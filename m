@@ -1,30 +1,30 @@
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5061DF25F;
-	Thu, 19 Feb 2026 10:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF4422B8AB;
+	Thu, 19 Feb 2026 10:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771496923; cv=none; b=p2D7HjsgnPR1UboqEjvk67AwKpMPrmSoZa41+iwCyp0FjXHeWeo2VFleAmRD2HxlB4AC4E5deSLnqNwtMM/kkFKf+9mGctDJdBXMFTuQbQRYOQI2G2WlJ6+BPYeyyGyGgdAKQLL/E8F2C14Y/pRL1RRtr5iB0PrpJqbrYELHJNc=
+	t=1771498552; cv=none; b=FkNuD/y8VspbjPYEsf/BzXAAIWMZ1rXMJue48CLgnMd90xU+Jwn5nd92dlqORiYCvs6Q+dfH/g05/+DcOwb2KGHhlPQVXV46fBtC4YJW32xao2mJms08m+tmSKbmZj0Q/zSAfyCUA3IL0IfnFoG08qw/AK64DJoJARhsEkx5+as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771496923; c=relaxed/simple;
-	bh=x17DcDfzdNRuQCTZUaQuMbvvf0OoBu2IJExejWxLZ5g=;
+	s=arc-20240116; t=1771498552; c=relaxed/simple;
+	bh=6vwn9d8bYSCJmxih6F1w6yLZp/aN2vV18ZBVLXAcL68=;
 	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eUa1lh0aTFvqaW7Q3HnEO3WpjSXKU+yd6wLGjeGSKkrP2L37o6HWSspIalGVactm9KK2YOZJ3Riv3OtmcPxN5CNSViB8Oul4LivlrUE0B5W2z+JxRIl8zrDgz+iLdy/Ziqb7xcOyYfAvVDWzyr10SIvM65f6aZ+XWEnTX+lG25s=
+	 MIME-Version:Content-Type; b=oMKWLq+wXW5AmG/rRtlkwUrHDnW8m4iWnc5nJgAQntDzwwo5fsUvWYufDXQ62Y11273xnE5aUVmTyRgh2uKX5kYBgIoDV8ksrGNhnQlQ77bIec8YCQQ/w9RIEUIMitpTQiqO7lapWC27dK+l4zFVf85ly95HCQLa5uMEdVz6AFc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.224.83])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fGqN75vSQzJ46Bs;
-	Thu, 19 Feb 2026 18:28:23 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fGqz82kzWzHnGjB;
+	Thu, 19 Feb 2026 18:55:16 +0800 (CST)
 Received: from dubpeml500005.china.huawei.com (unknown [7.214.145.207])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0CAE940569;
-	Thu, 19 Feb 2026 18:28:37 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 4BDA040539;
+	Thu, 19 Feb 2026 18:55:46 +0800 (CST)
 Received: from localhost (10.203.177.15) by dubpeml500005.china.huawei.com
  (7.214.145.207) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 19 Feb
- 2026 10:28:36 +0000
-Date: Thu, 19 Feb 2026 10:28:34 +0000
+ 2026 10:55:45 +0000
+Date: Thu, 19 Feb 2026 10:55:43 +0000
 From: Jonathan Cameron <jonathan.cameron@huawei.com>
 To: Besar Wicaksono <bwicaksono@nvidia.com>
 CC: <will@kernel.org>, <suzuki.poulose@arm.com>, <robin.murphy@arm.com>,
@@ -34,11 +34,11 @@ CC: <will@kernel.org>, <suzuki.poulose@arm.com>, <robin.murphy@arm.com>,
 	<vsethi@nvidia.com>, <rwiley@nvidia.com>, <sdonthineni@nvidia.com>,
 	<skelley@nvidia.com>, <ywan@nvidia.com>, <mochs@nvidia.com>,
 	<nirmoyd@nvidia.com>
-Subject: Re: [PATCH v2 6/8] perf: add NVIDIA Tegra410 CPU Memory Latency PMU
-Message-ID: <20260219102834.0000777c@huawei.com>
-In-Reply-To: <20260218145809.1622856-7-bwicaksono@nvidia.com>
+Subject: Re: [PATCH v2 7/8] perf: add NVIDIA Tegra410 C2C PMU
+Message-ID: <20260219105543.00007b0b@huawei.com>
+In-Reply-To: <20260218145809.1622856-8-bwicaksono@nvidia.com>
 References: <20260218145809.1622856-1-bwicaksono@nvidia.com>
-	<20260218145809.1622856-7-bwicaksono@nvidia.com>
+	<20260218145809.1622856-8-bwicaksono@nvidia.com>
 X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -48,37 +48,44 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
  dubpeml500005.china.huawei.com (7.214.145.207)
 
-On Wed, 18 Feb 2026 14:58:07 +0000
+On Wed, 18 Feb 2026 14:58:08 +0000
 Besar Wicaksono <bwicaksono@nvidia.com> wrote:
 
-> Adds CPU Memory (CMEM) Latency PMU support in Tegra410 SOC.
-> The PMU is used to measure latency between the edge of the
-> Unified Coherence Fabric to the local system DRAM.
+> Adds NVIDIA C2C PMU support in Tegra410 SOC. This PMU is
+> used to measure memory latency between the SOC and device
+> memory, e.g GPU Memory (GMEM), CXL Memory, or memory on
+> remote Tegra410 SOC.
 > 
 > Reviewed-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
 > Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
 
-Hi Besar
+Hi Besar.
 
-Various fairly superficial things inline.  Problem with reviewing
-uncore drivers is that I've always forgotten the details of the interactions
-with the perf core.  There aren't enough of them coming through to keep it in my head.
-Sadly I don't have time today to page all that info back in :(
+Another nice looking driver.
+
+My main comment here is around attribute management. In general I'd avoid doing
+dynamic assignment of attribute arrays when there are only a couple of options.
+Much cleaner and easier to read in those cases if you just have multiple
+static const arrays to pick between.
+
+That's made easier if you move to a struct for each of the supported types
+(and get rid of the enum currently used as that makes it too easy to end up
+with a mix of data in the struct vs code using the enum).
 
 Jonathan
 
-> diff --git a/drivers/perf/nvidia_t410_cmem_latency_pmu.c b/drivers/perf/nvidia_t410_cmem_latency_pmu.c
+> diff --git a/drivers/perf/nvidia_t410_c2c_pmu.c b/drivers/perf/nvidia_t410_c2c_pmu.c
 > new file mode 100644
-> index 000000000000..9b466581c8fc
+> index 000000000000..a3891c94dcde
 > --- /dev/null
-> +++ b/drivers/perf/nvidia_t410_cmem_latency_pmu.c
-> @@ -0,0 +1,727 @@
+> +++ b/drivers/perf/nvidia_t410_c2c_pmu.c
+> @@ -0,0 +1,1062 @@
 > +// SPDX-License-Identifier: GPL-2.0
 > +/*
-> + * NVIDIA Tegra410 CPU Memory (CMEM) Latency PMU driver.
+> + * NVIDIA Tegra410 C2C PMU driver.
 > + *
 > + * Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 > + */
@@ -92,300 +99,433 @@ Jonathan
 > +#include <linux/module.h>
 > +#include <linux/perf_event.h>
 > +#include <linux/platform_device.h>
-
-> +#define NUM_INSTANCES    14
-> +#define BCAST(pmu) pmu->base[NUM_INSTANCES]
-
-As below.  This is a weird macro.  I'd just split the
-base addresses up into a broad_cast_base and array of
-the individual bases.
+> +#include <linux/property.h>
 
 > +
-> +/* Register offsets. */
-> +#define CG_CTRL         0x800
-> +#define CTRL            0x808
-> +#define STATUS          0x810
-> +#define CYCLE_CNTR      0x818
-> +#define MC0_REQ_CNTR    0x820
-> +#define MC0_AOR_CNTR    0x830
-> +#define MC1_REQ_CNTR    0x838
-> +#define MC1_AOR_CNTR    0x848
-> +#define MC2_REQ_CNTR    0x850
-> +#define MC2_AOR_CNTR    0x860
-> +
-> +/* CTRL values. */
-> +#define CTRL_DISABLE    0x0ULL
-> +#define CTRL_ENABLE     0x1ULL
-> +#define CTRL_CLR        0x2ULL
-> +
-> +/* CG_CTRL values. */
-> +#define CG_CTRL_DISABLE    0x0ULL
-> +#define CG_CTRL_ENABLE     0x1ULL
-> +
-> +/* STATUS register field. */
-> +#define STATUS_CYCLE_OVF      BIT(0)
-> +#define STATUS_MC0_AOR_OVF    BIT(1)
-> +#define STATUS_MC0_REQ_OVF    BIT(3)
-> +#define STATUS_MC1_AOR_OVF    BIT(4)
-> +#define STATUS_MC1_REQ_OVF    BIT(6)
-> +#define STATUS_MC2_AOR_OVF    BIT(7)
-> +#define STATUS_MC2_REQ_OVF    BIT(9)
-> +
-> +/* Events. */
-> +#define EVENT_CYCLES    0x0
-> +#define EVENT_REQ       0x1
-> +#define EVENT_AOR       0x2
-> +
-> +#define NUM_EVENTS           0x3
-> +#define MASK_EVENT           0x3
-> +#define MAX_ACTIVE_EVENTS    32
-> +
-> +#define ACTIVE_CPU_MASK        0x0
-
-Some of these are very generic names.  To avoid a future clash with something in a
-header, I'd prefix them with something related to this driver.
-
-> +#define ASSOCIATED_CPU_MASK    0x1
-> +
-> +static unsigned long cmem_lat_pmu_cpuhp_state;
-> +
-> +struct cmem_lat_pmu_hw_events {
-> +	struct perf_event *events[MAX_ACTIVE_EVENTS];
-> +	DECLARE_BITMAP(used_ctrs, MAX_ACTIVE_EVENTS);
-> +};
-> +
-> +struct cmem_lat_pmu {
+> +struct nv_c2c_pmu {
 > +	struct pmu pmu;
 > +	struct device *dev;
+> +	struct acpi_device *acpi_dev;
+> +
 > +	const char *name;
 > +	const char *identifier;
-> +	void __iomem *base[NUM_INSTANCES + 1];
-
-As below. There are two types of things in this array (hence the +1)
-I'd just split it into an array of NUMSTANCES and a seperate
-pointer for the last one.
-
+> +
+> +	unsigned int c2c_type;
+> +	unsigned int peer_type;
+> +	unsigned int socket;
+> +	unsigned int nr_inst;
+> +	unsigned int nr_peer;
+> +	unsigned long peer_insts[C2C_NR_PEER_MAX][BITS_TO_LONGS(C2C_NR_INST_MAX)];
+Pity there isn't a DECLARE_BITMAP_ARRAY()
+macro.  I guess this isn't that common.
+> +	u32 filter_default;
+> +
+> +	struct nv_c2c_pmu_hw_events hw_events;
+> +
 > +	cpumask_t associated_cpus;
 > +	cpumask_t active_cpu;
-> +	struct hlist_node node;
-> +	struct cmem_lat_pmu_hw_events hw_events;
+> +
+> +	struct hlist_node cpuhp_node;
+> +
+> +	struct attribute **formats;
+> +	const struct attribute_group *attr_groups[6];
+
+As below. I'd push this into a type specific structure to remove all the dynamic
+code to fill it in.
+
+> +
+> +	void __iomem *base_broadcast;
+Ah. Good. This matches what I suggested for previous.
+> +	void __iomem *base[C2C_NR_INST_MAX];
 > +};
 
-> +static bool cmem_lat_pmu_validate_event(struct pmu *pmu,
-> +				 struct cmem_lat_pmu_hw_events *hw_events,
-> +				 struct perf_event *event)
-> +{
-> +	if (is_software_event(event))
-> +		return true;
-> +
-> +	/* Reject groups spanning multiple HW PMUs. */
-> +	if (event->pmu != pmu)
-> +		return false;
-> +
-> +	return (cmem_lat_pmu_get_event_idx(hw_events, event) >= 0);
-I'd be tempted to use
-	int ret;
-	...
-
-	ret = cmem_lat_pmu_get_event_idx(hw_events, event);
-	if (ret < 0)
-		return false;
-
-	return true;
-
-As that make it more obvious the final check is on the validity of the idx.
-
-
-> +}
-> +
 > +/*
-> + * Make sure the group of events can be scheduled at once
-> + * on the PMU.
-
-Wrap to 80 chars.
-
+> + * Read 64-bit register as a pair of 32-bit registers using hi-lo-hi sequence.
 > + */
-> +static bool cmem_lat_pmu_validate_group(struct perf_event *event)
-
-> +
-> +static int cmem_lat_pmu_event_init(struct perf_event *event)
+> +static u64 read_reg64_hilohi(const void __iomem *addr, u32 max_poll_count)
 > +{
-> +	struct cmem_lat_pmu *cmem_lat_pmu = to_cmem_lat_pmu(event->pmu);
-> +	struct hw_perf_event *hwc = &event->hw;
-> +	u32 event_type = get_event_type(event);
+> +	u32 val_lo, val_hi;
+> +	u64 val;
 > +
-> +	if (event->attr.type != event->pmu->type ||
-> +	    event_type >= NUM_EVENTS)
-> +		return -ENOENT;
+> +	/* Use high-low-high sequence to avoid tearing */
+> +	do {
+> +		if (max_poll_count-- == 0) {
+> +			pr_err("NV C2C PMU: timeout hi-low-high sequence\n");
+> +			return 0;
+> +		}
 > +
-> +	/*
-> +	 * Following other "uncore" PMUs, we do not support sampling mode or
-> +	 * attach to a task (per-process mode).
-Perhaps nicer to say why all uncore PMUs do this rather than this is
-doing the same as others...
+> +		val_hi = readl(addr + 4);
+> +		val_lo = readl(addr);
+> +	} while (val_hi != readl(addr + 4));
 
-Basically it's that they are system wide and so not clear what either sampling
-or task attachment would actually mean.
+I wonder if it's worth adding a non tearing variant include/linux/io-64-nonatomic-hi-lo.h
 
-> +	 */
-> +	if (is_sampling_event(event)) {
-> +		dev_dbg(cmem_lat_pmu->pmu.dev,
-> +			"Can't support sampling events\n");
-> +		return -EOPNOTSUPP;
-> +	}
+Feels like I see this open coded often enough that it might be nice to replace it
+once and for all with a generic version.
 
-
+Implementation would be pretty much what you have here.
 
 > +
-> +static void cmem_lat_pmu_read(struct perf_event *event)
-> +{
-> +	cmem_lat_pmu_event_update(event);
+> +	val = (((u64)val_hi << 32) | val_lo);
+> +
+> +	return val;
 > +}
+
+
 > +
-> +static inline void cmem_lat_pmu_cg_ctrl(struct cmem_lat_pmu *cmem_lat_pmu, u64 val)
+> +static umode_t
+> +nv_c2c_pmu_event_attr_is_visible(struct kobject *kobj, struct attribute *attr,
+> +				 int unused)
 > +{
-> +	writeq(val, BCAST(cmem_lat_pmu) + CG_CTRL);
+> +	struct device *dev = kobj_to_dev(kobj);
+> +	struct nv_c2c_pmu *c2c_pmu = to_c2c_pmu(dev_get_drvdata(dev));
+> +	struct perf_pmu_events_attr *eattr;
+> +
+> +	eattr = container_of(attr, typeof(*eattr), attr.attr);
+> +
+> +	if (c2c_pmu->c2c_type == C2C_TYPE_NVDLINK) {
+> +		/* Only incoming reads are available. */
+> +		switch (eattr->id) {
+> +		case C2C_EVENT_IN_WR_CUM_OUTS:
+> +		case C2C_EVENT_IN_WR_REQ:
+> +		case C2C_EVENT_OUT_RD_CUM_OUTS:
+> +		case C2C_EVENT_OUT_RD_REQ:
+> +		case C2C_EVENT_OUT_WR_CUM_OUTS:
+> +		case C2C_EVENT_OUT_WR_REQ:
+> +			return 0;
+> +		default:
+> +			return attr->mode;
+Given suggestion below to use separate attribute_groups[] for each
+of the 3 types, I'd do separate event attribute groups for each as well.
+That will cover this case as const data.
+> +		}
+> +	} else {
+> +		/* Hide the write events if C2C connected to another SoC. */
+> +		if (c2c_pmu->peer_type == C2C_PEER_TYPE_CPU) {
 
-The BCAST macro is odd enough I'd just put what it does in inline here so it's
-clear it's just the last element.  I'm not entirely sure why you put it at the
-end of that array though.  Why not just have a separate element in the struct?
+And only the two types where this is relevant will use the is_visible.
 
-> +}
-> +
-> +static inline void cmem_lat_pmu_ctrl(struct cmem_lat_pmu *cmem_lat_pmu, u64 val)
-> +{
-> +	writeq(val, BCAST(cmem_lat_pmu) + CTRL);
-> +}
-> +
-> +static void cmem_lat_pmu_enable(struct pmu *pmu)
-> +{
-> +	bool disabled;
-> +	struct cmem_lat_pmu *cmem_lat_pmu = to_cmem_lat_pmu(pmu);
-> +
-> +	disabled = bitmap_empty(
-> +		cmem_lat_pmu->hw_events.used_ctrs, MAX_ACTIVE_EVENTS);
-
-This is unusual formatting. Much better to have the parameters up a line
-and if you go to a second line, then start under the first character after (
-
-> +
-> +	if (disabled)
-> +		return;
-> +
-> +	/* Enable all the counters. */
-> +	cmem_lat_pmu_cg_ctrl(cmem_lat_pmu, CG_CTRL_ENABLE);
-> +	cmem_lat_pmu_ctrl(cmem_lat_pmu, CTRL_ENABLE);
-> +}
-> +
-> +static void cmem_lat_pmu_disable(struct pmu *pmu)
-> +{
-> +	int idx;
-> +	struct perf_event *event;
-> +	struct cmem_lat_pmu *cmem_lat_pmu = to_cmem_lat_pmu(pmu);
-> +
-> +	/* Disable all the counters. */
-> +	cmem_lat_pmu_ctrl(cmem_lat_pmu, CTRL_DISABLE);
-> +
-> +	/*
-> +	 * The counters will start from 0 again on restart.
-> +	 * Update the events immediately to avoid losing the counts.
-> +	 */
-> +	for_each_set_bit(
-> +		idx, cmem_lat_pmu->hw_events.used_ctrs, MAX_ACTIVE_EVENTS) {
-
-Very unusual formatting for a for loop.  Move at least some / maybe all of the
-parameters up a line.  The last thing we want is them to be indented
-the same as the stuff in the loop.
-
-Probably drag declaration of event in here to make it clearer what scope that
-local variable has.
-
-> +		event = cmem_lat_pmu->hw_events.events[idx];
-> +
-> +		if (!event)
-> +			continue;
-> +
-> +		cmem_lat_pmu_event_update(event);
-> +
-> +		local64_set(&event->hw.prev_count, 0ULL);
+> +			switch (eattr->id) {
+> +			case C2C_EVENT_IN_WR_CUM_OUTS:
+> +			case C2C_EVENT_IN_WR_REQ:
+> +			case C2C_EVENT_OUT_WR_CUM_OUTS:
+> +			case C2C_EVENT_OUT_WR_REQ:
+> +				return 0;
+> +			default:
+> +				return attr->mode;
+> +			}
+> +		}
 > +	}
 > +
-> +	cmem_lat_pmu_ctrl(cmem_lat_pmu, CTRL_CLR);
-> +	cmem_lat_pmu_cg_ctrl(cmem_lat_pmu, CG_CTRL_DISABLE);
+> +	return attr->mode;
 > +}
-
-> +static struct attribute *cmem_lat_pmu_formats[] = {
-> +	NV_PMU_EXT_ATTR(event, device_show_string, "config:0-1"),
-> +	NULL,
-As below.
-
+> +
+> +static const struct attribute_group nv_c2c_pmu_events_group = {
+> +	.name = "events",
+> +	.attrs = nv_c2c_pmu_events,
+> +	.is_visible = nv_c2c_pmu_event_attr_is_visible,
 > +};
 
-> +
-> +#define NV_PMU_CPUMASK_ATTR(_name, _config)			\
-> +	NV_PMU_EXT_ATTR(_name, cmem_lat_pmu_cpumask_show,	\
-> +				(unsigned long)_config)
-> +
-> +static struct attribute *cmem_lat_pmu_cpumask_attrs[] = {
-> +	NV_PMU_CPUMASK_ATTR(cpumask, ACTIVE_CPU_MASK),
-> +	NV_PMU_CPUMASK_ATTR(associated_cpus, ASSOCIATED_CPU_MASK),
-> +	NULL,
-
-As below.
-
-> +};
-> +
-> +static const struct attribute_group cmem_lat_pmu_cpumask_attr_group = {
-> +	.attrs = cmem_lat_pmu_cpumask_attrs,
-> +};
 > +
 > +/* Per PMU device attribute groups. */
 > +
-> +static const struct attribute_group *cmem_lat_pmu_attr_groups[] = {
-> +	&cmem_lat_pmu_identifier_attr_group,
-> +	&cmem_lat_pmu_format_group,
-> +	&cmem_lat_pmu_events_group,
-> +	&cmem_lat_pmu_cpumask_attr_group,
-> +	NULL,
-
-New code, so no need to copy any local style. Hence drop that trailing comma :)
-
-> +};
-> +
-
-> +static int cmem_lat_pmu_get_cpus(struct cmem_lat_pmu *cmem_lat_pmu,
-> +				unsigned int socket)
+> +static int nv_c2c_pmu_alloc_attr_groups(struct nv_c2c_pmu *c2c_pmu)
 > +{
-> +	int ret = 0, cpu;
+> +	const struct attribute_group **attr_groups = c2c_pmu->attr_groups;
+> +
+> +	attr_groups[0] = nv_c2c_pmu_alloc_format_attr_group(c2c_pmu);
+> +	attr_groups[1] = &nv_c2c_pmu_events_group;
+> +	attr_groups[2] = &nv_c2c_pmu_cpumask_attr_group;
+> +	attr_groups[3] = &nv_c2c_pmu_identifier_attr_group;
+> +	attr_groups[4] = &nv_c2c_pmu_peer_attr_group;
+> +
+> +	if (!attr_groups[0])
+> +		return -ENOMEM;
+
+This seems unnecessary code complexity to avoid having a couple of structures
+that duplicate some elements.  If you have a choice between picking between
+sets of static const data vs more code. Go the data route (as long as it
+isn't a huge amount more data!)
+
+So have a 
+const struct attribute_groups *xxxx[] = {
+};
+For each of the 3 types.
+
+Alternative is put all the format group attributes in one group and then use
+is_visible() to select what is relevant to each type, but I think that will
+be more complex than just replicating the array 3 times.
+
+
+
+> +
+> +	return 0;
+> +}
+
+> +static int nv_c2c_pmu_get_cpus(struct nv_c2c_pmu *c2c_pmu)
+> +{
+> +	int ret = 0, socket = c2c_pmu->socket, cpu;
 > +
 > +	for_each_possible_cpu(cpu) {
 > +		if (cpu_to_node(cpu) == socket)
-> +			cpumask_set_cpu(cpu, &cmem_lat_pmu->associated_cpus);
+> +			cpumask_set_cpu(cpu, &c2c_pmu->associated_cpus);
 > +	}
 > +
-> +	if (cpumask_empty(&cmem_lat_pmu->associated_cpus)) {
-> +		dev_dbg(cmem_lat_pmu->dev,
-> +			"No cpu associated with PMU socket-%u\n", socket);
+> +	if (cpumask_empty(&c2c_pmu->associated_cpus)) {
+> +		dev_dbg(c2c_pmu->dev,
+> +			"No cpu associated with C2C PMU socket-%u\n", socket);
 > +		ret = -ENODEV;
-		return -ENODEV;
-
-Saves reviewer reading on and...
 > +	}
 > +
 > +	return ret;
-	return 0;
-
-so the know that getting here always indicates success.
+Direct returns are often more readable. I think that applies here
+as we can then make ti clear where the good exit paths are with return 0.
 
 > +}
+> +
+> +static int nv_c2c_pmu_init_socket(struct nv_c2c_pmu *c2c_pmu)
+> +{
+> +	const char *uid_str;
+> +	int ret, socket;
+> +
+> +	uid_str = acpi_device_uid(c2c_pmu->acpi_dev);
+> +	if (!uid_str) {
+> +		ret = -ENODEV;
+> +		goto fail;
+> +	}
+> +
+> +	ret = kstrtou32(uid_str, 0, &socket);
+> +	if (ret)
+> +		goto fail;
+> +
+> +	c2c_pmu->socket = socket;
+> +	return 0;
+> +
+> +fail:
+> +	dev_err(c2c_pmu->dev, "Failed to initialize socket\n");
+
+I'd return above, with a more specific error message given there are two
+different things that can go wrong.
+
+> +	return ret;
+> +}
+> +
+> +static int nv_c2c_pmu_init_id(struct nv_c2c_pmu *c2c_pmu)
+> +{
+> +	const char *name_fmt[C2C_TYPE_COUNT] = {
+> +		[C2C_TYPE_NVLINK] = "nvidia_nvlink_c2c_pmu_%u",
+> +		[C2C_TYPE_NVCLINK] = "nvidia_nvclink_pmu_%u",
+> +		[C2C_TYPE_NVDLINK] = "nvidia_nvdlink_pmu_%u",
+> +	};
+> +
+> +	char *name;
+> +	int ret;
+> +
+> +	name = devm_kasprintf(c2c_pmu->dev, GFP_KERNEL,
+> +		name_fmt[c2c_pmu->c2c_type], c2c_pmu->socket);
+> +	if (!name) {
+> +		ret = -ENOMEM;
+> +		goto fail;
+> +	}
+> +
+> +	c2c_pmu->name = name;
+> +
+> +	c2c_pmu->identifier = acpi_device_hid(c2c_pmu->acpi_dev);
+> +
+> +	return 0;
+> +
+> +fail:
+> +	dev_err(c2c_pmu->dev, "Failed to initialize name\n");
+
+Why the goto?  Just error out above.
+For any calls like this that are only made from probe() use
+	return dev_err_probe(c2c_pmu->dev, ret, "...\n");
+However general view is that allocation failures make enough noise
+anyway that we never print additional error messages on them.  So
+just drop the print here.
+
+There are a few people cleaning the kernel tree up to remove exactly
+this case.  Not sure anyone got to perf yet though.
+
+
+> +	return ret;
+> +}
+> +
+> +static int nv_c2c_pmu_init_filter(struct nv_c2c_pmu *c2c_pmu)
+> +{
+> +	u32 cpu_en = 0;
+> +	struct device *dev = c2c_pmu->dev;
+> +
+> +	if (c2c_pmu->c2c_type == C2C_TYPE_NVDLINK) {
+> +		c2c_pmu->peer_type = C2C_PEER_TYPE_CXLMEM;
+> +
+> +		c2c_pmu->nr_inst = C2C_NR_INST_NVDLINK;
+> +		c2c_pmu->peer_insts[0][0] = (1UL << c2c_pmu->nr_inst) - 1;
+> +
+> +		c2c_pmu->nr_peer = C2C_NR_PEER_CXLMEM;
+> +		c2c_pmu->filter_default = (1 << c2c_pmu->nr_peer) - 1;
+> +
+> +		c2c_pmu->formats = nv_c2c_pmu_formats;
+> +
+> +		return 0;
+> +	}
+> +
+> +	c2c_pmu->nr_inst = (c2c_pmu->c2c_type == C2C_TYPE_NVLINK) ?
+> +		C2C_NR_INST_NVLINK : C2C_NR_INST_NVCLINK;
+> +
+> +	if (device_property_read_u32(dev, "cpu_en_mask", &cpu_en))
+> +		dev_dbg(dev, "no cpu_en_mask property\n");
+> +
+> +	if (cpu_en) {
+> +		c2c_pmu->peer_type = C2C_PEER_TYPE_CPU;
+> +
+> +		/* Fill peer_insts bitmap with instances connected to peer CPU. */
+> +		bitmap_from_arr32(c2c_pmu->peer_insts[0], &cpu_en,
+> +				c2c_pmu->nr_inst);
+> +
+> +		c2c_pmu->nr_peer = 1;
+> +		c2c_pmu->formats = nv_c2c_pmu_formats;
+> +	} else {
+> +		u32 i;
+> +		const char *props[C2C_NR_PEER_MAX] = {
+> +			"gpu0_en_mask", "gpu1_en_mask"
+> +		};
+> +
+> +		for (i = 0; i < C2C_NR_PEER_MAX; i++) {
+> +			u32 gpu_en = 0;
+> +
+> +			if (device_property_read_u32(dev, props[i], &gpu_en))
+> +				dev_dbg(dev, "no %s property\n", props[i]);
+> +
+> +			if (gpu_en) {
+> +				/* Fill peer_insts bitmap with instances connected to peer GPU. */
+> +				bitmap_from_arr32(c2c_pmu->peer_insts[i], &gpu_en,
+> +						c2c_pmu->nr_inst);
+> +
+> +				c2c_pmu->nr_peer++;
+> +			}
+> +		}
+> +
+> +		if (c2c_pmu->nr_peer == 0) {
+> +			dev_err(dev, "No GPU is enabled\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		c2c_pmu->peer_type = C2C_PEER_TYPE_GPU;
+> +		c2c_pmu->formats = nv_c2c_nvlink_pmu_formats;
+> +	}
+> +
+> +	c2c_pmu->filter_default = (1 << c2c_pmu->nr_peer) - 1;
+> +
+> +	return 0;
+> +}
+> +
+> +static void *nv_c2c_pmu_init_pmu(struct platform_device *pdev)
+> +{
+> +	int ret;
+> +	struct nv_c2c_pmu *c2c_pmu;
+> +	struct acpi_device *acpi_dev;
+> +	struct device *dev = &pdev->dev;
+> +
+> +	acpi_dev = ACPI_COMPANION(dev);
+> +	if (!acpi_dev)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	c2c_pmu = devm_kzalloc(dev, sizeof(*c2c_pmu), GFP_KERNEL);
+> +	if (!c2c_pmu)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	c2c_pmu->dev = dev;
+> +	c2c_pmu->acpi_dev = acpi_dev;
+> +	c2c_pmu->c2c_type = (unsigned int)(unsigned long)device_get_match_data(dev);
+
+As below, I'd make this a pointer to a struct with all the type specific
+info in the struct.
+
+> +	platform_set_drvdata(pdev, c2c_pmu);
+> +
+> +	ret = nv_c2c_pmu_init_socket(c2c_pmu);
+> +	if (ret)
+> +		goto done;
+> +
+> +	ret = nv_c2c_pmu_init_id(c2c_pmu);
+> +	if (ret)
+> +		goto done;
+> +
+> +	ret = nv_c2c_pmu_init_filter(c2c_pmu);
+> +	if (ret)
+> +		goto done;
+> +
+> +done:
+Why not just return ERR_PTR() above and drop this goto?
+That will be easier to read as clear that on any error you just return.
+With the label here it looks like there might be good paths that use
+it.  That briefly confused me :)
+
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	return c2c_pmu;
+> +}
+
 
 > +
-> +static const struct acpi_device_id cmem_lat_pmu_acpi_match[] = {
-> +	{ "NVDA2021", },
+> +static const struct acpi_device_id nv_c2c_pmu_acpi_match[] = {
+> +	{ "NVDA2023", (kernel_ulong_t)C2C_TYPE_NVLINK },
 
-The trailing comma after the string doesn't add anything, so I'd drop it.
+Speaking from long experience of maintaining stuff that uses this pattern,
+it's much cleaner to have a per device type struct and put a pointer
+to that here.  The enum approach tends to lead to lots of switch statements
+of scattered data about the uniqueness of each type. 
 
+Up to you though, but I'd suggest this will bite you.
+
+> +	{ "NVDA2022", (kernel_ulong_t)C2C_TYPE_NVCLINK },
+> +	{ "NVDA2020", (kernel_ulong_t)C2C_TYPE_NVDLINK },
 > +	{ }
 > +};
-> +MODULE_DEVICE_TABLE(acpi, cmem_lat_pmu_acpi_match);
+> +MODULE_DEVICE_TABLE(acpi, nv_c2c_pmu_acpi_match);
+> +
+> +static struct platform_driver nv_c2c_pmu_driver = {
+> +	.driver = {
+> +		.name = "nvidia-t410-c2c-pmu",
+> +		.acpi_match_table = ACPI_PTR(nv_c2c_pmu_acpi_match),
+
+ACPI_PTR() mostly causes annoying issues with __maybe_unused
+being used to save a trivial amount of data for !CONFIG_ACPI.
+My advice would be to not use it.  It's not necessary at all.
+
+> +		.suppress_bind_attrs = true,
+> +	},
+> +	.probe = nv_c2c_pmu_probe,
+> +	.remove = nv_c2c_pmu_device_remove,
+> +};
+> +
+> +static int __init nv_c2c_pmu_init(void)
+> +{
+> +	int ret;
+> +
+> +	ret = cpuhp_setup_state_multi(CPUHP_AP_ONLINE_DYN,
+> +				      "perf/nvidia/c2c:online",
+> +				      nv_c2c_pmu_online_cpu,
+> +				      nv_c2c_pmu_cpu_teardown);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	nv_c2c_pmu_cpuhp_state = ret;
+> +	return platform_driver_register(&nv_c2c_pmu_driver);
+> +}
+> +
+> +static void __exit nv_c2c_pmu_exit(void)
+> +{
+> +	platform_driver_unregister(&nv_c2c_pmu_driver);
+> +	cpuhp_remove_multi_state(nv_c2c_pmu_cpuhp_state);
+> +}
+> +
+> +module_init(nv_c2c_pmu_init);
+> +module_exit(nv_c2c_pmu_exit);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("NVIDIA Tegra410 C2C PMU driver");
+> +MODULE_AUTHOR("Besar Wicaksono <bwicaksono@nvidia.com>");
 
