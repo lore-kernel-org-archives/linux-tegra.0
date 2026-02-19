@@ -1,30 +1,30 @@
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3163F10F1;
-	Thu, 19 Feb 2026 10:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5061DF25F;
+	Thu, 19 Feb 2026 10:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771495861; cv=none; b=Op4oT0t4MVLGw59iFpk6Te3vb3pL4v/bSW9wsmtnTLfS9XY9v2eufUyeInKL/Z+T6gXAhwdMrT7P4607Y/kv/Dp3+npqo3AvXL37vAmCmxqAmPpYIjRrgkyyrymCfZaRqitpL5Z3M5mRwrbNcgcqEu29Dc925FD4DimsoPaa6qw=
+	t=1771496923; cv=none; b=p2D7HjsgnPR1UboqEjvk67AwKpMPrmSoZa41+iwCyp0FjXHeWeo2VFleAmRD2HxlB4AC4E5deSLnqNwtMM/kkFKf+9mGctDJdBXMFTuQbQRYOQI2G2WlJ6+BPYeyyGyGgdAKQLL/E8F2C14Y/pRL1RRtr5iB0PrpJqbrYELHJNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771495861; c=relaxed/simple;
-	bh=mM03wtXbEP7b0CkX4Z2NfGNqJqevQ/l0NzlHSNE6b2E=;
+	s=arc-20240116; t=1771496923; c=relaxed/simple;
+	bh=x17DcDfzdNRuQCTZUaQuMbvvf0OoBu2IJExejWxLZ5g=;
 	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QcOa7owtMLVgZybNLVuhexbZ417U/93A8y/LhxfBgL4yJLABETvDb4+KtK59/2g91n/0k9QInULA1IwQ1MqUkpripkkQXGJ1KrmnMYEKj2nrfuGLNoHHR3F9unuz6H2SJyg7jdy4Ub9pSzyob1HTM/NM4ORRxZKzhGPraY4C3aI=
+	 MIME-Version:Content-Type; b=eUa1lh0aTFvqaW7Q3HnEO3WpjSXKU+yd6wLGjeGSKkrP2L37o6HWSspIalGVactm9KK2YOZJ3Riv3OtmcPxN5CNSViB8Oul4LivlrUE0B5W2z+JxRIl8zrDgz+iLdy/Ziqb7xcOyYfAvVDWzyr10SIvM65f6aZ+XWEnTX+lG25s=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.224.150])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fGpzQ1g3mzHnGk2;
-	Thu, 19 Feb 2026 18:10:26 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fGqN75vSQzJ46Bs;
+	Thu, 19 Feb 2026 18:28:23 +0800 (CST)
 Received: from dubpeml500005.china.huawei.com (unknown [7.214.145.207])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1857940565;
-	Thu, 19 Feb 2026 18:10:56 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 0CAE940569;
+	Thu, 19 Feb 2026 18:28:37 +0800 (CST)
 Received: from localhost (10.203.177.15) by dubpeml500005.china.huawei.com
  (7.214.145.207) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 19 Feb
- 2026 10:10:44 +0000
-Date: Thu, 19 Feb 2026 10:10:43 +0000
+ 2026 10:28:36 +0000
+Date: Thu, 19 Feb 2026 10:28:34 +0000
 From: Jonathan Cameron <jonathan.cameron@huawei.com>
 To: Besar Wicaksono <bwicaksono@nvidia.com>
 CC: <will@kernel.org>, <suzuki.poulose@arm.com>, <robin.murphy@arm.com>,
@@ -33,15 +33,12 @@ CC: <will@kernel.org>, <suzuki.poulose@arm.com>, <robin.murphy@arm.com>,
 	<mark.rutland@arm.com>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
 	<vsethi@nvidia.com>, <rwiley@nvidia.com>, <sdonthineni@nvidia.com>,
 	<skelley@nvidia.com>, <ywan@nvidia.com>, <mochs@nvidia.com>,
-	<nirmoyd@nvidia.com>, Bjorn Helgaas <bhelgaas@google.com>,
-	<linux-pci@vger.kernel.org>, Yushan Wang <wangyushan12@huawei.com>,
-	<shiju.jose@huawei.com>
-Subject: Re: [PATCH v2 5/8] perf/arm_cspmu: nvidia: Add Tegra410 PCIE-TGT
- PMU
-Message-ID: <20260219101043.00006d2e@huawei.com>
-In-Reply-To: <20260218145809.1622856-6-bwicaksono@nvidia.com>
+	<nirmoyd@nvidia.com>
+Subject: Re: [PATCH v2 6/8] perf: add NVIDIA Tegra410 CPU Memory Latency PMU
+Message-ID: <20260219102834.0000777c@huawei.com>
+In-Reply-To: <20260218145809.1622856-7-bwicaksono@nvidia.com>
 References: <20260218145809.1622856-1-bwicaksono@nvidia.com>
-	<20260218145809.1622856-6-bwicaksono@nvidia.com>
+	<20260218145809.1622856-7-bwicaksono@nvidia.com>
 X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -51,498 +48,344 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
  dubpeml500005.china.huawei.com (7.214.145.207)
 
-On Wed, 18 Feb 2026 14:58:06 +0000
+On Wed, 18 Feb 2026 14:58:07 +0000
 Besar Wicaksono <bwicaksono@nvidia.com> wrote:
 
-> Adds PCIE-TGT PMU support in Tegra410 SOC. This PMU is
-> instanced in each root complex in the SOC and it captures
-> traffic originating from any source towards PCIE BAR and CXL
-> HDM range. The traffic can be filtered based on the
-> destination root port or target address range.
+> Adds CPU Memory (CMEM) Latency PMU support in Tegra410 SOC.
+> The PMU is used to measure latency between the edge of the
+> Unified Coherence Fabric to the local system DRAM.
 > 
 > Reviewed-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
 > Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
 
-+CC same group as on previous.
+Hi Besar
 
-No additional comments from me, I just left the convent for those
-I +CC.
+Various fairly superficial things inline.  Problem with reviewing
+uncore drivers is that I've always forgotten the details of the interactions
+with the perf core.  There aren't enough of them coming through to keep it in my head.
+Sadly I don't have time today to page all that info back in :(
 
-J
+Jonathan
 
-> ---
->  .../admin-guide/perf/nvidia-tegra410-pmu.rst  |  76 +++++
->  drivers/perf/arm_cspmu/nvidia_cspmu.c         | 323 ++++++++++++++++++
->  2 files changed, 399 insertions(+)
-> 
-> diff --git a/Documentation/admin-guide/perf/nvidia-tegra410-pmu.rst b/Documentation/admin-guide/perf/nvidia-tegra410-pmu.rst
-> index 8528685ddb61..07dc447eead7 100644
-> --- a/Documentation/admin-guide/perf/nvidia-tegra410-pmu.rst
-> +++ b/Documentation/admin-guide/perf/nvidia-tegra410-pmu.rst
-> @@ -7,6 +7,7 @@ metrics like memory bandwidth, latency, and utilization:
->  
->  * Unified Coherence Fabric (UCF)
->  * PCIE
-> +* PCIE-TGT
->  
->  PMU Driver
->  ----------
-> @@ -211,6 +212,11 @@ Example usage:
->  
->      perf stat -a -e nvidia_pcie_pmu_0_rc_4/event=0x4,src_bdf=0x0180,src_bdf_en=0x1/
->  
-> +.. _NVIDIA_T410_PCIE_PMU_RC_Mapping_Section:
+> diff --git a/drivers/perf/nvidia_t410_cmem_latency_pmu.c b/drivers/perf/nvidia_t410_cmem_latency_pmu.c
+> new file mode 100644
+> index 000000000000..9b466581c8fc
+> --- /dev/null
+> +++ b/drivers/perf/nvidia_t410_cmem_latency_pmu.c
+> @@ -0,0 +1,727 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * NVIDIA Tegra410 CPU Memory (CMEM) Latency PMU driver.
+> + *
+> + * Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+> + */
 > +
-> +Mapping the RC# to lspci segment number
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +#include <linux/acpi.h>
+> +#include <linux/bitops.h>
+> +#include <linux/cpumask.h>
+> +#include <linux/device.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/perf_event.h>
+> +#include <linux/platform_device.h>
+
+> +#define NUM_INSTANCES    14
+> +#define BCAST(pmu) pmu->base[NUM_INSTANCES]
+
+As below.  This is a weird macro.  I'd just split the
+base addresses up into a broad_cast_base and array of
+the individual bases.
+
 > +
->  Mapping the RC# to lspci segment number can be non-trivial; hence a new NVIDIA
->  Designated Vendor Specific Capability (DVSEC) register is added into the PCIE config space
->  for each RP. This DVSEC has vendor id "10de" and DVSEC id of "0x4". The DVSEC register
-> @@ -266,3 +272,73 @@ Example output::
->    000d:40:00.0: Bus=40, Segment=0d, RP=01, RC=04, Socket=01
->    000d:c0:00.0: Bus=c0, Segment=0d, RP=02, RC=04, Socket=01
->    000e:00:00.0: Bus=00, Segment=0e, RP=00, RC=05, Socket=01
+> +/* Register offsets. */
+> +#define CG_CTRL         0x800
+> +#define CTRL            0x808
+> +#define STATUS          0x810
+> +#define CYCLE_CNTR      0x818
+> +#define MC0_REQ_CNTR    0x820
+> +#define MC0_AOR_CNTR    0x830
+> +#define MC1_REQ_CNTR    0x838
+> +#define MC1_AOR_CNTR    0x848
+> +#define MC2_REQ_CNTR    0x850
+> +#define MC2_AOR_CNTR    0x860
 > +
-> +PCIE-TGT PMU
-> +------------
+> +/* CTRL values. */
+> +#define CTRL_DISABLE    0x0ULL
+> +#define CTRL_ENABLE     0x1ULL
+> +#define CTRL_CLR        0x2ULL
 > +
-> +The PCIE-TGT PMU monitors traffic targeting PCIE BAR and CXL HDM ranges.
-> +There is one PCIE-TGT PMU per PCIE root complex (RC) in the SoC. Each RC in
-> +Tegra410 SoC can have up to 16 lanes that can be bifurcated into up to 8 root
-> +ports (RP). The PMU provides RP filter to count PCIE BAR traffic to each RP and
-> +address filter to count access to PCIE BAR or CXL HDM ranges. The details
-> +of the filters are described in the following sections.
+> +/* CG_CTRL values. */
+> +#define CG_CTRL_DISABLE    0x0ULL
+> +#define CG_CTRL_ENABLE     0x1ULL
 > +
-> +Mapping the RC# to lspci segment number is similar to the PCIE PMU.
-> +Please see :ref:`NVIDIA_T410_PCIE_PMU_RC_Mapping_Section` for more info.
+> +/* STATUS register field. */
+> +#define STATUS_CYCLE_OVF      BIT(0)
+> +#define STATUS_MC0_AOR_OVF    BIT(1)
+> +#define STATUS_MC0_REQ_OVF    BIT(3)
+> +#define STATUS_MC1_AOR_OVF    BIT(4)
+> +#define STATUS_MC1_REQ_OVF    BIT(6)
+> +#define STATUS_MC2_AOR_OVF    BIT(7)
+> +#define STATUS_MC2_REQ_OVF    BIT(9)
 > +
-> +The events and configuration options of this PMU device are available in sysfs,
-> +see /sys/bus/event_source/devices/nvidia_pcie_tgt_pmu_<socket-id>_rc_<pcie-rc-id>.
+> +/* Events. */
+> +#define EVENT_CYCLES    0x0
+> +#define EVENT_REQ       0x1
+> +#define EVENT_AOR       0x2
 > +
-> +The events in this PMU can be used to measure bandwidth and utilization:
+> +#define NUM_EVENTS           0x3
+> +#define MASK_EVENT           0x3
+> +#define MAX_ACTIVE_EVENTS    32
 > +
-> +  * rd_req: count the number of read requests to PCIE.
-> +  * wr_req: count the number of write requests to PCIE.
-> +  * rd_bytes: count the number of bytes transferred by rd_req.
-> +  * wr_bytes: count the number of bytes transferred by wr_req.
-> +  * cycles: counts the PCIE cycles.
+> +#define ACTIVE_CPU_MASK        0x0
+
+Some of these are very generic names.  To avoid a future clash with something in a
+header, I'd prefix them with something related to this driver.
+
+> +#define ASSOCIATED_CPU_MASK    0x1
 > +
-> +The average bandwidth is calculated as::
+> +static unsigned long cmem_lat_pmu_cpuhp_state;
 > +
-> +   AVG_RD_BANDWIDTH_IN_GBPS = RD_BYTES / ELAPSED_TIME_IN_NS
-> +   AVG_WR_BANDWIDTH_IN_GBPS = WR_BYTES / ELAPSED_TIME_IN_NS
-> +
-> +The average request rate is calculated as::
-> +
-> +   AVG_RD_REQUEST_RATE = RD_REQ / CYCLES
-> +   AVG_WR_REQUEST_RATE = WR_REQ / CYCLES
-> +
-> +The PMU events can be filtered based on the destination root port or target
-> +address range. Filtering based on RP is only available for PCIE BAR traffic.
-> +Address filter works for both PCIE BAR and CXL HDM ranges. These filters can be
-> +found in sysfs, see
-> +/sys/bus/event_source/devices/nvidia_pcie_tgt_pmu_<socket-id>_rc_<pcie-rc-id>/format/.
-> +
-> +Destination filter settings:
-> +
-> +* dst_rp_mask: bitmask to select the root port(s) to monitor. E.g. "dst_rp_mask=0xFF"
-> +  corresponds to all root ports (from 0 to 7) in the PCIE RC. Note that this filter is
-> +  only available for PCIE BAR traffic.
-> +* dst_addr_base: BAR or CXL HDM filter base address.
-> +* dst_addr_mask: BAR or CXL HDM filter address mask.
-> +* dst_addr_en: enable BAR or CXL HDM address range filter. If this is set, the
-> +  address range specified by "dst_addr_base" and "dst_addr_mask" will be used to filter
-> +  the PCIE BAR and CXL HDM traffic address. The PMU uses the following comparison
-> +  to determine if the traffic destination address falls within the filter range::
-> +
-> +    (txn's addr & dst_addr_mask) == (dst_addr_base & dst_addr_mask)
-> +
-> +  If the comparison succeeds, then the event will be counted.
-> +
-> +If the destination filter is not specified, the RP filter will be configured by default
-> +to count PCIE BAR traffic to all root ports.
-> +
-> +Example usage:
-> +
-> +* Count event id 0x0 to root port 0 and 1 of PCIE RC-0 on socket 0::
-> +
-> +    perf stat -a -e nvidia_pcie_tgt_pmu_0_rc_0/event=0x0,dst_rp_mask=0x3/
-> +
-> +* Count event id 0x1 for accesses to PCIE BAR or CXL HDM address range
-> +  0x10000 to 0x100FF on socket 0's PCIE RC-1::
-> +
-> +    perf stat -a -e nvidia_pcie_tgt_pmu_0_rc_1/event=0x1,dst_addr_base=0x10000,dst_addr_mask=0xFFF00,dst_addr_en=0x1/
-> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> index 42f11f37bddf..25c408b56dc8 100644
-> --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> @@ -42,6 +42,24 @@
->  #define NV_PCIE_V2_FILTER2_DST       GENMASK_ULL(NV_PCIE_V2_DST_COUNT - 1, 0)
->  #define NV_PCIE_V2_FILTER2_DEFAULT   NV_PCIE_V2_FILTER2_DST
->  
-> +#define NV_PCIE_TGT_PORT_COUNT       8ULL
-> +#define NV_PCIE_TGT_EV_TYPE_CC       0x4
-> +#define NV_PCIE_TGT_EV_TYPE_COUNT    3ULL
-> +#define NV_PCIE_TGT_EV_TYPE_MASK     GENMASK_ULL(NV_PCIE_TGT_EV_TYPE_COUNT - 1, 0)
-> +#define NV_PCIE_TGT_FILTER2_MASK     GENMASK_ULL(NV_PCIE_TGT_PORT_COUNT, 0)
-> +#define NV_PCIE_TGT_FILTER2_PORT     GENMASK_ULL(NV_PCIE_TGT_PORT_COUNT - 1, 0)
-> +#define NV_PCIE_TGT_FILTER2_ADDR_EN  BIT(NV_PCIE_TGT_PORT_COUNT)
-> +#define NV_PCIE_TGT_FILTER2_ADDR     GENMASK_ULL(15, NV_PCIE_TGT_PORT_COUNT)
-> +#define NV_PCIE_TGT_FILTER2_DEFAULT  NV_PCIE_TGT_FILTER2_PORT
-> +
-> +#define NV_PCIE_TGT_ADDR_COUNT       8ULL
-> +#define NV_PCIE_TGT_ADDR_STRIDE      20
-> +#define NV_PCIE_TGT_ADDR_CTRL        0xD38
-> +#define NV_PCIE_TGT_ADDR_BASE_LO     0xD3C
-> +#define NV_PCIE_TGT_ADDR_BASE_HI     0xD40
-> +#define NV_PCIE_TGT_ADDR_MASK_LO     0xD44
-> +#define NV_PCIE_TGT_ADDR_MASK_HI     0xD48
-> +
->  #define NV_GENERIC_FILTER_ID_MASK    GENMASK_ULL(31, 0)
->  
->  #define NV_PRODID_MASK	(PMIIDR_PRODUCTID | PMIIDR_VARIANT | PMIIDR_REVISION)
-> @@ -186,6 +204,15 @@ static struct attribute *pcie_v2_pmu_event_attrs[] = {
->  	NULL,
->  };
->  
-> +static struct attribute *pcie_tgt_pmu_event_attrs[] = {
-> +	ARM_CSPMU_EVENT_ATTR(rd_bytes,		0x0),
-> +	ARM_CSPMU_EVENT_ATTR(wr_bytes,		0x1),
-> +	ARM_CSPMU_EVENT_ATTR(rd_req,		0x2),
-> +	ARM_CSPMU_EVENT_ATTR(wr_req,		0x3),
-> +	ARM_CSPMU_EVENT_ATTR(cycles, NV_PCIE_TGT_EV_TYPE_CC),
-> +	NULL,
+> +struct cmem_lat_pmu_hw_events {
+> +	struct perf_event *events[MAX_ACTIVE_EVENTS];
+> +	DECLARE_BITMAP(used_ctrs, MAX_ACTIVE_EVENTS);
 > +};
 > +
->  static struct attribute *generic_pmu_event_attrs[] = {
->  	ARM_CSPMU_EVENT_ATTR(cycles, ARM_CSPMU_EVT_CYCLES_DEFAULT),
->  	NULL,
-> @@ -239,6 +266,15 @@ static struct attribute *pcie_v2_pmu_format_attrs[] = {
->  	NULL,
->  };
->  
-> +static struct attribute *pcie_tgt_pmu_format_attrs[] = {
-> +	ARM_CSPMU_FORMAT_ATTR(event, "config:0-2"),
-> +	ARM_CSPMU_FORMAT_ATTR(dst_rp_mask, "config:3-10"),
-> +	ARM_CSPMU_FORMAT_ATTR(dst_addr_en, "config:11"),
-> +	ARM_CSPMU_FORMAT_ATTR(dst_addr_base, "config1:0-63"),
-> +	ARM_CSPMU_FORMAT_ATTR(dst_addr_mask, "config2:0-63"),
-> +	NULL,
+> +struct cmem_lat_pmu {
+> +	struct pmu pmu;
+> +	struct device *dev;
+> +	const char *name;
+> +	const char *identifier;
+> +	void __iomem *base[NUM_INSTANCES + 1];
+
+As below. There are two types of things in this array (hence the +1)
+I'd just split it into an array of NUMSTANCES and a seperate
+pointer for the last one.
+
+> +	cpumask_t associated_cpus;
+> +	cpumask_t active_cpu;
+> +	struct hlist_node node;
+> +	struct cmem_lat_pmu_hw_events hw_events;
 > +};
-> +
->  static struct attribute *generic_pmu_format_attrs[] = {
->  	ARM_CSPMU_FORMAT_EVENT_ATTR,
->  	ARM_CSPMU_FORMAT_FILTER_ATTR,
-> @@ -478,6 +514,267 @@ static int pcie_v2_pmu_validate_event(struct arm_cspmu *cspmu,
->  	return 0;
->  }
->  
-> +struct pcie_tgt_addr_filter {
-> +	u32 refcount;
-> +	u64 base;
-> +	u64 mask;
-> +};
-> +
-> +struct pcie_tgt_data {
-> +	struct pcie_tgt_addr_filter addr_filter[NV_PCIE_TGT_ADDR_COUNT];
-> +	void __iomem *addr_filter_reg;
-> +};
-> +
-> +#if defined(CONFIG_ACPI)
-> +static int pcie_tgt_init_data(struct arm_cspmu *cspmu)
+
+> +static bool cmem_lat_pmu_validate_event(struct pmu *pmu,
+> +				 struct cmem_lat_pmu_hw_events *hw_events,
+> +				 struct perf_event *event)
 > +{
-> +	int ret;
-> +	struct acpi_device *adev;
-> +	struct pcie_tgt_data *data;
-> +	struct list_head resource_list;
-> +	struct resource_entry *rentry;
-> +	struct nv_cspmu_ctx *ctx = to_nv_cspmu_ctx(cspmu);
-> +	struct device *dev = cspmu->dev;
+> +	if (is_software_event(event))
+> +		return true;
 > +
-> +	data = devm_kzalloc(dev, sizeof(struct pcie_tgt_data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
+> +	/* Reject groups spanning multiple HW PMUs. */
+> +	if (event->pmu != pmu)
+> +		return false;
 > +
-> +	adev = arm_cspmu_acpi_dev_get(cspmu);
-> +	if (!adev) {
-> +		dev_err(dev, "failed to get associated PCIE-TGT device\n");
-> +		return -ENODEV;
+> +	return (cmem_lat_pmu_get_event_idx(hw_events, event) >= 0);
+I'd be tempted to use
+	int ret;
+	...
+
+	ret = cmem_lat_pmu_get_event_idx(hw_events, event);
+	if (ret < 0)
+		return false;
+
+	return true;
+
+As that make it more obvious the final check is on the validity of the idx.
+
+
+> +}
+> +
+> +/*
+> + * Make sure the group of events can be scheduled at once
+> + * on the PMU.
+
+Wrap to 80 chars.
+
+> + */
+> +static bool cmem_lat_pmu_validate_group(struct perf_event *event)
+
+> +
+> +static int cmem_lat_pmu_event_init(struct perf_event *event)
+> +{
+> +	struct cmem_lat_pmu *cmem_lat_pmu = to_cmem_lat_pmu(event->pmu);
+> +	struct hw_perf_event *hwc = &event->hw;
+> +	u32 event_type = get_event_type(event);
+> +
+> +	if (event->attr.type != event->pmu->type ||
+> +	    event_type >= NUM_EVENTS)
+> +		return -ENOENT;
+> +
+> +	/*
+> +	 * Following other "uncore" PMUs, we do not support sampling mode or
+> +	 * attach to a task (per-process mode).
+Perhaps nicer to say why all uncore PMUs do this rather than this is
+doing the same as others...
+
+Basically it's that they are system wide and so not clear what either sampling
+or task attachment would actually mean.
+
+> +	 */
+> +	if (is_sampling_event(event)) {
+> +		dev_dbg(cmem_lat_pmu->pmu.dev,
+> +			"Can't support sampling events\n");
+> +		return -EOPNOTSUPP;
+> +	}
+
+
+
+> +
+> +static void cmem_lat_pmu_read(struct perf_event *event)
+> +{
+> +	cmem_lat_pmu_event_update(event);
+> +}
+> +
+> +static inline void cmem_lat_pmu_cg_ctrl(struct cmem_lat_pmu *cmem_lat_pmu, u64 val)
+> +{
+> +	writeq(val, BCAST(cmem_lat_pmu) + CG_CTRL);
+
+The BCAST macro is odd enough I'd just put what it does in inline here so it's
+clear it's just the last element.  I'm not entirely sure why you put it at the
+end of that array though.  Why not just have a separate element in the struct?
+
+> +}
+> +
+> +static inline void cmem_lat_pmu_ctrl(struct cmem_lat_pmu *cmem_lat_pmu, u64 val)
+> +{
+> +	writeq(val, BCAST(cmem_lat_pmu) + CTRL);
+> +}
+> +
+> +static void cmem_lat_pmu_enable(struct pmu *pmu)
+> +{
+> +	bool disabled;
+> +	struct cmem_lat_pmu *cmem_lat_pmu = to_cmem_lat_pmu(pmu);
+> +
+> +	disabled = bitmap_empty(
+> +		cmem_lat_pmu->hw_events.used_ctrs, MAX_ACTIVE_EVENTS);
+
+This is unusual formatting. Much better to have the parameters up a line
+and if you go to a second line, then start under the first character after (
+
+> +
+> +	if (disabled)
+> +		return;
+> +
+> +	/* Enable all the counters. */
+> +	cmem_lat_pmu_cg_ctrl(cmem_lat_pmu, CG_CTRL_ENABLE);
+> +	cmem_lat_pmu_ctrl(cmem_lat_pmu, CTRL_ENABLE);
+> +}
+> +
+> +static void cmem_lat_pmu_disable(struct pmu *pmu)
+> +{
+> +	int idx;
+> +	struct perf_event *event;
+> +	struct cmem_lat_pmu *cmem_lat_pmu = to_cmem_lat_pmu(pmu);
+> +
+> +	/* Disable all the counters. */
+> +	cmem_lat_pmu_ctrl(cmem_lat_pmu, CTRL_DISABLE);
+> +
+> +	/*
+> +	 * The counters will start from 0 again on restart.
+> +	 * Update the events immediately to avoid losing the counts.
+> +	 */
+> +	for_each_set_bit(
+> +		idx, cmem_lat_pmu->hw_events.used_ctrs, MAX_ACTIVE_EVENTS) {
+
+Very unusual formatting for a for loop.  Move at least some / maybe all of the
+parameters up a line.  The last thing we want is them to be indented
+the same as the stuff in the loop.
+
+Probably drag declaration of event in here to make it clearer what scope that
+local variable has.
+
+> +		event = cmem_lat_pmu->hw_events.events[idx];
+> +
+> +		if (!event)
+> +			continue;
+> +
+> +		cmem_lat_pmu_event_update(event);
+> +
+> +		local64_set(&event->hw.prev_count, 0ULL);
 > +	}
 > +
-> +	INIT_LIST_HEAD(&resource_list);
-> +	ret = acpi_dev_get_memory_resources(adev, &resource_list);
-> +	if (ret < 0) {
-> +		dev_err(dev, "failed to get PCIE-TGT device memory resources\n");
-> +		acpi_dev_put(adev);
-> +		return ret;
+> +	cmem_lat_pmu_ctrl(cmem_lat_pmu, CTRL_CLR);
+> +	cmem_lat_pmu_cg_ctrl(cmem_lat_pmu, CG_CTRL_DISABLE);
+> +}
+
+> +static struct attribute *cmem_lat_pmu_formats[] = {
+> +	NV_PMU_EXT_ATTR(event, device_show_string, "config:0-1"),
+> +	NULL,
+As below.
+
+> +};
+
+> +
+> +#define NV_PMU_CPUMASK_ATTR(_name, _config)			\
+> +	NV_PMU_EXT_ATTR(_name, cmem_lat_pmu_cpumask_show,	\
+> +				(unsigned long)_config)
+> +
+> +static struct attribute *cmem_lat_pmu_cpumask_attrs[] = {
+> +	NV_PMU_CPUMASK_ATTR(cpumask, ACTIVE_CPU_MASK),
+> +	NV_PMU_CPUMASK_ATTR(associated_cpus, ASSOCIATED_CPU_MASK),
+> +	NULL,
+
+As below.
+
+> +};
+> +
+> +static const struct attribute_group cmem_lat_pmu_cpumask_attr_group = {
+> +	.attrs = cmem_lat_pmu_cpumask_attrs,
+> +};
+> +
+> +/* Per PMU device attribute groups. */
+> +
+> +static const struct attribute_group *cmem_lat_pmu_attr_groups[] = {
+> +	&cmem_lat_pmu_identifier_attr_group,
+> +	&cmem_lat_pmu_format_group,
+> +	&cmem_lat_pmu_events_group,
+> +	&cmem_lat_pmu_cpumask_attr_group,
+> +	NULL,
+
+New code, so no need to copy any local style. Hence drop that trailing comma :)
+
+> +};
+> +
+
+> +static int cmem_lat_pmu_get_cpus(struct cmem_lat_pmu *cmem_lat_pmu,
+> +				unsigned int socket)
+> +{
+> +	int ret = 0, cpu;
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		if (cpu_to_node(cpu) == socket)
+> +			cpumask_set_cpu(cpu, &cmem_lat_pmu->associated_cpus);
 > +	}
 > +
-> +	rentry = list_first_entry_or_null(
-> +		&resource_list, struct resource_entry, node);
-> +	if (rentry) {
-> +		data->addr_filter_reg = devm_ioremap_resource(dev, rentry->res);
-> +		ret = 0;
+> +	if (cpumask_empty(&cmem_lat_pmu->associated_cpus)) {
+> +		dev_dbg(cmem_lat_pmu->dev,
+> +			"No cpu associated with PMU socket-%u\n", socket);
+> +		ret = -ENODEV;
+		return -ENODEV;
+
+Saves reviewer reading on and...
 > +	}
-> +
-> +	if (IS_ERR(data->addr_filter_reg)) {
-> +		dev_err(dev, "failed to get address filter resource\n");
-> +		ret = PTR_ERR(data->addr_filter_reg);
-> +	}
-> +
-> +	acpi_dev_free_resource_list(&resource_list);
-> +	acpi_dev_put(adev);
-> +
-> +	ctx->data = data;
 > +
 > +	return ret;
+	return 0;
+
+so the know that getting here always indicates success.
+
 > +}
-> +#else
-> +static int pcie_tgt_init_data(struct arm_cspmu *cspmu)
-> +{
-> +	return -ENODEV;
-> +}
-> +#endif
+
 > +
-> +static struct pcie_tgt_data *pcie_tgt_get_data(struct arm_cspmu *cspmu)
-> +{
-> +	struct nv_cspmu_ctx *ctx = to_nv_cspmu_ctx(cspmu);
-> +
-> +	return ctx->data;
-> +}
-> +
-> +/* Find the first available address filter slot. */
-> +static int pcie_tgt_find_addr_idx(struct arm_cspmu *cspmu, u64 base, u64 mask,
-> +	bool is_reset)
-> +{
-> +	int i;
-> +	struct pcie_tgt_data *data = pcie_tgt_get_data(cspmu);
-> +
-> +	for (i = 0; i < NV_PCIE_TGT_ADDR_COUNT; i++) {
-> +		if (!is_reset && data->addr_filter[i].refcount == 0)
-> +			return i;
-> +
-> +		if (data->addr_filter[i].base == base &&
-> +			data->addr_filter[i].mask == mask)
-> +			return i;
-> +	}
-> +
-> +	return -ENODEV;
-> +}
-> +
-> +static u32 pcie_tgt_pmu_event_filter(const struct perf_event *event)
-> +{
-> +	u32 filter;
-> +
-> +	filter = (event->attr.config >> NV_PCIE_TGT_EV_TYPE_COUNT) &
-> +		NV_PCIE_TGT_FILTER2_MASK;
-> +
-> +	return filter;
-> +}
-> +
-> +static bool pcie_tgt_pmu_addr_en(const struct perf_event *event)
-> +{
-> +	u32 filter = pcie_tgt_pmu_event_filter(event);
-> +
-> +	return FIELD_GET(NV_PCIE_TGT_FILTER2_ADDR_EN, filter) != 0;
-> +}
-> +
-> +static u32 pcie_tgt_pmu_port_filter(const struct perf_event *event)
-> +{
-> +	u32 filter = pcie_tgt_pmu_event_filter(event);
-> +
-> +	return FIELD_GET(NV_PCIE_TGT_FILTER2_PORT, filter);
-> +}
-> +
-> +static u64 pcie_tgt_pmu_dst_addr_base(const struct perf_event *event)
-> +{
-> +	return event->attr.config1;
-> +}
-> +
-> +static u64 pcie_tgt_pmu_dst_addr_mask(const struct perf_event *event)
-> +{
-> +	return event->attr.config2;
-> +}
-> +
-> +static int pcie_tgt_pmu_validate_event(struct arm_cspmu *cspmu,
-> +				   struct perf_event *new_ev)
-> +{
-> +	u64 base, mask;
-> +	int idx;
-> +
-> +	if (!pcie_tgt_pmu_addr_en(new_ev))
-> +		return 0;
-> +
-> +	/* Make sure there is a slot available for the address filter. */
-> +	base = pcie_tgt_pmu_dst_addr_base(new_ev);
-> +	mask = pcie_tgt_pmu_dst_addr_mask(new_ev);
-> +	idx = pcie_tgt_find_addr_idx(cspmu, base, mask, false);
-> +	if (idx < 0)
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +static void pcie_tgt_pmu_config_addr_filter(struct arm_cspmu *cspmu,
-> +	bool en, u64 base, u64 mask, int idx)
-> +{
-> +	struct pcie_tgt_data *data;
-> +	struct pcie_tgt_addr_filter *filter;
-> +	void __iomem *filter_reg;
-> +
-> +	data = pcie_tgt_get_data(cspmu);
-> +	filter = &data->addr_filter[idx];
-> +	filter_reg = data->addr_filter_reg + (idx * NV_PCIE_TGT_ADDR_STRIDE);
-> +
-> +	if (en) {
-> +		filter->refcount++;
-> +		if (filter->refcount == 1) {
-> +			filter->base = base;
-> +			filter->mask = mask;
-> +
-> +			writel(lower_32_bits(base), filter_reg + NV_PCIE_TGT_ADDR_BASE_LO);
-> +			writel(upper_32_bits(base), filter_reg + NV_PCIE_TGT_ADDR_BASE_HI);
-> +			writel(lower_32_bits(mask), filter_reg + NV_PCIE_TGT_ADDR_MASK_LO);
-> +			writel(upper_32_bits(mask), filter_reg + NV_PCIE_TGT_ADDR_MASK_HI);
-> +			writel(1, filter_reg + NV_PCIE_TGT_ADDR_CTRL);
-> +		}
-> +	} else {
-> +		filter->refcount--;
-> +		if (filter->refcount == 0) {
-> +			writel(0, filter_reg + NV_PCIE_TGT_ADDR_CTRL);
-> +			writel(0, filter_reg + NV_PCIE_TGT_ADDR_BASE_LO);
-> +			writel(0, filter_reg + NV_PCIE_TGT_ADDR_BASE_HI);
-> +			writel(0, filter_reg + NV_PCIE_TGT_ADDR_MASK_LO);
-> +			writel(0, filter_reg + NV_PCIE_TGT_ADDR_MASK_HI);
-> +
-> +			filter->base = 0;
-> +			filter->mask = 0;
-> +		}
-> +	}
-> +}
-> +
-> +static void pcie_tgt_pmu_set_ev_filter(struct arm_cspmu *cspmu,
-> +				const struct perf_event *event)
-> +{
-> +	bool addr_filter_en;
-> +	int idx;
-> +	u32 filter2_val, filter2_offset, port_filter;
-> +	u64 base, mask;
-> +
-> +	filter2_val = 0;
-> +	filter2_offset = PMEVFILT2R + (4 * event->hw.idx);
-> +
-> +	addr_filter_en = pcie_tgt_pmu_addr_en(event);
-> +	if (addr_filter_en) {
-> +		base = pcie_tgt_pmu_dst_addr_base(event);
-> +		mask = pcie_tgt_pmu_dst_addr_mask(event);
-> +		idx = pcie_tgt_find_addr_idx(cspmu, base, mask, false);
-> +
-> +		if (idx < 0) {
-> +			dev_err(cspmu->dev,
-> +				"Unable to find a slot for address filtering\n");
-> +			writel(0, cspmu->base0 + filter2_offset);
-> +			return;
-> +		}
-> +
-> +		/* Configure address range filter registers.*/
-> +		pcie_tgt_pmu_config_addr_filter(cspmu, true, base, mask, idx);
-> +
-> +		/* Config the counter to use the selected address filter slot. */
-> +		filter2_val |= FIELD_PREP(NV_PCIE_TGT_FILTER2_ADDR, 1U << idx);
-> +	}
-> +
-> +	port_filter = pcie_tgt_pmu_port_filter(event);
-> +
-> +	/* Monitor all ports if no filter is selected. */
-> +	if (!addr_filter_en && port_filter == 0)
-> +		port_filter = NV_PCIE_TGT_FILTER2_PORT;
-> +
-> +	filter2_val |= FIELD_PREP(NV_PCIE_TGT_FILTER2_PORT, port_filter);
-> +
-> +	writel(filter2_val, cspmu->base0 + filter2_offset);
-> +}
-> +
-> +static void pcie_tgt_pmu_reset_ev_filter(struct arm_cspmu *cspmu,
-> +				     const struct perf_event *event)
-> +{
-> +	bool addr_filter_en;
-> +	u64 base, mask;
-> +	int idx;
-> +
-> +	addr_filter_en = pcie_tgt_pmu_addr_en(event);
-> +	if (!addr_filter_en)
-> +		return;
-> +
-> +	base = pcie_tgt_pmu_dst_addr_base(event);
-> +	mask = pcie_tgt_pmu_dst_addr_mask(event);
-> +	idx = pcie_tgt_find_addr_idx(cspmu, base, mask, true);
-> +
-> +	if (idx < 0) {
-> +		dev_err(cspmu->dev,
-> +			"Unable to find the address filter slot to reset\n");
-> +		return;
-> +	}
-> +
-> +	pcie_tgt_pmu_config_addr_filter(cspmu, false, base, mask, idx);
-> +}
-> +
-> +static u32 pcie_tgt_pmu_event_type(const struct perf_event *event)
-> +{
-> +	return event->attr.config & NV_PCIE_TGT_EV_TYPE_MASK;
-> +}
-> +
-> +static bool pcie_tgt_pmu_is_cycle_counter_event(const struct perf_event *event)
-> +{
-> +	u32 event_type = pcie_tgt_pmu_event_type(event);
-> +
-> +	return event_type == NV_PCIE_TGT_EV_TYPE_CC;
-> +}
-> +
->  enum nv_cspmu_name_fmt {
->  	NAME_FMT_GENERIC,
->  	NAME_FMT_SOCKET,
-> @@ -622,6 +919,30 @@ static const struct nv_cspmu_match nv_cspmu_match[] = {
->  		.reset_ev_filter = nv_cspmu_reset_ev_filter,
->  	  }
->  	},
-> +	{
-> +	  .prodid = 0x10700000,
-> +	  .prodid_mask = NV_PRODID_MASK,
-> +	  .name_pattern = "nvidia_pcie_tgt_pmu_%u_rc_%u",
-> +	  .name_fmt = NAME_FMT_SOCKET_INST,
-> +	  .template_ctx = {
-> +		.event_attr = pcie_tgt_pmu_event_attrs,
-> +		.format_attr = pcie_tgt_pmu_format_attrs,
-> +		.filter_mask = 0x0,
-> +		.filter_default_val = 0x0,
-> +		.filter2_mask = NV_PCIE_TGT_FILTER2_MASK,
-> +		.filter2_default_val = NV_PCIE_TGT_FILTER2_DEFAULT,
-> +		.get_filter = NULL,
-> +		.get_filter2 = NULL,
-> +		.init_data = pcie_tgt_init_data
-> +	  },
-> +	  .ops = {
-> +		.is_cycle_counter_event = pcie_tgt_pmu_is_cycle_counter_event,
-> +		.event_type = pcie_tgt_pmu_event_type,
-> +		.validate_event = pcie_tgt_pmu_validate_event,
-> +		.set_ev_filter = pcie_tgt_pmu_set_ev_filter,
-> +		.reset_ev_filter = pcie_tgt_pmu_reset_ev_filter,
-> +	  }
-> +	},
->  	{
->  	  .prodid = 0,
->  	  .prodid_mask = 0,
-> @@ -714,6 +1035,8 @@ static int nv_cspmu_init_ops(struct arm_cspmu *cspmu)
->  
->  	/* NVIDIA specific callbacks. */
->  	SET_OP(validate_event, impl_ops, match, NULL);
-> +	SET_OP(event_type, impl_ops, match, NULL);
-> +	SET_OP(is_cycle_counter_event, impl_ops, match, NULL);
->  	SET_OP(set_cc_filter, impl_ops, match, nv_cspmu_set_cc_filter);
->  	SET_OP(set_ev_filter, impl_ops, match, nv_cspmu_set_ev_filter);
->  	SET_OP(reset_ev_filter, impl_ops, match, NULL);
+> +static const struct acpi_device_id cmem_lat_pmu_acpi_match[] = {
+> +	{ "NVDA2021", },
+
+The trailing comma after the string doesn't add anything, so I'd drop it.
+
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(acpi, cmem_lat_pmu_acpi_match);
 
