@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE6529ACDD;
-	Mon, 23 Feb 2026 14:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3DE127FB18;
+	Mon, 23 Feb 2026 14:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771857210; cv=none; b=WSDDCtTkSQtSi/rjAtfdwvr9xcH5hgYZ+OLQPAQudZxfuPVF7XyOCjdMsXuIrGRX53K/gTPMOTCLNrHo2UtJjN6jEGNCBN5shgZQNhfNrVh5xX6EDz0FG/xp13lBbrIYbAVzXEoRERu7Hyw03SMQ8Mo4RTVmWEoSAPwKQDhCPAM=
+	t=1771857213; cv=none; b=Usb4OM6UOg6BsivCJXDxg5EDHXmExBb6x+dgYU951hYH+gPFeTzPH+Ax09CKa8tbGX8jRm15JabatrZFfrdlscjxh5WAa5WMml6PKwAqmTFV3VkbiNc5a+EqHcTRih+JLNT8OmTSivQdBqiUly3xy0zwvQsYT+d9oOK0WBkHyT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771857210; c=relaxed/simple;
-	bh=pcEJP6M+2YimMpG4c++3ch724oeThYKZtO3hE64tZJk=;
+	s=arc-20240116; t=1771857213; c=relaxed/simple;
+	bh=SCd2PdWqmoSRUceewBFV2KibBPAiNgsFHQx4MPUVckI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UauwBK490BDyylvwdwfMwBPTbIZkGwlFkBrMkxls9aggdFmyoeX9iE4v58YOkViGpTAfEcve3gmGD0o1BsxGCYazikS2E3gQbeabtM4OVZf2lygaOElkq7w/UukKw2/dVYWkZhEg1P2jCwJ7nfbyuTyOV6XgRFUazVjWCJkmGJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mMHITJMC; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=Jd9dIyN9pEFS5NH/ls+vCiPQTE8ECLJjkNGp/InRKRfmSuhYZGNK20NCJWXTEUtkagcUiyMInBgU4C7NroHPDM059144dCTsUnvi8MkQg4qcJj/QhzkzKZUApboW/93e8MavpCkwL7f4iToPnSesJubXJtyULnX2VpQW79AfDpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B1lFWBEo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mMHITJMC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BC99C19423;
-	Mon, 23 Feb 2026 14:33:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B1lFWBEo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4526CC116C6;
+	Mon, 23 Feb 2026 14:33:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771857210;
-	bh=pcEJP6M+2YimMpG4c++3ch724oeThYKZtO3hE64tZJk=;
+	s=k20201202; t=1771857212;
+	bh=SCd2PdWqmoSRUceewBFV2KibBPAiNgsFHQx4MPUVckI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mMHITJMCSkWsiS5fWf8WN8Raj4yTTRoIRSTp0GM0oX3NJWjgOL3Si86jZU+qSUXlY
-	 nVuLDTqXu7xwQIoI3oYGk++dbPUeTUCR+/YLF96MSpNdvsYNGMGcYrw00Uzp3LvWXw
-	 l2DZuMQnbZ37oq/l9lcbf4C0/Y9cefrGxFGLxqekF62xFtE+7QhVf+hGtU7mrDvryr
-	 1lOpDGfUS2DBypUbMikFrSAIrehyTf8AvmNcmyEAZoEw2Z2SiT74b5I+i5Vj929vBg
-	 qdDm3T+gIZ8pvOG+ZlAKvrW8DoFAlTu3zG8j7HhiRKlY2ruM8eIwjZngvcyrKPl3w0
-	 tyYfgHs6OQ4lg==
+	b=B1lFWBEoWWS4EoBpjbHBlZSz2uXWOFkljHQSaFQqBfdGH9JDiHMSiT2zkVpVKccaK
+	 vc8+twEXRsbgxpkDWhq6LPFfBx+XdApFe4t6HontcQRwMGU+x0RLylvhEYiEWQuNUL
+	 C7DR2zIhxvILITkSdsn7WKPCxV+msSM9gWud/twixBU8ZMKRxFuAnDaUzwKDPZ5GlS
+	 sUWUEIZx88AiK+GIBuaER5W2of1hWWPUPpf7K+uxCWVophx2NlujJeibS5MRJL/8aa
+	 L7RtsUhS23TKyukvdLuJvAxRegBlWVyHUrXXR6f9lvcB04lLa9YoSHbc6atG4omi/A
+	 e9LO+PMCRDdQg==
 From: Thierry Reding <thierry.reding@kernel.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -34,9 +34,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: Jon Hunter <jonathanh@nvidia.com>,
 	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH v2 07/10] dt-bindings: memory: Add Tegra210 memory controller bindings
-Date: Mon, 23 Feb 2026 15:33:02 +0100
-Message-ID: <20260223143305.3771383-8-thierry.reding@kernel.org>
+Subject: [PATCH 08/10] dt-bindings: memory: tegra210: Mark EMC as cooling device
+Date: Mon, 23 Feb 2026 15:33:03 +0100
+Message-ID: <20260223143305.3771383-9-thierry.reding@kernel.org>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260223143305.3771383-1-thierry.reding@kernel.org>
 References: <20260223143305.3771383-1-thierry.reding@kernel.org>
@@ -50,100 +50,46 @@ Content-Transfer-Encoding: 8bit
 
 From: Thierry Reding <treding@nvidia.com>
 
-Document the bindings for the memory controller found on Tegra210 SoCs.
+The external memory controller found on Tegra210 can use throttling of
+the EMC frequency in order to reduce the memory chip temperature. Mark
+the memory controller as a cooling device to take advantage of this
+functionality.
 
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
-Changes in v2:
-- drop unneeded node alias
+ .../bindings/memory-controllers/nvidia,tegra210-emc.yaml    | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
- .../nvidia,tegra210-mc.yaml                   | 77 +++++++++++++++++++
- 1 file changed, 77 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-mc.yaml
-
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-mc.yaml
-new file mode 100644
-index 000000000000..7f003fc422ab
---- /dev/null
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-mc.yaml
-@@ -0,0 +1,77 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-mc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
+index 4e4fb4acd7f9..7a653a011f03 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
+@@ -52,6 +52,9 @@ properties:
+       Should contain freqs and voltages and opp-supported-hw property, which
+       is a bitfield indicating SoC speedo ID mask.
+ 
++allOf:
++  - $ref: /schemas/thermal/thermal-cooling-devices.yaml
 +
-+title: NVIDIA Tegra210 SoC Memory Controller
-+
-+maintainers:
-+  - Thierry Reding <thierry.reding@gmail.com>
-+  - Jon Hunter <jonathanh@nvidia.com>
-+
-+description: |
-+  The NVIDIA Tegra210 SoC features a 64 bit memory controller that is split into two 32 bit
-+  channels to support LPDDR3 and LPDDR4 with x16 subpartitions. The MC handles memory requests for
-+  34-bit virtual addresses from internal clients and arbitrates among them to allocate memory
-+  bandwidth.
-+
-+  Up to 8 GiB of physical memory can be supported. Security features such as encryption of traffic
-+  to and from DRAM via general security apertures are available for video and other secure
-+  applications.
-+
-+properties:
-+  $nodename:
-+    pattern: "^memory-controller@[0-9a-f]+$"
-+
-+  compatible:
-+    items:
-+      - enum:
-+          - nvidia,tegra210-mc
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: module clock
-+
-+  clock-names:
-+    items:
-+      - const: mc
-+
-+  "#iommu-cells":
-+    const: 1
-+
-+  "#reset-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - "#iommu-cells"
-+  - "#reset-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/tegra210-car.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    memory-controller@70019000 {
-+        compatible = "nvidia,tegra210-mc";
-+        reg = <0x70019000 0x1000>;
-+        interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&tegra_car TEGRA210_CLK_MC>;
-+        clock-names = "mc";
-+
-+        #iommu-cells = <1>;
-+        #reset-cells = <1>;
-+    };
+ required:
+   - compatible
+   - reg
+@@ -59,7 +62,7 @@ required:
+   - clock-names
+   - nvidia,memory-controller
+ 
+-additionalProperties: false
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+@@ -90,4 +93,5 @@ examples:
+         operating-points-v2 = <&dvfs_opp_table>;
+ 
+         #interconnect-cells = <0>;
++        #cooling-cells = <2>;
+     };
 -- 
 2.52.0
 
