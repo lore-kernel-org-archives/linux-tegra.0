@@ -1,306 +1,161 @@
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012010.outbound.protection.outlook.com [52.101.43.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f54.google.com (mail-dl1-f54.google.com [74.125.82.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916D32BB17;
-	Mon, 23 Feb 2026 04:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771822038; cv=fail; b=Qbc4ReQYi9Jwl1MrsY0LkZn8dbrziLtd8fd7p0mhBIfrYeoK1tvgTUme/79kGj9BdcovXH1N0teaQNBBodzhIleucEWOHUX13K2tM5RM+tlCbRm44LFTm4ff5YFDm0zzNWS/keRFubKgZWTRIKaPKOF497cBA65xAV1BXM2clKU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771822038; c=relaxed/simple;
-	bh=A9Sljt0mb4wtL3EZKqRAirQG8Ot+kWInSMXLeavq/Dg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=nbRZwPn3HzV3GX89kYbWwmVhpgVQRxTIrQngubtlguDc0SPnsWUO7U22u7fBQXTokoVfEF+VkyqwQLgPXlpK2m8Bps5HAAa+fck2hPXk9bLKML55Qgpr5kus/uF2aBnwgcNirTbR8rBdmjaSJWbmGQX2vM4ks54Bx5HlpHCNdaA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MFh2b2kx; arc=fail smtp.client-ip=52.101.43.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4C91E49F
+	for <linux-tegra@vger.kernel.org>; Mon, 23 Feb 2026 04:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771822677; cv=none; b=gBsnNU2+pIMZDDBL/e4/2GiAPK6icOu1NFm34FQoXFAkibGHdy9jaEw8Gpa+7fCgJw64g14K2uUA1dzh/9PqDncc14u1hvuq1f35ag2GbYaJd6wlKCpxirmtlA8ciXAr0QrfwHzFYZbQR9USddU7KV3vauuXKnBM0D8C1jL2Ljk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771822677; c=relaxed/simple;
+	bh=1+fj/osOFOTUhi6//cNsWxgUvEAAcYmf9baAm1ts5cY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g+bimBoSU4rsZgNdN9YhriFkK47ST+1RjHbHacixNHcBqZkfuROyJTnZgm1OSjA8wHodaUBqpPEOPnBF/H5+1Uz30OMdIBBBos8nNlERgfBP8CqooJnMLCkwvne1rblQzC2CtEo+GJiuX/61pkLK4hCB9DBLyo8ln+BkksTC7TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SKCKqHKN; arc=none smtp.client-ip=74.125.82.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MFh2b2kx"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=g3ROuSl9QISza8m+jRriwDZCBClPX9/HbQYC9k3Y6Ri0NjywZYh7a/B41z57K0SOj8ShJBhZ3W6Ra93U7wl/LMH+6XV7cfg3kaaRW2f799gOlw1PSqcUS6AhlS1/eBALnI65Rk/aaYyf7LC/+HICy2jBJJGK59Q73bOLuDhmshwWOYlFzL1b2AaYYAM6niUfuD8ugkmDfM/9Bf3OF/xoi3GvW/1o0r4XWrc9ZSoX3B+NDMPU7cA46RsiySIPUwewrNwQ+7QwetD196sJg5D7yJWg+YVTxBc7cPfHRj7b1WkLS8ceqovmTfXDCDcpPF9pNFB0cLhqpOvkPg+NKZDrJw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NdxnlW1dAYeVpcxB+9cPMwRsm3aCok/F67z2cr3O9ss=;
- b=I/jwkjfiSMbedzka1RG0bo4RHbp0zTplvfyyjTz+9xWR9f/IWaAgx/JiDzYWZwKoK3cfnjoxQL7TsBMuwqC2VIUZsuen6w6rfpTe6rRJ4nOXE4GA8l9swwZv/a1ziXj12IvD/51Bgo4xc7CmOXAkcXmSTeOJ3mGabYTRIRXTE2diPuJ6fzn3o0QbOPIzmZe7WW8uiJz5p7L7hLb7r4QmQyzb7x96Id8AOn2ypl3e/+r2iAoySd17W6WNFhOlcH0sK3trmy1lPttRv/DuNLH4UHhsrarak/98Flfu04epEB6kyRQXZsCUsAnLr0nBUcG83F+PjHvSRGRurtCsWuZ3pw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NdxnlW1dAYeVpcxB+9cPMwRsm3aCok/F67z2cr3O9ss=;
- b=MFh2b2kxaOCpgtleaxHt0MYTO87cj351ptLHRSxsfe8o1hp/N6J+vwovIwaGUE04IJG7qoXmQAEZUgJCfOW13bnj5u4Ws8dJ47qvmoWcUAJpuu6Pn62CM5wSsP69P87dvrRK/nv9904un7Lkrydno9AmQJnfJW6aH0eygIyd9NFsvlPF77+ZI74LlB4nDg4W1Oh9dRDxIIFnB7PNP8jPl2LuzS/0Qs249rT5Z+MGKy4xFDRgw1CMVHtkzRzknnyE+k6EfB2N7PxcEzo33z6r3O+l9rpHG1OJZ6Ei/TNW9DPGi9/V0596fNBtp7tjUNtP3Jdv1R8GB3iUFLN3ll+Nyg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB8245.namprd12.prod.outlook.com (2603:10b6:8:f2::16) by
- DS7PR12MB5718.namprd12.prod.outlook.com (2603:10b6:8:71::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9632.21; Mon, 23 Feb 2026 04:47:05 +0000
-Received: from DS0PR12MB8245.namprd12.prod.outlook.com
- ([fe80::e7c5:cfca:a597:7fa4]) by DS0PR12MB8245.namprd12.prod.outlook.com
- ([fe80::e7c5:cfca:a597:7fa4%4]) with mapi id 15.20.9632.017; Mon, 23 Feb 2026
- 04:47:05 +0000
-Message-ID: <bc3e8be5-8ffa-47f3-91e2-b3c0e9f8a28b@nvidia.com>
-Date: Mon, 23 Feb 2026 10:16:51 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/9] PCI: dwc: Replace BAR_RESERVED with BAR_DISABLED in
- glue drivers
-To: Frank Li <Frank.li@nxp.com>, Niklas Cassel <cassel@kernel.org>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Marek Vasut <marek.vasut+renesas@gmail.com>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Koichiro Den <den@valinux.co.jp>,
- Damien Le Moal <dlemoal@kernel.org>, linux-pci@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
- linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20260217212707.2450423-11-cassel@kernel.org>
- <20260217212707.2450423-16-cassel@kernel.org>
- <aZToh35w7GYrOmgc@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-X-Nvconfidentiality: public
-From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-In-Reply-To: <aZToh35w7GYrOmgc@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PNYP287CA0067.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:25a::6) To DS0PR12MB8245.namprd12.prod.outlook.com
- (2603:10b6:8:f2::16)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SKCKqHKN"
+Received: by mail-dl1-f54.google.com with SMTP id a92af1059eb24-1274204434bso3252536c88.1
+        for <linux-tegra@vger.kernel.org>; Sun, 22 Feb 2026 20:57:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1771822675; x=1772427475; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZoD6tE+yirYO2wDnJyh3VhePC5QLfqyFQbq0eMsMM6o=;
+        b=SKCKqHKNcvrisaNOx+xrUeJZW3r4vvf+FJEl/sWKdeIWhyGxvzHy8BJW8UL1qeeF0P
+         XrQK2POy3PeNqnEXJTCBduCWG8nKuSauqBu4uCKFUVjvn3zOhwkLCiG4EnNpmGH6EhE9
+         5fOh8uGhU/iGiedONOPvgEN3pmgX5mLRP2WXe22W2Qjot65JGLRGWshf6okRQhyPFsCo
+         TLrDTloQXH3Pk7wWEJs/4IhDy9+4iyv0JrONaTwMgxguIL6JgbQGJO4tnam4B90qbCns
+         deoC5Zud2h4Z/MhIIjkDKdEoz0Djbda36SOcNbPCJi6W/N7qQ7sTds3tdkq0FvcdikrL
+         rZmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771822675; x=1772427475;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZoD6tE+yirYO2wDnJyh3VhePC5QLfqyFQbq0eMsMM6o=;
+        b=CEKdFfb9d39TaXvbbyt0FM/ni5JCPlwQx587m1qW0/CSP93/j1DJvw30i6WibVmtRo
+         GCLXT5yLmqYRPBWT8Vr8vsooywkhfQh9F8fV2qZKjTTSmUlmNGNybyJdBrxzOmxPBqhq
+         WkRJmmi4pINDhQFnqRPtX+biuU8Z+k714bAoMHkEdVS49hXMdciGKajNe8bKim0z1ITI
+         ITFxYCNhKqK3WxefHRBSd2cFyVAW0skl0/pZTwK7G6/d2sNAxtt+Ig82Ysa+twuCnCme
+         W6VbP4g24QzhgWtWv3Um6ji4VVPvBGd/ckp/ibmCU8peNdp6XEfmoZt6Y6O2twwjH8Fz
+         4xbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhDeoQF2XOGYrzz0Odf8sH9CoYIPxU09giW7GR6Zn7mKBRJ4gsRwidcB/TB4JTkrhkSvUalFSz7pKfIQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+s2j+L6F9TWG69/nCic8t8Zue0eHcN3WzNEVDKHfy2BuTrDaH
+	w3UAcTppUlZnOcRrIBvUwYYIchDOAqtwS4MP5txhbXu8BjS8JdjSTIDC
+X-Gm-Gg: AZuq6aJHQlLIA2sVSYzYi47yfq3D8UPStmBt9JLhSEJI7730zKyR1csq3Bz3cm0mEi2
+	vG3Mai3/7E94FE0L0YOkPWpWclJWO9Dq0gpKegZzv2PZCAjr3LOCUuI9AlvVRHtat12EdLX/UCM
+	+Khgq+LtKEpLRoshlHevDmqNi9QzrfXljvt7TeELuYaJMM+xfCqsXHw6oY/MSh+rRn/JQBGBSOQ
+	ICo81AoM1yvBkSrua9qxlDOr92yLsxfVKMR4SnYWG3ZIUDlWeVBVvlRx8EmhSVGO9ZiOz3dmnuu
+	KVLggqpgT1/vvpoKhkzRJgMZOjFpOTx/Tpf7VBizhz26TFm0unkBQmybAzvynGRXbPd4W6tV3Xu
+	w+7yd8+6T9U5jsSKrrgDA3se0VeUcmxlSF/cbaZEVQ52qUbJRIhlwuHJSsVx+yaF78X1zN9x+d8
+	rc9K7Ye22022TUuUVv95UqWEIZ45ve24xm6Ev2kditpWX53E2pQiq1RhH/q0y8Jcw=
+X-Received: by 2002:a05:7022:48c:b0:11b:f271:835a with SMTP id a92af1059eb24-1275fa41703mr6770004c88.3.1771822675098;
+        Sun, 22 Feb 2026 20:57:55 -0800 (PST)
+Received: from google.com ([2a00:79e0:2ebe:8:c6c:6cca:170e:c77b])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1276af2ea06sm8045507c88.7.2026.02.22.20.57.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Feb 2026 20:57:54 -0800 (PST)
+Date: Sun, 22 Feb 2026 20:57:51 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Marc Dietrich <marvin24@gmx.de>
+Cc: Thierry Reding <thierry.reding@gmail.com>, 
+	Arnd Bergmann <arnd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: tegra: paz00: configure WiFi rfkill switch through
+ device tree
+Message-ID: <aZvdDIYlCjg8sVGT@google.com>
+References: <aY_BpRQmLdqOOW2K@google.com>
+ <82f24afb-1fd2-bfc9-2215-4526aff372ba@gmx.de>
+ <07c024a6-d2f9-5805-4ae7-cbc89cda53bf@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB8245:EE_|DS7PR12MB5718:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0bf370bf-62c6-4989-35f9-08de729697a9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Qnp1UzQwY0J6MitocWllTUprbWF6WHVYR3k4RzByWU1aWS9LYnpSY25tM3Z0?=
- =?utf-8?B?azJpNEdZQkxEdXd3MWNNY0hUNFEzTFV0aGU2aGVpU3Z5WHRSc1BrN3JNMFpj?=
- =?utf-8?B?eFhDbXJ6blNyQWp3RTBFN1RvUmI1TVVlU2R2dUs0Mk1YNVVLN0pQbEVuRTU2?=
- =?utf-8?B?VW1qcmloRnRRR1hhZEZRR0JLYlhMMjVvd3pCOTRrczJ0MDZnajFrUnd2VFhV?=
- =?utf-8?B?MTZaaGhZY3V0SDM5d2xRdFdjTGVURzdHckdIbVFxWGthajBnZ0lOamtobDBM?=
- =?utf-8?B?c2xEM05ncC80SW5mVmtQaXBJWEZReXR5TEl3MmpDMHJKSnV1N0gzSlNJMmhL?=
- =?utf-8?B?RzRsK3kyNlVmOC9Zc0pyczVFQjhxMEdqOEwxNVhXRHJ4Y200em40Y3NacmxT?=
- =?utf-8?B?b205M2p2ZE9seWtlaVpLMDhQVnVDMldvdjAxaGJ5U055cEhSbitaYmVmY3N3?=
- =?utf-8?B?QjNSNE40M2s5bktjZGZYd29vaFlTMGw5aUhqUWxQUE9waTM4eFdGa0ZKSllh?=
- =?utf-8?B?bXZwL3RCTStWQkYyOGFRWDlSVUY3Zmt5YXRyTkdWaXM5NEcwQVpJNE9TYzRK?=
- =?utf-8?B?MVdKMnRSQ29lYTFGTisxaWI1NnRQdW9EVWxCYzhRcTlmc2gyd3I3dTFEMVlV?=
- =?utf-8?B?cDBqN09aUUQvK1Q3cnpRd1JwaVNDTjd3YnJseUV3RFo3YzNRbDc5Z215TnZO?=
- =?utf-8?B?SWN6SDBsS0k1ZkszaWNlaWF3M2VFL3dVRzBvMlpuOFNBMi9iQ2F2ZU1uM0cw?=
- =?utf-8?B?YzhaeE5kWVYxcVVMazhsV3lyUzF1NHd1amJDVXR2a25BUHlGWkZiSE9xRzVN?=
- =?utf-8?B?Tzk4UzJCYUoyajlTQkF5NFNDZCtOVm1EZU5pbVlIUUhTaEYvN05GWE9GNENk?=
- =?utf-8?B?QzVvelk0aXpJVUtIMGZSU2xEN0lidUZ6eHFZWkhPYllpb1JzYTc2VTlSdUNa?=
- =?utf-8?B?NWQzNU9JNFhuYTV4NjEwYmRyRlVodTBYN3BKSThUSEJCWUQ3ZjVlajB4S1RZ?=
- =?utf-8?B?UDhoNXlCRnpVVUM1dGh3UGwyeU1USkkxaWlBdGFPc3JIYUdTU0ZzdFJFekln?=
- =?utf-8?B?VnBCKzJOdzNjRnlLcXdQUXl6ejJqaktWazc3TE9YRFJYekRGck45Mk5DcCtW?=
- =?utf-8?B?WU5MaXo4ZFpyb2FJUHJNZXFKL09FenBZSjlBV2MycFRzV2NjNVA2UVV1dTRH?=
- =?utf-8?B?RjBFbEQwVGxNcU5ReUJXK0VlYm82blpKRTdyM2hEMDFWK2RHcHkwK1BHVFdl?=
- =?utf-8?B?Qlk0czJlUWZKdEFBM3ZobVRvZzRoekZqd1VzblQvTThKc2JkblJvZVE2Q0tJ?=
- =?utf-8?B?TGlzRlQ5ZHNsMTRCY0o2S25tSnpGQ1BWWjYzZzBiL3IreEQxRHlRdW03MDBa?=
- =?utf-8?B?NklyeTlpZWlCbXlFNERvaDU2RGx5Y3VYeTN1TFVoMmdSeE5neXZCd3UrTUUx?=
- =?utf-8?B?cWRUaVlLTDZVNm1paW1ydDd0V0VqSG9iOE1Eenl6RkoxZVpaQmg4eHlJU3Bw?=
- =?utf-8?B?dXQzTEVCMGdhVWxQQW01SWVxa0owWmU4OXJxcS9lMHI2K040bTdrZ3AxV09r?=
- =?utf-8?B?OFlmZXQvNXhiVE5NY2pQV3lWT3FyS0ZZc1NvY1VYZTNKQ2dGVUxlcW1Sb3hV?=
- =?utf-8?B?enQ4WGxEd3YxYVREY0xUcVNYU3lUWDRYUmFUdk00MmlEUE5zU1g5SzlWNGxi?=
- =?utf-8?B?NkJiek1GTUhWS3NjN3I4Y21iYkNDSHprbFh6cjcyV3czUVZwNHZhUlZwTEtK?=
- =?utf-8?B?U1F4SHBldlRSMjlIS0xRZTNVMUtOMUg4UkE1RXhlekhmSXk2b1FZeEJZNEJz?=
- =?utf-8?B?TGEyUHV2bDBlZTRucjdscHMrckU0eTcyZ3ViUWt4OXZ0RzVBWEJjNTA3WWVi?=
- =?utf-8?B?V1BWWjR5eDFSM0F3dWFkZ2VVRWtOeDloTVNhOGNnTE1WM0l1MHNNYzA5Z0Fh?=
- =?utf-8?B?ZXRNSlZiYjVCUFNHb09YeW1VaXlqYW82SU10MjhIZUhrSEtOclZqTlZiYTgy?=
- =?utf-8?B?cVNZSE9Md0ZkcVJONTJqS2JyY1hoQ3YzY21xVkNYYmRIbXIwR053eFFGcFFU?=
- =?utf-8?B?V28rK2RpMXZiUDVMTzBYSlJtY01jODBPQnY5ZU03ZWhhM2l4emNmeWZXejdE?=
- =?utf-8?Q?C8uk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB8245.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OE1GNE90SGJpN3NncjlaQk1pT1NXVTh4T05xemJXRjBPL1lrWHpYbEkzVFlC?=
- =?utf-8?B?UkNHdnJGaHA5VWRWQXUzQkJlTHkxTjRHd2NLVDVRTGZKQ3h6eUhOYWUxVkNE?=
- =?utf-8?B?bVpMN25PeVdDV1hMcXNacDFSTXhyQ282WDMyOG9IVU1VNWtnZ2NZWnVCSHNl?=
- =?utf-8?B?RXZKc0V2bTh6N01kVGhJaDA0Mm9DTUxmOG1jUzlkWEhLbzhuTUQyRDlnS1FU?=
- =?utf-8?B?VHF3S0luODFGdkJzUnBuZ2IrUWdXRkc1cndEdjRzejJnYXh4VUljbGYwekc1?=
- =?utf-8?B?aXNsMU91L214d1R6d0Z4VUdhSVpOdHJ0SDUyL3R0NGxlZmVPRTRLS3phZ2Ju?=
- =?utf-8?B?Q2FHTHFaSlQzL0ozdjJWWnZMZGpsclNrUTJLR2xMb1BVREZuNXE5blh2Rk1w?=
- =?utf-8?B?bmU2NGpIZThvcnZhWmEzdXROdUpvZ1dLR0RqVXNvQXUxVTZxbFpveTJnSzNX?=
- =?utf-8?B?OGlSRmZucFhLVzQ4WlQ3U1JxY0tMVmxDVHlVejVQc0tRRW11VGFtaGNpVERP?=
- =?utf-8?B?VWZwbitxQ2xDa0xtSW9NNVp2TWtRY1FrRW5DUE1jUHhPVzMyVktGaFlsRnRv?=
- =?utf-8?B?L21pMEpteElsZmZhOTdtbk5ralBmR3N3MDBxL3dYeGtHYzNHZytFeGorZ2hp?=
- =?utf-8?B?Z1krQWZlN05ubW1RNXNabTFOU3NBQ3F3eUpqMDJSZTUrWHBBNDhCU0xrMXdW?=
- =?utf-8?B?RE9rRk5nK0l3OTBRWFVTdEZzdDBkR3FvNzJ1Z2E3T3BvbGY4ZXhtYk5oZGdZ?=
- =?utf-8?B?Y1RqRThDTUhqV2dTS1RlenA0ejk3SVh5Yzlna3pOY3c4V2d2R0RTdEEvWTZ0?=
- =?utf-8?B?TDhYaElpa3ZJK3hUQ2NRR2lUSzhDQkpENWVLVFp1b2hyTW5UU25RRjFEdGIr?=
- =?utf-8?B?NmQvak5zUzZlK20xazc1elp5VEQyeHRaUmFjNTU1eTh4aTJ1Yjd3Q3BnclhR?=
- =?utf-8?B?QkUzeG1rNlhNNmttanRSSTlOMlNBTmRtZWR1c0NZdjFWdFMrRkMzWHI4dVJ5?=
- =?utf-8?B?VFJvWUpKSDhROGNMUiszUHZkeVczcnVTNnVSazBxcVJvUmZHYmhhWVk1aXRr?=
- =?utf-8?B?UU1pN2pEVENHS1MyYm9WSVh3eU1LMHlWRExiTGRBVlRMTnM3MmpRVlI1eHdv?=
- =?utf-8?B?ekVuWE1UTjhzM1J0S3ErK25mcFpzUkJIK2xtVlJvNmYxT25KZkVjQkRuMUdG?=
- =?utf-8?B?UWFUdGNaSC9TMmhFci85WngwN2Z2TG5EVENqanlUZmxHUUp6dTdHRVRCUDV1?=
- =?utf-8?B?UjF5dXBscDIxdzNoaUVlZ1ZiaWVQWEJjblExUTQ5UC9OelZvUHZVSXlPa0hN?=
- =?utf-8?B?SHpzK0tON0hWeHVpTXIzK2lKQW1rbXh2Y2JwbzIxa3pQZ3pSTjloa25FNGhm?=
- =?utf-8?B?OU56WG9jZlMzaXFwdE5PaGVIdHpkZ1V6M0JLRnBqRDZtVnpmaUorbWNUWDFK?=
- =?utf-8?B?cm5wdzZBc1VoaU5HbWxNdFJteXRVTk5YYUQzektteDV2V0FuUHFmT29KU25m?=
- =?utf-8?B?YmJBWXdpeDJpa2tTSDB1SlZFcXFDZnRKYk5OQ25rWDNjRUowTmd4eTFGbW13?=
- =?utf-8?B?TXBhcHBTcDU4aDJVd3ZWNGdKY3NlZUtSSGZFMVJHa2s5dXJXWmdMWndtcFhF?=
- =?utf-8?B?R29yU0tJSjYxb1Q2bEFpVjk0QlIyc2VIbndNeXNZdEF5ZkVxamovVFd3QjVC?=
- =?utf-8?B?dHVFaDN4am40Y2lBMFNaK0g5MnR1ZWRuVEt4eTlGZTVLdk4vRHJ0VEk1TnJF?=
- =?utf-8?B?aEFkbG5NYTQ4TmJwVHhDS0doMEhLN3NoZnFjK3hpQXJaWEhqYktLaDMzOEJJ?=
- =?utf-8?B?SzJiMThKUWNDd1ZkRDEvQkw4emw3djVWM3k5QnZuendtRWJlMGYzQWROeVZ2?=
- =?utf-8?B?NEdkQVhwalNvcnBPMVNBM2tEQllsYm9kOUJBL2pxT3JaOXNlRENwWWROLzQy?=
- =?utf-8?B?cml3Y0pVZHhETENqaEEyc1RoQWI0bmJnTWI0anYzbk1DOXJtZElBdlhKRVFM?=
- =?utf-8?B?NUFzTGM1aWZRcFRGa1loZER6bWZ0dVI0R3BNMUI0ZGR4VnJzNEJCa0pxYXlz?=
- =?utf-8?B?QlJDbUl3MmNtYVdVc1EvekhJK2RJZHEzV0c0MHYrZkdrblY1OVhMRUxHSGla?=
- =?utf-8?B?VGt6S29VMXdWR0p6ckZhTEpDT1NSUmw4MWRMaWtWc1VGWk9HR3RuOFJhd0Qr?=
- =?utf-8?B?VVNTb3FaTklRRGJzRlBraU4veEYrY2ZTS2Q1czMydnNSQTNnT3kzSy9qZVlR?=
- =?utf-8?B?bDd3NVFHenBYRUZPd2Y0cEM2NlV5bWgvaUJoQmk0RjBjR2ZhZFJzZUZxNE5h?=
- =?utf-8?B?SEk3bGpwM2l6V00waFJOT0dCM05LZGVMOXg3cFErRG5TSk5IdUhPQT09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0bf370bf-62c6-4989-35f9-08de729697a9
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB8245.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Feb 2026 04:47:05.1464
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SeJHeafxF3GC4Jrr2de09V9ggsYfXOcd6Lq6oQfLcX6RN1/Kx+p5AvyIwvKItoQpHeNp0Wsr6u7rq8vf8yPQGg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5718
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <07c024a6-d2f9-5805-4ae7-cbc89cda53bf@gmx.de>
 
+Hi Marc,
 
-On 18/02/26 3:45 am, Frank Li wrote:
-> On Tue, Feb 17, 2026 at 10:27:11PM +0100, Niklas Cassel wrote:
->> Most DWC based EPC glue drivers that have BARs marked as BAR_RESERVED in
->> epc_features also call dw_pcie_ep_reset_bar() for these reserved BARs in
->> ep->ops->init().
->>
->> An EPF driver will be able to get/enable BARs that have been disabled/reset
->> unless they are marked as BAR_RESERVED (see pci_epc_get_next_free_bar()).
->>
->> Thus all EPC drivers that have a BAR marked as BAR_RESERVED in epc_features
->> AND call dw_pcie_ep_reset_bar() should really be marked as BAR_DISABLED.
->>
->> BARs that are marked as BAR_RESERVED in epc_features but for which
->> dw_pcie_ep_reset_bar() is not called in ep->ops->init() are still kept as
->> BAR_RESERVED.
-> combine the same condition together to make easy to read. like
->
-> "For BAR_RESERVED bars, change to BAR_DISABLED if call dw_pcie_ep_reset_bar().
-> and keep as BAR_RESERVED if not dw_pcie_ep_reset_bar() in ep-ops-init()"
->
-> Frank
->
->> No EPC drivers outside drivers/pci/controllers/dwc mark their BARs as
->> BAR_RESERVED, so there is nothing to do in non-DWC based EPC drivers.
->>
->> Signed-off-by: Niklas Cassel <cassel@kernel.org>
-Tested by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
->> ---
->>   drivers/pci/controller/dwc/pci-imx6.c         | 12 ++++++------
->>   drivers/pci/controller/dwc/pcie-rcar-gen4.c   |  6 +++---
->>   drivers/pci/controller/dwc/pcie-tegra194.c    |  8 ++++----
->>   drivers/pci/controller/dwc/pcie-uniphier-ep.c |  4 ++--
-I see BAR_RESERVED in pci-keystone.c driver in linux-next branch.
-Do you have any patch which changed BAR_RESERVED to different type
-in pci-keystone.c driver?
->>   4 files changed, 15 insertions(+), 15 deletions(-)
->>
->> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
->> index a5b8d0b71677..ec1e3557ca53 100644
->> --- a/drivers/pci/controller/dwc/pci-imx6.c
->> +++ b/drivers/pci/controller/dwc/pci-imx6.c
->> @@ -1433,19 +1433,19 @@ static int imx_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
->>   static const struct pci_epc_features imx8m_pcie_epc_features = {
->>   	DWC_EPC_COMMON_FEATURES,
->>   	.msi_capable = true,
->> -	.bar[BAR_1] = { .type = BAR_RESERVED, },
->> -	.bar[BAR_3] = { .type = BAR_RESERVED, },
->> +	.bar[BAR_1] = { .type = BAR_DISABLED, },
->> +	.bar[BAR_3] = { .type = BAR_DISABLED, },
->>   	.bar[BAR_4] = { .type = BAR_FIXED, .fixed_size = SZ_256, },
->> -	.bar[BAR_5] = { .type = BAR_RESERVED, },
->> +	.bar[BAR_5] = { .type = BAR_DISABLED, },
->>   	.align = SZ_64K,
->>   };
->>
->>   static const struct pci_epc_features imx8q_pcie_epc_features = {
->>   	DWC_EPC_COMMON_FEATURES,
->>   	.msi_capable = true,
->> -	.bar[BAR_1] = { .type = BAR_RESERVED, },
->> -	.bar[BAR_3] = { .type = BAR_RESERVED, },
->> -	.bar[BAR_5] = { .type = BAR_RESERVED, },
->> +	.bar[BAR_1] = { .type = BAR_DISABLED, },
->> +	.bar[BAR_3] = { .type = BAR_DISABLED, },
->> +	.bar[BAR_5] = { .type = BAR_DISABLED, },
->>   	.align = SZ_64K,
->>   };
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
->> index a6912e85e4dd..9dd05bac22b9 100644
->> --- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
->> +++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
->> @@ -422,10 +422,10 @@ static int rcar_gen4_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
->>   static const struct pci_epc_features rcar_gen4_pcie_epc_features = {
->>   	DWC_EPC_COMMON_FEATURES,
->>   	.msi_capable = true,
->> -	.bar[BAR_1] = { .type = BAR_RESERVED, },
->> -	.bar[BAR_3] = { .type = BAR_RESERVED, },
->> +	.bar[BAR_1] = { .type = BAR_DISABLED, },
->> +	.bar[BAR_3] = { .type = BAR_DISABLED, },
->>   	.bar[BAR_4] = { .type = BAR_FIXED, .fixed_size = 256 },
->> -	.bar[BAR_5] = { .type = BAR_RESERVED, },
->> +	.bar[BAR_5] = { .type = BAR_DISABLED, },
->>   	.align = SZ_1M,
->>   };
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
->> index 31aa9a494dbc..9f9453e8cd23 100644
->> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
->> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
->> @@ -1994,10 +1994,10 @@ static const struct pci_epc_features tegra_pcie_epc_features = {
->>   	.bar[BAR_0] = { .type = BAR_FIXED, .fixed_size = SZ_1M,
->>   			.only_64bit = true, },
->>   	.bar[BAR_1] = { .type = BAR_64BIT_UPPER, },
->> -	.bar[BAR_2] = { .type = BAR_RESERVED, },
->> -	.bar[BAR_3] = { .type = BAR_RESERVED, },
->> -	.bar[BAR_4] = { .type = BAR_RESERVED, },
->> -	.bar[BAR_5] = { .type = BAR_RESERVED, },
->> +	.bar[BAR_2] = { .type = BAR_DISABLED, },
->> +	.bar[BAR_3] = { .type = BAR_DISABLED, },
->> +	.bar[BAR_4] = { .type = BAR_DISABLED, },
->> +	.bar[BAR_5] = { .type = BAR_DISABLED, },
->>   	.align = SZ_64K,
->>   };
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-uniphier-ep.c b/drivers/pci/controller/dwc/pcie-uniphier-ep.c
->> index f873a1659592..5bde3ee682b5 100644
->> --- a/drivers/pci/controller/dwc/pcie-uniphier-ep.c
->> +++ b/drivers/pci/controller/dwc/pcie-uniphier-ep.c
->> @@ -429,8 +429,8 @@ static const struct uniphier_pcie_ep_soc_data uniphier_pro5_data = {
->>   		.bar[BAR_1] = { .type = BAR_64BIT_UPPER, },
->>   		.bar[BAR_2] = { .only_64bit = true, },
->>   		.bar[BAR_3] = { .type = BAR_64BIT_UPPER, },
->> -		.bar[BAR_4] = { .type = BAR_RESERVED, },
->> -		.bar[BAR_5] = { .type = BAR_RESERVED, },
->> +		.bar[BAR_4] = { .type = BAR_DISABLED, },
->> +		.bar[BAR_5] = { .type = BAR_DISABLED, },
->>   	},
->>   };
->>
->> --
->> 2.53.0
->>
+On Sat, Feb 21, 2026 at 03:24:35PM +0100, Marc Dietrich wrote:
+> Hi Dmitry,
+> 
+> On Sat, 14 Feb 2026, Marc Dietrich wrote:
+> 
+> > Hi Dmitry,
+> > 
+> > On Fri, 13 Feb 2026, Dmitry Torokhov wrote:
+> > 
+> > > As of d64c732dfc9e ("net: rfkill: gpio: add DT support") rfkill-gpio
+> > > device can be instantiated via device tree.
+> > > 
+> > > Add the declaration there and drop board-paz00.c file and relevant
+> > > Makefile fragments.
+> > > 
+> > > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > > ---
+> > > 
+> > > This is not tested on real hardware, compile tested only...
+> > > 
+> > > arch/arm/boot/dts/nvidia/tegra20-paz00.dts |  8 ++++
+> > > arch/arm/mach-tegra/Makefile               |  2 -
+> > > arch/arm/mach-tegra/board-paz00.c          | 56 ----------------------
+> > > arch/arm/mach-tegra/board.h                |  2 -
+> > > arch/arm/mach-tegra/tegra.c                |  4 --
+> > > 5 files changed, 8 insertions(+), 64 deletions(-)
+> > > 
+> > > diff --git a/arch/arm/boot/dts/nvidia/tegra20-paz00.dts
+> > > b/arch/arm/boot/dts/nvidia/tegra20-paz00.dts
+> > > index 1408e1e00759..d1093ad569e6 100644
+> > > --- a/arch/arm/boot/dts/nvidia/tegra20-paz00.dts
+> > > +++ b/arch/arm/boot/dts/nvidia/tegra20-paz00.dts
+> > > @@ -706,6 +706,14 @@ vdd_pnl_reg: regulator-3v0 {
+> > > 		enable-active-high;
+> > > 	};
+> > > 
+> > > +	rfkill {
+> > > +		compatible = "rfkill-gpio";
+> > > +		label = "wifi_rfkill";
+> > > +		radio-type = "wlan";
+> > > +		reset-gpios = <&gpio TEGRA_GPIO(D, 1) GPIO_ACTIVE_HIGH>;
+> > 
+> > I guess this can be removed, as it should trigger the LED, which is
+> > already included elsewhere ....
+> > 
+> > > +		shutdown-gpios = <&gpio TEGRA_GPIO(K, 5) GPIO_ACTIVE_HIGH>;
+> > > +	};
+> > > +
+> > > 	sound {
+> > > 		compatible = "nvidia,tegra-audio-alc5632-paz00",
+> > > 			"nvidia,tegra-audio-alc5632";
+> > 
+> > I'll give it a try and report back.
+> 
+> rfkill (and LED) works as expected. With the reset-gpio line mentioned above
+> removed, you can add my Tested-By.
+
+Thank you Marc.
+
+I am still a bit confused about the reset gpio. As far as I understand
+looking through old commits reset gpio (PD1) is distinct from the LED
+gpio (PD0) that is currently being controlled by "gpio-leds".
+
+I guess the rfkill driver needs at least one of "reset" or "shutdown"
+gpios, and that is why it continues to work with only shutdown, but I am
+trying to understand if PD1 was never connected to the WiFi chip reset
+line and instead is used for something else, or if it is indeed a reset
+line...
+
+Was the patch not working with reset-gpios present? I am trying to
+gather data to craft a proper commit message.
+
+Thanks.
+
+-- 
+Dmitry
