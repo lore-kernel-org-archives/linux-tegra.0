@@ -1,122 +1,193 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010062.outbound.protection.outlook.com [52.101.201.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB7830C606;
-	Mon, 23 Feb 2026 18:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771871375; cv=none; b=a5M48YJy9H049gI7h2rh2CquvFG8mmXO/bBCljiaTZ2kJaD9HtsMP4Q5NqZnEY+cKab8wsnSoDz1DRN8DZHZO+IIj3Q68zHO0HKLnTkmUQ+oxt3r0Zp3KACTzrsIQSg+8jja9leJ6fr1/XotKyMuWpl0hg15qt9nahJZ8lMRP7s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771871375; c=relaxed/simple;
-	bh=7q9I/7S8FyRGn41y8c5S+a9DguTOS0i3PPacEUgQRsU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K3T/XSighCIvulOHKHduIQkUdq3WsKLEVKv7IVfobwB8cbyO2yT+bDWbfxkHMiL3BtU202QMvLSXpw/ODKteRIizR117H0jQTYXU5/0GDHvlNdtQtN5+gkjt+KWrUhcAtHY6ai7243SfDcXBNKc+/kqp3xQMSxoB4eeSwXDyEPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qgnUJpT/; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4070366DD7;
+	Mon, 23 Feb 2026 18:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771872169; cv=fail; b=h+/DEUn9xdI5ES4xLE4XjeTkvi4zOCzk4UiIElVU++VxG2+HMHUvMn1DACC3ANp+EohzUjlCaZM0J/qKAmB4UrdqAoE5OGpIJSYtaDqLtgw6h15Ki0DhC3HqbQa/2UUIdsgyn79oK9crqFVp479O3319+6wdh/gtbgGSmZ+P3r4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771872169; c=relaxed/simple;
+	bh=QrrqDp+kOOB4V3TuVoUD46fUe1gO7SFh3gSggXBTv+c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ev7Q0PhAFm80Vi5ZJInqhq0mc78PwA9gnNA4HQ5oIaoc8LTbghOiNEPgFwJRmQIJQrAdGFqXTDIxnMlj3xC6OnRo4Fji8HSKB9ULI95uMb8gFSQBetaHVmF3h1197dj2uv/CnZWcvnsJaVQs4jXNuDVX3WYK7F7vc73C2nmCvt0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gBymgXhm; arc=fail smtp.client-ip=52.101.201.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgnUJpT/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CE51C116D0;
-	Mon, 23 Feb 2026 18:29:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771871375;
-	bh=7q9I/7S8FyRGn41y8c5S+a9DguTOS0i3PPacEUgQRsU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qgnUJpT/wj6s6lkwWB/umzdAEHvuHRCFQ7ir0Vn78bLZnyRFTr176ZVjiVQAtOYFp
-	 CzcQrrwBcZizcrcI89uZHn00FdON3GaK53mcUXzJOmBJBxBykeiM/reEOuwX6RLVlN
-	 wiuNUkdxqp6+ZP6XPX3BIab7NESRGvPQsG84Wlqb/wzjEzctBr43M406V0A70avEd6
-	 kFTI/TpueJq4b69m5CYf8z7rht9XMH1j2MOfm5jfBDjzBpD6U3KEraC9QkKiE2+UY6
-	 MSd50rmoEQjHeHMYKoewR6MbQHRYUWEAWMYHNKJhqcCwESgxpBIsCLd/HLjJx12VYm
-	 a5zHbXXb1UhXg==
-Date: Mon, 23 Feb 2026 18:29:28 +0000
-From: Will Deacon <will@kernel.org>
-To: Jie Zhan <zhanjie9@hisilicon.com>
-Cc: Sumit Gupta <sumitg@nvidia.com>, catalin.marinas@arm.com,
-	zhenglifeng1@huawei.com, viresh.kumar@linaro.org, rafael@kernel.org,
-	beata.michalska@arm.com, pierre.gondois@arm.com,
-	ionela.voinescu@arm.com, linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org, treding@nvidia.com,
-	jonathanh@nvidia.com, bbasu@nvidia.com
-Subject: Re: [PATCH] arm64: topology: Fix false warning in
- counters_read_on_cpu() for same-CPU reads
-Message-ID: <aZyciAy8zCvrvGB7@willie-the-truck>
-References: <20260127080700.3565546-1-sumitg@nvidia.com>
- <3c6d58b2-b4c9-4dc7-a705-b7626e127f33@hisilicon.com>
- <aXoJUYDrhuJgkXEr@willie-the-truck>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gBymgXhm"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=om9g/c71zx7UT1boXLFMg4iF4YAWYX07WuP4w9Ya+ePqUmS4iLOiOmPf6nLU02RyvWsIEDGV2NcfK2nvs1jAxFvDEm9UfBdeBqupltWY3dCql7qZ/jOwq/olstFL0AHgT6yhP4+kNRed4FJMMZGLn9aHwQ0AK3J2eKKH1VtJNwLsJ1JBr/NDzTk13nDw49DbAjKguYA2s1HmbkfuDJVlP8GHRW0nIwzZ0Yc+tD4YQ8ffcXoGb0qLnO+tgLDlEdfgdp1qA0kmKLbuk0lsUZO51K2XqKEmWTgdlZo6jkc2hZKwRme019axlK7gjGnNC7/ucm7jKH4XpoFlqlXd9tTBnQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YYSwwH8Cdx2n6Tl9HzDzvdaGqsfOdcWQZpIjevraGM0=;
+ b=o7GZz5AaHdxiD1IRf1iZPJhfr9Q4hoI/4Av7D6oEspzWGdiBDZdB3emWi6F6y55lMKzl7JNA6NIbB0HbPJ6aNlEqbHU9kB2HDMEstdwqYn25hJna73q5NoCw1oACmBFMfx0a8DfxFn4dpFy0vz+112whXEZvLr03f923cbdTV4Jw9MsIvSvsdjgag4djrlbHqD8I9l+5UjNfk49JJCde6Eql2qoxOBsyvwVfMbE7KzWHAiw6+gqM948Fic/iMVHM74eVYCIU8tRKzhZ7EH4nX1JV5bPPFfhQ1kv4hM55XG0SME8/vBSQUcNj5ab+CQ4eAMKJCFx4mcdC4pf6m/+xgg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YYSwwH8Cdx2n6Tl9HzDzvdaGqsfOdcWQZpIjevraGM0=;
+ b=gBymgXhm23wx6W2lGGnDN8Lwq0t1UFi2WKALQkHYqi1pO21upUg9k5rYa/wcqGy5Jhll+m7fgDMqiA84pOsZRCnq7+5dF/MQNUqGwFYB0mCTrCZH8e/9hfnqk2iwY3c0GL2cNQPmZyO1xBS7sH9Unfxk9efOR4IMhEdOT+eYfIOLsmq2mfqPrjFC8xY79jGbrj1mYfeDkWXBRzD8jb/K5UmerouiqS+DtnGSL5Z09NcZ5yGPnJG3xwZuEfGpgg6igJdpeFIauCgBedYlL/Ec81ZUl42DgkeVTlUp3orMvaEN1K4spqvXgdfS3KnQKm8x0kIqLiaROULoCA1jTNFfbw==
+Received: from MN2PR03CA0023.namprd03.prod.outlook.com (2603:10b6:208:23a::28)
+ by SJ5PPF4C62B9E70.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::991) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.16; Mon, 23 Feb
+ 2026 18:42:37 +0000
+Received: from BL6PEPF00020E60.namprd04.prod.outlook.com
+ (2603:10b6:208:23a:cafe::59) by MN2PR03CA0023.outlook.office365.com
+ (2603:10b6:208:23a::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9632.21 via Frontend Transport; Mon,
+ 23 Feb 2026 18:42:17 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL6PEPF00020E60.mail.protection.outlook.com (10.167.249.21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9632.12 via Frontend Transport; Mon, 23 Feb 2026 18:42:37 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 23 Feb
+ 2026 10:42:18 -0800
+Received: from mmaddireddy-ubuntu.nvidia.com (10.126.230.35) by
+ rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Mon, 23 Feb 2026 10:42:11 -0800
+From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
+	<mani@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+	<kishon@kernel.org>, <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
+	<Frank.Li@nxp.com>, <den@valinux.co.jp>, <hongxing.zhu@nxp.com>,
+	<jingoohan1@gmail.com>, <vidyas@nvidia.com>, <cassel@kernel.org>,
+	<18255117159@163.com>
+CC: <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Subject: [PATCH v6 00/13] Fixes to pcie-tegra194 driver
+Date: Tue, 24 Feb 2026 00:11:38 +0530
+Message-ID: <20260223184151.3083221-1-mmaddireddy@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aXoJUYDrhuJgkXEr@willie-the-truck>
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00020E60:EE_|SJ5PPF4C62B9E70:EE_
+X-MS-Office365-Filtering-Correlation-Id: 30b6d3f3-c19c-4ba6-e018-08de730b50fb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|7416014|376014|1800799024|36860700013|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ql864/u6tTyNlVOaDH5FvPq+tUiUY8U5+0B9ZOLNcXf5MpWMxKqsAErZR868?=
+ =?us-ascii?Q?xdp3PsZBvmVh2bP8uVMMAO3KMoNxibWOJr/gpyyr7idiD18e5rLpYDTu9pFC?=
+ =?us-ascii?Q?YXqxvmSTQuSr2MBQV9/Z6Q9ncCrkTcUYPJA4YLh0Swj0FjFsIQcQ5moNFKgz?=
+ =?us-ascii?Q?VonXgveLVqk1azSF1n0WxF4OCxapZT5DXD7zIqrYyNNvk87BYCvHsBebpn01?=
+ =?us-ascii?Q?kXRyza7G1F4dFsMz1+4RB/1ZXGc3HIj/UqV9zVgoHtLSRYCqiXE1njuoqjmw?=
+ =?us-ascii?Q?2Kf9Ss1cxZc9AOhGYhTdWQrSXMkSx4trxcH9eP5US1/IEz1TuwKRupysPzx+?=
+ =?us-ascii?Q?JjCeAWOGzqWQOo3+PL3/nIdoksf6H//i3BVl9M1vzrp+qKpJcM8QlsFln10+?=
+ =?us-ascii?Q?3vrdRJv7DtYLAJ+s7uBuqHLG6MACs/ZjTvLq0kjYlGRgJrjYL5XYT/idtYQQ?=
+ =?us-ascii?Q?JtqMREx0cArC23VPqKBAT6iRwIgCd7CY4j/CNl/DZzzzeo9cwgFmjgmHjwEE?=
+ =?us-ascii?Q?W/X9O7In2hvx562eZG6ymOwcz27vW09RwORUYtS/FaqhiYleHlWIFojFHcge?=
+ =?us-ascii?Q?E0w1G/TV62kaoVoh80Y+JkATJxJYe+bwgLSZT6/vAZJc2kOs7l3P1Ng467pP?=
+ =?us-ascii?Q?0M0dYpYUKYnlvqawZJ8uC6SnCku8r+Ojc1SbaRM2Bi8SvaWwA2mnurIaa40G?=
+ =?us-ascii?Q?E5k8R6B5Bm84zQZIHwC3Gm1i+9SoM09wakNZvUUcqnLidlt/+C+mjexCw8rF?=
+ =?us-ascii?Q?heYNoEBoftZQ40J68d8Wzk0py+0nxYhcPvl8zT1hTP2LPlyPeAJminFfFzhL?=
+ =?us-ascii?Q?xF/84hkCcyAQSJoTrcZcRES4mynaljiAFMphWib13VgtB8iVHlbUX7rQZzW1?=
+ =?us-ascii?Q?VPlRMeJILxJHa4RTbsuv4KrK5aRXJ6sxyllYODrdyff0czF/dJxEgUtzabCP?=
+ =?us-ascii?Q?CxlsmBw4mBXTonQSex2/3ua0TRM8MY04/Lh98XATSGPZ+gbvmV25/X2M7XlM?=
+ =?us-ascii?Q?lOMXEj41J68+dJCyJrmkG+Ut92Aq7ZNsrSJTwuN3drVCHCimxH9wfMC5uRi6?=
+ =?us-ascii?Q?PwdCy+zlOYZGO8CQzHkHupLgx3iWaamsqWocA7b0dWeYK3s6ZcQpLSkMq1xK?=
+ =?us-ascii?Q?WZtRu922bylrR0EPQDDhCForyNmUIV19HGxJxQaBBocnQZgIN/7q3HL2Nx9j?=
+ =?us-ascii?Q?SPz7ZCxVgbOD7lokvZBUP3i1ZwOL0922pPj+WJ1j7QnynbYFtjoTixnJ1Ddu?=
+ =?us-ascii?Q?nRoMI3t5cZl++75O4ulXeYPHlN2tCMaq1HCgxiONPDl4iRtNX137lUUMMO/R?=
+ =?us-ascii?Q?i3rgjRZ3mtpVW8THgpRq67y9zku24NWDezwMcuYSOKDHAuTORKBbPAJb5Cec?=
+ =?us-ascii?Q?mrwyC5lHhq7P09Vx/AaVdZQ8rFCbR1xgEFxGyyiLVfsUtkA+TQuH9Ox48fx5?=
+ =?us-ascii?Q?L4kWKQFA4OZcAPWKACWmd55t6c4ei5dngXx5Z1rYXGFhmhDgLDAAkq8luj7x?=
+ =?us-ascii?Q?3Tb3lyZ8myiD4herwhoXse/l1PHA1g7sn4IjeCYpBxVjclRWD32ArI5dTZ5o?=
+ =?us-ascii?Q?aztai5beILuRkKscos9ZxwQ0jAlMZGcSFH/GFqHHGVl0e1qZC/Oq7ekDsBih?=
+ =?us-ascii?Q?jJqHS21DYpzAmnFbrDDJCFU5CmdxqPquJxYkPu/189l9U9miknGHS37W22X3?=
+ =?us-ascii?Q?/u2XxYShEnGIcwgP7rsNah+snwk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(1800799024)(36860700013)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	cFh66wruBLHw//0PlVwD0eSIPDOSFmTA5eqalmoHGfvgOZqbmqBe8amG1YlsdsT0N4IZy8upAIm4ZacjKGFS4fT8ClxpNlVFP6MDXpEI3D8rK8aoc+qZ3C8FO5pnDrg3cgpKY4g+Mb0iQM98gl7We1wx8sALiuP+wfyICDUKyH46gjpP+4zQ6VwD/1ttpJlPLK8VJchk4znELiO+0PFVwP9F1QgivuJUNYyDidpAw81Fa2rUm4Gj+Bvi1ulPBiM5aFuLSGfnxWwroTBglajO1rNMaGx3CNmFkj+fZX09Ye5vtmhS3JC5wtX8+KKokoedxouqAiUES9pQCPTDDYf3HAOOI7ArbDVGmOc7Q3VOJyA1mzALrsjYqF3QfYzOJHRCrAjQfUXahKf5bKz681wvWP04QPpi8IopZsUY0CEfYTElb0+JzL81DTq6SQAmxUkp
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Feb 2026 18:42:37.1739
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30b6d3f3-c19c-4ba6-e018-08de730b50fb
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00020E60.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF4C62B9E70
 
-On Wed, Jan 28, 2026 at 01:04:17PM +0000, Will Deacon wrote:
-> On Wed, Jan 28, 2026 at 06:50:42PM +0800, Jie Zhan wrote:
-> > On 1/27/2026 4:07 PM, Sumit Gupta wrote:
-> > > The counters_read_on_cpu() function warns when called with IRQs disabled
-> > > to prevent deadlock in smp_call_function_single(). However, this warning
-> > > is spurious when reading counters on the current CPU since no IPI is
-> > > needed for same-CPU reads.
-> > > 
-> > > Commit 12eb8f4fff24 ("cpufreq: CPPC: Update FIE arch_freq_scale in ticks
-> > > for non-PCC regs") changed the CPPC Frequency Invariance Engine to read
-> > > AMU counters directly from the scheduler tick for non-PCC register
-> > > spaces (like FFH), instead of deferring to a kthread. This means
-> > > counters_read_on_cpu() is now called with IRQs disabled from the tick
-> > > handler, triggering the warning:
-> > > 
-> > > | WARNING: arch/arm64/kernel/topology.c:410 at counters_read_on_cpu
-> > > | ...
-> > > | Call trace:
-> > > |  counters_read_on_cpu+0x88/0xa8 (P)
-> > > |  cpc_read_ffh+0xdc/0x148
-> > > |  cpc_read+0x260/0x518
-> > > |  cppc_get_perf_ctrs+0xf0/0x398
-> > > |  __cppc_scale_freq_tick+0x4c/0x148 [cppc_cpufreq]
-> > > |  cppc_scale_freq_tick+0x44/0x88 [cppc_cpufreq]
-> > > |  topology_scale_freq_tick+0x34/0x58
-> > > |  sched_tick+0x58/0x300
-> > > |  update_process_times+0xcc/0x120
-> > > |  tick_nohz_handler+0xa8/0x260
-> > > |  __hrtimer_run_queues+0x154/0x360
-> > > |  hrtimer_interrupt+0xf4/0x2b0
-> > > |  arch_timer_handler_phys+0x4c/0x78
-> > > |  ....
-> > > |  CPPC Cpufreq:__cppc_scale_freq_tick: failed to read perf counters
-> > > |  ....
-> > > 
-> > > Fix this by calling the counter read function directly for same-CPU
-> > > case, bypassing smp_call_function_single() entirely. Use get_cpu() to
-> > > disable preemption as the counter read functions call this_cpu_has_cap()
-> > > which requires a non-preemptible context.
-> > > 
-> > > Fixes: 12eb8f4fff24 ("cpufreq: CPPC: Update FIE arch_freq_scale in ticks for non-PCC regs")
-> > > Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> > 
-> > Reviewed-by: Jie Zhan <zhanjie9@hisilicon.com>
-> > 
-> > Looks fine for me except for the minor comment wrapping.
-> > 
-> > Thanks for spotting this.
-> > I may have missed the warning log in the FFH test.
-> > 
-> > This happens during the short window in cpufreq_policy_online() between
-> > driver->init() and the CREATE_POLICY notifier that gets AMU FIE ready.
-> > After that, CPPC FIE will be stopped.
-> > 
-> > Ideally this can be merged together with Viresh's PR since the CPPC FIE
-> > changes are there.
-> > https://lore.kernel.org/all/j4qdid7iqmng4gzb5ozefemjkep3wx2b5z2yki5tnqc3vzvzf4@kvrnarvdod5p/
-> 
-> Right, looks like this should go via Rafael but if it doesn't make the merge
-> window then I can pick it up at -rc1 (please remind me :)
+This series[1] was originally posted by Vidya Sagar, and I have rebased
+it onto 6.19.0-rc6-next. I addressed review comments and split this into
+two series, one for fixes(current) and the other is for enhancements.
+I verified these patches on Jetson AGX Orin(Tegra234 SoC).
 
-Looks like this fix is still needed. Please can you post a new version,
-based on -rc1, so that I can pick it up?
+I added below four new patches to fix bugs, commit message of each
+patch has the details on the bug and fix.
+ - PCI: tegra194: Use HW version number
+ - PCI: tegra194: Fix CBB timeout caused by DBI access before core power-on
+ - PCI: tegra194: Disable PERST IRQ only in Endpoint mode
 
-You'll also need to fix the SHA in the commit message and the Fixes: tag,
-as 12eb8f4fff24 doesn't match the upstream change.
+Rest of the patches are same as the original V3 series, just rebased them on
+6.19.0-rc6-next.
 
-Will
+I fixed the missing PATCH prefix in the subject in V6 and also reordered the
+patches with regard to fixes tag.
+
+Verification details.
+ - I verified both Root port and Endpoint mode controllers on Tegra234 SoC.
+ - Basic sanity Link up, configuration space access and BAR access are verified.
+ - I verified that ASPM L1.2 capability is disabled for Endpoint mode.
+ - I verified suspend to RAM tests with Endpoint mode.
+
+[1] https://patchwork.kernel.org/project/linux-pci/patch/20221013183854.21087-1-vidyas@nvidia.com/
+
+Manikanta Maddireddy (3):
+  PCI: tegra194: Disable PERST IRQ only in Endpoint mode
+  PCI: tegra194: Use HW version number
+  PCI: tegra194: Fix CBB timeout caused by DBI access before core
+    power-on
+
+Vidya Sagar (10):
+  PCI: tegra194: Fix polling delay for L2 state
+  PCI: tegra194: Refactor LTSSM state polling on surprise down
+  PCI: tegra194: Don't force the device into the D0 state before L2
+  PCI: tegra194: Use devm_gpiod_get_optional() to parse
+    "nvidia,refclk-select"
+  PCI: tegra194: Disable direct speed change for EP
+  PCI: tegra194: Set LTR message request before PCIe link up
+  PCI: tegra194: Apply pinctrl settings for both PCIe RP and EP
+  PCI: tegra194: Allow system suspend when the Endpoint link is not up
+  PCI: tegra194: Free up EP resources during remove()
+  PCI: tegra194: Free resources during controller deinitialization
+
+ drivers/pci/controller/dwc/pcie-designware.c |   2 +-
+ drivers/pci/controller/dwc/pcie-designware.h |   2 +
+ drivers/pci/controller/dwc/pcie-tegra194.c   | 191 +++++++++----------
+ 3 files changed, 95 insertions(+), 100 deletions(-)
+
+-- 
+2.34.1
+
