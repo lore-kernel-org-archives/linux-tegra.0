@@ -1,61 +1,63 @@
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF3C346E64
-	for <linux-tegra@vger.kernel.org>; Mon, 23 Feb 2026 06:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A44349AF5
+	for <linux-tegra@vger.kernel.org>; Mon, 23 Feb 2026 06:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771829464; cv=none; b=k+snfpM8rBFpMogqnUTk+7/kvnSl3fyFMT6GzzZYRDH5FmWAll9B9RcSMRN23nfLKHOy9yM60G6WIYXuFmeUNeQeoO3MwjhNgjjxFWuaPtnQxy6G0tACzxOp6w/WOk6CWL8figo5PV4trBtxEA++750syxcShJxHBWnSIWgafGk=
+	t=1771829467; cv=none; b=Cm3I+dA1Al2INIBQD/BkTDGkZjBMJ6ZcANiPMOtmtSK7+QtR1FHZWu5vxmToUx3IZcu7d1L1v+VrKcz8y9OY0J91rWbdGsjiPL2crVqiK7wOaHqAQ3N8UwsWYSbrdBMALVeqyouePf+dzFUvyAxllCsQ5Wk6wcXI3uRdnIjQEvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771829464; c=relaxed/simple;
-	bh=qowcBJVi0boPrAEbMprHmoxPxBn/f6cve6U/hViUU3Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IAvGbGCQc/Qas6zyUtURvyuwmZZGbxl3T6PoAuNGEXOfuca70Ja09fkHs1019esUUYHSk6ZTGjEpG9ZkxJv2+7lGLEoqBRPeXrQ0h4c4mh/JGIbT15d5LG61ze8g3Sc5ycdBLMgn04wkx43PGJnhqI8ns9ptlZpKtlBMH40CglE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FnxNc4CX; arc=none smtp.client-ip=209.85.208.176
+	s=arc-20240116; t=1771829467; c=relaxed/simple;
+	bh=xM19W5y6sBZhK63TGYfPq7Dcx+S+y11DhFbKJgJ2kiA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lnJvzgMXOFUVr4/nzNHTVzIDLko2LSmoc5AotG0awt9Pl/RMoKL31h0oZeEilfHWEqwP2VDdQCneB9WjUfnLFBNqbWJBaf3P+RFdctcoDUmFXU6DGfFjrKybP5PYhO/Et+f9Y17y3Ne20RTEM8KB7VM+aeMSedk9Qsbm+nHV5Fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nfsy6irm; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FnxNc4CX"
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-3878de20527so34238381fa.3
-        for <linux-tegra@vger.kernel.org>; Sun, 22 Feb 2026 22:51:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nfsy6irm"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3870778358aso33646021fa.1
+        for <linux-tegra@vger.kernel.org>; Sun, 22 Feb 2026 22:51:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771829461; x=1772434261; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=D6pR3G4a3CQ6oBq2KzhWpos/Gb35dTMTzLB28yt+kEA=;
-        b=FnxNc4CXqVoUmhQuyR2R2AVI8g4bhDrWTxpJn9G8y42IwFDl6qJdvT0dPP/q3zbqAF
-         15bZTM0uRmsj9pWVVfswcf1ASS014X+exhQhnv0iMPBpRiaKHAnnaYifCVtGDnbRV9JY
-         ZF8DePapogbvrc4ZhhIjcSoPkJE5WiDdR9TYSmZRYXfDn7AISLnq1Do/GyTh+u5hRYnK
-         5I5AwPSOtGNExrcbmKymBOsFDf93nrPf9l82O7w+FjyJLlglA4N8DuaJv9Xiuq0gczEK
-         pdbpXYYvKs4wGp8GpBxPBgBNDkprRZJbg6twKctEkDJRiFpzDaTBcQPS6fYOliK6Qj1Q
-         6feg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771829461; x=1772434261;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1771829463; x=1772434263; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=D6pR3G4a3CQ6oBq2KzhWpos/Gb35dTMTzLB28yt+kEA=;
-        b=UU2MBqCclsw7leE+MoPL1lOAr1x1csHRVIV8lhajtYLW5pO9piFEGn84Ewa7hOu+XG
-         ULVidXZp8Sq/pG8qUVZMSuamJDj4j446iexeeL7JPfMt65rxv7yPFv2km0lfdFds5yrV
-         +B/X3EhVGOs0l9HjBLqjM4Rcdyj6AWGo7q3jqne6LR2ts58yE4j1hGiPEUkv8qenPubv
-         2s5XTOx7P28YrM2Wiepotw8aNZ74YDmpwY/lzYu3VFfyNlO7d1BVt/EcRUwChqhXIBOK
-         W7xV/sxt18A+/KNQjp+3TAhnSCRGApSQMKyN9x23TFS8OXlygBzvXkLUn1b+MHVAyP2d
-         r9sA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzVOA1jLW+5siCAj13pejsuXAxs/3RiAEWk3y3QeLejfrC8ChoTjQgOWpTY38K3ctQ8yaMuri8751wMQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yybr9JzIVTVGUdxp1wOMMj583C8I7+E6lr1sB8wOynBO+ap9GaM
-	/gsK1hbSTks1FcooJpRHvTBtRAMJ8qcgJkOtlSULmDIPrumMSNYbLQu1
-X-Gm-Gg: AZuq6aKcHG+xOTGSvz6J0McxBCy4FxedvUMA5cl6OAjycHSEg02pd+mSbwaxH/knHkS
-	wgvD5uUeeZZYrEWDTnFl0P7K3ucOkc8qoNQcSa7EslgktNck2ayerOxYmM4TXV/dSGEmU7wpkbU
-	EafNyzkIg0nWTfdDWHussKsx3cappQKyTTvUgb7CMFnDOKjYzKBVUqsi6lEEAk2D7xq6DdbwFls
-	WzU6dEYfy5qNApLTFUyP7b333p6L/udCM0jt3Aj32OCdvLCfigOBxOqhAg79IpR2q2A+bafbEkR
-	FmFKXvMXzhvfBiG8rFe7sFMOyRRH3C9dt8y6VPbm3d6ij2gAOv7YMAHKaPoiVasQ0XFMcWnMtdi
-	CmuKvvfAFpVLIKf2HYuocNa7ZlK8/PHTo37T0ecTWiWrnWU4AC6uCYrdlEdTg2DjuDqXgy/PXkY
-	5aS6jqWkHqAnkF
-X-Received: by 2002:a05:651c:150c:b0:385:f235:51c9 with SMTP id 38308e7fff4ca-389a5de9682mr24271771fa.34.1771829460571;
-        Sun, 22 Feb 2026 22:51:00 -0800 (PST)
+        bh=S1uE9SbozYnquR9REkQsKIr4GVqaAJFPEg6pyN2tdEE=;
+        b=Nfsy6irm/G6PU5E6FlxjQLziaEQQ8DAyWyGFPyDuCVBagpPV1VnkQ668fESXaAqCGh
+         nIUr/nnjpV/uc7o2NwNfSpds5Vjyu/0Vm1NUJKwr52gTdjgIGc36F8uNPuQqILbjqUW/
+         ZruowoNcKs9Z+HtBKXNTYC4rl2vIYRbNr0t+UAe4LsYZvmFNIo1H5rWFuuo/4PtHiiqE
+         lgrfE8gRuaVEO6VcMxPSWYF1+eZp7ETycmiyf9DBdP0L2B9FLt/P9FvwiAjNNiKlQwLP
+         Tykty6M8+atmkiRlvF8koqhKm8e+zkiJreKVwtMshXQQk5ZkjvLdzwG88HIXBl7MDCYc
+         fNvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771829463; x=1772434263;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=S1uE9SbozYnquR9REkQsKIr4GVqaAJFPEg6pyN2tdEE=;
+        b=gyGJg+9k9fywGCT/z88bETT4BdXCfziJ4+lvjIYRnbC1SzNwHlPrUZYr9Wzob/XTZi
+         /CQTQGEMim1ejbENi5bRFRB1MemYRB8H6inxCEqlw8aJjyi1+Z9I0k7UWoullLqRoKyd
+         LTvpwHG8VOESnj3eS3mCdPej1e7B80puR1D9IWmGuxlvDVTyQaJDKjtH6Scd+s1csJeK
+         Wx1iKG8lwY/P0p+r+b8IsMqqSr64ZuUysfnBo24acHllVuP7fG92+WlQTVdQfbDbEML9
+         PCTfQjc9DX6DCwZRKNHSC4Jp5+PAZ91eM6bw4oC1sv+MSFhPFIU17aZLc0mi+aIdvDUj
+         Xn3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVUQNiYc8EFf/H6NqIo0c0QwzF1ih8ehf9a6g9LwCYi+delpTm+1NeOQ7d112ITX8FKTkM12srZpAzQAg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEoPPutcwTLVyL0xXPE8+EY+4r4lnU0loqfQ2ahBf3N8npWJFc
+	TWHokGDwWOBXLo79NLdGFdm7oW0o80BdL1FMKYm5SA9bec5O8i8E7HoR
+X-Gm-Gg: AZuq6aLsY0eqkh3Rwo+02Ol9lmX1048zxHiFDVxLILM3kfXxOFiFYMn0euKxAB7CHBn
+	rTONkWVc6GCKQUdwjfcbcw8MszbgvzFv/2V/T1kKpY1dl3jynSs++5FEQsvPkUv1k1pWi8DHQf1
+	iF0Ds1f+j2Cy5fCZHxTCTWkJ+mFmqWsmUTPh/LJNnWbbdHhBAGYZjHsxKq6KbBpt8GNMXmHnq0s
+	z2LVsrLNjl/iUkGPCWZgWJoxNfrer5VDS8vMOIQMFY9SuH5VrXYF7ZjmDeKV+P6rj7xq9WBI1HJ
+	596Lw5gYrpjRqtIpm3BaLZfANM811t+3ftvuJ5hYLrc5udwjRcytTL+5aYHWp8jzL/ZchK2z+4w
+	LZM6A2bBgxFmp4GSMtexUiDMIR7LV7hlIqwAwKvrpzhwPvT8UcLlqJ1vcOuLy07rir186fXGCbC
+	QBEtRtPfeV8o6Z
+X-Received: by 2002:a05:651c:1ca:b0:386:fdcd:b2c4 with SMTP id 38308e7fff4ca-389a5e6d6f7mr20783041fa.35.1771829462597;
+        Sun, 22 Feb 2026 22:51:02 -0800 (PST)
 Received: from xeon ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-389a78b4a45sm13916521fa.13.2026.02.22.22.50.59
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-389a78b4a45sm13916521fa.13.2026.02.22.22.51.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Feb 2026 22:51:00 -0800 (PST)
+        Sun, 22 Feb 2026 22:51:02 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Liam Girdwood <lgirdwood@gmail.com>,
 	Mark Brown <broonie@kernel.org>,
@@ -72,55 +74,126 @@ Cc: linux-sound@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/5] ASoC: tegra: Add support for WM8962 and CPCAP codecs
-Date: Mon, 23 Feb 2026 08:50:46 +0200
-Message-ID: <20260223065051.13070-1-clamor95@gmail.com>
+Subject: [PATCH v3 2/5] ASoC: tegra: Support CPCAP by machine driver
+Date: Mon, 23 Feb 2026 08:50:48 +0200
+Message-ID: <20260223065051.13070-3-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260223065051.13070-1-clamor95@gmail.com>
+References: <20260223065051.13070-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add support for WM8962 and CPCAP codecs found in various Tegra devices.
+Add CPCAP codec support to the Tegra ASoC machine driver. This codec is
+found in Motorola T20 devices like Atrix 4G and Droid X2.
 
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
-Changes in v2:
-- fixed Kconfig dependencies
-- added schema adjustments for max9808x
+ sound/soc/tegra/Kconfig              |  9 +++++
+ sound/soc/tegra/tegra_asoc_machine.c | 52 ++++++++++++++++++++++++++++
+ 2 files changed, 61 insertions(+)
 
-Changes in v3:
-- in nvidia,tegra-audio-cpcap.yaml set vendor of device specific
-  compatible to motorola
-- in nvidia,tegra-audio-cpcap.yaml in example adjusted compatible
-  to avoid confusion
----
-
-Jonas Schwöbel (1):
-  ASoC: tegra: Support WM8962 by machine driver
-
-Svyatoslav Ryhel (4):
-  ASoC: dt-bindings: nvidia,tegra-audio: document CPCAP CODEC
-  ASoC: tegra: Support CPCAP by machine driver
-  ASoC: dt-bindings: nvidia,tegra-audio: document WM8962 CODEC
-  ASoC: dt-bindings: nvidia,tegra-audio-max9808x: document additional
-    board pins
-
- .../sound/nvidia,tegra-audio-cpcap.yaml       |  90 ++++++++++
- .../sound/nvidia,tegra-audio-max9808x.yaml    |   5 +
- .../sound/nvidia,tegra-audio-wm8962.yaml      |  88 ++++++++++
- sound/soc/tegra/Kconfig                       |  19 ++
- sound/soc/tegra/Makefile                      |   2 +
- sound/soc/tegra/tegra_asoc_machine.c          |  52 ++++++
- sound/soc/tegra/tegra_wm8962.c                | 165 ++++++++++++++++++
- 7 files changed, 421 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-cpcap.yaml
- create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8962.yaml
- create mode 100644 sound/soc/tegra/tegra_wm8962.c
-
+diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
+index 9dbd589879fb..dd58525b7079 100644
+--- a/sound/soc/tegra/Kconfig
++++ b/sound/soc/tegra/Kconfig
+@@ -294,6 +294,15 @@ config SND_SOC_TEGRA_SGTL5000
+ 	  boards using the SGTL5000 codec, such as Apalis T30, Apalis TK1 or
+ 	  Colibri T30.
+ 
++config SND_SOC_TEGRA_CPCAP
++	tristate "SoC Audio support for Tegra boards using a CPCAP codec"
++	depends on I2C && GPIOLIB && MFD_CPCAP
++	select SND_SOC_TEGRA_MACHINE_DRV
++	select SND_SOC_CPCAP
++	help
++	  Say Y or M here if you want to add support for SoC audio on Tegra
++	  boards using the CPCAP codec, such as Motorola Atrix 4G or Droid X2.
++
+ endif
+ 
+ endmenu
+diff --git a/sound/soc/tegra/tegra_asoc_machine.c b/sound/soc/tegra/tegra_asoc_machine.c
+index d48463ac16fc..10834f9c3422 100644
+--- a/sound/soc/tegra/tegra_asoc_machine.c
++++ b/sound/soc/tegra/tegra_asoc_machine.c
+@@ -287,6 +287,25 @@ static unsigned int tegra_machine_mclk_rate_6mhz(unsigned int srate)
+ 	return mclk;
+ }
+ 
++static unsigned int tegra_machine_mclk_rate_cpcap(unsigned int srate)
++{
++	unsigned int mclk;
++
++	switch (srate) {
++	case 11025:
++	case 22050:
++	case 44100:
++	case 88200:
++		mclk = 26000000;
++		break;
++	default:
++		mclk = 256 * srate;
++		break;
++	}
++
++	return mclk;
++}
++
+ static int tegra_machine_hw_params(struct snd_pcm_substream *substream,
+ 				   struct snd_pcm_hw_params *params)
+ {
+@@ -985,6 +1004,38 @@ static const struct tegra_asoc_data tegra_rt5631_data = {
+ 	.add_hp_jack = true,
+ };
+ 
++/* CPCAP machine */
++
++SND_SOC_DAILINK_DEFS(cpcap_hifi,
++	DAILINK_COMP_ARRAY(COMP_EMPTY()),
++	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "cpcap-hifi")),
++	DAILINK_COMP_ARRAY(COMP_EMPTY()));
++
++static struct snd_soc_dai_link tegra_cpcap_dai = {
++	.name = "CPCAP",
++	.stream_name = "CPCAP PCM",
++	.init = tegra_asoc_machine_init,
++	.dai_fmt = SND_SOC_DAIFMT_I2S |
++		   SND_SOC_DAIFMT_NB_NF |
++		   SND_SOC_DAIFMT_CBP_CFP,
++	SND_SOC_DAILINK_REG(cpcap_hifi),
++};
++
++static struct snd_soc_card snd_soc_tegra_cpcap = {
++	.components = "codec:cpcap",
++	.dai_link = &tegra_cpcap_dai,
++	.num_links = 1,
++	.fully_routed = true,
++};
++
++static const struct tegra_asoc_data tegra_cpcap_data = {
++	.mclk_rate = tegra_machine_mclk_rate_cpcap,
++	.card = &snd_soc_tegra_cpcap,
++	.add_common_dapm_widgets = true,
++	.add_common_controls = true,
++	.add_common_snd_ops = true,
++};
++
+ static const struct of_device_id tegra_machine_of_match[] = {
+ 	{ .compatible = "nvidia,tegra-audio-trimslice", .data = &tegra_trimslice_data },
+ 	{ .compatible = "nvidia,tegra-audio-max98090", .data = &tegra_max98090_data },
+@@ -997,6 +1048,7 @@ static const struct of_device_id tegra_machine_of_match[] = {
+ 	{ .compatible = "nvidia,tegra-audio-rt5640", .data = &tegra_rt5640_data },
+ 	{ .compatible = "nvidia,tegra-audio-alc5632", .data = &tegra_rt5632_data },
+ 	{ .compatible = "nvidia,tegra-audio-rt5631", .data = &tegra_rt5631_data },
++	{ .compatible = "nvidia,tegra-audio-cpcap", .data = &tegra_cpcap_data },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, tegra_machine_of_match);
 -- 
 2.51.0
 
