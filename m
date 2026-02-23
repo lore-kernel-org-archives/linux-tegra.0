@@ -1,217 +1,159 @@
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012025.outbound.protection.outlook.com [52.101.53.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227572B9BA;
-	Sun, 22 Feb 2026 19:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771788961; cv=fail; b=H4j/kMt1O3IWu7omPNcxHgdPFdZhdSzKrhIdsjbqMyzdp/pPVnsVOC5/HsGSsE+QXrJTHZAvD4ZWdImCH+oY5I3LZ0ZZHkg+I+vYewlpLeH9MWyVEpYOjxVlvM4M0e/HOxdXVSrecoYIGWxJ/f/tbpvaJABTtKL6x8IdZVEU8ZY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771788961; c=relaxed/simple;
-	bh=yeQ0iLuXDRoKpjKLOuRk5txuB9LLLeEoodDnZOnkYAU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n7ttJmqEV9D1s2QShZnI/J0C7RMqMv3wLtvO0ZFws1Qb2Bgyiqt1LRP1nQs+ZwLiEOoDr9YJtStzYJ8KlJtKHX/jzYbnfItQ8QsnV8Ck9cDfB6iHRHUFSNR551x5EtS8e6kSV3Fa5dgzae+f/dBvKw2ZrJ0rxtjdO/qiQ+cO1pI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YELuFfD4; arc=fail smtp.client-ip=52.101.53.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3D2219FC
+	for <linux-tegra@vger.kernel.org>; Mon, 23 Feb 2026 00:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771805528; cv=none; b=UPZfdT/fJPZterml96MyGpztIpTJskh0bCzkNInxKH6P7p8q7Pk0oHdpeWPa1G29QuZlvbmKM8pyDIq3QR14YCey1n+sZl4tQXyeQBjKScTJazFOl/wMKks7NY53BAd7IVC+b76N0r+v2amPwE9tgI0DjupQHJX6tmPe+4NZte8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771805528; c=relaxed/simple;
+	bh=8Q5y8U7qqQeIu9CIhdT2hDo15btgbsbWGqFIvIoUBDM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HTTiTWuGWKPsKUMiBnWUhf7IwRsyB5y0up8tu35qMOKBroFW/YdTB6PYwgMUuTAzOuWLvRawJEl7RG7sPvJ+8cI6eL1utJwtL+qlEyUBE7TCwdXzW4GXPoogHRQkeCvZ1rj5e55a7jzkVz2M9s29jU1qiciXA6Y32qt/HpSx02c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=X9xzzv/7; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YELuFfD4"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=h0mjW3I0ENRfCINBONPgN2Z834YaEzD1YMtS/vqNMl0QWsTFLuuBdMDKtYsB40xa4b57jAo+3vwpeVYPfAV6NFsfm8AjmwnepujUwN8PAiaOvAvtddFsqCMvxPspZhi5kVF13byUgKGa+UvcwSn+YP1fHr6wGTig1bEnd/smcU3wYtBnuWATAjaV8NnJT1TeYSXKRzqZVOFmf+N7enimHs/zd/i+rRCqsM6yj6ax2nqhs4aI9rKDLhqxpyf7X02+ttFKVHr50KHwpYkE225+VMnW/RB1AhxQsUFJb22ddCcZP3bDaH1jmveyQo9yGCckKBgaGYLpotYzzvdS/Z462w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EVXNia+HixdPH7ZEZkmpqCtdL3ySyeZjGodGRnxyq38=;
- b=V/4DR+wvOkYmVzYuQzoSPs+3JkR5StLGaAfzksSA7MXveXIs9bgASf58fB/uPBK17EyzTMhCUi0RmdsR7/9hKOcEDfbke+acfjowXpBVxLYgdasDlBhFH596zGkkIUHZRHheIjJo6PJvaYcg0diPXd3s2pb3Ymor1X6487Suc9mIVD4UIXsC/5bYY9t0xAEpFtUsvoYmHUstkRda1xPdGdx9Goyl4MBpHrt5w4dTca6wLkTFXf3Xc4z+gbM+kjW/xAnoAb7/WL6nsyzXoIk7sBNFeTpP7pEwEj3auUcdDGtf0QaEivgFeBW1H9yab/d99fwsdGLJVXWaY5BB56uLRg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EVXNia+HixdPH7ZEZkmpqCtdL3ySyeZjGodGRnxyq38=;
- b=YELuFfD459VkMaUwe9TAKZzQ5pvcH/PFBTRgKsjqBp7TaQmDyk9ZS059P7v4ZbVMNO1pmEd/IsnxszAmQdNLKJDqGsPyZOvsftOBvlaiYsevbEaGIG9nRu455mHdhJ9at6tVHLndGMk0RyGxAnCVjIQQt9frSPn6PWZI2Kv9IMnDPtm76JFQnkQMG1U5XrkWjR2jiurlxpS+G49QdqD6OglY1NZBDtwrOKvCJGUP79uWY1OhUerfHTPTxvu4rjgiTfTdlJeRe0IcOoxQn4cx6HONY5g0kCHczDryZ0ZwnVRnV9MjfqKbKgcLq0QagDLmTwDPytBJslIkhceCqFU8fw==
-Received: from CH0PR03CA0075.namprd03.prod.outlook.com (2603:10b6:610:cc::20)
- by DM4PR12MB5940.namprd12.prod.outlook.com (2603:10b6:8:6b::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.19; Sun, 22 Feb
- 2026 19:35:54 +0000
-Received: from CH2PEPF00000148.namprd02.prod.outlook.com
- (2603:10b6:610:cc:cafe::2b) by CH0PR03CA0075.outlook.office365.com
- (2603:10b6:610:cc::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9632.21 via Frontend Transport; Sun,
- 22 Feb 2026 19:35:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH2PEPF00000148.mail.protection.outlook.com (10.167.244.105) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9632.12 via Frontend Transport; Sun, 22 Feb 2026 19:35:54 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 22 Feb
- 2026 11:35:45 -0800
-Received: from mmaddireddy-ubuntu.nvidia.com (10.126.231.35) by
- rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Sun, 22 Feb 2026 11:35:38 -0800
-From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
-	<mani@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-	<kishon@kernel.org>, <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
-	<Frank.Li@nxp.com>, <den@valinux.co.jp>, <hongxing.zhu@nxp.com>,
-	<jingoohan1@gmail.com>, <vidyas@nvidia.com>, <cassel@kernel.org>,
-	<18255117159@163.com>
-CC: <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Subject: [PATCH 3/4] PCI: tegra194: Expose BAR2 (MSI-X) and BAR4 (DMA) as 64-bit BAR_RESERVED
-Date: Mon, 23 Feb 2026 01:04:55 +0530
-Message-ID: <20260222193456.2460963-4-mmaddireddy@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260222193456.2460963-1-mmaddireddy@nvidia.com>
-References: <20260222193456.2460963-1-mmaddireddy@nvidia.com>
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="X9xzzv/7"
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-414ffb4c0a0so3236788fac.2
+        for <linux-tegra@vger.kernel.org>; Sun, 22 Feb 2026 16:12:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1771805524; x=1772410324; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=f/cjh3P6a7yxOJcaGA1eGYzRpZFWZsrKDRxEVGR8r7c=;
+        b=X9xzzv/72fYyctuKzLyyvXQMtxVQw9h4CR8rvuGExyrFRH6L8oqor1dVrrzvcvMDgL
+         DTHqqfIx60037AmiVUfBOt7jIr1nzWT5gjZxR3uSWgERASYFMLYOOJHr7Yd2dT1C+xDn
+         Z5uTwmvG9v1dV/pPMYEHzoKralsQIVFb1FdZKlttB4XLRjvkR+T346dgqwOnIbHTArq8
+         8zGsWVwTWdi9oce4+QpmXhjjxmrIP2LIwdOaX+JMJolOcTn8FjdpvEH6cRf9+4Duihbl
+         mFNchiAz8VTyeCt96CLrqPFaRfuly2fJclRIOeIdwD8l3FbLk1OP6Cs1YiqNX4Vc1Zp/
+         0Bkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771805524; x=1772410324;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f/cjh3P6a7yxOJcaGA1eGYzRpZFWZsrKDRxEVGR8r7c=;
+        b=lPkK95BQ0Brf/ZsiMafzuqQSHSj7E9F7CwzIVAv53fUrS7ai2KdgSpSFJQarM9t6ar
+         TlBy1ccbgOzI1gtSbImHQ3/wEVNNy3TewWtUXEq9MhUqhS2558QT1o5NeeMX1RXvnupe
+         A21zVSG44QoB0aNpKcUrgE18AMR0+/YNANf4cnDpEjbAf/gj+Qd81V6bAVfEszM+KljP
+         p26GCirtOl9xF+KHeuXxyacyPaV1adWTGiFj2pWauzC4xIA7PeoVoWJPUVQGzJkM5+dw
+         K1rsn1NxiaxU9CIXaitbF4QcpixXj3QENwhmyZUL3KEfp1XnOHgr2ZaSFRpF0u6j0Txz
+         3DEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVm9dMrgnPhp2mGkc8eO+4KyxOsN936Y4/wdTEUJ72HyJA3IV4oPcRR2P/V9zjUcU5T5tjcgRlzmOlhcg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdIOh7l1zuIJ3FGGVJ7wZREFby0UptNVQzer828UOFcVkoJgmV
+	o1/hNMpjo5LT2sF6NWJXI0+RRDrod9+/YKnzY2iN1UAmGaxGPUPsIjpU3Mlv0KW5AJE=
+X-Gm-Gg: AZuq6aL5KYnln6tUJGlmqYLGmITOJv+RoVk8Kn+xaYowiU9nSCpsd7B4aCgHkb7EWdo
+	l6Ns/xM73kiC+TuchJpoDK3zL5HC2XsMlX0T3MikdSgQd+bPTJBq+aOnsczQ2k209cdj+1XhScO
+	G+k+e8heAg1JEMH/33eenAk7A6gf6X2s1bniyD3gHpE5Ml9yPzT1T9gwlYMgksj+JKuKNDlG5Mq
+	jXypY3mqbyl7pjhsjjSmbm53SQIyiCp0KbJQI3j2ku1Pk+mYHILKPBim5Fh3EDMHBQhgzshJcPV
+	SLVhfdd3yUebxaXzoTZg4ZGyDp7A46dRoZV4Ghpz6bQwgPPS9XTMS4zmCICotHcGqB+ifTkTyTJ
+	Qgl+KGZRLzdHHjh9sm3KxRG0uSEUDR4uOiVrtCDmuDBOJ7mRj5z0D274LgS401/Sg/tqeNdttR+
+	HNo5n2p6aXAp8PzCQAI9W/uRWNPq2O3XMv3cfaXChMgbbsKq5o8ynL2+qWKFY+zaI+ihI+GvI=
+X-Received: by 2002:a05:6870:f61b:b0:409:794e:fe9 with SMTP id 586e51a60fabf-4157b1b3fd3mr3557313fac.54.1771805524220;
+        Sun, 22 Feb 2026 16:12:04 -0800 (PST)
+Received: from ?IPV6:2600:8803:e7e4:500:e37:2309:3937:4469? ([2600:8803:e7e4:500:e37:2309:3937:4469])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4157ca3df7fsm6409978fac.0.2026.02.22.16.12.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 22 Feb 2026 16:12:02 -0800 (PST)
+Message-ID: <f5b38942-a584-4e78-a893-de4a219070b2@baylibre.com>
+Date: Sun, 22 Feb 2026 18:12:00 -0600
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000148:EE_|DM4PR12MB5940:EE_
-X-MS-Office365-Filtering-Correlation-Id: 40f81da1-5bd4-42a5-5dcb-08de7249981b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZeKiNLYgNexd4ZKgQuk2u21blbKgnUPFSSwNyZ60C/cFnjVNbgSdqfTNio10?=
- =?us-ascii?Q?zwtZntq0DIFl27CNIzIh4Chf1T2S9uhCXnjblDSvi1pPHpOqnGZbPHQPvNRY?=
- =?us-ascii?Q?PWTYRlI8I1cOcxmZXsna4kdSS8jNMItmcELgxmJl0c8vsBpm4EoLslP7tjcR?=
- =?us-ascii?Q?MJxiN1Pp9n7IOjUD61oSNo9kBYmc0Ht6A8hLPkN5mQehzP/gw8jhMZ4oqi/t?=
- =?us-ascii?Q?vMKTAVd3YyM9rlru2Wl39gGwpGz90zyzBUgqJ4N+rYXquj6E4bCQ+M5JyGPZ?=
- =?us-ascii?Q?6n9DObJ8EwcHZJrkMDuSwqb63ea+qe+kNVdHkoeMIKEMD/ARp94s2IfeGlV4?=
- =?us-ascii?Q?dh7aiaR72RSboiuwDdu5ru48rlTYUyBv9EZafIU0KyydPwk4dyGmzy1mxG+Y?=
- =?us-ascii?Q?3sgysfsU8GDYDZsn3V4M4jdv0j677GVpG8LjPX5FdU+DqFQk6Yc2LMPC4KIx?=
- =?us-ascii?Q?LaoRQDUlzlBdx2jgexz4Pf9eYVYQB5ECgFNUTX3IIBJzBJ/V7zK8jR/hbh6P?=
- =?us-ascii?Q?TOUXycECTfM6zQsW0hCWhUdiGMbrQH6Dodcilr+GXyOXyKCHyfRPiYAxr2/i?=
- =?us-ascii?Q?miiEht3uucLuXMdJ5+ZMw7eSGyDjhPBV94QXlpN514exRjwleP21423oLlqQ?=
- =?us-ascii?Q?NkttSWfVPswHLiqYPBObvdmur53+Sve9yCi3EmRwehTIg0KUHC+p6k2KvaAw?=
- =?us-ascii?Q?OjjkkvCZ0UOo9txynR+xPUXLuFDBN6qAU4DWwreYCWhJAwy9zItV9fVRAv/V?=
- =?us-ascii?Q?lJfwj2QzaT7w8U4qXiCs9TShkYNWunIXfb7+xVqt90W7fDyfNncyZP70yfWu?=
- =?us-ascii?Q?A/AvOAQLLdnYB9VgXQ+mNdRdwQ/jPlDzENvipRzghX1do/otLztFkcTiGNfq?=
- =?us-ascii?Q?a/tMi+gC8nSMpIsRCkllXwP3w59ecwb3g8qyjvAslHvCk7bO+nLRnIBF+7Ch?=
- =?us-ascii?Q?BiDIk8TVZQZ1rODh3ZzNBD4LcAtRQ58VFfDYTOqUAPHoQpqmn/pfhoiluMRr?=
- =?us-ascii?Q?eH7bhPD+1AKYxMMtOpI++kS5mKtmzZAIL6guWIBKD43rA2G6Pv82ZEX/fktK?=
- =?us-ascii?Q?9LuTtwQa7VFQ9UxU3m2cOYxgtnAc2ez3cxfMIG3wMOjp9bLTqdLFvGf44t5v?=
- =?us-ascii?Q?+Hg1hPOzC4cINB3IuFItYEkHTSiVfuxyrwIWZH5MxU7/y2YKOOT4W/SR9ljQ?=
- =?us-ascii?Q?vAc2TkFg7hwgaLWDAd2BdpIFswieyvkA2WSMEKrsfW44hEgCdeN8oJjrdqo8?=
- =?us-ascii?Q?WEk5JcVZZqnFlxS5/ffm9vfctg6lkh6Ign6NQHlxdc0vzm43ZmlEtoGMMnbR?=
- =?us-ascii?Q?Z8HVt6vK23x/R6+kMMDDN/X+iA1N4yy43OeCEr6o5oGcBBqE/vd6JavtQAaq?=
- =?us-ascii?Q?Tu4yuLsyX54cVdN0JpwO3oLGz8ecAF56nmXNHSKvGPVYXPbEz4nFzZjAfXbN?=
- =?us-ascii?Q?Sr/qM6Pff/5auo8Hk508KJYFAcM9p6lbp1jsnhV4aEfIbymqoc2AXs+GPKoY?=
- =?us-ascii?Q?+4tv6WzHR2fJHttUpyMPhP+CJIYKE3cLYZdiu59+/dHPClq+nEHAITLlD5AT?=
- =?us-ascii?Q?LSPZFEeJXwyRXzLIkYuRtTT7sDAlBhEeX7i9xiKKDiEfUElCotEumKJ8j9gU?=
- =?us-ascii?Q?r9TPuFMt4Z6ArdW5c2CQMgHEZwq9yCDuhWV6zc+6bYhXCOEjQKUxhtcNaDch?=
- =?us-ascii?Q?DR6ThEF3HIAE3YcT64hMndDYyl8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	ZpUgYl9Bhe3DXYSYnJ85LenFcIO0HjYvqvBAMAjPpGO1xKsi/nM8+o6iopwjyDzFsw7r2RIG2N5dA2M+st4JpiGDzyHlaHm59rTVik//h5Ddl6vtxeOwi4zYDxHX/1jCDNo96Hxsfkn+VNk9kiaeiLxr4STpcuHJYlZ9TPc5yVMvw0+f2W5G1qb/ENRAr1kZFQt+AjJIyk3hDF8RQKmTwvq7G+/y33o8hwpuR+HZz46ETeuZzbSDg1x7NFQScuh5Uoj6SnZpVr42Ab3/Vl5b3/au7NfsbHRs/ZPBaemP07qGjTXHhzbxcznNNQZ9vFSedeb257rnNh9soLP+n9CL1KiSUqOE0QJMWYDirThBt27kz6q1TaXYPtjs7EkFhhMhvw7MbTXV2WsOciKKgASbFtU3DOp7MUZX8D/zeH6iUsGSvrCJwIW1I3GuVzevWPCM
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2026 19:35:54.1956
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 40f81da1-5bd4-42a5-5dcb-08de7249981b
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF00000148.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5940
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 10/11] pinctrl: rockchip: Simplify locking with
+ scoped_guard()
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Linus Walleij <linusw@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Emil Renner Berthing <kernel@esmil.dk>, Hal Feng
+ <hal.feng@starfivetech.com>, Chen Wang <unicorn_wang@outlook.com>,
+ Inochi Amaoto <inochiama@gmail.com>,
+ Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Bartosz Golaszewski <brgl@kernel.org>,
+ Steen Hegelund <Steen.Hegelund@microchip.com>,
+ Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Heiko Stuebner <heiko@sntech.de>,
+ Patrice Chotard <patrice.chotard@foss.st.com>
+Cc: linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+ linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, sophgo@lists.linux.dev,
+ linux-tegra@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20260118-pinctrl-cleanup-guard-v2-0-bd36f681bdc0@oss.qualcomm.com>
+ <20260118-pinctrl-cleanup-guard-v2-10-bd36f681bdc0@oss.qualcomm.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20260118-pinctrl-cleanup-guard-v2-10-bd36f681bdc0@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Tegra endpoint exposes three 64-bit BARs at indices 0, 2, and 4:
-- BAR0+BAR1: EPF test/data (programmable 64-bit BAR)
-- BAR2+BAR3: MSI-X table (hardware-backed)
-- BAR4+BAR5: DMA registers (hardware-backed)
+On 1/18/26 12:09 PM, Krzysztof Kozlowski wrote:
+> Simplify error handling by removing two mutex_unlock() calls with
+> scoped_guard().
+> 
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> ---
+>  drivers/pinctrl/pinctrl-rockchip.c | 19 +++++++++----------
+>  1 file changed, 9 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+> index e44ef262beec..bbe1cf712965 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.c
+> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> @@ -3640,17 +3640,16 @@ static int rockchip_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
 
-Update tegra_pcie_epc_features so BAR2 is BAR_RESERVED with
-PCI_EPC_BAR_RSVD_MSIX_CTRL_MMIO (128KB), BAR3 is BAR_64BIT_UPPER,
-BAR4 is BAR_RESERVED with PCI_EPC_BAR_RSVD_DMA_CTRL_MMIO (4KB), and
-BAR5 is BAR_64BIT_UPPER. This keeps CONSECUTIVE_BAR_TEST working
-while allowing the host to use 64-bit BAR2 (MSI-X) and BAR4 (DMA).
+Filling in some context from the existing code...
 
-Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
----
- drivers/pci/controller/dwc/pcie-tegra194.c | 38 +++++++++++++++++++---
- 1 file changed, 33 insertions(+), 5 deletions(-)
+	for (i = 0; i < num_configs; i++) {
+		param = pinconf_to_config_param(configs[i]);
+		arg = pinconf_to_config_argument(configs[i]);
 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 3c84a230dc79..b5397a63461f 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -2000,16 +2000,44 @@ static int tegra_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
- 	return 0;
- }
- 
--/* Tegra EP: BAR0 = 64-bit programmable BAR */
-+static const struct pci_epc_bar_rsvd_region tegra194_bar2_rsvd[] = {
-+	{
-+		/* MSI-X structure */
-+		.type = PCI_EPC_BAR_RSVD_MSIX_CTRL_RAM,
-+		.offset = 0x0,
-+		.size = SZ_128K,
-+	},
-+};
-+
-+static const struct pci_epc_bar_rsvd_region tegra194_bar4_rsvd[] = {
-+	{
-+		/* DMA_CAP (BAR4: DMA Port Logic Structure) */
-+		.type = PCI_EPC_BAR_RSVD_DMA_CTRL_MMIO,
-+		.offset = 0x0,
-+		.size = SZ_4K,
-+	},
-+};
-+
-+/* Tegra EP: BAR0 = 64-bit programmable BAR,  BAR2 = 64-bit MSI-X table, BAR4 = 64-bit DMA regs. */
- static const struct pci_epc_features tegra_pcie_epc_features = {
- 	.linkup_notifier = true,
- 	.msi_capable = true,
- 	.bar[BAR_0] = { .type = BAR_PROGRAMMABLE, .only_64bit = true, },
- 	.bar[BAR_1] = { .type = BAR_64BIT_UPPER, },
--	.bar[BAR_2] = { .type = BAR_DISABLED, },
--	.bar[BAR_3] = { .type = BAR_DISABLED, },
--	.bar[BAR_4] = { .type = BAR_DISABLED, },
--	.bar[BAR_5] = { .type = BAR_DISABLED, },
-+	.bar[BAR_2] = {
-+		.type = BAR_RESERVED,
-+		.only_64bit = true,
-+		.nr_rsvd_regions = ARRAY_SIZE(tegra194_bar2_rsvd),
-+		.rsvd_regions = tegra194_bar2_rsvd,
-+	},
-+	.bar[BAR_3] = { .type = BAR_64BIT_UPPER, },
-+	.bar[BAR_4] = {
-+		.type = BAR_RESERVED,
-+		.only_64bit = true,
-+		.nr_rsvd_regions = ARRAY_SIZE(tegra194_bar4_rsvd),
-+		.rsvd_regions = tegra194_bar4_rsvd,
-+	},
-+	.bar[BAR_5] = { .type = BAR_64BIT_UPPER, },
- 	.align = SZ_64K,
- };
- 
--- 
-2.34.1
+		if (param == PIN_CONFIG_LEVEL || param == PIN_CONFIG_INPUT_ENABLE) {
+			/*
+			 * Check for gpio driver not being probed yet.
+
+>  			 * The lock makes sure that either gpio-probe has completed
+>  			 * or the gpio driver hasn't probed yet.
+>  			 */
+> -			mutex_lock(&bank->deferred_lock);
+> -			if (!gpio || !gpio->direction_output) {
+> -				rc = rockchip_pinconf_defer_pin(bank, pin - bank->pin_base, param,
+> -								arg);
+> -				mutex_unlock(&bank->deferred_lock);
+> -				if (rc)
+> -					return rc;
+> -
+> -				break;
+> +			scoped_guard(mutex, &bank->deferred_lock) {
+> +				if (!gpio || !gpio->direction_output) {
+> +					rc = rockchip_pinconf_defer_pin(bank,
+> +									pin - bank->pin_base,
+> +									param, arg);
+> +					if (rc)
+> +						return rc;
+> +					break;
+
+I think there is an unintentional change here.
+
+scoped_guard() is implemented by a for loop. So the break statement is now
+breaking out of the scoped_guard() scope rather than breaking out of the
+outer for loop.
+
+> +				}
+>  			}
+> -			mutex_unlock(&bank->deferred_lock);
+>  		}
+>  
+>  		switch (param) {
+> 
 
