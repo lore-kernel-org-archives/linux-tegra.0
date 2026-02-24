@@ -1,191 +1,194 @@
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012018.outbound.protection.outlook.com [52.101.43.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DED93A7F6B;
-	Tue, 24 Feb 2026 17:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771952558; cv=fail; b=SjZ5ZDzi1vCvG/YsmSFnSQLs7Pb9MzmCbaOoXjAcszn8tpsflNnU2sxBvRe4xK+PsOHZ6HOxoEo7MkAjupRXabQdoCdxsHSoOhGN3fZGGh7n8TGpUBWwu8/Jx6UhqpeYRQDYNu/LDSd/6BBchdBcScwrORrkMu+yZ8kyNWVetfg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771952558; c=relaxed/simple;
-	bh=6dZRSAnaHXzSVGw3mwFPwPFAkVU62O9nTfzqiEypus8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MXDQSPzj55UNtpXFMj9XkYyo3bPDcZVHpsk47elda4CqzGJsUFEYsJ+fsYTVJWLeNrLuLEAjyWAnGwyEM3hFnA8aw5QPK8z8J1XK6kjZkQ33T5Wph9LyeO+L7+cHMw0Hr8TQeejKvBhabJsX3VdE3cnKEwpuTVZ+8S9LJhS8BfQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KztPFskB; arc=fail smtp.client-ip=52.101.43.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D483A963E;
+	Tue, 24 Feb 2026 17:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771955761; cv=none; b=S7C2msLnwmj2EAcI/gGMB3ZeCDiC1xI66XmlVMyOQN312sqESwP3Gx1tMAr9qRpfSUMBrdzTsLSbx9IhNygoSei0YthItp3nPLXS9FcgY9NYz8gxTP9wzFKPBrNmV0HDV4Z9VsGL+ukX52pvT2sbWUddN0ozLeoxaUddi78Tun4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771955761; c=relaxed/simple;
+	bh=QKhb6gfqeqWF4M1NfdEZ6xd9pTG5nQh9Ci3Hs/v4UZg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MKQCeKVdLcl1g5iSs8GNXsAwL3HiWJ5ELJYHO3h6PqAwtJJwUp+Ykr4Y4Qn+mu/jRa6/SRHBIO48XIqXQ0FlpPAxKs4Jfyt5T2tOPt0q/X19EM8XwQD/unPpJv2nB7chRDbDc8U8J3m3SjFchqR2bmbYKmtNJcSYyC/WQkB4bKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KHZmVi3g; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KztPFskB"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vDbVRRPjLgE1fvpf2ExiVybUt3tYyl3Mz/nz349zXNC+hO2iFEEnPj9w2PgP1wj5Djzirm0m1bh1U9cSd/JPnxJAZRHnYErZCDaMtu7/iE2mut4Jy6NdUBI5yD5rw0Y2yQYJX7hZRjIySh4ddkuqAmOjX7FOwvyXVJMvqfdFJ4Ynu9jN/mufy0Q11J6I/e+eKL2zEWkobu/y9a3j5RYw3hNtW696+RxN+Kt6CjAkntlkBK923N1miISdqTL+K1YtXtv+If9smORa1rWehwiDwXCvO4w7+bFgHPvDiavnnSxE2B0CfRvTdOXKrIkKQMiHeS+yQCKtoR0owtUqo6r2Jg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0j4AT4sbpBZpy64+zQXObZzU6BiRvXHQ4OFiEvSEQnw=;
- b=hKpc2euoVSnVSXBMs6SJFLDnwUUqKiLn84bh/zQZUhilcXuAtnBLYOQWPCnAd3mL9vOL4J+MqzrOnehCq1obZfZDWNqnWZn5hTBWyuSCO/Nm8xCndGhUDXRM1nqk/ObIbg9Z39+fflv+NnBRpae9YFFWpJ7+SvZb/6P25FBGJ5Chzn4XHRN/+7ekOIIzICPegeXoTV6LTi1WZn72Ub0nPtmm27axGXnph2thL4LiXQuiFwazGl7dmhTLuztZ83QE6QfVGKCjc57eID7ynnXzMgb5FrFqzhjRnOFGf+x5GRtZXpgp36qvkuufh4YGuhLKGZf1hGbFCeU9PikO5KQHwQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0j4AT4sbpBZpy64+zQXObZzU6BiRvXHQ4OFiEvSEQnw=;
- b=KztPFskB7B3lJaJ3Uk0WdU6CLzVZE/J6APVlbjSCTNl10Lfoyr7b5HOP+Klr/PX5dZn6F9S6fuiqYxwRAaK5BdxN1yj9ghM+bH026el8zDGnypN0KLFhBH2Q4w8rXLwc3MeH1RWxhyixfEIUhlshwrMB7KhRvjOH/+C7e2fOoEpZ5ElyxHK0B770EiD4BIWCvoOERWpSi3XlfBpy3jHRtjWYmWk2v5GkI6t/ULixC9NLW1pgwP7Ird7eY2iG91EtPKqQ05UWKlNTG0H4kX4WVCCUensaUNlmJJ/eNFg1FXQHQx3JSXCMBXLT4V6jxg6dnYuacmsVHVsGKgd+hoUEPw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
- by IA1PR12MB7663.namprd12.prod.outlook.com (2603:10b6:208:424::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.22; Tue, 24 Feb
- 2026 17:02:31 +0000
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391%5]) with mapi id 15.20.9632.017; Tue, 24 Feb 2026
- 17:02:30 +0000
-Message-ID: <e7944c01-5ede-445e-94df-ce1006414a0d@nvidia.com>
-Date: Tue, 24 Feb 2026 17:02:24 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/8] dmaengine: tegra: Make reset control optional
-To: Akhil R <akhilrajeev@nvidia.com>, frank.li@nxp.com
-Cc: Frank.Li@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- dmaengine@vger.kernel.org, krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org, p.zabel@pengutronix.de, robh@kernel.org,
- thierry.reding@gmail.com, vkoul@kernel.org
-References: <aZStyRaoMYBlNOSY@lizhi-Precision-Tower-5810>
- <20260224053922.43058-1-akhilrajeev@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20260224053922.43058-1-akhilrajeev@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO3P123CA0029.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:388::19) To DS2PR12MB9750.namprd12.prod.outlook.com
- (2603:10b6:8:2b0::12)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KHZmVi3g"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20710C116D0;
+	Tue, 24 Feb 2026 17:56:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771955761;
+	bh=QKhb6gfqeqWF4M1NfdEZ6xd9pTG5nQh9Ci3Hs/v4UZg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KHZmVi3g+j4VAdT4fW8Shq4B9qpabNCL6IyfdQW3M9q3DYyPcDY2OeT66plyDPg9k
+	 LRy6YI3KMcUbzOPciP6v7zglajAwrxyEvyTnZl5XtZUb72N9rJH8W83joBnRYKo5dh
+	 jVSb5mi3xkgiPVgoqkcdq7UtpGjGRZTj8jvxqgxwIXmOJgLETWDUG2cb7agIxTJ5uX
+	 /egja3m8Lc5NVeXxhFb4vb3Hd+yV3IFsRJxi9WqLYfnoXdxYGGtzcrsH4Pb60E8L4t
+	 e2AjC08WVVZcEWpKWd+VpM7UZ3HXZuIsQp6AXPLdfcoz9oIk7VWYzcffaaYgOeZXfm
+	 t6MOtIz6IzppA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1vuwda-0000000DRDg-2gJ4;
+	Tue, 24 Feb 2026 17:55:58 +0000
+Date: Tue, 24 Feb 2026 17:55:58 +0000
+Message-ID: <86ecma9gb5.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Sumit Gupta <sumitg@nvidia.com>
+Cc: <catalin.marinas@arm.com>,
+	<will@kernel.org>,
+	<zhanjie9@hisilicon.com>,
+	<zhenglifeng1@huawei.com>,
+	<viresh.kumar@linaro.org>,
+	<rafael@kernel.org>,
+	<beata.michalska@arm.com>,
+	<pierre.gondois@arm.com>,
+	<ionela.voinescu@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>,
+	<treding@nvidia.com>,
+	<jonathanh@nvidia.com>,
+	<bbasu@nvidia.com>
+Subject: Re: [PATCH v2] arm64: topology: Fix false warning in counters_read_on_cpu() for same-CPU reads
+In-Reply-To: <20260224092714.1242141-1-sumitg@nvidia.com>
+References: <20260224092714.1242141-1-sumitg@nvidia.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|IA1PR12MB7663:EE_
-X-MS-Office365-Filtering-Correlation-Id: 36b10118-fd05-43bc-3344-08de73c67ec9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MjVYSDZBaTlUam54eC9vUmdKZHlibXc4c1FIQW1UR0xWM09PQy9KR3QyaGk2?=
- =?utf-8?B?ZTZKNXZXVzU5MnU4U3c2VjRrV29odGpVckdKMnRXRmtSUFVOUklHeFBoNStq?=
- =?utf-8?B?Q05jVmxKUGFxZWxJdTNYVE43Um0yaE1JQThubXhtcVhmQnM5QkNhU2VZbi85?=
- =?utf-8?B?WlFnMHRNZjNxRmlpWUVacjNEL3lLbTBZZm1ZSStPZi8yTVhHWHErSTY0dG94?=
- =?utf-8?B?K0ZVVEdLNnNYZXRlMHNEUE5qMnZtQTFCbDVzWmd3aGxQZ2NLTjlLT01qdmxp?=
- =?utf-8?B?Ym5kTkdqdUV2dWtzeUZHV21BOVdNZmpiSUJRdG04NTQ1bUVRWWVQaWgzVFAw?=
- =?utf-8?B?dTlmRGJLMWlPSjlRclpCeXNzSlZtdFUwZUZUL01tUjMyenZRWG9JZ3dQbUd6?=
- =?utf-8?B?dStQamt0a0RMZnJ2cTlVRVIzRVluRmM3Z09PbDRJSWJlV3hIdEpvWGl1M0Zo?=
- =?utf-8?B?QUFyWlhyc3VDUUJ1UlhrS2hJWVFTVGV1TE5OKzBrRTVhVEFWWnAvaFB6ek93?=
- =?utf-8?B?d0pOOTRwQXdhQ0xTc2djWWk4RlVuZkJZcHU4UHZZaE02RS9XZ2tuYjZOeXJ6?=
- =?utf-8?B?NlFwcVFQemFINVZvTWNXYy95LzFpZCtNVnB6a1ZxNFpEbDlvUGJoV1cwTmpC?=
- =?utf-8?B?Rnh0NitqWndnU1RORUtxMVFvaGdVWGh4TERtMnBOaU9CS2YxMGVBb0hKM1Zk?=
- =?utf-8?B?b3NUcE9IMG1KYWNOTWRsL1dQS0dXQmNKTmpyUGh4TEtvVjJQSkNYSnEwckFq?=
- =?utf-8?B?WXdRaWNGQWpINlVhM2xZZE1GNW0vNjVOT3RNek15bGxDSURpbW92SVFzelZh?=
- =?utf-8?B?WW5rWkIvL25FZ1M4RWVEMElQZDNFYmY0MjJwV2VTQnlYVDZvSUI5WXBDUFNi?=
- =?utf-8?B?L0lzdGJqRy9Kc1N6QnBMa1VhNy9DazNaQ0VaVm1vQ1FoZDFxY3Vwd2xzd0J3?=
- =?utf-8?B?ekkzRmpCMjZYU2VpcDB2V3lkZTVWWjNMYkxOQkxDNHMvZGxNMURHUmQ2QkpM?=
- =?utf-8?B?NVpXY2oxVE9qZmRSUE1RTDJLanZXeW5URzZPV044Ryt4N1V4enM1RlI1MDR1?=
- =?utf-8?B?SE8xZlFudnkwaDltd3BIUzd1UTI4K0d3K0xSTzdwS2grcnJ2QVpIVDY4MzFS?=
- =?utf-8?B?YldzdlJYVkpYREdVdVNpS2daQnVKUnVGNXZXczJ4USs3NVU3WUhtaVhueXlv?=
- =?utf-8?B?ZkVUT3MwdS9JbWwzeCtod3NBdDE1Y3hNaGg1N0NBenJYU01WVnF0S1pvWmgx?=
- =?utf-8?B?WjBwM3V1Ny8xK3JVRkRaczF1WlFxVVFYZDZHdHphL1dzZ0EwMG9WYXl3V1BG?=
- =?utf-8?B?NGFVRXZobW9aZXlIM2J4c2RJK29ETjVuMkRvRXZhWHhaRTF4QXUzc3RsUVF1?=
- =?utf-8?B?eE5GUWQ5QXRPSE4yRlVNN3hPU3Q5Z2lUUDgxbUw0UnExOFMrdmE2MWJ1ZjNN?=
- =?utf-8?B?cytiZUNUMlVjRVAvcDJOK1BrRUMwTVp2WU9HdFc2dU9Hem90c1I5d2xFR0Zw?=
- =?utf-8?B?blgyUldZeDhDaXV0d3hpVDduU0EwZEw0QjRFMk1aWDQ1N0pkWjBVU1lQNER0?=
- =?utf-8?B?djVXQVAra2FTRkhxM2Foa05Rc3FYOUpLUEJzTGhWa3lweE14RHVvVE1adTE1?=
- =?utf-8?B?cTdTWjJidlMrZ1JrTWZRTXZzZWxuOFBrNWN5QjNCYUxPOEFkZFcydTQ5aFcx?=
- =?utf-8?B?V0l2NkJPL2Q1c3lpUFViOFlqNUswVnFBZDVDd1doWWFMdzY3QTllcENBZDNZ?=
- =?utf-8?B?TDM3YStEcEtCM0xiNVlKakdoNHcxUWV2MlNoZ0IzTGNENThRVUpRdlZueHMy?=
- =?utf-8?B?Y1NTRTBYQmxDQ3ZlSTRZNUtLem9ZblUzRWpxRmpiSG1RUGZxMEF2VllEL3p3?=
- =?utf-8?B?S3c0Qm5KaFVUT2hBbmYwWld1WFMwOHUyYnZHbWxXejIreWQ0ekJqK00yZnNC?=
- =?utf-8?B?cUZUQnI2OWFkWXRtajhOZDB3VVFVdzdBZXFXTFU4RGdzNjE2eEpISFl5bDhr?=
- =?utf-8?B?eDk1dTRITm5KTmJsRng0dWlqS1lKejJmSGk5YVROdnUway9CVGZzeUtqV0VH?=
- =?utf-8?B?cENXUDlpTktEQkZIMDdrVTZqVFc2bWxXTlJOTElYUmN1Q01IbzNFTkNxWjFy?=
- =?utf-8?Q?Dp08=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dk40WTMrb0xpTzVFNktKU09VdjhQcU02Q3JBYWhoNTRMOHhPRlhLLy8rTGVP?=
- =?utf-8?B?d1FqelQzY01mNUZWaElsVEcrSkVMaFFvVGFxVGpIeHlRRjRrOWhNSHN2Z0wv?=
- =?utf-8?B?UG03MUJwajRQQjR0TVUzMkw0WEgrNTVic2JGNmtpRC9VaWdUVkFtdHAzOTBY?=
- =?utf-8?B?dmowYVdid0Vub1BaMWROMlJTZmNYZ1dWeWdOVThPK24zTEhCbitCSnp0Nkg0?=
- =?utf-8?B?cXpBOGQrSzVTYklwV3VZR0YxTEpTaTJyZmlrbzBxZW9TNXZTZjl4U2cxNFRa?=
- =?utf-8?B?eHJzaHZZWnRSa3VvdElMWUVtMTNBTWViMlJyL3YrRzFYeTFEN0Q5KzU2dWNo?=
- =?utf-8?B?OTlFTHA4Z2pOaWZHOG5uYzM1WU0zRmc4bnZQb29qd1B3a0x3dng2T0xFRnlC?=
- =?utf-8?B?NURrelNDa3pnV0pTUGwwY2hYV3lSL2xRaU9Ca3ZEMW5kZktKZURWNGtFRVZE?=
- =?utf-8?B?WE9GR1BSWjBnamtoRGt2NzIvcTkrSklBZ0E1T1FzUmZweGFrSElZeWh4TFFO?=
- =?utf-8?B?VzJoelNDK2dXbG95SlV5M3FWcUd3RGhmWDBEcXNrL2VOZUgvL0hqbysrUzdx?=
- =?utf-8?B?VnhYRUQrU2xBd2pnMFA3VkFjMkN2amsxanpnalVpdW8rZEJLR3JXZGx5S094?=
- =?utf-8?B?UDZwQzFydWF2dUdqQ1FjVGFkSS9xUTFwdnJVYnFtWmE2UWlOZTl0a2dUei9T?=
- =?utf-8?B?TUJIV0pQMkpVQlpSUkt1YmI1ZXFJOXYxOEZkRXVYcjNQTnhyNlJTYTI0OFU3?=
- =?utf-8?B?L0taaWREOExIcWpaRmZGcTlBTVl3RDk1NUFJYXdkMGd2UXZRZHBIUW9zczh2?=
- =?utf-8?B?MDRBQlV4WGFoWmt2V2toZHc4WURNdGRPR1V1NTR5OUtIcnlQbXFwVlJuQk9u?=
- =?utf-8?B?MjVleS9rbHJ4TFV4ZHltbk5UODVBM0V2bGRFUmk0Nzhic0R5WGE4bHVaY01D?=
- =?utf-8?B?NG9HSjJLdVVyTXhOMzk3VlQwSUxnZ3MxSkVrRktNVjMvR2g2WEJYNkJWZnRn?=
- =?utf-8?B?SHhXQVNQZElKU0hOdzA3N2xqMy91VnNpanM1eWMyZkNDMHl6SEhJTDNXa2JE?=
- =?utf-8?B?bk8yc1dvYWlJWnY3RUF0WUxFTkRtdXQvUUZkbXFvUjExOWNieVBQSThsbCtj?=
- =?utf-8?B?ZWNHYngzNEtFU2RDWDVWM2ZtZGg5Tzl4bjhWZFAxcjZaOXJSeTRZRyt4M1pH?=
- =?utf-8?B?aFpHRjhpYkVDRkxVZmwwcGErdE91UzQ0dzh4aUpJRGl0QlQvdXc5N05TOGFH?=
- =?utf-8?B?NGdFemxuQjFSdTY2cTY2ZzJKMHZMK2JhNmZ2eS81OUR0SVJOVEJOQ0d4RXYw?=
- =?utf-8?B?S2VkQ2h6TVd5TXdrRFpuQXJENkhSMC93bjVTQUo1dFdMS3R3eVBDM2lKbmFv?=
- =?utf-8?B?TWw0NjB4TkMzM25lWmZJbzBLaVdYL3drRmNrYi80SUJNK0lVZnZhT3N1MjEv?=
- =?utf-8?B?eStWS09CU2JpZEVkMlQwMndyNTVRcUMzSHI0M3JzV2hPR1AzTUpCVDU3c1Jl?=
- =?utf-8?B?VlU0OXpiMVg0cWp1Y0o1VUtQTHBZbzNrRmJpeG9SODl0anZ2eHo3VGZUamxK?=
- =?utf-8?B?RkxmeFY5b3RjQ281c3NXQnVqNjJGd0dTRXBzbmhJWmNqVkpqS2JMNWhqa1pV?=
- =?utf-8?B?ZlllRW5tdlRVMlA4Q3Roay90V3Rocjk3WlovV2grYWtOTUlzL2tNMDZDamo2?=
- =?utf-8?B?SjM5Z3lwbEphQVlpMnJNOWNMR0pwZUp0d3hIbVFmQ01YOC8xQjNNc09yWjJi?=
- =?utf-8?B?eWs1d0d4L2crSlZsMEpqWDl4akZzT0czY2YvS2dpY0xZSzlINGpJWUppbXlr?=
- =?utf-8?B?TkNkQVpxMThkRHRSOUZkcURJSWphbk5DV05aeEp4bzl3NTluZm9Ydmx2a1JU?=
- =?utf-8?B?bHlFVSsyb1RFaEI2eVljR3o4WjdKUjdhejRydmJCMXg2ei94MjJ3U090YnA2?=
- =?utf-8?B?a1VjQUJUeTFqekJJbmRYU2FxZ01RWGQ5MVlVSlpQL2lYSzFiMDdOUHY0NEVZ?=
- =?utf-8?B?WnE1VUwxbDZwWDUrYkxBWU5GWFJycVBWUUx4cDRnTnZqYm91b3VLeXNmaE9h?=
- =?utf-8?B?Q2FobG8vaWxpNjA4Yk9mWitORDFCVVhZaFI0V21Wb0pvNWJCak1KRit5WHdS?=
- =?utf-8?B?REZmOVdicnIvV1ZHeG41LzAxL1ZKQXJDcXhPZlRhcFVrMWJ0QTBRUHpZVEhr?=
- =?utf-8?B?NkpWSG5ZRVF2aG5ITlFwSjlSVHVRYTlEeG5XaDhaUEx0cFc2MWdBdkFlMlRO?=
- =?utf-8?B?M1kvdlhhYTBFRzNkRXFzWnVucWFIU1IrZFBoc2xQNStjcFZOMHRmMFlBZG1s?=
- =?utf-8?B?N2JlOGJYcEpWV0dlanBVSjhycWU3N25YYnFkNjZtOW43YmZPWFJMdz09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 36b10118-fd05-43bc-3344-08de73c67ec9
-X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2026 17:02:30.3154
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YgiqWsUW6tooOEA7mz5uWLSZsRvFZVa9Yytelzhg4druklE45O4XOfnNuKpbJNp4TEsp3hReKA2VYfmQhl3eCQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7663
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: sumitg@nvidia.com, catalin.marinas@arm.com, will@kernel.org, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, viresh.kumar@linaro.org, rafael@kernel.org, beata.michalska@arm.com, pierre.gondois@arm.com, ionela.voinescu@arm.com, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, bbasu@nvidia.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-
-On 24/02/2026 05:39, Akhil R wrote:
-> Hi Frank,
+On Tue, 24 Feb 2026 09:27:14 +0000,
+Sumit Gupta <sumitg@nvidia.com> wrote:
 > 
-> On Tue, 17 Feb 2026 13:04:57 -0500, Frank Li wrote:
->> On Tue, Feb 17, 2026 at 11:04:52PM +0530, Akhil R wrote:
->>> Tegra264 BPMP restricts access to GPCDMA reset control and the reset
->>
->> what's means of BPMP?
+> The counters_read_on_cpu() function warns when called with IRQs
+> disabled to prevent deadlock in smp_call_function_single(). However,
+> this warning is spurious when reading counters on the current CPU,
+> since no IPI is needed for same CPU reads.
 > 
-> BPMP is Boot and Power Management Processor which is a co-processor
-> in Tegra and runs a dedicated firmware. It manages the boot, clock,
-> reset etc. I will put the expansion in the commit message in the next
-> version. Do you suggest adding more details?
+> Commit 12eb8f4fff24 ("cpufreq: CPPC: Update FIE arch_freq_scale in
+> ticks for non-PCC regs") changed the CPPC Frequency Invariance Engine
+> to read AMU counters directly from the scheduler tick for non-PCC
+> register spaces (like FFH), instead of deferring to a kthread. This
+> means counters_read_on_cpu() is now called with IRQs disabled from
+> the tick handler, triggering the warning:
+> 
+> | WARNING: arch/arm64/kernel/topology.c:410 at counters_read_on_cpu
+> | ...
+> | Call trace:
+> |  counters_read_on_cpu+0x88/0xa8 (P)
+> |  cpc_read_ffh+0xdc/0x148
+> |  cpc_read+0x260/0x518
+> |  cppc_get_perf_ctrs+0xf0/0x398
+> |  __cppc_scale_freq_tick+0x4c/0x148 [cppc_cpufreq]
+> |  cppc_scale_freq_tick+0x44/0x88 [cppc_cpufreq]
+> |  topology_scale_freq_tick+0x34/0x58
+> |  sched_tick+0x58/0x300
+> |  update_process_times+0xcc/0x120
+> |  tick_nohz_handler+0xa8/0x260
+> |  __hrtimer_run_queues+0x154/0x360
+> |  hrtimer_interrupt+0xf4/0x2b0
+> |  arch_timer_handler_phys+0x4c/0x78
+> |  ....
+> |  CPPC Cpufreq:__cppc_scale_freq_tick: failed to read perf counters
+> |  ....
+> 
+> Fix this by calling the counter read function directly for same CPU
+> case, bypassing smp_call_function_single(). Use get_cpu() to disable
+> preemption, as the counter read functions call this_cpu_has_cap()
+> which requires a non-preemptible context.
+> 
+> Fixes: 997c021abc6e ("cpufreq: CPPC: Update FIE arch_freq_scale in ticks for non-PCC regs")
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> Reviewed-by: Jie Zhan <zhanjie9@hisilicon.com>
+> ---
+> v1 -> v2:
+>  - Rebased on v7.0-rc1
+>  - Updated Fixes tag to match upstream commit SHA
+> ---
+>  arch/arm64/kernel/topology.c | 21 +++++++++++++++++++--
+>  1 file changed, 19 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+> index 3fe1faab0362..c3e883e99aa0 100644
+> --- a/arch/arm64/kernel/topology.c
+> +++ b/arch/arm64/kernel/topology.c
+> @@ -400,12 +400,29 @@ static inline
+>  int counters_read_on_cpu(int cpu, smp_call_func_t func, u64 *val)
+>  {
+>  	/*
+> -	 * Abort call on counterless CPU or when interrupts are
+> -	 * disabled - can lead to deadlock in smp sync call.
+> +	 * Abort call on counterless CPU.
+>  	 */
+>  	if (!cpu_has_amu_feat(cpu))
+>  		return -EOPNOTSUPP;
+>  
+> +	/*
+> +	 * For same-CPU reads, call the function directly since no IPI
+> +	 * is needed and this is safe even with IRQs disabled.
+> +	 * Use get_cpu() to disable preemption as the counter read
+> +	 * functions call this_cpu_has_cap() which requires a
+> +	 * non-preemptible context.
+> +	 */
+> +	if (cpu == get_cpu()) {
+> +		func(val);
+> +		put_cpu();
+> +		return 0;
+> +	}
+> +	put_cpu();
 
-Technically you don't even need to mention BPMP here if it confuses 
-matters. We can just say that for "Tegra264 there is no reset available 
-for the driver to control and this is handled by boot firmware".
+A slightly more elegant way to write this would be:
 
-Jon
+diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+index 3fe1faab03620..83c7b346dc8cf 100644
+--- a/arch/arm64/kernel/topology.c
++++ b/arch/arm64/kernel/topology.c
+@@ -406,6 +406,13 @@ int counters_read_on_cpu(int cpu, smp_call_func_t func, u64 *val)
+ 	if (!cpu_has_amu_feat(cpu))
+ 		return -EOPNOTSUPP;
+ 
++	scoped_guard(preempt) {
++		if (cpu == raw_smp_processor_id()) {
++			func(val);
++			return 0;
++		}
++	}
++
+ 	if (WARN_ON_ONCE(irqs_disabled()))
+ 		return -EPERM;
+ 
+But I'm more concerned by the overall pattern of doing these things in
+random contexts. Going back to the original patch (997c021abc6e) that
+states:
+
+"However, this deferred update mechanism is unnecessary and introduces extra
+ overhead for non-PCC register spaces (e.g. System Memory or FFH), where
+ accessing the regs won't sleep and can be safely performed from the tick
+ context."
+
+Clearly, the AMU registers cannot be arbitrarily accessed without
+blocking when accessed from one CPU to another, so either this
+function is never called in a cross-cpu context (and the warning
+should be removed), or the premises of this change are wrong.
+
+Which one is it?
+
+Thanks,
+
+	M.
 
 -- 
-nvpublic
-
+Without deviation from the norm, progress is not possible.
