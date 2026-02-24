@@ -1,524 +1,191 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012018.outbound.protection.outlook.com [52.101.43.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5881D3A7833;
-	Tue, 24 Feb 2026 16:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771949450; cv=none; b=DlcqHEFZXIOphD1VTaoBM6/ZSI86oYJJPcyyYHzWwb7lFNRwWXkXFTN6rWCeuLHpi5RZyG81oBMVJuCEjDTadhHKL11Lu5AhT8o5D0ogqJaZhZRksZY17V7NtwrgZz+MLXdyeFlrnyOFOYdR8P0XnMySjvw2TvVT1kCirs/y+Og=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771949450; c=relaxed/simple;
-	bh=4oicak35lqjnoh/fm3bf3sURNVamYXVZDbvfW+Z7bB8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JDYhwmccVAiQ0eBHBug1wOv/VYsx94p/pa8gKiKCnKsfESegScWnYQ2pyb+hOmMq1OGDO5lfWlZ2ZAm8qxYUs8yHcYmlLb12oWLFX7dwFGLu9hcRaPo28Y+zhphOVhRPSA+c0QpC2fsOVtPGL9rip1P8Zj9x7oh5ernhgX1NX2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eDK7SwjK; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DED93A7F6B;
+	Tue, 24 Feb 2026 17:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771952558; cv=fail; b=SjZ5ZDzi1vCvG/YsmSFnSQLs7Pb9MzmCbaOoXjAcszn8tpsflNnU2sxBvRe4xK+PsOHZ6HOxoEo7MkAjupRXabQdoCdxsHSoOhGN3fZGGh7n8TGpUBWwu8/Jx6UhqpeYRQDYNu/LDSd/6BBchdBcScwrORrkMu+yZ8kyNWVetfg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771952558; c=relaxed/simple;
+	bh=6dZRSAnaHXzSVGw3mwFPwPFAkVU62O9nTfzqiEypus8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MXDQSPzj55UNtpXFMj9XkYyo3bPDcZVHpsk47elda4CqzGJsUFEYsJ+fsYTVJWLeNrLuLEAjyWAnGwyEM3hFnA8aw5QPK8z8J1XK6kjZkQ33T5Wph9LyeO+L7+cHMw0Hr8TQeejKvBhabJsX3VdE3cnKEwpuTVZ+8S9LJhS8BfQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KztPFskB; arc=fail smtp.client-ip=52.101.43.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eDK7SwjK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A095C116D0;
-	Tue, 24 Feb 2026 16:10:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771949449;
-	bh=4oicak35lqjnoh/fm3bf3sURNVamYXVZDbvfW+Z7bB8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=eDK7SwjKhWGDXgt16ET7GHXReNwzxd1C4Fx5+bbmErsH/zTZSwy1omz45zvIbuJRg
-	 rHb93BR2fnMghYp3a5vryUmhDgt7fInWih5zTiHsXF7xkes//U6GgolY0ECPNtPhd+
-	 /UWUVDq50g7eHO2J8TVHCc1V/vLc7QRjsJFMQEt3taz4K/hDPJSCxOLio7rIWASTbe
-	 IfBojeu+VGQUZL1ilYqukc2GWDr1w10xk+czRomSFhiiMXQkW4gd5ze79LfxFJiXNk
-	 PQuFBry+ESy6TzF9/+knoBtJVsyKTbH2Px/0iSYFlIkVAY5tSetrOLsWlmA6ysSeWw
-	 K5iU52xGYmzbw==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Tue, 24 Feb 2026 17:10:29 +0100
-Subject: [PATCH v5 4/4] drm/atomic: Remove state argument to
- drm_atomic_private_obj_init
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KztPFskB"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vDbVRRPjLgE1fvpf2ExiVybUt3tYyl3Mz/nz349zXNC+hO2iFEEnPj9w2PgP1wj5Djzirm0m1bh1U9cSd/JPnxJAZRHnYErZCDaMtu7/iE2mut4Jy6NdUBI5yD5rw0Y2yQYJX7hZRjIySh4ddkuqAmOjX7FOwvyXVJMvqfdFJ4Ynu9jN/mufy0Q11J6I/e+eKL2zEWkobu/y9a3j5RYw3hNtW696+RxN+Kt6CjAkntlkBK923N1miISdqTL+K1YtXtv+If9smORa1rWehwiDwXCvO4w7+bFgHPvDiavnnSxE2B0CfRvTdOXKrIkKQMiHeS+yQCKtoR0owtUqo6r2Jg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0j4AT4sbpBZpy64+zQXObZzU6BiRvXHQ4OFiEvSEQnw=;
+ b=hKpc2euoVSnVSXBMs6SJFLDnwUUqKiLn84bh/zQZUhilcXuAtnBLYOQWPCnAd3mL9vOL4J+MqzrOnehCq1obZfZDWNqnWZn5hTBWyuSCO/Nm8xCndGhUDXRM1nqk/ObIbg9Z39+fflv+NnBRpae9YFFWpJ7+SvZb/6P25FBGJ5Chzn4XHRN/+7ekOIIzICPegeXoTV6LTi1WZn72Ub0nPtmm27axGXnph2thL4LiXQuiFwazGl7dmhTLuztZ83QE6QfVGKCjc57eID7ynnXzMgb5FrFqzhjRnOFGf+x5GRtZXpgp36qvkuufh4YGuhLKGZf1hGbFCeU9PikO5KQHwQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0j4AT4sbpBZpy64+zQXObZzU6BiRvXHQ4OFiEvSEQnw=;
+ b=KztPFskB7B3lJaJ3Uk0WdU6CLzVZE/J6APVlbjSCTNl10Lfoyr7b5HOP+Klr/PX5dZn6F9S6fuiqYxwRAaK5BdxN1yj9ghM+bH026el8zDGnypN0KLFhBH2Q4w8rXLwc3MeH1RWxhyixfEIUhlshwrMB7KhRvjOH/+C7e2fOoEpZ5ElyxHK0B770EiD4BIWCvoOERWpSi3XlfBpy3jHRtjWYmWk2v5GkI6t/ULixC9NLW1pgwP7Ird7eY2iG91EtPKqQ05UWKlNTG0H4kX4WVCCUensaUNlmJJ/eNFg1FXQHQx3JSXCMBXLT4V6jxg6dnYuacmsVHVsGKgd+hoUEPw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
+ by IA1PR12MB7663.namprd12.prod.outlook.com (2603:10b6:208:424::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.22; Tue, 24 Feb
+ 2026 17:02:31 +0000
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391%5]) with mapi id 15.20.9632.017; Tue, 24 Feb 2026
+ 17:02:30 +0000
+Message-ID: <e7944c01-5ede-445e-94df-ce1006414a0d@nvidia.com>
+Date: Tue, 24 Feb 2026 17:02:24 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/8] dmaengine: tegra: Make reset control optional
+To: Akhil R <akhilrajeev@nvidia.com>, frank.li@nxp.com
+Cc: Frank.Li@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ dmaengine@vger.kernel.org, krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org, p.zabel@pengutronix.de, robh@kernel.org,
+ thierry.reding@gmail.com, vkoul@kernel.org
+References: <aZStyRaoMYBlNOSY@lizhi-Precision-Tower-5810>
+ <20260224053922.43058-1-akhilrajeev@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20260224053922.43058-1-akhilrajeev@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO3P123CA0029.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:388::19) To DS2PR12MB9750.namprd12.prod.outlook.com
+ (2603:10b6:8:2b0::12)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260224-drm-private-obj-reset-v5-4-5a72f8ec9934@kernel.org>
-References: <20260224-drm-private-obj-reset-v5-0-5a72f8ec9934@kernel.org>
-In-Reply-To: <20260224-drm-private-obj-reset-v5-0-5a72f8ec9934@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Liviu Dudau <liviu.dudau@arm.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Paul Cercueil <paul@crapouillou.net>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Rodrigo Siqueira <siqueira@igalia.com>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
- amd-gfx@lists.freedesktop.org, linux-mips@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
- linux-tegra@vger.kernel.org, Jessica Zhang <jesszhan0024@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=17214; i=mripard@kernel.org;
- h=from:subject:message-id; bh=4oicak35lqjnoh/fm3bf3sURNVamYXVZDbvfW+Z7bB8=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDJlzz1Ynmn/W37mfXWzJsXvTi85O+HbkwPw4/venuK4V6
- p356dq3rmMqC4MwJ4OsmCLLE5mw08vbF1c52K/8ATOHlQlkCAMXpwBM5JAuY8OHbiZdlgdVnE3n
- rE/U5qwKMjl47Pt9+z0MYUbHon7aJITYmtd8/jXF7+QCG2eXc5nzmBjrfXZq63sqvPNaPF1I+Ar
- fDc51a1YdPbIj132mlJ7U0W3lAk8DuSPfNy1f62tec+9SJa8GAA==
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|IA1PR12MB7663:EE_
+X-MS-Office365-Filtering-Correlation-Id: 36b10118-fd05-43bc-3344-08de73c67ec9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MjVYSDZBaTlUam54eC9vUmdKZHlibXc4c1FIQW1UR0xWM09PQy9KR3QyaGk2?=
+ =?utf-8?B?ZTZKNXZXVzU5MnU4U3c2VjRrV29odGpVckdKMnRXRmtSUFVOUklHeFBoNStq?=
+ =?utf-8?B?Q05jVmxKUGFxZWxJdTNYVE43Um0yaE1JQThubXhtcVhmQnM5QkNhU2VZbi85?=
+ =?utf-8?B?WlFnMHRNZjNxRmlpWUVacjNEL3lLbTBZZm1ZSStPZi8yTVhHWHErSTY0dG94?=
+ =?utf-8?B?K0ZVVEdLNnNYZXRlMHNEUE5qMnZtQTFCbDVzWmd3aGxQZ2NLTjlLT01qdmxp?=
+ =?utf-8?B?Ym5kTkdqdUV2dWtzeUZHV21BOVdNZmpiSUJRdG04NTQ1bUVRWWVQaWgzVFAw?=
+ =?utf-8?B?dTlmRGJLMWlPSjlRclpCeXNzSlZtdFUwZUZUL01tUjMyenZRWG9JZ3dQbUd6?=
+ =?utf-8?B?dStQamt0a0RMZnJ2cTlVRVIzRVluRmM3Z09PbDRJSWJlV3hIdEpvWGl1M0Zo?=
+ =?utf-8?B?QUFyWlhyc3VDUUJ1UlhrS2hJWVFTVGV1TE5OKzBrRTVhVEFWWnAvaFB6ek93?=
+ =?utf-8?B?d0pOOTRwQXdhQ0xTc2djWWk4RlVuZkJZcHU4UHZZaE02RS9XZ2tuYjZOeXJ6?=
+ =?utf-8?B?NlFwcVFQemFINVZvTWNXYy95LzFpZCtNVnB6a1ZxNFpEbDlvUGJoV1cwTmpC?=
+ =?utf-8?B?Rnh0NitqWndnU1RORUtxMVFvaGdVWGh4TERtMnBOaU9CS2YxMGVBb0hKM1Zk?=
+ =?utf-8?B?b3NUcE9IMG1KYWNOTWRsL1dQS0dXQmNKTmpyUGh4TEtvVjJQSkNYSnEwckFq?=
+ =?utf-8?B?WXdRaWNGQWpINlVhM2xZZE1GNW0vNjVOT3RNek15bGxDSURpbW92SVFzelZh?=
+ =?utf-8?B?WW5rWkIvL25FZ1M4RWVEMElQZDNFYmY0MjJwV2VTQnlYVDZvSUI5WXBDUFNi?=
+ =?utf-8?B?L0lzdGJqRy9Kc1N6QnBMa1VhNy9DazNaQ0VaVm1vQ1FoZDFxY3Vwd2xzd0J3?=
+ =?utf-8?B?ekkzRmpCMjZYU2VpcDB2V3lkZTVWWjNMYkxOQkxDNHMvZGxNMURHUmQ2QkpM?=
+ =?utf-8?B?NVpXY2oxVE9qZmRSUE1RTDJLanZXeW5URzZPV044Ryt4N1V4enM1RlI1MDR1?=
+ =?utf-8?B?SE8xZlFudnkwaDltd3BIUzd1UTI4K0d3K0xSTzdwS2grcnJ2QVpIVDY4MzFS?=
+ =?utf-8?B?YldzdlJYVkpYREdVdVNpS2daQnVKUnVGNXZXczJ4USs3NVU3WUhtaVhueXlv?=
+ =?utf-8?B?ZkVUT3MwdS9JbWwzeCtod3NBdDE1Y3hNaGg1N0NBenJYU01WVnF0S1pvWmgx?=
+ =?utf-8?B?WjBwM3V1Ny8xK3JVRkRaczF1WlFxVVFYZDZHdHphL1dzZ0EwMG9WYXl3V1BG?=
+ =?utf-8?B?NGFVRXZobW9aZXlIM2J4c2RJK29ETjVuMkRvRXZhWHhaRTF4QXUzc3RsUVF1?=
+ =?utf-8?B?eE5GUWQ5QXRPSE4yRlVNN3hPU3Q5Z2lUUDgxbUw0UnExOFMrdmE2MWJ1ZjNN?=
+ =?utf-8?B?cytiZUNUMlVjRVAvcDJOK1BrRUMwTVp2WU9HdFc2dU9Hem90c1I5d2xFR0Zw?=
+ =?utf-8?B?blgyUldZeDhDaXV0d3hpVDduU0EwZEw0QjRFMk1aWDQ1N0pkWjBVU1lQNER0?=
+ =?utf-8?B?djVXQVAra2FTRkhxM2Foa05Rc3FYOUpLUEJzTGhWa3lweE14RHVvVE1adTE1?=
+ =?utf-8?B?cTdTWjJidlMrZ1JrTWZRTXZzZWxuOFBrNWN5QjNCYUxPOEFkZFcydTQ5aFcx?=
+ =?utf-8?B?V0l2NkJPL2Q1c3lpUFViOFlqNUswVnFBZDVDd1doWWFMdzY3QTllcENBZDNZ?=
+ =?utf-8?B?TDM3YStEcEtCM0xiNVlKakdoNHcxUWV2MlNoZ0IzTGNENThRVUpRdlZueHMy?=
+ =?utf-8?B?Y1NTRTBYQmxDQ3ZlSTRZNUtLem9ZblUzRWpxRmpiSG1RUGZxMEF2VllEL3p3?=
+ =?utf-8?B?S3c0Qm5KaFVUT2hBbmYwWld1WFMwOHUyYnZHbWxXejIreWQ0ekJqK00yZnNC?=
+ =?utf-8?B?cUZUQnI2OWFkWXRtajhOZDB3VVFVdzdBZXFXTFU4RGdzNjE2eEpISFl5bDhr?=
+ =?utf-8?B?eDk1dTRITm5KTmJsRng0dWlqS1lKejJmSGk5YVROdnUway9CVGZzeUtqV0VH?=
+ =?utf-8?B?cENXUDlpTktEQkZIMDdrVTZqVFc2bWxXTlJOTElYUmN1Q01IbzNFTkNxWjFy?=
+ =?utf-8?Q?Dp08=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dk40WTMrb0xpTzVFNktKU09VdjhQcU02Q3JBYWhoNTRMOHhPRlhLLy8rTGVP?=
+ =?utf-8?B?d1FqelQzY01mNUZWaElsVEcrSkVMaFFvVGFxVGpIeHlRRjRrOWhNSHN2Z0wv?=
+ =?utf-8?B?UG03MUJwajRQQjR0TVUzMkw0WEgrNTVic2JGNmtpRC9VaWdUVkFtdHAzOTBY?=
+ =?utf-8?B?dmowYVdid0Vub1BaMWROMlJTZmNYZ1dWeWdOVThPK24zTEhCbitCSnp0Nkg0?=
+ =?utf-8?B?cXpBOGQrSzVTYklwV3VZR0YxTEpTaTJyZmlrbzBxZW9TNXZTZjl4U2cxNFRa?=
+ =?utf-8?B?eHJzaHZZWnRSa3VvdElMWUVtMTNBTWViMlJyL3YrRzFYeTFEN0Q5KzU2dWNo?=
+ =?utf-8?B?OTlFTHA4Z2pOaWZHOG5uYzM1WU0zRmc4bnZQb29qd1B3a0x3dng2T0xFRnlC?=
+ =?utf-8?B?NURrelNDa3pnV0pTUGwwY2hYV3lSL2xRaU9Ca3ZEMW5kZktKZURWNGtFRVZE?=
+ =?utf-8?B?WE9GR1BSWjBnamtoRGt2NzIvcTkrSklBZ0E1T1FzUmZweGFrSElZeWh4TFFO?=
+ =?utf-8?B?VzJoelNDK2dXbG95SlV5M3FWcUd3RGhmWDBEcXNrL2VOZUgvL0hqbysrUzdx?=
+ =?utf-8?B?VnhYRUQrU2xBd2pnMFA3VkFjMkN2amsxanpnalVpdW8rZEJLR3JXZGx5S094?=
+ =?utf-8?B?UDZwQzFydWF2dUdqQ1FjVGFkSS9xUTFwdnJVYnFtWmE2UWlOZTl0a2dUei9T?=
+ =?utf-8?B?TUJIV0pQMkpVQlpSUkt1YmI1ZXFJOXYxOEZkRXVYcjNQTnhyNlJTYTI0OFU3?=
+ =?utf-8?B?L0taaWREOExIcWpaRmZGcTlBTVl3RDk1NUFJYXdkMGd2UXZRZHBIUW9zczh2?=
+ =?utf-8?B?MDRBQlV4WGFoWmt2V2toZHc4WURNdGRPR1V1NTR5OUtIcnlQbXFwVlJuQk9u?=
+ =?utf-8?B?MjVleS9rbHJ4TFV4ZHltbk5UODVBM0V2bGRFUmk0Nzhic0R5WGE4bHVaY01D?=
+ =?utf-8?B?NG9HSjJLdVVyTXhOMzk3VlQwSUxnZ3MxSkVrRktNVjMvR2g2WEJYNkJWZnRn?=
+ =?utf-8?B?SHhXQVNQZElKU0hOdzA3N2xqMy91VnNpanM1eWMyZkNDMHl6SEhJTDNXa2JE?=
+ =?utf-8?B?bk8yc1dvYWlJWnY3RUF0WUxFTkRtdXQvUUZkbXFvUjExOWNieVBQSThsbCtj?=
+ =?utf-8?B?ZWNHYngzNEtFU2RDWDVWM2ZtZGg5Tzl4bjhWZFAxcjZaOXJSeTRZRyt4M1pH?=
+ =?utf-8?B?aFpHRjhpYkVDRkxVZmwwcGErdE91UzQ0dzh4aUpJRGl0QlQvdXc5N05TOGFH?=
+ =?utf-8?B?NGdFemxuQjFSdTY2cTY2ZzJKMHZMK2JhNmZ2eS81OUR0SVJOVEJOQ0d4RXYw?=
+ =?utf-8?B?S2VkQ2h6TVd5TXdrRFpuQXJENkhSMC93bjVTQUo1dFdMS3R3eVBDM2lKbmFv?=
+ =?utf-8?B?TWw0NjB4TkMzM25lWmZJbzBLaVdYL3drRmNrYi80SUJNK0lVZnZhT3N1MjEv?=
+ =?utf-8?B?eStWS09CU2JpZEVkMlQwMndyNTVRcUMzSHI0M3JzV2hPR1AzTUpCVDU3c1Jl?=
+ =?utf-8?B?VlU0OXpiMVg0cWp1Y0o1VUtQTHBZbzNrRmJpeG9SODl0anZ2eHo3VGZUamxK?=
+ =?utf-8?B?RkxmeFY5b3RjQ281c3NXQnVqNjJGd0dTRXBzbmhJWmNqVkpqS2JMNWhqa1pV?=
+ =?utf-8?B?ZlllRW5tdlRVMlA4Q3Roay90V3Rocjk3WlovV2grYWtOTUlzL2tNMDZDamo2?=
+ =?utf-8?B?SjM5Z3lwbEphQVlpMnJNOWNMR0pwZUp0d3hIbVFmQ01YOC8xQjNNc09yWjJi?=
+ =?utf-8?B?eWs1d0d4L2crSlZsMEpqWDl4akZzT0czY2YvS2dpY0xZSzlINGpJWUppbXlr?=
+ =?utf-8?B?TkNkQVpxMThkRHRSOUZkcURJSWphbk5DV05aeEp4bzl3NTluZm9Ydmx2a1JU?=
+ =?utf-8?B?bHlFVSsyb1RFaEI2eVljR3o4WjdKUjdhejRydmJCMXg2ei94MjJ3U090YnA2?=
+ =?utf-8?B?a1VjQUJUeTFqekJJbmRYU2FxZ01RWGQ5MVlVSlpQL2lYSzFiMDdOUHY0NEVZ?=
+ =?utf-8?B?WnE1VUwxbDZwWDUrYkxBWU5GWFJycVBWUUx4cDRnTnZqYm91b3VLeXNmaE9h?=
+ =?utf-8?B?Q2FobG8vaWxpNjA4Yk9mWitORDFCVVhZaFI0V21Wb0pvNWJCak1KRit5WHdS?=
+ =?utf-8?B?REZmOVdicnIvV1ZHeG41LzAxL1ZKQXJDcXhPZlRhcFVrMWJ0QTBRUHpZVEhr?=
+ =?utf-8?B?NkpWSG5ZRVF2aG5ITlFwSjlSVHVRYTlEeG5XaDhaUEx0cFc2MWdBdkFlMlRO?=
+ =?utf-8?B?M1kvdlhhYTBFRzNkRXFzWnVucWFIU1IrZFBoc2xQNStjcFZOMHRmMFlBZG1s?=
+ =?utf-8?B?N2JlOGJYcEpWV0dlanBVSjhycWU3N25YYnFkNjZtOW43YmZPWFJMdz09?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36b10118-fd05-43bc-3344-08de73c67ec9
+X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2026 17:02:30.3154
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YgiqWsUW6tooOEA7mz5uWLSZsRvFZVa9Yytelzhg4druklE45O4XOfnNuKpbJNp4TEsp3hReKA2VYfmQhl3eCQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7663
 
-Now that all drm_private_objs users have been converted to use
-atomic_create_state instead of the old ad-hoc initialization, we can
-remove the state parameter from drm_private_obj_init and the fallback
-code.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-Reviewed-by: Maíra Canal <mcanal@igalia.com>
----
+On 24/02/2026 05:39, Akhil R wrote:
+> Hi Frank,
+> 
+> On Tue, 17 Feb 2026 13:04:57 -0500, Frank Li wrote:
+>> On Tue, Feb 17, 2026 at 11:04:52PM +0530, Akhil R wrote:
+>>> Tegra264 BPMP restricts access to GPCDMA reset control and the reset
+>>
+>> what's means of BPMP?
+> 
+> BPMP is Boot and Power Management Processor which is a co-processor
+> in Tegra and runs a dedicated firmware. It manages the boot, clock,
+> reset etc. I will put the expansion in the commit message in the next
+> version. Do you suggest adding more details?
 
-To: Liviu Dudau <liviu.dudau@arm.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-To: Robert Foss <rfoss@kernel.org>
-To: Paul Cercueil <paul@crapouillou.net>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-To: Jonathan Hunter <jonathanh@nvidia.com>
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: Rodrigo Siqueira <siqueira@igalia.com>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: Jonas Karlman <jonas@kwiboo.se>
-Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: Abhinav Kumar <abhinav.kumar@linux.dev>
-Cc: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-Cc: Sean Paul <sean@poorly.run>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>
-Cc: "Maíra Canal" <mcanal@igalia.com>
-Cc: Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
-Cc: amd-gfx@lists.freedesktop.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: freedreno@lists.freedesktop.org
-Cc: linux-tegra@vger.kernel.org
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  1 -
- .../drm/arm/display/komeda/komeda_private_obj.c    | 16 ++++++++--------
- drivers/gpu/drm/display/drm_dp_mst_topology.c      |  1 -
- drivers/gpu/drm/display/drm_dp_tunnel.c            |  2 +-
- drivers/gpu/drm/drm_atomic.c                       | 22 +++++-----------------
- drivers/gpu/drm/drm_bridge.c                       |  1 -
- drivers/gpu/drm/ingenic/ingenic-drm-drv.c          |  2 +-
- drivers/gpu/drm/ingenic/ingenic-ipu.c              |  2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |  1 -
- drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c           |  1 -
- drivers/gpu/drm/omapdrm/omap_drv.c                 |  2 +-
- drivers/gpu/drm/tegra/hub.c                        |  2 +-
- drivers/gpu/drm/vc4/vc4_kms.c                      |  4 +---
- include/drm/drm_atomic.h                           |  1 -
- 14 files changed, 19 insertions(+), 39 deletions(-)
+Technically you don't even need to mention BPMP here if it confuses 
+matters. We can just say that for "Tegra264 there is no reset available 
+for the driver to control and this is handled by boot firmware".
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index 98ed54afb02864342bb2c04782d05c5fb6e38672..72cfba657d1f49b42e9f5f99fced653e7e24a4e9 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -4964,11 +4964,10 @@ static int amdgpu_dm_mode_config_init(struct amdgpu_device *adev)
- 	/* indicates support for immediate flip */
- 	adev_to_drm(adev)->mode_config.async_page_flip = true;
- 
- 	drm_atomic_private_obj_init(adev_to_drm(adev),
- 				    &adev->dm.atomic_obj,
--				    NULL,
- 				    &dm_atomic_state_funcs);
- 
- 	r = amdgpu_display_modeset_create_props(adev);
- 	if (r)
- 		return r;
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c b/drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c
-index 49b934c6dbdf0fdbf1dfa10bf74536481350a381..77b3f361091fc3e07d30cee4a74f69c7ea1f6e90 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c
-@@ -63,11 +63,11 @@ static const struct drm_private_state_funcs komeda_layer_obj_funcs = {
- };
- 
- static int komeda_layer_obj_add(struct komeda_kms_dev *kms,
- 				struct komeda_layer *layer)
- {
--	drm_atomic_private_obj_init(&kms->base, &layer->base.obj, NULL,
-+	drm_atomic_private_obj_init(&kms->base, &layer->base.obj,
- 				    &komeda_layer_obj_funcs);
- 	return 0;
- }
- 
- static struct drm_private_state *
-@@ -116,11 +116,11 @@ static const struct drm_private_state_funcs komeda_scaler_obj_funcs = {
- 
- static int komeda_scaler_obj_add(struct komeda_kms_dev *kms,
- 				 struct komeda_scaler *scaler)
- {
- 	drm_atomic_private_obj_init(&kms->base,
--				    &scaler->base.obj, NULL,
-+				    &scaler->base.obj,
- 				    &komeda_scaler_obj_funcs);
- 	return 0;
- }
- 
- static struct drm_private_state *
-@@ -168,11 +168,11 @@ static const struct drm_private_state_funcs komeda_compiz_obj_funcs = {
- };
- 
- static int komeda_compiz_obj_add(struct komeda_kms_dev *kms,
- 				 struct komeda_compiz *compiz)
- {
--	drm_atomic_private_obj_init(&kms->base, &compiz->base.obj, NULL,
-+	drm_atomic_private_obj_init(&kms->base, &compiz->base.obj,
- 				    &komeda_compiz_obj_funcs);
- 
- 	return 0;
- }
- 
-@@ -222,11 +222,11 @@ static const struct drm_private_state_funcs komeda_splitter_obj_funcs = {
- 
- static int komeda_splitter_obj_add(struct komeda_kms_dev *kms,
- 				   struct komeda_splitter *splitter)
- {
- 	drm_atomic_private_obj_init(&kms->base,
--				    &splitter->base.obj, NULL,
-+				    &splitter->base.obj,
- 				    &komeda_splitter_obj_funcs);
- 
- 	return 0;
- }
- 
-@@ -275,11 +275,11 @@ static const struct drm_private_state_funcs komeda_merger_obj_funcs = {
- 
- static int komeda_merger_obj_add(struct komeda_kms_dev *kms,
- 				 struct komeda_merger *merger)
- {
- 	drm_atomic_private_obj_init(&kms->base,
--				    &merger->base.obj, NULL,
-+				    &merger->base.obj,
- 				    &komeda_merger_obj_funcs);
- 
- 	return 0;
- }
- 
-@@ -328,11 +328,11 @@ static const struct drm_private_state_funcs komeda_improc_obj_funcs = {
- };
- 
- static int komeda_improc_obj_add(struct komeda_kms_dev *kms,
- 				 struct komeda_improc *improc)
- {
--	drm_atomic_private_obj_init(&kms->base, &improc->base.obj, NULL,
-+	drm_atomic_private_obj_init(&kms->base, &improc->base.obj,
- 				    &komeda_improc_obj_funcs);
- 
- 	return 0;
- }
- 
-@@ -381,11 +381,11 @@ static const struct drm_private_state_funcs komeda_timing_ctrlr_obj_funcs = {
- };
- 
- static int komeda_timing_ctrlr_obj_add(struct komeda_kms_dev *kms,
- 				       struct komeda_timing_ctrlr *ctrlr)
- {
--	drm_atomic_private_obj_init(&kms->base, &ctrlr->base.obj, NULL,
-+	drm_atomic_private_obj_init(&kms->base, &ctrlr->base.obj,
- 				    &komeda_timing_ctrlr_obj_funcs);
- 
- 	return 0;
- }
- 
-@@ -435,11 +435,11 @@ static const struct drm_private_state_funcs komeda_pipeline_obj_funcs = {
- };
- 
- static int komeda_pipeline_obj_add(struct komeda_kms_dev *kms,
- 				   struct komeda_pipeline *pipe)
- {
--	drm_atomic_private_obj_init(&kms->base, &pipe->obj, NULL,
-+	drm_atomic_private_obj_init(&kms->base, &pipe->obj,
- 				    &komeda_pipeline_obj_funcs);
- 
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/display/drm_dp_mst_topology.c b/drivers/gpu/drm/display/drm_dp_mst_topology.c
-index d8a732f21d3c04eaeefa64d5fe34d156369787ac..8757972e8e2427cbbab2e90d1c9c291d97e96c0a 100644
---- a/drivers/gpu/drm/display/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/display/drm_dp_mst_topology.c
-@@ -5763,11 +5763,10 @@ int drm_dp_mst_topology_mgr_init(struct drm_dp_mst_topology_mgr *mgr,
- 	mgr->max_dpcd_transaction_bytes = max_dpcd_transaction_bytes;
- 	mgr->max_payloads = max_payloads;
- 	mgr->conn_base_id = conn_base_id;
- 
- 	drm_atomic_private_obj_init(dev, &mgr->base,
--				    NULL,
- 				    &drm_dp_mst_topology_state_funcs);
- 
- 	return 0;
- }
- EXPORT_SYMBOL(drm_dp_mst_topology_mgr_init);
-diff --git a/drivers/gpu/drm/display/drm_dp_tunnel.c b/drivers/gpu/drm/display/drm_dp_tunnel.c
-index f442430d8de78221ec88d0567dc68f2fa8d2b82a..6519b42447285b58892ac07a3570cf6c457e4c27 100644
---- a/drivers/gpu/drm/display/drm_dp_tunnel.c
-+++ b/drivers/gpu/drm/display/drm_dp_tunnel.c
-@@ -1598,11 +1598,11 @@ static bool init_group(struct drm_dp_tunnel_mgr *mgr, struct drm_dp_tunnel_group
- {
- 	group->mgr = mgr;
- 	group->available_bw = -1;
- 	INIT_LIST_HEAD(&group->tunnels);
- 
--	drm_atomic_private_obj_init(mgr->dev, &group->base, NULL,
-+	drm_atomic_private_obj_init(mgr->dev, &group->base,
- 				    &tunnel_group_funcs);
- 
- 	return true;
- }
- 
-diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-index 04925166df989bcb30b111739aa4ed5c84f3a5ae..4283ab4d06c581727cc98b1dc870bf69691ea654 100644
---- a/drivers/gpu/drm/drm_atomic.c
-+++ b/drivers/gpu/drm/drm_atomic.c
-@@ -918,11 +918,10 @@ static void drm_atomic_plane_print_state(struct drm_printer *p,
- 
- /**
-  * drm_atomic_private_obj_init - initialize private object
-  * @dev: DRM device this object will be attached to
-  * @obj: private object
-- * @state: initial private object state
-  * @funcs: pointer to the struct of function pointers that identify the object
-  * type
-  *
-  * Initialize the private object, which can be embedded into any
-  * driver private object that needs its own atomic state.
-@@ -930,37 +929,26 @@ static void drm_atomic_plane_print_state(struct drm_printer *p,
-  * RETURNS:
-  * Zero on success, error code on failure
-  */
- int drm_atomic_private_obj_init(struct drm_device *dev,
- 				struct drm_private_obj *obj,
--				struct drm_private_state *state,
- 				const struct drm_private_state_funcs *funcs)
- {
-+	struct drm_private_state *state;
- 	memset(obj, 0, sizeof(*obj));
- 
- 	drm_modeset_lock_init(&obj->lock);
- 
- 	obj->dev = dev;
- 	obj->funcs = funcs;
- 	list_add_tail(&obj->head, &dev->mode_config.privobj_list);
- 
--	/*
--	 * Not all users of drm_atomic_private_obj_init have been
--	 * converted to using &drm_private_obj_funcs.atomic_create_state yet.
--	 * For the time being, let's only call reset if the passed state is
--	 * NULL. Otherwise, we will fallback to the previous behaviour.
--	 */
--	if (!state) {
--		state = obj->funcs->atomic_create_state(obj);
--		if (IS_ERR(state))
--			return PTR_ERR(state);
-+	state = obj->funcs->atomic_create_state(obj);
-+	if (IS_ERR(state))
-+		return PTR_ERR(state);
- 
--		obj->state = state;
--	} else {
--		obj->state = state;
--		state->obj = obj;
--	}
-+	obj->state = state;
- 
- 	return 0;
- }
- EXPORT_SYMBOL(drm_atomic_private_obj_init);
- 
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index f8b0333a0a3bf5bdf4036d2f7ca5565934e44b4c..1868d512ffa1fabc8adab97bc7cb96fd32a78997 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -551,11 +551,10 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
- 			goto err_reset_bridge;
- 	}
- 
- 	if (drm_bridge_is_atomic(bridge))
- 		drm_atomic_private_obj_init(bridge->dev, &bridge->base,
--					    NULL,
- 					    &drm_bridge_priv_state_funcs);
- 
- 	return 0;
- 
- err_reset_bridge:
-diff --git a/drivers/gpu/drm/ingenic/ingenic-drm-drv.c b/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
-index 9522a2e6ecd4166efc648a24e237b8166e426d48..4068114adf8c2068a94a3aaa308cf91847712acb 100644
---- a/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
-+++ b/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
-@@ -1399,11 +1399,11 @@ static int ingenic_drm_bind(struct device *dev, bool has_components)
- 	if (ret) {
- 		dev_err(dev, "Unable to register clock notifier\n");
- 		goto err_devclk_disable;
- 	}
- 
--	drm_atomic_private_obj_init(drm, &priv->private_obj, NULL,
-+	drm_atomic_private_obj_init(drm, &priv->private_obj,
- 				    &ingenic_drm_private_state_funcs);
- 
- 	ret = drmm_add_action_or_reset(drm, ingenic_drm_atomic_private_obj_fini,
- 				       &priv->private_obj);
- 	if (ret)
-diff --git a/drivers/gpu/drm/ingenic/ingenic-ipu.c b/drivers/gpu/drm/ingenic/ingenic-ipu.c
-index 4fec37c63e7cb7c96b32191d680c89e20837b155..34545b9c8c33833c3cc65f3d111b3f3bf9a60137 100644
---- a/drivers/gpu/drm/ingenic/ingenic-ipu.c
-+++ b/drivers/gpu/drm/ingenic/ingenic-ipu.c
-@@ -899,11 +899,11 @@ static int ingenic_ipu_bind(struct device *dev, struct device *master, void *d)
- 	if (err) {
- 		dev_err(dev, "Unable to prepare clock\n");
- 		return err;
- 	}
- 
--	drm_atomic_private_obj_init(drm, &ipu->private_obj, NULL,
-+	drm_atomic_private_obj_init(drm, &ipu->private_obj,
- 				    &ingenic_ipu_private_state_funcs);
- 
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-index 4495525139978e64e0c650aae0cdc1a57e0c8398..31743699d05f6667e37fe70d79549cfe736474fe 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-@@ -1159,11 +1159,10 @@ static int dpu_kms_hw_init(struct msm_kms *kms)
- 
- 	dev->mode_config.cursor_width = 512;
- 	dev->mode_config.cursor_height = 512;
- 
- 	drm_atomic_private_obj_init(dpu_kms->dev, &dpu_kms->global_state,
--				    NULL,
- 				    &dpu_kms_global_state_funcs);
- 
- 	atomic_set(&dpu_kms->bandwidth_ref, 0);
- 
- 	rc = pm_runtime_resume_and_get(&dpu_kms->pdev->dev);
-diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-index 1e3dc9bf9494c2b06ad5acaca74f7b17221b7833..2d26b07b06f54bbe8e26e538c155b8de994a4543 100644
---- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-+++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-@@ -715,11 +715,10 @@ static int mdp5_init(struct platform_device *pdev, struct drm_device *dev)
- 	int ret;
- 
- 	mdp5_kms->dev = dev;
- 
- 	drm_atomic_private_obj_init(mdp5_kms->dev, &mdp5_kms->glob_state,
--				    NULL,
- 				    &mdp5_global_state_funcs);
- 
- 	/* we need to set a default rate before enabling.  Set a safe
- 	 * rate first, then figure out hw revision, and then set a
- 	 * more optimal rate:
-diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm/omap_drv.c
-index 90832b4b8c9dd540c8778cb39de7cf80e8796857..ae678696fbacb0572869c7152a484fc5736ac44a 100644
---- a/drivers/gpu/drm/omapdrm/omap_drv.c
-+++ b/drivers/gpu/drm/omapdrm/omap_drv.c
-@@ -297,11 +297,11 @@ static const struct drm_private_state_funcs omap_global_state_funcs = {
- 
- static int omap_global_obj_init(struct drm_device *dev)
- {
- 	struct omap_drm_private *priv = dev->dev_private;
- 
--	drm_atomic_private_obj_init(dev, &priv->glob_obj, NULL,
-+	drm_atomic_private_obj_init(dev, &priv->glob_obj,
- 				    &omap_global_state_funcs);
- 	return 0;
- }
- 
- static void omap_global_obj_fini(struct omap_drm_private *priv)
-diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
-index 73190a4b4d0546be6d6cae746ba5d03ab8e98b92..10d993b8d043ab08ee65ab4db1e31624c953d0f3 100644
---- a/drivers/gpu/drm/tegra/hub.c
-+++ b/drivers/gpu/drm/tegra/hub.c
-@@ -955,11 +955,11 @@ static int tegra_display_hub_init(struct host1x_client *client)
- {
- 	struct tegra_display_hub *hub = to_tegra_display_hub(client);
- 	struct drm_device *drm = dev_get_drvdata(client->host);
- 	struct tegra_drm *tegra = drm->dev_private;
- 
--	drm_atomic_private_obj_init(drm, &hub->base, NULL,
-+	drm_atomic_private_obj_init(drm, &hub->base,
- 				    &tegra_display_hub_state_funcs);
- 
- 	tegra->hub = hub;
- 
- 	return 0;
-diff --git a/drivers/gpu/drm/vc4/vc4_kms.c b/drivers/gpu/drm/vc4/vc4_kms.c
-index 0507f24adcdd05660b9ef349dd609b095d52a9f8..264b5e80c24d67f59dea8085f7d02d218db25697 100644
---- a/drivers/gpu/drm/vc4/vc4_kms.c
-+++ b/drivers/gpu/drm/vc4/vc4_kms.c
-@@ -114,11 +114,11 @@ static void vc4_ctm_obj_fini(struct drm_device *dev, void *unused)
- 
- static int vc4_ctm_obj_init(struct vc4_dev *vc4)
- {
- 	drm_modeset_lock_init(&vc4->ctm_state_lock);
- 
--	drm_atomic_private_obj_init(&vc4->base, &vc4->ctm_manager, NULL,
-+	drm_atomic_private_obj_init(&vc4->base, &vc4->ctm_manager,
- 				    &vc4_ctm_state_funcs);
- 
- 	return drmm_add_action_or_reset(&vc4->base, vc4_ctm_obj_fini, NULL);
- }
- 
-@@ -755,11 +755,10 @@ static void vc4_load_tracker_obj_fini(struct drm_device *dev, void *unused)
- }
- 
- static int vc4_load_tracker_obj_init(struct vc4_dev *vc4)
- {
- 	drm_atomic_private_obj_init(&vc4->base, &vc4->load_tracker,
--				    NULL,
- 				    &vc4_load_tracker_state_funcs);
- 
- 	return drmm_add_action_or_reset(&vc4->base, vc4_load_tracker_obj_fini, NULL);
- }
- 
-@@ -847,11 +846,10 @@ static void vc4_hvs_channels_obj_fini(struct drm_device *dev, void *unused)
- }
- 
- static int vc4_hvs_channels_obj_init(struct vc4_dev *vc4)
- {
- 	drm_atomic_private_obj_init(&vc4->base, &vc4->hvs_channels,
--				    NULL,
- 				    &vc4_hvs_state_funcs);
- 
- 	return drmm_add_action_or_reset(&vc4->base, vc4_hvs_channels_obj_fini, NULL);
- }
- 
-diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
-index 0b1b32bcd2bda1b92299fd369ba7c23b1c2d3dfa..f03cd199aee73fa8e15b2d9e16a53d134fc7de7d 100644
---- a/include/drm/drm_atomic.h
-+++ b/include/drm/drm_atomic.h
-@@ -736,11 +736,10 @@ struct drm_connector_state * __must_check
- drm_atomic_get_connector_state(struct drm_atomic_state *state,
- 			       struct drm_connector *connector);
- 
- int drm_atomic_private_obj_init(struct drm_device *dev,
- 				struct drm_private_obj *obj,
--				struct drm_private_state *state,
- 				const struct drm_private_state_funcs *funcs);
- void drm_atomic_private_obj_fini(struct drm_private_obj *obj);
- 
- struct drm_private_state * __must_check
- drm_atomic_get_private_obj_state(struct drm_atomic_state *state,
+Jon
 
 -- 
-2.52.0
+nvpublic
 
