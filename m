@@ -1,77 +1,55 @@
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010020.outbound.protection.outlook.com [52.101.201.20])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD201F30A9;
-	Tue, 24 Feb 2026 08:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771922118; cv=fail; b=B3XsTJsr3BarWT2su4ITQ355Duth+mHR1x6AZ1ROd/Hds26G4/R32p/8FhA+i2JiZqhSRt7Y/AxAHWSRncUqfrnrc9df88ZrUVQCDazITo60juExY8giURHmQhG4BnmE5YMOn1ew5fLY3LJIqENV32V6xUoW6kZy2JR1Bg3zHAU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771922118; c=relaxed/simple;
-	bh=daDnOZujKP3brDfqHLN07i9xB4Hp+DmwSErRH0/xzDo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=J5Mj4JXBJN7ilH233cj0RW/VljgD3qI5WKZGq9JWr2NPtS9N44Q6kBEVcmiudSHECPUIn3n9CHlo5tnhUHHKo5TY9tztGwOFPcvlOP/Ra5SdDoDr849pvixR3APL0OHv95HDzmnKkcNiLDY2Z6JuaOiDUI5CsFZQmFtZfuXcb44=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fHAqpCi5; arc=fail smtp.client-ip=52.101.201.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1341C369209
+	for <linux-tegra@vger.kernel.org>; Tue, 24 Feb 2026 08:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771923483; cv=none; b=c7kyIBYybGXQcWaUdS/A/W8eML7CRX9RYaEARE2BSBXgXbwaMk5bj35v6xapqEuvQFIPP+FVywWzbhwy4KqwYsbYeF4Oft/r8i5vNjtgnZxsB2Re4JMt/t7F2t9kEDU6W4vIDRm1rbDVy3w5dzyvK2YItt11uPkXLsHApozJ5Pg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771923483; c=relaxed/simple;
+	bh=75tIlJhL7lTvbSGE7D59R10soZGFPbIv0b8WGkPwmek=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m6Qjx1H71FqHspi1nYLTFtT6Z+Fi7oL7tXnGGvxvtH2aXSL9y3WARbSVbu5la3cO0MAlxk9gvXalvQmyimxXWpUrcYKjLy4hHsiJhwj+SEzvQQd/6kf8DLV1b7xHo5KWqsn4LI0iSIV9EUVdNnNR66vOX0udYK+t44smWrW1t0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=LiQO4QDA; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fHAqpCi5"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P+u1a8gNmT+ufxnPKV1Pqrv7bce7qYKHgc2mP7bq4Mo18EXdOI650//z+fE3HzRN152Jllqkq/Ecv1UnU5qF8VEEUK0YRTPLGxd2xwPAUaQDA9P4Eb7gDaNyjBI25w3QGYfnMpfCiSM2GVRkQBIYqUU5dLQ60LBcTgBQARUl99sdxp1j3G3X33OSY9YkLgTUc2bAu6GvKmIJnaXLxJggEjryb0r8WZXmmdnBvRTGE+1FiSyv6AaUdGHoMc9J+g/UbYeWgE2mo2r7HN7lGm2rsDwz16EXsFq0BD7Fgvb0l5Pwb/CAEV6II4YGoPWjojGZv2wmSrfsW403auMJousHGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hdPlDzdlGddCOmEfz1SKeQLJqdQ626rkwDfE9ydTLb0=;
- b=ZJpfabBVF9hq97Hm3b//wdhZOfKaKymdlAlpYIO5eUJW+ECFzwsB8v8a2CxYd+TVvomRquShuKEGfllLz9SfctLVGloCQ51mCN5GtNyJlbUFUbaez1uUOueCBQydGlIr8A3WJzx7jcDHyi//fQVHj6iDJJZIrOiZnMU0S+h8IElGmJgrjPaDddxC4VpAbcMoHHfRf4O7SZ8zpHojzYtF91okfx6puDiWO60Z/gXeKKcVmoRnYPcRX5kszZ6yIGsLfPYhs+4FClMMehgvMrS8ZMH+8LwcW1uafyRHim9s4F12OPfiQ/qp000hxPXKyWS1uhdT880mZk2WdqMVi+kFkw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hdPlDzdlGddCOmEfz1SKeQLJqdQ626rkwDfE9ydTLb0=;
- b=fHAqpCi5bhArosm3ukklFfY55KIDaObXWPm2I62QGcSKRoNhU45yh/B2DtM5zoY4ZGEOv4qXgF3z1dssdaZi14YN4SgSVhsSNuFm4BpQnkW96G4nIw4ZSnsJXwZ0VhO+WZE5yAKU8bQlaudyeUCLOJoXJVfGn55oPw0/x7i7/ez0GUDmdoz80vbJUW+CMovaMF9/3yIOgrt8jlVMH5TfS1545vNjS3325SNu2UcXGLNVL7s0AFInoFXv7nghfndBS6IDXAd6eWouRCdI2e/mdVBSibrOpBxY9LKN4b24/U3AtrmY7YM+sgOvxSn4FRAc30xOfKdpEd8FtZQH5f34fg==
-Received: from PH8P220CA0037.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:2d9::9)
- by CH1PPFB21296325.namprd12.prod.outlook.com (2603:10b6:61f:fc00::620) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.10; Tue, 24 Feb
- 2026 08:35:12 +0000
-Received: from SJ1PEPF000023D8.namprd21.prod.outlook.com
- (2603:10b6:510:2d9:cafe::c1) by PH8P220CA0037.outlook.office365.com
- (2603:10b6:510:2d9::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9632.21 via Frontend Transport; Tue,
- 24 Feb 2026 08:35:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- SJ1PEPF000023D8.mail.protection.outlook.com (10.167.244.73) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9654.0 via Frontend Transport; Tue, 24 Feb 2026 08:35:10 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 24 Feb
- 2026 00:35:02 -0800
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Tue, 24 Feb 2026 00:35:01 -0800
-Received: from kkartik-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Tue, 24 Feb 2026 00:34:58 -0800
-From: Kartik Rajput <kkartik@nvidia.com>
-To: <ldewangan@nvidia.com>, <jonathanh@nvidia.com>, <akhilrajeev@nvidia.com>,
-	<vkoul@kernel.org>, <Frank.Li@kernel.org>, <thierry.reding@kernel.org>,
-	<digetx@gmail.com>, <pkunapuli@nvidia.com>, <dmaengine@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Kartik Rajput <kkartik@nvidia.com>, <stable@vger.kernel.org>
-Subject: [PATCH] dmaengine: tegra: Fix burst size calculation
-Date: Tue, 24 Feb 2026 14:04:54 +0530
-Message-ID: <20260224083455.333330-1-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="LiQO4QDA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=LkBWz+K1nxLr/l
+	Bo/t63y5ciaH4V8V92AgZnhwFxGiA=; b=LiQO4QDAIPC7jcFmuXQdpS9cUIzzff
+	rXWVlM9nR60bsKOnCkWjG0KnKQTqD81SwstkLHp6FEz3vYXFtiamSQVd5hgItMGq
+	GV9+bJGPQ50+Ac4ldqd1/vlEg3Mj4E28u/nF02AdxtVuthUCsJE7ELD9+nntiQ7h
+	d0HkE9X1UbIZxLn9T9E1VlZ9/bTfDL/nH/EjGWSGImvrCKh9VZ52v5gdOg2K2Rru
+	LrZjemW/Q8ZwVyzT83Y5GQOkT/mcff8RaSRsEL4wIxcuq3mV1aJSsP7ogw/qBrbz
+	l0XrVuhNFsQj8xLj9ahx68kzfmuU8AEKWck47h34E3GWLiq9ixsTjLgg==
+Received: (qmail 175537 invoked from network); 24 Feb 2026 09:57:54 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Feb 2026 09:57:54 +0100
+X-UD-Smtp-Session: l3s3148p1@Nso9FY5LUsUgAwDPXzF+ANZpdrMKUeLI
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Chen <peter.chen@cixtech.com>,
+	Fugang Duan <fugang.duan@cixtech.com>,
+	CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	linux-acpi@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [RFC PATCH] mailbox: remove superfluous internal header
+Date: Tue, 24 Feb 2026 09:50:21 +0100
+Message-ID: <20260224085720.18055-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -79,102 +57,178 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D8:EE_|CH1PPFB21296325:EE_
-X-MS-Office365-Filtering-Correlation-Id: fb3f8a1a-acee-4040-4808-08de737f9f46
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Jye+rJYElQeP1QDZK5C+DfsMRS9E6zx9z0VJSLmaY54Ee4CSNbD1Ulr4/QtY?=
- =?us-ascii?Q?2tYCjXmGC/q4LVgoT4rvkBplbcyGI9j2aQ3NWdEbtLKRJQ80bW8+XJHMHLON?=
- =?us-ascii?Q?ckqIx/DrukLaI36pWPI2JjLW3nu8R5fmJgL3VVn08SufgDydwLZiASAl7BRt?=
- =?us-ascii?Q?OBahqxebhrBRdZqme4Cd63Azc4F2vmtKllPc5/7xbpkiibwq705cxZOOAYH2?=
- =?us-ascii?Q?+IC6peMrybQ126CKG2ZbxtzsG2gAjuoNQnU/vk0jV/glCC5zhXIXpQJhNg2h?=
- =?us-ascii?Q?7nDJVRor/+MrTFsqzl42EmORmO+gDbszfE6ycfdBJIkMFg8vmf71AwLeIoN6?=
- =?us-ascii?Q?bmB9o/BYS0XkirlJe6JaE/yj2Y6GkM7lmbAy2ot0moWTnsoPXMt8Qhp+8WVG?=
- =?us-ascii?Q?9c2BDi9Y5PBrEjN+L0yTrfeto4W/TDolrY1dlSW7gENGkUeHwgQcnvS6pnro?=
- =?us-ascii?Q?kwhjXAEi5JywcrxW1AeM1YZZLejO4Kpf/a6DhMH47hIkjNWLNOOW3bPqIltm?=
- =?us-ascii?Q?YUzXkxQGRC3kYldfCTg1mCmPh+m3/EttkQOvra4iEwzhl035pHkjbfoPa0pT?=
- =?us-ascii?Q?lBDoR6CwPVSZqzejair8oys/DAJxa4fAfk3w3I8LQxTDW9Tihlf1sycyC4Rf?=
- =?us-ascii?Q?iY+RGLNGtDOKflwaEeKRJHgGwm6yVCBodWcwDoxumqFo7aT4irDO9YcFxcu/?=
- =?us-ascii?Q?WsDZiKC9eIoQTaL8uMk+iF5/duYLPFvJBMRj3uS1x8hqZ65pqKeHDQWNHS1v?=
- =?us-ascii?Q?IrqBMOke69xYtBOe0A8Rn8jHNaaA8fNSCb+1XherX+O1QVb+CBNKi4/Sz+HU?=
- =?us-ascii?Q?gTgZWKmA/icfbrnuMHAIb+tazroMqZSWijxutsqFZTXi/xEEuVMHbqdsBjAy?=
- =?us-ascii?Q?8UrwKEiMByL641UVWGCZYPVyxEydvlqkB82JxBmmuq2I9eDO/NM4rq4iuA7q?=
- =?us-ascii?Q?E8L8lmanRawYtfjA+yXgWeY6zj5D0bQU6W5kjL/M/CG0dqdMcOq/5jFmhaF/?=
- =?us-ascii?Q?WAHwSlFnIVfklLLxJpg5tvRa4yK7n7nya5jTS8ZZflccZdzWlZ8wMq+R1p2c?=
- =?us-ascii?Q?pedyO3CT5fOMP8XE8vJHMseq8yx3pVzb/EbA2bLwuOherKAK2NRik8FJui6/?=
- =?us-ascii?Q?9EksJTtq0Pd6MxHHdCTbh9v9/g0f2ra+CL0XyYCfMrvFPggXd8p37EuZ+eHu?=
- =?us-ascii?Q?nZXdrvlp888fxMh8DnAA8zsVk7PYBDofr+wcPKiW5gIpRM3tQyvqO4kx99pd?=
- =?us-ascii?Q?v2izQBCz0V55SD9Z62C3obYQvds4OPukTtXafLszrZJIeM+3WI6PFR+7arb+?=
- =?us-ascii?Q?F5DdOnsgmtAENZ+p6p9BBRvRpEAlL71EKf9aDABa5lt0OGb2z6N8yMii7aSu?=
- =?us-ascii?Q?Xc0h5PmZrvtxE0suTjdcRN/ZLXEbDx0/6NiyR9fyJFGuFeiJ6K6M+OMPSlF2?=
- =?us-ascii?Q?TRypdE7ilRcqxLN2sqMMVnKUg4q902IN58WznYO34QCMF1sTmGiE7n8a3ayy?=
- =?us-ascii?Q?kPrspx9BOTFBRKcGj/lDdosPC3Q5Yl+qDfupBb4nJ1b/+MZ6afgIUwHNNqma?=
- =?us-ascii?Q?2leBVzTZb8jSoRThhCBdfvOgDfWGFMra5W9IbTSCOYxvaeP+rFRkmNMvx40b?=
- =?us-ascii?Q?m9P4/AU9xD/gRO40a7CwBrNZqbGuNqbpMv9ugkjhD2B4kIAS8paFENl3WOA2?=
- =?us-ascii?Q?WrkxAvo4M0IWoued0B41WJSf0OU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	s0ey4ZZP+OzPkczrBygCpGKIwOICQMN/lLano5ADzUBozGiaP1bARwLkIbgMOOd2vBYJ6UlFJy4zT7EqAstoAlSzxTaq+U6Br2JiMRq5ZDkU68Rwb6TcsvjO7R0uCU0WhEs69a15Ogas45QSjkZ7owUHBJ0YL/irj0Lku/TR8Fggy+wtG6LVeHNC5TkSMQfBJ7W6ne9LT/eePhOL/FZh/mBeFYt7hupJDDUii901RcAeLdePGEnzD8x8VJeJOBOw5jcXZl7/3uF1aGm1yXrj9FYuq10Btbiu5HrybeemVqUn+RXWoJTPcWsiPg4MgLBHrEUCXA8kpmvTlJvWRjnSHkftG+DcMlHqg5BhPJrF2W8E4GjYA5teouE1FEwxYak8ydm81lZ/YcuZ7edh6v1PFqOPTXMbxqPOAAEMLvM/aBH3uQXlJrr/wEUda+N+kyAN
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2026 08:35:10.3271
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fb3f8a1a-acee-4040-4808-08de737f9f46
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D8.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPFB21296325
 
-Currently, the Tegra GPC DMA hardware requires the transfer length to
-be a multiple of the max burst size configured for the channel. When a
-client requests a transfer where the length is not evenly divisible by
-the configured max burst size, the DMA hangs with partial burst at
-the end.
+Quite some controller drivers use the defines from the internal header
+already. This prevents controller drivers outside the mailbox directory.
+Move the defines to the public controller header to allow this again as
+the defines are not strictly internal anyhow.
 
-Fix this by reducing the burst size to the largest power-of-2 value
-that evenly divides the transfer length. For example, a 40-byte
-transfer with a 16-byte max burst will now use an 8-byte burst
-(40 / 8 = 5 complete bursts) instead of causing a hang.
-
-This issue was observed with the PL011 UART driver where TX DMA
-transfers of arbitrary lengths were stuck.
-
-Fixes: ee17028009d4 ("dmaengine: tegra: Add tegra gpcdma driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/dma/tegra186-gpc-dma.c | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/dma/tegra186-gpc-dma.c b/drivers/dma/tegra186-gpc-dma.c
-index 4d6fe0efa76e..7df0a745e7b8 100644
---- a/drivers/dma/tegra186-gpc-dma.c
-+++ b/drivers/dma/tegra186-gpc-dma.c
-@@ -825,6 +825,13 @@ static unsigned int get_burst_size(struct tegra_dma_channel *tdc,
- 	 * len to calculate the optimum burst size
- 	 */
- 	burst_byte = burst_size ? burst_size * slave_bw : len;
-+
-+	/*
-+	 * Find the largest burst size that evenly divides the transfer length.
-+	 * The hardware requires the transfer length to be a multiple of the
-+	 * burst size - partial bursts are not supported.
-+	 */
-+	burst_byte = min(burst_byte, 1U << __ffs(len));
- 	burst_mmio_width = burst_byte / 4;
+I need this for a combined driver (mailbox + hwspinlock at least) which
+probably ends up in drivers/soc. But it seems reasonable to me to do
+this anyway. Locally build tested. Still waiting for buildbot results.
+Opinions?
+
+ drivers/mailbox/cix-mailbox.c      |  2 --
+ drivers/mailbox/hi3660-mailbox.c   |  2 --
+ drivers/mailbox/imx-mailbox.c      |  2 --
+ drivers/mailbox/mailbox-sti.c      |  2 --
+ drivers/mailbox/mailbox.c          |  2 --
+ drivers/mailbox/mailbox.h          | 12 ------------
+ drivers/mailbox/omap-mailbox.c     |  2 --
+ drivers/mailbox/pcc.c              |  2 --
+ drivers/mailbox/tegra-hsp.c        |  2 --
+ include/linux/mailbox_controller.h |  5 +++++
+ 10 files changed, 5 insertions(+), 28 deletions(-)
+ delete mode 100644 drivers/mailbox/mailbox.h
+
+diff --git a/drivers/mailbox/cix-mailbox.c b/drivers/mailbox/cix-mailbox.c
+index 443620e8ae37..864f98f21fc3 100644
+--- a/drivers/mailbox/cix-mailbox.c
++++ b/drivers/mailbox/cix-mailbox.c
+@@ -12,8 +12,6 @@
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
  
- 	if (burst_mmio_width < TEGRA_GPCDMA_MMIOSEQ_BURST_MIN)
+-#include "mailbox.h"
+-
+ /*
+  * The maximum transmission size is 32 words or 128 bytes.
+  */
+diff --git a/drivers/mailbox/hi3660-mailbox.c b/drivers/mailbox/hi3660-mailbox.c
+index 17c29e960fbf..9b727a2b54a5 100644
+--- a/drivers/mailbox/hi3660-mailbox.c
++++ b/drivers/mailbox/hi3660-mailbox.c
+@@ -15,8 +15,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ 
+-#include "mailbox.h"
+-
+ #define MBOX_CHAN_MAX			32
+ 
+ #define MBOX_RX				0x0
+diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.c
+index 003f9236c35e..22331b579489 100644
+--- a/drivers/mailbox/imx-mailbox.c
++++ b/drivers/mailbox/imx-mailbox.c
+@@ -23,8 +23,6 @@
+ #include <linux/slab.h>
+ #include <linux/workqueue.h>
+ 
+-#include "mailbox.h"
+-
+ #define IMX_MU_CHANS		24
+ /* TX0/RX0/RXDB[0-3] */
+ #define IMX_MU_SCU_CHANS	6
+diff --git a/drivers/mailbox/mailbox-sti.c b/drivers/mailbox/mailbox-sti.c
+index b4b5bdd503cf..b6c9ecbbc8ec 100644
+--- a/drivers/mailbox/mailbox-sti.c
++++ b/drivers/mailbox/mailbox-sti.c
+@@ -21,8 +21,6 @@
+ #include <linux/property.h>
+ #include <linux/slab.h>
+ 
+-#include "mailbox.h"
+-
+ #define STI_MBOX_INST_MAX	4      /* RAM saving: Max supported instances */
+ #define STI_MBOX_CHAN_MAX	20     /* RAM saving: Max supported channels  */
+ 
+diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+index e63b2292ee7a..9d41a1ab9018 100644
+--- a/drivers/mailbox/mailbox.c
++++ b/drivers/mailbox/mailbox.c
+@@ -18,8 +18,6 @@
+ #include <linux/property.h>
+ #include <linux/spinlock.h>
+ 
+-#include "mailbox.h"
+-
+ static LIST_HEAD(mbox_cons);
+ static DEFINE_MUTEX(con_mutex);
+ 
+diff --git a/drivers/mailbox/mailbox.h b/drivers/mailbox/mailbox.h
+deleted file mode 100644
+index e1ec4efab693..000000000000
+--- a/drivers/mailbox/mailbox.h
++++ /dev/null
+@@ -1,12 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
+-
+-#ifndef __MAILBOX_H
+-#define __MAILBOX_H
+-
+-#include <linux/bits.h>
+-
+-#define TXDONE_BY_IRQ	BIT(0) /* controller has remote RTR irq */
+-#define TXDONE_BY_POLL	BIT(1) /* controller can read status of last TX */
+-#define TXDONE_BY_ACK	BIT(2) /* S/W ACK received by Client ticks the TX */
+-
+-#endif /* __MAILBOX_H */
+diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
+index d9f100c18895..5772c6b9886a 100644
+--- a/drivers/mailbox/omap-mailbox.c
++++ b/drivers/mailbox/omap-mailbox.c
+@@ -22,8 +22,6 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/mailbox_controller.h>
+ 
+-#include "mailbox.h"
+-
+ #define MAILBOX_REVISION		0x000
+ #define MAILBOX_MESSAGE(m)		(0x040 + 4 * (m))
+ #define MAILBOX_FIFOSTATUS(m)		(0x080 + 4 * (m))
+diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+index 22e70af1ae5d..636879ae1db7 100644
+--- a/drivers/mailbox/pcc.c
++++ b/drivers/mailbox/pcc.c
+@@ -59,8 +59,6 @@
+ #include <linux/io-64-nonatomic-lo-hi.h>
+ #include <acpi/pcc.h>
+ 
+-#include "mailbox.h"
+-
+ #define MBOX_IRQ_NAME		"pcc-mbox"
+ 
+ /**
+diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+index ed9a0bb2bcd8..2231050bb5a9 100644
+--- a/drivers/mailbox/tegra-hsp.c
++++ b/drivers/mailbox/tegra-hsp.c
+@@ -16,8 +16,6 @@
+ 
+ #include <dt-bindings/mailbox/tegra186-hsp.h>
+ 
+-#include "mailbox.h"
+-
+ #define HSP_INT_IE(x)		(0x100 + ((x) * 4))
+ #define HSP_INT_IV		0x300
+ #define HSP_INT_IR		0x304
+diff --git a/include/linux/mailbox_controller.h b/include/linux/mailbox_controller.h
+index 80a427c7ca29..16fef421c30c 100644
+--- a/include/linux/mailbox_controller.h
++++ b/include/linux/mailbox_controller.h
+@@ -3,6 +3,7 @@
+ #ifndef __MAILBOX_CONTROLLER_H
+ #define __MAILBOX_CONTROLLER_H
+ 
++#include <linux/bits.h>
+ #include <linux/completion.h>
+ #include <linux/device.h>
+ #include <linux/hrtimer.h>
+@@ -11,6 +12,10 @@
+ 
+ struct mbox_chan;
+ 
++#define TXDONE_BY_IRQ	BIT(0) /* controller has remote RTR irq */
++#define TXDONE_BY_POLL	BIT(1) /* controller can read status of last TX */
++#define TXDONE_BY_ACK	BIT(2) /* S/W ACK received by Client ticks the TX */
++
+ /**
+  * struct mbox_chan_ops - methods to control mailbox channels
+  * @send_data:	The API asks the MBOX controller driver, in atomic
 -- 
-2.43.0
+2.51.0
 
