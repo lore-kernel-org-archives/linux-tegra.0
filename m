@@ -1,178 +1,276 @@
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013011.outbound.protection.outlook.com [40.107.162.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D5129BD80
-	for <linux-tegra@vger.kernel.org>; Wed, 25 Feb 2026 20:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772050533; cv=none; b=PGTXR1tFN9m3c8uPyzsxor5UMeYDBmCsVavMJLQSl7iA6bkT9X3lar6jNycaF0VZ/sMuiYzGjtxdC025om83pzxw/sMoJM8TkgDpMg0aCjL46/zgJqjf6uQEZNlTb6fR/lF+tE8qteYZVQzDQX1cKrt9wWuVR/v0a1dMH/H6m2s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772050533; c=relaxed/simple;
-	bh=bs36U7Z6zD0Hnagwm/ZqHl1ycDYGkn0uTVkMRoGi2qU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A94g6+jC5YmhHpWiYqxdiOJWQhfAgMd2owMTGS72tLZWViGk+xjaglgcNLEtckvO0v4zNXpIekQKPiTEaujDaSeZS5C/dxC75WbeX6xiMYANhPB/050RWnhsUuVn9CUcAm4GVIuhP0i16P0q5UZfEgwk4bvRECYEI8Uqf+d0vMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gdIrmXbQ; arc=none smtp.client-ip=209.85.214.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685122DA775;
+	Wed, 25 Feb 2026 20:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772051224; cv=fail; b=aM44q5pcMR3vOG7Ij/CDEHF6bXLpkyC6IeZwEOzSE+0MVkwymGNErKUGtEiDp/FAwm8yynd841fJhd56JKnFPF1MoqBnaRUJ3j1qN02F6vYzRnZyA73L6kAURWWKt3z5ubgVHA2Eq2s9NtpR7LIF1FH8a291CJmkqlnLqV8ytNw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772051224; c=relaxed/simple;
+	bh=mSVcdU6zCZaKta92R/CYaC9bvoT/RzVzyUnCzR/MCcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=jvVGY3Or1gway9iR0PWBhWWywXdqHi2lbrzRTDoWQsolC3k6Q9M1/IePho/WGqfGU0J8D5hxhFWoLBr02jJolUMq5CeyXX4vATgQab39dzpoz06xlLnhWvdYaTJ/cOFRC8PecezIhPVNh4Wkbkml4bdpyHx+gc5DBYWqH4GAghk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=F+R7wxAD; arc=fail smtp.client-ip=40.107.162.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gdIrmXbQ"
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-2ada9e4ea32so625ad.1
-        for <linux-tegra@vger.kernel.org>; Wed, 25 Feb 2026 12:15:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1772050530; x=1772655330; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4YyrNDRwRzkk9A2IzQ/QDYdpFxKzWLCjN0pyf/juCsM=;
-        b=gdIrmXbQgS64eNB3vcNMG1Y/7MZrj19eHjwL/NVgz6ubaOhwfy5mmR03onlODD6Dge
-         3Jo6Pc43vgzjPx47KGSgDMPlu5LoWPrTObyMvZkoUzQ03Ztol4VlPNSa5IbZqCudtAu4
-         eQ/bxRTYDMBGMSXYIIFPkxQGfaj+B+dWPHbPpI/AJnUugEJ4ZOHAs08A0bGm7tiXkR47
-         VLF0HpBBllCZzRPRzflqHXCdzMfEBcU5aOtYX02phgScW0xQdn6Xvg5Uz08QJwdsR4Y0
-         LwmUx6KXvOZY/ssSsT0fULArDO4Tv088u7ePnUtl03Spx9iua4YT28YmiNq0L0pYDt2m
-         BD4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772050530; x=1772655330;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4YyrNDRwRzkk9A2IzQ/QDYdpFxKzWLCjN0pyf/juCsM=;
-        b=Ok6CEOiapHzv6XtivsnYN5qaA6XnEfBPjPU4bD6oMVmW53dpoZ+Mvc3RyLAyN/v6+x
-         /dBuAGKu77Ev82CX37kYBhbT4TPcAKZX9cBlF0UJlqTod3uqoMQ8kZ6slpmzu3IBNRxu
-         btPRnOoKfVWMuWW21y92fZPsZyHl0Tkc2iGvViGuAE5AUP30ZguXyq4mSXyLaFS/LWJm
-         cbjeJsQwXJeSsFzzWk7aQMTXqMsoKOP4yh4MaLWuTxK9wNMT1JY97qeNNvPDGw50Mmi1
-         2En2FFVTOcz3ky+5dyPbW2/jwzGCY7MGTR7PKiUPoggq42rmClPgEzvbe8P/egkmXTSS
-         XijA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRcydFowZr59sF7Ebe1lAPtba48xozCgZrXMR+KwTmY1V/ex5S+B82KD0eWRLHOLjt/J3XX4zLGn5Wmg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsZRhcacf8Xxfcr0rJgVyi2rcWiWQaUiK2dZlV1O7YNciaQgs/
-	E712NAkNPi7twln4vA5OAA4e3oufmOofSOuwKWzz2qxIowlQV06A0UUpYmV0Vhxmdg==
-X-Gm-Gg: ATEYQzwFfPBxELcH0hJIc0WAdtf3fPSFJANdiRDO6QFzcLHRcxeehW+1XJfXXpH1zul
-	4J2yxfwhzybFCooNNDUrZVUStCiq0K5bTIgCCtVzQdIrcD34yDQm2eIayHBcFMEiXMPijjGe0Rm
-	uoNPIqqIo7+og+v76x+pZoh6AfMs3P4fm61m674Q49pGd5pAJojVbElwkpNf4u8BO6k55PoLegt
-	8F5hFhWxbsRbloTnbdK4A6tK27xs/VnORFNvwaAtns8Fu78kmV63E6ep5cE5p13GccxnLG0FTlT
-	ojDa2ZooRNqZfPetR9uJRyfS565KzC1pZBRbyugHQxVzjoYdkkpotxDxJowILnBSAqCTgz04ORX
-	Ri6iHjYvlq/9JK6qji9N8oolh9XskxaFt0BRkwdyIUnl7VfEA8hoF2pFHQenBaloURjFhkGeYPd
-	oNYMhfMpuTCnxAHp3ffL9s2pBRDiZkbyvOp9a1AosB2zKu1YNZsztCeyQAevDu
-X-Received: by 2002:a17:903:2a86:b0:29e:27f4:bac0 with SMTP id d9443c01a7336-2adf77c692amr376915ad.16.1772050529556;
-        Wed, 25 Feb 2026 12:15:29 -0800 (PST)
-Received: from google.com (222.245.187.35.bc.googleusercontent.com. [35.187.245.222])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2adfb6d5970sm502335ad.80.2026.02.25.12.15.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Feb 2026 12:15:28 -0800 (PST)
-Date: Wed, 25 Feb 2026 20:15:24 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Ashish Mhetre <amhetre@nvidia.com>, robin.murphy@arm.com,
-	joro@8bytes.org, will@kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-mm@kvack.org, Christoph Hellwig <hch@lst.de>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH RFC] iommu/dma: Validate page before accessing P2PDMA
- state
-Message-ID: <aZ9YXDleB5XyC7zt@google.com>
-References: <20260224104257.1641429-1-amhetre@nvidia.com>
- <20260224123221.GM10607@unreal>
- <aZ4Q1HA9q1ojsVYY@google.com>
- <20260225075000.GA9541@unreal>
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="F+R7wxAD"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uAY+GF1y60rTxWdwqOa0VxZpg2gd6WhtPsMFhzdL1OzpajeUY45gj7xA6VSl1zLj/tPmx4U2JzOPtrq2Cbwb5K96ggjKwCXJTYpf/pc6cB4rxx097TXfolYndsgcNKuu/xTFeFjMY6VI8Ny28dINK7/SdIgLzEeweSdKrb23wDitpaUcsaXdUwsh0YatbX0OtsJpLkYQgSI4OQ1Kk4XOLuA/lfpKRT4uagf1MhfHs0wZsbvhpksDnR+Aw/5X+DCgD+Tppogiw7e09ZABlwa4t15ecInhh8zXMn0kGwBWNjoXXAgGU9ll6M068mDulU1emgupbQtbdif0yvi5r7Nx0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VmWDQ8t0KR1xTsteB4oI/73cR1VaAxkeYefXR/F2ApA=;
+ b=O9aBsMzSFOwCLk0kRpN5I2RtVhvhyTjZQ0OssXrn8ce3/ceR2td/m8ASCN+vn0VfViYLxOomg0spcI3vWT4UgES5i6s2bQxgMjBvE1E5pI3qe8SlMNhVur+V7KPCMDzik3xii3T9WaDRPQK/+uF1TRQKVIIio/8x+pHcpvgboVy/RrDvHuuCgcqkLrRmOfDlAClEYjT9fvrQii3EsfdXIMYVy/loDOmVzBM8ylNGOeb37RF3KLgeGfLMASk+klpMIbnJtmekVM6bOKJKmQqH8Lt7o48zfXwHR4ueI1GOHmeU+03RvTX+aAe8xJ8gh+dF8gvzWqoTh7f5h/eLiDy5DQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VmWDQ8t0KR1xTsteB4oI/73cR1VaAxkeYefXR/F2ApA=;
+ b=F+R7wxADX9c+DQMadJpwessnsPfdKi+BNp3QctQZOU3sTTbFb4zhs6HfkFPPaVmTmqk0vQ82pknbrcSEpgiDvxWPnB3OxfM2mQRe7k8f0qVoXmO8gS30M6telbpa2MN/QuRGTeqVtn99YuYWWi6M69oYAXMUsU4ufHVumOQgBRKWWDHdkD+axt5Wt8pm8gm6GdXus2Uh1sriMfX/kYh+KDfC0lGTnsqCg3Y3t5Wl69gt2c+LIGH+xp8IRcMJdbUOe4cbFgQU9TvWrvwLKsvMNP5DF1ON2JF9GWidn2XyZgRinLkWtbxTbW2gvJEHecFOG1RJPtGob7e2rsQn3kW9kA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PA4PR04MB9366.eurprd04.prod.outlook.com (2603:10a6:102:2a9::8)
+ by AM0PR04MB7172.eurprd04.prod.outlook.com (2603:10a6:208:192::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.13; Wed, 25 Feb
+ 2026 20:26:59 +0000
+Received: from PA4PR04MB9366.eurprd04.prod.outlook.com
+ ([fe80::75e4:8143:ddbc:6588]) by PA4PR04MB9366.eurprd04.prod.outlook.com
+ ([fe80::75e4:8143:ddbc:6588%6]) with mapi id 15.20.9632.017; Wed, 25 Feb 2026
+ 20:26:59 +0000
+Date: Wed, 25 Feb 2026 15:26:47 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Manikanta Maddireddy <mmaddireddy@nvidia.com>,
+	Koichiro Den <den@valinux.co.jp>,
+	Damien Le Moal <dlemoal@kernel.org>, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 5/9] PCI: dwc: Replace certain BAR_RESERVED with
+ BAR_DISABLED in glue drivers
+Message-ID: <aZ9bB8IvnBmcbe75@lizhi-Precision-Tower-5810>
+References: <20260225170324.4033466-11-cassel@kernel.org>
+ <20260225170324.4033466-16-cassel@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260225170324.4033466-16-cassel@kernel.org>
+X-ClientProxiedBy: SJ0PR03CA0385.namprd03.prod.outlook.com
+ (2603:10b6:a03:3a1::30) To PA4PR04MB9366.eurprd04.prod.outlook.com
+ (2603:10a6:102:2a9::8)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260225075000.GA9541@unreal>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PA4PR04MB9366:EE_|AM0PR04MB7172:EE_
+X-MS-Office365-Filtering-Correlation-Id: 16c31a26-5a70-46c4-8926-08de74ac3a1d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|19092799006|52116014|7416014|376014|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	SY6V/vsYR+d5Q94bP+b0raadgvJDkrCgtKM5vFWuf7V3VJZYIreHuQyjcNpslD5NDigX50bvQbB622V1avxArFL0UpCMUwjj+EI8RzU+HFq1WlOTIy0GHmd6lBXgddl6JTYsuu1ARsh8d4p3sa6Gsp3vWc1ht6GvU7c95Cw1dFMXQcS1wrb0uPpenTc3H8Ide3JA0wthl7UY2B0ydCGNSpB8WortT4aoO5zq+v1LNh6FDV/9ofwmrmVYmmpy4WqY/pofuLkXjEyNN/gzeUXvZG5qwNvVFH3jqpNtyLIo95a2OCiiHp7JxA2CdM74dHY7/AvJLpTsD5sqNH8a7jWN5ZKY77dxc2d88QLOx8Dbrt5Crbkdh/XYc5qhx8QwDh3v9Bfq7nnwDzkL+6SfNxQg+kF5s/nch4acQhZUS29F3QeF7BZY2rZeLY7xckIpmPJEY9pAfp6opcBAIvkoY41CBXDZWs6n+WR4jFBqg5YvHGm33EqNobWNcWn9DlySnX1wrnoWXwHH88McsS0IRRJ5dpVtzxBfsuUmRemnVAFI0uf+gs/DQpp7rNSdj12swglnDFaPjTmYYq3ClusLbPY60IEQ1/5KNnMhIYtFElUbr8leVpSsvjAeDiC5lundel4tbJmgGXMclTP1CtpDzkA1H6bEVMTmyq8FVkEY2Zf3caHeKtwl6OyuuflKgIP4QmeCrDX/35XnafFVHIZFTb7pB/SYaBKGm7iUudo3s5oAZ2IAVrV/q5V7WXRQg7x54Dciy6Klg2kdcZMYmkA2+NDtafgPkxo7PUkpHbQjt9PrfFk=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9366.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(52116014)(7416014)(376014)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/8jOnGrpSxNR7laNmHlCR6HFzbKbA+vAqxRFbYWIRz3flZGKQkTC70IyG2JT?=
+ =?us-ascii?Q?bsuB1OEVBjEV1ZWafs6KwE8ZBmF4XhcIVzoNdKzCtRH9c4yrs3YW//XBAWGu?=
+ =?us-ascii?Q?HNyO0KQxGtv5dvP+h/DDhOFodQwrwzf9h1A7n5ZXXy71FB/RN7Ewb/95fs+X?=
+ =?us-ascii?Q?GE7fGXX5nc3dkOJX1+qFzvasTQ1KbvrRy+GmnB1fpq48TfczsdNNeXz8T0ip?=
+ =?us-ascii?Q?RPIHxb8iUNue68Rdk6GM9Bulhks8021/lorHW2GRbBL3ECDQskHRItDKnLO0?=
+ =?us-ascii?Q?4s5E4fBV1MHL66o1ZAlyMQSIf36jJzrl8KE6KxnFUMj8GAOjBNxnDioGDNsz?=
+ =?us-ascii?Q?9Z+AjbSnoXEkMcJxRpheP0RHyK0NZEWbfZV0yOr7JeUcQO/U4oMbYhlem7Pt?=
+ =?us-ascii?Q?5FHJGRRYkakoNodjWvTD2ZZarFB0Y8AuipqtoaLguTH3gjHupWRfSqPPqtx3?=
+ =?us-ascii?Q?6FxDXw0Dbp0fy3jjKxJphCZtvPQR8Yao2Qzb0sRhAX7JgnSktsaSGeycFRJz?=
+ =?us-ascii?Q?700cFF/Mi6PvHTFqNnWA9oSSoc30WJsD1p3vEESYKoc6YCncEBkpy0qritZ8?=
+ =?us-ascii?Q?WxdkcWHH+N3uFSH9lJfud5Mn50V4R2CP+YvOwZGi8JeWRE95XgICcRQPsQRp?=
+ =?us-ascii?Q?nG6VamzU0YT3vPpAy36Jjxt7rovyLem0EXdm1bghk8MFYU11Zgr96EbN8esI?=
+ =?us-ascii?Q?UGs1b2Twq4ABsOUCrJ+q7+GSPUQ0IlUD9M6vKk8AfWTFrVP0JcSXDmKFhwJo?=
+ =?us-ascii?Q?rzsT7EMwfCByp+CfnBQxEDQQB/bKwo2S4tEv5RPkSPKCjam4+E1q3nx6teko?=
+ =?us-ascii?Q?JGvbacvU9lmjIfAAE19yOv/0AJZqNOMFM8DL0EGnkNrvfmHqC3s7Nz18mXsx?=
+ =?us-ascii?Q?PytendAb7f0TXRxPn+jTlDXtEMKiCnO+O2XdNN2Xo3CAfoWVn8lYiihMQ1fV?=
+ =?us-ascii?Q?b98xTjfrnLoCubiVhZ17QFaT8dQDLX9P3i9p0UaDAecICeM0Pf7poSCDbFPJ?=
+ =?us-ascii?Q?/xvdTob6kvMFVuzZxGHNua8n+9XVN9r6kZXhrC5Mdbi+JJpJd4zjIObPzD3X?=
+ =?us-ascii?Q?rigUWKm71zBWM7IyJ2z9JcRFb7XsZFc7a5rcNIFtSmHbZtlpO0jYixn2xUXs?=
+ =?us-ascii?Q?wsr3Iq8Y3wxC31aBhf+4ie7rtqEy5u79RGQstLC7zrM7IiemPWj4NBH5tHzP?=
+ =?us-ascii?Q?aknw1S8n/+i/awXag93RERfPQZHectmxnzdtW5R7NL134G3OBhDExpaimmRz?=
+ =?us-ascii?Q?/orzOpLBG4I2U3Uer5p6VcHmtB8RRwnill9fHg7MTn9s3co+9DzAcWFDTdnp?=
+ =?us-ascii?Q?mWwZiaXbaPkUbBkmG557S+KWVdh0BXY4/eDjvhRl6/Tb0ZMkEQ5zcI5W7t8p?=
+ =?us-ascii?Q?tf1et/oEu4e7XcTObbvZqqL+WksdF6ki8L9Jv/RCJr15ACVjykRI9UgsSC9c?=
+ =?us-ascii?Q?OjZvKjrDZXIQvCcnmkNMD8ZO+77if6TkVwIHmR3GGm+Md8PBw/NW+M2sYOtZ?=
+ =?us-ascii?Q?p0/hm2PpgLXnLGkIeK0x7JcFD02VnVgOfNTnQ4viD8Jw1lWx3fl2rXIwZcaF?=
+ =?us-ascii?Q?AgG18QxMtaQDOHZIcM+Qvl2NcNggGzkOiADuf+pkgNutuCu+Nvx3h9L5DPGG?=
+ =?us-ascii?Q?zwXV4Rl9pGSCnat1VNyFMOQZ6z9w2SFquKE2e7LaeSevoQ3IcMAOumgqg+Wq?=
+ =?us-ascii?Q?tX4uKEYJMjN4DHiWv4ddBKL8LogMJ3DI5QQkDQQ1FEbgJ8YR?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16c31a26-5a70-46c4-8926-08de74ac3a1d
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9366.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2026 20:26:59.3915
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cnBXGN0dl1mK+hV31k5hm+u32Qj4CK0uer1iJ+u2SyzFj0O95rNHTrGsqbgzb8p7U1RcsK/FAc/YZrRuqT8vsA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7172
 
-On Wed, Feb 25, 2026 at 09:50:00AM +0200, Leon Romanovsky wrote:
-> On Tue, Feb 24, 2026 at 08:57:56PM +0000, Pranjal Shrivastava wrote:
-> > On Tue, Feb 24, 2026 at 02:32:21PM +0200, Leon Romanovsky wrote:
-> > > On Tue, Feb 24, 2026 at 10:42:57AM +0000, Ashish Mhetre wrote:
-> > > > When mapping scatter-gather entries that reference reserved
-> > > > memory regions without struct page backing (e.g., bootloader created
-> > > > carveouts), is_pci_p2pdma_page() dereferences the page pointer
-> > > > returned by sg_page() without first verifying its validity.
-> > > 
-> > > I believe this behavior started after commit 88df6ab2f34b  
-> > > ("mm: add folio_is_pci_p2pdma()"). Prior to that change, the
-> > > is_zone_device_page(page) check would return false when given a
-> > > non‑existent page pointer.
-> > > 
-> > 
-> > Doesn't folio_is_pci_p2pdma() also check for zone device?
-> > I see[1] that it does:
-> > 
-> > static inline bool folio_is_pci_p2pdma(const struct folio *folio)
-> > {
-> > 	return IS_ENABLED(CONFIG_PCI_P2PDMA) &&
-> > 		folio_is_zone_device(folio) &&
-> > 		folio->pgmap->type == MEMORY_DEVICE_PCI_P2PDMA;
-> > }
-> > 
-> > I believe the problem arises due to the page_folio() call in
-> > folio_is_pci_p2pdma(page_folio(page)); within is_pci_p2pdma_page().
-> > page_folio() assumes it has a valid struct page to work with. For these
-> > carveouts, that isn't true.
-> 
-> Yes, i came to the same conclusion, just explained why it worked before.
-> 
+On Wed, Feb 25, 2026 at 06:03:28PM +0100, Niklas Cassel wrote:
+> Most DWC based EPC glue drivers that have BARs marked as BAR_RESERVED in
+> epc_features also call dw_pcie_ep_reset_bar() for these reserved BARs in
+> ep->ops->init(). (The only exception is pci-keystone.c.)
+>
+> An EPF driver will be able to get/enable BARs that have been disabled/reset
+> using dw_pcie_ep_reset_bar(), except if the BAR is marked as BAR_RESERVED
+> (see pci_epc_get_next_free_bar()).
+>
+> Thus, all EPC drivers that have BARs marked as BAR_RESERVED in epc_features
+> and call dw_pcie_ep_reset_bar(), should really have these BARs marked as
+> BAR_DISABLED. If dw_pcie_ep_reset_bar() is not called by the glue driver,
+> the BARs are kept as BAR_RESERVED.
+>
+> No EPC drivers outside drivers/pci/controllers/dwc mark their BARs as
+> BAR_RESERVED, so there is nothing to do in non-DWC based EPC drivers.
+>
+> Tested-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+> Signed-off-by: Niklas Cassel <cassel@kernel.org>
+> ---
 
-Ack.
-
-> > 
-> > Potentially something like the following would stop the crash:
-> > 
-> > diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-> > index e3c2ccf872a8..e47876021afa 100644
-> > --- a/include/linux/memremap.h
-> > +++ b/include/linux/memremap.h
-> > @@ -197,7 +197,8 @@ static inline void folio_set_zone_device_data(struct folio *folio, void *data)
-> > 
-> >  static inline bool is_pci_p2pdma_page(const struct page *page)
-> >  {
-> > -       return IS_ENABLED(CONFIG_PCI_P2PDMA) &&
-> > +       return IS_ENABLED(CONFIG_PCI_P2PDMA) && page &&
-> > +               pfn_valid(page_to_pfn(page)) &&
-> 
-> pfn_valid() is a relatively expensive function [1] to invoke in the data path,
-> and is_pci_p2pdma_page() ends up being called in these execution flows.
-> 
-
-Right, that makes sense. Ideally, it shouldn't be there at either of the
-places (iommu_dma_map_sg or is_pci_p2pdma_page()).
-
-> [1] https://elixir.bootlin.com/linux/v6.19.3/source/include/linux/mmzone.h#L2167
-> 
-> >                 folio_is_pci_p2pdma(page_folio(page));
-> >  }
-> > 
-> > 
-> > But my broader question is: why are we calling a page-based API like 
-> > is_pci_p2pdma_page() on non-struct-page memory in the first place?
-> 
-> +1
-> 
-> > Could we instead add a helper to verify if the sg_page() return value
-> > is actually backed by a struct page?
-> 
-> According to the SG design, callers should store only struct page pointers.
-> There is one known user that violates this requirement: dmabuf, which is
-> gradually being migrated away from this behavior [2].
-> 
-> [2] https://lore.kernel.org/all/0-v1-b5cab63049c0+191af-dmabuf_map_type_jgg@nvidia.com/
-> 
-> > If it isn't, we should arguably skip the P2PDMA logic entirely and fall
-> > back to a dma_map_phys style path. Isn't handling these "pageless" physical
-> > ranges the primary reason dma_map_phys exists?
-> 
-> Right. dma_map_sg() is indeed the wrong API to use for memory that is not
-> backed by struct page pointers.
-> 
-> Thanks
-> 
-
-[--->8---]
-
-Thanks,
-Praan
-
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+>  drivers/pci/controller/dwc/pci-imx6.c         | 12 ++++++------
+>  drivers/pci/controller/dwc/pci-keystone.c     | 12 ++++++++++++
+>  drivers/pci/controller/dwc/pcie-rcar-gen4.c   |  6 +++---
+>  drivers/pci/controller/dwc/pcie-tegra194.c    |  8 ++++----
+>  drivers/pci/controller/dwc/pcie-uniphier-ep.c |  4 ++--
+>  5 files changed, 27 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index a5b8d0b71677..ec1e3557ca53 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -1433,19 +1433,19 @@ static int imx_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+>  static const struct pci_epc_features imx8m_pcie_epc_features = {
+>  	DWC_EPC_COMMON_FEATURES,
+>  	.msi_capable = true,
+> -	.bar[BAR_1] = { .type = BAR_RESERVED, },
+> -	.bar[BAR_3] = { .type = BAR_RESERVED, },
+> +	.bar[BAR_1] = { .type = BAR_DISABLED, },
+> +	.bar[BAR_3] = { .type = BAR_DISABLED, },
+>  	.bar[BAR_4] = { .type = BAR_FIXED, .fixed_size = SZ_256, },
+> -	.bar[BAR_5] = { .type = BAR_RESERVED, },
+> +	.bar[BAR_5] = { .type = BAR_DISABLED, },
+>  	.align = SZ_64K,
+>  };
+>
+>  static const struct pci_epc_features imx8q_pcie_epc_features = {
+>  	DWC_EPC_COMMON_FEATURES,
+>  	.msi_capable = true,
+> -	.bar[BAR_1] = { .type = BAR_RESERVED, },
+> -	.bar[BAR_3] = { .type = BAR_RESERVED, },
+> -	.bar[BAR_5] = { .type = BAR_RESERVED, },
+> +	.bar[BAR_1] = { .type = BAR_DISABLED, },
+> +	.bar[BAR_3] = { .type = BAR_DISABLED, },
+> +	.bar[BAR_5] = { .type = BAR_DISABLED, },
+>  	.align = SZ_64K,
+>  };
+>
+> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+> index 20fa4dadb82a..278d2dba1db0 100644
+> --- a/drivers/pci/controller/dwc/pci-keystone.c
+> +++ b/drivers/pci/controller/dwc/pci-keystone.c
+> @@ -933,6 +933,18 @@ static const struct pci_epc_features ks_pcie_am654_epc_features = {
+>  	DWC_EPC_COMMON_FEATURES,
+>  	.msi_capable = true,
+>  	.msix_capable = true,
+> +	/*
+> +	 * TODO: This driver is the only DWC glue driver that had BAR_RESERVED
+> +	 * BARs, but did not call dw_pcie_ep_reset_bar() for the reserved BARs.
+> +	 *
+> +	 * To not change the existing behavior, these BARs were not migrated to
+> +	 * BAR_DISABLED. If this driver wants the BAR_RESERVED BARs to be
+> +	 * disabled, it should migrate them to BAR_DISABLED.
+> +	 *
+> +	 * If they actually should be enabled, then the driver must also define
+> +	 * what is behind these reserved BARs, see the definition of struct
+> +	 * pci_epc_bar_rsvd_region.
+> +	 */
+>  	.bar[BAR_0] = { .type = BAR_RESERVED, },
+>  	.bar[BAR_1] = { .type = BAR_RESERVED, },
+>  	.bar[BAR_2] = { .type = BAR_RESIZABLE, },
+> diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+> index a6912e85e4dd..9dd05bac22b9 100644
+> --- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+> +++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
+> @@ -422,10 +422,10 @@ static int rcar_gen4_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+>  static const struct pci_epc_features rcar_gen4_pcie_epc_features = {
+>  	DWC_EPC_COMMON_FEATURES,
+>  	.msi_capable = true,
+> -	.bar[BAR_1] = { .type = BAR_RESERVED, },
+> -	.bar[BAR_3] = { .type = BAR_RESERVED, },
+> +	.bar[BAR_1] = { .type = BAR_DISABLED, },
+> +	.bar[BAR_3] = { .type = BAR_DISABLED, },
+>  	.bar[BAR_4] = { .type = BAR_FIXED, .fixed_size = 256 },
+> -	.bar[BAR_5] = { .type = BAR_RESERVED, },
+> +	.bar[BAR_5] = { .type = BAR_DISABLED, },
+>  	.align = SZ_1M,
+>  };
+>
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index 31aa9a494dbc..9f9453e8cd23 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -1994,10 +1994,10 @@ static const struct pci_epc_features tegra_pcie_epc_features = {
+>  	.bar[BAR_0] = { .type = BAR_FIXED, .fixed_size = SZ_1M,
+>  			.only_64bit = true, },
+>  	.bar[BAR_1] = { .type = BAR_64BIT_UPPER, },
+> -	.bar[BAR_2] = { .type = BAR_RESERVED, },
+> -	.bar[BAR_3] = { .type = BAR_RESERVED, },
+> -	.bar[BAR_4] = { .type = BAR_RESERVED, },
+> -	.bar[BAR_5] = { .type = BAR_RESERVED, },
+> +	.bar[BAR_2] = { .type = BAR_DISABLED, },
+> +	.bar[BAR_3] = { .type = BAR_DISABLED, },
+> +	.bar[BAR_4] = { .type = BAR_DISABLED, },
+> +	.bar[BAR_5] = { .type = BAR_DISABLED, },
+>  	.align = SZ_64K,
+>  };
+>
+> diff --git a/drivers/pci/controller/dwc/pcie-uniphier-ep.c b/drivers/pci/controller/dwc/pcie-uniphier-ep.c
+> index f873a1659592..5bde3ee682b5 100644
+> --- a/drivers/pci/controller/dwc/pcie-uniphier-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-uniphier-ep.c
+> @@ -429,8 +429,8 @@ static const struct uniphier_pcie_ep_soc_data uniphier_pro5_data = {
+>  		.bar[BAR_1] = { .type = BAR_64BIT_UPPER, },
+>  		.bar[BAR_2] = { .only_64bit = true, },
+>  		.bar[BAR_3] = { .type = BAR_64BIT_UPPER, },
+> -		.bar[BAR_4] = { .type = BAR_RESERVED, },
+> -		.bar[BAR_5] = { .type = BAR_RESERVED, },
+> +		.bar[BAR_4] = { .type = BAR_DISABLED, },
+> +		.bar[BAR_5] = { .type = BAR_DISABLED, },
+>  	},
+>  };
+>
+> --
+> 2.53.0
+>
