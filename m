@@ -1,73 +1,57 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013033.outbound.protection.outlook.com [40.107.201.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044CF313E31
-	for <linux-tegra@vger.kernel.org>; Fri, 27 Feb 2026 14:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772201332; cv=none; b=me2cr2pahzxkhFRolzKqq2tduqAtze/u0NEaPchSlZnQ++K+uuByZfsJfQGwBZfaJuikvCSkT8pXa9gBphkjR+IidmJt1zZc7AB+zEc8tesg3xP98MsuXBxqtXwR0XaDYlUaOPNbJX94ng7dGGr3DSZenE59e1yrmFl5U6t7ZbE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772201332; c=relaxed/simple;
-	bh=FiPOmkSP7ehgLmpdTYk5UUCfeoVIQIAHj0q6pX90Rco=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t1DCUrq5LFadVTcFUvcAX3NOLh+NWPOhBYV3DD/W3Uxwt2q+WxssV9LyeHSxampK2HSms/A/VpksEjzHBMUoO3ZLrA7FGG4he+roV6WXYLCIgga80KUzDVJg4FDmYaZd9Ya/6hHNlEnnt6Xzt62p5IMTq91Kc6X5XqAm6wnXro0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MLC+cBcX; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F557421899;
+	Fri, 27 Feb 2026 14:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772201623; cv=fail; b=WLvHlVFRuPJnDs5JI/+fgmd+jvm3roJw9Bkslark0na9FlbF6HQXr73BweR9HA8iAgu0NmTbBZl5eXkJsbslNu9bYPdywZnE4RHOoO+DXBOpJANsiF/BeRLZh15l4NmFB0p1bTLT1Y57e6POTwAfXGepxezO91wsVd9tAt7K/u0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772201623; c=relaxed/simple;
+	bh=raa5g/QC+9H7Rkd8zQ1ucYsB+Eob1UERa4dcHFJ/CIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=JAOg0nZfNLfGNnX6OmYhpPWyfUKnqMBEjaOKAWm2PtZ7dE1APVQrgn4v/SDVErNskX18l07yctOPcxjoGA9woZM6LQh3U+4jELwEcxHA8wljeHRdIH8mFnOtSiThouTjbTm1mGHiRQBk29RmpjQrOi6lLKa0NI28F8sCcpWKWUA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fod64RGn; arc=fail smtp.client-ip=40.107.201.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MLC+cBcX"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2a964077671so87275ad.0
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Feb 2026 06:08:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1772201330; x=1772806130; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+478MnXHHm9he6xCScSmHIKPdUGXlF+DBnPVpCD0kfA=;
-        b=MLC+cBcXlZd6dCDivqKaOdxdC0173OHpGlX9kfk8ztL6vGajp/MBm+4BfCRPm5EiC8
-         uUxhtzuenDMkdLwK8LQjtE3no5S8CW6Mw8eIVGSpgyTcnqXizp524odnmTQQg061Lk8l
-         IGurrMkxgFVbQli9BNQCWpNTGZbFP2W+6fCNosGdUpvRCwGQugScN1XoI4mq4DNQ/Co7
-         zK59D4azH6diUBqEm6vcOgqRpERQYqbFl25l77J01a3oJfGCN3B/QpQpwSDQx/+jegsn
-         xRrpsmmt3hjW02KugFvprCsY6cc2RI5RkY2FsDVEYeT43xEF7s/YnLMtsxkhT9zbncPw
-         aO4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772201330; x=1772806130;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+478MnXHHm9he6xCScSmHIKPdUGXlF+DBnPVpCD0kfA=;
-        b=WLFDPRMwxsU0ufrwXlDNUGdpzhiXrE0HtOqEcJtT8p9NRBy6Po3LMEI+WyCWKJqMOJ
-         EBXgG5TL3YXUGOiJ9s5/27CpuUkpVdV53avIakShB6Yduoi4AcOwneKD7/lUftzWJbWq
-         Jx8s4Fo/zQozaTpHB9kZcGWluj163u2LxZTl0/DeKKN9odIUoQH7bZ9/Gzaqm+sP1mZJ
-         xjL5KvJSEdFUso5owOQwPOfMCrGgtWHUr1IR61M6TwSsPZGp1SF01fuA1aqJM/jfVZym
-         lrv/RNjweCt3sIYH01OBSmAsdJnXZ/+UmeBSWkbwsDHg5w5xCJaT8a7Tg6pCgAz1m+Qa
-         S6Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCVz63I7FxzHp8ujzhewB1PPHeBzDGj085cbzziCctny0ZdS0NVi2YHZ0L+OB8G4QB0nzQaG3on35bM7iQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YycsTsDoTbnn0i7B4i77Kkvt2DuLeS8FHfq6xxbRfXxKVMT0K1f
-	4Y8+xCy54c4omf2PmRPFuLKryZzupKWiGV3JDMuCbprjwNHptZjCKsm6eP3HjBDVCA==
-X-Gm-Gg: ATEYQzzVi8ZQfw+46XnJzzk2XVRI+T13eNaA0EnInljRvrxQwjFGwLD5hVIDGymWy8p
-	FFG6pjQiJiWNT4DlpSEMWXh6+CswjPn9JmZRoMm6GjxXbuWUbKMF+eUR0TZlhe5gvPXc49K88cm
-	z4enrwddY1AVmD+TptSUPhbecjygkFKrHWsXzIkDgUbV9Vh913iDPPxRC2Uj8DdXjIC4XI3hBYU
-	VAzn87HkoaDtOftAL2CFzquBZtCTLGC2o+qVAVfRfBg3PWheqdr4D5XLCXF2hs3Mwvta6aosWk2
-	RHw2oUgyW4CYaB0o1FruIJ0EnhTzB3UZvZZgCn8JybV2c67AfoFPomYplJiCwi/7Nm5glTY2xDq
-	XxjDWS36GIMNMNNeq1QLqyxp+UzC5HbumjT+hNdsu2mKIP+hae9HpBuivjsNfnqDXWQ2ef5NQPw
-	ZL27Dn327oRd8nbEsdOOvQp7C2UejYqDDDhuxDYZHWMPi3sOzx4HoeKrXYkn07
-X-Received: by 2002:a17:903:15ce:b0:2a3:cd98:f07 with SMTP id d9443c01a7336-2adfefd95b6mr4837465ad.3.1772201329615;
-        Fri, 27 Feb 2026 06:08:49 -0800 (PST)
-Received: from google.com (222.245.187.35.bc.googleusercontent.com. [35.187.245.222])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2adfb5b148bsm77618315ad.10.2026.02.27.06.08.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Feb 2026 06:08:48 -0800 (PST)
-Date: Fri, 27 Feb 2026 14:08:42 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Ashish Mhetre <amhetre@nvidia.com>
-Cc: Leon Romanovsky <leon@kernel.org>, robin.murphy@arm.com,
-	joro@8bytes.org, will@kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-mm@kvack.org, jgg@ziepe.ca, jgg@nvidia.com
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fod64RGn"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VZ7Q4xjNEN+m0pQVs1h935mqxc1QTwyzM7IsIINGOj4qQvZKRdGcW0J0JJe9LEoBDG4CJMbp7q9/epzD54D6rL3gEQQ18n1KkJy/0Fzk9NyVVx/GPA88adelBJO9EjPWGZLO4NfW5qqXIEbDbOR20pJdlCALZB3N+GGFstL/XDq5sw46atHEVuscde8vqvJ0KmwGwwTyAblPfVzPsNtuKRAd7KTL7YKF8a9+KcCxjVXqsV1XPtS8p9ghPvS6n1AvY/I25BKoHr1ZEumRRCxxnINTqHbCjKVoiIcgHj6eIhDenh3RdUIf6MjRQrVpgRPgppnWluNAoKfsjQGfyzWaaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=m7RXGp6Zxv6O5Udt4N4jet+rBZrmfaPDgt7vjMa0vZI=;
+ b=AGZZd5Pq1Ga5v93U4EncHa0wL9u4+LMkil07v35oSyghjhqQ1puqV6RDuQmX4H6nLGigiv/b3gN/S/R5J7DcfTQyvZSOm6YOALKli+O+5f6NShHEjL4cLV2Y/Gh5QkT6PWodxIL1LcF+3qfhVF+OCZBAAuw+D/OOdnTUb43LnB906S9Gs/puBhLOJhfqN9jR+xFBBlrxwRII/+r5Or/0Oxq6s3fpggas0YkmXn4B7KI98YaDsaE4JLKaYupps28mxND0ReQhnzhgvywbXtQvjIqG31/qMmWRxudC9ujROLbYWC8EyukZL70PGrS7VaNXC6hZYoYanBMPT1IwHXe9TQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m7RXGp6Zxv6O5Udt4N4jet+rBZrmfaPDgt7vjMa0vZI=;
+ b=fod64RGncTEC1JplFhBEAfKWO1XFj1mZ80gtCQR03keDcBLcmytzva8QQFPtk8+hAzp0n/rinBNDOzd1vM019YXZ20F2gjuJs4piXcWwNmE8XivNlJnV5hLZ5TH/Ue6ZAD1q3CqLgUwISpOSHoT/Pq+JYFjQUf0mU3x9/s+sft58x4obEVeppfVJDDdMSWYJ771MPdLPINIbYK/OFj3Sm6XbJNn2pMzfy+C2+8va3J6C31C1wqdalEIhuqlbll6tX+gag2x0i0C4VXHxCjZijbkHEH/DsHpLwVm+3VOUPW/AOa/bV4U8nArdOiODQRmbEPkmyUWMWl7k2BJyNt+Ziw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by IA0PR12MB7751.namprd12.prod.outlook.com (2603:10b6:208:430::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.14; Fri, 27 Feb
+ 2026 14:13:32 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::299d:f5e0:3550:1528]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::299d:f5e0:3550:1528%5]) with mapi id 15.20.9654.014; Fri, 27 Feb 2026
+ 14:13:32 +0000
+Date: Fri, 27 Feb 2026 10:13:30 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Pranjal Shrivastava <praan@google.com>
+Cc: Ashish Mhetre <amhetre@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	robin.murphy@arm.com, joro@8bytes.org, will@kernel.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-mm@kvack.org
 Subject: Re: [PATCH RFC] iommu/dma: Validate page before accessing P2PDMA
  state
-Message-ID: <aaGlapPSmFJcXsDh@google.com>
+Message-ID: <20260227141330.GK5933@nvidia.com>
 References: <20260224104257.1641429-1-amhetre@nvidia.com>
  <20260224123221.GM10607@unreal>
  <aZ4Q1HA9q1ojsVYY@google.com>
@@ -76,149 +60,83 @@ References: <20260224104257.1641429-1-amhetre@nvidia.com>
  <aZ9Xccnn7JOikudb@google.com>
  <20260226075806.GE12611@unreal>
  <58634d52-5d44-4ec9-b1f6-273b5c32b525@nvidia.com>
+ <aaGlapPSmFJcXsDh@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aaGlapPSmFJcXsDh@google.com>
+X-ClientProxiedBy: BL1PR13CA0082.namprd13.prod.outlook.com
+ (2603:10b6:208:2b8::27) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <58634d52-5d44-4ec9-b1f6-273b5c32b525@nvidia.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|IA0PR12MB7751:EE_
+X-MS-Office365-Filtering-Correlation-Id: 23697258-5c45-4779-acdc-08de760a6328
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	KR0I+BC3lubd8+ConvZ+Jfo/AG98108zmYjpR+msYVwZ2d6UUPmHiHpfRc5MKvykhx8cBKpMCLfnZJP/k2J3cAAn8Qn7piD5+PM8JeUWp9q+DoeTAkhslo63eQUAOHTVDl23qFyuSUHRRTrlqJ0z4kpuGXwKM+WmKoqOHpDEUkisK/PSTjyjayvnDmt3yHxeWV3yPD5lAStuzWazQyfVzyIcmS7+7J1zYN9bc3s3Lt3cWcYGzrqsOtrmOehIspf88Wb8Gtt6W9DVSXCCxL2nUREF0Ev4z5kZkKK7St+TR/tswVrZIX1zFajQvfAt2RPXmJdl0reJBuMDp4sdCZ4A6DlJDk/3pjvhtgEaS51NQHDShFDcPTs3yAU/+WEOsD8ix4KRL9yLTs1hiHrSQ0TwtGuCL4hBwSXuncOcTq8G6TOmamHdQvQ0oSe6k6TQlpytdnzgeV6Vg+O2QG/sWpB+tusKYcK9VruwHiW8rmMZYN8ljumI06LBJKRAqh7QqWRxF3RTOVC0MRJJZ2FR803Gttn5ADs4sl7t706l0df2UmeLSMdejKrBpfySd8qZGe4b2CvCrz+ppDVqThG8e9KmpaRPUErH1oT0B3Y689ubbS6INyxEp6Sl25j7ZuSjBpMpnQLJ4jPS/UdLOOhOrGlsXhyKsHdxcEbMmrPtWI28eVyWy5MyThW0Cwly8IGAO01libKTozKy0fdHUhkK7p8FcXF1+iCWU8Cy5ul8SBtIU6M=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?W2kZBpdV0brpMQ4R8XYA2Z6Dk60npAIgoHtc9HGKyUNeWugsiBdAku9vYGBR?=
+ =?us-ascii?Q?BV73RlTPKzx+BVUmwk7Ao+nlu+28pheF+tZ9Y5F0NF6LkmH/iRi5Y7ZVHj4w?=
+ =?us-ascii?Q?gkbXqMYLBmYsnsCeQ1MEgX3mLiYUvTaAQ8YFUo+U5y2wE9Wvvokq3qrwcyrS?=
+ =?us-ascii?Q?FxMm3I6qnjr1SGMo1TPWhtRAPI005y9Dleubt7/slgX+S7OoSsNsmOYVdjm4?=
+ =?us-ascii?Q?+1Svbh0eFhwGPZ0sOZqXT+VIY8g6pR+IfSi1jMzAAdV9aTXdV7uG2y2QQbzJ?=
+ =?us-ascii?Q?fd2oIlbAMRgnf5dw/6YW6WnluvxLBLqc65szuOt6R27mCZNLlhZbCTwUVdja?=
+ =?us-ascii?Q?QDJ3nd/8dTXQUkL2ndDsXpIJLj2j2eyoJjKzqmhejUFaCNF/liYOaOZ5usNu?=
+ =?us-ascii?Q?vE0KL+SHqHcaCy4/lgRHkc61EnaTHZpK7JfYOCHmogG2bniP2ghvKEzU8kap?=
+ =?us-ascii?Q?BpJmcbTIsX7nCjQwueDrjbjChns7hUg3TiGNSB17zHaUn6biQztdwx2PabR/?=
+ =?us-ascii?Q?9ta0Jg6S34rr0E9SrZLJNhDueoFlw1OFeEMhG4v/YylYvJdkU3a3Pzj4gvdr?=
+ =?us-ascii?Q?RCTBChe2pGO9JKqehUR6Z802M2YZsgN+1Myurigz5FSv3kJIw/azmlrnIdmH?=
+ =?us-ascii?Q?CSY61egbFgzZab0Zwal7tjMyveVa/AFnWIG3R6DxJFJ8wcSqaE/oaYbqxkUP?=
+ =?us-ascii?Q?JQ9OFOH6zNX4k4YBXfHJ3YhtCs6y0zpcqbN+8G3lj0guspWw5/Yzjq4AYL0M?=
+ =?us-ascii?Q?9VwGmREb24IInvpJUvVfm4Hb4dXw60LUdXtSW5ZsrY61uSZN+Zv3B+LldFf8?=
+ =?us-ascii?Q?mar4o1AfQgIWSfszMZkKzy70wJfzXi8Af31h68HC3ZmWEl2RCzXZegA8p78N?=
+ =?us-ascii?Q?Qi/WgsThDsWUUIFBpO6ZmpVyrF6IA3UPY1n8cbFDuFErzqKLyH3tEzjQGnZo?=
+ =?us-ascii?Q?5Mlteewo+IzjPhPx6rc09X5iPECYejlQR+C8Lid8ey4OT8VzkAI1FfxriYul?=
+ =?us-ascii?Q?cTmbEyoUzzv1LFUEp2PwZZ55Qu5ABAB7raNcvpRfs3XbWU45Mp+EE2tdEkLk?=
+ =?us-ascii?Q?r6qMEjnv55xzOxG/txGwHM4QJdtfr9TA4IDCwkVYV36rxECp4jhElDSpmzw7?=
+ =?us-ascii?Q?PjmrS6Feb/NbD37TrxI0jXXitf1ErfcYwOSgHox/apdjoFPLLglRWRk02ZHl?=
+ =?us-ascii?Q?SA2ryuSqxmj9pXmat9b6jmwu0RmkJ8RRbGSvPnAad0X5D0poWRnHXc2vwyqK?=
+ =?us-ascii?Q?m0CrlEE73g2e5Nrv5HvvCp9au1bi5FnQzWliyzmsolFtxyAMxLVv7D+KoYuS?=
+ =?us-ascii?Q?LPFoqffUe321Zw0gkbIGc4ObkBXl1UxWfrSEYc8Dqm7Ghh/A80HfZ0+917wN?=
+ =?us-ascii?Q?uF0/HjStg1mrVfrNoFHKM8O+Ix8vhkyow54+XYs1JgDvsnSzR/oBYL1jclRD?=
+ =?us-ascii?Q?3RAJ1Q1idWcc2KCXQSD+r2kKuXysfB7n5OJ/OU/bcNrj4trRtQQ9btg5/Y6o?=
+ =?us-ascii?Q?HCPwKuIKH7DEx+Mf+f3XBBM2f2SC/Eqi6JMohtXKtbTpNISS7LE/shH2Oonm?=
+ =?us-ascii?Q?axpmlzuogaq/Q3kw4Hk7uvUB5tCqCX7oQVxMfuyBqJ6MPI2pOjocDOtTqRCW?=
+ =?us-ascii?Q?jvqOxsCQETJYvAAZKO5NP6oTtw4F/IX6b+VumJbg1VIMntZyxHUZFFPYsiiN?=
+ =?us-ascii?Q?uuF/586Fh8tIMZwCXFoA1kHGpd1F9jYsdVi5hL4E2w2ieVOw3MaT9cD6QY7f?=
+ =?us-ascii?Q?smTdBabskA=3D=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 23697258-5c45-4779-acdc-08de760a6328
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2026 14:13:32.0425
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kssHF8KEDVtZmMu9OcJqKnj/qXB+h6T4Az6+MtBMwd5MmKOAuYr/axBcY65ubgNJ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7751
 
-On Fri, Feb 27, 2026 at 11:16:02AM +0530, Ashish Mhetre wrote:
-> 
-> 
-> On 2/26/2026 1:28 PM, Leon Romanovsky wrote:
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > On Wed, Feb 25, 2026 at 08:11:29PM +0000, Pranjal Shrivastava wrote:
-> > > On Wed, Feb 25, 2026 at 09:56:09AM +0200, Leon Romanovsky wrote:
-> > > > On Wed, Feb 25, 2026 at 10:19:41AM +0530, Ashish Mhetre wrote:
-> > > > > 
-> > > > > On 2/25/2026 2:27 AM, Pranjal Shrivastava wrote:
-> > > > > > External email: Use caution opening links or attachments
-> > > > > > 
-> > > > > > 
-> > > > > > On Tue, Feb 24, 2026 at 02:32:21PM +0200, Leon Romanovsky wrote:
-> > > > > > > On Tue, Feb 24, 2026 at 10:42:57AM +0000, Ashish Mhetre wrote:
-> > > > > > > > When mapping scatter-gather entries that reference reserved
-> > > > > > > > memory regions without struct page backing (e.g., bootloader created
-> > > > > > > > carveouts), is_pci_p2pdma_page() dereferences the page pointer
-> > > > > > > > returned by sg_page() without first verifying its validity.
-> > > > > > > I believe this behavior started after commit 88df6ab2f34b
-> > > > > > > ("mm: add folio_is_pci_p2pdma()"). Prior to that change, the
-> > > > > > > is_zone_device_page(page) check would return false when given a
-> > > > > > > non‑existent page pointer.
-> > > > > > > 
-> > > > > Thanks Leon for the review. This crash started after commit 30280eee2db1
-> > > > > ("iommu/dma: support PCI P2PDMA pages in dma-iommu map_sg").
-> > > > > 
-> > > > > > Doesn't folio_is_pci_p2pdma() also check for zone device?
-> > > > > > I see[1] that it does:
-> > > > > > 
-> > > > > > static inline bool folio_is_pci_p2pdma(const struct folio *folio)
-> > > > > > {
-> > > > > >           return IS_ENABLED(CONFIG_PCI_P2PDMA) &&
-> > > > > >                   folio_is_zone_device(folio) &&
-> > > > > >                   folio->pgmap->type == MEMORY_DEVICE_PCI_P2PDMA;
-> > > > > > }
-> > > > > > 
-> > > > > > I believe the problem arises due to the page_folio() call in
-> > > > > > folio_is_pci_p2pdma(page_folio(page)); within is_pci_p2pdma_page().
-> > > > > > page_folio() assumes it has a valid struct page to work with. For these
-> > > > > > carveouts, that isn't true.
-> > > > > > 
-> > > > > > Potentially something like the following would stop the crash:
-> > > > > > 
-> > > > > > diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-> > > > > > index e3c2ccf872a8..e47876021afa 100644
-> > > > > > --- a/include/linux/memremap.h
-> > > > > > +++ b/include/linux/memremap.h
-> > > > > > @@ -197,7 +197,8 @@ static inline void folio_set_zone_device_data(struct folio *folio, void *data)
-> > > > > > 
-> > > > > >    static inline bool is_pci_p2pdma_page(const struct page *page)
-> > > > > >    {
-> > > > > > -       return IS_ENABLED(CONFIG_PCI_P2PDMA) &&
-> > > > > > +       return IS_ENABLED(CONFIG_PCI_P2PDMA) && page &&
-> > > > > > +               pfn_valid(page_to_pfn(page)) &&
-> > > > > >                   folio_is_pci_p2pdma(page_folio(page));
-> > > > > >    }
-> > > > > > 
-> > > > > Yes, this will also fix the crash.
-> > > > > 
-> > > > > > But my broader question is: why are we calling a page-based API like
-> > > > > > is_pci_p2pdma_page() on non-struct-page memory in the first place?
-> > > > > > Could we instead add a helper to verify if the sg_page() return value
-> > > > > > is actually backed by a struct page? If it isn't, we should arguably
-> > > > > > skip the P2PDMA logic entirely and fall back to a dma_map_phys style
-> > > > > > path. Isn't handling these "pageless" physical ranges the primary reason
-> > > > > > dma_map_phys exists?
-> > > > > Thanks for the feedback, Pranjal.
-> > > > > 
-> > > > > To clarify: are you suggesting we handle non-page-backed mappings inside
-> > > > > iommu_dma_map_sg (within dma-iommu), or that callers should detect
-> > > > > non-page-backed memory and use dma_map_phys instead of dma_map_sg?
-> > > > The latter one.
-> > > > 
-> > > Yup, I meant the latter.
-> > > 
-> > > > > Former approach sounds better so that existing iommu_dma_map_sg callers
-> > > > > don't need changes, but I'd like to confirm your preference.
-> > > > The bug is in callers which used wrong API, they need to be adapted.
-> > > Yes, the thing is, if the caller already knows that the region to be
-> > > mapped is NOT struct page-backed, then why does it use dma_map_sg
-> > > variants?
-> > Before dma_map_phys() was added, there was no reliable way to DMA‑map
-> > such memory, and using dma_map_sg() was a workaround that happened to
+On Fri, Feb 27, 2026 at 02:08:42PM +0000, Pranjal Shrivastava wrote:
 
-Ack.
+> The question is, are we sure to use scatterlists to represent non-paged
+> memory? 
 
-> > work. I'm not sure whether it worked by design or by accident, but the
-> > correct approach now is to use dma_map_phys().
-> 
-> Thanks Leon and Pranjal for the detailed feedback. I'll update our callers
-> to use
-> dma_map_phys() for non-page-backed buffers.
-> 
-> One question: would it make sense to add a check in iommu_dma_map_sg to
-> fail gracefully when non-page-backed buffers are passed, instead of crashing
-> the kernel?
+This is absolutely illegal and a driver bug to put non-struct page
+memory into a scatter list. It was never an acceptable "work
+around". What driver is doing this??
 
-In my opinion, the answer is no, since this is almost like the "should
-the kernel protect developers from themselves" debate.. we should be a
-little dramatic to make sure the developer doesn't call the wrong API.
-Sure, we could return a DMA_MAPPING_ERROR or something but a silent 
-DMA_MAPPING_ERROR can be ignored by a lazy driver resulting in a much
-harder-to-debug scenario than a straight-forward crash.
+If you want to improve robustness add some pfn_valid/etc checks under
+the CONFING DMA DEBUG and throw warns for these mistakes.
 
-The question is, are we sure to use scatterlists to represent non-paged
-memory? 
-
-If no, then why are we even calling the dma_map_sg* API?
-struct scatterlist has a field "page_link" [1] which is literally the
-struct page with a few bits representing something else.
-
-If yes, then we could maybe encode some information (similar to
-SG_CHAIN) representing if the sg is backed by a struct page. And then in
-the *sg_map APIs, we could fallback to the dma_phys API if it isn't
-struct paged-backed. (This would be quite some re-work and not limited
-to the DMA API alone).
-
-But as Leon pointed out that the use of sg for non-paged memory started
-as a "work-around" since there was no equivalent API to dma_map_phys
-earlier. Since that's the status quo, I'm leaning towards no.
-
-But I think this gives us a nice opportunity to discuss if we really
-*need* to have scatterlists to represent non-paged memory. I remember
-some similar discussion happened during tcp_devmem reviews [2].
-
-Adding Jason for his thoughts as well..
-
-Thanks,
-Praan
-
-[1] https://elixir.bootlin.com/linux/v6.19.3/source/include/linux/scatterlist.h#L12
-[2] https://lore.kernel.org/netdev/20241115015912.GA559636@ziepe.ca/
+Jason
