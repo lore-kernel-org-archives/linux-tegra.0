@@ -1,39 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478E71482E8;
-	Sun,  1 Mar 2026 01:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C19238171;
+	Sun,  1 Mar 2026 01:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772328119; cv=none; b=Dhc/bjxUpzPACc1intQA3VnjFX2GPd8JqhK9V0sSX/b7/h42SvLyP8/FpzreLbHjt5V97wPcULb+pyK0oSI2BHCpjLkao4rz7kml/ei32c7jqGyx0u748s8KaDLHDDbNcUPjFUJCn7hj5qMe5o7qksx9lQKjup1zvF+0Pv8CVrE=
+	t=1772328195; cv=none; b=GplMhnW05kER6qXjqatx4Ma/p5gbHnKEf+jgDVH+9FLwBqqfjfLlfH7hOJsmTxE+8nLUBhqWVaI1kuxRHG6ILTbMwuyv5J1HaVNdiygn8HYz5pXKWHYb1hlQ803SdJX3YG1DsCY220MgoL0kLUxF8Kv6csrtkArCA51JxWFU1fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772328119; c=relaxed/simple;
-	bh=c12qH1e5X3AIU/mGpLowYLIqMvIkOrEb6vdRAvnixBo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ciPC/ooi/4WyyuV6nBrM2j0RJPoL+8ORwlBbIl4X67fJQM+KQZgro5O9fovqmmC4R6cwdJ+MIrHB+u2HelmQbGwj40IkrOK7z9USKySNsF+faGDXqlPGh15OlGe4d3KDxBMhDmUUXAwbv/lRenRgNyi75HgwE5TVbfIRgkHcV28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aJc7sjHX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772328195; c=relaxed/simple;
+	bh=JvPsAWRl7A5TNresg7NgehnF90HT3KeZx5T6cofBRCg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PJiidR1ql3huiPd4JmnOFmF5JfM2M9ZIfIN3cynHkqSD2mZmuVtEFEPXEyy00EuccsQTmJCBHmB8fnPNV2LamwH/ULiWPfpM0+59pzW+jwFqq6PaEr7uw5dP0EO7QWcpRu4aO9Zk6oYnF3FrOXs9iTdcfApA5Fe+CMJGk819hOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d69ngT9d; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aJc7sjHX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95499C19421;
-	Sun,  1 Mar 2026 01:21:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d69ngT9d"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F094AC19424;
+	Sun,  1 Mar 2026 01:23:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772328119;
-	bh=c12qH1e5X3AIU/mGpLowYLIqMvIkOrEb6vdRAvnixBo=;
+	s=k20201202; t=1772328194;
+	bh=JvPsAWRl7A5TNresg7NgehnF90HT3KeZx5T6cofBRCg=;
 	h=From:To:Cc:Subject:Date:From;
-	b=aJc7sjHXSPBEjcqXnNN9AScAiNaEEuDoo27YJLmVy/PeE7Yy6LPwVL9fCgls7fWP0
-	 doqJgcyoh7scDeD3LvBOKZuja+AeZS/7sDOSKEJBH4CmB7JPaPmKib0RPkOU8NHvBn
-	 kO2XjdieJ1eTwf/kiAP8LzZG3a2qkaJEW8gHzhhUw9qJ2DumUAzB4y7LA8M4duRc6i
-	 IifxKs5IkKpMrfzttnVn5t9ycny6FJFoQ8yatbTUWs1xPXRHzkEN18UPhBA4+1RbYx
-	 JrxHtSWiqo4ugRzMAViRqAdxPR5HE78Co7ZcgVSfhF9SZm5GKtTOLctVnLb0LfoKGV
-	 ii4JZT36aOv7Q==
+	b=d69ngT9dQThn9lmqWR9wgLshUSTLRE1PUrx6hWxoT2rO3M7JC/yud1lj4wWsAPA9k
+	 5fo4E3JYP/4AW7qg2s3Rr+eKfVksyI3rpRAesa3y9oEJLlZzHRFa52CTraPJku2+HD
+	 BhfyZgnj0i3pT+XKuagAMpTlwfYoidCWY5Su6mgLAhsf25MOumPlDst3Hy97Pn5g50
+	 RHMLX5dx5tcAu1FL8bpQfpm0tm1IEwWW91DWrLu5m3ahA37/AmLZoDUOF/ZDJK9WzU
+	 isLPfGTS+P6Q3+yrJ5ZLTYuk4kYWQm8mJZUPWenbvZyflR5A8UmB+TcwoFF5U6ZWmE
+	 grVuHzCqujZFw==
 From: Sasha Levin <sashal@kernel.org>
 To: stable@vger.kernel.org,
 	johan@kernel.org
-Cc: Thierry Reding <treding@nvidia.com>,
-	dri-devel@lists.freedesktop.org,
+Cc: Mikko Perttunen <mperttunen@nvidia.com>,
+	Miaoqian Lin <linmq006@gmail.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: FAILED: Patch "drm/tegra: dsi: fix device leak on probe" failed to apply to 6.12-stable tree
-Date: Sat, 28 Feb 2026 20:21:57 -0500
-Message-ID: <20260301012157.1678062-1-sashal@kernel.org>
+Subject: FAILED: Patch "clk: tegra: tegra124-emc: fix device leak on set_rate()" failed to apply to 6.12-stable tree
+Date: Sat, 28 Feb 2026 20:23:12 -0500
+Message-ID: <20260301012312.1679886-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -55,45 +57,41 @@ Sasha
 
 ------------------ original commit in Linus's tree ------------------
 
-From bfef062695570842cf96358f2f46f4c6642c6689 Mon Sep 17 00:00:00 2001
+From da61439c63d34ae6503d080a847f144d587e3a48 Mon Sep 17 00:00:00 2001
 From: Johan Hovold <johan@kernel.org>
-Date: Fri, 21 Nov 2025 17:42:01 +0100
-Subject: [PATCH] drm/tegra: dsi: fix device leak on probe
+Date: Fri, 21 Nov 2025 17:40:03 +0100
+Subject: [PATCH] clk: tegra: tegra124-emc: fix device leak on set_rate()
 
-Make sure to drop the reference taken when looking up the companion
-(ganged) device and its driver data during probe().
+Make sure to drop the reference taken when looking up the EMC device and
+its driver data on first set_rate().
 
 Note that holding a reference to a device does not prevent its driver
 data from going away so there is no point in keeping the reference.
 
-Fixes: e94236cde4d5 ("drm/tegra: dsi: Add ganged mode support")
-Fixes: 221e3638feb8 ("drm/tegra: Fix reference leak in tegra_dsi_ganged_probe")
-Cc: stable@vger.kernel.org	# 3.19: 221e3638feb8
-Cc: Thierry Reding <treding@nvidia.com>
+Fixes: 2db04f16b589 ("clk: tegra: Add EMC clock driver")
+Fixes: 6d6ef58c2470 ("clk: tegra: tegra124-emc: Fix missing put_device() call in emc_ensure_emc_driver")
+Cc: stable@vger.kernel.org	# 4.2: 6d6ef58c2470
+Cc: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Miaoqian Lin <linmq006@gmail.com>
 Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Link: https://patch.msgid.link/20251121164201.13188-1-johan@kernel.org
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/gpu/drm/tegra/dsi.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/clk/tegra/clk-tegra124-emc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-index 175f5f9937b01..8ee96b59fdbc8 100644
---- a/drivers/gpu/drm/tegra/dsi.c
-+++ b/drivers/gpu/drm/tegra/dsi.c
-@@ -1542,11 +1542,9 @@ static int tegra_dsi_ganged_probe(struct tegra_dsi *dsi)
- 			return -EPROBE_DEFER;
+diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk-tegra124-emc.c
+index 2a6db04342815..2777e70da8b99 100644
+--- a/drivers/clk/tegra/clk-tegra124-emc.c
++++ b/drivers/clk/tegra/clk-tegra124-emc.c
+@@ -197,8 +197,8 @@ static struct tegra_emc *emc_ensure_emc_driver(struct tegra_clk_emc *tegra)
+ 	tegra->emc_node = NULL;
  
- 		dsi->slave = platform_get_drvdata(gangster);
--
--		if (!dsi->slave) {
--			put_device(&gangster->dev);
-+		put_device(&gangster->dev);
-+		if (!dsi->slave)
- 			return -EPROBE_DEFER;
--		}
- 
- 		dsi->slave->master = dsi;
+ 	tegra->emc = platform_get_drvdata(pdev);
++	put_device(&pdev->dev);
+ 	if (!tegra->emc) {
+-		put_device(&pdev->dev);
+ 		pr_err("%s: cannot find EMC driver\n", __func__);
+ 		return NULL;
  	}
 -- 
 2.51.0
