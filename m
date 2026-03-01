@@ -1,40 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2FAD25F7B9;
-	Sun,  1 Mar 2026 01:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040AE26E710;
+	Sun,  1 Mar 2026 01:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772327993; cv=none; b=un0SFcRHLB1x6bbCbTQ5SHRkn8Tb1jsKogzkLh6NX382972Pi/LrVgJae2HLrdGY6eYyDVr+sJiUkrQPrNk6/hMlEFTQYpi8uqdfkBDWKGuIowNgZTnUcubOuz97Q9VaM3ULjNZyeI6r9U7omFREzDyuoy4LhrNpcDGCCEg+iqs=
+	t=1772328098; cv=none; b=YMVg2GUfGZVvofpWevuHgnBU2s32u14XI9ol9PdPYd9ijIdejXX+5Sl/z/8QEReOX6UJ27oC4Q9a2DTXyuEAiGvxn/MxPEFrzc7//iPbFN1vtRUfGlMIlgy63LTZcIEVsUUzHpC7EbpXIwdxDUxYAiHU3h498mflv2Z/RxEEmKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772327993; c=relaxed/simple;
-	bh=q9fR5QWyZTeJaO0pgatmFwZnh9r09ioAsZIReRpLf6k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AiBSIIPq9/1GBASVGoHO7ZUzPsuN9gRJnNERodcIkOSDXMsjA4cJcfoRlNRx6dvzuAmV+5wWYoR4xYqraUBG85yHQeqiKzQkZYUxc1ImWjTEMl+CqHUhQhdnqS0u5Nk9iwXFZL7kWYMOjLR1NJNiwWpHxGnwlikgHOsy/MZVJ6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OJdHnMOq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772328098; c=relaxed/simple;
+	bh=0Ox7k95bsA7AFaqgdTUobxUxF1b1PqcYR5KCI6k1nUA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pa0GOUk2dPy/cD9xNp/Pi5bhSyjkWAp8WQyLTGLLFxZ5Jp5sh5GaXbPFd9xSpYdL/pJ+1tFgP8DigQQjpCbYGscfM5DYOci/nbJuSFuNg4YIIsFsGLDPm6kLLfDB4NkRQI0JkU4g6npECb3DnFY11f48ar2UdWFzxsTN5ISFCGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k4hAdYdz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJdHnMOq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37D3DC19421;
-	Sun,  1 Mar 2026 01:19:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k4hAdYdz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 354BFC19424;
+	Sun,  1 Mar 2026 01:21:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772327992;
-	bh=q9fR5QWyZTeJaO0pgatmFwZnh9r09ioAsZIReRpLf6k=;
+	s=k20201202; t=1772328097;
+	bh=0Ox7k95bsA7AFaqgdTUobxUxF1b1PqcYR5KCI6k1nUA=;
 	h=From:To:Cc:Subject:Date:From;
-	b=OJdHnMOq9bfnfEcdogyks+KRJMXoQeM42PsJ4PMGt7wC+Net+Fkbdp9CiDqq9OLiI
-	 t4tD+8Gn1HSMcAAWII2ga5mudI6juORJYpF5HVkA8Q+KO/rdqxflIZsrQJUwmIEQGK
-	 hz3mrGpZ/cWDYrue1068xIeKv1ZQ90cv5Mt32N3yqMnL4CnRpVRwPtEX0HKswB2AHc
-	 3hb66yGUePKLjgX/kZLPA9xrsQnkmMKBh1MntVeMiOc2LDSMi+RfIo2CrboTBEi1z4
-	 /Qxzm9v6cMvfJ5jHUpvchWsa2v8S+pCTN57pK7JMPt6B0JkrDQrPce9lYNBxF2qaiN
-	 Sm372ajwhVQzg==
+	b=k4hAdYdzjnXfn9claSTcWSKkMm94F8nz0BVSqcy9v8Ziz4Q80Ec6b5XzyXbztxdfq
+	 SDNRmlFNTGysi7lohKt36AtXLY7k38/cGi1eovqk25l/FumAtrZ3cXC5XX5Oe+88Y4
+	 65Bbs+MpTGzjHvstVSSzt2dZHA4+ZN3TQmoxAz3ARi7tTDAdN5QgleXcf5TNX3K22c
+	 FKDzNle13hfVGGep7d/mNA9bKFi5w1rzd+iyJBe65Y6Fcqzd2x21git8ly0cu0jzKk
+	 DxK62lk4tLXvfJAo9eKx/894FJs6PcTBcgECtChShGruksqmykqWTPJye6UYdspfIP
+	 2YitekHPjhzdw==
 From: Sasha Levin <sashal@kernel.org>
 To: stable@vger.kernel.org,
-	zilin@seu.edu.cn
-Cc: Hans Verkuil <hverkuil+cisco@kernel.org>,
-	linux-media@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: FAILED: Patch "media: tegra-video: Fix memory leak in __tegra_channel_try_format()" failed to apply to 6.12-stable tree
-Date: Sat, 28 Feb 2026 20:19:50 -0500
-Message-ID: <20260301011951.1675117-1-sashal@kernel.org>
+	lihaoxiang@isrc.iscas.ac.cn
+Cc: Brian Masney <bmasney@redhat.com>,
+	Thierry Reding <treding@nvidia.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: FAILED: Patch "clk: tegra: tegra124-emc: Fix potential memory leak in tegra124_clk_register_emc()" failed to apply to 6.12-stable tree
+Date: Sat, 28 Feb 2026 20:21:35 -0500
+Message-ID: <20260301012136.1677617-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -56,76 +56,39 @@ Sasha
 
 ------------------ original commit in Linus's tree ------------------
 
-From 43e5302d22334f1183dec3e0d5d8007eefe2817c Mon Sep 17 00:00:00 2001
-From: Zilin Guan <zilin@seu.edu.cn>
-Date: Fri, 14 Nov 2025 09:12:57 +0000
-Subject: [PATCH] media: tegra-video: Fix memory leak in
- __tegra_channel_try_format()
+From fce0d0bd9c20fefd180ea9e8362d619182f97a1d Mon Sep 17 00:00:00 2001
+From: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
+Date: Thu, 15 Jan 2026 13:05:42 +0800
+Subject: [PATCH] clk: tegra: tegra124-emc: Fix potential memory leak in
+ tegra124_clk_register_emc()
 
-The state object allocated by __v4l2_subdev_state_alloc() must be freed
-with __v4l2_subdev_state_free() when it is no longer needed.
+If clk_register() fails, call kfree to release "tegra".
 
-In __tegra_channel_try_format(), two error paths return directly after
-v4l2_subdev_call() fails, without freeing the allocated 'sd_state'
-object. This violates the requirement and causes a memory leak.
-
-Fix this by introducing a cleanup label and using goto statements in the
-error paths to ensure that __v4l2_subdev_state_free() is always called
-before the function returns.
-
-Fixes: 56f64b82356b7 ("media: tegra-video: Use zero crop settings if subdev has no get_selection")
-Fixes: 1ebaeb09830f3 ("media: tegra-video: Add support for external sensor capture")
+Fixes: 2db04f16b589 ("clk: tegra: Add EMC clock driver")
 Cc: stable@vger.kernel.org
-Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
-Signed-off-by: Hans Verkuil <hverkuil+cisco@kernel.org>
+Signed-off-by: Haoxiang Li <lihaoxiang@isrc.iscas.ac.cn>
+Reviewed-by: Brian Masney <bmasney@redhat.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/staging/media/tegra-video/vi.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/clk/tegra/clk-tegra124-emc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index c9276ff76157f..14b327afe045e 100644
---- a/drivers/staging/media/tegra-video/vi.c
-+++ b/drivers/staging/media/tegra-video/vi.c
-@@ -438,7 +438,7 @@ static int __tegra_channel_try_format(struct tegra_vi_channel *chan,
- 		.target = V4L2_SEL_TGT_CROP_BOUNDS,
- 	};
- 	struct v4l2_rect *try_crop;
--	int ret;
-+	int ret = 0;
+diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk-tegra124-emc.c
+index 2a6db04342815..0f6fb776b2298 100644
+--- a/drivers/clk/tegra/clk-tegra124-emc.c
++++ b/drivers/clk/tegra/clk-tegra124-emc.c
+@@ -538,8 +538,10 @@ struct clk *tegra124_clk_register_emc(void __iomem *base, struct device_node *np
+ 	tegra->hw.init = &init;
  
- 	subdev = tegra_channel_get_remote_source_subdev(chan);
- 	if (!subdev)
-@@ -482,8 +482,10 @@ static int __tegra_channel_try_format(struct tegra_vi_channel *chan,
- 		} else {
- 			ret = v4l2_subdev_call(subdev, pad, get_selection,
- 					       NULL, &sdsel);
--			if (ret)
--				return -EINVAL;
-+			if (ret) {
-+				ret = -EINVAL;
-+				goto out_free;
-+			}
+ 	clk = clk_register(NULL, &tegra->hw);
+-	if (IS_ERR(clk))
++	if (IS_ERR(clk)) {
++		kfree(tegra);
+ 		return clk;
++	}
  
- 			try_crop->width = sdsel.r.width;
- 			try_crop->height = sdsel.r.height;
-@@ -495,14 +497,15 @@ static int __tegra_channel_try_format(struct tegra_vi_channel *chan,
- 
- 	ret = v4l2_subdev_call(subdev, pad, set_fmt, sd_state, &fmt);
- 	if (ret < 0)
--		return ret;
-+		goto out_free;
- 
- 	v4l2_fill_pix_format(pix, &fmt.format);
- 	chan->vi->ops->vi_fmt_align(pix, fmtinfo->bpp);
- 
-+out_free:
- 	__v4l2_subdev_state_free(sd_state);
- 
--	return 0;
-+	return ret;
- }
- 
- static int tegra_channel_try_format(struct file *file, void *fh,
+ 	tegra->prev_parent = clk_hw_get_parent_by_index(
+ 		&tegra->hw, emc_get_parent(&tegra->hw))->clk;
 -- 
 2.51.0
 
