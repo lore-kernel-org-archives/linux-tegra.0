@@ -1,124 +1,154 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2281F2B88
-	for <linux-tegra@vger.kernel.org>; Mon,  2 Mar 2026 08:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A6C332EBB
+	for <linux-tegra@vger.kernel.org>; Mon,  2 Mar 2026 08:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772438723; cv=pass; b=Z/PmsfpYAMrlf0fH2jrSIDrytQyCO2BcnqlajOJZ80IxCWs3zB9+THnnXzIoXOegAKLHtYu3OUOHirrEAmbkxVvTq2F4VwlPoS/gYVWpOC8GULerxJmQUMumx/Vu/L8zqA71OhWIdr83aqmXL0Q2HxOTV86qFrwugTNsvVlgNic=
+	t=1772439200; cv=pass; b=hjSgKTQ9Q4+5TowPEvqefsueEyRpgOTSILvZnshCxVQAXMqY6WvZCAgAV7Y0buUbm4P2BMtggL100sjb0gRH+rBB4pPCCOG4W9f+lyGrm0dH2TyJsXZSF1l+K66AECB59EIrQUtAGWzPLYq8WEscXLYkJwf9uIfX+DBnlh30VWE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772438723; c=relaxed/simple;
-	bh=uY/rLn7MxqPwGi+m5ZQtM3qjDoRsnCBjHmzawfcVFy4=;
+	s=arc-20240116; t=1772439200; c=relaxed/simple;
+	bh=l2mSkg7KkSm2uUTG1wCFPeaZJ3kB8IInsxSM3RxSchw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NqPJZWAj1CFIFZy8VmV9TOQigPQV/YGz6jL1Y17z+CmOpxTHJDX1eUtyFA0kLsrxMwkzLhqw6QAdw6KT+MrY+ZOv9/0CKoEzsNUUCWJSXi+FwLyuPah1OejNKdcy2t86ABAVSDxH6mwzPkSWnMYW4vk/lVWUgyKP9fUnrpHachU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YATXMO89; arc=pass smtp.client-ip=209.85.128.52
+	 To:Cc:Content-Type; b=c5TnCvOGkDj+tp95DAOw8WHwhF/g9eBRffmvSLGSlU/pPbwtNM5Kt7+QHCLZIYF7m5UbiYJQxfqsMDYox3A95osLdZ+13nintjOQFeNjpCJrUFYgn3LKi2B4eiUZeDefzU16FfT98KHXxVaE4AsZ/qZEV5VDekTu+9VSXjNk4YQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V5YAcOi7; arc=pass smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YATXMO89"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4806ce0f97bso35190675e9.0
-        for <linux-tegra@vger.kernel.org>; Mon, 02 Mar 2026 00:05:21 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772438720; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V5YAcOi7"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-439b94a19fdso461929f8f.0
+        for <linux-tegra@vger.kernel.org>; Mon, 02 Mar 2026 00:13:18 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772439197; cv=none;
         d=google.com; s=arc-20240605;
-        b=X9ErjOahsEgfacEM+QJhjtdIZlA2wqqOyi5yjh9WvZ7rDlaU7Y6wRnazsbOVpUVX/x
-         mJ4p/Li/ix8k5x4257vb/VRXodBKcNfgrfcdXLZ0IKJBSg16FV5deb5dwLWddlfini+h
-         p53HXmUQDdDSzj1aRUUUdmhfEslSA4n/zjJ8icT37yo89CrkHLQDkrXQGGkj2a2P66Yn
-         CjPwaRkbWlOZi1eCCXADBGHcG9oZXCTSARAT+2+2XFEf/saURtl2z+xLhs2C3sCv3JxQ
-         Cr2zUIkV98lMUFax1w3yIit7/IQXBgih512/I0+NN8j3SZcQsaolUT9IHvp3yegqzEwF
-         nfOQ==
+        b=ELV5PCDf3vXLufQH3eX9JLFmyltYRWivvMvRUHBjZBhftIcCnPIFF4CGkiVyqasvAD
+         jZ+5bajVDQZsQYoxGbRAWLcTu2ZxfjIm0374/azL3e86jugWR3L2K266NHnVHoUymnCy
+         JChS/G0T7tRbIoD+gRP4jKI30LCSz4sZaBSVAFevMGPuUkHltRdO4bEObpcSaiOVL9Qz
+         Qe/uHmJXbjiLn5Y4HgnBOmP23PPzc2ECHk3QlCsIFbWDPAYy9+Em+Xct1U+6xOLjdU6i
+         YWxEyN7SCCP66G8WwGTVPlEedPB9r0DzFzRDUcMQX9hjlTLpD4hR9gGqxQEu8UmzMt+H
+         bjUg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=dCYuDzhjJBNoZbXZeQzRxSVRy99nSlDkX+Pj2ZFikhM=;
-        fh=6ZTa3ANbILlP08tA+jR1gVpEvLy+Vn3oqKmmd8jgn3Y=;
-        b=h87vfP459l8RTisXAK+KZLJWHIzWXME/UMPCZQZXZPi39ofLPzJ3WE4prOv2787hnC
-         QRtay0LzXlHmB4txp/R6aP4qpLGJxHl5TN7ZdJmmN6G2QzNleD/lm3pJEO+D5mOpsT7G
-         TeexkHkF8fTVlDgy80QY3di+CrZoMCl6PMIWVJtmz5xDzSkBqNVckCT0M1vZ4D256Dwh
-         mOKjVbUOvNw/zbxBY8lDQaQyyar8Vt4MhLtzIK7OoWcW12+PYm9uN0V0qXwprgxFh3Ji
-         dO4HF76+6UK1GjudBkFkNai4ttc8mf8dMszLa0P3YzlGKk9Gmc9L7tbsuNLJYyCAA932
-         bumA==;
+        bh=l2mSkg7KkSm2uUTG1wCFPeaZJ3kB8IInsxSM3RxSchw=;
+        fh=BxNIraFvYyIYYSnfemHmoky7yg2Pdbq/qGnhkhmBphI=;
+        b=dBbIBT8VhDCKSClF0YOBvtp0M8hxa2j1O2AWoVWb+VG1CwvEVm+GQvD3lJr2XBVWNy
+         X7frkZIfP4gTJjPNRCq9l5NyznRs4PYEjlf6foCTpfuP8WSJyn8r/Yg/5wTEb1OPnc5t
+         MEBed9E9Xqb0ca4uaaUzqS8bDaFunUFE8REQciO136uw/nJ1Osahi2b4f9mxWUGft6ZC
+         s3vB8VsHSzwvKzuLiMhc4Pcy/vmUHJQmIbiIqItFIFxbUa5bWwrdSP0cjUUIvhfGPzxA
+         WOquf+0wVF7rQgxyBq8D/zj19pYt30SxUusw5fBPgEPgSUaMHB/TKcjts/rX93/5Xl3Q
+         /Ueg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772438720; x=1773043520; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1772439197; x=1773043997; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dCYuDzhjJBNoZbXZeQzRxSVRy99nSlDkX+Pj2ZFikhM=;
-        b=YATXMO895j6TWsy8ZbNPwqb/mIAh39kpqi5isveOWmk1z4ikfBjAEPBqeA13pyGIT5
-         jLkyV+X183OvDXHKvdnjxXfts0VcSU76HrtAYr0C/77qkNb+VscCWuAFAJqrSsUdOinI
-         3zgIKNs1Z5eXi7uHyAkGwiDVeyAx6J8kOIQ3kDKRqJv8mfRmc4/tmhXUpZ8oc1ese5uB
-         4WMm76q7/bpwQx0eZinWi6eUr4CgVNnudN73kLyRk6wb4fk69QnacT26UfcG+z/jdBem
-         Hq9SPChRcFwsfPX3qcoAvH3Od5cX0JW4yHWHc7O00NVxW4GE5ouqfLWNIPjSXlYltaBN
-         wHpA==
+        bh=l2mSkg7KkSm2uUTG1wCFPeaZJ3kB8IInsxSM3RxSchw=;
+        b=V5YAcOi7mztYUB8lv5ds0C1mG8Ld2+h8jExjDbvyurWopV3lqbGYlPf/K8NHgBUFiD
+         XXqBBOPzEluwkIGbw8aXj1OVi6mMEowu5C8J2gM5wfARCje6voJbZ4hNuNBxyFvgb+bs
+         KAygrpThVKLZeUAnU2CgxYQUPpz7MdftmnLpG6/e6PCtkPi419NBSwjaTZ4Df3l5YwMu
+         vg2W2bpA8rnbKOoVLLawEVxuFv9oD7eETx58KhYGJgAU5Zvsp5sUgaaRTVMZ/DgLtS3B
+         Ne+Z/XI+9s/2azipJhVXpysp13TqAyARpMfRBLcD7/yluia1UxmqpcB1LPOyJth3R0Gj
+         zIvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772438720; x=1773043520;
+        d=1e100.net; s=20230601; t=1772439197; x=1773043997;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=dCYuDzhjJBNoZbXZeQzRxSVRy99nSlDkX+Pj2ZFikhM=;
-        b=Dx7cjArJOIQ4xoNF73an/qx5EVpvZIczigP5JtG0AramxpYJeaID6+eGlBsOP/m/r8
-         xXhr0z3sNZazUz9czLkWW2XywIwVtG9fc+/bCjTw1Lw1xIP1llli9Lh9hs9vHNSZ0Pco
-         M5YlxKPA21T0ZdSPxXW9UgXXWSt4s49xc6TsQg4aCO4RVggUsNflGw3RizPOtYM8kwdX
-         1Taewnr0YaOM+NfvOXnBYgQ1NJkeFu/AbYpoSXubB08N97OEbhNOJ0/8I8fuRCtrFkcC
-         1+xwAOH2t4QeF6ZSYEtzSUzBu2/2G5Oo30VLuTUz1oxYNHYTg7VSTqeieMWxmrasMFjO
-         27pw==
-X-Gm-Message-State: AOJu0Yy1Dpbc5uUwnalF2npFEtO99Oc8Qci8cd7Bk+QtcOQglFkuNhZ+
-	q2PNeYPPMP6ID9/YeSaHVc0b8t/yg2MRoscHENNGUFT0JbSdKddnQULHNu+xZIDBoBII/awi3SU
-	YyIUAzdYcq6SGnmSg1oxDRXklRFrQP+Q=
-X-Gm-Gg: ATEYQzyvSmEUc7atuHXv1F4IBQQLjczL8w9VIkb7nm3m6466A7wSRT/RHzXsTN+Zd3H
-	3ZNqv2L3BZ3X49cv9tpGFB24OyA9HcDv9roDW7yrsE3uAUAsGyl2OX9SgpuZsY++7p6cPnzEeSN
-	jzoMvM+j+mI7+s1I7C6b8FVH1OzqfQobOX6whl3s8mPbUrSlVd6+JYurHU1TmJiFSnXx9fZBa0L
-	BCj9DIZ3A/MT1+sVJsJlNKqTlGsXtL4+H53DyJbHmS9j+zG1PcXohfPxastruTz9bjNe3/D5Hpf
-	N8nwJpPU8uPbjqAlfbQ=
-X-Received: by 2002:a05:600c:8108:b0:477:7ab8:aba with SMTP id
- 5b1f17b1804b1-483c9ba5fe4mr184918465e9.1.1772438720300; Mon, 02 Mar 2026
- 00:05:20 -0800 (PST)
+        bh=l2mSkg7KkSm2uUTG1wCFPeaZJ3kB8IInsxSM3RxSchw=;
+        b=Ot6Z9a6FsqI5DwA8AXmBPpi54eCKXPK2h1c92KClwarTrm4Ym6odrJgYsDDlPHtkjc
+         Jc+Iroiqz+NsdImpzveYG6IYGkgue+oV011LWVtslT3h+8n071ZOMbfcgZNZ1pPf+Ftp
+         kRDGIpEmOhtjsIT/IBNdDIX/Z5Aol8lJn/3mg9v7Va4yR/GqRvjQ6dP2Ivr4yt9+EVYn
+         VIQCjQDUI/9LQj6wk82N/t7P4ilxYsnaGHA9Ytqi8k5o5nc5P+ql7Ev95njqMsNNsh40
+         q2lxxdI+7UkaWJRIa+UG0y6HIKSpkHg+8w0oOXJJrqowUaOvqd1pb6VjUxKXZcrs8z1S
+         tkeA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1dEOgsiQmSUm5MFg/z2sAqwlTYLpXdbjnf2ufNKL7dR2DtlBAdmUijn5L2/6u3wnMk9q0XcdVStNCOw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMloLuQo6HWrT1T0nMdkZ7FD6iL9ejyLSffcTRNpzmHxhTw9b1
+	GL9u2RB9O6hEfeY8qoPrrZWr/HZzEt8V9LjsxVi+j/jLkILscoGMLg7zXhgYodjGhMe6RrAZwpi
+	V2ELtSU9cACpHmv+2IQz7JptIpG49WII=
+X-Gm-Gg: ATEYQzzPK1IaioTHWN3ucYysXUlsmeCLLC6kijmEQ4BeJUKGxdLQSMbGGwYV3K7+3s1
+	2RDtRyLIml2KSgDtW+HvksMwYZqiTs3Jd9lXNOzjBLQhD6OZIQ1HLja0JRaxRaDB1B6UNvJPB8E
+	PH0xudP7ZNzU02gRbtwKTwXvSud0HJZ+xEB7H6VP0eWX61mX6E8DUCEyJch4Gzh61Vm0JheoIgB
+	KpHug1sQTUZNcQkVf6hZ8IXlGbBuMMWktT6IKkEiWdJAM5KavWC1xZgiEh5jtQZa8rNgCg5wC67
+	VFKMsvyi
+X-Received: by 2002:a05:6000:4011:b0:439:b922:8479 with SMTP id
+ ffacd0b85a97d-439b92285dfmr2649252f8f.36.1772439197286; Mon, 02 Mar 2026
+ 00:13:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260126190206.78270-1-clamor95@gmail.com>
-In-Reply-To: <20260126190206.78270-1-clamor95@gmail.com>
+References: <20260130124932.351328-1-clamor95@gmail.com> <20260130124932.351328-6-clamor95@gmail.com>
+ <DGP1SU17I99K.3QKZWHDPBB74H@bootlin.com> <CAPVz0n2uiF_UHK5_7-dW+AjazxTsonQQsnf96QvRu5HgmsyGSg@mail.gmail.com>
+In-Reply-To: <CAPVz0n2uiF_UHK5_7-dW+AjazxTsonQQsnf96QvRu5HgmsyGSg@mail.gmail.com>
 From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Mon, 2 Mar 2026 10:05:08 +0200
-X-Gm-Features: AaiRm53xsG5yx8XhFwhx2GRqK9qMlMuaEpIerBA9utjGyDVCekHeYpnJIy04YVs
-Message-ID: <CAPVz0n07bbe9pKJirZXxnqE9Nd2Onf001OhbXY9opYrOPnRPnw@mail.gmail.com>
-Subject: Re: [PATCH v1 0/1] soc: tegra: common: add Tegra114 support to devm_tegra_core_dev_init_opp_table
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Svyatoslav Ryhel <clamor95@gmail.com>, 
-	Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <treding@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 2 Mar 2026 10:13:06 +0200
+X-Gm-Features: AaiRm513PJ2Vl3yAaZ9EK2Cx-_p8na7NMdLvn762xKViUHPZp6XfmHs_ZYNwew4
+Message-ID: <CAPVz0n2rv3aey+7dVdtGeQfdgVpyMczp=RTKeg8V5SxNPr5-Xg@mail.gmail.com>
+Subject: Re: [PATCH v6 05/15] gpu: host1x: convert MIPI to use operation
+ function pointers
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Hans Verkuil <hverkuil+cisco@kernel.org>, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-staging@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D0=BF=D0=BD, 26 =D1=81=D1=96=D1=87. 2026=E2=80=AF=D1=80. =D0=BE 21:02 Svya=
+=D1=87=D1=82, 26 =D0=BB=D1=8E=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 19:09 Svya=
 toslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> Determine the Tegra114 hardware version using the SoC Speedo ID bit macro=
-,
-> mirroring the approach already used for Tegra30 and Tegra124.
+> =D1=87=D1=82, 26 =D0=BB=D1=8E=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 18:52 Lu=
+ca Ceresoli <luca.ceresoli@bootlin.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > Hello Svyatoslav,
+> >
+> > On Fri Jan 30, 2026 at 1:49 PM CET, Svyatoslav Ryhel wrote:
+> > > Convert existing MIPI code to use operation function pointers, a nece=
+ssary
+> > > step for supporting Tegra20/Tegra30 SoCs. All common MIPI configurati=
+on
+> > > that is SoC-independent remains in mipi.c, while all SoC-specific cod=
+e is
+> > > moved to tegra114-mipi.c (The naming matches the first SoC generation=
+ with
+> > > a dedicated calibration block). Shared structures and function calls =
+are
+> > > placed into tegra-mipi-cal.h.
+> > >
+> > > Tested-by: Luca Ceresoli <luca.ceresoli@bootlin.com> # tegra20, paral=
+lel camera
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > Acked-by: Mikko Perttunen <mperttunen@nvidia.com>
+> >
+> > I wanted to test this series on top of v7.0-rc1, but applying this patc=
+h
+> > fails (with b4 shazam). Can you rebase and send a new iteration?
+> >
 >
-> Part of previous patchset: https://lore.kernel.org/lkml/20251125120559.15=
-8860-1-clamor95@gmail.com/
->
-> Svyatoslav Ryhel (1):
->   soc: tegra: common: add Tegra114 support to
->     devm_tegra_core_dev_init_opp_table
->
->  drivers/soc/tegra/common.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+> kzalloc(sizeof(*mipidev), GFP_KERNEL) > kzalloc_obj(*mipidev)
 >
 
-Hello there!
+Hello Luca!
 
-May this patch be picked if everyone is fine with it?
+Thank you for still being interested in this endeavor. Sorry for such
+a brief answer, I was very short on time. I have rebased changes on
+top of v7.0 but ATM I still have a bit of time constrains and I have
+to test them on my device. I will send rebased v7 ASAP.
 
 Best regards,
 Svyatoslav R.
 
-> --
-> 2.51.0
->
+> > Best regards,
+> > Luca
+> >
+> > --
+> > Luca Ceresoli, Bootlin
+> > Embedded Linux and Kernel engineering
+> > https://bootlin.com
