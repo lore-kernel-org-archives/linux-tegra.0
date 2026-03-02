@@ -1,69 +1,152 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7EFB39281B;
-	Mon,  2 Mar 2026 09:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF4F38F93E;
+	Mon,  2 Mar 2026 10:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772445577; cv=none; b=pTjFSAAbIiq/gHRHbwosJJkcTBmZQam6kfE2Ru0SOY/cx6QMTR8M48h/7+LX4w7JKzAK0onLrEKvvUkgxyaGikQ3GXYfLNsKcEpcjlqXNX3ypYae4pjLU9sYikUHht3G8Qr3a9cP/iGf8Cw35N7bDpiTDTbrffwB81wPlJf6j8A=
+	t=1772445602; cv=none; b=GW1V+9RpID5bVMh2K1U3SAwpAi5KLT2pRjdCZl6StuWb3V9ehS5dKRT+8rNwhzeVRhlMQ91ZYGq7YDOg0PZaNhavzQIZ5BQob4TSpzvlobaIjeeXqJqTeNuHPyPaP3UuN33k1rakg+c5jQNjJVdjRFmEvxEs6SfKgkJuHfu2GNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772445577; c=relaxed/simple;
-	bh=JW4wtcwWSZaAh0Eew+adPH7eqv23BxKf/1lj6ik4sTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PDLvI5nX8+2PAGSsGpy0lLF94RJIternhZQ+c41MGtIVfhHU/NdGKKGJLg8W9ks4uxdeJonOWTWS1ZjZpHFxcT2fg5tPS9/mMeArD3tHSNTqgXy/TgI52+imC51WrJi9io7QADoMs0jQwj8RqcS5bi89WRmBpnE1fNPwJj8qolg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hiq+kzVp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772445602; c=relaxed/simple;
+	bh=IoPwRnzhcjgMfGxBVDJ5aughrS0y6ra32/Xy0hY7TLw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l1J78x2352vmpvXR7l19zFyy+tqrwninm5tZPspj00iT1gHoJTf6+REcM1mAZypvr3gEOYIIY//NhM4yyenPtftgydsyShf1fmlURHHHB6oDaHidB+TOf5twX4y9+NnxBRMXL6VmGUn7GiF+C0hSLv8sbt+ASsG1mi0RxeNNeXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+MpGq1d; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hiq+kzVp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7BA9C19423;
-	Mon,  2 Mar 2026 09:59:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+MpGq1d"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1A15C19423;
+	Mon,  2 Mar 2026 09:59:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772445576;
-	bh=JW4wtcwWSZaAh0Eew+adPH7eqv23BxKf/1lj6ik4sTU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hiq+kzVp93oaS6b2l2zDiik3ghkSOKcBm1+R63qsJ/z9Ds6V/BkrXDYyyrRcCER3e
-	 ES27r1RFJ2IqyLpQiS6I4UDiKB8rMFrM46AggFSgm9XCBmDLwb9BYufeQTC8U5nOUH
-	 S+iFxQ3zGapm+gaNZzsVe2EFqUQ96MHuq9kgOiLh0pK49rZxyrkuxgynR9BrsBVQgu
-	 sSkf5WO4gJB+M1qu5X1K+WLXNU8Yov1+hAfKgqTRoa4FDBb4OlhMokPrnxxT8AE7wr
-	 DGtUUEkZKuvjJMy8Tp/WYFllqdu6owx8W1R3o/3SQ87m/y/R56GlD2oBBk6T7KHY8L
-	 S7h0Fzc90wBVg==
-Date: Mon, 2 Mar 2026 15:29:32 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Mathias Nyman <mathias.nyman@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	JC Kuo <jckuo@nvidia.com>,
+	s=k20201202; t=1772445602;
+	bh=IoPwRnzhcjgMfGxBVDJ5aughrS0y6ra32/Xy0hY7TLw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=c+MpGq1dnuTjUI7f0FrIbg04S4ve5/201mDbKqansVCUw6ROye6c/d1QelKslSjbF
+	 nba0cVLK3eHGlu7U4FA/t8bBHPJoMpo73cDxG0l8/SCtcSRTaEkNqbuzWgwdMpTYRZ
+	 Lg/THWXWHObfMlWayI3hhx+JkkDlWbVyNZyrBMWUSnXauUHohb7Y878keSZs/kSMUM
+	 48PxGoCsSYXBKycQxMj0s4ihGAHFiYZxyv2Ki8nhknqS7avD0DtBgGwMAJOw7zi0tC
+	 8vlwUS9HXOWiK1eYWUSuxV1u1QJgKxdXP1R9e4c0vILJtRJUDRweH2sW7Q7QOaigUI
+	 4V9PxzbbkBD/Q==
+From: Niklas Cassel <cassel@kernel.org>
+To: Manivannan Sadhasivam <mani@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
 	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
 	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] Fixes to Tegra USB role switching and phy handling
-Message-ID: <aaVfhN_pVLebf0MI@vaman>
-References: <20260127-diogo-tegra_phy-v2-0-787b9eed3ed5@tecnico.ulisboa.pt>
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Minghuan Lian <minghuan.Lian@nxp.com>,
+	Mingkai Hu <mingkai.hu@nxp.com>,
+	Roy Zang <roy.zang@nxp.com>,
+	Jesper Nilsson <jesper.nilsson@axis.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Srikanth Thokala <srikanth.thokala@intel.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Christian Bruel <christian.bruel@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Shuah Khan <shuah@kernel.org>
+Cc: Manikanta Maddireddy <mmaddireddy@nvidia.com>,
+	Koichiro Den <den@valinux.co.jp>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	linux-pci@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@axis.com,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-tegra@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH v3 0/9] PCI: endpoint: Differentiate between disabled and reserved BARs
+Date: Mon,  2 Mar 2026 10:59:12 +0100
+Message-ID: <20260302095913.48155-11-cassel@kernel.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260127-diogo-tegra_phy-v2-0-787b9eed3ed5@tecnico.ulisboa.pt>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2516; i=cassel@kernel.org; h=from:subject; bh=IoPwRnzhcjgMfGxBVDJ5aughrS0y6ra32/Xy0hY7TLw=; b=owGbwMvMwCV2MsVw8cxjvkWMp9WSGDKXxheqFho7TVV4vZNPP2u59rS1LzakLTaM+X7/asqxv n3T7iV86yhlYRDjYpAVU2Tx/eGyv7jbfcpxxTs2MHNYmUCGMHBxCsBElIMYGd7tY5/em1zZdO3m KzvfZ+eOlx/NEF/1eubppbbZQi1PLHgY/mmxcaU+WXH5k4/jHZ8DVSILb83YIv9r9unVb5p6300 KuckHAA==
+X-Developer-Key: i=cassel@kernel.org; a=openpgp; fpr=5ADE635C0E631CBBD5BE065A352FE6582ED9B5DA
+Content-Transfer-Encoding: 8bit
 
-On 27-01-26, 15:11, Diogo Ivo wrote:
-> Hello,
-> 
-> This patch series contains fixes/improvements for USB role switching on the
-> Tegra210 and Tegra186 SoCs.
+Hello all,
 
-Thierry, Jonathan
+This series was originally written in response to the patch series from
+Manikanta Maddireddy that was posted here:
+https://lore.kernel.org/linux-pci/291dab65-3fa6-4fc8-90a2-4ad608ca015c@nvidia.com/T/#t
 
-can you folks check this and r-b/t-b please
+Manikanta has reviewed V1 and will send a small series on top of this one.
 
+
+Changes since v2:
+-Picked up tags from Frank and Koichiro (thank you)
+-Fixed a comment in pcie-dw-rockchip.c to no longer reflect the old
+ definition of BAR_RESERVED.
+
+Link to v2:
+https://lore.kernel.org/linux-pci/20260225170324.4033466-11-cassel@kernel.org/
+
+
+Koichiro Den (2):
+  PCI: endpoint: Describe reserved subregions within BARs
+  PCI: dw-rockchip: Describe RK3588 BAR4 DMA ctrl window
+
+Niklas Cassel (7):
+  PCI: endpoint: Introduce pci_epc_bar_type BAR_64BIT_UPPER
+  PCI: endpoint: Introduce pci_epc_bar_type BAR_DISABLED
+  PCI: dwc: Replace certain BAR_RESERVED with BAR_DISABLED in glue
+    drivers
+  PCI: dwc: Disable BARs in common code instead of in each glue driver
+  PCI: endpoint: pci-epf-test: Advertise reserved BARs
+  misc: pci_endpoint_test: Give reserved BARs a distinct error code
+  selftests: pci_endpoint: Skip reserved BARs
+
+ drivers/misc/pci_endpoint_test.c              | 21 ++++++++-
+ drivers/pci/controller/dwc/pci-dra7xx.c       |  4 --
+ drivers/pci/controller/dwc/pci-imx6.c         | 22 +++------
+ drivers/pci/controller/dwc/pci-keystone.c     | 12 +++++
+ .../pci/controller/dwc/pci-layerscape-ep.c    |  8 +---
+ drivers/pci/controller/dwc/pcie-artpec6.c     |  4 --
+ .../pci/controller/dwc/pcie-designware-ep.c   | 24 ++++++++++
+ .../pci/controller/dwc/pcie-designware-plat.c | 10 -----
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c | 23 ++++++----
+ drivers/pci/controller/dwc/pcie-keembay.c     |  6 +--
+ drivers/pci/controller/dwc/pcie-qcom-ep.c     | 14 +-----
+ drivers/pci/controller/dwc/pcie-rcar-gen4.c   | 16 ++-----
+ drivers/pci/controller/dwc/pcie-stm32-ep.c    | 10 -----
+ drivers/pci/controller/dwc/pcie-tegra194.c    | 20 +++------
+ drivers/pci/controller/dwc/pcie-uniphier-ep.c | 24 +++-------
+ drivers/pci/controller/pcie-rcar-ep.c         |  6 +--
+ drivers/pci/endpoint/functions/pci-epf-test.c | 24 ++++++++++
+ drivers/pci/endpoint/pci-epc-core.c           |  6 ++-
+ include/linux/pci-epc.h                       | 45 +++++++++++++++++--
+ .../pci_endpoint/pci_endpoint_test.c          |  4 ++
+ 20 files changed, 175 insertions(+), 128 deletions(-)
+
+
+base-commit: 36bfc3642b19a98f1302aed4437c331df9b481f0
 -- 
-~Vinod
+2.53.0
+
