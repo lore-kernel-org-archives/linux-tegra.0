@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECD3383C8E;
-	Mon,  2 Mar 2026 09:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABD732AAA7;
+	Mon,  2 Mar 2026 09:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772442190; cv=none; b=cBhE6qEE8xUD0bEtPBr9AQTyZqzrWt1YnEAx/EiuYUvL2BUsUB2BT6tdrfhoLtY1loZupt4xP5CcnRbtds2qRlhYry5o54Fg29eoSjks4tGCwbGGDR8F4/BzkpURFoi/9XCqz1NYYvlNPr7p5PBMMbLestyn99NUn0+DHaDb5HA=
+	t=1772442249; cv=none; b=BVxt/K4YpCQHRswCD1YUG+y11U2udCDxhRpSnxk08J7Wy9r7nXEoAt+AVNtEm8MJYpdLP5B9Zo831oblokiaiHpZGq6wjZt7BtwuMzf7KwqysztLmDcAoebWzu18Rm2lO1LNupbJ+aQnh2mvxnHIJBZZW1FZWvh7XXiy5cJoLJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772442190; c=relaxed/simple;
-	bh=mIhC1osNgAUxZYse4Scup5RMDaCSbE6vBXfShNOqGsk=;
+	s=arc-20240116; t=1772442249; c=relaxed/simple;
+	bh=iQBz+7qJ+Vib0hgib9uOQYUG+N0tzSYhavXFT+171t8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u0txQNKRoEulXYBeOxIMb6KyeWXXkRffgEjtPqkrTPex3y0s6+znaavBv3OlNJ4i+u6hLGc0QARKulBPlE8bsaPeZ0cFCy13Ee0Hw/KlT6wOejHoI/8K4QC21ttm+eZCc7McIlizSXAdw86rIErP7OZyZZCdnkrTmOTsDE+uZRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YtbjJQV+; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=rUjoKy+wJ/T6Oi1U+/0anhRgWb2v4Y0CWolUl5yCkWvgki4glEAgPs4HBVxXPpmS2p0CwRIUjGWjSyqwMan3SFIW27h49lcGrWmVkH9ZyVGATNyN0p8pi+zC32zHwLxoLFW6oR5Q2ThcxvHcOBh0MflDlSxdKFE0diLhTsz7Fj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jPONdLoY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtbjJQV+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 353F3C19423;
-	Mon,  2 Mar 2026 09:03:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jPONdLoY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FBCCC19423;
+	Mon,  2 Mar 2026 09:04:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772442190;
-	bh=mIhC1osNgAUxZYse4Scup5RMDaCSbE6vBXfShNOqGsk=;
+	s=k20201202; t=1772442249;
+	bh=iQBz+7qJ+Vib0hgib9uOQYUG+N0tzSYhavXFT+171t8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YtbjJQV+pRyp4EEb6/eSlnd0L59+Gt0KpyUuG7qJ2YwWysjidtX8uRlwI0mkpDPP+
-	 oyWIVmFCQ2aXNTxVNQtbakvVfS+kPiycaYe5Hok25XmPr+VIGbkz8sWYIw8SR54P1A
-	 H5cPo2yF4wDSqfKN4Ij8QbhtLX2FRu+TqGQGN9N4vIQDI8cvyNsvpYaPPKo20CXROR
-	 2Hb1XdBHYlcZbKuv5ht0qJMNmfbU0+QE1nAXlkeYWYFVfDKmM8j7qTzIEKxz8T5M1o
-	 sgpk3PCdq5U8hKUDdvfXoMO6xbKwzwM7BeCisZgPGvH6Dx9A/IJYJcfRZf6lpl50Co
-	 hG2CHrggjEZug==
-Message-ID: <cd61c6dd-6224-42f7-8032-7fde13d068cf@kernel.org>
-Date: Mon, 2 Mar 2026 10:03:05 +0100
+	b=jPONdLoY8Szf5rdtT2rWfLjSZMeRMwQu0ywvoaaTMF8l2hguNS60JHv/NdAtfWEVd
+	 Vdz7lzWXxxPrI1eUT4UURqfZlnUALRSDviccXCtPvp0zwErHHne0cWD0Fs71zBMJEB
+	 K4n/JWudMuAlJ3Gb9ChiBygdHZC9cE3FhoW5OujJm9KFuAi0IrkFt6AWFsoWHRy02N
+	 NdsBGJnh0f+sfaU/uumBR4FCzIsHOM7whcHg2XNKESfBuS60+C4wBJv1q7yWGQ+0di
+	 0G5TFx5Xjtu2CfaN0mGu75XGB/OOZe0tkdVc4KZjDdaajrADs+NNj33fGBAh+/p1k3
+	 99NF3c74Epn/A==
+Message-ID: <7447fde1-7eae-4bbc-b36e-fc0da9609c8c@kernel.org>
+Date: Mon, 2 Mar 2026 10:04:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,8 +35,7 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ASoC: dt-bindings: tegra: Add compatible for Tegra238
- sound card
+Subject: Re: [PATCH 2/2] ASoC: tegra: Add support for Tegra238 soundcard
 To: "Sheetal ." <sheetal@nvidia.com>, Liam Girdwood <lgirdwood@gmail.com>,
  Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -45,9 +44,9 @@ Cc: Jonathan Hunter <jonathanh@nvidia.com>, Jaroslav Kysela <perex@perex.cz>,
  Takashi Iwai <tiwai@suse.com>, Sameer Pujar <spujar@nvidia.com>,
  Mohan kumar <mkumard@nvidia.com>, linux-sound@vger.kernel.org,
  devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
+ linux-kernel@vger.kernel.org, Aditya Bavanari <abavanari@nvidia.com>
 References: <20260302085323.3139571-1-sheetal@nvidia.com>
- <20260302085323.3139571-2-sheetal@nvidia.com>
+ <20260302085323.3139571-3-sheetal@nvidia.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,21 +92,36 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260302085323.3139571-2-sheetal@nvidia.com>
+In-Reply-To: <20260302085323.3139571-3-sheetal@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 02/03/2026 09:53, Sheetal . wrote:
 > From: Sheetal <sheetal@nvidia.com>
 > 
-> Tegra238 requires different PLLA and PLLA_OUT0 clock rates compared to
-> other Tegra platforms. Add Tegra238 compatible string to the APE
-> tegra-audio-graph-card bindings.
+> Tegra238 platforms use different clock rates for plla and
+> plla_out0 clocks. Add Tegra238 support in the Tegra
+> sound card driver to apply specific clock configurations.
 > 
+> Signed-off-by: Aditya Bavanari <abavanari@nvidia.com>
 > Signed-off-by: Sheetal <sheetal@nvidia.com>
+> ---
+>  sound/soc/tegra/tegra_audio_graph_card.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/sound/soc/tegra/tegra_audio_graph_card.c b/sound/soc/tegra/tegra_audio_graph_card.c
+> index 94b5ab77649b..b6dadd6a3d3d 100644
+> --- a/sound/soc/tegra/tegra_audio_graph_card.c
+> +++ b/sound/soc/tegra/tegra_audio_graph_card.c
+> @@ -1,5 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+> -// SPDX-FileCopyrightText: Copyright (c) 2020-2025 NVIDIA CORPORATION. All rights reserved.
+> +// SPDX-FileCopyrightText: Copyright (c) 2020-2026 NVIDIA CORPORATION. All rights reserved.
 
+If updating it, you should rather drop it and use standard copyright.
+This tag is not supported in kernel in general and I document it only
+because it already spread all over.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
