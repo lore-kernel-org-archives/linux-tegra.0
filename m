@@ -1,134 +1,263 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA3B392C42
-	for <linux-tegra@vger.kernel.org>; Mon,  2 Mar 2026 10:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7190394482;
+	Mon,  2 Mar 2026 10:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772445609; cv=none; b=D17GH29IC9qlBH0P0Y9IhkHp4k6H3DBklScJqivLw193umt0vD43ZKoWAcFBnqqRyNQdWaese7/23YaN5C9ip0tSXzjYye/pOP06YdjLw2x//bMy0OqScp9U/fc+VU4LVfFjt/BKojjcklfwQvEpdIxfaZo+0PTLMLQ9+TeY6xY=
+	t=1772445610; cv=none; b=KQLN4B9mcFzM8bk1FpsoNMk0xcfqcz8n6vrMLuERY6auupQOupsj1IB1U6GgnZJYOD2XCpFslstDNHYMZReq1J/03SA8wLJzoYDjiX5ZDmO7ZatPUbpC/AWiQ1zjMj2DpART+4W3SWZ79dX08fXshErQOf5nx9A5iUf4ZG2rGmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772445609; c=relaxed/simple;
-	bh=//RDafJ77aefXPhkb+CPc5dlvrRnRxlG7eUHg7CVqbM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kDIrz1MCW58nAQz8B2WbNsGFRJsSet9CB7HkZ+PzX8VNIL2sCnziV7/iRbVBNF8LHuF6koyaNW5HgrXpfno6iIuNEXJKBhl4ZNcVmdPXUOlh2z863+8NYYV30gf9PiZhSk3QK8eBdXFPf2Ilx+JITH6wNpS/MhryI2a3W8gNLLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NQAaulIO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=L5mPdj2x; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NQAaulIO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=L5mPdj2x; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1772445610; c=relaxed/simple;
+	bh=BxIYx3Y999QRoEkyovD05r3kAt0oourcD0d7OR38w/8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ky54nDps/i/sgO0bnndS9iRcKBJjoBNXlSviMD5VHw+bVV7qh02/0KNgMSna5Qfv5ZtOk9w6QwhYDQme2X01gJoKOH7HuDun+Fjy/7+Rxa48KX/a5UsswF0FgcSyp0OPxuhdVcmqczq2ld7UOrjsC8ELSV6OK/KulNHEyJnUG9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dx+5vVE6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NQAaulIO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="L5mPdj2x";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NQAaulIO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="L5mPdj2x"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 30CC93F823;
-	Mon,  2 Mar 2026 10:00:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1772445606; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gaoltdEYOEBqUxm7stCACiLNkbc75IZQL+NDstyFaXk=;
-	b=NQAaulIOo85lN6Wnk1DOD1IaOZqAcTSg0PSbOjOLZNSn+Gz6cgCJ1XVrbtoq4L9PP8jscN
-	meX/rVtPJzdjOpEiafjei7w+tIpR7hKa1vH5RE1kP5PtgX+Lo0F7UWLOWwYDRqBx6l0F4Q
-	ysBOctHrTDCdzLbP3HtciqTm0lEK4DU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1772445606;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gaoltdEYOEBqUxm7stCACiLNkbc75IZQL+NDstyFaXk=;
-	b=L5mPdj2xAKi0jhs4vRFuiAShzGj2bfZz1iltEcNwbzpeBZ28MI8JtuZABfbkD540ngA104
-	9hltk+Fdvp3ijoCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1772445606; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gaoltdEYOEBqUxm7stCACiLNkbc75IZQL+NDstyFaXk=;
-	b=NQAaulIOo85lN6Wnk1DOD1IaOZqAcTSg0PSbOjOLZNSn+Gz6cgCJ1XVrbtoq4L9PP8jscN
-	meX/rVtPJzdjOpEiafjei7w+tIpR7hKa1vH5RE1kP5PtgX+Lo0F7UWLOWwYDRqBx6l0F4Q
-	ysBOctHrTDCdzLbP3HtciqTm0lEK4DU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1772445606;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gaoltdEYOEBqUxm7stCACiLNkbc75IZQL+NDstyFaXk=;
-	b=L5mPdj2xAKi0jhs4vRFuiAShzGj2bfZz1iltEcNwbzpeBZ28MI8JtuZABfbkD540ngA104
-	9hltk+Fdvp3ijoCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E91B93EA69;
-	Mon,  2 Mar 2026 10:00:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +RXEN6VfpWl1EgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 02 Mar 2026 10:00:05 +0000
-Date: Mon, 02 Mar 2026 11:00:05 +0100
-Message-ID: <87jyvumtzu.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: "Sheetal ." <sheetal@nvidia.com>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	"Thierry Reding" <thierry.reding@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dx+5vVE6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB436C19425;
+	Mon,  2 Mar 2026 10:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772445609;
+	bh=BxIYx3Y999QRoEkyovD05r3kAt0oourcD0d7OR38w/8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=dx+5vVE6p+29xGUUJChh99qvbGtsZ4Dyd2J1DEGKuMDD2KM/fjMA6+SiVZELx89Jh
+	 50BFScarlpt/oTVgeaFjQX1+u/4gTI0okmZJh2l25arG0zrws6yK7iHRrKmqKC9xKj
+	 rGxJBKPwc3APmR1szWc4AHELctWmeoPR5CYI4czXyjMNhwvX5umOUcxhVcGiKQ6ovd
+	 jiKq49HKYZX950f8fmYv5BXKlIhqACRnje9zIvnoxdt/ypK2HN2gfc6G2kDu9JJ+4Z
+	 izqUn3mPa568hj0TH/hgSjVqaAbCbPj8ve7SwPiZVcb2RxsZ2q3lePmNmnkljpMUMz
+	 D3sz2hyZZkUWA==
+From: Niklas Cassel <cassel@kernel.org>
+To: Minghuan Lian <minghuan.Lian@nxp.com>,
+	Mingkai Hu <mingkai.hu@nxp.com>,
+	Roy Zang <roy.zang@nxp.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Srikanth Thokala <srikanth.thokala@intel.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	<mkumard@nvidia.com>,
-	<linux-sound@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] ALSA: hda/hdmi: Add Tegra238 HDA codec device ID
-In-Reply-To: <20260302084217.3135982-1-sheetal@nvidia.com>
-References: <20260302084217.3135982-1-sheetal@nvidia.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/30.2 Mule/6.0
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: Manikanta Maddireddy <mmaddireddy@nvidia.com>,
+	Koichiro Den <den@valinux.co.jp>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Frank Li <Frank.Li@nxp.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v3 1/9] PCI: endpoint: Introduce pci_epc_bar_type BAR_64BIT_UPPER
+Date: Mon,  2 Mar 2026 10:59:13 +0100
+Message-ID: <20260302095913.48155-12-cassel@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260302095913.48155-11-cassel@kernel.org>
+References: <20260302095913.48155-11-cassel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.27
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.27 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.17)[-0.871];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7941; i=cassel@kernel.org; h=from:subject; bh=BxIYx3Y999QRoEkyovD05r3kAt0oourcD0d7OR38w/8=; b=owGbwMvMwCV2MsVw8cxjvkWMp9WSGDKXxpdzZXDKaPV8yv94V66obW5sWWXJsv7PipPeake1G r155L6/o5SFQYyLQVZMkcX3h8v+4m73KccV79jAzGFlAhnCwMUpABP5lc/whyMtPfbWMYbsOy/8 TqtV5S/dEcNj6OvQnRTk1u8+/0DNSob/FVv7/EIU6oskd12qYJur83VBly73p3mLtf4zSDod/by UDwA=
+X-Developer-Key: i=cassel@kernel.org; a=openpgp; fpr=5ADE635C0E631CBBD5BE065A352FE6582ED9B5DA
+Content-Transfer-Encoding: 8bit
 
-On Mon, 02 Mar 2026 09:42:17 +0100,
-Sheetal . wrote:
-> 
-> From: Sheetal <sheetal@nvidia.com>
-> 
-> Add Tegra238 HDA codec device in hda_device_id list.
-> 
-> Signed-off-by: Sheetal <sheetal@nvidia.com>
-> ---
-> Changes in v2:
-> - Resend as standalone patch; v1 was incorrectly sent with
->   Change-Id and wrong series numbering (1/3)
+Add a pci_epc_bar_type BAR_64BIT_UPPER to more clearly differentiate from
+BAR_RESERVED.
 
-Applied now.  Thanks.
+This BAR type will only be used for a BAR following a "only_64bit" BAR.
 
+This makes the BAR description more clear, and the reader does no longer
+need to check the BAR type for the preceding BAR to know how to interpret
+the BAR type.
 
-Takashi
+No functional changes.
+
+Tested-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Tested-by: Koichiro Den <den@valinux.co.jp>
+Signed-off-by: Niklas Cassel <cassel@kernel.org>
+---
+ drivers/pci/controller/dwc/pci-layerscape-ep.c |  4 ++--
+ drivers/pci/controller/dwc/pcie-keembay.c      |  6 +++---
+ drivers/pci/controller/dwc/pcie-qcom-ep.c      |  4 ++--
+ drivers/pci/controller/dwc/pcie-tegra194.c     |  2 +-
+ drivers/pci/controller/dwc/pcie-uniphier-ep.c  | 10 +++++-----
+ drivers/pci/controller/pcie-rcar-ep.c          |  6 +++---
+ drivers/pci/endpoint/pci-epc-core.c            |  3 ++-
+ include/linux/pci-epc.h                        |  5 ++++-
+ 8 files changed, 22 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
+index a4a800699f89..5a03a8f895f9 100644
+--- a/drivers/pci/controller/dwc/pci-layerscape-ep.c
++++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
+@@ -251,9 +251,9 @@ static int __init ls_pcie_ep_probe(struct platform_device *pdev)
+ 	pci->ops = pcie->drvdata->dw_pcie_ops;
+ 
+ 	ls_epc->bar[BAR_2].only_64bit = true;
+-	ls_epc->bar[BAR_3].type = BAR_RESERVED;
++	ls_epc->bar[BAR_3].type = BAR_64BIT_UPPER;
+ 	ls_epc->bar[BAR_4].only_64bit = true;
+-	ls_epc->bar[BAR_5].type = BAR_RESERVED;
++	ls_epc->bar[BAR_5].type = BAR_64BIT_UPPER;
+ 	ls_epc->linkup_notifier = true;
+ 
+ 	pcie->pci = pci;
+diff --git a/drivers/pci/controller/dwc/pcie-keembay.c b/drivers/pci/controller/dwc/pcie-keembay.c
+index 2666a9c3d67e..5a00b8cf5b53 100644
+--- a/drivers/pci/controller/dwc/pcie-keembay.c
++++ b/drivers/pci/controller/dwc/pcie-keembay.c
+@@ -313,11 +313,11 @@ static const struct pci_epc_features keembay_pcie_epc_features = {
+ 	.msi_capable		= true,
+ 	.msix_capable		= true,
+ 	.bar[BAR_0]		= { .only_64bit = true, },
+-	.bar[BAR_1]		= { .type = BAR_RESERVED, },
++	.bar[BAR_1]		= { .type = BAR_64BIT_UPPER, },
+ 	.bar[BAR_2]		= { .only_64bit = true, },
+-	.bar[BAR_3]		= { .type = BAR_RESERVED, },
++	.bar[BAR_3]		= { .type = BAR_64BIT_UPPER, },
+ 	.bar[BAR_4]		= { .only_64bit = true, },
+-	.bar[BAR_5]		= { .type = BAR_RESERVED, },
++	.bar[BAR_5]		= { .type = BAR_64BIT_UPPER, },
+ 	.align			= SZ_16K,
+ };
+ 
+diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+index 18460f01b2c6..e55675b3840a 100644
+--- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
++++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+@@ -850,9 +850,9 @@ static const struct pci_epc_features qcom_pcie_epc_features = {
+ 	.msi_capable = true,
+ 	.align = SZ_4K,
+ 	.bar[BAR_0] = { .only_64bit = true, },
+-	.bar[BAR_1] = { .type = BAR_RESERVED, },
++	.bar[BAR_1] = { .type = BAR_64BIT_UPPER, },
+ 	.bar[BAR_2] = { .only_64bit = true, },
+-	.bar[BAR_3] = { .type = BAR_RESERVED, },
++	.bar[BAR_3] = { .type = BAR_64BIT_UPPER, },
+ };
+ 
+ static const struct pci_epc_features *
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 06571d806ab3..31aa9a494dbc 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -1993,7 +1993,7 @@ static const struct pci_epc_features tegra_pcie_epc_features = {
+ 	.msi_capable = true,
+ 	.bar[BAR_0] = { .type = BAR_FIXED, .fixed_size = SZ_1M,
+ 			.only_64bit = true, },
+-	.bar[BAR_1] = { .type = BAR_RESERVED, },
++	.bar[BAR_1] = { .type = BAR_64BIT_UPPER, },
+ 	.bar[BAR_2] = { .type = BAR_RESERVED, },
+ 	.bar[BAR_3] = { .type = BAR_RESERVED, },
+ 	.bar[BAR_4] = { .type = BAR_RESERVED, },
+diff --git a/drivers/pci/controller/dwc/pcie-uniphier-ep.c b/drivers/pci/controller/dwc/pcie-uniphier-ep.c
+index d52753060970..f873a1659592 100644
+--- a/drivers/pci/controller/dwc/pcie-uniphier-ep.c
++++ b/drivers/pci/controller/dwc/pcie-uniphier-ep.c
+@@ -426,9 +426,9 @@ static const struct uniphier_pcie_ep_soc_data uniphier_pro5_data = {
+ 		.msix_capable = false,
+ 		.align = 1 << 16,
+ 		.bar[BAR_0] = { .only_64bit = true, },
+-		.bar[BAR_1] = { .type = BAR_RESERVED, },
++		.bar[BAR_1] = { .type = BAR_64BIT_UPPER, },
+ 		.bar[BAR_2] = { .only_64bit = true, },
+-		.bar[BAR_3] = { .type = BAR_RESERVED, },
++		.bar[BAR_3] = { .type = BAR_64BIT_UPPER, },
+ 		.bar[BAR_4] = { .type = BAR_RESERVED, },
+ 		.bar[BAR_5] = { .type = BAR_RESERVED, },
+ 	},
+@@ -445,11 +445,11 @@ static const struct uniphier_pcie_ep_soc_data uniphier_nx1_data = {
+ 		.msix_capable = false,
+ 		.align = 1 << 12,
+ 		.bar[BAR_0] = { .only_64bit = true, },
+-		.bar[BAR_1] = { .type = BAR_RESERVED, },
++		.bar[BAR_1] = { .type = BAR_64BIT_UPPER, },
+ 		.bar[BAR_2] = { .only_64bit = true, },
+-		.bar[BAR_3] = { .type = BAR_RESERVED, },
++		.bar[BAR_3] = { .type = BAR_64BIT_UPPER, },
+ 		.bar[BAR_4] = { .only_64bit = true, },
+-		.bar[BAR_5] = { .type = BAR_RESERVED, },
++		.bar[BAR_5] = { .type = BAR_64BIT_UPPER, },
+ 	},
+ };
+ 
+diff --git a/drivers/pci/controller/pcie-rcar-ep.c b/drivers/pci/controller/pcie-rcar-ep.c
+index 657875ef4657..9b3f5391fabe 100644
+--- a/drivers/pci/controller/pcie-rcar-ep.c
++++ b/drivers/pci/controller/pcie-rcar-ep.c
+@@ -440,13 +440,13 @@ static const struct pci_epc_features rcar_pcie_epc_features = {
+ 	/* use 64-bit BARs so mark BAR[1,3,5] as reserved */
+ 	.bar[BAR_0] = { .type = BAR_FIXED, .fixed_size = 128,
+ 			.only_64bit = true, },
+-	.bar[BAR_1] = { .type = BAR_RESERVED, },
++	.bar[BAR_1] = { .type = BAR_64BIT_UPPER, },
+ 	.bar[BAR_2] = { .type = BAR_FIXED, .fixed_size = 256,
+ 			.only_64bit = true, },
+-	.bar[BAR_3] = { .type = BAR_RESERVED, },
++	.bar[BAR_3] = { .type = BAR_64BIT_UPPER, },
+ 	.bar[BAR_4] = { .type = BAR_FIXED, .fixed_size = 256,
+ 			.only_64bit = true, },
+-	.bar[BAR_5] = { .type = BAR_RESERVED, },
++	.bar[BAR_5] = { .type = BAR_64BIT_UPPER, },
+ };
+ 
+ static const struct pci_epc_features*
+diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+index e546b3dbb240..1ad2f62963c8 100644
+--- a/drivers/pci/endpoint/pci-epc-core.c
++++ b/drivers/pci/endpoint/pci-epc-core.c
+@@ -104,7 +104,8 @@ enum pci_barno pci_epc_get_next_free_bar(const struct pci_epc_features
+ 
+ 	for (i = bar; i < PCI_STD_NUM_BARS; i++) {
+ 		/* If the BAR is not reserved, return it. */
+-		if (epc_features->bar[i].type != BAR_RESERVED)
++		if (epc_features->bar[i].type != BAR_RESERVED &&
++		    epc_features->bar[i].type != BAR_64BIT_UPPER)
+ 			return i;
+ 	}
+ 
+diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
+index c021c7af175f..c22f8a6cf9a3 100644
+--- a/include/linux/pci-epc.h
++++ b/include/linux/pci-epc.h
+@@ -192,12 +192,15 @@ struct pci_epc {
+  *		   NOTE: An EPC driver can currently only set a single supported
+  *		   size.
+  * @BAR_RESERVED: The BAR should not be touched by an EPF driver.
++ * @BAR_64BIT_UPPER: Should only be set on a BAR if the preceding BAR is marked
++ *		     as only_64bit.
+  */
+ enum pci_epc_bar_type {
+ 	BAR_PROGRAMMABLE = 0,
+ 	BAR_FIXED,
+ 	BAR_RESIZABLE,
+ 	BAR_RESERVED,
++	BAR_64BIT_UPPER,
+ };
+ 
+ /**
+@@ -207,7 +210,7 @@ enum pci_epc_bar_type {
+  * @only_64bit: if true, an EPF driver is not allowed to choose if this BAR
+  *		should be configured as 32-bit or 64-bit, the EPF driver must
+  *		configure this BAR as 64-bit. Additionally, the BAR succeeding
+- *		this BAR must be set to type BAR_RESERVED.
++ *		this BAR must be set to type BAR_64BIT_UPPER.
+  *
+  *		only_64bit should not be set on a BAR of type BAR_RESERVED.
+  *		(If BARx is a 64-bit BAR that an EPF driver is not allowed to
+-- 
+2.53.0
+
