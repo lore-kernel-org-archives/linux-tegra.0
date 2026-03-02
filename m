@@ -1,137 +1,108 @@
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC69638D009;
-	Mon,  2 Mar 2026 09:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F0938A705
+	for <linux-tegra@vger.kernel.org>; Mon,  2 Mar 2026 09:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772442649; cv=none; b=sOJGPFxzG6ZFy5mNOohPBzXWmizqof4ekx596vccJdZOzqjTNU0i9HOCXYUUjqEEUVUGNJj7keeuURhrgu803q6jPFTF+0z6BxTrskqfXFBUYlddQzPHyHqIsKw2R5RnOei1/adO74MuGqtphH5QMeGfp9GdK2AFeHg1a33guvc=
+	t=1772443580; cv=none; b=Z7E5/Rf8ogAMzw4uTfWI0oIRPGMY5PvDbkLI85WEn7KZhZLTE53NQE96HP8IvGF2pX5yIJYtIvpTlXMRQNOZL+pOfNkM4b+SvP2v93r07xsocv6rqmd5qBJHd6iuoT+Q/722MAizZeSb2amqYEqSG/6GOULUmIUzQLnkpestuQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772442649; c=relaxed/simple;
-	bh=EbiUbBamIZ6iQCnBuNSz7FJjjmgw1YlSiC2B9C7jRP4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k4o4ZljERrGKtlw+kzQrUGjSfCKKifP0cSID63+975nP/UIvPqz3HoMg+OQsMyMW+SmKq2Ww3lKZPiR2XAkboAehYTCtkoGD0A566hR4D1welXDxUIMMD/o02vbKAhFDdYP9mciA63C+uUavszCapvSeTj2P9yPTMWdYtOXOjoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=kq6yykSq; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+	s=arc-20240116; t=1772443580; c=relaxed/simple;
+	bh=NvlfqQkFSjiKefhGJg1nl4VUtTSqxowA+e2w6Haf9IU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T4lxIBnsKaZ+Uziz7SfU+Nz+mPKqfjBmpEhEqJJvcz4KceyYeffF8bXRH+km2trBdVzLCjWaN8w3tqvlNrvUln07cDmIQGU6bUIN6ZNjlaOUkj88yvrEG41g43wjz3lUwOP07eva4XEKNCdJAek2GHdl5uefwkYFklnOAMUfelA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X6xbHYjB; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="kq6yykSq"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 31F2B600298F;
-	Mon,  2 Mar 2026 09:10:46 +0000 (WET)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id 9zY3EXe9AjZ4; Mon,  2 Mar 2026 09:10:43 +0000 (WET)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [IPv6:2001:690:2100:1::b3dd:b9ac])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 40B36600298D;
-	Mon,  2 Mar 2026 09:10:42 +0000 (WET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail2; t=1772442643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ALlF6/vIv/5xuYr1Gfj3RVY3fMyDzf4HKQYtSC25+Y4=;
-	b=kq6yykSqCccGOyxQkZiYYRl4InB8BhUZ8Xs18tk1CsbLkx6x53sO9TssNNE4IQhab0mX6+
-	mb3f/niCWn5KWXeAD5nzC5awUAM303Ro18H9t/o5YH1z0MZuCK+pPUcOAct8XEZBfweJ6/
-	JaPuliwJ/uWR9AkGnIhkO7AEN5brKWsABtzVwup+36oZZO+MKN9STQ6AJeRxjf2235/aaf
-	Tvs7tkK8V+ZBYxYPq4cpM8wrosSRCEkYKrXw7A2U4RMH61DqyiywtVGIWr7xu6PDJDTPwS
-	rMiYO2GxfTgSTrUCfVfRW0WGtlsN4J0d2zzg9YBFMz81nTzxt0XULAhWB7ZrSw==
-Received: from [IPV6:2001:8a0:fbec:a900:2c09:2fb0:9be7:36e0] (unknown [IPv6:2001:8a0:fbec:a900:2c09:2fb0:9be7:36e0])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id D502136013D;
-	Mon,  2 Mar 2026 09:10:40 +0000 (WET)
-Message-ID: <1663dc81-0685-4de9-8cf7-6065a644e7af@tecnico.ulisboa.pt>
-Date: Mon, 2 Mar 2026 09:10:29 +0000
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X6xbHYjB"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-483703e4b08so36616685e9.1
+        for <linux-tegra@vger.kernel.org>; Mon, 02 Mar 2026 01:26:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1772443578; x=1773048378; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8OftFQTV8naufyqWqKOJ13Y+eOJO1ch+XainGBjNPzc=;
+        b=X6xbHYjBBMbIc1HYXMx9KPgwRFm5AuJV8rkuFMkIqLoDh2Gw1Cgy00KJWZcr+B+SVc
+         KVsWvl/mN2wFCh3V9TRcB7pgc8IT0zq0H5Gn03bZKV0/O3U8pOv3532OqwUURkqXsnCv
+         8Dr0oa6I/dJ4aAuXF5CS/88HWjEdpfGE+jsEsyPjIq/9C4//dqwCW9emdCVovMA+IcTq
+         FEChXHnRZc+qD2U3JAI5zbrnSWmO57dbnfcLcHplbueQEdw8peR9NpDWz1KBO03NGLt5
+         La/op+yLkPrapNusYiSwrQoScLgda1zw7MkvO0V81SBD4mvbDyTwZH9P4g1jotQXHF6u
+         NOPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772443578; x=1773048378;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8OftFQTV8naufyqWqKOJ13Y+eOJO1ch+XainGBjNPzc=;
+        b=fpZ6do3gYo9jaFiGP9w9b5YZBGsfLtdpidt43vdmbNyvvr7nNMkRJr8W5AXXCTpUXy
+         7oaJT1fD0xL149sdw0ZrlgOBtUkO8AXsW9ENn2lwKU724Ud+Infb9tHj8YnyDfFcm+wd
+         EqWmfxnVZhoDq5nRW3GwdFLbosTKAGB/bKwgQZxEn3i60MaSdd/bh6iT8URptjFaoC+2
+         XvKnDnTZ6abcZHsnOHvPRxOlF5DgzATj8PbrZTMYkYYvPyCkxIitE161sG9jLlSfCaCh
+         i9gH+a7B18OHs09HPWukIVe4Hu6yDcnBWNpN8sMxCL4XNyIMXjgQZqeM5uPOZluwdge8
+         53ww==
+X-Forwarded-Encrypted: i=1; AJvYcCWtp8sPEg2LdYbifX4FzJLnWy4VvjSvHzxxKrxT3rzpLFiyFxFMlGnH5m7JXDoANzInpGQ3fGr7z4xPCw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YykwqrU6BAm72oAdmH5e4cZqFo5Y7THjCWxM2nE40WZ4ELclpjN
+	BlRxL3vhThOgHFeJdy4jX+4c+tZmvyZLZQTatPajQhzOnWPqZ906NrzcSbbTBqNB+39bc93dXJE
+	G4+3l
+X-Gm-Gg: ATEYQzxl05C386/sdj84RQd1pV1c1jZzMZE/mujoR//ba1FWipTJoZyUOnI7OWMS9kY
+	PSpYDPTcge5F+NA88qNQEWGC16hbBUvYt6mIsNWdyY72tc45Glba3ChKOiHvA6gLcWIh5sCZytF
+	pRnJ+qf8Dm+PF4W4bet+jVYTD/j0nvCBSwqejqzKjQtQfRi2da5wKXqmZcZfo1O1eIbevjBYXI8
+	cSDZ1xU4k/XqgX1DODDgpTgT5om7rD/WwLOtaJclbLp1qcMy48dyn3rszHWoOky+mEypdc3w1ji
+	4Uo0brf7WHbPT529FeNO3wiuXvtt0u4KMlCZ8EvvrCdNE644tvcHnXYdzYJL0VTsPa4lY4Aklex
+	PQvEa+Q2oFzxIZ1f9cxVembktArVeEpb9mawYBav8AAfmShoeoXmjk2O9r9b6PAO5j8wCoWxmD+
+	bqeCxom2pKQAj+dCkig7ITy/NXTd80LcsypQIbxKQ=
+X-Received: by 2002:a05:600c:c8c:b0:479:1348:c63e with SMTP id 5b1f17b1804b1-483c992e3a4mr187337525e9.9.1772443577584;
+        Mon, 02 Mar 2026 01:26:17 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439b0549600sm11507548f8f.35.2026.03.02.01.26.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Mar 2026 01:26:17 -0800 (PST)
+Date: Mon, 2 Mar 2026 12:26:13 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Soham Kute <officialsohamkute@gmail.com>
+Cc: marvin24@gmx.de, gregkh@linuxfoundation.org, ac100@lists.launchpad.net,
+	linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: nvec: kbd: use -EINVAL instead of -1
+Message-ID: <aaVXtbHMfUFJW_Tu@stanley.mountain>
+References: <20260228202008.40063-1-officialsohamkute@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/6] Fixes to Tegra USB role switching and phy handling
-To: Mathias Nyman <mathias.nyman@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, stable@vger.kernel.org
-References: <20260127-diogo-tegra_phy-v2-0-787b9eed3ed5@tecnico.ulisboa.pt>
-Content-Language: en-US
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-In-Reply-To: <20260127-diogo-tegra_phy-v2-0-787b9eed3ed5@tecnico.ulisboa.pt>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260228202008.40063-1-officialsohamkute@gmail.com>
 
-Hello,
-
-Gentle ping on this series.
-
-Best regards,
-Diogo
-
-On 1/27/26 15:11, Diogo Ivo wrote:
-> Hello,
+On Sun, Mar 01, 2026 at 01:50:08AM +0530, Soham Kute wrote:
+> Return proper error code -EINVAL instead of -1 when
+> the event type or code is not supported.
 > 
-> This patch series contains fixes/improvements for USB role switching on the
-> Tegra210 and Tegra186 SoCs.
-> 
-> The first patch addresses a wrong check on the logic that disables the
-> VBUS regulator.
-> 
-> The second patch removes a redundant mutex lock when setting the PHY
-> mode.
-> 
-> The third patch guarantees proper ordering of events when switching PHY
-> roles.
-> 
-> The remaining patches are included to standardize the PHY .set_mode()
-> callback between Tegra186 and Tegra210.
-> 
-> With this patch series this feature can only be controlled from userspace,
-> by writing the desired role to sysfs as
-> 
-> echo "role" > /sys/class/usb_role/usb2-0-role-switch/role
-> 
-> with role being one of {device, host, none}.
-> 
-> Further patches will enable automatic role switching via the 'cros_ec_typec'
-> driver which is currently broken on Smaug.
-> 
-> Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+> Signed-off-by: Soham Kute <officialsohamkute@gmail.com>
 > ---
-> Changes in v2:
-> - Remove DT patches already taken to be upstreamed
-> - Add standardization between Tegra210 and Tegra186
-> - Address review comments from v1, detailed descriptions in each patch
-> - Link to v1: https://lore.kernel.org/r/20251204-diogo-tegra_phy-v1-0-51a2016d0be8@tecnico.ulisboa.pt
-> 
-> ---
-> Diogo Ivo (6):
->        phy: tegra: xusb: Fix USB2 port regulator disable logic
->        usb: xhci: tegra: Remove redundant mutex when setting phy mode
->        phy: tegra: xusb: Fix ordering issue when switching roles on USB2 ports
->        phy: tegra: xusb: Add ID override support to padctl
->        phy: tegra: xusb: Move .set_mode() to a shared location
->        phy: tegra: xusb: Move T186 .set_mode() to common implementation
-> 
->   drivers/phy/tegra/xusb-tegra186.c   | 73 +++++----------------------------
->   drivers/phy/tegra/xusb-tegra210.c   | 42 +------------------
->   drivers/phy/tegra/xusb.c            | 80 +++++++++++++++++++++++++++++++++++++
->   drivers/phy/tegra/xusb.h            |  4 ++
->   drivers/usb/gadget/udc/tegra-xudc.c |  4 ++
->   drivers/usb/host/xhci-tegra.c       | 14 ++++---
->   include/linux/phy/tegra/xusb.h      |  3 ++
->   7 files changed, 111 insertions(+), 109 deletions(-)
-> ---
-> base-commit: b02a5530af8abe0d3cd4852ba48990716e962934
-> change-id: 20251201-diogo-tegra_phy-86c89cab7377
-> 
-> Best regards,
+
+Could you do some analysis to see if this affects runtime?  You'll need
+to review the callers to see what they do with error codes.  In this
+case they ignore them.
+
+One thing which could help would be to build the Smatch cross function
+DB.  But it takes a long time so do it overnight.
+https://github.com/error27/smatch
+https://github.com/error27/smatch/blob/master/Documentation/smatch.rst
+cd ~/path/to/kernel_dir ~/path/to/smatch_dir/smatch_scripts/build_kernel_data.sh
+
+$ ~/progs/smatch/devel/smatch_data/db/smdb.py nvec_kbd_event | grep INTER
+drivers/input/input.c |  input_event_dispose | (struct input_dev)->event |           INTERNAL | -1 |                 | int(*)(struct input_dev*, uint, uint, int)
+drivers/input/input.c |     input_dev_toggle | (struct input_dev)->event |           INTERNAL | -1 |                 | int(*)(struct input_dev*, uint, uint, int)
+drivers/input/input.c |     input_dev_toggle | (struct input_dev)->event |           INTERNAL | -1 |                 | int(*)(struct input_dev*, uint, uint, int)
+drivers/input/input.c |     input_dev_toggle | (struct input_dev)->event |           INTERNAL | -1 |                 | int(*)(struct input_dev*, uint, uint, int)
+drivers/input/input.c |     input_dev_toggle | (struct input_dev)->event |           INTERNAL | -1 |                 | int(*)(struct input_dev*, uint, uint, int)
+drivers/hid/hid-holtek-kbd.c | holtek_kbd_input_event | (struct input_dev)->event |           INTERNAL | -1 |                 | int(*)(struct input_dev*, uint, uint, int)
+$
+
+regards,
+dan carpenter
+
