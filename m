@@ -1,33 +1,49 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABD732AAA7;
-	Mon,  2 Mar 2026 09:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E99634CFD4;
+	Mon,  2 Mar 2026 09:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772442249; cv=none; b=BVxt/K4YpCQHRswCD1YUG+y11U2udCDxhRpSnxk08J7Wy9r7nXEoAt+AVNtEm8MJYpdLP5B9Zo831oblokiaiHpZGq6wjZt7BtwuMzf7KwqysztLmDcAoebWzu18Rm2lO1LNupbJ+aQnh2mvxnHIJBZZW1FZWvh7XXiy5cJoLJA=
+	t=1772442607; cv=none; b=q6lafjltmCPsa2FN8du+d7qpvvh0pFjMLtfh/rLCqJPf2Ou622jf3+H3Ysruud0BIlamzPXEMFi3BDiw/D9N5t6u0xjAykfINeLoMRl9wVVfowAgWRpOPw88B7XZLUSlYn7VAcRdtePX3jEtslKZ25rZnJd5d3l5VrbxOTNMME0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772442249; c=relaxed/simple;
-	bh=iQBz+7qJ+Vib0hgib9uOQYUG+N0tzSYhavXFT+171t8=;
+	s=arc-20240116; t=1772442607; c=relaxed/simple;
+	bh=e2tpTFdMX/3gIuwgJ2igzz1nxPtReRSI7K4bqcD3kPU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rUjoKy+wJ/T6Oi1U+/0anhRgWb2v4Y0CWolUl5yCkWvgki4glEAgPs4HBVxXPpmS2p0CwRIUjGWjSyqwMan3SFIW27h49lcGrWmVkH9ZyVGATNyN0p8pi+zC32zHwLxoLFW6oR5Q2ThcxvHcOBh0MflDlSxdKFE0diLhTsz7Fj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jPONdLoY; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=q8yZuViWsGzURr9SfIIl7tmDDOkNg34dirCInaB2Vl8LoBdMyFtz7WkMUBnSw0W37TYAQHFguCUMEWw57BD9rDmKUt3ZwVODYTna7vc8W91Yc0cVWbn/9F/ABOJZ6BvkldwzF8VQ2grLZvNswIhZoa0vXfEpo2damIK/qt+HE7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=G5ML0Rjp; arc=none smtp.client-ip=193.136.128.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jPONdLoY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FBCCC19423;
-	Mon,  2 Mar 2026 09:04:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772442249;
-	bh=iQBz+7qJ+Vib0hgib9uOQYUG+N0tzSYhavXFT+171t8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jPONdLoY8Szf5rdtT2rWfLjSZMeRMwQu0ywvoaaTMF8l2hguNS60JHv/NdAtfWEVd
-	 Vdz7lzWXxxPrI1eUT4UURqfZlnUALRSDviccXCtPvp0zwErHHne0cWD0Fs71zBMJEB
-	 K4n/JWudMuAlJ3Gb9ChiBygdHZC9cE3FhoW5OujJm9KFuAi0IrkFt6AWFsoWHRy02N
-	 NdsBGJnh0f+sfaU/uumBR4FCzIsHOM7whcHg2XNKESfBuS60+C4wBJv1q7yWGQ+0di
-	 0G5TFx5Xjtu2CfaN0mGu75XGB/OOZe0tkdVc4KZjDdaajrADs+NNj33fGBAh+/p1k3
-	 99NF3c74Epn/A==
-Message-ID: <7447fde1-7eae-4bbc-b36e-fc0da9609c8c@kernel.org>
-Date: Mon, 2 Mar 2026 10:04:03 +0100
+	dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="G5ML0Rjp"
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 7D7526002984;
+	Mon,  2 Mar 2026 09:10:04 +0000 (WET)
+X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
+Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
+ by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
+ with LMTP id I03Mb2ac7psX; Mon,  2 Mar 2026 09:10:02 +0000 (WET)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 458D16002985;
+	Mon,  2 Mar 2026 09:10:01 +0000 (WET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
+	s=mail2; t=1772442601;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F8Tz4FFQl5iQc1XWMkYIGnjVlMkJFC7GVijqzDIR/RQ=;
+	b=G5ML0RjpomBDzOtL9Y7bQJQFLkgFLjejj5UGjbfvqGGgli8hzII95UwsPxZIsUDR/Owf0F
+	MzTIausAYhI3ueZk7ZMaUn8/u64a/e47gMU4YrzOcc+VYWjvfWbNNHdmO9kBThvKb3vh3i
+	T06GU881j+a6hrWI+HnYlKuRXnVdkehHTo5zZyeBiiO/pD/2aBHomIoqv4bOwWCmu6wYkU
+	Pmy2H/cFAJvd0BozClXKsPrWTXtTuo98Wt9JbyD5zSQYpZVQSDynA9gUsu5ZyytMfB+FMY
+	kISfVIrtA3NLdyDavw1NQ2+LP9lkGmgj1w7lTaFw3uP/E6uMNYYM2J90SZ/Z+Q==
+Received: from [IPV6:2001:8a0:fbec:a900:2c09:2fb0:9be7:36e0] (unknown [IPv6:2001:8a0:fbec:a900:2c09:2fb0:9be7:36e0])
+	(Authenticated sender: ist187313)
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id EEC0D36013C;
+	Mon,  2 Mar 2026 09:10:00 +0000 (WET)
+Message-ID: <34d43310-1358-4a03-b70b-330f90956532@tecnico.ulisboa.pt>
+Date: Mon, 2 Mar 2026 09:09:49 +0000
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,93 +51,60 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] ASoC: tegra: Add support for Tegra238 soundcard
-To: "Sheetal ." <sheetal@nvidia.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thierry Reding <thierry.reding@kernel.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Sameer Pujar <spujar@nvidia.com>,
- Mohan kumar <mkumard@nvidia.com>, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, Aditya Bavanari <abavanari@nvidia.com>
-References: <20260302085323.3139571-1-sheetal@nvidia.com>
- <20260302085323.3139571-3-sheetal@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] arm64: tegra: smaug: Enable SPI-NOR flash
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260203-smaug-spi_flash-v1-1-a6d477ac7055@tecnico.ulisboa.pt>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260302085323.3139571-3-sheetal@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+In-Reply-To: <20260203-smaug-spi_flash-v1-1-a6d477ac7055@tecnico.ulisboa.pt>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 02/03/2026 09:53, Sheetal . wrote:
-> From: Sheetal <sheetal@nvidia.com>
-> 
-> Tegra238 platforms use different clock rates for plla and
-> plla_out0 clocks. Add Tegra238 support in the Tegra
-> sound card driver to apply specific clock configurations.
-> 
-> Signed-off-by: Aditya Bavanari <abavanari@nvidia.com>
-> Signed-off-by: Sheetal <sheetal@nvidia.com>
-> ---
->  sound/soc/tegra/tegra_audio_graph_card.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/tegra/tegra_audio_graph_card.c b/sound/soc/tegra/tegra_audio_graph_card.c
-> index 94b5ab77649b..b6dadd6a3d3d 100644
-> --- a/sound/soc/tegra/tegra_audio_graph_card.c
-> +++ b/sound/soc/tegra/tegra_audio_graph_card.c
-> @@ -1,5 +1,5 @@
->  // SPDX-License-Identifier: GPL-2.0-only
-> -// SPDX-FileCopyrightText: Copyright (c) 2020-2025 NVIDIA CORPORATION. All rights reserved.
-> +// SPDX-FileCopyrightText: Copyright (c) 2020-2026 NVIDIA CORPORATION. All rights reserved.
+Hello,
 
-If updating it, you should rather drop it and use standard copyright.
-This tag is not supported in kernel in general and I document it only
-because it already spread all over.
-
+Gentle ping on this patch.
 
 Best regards,
-Krzysztof
+Diogo
+
+On 2/3/26 17:01, Diogo Ivo wrote:
+> Add support for the SPI-NOR flash found in Pixel C devices.
+> 
+> Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+> ---
+>   arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 12 ++++++++++++
+>   1 file changed, 12 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+> index b88428aa831e..f0b8c2c80aa5 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+> @@ -1892,6 +1892,18 @@ interrupt-controller@702f9000 {
+>   		};
+>   	};
+>   
+> +	spi@70410000 {
+> +		status = "okay";
+> +
+> +		flash@0 {
+> +			compatible = "jedec,spi-nor";
+> +			reg = <0>;
+> +			spi-max-frequency = <104000000>;
+> +			spi-tx-bus-width = <2>;
+> +			spi-rx-bus-width = <2>;
+> +		};
+> +	};
+> +
+>   	clk32k_in: clock-32k {
+>   		compatible = "fixed-clock";
+>   		clock-frequency = <32768>;
+> 
+> ---
+> base-commit: 9a55406e2eb67b27eb5bb0f2d5a3afdea7d1f5df
+> change-id: 20260203-smaug-spi_flash-c51faa6c1022
+> 
+> Best regards,
