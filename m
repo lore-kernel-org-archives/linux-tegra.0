@@ -1,455 +1,152 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012020.outbound.protection.outlook.com [52.101.48.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488C638D01A;
-	Mon,  2 Mar 2026 10:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772445635; cv=none; b=lmZodRN101IQPfxbavZyRW4Hx9p4ap9mTqE/zV8co1ynC3rMTu14wMFVuwF3kCbchGdWf7loJdGd6O3g7INCK5jYBtejwp+WsXz0UCsXAkRG0ExWj/tFNNRHrVvqJfH7TISahptAhU9HWqUIswplBgjHsGVR3PPyyHkiUiG7neE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772445635; c=relaxed/simple;
-	bh=9uD5ro267VZ2CO7qSRqt0cvPHYF+IatQD96SFa/H2FE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OJTKAAmrtnJ8FP1pve3ss/ZHgD/J/H1Zd0yhC+k0tRjbNRBoJQV+1QOyyqyrBrgLI5uCRCjVXF2sk0jpzIF+HCqnQLmzJM5w3K7SmQhGKw+ARorKHmVrq22HI5CzS/hb5klAJTkVtfvQYanaKdEt6kReCRdsFXrJUkMYY3UApu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nzAoSDhz; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880EF36D504;
+	Mon,  2 Mar 2026 12:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772454835; cv=fail; b=pkQ+6977CfZJazRPWMROp7V/6RZvkRH/eCPdv1NvAq3Dgc9uZtWIxXV2wjPgdsebMvKTmw5HCn0rA528iY+c46b1kUfIBmDgbZmE7KzERLGSe24s0Y7QK69pTSTUnjo/0TwVG4Fwa6RfpmBrUEifojz5fK0TiE9AYYGaRkuyM80=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772454835; c=relaxed/simple;
+	bh=g0sUoqaafyX4CPHQ7tmPDd+nmapZ7nhnLwwt1ZQIey4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OgYoFTwg/9tXLZYzPl6pke9B6lKrmQDqC/KFU6s6FhvDZNnLWK5ljVDTfihGHQaEK+qjcmYBQmI7vwVZyAQmMA54lcEidpyfvSeBojtey9pGVrqjEd3PlpR6FgPjRlth+AP2phpAO+6slQ0pPwYa//KoE1jKtPbrPJcmEBbqzB4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bhqUCqcZ; arc=fail smtp.client-ip=52.101.48.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nzAoSDhz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BF16C19425;
-	Mon,  2 Mar 2026 10:00:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772445634;
-	bh=9uD5ro267VZ2CO7qSRqt0cvPHYF+IatQD96SFa/H2FE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nzAoSDhzMP+/7MBbHjd4QjWZjsxDUYvv3XlFzR861v7WOBep693qlOwIeUbjv4F3a
-	 0jutfsMhA1MX3tX98Y9+ce615hPfXyJpJRw/R8d/SU8IfUtcOXnuKEM3rjgVIhhN5h
-	 R+qZL7qK33P5tHDiyNIzKK35m7G7tJSyuamDjJzeovesKhj0fQTJj4S3Vgpp5YbUbn
-	 zOPj42FecMpC81jZVARwvlcenvzIAs1ptXX6Ufwco07kWYtpOzc6Bn2/WfNYRgWGzj
-	 MckpsP0Uxayy7xE1tjuIBYbXVv9o89ciak3ift3gEUhRnwgUjseL61VbZ6fMdtXvqN
-	 nYY4ZKVQgdQHw==
-From: Niklas Cassel <cassel@kernel.org>
-To: Vignesh Raghavendra <vigneshr@ti.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Minghuan Lian <minghuan.Lian@nxp.com>,
-	Mingkai Hu <mingkai.hu@nxp.com>,
-	Roy Zang <roy.zang@nxp.com>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Christian Bruel <christian.bruel@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Manikanta Maddireddy <mmaddireddy@nvidia.com>,
-	Koichiro Den <den@valinux.co.jp>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	linux-omap@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@axis.com,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v3 6/9] PCI: dwc: Disable BARs in common code instead of in each glue driver
-Date: Mon,  2 Mar 2026 10:59:18 +0100
-Message-ID: <20260302095913.48155-17-cassel@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260302095913.48155-11-cassel@kernel.org>
-References: <20260302095913.48155-11-cassel@kernel.org>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bhqUCqcZ"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=f+sQGjxqP+amwXLeA+YoFH+Qtvlj83ODcvTGFoOdNdKs11dllP8OInv7wCVVX9pJiR0hoRAKiNIjtBcUyfGq+6/sTPJ+96ud1w5CbjZ8OfrFWz8kz4jsoCrlCKU4R7K/QdTKS4NJfYDd/1eq1d6yFNNZFCkns3qGgkl6f2nSHXB9mSPhwalrlsukOgDyY4WONRalvkqVtyOZagHxu4muuVPnPuu6hcJHxgwtoI0lYahOINT9BDMyaNCoNC3hNRXjETTIh8PYQ7Z1Z4OpAi2GixYLAswnFb25lJAc4dZysZ9wtA6cwf2B6ICN9omt/u1IxpXbeoCa5Rq+QnLDTJc+ag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gDoFr3TbwzWA2t81KuAF2GGVgsdyyirsQUDVWA9bICM=;
+ b=Jcd5P3rb15qO9u7g7rmiJVp2Oyw5f9mz0EwCNiW985Wo/ZwVNLWKtMM+4dUK4mE4NZnjezMLXAAVh3k+jx+U8HY4ZfhEMFmROWp+aXyfcbN0gUxvuO4rakjEiSAd2H37Dmzr/8CnA+LRka9hSjMW7mDRWWT416EI05dakiazkuItuGOUL/qEH4TD4dYFMgJFCMOKrbNahbNpRKSQ4mEt8HkDfGtOds3c0NKcU4nWjZ61hK5lRyq9EwHDQoIP2GSAPEgihNBNhKp61ztZsAhMn2kzilGdRowgh1U7qolF4W5uGebFG8omsE4Oqao2vTqt7dKqetvMJOn1RKYU4qYj9g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gDoFr3TbwzWA2t81KuAF2GGVgsdyyirsQUDVWA9bICM=;
+ b=bhqUCqcZSNHWspFJ7Oik3VLzdY9ShWLa8rQ0tJciB54VtYhj1+Ugx/6u0qz5JyAROzhn1KWmh8vbCss+l+P4r8yb8N+YSlhPTMJ7Cy5hdowcPmrEV1plBQoZNRr9KJ0AR5WA8GpkfYZuvSjDiDQYj1BX70YvRYw4dBOCj4fNEe3rraaTWULnlP1/NjVUvRfZ81Up7/mnz71PCWdTwQ2/uQtftlWOidPSAQsng8jTt5LRlTtsBz659M54m2hskOW9ajmOGKuLw+FlO0IChuZfVS2rMLr4jmoKqQTCYgmrbBTDgGPQEBiySmWM+a9kYMS+BN/c+G8qipcokGVsOZh7qQ==
+Received: from PH7P220CA0072.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:32c::31)
+ by SJ5PPF5D591B24D.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::994) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.21; Mon, 2 Mar
+ 2026 12:33:49 +0000
+Received: from SN1PEPF000252A2.namprd05.prod.outlook.com
+ (2603:10b6:510:32c:cafe::c0) by PH7P220CA0072.outlook.office365.com
+ (2603:10b6:510:32c::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9654.18 via Frontend Transport; Mon,
+ 2 Mar 2026 12:33:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SN1PEPF000252A2.mail.protection.outlook.com (10.167.242.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9654.16 via Frontend Transport; Mon, 2 Mar 2026 12:33:48 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 2 Mar
+ 2026 04:33:36 -0800
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 2 Mar
+ 2026 04:33:36 -0800
+Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Mon, 2 Mar 2026 04:33:31 -0800
+From: Akhil R <akhilrajeev@nvidia.com>
+To: Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, "Jonathan
+ Hunter" <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, <dmaengine@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Akhil R <akhilrajeev@nvidia.com>
+Subject: [PATCH v2 0/9] Add GPCDMA support in Tegra264
+Date: Mon, 2 Mar 2026 18:02:30 +0530
+Message-ID: <20260302123239.68441-1-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=14065; i=cassel@kernel.org; h=from:subject; bh=9uD5ro267VZ2CO7qSRqt0cvPHYF+IatQD96SFa/H2FE=; b=owGbwMvMwCV2MsVw8cxjvkWMp9WSGDKXxldN+O092X5/aecSnlVPNk/6Mu0Oq8/2Cgt3qQvRE 28dXHt3WkcpC4MYF4OsmCKL7w+X/cXd7lOOK96xgZnDygQyhIGLUwAmkrGF4Z/qqQfr7j/77t7e 8nqRkq9h/pnDIRmb/JZrNh7iOfAzvyOW4b9Tx7WzXrH3dEX3MRZevbhHfzN340ul5YtmFcwJee7 cU8wDAA==
-X-Developer-Key: i=cassel@kernel.org; a=openpgp; fpr=5ADE635C0E631CBBD5BE065A352FE6582ED9B5DA
+X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF000252A2:EE_|SJ5PPF5D591B24D:EE_
+X-MS-Office365-Filtering-Correlation-Id: 42c6173a-1440-4025-20da-08de7857f459
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	qeAczlJR0E60lXCCQq9DAfCq0+Me4zHVVODSdqrrb24eN9INDnovaIeeViuIpBaTDSg3ka7yLTMGBfyXiRmAnnO5iiGvVBiZVpGlxs78lZwy5deZ52ER35yxTj9j6nwT4n2FGjrwLLAC6GCgkE7WiuWGXkucgJaLyVZH5yM/m7ln7m0I5gRSkJ1EqJvkilVg2PycBBO07YvECJaXZ/+z8/CpfzbujZ9WAOd6hpC9wMjc2n+D8EArm6Zno3TnuAR90L9oyBGB27Om5g6vQrLAMyQJCj2u8z1NJM0RR46H7n4IQmpAcBGgRPdab4VxEDBChC/SUveKKAC11b+3JVvkCLcRkjBlQx5g7DG2enSe6q2rkE0KV/JIgrSNnIbLwhT6QjxyoRre2+5zW/pAbOyegNdYtaPNy0MztmTM8epDPtKI+f6Hw2NXxOvNNLvb6ng7eDqgUq93rtitjb2RghPcsHcs6XF2f/YvRWgg8/qzMfwALggVfK+0BOdSrToaV/glF5Wk43oRPcqe/ypug2ziPxpNOcziiXcET3xSpmL9Z0WgrGY3VyB9mUwlFWdIZdOSvd68K9k6SATP4gptcehLg9f7mMr//NoBYYkXIcAfXEXtRgTYFdgV6G5v+u/M7LXGn/QGzkuC2ZP8lLP1gOZYICHegccFOIk3v1YZh0GMFBG5pW7JLQMB2eE/4pPAR3QbIlvMMqImtDTY03HSRk+kgjFJznUAj6QJmdmswDRFncx1ztTwdgeMa/YK8JMnCDOI1mZlrZPg5QlR+v7swlD9r7MpWVK5HZzwuIK/zX7F/ZUqW1osIwf95PE7hPWVowpSuiM6G7d5WRo7gPP+M6QFX4xsJAh9w+zh4HA/cCzE/hQ=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	89kf60vtcOn4qfUUV7B11Obz0m5jvCKACvTror5NikEtdK98n7J0Iu3tm8sjeJK2nMmSa2RsEpPWhazVJ5+aWW2uGi4ZTDf/YglocdFVyXh3iAEiJW2gRdijRDkoC4AwRn6UkKOYQm5sPusP7RLCQLztGVvSWlmC1jR85TmJw5B87zaEdSVjIy5Vv87HmcK3/QfqbLpu53QbRUZkaw3j6lpPKTX2Si6XoENMokZ+MkxU9omng8aJGlEJEZh+6AwPFrQwdrBhhgDOL8sXtvssNABI1Roqn/qZyQvR0EMUUZ0/PkzF5FHwzLeM4IqE50If9RW0Z+YXs0GueLDDYFd4po2ZxEgAg/XAfEE6ir9Tf50OZFwpjdD163MDFclZnlEaTAOR1DUI7CzE5sSDfM/Bd+ubMfK+zx39L+jcub137YqrKGrZAJUxjYydiNihtsJD
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2026 12:33:48.8691
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 42c6173a-1440-4025-20da-08de7857f459
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000252A2.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF5D591B24D
 
-The current EPC core design relies on an EPC driver disabling all BARs by
-default. An EPF driver will then enable the BARs that it wants to enabled.
+This series adds support for GPCDMA in Tegra264 with additional
+support for separate stream ID for each channel. Tegra264 GPCDMA
+controller has changes in the register offsets and uses 41-bit
+addressing for memory. Add changes in the tegra186-gpc-dma driver
+to support these.
 
-This design is there because there is no epc->ops->disable_bar().
-(There is a epc->ops->clear_bar(), but that is only to disable a BAR that
-has been enabled using epc->ops->set_bar() first.)
+v1->v2:
+- Fix dt_bindings_check warnings
+- Drop fallback compatible "nvidia,tegra186-gpcdma" from Tegra264 DT
+- Use dma_addr_t for sg_req src/dst fields and drop separate high_add
+  variable and check for the addr_bits only when programming the
+  registers.
+- Update address width to 39 bits for Tegra234 and before since the SMMU
+  supports only up to 39 bits till Tegra234.
+- Add a patch to do managed DMA controller registration.
+- Describe the second iteration in the probe.
+- Update commit descriptions.
 
-By default, an EPF driver will not be able to get/enable BARs that are
-marked as BAR_RESERVED or BAR_DISABLED (see pci_epc_get_next_free_bar()).
+Akhil R (9):
+  dt-bindings: dma: nvidia,tegra186-gpc-dma: Add iommu-map property
+  dt-bindings: dma: nvidia,tegra186-gpc-dma: Make reset optional
+  dmaengine: tegra: Make reset control optional
+  dmaengine: tegra: Use struct for register offsets
+  dmaengine: tegra: Support address width > 39 bits
+  dmaengine: tegra: Use managed DMA controller registration
+  dmaengine: tegra: Use iommu-map for stream ID
+  dmaengine: tegra: Add Tegra264 support
+  arm64: tegra: Add iommu-map and enable GPCDMA in Tegra264
 
-Since the current EPC code design requires an EPC driver to disable all
-BARs by default, let's move this to DWC common code from each glue driver.
+ .../bindings/dma/nvidia,tegra186-gpc-dma.yaml |  27 +-
+ .../arm64/boot/dts/nvidia/tegra264-p3834.dtsi |   4 +
+ arch/arm64/boot/dts/nvidia/tegra264.dtsi      |   3 +-
+ drivers/dma/tegra186-gpc-dma.c                | 433 +++++++++++-------
+ 4 files changed, 298 insertions(+), 169 deletions(-)
 
-BAR_RESERVED BARs are not disabled by default because these BARs are
-hardware backed, and should only be disabled explicitly by an EPF driver
-if absolutely necessary for the EPF driver to function correctly.
-(This is similar to how e.g. NVMe may have vendor specific BARs outside of
-the mandatory BAR0 which contains the NVMe registers.)
-
-Note that there is currently no EPC operation to disable a BAR that has not
-first been programmed using pci_epc_set_bar(). If an EPF driver ever wants
-to disable a BAR marked as BAR_RESERVED, a disable_bar() operation would
-have to be added first.
-
-No functional changes intended.
-
-Tested-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Reviewed-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-Tested-by: Koichiro Den <den@valinux.co.jp>
-Signed-off-by: Niklas Cassel <cassel@kernel.org>
----
- drivers/pci/controller/dwc/pci-dra7xx.c       |  4 ----
- drivers/pci/controller/dwc/pci-imx6.c         | 10 --------
- .../pci/controller/dwc/pci-layerscape-ep.c    |  4 ----
- drivers/pci/controller/dwc/pcie-artpec6.c     |  4 ----
- .../pci/controller/dwc/pcie-designware-ep.c   | 24 +++++++++++++++++++
- .../pci/controller/dwc/pcie-designware-plat.c | 10 --------
- drivers/pci/controller/dwc/pcie-dw-rockchip.c |  8 +------
- drivers/pci/controller/dwc/pcie-qcom-ep.c     | 10 --------
- drivers/pci/controller/dwc/pcie-rcar-gen4.c   | 10 --------
- drivers/pci/controller/dwc/pcie-stm32-ep.c    | 10 --------
- drivers/pci/controller/dwc/pcie-tegra194.c    | 10 --------
- drivers/pci/controller/dwc/pcie-uniphier-ep.c | 10 --------
- 12 files changed, 25 insertions(+), 89 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
-index d5d26229063f..cd904659c321 100644
---- a/drivers/pci/controller/dwc/pci-dra7xx.c
-+++ b/drivers/pci/controller/dwc/pci-dra7xx.c
-@@ -378,10 +378,6 @@ static void dra7xx_pcie_ep_init(struct dw_pcie_ep *ep)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
- 	struct dra7xx_pcie *dra7xx = to_dra7xx_pcie(pci);
--	enum pci_barno bar;
--
--	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++)
--		dw_pcie_ep_reset_bar(pci, bar);
- 
- 	dra7xx_pcie_enable_wrapper_interrupts(dra7xx);
- }
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index ec1e3557ca53..f5fe5cfc46c7 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -1401,15 +1401,6 @@ static const struct dw_pcie_ops dw_pcie_ops = {
- 	.stop_link = imx_pcie_stop_link,
- };
- 
--static void imx_pcie_ep_init(struct dw_pcie_ep *ep)
--{
--	enum pci_barno bar;
--	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
--
--	for (bar = BAR_0; bar <= BAR_5; bar++)
--		dw_pcie_ep_reset_bar(pci, bar);
--}
--
- static int imx_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
- 				  unsigned int type, u16 interrupt_num)
- {
-@@ -1478,7 +1469,6 @@ imx_pcie_ep_get_features(struct dw_pcie_ep *ep)
- }
- 
- static const struct dw_pcie_ep_ops pcie_ep_ops = {
--	.init = imx_pcie_ep_init,
- 	.raise_irq = imx_pcie_ep_raise_irq,
- 	.get_features = imx_pcie_ep_get_features,
- };
-diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-index 5a03a8f895f9..1f5fccdb4ff4 100644
---- a/drivers/pci/controller/dwc/pci-layerscape-ep.c
-+++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-@@ -152,15 +152,11 @@ static void ls_pcie_ep_init(struct dw_pcie_ep *ep)
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
- 	struct ls_pcie_ep *pcie = to_ls_pcie_ep(pci);
- 	struct dw_pcie_ep_func *ep_func;
--	enum pci_barno bar;
- 
- 	ep_func = dw_pcie_ep_get_func_from_ep(ep, 0);
- 	if (!ep_func)
- 		return;
- 
--	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++)
--		dw_pcie_ep_reset_bar(pci, bar);
--
- 	pcie->ls_epc->msi_capable = ep_func->msi_cap ? true : false;
- 	pcie->ls_epc->msix_capable = ep_func->msix_cap ? true : false;
- }
-diff --git a/drivers/pci/controller/dwc/pcie-artpec6.c b/drivers/pci/controller/dwc/pcie-artpec6.c
-index e994b75986c3..55cb957ae1f3 100644
---- a/drivers/pci/controller/dwc/pcie-artpec6.c
-+++ b/drivers/pci/controller/dwc/pcie-artpec6.c
-@@ -340,15 +340,11 @@ static void artpec6_pcie_ep_init(struct dw_pcie_ep *ep)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
- 	struct artpec6_pcie *artpec6_pcie = to_artpec6_pcie(pci);
--	enum pci_barno bar;
- 
- 	artpec6_pcie_assert_core_reset(artpec6_pcie);
- 	artpec6_pcie_init_phy(artpec6_pcie);
- 	artpec6_pcie_deassert_core_reset(artpec6_pcie);
- 	artpec6_pcie_wait_for_phy(artpec6_pcie);
--
--	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++)
--		dw_pcie_ep_reset_bar(pci, bar);
- }
- 
- static int artpec6_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
-diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-index 295076cf70de..386bfb7b2bf6 100644
---- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-@@ -1114,6 +1114,28 @@ static void dw_pcie_ep_init_non_sticky_registers(struct dw_pcie *pci)
- 	dw_pcie_dbi_ro_wr_dis(pci);
- }
- 
-+static void dw_pcie_ep_disable_bars(struct dw_pcie_ep *ep)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	enum pci_epc_bar_type bar_type;
-+	enum pci_barno bar;
-+
-+	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++) {
-+		bar_type = dw_pcie_ep_get_bar_type(ep, bar);
-+
-+		/*
-+		 * Reserved BARs should not get disabled by default. All other
-+		 * BAR types are disabled by default.
-+		 *
-+		 * This is in line with the current EPC core design, where all
-+		 * BARs are disabled by default, and then the EPF driver enables
-+		 * the BARs it wishes to use.
-+		 */
-+		if (bar_type != BAR_RESERVED)
-+			dw_pcie_ep_reset_bar(pci, bar);
-+	}
-+}
-+
- /**
-  * dw_pcie_ep_init_registers - Initialize DWC EP specific registers
-  * @ep: DWC EP device
-@@ -1196,6 +1218,8 @@ int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
- 	if (ep->ops->init)
- 		ep->ops->init(ep);
- 
-+	dw_pcie_ep_disable_bars(ep);
-+
- 	/*
- 	 * PCIe r6.0, section 7.9.15 states that for endpoints that support
- 	 * PTM, this capability structure is required in exactly one
-diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
-index 8530746ec5cb..d103ab759c4e 100644
---- a/drivers/pci/controller/dwc/pcie-designware-plat.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
-@@ -32,15 +32,6 @@ struct dw_plat_pcie_of_data {
- static const struct dw_pcie_host_ops dw_plat_pcie_host_ops = {
- };
- 
--static void dw_plat_pcie_ep_init(struct dw_pcie_ep *ep)
--{
--	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
--	enum pci_barno bar;
--
--	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++)
--		dw_pcie_ep_reset_bar(pci, bar);
--}
--
- static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
- 				     unsigned int type, u16 interrupt_num)
- {
-@@ -73,7 +64,6 @@ dw_plat_pcie_get_features(struct dw_pcie_ep *ep)
- }
- 
- static const struct dw_pcie_ep_ops pcie_ep_ops = {
--	.init = dw_plat_pcie_ep_init,
- 	.raise_irq = dw_plat_pcie_ep_raise_irq,
- 	.get_features = dw_plat_pcie_get_features,
- };
-diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-index ecc28093c589..8db27199cfa6 100644
---- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-+++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-@@ -361,13 +361,9 @@ static void rockchip_pcie_ep_hide_broken_ats_cap_rk3588(struct dw_pcie_ep *ep)
- static void rockchip_pcie_ep_init(struct dw_pcie_ep *ep)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
--	enum pci_barno bar;
- 
- 	rockchip_pcie_enable_l0s(pci);
- 	rockchip_pcie_ep_hide_broken_ats_cap_rk3588(ep);
--
--	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++)
--		dw_pcie_ep_reset_bar(pci, bar);
- };
- 
- static int rockchip_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
-@@ -415,9 +411,7 @@ static const struct pci_epc_bar_rsvd_region rk3588_bar4_rsvd[] = {
- /*
-  * BAR4 on rk3588 exposes the ATU Port Logic Structure to the host regardless of
-  * iATU settings for BAR4. This means that BAR4 cannot be used by an EPF driver,
-- * so mark it as RESERVED. (rockchip_pcie_ep_init() will disable all BARs by
-- * default.) If the host could write to BAR4, the iATU settings (for all other
-- * BARs) would be overwritten, resulting in (all other BARs) no longer working.
-+ * so mark it as RESERVED.
-  */
- static const struct pci_epc_features rockchip_pcie_epc_features_rk3588 = {
- 	DWC_EPC_COMMON_FEATURES,
-diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-index e55675b3840a..e8c8ba1659fd 100644
---- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-@@ -861,17 +861,7 @@ qcom_pcie_epc_get_features(struct dw_pcie_ep *pci_ep)
- 	return &qcom_pcie_epc_features;
- }
- 
--static void qcom_pcie_ep_init(struct dw_pcie_ep *ep)
--{
--	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
--	enum pci_barno bar;
--
--	for (bar = BAR_0; bar <= BAR_5; bar++)
--		dw_pcie_ep_reset_bar(pci, bar);
--}
--
- static const struct dw_pcie_ep_ops pci_ep_ops = {
--	.init = qcom_pcie_ep_init,
- 	.raise_irq = qcom_pcie_ep_raise_irq,
- 	.get_features = qcom_pcie_epc_get_features,
- };
-diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-index 9dd05bac22b9..1198ddc1752c 100644
---- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-+++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-@@ -386,15 +386,6 @@ static void rcar_gen4_pcie_ep_pre_init(struct dw_pcie_ep *ep)
- 	writel(PCIEDMAINTSTSEN_INIT, rcar->base + PCIEDMAINTSTSEN);
- }
- 
--static void rcar_gen4_pcie_ep_init(struct dw_pcie_ep *ep)
--{
--	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
--	enum pci_barno bar;
--
--	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++)
--		dw_pcie_ep_reset_bar(pci, bar);
--}
--
- static void rcar_gen4_pcie_ep_deinit(struct rcar_gen4_pcie *rcar)
- {
- 	writel(0, rcar->base + PCIEDMAINTSTSEN);
-@@ -449,7 +440,6 @@ static unsigned int rcar_gen4_pcie_ep_get_dbi2_offset(struct dw_pcie_ep *ep,
- 
- static const struct dw_pcie_ep_ops pcie_ep_ops = {
- 	.pre_init = rcar_gen4_pcie_ep_pre_init,
--	.init = rcar_gen4_pcie_ep_init,
- 	.raise_irq = rcar_gen4_pcie_ep_raise_irq,
- 	.get_features = rcar_gen4_pcie_ep_get_features,
- 	.get_dbi_offset = rcar_gen4_pcie_ep_get_dbi_offset,
-diff --git a/drivers/pci/controller/dwc/pcie-stm32-ep.c b/drivers/pci/controller/dwc/pcie-stm32-ep.c
-index c1944b40ce02..a7988dff1045 100644
---- a/drivers/pci/controller/dwc/pcie-stm32-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-stm32-ep.c
-@@ -28,15 +28,6 @@ struct stm32_pcie {
- 	unsigned int perst_irq;
- };
- 
--static void stm32_pcie_ep_init(struct dw_pcie_ep *ep)
--{
--	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
--	enum pci_barno bar;
--
--	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++)
--		dw_pcie_ep_reset_bar(pci, bar);
--}
--
- static int stm32_pcie_start_link(struct dw_pcie *pci)
- {
- 	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
-@@ -82,7 +73,6 @@ stm32_pcie_get_features(struct dw_pcie_ep *ep)
- }
- 
- static const struct dw_pcie_ep_ops stm32_pcie_ep_ops = {
--	.init = stm32_pcie_ep_init,
- 	.raise_irq = stm32_pcie_raise_irq,
- 	.get_features = stm32_pcie_get_features,
- };
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 9f9453e8cd23..3a6bffaff9ea 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -1923,15 +1923,6 @@ static irqreturn_t tegra_pcie_ep_pex_rst_irq(int irq, void *arg)
- 	return IRQ_HANDLED;
- }
- 
--static void tegra_pcie_ep_init(struct dw_pcie_ep *ep)
--{
--	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
--	enum pci_barno bar;
--
--	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++)
--		dw_pcie_ep_reset_bar(pci, bar);
--};
--
- static int tegra_pcie_ep_raise_intx_irq(struct tegra_pcie_dw *pcie, u16 irq)
- {
- 	/* Tegra194 supports only INTA */
-@@ -2008,7 +1999,6 @@ tegra_pcie_ep_get_features(struct dw_pcie_ep *ep)
- }
- 
- static const struct dw_pcie_ep_ops pcie_ep_ops = {
--	.init = tegra_pcie_ep_init,
- 	.raise_irq = tegra_pcie_ep_raise_irq,
- 	.get_features = tegra_pcie_ep_get_features,
- };
-diff --git a/drivers/pci/controller/dwc/pcie-uniphier-ep.c b/drivers/pci/controller/dwc/pcie-uniphier-ep.c
-index 5bde3ee682b5..494376d1812d 100644
---- a/drivers/pci/controller/dwc/pcie-uniphier-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-uniphier-ep.c
-@@ -203,15 +203,6 @@ static void uniphier_pcie_stop_link(struct dw_pcie *pci)
- 	uniphier_pcie_ltssm_enable(priv, false);
- }
- 
--static void uniphier_pcie_ep_init(struct dw_pcie_ep *ep)
--{
--	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
--	enum pci_barno bar;
--
--	for (bar = BAR_0; bar <= BAR_5; bar++)
--		dw_pcie_ep_reset_bar(pci, bar);
--}
--
- static int uniphier_pcie_ep_raise_intx_irq(struct dw_pcie_ep *ep)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-@@ -283,7 +274,6 @@ uniphier_pcie_get_features(struct dw_pcie_ep *ep)
- }
- 
- static const struct dw_pcie_ep_ops uniphier_pcie_ep_ops = {
--	.init = uniphier_pcie_ep_init,
- 	.raise_irq = uniphier_pcie_ep_raise_irq,
- 	.get_features = uniphier_pcie_get_features,
- };
 -- 
-2.53.0
+2.50.1
 
