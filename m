@@ -1,47 +1,47 @@
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013002.outbound.protection.outlook.com [40.107.159.2])
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013065.outbound.protection.outlook.com [52.101.72.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9533347DD48;
-	Mon,  2 Mar 2026 20:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B3E388E79;
+	Mon,  2 Mar 2026 21:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.65
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772483529; cv=fail; b=rk4htH8ydYEuJetKLb9DhZISv9ieNuxZGe9+G8RlU31zX/wlVGvHvjujWMeGiSCzXLSj75K6Fi70/PQ38AQrAbImqW8sidLQC9LzXTb8P/FBrRXzH9rqVW9NX3bNg9Q6Ftiihs+FfNgfx0GteLDpEhV7GvbLOEuqnMLnT2zYgV8=
+	t=1772486080; cv=fail; b=YFISX1o5WveVC+AkeDxqfiwA+Bbb4S6O8lzBSSivhdkTIBuTiXEtSht3YyFFsQSgWg+TlEUbn8eoYWfioQ6R5EXS72Wsos3n2KB9yPIMOOjccR4p5LZ3JLmmQUqzlrW7TD72YQ9kEzSjtecjMRspnkOJLqppakGp+dnFuBx+Cak=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772483529; c=relaxed/simple;
-	bh=RcUNp+iX+BOvTb7q62Hzd8lmnbqQJx6Pp8CEqS9phdg=;
+	s=arc-20240116; t=1772486080; c=relaxed/simple;
+	bh=m0ifbLyOY5oM351k4QIpRxIqFq0JEBeVpUsqYKMotNU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=sk0KrUYVHJnuBJZCl2O3qouuISr//eVvdP261FnALroMj9U94veAOrTOGjpFAfn54WUCsuuWkY/BcqhhRi9OQkDkFLSc8oizp9c/8sgXmmGHrDqsv7uWW9iLyRSFKUgoPycoqvYIdqnhF4oJNbVFamk+xjI7OP5Ca/2YSOGTvus=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=LwQjl4ux; arc=fail smtp.client-ip=40.107.159.2
+	 Content-Disposition:In-Reply-To:MIME-Version; b=KJp0SeT0W7JGEbI2hl8oU2ID89zC2UcBhMz90jRmoliLgvwRd/hJd7o4lI/FaIYwc/mQba4HRjBoF26eHaVtqsrSi03wpVZNmenW6jH8ayC7XaW4i+bVH3MS9upgUeKAyiRwHg8VtVKI4RyzuSOh2oqOjrhNA3rr08OHMk3JCog=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=jrO25vSc; arc=fail smtp.client-ip=52.101.72.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="LwQjl4ux"
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="jrO25vSc"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=S6eU23HIgHpPRzR7sVQEaS41LGWM/f2irBVsyEmbge4DoAYfeyknlA3uXsC0HifTU8JCFvosj7VFlEpoqCDuq75L1qYbPafQ95k3kshrUgLSmfQWQFgG1UAhx5KIFJb6nWbQA2MUUryWQSBkBPuM4nNKIM+wwe9ompol8Yd129pH5SjKjkqpu1hHFuRu6C24xfaqp1Cg0KlgZE3doXRgGWKkAZzrTpq56FOmySjWKvKnVK+3B/88AiVdOor8ljVCDNmoJYKIpMBjZbO/5FrkgFln3OC85DtvVBWd2LpuaEcQglotvOt4vqkMYGk74v4FAQbcMU5Q4Cr/BIXVUos2Ng==
+ b=brc5XszxH4peYVtNpZftDf6GTfAsrgmuUmUAO8yt0iz3pWemeh3kQfCtNO4fwGLZGpS8wZ196NycXxweGMPLOEAsZDzJsFGlsWLdgeoxNNMxYmKwqfGOwhOKp7MZpIFimYDB1Ml2G+qnWyzTy2G6sw/lC2HqC5MnLeZj+gWfuI2IqSSIthx21D0LLtRRwIcHurIKfT6YFXM3kkxDmaPu5vs8CPvaL0GGQJvRIe6O0gjjENU0RksaMuLBzovr4o46e6rDZdzES8Sl7H7xiPE+mrdrWAlVf1nbEhb3WH920HqJX+Ld5kckmGyHkBDeso11V5pvSTt22MQnMCZJ/fq0Vg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2GRgNyS3Dh+1bU8Id1UQ+rVIhA7V8sWy+MjRZ/OJJkc=;
- b=fBm48d65TzQRAnRHvjwFw+GZN/2JxfoPjqmNKaQQTyw3hNrc1G74ltHolYYR09+9k4UBM+HyDwWA9Lrx/S57ItHYrhoLOqWDYMqbkP8ywQoGwQlA7dMpYNVtWiG+/OzmEXpOPMM6BwEtkQJ2u64+33CMZLVxZ9NQbhbn8l4QhxLtnUJ4eERH2mAeSADKLGeH4lQI7n8C5U3YDCMFWVybMCOdeULmHm4AEtDqQSpeMdqZibC0DtwO+8MyIPIBINZyNDD34Ni16M9YclM5wGpnQT/l/Pd3b4aFm291yCr4W5n8lqCNdOYiXOIM4yZ57+9w3wv78dsHkgx93bdM9jGnJw==
+ bh=AueXEUvfb8faKZk3L1uws7lstA96auNi1n2MgBR/xlc=;
+ b=MyuLVhI1uYEa/uBSoZrQ/BJJFs3wdpxjkAfBsymlCi16wp2RGEhC74L1Hya5bSYgkT6duwk+Noe3RXy5pQ5K+ISstTT029jpwFHSyDIeBcSMb8ppFA5z5xrlyGaknw/nQag9qLn+iCk5ghHGuopF8x+poOOXDQk/yMtZ+EziDQhp29jlNBxy8m5FSDJK0RoEp5UEbfaXfVphDqp2lI/MmaHqaVoQ3iwlmYFETczCQCCjrP0N3CSrsl3EuL5Akjt6tI/Ht+aMhNVTOclcN2RHeypi1+ZEHRtdMHXroYAbVsegz+RhlLUPzMLjhNE74eB2d4fEonz/QCuJEDhoHNCD5Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2GRgNyS3Dh+1bU8Id1UQ+rVIhA7V8sWy+MjRZ/OJJkc=;
- b=LwQjl4uxb9CZAflfRh41vy+D7tfV40jNGiobSxFBNIcn7uTncQAJUEgVm8GgKBxm4ZMnzVMeSCTJfrMNYF6v/dTqfe/hOq4hMxzBOajAbfkxDgCLy8+wsHJuh9ht1IN/QsZhV2mtg1ujPf/PPQdDF7WRnu0BXZ8sMxHNNgBQDCF4E13G5BD31W0j+pVhrlkytuY9rr9dWuuWDb1xHJFdou7OQnK37fbJUKpOYk7ai/ScUg9zb3hVsrgi7pw0GCianS4hrjCAbfPkGn5XM2iPhTwedLmCM6CHGOycsg3lpSoWEoxncH9E73jNPZsGshLY1PSALAScxBW5OkRfIZ8PQg==
+ bh=AueXEUvfb8faKZk3L1uws7lstA96auNi1n2MgBR/xlc=;
+ b=jrO25vScnAb2pKZSXgyl9PMiUHh7HceDVERUhjVFocIhUStZ2t1niFAKDI7a5T6DPmof78naufe20bTXuv/KK4qG0tjtHLn2EOtLxPnegYqiaBiRF73Cin1QkOi6IwBKljcO67R3Mxli/EBHGtGEYHjqb6l0guJUe1OGnbcMiqQ7wt/7r3cuEV+qtOwZjXmhYE0dUA2M9GU7VrASf4yylcIoyg/CzSykqFG2GKV7Kss2uV96ETepWesQ4RP/anWnOICYYEpgzk2Dg1k1UWuXkPI5cmi9U3zsFh4iehi4UudQ4JoILO5zrYc3glmKXrH6aFeKYDP+TuOrd0pcNJQKlg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from PA4PR04MB9366.eurprd04.prod.outlook.com (2603:10a6:102:2a9::8)
- by AM8PR04MB7905.eurprd04.prod.outlook.com (2603:10a6:20b:235::18) with
+ by DB9PR04MB9889.eurprd04.prod.outlook.com (2603:10a6:10:4ef::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.21; Mon, 2 Mar
- 2026 20:32:03 +0000
+ 2026 21:14:34 +0000
 Received: from PA4PR04MB9366.eurprd04.prod.outlook.com
  ([fe80::75e4:8143:ddbc:6588]) by PA4PR04MB9366.eurprd04.prod.outlook.com
  ([fe80::75e4:8143:ddbc:6588%6]) with mapi id 15.20.9654.020; Mon, 2 Mar 2026
- 20:32:03 +0000
-Date: Mon, 2 Mar 2026 15:31:56 -0500
+ 21:14:34 +0000
+Date: Mon, 2 Mar 2026 16:14:25 -0500
 From: Frank Li <Frank.li@nxp.com>
 To: Akhil R <akhilrajeev@nvidia.com>
 Cc: Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>,
@@ -54,15 +54,15 @@ Cc: Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>,
 	Philipp Zabel <p.zabel@pengutronix.de>, dmaengine@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/9] dmaengine: tegra: Make reset control optional
-Message-ID: <aaXzvPYFF4euUTEY@lizhi-Precision-Tower-5810>
+Subject: Re: [PATCH v2 5/9] dmaengine: tegra: Support address width > 39 bits
+Message-ID: <aaX9sfdDORWIqYos@lizhi-Precision-Tower-5810>
 References: <20260302123239.68441-1-akhilrajeev@nvidia.com>
- <20260302123239.68441-4-akhilrajeev@nvidia.com>
+ <20260302123239.68441-6-akhilrajeev@nvidia.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260302123239.68441-4-akhilrajeev@nvidia.com>
-X-ClientProxiedBy: PH5P220CA0007.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:510:34a::12) To PA4PR04MB9366.eurprd04.prod.outlook.com
+In-Reply-To: <20260302123239.68441-6-akhilrajeev@nvidia.com>
+X-ClientProxiedBy: SJ0PR13CA0090.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c4::35) To PA4PR04MB9366.eurprd04.prod.outlook.com
  (2603:10a6:102:2a9::8)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -71,87 +71,311 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB9366:EE_|AM8PR04MB7905:EE_
-X-MS-Office365-Filtering-Correlation-Id: f9f77c41-9e43-4fe5-2f35-08de789ac3a1
+X-MS-TrafficTypeDiagnostic: PA4PR04MB9366:EE_|DB9PR04MB9889:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6a4af5c2-8c7b-4823-8c61-08de78a0b3f2
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|19092799006|1800799024|366016|38350700014|7053199007;
+	BCL:0;ARA:13230040|1800799024|19092799006|366016|376014|7416014|52116014|38350700014|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	mYwDjKs44K3xrTB3oPRk6wOyjSXSZxRf+O1Hm85lk/JNPfoaIGoST1MNqshTn55Q5rfYOIAnPIs80EtPr9UWvf210ya0gdtChka8U9w7euDrD4QrKZ/B1rKmcByEdSSkHRAg/GTEq9D+R/ECPWCpVM3Nfut0g7jcmmhu9upjoVGrP/ZqKUesfl56SnqhZE+s7Ud0SH5EJznOpK0Pw0H6DD41Sh3kGM0XknTepavpel8OGF1YfJrIyC/UHaO641SgJq0hv+/nTpYq32jgFUhvoNw1vD8KMwEn+Yq6YNVJfxv/l3/ml+5Gmjj91pCjRdlwdZc4KHdnW2VQaA2v8qPa+M/YpbvmHVd320i8FTaluoM/3ZYYcB6MjP6hCOAiVCb1Rjn46F6nq1+sJh5vrSDrLqO5uATG8WT58vvr4lBKcAQVwheWM9UnSq9m3GWEABGNOjjJqMB+yyqbPBMwrWPeGfxjdFKET0Xky9feCINe2xMPlKOTDbcPln5Yk0h6uM2ml0i7QQriL6H8UjowFKx2HpOrt7kRxhM4CSgkqPDPUQGyvmg8s9DL/jxFq4iHtNen02fFJr5g19KHQMwEnctzUDWwSDqbAmm6c20HxlKhf1cK+r5KNW3+kXRlXTRIQNZPEC3K0DWy4DIfYI8eYhNlUQdIeiNL3n7r98fJTrKNRQ1FxTfYMxun6KH6mvkU12WeTunHVlPj+uklAWTTXIoeIf5nLJPNiWouDqlWn8LkrZN1hf4726Es+r22vMt2WBNKqN7xKcGd+MjjAaHv6IDqfKX0GheQukOTBFmbCZMY0i4=
+	/2QVINHh9HLVVdCA4fi9fQhHzQ6NxDfzBLDHqA/vEVtxmNtkaHOuWMamSag7n8gb4ZTVQyqOMtvgoc7kauI8JRmSExoQUMW1P+F2QWK7r8JTlz3G3IdhmfZIq0P/pqIAZd2kv+p6q/vAchqpz4VVFRQLMSUdIc6UU3OhcfH7X1gWi8BUKDhlWWU0NYuURZxvBOLPn+OrbCg/+uzDOSU/jfy3CZA9TM+vbEUucVCmTUCqoH1I5FFJd8t0nmu+WfyzPSOtBJtrNvaFuH3FfbmqezWzbn+Gk6MszEwiDAhS72qOUGnUdMeSD0fMCeZItW0enCKTJssqqjnDqPm/XJdGjhx0qvL2BQ8ZsvFxLO+XhtFlOzbhJ93kPujm/O+H5KZ0jSyRnwDMFHdAfXwyZKe28Xvju5P3ALwJvbJe2tWZSlTOkZrE8EwBtOnVuCRLV8kzkgdUZeJ7yz+QL0ur0JZZfjdVFSMLaTSufxfr41gZEz4Lc01GKoBKX4oyCS/GtNc3DyPAaZ8SwwqEZfsBrw2uX9O9VLkUfYrEQ4GsWgV78DZonTDcX3r5SkYAABCc1HdVzyK1AuTPyJZ8LC7mfv1dx6G/NBbsOLgzUW6cPTsD2n8t43fEgNSpqBaOjhp1f3jCazIGI81DqJA+N3BwfPAeG9ODJofFFbdoepqUQKC6fdvwsvz3bjNX3lLJwd297pMFzBkRSHfMOJYjTpaUbIpRnWjPoytgSue09e2A0FemvAmgJ/s9lBb7+87G8FyoXiSYnDELuDtn7/hWxv9F6iOd7DqNCEdLAfB2vgD9ObG3lHI=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9366.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(19092799006)(1800799024)(366016)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9366.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(366016)(376014)(7416014)(52116014)(38350700014)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?DdDDClA7ItTuOuJ+ETy8GkUphobvm93CXamR9YzFQmDo/KtEvDj4+Ssu1fjo?=
- =?us-ascii?Q?rhJmkV+S0HRvESEyMiAOnnzc/z16bu0NlumiLQI7iWN85IGPqkVetnd+Q7To?=
- =?us-ascii?Q?FQlb8YpPwQHM7dmgYT2nrhsIH9ues8rgnDU9rDYLkKSBXBpWZLdX4AUj4j9W?=
- =?us-ascii?Q?I91H56+AtXo3/eIoMpoLlfGhOTy0pf4rSOow88ySu7UKtmGx7RtG41shyXNq?=
- =?us-ascii?Q?31MZyooExx9Ojj+JznFe+s3Nj3rFx1lWeyp9A/x4Tt6WEaT6CXHtH8RKf2vU?=
- =?us-ascii?Q?mEze9ozMVcvuqkfPimdMpDeUdkA3ZpTU3kpDXSNDabcS6nrJVSRrUrI/AX1P?=
- =?us-ascii?Q?/jDSQQqegOkuxvav1+CA3Mx7twc0NzH1QT7B99SUHORzhtZVVQdwgZ5IY4bh?=
- =?us-ascii?Q?S0d/r5BLAiMkKz/ADMcpHZvsp89jxG4yqPAy5S/QpxlHkhqAot/rw1C8Eamc?=
- =?us-ascii?Q?uxkNFszPYvcRSVSMx/oZLiXJHHHKGZ1r+3uOhOhYdFRzVT6CjVCP6Jg0wezB?=
- =?us-ascii?Q?pTKzqqMwnncvi4v5xDYsG2WgbebmoYsv0m1ksRObB3XTGespWykOsGhXPzO3?=
- =?us-ascii?Q?jTd70fjdLX60Up4m68pQoCEmZbgs50zVJWO13aHo35U2QbW/8t/r7erZBb2e?=
- =?us-ascii?Q?YB/H0wPxJMRf4spMHy9Ol34W8idiPdNpTNLRLww0OOrmQ/K+S+/Pr4lMCRiF?=
- =?us-ascii?Q?E1GgFU2X2QtC40nL84SxZDaI8zkWpq+boxHrr5D+1cocw0R5Efg/aGEARfqm?=
- =?us-ascii?Q?oYyoanR2JJaE5J89wySZ7xRS0ML5nMyFBpjb0rOyd9EqG+LX8GpsKQ/km7e2?=
- =?us-ascii?Q?gdHitCMI1vV5e49rjqIrMlS11aUJTEGHA0XCrWXnVyVMPamob8El9zMLiuYk?=
- =?us-ascii?Q?r2Tyk+7d6MSMFbfWAaSQZ6Bu0Wlz9b24MMX4K78JIQ2NFBUd7a0NJTk1KSnO?=
- =?us-ascii?Q?+yb5Q2Sgmp+B3hCE7Nn3NNR2G0oFcTtD1+kB5U71/Hg2CC2JKIcPR0pmFMj+?=
- =?us-ascii?Q?I48c0kdWA8aYXkiQFx3l2oey91C5OQUr/KdlQ5OMr3g/+VuDcOyYawx7t1Uz?=
- =?us-ascii?Q?p9fKky1dOvTY72+FnYTY7XVyZdluNFAdnco/e1vb1CKt013wrIPxyLEDXxI9?=
- =?us-ascii?Q?HUhb8Cedd9gL4iK3kQCzgCn9fBUPjuZlW330ZTJwsNhialEF6s99VUXZjP/b?=
- =?us-ascii?Q?oJ0Io0sWCJwtFxppu2+F1Wvq+ysLmH+p6GVXs+oI2wfIAyN+9W9+m6i5IyOh?=
- =?us-ascii?Q?1Jni97+w6KaXuCn4nBedndz/ZMlCFItcbud9Vut7zZtKQ33WFtToCB0Q7D7T?=
- =?us-ascii?Q?oAA1YyXBZIBEJKuBHKOrikloBlc+f1AtQ/piTlpUQJqGpVzd0qhGu+wyxLmw?=
- =?us-ascii?Q?ExyonU0YFbwAdUohaH5r2+J6Ljf87kXMkMIpZ2r7AMrFypUeKpBI3FxInkNf?=
- =?us-ascii?Q?EZ9LbPh9WLbxFZUy0EEiDYpyIzR1nElCr88z3y+/pELWksUDWSlPG7mlO/tw?=
- =?us-ascii?Q?YEqKnx7xfrzmNU/ufHK3lCmyq91lLow67JCs//exr8yllf6pbxzESj6oQTyF?=
- =?us-ascii?Q?2vKmFTwcyknj8kfqkUzqleremFwIHzCJq2kJkz5xbbC611iOJwFd8fyu8Ikr?=
- =?us-ascii?Q?kFL6TODVe0by3ugvAcqXNnskwluiu/3thKJCnskh8XrOYpznIZPUULSivyw8?=
- =?us-ascii?Q?S70tA9xFczkRFxsUMH3BNYoEFDUH1d9Q02akLc/EAvlEjlvN?=
+	=?us-ascii?Q?IazcVo2AHqp8jeyGSuB5yb189sggutYELVdNo6EALR2kAjpOv+6DLy2iDObV?=
+ =?us-ascii?Q?7fZMJGv8ZY3uMOd5jiyYYU75tgC/QchsSDe/IHZKNE9C9dvt9ew2VXHnkFZt?=
+ =?us-ascii?Q?hM0G6iKYV5CczFoyXyg+eHGP4U/gvnQsuV6hJjd31fyVct1hgl9S3gM5vnd4?=
+ =?us-ascii?Q?bhlXv1K/pgZQRVINMdAjK0aAvqnPbzpYm4h1bGyBTnyZxE9OILWt/cdfSzbC?=
+ =?us-ascii?Q?vP00v57KPV8GvOXmu5HLlcbF2LJiRVvljGEuI1NuTownM+EoTij0cG2jqszI?=
+ =?us-ascii?Q?Lcqj728VNNT7Wcd1JkkHfiQnCPuuNELQ3MoUie2MNn/Tq49wz1qZCAvMmOrR?=
+ =?us-ascii?Q?caiyPhhOsAzq6VY4t2PVCKBHAs/JCsYWu5O5O7evBzVY6kS+6+GuG23MymoI?=
+ =?us-ascii?Q?j60HD1MArcclyBHN5MYY9OWc/v5GDXVW10f0jgceVlBxJ8+hWwdeGX5Atbwc?=
+ =?us-ascii?Q?Iy3/t5VzWQ0M/v45LkfLMofPfDmEl5DdyTUnvRpGgCqgC3mEQ17VLD7BVvlc?=
+ =?us-ascii?Q?de+8iNzyxDtfQfbe+PGOMKVTQo4tXKOLgzSNAuPFaZrBxFqglWk9h22TtrEY?=
+ =?us-ascii?Q?3LpkkCd1f76duoxhL1rrVLjzWyCadNKfSBcLiugXfc7bDy9qdNPo7lqOal1o?=
+ =?us-ascii?Q?RDA6mKErKolCg0bmO+v4HTDJTH7yOv9tCsLEAyASrnLUslZw4YN72vrZDDHD?=
+ =?us-ascii?Q?Pit7IHrJ834rGLG0InkGpw/AEqi2P8jtPkcptaizzXhg7ZTI0dZJwWwIy43b?=
+ =?us-ascii?Q?HHlJZxwUwjEKrKotN6Vo+n7GL0q0Jf9jGwMuWa4HaP22ff687n09tqr5Ekfs?=
+ =?us-ascii?Q?IqBtmFkM3n+EvWyRIWyYbuxrk4DpjRC7f5JotWpiazI8tJ4pb1HTujI43g6V?=
+ =?us-ascii?Q?HfnP2VvW7mJRI6JXpX6qjtL7Ug1afOAeFPW1KAJWR3YzUJwTHAmScZCoYWwZ?=
+ =?us-ascii?Q?DTRjoJtpkBERGPK904y4JeCWVw2p5nVpPWPfciEu8Z70+wRDof1cTYpFS+aZ?=
+ =?us-ascii?Q?e23xfwQe03SwAuc14wsotuQ16D7XzOcxPRytsw1EvhO0R9XyyB9TC8zELUmr?=
+ =?us-ascii?Q?kccavHWTZn9SYgCzaQmljVWr4iNuKFGa6YF0UJwgB0SI/uMSKIrvLyxpV9Z8?=
+ =?us-ascii?Q?uZKLqL6sKyXOelrH7XsQ9x3oXwZ0rrKacC1asP0tr/eGqVRozxFRjz6YAktu?=
+ =?us-ascii?Q?OiTbmleDWB8ubZxmRxc9H2/LR1fDA9GtjYawNjG0gGiHIYyPcxenI5BtSxsg?=
+ =?us-ascii?Q?tBTLh641xURNQA/LWJM0gOzlRdAdu9SS5w85fo0e6omNThaNYiaODdo6B6nN?=
+ =?us-ascii?Q?/164Ge2kZVTzG7OCLyAkHmvZznMY0uoY/QvAjguzkvLSjlNlLTYnfRczD/BJ?=
+ =?us-ascii?Q?xKDrFHA/IfeK8GVJ4ndE/Uj85pPj1JCoVAWXa8XAcYEhFENJMPOGEZRpek88?=
+ =?us-ascii?Q?kT+2o5bHQXLktsVcIe7CREehz+4xeGnOnj19VFlEViU/+QEhPHfqfLxhf1yJ?=
+ =?us-ascii?Q?cJpptGOeh9LiHD/DMWh2sTXSZwtyQaGqhoC6V/gH8Ipp4RaG16If6WNQqB4h?=
+ =?us-ascii?Q?CgQnYvpBs3FGfEZfEQWq1U0ynwzZqhHsox0CZglsUbYHu447ByJ45q7KAhcS?=
+ =?us-ascii?Q?O4jdG4NP6t+jgFw//cXVdjmSThUB1yvb/2+/vSjPFCJbJOx1He7E2Vu7V24h?=
+ =?us-ascii?Q?3lAEjSalC3fx1DseJu85zTP1kaz6kJRXOvO2gdZE9T84SoI4Za9Y2eKjGbaA?=
+ =?us-ascii?Q?xvSsfo7VaQ=3D=3D?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f9f77c41-9e43-4fe5-2f35-08de789ac3a1
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a4af5c2-8c7b-4823-8c61-08de78a0b3f2
 X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9366.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2026 20:32:03.6890
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2026 21:14:34.5978
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VW2HYHsHc2CnbasK/hlgDToknsyMIedSI1/38ra3wM26XFxWipKcdFg2/K+9QpEMIVyIddjy3xZZzFjq8oT9aA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7905
+X-MS-Exchange-CrossTenant-UserPrincipalName: 31jgh3mUrYLIIi20otQ2oS8T5NmYtRBL3WoC2SQsmSVuucg4rBRHqPjzOK8vFBIO7slZB1SU4SNqChVHMzO0dw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9889
 
-On Mon, Mar 02, 2026 at 06:02:33PM +0530, Akhil R wrote:
-> In Tegra264, reset is not available for the driver to control as
-> this is handled by the boot firmware. Hence make the reset control
-> optional and update the error message to reflect the correct error.
+On Mon, Mar 02, 2026 at 06:02:35PM +0530, Akhil R wrote:
+> Tegra264 supports address width of 41 bits. Unlike older SoCs which use
+> a common high_addr register for upper address bits, Tegra264 has separate
+> src_high and dst_high registers to accommodate this wider address space.
+>
+> Add an addr_bits property to the device data structure to specify the
+> number of address bits supported on each device and use that to program
+> the appropriate registers.
+>
+> Update the sg_req struct to remove the high_addr field and use
+> dma_addr_t for src and dst to store the complete addresses. Extract
+> the high address bits only when programming the registers.
 >
 > Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
 > ---
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
->  drivers/dma/tegra186-gpc-dma.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/dma/tegra186-gpc-dma.c | 87 ++++++++++++++++++++++------------
+>  1 file changed, 56 insertions(+), 31 deletions(-)
 >
 > diff --git a/drivers/dma/tegra186-gpc-dma.c b/drivers/dma/tegra186-gpc-dma.c
-> index 4d6fe0efa76e..09a1717aa808 100644
+> index 09ba2755c06d..753e86d05a02 100644
 > --- a/drivers/dma/tegra186-gpc-dma.c
 > +++ b/drivers/dma/tegra186-gpc-dma.c
-> @@ -1382,10 +1382,10 @@ static int tegra_dma_probe(struct platform_device *pdev)
->  	if (IS_ERR(tdma->base_addr))
->  		return PTR_ERR(tdma->base_addr);
+> @@ -151,6 +151,7 @@ struct tegra_dma_channel;
+>   */
+>  struct tegra_dma_chip_data {
+>  	bool hw_support_pause;
+> +	unsigned int addr_bits;
+>  	unsigned int nr_channels;
+>  	unsigned int channel_reg_size;
+>  	unsigned int max_dma_count;
+> @@ -166,6 +167,8 @@ struct tegra_dma_channel_regs {
+>  	u32 src;
+>  	u32 dst;
+>  	u32 high_addr;
+> +	u32 src_high;
+> +	u32 dst_high;
+>  	u32 mc_seq;
+>  	u32 mmio_seq;
+>  	u32 wcount;
+> @@ -186,10 +189,9 @@ struct tegra_dma_channel_regs {
+>   */
+>  struct tegra_dma_sg_req {
+>  	unsigned int len;
+> +	dma_addr_t src;
+> +	dma_addr_t dst;
+>  	u32 csr;
+> -	u32 src;
+> -	u32 dst;
+> -	u32 high_addr;
+>  	u32 mc_seq;
+>  	u32 mmio_seq;
+>  	u32 wcount;
+> @@ -273,6 +275,25 @@ static inline struct device *tdc2dev(struct tegra_dma_channel *tdc)
+>  	return tdc->vc.chan.device->dev;
+>  }
 >
-> -	tdma->rst = devm_reset_control_get_exclusive(&pdev->dev, "gpcdma");
-> +	tdma->rst = devm_reset_control_get_optional_exclusive(&pdev->dev, "gpcdma");
->  	if (IS_ERR(tdma->rst)) {
->  		return dev_err_probe(&pdev->dev, PTR_ERR(tdma->rst),
-> -			      "Missing controller reset\n");
-> +			      "Failed to get controller reset\n");
+> +static void tegra_dma_program_addr(struct tegra_dma_channel *tdc,
+> +				   struct tegra_dma_sg_req *sg_req)
+> +{
+> +	tdc_write(tdc, tdc->regs->src, lower_32_bits(sg_req->src));
+> +	tdc_write(tdc, tdc->regs->dst, lower_32_bits(sg_req->dst));
+> +
+> +	if (tdc->tdma->chip_data->addr_bits > 39) {
+> +		tdc_write(tdc, tdc->regs->src_high, upper_32_bits(sg_req->src));
+> +		tdc_write(tdc, tdc->regs->dst_high, upper_32_bits(sg_req->dst));
+> +	} else {
+> +		u32 src_high = FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_SRC_PTR,
+> +					      upper_32_bits(sg_req->src));
+> +		u32 dst_high = FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR,
+> +					      upper_32_bits(sg_req->dst));
+> +
+> +		tdc_write(tdc, tdc->regs->high_addr, src_high | dst_high);
+> +	}
+> +}
+> +
+>  static void tegra_dma_dump_chan_regs(struct tegra_dma_channel *tdc)
+>  {
+>  	dev_dbg(tdc2dev(tdc), "DMA Channel %d name %s register dump:\n",
+> @@ -281,10 +302,20 @@ static void tegra_dma_dump_chan_regs(struct tegra_dma_channel *tdc)
+>  		tdc_read(tdc, tdc->regs->csr),
+>  		tdc_read(tdc, tdc->regs->status),
+>  		tdc_read(tdc, tdc->regs->csre));
+> -	dev_dbg(tdc2dev(tdc), "SRC %x DST %x HI ADDR %x\n",
+> -		tdc_read(tdc, tdc->regs->src),
+> -		tdc_read(tdc, tdc->regs->dst),
+> -		tdc_read(tdc, tdc->regs->high_addr));
+> +
+> +	if (tdc->tdma->chip_data->addr_bits > 39) {
+> +		dev_dbg(tdc2dev(tdc), "SRC %x SRC HI %x DST %x DST HI %x\n",
+> +			tdc_read(tdc, tdc->regs->src),
+> +			tdc_read(tdc, tdc->regs->src_high),
+> +			tdc_read(tdc, tdc->regs->dst),
+> +			tdc_read(tdc, tdc->regs->dst_high));
+> +	} else {
+> +		dev_dbg(tdc2dev(tdc), "SRC %x DST %x HI ADDR %x\n",
+> +			tdc_read(tdc, tdc->regs->src),
+> +			tdc_read(tdc, tdc->regs->dst),
+> +			tdc_read(tdc, tdc->regs->high_addr));
+> +	}
+> +
+>  	dev_dbg(tdc2dev(tdc), "MCSEQ %x IOSEQ %x WCNT %x XFER %x WSTA %x\n",
+>  		tdc_read(tdc, tdc->regs->mc_seq),
+>  		tdc_read(tdc, tdc->regs->mmio_seq),
+> @@ -487,9 +518,7 @@ static void tegra_dma_configure_next_sg(struct tegra_dma_channel *tdc)
+>  	sg_req = &dma_desc->sg_req[dma_desc->sg_idx];
+>
+>  	tdc_write(tdc, tdc->regs->wcount, sg_req->wcount);
+> -	tdc_write(tdc, tdc->regs->src, sg_req->src);
+> -	tdc_write(tdc, tdc->regs->dst, sg_req->dst);
+> -	tdc_write(tdc, tdc->regs->high_addr, sg_req->high_addr);
+> +	tegra_dma_program_addr(tdc, sg_req);
+>
+>  	/* Start DMA */
+>  	tdc_write(tdc, tdc->regs->csr,
+> @@ -517,11 +546,9 @@ static void tegra_dma_start(struct tegra_dma_channel *tdc)
+>
+>  	sg_req = &dma_desc->sg_req[dma_desc->sg_idx];
+>
+> +	tegra_dma_program_addr(tdc, sg_req);
+>  	tdc_write(tdc, tdc->regs->wcount, sg_req->wcount);
+>  	tdc_write(tdc, tdc->regs->csr, 0);
+> -	tdc_write(tdc, tdc->regs->src, sg_req->src);
+> -	tdc_write(tdc, tdc->regs->dst, sg_req->dst);
+> -	tdc_write(tdc, tdc->regs->high_addr, sg_req->high_addr);
+>  	tdc_write(tdc, tdc->regs->fixed_pattern, sg_req->fixed_pattern);
+>  	tdc_write(tdc, tdc->regs->mmio_seq, sg_req->mmio_seq);
+>  	tdc_write(tdc, tdc->regs->mc_seq, sg_req->mc_seq);
+> @@ -826,7 +853,7 @@ static unsigned int get_burst_size(struct tegra_dma_channel *tdc,
+>
+>  static int get_transfer_param(struct tegra_dma_channel *tdc,
+>  			      enum dma_transfer_direction direction,
+> -			      u32 *apb_addr,
+> +			      dma_addr_t *apb_addr,
+>  			      u32 *mmio_seq,
+>  			      u32 *csr,
+>  			      unsigned int *burst_size,
+> @@ -904,11 +931,9 @@ tegra_dma_prep_dma_memset(struct dma_chan *dc, dma_addr_t dest, int value,
+>  	dma_desc->bytes_req = len;
+>  	dma_desc->sg_count = 1;
+>  	sg_req = dma_desc->sg_req;
+> -
+>  	sg_req[0].src = 0;
+>  	sg_req[0].dst = dest;
+> -	sg_req[0].high_addr =
+> -			FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (dest >> 32));
+> +
+>  	sg_req[0].fixed_pattern = value;
+>  	/* Word count reg takes value as (N +1) words */
+>  	sg_req[0].wcount = ((len - 4) >> 2);
+> @@ -976,10 +1001,7 @@ tegra_dma_prep_dma_memcpy(struct dma_chan *dc, dma_addr_t dest,
+>
+>  	sg_req[0].src = src;
+>  	sg_req[0].dst = dest;
+> -	sg_req[0].high_addr =
+> -		FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_SRC_PTR, (src >> 32));
+> -	sg_req[0].high_addr |=
+> -		FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (dest >> 32));
+> +
+>  	/* Word count reg takes value as (N +1) words */
+>  	sg_req[0].wcount = ((len - 4) >> 2);
+>  	sg_req[0].csr = csr;
+> @@ -999,7 +1021,8 @@ tegra_dma_prep_slave_sg(struct dma_chan *dc, struct scatterlist *sgl,
+>  	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
+>  	unsigned int max_dma_count = tdc->tdma->chip_data->max_dma_count;
+>  	enum dma_slave_buswidth slave_bw = DMA_SLAVE_BUSWIDTH_UNDEFINED;
+> -	u32 csr, mc_seq, apb_ptr = 0, mmio_seq = 0;
+> +	u32 csr, mc_seq, mmio_seq = 0;
+> +	dma_addr_t apb_ptr = 0;
+>  	struct tegra_dma_sg_req *sg_req;
+>  	struct tegra_dma_desc *dma_desc;
+>  	struct scatterlist *sg;
+> @@ -1087,13 +1110,9 @@ tegra_dma_prep_slave_sg(struct dma_chan *dc, struct scatterlist *sgl,
+>  		if (direction == DMA_MEM_TO_DEV) {
+>  			sg_req[i].src = mem;
+>  			sg_req[i].dst = apb_ptr;
+> -			sg_req[i].high_addr =
+> -				FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_SRC_PTR, (mem >> 32));
+>  		} else if (direction == DMA_DEV_TO_MEM) {
+>  			sg_req[i].src = apb_ptr;
+>  			sg_req[i].dst = mem;
+> -			sg_req[i].high_addr =
+> -				FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (mem >> 32));
+>  		}
+>
+>  		/*
+> @@ -1117,7 +1136,8 @@ tegra_dma_prep_dma_cyclic(struct dma_chan *dc, dma_addr_t buf_addr, size_t buf_l
+>  			  unsigned long flags)
+>  {
+>  	enum dma_slave_buswidth slave_bw = DMA_SLAVE_BUSWIDTH_UNDEFINED;
+> -	u32 csr, mc_seq, apb_ptr = 0, mmio_seq = 0, burst_size;
+> +	u32 csr, mc_seq, mmio_seq = 0, burst_size;
+> +	dma_addr_t apb_ptr = 0;
+>  	unsigned int max_dma_count, len, period_count, i;
+>  	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
+>  	struct tegra_dma_desc *dma_desc;
+> @@ -1209,13 +1229,9 @@ tegra_dma_prep_dma_cyclic(struct dma_chan *dc, dma_addr_t buf_addr, size_t buf_l
+>  		if (direction == DMA_MEM_TO_DEV) {
+>  			sg_req[i].src = mem;
+>  			sg_req[i].dst = apb_ptr;
+> -			sg_req[i].high_addr =
+> -				FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_SRC_PTR, (mem >> 32));
+>  		} else if (direction == DMA_DEV_TO_MEM) {
+>  			sg_req[i].src = apb_ptr;
+>  			sg_req[i].dst = mem;
+> -			sg_req[i].high_addr =
+> -				FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (mem >> 32));
+>  		}
+>  		/*
+>  		 * Word count register takes input in words. Writing a value
+> @@ -1314,6 +1330,7 @@ static const struct tegra_dma_channel_regs tegra186_reg_offsets = {
+>
+>  static const struct tegra_dma_chip_data tegra186_dma_chip_data = {
+>  	.nr_channels = 32,
+> +	.addr_bits = 39,
+>  	.channel_reg_size = SZ_64K,
+>  	.max_dma_count = SZ_1G,
+>  	.hw_support_pause = false,
+> @@ -1323,6 +1340,7 @@ static const struct tegra_dma_chip_data tegra186_dma_chip_data = {
+>
+>  static const struct tegra_dma_chip_data tegra194_dma_chip_data = {
+>  	.nr_channels = 32,
+> +	.addr_bits = 39,
+>  	.channel_reg_size = SZ_64K,
+>  	.max_dma_count = SZ_1G,
+>  	.hw_support_pause = true,
+> @@ -1332,6 +1350,7 @@ static const struct tegra_dma_chip_data tegra194_dma_chip_data = {
+>
+>  static const struct tegra_dma_chip_data tegra234_dma_chip_data = {
+>  	.nr_channels = 32,
+> +	.addr_bits = 39,
+>  	.channel_reg_size = SZ_64K,
+>  	.max_dma_count = SZ_1G,
+>  	.hw_support_pause = true,
+> @@ -1443,6 +1462,12 @@ static int tegra_dma_probe(struct platform_device *pdev)
+>  		tdc->stream_id = stream_id;
 >  	}
->  	reset_control_reset(tdma->rst);
 >
+> +	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(cdata->addr_bits));
+
+when bit mask >= 32, dma_set_mask_and_coherent() never return failure. So
+needn't check return value.
+
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Failed to set DMA mask: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+>  	dma_cap_set(DMA_SLAVE, tdma->dma_dev.cap_mask);
+>  	dma_cap_set(DMA_PRIVATE, tdma->dma_dev.cap_mask);
+>  	dma_cap_set(DMA_MEMCPY, tdma->dma_dev.cap_mask);
 > --
 > 2.50.1
 >
