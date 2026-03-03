@@ -1,58 +1,73 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96071390999;
-	Mon,  2 Mar 2026 23:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BF61DF271
+	for <linux-tegra@vger.kernel.org>; Tue,  3 Mar 2026 04:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772494443; cv=none; b=nc3ih00v7n2mjlk877ZV55NAICDgMxKvTVf1OSkxUwwl1uPQSA4HoQyghOFyJ4Qv+HFfwC67scoSWB/QrvHJNBUpTTfNrSEjvbWT04Cv+y1R486sjG3ipKKNvx06FMti/1TeDJ1pPSjs4OY8YHg2UD5iwD1gUCM4sXmaCd+V+zg=
+	t=1772511424; cv=none; b=XixYOUvAkXSqkTWz9Tgs88EgYRMmS4zOhrlCwC5YR0u+m/oX+GBq2dMtIVUUnXM/X1Z/17RxhQbj5V7vT48zYocD/fflL3yKSgO7rt+jYVdxjaHZO/yxQYzz41Do9BNHfaWjs9e2ZuyxUEApfGbFlukRTiuO+ywt7q3dwnUBAOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772494443; c=relaxed/simple;
-	bh=mL6f56HgyQO2Y7b3yScPWfCJ2EH+1ll0FYkWzkDjtPA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=c03tLBVQqLknP8C+kdGfQPu9OxUygamflp8zGBxbbJrqxBqs5U/L7Abiv9bVkqr8DY8mUmyQB2MjLFXdCBGeephFzhOzWhvpAvwe5llavzu8oiNZxJG6WTJfzeYPJB+T1CIX/3Ulb7f+UjmaNNrycIx5GyKyR1PO2lb7Pgo9BMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hgwRz9mo; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772511424; c=relaxed/simple;
+	bh=ZmweLOnXG4Le8DUQht02KQJMGF2iglt2HkQ62tdQNN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rSW3cDHUX0fr1RLbXHv862lHHnq9G+mu0P0gVE89ZNJ91qz02PLD3MrtJj2XWY5e0R01rWZhBrC1qFBbn632Xw3VhOHiX3HzVhZQ5HXuU7XfXn1qaNq5fCYzK/Tc9ExBJr2AhusM0vC7VvIWTq1EM6hEztG0XbuLBTlIULIpCJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EbdCVLHe; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hgwRz9mo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E26C9C19423;
-	Mon,  2 Mar 2026 23:34:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772494443;
-	bh=mL6f56HgyQO2Y7b3yScPWfCJ2EH+1ll0FYkWzkDjtPA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=hgwRz9mo1f6P8lEaYvZLYQSexkcYULCY412yJXRHh8WsDcaGflxIaqXD0rytVzK8U
-	 kLKPoOZ3GddfXKEdvKKlTvkVEM8j9pOoHByDdtwVpCSS1W98FfjtLG1xKXbHTOCRxL
-	 WealVtc3Z64TH/4TIfMdymDmXy5x+GxgLK8JvO8n6TP5bA3y91wNFOH+RGlliY5JPL
-	 jbwxLv+ShytokK7eZASQT+naboVkF/HXkSY9Oydaz05uMydcoG1f5FBOTWpJvI2k24
-	 Et35Y6XrUk+vK/GcChk3aRI832rESHc7C5ZTmnulO8I3UGiRmFv+65RDOPpJdrr1lw
-	 wu8vURfkKyLUw==
-Date: Mon, 2 Mar 2026 17:34:01 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Vidya Sagar <vidyas@nvidia.com>
-Cc: Manikanta Maddireddy <mmaddireddy@nvidia.com>,
-	"bhelgaas@google.com" <bhelgaas@google.com>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"kwilczynski@kernel.org" <kwilczynski@kernel.org>,
-	"mani@kernel.org" <mani@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	"kishon@kernel.org" <kishon@kernel.org>,
-	"arnd@arndb.de" <arnd@arndb.de>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"Frank.Li@nxp.com" <Frank.Li@nxp.com>,
-	"den@valinux.co.jp" <den@valinux.co.jp>,
-	"hongxing.zhu@nxp.com" <hongxing.zhu@nxp.com>,
-	"jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-	"cassel@kernel.org" <cassel@kernel.org>,
-	"18255117159@163.com" <18255117159@163.com>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 1/9] PCI: tegra194: Drive CLKREQ signal low explicitly
-Message-ID: <20260302233401.GA4036986@bhelgaas>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EbdCVLHe"
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-c70b69ced09so1379259a12.2
+        for <linux-tegra@vger.kernel.org>; Mon, 02 Mar 2026 20:17:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1772511423; x=1773116223; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=s0KJ6MPLwz4hfSbB2J0YXeVoJBEVj7NgQK32ArZzCAY=;
+        b=EbdCVLHeVDXC4C8QlPDla1rNO/jSTNF06KuTusk/Rq9qHioFuTWccxJJmqzNjCu/Au
+         qerY1wnYdiijPeKtim8VKSiruTT6IelHCJtHcbUXYq0lR7tdRlCorgyxOiRxk8F6+Plv
+         L7qt2WgRA90u2akNsEcEgQkAfneAG2hB6HzolCTeUDcrFgyLsMzp9V/39ihERvU2PCY/
+         Q4tErl25PKTXO1X8a2IXn3heHlIxHaUjBkNcqHax+BQtAh8gNN1gqUavn4W7qoF1TB8o
+         rwSd8AyI9CQujcQ3P99E7ZSeo81EMW06OisTonCmTtlCWq/zAEOF7WKMfX8AgeTuDxKI
+         Dq+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772511423; x=1773116223;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s0KJ6MPLwz4hfSbB2J0YXeVoJBEVj7NgQK32ArZzCAY=;
+        b=svwUq7EihgbUJFzQXAV/msViJxEmjypf63jBn+EQ6sM0iCYZr4NT3f7FB/tlftUZyt
+         8AzvIe0mXSd6WOqbnkoi+FFEOrUNZxdNtQL/Mgof98e5rWK1uQSvQ6m8++S4jTR5hqdw
+         LjKXF+F/2ajr0Zj7qWS10PozsuNpEZG4tCgCPApUnXg4uP/4e0NTntBf5UPIPAQ251Hf
+         lyv5TR9FW+BZkT91XEbLQQUP/zp1L/NTO5L+UXVzLwdxql8TSVaB199SRe2nuRB4QTuK
+         PcY0XWP4H00TIG7VHHTrr5mCSOEyVxO+CGi92h/Xs4NmFfxyPYtO07BaUofTye/x5SB8
+         sG8g==
+X-Forwarded-Encrypted: i=1; AJvYcCU77AgA6MzkD5VBR+AeGlVzucGIUjr2yRmBX+7z+WnwijTOEX3ffXywg2vWg5734F1NQVU4WWMKrpMoNw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmrr5uBsD/QExMPXEIsa9n9lBlqyad9bqKWmKuQGooQz5rCtll
+	u7mbsUWK8/frDmgB2Q/A0DhDqGdY4bQQF/7wa2B+Vxyd8tUOmDhxjSYZ1sOUVQNQWXA=
+X-Gm-Gg: ATEYQzxDQe8wA93rC3PRPGTGnMsamxGdxtcJ7OyVzxMT69g7PWg7KepIEaGIM7WuhCH
+	rMD2nweCK37IRUmWvdF/iS2O7gb2XIinhmjKWI365gDG4xfzZQ7s5+ODb+1S4Nt1mYTr1qdfh2z
+	P0oXKn5YAj3nUuqQddRFfrCdtJ28gfYyh4STt6dElQFGmdYAYBcn6QldA8CLQOP+7qoX/4FPnul
+	dupyIB94It26OfixHMh7c1HVIRGXo+Ml2KX5Cp4OFAGxxvLx8GnXkOWs8FSlv2KgUok195qw3yQ
+	xffDoLxKtmwawf25T42V2u2BDMsrwr+CjNrbMm7k9YPzyjrHW+KKB1eCGc4udubEgwKbsRn0peO
+	X3Q2nqfjELOZf3S2GORHn0Gd7pu5GolZGLu2FKxZoJ4lqhHqt/PLb3lrs6yo9VaXx0DSqS7UJh/
+	yLveincHq0XkPa5Rw1QgUkFSXO
+X-Received: by 2002:a17:902:e845:b0:2ae:5102:3026 with SMTP id d9443c01a7336-2ae510250bfmr51175175ad.14.1772511422634;
+        Mon, 02 Mar 2026 20:17:02 -0800 (PST)
+Received: from localhost ([122.172.81.200])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ae46500068sm70579525ad.52.2026.03.02.20.17.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Mar 2026 20:17:01 -0800 (PST)
+Date: Tue, 3 Mar 2026 09:46:59 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jon Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: arm: nvidia: Document the Tegra238
+ CCPLEX cluster
+Message-ID: <hsxkn3emukz2wafaaizqp7upjaa7vo74tjnjd6lxuypgowe6jr@cffvh7h2de2f>
+References: <20260226151212.4067944-1-thierry.reding@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -61,32 +76,34 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2b1f2d0f-b07d-4b14-ac19-78112ca84f05@nvidia.com>
+In-Reply-To: <20260226151212.4067944-1-thierry.reding@kernel.org>
 
-On Fri, Feb 27, 2026 at 12:35:31PM +0000, Vidya Sagar wrote:
-> On 24/02/26 00:15, Manikanta Maddireddy wrote:
-> > From: Vidya Sagar <vidyas@nvidia.com>
-> > 
-> > Currently, the default setting is that CLKREQ signal of a Root Port
-> > is internally overridden to '0' to enable REFCLK to flow out to the slot.
-> > It is observed that one of the PCIe switches (case in point Broadcom PCIe
-> > Gen4 switch) is propagating the CLKREQ signal of the root port to the
-> > downstream side of the switch and expecting the endpoints to pull it low
-> > so that it (PCIe switch) can give out the REFCLK although the Switch as
-> > such doesn't support CLK-PM or ASPM-L1SS. So, as a workaround, this patch
-> > drives the CLKREQ of the Root Port itself low to avoid link up issues
-> > between PCIe switch downstream port and endpoints. This is not a wrong
-> > thing to do after all the CLKREQ is anyway being overridden to '0'
-> > internally and now it is just that the same is being propagated outside
-> > also.
+On 26-02-26, 16:12, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Tegra238 is derived from Tegra234 and uses a similar CCPLEX cluster,
+> with slight variations but the same programming model. Add a compatible
+> string to specify this particular implementation.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  .../bindings/arm/tegra/nvidia,tegra-ccplex-cluster.yaml          | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra-ccplex-cluster.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra-ccplex-cluster.yaml
+> index 36dbd0838f2d..fe9c8791f227 100644
+> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra-ccplex-cluster.yaml
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra-ccplex-cluster.yaml
+> @@ -24,6 +24,7 @@ properties:
+>      enum:
+>        - nvidia,tegra186-ccplex-cluster
+>        - nvidia,tegra234-ccplex-cluster
+> +      - nvidia,tegra238-ccplex-cluster
+>  
+>    reg:
+>      maxItems: 1
 
-Inconsistent styling of "Root Port", "root port".  Spec uses
-"CLKREQ#".
+Applied both. Thanks.
 
-> > Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> > Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-
-> Reviewed-by: Vidya Sagar <vidyas@nvidia.com>
-
-A Reviewed-by tag here seems a little weird since you're the source of
-the patch.  I'm not sure what that would mean.
+-- 
+viresh
