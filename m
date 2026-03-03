@@ -1,63 +1,63 @@
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66B438C2BB
-	for <linux-tegra@vger.kernel.org>; Tue,  3 Mar 2026 08:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FB538C419
+	for <linux-tegra@vger.kernel.org>; Tue,  3 Mar 2026 08:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772527390; cv=none; b=TvEQESGfOxVGaKCsqrwxQDWnv2JLgaKVp6a51clE9zslwc1SJQXurHZt4TJW5snb5cJvXxIJP7U48HnDyqva4AEMHMRgwi62dVrEmXkdK2rBB+QRyyMBj4kz2kVbS07b6uZWE500imAT1FejjjqQ6/Rt6OanyMp04IwckK/wy3w=
+	t=1772527390; cv=none; b=Eh+m61ARMUX1u3k+ndGCm4c9wMt1v7fk6HwE2WSwdKgDx9gnbxArjlxc7Hl423zYZfJz7jJTdzz3T2Iiyy/yE8NTf7aJXmqCnjmgGQ2UQ73CK3D75/HYoKNPk4LKetSj9yg2GIXx2+NLFm+yfQ9++94v7CKgKEE7jEjVZilXVnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1772527390; c=relaxed/simple;
-	bh=BtYUDPRydbD7qJguB7Cv1gqWmul/7Eiqmo1Zcx4dX7U=;
+	bh=XkC6pC1Ht7QYhYz5xBTY+ZnKrbdM95bt/73kNqM5zOw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iO86NxQT6dfMlCjjEKtGnNvhUO9QvILyN8LZjQlYlmbojVhjsXFs1BpiJFMLuyfU2ridUKAnTTyKe+XoDRj0o5SHlAoMoD8Xd5XmZCnm8+OKrPqfvvc16vHR//P03sfNTY2B1gD9ytZnQRhMFT31KslSKLnmyeXu+m7m8JRhFk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AVFnK+I4; arc=none smtp.client-ip=209.85.208.182
+	 MIME-Version; b=RM6kMuejf9Azax57EoC0dK5ujA/0eqrhI1iCk6w0WL6aSpJ97xVBgld4oBOn60a4YqVlLoEGvhAnBMXN3NmM/m6+T3Z4yET/NDZxQ31lFsHrnzHuR1t/5/Qt34H8UCPZq7qMjoNqRcTEl4QNTl4O2Br0h9Y9vn25SKcOpNAUOo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bkRpcI7m; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AVFnK+I4"
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-389ee8efedeso84020461fa.3
-        for <linux-tegra@vger.kernel.org>; Tue, 03 Mar 2026 00:43:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bkRpcI7m"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-38706b10b3bso98974171fa.1
+        for <linux-tegra@vger.kernel.org>; Tue, 03 Mar 2026 00:43:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772527381; x=1773132181; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1772527384; x=1773132184; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DmrH8ssg9I3rSN9CRTVvj/vC0MjWYSI81FqMxg6ZCSs=;
-        b=AVFnK+I4XCLGf0l2UuRlPxnvyRF8uAGt92TzsOZnZQl7BquJBzBVvxEp/wAQVaHnUz
-         I7V9Wn8ZmGLpc6Rznc1r/GG9XDxAKuNMNJ8UHZa9uML8+QyXD3Am19Nv3hIHzBvyoZ2t
-         aWU0IA5APyOwk8nO8q5spOK8C8AU+FDny0V1RlVUT5AEhS2NHRiCC0cW3WmEHHXetgeO
-         IOYH9TTEAaxY5INVIMH2WaSPIB0SAN3tXRpz2VDUPMIvKmwIBZmSthvOKjLd3K3PTbF/
-         cCir1xOhVgLtXGlxyMWerTIpajf7ihb/fhdOHJYhXPDcKbzSHTjUqLA5ZS2Rqg/Dq83y
-         UpkA==
+        bh=edep+Evwox4IxBSEQEcIkaZkpzUcbpvh4gwyQ5gLWYA=;
+        b=bkRpcI7m/wVE5GZiNV3qWpemY4Hwjz4OfZj4KGlio9HVBZmLr2NQpE/QExWdsdhFd4
+         MrWG8dySCvIGFSBlL7C5ytRH2rS5g4IObLw+W21DVUZDnsAlLoZHeUugNzk+yWJItgKx
+         84FbZ0JFM7gJROyqBHSR71jWoRGJ3cq1H95LXU7SkeqK2voB08XQ1BAgOAcG9Rpy5T9C
+         iObzz0miNJx/UdWO2wl3Jqtw2tC+J7PqRIyNDXN2MwjHaVJXwVPYSR1SZDHMPalTTpsR
+         vhOt/7GnxpHkPliXRJia850tPLyYdiKG0u37u4az+9merit5JZvTg4B4f9gpcwOB8JJ1
+         8/uQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772527381; x=1773132181;
+        d=1e100.net; s=20230601; t=1772527384; x=1773132184;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=DmrH8ssg9I3rSN9CRTVvj/vC0MjWYSI81FqMxg6ZCSs=;
-        b=aCBo/MA4e3fxLYa/Ts25W+vquLJGdh6WPw0GFIKpOA5d2jA2/XJe0xKUA0grzWDMxB
-         hS1nHgdxxPOW+XUkwiqH9K1gOB5OK4u5I/n9zGPcE07vKA3iQinPk61/5NwoTnfqNg69
-         YvAimR1stDVemFWZMa8Pho4lzGmxRi1NDXBtsry4TM3aW5f5aQzTzzioPTzvRzFPZbKc
-         EBDvvqG7Hi00Cjq7km/wwZXhYwvNh9vGXycBq8wbcXfA3VIlXRZ+F+8FL+VIu+5MIu2R
-         v1q20dp+yzcYJA3/xNQqNG5wtjyINildOQm8pPp+OTd3TpYy29yjdLMxk30910RgxwTu
-         WZvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCt/14+HydmhbYy8lYmD6Jut38eELx/LnsXmSUYf40Pso5r1MD4ScDfcpWlzxJ5YEOY5WW7vxM8UvcVQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6L2hUR/cnExHX7nFSxffSgKybGFPRQt7DT+nFYaHSxmSJivOx
-	8+HPOU2GoFMsAb26q76ScLzi5TtwK/Weic9YeYZ/HdfcCwAifu4SPkmi
-X-Gm-Gg: ATEYQzzVCo2iHbW9SMAfndYWQOdUMUkkudknFpC+uB7z8ssObTooNaHfqUvEhoyxmN/
-	bXpP/buV2Ma+LW3Oll7c0Ch8QguDjLhWCpSgClslzDhIQ6okJCTaJiQxEXVlqjKYTrYbjt+NbEX
-	hGwzIjmP6e2YGj3nhmEXSXrWVlmKst0h9Ru/mBUalGLLxVipOd1flLoK+lzFHioXEcIwLugYYvh
-	1XMY1X0IgV4KtPo+F2yPwflf1MwFa4QFHVu9mu1UjgD3NXib0SoDeIusuK77gtW+MSxmNZ41k0f
-	w19/QAf4HSDfGVX2b5wyDTtOMCDZGAuZ9l6oJ5WQ/Zo9NcbqqHI0K1O2VvIRFDLkJ2Ls2p/iALY
-	7vJyYIOxz8MEhhEqLDOmIgWhDGdEw1xQBLL2+fQfqBk8ypeAL2KQXwcBkv7GUwy4S91cJL3JLNc
-	9Iy4WahZJq4oic
-X-Received: by 2002:a05:651c:882:b0:389:fa5e:51f9 with SMTP id 38308e7fff4ca-389ff355fc9mr105960021fa.27.1772527381047;
-        Tue, 03 Mar 2026 00:43:01 -0800 (PST)
+        bh=edep+Evwox4IxBSEQEcIkaZkpzUcbpvh4gwyQ5gLWYA=;
+        b=ZirqG3n/AoseZ8muifkJ8DdGKC1HuxnrZG/rRGxCT8JxjFm/LO1YOV3/m8gwe5Z/Cr
+         lVEdNkh2FrahFJdK40gKA1l0jkEiKExiU4KSzTbVuwdXUGnhmUAZrKcfS6byddUuBho4
+         f3mx10i1sc7Bc5aX+NvrTU655wxC34l7UokokK+jcebBdMLsgQaYnB8Ns+xayfRJnwsR
+         mW+rOel6qEklpMJO97Q+RC4jaOwjaOqBaTpbC+bqA58PETw6jdCwDdmQGUAaPzWWqUl3
+         xsYPNGakYu32Zyuj4smMmhoHkUiVBVXOmOz2mYpe5jRC7klwfhe4DPRA0F40R2w0X5vt
+         7hZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUkcNTbUNYVYIBlpstEMHx0jQX8DJiSaN3DmYOQjzbcAStf/a1ZSY5rATkqoIUEvtFBWnuIuXd0aCOr3g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE7i2a14GtfyDPl+xSnYIi83TEcvuPgPUOnKtwcqUqVYuFS7uA
+	81HnJa62S2jiH3G93Tp7m+7i6ttKFMDd9nvKoVPKdpxuOzFhMwNiS0ax
+X-Gm-Gg: ATEYQzybcxs3g788gmoAo2ExGCXfBz7goArDMFzX8/pTMlJ9t+d3bI15w4GiotTFJzJ
+	qoSv1wGjjdXdajWkZ00M5gIbIdtD/5PL3FjsF/bYvw2gPfc8BKvvTkDwzefTudcfHd3sPgG9IXG
+	XpH1i8YICP5hftc93TBNaZCHscDsJ7EmUlrgjH+rRm0KtIhhK9e1plWDaAKr9dU0ShlVE/PayNm
+	3HURFaLQ7mJsJbDRGb7yyIYnvh5ZxvQSFZGuvEJ24r+a3fuodYkefuVRMMoDzv9LxusmPI4N4ZH
+	jZzUvARTWhi3RkYp2axm49V2av2rs+1CQORqWh0HZEjTKohfr2WrmCGOraAOo2COmchiflndddP
+	fQE8I3G5RIEb8HJfrf/T5VW+v1qmva53xPSts23A4chsDLdls4sSYIe/ZlC9zUbIKGE56LCGsyj
+	tfP76U2+DP7Ymh
+X-Received: by 2002:a05:651c:2112:b0:38a:34a:7823 with SMTP id 38308e7fff4ca-38a034a7c3dmr110038231fa.21.1772527383803;
+        Tue, 03 Mar 2026 00:43:03 -0800 (PST)
 Received: from xeon ([188.163.112.72])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-389f30227a9sm32599471fa.42.2026.03.03.00.43.00
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-389f30227a9sm32599471fa.42.2026.03.03.00.43.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2026 00:43:00 -0800 (PST)
+        Tue, 03 Mar 2026 00:43:03 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Thierry Reding <thierry.reding@gmail.com>,
 	Thierry Reding <treding@nvidia.com>,
@@ -76,9 +76,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-media@vger.kernel.org,
 	linux-staging@lists.linux.dev
-Subject: [PATCH v7 08/15] staging: media: tegra-video: tegra20: set correct maximum width and height
-Date: Tue,  3 Mar 2026 10:42:31 +0200
-Message-ID: <20260303084239.15007-9-clamor95@gmail.com>
+Subject: [PATCH v7 10/15] staging: media: tegra-video: tegra20: adjust format align calculations
+Date: Tue,  3 Mar 2026 10:42:33 +0200
+Message-ID: <20260303084239.15007-11-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260303084239.15007-1-clamor95@gmail.com>
 References: <20260303084239.15007-1-clamor95@gmail.com>
@@ -90,35 +90,82 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Maximum width and height for Tegra20 and Tegra30 is determined by
-respective register field, rounded down to factor of 2, which is 8191U
-rounded down to 8190U.
+Expand supported formats structure with data_type and bit_width fields
+required for CSI support. Adjust tegra20_fmt_align by factoring out common
+bytesperline and sizeimage calculation logic shared by supported planar
+and non-planar formats and leaving planar-related correction under a
+switch.
 
 Tested-by: Luca Ceresoli <luca.ceresoli@bootlin.com> # tegra20, parallel camera
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/staging/media/tegra-video/tegra20.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/staging/media/tegra-video/tegra20.c | 39 ++++++++++-----------
+ 1 file changed, 19 insertions(+), 20 deletions(-)
 
 diff --git a/drivers/staging/media/tegra-video/tegra20.c b/drivers/staging/media/tegra-video/tegra20.c
-index aa9ff7fec4f9..b2e706fa727b 100644
+index c8afc6f2adf2..4b218b9fbc26 100644
 --- a/drivers/staging/media/tegra-video/tegra20.c
 +++ b/drivers/staging/media/tegra-video/tegra20.c
-@@ -23,11 +23,10 @@
+@@ -280,18 +280,13 @@ static void tegra20_fmt_align(struct v4l2_pix_format *pix, unsigned int bpp)
+ 	pix->width  = clamp(pix->width,  TEGRA20_MIN_WIDTH,  TEGRA20_MAX_WIDTH);
+ 	pix->height = clamp(pix->height, TEGRA20_MIN_HEIGHT, TEGRA20_MAX_HEIGHT);
  
- #define TEGRA_VI_SYNCPT_WAIT_TIMEOUT			msecs_to_jiffies(200)
++	pix->bytesperline = roundup(pix->width, 8) * bpp;
++	pix->sizeimage = pix->bytesperline * pix->height;
++
+ 	switch (pix->pixelformat) {
+-	case V4L2_PIX_FMT_UYVY:
+-	case V4L2_PIX_FMT_VYUY:
+-	case V4L2_PIX_FMT_YUYV:
+-	case V4L2_PIX_FMT_YVYU:
+-		pix->bytesperline = roundup(pix->width, 2) * 2;
+-		pix->sizeimage = roundup(pix->width, 2) * 2 * pix->height;
+-		break;
+ 	case V4L2_PIX_FMT_YUV420:
+ 	case V4L2_PIX_FMT_YVU420:
+-		pix->bytesperline = roundup(pix->width, 8);
+-		pix->sizeimage = roundup(pix->width, 8) * pix->height * 3 / 2;
++		pix->sizeimage = pix->sizeimage * 3 / 2;
+ 		break;
+ 	}
+ }
+@@ -576,20 +571,24 @@ static const struct tegra_vi_ops tegra20_vi_ops = {
+ 	.vi_stop_streaming = tegra20_vi_stop_streaming,
+ };
  
--/* This are just good-sense numbers. The actual min/max is not documented. */
- #define TEGRA20_MIN_WIDTH	32U
-+#define TEGRA20_MAX_WIDTH	8190U
- #define TEGRA20_MIN_HEIGHT	32U
--#define TEGRA20_MAX_WIDTH	2048U
--#define TEGRA20_MAX_HEIGHT	2048U
-+#define TEGRA20_MAX_HEIGHT	8190U
+-#define TEGRA20_VIDEO_FMT(MBUS_CODE, BPP, FOURCC)	\
+-{							\
+-	.code    = MEDIA_BUS_FMT_##MBUS_CODE,		\
+-	.bpp     = BPP,					\
+-	.fourcc  = V4L2_PIX_FMT_##FOURCC,		\
++#define TEGRA20_VIDEO_FMT(DATA_TYPE, BIT_WIDTH, MBUS_CODE, BPP, FOURCC)	\
++{									\
++	.img_dt		= TEGRA_IMAGE_DT_##DATA_TYPE,			\
++	.bit_width	= BIT_WIDTH,					\
++	.code		= MEDIA_BUS_FMT_##MBUS_CODE,			\
++	.bpp		= BPP,						\
++	.fourcc		= V4L2_PIX_FMT_##FOURCC,			\
+ }
  
- /* --------------------------------------------------------------------------
-  * Registers
+ static const struct tegra_video_format tegra20_video_formats[] = {
+-	TEGRA20_VIDEO_FMT(UYVY8_2X8, 2, UYVY),
+-	TEGRA20_VIDEO_FMT(VYUY8_2X8, 2, VYUY),
+-	TEGRA20_VIDEO_FMT(YUYV8_2X8, 2, YUYV),
+-	TEGRA20_VIDEO_FMT(YVYU8_2X8, 2, YVYU),
+-	TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YUV420),
+-	TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YVU420),
++	/* YUV422 */
++	TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 2, UYVY),
++	TEGRA20_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 2, VYUY),
++	TEGRA20_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 2, YUYV),
++	TEGRA20_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 2, YVYU),
++	/* YUV420P */
++	TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 1, YUV420),
++	TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 1, YVU420),
+ };
+ 
+ const struct tegra_vi_soc tegra20_vi_soc = {
 -- 
 2.51.0
 
