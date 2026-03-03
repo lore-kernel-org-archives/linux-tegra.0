@@ -1,282 +1,273 @@
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010004.outbound.protection.outlook.com [52.101.85.4])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CEA37B035;
-	Tue,  3 Mar 2026 16:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.4
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772553643; cv=fail; b=bPFA9mGdba3bX5TvgPgBh7QxaOBx0THpCDW1ET4abA1dFRzftg6y2kBRrAqJbIlG2QAp+yOoX6cldqXXY7ATSffpWIUSyELDAY+elD2vsm9UqfXGzkJdakojOMa/4WTlLHdi4BtRjzjRoCwgGnRk9fxlfTYkGN8k6jBZuQzXWtg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772553643; c=relaxed/simple;
-	bh=ofvyOV3BEB5zGh2hcr9H3VXArYP59G2YefZ6RiOxuhA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GDhluJSo8PRFB4q9pSU+BbRG8SKP9Pel9gwKuxLd41wdqmG9p9Ejtuy5U+3jqIugP06wCQBAYhvbtaC0JbjLFvJ2lK23lmWMJkPAUHc/EmqBzoFsPwNa3lN3Eoz3Rlmr5pSQ+EH80BWsunOSU26cwzDM0Jk8r4UO0jdSCW7gVp4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bBoY/h2g; arc=fail smtp.client-ip=52.101.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C57496903
+	for <linux-tegra@vger.kernel.org>; Tue,  3 Mar 2026 16:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772554161; cv=none; b=JjWQqstxiCl1hZWf5zEz6hlT7Xy7+kceGc3qnJRUu+514DQWtOmOsJ9RkytIHNdeSnzXXFDCTtoFHZFPAx/2iDudpHoTtFUmrlKM8VtGeGxAe0hOr8+yhSX0udU1oWNB5BAlg8ABJSuYGuh6yP3QYH59Yun/zcGG6afaEpIFKaY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772554161; c=relaxed/simple;
+	bh=akDQhYOtKo7tEfR4mpv/Gy7p5q5J91eAOdn+8M51fdw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G6CI8RjAEMgD0GcFSrbsuQo83p7MqFWBVzB7Y4IV/PQ9XJIc0quDhZHzNrQ2UmfJbFfnIVUzJa/2JU0/H05ag5dwzhyQ69PM1ZG2Qj9HAzltiFZNkKLlUbmzq3aRryQm4ASUV4evxUSgwobjy+n1zyn9PiogF6UHMgHgc/JScHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A9ERIqFH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bBoY/h2g"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=J4n6sjfrz+wTPsnj6vI+0ZORh6urF2ptAUMCANDKv1J+YRVGaKZj9qMyQSfRRM3S9Mzwh6/eZYur70KzW1w54R8VWIpMS0QZAiz9biSnBiXj0njpz4kc9zFq4l061xrBzHPFnxxHh7IqtnGArjp6vArmH6JIt058guSp06jkRa6fa85F1bJTM+f0f4CNfdM1tN5qhLQKdGSDEK9SyZbR6yK1T1FgKPvwDkg531C0PLqiw2f7/VmA3A76uUfVWUTL0WFx/t5413/VXfzayfAH+mZZn9Zs3sTrTiNT+jlPoPaiQPcPxfHyCNuog6aHyFIWdIzOKD8v1BDkxgX7mmCqYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tzdCQx4yvc4MJM5JRdOuJEj3Y3sDwzt7ETfiLpd81tY=;
- b=ULCiYqM8i7AGjecxuCJ7TvXoygE5NwJWS8saiICXUthvLFvFxgs1QChospvappI7ffzKtfQ5hWKuO7PcsqHQAE0NnUkL2+u/ySz3bv3P4GNU/BO4xjTqzgAW+RpSBW9xSMwUMPejPQO/p62TjL2eM3cYUf6HrFvS951f8cG4gTr5b1hEJH4tbdzhj/20nr8tv7vfJdGBj5c90H3pIYJUzTie9Vpsz/PTli/ZcAMVVGGv4M/MSA8MAo2wd+/+aZrKFtk2udjN1wv5MxmbcqJ9+apEvueGLIsN3Eqea84P/A5b2Uirc1jYevMyU/8BTVOe9mM+6IHffdyv6R8tsooILA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tzdCQx4yvc4MJM5JRdOuJEj3Y3sDwzt7ETfiLpd81tY=;
- b=bBoY/h2gloZfWWaPvf5zbz6NYTAOYuUlrKiDk4JaIuLJWanLQ7VqDgrYxy76WblkGI9bgMfOjXoswfLpMtiHTooP7gERn2dFBfxO7md5Lf4OhowGAqvuMROgTR+izGfvP9k3FlZVy+tcEzj4z81BsHaljcHyh/WOpSm+EjEQNaBJk7cxRbrILky5D9nEZfpXnIeEzU2BgSIiJ8TY1A4a9N23ZkfXpH3+sNuXGaP9UEGX69nIaNN0ZjFQapUBgPNSqTP/rqDaGT+aRD4pO1QVmr5MwBsDBsgD4KeJo89FzFlIJc749JTvEphOQ/NzPv/nAG0CAm8/YQz1q1l8j4XA5Q==
-Received: from CH0PR04CA0024.namprd04.prod.outlook.com (2603:10b6:610:76::29)
- by SN7PR12MB8789.namprd12.prod.outlook.com (2603:10b6:806:34b::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.22; Tue, 3 Mar
- 2026 16:00:35 +0000
-Received: from CH2PEPF00000142.namprd02.prod.outlook.com
- (2603:10b6:610:76:cafe::8e) by CH0PR04CA0024.outlook.office365.com
- (2603:10b6:610:76::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9654.22 via Frontend Transport; Tue,
- 3 Mar 2026 16:00:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CH2PEPF00000142.mail.protection.outlook.com (10.167.244.75) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9654.16 via Frontend Transport; Tue, 3 Mar 2026 16:00:35 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 3 Mar
- 2026 08:00:14 -0800
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 3 Mar
- 2026 08:00:13 -0800
-Received: from sumitg-l4t.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Tue, 3 Mar 2026 08:00:11 -0800
-From: Sumit Gupta <sumitg@nvidia.com>
-To: <treding@nvidia.com>, <jonathanh@nvidia.com>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <bbasu@nvidia.com>, <sumitg@nvidia.com>
-Subject: [PATCH 2/2] soc/tegra: cbb: Add support for CBB fabrics in Tegra238
-Date: Tue, 3 Mar 2026 21:29:27 +0530
-Message-ID: <20260303155927.1885297-3-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260303155927.1885297-1-sumitg@nvidia.com>
-References: <20260303155927.1885297-1-sumitg@nvidia.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A9ERIqFH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1772554157;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jzSCbJR/VtGBu6zb1m/kKqEWAmdsH+6Wgot4P7Bc760=;
+	b=A9ERIqFH+8E6Jp4yMBuqBrkH7HBPBZ8WE7IlWB7yNFXoVw4P/nPMx0Ppu0amj8XZ50BI61
+	FLvhzPM9dvUfyVP1AQuoiznSi55Rdx+0jOn5NJBbYKlX4nWtXRN0RrafbmQLnHuYYfmPhT
+	eh6lmfhIqQCGAkD8bLf+PARVpD66kbM=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-70-2H7HGOKtO3GMZIXqiYklUg-1; Tue,
+ 03 Mar 2026 11:09:12 -0500
+X-MC-Unique: 2H7HGOKtO3GMZIXqiYklUg-1
+X-Mimecast-MFC-AGG-ID: 2H7HGOKtO3GMZIXqiYklUg_1772554147
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2A0371956068;
+	Tue,  3 Mar 2026 16:09:07 +0000 (UTC)
+Received: from [10.22.88.179] (unknown [10.22.88.179])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 47B5E30001B9;
+	Tue,  3 Mar 2026 16:09:03 +0000 (UTC)
+Message-ID: <5132ea39-de35-4002-a053-4976dd5390bc@redhat.com>
+Date: Tue, 3 Mar 2026 11:09:02 -0500
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 7/8] cgroup/cpuset: Defer housekeeping_update() calls
+ from CPU hotplug to workqueue
+To: Jon Hunter <jonathanh@nvidia.com>,
+ Chen Ridong <chenridong@huaweicloud.com>, Tejun Heo <tj@kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Shuah Khan <shuah@kernel.org>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20260221185418.29319-1-longman@redhat.com>
+ <20260221185418.29319-8-longman@redhat.com>
+ <1a89aceb-48db-4edd-a730-b445e41221fe@nvidia.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <1a89aceb-48db-4edd-a730-b445e41221fe@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000142:EE_|SN7PR12MB8789:EE_
-X-MS-Office365-Filtering-Correlation-Id: 56f5220e-f5cc-4455-2982-08de793e0184
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	d+GmWNCW4XlezQbpWs+v26X350LPJKkvMnTZYUPRLcwrcOYk87yXrTwvcSTKafPgsSHDzS2wTogKMwvh+8wj3eqbsnhOntnIihYwNq3MeOys8fju7fkZyhytKYCf2MtUFeNJR71NwWchExkVYjg7MdHoNxfo8lF0J68Ck45SOddbfFlEPZRYSvkeM6e0CK4H3chUFx4tD8l1mK0mW7MvMtLP5p7KQm6Kfp6f+6/jDXmB5rFHpz5S1D+snl5zun62Q2Vxm9PxSvqlTbCacBhB5DpHmB9lkEx+XT1cTZK3PbUHa6icc5X4inoLorT47iVI8NPTHAcN9ngL6ID6PGxtW+LQAVpUWIM758qTkfBuhHPvddjEf76cbNv1Wj2dwH/Hh9PWJbK5NlorpUHP/qpncDJQpRBYf0W4CfB+ZOlPq4m3/MXAOqNnsj2/wrUJdaZt+u3Y4yJBajMLBZaIYIVg6viN2z2o6oISpLo4fZPU0sFpVaLymV9QyPMMBbTfOAMMYsjKMtVQj8EO5d13QAeq0z1+3XeZIEnqB31kwANGUuC08wbNOqnPmr83SzRxN5K7iDnO5zHOvKfxvDoe8PWk38kk0x9SKrVIkeGcLNC2JHOsRgPm+J1xzyufkUesnj/99u7O/bq4OFQ/W3VxHKoN7rqVq57vrnYMkCdUM80hDo0XngdFNFTJLbUEN/NVU9rI/FnkxDQngVk4rZYjul4EIEoZzzjZVbn5Ijf1EqzsKf79umjttwB6VdfeQk1Hoo23CazX1iU+u9iN4/QGNe4gkd248/3inrVeKZvmQxhL4X4W3CZ5/mI4SMlTQbCI5gMU4LBCrmdMVi79NOjnoLmhmg==
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	yQlDCiVmg+KGKaSS9JK8p7UkJ/D701wIVSa3YgwtG7ox/zJTf4dKmtfII/TMSi0hAOf+BzObqg1qBwvcpJ7L19AdCffo+r/qT5lmwaV+uswWCVWsaos/iL0b0fdhLscgHSm+uOgQ4AnmkPTk4jzPFWcqqMVHAHi/1gheD/08G8KSWZAVhQM6t94oQsD5zF+hSVjPJjNbHQE7Nni3F1k2ILb6fxjAUtA4c+LHqfQeSrl851DhHSG7kzGbI0RVD13QQWtolshwhAWYmzJtO8XIo1jDW1vuN7YxmDw7Gx449fx3Cjr4TjrWPMlPQwd9Rg/km2ZQzbx2V6or2XZeInkHFgNwMqhRa2gLPXL0JC0OJ+2oPme2MhVCOn6NxU+bZq0JuKhxuF3j7g4xHNO+2ofRmN8htVWNuwT1ZO/3s6fnkS1Dy8K3p1qLjbgRkXI4unUP
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2026 16:00:35.2228
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 56f5220e-f5cc-4455-2982-08de793e0184
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF00000142.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8789
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Add support for CBB 2.0 based fabrics in Tegra238 SoC using DT.
-Fabrics reporting errors are: CBB, AON, BPMP, APE.
+On 3/3/26 10:18 AM, Jon Hunter wrote:
+> Hi Waiman,
+>
+> On 21/02/2026 18:54, Waiman Long wrote:
+>> The cpuset_handle_hotplug() may need to invoke housekeeping_update(),
+>> for instance, when an isolated partition is invalidated because its
+>> last active CPU has been put offline.
+>>
+>> As we are going to enable dynamic update to the nozh_full housekeeping
+>> cpumask (HK_TYPE_KERNEL_NOISE) soon with the help of CPU hotplug,
+>> allowing the CPU hotplug path to call into housekeeping_update() 
+>> directly
+>> from update_isolation_cpumasks() will likely cause deadlock. So we
+>> have to defer any call to housekeeping_update() after the CPU hotplug
+>> operation has finished. This is now done via the workqueue where
+>> the update_hk_sched_domains() function will be invoked via the
+>> hk_sd_workfn().
+>>
+>> An concurrent cpuset control file write may have executed the required
+>> update_hk_sched_domains() function before the work function is 
+>> called. So
+>> the work function call may become a no-op when it is invoked.
+>>
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+>> ---
+>>   kernel/cgroup/cpuset.c                        | 31 ++++++++++++++++---
+>>   .../selftests/cgroup/test_cpuset_prs.sh       | 11 ++++++-
+>>   2 files changed, 36 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>> index 3d0d18bf182f..2c80bfc30bbc 100644
+>> --- a/kernel/cgroup/cpuset.c
+>> +++ b/kernel/cgroup/cpuset.c
+>> @@ -1323,6 +1323,16 @@ static void update_hk_sched_domains(void)
+>>           rebuild_sched_domains_locked();
+>>   }
+>>   +/*
+>> + * Work function to invoke update_hk_sched_domains()
+>> + */
+>> +static void hk_sd_workfn(struct work_struct *work)
+>> +{
+>> +    cpuset_full_lock();
+>> +    update_hk_sched_domains();
+>> +    cpuset_full_unlock();
+>> +}
+>> +
+>>   /**
+>>    * rm_siblings_excl_cpus - Remove exclusive CPUs that are used by 
+>> sibling cpusets
+>>    * @parent: Parent cpuset containing all siblings
+>> @@ -3795,6 +3805,7 @@ static void cpuset_hotplug_update_tasks(struct 
+>> cpuset *cs, struct tmpmasks *tmp)
+>>    */
+>>   static void cpuset_handle_hotplug(void)
+>>   {
+>> +    static DECLARE_WORK(hk_sd_work, hk_sd_workfn);
+>>       static cpumask_t new_cpus;
+>>       static nodemask_t new_mems;
+>>       bool cpus_updated, mems_updated;
+>> @@ -3877,11 +3888,21 @@ static void cpuset_handle_hotplug(void)
+>>       }
+>>     -    if (update_housekeeping || force_sd_rebuild) {
+>> -        mutex_lock(&cpuset_mutex);
+>> -        update_hk_sched_domains();
+>> -        mutex_unlock(&cpuset_mutex);
+>> -    }
+>> +    /*
+>> +     * Queue a work to call housekeeping_update() & 
+>> rebuild_sched_domains()
+>> +     * There will be a slight delay before the HK_TYPE_DOMAIN 
+>> housekeeping
+>> +     * cpumask can correctly reflect what is in isolated_cpus.
+>> +     *
+>> +     * We rely on WORK_STRUCT_PENDING_BIT to not requeue a work item 
+>> that
+>> +     * is still pending. Before the pending bit is cleared, the work 
+>> data
+>> +     * is copied out and work item dequeued. So it is possible to queue
+>> +     * the work again before the hk_sd_workfn() is invoked to 
+>> process the
+>> +     * previously queued work. Since hk_sd_workfn() doesn't use the 
+>> work
+>> +     * item at all, this is not a problem.
+>> +     */
+>> +    if (update_housekeeping || force_sd_rebuild)
+>> +        queue_work(system_unbound_wq, &hk_sd_work);
+>> +
+>>       free_tmpmasks(ptmp);
+>>   }
+>>   diff --git a/tools/testing/selftests/cgroup/test_cpuset_prs.sh 
+>> b/tools/testing/selftests/cgroup/test_cpuset_prs.sh
+>> index 0c5db118f2d1..dc2dff361ec6 100755
+>> --- a/tools/testing/selftests/cgroup/test_cpuset_prs.sh
+>> +++ b/tools/testing/selftests/cgroup/test_cpuset_prs.sh
+>> @@ -246,6 +246,9 @@ TEST_MATRIX=(
+>>       "  C2-3:P1  C3:P1   .      .     O3=0    .      . .     0 
+>> A1:2|A2: A1:P1|A2:P1"
+>>       "  C2-3:P1  C3:P1   .      .    T:O2=0   .      . .     0 
+>> A1:3|A2:3 A1:P1|A2:P-1"
+>>       "  C2-3:P1  C3:P1   .      .      .    T:O3=0   . .     0 
+>> A1:2|A2:2 A1:P1|A2:P-1"
+>> +    "  C2-3:P1  C3:P2   .      .    T:O2=0   .      . .     0 
+>> A1:3|A2:3 A1:P1|A2:P-2"
+>> +    "  C1-3:P1  C3:P2   .      .      .    T:O3=0   . .     0 
+>> A1:1-2|A2:1-2 A1:P1|A2:P-2 3|"
+>> +    "  C1-3:P1  C3:P2   .      .      .    T:O3=0  O3=1 .     0 
+>> A1:1-2|A2:3 A1:P1|A2:P2  3"
+>>       "$SETUP_A123_PARTITIONS    .     O1=0    .      . .     0 
+>> A1:|A2:2|A3:3 A1:P1|A2:P1|A3:P1"
+>>       "$SETUP_A123_PARTITIONS    .     O2=0    .      . .     0 
+>> A1:1|A2:|A3:3 A1:P1|A2:P1|A3:P1"
+>>       "$SETUP_A123_PARTITIONS    .     O3=0    .      . .     0 
+>> A1:1|A2:2|A3: A1:P1|A2:P1|A3:P1"
+>> @@ -762,7 +765,7 @@ check_cgroup_states()
+>>   # only CPUs in isolated partitions as well as those that are 
+>> isolated at
+>>   # boot time.
+>>   #
+>> -# $1 - expected isolated cpu list(s) <isolcpus1>{,<isolcpus2>}
+>> +# $1 - expected isolated cpu list(s) <isolcpus1>{|<isolcpus2>}
+>>   # <isolcpus1> - expected sched/domains value
+>>   # <isolcpus2> - cpuset.cpus.isolated value = <isolcpus1> if not 
+>> defined
+>>   #
+>> @@ -771,6 +774,7 @@ check_isolcpus()
+>>       EXPECTED_ISOLCPUS=$1
+>>       ISCPUS=${CGROUP2}/cpuset.cpus.isolated
+>>       ISOLCPUS=$(cat $ISCPUS)
+>> +    HKICPUS=$(cat /sys/devices/system/cpu/isolated)
+>>       LASTISOLCPU=
+>>       SCHED_DOMAINS=/sys/kernel/debug/sched/domains
+>>       if [[ $EXPECTED_ISOLCPUS = . ]]
+>> @@ -808,6 +812,11 @@ check_isolcpus()
+>>       ISOLCPUS=
+>>       EXPECTED_ISOLCPUS=$EXPECTED_SDOMAIN
+>>   +    #
+>> +    # The inverse of HK_TYPE_DOMAIN cpumask in $HKICPUS should match 
+>> $ISOLCPUS
+>> +    #
+>> +    [[ "$ISOLCPUS" != "$HKICPUS" ]] && return 1
+>> +
+>>       #
+>>       # Use the sched domain in debugfs to check isolated CPUs, if 
+>> available
+>>       #
+>
+> We have a CPU hotplug test that cycles through all CPUs off-lining 
+> them and on-lining them in different combinations. Since this change 
+> was added to -next, this test is failing on our Tegra210 boards. 
+> Bisecting the issue, it pointed to this commit and reverting this on 
+> top of -next fixes the issue.
+>
+> The test is quite simple and part of Thierry's tegra-test suite [0].
+>
+> $ ./tegra-tests/tests/cpu.py --verbose hotplug
+> cpu: hotplug: CPU#0: mask: 1
+> cpu: hotplug: CPU#1: mask: 2
+> cpu: hotplug: CPU#2: mask: 4
+> cpu: hotplug: CPU#3: mask: 8
+> cpu: hotplug: applying mask 0xf
+> cpu: hotplug: applying mask 0xe
+> cpu: hotplug: applying mask 0xd
+> cpu: hotplug: applying mask 0xc
+> cpu: hotplug: applying mask 0xb
+> cpu: hotplug: applying mask 0xa
+> ...
+> cpu: hotplug: applying mask 0x1
+> Traceback (most recent call last):
+>   File "./tegra-tests/tests/cpu.py", line 159, in <module>
+>     runner.standalone(module)
+>   File "./tegra-tests/tests/runner.py", line 147, in standalone
+>     log.test(log = log, args = args)
+>   File "./tegra-tests/tests/cpu.py", line 29, in __call__
+>     cpus.apply_mask(mask)
+>   File "./tegra-tests/linux/system.py", line 149, in apply_mask
+>     cpu.set_online(False)
+>   File "./tegra-tests/linux/system.py", line 45, in set_online
+>     self.online = online
+> OSError: [Errno 16] Device or resource busy
+>
+> From looking at different runs it appears to fail at different places.
+>
+> Let me know if you have any thoughts.
+>
+> Thanks
+> Jon
+>
+> [0] https://github.com/thierryreding/tegra-tests/blob/master/tests/cpu.py
 
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
----
- drivers/soc/tegra/cbb/tegra234-cbb.c | 134 +++++++++++++++++++++++++++
- 1 file changed, 134 insertions(+)
+Thanks for the report. Will take a further look into this problem and 
+report back what I find.
 
-diff --git a/drivers/soc/tegra/cbb/tegra234-cbb.c b/drivers/soc/tegra/cbb/tegra234-cbb.c
-index 7e387fc54c6b..fb26f085f691 100644
---- a/drivers/soc/tegra/cbb/tegra234-cbb.c
-+++ b/drivers/soc/tegra/cbb/tegra234-cbb.c
-@@ -89,6 +89,15 @@ enum tegra234_cbb_fabric_ids {
- 	T234_MAX_FABRIC_ID,
- };
- 
-+enum tegra238_cbb_fabric_ids {
-+	T238_CBB_FABRIC_ID  = 0,
-+	T238_AON_FABRIC_ID  = 4,
-+	T238_PSC_FABRIC_ID  = 5,
-+	T238_BPMP_FABRIC_ID = 6,
-+	T238_APE_FABRIC_ID  = 7,
-+	T238_MAX_FABRIC_ID,
-+};
-+
- enum tegra264_cbb_fabric_ids {
- 	T264_SYSTEM_CBB_FABRIC_ID,
- 	T264_TOP_0_CBB_FABRIC_ID,
-@@ -999,6 +1008,127 @@ static const struct tegra234_cbb_fabric tegra234_sce_fabric = {
- 	.firewall_wr_ctl = 0x288,
- };
- 
-+static const struct tegra234_target_lookup tegra238_ape_target_map[] = {
-+	{ "AXI2APB", 0x00000 },
-+	{ "AGIC",    0x15000 },
-+	{ "AMC",     0x16000 },
-+	{ "AST0",    0x17000 },
-+	{ "AST1",    0x18000 },
-+	{ "AST2",    0x19000 },
-+	{ "CBB",     0x1A000 },
-+};
-+
-+static const struct tegra234_target_lookup tegra238_cbb_target_map[] = {
-+	{ "AON",         0x40000 },
-+	{ "APE",         0x50000 },
-+	{ "BPMP",        0x41000 },
-+	{ "HOST1X",      0x43000 },
-+	{ "STM",         0x44000 },
-+	{ "CBB_CENTRAL", 0x00000 },
-+	{ "PCIE_C0",     0x51000 },
-+	{ "PCIE_C1",     0x47000 },
-+	{ "PCIE_C2",     0x48000 },
-+	{ "PCIE_C3",     0x49000 },
-+	{ "GPU",         0x4C000 },
-+	{ "SMMU0",       0x4D000 },
-+	{ "SMMU1",       0x4E000 },
-+	{ "SMMU2",       0x4F000 },
-+	{ "PSC",         0x52000 },
-+	{ "AXI2APB_1",   0x70000 },
-+	{ "AXI2APB_12",  0x73000 },
-+	{ "AXI2APB_13",  0x74000 },
-+	{ "AXI2APB_15",  0x76000 },
-+	{ "AXI2APB_16",  0x77000 },
-+	{ "AXI2APB_18",  0x79000 },
-+	{ "AXI2APB_19",  0x7A000 },
-+	{ "AXI2APB_2",   0x7B000 },
-+	{ "AXI2APB_23",  0x7F000 },
-+	{ "AXI2APB_25",  0x80000 },
-+	{ "AXI2APB_26",  0x81000 },
-+	{ "AXI2APB_27",  0x82000 },
-+	{ "AXI2APB_28",  0x83000 },
-+	{ "AXI2APB_32",  0x87000 },
-+	{ "AXI2APB_33",  0x88000 },
-+	{ "AXI2APB_4",   0x8B000 },
-+	{ "AXI2APB_5",   0x8C000 },
-+	{ "AXI2APB_6",   0x93000 },
-+	{ "AXI2APB_9",   0x90000 },
-+	{ "AXI2APB_3",   0x91000 },
-+};
-+
-+static const struct tegra234_fabric_lookup tegra238_cbb_fab_list[] = {
-+	[T238_CBB_FABRIC_ID]  = { "cbb-fabric", true,
-+				  tegra238_cbb_target_map,
-+				  ARRAY_SIZE(tegra238_cbb_target_map) },
-+	[T238_AON_FABRIC_ID]  = { "aon-fabric", true,
-+				  tegra234_aon_target_map,
-+				  ARRAY_SIZE(tegra234_aon_target_map) },
-+	[T238_PSC_FABRIC_ID]  = { "psc-fabric" },
-+	[T238_BPMP_FABRIC_ID] = { "bpmp-fabric", true,
-+				  tegra234_bpmp_target_map,
-+				  ARRAY_SIZE(tegra234_bpmp_target_map) },
-+	[T238_APE_FABRIC_ID]  = { "ape-fabric", true,
-+				  tegra238_ape_target_map,
-+				  ARRAY_SIZE(tegra238_ape_target_map) },
-+};
-+
-+static const struct tegra234_cbb_fabric tegra238_aon_fabric = {
-+	.fab_id = T238_AON_FABRIC_ID,
-+	.fab_list = tegra238_cbb_fab_list,
-+	.initiator_id = tegra234_initiator_id,
-+	.errors = tegra234_cbb_errors,
-+	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
-+	.err_intr_enbl = 0x7,
-+	.err_status_clr = 0x3f,
-+	.notifier_offset = 0x17000,
-+	.firewall_base = 0x30000,
-+	.firewall_ctl = 0x8f0,
-+	.firewall_wr_ctl = 0x8e8,
-+};
-+
-+static const struct tegra234_cbb_fabric tegra238_ape_fabric = {
-+	.fab_id = T238_APE_FABRIC_ID,
-+	.fab_list = tegra238_cbb_fab_list,
-+	.initiator_id = tegra234_initiator_id,
-+	.errors = tegra234_cbb_errors,
-+	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
-+	.err_intr_enbl = 0xf,
-+	.err_status_clr = 0x3f,
-+	.notifier_offset = 0x1E000,
-+	.firewall_base = 0x30000,
-+	.firewall_ctl = 0xad0,
-+	.firewall_wr_ctl = 0xac8,
-+};
-+
-+static const struct tegra234_cbb_fabric tegra238_bpmp_fabric = {
-+	.fab_id = T238_BPMP_FABRIC_ID,
-+	.fab_list = tegra238_cbb_fab_list,
-+	.initiator_id = tegra234_initiator_id,
-+	.errors = tegra234_cbb_errors,
-+	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
-+	.err_intr_enbl = 0xf,
-+	.err_status_clr = 0x3f,
-+	.notifier_offset = 0x19000,
-+	.firewall_base = 0x30000,
-+	.firewall_ctl = 0x8f0,
-+	.firewall_wr_ctl = 0x8e8,
-+};
-+
-+static const struct tegra234_cbb_fabric tegra238_cbb_fabric = {
-+	.fab_id = T238_CBB_FABRIC_ID,
-+	.fab_list = tegra238_cbb_fab_list,
-+	.initiator_id = tegra234_initiator_id,
-+	.errors = tegra234_cbb_errors,
-+	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
-+	.err_intr_enbl = 0x3f,
-+	.err_status_clr = 0x3f,
-+	.notifier_offset = 0x60000,
-+	.off_mask_erd = 0x3d004,
-+	.firewall_base = 0x10000,
-+	.firewall_ctl = 0x2230,
-+	.firewall_wr_ctl = 0x2228,
-+};
-+
- static const char * const tegra241_initiator_id[] = {
- 	[0x0] = "TZ",
- 	[0x1] = "CCPLEX",
-@@ -1505,6 +1635,10 @@ static const struct of_device_id tegra234_cbb_dt_ids[] = {
- 	{ .compatible = "nvidia,tegra234-dce-fabric", .data = &tegra234_dce_fabric },
- 	{ .compatible = "nvidia,tegra234-rce-fabric", .data = &tegra234_rce_fabric },
- 	{ .compatible = "nvidia,tegra234-sce-fabric", .data = &tegra234_sce_fabric },
-+	{ .compatible = "nvidia,tegra238-aon-fabric", .data = &tegra238_aon_fabric },
-+	{ .compatible = "nvidia,tegra238-ape-fabric", .data = &tegra238_ape_fabric },
-+	{ .compatible = "nvidia,tegra238-bpmp-fabric", .data = &tegra238_bpmp_fabric },
-+	{ .compatible = "nvidia,tegra238-cbb-fabric", .data = &tegra238_cbb_fabric },
- 	{ .compatible = "nvidia,tegra264-sys-cbb-fabric", .data = &tegra264_sys_cbb_fabric },
- 	{ .compatible = "nvidia,tegra264-top0-cbb-fabric", .data = &tegra264_top0_cbb_fabric },
- 	{ .compatible = "nvidia,tegra264-uphy0-cbb-fabric", .data = &tegra264_uphy0_cbb_fabric },
--- 
-2.34.1
+Cheers,
+Longman
 
