@@ -1,126 +1,114 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6D23D3D0E
-	for <linux-tegra@vger.kernel.org>; Wed,  4 Mar 2026 18:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40B43CD8AE
+	for <linux-tegra@vger.kernel.org>; Wed,  4 Mar 2026 19:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772647905; cv=none; b=OrdAT3F6HuIJodPp9ENvfn3KNJZUx0LF4WArum70bihIx54ETXk4O/ticu0D/A4IG0qPms7cQQhTtjE371gENYFHI5+tIeesUAfzjbOTikPB1VdtJV8jQPR8Z1CcsGlCFRzMHwcNDgiRIdnaABj8fhJwNzrh0j/Ri2AR9a+dN2E=
+	t=1772651966; cv=none; b=rQAt4MvrIutVs2Wwy7ozb7KLWUBrwhZW4mth7a9sNj5FMIbhsgAY+FiU6EUHvUrZeujXfIX8Shl5W+2prML9z71MPPwo5bX/GrUJbBzQK4Q9AgfNO18sUPcACvq6Dlm4F8skIwKa5sRJJ79eVPWjY6UN+Fd0HatFwd0Y9t0Fi5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772647905; c=relaxed/simple;
-	bh=cb4y2nZytFUTBjTWPqQJWtOD68YUktKfQo9N/u0reMY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SYNkIGeZNjfGv536vuBE3WffX7u6GXtH57uMTE56sdjFonFZoVulkTajpsbqzRe9wSu1p2Hclvp82NEoHdnBOkiSBC3YpygDILvtUoAB6xIy1ZLriBjhP7o2zbC9L5sQggc+Wxt8cr57a2wpklfyPKo3jRWdbcZ9uEljfC+TS/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bJBlPgky; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1772651966; c=relaxed/simple;
+	bh=KtMloLAjaYn+gwP362zAnW9O3LbVLb9ezwt4mXRDDfM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EfJFw84cueTb9byc1la1rWNbFsojyRigTIsAeqKlOoA4IV28wWYU9Z+IFAIYJe+982Lcov4+WwqEKmXk9Qt11TGt/JQvxR1cIU+kMEorMoOJEU3C0Mf/hxZSUBMQkR65bwmnothEo31uzd6dmvX0i9m3N68KmGo5szebATruSO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ecwj2P1S; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bJBlPgky"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1772647902;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r75+9K5ySWolahPAJ2e0ED/yndC4WL32Fqg5S686FY8=;
-	b=bJBlPgkypVqKsAMAc+xCZSuklipcRmi14gkVvNkKfg0lFDwUqKlJic5VBJQ0nR3AYM6Ww+
-	3Ytf5HTyDfH2Eae5HvHI/+5VY3OahXT8wv6E8ib+ACCP7JVhfJknxb/FMCQg3PNUg4e/6J
-	Ek14QNEUClYmbuPe8SObdPgiUVx8ut8=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-13-b_lShdBIOHOfL7-cqWjQdg-1; Wed,
- 04 Mar 2026 13:11:38 -0500
-X-MC-Unique: b_lShdBIOHOfL7-cqWjQdg-1
-X-Mimecast-MFC-AGG-ID: b_lShdBIOHOfL7-cqWjQdg_1772647895
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8842919560B7;
-	Wed,  4 Mar 2026 18:11:34 +0000 (UTC)
-Received: from [10.22.89.197] (unknown [10.22.89.197])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3182818002A6;
-	Wed,  4 Mar 2026 18:11:30 +0000 (UTC)
-Message-ID: <dbddcc76-da17-4f7c-9e96-475bec0898d2@redhat.com>
-Date: Wed, 4 Mar 2026 13:11:29 -0500
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ecwj2P1S"
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-389f9895c81so67282531fa.2
+        for <linux-tegra@vger.kernel.org>; Wed, 04 Mar 2026 11:19:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772651963; x=1773256763; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G8xRFn2w9z/jS1C6VB4kiHAZ9cEGHmvzdhzaEpkLpaw=;
+        b=ecwj2P1SzMKSCSCQfi7tIx7phq41UhaVuqn0wXqBl/zBgrZyJPJP3tCqCU5lS9Cv58
+         yKKKKwVrHaKSq8s0opo0rHaEIKiAcLqpp+8rgWkfdsgoVhJsDeu1Z+j0kG2uxoj6Crkv
+         fpEb/Z0grfdPT4cqTQge22MD90SJNEuyVuYyMSfCS6r8SdeXD4FTKm6pUPzzQrO024Lp
+         wHToap5NkRNfW5rwqNHtzhXFbjVABDH9sJDZoLRQ1FuF7+gdeThNY5stPi8NT2FkXTLS
+         3iTdkxlHVSKkNsJ3O4NfJRRd/+DmefAlpc3074tOt8BzSZ7+/2mxcfVKt2KNRGvOxXLf
+         vQOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772651963; x=1773256763;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G8xRFn2w9z/jS1C6VB4kiHAZ9cEGHmvzdhzaEpkLpaw=;
+        b=XfFC/SYz44f8+8+Tj+IA1FryWI3YVLbBaYbHm0ItnsIyA13wppNHXL24EGVJkd2Q8H
+         mCjTtVAwdyIoV+rFBfsK/ojJTzsVMorU2QQ+tdEkbEsBwOCzozMCGYzK4rfji3MljE6b
+         7T8sEqz0C41xZXLtS5sG2TI+P69SHLUCqY7vGKvJI2o3Zxvi+7HzGJ017xKfEjvJbgdv
+         G6fuJmXH+spfmyuMgEUH8cfUu38YUT/Dasrpw7a6Odua2w2I7KwnOEK90KhekAQtq7Ot
+         0NaE+vfhoxNc7LE1r4ntAjxekE006s8sAdKETMTGheN+RmuJGcd3mH4jTJvO94cLKRN9
+         Znrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVu5SpZ96sYF6smf2+/AVpuNGr4MhVrhA0WBBuubGuQ3ieJzYCW7wDMeN/h51TdW/+cY5zLlCNnGMveRQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2vkbB9xEZ3hv0tseubD3FirMgtjDiWRN1f/s6CsQhL7O0pAlG
+	K0CRgMZm5JrhCvmwdTBge+4oxkj1n/RcIxZCahMT6EwP1NuMe+dnJ+KS
+X-Gm-Gg: ATEYQzzvJmtLQhqXsa+3PDVFDSPenZPWU2BkNIX85355EfBNfUzNNv419iI2i9TvRrR
+	s2hw0LoHiqN46409+XUeULEWVuKhj7a5z4MPtxZLEjrJxctO4XVlC5X3AUjtMabwk4+Z/0PRfhg
+	VCcQkw/du47r5u51xqdP2A1QpkKflqoW0eIONa3h7x/mEsR4eY3fVhaoXpq/Z27cR2xPzRbAmVD
+	BgxmzQKXwdI6Kqi17sMsy0cIFW6neEme9duTcqRGtNH+k7zwd+a0pdDRW+2Tt9J7TyMz2bw19Bv
+	DUCudP9FnNd0kkCZUoczLJDfBatJz2j9Y3i7aRYQTcoi4st8yv0hKY8Gi0mLO03q9Htsn9+VgSU
+	yI5z8Ey3DMjb5pWZMmThqSJvonqi96Ym7/JNFkUsZgIz8ZvMnVNL3c/tmKUW2C+fMGwD4jlg31P
+	Ah1BDkdh7jr1ENsKrX4ptckTjhFLLwpiRZc/YfPvquTUHMzRgcDo+FDatsFL6OpLegGJ+jyEfoM
+	NQ774A5s2cC
+X-Received: by 2002:a2e:bd07:0:b0:380:989:f615 with SMTP id 38308e7fff4ca-38a2c58c12dmr24430771fa.6.1772651962614;
+        Wed, 04 Mar 2026 11:19:22 -0800 (PST)
+Received: from T6NXCV08J99224A.lan (81-237-238-191-no600.tbcn.telia.com. [81.237.238.191])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a12f4a5b03sm217166e87.87.2026.03.04.11.19.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Mar 2026 11:19:21 -0800 (PST)
+From: Oskar Ray-Frayssinet <rayfraytech@gmail.com>
+To: marvin24@gmx.de,
+	gregkh@linuxfoundation.org
+Cc: linux-staging@lists.linux.dev,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Oskar Ray-Frayssinet <rayfraytech@gmail.com>
+Subject: [PATCH] staging: nvec: fix block comment style in nvec.c
+Date: Wed,  4 Mar 2026 20:18:53 +0100
+Message-ID: <20260304191853.4500-1-rayfraytech@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 7/8] cgroup/cpuset: Defer housekeeping_update() calls
- from CPU hotplug to workqueue
-To: Jon Hunter <jonathanh@nvidia.com>,
- Chen Ridong <chenridong@huaweicloud.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Shuah Khan <shuah@kernel.org>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20260221185418.29319-1-longman@redhat.com>
- <20260221185418.29319-8-longman@redhat.com>
- <1a89aceb-48db-4edd-a730-b445e41221fe@nvidia.com>
- <8ad885a8-be65-4d1b-b8c4-dabe50fe3788@redhat.com>
- <d0695355-87bd-4d05-ad4e-8e591e226108@nvidia.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <d0695355-87bd-4d05-ad4e-8e591e226108@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
+Fix block comment formatting to use * on subsequent lines
+and */ on a separate line as required by kernel coding style.
 
-On 3/4/26 6:07 AM, Jon Hunter wrote:
->
-> On 04/03/2026 03:58, Waiman Long wrote:
->
-> ...
->
->> It looks that -EBUSY was returned when the script tries to online/ 
->> offline a CPU. I ran a simple script to repetitively doing offline/ 
->> online operation and couldn't reproduce the problem. I don't have 
->> access to the tegra board that you use for testing. Would you mind 
->> trying out the following patch to see if it can get rid of the problem.
->>
->> Thanks,
->> Longman
->>
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index e200de7c60b6..5a5953fb391c 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -3936,8 +3936,10 @@ static void cpuset_handle_hotplug(void)
->>           * previously queued work. Since hk_sd_workfn() doesn't use 
->> the work
->>           * item at all, this is not a problem.
->>           */
->> -       if (update_housekeeping || force_sd_rebuild)
->> -               queue_work(system_unbound_wq, &hk_sd_work);
->> +       if (force_sd_rebuild)
->> +               rebuild_sched_domains_cpuslocked();
->> +       if (update_housekeeping)
->> +               queue_work(system_dfl_wq, &hk_sd_work);
->>
->>          free_tmpmasks(ptmp);
->>   }
->>
->>
->
-> Yes that did the trick. Works for me. Feel free to add my ...
->
-> Tested-by: Jon Hunter <jonathanh@nvidia.com> 
+Signed-off-by: Oskar Ray-Frayssinet <rayfraytech@gmail.com>
+---
+ drivers/staging/nvec/nvec.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Thanks for the confirmation.
-
-Cheers,
-Longman
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index e9af66a08448..ee2715df3b48 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -646,7 +646,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+ 			nvec->state = 2;
+ 		}
+ 		break;
+-	case 2:		/* first byte after command */
++	case 2:		/* First byte after command */
+ 		if (status == (I2C_SL_IRQ | RNW | RCVD)) {
+ 			if (nvec->rx->data[0] != 0x01) {
+ 				dev_err(nvec->dev,
+@@ -659,8 +659,9 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+ 			nvec_tx_set(nvec);
+ 			to_send = nvec->tx->data[0];
+ 			nvec->tx->pos = 1;
+-			/* delay ACK due to AP20 HW Bug
+-			   do not replace by usleep_range */
++			/* Delay ACK due to AP20 HW Bug
++			 * do not replace by usleep_range
++			 */
+ 			udelay(33);
+ 		} else if (status == (I2C_SL_IRQ)) {
+ 			nvec->rx->data[1] = received;
+-- 
+2.43.0
 
