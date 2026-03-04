@@ -1,296 +1,108 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAEA34D90F
-	for <linux-tegra@vger.kernel.org>; Wed,  4 Mar 2026 03:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5853A36D9F6
+	for <linux-tegra@vger.kernel.org>; Wed,  4 Mar 2026 05:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772596702; cv=none; b=gVl+BIZbApbvbFi2UTMC3ic63+D1oS4nCXXwgzd2blpngOOoImYm7aNiAKcpwP8XR0jlld5zFI/PNL2/VVkP3+Kn1dtExw/XyOc8kKVNEpmSaBKzH/+o0G0SCU7wHcoqHgG+xD9AlR9zqZWv0awGdonpP6491ZjrdJCWBaltAbs=
+	t=1772603289; cv=none; b=qdt2N6sGyyhV0urh/L/UbGFeJAQu3e/R6fMUFD+5su3qQ2ckYItVvVVboce1WtczLRnSrFiKRYk2O3Lc1oz/ZOutH0fDbqTpmbAU3CrN4aqIW3Zzg3ZCnp568+1h6+gUwD51HDsi3NF5C6H+1Wpsq1FdYUoOJhKwcs4VafWpHlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772596702; c=relaxed/simple;
-	bh=q8yq5LSEk/ZoymgNO9/6kFm8wo0IZf+GZq5IdkICKg0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IfqjZseJhwoRIl1VGMJTHXk1waSmYdUJ1ka6pGOp4G9/pYCk/lkLczWzs626JNZcEgXFeWaW7ruZlTLAzAHATS5q2iV+ZF1Qb7bNmgq+zc9rSOper0mRp206LCDVK6/uN6KQvE0B99I0DtbNStuIZW2MVSzJApzSzTv6VxAHKTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TYkqo2Iw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1772603289; c=relaxed/simple;
+	bh=hGzGZSIesgRYKKABk3MCtmQIw4wPBxignY5EC/CTKhk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jppplZQEcuq0m1UWlefNmAf+/t+LPo2BKj6dXO1fFGnZPAAtH/0E873JMGgxtdvTjp+jCWmh79wrbkEyMPX20jvXJVtUkA7uEkGnjzFiF5tzAAOszld/Xv8una+EZ0Rl9hTY85AK/ZRc9CiI8WkuklcVQQ7vTsmwGWMXDZ+7NCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H3iCCcFb; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TYkqo2Iw"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1772596698;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=65n2E7t33ugPpdbZSVuYeTo0xW6xYI4B9IPN+ub45Eg=;
-	b=TYkqo2IwacOPZbtUahaH0kJT9OY9Ole/PWdzImgsQum+V9OLk1BdMrUrUdT/WSOjCFRTsS
-	q/RjEj5AUvvn88qCWOcGlBXrGd1tbABq9La6JSPxDaGt4W/5C515je5tLrio1yu4Xb5Dyu
-	g0lPm5H/tsRB6OfN9T0jzzoLtU8vduU=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-345-h1VxkWQvP8aBfSh1Bob3cA-1; Tue,
- 03 Mar 2026 22:58:15 -0500
-X-MC-Unique: h1VxkWQvP8aBfSh1Bob3cA-1
-X-Mimecast-MFC-AGG-ID: h1VxkWQvP8aBfSh1Bob3cA_1772596693
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4B6411800464;
-	Wed,  4 Mar 2026 03:58:12 +0000 (UTC)
-Received: from [10.22.64.108] (unknown [10.22.64.108])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D668E1958DC2;
-	Wed,  4 Mar 2026 03:58:07 +0000 (UTC)
-Message-ID: <8ad885a8-be65-4d1b-b8c4-dabe50fe3788@redhat.com>
-Date: Tue, 3 Mar 2026 22:58:07 -0500
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3iCCcFb"
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-35990245493so1820062a91.2
+        for <linux-tegra@vger.kernel.org>; Tue, 03 Mar 2026 21:48:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772603288; x=1773208088; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uU9ryShtwN5h/4AuvpDstnK+MMGP0hOhRJ5NA+muSDg=;
+        b=H3iCCcFb1+n+HKBLH65EgOTbS+frKdQHgE4/AxiDLdR1lUqBr05VXwZABE0fHbgIz3
+         Dv+5WRqTwuaDUhQh2IfTltMdaeuUnqZNq2RNdqs5QI99r/7QPPkDmLOqm5qd0gir5hXu
+         P1BRVB7BPP3xONh1Yr1fiX9rqQ4IoA0hBJJL0peQeJ28gE1a4CrrHexIkLo+5Iz3MNr1
+         oRLsS/66iNynNwe26jXK+0meiS1gh51S48uLWS4PtAmSuRwHH9tgEtwa63cSqh2EaG7C
+         sR1yXo2OTxhlr+r7CPAUn6ViierNTCdNW0GU1dMqQHa2eh4AmF8F+9jEdtyHRA4G0EO6
+         14qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772603288; x=1773208088;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uU9ryShtwN5h/4AuvpDstnK+MMGP0hOhRJ5NA+muSDg=;
+        b=SKNKJe6gbiWGTVNBiQVZqFfqWkI8eNCa99JSGlAzRMfM6XUxEAdmKShOAlrfr9b8yw
+         c/9cWCGb0SQ4vxrxppRBANr/e4ga9OJBrFAuW28uoBUJ0ajj8tvxJdgYwjjEbevjtvGg
+         POgbE+4a+SwCeqeBHG7lG7inG3mIZeLm3Lk8ZkjSDVOFjWaAXSA1rR3xFBCzZLeDV/5S
+         ELhZ9+wnrDMsviYdCul7T9owxP62uOuIakg6hr64bovjtEzMJ2FKEKX1F6UyR22gVbge
+         1LzXqnoRmKSPxv42AHMvlmi5cqF2XGvk3CI9cO6teSFyxWkRYJSVHNQyHCBfwvlAWgvT
+         2MAg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWEIGdjajI44krSBoXhMSMBw4+Ps3Xpr+2Y3ZV4QJGNfH09LhyyNhjaGKAlVtuYdTUmCJJT/KIQFnDKA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf496kgDt5BA3JD0s5IIDlHPJX+YlV6PAnmDU+srQCiNqJUfXV
+	/eVyR2PbvsvICymk7+jFvmMsm+PkW7b+Swfym+JBV3C/IFjGdwDdwS0k
+X-Gm-Gg: ATEYQzwUQfhw0nSKM6UcCM1T3cBF4TqjhC+7nMS3BtscZd+YTH7BW1I79lm7YxN+q5e
+	B9vSQEnMjNp+cGiJgQsbowHF3Si9gJCIuZ3Gb4rir/WZSm102LgWT0wwXm4rjmXOOcj1XXYYrCZ
+	9eAU3YqM7U0HF0l3acm9QxchyvhITmrJsjYAKJs+bMnISjbm/IOnL2c8ZacHiZwhNF09JnfeyEE
+	pSyhJBgsk6/FG4AqvztSs1wkqHL4+3qWAIyFlLq9jfZ9FKHNWfFxX8D/OTBUWIfwmGjmYTvMqLn
+	619ZMwbrvOtLWOBx7kcfuGLaxm9/t0O10G4VZFSs/RFvZ9r8TxQH7P6wHVlHB1kLQu+88LvUoWp
+	CRof1RdLYCfkA2Bi5oXtYNsiedEU7r7oRiNCRI9JIjymTd/fouxQGs3xltHcioFEG0q3fNz1sxr
+	mgzTdxVLE6uJZU2HniugtjKXZjkwXgJKq5SA==
+X-Received: by 2002:a17:90b:2691:b0:349:2154:eef4 with SMTP id 98e67ed59e1d1-359a69c0d3dmr842672a91.5.1772603287690;
+        Tue, 03 Mar 2026 21:48:07 -0800 (PST)
+Received: from localhost ([2001:da8:e000:1218:e91a:3fb1:31fb:f3b])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3599c49f6e2sm4416242a91.10.2026.03.03.21.48.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2026 21:48:07 -0800 (PST)
+From: Avon-Hermit <avon.hermit@gmail.com>
+To: Marc Dietrich <marvin24@gmx.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	ac100@lists.launchpad.net,
+	linux-tegra@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Avon-Hermit <avon.hermit@gmail.com>
+Subject: [PATCH] staging: nvec: fix block comment style
+Date: Wed,  4 Mar 2026 13:47:20 +0800
+Message-ID: <20260304054727.70113-1-avon.hermit@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 7/8] cgroup/cpuset: Defer housekeeping_update() calls
- from CPU hotplug to workqueue
-To: Jon Hunter <jonathanh@nvidia.com>,
- Chen Ridong <chenridong@huaweicloud.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Shuah Khan <shuah@kernel.org>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20260221185418.29319-1-longman@redhat.com>
- <20260221185418.29319-8-longman@redhat.com>
- <1a89aceb-48db-4edd-a730-b445e41221fe@nvidia.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <1a89aceb-48db-4edd-a730-b445e41221fe@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 3/3/26 10:18 AM, Jon Hunter wrote:
-> Hi Waiman,
->
-> On 21/02/2026 18:54, Waiman Long wrote:
->> The cpuset_handle_hotplug() may need to invoke housekeeping_update(),
->> for instance, when an isolated partition is invalidated because its
->> last active CPU has been put offline.
->>
->> As we are going to enable dynamic update to the nozh_full housekeeping
->> cpumask (HK_TYPE_KERNEL_NOISE) soon with the help of CPU hotplug,
->> allowing the CPU hotplug path to call into housekeeping_update() 
->> directly
->> from update_isolation_cpumasks() will likely cause deadlock. So we
->> have to defer any call to housekeeping_update() after the CPU hotplug
->> operation has finished. This is now done via the workqueue where
->> the update_hk_sched_domains() function will be invoked via the
->> hk_sd_workfn().
->>
->> An concurrent cpuset control file write may have executed the required
->> update_hk_sched_domains() function before the work function is 
->> called. So
->> the work function call may become a no-op when it is invoked.
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
->> ---
->>   kernel/cgroup/cpuset.c                        | 31 ++++++++++++++++---
->>   .../selftests/cgroup/test_cpuset_prs.sh       | 11 ++++++-
->>   2 files changed, 36 insertions(+), 6 deletions(-)
->>
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index 3d0d18bf182f..2c80bfc30bbc 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -1323,6 +1323,16 @@ static void update_hk_sched_domains(void)
->>           rebuild_sched_domains_locked();
->>   }
->>   +/*
->> + * Work function to invoke update_hk_sched_domains()
->> + */
->> +static void hk_sd_workfn(struct work_struct *work)
->> +{
->> +    cpuset_full_lock();
->> +    update_hk_sched_domains();
->> +    cpuset_full_unlock();
->> +}
->> +
->>   /**
->>    * rm_siblings_excl_cpus - Remove exclusive CPUs that are used by 
->> sibling cpusets
->>    * @parent: Parent cpuset containing all siblings
->> @@ -3795,6 +3805,7 @@ static void cpuset_hotplug_update_tasks(struct 
->> cpuset *cs, struct tmpmasks *tmp)
->>    */
->>   static void cpuset_handle_hotplug(void)
->>   {
->> +    static DECLARE_WORK(hk_sd_work, hk_sd_workfn);
->>       static cpumask_t new_cpus;
->>       static nodemask_t new_mems;
->>       bool cpus_updated, mems_updated;
->> @@ -3877,11 +3888,21 @@ static void cpuset_handle_hotplug(void)
->>       }
->>     -    if (update_housekeeping || force_sd_rebuild) {
->> -        mutex_lock(&cpuset_mutex);
->> -        update_hk_sched_domains();
->> -        mutex_unlock(&cpuset_mutex);
->> -    }
->> +    /*
->> +     * Queue a work to call housekeeping_update() & 
->> rebuild_sched_domains()
->> +     * There will be a slight delay before the HK_TYPE_DOMAIN 
->> housekeeping
->> +     * cpumask can correctly reflect what is in isolated_cpus.
->> +     *
->> +     * We rely on WORK_STRUCT_PENDING_BIT to not requeue a work item 
->> that
->> +     * is still pending. Before the pending bit is cleared, the work 
->> data
->> +     * is copied out and work item dequeued. So it is possible to queue
->> +     * the work again before the hk_sd_workfn() is invoked to 
->> process the
->> +     * previously queued work. Since hk_sd_workfn() doesn't use the 
->> work
->> +     * item at all, this is not a problem.
->> +     */
->> +    if (update_housekeeping || force_sd_rebuild)
->> +        queue_work(system_unbound_wq, &hk_sd_work);
->> +
->>       free_tmpmasks(ptmp);
->>   }
->>   diff --git a/tools/testing/selftests/cgroup/test_cpuset_prs.sh 
->> b/tools/testing/selftests/cgroup/test_cpuset_prs.sh
->> index 0c5db118f2d1..dc2dff361ec6 100755
->> --- a/tools/testing/selftests/cgroup/test_cpuset_prs.sh
->> +++ b/tools/testing/selftests/cgroup/test_cpuset_prs.sh
->> @@ -246,6 +246,9 @@ TEST_MATRIX=(
->>       "  C2-3:P1  C3:P1   .      .     O3=0    .      . .     0 
->> A1:2|A2: A1:P1|A2:P1"
->>       "  C2-3:P1  C3:P1   .      .    T:O2=0   .      . .     0 
->> A1:3|A2:3 A1:P1|A2:P-1"
->>       "  C2-3:P1  C3:P1   .      .      .    T:O3=0   . .     0 
->> A1:2|A2:2 A1:P1|A2:P-1"
->> +    "  C2-3:P1  C3:P2   .      .    T:O2=0   .      . .     0 
->> A1:3|A2:3 A1:P1|A2:P-2"
->> +    "  C1-3:P1  C3:P2   .      .      .    T:O3=0   . .     0 
->> A1:1-2|A2:1-2 A1:P1|A2:P-2 3|"
->> +    "  C1-3:P1  C3:P2   .      .      .    T:O3=0  O3=1 .     0 
->> A1:1-2|A2:3 A1:P1|A2:P2  3"
->>       "$SETUP_A123_PARTITIONS    .     O1=0    .      . .     0 
->> A1:|A2:2|A3:3 A1:P1|A2:P1|A3:P1"
->>       "$SETUP_A123_PARTITIONS    .     O2=0    .      . .     0 
->> A1:1|A2:|A3:3 A1:P1|A2:P1|A3:P1"
->>       "$SETUP_A123_PARTITIONS    .     O3=0    .      . .     0 
->> A1:1|A2:2|A3: A1:P1|A2:P1|A3:P1"
->> @@ -762,7 +765,7 @@ check_cgroup_states()
->>   # only CPUs in isolated partitions as well as those that are 
->> isolated at
->>   # boot time.
->>   #
->> -# $1 - expected isolated cpu list(s) <isolcpus1>{,<isolcpus2>}
->> +# $1 - expected isolated cpu list(s) <isolcpus1>{|<isolcpus2>}
->>   # <isolcpus1> - expected sched/domains value
->>   # <isolcpus2> - cpuset.cpus.isolated value = <isolcpus1> if not 
->> defined
->>   #
->> @@ -771,6 +774,7 @@ check_isolcpus()
->>       EXPECTED_ISOLCPUS=$1
->>       ISCPUS=${CGROUP2}/cpuset.cpus.isolated
->>       ISOLCPUS=$(cat $ISCPUS)
->> +    HKICPUS=$(cat /sys/devices/system/cpu/isolated)
->>       LASTISOLCPU=
->>       SCHED_DOMAINS=/sys/kernel/debug/sched/domains
->>       if [[ $EXPECTED_ISOLCPUS = . ]]
->> @@ -808,6 +812,11 @@ check_isolcpus()
->>       ISOLCPUS=
->>       EXPECTED_ISOLCPUS=$EXPECTED_SDOMAIN
->>   +    #
->> +    # The inverse of HK_TYPE_DOMAIN cpumask in $HKICPUS should match 
->> $ISOLCPUS
->> +    #
->> +    [[ "$ISOLCPUS" != "$HKICPUS" ]] && return 1
->> +
->>       #
->>       # Use the sched domain in debugfs to check isolated CPUs, if 
->> available
->>       #
->
-> We have a CPU hotplug test that cycles through all CPUs off-lining 
-> them and on-lining them in different combinations. Since this change 
-> was added to -next, this test is failing on our Tegra210 boards. 
-> Bisecting the issue, it pointed to this commit and reverting this on 
-> top of -next fixes the issue.
->
-> The test is quite simple and part of Thierry's tegra-test suite [0].
->
-> $ ./tegra-tests/tests/cpu.py --verbose hotplug
-> cpu: hotplug: CPU#0: mask: 1
-> cpu: hotplug: CPU#1: mask: 2
-> cpu: hotplug: CPU#2: mask: 4
-> cpu: hotplug: CPU#3: mask: 8
-> cpu: hotplug: applying mask 0xf
-> cpu: hotplug: applying mask 0xe
-> cpu: hotplug: applying mask 0xd
-> cpu: hotplug: applying mask 0xc
-> cpu: hotplug: applying mask 0xb
-> cpu: hotplug: applying mask 0xa
-> ...
-> cpu: hotplug: applying mask 0x1
-> Traceback (most recent call last):
->   File "./tegra-tests/tests/cpu.py", line 159, in <module>
->     runner.standalone(module)
->   File "./tegra-tests/tests/runner.py", line 147, in standalone
->     log.test(log = log, args = args)
->   File "./tegra-tests/tests/cpu.py", line 29, in __call__
->     cpus.apply_mask(mask)
->   File "./tegra-tests/linux/system.py", line 149, in apply_mask
->     cpu.set_online(False)
->   File "./tegra-tests/linux/system.py", line 45, in set_online
->     self.online = online
-> OSError: [Errno 16] Device or resource busy
->
-> From looking at different runs it appears to fail at different places.
->
-> Let me know if you have any thoughts.
->
-> Thanks
-> Jon
->
-> [0] https://github.com/thierryreding/tegra-tests/blob/master/tests/cpu.py
->
-It looks that -EBUSY was returned when the script tries to 
-online/offline a CPU. I ran a simple script to repetitively doing 
-offline/online operation and couldn't reproduce the problem. I don't 
-have access to the tegra board that you use for testing. Would you mind 
-trying out the following patch to see if it can get rid of the problem.
+Convert a block comment describing the AP20 hardware bug workaround
+to the preferred kernel block comment format.
 
-Thanks,
-Longman
+This change only adjusts the comment style and does not modify the
+behavior of the driver.
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index e200de7c60b6..5a5953fb391c 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -3936,8 +3936,10 @@ static void cpuset_handle_hotplug(void)
-          * previously queued work. Since hk_sd_workfn() doesn't use the 
-work
-          * item at all, this is not a problem.
-          */
--       if (update_housekeeping || force_sd_rebuild)
--               queue_work(system_unbound_wq, &hk_sd_work);
-+       if (force_sd_rebuild)
-+               rebuild_sched_domains_cpuslocked();
-+       if (update_housekeeping)
-+               queue_work(system_dfl_wq, &hk_sd_work);
+Signed-off-by: Avon-Hermit <avon.hermit@gmail.com>
+---
+ drivers/staging/nvec/nvec.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-         free_tmpmasks(ptmp);
-  }
-
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index e9af66a08448..736f11942174 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -659,8 +659,9 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+ 			nvec_tx_set(nvec);
+ 			to_send = nvec->tx->data[0];
+ 			nvec->tx->pos = 1;
+-			/* delay ACK due to AP20 HW Bug
+-			   do not replace by usleep_range */
++			/*
++			 * Delay ACK due to AP20 HW Bug; do not replace by usleep_range.
++			 */
+ 			udelay(33);
+ 		} else if (status == (I2C_SL_IRQ)) {
+ 			nvec->rx->data[1] = received;
+-- 
+2.47.3
 
