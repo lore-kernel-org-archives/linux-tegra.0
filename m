@@ -1,479 +1,222 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012003.outbound.protection.outlook.com [52.101.66.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6533A5E62;
-	Wed,  4 Mar 2026 17:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772644958; cv=none; b=sN5IPo9Z1WiXxL1JxDAQPq9xJGr6R2XD023hrvMSglU1sECF7H89CKM4ZPMBk5Mi3EDc9XXDz3keIXmHDO3Rhu/s5xQzxOL3O593gKrIZVSwKa3AzS2nCjz6R0avSc6wIRA5k4LFGqrctYWmun7KPr6aTPWtfR9Wgpb1PNIe82w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772644958; c=relaxed/simple;
-	bh=jEWxDQr6S1Zs3tl6hWjnIS+nMXm8FLgWHmyk0MSVFpA=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D7737E301;
+	Wed,  4 Mar 2026 17:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.3
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772647197; cv=fail; b=Fcct6tuuCAD44IqxKhLydS0GoKa6emY+oVf3Gr2rzfNbhFjEg1DyGLT2md5Pu5RP66TSAmXEeTwr+pj+w+KO9TazjhbiJjqxhmg99Nm+H6Qzoo7FraNhoqrG+yYTMgGPhKKqpsts/UXUAxySz9ofdUZ97ekthT3LLDQM5Cr7bPU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772647197; c=relaxed/simple;
+	bh=ii3Qf+ivA8OpqUthH2iKjKd7nWP1MV8qKSuMMt9pkQg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Maf0sa5uyA4h+61bMmheCsSksA3Fj/3HW4qTcBozD8rK8q3s6ztGyBtfwQw2fI39QAakzh0gBReXpEzoh+XnO9zZfq9w15CyLxWIYkhmQLd6//vzyR3lpK6aUMsPG4Pgd7y2Q3ZOVDB7kC1tfal7YqfW4FPPvm2EljcPdHxaynQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A1C4C2BC9E;
-	Wed,  4 Mar 2026 17:22:31 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Marc Zyngier <maz@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Antoine Tenart <atenart@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
+	 Content-Type:MIME-Version; b=FUJS8DR0YUIG8YHm7CIyk9k9TKV+qWteJbImAO4rXxRLjGA3XiJwnb7MPsPALax2j//T6jl+17Go+b3NJ3fpW9gt4buJO+3Ajas/BLJ2uvG3RYb+qQ7169G9Xirf/dM3F5OR7ANn9S+vTBhkefBmn8NJhdOlORaHAb0CjvowObs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=cJqDHM8g; arc=fail smtp.client-ip=52.101.66.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="cJqDHM8g"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eh9o8Ax5gwgAAA4QfsTmyMbH22KSLZUUl97SPbtKA6+dv1ohdIo0rE1iIngQt5GYZ4iHH/Na+1TEnWsvfkTSkuRbVtxr3xS3K0h0rchDalfDQfwFCfQwQwTkc1T45PuBo5fCv8KJtrEdEmyRjWaruSaA5bQKNWiNk8bsrD5CTRmmv8TEbtPJMlzqQmGZ60CBko/D0CWIRZUwCi+9vY23sNYdI6RtIVrHwxp+f5pN6znug+pYc9QiwlBnUOnYxPfgXDWqlg7G3DE9o/UEZ8BfzRYL3xF36rz9Z8VG6FfDLooaFOYqh2qEC/KTsHOOv/U0d6C0xA5PyBUnoBvHMF13Kg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c4JQ/bII+MvgEezVtqKdJAly6M8oIo8qsWEW6EZQTuc=;
+ b=jsJUkLoW0G3Ist1zyaQ5VhNSpRa8TA8ihDmTCqZ9Zsyw93EvTYgZ8k1BEm0cniFN5G/dawisJdbee/Z1YzgUh9k0UEK0njN9TeAzJFXY2Vw+rA0nzIfpNvE6nFpD8RXDTfkHETvwzYZntWmg53wkyeRzvcGjRi2xhKZURD0IPYzUoByFPkNyOQz91XhicHbqKtqwsp5p54k9lKdsfG9pZOjXi0kK/k68gQjmeInOPd6xb+BilMBvijoD1/VaNhMCEmcNeXLrWo8lGcC6BnNESkgoJ87/TDDVtGCF6eyDGmzpoeso+jULvEcurYugMDq48LMpTDAF7h1gMIILAzTd+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c4JQ/bII+MvgEezVtqKdJAly6M8oIo8qsWEW6EZQTuc=;
+ b=cJqDHM8gkHh6AKdymHl15hlOQj0sVk37T6SxNwLHcRUB5/C10WYfmlmJX9z27qWRYkyJPXQZBJHeXqE/EtJucw15FlIGGAamxHIMadAXYibYuuADkq2hDKqDhQEJOGszVA9DGKkjYo76zYWGQTYmiYgPy+ootvzptq2rQArkzXIk+T0HaVFaQeZ5n9YjvQly6X5eCWJX+c6/tSGJ4ZXbJqnaDFEgCPRX14L2q4FYcQUlAT4NMhIRzUxTTL4sq9aHXR8lieS65zSh3d9Xfu+cjeAg79ZOQoEfJiWG4Fxc+NMzStNYznbmFTz3O2/kmTMiw7AMJQVZmXDi3pLE+fdH5Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM9PR04MB8585.eurprd04.prod.outlook.com (2603:10a6:20b:438::13)
+ by AM9PR04MB8778.eurprd04.prod.outlook.com (2603:10a6:20b:409::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.22; Wed, 4 Mar
+ 2026 17:59:53 +0000
+Received: from AM9PR04MB8585.eurprd04.prod.outlook.com
+ ([fe80::f010:fca8:7ef:62f4]) by AM9PR04MB8585.eurprd04.prod.outlook.com
+ ([fe80::f010:fca8:7ef:62f4%4]) with mapi id 15.20.9678.016; Wed, 4 Mar 2026
+ 17:59:53 +0000
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: linux-phy@lists.infradead.org
+Cc: Vinod Koul <vkoul@kernel.org>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Mark-PK Tsai <mark-pk.tsai@mediatek.com>,
-	Daniel Palmer <daniel@thingy.jp>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Nishanth Menon <nm@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	imx@lists.linux.dev,
-	linux-amlogic@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-arm-msm@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] iirqchip/gic children: Use GIC_* DT binding definitions
-Date: Wed,  4 Mar 2026 18:21:59 +0100
-Message-ID: <42b68ef7417c42bd7df4de7853e774aee5b73b5f.1772644406.git.geert+renesas@glider.be>
+	linux-can@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org,
+	spacemit@lists.linux.dev,
+	UNGLinuxDriver@microchip.com,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>
+Subject: [PATCH phy-next 01/22] ata: add <linux/pm_runtime.h> where missing
+Date: Wed,  4 Mar 2026 19:57:14 +0200
+Message-ID: <20260304175735.2660419-2-vladimir.oltean@nxp.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1772644406.git.geert+renesas@glider.be>
-References: <cover.1772644406.git.geert+renesas@glider.be>
+In-Reply-To: <20260304175735.2660419-1-vladimir.oltean@nxp.com>
+References: <20260304175735.2660419-1-vladimir.oltean@nxp.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: VI1P195CA0030.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:802:5a::19) To AM9PR04MB8585.eurprd04.prod.outlook.com
+ (2603:10a6:20b:438::13)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR04MB8585:EE_|AM9PR04MB8778:EE_
+X-MS-Office365-Filtering-Correlation-Id: f4c3b229-4756-4d63-628a-08de7a17d629
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|7416014|52116014|376014|366016|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	KjgH9F4RKGrzJMwDWFwXCfVbul+ILGB1iW3tXewH5XnhrR9GcEAB4yQzHm/lh+x0NS7aKafythMCJVYr2WQrmvYNkAOmWyRAfM2JnwZDkvXPZd3SN+mJIXtVAGugkpMcHcRrQ8ZcBdJS4adY+2SHeZvMcsXTqC1Cz3kVUg1uEol6OBUXPFpSUNMxmMggUmUR2yDceKx2NsphORlmSjunsNS+oXPHudryoa3twSbOZvv+0WjuxbCeBc5tZkuKH2Pc17epQmWT81qmunnpsLCf25IbGXGLABefEhb+EJds8sp1+dY3rb5aGfXic0bnpyP9ceucGld9yKmaX+29kNuz/VmsznAopeVGin2ERwEYt+ymMdInxeTfI8+jf7lohqOfYWhCbcSSYnTmtwAbKl5GUncQKL187A5KEhNTj8XeQVLoMmS037xzqokj5g/ygRWFf4POw3KkiQT4ImAcS3dcH8uJrbd1UdFPnOKv5Ygv9G3i3HpVptVIqLol8D7WD/OJ5uzyS1YMtInhdVZ8XixPsT6eAk9mnBNs9CcXLf57e8xb9QmGC4Tl6QECDl0mb2Mne0UK/TAbWzIyZSWAPrGyJWcyRG8m9RqsWg3b0kKn11ruH4sV8kfvq6o/dTwQPeFeRrKCG2AXEWpX/f4xCfwiVhQYYdeYO/RTrit+YWYv3aaPtNvkTLOks5IekhDGRLpHJKXE3FtCJYjiBowNSyRkvSTj1Beej8UEBnxNyrwJMn8=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8585.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(52116014)(376014)(366016)(1800799024)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?PMUBawlHTNAC/3xBbE/zFISgGNLHtdZVv4rh9A5moFleu0Eqg9BpkQUvgJXk?=
+ =?us-ascii?Q?o+IELdXQiE+4J+ky+iIzMbIqg6ck1kNMutg/c58AscsOjybi7sX+YTbc2LeC?=
+ =?us-ascii?Q?kO2RpCPEytVMZ/KuUACeQcI5gkuFCNReLJ6IsbHfGbVsjgOFc9A+u5P+AGI8?=
+ =?us-ascii?Q?r5MmRuRayQ5dUmJXZzaYdjKMpdrlSHed5iyUb+gUSfyRmX8ZvHIS15M6Pykr?=
+ =?us-ascii?Q?IO9WPXn9XklcMbxtXN7hjdPdP0XGKruwW7wTFYwysbGcpZ0LHZT40rRGe7FF?=
+ =?us-ascii?Q?rE5GDhpAa1tc6L0rbHmzry2eaR2bV5iTptpZpTOXN2nMkds8LZjuMn6WLXtt?=
+ =?us-ascii?Q?W9z6tCC8GhJi6hpYSTm14EzHAiXRt12SF7mSidKYOKsyeFGUtpuUAgpN+cSB?=
+ =?us-ascii?Q?vvpSO6WQHmegV1B6AeCVsi3FXyoSZ5U6dskhTtp6OIW45Xk6nfiDad5COMEF?=
+ =?us-ascii?Q?3UtPUUjnCERQJMHv8WdBadtsD+aUBEwKOCcp8+hoCtpcOESyajn0ZPw/mSG/?=
+ =?us-ascii?Q?ajAzg4sfDZeXPz1srzHR3dWuOa4iCCUlWjBmE50Y3QomV6vw8hK5sByH10wD?=
+ =?us-ascii?Q?yYizx2x7/Q1K2Gr4cHUBb/VqU5rJaehoYobzYpmMIyB0eOrRlbXHLvC6NPno?=
+ =?us-ascii?Q?9R5RSXHVtrrDTlcJetFfJ9kunlsL+PtQnQuYKkjOgJr0QsBc0r+GMqRjNE7g?=
+ =?us-ascii?Q?PSDOKf19721GIK3YHahLbRnCdvY9c3YDIT61Ltxg+mZP0adOMC0sOPRp16Yd?=
+ =?us-ascii?Q?gmqHuMhFUQQCz1DNIK++K8X6DDf6ZAYdHzMqUkOgZ2DzdZxVuG9ndzhUF1fx?=
+ =?us-ascii?Q?HKlRfGmmYi83hPgA/MBSACphIcRWWxdQrG/QfzChFbswPeCh1ktIbUs/Bjp8?=
+ =?us-ascii?Q?C5GGHZqbFgnvnP6Ko1VfYlfnQ8KvPw0OfrIUqqyH/xypghyQS7HXCZv/IOzz?=
+ =?us-ascii?Q?LWDW2tMGbb7dgCmLXl+tVUNIsuXgyPHoQInZuyXWgOGmE8iiBUCbbfxVrEne?=
+ =?us-ascii?Q?i4Hf3MXTdt47Al8S9oBv5UX5sEF7EH+b2SrDKRLRF4Ne7vsd9WSp5VRX9sFn?=
+ =?us-ascii?Q?whCCiveenDyDlI3mC8RSYstLIhvlds7kjYI9r1cF/DFHFQrYBLnn6V4Ev0kJ?=
+ =?us-ascii?Q?pbErQUwgjL5kfvw/kR2I19Trpxc9IhFLomvR14plJ82XNUAMuSbKiX4qbJNA?=
+ =?us-ascii?Q?ZqjU9UYkWrS2e0ZA1jwEEdfilW2RWk+73nEfJsuoLL3eRzh9Lrqm9OZ+I0Im?=
+ =?us-ascii?Q?nd1Wr45YRiXLg2xk99qvq033sFjqqSXt6t+LbhB0KQLvFRsGaDgypL1cK4SU?=
+ =?us-ascii?Q?ACNs0240xDmMTIW3LvH4HtegXlFvLASl0XE2S12GdI2nkRski6Zu1H/gevos?=
+ =?us-ascii?Q?aeWHo+IApH8Lb4d1jGFZtZTz9alRS7NC+8uwbe+YzZaAk/ghOuvVEBkpa56I?=
+ =?us-ascii?Q?q16wMutFo/U7YZWgpq+xa8CBjpP6um10/wcGmNACwE1Vi0OxvmwLlyGoygFJ?=
+ =?us-ascii?Q?6DXWFmPYMq2QBGzGGUVMpRuiSJ7w/Ir+ClJvW0Tehuh/RckPox4JhaSuAOc8?=
+ =?us-ascii?Q?xzdDTu/rhJNyNkHvtG38C/7HzMFWoDp60ZRwstjSTTnJ23UJNqLYKLVH+H1A?=
+ =?us-ascii?Q?P0YOjIa8MKA+6FQusPS3X6eo1o0bQNqIeE0jMSvvY9iK+VsBzdMiP9XLDas7?=
+ =?us-ascii?Q?S7Y8g2vswVL95WhIQ5nx+HO5yhKMMdefVA3Z7uCp1rJ9kjnBZgPY3nBMpUKU?=
+ =?us-ascii?Q?c72iyzyBvqbTZOsieK4LhxzuQzBgNq/y1L6kPAVHorUSF7rHotZ6JZb51Jvm?=
+X-MS-Exchange-AntiSpam-MessageData-1: 9aHoSPXB1S7V9A2H1kliwV7ETBg39rsUKms=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4c3b229-4756-4d63-628a-08de7a17d629
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8585.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2026 17:59:53.1166
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4z1xmuOCObrSvaoxNu2cEXDTfbztWiRvwYNA1Z0/9WTrLNwnkRAt/oUqobA6yuc9wgUAAOZSwEzt0XrgVr2REg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8778
 
-Several interrupt controllers have GICs as their interrupt parents, to
-forward SPI interrupts to.  Improve readability by replacing explicit
-and implicit magic zeroes by the GIC_SPI constant from the DT binding
-definitions.
+It appears that libahci.c, ahci.c as well as the ahci_brcm, ahci_ceva
+and ahci_qoriq drivers are using runtime PM operations without including
+<linux/pm_runtime.h>. This header is somehow being indirectly provided
+by <linux/phy/phy.h>, which would like to drop it (none of the functions
+it exports need it).
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 ---
- drivers/irqchip/irq-alpine-msi.c     | 4 +++-
- drivers/irqchip/irq-bcm2712-mip.c    | 4 +++-
- drivers/irqchip/irq-crossbar.c       | 8 +++++---
- drivers/irqchip/irq-gic-v2m.c        | 4 +++-
- drivers/irqchip/irq-gic-v3-mbi.c     | 6 ++++--
- drivers/irqchip/irq-imx-gpcv2.c      | 4 +++-
- drivers/irqchip/irq-meson-gpio.c     | 4 +++-
- drivers/irqchip/irq-mst-intc.c       | 6 ++++--
- drivers/irqchip/irq-mtk-cirq.c       | 4 +++-
- drivers/irqchip/irq-mtk-sysirq.c     | 6 ++++--
- drivers/irqchip/irq-qcom-mpm.c       | 4 +++-
- drivers/irqchip/irq-tegra.c          | 2 +-
- drivers/irqchip/irq-ti-sci-inta.c    | 4 +++-
- drivers/irqchip/irq-ti-sci-intr.c    | 4 +++-
- drivers/irqchip/irq-uniphier-aidet.c | 4 +++-
- drivers/irqchip/qcom-pdc.c           | 4 +++-
- 16 files changed, 51 insertions(+), 21 deletions(-)
+Cc: Damien Le Moal <dlemoal@kernel.org>
+Cc: Niklas Cassel <cassel@kernel.org>
+---
+ drivers/ata/ahci.c       | 1 +
+ drivers/ata/ahci_brcm.c  | 1 +
+ drivers/ata/ahci_ceva.c  | 1 +
+ drivers/ata/ahci_qoriq.c | 1 +
+ drivers/ata/libahci.c    | 1 +
+ 5 files changed, 5 insertions(+)
 
-diff --git a/drivers/irqchip/irq-alpine-msi.c b/drivers/irqchip/irq-alpine-msi.c
-index 6764d64e79500dcb..309b9578ed6de381 100644
---- a/drivers/irqchip/irq-alpine-msi.c
-+++ b/drivers/irqchip/irq-alpine-msi.c
-@@ -26,6 +26,8 @@
- #include <asm/irq.h>
- #include <asm/msi.h>
- 
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
- /* MSIX message address format: local GIC target */
- #define ALPINE_MSIX_SPI_TARGET_CLUSTER0		BIT(16)
- 
-@@ -89,7 +91,7 @@ static int alpine_msix_gic_domain_alloc(struct irq_domain *domain, unsigned int
- 
- 	fwspec.fwnode = domain->parent->fwnode;
- 	fwspec.param_count = 3;
--	fwspec.param[0] = 0;
-+	fwspec.param[0] = GIC_SPI;
- 	fwspec.param[1] = sgi;
- 	fwspec.param[2] = IRQ_TYPE_EDGE_RISING;
- 
-diff --git a/drivers/irqchip/irq-bcm2712-mip.c b/drivers/irqchip/irq-bcm2712-mip.c
-index 06a6ab6270ad36bc..816836f6437c1b26 100644
---- a/drivers/irqchip/irq-bcm2712-mip.c
-+++ b/drivers/irqchip/irq-bcm2712-mip.c
-@@ -13,6 +13,8 @@
- 
- #include <linux/irqchip/irq-msi-lib.h>
- 
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
- #define MIP_INT_RAISE		0x00
- #define MIP_INT_CLEAR		0x10
- #define MIP_INT_CFGL_HOST	0x20
-@@ -99,7 +101,7 @@ static int mip_middle_domain_alloc(struct irq_domain *domain, unsigned int virq,
- 
- 	fwspec.fwnode = domain->parent->fwnode;
- 	fwspec.param_count = 3;
--	fwspec.param[0] = 0;
-+	fwspec.param[0] = GIC_SPI;
- 	fwspec.param[1] = hwirq + mip->msi_base;
- 	fwspec.param[2] = IRQ_TYPE_EDGE_RISING;
- 
-diff --git a/drivers/irqchip/irq-crossbar.c b/drivers/irqchip/irq-crossbar.c
-index cd1134101ace03e3..dc38eed366bf85ea 100644
---- a/drivers/irqchip/irq-crossbar.c
-+++ b/drivers/irqchip/irq-crossbar.c
-@@ -13,6 +13,8 @@
- #include <linux/of_irq.h>
- #include <linux/slab.h>
- 
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
- #define IRQ_FREE	-1
- #define IRQ_RESERVED	-2
- #define IRQ_SKIP	-3
-@@ -95,7 +97,7 @@ static int allocate_gic_irq(struct irq_domain *domain, unsigned virq,
- 
- 	fwspec.fwnode = domain->parent->fwnode;
- 	fwspec.param_count = 3;
--	fwspec.param[0] = 0;	/* SPI */
-+	fwspec.param[0] = GIC_SPI;
- 	fwspec.param[1] = i;
- 	fwspec.param[2] = IRQ_TYPE_LEVEL_HIGH;
- 
-@@ -117,7 +119,7 @@ static int crossbar_domain_alloc(struct irq_domain *d, unsigned int virq,
- 
- 	if (fwspec->param_count != 3)
- 		return -EINVAL;	/* Not GIC compliant */
--	if (fwspec->param[0] != 0)
-+	if (fwspec->param[0] != GIC_SPI)
- 		return -EINVAL;	/* No PPI should point to this domain */
- 
- 	hwirq = fwspec->param[1];
-@@ -175,7 +177,7 @@ static int crossbar_domain_translate(struct irq_domain *d,
- 			return -EINVAL;
- 
- 		/* No PPI should point to this domain */
--		if (fwspec->param[0] != 0)
-+		if (fwspec->param[0] != GIC_SPI)
- 			return -EINVAL;
- 
- 		*hwirq = fwspec->param[1];
-diff --git a/drivers/irqchip/irq-gic-v2m.c b/drivers/irqchip/irq-gic-v2m.c
-index bd85bd344f259e19..17311ad7a494016b 100644
---- a/drivers/irqchip/irq-gic-v2m.c
-+++ b/drivers/irqchip/irq-gic-v2m.c
-@@ -28,6 +28,8 @@
- 
- #include <linux/irqchip/irq-msi-lib.h>
- 
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
- /*
- * MSI_TYPER:
- *     [31:26] Reserved
-@@ -117,7 +119,7 @@ static int gicv2m_irq_gic_domain_alloc(struct irq_domain *domain,
- 	if (is_of_node(domain->parent->fwnode)) {
- 		fwspec.fwnode = domain->parent->fwnode;
- 		fwspec.param_count = 3;
--		fwspec.param[0] = 0;
-+		fwspec.param[0] = GIC_SPI;
- 		fwspec.param[1] = hwirq - 32;
- 		fwspec.param[2] = IRQ_TYPE_EDGE_RISING;
- 	} else if (is_fwnode_irqchip(domain->parent->fwnode)) {
-diff --git a/drivers/irqchip/irq-gic-v3-mbi.c b/drivers/irqchip/irq-gic-v3-mbi.c
-index 62504deb6cd376a4..5a046a92bc52a063 100644
---- a/drivers/irqchip/irq-gic-v3-mbi.c
-+++ b/drivers/irqchip/irq-gic-v3-mbi.c
-@@ -17,9 +17,11 @@
- #include <linux/spinlock.h>
- 
- #include <linux/irqchip/arm-gic-v3.h>
--
- #include <linux/irqchip/irq-msi-lib.h>
- 
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+
- struct mbi_range {
- 	u32			spi_start;
- 	u32			nr_spis;
-@@ -62,7 +64,7 @@ static int mbi_irq_gic_domain_alloc(struct irq_domain *domain,
- 	 */
- 	fwspec.fwnode = domain->parent->fwnode;
- 	fwspec.param_count = 3;
--	fwspec.param[0] = 0;
-+	fwspec.param[0] = GIC_SPI;
- 	fwspec.param[1] = hwirq - 32;
- 	fwspec.param[2] = IRQ_TYPE_EDGE_RISING;
- 
-diff --git a/drivers/irqchip/irq-imx-gpcv2.c b/drivers/irqchip/irq-imx-gpcv2.c
-index 6ea10d3356a7ff86..e269ad794c50af96 100644
---- a/drivers/irqchip/irq-imx-gpcv2.c
-+++ b/drivers/irqchip/irq-imx-gpcv2.c
-@@ -9,6 +9,8 @@
- #include <linux/irqchip.h>
- #include <linux/syscore_ops.h>
- 
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
- #define IMR_NUM			4
- #define GPC_MAX_IRQS            (IMR_NUM * 32)
- 
-@@ -151,7 +153,7 @@ static int imx_gpcv2_domain_translate(struct irq_domain *d,
- 			return -EINVAL;
- 
- 		/* No PPI should point to this domain */
--		if (fwspec->param[0] != 0)
-+		if (fwspec->param[0] != GIC_SPI)
- 			return -EINVAL;
- 
- 		*hwirq = fwspec->param[1];
-diff --git a/drivers/irqchip/irq-meson-gpio.c b/drivers/irqchip/irq-meson-gpio.c
-index f722e9c57e2e40a5..9f5849ef5cbf6c44 100644
---- a/drivers/irqchip/irq-meson-gpio.c
-+++ b/drivers/irqchip/irq-meson-gpio.c
-@@ -16,6 +16,8 @@
+diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
+index 931d0081169b..aa3c4949c4ab 100644
+--- a/drivers/ata/ahci.c
++++ b/drivers/ata/ahci.c
+@@ -26,6 +26,7 @@
+ #include <linux/device.h>
+ #include <linux/dmi.h>
+ #include <linux/gfp.h>
++#include <linux/pm_runtime.h>
+ #include <scsi/scsi_host.h>
+ #include <scsi/scsi_cmnd.h>
+ #include <linux/libata.h>
+diff --git a/drivers/ata/ahci_brcm.c b/drivers/ata/ahci_brcm.c
+index 29be74fedcf0..48460e515722 100644
+--- a/drivers/ata/ahci_brcm.c
++++ b/drivers/ata/ahci_brcm.c
+@@ -16,6 +16,7 @@
+ #include <linux/module.h>
  #include <linux/of.h>
- #include <linux/of_address.h>
- 
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
- #define MAX_NUM_CHANNEL 64
- #define MAX_INPUT_MUX 256
- 
-@@ -488,7 +490,7 @@ static int meson_gpio_irq_allocate_gic_irq(struct irq_domain *domain,
- 
- 	fwspec.fwnode = domain->parent->fwnode;
- 	fwspec.param_count = 3;
--	fwspec.param[0] = 0;	/* SPI */
-+	fwspec.param[0] = GIC_SPI;
- 	fwspec.param[1] = hwirq;
- 	fwspec.param[2] = meson_gpio_irq_type_output(type);
- 
-diff --git a/drivers/irqchip/irq-mst-intc.c b/drivers/irqchip/irq-mst-intc.c
-index b5335f6fd6d6e3f6..ca254b2d8cf0a0b5 100644
---- a/drivers/irqchip/irq-mst-intc.c
-+++ b/drivers/irqchip/irq-mst-intc.c
-@@ -15,6 +15,8 @@
- #include <linux/spinlock.h>
- #include <linux/syscore_ops.h>
- 
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
- #define MST_INTC_MAX_IRQS	64
- 
- #define INTC_MASK		0x0
-@@ -189,7 +191,7 @@ static int mst_intc_domain_translate(struct irq_domain *d,
- 			return -EINVAL;
- 
- 		/* No PPI should point to this domain */
--		if (fwspec->param[0] != 0)
-+		if (fwspec->param[0] != GIC_SPI)
- 			return -EINVAL;
- 
- 		if (fwspec->param[1] >= cd->nr_irqs)
-@@ -216,7 +218,7 @@ static int mst_intc_domain_alloc(struct irq_domain *domain, unsigned int virq,
- 		return -EINVAL;
- 
- 	/* No PPI should point to this domain */
--	if (fwspec->param[0])
-+	if (fwspec->param[0] != GIC_SPI)
- 		return -EINVAL;
- 
- 	hwirq = fwspec->param[1];
-diff --git a/drivers/irqchip/irq-mtk-cirq.c b/drivers/irqchip/irq-mtk-cirq.c
-index 914d1d639fe303b7..00fb50e8ff40fc1f 100644
---- a/drivers/irqchip/irq-mtk-cirq.c
-+++ b/drivers/irqchip/irq-mtk-cirq.c
-@@ -15,6 +15,8 @@
- #include <linux/slab.h>
- #include <linux/syscore_ops.h>
- 
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
- enum mtk_cirq_regoffs_index {
- 	CIRQ_STA,
- 	CIRQ_ACK,
-@@ -151,7 +153,7 @@ static int mtk_cirq_domain_translate(struct irq_domain *d,
- 			return -EINVAL;
- 
- 		/* No PPI should point to this domain */
--		if (fwspec->param[0] != 0)
-+		if (fwspec->param[0] != GIC_SPI)
- 			return -EINVAL;
- 
- 		/* cirq support irq number check */
-diff --git a/drivers/irqchip/irq-mtk-sysirq.c b/drivers/irqchip/irq-mtk-sysirq.c
-index 50f88293b4ccf3fe..8259c37710137297 100644
---- a/drivers/irqchip/irq-mtk-sysirq.c
-+++ b/drivers/irqchip/irq-mtk-sysirq.c
-@@ -14,6 +14,8 @@
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- 
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
- struct mtk_sysirq_chip_data {
- 	raw_spinlock_t lock;
- 	u32 nr_intpol_bases;
-@@ -78,7 +80,7 @@ static int mtk_sysirq_domain_translate(struct irq_domain *d,
- 			return -EINVAL;
- 
- 		/* No PPI should point to this domain */
--		if (fwspec->param[0] != 0)
-+		if (fwspec->param[0] != GIC_SPI)
- 			return -EINVAL;
- 
- 		*hwirq = fwspec->param[1];
-@@ -101,7 +103,7 @@ static int mtk_sysirq_domain_alloc(struct irq_domain *domain, unsigned int virq,
- 		return -EINVAL;
- 
- 	/* sysirq doesn't support PPI */
--	if (fwspec->param[0])
-+	if (fwspec->param[0] != GIC_SPI)
- 		return -EINVAL;
- 
- 	hwirq = fwspec->param[1];
-diff --git a/drivers/irqchip/irq-qcom-mpm.c b/drivers/irqchip/irq-qcom-mpm.c
-index 83f31ea657b74a77..425f7a8914452d12 100644
---- a/drivers/irqchip/irq-qcom-mpm.c
-+++ b/drivers/irqchip/irq-qcom-mpm.c
-@@ -22,6 +22,8 @@
- #include <linux/soc/qcom/irq.h>
- #include <linux/spinlock.h>
- 
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
- /*
-  * This is the driver for Qualcomm MPM (MSM Power Manager) interrupt controller,
-  * which is commonly found on Qualcomm SoCs built on the RPM architecture.
-@@ -247,7 +249,7 @@ static int qcom_mpm_alloc(struct irq_domain *domain, unsigned int virq,
- 
- 	parent_fwspec.fwnode = domain->parent->fwnode;
- 	parent_fwspec.param_count = 3;
--	parent_fwspec.param[0] = 0;
-+	parent_fwspec.param[0] = GIC_SPI;
- 	parent_fwspec.param[1] = map->hwirq;
- 	parent_fwspec.param[2] = type;
- 
-diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
-index b449e9cc4034a372..f141f52862796635 100644
---- a/drivers/irqchip/irq-tegra.c
-+++ b/drivers/irqchip/irq-tegra.c
-@@ -226,7 +226,7 @@ static int tegra_ictlr_domain_translate(struct irq_domain *d,
- 			return -EINVAL;
- 
- 		/* No PPI should point to this domain */
--		if (fwspec->param[0] != 0)
-+		if (fwspec->param[0] != GIC_SPI)
- 			return -EINVAL;
- 
- 		*hwirq = fwspec->param[1];
-diff --git a/drivers/irqchip/irq-ti-sci-inta.c b/drivers/irqchip/irq-ti-sci-inta.c
-index f1eb2f92f0ca10fd..d2135b304c87adf6 100644
---- a/drivers/irqchip/irq-ti-sci-inta.c
-+++ b/drivers/irqchip/irq-ti-sci-inta.c
-@@ -23,6 +23,8 @@
- #include <linux/soc/ti/ti_sci_protocol.h>
- #include <asm-generic/msi.h>
- 
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
- #define TI_SCI_DEV_ID_MASK	0xffff
- #define TI_SCI_DEV_ID_SHIFT	16
- #define TI_SCI_IRQ_ID_MASK	0xffff
-@@ -238,7 +240,7 @@ static struct ti_sci_inta_vint_desc *ti_sci_inta_alloc_parent_irq(struct irq_dom
- 	if (of_device_is_compatible(parent_node, "arm,gic-v3")) {
- 		/* Parent is GIC */
- 		parent_fwspec.param_count = 3;
--		parent_fwspec.param[0] = 0;
-+		parent_fwspec.param[0] = GIC_SPI;
- 		parent_fwspec.param[1] = p_hwirq - 32;
- 		parent_fwspec.param[2] = IRQ_TYPE_LEVEL_HIGH;
- 	} else {
-diff --git a/drivers/irqchip/irq-ti-sci-intr.c b/drivers/irqchip/irq-ti-sci-intr.c
-index 0ea17040e934fd0d..8bcc410c3f5aa3ac 100644
---- a/drivers/irqchip/irq-ti-sci-intr.c
-+++ b/drivers/irqchip/irq-ti-sci-intr.c
-@@ -17,6 +17,8 @@
  #include <linux/platform_device.h>
- #include <linux/soc/ti/ti_sci_protocol.h>
++#include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+ #include <linux/string.h>
  
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
- /**
-  * struct ti_sci_intr_irq_domain - Structure representing a TISCI based
-  *				   Interrupt Router IRQ domain.
-@@ -164,7 +166,7 @@ static int ti_sci_intr_alloc_parent_irq(struct irq_domain *domain, unsigned int
- 	if (of_device_is_compatible(parent_node, "arm,gic-v3")) {
- 		/* Parent is GIC */
- 		fwspec.param_count = 3;
--		fwspec.param[0] = 0;	/* SPI */
-+		fwspec.param[0] = GIC_SPI;
- 		fwspec.param[1] = p_hwirq - 32; /* SPI offset */
- 		fwspec.param[2] = hwirq_type;
- 	} else {
-diff --git a/drivers/irqchip/irq-uniphier-aidet.c b/drivers/irqchip/irq-uniphier-aidet.c
-index 6005c2d28dd9389a..bef7978c3d7cd76e 100644
---- a/drivers/irqchip/irq-uniphier-aidet.c
-+++ b/drivers/irqchip/irq-uniphier-aidet.c
-@@ -16,6 +16,8 @@
+diff --git a/drivers/ata/ahci_ceva.c b/drivers/ata/ahci_ceva.c
+index 2d6a08c23d6a..3938bf378341 100644
+--- a/drivers/ata/ahci_ceva.c
++++ b/drivers/ata/ahci_ceva.c
+@@ -12,6 +12,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
  #include <linux/platform_device.h>
- #include <linux/spinlock.h>
++#include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+ #include "ahci.h"
  
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
- #define UNIPHIER_AIDET_NR_IRQS		256
+diff --git a/drivers/ata/ahci_qoriq.c b/drivers/ata/ahci_qoriq.c
+index 0dec1a17e5b1..409152bfefb6 100644
+--- a/drivers/ata/ahci_qoriq.c
++++ b/drivers/ata/ahci_qoriq.c
+@@ -14,6 +14,7 @@
+ #include <linux/device.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/libata.h>
+ #include "ahci.h"
  
- #define UNIPHIER_AIDET_DETCONF		0x04	/* inverter register base */
-@@ -146,7 +148,7 @@ static int uniphier_aidet_domain_alloc(struct irq_domain *domain,
- 	/* parent is GIC */
- 	parent_fwspec.fwnode = domain->parent->fwnode;
- 	parent_fwspec.param_count = 3;
--	parent_fwspec.param[0] = 0;		/* SPI */
-+	parent_fwspec.param[0] = GIC_SPI;
- 	parent_fwspec.param[1] = hwirq;
- 	parent_fwspec.param[2] = type;
- 
-diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
-index 32b77fa93f730416..5340fc9abaec1622 100644
---- a/drivers/irqchip/qcom-pdc.c
-+++ b/drivers/irqchip/qcom-pdc.c
-@@ -20,6 +20,8 @@
- #include <linux/slab.h>
- #include <linux/types.h>
- 
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
- #define PDC_MAX_GPIO_IRQS	256
- #define PDC_DRV_OFFSET		0x10000
- 
-@@ -295,7 +297,7 @@ static int qcom_pdc_alloc(struct irq_domain *domain, unsigned int virq,
- 
- 	parent_fwspec.fwnode      = domain->parent->fwnode;
- 	parent_fwspec.param_count = 3;
--	parent_fwspec.param[0]    = 0;
-+	parent_fwspec.param[0]    = GIC_SPI;
- 	parent_fwspec.param[1]    = pin_to_hwirq(region, hwirq);
- 	parent_fwspec.param[2]    = type;
+diff --git a/drivers/ata/libahci.c b/drivers/ata/libahci.c
+index c79abdfcd7a9..e0de4703a4f2 100644
+--- a/drivers/ata/libahci.c
++++ b/drivers/ata/libahci.c
+@@ -30,6 +30,7 @@
+ #include <scsi/scsi_cmnd.h>
+ #include <linux/libata.h>
+ #include <linux/pci.h>
++#include <linux/pm_runtime.h>
+ #include "ahci.h"
+ #include "libata.h"
  
 -- 
 2.43.0
