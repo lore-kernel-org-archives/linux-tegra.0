@@ -1,237 +1,296 @@
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010015.outbound.protection.outlook.com [52.101.193.15])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7971526290
-	for <linux-tegra@vger.kernel.org>; Wed,  4 Mar 2026 02:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772593190; cv=fail; b=qwdil3WPO6KmFK2hVxUP/DaA3gZrdHLHKWfgschDmM/gCFtEwFQ1JrT1ACgo480mBI0wW5PHlp77y84Lb1G2Bx1zxb6MGf2cT+A3yw6awIi5keV29exwyaVQuP0jUMH9PSsSPK2Im0OquQdfMZXaAKzxGUGLRA4X/uiOwsLaBH0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772593190; c=relaxed/simple;
-	bh=/P+4+PVi3mPeaIDXKBv6G0RJLpTg8OQddEDZEZGVaMw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EhvRTB4aVFPMiWL6cggzAfV8qLyMTRPQWFyo4VRSZiQUfDKHlTd3Jy223TDKlbIEVbQ2fVqyRU4Z89ZDXFLmrgpZ3gnmaNrmZ0wTss+YOnIW1qrLcWqdH+Iqhovm8/T5+5TzThWH8Xw3EH6LN7XpBpHcsKHruHw8TcVBH2KmE1M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nsA+XHnw; arc=fail smtp.client-ip=52.101.193.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAEA34D90F
+	for <linux-tegra@vger.kernel.org>; Wed,  4 Mar 2026 03:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772596702; cv=none; b=gVl+BIZbApbvbFi2UTMC3ic63+D1oS4nCXXwgzd2blpngOOoImYm7aNiAKcpwP8XR0jlld5zFI/PNL2/VVkP3+Kn1dtExw/XyOc8kKVNEpmSaBKzH/+o0G0SCU7wHcoqHgG+xD9AlR9zqZWv0awGdonpP6491ZjrdJCWBaltAbs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772596702; c=relaxed/simple;
+	bh=q8yq5LSEk/ZoymgNO9/6kFm8wo0IZf+GZq5IdkICKg0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IfqjZseJhwoRIl1VGMJTHXk1waSmYdUJ1ka6pGOp4G9/pYCk/lkLczWzs626JNZcEgXFeWaW7ruZlTLAzAHATS5q2iV+ZF1Qb7bNmgq+zc9rSOper0mRp206LCDVK6/uN6KQvE0B99I0DtbNStuIZW2MVSzJApzSzTv6VxAHKTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TYkqo2Iw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nsA+XHnw"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Sog6f1hjkE3FKZR6obvQp9DT8CaCNKDpT/11+SuW0TWqBkNwk3cpTeNTr48rVI7XB9KJtsP+dJonfweSa6K+7XOiSy1o1gTPJBBhKglGC/u4Gkt4xPpgivt/wQGQN6eJIFD+K0W+8OruH7Q7WG+u0aL3U6GOVO/3x66ECpDGpJoAvn7zzQYrzpjiWieHjI+y189fzZgg1y4Aa/vPYlocqeC2V94eigLBtx8EKMaqxR4V/SKfnESZ9/Pa7chpJE/R7ya3CHKQO0n9kgmjHflVx5EDGWcuaGam6w1PjL0zWdeFCVtSBtqp57+v7O++KAK97ghwCIlfMS3UYkdjZNtKPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HS5kS800H8DaIKevz+ZAg/34dTSOlniRxtAJWlF3NGw=;
- b=l9siGKvHZNv4LElS1o7roLI2lSZj6PXd2XHZUZRB35Gx3HRbsazsvn2sdxoXdNzoaHlpAgwN5WrZrC/8Q0tsX87MIw9+FQQUHY9XV79S76v49b2cTa7xSzwjAAYSvnGH350oviToVBFxYEd0FNGqxwaRFJNEMvzB3FjW4nzXSSpM+uLrXaRWaBPRFGkErTr6cpyd99osPzExKfy4mKfCAJm/2hC5FOh6C3PQ+hqZRo+P2UO5c51KCKC8yybBKRSPyNnLSAzd8urugx0QyL3BsJrBZkRThDmeM40xoBZVqeak2wDehL9vPCpjQ9gD3dFZNylj4tcQ38M4XKdeGFpd7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HS5kS800H8DaIKevz+ZAg/34dTSOlniRxtAJWlF3NGw=;
- b=nsA+XHnwm/fN0ni7x7gkC0ZWqb94sIYAgW/n1lw84J6GtZqmZ/flkNcKoMfzZf6wv3kRj4EhsBbtUQWHzKHKA0jsKgpoxC1wf82hc90gpZITgm2TGMRnhDR12a8BEq0nQzGP1fY9FNiNhjuNggHGZiMbMqfvvFEV5XYAUi/84/hExQgMqMuue0Qy/O+tzvvuCZzMoRkZWXnKwrfWBRWIYN3ka9F6DVxseQItPsqLWl0SwuzMJ8wg3VfNYD8gZ1xfySW3jrELIHbD0bt/PJNzzPxs2TjYbz4Kn8Egx5Jiv8xAv3E8lok5dWKsdOCwhERnVvqCPVecd9xNeToXD76LoA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by CH3PR12MB8581.namprd12.prod.outlook.com (2603:10b6:610:15d::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.22; Wed, 4 Mar
- 2026 02:59:45 +0000
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017%4]) with mapi id 15.20.9654.022; Wed, 4 Mar 2026
- 02:59:45 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: dri-devel@lists.freedesktop.org, Randy Dunlap <rdunlap@infradead.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>,
- Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Subject:
- Re: [PATCH v2] drm/tegra: tegra_drm.h: fix all uapi kernel-doc warnings
-Date: Wed, 04 Mar 2026 11:59:41 +0900
-Message-ID: <5144736.e9J7NaK4W3@senjougahara>
-In-Reply-To: <20260304014152.482104-1-rdunlap@infradead.org>
-References: <20260304014152.482104-1-rdunlap@infradead.org>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TY4PR01CA0116.jpnprd01.prod.outlook.com
- (2603:1096:405:379::16) To SJ2PR12MB9161.namprd12.prod.outlook.com
- (2603:10b6:a03:566::20)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TYkqo2Iw"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1772596698;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=65n2E7t33ugPpdbZSVuYeTo0xW6xYI4B9IPN+ub45Eg=;
+	b=TYkqo2IwacOPZbtUahaH0kJT9OY9Ole/PWdzImgsQum+V9OLk1BdMrUrUdT/WSOjCFRTsS
+	q/RjEj5AUvvn88qCWOcGlBXrGd1tbABq9La6JSPxDaGt4W/5C515je5tLrio1yu4Xb5Dyu
+	g0lPm5H/tsRB6OfN9T0jzzoLtU8vduU=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-345-h1VxkWQvP8aBfSh1Bob3cA-1; Tue,
+ 03 Mar 2026 22:58:15 -0500
+X-MC-Unique: h1VxkWQvP8aBfSh1Bob3cA-1
+X-Mimecast-MFC-AGG-ID: h1VxkWQvP8aBfSh1Bob3cA_1772596693
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4B6411800464;
+	Wed,  4 Mar 2026 03:58:12 +0000 (UTC)
+Received: from [10.22.64.108] (unknown [10.22.64.108])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D668E1958DC2;
+	Wed,  4 Mar 2026 03:58:07 +0000 (UTC)
+Message-ID: <8ad885a8-be65-4d1b-b8c4-dabe50fe3788@redhat.com>
+Date: Tue, 3 Mar 2026 22:58:07 -0500
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|CH3PR12MB8581:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9067efc2-6182-4e4c-11dd-08de799a16e5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	hcEmdURDYZLp+BnVj/6i/3SEX7YguBVfCPA/kUL9SwrP8zlktjHapD9SuxuXFtFvk5Awp3WQF1tzd2Qc+sGG3ckTwgLPQJLB9CfnKwHtUcycAX+9/iAopc0UeuqRydASk7OCD2Zhf8MPfFrGHzY3dezYGi32FDKVHUouxvlz7oYnw0STN1qloYkeozGJytcG1prYxIBsQSJsuw9j6Argr8yCchND7Om1d8Jv6CcS8/IL1uFNkw8ppR+I5d7B1OJYuBzZXq/Gxketz6QtXm7fQmS/ZPeBq3bvRlMwnrLV1iEHXxO7LlNwDx2UoX1cOdSrVmDM9WnoTgYQujHXIE+jFBvErkhY2vDhjUyxMEDI3poQ1sBO4aeu341/9YOQfkuFbLIh5Kfk4nlMO1VFIfas/0O4V9fmBxaA1BumwtRKU5LF8WMOzzr2y1Ujurpp+j6u1ts5iIZzzMFu/JXLPlzM+SxEGa0XwvNI0vdQvULpvj+ppIMXbq8PKU+plKpZJa2usl9mRf83P73QkeSXRdIwMQNA5TO7tiTjAyVicNTOqmd7fj96vUbML4okzoHh+lSacBM9RhiAM1r3wovlYAzeH+AC+jyYOb4ZbJ+1LZ6CUMlgzGmFer0gQ6MnMXc/IYqGVE/lnfJeXIlUkGN85rpWwNUaTjbEU+Re05rr9wMzJ9WSzxo1ti8IcdweedQflswlK6T86lYu4rtBHQ//oR79lTFyXaCa6rA+9UDXZEBz/TU=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Z1RMVTVESTlDNlNvb3RuTk9VNzNRTUZtMGZzdkx6RVExUDlJVDhvU2RFcUdR?=
- =?utf-8?B?bGxwVnJKaEVwY2VLbWNwbC9iSzcxR2pZUDAyM3RsSWx3alhwemhTbWlzTWow?=
- =?utf-8?B?M1d2TEUzamtDaW1pT0w1VlMyNS9hMEJqdWNBYmMrNW81TEFLNk1uWjVrZ2Va?=
- =?utf-8?B?dkoxTDdGem14QkxuTDZYRzlRTUZzMHlxdy8rTEtJU3htM0cwbEZZSFZTZ3NV?=
- =?utf-8?B?dWt1S21qNEt6MEI5V1RxcUY5aEZTcUNuNVloc2szc0FLK21tS2VRb3VRTjVa?=
- =?utf-8?B?dlM1TUNRNnVuM3RFcEJxdHhjblVzN3NuMlp5UTVWeDFYdXlHM0M5ZEIyUGVX?=
- =?utf-8?B?ODVGYmhZdC81alhvVHdDeVcxUUsvR3N0WDk1ektSVDIzUkUycjVKQ0FMMk4r?=
- =?utf-8?B?T2xrb1c0Mmo0T3NCbDdNTkVQdDBmSjFEQlQrNlRUdzBPejJXNER4dFFqbUxz?=
- =?utf-8?B?SE9sbW1RQTdoZ2VLdmVBS2h1aTJvdmErdTJ3UWQrVHZFWnZWaUp1b1phVXZY?=
- =?utf-8?B?YVVoSnk5dk54bE5XSHNpWU92V1B4cDhqVDdzZkk3T0JaK2s3S3pqUFRQKytX?=
- =?utf-8?B?dS9GSnBUUVFVT1h0OWJIRENLVUR1MlNJdldjOE95NFBETTcxVGl4NXJ5TVBz?=
- =?utf-8?B?TklCNlVkbjZLdW9XNUFoYjNjMlAvWmsreFp3WFh5MmxjcENGR0RQRWVrczBI?=
- =?utf-8?B?Tm9scXFWb0J0M3VFK3o4aGIrOXJVWHc4djR6THFJYUVLVzFxaGRlQ3lFa0dE?=
- =?utf-8?B?Q0dCRWhWTXJORUJHdlJGSFgzNVNJckRJTUk0K05yRFMweE9wYk4rdDdZM0Fa?=
- =?utf-8?B?K0doM1NvVm8wdUNlNW1xS0dQT3FoUzkxSGEzS045ZWM4dm1aU0lkMEIwSmdO?=
- =?utf-8?B?VDFLRVA3ZTkzOG96NmhwakpXMFZ3TlpybTJ4K0wwa3RLS3I0cDJXcWlwL3Z5?=
- =?utf-8?B?YU15eUVMdXdLeFdJaDJud2xVcHFGK0JBYVNoQXVyUkt1MlJxL1o1dUcyQkVa?=
- =?utf-8?B?OUxPT1l1bGIyUDRPeUtKcHdGcEhXbnFZQzNYUGllU3A1Q1ZpVEF5T3hGeUtG?=
- =?utf-8?B?S0lyMHk3SEdGT2h3S1BraWVkejVteVZwUHBEcmJPWHZoQkdzZzFqSDNvcHdx?=
- =?utf-8?B?ekpmb1Iwc2NWQTdFWTlHWUtmY2U3YUo2dzJxTUdRU1YvMjBpcmFOcTVpUjdN?=
- =?utf-8?B?NUdKZDhWd3dWNkhZR2FXUlB0ZW9wVUhuczRxd0NhWnZ1cDQzamJReFZCekRy?=
- =?utf-8?B?YWZPSFMvM0gvbml2c080TC9FUFNVWFB4OFdXcHZUOFgrT0wwakZtdE9WL2xl?=
- =?utf-8?B?Ykp4ejUwbThWSUM0QTI2dnRhSklja29YVy91TFpnS0NLNzArSVoxQWtuZjRy?=
- =?utf-8?B?YW1zQTIreFV6bVZFTlU1VkpkN2o0YXFWMStaMFM2SEwwenlXWnk0QmdyTENH?=
- =?utf-8?B?MnhjeitNcXl3dTFjVkpMQy9sdFdBU0QrUTNHK0pDcnU0RzdZTERORkZHdE1m?=
- =?utf-8?B?K0IzSUwwc0ZVNG5jQmZ1azNsRTgyTzcyckhXWXdlUjNudGVFL1lQeTVxZ1ow?=
- =?utf-8?B?cjdlY3RSQ3ZSZHVkeGVkay9vdWEyajUvZUw1WHljZHlqZnA1elhuUUtDd2Nu?=
- =?utf-8?B?Q1BKRXVEM3MrVXdvbjN3Z3V2R0VTdDNES0NaRHdEaFF0bFh0b0lKQUh4TzRz?=
- =?utf-8?B?SlJmbTV1T0N1alRrSzlCbFZwdTRMdnIzMnU4VEVwMzJyTndybkNkMjdaMExn?=
- =?utf-8?B?ekprSnV3N3RXa000aXg0UVl6WDEybHdFcU0zR01OWXJvaUNDVHpISmp0Q2VY?=
- =?utf-8?B?UUdwL05nY2M2dFJ2NWN1ZUZkTFZiVG13dURKN2QwTDZYMFNyayt0YjdFc3dl?=
- =?utf-8?B?Wi9sRDh6Q1VHUkw4S1lqZjhrODZYbnFoR0xKY2dEcEVxMW1Oay95YWFudkw5?=
- =?utf-8?B?T3JTTWRFeFdrcldxMHdCMW5lbmZzcnJLcGpJSGs3Uy9kVkN4dVg3ZnZrQmp1?=
- =?utf-8?B?RkpjaGFZRjlhcnQyTUFnZTRlZmNWbTFvbXUvL3Jvck9VV3BNWC82dDhUV1B0?=
- =?utf-8?B?RU9LZlJyME0rV1RocG40UzhoZms5bWJEajEwYVZhcDgrRlFydEZ2SWNKMEZz?=
- =?utf-8?B?YWtYMklqazFBMmdqUU41SVJ3OWJhTHR3OE5PRlNiVmMyUzdMeE9FSzdWOXBY?=
- =?utf-8?B?dnpaS08wc3lVV29JU2dTelJCMnpJSEpBWWp2NDR6dkh0V1dEZUcrdXhFNzdJ?=
- =?utf-8?B?YU5PaXQvaDZRZDUydmxpSC9OUkYvT1NlMGdRYlVZME03cDVSVjRPa0M1UUtx?=
- =?utf-8?B?T2pBMWtBYVRpVCtnSTlmazJXM0VKWjkzQUszY3hTemFNd0l2Nm81Mll3YWRU?=
- =?utf-8?Q?QWnBM0sMnTW2ZuK8xKL91HFsld0WgVBV5aQRSR7do2FkA?=
-X-MS-Exchange-AntiSpam-MessageData-1: I3UjJqb2+u90hQ==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9067efc2-6182-4e4c-11dd-08de799a16e5
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2026 02:59:45.1788
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8HcT7PXXE0+DgZBqFHebqTtHRlWmi7+KugQr+eqi2EPgm081E37Ns0kSVoou56H+1nNbMiY3RhqTjWEbheBcCA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8581
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 7/8] cgroup/cpuset: Defer housekeeping_update() calls
+ from CPU hotplug to workqueue
+To: Jon Hunter <jonathanh@nvidia.com>,
+ Chen Ridong <chenridong@huaweicloud.com>, Tejun Heo <tj@kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Shuah Khan <shuah@kernel.org>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20260221185418.29319-1-longman@redhat.com>
+ <20260221185418.29319-8-longman@redhat.com>
+ <1a89aceb-48db-4edd-a730-b445e41221fe@nvidia.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <1a89aceb-48db-4edd-a730-b445e41221fe@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wednesday, March 4, 2026 10:41=E2=80=AFAM Randy Dunlap wrote:
-> Add 2 struct member descriptions and convert #define macro constants
-> comments to kernel-doc comments to eliminate all kernel-doc warnings:
->=20
-> Warning: include/uapi/drm/tegra_drm.h:353 struct member 'cmdbuf' not
->  described in 'drm_tegra_reloc'
-> Warning: include/uapi/drm/tegra_drm.h:353 struct member 'target' not
->  described in 'drm_tegra_reloc'
->=20
-> Warning: include/uapi/drm/tegra_drm.h:780 This comment starts with '/**',
->  but isn't a kernel-doc comment.
->  * Specify that bit 39 of the patched-in address should be set to switch
-> Warning: include/uapi/drm/tegra_drm.h:832 This comment starts with '/**',
->  but isn't a kernel-doc comment.
->  * Execute `words` words of Host1x opcodes specified in the
->  `gather_data_ptr`
-> Warning: include/uapi/drm/tegra_drm.h:837 This comment starts with '/**',
->  but isn't a kernel-doc comment.
->  * Wait for a syncpoint to reach a value before continuing with further
-> Warning: include/uapi/drm/tegra_drm.h:842 This comment starts with '/**',
->  but isn't a kernel-doc comment.
->  * Wait for a syncpoint to reach a value before continuing with further
->=20
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> ---
-> v2: add kernel-doc comments for #define constants (thanks, Mikko)
->=20
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Mikko Perttunen <mperttunen@nvidia.com>
-> Cc: linux-tegra@vger.kernel.org
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Simona Vetter <simona@ffwll.ch>
->=20
->  include/uapi/drm/tegra_drm.h |   16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->=20
-> --- linux-next-20260303.orig/include/uapi/drm/tegra_drm.h
-> +++ linux-next-20260303/include/uapi/drm/tegra_drm.h
-> @@ -304,6 +304,7 @@ struct drm_tegra_cmdbuf {
->   * struct drm_tegra_reloc - GEM object relocation structure
->   */
->  struct drm_tegra_reloc {
-> +	/** @cmdbuf: cmd information */
->  	struct {
->  		/**
->  		 * @cmdbuf.handle:
-> @@ -321,6 +322,7 @@ struct drm_tegra_reloc {
->  		 */
->  		__u32 offset;
->  	} cmdbuf;
-> +	/** @target: relocate target information */
->  	struct {
->  		/**
->  		 * @target.handle:
-> @@ -778,6 +780,9 @@ struct drm_tegra_channel_unmap {
->  /* Submission */
->=20
->  /**
-> + * define DRM_TEGRA_SUBMIT_RELOC_SECTOR_LAYOUT - \
-> + *    Select sector layout swizzling for in-memory buffers.
-> + *
->   * Specify that bit 39 of the patched-in address should be set to switch
->   * swizzling between Tegra and non-Tegra sector layout on systems that
-> store * surfaces in system memory in non-Tegra sector layout.
-> @@ -830,16 +835,27 @@ struct drm_tegra_submit_buf {
->  };
->=20
->  /**
-> + * define DRM_TEGRA_SUBMIT_CMD_GATHER_UPTR - \
-> + *    Execute Host1x opcodes from user pointer.
-> + *
->   * Execute `words` words of Host1x opcodes specified in the
-> `gather_data_ptr` * buffer. Each GATHER_UPTR command uses successive word=
-s
-> from the buffer. */
->  #define DRM_TEGRA_SUBMIT_CMD_GATHER_UPTR		0
-> +
->  /**
-> + * define DRM_TEGRA_SUBMIT_CMD_WAIT_SYNCPT - \
-> + *    Wait for syncpoint (absolute).
-> + *
->   * Wait for a syncpoint to reach a value before continuing with further
->   * commands.
->   */
->  #define DRM_TEGRA_SUBMIT_CMD_WAIT_SYNCPT		1
-> +
->  /**
-> + * define DRM_TEGRA_SUBMIT_CMD_WAIT_SYNCPT_RELATIVE - \
-> + *    Wait for syncpoint (relative).
-> + *
->   * Wait for a syncpoint to reach a value before continuing with further
->   * commands. The threshold is calculated relative to the start of the jo=
-b.
->   */
+On 3/3/26 10:18 AM, Jon Hunter wrote:
+> Hi Waiman,
+>
+> On 21/02/2026 18:54, Waiman Long wrote:
+>> The cpuset_handle_hotplug() may need to invoke housekeeping_update(),
+>> for instance, when an isolated partition is invalidated because its
+>> last active CPU has been put offline.
+>>
+>> As we are going to enable dynamic update to the nozh_full housekeeping
+>> cpumask (HK_TYPE_KERNEL_NOISE) soon with the help of CPU hotplug,
+>> allowing the CPU hotplug path to call into housekeeping_update() 
+>> directly
+>> from update_isolation_cpumasks() will likely cause deadlock. So we
+>> have to defer any call to housekeeping_update() after the CPU hotplug
+>> operation has finished. This is now done via the workqueue where
+>> the update_hk_sched_domains() function will be invoked via the
+>> hk_sd_workfn().
+>>
+>> An concurrent cpuset control file write may have executed the required
+>> update_hk_sched_domains() function before the work function is 
+>> called. So
+>> the work function call may become a no-op when it is invoked.
+>>
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+>> ---
+>>   kernel/cgroup/cpuset.c                        | 31 ++++++++++++++++---
+>>   .../selftests/cgroup/test_cpuset_prs.sh       | 11 ++++++-
+>>   2 files changed, 36 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>> index 3d0d18bf182f..2c80bfc30bbc 100644
+>> --- a/kernel/cgroup/cpuset.c
+>> +++ b/kernel/cgroup/cpuset.c
+>> @@ -1323,6 +1323,16 @@ static void update_hk_sched_domains(void)
+>>           rebuild_sched_domains_locked();
+>>   }
+>>   +/*
+>> + * Work function to invoke update_hk_sched_domains()
+>> + */
+>> +static void hk_sd_workfn(struct work_struct *work)
+>> +{
+>> +    cpuset_full_lock();
+>> +    update_hk_sched_domains();
+>> +    cpuset_full_unlock();
+>> +}
+>> +
+>>   /**
+>>    * rm_siblings_excl_cpus - Remove exclusive CPUs that are used by 
+>> sibling cpusets
+>>    * @parent: Parent cpuset containing all siblings
+>> @@ -3795,6 +3805,7 @@ static void cpuset_hotplug_update_tasks(struct 
+>> cpuset *cs, struct tmpmasks *tmp)
+>>    */
+>>   static void cpuset_handle_hotplug(void)
+>>   {
+>> +    static DECLARE_WORK(hk_sd_work, hk_sd_workfn);
+>>       static cpumask_t new_cpus;
+>>       static nodemask_t new_mems;
+>>       bool cpus_updated, mems_updated;
+>> @@ -3877,11 +3888,21 @@ static void cpuset_handle_hotplug(void)
+>>       }
+>>     -    if (update_housekeeping || force_sd_rebuild) {
+>> -        mutex_lock(&cpuset_mutex);
+>> -        update_hk_sched_domains();
+>> -        mutex_unlock(&cpuset_mutex);
+>> -    }
+>> +    /*
+>> +     * Queue a work to call housekeeping_update() & 
+>> rebuild_sched_domains()
+>> +     * There will be a slight delay before the HK_TYPE_DOMAIN 
+>> housekeeping
+>> +     * cpumask can correctly reflect what is in isolated_cpus.
+>> +     *
+>> +     * We rely on WORK_STRUCT_PENDING_BIT to not requeue a work item 
+>> that
+>> +     * is still pending. Before the pending bit is cleared, the work 
+>> data
+>> +     * is copied out and work item dequeued. So it is possible to queue
+>> +     * the work again before the hk_sd_workfn() is invoked to 
+>> process the
+>> +     * previously queued work. Since hk_sd_workfn() doesn't use the 
+>> work
+>> +     * item at all, this is not a problem.
+>> +     */
+>> +    if (update_housekeeping || force_sd_rebuild)
+>> +        queue_work(system_unbound_wq, &hk_sd_work);
+>> +
+>>       free_tmpmasks(ptmp);
+>>   }
+>>   diff --git a/tools/testing/selftests/cgroup/test_cpuset_prs.sh 
+>> b/tools/testing/selftests/cgroup/test_cpuset_prs.sh
+>> index 0c5db118f2d1..dc2dff361ec6 100755
+>> --- a/tools/testing/selftests/cgroup/test_cpuset_prs.sh
+>> +++ b/tools/testing/selftests/cgroup/test_cpuset_prs.sh
+>> @@ -246,6 +246,9 @@ TEST_MATRIX=(
+>>       "  C2-3:P1  C3:P1   .      .     O3=0    .      . .     0 
+>> A1:2|A2: A1:P1|A2:P1"
+>>       "  C2-3:P1  C3:P1   .      .    T:O2=0   .      . .     0 
+>> A1:3|A2:3 A1:P1|A2:P-1"
+>>       "  C2-3:P1  C3:P1   .      .      .    T:O3=0   . .     0 
+>> A1:2|A2:2 A1:P1|A2:P-1"
+>> +    "  C2-3:P1  C3:P2   .      .    T:O2=0   .      . .     0 
+>> A1:3|A2:3 A1:P1|A2:P-2"
+>> +    "  C1-3:P1  C3:P2   .      .      .    T:O3=0   . .     0 
+>> A1:1-2|A2:1-2 A1:P1|A2:P-2 3|"
+>> +    "  C1-3:P1  C3:P2   .      .      .    T:O3=0  O3=1 .     0 
+>> A1:1-2|A2:3 A1:P1|A2:P2  3"
+>>       "$SETUP_A123_PARTITIONS    .     O1=0    .      . .     0 
+>> A1:|A2:2|A3:3 A1:P1|A2:P1|A3:P1"
+>>       "$SETUP_A123_PARTITIONS    .     O2=0    .      . .     0 
+>> A1:1|A2:|A3:3 A1:P1|A2:P1|A3:P1"
+>>       "$SETUP_A123_PARTITIONS    .     O3=0    .      . .     0 
+>> A1:1|A2:2|A3: A1:P1|A2:P1|A3:P1"
+>> @@ -762,7 +765,7 @@ check_cgroup_states()
+>>   # only CPUs in isolated partitions as well as those that are 
+>> isolated at
+>>   # boot time.
+>>   #
+>> -# $1 - expected isolated cpu list(s) <isolcpus1>{,<isolcpus2>}
+>> +# $1 - expected isolated cpu list(s) <isolcpus1>{|<isolcpus2>}
+>>   # <isolcpus1> - expected sched/domains value
+>>   # <isolcpus2> - cpuset.cpus.isolated value = <isolcpus1> if not 
+>> defined
+>>   #
+>> @@ -771,6 +774,7 @@ check_isolcpus()
+>>       EXPECTED_ISOLCPUS=$1
+>>       ISCPUS=${CGROUP2}/cpuset.cpus.isolated
+>>       ISOLCPUS=$(cat $ISCPUS)
+>> +    HKICPUS=$(cat /sys/devices/system/cpu/isolated)
+>>       LASTISOLCPU=
+>>       SCHED_DOMAINS=/sys/kernel/debug/sched/domains
+>>       if [[ $EXPECTED_ISOLCPUS = . ]]
+>> @@ -808,6 +812,11 @@ check_isolcpus()
+>>       ISOLCPUS=
+>>       EXPECTED_ISOLCPUS=$EXPECTED_SDOMAIN
+>>   +    #
+>> +    # The inverse of HK_TYPE_DOMAIN cpumask in $HKICPUS should match 
+>> $ISOLCPUS
+>> +    #
+>> +    [[ "$ISOLCPUS" != "$HKICPUS" ]] && return 1
+>> +
+>>       #
+>>       # Use the sched domain in debugfs to check isolated CPUs, if 
+>> available
+>>       #
+>
+> We have a CPU hotplug test that cycles through all CPUs off-lining 
+> them and on-lining them in different combinations. Since this change 
+> was added to -next, this test is failing on our Tegra210 boards. 
+> Bisecting the issue, it pointed to this commit and reverting this on 
+> top of -next fixes the issue.
+>
+> The test is quite simple and part of Thierry's tegra-test suite [0].
+>
+> $ ./tegra-tests/tests/cpu.py --verbose hotplug
+> cpu: hotplug: CPU#0: mask: 1
+> cpu: hotplug: CPU#1: mask: 2
+> cpu: hotplug: CPU#2: mask: 4
+> cpu: hotplug: CPU#3: mask: 8
+> cpu: hotplug: applying mask 0xf
+> cpu: hotplug: applying mask 0xe
+> cpu: hotplug: applying mask 0xd
+> cpu: hotplug: applying mask 0xc
+> cpu: hotplug: applying mask 0xb
+> cpu: hotplug: applying mask 0xa
+> ...
+> cpu: hotplug: applying mask 0x1
+> Traceback (most recent call last):
+>   File "./tegra-tests/tests/cpu.py", line 159, in <module>
+>     runner.standalone(module)
+>   File "./tegra-tests/tests/runner.py", line 147, in standalone
+>     log.test(log = log, args = args)
+>   File "./tegra-tests/tests/cpu.py", line 29, in __call__
+>     cpus.apply_mask(mask)
+>   File "./tegra-tests/linux/system.py", line 149, in apply_mask
+>     cpu.set_online(False)
+>   File "./tegra-tests/linux/system.py", line 45, in set_online
+>     self.online = online
+> OSError: [Errno 16] Device or resource busy
+>
+> From looking at different runs it appears to fail at different places.
+>
+> Let me know if you have any thoughts.
+>
+> Thanks
+> Jon
+>
+> [0] https://github.com/thierryreding/tegra-tests/blob/master/tests/cpu.py
+>
+It looks that -EBUSY was returned when the script tries to 
+online/offline a CPU. I ran a simple script to repetitively doing 
+offline/online operation and couldn't reproduce the problem. I don't 
+have access to the tegra board that you use for testing. Would you mind 
+trying out the following patch to see if it can get rid of the problem.
 
-Thank you!
+Thanks,
+Longman
 
-Acked-by: Mikko Perttunen <mperttunen@nvidia.com>
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index e200de7c60b6..5a5953fb391c 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -3936,8 +3936,10 @@ static void cpuset_handle_hotplug(void)
+          * previously queued work. Since hk_sd_workfn() doesn't use the 
+work
+          * item at all, this is not a problem.
+          */
+-       if (update_housekeeping || force_sd_rebuild)
+-               queue_work(system_unbound_wq, &hk_sd_work);
++       if (force_sd_rebuild)
++               rebuild_sched_domains_cpuslocked();
++       if (update_housekeeping)
++               queue_work(system_dfl_wq, &hk_sd_work);
 
+         free_tmpmasks(ptmp);
+  }
 
 
