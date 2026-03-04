@@ -1,155 +1,48 @@
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D995F3B4E9C
-	for <linux-tegra@vger.kernel.org>; Wed,  4 Mar 2026 14:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D8C27FD6D;
+	Wed,  4 Mar 2026 14:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772633899; cv=none; b=nk66jYiReC7jKVPxjyA3VDP8FyuKdagIDIIlAnTJ3rf9JspIpDXFTk5uoH5ohW5X9tofS1a7IlaWn53oF3r+y9ycw17bkpDu06OSq7tm3QpT++URhTNAAckqqb4KlqskJcMtZTBBiXdfCWipNoS/pDCYHo4VV9NldT1nm6v8TfE=
+	t=1772635647; cv=none; b=cKH7gLPcjDGkIGI8U0Z4Eflgao2zcD17QO/PYT70GOlQGrAptTKc0cuxOhufBFV+4Z1D6E6Gys2rnr4AtD3GjamsiMobk51jXiQ2tYUWVAvY3mbMxrYXWqwv1/EveXNLuPpf8yLVFaIExGLdqj6FBwyDtPMDPj6Nio4G/rwrXMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772633899; c=relaxed/simple;
-	bh=MFtn++fehPz2bcYxQs56cfdjtPdPajpg8F67EhLU4r8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FsYwyFF5dR02DnXvXhK96pjH6wnKP4wlku9FSFmYwCj0ogtFh72lVhb8VW7F+7vJJzImzy14ZkssJqp2kHXVLWd0pjlAQzZ2GTz9+ZCYvbPA4/3xgizDvx9tZRTj5JWIJe48GnBAx0lJuOqUPE269qRxdm7kwXPn42So+12u3pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dCY2yi9f; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1772635647; c=relaxed/simple;
+	bh=3VVI/66Nw6XiU0wwB/eTH3WXrj2eFyM5mlM0Ut8qw8k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p3hRLun3tZ2awJ2z4HCHanjofjQ4i3TL/y99nCiH8b/EMdlCrbTh1qSYpdqSGgY2hDTArfrrPOlXNMxZiTmo1NatJewtj9gbUgJHn4IrbSUj17OOmmjYCPs52UJ4Kk49XwBNaPAqQ7XlSnz09r2jOb8ZevgrJ4iVBailynN3kxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1jbZyPv8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dCY2yi9f"
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3597b474cbdso2074739a91.1
-        for <linux-tegra@vger.kernel.org>; Wed, 04 Mar 2026 06:18:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772633897; x=1773238697; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gOqiu9rk3pfbNQbzbq46fMvxLJFiDFeJ6tCyKh6dPNk=;
-        b=dCY2yi9fpzXaTO93FzvbGxrN5zrVrSNiKzsDjv9krXAuw5iO51gCedPntI1sFcvvYc
-         JpTZ4oW4MZq7ZurW9PuZzqwvfHTvhugisL7lA+iKfObo7nclFMfJBrlGhrBcrgrXIPHT
-         8pTdOjnvKOA0jUjneAozr4wA3OKDOrglg8ircrZpe7OnthMFybZ27QqrbzekBnW/Bn7K
-         zddU2DHhlNBSUesgzyK+jjI1PCEiii+dPXPJfInTOsXArVXLZ3zeDpe16VbtGG0dgs4d
-         Fba/6mJq5/uk9WbDsdzfX8wxqijN1B0hJ89OHpI36VWClKD/jBWKcbZS2Bq8oS0X3VnW
-         qGwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772633897; x=1773238697;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=gOqiu9rk3pfbNQbzbq46fMvxLJFiDFeJ6tCyKh6dPNk=;
-        b=wZn0kk48d1DUF+qdEforp/+YWoIEwDFgLqsX0sefbHAr7f/PuKDZSGh5owIdTJFBPF
-         3OS69vRxUkhZw4crRT2/kENFjXM/nV61nIxzDuJb/zNhd54t2zz+mCqUxeeeVSSRig8+
-         veNv0acWBv92GQOcpIhTPpEW9zHEr1ImWE0cg+17az8FbrDI0ftZoJcAt2QASr07UfwG
-         vlvS1wsDY0aShuOB0Dwewr8HthsfemVyoNZz2ZaxDitIlbPHWn8u0e9/tgmpjighvyCD
-         dHVnQhxUZAvII5nrmHopF1t98zL0Mhrf3BlUzf74+2wCkxdFvil3aFWPEcfms6Of+irE
-         DftA==
-X-Forwarded-Encrypted: i=1; AJvYcCXE0wvivw0km4JoEIaA//KKzsnyiamSbZM6nn1u1rnbxBRAUnJpi/RDEiDHRzoK9zvH8lXubE7APO2QjQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh4HoDIOma/E6nInMAHgWp4szPMotKjPon4llksLmlbU0yXWgP
-	P+MlqVKCUBGFuXr0x+46iw94nTMqQyhO2MM0qy3XLBeUkX9hl3HqzaUY
-X-Gm-Gg: ATEYQzySejWkDUbNI9GUMi+d+sEqKSlEV9WVgwZiDGy+mVfoYydulf80F6BSEnmIxNI
-	8hSPe2PLLiV+BkF9ekOTEnxGnGLvUGC/ILw/qx0M9qUamrNkmOEVbshwZ1NaY1+MatZStll2Duo
-	W7ICcJpRfGLoklsmLMiJiUeoFj4p2qtVfK5a+a6M9MGJF0JS5vOJ0BdOGll3l3wgHQ4lRp3H5LH
-	96O3innb+uyc0ZFz5wvOwkTP+DMVNjwDQTjO5mOryhDCoJoTCNlV5tQq3xQQWpqI3YqS4a09EmW
-	9xnTlHwsOypLY3Z40/4asRvMFJQh2ajgBd7azIfNlHaihP+rueQz0rG/PqTdsItirEjgFTSBCsC
-	KBhf4ezvcVF2pbxCJJScDICQ/S4yVhxGEjSh8holkyMjSqhYXApiqhEjinxU6CqLflag1tuPr9M
-	gmKiuPrhqKSCvK0MNbgGoXAK1n+SiQUpo=
-X-Received: by 2002:a17:90b:4a87:b0:352:bdcd:118a with SMTP id 98e67ed59e1d1-359a6a21675mr2061241a91.21.1772633897136;
-        Wed, 04 Mar 2026 06:18:17 -0800 (PST)
-Received: from rockpi-5b ([45.112.0.200])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3599c4c0f80sm6826545a91.16.2026.03.04.06.18.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2026 06:18:16 -0800 (PST)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Vignesh Raghavendra <vigneshr@ti.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Minghuan Lian <minghuan.Lian@nxp.com>,
-	Mingkai Hu <mingkai.hu@nxp.com>,
-	Roy Zang <roy.zang@nxp.com>,
-	Yue Wang <yue.wang@Amlogic.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Jonathan Chocron <jonnyc@amazon.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Paul Walmsley <pjw@kernel.org>,
-	Greentime Hu <greentime.hu@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Chuanhua Lei <lchuanhua@maxlinear.com>,
-	Srikanth Thokala <srikanth.thokala@intel.com>,
-	Xiaowei Song <songxiaowei@hisilicon.com>,
-	Binghui Wang <wangbinghui@hisilicon.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
-	Niklas Cassel <cassel@kernel.org>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Hans Zhang <18255117159@163.com>,
-	Qianfeng Rong <rongqianfeng@vivo.com>,
-	Sai Krishna Musham <sai.krishna.musham@amd.com>,
-	Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Vidya Sagar <vidyas@nvidia.com>,
-	linux-omap@vger.kernel.org (open list:PCI DRIVER FOR TI DRA7XX/J721E),
-	linux-pci@vger.kernel.org (open list:PCI DRIVER FOR TI DRA7XX/J721E),
-	linux-arm-kernel@lists.infradead.org (moderated list:PCI DRIVER FOR TI DRA7XX/J721E),
-	linux-kernel@vger.kernel.org (open list),
-	linux-samsung-soc@vger.kernel.org (open list:PCI DRIVER FOR SAMSUNG EXYNOS),
-	linuxppc-dev@lists.ozlabs.org (open list:PCI DRIVER FOR FREESCALE LAYERSCAPE),
-	imx@lists.linux.dev (open list:PCI DRIVER FOR FREESCALE LAYERSCAPE),
-	linux-amlogic@lists.infradead.org (open list:PCIE DRIVER FOR AMLOGIC MESON),
-	linux-arm-kernel@axis.com (open list:PCIE DRIVER FOR AXIS ARTPEC),
-	sophgo@lists.linux.dev (open list:SOPHGO DEVICETREES and DRIVERS),
-	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
-	linux-riscv@lists.infradead.org (open list:SIFIVE DRIVERS:Keyword:fu[57]40)
-Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [RFC v1 18/18] PCI: visconti: Allow asynchronous probing for background link training
-Date: Wed,  4 Mar 2026 19:22:01 +0530
-Message-ID: <20260304140329.7089-19-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260304140329.7089-1-linux.amoon@gmail.com>
-References: <20260304140329.7089-1-linux.amoon@gmail.com>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1jbZyPv8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D219C4CEF7;
+	Wed,  4 Mar 2026 14:47:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1772635646;
+	bh=3VVI/66Nw6XiU0wwB/eTH3WXrj2eFyM5mlM0Ut8qw8k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1jbZyPv8shPxzDJr9VQyNR2D68JQT7EkMazxsiqsdbK9iej8Zr4A3caJ8NHpJ8Afh
+	 a9LUypunK8uejQbeZDADKmWv+58EAwRwgtba+WaiDL6D98TFmIij8hIJ0cTBNKTcKQ
+	 vxx84PCB/hWfNz/AYW3OaMooYwe10Y+mV6tsuGbU=
+Date: Wed, 4 Mar 2026 15:47:14 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Alexandru Hossu <hossu.alexandru@gmail.com>
+Cc: marvin24@gmx.de, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] staging: nvec: fix block comment style in nvec.c
+Message-ID: <2026030405-thirsting-idealness-b1ed@gregkh>
+References: <20260304130701.37332-1-hossu.alexandru@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260304130701.37332-1-hossu.alexandru@gmail.com>
 
-Establishing a PCIe link can take a while, allow asynchronous probing so
-that link establishment can happen in the background while other devices
-are being probed.
+On Wed, Mar 04, 2026 at 02:07:01PM +0100, Alexandru Hossu wrote:
+> Signed-off-by: Alexandru Hossu <hossu.alexandru@gmail.com>
+> ---
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
- drivers/pci/controller/dwc/pcie-visconti.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/pci/controller/dwc/pcie-visconti.c b/drivers/pci/controller/dwc/pcie-visconti.c
-index cdeac6177143..f21cc95fe89f 100644
---- a/drivers/pci/controller/dwc/pcie-visconti.c
-+++ b/drivers/pci/controller/dwc/pcie-visconti.c
-@@ -324,6 +324,7 @@ static struct platform_driver visconti_pcie_driver = {
- 		.name = "visconti-pcie",
- 		.of_match_table = visconti_pcie_match,
- 		.suppress_bind_attrs = true,
-+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
- 	},
- };
- builtin_platform_driver(visconti_pcie_driver);
--- 
-2.50.1
-
+No changelog text :(
