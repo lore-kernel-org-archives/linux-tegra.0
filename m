@@ -1,133 +1,168 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60257273803;
-	Thu,  5 Mar 2026 10:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669C137AA83;
+	Thu,  5 Mar 2026 10:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772706906; cv=none; b=eKjZbeCS0KdW9c3MoK/suMAYQfHOoFRFNj1v8P2okkkmhFzXeNYuQVVHZdXSK8Nq7HFFl6sTMKlWDVnCXknH9B1EizfBuw2zfbT1+4DtuiZg3SrogjJLxsyvVOlxb2fgurKYih1vd3SM5Osj9B71caaHHcj+w8aFvvLZ4byceYQ=
+	t=1772707137; cv=none; b=DPZDolij282wzUaZfrRoUJYGE0n9GG1FeiYJApJhbQFSVSCecAqEJa1nJEyXZs9nvzVR65X04AmUoFei8AqW2uISleXB4Z2nAsu8rJwNcQCQGHBe7jZJ5Z0SFWMypS0xkSJqjn6ePN9t5YDeYvI6Qi/en5i5EijIIR3R9U32RK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772706906; c=relaxed/simple;
-	bh=SHJrA8v6gZzVpEbA5JWqCBf2oH3mvCG/bchjwaakkwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DoSLqr70d5/65LloN0IyOxVnTx3eQhgtUBYyFyov8Sanq4g+PxNfVWcXa1Tj457cuTCv23MpKLbDiirTLKmIaCqP8hmWhyFoJd1NmHYYyY/uRH1WMmne3GBwBet/OpDrJTFWOpG3kxPhZquNQZVPSZWXHutCc+HVeiMhB2CyFzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PgMFW8M7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772707137; c=relaxed/simple;
+	bh=56dnd+yJBrELoNOf74QX1gXElP1APH+JtJUeVGWJ7VE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JzcvfSpi7cZos+vl3vrC0VMRaO+3gTLlcwWXrjnAMWRqoZ61gmP7SlICkYlUfb2QibMU50R0svbunedpx4zLxi5MjjdO7DBWwBYTwXCG5Styf0dfOhXMyLqZDAPOdJhkenyk9NlIpMG3qn34q/Krh/EabrigzF2j/cvtigSW0ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aNXALXvs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PgMFW8M7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A7BC116C6;
-	Thu,  5 Mar 2026 10:34:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aNXALXvs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD304C116C6;
+	Thu,  5 Mar 2026 10:38:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772706905;
-	bh=SHJrA8v6gZzVpEbA5JWqCBf2oH3mvCG/bchjwaakkwA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PgMFW8M7Lma9TY3ZH9uzD5hW8NrbJs+osBrZMZea7orT6Y8vtiSC3fv7PnW/RoEk2
-	 FJ6r5gGefVBTo1HGq4fKGrfykYibx5D9H71ZuHbKFmSaoZ3D3zVR1tDvEIuxg5uHvO
-	 PIsP/+J1T0kH47Uv3kLf4EB54FJMFHFqx730KeiIqMLrlpsK6G37qogr1xu2LzZjRn
-	 FSgq1grBGzlNSlsvuD8C+UZXv+nG3OEDhiiXdzLffXXpwcDBAM6hsva/YhYo7OKsoL
-	 ullFXxyKojqaNrPGSZd2M4ToNecTtkRYK/nhYuxiykMxhu5o/s3Qe/SB2jerAaySV1
-	 iUefltgkZLl3w==
-Date: Thu, 5 Mar 2026 16:04:50 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@kernel.org, arnd@arndb.de, 
-	gregkh@linuxfoundation.org, Frank.Li@nxp.com, den@valinux.co.jp, hongxing.zhu@nxp.com, 
-	jingoohan1@gmail.com, vidyas@nvidia.com, cassel@kernel.org, 18255117159@163.com, 
-	linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 11/13] PCI: tegra194: Use HW version number
-Message-ID: <bc7t56twrq25v2rwoghyoiuantmpozknhnyaq27qiafmnv7u2r@yppijlhxtzpl>
-References: <20260303065448.2361488-1-mmaddireddy@nvidia.com>
- <20260303065448.2361488-12-mmaddireddy@nvidia.com>
+	s=k20201202; t=1772707136;
+	bh=56dnd+yJBrELoNOf74QX1gXElP1APH+JtJUeVGWJ7VE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=aNXALXvs+G1hWLA6P+I+h/DReCJXZSm97mHKep8u8GFL36LFVxIH+i5y7WFv+iKDf
+	 45lyWVNJcbnfmUSizIK1p/UBS8e7RFQIp5f3mE6X07ogThBerQzn7xQC0Shd7VE7cU
+	 KiR82ar/+6EdLt20Ma6DhKNQwIrZ038LN8Mc5GCw/5/EpuWBWmx2bY5TlKmOVzfZ5w
+	 GuNJtHMaYCew95aZFYNZ+rUml6q3wiVNhVMuCROl8gMx+t0njgof7PG++ea3FnNO1k
+	 Mxr4pwcNMwUq/T0qaURlUt+cqz7aRmpPKyfU3p/AJmRmDIUXrcXM0NOAv/TJeEX+Lh
+	 nsjyHZw1EbifA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1vy66Y-0000000GOmb-1qAv;
+	Thu, 05 Mar 2026 10:38:54 +0000
+Date: Thu, 05 Mar 2026 10:38:53 +0000
+Message-ID: <86tsuu7e82.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Thomas Gleixner <tglx@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Mark-PK Tsai <mark-pk.tsai@mediatek.com>,
+	Daniel Palmer <daniel@thingy.jp>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Nishanth Menon <nm@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	linux-amlogic@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 3/4] irqchip/gic: Use GIC_* DT binding definitions
+In-Reply-To: <CAMuHMdWWYNGThGYsj6Oakwx-1RKO_BrENiSSUi08ZzfE_b3EXA@mail.gmail.com>
+References: <cover.1772644406.git.geert+renesas@glider.be>
+	<d22488d128d39fcd90359f59559fac637bb4b04c.1772644406.git.geert+renesas@glider.be>
+	<86v7fa7fdq.wl-maz@kernel.org>
+	<CAMuHMdWWYNGThGYsj6Oakwx-1RKO_BrENiSSUi08ZzfE_b3EXA@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260303065448.2361488-12-mmaddireddy@nvidia.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: geert@linux-m68k.org, tglx@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, lpieralisi@kernel.org, atenart@kernel.org, florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com, Frank.Li@nxp.com, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, neil.armstrong@linaro.org, khilman@baylibre.com, jbrunet@baylibre.com, martin.blumenstingl@googlemail.com, mark-pk.tsai@mediatek.com, daniel@thingy.jp, matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, thierry.reding@gmail.com, jonathanh@nvidia.com, nm@ti.com, kristo@kernel.org, ssantosh@kernel.org, hayashi.kunihiko@socionext.com, mhiramat@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, imx@lists.linux.dev, linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Mar 03, 2026 at 12:24:46PM +0530, Manikanta Maddireddy wrote:
-> Tegra194 PCIe driver uses custom version number to detect Tegra194 and
-> Tegra234 IPs. With version detect logic added, version check results
-> in mismatch warnings.
+On Thu, 05 Mar 2026 10:24:23 +0000,
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 > 
+> Hi Marc,
+> 
+> On Thu, 5 Mar 2026 at 11:13, Marc Zyngier <maz@kernel.org> wrote:
+> > On Wed, 04 Mar 2026 17:21:58 +0000,
+> > Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> > > Replace magic numbers by symbolic DT binding definitions.  This improves
+> > > readability, and makes it easier to find where the various GIC
+> > > interrupts types are handled.
+> > >
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> > > --- a/drivers/irqchip/irq-gic-v3.c
+> > > +++ b/drivers/irqchip/irq-gic-v3.c
+> > > @@ -35,6 +35,8 @@
+> > >  #include <asm/smp_plat.h>
+> > >  #include <asm/virt.h>
+> > >
+> > > +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> > > +
+> > >  #include "irq-gic-common.h"
+> > >
+> > >  static u8 dist_prio_irq __ro_after_init = GICV3_PRIO_IRQ;
+> > > @@ -1602,25 +1604,25 @@ static int gic_irq_domain_translate(struct irq_domain *d,
+> > >                       return -EINVAL;
+> > >
+> > >               switch (fwspec->param[0]) {
+> > > -             case 0:                 /* SPI */
+> > > +             case GIC_SPI:
+> >
+> > I'd rather not do that. I use *numeric* values on purpose, because
+> > that's what the DT *binding* describes, and I have no control over
+> > what lives in that include file (it gets changed without me being even
+> > Cc'd).
+> >
+> > So I want to stick to the binding, and not to the interpretation of
+> > it. If you want symbolic values to be used, describe them in the
+> > binding, have a tool to generate the values from the binding, and use
+> > that everywhere.
+> 
+> This sounds more like a philosophical debate, so I'd like to defer
+> to the DT maintainers...
 
-What warnings? This sounds like a separate fix.
+That's not philosophical.
 
-> Use HW version numbers in Tegra194 driver to avoid this kernel warnings.
-> 
-> Fixed version check to enable ecrc for Tegra194.
+That's a pragmatic approach to having a common source of information,
+and a unique reference. Carrying an extra copy that can be
+independently changed is a source of errors, which I've been trying to
+reduce in other parts of the kernel (system register description and
+encoding, for example).
 
-This is a separate fix, so separate patch. Do not combine two unreleated fixes
-in a single patch.
+> 
+> About you not being notified: that can be fixed easily ;-)
+> 
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2110,6 +2110,7 @@ F:        arch/arm64/include/asm/arch_gicv3.h
+>  F:     drivers/irqchip/irq-gic*.[ch]
+>  F:     include/linux/irqchip/arm-gic*.h
+>  F:     include/linux/irqchip/arm-vgic-info.h
+> +F:     include/dt-bindings/interrupt-controller/arm-gic.h
 
-- Mani
+I'm actively trying to *remove* myself from the kernel, not to grab
+more stuff.
 
-> Existing 490A check is left intact in case any HW relying on existing check.
-> 
-> Fixes: a54e19073718 ("PCI: tegra194: Add Tegra234 PCIe support")
-> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
-> Reviewed-by: Vidya Sagar <vidyas@nvidia.com>
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-> ---
-> Changes V1 -> V7: None
-> 
->  drivers/pci/controller/dwc/pcie-designware.c | 2 +-
->  drivers/pci/controller/dwc/pcie-designware.h | 2 ++
->  drivers/pci/controller/dwc/pcie-tegra194.c   | 4 ++--
->  3 files changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> index 345365ea97c7..0dac5d2f5a83 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> @@ -559,7 +559,7 @@ int dw_pcie_prog_outbound_atu(struct dw_pcie *pci,
->  	if (upper_32_bits(limit_addr) > upper_32_bits(parent_bus_addr) &&
->  	    dw_pcie_ver_is_ge(pci, 460A))
->  		val |= PCIE_ATU_INCREASE_REGION_SIZE;
-> -	if (dw_pcie_ver_is(pci, 490A))
-> +	if (dw_pcie_ver_is(pci, 490A) || dw_pcie_ver_is(pci, 500A))
->  		val = dw_pcie_enable_ecrc(val);
->  	dw_pcie_writel_atu_ob(pci, atu->index, PCIE_ATU_REGION_CTRL1, val);
->  
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index f4cf1602cc99..5bceadbd2c9f 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -34,8 +34,10 @@
->  #define DW_PCIE_VER_470A		0x3437302a
->  #define DW_PCIE_VER_480A		0x3438302a
->  #define DW_PCIE_VER_490A		0x3439302a
-> +#define DW_PCIE_VER_500A		0x3530302a
->  #define DW_PCIE_VER_520A		0x3532302a
->  #define DW_PCIE_VER_540A		0x3534302a
-> +#define DW_PCIE_VER_562A		0x3536322a
->  
->  #define __dw_pcie_ver_cmp(_pci, _ver, _op) \
->  	((_pci)->version _op DW_PCIE_VER_ ## _ver)
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 1963165967b9..1c6543341fb9 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -35,8 +35,8 @@
->  #include <soc/tegra/bpmp-abi.h>
->  #include "../../pci.h"
->  
-> -#define TEGRA194_DWC_IP_VER			0x490A
-> -#define TEGRA234_DWC_IP_VER			0x562A
-> +#define TEGRA194_DWC_IP_VER			DW_PCIE_VER_500A
-> +#define TEGRA234_DWC_IP_VER			DW_PCIE_VER_562A
->  
->  #define APPL_PINMUX				0x0
->  #define APPL_PINMUX_PEX_RST			BIT(0)
-> -- 
-> 2.34.1
-> 
+Thanks,
+
+	M.
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Without deviation from the norm, progress is not possible.
