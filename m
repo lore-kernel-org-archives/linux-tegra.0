@@ -1,189 +1,328 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1426123E32D;
-	Thu,  5 Mar 2026 09:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602E53793B7
+	for <linux-tegra@vger.kernel.org>; Thu,  5 Mar 2026 09:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772703078; cv=none; b=NAH76CLU2MzH2X+TFaOSOM6gGPtqkq8ogQ5M1O6hMmLu7QP5mw4rURDTOqVvlAhKNm5FbOEnMo5sp/p27pMmEhrbCTPbA2KsgLV6B20yU1RLn6rK3iqah31XgDpVUC9XQySsWLWzpIoaj1J22i6bp6DdLtW0I8gp4+98DVkoULg=
+	t=1772703391; cv=none; b=ssPlYBEmSdZ8R7W+JUiFVV7JWoKBL5TNqSLhAlWDfXbAqljTl8fhnD2UtcCwhUA9gP3pLt4O2xOQlSCa6BPqJ12WSGiFNHdH2A5FysqBJqcR1+Ztb3u4JrqHGV1qmo3cnOPo6Bx9EYxb/7p88fTWYJNEwJqF9WYIpz5I5ZmcIOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772703078; c=relaxed/simple;
-	bh=HEvg29/Hj9lWiQ5IuwMKZXROpFEsc2gJsguQRspFvMw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IhFfeB2o0/8zMRl3g13WHfRg+8FEfKiIM9qatagHr7OHJRsCFUxpG66T57o1cCocRs+7fqoi1i0YAUVd+9AiYqFEDD/OlTzOTWLXGE4f5r3K3/NsZP+qkix8belNB8impKPjOfVyqSUU1rgfePDodxzbUoMux8BOWYEvZ+8qOIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PZ5gF/Mk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772703391; c=relaxed/simple;
+	bh=CMgXM6u7309Wn3e+oqvoc7hX9vYREWTZOtF5JH1MCY8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=VnyyLruCCXQcZgL0A+Lc5CayIMi9uBjyg7zHMnI/Zc5ymc3R0Wl0NUr3PRrsVLXK1qO/t4aH/mhB6VrcRhsknbTzmuJ7vs/aN411PoiMkYs4phbEljtK8sDt5PGZrB6igJ0BwYA9ztqGHfSs6iS0DE7UGLsiwQHKnCG2Kzarg3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=r8n3aZlu; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PZ5gF/Mk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39134C116C6;
-	Thu,  5 Mar 2026 09:31:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772703077;
-	bh=HEvg29/Hj9lWiQ5IuwMKZXROpFEsc2gJsguQRspFvMw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PZ5gF/MkvkgoA6lshxtVRZ50Z+62fL76tnX0snPYEzM0zWSQjJMKwNTD7pXKXgNMw
-	 wMhkjJK30V0ZnW2Wu2khrbKmMJ+4YeIPulZSYUwRPCc6b1K85kM1vqi9OVMRKXH0Vv
-	 kf4+tI5yUMBTYNftGZNsQYepg4Qujub1LRVQx8b/hLu+yOxq60SdRFc+O0sFobqJLf
-	 pRD1kd5HXXENzpyB0B+34qS8t2ZP89sSljS1VAC88rExUsS9LoYXd54g93MW4upLW4
-	 2xxOvGu3PLm14pd18ypQhYmtNvQZcVXmnfgESSQanLINdulJCkPapK3cqgWnmO3V7v
-	 aF/MGgLsrcE5A==
-Date: Thu, 5 Mar 2026 15:01:00 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@kernel.org, arnd@arndb.de, 
-	gregkh@linuxfoundation.org, Frank.Li@nxp.com, den@valinux.co.jp, hongxing.zhu@nxp.com, 
-	jingoohan1@gmail.com, vidyas@nvidia.com, cassel@kernel.org, 18255117159@163.com, 
-	linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 02/13] PCI: tegra194: Refactor LTSSM state polling on
- surprise down
-Message-ID: <iqnk6hzhh4sv6ilay3eii5wrcg3473l5ekenrvcwumkb2elwnc@rgtxgmeg4tfv>
-References: <20260303065448.2361488-1-mmaddireddy@nvidia.com>
- <20260303065448.2361488-3-mmaddireddy@nvidia.com>
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="r8n3aZlu"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-439c92a193bso1573191f8f.2
+        for <linux-tegra@vger.kernel.org>; Thu, 05 Mar 2026 01:36:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1772703385; x=1773308185; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mbidr/A9XxccdAFsJsVKLL2bBtmGRz8XUrt7LUMLgOs=;
+        b=r8n3aZluVhBTCfb7BQuBR7rtMDtwMt/hhUveTeZDZQAO4wJxkqYdVnWInamwTvoasd
+         njRsc4y1mlFqY6e8h+MrxsQmTwUtFPEr4bGcC2jwn78y+TT5X2hBUAy+EkXK3GfkPnMc
+         efI7YRWZmXX4iWMH3mdtVwJdLQgh9b+NgkxQAUiokU1kYqlHFgrFqn8X6Kh54oqNRJvL
+         W9KF9PgfXi06d+0sZ2isvDvqnFTaI47uFjf39desDXwhsR9fNqaB6S1RhpTym+6cBpi7
+         37SVpkS6dpjv/ggxoqRfyQPvFp9lVwc3QY78bUWB4dZgVEV/oWO3UY/ChIwfz5zMSHTu
+         wMIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772703385; x=1773308185;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mbidr/A9XxccdAFsJsVKLL2bBtmGRz8XUrt7LUMLgOs=;
+        b=lrXAHtIFuGtvbqymZsl5djZBZ/3+Jkf2F5Metkv2iotS3LYkzJZKvMWzMdEp7irPLG
+         sHMoyxCsOg7S8667VkLG5vf2V7EOZUxJsaFmcBn1bmGq5VWJnmHZY1zQ/Zf7T17B9d6m
+         QDx1Gf7M0ZIB2CV6xvo43s41tuwewhHW7bUWe1JdgRifxXrQSCVf6Kpp2Dud9I762iuL
+         RACtzHzhYFK8I0WBCP4xaK7Bm2WEuJ80rrsDa0p+U2qs+JbOz/61Ug9rr5a+uw2eZeL8
+         bnwL+o5dn50dsTVXFXjVhUumZSqLJalONQbrfNdXABSbMe94AE+GIrWijZbJED4SdjRB
+         Yzpw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2lIx9aYLyLZuE2UfXYRZe43bhSeP0j7voiBwnWq+XisR98QPS0ZdoALBqmqP0vBxjZU3jBRd2zrSMBQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+WGQ/9RIzLSAWcLfaoRBSK74bBguMpaycHCK03Z0vNLVjh3a3
+	J47Xknp7urnEK0PQff8iUyuFLJ3E+R6CILfwBcyh60z0kE0f/vSEKdPTB3qJXY6hASk=
+X-Gm-Gg: ATEYQzyVCI4DOW8656JeuWG/dyZ/vOyYNwuwihEVFLp89LlHf3rtq8FxU4Y64zgM8ah
+	qjl9CB5TGukrOsfBcoDH7/ktaCLIK74+qoIibV+AMP+geKh9VkfbiNWyGWHCiqdwe4g2OfBTNXk
+	rEc3oNCiGA5Mq0gW85WVw/I+tN/icx5kbYbCJpztF/o0aardP/s35sQhUJNgKrJlT6YVDVLX7IR
+	ovSZGbwE2WZ2IM2QkdGwB4/n6ftOfVX5lqHDcN6EQ1jam796w384g7KzIrWGZoKzs85j9b9+he2
+	rI3mBfvOurAJuat4f5wdDvuTnAJh4TyDYP9FPrNWpG/0UvDSC6UEXzpVc8DX9UDGO7f0H1LwzWX
+	G5sD6MyH1ShAdp3XJssiT694Eplh1y9l6f1+zpa1un9hVk3XkmjFCvj40BW+2ol7xPqKpEKwLvH
+	nVBJGy6V183G64W/w=
+X-Received: by 2002:a05:6000:144f:b0:439:b564:7a6c with SMTP id ffacd0b85a97d-439c7f6a2c9mr9158913f8f.4.1772703384539;
+        Thu, 05 Mar 2026 01:36:24 -0800 (PST)
+Received: from localhost ([195.52.25.213])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439c2f7eca1sm14966458f8f.11.2026.03.05.01.36.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2026 01:36:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260303065448.2361488-3-mmaddireddy@nvidia.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=b895f1e89350da7f8491f35b99d431866030fe6df54b62358155e9918430;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Thu, 05 Mar 2026 10:36:14 +0100
+Message-Id: <DGUQWFYCPRQZ.17SO07GXW2DYA@baylibre.com>
+From: "Markus Schneider-Pargmann" <msp@baylibre.com>
+To: "Vladimir Oltean" <vladimir.oltean@nxp.com>,
+ <linux-phy@lists.infradead.org>
+Cc: "Vinod Koul" <vkoul@kernel.org>, "Neil Armstrong"
+ <neil.armstrong@linaro.org>, <dri-devel@lists.freedesktop.org>,
+ <freedreno@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-arm-msm@vger.kernel.org>, <linux-can@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-ide@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+ <linux-riscv@lists.infradead.org>, <linux-rockchip@lists.infradead.org>,
+ <linux-samsung-soc@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
+ <linux-tegra@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+ <netdev@vger.kernel.org>, <spacemit@lists.linux.dev>,
+ <UNGLinuxDriver@microchip.com>, "Andrzej Hajda" <andrzej.hajda@intel.com>,
+ "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
+ <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
+ "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Andy Yan"
+ <andy.yan@rock-chips.com>, "Marc Kleine-Budde" <mkl@pengutronix.de>,
+ "Vincent Mailhol" <mailhol@kernel.org>, "Nicolas Ferre"
+ <nicolas.ferre@microchip.com>, "Alexandre Belloni"
+ <alexandre.belloni@bootlin.com>, "Claudiu Beznea"
+ <claudiu.beznea@tuxon.dev>, "Markus Schneider-Pargmann" <msp@baylibre.com>,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>, "Magnus Damm"
+ <magnus.damm@gmail.com>
+Subject: Re: [PATCH phy-next 13/22] phy: introduce phy_get_max_link_rate()
+ helper for consumers
+X-Mailer: aerc 0.21.0
+References: <20260304175735.2660419-1-vladimir.oltean@nxp.com>
+ <20260304175735.2660419-14-vladimir.oltean@nxp.com>
+In-Reply-To: <20260304175735.2660419-14-vladimir.oltean@nxp.com>
 
-On Tue, Mar 03, 2026 at 12:24:37PM +0530, Manikanta Maddireddy wrote:
-> From: Vidya Sagar <vidyas@nvidia.com>
-> 
-> On surprise down, LTSSM state transits from L0 -> Recovery.RcvrLock ->
-> Recovery.RcvrSpeed -> Gen1 Recovery.RcvrLock -> Detect. Recovery.RcvrLock
-> and Recovery.RcvrSpeed transit times are 24 msec and 48 msec respectively.
-> So, the total time taken to transit from L0 to detect state is ~96 msec.
-> Hence, increase the poll time to 120 msec.
-> 
-> Disable the LTSSM state after it transits to detect to avoid LTSSM
-> toggling between polling and detect states.
-> 
+--b895f1e89350da7f8491f35b99d431866030fe6df54b62358155e9918430
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-These are two separate changes (increasing poll time and disabling LTSSM).
-Please split this into two patches. A patch should only fix one issue, not more.
+Hi,
 
-- Mani
-
-> tegra_pcie_dw_pme_turnoff() function is called in non-atomic context
-> only, so use the non-atomic poll function.
-> 
-> Fixes: 56e15a238d92 ("PCI: tegra: Add Tegra194 PCIe support")
-> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+On Wed Mar 4, 2026 at 6:57 PM CET, Vladimir Oltean wrote:
+> Consumer drivers shouldn't dereference struct phy, not even to get to
+> its attributes.
+>
+> We have phy_get_bus_width() as a precedent for getting the bus_width
+> attribute, so let's add phy_get_max_link_rate() and use it in DRM and
+> CAN drivers.
+>
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 > ---
-> Changes V6 -> V7: Append _US to LTSSM macros
-> Changes V5 -> V6: Retain only one fixes tag
-> Changes V1 -> V5: None
-> 
->  drivers/pci/controller/dwc/pcie-tegra194.c | 55 +++++++++++++---------
->  1 file changed, 32 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index d6c6bd512b51..afbc0bdd8a93 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -137,7 +137,11 @@
->  #define APPL_DEBUG_PM_LINKST_IN_L0		0x11
->  #define APPL_DEBUG_LTSSM_STATE_MASK		GENMASK(8, 3)
->  #define APPL_DEBUG_LTSSM_STATE_SHIFT		3
-> -#define LTSSM_STATE_PRE_DETECT			5
-> +#define LTSSM_STATE_DETECT_QUIET		0x00
-> +#define LTSSM_STATE_DETECT_ACT			0x08
-> +#define LTSSM_STATE_PRE_DETECT_QUIET		0x28
-> +#define LTSSM_STATE_DETECT_WAIT			0x30
-> +#define LTSSM_STATE_L2_IDLE			0xa8
->  
->  #define APPL_RADM_STATUS			0xE4
->  #define APPL_PM_XMT_TURNOFF_STATE		BIT(0)
-> @@ -198,7 +202,8 @@
->  #define CAP_SPCIE_CAP_OFF_USP_TX_PRESET0_MASK	GENMASK(11, 8)
->  #define CAP_SPCIE_CAP_OFF_USP_TX_PRESET0_SHIFT	8
->  
-> -#define LTSSM_TIMEOUT 50000	/* 50ms */
-> +#define LTSSM_DELAY_US		10000	/* 10 ms */
-> +#define LTSSM_TIMEOUT_US	120000	/* 120 ms */
->  
->  #define GEN3_GEN4_EQ_PRESET_INIT	5
->  
-> @@ -1589,23 +1594,22 @@ static void tegra_pcie_dw_pme_turnoff(struct tegra_pcie_dw *pcie)
->  		data &= ~APPL_PINMUX_PEX_RST;
->  		appl_writel(pcie, data, APPL_PINMUX);
->  
-> +		err = readl_poll_timeout(pcie->appl_base + APPL_DEBUG, data,
-> +			((data & APPL_DEBUG_LTSSM_STATE_MASK) == LTSSM_STATE_DETECT_QUIET) ||
-> +			((data & APPL_DEBUG_LTSSM_STATE_MASK) == LTSSM_STATE_DETECT_ACT) ||
-> +			((data & APPL_DEBUG_LTSSM_STATE_MASK) == LTSSM_STATE_PRE_DETECT_QUIET) ||
-> +			((data & APPL_DEBUG_LTSSM_STATE_MASK) == LTSSM_STATE_DETECT_WAIT),
-> +			LTSSM_DELAY_US, LTSSM_TIMEOUT_US);
-> +		if (err)
-> +			dev_info(pcie->dev, "Link didn't go to detect state\n");
-> +
->  		/*
-> -		 * Some cards do not go to detect state even after de-asserting
-> -		 * PERST#. So, de-assert LTSSM to bring link to detect state.
-> +		 * Deassert LTSSM state to stop the state toggling between
-> +		 * polling and detect.
->  		 */
->  		data = readl(pcie->appl_base + APPL_CTRL);
->  		data &= ~APPL_CTRL_LTSSM_EN;
->  		writel(data, pcie->appl_base + APPL_CTRL);
-> -
-> -		err = readl_poll_timeout_atomic(pcie->appl_base + APPL_DEBUG,
-> -						data,
-> -						((data &
-> -						APPL_DEBUG_LTSSM_STATE_MASK) >>
-> -						APPL_DEBUG_LTSSM_STATE_SHIFT) ==
-> -						LTSSM_STATE_PRE_DETECT,
-> -						1, LTSSM_TIMEOUT);
-> -		if (err)
-> -			dev_info(pcie->dev, "Link didn't go to detect state\n");
+> Cc: Andrzej Hajda <andrzej.hajda@intel.com>
+> Cc: Neil Armstrong <neil.armstrong@linaro.org>
+> Cc: Robert Foss <rfoss@kernel.org>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: Jonas Karlman <jonas@kwiboo.se>
+> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: Andy Yan <andy.yan@rock-chips.com>
+> Cc: Marc Kleine-Budde <mkl@pengutronix.de>
+> Cc: Vincent Mailhol <mailhol@kernel.org>
+> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> Cc: Markus Schneider-Pargmann <msp@baylibre.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> ---
+>  drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c | 4 ++--
+>  drivers/gpu/drm/bridge/synopsys/dw-dp.c             | 2 +-
+>  drivers/net/can/at91_can.c                          | 2 +-
+>  drivers/net/can/flexcan/flexcan-core.c              | 2 +-
+>  drivers/net/can/m_can/m_can_platform.c              | 2 +-
+>  drivers/net/can/rcar/rcar_canfd.c                   | 2 +-
+>  drivers/phy/phy-core.c                              | 6 ++++++
+>  include/linux/phy/phy.h                             | 6 ++++++
+>  8 files changed, 19 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/driver=
+s/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+> index a8b6ae58cb0a..ed7ed82ddb64 100644
+> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+> @@ -1300,7 +1300,7 @@ static u32 cdns_mhdp_get_training_interval_us(struc=
+t cdns_mhdp_device *mhdp,
+> =20
+>  static void cdns_mhdp_fill_host_caps(struct cdns_mhdp_device *mhdp)
+>  {
+> -	unsigned int link_rate;
+> +	u32 link_rate;
+> =20
+>  	/* Get source capabilities based on PHY attributes */
+> =20
+> @@ -1308,7 +1308,7 @@ static void cdns_mhdp_fill_host_caps(struct cdns_mh=
+dp_device *mhdp)
+>  	if (!mhdp->host.lanes_cnt)
+>  		mhdp->host.lanes_cnt =3D 4;
+> =20
+> -	link_rate =3D mhdp->phy->attrs.max_link_rate;
+> +	link_rate =3D phy_get_max_link_rate(mhdp->phy);
+>  	if (!link_rate)
+>  		link_rate =3D drm_dp_bw_code_to_link_rate(DP_LINK_BW_8_1);
+>  	else
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-dp.c b/drivers/gpu/drm/br=
+idge/synopsys/dw-dp.c
+> index 4ab6922dd79c..79c72ee8e263 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-dp.c
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-dp.c
+> @@ -536,7 +536,7 @@ static int dw_dp_link_parse(struct dw_dp *dp, struct =
+drm_connector *connector)
+> =20
+>  	link->revision =3D link->dpcd[DP_DPCD_REV];
+>  	link->rate =3D min_t(u32, min(dp->plat_data.max_link_rate,
+> -				    dp->phy->attrs.max_link_rate * 100),
+> +				    phy_get_max_link_rate(dp->phy) * 100),
+>  			   drm_dp_max_link_rate(link->dpcd));
+>  	link->lanes =3D min_t(u8, phy_get_bus_width(dp->phy),
+>  			    drm_dp_max_lane_count(link->dpcd));
+> diff --git a/drivers/net/can/at91_can.c b/drivers/net/can/at91_can.c
+> index 58da323f14d7..b56db253f02d 100644
+> --- a/drivers/net/can/at91_can.c
+> +++ b/drivers/net/can/at91_can.c
+> @@ -1126,7 +1126,7 @@ static int at91_can_probe(struct platform_device *p=
+dev)
+>  	can_rx_offload_add_timestamp(dev, &priv->offload);
+> =20
+>  	if (transceiver)
+> -		priv->can.bitrate_max =3D transceiver->attrs.max_link_rate;
+> +		priv->can.bitrate_max =3D phy_get_max_link_rate(transceiver);
+> =20
+>  	if (at91_is_sam9263(priv))
+>  		dev->sysfs_groups[0] =3D &at91_sysfs_attr_group;
+> diff --git a/drivers/net/can/flexcan/flexcan-core.c b/drivers/net/can/fle=
+xcan/flexcan-core.c
+> index f5d22c61503f..3a4307bc1d61 100644
+> --- a/drivers/net/can/flexcan/flexcan-core.c
+> +++ b/drivers/net/can/flexcan/flexcan-core.c
+> @@ -2211,7 +2211,7 @@ static int flexcan_probe(struct platform_device *pd=
+ev)
+>  	priv->transceiver =3D transceiver;
+> =20
+>  	if (transceiver)
+> -		priv->can.bitrate_max =3D transceiver->attrs.max_link_rate;
+> +		priv->can.bitrate_max =3D phy_get_max_link_rate(transceiver);
+> =20
+>  	if (priv->devtype_data.quirks & FLEXCAN_QUIRK_NR_IRQ_3) {
+>  		priv->irq_boff =3D platform_get_irq(pdev, 1);
+> diff --git a/drivers/net/can/m_can/m_can_platform.c b/drivers/net/can/m_c=
+an/m_can_platform.c
+> index 56da411878af..73525be6566b 100644
+> --- a/drivers/net/can/m_can/m_can_platform.c
+> +++ b/drivers/net/can/m_can/m_can_platform.c
+> @@ -132,7 +132,7 @@ static int m_can_plat_probe(struct platform_device *p=
+dev)
 >  	}
->  	/*
->  	 * DBI registers may not be accessible after this as PLL-E would be
-> @@ -1679,19 +1683,24 @@ static void pex_ep_event_pex_rst_assert(struct tegra_pcie_dw *pcie)
->  	if (pcie->ep_state == EP_STATE_DISABLED)
->  		return;
->  
-> -	/* Disable LTSSM */
-> +	ret = readl_poll_timeout(pcie->appl_base + APPL_DEBUG, val,
-> +		((val & APPL_DEBUG_LTSSM_STATE_MASK) == LTSSM_STATE_DETECT_QUIET) ||
-> +		((val & APPL_DEBUG_LTSSM_STATE_MASK) == LTSSM_STATE_DETECT_ACT) ||
-> +		((val & APPL_DEBUG_LTSSM_STATE_MASK) == LTSSM_STATE_PRE_DETECT_QUIET) ||
-> +		((val & APPL_DEBUG_LTSSM_STATE_MASK) == LTSSM_STATE_DETECT_WAIT) ||
-> +		((val & APPL_DEBUG_LTSSM_STATE_MASK) == LTSSM_STATE_L2_IDLE),
-> +		LTSSM_DELAY_US, LTSSM_TIMEOUT_US);
-> +	if (ret)
-> +		dev_err(pcie->dev, "LTSSM state: 0x%x timeout: %d\n", val, ret);
-> +
-> +	/*
-> +	 * Deassert LTSSM state to stop the state toggling between
-> +	 * polling and detect.
-> +	 */
->  	val = appl_readl(pcie, APPL_CTRL);
->  	val &= ~APPL_CTRL_LTSSM_EN;
->  	appl_writel(pcie, val, APPL_CTRL);
->  
-> -	ret = readl_poll_timeout(pcie->appl_base + APPL_DEBUG, val,
-> -				 ((val & APPL_DEBUG_LTSSM_STATE_MASK) >>
-> -				 APPL_DEBUG_LTSSM_STATE_SHIFT) ==
-> -				 LTSSM_STATE_PRE_DETECT,
-> -				 1, LTSSM_TIMEOUT);
-> -	if (ret)
-> -		dev_err(pcie->dev, "Failed to go Detect state: %d\n", ret);
-> -
->  	reset_control_assert(pcie->core_rst);
->  
->  	tegra_pcie_disable_phy(pcie);
-> -- 
-> 2.34.1
-> 
+> =20
+>  	if (transceiver)
+> -		mcan_class->can.bitrate_max =3D transceiver->attrs.max_link_rate;
+> +		mcan_class->can.bitrate_max =3D phy_get_max_link_rate(transceiver);
+> =20
+>  	priv->base =3D addr;
+>  	priv->mram_base =3D mram_addr;
+> diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rca=
+r_canfd.c
+> index eaf8cac78038..645d5671705d 100644
+> --- a/drivers/net/can/rcar/rcar_canfd.c
+> +++ b/drivers/net/can/rcar/rcar_canfd.c
+> @@ -1885,7 +1885,7 @@ static int rcar_canfd_channel_probe(struct rcar_can=
+fd_global *gpriv, u32 ch,
+>  	priv->channel =3D ch;
+>  	priv->gpriv =3D gpriv;
+>  	if (transceiver)
+> -		priv->can.bitrate_max =3D transceiver->attrs.max_link_rate;
+> +		priv->can.bitrate_max =3D phy_get_max_link_rate(transceiver);
+>  	priv->can.clock.freq =3D fcan_freq;
+>  	dev_info(dev, "can_clk rate is %u\n", priv->can.clock.freq);
+> =20
+> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+> index a1aff00fba7c..89f7410241aa 100644
+> --- a/drivers/phy/phy-core.c
+> +++ b/drivers/phy/phy-core.c
+> @@ -640,6 +640,12 @@ void phy_set_bus_width(struct phy *phy, int bus_widt=
+h)
+>  }
+>  EXPORT_SYMBOL_GPL(phy_set_bus_width);
+> =20
+> +u32 phy_get_max_link_rate(struct phy *phy)
+> +{
 
--- 
-மணிவண்ணன் சதாசிவம்
+All of the can drivers that would use this function are checking phy
+before assigning the max_link_rate:
+
+  if (transceiver)
+          priv->can.bitrate_max =3D transceiver->attrs.max_link_rate;
+
+Would it be reasonable to have
+
+  if (!phy)
+          return 0;
+
+in this function to be able to drop these individual checks of the
+drivers? This would be similar to clk_get_rate() which does the same
+check and return 0 for convenience.
+
+Best
+Markus
+
+> +	return phy->attrs.max_link_rate;
+> +}
+> +EXPORT_SYMBOL_GPL(phy_get_max_link_rate);
+> +
+>  /**
+>   * _of_phy_get() - lookup and obtain a reference to a phy by phandle
+>   * @np: device_node for which to get the phy
+> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+> index 36307e47760d..af9c3e795786 100644
+> --- a/include/linux/phy/phy.h
+> +++ b/include/linux/phy/phy.h
+> @@ -57,6 +57,7 @@ int phy_notify_disconnect(struct phy *phy, int port);
+>  int phy_notify_state(struct phy *phy, union phy_notify state);
+>  int phy_get_bus_width(struct phy *phy);
+>  void phy_set_bus_width(struct phy *phy, int bus_width);
+> +u32 phy_get_max_link_rate(struct phy *phy);
+>  #else
+>  static inline struct phy *phy_get(struct device *dev, const char *string=
+)
+>  {
+> @@ -256,6 +257,11 @@ static inline int phy_get_bus_width(struct phy *phy)
+>  static inline void phy_set_bus_width(struct phy *phy, int bus_width)
+>  {
+>  }
+> +
+> +static inline u32 phy_get_max_link_rate(struct phy *phy)
+> +{
+> +	return 0;
+> +}
+>  #endif /* IS_ENABLED(CONFIG_GENERIC_PHY) */
+> =20
+>  #endif /* __PHY_CONSUMER_H */
+
+
+--b895f1e89350da7f8491f35b99d431866030fe6df54b62358155e9918430
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaalOjxsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlPc
+SwEAt3Fg0ly9qnS+HJQv96JGhcc9ssPHPspnN0LcoiUH76oBAJJ1UWuuXcnIsBb3
+namewJQN1U0nDnFUFRtJbSq49LcK
+=6g8b
+-----END PGP SIGNATURE-----
+
+--b895f1e89350da7f8491f35b99d431866030fe6df54b62358155e9918430--
