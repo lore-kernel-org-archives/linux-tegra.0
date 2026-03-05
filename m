@@ -1,99 +1,120 @@
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81B22BB17
-	for <linux-tegra@vger.kernel.org>; Thu,  5 Mar 2026 06:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1532BEFEE;
+	Thu,  5 Mar 2026 06:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772690652; cv=none; b=rzqdp50iqzKz+z3tJiKHxFXogkO/O426CqyxUPMW8Zx080chu20DNQyabFsUSHCl+60qKh4s74sKtEhp6Pge6f8XQAFIYg/NFLW0/qPnRl1RA1CBvc+9jB+aM10rxXg627m43Ir7H/lTq8mslM6dosYl8VVIGQd1dRrXQyi3jXE=
+	t=1772691135; cv=none; b=fUAP+cG/kSbcLailwav6qW1zrJDDPkAaf4nN+eDkmz2GlfW+QDByAqgmheKiQKx+Ddmh8tw+K4BKlJ2oZ8au14gJapuFLor02Ozd/NDLkx2k4UG+LxqmX1mSLs55Kq4+b/6xCuIt5S8iL0Lvv8KsT/Jh+DImSRcfL+FhLMFlq7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772690652; c=relaxed/simple;
-	bh=mw2FowQeB3NKNiDWEv3z2zPNu0YlBCNNOQVnPEtXm00=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FzdxlowDEkR07Bg92NvkfCqoVQWDPqACz/ifzxGlRs13vcOox0NHmxsoXBS8vI3tr/8/roWzI6Be/YWrnh0XAhqsbtudnP592Tle8ZM90ljAaBPhLnuwYoI++ulZjX2pZchjqIqJzXG5wv9WPCjDrQxVWdMRuE/glS1+k25djUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HEQ885zy; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1772691135; c=relaxed/simple;
+	bh=Ucql6G8fikWgKmYhVeI8oG8c/q5qH54SMiTmcR+3pc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jl7gIaZ5z+hpk4m4k4Jtj/FKbCEicqeoloFB6rYFCHRoYlGmLKaZs7tpJ48y/nziPgj6zgOC50ViWSeQZl32wHlNMgdIZF/d5UjbtaihdspUMWZesL6dOAb0VVRRNV/Se1JjM5kJqR4+2yY1ub7Gsd2Hu6ZyXQsv5c5a3doVf1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OW/TlmMS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HEQ885zy"
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-8297e0b27e5so517744b3a.1
-        for <linux-tegra@vger.kernel.org>; Wed, 04 Mar 2026 22:04:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772690651; x=1773295451; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jEWkW3Nk8ma3FEylFtlJlya4pyZzhciMSL74qSW9b+o=;
-        b=HEQ885zynfnvBKYmS65kaWn+VdW3JCNxBo1vg4qZHckCPH3+Tk+ccLxGkqfsem0q1b
-         nQu48bfqAi8dyuqmTLSCZgLyD5kq3Y4kM7GRhJXaqIgqRdZ9sqitRxfOlSfj+H9a/4C0
-         KejPWvHm78LE932GJa2uabukL07WriBdb31YxCRE4M783XzkkbtXd9Jw0bJWza/DtAXK
-         +9o2EhZKxEXAReiJP7mFSETuAB6dTeQQu0LbkOdHOr5Aw8ooi5azXAPCUyypx50b8Adg
-         FiFGyJJgfbLQ18b1sfALOYOjPXOTPHaBspjhMbOBKbnPBw1dzg2q/8exDAp525CTfmPM
-         r0TA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772690651; x=1773295451;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jEWkW3Nk8ma3FEylFtlJlya4pyZzhciMSL74qSW9b+o=;
-        b=fk+49Wv4g7oVImRhlcQbMVH82BkUs3xCv/U91A6OK5fcT9VWCJVSxUk2ldvKQpTDty
-         vydzqUH5Kh35BXX/3swmq8UhjSlgyywa6OKqNYUn+seH6yke5wwZ0PbaTbN5ViI6+Pdf
-         ABI6Liz1OUG8PIIzsO4nSyCpRL/iyk4rExtecJ8Qmsn5/x1E3IIOa0MOhAX5p6icWCbG
-         Mg/m8ccqRTZxEU7EFkn7vDuIOtJLw0LPZ6N50ZO5jjDFJ8UwOBW0f5wCP+RFMBZ0QG76
-         Q281vWA+BZ/WeWxnu/cIzNGFw0wyDGCfz8k8U1SB0r/Ds4wd8hncJ7EIIcj0Im9KW6st
-         urtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHqQP+545R0uqqmiAVtEjqPcGOfvR8X3MK3atdLDtZXFXusi+cHaj3DzUmL0aAzG6NC5MOPTncMFnSVA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk6xgzDIkcoZTjWuoqeMWNQbKNi65aGnOm7BySxqr0Peq1/3LY
-	bdKFhUG9l1pHJKfW4INes7mkpG+nvl9zlEyfE7912ibFYdYOrFvwR7IHpFEI3KZj/Xg=
-X-Gm-Gg: ATEYQzyiQEIxwcDrrv8FdlLLrkFpkAqvkx++p2nvNKkngGLkJonefcUO6+vrrrH1qSz
-	vosezxS0lrtMOW/TfkSuhB1GgOFNoXYxBm6qY1tA1+uHsBPl0qiMaoCopIdStwEzCp0f/EfkusP
-	t43I7I/n9hSLAMoqGc4XV6qrYED0WI/t01yNNYZGE7LKNeg1XUpUsLBLsSI3lgditZwn48fx81I
-	xqa7F7Ih93oT1z+2uTIjkPrb9sr7urzlfTD5HgXWR1Z5G71Rewu42bOCRAVg+I7N+wZjHmNc5YP
-	a+fqz7NxCR9PTLlD5/So/sRUkEeCFr3v66yrP98I668Bjhw3YHJyDZcgWHLgs+sJ5a0rautma9y
-	SKiMj42Q6QCx1NpdSJK9c3wsWxZkln1BuogSqKbJF1FxLE2GApOqp4jVBN51a+YSCw/pfLDcKMS
-	Gb4hTf/Mq0yCmQe4/q6Phq7bxPrOEo4fVaVAq7viGFnoR11YFX0c4tAosz/je6WCnUWepsIpfdL
-	Hztl9BUp37zpfHqDwgspOMoi4Mi8A==
-X-Received: by 2002:a05:6a21:60c8:b0:392:e5eb:f0f with SMTP id adf61e73a8af0-3982e24369bmr4341135637.68.1772690651300;
-        Wed, 04 Mar 2026 22:04:11 -0800 (PST)
-Received: from [192.168.1.109] (c-73-37-64-97.hsd1.or.comcast.net. [73.37.64.97])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c738877202fsm1600352a12.25.2026.03.04.22.04.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Mar 2026 22:04:10 -0800 (PST)
-Message-ID: <2f7bcd41-eb4d-4b4d-8332-da2b193e3aea@gmail.com>
-Date: Wed, 4 Mar 2026 22:04:10 -0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OW/TlmMS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56CBEC19423;
+	Thu,  5 Mar 2026 06:12:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772691134;
+	bh=Ucql6G8fikWgKmYhVeI8oG8c/q5qH54SMiTmcR+3pc8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OW/TlmMSjxRIv76YYa4Rs3TTKdVmDKfZyk6dpYyjGwu8hZPI8q9/tALDdhrTgPXCk
+	 TvFQZwOO0XLXTBqmRMD94KV5dkiUuCwaAgE0SABadsIP7FTT41JeBCuqrTTZnar76v
+	 7xzV53tMPTsQL4dmjL9ZpYS7AzR0EzNM8lw8JRTKPzMDg37PUglTVhta3eVtpIswSv
+	 m3ie/kefrQes5hscO8INQBz+PN0FFVav36SQ8BtiJCGJZY9xx3ilKMigN78geJZcCC
+	 holj2XmP7TDRs/AplJARasMXjbqG7mnA4gbnX854Wi2RKDhAihv28nVSf6cUCF6Quk
+	 sxZXCo5e8ZLVg==
+Date: Thu, 5 Mar 2026 11:42:01 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Aaron Kling <webgeek1234@gmail.com>, 
+	"open list:PCI DRIVER FOR NVIDIA TEGRA" <linux-tegra@vger.kernel.org>, 
+	"open list:PCI DRIVER FOR NVIDIA TEGRA" <linux-pci@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 0/5] PCI: tegra: A couple of cleanups
+Message-ID: <ogfkqs6s6zsrnmamqwnk3rugwsjmknu74piwko3zzgfumsb2us@cib4xktivpip>
+References: <20260224121948.25218-1-linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: nvec: fix multi-line comment
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: linux-staging@lists.linux.dev, gregkh@linuxfoundation.org,
- marvin24@gmx.de, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260305012626.56403-1-marusik.adamenko@gmail.com>
- <aakaLv83wsXQl54x@stanley.mountain>
-Content-Language: en-US
-From: Mark Adamenko <marusik.adamenko@gmail.com>
-In-Reply-To: <aakaLv83wsXQl54x@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260224121948.25218-1-linux.amoon@gmail.com>
 
-I was not aware of such a thing. Thank you
+On Tue, Feb 24, 2026 at 05:48:56PM +0530, Anand Moon wrote:
+> Hi All,
+> 
+> This small series provides two cleanup patches for the Tegra PCIe driver.
+> The overall goal is to replace custom, open-coded logic with standard
+> kernel helper functions.
+> 
+> These changes improve the driver's readability and maintainability by
+> everaging modern, well-tested APIs for clock management and register
+> polling.
+> 
+> v3: Fix the DT binding for nvidia,tegra-pcie.yaml
+>     tried to address issue for Krzysztof and Jon.
+>     Added missing regulator and new patch to fix the device tree check.
+>     Added missing entry in MAINTAINERS.
+> 
+> v2: Fix the DT binding for nvidia,tegra-pcie.yaml
+>     switch back to devm_clk_bulk_get_all to get all the clocks
+>     improve the commit message.
+> 
+> v1 Added new devicetree binding nvidia,tegra-pcie.yaml file.
+>    Switch from devm_clk_bulk_get_all() -> devm_clk_bulk_get() api.
+>    Fixed checkpatch warnings.
+> 
+> Tested on Jetson Nano 4 GB ram.
+> 
+> jetson-nano:~$ lspci -tvv
+> -[0000:00]-+-01.0-[01]----00.0  Intel Corporation Wireless 8265 / 8275
+>            \-02.0-[02]----00.0  Realtek Semiconductor Co., Ltd. RTL8111/8168/8211/8411 PCI Express Gigabit Ethernet Controller
+> 
 
-On 3/4/26 21:52, Dan Carpenter wrote:
-> On Wed, Mar 04, 2026 at 05:26:26PM -0800, Mark Adamenko wrote:
->> Fix multi-line comment style flagged by checkpatch.pl.
->>
->> Signed-off-by: Mark Adamenko <marusik.adamenko@gmail.com>
->> ---
+Given the history of this series, I want an Ack from Jon/Thierry or other Nvidia
+folks for the driver patches.
+
+- Mani
+
+> v2:   https://lore.kernel.org/linux-tegra/20251215141603.6749-1-linux.amoon@gmail.com/
+> v1:   https://lore.kernel.org/linux-tegra/20250926072905.126737-1-linux.amoon@gmail.com/
+> RFC : https://lore.kernel.org/linux-tegra/20250831190055.7952-2-linux.amoon@gmail.com/
 > 
-> Someone already did this.  Please, work against the staging-next git
-> tree.
+> Thanks
+> -Anand
 > 
-> regards,
-> dan carpenter
+> Anand Moon (5):
+>   dt-bindings: PCI: Convert nvidia,tegra-pcie to DT schema
+>   arm64: dts: tegra: tegra186-p2771: Fix invalid PCIe nvidia,num-lanes
+>   PCI: tegra: Simplify clock handling by using clk_bulk*() functions
+>   PCI: tegra: Use readl_poll_timeout() for link status polling
+>   PCI: tegra: Use BIT() and GENMASK() macros for register definitions
+> 
+>  .../bindings/pci/nvidia,tegra-pcie.yaml       | 528 ++++++++++++++
+>  .../bindings/pci/nvidia,tegra20-pcie.txt      | 670 ------------------
+>  MAINTAINERS                                   |   2 +-
+>  .../boot/dts/nvidia/tegra186-p2771-0000.dts   |   2 +-
+>  drivers/pci/controller/pci-tegra.c            | 237 +++----
+>  5 files changed, 621 insertions(+), 818 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+> 
+> 
+> base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
+> -- 
+> 2.50.1
 > 
 
+-- 
+மணிவண்ணன் சதாசிவம்
