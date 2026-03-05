@@ -1,257 +1,106 @@
-Received: from MA0PR01CU009.outbound.protection.outlook.com (mail-southindiaazolkn19010007.outbound.protection.outlook.com [52.103.67.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FCDCA5A;
-	Thu,  5 Mar 2026 00:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772670469; cv=fail; b=oronKo/ivRIokP8Q0JuqONIuNbOlqEJgvb8Sziw/OgTjHzbRq/czNs4j9Usc93zi08C1gC8RuxXi7HmIyBWtjsyW1uGQ52R+zs3TtqGiDQy3Oq9jU6nCrVACtpEc2mSLFOqOdXXf+h+2VQKa4d9NYnECTXVWclhyJR3Q8XJw4nk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772670469; c=relaxed/simple;
-	bh=bNzWj+HhA2A95EusZJoSypHBLk2OYdlBd0UDJvdemWc=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=mp191pT73AVRCVuPEzhp/MKYuA+RSmUq6B8NIdoEkTPM8ItiioK2brPIWuGjVuHeOXt+k3PKpvQUGJzhZHnpndAIGzuGuFPP9s3HskPQf6y5z4iQ2WPPYZL4JSaDE/f6l0y5u8BkNOk3V8+1BHyoTr/QaMaRDybqPWwxgzL9xmI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=sahOjNw8; arc=fail smtp.client-ip=52.103.67.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD90231830
+	for <linux-tegra@vger.kernel.org>; Thu,  5 Mar 2026 01:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772672971; cv=none; b=F9KxCjiBcxqEOk55Aav3o+YmOHw6A8iF1BOCUdPY/E1RkNFggg+uB1RLV5pqxE7zUls8gsA9QokKMy2FDcNfMycFwu1U+rzGhzYgPQ0aIxFaSrDUXlJtOxERlApWq1YczJ499Lfran6+mCZImpRW2ZNTcDfDe6ZvCk0Fl2N1GEg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772672971; c=relaxed/simple;
+	bh=LbtcQ/Ss8yqEo8OcFf87cZm2O+0qnQL71Oa9ALTRLFo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xr7MjfKldP1Y62u05QngshJZ8vtd+l+Xwq/UIo1mkXt96fe1f1GJ9AVvbDoYIH6Ad+ZWD75nmpyzKHj2jbhrfRAdnhSpQV/F8EOQBeu+IJ0wnOYclrCaKbaQve2okf4CzHU2/0IcskKeJ29E/P01LMD90Nx5ox+RKdu6Hx8+CqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eliB95wi; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="sahOjNw8"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UHbvkvq/xN1U/13Qmsacw8iS+jR/n5Cpz+PFL1GQcQ/rS9YY88uI8j8lQ1i42PrgD0QykFGksk4gubjhQTPWiuB7cFKcTTzBqSt5M6jbQ1jB4ltGhbArgkZIM68C4OHZactcc17UEUaOYWyJtEGeR6eQpdlPpcbNwYuaB2aqNuEnOYiYP8RpUI7lZbBTjb8UZt8Z0sW+PSDiIdPLvHUkNco/5L6lKMuwvv7RH6y3P36339w2WPC9vVxcZhZDxLvEwamg/tN4MZ24hMJXjjZ+8er9UHxnXF9CbmnCi1nVF81nCFmZCo8/QNcNBaoLSmnb/HxkTwfDG0JQ78WojcWmtg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sdw/+VpM6iouSnsmX5ZjIJcyigPK/dF56hm7Xnv792U=;
- b=zMntNX4w/51y+b8yeiuIeyEhGTsHNmZtsMBMjNLgepQ9iI0rY+hVROCIWwkyg5RCPfD/E4ceRWB2wu5cQi1gkq9OniYQ2o2EoU9xq9iYF4JN2yF/IYPaB5Udkaxt8NlZ/lfy4pwnkTSN84+lc5CJCiqIa8dRijyzJjMv+f6zNfnBQq58OtPrxXLI/oHMIgXZvIotgt/4OlyvrpTj9gTW8hTGe4SGrJ79iKq/7wVYjFHHcOZi3RKqiq4cjwWSKWitFja32dBNpmZLM+HGSGdWnScKf2S+XTZhrb0RFgMnJQFNRXAZGM8D8jkG+fzHACRpcF1+enzezMklmogI+af6LQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sdw/+VpM6iouSnsmX5ZjIJcyigPK/dF56hm7Xnv792U=;
- b=sahOjNw8Z4HusYGsweaJ56M8GwyEK+F8kQRHQx80tRK/8/NCFiLKiHY48Iv2lcQ3N8cj+Y6PXW4Ndq5KexR61114CV9SWLsD9rg/rSUYpXQjMcR6CMJPWGAKXCTOrj2xlgTas8pYmX7Awej81y28FztFvQwNrcYFohPA5ZUQwRK1BvYSiEsb/wbvx8ztu5ChfFsf03BU9HrEpkupaUa+XaRtg9n8Tn+u3a8gTr7Yu8n6YORTxHqMY8rU9z3aJ8KHrytv8QzmruodNOl3T1kXkocrO2FMiQnpoMg4vxVhqSvnGmiSTuLUIVH6EAgc3oV/WIG7VzRys9uNasz20Jf7Bg==
-Received: from MA5PR01MB12500.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:1e9::18) by PN3PR01MB9936.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:171::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9678.18; Thu, 5 Mar
- 2026 00:27:26 +0000
-Received: from MA5PR01MB12500.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::8a6b:3853:1bc:67e4]) by MA5PR01MB12500.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::8a6b:3853:1bc:67e4%6]) with mapi id 15.20.9678.017; Thu, 5 Mar 2026
- 00:27:26 +0000
-Message-ID:
- <MA5PR01MB125008C876FC8461A80514DE8FE7DA@MA5PR01MB12500.INDPRD01.PROD.OUTLOOK.COM>
-Date: Thu, 5 Mar 2026 08:27:12 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v1 00/18] PCI: Enable async probe by default
-To: Anand Moon <linux.amoon@gmail.com>, Vignesh Raghavendra
- <vigneshr@ti.com>, Siddharth Vadapalli <s-vadapalli@ti.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Minghuan Lian <minghuan.Lian@nxp.com>,
- Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
- Yue Wang <yue.wang@Amlogic.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Jonathan Chocron <jonnyc@amazon.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Jesper Nilsson <jesper.nilsson@axis.com>, Paul Walmsley <pjw@kernel.org>,
- Greentime Hu <greentime.hu@sifive.com>,
- Samuel Holland <samuel.holland@sifive.com>,
- Chuanhua Lei <lchuanhua@maxlinear.com>,
- Srikanth Thokala <srikanth.thokala@intel.com>,
- Xiaowei Song <songxiaowei@hisilicon.com>,
- Binghui Wang <wangbinghui@hisilicon.com>, Inochi Amaoto
- <inochiama@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
- Niklas Cassel <cassel@kernel.org>, "Jiri Slaby (SUSE)"
- <jirislaby@kernel.org>, Qianfeng Rong <rongqianfeng@vivo.com>,
- Koichiro Den <den@valinux.co.jp>, Hans Zhang <18255117159@163.com>,
- Sai Krishna Musham <sai.krishna.musham@amd.com>,
- Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
- Vidya Sagar <vidyas@nvidia.com>,
- "open list:PCI DRIVER FOR TI DRA7XX/J721E" <linux-omap@vger.kernel.org>,
- "open list:PCI DRIVER FOR TI DRA7XX/J721E" <linux-pci@vger.kernel.org>,
- "moderated list:PCI DRIVER FOR TI DRA7XX/J721E"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:PCI DRIVER FOR SAMSUNG EXYNOS"
- <linux-samsung-soc@vger.kernel.org>,
- "open list:PCI DRIVER FOR FREESCALE LAYERSCAPE"
- <linuxppc-dev@lists.ozlabs.org>,
- "open list:PCI DRIVER FOR FREESCALE LAYERSCAPE" <imx@lists.linux.dev>,
- "open list:PCIE DRIVER FOR AMLOGIC MESON"
- <linux-amlogic@lists.infradead.org>,
- "open list:PCIE DRIVER FOR AXIS ARTPEC" <linux-arm-kernel@axis.com>,
- "open list:SOPHGO DEVICETREES and DRIVERS" <sophgo@lists.linux.dev>,
- "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
- "open list:SIFIVE DRIVERS:Keyword:fu [57] 40"
- <linux-riscv@lists.infradead.org>
-References: <20260304140329.7089-1-linux.amoon@gmail.com>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20260304140329.7089-1-linux.amoon@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TP0P295CA0019.TWNP295.PROD.OUTLOOK.COM
- (2603:1096:910:5::13) To MA5PR01MB12500.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:1e9::18)
-X-Microsoft-Original-Message-ID:
- <be3e4319-e9ec-46ea-bcd9-42d7707c3646@outlook.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eliB95wi"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b936b85cc71so920389066b.2
+        for <linux-tegra@vger.kernel.org>; Wed, 04 Mar 2026 17:09:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772672969; x=1773277769; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2MWUrsUXFcwGOAac+qp/yjy4va2ZunaLxL5VCfPRVvY=;
+        b=eliB95wiAXGoG35ssONcunQlQKovuuvWsxOL6j9BIh0W39mVsFlMD2q9HkkLcnHBt+
+         RZU4t1oIJK2sPtHtGb/8hF3/5tXCIYFaB2LZeZaqvuuJ8zfG+LIVjRucaY0EpKxSc8tF
+         U61u88OLvWNIu30kWAw5ALOqqpxqgv0Urbthp++PGZ+CNFMMRXgE4HyBpqiB7B4qEf//
+         yJtQLGaLQFIufMMpi4KfGdth6fbD7Gdds1eDArp9whW9sjCdDQPY3h8P/DqfMCB+uG+i
+         32T+ofsYyS0Zi4ZrYYhjNUTymLg3y3iaWYmV02ZFTSFava/nIZZq1L3RVdtFTIHXIkSO
+         X9Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772672969; x=1773277769;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2MWUrsUXFcwGOAac+qp/yjy4va2ZunaLxL5VCfPRVvY=;
+        b=tvYlqfW3fnByIWTGeWiBvn0xYD5casagyKAgr9ZgqClaIiwbQUycDT6xhyGTTqjAoO
+         B3GMVwrB5em076hQgF4abiiza3poAB+4jUIFCpdOCNZjEEXS98F7/+3Ne+IgJL+Ppfe6
+         tGwpqzfAzZpY1aFpgboihAVZbyDtIWDqWoh/y1y8adYTpNtllDMpXUbkIlIZFmwfoduw
+         tYKqHa3Y0yyj0ToaBLbM0pr2FRh1k5uDLMxQUt20fnan3CG2QRUmJhWfBQy3u5VmDEPR
+         17+dG0+2G7kL4gwgqOFDptbJKUjhRbMz3HExMFZQ25w0Cr7Z3XAUb30AncBQW39X8ZhI
+         YApg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQB318n0uNWwzmXdQvSSPNQ1DjlVIpJy/+B+txiFlwr4GMZ1NrJLqe77JQIEs7+u7cN+zKywNO9fF0aw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yznz3c8b7b2qa6omGNvU1kU7vd0GUUUR16tALYFZyPeM9ElHfeh
+	fUqrKWGgRLSYO0tcW5GWgo5r34kot33LotO/UNrV4DCgOOiWK8AITU6j
+X-Gm-Gg: ATEYQzzhfjM+gudRIAXaQVGQg2GsJNm76lmkeyD5whsxx/TmFNFQoTSu26o0O+WdV/6
+	NbBA9MMEVlF+9iLC5ZUMpov4ShS2zfO2NY6vd2CxQud9zp5B3ItH7DOloi2u9v1RTrA9JrnLiv8
+	p0VDAAv9LnlfeTunwn5Yo1BbDBe0oChK6qpLVA7jlj9iZsUI3PBeychuwKxiYx9A2GdcU/SuHm2
+	+qh371jSB3gi8kVMq+L3ZD51o7MEA9qYSpUhlDJipotLWryXBliO/AZHCfXieFlF1IrXMKdVPvi
+	P1OrOzV5pbYGnpiVFBwfQrXXps/E396MwuTEaNnvguvfOntrWLqGrRh80h/JfA7zov7oPpUftcv
+	BoYKOq43g3Q1xQlIUrzsropcBcA8rI16uKv0UZIj6r1HMpqyb5UxK8pL+8hr2952Z921++Nq4uT
+	qMz7zZNHCK1hgbUvCUxkhqcgGLkZH8+RRbmr3yVo0llPW30vB1VWX1u7yRGDyH70FZnjFby4xt+
+	lki7jCAsgSy4qATSKP3/8y6L4/FMGfwc69fkH2U28zL8UrrdDHdEC4v01+uR7vGf0xcOMiD2Yq6
+	v48qfdMGlSqcMDPe
+X-Received: by 2002:a17:906:4792:b0:b7f:f862:df26 with SMTP id a640c23a62f3a-b93f116dcafmr247166866b.14.1772672968574;
+        Wed, 04 Mar 2026 17:09:28 -0800 (PST)
+Received: from DESKTOP-JNMGKT5.residents.sin.openfiber.nl ([88.202.160.248])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b935ab135bfsm841560566b.1.2026.03.04.17.09.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Mar 2026 17:09:26 -0800 (PST)
+From: Alexandru Hossu <hossu.alexandru@gmail.com>
+To: marvin24@gmx.de
+Cc: gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	Alexandru Hossu <hossu.alexandru@gmail.com>
+Subject: [PATCH v2] staging: nvec: fix block comment style in nvec.c
+Date: Thu,  5 Mar 2026 02:09:24 +0100
+Message-ID: <20260305010924.40335-1-hossu.alexandru@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA5PR01MB12500:EE_|PN3PR01MB9936:EE_
-X-MS-Office365-Filtering-Correlation-Id: f9ad4c95-ffeb-430f-2457-08de7a4df9c6
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|39105399006|19110799012|5072599009|461199028|6090799003|23021999003|8060799015|15080799012|1602099012|40105399003|31055399003|3412199025|4302099013|440099028|10035399007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dzF4Q3NIZ3BualFaSDdld0w0RjU1aSswejZ2TFozTGhvOHhaRGtOd0tnZTA1?=
- =?utf-8?B?NHl5OGhxb0IyRHpHS1R2TTloZ2dVQjRjRGtLU3FrK0UrUjhweUFvay9UVnh0?=
- =?utf-8?B?bTNsZTh1NkFBTVNOREhWVEt0dlhDZVR2bVZlR2F4V3VxQXpPVFhDVFpMK1NO?=
- =?utf-8?B?ekd5RytQanJhamVBZGRIZjF4ZS9TNTk1YVg2Q2w0YVRSNS9Hd09xNHQ2Mkpk?=
- =?utf-8?B?emdCSFkraExIdlVvTE11bjl2alpTTnNGZUMxK281VWZOZWYzaWx6Sy9kNTl1?=
- =?utf-8?B?V0NzWnAyWldWeHA1NjlUVGhvLy94V2tEK05mbFhXMGFGb0pneU9QMTdjNUlD?=
- =?utf-8?B?KzZ2c28zQVNkSS9aTEdLdzR5Sk5xQzdaOGdyVkNra2JweG9qUUVZQkJaaW1v?=
- =?utf-8?B?YUdIYnBlQjZMQjRHWkRPUWczK3FqSXRjeCttNWR1MDdLcnlOK0VrODUyN0E3?=
- =?utf-8?B?YXlWcXo5RW5FRXZoNWtIUjZhZC9lZk1oVkc5dVFoeDMwakpuNjg1Yks2SGc4?=
- =?utf-8?B?THJDVHEveFhaSmd5SkdUM01CdGVwNkJIV2gwcWxhdXdYUDBPd3pxd1lld0Rm?=
- =?utf-8?B?RGtSUElvbTF0NzdqUU9jb3FGL1J6VGFGNlE5VVZMdHFtSDlabE5qZW1NMnYy?=
- =?utf-8?B?ZmlEWm1uM0dESHBUdlo4WHVETlZiY20zLzVveDB3cVpsTGpBWWFWamhqVUR0?=
- =?utf-8?B?Z2JyUFdFSXFYV3RpNGFRUytSL3lBdXVmZHA1cGVFWThxd25IdFJCU1ltdTZL?=
- =?utf-8?B?TE9rSzFvQzlLSk1LY3V1aFFuM1Nra09paWoyd1JuNjBPMzlBVjBIK3dRV2xY?=
- =?utf-8?B?SVRMSmZINXBrL2d1UFpReHVISTFXdTBTUHpMM0RuZ0FPSnZjanhHWksraEM4?=
- =?utf-8?B?UDN6VXQ4ZHYxd1dVU1lSRGxvK0dvamIrQkFncUpMcS8wbjdVc2c0VFN3RmFH?=
- =?utf-8?B?aGhIRUFVc0R6WTQ0MG9tQSt2ZVV5dXFVRjlIR0k0cThWYnVSOHBid1orUDFM?=
- =?utf-8?B?Y0tDVWxwN0ppRkNxNkxOaHhjQXRUUk00YTVCcEE4T3p3cnM3UDg2TnFJL1ph?=
- =?utf-8?B?Q25RZ2xLY21aUzRyWWYyR01SbU5RVWM1RXhmUHdLbncvWWJXZWVuYVBPZTFI?=
- =?utf-8?B?S3hWK0FVUTRkWFdSTVE0bU8xaDk5Ry9laFBrNEliWFRqVDVXby9ZVjVubWdz?=
- =?utf-8?B?NnJsM2h3LzgrZjYxNHZta1pqVDhOdUtaOFl1MGpPVzZycml3UWdNN2Y1NzNt?=
- =?utf-8?B?cldxVEl2OHFQclNwVldTSmdHTHN2M01EaElwSkRJZWdzc21BVEYyTGpZZlJR?=
- =?utf-8?B?Uk1Gc0lTRk9zV21hQWRHYjhvY24xcTAxQjdHSmlucHM1Ri9nTnYrREJQaGNn?=
- =?utf-8?B?MlpaVkFNSkFWVHN5bWhWWElLR2Z4TlM5dnhHNCtCT3VyZWc3Q2JwUnArYndm?=
- =?utf-8?B?Zm1XZm5KVVo2K2xuRkltK2dxK29oZ0ZUaGdta3ExT1hRSkZsYUFQU1dJVGgy?=
- =?utf-8?Q?MrUkGw=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?djZJMmpDaDY3NG5aSDlzU05WU1RtWjhuak5RT29scE1yUk16UldvcGxvaHA1?=
- =?utf-8?B?eHFsYnE3aThvMEozckpOcEVJa2R1T2w4VHJwUHRxU3Y0bzFvYVBkbWRLK2F4?=
- =?utf-8?B?SERRZFJHUkZYQjB2OXgyT2RWQzJ0WmkzdzMwQkYvVDBudk9KOFNWYWw2MU1a?=
- =?utf-8?B?MWhOdG4rWXBlR2xSVHE3aVVHZm51bkpnSklpZ3pVeHhmblpYVUFOMU4zVUxH?=
- =?utf-8?B?RTU2djBzNWRpTWZ2aFZIa3UvMzhIb0ZKc2RKVUxMMjljWm0xSjFhVkg4Q0hS?=
- =?utf-8?B?cGJiYzFRZEV1aml0QmkrbzJGeDFwd1BaQXFsRHNOcmNEK0ZIMDA4VVBYcmJj?=
- =?utf-8?B?NFdGTUtMUGpVL2pmWVFSbmVYb2dYUUkxS0hUZ3VpdDhvU3pzZ2RBT3N1TmJB?=
- =?utf-8?B?NzFEMUtzWDN3clNTNjYxbEs2T1ZtSmJQVmllNWhaUDg2aUJTOFFMbGJkWTNu?=
- =?utf-8?B?RVpwZUlmbzN6b3FqSHA5TThwSkErMTdOQ1Rrd2lKM01KRGRmUXR4VHFjRnhz?=
- =?utf-8?B?MlR6enV6YlR0bit4U09DdFhOV3hNWTEza2FmWU8vMDdVc2NERnZreHBsOEh2?=
- =?utf-8?B?M3p0d3UrYlBncVVtYjBzaytMc3VJSGhiS1NWSGpOd3E5TVJOZHllVGVlT0Uy?=
- =?utf-8?B?dWpzQk93aHc4K044eXRURkRJdUtWRGhrcUNvcHVFMno2N2pwclVyRnhCRWRO?=
- =?utf-8?B?eGtOREVxcStvOURnRStUcytITEdhbEpmNjVQUzY3b2xSNnBnNENKVys4YWw4?=
- =?utf-8?B?Y1d4WXJtbEwzWDQ4L1ZyUnZuVDVJRDE3K2JDWnE5VWhDS3BJcmw2Z3pKckVB?=
- =?utf-8?B?NGFqZzh0NjVjT1R6d3o2eC9XMnpZc0RaRnZvcjREWFdvU04vd3FsakViTU9x?=
- =?utf-8?B?ZkQ0Mjl3YUwxOEdEK3pEQzh1SnZQbXBlcWlhQ1BoYjcweEs3NGYwMWFteXNr?=
- =?utf-8?B?RFRvUmUrUW55S0ZZM0ZkSFFPYWlSS2ZFV2s2WHVDd2RXTkJpZ3pmUjFSQW5M?=
- =?utf-8?B?QUU4Mks1ZUpaZGxGNitZUEEzdmxpLzloUlVMWWVvdlpJWlpaNTBTUnFNM0Zp?=
- =?utf-8?B?UWQvN0tPZDZXSVExeGF3WXBoS2tWcnhsbVJ2Y0l6dm9vNUdBcC9VdElYd3d2?=
- =?utf-8?B?aG1ZVllGZXI4R1JMckNvRXVpUU0xKzJkRWV4d1BrbWw1V3hPcGduMHZwd01w?=
- =?utf-8?B?c0ZEZHVWK3Z3UjRRUnlSeFdFRVZlMDhoT01JRFJ1TmhsNGlXdm9aSmhuS1Vt?=
- =?utf-8?B?Y1ZOcWIxNVFNV0gxeGRNRVlOOW9hZVRkd3lvbml6VGw1Z3JtNVZtRisxNHBq?=
- =?utf-8?B?ZmlMTmlna0k4b2M4aTFjemxYSXBhQWM1RzVYeGZPeFVmSFBkRUNTOHAzRVNo?=
- =?utf-8?B?akNSbXVmcC9JalpjdnBCZThQS2xQd3g2Nk12SUZqbjhyby95M3NmejBoVzVq?=
- =?utf-8?B?QWpLaTNHcFhnY2Yxd2FNQnAxcEZ2aHlXZTZiWDJMV2EyQ3RRdjRBaE43Q3BM?=
- =?utf-8?B?end5em9yR2szV0dRTkU4L1Q3NzJmbE9uUldoWmtCejlEVFdwMEJBTk1wcjNs?=
- =?utf-8?B?M1BsRlBwMnl0T0xFOXM3QjZvN290TEk2MUFNR2hQWXZWemQrSmxQYllJQzF6?=
- =?utf-8?B?eUQ0SjZEd1BtM21LSDlvWjBkcWEvUFlkRm1oM3BRaS9wcVpYZitMRmtMdDZO?=
- =?utf-8?B?WVB0SDZYSU9zcXdBM0VNQVJSbmxmTnc2RTVUekhQWVIrR3lrYlRITEZVRDBH?=
- =?utf-8?B?ZElzcjUxK1RGUzYvMXl6WHdYRmtHMXAzQnJiZEE3SGNqZGlyZFNlb2Y4NC9s?=
- =?utf-8?B?bWJiVHVSOFRFc0pTRUQxcEZ6cUEzNFRycHhiTWpqektDT0hTNUl1UU9qeStP?=
- =?utf-8?B?V1E0YVJ4cjhwZ0dIQ0lnYi9sSU9peFoyWnQ5OHZEaUgwZDhtbCt2N3J4UHFu?=
- =?utf-8?Q?SGbUydehJYyqyFtYUlf3lTxMWyKwWDx9?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f9ad4c95-ffeb-430f-2457-08de7a4df9c6
-X-MS-Exchange-CrossTenant-AuthSource: MA5PR01MB12500.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2026 00:27:25.8239
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3PR01MB9936
+Content-Transfer-Encoding: 8bit
 
-Hello Anand,
+Fix a multi-line block comment to follow kernel coding style.
 
-On 3/4/2026 9:51 PM, Anand Moon wrote:
-> Following recent asynchronous probing updates to the Rockchip PCIe
-> controller, this change enables default async probe functionality for
-> all DesignWare Core (DWC) based controllers to optimize boot times [0].
->
-> [0] https://lore.kernel.org/all/20260226101032.1042-1-linux.amoon@gmail.com/
->
-> This PROBE_PREFER_ASYNCHRONOUS flag help to parallelize device initialization.
->
-> Thanks
-> -Anand
->
-> Anand Moon (18):
->    PCI: al: Allow asynchronous probing for background link training
->    PCI: amd-mdb: Allow asynchronous probing for background link training
->    PCI: armada8x: Allow asynchronous probing for background link training
->    PCI: artpec6: Allow asynchronous probing for background link training
->    PCI: bt1: Allow asynchronous probing for background link training
->    PCI: dra7xx: Allow asynchronous probing for background link training
->    PCI: exynos: Allow asynchronous probing for background link training
->    PCI: fu740: Allow asynchronous probing for background link training
->    PCI: intel-gw: Allow asynchronous probing for background link training
->    PCI: keystone: Allow asynchronous probing for background link training
->    PCI: keembay: Allow asynchronous probing for background link training
->    PCI: kirin: Allow asynchronous probing for background link training
->    PCI: layerscape: Allow asynchronous probing for background link
->      training
->    PCI: meson: Allow asynchronous probing for background link training
->    PCI: sophgo: Allow asynchronous probing for background link training
->    PCI: tegra194: Allow asynchronous probing for background link training
->    PCI: uniphier: Allow asynchronous probing for background link training
->    PCI: visconti: Allow asynchronous probing for background link training
->
->   drivers/pci/controller/dwc/pci-dra7xx.c     | 1 +
->   drivers/pci/controller/dwc/pci-exynos.c     | 1 +
->   drivers/pci/controller/dwc/pci-keystone.c   | 1 +
->   drivers/pci/controller/dwc/pci-layerscape.c | 1 +
->   drivers/pci/controller/dwc/pci-meson.c      | 1 +
->   drivers/pci/controller/dwc/pcie-al.c        | 1 +
->   drivers/pci/controller/dwc/pcie-amd-mdb.c   | 1 +
->   drivers/pci/controller/dwc/pcie-armada8k.c  | 1 +
->   drivers/pci/controller/dwc/pcie-artpec6.c   | 1 +
->   drivers/pci/controller/dwc/pcie-bt1.c       | 1 +
->   drivers/pci/controller/dwc/pcie-fu740.c     | 7 ++++---
->   drivers/pci/controller/dwc/pcie-intel-gw.c  | 1 +
->   drivers/pci/controller/dwc/pcie-keembay.c   | 1 +
->   drivers/pci/controller/dwc/pcie-kirin.c     | 1 +
->   drivers/pci/controller/dwc/pcie-sophgo.c    | 1 +
->   drivers/pci/controller/dwc/pcie-tegra194.c  | 1 +
->   drivers/pci/controller/dwc/pcie-uniphier.c  | 1 +
->   drivers/pci/controller/dwc/pcie-visconti.c  | 1 +
->   18 files changed, 21 insertions(+), 3 deletions(-)
->
->
-> base-commit: 0031c06807cfa8aa51a759ff8aa09e1aa48149af
+Signed-off-by: Alexandru Hossu <hossu.alexandru@gmail.com>
+---
+v2:
+  - Add missing commit description.
 
-Suggest you indicate in the title of the cover letter for the next patch 
-that this patchset is only related to dwc.
+ drivers/staging/nvec/nvec.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks,
-
-Chen
-
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index e9af66a08..0e655f79e 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -660,7 +660,8 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+ 			to_send = nvec->tx->data[0];
+ 			nvec->tx->pos = 1;
+ 			/* delay ACK due to AP20 HW Bug
+-			   do not replace by usleep_range */
++			 * do not replace by usleep_range
++			 */
+ 			udelay(33);
+ 		} else if (status == (I2C_SL_IRQ)) {
+ 			nvec->rx->data[1] = received;
+-- 
+2.43.0
 
