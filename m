@@ -1,142 +1,122 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC81331204;
-	Thu,  5 Mar 2026 10:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADC437CD52;
+	Thu,  5 Mar 2026 10:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772705637; cv=none; b=p2SOiWC9UcBh7z/Y8/AK2jfCXJ9Yk5qlDl8+qVjkhwL5+NmSjWzzyVR/E4xQ3U2X1DC+kQuGLqu2bWHXK0Mbm/3oAT/k4fWUmIZJsvBISq9ExX3HH9uFutbjRmtt2/b0vq/cH8oe+3jzaxuGnRVfNVGgUQUGJ7Zcx3Carqg9AcY=
+	t=1772705896; cv=none; b=ObOA+W7t7+gp2BCio5wbXXiGVW977Jx2bHpZzYZn8sqqnZVuFavyiYfR07OIhRV+jsAA2X51PYjpg3YOaR79vsVK9gIed0d+L2gzq4bYzkUK5U7zgF1/FqlSx0u9ZIPsO3/KHHnA1Lusfzx/ycavEzfPmD0TPoxTRas8s8Tppbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772705637; c=relaxed/simple;
-	bh=gLlEtYagEKIFjG5F8a3A/NR9PRdUS4OHscROMOIMXZA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jcbEFctYv9Cgfbw27kGCh+gsj8XCP1/QN8m64Iobst3elptXHTd2f9+S3qUFTcA6oXGeKT3sFoTsE55/txW69zHsqyHJVVymq3M9XHCYqaf9p90KlwdtvlmBKKNrqN2aaYUeM/ndBCbt/wi0zdCIpuWTBBaZ3QG9r6qy1ewGCM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OGxx742k; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772705896; c=relaxed/simple;
+	bh=c1FAi14nQ1GNRGY0M905cz7eIhZ2MT8LL6nU2RGR+PM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BUJasvoavi22S/nJoUVsbNl1Oa0UXtQiCniPE+J3l/gRN+CeDbdK3DYwcCe+vSpt+Tf0lu30cM0NGivuUUBy+2LBbyPevQlVglKGYSq3jbquQO2yefnK7xDm008PbZVwliBeyrkAXgh5vV17bBbddkIbOr5KIUK6C5Y2AYO9xMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pBfU900B; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OGxx742k"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C52AEC116C6;
-	Thu,  5 Mar 2026 10:13:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pBfU900B"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F56AC116C6;
+	Thu,  5 Mar 2026 10:18:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772705636;
-	bh=gLlEtYagEKIFjG5F8a3A/NR9PRdUS4OHscROMOIMXZA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OGxx742ke8ndUq+KKpCoK78oYVQ+tBt9CF0nBSTEw5V6sjEK34QB1i75slSO+ilb5
-	 bzv8SKdM+Aj941MheVLLmptyNHH2aZRlbMyfKcyximmU0Iqru503CIvVVpvKQewuVJ
-	 I1gkrYmmRNt70fhzjJFOJIBOr43VyqJZnMKOHmI4BpNrGBTGz3h27oyGs2gULFRa48
-	 cK56WnPdi+Oq6gXwLZby4u/gIzKC/Y28ebuttCuqXyLbELbpasi/D2md3AQnhSl5BY
-	 P9X2qwHlg3WZH66oyHfOnWJ2bJhliZovnSdIh46cr0FMTHaQ40jjxu7XbWLeozpAnG
-	 I1rOHUQJMHF/Q==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1vy5iM-0000000GOHR-0DfY;
-	Thu, 05 Mar 2026 10:13:54 +0000
-Date: Thu, 05 Mar 2026 10:13:53 +0000
-Message-ID: <86v7fa7fdq.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Thomas Gleixner <tglx@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Antoine Tenart <atenart@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Mark-PK Tsai <mark-pk.tsai@mediatek.com>,
-	Daniel Palmer <daniel@thingy.jp>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Nishanth Menon <nm@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	imx@lists.linux.dev,
-	linux-amlogic@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 3/4] irqchip/gic: Use GIC_* DT binding definitions
-In-Reply-To: <d22488d128d39fcd90359f59559fac637bb4b04c.1772644406.git.geert+renesas@glider.be>
-References: <cover.1772644406.git.geert+renesas@glider.be>
-	<d22488d128d39fcd90359f59559fac637bb4b04c.1772644406.git.geert+renesas@glider.be>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1772705896;
+	bh=c1FAi14nQ1GNRGY0M905cz7eIhZ2MT8LL6nU2RGR+PM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pBfU900BAw9GwAbY5xH63mq8ZANcF4CqlDu+Qj80LEqqmn1Rw4A5NdDh4XBVu+UgY
+	 QY2XiYpFtRLwgIT15s+Epcgnd1LtS6ygxAbrRZK+cfcvdn6oHmBv9mWNbCrffrEK2/
+	 S0MnJWV8wmE2c59HeCp6SQorEuEaJLDlw4Lbzzb4BTAYjaKm1UxPxMg6d6QJBguT5J
+	 beaE4PQjB5+8KWzmPQTQEP83cIludLfvZTfkNiFXe9kFICGONoXOFKRoe080S3GF0I
+	 DJjhvOAiw5yiXIzHsPQn3ddsgNV7m/Rta9iKOHBVJaHPFmTpDrlNB/g3fsGAxA9V3K
+	 6v1P6Ev4tjKUg==
+Date: Thu, 5 Mar 2026 15:48:00 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@kernel.org, arnd@arndb.de, 
+	gregkh@linuxfoundation.org, Frank.Li@nxp.com, den@valinux.co.jp, hongxing.zhu@nxp.com, 
+	jingoohan1@gmail.com, vidyas@nvidia.com, cassel@kernel.org, 18255117159@163.com, 
+	linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 07/13] PCI: tegra194: Set LTR message request before
+ PCIe link up
+Message-ID: <x5m2omsus72plxulgt66hov5giw2t5madb6zfzyr2e2o5ojm4b@uhyuycoa6gpw>
+References: <20260303065448.2361488-1-mmaddireddy@nvidia.com>
+ <20260303065448.2361488-8-mmaddireddy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: geert+renesas@glider.be, tglx@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, lpieralisi@kernel.org, atenart@kernel.org, florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com, Frank.Li@nxp.com, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, neil.armstrong@linaro.org, khilman@baylibre.com, jbrunet@baylibre.com, martin.blumenstingl@googlemail.com, mark-pk.tsai@mediatek.com, daniel@thingy.jp, matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, thierry.reding@gmail.com, jonathanh@nvidia.com, nm@ti.com, kristo@kernel.org, ssantosh@kernel.org, hayashi.kunihiko@socionext.com, mhiramat@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, imx@lists.linux.dev, linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260303065448.2361488-8-mmaddireddy@nvidia.com>
 
-On Wed, 04 Mar 2026 17:21:58 +0000,
-Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+On Tue, Mar 03, 2026 at 12:24:42PM +0530, Manikanta Maddireddy wrote:
+> From: Vidya Sagar <vidyas@nvidia.com>
 > 
-> Replace magic numbers by symbolic DT binding definitions.  This improves
-> readability, and makes it easier to find where the various GIC
-> interrupts types are handled.
+> LTR message should be sent as soon as the Root Port enables LTR in the
+> Endpoint. Set snoop & no snoop LTR timing and LTR message request before
+> PCIe links up. This ensures that LTR message is sent upstream as soon as
+> LTR is enabled.
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+
+
+> Fixes: c57247f940e8 ("PCI: tegra: Add support for PCIe endpoint mode in Tegra194")
+> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
 > ---
->  drivers/irqchip/irq-gic-v3.c | 14 ++++++++------
->  drivers/irqchip/irq-gic.c    |  6 ++++--
->  2 files changed, 12 insertions(+), 8 deletions(-)
+> Changes V6 -> V7: Retain FIELD_PREP() usage
+> Changes V1 -> V6: None
 > 
-> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> index d75163e71bf22473..6ac103cb40097acc 100644
-> --- a/drivers/irqchip/irq-gic-v3.c
-> +++ b/drivers/irqchip/irq-gic-v3.c
-> @@ -35,6 +35,8 @@
->  #include <asm/smp_plat.h>
->  #include <asm/virt.h>
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index 2da3478f0b5f..b50229df890e 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -485,15 +485,6 @@ static irqreturn_t tegra_pcie_ep_irq_thread(int irq, void *arg)
+>  	if (val & PCI_COMMAND_MASTER) {
+>  		ktime_t timeout;
 >  
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
->  #include "irq-gic-common.h"
+> -		/* 110us for both snoop and no-snoop */
+> -		val = FIELD_PREP(PCI_LTR_VALUE_MASK, 110) |
+> -		      FIELD_PREP(PCI_LTR_SCALE_MASK, 2) |
+> -		      LTR_MSG_REQ |
+> -		      FIELD_PREP(PCI_LTR_NOSNOOP_VALUE, 110) |
+> -		      FIELD_PREP(PCI_LTR_NOSNOOP_SCALE, 2) |
+> -		      LTR_NOSNOOP_MSG_REQ;
+> -		appl_writel(pcie, val, APPL_LTR_MSG_1);
+> -
+>  		/* Send LTR upstream */
+>  		val = appl_readl(pcie, APPL_LTR_MSG_2);
+>  		val |= APPL_LTR_MSG_2_LTR_MSG_REQ_STATE;
+> @@ -1803,6 +1794,15 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+>  	val |= APPL_INTR_EN_L1_0_0_RDLH_LINK_UP_INT_EN;
+>  	appl_writel(pcie, val, APPL_INTR_EN_L1_0_0);
 >  
->  static u8 dist_prio_irq __ro_after_init = GICV3_PRIO_IRQ;
-> @@ -1602,25 +1604,25 @@ static int gic_irq_domain_translate(struct irq_domain *d,
->  			return -EINVAL;
->  
->  		switch (fwspec->param[0]) {
-> -		case 0:			/* SPI */
-> +		case GIC_SPI:
+> +	/* 110us for both snoop and no-snoop */
+> +	val = FIELD_PREP(PCI_LTR_VALUE_MASK, 110) |
+> +	      FIELD_PREP(PCI_LTR_SCALE_MASK, 2) |
+> +	      LTR_MSG_REQ |
+> +	      FIELD_PREP(PCI_LTR_NOSNOOP_VALUE, 110) |
+> +	      FIELD_PREP(PCI_LTR_NOSNOOP_SCALE, 2) |
+> +	      LTR_NOSNOOP_MSG_REQ;
 
-I'd rather not do that. I use *numeric* values on purpose, because
-that's what the DT *binding* describes, and I have no control over
-what lives in that include file (it gets changed without me being even
-Cc'd).
+As per the spec, the device is not permitted to request Snoop/No-Snoop latencies
+greater that the Max Snoop/No-Snoop latencies set by the host depending on the
+platform requirement.
 
-So I want to stick to the binding, and not to the interpretation of
-it. If you want symbolic values to be used, describe them in the
-binding, have a tool to generate the values from the binding, and use
-that everywhere.
+But here the driver is just using a hardcoded value without reading Max values.
+It may be assuming that the host is always going to be another NVidia platform,
+so it sends out fixed LTR latencies, but that's not going to be true always.
 
-Thanks,
+Also, the host can update the Max latencies at any point of time during runtime.
 
-	M.
+- Mani
 
 -- 
-Without deviation from the norm, progress is not possible.
+மணிவண்ணன் சதாசிவம்
