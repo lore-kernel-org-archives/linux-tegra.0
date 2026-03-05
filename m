@@ -1,97 +1,148 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E6A374E53;
-	Thu,  5 Mar 2026 09:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772703821; cv=none; b=lS29t6eTN6xdymoc2Xf623csi7etxzqIWgFTYcR5kMwmpTKO3jnNLzPCuB2u+c8qwKnCMUulvQ0K94Zqvi+twACkINyR8CZjoncJm0O0mP1PzsyFMjMTbIoqAbO7ZnRmR8CLkoDme8Q2kNrzfa7U0bNWTybtDiuXR0kmV4EmAc8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772703821; c=relaxed/simple;
-	bh=fS48OwWxLVQHQhxLkHNDQvrzSzRV8rXwmnPDQKMYEaQ=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D953783B5;
+	Thu,  5 Mar 2026 09:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772704406; cv=pass; b=JTqu1JzKzrEzlhqVc5TyrK72gmp9gf3LB7fpV/hILgcf5X0LvNfh6S1kLmSfYs9Chwsj4oQAbG/DI33xZ9M/OdpcZxiWjSyJGguqw80WKKrV+fvAJG11De/ctvvDNT9CtArh7iR8MI1RI7Q3SnY9fq3mRBlbin2Q9UOJGiA4cTo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772704406; c=relaxed/simple;
+	bh=D7W50Gyx79F1BQJBBcvSYt9GNLrXBM4NZSb+Xw2SOq4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lFk3pNgFXWSTsToXAm7XgrWx9/fJpVry/UhsVCmjG+Ap0xgQfYLMVzu2v5ERzBa7g7iTMdUv81gWng+k4E3egXKQlFyhDN/ZLeA++72DlAsHaTLClco5KfLLAcvn9ZHhBuJSYt6Z3/U2Qmde50MKmKwjYfZiHdJic/gO4bkg8TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hex5f4Fx; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=WAP5e7WHh5z6I+QPBlkK/PtDYW/R11767JXN7MpMcBf8W5LTMYV0QwEscS97mdzAF7pSouj+YqEpNtdnml6aYS/h8PcNrQkKLdo0QxwgDh6CYN5224CmjtZlkOkRH4/Vq6XIe2r2IGTEFh+76G1ZMCXmViKX6mG1g1Eka/IwyTg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=kuQ6wgoy; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hex5f4Fx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4192DC19425;
-	Thu,  5 Mar 2026 09:43:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772703820;
-	bh=fS48OwWxLVQHQhxLkHNDQvrzSzRV8rXwmnPDQKMYEaQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hex5f4FxVqyBvO50uxxL/kGCRviV/vUbl3rVgwQakLATKwEkSWLr8Pqu5H2gr4RNw
-	 hf22gixN1bF4hII8addLtj0cfu4kHfO7jmistmqVIR+PrPvEHVupOYbOTErThtKapg
-	 k5KX5D046lzbUpMTXx2zZqMAuKqvFHUXm4/KTaZ53k022SKojRYIzucGnGXaloDgsP
-	 2AjRXHyqJT1lqZCekSYUU7NKaqAOKpb3JMYH6LSLWnC8npW1XBZmEMqDhbKoqmzPZK
-	 XuBOvuoULr9U+7Czw2br+yfbO8vDiwt/umknwh2dO6/kEGY3LSoauhQv8LgAJGyqD6
-	 cc9K7goRCDACQ==
-Date: Thu, 5 Mar 2026 15:13:23 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@kernel.org, arnd@arndb.de, 
-	gregkh@linuxfoundation.org, Frank.Li@nxp.com, den@valinux.co.jp, hongxing.zhu@nxp.com, 
-	jingoohan1@gmail.com, vidyas@nvidia.com, cassel@kernel.org, 18255117159@163.com, 
-	linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 06/13] PCI: tegra194: Disable direct speed change for
- EP
-Message-ID: <4zxcmzsm6l3zbz4pblp7c67xpn6q6okpqcilupv6l22ce4gcno@b4htj36ngr33>
-References: <20260303065448.2361488-1-mmaddireddy@nvidia.com>
- <20260303065448.2361488-7-mmaddireddy@nvidia.com>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="kuQ6wgoy"
+ARC-Seal: i=1; a=rsa-sha256; t=1772704388; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ILbpyWSpgsHBsljKSeJYbS7Vw03gooRrhFM0zfvSJ0mMnsLhlex4dZfvu0oPRIpkKO47xszQ2NfzHWwj0pqoFXT4WttLKvDbi1tiW3nCRR4ojr4Vznpxn72wH7dC+ms4XVRbfVzqDJCc2LgWtNUaXznEcvPGtkEc57jsG4V4QXU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1772704388; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=nzu6bAtb37Rscm3wTe12q1wA4WbiMxsyc0YgbMDmKhU=; 
+	b=mYJnA6goY8gyGl8bcxdTO/ByoiY0b4sP3KBwTqzQqQEu2c5WKfTddS9Fe6+yv32bTaxDKYI77aHYbYDm3y0nylvB+35tg6Dif1cn+oIsHiwDCXjvuTbZTh5SotriBERyVv4hZBgBiBYR/T0QbFyyAxO9Bo5rJckG1guguTRV57Q=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1772704388;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=nzu6bAtb37Rscm3wTe12q1wA4WbiMxsyc0YgbMDmKhU=;
+	b=kuQ6wgoyu9T6YeGL0SUqZ9zx8isgTeA+3UHBcaeWieFRMa3K4z+NnEetspD5wWZI
+	TL1RG3LK6Yh1ZgrkSKhInXGy6ScbB4h0qNcCIN3ps5vMT5cv/qWX4tybyGlWVkJHBrt
+	Vz08HTmqhf50ivIQbgSUcJHFeQhtd9qRZpIk3S4c=
+Received: by mx.zohomail.com with SMTPS id 1772704385504238.17185557574544;
+	Thu, 5 Mar 2026 01:53:05 -0800 (PST)
+Received: by venus (Postfix, from userid 1000)
+	id 8DA0C180891; Thu, 05 Mar 2026 10:52:59 +0100 (CET)
+Date: Thu, 5 Mar 2026 10:52:59 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-can@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org, spacemit@lists.linux.dev, 
+	UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH phy-next 19/22] power: supply: cpcap-charger: include
+ missing <linux/property.h>
+Message-ID: <aalSUJI5jFG2kJBL@venus>
+References: <20260304175735.2660419-1-vladimir.oltean@nxp.com>
+ <20260304175735.2660419-20-vladimir.oltean@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2vxe7ox52jklnq2g"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260303065448.2361488-7-mmaddireddy@nvidia.com>
+In-Reply-To: <20260304175735.2660419-20-vladimir.oltean@nxp.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-0.2.1.1.4.3/272.682.15
+X-ZohoMailClient: External
 
-On Tue, Mar 03, 2026 at 12:24:41PM +0530, Manikanta Maddireddy wrote:
-> From: Vidya Sagar <vidyas@nvidia.com>
-> 
-> Disable direct speed change for the Endpoint to prevent it from initiating
-> the speed change post physical layer link up at gen1. This leaves the speed
-> change ownership with the host.
-> 
 
-Why?
+--2vxe7ox52jklnq2g
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH phy-next 19/22] power: supply: cpcap-charger: include
+ missing <linux/property.h>
+MIME-Version: 1.0
 
-- Mani
+Hi,
 
-> Fixes: c57247f940e8 ("PCI: tegra: Add support for PCIe endpoint mode in Tegra194")
-> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+On Wed, Mar 04, 2026 at 07:57:32PM +0200, Vladimir Oltean wrote:
+> This file uses dev_fwnode() without including the proper header for it,
+> relying on transitive header inclusion from:
+>=20
+> drivers/power/supply/cpcap-charger.c
+> - include/linux/phy/omap_usb.h
+>   - include/linux/usb/phy_companion.h
+>     - include/linux/usb/otg.h
+>       - include/linux/phy/phy.h
+>         - drivers/phy/phy-provider.h
+>           - include/linux/of.h
+>             - include/linux/property.h
+>=20
+> With the future removal of drivers/phy/phy-provider.h from
+> include/linux/phy/phy.h, this transitive inclusion would break.
+>=20
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 > ---
-> Changes V1 -> V7: None
-> 
->  drivers/pci/controller/dwc/pcie-tegra194.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 7dcf3e3596dd..2da3478f0b5f 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -1805,6 +1805,10 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
->  
->  	reset_control_deassert(pcie->core_rst);
->  
-> +	val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
-> +	val &= ~PORT_LOGIC_SPEED_CHANGE;
-> +	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
-> +
->  	if (pcie->update_fc_fixup) {
->  		val = dw_pcie_readl_dbi(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF);
->  		val |= 0x1 << CFG_TIMER_CTRL_ACK_NAK_SHIFT;
-> -- 
-> 2.34.1
-> 
+> Cc: Sebastian Reichel <sre@kernel.org>
+> ---
 
--- 
-மணிவண்ணன் சதாசிவம்
+Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+
+-- Sebastian
+
+>  drivers/power/supply/cpcap-charger.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/power/supply/cpcap-charger.c b/drivers/power/supply/=
+cpcap-charger.c
+> index d0c3008db534..24221244b45b 100644
+> --- a/drivers/power/supply/cpcap-charger.c
+> +++ b/drivers/power/supply/cpcap-charger.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/power_supply.h>
+> +#include <linux/property.h>
+>  #include <linux/regmap.h>
+> =20
+>  #include <linux/gpio/consumer.h>
+> --=20
+> 2.43.0
+>=20
+
+--2vxe7ox52jklnq2g
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmmpUncACgkQ2O7X88g7
++prvUBAAiDlamBegg+ohGQtBVAORFIULNrYOBZOk8AG1Qluc6NS+fOqK9Cpw1hjn
+4u0f9h1GsBhjBMOb0dS/kxcNWI+xKiTxrMzu4llAu0C9WimbA0CieynGh2b2a3Ja
+R/9RQ6pXqPuVZk+7oVlT6gk++/w8TU83M31vyXL0Kx786QzieoSbOvgyZqhEwLez
+W41hmnYSkPas6nVkhjp0mnP7eqYQRhXLBeFJgUWhgXvy5YMVAfRrso3DK5JA7hB3
+4q8qNISMg2IrcIDMdDaTKVq+3+Ba1z8pRgr4WpIaOpH+Gsq8e8tzt/SEsGt/4SIY
+bKuAPMOCmsYuR8RskVyUWJiWX4qt4/YIRU01cg2xxXP404xIKR49X9Z12aEOKjg8
+DoBnNzlrSRN/RP85te7hG74Mbc/eVL2fJM9dL+7yZylsv03FFoeii0d+a50bbrQT
+QfQy75KNMSMkb7BDrpalL0DhG9bJoZn96pso0p4aD+viqdbpIybrsgMhuUv9DKVS
+2rIsnhe/N1gPds7wwpt/4shjn93YGbngre66mxi0y0YvvBQqc3eCf4YbPkGttJ0g
+18vYhd7giJO8RE2ApEXsQzT6eKtQFPh01zUJhxvemKoAb6hr3Tptep+/2bn4BVzY
+k3rY5iRgS6ono6DZg08TuLXoB3Ck/kz2OE+ntIibQIQNa0GY/4w=
+=oTrF
+-----END PGP SIGNATURE-----
+
+--2vxe7ox52jklnq2g--
