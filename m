@@ -1,280 +1,118 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8E12D6E5A;
-	Fri,  6 Mar 2026 00:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772757814; cv=none; b=iq9yks5WqJh8G5WawlJXNu++pVRxxtteHWKZD7BV5kzeZF7dJcrLlkuAmZ/bk10qeHXPQ9k4O6Di5S7Igsw+ge262r3r8PTrHP7HfNM2RlCheNZ+WGF8i47zB3xFdRaT3l5p6SsBKg8vilmG9qYYMpk9KYmEtTVxi9ZE3L/X7z8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772757814; c=relaxed/simple;
-	bh=uynp/F1TEhsuEQvaU0KZCrYdvfuryfR+sRqkbJZUsSE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FIgTMVuP5/M2rZWT1S42wqjq17HSHbjZle/lRuv+BtPwSXakAS2J9YeSvLrj/YEAaD0g/ddiL06BxdUuYJMzvIark6WtwlJ4DAvkJE8eUdDpDyElrgfA+XoPnjbUch9KmDmVcResY6KEIBwxE482NRfA64ZFrAGQwJH+ZJXi90U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PeJMMxwo; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE6E7262A
+	for <linux-tegra@vger.kernel.org>; Fri,  6 Mar 2026 03:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.175
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772768945; cv=pass; b=E8B7WzHso3JcsM882rGra5wMVkRL/6P30Y929fqRTvP6DuvwLma1NtgkHQBPGHwOESQrecOUMiiJqPHl5x549HhdiZ+dOy4DG25kmeeDWM3A7P6f6NqfYZqDI36iWqq/Fb/CQtMPfgJQYYBZrU9riuO8+dX2BkBQneB6HxoWv1M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772768945; c=relaxed/simple;
+	bh=dNUpHR0oTQwJy+ecOBEV2Ruj/VUmFxhcmOhLjQeHLXI=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=rQs8ojn22Zmr1Of0eun72xYkibX6PFRz2RUMxkNjUZEJTO5HfiBCmNAP3WaBcL9nkMW4Ectz9NjrnPGjJ+I/wfdSU9AcLKNRPgqvuvBzZAFl2aLw+SASeB6doYWgoc6JCAvsnuxcwVzSihfSSzoaaavgV44LSoTp5tWS+gJhx4Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LvVHwdIq; arc=pass smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PeJMMxwo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5595AC116C6;
-	Fri,  6 Mar 2026 00:43:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772757814;
-	bh=uynp/F1TEhsuEQvaU0KZCrYdvfuryfR+sRqkbJZUsSE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PeJMMxwo+BgL99hg9XvB8qmgZgDFQkBXJmOov9LE7YGicxw23xXh9YtRw0A5UGuEf
-	 yPCYZps0UfU5La7gvtaXHwIv5jb8SniDhy6BQYQrm0fwX46d2xebX5k+U20NC5rXBJ
-	 WeXjjWmn47YT9De+fJNjMWy+1gJqC2dPNpdoU0zdvhx5MGc525EYR+DxbZUpqO+FgT
-	 MmKjnS5ZlVtipmyQyoIuvE6rnda7YgAd+D1GBRdKBsx6pz6JLPIJcZy2gjM7zu365a
-	 orqRhbynoK/q+Ht8/xaKNseXbumoud5WWzkArxnwe7ppsNuFGjkhG/046+OBZnixey
-	 zFlkv7dSiUBFg==
-Date: Thu, 5 Mar 2026 18:43:33 -0600
-From: Rob Herring <robh@kernel.org>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Aaron Kling <webgeek1234@gmail.com>,
-	"open list:PCI DRIVER FOR NVIDIA TEGRA" <linux-tegra@vger.kernel.org>,
-	"open list:PCI DRIVER FOR NVIDIA TEGRA" <linux-pci@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/5] dt-bindings: PCI: Convert nvidia,tegra-pcie to DT
- schema
-Message-ID: <20260306004333.GA863798-robh@kernel.org>
-References: <20260224121948.25218-1-linux.amoon@gmail.com>
- <20260224121948.25218-2-linux.amoon@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LvVHwdIq"
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-7986e0553bdso85974167b3.2
+        for <linux-tegra@vger.kernel.org>; Thu, 05 Mar 2026 19:49:02 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772768942; cv=none;
+        d=google.com; s=arc-20240605;
+        b=bKDptI4qSMnQ7QfsV+Xavpe1cJ3O41GS+M6Lru+bocZ2yCsTmvD3c5I0gMKhXowhLA
+         wU07klnAWs8dhvsUARWv1vK4ufiyoYMWU+lpHjoEnAuvA2/AKeYOyD9MQW9rMtVOYMh7
+         Y3Z6AgAFyeGBC+mdac9cT53o4M+wbct/nU7bkDmG8RQtGOuale3p5Zznec2gP2bdtMFy
+         Qa53kOUa8/l5W8Kfqq1tDZicQBymK9wmIf3OdxoWFRf3XAuMjBo6yWNAqf3Xykzs13fJ
+         OQvnG3SyJ8ZFGdCyMDwmnPLnNOQCbsf1JoyCU7kXO4y4YQ+3GajMJcIYVUS6ICOE9NMr
+         00gw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:mime-version:dkim-signature;
+        bh=+3KVfu4YF0iDe9x9XbVLpDOnpHDuNLpZRAeCr26k+RA=;
+        fh=syTMnTg22NQBHCxTett6+AnBfDWrPbGU49aPl3DW5pw=;
+        b=ewg1U6U1gtbSFkOySZ5tivOxjPjORcymuKhqJ7qj11lo/9+cf0he8/7hehVPXVpcVw
+         pPrfXSvYhpHn9VCBeDDm0XVYfzVJfVynM6D0fptaMpiBGZO6HA63ggHC7NgvDx1K3t5S
+         NKOvvvepYzrGH9JxO4aH29eMo6UbvI0WgcjqS3YQAaLpQqS0laEj6jE97138vB6KLEFP
+         gqhsz8vKbfQ/uP6+vgSJrKV8sWUOyKuHCzwHiWvFtUi0mWajAUuN8xJfw6uA9idHX1Be
+         khlo0aqW2TDmKlsF41QnKPiCjDgXbPQq1X3yDDzboAnIzGWpS3AlX4mSXE5JUW19w1dO
+         /9kg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772768942; x=1773373742; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+3KVfu4YF0iDe9x9XbVLpDOnpHDuNLpZRAeCr26k+RA=;
+        b=LvVHwdIqvr1onlFNWydzwH8O6VxokMilXmRvotd9owKnCroNDUyg4Tza/OC4ZcD4Mc
+         yhD35UZ1eGde+Mjj75NtVl59Szzui7uvty4b1GUFvGOD++vVjTAJEIer2iDiA579x1yE
+         vQ58xW/X40JuZ732W+jzB+te2esqnVQVPlMVkvZ5nLUdXn98ZeK7YHz/zdmoypiXkmWv
+         AsrErvf4exGz7jPTfO2lr2+leu0ogtyL6uu9j5OVkEARI0PSdQl5IuLJBsBzykCkCvrW
+         12cyMQci6To8KdSQGDNdwnN/jR9oSlmQpAq8VRxZGFOntYgwJbZ11/FamcuhcUJcOESm
+         M9uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772768942; x=1773373742;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+3KVfu4YF0iDe9x9XbVLpDOnpHDuNLpZRAeCr26k+RA=;
+        b=tLk7wcJco4+r27K8koBc0AGEbhyLBNYJDpwD/YxYm5NENyq5oXeKxn6EZ+LHv0oWov
+         FQtTfIc7Euf3klsWP3jvl4UcnODmGpEcWZRVDJ8p7uF8kYopBnrIfusyzNAHwZKnW+yE
+         fB5Ba9W/mvTXrlDDFZGULlUPzukkf7vgdmvHnHSKitY5wHmmsgLupK7cWXN8hjTHvqbZ
+         sxASdfLp9qud4gvbXRnEZPSMhCrOWZhlPAh3fUeNLNP7jiyEtBoeHfMHUYn574LBMz6P
+         tVJ/er2qHLIKdh4hoTaj0KccU4rJOCXptWKBBgM80YFeUoFLyOyuf16TswxlOg/wSQPq
+         nb5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXw05vZu/kOLxGur/jXvLKLjAawiwf6rE4ifY18ivecd93EGipnrkf7T5eS8mokxnbhLXsBmti5avOfEA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5oZGFF7VMv0/ZiBq6z0btnzM6qP11zaxpIB6fzHGtOKyj+nKG
+	a5hRsefvAVLf7UfAZXPqBMFTfycV5+sIU9QUAbTI0LNydoOhCIIK6A9UOfCvt2v5PwwZe2n7Fe7
+	XKKLIDHq8LJVqp3aYYvIWfJL1q1qUV1I=
+X-Gm-Gg: ATEYQzyxj8qhRpYCJoJKbATUX+XNZOThu8X+iFUOCQg383Kx4qtbmX09DS8UUip13qp
+	FsuPUAKVeaRiXtRFfDdtAerqI1r8MUYojO2CHKbRvqv/yJlE9IpwtHyDRZw5tRlbpOo5xzoOFwk
+	/furEwcJfJf6XEzs0EA5WxiEQ/lk8dPBBn6Lc2kxHNEZJftk6MDR+rMLu8PTqn7MGE8RM1NHDgJ
+	g+CnJNPnj1I/a135TBHu7L2SmTLJvZ785/Im2ffP6ksQsZXp0+zToU4fb3pvrgqgB2pQNc3OsLk
+	BpyTXD8LXw==
+X-Received: by 2002:a05:690c:d8a:b0:794:ecaf:c501 with SMTP id
+ 00721157ae682-798dd787623mr6124827b3.46.1772768941686; Thu, 05 Mar 2026
+ 19:49:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260224121948.25218-2-linux.amoon@gmail.com>
+From: Owens James <hechushiguitu666@gmail.com>
+Date: Fri, 6 Mar 2026 11:48:49 +0800
+X-Gm-Features: AaiRm52csMwF0QK4pgCSSR3OS4LQ5YiTwX8PFjLU0ZrSNYhf25gvuUCbgnI340M
+Message-ID: <CAEZ4rQ8xmmw8sQ9UX7y3iyE0-UVLEHa10vJwxcajfzcqp2SaYA@mail.gmail.com>
+Subject: [PATCH] iommu: tegra-smmu: Fix spacing around operators
+To: thierry.reding@gmail.com
+Cc: iommu@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, joro@8bytes.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Feb 24, 2026 at 05:48:57PM +0530, Anand Moon wrote:
-> Convert the existing text-based DT bindings documentation for the
-> NVIDIA Tegra PCIe host controller to a DT schema format.
+From 976ec7e6ca46a3f9f6031b74e2e88f630ae709c2 Mon Sep 17 00:00:00 2001
+From: "haoyu.lu" <hechushiguitu666@gmail.com>
+Date: Fri, 6 Mar 2026 11:36:52 +0800
+Subject: [PATCH] iommu: tegra-smmu: Fix spacing around operators
 
-I just reviewed the same thing from Thierry... This one looks a bit 
-better for overall structure (fewer if/then schemas), but I think misses 
-some things like deprecated supplies. Please resolve the differences 
-between the 2 and coordinate who is going to send the next version.
+Fix checkpatch.pl warning for missing space around operator:
+- SMMU_SIZE_PT-1 -> SMMU_SIZE_PT - 1
 
-> 
-> Also update the MAINTAINERS file to reflect this change.
-> 
-> Cc: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
-> v3: Tried to address the issues Krzysztof pointed out.
->    Added missing regulator binding as suggeested by Jon.
-> v2: Tried to address the isssue Rob pointed
-> [1] https://lkml.org/lkml/2025/9/26/704
-> improve the $suject and commit message
-> drop few examples only nvidia,tegra20-pcie and nvidia,tegra210-pcie
-> 
-> $ make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.yaml
-> ---
->  .../bindings/pci/nvidia,tegra-pcie.yaml       | 528 ++++++++++++++
->  .../bindings/pci/nvidia,tegra20-pcie.txt      | 670 ------------------
->  MAINTAINERS                                   |   2 +-
->  3 files changed, 529 insertions(+), 671 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.yaml
->  delete mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.yaml b/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.yaml
-> new file mode 100644
-> index 000000000000..0675bec205e8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.yaml
-> @@ -0,0 +1,528 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/nvidia,tegra-pcie.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra PCIe Controller
-> +
-> +maintainers:
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +  - Thierry Reding <treding@nvidia.com>
-> +
-> +description:
-> +  PCIe controller found on NVIDIA Tegra SoCs which supports multiple
-> +  root ports and platform-specific clock, reset, and power supply
-> +  configurations.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nvidia,tegra20-pcie
-> +      - nvidia,tegra30-pcie
-> +      - nvidia,tegra124-pcie
-> +      - nvidia,tegra210-pcie
-> +      - nvidia,tegra186-pcie
-> +
-> +  reg:
-> +    items:
-> +      - description: PADS registers
-> +      - description: AFI registers
-> +      - description: Configuration space region
-> +
-> +  reg-names:
-> +    items:
-> +      - const: pads
-> +      - const: afi
-> +      - const: cs
-> +
-> +  interrupts:
-> +    items:
-> +      - description: Controller interrupt
-> +      - description: MSI interrupt
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: intr
-> +      - const: msi
-> +
-> +  clocks:
-> +    minItems: 3
-> +    items:
-> +      - description: PCIe clock
-> +      - description: AFI clock
-> +      - description: PLL_E clock
-> +      - description: Optional CML clock
-> +
-> +  clock-names:
-> +    description: Names of clocks used by the PCIe controller
-> +    minItems: 3
-> +    items:
-> +      - const: pex
-> +      - const: afi
-> +      - const: pll_e
-> +      - const: cml
-> +
-> +  resets:
-> +    items:
-> +      - description: PCIe reset
-> +      - description: AFI reset
-> +      - description: PCIe-X reset
-> +
-> +  reset-names:
-> +    items:
-> +      - const: pex
-> +      - const: afi
-> +      - const: pcie_x
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  interconnects:
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  interconnect-names:
-> +    items:
-> +      - const: dma-mem
-> +      - const: write
-> +
-> +  pinctrl-names:
-> +    items:
-> +      - const: default
-> +      - const: idle
-> +
-> +  pinctrl-0: true
-> +  pinctrl-1: true
-> +
-> +  operating-points-v2:
-> +    description:
-> +      Defines operating points with required frequency and voltage values,
-> +      and the opp-supported-hw property.
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-> +  avdd-pex-supply:
-> +    description: Power supply for analog PCIe logic. Must supply 1.05 V.
-> +
-> +  vdd-pex-supply:
-> +    description: Power supply for digital PCIe I/O. Must supply 1.05 V.
-> +
-> +  avdd-pex-pll-supply:
-> +    description: Power supply for dedicated (internal) PCIe PLL. Must supply 1.05 V.
-> +
-> +  avdd-plle-supply:
-> +    description: Power supply for PLLE, which is shared with SATA. Must supply 1.05 V.
-> +
-> +  vddio-pex-clk-supply:
-> +    description: Power supply for PCIe clock. Must supply 3.3 V.
-> +
-> +  vddio-pex-ctl-supply:
-> +    description: Power supply for PCIe control I/O partition. Must supply 1.8 V.
-> +
-> +  hvdd-pex-supply:
-> +    description: High-voltage supply for PCIe I/O and PCIe output clocks. Must supply 3.3 V.
-> +
-> +  avdd-pexa-supply:
-> +    description: Power supply for analog PCIe logic. Must supply 1.05 V.
-> +
-> +  vdd-pexa-supply:
-> +    description: Power supply for digital PCIe I/O. Must supply 1.05 V.
-> +
-> +  avdd-pexb-supply:
-> +    description: Power supply for analog PCIe logic. Must supply 1.05 V.
-> +
-> +  vdd-pexb-supply:
-> +    description: Power supply for digital PCIe I/O. Must supply 1.05 V.
-> +
-> +  avddio-pex-supply:
-> +    description: Power supply for analog PCIe logic. Must supply 1.05 V.
-> +
-> +  dvddio-pex-supply:
-> +    description: Power supply for digital PCIe I/O. Must supply 1.05 V.
-> +
-> +  hvddio-pex-supply:
-> +    description: High-voltage supply for PCIe I/O and PCIe output clocks. Must supply 1.8 V.
-> +
-> +  dvdd-pex-supply:
-> +    description: Power supply for digital PCIe I/O. Must supply 1.05 V.
-> +
-> +  hvdd-pex-pll-supply:
-> +    description: High-voltage supply for PLLE (shared with USB3). Must supply 1.8 V.
-> +
-> +  vddio-pexctl-aud-supply:
-> +    description: Power supply for PCIe side band signals. Must supply 1.8 V.
-> +
-> +patternProperties:
-> +  "^pci@[0-9a-f]+(,[0-9a-f]+)?$":
-> +    type: object
-> +    allOf:
+Signed-off-by: haoyu.lu <hechushiguitu666@gmail.com>
+---
+ drivers/iommu/tegra-smmu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Don't need allOf.
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 67e7a7b925f0..58ccaa74475b 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -137,7 +137,7 @@ static inline u32 smmu_readl(struct tegra_smmu
+*smmu, unsigned long offset)
+ #define SMMU_PDE_SHIFT 22
+ #define SMMU_PTE_SHIFT 12
 
-> +      - $ref: /schemas/pci/pci-pci-bridge.yaml#
-> +    properties:
-> +      reg:
-> +        maxItems: 1
-> +
-> +      nvidia,num-lanes:
-> +        description: Number of lanes used by this PCIe port
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        enum: [1, 2, 4]
-> +
-> +      phys:
-> +        description: Phandles to PCIe PHYs
-> +        items:
-> +          maxItems: 1
-
-How many cells a phy entry has depends on the provider which is outside 
-the scope of this binding.
-
-> +        minItems: 1
-> +        maxItems: 4
-
+-#define SMMU_PAGE_MASK (~(SMMU_SIZE_PT-1))
++#define SMMU_PAGE_MASK (~(SMMU_SIZE_PT - 1))
+ #define SMMU_OFFSET_IN_PAGE(x) ((unsigned long)(x) & ~SMMU_PAGE_MASK)
+ #define SMMU_PFN_PHYS(x) ((phys_addr_t)(x) << SMMU_PTE_SHIFT)
+ #define SMMU_PHYS_PFN(x) ((unsigned long)((x) >> SMMU_PTE_SHIFT))
+-- 
+2.53.0.windows.1
