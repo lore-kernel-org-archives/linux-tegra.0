@@ -1,43 +1,43 @@
 Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B38133B6D5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA647081F;
 	Sat,  7 Mar 2026 11:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772881418; cv=none; b=ilZ2C46ECmmtoKcQ0C+KyyjBZXF+6jVL0PjQ3QjTodTPuwfF70UAZ34a859S2bZZLhYgTb7q5TpNlm7qAf2zqbjti8QXJ2QpiJW53EpD8qri5eUp/vRk5SWlFJM+Q6oJ5tPPvOGEyWA5SXeOIidd5AVINXPas2JwM3XiThf1ChM=
+	t=1772881419; cv=none; b=Ri+YFoTfA27JGDaOn0hWNgl+T91BNk3//e+8hMZIVA14S3O9zgTvhmNM6JzciVqGOeAIrCCZVDl4tAAiXNHyNNFzZcEIOsQAVShu5LCzYqRt81HOEL49PgwBpZTj5r8afcYwMsBvLqNL4UfthLUvdLHEwpIYEdvaNm8JeM69pas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772881418; c=relaxed/simple;
-	bh=Cc4o5RiSBiXzTUt+4lBz53YglbIRDjNMC28x76OoMDQ=;
+	s=arc-20240116; t=1772881419; c=relaxed/simple;
+	bh=z5rQEzjO9qhBW+MxPk6raUNctvZj8rSJkZ64MrMgWu4=;
 	h=In-Reply-To:References:From:To:Cc:Subject:MIME-Version:
-	 Content-Disposition:Content-Type:Message-Id:Date; b=CZX35Ti0BxQXZmVZN0ijgC2Yu6jlCxb1AxRaK/yJHKE86IMf0J+iywg9AkAuF0v19utFgfWT1OA8ITKAvb8jhisHptlpI/eKFR9H9l6OqLsjzYP4QvPmvFUUM9xMqRGm09vq8GjBUXEUduBbJcjNEEZeh8Byf3IInmGdlUiEhVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=BYx63X43; arc=none smtp.client-ip=78.32.30.218
+	 Content-Disposition:Content-Type:Message-Id:Date; b=UTH1L+DkaPQKHo6dThOdo31RlAnvOOL8fNIZdlvdnZPhGOkYCug5RA5GEw3tQFjvarf/Dl9Cq3lZarBphMa/W9raQvkQTYutji2OhlL1oGxlW0h4x8msqBcI1G/gyBYeeNVIRErREUwH8T04k1Q7ZlqLxtvvR9WEQQYy0Hl5WYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Pzfudn6a; arc=none smtp.client-ip=78.32.30.218
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="BYx63X43"
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Pzfudn6a"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
 	Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:References:
 	In-Reply-To:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
 	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=zyItZuZ4+Hst+XLGZf5NqjqPTntMZ8Z+OnnAGXqJkFo=; b=BYx63X43R4LLoKfUQVqcc83Swo
-	cGcsR57YhjAAJpHRfwIjkeTQ3I4WCG+IiH0FtbLMmDyJ7QSKHEP9FyotKv5WbmaGwP5qdWPU0wek1
-	EBtGs5xaAn9lClCuj5DjwkAiIZYIVjGBJLEqwJ3VKBRxclaCIkD53DlfY03G0XCA6JSX+ZggGj/n0
-	vTQeAh06k07PTgBR+mFUbrK2H/TAFU0wgmITOV1QIBkIuEBb9Ukg6n19zXm9sVcZpwZfkgc1AnvID
-	5VpcNJaetXacqdcV6FySLj88X/TsV3fxybua23hq4Ix+AmrjKmhBrLnmlxzLLb7Po2oWlF46ZUx5B
-	mYWiPkgA==;
-Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:48788 helo=rmk-PC.armlinux.org.uk)
+	bh=BqOZqsxLjH0KcEVHYX5tZr7X5AxIS8B6ZxX6dP1JQCw=; b=Pzfudn6a7l/b8b55HtmX9pEEih
+	Mm0EokPAzs21rn5GpwfEqyg+bkcaM0srV1B051bJvN22YLKwMZM8OpOf1bXvUq26Gp0cIVgM+8oCv
+	IseY7/JPYNXrQGSCckcwRf8RoT5F1ExAdR6eA2pKeWJPjg76QPv7FYtbWc9WBBjWMtGE9Ec6WLJbG
+	PXOzTfi6mWwbB8T5mgiWUPDxklQMpZQsbqeHxfNsJai1rKH4KFBmrpy7tG3RlfNbE9rft+YnxNJH/
+	cTAHyRyv03tPJZDELId1i5UpKPAl8NcYIllDgg70rcCuiwQIeeVld+97qXwulgsiPu8VPDJh6fjiu
+	wdxHY1uw==;
+Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:48778 helo=rmk-PC.armlinux.org.uk)
 	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.98.2)
 	(envelope-from <rmk@armlinux.org.uk>)
-	id 1vypR6-0000000028v-3IER;
-	Sat, 07 Mar 2026 11:03:09 +0000
+	id 1vypR4-0000000028j-08id;
+	Sat, 07 Mar 2026 11:03:08 +0000
 Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.98.2)
 	(envelope-from <rmk@rmk-PC.armlinux.org.uk>)
-	id 1vypR3-0000000CSwU-2m0B;
-	Sat, 07 Mar 2026 11:03:05 +0000
+	id 1vypQy-0000000CSwP-28Y9;
+	Sat, 07 Mar 2026 11:03:00 +0000
 In-Reply-To: <aawFuXTVAgVOrw4k@shell.armlinux.org.uk>
 References: <aawFuXTVAgVOrw4k@shell.armlinux.org.uk>
 From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
@@ -68,8 +68,8 @@ Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
 	Samuel Holland <samuel@sholland.org>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
 	Yao Zi <me@ziyao.cc>
-Subject: [PATCH net-next 6/7] net: stmmac: add documentation for
- stmmac_dma_cfg members
+Subject: [PATCH net-next 5/7] net: stmmac: use u8 for host_dma_width and
+ similar struct members
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -79,61 +79,100 @@ MIME-Version: 1.0
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <E1vypR3-0000000CSwU-2m0B@rmk-PC.armlinux.org.uk>
+Message-Id: <E1vypQy-0000000CSwP-28Y9@rmk-PC.armlinux.org.uk>
 Sender: Russell King <rmk@armlinux.org.uk>
-Date: Sat, 07 Mar 2026 11:03:05 +0000
+Date: Sat, 07 Mar 2026 11:03:00 +0000
 
-Add documentation of each of the struct stmmac_dma_cfg members. dche
-remains undocumented as I don't have documentation that covers this.
+We aren't going to see >= 256-bit address busses soon, so reduce
+host_dma_width and associated other struct members that initialise
+this from u8 to u32.
 
 Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 ---
- include/linux/stmmac.h | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c         | 2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c    | 6 +++---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c | 2 +-
+ include/linux/stmmac.h                                  | 2 +-
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c
+index 9f5a15b81f8a..9d1bd72ffb73 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c
+@@ -42,8 +42,8 @@
+ struct imx_priv_data;
+ 
+ struct imx_dwmac_ops {
+-	u32 addr_width;
+ 	u32 flags;
++	u8 addr_width;
+ 	bool mac_rgmii_txclk_auto_adj;
+ 
+ 	int (*fix_soc_reset)(struct stmmac_priv *priv);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
+index a139db6a8cbb..30ae0dba7fff 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
+@@ -93,9 +93,9 @@ struct mediatek_dwmac_variant {
+ 	const char * const *clk_list;
+ 	int num_clks;
+ 
+-	u32 dma_bit_mask;
+ 	u32 rx_delay_max;
+ 	u32 tx_delay_max;
++	u8 dma_bit_mask;
+ };
+ 
+ /* list of clocks required for mac */
+@@ -268,9 +268,9 @@ static const struct mediatek_dwmac_variant mt2712_gmac_variant = {
+ 		.dwmac_set_delay = mt2712_set_delay,
+ 		.clk_list = mt2712_dwmac_clk_l,
+ 		.num_clks = ARRAY_SIZE(mt2712_dwmac_clk_l),
+-		.dma_bit_mask = 33,
+ 		.rx_delay_max = 17600,
+ 		.tx_delay_max = 17600,
++		.dma_bit_mask = 33,
+ };
+ 
+ static int mt8195_set_interface(struct mediatek_dwmac_plat_data *plat,
+@@ -418,9 +418,9 @@ static const struct mediatek_dwmac_variant mt8195_gmac_variant = {
+ 	.dwmac_set_delay = mt8195_set_delay,
+ 	.clk_list = mt8195_dwmac_clk_l,
+ 	.num_clks = ARRAY_SIZE(mt8195_dwmac_clk_l),
+-	.dma_bit_mask = 35,
+ 	.rx_delay_max = 9280,
+ 	.tx_delay_max = 9280,
++	.dma_bit_mask = 35,
+ };
+ 
+ static int mediatek_dwmac_config_dt(struct mediatek_dwmac_plat_data *plat)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+index 388e9fdeb86c..3ccf20fdf52a 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+@@ -91,8 +91,8 @@ struct ethqos_emac_driver_data {
+ 	unsigned int num_rgmii_por;
+ 	bool rgmii_config_loopback_en;
+ 	bool has_emac_ge_3;
++	u8 dma_addr_width;
+ 	const char *link_clk_name;
+-	u32 dma_addr_width;
+ 	struct dwmac4_addrs dwmac4_addrs;
+ 	bool needs_sgmii_loopback;
+ };
 diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
-index 11886189bf51..3521b88aa345 100644
+index 03fd85060a73..11886189bf51 100644
 --- a/include/linux/stmmac.h
 +++ b/include/linux/stmmac.h
-@@ -93,16 +93,37 @@ struct stmmac_mdio_bus_data {
- };
- 
- struct stmmac_dma_cfg {
-+	/* pbl: programmable burst limit
-+	 * txpbl: transmit programmable burst limit
-+	 * rxpbl: receive programmable burst limit
-+	 * If txpbl or rxpbl are zero, the value of pbl will be subsituted.
-+	 * Range 0 - 63.
-+	 */
- 	int pbl;
- 	int txpbl;
- 	int rxpbl;
-+	/* pblx8: multiplies pbl, txpbl, rxpbl by a factor of 8 for dwmac >=
-+	 * 3.50a, or a factor of 4 for previous versions.
-+	 */
- 	bool pblx8;
-+	/* fixed_burst:
-+	 *  when set, AXI bursts defined by axi_blen_regval are permitted.
-+	 *   AHB uses SINGLE, INCR4, INCR8 or INCR16 during burst transfers.
-+	 *  when clear, AXI and AHB use SINGLE or INCR bursts.
-+	 */
- 	bool fixed_burst;
-+	/* mixed_burst:
-+	 *  when set and fixed_burst is clear, AHB uses INCR for bursts > 16
-+	 *  and SINGLE or INCRx for bursts <= 16.
-+	 */
- 	bool mixed_burst;
-+	/* aal: address aligned bursts for AHB and AXI master interface */
- 	bool aal;
-+	bool dche;
- 	bool eame;
-+	/* multi_msi_en: stmmac core internal */
- 	bool multi_msi_en;
--	bool dche;
-+	/* atds: stmmac core internal */
- 	bool atds;
- };
- 
+@@ -243,7 +243,7 @@ struct plat_stmmacenet_data {
+ 	int unicast_filter_entries;
+ 	int tx_fifo_size;
+ 	int rx_fifo_size;
+-	u32 host_dma_width;
++	u8 host_dma_width;
+ 	u8 rx_queues_to_use;
+ 	u8 tx_queues_to_use;
+ 	u8 rx_sched_algorithm;
 -- 
 2.47.3
 
