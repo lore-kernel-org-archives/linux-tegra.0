@@ -1,43 +1,43 @@
 Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA647081F;
-	Sat,  7 Mar 2026 11:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0840A322C99;
+	Sat,  7 Mar 2026 11:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772881419; cv=none; b=Ri+YFoTfA27JGDaOn0hWNgl+T91BNk3//e+8hMZIVA14S3O9zgTvhmNM6JzciVqGOeAIrCCZVDl4tAAiXNHyNNFzZcEIOsQAVShu5LCzYqRt81HOEL49PgwBpZTj5r8afcYwMsBvLqNL4UfthLUvdLHEwpIYEdvaNm8JeM69pas=
+	t=1772881423; cv=none; b=rt74+Ctg8nnMWuOwQ5rsFJjjepJvu5/XJwO1bVRTShXFuosxpYMFzWFsrMc0yALadO+SVnDsUHjKD89onUCrMqXLvidZb8qxnmJ/KBnDvXUNTF1xsaWWBre5We5VvH7Xgncz9q1X20a0DIMb/Uuezw/hu2UA4EZuUlKcVrgNK2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772881419; c=relaxed/simple;
-	bh=z5rQEzjO9qhBW+MxPk6raUNctvZj8rSJkZ64MrMgWu4=;
+	s=arc-20240116; t=1772881423; c=relaxed/simple;
+	bh=sVNzSxlK1PzuAr8F/B4Bf+nuIbGcCC+LacFY6MERQig=;
 	h=In-Reply-To:References:From:To:Cc:Subject:MIME-Version:
-	 Content-Disposition:Content-Type:Message-Id:Date; b=UTH1L+DkaPQKHo6dThOdo31RlAnvOOL8fNIZdlvdnZPhGOkYCug5RA5GEw3tQFjvarf/Dl9Cq3lZarBphMa/W9raQvkQTYutji2OhlL1oGxlW0h4x8msqBcI1G/gyBYeeNVIRErREUwH8T04k1Q7ZlqLxtvvR9WEQQYy0Hl5WYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Pzfudn6a; arc=none smtp.client-ip=78.32.30.218
+	 Content-Disposition:Content-Type:Message-Id:Date; b=pqlvsLhbCIcXu0rJtoCJceFUAYs7nUhh2RkmCJr2E2uJUUyvNINztoXvASmFY8qDJVJuzXd0Qzz4p+eSMOfWVijk9NIQ5X1dPlD5N9JNH85Qe9waYytaWNfsiKx41Y89yyAibKyKM9rEhJ71TOTuQ0cDZ9sqHtFZIJX/H6qoKgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=KfYWPFr2; arc=none smtp.client-ip=78.32.30.218
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Pzfudn6a"
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="KfYWPFr2"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
 	Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:References:
 	In-Reply-To:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
 	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=BqOZqsxLjH0KcEVHYX5tZr7X5AxIS8B6ZxX6dP1JQCw=; b=Pzfudn6a7l/b8b55HtmX9pEEih
-	Mm0EokPAzs21rn5GpwfEqyg+bkcaM0srV1B051bJvN22YLKwMZM8OpOf1bXvUq26Gp0cIVgM+8oCv
-	IseY7/JPYNXrQGSCckcwRf8RoT5F1ExAdR6eA2pKeWJPjg76QPv7FYtbWc9WBBjWMtGE9Ec6WLJbG
-	PXOzTfi6mWwbB8T5mgiWUPDxklQMpZQsbqeHxfNsJai1rKH4KFBmrpy7tG3RlfNbE9rft+YnxNJH/
-	cTAHyRyv03tPJZDELId1i5UpKPAl8NcYIllDgg70rcCuiwQIeeVld+97qXwulgsiPu8VPDJh6fjiu
-	wdxHY1uw==;
-Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:48778 helo=rmk-PC.armlinux.org.uk)
+	bh=gKq7Ur0o7o0fnfG6VoXbzm/WfSG13rcROPhghnkiHuY=; b=KfYWPFr2YVcrUXRrfluFTGbIdz
+	zfP6GrfPdxzliFEeNl0EUGmWfcyryLQacMv+YTvtqKM+3Q+OmiV3uNxunJFspWh1m+t5LJSKdtHKa
+	5SSGGFOgivZjhIs8Oz7PdmUD+OHCk7OBIipXu1cJyvlr0wg/KdAKgl0GOyE+LTB/RTYdRVSQWbnRa
+	kKbyPGq4M4yQAfjH19uHnoof+jyOD6Ac6/x7xUeO3omUaSgO3oLcQKAkPv82lpBdTfHGM091t6YwL
+	ajg8IJI6neZctZHkKSkCWx5qLsSNAfLWjb8Cw+Bv7tP4Wr+qBbecwLWjZey17tioABP4T/hLw+f9L
+	iR9IRxfg==;
+Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:59388 helo=rmk-PC.armlinux.org.uk)
 	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.98.2)
 	(envelope-from <rmk@armlinux.org.uk>)
-	id 1vypR4-0000000028j-08id;
-	Sat, 07 Mar 2026 11:03:08 +0000
+	id 1vypRE-00000000298-28R9;
+	Sat, 07 Mar 2026 11:03:18 +0000
 Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.98.2)
 	(envelope-from <rmk@rmk-PC.armlinux.org.uk>)
-	id 1vypQy-0000000CSwP-28Y9;
-	Sat, 07 Mar 2026 11:03:00 +0000
+	id 1vypR8-0000000CSwb-3P3f;
+	Sat, 07 Mar 2026 11:03:10 +0000
 In-Reply-To: <aawFuXTVAgVOrw4k@shell.armlinux.org.uk>
 References: <aawFuXTVAgVOrw4k@shell.armlinux.org.uk>
 From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
@@ -68,8 +68,7 @@ Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
 	Samuel Holland <samuel@sholland.org>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
 	Yao Zi <me@ziyao.cc>
-Subject: [PATCH net-next 5/7] net: stmmac: use u8 for host_dma_width and
- similar struct members
+Subject: [PATCH net-next 7/7] net: stmmac: add documentation for clocks
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -79,100 +78,71 @@ MIME-Version: 1.0
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <E1vypQy-0000000CSwP-28Y9@rmk-PC.armlinux.org.uk>
+Message-Id: <E1vypR8-0000000CSwb-3P3f@rmk-PC.armlinux.org.uk>
 Sender: Russell King <rmk@armlinux.org.uk>
-Date: Sat, 07 Mar 2026 11:03:00 +0000
+Date: Sat, 07 Mar 2026 11:03:10 +0000
 
-We aren't going to see >= 256-bit address busses soon, so reduce
-host_dma_width and associated other struct members that initialise
-this from u8 to u32.
+Add documentation covering stmmac_clk, pclk, clk_ptp_ref and clk_tx_i
+in the hope that this will help understand what each of these clocks
+are for.
+
+There is confusion around stmmac_clk and pclk which can't be easily
+resolved today as the Imagination Technologies Pistachio board that
+pclk was introduced for has no public documentation and is likely now
+obsolete. So the origins of pclk are lost to the winds of time.
 
 Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c         | 2 +-
- drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c    | 6 +++---
- drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c | 2 +-
- include/linux/stmmac.h                                  | 2 +-
- 4 files changed, 6 insertions(+), 6 deletions(-)
+ include/linux/stmmac.h | 33 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 32 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c
-index 9f5a15b81f8a..9d1bd72ffb73 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c
-@@ -42,8 +42,8 @@
- struct imx_priv_data;
- 
- struct imx_dwmac_ops {
--	u32 addr_width;
- 	u32 flags;
-+	u8 addr_width;
- 	bool mac_rgmii_txclk_auto_adj;
- 
- 	int (*fix_soc_reset)(struct stmmac_priv *priv);
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
-index a139db6a8cbb..30ae0dba7fff 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
-@@ -93,9 +93,9 @@ struct mediatek_dwmac_variant {
- 	const char * const *clk_list;
- 	int num_clks;
- 
--	u32 dma_bit_mask;
- 	u32 rx_delay_max;
- 	u32 tx_delay_max;
-+	u8 dma_bit_mask;
- };
- 
- /* list of clocks required for mac */
-@@ -268,9 +268,9 @@ static const struct mediatek_dwmac_variant mt2712_gmac_variant = {
- 		.dwmac_set_delay = mt2712_set_delay,
- 		.clk_list = mt2712_dwmac_clk_l,
- 		.num_clks = ARRAY_SIZE(mt2712_dwmac_clk_l),
--		.dma_bit_mask = 33,
- 		.rx_delay_max = 17600,
- 		.tx_delay_max = 17600,
-+		.dma_bit_mask = 33,
- };
- 
- static int mt8195_set_interface(struct mediatek_dwmac_plat_data *plat,
-@@ -418,9 +418,9 @@ static const struct mediatek_dwmac_variant mt8195_gmac_variant = {
- 	.dwmac_set_delay = mt8195_set_delay,
- 	.clk_list = mt8195_dwmac_clk_l,
- 	.num_clks = ARRAY_SIZE(mt8195_dwmac_clk_l),
--	.dma_bit_mask = 35,
- 	.rx_delay_max = 9280,
- 	.tx_delay_max = 9280,
-+	.dma_bit_mask = 35,
- };
- 
- static int mediatek_dwmac_config_dt(struct mediatek_dwmac_plat_data *plat)
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-index 388e9fdeb86c..3ccf20fdf52a 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-@@ -91,8 +91,8 @@ struct ethqos_emac_driver_data {
- 	unsigned int num_rgmii_por;
- 	bool rgmii_config_loopback_en;
- 	bool has_emac_ge_3;
-+	u8 dma_addr_width;
- 	const char *link_clk_name;
--	u32 dma_addr_width;
- 	struct dwmac4_addrs dwmac4_addrs;
- 	bool needs_sgmii_loopback;
- };
 diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
-index 03fd85060a73..11886189bf51 100644
+index 3521b88aa345..a9c0cb61dd50 100644
 --- a/include/linux/stmmac.h
 +++ b/include/linux/stmmac.h
-@@ -243,7 +243,7 @@ struct plat_stmmacenet_data {
- 	int unicast_filter_entries;
- 	int tx_fifo_size;
- 	int rx_fifo_size;
--	u32 host_dma_width;
-+	u8 host_dma_width;
- 	u8 rx_queues_to_use;
- 	u8 tx_queues_to_use;
- 	u8 rx_sched_algorithm;
+@@ -300,10 +300,41 @@ struct plat_stmmacenet_data {
+ 	struct phylink_pcs *(*select_pcs)(struct stmmac_priv *priv,
+ 					  phy_interface_t interface);
+ 	void *bsp_priv;
++
++	/* stmmac clocks:
++	 *  stmmac_clk: CSR clock (which can be hclk_i, clk_csr_i, aclk_i,
++	 *    or clk_app_i depending on GMAC configuration). This clock
++	 *    generates the MDC clock.
++	 *
++	 *  pclk: introduced for Imagination Technologies Pistachio board -
++	 *    see 5f9755d26fbf ("stmmac: Add an optional register interface
++	 *    clock"). This is probably used for cases where separate clocks
++	 *    are provided for the host interface and register interface. In
++	 *    this case, as the MDC clock is derived from stmmac_clk, pclk
++	 *    can only really be the "application clock" for the "host
++	 *    interface" and not the "register interface" aka CSR clock as
++	 *    it is never used when determining the divider for the MDC
++	 *    clock.
++	 *
++	 *  clk_ptp_ref: optional PTP reference clock (clk_ptp_ref_i). When
++	 *    present, this clock increments the timestamp value. Otherwise,
++	 *    the rate of stmmac_clk will be used.
++	 *
++	 *  clk_tx_i: MAC transmit clock, which will be 2.5MHz for 10M,
++	 *    25MHz for 100M, or 125MHz for 1G irrespective of the interface
++	 *    mode. For the DWMAC PHY interface modes:
++	 *
++	 *    GMII/MII	PHY's transmit clock for 10M (2.5MHz) or 100M (25MHz),
++	 *		or 125MHz local clock for 1G mode
++	 *    RMII	50MHz RMII clock divided by 2 or 20.
++	 *    RGMII	125MHz local clock divided by 1, 5, or 50.
++	 *    SGMII	125MHz SerDes clock divided by 1, 5, or 50.
++	 *    TBI/RTBI	125MHz SerDes clock
++	 */
+ 	struct clk *stmmac_clk;
+ 	struct clk *pclk;
+ 	struct clk *clk_ptp_ref;
+-	struct clk *clk_tx_i;		/* clk_tx_i to MAC core */
++	struct clk *clk_tx_i;
+ 	unsigned long clk_ptp_rate;
+ 	unsigned long clk_ref_rate;
+ 	struct clk_bulk_data *clks;
 -- 
 2.47.3
 
