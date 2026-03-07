@@ -1,94 +1,77 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B6D251793;
-	Sat,  7 Mar 2026 17:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C82C313E21
+	for <linux-tegra@vger.kernel.org>; Sat,  7 Mar 2026 21:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772906159; cv=none; b=C1e0+Zl2t1AdnIQ++1faX1LhTKZpBusOyUmSgbFcVsIoujev0bWoPorXoSV3VmnkxrsMnpExlyXlRHnxC7sd+YWIB4JrAuayJp1l5E9cSPc7f0TvUQQT7A2DSYA8rrsb1J6oDlCpisETWz6Vd0QiKDsbp+ZactD9VEJUyxAaf1w=
+	t=1772918003; cv=none; b=VaIVKeGj2sK0FlurGfPh/lZ+n54M+VmcEBQpntSFkgdE4H4Dnjv8gRF/vZdsjTm6+DNvGxeBVZRmzvqXiyEkCeRW8/uWhRkVVsfbv0QV7V5vjb/g0++yHf0Q+Jx0+2R4Zztl4jZccmSYKLroU7L/srnRy575gsjVfA/dD9Zk104=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772906159; c=relaxed/simple;
-	bh=JixTgKowbvz3hPRSaIC4iVDhGP7BrzeUbOYe9GLtyyY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XN/xQR+Pye7zpbx+q2gMYgfWQcLVwVVvrYLj0qeXZGiF/b/A9lL5+Ksx+cKS3aGNS+1cN7Il8Bw0OARAgdqdLUJ7Ma2eyD6NESWb+sKhcxEKobqrW72vDHDXs7sGy4inojLkmEDC6MxUkku7vsRB33FKgHfFoLQjzJRnvMVUJwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=gpPmwwQm; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1772918003; c=relaxed/simple;
+	bh=w8t269qI4kdA1DU9l5jve4mAHmOdAC9k1jnaSrHc+Rc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=iCuoAIWRbE873WerC4683rEzmW1x9gVpVm2mG3aMXZzeu2lSSchjJtk7kJrMvxXMBJ5E5HGEX2BiG0k5wHPKHnUjptlq+ygG2dUO3vU9H475BgOPO6O2llUT5kWVgMCssi+qn+vdNEHWOOTuDMilaX8ehlKwYKr9pGshvA2louk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=EZzFyUEA; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="gpPmwwQm"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=Taf8QKd8++5heUK6i/mGRj//WC4gBXj3LSLau58JkDQ=; b=gpPmwwQm4pUuWz0Ueam5wdwjts
-	GeramEceA9tkDM4cQ1GLn1f6XcpqWM2NIkRuYzNtEa/RkDwuwZJuEQvOmTQTS5jkj9n8+pHC01GSY
-	ZRVCuIDwX+DhN6A7B9HlDdc89CquXWCTxv0V2G0UCZxhqdJbisyg9+D6bMcBv+32N6wthSVsLhAzz
-	R3ddKzMY+X1mTp4hIe1dIdyXqIlmdvUk8nsJji7ZlSFl9/gvxgN0XYadb5OCIdd7fXopz/PWAJ3M4
-	kNXblVrEAQO9HKXQ9fY5XqRksXaSsh/kBTsXzTumbl5VaQkazf9FSAU0Rh95q3XNCsbFHlIooXru7
-	kLGC0eAQ==;
-Date: Sat, 7 Mar 2026 18:26:10 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Frank Li
- <Frank.Li@nxp.com>, Linus Walleij <linusw@kernel.org>, Patrice Chotard
- <patrice.chotard@foss.st.com>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Dave Stevenson
- <dave.stevenson@raspberrypi.com>, Bartosz Golaszewski
- <bartosz.golaszewski@oss.qualcomm.com>, Bartosz Golaszewski
- <brgl@kernel.org>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kalle Niemi <kaleposti@gmail.com>, "linux-tegra@vger.kernel.org"
- <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] i2c: i2c-core-base: fix devicetree alias handling
-Message-ID: <20260307182610.48cae8b4@kemnade.info>
-In-Reply-To: <9b3c0190-7996-40a3-8306-5038f42b2b15@nvidia.com>
-References: <20260302-i2cfix-v1-1-a95418e9217e@kemnade.info>
-	<9b3c0190-7996-40a3-8306-5038f42b2b15@nvidia.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="EZzFyUEA"
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id B7A82240028
+	for <linux-tegra@vger.kernel.org>; Sat,  7 Mar 2026 22:13:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
+	t=1772917993; bh=w8t269qI4kdA1DU9l5jve4mAHmOdAC9k1jnaSrHc+Rc=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 From;
+	b=EZzFyUEAq2uqG/6OGRQs8oqeu2csiqUvX/OLFUdfWkLyOgjmVq8I+mScUV1NRAZ/f
+	 C5T6/eMv/ym7ZcOT25lmknOsFDgkZxHKQ5yRVEHOLsayQUitGlI2JZ7RFtMCXOoLvf
+	 1Gv2oAvt8tZ/gWyOmvJM0/cLOLlwhFvDlOkWxqzO5fw8+QWXH9wa+r0ix/NwcJ2EL2
+	 MF8HGUdeHL8G2zABFK/9betnYVIHK96q9LHOrQLltXuig4o6CMrESJhhezm8RP+SpA
+	 89N5dcxbAQ0IYydFluJqjXnz+PPcX0xsglF/slA1U6Ap5IFIvoN69hs0u268bRU2P5
+	 eJJy4FO3+PjHA==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4fSwwl4JjWz6tw2;
+	Sat,  7 Mar 2026 22:13:11 +0100 (CET)
+Date: Sat, 07 Mar 2026 21:13:12 +0000
+From: Marc Dietrich <marvin24@posteo.de>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+cc: Thierry Reding <thierry.reding@gmail.com>, Arnd Bergmann <arnd@kernel.org>, 
+    Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+    Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+    devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: tegra: paz00: configure WiFi rfkill switch through
+ device tree
+In-Reply-To: <aaSsgDqmTLEQQqK0@google.com>
+Message-ID: <78b4684a-0e97-ebac-c955-6c77c3edc47f@posteo.de>
+References: <aY_BpRQmLdqOOW2K@google.com> <82f24afb-1fd2-bfc9-2215-4526aff372ba@gmx.de> <07c024a6-d2f9-5805-4ae7-cbc89cda53bf@gmx.de> <aZvdDIYlCjg8sVGT@google.com> <99ddd816-f19f-cda8-15a9-6273e26e9e8b@gmx.de> <4a1bcdfd-e308-e357-2409-8bc82f115928@gmx.de>
+ <aaSsgDqmTLEQQqK0@google.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-On Fri, 6 Mar 2026 10:18:09 +0000
-Jon Hunter <jonathanh@nvidia.com> wrote:
 
-[...]
 
-> /sys/class/i2c-dev/i2c-0/name --> 3160000.i2c
-> /sys/class/i2c-dev/i2c-1/name --> c240000.i2c
-> /sys/class/i2c-dev/i2c-4/name --> Tegra BPMP I2C adapter
-> /sys/class/i2c-dev/i2c-8/name --> 31e0000.i2c
-> 
-> After this change I now see ...
-> 
-> /sys/class/i2c-dev/i2c-9/name --> Tegra BPMP I2C adapter
-> /sys/class/i2c-dev/i2c-10/name --> 3160000.i2c
-> /sys/class/i2c-dev/i2c-11/name --> 31e0000.i2c
-> /sys/class/i2c-dev/i2c-12/name --> c240000.i2c
-> 
-> So the subject says that this fixes device-tree aliases, but it appears 
-> to break it for Tegra. In fact, this patch appears to have the same 
-> problem that you reported with Bartosz's change. Reverting this change 
-> fixes the problem. So I am a bit confused why we are seeing different 
-> behaviour.
-> 
-Hmm, i2c-tegra.c was forgotten in Bartosz's change because
-the code looks a bit different.
+On Sun, 1 Mar 2026, Dmitry Torokhov wrote:
 
-There is still
-i2c_dev->adapter.dev.of_node = i2c_dev->dev->of_node;
-        i2c_dev->adapter.dev.parent = i2c_dev->dev;
-there.
-compared to 
-  adap->parent = &pdev->dev;
-        adap->of_node = pdev->dev.of_node;
+> Hi Marc,
+>
+> On Sun, Mar 01, 2026 at 09:55:45PM +0100, Marc Dietrich wrote:
+>>
+>> thinking about all this a bit more, I guess your approach to just convert
+>> the driver to device-tree and not change any functionally beside it, is the
+>> best solution for now (and good pratice in general).
+>> Maybe I can get access to a machine with bluetooth (or some other user steps
+>> up), so we can try to find a better solution, if required at all.
+>
+> Thank you. I believe your tested-by is applicable to the current version
+> of the patch as well, so maybe Thierry can simply pick it up.
 
-in omap code. So I think, the easiest to get forward is to
-also adapt i2c-tegra.c.
+yes sure, thanks!
 
-Regards,
-Andreas
+Marc
+
