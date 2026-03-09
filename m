@@ -1,231 +1,165 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C92238F256
-	for <linux-tegra@vger.kernel.org>; Mon,  9 Mar 2026 10:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773052971; cv=pass; b=VFPGEslFde6zqnIWUfUU9nKKZmq97L/VuTl8i0IYZwkJhnWJlrXvxi8mfDq1vkY/eJ4YdcujPC4gQup0lg9Fxhrjo3oDvnWXjYDBwKolpbiCM1uvVHoLZjffWYoSDuTPAuhtNTNVfsUnGtGEpJMNKTZhVaPPt1q6JS8pKmNXEKE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773052971; c=relaxed/simple;
-	bh=TWYX796qf27EFfnT0fwv1H53f8anzfrtf86Zv/nI9IE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aXgK6xvC2hmJZtp79hYqtePZGkbvTLQRZ56LXB+dZBnvtO6k8y21tJXIbWvneV8lJA79oBBmqxwItIQcUg+89GNB0TcHgl4SwElAP54ilGxLZcRYMglf+ID18Ah/TrQ7vfRjr1COmZn+kuu2jwnHr90MfyVz2rxnbwm2IfHBy38=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Iy+5kasM; arc=pass smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C94395D8A
+	for <linux-tegra@vger.kernel.org>; Mon,  9 Mar 2026 11:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773054418; cv=none; b=F5L29RmKc112/2IAHzSt1TxY7fw3s/KE26gl03XBiQEEwk6UUfoARiwmVo5yAtFx4dzxqStRK/l/IYnqen4z2u/vgAVNZu/rqTCxbdh7Vb7UwZ3h5Z/DPVf26uENikjdturTj+UWAafFH0uG4CjG0x/fW841kzZ4Md4hIjA2Cj0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773054418; c=relaxed/simple;
+	bh=7jFrjfVpNEF7+5pofyTW+BP7utiTtPBz1JY9cb1Gn74=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OvUPXkVX4K8tl7OA4/3O01T3ai29Pp6AZVcmQaKlxmFFK6A+GBfD2UwU3u+C9ghGW3Mk07wKJbBtFAoBDImlZOH3LimU9bcb/XH0Y1/KIVkLcsh/iRndyyyZA9Rg2lIMyYrYGt4d0uLIrukISjaNBJr8i5ZS3Y6l68vBJ06KwDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cT5pkRzX; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=FSeTBr5e; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Iy+5kasM"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-661ce258878so12229a12.0
-        for <linux-tegra@vger.kernel.org>; Mon, 09 Mar 2026 03:42:50 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773052969; cv=none;
-        d=google.com; s=arc-20240605;
-        b=X9KEBPyYlz7deeOJZpROr0rf/Ncewlg69uHdgQFNT6IZqMtNB3ILlEijNOxjJwtB4u
-         70hIkB4x6NULCh9WVlo/DYxNaU8cKcMOmO0yqxxhVQ2hJvYNAPFGxcGieM8+pc9r5cPU
-         S4tbwFJ4mCa3jMtxxqfy3PaEJbw7Rowsf5KNyz39QdFKIQesAnPvkUd+Og9bacW4xvk0
-         aiMcv2710o6jHWd2nlsq6qWbiCUYyueqisMsVcwPpC/NySZRP7IJjx9Oyu7x3YGhQP+Q
-         4wYJPlPrI6hXxIF4JNxLvS+cak3pKdAoS2R6tRLgtn+ojJ24cBLa9uVbhtqqwWR2iJkZ
-         1VTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=e5cK9Urk/4A4PH+rsif+5eOqOyGE3NvOcm5rrxoIzRQ=;
-        fh=wsFGOhBzdQIKyB+fV63kAS6meQ/j3osJEakylLbrCac=;
-        b=h1yP5o6zSexweVwsKiQ9+WwK0WIj/A3/JzUI8fUcviEOfcd9W0IjBdjEFJiCnyveXB
-         6NPojkxqPow43buDKZVHH1ViAo/efqM0RS5vfJoPeTlC/p9A3xz8CgjNe29NJ5qAqOxM
-         2iEyISD8P2CDABwe/5GWB8L5/oIwCulJfMHzwMqXDiNMGyarwaiyeWd6RF9REpahOh7v
-         eMXlak57sB6NYGQSmh2Lk4ypevd81uhCxljKa3j7t/ydLEV/F9UysJYj/TKA0uGdKbL8
-         PH/uc8YJ1BfD4UXsmG5WfMJi7lxsEKv3n/ZAJOu6to1zyEJ4G9deSKnRBhYU3S4z2zSq
-         S+Vg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cT5pkRzX";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="FSeTBr5e"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6298IMfo2662872
+	for <linux-tegra@vger.kernel.org>; Mon, 9 Mar 2026 11:06:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=TrEOcA+LHeeXNlAZJAw+XIej
+	7hfOvjSZS4fXCV/6ZP8=; b=cT5pkRzXP6qVFsUdkwZYKvpu2QDIkKWB/m+APQg3
+	xlQJXyfUDxe5z5j/J9YHHaQyCPT1iK2NE/VExyzQbVIPzEXUZl+ZXZxrAH/SZhyi
+	tKDLTr3m9k69Gy909AFRL0cI6KdJD7DFNOmt3wC463C8wLM48cDSrkLOLtV5Ix/o
+	EDSTiDTPnhe+j3+TlBGosUM8+4DtPOw1rEaWNMn42G008p9ZCTZJMzyltrDd9F4Z
+	O85hGkC/n+PYGdq5mEMfYii5Gpg1wSToemHQAr1t3Jy3ucXGiNbcLnHmcYvBMfaf
+	Gujxy+JLvzq0bucFV/9+WtoERcTQlj3aLeDFfn45uRcXQA==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cr9cpndb2-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-tegra@vger.kernel.org>; Mon, 09 Mar 2026 11:06:56 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-35984ef203bso8113061a91.3
+        for <linux-tegra@vger.kernel.org>; Mon, 09 Mar 2026 04:06:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1773052969; x=1773657769; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e5cK9Urk/4A4PH+rsif+5eOqOyGE3NvOcm5rrxoIzRQ=;
-        b=Iy+5kasMrScR9VDlh/OyrRQwSPliIPj22ysvwFDvdlR5a/XBK5JEFqKVu6Zwa3fVVk
-         h0IAp/TGJykZcehYJaDEciWSSPzdQeannId/ZxYFXtQW6G3Re9SbK/1fvtEZuNb1OGj5
-         4IWCySBfM890c6q5P003x/7YVRy69I0apx2zeLa0eMpqTBRraoa1CIlRemnD2AYBZsfU
-         AxCDP1uD/UqHbwMbfpGczge3kIYsLoHWsUNN8VVwT/D+gRTTEI0xIrhPecSku3LbTq39
-         n9LYJuEbj1gGDp7zQRt9DZSDpvIXaNVK2L6FlxRtrYWW3SCIYufL7pqvFoJfGSMD8X/h
-         nTlg==
+        d=oss.qualcomm.com; s=google; t=1773054415; x=1773659215; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TrEOcA+LHeeXNlAZJAw+XIej7hfOvjSZS4fXCV/6ZP8=;
+        b=FSeTBr5ept85WxlDxOhu1F2+OSu4YmlaDD9bdIBjQPKHyL7sAd4Pm1KtOtBJGkYFgH
+         vE5fA/MYTaF8X1e1o/5GTRsfYSIdCO7A0UfOMBQ70/DXFwpPo6SgXGKhnd0ru53ZW47I
+         YMyMgNIycwfPlw1mR48soKXvSSLo6q9y9iaDjX4o5JKCZSkIpdKCjN0T2ozV33a8oyVB
+         xH8QYudpgX0AwkanoXCEYlyI/X6Uu0GTUIW9pJkUaj6ij7ssXJ6ZjCXiae7CelMjsdTm
+         +r9moat5F4nQWgw61W+wRbBZ5FwqALXWctcjUr/CHszQnvY8frFucoZST64EAUFrMin3
+         UVlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773052969; x=1773657769;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=e5cK9Urk/4A4PH+rsif+5eOqOyGE3NvOcm5rrxoIzRQ=;
-        b=B2SC+xKudlu66lWvjRCdGH1AqCWX372Z3UhflZFtdCXjAQR7Lq95drgXwu0/R7MTdH
-         4OjiksttcePsJOFxDjghhY/vUBBhITXgMLnJZPmJ/O5rtPGmFkzTIiqsChUIaMIM59M4
-         U5ojVeoLbYtZeT/Q7Xz3doplxuQQ2nehbv3s/qrsLyztwPyjwsU6d5+G6LcX44oIQeEv
-         B0p5s8szXEEKW5l8G8vGsZpg7Y0P3knFEOdLRpUCnBQHeuLOg8EVa+NB1xYAzZoWoFU0
-         poIwnaMuEXL0hV15pxzWQFjWz8RrCEx9lbct44tTOmgRQuK7XilNE5ln8fu3x9Jfe1YX
-         Vxsg==
-X-Forwarded-Encrypted: i=1; AJvYcCXy5vukBLfa9ysYMk4IjuQUZbXzdL5woiae/chPkE3wdjtxtLkgIoujln02d27E5m0daOnlzHIPIylL4g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqwUwERzoyfO2CDONHeQZZpnTk0MjfBV62456tU0JdM7tceSzD
-	DUYp7mhhI4PvgRDd/OKOKIooNhUy1IFYThchEIjUxlUE0qd5fOu+XU8VY1O7lWDl8Mbtg7lWOAN
-	sjcT26XWQxPWYQdz1w+ezDeLMZfSmU4mtosyswmngWwYietjlp/VZidN7
-X-Gm-Gg: ATEYQzx2V2JETgETItetcf6TaSlEAzw9XhzY0agAoGWM9xvpHoJHHMzjuuhE1OcbGQr
-	q5OYT0v/hXEF43UVc6tB6Z58rJ2QF2fz5M752vANE36G33II4rQRhGRAxTplEk/66ap6bn6pgRE
-	xoSkrX6oJ7O0DNRWleX5sOl6OdtBL1zC+xCaudoMkCqtCCTpXuV2GYtC4b2qfcNZIEI4wI2dq3D
-	Fo2Rhmp1oZqXljxZmUVBVAfv3JEj/SkE1ObbVtKq5mMkRS0jsKX7ERNolYrIMCGDQ3oEmv+kNSi
-	6yiVmFA0N82FXDlAr9/87byalOierVBjItE=
-X-Received: by 2002:a05:6512:743:b0:5a1:1853:524a with SMTP id
- 2adb3069b0e04-5a140b52f26mr139217e87.16.1773052647105; Mon, 09 Mar 2026
- 03:37:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1773054415; x=1773659215;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TrEOcA+LHeeXNlAZJAw+XIej7hfOvjSZS4fXCV/6ZP8=;
+        b=Yfavt2+swWvTak3DFZWEzft6OEOJ0yRv1uqYAYeRVb0YPCTQMY6Av3ZO7ovX4BGaE7
+         3JrqqgL030/TcAkynnU27IXPwi4XTtks1FWkbFpmRWfQveNNvSt9MvvrkAYbWjR7GT/r
+         9A482gBkxNLPUN7v0Ffl21GtEkv5iohUtw5d1r+BQJdDP7JrI3d0XX1IUg+bRx9MSa0e
+         PlrB8D3YpGp+5Ttsl4D6ho+36iGD6RDELXd2y2wUquKf/0BB1RME5vufzEKsxxyH1+ZH
+         ziS91bT7k7dmzO09INeb3doLsKXWK2a1Sv8UsDut4EkMcSQ81b6f4BqA5FIaUbxWZWaG
+         SlcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVaSl9I5dkGA/mmruQC4hlb+R8dTIzMzWEkNiZQkuFxBZealPOKcT88UoLhMElXeeHjKGGSEnwtYicWtw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzThJad/71+6k0bZmVrLwBYwfR2GOUsIF5V6E3Zp2TEajXMDcHo
+	k2lr/TRXUgSS/Q4mCJAJHr4PFIxCjWFjnlLeT4xc9Mr3qEwj4cauc8TpVyMjzn20eDfBfjQG5r7
+	HJQ391nah69ilatuEaGTgGJ9n72+Z3Z54PBgRaaVoyojXlV3dlSEzRbPS/BJ1kyiulQ==
+X-Gm-Gg: ATEYQzwUR3rNBfrKRJ7dUlhFU5zoz/nNlfemZGOt8XHYg08VVJZe7YFN0IwfAkqhPBz
+	eM4dMZrN3/JoHqpQe4Rj8A8DS30uFyx9nmsaiVqKIuZ7KRhWwe12ZYw00gb50Sxzgp3jhU4LDZt
+	fzqv4qWZFWEc4zmwoMPWm9pCSOzt6cGDf1CrAmpxSyBJY3k9jzlt+9v4bqflDMQwOChNSoWz/Zn
+	QL8ZFKkLQLPMWQqynHVQ6ZOS4CRjZifGxJNCKvgSMiUyjD6FLHdUvOWu4rF0f3yt4n0dwyMo7E3
+	n7XpTSeKO4ZfkG+/Zlt2KgrL5K5x4BDnWO/i8sZKDQGTF+u9qzFHS2RUobcXuHhid+tFMGHHx8x
+	wZGYlKXUb7pxwRLhHUUL9TKGGxoPyLjs8e2k=
+X-Received: by 2002:a17:90a:d2ce:b0:34c:fe57:278c with SMTP id 98e67ed59e1d1-359be353f40mr9443414a91.34.1773054415393;
+        Mon, 09 Mar 2026 04:06:55 -0700 (PDT)
+X-Received: by 2002:a17:90a:d2ce:b0:34c:fe57:278c with SMTP id 98e67ed59e1d1-359be353f40mr9443395a91.34.1773054414906;
+        Mon, 09 Mar 2026 04:06:54 -0700 (PDT)
+Received: from oss.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-359bcc2d096sm4067057a91.14.2026.03.09.04.06.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2026 04:06:54 -0700 (PDT)
+Date: Mon, 9 Mar 2026 16:36:44 +0530
+From: Mohd Ayaan Anwar <mohd.anwar@oss.qualcomm.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Chen-Yu Tsai <wens@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Frank Li <Frank.Li@nxp.com>,
+        imx@lists.linux.dev, Jakub Kicinski <kuba@kernel.org>,
+        Jan Petrous <jan.petrous@oss.nxp.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>, s32@nxp.com,
+        Samuel Holland <samuel@sholland.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>, Yao Zi <me@ziyao.cc>
+Subject: Re: [PATCH net-next v2 0/7] net: stmmac: start to shrink memory usage
+Message-ID: <aa6pxGDvslU9ygra@oss.qualcomm.com>
+References: <aa6VEsmBK-S9eNYU@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251230-ncm-refactor-v1-0-793e347bc7a7@google.com>
- <20251230-ncm-refactor-v1-3-793e347bc7a7@google.com> <89e20554-8a99-40e0-8b4d-2160b364cbc7@nvidia.com>
-In-Reply-To: <89e20554-8a99-40e0-8b4d-2160b364cbc7@nvidia.com>
-From: Kuen-Han Tsai <khtsai@google.com>
-Date: Mon, 9 Mar 2026 18:37:00 +0800
-X-Gm-Features: AaiRm519KwpNgmZqJbRDelkwMmTnvRbtfpqRlcHZj0AYXyLni9zb9nIbhwixKM0
-Message-ID: <CAKzKK0qCdgk3vVJMK-zk8roxDtYkqdPTyAahpJOzF2knMYc9yQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] usb: gadget: f_ncm: align net_device lifecycle with bind/unbind
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>, 
-	Prashanth K <prashanth.k@oss.qualcomm.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Andrzej Pietrasiewicz <andrzej.p@samsung.com>, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@kernel.org, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aa6VEsmBK-S9eNYU@shell.armlinux.org.uk>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA5MDEwMiBTYWx0ZWRfXwDrcxEJq9GJw
+ pe5OmCKRd++CM0JQO9QqThF7YW/ILlDs1HHIMvtF0oniVjvb+LmQn54VLDGEu4NP0Cl2YJxm3/Z
+ Zhubmzmh/zxR3TkuOsYEBQSCFnACe4H090Wp5kG+IN4dej7vah5ZxW1XeIOM/EAYntUQzzIC6di
+ WroVp+xJ2ZCGDzMwkx5U5fI5653btzwKLwoUrMMDOMc/rP42EK3n/yu2T8SwZwy59T3k58F40Ol
+ uHmnRAzF38irVYzDeTzNS5pYaJJ/yffkWmrHuagopKkNC2gOBj8HmEpor0ak95SFEj9ld9AoJw0
+ PRUZCJr326ZaK3fGnrkjilRHVdu+Gykw7HXM7ofu97JLNiONOm8gH2lHAkxVAptja2iFRIWQh4S
+ aNADAcVA/0aQQA4QTsy2aEIvhLKLjPGM0uhJ5bX3BG5YXKFzQOVt++oee0hZq/8+Jd4K6TX3mXd
+ y4tgtB4Q2TJSWXE0ibQ==
+X-Proofpoint-ORIG-GUID: F2pxx91y1eRXE5v2X7SqHmY6Okfmfo-X
+X-Proofpoint-GUID: F2pxx91y1eRXE5v2X7SqHmY6Okfmfo-X
+X-Authority-Analysis: v=2.4 cv=e7sLiKp/ c=1 sm=1 tr=0 ts=69aea9d0 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=kj9zAlcOel0A:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
+ a=EUspDBNiAAAA:8 a=J-7NsHqoITSIJWJjikQA:9 a=CjuIK1q_8ugA:10 a=zZCYzV9kfG8A:10
+ a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-09_03,2026-03-06_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
+ suspectscore=0 spamscore=0 bulkscore=0 impostorscore=0 malwarescore=0
+ clxscore=1011 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2602130000
+ definitions=main-2603090102
 
-Hi Jon,
+Hi Russell,
+On Mon, Mar 09, 2026 at 09:38:26AM +0000, Russell King (Oracle) wrote:
+> Hi,
+> 
+> Start shrinking stmmac's memory usage by avoiding using "int" for
+> members that are only used for 0/1 (boolean) values, or values that
+> can't be larger than 255.
+> 
+> In addition, as struct stmmac_dma_cfg is approximately a cache line,
+> shrinks below a cache line as a result of this patch set, and is
+> required, there is no point separately allocating this from
+> struct plat_stmmacenet_data. Embed it into the end of this struct
+> and set the existing pointer to avoid large wide-spread changes.
+> 
+> Lastly, add documentation for struct stmmac_dma_cfg, and document
+> the stmmac clocks as best we can given the driver history.
+> 
+> v2:
+> - fix error in commit message for patch 5
+> - fix typo in comment in patch 6
+> 
 
-On Mon, Mar 9, 2026 at 6:20=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com> wr=
-ote:
->
->
->
-> On 30/12/2025 10:13, Kuen-Han Tsai wrote:
-> > Currently, the net_device is allocated in ncm_alloc_inst() and freed in
-> > ncm_free_inst(). This ties the network interface's lifetime to the
-> > configuration instance rather than the USB connection (bind/unbind).
-> >
-> > This decoupling causes issues when the USB gadget is disconnected where
-> > the underlying gadget device is removed. The net_device can outlive its
-> > parent, leading to dangling sysfs links and NULL pointer dereferences
-> > when accessing the freed gadget device.
-> >
-> > Problem 1: NULL pointer dereference on disconnect
-> >   Unable to handle kernel NULL pointer dereference at virtual address
-> >   0000000000000000
-> >   Call trace:
-> >     __pi_strlen+0x14/0x150
-> >     rtnl_fill_ifinfo+0x6b4/0x708
-> >     rtmsg_ifinfo_build_skb+0xd8/0x13c
-> >     rtmsg_ifinfo+0x50/0xa0
-> >     __dev_notify_flags+0x4c/0x1f0
-> >     dev_change_flags+0x54/0x70
-> >     do_setlink+0x390/0xebc
-> >     rtnl_newlink+0x7d0/0xac8
-> >     rtnetlink_rcv_msg+0x27c/0x410
-> >     netlink_rcv_skb+0x134/0x150
-> >     rtnetlink_rcv+0x18/0x28
-> >     netlink_unicast+0x254/0x3f0
-> >     netlink_sendmsg+0x2e0/0x3d4
-> >
-> > Problem 2: Dangling sysfs symlinks
-> >   console:/ # ls -l /sys/class/net/ncm0
-> >   lrwxrwxrwx ... /sys/class/net/ncm0 ->
-> >   /sys/devices/platform/.../gadget.0/net/ncm0
-> >   console:/ # ls -l /sys/devices/platform/.../gadget.0/net/ncm0
-> >   ls: .../gadget.0/net/ncm0: No such file or directory
-> >
-> > Move the net_device allocation to ncm_bind() and deallocation to
-> > ncm_unbind(). This ensures the network interface exists only when the
-> > gadget function is actually bound to a configuration.
-> >
-> > To support pre-bind configuration (e.g., setting interface name or MAC
-> > address via configfs), cache user-provided options in f_ncm_opts
-> > using the gether_opts structure. Apply these cached settings to the
-> > net_device upon creation in ncm_bind().
-> >
-> > Preserve the use-after-free fix from commit 6334b8e4553c ("usb: gadget:
-> > f_ncm: Fix UAF ncm object at re-bind after usb ep transport error").
-> > Check opts->net in ncm_set_alt() and ncm_disable() to ensure
-> > gether_disconnect() runs only if a connection was established.
-> >
-> > Fixes: 40d133d7f542 ("usb: gadget: f_ncm: convert to new function inter=
-face with backward compatibility")
-> > Cc: stable@kernel.org
-> > Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
->
->
-> I see you have sent a revert for this series now, but I wanted to let
-> you know that this change was also triggering the following warning ...
+No issues found with v1 on QCS9100 Ride R3, so feel free to add:
 
-Thanks for catching this. I sent a fix [1] for this specific warning,
-but since the overall solution caused a regression on pmOS, I reverted
-the entire series including that fix.
+Tested-by: Mohd Ayaan Anwar <mohd.anwar@oss.qualcomm.com>
 
-Fortunately, the regression David reported gave me a much clearer
-picture of how the network device interacts with f_ncm. I've
-implemented a new solution and will send it out shortly.
-
-Thanks again for testing and helping catch this!
-
-Regards,
-Kuen-Han
-
-[1] https://lore.kernel.org/linux-usb/20260221-legacy-ncm-v2-2-dfb891d76507=
-@google.com/
-
->
->   BUG: sleeping function called from invalid context at kernel/locking/mu=
-tex.c:287
->   tegra-xudc 3550000.usb: EP 11 (type: bulk, dir: in) enabled
->   in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 0, name: swapper=
-/0
->   preempt_count: 10003, expected: 0
->   tegra-xudc 3550000.usb: EP 6 (type: bulk, dir: out) enabled
->   RCU nest depth: 0, expected: 0
->   CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Tainted: G           OE       7.0.=
-0-rc2-debug-tegra #1 PREEMPT
->   Tainted: [O]=3DOOT_MODULE, [E]=3DUNSIGNED_MODULE
->   Hardware name: NVIDIA NVIDIA Jetson AGX Orin Developer Kit/Jetson, BIOS=
- buildbrain-gcid-44366467 03/05/2026
->   Call trace:
->    show_stack+0x20/0x40 (C)
->    dump_stack_lvl+0x7c/0xa0
->    dump_stack+0x18/0x30
->    __might_resched+0x128/0x198
->    __might_sleep+0x64/0xd0
->    mutex_lock+0x2c/0xe8
->    0xffff80007eaedf84
->    composite_setup+0xb30/0x2010 [libcomposite]
->    usb_function_register+0x20e0/0x2c28 [libcomposite]
->    0xffff80007cf7ba20
->    0xffff80007cf7cb84
->    __handle_irq_event_percpu+0x64/0x3d8
->    handle_irq_event+0x54/0x110
->    handle_fasteoi_irq+0x114/0x1c0
->    handle_irq_desc+0x50/0x90
->    generic_handle_domain_irq+0x20/0x40
->    gic_handle_irq+0x54/0x180
->    call_on_irq_stack+0x30/0x48
->    do_interrupt_handler+0x90/0xb0
->    el1_interrupt+0x3c/0x68
->    el1h_64_irq_handler+0x18/0x30
->    el1h_64_irq+0x70/0x78
->    cpuidle_enter_state+0xcc/0x950 (P)
->    cpuidle_enter+0x40/0x68
->    do_idle+0x1fc/0x298
->    cpu_startup_entry+0x3c/0x50
->    rest_init+0x100/0x120
->    start_kernel+0x760/0x908
->    __primary_switched+0x88/0x98
->
-> Jon
->
-> --
-> nvpublic
->
+	Ayaan
