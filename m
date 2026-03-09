@@ -1,137 +1,105 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96CC36896D
-	for <linux-tegra@vger.kernel.org>; Mon,  9 Mar 2026 07:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026B33644C5;
+	Mon,  9 Mar 2026 08:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773042796; cv=none; b=WQJ7BTKKRwvuTOnoMNx6gwAb8pWOSpVHLs++Png+bGpp1nLPUF/bbfAp70DHD7dX2SJF6NejIuCcrKMc88LdaV71dz5vSB1vvWkcFq4Cm1CIsCbmmODyC6ibVJ2q4sE+6G/y8j6uws1dQ7EAFAQrTItqgQ0CFdNcjAL0YLJOfdU=
+	t=1773043245; cv=none; b=iEJNIZOkjJ4o9p1uRTEyVaK222dBhiyvo79qeMSpaDq8/l3qRXRwVBsT/iDiF8W6Vcmn/VeM/XyW8MvTuBv5ehSvM6XuMfY6QooOqvmnz9F0wYLKHtRBPp8VzQz8Ro+a65JSvMF6F8BrWJ+TYvGm6wVAjMgcXXiTxEecPdVbki0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773042796; c=relaxed/simple;
-	bh=BfCGLduhY9yG7QLq78Hh4dR6ZPzK4zm1QeyS8EzRSxY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AXKh3dWw9R34kaDMTo+Zqs5Pzs3/yJfJ/EkP3b6UR5wP6x3twi+WEzF/+ZJWOBEolMjDwr2SutmRwuKvOmA6u/2M7IEgEkk35nHZsFuLNwzElq7Ik4rBtBwZyHvPr6wd4nGi7vqdw+kLnIrVfPmReGA0qnbgU5c1au6upK71zDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I8JZtw2L; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1773043245; c=relaxed/simple;
+	bh=oLICg3wmajRFE766zc5v+Mhsl02mz5h3ToNTDdVSp04=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lElYhWhwYZxjsYkBx/XYfUJ1WgZjTCg3ZUefHSZ+pTp+x4GpXiH+sU2m3OD1iudqdCqQFRof1zb5TO4qN84X1vcE5oeTiZK81v9cN3IqLFkiAauTMHiLvOVsWaCprBiJB/VRaIWjdttDVv4qTNg798zpict8rXIvtoSsPKHXZPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CNZItq8L; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I8JZtw2L"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-482f454be5bso113377295e9.0
-        for <linux-tegra@vger.kernel.org>; Mon, 09 Mar 2026 00:53:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773042793; x=1773647593; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4/vo+yztL0AmH8P24goXzbtezovr3DoQGmWB3EtlnhE=;
-        b=I8JZtw2LZx739So3eBhwattFpRcM/xJeGX48zSgjcbsJ4loHtVOdhw27bOASyxg/QK
-         iTJElJGMR++V4iLgpAZWCW/zXomiigO0SZ8/gMRcK8oxmgIf0kgU+KWmHwsqwJOhUmNl
-         uYkLaZOJ+Bh6Xdp/V43EUH3/gjJev5BuQpLdOQoJxvIAbaQ3Iwl4rcpMfLenllXtPM6A
-         FPYLJqp57ywk/1NyJWBqqIcyxgN7q46YmJOJZYHa8v5TSQ5Gh6n1zA6og5FF05Ilypsk
-         Y2Cf9+Yfc3sAIpH0jsOktB6KCkSTyfEje314ySJM314l/v5k5CrskOmae8XN/rjuXdZ7
-         4ZPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773042793; x=1773647593;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4/vo+yztL0AmH8P24goXzbtezovr3DoQGmWB3EtlnhE=;
-        b=bPRICZw+lKaL+9d1W9cUaU48fmjZ/ednJ/FxWbLjuxM882ryaofMVJWexHwbFJRSBs
-         xjR8eNLlzQQkwZL6W85gZN1q2xam4rs8wgXXAFvTZsYJ9IzaiohDT0P8Hg0rkqXPkX/l
-         x1QxVw6u6Ank8TQMERUlSF8BjJjEmnaTKhB5xuXedwQHLBne9W0mT2OAdMEsDDlQdx1U
-         qdVPIQeKoR9DpnNJvK0xIiEqbMhuBI0NnYrmsceSFQFIYwzvgS1jU1MDCgU/O1m+hHus
-         B8XZMurDTygqLiEYMx+LLdsY21DuWvhj1gIAw2olYpsTWsnecq8AJ2EXYTqGWNzDQJtH
-         v+pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWuS0ahCY/o3XnI0Epq+JaMMiWiZQiaEwo+Q/QAh40ESsY0/dnZpTZUB0CsLu1RwdJEAvKTZrxVE1FrRg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YylzCTlq7Ar/T6NfYw7ZU0cBEoTb/Dg8dybJ9hNqHtiMlBMxBxG
-	+Pz5ev0gAfNT+EPq9R0rDoQsNAj5PK3dYHrbDhY9pgVwEihQ73+1YyWY
-X-Gm-Gg: ATEYQzxvARR/xxINlENXHAPJArLZft/rZmB+Ot1RpTS/1ebqDst9aFegXgOJaQu86BE
-	PhdLCM+jGEfdIUGIgmR9asSdQID0g+4cvTYBkqlqOe3rzWbF4JGHT3g6kV59cWfoR2QQWcP5oIJ
-	FaEXfcb+GFqtDnm41drVTpj1vzQKTBKxFoFYTYjDIZD3e3cvacF2d/4XpFOVq+yPtUxur3H8QI8
-	cb0AlwANkH5IcAE6BdWP9j75QUrjb7sAj8KbKGfiszFS+0EOD+4Hf2VHz30TulobONBkedYB42u
-	w7wshrN7Akw/hD1a/FDqZ9m9LowvmKwTwY6Zv2VBmxr2+lAreZr0br+FeDqLVnuyohuosTZfpcB
-	N4eipieaTFCw/Qx+Az0Mr4IwGPtwzq8VN4JjB9QQaxT/TbMMBKkPVfRxUCjhfcr1J0lTRFdd+Ir
-	xHn4kZVrhxzusXbmjtAVMC138=
-X-Received: by 2002:a05:600c:3f06:b0:485:3e00:944a with SMTP id 5b1f17b1804b1-4853e0094c8mr13491155e9.9.1773042792676;
-        Mon, 09 Mar 2026 00:53:12 -0700 (PDT)
-Received: from xeon ([188.163.112.72])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-485245dbd87sm97799975e9.16.2026.03.09.00.53.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2026 00:53:12 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] drm/tegra: dsi: re-add clear enable register if DSI was powered by bootloader
-Date: Mon,  9 Mar 2026 09:52:48 +0200
-Message-ID: <20260309075248.47730-3-clamor95@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260309075248.47730-1-clamor95@gmail.com>
-References: <20260309075248.47730-1-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CNZItq8L"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B09CEC4CEF7;
+	Mon,  9 Mar 2026 08:00:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773043244;
+	bh=oLICg3wmajRFE766zc5v+Mhsl02mz5h3ToNTDdVSp04=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CNZItq8LwmKUyF4EsMYfZzw79lQvEZA1PoAqpBMqbYmGVknRBToRujRDKh6Ep4Csh
+	 7tpZ+lWDOH1+lfes2lAtWo8E8mb7XSLrUspgSZuiyeJdMDX8h+FQktz7PZZF1T25lJ
+	 uACXhUtIhn54ju06Ox37MB4fbfLeXj/G/KflaUyci8mylZHqMmJqgZNArwBJ6t83HP
+	 +ji9lZ0aQQJIPvusqwCq22ogl7M502qvPO0+2PuWChQ4mMJGH6LfGAXsdhuF+J6RmM
+	 rBi2SCB9AgU2x6l6VsvNUWrbrxXP0lXmwN7v77tVA0KDh+Q7QJ2Vp4TzMh5TbvnyHz
+	 r73zDPAlQdt7g==
+Date: Mon, 9 Mar 2026 13:30:28 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Manikanta Maddireddy <mmaddireddy@nvidia.com>, 
+	krishna.chundru@oss.qualcomm.com, Bjorn Helgaas <helgaas@kernel.org>, 
+	manivannan.sadhasivam@oss.qualcomm.com, Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, "David E. Box" <david.e.box@linux.intel.com>, 
+	Kai-Heng Feng <kai.heng.feng@canonical.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Chia-Lin Kao <acelan.kao@canonical.com>, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
+ set by BIOS for devicetree platforms
+Message-ID: <y6ssm2pxybi26r54aszgsksg7pijnnqkmrut26lwgw2iawihu7@sw7ctkze7yni>
+References: <bf37b6a5-268d-4c07-a536-a826b3d5953b@nvidia.com>
+ <unc5zefwndgcv7wufaezz3gkg3qtaymkjlmymhyqdqwzn3wybl@ow2rhbyt772h>
+ <f9ac8c8f-8959-416b-ba90-14f0886c5bc0@nvidia.com>
+ <a5m4pqtiaxsq5lmq64roro633ganbeq7mypa5ojuuqy4npkvok@wcogdbzaq6xe>
+ <7157c68e-97f3-43b0-bfb5-e271a8f2a4b8@nvidia.com>
+ <cf1e685a-a1cb-45ec-bdc3-1ef1a3d1044e@nvidia.com>
+ <npt2cgwksulq5375dzlhszqaqrurgdvlkz6fdczer6shglqfg5@gp6a6xymymww>
+ <26ad62ff-4972-4b29-8f9e-1868cd20ee00@nvidia.com>
+ <kkly3z4durpagtenadvmzdpojlctachgfgi2fdapt6zthdl2gx@n2qhmlud2zb7>
+ <3a0ddcfa-9fe6-4744-a9e4-016c43f9400e@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <3a0ddcfa-9fe6-4744-a9e4-016c43f9400e@nvidia.com>
 
-Original commit b22fd0b9639e ("drm/tegra: dsi: Clear enable register if
-powered by bootloader") was added to address the issue of DSI being in an
-unknown state after the bootloader, ensuring correct panel configuration.
-This worked fairly well under the assumption that the bootloader had set
-up DSI; however, in cases where it did not, the device would hang because
-a DSI read was called before the DSI hardware was ready.
+On Fri, Mar 06, 2026 at 04:03:35PM +0000, Jon Hunter wrote:
+> 
+> On 03/03/2026 16:17, Manivannan Sadhasivam wrote:
+> 
+> ...
+> 
+> > > For Tegra, we enter a deep low power state known as SC7 on suspend which
+> > > does involve firmware. Nonetheless I tried for fun, but this breaks suspend
+> > > completely.
+> > > 
+> > 
+> > Ah, this explains the problem. We also have a similar problem on our Qcom Auto
+> > boards where the firmware completely shuts down the SoC and puts the DRAM in
+> > self refresh mode. So NVMe driver never resumes properly. We tried multiple ways
+> > to address this issue in the NVMe driver, but the NVMe maintainers rejected
+> > every single one of them and asking for some API in the PCI or PM core to tell
+> > the NVMe driver when to shutdown the device during suspend. But this turned out
+> > to be not so trivial.
+> > 
+> > Another way to workaround this issue would be by calling
+> > pm_set_suspend_via_firmware() from the driver that controls the entity doing
+> > power management of the SoC (firmware). In your case, it is
+> > drivers/soc/tegra/pmc.c?
+> 
+> Actually for newer devices it is PSCI and so ...
+> 
+> > In that case, you can use this patch as a reference:
+> > https://lore.kernel.org/all/20251231162126.7728-1-manivannan.sadhasivam@oss.qualcomm.com
+> 
+> This change fixes the problem as implemented. What is the status of the
+> above? Any plans to get this merged?
+> 
 
-Removing this workaround results in the issue described in the original
-fix: the panel initialization sequence fails and the panel gets stuck in
-an undefined state. This is especially noticeable with command mode panels
+It didn't get any love so far. It'd help if you can give your tags to that
+patch.
 
-In order to properly address this issue, the original workaround is
-restored and placed after the DSI hardware is prepared for R/W operations.
-This fixes behavior for both cases: where DSI is set by the bootloader and
-where DSI is untouched.
+- Mani
 
-I have tested this change on Tegra20 (Motorola Atrix 4G),
-Tegra114 (NVIDIA Tegra Note 7 and ASUS Transformer Pad TF701T), and
-Tegra124 (Xiaomi Mi Pad) with U-Boot, using both bootloader-initialized
-DSI and untouched DSI.
-
-Fixes: b22fd0b9639e ("drm/tegra: dsi: Clear enable register if powered by bootloader")
-Fixes: 660b299bed2a ("Revert "drm/tegra: dsi: Clear enable register if powered by bootloader"")
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/gpu/drm/tegra/dsi.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-index fbab10bc5c41..e7fdd8c7ac12 100644
---- a/drivers/gpu/drm/tegra/dsi.c
-+++ b/drivers/gpu/drm/tegra/dsi.c
-@@ -936,6 +936,15 @@ static void tegra_dsi_encoder_enable(struct drm_encoder *encoder)
- 		return;
- 	}
- 
-+	/* If the bootloader enabled DSI it needs to be disabled
-+	 * in order for the panel initialization commands to be
-+	 * properly sent.
-+	 */
-+	value = tegra_dsi_readl(dsi, DSI_POWER_CONTROL);
-+
-+	if (value & DSI_POWER_CONTROL_ENABLE)
-+		tegra_dsi_disable(dsi);
-+
- 	state = tegra_dsi_get_state(dsi);
- 
- 	tegra_dsi_set_timeout(dsi, state->bclk, state->vrefresh);
 -- 
-2.51.0
-
+மணிவண்ணன் சதாசிவம்
