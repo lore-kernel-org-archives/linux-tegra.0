@@ -1,104 +1,150 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C433430B86
-	for <linux-tegra@vger.kernel.org>; Tue, 10 Mar 2026 08:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC9A40759B;
+	Tue, 10 Mar 2026 09:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773132140; cv=none; b=DsEfg6QVSDTJB3XadRFO8Ovj9I5H2/oWcC5Kz+p5gjH1iGjnwOl2U0x0JEV/Ftogw452PFK90NYKwn/1rXpoRskC9F8bqwvgr0qYFtF7Obj+PatjLGrOT67d4FX27iUgHtKWh+5uP5LLRhCw2yiUa5M0fHc3cIxwV/ZQInimnDI=
+	t=1773133308; cv=none; b=CyjIRuMA+j0T4qktd/yVqFA0jd61IdliXQsPeV7cU0aM/fvWeFs88qiAIKr7iDEYGZAuH2CaXI5KxY5Fp4K000Fna/y5jbOkJmbmyWpLu8UK3c0mHfBpMFxjL9O0JZ0dV7eTp/0iLYMcVH5mfm9gYcIFU2vKeeaXIPJzesb6+yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773132140; c=relaxed/simple;
-	bh=+hdxOVwm077ylsjLu0wR0T6SVFeW4T69FussqsDDRHA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DNe4no7rUWWTEn+TeqWnHg6W8KAcZ7tXbMdkzn+Dd68tjATDc2y+FAUfibpdUN7WOhwoOqFsFbv3XbmEOwxL3y7VmSXTdpjjYnjsQyUwiJPwHk/Szd+RrfGhB/XDas2Xze3hr8TnqohagS8Mh6ao3tw/gJJRq3dS1PaB1m9usbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GTvciSqq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773133308; c=relaxed/simple;
+	bh=u2Vzam/bYA8NgPkPOiOe7/hybQIcVlVZQq2S9mdk6yA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c+RAeywAUhGz6OW+nzC691sjbRK+ZPebpwBLaSp7YzlIL9Nl6J92Fbq6n264wMhchOJtyxgvz8UQnc0ILpumdIluoMfUj0wF31UrWEphlcYrRAqmUg465YGZpCtKVQsXuVqUgGQgeqRov9Xk+YqTaHxL8BpziA16HunzH7D5Ew4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m3CUmkxi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GTvciSqq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CE8AC2BCF6
-	for <linux-tegra@vger.kernel.org>; Tue, 10 Mar 2026 08:42:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m3CUmkxi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED944C19423;
+	Tue, 10 Mar 2026 09:01:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773132140;
-	bh=+hdxOVwm077ylsjLu0wR0T6SVFeW4T69FussqsDDRHA=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=GTvciSqq+x8/zCMOtuyLli8n1vUX944BWGl817kV9StHpWn/ZCnegugKuRQsP31zc
-	 BzAgQT7AReGa+w9FNTeP0MAZpzB8BrfJNqjl8scrI0LyBvBQY7rG+irphiVi9e9Pay
-	 H9kcdpBYkJtzeYMnQcffp0/6DqalOD85Ero6OlpmOhuOcyq6hlw5qVhAebzG2/YIXB
-	 DnMhuDw8gGVkaM59hP3I087c+z0UZ4KsUJrbnznXy+njrrp6YDnmMQ++sMxHFuRr6G
-	 HFUyohjET/eAy2mVYsy+9Qp1f3+sfdypP6FF2U5DFevqkN4m7+QA91ws+sAjszCwIj
-	 fWqe+XRjm8C8A==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-38a32d36396so41991231fa.0
-        for <linux-tegra@vger.kernel.org>; Tue, 10 Mar 2026 01:42:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWCjNMUAGq3KxJeLiX3hA9CRMCXM0dQrktW7hbiZp58OWjYzDMKvp4Ihrrm4w4Fg1YK/Rv5hA++vChhDg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YywW0vkuaVOFhyPI859HqxjfX1DdNO1LtUTjZKrW1HsDhloWFuJ
-	dBWR47OGeSH6LdsJ33mHqgIu1wuJy5XQO/MRk9qEVamXgoAZOdCvcgxIC18iYmE+UKH1WAhu5q7
-	LL7XPnPFMmrbdHfBJFXXj3J3xAUHaTkU=
-X-Received: by 2002:a2e:880b:0:b0:388:4329:c054 with SMTP id
- 38308e7fff4ca-38a5d04ed61mr6094121fa.15.1773132138304; Tue, 10 Mar 2026
- 01:42:18 -0700 (PDT)
+	s=k20201202; t=1773133308;
+	bh=u2Vzam/bYA8NgPkPOiOe7/hybQIcVlVZQq2S9mdk6yA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=m3CUmkxiQNWKnTq2OcXs1ei9ZwJ+kqQEJmYgF1nwy0UKJt/iQZOJ7aCFVWcLKAw74
+	 9fsioppodr4kXiO0yV2SrEzkKTV4o8ByF9T19sGs1qp11JFoTzI6kqSn6XnOktioLo
+	 MrucCmbwSW+Ga12hP0/GYYv6v9imyokDg/Zbp8HUup45zpv5sXUGbja3YMrwvNKuxG
+	 e0OnbmJgIXw1tZZiEEm/pZ3DEwERc0JvsHEHXJmW5x2i7TNVPNldD4UsZSAM01IREy
+	 /Kk9fZ7qRTmm+9MBuYRCu9r9yhgt3j42KdBDBPdjqKhdUE/U5h+xqfwJiehUUYvsei
+	 +A1McfDbIhLLw==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Sheetal <sheetal@nvidia.com>,
+	Takashi Iwai <tiwai@suse.de>,
+	Sasha Levin <sashal@kernel.org>,
+	perex@perex.cz,
+	tiwai@suse.com,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	linux-sound@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.19-6.18] ALSA: hda/hdmi: Add Tegra238 HDA codec device ID
+Date: Tue, 10 Mar 2026 05:01:01 -0400
+Message-ID: <20260310090145.2709021-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260309190842.927634-1-vladimir.oltean@nxp.com> <20260309190842.927634-22-vladimir.oltean@nxp.com>
-In-Reply-To: <20260309190842.927634-22-vladimir.oltean@nxp.com>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Tue, 10 Mar 2026 16:42:04 +0800
-X-Gmail-Original-Message-ID: <CAGb2v649jsoT9Uw5=gg5Zzxmgd4E04f8B8St_vUseP3JOrGG5g@mail.gmail.com>
-X-Gm-Features: AaiRm50ffNFGTkd49hJolMVvUoYaIAAtO7JRlAyrrCfXMo0y-iPLjdkpqATmeN0
-Message-ID: <CAGb2v649jsoT9Uw5=gg5Zzxmgd4E04f8B8St_vUseP3JOrGG5g@mail.gmail.com>
-Subject: Re: [PATCH v3 phy-next 21/24] phy: include PHY provider header (1/2)
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-can@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-ide@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
-	linux-usb@vger.kernel.org, netdev@vger.kernel.org, spacemit@lists.linux.dev, 
-	UNGLinuxDriver@microchip.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.19.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 10, 2026 at 3:10=E2=80=AFAM Vladimir Oltean <vladimir.oltean@nx=
-p.com> wrote:
->
-> The majority of PHY drivers are PHY providers (obviously).
->
-> Some are providers *and* consumers (phy-meson-axg-mipi-dphy,
-> phy-meson-axg-pcie). These are the Amlogic AXG SoCs, which split the
-> physical layer into two chained PHYs: the digital layer and the analog
-> layer. The DSI or PCIe controller interacts only with the digital PHY,
-> presumably for simplicity.
->
-> The rest of PHY drivers which include <linux/phy/phy.h> do so because
-> they call phy_set_bus_width(), a consumer function.
->
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> ---
-> Conflicts in drivers/phy/canaan/phy-k230-usb.c with commit 8787fa1da603
-> ("phy: usb: Add driver for Canaan K230 USB 2.0 PHY").
-> Conflicts in drivers/phy/eswin/phy-eic7700-sata.c with commit
-> 67ee9ccaa34a ("phy: eswin: Create eswin directory and add EIC7700 SATA
-> PHY driver")
->
-> Both drivers are newly added in linux-phy/next and not present in
-> v7.0-rc1. The recommendation is to drop the changes in this patch and
-> readd them when merging into linux-phy/next.
->
-> v2->v3: add conflict resolution details
-> v1->v2: split in two parts to pass through linux-phy mailing list
-> moderation
-> ---
->  drivers/phy/allwinner/phy-sun4i-usb.c                 | 3 ++-
->  drivers/phy/allwinner/phy-sun50i-usb3.c               | 3 ++-
->  drivers/phy/allwinner/phy-sun6i-mipi-dphy.c           | 4 ++--
->  drivers/phy/allwinner/phy-sun9i-usb.c                 | 3 ++-
+From: Sheetal <sheetal@nvidia.com>
 
-Acked-by: Chen-Yu Tsai <wens@kernel.org> # allwinner
+[ Upstream commit 5f4338e5633dc034a81000b2516a78cfb51c601d ]
+
+Add Tegra238 HDA codec device in hda_device_id list.
+
+Signed-off-by: Sheetal <sheetal@nvidia.com>
+Link: https://patch.msgid.link/20260302084217.3135982-1-sheetal@nvidia.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+
+LLM Generated explanations, may be completely bogus:
+
+## Analysis: ALSA: hda/hdmi: Add Tegra238 HDA codec device ID
+
+### Commit Overview
+This is a single-line addition of a new HDA codec device ID
+(`0x10de0032`) for the Tegra238 HDMI/DP audio codec to the existing
+`snd_hda_id_tegrahdmi[]` device ID table.
+
+### Classification: New Device ID Addition
+
+This falls squarely into the **"New Device IDs"** exception category for
+stable backports. The change:
+
+1. Adds exactly one line: `HDA_CODEC_ID_MODEL(0x10de0032, "Tegra238
+   HDMI/DP", MODEL_TEGRA234)`
+2. Uses an existing model type (`MODEL_TEGRA234`) — the same model used
+   by surrounding entries (Tegra234, SoC 33, Tegra264, SoC 35)
+3. The driver already fully exists in stable trees
+4. No new code paths, no new features, no behavioral changes for
+   existing hardware
+
+### Risk Assessment
+- **Risk: Extremely low.** This is a data-only change — adding an entry
+  to a device ID table. It cannot affect any existing hardware or code
+  path.
+- **Scope: Minimal.** One line in one file.
+- **Regression potential: Near zero.** The new entry is only matched
+  when the specific Tegra238 hardware is present.
+
+### User Impact
+Without this ID, users with Tegra238 SoCs would have no HDMI/DP audio
+support. This is a real hardware enablement fix for NVIDIA's Tegra238
+platform.
+
+### Stable Kernel Rules Compliance
+1. **Obviously correct and tested**: Yes — follows the exact same
+   pattern as all other entries in the table, uses the same model as the
+   adjacent Tegra234 entry.
+2. **Fixes a real bug**: Yes — hardware doesn't work without its device
+   ID in the table.
+3. **Small and contained**: Yes — one line.
+4. **No new features/APIs**: Correct — uses existing driver
+   infrastructure.
+
+### Verification
+- Reviewed the diff: confirms a single `HDA_CODEC_ID_MODEL` line
+  insertion using existing `MODEL_TEGRA234` model type, consistent with
+  adjacent entries.
+- The file `sound/hda/codecs/hdmi/tegrahdmi.c` contains the full Tegra
+  HDMI codec driver with probe, init, build_pcms, etc. — the driver is
+  complete and existing.
+- The new entry is placed in numerical order between `0x10de0031`
+  (Tegra234) and `0x10de0033` (SoC 33), both using `MODEL_TEGRA234`.
+- Commit is signed off by NVIDIA engineer (sheetal@nvidia.com) and
+  accepted by the ALSA maintainer (Takashi Iwai).
+
+### Conclusion
+This is a textbook device ID addition — the single most common and least
+risky type of stable backport. It enables HDMI/DP audio on Tegra238
+hardware with zero risk to existing functionality.
+
+**YES**
+
+ sound/hda/codecs/hdmi/tegrahdmi.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/hda/codecs/hdmi/tegrahdmi.c b/sound/hda/codecs/hdmi/tegrahdmi.c
+index 5f6fe31aa2028..ebb6410a48313 100644
+--- a/sound/hda/codecs/hdmi/tegrahdmi.c
++++ b/sound/hda/codecs/hdmi/tegrahdmi.c
+@@ -299,6 +299,7 @@ static const struct hda_device_id snd_hda_id_tegrahdmi[] = {
+ 	HDA_CODEC_ID_MODEL(0x10de002f, "Tegra194 HDMI/DP2",	MODEL_TEGRA),
+ 	HDA_CODEC_ID_MODEL(0x10de0030, "Tegra194 HDMI/DP3",	MODEL_TEGRA),
+ 	HDA_CODEC_ID_MODEL(0x10de0031, "Tegra234 HDMI/DP",	MODEL_TEGRA234),
++	HDA_CODEC_ID_MODEL(0x10de0032, "Tegra238 HDMI/DP",	MODEL_TEGRA234),
+ 	HDA_CODEC_ID_MODEL(0x10de0033, "SoC 33 HDMI/DP",	MODEL_TEGRA234),
+ 	HDA_CODEC_ID_MODEL(0x10de0034, "Tegra264 HDMI/DP",	MODEL_TEGRA234),
+ 	HDA_CODEC_ID_MODEL(0x10de0035, "SoC 35 HDMI/DP",	MODEL_TEGRA234),
+-- 
+2.51.0
+
