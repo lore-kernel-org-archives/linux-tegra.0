@@ -1,120 +1,167 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012009.outbound.protection.outlook.com [40.93.195.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B2A43CEED;
-	Tue, 10 Mar 2026 09:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773133703; cv=none; b=Gp0g6QAKNC+q4R71GJDY4Bwh+N0dw3YEcAGoF1JEDQqm+Ru7049zgtgRjTUUfxwfy7KOiZMOXF3ITMXwYd/QmaFY/UbofRC9O0jobsKttz6y7GhU4itPlUaT0ABEXmnZDENjtj26yv2JseLVm3Qv8n1w5yu49G0MvQJoT2CmAtk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773133703; c=relaxed/simple;
-	bh=kvP+A80lUtHD0JXSxM0RjhmHdTQdCORerkk2CLjcP+8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fAjTwIkRyvEbocybuLg3AQmxVbCkE7XvgDWfzoGFde/ROmAczQ5SUbllpyy2u4DyJoQW32W5W22I5yypCZAlF5jeLlvEsvxxX1MMdHvE2BZgMkFJQZoiSG1bWC5v09yNIqfNiOmcGAoXcgBC+CeJ0VTL10vmr2II3Gr5Kn2D5Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=2P8w16KW; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52442199D8;
+	Tue, 10 Mar 2026 09:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773136080; cv=fail; b=BwTXFehcpB7YeiOkQpgu3iLCDbanU21UCIeBe8JlRO5mcwcH8Yg4NbYe5IUWncR6HVbAnCvwxycTzn7ysavbwWVS4DhpsEC+TjscGjRZluGuBjOtVNjNd59Rs0jKVYovogTaXolxCCq7Lsm9XziynzNn22SHVifCHDw9rKV3GXg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773136080; c=relaxed/simple;
+	bh=TOdFD8+NyQwlGGBVn5n9Etmylvwn55uiB3WBs/BQ5UE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=EwXzt3A/eVlz/doNwTtIGViq0+Kn8oFzSIR+phU0JJGncIjCWMWn6HrWVpxVl9RhukRExtTm6gfCSbFWVEJ6WHxReRhTLBUwarSs026TldXEjVByuGiItJRjeiO/GfPdLrnFgvzYGmF/KXTW0wj2/z9/uzxC469QS1Vv/XjKgQg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=UWY3ZKuQ; arc=fail smtp.client-ip=40.93.195.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="2P8w16KW"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=x+sKkqEen+FTZVcatdq7BWmJBRObIwAqW8MBSeFsbCg=; b=2P8w16KW4mcJ4VoQcD9GwW+Aaw
-	LPnWPTjV+iBSgpGU8VvlZBgivFQ41jbbUv9xPLTe0UGiC2O/TtxW9n87YjtaKXtEvok+d9X3m90n3
-	88MyVWdnk4KdCug4lCgmQ65VmF5YA3tIEvuVR5jNAJV+kyyiI3aJ/12D7cJW361aI64t62QfKt+G8
-	DpRgtf8aKTCqaf2K91HStN6cfzfIMJzfn16r4ZEdGteuKTcM5375CxPjFb+Zcjq9TyhP53oWNANrb
-	QG5VUTphEsm3do+5av7k096Uzt/+LkiRWIWXHy5//oKgMhx3VYbZAmsubGNimoJORazjXzWfE9QP0
-	iOm5zq+A==;
-From: Heiko Stuebner <heiko@sntech.de>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, linux-can@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-ide@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
- linux-usb@vger.kernel.org, netdev@vger.kernel.org, spacemit@lists.linux.dev,
- UNGLinuxDriver@microchip.com, Sandy Huang <hjc@rock-chips.com>,
- Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Subject:
- Re: [PATCH v3 phy-next 10/24] drm/rockchip: dw_hdmi: avoid direct dereference
- of phy->dev.of_node
-Date: Tue, 10 Mar 2026 10:08:07 +0100
-Message-ID: <2772778.X9hSmTKtgW@phil>
-In-Reply-To: <20260310083752.ms6u4qpy3snl4h6w@skbuf>
-References:
- <20260309190842.927634-1-vladimir.oltean@nxp.com> <2218670.OBFZWjSADL@phil>
- <20260310083752.ms6u4qpy3snl4h6w@skbuf>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="UWY3ZKuQ"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=A8AoCZB7x5+1gjH1uLWGUYPEnZ3PpVfTMXCBLwDc34QBadHTlQP9MGlXnK2nQ3vLsQdn801qartiDIOG2LZ/IF8DUl/9CZdot3lp0HnaMKKBf7QoLRaVIyEcF8KHasMWMzrRnb8UZkl2zsQpBomG2mcuvjI0kq7ImgIWmkqltTlkhrVAg4QY4CS31eQEjmTLlKIllvDLucKrFcxAQbFM0bnQTNSqQHAp1v47At9ENL4kOSxfPlMa1A5B+EJTsxA6RA6VZ6ebI4BoHQhkKkg7wv15zB33lqVvX8mcyrNSmaUuxWrTwFe03qcj+Ns8gx6sPpI6g1ZgIhVLyNEf62sKrA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Gxx0AR4IUlLyNaWYh4rgHChIcAGnyyHMG8BfWrsxCwM=;
+ b=eQH5peDK0pm/AqenVp4EesWufaNJoiFqvnd8m9UxInmD/mT3yfFs+USAkifVQ1CjWUq6cdsJ9z7+pLfNryPUZu7kGXN5l89RxbSXijjFhiBn5eScn1H92o2HWkt35rMCbVNDndsDiCoxfnfcbJI+iy/sc4Modo4DuTJ52vMAmERGbNAr0QqJZlaNvz50XBqJgg5y7MKdrL+U5hkApPiCnFJhmn5DkL9mRwoObXI3pa8EuXa2yZe08rF3lbmOwmeR/fFGOHBYnT0zCTYByia5ArhN/u/TA42IQRVKd1H3BKuIAKENwwgjPqyjmu+3debqCio5gJIC7mIdVfT/tLKoRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Gxx0AR4IUlLyNaWYh4rgHChIcAGnyyHMG8BfWrsxCwM=;
+ b=UWY3ZKuQSUBpMTssK47YRgkKdDfsRENNvIfZdHl1lR4jbPM4lW7yMpRN2cEfqz1pSDshZAAQyd8mibhGWpCI2xq4Llf0MPrEy8adgRize75s2ikWAjVds7ZONnV0MJ13t1zOiykT3V8FSqe62PeJ0rMdVEe76UbrEnjLvKlScPu08z09j+jknIYMRvpdXHV0VzNi+R966Qybk56N2OJjQ09kl0+qGOqC/CWYJvugUjr/ZLXUK7CNYT4ktD/83KJpBWlLzKS+KRpqJhy3KN+zs1l6ofako5v7BwGUVCphZanJyoGhv/oDB9BCuWCZhYnuS/dqestBUzEnGSdtETV0Fw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
+ by CH3PR12MB9315.namprd12.prod.outlook.com (2603:10b6:610:1cf::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.11; Tue, 10 Mar
+ 2026 09:47:54 +0000
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391%5]) with mapi id 15.20.9700.010; Tue, 10 Mar 2026
+ 09:47:54 +0000
+Message-ID: <4af40858-c2fd-4eba-9d71-39fa403dd4af@nvidia.com>
+Date: Tue, 10 Mar 2026 09:47:49 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/9] dt-bindings: dma: nvidia,tegra186-gpc-dma: Add
+ iommu-map property
+To: Akhil R <akhilrajeev@nvidia.com>
+Cc: Frank.Li@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ dmaengine@vger.kernel.org, krzk+dt@kernel.org, krzk@kernel.org,
+ ldewangan@nvidia.com, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org, p.zabel@pengutronix.de, robh@kernel.org,
+ thierry.reding@kernel.org, vkoul@kernel.org
+References: <9740033b-0fa4-46c6-9628-f4c3ba1cceae@nvidia.com>
+ <20260310044426.53519-1-akhilrajeev@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20260310044426.53519-1-akhilrajeev@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PA7P264CA0089.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:349::9) To DS2PR12MB9750.namprd12.prod.outlook.com
+ (2603:10b6:8:2b0::12)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|CH3PR12MB9315:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1b00608c-c5b5-4cb7-6f87-08de7e8a1a5b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|10070799003|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	1r4s9Nqu7tgSMcQIjBw1HLDKaKnxMm4cGx6jjR6tH+t25QCmqUj9U3o6zMqk8SXHIXUXsuiaSXXsgKHBK+UP8Kjk/Odi+fndHduc6Ude4R/Jmps9Tz5ZzQe0TD4QokN7DVQN0F4AL1vS2NhiTp5+1SLYZMLO7u8/G6CGHkk+h6TzQDAQEZ0VQZSV/+t/3raNPR8w4Peteglm4CmCtM0nTd0soboO5wwzo97stn0DmZPNx0m+AWPt8CbS4A1SP3aOAtDQ2EvDTf5PUbbHbHlWyDdlCtZLbANQz3nqtvMeYg/7EIZZVXjoGth0zofQwCsQcNI3Oj5Szv9nNfqQRpLsOIpvZcSiJA2bLIMXnkUFyuZTowsxfTlIWa/dTRoEQRLOPyY/vu7Mm4sJ0perm6IYlNRJozmKLHMCN8wNjc9HjiulbmFhTxfYIaDyNcoCJkU6STybGrhPc0zsgfjtW6Vr681KPE+/Sm+a2BNurS4AQcMD8ghDwS1Cxtq25VkLEE+fzL0TtEC/uA8j7P9Ai+58O0xxCZEvnrtJfP2IBDwmnzOREHJzoe2syEkaaeRPh1/kxXa4NXYPJEcOHQ432HCQfcMQcuCk3M0S2NjLAXTvnTeXqrRRG7srdvZyRL/dDFEo4NYgymaMLSU9ahWHSl4dtFV13OI7XTH4uJRpMz+aSQa5O9Q/UbA27/73oA4h4Yv3PI57vBT+9q4jszgUIH/lKqZmKxehPYAfs6Gbm2c94nQ=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(10070799003)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?a1I1T3RoTElkdldjcno3d0x1ZC9iWXJYN3hYTCtTc2FodnhkQmcyVjEydFJu?=
+ =?utf-8?B?SU1OOTQ2Sit1bEVzNkcwRTFJTFFGZWFFNCtHTEtXb3JsUXBsMlRlWHlPbTUr?=
+ =?utf-8?B?dU8wdUpDa0ZWeEorMkRtcTlieGVWMXlMaFBmbkhxREc4MjBvcGJxeEtEMGVm?=
+ =?utf-8?B?YlFvQUdYM1ljN3VDUzFHNFV3WCtkNmVoMjFEY3F4RnI1cmJZd2pzUVBaM2FH?=
+ =?utf-8?B?a2N1dVlLY3czaWc0MjNxMjJmWEV5aTVFME1WbURpWjIrcG1HbE9sdFo3elg0?=
+ =?utf-8?B?M2dMSlRYQjNoN3FkaXV4WjQwREI5M2JjMnREeVlOdzJsdDhWM01wbE0wN1Jr?=
+ =?utf-8?B?K1hPRmEvdHp0NHJZWHNFNGFsYnlHNkV4bGlDWGpHZmdTSVUvSnVpa0JxbHZo?=
+ =?utf-8?B?RklNc2RLOFFVNUVENU80ZDBTUmNWZGdkTlprYjRxVU4zN3FoS3JTSG1KS0tm?=
+ =?utf-8?B?b0taRmcvK0FjdGpmdXoyVDBxZEtaOThBNFpsbnU4RlRYWm1wYk9RdHRwVGEz?=
+ =?utf-8?B?czBLU0hadzIxazdvODRrejVadWNyd2I0eHloRldhd3crTWI3Zmt5ZThUV0xh?=
+ =?utf-8?B?V0trc3htMW9MTDV5bXdDbGUwbitQVkRVeHI2WGd4K1hsbjlYYjFmOG9yZ2Jl?=
+ =?utf-8?B?QjRCaHFWdEg3a3BzaktpQ2xyKytYRm1kRzFNSDFzQjNObWVNRFhZcTVCa0Nw?=
+ =?utf-8?B?cW9jenc5blJIYkxHaWQzNGpsdlNMVS9WWXV6Y2I4bVhCMHhCaXJHZGhvQUdy?=
+ =?utf-8?B?OXZpSVM5ai8wR05sU1JMa3Q2N044NkY4d1F5aE5seS9KaXpHMVdoTS80WHdn?=
+ =?utf-8?B?Q0pBTHoxQkQ4S2tZTWF6MUV6ODJTcnJjMjlhWkZ5UWs4SE9IN0g2bjZ2eDBq?=
+ =?utf-8?B?UGd4VVZwZUE0VUpoTVAwRTBnZTNrdFBDS3c0MW1najlJWE1iazA1T0hQandQ?=
+ =?utf-8?B?TTg0UFp2Q2hpaEdNZy9wbVRKRWxiSituTk4zSjdVUWVDTEUxWW04Y0ZEQThq?=
+ =?utf-8?B?TDhOazlOai95ZnMvOVV6Tmo2N05BQTdIN2tqcDNKSFpXNFNMV1hOdWxMVUs2?=
+ =?utf-8?B?RTIyRHdOalUwWHVnUkh5VEpIaU82WjdWY2VkaXFFOGwySUUyNGMyZHkyTFNn?=
+ =?utf-8?B?MTNjTEl6MWFYdXVlbytya3kyZWdiWkRDb2xSVE1jSmpEdEhmVUhLaGxJbUZu?=
+ =?utf-8?B?OGg4NVQwQmo3bjdjbG00eFJCaVZISTYvWk5KV080clpidmpWWUJDTnprbjJB?=
+ =?utf-8?B?RGV0MXRubFRSclEwNzZyVmN3cVhSMlpPQ2lhTndlK1UvSGs0ekNuMjBUNHZK?=
+ =?utf-8?B?d3pTdFB4M0dZL1FTRXU0aS9tcXI2a2NlcXdoMU9Kd0kzU3l0SjM3QkFwc0Zl?=
+ =?utf-8?B?Vmx6cW9kOEluVUJtZC9vaVhRWEpaM2tNdzVENzR1b1VabDNTWmczbHZCaGJJ?=
+ =?utf-8?B?NXViemd5UkhlSXowZnFPdVlTUFYxbHRCTXloaGpuSkpoT3NpV1dQY1MxeERH?=
+ =?utf-8?B?dEFuZW40aGhPOTQrUzY1YkN1T2F2dllxUkZ4aEc2TVV0bVpjZXBnZkJBZk90?=
+ =?utf-8?B?VmtxZ2NNZU5NalIzSXhsN3Yxd1FuTTVXd0J5WkdlRXRTYWM0UlYra3BITHNP?=
+ =?utf-8?B?cmZoNjA4MXBqVU0zUlY4TmR3MG1uUkVZOElPVnRHdXFFVStSZnpJUnJKVm5R?=
+ =?utf-8?B?ajVrUlR2UDlwYmZUU2xxUDVRT2dNVUg4eHNwUk1yUVZZMnd6dkc0Ylk3VGFO?=
+ =?utf-8?B?cmtPdGdvUGQ5R2xmRXE2ZmtGbE55R1JwRzNxY2ZNNHkxMlRLZVQ5a0JLd01E?=
+ =?utf-8?B?VnVpbUw4RjRIaDFnajYxQSt4U1hOSGFGNmcrWm1DR3dNNCtwbU9acUNVY0F3?=
+ =?utf-8?B?V1R6NDVnblhUQTRubGkyVjMySExuN2ozYy9JOG9GMVFlRTBTOFhOKy83TXRy?=
+ =?utf-8?B?Wi9UYVpaM2ZFSHR2Q1NjM3FycjBtSkV6azR0ck5TYTdZbks5WDAvcUZOVVFP?=
+ =?utf-8?B?T21YczFBQ0IzTlpTMHFkRjRUUUxmdjNaZmdxdWJpM0ZaaXdJdmF2SWpBSVFO?=
+ =?utf-8?B?OGxzeEcrYlVhdmFVeVRXSDFjKzBRdXRIaFJvZDgwalcyZDVEdlFNRjJFdC90?=
+ =?utf-8?B?ZTh0WE8wOTdzbGpoaE9sRTBxOS9UYlR2S2JvQ0hPeEFBUU84Z21BTVg4UUtx?=
+ =?utf-8?B?Ri8rZWpjTFc0bnJ6d2xOMUdXZzdiNCsydURDeDMwRjRyaW5nQW02L2ZPNHRG?=
+ =?utf-8?B?NzkvWllQUjhLSHBlNEt3aDRkTktpSTk2UWN5VUpFT1BXSkpka2piSHdObFJl?=
+ =?utf-8?B?cHp3cjI4cUdqaGJJbXhub29ENUdnVXVROVBscFQ2SVZlYVdwZERXd0hzQTUz?=
+ =?utf-8?Q?eMxFEBU1YnWqkxQ11DKn7U3VNqSEbbaPjxeM8gzYxw9kp?=
+X-MS-Exchange-AntiSpam-MessageData-1: N5bhRz6F6RtDvA==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b00608c-c5b5-4cb7-6f87-08de7e8a1a5b
+X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2026 09:47:54.6773
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ipH64rkxfc70FMQzJYc1iudscAnsaKiofmAkCImxhQF4NLS8e9LOYagRTwBumYOjqjvU8lfh+egIkX3rcLz+bg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9315
 
-Am Dienstag, 10. M=C3=A4rz 2026, 09:37:52 Mitteleurop=C3=A4ische Normalzeit=
- schrieb Vladimir Oltean:
-> On Tue, Mar 10, 2026 at 09:24:43AM +0100, Heiko Stuebner wrote:
-> > Am Montag, 9. M=C3=A4rz 2026, 20:08:28 Mitteleurop=C3=A4ische Normalzei=
-t schrieb Vladimir Oltean:
-> > > The dw_hdmi-rockchip driver validates pixel clock rates against the
-> > > HDMI PHY's internal clock provider on certain SoCs like RK3328.
-> > > This is currently achieved by dereferencing hdmi->phy->dev.of_node
-> > > to obtain the provider node, which violates the Generic PHY API's
-> > > encapsulation (the goal is for struct phy to be an opaque pointer).
-> > >=20
-> > > Refactor dw_hdmi_rockchip_bind() to perform a manual phandle lookup
-> > > on the "hdmi" PHY index within the controller's DT node. This provides
-> > > a parallel path to the clock provider's OF node without relying on the
-> > > internal structure of the struct phy handle.
-> > >=20
-> > > Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> > > ---
-> > > Cc: Sandy Huang <hjc@rock-chips.com>
-> > > Cc: "Heiko St=C3=BCbner" <heiko@sntech.de>
-> > > Cc: Andy Yan <andy.yan@rock-chips.com>
-> > > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> > > Cc: Maxime Ripard <mripard@kernel.org>
-> > > Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> > > Cc: David Airlie <airlied@gmail.com>
-> > > Cc: Simona Vetter <simona@ffwll.ch>
-> > >=20
-> > > v1->v3: none
-> > > ---
-> >=20
-> > [...]
-> >=20
-> > > @@ -588,13 +589,17 @@ static int dw_hdmi_rockchip_bind(struct device =
-*dev, struct device *master,
-> > >  		return dev_err_probe(hdmi->dev, ret, "failed to get phy\n");
-> > >  	}
-> > > =20
-> > > -	if (hdmi->phy) {
-> >=20
-> > nit: a comment would be nice here. I.e. hdmi->phy being an opaque point=
-er
-> > so checking hdmi->phy !=3D NULL is not possible.
-> >=20
-> > With that being a "goal", I assume that information is not widely spread
-> > so this would prevent the next developer trying to change it back to
-> > "if (hdmi->phy)" while that handling change trickles down.
->=20
-> Testing the NULL quality of "struct phy *phy" is still possible and legal.
-> It means that you called an "optional" variant of phy_get(), and there
-> was no PHY.
 
-ok, I'll keep that in mind :-)
+On 10/03/2026 04:44, Akhil R wrote:
 
+...
 
-Heiko
+> Looking at the qcom,sm8750-camss.yaml, each iommus entry is describing a
+> functionally distinct hardware block like IPE, JPEG, etc. Here for
+> GPCDMA the channels and the stream IDs are identical in hardware and there
+> is nothing functionally unique about any individual channel to describe.
+> 
+> If the channels and stream IDs are consecutive, as Frank mentioned in
+> the previous version, we would need only one iommu-map entry for all
+> the channels. In a virtualized system the hypervisor may assign
+> non-consecutive stream IDs, or a scattered channel mask. That would
+> require multiple entries.
+> 
+> I will document this in the description. Please let me know if it sounds
+> good or if you have any suggestions.
 
+Even in the non-virtualised case we can set dma-channel-mask property 
+and only enable specific channels. Given that the hardware allows this 
+flexibility and we could potentially have various different 
+permutations. So I think that we need to have a flexible number of items 
+for iommu-map. And yes, let's describe that clearer in the commit message.
+
+Jon
+
+-- 
+nvpublic
 
