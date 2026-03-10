@@ -1,154 +1,166 @@
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013047.outbound.protection.outlook.com [40.93.196.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD43A2D1907;
-	Tue, 10 Mar 2026 14:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773152594; cv=fail; b=pT1Q0ydaSqiQwd0+ucRMuH54/IrLu5xdyiw9g+dCXoHPZDUK1pczDpjbz45dPxZuZBWHh0pmUKCgTtpq6RM5Y8OQVB0TCzCkUaa19vJmSPr8N+X2M92ND6za4lEJp/INYaNjrKGGlK2h2CxAs7zJfLm0oW1hiISkwLCdvcSTmNI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773152594; c=relaxed/simple;
-	bh=gfE1vW2RF0FQ420Kdnf9s5aZyCd2wD82rvBfHbJB6tk=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=KrzcoQE0RZRczcSqxtAlU9rjbkhhN/Qx7ALfQ7LOBvcVccH6RiLSqWjA7a0JBRr0piNkOCpU/N3NEuG+adhg6+EN55aneRsi1a9IF5fgzo9qxjXMJ+wWOrLV8cc/XC2Ibae2GAfYp7H9giL/UUAlWE82fvURF8HD40juyikxA3E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NVm3oziP; arc=fail smtp.client-ip=40.93.196.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66CC02F6911
+	for <linux-tegra@vger.kernel.org>; Tue, 10 Mar 2026 15:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773155338; cv=none; b=OQfWk0aD1skprg3B3e6pOJ281xsHt5BzTaSUVhm5Zv/Mlczvc63UI38cbqTZiiq5Pgof9lM1vL/LOKO79cJx/iBFzDM67fQUa7fHj9Nrzp6Y8EB/mEPMrNvwd/CPZMc2Tty308LuPMdkfMNj760ENnOMug+pykom5IG69r8XqLE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773155338; c=relaxed/simple;
+	bh=l66roiogcZuRuWdg/BN7GAGFpuk8qIZkWg5A5bU5kEI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pzJmgkh7DMU8uaCH+Yai0ho692ltSXnsw2bmIxXiCdeGSDZ5h3o2kQnQI+w125fueXaIM6k9FzAlRXkoXfOuOiCj2NfxECAWr1GlgRBcpVR1Wm455oehb08r6QEoA3jZsNEyOX+liFeHRjqEhtDnxG5pEbLustDZJ6cKzwhizzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SPS87wIt; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NVm3oziP"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wUry/kfhIrkMbbHWGgSmcYgheCHkxtNqoK9jZkeQD/4b94m2DPXphCfYMLzp2ymuJfVyfE687SaskN+f2APa4YXeUxmojMm9SSatf4pyCr9rhgLV59gbnvf5oRE3zguag6X4H1QjaB8grabRHSJURfml1sTMwOc0SXl5OAG4ldFrUaaXcBeJfhNGipQLw57E1+p0GUpsVJx/ythLEec/qqqq9bM5YGsq8hpE1GqQ9MTY3hKHWCRA+oI9wAOPnnPBFwCtYwF8s5UwPd5v/NN8sxGD/eHjDBeY1dZcyaUDQj5/+Xwb+z+HJVGWS90RisdBdVx+U42Jc3auELjMVAnQAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SpofAMp216cZas0ixz9e9tuMCaVFM9FMUGuEQLuWS8A=;
- b=N2I9K5VOTOVKq5IEtfyQid35hvNjB68Uh1AIZXf//tP7tr0+8itTJ5v/hs4GgvDUiNjJEuD0vq57DxfHYJJpa+ExNu0R4QrzIso1YNXyXc/sM5TRp/rFl8NehkNEEhDQaZTuT4XsiH6Ym3k7jb2odUCP1jhhC0Pe8eb9E00Z8g7fK7JIuPsLdtOGxbyJ1ALlV0PCMgh9cLEINQyXqx9/WLczYD6y9d1SQ3Ku4eUInUSQdDqFOw+0JTEB4vJL6iy6iUuzUt9r5u+47pmpmtWYIU7DLuVzLRGYZBkhdqMeFA8qIDkDeRAs22b20xzbfncwqoymynhfeVcZ1d/FKPJ8vw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SpofAMp216cZas0ixz9e9tuMCaVFM9FMUGuEQLuWS8A=;
- b=NVm3oziPFqj9QpPL1D0jegvYM30pHtqdVE74nVzmAPGP/J707ZXc1ze3yJowYuL7SkH3xkJADVJLJ42JnimNNW8JXgQZnPtwKebAISSV/8SU+G+1dBuLSMRWKSSB+KSlBdusdpvmA9qbuSZGBrHaR++dg34KJDyQK5Q1MEaazJ+XHibWzvOVupYHUtKLaCD4I8G+yHLJhqaIhkxfnxLWDxiD7QgrKnW00fV+a5TYBX6VhM+fABImw3LDA/kgXC2DgKDjQJmwFfUCVYIwPM3ToODDkDolNZK1xrVn9nW8v2LI/fREhjpaCbxWyxC0pagb22TM3FtYr0tFlgDvjqIdQA==
-Received: from MN2PR18CA0019.namprd18.prod.outlook.com (2603:10b6:208:23c::24)
- by DS7PR12MB5742.namprd12.prod.outlook.com (2603:10b6:8:71::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.11; Tue, 10 Mar
- 2026 14:23:01 +0000
-Received: from MN1PEPF0000ECD5.namprd02.prod.outlook.com
- (2603:10b6:208:23c:cafe::8e) by MN2PR18CA0019.outlook.office365.com
- (2603:10b6:208:23c::24) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9678.25 via Frontend Transport; Tue,
- 10 Mar 2026 14:22:29 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- MN1PEPF0000ECD5.mail.protection.outlook.com (10.167.242.133) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9678.18 via Frontend Transport; Tue, 10 Mar 2026 14:23:00 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 10 Mar
- 2026 07:22:34 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 10 Mar
- 2026 07:22:34 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 10 Mar 2026 07:22:33 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Sasha Levin <sashal@kernel.org>
-CC: Sasha Levin <sashal@kernel.org>, <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <torvalds@linux-foundation.org>,
-	<akpm@linux-foundation.org>, <linux@roeck-us.net>, <shuah@kernel.org>,
-	<patches@kernelci.org>, <lkft-triage@lists.linaro.org>, <pavel@nabladev.com>,
-	<jonathanh@nvidia.com>, <f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
-	<broonie@kernel.org>, <achill@achill.org>, <sr@sladewatkins.com>,
-	<linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.19 000/311] 6.19.7-rc1 review
-In-Reply-To: <cover.1773140654.git.sashal@kernel.org>
-References: <cover.1773140654.git.sashal@kernel.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SPS87wIt"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-65c4152313fso18215971a12.1
+        for <linux-tegra@vger.kernel.org>; Tue, 10 Mar 2026 08:08:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1773155333; x=1773760133; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZrhwHJgKfQunIbqKLgGEw/Kos9vy+e6R49GEIQjjeck=;
+        b=SPS87wItf5UQpxDPxkRNfEwwBJR2MBJNzoKzucQ1P3Z9b6srBO3/GVVWIVnyVD4JZB
+         iy1S1wmjPe5SNvcLXZyPSlL6US4soE4gW7Webmx6M9a0FaAwSZ5lnoItTxaeRbBQC7PF
+         5le4eeh1ufNwfS+gPfNleH8lk+nhgUObtYkW4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773155333; x=1773760133;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ZrhwHJgKfQunIbqKLgGEw/Kos9vy+e6R49GEIQjjeck=;
+        b=HgX9sBYshdCLryIFwoXwmznHEpQDsViJHL7O2YlkjPqKYtHbVsLofwRhWbU+5sflwr
+         JXpfrAEtMqAqcGTLSDXDTjeWnIS28tZNk+WvIiMije5AcPF6T1jvp0JfMcP5KxnwC9FN
+         +4EIAdc3jCyvJWyWhnhpePp/hTD2/ZSbQcLEjedcOGlM1vH0mTm+O4BG24cwXj+CMRRZ
+         OXRTrkNMF8x3TzOmw0kO2bEGPeorWhJ6A7fNTqnAOmpX/y1GWyQCUcs1A7tebpYT5ULl
+         m0MHfMobxsAIizN7JpLJ57S7qkeGwffQO49sAM6KxalmjfAnp0uhkJEp1qXmzbJsVaqM
+         zw3g==
+X-Forwarded-Encrypted: i=1; AJvYcCW+xaTs9aWfGVDxyR7GL1eGnIgOFVQcRKL+iq5NUHrKbcanqWeOwBAtShOhEXLvw7/5i6VAbWtKUNUXSA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLzppQNJN9Wd2/wdcXP1rIVhxQEZH0okbMqgkvMmA5OOrUsaXK
+	7utarJG+HwhD2VMsZt5LlRobUp/mgUxgHv0Zu80CYohMeMtcWCTpAd5KNNfu17nNqT5CrFv/n9p
+	yl2XD1qVN
+X-Gm-Gg: ATEYQzxVuUtyeZxQnie+jLBPZrYV2O8Tvg9rIqfmypjW+C38DzXuTGoZtuJzKkfHXWR
+	2JS4MZXd3LEYQPIkKpzkeumgiV9CeiQXeeWnz9gqE5Z/pZXAOgtmSyE6Pz4RtJc/tdxH1EbIp2T
+	+q3JWkSrpEiLz8RWexHo/OVIxaB65OVD9mYnSQ7g/P+/jEbSipRtKzmx4/RlG/kiX/8kkpcQfOp
+	DoMGNZrh+xCDy2BAOt/QKDz6NZJs8Fx/H194HabloPCNjURJXwMUlsM7mTu4rcWqtTttCbnc1ld
+	66IMAahG9iPmAl5vsxUKqyPzT0y5ro3GAPGJ038GIgU73oO91EWZDuHkZZcmEOgyx6dDYBoOSOX
+	3ICTzHIv/Z7Qtew37s/l/QWc7AfYcuBR3WS6Q7brhUhXAvB3QmihDV63O6BLv32z38C2Oz+TqyV
+	glS/u3cunhvD6Bu2k1++huVTxUoUbUZPE8XBovGEmu2GRK8lvDi5gohi5IH2KHHA==
+X-Received: by 2002:a17:907:e10c:b0:b96:dd06:8d9 with SMTP id a640c23a62f3a-b96dd061152mr376920866b.60.1773155332727;
+        Tue, 10 Mar 2026 08:08:52 -0700 (PDT)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com. [209.85.128.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b96dbd03643sm375228066b.4.2026.03.10.08.08.50
+        for <linux-tegra@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Mar 2026 08:08:51 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4853c3c2fe7so14292345e9.0
+        for <linux-tegra@vger.kernel.org>; Tue, 10 Mar 2026 08:08:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV+XX147+JCll1ZwwLy29CmdDbch7ftkP8mO4qMx4SPNMsGBYdJUncJfNSQa5Imt65/YwHHG1BpPRAOGg==@vger.kernel.org
+X-Received: by 2002:a05:600c:1d04:b0:47e:e7e5:ff32 with SMTP id
+ 5b1f17b1804b1-48526983292mr236479455e9.34.1773155329681; Tue, 10 Mar 2026
+ 08:08:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <9b6f0707-225f-4ce8-8d3c-b9a88633ce4f@rnnvmail205.nvidia.com>
-Date: Tue, 10 Mar 2026 07:22:33 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD5:EE_|DS7PR12MB5742:EE_
-X-MS-Office365-Filtering-Correlation-Id: f1e5454b-0ce2-48d0-343d-08de7eb088c9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|7416014|376014|36860700016|18002099003|22082099003|56012099003|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	W2jFXaQikjRigMGFR7TWPgmFEgPT6KcXxbG24t0vXAzfjQfOruOsvw2ipUwK7majNg7KpMvoQ/23FibqCiqNOcwbdMNacfuFraXK6ohrKRgEH6X1yjfbvDF8pvhnwPqiVtZrMiUq822T9W8WtocReQ4Rt08wkUQ5PlQ2QQjJJHrIAOZk/AabJ0muSknvIzPUy4cwQ2nusEDkewYjchwKI07fUwyra5UBveGLyE7nNzMTUIuC4BUuA74rqzN45ZB1diNDUrLcyCBb/xl+qtHf//dLt6ig7rXUiqz9dL1UL8U9Q1ms3QyYnM+VIE5a5jBlx/3D4rEGgWfg0T4TPNn7793Qm6RU3Fz+wzf6e53+xI3aNLuaBWaq9db6XAtWfmL65HCmmCmV1giS9wwUTpI69r25LXWFF4mTU8LSk+/cE5Ua4N2dGB3w+gKs5xV6MpehGZT50iRQAb4NsPjJuGfsDrZsLaNVxFhuhp2wMsiXsToWHvhAHbqVZnl+gEQwM5se9RMMMmhpkH7ooSiRtCMx8eizwxsY184pN6HZfMKmlHroJtkQ7/YPNHOLPduUE8/Qx0WtWhHKducxnvkt9gRlaEWSv/lRKg8oMpZqBcftUGeS/KXurpbePfb+eB7NejdDLzYdl5BgGj6yzfdsiox32z8z4TjZ4qTfJx31Q9vDx6rV/w/U11CJLyaW5l9U61mzwS6xEziwvKwEOalv9Jgzsd72u4ftYZIY2vHaWB4k1YxHSNQum0x88woRdaRDdVh9N4MPj6yWPe/XIjRdWv3dlA==
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(376014)(36860700016)(18002099003)(22082099003)(56012099003)(13003099007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	jr4r3lFeNcXlsOFeHME4SMJY6e/8QgF1uvAME55kPowu/pcNlFTmGZIRHqhGm8IY/C7P8aKIWbypVjatvy2OG/xWtqx9gE/ycHITyidB9DIocXldPXerA50KWsjumKbg0Je2QcJ7IX5kZ4Pev4WN4hOMk8t0Vdy5/bC9QRiQQoUu1WJMEtd6IzmxWAkRpiHsVGwsE2gjAAgRmOeglzHBeZWx9l3oHVQALaXqE9hbwAumeuJK3Y/KVW3ML5oTYKNnul6IhW/schpIdUCG9Y3lpM5ez0U2MvuuJUZu7bsrOiYCPoGjz1BDt0avcght8FNotKDIBRH/A0sKpJbcnJt16Ak/EHyjIZRrcuR6oQnNdGxreHu3xKknBb0aD5bgC6357BcCU0y6L5PQowPs5eP4VZonwftcGWV7Yaazm/GtVp9DDONKYP83kELYaD6TQybF
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2026 14:23:00.5619
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1e5454b-0ce2-48d0-343d-08de7eb088c9
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000ECD5.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5742
+References: <20260216181002.3475421-1-dianders@chromium.org>
+ <20260216100943.v3.1.I600d04c0553f5c5ba39c2f92201da313aedfe746@changeid> <CABb+yY2RKJgyNQ6789ua6s8C4tuOvhWqdcS16_4yU3AHjAiv_A@mail.gmail.com>
+In-Reply-To: <CABb+yY2RKJgyNQ6789ua6s8C4tuOvhWqdcS16_4yU3AHjAiv_A@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 10 Mar 2026 08:08:38 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=U4te2V7MaOrQ8kSibLazqUy_Kv3ZcJyAAaCAiGWOY1Gw@mail.gmail.com>
+X-Gm-Features: AaiRm51YHmAMmjPRIWQTSvpfsMBkAMaTT684zHe2XNjk21TEkEMaZPx6RHcKG9o
+Message-ID: <CAD=FV=U4te2V7MaOrQ8kSibLazqUy_Kv3ZcJyAAaCAiGWOY1Gw@mail.gmail.com>
+Subject: Re: [PATCH v3 01/15] mailbox: Deprecate NULL mbox messages; Introduce mbox_ring_doorbell()
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Frank.Li@nxp.com, arm-scmi@vger.kernel.org, 
+	cristian.marussi@arm.com, festevam@gmail.com, imx@lists.linux.dev, 
+	jay.buddhabhatti@amd.com, jonathanh@nvidia.com, kernel@pengutronix.de, 
+	konradybcio@kernel.org, krzk@kernel.org, lenb@kernel.org, 
+	linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	lucaswei@google.com, mathieu.poirier@linaro.org, michal.simek@amd.com, 
+	nm@ti.com, rafael@kernel.org, robh@kernel.org, s.hauer@pengutronix.de, 
+	shawn.guo@linaro.org, ssantosh@kernel.org, sudeep.holla@kernel.org, 
+	tglx@kernel.org, thierry.reding@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 10 Mar 2026 07:05:54 -0400, Sasha Levin wrote:
-> 
-> This is the start of the stable review cycle for the 6.19.7 release.
-> There are 311 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu Mar 12 11:04:16 AM UTC 2026.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
->         https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git/rawdiff/?id=linux-6.19.y&id2=v6.19.6
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.19.y
-> and the diffstat can be found below.
-> 
-> Thanks,
-> Sasha
+Hi,
 
-All tests passing for Tegra ...
+On Mon, Mar 9, 2026 at 8:24=E2=80=AFPM Jassi Brar <jassisinghbrar@gmail.com=
+> wrote:
+>
+> Hi Doug,
+>
+> On Mon, Feb 16, 2026 at 12:11=E2=80=AFPM Douglas Anderson <dianders@chrom=
+ium.org> wrote:
+> > @@ -249,6 +255,28 @@ int mbox_send_message(struct mbox_chan *chan, void=
+ *mssg)
+> >         if (!chan || !chan->cl)
+> >                 return -EINVAL;
+> >
+> > +       /*
+> > +        * The mailbox core gets confused when mbox_send_message() is c=
+alled
+> > +        * with NULL messages since the code directly stores messages i=
+n
+> > +        * `active_req` and assumes that a NULL `active_req` means no r=
+equest
+> > +        * is active. This causes the core to call the mailbox controll=
+er a
+> > +        * second time even if the previous message hasn't finished and=
+ also
+> > +        * means the client's tx_done() callback will never be called. =
+However,
+> > +        * clients historically passed NULL anyway. Deprecate passing N=
+ULL
+> > +        * here by adding a warning.
+> > +        *
+> > +        * Clients who don't have a message should switch to using
+> > +        * mbox_ring_doorbell(), which explicitly documents the immedia=
+te
+> > +        * sending of doorbells, the lack of txdone, and what happens i=
+f you
+> > +        * mix doorbells and normal messages.
+> > +        *
+> > +        * TODO: when it's certain that all clients have transitioned, =
+consider
+> > +        * changing this to return -EINVAL.
+> > +        */
+> > +       if (!mssg)
+> > +               dev_warn_once(chan->mbox->dev,
+> > +                             "NULL mbox messages are deprecated; use m=
+box_ring_doorbell\n");
+> > +
+> Does this patchset leave some such clients out?  If not, should we
+> drop this block and return -EINVAL already?
 
-Test results for stable-v6.19:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    133 tests:	133 pass, 0 fail
+This patchset series got all the clients that were in mainline at the
+time I last checked. However, it was unclear to me if all the patches
+would all go through your tree or not, since they don't touch mailbox
+drivers but the somewhat widespread places that were clients of
+mailbox.
 
-Linux version:	6.19.7-rc1-g2867504d9c53
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
-                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
+If all the patches aren't going through your tree, we'll need to keep
+it like this until we can confirm all of the clients have been
+updated. If all the patcheds are going through your tree, then we
+could make it return -EINVAL right away, but it we'd have to do that
+as a last patch in the series. I think it would still make sense for
+the first patch (which adds the mbox_ring_doorbell() call) to have a
+warning like this and then a final patch to switch to -EINVAL. That
+keeps things bisectable.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+What do you think?
 
-Jon
+I'm happy to post a patch atop my series that switches it to -EINVAL
+and you can land it whenever you see fit. Would that work?
+
+-Doug
