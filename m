@@ -1,198 +1,195 @@
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013044.outbound.protection.outlook.com [40.93.196.44])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37DB299A94;
-	Thu, 12 Mar 2026 08:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773305481; cv=fail; b=ie9mFwN4CK5hhzpbhZdoMT2Mw5In3D220S6kSVVqcbBi89jpHkJ+9SpvNBo5QjHXVWfqJGiShL3rQm8TmgafkzNMQhIxWlub84AWahg8kxuTsF0m27OmC240tx2b8HBaf+6SJ5R+nXW7Jl9HaPzNlRFeq5OJy+B11KBgyREkTN4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773305481; c=relaxed/simple;
-	bh=p4Hg32AGlgeKOMqhVTznr9dO4Bz9eSsXzNV3JqyFwrA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=s7+c9EHcRXUh+SqC08KHYwX9cyawHJZfxYxPR7kKwhtXoen8HFSk4xlvlKSYQ7c9Spb7xQN2J5mBcujcE6SJiJSZ+jBEQPKJduHedP3dDJ6C46pLrJoBqiSex4utyyxw54tpcfBwLfL+MWxnAdogIkxI07k7lzEaSZs3nLo1Gts=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DMs0pUct; arc=fail smtp.client-ip=40.93.196.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C1A38B124;
+	Thu, 12 Mar 2026 08:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773305719; cv=none; b=J++vASlQ4P3GuygflUrE0iqjXYNtrtePFX9TufnKEBHQMagNGHimcbaWglreHFYsWy2H+Ja1A2I3fiudWtL9h/a77bRBdHSheGI8hLb/pRs0LLA18+icoqwL/yyGq+s0efVi6f2peLyQbp7aj4tTKKiyf3ObtQ/uRWREN3Beyig=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773305719; c=relaxed/simple;
+	bh=Zlw2pnya/OaJ1VxnB8BPExMvf19QwK1ysreWBJN45KE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YmtqrrpaFhL3aogTMTdpNWhB6kBBIo3zFyeFdtcc24hOH/4+YpQcbQLTy7e2dc08AEbT0WUbJIT3RPQBEwa3iIiV1bz0eUa2Acg6yLxVp6BiufIB2RffYXk+2HFstDieL3qWo0SQpr5KSR/QqvpJHUzBblYgd3M+B0UmQEtLtok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=PCj4EbSo; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DMs0pUct"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o14nxkQ80t4AXUFbo6RcAiYzdbXWTIGCGE2EWSLpxryXaQq3DKzo+P5RTJOXkphICVAZL3/AY45hccaUSSsLjGPr6GNIR8MznPfBiqyaypRbauO/NdAqVNHAnQNxUyS+hLYXw9/CQV+3AbDpVPlXsKAnhhAhaAYKZfpyojfHC9PW1GpuIDqIWMpgikpSPRim0xl4fXwgWsqvkBMN3oZCXDT+AS8V3dBxTIBtNFUVZPOj8RIjQDbbwWQ++m/3Xz3W1lq3USihyX2KgO0FOlCMPYSC8kJfUe05AM0HbqRh/0fkWZUhpn8bH7N5wRK7atGO5w093WIN6PwtIsEYr1CPnw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2LkiqnoclMrvCG6OJctCIabOUKZPa7d5jZjnCNWTsQY=;
- b=Yx5Jk5D4JKwtpiQbh4D+2Cea1YTxXUmpXDse/bWOXQ4oL/BBKtGYHcHbc6sBIPTrSCCslE9ZsEJOyqdzlh0Yf+XH/Qlj6VsqS0FnQbkSq2CPpboYqwZhnOl8xcmdo0dqVO7rabeHr8RBWJpu82u/doicNddHyrI8eVaZsaY6wNOd53yG2wsZuXfWmoF6ymC07AFbsut8/0qVe8T7nqSKa/1eyHGw0y1QFSKwMJn8rpORZ979Id3s2/GDtVoujZl5/JLAxzPtqukqE0eY4i3sff4svMdANPcIGcL9tciWs/XKUVs0jH6k/3AH6pvXu+SR51FyEScADOe6CuUk7TRM5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2LkiqnoclMrvCG6OJctCIabOUKZPa7d5jZjnCNWTsQY=;
- b=DMs0pUctnDfWhcCHgQkEdSXQM2A736xcXQ1etnrqYJMKXrzV+WrhvzM3kddpjncjhGozdKPmkOo/5I5TXCk6d+rIRgXKbQ/uSWD3kJNl2ZG/GOH5ChfkIWjiecigLeTvY3HGoEdTv7aSAowtypAQPluhBzSE81Al75NWlFdAFMrPktizJPTL2jCCq0zXSJZ/c4O7HgY16N7DOadWrmZGtKLs3UB6Ig3uPi5kvFmFzv/lLT6dMsvRMqey46im7+HAZ/fbAFPcgDGZg5q9wlrYjDDql5Gd0qSSerHo/Xm7+BKl/xfcJQjqbTjC5oxA7Q7HTz6ZSDHZBITSNUMu6yrBCQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
- by DS7PR12MB5792.namprd12.prod.outlook.com (2603:10b6:8:77::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.6; Thu, 12 Mar
- 2026 08:51:14 +0000
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391%5]) with mapi id 15.20.9723.000; Thu, 12 Mar 2026
- 08:51:14 +0000
-Message-ID: <ceeddf8e-d8f1-4520-8030-67a1277a1032@nvidia.com>
-Date: Thu, 12 Mar 2026 08:51:09 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm/cma: move put_page_testzero() out of VM_WARN_ON in
- cma_release()
-To: Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, SeongJae Park <sj@kernel.org>,
- Ron Economos <re@w6rz.net>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20260225031231.2352011-1-ziy@nvidia.com>
-Content-Language: en-US
-From: Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20260225031231.2352011-1-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0379.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:18f::6) To DS2PR12MB9750.namprd12.prod.outlook.com
- (2603:10b6:8:2b0::12)
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="PCj4EbSo"
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 93869594;
+	Thu, 12 Mar 2026 09:54:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1773305644;
+	bh=Zlw2pnya/OaJ1VxnB8BPExMvf19QwK1ysreWBJN45KE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PCj4EbSo9M+nhHO3YMM4wzqVA4FGezdG+MvXFQFOZZ8CgexMrQdcoESlaOrLqzf2j
+	 QVCBNoXUx4jB/v0V61h//xEOqEOoBymApHk4BImhdAqPNKBFKFKADpMA2eIMmo0+B6
+	 ObAiKPqh8+BeAMCqndRA9HlNyI879370Uc/TD4y0=
+Message-ID: <19fef8f8-9746-426f-91e5-51ff8b13c441@ideasonboard.com>
+Date: Thu, 12 Mar 2026 10:55:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|DS7PR12MB5792:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1970be56-f0e2-4649-e17d-08de80148478
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|22082099003|18002099003|56012099003;
-X-Microsoft-Antispam-Message-Info:
-	fvnXjG40lGwy5XENdfSPR6NfVv0lPCfngPeoPIQkCDbDsCo/DYchFUPNxT0JKe+duMWucufoZQwLzruZuyPNJJ928AI+CcKUclJR3nvAsxt09w5zUT7nsJWH1AbSQSmOJMc2UegnL7YalxMIPFnpJftjtr+qFXTz7cgBbTu9ARscnML5EbOPZaWOtvJZRqqtcbRT0SCTg3FCixPr/KppCwvx+Ev3y1ya4LZOVNmezUJRGcCEt5eCKVKDQJVSG9vYllTML239lutIWDYPdBZYk6YzG2HY1PxRsmryDeL3IZKdLFNhI8L7GKrOzRxmrWuhhabQ/HAVj69tMjV2grfzMseZSjkWLETe3jH2cIWPFhzBaAHnFkSV/XPcWmtBthHn2TA9Do0uf6sMHcYM01QZVACgtY63VOdAxb3QpK8F94vgJEHOCNgj5c2+ub07bup6bxv4oTadLhx/+hmyEACEO1hRUroGGv0collfERWkWQ48T2fxvgq/bZqrEnU6Dhe+R8g/sYWy0IFTAobaHOca/GiBuzSfM0wyvJAU6aQtaFsjtdzDRZMM+1TPEjNRJLIMN7/9HS1Ez8C1Tuw/0L5j/JQgRf7MbkMU8bMPNmSGd2Ymc4S4JmCEUzJohcPT+QD7ylrFrd1yIuutQ5Agm4Bz0pP8kcaND4f9+a2zh60xkGCtSbfNArufhvsY9DZWEKb5qz0bejWHIdYEMG230dm/Io2hkkFr7OFpnxBW5f1kBrw=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bldzZEVHZDZ3SGFuNXYrczNiaVFlM1YwTFBiaXlUQ29paUIramhJaW82UEpG?=
- =?utf-8?B?cEZUbUE1TkNtTmFWUHh0Y0oraHpqV1RuUmFKQ2x3VitGREZReUdidW0vSGZ2?=
- =?utf-8?B?WGRmRXF1am1nTUVJQUZuc3piVjhMTkNQTkV1NlhrbDdXZnEwTXk1c3MrV2RM?=
- =?utf-8?B?NkZRME4zTzV3YllGV0M3d0hMYTcyY2E0TE1YQ3UvR1A3di9DR3NyaTIzdUpN?=
- =?utf-8?B?cjVOM0ZsZDRPN2hscVdHU2VVUkNhcWxLb0h0bzJJbnl3SXAyOGtZZHhoeUlx?=
- =?utf-8?B?ajQzTHFnWGpsNVVoa1dnQmNrZFg0WmhpU0tuM00ySDRHWEhXa0p1YzZBSms4?=
- =?utf-8?B?TzcyTFhxWDdaRVVjQXA3WCtJWTh5MzBMSnoyTEpDR1FLY3daZ25MR3Q5cHZY?=
- =?utf-8?B?RElUZVN0Ujl5d3F6U0Z6aUFYaHNJeHZZeEt0Qy9LUkZ3ekpsMTVZenFncUFw?=
- =?utf-8?B?K2lMMEdGemxrMWxmdlBQbngzRDZhaVhibkY1REQ2ZGhCUEpCTXE1bGdRNDJx?=
- =?utf-8?B?M0dpUVF6SXN0YTFzZnhLLzNNeVBxK21pZXBJaURtTkV0MHZGVWpSbnZyQU90?=
- =?utf-8?B?M3Mxc2RqZWFGTVFYRmk0d09DQnNyb3VxMnpLWSsrcDRpVXZkOXh0a3hQRTFz?=
- =?utf-8?B?ZmwzalFQVzJ3bU1NbDJrOTNLN1hXTnpSUnJFVmxZS2dvTjl3R3QzL1BaeHNo?=
- =?utf-8?B?TFdoTjdJNDgzejhFQmI0WVJPZ2p6NWdIYWI4OWRDK2JPakgzUms2THRlMXZn?=
- =?utf-8?B?WEtpRUFDMS9rTTEyZndqeTNsYnFRTW43VW00YUplT3o0enJvNEI0T1R4dzdC?=
- =?utf-8?B?NEVvWGppKzRnMmFCTEM4YXJtSDZwSlc2NCtrOE12Q1kxSmE4QTZrckRlREpI?=
- =?utf-8?B?NnNjdkNlT0FRMHlVQ3B1QW8vbHdzN3RNc0xCZy9rajZCTjEvSEJTeSt6Y3Ir?=
- =?utf-8?B?UjVabjd2VTg1MDlrN3p6L0IrY2kzNjFBczM2UGh6YWtSSFlpWHd4SGdJNzBJ?=
- =?utf-8?B?TWtteldHaTM1ZndWYnJkS0JSWW13eTMzYWgzdUg0VllGNkpuamcvMDJ0NE5s?=
- =?utf-8?B?b0NZbzNYUjFGYVhFaWtLMWdBUUdpY25pQ3cwOVR2anhzL1hjRjdkdmd1QlZE?=
- =?utf-8?B?UGx5cENjUDQ0d1lHREF5b2JmaU1NU0M5ZDJ4T0JjZVVvOVU0dFRvVm1uVHNR?=
- =?utf-8?B?UDFOcFVMWWRRT0s5TC9Hb05rSVExNGlvNVhtNm0xMlpzWVhBWFBhSnhVOTZw?=
- =?utf-8?B?WEwyMUlxN0pSdnVLWkM3QSt3bjhEQVJHR0FEc2ZvS3RyS0hVdVV0aTdrekd6?=
- =?utf-8?B?STR1Y3VrV28ycG1IQVBrL2lrRlVkZjRqVk9sSzBsY3dkdWJWZndGQVdsZFJH?=
- =?utf-8?B?YWNtMlNJTWRweGF1VmErYXRKRk1kL1dFOFp1czFNbnc1M0IxSTU0QTk5NXlK?=
- =?utf-8?B?aC9mcDlpRXlMV0x3VWRVTThMREFRcmNqN0JMMWZvaGJtRDJTbUNpeTRKS25l?=
- =?utf-8?B?VjcvZHc2NGUxUkNFaVZQUFowVmhCZnpBYlc3R3duMWxWZmlZcThEWjdSd2Ux?=
- =?utf-8?B?ZnVZalZ6M2QwWEZ3OGVMczdzaTE4QVBsTjdrQnIwcXBxN1dnVUVzVmVWeUJ1?=
- =?utf-8?B?dmFjYUZsNk55SjRuSHdxdFFEcDJxbEFtZTB6TlFGQ085cXRxREJMOHQrT3dN?=
- =?utf-8?B?YTQ5VkRBU3JkVFlMM1RFMzNOZXJVaTc2Y0xPS1lraTJGbmNpeFpoOG9rVXhJ?=
- =?utf-8?B?WThpR0J1a1YrOEdneTBOWTljVFVGS1NUdDB3YnZEb3R3bzUwdG9aclRYMHdv?=
- =?utf-8?B?d25HWUFhZCthS2tQMVVkeTh3VDNvQjJqYVJMZWhHL2dJVThYbjdNRTlxYUoz?=
- =?utf-8?B?Znd4bHFxTkJrN2NnUjNjc0w3OE80cVZ3RVkvQVNUNm9MOFIzQWRkNG9XclZ5?=
- =?utf-8?B?VXhaSG93TVJ1ZmRjMWE0cGFWTjNxdnNHRGxpMmFzTW1FRW41bHFvZm5mODl4?=
- =?utf-8?B?NExDVUpsVkdmUDhHWmN6T2M2a1lSZm40WHYvOTFUUGh2REpQdUtCUE5QSFVE?=
- =?utf-8?B?dHJvbFlOMi9KeVI5QWNaUmhqd0lSRG0rSjhiWmxPRG5WaTVoNmFpZGpUUUl5?=
- =?utf-8?B?dHlzQkZyL3JqblNYL3BMeS8ybXlLdlErTWJBcDBWeFZwcDJ2c0k3OFoxOTR5?=
- =?utf-8?B?V0poR1lRVkN1QkNVY1BQTEI5RGh0NGxwNEJjbGwrMGdIZ3dCN3ovVWlXOUp5?=
- =?utf-8?B?MkdNNVdYT2dYNlFveFh6TFZ0Y0prZUhrQzJZVlloSHF0UytYbzNJZkRvOTE1?=
- =?utf-8?B?NDdJYzFOODBTYU04cy9LWWZreUxDZHdvcWxEVjQ4RlZMc2xJT2ZDdz09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1970be56-f0e2-4649-e17d-08de80148478
-X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2026 08:51:14.5534
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xL4ETf0yYVtudXMs2uPSmBjFGCEASXkpltLqAjwKxXKO50cUduapcm73u1ujPSbekOXwI409PCsyR3OvAO5HWA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5792
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/4] drm/atomic: Allocate drm_private_state through a
+ callback
+To: Maxime Ripard <mripard@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, Harry Wentland <harry.wentland@amd.com>,
+ Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <siqueira@igalia.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ amd-gfx@lists.freedesktop.org, Thierry Reding <thierry.reding@gmail.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Liviu Dudau <liviu.dudau@arm.com>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
+ <mcanal@igalia.com>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Paul Cercueil <paul@crapouillou.net>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+ linux-mips@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org, Jessica Zhang <jesszhan0024@gmail.com>
+References: <20260224-drm-private-obj-reset-v5-0-5a72f8ec9934@kernel.org>
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Content-Language: en-US
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20260224-drm-private-obj-reset-v5-0-5a72f8ec9934@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi,
 
-On 25/02/2026 03:12, Zi Yan wrote:
-> When CONFIG_DEBUG_VM is not set, VM_WARN_ON is a NOP. Putting any statement
-> with side effect inside it is incorrect. Collect all !put_page_testzero()
-> results and check the sum using WARN instead after the loop. It restores
-> the same check in free_contig_range() before commit
-> e0c1326779cc ("mm: page_alloc: add alloc_contig_frozen_{range,pages}()"),
-> the commit prior to the Fixes one.
+On 24/02/2026 18:10, Maxime Ripard wrote:
+> Hi,
 > 
-> Fixes: 9bda131c6093 ("mm: cma: add cma_alloc_frozen{_compound}()")
-> Reported-by: Ron Economos <re@w6rz.net>
-> Closes: https://lore.kernel.org/all/1b17c38f-30d3-4bb4-a7e1-e74b19ada885@w6rz.net/
-> Suggested-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> This series started from my work on the hardware state readout[1], and
+> was suggested by Dmitry[2].
+> 
+> This series deal with the fact that drm_private_obj (and thus bridges)
+> are not initialized using the same pattern than any other object. This
+> series solves that inconsistency by aligning it to what we're doing for
+> all the other objects.
+> 
+> This was tested on a TI SK-AM62, with three bridges.
+> 
+> Let me know what you think,
+> Maxime
+
+Looks fine to me, except for one thing: the return value of
+drm_atomic_private_obj_init() is ignored everywhere, so we won't catch
+ENOMEM. Is there a plan or follow-up series for that? If yes:
+
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
+ Tomi
+
+> 1: https://lore.kernel.org/dri-devel/20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org/
+> 2: https://lore.kernel.org/dri-devel/zvqtehg66dbrrdmik6ylo2kdk74umfzo5hbfkizwsb352nlyqv@jgouvmbfwa4x/
+> 
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
 > ---
->>From V2:
-> - Collect !put_page_testzero() to get the right result.
+> Changes in v5:
+> - Rebase to drm-misc-next
+> - Link to v4: https://lore.kernel.org/r/20260128-drm-private-obj-reset-v4-0-90891fa3d3b0@redhat.com
 > 
->>From V1:
-> - Collect all put_page_testzero() results and do a single WARN after the
->    loop.
+> Changes in v4:
+> - Fix a circular dependencies between modules by calling
+>   __drm_atomic_helper_private_obj_create_state from
+>   __drm_atomic_helper_bridge_reset instead of
+>   drm_bridge_atomic_create_priv_state()
+> - Link to v3: https://lore.kernel.org/r/20260119-drm-private-obj-reset-v3-0-b931abe3a5e3@redhat.com
 > 
->   mm/cma.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
+> Changes in v3:
+> - EDITME: describe what is new in this series revision.
+> - EDITME: use bulletpoints and terse descriptions.
+> - Link to v2: https://lore.kernel.org/r/20251014-drm-private-obj-reset-v2-0-6dd60e985e9d@kernel.org
 > 
-> diff --git a/mm/cma.c b/mm/cma.c
-> index 94b5da468a7d..15cc0ae76c8e 100644
-> --- a/mm/cma.c
-> +++ b/mm/cma.c
-> @@ -1013,6 +1013,7 @@ bool cma_release(struct cma *cma, const struct page *pages,
->   		 unsigned long count)
->   {
->   	struct cma_memrange *cmr;
-> +	unsigned long ret = 0;
->   	unsigned long i, pfn;
->   
->   	cmr = find_cma_memrange(cma, pages, count);
-> @@ -1021,7 +1022,9 @@ bool cma_release(struct cma *cma, const struct page *pages,
->   
->   	pfn = page_to_pfn(pages);
->   	for (i = 0; i < count; i++, pfn++)
-> -		VM_WARN_ON(!put_page_testzero(pfn_to_page(pfn)));
-> +		ret += !put_page_testzero(pfn_to_page(pfn));
-> +
-> +	WARN(ret, "%lu pages are still in use!\n", ret);
->   
->   	__cma_release_frozen(cma, cmr, pages, count);
->   
-
-
-This fixes a regression I was seeing on Tegra. So ...
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Thanks!
-Jon
-
--- 
-nvpublic
+> Changes in v2:
+> - Switch to a new hook instead of reset since some drm_private_objs want
+>   to persist across suspends
+> - Drop the call to drm_private_obj_funcs.reset in
+>   drm_mode_config_reset()
+> - Link to v1: https://lore.kernel.org/r/20251008-drm-private-obj-reset-v1-0-805ab43ae65a@kernel.org
+> 
+> ---
+> Maxime Ripard (4):
+>       drm/amdgpu: Switch private_obj initialization to atomic_create_state
+>       drm/omapdrm: Switch private_obj initialization to atomic_create_state
+>       drm/tegra: Switch private_obj initialization to atomic_create_state
+>       drm/atomic: Remove state argument to drm_atomic_private_obj_init
+> 
+>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  | 51 ++++++++++++----------
+>  .../drm/arm/display/komeda/komeda_private_obj.c    | 16 +++----
+>  drivers/gpu/drm/display/drm_dp_mst_topology.c      |  1 -
+>  drivers/gpu/drm/display/drm_dp_tunnel.c            |  2 +-
+>  drivers/gpu/drm/drm_atomic.c                       | 22 +++-------
+>  drivers/gpu/drm/drm_bridge.c                       |  1 -
+>  drivers/gpu/drm/ingenic/ingenic-drm-drv.c          |  2 +-
+>  drivers/gpu/drm/ingenic/ingenic-ipu.c              |  2 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |  1 -
+>  drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c           |  1 -
+>  drivers/gpu/drm/omapdrm/omap_drv.c                 | 22 +++++++---
+>  drivers/gpu/drm/tegra/hub.c                        | 22 +++++++---
+>  drivers/gpu/drm/vc4/vc4_kms.c                      |  4 +-
+>  include/drm/drm_atomic.h                           |  1 -
+>  14 files changed, 76 insertions(+), 72 deletions(-)
+> ---
+> base-commit: 196b2b95fec447c2c4460f753b277d840633fbef
+> change-id: 20251008-drm-private-obj-reset-ae1e2741027a
+> 
+> Best regards,
 
