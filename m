@@ -1,159 +1,224 @@
-Received: from mail-pg1-f225.google.com (mail-pg1-f225.google.com [209.85.215.225])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013020.outbound.protection.outlook.com [40.93.201.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C075A3FBECA
-	for <linux-tegra@vger.kernel.org>; Thu, 12 Mar 2026 17:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.225
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773335235; cv=none; b=CHzLzeTmdE4FNlPEFIpj1aRNAO4xMThb4nK8Oh0uMxP71tjMDbGxEUyih091CxRwmD3g0Ptbdu+m+YxyhJVYGV7GCF3ZPtS8eBEdG/DV/Trar/WVS4eKapgmM5ZwE2UzqtsTR4Vxj/L0M8CW0I9puF4mQbqPu4sQjKjWT8glyQU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773335235; c=relaxed/simple;
-	bh=4YRmuyiZ3BSKrd+XqEKuYmpqHzSqvCpxgtwy4jvlN5w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kZAA51WUf5IXBR+gnT0YT/Nst4OzPD3G8/kHCfl4RzjViLi8qlV2qrO4J4yB10TkekfUWg9V9Gel8kfeBxOC8+94Wrm1lhNKw//FYknjVM0XsItgZhnFGawINWDqBSIwuBFs5n4XP6T0BCNbIJE5Xt3W2VPN0q3sy03dreIMeFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=dbf8uhn1; arc=none smtp.client-ip=209.85.215.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D917C375F7C;
+	Thu, 12 Mar 2026 19:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773342056; cv=fail; b=hwPZmkXCThCcateG6dHrFGccy4+ALLlTxw6KqQa2gTfUB+W0rOt9+h/rVaz2D/ktjdld3rz7+eA0mLBPyuYfeFtpW7tTA0W7XlrQvivk56LBxDhE9xUlBFjlk6kwn/Qxdym8sz36RiEd8muZjxeHRK6mXaMxPirYngXLaTaMFQE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773342056; c=relaxed/simple;
+	bh=2F6vQ/TMDKr90nlmlF5M98tQy5WcwqpLm5eLIHqbM7Q=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UL8W2/iBkcGiXVQO9IAtvhLdoxWnn3gNQhBwhBwCL0mKF4a8E/88dhCND+pEL4ux5OGtSNpBCYjSBKMlyZzh++vEkhKdSah5RUdiKBWS7AL2LtilWqG28JTmVvcOxKuXdKRsseSEuMeOCZhXuuSbSV6foRinE2XjFeM8rJgtWiM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=P5lwGXPn; arc=fail smtp.client-ip=40.93.201.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="dbf8uhn1"
-Received: by mail-pg1-f225.google.com with SMTP id 41be03b00d2f7-c73ba417c6eso514246a12.3
-        for <linux-tegra@vger.kernel.org>; Thu, 12 Mar 2026 10:07:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773335227; x=1773940027;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:dkim-signature:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=r5d3U58A7EbRwEFn4KrmQ5cld9P0wudWqSFmPnXCnnU=;
-        b=XtKCT00GQWaToGqsjfoICkF3KEbgrty849fBUeOShQXZ+RqCPRQ5bCQup5WDnts7Qv
-         oJkHTLvFqLRrCiQDTdDGyYKIkUL79246kPj8uHxwqno8FmLZPsJL927hZUusExvWqnIw
-         MPJ2awJbB1zGE2zbiO4LSVdu+CUw/bUFzsVhbEv5W58qpmrOR1igGUBifonBpdJCGM55
-         uL+KJ7dYikh2I1SKT5uwJlRvtwjRQYB248IKqtYNQxI3HO44to7ot7CO7+/FsUVUBYWc
-         OvApXB6FhJTu60mysB2e4ZWeiZ102UJKWtWWRTw5aMbTVH6Rzd+BD9Ryf9KwGQDmsbHH
-         fsnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX4Gmj2DTQrw97wynGQokjv4dEz5EAD4fNOz8i5ucUsmFgmglNfiCDMxu5vmOkp+GZPBPJ34GbrgQwRYQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMNnPjeNelHEu96Ts/Srv4LcSiGFXKSi3Y3zLd3e0MyLyWUXU5
-	Sz6sgwkv0Hci04/O5JdzIJ0IGfQ0QAylkAGDrhbM10f8dIaaRLuZkPJ19G1l+UXPZm7UOkfgOD0
-	M2j04mLwPNwOXbIOZF74+ILWR9x55ANSV0ztYemaw6qZNeyOdc6wrUScID4FZXij295+WHj7Fbw
-	00VlO3WPeWOFrYWNGMHS3fxeaffr3XH8oW6FbxMcMdYspMuK4R6pk3ZN0Pe6/3SSNXHzoIpCQki
-	3rnANXRGITdb0IjNjn7Exo=
-X-Gm-Gg: ATEYQzyrvSG3FLq+ETaqb7FybIp9Xw4j3QdIOOo1B075NXqohJb9pHq/tfBTBMw74tQ
-	g3ipcolylfMRSDq0QZd8z9Ma8IHg9dHW7Tl2UNsNPRfGs3xNdkVdlwPlnhdwXTgW+1AUIZk+pxs
-	vdsCg0+82KZnrKrpcwJc7R/71tcWUcXGmAZ/DPMVhhQQA1Wmhm+maWZHzK3jwlqcNOhDkLgsjGM
-	efwGfSCQTVuQObcnORoqxajR9JpIlHjPTyurRVUDaGjZQEd52gbUz9xyn2PUsS7AuEzono5SHz1
-	6aUwQgkV1rjLpETAvKen3TB+I6GHWdHisU5iP1kpMhZxtGafdec+OnLS7u2NIfzSHAK4O9l6gwA
-	c63fuSLF7szq/prB7MolkIA10IdqUXQMGrmL2RAmXb40iGhNjuM0p1cENnLOX1eJ4TetmpHJEwp
-	Nbv355TNZZQ8t4qlXYEOAUaYEcIfnCKJ/kdthT3IPnIZ4u1eHtbKkqAOjLJ9jwFw==
-X-Received: by 2002:a17:903:2447:b0:2ae:478f:2df with SMTP id d9443c01a7336-2aecacf2100mr1841115ad.57.1773335226467;
-        Thu, 12 Mar 2026 10:07:06 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-63.dlp.protect.broadcom.com. [144.49.247.63])
-        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-2aeae336c20sm7842585ad.49.2026.03.12.10.07.06
-        for <linux-tegra@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Mar 2026 10:07:06 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-899edf0171bso80145506d6.0
-        for <linux-tegra@vger.kernel.org>; Thu, 12 Mar 2026 10:07:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1773335225; x=1773940025; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=r5d3U58A7EbRwEFn4KrmQ5cld9P0wudWqSFmPnXCnnU=;
-        b=dbf8uhn1yqQ9cdMkVTOAE5x6DS0V3qVbFtGeBaIFfAF1uxA90q8ppuGQKFwe260pH8
-         lO8ZZkIGo+uTqKLHF0+TQj1XuR+cKVhhx5hQnOAU+A6F6rAJX+elQbo4KLScXDIWSAZn
-         JYUk61QzieEOC5FKLTFOb9i8P2D4qAg9dhdO8=
-X-Forwarded-Encrypted: i=1; AJvYcCVG13oYt8Fw9vbniJfTvSU9m4Fz0mwAQtuD0YDocmrvRPEyDJ/ArmUTiOIBn5IZCLYxGMO647/uFCdqIg==@vger.kernel.org
-X-Received: by 2002:a05:6214:29c8:b0:89a:116b:e674 with SMTP id 6a1803df08f44-89a81d5dfcemr7819536d6.20.1773335225372;
-        Thu, 12 Mar 2026 10:07:05 -0700 (PDT)
-X-Received: by 2002:a05:6214:29c8:b0:89a:116b:e674 with SMTP id 6a1803df08f44-89a81d5dfcemr7818666d6.20.1773335224670;
-        Thu, 12 Mar 2026 10:07:04 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89a65d17023sm38864336d6.49.2026.03.12.10.07.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Mar 2026 10:07:04 -0700 (PDT)
-Message-ID: <9040aef7-1981-44c8-a25b-2179b892d37e@broadcom.com>
-Date: Thu, 12 Mar 2026 10:06:59 -0700
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="P5lwGXPn"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ifawU5zUF1vuWgETXkf+S2zl19lGkf3W9VXdhVMMGoGeYqeR++SsiGuSVJw5BMYx6N4GYpPiMmDDIRBpZM5cJvxFFEHJkWuf62vygrdu42p9vEx7xsGG07jQ5Vx2JSxsfALJDwsBRgQdhNR0Y/CJ1vk33hYarmzpjwx7WHioJumnuHgA3ozZ3Ay0bPIrIqxZpQ5pdw9jXiy8FN5lPfUD1tWq4PDMKgu3bClMKeX185S281l0Pr1DFN1ew/MLQ5VYeuLLZvQvtfBJv3akpj6ANY4IO9MWfRPOPShtLG00fsE8oWwzp38me3xVYD0K/+H8LAhK5Dj+FSknxJjftz4f+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K+N1zwAxafAS4WSArAVeIZmEEUdGZLqyw3q4U3b8jZc=;
+ b=Ff1pTzsGiwIShh7stO2+9Kpqbq8dE1ccAvGKVSRlsKPb1eM4+f34F5acpdrf5zgr/oXnFFpaDg5zuI0KfFNJCJyGNVrEuN5VT/VnuCGQs53fDJFe23jjkl6K4029jikJmlY2FzpdOB8aE4xgXglREKodZO/obr5AC5tJqGDxAakIaLGR3/vzowrClW7rgBmR08Ds6MzgN5suXa7b6mkf8tSJnIfY8YUePu4bW3n6G6XbOjGA4Nz0CMaFX8t6KtW7ng1INo5qrR05W6aDIeTNWW8ZFB5eh74c3VKxTO7WLWc9XyYhaN2Ap1cESySMrezY/PoE1AKGXXzmzjbNu5oDgw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K+N1zwAxafAS4WSArAVeIZmEEUdGZLqyw3q4U3b8jZc=;
+ b=P5lwGXPnrvYMP5VaYi5+mAttF2c6GLTfnByKgFJGAmCaSor4QV+xwtSn81JN320twn+O4K3jUQ75qAwHqES9ZeF4w74mYS9j7Ex7VeJujspaiR7sDw74EH/rhxLpn+YqsHrHdXrJQdRwCTHyTsSP1rvkWWhlb9Bys2RmEsALWe2roHP3oTCAQVl8gowJa6AFxThlQ+IfhSlVqFWX7Ous/qnTP9kdFLvNug5LWZz5zFMBJYUSGkSdE/wN/vYBGBF8PoDxfHyHUiNF5CCduDFxFAUaN82XcR4C8RwGy+TWDhQts9UTk8zcZpQN5MnrJ/upYHHRm4MLZvm/JKP+qmi+sw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
+ by DM4PR12MB6111.namprd12.prod.outlook.com (2603:10b6:8:ac::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.12; Thu, 12 Mar
+ 2026 19:00:26 +0000
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391%5]) with mapi id 15.20.9723.000; Thu, 12 Mar 2026
+ 19:00:25 +0000
+Message-ID: <d7a8271e-f6a5-491c-be2a-7ebc7d37645d@nvidia.com>
+Date: Thu, 12 Mar 2026 19:00:21 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] firmware: psci: Set pm_set_resume/suspend_via_firmware()
+ for SYSTEM_SUSPEND
+To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
+ mark.rutland@arm.com, lpieralisi@kernel.org
+Cc: bjorn.andersson@oss.qualcomm.com, konrad.dybcio@oss.qualcomm.com,
+ mani@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Sudeep Holla
+ <sudeep.holla@arm.com>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20251231162126.7728-1-manivannan.sadhasivam@oss.qualcomm.com>
+Content-Language: en-US
+From: Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20251231162126.7728-1-manivannan.sadhasivam@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO3P123CA0024.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:388::7) To DS2PR12MB9750.namprd12.prod.outlook.com
+ (2603:10b6:8:2b0::12)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 4/5] PCI: controller: Validate max-link-speed
-To: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org,
- jingoohan1@gmail.com, mani@kernel.org, kwilczynski@kernel.org,
- bhelgaas@google.com, helgaas@kernel.org, florian.fainelli@broadcom.com,
- jim2101024@gmail.com
-Cc: robh@kernel.org, ilpo.jarvinen@linux.intel.com,
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, claudiu.beznea.uj@bp.renesas.com,
- linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
- linux-omap@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260312163652.113228-1-18255117159@163.com>
- <20260312163652.113228-5-18255117159@163.com>
-Content-Language: en-US, fr-FR
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20260312163652.113228-5-18255117159@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|DM4PR12MB6111:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4906ce26-3972-49cc-8a37-08de80699ecc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|7053199007|56012099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	vkrKTJQY0vk8NP8t+92k+H/PHWqcafBVdvPxTlaxbuDbcjIc8jZgDz2bntKu0Lyl0XJ9b9xLzHxwpoG0JYpInlMfrHzNcKzOo1TFX3mvLD6JL2vNbzOPReeoJH73Kwfq3A0MhhJ/AZEa5h8BB9RE7ONvw0F+Pno/KaJtu0WWUlwluzj8WLKSOPbV66UfIWmefKFzgmHAuFTG4/v4TI1xb0k9EhzqA8ke1wcjkSBkmWNgWvo8JCIauNrLGjL1DM9CHgBYIK15oVPnpl5x6/bQWVAbZkcF2q6rrHbzGkmcC7ECOS1zq0iFX8KAdA2u4uSvNXi1VYKhp2+rUc3SMNbdtr3szUzrpd08F0lYbQW/AIOpC2oCHou49eX71nMJdzEA3Ry+9iTts4Aiz+gGEKvt3SuUzEmD5aU5/VnR9gMXcTzmOvd15QAlekJKLANswmTR5M9AnOmp98fv31sdk3ei6PuPOGAB86o1uMIe0siVWc9w91AgVhWeMqpG8IMUSQ6xas7cmQG10oy2q1czm4LF3MFMPfuR7fUBmxtJxhD0tclazyXcGMuNQVSSV/fAmGZZ3a5byr5adQ7Je+4WCmnStuvv815S4XV3EmQCJP8O0rfLyoTTwV0bpLnSia2O/VlH1f0R6fl96/9LdqSCJKUbB0UCW50Elli8msKHOiLr60GmiSajS/lVBwq8WyclFCZ4VrD2bIvf6TdRdISoBKZTTeQmsoLT8Cw/RVFWnlbQI8vaAllwoJtlGbVwLx8uW8vB
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(7053199007)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?a1lVdVVTVkFPdWJDemZ4RkpOSTNSWHN2Wi9sWUlpaEtVTHlQRVJrM28zWEp6?=
+ =?utf-8?B?T2xUcHdYMFVoLzJIZExGNlVXVisvTjNld0kyT1IyR04xbEp5NXRYM2FjdkNw?=
+ =?utf-8?B?Z1JBc0lIVm1FNVBwMHJCejNsanBsMjVRc2dwb2QxTkpVZHhjKzJ0NkhYRDVw?=
+ =?utf-8?B?MUZJc3lGS05Ud0xWTmlhNnl3bFlVemdMR3dNWVZwaGhYNVdKMmY4bVlobk51?=
+ =?utf-8?B?d2k4UmIybHl4VU8vRkRuVkZWbm0zU3NDZ1Nsd1JXWGhxVnd6MEZzcmNvVldl?=
+ =?utf-8?B?T2t0U0pWWE0zeG10akxVdW84Q3RQMThHb2d2NjBMcFJldTFUa0wwa2xuZ2RR?=
+ =?utf-8?B?ZWxjNDRHVFNaRU43TzB3U2tLNE1TK0xsazhnQjlPNS9nTUFvTE5iSHpGYVpp?=
+ =?utf-8?B?U2htcHpZdU0vWjByYUtkd0xhMDRlMzBoTUdPM2lsaFFlOHkyZ1ZiQXN0V1lp?=
+ =?utf-8?B?NVlTN1EybGNvQ2I5bW1xUXBObTE3eVNoM3lNVHluVmRZdisxWUVramU3bkM1?=
+ =?utf-8?B?ZzZpZUlwejg3SzF3TllGM0NKbGhRSmFHRTlRc0paWXI3aDVuUHVGLzBEWkx5?=
+ =?utf-8?B?ZzVDdGxUK005emI0cTVvOVFoZmpUeDBhWi9wVzMrUFk0bEF1dis4UXdDb3Z3?=
+ =?utf-8?B?c0ZSOVIwTTh3dWdnMmpxbkU1UjVEVmlDMkpJSHB0Y1dkaEI5UzlNRnNIaU1q?=
+ =?utf-8?B?LzNpZEk1YUdVaEswNEsxYnh2M0tZeGt0cVpvcTF3bndOZTlIMzYwUWtMWWh4?=
+ =?utf-8?B?WUc2azI2UnlYM05rejZuWHVkY3NEejZDeXd4Q25VS254Z2xSdjBZZnlyZVBV?=
+ =?utf-8?B?R3ZEdkJsci9pRmZSUTFDL01zRUlYVWYxeVVLeVZ4RXJ3bm5KWUZ2dTlJLyt5?=
+ =?utf-8?B?c21hYlhiR1hlTE4xbTFtZklLTFZxZjFWWHhuTHQ3M1lPRkZvSkIrMjV0Ylkv?=
+ =?utf-8?B?VktWemZERGVDV3pCcjhxME92cTdDY0ZiWDhaNFhmc2h4NjdURjkxaS9UdVRG?=
+ =?utf-8?B?cXdERzN6Snp5dEpDUlV6M0UyZGtGSHVndVNoZFF0Tm81ZDF1ZEFPOElVOWhy?=
+ =?utf-8?B?OUNVRTFoMGJxeldWWmp5L0pOY3YzcnBtbGVUSGxCb0FRc0lKRnR1OUM3S3pS?=
+ =?utf-8?B?THhkUDJHV05OdEUvTGFBdkV4eHZOdEd3Uld2dEpabzlsZmc3Yi9sNnNCMFUw?=
+ =?utf-8?B?UlVZdnR1ajVSWFJnRnJqTElTbTN0ZWpGNkZsK1A0amNqbTJ2eVVndXlVNzBL?=
+ =?utf-8?B?dlRFTENGUGNucktZc2o3dlpYL2IvT1hvMVJvclFvYThleFFHU3lHSHdjODNP?=
+ =?utf-8?B?OTBqeDJ0TjFEemZOZHZxWDZhY29nZUZKSXRCUUxYS25BVUk2cFh6QU5RQ3ZT?=
+ =?utf-8?B?OGVhdnpLNjJhSHcwWm5Ua2d5NlFhcHVEWFFMNmxlWUpwb0NiN0NsYUdSL0JL?=
+ =?utf-8?B?UXFIZXoxWjcrQVdwZEJlVUR1YStpZW40RDBlMys5cGxqby9xTzVqZWYwRXgy?=
+ =?utf-8?B?WHZpQ3J1REUzYkVEYWxBTkdGN2t3eFNyZmdZcitkWHdMaVpZRXZ2STVxVjJQ?=
+ =?utf-8?B?RUk2Uys0QnNiYVpJTmpJeXBuS0RsaDN6ZVB1MmFic3NuQU9ncy9DNDN5dFk2?=
+ =?utf-8?B?dVRWYVlzeVh1RDZFT0YrOVBuTFgrQ1dzbkR0THRBaTkzZFJ3aXdONVdoM1l0?=
+ =?utf-8?B?UmQ1VXk1SmVYZWh1WnVUOXBrZlRIQWlSYk1jWE5Pb3lTc01BczIzSFV6ZUUz?=
+ =?utf-8?B?YitZenVxTFIvb3lMZXR0eDh4NUg5QmFhcEpabmxNK0hnWEhTdGtORTBJM3Fs?=
+ =?utf-8?B?UWh5S0FGZGJhcjRiUTVWdHBDZEprcGhuSVFqU0JWUk9WTFZJRWExR0kycnYw?=
+ =?utf-8?B?OUFJNENBUUtCNVp5MFpqWURXeXRINzRQdjJpN0hCRlVvR3hha3JGT3FkRkUy?=
+ =?utf-8?B?NlBhaVBHc2pkb0hSQkhlY253ajJ5N1lJYXhYZFFSRk51SFl6SnovZDdWczBK?=
+ =?utf-8?B?Y2IwbThFYzRNK2F5VVpYZUNIZnR6T2xyZHNuQXZTcFZkOFI4VFk2Q2RMczFn?=
+ =?utf-8?B?RFc0aFNWeDBqR3NsSFlCanRHRjgxNTNqRDJOb044VktXTytDeFBWOU1id1pV?=
+ =?utf-8?B?RzQ5K2kwVk5IMVQvaWh6RlRIZ3E5SzRralVzTDE3OTZFS25EN2ljd2hGVVBV?=
+ =?utf-8?B?eGZYMXNQMHpFTGVQb0JIN1I3SUhYVDRhREpsSGhZZExGeklHQjcrNVZtOUpJ?=
+ =?utf-8?B?ajEvNWxnbGQ3NlNhSlRIczNuaUpYWXRzV0dwS1FUc29obTdmdGpIdDVkQnRm?=
+ =?utf-8?B?Nks5aDUweUxaSDc3WEo3V0NJaVo3K1JRQTZ5ODlYbTRWWmJ0OGdZdz09?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4906ce26-3972-49cc-8a37-08de80699ecc
+X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2026 19:00:25.9301
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XBV0q656AODtW6TIWMMDXAFvpLCwas/R88DdERG3ZN8TJHdk3FDvu7axvYmALQwbfBVIbMGYBgG/Z+WqXvlnDQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6111
 
-On 3/12/26 09:36, Hans Zhang wrote:
-> Add validation for the "max-link-speed" DT property in three more
-> drivers, using the pcie_get_link_speed() helper.
+Hi all,
+
+On 31/12/2025 16:21, Manivannan Sadhasivam wrote:
+> From: Konrad Dybcio <konradybcio@kernel.org>
 > 
-> - brcmstb: If the value is missing or invalid, fall back to no
->    limitation (pcie->gen = 0).  Fix the previous incorrect logic.
-> - mediatek-gen3: If the value is missing or invalid, use the maximum
->    speed supported by the controller.
-> - rzg3s-host: If the value is missing or invalid, fall back to Gen2.
+> PSCI specification defines the SYSTEM_SUSPEND feature which enables the
+> firmware to implement the suspend to RAM (S2RAM) functionality by
+> transitioning the system to a deeper low power state. When the system
+> enters such state, the power to the peripheral devices might be removed. So
+> the respective device drivers must prepare for the possible removal of the
+> power by performing actions such as shutting down or resetting the device
+> in their system suspend callbacks.
 > 
-> This ensures that all users of of_pci_get_max_link_speed() are ready
-> for the removal of the central range check.
+> The Linux PM framework allows the platform drivers to convey this info to
+> device drivers by calling the pm_set_suspend_via_firmware() and
+> pm_set_resume_via_firmware() APIs.
 > 
-> Signed-off-by: Hans Zhang <18255117159@163.com>
+> Hence, if the PSCI firmware supports SYSTEM_SUSPEND feature, call the above
+> mentioned APIs in the psci_system_suspend_begin() and
+> psci_system_suspend_enter() callbacks.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> [mani: reworded the description to be more elaborative]
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
 > ---
->   drivers/pci/controller/pcie-brcmstb.c       | 5 +++--
+> 
+> This patch was part of an old series that didn't make it to mainline due to
+> objections in the binding and exposing CPU_SUSPEND as S2RAM patches:
+> https://lore.kernel.org/all/20241028-topic-cpu_suspend_s2ram-v1-0-9fdd9a04b75c@oss.qualcomm.com/
+> 
+> But this patch on its own is useful for platforms implementing the S2RAM
+> feature in PSCI firmware. So I picked it up, tested on Qcom X1E T14s and
+> resending it.
+> 
+>   drivers/firmware/psci/psci.c | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+> index 38ca190d4a22..e73bae6cb23a 100644
+> --- a/drivers/firmware/psci/psci.c
+> +++ b/drivers/firmware/psci/psci.c
+> @@ -539,12 +539,22 @@ static int psci_system_suspend(unsigned long unused)
+>   
+>   static int psci_system_suspend_enter(suspend_state_t state)
+>   {
+> +	pm_set_resume_via_firmware();
+> +
+>   	return cpu_suspend(0, psci_system_suspend);
+>   }
+>   
+> +static int psci_system_suspend_begin(suspend_state_t state)
+> +{
+> +	pm_set_suspend_via_firmware();
+> +
+> +	return 0;
+> +}
+> +
+>   static const struct platform_suspend_ops psci_suspend_ops = {
+>   	.valid          = suspend_valid_only_mem,
+>   	.enter          = psci_system_suspend_enter,
+> +	.begin          = psci_system_suspend_begin,
+>   };
+>   
+>   static void __init psci_init_system_reset2(void)
 
-For pcie-brcmstb.c:
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+I wanted to ask what the status of this patch is?
+
+It turns out that since commit f3ac2ff14834 ("PCI/ASPM: Enable all 
+ClockPM and ASPM states for devicetree platforms"), this fix is also 
+need for Tegra platforms that have NVMe devices to ensure that they are 
+suspended as needed. There is some more background in this thread [0].
+
+So for Tegra ...
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+[0] 
+https://lore.kernel.org/lkml/kkly3z4durpagtenadvmzdpojlctachgfgi2fdapt6zthdl2gx@n2qhmlud2zb7/
+
 -- 
-Florian
+nvpublic
 
