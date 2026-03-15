@@ -1,143 +1,226 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012020.outbound.protection.outlook.com [52.101.53.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A972B9BA;
-	Sun, 15 Mar 2026 16:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773592705; cv=none; b=EOS0JoSO64qvDMxhTdmbrhB8PpLJgqmI/ww6SIiVC2brXtI2or3hrO9QGF4DI3VtDm4VHAPiz5gRtgGeuMBNamRB7cKTpgvFIOzz75Ojz5stm2EA/OWcWW3hUhhZdtwK7HCsZmxVm/1UofPih+L1kHOdl7rMu+stcWXTG1mRLlQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773592705; c=relaxed/simple;
-	bh=WrNeMYsAA03DHVECs98FC7knzVMNjLmWyKvwlzN4Krw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pHBmT8NL4pQcHhjEgl4wif5HRLz1rz23MlvfmD2CyOsax86i3au41AN+3WAcgkz/QzCkwAWXAktLTbyf3na7CePt0jcjXeLxILJ3+ucdZvt3pwfPl2vMrcEOUkk5fH7cYyLam550l6b5kLGqkRv9RdYF8KZ0a+dz8Pipu32RQ7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODlndx/l; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCED74BE1;
+	Sun, 15 Mar 2026 17:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773594983; cv=fail; b=Tjv8jjqWjgicDx/S8+SWV2ij8emaJYkgIJtlDVK87ilFRKUKISZkv0zvaE/xsSnz++6J4Aa5bNp1iIHBIB2GEtUoq+fcr6BKz4HkgzO6cbba4B0tJh8Hz+J9vWAlMncAyDaogR+xUVUuiZFLae14ACkx0G+1ZwTHSVh3bKZbF2w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773594983; c=relaxed/simple;
+	bh=NENnKkM2/L17kqjgBhkwTQUVCuV7AvSrcWnYS2b9KUk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=uiuKneFs67PfAx7MFzqdPkNNCygcbkUtiMByKmDtJbQFWxTRkN6zuZvcpXEOMrsLYrBgxkI5W5x8gRLg70UioArOojxlFaaeNXIoxGB7UuFmsf5jgIvvwZCgHzVGT/5UF8Z0zLN4KEj3fZ8iLvkzDe03ACTqKK7sZPOKhjp0M8o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=UokOtzCU; arc=fail smtp.client-ip=52.101.53.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODlndx/l"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A308C4CEF7;
-	Sun, 15 Mar 2026 16:38:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773592705;
-	bh=WrNeMYsAA03DHVECs98FC7knzVMNjLmWyKvwlzN4Krw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ODlndx/l2BTSbPjRspV9GLT7+5T3/4XNm1uJzTAR5k+bHedYGFbm7JcgrzbAMgwWW
-	 h3t+0iwi22VFwi/vk45Kz2w9HYLdExgXOq8xBGIQKNkp/kZKGRqwYWpyQfSimyVgB7
-	 WrKPZMlYKJl6FxwhgiR9lK+Hi0KC8ofixzUzYoWcVFS2xLl6FqTtVBCdp6trj9wHFZ
-	 G1cjoMWJmWsNxRMB0F4r6FJFjTbPCymS+hka/0zDBbmt7PBcrnAvIG9To3of5IcfVp
-	 JWhdazvUhIMZ2QhFYQA0dxWVuzXyQyBnyelMGJ1ME9cZe/XmLRTuJJVXnFz+VDnPI7
-	 1D2bXfJj7EFFg==
-Date: Sun, 15 Mar 2026 22:08:06 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	Siddharth Vadapalli <s-vadapalli@ti.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Minghuan Lian <minghuan.Lian@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>, 
-	Jesper Nilsson <jesper.nilsson@axis.com>, Jingoo Han <jingoohan1@gmail.com>, 
-	Heiko Stuebner <heiko@sntech.de>, Srikanth Thokala <srikanth.thokala@intel.com>, 
-	Marek Vasut <marek.vasut+renesas@gmail.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Christian Bruel <christian.bruel@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	Manikanta Maddireddy <mmaddireddy@nvidia.com>, Koichiro Den <den@valinux.co.jp>, 
-	Damien Le Moal <dlemoal@kernel.org>, linux-pci@vger.kernel.org, linux-omap@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org, 
-	linux-arm-kernel@axis.com, linux-rockchip@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 00/10] PCI: endpoint: Differentiate between disabled
- and reserved BARs
-Message-ID: <skfqxnugt4t7eidfny5ojczq3wpu4u5yjfd6wdk3ikjmbgru7t@63nfqvrl5mvs>
-References: <20260312130229.2282001-12-cassel@kernel.org>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="UokOtzCU"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HifKg+bQo+FmThVfmlW+XFqN1vC40AuNUUq1L7bsAD71AwNmmywes8q3YOvB58EGlD1pOE2Ju761IxkEpxMDLoFfQLO1IyrN/1eyq9scl8ZBxjNOYKa1PSRtavuHu0eUVzy3US8lLlILAg4w1KtTs9x8Q0JlZKcvU2hM/xW/swXKy5t26AagDMbpJFGAzQGi48df2l6Ix/3urzK2jeCm7zRH3E0VUPlaXDQDZI4U79aaTgrKQYZn36Lp72lNKSTkLxiK1EWTXdxRfGrhHNn71bG2VYPzGIMd/FmcfkpaHxpLoA2MVVCfzfrsz6H22pU0010e5Hpk9HXzPiT/7Kt6fw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gLfNCM5eWjrEQJp449jSgSpPXc7avaqIMDOzt9WCjhU=;
+ b=u5Vki9DyKWmjmh+7BKBYAV/6EkERvBoc1a4QVgYbqvbVPFQyNJVL0O1GKlj4yukmkiwdohAcwEvYI58hHe23C5bhu8u+nuHIRaseksQx9CfGHxDKhwnl6D+GQ8S5ACCvOf+6xyVUcoyqCwe5EIZogO36UFoXf92Fr95DiK7+nK3o4hyITd0nwMOI0+Fs54YrG8l2A6lB65zXldA1/Sk6VHtAiSCZboWOm6GkMBttzs7uc8MxFfiMAlthKV4NV3tAMPxR8duBDiDxlHkJOGTGSjOaBtXYEHfABBND5o3KPMkQj1sDZ1AGtqNYY06iNo0yZ0lj5XDpm7739ITQQK1vMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gLfNCM5eWjrEQJp449jSgSpPXc7avaqIMDOzt9WCjhU=;
+ b=UokOtzCUttYGgkGIh2r2zAIvnm2J+Sro2TMwLdN8/3aVguTADhucdaUevznrK9FgXDAeJ1KlodkefCHJz2r8qX74U58fT4fxUoUgqKps1REvC5yW8X8CcchRrGtIWdoZrq0lhAlv9tYAarJ+CtLn3lyvvaXhYYlUqpbwxIKInbzBIxj2so3RPrWSWF3f4/Bd1LhiSBoVicsxI/WbDa2JLGdtbNtF5EZYAOwV3C6zNlb4HKpY3vTokxjJRsaalJVVTR87c1eNPwv2ivbbnu6l4fF9QYzljWTfZtKy2pWcvo0fz5NJgvRFX2gWi4ej5H1zo2Tim+mNXyhKcM9gIE9iNA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB8245.namprd12.prod.outlook.com (2603:10b6:8:f2::16) by
+ CY8PR12MB7683.namprd12.prod.outlook.com (2603:10b6:930:86::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9723.7; Sun, 15 Mar 2026 17:16:18 +0000
+Received: from DS0PR12MB8245.namprd12.prod.outlook.com
+ ([fe80::e7c5:cfca:a597:7fa4]) by DS0PR12MB8245.namprd12.prod.outlook.com
+ ([fe80::e7c5:cfca:a597:7fa4%4]) with mapi id 15.20.9723.014; Sun, 15 Mar 2026
+ 17:16:18 +0000
+Message-ID: <2ec931b6-a287-419e-821e-35420c12378d@nvidia.com>
+Date: Sun, 15 Mar 2026 22:46:08 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/9] PCI: tegra194: Drive CLKREQ# signal low explicitly
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+ "kwilczynski@kernel.org" <kwilczynski@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+ Jon Hunter <jonathanh@nvidia.com>, "kishon@kernel.org" <kishon@kernel.org>,
+ "arnd@arndb.de" <arnd@arndb.de>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "Frank.Li@nxp.com" <Frank.Li@nxp.com>, "den@valinux.co.jp"
+ <den@valinux.co.jp>, "hongxing.zhu@nxp.com" <hongxing.zhu@nxp.com>,
+ "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+ Vidya Sagar <vidyas@nvidia.com>, "cassel@kernel.org" <cassel@kernel.org>,
+ "18255117159@163.com" <18255117159@163.com>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20260303065758.2364340-1-mmaddireddy@nvidia.com>
+ <20260303065758.2364340-2-mmaddireddy@nvidia.com>
+ <vtylufhul43vacnq6gxvoyshtiesl2is5rmfgxw2ijlzntyvch@sbt7dhufem6q>
+Content-Language: en-US
+From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+X-Nvconfidentiality: public
+In-Reply-To: <vtylufhul43vacnq6gxvoyshtiesl2is5rmfgxw2ijlzntyvch@sbt7dhufem6q>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BM1P287CA0012.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:b00:40::35) To DS0PR12MB8245.namprd12.prod.outlook.com
+ (2603:10b6:8:f2::16)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260312130229.2282001-12-cassel@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB8245:EE_|CY8PR12MB7683:EE_
+X-MS-Office365-Filtering-Correlation-Id: e141e5bc-afe9-40d6-dd1c-08de82b69247
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|56012099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	Ec8XXlWusQ5EV+ObwssTxjZeXctH7CJG1tDo77QjfAjatqwcLotaXe5yOavLk4HIMm4Ho7Eyt8ZufZr4pT5aZWSG26jkexo0AOc7/rW+wZngUA7tQ5sxxA/HN/orfQVwN8brTZIjmbn5UDwpw0rx54i9W5TcRqcO35xqBfjZIbFJp5RD6JutK1kwqfPeg+PQ3NYNAC55TyTQwdRr5wgJS78JOUS2NoKCp3NTHnNX86AdBs3sPuraKDauxwO+XFp0dHCXN/7qYksO0V6m4zI43VGKin+IYTZ8Ognur1ITJHp494etBa/3pZmvYnxyZghkLVMnr0QnR0IrRBO5S4/XGOSeafLInrkDkke71LT5neZywqaRY+Lk4p0SUNmxVaJjg/xp7O/TdQrgHNflHZRIELYlQ+U+mt6nZBQ0jpU9Bovl5x5p/SOOj6l/DxpxyBJ4KavRb6VGhvigVGH3XINzBehVoiaDqdErxy+COcD5dWegiqbi0PABrLCjdTShqiBxkiBqE184Voq0dZXy+YzwN0oYCmU0wr7O4YEtnDwEiqacejNUzFoIZ0I5Ssnd0icmW/nzZUNBc0H/pO73TEnqI/TH30JeEM37E7qkB+YPcv/4ZveSrTCkQlbc5xl7m53KRqKc3/Z3Jj5uA54xXCPmWUSwBe+hYInkt6WBAfB9euuWR1/ZXbsmbJv8du3ofV431m/pV7hd/5iSBqmFj1ihrMxHLcqsKVJTUFTg47YWvd4=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB8245.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?b2p1aVhsVnBYMllZTWRBdE1CYUc4WUMrL1Q1NnpyTEtnUkVtWWNjeW1lVits?=
+ =?utf-8?B?WE8yK2dZRi9KeUMrMlpZTG5rY3VKRlAzUUxJNnVJWVAwQ0hoVC9zVFFuN05z?=
+ =?utf-8?B?cnpJdU5UYnVTcTF6VUxzNjYzRG9zUy9PTDVUc2ZQbXRFZEI3UElaeEc3dC9P?=
+ =?utf-8?B?RmY0QXVRdEhqQVpWQ2F3SjRFTE1FNDlORmdISzlVMDRhb1g3VjdXQldTWEF6?=
+ =?utf-8?B?MEhXbU5UMkE0OFdEcGFzK3V2Mk42eHRXV280cHFwQ2ZncEh0MXRibFNDVkVG?=
+ =?utf-8?B?TW81RE1lWFBRSG5FZDZmckFZZ20xWUhTenVnZlpDRjZlTFhOa3c3YUJaZmlP?=
+ =?utf-8?B?bWJlVlB0b0liMG5zcENnREJ2aWJCd1krczdRY1UxRWN0SThDQVg4SWt1U2ds?=
+ =?utf-8?B?MnhCVnlxbG5XZ0NOdTAwL3FLbE1nWmVnSnFOTWVjWS9EVlJPUll4SWRiYUY1?=
+ =?utf-8?B?UUp0dnhTdm1aalp4UjBYM0xBa2E3MTVXbXVkVENYbFNwbGVHZkVtVVFLbml3?=
+ =?utf-8?B?dXdZTWwzQ3RvZmduT1ZuMFljSGdYNXREYTI5eHg4RXFCUUJWOWVIRUZadVFV?=
+ =?utf-8?B?MU94LzVOUWt1WTFOaHBCUGxIckJPZmN4K3RidDNaOUlXM3g5b243ZXBWT3d1?=
+ =?utf-8?B?YmxMU3dxWjNLUHdRZXZZU0JKWHMzTjEwMTJPbGJHOEIxM2I2VU8reVZoZFMz?=
+ =?utf-8?B?dS95V2theW8wdHVCNjBBdXBvMHg2RVlob09Gd0NNa1hWb0FQVG8vN282MmxO?=
+ =?utf-8?B?Y2pDdFRuR09aZjdxZ0ZtL1JZWHZOaGtuRTJnQUwwZWZOazFFd2F5RVcxR1Vv?=
+ =?utf-8?B?V0FyL21WTy9kdEV2VUJjbHRCR21DRWZaV1RwOUxoNWdqQnV4dnh4bnF1bEZz?=
+ =?utf-8?B?VEdrRDF2dTJEOFAyemtpZUozL0lsNHcycno0aE9hdjNFamZ6VmdMcGFjRWg2?=
+ =?utf-8?B?Z2ZoOXozWUx4QlEvYlFoMDMvM3dpMHFaUC9wbDVzRE5TRWUwRVFDVWI1ejBj?=
+ =?utf-8?B?em92L0hhZVJ2cDR6MDMyV2s4TWVhTHFHWm1ybUVIc3VHUnZLUUp2c3V2ZVBu?=
+ =?utf-8?B?TzBpZWtmM09BS2w0NGZoQ3R5TFpnSkdUS0trWkFGT3p3cU1mek9lTlVsUlhY?=
+ =?utf-8?B?MFBwRkw3akVuK3pwTDFnMGE4SkVKbUt6eHpyVTJjZnFvRWZHc2lXRWJlSW01?=
+ =?utf-8?B?NTBtT2pmNmxVVVpManlPOEwwUEVNR0lHZHMrbG85T0s1VXRibTg2eUdXVTc0?=
+ =?utf-8?B?U2FhUlpXRWdRbmlsTFhHMTlsYWs4c2NPTXZlR2d1b29JbEVYa1BPSWZxcVh4?=
+ =?utf-8?B?VmhJS0NEeHlhbEthSlV0bmw1SmMydzRSWDRFOEM5MTNUdnZaTUl1ZUEyVlkx?=
+ =?utf-8?B?a1E2SWlJL2pTZ2RDdlpTNE9XSDBGRWhkWWJ2aTFiSVV0WmJxL053SUNGTnpo?=
+ =?utf-8?B?MUVvZmRkM1VaR3pqREFFaEduaThCUkNXT1hkcGQ5UC9DbkxtNFcvaVZhd0xL?=
+ =?utf-8?B?RVZuN3JESnBZdVR1Nk8yQjBWS1hkcytadFJJV3IzWW5YTjRDOWo1akFFdGxS?=
+ =?utf-8?B?dVV3eHZVSkx1NUcrVnNLSk4zM1FNZEwrUFpjbDJTY2FPZFljK2xVZm9GeHFo?=
+ =?utf-8?B?cmJIWnIyelNyeHB1UXFSTWV0RTU2OXJuT05oZ1ZPRlVLNXNRNUU3VDBIRWNw?=
+ =?utf-8?B?OFVYbVJEKzR4REFWaDY3TXRsQ1VldmlQWnhWdHNBTlZtcjdhWjdST0NIdHQy?=
+ =?utf-8?B?YXcvWnBDOUh1QWtTbmtkUlYrSmNNU3E0RDE4WUd5UVlNRDgwQUZjWFE3ZDhz?=
+ =?utf-8?B?NG9WQTVXdW1scTIwUElDOEtwS25IbHptNC9FdzdXMldDYjhGMi9FWjJCakxt?=
+ =?utf-8?B?bWRPSy9Uak4yYkF4TjRYUThWb2xUN1pmZ2NMaDQ1TXMvRmc0c3R2NTMycTl3?=
+ =?utf-8?B?V1ZGUnNTdkFKRzNQTTMybTcwNFo1Z24xRGF6dEVqZHo4cFNiZE1VOE9rTHlm?=
+ =?utf-8?B?RjdORGgwblZwN255WWdneGpZMW96UHlJV3BDdTlXQVUwOUU5SUlQdnpkcWFJ?=
+ =?utf-8?B?QkpnK3JINTZIRGphcnFDMmQ5cXVpUSsyZStFeDBKV1ZLWGtYWEVuS3o5dmV0?=
+ =?utf-8?B?akJON2E5SThGd2dUeElqSnhsL0xlTG9rS0V1NDI3K04zcllmN0JMZjFheXB5?=
+ =?utf-8?B?WVFITExkcjhKTEJKUnR4U0dmWGJSOU9EZkhqTVVXNVY2bkdMTGFtb25EY3hL?=
+ =?utf-8?B?YUU4Q0ppeW5KeEptTy9CV3hUb1lLcW1GZHhHUHN4UTVjeXM3YXltMXpuRE5E?=
+ =?utf-8?B?NFd4WnUyakpwMzRqbXNoWEh0SDhSNXJRbGVhRlJsTHlkcjJLSTNtUT09?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e141e5bc-afe9-40d6-dd1c-08de82b69247
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB8245.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Mar 2026 17:16:18.4232
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: x5aI8LpXZoS82R/HGEEFlQVP5D7khIOAouISfqEiZIA49t3RR4472C0ZkHoRFgpLv46Xe44N9djyY8nz49iDyw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7683
 
-On Thu, Mar 12, 2026 at 02:02:28PM +0100, Niklas Cassel wrote:
-> Hello all,
-> 
-> This series was originally written in response to the patch series from
-> Manikanta Maddireddy that was posted here:
-> https://lore.kernel.org/linux-pci/291dab65-3fa6-4fc8-90a2-4ad608ca015c@nvidia.com/T/#t
-> 
-> Manikanta has reviewed this series and will send a small series on top of
-> this one.
-> 
 
-Applied to pci/endpoint, thanks!
 
-- Mani
+On 05/03/26 4:28 pm, Manivannan Sadhasivam wrote:
+> On Tue, Mar 03, 2026 at 12:27:50PM +0530, Manikanta Maddireddy wrote:
+>> From: Vidya Sagar <vidyas@nvidia.com>
+>>
+>> Currently, the default setting is that CLKREQ# signal of a Root Port
+>> is internally overridden to '0' to enable REFCLK to flow out to the slot.
+>> It is observed that one of the PCIe switches (case in point Broadcom PCIe
+>> Gen4 switch) is propagating the CLKREQ# signal of the Root Port to the
+>> downstream side of the switch and expecting the Endpoint devices to pull
+>> it low so that it (PCIe switch) can give out the REFCLK although the Switch
+>> as such doesn't support CLK-PM or ASPM-L1SS. So, as a workaround, this
+>> patch drives the CLKREQ# of the Root Port itself low to avoid link up
+>> issues between PCIe switch downstream port and Endpoint devices. This is
+> 
+> Is the CLKREQ# signal shared with the switch and the endpoint devices
+> connected to its downstream port also?
+> 
+Yes, this is the observation.
+
+>> not a wrong thing to do after all the CLKREQ# is anyway being overridden
+>> to '0' internally and now it is just that the same is being propagated
+>> outside also.
+>>
+> 
+> What do you mean by 'propagating outside'?
+> 
+> And what is the difference between APPL_PINMUX_CLKREQ_OVERRIDE and
+> APPL_PINMUX_CLKREQ_DEFAULT_VALUE?
+> 
+> - Mani
+APPL_PINMUX_CLKREQ_OVERRIDE: This overrides CLKREQ# input PAD to PCIe 
+controller.
+APPL_PINMUX_CLKREQ_OVERRIDE: This overrides CLKREQ# output PAD to low.
+Propagating outside means driving CLKREQ# pin as low.
+
+- Manikanta
 
 > 
-> Changes since v3:
-> -Modified patch 1 to simply drop BAR_RESERVED for a BAR following an
->  only_64bit BAR (Manivannan).
-> -Added a patch from Manikanta, to make his follow-up series smaller,
->  since this series touches the same lines anyway.
-> 
-> Link to v3:
-> https://lore.kernel.org/linux-pci/20260302095913.48155-11-cassel@kernel.org/
-> 
-> 
-> Koichiro Den (2):
->   PCI: endpoint: Describe reserved subregions within BARs
->   PCI: dw-rockchip: Describe RK3588 BAR4 DMA ctrl window
-> 
-> Manikanta Maddireddy (1):
->   PCI: endpoint: Allow only_64bit on BAR_RESERVED
-> 
-> Niklas Cassel (7):
->   PCI: endpoint: Do not mark the BAR succeeding a 64-bit BAR as
->     BAR_RESERVED
->   PCI: endpoint: Introduce pci_epc_bar_type BAR_DISABLED
->   PCI: dwc: Replace certain BAR_RESERVED with BAR_DISABLED in glue
->     drivers
->   PCI: dwc: Disable BARs in common code instead of in each glue driver
->   PCI: endpoint: pci-epf-test: Advertise reserved BARs
->   misc: pci_endpoint_test: Give reserved BARs a distinct error code
->   selftests: pci_endpoint: Skip reserved BARs
-> 
->  drivers/misc/pci_endpoint_test.c              | 21 ++++++++-
->  drivers/pci/controller/dwc/pci-dra7xx.c       |  4 --
->  drivers/pci/controller/dwc/pci-imx6.c         | 22 +++------
->  drivers/pci/controller/dwc/pci-keystone.c     | 12 +++++
->  .../pci/controller/dwc/pci-layerscape-ep.c    |  6 ---
->  drivers/pci/controller/dwc/pcie-artpec6.c     |  4 --
->  .../pci/controller/dwc/pcie-designware-ep.c   | 24 ++++++++++
->  .../pci/controller/dwc/pcie-designware-plat.c | 10 ----
->  drivers/pci/controller/dwc/pcie-dw-rockchip.c | 23 ++++++----
->  drivers/pci/controller/dwc/pcie-keembay.c     |  3 --
->  drivers/pci/controller/dwc/pcie-qcom-ep.c     | 12 -----
->  drivers/pci/controller/dwc/pcie-rcar-gen4.c   | 16 ++-----
->  drivers/pci/controller/dwc/pcie-stm32-ep.c    | 10 ----
->  drivers/pci/controller/dwc/pcie-tegra194.c    | 19 ++------
->  drivers/pci/controller/dwc/pcie-uniphier-ep.c | 19 +-------
->  drivers/pci/controller/pcie-rcar-ep.c         |  3 --
->  drivers/pci/endpoint/functions/pci-epf-test.c | 24 ++++++++++
->  drivers/pci/endpoint/pci-epc-core.c           |  5 +-
->  include/linux/pci-epc.h                       | 46 +++++++++++++++----
->  .../pci_endpoint/pci_endpoint_test.c          |  4 ++
->  20 files changed, 154 insertions(+), 133 deletions(-)
-> 
-> 
-> base-commit: 0b74f7d72399d4c4422ed3d68ef28b3612f71e74
-> -- 
-> 2.53.0
+>> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+>> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+>> ---
+>> Changes V6 -> V7: Fix commit message
+>> Changes V1 -> V6: None
+>>
+>>   drivers/pci/controller/dwc/pcie-tegra194.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+>> index b1ae46761915..2f1f882fc737 100644
+>> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+>> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+>> @@ -44,6 +44,7 @@
+>>   #define APPL_PINMUX_CLKREQ_OVERRIDE		BIT(3)
+>>   #define APPL_PINMUX_CLK_OUTPUT_IN_OVERRIDE_EN	BIT(4)
+>>   #define APPL_PINMUX_CLK_OUTPUT_IN_OVERRIDE	BIT(5)
+>> +#define APPL_PINMUX_CLKREQ_DEFAULT_VALUE	BIT(13)
+>>   
+>>   #define APPL_CTRL				0x4
+>>   #define APPL_CTRL_SYS_PRE_DET_STATE		BIT(6)
+>> @@ -1411,6 +1412,7 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
+>>   		val = appl_readl(pcie, APPL_PINMUX);
+>>   		val |= APPL_PINMUX_CLKREQ_OVERRIDE_EN;
+>>   		val &= ~APPL_PINMUX_CLKREQ_OVERRIDE;
+>> +		val &= ~APPL_PINMUX_CLKREQ_DEFAULT_VALUE;
+>>   		appl_writel(pcie, val, APPL_PINMUX);
+>>   	}
+>>   
+>> -- 
+>> 2.34.1
+>>
 > 
 
 -- 
-மணிவண்ணன் சதாசிவம்
+nvpublic
+
