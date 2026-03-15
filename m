@@ -1,180 +1,122 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com [74.125.82.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9142C221265;
-	Sun, 15 Mar 2026 20:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176A537B3F2
+	for <linux-tegra@vger.kernel.org>; Sun, 15 Mar 2026 21:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773607693; cv=none; b=SqQ2pmPgnoZCTY3Vb8YTPSeU7KuD1oecgG75mO4uh1OS0MuTcdoMYBY03Bqsa+9R1kjTwfeJ174BfRNnjhoupjoJpDvoUQTi4XYNstL19QmlJYoq9Sa41mc2/+jgHuqu3p9tK19lr1igNejtK88+HqMn3ul0o15yo7XLj9AcIx0=
+	t=1773611372; cv=none; b=V3ZkAPmXt4hM6od3N3jyX3IJipIZgtjf64BfHEa1I+H5P4gt0T7DAhutjZjQUie6UyBWkqY8n8SMwUxqC2JMI/rb3j2pTvBT5uUFYB9In58dU7P6u3OMts95Ah0MWseEyBPpIaFGosIF9WKEDUHBOI57MrRutHbrsGZfymPvrJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773607693; c=relaxed/simple;
-	bh=+X08AHsDj3GmVAeobA9fDcEXl2DHWNce1XM0hUbgDg8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=uASqgqeM1G+BfHEwkO7obkw82okehZi4TZqg92gTawK7GQbNPYbQTQ/DeRh+sbNgE+wC8FgI/sawQKiQwBgRt6fCWDF9ltaun+vIssalUR93crQ7qaA2kkHCvKyjp1stPkUdWiYB1jEf8HEeg0WXTmIiJ4LAcQdZ0IalhFlRb9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b=SfqYB2XY; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+	s=arc-20240116; t=1773611372; c=relaxed/simple;
+	bh=Qxv+0hEJYOFZkN5TsZs6luIf1ayGG9y3q6VTgDkvQv4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ijjNLw2eZCFZOMFbP5i543qgbzITivHT5uoagg7NlHi3hFcl/GluAs3/42j9988yldeuMhNYnsMqCHl+4ziXmWi1GIwlwsvVdnqQShefJ3vp/gUJBkn1eHIvXkJltABdHRyn3jNvSFK/lA03W7XA88n9OkRTMb4G2gV5EwqUO68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mVzwuB8S; arc=none smtp.client-ip=74.125.82.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b="SfqYB2XY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1773607689; x=1774212489; i=marvin24@gmx.de;
-	bh=yAohcocTNYALxsGID+iOAn5FcDqVuL+HrPR47ufzgYU=;
-	h=X-UI-Sender-Class:Date:From:To:cc:Subject:In-Reply-To:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=SfqYB2XYLSWplNuhpCzUfl6YlUzyUle94f9sTJG6YLXd8OKoNMMbbZkYwNYZ+oKg
-	 ZEvFQq7LtXZscqngdFDKcNXZIMCJ3CseV1kfWMMFZO2447z4LlY0Xt8iDnBxyHH5d
-	 EiO3kBPLEokTUD0Hwq5gajS6kUA74GKHR9uLtHe1fEopNLlHdIPD1O6IEUYwxgW/T
-	 o7oB74IlVfgNVOlzeSZvm9UzCuCGhQug7LempMxDtaMtYYHJIeOrcMjsE3CUL3vUa
-	 6GWQJVI1db7Lti7tSf1M7jQEer3urztY3wn1GfQE7NlZK7yo+zpZ8uiSRcnPmNoTP
-	 UWiN4fSMIkaHCAW1Mg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from client.hidden.invalid by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MUowV-1wAVFQ2rNB-00RnMq; Sun, 15
- Mar 2026 21:48:09 +0100
-Date: Sun, 15 Mar 2026 21:48:08 +0100 (CET)
-From: Marc Dietrich <marvin24@gmx.de>
-To: Gustavo Arantes <dev.gustavoa@gmail.com>
-cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev, 
-    ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] staging: nvec_power: quiesce EC queries for system
- suspend
-In-Reply-To: <20260312211151.85379-1-dev.gustavoa@gmail.com>
-Message-ID: <233329fb-0ea9-d784-b56c-f078a329d370@gmx.de>
-References: <20260312211151.85379-1-dev.gustavoa@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mVzwuB8S"
+Received: by mail-dy1-f177.google.com with SMTP id 5a478bee46e88-2c0bdf1988cso1042522eec.1
+        for <linux-tegra@vger.kernel.org>; Sun, 15 Mar 2026 14:49:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773611370; x=1774216170; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qxv+0hEJYOFZkN5TsZs6luIf1ayGG9y3q6VTgDkvQv4=;
+        b=mVzwuB8S+dTQgYy/Zp0iRtywsi5LWS4zX9W27E3LMGyKzHeleUNOhLGvRobn1mWZZq
+         VDr3pbSqRO0Zcdij+WKQcskgLnLxVyb2vYi7YjlAOi31alBw70DahLk7AKO87ark3p70
+         Aiw+FnfnRW8VMNVQ68igBuf1ccgOi5HhU/1GfQT82k9SvPRcptirDKE1PBmpvucSUum8
+         MFoddB77GDED3swpuK1kHaZvvxVM0pkOGBWkB36yXSGeEFc6wLSHEgT5BdjrPnAzFgkt
+         cklfAYwtKJtOokGiUeyLIbIFuPg0cQZHcaMGYhoF/+eVh2GG3+9z2CMlk1jw3VDVx9Pl
+         ee4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773611370; x=1774216170;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Qxv+0hEJYOFZkN5TsZs6luIf1ayGG9y3q6VTgDkvQv4=;
+        b=qQy5ge4qtCXJjViL2q4cv/DX9N9sGIc2Ulm9M3zjIcNvSLLvyFcK47mL5kA4HrDOmi
+         Dg6w7SVNvoc0ltPnIxqQqX/gP56S3+y6Fzpsr0rgJTQ5NwrABFqmW3V+03Pyrq8wUgc0
+         u73S6xUT0Yb7BicI3fHbFegsP81lVNs1dQwDUbVYaPmduxDzNCZrM3BWSBUIllrUnWBu
+         4y/wRKQl7UCLn6qvTj1VVeOeH+LDjJUBucl34hdge9TzBRPedIeWplYQ39Eo5dQf+0FC
+         yzNWXf+xPp6+Z6+Xy0+07hcxnB9gbcgHeK516tLiOoQkvDfxvsppD5qPD6I9HyC15uA2
+         Oaxw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3zkpKbON6iQXlyAb6OQwzeXPR2Mc58z6upwZrE1+ObfKEULDGJgHZBrYoX5iR1BattpanAxoamK2zOw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWCaqrKWpJTFifqsX9R8pXd079SzpOSkCb8Cb1z1cWwdxs/R98
+	LDuIpWzXDzkSKvYm3wEOaTlUZPJG5sDt6uamQ8t06we4FRP/fD2q2J8c
+X-Gm-Gg: ATEYQzzJBlkSB9qPvvQaxVjZyXdIv/WjT+wSgl793crDravguSjY5Wl4yjLHJD0/6KG
+	kE9H1+kGQ9rKKGweDwK3ZtD7enulLK7CbQYqEYbxAOClq9dS3sBjFeQ82vT/boMcD3hoyNGQySn
+	FvnggHS7HPGRfO63ijgITg+pdczYcANLN52Ae6IrjA+q2IsL8VCHt69IdOMM4OL31PnALf5ZqHr
+	PR5X7ArYgqHfWPslyFpTyrmBJ380hPU6lh/uYfSRAVHR9T8Dp32FyKnWImCabeVv+aNjg7MkDyc
+	OADaZqnqyzcyFOU8f8E1KTVKNhm+X/kzwhul0NbxivrIuPoNr+dmTYz4C7bRZ9jMwbWk4LOPNwB
+	ACGHoIdZejqEznLFEYwH/t49iiZxuQPyB9Jtc9N70zh6IzspFCxTTK+iO1n/yEaDsjR8vw1bdpA
+	YVFz8XngPgtSIio6KqYXUL2VdyRHiEFxjPdjpn5D5bZwBhKGGJMKTYk/5XCg==
+X-Received: by 2002:a05:7301:2f9b:b0:2be:171c:503b with SMTP id 5a478bee46e88-2bea547de61mr5131000eec.16.1773611370199;
+        Sun, 15 Mar 2026 14:49:30 -0700 (PDT)
+Received: from unix.my.domain (191-217-32-216.user3p.v-tal.net.br. [191.217.32.216])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2c0b1fc876csm6441974eec.29.2026.03.15.14.49.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Mar 2026 14:49:29 -0700 (PDT)
+From: Gustavo Arantes <dev.gustavoa@gmail.com>
+To: marvin24@gmx.de
+Cc: gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev,
+	ac100@lists.launchpad.net,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Gustavo Arantes <dev.gustavoa@gmail.com>
+Subject: Re: [PATCH 0/2] staging: nvec_power: quiesce EC queries for system suspend
+Date: Sun, 15 Mar 2026 18:48:51 -0300
+Message-ID: <20260315214851.15008-1-dev.gustavoa@gmail.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <233329fb-0ea9-d784-b56c-f078a329d370@gmx.de>
+References: <233329fb-0ea9-d784-b56c-f078a329d370@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-X-Provags-ID: V03:K1:W5tiCN0HOWJA6ioI6BSEiFL9xjrdSjUW5YMxRssVgtLNll1lXoP
- jHAhnr27IbGYUTCIlbGZH8jsXHSBhN9KTXmhNiTES3l26Z5SUml2i1VByzXnXv+Jc3Z6H/3
- WveW5dZOAkZuX8yBQXbjoI3oCToZWLpoVyvd7+/ZZIt3Sl0tpgpzdz6JwcA3OSQUZRw5Z4b
- PziMqmPS3CyreE49wecWA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:UjMfFpNSkeg=;xUdlNcUZl4hFoZ+L2ekLg0FTYB7
- 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
 Content-Transfer-Encoding: quoted-printable
 
-Hello Gustavo,
-
-thanks for your patches.
-
-On Thu, 12 Mar 2026, Gustavo Arantes wrote:
-> nvec_power still issues EC queries asynchronously and keeps work queued
-> across system sleep. This series first serializes the driver's EC
-> requests, then adds PM hooks so the remaining work items are quiesced
-> while the parent NVEC controller is suspended.
-
-Reading out the battery info during boot takes some time as far as I=20
-remember, but I haven't tested your patches yet. Is the use of sync=20
-writes really required in order to realize a clean suspend?
-
-AFAIK, the machine doesn't support suspend currently, partily due to=20
-missing atomic writes for the EC. Building the driver as a removable=20
-module may be enough to test the change though.
-Are you able to test the change on real hardware?
-
-Best wishes,
-
-Marc
-
-> Patch 1 exports a small core parser helper, moves the battery metadata
-> queries into a worker, and switches nvec_power over to synchronous EC
-> requests.
->
-> Patch 2 tracks the suspend state per instance, prevents new work from
-> being queued during suspend, and restarts the polling and metadata work
-> on resume.
->
-> Gustavo Arantes (2):
->  staging: nvec_power: make EC queries synchronous
->  staging: nvec_power: stop EC queries during system suspend
->
-> drivers/staging/nvec/nvec.c       |   7 +-
-> drivers/staging/nvec/nvec.h       |   2 +
-> drivers/staging/nvec/nvec_power.c | 122 +++++++++++++++++++++++++-----
-> 3 files changed, 111 insertions(+), 20 deletions(-)
->
->
-> base-commit: ad6bb64332bb4297110950769ad5af52791e33a2
-> --=20
-> 2.53.0
->
+Hello Marc,=0D
+=0D
+thanks for reviewing.=0D
+=0D
+On Sun, 15 Mar 2026, Marc Dietrich wrote:=0D
+> Reading out the battery info during boot takes some time as far as I=0D
+> remember, but I haven't tested your patches yet. Is the use of sync=0D
+> writes really required in order to realize a clean suspend?=0D
+=0D
+You're right, I worked out some math on this, and I agree that the sync=0D
+conversion isn't strictly necessary.=0D
+=0D
+The worst case with async writes during suspend is a reply arriving=0D
+after work has been cancelled. That reply would just be lost, and since=0D
+the poller refreshes everything on resume, there's no corruption or=0D
+crash =E2=80=94 just one missed update.=0D
+=0D
+The sync approach does avoid that window, but the cost is structural:=0D
+the battery metadata init serializes N queries, so the boot-time wall=0D
+time goes from roughly one EC round-trip to N * T_rt. With N =3D 3=0D
+(MANUFACTURER, MODEL, TYPE), the relative overhead is always 2x=0D
+regardless of how fast the EC is. Without hardware to measure T_rt=0D
+I can't tell whether that's 100ms or 2s of added latency, but either=0D
+way it's a cost with no real safety benefit.=0D
+=0D
+> Are you able to test the change on real hardware?=0D
+=0D
+Unfortunately I don't have access to Tegra 2 hardware, so this has=0D
+only been build-tested and reviewed by inspection. I'd appreciate it=0D
+if you or someone on the ac100 list could validate the v2 on a real=0D
+device.=0D
+=0D
+If you think the lost-reply window during suspend is benign, I'd=0D
+prefer to drop patch 1 and send a v2 with just the PM hooks on top=0D
+of the existing async flow. Otherwise, I'm happy to keep the sync=0D
+conversion as-is.=0D
+=0D
+=0D
+Best regards,=0D
+Gustavo Arantes=0D
