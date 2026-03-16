@@ -1,94 +1,106 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772D624BD03;
-	Mon, 16 Mar 2026 01:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766652248A0;
+	Mon, 16 Mar 2026 03:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773625094; cv=none; b=clrnh1oZJYKSJGtUeXHNq7jmoU7NOlsiQYZSRDn1xAYYGgFVEqzVfiRzrr9Ao/pcv3csaT7MySn8NHwCkeqiZD/E6GPfgbPcQUmH0uH+fdxrrF6nld3JkyIYdXgPj13bH2+Gt9Eyd4gNnN5he4hJc4gZ1UG6To90XPrJd7awTrc=
+	t=1773631604; cv=none; b=Y/i4yIWyBdPPjbvOpAVG6CD32ldkqihMWlkj/Ih6P1WwQqQi6iQmtcBHezFeDlK6HGvKfWV2qo876mkCbdppGGLngyXiCh2yLkvas8me8CeFd2u9IAZyUwKYYd4N/oExmxbm/XnfwUr+kKcUO8D9K53fvselWdN7BPEbZLIOdXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773625094; c=relaxed/simple;
-	bh=gNZVgSqOOK7OrrMph7m08TJdfti5P/J95WLhvjRscdw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=TJb3LFHgNKNv6IVg61MGjpiHrEirQEYJx1RUlsEXJ/v0F9+evfuJs0uMD4J7Gt7yB5seYchrp1fAfDXC04c0Lc+zpxUxBd5XqqPOz9+WU4wQ5xvxOxEOqfi83w4PF9QZUId7fQiLD9iUhzB9+au9J1IrWSweZWDgudhjA/IzH6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WHcjHenp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773631604; c=relaxed/simple;
+	bh=sgdALoR0VYscVtPqY92tNwojFsvFl1BLlsT4yLskaU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C7ipek+5pSjmpZZTNpF3cufruTDLG2QYKz/uTqPMkaVnPveC6MTecn8C3QUhY07lcbTAVwNWzvrB7+rmy3WKKovmbbxcQ9SE34y5mvKqRcG2KoJnxmNnP1M+duFolEzo/SaZ9BcU+SS2GKH44xOJEQlQWwQcD/Xyfa9/ETr/j8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q5/tRw39; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WHcjHenp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 266BCC2BCAF;
-	Mon, 16 Mar 2026 01:38:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q5/tRw39"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89B6DC19425;
+	Mon, 16 Mar 2026 03:26:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773625094;
-	bh=gNZVgSqOOK7OrrMph7m08TJdfti5P/J95WLhvjRscdw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=WHcjHenp8nOdHNKJ1+vy6uGA/bxPYMJ20ey9dyNZFquvl9hnARd9KdFLSfztntkKi
-	 BjEAE3EUX2TN6jp6XrYJAhdol4RRH1LQh/zg7JQWNq/K44THuvHp/lWeRzgzmpvPFi
-	 AEV4XlP1GU4Sp4s85gTFBtpMwIKpa0KVYFvJnJCTElj1udqVMpfcjiHOtJf/f7RlXg
-	 Z8AvTGaO4iwbZwy75ZhdIRDRmvLIJN5IjJJv7Wc7k60BuQw9JbxxeJ/mUPP7At0tKk
-	 e9NPBNYcFtwpbyQ92qvF/qvq8K9z2GOcYtcocEHr0FSe0bBNyqAP2dAJU8wLZD+ykK
-	 57gTNHuoBH5OQ==
-From: Mark Brown <broonie@kernel.org>
-To: Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Sowjanya Komatineni <skomatineni@nvidia.com>, 
- Laxman Dewangan <ldewangan@nvidia.com>, Vishwaroop A <va@nvidia.com>, 
- Felix Gu <ustc.gu@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20260307-quad-v1-1-f103515db501@gmail.com>
-References: <20260307-quad-v1-1-f103515db501@gmail.com>
-Subject: Re: [PATCH] spi: tegra210-quad: Remove redundant
- pm_runtime_mark_last_busy() calls
-Message-Id: <177352553778.149922.14349765844535159648.b4-ty@kernel.org>
-Date: Sat, 14 Mar 2026 21:58:57 +0000
+	s=k20201202; t=1773631604;
+	bh=sgdALoR0VYscVtPqY92tNwojFsvFl1BLlsT4yLskaU4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q5/tRw39AugTN2V0Fr4z2IF0YErZQoenEo9A99d06iJsE/DjvSHMPQugrkjU6xtwF
+	 sCGazZxdL1qdS/i9dYd3UVwvrUJkWTeY8cdzaTlcO8sdSDUFX1d7aRxnc3xmPPHlER
+	 gQhoMwxnx2Pm2Ej3X5I4lS9HygrF4BpuqwUT7PEnlRFwshSWcKtkDKZrqovw7/I/Uu
+	 ssNFJvED0M32sPrgjXwAsXjfMLZlv/w4bd8K1KyRJoiJshkiOMF+oyWVXE+xOkXYQn
+	 kM1V3j0Ju+CfdtIfdMg9Ozse3YjK3CsJ26z0OBNa4FKbnhry/7rnV7Yq6MWB+UOhXo
+	 RfPMKilGGHhPA==
+Date: Mon, 16 Mar 2026 08:56:33 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Cc: "bhelgaas@google.com" <bhelgaas@google.com>, 
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kwilczynski@kernel.org" <kwilczynski@kernel.org>, 
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, 
+	Jon Hunter <jonathanh@nvidia.com>, "kishon@kernel.org" <kishon@kernel.org>, 
+	"arnd@arndb.de" <arnd@arndb.de>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
+	"Frank.Li@nxp.com" <Frank.Li@nxp.com>, "den@valinux.co.jp" <den@valinux.co.jp>, 
+	"hongxing.zhu@nxp.com" <hongxing.zhu@nxp.com>, "jingoohan1@gmail.com" <jingoohan1@gmail.com>, 
+	Vidya Sagar <vidyas@nvidia.com>, "cassel@kernel.org" <cassel@kernel.org>, 
+	"18255117159@163.com" <18255117159@163.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 1/9] PCI: tegra194: Drive CLKREQ# signal low explicitly
+Message-ID: <js7ev7dxc4zzal7lt6r632gtsm2dlcotncqgpgyytdritnismy@t62pcftuj3nk>
+References: <20260303065758.2364340-1-mmaddireddy@nvidia.com>
+ <20260303065758.2364340-2-mmaddireddy@nvidia.com>
+ <vtylufhul43vacnq6gxvoyshtiesl2is5rmfgxw2ijlzntyvch@sbt7dhufem6q>
+ <2ec931b6-a287-419e-821e-35420c12378d@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-5154a
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1151; i=broonie@kernel.org;
- h=from:subject:message-id; bh=gNZVgSqOOK7OrrMph7m08TJdfti5P/J95WLhvjRscdw=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBpt18DZHHfbmhc+VGmZ65ZSaLmg6nxJATlYpEs2
- sfZHnq/25OJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCabdfAwAKCRAk1otyXVSH
- 0DnZB/9w4yYLrJucXLZITTiD/ZwXvdnb6+TjWQWImseY1AmuRGrSjR6hPQG+R9g/CRVX+3aKC22
- f/BpQrUCpySf4XXKBDDARY95UxU28Z1+X7p7eocRuttObVSkZZjaWOWHaJYhaE+sDhx26QhufxF
- UcgCE/trpnuh1QM6BK3E+oVwSLDqRaF+GZ27BoVHOb6d7WYAlqvSSGQ+2BekO+Sv23eqxZG86bW
- igoKHEBmmZfY4Hl1csgtQL4xqIiV4BHZCwgXo+cNc7Sc0qL2fuR/9YWWdvHbW4d2wCKZpYm+dzk
- F+tEPCeT9gEbCT9umWZVsN+kjAyJb9HxSegHW7ry9ogrWKxh
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2ec931b6-a287-419e-821e-35420c12378d@nvidia.com>
 
-On Sat, 07 Mar 2026 15:24:45 +0800, Felix Gu wrote:
-> spi: tegra210-quad: Remove redundant pm_runtime_mark_last_busy() calls
+On Sun, Mar 15, 2026 at 10:46:08PM +0530, Manikanta Maddireddy wrote:
+> 
+> 
+> On 05/03/26 4:28 pm, Manivannan Sadhasivam wrote:
+> > On Tue, Mar 03, 2026 at 12:27:50PM +0530, Manikanta Maddireddy wrote:
+> > > From: Vidya Sagar <vidyas@nvidia.com>
+> > > 
+> > > Currently, the default setting is that CLKREQ# signal of a Root Port
+> > > is internally overridden to '0' to enable REFCLK to flow out to the slot.
+> > > It is observed that one of the PCIe switches (case in point Broadcom PCIe
+> > > Gen4 switch) is propagating the CLKREQ# signal of the Root Port to the
+> > > downstream side of the switch and expecting the Endpoint devices to pull
+> > > it low so that it (PCIe switch) can give out the REFCLK although the Switch
+> > > as such doesn't support CLK-PM or ASPM-L1SS. So, as a workaround, this
+> > > patch drives the CLKREQ# of the Root Port itself low to avoid link up
+> > > issues between PCIe switch downstream port and Endpoint devices. This is
+> > 
+> > Is the CLKREQ# signal shared with the switch and the endpoint devices
+> > connected to its downstream port also?
+> > 
+> Yes, this is the observation.
+> 
+> > > not a wrong thing to do after all the CLKREQ# is anyway being overridden
+> > > to '0' internally and now it is just that the same is being propagated
+> > > outside also.
+> > > 
+> > 
+> > What do you mean by 'propagating outside'?
+> > 
+> > And what is the difference between APPL_PINMUX_CLKREQ_OVERRIDE and
+> > APPL_PINMUX_CLKREQ_DEFAULT_VALUE?
+> > 
+> > - Mani
+> APPL_PINMUX_CLKREQ_OVERRIDE: This overrides CLKREQ# input PAD to PCIe
+> controller.
+> APPL_PINMUX_CLKREQ_OVERRIDE: This overrides CLKREQ# output PAD to low.
+> Propagating outside means driving CLKREQ# pin as low.
+> 
 
-Applied to
+From the commit message, it looks like APPL_PINMUX_CLKREQ_OVERRIDE itself
+drivers the CLKREQ# signal to low (0), so it is not clear to me what this new
+APPL_PINMUX_CLKREQ_DEFAULT_VALUE setting does.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.1
+- Mani
 
-Thanks!
-
-[1/1] spi: tegra210-quad: Remove redundant pm_runtime_mark_last_busy() calls
-      https://git.kernel.org/broonie/misc/c/d1008a8e29b0
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+-- 
+மணிவண்ணன் சதாசிவம்
