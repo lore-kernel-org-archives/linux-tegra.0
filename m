@@ -1,127 +1,107 @@
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0C72874E3
-	for <linux-tegra@vger.kernel.org>; Sun, 15 Mar 2026 23:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254B03B2BA;
+	Mon, 16 Mar 2026 01:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773616220; cv=none; b=TyAAsr2YdYPNg9i3lJbvNPTqKzxNfyNSwkHHE+YjsQiunuo3Zl/MBAc/G4T/8e73exirFr2OkWLseFkAX8bY+JmyF/pFq1LL5Zo5bOP04zXokdloErSr1bcVEAFWscataaO3JgwTezuqhSg2SatHAR9nsEjnvbWmyQWeMd91DTU=
+	t=1773624325; cv=none; b=MH/XzR3fiz/D47Rm9wp4Qne38jL8bB3AHMUKBtTFVHGkIcTxrHRwi6oBWywFkbPSqCA99VMFgD7FMp1Wq2xCfoPiEWJ4wll6BU9bh3hb6M101//f0ruFhQONe7Tx3y9fRAsy38oZka7x479vfbUQvwK4hhVW3+qiuodSNjCqkF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773616220; c=relaxed/simple;
-	bh=fLloq4+x8At7hQovZLrmBNB1XxjUka1iComkdFuv2dU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BoN9ECOzBk2XkHcuRdadpLc2v+1+sziXknmQPan6NfyD7dx5G9/VgiSlSXn6BIgXsyR7RkVZAVpBUZdr7r79CEFL2kf/6lwH4pI8g6AQcgNnBNFnZDPBP4egSepz+EU8mbxPgbndCFmf8S89urT478Vz7UaZAe7ewJHhsRbveo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y65crVlR; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1773624325; c=relaxed/simple;
+	bh=aHkbnn87tDJLEor7BJnTVAnBMXTWTv+C7Eg7gVuAo3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rh9N8arqdVhD+MZsxhSulhvk7pliItKfWYlVcuKtVzzUdqQ9M2oSXnFeemuqUq8YIxponr8AgTmwWbZ9NEp6fjmfUr51Fzzi09fqRLyuiKxCGbsg1jguek8h9SAhteDWKZVp9vvMFo2wroQ96/sZ48Lr3RAHnJnQ30bT+yfbr/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bEiYDBBN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y65crVlR"
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3590042fa8eso2534400a91.1
-        for <linux-tegra@vger.kernel.org>; Sun, 15 Mar 2026 16:10:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773616218; x=1774221018; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LEWsD2Q8KtTGsEAWmFS/iNWR9RG+AhbQpSE8inJiSCs=;
-        b=Y65crVlR74PkKRkO8mL4eeqPXhF782C26loL0teMr+PV7x/KxM9veSRd4A/9JLYNfe
-         PY8IjmzJUDAx+nDk5krQVFaYqZCtxJ85cIyI7eVuLXQV1mR7wtqp0+EYxgFTs4MRgMmz
-         bQoELgCedf0pews2p8+Srzggs5OO/UAk/wpRAMBr5XYXO/xzsf6peOhBKbxGpvV5girZ
-         ATu8+/9gXuvtpkQn0J/Vdj+S9tnwZr0XyTfnkOAJNtZytlUwF9ymDAdhzyF2ublQR9PZ
-         Ds7mMvctffhKb6RZqbK73noFjqDtCQm1tEB3TERpt2L3hqaP+2X1ssPaWh1YK28Jeilv
-         KDRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773616218; x=1774221018;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LEWsD2Q8KtTGsEAWmFS/iNWR9RG+AhbQpSE8inJiSCs=;
-        b=HSPqzRSpu/C+rLT+wBg/RYYYqnuSsP1E5l6ta2SNSLqA8znAw0XVKPOarTjOAvDJoF
-         LJJxL9Tlvv6us116Cyqe+EM/+cCewuLLhC8nsXjqdDyHExMNQFLOKn5XWFnK3wnEmWE0
-         uB+/JnfgKvBN7c+Y8VcX2JAGDJPaIGaoBqi5C92lI+XHIdta/dzyljaSQ7btqa8zW3cL
-         bwzV4HDh1RkUjEIbfnhAs1srbJ0dN1c79Oi4RDzOtjkY1gkCS+9H1Lv2w19QfR2ECWMm
-         6NP0bAm1u6kvVPmbjvKMDgTyOM7G7dBeJsW6hJfeea5cjlTEAF0B0t8DbGQshU44Y2VO
-         dsaQ==
-X-Gm-Message-State: AOJu0YyvGnGZo1Mp3UuUhuvVEXhKy/LswWg/G2Rsxf/vC8BZaRD6jkdf
-	98UtEMj+GVr/MDqsy37v1suONh2fqbUtwlQoOZCGjzT01u3Hwaws0ftSjdJUuA==
-X-Gm-Gg: ATEYQzxUoVUetno7SvHrXwm5tkWr0NTgYqCh1MSFz/MMvCfYZjDQJUwCqXwqibHJZG4
-	2teiYYpvmISbmXxfg0y4WQzMpskH77t5jz6c3+98gmawkRpg/AGpjHApLwZuPY1BmCrkxn7bDbm
-	ZEOYgd1I2XrSdbWg6/u7OxC5GyzlTU882AJYcoS5w2OE5MyRPDaT2GBRS9k6bUzXPYfDdX9y8Nc
-	C3rIx6xl2MCzASi8HEO+kxQOz9w+U08I3upP9sl8Nq9NyATnGOdc6NM4SS1kUBpbXU9XdVkNOvn
-	nZUYtOZUBUtlD6R+mmv0BSSRcTQ0G7OckIn9m6tEvCteiCM6YLcv+QjLoT1Fk3MXuO1SiDVmV9k
-	+I0PYCc7GwEgQYkRYPBqg0KGfuFzPv+KEzD5mXzr67hE5teXjnRCfV5eUTXwz4XBP4g5eG5SPpb
-	iIgoAr4JmRN0szC4wHXEZsHflExjBnfTwOTHxQtw8dF0PlY/HEtmtdwg4=
-X-Received: by 2002:a17:90a:da90:b0:35b:91e1:e110 with SMTP id 98e67ed59e1d1-35b91e1e214mr3925378a91.20.1773616218024;
-        Sun, 15 Mar 2026 16:10:18 -0700 (PDT)
-Received: from ryzen ([2601:644:8000:56f5::8bd])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35b9db7dfe6sm1399177a91.8.2026.03.15.16.10.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Mar 2026 16:10:17 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-tegra@vger.kernel.org
-Cc: Linus Walleij <linusw@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-gpio@vger.kernel.org (open list:PIN CONTROL SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] pinctrl: tegra: use flexible array member for array
-Date: Sun, 15 Mar 2026 16:10:00 -0700
-Message-ID: <20260315231000.50543-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bEiYDBBN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE981C4CEF7;
+	Mon, 16 Mar 2026 01:25:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773624324;
+	bh=aHkbnn87tDJLEor7BJnTVAnBMXTWTv+C7Eg7gVuAo3Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bEiYDBBN7k31TXaMtwHgCb7gjw7pKuOm4itdb4rPNZdZ1FUuaEj2ZQ8BV9+j10I5S
+	 38mvrMn2MyeG486OAk0G4xT5fJt8OK1U437FsSqfCvsQS1vyRAjD7VCWnESSqVAMsH
+	 HPCbLivTQtjsABRrQT2ZCTH37zqwGC4H3oF8Jg3RODfoVe8LVJ6ryUeRXQ9MeQks6A
+	 fShPVP9XRWp+X69goJIDBTOeW+I4P55ZJN2Clft3CjPldi78Hkg0SZi9shcFo2U5zG
+	 yxvl2uGvqQCt27L8DuWWYIgzrBcpzSrOF443u+E7uf9Z/jLFBSXbYGP2V34f35gA1p
+	 6ajYSQENJa7gQ==
+Date: Mon, 16 Mar 2026 06:55:07 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Cc: "bhelgaas@google.com" <bhelgaas@google.com>, 
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kwilczynski@kernel.org" <kwilczynski@kernel.org>, 
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, 
+	Jon Hunter <jonathanh@nvidia.com>, "kishon@kernel.org" <kishon@kernel.org>, 
+	"arnd@arndb.de" <arnd@arndb.de>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
+	"Frank.Li@nxp.com" <Frank.Li@nxp.com>, "den@valinux.co.jp" <den@valinux.co.jp>, 
+	"hongxing.zhu@nxp.com" <hongxing.zhu@nxp.com>, "jingoohan1@gmail.com" <jingoohan1@gmail.com>, 
+	Vidya Sagar <vidyas@nvidia.com>, "cassel@kernel.org" <cassel@kernel.org>, 
+	"18255117159@163.com" <18255117159@163.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 03/13] PCI: tegra194: Don't force the device into the
+ D0 state before L2
+Message-ID: <7d7p7b6ntvqmzfkqssioatepxnyh3h2f36uxrwgsc5txeosu46@mhruqj5ikjx7>
+References: <20260303065448.2361488-1-mmaddireddy@nvidia.com>
+ <20260303065448.2361488-4-mmaddireddy@nvidia.com>
+ <6ekumkzuh6znxzf4deaawc46mgoen6haxcrvrein2irpw3xqhc@shwkkvjnlj6h>
+ <a917e475-1ae9-4e12-98a1-babc49f042a7@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <a917e475-1ae9-4e12-98a1-babc49f042a7@nvidia.com>
 
-Simplifies allocation slightly by removing a kcalloc call and using
-struct_size.
+On Sun, Mar 15, 2026 at 06:51:23PM +0530, Manikanta Maddireddy wrote:
+> 
+> 
+> On 05/03/26 3:10 pm, Manivannan Sadhasivam wrote:
+> > On Tue, Mar 03, 2026 at 12:24:38PM +0530, Manikanta Maddireddy wrote:
+> > > From: Vidya Sagar <vidyas@nvidia.com>
+> > > 
+> > > As per PCIe CEM spec rev 4.0 ver 1.0 sec 2.3, the PCIe Endpoint device
+> > > should be in D3 state to assert wake# pin. This takes precedence over PCI
+> > 
+> > WAKE#
+> > 
+> > > Express Base r4.0 v1.0 September 27-2017, 5.2 Link State Power Management
+> > > which states that the device can be put into D0 state before taking the
+> > > link to L2 state. To enable the wake functionality for Endpoint devices,
+> > > do not force the devices to D0 state before taking the link to L2 state.
+> > > There is no functional issue with the Endpoint devices where the link
+> > > doesn't go into L2 state (the reason why the earlier change was made in
+> > > the first place) as the Root Port proceeds with the usual flow post PME
+> > > timeout.
+> > > 
+> > 
+> > So the previous claim in the comments is not true?
+> > 
+> > I agree with this patch in principle, but just want to know why the comment
+> > claimed there is an issue if the devices are not in D0 state.
+> > 
+> > - Mani
+> No, previous claim is true. D0 fix is done to fix L2 timeout with a specific
+> Endpoint. However, later realized that it is breaking wake functionality
+> with other Endpoints. As I mentioned in the commit message reverting D0 fix
+> still causes L2 timeout with that specific Endpoint, but it doesn't cause
+> any functional issue.
+> 
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/pinctrl/tegra/pinctrl-tegra.c | 9 ++-------
- drivers/pinctrl/tegra/pinctrl-tegra.h | 2 +-
- 2 files changed, 3 insertions(+), 8 deletions(-)
+Okay, I just looked up the mentioned section in r4.0. The spec suggests that it
+is possible to initiate power removal without transitioning the device into
+D3Hot. It didn't explicitly say that "put device into D0", which is quite
+misleading.
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index 11ecbd6a9b2a..b09d7675a33a 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -832,19 +832,14 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
- 	int fn, gn, gfn;
- 	unsigned long backup_regs_size = 0;
- 
--	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
-+	pmx = devm_kzalloc(&pdev->dev,
-+			struct_size(pmx, pingroup_configs, soc_data->ngroups), GFP_KERNEL);
- 	if (!pmx)
- 		return -ENOMEM;
- 
- 	pmx->dev = &pdev->dev;
- 	pmx->soc = soc_data;
- 
--	pmx->pingroup_configs = devm_kcalloc(&pdev->dev,
--					     pmx->soc->ngroups, sizeof(*pmx->pingroup_configs),
--					     GFP_KERNEL);
--	if (!pmx->pingroup_configs)
--		return -ENOMEM;
--
- 	/*
- 	 * Each mux group will appear in 4 functions' list of groups.
- 	 * This over-allocates slightly, since not all groups are mux groups.
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
-index bc7b70913b89..c74272c82828 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.h
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
-@@ -26,7 +26,7 @@ struct tegra_pmx {
- 	void __iomem **regs;
- 	u32 *backup_regs;
- 	/* Array of size soc->ngroups */
--	struct tegra_pingroup_config *pingroup_configs;
-+	struct tegra_pingroup_config pingroup_configs[];
- };
- 
- enum tegra_pinconf_param {
+Anyway, the previous comment as well as the workaround is not correct. So ammend
+the commit message as per above in next version.
+
+- Mani
+
 -- 
-2.53.0
-
+மணிவண்ணன் சதாசிவம்
