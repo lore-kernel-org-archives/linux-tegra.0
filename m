@@ -1,145 +1,193 @@
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013050.outbound.protection.outlook.com [40.93.196.50])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2930379EF6;
-	Tue, 17 Mar 2026 09:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773740995; cv=fail; b=BREWp9EO8tocHlTPx+f9L0Xm1g6AEiE91y1LWjAx8wgB1Pu2Z9Owy5XLoSr/W2AkwFLOfKS88ZfqyRAnKY85DRCJ6TutNN8+LRk2skjM/ID84UZq/KzoGIzjntqGy8K8dt/Q/ihBqy0NqTSrwVxQ+J9SRQW8MZiOXEmU/+iTRdE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773740995; c=relaxed/simple;
-	bh=1lmchsYOyvncRDAghZaUlBpnDmfU0e5PUuCy8/Lad0Q=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rwOTpVUL0i+7JievE9V7uQadPOaBsqYKltUGMBGZcaXyCiCKfn3uX3mq+55/RCDZBR5XaXFTBW9EDV8WVa9bjVc8MajldFYfQlm7RmK7OHYt/dOIUJ8sZDkKRANVBtdlaxblTcwqv5IzlDlRgR1Vz5qxINBwJmXp0eceIYCOiZE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CzytviQV; arc=fail smtp.client-ip=40.93.196.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BB434F489
+	for <linux-tegra@vger.kernel.org>; Tue, 17 Mar 2026 10:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773741908; cv=none; b=mzfWnDHwvdpWagEaaT17lfz8xIMloxTFQjzy6GlTTNyW8WrdsbECefBQA11tzt5CSd4gO6w9HRPTDEb1hWhA07CFkhECoHI3hjaU0S/SS7bpjG8MXOcXKwLotquwKvlUEyTsFW8Qkd6NOcVzZfLbjo5fqdayDeIz4kqdO4ZHLIg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773741908; c=relaxed/simple;
+	bh=1g3CqT8gCy510UUUsAdMzKQU3risfXYiRno+HhmRkto=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=Qjg98v07PSzY637tEAq4Sv1lfPbg+zpMHt/PGbPPlZBMRFSmreMQtV69kY5j6hyvDqCVdnRVMk08RYMz9sSgDEbauqWrWe/pns5b3TzWtAjIunJXHntwfGz0V69GjTcwvO8H3i5SpJcFWXdoNOYshunbu/v7jVYysdPEPnofY4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=z/nZBfK8; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CzytviQV"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=E2KGqvenHP97RTRQL84swCoxcsKIRNAhGcL2Uzlftc41KluuloGpEk0SMDFdgeKxoCqYHUNk++QPCOOaI7IsxlSCBLJVzqrO/+gB61dKW4J7Ny5H1et4HRLrLKV63VIdfyGsgJleoi63fZ/AqjiJWs/Uhb1BAdmOBHJ6Mmx/2zjnACWFcmOGMgLpVnfR57sciNhCBd+O7oqa5mT9fhdOru3yLDwToiGMLSL1lDKCmlP9cPGBFSkYJvk8Hn8jw9KVZANSVcBd0AMR2r84XWjwAfyKSXlv9naThiZaQ/p7bgqCx0tbdaHfYh4JtMCDvZbW/81gNba/HVzsx6GxWY5KLQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LzFQ9a++YCuLMTrxsF5+snRpjzWw7GGUS8z0klZSlB0=;
- b=UiKxvD+0bQ6Mo4rzgAK2+Z1ksEHmUNKVDbKXmp5KAVbJR5f2pK7ZslNU8WFxszEew/DWM1i5Wft9sbVaW3bBE5Ne5/DfVqtjM4r2ePaPd7jvz3Nlwk4dLKbmS8BMNZTJcPZnYOHeG/8BDLbrCjf/gwEJs655WX+Ze0KuejRGTsD9twMjfIfryl0g78KbShrEUuApK9P3WdSjqgcNUiTUkqayH19hMBuEDkU1s0v1oaU+Opc/p6YMyLS6RCZmpWlOhmpW0pl6L+bIFJ0B2Hhx0hE1danICfYET+/1yYekis8Y/QthppGPeXInfHoH98H/h7svVGXut04GwnMI4A7yMw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LzFQ9a++YCuLMTrxsF5+snRpjzWw7GGUS8z0klZSlB0=;
- b=CzytviQVEU5D1OycLyJWG608rhNY9mnhnWUVWy0WrttsWsWHXjkh+NU2AxRxsDashljTZqkBHScbG7aSTQamAciPYfti/9HoNddN6uJ7ZmpmIVeFviBJwJXa487JMnnZQa5k/X05TZqubBzrZjOHmINQEsBTJpA5QAABrAno08OpzN5XGLAMSpipPt4k8jWRi1o9u3WyhJSPsN1iMM8aeaDNGwQLOmBoruwoKeGCOEvyP0RqsBKFNnxqVJex4ilAGtZ0YqbjAkSHHher07HEzYo7BS5g59223eZJ945iF9pboqxeUIdvp96xb9F6QSO8GcCFE2I5JUnq4Qn5nFe3XQ==
-Received: from BL1P222CA0022.NAMP222.PROD.OUTLOOK.COM (2603:10b6:208:2c7::27)
- by MN2PR12MB4080.namprd12.prod.outlook.com (2603:10b6:208:1d9::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.19; Tue, 17 Mar
- 2026 09:49:49 +0000
-Received: from MN1PEPF0000F0E3.namprd04.prod.outlook.com
- (2603:10b6:208:2c7:cafe::e2) by BL1P222CA0022.outlook.office365.com
- (2603:10b6:208:2c7::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9700.27 via Frontend Transport; Tue,
- 17 Mar 2026 09:49:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- MN1PEPF0000F0E3.mail.protection.outlook.com (10.167.242.41) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9700.17 via Frontend Transport; Tue, 17 Mar 2026 09:49:49 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 17 Mar
- 2026 02:49:38 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 17 Mar
- 2026 02:49:38 -0700
-Received: from build-sheetal-bionic-20251202.nvidia.com (10.127.8.14) by
- mail.nvidia.com (10.129.68.8) with Microsoft SMTP Server id 15.2.2562.20 via
- Frontend Transport; Tue, 17 Mar 2026 02:49:37 -0700
-From: Sheetal <sheetal@nvidia.com>
-To: Mark Brown <broonie@kernel.org>, Kuninori Morimoto
-	<kuninori.morimoto.gx@renesas.com>, Jaroslav Kysela <perex@perex.cz>,
-	"Takashi Iwai" <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Thierry
- Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>
-CC: Mohan Kumar <mkumard@nvidia.com>, <linux-sound@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Sheetal
-	<sheetal@nvidia.com>
-Subject: [PATCH 2/2] ASoC: tegra: enable ignore_zero_sysclk for Tegra
-Date: Tue, 17 Mar 2026 09:49:10 +0000
-Message-ID: <20260317094910.1582011-3-sheetal@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20260317094910.1582011-1-sheetal@nvidia.com>
-References: <20260317094910.1582011-1-sheetal@nvidia.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="z/nZBfK8"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 3E0894E42629;
+	Tue, 17 Mar 2026 10:05:04 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id F0CC05FC9A;
+	Tue, 17 Mar 2026 10:05:03 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B7C1810450405;
+	Tue, 17 Mar 2026 11:04:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1773741903; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=I1PUYYA+kCa3SQEPsUk+ui1wHEWokk2KMQCSQD3wjGc=;
+	b=z/nZBfK83C/z42Gy7D0i6aCgKJ3OvXcM6D7Zhe7QznTeulVjo01/rnrOfNUHaPEc+6vty2
+	i6H961xgefwV0ipYpEgTYCCWXHsa4ErIBBkuXj3y1k9rFx5cjNL7AcAmuLbZJZbBf3FbHJ
+	qLny+W0GmgTrADZK/PNDo0pni1R+6qzPJ+UAmEdwcWuPL7WVztce0W8hH7fHeVFaweaz63
+	9mZgFvhgmLbyypiXioo4ae+ad92irsZpQ42Dg9hXwqtAD7MokPDl8reQxvAIzk00yo/Clx
+	Ox6ye6p+ufsTjRsr+ffPw8ERfWxrSaepczzFNUH6K3oGCwDIoUjzZqr19yPWTg==
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E3:EE_|MN2PR12MB4080:EE_
-X-MS-Office365-Filtering-Correlation-Id: 76283916-0738-4eab-0405-08de840a8800
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700016|82310400026|22082099003|56012099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	AmbLapJF+FY83FME7atN23BvYEO6eZmFSqmPCMYz+jvi94t3QxC7IYIGL5zZsZGXyKwvROlSGMDg4+40rh8oANOAQEgqoNKq9o8Agwa+wshRy9GDNDyRP2DMc4F76AxSv47sKZaW80EigL3Qzu20N3UvrJuhcCl0eBNBHEDWdNY+a47Pz4Az8vR0kt5xCTXNw33pSYOgs8rFPyo0UotfR0k058an3pHthF3D6806c8Pu3bTsYbs3FvQcZjj4bg9T6949AtLNYuSByOrJ8fOlTZlAH4dM9dZ2TfoHYMPomdu5//ACXIIErZWAycpWmJm7TsmlbcLe9WhJLnY101GAuqNaOelHUCfxJXXK24QOmWpfUxFJwbj+px2TGUuEyejzv42iUqiRoheGw3hmFYGb0ZxWMRfOH9EqrxrAhpUpYCmOqSsSoD3tg8Q0HozxyqQTwzd1TU4jGJ8B85XNNPzx6GuIKItuJ3JXA9+OpfjoOVSyXgu5KcNDIEgJ8mXl7neXVaOFk/oERcqjHmnNW802/u/KClGsV1sxnBbZ7zF+ggi7n+vGLcYJv0rPpk7x34DEY/UE8k9HrbyeBBztY3IDZAZov2idiLG1PzblsRu+k9XUmNz+RtAlAu6D1eGTxBlZmOlHtvnuwMSQ5IHYu+8oAtoNUHi4RzWk3qTPaApLoMk3vs0cj8fTCU56/xxH1Yxug8upu8/+2P6sEOWjEYaJ00FHJmrvGb9zstDcx7iW5dRXaEnHt1lLUU5CiTEvYomGyZi8r4mslebuX3wV5RoHbQ==
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700016)(82310400026)(22082099003)(56012099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	fWO4Oz0OsdV1y5kOOvfN8LGBisRWM0Qa85SSZ6vlNqq7qpUEL9LXPvPXtCNTMza62wRcFVLi3B5l8yzzR6DKXigWOq/EomCisM3Oi+qwEF3ylGlHbJT4qsKLhfd0Veyi/A6gDmdBWlGpdyucJFwmxokJE/ffdM1bDfn8iVTLSdcNPMVwDlE/FMcQxbSnZy4P6UU2UYsOvbvcyJBZ5QfkFp3AIiHgg2p3Jn4g8jGt1HJZsu7eJVCFsU1djqGHDQz/VGvjLwTdJKD6U+nBbhLwJsYMdYKEJANoDKwohHHHI83171jED/3QFRRMn0hvzpG7+fh+TPQLL9llwtuukRKLTVETiNOSQMyr+X+OA8LGELkv1ach3tdDiApAuQNAnTuQTu2qwunoRrkzjikTmN0cMZ90O/C9i68Op4S+imSWBUER0FdVhNQSU8d43lqnoVL/
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2026 09:49:49.7576
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 76283916-0738-4eab-0405-08de840a8800
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000F0E3.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4080
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 17 Mar 2026 11:04:58 +0100
+Message-Id: <DH4Z0YY7GPKV.3EKN4U52NE63@bootlin.com>
+Cc: <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+ <linux-tegra@vger.kernel.org>, <linux-media@vger.kernel.org>,
+ <linux-staging@lists.linux.dev>
+To: "Svyatoslav Ryhel" <clamor95@gmail.com>, "Thierry Reding"
+ <thierry.reding@gmail.com>, "Thierry Reding" <treding@nvidia.com>, "Mikko
+ Perttunen" <mperttunen@nvidia.com>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Jonathan Hunter"
+ <jonathanh@nvidia.com>, "Sowjanya Komatineni" <skomatineni@nvidia.com>,
+ "Mauro Carvalho Chehab" <mchehab@kernel.org>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Hans Verkuil" <hverkuil+cisco@kernel.org>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v7 00/15] tegra-video: add CSI support for Tegra20 and
+ Tegra30
+X-Mailer: aerc 0.20.1
+References: <20260303084239.15007-1-clamor95@gmail.com>
+ <CAPVz0n0+FDAsRxCaPy65_N5O0KKE0tQ=zQupEM6VAR5LPLuOcg@mail.gmail.com>
+In-Reply-To: <CAPVz0n0+FDAsRxCaPy65_N5O0KKE0tQ=zQupEM6VAR5LPLuOcg@mail.gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Tegra AUD_MCLK has a minimum allowed clock frequency of 1.5MHz, but
-0Hz requests cause the system to set a lower rate than this minimum,
-resulting in the following errors from the Tegra Boot and Power
-Management Processor (BPMP) that configures the clocks:
+On Thu Mar 5, 2026 at 10:24 AM CET, Svyatoslav Ryhel wrote:
+> =D0=B2=D1=82, 3 =D0=B1=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 10:42 Svy=
+atoslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>>
+>> Add support for MIPI CSI device found in Tegra20 and Tegra30 SoC along
+>> with a set of changes required for that.
+>>
+>> ---
+>> Changes in v2:
+>> - vi_sensor gated through csus
+>> - TEGRA30_CLK_CLK_MAX moved to clk-tegra30
+>> - adjusted commit titles and messages
+>> - clk_register_clkdev dropped from pad clock registration
+>> - removed tegra30-vi/vip and used tegra20 fallback
+>> - added separate csi schema for tegra20-csi and tegra30-csi
+>> - fixet number of VI channels
+>> - adjusted tegra_vi_out naming
+>> - fixed yuv_input_format to main_input_format
+>> - MIPI calibration refsctored for Tegra114+ and added support for
+>>   pre-Tegra114 to use CSI as a MIPI calibration device
+>> - switched ENOMEM to EBUSY
+>> - added check into tegra_channel_get_remote_csi_subdev
+>> - moved avdd-dsi-csi-supply into CSI
+>> - next_fs_sp_idx > next_fs_sp_value
+>> - removed host1x_syncpt_incr from framecounted syncpoint
+>> - csi subdev request moved before frame cycle
+>>
+>> Changes in v3:
+>> - tegra20 and tegra30 csi schema merged
+>> - removed unneeded properties and requirements from schema
+>> - improved vendor specific properties description
+>> - added tegra20 csus parent mux
+>> - improved commit descriptions
+>> - redesigned MIPI-calibration to expose less SoC related data into heade=
+r
+>> - commit "staging: media: tegra-video: csi: add support for SoCs with in=
+tegrated
+>>   MIPI calibration" dropped as unneeded
+>> - improved tegra_channel_get_remote_device_subdev logic
+>> - avdd-dsi-csi-supply moved from vi to csi for p2597 and p3450-0000
+>> - software syncpoint counters switched to direct reading
+>> - adjusted planar formats offset calculation
+>>
+>> Changes in v4:
+>> - removed ifdefs from tegra_mipi_driver
+>> - document Tegra132 MIPI calibration device
+>> - switched to use BIT macro in tegra114-mipi
+>> - pinctrl changes moved to a separate patch
+>> - ERESTARTSYS workaround preserved for now
+>> - tegra_mipi_add_provider replaced with devm_tegra_mipi_add_provider
+>> - reworked bytesperline and sizeimage calculaion
+>>
+>> Changes in v5:
+>> - dropped patch 1/24 of v4 since it was picked to pinctrl tree
+>> - added reasoning for tegra132 comaptible into commit desctiption
+>> - moved clocks into common section in tegra20-csi schema
+>> - added note regarding ERESTARTSYS
+>>
+>> Changes in v6:
+>> - dropped patches 1, 2, 3, 4, 10, 13, 21, 22 of v5 since they were picke=
+d
+>> - rebased on top of linux next/master
+>> - improved description of commit
+>>   "staging: media: tegra-video: vi: adjust get_selection operation check=
+"
+>>
+>> Changes in v7:
+>> - rebased on top of v7
+>> - kzalloc > kzalloc_obj in mipi.c
+>> ---
+>>
+>> Svyatoslav Ryhel (15):
+>>   staging: media: tegra-video: expand VI and VIP support to Tegra30
+>>   staging: media: tegra-video: vi: adjust get_selection operation check
+>>   staging: media: tegra-video: vi: add flip controls only if no source
+>>     controls are provided
+>>   staging: media: tegra-video: csi: move CSI helpers to header
+>>   gpu: host1x: convert MIPI to use operation function pointers
+>>   staging: media: tegra-video: vi: improve logic of source requesting
+>>   staging: media: tegra-video: csi: move avdd-dsi-csi-supply from VI to
+>>     CSI
+>>   staging: media: tegra-video: tegra20: set correct maximum width and
+>>     height
+>>   staging: media: tegra-video: tegra20: add support for second output of
+>>     VI
+>>   staging: media: tegra-video: tegra20: adjust format align calculations
+>>   staging: media: tegra-video: tegra20: set VI HW revision
+>>   staging: media: tegra-video: tegra20: increase maximum VI clock
+>>     frequency
+>>   staging: media: tegra-video: tegra20: expand format support with
+>>     RAW8/10 and YUV422/YUV420p 1X16
+>>   staging: media: tegra-video: tegra20: adjust luma buffer stride
+>>   staging: media: tegra-video: add CSI support for Tegra20 and Tegra30
+>>
+>>  drivers/gpu/drm/tegra/dsi.c                 |   1 +
+>>  drivers/gpu/host1x/Makefile                 |   1 +
+>>  drivers/gpu/host1x/mipi.c                   | 592 +++-----------
+>>  drivers/gpu/host1x/tegra114-mipi.c          | 483 ++++++++++++
+>>  drivers/staging/media/tegra-video/Makefile  |   1 +
+>>  drivers/staging/media/tegra-video/csi.c     |  64 +-
+>>  drivers/staging/media/tegra-video/csi.h     |  22 +
+>>  drivers/staging/media/tegra-video/tegra20.c | 820 +++++++++++++++++---
+>>  drivers/staging/media/tegra-video/vi.c      |  58 +-
+>>  drivers/staging/media/tegra-video/vi.h      |   6 +-
+>>  drivers/staging/media/tegra-video/video.c   |   8 +-
+>>  drivers/staging/media/tegra-video/vip.c     |   2 +-
+>>  drivers/staging/media/tegra-video/vip.h     |   2 +-
+>>  include/linux/host1x.h                      |  10 -
+>>  include/linux/tegra-mipi-cal.h              |  57 ++
+>>  15 files changed, 1482 insertions(+), 645 deletions(-)
+>>  create mode 100644 drivers/gpu/host1x/tegra114-mipi.c
+>>  create mode 100644 include/linux/tegra-mipi-cal.h
+>>
+>
+> Hello there!
+>
+> May this patchset be picked if everyone is fine with it? v6 iteration
+> was hanging for a quite some time already without any actions, I have
+> rebased v7 onto linux-next but no other major changes were applied.
 
- verify_rate_range: FMON_AUD_MCLK: rate 383999 below min 1500000
- fmon_update_config: FMON_AUD_MCLK: detected fault 0x80
+FWIW I just tested this on v7.0-rc4 and tegra20 parallel capture still
+works as before, so my Tested-by is confirmed.
 
-Enable the ignore_zero_sysclk flag for Tegra audio graph card to
-ignore these 0Hz sysclk requests during stream shutdown.
+Luca
 
-Signed-off-by: Sheetal <sheetal@nvidia.com>
----
- sound/soc/tegra/tegra_audio_graph_card.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/sound/soc/tegra/tegra_audio_graph_card.c b/sound/soc/tegra/tegra_audio_graph_card.c
-index ea10e6e8a9fe..3c88c43e1273 100644
---- a/sound/soc/tegra/tegra_audio_graph_card.c
-+++ b/sound/soc/tegra/tegra_audio_graph_card.c
-@@ -209,6 +209,7 @@ static int tegra_audio_graph_probe(struct platform_device *pdev)
- 	card->component_chaining = 1;
- 	priv->simple.ops = &tegra_audio_graph_ops;
- 	priv->simple.force_dpcm = 1;
-+	priv->simple.ignore_zero_sysclk = 1;
- 
- 	return audio_graph_parse_of(&priv->simple, dev);
- }
--- 
-2.17.1
-
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
