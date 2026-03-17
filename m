@@ -1,130 +1,133 @@
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012035.outbound.protection.outlook.com [40.93.195.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF40B212566
-	for <linux-tegra@vger.kernel.org>; Tue, 17 Mar 2026 00:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773707360; cv=none; b=aoeNYb8ePCiqq3u3sE2Zh6PneG1Uclb1+MFYJpcSuBJ3/SLSh2KMnRYnDISf/AEi9yURr4ZUpyPhcB52Y7NeNJHVgfp3I7oHsoHIJ+tYy6PKGrcI8IbqAW2/oHFTwuOGNLCiWukmQBp9ppHac/DNG+C6pvUjKQ7XMI7wa2Jk3VE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773707360; c=relaxed/simple;
-	bh=Ykl7pRMjv9ddmeTEMSu2XWv5ypxsnnaE2OuTTvdmJf8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B15V+1QLHonfoWA1G8I/E0Nj7jZpnc2dMPESnleGKm3kW4vz5gMbAP7q2JyDE4TAO58gbr9PqXwGEB5c0n4xG6o6DKacM9sPxcNEWOtQgt+Jw4490Haz4iUwfwv9d9SxH9NIWe5AM8V3bvzUsATGXwkxhYOX1MV0yLoVgHygtN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JKqgHCMF; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE6224501B;
+	Tue, 17 Mar 2026 09:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773740985; cv=fail; b=Vi3DzBk6QyxZv+tCXS69HcfR1KRh+sgvFO4hoiPl/raBPeI79kr5y0BJs+HPYfOWsviQkqlC8LqoXB6pckxW3w0MpTsiza1PBPs1EIdsn3IIP82sH0FFKYHFQPhzHFu8a8v9u8yvB23MOTpLmOj1h1M3e6+KUPkEPIuyRNx2xrI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773740985; c=relaxed/simple;
+	bh=llwhRAhGKKiy1vBkzm87AW+bQCjSqC0daq/86AhMfms=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gmVSyz5WtCuDfMp8f+wbtSKeVHmv2adkB8FbKLlh3CMuDjOTGSSczYZDaNyQVcDJo532PMiEvMECAmFwYqatGIEvTyGgkXhU70o4KzShfvU3Llk0qnFFi90wfiZyQS/YfPBkoseu5kp2Y3Rtvku41t5NfVhUHd/G90qV4RRRu24=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=p10ouWNK; arc=fail smtp.client-ip=40.93.195.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JKqgHCMF"
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-829865a8471so4905713b3a.3
-        for <linux-tegra@vger.kernel.org>; Mon, 16 Mar 2026 17:29:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773707359; x=1774312159; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zEaJEC5yeKcESXwFqV6k9VnziI7uI+jjMq7JZGGKBfA=;
-        b=JKqgHCMFSBN2PktyvNv9ikODFsFN4db8y1UDUAFV/l3h66ijBTPp/epT4aUYOshxTa
-         /zCbg8ydFzlS1rtWzGwKKDfhw6mcsPjciA88tBxolmK90PX1Xd9qoy5UVXlqwkv31vI7
-         B9CNqxKFN6v6yFspDcztc1/MGSwLCQSvZxQhInkWi+RazCtKvOwtq+NLIrfb4vVoPKau
-         9+Qcrka58jKKJfCn3zMCdAaD+qXWKWfxvLgIGrPojnnR3XrAgOdvYdxzMLmbVexL73/d
-         3cg/KRTHRhC3DuS/UC/C/zWRYnDOkV6SIuyvr/vqpN+nnztK90kvC5GTUeJ5McPGAwXP
-         klfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773707359; x=1774312159;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zEaJEC5yeKcESXwFqV6k9VnziI7uI+jjMq7JZGGKBfA=;
-        b=AsHwX2uBFlrsd+FEauq6IvjP6K2LkaW0o2ilWhDNHOcPmC5JzV5LHBPn1hO8o/bZ9B
-         Li7wMTX7s/HakBhwkmDuWjVWJvwcEIzKOpeck/JqSU1QaCtEeDYoXRwROjibiUBoAT6A
-         u2KBitobU1reoeJ8IKL0A5+lP6FK6Y4XSKNqchssfK6EycTnXJeELuNlZtXUj+4m4Du1
-         uJHZrW4Px7eKeQrLQ6hQF44JToqgQuVpTP/b9Vexr3y6V0E6UPeDKmRZeJ5DQapzX2cY
-         EZENEZpEtV7km5HE6M0uawIhTFqtzBTMDs2YFLzPdy7KbyY6Lm51jqyeyvjmHzOFmHZT
-         3rqA==
-X-Gm-Message-State: AOJu0YyJTwHhEu44rZb1t4/+mhl1L+az/EbDaNGifV4+e9LJJSkcG8+d
-	ff9/0xdDZmVZXZqK51s5Tgy5bdm+FZdLhdEpfmemNXjniK8ixkJUnT6Mrlt1KDVr
-X-Gm-Gg: ATEYQzwQkdsN3d/CRa5GuYrZPnP0xm+ymx50MquQIav8vTSkkWnJW2Gn3lD9BufRLmk
-	3Zcsgb3K8MpQQRPvNOTYaTfkn7JwpEIfkpdJQ9zS70vpqQB485uqn0edk8UFK3eGigTqQ1DtMts
-	+kYq5pjUjOyPmNoN8NmNkJiVua0sAbwef9bpvMbwjOZJaYced13ylvPWPcCVMUl5xD2nsmHsnKR
-	oKZak4lvfxsuMp42FnxPRtZ0XnKJLG3IXjHyaPiucoe8M9ayzLsWe12KJ8vl4w1/Fie0BX2kVKb
-	xufsR+JGGAXArV6zVHXkmjH5/WJ5oRJNfUhn4Go8NzXfcbUS94iB6L/KtwwseVaUIGPhUJ4fKbY
-	TrOpv88dtuSW3eNdZAssQ8qyhh0MqBCCJJDqA4K8GjEzHf/39GCAxqT0rbkObvGxEXSh/meqH2q
-	REW1R9UD4jvjWF1KApVnVJPvXqNNP704dJ3mjFf5cdgGxbH2jkUss90jM=
-X-Received: by 2002:a05:6a00:1594:b0:82a:778:cd73 with SMTP id d2e1a72fcca58-82a1992c45amr10581048b3a.51.1773707358578;
-        Mon, 16 Mar 2026 17:29:18 -0700 (PDT)
-Received: from ryzen ([2601:644:8000:56f5::8bd])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82a072603c0sm14010022b3a.22.2026.03.16.17.29.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2026 17:29:18 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-tegra@vger.kernel.org
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	linux-kernel@vger.kernel.org (open list),
-	linux-hardening@vger.kernel.org (open list:KERNEL HARDENING (not covered by other areas):Keyword:\b__counted_by(_le|_be)?\b)
-Subject: [PATCH] clk: tegra: bmp: remove kcalloc
-Date: Mon, 16 Mar 2026 17:29:00 -0700
-Message-ID: <20260317002900.71452-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="p10ouWNK"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HTGrv42Nc1OhgBzshFfFHjg1D99wycpNljGLMx8midbZrIPPpLIWxDEt2av4VHS88tIRApO5bYww8WPd0lyAsdouKNq9n5U4kbH07XlZjjcoSJ1Y0v009p+2T6yuAhqGmN6SEfjQohOYcwwmx+ptdzWEQdR6K73Rjo09Y3L0y6WnOvQ3kYZZ0EnT6U1IbAXidNoxr+5Dv23h8fq+3u/j97pkoVwB5NA7KjNWg+f388xbjZllmCVHk7JtnnZa3xpqLp//UAAfPWWSaHcPend310byoGFWrumpoTZ0UGt2FkB+PyjxmqfhM52f97UV3yLSmdPSi8ciquLYNQX+qxBYmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=E0TaVNW5b/G5NQ0vXDdRkIakDj/Rma1cK3rdIFSyFu0=;
+ b=TLa5Py7CcN+tkH2nf877JZp0d4j2jLOX/0h2LSdnFs5UjqBcPh0IBDopuNFoEXGZGi+2f9HFp073+hJxP0x4Nv4hi+yJINTiI26AsAeoj2jUEq3RM2z8vQTn5/VUeors5yotHzIP+/oJwPMAI2r75e+k7t587oZaiFTdy3w5jyH3iE34WIhHhVNJGRtwaSihXWmvoQLZ6tCQEOa1sG8DyBu9IJ/WCw+YMcdSgbVndRnJBNg8AH7pxg3+2bKjT/TKB3suz01t1aDRTIV7zQiRuJHA5Hj1fcpcSjpBZnzMxEgaW70LT+w6sHy/Ql/zc/zt79iYvNC2spMJL3J9Di4gOQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E0TaVNW5b/G5NQ0vXDdRkIakDj/Rma1cK3rdIFSyFu0=;
+ b=p10ouWNKsBxJpIeNjpiKaNuUbuhJQSrlZcJy5GpBcOSmULnSA9FkQ3IxcJ4mYEpUygrhhrkq3mCAO2ssmNSJ80+0UR5n3+BTqbcIcCG4RXumjMbkUgMqXW/8zvnNNZ2KdP7mc2CyENKRCGZFFUJVgMZq5bUkjoV7rssBzvaEvdOFXw65Qe3fu6P6SRxeEHKr9zXoVhHT0IMhgAllWTgS978KuPC7BvQ1jFP/uuPvKRRvit8rdI0qBhKRcSO8+QH8zRD48W7ODI/z//Y+O8uscnXpDoeoNW+kkoLGxgETgJeTnNc+zojZ1js5PNb9EQua++EnceHspyjDhBwLhQO9CQ==
+Received: from BL1P223CA0038.NAMP223.PROD.OUTLOOK.COM (2603:10b6:208:5b6::7)
+ by DM4PR12MB6009.namprd12.prod.outlook.com (2603:10b6:8:69::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.17; Tue, 17 Mar
+ 2026 09:49:37 +0000
+Received: from MN1PEPF0000F0DE.namprd04.prod.outlook.com
+ (2603:10b6:208:5b6:cafe::9d) by BL1P223CA0038.outlook.office365.com
+ (2603:10b6:208:5b6::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9700.27 via Frontend Transport; Tue,
+ 17 Mar 2026 09:49:46 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ MN1PEPF0000F0DE.mail.protection.outlook.com (10.167.242.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9700.17 via Frontend Transport; Tue, 17 Mar 2026 09:49:37 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 17 Mar
+ 2026 02:49:22 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 17 Mar
+ 2026 02:49:21 -0700
+Received: from build-sheetal-bionic-20251202.nvidia.com (10.127.8.14) by
+ mail.nvidia.com (10.129.68.8) with Microsoft SMTP Server id 15.2.2562.20 via
+ Frontend Transport; Tue, 17 Mar 2026 02:49:21 -0700
+From: Sheetal <sheetal@nvidia.com>
+To: Mark Brown <broonie@kernel.org>, Kuninori Morimoto
+	<kuninori.morimoto.gx@renesas.com>, Jaroslav Kysela <perex@perex.cz>,
+	"Takashi Iwai" <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Thierry
+ Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>
+CC: Mohan Kumar <mkumard@nvidia.com>, <linux-sound@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Sheetal
+	<sheetal@nvidia.com>
+Subject: [PATCH 0/2] ASoC: Add flag to ignore 0Hz sysclk requests
+Date: Tue, 17 Mar 2026 09:49:08 +0000
+Message-ID: <20260317094910.1582011-1-sheetal@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0DE:EE_|DM4PR12MB6009:EE_
+X-MS-Office365-Filtering-Correlation-Id: 397f1b4f-6ef6-4a94-93df-08de840a8087
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|82310400026|376014|1800799024|56012099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	iX2BMnUX8cgEAzBV576GNIJWN9s6mih+mlQUb1eMDLESGjtQ/IiP4PYzavGqEiEB91xY9TffS5PniQX2FAIAakNjhpbxiZP2r8/iSImBjsgjkOML7lCcGmUAfcjEH3JHb++HnJt7NqgXnCm3mOSUETcSh7Jic+MZ6BrkW/gljMB6hiVL05L14KP3ELNwRg33OG4P01x7hc6aTtWF6aM6LGvw+IW2+64Q7lo1t/D05Fgjzib61hceelIlaQVqnlC3DQvly1F2wNxqRMHAOlNkC4oQkqwAXwN4d2cSG2BQmFwIsShz1g9aGUepH0fpmvrTSL7ZYb0coEsJeq415gv7xVoifN/uAtIo5vrHhVYTp2IKrScRCX/57CyTRsghflrWm469kTgmpleMKmMpsLaxdDB/5ZxpSZ/vMgIDlopyQ9iiQdltTQiekEBduEMiZp3mR6Qxdb1viHk9xMbTLA7xUOOfQlpG0hclvfCHGSl1S94L+hoGNJ2UWYcOBAt1TC9Nl6wcrZZneSP6pNz2Q0/cEj6e3Yk4EdXYMx4NgB94N79fWu6PNqdOciqci1Pw/aMST9S8AeVJX2KP/qQDwpXE/MEd7n9vXCPYU/w93SPZq9vJE/wLPY+i0wGj0TNzJBm3j03Sy1St32zBRNGuBZQPLs6OC+uDfvvnGln3o+dqIN/askNObNx4nShH5uAxly0cXbfBr4pVsmArOQO+zRNWEI6fBA1+IEJ38IapfLnDFD1WGBiBbl00UOWD3axFjLjekdgcciu5elMY7YQPXf5DPg==
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(82310400026)(376014)(1800799024)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	5so5PST6/yR4qs8qn/MU5RIj03chqqXIB3MOVDXWUpFwP+5TI0CDY9JoH8rmbem0GEVXfJp7mIhR23OJOcrka8I7kY3MHUBsoS71Mg3dPSnJNC+yZKgHrbXQ81KwFfoudQ2HR5IdXEf0RCLBby3AIFGYS2h5eOiJP/4z0t8BnBEzM3J/k+hjf+66ks61yHRC3MN59IgdoJfpuJHFn+2kPsvWT0UPM1mxTxZ8eMPiTH76GQY+rxqG6vWsxsFJi6Ln02kfYeITRfesiGm0jxLbl4IMdX3NshwgxJx8DTZMmpZMy8rmVLCfz4Ql38r3SlvnfiRJmihyOM0ZTFRvGfb7Fjmj1vmIhFqCE+t5hdTAvY6qLFwXaZYel4mNhTg6jRD3YoS/a3dfroaBcC9OTtQyF9bBGvtxg6Z8Zo45WeSWHRq0rg1bNKcTQPNLluvtVv0D
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2026 09:49:37.2215
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 397f1b4f-6ef6-4a94-93df-08de840a8087
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000F0DE.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6009
 
-Use a flexible array member to avoid allocating separately.
+Commit 2458adb8f92a ("SoC: simple-card-utils: set 0Hz to sysclk
+when shutdown") introduced 0Hz sysclk requests during stream
+shutdown. On Tegra platforms, clocks such as AUD_MCLK have a
+minimum allowed frequency, so passing 0Hz results in Boot and
+Power Management Processor (BPMP) clock controller errors.
 
-Use __counted_by for extra runtime analysis.
+This series adds an ignore_zero_sysclk flag to simple-card-utils
+so that platform drivers can opt out of these 0Hz requests, and
+enables it for the Tegra audio graph card.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/clk/tegra/clk-bpmp.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+Sheetal (2):
+  ASoC: simple-card-utils: add ignore_zero_sysclk flag
+  ASoC: tegra: enable ignore_zero_sysclk for Tegra
 
-diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
-index f6d2b934228b..e2d506cdbae2 100644
---- a/drivers/clk/tegra/clk-bpmp.c
-+++ b/drivers/clk/tegra/clk-bpmp.c
-@@ -32,7 +32,7 @@ struct tegra_bpmp_clk {
- 	unsigned int id;
- 
- 	unsigned int num_parents;
--	unsigned int *parents;
-+	unsigned int parents[] __counted_by(num_parents);
- };
- 
- static inline struct tegra_bpmp_clk *to_tegra_bpmp_clk(struct clk_hw *hw)
-@@ -510,20 +510,14 @@ tegra_bpmp_clk_register(struct tegra_bpmp *bpmp,
- 	unsigned int i;
- 	int err;
- 
--	clk = devm_kzalloc(bpmp->dev, sizeof(*clk), GFP_KERNEL);
-+	clk = devm_kzalloc(bpmp->dev, struct_size(clk, parents, info->num_parents), GFP_KERNEL);
- 	if (!clk)
- 		return ERR_PTR(-ENOMEM);
- 
-+	clk->num_parents = info->num_parents;
- 	clk->id = info->id;
- 	clk->bpmp = bpmp;
- 
--	clk->parents = devm_kcalloc(bpmp->dev, info->num_parents,
--				    sizeof(*clk->parents), GFP_KERNEL);
--	if (!clk->parents)
--		return ERR_PTR(-ENOMEM);
--
--	clk->num_parents = info->num_parents;
--
- 	/* hardware clock initialization */
- 	memset(&init, 0, sizeof(init));
- 	init.name = info->name;
+ include/sound/simple_card_utils.h        | 1 +
+ sound/soc/generic/simple-card-utils.c    | 6 ++++--
+ sound/soc/tegra/tegra_audio_graph_card.c | 1 +
+ 3 files changed, 6 insertions(+), 2 deletions(-)
+
 -- 
-2.53.0
+2.17.1
 
