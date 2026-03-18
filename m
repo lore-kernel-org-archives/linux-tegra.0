@@ -1,294 +1,244 @@
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012034.outbound.protection.outlook.com [52.101.53.34])
+Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011017.outbound.protection.outlook.com [52.101.57.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FC939E191;
-	Wed, 18 Mar 2026 09:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40CC34EEFD;
+	Wed, 18 Mar 2026 10:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.17
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773827450; cv=fail; b=F5i6taxs0dxAxmsV6wccz2d81bhhfhYgwEG/w1gimklk968YkC5NVb2d33qWWRdCjPrQ8n0Hx8zfsgejGRaPFYcMM1T7r5FA6Lj10N2O0KL4UJbVS1zi66DPqBUUE0ii3L81qtM1pdBeX8zIdG/oanZ9gD74i+aTggP4yNDJWBU=
+	t=1773829479; cv=fail; b=Bknxi8W1s5jUjQv2iJ/iP1Ke0PycxpVJdAbB053kvdPzyYjOs9PeQkj3tKRCRCAL2DSXMDrBNSi7ZZitFGQKHJSIlXmxOKOevDCAGWyx0BtHPOltFXVeqTyYtLZtmo8KyEcfq/zrd0r3tWxfZvo99kbtQoF1wS1O1Oa4eRnN5d0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773827450; c=relaxed/simple;
-	bh=oGlctU1FFKr/O6U6sI+DXUfeVfIOoybeOre6gDPTSWA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rX6Y6rMOz17V+zZjjV9fC4QeMbH/ZmV+AESqA+UuRV9DGNj4wiTkhx5lpe5QLJNmnNtFvIvv/eLfg5YJ/CoOh/c8fByStnAwOLMRhfxq6+CvLbnGUJSldbuUoWyz4Omm9CnTHdvJJ7trluZvsr6xdtiEKGukeXahx5ii3707ZHk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ufK7hwbh; arc=fail smtp.client-ip=52.101.53.34
+	s=arc-20240116; t=1773829479; c=relaxed/simple;
+	bh=cbDH5GTKju3ZZ6Dr2gi/g7SM8jVjVIc4m9xzSNfl3dI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FbPM5/NArn2rR1gPcbwf7AQiw6hSZKhcjkzri4gnyKZ7OIwaJWxVlEQ+RpdLiOEgkFI17OE8xnRJX6j6iIh1rgNiHZSa/jXbA2LTh3VbeZaD7ouZRraEzSuW+XcSqNP5HaleKP1c5wU7It5MJta/URHt3RscunTzJH/8GRPimlw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mLM1VxS+; arc=fail smtp.client-ip=52.101.57.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ufK7hwbh"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mLM1VxS+"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ou1Q5wQcL0cjFsopKyXQ99zuvF76kwsYd9SxWnICByYpvzXCrAjhbbofBpvy9waURAIwRTiVo0Hm+qZ4zM90nhr/0osz2A72HDB1mjEXcvCMYzzTvFaaKkaQRKkld+SaYK5ZsGW1GuIO5fzecXLeg0XWN01qPw824ixp3VJEIQarMBDWGJMZ6YDy7xVT+WwA4by1laToJm77EH8RIGq//mGoQPIsy58hWh555w2Sv8lwgdK56GXuuL2B09q8fd1alAdVm9cj8/nEiaxZ4xI47QYzXEeK88ukUQX/ZVL7M/GOAhVNe+btHSoThnWGYSH0q2HODBMb6eO3IUCGPj3Rng==
+ b=PxwHp1HnG5A48PCnsNqGn9K9cP3Gm4/EcTpnUdKrpzvwMZPcqpkFSWBKeEkod9Xhgp+ir2ncVe4XfHSXOTbFVGEEOWDpw+YwumACptqpuXjoQwcfTSjt5A21Uvb51c442LY/3GjyGo7u/GPuHpyctwujc4gIedWyPt87dsxkKslBkv/RNhXm6XYzKRhh1IVnRtR9QFQgetfD5vUVe+cexst/Lu8EEQP0a/mGqc5k3FLAx+0cr7dEVleTakP2BObi3Ns/6eK2dEqcYiDRoaj1w9aK2yKf9LGwZxT3t5M/w/MeT2Nva4KKCLeS8xYNxrd0nDqM5LLeJH163LxdPyCvyA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mDQd83oGBxmPEzNX0/4pJgYceWXd4uZ+q/2mPlmKYNk=;
- b=a9oEH43TkjwFJ6wPyjH1WJfhGK70ybZWkU6Uu8XfGfM/eVyFIKKwD/4qgZp1ggZWc8DGgvps/MX2Hn3xOuRy/rmhWn3v26Q0rdC+SC/WeIuCsj0UoOiUJ7UEf+fcMgIGkk0aIh+FfSP8l1YKT/xxU5mH5tPaaP/MZeU6o37XeRF4AVY2soJhkcOUoqdI6OfibNM8rO8Y19QzDxq55MzZZQDlOA++XPOrz9MC48JOFrZhoaGNMX1nftv4y9G0ky6PR9lFdG1qXZx4J9MPOMcwhxTnk0mzZ3Z4hWQe6kjjfcBEkoC+AgIrcgVzoVUij0DIzidA0XCVSmlb/RVgsMPe4g==
+ bh=hv5b7P6cSQOtHEldfn/C0hKjHlEtY+6lecfjv9mi4kE=;
+ b=ow8sAAfbhZj39E97rdvLwcEFJ4EcL2cgEa7jr4DGMPs+7hvmmubMwv0n+PB3FXFaoP32JKno173uGnXE9Li5B+qX90Py/KkPffEWORc4dwksY0BVRFRFBZgICiYm/dLpfyFjHJmgH3fLe/xVLk2w/rJiTaBG3HDKP/+bNurivb6tQnmiScET5cLUgBtGZur2Kkzs6k9VuJAWvA21EP/3rbUrDhvASh8pEvmCcf/bJMO11rke5BvTfG77GsKa5xxuit8UXzfAqqcaCXZfW7Ub9w3OLOw8E3FmXFHr03XEHuehf0/wiR2MuFORyF4nz16bhMHHgmOzZp2AU0I5olyozg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mDQd83oGBxmPEzNX0/4pJgYceWXd4uZ+q/2mPlmKYNk=;
- b=ufK7hwbhpR453XJGeB+k8Lh9SrOcL2+b+KGdib/BF2R+erKZ5HpX6rNROx8XRzdDgG8z0R25wY1QHLm+pVka58JxrKpJw8fjVAHe7uTiUMHuZsD9qy/Oz0STogJ7byqAYsBQpbcvhYcIXwCKcf+nMam6M2+yox33gWXOvPeS3OFA4BXPQQaNb0JRPg9xedur+RCg76L3kvGYait9r8g4MxOiU+b22ik8BRO+Hf2gNO7C8JAZm2fyMzH0LrQJOAeqdAsZ7DzXuMNPWp6ds9Oa1fVtMtRfoiZCSSdgepF1YyhA29HrosWd0rUzxxVkRk7gNX+cbL2jEEcgHZGmNbHMFw==
-Received: from BLAPR03CA0056.namprd03.prod.outlook.com (2603:10b6:208:32d::31)
- by CH2PR12MB9459.namprd12.prod.outlook.com (2603:10b6:610:27d::6) with
+ bh=hv5b7P6cSQOtHEldfn/C0hKjHlEtY+6lecfjv9mi4kE=;
+ b=mLM1VxS+U+xf+x33JkzesG5sJRS66BnJ1XdJ3cezs+s8Z5csxQAT07HAukM4eVUSHt/lnhBfJx2xzY/m2KKg3O/c+r1GatHD4uYl2gDg491Eu04batLMDB1Vqfy+eXecwOIYm7CJ3fKyDGwsv5Njbi7aIG6wVVlk8e3W0rnSPtP6H43r5KfESHvbagiLfTc08ijnj16MFHWToCuaLZ4iw0yhvhdtAQdfNB4LCvJ3UQZwaDAIA+T6WKHFH+r7oVZrSAuUlgCAoMevB+NGBUwVHT1R/JTcTEMRZPxMiaBOVcQqJrMntC1f6LpHDcf9nxc/PyO/ZntWmox3AX4oeYSQYQ==
+Received: from SJ0PR13CA0011.namprd13.prod.outlook.com (2603:10b6:a03:2c0::16)
+ by CH3PR12MB8402.namprd12.prod.outlook.com (2603:10b6:610:132::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.19; Wed, 18 Mar
- 2026 09:50:37 +0000
-Received: from BN3PEPF0000B36D.namprd21.prod.outlook.com
- (2603:10b6:208:32d:cafe::18) by BLAPR03CA0056.outlook.office365.com
- (2603:10b6:208:32d::31) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9700.27 via Frontend Transport; Wed,
- 18 Mar 2026 09:50:15 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ 2026 10:24:30 +0000
+Received: from SJ1PEPF00002316.namprd03.prod.outlook.com
+ (2603:10b6:a03:2c0:cafe::6d) by SJ0PR13CA0011.outlook.office365.com
+ (2603:10b6:a03:2c0::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9700.25 via Frontend Transport; Wed,
+ 18 Mar 2026 10:24:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN3PEPF0000B36D.mail.protection.outlook.com (10.167.243.164) with Microsoft
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ1PEPF00002316.mail.protection.outlook.com (10.167.242.170) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9745.0 via Frontend Transport; Wed, 18 Mar 2026 09:50:37 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.9700.17 via Frontend Transport; Wed, 18 Mar 2026 10:24:30 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 18 Mar
- 2026 02:50:22 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ 2026 03:24:16 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 18 Mar
- 2026 02:50:21 -0700
-Received: from sumitg-l4t.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Wed, 18 Mar 2026 02:50:18 -0700
-From: Sumit Gupta <sumitg@nvidia.com>
-To: <rafael@kernel.org>, <lenb@kernel.org>, <viresh.kumar@linaro.org>,
-	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>
-CC: <linux-tegra@vger.kernel.org>, <treding@nvidia.com>,
-	<jonathanh@nvidia.com>, <bbasu@nvidia.com>, <sumitg@nvidia.com>, "Rafael J .
- Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH] ACPI: CPPC: Check cpc_read() return values consistently
-Date: Wed, 18 Mar 2026 15:20:05 +0530
-Message-ID: <20260318095005.2437960-1-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+ 2026 03:24:16 -0700
+Received: from build-sheetal-bionic-20251202.nvidia.com (10.127.8.14) by
+ mail.nvidia.com (10.129.68.7) with Microsoft SMTP Server id 15.2.2562.20 via
+ Frontend Transport; Wed, 18 Mar 2026 03:24:15 -0700
+From: Sheetal <sheetal@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, "Thierry
+ Reding" <thierry.reding@kernel.org>
+CC: Laxman Dewangan <ldewangan@nvidia.com>, Frank Li <Frank.Li@kernel.org>,
+	Mohan Kumar <mkumard@nvidia.com>, <dmaengine@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Sheetal
+	<sheetal@nvidia.com>
+Subject: [PATCH v2] dmaengine: tegra210-adma: Add error logging on failure paths
+Date: Wed, 18 Mar 2026 10:24:10 +0000
+Message-ID: <20260318102410.1800162-1-sheetal@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B36D:EE_|CH2PR12MB9459:EE_
-X-MS-Office365-Filtering-Correlation-Id: 22b6ff61-f8d9-4dfc-7eff-08de84d3cee7
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002316:EE_|CH3PR12MB8402:EE_
+X-MS-Office365-Filtering-Correlation-Id: 121a2784-41ff-464a-fee3-08de84d88a64
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700016|82310400026|376014|13003099007|56012099003|18002099003;
+	BCL:0;ARA:13230040|1800799024|36860700016|82310400026|376014|18002099003|56012099003;
 X-Microsoft-Antispam-Message-Info:
-	fN+kwWh7/3BBBWq4/dmdw3aK8xtxzGP8ZZ4Gc4KCObM7n+YUsn6XP62/JdLCy8lN8IMuo8xnC6y8V7agaBwQqGj4uiWfOdKOJUJ6QBpWjsocke2ZzcaF+jLwXPEmEiiGIThKfXjW/7eeVWHWgmhuXnAFcQ9klnnlZt/TelYDbeseNarkVqMczQP044mwfZsZwZgE+Jk++OYyONd4jcPQjNoeZPBXRqhk9fMGkj1DaywgrDPDhRnJeKnhLbwWs/Z2z5W3eCAwQY5v8ey7lwUdZ9IUOafEonR5+vgzwcy7O7FnoCvvrbawNPuI16oWIUzwlyLagmgecL1ZIWakRaAzl9cUHlrg4DUEQzqhOW42JJhjIrX61bmur6YeE0Qw3q4TDDmLM9NI6N602vxL9w4aOVFDPzCNcUoDveDYYs3JOPvbsNLtaeslRq00rdkDHye1DFC6x5OpGKZTtKMpr6NWeee5X7G7k9HmudihSlBtKQDYXm2O4EFYorccS7H82gx2dQdkQxaDtskQA1BeHtadPlTviDEOuWDK1QG2Z59n1YfE4kS+4MX+hTLu6egxHIcnaYyKlK2uaD9aYF/2FyYkXZi8fChXEFMS3sFg7Fa4jBDwWp7xnyI8HIib1URqSm2gTOjNlpeht1vcLx7oh0j3xbdl24KFDMce3v+MSJoFVvnDh91TuUGvwOntFnkkTWJpOHzL1tb5l87aBao8LlbBFhrWpdRvNSslr4y0GjO6CCzjAwAoVjIYR4F7n/UpKqxos/X9lxi688TeHYizh1dlfg==
+	ivXenEL1QsIXNo1R4Y+YPwOSWLcokNqtWId2GAXx0u18nj5SgVNy0dqYqaxlPJ9EMyvHHQKalAkQWIUmudrzT7QQLXAALuN+Xwr9l5Z0NCvVsY+Z16Vg+ElwKH83eNc+QHli+UkaM2wAAArvgbR4Joawcd91m/0RRoR1tvTpdxpf/f/JoTEkuGxG71kX7stWVobytiI3nO5iW3BEnpU5epa9GduKfpSDhHujojDu0CIvxaJTBjSDjIe27qc8SzAozVRbuWTZri28Omzd1j37ZV0beDPUy5wUdvYzzvpoG2cq1yOJP8zAND9BKsMOAf0jySeT5xqi+7hlARxK5mlFjUH7yD0rkbZDLnXZxvoAjCH8or/z4MnXFaWlqR+cI6YXG7Mf6NbrQFJ+rS+67x55bW8M0UfOavyTNAHpW+AIupfqHbJ7FopTD820bMhdOcs5m8XE3ASn8jS9NLmuwDYLp6S5ybE/jmmgzv+a8NFvhQJdR0Hn9d23lSYaNND1VYbzvYYxVqh3I1G5cDuNQfBjSoGC2U6tc8jFGkOdt77qLp6T7yJB1NUVjypa8YRjgSLhG+rSoUopINiPlZ1xHHDcIcskpwKY9k/kNn73LYPObimex9Dq0NC81pQWs0xE+tfXtsygLgEuTOaYI8mZF0UL5ajSukxfFqyXZkTpavB6IDGC9cSAzUf4pKbyjAfNOVxa7ujYD3LLr/xsUVTGPQsonBcoeRv+11kTSlf1I8PpObXjZUq5H3qugbGhJU6KWtCmipU721zW2uoLg4JfzAATbQ==
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700016)(82310400026)(376014)(13003099007)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700016)(82310400026)(376014)(18002099003)(56012099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	4XTKGr21SlCESGQAF8ZyYz5oY+mtLWmsShhsGnNNUvKDVTQDKn79G/R9gJPKSL6SK5SNajqOS/qbpcJKkJy+44WjsbynNLCIJC7mhK6nVO2wOrjH2Iaxh/IRkkhTJCEzum4B7f2EP2DEb9aLLycSWtkCXw6l+EA7JW2Ue6zL6eoO1iDiG/G+BrrfPZYEnuKBcDBH9/8eJxw7pK1jpvsTNdqVwE6zRCNh6gJpe5hRtf5I/GK48WGKlRr+nQ2Bh9CgpGWa3o3CHZpqb5q9NMRyzXWMUzFKM9V+sjdilXfc3rd0lTwQ4tMSN2DssMTU5Q0DGjX+EBXEhpJFOiJOMGQZs6fX+yECxR6kb7QOylek006bJkLS1H12Yc70tshTxQIlTvGTlw6Z3ZKz6CPzyqSlPBf0b9l8UB0t9YjsAEzKq/0vZqOfMXx7oQMMDPCtX8ze
+	H+aNmqDZ2gnFXkKayNEPGgRfEqNLfdEewU701Jnlvu7HsgQvVIeGzeRumUHjRPBOZ8hH3QwpNxnpV4cgRJu2sCDHLvv12AzptKLaPmzIBgvzf8177UCZd89Zk6CU4JBABza8VbH4e/xMXvaa0CBC15LCEjwegSyN3QkspoH+2edm2qlQ77kQmD3ZbLcSEWxLWiuFfc4wWadeDIuM2MD4tBqdzzIK+jRoR4gTWz4BuX2qhEUY0mgB+4lLgvlfj7Siw4zuJYff9e4efhGsXlQ2DkwM7OY/vQiw7/Vto+YESVor68Be9QXqtsKe39H1O2bR+d6jMQ7/EgiPkWWnVcU7j9wy/vfEadFHHVNKUL2xNZw2lz7p5/xKL6Ua+XpY8CllPYAd15oRSF45R8XW8X681PndkcEAdJBrjOxi9QwS1yI/3uM7b36dKg12y43/sNxh
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2026 09:50:37.5559
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2026 10:24:30.2576
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 22b6ff61-f8d9-4dfc-7eff-08de84d3cee7
+X-MS-Exchange-CrossTenant-Network-Message-Id: 121a2784-41ff-464a-fee3-08de84d88a64
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B36D.namprd21.prod.outlook.com
+	SJ1PEPF00002316.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB9459
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8402
 
-Callers of cpc_read() ignore its return value, which can lead
-to using uninitialized or stale values when the read fails.
+Add dev_err/dev_err_probe logging across failure paths to improve
+debuggability of DMA errors during runtime and probe.
 
-Fix this by consistently checking cpc_read() return values in
-cppc_get_perf_caps(), cppc_get_perf_ctrs(), and cppc_get_perf().
-
-Depends-on: https://lore.kernel.org/lkml/20260206142658.72583-2-sumitg@nvidia.com/
-
-Link: https://lore.kernel.org/lkml/48bdf87e-39f1-402f-a7dc-1a0e1e7a819d@nvidia.com/
-Suggested-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+Signed-off-by: Sheetal <sheetal@nvidia.com>
 ---
- drivers/acpi/cppc_acpi.c | 99 +++++++++++++++++++++++++++++-----------
- 1 file changed, 72 insertions(+), 27 deletions(-)
+Changes in v2:
+- Fix format specifier for size_t: use %zu instead of %u for
+  desc->num_periods to resolve -Wformat warning with W=1
 
-diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-index 5ad922eb937a..053fc6765a59 100644
---- a/drivers/acpi/cppc_acpi.c
-+++ b/drivers/acpi/cppc_acpi.c
-@@ -1394,45 +1394,66 @@ int cppc_get_perf_caps(int cpunum, struct cppc_perf_caps *perf_caps)
- 		}
- 	}
+ drivers/dma/tegra210-adma.c | 48 +++++++++++++++++++++++++++++--------
+ 1 file changed, 38 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index 14e0c408ed1e..a50cd52fec18 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -335,8 +335,16 @@ static int tegra_adma_request_alloc(struct tegra_adma_chan *tdc,
+ 	struct tegra_adma *tdma = tdc->tdma;
+ 	unsigned int sreq_index = tdc->sreq_index;
  
--	cpc_read(cpunum, highest_reg, &high);
-+	ret = cpc_read(cpunum, highest_reg, &high);
-+	if (ret)
-+		goto out_err;
- 	perf_caps->highest_perf = high;
- 
--	cpc_read(cpunum, lowest_reg, &low);
-+	ret = cpc_read(cpunum, lowest_reg, &low);
-+	if (ret)
-+		goto out_err;
- 	perf_caps->lowest_perf = low;
- 
--	cpc_read(cpunum, nominal_reg, &nom);
-+	ret = cpc_read(cpunum, nominal_reg, &nom);
-+	if (ret)
-+		goto out_err;
- 	perf_caps->nominal_perf = nom;
- 
- 	/*
- 	 * If reference perf register is not supported then we should
- 	 * use the nominal perf value
- 	 */
--	if (CPC_SUPPORTED(reference_reg))
--		cpc_read(cpunum, reference_reg, &ref);
--	else
-+	if (CPC_SUPPORTED(reference_reg)) {
-+		ret = cpc_read(cpunum, reference_reg, &ref);
-+		if (ret)
-+			goto out_err;
-+	} else {
- 		ref = nom;
+-	if (tdc->sreq_reserved)
+-		return tdc->sreq_dir == direction ? 0 : -EINVAL;
++	if (tdc->sreq_reserved) {
++		if (tdc->sreq_dir != direction) {
++			dev_err(tdma->dev,
++				"DMA request direction mismatch: reserved=%s, requested=%s\n",
++				dmaengine_get_direction_text(tdc->sreq_dir),
++				dmaengine_get_direction_text(direction));
++			return -EINVAL;
++		}
++		return 0;
 +	}
- 	perf_caps->reference_perf = ref;
  
- 	if (guaranteed_reg->type != ACPI_TYPE_BUFFER  ||
- 	    IS_NULL_REG(&guaranteed_reg->cpc_entry.reg)) {
- 		perf_caps->guaranteed_perf = 0;
+ 	if (sreq_index > tdma->cdata->ch_req_max) {
+ 		dev_err(tdma->dev, "invalid DMA request\n");
+@@ -665,8 +673,11 @@ static int tegra_adma_set_xfer_params(struct tegra_adma_chan *tdc,
+ 	const struct tegra_adma_chip_data *cdata = tdc->tdma->cdata;
+ 	unsigned int burst_size, adma_dir, fifo_size_shift;
+ 
+-	if (desc->num_periods > ADMA_CH_CONFIG_MAX_BUFS)
++	if (desc->num_periods > ADMA_CH_CONFIG_MAX_BUFS) {
++		dev_err(tdc2dev(tdc), "invalid DMA periods %zu (max %u)\n",
++			desc->num_periods, ADMA_CH_CONFIG_MAX_BUFS);
+ 		return -EINVAL;
++	}
+ 
+ 	switch (direction) {
+ 	case DMA_MEM_TO_DEV:
+@@ -1047,38 +1058,50 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 	res_page = platform_get_resource_byname(pdev, IORESOURCE_MEM, "page");
+ 	if (res_page) {
+ 		tdma->ch_base_addr = devm_ioremap_resource(&pdev->dev, res_page);
+-		if (IS_ERR(tdma->ch_base_addr))
++		if (IS_ERR(tdma->ch_base_addr)) {
++			dev_err(&pdev->dev, "failed to map page resource\n");
+ 			return PTR_ERR(tdma->ch_base_addr);
++		}
+ 
+ 		res_base = platform_get_resource_byname(pdev, IORESOURCE_MEM, "global");
+ 		if (res_base) {
+ 			resource_size_t page_offset, page_no;
+ 			unsigned int ch_base_offset;
+ 
+-			if (res_page->start < res_base->start)
++			if (res_page->start < res_base->start) {
++				dev_err(&pdev->dev, "invalid page/global resource order\n");
+ 				return -EINVAL;
++			}
++
+ 			page_offset = res_page->start - res_base->start;
+ 			ch_base_offset = cdata->ch_base_offset;
+ 			if (!ch_base_offset)
+ 				return -EINVAL;
+ 
+ 			page_no = div_u64(page_offset, ch_base_offset);
+-			if (!page_no || page_no > INT_MAX)
++			if (!page_no || page_no > INT_MAX) {
++				dev_err(&pdev->dev, "invalid page number %llu\n", page_no);
+ 				return -EINVAL;
++			}
+ 
+ 			tdma->ch_page_no = page_no - 1;
+ 			tdma->base_addr = devm_ioremap_resource(&pdev->dev, res_base);
+-			if (IS_ERR(tdma->base_addr))
++			if (IS_ERR(tdma->base_addr)) {
++				dev_err(&pdev->dev, "failed to map global resource\n");
+ 				return PTR_ERR(tdma->base_addr);
++			}
+ 		}
  	} else {
--		cpc_read(cpunum, guaranteed_reg, &guaranteed);
-+		ret = cpc_read(cpunum, guaranteed_reg, &guaranteed);
-+		if (ret)
-+			goto out_err;
- 		perf_caps->guaranteed_perf = guaranteed;
- 	}
- 
--	cpc_read(cpunum, lowest_non_linear_reg, &min_nonlinear);
-+	ret = cpc_read(cpunum, lowest_non_linear_reg, &min_nonlinear);
-+	if (ret)
-+		goto out_err;
- 	perf_caps->lowest_nonlinear_perf = min_nonlinear;
- 
--	if (!high || !low || !nom || !ref || !min_nonlinear)
-+	if (!high || !low || !nom || !ref || !min_nonlinear) {
- 		ret = -EFAULT;
-+		goto out_err;
-+	}
- 
- 	/* Read optional lowest and nominal frequencies if present */
--	if (CPC_SUPPORTED(low_freq_reg))
--		cpc_read(cpunum, low_freq_reg, &low_f);
-+	if (CPC_SUPPORTED(low_freq_reg)) {
-+		ret = cpc_read(cpunum, low_freq_reg, &low_f);
-+		if (ret)
-+			goto out_err;
-+	}
- 
--	if (CPC_SUPPORTED(nom_freq_reg))
--		cpc_read(cpunum, nom_freq_reg, &nom_f);
-+	if (CPC_SUPPORTED(nom_freq_reg)) {
-+		ret = cpc_read(cpunum, nom_freq_reg, &nom_f);
-+		if (ret)
-+			goto out_err;
-+	}
- 
- 	perf_caps->lowest_freq = low_f;
- 	perf_caps->nominal_freq = nom_f;
-@@ -1526,16 +1547,25 @@ int cppc_get_perf_ctrs(int cpunum, struct cppc_perf_fb_ctrs *perf_fb_ctrs)
+ 		/* If no 'page' property found, then reg DT binding would be legacy */
+ 		res_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 		if (res_base) {
+ 			tdma->base_addr = devm_ioremap_resource(&pdev->dev, res_base);
+-			if (IS_ERR(tdma->base_addr))
++			if (IS_ERR(tdma->base_addr)) {
++				dev_err(&pdev->dev, "failed to map base resource\n");
+ 				return PTR_ERR(tdma->base_addr);
++			}
+ 		} else {
++			dev_err(&pdev->dev, "failed to map mem resource\n");
+ 			return -ENODEV;
  		}
- 	}
  
--	cpc_read(cpunum, delivered_reg, &delivered);
--	cpc_read(cpunum, reference_reg, &reference);
-+	ret = cpc_read(cpunum, delivered_reg, &delivered);
-+	if (ret)
-+		goto out_err;
-+
-+	ret = cpc_read(cpunum, reference_reg, &reference);
-+	if (ret)
-+		goto out_err;
-+
- 	/*
- 	 * Per spec, if ctr_wrap_time optional register is unsupported, then the
- 	 * performance counters are assumed to never wrap during the lifetime of
- 	 * platform
- 	 */
- 	ctr_wrap_time = (u64)(~((u64)0));
--	if (CPC_SUPPORTED(ctr_wrap_reg))
--		cpc_read(cpunum, ctr_wrap_reg, &ctr_wrap_time);
-+	if (CPC_SUPPORTED(ctr_wrap_reg)) {
-+		ret = cpc_read(cpunum, ctr_wrap_reg, &ctr_wrap_time);
-+		if (ret)
-+			goto out_err;
+@@ -1130,6 +1153,7 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 		tdc->irq = of_irq_get(pdev->dev.of_node, i);
+ 		if (tdc->irq <= 0) {
+ 			ret = tdc->irq ?: -ENXIO;
++			dev_err_probe(&pdev->dev, ret, "failed to get IRQ for channel %d\n", i);
+ 			goto irq_dispose;
+ 		}
+ 
+@@ -1141,12 +1165,16 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 	pm_runtime_enable(&pdev->dev);
+ 
+ 	ret = pm_runtime_resume_and_get(&pdev->dev);
+-	if (ret < 0)
++	if (ret < 0) {
++		dev_err(&pdev->dev, "runtime PM resume failed: %d\n", ret);
+ 		goto rpm_disable;
 +	}
  
- 	if (!delivered || !reference) {
- 		ret = -EFAULT;
-@@ -1811,24 +1841,39 @@ int cppc_get_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls)
- 	}
- 
- 	/* Read optional elements if present */
--	if (CPC_SUPPORTED(max_perf_reg))
--		cpc_read(cpu, max_perf_reg, &max);
-+	if (CPC_SUPPORTED(max_perf_reg)) {
-+		ret = cpc_read(cpu, max_perf_reg, &max);
-+		if (ret)
-+			goto out_err;
+ 	ret = tegra_adma_init(tdma);
+-	if (ret)
++	if (ret) {
++		dev_err(&pdev->dev, "failed to initialize ADMA: %d\n", ret);
+ 		goto rpm_put;
 +	}
- 	perf_ctrls->max_perf = max;
  
--	if (CPC_SUPPORTED(min_perf_reg))
--		cpc_read(cpu, min_perf_reg, &min);
-+	if (CPC_SUPPORTED(min_perf_reg)) {
-+		ret = cpc_read(cpu, min_perf_reg, &min);
-+		if (ret)
-+			goto out_err;
-+	}
- 	perf_ctrls->min_perf = min;
- 
--	if (CPC_SUPPORTED(desired_perf_reg))
--		cpc_read(cpu, desired_perf_reg, &desired_perf);
-+	if (CPC_SUPPORTED(desired_perf_reg)) {
-+		ret = cpc_read(cpu, desired_perf_reg, &desired_perf);
-+		if (ret)
-+			goto out_err;
-+	}
- 	perf_ctrls->desired_perf = desired_perf;
- 
--	if (CPC_SUPPORTED(energy_perf_reg))
--		cpc_read(cpu, energy_perf_reg, &energy_perf);
-+	if (CPC_SUPPORTED(energy_perf_reg)) {
-+		ret = cpc_read(cpu, energy_perf_reg, &energy_perf);
-+		if (ret)
-+			goto out_err;
-+	}
- 	perf_ctrls->energy_perf = energy_perf;
- 
--	if (CPC_SUPPORTED(auto_sel_reg))
--		cpc_read(cpu, auto_sel_reg, &auto_sel);
-+	if (CPC_SUPPORTED(auto_sel_reg)) {
-+		ret = cpc_read(cpu, auto_sel_reg, &auto_sel);
-+		if (ret)
-+			goto out_err;
-+	}
- 	perf_ctrls->auto_sel = (bool)auto_sel;
- 
- out_err:
+ 	dma_cap_set(DMA_SLAVE, tdma->dma_dev.cap_mask);
+ 	dma_cap_set(DMA_PRIVATE, tdma->dma_dev.cap_mask);
 -- 
-2.34.1
+2.17.1
 
