@@ -1,135 +1,209 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25345363C60;
-	Wed, 18 Mar 2026 18:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9443BFE33;
+	Wed, 18 Mar 2026 18:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773857879; cv=none; b=t39bjDFA2At4ujy/RrcRm35U+6N5wmUUD4JKwZCQvc3VhmmFycDQswk+lKb+eEDqHp+TAR/SeY/7ZywMbB76R+w4kCtmO99vaN14GTrPh+mF+D7rx02xxDzdEO/WeJB8BPmNZ2cH4FPzcTA1DWe0JNDboZ+n3bUQShVZcQCOOKc=
+	t=1773857990; cv=none; b=gwejSA6F5kIzsUKg6YO7HVOg8HhEllkJyvcYAwCHwylWnrTSf247g7Jf1tTariOpd7g1SMaJnsz4cZiwT+eGZyEuRbeRWJ3HRCOATfA1ShElT6C/taFTdqYg35mXFxyqFUuxLFEIYN4wWJY9R525hzjBT77kti96sQGV6kGXf1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773857879; c=relaxed/simple;
-	bh=e4yzMa5HuMJRcUTMrTesXNJjFSWRTNlzN6y/Dr36S/A=;
+	s=arc-20240116; t=1773857990; c=relaxed/simple;
+	bh=vj7tS7uIMvZSXYU425dVU9YT132ngTU9jfQFxZte628=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o4NSh0AOYviLgFFu/CiMVnAyp2GgcSIDkrZYOTObqVz3WWG6WLnenwQAB8i/b7M252RY/N5YvYgZrwyUpEzKiWf8VDAwKYtbX4UNtmRVdM8P+TP9H25W9a9Sodvsd5ZX0S3nM+MenA5cRmflZSxEAryb6Fl7NXC0WQs15BC7Qwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=bWaVeHqz; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=WxUFBQsFPNjmBykGCPiCTKakJ/qpnqQgkHAQuFQb3/y+hHDSE88Ot22XXfriVOF9VePZAAtret/ldzu/ZaiPDmyga58dj9z0ZPeM2XEInBJ37lizCdzbXetA3CYjmzbghrGkz4VyZKYogTgeSVX5q+/njc4zxKelhSwX2749dtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=wC05hgGu; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="bWaVeHqz"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=+XHQ0aGtLx1tevhTAjCKKEhJVloZXEKH4qJpmcE8IDo=; b=bWaVeHqz0dK554wfgHG1/zTvhy
-	epaEK6fkX7fKC8DnBvMGQXXo8PSOlBCy1VoqE9cDkiJpHHjpy4EXcfao2+OKn9pt0mJAO5C+KWPbp
-	BkICYE9+Ms/wapBskvoY0wwzFlZqcoXWihPCvNqG2DLw+cv2z9SsdUM/x7cxnYmR+UO9Aqm+8zcAC
-	48e4sbQXNqCKNGSyMSoHbWXDChxEsvWRlGxuhiMColJw+Sl5G/PQu74wNxTNKwCCV4mKIFna4/8G3
-	g3q16XH29uJnxfHawgrulhAZp2JRFlNtHgn+wiEnDfiVM5eE2lwgRes3VDygiCOE+um3J2kaoftlS
-	/h5KCb/w==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:58880)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1w2vSn-000000003np-1Vie;
-	Wed, 18 Mar 2026 18:17:49 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1w2vSl-000000007II-2zvC;
-	Wed, 18 Mar 2026 18:17:47 +0000
-Date: Wed, 18 Mar 2026 18:17:47 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Jon Hunter <jonathanh@nvidia.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH net-next] i2c: tegra: runtime PM is not IRQ-safe
-Message-ID: <abrsS1UW-q6J1rEU@shell.armlinux.org.uk>
-References: <E1vsNBv-00000009nfA-27ZK@rmk-PC.armlinux.org.uk>
- <aZSZ54oZS9C1Qf1h@shell.armlinux.org.uk>
- <046c9bca-f6a5-47ce-8147-6e864b364dc3@nvidia.com>
- <15817166.RDIVbhacDa@senjougahara>
- <b7ede8c7-acc6-485a-b433-35d780d6ad1c@nvidia.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="wC05hgGu"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 41CDF4E426F8;
+	Wed, 18 Mar 2026 18:19:44 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id E1C1D6004F;
+	Wed, 18 Mar 2026 18:19:43 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2878510450431;
+	Wed, 18 Mar 2026 19:19:36 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1773857982; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=GFiGghzPl6g8oEQeQrcO9TafT5x7gCN92iALR8Yy2dM=;
+	b=wC05hgGuVfa+8EvwpROQS7dqjARjeKaWIU113kVPpWKO9oJMZR7+p4+5qakt+7dNOXwT4Y
+	5DnoW5/51sYHsUt67qtSiLOELpz0LbWYtNq1eu4fVCpGKQ6H/1t0Is4PMy5YWyuE783a7j
+	LQ6shnjEo6aAPupfW+6MPI4Xq1QbP1evicCA6W18jltj/xHBBkMs8k1sxpMPX5/LhR0jDu
+	YRrNoRzGBVtsGscmtlEpz9wGUVJD0neM+6vaOnJkRaC396auEzOO/ADgY2/2MlyIYZD2B1
+	WYQ4YdXSQXv1ymLaqL15eMTElJc49798VPeRb9dxn+z1nWK5ClpPEz56vJ5JFA==
+Date: Wed, 18 Mar 2026 19:19:36 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Akhil R <akhilrajeev@nvidia.com>
+Cc: Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Robert Moore <robert.moore@intel.com>, Len Brown <lenb@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Fredrik Markstrom <fredrik.markstrom@est.tech>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Suresh Mangipudi <smangipudi@nvidia.com>,
+	linux-tegra@vger.kernel.org, linux-i3c@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev,
+	linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH 11/12] hwmon: spd5118: Add I3C support
+Message-ID: <202603181819360a32c641@mail.local>
+References: <20260318172820.13771-1-akhilrajeev@nvidia.com>
+ <20260318172820.13771-12-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <b7ede8c7-acc6-485a-b433-35d780d6ad1c@nvidia.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260318172820.13771-12-akhilrajeev@nvidia.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Feb 18, 2026 at 08:30:49AM +0000, Jon Hunter wrote:
+On 18/03/2026 22:57:24+0530, Akhil R wrote:
+> Add a regmap config and a probe function to support for I3C based
+> communication to SPD5118 devices.
 > 
-> On 18/02/2026 01:35, Mikko Perttunen wrote:
+> On an I3C bus, SPD5118 are enumerated via SETAASA and always require an
+> ACPI or device tree entry. The device matching is hence through the OF
+> match tables only and do not need an I3C class match table. The device
+> identity is verified in the type registers before proceeding to the
+> common probe function.
 > 
-> ...
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> ---
+>  drivers/hwmon/Kconfig   |  7 +++--
+>  drivers/hwmon/spd5118.c | 66 ++++++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 70 insertions(+), 3 deletions(-)
 > 
-> > > > > Yes we should always follow that rule. However, in this case, I believe
-> > > > > that the build time dependency on the PINCTRL subsystem was only exposed
-> > > > > by adding the 'i2c_dev->dev->pins'. Unless I am misunderstanding ...
-> > > > 
-> > > > Yes, it looks like it.
-> > > > 
-> > > > However, I wonder why the dependency has to be complicated.
-> > > > 
-> > > > ARCH_TEGRA in both arm64 and arm selects PINCTRL, so we can assume that
-> > > > 
-> > > > PINCTRL will be set for ARCH_TEGRA. So:
-> > > >    config I2C_TEGRA
-> > > >    	tristate "NVIDIA Tegra internal I2C controller"
-> > > >    	depends on ARCH_TEGRA || (COMPILE_TEST && (ARC || ARM || ARM64 ||
-> > M68K
-> > > >    	|| RISCV || SUPERH || SPARC))>
-> > > > +	depends on PINCTRL
-> > > > 
-> > > > is a shorter way of writing this, and it makes sense - pinctrl isn't
-> > > > required because we're doing a compile test, it's required because
-> > > > the driver itself fundamentally requires it with this change whether
-> > > > or not we're doing a compile test.
-> > > 
-> > > Yes that's true indeed.
-> > > 
-> > > Mikko, do you want to take care of this?
-> > 
-> > My thought was it would be better to keep the PINCTRL dependency grouped with
-> > COMPILE_TEST. That makes it clear it's only needed because of it -- clearer to
-> > the reader that ARCH_TEGRA implies it. Kind of like not checking for NULL
-> > pointers in C code when the contract is that the pointer is not NULL.
-> 
-> Russell's point is that regardless of the compile test, the driver has a
-> dependency on pinctrl and so should always be dependent on it. The I2C
-> instances for the DPAUX device on certain devices require this and will not
-> work without it (before your change was added). I guess I should have added
-> this dependency back with commit 718917b9875f ("i2c: tegra: Add pinctrl
-> support").
-> 
-> > I can change it though if you'd like.
-> 
-> I think we should.
-> 
-> Thanks!
+> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+> index 8af80e17d25e..23604c05ad22 100644
+> --- a/drivers/hwmon/Kconfig
+> +++ b/drivers/hwmon/Kconfig
+> @@ -2300,10 +2300,13 @@ config SENSORS_SPD5118
+>  	tristate "SPD5118 Compliant Temperature Sensors"
+>  	depends on I2C
 
-When is this bug going to be fixed? This is a regression that's
-affecting Xavier systems. It's been over a month since I proposed
-a patch to fix this:
+Please use I3C_OR_I2C here
 
-BUG: sleeping function called from invalid context at kernel/locking/mutex.c:591
-in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 59, name: kworker/u24:6
-
-Please see:
-
-https://lore.kernel.org/r/E1vsNBv-00000009nfA-27ZK@rmk-PC.armlinux.org.uk
-
-for my original proposed fix, complete kernel messages and analysis.
+>  	select REGMAP_I2C
+> +	select REGMAP_I3C if I3C
+>  	help
+>  	  If you say yes here you get support for SPD5118 (JEDEC JESD300)
+> -	  compliant temperature sensors. Such sensors are found on DDR5 memory
+> -	  modules.
+> +	  compliant temperature sensors using I2C or I3C bus interface.
+> +	  Such sensors are found on DDR5 memory modules.
+> +
+> +	  This driver supports both I2C and I3C interfaces.
+>  
+>  	  This driver can also be built as a module. If so, the module
+>  	  will be called spd5118.
+> diff --git a/drivers/hwmon/spd5118.c b/drivers/hwmon/spd5118.c
+> index 5da44571b6a0..d70123e10616 100644
+> --- a/drivers/hwmon/spd5118.c
+> +++ b/drivers/hwmon/spd5118.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/bits.h>
+>  #include <linux/err.h>
+>  #include <linux/i2c.h>
+> +#include <linux/i3c/device.h>
+>  #include <linux/hwmon.h>
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+> @@ -482,6 +483,25 @@ static const struct regmap_config spd5118_regmap16_config = {
+>  	.cache_type = REGCACHE_MAPLE,
+>  };
+>  
+> +/*
+> + * I3C uses 2-byte register addressing -
+> + *   Byte 1: MemReg | BlkAddr[0] | Address[5:0]
+> + *   Byte 2: 0000   | BlkAddr[4:1]
+> + *
+> + * The low byte carries the register/NVM address and the high byte carries the
+> + * upper block address bits, so little-endian format is required. No range
+> + * config is needed since I3C does not use MR11 page switching.
+> + */
+> +static const struct regmap_config spd5118_regmap_i3c_config = {
+> +	.reg_bits = 16,
+> +	.val_bits = 8,
+> +	.max_register = 0x7ff,
+> +	.reg_format_endian = REGMAP_ENDIAN_LITTLE,
+> +	.writeable_reg = spd5118_writeable_reg,
+> +	.volatile_reg = spd5118_volatile_reg,
+> +	.cache_type = REGCACHE_MAPLE,
+> +};
+> +
+>  static int spd5118_suspend(struct device *dev)
+>  {
+>  	struct spd5118_data *data = dev_get_drvdata(dev);
+> @@ -770,7 +790,51 @@ static struct i2c_driver spd5118_i2c_driver = {
+>  	.address_list	= IS_ENABLED(CONFIG_SENSORS_SPD5118_DETECT) ? normal_i2c : NULL,
+>  };
+>  
+> -module_i2c_driver(spd5118_i2c_driver);
+> +/* I3C */
+> +
+> +static int spd5118_i3c_probe(struct i3c_device *i3cdev)
+> +{
+> +	struct device *dev = i3cdev_to_dev(i3cdev);
+> +	struct regmap *regmap;
+> +	unsigned int regval;
+> +	int err;
+> +
+> +	regmap = devm_regmap_init_i3c(i3cdev, &spd5118_regmap_i3c_config);
+> +	if (IS_ERR(regmap))
+> +		return dev_err_probe(dev, PTR_ERR(regmap), "regmap init failed\n");
+> +
+> +	/* Verify this is a SPD5118 device */
+> +	err = regmap_read(regmap, SPD5118_REG_TYPE, &regval);
+> +	if (err)
+> +		return err;
+> +
+> +	if (regval != 0x51) {
+> +		dev_err(dev, "unexpected device type 0x%02x, expected 0x51\n", regval);
+> +		return -ENODEV;
+> +	}
+> +
+> +	err = regmap_read(regmap, SPD5118_REG_TYPE + 1, &regval);
+> +	if (err)
+> +		return err;
+> +
+> +	if (regval != 0x18) {
+> +		dev_err(dev, "unexpected device type 0x%02x, expected 0x18\n", regval);
+> +		return -ENODEV;
+> +	}
+> +
+> +	return spd5118_common_probe(dev, regmap, false);
+> +}
+> +
+> +static struct i3c_driver spd5118_i3c_driver = {
+> +	.driver = {
+> +		.name	= "spd5118_i3c",
+> +		.of_match_table = spd5118_of_ids,
+> +		.pm = pm_sleep_ptr(&spd5118_pm_ops),
+> +	},
+> +	.probe		= spd5118_i3c_probe,
+> +};
+> +
+> +module_i3c_i2c_driver(spd5118_i3c_driver, &spd5118_i2c_driver);
+>  
+>  MODULE_AUTHOR("René Rebe <rene@exactcode.de>");
+>  MODULE_AUTHOR("Guenter Roeck <linux@roeck-us.net>");
+> -- 
+> 2.50.1
+> 
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
