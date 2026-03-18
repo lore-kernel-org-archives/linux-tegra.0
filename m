@@ -1,290 +1,312 @@
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010002.outbound.protection.outlook.com [52.101.85.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0C33128A3
-	for <linux-tegra@vger.kernel.org>; Wed, 18 Mar 2026 18:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773860036; cv=none; b=CZ+iMwRAU4kFCV+m8LV4RFnTakZN4E6qog38Q+ZrWE8isLP55Pk7iFTzc6TfT65hX7ikL3W79ZANbtfOHN+BrS3LlToPhIjL77igm6sIkhDKjaVa/7NrmAVQXO+lwBk+ABd2fcKbKp/59C4ll1ER8Q+Ae1lfnHHt+bb+tlovOAA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773860036; c=relaxed/simple;
-	bh=4vwHuZhCBdWEo7/LYVTBkP2edEov7tQ4NKjrZQI1un0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mkevCLhmCnLrEgF/yQEjf/KcDSaCkbfFCjaoUX1ZpqP47LHuvCz08yuW8UWtG0SzTgThw6a/rtftF61iA3AwrBEM8S8E1K7+1jgmI5mVkEN0WrzCqjNfDDNJXaNZ6DffbtzXa1JuNUCCfw9cnYnoL2xgZbt8vYOtE9t9ieHH23o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dFnmzUm7; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563343E9F61;
+	Wed, 18 Mar 2026 19:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773860961; cv=fail; b=ErRwGA759xqXqKd6srIXyn1QcvdVlqWJ2VZNwHf0xd0kCnui7vx69IklMDnD4GVApI4TUE83pNTt+lqyADOIjpms6q3aAthHnqKmkHG98iipCS3LaqlP0GNIAh4GUOHIHq7oOeIUlEmRtq1AOo5nh+BySnFL7HciFrQBH4mGUus=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773860961; c=relaxed/simple;
+	bh=EOrRS0acc0DYHY1PzE8thHNxA8xeIN0tnyE4TVmxFfM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=f5s5eMDbxtRDsL30nkknpJOc+w+Hy6Rs0DU8tTEIoOLj5cw+6WNbGvFYkGYKU82+udq2mxt009+8RYo8zuENBsDJJAllfUyTtqB7UCZUgLMLr14mO03am0a15WDXgCbI5P70GqdzyYvpbyJb6f27hDO/3mqU2QCOG/XOpIv8Jb0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VIxBv9MU; arc=fail smtp.client-ip=52.101.85.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dFnmzUm7"
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-829865a8471so259777b3a.3
-        for <linux-tegra@vger.kernel.org>; Wed, 18 Mar 2026 11:53:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773860032; x=1774464832; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=hh3HXSaRNZYrgfFy6kO/5eGwrNgWsuUWpuE42iqN3sY=;
-        b=dFnmzUm7Q/T8KTO+2gZFv3w1kpjxn7af63bpeJvmcD5EDG5ph8xj0RPq2xnaeHJAE9
-         LdZrUuGhDdXN4mowdLLuCdS1Ig5QkcXTObbOo5v2qvziu4i1iTj5ruHD6mLQhIELywdc
-         /m9/e02wrAUvhyDeSZWVhvCfoCzeYungQ08ygftcvz1dLrrmWW6o6cElOTL4VlxudvVe
-         Z8drn+lnglP6Bb1AxFJPL3TNogFR2jVDj76jOp8X/WzIx/heQMvHR1negc6CdJo7Pg10
-         mrVwVhLz8CQ+39C2h+SwHvGBGxbn5vlFSdGBukQgdFel6r7Nx76YBiUaDYBgJD7pkWMM
-         2xjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773860032; x=1774464832;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hh3HXSaRNZYrgfFy6kO/5eGwrNgWsuUWpuE42iqN3sY=;
-        b=Bt7uqTTGken/1qQYsaHoj88QyapFPJixdHSv6TdgMS/GGJsMTDMpEVZUeer/h8vlMq
-         /PieaSuW1N04XCbOnLpHjyebuz7aFNc1Z+h7GPDnh7F4E1TPGYfgbTBH7PkhPl7VYr0z
-         C08/OA/J+BHa7oo23RnmZVjmv6ifUtE1Q6p6TM0CNbGZvr3lhJxAxnGU0TBgwQtZLgzI
-         IUcdj5E51TgaSnKdInYC5q/aw7IkVdS/Z1QH27itaUOQREgipAsQPsoECGfMpGe9bFzy
-         Tjo+j879GCK3kES3FsbnePF0D/T4dR/P+dtXRdrnSZ6pFarVMqf7+5jcf9Gy5RyaO7WI
-         8JvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbr56J0+jqFlzqhFsy9VjGWCmxe6EVoNVz65brgYQGQ1W0U/nzUhHlsvvOvV0X8911tTmsM6Mu7oGeqQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeJ+1jFEVEP/ogNcrDVHQlTC2l6GFffcTTTS6JBPsyi8+EzSr6
-	9t+/Wl8n8F3xApYtdictbvZJ8T2FVI/sqXsVUvrHkj8Lg3rKSn0wj3G1
-X-Gm-Gg: ATEYQzxEGKZnNG2HZB2eMFY6ZSwVHF9QBN4rb5W0T/N4Evfe1JxcWuRJPyWANCCsB+r
-	kMTwzpe0DZOzSKpcpR9xttcgBaxYuw7hKSDJ58PVzCPxwzKgnS/6bg/Y05qa8bkY2SMKZgRgg77
-	FRKxXswAfUkPh2cXtoiToSzYUtZs3G1yQs9bR/cJfoCeixiDSvtQIbICy3pNbtoKz8OjRe4H+aY
-	Zrl/cP6mid/QsgDdEfIBs7udqy9nFnoHoz5cVvlvOKDUUmd5TC2nZSKo7/75ERp54Yy9aZe2nRr
-	T5zOxEgqyf9woVSbM8mraXkKI5hvsgt75pUOZdWMJo+vfCQVmXTT+WaDWCVXcz6K1L1rkeMmiWO
-	ov62jGaG8X3f6qoPZFWW02zY2g1CPtaC1dGhYS5wU7Ry+Kwx76lD7j2GEa6fHhQUJ2UIz88K3t/
-	5Xbku4SdBscJCjCKLDB2CvkhD34tLb8djRl3J5lSXUqB1JxBRcEt6PJNoou9VuLF+m1JTxX1j3d
-	8Miultykdk=
-X-Received: by 2002:a05:6a00:3698:b0:824:9848:b020 with SMTP id d2e1a72fcca58-82a6b26e7a3mr3958271b3a.52.1773860032113;
-        Wed, 18 Mar 2026 11:53:52 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82a6af06bd7sm3517633b3a.0.2026.03.18.11.53.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Mar 2026 11:53:51 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <df8086b1-8834-4bf2-ac4b-cb921beb8471@roeck-us.net>
-Date: Wed, 18 Mar 2026 11:53:49 -0700
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VIxBv9MU"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rGRjIlGRGJDe1qVsdQr0lSSILQXAvqWUP+vsOWG+8H+zmpiMcJSYH5Z+kyWGJt/y/Ki5FQFjSXhykT2MZ6Jf82F5oJCDbQWWwDAbf5zhV8ia7V5Qmrna2958PZV0liUTPnEUwH/oliWKAMTWykol3rxKcx+0nuhVdnkyjZPLJ78urtApp5tAV7KWML2S5qfbJojHaCbcmxxPxpfXH2dreTGVgUyZbDYvhaXu8NL5GHxrrB9cRYS0QKMthqVbHR/w+gFfCrOe7+ZPIeF+mNvRJxPOQuk5fBukURYujkaR6wxxw+kxsRrYvRinDQQeNzRPSgxhl4ECAdcQwoPC1dr9Gg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=InNf1odKeWUiZdLKqX0SPbWhi8kPUw9AhkT0kLviTT4=;
+ b=HkQbzWBm4L5o5pKGsfPYLrUWajBzoVHu3qm4/IRHVgO1Rl6W1cuIyfaY3vAZNoXo+DelLy54f40CYTyhtBrI4Tl4NSkRXSPIyqKINymS6ecqVDpHXldXUbcidPPLqMDU5XPkhvGbIZLJOZOn0+0yVIh4arl/WeiRKI4efl3PNPAjnsGp5H0a6En7i+7U/RGOI92iwBfXZN14JM1CwByjVVy2ggVtoIWK4eqgDthBy+Qi9jeT5SBQnXL+dvx8ou8i0GgHiF6TtPro6awg0mORwSzs5dzPk++AonkLWX9Jk+B/5KwEmuOFfo8G2eTNvdMHwISkCHx7Ne1JogUQhokYRg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=InNf1odKeWUiZdLKqX0SPbWhi8kPUw9AhkT0kLviTT4=;
+ b=VIxBv9MUVaCZhUBvVVpD24o6bW9T12W3tFPFvw2AvsooHtqhW82ZkC+6M8911iPl5nniR3iGyASBL0oO6uMHMb5f7k1z6xvQzvNlgj0Vfge88EHP5lfJ9fG754fnt9T5SyVy6njuLwx5QbQZiWD14KfYJ2yc4gJ0XsNSY3GUlL4iUraLqNuhG3jf1Ldq0I/uQ5NH5aIAcyT2TEbqJGg/uBaa5OXpFmWxk9KuW0BLvM6fQommK3euZvfMdJ9MZhhsZgHS9NA6rADj0CTO5+/Opq15pw66xydXLcb8o6vCOrgMmlp+Uk+L1mQwjGuOB22O9H/WcsjYOK5oVYwrIRA2Ug==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV5PR12MB9754.namprd12.prod.outlook.com (2603:10b6:408:305::12)
+ by SN7PR12MB7275.namprd12.prod.outlook.com (2603:10b6:806:2ae::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.16; Wed, 18 Mar
+ 2026 19:09:12 +0000
+Received: from LV5PR12MB9754.namprd12.prod.outlook.com
+ ([fe80::9667:3c95:27d2:73da]) by LV5PR12MB9754.namprd12.prod.outlook.com
+ ([fe80::9667:3c95:27d2:73da%7]) with mapi id 15.20.9723.018; Wed, 18 Mar 2026
+ 19:09:12 +0000
+Message-ID: <ab009797-3b48-4568-8e80-b10a44b6fac1@nvidia.com>
+Date: Wed, 18 Mar 2026 19:09:08 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpio: shared: call gpio_chip::of_xlate() if set
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+ Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20260316-gpio-shared-xlate-v1-1-0ce07a1362d2@oss.qualcomm.com>
+ <dff3c797-a619-42c0-9696-3e617e13356e@nvidia.com>
+ <CAMRc=Mfg-2kjfd5RrcD748WPcUUef=aaxyk8fBtzdcbxqmxcCA@mail.gmail.com>
+ <e217c9a6-e2a6-4413-8247-19b7ab72a53a@nvidia.com>
+ <CAMRc=MfK_eqbWDdEQHHWgAyz-zMWyW5G=DF8eNh0o+iyt=BtOg@mail.gmail.com>
+ <d05d4468-84f7-4692-8381-e0742f1f2749@nvidia.com>
+ <CAMRc=McY9dcDLXPM8-QErxzAJuoe1bxy8BX5H2y0uCHXJSsAwA@mail.gmail.com>
+ <CAMRc=McMCMuyB7ETefXaWJ6K=-nPcDHo964WZKtPRU9XVVky_w@mail.gmail.com>
+ <6ea1e467-b0d0-4ec7-90b5-740ca2415460@nvidia.com>
+ <CAMRc=McGaF2XYedgy4n_RZzbHSBBZ2=EMvBEF4f8+ejLbu+CPQ@mail.gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <CAMRc=McGaF2XYedgy4n_RZzbHSBBZ2=EMvBEF4f8+ejLbu+CPQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0464.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a2::20) To LV5PR12MB9754.namprd12.prod.outlook.com
+ (2603:10b6:408:305::12)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/12] hwmon: spd5118: Add I3C support
-To: Akhil R <akhilrajeev@nvidia.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Robert Moore <robert.moore@intel.com>, Len Brown <lenb@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Eric Biggers <ebiggers@kernel.org>,
- Fredrik Markstrom <fredrik.markstrom@est.tech>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Thierry Reding <thierry.reding@kernel.org>, Jon Hunter
- <jonathanh@nvidia.com>, Suresh Mangipudi <smangipudi@nvidia.com>,
- linux-tegra@vger.kernel.org, linux-i3c@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev,
- linux-hwmon@vger.kernel.org
-References: <20260318172820.13771-1-akhilrajeev@nvidia.com>
- <20260318172820.13771-12-akhilrajeev@nvidia.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20260318172820.13771-12-akhilrajeev@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV5PR12MB9754:EE_|SN7PR12MB7275:EE_
+X-MS-Office365-Filtering-Correlation-Id: 70cd2331-5595-4dbd-8064-08de8521d701
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|10070799003|366016|18002099003|22082099003|56012099003;
+X-Microsoft-Antispam-Message-Info:
+	4xat2t3b40aF7dNcrHaAEioF5dq6rCWP5YzvOokjFTKWS0rUAT63Ixm0mB3dhosPkkQVgdWSTZFCLdCTsZ2fXQQdjQ3RdOzeIKlLcKuNb4W7mkfgBC88RpWU84D9ooXzs18wQk0i526BwU3Cw2+nQIsbUPyLscx4+eNW1bs8vjMDxy0dj/mNgar15PofOtFctd+l8dcjOdA27YMf2cTh/SACTPRgvWlW0yIFRXcIECKEn/JbztDiKIjvv6G6u5KURtTzKSXgP7ur18Ve9KyTwdk0OvVgw6oCl/e3Op/zpN6FC11B9q7yFomwzTmCenVVITfc6AngBIzCw09+LC+58gsdUa4ri4h/81WA0LpRGOuC9Z5jRE19LjJ5yh2namEfiSN49dGj/0XAzOOamZ9Mwi2QaC+Y7bZWqZLHnmEOnEU20W5yjyB1Eq2XpqBvt2yjbT23QEe7V6mm2Q+gz3owt5HEk+x/fLs2QRb/suxBrc00sE7BYzM05a0bWwiZNKUDICH5LK1UONXjxhgp8IXgllBz+Y3Ljt6vw1pBSy6JA1qxJXz3umii+qweBbmpskrUFA04X44676kNyNTK354s4T2w/TcuHLPEtBL/kRm/ORpJBLz65V9WhIQH0qqwtyib1rWZ5JfiyHexsMISB1S+6BgBS+IadZlKVjX42gzTMJ6fT86kYC8vsSBRSKM2HdLMKmnTpZN7NhR04vI8c3/tNT9N6Prr/Ekzmh0m0ACSxzE=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV5PR12MB9754.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(10070799003)(366016)(18002099003)(22082099003)(56012099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QTBFb0hjV2VrNWhQaFNESmZ5QVFWc1UzWE5qOUdzZnJWc0lwak1YL1lPUnZn?=
+ =?utf-8?B?czF0ZDJRaHVRMWNpVlE5dGtiMHVKVVYwQ0JxSjZWV3I3VVJlcjYwdXRNU0Qy?=
+ =?utf-8?B?ZlB1U2xwYkhUQ0JwR05PNnpwTzJBTmcwT2dVZGVJb2gzNXJHby9hRnRIY1dw?=
+ =?utf-8?B?YkozaWlFNXBIWTFVTDBNUXZMd0tVa3owK2tmWm9jenAxVEdpTDlpRzRzUFJ6?=
+ =?utf-8?B?SkpLQ3cyS3dZYkl2eDlFd0JoRDIyTVd3b3pBVFNna2NyOUxXNjRuaXFhbDlE?=
+ =?utf-8?B?bWtOSWdXNlNQK3Q5VG1MaUtpNzlWU0JQVnVCYkZ3WURXZ2I0Uk51dWV1cGRl?=
+ =?utf-8?B?M0pSM0NOM0hFa0ZIV3NiODhPSWZLSXBHUHI0YlBEMDVMUit1aUJvWHhkK0tB?=
+ =?utf-8?B?UmtlTEYyNVBwNFJ1cjBPajB3dU8vb29SY0U5dWhQTlBEQ2V3MmxEZ0tiSTV2?=
+ =?utf-8?B?VWZwcG1mTXVZTUZDaHVyOHZlR1ZJUmpjY1BnME9XVVZzRnBkeVE5VC9zell0?=
+ =?utf-8?B?SVdxRkR5SXhXemRPZ0l4WFJwTlZtcC8rVFBkTUFHWUpqa2pxdVNxQ2hBUk9Q?=
+ =?utf-8?B?VHhONXFvTUJDMzRBMkhQc1RWaDVDcTNncVllWmxIYkVqbEpkd3M0Q3YzYnBF?=
+ =?utf-8?B?LytVNTFoMmtmU29GR0M1NGJKS0lwQVNrMHlqbTdTWjBBYTRLR0VJRUltVzdZ?=
+ =?utf-8?B?R2tPRUtJbUg3T0g2ZWxXdHhvcSsyZXVrOHdaNVpubFFRL09ZNnEwQ1JPOFJm?=
+ =?utf-8?B?K2FBWHl1KzdGRThjem52cjdqY3psRS9JTUlickYvd1dnRE5WVTFoZDdoaUlW?=
+ =?utf-8?B?dm5rSmFTeUFkNDhZNUY4Szl4YjNvbFNtNlA1bll3UGtMVTUxQk9yVzYwOXpv?=
+ =?utf-8?B?RjBISlhqam1VVDVuTithSTJ1VlYwVnRsekdYY1NqTE8vUnZRWVNZNGlCYk90?=
+ =?utf-8?B?RHFFK29CcEdrOGQwVDJldXJiMWdYOXp3YmFxbjVKb1M1KzFqWFpXZnFRMldO?=
+ =?utf-8?B?RVQ2b0k2ZVVNQmZVclpKemxOSFJ3TFVIWlhJWGZzYUE4RXRMNWtsajAvQ0NN?=
+ =?utf-8?B?K0tPalpXL2RLYXBDZXZWc0hHVThNK1JPNGp6YU1CZURHZ21ORk5xa2ZQU3ho?=
+ =?utf-8?B?eGgvNHlhZ1FoVjhIU2R0KytBM3BoemtmOGxpSHhFcjMrQWpUU1B5WG95MVQ0?=
+ =?utf-8?B?WmU3bk9aNlgxd0R3WCtUTTg4WVJOZTg4ekxSNGpSL0lsRkxNZm0vUzBuMTF5?=
+ =?utf-8?B?Yml2ZmNSSERURlhHaktRWkRNY09ST25jSWRXRnRFWktaSUJZbzVtTC9SR1Js?=
+ =?utf-8?B?UDF0eTRXaEFrZDNWVWI1enc3cTluemVqTzc4dGFSNktwcEJYTmZUMlEwdmlu?=
+ =?utf-8?B?QlpFV2hnRXF4Yk50NEgrd3YzQ2Z5cVNQdTROL1lieHNZVS9ucDlDaTFXdXcz?=
+ =?utf-8?B?cURGUTB0c1c2ZWpmOWRmU1dwWkg0MUw4NVdTYUp0YVE4eEFkRU9pdnZGdTlp?=
+ =?utf-8?B?OWZuNG02dkU1ZDVKVlp6WlpCdGJwaSs4QWRsblZTbkp6ZEJRTUtMTXdBYVhM?=
+ =?utf-8?B?Ni9WU1Y3S1QwTk8vN21Vc0VFY0t1UXpaTy9rTFBCeGVBVGxTamgwU1dPMDJE?=
+ =?utf-8?B?YTh5UGc4SmNvdy9nUXdhUXZQdVB0US9nUkNzcVE0MGpNYWJjRHNNQjQreGh3?=
+ =?utf-8?B?b0hkNDdsaTNOY2F0Ny94MU1yT2d1dTU0TUg3TnlqMDViQmpGTU93QW9mTk8y?=
+ =?utf-8?B?dlkvZEdLcUsrWjJqSFBBdjFXblFvWmtialJTcVp6UEs2TXR1UHF2RjV4b0Mx?=
+ =?utf-8?B?T1B1SHN6Z0hTdmJDbFdWNStKK0NtaW0welUrOTlFeEFPczk4Qzl4bWtPZzN1?=
+ =?utf-8?B?RjkwZnN0SmM4VXgyY0JNLzdGeVpVMWd6RS9KNjFjNVBuTkFRZkpZbjNyRXQw?=
+ =?utf-8?B?WFJpWGxlb0ZGSnVsd2VaQWQzdVVjZE5QbkdxUHJ0Z055blZFRHFBMVpIQ1Vl?=
+ =?utf-8?B?SkgreTE4SXVjVGFjNEducGZBNUhFbklUcXM0aVNYVTFTaGpXYVdabE52cG9G?=
+ =?utf-8?B?T3JhVmpVb29xbzIyeVpaNjViNk02blBRTXNBeThYN0p6bEZzNTQzcWZ3UmU4?=
+ =?utf-8?B?bEE2SU4xOHNGZWpyTVpIRmIySEdCbno4eU5jTWYvVWVaTnNWc0hMN0wwYklC?=
+ =?utf-8?B?RTl6aTZGblQ0QjZnaVRZUG1ybXBsbnF5YkZvSUZQM0NsZWRMRDlDYStjUnAz?=
+ =?utf-8?B?ZnZNNG5QeGliTVhvcEs5dk55eURIVVVmZE9RR09uWnRNckp0MXVQT1dlT1FL?=
+ =?utf-8?B?VXgvckIrOVFwYlBLRlFKT3kweXgvSXA0SUh4cmVNNGFESFZ3SWFMakExeFJQ?=
+ =?utf-8?Q?9AeURNUbjKxI3YYNAMYt/+Cff8s9vHdlme9Ai3C6gPm3f?=
+X-MS-Exchange-AntiSpam-MessageData-1: bfYJo9+eB2qR1Q==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70cd2331-5595-4dbd-8064-08de8521d701
+X-MS-Exchange-CrossTenant-AuthSource: LV5PR12MB9754.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2026 19:09:12.1872
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DE+BxIB+Ch39df3hQ1/z0RR9AixzzOPxcmc+Da30Q+xmkisQ7UdMtJ40u5pAEcXDu5XsFQqdVSdKIhEibpQE7Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7275
 
-On 3/18/26 10:27, Akhil R wrote:
-> Add a regmap config and a probe function to support for I3C based
-> communication to SPD5118 devices.
+
+On 18/03/2026 08:09, Bartosz Golaszewski wrote:
+
+...
+
+>>>> I can reproduce this with a gpio-keys setup. I think you hit an
+>>>> interesting corner-case where the consumer device is the same for two
+>>>> shared pins assigned to its child fwnodes. The setup doesn't make
+>>>> sense really but I guess this shouldn't just fail like that.
+>>>>
+>>>
+>>> So the problem goes like this: we're using lookup tables for shared
+>>> GPIOs but they are not capable of dealing with two fwnodes that are
+>>> children of the same device that share the same pin but are themselves
+>>> not attached to a device bound to a driver. While we could extend
+>>> lookup tables to take that into account, I think that the setup here
+>>> is so hypothetical, it doesn't really make sense to spend time on it.
+>>
+>> Makes sense.
+>>
 > 
-> On an I3C bus, SPD5118 are enumerated via SETAASA and always require an
-> ACPI or device tree entry. The device matching is hence through the OF
-> match tables only and do not need an I3C class match table. The device
-> identity is verified in the type registers before proceeding to the
-> common probe function.
+> Just to be clear, this:
 > 
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> ---
->   drivers/hwmon/Kconfig   |  7 +++--
->   drivers/hwmon/spd5118.c | 66 ++++++++++++++++++++++++++++++++++++++++-
->   2 files changed, 70 insertions(+), 3 deletions(-)
+> 	gpio-keys {
+> 		compatible = "gpio-keys";
 > 
-> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-> index 8af80e17d25e..23604c05ad22 100644
-> --- a/drivers/hwmon/Kconfig
-> +++ b/drivers/hwmon/Kconfig
-> @@ -2300,10 +2300,13 @@ config SENSORS_SPD5118
->   	tristate "SPD5118 Compliant Temperature Sensors"
->   	depends on I2C
->   	select REGMAP_I2C
+> 		key-one {
+> 			label = "foo";
+> 			gpios = <&gpio_sim0 10 0>;
+> 			linux,input-type = <EV_KEY>;
+> 			linux,code = <KEY_POWER>;
+> 		};
+> 
+> 		key-two {
+> 			label = "bar";
+> 			gpios = <&gpio_sim0 10 0>;
+> 			linux,input-type = <EV_KEY>;
+> 			linux,code = <KEY_POWER>;
+> 		};
+> 	};
+> 
+> doesn't work, but this:
+> 
+> 	gpio-keys-1 {
+> 		compatible = "gpio-keys";
+> 
+> 		key-one {
+> 			label = "foo";
+> 			gpios = <&gpio_sim0 10 0>;
+> 			linux,input-type = <EV_KEY>;
+> 			linux,code = <KEY_POWER>;
+> 		};
+> 	};
+> 
+> 	gpio-keys-2 {
+> 		compatible = "gpio-keys";
+> 
+> 		key-two {
+> 			label = "bar";
+> 			gpios = <&gpio_sim0 10 0>;
+> 			linux,input-type = <EV_KEY>;
+> 			linux,code = <KEY_POWER>;
+> 		};
+> 	};
+> 
+> does. I don't think making the former work is worth the effort.
 
-I also had
-	depends on I3C || I3C=n
-in my version at
+That's fine with me.
 
-https://patchwork.kernel.org/project/linux-hwmon/patch/20250419161356.2528986-6-linux@roeck-us.net/
+>>> Does this patch fix the real problem on the tegra board that you
+>>> reported initially? I doubt two separate GPIO keys, share the same pin
+>>> in real life.
+>>
+>> Yes it fixes the initial issue. However, now I am seeing a different
+>> error on the actual platform that is having the issue to begin with ...
+>>
+> 
+> This is *with* the fix?
 
-which I guess matches the more recent "depends on I3C_OR_I2C".
+Yes.
 
-> +	select REGMAP_I3C if I3C
->   	help
->   	  If you say yes here you get support for SPD5118 (JEDEC JESD300)
-> -	  compliant temperature sensors. Such sensors are found on DDR5 memory
-> -	  modules.
-> +	  compliant temperature sensors using I2C or I3C bus interface.
-> +	  Such sensors are found on DDR5 memory modules.
-> +
-> +	  This driver supports both I2C and I3C interfaces.
->   
->   	  This driver can also be built as a module. If so, the module
->   	  will be called spd5118.
-> diff --git a/drivers/hwmon/spd5118.c b/drivers/hwmon/spd5118.c
-> index 5da44571b6a0..d70123e10616 100644
-> --- a/drivers/hwmon/spd5118.c
-> +++ b/drivers/hwmon/spd5118.c
-> @@ -18,6 +18,7 @@
->   #include <linux/bits.h>
->   #include <linux/err.h>
->   #include <linux/i2c.h>
-> +#include <linux/i3c/device.h>
->   #include <linux/hwmon.h>
->   #include <linux/module.h>
->   #include <linux/mutex.h>
-> @@ -482,6 +483,25 @@ static const struct regmap_config spd5118_regmap16_config = {
->   	.cache_type = REGCACHE_MAPLE,
->   };
->   
-> +/*
-> + * I3C uses 2-byte register addressing -
-> + *   Byte 1: MemReg | BlkAddr[0] | Address[5:0]
-> + *   Byte 2: 0000   | BlkAddr[4:1]
-> + *
-> + * The low byte carries the register/NVM address and the high byte carries the
-> + * upper block address bits, so little-endian format is required. No range
-> + * config is needed since I3C does not use MR11 page switching.
-> + */
-> +static const struct regmap_config spd5118_regmap_i3c_config = {
-> +	.reg_bits = 16,
-> +	.val_bits = 8,
-> +	.max_register = 0x7ff,
-> +	.reg_format_endian = REGMAP_ENDIAN_LITTLE,
+>>    ------------[ cut here ]------------
+>>    WARNING: kernel/rcu/srcutree.c:757 at cleanup_srcu_struct+0xc0/0x1e0, CPU#2: kworker/u49:1/114
+>>    Modules linked in:
+>>    CPU: 2 UID: 0 PID: 114 Comm: kworker/u49:1 Not tainted 6.19.0-tegra #1 PREEMPT
+>>    Hardware name: NVIDIA NVIDIA Jetson AGX Orin Developer Kit/Jetson, BIOS buildbrain-gcid-44496888 03/15/2026
+>>    Workqueue: events_unbound deferred_probe_work_func
+>>    pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>>    pc : cleanup_srcu_struct+0xc0/0x1e0
+>>    lr : cleanup_srcu_struct+0xb4/0x1e0
+>>    sp : ffff800081cbb930
+>>    x29: ffff800081cbb930 x28: ffffd79ff96d0c40 x27: ffff000086059000
+>>    x26: 00000000fffffff0 x25: ffff000086571200 x24: ffffd79ff94adb10
+>>    x23: ffffd79ff86400c0 x22: ffff000086059390 x21: ffffd79ff94aa040
+>>    x20: 0000000000000000 x19: fffffdffbf669d40 x18: 00000000ffffffff
+>>    x17: 0000000000000000 x16: ffffd79ff62dc8a0 x15: 0081cf5fe0409838
+>>    x14: 0000000000000000 x13: 0000000000000272 x12: 0000000000000000
+>>    x11: 00000000000000c0 x10: f7c5d06d757a4b3a x9 : 15ccf89dfeffb5e1
+>>    x8 : ffff800081cbb8c8 x7 : 0000000000000000 x6 : 000000000151e960
+>>    x5 : 0800000000000000 x4 : 0000000000000000 x3 : 0000000000000000
+>>    x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000004
+>>    Call trace:
+>>     cleanup_srcu_struct+0xc0/0x1e0 (P)
+>>     gpiochip_add_data_with_key+0x3dc/0xf68
+>>     devm_gpiochip_add_data_with_key+0x30/0x84
+>>     tegra186_gpio_probe+0x5e4/0x808
+>>     platform_probe+0x5c/0xb0
+>>     really_probe+0xbc/0x2b4
+>>     __driver_probe_device+0x78/0x134
+>>     driver_probe_device+0x3c/0x164
+>>     __device_attach_driver+0xc8/0x15c
+>>     bus_for_each_drv+0x88/0x100
+>>     __device_attach+0xa0/0x198
+>>     device_initial_probe+0x58/0x5c
+>>     bus_probe_device+0x38/0xbc
+>>     deferred_probe_work_func+0x88/0xc8
+>>     process_one_work+0x16c/0x3fc
+>>     worker_thread+0x2d8/0x3ec
+>>     kthread+0x144/0x22c
+>>     ret_from_fork+0x10/0x20
+>>    ---[ end trace 0000000000000000 ]---
 
-Should this be added to spd5118_regmap16_config instead, or is there reason
-to assume that I2C 16-bit addressing differs from I3C addressing ?
+It seems that when the gpiochip_add_data_with_key(), then to avoid the
+above warning I needed to ...
 
-> +	.writeable_reg = spd5118_writeable_reg,
-> +	.volatile_reg = spd5118_volatile_reg,
-> +	.cache_type = REGCACHE_MAPLE,
-> +};
-> +
->   static int spd5118_suspend(struct device *dev)
->   {
->   	struct spd5118_data *data = dev_get_drvdata(dev);
-> @@ -770,7 +790,51 @@ static struct i2c_driver spd5118_i2c_driver = {
->   	.address_list	= IS_ENABLED(CONFIG_SENSORS_SPD5118_DETECT) ? normal_i2c : NULL,
->   };
->   
-> -module_i2c_driver(spd5118_i2c_driver);
-> +/* I3C */
-> +
-> +static int spd5118_i3c_probe(struct i3c_device *i3cdev)
-> +{
-> +	struct device *dev = i3cdev_to_dev(i3cdev);
-> +	struct regmap *regmap;
-> +	unsigned int regval;
-> +	int err;
-> +
-> +	regmap = devm_regmap_init_i3c(i3cdev, &spd5118_regmap_i3c_config);
-> +	if (IS_ERR(regmap))
-> +		return dev_err_probe(dev, PTR_ERR(regmap), "regmap init failed\n");
-> +
-> +	/* Verify this is a SPD5118 device */
-> +	err = regmap_read(regmap, SPD5118_REG_TYPE, &regval);
-> +	if (err)
-> +		return err;
-> +
-> +	if (regval != 0x51) {
-> +		dev_err(dev, "unexpected device type 0x%02x, expected 0x51\n", regval);
-> +		return -ENODEV;
-> +	}
-> +
-> +	err = regmap_read(regmap, SPD5118_REG_TYPE + 1, &regval);
-> +	if (err)
-> +		return err;
-> +
-> +	if (regval != 0x18) {
-> +		dev_err(dev, "unexpected device type 0x%02x, expected 0x18\n", regval);
-> +		return -ENODEV;
-> +	}
-> +
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 27ea5bc9ed8a..3130acfeeb66 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1277,6 +1277,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+                 goto err_print_message;
+         }
+  err_cleanup_desc_srcu:
++       synchronize_srcu(&gdev->desc_srcu);
+         cleanup_srcu_struct(&gdev->desc_srcu);
+  err_cleanup_gdev_srcu:
+         cleanup_srcu_struct(&gdev->srcu);
 
-I don't think this should dump error messages. Also, it might be desirable
-to use a single regmap operation to read both values.
 
-> +	return spd5118_common_probe(dev, regmap, false);
+>>    gpiochip_add_data_with_key: GPIOs 512..675 (tegra234-gpio) failed to register, -16
+>>    tegra186-gpio 2200000.gpio: probe with driver tegra186-gpio failed with error -16
 
-Why is_16bit=false ?
+Which leaves the above.
 
-Thanks,
-Guenter
+> There's a change to how gpiochip_add_data_with_key() error path works in
+> linux-next at the moment but it's not in any stable branch yet.
+> 
 
-> +}
-> +
-> +static struct i3c_driver spd5118_i3c_driver = {
-> +	.driver = {
-> +		.name	= "spd5118_i3c",
-> +		.of_match_table = spd5118_of_ids,
-> +		.pm = pm_sleep_ptr(&spd5118_pm_ops),
-> +	},
-> +	.probe		= spd5118_i3c_probe,
-> +};
-> +
-> +module_i3c_i2c_driver(spd5118_i3c_driver, &spd5118_i2c_driver);
->   
->   MODULE_AUTHOR("René Rebe <rene@exactcode.de>");
->   MODULE_AUTHOR("Guenter Roeck <linux@roeck-us.net>");
+This commit?
+
+16fdabe143fc ("gpio: Fix resource leaks on errors in gpiochip_add_data_with_key()")
+
+
+> -EBUSY can typically only happen if gpiod_request_commit() is called twice on
+> the same descriptor. Is that the case here?
+
+I have been looking at this today and now I can see that we have a
+'gpio-hog' set for the same pins that are shared and hence it is
+getting request twice. If I drop the hog it goes away. This is a
+produce device-tree, not upstream, for some camera modules so I am
+wondering if we are doing something here we should not be. I am
+taking a closer look.
+
+Thanks!
+Jon
+
+-- 
+nvpublic
 
