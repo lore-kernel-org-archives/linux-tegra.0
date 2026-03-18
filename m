@@ -1,240 +1,229 @@
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013039.outbound.protection.outlook.com [40.93.201.39])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E21B36BCC9;
-	Wed, 18 Mar 2026 07:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.39
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773819603; cv=fail; b=jdwM2GbGZNwPua1FH/6YWl9oiWE9zvY1vpelJdmaF+3KXb4qVAAcQkFzYzGfOxnfXRTWD8tQjAvxCKjrSmsMhX2ZN/lTwsmAWSj2QZhdhw7fq8sEl38xmJOIZJQZqgrXpoRUzwP18mjepqo5674G6x2veqHt7Ig0LscHiGRCc7o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773819603; c=relaxed/simple;
-	bh=SanAqAW1pZUMoeWKDJxdb0vZGdnzNzuSVA9HqdAIqHs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dtpz5VW9Ox7DquSIwRl0yeTuKyMxCs8GFdNPi7zBFCwSfAHDwvS++02e0P0MWGMMJITPYlxILmvsBw6s+8solaQYk2XWFCLzvb2wUx1r+yn2f8+Z0vkA3hkunmy/daQf29OslvwAm+CrsCSxraPNi/jDg9UrcPYTs4KfGboxOLo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uamGfnOM; arc=fail smtp.client-ip=40.93.201.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477FD36BCE7
+	for <linux-tegra@vger.kernel.org>; Wed, 18 Mar 2026 08:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773821343; cv=none; b=rIdmMovDbvteQFjkyB3malTBdqnyl13ErQQLNFSA4LDECr3QaB3JtVKX3x9+LpnWJRsKEAuJuf89rJnjuvBInXUOqcqQhJvN7TPAOLoq6E9NVsTpjfIthDtWJJkS2F4u/Mvlf7gmg2RP967rMvNxtNBzbhhtdn7LWqhjVGUs3k4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773821343; c=relaxed/simple;
+	bh=LFA4eHbI62m3WvSv3qGl8TBwTFNzb4SAUlsJbVxVySI=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H7SGPw4NgVTF3yUodEa3Gu2K350UaAbnyRy+Pd/6Vihsn0Z+pABt5LLCBMVbOU3LOGzrP4RE/JOFhAJR5VnwGFFZL22MaFwz5GIC0e7m4XaaD7pUhBR7jgGYm/rDBGQTXMQQRJ4whei4q6Cnro9iHJtlQyvLacV6WuQOujwPsqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bOVQfejp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uamGfnOM"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Tan6C7vMbiMwiUb2vgirGex03Awcp3q5egtZp02UdFIO3PLu2LelvwnqjSHAlyB8vP0xNpiimqSTG7FhKe4gHW3UcXD1ugcEdZSgjOhkKUbyvRry66kShjePm37fA7xnu7Yk6cJeeJ/1QrR6HJ1fJxmSPoVbw3eX2hyOkSrvPe24X2mM4OXo2d99iCmhkmrNVZjAIXEoqMqsV8JD/mqSAw1RUIyI1zFgmMMRrPksQGVPAeSj8pZ3/kyY6kNchGd8GqywSpM9rvw/gNLMG1aS4aE6AOtyH/ZMPx979VrHP14Muo12gWfERO8biTrp0IEJia8aPNO75G4asBmuFRGpUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VluZvYQcFEOhVpqe0sEvybhjPEoQ9vQbxv0i9FvjVCo=;
- b=uq6GsJO/cnIE3rOkbvui1YxnyyoY0LVGAMSVE4QC2yEWlXMs8fQMmqQUwmwQkDLxYAxxDTZ0bv3l1rqbbz7989Ec5lySikyMrGyq7w4WphGqozZN92qIVfbhoyyvnlvVtr5oWXy3qJANN/THyOEHZU5fO9FqN2btM1uzma0epCi1BjkHLtJ4dgSWYb5KxlQbBB/Jl5al1R5pxXq4Kyog1eWA/MO+jCvabpAOAX2S9QFGDSjZ7gJQnyR7PbwQEPpeuHyr2shQqkv4Mxw6eB2YNnOgePGRY8rC1oX6TtN35mBRCR6k4+tKRG/VWlzoUGWn11Zzg206ILr6fokFjeZ+6A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VluZvYQcFEOhVpqe0sEvybhjPEoQ9vQbxv0i9FvjVCo=;
- b=uamGfnOMaAyYpp47guRTHvv5uQMIJ48y808XbQZToj/mxQ97ek7Fuy8tGL7NdOb323CTl2FGm5fe3zNdsEyuvW4FjOvtsVw5H62xmL3oCbfm4rxhla/geQU7QhIdQqq+MEIxz52vBiFT2/q6XpAYLYBHIQdAfiG/QsodvsCKCc9CW3d8rIOeswu5REW2VR4WqB6djvRnd7jX6LKgc1w2DIQ/lHM/f5nBHHIunIfnr+YsVkNAWtDKA4KYa/fUG/d2leJ3dlejiIXad3CcebGEjPwKAjZhepWzR6h/Mw2z/HPAkPUKeOpub/qpl8ZNuf91/7KiU/JEUKqQehnt/VSDJw==
-Received: from BY3PR03CA0004.namprd03.prod.outlook.com (2603:10b6:a03:39a::9)
- by DS3PR12MB999218.namprd12.prod.outlook.com (2603:10b6:8:38e::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.17; Wed, 18 Mar
- 2026 07:39:56 +0000
-Received: from SJ1PEPF00002316.namprd03.prod.outlook.com
- (2603:10b6:a03:39a:cafe::c1) by BY3PR03CA0004.outlook.office365.com
- (2603:10b6:a03:39a::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9700.27 via Frontend Transport; Wed,
- 18 Mar 2026 07:39:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ1PEPF00002316.mail.protection.outlook.com (10.167.242.170) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9700.17 via Frontend Transport; Wed, 18 Mar 2026 07:39:56 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 18 Mar
- 2026 00:39:41 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 18 Mar
- 2026 00:39:40 -0700
-Received: from build-sheetal-bionic-20251202.nvidia.com (10.127.8.14) by
- mail.nvidia.com (10.129.68.7) with Microsoft SMTP Server id 15.2.2562.20 via
- Frontend Transport; Wed, 18 Mar 2026 00:39:40 -0700
-From: Sheetal <sheetal@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, "Thierry
- Reding" <thierry.reding@kernel.org>
-CC: Laxman Dewangan <ldewangan@nvidia.com>, Frank Li <Frank.Li@kernel.org>,
-	Mohan Kumar <mkumard@nvidia.com>, <dmaengine@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Sheetal
-	<sheetal@nvidia.com>
-Subject: [PATCH] dmaengine: tegra210-adma: Add error logging on failure paths
-Date: Wed, 18 Mar 2026 07:39:22 +0000
-Message-ID: <20260318073922.1760132-1-sheetal@nvidia.com>
-X-Mailer: git-send-email 2.17.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bOVQfejp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E571CC2BC9E
+	for <linux-tegra@vger.kernel.org>; Wed, 18 Mar 2026 08:09:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773821342;
+	bh=LFA4eHbI62m3WvSv3qGl8TBwTFNzb4SAUlsJbVxVySI=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc:From;
+	b=bOVQfejph27ZEe/QMAFEnZztyXotpDa62kB5frpJDqA5kgseC9MO5GW2pPQEjvIAJ
+	 rhWf48nCiplcGY0P9IzRy5am6BBMEihQj8uOqj/H+hBjjWATDFpBXcobwRwzQ9kxvc
+	 GzTsGU8xUkL0WyOpB1Wb2UElMF5Qqi2rAZlbonjWDD7BkpFCnZHissObstTxEoimQy
+	 CCLef7lMVVyuV2tN7VujE6Y+o8BAq9Q5ce1+0JLfIODnccGJDYX7NmTjSQmDn9KRa5
+	 +qNgvqXWHA6lXwENwwGVYAUlQ4m60ejGNmYQ28l9d5HqX/I0nZmbA9r8MeMXLhAqy3
+	 8hzNGvLi/Y3yw==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-38a76ba6a78so45005661fa.0
+        for <linux-tegra@vger.kernel.org>; Wed, 18 Mar 2026 01:09:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXnouqlY+QJafx1Lgh+l/wioSsJdE7HHW5d2/RV6O1EwILdlIIBPZWju0acAnOzGGKj7Byp6yoANOmidA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX3EptEwh3HXbA6ujB0MRiQvTb+mOCWIsFkES9TZJGSYA1UnIt
+	KCKhv5RTZjBYgQx3PjGUinTFBM6bGxEpl59dMI7vdATsnV3TCbidEm/7XQaEMwPMqsGWlHKc8GK
+	qrP+4O5eePYO4fs1HuIpeEagQCiF6jRIySshjzN6w0g==
+X-Received: by 2002:a2e:98cd:0:b0:389:ff39:d36f with SMTP id
+ 38308e7fff4ca-38bd5780dd8mr7061231fa.8.1773821341490; Wed, 18 Mar 2026
+ 01:09:01 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 18 Mar 2026 04:09:00 -0400
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 18 Mar 2026 04:09:00 -0400
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <6ea1e467-b0d0-4ec7-90b5-740ca2415460@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002316:EE_|DS3PR12MB999218:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b3501d6-9166-46da-6141-08de84c18d15
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700016|376014|1800799024|18002099003|56012099003;
-X-Microsoft-Antispam-Message-Info:
-	TbXa1dB2CcOezSIDiRlltTC9/nEEO0N79JnLiRJmUEC/+nd208GdxTZKHeRlNORr1NYHHoXlfAONf3Jc4IwRAANs3Ty5Z6xSKIhuM8c5UShvgXYok9q4i6kmMxIAGx+DgaySqSEFQ9Fsa3z+9uGZb+fpohdDaZTE4WmaprROKAUAf9O6W/+RIczFOxvHG+5aH8HmDjhsMhQSyh8VjvFtP45giz7EHnPMKxRdGFrT03U3Sc7JCQYsq+GkevYl/uglGEP2pVOPgdu99TRyE5Fq6CTCGaVJWpIEEmzFVQ+Y3HMTPWZxzNXvw1Weog+kdFEQpkfDj3/CQg4BlujmCfW3fZFmU4zQL7NM7zDuOQ2JexbnU9vNVNrryA0rVX2ZyohfnlHR0H3IHZDw/s4WlQvrBrvo5MXNZmux6eGAJT4/5JneMIRZUL25aM9x2XX07ygJSblMzd+Y9Uu4mkKQ3epWAbBAVvo+n6jV1qlVaoGfKek0kUXkl7XlzJqvRYUTiMOd4/GpCfVLLpEu1EoyCUBwcMxQMW33/noXJQjrnmLCuocVMdAhdC4MoudXPWoClYUTY6pCAc58pdybnd+Su1ouFTcKodHFvvBoItblaA6D4ehnEgFjdlGUQX+UfCqu4QYJTLpeMb2uM/qZ6gNymUQC5Sfkq3BhaT5Jb8/23Yl6Y/OTZxE19el1IaC7HYP1inQJ/PPa1vAq5rBg8k0qiUM+7ozHdvQsFkVZHayz4EaYK6ALpFBVg9Am5hap2Jb8fKlf8cMt3LOProyx7ojU2lCY9g==
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700016)(376014)(1800799024)(18002099003)(56012099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	27eK5JKrl8PzGiz2iVlytaxy24MjD9hHxQeUfEQtjZJQln7u8VcIBx2oVRvNh4Cdut4S6HGTXN7FKZqsVMLh+jINsbY2KvTzVpUyIUondVJZTQ5xuDNDZ/ZTBnthtVdH+jBQOKVyRUVy1EFWg0UsgmfvBuceq6ukXidJvNg7Njr7bG7b7gAqS6c4KCtA9GNIIUtGN5FjcUI3P6Xyc2cNcXedXVEFsfhbcRTZIDSITpu4oa863sg/4cZafY93k50JcIMl+vf2YY82tw+OwnbqRFkFETOqYxYa3KrF/62XYD2EviXb/buG+StHQvDvkbo0YeQEa70K48sRSO/nTHvYLrrigpgJZUQ7dsR3ttSkIwnkOWTPtOO+fBhx/akSN2w0FOd1SbGnHTw3/c1+hp09Ll1MT+Zzr4XmQcZSK0s5EP6/yNjMX0u6oDUi+nKYtnss
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2026 07:39:56.2344
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b3501d6-9166-46da-6141-08de84c18d15
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002316.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS3PR12MB999218
+References: <20260316-gpio-shared-xlate-v1-1-0ce07a1362d2@oss.qualcomm.com>
+ <dff3c797-a619-42c0-9696-3e617e13356e@nvidia.com> <CAMRc=Mfg-2kjfd5RrcD748WPcUUef=aaxyk8fBtzdcbxqmxcCA@mail.gmail.com>
+ <e217c9a6-e2a6-4413-8247-19b7ab72a53a@nvidia.com> <CAMRc=MfK_eqbWDdEQHHWgAyz-zMWyW5G=DF8eNh0o+iyt=BtOg@mail.gmail.com>
+ <d05d4468-84f7-4692-8381-e0742f1f2749@nvidia.com> <CAMRc=McY9dcDLXPM8-QErxzAJuoe1bxy8BX5H2y0uCHXJSsAwA@mail.gmail.com>
+ <CAMRc=McMCMuyB7ETefXaWJ6K=-nPcDHo964WZKtPRU9XVVky_w@mail.gmail.com> <6ea1e467-b0d0-4ec7-90b5-740ca2415460@nvidia.com>
+Date: Wed, 18 Mar 2026 04:09:00 -0400
+X-Gmail-Original-Message-ID: <CAMRc=McGaF2XYedgy4n_RZzbHSBBZ2=EMvBEF4f8+ejLbu+CPQ@mail.gmail.com>
+X-Gm-Features: AaiRm52wjSg-PM0UkMd3FiuGWl78mnFGnJu8WTrJKTnF4ZSFLRriE3c_f4QVH-w
+Message-ID: <CAMRc=McGaF2XYedgy4n_RZzbHSBBZ2=EMvBEF4f8+ejLbu+CPQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: shared: call gpio_chip::of_xlate() if set
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Linus Walleij <linusw@kernel.org>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add dev_err/dev_err_probe logging across failure paths to improve
-debuggability of DMA errors during runtime and probe.
+On Tue, 17 Mar 2026 23:46:55 +0100, Jon Hunter <jonathanh@nvidia.com> said:
+>
+> On 17/03/2026 15:19, Bartosz Golaszewski wrote:
+>> On Tue, Mar 17, 2026 at 3:05=E2=80=AFPM Bartosz Golaszewski <brgl@kernel=
+.org> wrote:
+>>>
+>>> On Tue, Mar 17, 2026 at 2:47=E2=80=AFPM Jon Hunter <jonathanh@nvidia.co=
+m> wrote:
+>>>>
+>>>>
+>>>>>> I am not sure if this is because these are child nodes of gpio-keys?
+>>>>>> Obviously this is not a proper example, but something quick and dirt=
+y
+>>>>>> for local testing :-)
+>>>>>>
+>>>>>
+>>>>> Let me create a setup with GPIO keys then.
+>>>>
+>>>> Thanks!
+>>>> Jon
+>>>>
+>>>
+>>> I can reproduce this with a gpio-keys setup. I think you hit an
+>>> interesting corner-case where the consumer device is the same for two
+>>> shared pins assigned to its child fwnodes. The setup doesn't make
+>>> sense really but I guess this shouldn't just fail like that.
+>>>
+>>
+>> So the problem goes like this: we're using lookup tables for shared
+>> GPIOs but they are not capable of dealing with two fwnodes that are
+>> children of the same device that share the same pin but are themselves
+>> not attached to a device bound to a driver. While we could extend
+>> lookup tables to take that into account, I think that the setup here
+>> is so hypothetical, it doesn't really make sense to spend time on it.
+>
+> Makes sense.
+>
 
-Signed-off-by: Sheetal <sheetal@nvidia.com>
----
- drivers/dma/tegra210-adma.c | 48 +++++++++++++++++++++++++++++--------
- 1 file changed, 38 insertions(+), 10 deletions(-)
+Just to be clear, this:
 
-diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-index 14e0c408ed1e..a50cd52fec18 100644
---- a/drivers/dma/tegra210-adma.c
-+++ b/drivers/dma/tegra210-adma.c
-@@ -335,8 +335,16 @@ static int tegra_adma_request_alloc(struct tegra_adma_chan *tdc,
- 	struct tegra_adma *tdma = tdc->tdma;
- 	unsigned int sreq_index = tdc->sreq_index;
- 
--	if (tdc->sreq_reserved)
--		return tdc->sreq_dir == direction ? 0 : -EINVAL;
-+	if (tdc->sreq_reserved) {
-+		if (tdc->sreq_dir != direction) {
-+			dev_err(tdma->dev,
-+				"DMA request direction mismatch: reserved=%s, requested=%s\n",
-+				dmaengine_get_direction_text(tdc->sreq_dir),
-+				dmaengine_get_direction_text(direction));
-+			return -EINVAL;
-+		}
-+		return 0;
-+	}
- 
- 	if (sreq_index > tdma->cdata->ch_req_max) {
- 		dev_err(tdma->dev, "invalid DMA request\n");
-@@ -665,8 +673,11 @@ static int tegra_adma_set_xfer_params(struct tegra_adma_chan *tdc,
- 	const struct tegra_adma_chip_data *cdata = tdc->tdma->cdata;
- 	unsigned int burst_size, adma_dir, fifo_size_shift;
- 
--	if (desc->num_periods > ADMA_CH_CONFIG_MAX_BUFS)
-+	if (desc->num_periods > ADMA_CH_CONFIG_MAX_BUFS) {
-+		dev_err(tdc2dev(tdc), "invalid DMA periods %u (max %u)\n",
-+			desc->num_periods, ADMA_CH_CONFIG_MAX_BUFS);
- 		return -EINVAL;
-+	}
- 
- 	switch (direction) {
- 	case DMA_MEM_TO_DEV:
-@@ -1047,38 +1058,50 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 	res_page = platform_get_resource_byname(pdev, IORESOURCE_MEM, "page");
- 	if (res_page) {
- 		tdma->ch_base_addr = devm_ioremap_resource(&pdev->dev, res_page);
--		if (IS_ERR(tdma->ch_base_addr))
-+		if (IS_ERR(tdma->ch_base_addr)) {
-+			dev_err(&pdev->dev, "failed to map page resource\n");
- 			return PTR_ERR(tdma->ch_base_addr);
-+		}
- 
- 		res_base = platform_get_resource_byname(pdev, IORESOURCE_MEM, "global");
- 		if (res_base) {
- 			resource_size_t page_offset, page_no;
- 			unsigned int ch_base_offset;
- 
--			if (res_page->start < res_base->start)
-+			if (res_page->start < res_base->start) {
-+				dev_err(&pdev->dev, "invalid page/global resource order\n");
- 				return -EINVAL;
-+			}
-+
- 			page_offset = res_page->start - res_base->start;
- 			ch_base_offset = cdata->ch_base_offset;
- 			if (!ch_base_offset)
- 				return -EINVAL;
- 
- 			page_no = div_u64(page_offset, ch_base_offset);
--			if (!page_no || page_no > INT_MAX)
-+			if (!page_no || page_no > INT_MAX) {
-+				dev_err(&pdev->dev, "invalid page number %llu\n", page_no);
- 				return -EINVAL;
-+			}
- 
- 			tdma->ch_page_no = page_no - 1;
- 			tdma->base_addr = devm_ioremap_resource(&pdev->dev, res_base);
--			if (IS_ERR(tdma->base_addr))
-+			if (IS_ERR(tdma->base_addr)) {
-+				dev_err(&pdev->dev, "failed to map global resource\n");
- 				return PTR_ERR(tdma->base_addr);
-+			}
- 		}
- 	} else {
- 		/* If no 'page' property found, then reg DT binding would be legacy */
- 		res_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 		if (res_base) {
- 			tdma->base_addr = devm_ioremap_resource(&pdev->dev, res_base);
--			if (IS_ERR(tdma->base_addr))
-+			if (IS_ERR(tdma->base_addr)) {
-+				dev_err(&pdev->dev, "failed to map base resource\n");
- 				return PTR_ERR(tdma->base_addr);
-+			}
- 		} else {
-+			dev_err(&pdev->dev, "failed to map mem resource\n");
- 			return -ENODEV;
- 		}
- 
-@@ -1130,6 +1153,7 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 		tdc->irq = of_irq_get(pdev->dev.of_node, i);
- 		if (tdc->irq <= 0) {
- 			ret = tdc->irq ?: -ENXIO;
-+			dev_err_probe(&pdev->dev, ret, "failed to get IRQ for channel %d\n", i);
- 			goto irq_dispose;
- 		}
- 
-@@ -1141,12 +1165,16 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 	pm_runtime_enable(&pdev->dev);
- 
- 	ret = pm_runtime_resume_and_get(&pdev->dev);
--	if (ret < 0)
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "runtime PM resume failed: %d\n", ret);
- 		goto rpm_disable;
-+	}
- 
- 	ret = tegra_adma_init(tdma);
--	if (ret)
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to initialize ADMA: %d\n", ret);
- 		goto rpm_put;
-+	}
- 
- 	dma_cap_set(DMA_SLAVE, tdma->dma_dev.cap_mask);
- 	dma_cap_set(DMA_PRIVATE, tdma->dma_dev.cap_mask);
--- 
-2.17.1
+	gpio-keys {
+		compatible =3D "gpio-keys";
 
+		key-one {
+			label =3D "foo";
+			gpios =3D <&gpio_sim0 10 0>;
+			linux,input-type =3D <EV_KEY>;
+			linux,code =3D <KEY_POWER>;
+		};
+
+		key-two {
+			label =3D "bar";
+			gpios =3D <&gpio_sim0 10 0>;
+			linux,input-type =3D <EV_KEY>;
+			linux,code =3D <KEY_POWER>;
+		};
+	};
+
+doesn't work, but this:
+
+	gpio-keys-1 {
+		compatible =3D "gpio-keys";
+
+		key-one {
+			label =3D "foo";
+			gpios =3D <&gpio_sim0 10 0>;
+			linux,input-type =3D <EV_KEY>;
+			linux,code =3D <KEY_POWER>;
+		};
+	};
+
+	gpio-keys-2 {
+		compatible =3D "gpio-keys";
+
+		key-two {
+			label =3D "bar";
+			gpios =3D <&gpio_sim0 10 0>;
+			linux,input-type =3D <EV_KEY>;
+			linux,code =3D <KEY_POWER>;
+		};
+	};
+
+does. I don't think making the former work is worth the effort.
+
+>> Does this patch fix the real problem on the tegra board that you
+>> reported initially? I doubt two separate GPIO keys, share the same pin
+>> in real life.
+>
+> Yes it fixes the initial issue. However, now I am seeing a different
+> error on the actual platform that is having the issue to begin with ...
+>
+
+This is *with* the fix?
+
+>   ------------[ cut here ]------------
+>   WARNING: kernel/rcu/srcutree.c:757 at cleanup_srcu_struct+0xc0/0x1e0, C=
+PU#2: kworker/u49:1/114
+>   Modules linked in:
+>   CPU: 2 UID: 0 PID: 114 Comm: kworker/u49:1 Not tainted 6.19.0-tegra #1 =
+PREEMPT
+>   Hardware name: NVIDIA NVIDIA Jetson AGX Orin Developer Kit/Jetson, BIOS=
+ buildbrain-gcid-44496888 03/15/2026
+>   Workqueue: events_unbound deferred_probe_work_func
+>   pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
+>   pc : cleanup_srcu_struct+0xc0/0x1e0
+>   lr : cleanup_srcu_struct+0xb4/0x1e0
+>   sp : ffff800081cbb930
+>   x29: ffff800081cbb930 x28: ffffd79ff96d0c40 x27: ffff000086059000
+>   x26: 00000000fffffff0 x25: ffff000086571200 x24: ffffd79ff94adb10
+>   x23: ffffd79ff86400c0 x22: ffff000086059390 x21: ffffd79ff94aa040
+>   x20: 0000000000000000 x19: fffffdffbf669d40 x18: 00000000ffffffff
+>   x17: 0000000000000000 x16: ffffd79ff62dc8a0 x15: 0081cf5fe0409838
+>   x14: 0000000000000000 x13: 0000000000000272 x12: 0000000000000000
+>   x11: 00000000000000c0 x10: f7c5d06d757a4b3a x9 : 15ccf89dfeffb5e1
+>   x8 : ffff800081cbb8c8 x7 : 0000000000000000 x6 : 000000000151e960
+>   x5 : 0800000000000000 x4 : 0000000000000000 x3 : 0000000000000000
+>   x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000004
+>   Call trace:
+>    cleanup_srcu_struct+0xc0/0x1e0 (P)
+>    gpiochip_add_data_with_key+0x3dc/0xf68
+>    devm_gpiochip_add_data_with_key+0x30/0x84
+>    tegra186_gpio_probe+0x5e4/0x808
+>    platform_probe+0x5c/0xb0
+>    really_probe+0xbc/0x2b4
+>    __driver_probe_device+0x78/0x134
+>    driver_probe_device+0x3c/0x164
+>    __device_attach_driver+0xc8/0x15c
+>    bus_for_each_drv+0x88/0x100
+>    __device_attach+0xa0/0x198
+>    device_initial_probe+0x58/0x5c
+>    bus_probe_device+0x38/0xbc
+>    deferred_probe_work_func+0x88/0xc8
+>    process_one_work+0x16c/0x3fc
+>    worker_thread+0x2d8/0x3ec
+>    kthread+0x144/0x22c
+>    ret_from_fork+0x10/0x20
+>   ---[ end trace 0000000000000000 ]---
+>   gpiochip_add_data_with_key: GPIOs 512..675 (tegra234-gpio) failed to re=
+gister, -16
+>   tegra186-gpio 2200000.gpio: probe with driver tegra186-gpio failed with=
+ error -16
+>
+> Note this is on top of a Linux v6.19 kernel I was using to track down the
+> original problem.
+>
+
+There's a change to how gpiochip_add_data_with_key() error path works in
+linux-next at the moment but it's not in any stable branch yet.
+
+> Looking at the above there appears to be two other issues; one the warnin=
+g from
+> SRCU and the other an -EBUSY failure when registering the GPIO controller=
+. I am
+> guessing the warning is triggered when gpiochip_add_data_with_key fails. =
+I need
+> to look at this closer.
+>
+
+-EBUSY can typically only happen if gpiod_request_commit() is called twice =
+on
+the same descriptor. Is that the case here?
+
+Bart
