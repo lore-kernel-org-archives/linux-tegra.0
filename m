@@ -1,87 +1,99 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6916A315D40;
-	Thu, 19 Mar 2026 14:47:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35B63E3179;
+	Thu, 19 Mar 2026 16:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773931639; cv=none; b=d2GxdUS8d01+Jo4RUQsvtovrgUlQmBrJ0akVzLcSDFMuRKp8QvSRKRJcbbYQXF7G+ifGi7N2T4swXicTa/mGOEvsUKDFmkQ07pU7pfDExqwD0teWEqyE4GH7XEYwsO0YR2rhrG5BN3w4PKQR9OqhwDYJEGY5MAGdDHZjZMDpSCA=
+	t=1773936079; cv=none; b=kL58iWyZ/7bihOeS6UdCI3C8dJut7a021L+0nKDUW/VVc77ckwP1upLpSeuWf/ARlCbbzxDGorslx7GjJM6+L37shJgeH4lt3Jdin1ySiwyzRYs2QL0Mgo2bN4ilIJJ82ZbHyfMBzPK/IwbPsW4mQQZm0VUfTSzHXL7ZO/99tAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773931639; c=relaxed/simple;
-	bh=EicLv+Pp2VYPHfrLT5jJbVaFs0nelxml4j5+LlQ6DOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bVEg8/XRGaVKVqGKMe7gGy2MyFyXGX9NRIPmBZXtG6sI4s561bSrRGKWKs0xR/l5uQ6b9pjgfhGtIjm8vJ4XsV9aKEJR95JL8odiLDC6yt36U3a52dmsIv4JtnBFTJxGQ0IUEy6wbe8S4G2oJ2TLfzgEQy/1JBley4e58lnkL+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JBLyQ84Z; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773936079; c=relaxed/simple;
+	bh=sM41SGwojTpQVvrcjk2xO9L6REUH8GaV4fgRH+ZGqks=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FO3G3n0JVFOIjqWrKpnhQKA9rdcRAy3M2r70tmZdQKKkLvp1gzI6TDoOGdmEpwN4+4x2M4WCp51UNGiumNGN9PN0jWOkqQ35pfa/2pi59rvQHXA7rW0OkMyERSACkFg5KGMsYSXJzA4y/BbbXpm+o3GVgGYj6pklj1as5MwsjzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nojLQuhZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JBLyQ84Z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC0FAC19424;
-	Thu, 19 Mar 2026 14:47:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nojLQuhZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1920C19424;
+	Thu, 19 Mar 2026 16:01:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773931638;
-	bh=EicLv+Pp2VYPHfrLT5jJbVaFs0nelxml4j5+LlQ6DOs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JBLyQ84ZNZ2zURLv4YQlg87S6ASd2taCZrsWvtxvgxLR2ZNShIS020jbPJdywWktN
-	 S2sir5HUtz85SNypHesWkffqX7qqXBqDkhtMkoIHMQPzk/SDH3U2BMkmoWe7MG50YJ
-	 IWVW5ItH2N+9YdkYJmFJaK9dTLb9NswVvUzzZ5TuSIGdTIopfKcU/Z3roSLVcAuCSD
-	 HcLk154JdE1ni9T1oC/429iAKzMxooKFYM1fFJ4D/6+mmkz9KVSsmsTykb9nwN1WNA
-	 2AYUJPT/qkSO5tCp8m6rW8UfEw1iFOQLUoUa2mZn4dEbyeuiKos7gGqCp1HYNMZmw9
-	 Qv4b46VZNE6cA==
-Date: Thu, 19 Mar 2026 14:47:13 +0000
-From: Will Deacon <will@kernel.org>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: robin.murphy@arm.com, jgg@nvidia.com, kevin.tian@intel.com,
-	joro@8bytes.org, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, eric.auger@redhat.com,
-	skolothumtho@nvidia.com
-Subject: Re: [PATCH 2/2] iommu/tegra241-cmdqv: Update uAPI to clarify HYP_OWN
- requirement
-Message-ID: <abwMcZZHtEuaMEdZ@willie-the-truck>
-References: <cover.1773361875.git.nicolinc@nvidia.com>
- <9ef47d0db2d7b8207fef1ef4437de6efa08565b6.1773361875.git.nicolinc@nvidia.com>
+	s=k20201202; t=1773936079;
+	bh=sM41SGwojTpQVvrcjk2xO9L6REUH8GaV4fgRH+ZGqks=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nojLQuhZsbgXkau/qYpdqPcFwClWcDQcJycZmWW2CIlyf25qYi7NhmmqG0HlH6L4f
+	 vSVnw3g5zXe+BI3ywwl+bMW9UYeMJuWzA0wSOPx+J0D76eP/B3v66cKPQA9CghXmug
+	 UkVRAinSLMWJ3QAgloqvoRozZYfAfhnOkrR0ThhNHFYMBfKlGsh/IrbeRODHdElZRl
+	 WyPx9pt8OeH7PU3y9YF3KS4A3cy8lCzKvrvZEuWIeQA7tfFkNn3bvQHyl3VeHwKrQj
+	 hly53bqxpQKE5qNn49WrfoVBZs2W74LjBBIhk/GR2g1da0SOc2jZtGVxjPT4tm2Eef
+	 6VVzzFItXa2jg==
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Thierry Reding <thierry.reding@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+	linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH 0/5] PCI: tegra: Add Tegra264 support
+Date: Thu, 19 Mar 2026 17:01:04 +0100
+Message-ID: <20260319160110.2131954-1-thierry.reding@kernel.org>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9ef47d0db2d7b8207fef1ef4437de6efa08565b6.1773361875.git.nicolinc@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 12, 2026 at 05:36:35PM -0700, Nicolin Chen wrote:
-> From hardware implementation perspective, a guest tegra241-cmdqv hardware
-> is different than the host hardware:
->  - Host HW is backed by a VINTF (HYP_OWN=1)
->  - Guest HW is backed by a VINTF (HYP_OWN=0)
-> 
-> The kernel driver has an implementation requirement of the HYP_OWN bit in
-> the VM. So, VMM must follow that to allow the same copy of Linux to work.
-> 
-> Add this requirement to the uAPI, which is currently missing.
-> 
-> Fixes: 4dc0d12474f9 ("iommu/tegra241-cmdqv: Add user-space use support")
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->  include/uapi/linux/iommufd.h | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
-> index 1dafbc552d37d..f63edbe71d542 100644
-> --- a/include/uapi/linux/iommufd.h
-> +++ b/include/uapi/linux/iommufd.h
-> @@ -1052,6 +1052,11 @@ struct iommu_fault_alloc {
->  enum iommu_viommu_type {
->  	IOMMU_VIOMMU_TYPE_DEFAULT = 0,
->  	IOMMU_VIOMMU_TYPE_ARM_SMMUV3 = 1,
-> +	/*
-> +	 * TEGRA241_CMDQV requirements (otherwise, VCMDQs will not work)
-> +	 * - Kernel will allocate a VINTF (HYP_OWN=0) to back this VIOMMU. So,
-> +	 *   VMM must wire the HYP_OWN bit to 0 in guest VINTF_CONFIG register
-> +	 */
->  	IOMMU_VIOMMU_TYPE_TEGRA241_CMDQV = 2,
->  };
+From: Thierry Reding <treding@nvidia.com>
 
-Jason, are you happy with this one?
+Hi,
 
-Will
+this series adds support for the PCIe controllers found on the Tegra264
+SoC. There are six instances, one of which is for internal purposes only
+and the other five are general purpose.
+
+The first two patches in the series add the BPMP support needed to power
+up/down the PCI link. Patch 3 contains the device tree bindings for the
+PCIe controller and patch 4 adds the driver. Finally, patch 5 adds DT
+nodes for the controllers found on the Tegra264 SoC.
+
+Regarding merging these patches, I think ideally I'd want to pick up the
+PCI driver patch into the Tegra tree because there is a build dependency
+on patches 1 and 2. Furthermore, patch 1 depends on another patch that's
+already in the Tegra tree, and there will be conflicts if it is merged
+in another tree. Alternatively I can provide a stable branch with
+patches 1 and 2 for the PCI maintainers to pull in.
+
+Let me know how you'd like to handle this.
+
+Thanks,
+Thierry
+
+Thierry Reding (5):
+  soc/tegra: Update BPMP ABI header
+  firmware: tegra: bpmp: Add tegra_bpmp_get_with_id() function
+  dt-bindings: pci: Document the NVIDIA Tegra264 PCIe controller
+  PCI: tegra: Add Tegra264 support
+  arm64: tegra: Add PCI controllers on Tegra264
+
+ .../bindings/pci/nvidia,tegra264-pcie.yaml    |   92 +
+ arch/arm64/boot/dts/nvidia/tegra264.dtsi      |  248 +-
+ drivers/firmware/tegra/bpmp.c                 |   34 +
+ drivers/pci/controller/Kconfig                |    8 +
+ drivers/pci/controller/Makefile               |    1 +
+ drivers/pci/controller/pcie-tegra264.c        |  506 ++
+ include/soc/tegra/bpmp-abi.h                  | 4565 +++++++++++++----
+ include/soc/tegra/bpmp.h                      |    1 +
+ 8 files changed, 4534 insertions(+), 921 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra264-pcie.yaml
+ create mode 100644 drivers/pci/controller/pcie-tegra264.c
+
+-- 
+2.52.0
+
