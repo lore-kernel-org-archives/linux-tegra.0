@@ -1,1603 +1,287 @@
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010057.outbound.protection.outlook.com [52.101.61.57])
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012031.outbound.protection.outlook.com [52.101.48.31])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4837036C58F;
-	Thu, 19 Mar 2026 02:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C889E3126B9;
+	Thu, 19 Mar 2026 04:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.31
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773886877; cv=fail; b=Jm38w27UbDXR2eBN8dH+3Bu1hJXGsT56no8MsXxsUIV6Xs22MOhlTLlX5dSvgUuiPGHn9O/GAzfur2T9yM1fNeprrNth+m2R2G0IINENXVsGr1HJawCp7l8+V6/SAT7NA7RsD1cYtcB9e0hSInVI7SWb+nhVkZdvEpUFyxk9QS4=
+	t=1773894968; cv=fail; b=VHQXVqhRMnMiyS4ewcNB0PmYczlOGEsp2Z4sqQJbCN231F88pqNNsPALZtJ/3ZKNBvY98HLAMBGoSWWtr42IlweRh6pFMm8MeoEnPXr90LzEqnt8ledz6mO8EkUWqUhLybqwtccUh5H9uhh6XLzYEyqgPMbrDA3fOFP8XhTm3tY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773886877; c=relaxed/simple;
-	bh=Xmntd1ncKxfu95BxBHd0TenZ8kT6gsypVUeNasjhlnU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jCHIG1AojbtcwfERS8Jbxt2m4v5G7NeatlulMHfIWasAMz/vl+A54Mp+k0hxV3TIiXhcARoaryK3hsI+xIe2VkAiqAUzc8hTT7eghJpeY0SzTIlV3DMVzaiNNyGItfmR56f84ikc2EmZ6UQK9+0ve4l9SkqHp8BLXCxiA9dFgZk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gZ1zk+4g; arc=fail smtp.client-ip=52.101.61.57
+	s=arc-20240116; t=1773894968; c=relaxed/simple;
+	bh=6J9pCKWQHkKJweLzEa6FrciVOabUaMLnCn1JicctWAA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hfMN19EixKgr/E2Qcldyxlt9JDrXb6ai/sa/HwzYee5QE0ZoegTc1gBnxcNlmU/ggVclVtC+Svdb4vmOuESOZ0Fzdxsy5TdfmPBO9nsaiIORt1mFfN3tLL7XIIq6qmtwSrfv5jB8XhyU7yh0dqKzhWp4WqMNEVYjEwZm3Dox8mo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=biYa/zaP; arc=fail smtp.client-ip=52.101.48.31
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gZ1zk+4g"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="biYa/zaP"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HEjVfgw5O9szRKcBbkY2y/JIuhuHeQj0AoV8s9xu+mYppvnIW7uf85D310oSoa0ao04hZlCQHYVOq9d45U/IVVHX9oJJK2jaJbEd7lhiVeMlzkh838+hB+zuLbxywuspx94YmsBj/o1gEDs4BXwn2HoZJLM25prNIgYSSgW89LIGdRqEg8ov1kUgkZXDYtAtI5bps1EF1A3eTq9MjLT7RraPNABh08HlomA0DGqdJeVptwcwvtcSzkYPo/0JhVnEVooPmoGvM6fkvNjkUTKm9W+z2csp7Nb0RRpZh3YAKEBO3AnEPweJuv1CSZ4kJpuU+tuRvlxrN4ynSY9KEW5AWw==
+ b=Xvo3zMbw/bWZ2LIs4iV+CEtkGBmnd4B1hTixhRdzZO8Zcl89R8AQgAwf+PmdjSCCru/upXsRWsh1pA72+f0QlbeorXj6aLJhgshQuIPUXmhlm3zXOfVLfUHdiLuqHNMEKLP9WhCJc7dUY5FOM1Ni/83u6Pdv3Xfq22qt5k7mT6Mmfe8jZtB8vl5Z5q+ntN/BWnxbq1KrODi4zkj4mJCzh7LOGEsQL4mN4lXoLj4WzMgsf2W5SIJ30LQW17RaU2jBwXAJbd67hgv7XNTI9ABWBClkfWOPac0JGlB4wHoUeWjZR2pAOQ7RgKY0Y15Nxo94az1aUi9evFZ/tjHNgyBuAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Fdtv1s/WJzGykwqUbTpDM/HXuJoWd03T0gjtk1xKdeM=;
- b=adOl1GFx8/JcnWPC89V41FjvnYLNPa8JYEs3CSr5aV2cgq6GRdJnxwwoJDKUtpxZAIIeSQBJjM8dGCs8mnjBLYBzzWGfcYWhFgkY0eyk+SCMJ7Ly8iURLb0C9txLxaUVlTQx6dLRDdWb46nsFtI5eqx5wnTpncO1xaGsE+8uKOVZOEFiNdW6z0Gh8gs0/44njk5viQo4UoMb6NUZYXq39RhRDp8yBFnFdTU8uNnAs4qW1a1Jn0cZgUMWSzlRQPlYLqDslO76bESDUMt4W9QmiqDSTtTedKmfFuMGOBW2JhBIYn0dXdBPb1a1SkA2P5FFr32cKt6WUz5x1yBdfE1vrg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
+ bh=XNE6NY5Xhus889svthFz8/HqstUbR3i4p9lK6t1F6N8=;
+ b=ZAHeYNEu1K0vibmpKMYciXF6/qM7kixmFNxrt6wu96UYSYL0Iz0FfKfMQvCuz+l0KWz4jTqtAYlLp1Z3CKVwDotxf8cd08uqbAaPUKG/rGuHauKHv6XhFI+PGORBlgmDEdQsyuyiRSyI4R7lDwXDVfNPSHNckvZZbbPoY+vY1S+Ew1y91NNkKc1LhvMFXCCgWX4iC02fr3EeaeOrb+6/oZVpr2UeYolaI/AeuHN5fTwi2rSyKeBu8l0I7XX1HHUhlsbONf56jxWb7oYsPcpge2LJ++OxApkPqL6b/JQJXr2rqps7jJxq6WMvMEgg6LnQqkc2qALZGmMDGH//KTVcoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=roeck-us.net smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fdtv1s/WJzGykwqUbTpDM/HXuJoWd03T0gjtk1xKdeM=;
- b=gZ1zk+4gZB8PAlcKT2tbc5ODHl0Oz4hUoo1NsU/dtEjjc+4SspMWzQWeSGicjNQkfk0twgBU43RVIdwERaPIBshTyQdUpiEB22v3OuBDk3e/Fy+Gxz1ciOZ2iHN4Hi0Ek61wgGBTr1AbN7UqCo3DTN06CYpEeMPoxb+C+eC5mc4BpOvNbBsNTk/cR8DnzMdZfelT80Ym++Oe7XbbsitZ64JPrmf0bDrB0hO7NbEucDqjbmUdlxDisYH3ypsZJzX9VTbZxr+pKsZigt3qR4PxaPtihkOIbQo/hE9Ojx8y5FP9hN3ydkwJHI8zxTYin1RANz1w6CdJTCgYOv1/u3FGKA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by SA1PR12MB6799.namprd12.prod.outlook.com (2603:10b6:806:25b::18) with
+ bh=XNE6NY5Xhus889svthFz8/HqstUbR3i4p9lK6t1F6N8=;
+ b=biYa/zaPivADa91/EGN36m4o9qk7aDKiNeg5AIc59mU5Oyqw/auEnn3H+u5cB3fcoVRq4blVNxCfVI6wbY00Jp+4Vx/yTjjDzOdcjZiWqyt+rM3SnC540zth4TH/VLk5A95iXSE7qIwmoEoar07g9nUBooSIZgM1wt++2gXfEFZQrehocLDtulfP+jyqg+QyaZJttHM5xmTfMwIiocmQQ3yIsJItmcMnKNucne1wWIaIiod5YzSPPe2skdGKED155my0wbGQ/3by8G3TWOzlCSTg0lBX7LDTMlF/f+Zow259/ImBzn274b56VksXqLg6+0FAcsUqjf0J/wueir+viw==
+Received: from BN9PR03CA0515.namprd03.prod.outlook.com (2603:10b6:408:131::10)
+ by DM4PR12MB7597.namprd12.prod.outlook.com (2603:10b6:8:10b::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.16; Thu, 19 Mar
- 2026 02:21:02 +0000
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017%4]) with mapi id 15.20.9723.016; Thu, 19 Mar 2026
- 02:21:02 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Thierry Reding <treding@nvidia.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Hans Verkuil <hverkuil+cisco@kernel.org>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
- linux-staging@lists.linux.dev
-Subject:
- Re: [PATCH v7 05/15] gpu: host1x: convert MIPI to use operation function
- pointers
-Date: Thu, 19 Mar 2026 11:20:58 +0900
-Message-ID: <10139201.lOV4Wx5bFT@senjougahara>
-In-Reply-To: <31e56301-2764-4d3b-bc21-555227248e5f@kernel.org>
-References:
- <20260303084239.15007-1-clamor95@gmail.com>
- <20260303084239.15007-6-clamor95@gmail.com>
- <31e56301-2764-4d3b-bc21-555227248e5f@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TY4P286CA0077.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:36d::6) To SJ2PR12MB9161.namprd12.prod.outlook.com
- (2603:10b6:a03:566::20)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.9; Thu, 19 Mar
+ 2026 04:35:59 +0000
+Received: from BN1PEPF00005FFD.namprd05.prod.outlook.com
+ (2603:10b6:408:131:cafe::82) by BN9PR03CA0515.outlook.office365.com
+ (2603:10b6:408:131::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9700.27 via Frontend Transport; Thu,
+ 19 Mar 2026 04:35:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN1PEPF00005FFD.mail.protection.outlook.com (10.167.243.229) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9723.19 via Frontend Transport; Thu, 19 Mar 2026 04:35:59 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 18 Mar
+ 2026 21:35:48 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 18 Mar
+ 2026 21:35:48 -0700
+Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Wed, 18 Mar 2026 21:35:41 -0700
+From: Akhil R <akhilrajeev@nvidia.com>
+To: <linux@roeck-us.net>
+CC: <Frank.Li@nxp.com>, <acpica-devel@lists.linux.dev>,
+	<akhilrajeev@nvidia.com>, <alexandre.belloni@bootlin.com>,
+	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>, <ebiggers@kernel.org>,
+	<fredrik.markstrom@est.tech>, <jonathanh@nvidia.com>, <krzk+dt@kernel.org>,
+	<lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-hwmon@vger.kernel.org>, <linux-i3c@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<miquel.raynal@bootlin.com>, <p.zabel@pengutronix.de>, <rafael@kernel.org>,
+	<robert.moore@intel.com>, <robh@kernel.org>, <smangipudi@nvidia.com>,
+	<thierry.reding@kernel.org>
+Subject: Re: [PATCH 11/12] hwmon: spd5118: Add I3C support
+Date: Thu, 19 Mar 2026 10:05:27 +0530
+Message-ID: <20260319043541.39291-1-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <df8086b1-8834-4bf2-ac4b-cb921beb8471@roeck-us.net>
+References: <df8086b1-8834-4bf2-ac4b-cb921beb8471@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|SA1PR12MB6799:EE_
-X-MS-Office365-Filtering-Correlation-Id: eb9dabbc-2088-4c65-9448-08de855e2a5b
+X-MS-TrafficTypeDiagnostic: BN1PEPF00005FFD:EE_|DM4PR12MB7597:EE_
+X-MS-Office365-Filtering-Correlation-Id: a20db97d-8e90-4193-26bc-08de85710500
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|10070799003|376014|7416014|366016|921020|56012099003|22082099003|18002099003|7053199007;
+	BCL:0;ARA:13230040|36860700016|376014|7416014|1800799024|82310400026|13003099007|7053199007|56012099003|22082099003|18002099003;
 X-Microsoft-Antispam-Message-Info:
-	StYu5QcuhI0alpYajx2vdDw3YvfzRcVgPpOfPjEnhgmaVx0CNuUO10ASmJ8v19g45NV+IE+d8C8lo+XZ/AaYXPTGbeijGhy1gfWQpK9CaDi+JGztaDJ03fA89Yi300KWesN68gg8iXagvRu1BKXeE0ggshDWfqSlGQqDJZUdTRRjFEbBxkbR3yszAf3EH9i2d3ZJoNUHzYpCC13HZfNCN3ZuEy+wPbquEwuVyaRO2NcrveZ6L3kewGIbT43dIfX6eN0wxZewApsTbcg4jORwlyp56z/vLCRGbMvxQU6EaZA+IAm38arGUCBaiCVyA+HtjrcFmh8LhetAQScr11J8p5goI13EIYz69DQQAl358VMBoLgzgoAXYusMLHZ7arIzujBMG10HUH8UuBXSUMRNL3IxAN1mQHPjq3p8O7VLELiGKg+Dej8fLI9wdctuX3JLeIijd7Ddd2G+whxBSPDhWW7k8BGr8FFHDPOAuLBi4TPPEgzCvs39HEVmOPXCBy+YSrCD/FwlWPLw7Td02yu6xRpk4qha7OiYS3f0X3w7tx5Tmz/OOFbK1Ny3P81nbWl3bsoEy0YobpcirMj/XVHTZRDzw4qMdS9PHSzyYxxsv1Azc3cEaiQKOUItC+HivYZaoUJn8Fi3hvpTXq5rO8UfKtg22n3doDpMnMh0JQz3+5oIAsXqimYipd4i2YYk7B7hqDhBH9JI1ql/UQ+uNqfMpaMxUzRq6FVHwpJEIa4gEKTQUnwFco0CR7o9aOxh0oeGEwxoZd1EISFSy3TyohXe7Wlkizk90D12c+za8SP+h5k=
+	O2miK5d4BXvnZnO+WFdUieFdOlcwPJlkGfkrdEbY8qVw7HCCJ07yqFABWX3Rl6s8j/8gbsSZFGt74k9Yrg70FP4UNB4ZppE9qns5Q55zcTe3nM/I89EHT+qcDB/yLe5dt/9PMzb2ZZBuOxzy5idDIQlIIstbkrxObDTgFw2Esxik5ipNoboLeCB4TSbZVcu4JjxuvnAJCAJ2fJl4U8POnrA8o4WP01ZquikO6tsF6d40BtJgkQINyowfEzYGNjg70dz7jVmHpUKTKGYP0eIEUljDRW90t6TEIAv2DJHJz8Dr2QmUhhKYVzckrOQQiFwWBJN53FRJw5f8f8S/k5rikHi/5VwCoyZkXzObMYVkxj2WcvRn8BuPV3kIG2D72oLuINpvOC12pa74+C5r12npErHDHZlqa4E+VUHCK79X3szyP0i7J/k42MsreJHG57GX1fyhaPmktMLyHqfcr9RYqtAlIGMcuSwvkAT4YdBF0grQB1BQxL5Uhm9atvjuXRclZKEdD+Fe+ghkoSYBHuLsxgdUS5NCG0yr03uMToDfB+gKLwWajYqC0Jf7nHicRrx2RQ8pe+VAU6vwbgFbQGoYVXeFhcJIP08Tr2EHqJfCUpEC9Oea0WNrgiP9A/Lcz3QAPwNr823QzMFH6LB47+8QjQYciCCqYjTWF4I99in8giFrqzOACLPcGXNyYw/xP5Q0IZz7kjp7cXA0VgcJzxChNVjvFqoVI9nm8ozCVfz/u1oUmx0zF22nNQ9KH7mCRAhxpU2psSL4XKMYcEo6vdrdBw==
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(376014)(7416014)(366016)(921020)(56012099003)(22082099003)(18002099003)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(376014)(7416014)(1800799024)(82310400026)(13003099007)(7053199007)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?L0w0T1hxaCs5bitjUGdPRXJUTjJla0VYTlM3dit4SGFGUUVvTzZFT3NDTWZu?=
- =?utf-8?B?T3owQi9HckNxVzZyZGdRRHQ0b2EwQjdoSFNzZkFPVEd1QTAxR3RGUWhxdzY3?=
- =?utf-8?B?QXhNRzRHVis0cFg0ellXTmUzdEIrVzl4SS9TU2pvQW5hMlVxR2xVdTlTWVlB?=
- =?utf-8?B?dFBsYy82UU5GTXdObXhyNXNDK0lvYlQ3dDRNZTJ1SXIvWTdkWFBlbmxjQjBk?=
- =?utf-8?B?Q2d4eUtyYlIyUkwrZjcvRFFPVFBlWmpJM1BZbkczVUlWRGlBWjQrcXVyRi9v?=
- =?utf-8?B?YXV2VWhFQWtlSTdSRStYQlI4UG1GSHIxYXJOV3p2V2x3cmt0TlVRaVIzRlZl?=
- =?utf-8?B?djdQWVpnOWlGdzZScDREQlpWN0VGUHVuc2d0YWo4a1lPcmYzc0JSS2QyaG5j?=
- =?utf-8?B?VU43RENiMkZZdnZRR20vMUp6T0dNbkh6YTIydytNRnNRV3ZLdDVXREQ2S1RC?=
- =?utf-8?B?WWZyejBWVmY3cWdwN3lrL0xDVnYvT2pQbTV2bmR5RVc2NmpWOFlaOTB6clIv?=
- =?utf-8?B?bi8wb1Jjd2ZzcXY2ckM0SEdjWXlnVkhLaWt0UXJFMkVQRFRBYkdMTTlDdFpK?=
- =?utf-8?B?SjRWK1JwTEFIU2ptTDFGNHY2Q0NIZ00vSlMycGR1SllYb2R6Z3d6cU0vOGVJ?=
- =?utf-8?B?NUJFUDVPT2daWFVSS0dnWXQ3NmNsTDBBWlh0cFJub1JndDBRTHlzRVJ5SUxE?=
- =?utf-8?B?a25OTTlSMnR1d3BGTmJrQlV3a2dMV0NncnBGRmM2R0NEblU2VmJtelNnd2FN?=
- =?utf-8?B?QzF6YXR1a1lCSkdEZ0NxTmh1czhURkg4eDNHL0RHVjNpOG9qM0xlUU9mbGlZ?=
- =?utf-8?B?eWptdmFPMTBTY0VxLzcwNUk4V0JmWUVRLzJZbWt6b0xQYldDWlM4aEpObmdu?=
- =?utf-8?B?bTNIanVMaUxBeXJiaHo4dU1MaC83bDE3eXNFNVVDSkFXaC91SmQxNVRUalZO?=
- =?utf-8?B?QkRZQnRwSGp5dnd4QllaSVh4NCtNckZ0MzcxSDBwd3NKOGYzU2ludWR4Vmg0?=
- =?utf-8?B?Wnd5VkZnRlFLTEpqRUtCb3d2dE9YQ0ROMm53emt4bmFDbldrUjZYQkNZZ3VM?=
- =?utf-8?B?UGU0T2JvMW5GcVlGa2Z0eEQ3alJyS1pVaWRVSU1WV3FscUlza0UvU0J2QmFS?=
- =?utf-8?B?bW8xVWVVWEdLTGVxRjdRdWltT3dxYWttM1Y1cnFYRUNzUGtpanFjSndxelZU?=
- =?utf-8?B?Si90dVNjWVE2OFdHUW9LNFhZK1BCUnIxUVZxWUZ0dW5rWUJ2Q1Z6eS9QWWR6?=
- =?utf-8?B?bGN0cTJWaThHbzZscDhYWDVzNThhMEYxYkxlb2p2amh6Z2puZHplQWNwN2d3?=
- =?utf-8?B?UFRQUTFqZ3BEVFRZZG1LYUNDcndFLzFMZnQ1cFFyTFFJUXBQczV1ZDVod2dv?=
- =?utf-8?B?a290VmZsOEgzRlQ5SXFxSHZ0SFpDRW83WGNjdGJ0UHFpTGIzTUg2TzNwQ1Vp?=
- =?utf-8?B?NkIybWcvTDdQNW5MNkQzQTdHRDZod0x2NHpndExLU0pPcWV2WmJTT0YvUkZ1?=
- =?utf-8?B?YXdXNGE3S0thSUFqVExWKzhaNmZmOThKUHI4QnkvWlBoVjFIQUczY0FTclox?=
- =?utf-8?B?Y0ZtZk5MbjdOdUc1V2VVdS9DdzdPYlpEN1hqZHp6OUdYbHA0WkZQL0tpelVt?=
- =?utf-8?B?Vk1sZEhjRFdZNEVQL1JXVTNnOXFKakV5QWprWS9YY3NxTXVWSHRIc2NqdE9Z?=
- =?utf-8?B?UEZacXl0ZHpBSGdpQTdEYUptTU5vK0h0T0RaeW9RdzBpNW1MeHU2MG02QnE0?=
- =?utf-8?B?MWtwWW1DTmdZZ0pDVVRHQlduSHRRWVZUNHV3czgzbHovQjZ5TGpTTDRjSGlM?=
- =?utf-8?B?Um1IL3c5ZUdHbzIyRHduZFpBOW5KYS9vN0wzZ3l1SGk2TlJjaytJTjl6WFZq?=
- =?utf-8?B?bklOOTlXaVU2SFJJQm8xN3QrQms5Q1g1c0VueE1NdndLbWJ6cXd2ODlheXp2?=
- =?utf-8?B?eHlGYTNnRkNvU1pXQmRGclZEZlVicmZmUWFLcjJQNldpTEI3SlFxYUIyVWRS?=
- =?utf-8?B?VDBOeVJjc29zaW51YnRDTlYxZ1RIakE3ZWVXVnE0aUhyWWFITGdxSHVQZWlr?=
- =?utf-8?B?UFdndFh5Y1ZqdDJzRTJrQk9UQVBSNGdOc1ZYbWZsRHh4MDBaS01ZWDgrNDFr?=
- =?utf-8?B?VXpkeEtWMlBJaWFrTTVGa2VXdXphSjJId29ZRlJMWjg4NmwySHhKUlovQTJa?=
- =?utf-8?B?N2kzeEd1WitlMEoyVzE5dTZDVGY1NlB6b0YvbVd4dnc2Z3RPUGZINnRSRFNn?=
- =?utf-8?B?b3pTVy9vZTkyWGNQQkJ0VkcwQmJmY0srR3NuejZhVHdnTUVOWWlkbFN1Z3lL?=
- =?utf-8?B?NlphajNWMWR6SWROV2Z2UWtwRWl4RUFYWHhhWGZGU05ZeVplamFCVlZBKzA0?=
- =?utf-8?Q?41UUAVSWtBKag+L6h9YJnaLFDyqDQ1yAJQRct3j/e+Jj0?=
-X-MS-Exchange-AntiSpam-MessageData-1: kWK8xF2J9nk9MQ==
+	wNVoqq8FTK406k2TomdP2svlmuWYNAN+YBfmOfG/WvOfN+kDTJiILlCYjqWe0aZOH1uvWq49Et+iNpGKVWgR0RT6UUiWFUfiUDZseBjwH+voZ3x3bIjBRQ9fVMjCmjE4IC22u4HFMRsF6ZnJYmvwvyJsrRBIIlo9xOX1s/g2VljHtKJJ/hCKDc4i6Co8jar1vyQsexjEUnwd3nwg+WDd73WhzFkQC2ctnPzcyxinu5X8bBHNyKRsCMw7uSJbKAkWL6JIueBxNJwxFsdLaAFa+m2V9XgNhQiUyN7LuaX610CqXkrt/UdHtrVfdoZzu8ppSf3rUMurAuSOBF/3p2vMhszJwcaE/Ky4L57hAuRvyjuWlgCexhTQmgVnC2EUnxm5RNN3a4yvZk9wb0LjqyjIRSIWjGYrR47TluK8K1gvhnyboVUoHDX5sUyF97625USp
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb9dabbc-2088-4c65-9448-08de855e2a5b
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2026 02:21:02.0140
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2026 04:35:59.2993
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Network-Message-Id: a20db97d-8e90-4193-26bc-08de85710500
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: irZ8iTuOvxwh65Q5mgpf+SFujTRKNrjo+TTCXIi3QE4K4DZVI1WyxY/a8eD/CyqrTrRfKW8ddDXeD4SMRuIaug==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6799
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00005FFD.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7597
 
-On Tuesday, March 17, 2026 10:07=E2=80=AFPM Hans Verkuil wrote:
-> Hi Svyatoslav, Mikko, Thierry,
->=20
-> On 03/03/2026 09:42, Svyatoslav Ryhel wrote:
-> > Convert existing MIPI code to use operation function pointers, a necess=
-ary
-> > step for supporting Tegra20/Tegra30 SoCs. All common MIPI configuration
-> > that is SoC-independent remains in mipi.c, while all SoC-specific code =
-is
-> > moved to tegra114-mipi.c (The naming matches the first SoC generation w=
-ith
-> > a dedicated calibration block). Shared structures and function calls ar=
-e
-> > placed into tegra-mipi-cal.h.
-> >=20
-> > Tested-by: Luca Ceresoli <luca.ceresoli@bootlin.com> # tegra20, paralle=
-l
-> > camera Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > Acked-by: Mikko Perttunen <mperttunen@nvidia.com>
->=20
-> I would like to merge this series, but in the v5 series there was a
-> discussion about this host1x split:
->=20
-> https://lore.kernel.org/linux-media/CAPVz0n0fkMYV-O4xWTBELd6HtKR83wrs+DS1=
-wTV
-> DOXdWuAK2OA@mail.gmail.com/
->=20
-> Mikko Acked this patch, but Thierry objected. However, I saw no further
-> updates on this, and I do agree with Svyatoslav that this patch makes
-> sense.
->=20
-> If there are no objections, then I plan to merge series this on Monday fo=
-r
-> v7.1.
+On Wed, 18 Mar 2026 11:53:49 -0700, Guenter Roeck wrote:
+> On 3/18/26 10:27, Akhil R wrote:
+>> Add a regmap config and a probe function to support for I3C based
+>> communication to SPD5118 devices.
+>> 
+>> On an I3C bus, SPD5118 are enumerated via SETAASA and always require an
+>> ACPI or device tree entry. The device matching is hence through the OF
+>> match tables only and do not need an I3C class match table. The device
+>> identity is verified in the type registers before proceeding to the
+>> common probe function.
+>> 
+>> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+>> ---
+>>   drivers/hwmon/Kconfig   |  7 +++--
+>>   drivers/hwmon/spd5118.c | 66 ++++++++++++++++++++++++++++++++++++++++-
+>>   2 files changed, 70 insertions(+), 3 deletions(-)
+>> 
+>> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+>> index 8af80e17d25e..23604c05ad22 100644
+>> --- a/drivers/hwmon/Kconfig
+>> +++ b/drivers/hwmon/Kconfig
+>> @@ -2300,10 +2300,13 @@ config SENSORS_SPD5118
+>>   	tristate "SPD5118 Compliant Temperature Sensors"
+>>   	depends on I2C
+>>   	select REGMAP_I2C
+> 
+> I also had
+> 	depends on I3C || I3C=n
+> in my version at
+> 
+> https://patchwork.kernel.org/project/linux-hwmon/patch/20250419161356.2528986-6-linux@roeck-us.net/
+> 
+> which I guess matches the more recent "depends on I3C_OR_I2C".
 
-Please do, I believe we ended up resolving that discussion offline.
+Ack. Will update.
 
-Thanks,
-Mikko
+> 
+>> +	select REGMAP_I3C if I3C
+>>   	help
+>>   	  If you say yes here you get support for SPD5118 (JEDEC JESD300)
+>> -	  compliant temperature sensors. Such sensors are found on DDR5 memory
+>> -	  modules.
+>> +	  compliant temperature sensors using I2C or I3C bus interface.
+>> +	  Such sensors are found on DDR5 memory modules.
+>> +
+>> +	  This driver supports both I2C and I3C interfaces.
+>>   
+>>   	  This driver can also be built as a module. If so, the module
+>>   	  will be called spd5118.
+>> diff --git a/drivers/hwmon/spd5118.c b/drivers/hwmon/spd5118.c
+>> index 5da44571b6a0..d70123e10616 100644
+>> --- a/drivers/hwmon/spd5118.c
+>> +++ b/drivers/hwmon/spd5118.c
+>> @@ -18,6 +18,7 @@
+>>   #include <linux/bits.h>
+>>   #include <linux/err.h>
+>>   #include <linux/i2c.h>
+>> +#include <linux/i3c/device.h>
+>>   #include <linux/hwmon.h>
+>>   #include <linux/module.h>
+>>   #include <linux/mutex.h>
+>> @@ -482,6 +483,25 @@ static const struct regmap_config spd5118_regmap16_config = {
+>>   	.cache_type = REGCACHE_MAPLE,
+>>   };
+>>   
+>> +/*
+>> + * I3C uses 2-byte register addressing -
+>> + *   Byte 1: MemReg | BlkAddr[0] | Address[5:0]
+>> + *   Byte 2: 0000   | BlkAddr[4:1]
+>> + *
+>> + * The low byte carries the register/NVM address and the high byte carries the
+>> + * upper block address bits, so little-endian format is required. No range
+>> + * config is needed since I3C does not use MR11 page switching.
+>> + */
+>> +static const struct regmap_config spd5118_regmap_i3c_config = {
+>> +	.reg_bits = 16,
+>> +	.val_bits = 8,
+>> +	.max_register = 0x7ff,
+>> +	.reg_format_endian = REGMAP_ENDIAN_LITTLE,
+> 
+> Should this be added to spd5118_regmap16_config instead, or is there reason
+> to assume that I2C 16-bit addressing differs from I3C addressing ?
 
->=20
-> Regards,
->=20
-> 	Hans
->=20
-> > ---
-> >=20
-> >  drivers/gpu/drm/tegra/dsi.c             |   1 +
-> >  drivers/gpu/host1x/Makefile             |   1 +
-> >  drivers/gpu/host1x/mipi.c               | 592 +++++-------------------
-> >  drivers/gpu/host1x/tegra114-mipi.c      | 483 +++++++++++++++++++
-> >  drivers/staging/media/tegra-video/csi.c |   1 +
-> >  include/linux/host1x.h                  |  10 -
-> >  include/linux/tegra-mipi-cal.h          |  57 +++
-> >  7 files changed, 666 insertions(+), 479 deletions(-)
-> >  create mode 100644 drivers/gpu/host1x/tegra114-mipi.c
-> >  create mode 100644 include/linux/tegra-mipi-cal.h
-> >=20
-> > diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-> > index 2c5aefe9621a..7f25c50621c9 100644
-> > --- a/drivers/gpu/drm/tegra/dsi.c
-> > +++ b/drivers/gpu/drm/tegra/dsi.c
-> > @@ -14,6 +14,7 @@
-> >=20
-> >  #include <linux/pm_runtime.h>
-> >  #include <linux/regulator/consumer.h>
-> >  #include <linux/reset.h>
-> >=20
-> > +#include <linux/tegra-mipi-cal.h>
-> >=20
-> >  #include <video/mipi_display.h>
-> >=20
-> > diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
-> > index ee5286ffe08d..fead483af0b4 100644
-> > --- a/drivers/gpu/host1x/Makefile
-> > +++ b/drivers/gpu/host1x/Makefile
-> > @@ -9,6 +9,7 @@ host1x-y =3D \
-> >=20
-> >  	job.o \
-> >  	debug.o \
-> >  	mipi.o \
-> >=20
-> > +	tegra114-mipi.o \
-> >=20
-> >  	fence.o \
-> >  	hw/host1x01.o \
-> >  	hw/host1x02.o \
-> >=20
-> > diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
-> > index fea9f491df66..01513b775d89 100644
-> > --- a/drivers/gpu/host1x/mipi.c
-> > +++ b/drivers/gpu/host1x/mipi.c
-> > @@ -1,215 +1,110 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> >=20
-> >  /*
-> > =20
-> >   * Copyright (C) 2013 NVIDIA Corporation
-> >=20
-> > - *
-> > - * Permission to use, copy, modify, distribute, and sell this software
-> > and its - * documentation for any purpose is hereby granted without fee=
-,
-> > provided that - * the above copyright notice appear in all copies and
-> > that both that copyright - * notice and this permission notice appear i=
-n
-> > supporting documentation, and - * that the name of the copyright holder=
-s
-> > not be used in advertising or - * publicity pertaining to distribution =
-of
-> > the software without specific, - * written prior permission.  The
-> > copyright holders make no representations - * about the suitability of
-> > this software for any purpose.  It is provided "as - * is" without
-> > express or implied warranty.
-> > - *
-> > - * THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS
-> > SOFTWARE, - * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
-> > FITNESS, IN NO - * EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY
-> > SPECIAL, INDIRECT OR - * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVE=
-R
-> > RESULTING FROM LOSS OF USE, - * DATA OR PROFITS, WHETHER IN AN ACTION O=
-F
-> > CONTRACT, NEGLIGENCE OR OTHER - * TORTIOUS ACTION, ARISING OUT OF OR IN
-> > CONNECTION WITH THE USE OR PERFORMANCE - * OF THIS SOFTWARE.
-> > + * Copyright (C) 2025 Svyatoslav Ryhel <clamor95@gmail.com>
-> >=20
-> >   */
-> > =20
-> >  #include <linux/clk.h>
-> >=20
-> > -#include <linux/host1x.h>
-> >=20
-> >  #include <linux/io.h>
-> >  #include <linux/iopoll.h>
-> >=20
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> >=20
-> >  #include <linux/of_platform.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/slab.h>
-> >=20
-> > +#include <linux/tegra-mipi-cal.h>
-> >=20
-> > -#include "dev.h"
-> > -
-> > -#define MIPI_CAL_CTRL			0x00
-> > -#define MIPI_CAL_CTRL_NOISE_FILTER(x)	(((x) & 0xf) << 26)
-> > -#define MIPI_CAL_CTRL_PRESCALE(x)	(((x) & 0x3) << 24)
-> > -#define MIPI_CAL_CTRL_CLKEN_OVR		(1 << 4)
-> > -#define MIPI_CAL_CTRL_START		(1 << 0)
-> > -
-> > -#define MIPI_CAL_AUTOCAL_CTRL		0x01
-> > -
-> > -#define MIPI_CAL_STATUS			0x02
-> > -#define MIPI_CAL_STATUS_DONE		(1 << 16)
-> > -#define MIPI_CAL_STATUS_ACTIVE		(1 <<  0)
-> > -
-> > -#define MIPI_CAL_CONFIG_CSIA		0x05
-> > -#define MIPI_CAL_CONFIG_CSIB		0x06
-> > -#define MIPI_CAL_CONFIG_CSIC		0x07
-> > -#define MIPI_CAL_CONFIG_CSID		0x08
-> > -#define MIPI_CAL_CONFIG_CSIE		0x09
-> > -#define MIPI_CAL_CONFIG_CSIF		0x0a
-> > -#define MIPI_CAL_CONFIG_DSIA		0x0e
-> > -#define MIPI_CAL_CONFIG_DSIB		0x0f
-> > -#define MIPI_CAL_CONFIG_DSIC		0x10
-> > -#define MIPI_CAL_CONFIG_DSID		0x11
-> > -
-> > -#define MIPI_CAL_CONFIG_DSIA_CLK	0x19
-> > -#define MIPI_CAL_CONFIG_DSIB_CLK	0x1a
-> > -#define MIPI_CAL_CONFIG_CSIAB_CLK	0x1b
-> > -#define MIPI_CAL_CONFIG_DSIC_CLK	0x1c
-> > -#define MIPI_CAL_CONFIG_CSICD_CLK	0x1c
-> > -#define MIPI_CAL_CONFIG_DSID_CLK	0x1d
-> > -#define MIPI_CAL_CONFIG_CSIE_CLK	0x1d
-> > -
-> > -/* for data and clock lanes */
-> > -#define MIPI_CAL_CONFIG_SELECT		(1 << 21)
-> > -
-> > -/* for data lanes */
-> > -#define MIPI_CAL_CONFIG_HSPDOS(x)	(((x) & 0x1f) << 16)
-> > -#define MIPI_CAL_CONFIG_HSPUOS(x)	(((x) & 0x1f) <<  8)
-> > -#define MIPI_CAL_CONFIG_TERMOS(x)	(((x) & 0x1f) <<  0)
-> > -
-> > -/* for clock lanes */
-> > -#define MIPI_CAL_CONFIG_HSCLKPDOSD(x)	(((x) & 0x1f) <<  8)
-> > -#define MIPI_CAL_CONFIG_HSCLKPUOSD(x)	(((x) & 0x1f) <<  0)
-> > -
-> > -#define MIPI_CAL_BIAS_PAD_CFG0		0x16
-> > -#define MIPI_CAL_BIAS_PAD_PDVCLAMP	(1 << 1)
-> > -#define MIPI_CAL_BIAS_PAD_E_VCLAMP_REF	(1 << 0)
-> > -
-> > -#define MIPI_CAL_BIAS_PAD_CFG1		0x17
-> > -#define MIPI_CAL_BIAS_PAD_DRV_DN_REF(x) (((x) & 0x7) << 16)
-> > -#define MIPI_CAL_BIAS_PAD_DRV_UP_REF(x) (((x) & 0x7) << 8)
-> > -
-> > -#define MIPI_CAL_BIAS_PAD_CFG2		0x18
-> > -#define MIPI_CAL_BIAS_PAD_VCLAMP(x)	(((x) & 0x7) << 16)
-> > -#define MIPI_CAL_BIAS_PAD_VAUXP(x)	(((x) & 0x7) << 4)
-> > -#define MIPI_CAL_BIAS_PAD_PDVREG	(1 << 1)
-> > -
-> > -struct tegra_mipi_pad {
-> > -	unsigned long data;
-> > -	unsigned long clk;
-> > -};
-> > -
-> > -struct tegra_mipi_soc {
-> > -	bool has_clk_lane;
-> > -	const struct tegra_mipi_pad *pads;
-> > -	unsigned int num_pads;
-> > -
-> > -	bool clock_enable_override;
-> > -	bool needs_vclamp_ref;
-> > -
-> > -	/* bias pad configuration settings */
-> > -	u8 pad_drive_down_ref;
-> > -	u8 pad_drive_up_ref;
-> > +/* only need to support one provider */
-> > +static struct {
-> > +	struct device_node *np;
-> > +	const struct tegra_mipi_ops *ops;
-> > +} provider;
-> >=20
-> > -	u8 pad_vclamp_level;
-> > -	u8 pad_vauxp_level;
-> > -
-> > -	/* calibration settings for data lanes */
-> > -	u8 hspdos;
-> > -	u8 hspuos;
-> > -	u8 termos;
-> > -
-> > -	/* calibration settings for clock lanes */
-> > -	u8 hsclkpdos;
-> > -	u8 hsclkpuos;
-> > -};
-> > -
-> > -struct tegra_mipi {
-> > -	const struct tegra_mipi_soc *soc;
-> > -	struct device *dev;
-> > -	void __iomem *regs;
-> > -	struct mutex lock;
-> > -	struct clk *clk;
-> > -
-> > -	unsigned long usage_count;
-> > -};
-> > -
-> > -struct tegra_mipi_device {
-> > -	struct platform_device *pdev;
-> > -	struct tegra_mipi *mipi;
-> > -	struct device *device;
-> > -	unsigned long pads;
-> > -};
-> > -
-> > -static inline u32 tegra_mipi_readl(struct tegra_mipi *mipi,
-> > -				   unsigned long offset)
-> > +/**
-> > + * tegra_mipi_enable - Enable the Tegra MIPI calibration device.
-> > + * @device: Handle to the Tegra MIPI calibration device.
-> > + *
-> > + * This calls the enable sequence for the Tegra MIPI calibration devic=
-e.
-> > + *
-> > + * Returns 0 on success or a negative error code on failure.
-> > + */
-> > +int tegra_mipi_enable(struct tegra_mipi_device *device)
-> >=20
-> >  {
-> >=20
-> > -	return readl(mipi->regs + (offset << 2));
-> > -}
-> > +	if (device->ops->enable)
-> > +		return device->ops->enable(device);
-> >=20
-> > -static inline void tegra_mipi_writel(struct tegra_mipi *mipi, u32 valu=
-e,
-> > -				     unsigned long offset)
-> > -{
-> > -	writel(value, mipi->regs + (offset << 2));
-> > +	return 0;
-> >=20
-> >  }
-> >=20
-> > +EXPORT_SYMBOL(tegra_mipi_enable);
-> >=20
-> > -static int tegra_mipi_power_up(struct tegra_mipi *mipi)
-> > +/**
-> > + * tegra_mipi_disable - Disable the Tegra MIPI calibration device.
-> > + * @device: Handle to the Tegra MIPI calibration device.
-> > + *
-> > + * This calls the disable sequence for the Tegra MIPI calibration devi=
-ce.
-> > + *
-> > + * Returns 0 on success or a negative error code on failure.
-> > + */
-> > +int tegra_mipi_disable(struct tegra_mipi_device *device)
-> >=20
-> >  {
-> >=20
-> > -	u32 value;
-> > -	int err;
-> > -
-> > -	err =3D clk_enable(mipi->clk);
-> > -	if (err < 0)
-> > -		return err;
-> > -
-> > -	value =3D tegra_mipi_readl(mipi, MIPI_CAL_BIAS_PAD_CFG0);
-> > -	value &=3D ~MIPI_CAL_BIAS_PAD_PDVCLAMP;
-> > -
-> > -	if (mipi->soc->needs_vclamp_ref)
-> > -		value |=3D MIPI_CAL_BIAS_PAD_E_VCLAMP_REF;
-> > -
-> > -	tegra_mipi_writel(mipi, value, MIPI_CAL_BIAS_PAD_CFG0);
-> > -
-> > -	value =3D tegra_mipi_readl(mipi, MIPI_CAL_BIAS_PAD_CFG2);
-> > -	value &=3D ~MIPI_CAL_BIAS_PAD_PDVREG;
-> > -	tegra_mipi_writel(mipi, value, MIPI_CAL_BIAS_PAD_CFG2);
-> > -
-> > -	clk_disable(mipi->clk);
-> > +	if (device->ops->disable)
-> > +		return device->ops->disable(device);
-> >=20
-> >  	return 0;
-> > =20
-> >  }
-> >=20
-> > +EXPORT_SYMBOL(tegra_mipi_disable);
-> >=20
-> > -static int tegra_mipi_power_down(struct tegra_mipi *mipi)
-> > +/**
-> > + * tegra_mipi_start_calibration - Start the Tegra MIPI calibration
-> > sequence. + * @device: Handle to the Tegra MIPI calibration device.
-> > + *
-> > + * This initiates the calibration of CSI/DSI interfaces via the Tegra
-> > MIPI
-> > + * calibration device.
-> > + *
-> > + * Returns 0 on success or a negative error code on failure.
-> > + */
-> > +int tegra_mipi_start_calibration(struct tegra_mipi_device *device)
-> >=20
-> >  {
-> >=20
-> > -	u32 value;
-> > -	int err;
-> > -
-> > -	err =3D clk_enable(mipi->clk);
-> > -	if (err < 0)
-> > -		return err;
-> > -
-> > -	/*
-> > -	 * The MIPI_CAL_BIAS_PAD_PDVREG controls a voltage regulator that
-> > -	 * supplies the DSI pads. This must be kept enabled until none of the
-> > -	 * DSI lanes are used anymore.
-> > -	 */
-> > -	value =3D tegra_mipi_readl(mipi, MIPI_CAL_BIAS_PAD_CFG2);
-> > -	value |=3D MIPI_CAL_BIAS_PAD_PDVREG;
-> > -	tegra_mipi_writel(mipi, value, MIPI_CAL_BIAS_PAD_CFG2);
-> > -
-> > -	/*
-> > -	 * MIPI_CAL_BIAS_PAD_PDVCLAMP and MIPI_CAL_BIAS_PAD_E_VCLAMP_REF
-> > -	 * control a regulator that supplies current to the pre-driver logic.
-> > -	 * Powering down this regulator causes DSI to fail, so it must remain
-> > -	 * powered on until none of the DSI lanes are used anymore.
-> > -	 */
-> > -	value =3D tegra_mipi_readl(mipi, MIPI_CAL_BIAS_PAD_CFG0);
-> > +	if (device->ops->start_calibration)
-> > +		return device->ops->start_calibration(device);
-> >=20
-> > -	if (mipi->soc->needs_vclamp_ref)
-> > -		value &=3D ~MIPI_CAL_BIAS_PAD_E_VCLAMP_REF;
-> > +	return 0;
-> > +}
-> > +EXPORT_SYMBOL(tegra_mipi_start_calibration);
-> >=20
-> > -	value |=3D MIPI_CAL_BIAS_PAD_PDVCLAMP;
-> > -	tegra_mipi_writel(mipi, value, MIPI_CAL_BIAS_PAD_CFG0);
-> > +/**
-> > + * tegra_mipi_finish_calibration - Finish the Tegra MIPI calibration
-> > sequence. + * @device: Handle to the Tegra MIPI calibration device.
-> > + *
-> > + * This completes the calibration of CSI/DSI interfaces via the Tegra
-> > MIPI
-> > + * calibration device.
-> > + *
-> > + * Returns 0 on success or a negative error code on failure.
-> > + */
-> > +int tegra_mipi_finish_calibration(struct tegra_mipi_device *device)
-> > +{
-> > +	if (device->ops->finish_calibration)
-> > +		return device->ops->finish_calibration(device);
-> >=20
-> >  	return 0;
-> > =20
-> >  }
-> >=20
-> > +EXPORT_SYMBOL(tegra_mipi_finish_calibration);
-> >=20
-> > +/**
-> > + * tegra_mipi_request - Request a Tegra MIPI calibration device.
-> > + * @device: Handle of the device requesting the MIPI calibration
-> > function.
-> > + * @np: Device node pointer of the device requesting the MIPI calibrat=
-ion
-> > + *	function.
-> > + *
-> > + * This function requests a reference to a Tegra MIPI calibration devi=
-ce.
-> > + *
-> > + * Returns a pointer to the Tegra MIPI calibration device on success,
-> > + * or an ERR_PTR-encoded error code on failure.
-> > + */
-> >=20
-> >  struct tegra_mipi_device *tegra_mipi_request(struct device *device,
-> > =20
-> >  					     struct device_node *np)
-> > =20
-> >  {
-> >=20
-> > -	struct tegra_mipi_device *dev;
-> > +	struct tegra_mipi_device *mipidev;
-> >=20
-> >  	struct of_phandle_args args;
-> >  	int err;
-> >=20
-> > @@ -219,321 +114,80 @@ struct tegra_mipi_device *tegra_mipi_request(str=
-uct
-> > device *device,>=20
-> >  	if (err < 0)
-> >  =09
-> >  		return ERR_PTR(err);
-> >=20
-> > -	dev =3D kzalloc_obj(*dev);
-> > -	if (!dev) {
-> > +	if (provider.np !=3D args.np)
-> > +		return ERR_PTR(-ENODEV);
-> > +
-> > +	mipidev =3D kzalloc_obj(*mipidev);
-> > +	if (!mipidev) {
-> >=20
-> >  		err =3D -ENOMEM;
-> >  		goto out;
-> >  =09
-> >  	}
-> >=20
-> > -	dev->pdev =3D of_find_device_by_node(args.np);
-> > -	if (!dev->pdev) {
-> > +	mipidev->pdev =3D of_find_device_by_node(args.np);
-> > +	if (!mipidev->pdev) {
-> >=20
-> >  		err =3D -ENODEV;
-> >  		goto free;
-> >  =09
-> >  	}
-> >=20
-> > -	dev->mipi =3D platform_get_drvdata(dev->pdev);
-> > -	if (!dev->mipi) {
-> > -		err =3D -EPROBE_DEFER;
-> > -		goto put;
-> > -	}
-> > -
-> >=20
-> >  	of_node_put(args.np);
-> >=20
-> > -	dev->pads =3D args.args[0];
-> > -	dev->device =3D device;
-> > +	mipidev->ops =3D provider.ops;
-> > +	mipidev->pads =3D args.args[0];
-> >=20
-> > -	return dev;
-> > +	return mipidev;
-> >=20
-> > -put:
-> > -	platform_device_put(dev->pdev);
-> >=20
-> >  free:
-> > -	kfree(dev);
-> > +	kfree(mipidev);
-> >=20
-> >  out:
-> >  	of_node_put(args.np);
-> >  	return ERR_PTR(err);
-> > =20
-> >  }
-> >  EXPORT_SYMBOL(tegra_mipi_request);
-> >=20
-> > -void tegra_mipi_free(struct tegra_mipi_device *device)
-> > +/**
-> > + * tegra_mipi_free - Free a Tegra MIPI calibration device.
-> > + * @mipidev: Handle to the Tegra MIPI calibration device.
-> > + *
-> > + * This function releases a reference to a Tegra MIPI calibration devi=
-ce
-> > + * previously requested by tegra_mipi_request().
-> > + */
-> > +void tegra_mipi_free(struct tegra_mipi_device *mipidev)
-> >=20
-> >  {
-> >=20
-> > -	platform_device_put(device->pdev);
-> > -	kfree(device);
-> > +	platform_device_put(mipidev->pdev);
-> > +	kfree(mipidev);
-> >=20
-> >  }
-> >  EXPORT_SYMBOL(tegra_mipi_free);
-> >=20
-> > -int tegra_mipi_enable(struct tegra_mipi_device *dev)
-> > +static void tegra_mipi_remove_provider(void *data)
-> >=20
-> >  {
-> >=20
-> > -	int err =3D 0;
-> > -
-> > -	mutex_lock(&dev->mipi->lock);
-> > -
-> > -	if (dev->mipi->usage_count++ =3D=3D 0)
-> > -		err =3D tegra_mipi_power_up(dev->mipi);
-> > -
-> > -	mutex_unlock(&dev->mipi->lock);
-> > -
-> > -	return err;
-> > -
-> > -}
-> > -EXPORT_SYMBOL(tegra_mipi_enable);
-> > -
-> > -int tegra_mipi_disable(struct tegra_mipi_device *dev)
-> > -{
-> > -	int err =3D 0;
-> > -
-> > -	mutex_lock(&dev->mipi->lock);
-> > -
-> > -	if (--dev->mipi->usage_count =3D=3D 0)
-> > -		err =3D tegra_mipi_power_down(dev->mipi);
-> > -
-> > -	mutex_unlock(&dev->mipi->lock);
-> > -
-> > -	return err;
-> > -
-> > -}
-> > -EXPORT_SYMBOL(tegra_mipi_disable);
-> > -
-> > -int tegra_mipi_finish_calibration(struct tegra_mipi_device *device)
-> > -{
-> > -	struct tegra_mipi *mipi =3D device->mipi;
-> > -	void __iomem *status_reg =3D mipi->regs + (MIPI_CAL_STATUS << 2);
-> > -	u32 value;
-> > -	int err;
-> > -
-> > -	err =3D readl_relaxed_poll_timeout(status_reg, value,
-> > -					 !(value &=20
-MIPI_CAL_STATUS_ACTIVE) &&
-> > -					 (value & MIPI_CAL_STATUS_DONE),=20
-50,
-> > -					 250000);
-> > -	mutex_unlock(&device->mipi->lock);
-> > -	clk_disable(device->mipi->clk);
-> > -
-> > -	return err;
-> > +	provider.np =3D NULL;
-> > +	provider.ops =3D NULL;
-> >=20
-> >  }
-> >=20
-> > -EXPORT_SYMBOL(tegra_mipi_finish_calibration);
-> > -
-> > -int tegra_mipi_start_calibration(struct tegra_mipi_device *device)
-> > -{
-> > -	const struct tegra_mipi_soc *soc =3D device->mipi->soc;
-> > -	unsigned int i;
-> > -	u32 value;
-> > -	int err;
-> > -
-> > -	err =3D clk_enable(device->mipi->clk);
-> > -	if (err < 0)
-> > -		return err;
-> > -
-> > -	mutex_lock(&device->mipi->lock);
-> > -
-> > -	value =3D MIPI_CAL_BIAS_PAD_DRV_DN_REF(soc->pad_drive_down_ref) |
-> > -		MIPI_CAL_BIAS_PAD_DRV_UP_REF(soc->pad_drive_up_ref);
-> > -	tegra_mipi_writel(device->mipi, value, MIPI_CAL_BIAS_PAD_CFG1);
-> > -
-> > -	value =3D tegra_mipi_readl(device->mipi, MIPI_CAL_BIAS_PAD_CFG2);
-> > -	value &=3D ~MIPI_CAL_BIAS_PAD_VCLAMP(0x7);
-> > -	value &=3D ~MIPI_CAL_BIAS_PAD_VAUXP(0x7);
-> > -	value |=3D MIPI_CAL_BIAS_PAD_VCLAMP(soc->pad_vclamp_level);
-> > -	value |=3D MIPI_CAL_BIAS_PAD_VAUXP(soc->pad_vauxp_level);
-> > -	tegra_mipi_writel(device->mipi, value, MIPI_CAL_BIAS_PAD_CFG2);
-> > -
-> > -	for (i =3D 0; i < soc->num_pads; i++) {
-> > -		u32 clk =3D 0, data =3D 0;
-> > -
-> > -		if (device->pads & BIT(i)) {
-> > -			data =3D MIPI_CAL_CONFIG_SELECT |
-> > -			       MIPI_CAL_CONFIG_HSPDOS(soc->hspdos) |
-> > -			       MIPI_CAL_CONFIG_HSPUOS(soc->hspuos) |
-> > -			       MIPI_CAL_CONFIG_TERMOS(soc->termos);
-> > -			clk =3D MIPI_CAL_CONFIG_SELECT |
-> > -			      MIPI_CAL_CONFIG_HSCLKPDOSD(soc->hsclkpdos) |
-> > -			      MIPI_CAL_CONFIG_HSCLKPUOSD(soc->hsclkpuos);
-> > -		}
-> >=20
-> > -		tegra_mipi_writel(device->mipi, data, soc->pads[i].data);
-> > -
-> > -		if (soc->has_clk_lane && soc->pads[i].clk !=3D 0)
-> > -			tegra_mipi_writel(device->mipi, clk, soc-
->pads[i].clk);
-> > -	}
-> > -
-> > -	value =3D tegra_mipi_readl(device->mipi, MIPI_CAL_CTRL);
-> > -	value &=3D ~MIPI_CAL_CTRL_NOISE_FILTER(0xf);
-> > -	value &=3D ~MIPI_CAL_CTRL_PRESCALE(0x3);
-> > -	value |=3D MIPI_CAL_CTRL_NOISE_FILTER(0xa);
-> > -	value |=3D MIPI_CAL_CTRL_PRESCALE(0x2);
-> > -
-> > -	if (!soc->clock_enable_override)
-> > -		value &=3D ~MIPI_CAL_CTRL_CLKEN_OVR;
-> > -	else
-> > -		value |=3D MIPI_CAL_CTRL_CLKEN_OVR;
-> > -
-> > -	tegra_mipi_writel(device->mipi, value, MIPI_CAL_CTRL);
-> > -
-> > -	/* clear any pending status bits */
-> > -	value =3D tegra_mipi_readl(device->mipi, MIPI_CAL_STATUS);
-> > -	tegra_mipi_writel(device->mipi, value, MIPI_CAL_STATUS);
-> > -
-> > -	value =3D tegra_mipi_readl(device->mipi, MIPI_CAL_CTRL);
-> > -	value |=3D MIPI_CAL_CTRL_START;
-> > -	tegra_mipi_writel(device->mipi, value, MIPI_CAL_CTRL);
-> > -
-> > -	/*
-> > -	 * Wait for min 72uS to let calibration logic finish calibration
-> > -	 * sequence codes before waiting for pads idle state to apply the
-> > -	 * results.
-> > -	 */
-> > -	usleep_range(75, 80);
-> > -
-> > -	return 0;
-> > -}
-> > -EXPORT_SYMBOL(tegra_mipi_start_calibration);
-> > -
-> > -static const struct tegra_mipi_pad tegra114_mipi_pads[] =3D {
-> > -	{ .data =3D MIPI_CAL_CONFIG_CSIA },
-> > -	{ .data =3D MIPI_CAL_CONFIG_CSIB },
-> > -	{ .data =3D MIPI_CAL_CONFIG_CSIC },
-> > -	{ .data =3D MIPI_CAL_CONFIG_CSID },
-> > -	{ .data =3D MIPI_CAL_CONFIG_CSIE },
-> > -	{ .data =3D MIPI_CAL_CONFIG_DSIA },
-> > -	{ .data =3D MIPI_CAL_CONFIG_DSIB },
-> > -	{ .data =3D MIPI_CAL_CONFIG_DSIC },
-> > -	{ .data =3D MIPI_CAL_CONFIG_DSID },
-> > -};
-> > -
-> > -static const struct tegra_mipi_soc tegra114_mipi_soc =3D {
-> > -	.has_clk_lane =3D false,
-> > -	.pads =3D tegra114_mipi_pads,
-> > -	.num_pads =3D ARRAY_SIZE(tegra114_mipi_pads),
-> > -	.clock_enable_override =3D true,
-> > -	.needs_vclamp_ref =3D true,
-> > -	.pad_drive_down_ref =3D 0x2,
-> > -	.pad_drive_up_ref =3D 0x0,
-> > -	.pad_vclamp_level =3D 0x0,
-> > -	.pad_vauxp_level =3D 0x0,
-> > -	.hspdos =3D 0x0,
-> > -	.hspuos =3D 0x4,
-> > -	.termos =3D 0x5,
-> > -	.hsclkpdos =3D 0x0,
-> > -	.hsclkpuos =3D 0x4,
-> > -};
-> > -
-> > -static const struct tegra_mipi_pad tegra124_mipi_pads[] =3D {
-> > -	{ .data =3D MIPI_CAL_CONFIG_CSIA, .clk =3D MIPI_CAL_CONFIG_CSIAB_CLK =
-},
-> > -	{ .data =3D MIPI_CAL_CONFIG_CSIB, .clk =3D MIPI_CAL_CONFIG_CSIAB_CLK =
-},
-> > -	{ .data =3D MIPI_CAL_CONFIG_CSIC, .clk =3D MIPI_CAL_CONFIG_CSICD_CLK =
-},
-> > -	{ .data =3D MIPI_CAL_CONFIG_CSID, .clk =3D MIPI_CAL_CONFIG_CSICD_CLK =
-},
-> > -	{ .data =3D MIPI_CAL_CONFIG_CSIE, .clk =3D MIPI_CAL_CONFIG_CSIE_CLK  =
-},
-> > -	{ .data =3D MIPI_CAL_CONFIG_DSIA, .clk =3D MIPI_CAL_CONFIG_DSIA_CLK  =
-},
-> > -	{ .data =3D MIPI_CAL_CONFIG_DSIB, .clk =3D MIPI_CAL_CONFIG_DSIB_CLK  =
-},
-> > -};
-> > -
-> > -static const struct tegra_mipi_soc tegra124_mipi_soc =3D {
-> > -	.has_clk_lane =3D true,
-> > -	.pads =3D tegra124_mipi_pads,
-> > -	.num_pads =3D ARRAY_SIZE(tegra124_mipi_pads),
-> > -	.clock_enable_override =3D true,
-> > -	.needs_vclamp_ref =3D true,
-> > -	.pad_drive_down_ref =3D 0x2,
-> > -	.pad_drive_up_ref =3D 0x0,
-> > -	.pad_vclamp_level =3D 0x0,
-> > -	.pad_vauxp_level =3D 0x0,
-> > -	.hspdos =3D 0x0,
-> > -	.hspuos =3D 0x0,
-> > -	.termos =3D 0x0,
-> > -	.hsclkpdos =3D 0x1,
-> > -	.hsclkpuos =3D 0x2,
-> > -};
-> > -
-> > -static const struct tegra_mipi_soc tegra132_mipi_soc =3D {
-> > -	.has_clk_lane =3D true,
-> > -	.pads =3D tegra124_mipi_pads,
-> > -	.num_pads =3D ARRAY_SIZE(tegra124_mipi_pads),
-> > -	.clock_enable_override =3D false,
-> > -	.needs_vclamp_ref =3D false,
-> > -	.pad_drive_down_ref =3D 0x0,
-> > -	.pad_drive_up_ref =3D 0x3,
-> > -	.pad_vclamp_level =3D 0x0,
-> > -	.pad_vauxp_level =3D 0x0,
-> > -	.hspdos =3D 0x0,
-> > -	.hspuos =3D 0x0,
-> > -	.termos =3D 0x0,
-> > -	.hsclkpdos =3D 0x3,
-> > -	.hsclkpuos =3D 0x2,
-> > -};
-> > -
-> > -static const struct tegra_mipi_pad tegra210_mipi_pads[] =3D {
-> > -	{ .data =3D MIPI_CAL_CONFIG_CSIA, .clk =3D 0 },
-> > -	{ .data =3D MIPI_CAL_CONFIG_CSIB, .clk =3D 0 },
-> > -	{ .data =3D MIPI_CAL_CONFIG_CSIC, .clk =3D 0 },
-> > -	{ .data =3D MIPI_CAL_CONFIG_CSID, .clk =3D 0 },
-> > -	{ .data =3D MIPI_CAL_CONFIG_CSIE, .clk =3D 0 },
-> > -	{ .data =3D MIPI_CAL_CONFIG_CSIF, .clk =3D 0 },
-> > -	{ .data =3D MIPI_CAL_CONFIG_DSIA, .clk =3D MIPI_CAL_CONFIG_DSIA_CLK }=
-,
-> > -	{ .data =3D MIPI_CAL_CONFIG_DSIB, .clk =3D MIPI_CAL_CONFIG_DSIB_CLK }=
-,
-> > -	{ .data =3D MIPI_CAL_CONFIG_DSIC, .clk =3D MIPI_CAL_CONFIG_DSIC_CLK }=
-,
-> > -	{ .data =3D MIPI_CAL_CONFIG_DSID, .clk =3D MIPI_CAL_CONFIG_DSID_CLK }=
-,
-> > -};
-> > -
-> > -static const struct tegra_mipi_soc tegra210_mipi_soc =3D {
-> > -	.has_clk_lane =3D true,
-> > -	.pads =3D tegra210_mipi_pads,
-> > -	.num_pads =3D ARRAY_SIZE(tegra210_mipi_pads),
-> > -	.clock_enable_override =3D true,
-> > -	.needs_vclamp_ref =3D false,
-> > -	.pad_drive_down_ref =3D 0x0,
-> > -	.pad_drive_up_ref =3D 0x3,
-> > -	.pad_vclamp_level =3D 0x1,
-> > -	.pad_vauxp_level =3D 0x1,
-> > -	.hspdos =3D 0x0,
-> > -	.hspuos =3D 0x2,
-> > -	.termos =3D 0x0,
-> > -	.hsclkpdos =3D 0x0,
-> > -	.hsclkpuos =3D 0x2,
-> > -};
-> > -
-> > -static const struct of_device_id tegra_mipi_of_match[] =3D {
-> > -	{ .compatible =3D "nvidia,tegra114-mipi", .data =3D &tegra114_mipi_so=
-c },
-> > -	{ .compatible =3D "nvidia,tegra124-mipi", .data =3D &tegra124_mipi_so=
-c },
-> > -	{ .compatible =3D "nvidia,tegra132-mipi", .data =3D &tegra132_mipi_so=
-c },
-> > -	{ .compatible =3D "nvidia,tegra210-mipi", .data =3D &tegra210_mipi_so=
-c },
-> > -	{ },
-> > -};
-> > -
-> > -static int tegra_mipi_probe(struct platform_device *pdev)
-> > +/**
-> > + * devm_tegra_mipi_add_provider - Managed registration of a Tegra MIPI
-> > + *				  calibration function provider.
-> > + * @device: Handle to the device providing the MIPI calibration functi=
-on.
-> > + * @np: Device node pointer of the device providing the MIPI calibrati=
-on
-> > + *	function.
-> > + * @ops: Operations supported by the MIPI calibration device.
-> > + *
-> > + * This registers a device that provides MIPI calibration functions.
-> > + * For Tegra20 and Tegra30, this is the CSI block, while Tegra114 and
-> > + * newer SoC generations have a dedicated hardware block for these
-> > + * functions.
-> > + *
-> > + * Returns 0 on success or a negative error code on failure.
-> > + */
-> > +int devm_tegra_mipi_add_provider(struct device *device, struct
-> > device_node *np, +				 const struct=20
-tegra_mipi_ops *ops)
-> >=20
-> >  {
-> >=20
-> > -	const struct of_device_id *match;
-> > -	struct tegra_mipi *mipi;
-> > -
-> > -	match =3D of_match_node(tegra_mipi_of_match, pdev->dev.of_node);
-> > -	if (!match)
-> > -		return -ENODEV;
-> > +	if (provider.np)
-> > +		return -EBUSY;
-> >=20
-> > -	mipi =3D devm_kzalloc(&pdev->dev, sizeof(*mipi), GFP_KERNEL);
-> > -	if (!mipi)
-> > -		return -ENOMEM;
-> > +	provider.np =3D np;
-> > +	provider.ops =3D ops;
-> >=20
-> > -	mipi->soc =3D match->data;
-> > -	mipi->dev =3D &pdev->dev;
-> > -
-> > -	mipi->regs =3D devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
-> > -	if (IS_ERR(mipi->regs))
-> > -		return PTR_ERR(mipi->regs);
-> > -
-> > -	mutex_init(&mipi->lock);
-> > -
-> > -	mipi->clk =3D devm_clk_get_prepared(&pdev->dev, NULL);
-> > -	if (IS_ERR(mipi->clk)) {
-> > -		dev_err(&pdev->dev, "failed to get clock\n");
-> > -		return PTR_ERR(mipi->clk);
-> > -	}
-> > -
-> > -	platform_set_drvdata(pdev, mipi);
-> > -
-> > -	return 0;
-> > +	return devm_add_action_or_reset(device, tegra_mipi_remove_provider,
-> > NULL);>=20
-> >  }
-> >=20
-> > -
-> > -struct platform_driver tegra_mipi_driver =3D {
-> > -	.driver =3D {
-> > -		.name =3D "tegra-mipi",
-> > -		.of_match_table =3D tegra_mipi_of_match,
-> > -	},
-> > -	.probe =3D tegra_mipi_probe,
-> > -};
-> > +EXPORT_SYMBOL(devm_tegra_mipi_add_provider);
-> > diff --git a/drivers/gpu/host1x/tegra114-mipi.c
-> > b/drivers/gpu/host1x/tegra114-mipi.c new file mode 100644
-> > index 000000000000..c084a09784d1
-> > --- /dev/null
-> > +++ b/drivers/gpu/host1x/tegra114-mipi.c
-> > @@ -0,0 +1,483 @@
-> > +/*
-> > + * Copyright (C) 2013 NVIDIA Corporation
-> > + *
-> > + * Permission to use, copy, modify, distribute, and sell this software
-> > and its + * documentation for any purpose is hereby granted without fee=
-,
-> > provided that + * the above copyright notice appear in all copies and
-> > that both that copyright + * notice and this permission notice appear i=
-n
-> > supporting documentation, and + * that the name of the copyright holder=
-s
-> > not be used in advertising or + * publicity pertaining to distribution =
-of
-> > the software without specific, + * written prior permission.  The
-> > copyright holders make no representations + * about the suitability of
-> > this software for any purpose.  It is provided "as + * is" without
-> > express or implied warranty.
-> > + *
-> > + * THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS
-> > SOFTWARE, + * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
-> > FITNESS, IN NO + * EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY
-> > SPECIAL, INDIRECT OR + * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVE=
-R
-> > RESULTING FROM LOSS OF USE, + * DATA OR PROFITS, WHETHER IN AN ACTION O=
-F
-> > CONTRACT, NEGLIGENCE OR OTHER + * TORTIOUS ACTION, ARISING OUT OF OR IN
-> > CONNECTION WITH THE USE OR PERFORMANCE + * OF THIS SOFTWARE.
-> > + */
-> > +
-> > +#include <linux/clk.h>
-> > +#include <linux/host1x.h>
-> > +#include <linux/io.h>
-> > +#include <linux/iopoll.h>
-> > +#include <linux/of_platform.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/tegra-mipi-cal.h>
-> > +
-> > +#include "dev.h"
-> > +
-> > +#define MIPI_CAL_CTRL			0x00
-> > +#define MIPI_CAL_CTRL_NOISE_FILTER(x)	(((x) & 0xf) << 26)
-> > +#define MIPI_CAL_CTRL_PRESCALE(x)	(((x) & 0x3) << 24)
-> > +#define MIPI_CAL_CTRL_CLKEN_OVR		BIT(4)
-> > +#define MIPI_CAL_CTRL_START		BIT(0)
-> > +
-> > +#define MIPI_CAL_AUTOCAL_CTRL		0x01
-> > +
-> > +#define MIPI_CAL_STATUS			0x02
-> > +#define MIPI_CAL_STATUS_DONE		BIT(16)
-> > +#define MIPI_CAL_STATUS_ACTIVE		BIT(0)
-> > +
-> > +#define MIPI_CAL_CONFIG_CSIA		0x05
-> > +#define MIPI_CAL_CONFIG_CSIB		0x06
-> > +#define MIPI_CAL_CONFIG_CSIC		0x07
-> > +#define MIPI_CAL_CONFIG_CSID		0x08
-> > +#define MIPI_CAL_CONFIG_CSIE		0x09
-> > +#define MIPI_CAL_CONFIG_CSIF		0x0a
-> > +#define MIPI_CAL_CONFIG_DSIA		0x0e
-> > +#define MIPI_CAL_CONFIG_DSIB		0x0f
-> > +#define MIPI_CAL_CONFIG_DSIC		0x10
-> > +#define MIPI_CAL_CONFIG_DSID		0x11
-> > +
-> > +#define MIPI_CAL_CONFIG_DSIA_CLK	0x19
-> > +#define MIPI_CAL_CONFIG_DSIB_CLK	0x1a
-> > +#define MIPI_CAL_CONFIG_CSIAB_CLK	0x1b
-> > +#define MIPI_CAL_CONFIG_DSIC_CLK	0x1c
-> > +#define MIPI_CAL_CONFIG_CSICD_CLK	0x1c
-> > +#define MIPI_CAL_CONFIG_DSID_CLK	0x1d
-> > +#define MIPI_CAL_CONFIG_CSIE_CLK	0x1d
-> > +
-> > +/* for data and clock lanes */
-> > +#define MIPI_CAL_CONFIG_SELECT		BIT(21)
-> > +
-> > +/* for data lanes */
-> > +#define MIPI_CAL_CONFIG_HSPDOS(x)	(((x) & 0x1f) << 16)
-> > +#define MIPI_CAL_CONFIG_HSPUOS(x)	(((x) & 0x1f) <<  8)
-> > +#define MIPI_CAL_CONFIG_TERMOS(x)	(((x) & 0x1f) <<  0)
-> > +
-> > +/* for clock lanes */
-> > +#define MIPI_CAL_CONFIG_HSCLKPDOSD(x)	(((x) & 0x1f) <<  8)
-> > +#define MIPI_CAL_CONFIG_HSCLKPUOSD(x)	(((x) & 0x1f) <<  0)
-> > +
-> > +#define MIPI_CAL_BIAS_PAD_CFG0		0x16
-> > +#define MIPI_CAL_BIAS_PAD_PDVCLAMP	BIT(1)
-> > +#define MIPI_CAL_BIAS_PAD_E_VCLAMP_REF	BIT(0)
-> > +
-> > +#define MIPI_CAL_BIAS_PAD_CFG1		0x17
-> > +#define MIPI_CAL_BIAS_PAD_DRV_DN_REF(x) (((x) & 0x7) << 16)
-> > +#define MIPI_CAL_BIAS_PAD_DRV_UP_REF(x) (((x) & 0x7) << 8)
-> > +
-> > +#define MIPI_CAL_BIAS_PAD_CFG2		0x18
-> > +#define MIPI_CAL_BIAS_PAD_VCLAMP(x)	(((x) & 0x7) << 16)
-> > +#define MIPI_CAL_BIAS_PAD_VAUXP(x)	(((x) & 0x7) << 4)
-> > +#define MIPI_CAL_BIAS_PAD_PDVREG	BIT(1)
-> > +
-> > +struct tegra_mipi_pad {
-> > +	unsigned long data;
-> > +	unsigned long clk;
-> > +};
-> > +
-> > +struct tegra_mipi_soc {
-> > +	bool has_clk_lane;
-> > +	const struct tegra_mipi_pad *pads;
-> > +	unsigned int num_pads;
-> > +
-> > +	bool clock_enable_override;
-> > +	bool needs_vclamp_ref;
-> > +
-> > +	/* bias pad configuration settings */
-> > +	u8 pad_drive_down_ref;
-> > +	u8 pad_drive_up_ref;
-> > +
-> > +	u8 pad_vclamp_level;
-> > +	u8 pad_vauxp_level;
-> > +
-> > +	/* calibration settings for data lanes */
-> > +	u8 hspdos;
-> > +	u8 hspuos;
-> > +	u8 termos;
-> > +
-> > +	/* calibration settings for clock lanes */
-> > +	u8 hsclkpdos;
-> > +	u8 hsclkpuos;
-> > +};
-> > +
-> > +struct tegra_mipi {
-> > +	const struct tegra_mipi_soc *soc;
-> > +	struct device *dev;
-> > +	void __iomem *regs;
-> > +	struct mutex lock; /* for register access */
-> > +	struct clk *clk;
-> > +
-> > +	unsigned long usage_count;
-> > +};
-> > +
-> > +static inline u32 tegra_mipi_readl(struct tegra_mipi *mipi,
-> > +				   unsigned long offset)
-> > +{
-> > +	return readl(mipi->regs + (offset << 2));
-> > +}
-> > +
-> > +static inline void tegra_mipi_writel(struct tegra_mipi *mipi, u32 valu=
-e,
-> > +				     unsigned long offset)
-> > +{
-> > +	writel(value, mipi->regs + (offset << 2));
-> > +}
-> > +
-> > +static int tegra114_mipi_power_up(struct tegra_mipi *mipi)
-> > +{
-> > +	u32 value;
-> > +	int err;
-> > +
-> > +	err =3D clk_enable(mipi->clk);
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> > +	value =3D tegra_mipi_readl(mipi, MIPI_CAL_BIAS_PAD_CFG0);
-> > +	value &=3D ~MIPI_CAL_BIAS_PAD_PDVCLAMP;
-> > +
-> > +	if (mipi->soc->needs_vclamp_ref)
-> > +		value |=3D MIPI_CAL_BIAS_PAD_E_VCLAMP_REF;
-> > +
-> > +	tegra_mipi_writel(mipi, value, MIPI_CAL_BIAS_PAD_CFG0);
-> > +
-> > +	value =3D tegra_mipi_readl(mipi, MIPI_CAL_BIAS_PAD_CFG2);
-> > +	value &=3D ~MIPI_CAL_BIAS_PAD_PDVREG;
-> > +	tegra_mipi_writel(mipi, value, MIPI_CAL_BIAS_PAD_CFG2);
-> > +
-> > +	clk_disable(mipi->clk);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int tegra114_mipi_power_down(struct tegra_mipi *mipi)
-> > +{
-> > +	u32 value;
-> > +	int err;
-> > +
-> > +	err =3D clk_enable(mipi->clk);
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> > +	/*
-> > +	 * The MIPI_CAL_BIAS_PAD_PDVREG controls a voltage regulator that
-> > +	 * supplies the DSI pads. This must be kept enabled until none of the
-> > +	 * DSI lanes are used anymore.
-> > +	 */
-> > +	value =3D tegra_mipi_readl(mipi, MIPI_CAL_BIAS_PAD_CFG2);
-> > +	value |=3D MIPI_CAL_BIAS_PAD_PDVREG;
-> > +	tegra_mipi_writel(mipi, value, MIPI_CAL_BIAS_PAD_CFG2);
-> > +
-> > +	/*
-> > +	 * MIPI_CAL_BIAS_PAD_PDVCLAMP and MIPI_CAL_BIAS_PAD_E_VCLAMP_REF
-> > +	 * control a regulator that supplies current to the pre-driver logic.
-> > +	 * Powering down this regulator causes DSI to fail, so it must remain
-> > +	 * powered on until none of the DSI lanes are used anymore.
-> > +	 */
-> > +	value =3D tegra_mipi_readl(mipi, MIPI_CAL_BIAS_PAD_CFG0);
-> > +
-> > +	if (mipi->soc->needs_vclamp_ref)
-> > +		value &=3D ~MIPI_CAL_BIAS_PAD_E_VCLAMP_REF;
-> > +
-> > +	value |=3D MIPI_CAL_BIAS_PAD_PDVCLAMP;
-> > +	tegra_mipi_writel(mipi, value, MIPI_CAL_BIAS_PAD_CFG0);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int tegra114_mipi_enable(struct tegra_mipi_device *mipidev)
-> > +{
-> > +	struct tegra_mipi *mipi =3D platform_get_drvdata(mipidev->pdev);
-> > +	int err =3D 0;
-> > +
-> > +	mutex_lock(&mipi->lock);
-> > +
-> > +	if (mipi->usage_count++ =3D=3D 0)
-> > +		err =3D tegra114_mipi_power_up(mipi);
-> > +
-> > +	mutex_unlock(&mipi->lock);
-> > +
-> > +	return err;
-> > +}
-> > +
-> > +static int tegra114_mipi_disable(struct tegra_mipi_device *mipidev)
-> > +{
-> > +	struct tegra_mipi *mipi =3D platform_get_drvdata(mipidev->pdev);
-> > +	int err =3D 0;
-> > +
-> > +	mutex_lock(&mipi->lock);
-> > +
-> > +	if (--mipi->usage_count =3D=3D 0)
-> > +		err =3D tegra114_mipi_power_down(mipi);
-> > +
-> > +	mutex_unlock(&mipi->lock);
-> > +
-> > +	return err;
-> > +}
-> > +
-> > +static int tegra114_mipi_finish_calibration(struct tegra_mipi_device
-> > *mipidev) +{
-> > +	struct tegra_mipi *mipi =3D platform_get_drvdata(mipidev->pdev);
-> > +	void __iomem *status_reg =3D mipi->regs + (MIPI_CAL_STATUS << 2);
-> > +	u32 value;
-> > +	int err;
-> > +
-> > +	err =3D readl_relaxed_poll_timeout(status_reg, value,
-> > +					 !(value &=20
-MIPI_CAL_STATUS_ACTIVE) &&
-> > +					 (value & MIPI_CAL_STATUS_DONE),=20
-50,
-> > +					 250000);
-> > +	mutex_unlock(&mipi->lock);
-> > +	clk_disable(mipi->clk);
-> > +
-> > +	return err;
-> > +}
-> > +
-> > +static int tegra114_mipi_start_calibration(struct tegra_mipi_device
-> > *mipidev) +{
-> > +	struct tegra_mipi *mipi =3D platform_get_drvdata(mipidev->pdev);
-> > +	const struct tegra_mipi_soc *soc =3D mipi->soc;
-> > +	unsigned int i;
-> > +	u32 value;
-> > +	int err;
-> > +
-> > +	err =3D clk_enable(mipi->clk);
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> > +	mutex_lock(&mipi->lock);
-> > +
-> > +	value =3D MIPI_CAL_BIAS_PAD_DRV_DN_REF(soc->pad_drive_down_ref) |
-> > +		MIPI_CAL_BIAS_PAD_DRV_UP_REF(soc->pad_drive_up_ref);
-> > +	tegra_mipi_writel(mipi, value, MIPI_CAL_BIAS_PAD_CFG1);
-> > +
-> > +	value =3D tegra_mipi_readl(mipi, MIPI_CAL_BIAS_PAD_CFG2);
-> > +	value &=3D ~MIPI_CAL_BIAS_PAD_VCLAMP(0x7);
-> > +	value &=3D ~MIPI_CAL_BIAS_PAD_VAUXP(0x7);
-> > +	value |=3D MIPI_CAL_BIAS_PAD_VCLAMP(soc->pad_vclamp_level);
-> > +	value |=3D MIPI_CAL_BIAS_PAD_VAUXP(soc->pad_vauxp_level);
-> > +	tegra_mipi_writel(mipi, value, MIPI_CAL_BIAS_PAD_CFG2);
-> > +
-> > +	for (i =3D 0; i < soc->num_pads; i++) {
-> > +		u32 clk =3D 0, data =3D 0;
-> > +
-> > +		if (mipidev->pads & BIT(i)) {
-> > +			data =3D MIPI_CAL_CONFIG_SELECT |
-> > +			       MIPI_CAL_CONFIG_HSPDOS(soc->hspdos) |
-> > +			       MIPI_CAL_CONFIG_HSPUOS(soc->hspuos) |
-> > +			       MIPI_CAL_CONFIG_TERMOS(soc->termos);
-> > +			clk =3D MIPI_CAL_CONFIG_SELECT |
-> > +			      MIPI_CAL_CONFIG_HSCLKPDOSD(soc->hsclkpdos) |
-> > +			      MIPI_CAL_CONFIG_HSCLKPUOSD(soc->hsclkpuos);
-> > +		}
-> > +
-> > +		tegra_mipi_writel(mipi, data, soc->pads[i].data);
-> > +
-> > +		if (soc->has_clk_lane && soc->pads[i].clk !=3D 0)
-> > +			tegra_mipi_writel(mipi, clk, soc->pads[i].clk);
-> > +	}
-> > +
-> > +	value =3D tegra_mipi_readl(mipi, MIPI_CAL_CTRL);
-> > +	value &=3D ~MIPI_CAL_CTRL_NOISE_FILTER(0xf);
-> > +	value &=3D ~MIPI_CAL_CTRL_PRESCALE(0x3);
-> > +	value |=3D MIPI_CAL_CTRL_NOISE_FILTER(0xa);
-> > +	value |=3D MIPI_CAL_CTRL_PRESCALE(0x2);
-> > +
-> > +	if (!soc->clock_enable_override)
-> > +		value &=3D ~MIPI_CAL_CTRL_CLKEN_OVR;
-> > +	else
-> > +		value |=3D MIPI_CAL_CTRL_CLKEN_OVR;
-> > +
-> > +	tegra_mipi_writel(mipi, value, MIPI_CAL_CTRL);
-> > +
-> > +	/* clear any pending status bits */
-> > +	value =3D tegra_mipi_readl(mipi, MIPI_CAL_STATUS);
-> > +	tegra_mipi_writel(mipi, value, MIPI_CAL_STATUS);
-> > +
-> > +	value =3D tegra_mipi_readl(mipi, MIPI_CAL_CTRL);
-> > +	value |=3D MIPI_CAL_CTRL_START;
-> > +	tegra_mipi_writel(mipi, value, MIPI_CAL_CTRL);
-> > +
-> > +	/*
-> > +	 * Wait for min 72uS to let calibration logic finish calibration
-> > +	 * sequence codes before waiting for pads idle state to apply the
-> > +	 * results.
-> > +	 */
-> > +	usleep_range(75, 80);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static const struct tegra_mipi_ops tegra114_mipi_ops =3D {
-> > +	.enable =3D tegra114_mipi_enable,
-> > +	.disable =3D tegra114_mipi_disable,
-> > +	.start_calibration =3D tegra114_mipi_start_calibration,
-> > +	.finish_calibration =3D tegra114_mipi_finish_calibration,
-> > +};
-> > +
-> > +static const struct tegra_mipi_pad tegra114_mipi_pads[] =3D {
-> > +	{ .data =3D MIPI_CAL_CONFIG_CSIA },
-> > +	{ .data =3D MIPI_CAL_CONFIG_CSIB },
-> > +	{ .data =3D MIPI_CAL_CONFIG_CSIC },
-> > +	{ .data =3D MIPI_CAL_CONFIG_CSID },
-> > +	{ .data =3D MIPI_CAL_CONFIG_CSIE },
-> > +	{ .data =3D MIPI_CAL_CONFIG_DSIA },
-> > +	{ .data =3D MIPI_CAL_CONFIG_DSIB },
-> > +	{ .data =3D MIPI_CAL_CONFIG_DSIC },
-> > +	{ .data =3D MIPI_CAL_CONFIG_DSID },
-> > +};
-> > +
-> > +static const struct tegra_mipi_soc tegra114_mipi_soc =3D {
-> > +	.has_clk_lane =3D false,
-> > +	.pads =3D tegra114_mipi_pads,
-> > +	.num_pads =3D ARRAY_SIZE(tegra114_mipi_pads),
-> > +	.clock_enable_override =3D true,
-> > +	.needs_vclamp_ref =3D true,
-> > +	.pad_drive_down_ref =3D 0x2,
-> > +	.pad_drive_up_ref =3D 0x0,
-> > +	.pad_vclamp_level =3D 0x0,
-> > +	.pad_vauxp_level =3D 0x0,
-> > +	.hspdos =3D 0x0,
-> > +	.hspuos =3D 0x4,
-> > +	.termos =3D 0x5,
-> > +	.hsclkpdos =3D 0x0,
-> > +	.hsclkpuos =3D 0x4,
-> > +};
-> > +
-> > +static const struct tegra_mipi_pad tegra124_mipi_pads[] =3D {
-> > +	{ .data =3D MIPI_CAL_CONFIG_CSIA, .clk =3D MIPI_CAL_CONFIG_CSIAB_CLK =
-},
-> > +	{ .data =3D MIPI_CAL_CONFIG_CSIB, .clk =3D MIPI_CAL_CONFIG_CSIAB_CLK =
-},
-> > +	{ .data =3D MIPI_CAL_CONFIG_CSIC, .clk =3D MIPI_CAL_CONFIG_CSICD_CLK =
-},
-> > +	{ .data =3D MIPI_CAL_CONFIG_CSID, .clk =3D MIPI_CAL_CONFIG_CSICD_CLK =
-},
-> > +	{ .data =3D MIPI_CAL_CONFIG_CSIE, .clk =3D MIPI_CAL_CONFIG_CSIE_CLK  =
-},
-> > +	{ .data =3D MIPI_CAL_CONFIG_DSIA, .clk =3D MIPI_CAL_CONFIG_DSIA_CLK  =
-},
-> > +	{ .data =3D MIPI_CAL_CONFIG_DSIB, .clk =3D MIPI_CAL_CONFIG_DSIB_CLK  =
-},
-> > +};
-> > +
-> > +static const struct tegra_mipi_soc tegra124_mipi_soc =3D {
-> > +	.has_clk_lane =3D true,
-> > +	.pads =3D tegra124_mipi_pads,
-> > +	.num_pads =3D ARRAY_SIZE(tegra124_mipi_pads),
-> > +	.clock_enable_override =3D true,
-> > +	.needs_vclamp_ref =3D true,
-> > +	.pad_drive_down_ref =3D 0x2,
-> > +	.pad_drive_up_ref =3D 0x0,
-> > +	.pad_vclamp_level =3D 0x0,
-> > +	.pad_vauxp_level =3D 0x0,
-> > +	.hspdos =3D 0x0,
-> > +	.hspuos =3D 0x0,
-> > +	.termos =3D 0x0,
-> > +	.hsclkpdos =3D 0x1,
-> > +	.hsclkpuos =3D 0x2,
-> > +};
-> > +
-> > +static const struct tegra_mipi_soc tegra132_mipi_soc =3D {
-> > +	.has_clk_lane =3D true,
-> > +	.pads =3D tegra124_mipi_pads,
-> > +	.num_pads =3D ARRAY_SIZE(tegra124_mipi_pads),
-> > +	.clock_enable_override =3D false,
-> > +	.needs_vclamp_ref =3D false,
-> > +	.pad_drive_down_ref =3D 0x0,
-> > +	.pad_drive_up_ref =3D 0x3,
-> > +	.pad_vclamp_level =3D 0x0,
-> > +	.pad_vauxp_level =3D 0x0,
-> > +	.hspdos =3D 0x0,
-> > +	.hspuos =3D 0x0,
-> > +	.termos =3D 0x0,
-> > +	.hsclkpdos =3D 0x3,
-> > +	.hsclkpuos =3D 0x2,
-> > +};
-> > +
-> > +static const struct tegra_mipi_pad tegra210_mipi_pads[] =3D {
-> > +	{ .data =3D MIPI_CAL_CONFIG_CSIA, .clk =3D 0 },
-> > +	{ .data =3D MIPI_CAL_CONFIG_CSIB, .clk =3D 0 },
-> > +	{ .data =3D MIPI_CAL_CONFIG_CSIC, .clk =3D 0 },
-> > +	{ .data =3D MIPI_CAL_CONFIG_CSID, .clk =3D 0 },
-> > +	{ .data =3D MIPI_CAL_CONFIG_CSIE, .clk =3D 0 },
-> > +	{ .data =3D MIPI_CAL_CONFIG_CSIF, .clk =3D 0 },
-> > +	{ .data =3D MIPI_CAL_CONFIG_DSIA, .clk =3D MIPI_CAL_CONFIG_DSIA_CLK }=
-,
-> > +	{ .data =3D MIPI_CAL_CONFIG_DSIB, .clk =3D MIPI_CAL_CONFIG_DSIB_CLK }=
-,
-> > +	{ .data =3D MIPI_CAL_CONFIG_DSIC, .clk =3D MIPI_CAL_CONFIG_DSIC_CLK }=
-,
-> > +	{ .data =3D MIPI_CAL_CONFIG_DSID, .clk =3D MIPI_CAL_CONFIG_DSID_CLK }=
-,
-> > +};
-> > +
-> > +static const struct tegra_mipi_soc tegra210_mipi_soc =3D {
-> > +	.has_clk_lane =3D true,
-> > +	.pads =3D tegra210_mipi_pads,
-> > +	.num_pads =3D ARRAY_SIZE(tegra210_mipi_pads),
-> > +	.clock_enable_override =3D true,
-> > +	.needs_vclamp_ref =3D false,
-> > +	.pad_drive_down_ref =3D 0x0,
-> > +	.pad_drive_up_ref =3D 0x3,
-> > +	.pad_vclamp_level =3D 0x1,
-> > +	.pad_vauxp_level =3D 0x1,
-> > +	.hspdos =3D 0x0,
-> > +	.hspuos =3D 0x2,
-> > +	.termos =3D 0x0,
-> > +	.hsclkpdos =3D 0x0,
-> > +	.hsclkpuos =3D 0x2,
-> > +};
-> > +
-> > +static const struct of_device_id tegra_mipi_of_match[] =3D {
-> > +	{ .compatible =3D "nvidia,tegra114-mipi", .data =3D &tegra114_mipi_so=
-c },
-> > +	{ .compatible =3D "nvidia,tegra124-mipi", .data =3D &tegra124_mipi_so=
-c },
-> > +	{ .compatible =3D "nvidia,tegra132-mipi", .data =3D &tegra132_mipi_so=
-c },
-> > +	{ .compatible =3D "nvidia,tegra210-mipi", .data =3D &tegra210_mipi_so=
-c },
-> > +	{ },
-> > +};
-> > +
-> > +static int tegra_mipi_probe(struct platform_device *pdev)
-> > +{
-> > +	const struct of_device_id *match;
-> > +	struct tegra_mipi *mipi;
-> > +
-> > +	match =3D of_match_node(tegra_mipi_of_match, pdev->dev.of_node);
-> > +	if (!match)
-> > +		return -ENODEV;
-> > +
-> > +	mipi =3D devm_kzalloc(&pdev->dev, sizeof(*mipi), GFP_KERNEL);
-> > +	if (!mipi)
-> > +		return -ENOMEM;
-> > +
-> > +	mipi->soc =3D match->data;
-> > +	mipi->dev =3D &pdev->dev;
-> > +
-> > +	mipi->regs =3D devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
-> > +	if (IS_ERR(mipi->regs))
-> > +		return PTR_ERR(mipi->regs);
-> > +
-> > +	mutex_init(&mipi->lock);
-> > +
-> > +	mipi->clk =3D devm_clk_get_prepared(&pdev->dev, NULL);
-> > +	if (IS_ERR(mipi->clk)) {
-> > +		dev_err(&pdev->dev, "failed to get clock\n");
-> > +		return PTR_ERR(mipi->clk);
-> > +	}
-> > +
-> > +	platform_set_drvdata(pdev, mipi);
-> > +
-> > +	return devm_tegra_mipi_add_provider(&pdev->dev, pdev->dev.of_node,
-> > +					    &tegra114_mipi_ops);
-> > +}
-> > +
-> > +struct platform_driver tegra_mipi_driver =3D {
-> > +	.driver =3D {
-> > +		.name =3D "tegra-mipi",
-> > +		.of_match_table =3D tegra_mipi_of_match,
-> > +	},
-> > +	.probe =3D tegra_mipi_probe,
-> > +};
-> > diff --git a/drivers/staging/media/tegra-video/csi.c
-> > b/drivers/staging/media/tegra-video/csi.c index
-> > f858c05ce6c9..bcaea20c3025 100644
-> > --- a/drivers/staging/media/tegra-video/csi.c
-> > +++ b/drivers/staging/media/tegra-video/csi.c
-> > @@ -12,6 +12,7 @@
-> >=20
-> >  #include <linux/of_graph.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/pm_runtime.h>
-> >=20
-> > +#include <linux/tegra-mipi-cal.h>
-> >=20
-> >  #include <media/v4l2-fwnode.h>
-> >=20
-> > diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-> > index 5e7a63143a4a..1f5f55917d1c 100644
-> > --- a/include/linux/host1x.h
-> > +++ b/include/linux/host1x.h
-> > @@ -453,16 +453,6 @@ void host1x_client_unregister(struct host1x_client
-> > *client);>=20
-> >  int host1x_client_suspend(struct host1x_client *client);
-> >  int host1x_client_resume(struct host1x_client *client);
-> >=20
-> > -struct tegra_mipi_device;
-> > -
-> > -struct tegra_mipi_device *tegra_mipi_request(struct device *device,
-> > -					     struct device_node *np);
-> > -void tegra_mipi_free(struct tegra_mipi_device *device);
-> > -int tegra_mipi_enable(struct tegra_mipi_device *device);
-> > -int tegra_mipi_disable(struct tegra_mipi_device *device);
-> > -int tegra_mipi_start_calibration(struct tegra_mipi_device *device);
-> > -int tegra_mipi_finish_calibration(struct tegra_mipi_device *device);
-> > -
-> >=20
-> >  /* host1x memory contexts */
-> > =20
-> >  struct host1x_memory_context {
-> >=20
-> > diff --git a/include/linux/tegra-mipi-cal.h
-> > b/include/linux/tegra-mipi-cal.h new file mode 100644
-> > index 000000000000..2a540b50f65d
-> > --- /dev/null
-> > +++ b/include/linux/tegra-mipi-cal.h
-> > @@ -0,0 +1,57 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +
-> > +#ifndef __TEGRA_MIPI_CAL_H_
-> > +#define __TEGRA_MIPI_CAL_H_
-> > +
-> > +struct tegra_mipi_device {
-> > +	const struct tegra_mipi_ops *ops;
-> > +	struct platform_device *pdev;
-> > +	unsigned long pads;
-> > +};
-> > +
-> > +/**
-> > + * Operations for Tegra MIPI calibration device
-> > + */
-> > +struct tegra_mipi_ops {
-> > +	/**
-> > +	 * @enable:
-> > +	 *
-> > +	 * Enable MIPI calibration device
-> > +	 */
-> > +	int (*enable)(struct tegra_mipi_device *device);
-> > +
-> > +	/**
-> > +	 * @disable:
-> > +	 *
-> > +	 * Disable MIPI calibration device
-> > +	 */
-> > +	int (*disable)(struct tegra_mipi_device *device);
-> > +
-> > +	/**
-> > +	 * @start_calibration:
-> > +	 *
-> > +	 * Start MIPI calibration
-> > +	 */
-> > +	int (*start_calibration)(struct tegra_mipi_device *device);
-> > +
-> > +	/**
-> > +	 * @finish_calibration:
-> > +	 *
-> > +	 * Finish MIPI calibration
-> > +	 */
-> > +	int (*finish_calibration)(struct tegra_mipi_device *device);
-> > +};
-> > +
-> > +int devm_tegra_mipi_add_provider(struct device *device, struct
-> > device_node *np, +				 const struct=20
-tegra_mipi_ops *ops);
-> > +
-> > +struct tegra_mipi_device *tegra_mipi_request(struct device *device,
-> > +					     struct device_node *np);
-> > +void tegra_mipi_free(struct tegra_mipi_device *device);
-> > +
-> > +int tegra_mipi_enable(struct tegra_mipi_device *device);
-> > +int tegra_mipi_disable(struct tegra_mipi_device *device);
-> > +int tegra_mipi_start_calibration(struct tegra_mipi_device *device);
-> > +int tegra_mipi_finish_calibration(struct tegra_mipi_device *device);
-> > +
-> > +#endif /* __TEGRA_MIPI_CAL_H_ */
+I did not see any difference for I2C in the specification, but I assumed the
+existing format would have been working and I thought not to change them.
+Changing the I2C format would also require a change in the is_16bit nvmem_read
+formula.
 
+> 
+>> +	.writeable_reg = spd5118_writeable_reg,
+>> +	.volatile_reg = spd5118_volatile_reg,
+>> +	.cache_type = REGCACHE_MAPLE,
+>> +};
+>> +
+>>   static int spd5118_suspend(struct device *dev)
+>>   {
+>>   	struct spd5118_data *data = dev_get_drvdata(dev);
+>> @@ -770,7 +790,51 @@ static struct i2c_driver spd5118_i2c_driver = {
+>>   	.address_list	= IS_ENABLED(CONFIG_SENSORS_SPD5118_DETECT) ? normal_i2c : NULL,
+>>   };
+>>   
+>> -module_i2c_driver(spd5118_i2c_driver);
+>> +/* I3C */
+>> +
+>> +static int spd5118_i3c_probe(struct i3c_device *i3cdev)
+>> +{
+>> +	struct device *dev = i3cdev_to_dev(i3cdev);
+>> +	struct regmap *regmap;
+>> +	unsigned int regval;
+>> +	int err;
+>> +
+>> +	regmap = devm_regmap_init_i3c(i3cdev, &spd5118_regmap_i3c_config);
+>> +	if (IS_ERR(regmap))
+>> +		return dev_err_probe(dev, PTR_ERR(regmap), "regmap init failed\n");
+>> +
+>> +	/* Verify this is a SPD5118 device */
+>> +	err = regmap_read(regmap, SPD5118_REG_TYPE, &regval);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	if (regval != 0x51) {
+>> +		dev_err(dev, "unexpected device type 0x%02x, expected 0x51\n", regval);
+>> +		return -ENODEV;
+>> +	}
+>> +
+>> +	err = regmap_read(regmap, SPD5118_REG_TYPE + 1, &regval);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	if (regval != 0x18) {
+>> +		dev_err(dev, "unexpected device type 0x%02x, expected 0x18\n", regval);
+>> +		return -ENODEV;
+>> +	}
+>> +
+> 
+> I don't think this should dump error messages. Also, it might be desirable
+> to use a single regmap operation to read both values.
 
+Ack. Will use regmap_bulk_read() and will remove the error dump.
 
+> 
+>> +	return spd5118_common_probe(dev, regmap, false);
+> 
+> Why is_16bit=false ?
 
+We don't need the encoding formula for the nvmem address with I3C. Since it
+uses little-endian, (page * 0x100 + SPD5118_EEPROM_BASE) translates to the
+correct address. Or did I overlook something?
+
+> 
+>> +}
+>> +
+>> +static struct i3c_driver spd5118_i3c_driver = {
+>> +	.driver = {
+>> +		.name	= "spd5118_i3c",
+>> +		.of_match_table = spd5118_of_ids,
+>> +		.pm = pm_sleep_ptr(&spd5118_pm_ops),
+>> +	},
+>> +	.probe		= spd5118_i3c_probe,
+>> +};
+>> +
+>> +module_i3c_i2c_driver(spd5118_i3c_driver, &spd5118_i2c_driver);
+>>   
+>>   MODULE_AUTHOR("René Rebe <rene@exactcode.de>");
+>>   MODULE_AUTHOR("Guenter Roeck <linux@roeck-us.net>");
+
+Best Regards,
+Akhil
