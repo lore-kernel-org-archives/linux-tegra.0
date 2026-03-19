@@ -1,330 +1,314 @@
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010061.outbound.protection.outlook.com [52.101.84.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339F435C180;
-	Thu, 19 Mar 2026 14:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773930601; cv=fail; b=u3m+R4a65IM+/EOIafO7bWsmvzvPLrx/V/C5cyUCL8oGozl7QrgjZeLp89Rgr9bcTaCs3T/0VFjY7rknLVQJnwpNc371k1vtZi6Ni+HoyWrWseHgBbKBoiy685tcyoOJVv4WqbjBXHFjS9XGoHkBBUkTHYd+nUM26nYtD2ZK+ms=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773930601; c=relaxed/simple;
-	bh=jTtfLuaVtoTY0HzcPAPulymofUF7NtD9odc06kcJhZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=e6KV1j06TbrTu4r4OYRLzSAOybZwROy7JD/uKZzkyhwFjP1v/NmQD70lh38sT4gqaoYp3yTDozg7H/KjT0pHA5JnPLkH11qrW7Dc1Kr64tsqX6uoxKgXgA0NywkM2mxxgMI++6pfJo4Wh57qvH91wpqOkVKAcHU1xtkN3EKi6n4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=VoDAJxeX; arc=fail smtp.client-ip=52.101.84.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3F43A7589
+	for <linux-tegra@vger.kernel.org>; Thu, 19 Mar 2026 14:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773930864; cv=none; b=PsQyVK6HXco6By0GNxkGCIufb8Mct4pzlLvDqe7ydmRiPIrHbT4y+OLEdxn4He0rGhmp7ubbBr9ldUBsDS5eZZEdsuye1pjCuFC40fK0H9OOF7JFGGYKLgarMmAjGIOjdyPeu/wLbswNsLiQqht7rguWA4dtW3QdMVqRHahsWHs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773930864; c=relaxed/simple;
+	bh=zrILEl1jzgUmvztQxq+EyGuX5tkMYJUxVVQLCPC0j1w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lGMGFA/ralf8Hd0ccYCWIFP53eQA1WsutW/BgVnC8vZLVyYua44CMSAR1u4C/xbYAH2fDmAxBfpZ1c+2ThhjzzJwk/mZHvsSlCufUnlCaW8urDisrNpbOZSlUvpV0oYEsolEWUagsylobnsqJG7hUzn+BejF2F7mdwehLaOQY08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=epha8F88; arc=none smtp.client-ip=74.125.82.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="VoDAJxeX"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=maisuyrUaudD/7jfD20LoAR519Ev1AJ+0IwN7CHUyDQ7vRqVv2/VmbQvP/5/3rAY0ABb1FmqV8R3BdzEcOWaCbsJVvK9qlrX+Mnt+ib3tx5cPMLK37kMruT/GOGex9rcfJsSUKNeaXp/xhBNrfq4AwVVZh3uGlboc6NZQh5OsX1Lbst/rQQLHE45wcJj4AFZAwIwBxj+Fjbz+XMjVFhvfzfExpRq8k7BHxMkentkDrHPraLOGe+BQSLQDfxSMR637dHWbbrTOvvhSo3WVdIuPBR/fJwGeED7oNY0S0Z72N37HJHZ2FyjLoaM69umE1VrW4jmBeZ0g9HUaU9jFVnogA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TDDDaUZI/jV56iGm0BNrraqXa/iW0rff9o6uT4jTXEI=;
- b=mYIj7ARm33AzuPk57M0ZQfZ/MPIvVl8FEiUTiPZTbEAkUY8GhIdBTnJrLDXpGgEAwumToCLuhiZHfWdlz2FnHoXda+EjXGXFwOPV79ikbnLPCU3otxMb3kALmc0a5KYmWCGITqXChmghziBUHVkejwSfRYT+/Aq/bR7Nk1F8JdjW77D9why0wzyxtExSXCm1JMGBBS/plU0qqir2l73kffQrbViUS9veytGew7jHeZOuzFqn7w5pRuIAeqxiuqNdl1vHqvlgRyd1lKnKP4maayhvXC+ijRnDmrk2no46UxDVAp5J7Rv8YGYPX1hgBtxg+CcRDHn85yCv4V63M3hSVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TDDDaUZI/jV56iGm0BNrraqXa/iW0rff9o6uT4jTXEI=;
- b=VoDAJxeX+0QFeVBrVHuYWOtsJKgRlePw2qNREfTIp1O9jI9C/7XhBDe2cSFq/h7IigqJtsY3e+HLWTr683nIm1IyN7mmroVqAw5CXt8cvNyyHpTkxTezrPB34GcZ6FLzsjU2+che3zc7iUMcqDwXqtsx3A7BeGIagVaLSSoxyq+LptKu3eOT/eidYpmKonozPSht4yEtTYQdMUwSITktsS1bJPJn8+d57yT+P9hdEjdA4jRhi0SS9nbTbO6f3ryMiXpb5/F57QlECGpoNiKansuR0L8Dss3ooV4BWtGMxuLSCIpz0zShs/JRYtOMCm8oZANuLMJjgn3HCNZv4vP+xw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PA4PR04MB9366.eurprd04.prod.outlook.com (2603:10a6:102:2a9::8)
- by GV2PR04MB11096.eurprd04.prod.outlook.com (2603:10a6:150:27b::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.19; Thu, 19 Mar
- 2026 14:29:51 +0000
-Received: from PA4PR04MB9366.eurprd04.prod.outlook.com
- ([fe80::75e4:8143:ddbc:6588]) by PA4PR04MB9366.eurprd04.prod.outlook.com
- ([fe80::75e4:8143:ddbc:6588%6]) with mapi id 15.20.9723.018; Thu, 19 Mar 2026
- 14:29:48 +0000
-Date: Thu, 19 Mar 2026 10:29:38 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Akhil R <akhilrajeev@nvidia.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Robert Moore <robert.moore@intel.com>, Len Brown <lenb@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Fredrik Markstrom <fredrik.markstrom@est.tech>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Suresh Mangipudi <smangipudi@nvidia.com>,
-	linux-tegra@vger.kernel.org, linux-i3c@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev,
-	linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH 04/12] i3c: master: Support ACPI enumeration
-Message-ID: <abwIUmXfapfi1k3D@lizhi-Precision-Tower-5810>
-References: <20260318172820.13771-1-akhilrajeev@nvidia.com>
- <20260318172820.13771-5-akhilrajeev@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260318172820.13771-5-akhilrajeev@nvidia.com>
-X-ClientProxiedBy: SJ0PR05CA0025.namprd05.prod.outlook.com
- (2603:10b6:a03:33b::30) To PA4PR04MB9366.eurprd04.prod.outlook.com
- (2603:10a6:102:2a9::8)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="epha8F88"
+Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-2c0bcd8f194so1507455eec.1
+        for <linux-tegra@vger.kernel.org>; Thu, 19 Mar 2026 07:34:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773930862; x=1774535662; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=C+wGnZ5ViKkIq9WuGANaT/zAJ2GOoEtdDiWRCIVt3Is=;
+        b=epha8F883wPc256rnCRfGlizcu3OVM2H2sbipClME5BkDy5M5BFE9OTTMQfDjU0ULr
+         TSPop45k2uXBcZSW+AVmdQ6clUGg9drSRhOxHM/nDhloBg3bMsK2GUMIDD0pHXKJ3CAM
+         1sr2Es3gG4zU0IHTvCeImoduu99+CWT4kYrQJ7wfUBLwGfTARlu+E5KQg4LxNVzRxRE8
+         +a/D741WTYNe7tScTc2maG0wRMjNRiAXD5n2ISojswORL7lgRr4Iu1xZMNIwY9yd5UHD
+         JDaxIecg+LzF4zU4e+Xbg+pTsSEpBmcSM1iZf53jIZwlIGC/J2qc9UtoM+pYqQxdfWML
+         5QTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773930862; x=1774535662;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C+wGnZ5ViKkIq9WuGANaT/zAJ2GOoEtdDiWRCIVt3Is=;
+        b=X4zwf3k45ZnCXD5NOxKqIGDlRVt0HqeBgRD1secB5TIvtkPlRgS95UU2VyhF8lPLDh
+         RdexA7xPOTLJNpyVGLrmTi1kOOb87IuIGm540I90dFo2+EdZt2aHVUGIJRnbAXQRuolb
+         K/yqKTbUeeCmOlQTqTeyamjoSumV3EO8Sk4+8SYWMIr3sksUW7LLpNbcO2pGlTW9/sht
+         mu/4Ulzbk73H4hYQxwqFV7M1c7ldNGxpBNxhvVJZ5lYkyI9HPjOd4SgorOuaIbC0llTp
+         tOmImKIst7DmR197hVDSQ5tp9DY7bUM+xXmHljK84MOI3ZKb5VbkluiJQuz9zQobgTjU
+         Mf+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUuA81lB9s/wdHYjQUcry5vvug8UKheiufGKj6OXTQZ3Z0kDlZTLAZ2tAHqzP6rfmJ6Gb0CgCT4HvZFGw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YydK9ORHY7RLgyjwJqi8pYIkV/x8yCXUgwjg19Swqf5ff7CRq6o
+	ka+7a965tYt6vkQrV6CJ7GaCw9RX0++ICPysMtRxZjYmaRvq3C85y2YD
+X-Gm-Gg: ATEYQzwOd173RhszsFSCzBJoZQW9WKjABAqEwbhmVKExvKrf+6/T/Av2pblWHs54GlJ
+	GhC3s6NaH4kpXlYC5BzZfJxBMAMa4Hp6Hgs6r5QpWObvXkCI7rRr6MttMwoQHzSLs4WxFdzF4P+
+	f2KtIdB8guk3H2R6Z5nuNSDL1f9+qZ6bChT/RxmRJcc6SzWKAFXTfMwSOZnQxW8oDOfeRV83t9Q
+	BB+kYgsaCi99yanclVPrYYYYPqH+Y5ELcJvA/nJABqViufm9ykkrxH9Ctpr8UXNDlsVh7gaQubS
+	oNMfWBN6Qugsdy9mq6QK9zStdK7USGDn9/kXEQHhptRX66sY/NGWsxT6USa7YlyyGkneShrRlJA
+	m4EJmrFl0BAEQMS8Lrlcf3ZR0r5p4QqWSBYkvKrFI2A2NSQIZZEjAdhy1vBRNWD1yG8KM72usUu
+	uvsAxwoPZSnHXZNmB/ZQS+JHr8U2HWbp2VnY9JZawAtFpSHKXGiP7ZzrKVZes4lUTUAuoensqE
+X-Received: by 2002:a05:7301:4187:b0:2be:8216:57cb with SMTP id 5a478bee46e88-2c0e508dfa9mr3188822eec.29.1773930862015;
+        Thu, 19 Mar 2026 07:34:22 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2c0e56062e4sm8436720eec.30.2026.03.19.07.34.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Mar 2026 07:34:21 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <7cc8ab1f-6c9a-4e3f-a1bc-266e020d8179@roeck-us.net>
+Date: Thu, 19 Mar 2026 07:34:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB9366:EE_|GV2PR04MB11096:EE_
-X-MS-Office365-Filtering-Correlation-Id: 211e114d-04aa-43bb-621c-08de85c3f958
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|19092799006|7416014|52116014|376014|1800799024|38350700014|7053199007|22082099003|18002099003|56012099003;
-X-Microsoft-Antispam-Message-Info:
-	OqRRsIvVbb8aO51pVdQWWnzxMSFZKiB9m+TSF80tMuc5qjDK58ZxU/t/MgC6qUAVuZcMzXx9Dsb0joBU3GNdSD4KS3lLybxIYD+U5CZAmZ70xP3gc+q/NzhlsEkS4agrr+jXArcsSwRRWYfs2XLicgJJN22lCYG6nrmCtRM6lbsRVN9iL5sqol18634Hb64lNFKSTJeo9MXGsBPE0z1cjrWKoXSyKH8vRosxtOrNhWOTct/l9PyB5AHwzn3QzR9hT/rbs9R3ngda0KXk0i2zkuw+cFDecQ+98R1ZcScLeihY9tb/Vpw7M/+AWkTPM7Z7SQCIl5a1eK55atBT6qrNeOl6LFke35Qbr7UzNrNer2HDUs+J/T6dyvbTN9FmkLA4PZ8/6bIljfyAorZ8Pkx2TTbc96txkcgsRgCxJUaMBZ/iXVaxMM17fTEaqlhqgcsVNyxo6nUMNv8V591+7hO5RKwGpzJ3kW7z2x4Uk0ZecvwqgaGkviynyedr+DfxmUFagEXy+nVgdF+aCFWO5XLc/i6xn14WKVnTpU+Po7EJkL1oarS2WoSIGDedmR7/38VzdMt84iRA6xGiVFcPhQOO6gZPPfBjMvueFezj4VYMxowW6HlJobK0785wcU8LFIBHC9gzqnCjm09y3JJc2Q7IcCBi4r6oFcZOoo4eEF4bQVGCSzsw0WdMbgbOtg7I+GZ+Qir2bHbKS/FxB57lRXbsxqG2smFEf85fY7DdJRnh6Zdgd2w70lC/MUmUpIC0Qp3E
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9366.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(7416014)(52116014)(376014)(1800799024)(38350700014)(7053199007)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?2vtEQgf34y8Iy031XUpykaHC4CqagbYOim8ka/TJYnftffu1H7USk+AVr4At?=
- =?us-ascii?Q?7CfqLfnzzx2MOU3MYrlhj9m0WsJecnRjB4qeMhs9fgZ8/Xh73obwnGFqNHIy?=
- =?us-ascii?Q?OzqXwTgeKBcpovziDdkYjuOPpScY01uDW+M09rKZTszeu3C+zWoO/rIZ8OFH?=
- =?us-ascii?Q?rce5gLuT8mt9tV6psyjIagchq1UhAPBgK4Q8v9nr28C/Ah4jbKq8Kl9LDCFZ?=
- =?us-ascii?Q?aUSB794ShL3NOw2CWPGUxM5JcKUOclInlY1/EF8P3vG+6X36PvM63CYqSShM?=
- =?us-ascii?Q?aVwpd6mKUbebS00S6bMpdrUcuFLfZCkTosXPYVwhJ7LCpZOq4xKfvnHHWNNc?=
- =?us-ascii?Q?I2iHuP0CgCOR1eoFEszaHBG3MT4OlJGKq4f+YiVlX5ZlWEgyxqQyBiv9E9/u?=
- =?us-ascii?Q?0o7K3UBcHiJVZyYNSxpNgOSffmrn35iZkxKQurQtCfhJGhp2npkaaBeLEuys?=
- =?us-ascii?Q?yal+dSTbw66Bn0a/zv4F99fw1huiL8/LU1CX4l2EXfWd4oLO/kVMaFubWXI/?=
- =?us-ascii?Q?vnIl4KEttf0FpQgvROj3OGn3yig5Ktp66ibHyI6ZLvU//lI5Cnq/o4/YqFPp?=
- =?us-ascii?Q?wWXX0oECJgKkVo7POU2P00kJ2ntsplQsi0iXoxlNIulYiXCiHfyjiQJ59V0L?=
- =?us-ascii?Q?qhVwxTCexl9Ia5PX3LXT/aZWfK56fmMES4MCupEte71CF1TAgyot4tEBgRzq?=
- =?us-ascii?Q?O2ol9pZgrareojG3FdzCc4dwKxdCQvyLHuHF1Whb1V9itQhcTqmmnqqNRj7H?=
- =?us-ascii?Q?5UbMFxpgaOPcDM7oPBeSwUEorLtphCeV255l4A2yX23UggFDT98tuqVsDxIs?=
- =?us-ascii?Q?jw67v3XV3kdHb7UPo+3y2S/5msT+5lR76wspy1ZzBGvm49GQ4FWng/o5QBef?=
- =?us-ascii?Q?DPLSpeuWMvQZ5ZesRoBon5z5rZ5v7QQW1kcIeYIP14LMmbXzmOmnxOKiBcsE?=
- =?us-ascii?Q?YaeDmjCmXJ2B1Tug4g9fcOiCwty61kZAi8hJxE/5m5h4DW3+Ce3msFHhLyAk?=
- =?us-ascii?Q?sPD6P+73ywjH0ZuacUinTyRCK2g8G5okZa/N+Q7u4vt5ZTGOBvijIaIXukkR?=
- =?us-ascii?Q?j/seBa9b3cozmkZ+t8SWtgYVL8FeaVMcw6PYmVjRUsodZg1FpIAny7U/j6lj?=
- =?us-ascii?Q?8M24RwZmL2+Tp5sa4+6X6yt+1m66y2nguuwxoKYdAR+27j6ST35j1121vEib?=
- =?us-ascii?Q?lgWn3geo9Tka/xA1eX/AXylAC5UWKCqAToHI+a/hIyLOuq0wh3z4v+0Hj9Jg?=
- =?us-ascii?Q?vW/CeWSxBYL83GI4OdyayQt2HTTu3WpuSGW6gedhFO/dOY+9VKHlDnI3jx8l?=
- =?us-ascii?Q?ryJuajAOSZW5tp7fB/ZQFdO0A0/pjT1jHC4VAHiTZxaeSsEvMRw+J+E56Om7?=
- =?us-ascii?Q?xkH1fkocBrdGMm8sSdv8aI89FDZVTlTvoqY5x3ywzs/0D9AfqWtuIqpgeExC?=
- =?us-ascii?Q?6zzQiNimqrV+t6QBipMvr1T/vieAn9wmuBeBdJ80Toa1IqeAOk+U3owXbA6w?=
- =?us-ascii?Q?carvhKuGwOzvJfU443kXRo2i5qBzupjUs+M5bCZ6LODeVlq3g6OezbyZZqXG?=
- =?us-ascii?Q?CL4ebljseNmKUIgvjYtjDZC3DVmxuklnlF3SEQuUqywTTH4Q7TweZFK7JVL+?=
- =?us-ascii?Q?zhucKHnUygpMLqy68ZobKUQ49liT19oVd+MOTl/POdKC/4kKgCFrYhABwoOs?=
- =?us-ascii?Q?uKNiSJzXOIBaClzfUQwTcMKeKJWVxJhl0+Q24aXVHsjjV2Vq?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 211e114d-04aa-43bb-621c-08de85c3f958
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9366.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2026 14:29:48.5859
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3HXprRTwJv3WyM6BXQV3XMMXj6stUoI/uR1txFRZZIoJaHUQKbCxjQOtO82xsBqzRq5556oGF2AKFGdoQgA3ng==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR04MB11096
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/12] hwmon: spd5118: Add I3C support
+To: Akhil R <akhilrajeev@nvidia.com>
+Cc: Frank.Li@nxp.com, acpica-devel@lists.linux.dev,
+ alexandre.belloni@bootlin.com, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, ebiggers@kernel.org, fredrik.markstrom@est.tech,
+ jonathanh@nvidia.com, krzk+dt@kernel.org, lenb@kernel.org,
+ linux-acpi@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org, miquel.raynal@bootlin.com,
+ p.zabel@pengutronix.de, rafael@kernel.org, robert.moore@intel.com,
+ robh@kernel.org, smangipudi@nvidia.com, thierry.reding@kernel.org
+References: <df8086b1-8834-4bf2-ac4b-cb921beb8471@roeck-us.net>
+ <20260319043541.39291-1-akhilrajeev@nvidia.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20260319043541.39291-1-akhilrajeev@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 18, 2026 at 10:57:17PM +0530, Akhil R wrote:
-> Support ACPI enumeration for I2C and I3C devices on an I3C bus.
-> Read _ADR and LVR from the ACPI resources and extract the data
+On 3/18/26 21:35, Akhil R wrote:
+> On Wed, 18 Mar 2026 11:53:49 -0700, Guenter Roeck wrote:
+>> On 3/18/26 10:27, Akhil R wrote:
+>>> Add a regmap config and a probe function to support for I3C based
+>>> communication to SPD5118 devices.
+>>>
+>>> On an I3C bus, SPD5118 are enumerated via SETAASA and always require an
+>>> ACPI or device tree entry. The device matching is hence through the OF
+>>> match tables only and do not need an I3C class match table. The device
+>>> identity is verified in the type registers before proceeding to the
+>>> common probe function.
+>>>
+>>> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+>>> ---
+>>>    drivers/hwmon/Kconfig   |  7 +++--
+>>>    drivers/hwmon/spd5118.c | 66 ++++++++++++++++++++++++++++++++++++++++-
+>>>    2 files changed, 70 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+>>> index 8af80e17d25e..23604c05ad22 100644
+>>> --- a/drivers/hwmon/Kconfig
+>>> +++ b/drivers/hwmon/Kconfig
+>>> @@ -2300,10 +2300,13 @@ config SENSORS_SPD5118
+>>>    	tristate "SPD5118 Compliant Temperature Sensors"
+>>>    	depends on I2C
+>>>    	select REGMAP_I2C
+>>
+>> I also had
+>> 	depends on I3C || I3C=n
+>> in my version at
+>>
+>> https://patchwork.kernel.org/project/linux-hwmon/patch/20250419161356.2528986-6-linux@roeck-us.net/
+>>
+>> which I guess matches the more recent "depends on I3C_OR_I2C".
+> 
+> Ack. Will update.
+> 
+>>
+>>> +	select REGMAP_I3C if I3C
+>>>    	help
+>>>    	  If you say yes here you get support for SPD5118 (JEDEC JESD300)
+>>> -	  compliant temperature sensors. Such sensors are found on DDR5 memory
+>>> -	  modules.
+>>> +	  compliant temperature sensors using I2C or I3C bus interface.
+>>> +	  Such sensors are found on DDR5 memory modules.
+>>> +
+>>> +	  This driver supports both I2C and I3C interfaces.
+>>>    
+>>>    	  This driver can also be built as a module. If so, the module
+>>>    	  will be called spd5118.
+>>> diff --git a/drivers/hwmon/spd5118.c b/drivers/hwmon/spd5118.c
+>>> index 5da44571b6a0..d70123e10616 100644
+>>> --- a/drivers/hwmon/spd5118.c
+>>> +++ b/drivers/hwmon/spd5118.c
+>>> @@ -18,6 +18,7 @@
+>>>    #include <linux/bits.h>
+>>>    #include <linux/err.h>
+>>>    #include <linux/i2c.h>
+>>> +#include <linux/i3c/device.h>
+>>>    #include <linux/hwmon.h>
+>>>    #include <linux/module.h>
+>>>    #include <linux/mutex.h>
+>>> @@ -482,6 +483,25 @@ static const struct regmap_config spd5118_regmap16_config = {
+>>>    	.cache_type = REGCACHE_MAPLE,
+>>>    };
+>>>    
+>>> +/*
+>>> + * I3C uses 2-byte register addressing -
+>>> + *   Byte 1: MemReg | BlkAddr[0] | Address[5:0]
+>>> + *   Byte 2: 0000   | BlkAddr[4:1]
+>>> + *
+>>> + * The low byte carries the register/NVM address and the high byte carries the
+>>> + * upper block address bits, so little-endian format is required. No range
+>>> + * config is needed since I3C does not use MR11 page switching.
+>>> + */
+>>> +static const struct regmap_config spd5118_regmap_i3c_config = {
+>>> +	.reg_bits = 16,
+>>> +	.val_bits = 8,
+>>> +	.max_register = 0x7ff,
+>>> +	.reg_format_endian = REGMAP_ENDIAN_LITTLE,
+>>
+>> Should this be added to spd5118_regmap16_config instead, or is there reason
+>> to assume that I2C 16-bit addressing differs from I3C addressing ?
+> 
+> I did not see any difference for I2C in the specification, but I assumed the
+> existing format would have been working and I thought not to change them.
+> Changing the I2C format would also require a change in the is_16bit nvmem_read
+> formula.
+> 
+>>
+>>> +	.writeable_reg = spd5118_writeable_reg,
+>>> +	.volatile_reg = spd5118_volatile_reg,
+>>> +	.cache_type = REGCACHE_MAPLE,
+>>> +};
+>>> +
+>>>    static int spd5118_suspend(struct device *dev)
+>>>    {
+>>>    	struct spd5118_data *data = dev_get_drvdata(dev);
+>>> @@ -770,7 +790,51 @@ static struct i2c_driver spd5118_i2c_driver = {
+>>>    	.address_list	= IS_ENABLED(CONFIG_SENSORS_SPD5118_DETECT) ? normal_i2c : NULL,
+>>>    };
+>>>    
+>>> -module_i2c_driver(spd5118_i2c_driver);
+>>> +/* I3C */
+>>> +
+>>> +static int spd5118_i3c_probe(struct i3c_device *i3cdev)
+>>> +{
+>>> +	struct device *dev = i3cdev_to_dev(i3cdev);
+>>> +	struct regmap *regmap;
+>>> +	unsigned int regval;
+>>> +	int err;
+>>> +
+>>> +	regmap = devm_regmap_init_i3c(i3cdev, &spd5118_regmap_i3c_config);
+>>> +	if (IS_ERR(regmap))
+>>> +		return dev_err_probe(dev, PTR_ERR(regmap), "regmap init failed\n");
+>>> +
+>>> +	/* Verify this is a SPD5118 device */
+>>> +	err = regmap_read(regmap, SPD5118_REG_TYPE, &regval);
+>>> +	if (err)
+>>> +		return err;
+>>> +
+>>> +	if (regval != 0x51) {
+>>> +		dev_err(dev, "unexpected device type 0x%02x, expected 0x51\n", regval);
+>>> +		return -ENODEV;
+>>> +	}
+>>> +
+>>> +	err = regmap_read(regmap, SPD5118_REG_TYPE + 1, &regval);
+>>> +	if (err)
+>>> +		return err;
+>>> +
+>>> +	if (regval != 0x18) {
+>>> +		dev_err(dev, "unexpected device type 0x%02x, expected 0x18\n", regval);
+>>> +		return -ENODEV;
+>>> +	}
+>>> +
+>>
+>> I don't think this should dump error messages. Also, it might be desirable
+>> to use a single regmap operation to read both values.
+> 
+> Ack. Will use regmap_bulk_read() and will remove the error dump.
+> 
+>>
+>>> +	return spd5118_common_probe(dev, regmap, false);
+>>
+>> Why is_16bit=false ?
+> 
+> We don't need the encoding formula for the nvmem address with I3C. Since it
+> uses little-endian, (page * 0x100 + SPD5118_EEPROM_BASE) translates to the
+> correct address. Or did I overlook something?
+> 
 
-ADR have _, but not _ before LVR, I am not familary with ACPI.
+Testing of the 16-bit code was limited: I had to set the SPD on a system
+manually to 16-bit mode to get it working, and that only worked until the system
+was reset. Its whole point was to prepare for I3C mode. If that fails, the entire
+16-bit code in the driver is potentially wrong and should be pulled out before
+adding I3C code. It can be added back later if/when a system actually utilizing
+it is found.
 
-> as per the ACPI specification for an I3C bus. Also read
-> mipi-i3c-static-address as per the MIPI DISCO specifications [1]
-> to get the static address to be used.
->
-> Although the existing subsystem allows host controllers to register
-> through the ACPI table, it was not possible to describe I3C or I2C
-> devices there.
+Thanks,
+Guenter
 
-why?
+>>
+>>> +}
+>>> +
+>>> +static struct i3c_driver spd5118_i3c_driver = {
+>>> +	.driver = {
+>>> +		.name	= "spd5118_i3c",
+>>> +		.of_match_table = spd5118_of_ids,
+>>> +		.pm = pm_sleep_ptr(&spd5118_pm_ops),
+>>> +	},
+>>> +	.probe		= spd5118_i3c_probe,
+>>> +};
+>>> +
+>>> +module_i3c_i2c_driver(spd5118_i3c_driver, &spd5118_i2c_driver);
+>>>    
+>>>    MODULE_AUTHOR("René Rebe <rene@exactcode.de>");
+>>>    MODULE_AUTHOR("Guenter Roeck <linux@roeck-us.net>");
+> 
+> Best Regards,
+> Akhil
 
-> This change enables describing the I3C or I2C devices
-
-Don't use "This commit/change/" just Enable ...
-
-Frank
-> in the ACPI table, which is required if the device is using a static
-> address or if it needs some specific properties to be attached to it.
->
-> [1] https://www.mipi.org/specifications/disco
->
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> ---
->  drivers/i3c/master.c | 101 +++++++++++++++++++++++++++++++++++++++----
->  1 file changed, 93 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-> index 2c479fecbfdf..15a356a2b3c8 100644
-> --- a/drivers/i3c/master.c
-> +++ b/drivers/i3c/master.c
-> @@ -2404,12 +2404,31 @@ EXPORT_SYMBOL_GPL(i3c_master_add_i3c_dev_locked);
->
->  #define OF_I3C_REG1_IS_I2C_DEV			BIT(31)
->
-> +static int i3c_acpi_get_i2c_resource(struct acpi_resource *ares, void *data)
-> +{
-> +	struct i2c_dev_boardinfo *boardinfo = data;
-> +	struct acpi_resource_i2c_serialbus *sb;
-> +
-> +	if (!i2c_acpi_get_i2c_resource(ares, &sb))
-> +		return 1;
-> +
-> +	boardinfo->base.addr = sb->slave_address;
-> +	if (sb->access_mode == ACPI_I2C_10BIT_MODE)
-> +		boardinfo->base.flags |= I2C_CLIENT_TEN;
-> +
-> +	boardinfo->lvr = sb->lvr;
-> +
-> +	return 0;
-> +}
-> +
->  static int
->  i3c_master_add_i2c_boardinfo(struct i3c_master_controller *master,
->  			     struct fwnode_handle *fwnode, u32 *reg)
->  {
->  	struct i2c_dev_boardinfo *boardinfo;
->  	struct device *dev = &master->dev;
-> +	struct acpi_device *adev;
-> +	LIST_HEAD(resources);
->  	int ret;
->
->  	boardinfo = devm_kzalloc(dev, sizeof(*boardinfo), GFP_KERNEL);
-> @@ -2420,6 +2439,23 @@ i3c_master_add_i2c_boardinfo(struct i3c_master_controller *master,
->  		ret = of_i2c_get_board_info(dev, to_of_node(fwnode), &boardinfo->base);
->  		if (ret)
->  			return ret;
-> +
-> +		/* LVR is encoded in reg[2] for Device Tree. */
-> +		boardinfo->lvr = reg[2];
-> +	} else if (is_acpi_device_node(fwnode)) {
-> +		adev = to_acpi_device_node(fwnode);
-> +		boardinfo->base.fwnode = acpi_fwnode_handle(adev);
-> +
-> +		ret = acpi_dev_get_resources(adev, &resources,
-> +					     i3c_acpi_get_i2c_resource, boardinfo);
-> +
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		acpi_dev_free_resource_list(&resources);
-> +
-> +		if (!boardinfo->base.addr)
-> +			return -ENODEV;
->  	} else {
->  		return -EINVAL;
->  	}
-> @@ -2434,9 +2470,6 @@ i3c_master_add_i2c_boardinfo(struct i3c_master_controller *master,
->  		return -EOPNOTSUPP;
->  	}
->
-> -	/* LVR is encoded in reg[2]. */
-> -	boardinfo->lvr = reg[2];
-> -
->  	list_add_tail(&boardinfo->node, &master->boardinfo.i2c);
->  	fwnode_handle_get(fwnode);
->
-> @@ -2491,8 +2524,8 @@ i3c_master_add_i3c_boardinfo(struct i3c_master_controller *master,
->  	return 0;
->  }
->
-> -static int i3c_master_add_dev(struct i3c_master_controller *master,
-> -			      struct fwnode_handle *fwnode)
-> +static int i3c_master_add_of_dev(struct i3c_master_controller *master,
-> +				 struct fwnode_handle *fwnode)
->  {
->  	u32 reg[3];
->  	int ret;
-> @@ -2516,6 +2549,31 @@ static int i3c_master_add_dev(struct i3c_master_controller *master,
->  	return ret;
->  }
->
-> +static int i3c_master_add_acpi_dev(struct i3c_master_controller *master,
-> +				   struct fwnode_handle *fwnode)
-> +{
-> +	struct acpi_device *adev = to_acpi_device_node(fwnode);
-> +	acpi_bus_address adr;
-> +	u32 reg[3] = { 0 };
-> +
-> +	/*
-> +	 * If the ACPI table entry does not have _ADR method, it's an I2C device
-> +	 * If the ACPI table entry has _ADR method, it's an I3C device
-> +	 */
-> +	if (!acpi_has_method(adev->handle, "_ADR"))
-> +		return i3c_master_add_i2c_boardinfo(master, fwnode, reg);
-> +
-> +	adr = acpi_device_adr(adev);
-> +
-> +	/* For I3C devices, _ADR will have the 48 bit PID of the device  */
-> +	reg[1] = upper_32_bits(adr);
-> +	reg[2] = lower_32_bits(adr);
-> +
-> +	fwnode_property_read_u32(fwnode, "mipi-i3c-static-address", &reg[0]);
-> +
-> +	return i3c_master_add_i3c_boardinfo(master, fwnode, reg);
-> +}
-> +
->  static int fwnode_populate_i3c_bus(struct i3c_master_controller *master)
->  {
->  	struct device *dev = &master->dev;
-> @@ -2527,7 +2585,13 @@ static int fwnode_populate_i3c_bus(struct i3c_master_controller *master)
->  		return 0;
->
->  	fwnode_for_each_available_child_node_scoped(fwnode, child) {
-> -		ret = i3c_master_add_dev(master, child);
-> +		if (is_of_node(child))
-> +			ret = i3c_master_add_of_dev(master, child);
-> +		else if (is_acpi_device_node(child))
-> +			ret = i3c_master_add_acpi_dev(master, child);
-> +		else
-> +			continue;
-> +
->  		if (ret)
->  			return ret;
->  	}
-> @@ -2593,10 +2657,31 @@ static u8 i3c_master_i2c_get_lvr(struct i2c_client *client)
->  {
->  	/* Fall back to no spike filters and FM bus mode. */
->  	u8 lvr = I3C_LVR_I2C_INDEX(2) | I3C_LVR_I2C_FM_MODE;
-> +	struct i2c_dev_boardinfo boardinfo;
-> +	struct acpi_device *adev;
-> +	LIST_HEAD(resources);
->  	u32 reg[3];
-> +	int ret;
-> +
-> +	if (is_of_node(client->dev.fwnode)) {
-> +		if (!fwnode_property_read_u32_array(client->dev.fwnode, "reg",
-> +						    reg, ARRAY_SIZE(reg)))
-> +			lvr = reg[2];
-> +	} else if (is_acpi_device_node(client->dev.fwnode)) {
-> +		adev = to_acpi_device_node(client->dev.fwnode);
-> +		memset(&boardinfo, 0, sizeof(boardinfo));
-> +
-> +		ret = acpi_dev_get_resources(adev, &resources,
-> +					     i3c_acpi_get_i2c_resource, &boardinfo);
->
-> -	if (!fwnode_property_read_u32_array(client->dev.fwnode, "reg", reg, ARRAY_SIZE(reg)))
-> -		lvr = reg[2];
-> +		if (ret < 0)
-> +			return lvr;
-> +
-> +		if (boardinfo.base.addr)
-> +			lvr = boardinfo.lvr;
-> +
-> +		acpi_dev_free_resource_list(&resources);
-> +	}
->
->  	return lvr;
->  }
-> --
-> 2.50.1
->
