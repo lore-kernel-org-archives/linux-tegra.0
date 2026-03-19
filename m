@@ -1,28 +1,28 @@
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011058.outbound.protection.outlook.com [52.101.52.58])
+Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011069.outbound.protection.outlook.com [52.101.57.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD55939DBF8;
-	Thu, 19 Mar 2026 19:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0248D37AA72;
+	Thu, 19 Mar 2026 19:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.69
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773949962; cv=fail; b=IljlKmmWvgs3SITGl/abUcsA+BKE7sVs/tqyOU15RXP1NNY99Yhnt+kw9tiSYxm2PRuGdTg+X8BWnKx7y+SIzZTIzUP9bmpQxcU2Y0U+Lfh/sXvEj5mmW506X82p+yVkQhQKzTNHrpX5yYogXwY3oVfru0WAk6CHnWbCzDexuS8=
+	t=1773949967; cv=fail; b=Vkm1f8iXd//9GxXwGh3t6OS7hWi/uC32t7T73qP3a4I6XBiDrqry2FVMhV0HyQbFRo85YAToDN2uI7tMSH1kHWPw0pB1idt98USoL23k72WZuoB2AyPNBDKY+huF0KMQ1X7XOplDsxYkJnke5ESbAp3lpQJrPOLX5RrB/Rc4dm4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773949962; c=relaxed/simple;
-	bh=y250Q2PYihW47gZMkwz0Yvjtdq+LV/hkt9WLpqBIRCU=;
+	s=arc-20240116; t=1773949967; c=relaxed/simple;
+	bh=Wq+M66pzhWxs7LASf9rk4dSLRXXVT5zObavgcQ7qj7M=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iAyVYpqfhYtVk6gPeT3VXWIvK3YOcMfw9h6SXgd93mPMRyJNJdFGwszUtGFCXv3d5PpNCT0lvM7hCJo36CHFhxny10w+pSeyCeu9nTLPQsHirLkqT54TXPeWdoNWrA0z+bZQ9Vfu6HS2NplXLWq4LJDh4ZopEaJz6XRtEQsVgEo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Uh2N9T0r; arc=fail smtp.client-ip=52.101.52.58
+	 MIME-Version:Content-Type; b=toWu4mYUajq2EL6ww4VR0az4BB/Mbf0m54SDBbQSrocm+RgiZvtZYqUDMe4DuT2V/diN8CkDoyYfAXBSksC105ehUrINId3nYnqlrL6K7xrVkZIxSkAR0Cki+6rcA9Jkpm3Es2GRQSfhJG11GU3y0jsdVqP6DOQt3C8PL0TuluI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gZpJpMmd; arc=fail smtp.client-ip=52.101.57.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Uh2N9T0r"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gZpJpMmd"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XIB1Xa22pcv8/fJryOovfs1/HHvvjrYOM15WRbozxIor3/K4tqMD7604fR6K+1dG6pqvSSoWG/n8TU8mc+SmqP61pE3sAKRF88b5at54LPnQuprWvfLCcNi1ynUYcP7wOsNcn3LhI7Vu7M5XphZyoubyAqMaAv5cFwvk5NOZ77hHZMptUvGrNb4A/VQq54wApmczRnBlCht2wuVBEwAM6HBy6ta8f9BaWIa2IT6JHNCSRxGcqCSSLF1S4DFNGFsxOaHIpga+xbs40goEmWUdKiDyanucWCmeMCNeekszPKUJYaCVUge27oss2zUuKpJGKidf3jq0UrSyPcr9rADbKA==
+ b=m5C2Gfp3NObTriwBSDj8yS8U+q1O7IODkGIgcYaQ4A2OlDfmuZR9HWmLmGjsWnF+BfpxNkewws+UAVMvnpAC38+saDTsks7PK0/ZEYNvgtE/VjS2GAO514xJ2xvtlh/KaIADdv90rt0fdqbQ3JkT7iR8hdQsmOaA9bTI8bxyzJR47wd4zPVHqBjewHi5NZk049x0mgzBL5mIpxVeOgpRfH8sXEFVZCa0UMQC/hl2V3VsALJxadhZXDXUrUuOi4v6IH/JvaWe/e5pGKOF9gc63TBCEXjkvFXS+JnAmiMq/aYmz1Nhn3uyit3VgJvWbs6d5L6L1MmJDApJoFaUX/tMtA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/BvTRjSzVVPiukmcWPQWJi7xjBPAIBOqVIiIRwRFQeQ=;
- b=QeVRlXUXph++4WbYXkcv13qo+g2sCGlX3K1DKyci2gzGxKf2TSg+zpPqAaB0/oAJ3HVl2/JE5bejYIMuTWD5vsRhLRS7Sq1qpgCyjU0My+WYfPo7p2Vkrqm8kkF322xHOfZnJNu2mFI9A2vmmipoa2HnayKFUw2ZWT2opW9NPMwmTnyFhAqGJPnO1+L0WSTjWDfnC8IXjZDHRlqAhSvattTvxVp4CclNQ+/GA7ojpmcrN4eGJFxG4dQQiNKXYgL0sZGLm5BXtPlnpIsVZHeT7Mm+R5VduwKGqaKtlNFfxX160/2NR0e+k+jOfIbk8MX6sNlgG9ttBwJQV3VIOZY85A==
+ bh=joMsNUv1H1QW+EOYwwiYNki5VKhmSFNGP3IZL2EwVR4=;
+ b=jBhbLtV0kyaxjiSJWAD1J4B84YEJajSC4V6OpzKV9HYrBEHfO4DkicHv2Ump2/+w7nQTuQUNzGOWiFuuF9EgDCZ7a/eAXeeFNeYtd1RyAD9vrNa9LfdEOP4fZSIW1o4Pf6s5dPzml0GcZ+JVbeseiv6XINBElZDFdvstFE+4zuztoAKwnXpRXblWa85Axd/G4Wb6kQoRg5ZwS/Z4c9Ju1z6f/RJBA7aC0ne+EgHa49O+4flstOuZBwaKBELvv+kXz6+UYsJmYF8A/VqQRn8U/Mcy5ncrnAcU8JXJh2Rgjw+RIzS5lkUjW+mwruQaNOTx18G7ASAnIonBGIt8rJSYog==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/BvTRjSzVVPiukmcWPQWJi7xjBPAIBOqVIiIRwRFQeQ=;
- b=Uh2N9T0rsLHZ1gzB3CdoX4i6JwbefmlmCZFHK6TdkUz07A5CWgb/pSUy8lx9C0zdOkRAzLjl2SMLfOz4Li6xku+bX11xdxw9zokvkIXOxOxxYYYr8PdbimHra2eY+YlgqsoGEE+/28t1Mrwq018SPjbQxiSzQURX2aMcBIeXgxIW341Fw033gAszD9ZAkw/eMr8Czg2GQzwYSs9bjaNrccTP3oxqDSXXhT7sbogooI9Zfw0PXZLf6CvmNME6rMLJxlvdgtcmV/Lm9iI9NgvH3z9Ujs+wKTNymsd2FKHzKRXt13MMdM8XNXvlc10ro78i/GbZzkJUOtAXV79ksdFORw==
-Received: from DS7PR03CA0319.namprd03.prod.outlook.com (2603:10b6:8:2b::27) by
- BN7PPF9E4583E15.namprd12.prod.outlook.com (2603:10b6:40f:fc02::6dc) with
+ bh=joMsNUv1H1QW+EOYwwiYNki5VKhmSFNGP3IZL2EwVR4=;
+ b=gZpJpMmdlk+SAp2Xbcg7qnUBswr/J/2Jo60hAIZUbutRfyuu3/2vuLsU8obKXF0QWf/SElHzlpIA3hTnnolh6e8oPucW88596p9of4L6bp07bsnywsItNmaXiefXJ3wQGFjSQ5gRS3wYjbtoCiaThglTLJxyQRtA9BZ5bxZ0S+Ky+qs2fd3LRPr7NrWUQ1ATghp1OP5+FvzFj4b7tluQqxQJtpfE9Ox6UwEFLN4fCrP7Oi9UVZkEbJ91980NF87KhG1jW6E1oKZCKwrBLZZxaxz/UFOxWtCGKu7AjQv3ZcKOVo8tQ2I/EI5oc6gV42efIQ8DFC41e/7Saj63jukWDg==
+Received: from BY5PR17CA0047.namprd17.prod.outlook.com (2603:10b6:a03:167::24)
+ by CH3PR12MB9025.namprd12.prod.outlook.com (2603:10b6:610:129::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.19; Thu, 19 Mar
- 2026 19:52:29 +0000
-Received: from CH3PEPF00000015.namprd21.prod.outlook.com
- (2603:10b6:8:2b:cafe::d5) by DS7PR03CA0319.outlook.office365.com
- (2603:10b6:8:2b::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9723.20 via Frontend Transport; Thu,
- 19 Mar 2026 19:52:29 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.9; Thu, 19 Mar
+ 2026 19:52:27 +0000
+Received: from SJ5PEPF000001CF.namprd05.prod.outlook.com
+ (2603:10b6:a03:167:cafe::dc) by BY5PR17CA0047.outlook.office365.com
+ (2603:10b6:a03:167::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9700.27 via Frontend Transport; Thu,
+ 19 Mar 2026 19:52:27 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -49,20 +49,20 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.161 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.161) by
- CH3PEPF00000015.mail.protection.outlook.com (10.167.244.120) with Microsoft
+ SJ5PEPF000001CF.mail.protection.outlook.com (10.167.242.43) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9745.0 via Frontend Transport; Thu, 19 Mar 2026 19:52:28 +0000
+ 15.20.9723.19 via Frontend Transport; Thu, 19 Mar 2026 19:52:27 +0000
 Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
  (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 19 Mar
- 2026 12:52:11 -0700
+ 2026 12:52:09 -0700
 Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
  (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 19 Mar
- 2026 12:52:10 -0700
+ 2026 12:52:09 -0700
 Received: from Asurada-Nvidia.nvidia.com (10.127.8.9) by mail.nvidia.com
  (10.129.68.7) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Thu, 19 Mar 2026 12:52:09 -0700
+ Transport; Thu, 19 Mar 2026 12:52:08 -0700
 From: Nicolin Chen <nicolinc@nvidia.com>
 To: <will@kernel.org>, <jgg@nvidia.com>
 CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <jpb@kernel.org>,
@@ -70,9 +70,9 @@ CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <jpb@kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
 	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
 	<jonathan.cameron@huawei.com>
-Subject: [PATCH v4 06/10] iommu/arm-smmu-v3: Introduce INV_TYPE_S2_VMID_VSMMU
-Date: Thu, 19 Mar 2026 12:51:52 -0700
-Message-ID: <c514aa533257ce67bf28645863abf5eaab437996.1773949042.git.nicolinc@nvidia.com>
+Subject: [PATCH v4 05/10] iommu/arm-smmu-v3: Pass in IOTLB cache tag to CD and STE
+Date: Thu, 19 Mar 2026 12:51:51 -0700
+Message-ID: <3910bdf4c376591c607184db72b3c0adc54f3b17.1773949042.git.nicolinc@nvidia.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1773949042.git.nicolinc@nvidia.com>
 References: <cover.1773949042.git.nicolinc@nvidia.com>
@@ -87,155 +87,331 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF00000015:EE_|BN7PPF9E4583E15:EE_
-X-MS-Office365-Filtering-Correlation-Id: 121df83f-ba63-4c32-6b36-08de85f10d56
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CF:EE_|CH3PR12MB9025:EE_
+X-MS-Office365-Filtering-Correlation-Id: b6287ce8-2357-4038-5a33-08de85f10c3a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700016|1800799024|56012099003|18002099003|22082099003|3613699012;
+	BCL:0;ARA:13230040|1800799024|36860700016|7416014|376014|82310400026|22082099003|18002099003|56012099003;
 X-Microsoft-Antispam-Message-Info:
-	vkEM5kqtJ/3jXH9p1OJvlrflqOmO8gD91fukWX2FRA1VJwjrBQX33IcIDsdKKv+1Hzk62GO9ox//k0OU8RZ/aJcvD6TFFJSn4QKQq82F8aUndXXpMCay/TkiOrZ588OZk8owp8/32/FWWfrhIKraKUQkcrJD6OzkvpfgP8GObNjhnzB2ivyvs0aWKKdaKc9ee3VxKOnq1Y/CbJn9miSQ6KRHriTcFd4WFpaJImiYBCo5aK06jXX50guDuRFhpZwr/QqpWp9GoX+0JCvdC1AuVw/GAxDBKW3XxYpHYWoExUBX/ev1gEqkHvuA1SzllFVV42mordQZyL9shXQ/MOR48ptvfI5HB9iDWAxaTDXNIukPe4zI17hcYjzpd8INxGlkYB+VsjQ474NY0Zn2zRc9mABLX6DKNYI3FOQVQxKQr0c2VlMjsch3KAVKQiSxiAoX/QNTM8rEpPhsjVA7I89js9qIa9R1YDJGa6Bfds/MS1F6la2UZ3Jfw7+deOvvv62EDHv51UqKgMn0so1U/HJGxIVlm6UUAoKolRL6VuTk3gj41K7AjpaZvoUP6/VV2z2iDdb5ZNRmE00U7ePyKUJrWxDl4Pcr71aBgqkonR6Bs07mCTwoUAIBBU+WLSPNi8Z2Vktwknsu/IHf6byLzo1/Eu883FbeAQePdWNwcfgDk1ax8+nCqWQIfzSSmLtYMG8CrA74I8OZ0lpzlmhXEL1qwunY2m0J05fLPnjIjMCB0F1ezV6aPQA5x2knjljZS81C1d+MZ49vreg0YLCkpwtY9aAXSKvVYrZ/bEIboQCLoLiF0MfYsEeIfpTDEo1GdC0fteFXsDNNrtXy5I37CotDDw==
+	GADSGUQLF1RD0ePg0QzEyw+njxbqIUqTViVuNevo6vP9OwmrXGKdYsmhk+SkSwZH2yhJYfYaL2gkPVnf+IJUzPH7eUxhKAI61CQRjeuXeR7dBekAFKvvbhxk8kJwp4Ajk3m6X+NUJBva9ndjW8sNsbN10mcC9MJgRkmXL/iuBk+BH2KuaA3piQO3uyF0K6Za0m3gPIbrCDW8uOzZuDR6IubiT1VGmqoGRNwIXsFkatuSrunEbbBbFA6y8lxdjRTOoP+VxPLyGvu3kE+4axn/mkAr5wZ/Ws544dc6K9DZ7hpy8uaXduE8Ev8+/b/y4qMsmcMEwDZRWUBev0jMOOQysPbkPvNHSMKzOsVjLjLOLnZWge+/Jz2Go9MQXMe72rklZTcBgJmrpkI4XwnEGUWeqiAnaiz9TSRw6YyztzjXMo84nCzZa5KQBpDOq8PFGrSX4glbkQEblkK+kBr5JmB5Zo1bE8ZWP0orXuUPJiGYzIvMpAJrEMP19dnwoeFc0mPF8VydtIYSeIFEuF5xPiW2rOoWIhtKPDoHeC90q/U9qiorLltbL4YtMjx067sNE82omfztFFUkG0WdSD8n7YNBfDo6HHmm4rS+VqONg8WMyjS4fL741vise6Ny/kue36PBvqtAjJ14ddqorXdxes/TCp7mZK8ZKBYREpM1FqqKVoCWCFJPN/NMOdpBiS9FPHfYgP2KtccAvAnSAXp7E1boHW1AO+oXJbkTvsVlBFkh6Q9xvTYt+x3l0yuDyJ8kpmy2dXvb1hgFnQbkJd2G8WptWw==
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700016)(1800799024)(56012099003)(18002099003)(22082099003)(3613699012);DIR:OUT;SFP:1101;
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700016)(7416014)(376014)(82310400026)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	323Con7baJUcdaVNtwKl6zDozxhqWm4yqELmCG0l4hPtLZCkgDIUrJ0WIXSS5a/TbOn9Y12u2dZYWcKFHIc3yVkCtx4PKfPfCh/oZW55OYJZZlJWRhfukRRkhPe109pXtiFToAwzHs8VwmFW/+TCnxgk8p9DvY5QLlAfaj6og503z1EmSZC6kaj73mvCk5fQcGmqQRcx/647RpXvOXDQtQ1yk1jBjhnu3JdEfiIpfLqCf7MJuDazlkJSkJoETzEQEtxKSkC1cCKsEXg580Y09XoIO0+OjOiEx0IOoLFpSPeO+f6pQnn2FWjG9x9nr2w0gr6bvJQID7sHy/Oxf3+jpHb3BjiKMswX46vyjAPyh5w4OcQxWNpXTiatis/J2U5ajp014w84SHlXQ4zpbNZGfCmasVdJ30csiA2shFY6M7I9zavwpR5bCUUJO/9dIFTT
+	/8P4znuwx2phZeD/oBT/FWq4FpOHEvB2cuCKN+gTW1zLm4KnRRMlJEBtd/82YhRe2qLO7pVQLgh3+kUvo5Pd1uBZgvE1Yav0sw5S87R5hb521bfcz/Wf3fjYFy/wHFjfTN2bvG8dwrkMjKjecmIE56oVVxFysUouhTKtBPe3mHzy5AHNmcG+JVUxJfMvsk5ldnNP7zNjYNid8tQ15bcgulMsaxKPQyBR5S5nm2GWmbdNVyz4ss/GBBaiQpynQNsTefTqiXc0QfCkKPHhi+iMAjUCB2PyrFTcLHAtR/2zAB09mDIUA4+AxBQsvRK2q63j9EAH2Oc907JlkHd5iUB5OnwK8OfFYlx+RfHeFI1n5hXB3gGBUo1VSZCDiqq3vY7JxKw1tikiv71u2bkxbfkfqnSQTfdWX6nJmYszjwpNo/NLxTAuJymjs2hyoZTVF3eE
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2026 19:52:28.9032
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2026 19:52:27.0664
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 121df83f-ba63-4c32-6b36-08de85f10d56
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6287ce8-2357-4038-5a33-08de85f10c3a
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF00000015.namprd21.prod.outlook.com
+	SJ5PEPF000001CF.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PPF9E4583E15
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9025
 
-A VMID held by a vSMMU is required to setup hardware (e.g. tegra241-cmdqv)
-during its initialization. So, it should be allocated in the ->viommu_init
-callback. This makes the VMID lifecycle unique than a VMID allocated for a
-naked S2 attachment.
+Now, struct arm_smmu_attach_state has the IOTLB cache tags.
 
-Introduce an INV_TYPE_S2_VMID_VSMMU to prepare for this case.
+Pass them down to arm_smmu_make_s1_cd() and arm_smmu_make_s2_domain_ste()
+to set in the CD and STE, removing the uses of smmu_domain for ASID/VMID.
 
-In arm_smmu_alloc_iotlb_tag(), retrieve the preallocated VMID on the vSMMU
-directly instead of allocating a new one.
-
-In arm_smmu_find_iotlb_tag(), continue searching in the smmu_domain->invs,
-using the type INV_TYPE_S2_VMID_VSMMU. This means a second device attached
-to a nested domain associated with the same vSMMU instance shall reuse the
-VMID held by the vSMMU. (FWIW, device attached to a nesting parent domain
-will have an INV_TYPE_S2_VMID and will not resue the VMID on any vSMMU.)
-
-Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
 ---
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h | 12 +++++++++++-
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 18 +++++++++++++++---
- 2 files changed, 26 insertions(+), 4 deletions(-)
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  8 +++---
+ .../arm/arm-smmu-v3/arm-smmu-v3-iommufd.c     | 26 ++++++++++++-------
+ .../iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c   | 23 +++++++++++-----
+ .../iommu/arm/arm-smmu-v3/arm-smmu-v3-test.c  | 12 +++++++--
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 21 +++++++++------
+ 5 files changed, 61 insertions(+), 29 deletions(-)
 
 diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-index 385dc76bc1b9f..c722df9b21982 100644
+index 7f86be3144805..385dc76bc1b9f 100644
 --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
 +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-@@ -655,6 +655,7 @@ struct arm_smmu_cmdq_batch {
- enum arm_smmu_inv_type {
- 	INV_TYPE_S1_ASID,
- 	INV_TYPE_S2_VMID,
-+	INV_TYPE_S2_VMID_VSMMU,
- 	INV_TYPE_S2_VMID_S1_CLEAR,
- 	INV_TYPE_ATS,
- 	INV_TYPE_ATS_FULL,
-@@ -676,7 +677,9 @@ struct arm_smmu_inv {
+@@ -1010,7 +1010,7 @@ void arm_smmu_make_abort_ste(struct arm_smmu_ste *target);
+ void arm_smmu_make_s2_domain_ste(struct arm_smmu_ste *target,
+ 				 struct arm_smmu_master *master,
+ 				 struct arm_smmu_domain *smmu_domain,
+-				 bool ats_enabled);
++				 struct arm_smmu_inv *tag, bool ats_enabled);
  
- static inline void arm_smmu_inv_assert_iotlb_tag(struct arm_smmu_inv *inv)
- {
--	WARN_ON(inv->type != INV_TYPE_S1_ASID && inv->type != INV_TYPE_S2_VMID);
-+	WARN_ON(inv->type != INV_TYPE_S1_ASID &&
-+		inv->type != INV_TYPE_S2_VMID &&
-+		inv->type != INV_TYPE_S2_VMID_VSMMU);
+ #if IS_ENABLED(CONFIG_KUNIT)
+ void arm_smmu_get_ste_used(const __le64 *ent, __le64 *used_bits);
+@@ -1076,14 +1076,16 @@ struct arm_smmu_cd *arm_smmu_get_cd_ptr(struct arm_smmu_master *master,
+ 					u32 ssid);
+ void arm_smmu_make_s1_cd(struct arm_smmu_cd *target,
+ 			 struct arm_smmu_master *master,
+-			 struct arm_smmu_domain *smmu_domain);
++			 struct arm_smmu_domain *smmu_domain,
++			 struct arm_smmu_inv *tag);
+ void arm_smmu_write_cd_entry(struct arm_smmu_master *master, int ssid,
+ 			     struct arm_smmu_cd *cdptr,
+ 			     const struct arm_smmu_cd *target);
+ 
+ typedef void (*arm_smmu_make_cd_fn)(struct arm_smmu_cd *target,
+ 				    struct arm_smmu_master *master,
+-				    struct arm_smmu_domain *smmu_domain);
++				    struct arm_smmu_domain *smmu_domain,
++				    struct arm_smmu_inv *tag);
+ 
+ int arm_smmu_set_pasid(struct arm_smmu_master *master,
+ 		       struct arm_smmu_domain *smmu_domain, ioasid_t pasid,
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+index ddae0b07c76b5..a77c60321203c 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+@@ -39,12 +39,15 @@ void *arm_smmu_hw_info(struct device *dev, u32 *length,
+ 	return info;
  }
  
- static inline bool arm_smmu_inv_is_ats(const struct arm_smmu_inv *inv)
-@@ -1195,6 +1198,13 @@ struct arm_vsmmu {
- 	u16 vmid;
- };
+-static void arm_smmu_make_nested_cd_table_ste(
+-	struct arm_smmu_ste *target, struct arm_smmu_master *master,
+-	struct arm_smmu_nested_domain *nested_domain, bool ats_enabled)
++static void
++arm_smmu_make_nested_cd_table_ste(struct arm_smmu_ste *target,
++				  struct arm_smmu_master *master,
++				  struct arm_smmu_nested_domain *nested_domain,
++				  struct arm_smmu_inv *tag, bool ats_enabled)
+ {
+-	arm_smmu_make_s2_domain_ste(
+-		target, master, nested_domain->vsmmu->s2_parent, ats_enabled);
++	arm_smmu_make_s2_domain_ste(target, master,
++				    nested_domain->vsmmu->s2_parent, tag,
++				    ats_enabled);
  
-+static inline struct arm_vsmmu *to_vsmmu(struct iommu_domain *domain)
-+{
-+	if (domain->type == IOMMU_DOMAIN_NESTED)
-+		return to_smmu_nested_domain(domain)->vsmmu;
-+	return NULL;
-+}
-+
- #if IS_ENABLED(CONFIG_ARM_SMMU_V3_IOMMUFD)
- void *arm_smmu_hw_info(struct device *dev, u32 *length,
- 		       enum iommu_hw_info_type *type);
+ 	target->data[0] = cpu_to_le64(STRTAB_STE_0_V |
+ 				      FIELD_PREP(STRTAB_STE_0_CFG,
+@@ -64,9 +67,11 @@ static void arm_smmu_make_nested_cd_table_ste(
+  * - Bypass STE (install the S2, no CD table)
+  * - CD table STE (install the S2 and the userspace CD table)
+  */
+-static void arm_smmu_make_nested_domain_ste(
+-	struct arm_smmu_ste *target, struct arm_smmu_master *master,
+-	struct arm_smmu_nested_domain *nested_domain, bool ats_enabled)
++static void
++arm_smmu_make_nested_domain_ste(struct arm_smmu_ste *target,
++				struct arm_smmu_master *master,
++				struct arm_smmu_nested_domain *nested_domain,
++				struct arm_smmu_inv *tag, bool ats_enabled)
+ {
+ 	unsigned int cfg =
+ 		FIELD_GET(STRTAB_STE_0_CFG, le64_to_cpu(nested_domain->ste[0]));
+@@ -82,12 +87,12 @@ static void arm_smmu_make_nested_domain_ste(
+ 	switch (cfg) {
+ 	case STRTAB_STE_0_CFG_S1_TRANS:
+ 		arm_smmu_make_nested_cd_table_ste(target, master, nested_domain,
+-						  ats_enabled);
++						  tag, ats_enabled);
+ 		break;
+ 	case STRTAB_STE_0_CFG_BYPASS:
+ 		arm_smmu_make_s2_domain_ste(target, master,
+ 					    nested_domain->vsmmu->s2_parent,
+-					    ats_enabled);
++					    tag, ats_enabled);
+ 		break;
+ 	case STRTAB_STE_0_CFG_ABORT:
+ 	default:
+@@ -187,6 +192,7 @@ static int arm_smmu_attach_dev_nested(struct iommu_domain *domain,
+ 	}
+ 
+ 	arm_smmu_make_nested_domain_ste(&ste, master, nested_domain,
++					&state.new_domain_invst.tag,
+ 					state.ats_enabled);
+ 	arm_smmu_install_ste_for_dev(master, &ste);
+ 	arm_smmu_attach_commit(&state);
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
+index 4370cb88c57cf..846a278fa5469 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c
+@@ -24,12 +24,18 @@ arm_smmu_update_s1_domain_cd_entry(struct arm_smmu_domain *smmu_domain)
+ 	list_for_each_entry(master_domain, &smmu_domain->devices, devices_elm) {
+ 		struct arm_smmu_master *master = master_domain->master;
+ 		struct arm_smmu_cd *cdptr;
++		struct arm_smmu_inv tag;
+ 
+ 		cdptr = arm_smmu_get_cd_ptr(master, master_domain->ssid);
+ 		if (WARN_ON(!cdptr))
+ 			continue;
+ 
+-		arm_smmu_make_s1_cd(&target_cd, master, smmu_domain);
++		if (WARN_ON(arm_smmu_find_iotlb_tag(&smmu_domain->domain,
++						    master->smmu, &tag)))
++			continue;
++		if (WARN_ON(tag.type != INV_TYPE_S1_ASID))
++			continue;
++		arm_smmu_make_s1_cd(&target_cd, master, smmu_domain, &tag);
+ 		arm_smmu_write_cd_entry(master, master_domain->ssid, cdptr,
+ 					&target_cd);
+ 	}
+@@ -124,10 +130,10 @@ EXPORT_SYMBOL_IF_KUNIT(__arm_smmu_make_sva_cd);
+ 
+ static void arm_smmu_make_sva_cd(struct arm_smmu_cd *target,
+ 				 struct arm_smmu_master *master,
+-				 struct arm_smmu_domain *smmu_domain)
++				 struct arm_smmu_domain *smmu_domain,
++				 struct arm_smmu_inv *tag)
+ {
+-	__arm_smmu_make_sva_cd(target, master, smmu_domain->domain.mm,
+-			       smmu_domain->cd.asid);
++	__arm_smmu_make_sva_cd(target, master, smmu_domain->domain.mm, tag->id);
+ }
+ 
+ static void arm_smmu_mm_arch_invalidate_secondary_tlbs(struct mmu_notifier *mn,
+@@ -166,12 +172,17 @@ static void arm_smmu_mm_release(struct mmu_notifier *mn, struct mm_struct *mm)
+ 		struct arm_smmu_master *master = master_domain->master;
+ 		struct arm_smmu_cd target;
+ 		struct arm_smmu_cd *cdptr;
++		struct arm_smmu_inv tag;
+ 
+ 		cdptr = arm_smmu_get_cd_ptr(master, master_domain->ssid);
+ 		if (WARN_ON(!cdptr))
+ 			continue;
+-		__arm_smmu_make_sva_cd(&target, master, NULL,
+-				       smmu_domain->cd.asid);
++		if (WARN_ON(arm_smmu_find_iotlb_tag(&smmu_domain->domain,
++						    master->smmu, &tag)))
++			continue;
++		if (WARN_ON(tag.type != INV_TYPE_S1_ASID))
++			continue;
++		__arm_smmu_make_sva_cd(&target, master, NULL, tag.id);
+ 		arm_smmu_write_cd_entry(master, master_domain->ssid, cdptr,
+ 					&target);
+ 	}
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-test.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-test.c
+index 546138f1efb1b..590bba5acc97e 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-test.c
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-test.c
+@@ -347,6 +347,9 @@ static void arm_smmu_test_make_s2_ste(struct arm_smmu_ste *ste,
+ 	struct arm_smmu_domain smmu_domain = {
+ 		.pgtbl_ops = &io_pgtable.ops,
+ 	};
++	struct arm_smmu_inv tag = {
++		.type = INV_TYPE_S2_VMID,
++	};
+ 
+ 	io_pgtable.cfg.arm_lpae_s2_cfg.vttbr = 0xdaedbeefdeadbeefULL;
+ 	io_pgtable.cfg.arm_lpae_s2_cfg.vtcr.ps = 1;
+@@ -357,7 +360,8 @@ static void arm_smmu_test_make_s2_ste(struct arm_smmu_ste *ste,
+ 	io_pgtable.cfg.arm_lpae_s2_cfg.vtcr.sl = 3;
+ 	io_pgtable.cfg.arm_lpae_s2_cfg.vtcr.tsz = 4;
+ 
+-	arm_smmu_make_s2_domain_ste(ste, &master, &smmu_domain, ats_enabled);
++	arm_smmu_make_s2_domain_ste(ste, &master, &smmu_domain, &tag,
++				    ats_enabled);
+ }
+ 
+ static void arm_smmu_v3_write_ste_test_s2_to_abort(struct kunit *test)
+@@ -502,6 +506,10 @@ static void arm_smmu_test_make_s1_cd(struct arm_smmu_cd *cd, unsigned int asid)
+ 			.asid = asid,
+ 		},
+ 	};
++	struct arm_smmu_inv tag = {
++		.type = INV_TYPE_S1_ASID,
++		.id = asid,
++	};
+ 
+ 	io_pgtable.cfg.arm_lpae_s1_cfg.ttbr = 0xdaedbeefdeadbeefULL;
+ 	io_pgtable.cfg.arm_lpae_s1_cfg.tcr.ips = 1;
+@@ -512,7 +520,7 @@ static void arm_smmu_test_make_s1_cd(struct arm_smmu_cd *cd, unsigned int asid)
+ 	io_pgtable.cfg.arm_lpae_s1_cfg.tcr.tsz = 4;
+ 	io_pgtable.cfg.arm_lpae_s1_cfg.mair = 0xabcdef012345678ULL;
+ 
+-	arm_smmu_make_s1_cd(cd, &master, &smmu_domain);
++	arm_smmu_make_s1_cd(cd, &master, &smmu_domain, &tag);
+ }
+ 
+ static void arm_smmu_v3_write_cd_test_s1_clear(struct kunit *test)
 diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index ca7628abef5bd..130b6442af37f 100644
+index 9c23beb8a2545..ca7628abef5bd 100644
 --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
 +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -1987,7 +1987,8 @@ void arm_smmu_make_s2_domain_ste(struct arm_smmu_ste *target,
+@@ -1692,14 +1692,16 @@ void arm_smmu_write_cd_entry(struct arm_smmu_master *master, int ssid,
+ 
+ void arm_smmu_make_s1_cd(struct arm_smmu_cd *target,
+ 			 struct arm_smmu_master *master,
+-			 struct arm_smmu_domain *smmu_domain)
++			 struct arm_smmu_domain *smmu_domain,
++			 struct arm_smmu_inv *tag)
+ {
+-	struct arm_smmu_ctx_desc *cd = &smmu_domain->cd;
+ 	const struct io_pgtable_cfg *pgtbl_cfg =
+ 		&io_pgtable_ops_to_pgtable(smmu_domain->pgtbl_ops)->cfg;
+ 	typeof(&pgtbl_cfg->arm_lpae_s1_cfg.tcr) tcr =
+ 		&pgtbl_cfg->arm_lpae_s1_cfg.tcr;
+ 
++	WARN_ON(tag->type != INV_TYPE_S1_ASID);
++
+ 	memset(target, 0, sizeof(*target));
+ 
+ 	target->data[0] = cpu_to_le64(
+@@ -1719,7 +1721,7 @@ void arm_smmu_make_s1_cd(struct arm_smmu_cd *target,
+ 		CTXDESC_CD_0_R |
+ 		CTXDESC_CD_0_A |
+ 		CTXDESC_CD_0_ASET |
+-		FIELD_PREP(CTXDESC_CD_0_ASID, cd->asid)
++		FIELD_PREP(CTXDESC_CD_0_ASID, tag->id)
+ 		);
+ 
+ 	/* To enable dirty flag update, set both Access flag and dirty state update */
+@@ -1976,9 +1978,8 @@ EXPORT_SYMBOL_IF_KUNIT(arm_smmu_make_cdtable_ste);
+ void arm_smmu_make_s2_domain_ste(struct arm_smmu_ste *target,
+ 				 struct arm_smmu_master *master,
+ 				 struct arm_smmu_domain *smmu_domain,
+-				 bool ats_enabled)
++				 struct arm_smmu_inv *tag, bool ats_enabled)
+ {
+-	struct arm_smmu_s2_cfg *s2_cfg = &smmu_domain->s2_cfg;
+ 	const struct io_pgtable_cfg *pgtbl_cfg =
+ 		&io_pgtable_ops_to_pgtable(smmu_domain->pgtbl_ops)->cfg;
+ 	typeof(&pgtbl_cfg->arm_lpae_s2_cfg.vtcr) vtcr =
+@@ -1986,6 +1987,8 @@ void arm_smmu_make_s2_domain_ste(struct arm_smmu_ste *target,
  	u64 vtcr_val;
  	struct arm_smmu_device *smmu = master->smmu;
  
--	WARN_ON(tag->type != INV_TYPE_S2_VMID);
-+	WARN_ON(tag->type != INV_TYPE_S2_VMID &&
-+		tag->type != INV_TYPE_S2_VMID_VSMMU);
- 
++	WARN_ON(tag->type != INV_TYPE_S2_VMID);
++
  	memset(target, 0, sizeof(*target));
  	target->data[0] = cpu_to_le64(
-@@ -2683,6 +2684,7 @@ static void __arm_smmu_domain_inv_range(struct arm_smmu_invs *invs,
- 						   granule);
- 			break;
- 		case INV_TYPE_S2_VMID:
-+		case INV_TYPE_S2_VMID_VSMMU:
- 			cmd.tlbi.vmid = cur->id;
- 			cmd.tlbi.leaf = leaf;
- 			arm_smmu_inv_to_cmdq_batch(cur, &cmds, &cmd, iova, size,
-@@ -3246,7 +3248,10 @@ int arm_smmu_find_iotlb_tag(struct iommu_domain *domain,
- 		tag->type = INV_TYPE_S1_ASID;
- 		break;
+ 		STRTAB_STE_0_V |
+@@ -2009,7 +2012,7 @@ void arm_smmu_make_s2_domain_ste(struct arm_smmu_ste *target,
+ 		   FIELD_PREP(STRTAB_STE_2_VTCR_S2TG, vtcr->tg) |
+ 		   FIELD_PREP(STRTAB_STE_2_VTCR_S2PS, vtcr->ps);
+ 	target->data[2] = cpu_to_le64(
+-		FIELD_PREP(STRTAB_STE_2_S2VMID, s2_cfg->vmid) |
++		FIELD_PREP(STRTAB_STE_2_S2VMID, tag->id) |
+ 		FIELD_PREP(STRTAB_STE_2_VTCR, vtcr_val) |
+ 		STRTAB_STE_2_S2AA64 |
+ #ifdef __BIG_ENDIAN
+@@ -3772,7 +3775,8 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev,
+ 	case ARM_SMMU_DOMAIN_S1: {
+ 		struct arm_smmu_cd target_cd;
+ 
+-		arm_smmu_make_s1_cd(&target_cd, master, smmu_domain);
++		arm_smmu_make_s1_cd(&target_cd, master, smmu_domain,
++				    &state.new_domain_invst.tag);
+ 		arm_smmu_write_cd_entry(master, IOMMU_NO_PASID, cdptr,
+ 					&target_cd);
+ 		arm_smmu_make_cdtable_ste(&target, master, state.ats_enabled,
+@@ -3782,6 +3786,7 @@ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev,
+ 	}
  	case ARM_SMMU_DOMAIN_S2:
--		tag->type = INV_TYPE_S2_VMID;
-+		if (to_vsmmu(domain))
-+			tag->type = INV_TYPE_S2_VMID_VSMMU;
-+		else
-+			tag->type = INV_TYPE_S2_VMID;
- 		break;
- 	default:
- 		return -EINVAL;
-@@ -3270,6 +3275,12 @@ static int arm_smmu_alloc_iotlb_tag(struct iommu_domain *domain,
- 	if (!ret || ret != -ENOENT)
- 		return ret;
+ 		arm_smmu_make_s2_domain_ste(&target, master, smmu_domain,
++					    &state.new_domain_invst.tag,
+ 					    state.ats_enabled);
+ 		arm_smmu_install_ste_for_dev(master, &target);
+ 		arm_smmu_clear_cd(master, IOMMU_NO_PASID);
+@@ -3874,7 +3879,7 @@ int arm_smmu_set_pasid(struct arm_smmu_master *master,
+ 	if (ret)
+ 		goto out_unlock;
  
-+	if (tag->type == INV_TYPE_S2_VMID_VSMMU) {
-+		/* Use the pre-allocated VMID from vSMMU */
-+		tag->id = to_vsmmu(domain)->vmid;
-+		return 0;
-+	}
-+
- 	/* FIXME replace with an actual allocation from the bitmap */
- 	if (tag->type == INV_TYPE_S1_ASID)
- 		tag->id = smmu_domain->cd.asid;
-@@ -3313,6 +3324,7 @@ arm_smmu_master_build_inv(struct arm_smmu_master *master,
- 		}
- 		break;
- 	case INV_TYPE_S2_VMID:
-+	case INV_TYPE_S2_VMID_VSMMU:
- 		cur->size_opcode = CMDQ_OP_TLBI_S2_IPA;
- 		cur->nsize_opcode = CMDQ_OP_TLBI_S12_VMALL;
- 		break;
-@@ -3357,7 +3369,7 @@ arm_smmu_master_build_invs(struct arm_smmu_master *master, bool ats_enabled,
- 		return NULL;
+-	make_cd_fn(cd, master, smmu_domain);
++	make_cd_fn(cd, master, smmu_domain, &state.new_domain_invst.tag);
+ 	arm_smmu_write_cd_entry(master, pasid, cdptr, cd);
+ 	arm_smmu_update_ste(master, sid_domain, state.ats_enabled);
  
- 	/* All the nested S1 ASIDs have to be flushed when S2 parent changes */
--	if (nesting) {
-+	if (tag->type == INV_TYPE_S2_VMID_VSMMU) {
- 		if (!arm_smmu_master_build_inv(master,
- 					       INV_TYPE_S2_VMID_S1_CLEAR,
- 					       tag->id, IOMMU_NO_PASID, 0))
 -- 
 2.43.0
 
