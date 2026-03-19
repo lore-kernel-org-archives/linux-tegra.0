@@ -1,187 +1,228 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013003.outbound.protection.outlook.com [52.101.72.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B002ED84C
-	for <linux-tegra@vger.kernel.org>; Thu, 19 Mar 2026 21:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773955604; cv=none; b=SQn5JaGwGzrqRLBwPXTNirfbFXN/GmGEn5HyEr9IcmPfpYGqFRA+TYWP9m+EEaOO8tLcYJD8kVHwOY3DiTi6HYNG7/rs2okcP4UkynASWa5ZxbaVQHUj6H/pzPiNWovKoLFd7htl93xMf2xYpe+NBT0KWh33GRcFPFIDF7aKxek=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773955604; c=relaxed/simple;
-	bh=tYI4JuCClflQeNy41iDQ7edGHrk/SVWynp0v5EfnkCk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a8qhmqkgtkYWXwnISlF15SvDXlBVlxjgnGRdO8Jug1xDe7YNWMfzgfuDGCT893dZahXjTuWeEfNgqkT23Y7OBrvK0BQ94EoFJh5Aw/6lMjk08Oe1mOXDbYa6XQiM0qRefgo5spttaSQXMI1BLUnFq8I7RplKi9uUgDjkPtVH5CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hbeK5MOg; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B6E29BD91;
+	Thu, 19 Mar 2026 22:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.3
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773959573; cv=fail; b=EdXM4spo9bNTxBGqrn/8DZuDC9sNrXutFCwNF7l5WC9STK+EPmG1rmB+LazBGJBDF/+GX6gDwlYurPE69MlbKpZgXUs9eS8H5Yhmrvb4cq/TAkFW2qaajyVMcbf452zaO+pSKSUNUTeuzpeZZdjlgSoSc7S4SmqIneTjmGjM1Xw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773959573; c=relaxed/simple;
+	bh=ekH7md/3BJ11+vzlKRKzkQMljkIz9ct4npkxuiYfTXQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pXB7aFUhx9D76w444ofmIjsVPH9JeN+Z2y+67GFTR8DswzNdF4B9fVSkKq+JotcDpofcZOpdqbWIo2jvbqTN/qknzETTNwMS2rOYWH48fSied233oFwCXhZ3hqZ1ElCoIm6dZUhJp0moY+mC/knGD6LT7FW07gWcgJ06HKeg5fA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=WPGK3avT; arc=fail smtp.client-ip=52.101.72.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hbeK5MOg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF937C2BCB2
-	for <linux-tegra@vger.kernel.org>; Thu, 19 Mar 2026 21:26:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773955604;
-	bh=tYI4JuCClflQeNy41iDQ7edGHrk/SVWynp0v5EfnkCk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hbeK5MOgQC2KsNJEt0FLtnzuxHQ7Gp/Fnr3DHHv3l7l4Oy4Q3/hjF3ab1nHoKK2RT
-	 Mt/X+xOQ2elSksZDmCaSRHx0mCz3NmDzd60WX+taAX9MJL2Yz0alpse+itEafUnoDE
-	 ss4N+3tL0BdQw3NUdXgnqSk3/D4X7TlRNiuybOknNTL2L8hATWrYbJG4E/OxiXxK6v
-	 xvh/zTpJGymBQ1zlkieq2bzg2l2k9X/m6Gd8jJH4p6eBSIjMG0to4scsvEpAQXGjnv
-	 el9VpIrCQBOaTjJCYfOVVwUf50QIvxjximwwNB1ZAyfbfl+HGBD5loO5d4no+xslhZ
-	 Zt5SsipWmUBoA==
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-667cc4ec065so1991263a12.1
-        for <linux-tegra@vger.kernel.org>; Thu, 19 Mar 2026 14:26:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVgSNhv/LE0z1xykGWyLkCLrlJwz5hDeim7zS7nP27h55jibF8oEbDJ4z1GXXmnhsdGZ4aWHVvBjBYtgQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YywSsK/TdITOna832HMjjtQ1IdFq/PEV3S+d1IaL0eIKJCFUxmD
-	0iTW7S+sp3aS/JthMmTyXXbrlbe5D27ZZWqcB4KA/+KIt/FyKY1O26DNRcWSsSsUCjdITvOvCbS
-	7xZy2qCcPB6l6ch7HR+5T+s+vdZc6Gw==
-X-Received: by 2002:a05:6402:1451:b0:665:e9f:901d with SMTP id
- 4fb4d7f45d1cf-668c8f0491emr724945a12.1.1773955603221; Thu, 19 Mar 2026
- 14:26:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="WPGK3avT"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eXIisY8sJtwnV4659apnzDZjoFQg6xaYbA2PFpbDbgo0fdAvNRoyZ3ZB/AusJb5nLwvcnZmruLuIFHAPjaw6Fm14OKhrD/h0jUAwJ7kjaeMF23MBrJ6F04bDO7VXGMbS8si9bkk+qfI9lYj1DQKHfLvImsD/bCNA7U8bVc7A7AX0i2f5fEXNuLYu3oWrVC6gBRPM6WiPo29Hae/2DE+y3QTgzwt7snD2IXPz8JBublfbEL7m/zD/FQAFczIToFGdOrWC0l1rxLpx8Eqk5zdUqqwMhOod3+lT3qjF/055blmIh9Yva89kBeO90/vQtREPIhglzy2d8MqTfSSvOJlXtw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sp/GfWK69gwrQc5CRDy0/bt/Jc9/I2kE1t3OvSA1dPY=;
+ b=EHWvJjo66cfZqMUwTwEqcXTAnD6h2NgRvoYSsRSLntRlshzGic6/wxNzVzmp1wAJbFtQr5PsGsg/2/22uQq/farjMLSR6nUgXznDaIxobTBSWwJTTQGnlUmPxxzUoGDNnIwpxbGvElh/7AhmrWeEywjkT84RcggH9cJx1q2QsobF8XV6jlFjaiMV3Vm2X/Oe+oKcs0yBOskxrQhrsZjr46i7Mk8ViYkiHxKPcV+ecLOMJ8469SpgiRD3VTMxXo3n1C4MV7BJ5j1lJ/3bEuEJnEd0CrsK3ttMTWwXaN3uQ9tji2JoWQiAVa8Cw1hEf2gid0f0GslZCM+ToDYu+e81Lw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sp/GfWK69gwrQc5CRDy0/bt/Jc9/I2kE1t3OvSA1dPY=;
+ b=WPGK3avTA/eqX8LldGuG8vZk+h2hhjkZiXsXi9flwaHeTrkWggIIp+jFtRsJMfexhNQrzs72MhZLpa1G7iH7V+3bAfm1F8++YkOu493ULseFjXMIOId8pHUC36l1jtexjHz/yc95tL+po9NFQ8VyygVUAlTCi+eGwVNsFv2cZJszSOkE6uCxdUXkuRx7nR796vKsHu+J5lETNOi3snouN3JorepwILvKoOkFodi3juU4jNQAleTthWUAXJaMw2OxfCBZ9SfNW8c/oVm2NRHnX8dA/IPmtyHCK49u/+bYxr7KxlqFvqNbtt6mQM11O5eKav8ryQUjplHwZA5pKpfS9A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM9PR04MB8585.eurprd04.prod.outlook.com (2603:10a6:20b:438::13)
+ by GV4PR04MB11355.eurprd04.prod.outlook.com (2603:10a6:150:296::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.19; Thu, 19 Mar
+ 2026 22:32:42 +0000
+Received: from AM9PR04MB8585.eurprd04.prod.outlook.com
+ ([fe80::f010:fca8:7ef:62f4]) by AM9PR04MB8585.eurprd04.prod.outlook.com
+ ([fe80::f010:fca8:7ef:62f4%4]) with mapi id 15.20.9723.018; Thu, 19 Mar 2026
+ 22:32:40 +0000
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: linux-phy@lists.infradead.org
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-can@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org,
+	spacemit@lists.linux.dev,
+	UNGLinuxDriver@microchip.com,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>
+Subject: [PATCH v5 phy-next 01/27] ata: add <linux/pm_runtime.h> where missing
+Date: Fri, 20 Mar 2026 00:32:15 +0200
+Message-ID: <20260319223241.1351137-2-vladimir.oltean@nxp.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260319223241.1351137-1-vladimir.oltean@nxp.com>
+References: <20260319223241.1351137-1-vladimir.oltean@nxp.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: WA2P291CA0045.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:1f::19) To AM9PR04MB8585.eurprd04.prod.outlook.com
+ (2603:10a6:20b:438::13)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260319160110.2131954-1-thierry.reding@kernel.org> <20260319160110.2131954-4-thierry.reding@kernel.org>
-In-Reply-To: <20260319160110.2131954-4-thierry.reding@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 19 Mar 2026 16:26:31 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+smyMYE_oexRc9wEJgMxdUxSwg7p8Bex8q6J6PrwZZ+Q@mail.gmail.com>
-X-Gm-Features: AaiRm53lN6yYR9QpqF6KxOg0pgZSKjOGMdgukT38RLesnKDXU4n4eCCG7IjHUV8
-Message-ID: <CAL_Jsq+smyMYE_oexRc9wEJgMxdUxSwg7p8Bex8q6J6PrwZZ+Q@mail.gmail.com>
-Subject: Re: [PATCH 3/5] dt-bindings: pci: Document the NVIDIA Tegra264 PCIe controller
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jon Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR04MB8585:EE_|GV4PR04MB11355:EE_
+X-MS-Office365-Filtering-Correlation-Id: f991486c-b6e7-4470-c894-08de86076de7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|366016|10070799003|1800799024|376014|7416014|22082099003|56012099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	ni/LtzVP003250LRDeQc7k67Fn3qKn8coAQ1u9g1wB8sHb0nY8ZhoJlMoqMdOih+c9eyO2I70xQALUFqSyzKBoqZVjAhaXGWZVek3xR8FAHRf7+mA0fuo/uarmZIfXWa5kZeVuw35Mpxt65Dk/6FM0W2tk8LXL7xF8RyT5N5LO6/1v1nR1E15FnhAq3OQx7kL3FyvhucTgFrFAqCL/W+t9nJ6X3qLYPp5b9q6pxzwJgON3Ew3dE9L916L8F/X6LKWcs9HdN3RXuRpZ99zOKgZWa9Fd+IEnEewiZ3pyzW5NnUHVD3ot4Gf0oAvhfmFMlEqB14K6HsrOFy3bk0fu4cnLWypa1krDt3YWT8na5QsDZePkUKxQCmDp5AFSRgk88H0iAkzprdAbSD9EyfTmi+qyuQp3LX46s0GG7g3B7/tKxig7wNkCh4fdjHYusrAU1P+jLJqp7/hlZKUiMB/GLV3Y7WdU8KnzML0jb3CKAgRJ4nQRR0yVGnlHR6iPc3jiK6eClRbAH4ngJCZE23O2Xo7yJr5YTRNGi6gNnsHzH0biUH2jbmOzdldqFfE6KgQrW2m0Sh3AxHCg0G+LZFdWhkz1lcxlSK3FIsDW49YeS51jVMrbpCM0ajrGEB/JXD7cqffRciZAgoqX+HiCRUtp+GkRTMjk1iKoUw/DIbwpwXy4ffGmLmbqhA8segJ2v4eB7e42QRomb9iiyIK40f/tx8XdqcD9mRuRrRx6QbHewLXRI=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8585.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(10070799003)(1800799024)(376014)(7416014)(22082099003)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?TsDZdn1D9lJJru6e+E/MtjMvE3BsC/eSk1iHJraQFWQFbOEM/tTYR4MD8wgM?=
+ =?us-ascii?Q?mvVbPgEBddKJSVylxqhj0P7CHxQnpc3LeSzApeg2iJCBfEfgSzAJtFaWhQip?=
+ =?us-ascii?Q?dOnk23E/rccNHpxm44b6SsqPsa6kHZt8JQc/Th3GJGDcHbUOsfw9CmLPa341?=
+ =?us-ascii?Q?2PrUp79l+UpM/cK94LfVzp6Tsk5/uvuE0hkA1JDLDJbRsSXIp2uOjQB6ynwl?=
+ =?us-ascii?Q?HSt6LOZd024xghJ4koihHSSrTsiguK2h7fAU4eROXobPLFn7kp3crXvy6XQz?=
+ =?us-ascii?Q?MGSN7sUEOBVVk5a5xDLMulNFUwWmz0DAX2qJsgVA/BOq+h/gmguBCm02HLMV?=
+ =?us-ascii?Q?2lI3k2PtLSushKx86VeGrAVMzp0mD5kuHU3VRRnh8KpuqLcBnIAhgJrXhMbe?=
+ =?us-ascii?Q?+0bEwqOgdeTY0U5nqWwQF2tz4yRN/K3Ch21zMSTYM0UBMh6EuyK9KnMQaf4v?=
+ =?us-ascii?Q?ITStG1BV0UNA0ntzpSwI/6yDHA5eFhP4xs3zsn8tP9g8rDpdZAEQ1z5s6ja3?=
+ =?us-ascii?Q?keLHdKzJzsp7S21YeaTTSRu/HHoeXHDA6TbjbYDzh1OUd6oP9uXWJdR/CWJr?=
+ =?us-ascii?Q?JU1iO6S4t1nT7PMRUIMPcvfbFcJrswB6oZCgzZDtZNrGf0gCI6h+muNMEzhe?=
+ =?us-ascii?Q?bIUhITd2SMKUhmQ0A8dR1wPI1WaVXGk+swGXYaafG/+cpsBBGGwyUnmSW2Xj?=
+ =?us-ascii?Q?j8m0cNJUbUlb+fuNf8DMVi1CRuIBrklewGualrhFpVVyOn2+Mpv2gmA6XrFd?=
+ =?us-ascii?Q?iZFBa1uDzRcggBtSYBpPpSnT9hZrsRU1YhFNxGBBzU+CzsCYBIIIkK+yIGK9?=
+ =?us-ascii?Q?L4iVbuGfwDAm8XaAet8yoPnGZjoRmyzHRLfQ+Ui2HOhsOCGwooVodj5RZCfD?=
+ =?us-ascii?Q?lKVsdCo5qvYXWQN23cvzNd33ocrCsLXOeOaeQ96o6B+s0EZYsHKpTU8zNt2w?=
+ =?us-ascii?Q?7rZ1NJSvlnZyc27igscO0vOPhKuAzljadIjmhd8Izf4lCXCceLDiAb1jXdQL?=
+ =?us-ascii?Q?0yLY/CumKl2uR6MF8EJ2/Y+14VxkZwR3mMczRSncp/gIcVdKOcF9DZx1N42S?=
+ =?us-ascii?Q?zLqT805lVMW/aQ1/p2uPrnUUjaZlUPVKD/8E8uKPtrUXrN+f2L3AB6xf1UCI?=
+ =?us-ascii?Q?ZErQq38iy7P3OU8VuYLvjh2rFmVCR7Urcjf7nwjK17yCJ8qz9Qdy1D0vyL1k?=
+ =?us-ascii?Q?DWJGgaaWLkLWNEhYZK5dHzgURsPzSDHYElSZL2xv1k+jXBfaXDPdHp5p03V9?=
+ =?us-ascii?Q?ijCdmd7miFxuvqg/GPaAfK9hnfl+g1LqoJu/zQfTM3ZPYVYCXkvESosasjc/?=
+ =?us-ascii?Q?lzMGSHN9clGnya4yNhkJRpvypO/kzD+Sc80A7OOlv618NqM6LJmPaD5PrXE+?=
+ =?us-ascii?Q?bMO7d07FzDfX6fCx/Oy3YPchH9jckG/AC/Q1TUdUbCxxkRYXxeWKU5DyJsZM?=
+ =?us-ascii?Q?+/LbwtZRHHoqZ5IQfBO6cehp340Awy7EU44q8vaX04+vbASVAyeP8V5ZHlni?=
+ =?us-ascii?Q?rrqeIsP0tOQSi2L7vtsuF9f0fgVk/UQ8kNPWGTjDDQTV5t2y0b6MtXc/MzyW?=
+ =?us-ascii?Q?VHV7G1WagDQ4qJ5+AmH9t3mqNphQaE6cl0e4o0wSaBRrw7SOOEu29xg5EPF7?=
+ =?us-ascii?Q?0nGZbU9phe9FdWyAiIUk3lIQ/dFzjhd0lS0XT6T4cT27G4YxZwUiElXZFeFZ?=
+ =?us-ascii?Q?Pjv6e/gWLxudnHUAUAkEji6sO/G80B3hGwr2xnjwnQLn5AWn0mJA4escT/rD?=
+ =?us-ascii?Q?/jlehz+b0JK3NUdtsr01e/frs8CwwcCctMxQGLAiy0M37hlN+ME+XxFPajiD?=
+X-MS-Exchange-AntiSpam-MessageData-1: ZlSXl+TlgibzFXdBloOHE0hap3gXQcttSbo=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f991486c-b6e7-4470-c894-08de86076de7
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8585.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2026 22:32:40.1130
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HqOrMr9EcZHrILstsJfktmVS8cGgWeUlvtIjyQ6ztgqudmoF1tlGF3mCxYrtPdGTLasGUBrZTX0Md2eXImNwRg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV4PR04MB11355
 
-On Thu, Mar 19, 2026 at 11:01=E2=80=AFAM Thierry Reding
-<thierry.reding@kernel.org> wrote:
->
-> From: Thierry Reding <treding@nvidia.com>
->
-> The six PCIe controllers found on Tegra264 are of two types: one is used
-> for the internal GPU and therefore is not connected to a UPHY and the
-> remaining five controllers are typically routed to a PCI slot and have
-> additional controls for the physical link.
->
-> While these controllers can be switched into endpoint mode, this binding
-> describes the root complex mode only.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  .../bindings/pci/nvidia,tegra264-pcie.yaml    | 92 +++++++++++++++++++
->  1 file changed, 92 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra264=
--pcie.yaml
->
-> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra264-pcie.y=
-aml b/Documentation/devicetree/bindings/pci/nvidia,tegra264-pcie.yaml
-> new file mode 100644
-> index 000000000000..56d69de2788b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra264-pcie.yaml
-> @@ -0,0 +1,92 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/nvidia,tegra264-pcie.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra264 PCIe controller
-> +
-> +maintainers:
-> +  - Thierry Reding <thierry.reding@gmail.com>
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: nvidia,tegra264-pcie
-> +
-> +  reg:
-> +    minItems: 4
-> +    maxItems: 5
-> +
-> +  reg-names:
-> +    minItems: 4
-> +    maxItems: 5
-> +
-> +  interrupts:
-> +    minItems: 1
-> +    maxItems: 4
-> +
-> +  dma-coherent: true
-> +
-> +  nvidia,bpmp:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: |
-> +      Must contain a pair of phandle (to the BPMP controller node) and
-> +      controller ID. The following are the controller IDs for each contr=
-oller:
-> +
-> +      0: C0
-> +      1: C1
-> +      2: C2
-> +      3: C3
-> +      4: C4
-> +      5: C5
-> +    items:
-> +      - items:
-> +          - description: phandle to the BPMP controller node
-> +          - description: PCIe controller ID
-> +            maximum: 5
-> +
-> +unevaluatedProperties: false
-> +
-> +required:
-> +  - interrupt-map
-> +  - interrupt-map-mask
-> +  - iommu-map
-> +  - msi-map
-> +  - nvidia,bpmp
-> +
-> +allOf:
-> +  - $ref: /schemas/pci/pci-host-bridge.yaml#
-> +  - oneOf:
-> +    - description: C0 controller (no UPHY)
-> +      properties:
-> +        reg:
-> +          items:
-> +            - description: application layer registers
-> +            - description: transaction layer registers
-> +            - description: privileged transaction layer registers
-> +            - description: ECAM-compatible configuration space
-> +
-> +        reg-names:
-> +          items:
-> +            - const: xal
-> +            - const: xtl
-> +            - const: xtl-pri
-> +            - const: ecam
-> +
-> +    - description: C1-C5 controllers (with UPHY)
-> +      properties:
-> +        reg:
-> +          items:
-> +            - description: application layer registers
-> +            - description: transaction layer registers
-> +            - description: privileged transaction layer registers
-> +            - description: data link/physical layer registers
-> +            - description: ECAM-compatible configuration space
-> +
-> +      items:
-> +        - const: xal
-> +        - const: xtl
-> +        - const: xtl-pri
-> +        - const: xpl
+It appears that libahci.c, ahci.c as well as the ahci_brcm, ahci_ceva
+and ahci_qoriq drivers are using runtime PM operations without including
+<linux/pm_runtime.h>. This header is somehow being indirectly provided
+by <linux/phy/phy.h>, which would like to drop it (none of the functions
+it exports need it).
 
-Put this entry last since it is the optional one. Then you can move
-all of this to the top-level and get rid of the duplication.
+Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+Acked-by: Damien Le Moal <dlemoal@kernel.org>
+---
+Cc: Damien Le Moal <dlemoal@kernel.org>
+Cc: Niklas Cassel <cassel@kernel.org>
 
-> +        - const: ecam
-> --
-> 2.52.0
->
+v2->v5: none
+v1->v2: collect tag
+---
+ drivers/ata/ahci.c       | 1 +
+ drivers/ata/ahci_brcm.c  | 1 +
+ drivers/ata/ahci_ceva.c  | 1 +
+ drivers/ata/ahci_qoriq.c | 1 +
+ drivers/ata/libahci.c    | 1 +
+ 5 files changed, 5 insertions(+)
+
+diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
+index 931d0081169b..aa3c4949c4ab 100644
+--- a/drivers/ata/ahci.c
++++ b/drivers/ata/ahci.c
+@@ -26,6 +26,7 @@
+ #include <linux/device.h>
+ #include <linux/dmi.h>
+ #include <linux/gfp.h>
++#include <linux/pm_runtime.h>
+ #include <scsi/scsi_host.h>
+ #include <scsi/scsi_cmnd.h>
+ #include <linux/libata.h>
+diff --git a/drivers/ata/ahci_brcm.c b/drivers/ata/ahci_brcm.c
+index 29be74fedcf0..48460e515722 100644
+--- a/drivers/ata/ahci_brcm.c
++++ b/drivers/ata/ahci_brcm.c
+@@ -16,6 +16,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+ #include <linux/string.h>
+ 
+diff --git a/drivers/ata/ahci_ceva.c b/drivers/ata/ahci_ceva.c
+index 2d6a08c23d6a..3938bf378341 100644
+--- a/drivers/ata/ahci_ceva.c
++++ b/drivers/ata/ahci_ceva.c
+@@ -12,6 +12,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+ #include "ahci.h"
+ 
+diff --git a/drivers/ata/ahci_qoriq.c b/drivers/ata/ahci_qoriq.c
+index 0dec1a17e5b1..409152bfefb6 100644
+--- a/drivers/ata/ahci_qoriq.c
++++ b/drivers/ata/ahci_qoriq.c
+@@ -14,6 +14,7 @@
+ #include <linux/device.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/libata.h>
+ #include "ahci.h"
+ 
+diff --git a/drivers/ata/libahci.c b/drivers/ata/libahci.c
+index c79abdfcd7a9..e0de4703a4f2 100644
+--- a/drivers/ata/libahci.c
++++ b/drivers/ata/libahci.c
+@@ -30,6 +30,7 @@
+ #include <scsi/scsi_cmnd.h>
+ #include <linux/libata.h>
+ #include <linux/pci.h>
++#include <linux/pm_runtime.h>
+ #include "ahci.h"
+ #include "libata.h"
+ 
+-- 
+2.43.0
+
