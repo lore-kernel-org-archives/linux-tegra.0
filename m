@@ -1,318 +1,233 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011071.outbound.protection.outlook.com [52.101.52.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4434138F251;
-	Wed, 18 Mar 2026 23:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773877747; cv=none; b=sZakdFE9IsGo5+hqgWnsSMyzWV51IbVDKnWyLGY6v4Ee8JNoptonuDHEH3d6wOWrbwuq59UkYKiS7HwRlbCC8NJwLzBxg/qEIq+/G+qUu9/9NIMoxiaFLkSzgwrA+STM501DmEqxP/qiWBKEfU+1BBz6h1FVvANlMfOW2ngHdhg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773877747; c=relaxed/simple;
-	bh=2Y1T4P2y8nfo8rEBpPRjqu1G7Nk53ZqugMUvnSqHK5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uvLDZkdhVmsJsMy4Eb4CvlSemL351YiJs2nmV9n9xCMQXiunyytRq7TiCmbtOLMK9SONvpiJ01WlRAg5kXYimN4j3E2biPX06tlFOk3xVemhlRbpRBMIKM0m58jgW0birKUla8yWnYl0cb+OH6bYnPW7JGTby4pCmHsPyx/aD+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gFljARgi; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0087C27979A;
+	Thu, 19 Mar 2026 02:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773886627; cv=fail; b=bj9xo6Xh0I5OVTyeNo3XTnMmScv1Q4eHWHRJFRIq2v36uUVeBegLxBavSQIPI6TLbDPRearmClzgo0fCLnF4Zd/1ufX10EYqVqKr3FwfNPsiD71utwUMM6Yk19t3Qods5T9X6m6DKCQ835FTbD79cN3tuH2aCt9l7rfx7Hvz2XU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773886627; c=relaxed/simple;
+	bh=vnNd9lTXrfajruD5uvYR+AWA3KaGXOQ0GCLUXC6zX2Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uyUIreHFIGyfkfui8mU7RYAyjwqqPwDfNHB+M+YAPvuJREtv7/cpAYwOol1hTKArTqPsISgB3ArlYCrEh4VkFSgEeK6F11Aez2CmAaE2Lw/DQ7BkP/356weyjXHqh/6v5P9VudTjn9Kha24QdAPJR7JK58tgamJTIQwQUpI6XM4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MVPGIVsT; arc=fail smtp.client-ip=52.101.52.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gFljARgi"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1773877746; x=1805413746;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2Y1T4P2y8nfo8rEBpPRjqu1G7Nk53ZqugMUvnSqHK5o=;
-  b=gFljARgiCZButRwUCDFluy7a4v/e3+OIdJsPwWBGVZNZcopdkgBIwm4h
-   m9u/3Sbbz2f/zDVxiSVwZ9Oa90tsgx236UvhbpihP1rBbaoSqUaGCBkne
-   bsEpEscoJJULUdPnAY3OPZKda8OG3F0klO+Af3Dcc3Z72awyCE4u16tY5
-   C0Qhha5UHLi9fE3xV6aIKOF+4WkhArbKHKOkUE2RNS95lQwdla7m7zffV
-   jnmdDqH2UDohwiAZgKDTsuvZn6Xcr37JQOm0jwrlorbDLxYCDPJ9upBP3
-   XU5YxEI1hUEM0oCQuPk77bJWQgnyAgy4idwfQtwNpO/1zZQD/fS1iQOmF
-   A==;
-X-CSE-ConnectionGUID: 4hRdAfypQsyMQo+E5r3Bpg==
-X-CSE-MsgGUID: ijv+bknCRjqoH4es4HAycw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11733"; a="77555040"
-X-IronPort-AV: E=Sophos;i="6.23,128,1770624000"; 
-   d="scan'208";a="77555040"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2026 16:49:06 -0700
-X-CSE-ConnectionGUID: gNHpDHCHRweZCW0b8lnR9w==
-X-CSE-MsgGUID: lIs+AGcuQjCvMOsQQTdltA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,128,1770624000"; 
-   d="scan'208";a="227739876"
-Received: from lkp-server02.sh.intel.com (HELO a51c2a36b9df) ([10.239.97.151])
-  by orviesa005.jf.intel.com with ESMTP; 18 Mar 2026 16:49:02 -0700
-Received: from kbuild by a51c2a36b9df with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1w30b2-0000000005T-3Tk0;
-	Wed, 18 Mar 2026 23:47:43 +0000
-Date: Thu, 19 Mar 2026 07:42:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sheetal <sheetal@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Frank Li <Frank.Li@kernel.org>, Mohan Kumar <mkumard@nvidia.com>,
-	dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Sheetal <sheetal@nvidia.com>
-Subject: Re: [PATCH] dmaengine: tegra210-adma: Add error logging on failure
- paths
-Message-ID: <202603190728.xcKzTcOu-lkp@intel.com>
-References: <20260318073922.1760132-1-sheetal@nvidia.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MVPGIVsT"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ipo1T0ALifAKEh4uDw/gIeINbY4hFnIMGulJ/fINr7tWHv1M9xXGbB2LFUWBoIEOiZ/nCowtDXogbZEccLHrEBCBEF0XdCZWG2yAbslP8aABi7UuajBD2tgCRxUdVrzMtifQw7/3/geCy71ZIrDa3yqPhzxguwqQUtHH/y3ngC5cTldWrRdQkyPGWLl/mFpD6M/CvGlX+o2sanIHEqaiXLV9L30km9GyG6oowUyq2IHBD/Y/YKxfl5rht5YsUJEZH30Kv9rqgxOctkwLq6UmeOFaStVCYvJccI4GtFQLr84nwxTyDpC9JhHL/V/B654bd89EmNI4R1VwrY3Hhss2GQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zk9tUTMjxx41x8gsA95beiD1w+2pmRbap62bIBUdxvU=;
+ b=TuHSKxLzy6jrStkIGOSqoIit6HxwHWM4YHIhE/Z5ZJJXe98x6p0cmm2MSSOuH0PM4cBxOh+aYLDjJgadUWZbOu2G+0MN439SU6QVgRRuqvG0OaHboMu+5tzD1t8knhBg1+DHP5U24jd7nxPIHEOZ39djb8viDhNd0bC4LIw5MgIGuENo66PbOvXNPNoMlH2B1yrgiXNtN1J6namo72rWd9Y21hdEI1OM7oJxvwUJE9cvpHAQtsjgqtLgGCQTew6K1fFzekEEzAsdSm+Ec8SXMO5RlJc/OxqknyNKDz9zRMwoRJSNG/CN6OassOnt3i7U2jCMVxf5ffTk3cxyxo20DQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zk9tUTMjxx41x8gsA95beiD1w+2pmRbap62bIBUdxvU=;
+ b=MVPGIVsTH+rboYuRhj8/aID8zaQFdaZ8Wy8yJgMkCCQiOEaggPh3uTrQwcE/o+Wmg+0D0WD47kMw5T3EZOWNIF9oms8rgraBujv+j9doRkI5WsfKrLiUWayRQeeqMtq8ekrFePYcpBHdToXOiOf/D7D/YlbpIsdA1DKTxo0FnDWAJj4IATUGodDs3/kM3FJgi299ovYsvAvqgkHV7Ad8MOA+lfFV6m0L+4vGHHKnCchWwQaLn9Jq+Al0BIOEUYtIpOcB1FJICZZ9c8OzcvlCq3hxExEW4BMj6GmFt0H31/2GIWgC5dZhOO6p+cAwObGPub9JmSSQpDHl5TqRjYK0PA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
+ by SA1PR12MB6799.namprd12.prod.outlook.com (2603:10b6:806:25b::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.16; Thu, 19 Mar
+ 2026 02:17:00 +0000
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017%4]) with mapi id 15.20.9723.016; Thu, 19 Mar 2026
+ 02:17:00 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>,
+ Dmitry Osipenko <digetx@gmail.com>, Andi Shyti <andi.shyti@kernel.org>,
+ Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH net-next] i2c: tegra: runtime PM is not IRQ-safe
+Date: Thu, 19 Mar 2026 11:16:48 +0900
+Message-ID: <6713290.mvXUDI8C0e@senjougahara>
+In-Reply-To: <abrsS1UW-q6J1rEU@shell.armlinux.org.uk>
+References:
+ <E1vsNBv-00000009nfA-27ZK@rmk-PC.armlinux.org.uk>
+ <b7ede8c7-acc6-485a-b433-35d780d6ad1c@nvidia.com>
+ <abrsS1UW-q6J1rEU@shell.armlinux.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP286CA0330.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3b7::19) To SJ2PR12MB9161.namprd12.prod.outlook.com
+ (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260318073922.1760132-1-sheetal@nvidia.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|SA1PR12MB6799:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9581c145-fddf-4160-c532-08de855d9a5f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|10070799003|376014|366016|56012099003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	KFmQ9kR+FWOUwik2CPKvHCu5GMDOF7mcaGbNstekjVFF6T+A/rvEKzjXbi6dff1cqIKoVtwgzkXLuw/mxeOwEapZUYEDVgSme6n2s04fQOqyrZyyVvEeZ6jAk5Vir/R41kXXnd34RhXbfN4kfjD9GNMk3EBUulW5Cemay9V4Yp6TpGScgLtpY1yqZEibtT1OLxlFD9YlOLicW6mG4UnOCsf18I8Ur8aoxyl36tq2pHUJIluek2Y7bKsjU5kKBHpf+GM0ELdAwrfE8ficZD0gnXAm+m8fWmi09aBtr8uvlhFX9e/Z8r8OLQC2+2W0Jec/CLSF0dUcfAGlSrN9tBK0u1gBFLSCoZmDa/uyLF/leK8WXySnv2y7kLWYG1mfu1lWgay70vw/yiqXd/XdPDwX+TZ3LkEOGl8U4p1HnalxqpEZAdBxeCXxBLprXDjnNmGj3iqhYFDbMRfDQOZaJnhTrN6h3WBfWkQsj+7xllUYzOQ7eYlf2xqfSGpSX8NnVUDcSYrdMVazHNkYM6uh5KMwgL7/SIWxsPxFV1TQ8N2GqWBybuiMHN4QuoygPUHaxxFMAPF6DFKiNa/uKjFSsDTtiJVL31R69Yb/WHSCLyQlSyDVv7Nr/YHwgr1G0njO4CghDKhZPXQswj1J2QLXzuIG621Y6cIIVkf8CJ1ABrLnKDbpkAGHM6xtWiBqj3wt+rvMSx0G64KuGgpIQ+b/7GSba3jpqRxwraUdvNxqJc9i6tA=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(376014)(366016)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eUlrOFZGK2pBNHZwTm1qSktISkJFYlJDRU1FSG0yMkIvSERwWW05dzNtSWUv?=
+ =?utf-8?B?eTdyMmRDZTZCanVTSVpPNGVrd0l3Z1dkM1NWYU5VZE8yR2NNbURUN0hJVDBJ?=
+ =?utf-8?B?SnRuaEVBZkFYUUlpYmMyMVNPb01XWVA5VDU4ZjhQTjFQT0h6bXdSQXllMUtO?=
+ =?utf-8?B?c3l0OVRMcGd6Y0tyZnI0VStIdVU5b0pXWFJkd0FZRzdvOWd4cEE0NysvTk9i?=
+ =?utf-8?B?eGd2bm9uMlE1YVBSdzVrTlMvcERDalJCU05KYXVDQ1FmTzljMWNQMmdXaEUw?=
+ =?utf-8?B?Rkd4cDFyVTh6aS9hSWJsTUFKOHBYZ2Z2Z2NodGFKalY3NGlqVndNUldlSHl2?=
+ =?utf-8?B?MUdqNDkxQzg1MGZJK0JTSzRnbjYrMkxQYTdEYVJkQnNRMkp5cHNCRndLc2tD?=
+ =?utf-8?B?ajFsRU13ZGYzZnJVc1ZRZCtSMHVBMGk2V0JyTFkrQ0pEcmNXaFZGb1hsL1lz?=
+ =?utf-8?B?ejcydEVTOTVScGxLUndtanRoMEFOZXl3N3ZVZFk2ZmZvSkpGWGw4ZDZQOUdB?=
+ =?utf-8?B?WE1ReXQ2MjZpUWJNeWw1RkxhSW9nT0FUdDhheGNkek4rakluZ2xYRHBlSmlq?=
+ =?utf-8?B?dWZLbFp0ZzFGalp0QzVMcUtoREg1N2VOYTBOeUdQbmtvdC9UY1pxOVlVUWtn?=
+ =?utf-8?B?c3duaVpQc0FGSDFkYUcyOUszdVlBVmEzekQ4MkZuSmNiWU5mbEdINjdrMVJC?=
+ =?utf-8?B?c2t0YXpDNGZjMTU0dXdmUUlmVlFpYk5sUFhTWWxXVkJCMnFNZGVjRFhWbFlo?=
+ =?utf-8?B?cTl2T3plZWt2bUZocGZ4NzlwMHFSREp2NzUxdXFxL21UdXBOZm5nb3ZEQlVN?=
+ =?utf-8?B?dy9KTVJIczE1WHFvakFoL3dYY1NYVWlSaFdGT01UMzhNMXUvdXYya1o5ZHVN?=
+ =?utf-8?B?Q3pBamtTQnl3eVAxS1pQNUxwWTNLbDdHV1BEL1c2K0FBMGtFTmM2TVhNb2xR?=
+ =?utf-8?B?M1FtbEhHRHJFdHlXUEtGY2FpNC9LdVhoNERqbjBpN2RCRVFBRGpGTmFRN2sr?=
+ =?utf-8?B?ZUJ5amhSY0ZjaFJ5SWNaZ0lzeGp4VzZIL3ovcmwwSkJPVnc2cVBLMzRFNGZ5?=
+ =?utf-8?B?RzNyMVA5Vy82cjliMFVXa1hCaWhKeDAyaFozRmpaZXhEc2V3WlRUNEFpOVpL?=
+ =?utf-8?B?L28zeTJPeGNtNzY2VmhheWE2L0tuaDN0aHhmTnAwOU8zcXNGTS9aSGJ3eUhT?=
+ =?utf-8?B?VkMxU3duZDdPU2tlWEJvRTFKdmZMOGZOdmFqTmo0UnptaVdmU0N6U3BqWDF2?=
+ =?utf-8?B?MWxvMUJTNk9pb2V1V0pyb09JWjE5Q0VJYlUySlovYmJvYjNZZVdKS29XeXBD?=
+ =?utf-8?B?TVRieE53WUpJTHQ3UlJuUGdVRnk4dy8vTjJWUTdZUEFDUDJoSXplRC92UmRm?=
+ =?utf-8?B?MVp5MSt0VmEvQnJSR0YwbjM1SHZWQnhMbk04Qm16U3JWRyt0NS9YdmVDS1dw?=
+ =?utf-8?B?SnBWZTNLQmtEZ3NWS0h5U1QzcEQvaENUVDNmcGY1WXlkN2FwRWgrWWl0OWdV?=
+ =?utf-8?B?MTRES3JaRk1WelN2WjlwNTMwbENGbVBEN1haeExvblBUeS9ETVpzMGNWdW1s?=
+ =?utf-8?B?YVNZL2RyU0JTOVh2aVY3YzhmV1ZZbXIvQjA2TXN4dk5RbHVuelFVcUNHVk9x?=
+ =?utf-8?B?Q0dzNTl0RVhFd25uRHJqVG94cVNMamZMNzFYaTl3WkxPZFc1eFBBdFplbnQ1?=
+ =?utf-8?B?S2JtUUZ1aVc2cno1OWN1aWlGTzFHQk9jMUhha0F1dWdkMXd0OCszMHg2eDBU?=
+ =?utf-8?B?M1ZNT0Nua0E1ams2MU0vdUZJNVdmQ0NrbWF0NXdoeHNVZnVvUVcxdE1HUkJt?=
+ =?utf-8?B?M2lERlV0aVgwNFk4N2N0cDZiMmdoRTVlcUdyNnlQSnNoY2kvWmp6NVpJMnpo?=
+ =?utf-8?B?QWxmMml3Rm9LL3pYQmdjZkJIQXpGY2tDd2s3RHYxd3l0M2toY0xVcm02NTZk?=
+ =?utf-8?B?OGlNQUJVWU5wU0JLL2psNUFkT3VpTHhjbjBHMmYyOHAvWHpVais4ZUtTNnBv?=
+ =?utf-8?B?Y1BJWWwyaFREb3hnNmNURENBNXRyYVdtc1FpZU5GYlc4SEN3R2MrWDV1TmIx?=
+ =?utf-8?B?bDN2Z05oOUhNclBaMm1iK0lXRVN6Vm5jWjBNNloyUzUwRm9TTkZTZUhReDM1?=
+ =?utf-8?B?R0ZBVDdvNjM2emQyWnB5Tk9BQnNoekZqTGxoNm4wNnloOFRobGJSbURnTTcy?=
+ =?utf-8?B?VFlzazhXOE5IbFgzdm5na3hvNyswenFpVCtTMGQ5UWRzQU1OVmVxeEdFYmFr?=
+ =?utf-8?B?T3J6aEdGTGk0dHlNOHBSYlJQTUxDUTcyWU45YlduRUhtc2JkV0UzNVZyeWVW?=
+ =?utf-8?B?cGR6M0Q0Y1U4d0VBNmc0OGhYcXBBbE1CVm5OREFTWXZDOG5PeVJzZVNMalU3?=
+ =?utf-8?Q?S5VbGTyfmGuhvf7oqhMDGW1AkFuP8Ye86s/JkkrALqoD9?=
+X-MS-Exchange-AntiSpam-MessageData-1: q5f+NOYwfqrfbw==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9581c145-fddf-4160-c532-08de855d9a5f
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2026 02:17:00.4143
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 86yH5vVg6piH0Q+YSBb1fxEZXIBt39c6nDHbsBQZudB3CMlTOhpT866ygB8p5KNoUchaI5r/hlheWTt1ckisng==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6799
 
-Hi Sheetal,
+On Thursday, March 19, 2026 3:17=E2=80=AFAM Russell King (Oracle) wrote:
+> On Wed, Feb 18, 2026 at 08:30:49AM +0000, Jon Hunter wrote:
+> > On 18/02/2026 01:35, Mikko Perttunen wrote:
+> >=20
+> > ...
+> >=20
+> > > > > > Yes we should always follow that rule. However, in this case, I
+> > > > > > believe
+> > > > > > that the build time dependency on the PINCTRL subsystem was onl=
+y
+> > > > > > exposed
+> > > > > > by adding the 'i2c_dev->dev->pins'. Unless I am misunderstandin=
+g
+> > > > > > ...
+> > > > >=20
+> > > > > Yes, it looks like it.
+> > > > >=20
+> > > > > However, I wonder why the dependency has to be complicated.
+> > > > >=20
+> > > > > ARCH_TEGRA in both arm64 and arm selects PINCTRL, so we can assum=
+e
+> > > > > that
+> > > > >=20
+> > > > > PINCTRL will be set for ARCH_TEGRA. So:
+> > > > >    config I2C_TEGRA
+> > > > >   =20
+> > > > >    	tristate "NVIDIA Tegra internal I2C controller"
+> > > > >    	depends on ARCH_TEGRA || (COMPILE_TEST && (ARC || ARM ||=20
+ARM64
+> > > > >    	||
+> > >=20
+> > > M68K
+> > >=20
+> > > > >    	|| RISCV || SUPERH || SPARC))>
+> > > > >=20
+> > > > > +	depends on PINCTRL
+> > > > >=20
+> > > > > is a shorter way of writing this, and it makes sense - pinctrl is=
+n't
+> > > > > required because we're doing a compile test, it's required becaus=
+e
+> > > > > the driver itself fundamentally requires it with this change whet=
+her
+> > > > > or not we're doing a compile test.
+> > > >=20
+> > > > Yes that's true indeed.
+> > > >=20
+> > > > Mikko, do you want to take care of this?
+> > >=20
+> > > My thought was it would be better to keep the PINCTRL dependency grou=
+ped
+> > > with COMPILE_TEST. That makes it clear it's only needed because of it
+> > > -- clearer to the reader that ARCH_TEGRA implies it. Kind of like not
+> > > checking for NULL pointers in C code when the contract is that the
+> > > pointer is not NULL.>=20
+> > Russell's point is that regardless of the compile test, the driver has =
+a
+> > dependency on pinctrl and so should always be dependent on it. The I2C
+> > instances for the DPAUX device on certain devices require this and will
+> > not
+> > work without it (before your change was added). I guess I should have
+> > added
+> > this dependency back with commit 718917b9875f ("i2c: tegra: Add pinctrl
+> > support").
+> >=20
+> > > I can change it though if you'd like.
+> >=20
+> > I think we should.
+> >=20
+> > Thanks!
+>=20
+> When is this bug going to be fixed? This is a regression that's
+> affecting Xavier systems. It's been over a month since I proposed
+> a patch to fix this:
+>=20
+> BUG: sleeping function called from invalid context at
+> kernel/locking/mutex.c:591 in_atomic(): 0, irqs_disabled(): 1, non_block:
+> 0, pid: 59, name: kworker/u24:6
+>=20
+> Please see:
+>=20
+> https://lore.kernel.org/r/E1vsNBv-00000009nfA-27ZK@rmk-PC.armlinux.org.uk
+>=20
+> for my original proposed fix, complete kernel messages and analysis.
+>=20
+> --
+> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
-kernel test robot noticed the following build warnings:
+FWIW I did post v3 of my patch a while back: https://lore.kernel.org/linux-=
+tegra/20260303-i2c-dpaux-irqsafe-v3-1-75ca95b96666@nvidia.com/
 
-[auto build test WARNING on vkoul-dmaengine/next]
-[also build test WARNING on linus/master v7.0-rc4 next-20260318]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Sheetal/dmaengine-tegra210-adma-Add-error-logging-on-failure-paths/20260318-214221
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git next
-patch link:    https://lore.kernel.org/r/20260318073922.1760132-1-sheetal%40nvidia.com
-patch subject: [PATCH] dmaengine: tegra210-adma: Add error logging on failure paths
-config: i386-buildonly-randconfig-001-20260319 (https://download.01.org/0day-ci/archive/20260319/202603190728.xcKzTcOu-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260319/202603190728.xcKzTcOu-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202603190728.xcKzTcOu-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/dma/tegra210-adma.c:1083:55: warning: format specifies type 'unsigned long long' but the argument has type 'resource_size_t' (aka 'unsigned int') [-Wformat]
-    1083 |                                 dev_err(&pdev->dev, "invalid page number %llu\n", page_no);
-         |                                                                          ~~~~     ^~~~~~~
-         |                                                                          %u
-   include/linux/dev_printk.h:154:65: note: expanded from macro 'dev_err'
-     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                                ~~~     ^~~~~~~~~~~
-   include/linux/dev_printk.h:110:23: note: expanded from macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ~~~    ^~~~~~~~~~~
-   1 warning generated.
+Mikko
 
 
-vim +1083 drivers/dma/tegra210-adma.c
 
-  1033	
-  1034	static int tegra_adma_probe(struct platform_device *pdev)
-  1035	{
-  1036		const struct tegra_adma_chip_data *cdata;
-  1037		struct tegra_adma *tdma;
-  1038		struct resource *res_page, *res_base;
-  1039		int ret, i;
-  1040	
-  1041		cdata = of_device_get_match_data(&pdev->dev);
-  1042		if (!cdata) {
-  1043			dev_err(&pdev->dev, "device match data not found\n");
-  1044			return -ENODEV;
-  1045		}
-  1046	
-  1047		tdma = devm_kzalloc(&pdev->dev,
-  1048				    struct_size(tdma, channels, cdata->nr_channels),
-  1049				    GFP_KERNEL);
-  1050		if (!tdma)
-  1051			return -ENOMEM;
-  1052	
-  1053		tdma->dev = &pdev->dev;
-  1054		tdma->cdata = cdata;
-  1055		tdma->nr_channels = cdata->nr_channels;
-  1056		platform_set_drvdata(pdev, tdma);
-  1057	
-  1058		res_page = platform_get_resource_byname(pdev, IORESOURCE_MEM, "page");
-  1059		if (res_page) {
-  1060			tdma->ch_base_addr = devm_ioremap_resource(&pdev->dev, res_page);
-  1061			if (IS_ERR(tdma->ch_base_addr)) {
-  1062				dev_err(&pdev->dev, "failed to map page resource\n");
-  1063				return PTR_ERR(tdma->ch_base_addr);
-  1064			}
-  1065	
-  1066			res_base = platform_get_resource_byname(pdev, IORESOURCE_MEM, "global");
-  1067			if (res_base) {
-  1068				resource_size_t page_offset, page_no;
-  1069				unsigned int ch_base_offset;
-  1070	
-  1071				if (res_page->start < res_base->start) {
-  1072					dev_err(&pdev->dev, "invalid page/global resource order\n");
-  1073					return -EINVAL;
-  1074				}
-  1075	
-  1076				page_offset = res_page->start - res_base->start;
-  1077				ch_base_offset = cdata->ch_base_offset;
-  1078				if (!ch_base_offset)
-  1079					return -EINVAL;
-  1080	
-  1081				page_no = div_u64(page_offset, ch_base_offset);
-  1082				if (!page_no || page_no > INT_MAX) {
-> 1083					dev_err(&pdev->dev, "invalid page number %llu\n", page_no);
-  1084					return -EINVAL;
-  1085				}
-  1086	
-  1087				tdma->ch_page_no = page_no - 1;
-  1088				tdma->base_addr = devm_ioremap_resource(&pdev->dev, res_base);
-  1089				if (IS_ERR(tdma->base_addr)) {
-  1090					dev_err(&pdev->dev, "failed to map global resource\n");
-  1091					return PTR_ERR(tdma->base_addr);
-  1092				}
-  1093			}
-  1094		} else {
-  1095			/* If no 'page' property found, then reg DT binding would be legacy */
-  1096			res_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-  1097			if (res_base) {
-  1098				tdma->base_addr = devm_ioremap_resource(&pdev->dev, res_base);
-  1099				if (IS_ERR(tdma->base_addr)) {
-  1100					dev_err(&pdev->dev, "failed to map base resource\n");
-  1101					return PTR_ERR(tdma->base_addr);
-  1102				}
-  1103			} else {
-  1104				dev_err(&pdev->dev, "failed to map mem resource\n");
-  1105				return -ENODEV;
-  1106			}
-  1107	
-  1108			tdma->ch_base_addr = tdma->base_addr + cdata->ch_base_offset;
-  1109		}
-  1110	
-  1111		tdma->ahub_clk = devm_clk_get(&pdev->dev, "d_audio");
-  1112		if (IS_ERR(tdma->ahub_clk)) {
-  1113			dev_err(&pdev->dev, "Error: Missing ahub controller clock\n");
-  1114			return PTR_ERR(tdma->ahub_clk);
-  1115		}
-  1116	
-  1117		tdma->dma_chan_mask = devm_kzalloc(&pdev->dev,
-  1118						   BITS_TO_LONGS(tdma->nr_channels) * sizeof(unsigned long),
-  1119						   GFP_KERNEL);
-  1120		if (!tdma->dma_chan_mask)
-  1121			return -ENOMEM;
-  1122	
-  1123		/* Enable all channels by default */
-  1124		bitmap_fill(tdma->dma_chan_mask, tdma->nr_channels);
-  1125	
-  1126		ret = of_property_read_u32_array(pdev->dev.of_node, "dma-channel-mask",
-  1127						 (u32 *)tdma->dma_chan_mask,
-  1128						 BITS_TO_U32(tdma->nr_channels));
-  1129		if (ret < 0 && (ret != -EINVAL)) {
-  1130			dev_err(&pdev->dev, "dma-channel-mask is not complete.\n");
-  1131			return ret;
-  1132		}
-  1133	
-  1134		INIT_LIST_HEAD(&tdma->dma_dev.channels);
-  1135		for (i = 0; i < tdma->nr_channels; i++) {
-  1136			struct tegra_adma_chan *tdc = &tdma->channels[i];
-  1137	
-  1138			/* skip for reserved channels */
-  1139			if (!test_bit(i, tdma->dma_chan_mask))
-  1140				continue;
-  1141	
-  1142			tdc->chan_addr = tdma->ch_base_addr + (cdata->ch_reg_size * i);
-  1143	
-  1144			if (tdma->base_addr) {
-  1145				if (cdata->global_ch_fifo_base)
-  1146					tdc->global_ch_fifo_offset = cdata->global_ch_fifo_base + (4 * i);
-  1147	
-  1148				if (cdata->global_ch_config_base)
-  1149					tdc->global_ch_config_offset =
-  1150						cdata->global_ch_config_base + (4 * i);
-  1151			}
-  1152	
-  1153			tdc->irq = of_irq_get(pdev->dev.of_node, i);
-  1154			if (tdc->irq <= 0) {
-  1155				ret = tdc->irq ?: -ENXIO;
-  1156				dev_err_probe(&pdev->dev, ret, "failed to get IRQ for channel %d\n", i);
-  1157				goto irq_dispose;
-  1158			}
-  1159	
-  1160			vchan_init(&tdc->vc, &tdma->dma_dev);
-  1161			tdc->vc.desc_free = tegra_adma_desc_free;
-  1162			tdc->tdma = tdma;
-  1163		}
-  1164	
-  1165		pm_runtime_enable(&pdev->dev);
-  1166	
-  1167		ret = pm_runtime_resume_and_get(&pdev->dev);
-  1168		if (ret < 0) {
-  1169			dev_err(&pdev->dev, "runtime PM resume failed: %d\n", ret);
-  1170			goto rpm_disable;
-  1171		}
-  1172	
-  1173		ret = tegra_adma_init(tdma);
-  1174		if (ret) {
-  1175			dev_err(&pdev->dev, "failed to initialize ADMA: %d\n", ret);
-  1176			goto rpm_put;
-  1177		}
-  1178	
-  1179		dma_cap_set(DMA_SLAVE, tdma->dma_dev.cap_mask);
-  1180		dma_cap_set(DMA_PRIVATE, tdma->dma_dev.cap_mask);
-  1181		dma_cap_set(DMA_CYCLIC, tdma->dma_dev.cap_mask);
-  1182	
-  1183		tdma->dma_dev.dev = &pdev->dev;
-  1184		tdma->dma_dev.device_alloc_chan_resources =
-  1185						tegra_adma_alloc_chan_resources;
-  1186		tdma->dma_dev.device_free_chan_resources =
-  1187						tegra_adma_free_chan_resources;
-  1188		tdma->dma_dev.device_issue_pending = tegra_adma_issue_pending;
-  1189		tdma->dma_dev.device_prep_dma_cyclic = tegra_adma_prep_dma_cyclic;
-  1190		tdma->dma_dev.device_config = tegra_adma_slave_config;
-  1191		tdma->dma_dev.device_tx_status = tegra_adma_tx_status;
-  1192		tdma->dma_dev.device_terminate_all = tegra_adma_terminate_all;
-  1193		tdma->dma_dev.device_synchronize = tegra_adma_synchronize;
-  1194		tdma->dma_dev.src_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
-  1195		tdma->dma_dev.dst_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
-  1196		tdma->dma_dev.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
-  1197		tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
-  1198		tdma->dma_dev.device_pause = tegra_adma_pause;
-  1199		tdma->dma_dev.device_resume = tegra_adma_resume;
-  1200	
-  1201		ret = dma_async_device_register(&tdma->dma_dev);
-  1202		if (ret < 0) {
-  1203			dev_err(&pdev->dev, "ADMA registration failed: %d\n", ret);
-  1204			goto rpm_put;
-  1205		}
-  1206	
-  1207		ret = of_dma_controller_register(pdev->dev.of_node,
-  1208						 tegra_dma_of_xlate, tdma);
-  1209		if (ret < 0) {
-  1210			dev_err(&pdev->dev, "ADMA OF registration failed %d\n", ret);
-  1211			goto dma_remove;
-  1212		}
-  1213	
-  1214		pm_runtime_put(&pdev->dev);
-  1215	
-  1216		dev_info(&pdev->dev, "Tegra210 ADMA driver registered %d channels\n",
-  1217			 tdma->nr_channels);
-  1218	
-  1219		return 0;
-  1220	
-  1221	dma_remove:
-  1222		dma_async_device_unregister(&tdma->dma_dev);
-  1223	rpm_put:
-  1224		pm_runtime_put_sync(&pdev->dev);
-  1225	rpm_disable:
-  1226		pm_runtime_disable(&pdev->dev);
-  1227	irq_dispose:
-  1228		while (--i >= 0)
-  1229			irq_dispose_mapping(tdma->channels[i].irq);
-  1230	
-  1231		return ret;
-  1232	}
-  1233	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
