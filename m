@@ -1,261 +1,205 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010071.outbound.protection.outlook.com [52.101.193.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF433A874A
-	for <linux-tegra@vger.kernel.org>; Thu, 19 Mar 2026 08:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773908967; cv=none; b=HZ9eqsIHhIK37qQDkZqwEzuIS2651HZSbi3sswsIbbZ2DzS7g74BWArwYdqxWC0OmpyTVAm64Aplt3JPSb+KMeYE2Nrf+hRs5tqevlXWPXM6PiDA+6suFCbsl/aaEEL+kPKfUtj40W490gXhbcQLhZEESiFDRZ6WH+tCsenBj90=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773908967; c=relaxed/simple;
-	bh=pJVhq7hxbXIQ7CKLqDq7kL2nsX95Dyjd3xsfL2oMuOE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lb34QGx0tMtWZLM5KdgKJsh2R7PNY5rLVd9XVV8/6/kr611EGLU8cfvbsV4wzJ3C+Blop+mAt6UsM+1lEfQexuEHMMHyiDLoXHkbk09hWu9BiNDl998+MBGvOJw67pA2OqswlmXDbuD6zWEVgXduQ/45mQsWX1FQ7pwnUhsBaAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=S+AgGMCS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8pcZ2dwV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=S+AgGMCS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8pcZ2dwV; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341DF35837B;
+	Thu, 19 Mar 2026 08:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773910039; cv=fail; b=KHlhDE9m8iG5/4uIpZVgxd5okkU49zRYMYrW8kIMjto/qeGsa1SYloenodV49Tgd5tOoabWU4pcA2xX/a43BIwqfDe1W2Ume98/x0ctW/vkPtjrpPNLUyhI3YaXDdvhwgUQxEaut5naBkCzfh2eXIdkqU4hlbegoxXjXjflfSlU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773910039; c=relaxed/simple;
+	bh=b3PZ3nszum98d4XZv3RZracFjYaqsUaPDmxgLw/U/i0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TVbxR7mqkB0P0RWBRfNHBIeBKr8ncpmdtDMt3SyB1cLPmAgbj5tQmNzh72UTBa4YkDjgCeFsQ9eNz+y1tRlA0Pmf41zfya0Lsa/58773mcMkvv8cttaf1cuc6GKCT9lI6jdeng4Q7bDB/Xm4izUwgwaeUmTk2iCbDO7gg2F6BzA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=owUEmC+m; arc=fail smtp.client-ip=52.101.193.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="S+AgGMCS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8pcZ2dwV";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="S+AgGMCS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8pcZ2dwV"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0919C5BD23;
-	Thu, 19 Mar 2026 08:29:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1773908962; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=uepIOdIe1KDBAdOR2nVFfKPb1oLN4//z8c2D1VPKCns=;
-	b=S+AgGMCSXeJliUMRbJImB4/IfpfwkHgvUO7xXbehPl6BSsU8qP1/tqAKtzzkZ2TDvspYYM
-	xp0lW+/DeyF2ROg5CCKt7W413Tzs9QFuTE8fEf0Qw/viAUB9yDKBheoXXyIRQx/03PkbJe
-	IB7wGLlKvhu6a/xa7SqJUfO8erhCdCg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1773908962;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=uepIOdIe1KDBAdOR2nVFfKPb1oLN4//z8c2D1VPKCns=;
-	b=8pcZ2dwVitZL8DLsqHjvhQci1vcFMh5jy1/u9c91WLJ82iDazWply9/R8OnN7C09QiHQF0
-	RYdYYThEEJTD97Cg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1773908962; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=uepIOdIe1KDBAdOR2nVFfKPb1oLN4//z8c2D1VPKCns=;
-	b=S+AgGMCSXeJliUMRbJImB4/IfpfwkHgvUO7xXbehPl6BSsU8qP1/tqAKtzzkZ2TDvspYYM
-	xp0lW+/DeyF2ROg5CCKt7W413Tzs9QFuTE8fEf0Qw/viAUB9yDKBheoXXyIRQx/03PkbJe
-	IB7wGLlKvhu6a/xa7SqJUfO8erhCdCg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1773908962;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=uepIOdIe1KDBAdOR2nVFfKPb1oLN4//z8c2D1VPKCns=;
-	b=8pcZ2dwVitZL8DLsqHjvhQci1vcFMh5jy1/u9c91WLJ82iDazWply9/R8OnN7C09QiHQF0
-	RYdYYThEEJTD97Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 030304273B;
-	Thu, 19 Mar 2026 08:29:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id JuLvOeCzu2n6dgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 19 Mar 2026 08:29:20 +0000
-Message-ID: <29c59b0f-c86c-4197-8cf5-47e4132c730b@suse.de>
-Date: Thu, 19 Mar 2026 09:29:20 +0100
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="owUEmC+m"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BbI5mi1P8XyvvcaHkLOvIjjzopJ0dQa5FfSu31FyegXqglWgpZ22Koz2+55a6x2G4yDIKYJ9XqAOP0fG7ZwSotmEA3SuCvQXjd9Y1rMKrI/KBDFct3tQjdALOIWMeD3BBDSx6m8PssAxaKuslENQmY9XR90gPc+O4neSRApCumrCp5WbLAeH0JMmoGIFXqcECs5ekdyrsWjv45wk99nuUWtsmDmwhSgdvod8SFLI4wn51YokhisR8V1uh4KNeMzwavGs5V78Ay6ZFhV3fChUd219Nx51hHOEqCwNwINhIrV1QmtVxVcv98P5o9tIQEgVfrebhUiMVrDvIILLc2H51g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hyX1PGEh5Fmb3+9LJsAql7p93k6+7CRPemknitksSsM=;
+ b=NRyU4i5a0w7Pt065QzZ4D1zD4FrVpxbgxBnvMiAI/L8hXjMguNq0X6hR/BIUQYGBpTG0wao7dB84lv9tjWuWq+0D1AWVb13b2OteNBWF18vJyktlXfkAeRsNQC55P6rCtKRNBofg0mFi1iHlJRzsBJGaurD5u7dgr0qTfPbPdWGe026oBsKa5bBpg6+JAzSUB32H/HrsCA5eAQWOuhThfq3v2eSKfNqv4lbTg61usZnGCd8jHVsObxc7IzrsnHXBuLzzqpMxdUNxKo7a8T71Waws4BSwXHKjXdH6wCgSlYdG1jbzoU77/NJGRU8vbzvFp/BJFPEz/fB7LpkuPk++QA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hyX1PGEh5Fmb3+9LJsAql7p93k6+7CRPemknitksSsM=;
+ b=owUEmC+m9cwtdq8hkRP3SpCd31R/flGUZl71y9jqlK3cEfgD2dlBczad0Sab8vbq4VRZFGmbmh17M6Ijt+0QXor3AWQy/fAjfHtvOi52CIwNdXuAsJdQ6mdW+FCff7sNRa/SyN2x4wDl/si39+YtWWgC3F8S5ymRrffNUnosf+bRfVNErb2b5u9TXm/i6q1qwnUUg8DU8kRef3rp6l2Ktfxheq+/Q9LFzE87Cksv6PKNXigKeXB50LomTxt+TlkovcWu4CQxrPYC+/NRtjGIKT0g0Xnd5fI0KKknvJYKNqOU27mb8SOMJNR2m3PFmjOKQgzIh92gpmTfx7ZpRQZ3dA==
+Received: from DS7PR03CA0182.namprd03.prod.outlook.com (2603:10b6:5:3b6::7) by
+ IA1PR12MB6556.namprd12.prod.outlook.com (2603:10b6:208:3a0::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.9; Thu, 19 Mar
+ 2026 08:47:06 +0000
+Received: from CH3PEPF00000012.namprd21.prod.outlook.com
+ (2603:10b6:5:3b6:cafe::ed) by DS7PR03CA0182.outlook.office365.com
+ (2603:10b6:5:3b6::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9700.27 via Frontend Transport; Thu,
+ 19 Mar 2026 08:47:05 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CH3PEPF00000012.mail.protection.outlook.com (10.167.244.117) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9745.0 via Frontend Transport; Thu, 19 Mar 2026 08:47:05 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 19 Mar
+ 2026 01:46:49 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 19 Mar
+ 2026 01:46:49 -0700
+Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Thu, 19 Mar 2026 01:46:42 -0700
+From: Akhil R <akhilrajeev@nvidia.com>
+To: <conor@kernel.org>
+CC: <Frank.Li@nxp.com>, <acpica-devel@lists.linux.dev>,
+	<akhilrajeev@nvidia.com>, <alexandre.belloni@bootlin.com>,
+	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>, <ebiggers@kernel.org>,
+	<fredrik.markstrom@est.tech>, <jonathanh@nvidia.com>, <krzk+dt@kernel.org>,
+	<lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-hwmon@vger.kernel.org>, <linux-i3c@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux@roeck-us.net>, <miquel.raynal@bootlin.com>, <p.zabel@pengutronix.de>,
+	<rafael@kernel.org>, <robert.moore@intel.com>, <robh@kernel.org>,
+	<smangipudi@nvidia.com>, <thierry.reding@kernel.org>
+Subject: Re: [PATCH 01/12] dt-bindings: i3c: Add mipi-i3c-static-method to support SETAASA
+Date: Thu, 19 Mar 2026 14:16:41 +0530
+Message-ID: <20260319084641.57672-1-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260318-tweed-herbicide-eb924ef056b8@spud>
+References: <20260318-tweed-herbicide-eb924ef056b8@spud>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/4] drm/atomic: Allocate drm_private_state through a
- callback
-To: Maxime Ripard <mripard@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, Harry Wentland <harry.wentland@amd.com>,
- Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <siqueira@igalia.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- amd-gfx@lists.freedesktop.org,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Mikko Perttunen <mperttunen@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Liviu Dudau <liviu.dudau@arm.com>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
- <mcanal@igalia.com>, Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Paul Cercueil <paul@crapouillou.net>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- linux-mips@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, Jessica Zhang <jesszhan0024@gmail.com>
-References: <20260224-drm-private-obj-reset-v5-0-5a72f8ec9934@kernel.org>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20260224-drm-private-obj-reset-v5-0-5a72f8ec9934@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[35];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLq3cifbxyhc6qbbynzfc6amns)];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[lists.freedesktop.org,amd.com,igalia.com,ideasonboard.com,gmail.com,nvidia.com,vger.kernel.org,oss.qualcomm.com,arm.com,intel.com,linaro.org,kernel.org,crapouillou.net,raspberrypi.com,kwiboo.se,linux.dev,poorly.run,somainline.org];
-	FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,gmail.com,ffwll.ch];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PEPF00000012:EE_|IA1PR12MB6556:EE_
+X-MS-Office365-Filtering-Correlation-Id: 60fce4d6-bff6-4ee8-82af-08de8594192e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|36860700016|82310400026|13003099007|18002099003|22082099003|56012099003;
+X-Microsoft-Antispam-Message-Info:
+	2DDDrwlVz+GzI9iq3LtH1kRgfVkRhGL9uHQOqnY7Z1mhzRspHtjryZpVov9VJiBHyi63s8mgKX0yE524MHnY5/zQim7m4dkcdgl/s1XIGmNAMXE6mMi9WrisdYg/n/y+rgQhklCSfAVhDfGnJsDjcNrlt9wKMRhA0IGmRwUcxHxUCYjVyIm0y80sPBy19hvudnQQ6JmiVLAdISwCVMgIXQsNJ25lDXndoR/2XbN/i3Bk2+wA3vDtAm6hKVm5oXadXMSOztdMkg0nA3yZ5sii2HTrlDKApORI2FEMhI656Ofcebhzr9lxkSoMWDOVkMpkYEIFKhr6q+YGBdV7ca+Ry5aGfagMW5Td0bNoJYWvOUPr96yWAneFJfQpDjm9VzCUzEGhHWn0fbjhKkFCMYmNDxLflKsq3gnjTDG4QM0yt/o1Wv9WZiUzY+8VF24/psVeraYXuX1J4f3VdNfYK8C04XJXmkHw91tHiSJuOQwHP6P7OQAQLc+9UsVZC9MdBWy///NJEumpC5VEDj6NoS1lRIQ1w+iPHAvLa6SAe1bXmDQdlUVuja/SYMTtZGkjX5mKHSZngo2ZTWUfqsSrv8KhfghqvNy4Iw8xB8EKEwu6mwhPUCGNe5zbqCdUqq/zylrDzLV0K0EGk5YXJ4P01gv5tERr2rk6B4fUj8khKvyt9bW6186qmvmiGlgFZmzUohEe7WfO0DtqUI3zsBwFxcD1p566ZHU+iKLa6h600C1318wLNKy54RtKUWBoLqUxYb8Cw3XC3Y4DU6Ykd+NGQfch9g==
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(36860700016)(82310400026)(13003099007)(18002099003)(22082099003)(56012099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	fhEVPWLuM/Uj1hXThH3kIJG3xvYqoyZOqKWkv4oUHfSyt33T/77KnNhZ7/g52nchZ6m4+1fI3GZniaKcB0y/S8HxxSQ+ANz2c75V1WOP0ZLMAP2zjBhxHvX47MBNjj8kRXBK9LXV+Z5WfoC2F04O3KyUV+JSSmwDQHhRsrfOBCdQmEyGeUaTwbKPFC7CuPHABAju01Cnr5J3vQyZclA3NgK+5SSiHdOFO3MwKcSKcPv4pJ7N1oRn4OM8TqwT/u+ZsY5zTQEEP0vBnyvTY7EATQVNjPZLWkGz27FUD2Rz3WmxFWuqsjUa65iqRjvHvQlCWr9wj6BdnRKnIechdGK71uh0tqRklzgRmlYfxiL3xJHD9pd6kH/MPEIA53SO5P8RhLBuDXRNZun0eOFTfJ3JZbaTNd4gmwsfChLedMVuVlAvBXyRy0E8OoKs0sy4xY4L
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2026 08:47:05.5733
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60fce4d6-bff6-4ee8-82af-08de8594192e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH3PEPF00000012.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6556
 
-Hi
+On Wed, 18 Mar 2026 17:31:50 +0000, Conor Dooley wrote:
+> On Wed, Mar 18, 2026 at 10:57:14PM +0530, Akhil R wrote:
+>> Add the 'mipi-i3c-static-method' property mentioned in the MIPI I3C
+>> Discovery and Configuration Specification [1] to specify which discovery
+>> method an I3C device supports during bus initialization. The property is
+>> a bitmap, where a bit value of 1 indicates support for that method, and 0
+>> indicates lack of support.
+>> Bit 0: SETDASA CCC (Direct)
+>> Bit 1: SETAASA CCC (Broadcast)
+>> Bit 2: Other CCC (vendor / standards extension)
+>> All other bits are reserved.
+>> 
+>> It is specifically needed when an I3C device requires SETAASA for the
+>> address assignment. SETDASA will be supported by default if this property
+>> is absent - which means for now the property just serves as a flag to
+>> enable SETAASA, but keep the property as a bitmap to align with the
+>> specifications.
+>> 
+>> [1] https://www.mipi.org/specifications/disco
+>> 
+>> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+>> ---
+>>  .../devicetree/bindings/i3c/i3c.yaml          | 30 ++++++++++++++++---
+>>  1 file changed, 26 insertions(+), 4 deletions(-)
+>> 
+>> diff --git a/Documentation/devicetree/bindings/i3c/i3c.yaml b/Documentation/devicetree/bindings/i3c/i3c.yaml
+>> index e25fa72fd785..1705d90d4d79 100644
+>> --- a/Documentation/devicetree/bindings/i3c/i3c.yaml
+>> +++ b/Documentation/devicetree/bindings/i3c/i3c.yaml
+>> @@ -31,10 +31,12 @@ properties:
+>>        described in the device tree, which in turn means we have to describe
+>>        I3C devices.
+>>  
+>> -      Another use case for describing an I3C device in the device tree is when
+>> -      this I3C device has a static I2C address and we want to assign it a
+>> -      specific I3C dynamic address before the DAA takes place (so that other
+>> -      devices on the bus can't take this dynamic address).
+>> +      Other use-cases for describing an I3C device in the device tree are:
+>> +      - When the I3C device has a static I2C address and we want to assign
+>> +        it a specific I3C dynamic address before the DAA takes place (so
+>> +        that other devices on the bus can't take this dynamic address).
+>> +      - When the I3C device requires SETAASA for its discovery and uses a
+>> +        pre-defined static address.
+>>  
+>>    "#size-cells":
+>>      const: 0
+>> @@ -147,6 +149,26 @@ patternProperties:
+>>            through SETDASA. If static address is not present, this address is assigned
+>>            through SETNEWDA after assigning a temporary address via ENTDAA.
+>>  
+>> +      mipi-i3c-static-method:
+>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>> +        minimum: 0x1
+>> +        maximum: 0xff
+>> +        default: 1
+>> +        description: |
+>> +          Bitmap describing which methods of Dynamic Address Assignment from a
+>> +          static address are supported by this I3C Target. A bit value of 1
+>> +          indicates support for that method, and 0 indicates lack of support.
+> 
+> I really am not keen on properties that are bitmaps, why can't we just
+> use the strings "setdasa", "setaasa" etc?
 
-Am 24.02.26 um 17:10 schrieb Maxime Ripard:
-> Hi,
->
-> This series started from my work on the hardware state readout[1], and
-> was suggested by Dmitry[2].
->
-> This series deal with the fact that drm_private_obj (and thus bridges)
-> are not initialized using the same pattern than any other object. This
-> series solves that inconsistency by aligning it to what we're doing for
-> all the other objects.
->
-> This was tested on a TI SK-AM62, with three bridges.
->
-> Let me know what you think,
-> Maxime
->
-> 1: https://lore.kernel.org/dri-devel/20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org/
-> 2: https://lore.kernel.org/dri-devel/zvqtehg66dbrrdmik6ylo2kdk74umfzo5hbfkizwsb352nlyqv@jgouvmbfwa4x/
->
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
-> Changes in v5:
-> - Rebase to drm-misc-next
-> - Link to v4: https://lore.kernel.org/r/20260128-drm-private-obj-reset-v4-0-90891fa3d3b0@redhat.com
->
-> Changes in v4:
-> - Fix a circular dependencies between modules by calling
->    __drm_atomic_helper_private_obj_create_state from
->    __drm_atomic_helper_bridge_reset instead of
->    drm_bridge_atomic_create_priv_state()
-> - Link to v3: https://lore.kernel.org/r/20260119-drm-private-obj-reset-v3-0-b931abe3a5e3@redhat.com
->
-> Changes in v3:
-> - EDITME: describe what is new in this series revision.
-> - EDITME: use bulletpoints and terse descriptions.
-> - Link to v2: https://lore.kernel.org/r/20251014-drm-private-obj-reset-v2-0-6dd60e985e9d@kernel.org
->
-> Changes in v2:
-> - Switch to a new hook instead of reset since some drm_private_objs want
->    to persist across suspends
-> - Drop the call to drm_private_obj_funcs.reset in
->    drm_mode_config_reset()
-> - Link to v1: https://lore.kernel.org/r/20251008-drm-private-obj-reset-v1-0-805ab43ae65a@kernel.org
->
-> ---
-> Maxime Ripard (4):
->        drm/amdgpu: Switch private_obj initialization to atomic_create_state
->        drm/omapdrm: Switch private_obj initialization to atomic_create_state
->        drm/tegra: Switch private_obj initialization to atomic_create_state
->        drm/atomic: Remove state argument to drm_atomic_private_obj_init
+The intention was to mirror the property described in the specification. Using
+strings would not allow to use a combination of methods when a device supports
+more than one method. It also cannot represent the vendor extensions (Bit 2)
+cleanly. Would this be better if we use macros instead of raw numbers?
+Please let me know your thoughts.
 
-Nice cleanup. For the whole series:
+> 
+>> +          Bit 0: SETDASA CCC (Direct)
+>> +          Bit 1: SETAASA CCC (Broadcast)
+>> +          Bit 2: Other CCC (vendor / standards extension)
+>> +          All other bits are reserved.
+>> +
+>> +          This property follows the MIPI I3C specification. The primary use
+>> +          of this property is to indicate support for SETAASA, i.e Bit 1, but
+>> +          will allow all values so that it is aligned with the specifications.
+>> +          SETDASA will remain as the default method even if this property is
+>> +          not present.
+>> +
+>>      required:
+>>        - reg
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-Best regards
-Thomas
-
->
->   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  | 51 ++++++++++++----------
->   .../drm/arm/display/komeda/komeda_private_obj.c    | 16 +++----
->   drivers/gpu/drm/display/drm_dp_mst_topology.c      |  1 -
->   drivers/gpu/drm/display/drm_dp_tunnel.c            |  2 +-
->   drivers/gpu/drm/drm_atomic.c                       | 22 +++-------
->   drivers/gpu/drm/drm_bridge.c                       |  1 -
->   drivers/gpu/drm/ingenic/ingenic-drm-drv.c          |  2 +-
->   drivers/gpu/drm/ingenic/ingenic-ipu.c              |  2 +-
->   drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |  1 -
->   drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c           |  1 -
->   drivers/gpu/drm/omapdrm/omap_drv.c                 | 22 +++++++---
->   drivers/gpu/drm/tegra/hub.c                        | 22 +++++++---
->   drivers/gpu/drm/vc4/vc4_kms.c                      |  4 +-
->   include/drm/drm_atomic.h                           |  1 -
->   14 files changed, 76 insertions(+), 72 deletions(-)
-> ---
-> base-commit: 196b2b95fec447c2c4460f753b277d840633fbef
-> change-id: 20251008-drm-private-obj-reset-ae1e2741027a
->
-> Best regards,
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstr. 146, 90461 Nürnberg, Germany, www.suse.com
-GF: Jochen Jaser, Andrew McDonald, Werner Knoblich, (HRB 36809, AG Nürnberg)
-
-
+Best Regards,
+Akhil
