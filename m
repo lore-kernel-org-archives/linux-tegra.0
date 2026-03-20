@@ -1,216 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A26C1A9F8D;
-	Fri, 20 Mar 2026 04:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D8734753B
+	for <linux-tegra@vger.kernel.org>; Fri, 20 Mar 2026 06:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773982155; cv=none; b=mQ0doFZWZvRlIeQarurIzQ2OFxFq+xvnoQmjFzFwT8jfwIgCqldlzFZLqJOCcGbgrh1D8h7ZBPM1cZecKcqFZ6xRynLmcTtSvO4PQFC+IwZNqpPZoJLkf2+gtNt4eMNNwEOqWjF/aLv47rAT5TcvpZdF2QSyL67hnoVGjesKRf0=
+	t=1773989126; cv=none; b=ZVvCPzdksJMaekPsi1m0D4YciE3yD2faR7c4mcge8UKQPc1BKo+Os1qO4Tiygeilu0qDKmlBDMu/IxXEcTtajrBmIx1g1CkxD31TEqVivfqqeWhk3qvJTUE4z/qCTGnbw7gk8i3rN7UEuJ311RnIi1h9r4EbcXfoxxOA1m6zhv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773982155; c=relaxed/simple;
-	bh=CkQidQJ3odYC6HpjbOxtsJSgA3FL9gymx8bc59ueXts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f6Y7cwkdGcP6rpDwGnx8n/oRJeMAFSbsLyerKkJ6/1Q0gm3GmGroyUSIWRw3wOttU2INh7TQeXGRZazZhyM56Yh6YcaQDGKJY86byP08DT8J3yPH/CMCQjSQRJIv7SnIyQD+Aw8bXtSfxFAPzTAUY2BSj6842mDK9KgBa5h2y4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D9Pp/6lM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773989126; c=relaxed/simple;
+	bh=zyiKjaWecA0IHCJ7hc/oC4qrrG+LBbEEHcW1bYT+nt4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EZ26HsKjl4Ho90wKlXkQNwNgIy4BuoA9wu6kq5FZt2FuLBca9MqsH8l8S4fdWKAVY48uE1jy6IybYjEqs/pzWE/jep8FE1LVSlFXEpeAgdivT11Cc5v+zswNp5JPFJbuAlrGXgcDDAojo+ZStawzmz4ggr/PeiKDS3zBmY2ol2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=earBRlNC; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9Pp/6lM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BB32C4CEF7;
-	Fri, 20 Mar 2026 04:49:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773982154;
-	bh=CkQidQJ3odYC6HpjbOxtsJSgA3FL9gymx8bc59ueXts=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D9Pp/6lMm/jrtq6qjNYzhelHJTJnrQL0xRL/1gkxXx8ZjoaeCloskFX0EM4zOGLKJ
-	 JSeuRDLKigLsYk5PbhzdjfTCuiJugXMLT85YM5VyRAuSTcv2GVzaqQW7cXMU22dLHD
-	 ZClvVEtgfqVe/ArKHG35FvDPeNdeSMX9vshUBVUn0JBh7gl82O0pB/oaA7fHO1kUBo
-	 e5rSKppr2wHt6ZQgk6iXdO7xkN2Ye/eAIibv6bFGL64TBKozEMO1FcA624sfp35U6B
-	 vM993usS3YVjkasT6MJz7tMs6UEDwoh7S5tiA96E+7YSZXqGimaJZCtI2JIm7s06+j
-	 yfS+rlgffLqpw==
-Date: Fri, 20 Mar 2026 04:49:11 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] gpio: shared: call gpio_chip::of_xlate() if set
-Message-ID: <abzRxyoW4svizpRY@google.com>
-References: <CAMRc=Mfg-2kjfd5RrcD748WPcUUef=aaxyk8fBtzdcbxqmxcCA@mail.gmail.com>
- <e217c9a6-e2a6-4413-8247-19b7ab72a53a@nvidia.com>
- <CAMRc=MfK_eqbWDdEQHHWgAyz-zMWyW5G=DF8eNh0o+iyt=BtOg@mail.gmail.com>
- <d05d4468-84f7-4692-8381-e0742f1f2749@nvidia.com>
- <CAMRc=McY9dcDLXPM8-QErxzAJuoe1bxy8BX5H2y0uCHXJSsAwA@mail.gmail.com>
- <CAMRc=McMCMuyB7ETefXaWJ6K=-nPcDHo964WZKtPRU9XVVky_w@mail.gmail.com>
- <6ea1e467-b0d0-4ec7-90b5-740ca2415460@nvidia.com>
- <CAMRc=McGaF2XYedgy4n_RZzbHSBBZ2=EMvBEF4f8+ejLbu+CPQ@mail.gmail.com>
- <ab009797-3b48-4568-8e80-b10a44b6fac1@nvidia.com>
- <CAMRc=MffhRN3bC0TpeNqe-8fMCeSc9wBMrDANS9mtFkipdsiUA@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="earBRlNC"
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-79860421382so13664617b3.0
+        for <linux-tegra@vger.kernel.org>; Thu, 19 Mar 2026 23:45:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773989122; x=1774593922; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=M0iPAxzcv1Xpu4OocZn/titjlzEhToR3/eHqStKc3wk=;
+        b=earBRlNC7Ox5c3BMl01dcZzIQgMDDXGvOIi67GELuHWczd6zAKVTQ9q2hVlhitHADG
+         PwE0TYMILzPwOMq5Pn6EcfQnyIzQ3djBBdeSDJd/bgtqqki6rf7JlRlTj1djZeDd75pj
+         PFxU85kSpA+RnPvmZ6HIU7FblP0qAAlOYnx3CJhnFR06Z5+Ssw0b/JiWzcz6iV/Rd88C
+         w3VpUtcs8fsAXEKaNiYO+hzWQ4iZ85RP/+gsun9iFmCFSW6pqho880ZpZPNX+glfW2mi
+         Kyh3dF9BMI9/zz2m3quTOTzCd9TpLx9sXUWIote1BHbnl6SaY6c3hi40u0hqIRQClaTF
+         32mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773989122; x=1774593922;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M0iPAxzcv1Xpu4OocZn/titjlzEhToR3/eHqStKc3wk=;
+        b=QGuhuSwVl8E01cw/yqQ9tyzXcI9OuqPy0w95DIgg4UUxvZ1Ej/Pk0CqDtE4sYge5QZ
+         6oxz4ZOnwywUPw5wMuu8ilyY3X9/qZ1222oqtPbyVK3DWBy5ABq2y02p9HJ+zPQz00QL
+         8Cmr8M6rdQTYaPXZnx1j+s3POlYzr7IwNIJa5BRJdn2LNOwABbrzGIY9/aH5R4tUVWDJ
+         vSDcx5vggPb3KmGi26SkG65sQt7Ns6BgCFPrnx+hV3wtFu7rUNrvT2s08u8JNLs80T+7
+         fOuIQmwMximLUYvBITkrW5WA98dPd85969cKOq1PUjFc2zXWSXoS/2DCpNlBCmRhhQrd
+         W7oQ==
+X-Gm-Message-State: AOJu0Yx6dziuNy6EbE9C3fVcm6NH9qfabLYfcp3SoiknjldwZL7AejX6
+	+GltGqt6C4TXoF0Zlm5Pt/uQskmY25i312zTo7N56VWfybta2I/QbAEH2l7b5HBT
+X-Gm-Gg: ATEYQzxhCx+GO9COSiOny51uJ8djgxJlHihYwyXq5W8cN711vmD+DCObYpaxm3MjSXd
+	XFGRpP6XyJLL1FvGVK3FInYw0/nq3RFdpnVjAS3gAOSot6qia0JcdB0Kx6q7xQ+pyW0ycdY3NjB
+	VAtH+1ccYO63s9YZDVSLYGrzVcJwpa+O29TRdopaEkmBPGg5I79hiez1vFFNyJfyPCYYWY9W4l1
+	WKw7ghzZ3WhROx6gGn+fvAhD0CXaQazEBtnsGxE136DM3As8oRXPAUs5N79BH42HCEzv18tnypT
+	kBgqvezdQxXiSF2op2dyCpP1GmcYMsyJfPAHbUpEHwjLXK3fKcKl8aV2ABtOoltaS75Obe04Pi+
+	4IBc0DEOYoUPtCtlqxS5EhNOP8GRl9BM5y+VIoHZZFwi9PoZR3q8IGnaLyghMNrqB3TxMzuVmqE
+	V6ZnZvGscBWAjOl3VSj+PwL3av7Nx4I5rLWLXy3idsHJVPPQM5Ikn3cuQ=
+X-Received: by 2002:a05:690c:698b:b0:798:3efa:602d with SMTP id 00721157ae682-79a90ba07e7mr20467597b3.33.1773989122400;
+        Thu, 19 Mar 2026 23:45:22 -0700 (PDT)
+Received: from ryzen ([2601:644:8000:5b5d::8bd])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-79a9057ff43sm10534187b3.39.2026.03.19.23.45.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Mar 2026 23:45:20 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-tegra@vger.kernel.org
+Cc: Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] firmware/tegra: add COMPILE_TEST
+Date: Thu, 19 Mar 2026 23:45:02 -0700
+Message-ID: <20260320064503.57620-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MffhRN3bC0TpeNqe-8fMCeSc9wBMrDANS9mtFkipdsiUA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 19, 2026 at 02:41:07AM -0700, Bartosz Golaszewski wrote:
-> On Wed, 18 Mar 2026 20:09:08 +0100, Jon Hunter <jonathanh@nvidia.com> said:
-> >
-> >>>> Does this patch fix the real problem on the tegra board that you
-> >>>> reported initially? I doubt two separate GPIO keys, share the same pin
-> >>>> in real life.
-> >>>
-> >>> Yes it fixes the initial issue. However, now I am seeing a different
-> >>> error on the actual platform that is having the issue to begin with ...
-> >>>
-> >>
-> >> This is *with* the fix?
-> >
-> > Yes.
-> >
-> >>>    ------------[ cut here ]------------
-> >>>    WARNING: kernel/rcu/srcutree.c:757 at cleanup_srcu_struct+0xc0/0x1e0, CPU#2: kworker/u49:1/114
-> >>>    Modules linked in:
-> >>>    CPU: 2 UID: 0 PID: 114 Comm: kworker/u49:1 Not tainted 6.19.0-tegra #1 PREEMPT
-> >>>    Hardware name: NVIDIA NVIDIA Jetson AGX Orin Developer Kit/Jetson, BIOS buildbrain-gcid-44496888 03/15/2026
-> >>>    Workqueue: events_unbound deferred_probe_work_func
-> >>>    pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> >>>    pc : cleanup_srcu_struct+0xc0/0x1e0
-> >>>    lr : cleanup_srcu_struct+0xb4/0x1e0
-> >>>    sp : ffff800081cbb930
-> >>>    x29: ffff800081cbb930 x28: ffffd79ff96d0c40 x27: ffff000086059000
-> >>>    x26: 00000000fffffff0 x25: ffff000086571200 x24: ffffd79ff94adb10
-> >>>    x23: ffffd79ff86400c0 x22: ffff000086059390 x21: ffffd79ff94aa040
-> >>>    x20: 0000000000000000 x19: fffffdffbf669d40 x18: 00000000ffffffff
-> >>>    x17: 0000000000000000 x16: ffffd79ff62dc8a0 x15: 0081cf5fe0409838
-> >>>    x14: 0000000000000000 x13: 0000000000000272 x12: 0000000000000000
-> >>>    x11: 00000000000000c0 x10: f7c5d06d757a4b3a x9 : 15ccf89dfeffb5e1
-> >>>    x8 : ffff800081cbb8c8 x7 : 0000000000000000 x6 : 000000000151e960
-> >>>    x5 : 0800000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-> >>>    x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000004
-> >>>    Call trace:
-> >>>     cleanup_srcu_struct+0xc0/0x1e0 (P)
-> >>>     gpiochip_add_data_with_key+0x3dc/0xf68
-> >>>     devm_gpiochip_add_data_with_key+0x30/0x84
-> >>>     tegra186_gpio_probe+0x5e4/0x808
-> >>>     platform_probe+0x5c/0xb0
-> >>>     really_probe+0xbc/0x2b4
-> >>>     __driver_probe_device+0x78/0x134
-> >>>     driver_probe_device+0x3c/0x164
-> >>>     __device_attach_driver+0xc8/0x15c
-> >>>     bus_for_each_drv+0x88/0x100
-> >>>     __device_attach+0xa0/0x198
-> >>>     device_initial_probe+0x58/0x5c
-> >>>     bus_probe_device+0x38/0xbc
-> >>>     deferred_probe_work_func+0x88/0xc8
-> >>>     process_one_work+0x16c/0x3fc
-> >>>     worker_thread+0x2d8/0x3ec
-> >>>     kthread+0x144/0x22c
-> >>>     ret_from_fork+0x10/0x20
-> >>>    ---[ end trace 0000000000000000 ]---
-> >
-> > It seems that when the gpiochip_add_data_with_key(), then to avoid the
-> > above warning I needed to ...
-> >
-> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> > index 27ea5bc9ed8a..3130acfeeb66 100644
-> > --- a/drivers/gpio/gpiolib.c
-> > +++ b/drivers/gpio/gpiolib.c
-> > @@ -1277,6 +1277,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
-> >                  goto err_print_message;
-> >          }
+For this driver specifically, there's no arch specific stuff needed.
 
-The context '}' here suggests that commit 16fdabe143fc ("gpio: Fix resource
-leaks on errors in gpiochip_add_data_with_key()") might not be applied in
-your code base.  After applying that commit, this code should look like:
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ drivers/firmware/tegra/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-    err_put_device:
-        gpio_device_put(gdev);
-        goto err_print_message;
+diff --git a/drivers/firmware/tegra/Kconfig b/drivers/firmware/tegra/Kconfig
+index 91f2320c0d0f..ae21f460807d 100644
+--- a/drivers/firmware/tegra/Kconfig
++++ b/drivers/firmware/tegra/Kconfig
+@@ -3,7 +3,7 @@ menu "Tegra firmware driver"
+ 
+ config TEGRA_IVC
+ 	bool "Tegra IVC protocol" if COMPILE_TEST
+-	depends on ARCH_TEGRA
++	depends on ARCH_TEGRA || COMPILE_TEST
+ 	help
+ 	  IVC (Inter-VM Communication) protocol is part of the IPC
+ 	  (Inter Processor Communication) framework on Tegra. It maintains the
+@@ -13,7 +13,7 @@ config TEGRA_IVC
+ 
+ config TEGRA_BPMP
+ 	bool "Tegra BPMP driver"
+-	depends on ARCH_TEGRA && TEGRA_HSP_MBOX
++	depends on (ARCH_TEGRA && TEGRA_HSP_MBOX) || COMPILE_TEST
+ 	depends on !CPU_BIG_ENDIAN
+ 	select TEGRA_IVC
+ 	help
+-- 
+2.53.0
 
-    err_cleanup_desc_srcu:
-        cleanup_srcu_struct(&gdev->desc_srcu);
-
-I'll use v6.19 (i.e., without the commit) for the following examples.
-
-> >   err_cleanup_desc_srcu:
-> > +       synchronize_srcu(&gdev->desc_srcu);
-> >          cleanup_srcu_struct(&gdev->desc_srcu);
-> >   err_cleanup_gdev_srcu:
-> >          cleanup_srcu_struct(&gdev->srcu);
-> >
-> 
-> Hi Tzung-Bi, allow me to Cc you. It looks like someone takes the SRCU lock
-> during the call to gpiochip_add_data_with_key() and this is why the cleanup
-> path complains. Does it make sense to add this synchronize_srcu() call here?
-
-No, I think this is very unusual: `gdev` is still initializing in
-gpiochip_add_data_with_key(), but someone else already starts to access
-members of `gdev`.
-
-> 
-> >
-> >>>    gpiochip_add_data_with_key: GPIOs 512..675 (tegra234-gpio) failed to register, -16
-> >>>    tegra186-gpio 2200000.gpio: probe with driver tegra186-gpio failed with error -16
-
-Along with the above patch, the -16 (-EBUSY) should be from
-gpiodev_add_to_list_unlocked()[1].
-
-    scoped_guard(mutex, &gpio_devices_lock) {
-        ...
-
-        ret = gpiodev_add_to_list_unlocked(gdev);
-        if (ret) {
-            gpiochip_err(gc, "GPIO integer space overlap, cannot add chip\n");
-            goto err_cleanup_desc_srcu;
-        }
-    }
-
-[1] https://elixir.bootlin.com/linux/v6.19/source/drivers/gpio/gpiolib.c#L1151
-
-My understanding is that within this function, there appear to be no other
-users of `gdev->desc_srcu` between the calls to init_srcu_struct() and
-gpiodev_add_to_list_unlocked().
-
-At the point gpiodev_add_to_list_unlocked() is called, `gc->gpiodev` and
-`gdev->descs` have also been set.
-
-Jon: My main concern is about potential races from other threads.  Is it
-possible that another thread could start accessing struct gpio_desc elements
-(e.g., via gpiochip_request_own_desc() and desc_set_label()) before
-gpiochip_add_data_with_key() has fully completed the initialization of `gdev`?
-
-> >
-> > Which leaves the above.
-> >
-> >> There's a change to how gpiochip_add_data_with_key() error path works in
-> >> linux-next at the moment but it's not in any stable branch yet.
-> >>
-> >
-> > This commit?
-> >
-> > 16fdabe143fc ("gpio: Fix resource leaks on errors in gpiochip_add_data_with_key()")
-> >
-> 
-> Yes, I Cc'ed the author above.
-> 
-> >
-> >> -EBUSY can typically only happen if gpiod_request_commit() is called twice on
-> >> the same descriptor. Is that the case here?
-> >
-> > I have been looking at this today and now I can see that we have a
-> > 'gpio-hog' set for the same pins that are shared and hence it is
-> > getting request twice. If I drop the hog it goes away. This is a
-> > produce device-tree, not upstream, for some camera modules so I am
-> > wondering if we are doing something here we should not be. I am
-> > taking a closer look.
-> >
-> 
-> Ah, yes that definitely will not work. Hogs are taken first during the chip's
-> bringup and hogged lines will not be available to users. The error returned is
-> -EBUSY so it makes perfect sense and is expected.
-> 
-> Bart
