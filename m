@@ -1,45 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF84324707;
-	Fri, 20 Mar 2026 09:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603FC35F60C;
+	Fri, 20 Mar 2026 09:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773999245; cv=none; b=lJkzFHQBbhSDq01lDXnXjKiSllYo8HCG+5P+ii7Bf2KQMcaN/uQ85D8Mpt+lkmjebmOqPGoEFe+VrWw67pT+9k0gmolMJGX/S7goi4tZNrCoZevwLGlV7n7iSZIoArfOJ1knhTz051NJYyxrIgAw39mbUoRRLLPRIkMXljGL8n0=
+	t=1773999595; cv=none; b=nltwG/lJhj+DFPYj5eNzJGWW7hhpbLsP0NctxtREwPp2J6LinKQfWxlYCTBnAzBcGOHxK7GCYd9lBvEPprhsfuOc8e7Hi5vJYShNhQSRdYHGr6b04FPZMZx725j2tKgGZz/lzZLnI/xCypntIafcW5wP2PLscOwSOanJaQU0izs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773999245; c=relaxed/simple;
-	bh=ZqkdnmTr1RZKGIn9zMFMXeAOkaFBOBOUV0NLFYqppZ8=;
+	s=arc-20240116; t=1773999595; c=relaxed/simple;
+	bh=i+pP4V+ABRrU7y+KipWHLhEUf1H6LxI4Ze7TYBfD/lI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gMl9fPYb/kErDM9N2M8+iM9OiMFLar0m4ymvs6+RUPjMqT76IqIDx3V8GmzL34AYAV9OvoU1eBxhKG2Bn0OMSBgBDTzKJtGtiQs3qqrpUBCIV14NC3wh6x1SyEPIJmPTsKFByoUDeXJJL3T7BMl4riKobAfgLTLDK31LSR4PXF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tkjECuPH; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qu5tnHkKYvFq1rwVRy8PESZXVAQIZ4g1z/KNghpTcTeY22ekSnNa+eLwyGE2+Ro82OPr4lIJQ79oInXfllcSPmS7DvlXmrNt70SX9sZ1FfbpRnhdbMJDsmyi18Y1vDlMosNpxWGgtI/5m7EJOCkIpC7iFmJIAU8xAsBuCMTxex4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=stetC2bp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tkjECuPH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD606C4CEF7;
-	Fri, 20 Mar 2026 09:34:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="stetC2bp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 852BCC4CEF7;
+	Fri, 20 Mar 2026 09:39:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773999244;
-	bh=ZqkdnmTr1RZKGIn9zMFMXeAOkaFBOBOUV0NLFYqppZ8=;
+	s=k20201202; t=1773999595;
+	bh=i+pP4V+ABRrU7y+KipWHLhEUf1H6LxI4Ze7TYBfD/lI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tkjECuPHSOpDPaarB14JUOSxmgPZ8aX3os78DzPr0Uva4fDvHhYYP0NIJhJsDk7RQ
-	 7msxtgW216AoTLDQ8JJ02j2HPNzeVBhjAtUsThrF/gYwrAQ255jozPVUHcXdUt9RxE
-	 ax0a9HpwNfvVAH4ALHU3BhUKc/CNX05YBGu3RSOLFVPKMnJ8uTDegmfOibOWDvko73
-	 r8EuqwYYwvsVE9o5lZ33MY0NvC3wP+eC0z7Yq3ykAe3efujQy8RP/XJvUKs1Df3eo7
-	 HTZ6uGHtyqTxJr27oQjdyU9Wf7jVSK1IjGdxw9oOagDdK1bpm6kTgtkcaIWVBU65wV
-	 pzQI1JAUu3FMA==
-Date: Fri, 20 Mar 2026 10:34:01 +0100
+	b=stetC2bpfEX8FvAm4oFQOc4VRxBmexeeFL8Ie45Tt4g9Vp4efZkF87YFB4x2k/5o5
+	 3CdD8EjOBim1rw1aZWJsp8n7kyYeOGTNj9U5XAnoISaPaxkd3WVjdX1boKf6qMIzJj
+	 GoVn9kYZOybFKPPDvEd0pF3cBu4wGm8WMp2PGwG9eEKbMhQT7TJrCB/1Hm3apSyp0b
+	 W2vBTYxaFg6u7ebj3r2g1lNFlUgvK3bssbNXZLdXsUUDU5uc4Mf8OQp8IOLiE6VwoS
+	 tiL+bP+14uaPKD0kRiOwhRGSscI4YamZDeq254EEmh/xp21cIKEP4PIzUUXjLJzxlR
+	 vx9qewFftGPxA==
+Date: Fri, 20 Mar 2026 10:39:52 +0100
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rob Herring <robh@kernel.org>
 Cc: Bjorn Helgaas <bhelgaas@google.com>, 
 	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jon Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/5] soc/tegra: Update BPMP ABI header
-Message-ID: <ab0T_0Pyio2SYrzq@orome>
+	Manivannan Sadhasivam <mani@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 3/5] dt-bindings: pci: Document the NVIDIA Tegra264 PCIe
+ controller
+Message-ID: <ab0U5bfZ2hwp-GST@orome>
 References: <20260319160110.2131954-1-thierry.reding@kernel.org>
- <20260319160110.2131954-2-thierry.reding@kernel.org>
- <435095b4-ce29-4c8a-9f63-300ff94e419a@kernel.org>
+ <20260319160110.2131954-4-thierry.reding@kernel.org>
+ <CAL_Jsq+smyMYE_oexRc9wEJgMxdUxSwg7p8Bex8q6J6PrwZZ+Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -47,70 +47,177 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7kxa3sapo22qfnnf"
+	protocol="application/pgp-signature"; boundary="xadlc4yvs4q6exe6"
 Content-Disposition: inline
-In-Reply-To: <435095b4-ce29-4c8a-9f63-300ff94e419a@kernel.org>
+In-Reply-To: <CAL_Jsq+smyMYE_oexRc9wEJgMxdUxSwg7p8Bex8q6J6PrwZZ+Q@mail.gmail.com>
 
 
---7kxa3sapo22qfnnf
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+--xadlc4yvs4q6exe6
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/5] soc/tegra: Update BPMP ABI header
+Subject: Re: [PATCH 3/5] dt-bindings: pci: Document the NVIDIA Tegra264 PCIe
+ controller
 MIME-Version: 1.0
 
-On Thu, Mar 19, 2026 at 05:15:56PM +0100, Krzysztof Kozlowski wrote:
-> On 19/03/2026 17:01, Thierry Reding wrote:
+On Thu, Mar 19, 2026 at 04:26:31PM -0500, Rob Herring wrote:
+> On Thu, Mar 19, 2026 at 11:01=E2=80=AFAM Thierry Reding
+> <thierry.reding@kernel.org> wrote:
+> >
 > > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > This update primarily adds various new commands and MRQs for Tegra264,
-> > but also contains a few new annotations and fixes.
-> >=20
+> >
+> > The six PCIe controllers found on Tegra264 are of two types: one is used
+> > for the internal GPU and therefore is not connected to a UPHY and the
+> > remaining five controllers are typically routed to a PCI slot and have
+> > additional controls for the physical link.
+> >
+> > While these controllers can be switched into endpoint mode, this binding
+> > describes the root complex mode only.
+> >
 > > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > > ---
-> >  include/soc/tegra/bpmp-abi.h | 4565 +++++++++++++++++++++++++++-------
-> >  1 file changed, 3671 insertions(+), 894 deletions(-)
-> >=20
-> > diff --git a/include/soc/tegra/bpmp-abi.h b/include/soc/tegra/bpmp-abi.h
-> > index 39bb3f87e28d..6cf6442395f1 100644
-> > --- a/include/soc/tegra/bpmp-abi.h
-> > +++ b/include/soc/tegra/bpmp-abi.h
-> > @@ -1,6 +1,6 @@
-> > -/* SPDX-License-Identifier: GPL-2.0-only */
-> > +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-> >  /*
-> > - * Copyright (c) 2014-2022, NVIDIA CORPORATION.  All rights reserved.
-> > + * SPDX-FileCopyrightText: Copyright (c) 2014-2025, NVIDIA CORPORATION=
-=2E  All rights reserved.
+> >  .../bindings/pci/nvidia,tegra264-pcie.yaml    | 92 +++++++++++++++++++
+> >  1 file changed, 92 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra2=
+64-pcie.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra264-pcie=
+=2Eyaml b/Documentation/devicetree/bindings/pci/nvidia,tegra264-pcie.yaml
+> > new file mode 100644
+> > index 000000000000..56d69de2788b
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra264-pcie.yaml
+> > @@ -0,0 +1,92 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/pci/nvidia,tegra264-pcie.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: NVIDIA Tegra264 PCIe controller
+> > +
+> > +maintainers:
+> > +  - Thierry Reding <thierry.reding@gmail.com>
+> > +  - Jon Hunter <jonathanh@nvidia.com>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: nvidia,tegra264-pcie
+> > +
+> > +  reg:
+> > +    minItems: 4
+> > +    maxItems: 5
+> > +
+> > +  reg-names:
+> > +    minItems: 4
+> > +    maxItems: 5
+> > +
+> > +  interrupts:
+> > +    minItems: 1
+> > +    maxItems: 4
+> > +
+> > +  dma-coherent: true
+> > +
+> > +  nvidia,bpmp:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> > +    description: |
+> > +      Must contain a pair of phandle (to the BPMP controller node) and
+> > +      controller ID. The following are the controller IDs for each con=
+troller:
+> > +
+> > +      0: C0
+> > +      1: C1
+> > +      2: C2
+> > +      3: C3
+> > +      4: C4
+> > +      5: C5
+> > +    items:
+> > +      - items:
+> > +          - description: phandle to the BPMP controller node
+> > +          - description: PCIe controller ID
+> > +            maximum: 5
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +required:
+> > +  - interrupt-map
+> > +  - interrupt-map-mask
+> > +  - iommu-map
+> > +  - msi-map
+> > +  - nvidia,bpmp
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/pci/pci-host-bridge.yaml#
+> > +  - oneOf:
+> > +    - description: C0 controller (no UPHY)
+> > +      properties:
+> > +        reg:
+> > +          items:
+> > +            - description: application layer registers
+> > +            - description: transaction layer registers
+> > +            - description: privileged transaction layer registers
+> > +            - description: ECAM-compatible configuration space
+> > +
+> > +        reg-names:
+> > +          items:
+> > +            - const: xal
+> > +            - const: xtl
+> > +            - const: xtl-pri
+> > +            - const: ecam
+> > +
+> > +    - description: C1-C5 controllers (with UPHY)
+> > +      properties:
+> > +        reg:
+> > +          items:
+> > +            - description: application layer registers
+> > +            - description: transaction layer registers
+> > +            - description: privileged transaction layer registers
+> > +            - description: data link/physical layer registers
+> > +            - description: ECAM-compatible configuration space
+> > +
+> > +      items:
+> > +        - const: xal
+> > +        - const: xtl
+> > +        - const: xtl-pri
+> > +        - const: xpl
 >=20
-> You just replaced correct syntax with discouraged (as in not welcomed
-> upstream) SPDX tag.
+> Put this entry last since it is the optional one. Then you can move
+> all of this to the top-level and get rid of the duplication.
 
-Fair enough, I'm dropping the tag. I didn't know it was actively
-discouraged and I don't see this documented anywhere. I suppose I should
-go and drop similar tags from various other sources. Looks like we've
-been introducing this recently for Tegra.
+I understand this concern and was actually on the fence about this
+myself. The reason why I ultimately went with this variant is for two
+reasons:
+
+  1. XPL does not exist for controller 0, the variant above makes that
+     very explicit. It explicitly documents that controller 0 is used
+     for internal purposes and cannot be connected to an external port
+     like the other five controllers.
+
+  2. The ECAM region is part of a memory region specifically reserved
+     for configuration space, whereas all of the other regions are
+     from the controller's MMIO region. I find the DT hard to read if
+     the two are interleaved.
 
 Thierry
 
---7kxa3sapo22qfnnf
+--xadlc4yvs4q6exe6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmm9FIUACgkQ3SOs138+
-s6EYsA//SNNKlRe3t3SUPX3spNqirFTfAQhpfnmouSK5Aw36bpy3uwHdQn6nuuPB
-20T7Q7bM32A3yvXhg+r+3T+oN/cxlNR8k0sge1KJJzF0SQ5+nMcseeqTa/6K8a0a
-y20jWBXRYOb88BmdK4prkqwIk6s9hgiiBrTvqZ4ULuOsplWH0BfiqNvLCZ8aTWZL
-uqiqGNGaPN2b0G/g4HOsB898aC6LOwvTwKKDgxYLsHCxUlGzdHKgbGODEC3XBguu
-/qHx0Ca33yT0CZa+s2pJUzc4lEOi0jIMZ482ioGuPrRFJ3+SA67dUyPxyzAK+wz9
-7WlD0psL8gHmMrjAa+PXFnR/xy5AfbFJG3e/eD+jQnliQDgGbakI0OkctcGIryAq
-vqjASYw6r7krihG3m0nT+Wc8e4pe/0/HiHVIBibaNZdYJ7wiRts6gHOp1HuapH+z
-S/JHbf6O7s1hh37c9+7vzKQ5wDJhVlS/QEvDrlBGfNpVkEDFrVZbAbZCH+cVdi8E
-Z9rMCI7BT/f5JINh2aQkNHHELUfmq8BVfVSYc6UB6Ttk/IIOAW6s5VCJ0LRPWnzp
-p/oypDG0ZFeCCFDUZfKWqf3fVei9YaUtOaSPrE2R9A+DVbPwMThNu5SvsPRm3BiJ
-FEMTJ/2m5kmWquwGni5fnsNdZ5CZiRYIKsRDwScH1dLqDv5Pv+A=
-=SVZO
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmm9FegACgkQ3SOs138+
+s6EIWQ//ckQncs/jfQ2lie639+yWQaYKqj+f3mfXRhxT8cmiO+3YU6I/9F1Sjxwu
+w29ijDgXiM3/DdkEXbzS0mtdBMwh1V4Zl2sDsgFD+6heyw5mFCmh2wGo2E9WWxyN
+4OTcuA+30wWJZvmh49BDnvcDnvDw7v4ENaaU4dyvePj/Vj8X4ekGslv1Ihv9Ao8y
+NG/KGJ6nsDwhIpHwsOoL88ADKrltkSsqTgxhunnqKVu+v7bGzXRIlX2+uXteRvGx
+QYU9cHLa8h589ZDZUHgylJt3Eqnew8G6tLVBvc4jMni2OdorzQQ7zyMtQRLQSvaY
+NQIzfdwuK7l/+vO5DboxCvffkWP4wHI2EDFBMHK8q2zSh+Q44Gts4sG53ITXQVlS
+l0OEZmguQ4RQDeytMv2EdkGmJYICW5qE/1CunjIQU3zBqxOMstY1sm1CdZkkx8sS
+/dF+4JF9i9ETWl3UC5T3VpWfWAfI7ADTZEU318bREXTDtpkPwHdodlSWBZFq22gK
+wmy+hjD7wG/I9fy1yJL+DhxSJBgFiDEwswvMe4pbGR34xkQjJQFcMGlSBg2YYO/N
+r1nJaa0G58QMN+MGtfA62q3u0yugRfHjtTF2gy2iwJXBELawhgGPJzzEhRwNGSBI
+I6RHRcxjnD9NkjSsPM0DTHJmoOaeclfetpFCgS0QUohaC6rGQQA=
+=2I0I
 -----END PGP SIGNATURE-----
 
---7kxa3sapo22qfnnf--
+--xadlc4yvs4q6exe6--
