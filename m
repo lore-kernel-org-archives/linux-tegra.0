@@ -1,227 +1,105 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94003CBE98
-	for <linux-tegra@vger.kernel.org>; Fri, 20 Mar 2026 15:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45738374196;
+	Fri, 20 Mar 2026 22:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774022327; cv=none; b=VYKS3X/7tllbfvmV8NKhlcvIWjLv8MLZGkr7KMwkmca6sv5AFM8JMhmXfheESCHiQUgv7iwHRJHRAXXnHmya8SQrPacn6llzdKqulyfAXSaNHpqad8NyxsYjixsusMorCjCoYcOPe//5hMkNOLcRe7WZMDnaR67xmrXr0b24mLw=
+	t=1774047286; cv=none; b=ooelPMSdIivi7VFci/Fci+MgETkeybctO1VaP25Dig2/LRZEIOLZACNW2MTYB368EbEGnXL/f4ui5PDv/vLDNdAXrHIIbnoZuKEqN/9hMOUV9+vJfvvrD71aWjt9usVrRvthU7b2GK+n5qSkHJguJBRq3y01kG4deIzk0ovomFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774022327; c=relaxed/simple;
-	bh=aiSd5OVBVjs+5Lqgol+Wge7MnZFB8HU1UxEFicnTJsA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fsc75D3WOCEdLM9yjwq01lN/ZFnBxAuLVUnm3R5f+Ov8SOfYkZxLx7YiNgodS/XI1wGzlHBsdCSPL5MCFQVoMKG0E6agEA2BcvBEXa2kXJ1a/6UuEhS1rN5YMGkaxRevLEqIqnmhGMzdhrowKz4VNkRyBes4lMvbAGG1FcqzhaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sJiwwkWq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774047286; c=relaxed/simple;
+	bh=QmJaBBqEI/ws3NCw6GsBHeDkkWX91BDQIZPgv6eHKqM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GLmmu4A8LyglACL9dHLRbrEsIVv9vBTUvs4JsltsTOcq7bdPmUiyYn3HqCfLv9impnlNbSUepQD1+XgR4TQjj+RJmWpS7x41j5a6Vq9atSjm4xMQf6QxbxjATb042d71syRcB1fTCsenb/UYFyzQxN4r13+5WD0A0yO+teHLxb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A55K8PHH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sJiwwkWq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82049C2BCB5
-	for <linux-tegra@vger.kernel.org>; Fri, 20 Mar 2026 15:58:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A55K8PHH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CF7DC4CEF7;
+	Fri, 20 Mar 2026 22:54:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774022327;
-	bh=aiSd5OVBVjs+5Lqgol+Wge7MnZFB8HU1UxEFicnTJsA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sJiwwkWqsGD9uI3P7tI08I1OFNcFBuZrkZq/6h0a5aQZ/JJotn4uYeEC9maFNwo6H
-	 LpoacLh7JeCIuplmpZJg09lODgjvLhPSg/GovK3jOPsRVOdMjKL4tEzwU6+mE2HRba
-	 ion9X+xu3H/tf/M+hO9cVrPRwyHJtlaGRGKVYbYhMgw8NK/6Ny15jIDEo8/Xt5O/LH
-	 hBX9uh1Ol5v4g3yMrxu+aHxh6OsZwGvYGzPc6N6PXWoQ4HRz7UVwPFjY/73d+2KDEU
-	 8/E2W3YQoAIviNyd1QA+8kqePAJUekZGB6t3OvMNLAUzJYa7IgdnuajH6Tidmmk1wf
-	 X67JWILRtMz0g==
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-66132b22182so3158424a12.2
-        for <linux-tegra@vger.kernel.org>; Fri, 20 Mar 2026 08:58:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVQ0XcJB9n6SlUsJu6kVMEb4Qqxm6BYIoNlGkJfLwq8yg9DjFUQD82+u4z/pUm4NxpzYek9TUico3hRqw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjDRLQU/99NRwyrSw2Gvn3bKHFrY3FpyKpQVSyuZMlZM5YL6qx
-	m1N2rt/by9B/FnqVjyLO7n7Hn6oRy6iY3tWlWRoRrOeNYt9x6AWXWhtrA6PSyZc97E7pe01aErx
-	Fu7tj9PyEu51aWx9WnjECIw2A5ohP4w==
-X-Received: by 2002:a05:6402:50cf:b0:668:6e22:3e10 with SMTP id
- 4fb4d7f45d1cf-668c84f299fmr3104507a12.0.1774022325958; Fri, 20 Mar 2026
- 08:58:45 -0700 (PDT)
+	s=k20201202; t=1774047286;
+	bh=QmJaBBqEI/ws3NCw6GsBHeDkkWX91BDQIZPgv6eHKqM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=A55K8PHHzpPPkvUQpl9BXLTMpAbi+5zXaFlFU9lz4wC1lw3bsVdsYgxKLj2TKRRFC
+	 kW1STELQwxfwlZWDNMuoPjJQKqxinWWTG5k6XZVZ6i9dQlSK8dwInynU1dczdTLG9f
+	 zzrzOQapthdG67jFnt1ricW8ihLm/13aQcaYceiXR00PBTqCN8UAWjPU6uc8d/r+9O
+	 EfEeDlyjuD9Uxnq4RC1Za5nJNeCTiYo365jtnozsBGdJfP1o0zIIfcHKsgg2y7cUFa
+	 wxeShwjlHVJpJjNR0IgHVAIFJ7hZLT6E7KW59INzaW4X9YhpiePvllz3/uawwCeZj9
+	 Zv4Sf9qwx8v7g==
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Thierry Reding <thierry.reding@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH v2 0/5] PCI: tegra: Add Tegra264 support
+Date: Fri, 20 Mar 2026 23:54:32 +0100
+Message-ID: <20260320225443.2571920-1-thierry.reding@kernel.org>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260319160110.2131954-1-thierry.reding@kernel.org>
- <20260319160110.2131954-4-thierry.reding@kernel.org> <CAL_Jsq+smyMYE_oexRc9wEJgMxdUxSwg7p8Bex8q6J6PrwZZ+Q@mail.gmail.com>
- <ab0U5bfZ2hwp-GST@orome> <CAL_JsqJuoOiBGKW=H=u9AQ=XgY+-iXS+UP7iEw5z6p57Yk_AVw@mail.gmail.com>
- <ab1Ik3HbOQsDsG-K@orome>
-In-Reply-To: <ab1Ik3HbOQsDsG-K@orome>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 20 Mar 2026 10:58:34 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLWLCyV0j5pe_EtH-393zL2Bqrz-xFBydm7pECi_8iN0A@mail.gmail.com>
-X-Gm-Features: AaiRm538DnCHUjf50GK5tgq6RwltBjLP6uKu6msBMEA6dCdN5XqSvWmjN2Y_lR8
-Message-ID: <CAL_JsqLWLCyV0j5pe_EtH-393zL2Bqrz-xFBydm7pECi_8iN0A@mail.gmail.com>
-Subject: Re: [PATCH 3/5] dt-bindings: pci: Document the NVIDIA Tegra264 PCIe controller
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jon Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 20, 2026 at 8:48=E2=80=AFAM Thierry Reding
-<thierry.reding@kernel.org> wrote:
->
-> On Fri, Mar 20, 2026 at 08:06:26AM -0500, Rob Herring wrote:
-> > On Fri, Mar 20, 2026 at 4:39=E2=80=AFAM Thierry Reding
-> > <thierry.reding@kernel.org> wrote:
-> > >
-> > > On Thu, Mar 19, 2026 at 04:26:31PM -0500, Rob Herring wrote:
-> > > > On Thu, Mar 19, 2026 at 11:01=E2=80=AFAM Thierry Reding
-> > > > <thierry.reding@kernel.org> wrote:
-> > > > >
-> > > > > From: Thierry Reding <treding@nvidia.com>
-> > > > >
-> > > > > The six PCIe controllers found on Tegra264 are of two types: one =
-is used
-> > > > > for the internal GPU and therefore is not connected to a UPHY and=
- the
-> > > > > remaining five controllers are typically routed to a PCI slot and=
- have
-> > > > > additional controls for the physical link.
-> > > > >
-> > > > > While these controllers can be switched into endpoint mode, this =
-binding
-> > > > > describes the root complex mode only.
-> > > > >
-> > > > > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > > > > ---
-> > > > >  .../bindings/pci/nvidia,tegra264-pcie.yaml    | 92 +++++++++++++=
-++++++
-> > > > >  1 file changed, 92 insertions(+)
-> > > > >  create mode 100644 Documentation/devicetree/bindings/pci/nvidia,=
-tegra264-pcie.yaml
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra26=
-4-pcie.yaml b/Documentation/devicetree/bindings/pci/nvidia,tegra264-pcie.ya=
-ml
-> > > > > new file mode 100644
-> > > > > index 000000000000..56d69de2788b
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra264-pcie.=
-yaml
-> > > > > @@ -0,0 +1,92 @@
-> > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > > +%YAML 1.2
-> > > > > +---
-> > > > > +$id: http://devicetree.org/schemas/pci/nvidia,tegra264-pcie.yaml=
-#
-> > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > > +
-> > > > > +title: NVIDIA Tegra264 PCIe controller
-> > > > > +
-> > > > > +maintainers:
-> > > > > +  - Thierry Reding <thierry.reding@gmail.com>
-> > > > > +  - Jon Hunter <jonathanh@nvidia.com>
-> > > > > +
-> > > > > +properties:
-> > > > > +  compatible:
-> > > > > +    const: nvidia,tegra264-pcie
-> > > > > +
-> > > > > +  reg:
-> > > > > +    minItems: 4
-> > > > > +    maxItems: 5
-> > > > > +
-> > > > > +  reg-names:
-> > > > > +    minItems: 4
-> > > > > +    maxItems: 5
-> > > > > +
-> > > > > +  interrupts:
-> > > > > +    minItems: 1
-> > > > > +    maxItems: 4
-> > > > > +
-> > > > > +  dma-coherent: true
-> > > > > +
-> > > > > +  nvidia,bpmp:
-> > > > > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> > > > > +    description: |
-> > > > > +      Must contain a pair of phandle (to the BPMP controller nod=
-e) and
-> > > > > +      controller ID. The following are the controller IDs for ea=
-ch controller:
-> > > > > +
-> > > > > +      0: C0
-> > > > > +      1: C1
-> > > > > +      2: C2
-> > > > > +      3: C3
-> > > > > +      4: C4
-> > > > > +      5: C5
-> > > > > +    items:
-> > > > > +      - items:
-> > > > > +          - description: phandle to the BPMP controller node
-> > > > > +          - description: PCIe controller ID
-> > > > > +            maximum: 5
-> > > > > +
-> > > > > +unevaluatedProperties: false
-> > > > > +
-> > > > > +required:
-> > > > > +  - interrupt-map
-> > > > > +  - interrupt-map-mask
-> > > > > +  - iommu-map
-> > > > > +  - msi-map
-> > > > > +  - nvidia,bpmp
-> > > > > +
-> > > > > +allOf:
-> > > > > +  - $ref: /schemas/pci/pci-host-bridge.yaml#
-> > > > > +  - oneOf:
-> > > > > +    - description: C0 controller (no UPHY)
-> > > > > +      properties:
-> > > > > +        reg:
-> > > > > +          items:
-> > > > > +            - description: application layer registers
-> > > > > +            - description: transaction layer registers
-> > > > > +            - description: privileged transaction layer register=
-s
-> > > > > +            - description: ECAM-compatible configuration space
-> > > > > +
-> > > > > +        reg-names:
-> > > > > +          items:
-> > > > > +            - const: xal
-> > > > > +            - const: xtl
-> > > > > +            - const: xtl-pri
-> > > > > +            - const: ecam
-> > > > > +
-> > > > > +    - description: C1-C5 controllers (with UPHY)
-> > > > > +      properties:
-> > > > > +        reg:
-> > > > > +          items:
-> > > > > +            - description: application layer registers
-> > > > > +            - description: transaction layer registers
-> > > > > +            - description: privileged transaction layer register=
-s
-> > > > > +            - description: data link/physical layer registers
-> > > > > +            - description: ECAM-compatible configuration space
-> > > > > +
-> > > > > +      items:
-> > > > > +        - const: xal
-> > > > > +        - const: xtl
-> > > > > +        - const: xtl-pri
-> > > > > +        - const: xpl
-> > > >
-> > > > Put this entry last since it is the optional one. Then you can move
-> > > > all of this to the top-level and get rid of the duplication.
-> > >
-> > > I understand this concern and was actually on the fence about this
-> > > myself. The reason why I ultimately went with this variant is for two
-> > > reasons:
-> > >
-> > >   1. XPL does not exist for controller 0, the variant above makes tha=
-t
-> > >      very explicit. It explicitly documents that controller 0 is used
-> > >      for internal purposes and cannot be connected to an external por=
-t
-> > >      like the other five controllers.
-> >
-> > That doesn't really matter to the schema because it can never check
-> > that unless you have 2 different compatibles (and you shouldn't).
->
-> I know that, the documentation would be more for developers/users rather
-> than the validation tools.
+From: Thierry Reding <treding@nvidia.com>
 
-You can add whatever documentation you want to express that without
-needlessly complicating the schema for no validation purpose. Arguably
-if the schema is shorter, that documentation will be easier to see.
+Hi,
 
-Rob
+this series adds support for the PCIe controllers found on the Tegra264
+SoC. There are six instances, one of which is for internal purposes only
+and the other five are general purpose.
+
+The first two patches in the series add the BPMP support needed to power
+up/down the PCI link. Patch 3 contains the device tree bindings for the
+PCIe controller and patch 4 adds the driver. Finally, patch 5 adds DT
+nodes for the controllers found on the Tegra264 SoC.
+
+Regarding merging these patches, I think ideally I'd pick up the PCI
+driver patch into the Tegra tree because there is a build dependency on
+patches 1 and 2. Furthermore, patch 1 depends on another patch that's
+already in the Tegra tree, and there will be conflicts if it is merged
+in another tree. Alternatively I can provide a stable branch with
+patches 1 and 2 for the PCI maintainers to pull in.
+
+Let me know how you'd like to handle this.
+
+Changes in v2:
+- fix an issue with sanity-checking disabled BARs
+- address review comments
+
+Thanks,
+Thierry
+
+
+Thierry Reding (5):
+  soc/tegra: Update BPMP ABI header
+  firmware: tegra: bpmp: Add tegra_bpmp_get_with_id() function
+  dt-bindings: pci: Document the NVIDIA Tegra264 PCIe controller
+  PCI: tegra: Add Tegra264 support
+  arm64: tegra: Add PCI controllers on Tegra264
+
+ .../bindings/pci/nvidia,tegra264-pcie.yaml    |  149 +
+ arch/arm64/boot/dts/nvidia/tegra264.dtsi      |  248 +-
+ drivers/firmware/tegra/bpmp.c                 |   34 +
+ drivers/pci/controller/Kconfig                |   10 +-
+ drivers/pci/controller/Makefile               |    1 +
+ drivers/pci/controller/pcie-tegra264.c        |  527 ++
+ include/soc/tegra/bpmp-abi.h                  | 4565 +++++++++++++----
+ include/soc/tegra/bpmp.h                      |    1 +
+ 8 files changed, 4613 insertions(+), 922 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra264-pcie.yaml
+ create mode 100644 drivers/pci/controller/pcie-tegra264.c
+
+-- 
+2.52.0
+
