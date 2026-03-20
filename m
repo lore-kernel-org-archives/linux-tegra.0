@@ -1,126 +1,218 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678E7194A6C;
-	Fri, 20 Mar 2026 12:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2743B3AE6F4
+	for <linux-tegra@vger.kernel.org>; Fri, 20 Mar 2026 13:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774010803; cv=none; b=FA0JCfZVCOw2VAhd0j+zJeJtVbuiUqqxKMrR0TO1ILEGcfvkJHr1cDhuBeyrnNKg6+RR1bxxLJ4QzFeie7tmiwEzmWjrzTiUjtzamMi7uHzCkPdjaxwunXkECRxd6zsdeL6kjM17/tOHGZDpmm6Y4u20XmcXmmwgtt7bwK06QMQ=
+	t=1774012000; cv=none; b=DsciCjf8lRWH5PPrtpwD4lWeGNdLrmAF5bq9+vB1zWlF2xJZZHc3JlDQHMtlOxRD5GOqcEqUvPdn14G4iHYRhIV6Tceu9+2H1ZLHeXvsqq3YoHQnH/0RJZEuiBlSl+OLp+LgKOsoJxeU+GZQag2E5Iaque4ODxxy2JR2/ct7baQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774010803; c=relaxed/simple;
-	bh=ikDZCto24lsL/kZUvfs3csyLpMtu/YD2NBPxKQNRa/8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j/4mxklr8czihrNvw8Qmal7cwrTpLfgcYTsm8FXgKsl6r7AmFZeUzM0/KkpIW8WqVfbm4/MYLUfUroAfdElaI1IAfePFDwNMWScvJl98qq4hhEGxLOqT4JmUuHyoSbkrPUJqjz4A2okFPbdpAe+y3BClc+K11N1sXbpnjn74AKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gSULDal+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774012000; c=relaxed/simple;
+	bh=ohF9aj/ivf8FP5hU7Mx9A4FMUlEZTjOdQAIqZR4Tcf4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y3dn/d09RGvPkFUhentFuTUbZxmDJSfFNGR308ivPExZ3fIp9LIklgvyiMWa3870dGN1VSaMMOLEHCY59r+NLRS3b3pyYYDSHs8u1tzTdVarqBkB+czdjUu/QnZXsVEpKpqWJyfkIDW0Aem68LfnQK8HwC7gvLHimsN9LPoZz/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a48zzDes; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gSULDal+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CA05C4CEF7;
-	Fri, 20 Mar 2026 12:46:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a48zzDes"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC5CAC2BCB2
+	for <linux-tegra@vger.kernel.org>; Fri, 20 Mar 2026 13:06:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774010803;
-	bh=ikDZCto24lsL/kZUvfs3csyLpMtu/YD2NBPxKQNRa/8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gSULDal+44TVNt2Ua6eIYQOvHuoQYMDC8PcVV8P+PEKI7JjLXzdKpkWTYNqEDR5dc
-	 tiDk2YTa8/XvTwcC55zLh42Ef4bedycBvvAWw5Y7YsHPvszIf4zEo7vZ9ZaR59LQap
-	 ulAsZ+bUYcveM+NBPs1AMhYeKALxThvaL6UtEO+6le9Kk2/xfx/76AaowH9WjggbKV
-	 4WlkVdRlHTy2fHxo+D4RnDyiiclu6okf5ZhGu8Ax25Ng0h9Bbx6wXqeI1KcJiOvXqz
-	 IN5SFHzqT6GXuXKTrUzChzfQ98FWnTn7gTVQtsaKT/wkSi3IoI9IovIfA5PBnGxTOI
-	 n5FJuEteyDjkw==
-Message-ID: <f0699320-fc92-4d49-9ce7-871b3acc49a8@kernel.org>
-Date: Fri, 20 Mar 2026 13:46:38 +0100
+	s=k20201202; t=1774012000;
+	bh=ohF9aj/ivf8FP5hU7Mx9A4FMUlEZTjOdQAIqZR4Tcf4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=a48zzDesiWeA5MeHUVbwZmaN9Rqhunya+ApNTXZ5ckZR+Ire7m3LKH/bsVYdocdr4
+	 Tff6aZSbsQa6s0IHfcJgzvv3MwpO1lEb51sskCkdJ5YnnzS8+Pfdj5iRvKj3vol6r6
+	 PHVcKAM9bV4WpanynbWkfTAhNqfrr8+WXLc/p2E6n4A/dcL0c/cUu2Pd4LcxYf4SSC
+	 D0mOK3hDALVBa9sav0rNru9o1tMY0h355vmSFJ3pz+v/4pEABU8xRoU4D7HZEvu79C
+	 gjPoUoI0JI8PrQzVPzHSrIkoU048Zjr4M4xQdobTpY6B3A3ayd4xMepSPC7ny0z/PA
+	 LN3v5obbqddfQ==
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-668abc98923so1096428a12.3
+        for <linux-tegra@vger.kernel.org>; Fri, 20 Mar 2026 06:06:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXDR5Ko0GG6io6gGTzhJU2W4ggMnXct+xAVGY4lYAhrdYAseD3SNoWAlftyazrtQ7aAZG7WA0pgvVWBVw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWyOYyJnw1QdllRQx6K9KixqTOb19clggc8DpSXpP30Yf6h3DL
+	pSWptAFwsnGCv+HpQV96TkeCKxPwdwpg5IiLRVmoNqckknLGePNcSEdgisKmBMQ68YVX/a4BYhv
+	Onw+aUOwVmq8tO1rbvpIVrPbTzglPQA==
+X-Received: by 2002:a05:6402:510a:b0:668:599e:1038 with SMTP id
+ 4fb4d7f45d1cf-668c90fa1d6mr2450159a12.3.1774011998290; Fri, 20 Mar 2026
+ 06:06:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] soc/tegra: Update BPMP ABI header
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org
 References: <20260319160110.2131954-1-thierry.reding@kernel.org>
- <20260319160110.2131954-2-thierry.reding@kernel.org>
- <435095b4-ce29-4c8a-9f63-300ff94e419a@kernel.org> <ab0T_0Pyio2SYrzq@orome>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <ab0T_0Pyio2SYrzq@orome>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <20260319160110.2131954-4-thierry.reding@kernel.org> <CAL_Jsq+smyMYE_oexRc9wEJgMxdUxSwg7p8Bex8q6J6PrwZZ+Q@mail.gmail.com>
+ <ab0U5bfZ2hwp-GST@orome>
+In-Reply-To: <ab0U5bfZ2hwp-GST@orome>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 20 Mar 2026 08:06:26 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJuoOiBGKW=H=u9AQ=XgY+-iXS+UP7iEw5z6p57Yk_AVw@mail.gmail.com>
+X-Gm-Features: AaiRm52tHBx-J7zXWNYPLeZXnVQ_VCNCLwgZfhjsAdP857lNCkM_8--t64jKBsE
+Message-ID: <CAL_JsqJuoOiBGKW=H=u9AQ=XgY+-iXS+UP7iEw5z6p57Yk_AVw@mail.gmail.com>
+Subject: Re: [PATCH 3/5] dt-bindings: pci: Document the NVIDIA Tegra264 PCIe controller
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jon Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 20/03/2026 10:34, Thierry Reding wrote:
->>> diff --git a/include/soc/tegra/bpmp-abi.h b/include/soc/tegra/bpmp-abi.h
->>> index 39bb3f87e28d..6cf6442395f1 100644
->>> --- a/include/soc/tegra/bpmp-abi.h
->>> +++ b/include/soc/tegra/bpmp-abi.h
->>> @@ -1,6 +1,6 @@
->>> -/* SPDX-License-Identifier: GPL-2.0-only */
->>> +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
->>>  /*
->>> - * Copyright (c) 2014-2022, NVIDIA CORPORATION.  All rights reserved.
->>> + * SPDX-FileCopyrightText: Copyright (c) 2014-2025, NVIDIA CORPORATION.  All rights reserved.
->>
->> You just replaced correct syntax with discouraged (as in not welcomed
->> upstream) SPDX tag.
-> 
-> Fair enough, I'm dropping the tag. I didn't know it was actively
-> discouraged and I don't see this documented anywhere. I suppose I should
-> go and drop similar tags from various other sources. Looks like we've
-> been introducing this recently for Tegra.
+On Fri, Mar 20, 2026 at 4:39=E2=80=AFAM Thierry Reding
+<thierry.reding@kernel.org> wrote:
+>
+> On Thu, Mar 19, 2026 at 04:26:31PM -0500, Rob Herring wrote:
+> > On Thu, Mar 19, 2026 at 11:01=E2=80=AFAM Thierry Reding
+> > <thierry.reding@kernel.org> wrote:
+> > >
+> > > From: Thierry Reding <treding@nvidia.com>
+> > >
+> > > The six PCIe controllers found on Tegra264 are of two types: one is u=
+sed
+> > > for the internal GPU and therefore is not connected to a UPHY and the
+> > > remaining five controllers are typically routed to a PCI slot and hav=
+e
+> > > additional controls for the physical link.
+> > >
+> > > While these controllers can be switched into endpoint mode, this bind=
+ing
+> > > describes the root complex mode only.
+> > >
+> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > ---
+> > >  .../bindings/pci/nvidia,tegra264-pcie.yaml    | 92 +++++++++++++++++=
+++
+> > >  1 file changed, 92 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegr=
+a264-pcie.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra264-pc=
+ie.yaml b/Documentation/devicetree/bindings/pci/nvidia,tegra264-pcie.yaml
+> > > new file mode 100644
+> > > index 000000000000..56d69de2788b
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra264-pcie.yaml
+> > > @@ -0,0 +1,92 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/pci/nvidia,tegra264-pcie.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: NVIDIA Tegra264 PCIe controller
+> > > +
+> > > +maintainers:
+> > > +  - Thierry Reding <thierry.reding@gmail.com>
+> > > +  - Jon Hunter <jonathanh@nvidia.com>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    const: nvidia,tegra264-pcie
+> > > +
+> > > +  reg:
+> > > +    minItems: 4
+> > > +    maxItems: 5
+> > > +
+> > > +  reg-names:
+> > > +    minItems: 4
+> > > +    maxItems: 5
+> > > +
+> > > +  interrupts:
+> > > +    minItems: 1
+> > > +    maxItems: 4
+> > > +
+> > > +  dma-coherent: true
+> > > +
+> > > +  nvidia,bpmp:
+> > > +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> > > +    description: |
+> > > +      Must contain a pair of phandle (to the BPMP controller node) a=
+nd
+> > > +      controller ID. The following are the controller IDs for each c=
+ontroller:
+> > > +
+> > > +      0: C0
+> > > +      1: C1
+> > > +      2: C2
+> > > +      3: C3
+> > > +      4: C4
+> > > +      5: C5
+> > > +    items:
+> > > +      - items:
+> > > +          - description: phandle to the BPMP controller node
+> > > +          - description: PCIe controller ID
+> > > +            maximum: 5
+> > > +
+> > > +unevaluatedProperties: false
+> > > +
+> > > +required:
+> > > +  - interrupt-map
+> > > +  - interrupt-map-mask
+> > > +  - iommu-map
+> > > +  - msi-map
+> > > +  - nvidia,bpmp
+> > > +
+> > > +allOf:
+> > > +  - $ref: /schemas/pci/pci-host-bridge.yaml#
+> > > +  - oneOf:
+> > > +    - description: C0 controller (no UPHY)
+> > > +      properties:
+> > > +        reg:
+> > > +          items:
+> > > +            - description: application layer registers
+> > > +            - description: transaction layer registers
+> > > +            - description: privileged transaction layer registers
+> > > +            - description: ECAM-compatible configuration space
+> > > +
+> > > +        reg-names:
+> > > +          items:
+> > > +            - const: xal
+> > > +            - const: xtl
+> > > +            - const: xtl-pri
+> > > +            - const: ecam
+> > > +
+> > > +    - description: C1-C5 controllers (with UPHY)
+> > > +      properties:
+> > > +        reg:
+> > > +          items:
+> > > +            - description: application layer registers
+> > > +            - description: transaction layer registers
+> > > +            - description: privileged transaction layer registers
+> > > +            - description: data link/physical layer registers
+> > > +            - description: ECAM-compatible configuration space
+> > > +
+> > > +      items:
+> > > +        - const: xal
+> > > +        - const: xtl
+> > > +        - const: xtl-pri
+> > > +        - const: xpl
+> >
+> > Put this entry last since it is the optional one. Then you can move
+> > all of this to the top-level and get rid of the duplication.
+>
+> I understand this concern and was actually on the fence about this
+> myself. The reason why I ultimately went with this variant is for two
+> reasons:
+>
+>   1. XPL does not exist for controller 0, the variant above makes that
+>      very explicit. It explicitly documents that controller 0 is used
+>      for internal purposes and cannot be connected to an external port
+>      like the other five controllers.
 
-Just now Greg took my patch, so the tag is officially allowed. :)
+That doesn't really matter to the schema because it can never check
+that unless you have 2 different compatibles (and you shouldn't).
 
-Whether is preferred, depends whom you ask, so feel free to ignore my
-feedback to replace it.
+>   2. The ECAM region is part of a memory region specifically reserved
+>      for configuration space, whereas all of the other regions are
+>      from the controller's MMIO region. I find the DT hard to read if
+>      the two are interleaved.
 
-Best regards,
-Krzysztof
+I was also going to suggest putting ECAM first just to align with the
+generic host binding. That would make it slightly easier to rewrite
+the node if you decided to make it a firmware initialized controller.
+
+But if you really want it all as-is, fine.
+
+Rob
