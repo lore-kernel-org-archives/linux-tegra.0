@@ -1,168 +1,149 @@
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012029.outbound.protection.outlook.com [40.107.209.29])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5943806CA;
-	Fri, 20 Mar 2026 10:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774003789; cv=fail; b=NzrZcBvEAb3++PVTzKIbQQJtXGT+b1Q46J3IFwKIr+a8Ne5QhCTzE+dXROtOcEYB0BsPzszBsclmvzgnQtz4j56UbkZ6gMQy6rtrs4dJleLKM846Uz6Wjaytr7siBNZZ/hQnhlf0WDSpqSd6EK4sN2ANdjm/ENxYvUDI5pTEFk0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774003789; c=relaxed/simple;
-	bh=pvHkdOOobL7XUuNDMCi00N8H2s7FPsycdwqSjE/6H9A=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=qz03ifRLYQDkBNxzMXH2nD8DZuwS2MgizLg7xMUU+JPlQt6f5CWJGjk+wF7hhgNM036MPu0xkuJE/LyNyjsnGVrIshqF25txIz8OqGRJlNFXUclNzGNu0NltHym83MCcBrpfiPB9WkbLdEpU5HHgf8tqTvooys3zn5Tkyfl+COs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ivcw7/2N; arc=fail smtp.client-ip=40.107.209.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904E731F994;
+	Fri, 20 Mar 2026 10:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774003940; cv=none; b=XhULFf6aWCHPhVnbVuiv4KiHg/ARwNYIB5UurbyzthenOJDeH3MH1EckQDvyeFs4e+6Zl+5Qln4P+nLHuVIr7sBhqsvmeK8kmu53TdSnle65ILyHqWwJspGeisvvfou0/V/a04GABaq0GpL/0vw+MZRBdFyfP4yVEgmigpphS78=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774003940; c=relaxed/simple;
+	bh=nWnGcx4oZnKCFiRxJG4rnPGbEnFPVvJfKZJowNAm2nw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZYgoNVRZSOQjDD/ShFU6W5vGQrtQ3/6bh3MpgBIFVqR35v0tpbcW2xVGRQVeYrFRfJ+M2qMBE+g0uGjRFf99hxO92+62zkPn+fuXn31AUECgT6+1UBK59o9nQm3j+DCBvjxthRBqjOSbSDDpR/uHs0qkYJnsqFbOfjR1jcGUWZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tavyppr4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ivcw7/2N"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LzuHBLr+xTNySchtfuR1/Wy87DPnyIDZIrmnxFwcpqGKR7V06yv3tEdVbc4jjeEn1bgdY1aBrwJOQuHIdOKaIaPxzOqMMaolJZw8Qd/oRD6JNKgPvsSI0RY9k2/RreD8O1GEIN6hCmoitW4fy+NF9geA9RoPkgXqA+GG40XynvxycAzOThmv0r9bay/M8V0PEulMBkBIb21ILElWsYGHSWup3/m1RvwHDYdqkclNvDvgNSx5Y5B2acACQB/UFvyIKSqGG/3SbXDS/RbwJaD1e6X01+ECNGxrewxxyPx/HAIWgeAhzhuKS52trMvuX6ThxNPMYxA5NBgkbjd8MJtcAQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JJ3MFsNZbEcKQwt/6YgBDIdFSG45wred3YQGtG5DNGc=;
- b=lBCaRYuGx1yS3Edl2GSmRZELFrrYCZo4P2GcBPO5Lxuoyn/76udepMI1pYaHveKOb1x7VNrImfQy3UVWj8h3KrXdTMBeSLQFRPo2+y3OFjj2XxvrpJO+sxshZc1r5IQEidw4yQAoV/gtVYiJGq1UYxjVvIsbktMMt/qGBdI0RcofEiJ5WkwOqT8vE8Aa3N/UHBkdWsiSjgswuTU34Pd2EIADZzpLf06ANl5xsBgtfaTIq3L7EedJqYvednhMnUCTSaBjVOdE2Xi7vL+Es9yuz+emFN7TbaD+W2i1xQuTcXYPwUoAwFSYac/UCX9tUqrfoV/wLzACPKSMjMfberefhw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JJ3MFsNZbEcKQwt/6YgBDIdFSG45wred3YQGtG5DNGc=;
- b=ivcw7/2NyxKOS1heZa6natL2lRaYn6IeY2n2+qh6IjKfTL42f/+jBLdr5M0mUJZgU6RwTI6d/YptH60OJ5MlVfkmzQtVDoJnKoKn/d3W70Q1bKwcEmMFU/Ed46lhWhCEsZD8oMrBFfbXbOgxZoT95sean7TXCbW9YYfvMCLfToSRCr/nJQMn0/mTn5fH0+zR/7jJaXhvJRHX1OONvQmKbN4ALs9Jp1n5YV4ia2b3P858PsOIWk+TthtwcXpgV4QkmdDAPJSvSizZ48GR9OpKGgzBYNlKdbKXQPsX3q95JVeXBvSMww+ZX6HiZ8GJWMTuTJ/g2Ffn6wnWDJmRuJqigw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
- by CYXPR12MB9443.namprd12.prod.outlook.com (2603:10b6:930:db::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.9; Fri, 20 Mar
- 2026 10:49:44 +0000
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391%6]) with mapi id 15.20.9745.007; Fri, 20 Mar 2026
- 10:49:44 +0000
-Message-ID: <c5685e0c-eca6-464e-b2a9-d688918b966b@nvidia.com>
-Date: Fri, 20 Mar 2026 10:49:40 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] gpio: shared: fix devicetree corner cases
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
- Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20260318-gpio-shared-xlate-v2-0-0ce34c707e81@oss.qualcomm.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20260318-gpio-shared-xlate-v2-0-0ce34c707e81@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0141.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:9f::33) To DS2PR12MB9750.namprd12.prod.outlook.com
- (2603:10b6:8:2b0::12)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tavyppr4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2836C4CEF7;
+	Fri, 20 Mar 2026 10:52:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774003940;
+	bh=nWnGcx4oZnKCFiRxJG4rnPGbEnFPVvJfKZJowNAm2nw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tavyppr4S4D6vcQiDqcUZ4Nby0+YRCYfYd1t63E9f3gq7wQad7gCb2Fo+Kdu9qojg
+	 hSVOLpaSCxPJr/mprYMcgPOWC0D6fouOMxHWnaQ/O9YhsdAciShgtJXnZfovtUCGwp
+	 AkIgAF2AqM4+Cw5dffHEN3hhBvs6YL2ZzZrnN2KUEB3EY/FFv9/1w9gJZMTx4cpQ05
+	 nQHPPrskUGOgPPs5xdREPg2IoVUjq8t9xdtKJLIOP+0CbxK41QLy7jraucEcNrgz/K
+	 urrhQIu5+JTcRTQB07fgEmWSEqDug3yqRyLPt/wrCmkz9HRnLp6jl1kRhU0MWWhDHI
+	 rBhcdYVUHoFyw==
+Date: Fri, 20 Mar 2026 11:52:17 +0100
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jon Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 1/5] soc/tegra: Update BPMP ABI header
+Message-ID: <ab0kVVacojo8SLfw@orome>
+References: <20260319160110.2131954-1-thierry.reding@kernel.org>
+ <20260319160110.2131954-2-thierry.reding@kernel.org>
+ <435095b4-ce29-4c8a-9f63-300ff94e419a@kernel.org>
+ <ab0T_0Pyio2SYrzq@orome>
+ <1357d59f-7c38-4de0-9cc8-b40be3d7ce5b@kernel.org>
+ <e238644c-132a-43fc-b735-70f04ef3f212@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|CYXPR12MB9443:EE_
-X-MS-Office365-Filtering-Correlation-Id: 46aa4ac1-f41f-4324-a986-08de866e658d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|376014|1800799024|366016|22082099003|56012099003|7053199007|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	G/JW0B33i/ws23FDHHLpXsMZlEM4i83Lc5yst31BVdMXARKVtlgy02hAO636CikGc1Z5Useuex/GUcGW4YSk9WTpNRnk4C2dto3PTbeov8rG8aKTUf591EAdVSu2WbbQD/PImoO5QkWuVNlXIHQu/szCL50pR2cwYL7yrP3GKS7eTfGiy/4TNhnYZ9MjYpH7KGktr0BDLuji2X58hhaYkIpOvzAfQqmQpcWuHEHLyWEsAVwuk0OThwFNiKXqTTxU2hIP7g/m6UctkX/DIPalFDw2tNGpfKE2/Tve7HVIM7Pev6xfW3L3byuManhttOTJHzc2yF+qVwZQ0gfKQp8v3seSO92kCZ+BKHLOSq2rDVpDr7qu6wz7SUgLaRkoTBMElTGPjicxdJ9ZbwF1XUzwqA6bQXwqKIc5OKbYXUnXI8la82PCb5+ItCz4+rf1MnXRoYwU8VjxgOKxY2zyZP1NWhzwc6Ii/Vifsl5rqc3I0h0HzPeIGGWvkyI/qfniHA7D+Tvz4qM/IkXUs1KrG4P8Y2y4Szy00hMIfDFKEoZ8zczJLod3ABJyp3PuDQWZfaSh5veM8eV4Mk6YYACBLRViPrJJNk1rKDo0/ynB8g6LcLU7kZhKN5Q99SrAq61HPXlDW6gi1HPbDVMvUDD7ofboQZlsTjuN7lOFywtM0zvwPwGeJg6HQ+trUiESeMU8kQ8pxP5BzuseyrKsVF0WMNYKig9J2U7iwiYHNu3RG+z5fOs=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(1800799024)(366016)(22082099003)(56012099003)(7053199007)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NUoxRXJmYjNLZlphZHJuMURyaFdOODJKdVVGT01PWFhMQld0V3llKzVNdVlU?=
- =?utf-8?B?SjM0ZXRBMzFBS1ZvL0FYM0VzOG9uL1hMcGRramgyWFcrV2twd1VLZy9jTzRZ?=
- =?utf-8?B?aXF1ZElrZHBzT2w4TC8wRDc3dy96UkFiSGl1T1RUbDkvdTZ5S0M2M0xUQk9C?=
- =?utf-8?B?ck9YYVNNMUViR0hBRHhBRmU2RXdtd0JuSXV1UEVZUFFrUnJ0VktKb0szZWNs?=
- =?utf-8?B?SVRNSC9ZTFhKSGFacWtSNFhQRjV6NzZld0VTNVhCS29KN0NjV3ltTDVsT0Jn?=
- =?utf-8?B?ZW1GS0JOSlBMZlRiYndKY01tZ2krbW92MmJITzFaRXp6VHpOSThSbUErOHBs?=
- =?utf-8?B?cStPM1hBKzlkTGdQVllWSndWWkREY1RndVV1ZUl0dVozQ1h3RzdYRkttN0hB?=
- =?utf-8?B?dDFmVTlDbEttaUlKejNZSTlXV0pkdDRWQTYvTjRPSWF0SmVRK3dPdGdGZ3Uz?=
- =?utf-8?B?Uy9Pdm82eGRJUjBkY2dMbW1vREdvSzlTVDdaN1hPblB4Z1ZZMUg4T2F4SGhx?=
- =?utf-8?B?NGg2VmhmZnNwRlZ0SHRxNmpFaTBtSlgvT2dTcnZ4UjA0eDB5K0VvOEJOL2s5?=
- =?utf-8?B?emZJK01tUDZrcjIzR1Zqb2JiNSsxbWd3enVRQ3BTbVRTL1N2NzZpV0plZVgw?=
- =?utf-8?B?U3RGWWxiTnBDT0NBMFl4b3czS282NGk1QW5xSDBNOTVtQ0VEUnJxY2JtSitZ?=
- =?utf-8?B?RXVsc2VSbUNpc0NSWkIydWlZcnBPcENodDVMNG1MK0ppSG52NE1kR0txZGtl?=
- =?utf-8?B?bG5RZE50TlZ6UGJqQWI2eVppTFB4Q1d6RXpBaEg5b2FEQm9PQS8zVlN1dEww?=
- =?utf-8?B?RU1ZYnpXTEptb1BnOXVGOTNZTFVuY1dHSS9nNVhCbWJGdFdOUDAxNjRVbmNa?=
- =?utf-8?B?MWJIaEpLSUs1UzFQMUVRMk5ITzFiZW1qZXZTU0tDS0t3RXZTV25GOS9pa0Rr?=
- =?utf-8?B?OUwzVGVBNjNWWlF2LzZtUmQ4TXdkS3c0TUkvbGtxdFlqTk1iQ1d1WE40eTlk?=
- =?utf-8?B?VjhjeTlYRnlwc2NBYkpXbk1Mc05rVVVxbnA5RmxTb2VGMFhIUEMybi9IU2VD?=
- =?utf-8?B?MFQzbGRoUENFbmJFSW5vV1diNTFHSHUvWm12UWJkanpmb29IQlVpRk9rbVU5?=
- =?utf-8?B?SkFHOVNibkdkT1F1TmpYTVkvdmxxQndaVVpOZVVCSXRlUnhsUUR5c2ZXNzA5?=
- =?utf-8?B?Vi81RkVqVUJlcXNpR0xkV3IvTlhjaGhWTmovWkNRTmxpbk41UDJkeStmVVBG?=
- =?utf-8?B?djlYb3pldnpEUHFBV1VESzhOWi9YQndoT3F4TXFjaGoxRXJLM2tXUUJHVXBy?=
- =?utf-8?B?aDA0VWg5QWVMMWViaFNmZ0MrZVl0b2poZDhVeW1qWTdQMmllVWNZdzVqQ0xK?=
- =?utf-8?B?R1JRYTh0N1BocEpGNHJSTmhaMkd0RTViL2NPZlV0MThaUThjMFlpUXlSRjAv?=
- =?utf-8?B?eWF5VE5kMFNSMXUxb2NCVWc0dytXYk1wRFFqaUkwYTVqb0VBUUdtVFNMc2dT?=
- =?utf-8?B?SE5ZaVhNNmFUY2JRbEtEOU0wQ2cxUGhGeEx5cTJ1czh5NllwTnhOb2VidnJO?=
- =?utf-8?B?bTdudDdYWnkxdzV4eFNSOTY5ZHhMMTNsem9ZTElVL3V6U2hSSUpmS2svZHZx?=
- =?utf-8?B?OXdUd1lQZUZ0azhiYnNPUWloU1VieFVreXhOdzBZSkJOaWcvbms0UFFQUXdm?=
- =?utf-8?B?NUFMWXhlbEZMcVlPN2xOcnFzMFpyMW8yTWFrZmRCSEhTNXJrVHRLTjBOWm9T?=
- =?utf-8?B?V3l4YkdPTURyM0h4S1VPelhLSDd1NkxJTjUxclIxNXRZdXFNK1lFZXFuTk9s?=
- =?utf-8?B?U210WFpSblczZXFxWkppYlgrdjc2U1BwaWU2TlBoUVRGSW5yNXZIWmU2ODdE?=
- =?utf-8?B?c09kTTJWY1MzSE9KTkJDN2lNeVJIQmVSaVJ3SGN3eUFKZ2xxTjAwbXFyNnYy?=
- =?utf-8?B?SURNTllBajlaNzg2VXdjUHBPMndPTi9meXY5dnFSYTF6R2EzVmV3Z1dvUDRv?=
- =?utf-8?B?aHpaNkNCcHFNVVBEM1M1NGdZTFd5M0xOM2FrekJ1ZnJ3a2N6WVJ5VVQ1aG9T?=
- =?utf-8?B?WmdRN0dKWmJwT1oyNFZIR1ZFOS8rcUxlNlBueGVrdmd2a1NtYUF5bnhvRHB6?=
- =?utf-8?B?ejdnSHl5djd3ejFiZG5uRXJtRm96RkhYYU1LQkZpbzQxVWs0N0tGMjNQTUhK?=
- =?utf-8?B?aXB5NHFkemU4dXVmQ0lsSDFOODZCNVd1eW1vOEFJNjVvUi95Ym05cGV1eTdB?=
- =?utf-8?B?bVRwbXl0alkrMDFMWk1QNFpyd1g3WExNYzhuUGluR25taFNHY2JUN3FLdENY?=
- =?utf-8?B?bmRjS0N3aEVxYWtremhkUjBnSUdOREVvU2Y2SkgzNTZsNXRvTHYvL3FhRUhQ?=
- =?utf-8?Q?IuDfDIy9iW3rWM1oS484K/+LdhUCCiBtJNpgkUe/q5Z1h?=
-X-MS-Exchange-AntiSpam-MessageData-1: jAsAnrZp0C/Srg==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 46aa4ac1-f41f-4324-a986-08de866e658d
-X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2026 10:49:44.2175
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +3tze6whF6cuoquupAvopohOvZCnleWby8GXB1gxwncWr4VTgkVl5YxqmtbdJMQdZcF8TYxHRlvSx05BhnIe1g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9443
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="u2g6mysymwufbfqc"
+Content-Disposition: inline
+In-Reply-To: <e238644c-132a-43fc-b735-70f04ef3f212@kernel.org>
 
 
-On 18/03/2026 14:00, Bartosz Golaszewski wrote:
-> This fixes two issues with shared GPIO management reported by Jon.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-> ---
-> Changes in v2:
-> - Add patch 2/2 fixing an issue with sharing GPIOs by child nodes of
->    devices
-> - Collect tags
-> - Link to v1: https://patch.msgid.link/20260316-gpio-shared-xlate-v1-1-0ce07a1362d2@oss.qualcomm.com
-> 
-> ---
-> Bartosz Golaszewski (2):
->        gpio: shared: call gpio_chip::of_xlate() if set
->        gpio: shared: handle pins shared by child nodes of devices
-> 
->   drivers/gpio/gpiolib-shared.c | 33 +++++++++++++++++++++++++++++----
->   drivers/gpio/gpiolib-shared.h | 11 +++++++----
->   drivers/gpio/gpiolib.c        |  6 +++---
->   3 files changed, 39 insertions(+), 11 deletions(-)
-> ---
-> base-commit: eadf2995ab7c8158bf694304d41e49cada263277
-> change-id: 20260316-gpio-shared-xlate-708c651cac5f
+--u2g6mysymwufbfqc
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/5] soc/tegra: Update BPMP ABI header
+MIME-Version: 1.0
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+On Fri, Mar 20, 2026 at 10:49:43AM +0100, Krzysztof Kozlowski wrote:
+> On 20/03/2026 10:44, Krzysztof Kozlowski wrote:
+> > On 20/03/2026 10:34, Thierry Reding wrote:
+> >> On Thu, Mar 19, 2026 at 05:15:56PM +0100, Krzysztof Kozlowski wrote:
+> >>> On 19/03/2026 17:01, Thierry Reding wrote:
+> >>>> From: Thierry Reding <treding@nvidia.com>
+> >>>>
+> >>>> This update primarily adds various new commands and MRQs for Tegra26=
+4,
+> >>>> but also contains a few new annotations and fixes.
+> >>>>
+> >>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> >>>> ---
+> >>>>  include/soc/tegra/bpmp-abi.h | 4565 +++++++++++++++++++++++++++----=
+---
+> >>>>  1 file changed, 3671 insertions(+), 894 deletions(-)
+> >>>>
+> >>>> diff --git a/include/soc/tegra/bpmp-abi.h b/include/soc/tegra/bpmp-a=
+bi.h
+> >>>> index 39bb3f87e28d..6cf6442395f1 100644
+> >>>> --- a/include/soc/tegra/bpmp-abi.h
+> >>>> +++ b/include/soc/tegra/bpmp-abi.h
+> >>>> @@ -1,6 +1,6 @@
+> >>>> -/* SPDX-License-Identifier: GPL-2.0-only */
+> >>>> +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
+>=20
+> I missed this part here - that's license change. This has like 10
+> different authors, so you must be explicit about it in commit msg and
+> you must get their acks.
 
-Thanks for the rapid fixes!
+I'm not a lawyer, but any non-NVIDIA contributions to this file were a
+license header changes by Thomas and typofixes by a random assortment of
+people. I don't think any of those changes qualify as copyrightable or
+licensable.
 
-Jon
+> >>>>  /*
+> >>>> - * Copyright (c) 2014-2022, NVIDIA CORPORATION.  All rights reserve=
+d.
+> >>>> + * SPDX-FileCopyrightText: Copyright (c) 2014-2025, NVIDIA CORPORAT=
+ION.  All rights reserved.
+> >>>
+> >>> You just replaced correct syntax with discouraged (as in not welcomed
+> >>> upstream) SPDX tag.
+> >>
+> >> Fair enough, I'm dropping the tag. I didn't know it was actively
+> >> discouraged and I don't see this documented anywhere. I suppose I shou=
+ld
+> >=20
+> > I am trying to get it somehow documented as permissive, v4 is waiting
+> > for some time.
+> >=20
+>=20
+> ... feel free to encourage/review my change to get the tag officially
+> supported.
 
--- 
-nvpublic
+I've never thought about it much, but now that I have I almost prefer
+the variant without the tag. I guess if there were a usecase where
+people wanted to extract the copyright from kernel sources for some
+reason it might make some sense, though given the state of the kernel
+that would require an awful lot of churn and it'd probably be easier
+to just extract the data using regular expressions.
 
+Thierry
+
+--u2g6mysymwufbfqc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmm9Jt4ACgkQ3SOs138+
+s6HXbRAAtrPOD82LCq07sw+Q1GXYfZtRDw7vInR2rPZX50qjyTEBVTcSKQz3UceZ
+aFcEjI7l2tQ0IwDsW9VOAzjvob46Rik4NVVczCmwjsJcReXXmqQ6NLLWU6wG48QF
+CuRhOFtnIDJ/UrY2c5AaCsi8XL4Upw6FizGy9Bte6Z+6iA5YTIRqnnrvzu37fcO6
+FA+zZti7M+wnM8uHqlzceG+mz3vZff2yNm/WLnm1JOrd8CNKMEiuznw+bB+DQW1+
+08I39eBhdHrpxLMfkfdI99TcgzJSGxtwcGwh4UgoeE52mnvG3eea41E75u9EJDbS
+/32wM0BlrxRJvIJPb1TFNWke2jD28oV+rEnILi+mLXUs2WaRrunTIFPRh2c+1PeI
+P1LE/cbsSwJr9CrroE1V2dMN0HfLhkasN6EaZ+vO031b9vTsDRITmFJwLr3cgrWy
+OHmQ8BYtwYV0cLvVv5abXP22q4oFi2mf3B6Q7cmVI5fVDGR5pKBLHTOXEdlofKAe
+DS+NmDDDJ2O9l0SHcIVBOmuBFQNs+7bRhIuHJaWNyJScQsElpgXB7SZ9Kn/KX63y
+/lkaHFZYDTRoCsa/pLo9fQjc4ouTUaOCy3KZyzKZ+BN1/yQg1lSdUZoEllsfvQ19
+nZJL+vzVVRV6u5ZRFcna+AgH0U33dZ5KdtSZplAINhscuS1tlHM=
+=wYkc
+-----END PGP SIGNATURE-----
+
+--u2g6mysymwufbfqc--
