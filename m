@@ -1,31 +1,30 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9773A3835;
-	Fri, 20 Mar 2026 23:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BF23A3835;
+	Fri, 20 Mar 2026 23:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774050062; cv=none; b=rxHnJVtM7w9yOkSoWO0nWvSCyp+V9UNW/5qzqegaX/0dwgWkH5STSnzu74XWKOUcsDzh6ev3cBRoWhAq8S0lECsQNIb7TMkDfr4LZtpn7IDInlCS4SHCcEh9mFJUDpdAzZi2iF8cMpmiddBatYIGsswYKcdfSB82wTfczeRyHOU=
+	t=1774050212; cv=none; b=R5vlHUe9D47NBhdypZZVL0v9iv8iJEioi4mTwRpgkziajerUU1fcQyaTMOaNDMfDslHnu1I/2YU/SCC8wpb7sfJFogtw3ZRoAA9HLv19v0tL/6BTZiavywG7d0Re4Kojg+mrdYw6QYNhZwXr6GMnHZ5+uIKnmManWtrV8wC2LKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774050062; c=relaxed/simple;
-	bh=k4iO/6DXxX73V17POZlSonUAdTJloXeKXHjpOygNwt0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Qisg/FldBW1/ANlQZ2kqBW9uo5wmb5aBCbdNxXPxalQxLPxuD4RkT/VkijsJeLg/VgJJr7X4CMevY7FlkyWhYJWcIKlDZRT+WpcynwAdGjAYW1YpRLrjmAXUdNG7ANG3W06h0GvNNBCYyTHd84Sm6OmUxXnXHsEZYh2akQ14TBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XVNysDuA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774050212; c=relaxed/simple;
+	bh=OgxtOs+jWVf9lCYzsNg+BlX1lIqL8iG3bhT2eBw7ubo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kE5OfPkLe4C5jzuTPuxfAHATpuvSBrxCXJKSBxxaq0+ufAxbQQIe606mPbCkDCWx+0ILFa3egofofCIm2j26gl3zy2hIqn1GeKOwg/fLBLCq9SXHcx8PdphWYpsvOS3lllmoot0BwZpb17YMeEnF/FLNAnDDYJ9poQhI7Ll+uUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQ3yelM8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XVNysDuA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42B34C4CEF7;
-	Fri, 20 Mar 2026 23:41:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQ3yelM8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3601BC4CEF7;
+	Fri, 20 Mar 2026 23:43:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774050061;
-	bh=k4iO/6DXxX73V17POZlSonUAdTJloXeKXHjpOygNwt0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XVNysDuAXj9fJpPGfabhoHBcs1Ma3jMrmYHUVWr5jj2wFhufSC7PUx37SNrMYEQwO
-	 NAI1CfrJeJIuDhVkSXF4m5Y3tKeyoL4v3+4bu456x2AWIN1a1SDg6VCHqa6Rkoc8Rv
-	 tjzH1vE1pCual70pyOYMNMAJCZCbYu3BmbXKfE/ou9wwcNJDW0tNMwpl7BU7Qy2CA2
-	 Cis/WU/BXlmilIjksai+uQHSzxP9a/LVR5vllVFcrrX90k47plYaqJSfRfcO4WUQ+T
-	 5O8KRaRLCKl9ixqXB6pwLwyH1Jfv9Inwmtgy/PRmMNVvpyt9tkszTsKLGhadoHrp4L
-	 cUrLpevsFqXkw==
+	s=k20201202; t=1774050211;
+	bh=OgxtOs+jWVf9lCYzsNg+BlX1lIqL8iG3bhT2eBw7ubo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UQ3yelM86aG9AOcXFs9TJ7SIf7LfQ68wry7JWlcHS5m8lnc3uPXFzQpaUlW9AQBXS
+	 StkFjVWLf9pioao77TJ8TlOIUNErZRMXTIDrI22I5vn86sQKxOpXOXzZw/e7z81wPd
+	 q/6KmnOtnxMR5vs2nqvQL4Y/jMe/QJRI7T89qEW8aVRB3bd8IZ7qQX5rB5qarpUZ+d
+	 E5c1oSPMYJKMfIrrfg68CHVDqJGBZVBPu3ju0Ky5CR9oGi3twPjcGZ9o/uW227FDKZ
+	 moqTL4IAPK7c7KsvnUQGOPf8iL3Uu0OjDYC8RT2GDyM1IuIoM/gokebGEgQ5fW2ii6
+	 +X5XSR0tnfmBw==
 From: Thierry Reding <thierry.reding@kernel.org>
 To: Thierry Reding <thierry.reding@kernel.org>
 Cc: Rob Herring <robh@kernel.org>,
@@ -34,12 +33,10 @@ Cc: Rob Herring <robh@kernel.org>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH 2/2] arm64: tegra: Add PWM controllers on Tegra264
-Date: Sat, 21 Mar 2026 00:40:56 +0100
-Message-ID: <20260320234056.2579010-2-thierry.reding@kernel.org>
+Subject: [PATCH 1/2] dt-bindings: arm: tegra: Document Jetson AGX Thor DevKit
+Date: Sat, 21 Mar 2026 00:43:28 +0100
+Message-ID: <20260320234329.2579213-1-thierry.reding@kernel.org>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260320234056.2579010-1-thierry.reding@kernel.org>
-References: <20260320234056.2579010-1-thierry.reding@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -50,104 +47,29 @@ Content-Transfer-Encoding: 8bit
 
 From: Thierry Reding <treding@nvidia.com>
 
-Tegra264 has a number of PWM controller which are similar to those found
-on earlier chips but with some added functionality.
+The Jetson AGX Thor Developer Kit uses the same module (P3834) as the
+P3971 reference platform but a slightly different carrier board (P4071).
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra264.dtsi | 72 ++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+ Documentation/devicetree/bindings/arm/tegra.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra264.dtsi b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
-index efb4d21aa4e3..61c001fd2651 100644
---- a/arch/arm64/boot/dts/nvidia/tegra264.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
-@@ -3344,6 +3344,18 @@ i2c3: i2c@c610000 {
- 			status = "disabled";
- 		};
+diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
+index 50a31dba7bec..df257102bfa0 100644
+--- a/Documentation/devicetree/bindings/arm/tegra.yaml
++++ b/Documentation/devicetree/bindings/arm/tegra.yaml
+@@ -268,5 +268,10 @@ properties:
+           - const: nvidia,p3971-0089+p3834-0008
+           - const: nvidia,p3834-0008
+           - const: nvidia,tegra264
++      - description: Jetson AGX Thor Developer Kit
++        items:
++          - const: nvidia,p4071-0000+p3834-0008
++          - const: nvidia,p3834-0008
++          - const: nvidia,tegra264
  
-+		pwm4: pwm@c6a0000 {
-+			compatible = "nvidia,tegra264-pwm";
-+			reg = <0x0 0xc6a0000 0x0 0x10000>;
-+			status = "disabled";
-+
-+			clocks = <&bpmp TEGRA264_CLK_PWM4>;
-+			resets = <&bpmp TEGRA264_RESET_PWM4>;
-+			reset-names = "pwm";
-+
-+			#pwm-cells = <2>;
-+		};
-+
- 		pmc: pmc@c800000 {
- 			compatible = "nvidia,tegra264-pmc";
- 			reg = <0x0 0x0c800000 0x0 0x100000>,
-@@ -3579,6 +3591,66 @@ i2c16: i2c@c430000 {
- 			status = "disabled";
- 		};
- 
-+		pwm2: pwm@c5e0000 {
-+			compatible = "nvidia,tegra264-pwm";
-+			reg = <0x0 0xc5e0000 0x0 0x10000>;
-+			status = "disabled";
-+
-+			clocks = <&bpmp TEGRA264_CLK_PWM2>;
-+			resets = <&bpmp TEGRA264_RESET_PWM2>;
-+			reset-names = "pwm";
-+
-+			#pwm-cells = <2>;
-+		};
-+
-+		pwm3: pwm@c5f0000 {
-+			compatible = "nvidia,tegra264-pwm";
-+			reg = <0x0 0xc5f0000 0x0 0x10000>;
-+			status = "disabled";
-+
-+			clocks = <&bpmp TEGRA264_CLK_PWM3>;
-+			resets = <&bpmp TEGRA264_RESET_PWM3>;
-+			reset-names = "pwm";
-+
-+			#pwm-cells = <2>;
-+		};
-+
-+		pwm5: pwm@c600000 {
-+			compatible = "nvidia,tegra264-pwm";
-+			reg = <0x0 0xc600000 0x0 0x10000>;
-+			status = "disabled";
-+
-+			clocks = <&bpmp TEGRA264_CLK_PWM5>;
-+			resets = <&bpmp TEGRA264_RESET_PWM5>;
-+			reset-names = "pwm";
-+
-+			#pwm-cells = <2>;
-+		};
-+
-+		pwm9: pwm@c610000 {
-+			compatible = "nvidia,tegra264-pwm";
-+			reg = <0x0 0xc610000 0x0 0x10000>;
-+			status = "disabled";
-+
-+			clocks = <&bpmp TEGRA264_CLK_PWM9>;
-+			resets = <&bpmp TEGRA264_RESET_PWM9>;
-+			reset-names = "pwm";
-+
-+			#pwm-cells = <2>;
-+		};
-+
-+		pwm10: pwm@c620000 {
-+			compatible = "nvidia,tegra264-pwm";
-+			reg = <0x0 0xc620000 0x0 0x10000>;
-+			status = "disabled";
-+
-+			clocks = <&bpmp TEGRA264_CLK_PWM10>;
-+			resets = <&bpmp TEGRA264_RESET_PWM10>;
-+			reset-names = "pwm";
-+
-+			#pwm-cells = <2>;
-+		};
-+
- 		i2c0: i2c@c630000 {
- 			compatible = "nvidia,tegra264-i2c";
- 			reg = <0x00 0x0c630000 0x0 0x10000>;
+ additionalProperties: true
 -- 
 2.52.0
 
