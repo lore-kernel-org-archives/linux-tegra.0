@@ -1,53 +1,53 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC721B7F4;
-	Sun, 22 Mar 2026 16:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F22136896F;
+	Sun, 22 Mar 2026 17:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774198606; cv=none; b=cDI+d/WLyNECKrE4+ID87lnd12XPR/QAurUrQ7Wd8g8Mf/dDZo3aZnUTJAAJn0J5JMOHAx0apLtTozIdGWgq1CH1J10RFvPth1H6xWLiwyOWmxfC7M2zf5jnl6piZ+xlaoaCAQV9fGtvRpU9eGKUTuS/sc2KdvZPobyjYKfplbc=
+	t=1774201730; cv=none; b=NTk775zjIQgvsOyM9zIA40Z3YlERp7H4L94i9qVOpcNzTtEdfmp7eAxlWMQLIWva0z8JG6uu0t4CQXaDGhcVevP+wGR2wAb7wehEZSDiRIoUJwePK7kkv4aKv2fWegpW7Wlypn4+RtiUESuV2manZhvsycdgmA/ScSVpLmcVQE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774198606; c=relaxed/simple;
-	bh=2Om8Sh6EzFq8cdWMV2yg/VmRtANxX5brcu8b8T0bpJM=;
+	s=arc-20240116; t=1774201730; c=relaxed/simple;
+	bh=Q7plJylkoGw36pT5yDx8o4mQbJObfX4MYkkhDBNVVLo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N5KH93ba+aq6Z/6Rr1r8Uua7mI/yPAwW/MSH7fj//zBJKZi23cJmvQXHL8DrgLV3b7WEFDmrAFa3K12jAlwYTAb4Bd0Fi2eVGTDrRL/nY0qTznoB2i/eWmtVhzm4UyLo0H2wIqBVitoOqUADjRXcjcB8hnHMNGdc/IqrfELMUZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m8ybOsZt; arc=none smtp.client-ip=192.198.163.16
+	 Content-Type:Content-Disposition:In-Reply-To; b=WwIM6XQG7bJrZJDQt4AJ8tlVWzCbZEljmBV8s0nqDvR1Ttjg0i01pwVKSgFby6MI0WcBD8x0q69DNSSXNnUQ3EH0QGGVFl3EAWOMctkrhoHHrdXQnfOUoFMiL0jzxXZpRKlPMrlTJLE0+ZBLTUU53WX5hdez3pkM7bsJKGYaNnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SQmqnmzH; arc=none smtp.client-ip=192.198.163.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m8ybOsZt"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SQmqnmzH"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1774198605; x=1805734605;
+  t=1774201729; x=1805737729;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=2Om8Sh6EzFq8cdWMV2yg/VmRtANxX5brcu8b8T0bpJM=;
-  b=m8ybOsZtg0W/6X8OE7SQ0i5W+RbQk3npk8oKWZr2aYKw6qZW6IuuKOwV
-   bw0P1zV+47WMfQIiCl8xN7trfVOBviGV/fcooJu+wUcd474o55qfCZx7y
-   oGAX7ZtoxQtC7X+bptPDl3j7iEpNDpo/Wrho7pZE2SF2Wn7taoaispjx9
-   3XZnCpkb2HR21C9/5uu+hRrCz/pLuhP0GDZP0ZHPmHUlbKUqD2KvjYuv/
-   ocWu2uTgupN+ZGfqlVwTBb8aCPNC8m76xOBL6/G008WCcFiCSGV4iQgLl
-   zrWhTNFMcTXqkH741K3EUFFf8gawUEbZwvQHAqRWigCfVq+diQ7JHozcl
+  bh=Q7plJylkoGw36pT5yDx8o4mQbJObfX4MYkkhDBNVVLo=;
+  b=SQmqnmzHCqPn9TAFHlBwkjxft0rwSkKK2crqG40KOPOalUXrEq+RD9kO
+   46kWuWphH08YANzemVsrHvLETGavR5xaoq7oPg45bL9pYuTZe4K8YLNms
+   EgjkFsKbC3epyztIdviyTT6PBN+Q5chXIhUOdgFe6DsCKuz6o0BItwDCA
+   s+25tlYt6FpJ//LXp72M/gd7eL2YF2bfIE4dDXunx7Pq5SHrdYMjUYJla
+   +l53aFAgdiAeGWeXUXh3SXXhCXlkhyqWdSUVzwrUMPOkWyBtMRE/7ATqD
+   tHclfYYznV9WZl3SMKAVHBWZuMnuGbS2zl3oILUIIdiLRlWD0g32IhzHF
    g==;
-X-CSE-ConnectionGUID: +2oVaqcwRxKiUx5OP597eQ==
-X-CSE-MsgGUID: EEuUp3MMQbatCoqML8keEA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11737"; a="62771305"
+X-CSE-ConnectionGUID: n9ZYZds6TIux+ReSnkbDaw==
+X-CSE-MsgGUID: fYivz1zJQj2yfM89PlEdjA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11737"; a="100668013"
 X-IronPort-AV: E=Sophos;i="6.23,135,1770624000"; 
-   d="scan'208";a="62771305"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2026 09:56:44 -0700
-X-CSE-ConnectionGUID: kskDwVYgRAmOKoWKLWv+rA==
-X-CSE-MsgGUID: cEQ8NYITQa+qKe9qXBtf9A==
+   d="scan'208";a="100668013"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2026 10:48:48 -0700
+X-CSE-ConnectionGUID: 4NbUKZiMRHS2WCeYLBU5sQ==
+X-CSE-MsgGUID: 2xvUqkYIRpmaRNzOgIoPjQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.23,135,1770624000"; 
-   d="scan'208";a="221030586"
+   d="scan'208";a="261717612"
 Received: from lkp-server02.sh.intel.com (HELO d7fefbca0d04) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 22 Mar 2026 09:56:38 -0700
+  by orviesa001.jf.intel.com with ESMTP; 22 Mar 2026 10:48:42 -0700
 Received: from kbuild by d7fefbca0d04 with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1w4M6J-000000002QH-2gLA;
-	Sun, 22 Mar 2026 16:56:32 +0000
-Date: Mon, 23 Mar 2026 00:55:11 +0800
+	id 1w4MuG-000000002Tt-0QjY;
+	Sun, 22 Mar 2026 17:48:17 +0000
+Date: Mon, 23 Mar 2026 01:47:20 +0800
 From: kernel test robot <lkp@intel.com>
 To: Akhil R <akhilrajeev@nvidia.com>,
 	Alexandre Belloni <alexandre.belloni@bootlin.com>,
@@ -68,9 +68,10 @@ To: Akhil R <akhilrajeev@nvidia.com>,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev,
 	linux-hwmon@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Akhil R <akhilrajeev@nvidia.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Akhil R <akhilrajeev@nvidia.com>
 Subject: Re: [PATCH 04/12] i3c: master: Support ACPI enumeration
-Message-ID: <202603230007.WOMwklQ6-lkp@intel.com>
+Message-ID: <202603230124.VFt6CPBe-lkp@intel.com>
 References: <20260318172820.13771-5-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -97,44 +98,67 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Akhil-R/dt-bindings-i3c-A
 base:   next-20260320
 patch link:    https://lore.kernel.org/r/20260318172820.13771-5-akhilrajeev%40nvidia.com
 patch subject: [PATCH 04/12] i3c: master: Support ACPI enumeration
-config: sparc-randconfig-002-20260322 (https://download.01.org/0day-ci/archive/20260323/202603230007.WOMwklQ6-lkp@intel.com/config)
-compiler: sparc-linux-gcc (GCC) 15.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260323/202603230007.WOMwklQ6-lkp@intel.com/reproduce)
+config: hexagon-randconfig-002-20260322 (https://download.01.org/0day-ci/archive/20260323/202603230124.VFt6CPBe-lkp@intel.com/config)
+compiler: clang version 23.0.0git (https://github.com/llvm/llvm-project 4abb927bacf37f18f6359a41639a6d1b3bffffb5)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260323/202603230124.VFt6CPBe-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202603230007.WOMwklQ6-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202603230124.VFt6CPBe-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
-   drivers/i3c/master.c: In function 'i3c_master_add_i2c_boardinfo':
->> drivers/i3c/master.c:2449:23: error: implicit declaration of function 'acpi_dev_get_resources'; did you mean 'acpi_get_event_resources'? [-Wimplicit-function-declaration]
+>> drivers/i3c/master.c:2449:9: error: call to undeclared function 'acpi_dev_get_resources'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
     2449 |                 ret = acpi_dev_get_resources(adev, &resources,
-         |                       ^~~~~~~~~~~~~~~~~~~~~~
-         |                       acpi_get_event_resources
->> drivers/i3c/master.c:2455:17: error: implicit declaration of function 'acpi_dev_free_resource_list' [-Wimplicit-function-declaration]
+         |                       ^
+   drivers/i3c/master.c:2449:9: note: did you mean 'acpi_get_event_resources'?
+   include/acpi/acpixf.h:816:9: note: 'acpi_get_event_resources' declared here
+     816 |                              acpi_get_event_resources(acpi_handle device_handle,
+         |                              ^
+   include/acpi/platform/aclinux.h:93:21: note: expanded from macro 'ACPI_EXTERNAL_RETURN_STATUS'
+      93 |         static ACPI_INLINE prototype {return(AE_NOT_CONFIGURED);}
+         |                            ^
+>> drivers/i3c/master.c:2455:3: error: call to undeclared function 'acpi_dev_free_resource_list'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
     2455 |                 acpi_dev_free_resource_list(&resources);
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/i3c/master.c: In function 'i3c_master_add_acpi_dev':
->> drivers/i3c/master.c:2556:9: error: unknown type name 'acpi_bus_address'; did you mean 'acpi_io_address'?
+         |                 ^
+   drivers/i3c/master.c:2556:2: error: unknown type name 'acpi_bus_address'; did you mean 'acpi_io_address'?
     2556 |         acpi_bus_address adr;
          |         ^~~~~~~~~~~~~~~~
          |         acpi_io_address
->> drivers/i3c/master.c:2563:14: error: implicit declaration of function 'acpi_has_method'; did you mean 'acpi_has_watchdog'? [-Wimplicit-function-declaration]
+   include/acpi/actypes.h:187:13: note: 'acpi_io_address' declared here
+     187 | typedef u64 acpi_io_address;
+         |             ^
+>> drivers/i3c/master.c:2563:7: error: call to undeclared function 'acpi_has_method'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
     2563 |         if (!acpi_has_method(adev->handle, "_ADR"))
-         |              ^~~~~~~~~~~~~~~
-         |              acpi_has_watchdog
->> drivers/i3c/master.c:2563:34: error: invalid use of undefined type 'struct acpi_device'
+         |              ^
+   drivers/i3c/master.c:2563:7: note: did you mean 'acpi_has_watchdog'?
+   include/linux/acpi.h:1504:20: note: 'acpi_has_watchdog' declared here
+    1504 | static inline bool acpi_has_watchdog(void) { return false; }
+         |                    ^
+>> drivers/i3c/master.c:2563:27: error: incomplete definition of type 'struct acpi_device'
     2563 |         if (!acpi_has_method(adev->handle, "_ADR"))
-         |                                  ^~
->> drivers/i3c/master.c:2566:15: error: implicit declaration of function 'acpi_device_adr'; did you mean 'acpi_device_handle'? [-Wimplicit-function-declaration]
+         |                              ~~~~^
+   include/linux/device/bus.h:224:8: note: forward declaration of 'struct acpi_device'
+     224 | struct acpi_device;
+         |        ^
+>> drivers/i3c/master.c:2566:8: error: call to undeclared function 'acpi_device_adr'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
     2566 |         adr = acpi_device_adr(adev);
-         |               ^~~~~~~~~~~~~~~
-         |               acpi_device_handle
+         |               ^
+   drivers/i3c/master.c:2566:8: note: did you mean 'acpi_device_handle'?
+   include/linux/acpi.h:883:27: note: 'acpi_device_handle' declared here
+     883 | static inline acpi_handle acpi_device_handle(struct acpi_device *adev)
+         |                           ^
+   drivers/i3c/master.c:2674:9: error: call to undeclared function 'acpi_dev_get_resources'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    2674 |                 ret = acpi_dev_get_resources(adev, &resources,
+         |                       ^
+   drivers/i3c/master.c:2683:3: error: call to undeclared function 'acpi_dev_free_resource_list'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    2683 |                 acpi_dev_free_resource_list(&resources);
+         |                 ^
+   8 errors generated.
 
 
-vim +2449 drivers/i3c/master.c
+vim +/acpi_dev_get_resources +2449 drivers/i3c/master.c
 
   2423	
   2424	static int
