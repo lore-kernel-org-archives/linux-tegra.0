@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615D535959;
-	Mon, 23 Mar 2026 15:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B2324BBF4;
+	Mon, 23 Mar 2026 15:04:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774278058; cv=none; b=Bj21QZVt8SyFwWI9qpuo3tOLv44CoQH6MDQb6AbIaESHlespSLFwMti9K2/W37EHKEtYK5EogaDNOnBRIjWcERmzUCm4f0kxwlFgYwwrMOPM7uF0274SL/ohsQtC39gWTIvd/TlF2KAsMoBcsVDl84w4FqhNP3/wAEUmiZKcyTo=
+	t=1774278247; cv=none; b=V4xPCP0/tBccd3CXtPc23Lv0OO6unK2jAPacJ2h0yQOgw/2YrfdLcVCNob78yGFQe9YJOuwtaZQJBYDQvfdsh3s5bkxzauoY2F0A/Nb+13Ahw5bkG3DdCoP35C/EO5/1m5040QyjoLaaRBNjJO5f5OMpg40b8ZC+rbRvVeMnRlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774278058; c=relaxed/simple;
-	bh=K5wvmLCfEdIXtq/ZmdPIzqNhB2DOdlF1L+Gwvcu3Gok=;
+	s=arc-20240116; t=1774278247; c=relaxed/simple;
+	bh=j9SphybXpKQs+tI6PSVAGnhieEiNqTo0QXGtRvMwmyM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I58qPGRnpsTBAohxJQrct+YRkk3VgtsU1fYhlOItiv45tcp1YJk6p+jug+LVwmVZO6Qk1KnFvc7uAT9Eq0QgbyLelQzFm/1rxxgoTkUHW9ra6QEtXe13QZTJgPvSkZWZmBqgnKLMz9jVWoms0jrHvg3241KGscyqMZxCiLWdfwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e4YKw6FI; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=dfaQ416fNwTr7AYjSzOHXZdlQSwnMU8jJx5EC2RcxWrh7cI3u61dLORDyqmtCQ1rH3puqPhoO33LayRMjVQi4wyo+i61FQNDbOsqyHz8RGtonRJcRAJ3pmPU4FyM/Jj5GBkohnmWlRuI9xkk/lndEMKMngSXIx1N/h1+6S51TuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ku4j63ah; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4YKw6FI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F1FBC2BCB1;
-	Mon, 23 Mar 2026 15:00:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ku4j63ah"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FCA8C4CEF7;
+	Mon, 23 Mar 2026 15:04:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774278058;
-	bh=K5wvmLCfEdIXtq/ZmdPIzqNhB2DOdlF1L+Gwvcu3Gok=;
+	s=k20201202; t=1774278246;
+	bh=j9SphybXpKQs+tI6PSVAGnhieEiNqTo0QXGtRvMwmyM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=e4YKw6FIHxFo1R8kXSI1jIvZZh6pgeKGkrtucW9TzaMK9JTGYs1olR01o+dE64Hv6
-	 LhoBJtehgyEQI9Sd47BF97ctSll6gePY4oyvmwqIAgwDVM/zg2V2D3tV1o4JK++wXq
-	 Y2ibV9po/S3A8REWFBcI2Hx4HVEyPOOPo/tj8zCdCV1HMXj/KCsV/zBM3BOj6tSnLJ
-	 hBpJ+T+NzcHlH3OXcTOlhD0j/4rqMsVdZ9ASH5vACzvHfbC3Va7lOyJEygdjfzGytw
-	 t9ap299hexl76OadJT3lzbFfquh9CYJg9Nq23bOqQa7Csve/s0xc5jWKCW6Ispv+1T
-	 Z1g9cu31MEGbg==
-Message-ID: <aa424f26-1bc8-41d3-b83a-5f1879cd2559@kernel.org>
-Date: Mon, 23 Mar 2026 16:00:54 +0100
+	b=ku4j63ah1DrGz3m2j8QJjg61/cnjW541UAT1TWbV5/IbTw4l54NZK4IyR6zo1cDw2
+	 WOczNLlfYFW0XPrvToHvinw1dCLywmHS/car6wGIh4YJ2QUCtXezuuWUbvRk+Jhg9m
+	 ne79QgG9564doViJczJ4VRV6KlnC912QFn7uqEfGCS2TRobLEmDr66nOIdnnLmFjzz
+	 OLoaX0waWXlga39Bchlmgg/nsPpVSMkcbpsW4CVO/nQPbP9/2liiCs529yeWs24Pcn
+	 k1CK1g82jIeVaUaGJJqPekZZD6DjqHNEGKtZVHHpxI6KYOP5/75bJsg7ePV7jVPYk9
+	 JOvo6Rx63SwyA==
+Message-ID: <66ff573d-2b93-4e7c-bbb1-3ac0536ccdc5@kernel.org>
+Date: Mon, 23 Mar 2026 16:04:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -42,7 +42,7 @@ Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
  devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
 References: <20260320234056.2579010-1-thierry.reding@kernel.org>
- <20260321-witty-fortunate-elephant-ce50fe@quoll> <acFRczOXps0nRfMl@orome>
+ <20260321-lurking-courageous-centipede-5e82cb@quoll> <acFSL4r47VtoQx61@orome>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,32 +88,56 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <acFRczOXps0nRfMl@orome>
+In-Reply-To: <acFSL4r47VtoQx61@orome>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 23/03/2026 15:45, Thierry Reding wrote:
-> On Sat, Mar 21, 2026 at 11:47:59AM +0100, Krzysztof Kozlowski wrote:
+On 23/03/2026 15:50, Thierry Reding wrote:
+> On Sat, Mar 21, 2026 at 11:49:08AM +0100, Krzysztof Kozlowski wrote:
 >> On Sat, Mar 21, 2026 at 12:40:55AM +0100, Thierry Reding wrote:
 >>> From: Thierry Reding <treding@nvidia.com>
 >>>
 >>> The PWM controller found on Tegra264 is largely compatible with the one
 >>> on prior generations, but it comes with some extra features, hence a new
 >>> compatible string is needed.
+>>>
+>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yaml | 2 ++
+>>>  1 file changed, 2 insertions(+)
 >>
->> Extra features means devices are compatible.
->>
->> You also always need a new compatible even without extra features, so
->> last part is just confusing. Suggests like you could skip new
->> compatible.
+>> Where is the driver patch? Why this is not being part of driver
+>> submission (see also submitting bindings DT in description how patches
+>> should be sent)?
 > 
-> Erm... if the hardware was exactly identical, then there'd be no need
-> for a new compatible string. It's certainly good practice to add one
-> anyway, but what's the point in having 10 different compatible strings
-> for exactly the same hardware?
+> I don't see anything in the documentation about a requirement for driver
+> patches to be included. It does indicate what the ordering of patches
+> should be if driver code is included, but doesn't specifically say that
 
-Because integration is different. Nothing new here, DT maintainers
-request it for years and is since long time documented in writing bindings.
+It does. Explicitly:
+3) For a series going through multiple trees, the binding patch should
+be kept with the driver using the binding.
+
+
+> driver code must accompany binding updates.
+
+And you have entire cover letter to explain that...
+
+> 
+> Nor do I understand why it should be needed. I do understand why you
+
+It's not needed. It is just odd not to have it here.
+
+> would want to have driver code to go along with a completely new binding
+> but in cases like this where we're really only adding a new compatible
+> string to an otherwise unmodified binding, I don't see any advantage in
+> having to put both together.
+
+And the problem appeared later - the driver was posted separately
+without the binding. That's a no go and really odd process.
+
+For the other patches you have without drivers, it would be fine. And
+you would not get questions if it was explained.
 
 
 Best regards,
