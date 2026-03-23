@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF74233D6ED;
-	Mon, 23 Mar 2026 07:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C57B33D6ED;
+	Mon, 23 Mar 2026 07:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774250585; cv=none; b=bDgNORBDIQ1cM4P2hbiJl14q3XlnI/LQzBx01mR9xbgs5Yc5oD/lmoMceOqG6KqpC0nUt7mObuvPyH00Wxe390P+dkrfV2HKEQo2tldmwJWrzSNHeG3z8EazRfiODvePgz2l3TzsJ+X+rsmfMR3U78Y4naReFD/9DzYt7HqrxAY=
+	t=1774250671; cv=none; b=SsBx6LRC/W8Of/q5sGuRE1PZSq+gjXtbOqe0W82Y9j+glZoSBXjn6Rzqynbtm7eLoJL/V4r+b7fgFPjKl28ULSuB+NLh7Teq/uuvksHEdrq1qBzNkmaE6NjkegcbFqYu7lQ2SLuyK86FwaDehBEdELFYLYz/X++b41V0tjNkb2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774250585; c=relaxed/simple;
-	bh=NOr4/whM/6DDCxsSFLkoWn7h9JIHXCKtrxrgkH7C44s=;
+	s=arc-20240116; t=1774250671; c=relaxed/simple;
+	bh=1wX3cCzOotX5HYWcm0z9dTm/RgsIvPlTofCpo/Ap+2g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HLtk3PZzxm+phC8acuTJN43xg5rDYKJHnMsNOIt5dCAJC0RRybGjsc3uuuS/nz40RH7jxdsxN4zkQBi4JTY+JeO408AS7vcm9mIJAGZkIJ+lE8UhYFb5z7Xpirbxlh16QFjKpKVnYkweyZiC8oKNs541Y94hXIPhzBDurH5UQMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gZTP10K9; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=ZEkmKYz/vxJB3occ1gRnhkS1vn1S6TIIwo6hwV34HiPP5UD3aZr060Rj6w+tNu40wPLM/TJfa9ieD3H2qh6os4gQjWozTzVHEylJwG3if8fDSGv4EJ/cd14AWf8jMDnnn/nUII7raPHKfosBTMSMjld+aQ+z9Uz8oScmXPXWIVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fDFpeCQV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gZTP10K9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B31FAC4CEF7;
-	Mon, 23 Mar 2026 07:23:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fDFpeCQV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5537AC4CEF7;
+	Mon, 23 Mar 2026 07:24:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774250585;
-	bh=NOr4/whM/6DDCxsSFLkoWn7h9JIHXCKtrxrgkH7C44s=;
+	s=k20201202; t=1774250671;
+	bh=1wX3cCzOotX5HYWcm0z9dTm/RgsIvPlTofCpo/Ap+2g=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gZTP10K9D8nt+7+Nd5uivDLdc6Uy0Uvl6+WXZDN4PX+mZFbSPwPBTAB/NzHeS86ZE
-	 q6kZlExQq96cNwCMiaNPEfLqGEla6hOALCp5/mRvgCBUfjzUPDQPccwnY3mDOJpgvG
-	 oC2XhNq8rR9ow3e/ZyvyqF2l+qnGKRmwW97uNoM97SH3Wbx6jMhk642mjtps8WP+ON
-	 MzZe/me7GOl5tj1y/2pg+MqGOMN8nUt8DWPDJoYZQqkIkezeF2w8ztcIJM06SkwO5h
-	 MiWC4D8wYucQY0HCVP+2G4lhszXwmq9txnYmOvxBA1uIA8r0vOhvMAZWx3WurfUN5P
-	 bVxPny6r6Sa5w==
-Message-ID: <d3ca4cd0-c343-4885-ba97-814aeaf80fac@kernel.org>
-Date: Mon, 23 Mar 2026 08:23:02 +0100
+	b=fDFpeCQVfTYriJwYms03+m8ztBoMKjYc2BHeLYIpcsKhhXP27fkoyXVFAHhj1gqfM
+	 fHvMC87gguigzzlZVOrePfySIseHsttYBT4Yo+bYPoXRc3D9XEgu+2RQrXzfx3/C6W
+	 tuTR4nD+WbUsXt4ytkRXcP49Lsv8rZ/LzyamMEoqEHq/gTLGNR1AE5Wp7jc7sLmJrM
+	 zWmIHcJvvRjD0MiCh3SlP+neOhgFgUfq8vRjgZe8+TCg8r+dct2lYRm9vdEKiOiGPB
+	 7G9AjDC2Qa9BVUwi9htrKHo3JrSr5wtUVtrXmi+yccCcR8VS4Ml8UwJgh2rAj6g+7s
+	 0H0ulPahWs05A==
+Message-ID: <de5e6159-ae89-4b8f-948a-678cea9211fa@kernel.org>
+Date: Mon, 23 Mar 2026 08:24:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,16 +35,15 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: pwm: Document Tegra194 and Tegra264
- controllers
+Subject: Re: [PATCH 5/5] pwm: tegra: Add support for Tegra264
 To: Mikko Perttunen <mperttunen@nvidia.com>,
- Thierry Reding <thierry.reding@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20260320234056.2579010-1-thierry.reding@kernel.org>
- <20260321-lurking-courageous-centipede-5e82cb@quoll>
- <8611828.LvFx2qVVIh@senjougahara>
+ Thierry Reding <thierry.reding@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yi-Wei Wang <yiweiw@nvidia.com>
+References: <20260323-t264-pwm-v1-0-4c4ff743050f@nvidia.com>
+ <20260323-t264-pwm-v1-5-4c4ff743050f@nvidia.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,37 +89,26 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <8611828.LvFx2qVVIh@senjougahara>
+In-Reply-To: <20260323-t264-pwm-v1-5-4c4ff743050f@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 23/03/2026 03:45, Mikko Perttunen wrote:
-> On Saturday, March 21, 2026 7:49 PM Krzysztof Kozlowski wrote:
->> On Sat, Mar 21, 2026 at 12:40:55AM +0100, Thierry Reding wrote:
->>> From: Thierry Reding <treding@nvidia.com>
->>>
->>> The PWM controller found on Tegra264 is largely compatible with the one
->>> on prior generations, but it comes with some extra features, hence a new
->>> compatible string is needed.
->>>
->>> Signed-off-by: Thierry Reding <treding@nvidia.com>
->>> ---
->>>
->>>  Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yaml | 2 ++
->>>  1 file changed, 2 insertions(+)
->>
->> Where is the driver patch? Why this is not being part of driver
->> submission (see also submitting bindings DT in description how patches
->> should be sent)?
->>
->> Best regards,
->> Krzysztof
-> 
-> Just posted: https://lore.kernel.org/linux-tegra/20260323-t264-pwm-v1-0-4c4ff743050f@nvidia.com/T/#mfb40392e07d7ac9cedbaf853442eed822da7671e
+On 23/03/2026 03:36, Mikko Perttunen wrote:
+> +
+>  static const struct of_device_id tegra_pwm_of_match[] = {
+>  	{ .compatible = "nvidia,tegra20-pwm", .data = &tegra20_pwm_soc },
+>  	{ .compatible = "nvidia,tegra186-pwm", .data = &tegra186_pwm_soc },
+>  	{ .compatible = "nvidia,tegra194-pwm", .data = &tegra186_pwm_soc },
+> +	{ .compatible = "nvidia,tegra264-pwm", .data = &tegra264_pwm_soc },
 
-so this is completely misplaced. Please read submitting patches in DT
-dir and follow standard style of sending patches upstream. Just like
-every other contributor. You don't get any exceptions here.
+Undocumented ABI.
+
+Please run scripts/checkpatch.pl on the patches and fix reported
+warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
+patches and (probably) fix more warnings. Some warnings can be ignored,
+especially from --strict run, but the code here looks like it needs a
+fix. Feel free to get in touch if the warning is not clear.
+
 
 Best regards,
 Krzysztof
