@@ -1,150 +1,128 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5D13B0ADE
-	for <linux-tegra@vger.kernel.org>; Mon, 23 Mar 2026 13:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241753B7772
+	for <linux-tegra@vger.kernel.org>; Mon, 23 Mar 2026 14:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774274349; cv=none; b=mt6rJvHcJBmMqEpOhI5VY4obZH4kLcBR01y2XGxzPIdPAtcpXxZWwgw4+rmChesTaVWh1U9HHqw0cha5pHpyW2obrSTJOCHR+k1Qwh2Aq32pB3Lg1uKE9s5S2t0fFoo9a5AEsgvY9uLsg392wqI48eEE5QBQQ7LoQcckPrIYWpI=
+	t=1774274582; cv=none; b=FFTlt5mRTRe0ypiU/5uyr4cg6UcTrZFPwimG+rhkT2G35FyX/zzZZeRS5X+fT5kMRSn1LRVnurDC/LYkxQhwkgJxy6AHP5xSvZWfxA5WAs6JAWJQpr+7Waxim/J+5x4DLngbt6vzxkWKqyRSVHlks3Ma4G/SQftxOe567i/qJ3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774274349; c=relaxed/simple;
-	bh=FrJqgy6FrT/pl2LwdfE16n9Z4H8vmvSWs8GmjvMR+jc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bu2Xf/3/m6GFqK5UNnnHbXno0eNX6dDsmwVTAMpL+81aGedz3gvJGwzwiA+w2je0eobTi4UAb9Ev6GHYoAEDwnLXPTGZaYes5rK4sNWlYN1maquMUaI8ElAI33xIscy2OkIiIeYbIkRoIsc9pv+E9/naVaqrB8uZQs4k4cx0WDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OzcJ9XHe; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1774274582; c=relaxed/simple;
+	bh=74nU+p4AvwjOMMyaJKS8cH28y3pbGWscg6d7b4xTKtk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qH9EXF+YyqzvJ0wGZsDHRvhHbL8TpkwevyeeauOwlchnkWnm7OR4zoEJ7tGgwa6YsVhvfhivYMNIxzvWFFpOGFdLb/nB1q3wiDbd11VXF+rdVypbPXNZg/l3r1tXhGBsbCPUgDKv2bdlT00vzU4XV4OzHew/0aizWb+BhgJW7C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fKkCUfQr; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OzcJ9XHe"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1774274346;
-	h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bEtCE3UFyC9EUSjcg5HmiHx+sSKd6jmOnMFqB60P6ro=;
-	b=OzcJ9XHeV0VkLipiMui9/kGUOEIfDVWiMga7dfdn08v9AV33vxyflHlHd9DQrU0rZicfOq
-	gJgHVN6u5iwf36/Zo/PS89wlLeF3UNmsRCh+LygmejOva2QgcWpz9p8S4at/Oy7DqZCGSL
-	qjbkWC3/BGZvDuf8RxCxpT4xCyW6vbY=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-645-rZXRbb80NVmcHesOevigDQ-1; Mon, 23 Mar 2026 09:59:05 -0400
-X-MC-Unique: rZXRbb80NVmcHesOevigDQ-1
-X-Mimecast-MFC-AGG-ID: rZXRbb80NVmcHesOevigDQ_1774274344
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-485375aa56eso25449295e9.1
-        for <linux-tegra@vger.kernel.org>; Mon, 23 Mar 2026 06:59:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fKkCUfQr"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-439bcec8613so1938233f8f.3
+        for <linux-tegra@vger.kernel.org>; Mon, 23 Mar 2026 07:03:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1774274579; x=1774879379; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XP2z4EeTIErAA0SCjA9USYIYpOzE49JnT+Yi7rCFLbY=;
+        b=fKkCUfQrDEbktEiQkHJOEe0IvCeEhXrRL9uVaULPiv8tlhkvfD81NYD+zuVUGkLC0M
+         6nqAn4qNGE7kgm4okapJs3eIECWmOD8bs7pCb9QtriPmRImexM+5yHZXPdV6mtz+hNzw
+         wbZ/Xz52F/RJT1pdW84nBqspNH1zx8ngOT/eknBk62T5Fd2ojgG8pXsfXt8RGodwH++i
+         ujSlOYtPXxzmVApSxDnsywHEOrrOBck0BsFGtqfwRlmuCroGRL1ZZC/DFuuJfyB0sQDQ
+         X295x7Oa9d4AOnhc9RE9OmFtuKQ9hl/ewrMd0vpPzUPYZc9R8A0DDrJk7NFCnb3epZKQ
+         aXXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774274344; x=1774879144;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:reply-to:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1774274579; x=1774879379;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bEtCE3UFyC9EUSjcg5HmiHx+sSKd6jmOnMFqB60P6ro=;
-        b=H0Zqu88KsZpd1MP1X9CD5yJOBb/69/6ZYyk/0GLGta8ttilAqV/JChmJ3d2+UxsDEZ
-         vB1bB/VTOdEKCMdaa4djqRYqZjY2E3vOswuXl+Al9mriSsCHzz90b6lWNaLDeL177xYT
-         W411aBpL2X5tocONSLaU3QZ/NcLaZ/PYQQSIoaKV8FtAP781dPGBFVmXnJcc4z0GeBnp
-         nNr8kD52tlLTlhxlZ0UKcGqdrN23/7wuYQbQhSGubzs+ZRGgsd15g5kEBQ8VyUv5fO0u
-         RZiqKRai3A0Qxoqf27BfpAkMTmLZxcDxElZQfSEeGH0ohg8NzbhuUrO67uazPY4FQq0I
-         Hs1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXmTzl6rRX3Hrs28Mm3W/GuP9GJwJ1SZZJaF0djJZOD3xP6ncLzfZkCMCGzonOl6RXd+dLP+hCmCS71Sw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD/s5pURQpeXRKwvccLHBpeFWNXyKE1We5ReMJbnith654k3WO
-	Iz0r+bRtxHVJ+QLO2GJxc7FtDw3jiWUXkaBG//3FLCUBhFuyOG/wVwduVb54b6jwQ42rvK02nfO
-	m9tQ3eJBrIYVGcfwCtvQ0nrpLwFivr/aTjgEkEa9OJ4eFSUgvKKY/xfWYf323lUg/
-X-Gm-Gg: ATEYQzxzDrg1XMcVzveXV5bnv//P/LpvpWV8YmdYmtJa9JZbD4vnMnddLkfuQYhToKO
-	jq95h/knEt38ej1RjI0r/Yj94HNxIo6xMvGTQgz9uR0cWjFcfk30gveozhWrkuEtwSjIo7sqmN0
-	lTPmBPTLphm33/BBotn/a1O4YgHGC9WUraPjimW4+kCiuLyy0Cj8DVFwOBXmSSXmyl/G86kEfQA
-	hJSA3Mx9WSkRk6xl7LScaOs13hXUoM8Ekw43ZJGjNI8SxFBZUo1IyJ6mu5xRy0eKOIQI2vkjRvW
-	zgbj+6lmaYy38y/DEmNGUh9MPGGw4+3LqHGQLuBWEcRxfrZ6cf28YsUs5OlT2o8Nry+UNE0dCgp
-	i4Pey3zHoVUILTdiXercg7ex8YUkZDzU3Yu7BZb1MOAOOqgL95xQbFYD6oVaabJXloMyR1A==
-X-Received: by 2002:a05:600c:4fc8:b0:486:fbf6:abd4 with SMTP id 5b1f17b1804b1-486fedbf2d4mr182477935e9.9.1774274343817;
-        Mon, 23 Mar 2026 06:59:03 -0700 (PDT)
-X-Received: by 2002:a05:600c:4fc8:b0:486:fbf6:abd4 with SMTP id 5b1f17b1804b1-486fedbf2d4mr182477085e9.9.1774274343151;
-        Mon, 23 Mar 2026 06:59:03 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:f0e:9070:527b:9dff:feef:3874? ([2a01:e0a:f0e:9070:527b:9dff:feef:3874])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-486fe68ec05sm416952505e9.0.2026.03.23.06.59.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Mar 2026 06:59:02 -0700 (PDT)
-Message-ID: <772708e4-2878-41bc-b74e-8869bce7529c@redhat.com>
-Date: Mon, 23 Mar 2026 14:58:59 +0100
+        bh=XP2z4EeTIErAA0SCjA9USYIYpOzE49JnT+Yi7rCFLbY=;
+        b=WkSL9x/G+UZC0NlI7u24imH4LRSUKyxTDKyq/x3CwxOPu8C7O/oKSpnLzQQUSJEj+D
+         BvB2rYSs4UbkmDrU5ZbjxrhNtEKDpNJkw2JBTtIFDzEqsNgTc96GPuxC9cjRME8/oajm
+         KjMsfxvAWXo4+9GUjLQD/cY0KgJd/MdIpJ03uhmtTwZ/1B1hLvgssy9jn/TnTUKRSar+
+         TOh2X3BxVrIhxIxDcKuOtUxkNLtXTUQ6jHVKe/98iuwRQgLtIp6OBLtMlmmDN25TeNcf
+         KMC7S0hnHyM0O6pLuOFePuc48f56FtydUU8RWlTLfRiIDYzs/VZJKbZRpzgHYxNgqvXJ
+         RkQw==
+X-Gm-Message-State: AOJu0YyIVqp0iV/T7iNveCjYjCEujITgu5gdaLI0Nu8o5esd7Z7TQ48M
+	PX3txC0QX+IsppYOPskDjyML2RcW11EGiEqWRSBYkXwflD9Mwl0oTi6T
+X-Gm-Gg: ATEYQzwtLLCEfqrQbkoEICt48GtM88m+LdHQPcxOCrg+Sim/t9y5AKkgPs9rTHnBt3H
+	vISBeKPxjGAh3WnFsegNLLDxuzsp+GeIs19xGNNwDNBtCwcqlWD5tpvemOJe7Dfu+vNLuwGlyYf
+	XtWDlhutcS1b793mW6DMBnjzyrKRQ4rWaGwJjrRUXaTzhXWLBF7591s7VKSiPVqyig5pXcMCZiI
+	bNU6FkFZ9kdXXW959mf+wExrdqGy978OLwWSmHwjQzQCwM5q3/VWfqRlfuuCiKHKZATj5bX3LHy
+	SCZZDmIjMx6lHgnuxZLqHbB3z0uxQpsQlL06fEsUu1sq1cASultm7iNeNZJLYzx9OjTNfIC0ds/
+	szKy54AVcDUJQREE1XTimfKTEE8dzHVDKApgMh1Tk4phIrYiFsUBRW1m6TzRpw4Dol/0kLk+Su3
+	Asql56FY9/F1MovS7+8qP9/IRtlFQC52CpTFAWAF74uIe3bFIv4gYsxDhw8CuQorxEQg==
+X-Received: by 2002:a05:6000:4013:b0:43b:4960:60f2 with SMTP id ffacd0b85a97d-43b64291854mr18445975f8f.47.1774274579298;
+        Mon, 23 Mar 2026 07:02:59 -0700 (PDT)
+Received: from arrakis.kwizart.net (82-65-38-83.subs.proxad.net. [82.65.38.83])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b64703650sm30440010f8f.20.2026.03.23.07.02.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Mar 2026 07:02:58 -0700 (PDT)
+From: Nicolas Chauvet <kwizart@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-tegra@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Nicolas Chauvet <kwizart@gmail.com>
+Subject: [PATCH] usb: tegra: use MODULE_FIRMWARE if SOC is ENABLED
+Date: Mon, 23 Mar 2026 15:02:48 +0100
+Message-ID: <20260323140249.173603-1-kwizart@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: eric.auger@redhat.com
-Subject: Re: [PATCH 1/2] iommu/tegra241-cmdqv: Set supports_cmd op in
- tegra241_vcmdq_hw_init()
-Content-Language: en-US
-To: Nicolin Chen <nicolinc@nvidia.com>, will@kernel.org,
- robin.murphy@arm.com, jgg@nvidia.com, kevin.tian@intel.com
-Cc: joro@8bytes.org, linux-tegra@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, skolothumtho@nvidia.com
-References: <cover.1773361875.git.nicolinc@nvidia.com>
- <7988aa837f02e44c0f436bb236cba0573bd8974f.1773361875.git.nicolinc@nvidia.com>
-From: Eric Auger <eric.auger@redhat.com>
-In-Reply-To: <7988aa837f02e44c0f436bb236cba0573bd8974f.1773361875.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Nicolin,
+This allows to reduce the size of the initramfs by only selecting
+the related firmware when a given SOC is enabled.
 
-On 3/13/26 1:36 AM, Nicolin Chen wrote:
-> vintf->hyp_own is finalized in tegra241_vintf_hw_init(). On the other hand,
-> tegra241_vcmdq_alloc_smmu_cmdq() is called via an init_structures callback,
-> which is earlier than tegra241_vintf_hw_init().
->
-> This results in the supports_cmd op always being set to the guest function,
-> although this doesn't break any functionality nor have some noticeable perf
-> impact since non-invalidation commands are not issued in the perf sensitive
-> context.
->
-> Fix this by moving supports_cmd to tegra241_vcmdq_hw_init().
->
-> After this change,
->  - For a guest kernel, this will be a status quo
->  - For a host kernel, non-invalidation commands will be issued to VCMDQ(s)
->
-> Fixes: a9d40285bdef ("iommu/tegra241-cmdqv: Limit CMDs for VCMDQs of a guest owned VINTF")
-> Reported-by: Eric Auger <eric.auger@redhat.com>
-> Reported-by: Shameer Kolothum <skolothumtho@nvidia.com>
-> Closes: https://lore.kernel.org/qemu-devel/CH3PR12MB754836BEE54E39B30C7210C0AB44A@CH3PR12MB7548.namprd12.prod.outlook.com/
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+Signed-off-by: Nicolas Chauvet <kwizart@gmail.com>
+---
+ drivers/usb/host/xhci-tegra.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-
-Eric
-> ---
->  drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-> index 6fe5563eaf9eb..83f6e9f6c51d6 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-> @@ -479,6 +479,10 @@ static int tegra241_vcmdq_hw_init(struct tegra241_vcmdq *vcmdq)
->  	/* Reset VCMDQ */
->  	tegra241_vcmdq_hw_deinit(vcmdq);
->  
-> +	/* vintf->hyp_own is a HW state finalized in tegra241_vintf_hw_init() */
-> +	if (!vcmdq->vintf->hyp_own)
-> +		vcmdq->cmdq.supports_cmd = tegra241_guest_vcmdq_supports_cmd;
-> +
->  	/* Configure and enable VCMDQ */
->  	writeq_relaxed(vcmdq->cmdq.q.q_base, REG_VCMDQ_PAGE1(vcmdq, BASE));
->  
-> @@ -639,9 +643,6 @@ static int tegra241_vcmdq_alloc_smmu_cmdq(struct tegra241_vcmdq *vcmdq)
->  	q->q_base = q->base_dma & VCMDQ_ADDR;
->  	q->q_base |= FIELD_PREP(VCMDQ_LOG2SIZE, q->llq.max_n_shift);
->  
-> -	if (!vcmdq->vintf->hyp_own)
-> -		cmdq->supports_cmd = tegra241_guest_vcmdq_supports_cmd;
-> -
->  	return arm_smmu_cmdq_init(smmu, cmdq);
->  }
->  
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 3f6aa2440b05..5587302a69dd 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -2566,7 +2566,9 @@ static const struct tegra_xusb_soc tegra124_soc = {
+ 		.smi_intr = XUSB_CFG_ARU_SMI_INTR,
+ 	},
+ };
++#if IS_ENABLED(CONFIG_ARCH_TEGRA_124_SOC) || IS_ENABLED(CONFIG_ARCH_TEGRA_132_SOC)
+ MODULE_FIRMWARE("nvidia/tegra124/xusb.bin");
++#endif
+ 
+ static const char * const tegra210_supply_names[] = {
+ 	"dvddio-pex",
+@@ -2604,11 +2606,15 @@ static const struct tegra_xusb_soc tegra210_soc = {
+ 		.smi_intr = XUSB_CFG_ARU_SMI_INTR,
+ 	},
+ };
++#if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
+ MODULE_FIRMWARE("nvidia/tegra210/xusb.bin");
++#endif
+ 
+ static const char * const tegra186_supply_names[] = {
+ };
++#if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC)
+ MODULE_FIRMWARE("nvidia/tegra186/xusb.bin");
++#endif
+ 
+ static const struct tegra_xusb_phy_type tegra186_phy_types[] = {
+ 	{ .name = "usb3", .num = 3, },
+@@ -2681,7 +2687,9 @@ static const struct tegra_xusb_soc tegra194_soc = {
+ 	},
+ 	.lpm_support = true,
+ };
++#if IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC)
+ MODULE_FIRMWARE("nvidia/tegra194/xusb.bin");
++#endif
+ 
+ static const struct tegra_xusb_soc_ops tegra234_ops = {
+ 	.mbox_reg_readl = &bar2_readl,
+-- 
+2.53.0
 
