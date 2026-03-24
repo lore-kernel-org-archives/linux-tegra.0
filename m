@@ -1,66 +1,66 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B38273F9
-	for <linux-tegra@vger.kernel.org>; Tue, 24 Mar 2026 18:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B3B35AC3D
+	for <linux-tegra@vger.kernel.org>; Tue, 24 Mar 2026 18:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774376907; cv=none; b=BlMxgwibD4FkYXDGAB0+Cc26wBY9WrCHnjUPY+U4YVeDL0TGhnMKoS36qQxzmoQAUJSiJ5riTeQXova8boyKxMBOBss4j4Os/Aji6MVw2B/l8UzmNdxKL79U/9+y7e/51elsVPyA0uG7uO4SrS+4Mw0aqnoq9pIvilPUXO4+kCg=
+	t=1774376917; cv=none; b=vCyDbiKtZaU5sf8kZy6JJWaFBMejUQd0Zw3aJ3VymqLFf9r0eGr1G5FsTreQVmMBwPgbVCiQg6esQ4DQqfZFTN442RegPwexbb8YzE/MO0742ZW/rueMk0E75b4EE/vZXkrlhCvkHHydbc+04G+oQMokZYU7UbxD6wzC2aeSyXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774376907; c=relaxed/simple;
-	bh=cDcTMwkXqvLZxNGPDMHwcK5wJhpj2l1qGF/0VyfBQEI=;
+	s=arc-20240116; t=1774376917; c=relaxed/simple;
+	bh=InYIOZ74uRoVGHRDFdN9ukawBsa/EDFlsLY4lGClCxs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nqjGKfvfU/2wMN365TbJvU8AEY1Z2s+rQhfaO/+yIpNWoNqY8qewFv4nDNbDNbZ0J2RYvoJh0nzWxKOGLYR7nTCbgxOipUBEDo6M7l3QytxK9+laMObQVGkNNqfFTqFOoyeO5CMWh3M9MqvTilwn34y+y0KshuaZQAaU655/2pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iAyuvfKi; arc=none smtp.client-ip=209.85.216.50
+	 In-Reply-To:To:Cc; b=N9rO4bTmPqUzz+aKiayrPjae3SyE0sbP/vM4cvckPG3TuiPbuXWe65N74NsEF2g/cIdBBVvTv4h8pc1RzkaP6c/t60pIyw/ehRWp+YwlcCrpNzXOXa3amf0oxguuW9M95qq6uX9jyN4OmRPDaDiOkPwWKgLjGotkrBdvq6ey6ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qAnF8TBl; arc=none smtp.client-ip=209.85.216.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iAyuvfKi"
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3585ec417f6so68487a91.1
-        for <linux-tegra@vger.kernel.org>; Tue, 24 Mar 2026 11:28:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qAnF8TBl"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3590042fa8eso3729180a91.1
+        for <linux-tegra@vger.kernel.org>; Tue, 24 Mar 2026 11:28:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774376904; x=1774981704; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1774376916; x=1774981716; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7jbYoDFFKwnOMKQiaSrjwW8IJ/VZkZBU3IOohjNwPSU=;
-        b=iAyuvfKi9nJTHxonB7equYs5mZNti7S+SsGf9MUsJXMlh8pcIPrXU4iPcznnnuB5FO
-         FV7t48qTUIAC9gaqVQ9I6Ru8IOZGYNwX5DMX2TyPNQKG1ils3NC7HCLkILBNGn3mBe5d
-         lqGMtPGoXXxRlaVaRKM2gxHRbwye2AT6PqWSWV/4nBUsT/xmet98IxKIUfN27Bqcb9o3
-         NfyCVavU4GCTp7LdQmDKcdDT1aHm/WHRrwFwybTSqUJrhooRViAfDakbAkhp5+REyG8P
-         R1gxl0f7V8S7Fls3JDTYoXBx1uDeehUyS3x9QcZkugZ5yZ2Ho1mgYMKjEb28StiGIs4b
-         L77g==
+        bh=pWQFrxeJ9xbwYy1VhHH7N7bPolG8RRVJqSZfUbUVPdk=;
+        b=qAnF8TBlRT4R65eQu95gtSWiZ7VeUtt4W77VIKMKI/UO8AMGqvEz3rcekBF1eLhSWI
+         SXksNJlNvnHZzqCP8dPzuxK4GC8UjEBHiox9K1wuja11qXhN8k3wTZTYGS43PTbtY+u2
+         Hnf2OeZhAIGMOoYQKLqd72lIIuT78mXFI9vtNlHo7JjHZ24hb/bebzrXpsO3vyjCroZt
+         4O9Ew1bajxCTTiV6txX6T0y3vBW48sJKsHbreMGDyt8LOvb1UZ2X4QNV63VW/+hOkYal
+         18VOukCrtxQyn2VkS/57y+UaTBvD3CAt4I5C5eHDieMQdrgSxpom+cblkSDhanUh0SMC
+         NF5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774376904; x=1774981704;
+        d=1e100.net; s=20251104; t=1774376916; x=1774981716;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=7jbYoDFFKwnOMKQiaSrjwW8IJ/VZkZBU3IOohjNwPSU=;
-        b=ORlXBHV9/6rX23kprAtJvpuGpDwVhFRMNxAmQCuuI++ad/w/fryS+irP1Igb9AKn05
-         0mLL/t1qSDw50qM44AQdce5qKuLgocysTunjsd30hAxZiT/PARrp1YwNk4DJbapS+q7T
-         ixIjQk+th93AMnW1275qAAHB7VGaJUWxxkXf7ri0v+G+KvjzjVZGMO53bv5oioEK0XbQ
-         /FasTkUcf2I+VMNyU8ZZBYn2B/gk48nDMObHNbO4IMH+3It37Y/OueDjOMP+flLPeAtc
-         Hu3HHjLeIU1vXRKVy79hgJYPai+pzxhl8jDZD399Oo8LvgzsQ5i+5nDRpBUzZKbaNcVT
-         L+Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWqNDIQ7IzKtMtgN1UGzmJSi6rbQpGvlA0pRfLj2ra1Y/KM1R5EVAwW8pr1kOo4Sb1aO2V8BBeLlFXhw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD/Hjdtb5e1o0LaCZe6OiqIUtQT6iH6SsZ8jwOWer6EEFeKkro
-	5IIqk1DkiWPdHOc0sgs3Zd/AHasfOgqW9gKbdLkSyLsictIDZ0fn/gt/
-X-Gm-Gg: ATEYQzxDR+U5jS7igJHh9sjT7sy5C/PcQyXuYNleAi47OW9ORWB6gjKaGFBnoacHmvJ
-	9GAr2JVBuLmtgVrA7JN+gqe5/6xWTOld10JlBd/waGnQB9qUjrmhc8ssq9GMZgmHURvspyhYZlD
-	zOX+Ianr/zUGnI5hrlXGjxppYhs/PHsSpkWAuhJSJYcqxq1cxQsdtUtI6+dFSoSZUyulAMvae/R
-	zNf+IQ3fVAh257ZZvIw4+Dbl4zej2aUJbcMfzhOCXzBOkmHamGzJevoA4GDdDCAVrKusAnA5Qdo
-	44jqi0mohhmLajazI4svfgo/g50Sh23w2PkRtHkWkyD/42KA1huYoJBkVXGWvJRilYvEf382xXv
-	83+aaDiI3EPRjqd0pR2TjpzCP2LT9cUsWNoh9pDchvv/CYTT2yTLJvd5evYD8YZqT/5+P0FuaIa
-	K8Edtqf7w+q6aI4B+nlvwdfBnDmA==
-X-Received: by 2002:a17:90b:3c07:b0:35b:a0f0:8327 with SMTP id 98e67ed59e1d1-35c0d1001a9mr618620a91.2.1774376904310;
-        Tue, 24 Mar 2026 11:28:24 -0700 (PDT)
+        bh=pWQFrxeJ9xbwYy1VhHH7N7bPolG8RRVJqSZfUbUVPdk=;
+        b=KHavlKbdcoGjQYgfwsNkRLzl0uOd7MBW9fJBFQRKtL2yEChzhomXLnA56Y7i/TB6Zr
+         XCrO+6BUxDSiagl0IXAnvuxo7HEWiYjalzh/H8f8bEr/o64XKdGZEPNcj0z8SoNXNyGR
+         olC3GhL+BntvsYNt7TG2DVPnNwUjSPW/dmXZ1JRYceb1Van1BPnKfqwACTX7zQsp3NTh
+         UR970SYIEp8fYPqgGRQQVcaTnMgbRo74SZAQ3kcq+rafJGMsZqWGHhnWTveTpGOpvmse
+         MqfVEqMrnBoj5FsR0mZ1vdvmviKW/L3RXQJwmZRE8dhIQ/6zYtO9JaJTqnlfgRePwS51
+         tQzA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6ioR1TJwF88BoBM00ma+lxzTS4lhQb/beS/SSk4GktU2Py7bYZDdmtBPHYVFkbYEnX9iqu1dkSyQ9Ng==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzznM7xaQoPN8qB8RHJMlU3pj2fQJNhZsF3xCQxqJRtqmKYbGy2
+	kNglQPjMOJgsYlwzW1ayjaTVmVSJuerrbv63tvclGPeojr+xZFMFaoq1
+X-Gm-Gg: ATEYQzx4cdKheCanziJuBnrGROCy0sCNWkPhdP6cPIbHqpYn1oIyHT5wxBb9NS/wHkN
+	KPlQOqd9oB+Rt14sUDYRqywptn5AKj6J84oGxk2WFiZl+4ZQcNDQciZ9BW9Y0LpP/YYwe5LPzg7
+	snh7kbxYrKFPk+XfS3DVJyhuUNRsCLoUycLx0+2hXnkjsF7KLW1J5mJ92c44PZrbqz1u4/OMh10
+	/cnflHjuIWKPNlFq9LlhUc8oaQG5C0CzNDNvA2A/gtflyghgIvV+4YiWp9oUmibeB5Sybk6+Uwq
+	1x3R84mXNLcYelQGeXLDuWNg8rbBfDrd9neddb8o+YQ7PjpMpzvouBlMyzQJEJuoMTL2pYmJ0P8
+	7IWuy7wO2iRSFNvDjsgqamPoH5gMoH8zHAFBrqHdtN8FcWAKl32/oA6HqVPeB5jIN9n3OQTKGqw
+	obFyvf93vt3LTyMNfygJOAKiwd3A==
+X-Received: by 2002:a17:90b:17c8:b0:35b:e555:f19 with SMTP id 98e67ed59e1d1-35c0ddc5abamr302415a91.25.1774376915602;
+        Tue, 24 Mar 2026 11:28:35 -0700 (PDT)
 Received: from [127.0.1.1] ([103.216.213.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35c0d6060b5sm350576a91.17.2026.03.24.11.28.12
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35c0d6060b5sm350576a91.17.2026.03.24.11.28.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2026 11:28:23 -0700 (PDT)
+        Tue, 24 Mar 2026 11:28:35 -0700 (PDT)
 From: Atharv Dubey <atharvd440@gmail.com>
-Date: Tue, 24 Mar 2026 23:56:55 +0530
-Subject: [PATCH 07/10] i2c: st: Replace dev_err() with dev_err_probe() in
+Date: Tue, 24 Mar 2026 23:56:56 +0530
+Subject: [PATCH 08/10] i2c: sprd: Replace dev_err() with dev_err_probe() in
  probe function
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260324-deverr-v1-7-7e591cce33a3@gmail.com>
+Message-Id: <20260324-deverr-v1-8-7e591cce33a3@gmail.com>
 References: <20260324-deverr-v1-0-7e591cce33a3@gmail.com>
 In-Reply-To: <20260324-deverr-v1-0-7e591cce33a3@gmail.com>
 To: Till Harbaum <till@harbaum.org>, Andi Shyti <andi.shyti@kernel.org>, 
@@ -92,11 +92,11 @@ Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-sunxi@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com, 
  Enrico Zanda <e.zanda1@gmail.com>, Atharv Dubey <atharvd440@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1774376818; l=2664;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1774376818; l=1529;
  i=atharvd440@gmail.com; s=20260314; h=from:subject:message-id;
- bh=QTq/SsBBXUdzBzLen+lO5rBpYhODcjwD4XTKabWXWjM=;
- b=6uYv7INtZBtXz/5CGPPLnmZfr7dOa2FHZwl9/oOHXGn01WGXqmOPkElSojC2emL6vTKD8y1gU
- mA1lXC4EoXKCgHD1s/6elwyP7MOynX9ePlEaoKUiP69Jyq2pL/sIZCs
+ bh=ASHKLgyhVdhgUS0PF+wcYp1muqF4w//oNCLBXZkcUHY=;
+ b=hXROFYzb3OmT3cxRxEoFIuEeGuiZJd8xLM4x0yhyQx4WWK4SUYX6zSFRnwpUkd47L0bbPAvtp
+ mE3F0pCOHTsA7C6xaX1n86n4DvW3PrzzB2RQAlr/W45yvtlvUvwnwXb
 X-Developer-Key: i=atharvd440@gmail.com; a=ed25519;
  pk=T6i1xWOKT/RUSDYATSgyVG/4X7ac8jPjRSG1mMAcqVk=
 
@@ -107,73 +107,45 @@ This simplifies the code while improving log.
 Signed-off-by: Enrico Zanda <e.zanda1@gmail.com>
 Signed-off-by: Atharv Dubey <atharvd440@gmail.com>
 ---
- drivers/i2c/busses/i2c-st.c | 34 ++++++++++++++--------------------
- 1 file changed, 14 insertions(+), 20 deletions(-)
+ drivers/i2c/busses/i2c-sprd.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-st.c b/drivers/i2c/busses/i2c-st.c
-index 751ea421caaf..3f89c2145741 100644
---- a/drivers/i2c/busses/i2c-st.c
-+++ b/drivers/i2c/busses/i2c-st.c
-@@ -775,17 +775,15 @@ static int st_i2c_of_get_deglitch(struct device_node *np,
+diff --git a/drivers/i2c/busses/i2c-sprd.c b/drivers/i2c/busses/i2c-sprd.c
+index 1b490525d8dd..7b321a956fca 100644
+--- a/drivers/i2c/busses/i2c-sprd.c
++++ b/drivers/i2c/busses/i2c-sprd.c
+@@ -469,11 +469,10 @@ static int sprd_i2c_clk_init(struct sprd_i2c *i2c_dev)
+ 		i2c_dev->adap.nr, i2c_dev->src_clk);
  
- 	ret = of_property_read_u32(np, "st,i2c-min-scl-pulse-width-us",
- 			&i2c_dev->scl_min_width_us);
--	if ((ret == -ENODATA) || (ret == -EOVERFLOW)) {
--		dev_err(i2c_dev->dev, "st,i2c-min-scl-pulse-width-us invalid\n");
--		return ret;
--	}
-+	if ((ret == -ENODATA) || (ret == -EOVERFLOW))
-+		return dev_err_probe(i2c_dev->dev, ret,
-+				     "st,i2c-min-scl-pulse-width-us invalid\n");
- 
- 	ret = of_property_read_u32(np, "st,i2c-min-sda-pulse-width-us",
- 			&i2c_dev->sda_min_width_us);
--	if ((ret == -ENODATA) || (ret == -EOVERFLOW)) {
--		dev_err(i2c_dev->dev, "st,i2c-min-sda-pulse-width-us invalid\n");
--		return ret;
--	}
-+	if ((ret == -ENODATA) || (ret == -EOVERFLOW))
-+		return dev_err_probe(i2c_dev->dev, ret,
-+				     "st,i2c-min-sda-pulse-width-us invalid\n");
- 
- 	return 0;
- }
-@@ -808,16 +806,13 @@ static int st_i2c_probe(struct platform_device *pdev)
- 		return PTR_ERR(i2c_dev->base);
- 
- 	i2c_dev->irq = irq_of_parse_and_map(np, 0);
--	if (!i2c_dev->irq) {
--		dev_err(&pdev->dev, "IRQ missing or invalid\n");
--		return -EINVAL;
--	}
-+	if (!i2c_dev->irq)
-+		return dev_err_probe(&pdev->dev, -EINVAL, "IRQ missing or invalid\n");
- 
- 	i2c_dev->clk = of_clk_get_by_name(np, "ssc");
+ 	i2c_dev->clk = devm_clk_get(i2c_dev->dev, "enable");
 -	if (IS_ERR(i2c_dev->clk)) {
--		dev_err(&pdev->dev, "Unable to request clock\n");
+-		dev_err(i2c_dev->dev, "i2c%d can't get the enable clock\n",
+-			i2c_dev->adap.nr);
 -		return PTR_ERR(i2c_dev->clk);
 -	}
 +	if (IS_ERR(i2c_dev->clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(i2c_dev->clk),
-+				     "Unable to request clock\n");
++		return dev_err_probe(i2c_dev->dev, PTR_ERR(i2c_dev->clk),
++				     "i2c%d can't get the enable clock\n",
++				     i2c_dev->adap.nr);
  
- 	i2c_dev->mode = I2C_MODE_STANDARD;
- 	ret = of_property_read_u32(np, "clock-frequency", &clk_rate);
-@@ -829,10 +824,9 @@ static int st_i2c_probe(struct platform_device *pdev)
- 	ret = devm_request_threaded_irq(&pdev->dev, i2c_dev->irq,
- 			NULL, st_i2c_isr_thread,
- 			IRQF_ONESHOT, pdev->name, i2c_dev);
--	if (ret) {
--		dev_err(&pdev->dev, "Failed to request irq %i\n", i2c_dev->irq);
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "Failed to request irq %i\n", i2c_dev->irq);
+ 	return 0;
+ }
+@@ -548,13 +547,13 @@ static int sprd_i2c_probe(struct platform_device *pdev)
+ 		IRQF_NO_SUSPEND | IRQF_ONESHOT,
+ 		pdev->name, i2c_dev);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "failed to request irq %d\n", i2c_dev->irq);
++		dev_err_probe(&pdev->dev, ret, "failed to request irq %d\n", i2c_dev->irq);
+ 		goto err_rpm_put;
+ 	}
  
- 	pinctrl_pm_select_default_state(i2c_dev->dev);
- 	/* In case idle state available, select it */
+ 	ret = i2c_add_numbered_adapter(&i2c_dev->adap);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "add adapter failed\n");
++		dev_err_probe(&pdev->dev, ret, "add adapter failed\n");
+ 		goto err_rpm_put;
+ 	}
+ 
 
 -- 
 2.43.0
