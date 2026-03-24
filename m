@@ -1,167 +1,141 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464323DB659
-	for <linux-tegra@vger.kernel.org>; Tue, 24 Mar 2026 06:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774334561; cv=pass; b=MsUUtLGRt0OtOdACJmvbBTb/DrdVFgWC3MO3iMsGqVnF1VIGmigae5uJFVqQL0WbDa+MOlj+IbJFoM7OpZK8TYIwxQp5i+r3QO47OojOTGTbxuE7Ig031SpRpRJHOBkbbwF57doDNkPL7kTc+VYOA/JN7W3p66DbYY9cgAJ1hHs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774334561; c=relaxed/simple;
-	bh=pfBvUOdS3L0k+70ikBYfESRf7kE/vFfSaz/vCBw39yk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uMUQf2jBbibcTUTwhaBWu1nFtjkPMLHxNouqGtjZHy2k4u/s7nMIKFMW5OhSJigj9izwj/9gTdSfZXoqeADbmYBm1wUT9IwpykhijfNK//vZx42fJDXna4Dcw1TCp58GFH3vTTur9yjDb2IhuMWrG7s7YrPl6nOXXS520GSf5co=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BWNUX6kc; arc=pass smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C479730596F;
+	Tue, 24 Mar 2026 07:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774335728; cv=none; b=L+fx6fb5y8bwDYGmT1jM15pEfdqH4qH6WOWspatYG2ZlEPAM+k4xxFeENZ6kXuy85HV3RW34UgsGpNUH+daCA5oz/4zjNkOtaiOU+1fVeyAOrWw+ol2qha9ABYhtbH5fXn/+jqNjTT4pmS3QsOP/V/8Qd3+N9yDcZFqMkF0hqFg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774335728; c=relaxed/simple;
+	bh=7J7e2PZn49kKZWBgs1ncIOV2H6wLgMe5h297kwiAgRQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MTQXZNA7LMA1hzVHkE3s184MUgFB6z81QYChjoKXauIYp/GkGHUqwv66F83gb4TCHVVarKBfWH5xfE8UlxynGJAhB3M7Kl9sd/FSKDi9SvckegL3Rzzz2uwGzaCpDbWdUAxZABJHjXnX2oigaf0ZdJP0XSJbMFOQGHSpttAtrkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ijjj6Ljn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BWNUX6kc"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-668d9dba217so1786862a12.3
-        for <linux-tegra@vger.kernel.org>; Mon, 23 Mar 2026 23:42:31 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1774334550; cv=none;
-        d=google.com; s=arc-20240605;
-        b=Y5sSXO0eWH91mMSabuNxYCT0e8x3Mg5Xmt5B2T/7pSxa/uRB93XYKe6z5zsJ2+m3H/
-         oU5tcjLD12HlaA8oxJQWXMTnGHonHadaxDd1J8aBEif/3Gv5I5bDbXtbSGZTE++OiTPQ
-         eNR0rmDoWW8l54UGn+6zAX8819QMweHfLnwZ2O+08rv3z3EKg1aTAdOWIlzbQKcvXdsE
-         svZjPMrc5ZlNiosw+JNqG3pW41A1LspGET+lVN5rgHhwF526OwRkfQbN0G8mbR1d/lH9
-         4b4+NCr5LFFl6N3h1cBzCzLPKWhfupZiBX8arQjpht6Tk6t1pfrVHmyo8p2G3lTQrDz+
-         FS6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=ugpJxAclVCmtKcWDm9x8ki1L9JFRH3AsCD5hq5XlnHw=;
-        fh=7U3NCUeGWcPipzRxW7hoOHYgW+4mUJzEDqqYq3PYprY=;
-        b=BIrCArTmBCSOABmB9bekj/50Pi9S01CU75O77FRn/WrbH+OAdDl3wmWlG3BEqv0PU1
-         wDOPQn3fepfQ9jRPwenuuHJwEbMumNmU2htKxH8l/SbB5bAFFDcITMfGRajqxLB5rAjc
-         SMbR21FNc8W3Cp/Qb1jgA4PEk7z23gd2ZI+0ixvGPN3szhzMILXjESU3U1OCl7BG2Do/
-         DfZv/Bmxer9C2W01G4/anr2vqeNIi2AmeklWOEHcFAXoY2Tv8IYf/anEtd6sOmXegsvq
-         YkkZHIR1azjpY/NXhHSUg1OKLN5VkbuWSdFkmj1x7lTplxmUD+ACCKix36uvChAfvH9X
-         wX+w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774334550; x=1774939350; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ugpJxAclVCmtKcWDm9x8ki1L9JFRH3AsCD5hq5XlnHw=;
-        b=BWNUX6kcF6gd9RYxmcpaaNevmHMw2ZXOlV4In9kM9Bok9gMX5xWZUVvX1mygOfvERK
-         LUu6afP2QRW6yIfEUdI5QykIXyZcYy2ZVmtZpoU09YgaCvcV1E9ukm85fKrw/Q/5kBb8
-         V4N9kGr0KupTjQThGULzXAzzUvpA/AmFGj9jDwxRvquPEOIjiGJEsBvnF6rFZLP5SwB5
-         frzUEVRV8KlU2hEjlSRyDKGTWVW0UdTiDrAF/xglIDY/MgugG7SpN7W61TfpyFvE50hv
-         Q08tSiAmHT36VVsaGsNRLB2zBKpyAWqgUSpSrVkB8gw+2+acT0fuhbTIo1ePcrJIhp95
-         EiIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774334550; x=1774939350;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ugpJxAclVCmtKcWDm9x8ki1L9JFRH3AsCD5hq5XlnHw=;
-        b=ZwSacBjRp3CyN1hSH0LePYAd8jhNc+68Wazg7keixcN/kiJbUzrt8S+5MfTzWt5S/X
-         xu/hv/Ymab8ORZliGuNJIyKVNCIR83BlUzYQ6nq5e2mliDMA7kSTFYal2OD8TcZh2zQE
-         gjH+tqcsyEbDAzAvFZ6/5nGw7Jrh/vB2yb+HfGYo4azpwALTTo4kZZf1NeNzoGkfmRTZ
-         bbTUk6h3/Fy/gVejUxmNCn12u43B3REUHtGpFrdyXpu9BE8s4jk54j352INClFffktDm
-         yhdC2qHsk4z3ypI5uBbwIsmgS1ZdHU18SbCZXQ6z7gcP1xtzf1Rc/yCFGME8J7NiKSJT
-         v0nQ==
-X-Gm-Message-State: AOJu0YyJsmbS2hbLTLYM4Rqcclfx9MMBn5ZFrpLyHXhrocTuXnNSwflU
-	CmG2pGogRJVy+Tei0FA/TCWA1rtlGdZLev7sfWRWm9v15bBS1GIuM8MviI7WCgVDMT0rjjOgRKj
-	H5Dded0qCzO6Q9+l7uedEFg7ANYbTSCTZTw==
-X-Gm-Gg: ATEYQzy0dphMudLAIHzAgX8JsUwlPAnixh+DnrHICYdTy4LMYD0qEJZB7Ntrhy/ZQa2
-	dSmiaH9QJMt1i6VkUamlNeW25g3ORyEP/3PGmCIdOy5Ne3XDen1sVwH+vnIvhyZ4JjxKMUI7eDj
-	yzWxAF3exA3CzkMrNUtwziT8lHNUpbdyUS5SMHMb/Vn3IVk8JF1OYUmv77scB0KEo4CsQK9MGF/
-	v/L80yAI7eV6ZixAU/3HzIObgHxzearbAbiWHBxYzry6e+0d51ZyCq+nhF3Ymvj9mDJAbQCG6zR
-	vjm5nKWEhmGiVDU5zFtdik5WLAOhCF7owWdknNVQW3mcbO56VnFJ3Jrib2MlH/7QmektacykdLu
-	5FI+YXw==
-X-Received: by 2002:a17:907:2d0f:b0:b98:549d:8376 with SMTP id
- a640c23a62f3a-b9854acccd7mr671723066b.17.1774334549994; Mon, 23 Mar 2026
- 23:42:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ijjj6Ljn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60568C19424;
+	Tue, 24 Mar 2026 07:02:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774335728;
+	bh=7J7e2PZn49kKZWBgs1ncIOV2H6wLgMe5h297kwiAgRQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ijjj6LjnouSAMohvqNdXzsV9r9mlD6pUNeRLL7Y1EeYl7TZkXCtpma6Xxk6beRyyD
+	 vnFXmhxrAo9fHgw9tLUvWgJYGN/e+KGhWwFjtUVyqofjDAeXrKY52Droyy9LicND3L
+	 LGJpeQa5fOmUA02urp+PB3ESawRTs3qS2QyOzsuWjFrHY/iAmT45YbSBSFRzJ0y6Uk
+	 FfbRw+6QB562s0Yf7AfaM2rm1uYGgArvZCAV1YjRuQX4x7x5Hp4YSC1Lgs0Ogp5SpL
+	 BdA27HppeaIOwdbwzk1VxE1/Y7KSy6bfD5oMskUI9sfLesOsxP45Asyjh+nR4yKX3Z
+	 baQvEl1pkSJeQ==
+Message-ID: <511d83fe-eb94-4c25-8ce1-b2476dfbd404@kernel.org>
+Date: Tue, 24 Mar 2026 08:02:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260324015722.12507-1-rosenp@gmail.com> <2776817.iZASKD2KPV@senjougahara>
-In-Reply-To: <2776817.iZASKD2KPV@senjougahara>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Mon, 23 Mar 2026 23:42:18 -0700
-X-Gm-Features: AQROBzB_fGTtplSzK9mI89qLMudwBTlbTpWq_K5dPKKnRhiin1Ti1gHDWVHCj9M
-Message-ID: <CAKxU2N9E-9HLCJfGYD_r+qaW03fLz9NVW=RWuPvotCbSxv3ueA@mail.gmail.com>
-Subject: Re: [PATCHv2] firmware/tegra: add COMPILE_TEST
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, 
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: pwm: Document Tegra194 and Tegra264
+ controllers
+To: Mikko Perttunen <mperttunen@nvidia.com>,
+ Thierry Reding <thierry.reding@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20260320234056.2579010-1-thierry.reding@kernel.org>
+ <8611828.LvFx2qVVIh@senjougahara>
+ <d3ca4cd0-c343-4885-ba97-814aeaf80fac@kernel.org>
+ <5154962.LvFx2qVVIh@senjougahara>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <5154962.LvFx2qVVIh@senjougahara>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 23, 2026 at 11:01=E2=80=AFPM Mikko Perttunen <mperttunen@nvidia=
-.com> wrote:
->
-> On Tuesday, March 24, 2026 10:57=E2=80=AFAM Rosen Penev wrote:
-> > For this driver specifically, there's no arch specific stuff needed.
-> >
-> > Build the tegra clk stuff as tegra_bpmp_init_clocks is defined there.
-> > CLK_TEGRA_BPMP also depends on TEGRA_BPMP.
-> >
-> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> > ---
-> >  v2: also build the tegra clk stuff.
-> >  drivers/clk/Makefile           | 2 +-
-> >  drivers/firmware/tegra/Kconfig | 4 ++--
-> >  2 files changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> > index 760d9643705f..334d5c522394 100644
-> > --- a/drivers/clk/Makefile
-> > +++ b/drivers/clk/Makefile
-> > @@ -154,7 +154,7 @@ obj-$(CONFIG_ARCH_STM32)          +=3D stm32/
-> >  obj-y                                        +=3D starfive/
-> >  obj-$(CONFIG_ARCH_SUNXI)             +=3D sunxi/
-> >  obj-y                                        +=3D sunxi-ng/
-> > -obj-$(CONFIG_ARCH_TEGRA)             +=3D tegra/
-> > +obj-y                                        +=3D tegra/
->
-> clk/tegra/Makefile doesn't separately check for ARCH_TEGRA, so this will =
-cause
-> much of it to get built on non-Tegra platforms as well.
-Sure. It builds fine.
->
-> Cheers,
-> Mikko
->
-> >  obj-y                                        +=3D tenstorrent/
-> >  obj-$(CONFIG_ARCH_THEAD)             +=3D thead/
-> >  obj-y                                        +=3D ti/
-> > diff --git a/drivers/firmware/tegra/Kconfig b/drivers/firmware/tegra/Kc=
-onfig
-> > index 91f2320c0d0f..ae21f460807d 100644
-> > --- a/drivers/firmware/tegra/Kconfig
-> > +++ b/drivers/firmware/tegra/Kconfig
-> > @@ -3,7 +3,7 @@ menu "Tegra firmware driver"
-> >
-> >  config TEGRA_IVC
-> >       bool "Tegra IVC protocol" if COMPILE_TEST
-> > -     depends on ARCH_TEGRA
-> > +     depends on ARCH_TEGRA || COMPILE_TEST
-> >       help
-> >         IVC (Inter-VM Communication) protocol is part of the IPC
-> >         (Inter Processor Communication) framework on Tegra. It maintain=
-s
-> the
-> > @@ -13,7 +13,7 @@ config TEGRA_IVC
-> >
-> >  config TEGRA_BPMP
-> >       bool "Tegra BPMP driver"
-> > -     depends on ARCH_TEGRA && TEGRA_HSP_MBOX
-> > +     depends on (ARCH_TEGRA && TEGRA_HSP_MBOX) || COMPILE_TEST
-> >       depends on !CPU_BIG_ENDIAN
-> >       select TEGRA_IVC
-> >       help
-> > --
-> > 2.53.0
->
->
->
->
+On 24/03/2026 05:24, Mikko Perttunen wrote:
+> On Monday, March 23, 2026 4:23 PM Krzysztof Kozlowski wrote:
+>> On 23/03/2026 03:45, Mikko Perttunen wrote:
+>>> On Saturday, March 21, 2026 7:49 PM Krzysztof Kozlowski wrote:
+>>>> On Sat, Mar 21, 2026 at 12:40:55AM +0100, Thierry Reding wrote:
+>>>>> From: Thierry Reding <treding@nvidia.com>
+>>>>>
+>>>>> The PWM controller found on Tegra264 is largely compatible with the one
+>>>>> on prior generations, but it comes with some extra features, hence a new
+>>>>> compatible string is needed.
+>>>>>
+>>>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>>>>> ---
+>>>>>
+>>>>>  Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yaml | 2 ++
+>>>>>  1 file changed, 2 insertions(+)
+>>>>
+>>>> Where is the driver patch? Why this is not being part of driver
+>>>> submission (see also submitting bindings DT in description how patches
+>>>> should be sent)?
+>>>>
+>>>> Best regards,
+>>>> Krzysztof
+>>>
+>>> Just posted:
+>>> https://lore.kernel.org/linux-tegra/20260323-t264-pwm-v1-0-4c4ff743050f@n
+>>> vidia.com/T/#mfb40392e07d7ac9cedbaf853442eed822da7671e
+>> so this is completely misplaced. Please read submitting patches in DT
+>> dir and follow standard style of sending patches upstream. Just like
+>> every other contributor. You don't get any exceptions here.
+>>
+> 
+> You asked to see patches, so I thought I'd be helpful and clean up my work in 
+> progress and respond. I'm not looking for any exceptions. Please do not make 
+> such accusations.
+
+I asked where are the patches. The non-existing cover letter of this
+patchset explained nothing in this regard. After my question where are
+the patches, you sent them without explanation why, so don't assume I
+can read your intentions that you posted them just so I can see the
+patches and you do not intend to merge them.
+
+Best regards,
+Krzysztof
