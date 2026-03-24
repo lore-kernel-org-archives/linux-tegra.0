@@ -1,145 +1,155 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010030.outbound.protection.outlook.com [52.101.201.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C548370D78;
-	Tue, 24 Mar 2026 08:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774341922; cv=none; b=RiPNMyniB+Rql4Fv6q3ipV28x6cQhMuidZzKmE2TnK3kTlNIduB3wgh7OmcbJWbCcrNt7SFTqs6b23cf61YH/D21AM2e9vvrCWFTy+CekRA/Tz3Hvv5+ZuWcnqBxZWnNdudBhb+5sR42aI1RDJPH5yBnVv2flarIa9hMgO2D3Us=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774341922; c=relaxed/simple;
-	bh=PPl/rC2OPLdnK/BWcMFaxt/YnKgshXcEJ8ivDfLY7fY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LA7CuVCO7AlKKfqJt5tOyPGJPDLp/NEU9EMfn2eG2sm9+0IOgztmlYxqUKOGWqbfanQ5qGollxODYjSBtQpgveRK2xWcFWtGKMyBQVQhB4qwYQk6ijn4iCosHMglXDj8raxzXQ9RokbkCBVdgcvgm1910tSwgxA9px9PW9q54Mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eJqB4X8W; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B02C3876AB;
+	Tue, 24 Mar 2026 09:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774343058; cv=fail; b=sMN4zin9cIwqgXO2ARGZAJpzsBfrLbPyw20FS4KJ+jbBU2C0gYN8M7p3/Z3vu/P9mndIH1zx5PW7tg8NOagbQ0BozF2+DJ5hetK/5E2PeEbDSPR9tpvU9xAeWoVlx2DSfe5LwbllE0n4TzrIbtL/mP+MebpxgeTFp0wrkK5gU8Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774343058; c=relaxed/simple;
+	bh=ivi7u4biGCTmPF9QvgO0J+RFjVfhkyQKgwSpqMebrd4=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=kP/4JQX1PU565/2a+iWmfQI0FHhQj+ChXPm3RNyJVdogLgXjH/mq4hThamU/NU70yd+OPR2l0xZ9xAWaSnBrcVqb1edD/lWptfYhJWhxQQm7tvRh6Hr/xl61DL1gnGIZB6CO/7IsODuIbEx79qnr1iLidUh/CKVg56eIKuCBPmw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ImhecIa7; arc=fail smtp.client-ip=52.101.201.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eJqB4X8W"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCD75C19424;
-	Tue, 24 Mar 2026 08:45:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774341921;
-	bh=PPl/rC2OPLdnK/BWcMFaxt/YnKgshXcEJ8ivDfLY7fY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eJqB4X8WYlPyGiXK2O72S3SKONpGWaKEpkxoGJ27JTZsE1lPhe7Q39be9Hv6pPMKG
-	 ALJEOMY/OdEkWXpEWlJJh/Pn7rwVLFl+J4a+4HDZWmuvWq53YjhiUQWc5bZ4K8OyND
-	 7fOLFjcUMvSdOBDYTFMyude1IDU8Qkia0mG2sTLGykgzkF3zwFyw9zhDiPt2MNQb+Q
-	 gTRnKdOkcpoQBgC/ORayqvOFe5ZYYkE8tPxs+kH5msRm8S6U2hDEtVvEStWvfuI7cC
-	 vMEmsn2ByBeE/8+byN/E8XEAFD/FCiA0CJl0o8muSPEme+Zgdr/1o4eWjLnZESpfVH
-	 cqH8jFw1OGq8g==
-Date: Tue, 24 Mar 2026 09:45:16 +0100
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
-	mark.rutland@arm.com, bjorn.andersson@oss.qualcomm.com,
-	konrad.dybcio@oss.qualcomm.com, mani@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] firmware: psci: Set pm_set_resume/suspend_via_firmware()
- for SYSTEM_SUSPEND
-Message-ID: <acJPHGIW1fb7whsu@lpieralisi>
-References: <20251231162126.7728-1-manivannan.sadhasivam@oss.qualcomm.com>
- <d7a8271e-f6a5-491c-be2a-7ebc7d37645d@nvidia.com>
- <b5860d64-6eed-453e-8261-2c8b0c5571c4@nvidia.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ImhecIa7"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HGIHkrojelgIhBL6fV51ky79xbFYY/FGg4UNIXE0kwWHyaD8/dDsmdYotP3BmyNO2Ai8R/6T+fJWGvvjiUTWKDSWLVP+7TpD3sCDTbluJqRKeApDKQyZ9P/TjglE38cfmfyzgdNkzqDlSxEt5f8ZhxkKft9VKdoQyz+ZQu3Tsk6u0172RMKlyPa2eh5P4rV5YZwKWE3nSZopTTIiKgnP8zFQtSyu5+wq3lPgbU6q1sT8tKYR8IbY6VROQ16RcQ25/0IbA0AHtGCDgZIQ7zgGB+7NOUrgMd2/8DazPep4BA75ECql5UCSLvUWGGrDi199lKCKV0ipg/ed9MQkmE6mvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bO3dnII/BjcuaofPMx+6CU/pF7zg4cyP+Xzyq7K+orE=;
+ b=B/pwt3nSCHLXV8jql/HTXgn14kcinWLvx68QsxoeY/oB0zBmmiVoBPlntn8p6wsV7WHJhFTw4t4SQHPkKNy+O/MKrJOSicDIIY8tREVV79H4VvQfQ4dM1g2ggybFHEr9X2oXoKyvgolIxiJJ5pkggDGE3Z8OpQYkEYOupVFI7mgRkOY87mhNaN4tj/a+P+uT050oGSq7stQbiGIJ8LN1rE4dPgK2iXACWTPtTTSWdCZ4Fwb8UfOhs3Ij2DIarPWK5WyBaO3qXUXxK01BZ+lEGMMhwlPpLh3A8mKzG+TNnlXkljMfmq3yRmTCZJxAE9IvtlnSS8SOrbKmKV9pV2Kt4Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bO3dnII/BjcuaofPMx+6CU/pF7zg4cyP+Xzyq7K+orE=;
+ b=ImhecIa7N7b1vfmV1T/WzWP9pZE4QlJlY2Ctc7jnc5CqIpjGHI7wtypsqGn6Vt5VVyMHwv9ICe9Zuwii9vW61VSjHIxwi7pWSlcWBVyHXkwfbyRqDJSn5lBSubkoyO0aqa6UWKuK06XyqgusR4py9rvp8zeXKFtVPCH3EWws+CznI37ikPkdjubX2pn9Jg4zbaCiEu2XYiqEX+owmBv4+IDyEQI7HoeG8Gn7Eo4/iSVPf9snu9vWxa1cp69g7/f0MnPQgwPhwEo3uxVrA79M7/gVbVvaeiG08uYkvXfJ6NfNek9+1hpBzx4aOYa0fqn0WllaBDFEy3oEA3M2o4o6XQ==
+Received: from CH0PR03CA0333.namprd03.prod.outlook.com (2603:10b6:610:11a::7)
+ by IA0PR12MB7750.namprd12.prod.outlook.com (2603:10b6:208:431::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Tue, 24 Mar
+ 2026 09:04:11 +0000
+Received: from CH1PEPF0000AD7E.namprd04.prod.outlook.com
+ (2603:10b6:610:11a:cafe::9f) by CH0PR03CA0333.outlook.office365.com
+ (2603:10b6:610:11a::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9723.31 via Frontend Transport; Tue,
+ 24 Mar 2026 09:04:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CH1PEPF0000AD7E.mail.protection.outlook.com (10.167.244.87) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9723.19 via Frontend Transport; Tue, 24 Mar 2026 09:04:11 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 24 Mar
+ 2026 02:03:59 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Tue, 24 Mar 2026 02:03:58 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 24 Mar 2026 02:03:58 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@nabladev.com>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <rwarsow@gmx.de>,
+	<conor@kernel.org>, <hargar@microsoft.com>, <broonie@kernel.org>,
+	<achill@achill.org>, <sr@sladewatkins.com>, <linux-tegra@vger.kernel.org>,
+	<stable@vger.kernel.org>
+Subject: Re: [PATCH 6.1 000/481] 6.1.167-rc1 review
+In-Reply-To: <20260323134525.256603107@linuxfoundation.org>
+References: <20260323134525.256603107@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b5860d64-6eed-453e-8261-2c8b0c5571c4@nvidia.com>
+Message-ID: <1956b45f-0e8a-48a1-a753-da653fcb78cf@drhqmail202.nvidia.com>
+Date: Tue, 24 Mar 2026 02:03:58 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7E:EE_|IA0PR12MB7750:EE_
+X-MS-Office365-Filtering-Correlation-Id: db9fa854-f4e5-4f92-e9e9-08de89845088
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|7416014|36860700016|1800799024|13003099007|56012099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	qJ5J7uqDpDDo3fV1Wo2fLYl99ax5HX7OXmNHtA6nALG0vRySgP84YDoKlGEb+vBuo2o/fngrCHPDoLqXbQhyadc0/ORmvAH7j37X9iOJHQUJc8Vu16+enyoj7vlbp5vDsLJ7tciQBli36ByqLrPaiftOyHmNBZCr63vfRBVcY0dlrU3nCCBrosi6yCrY1aFxUFRSIDh+LGaKj8Nw0LWMZBfJyEqgEAwdEOZbIfMe9gyb9un95h6wykFY4Bb8HHlkb1nncViwveWlJMM8fiJ0CNUQ/C6pgI7Ij5/lvWz0gZaDcqi5OSGre0xO9utVBL+6LHnG6zCZXERXLVBoXFSaMyRVqrrHcHVi+UkX+RKo7VcQmNDjb3diLjAiEFD0k4qwhtu62Y8brzOrw/Fp16JMHXx+T0HxmQemcpJqT+pq52wkoNRVPy0bN3o01zC2xiVwyj8tU/bZSPB1dkN+FRfMvtWMvvTOIK3yBAwEu3KbN/El2qL3olCauy1uNT2de1VKO9Edt6M0V6LA9NJPRJ3p1SSDTD63W7eoTx1OM9O4ZFs5MSqPT08ssA7ngwGyH3Ss6holbvlAoTlrk0Du97ecpPVw6XGus0JmafVwumSdwTYFgKK1PHy0xAciUYTcNjbx8QQzlIIxTGeDUicAF2aAPSO6hHz87kQn6haCU3B3rN/tiLTMdKMlYtaVpsH0EBqAaN4HOjJ3kEdNNi+R9mFeukz3oGH15+NmMl6m/M5+Q08+asy38qFjCGr1V7p8++GLEbN/d91VtKyc4sIs1tfyzA==
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(36860700016)(1800799024)(13003099007)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	b/D+t7Hph3GjYQnyT22KMlwjGv91WcL8BaApAFNb4So3bIxY3SAqTtcphlGexLU9lGezJ+Lxdr+AAsVfvFzDmrnf1JxTECcBG0wpt9pxpYub460zffUuF+aPTRRV0JMt6KTBFVO96lYDR3QHPnEDLZB/DkyzrQ341OE+rNt3fJM/a0nZPbLaIO4KO3l5Pw5DNqWnrJwl1DL8JnA7Y0pV/jWqANvlFxLSUdhC7ukwy027WJ3AdNSUYmKc2Hzy+wSm46ebXlLwMgMUp71wcXhx5g76ACApU1iEE8kYPpl6dWgFj6v0NZzqjNho3bBitftVKsOWeOi02yptyaTMFYGUwqo7AAVzVsdw7YjsG57Vv1Olh/MIjesSb6D0n3pesADbdYztSus6QDlnnjwEAL62YP6Jp7Bqankd2NF+aQ7ZudNNm4jw0w/dE+OCVfz1ezFR
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2026 09:04:11.1549
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: db9fa854-f4e5-4f92-e9e9-08de89845088
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD7E.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7750
 
-On Mon, Mar 23, 2026 at 10:10:00AM +0000, Jon Hunter wrote:
-> Hi Mark, Lorenzo,
+On Mon, 23 Mar 2026 14:39:42 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.167 release.
+> There are 481 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> On 12/03/2026 19:00, Jon Hunter wrote:
-> > Hi all,
-> > 
-> > On 31/12/2025 16:21, Manivannan Sadhasivam wrote:
-> > > From: Konrad Dybcio <konradybcio@kernel.org>
-> > > 
-> > > PSCI specification defines the SYSTEM_SUSPEND feature which enables the
-> > > firmware to implement the suspend to RAM (S2RAM) functionality by
-> > > transitioning the system to a deeper low power state. When the system
-> > > enters such state, the power to the peripheral devices might be
-> > > removed. So
-> > > the respective device drivers must prepare for the possible removal
-> > > of the
-> > > power by performing actions such as shutting down or resetting the device
-> > > in their system suspend callbacks.
-> > > 
-> > > The Linux PM framework allows the platform drivers to convey this info to
-> > > device drivers by calling the pm_set_suspend_via_firmware() and
-> > > pm_set_resume_via_firmware() APIs.
-> > > 
-> > > Hence, if the PSCI firmware supports SYSTEM_SUSPEND feature, call
-> > > the above
-> > > mentioned APIs in the psci_system_suspend_begin() and
-> > > psci_system_suspend_enter() callbacks.
-> > > 
-> > > Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> > > [mani: reworded the description to be more elaborative]
-> > > Signed-off-by: Manivannan Sadhasivam
-> > > <manivannan.sadhasivam@oss.qualcomm.com>
-> > > ---
-> > > 
-> > > This patch was part of an old series that didn't make it to mainline
-> > > due to
-> > > objections in the binding and exposing CPU_SUSPEND as S2RAM patches:
-> > > https://lore.kernel.org/all/20241028-topic-cpu_suspend_s2ram-
-> > > v1-0-9fdd9a04b75c@oss.qualcomm.com/
-> > > 
-> > > But this patch on its own is useful for platforms implementing the S2RAM
-> > > feature in PSCI firmware. So I picked it up, tested on Qcom X1E T14s and
-> > > resending it.
-> > > 
-> > >   drivers/firmware/psci/psci.c | 10 ++++++++++
-> > >   1 file changed, 10 insertions(+)
-> > > 
-> > > diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-> > > index 38ca190d4a22..e73bae6cb23a 100644
-> > > --- a/drivers/firmware/psci/psci.c
-> > > +++ b/drivers/firmware/psci/psci.c
-> > > @@ -539,12 +539,22 @@ static int psci_system_suspend(unsigned long
-> > > unused)
-> > >   static int psci_system_suspend_enter(suspend_state_t state)
-> > >   {
-> > > +    pm_set_resume_via_firmware();
-> > > +
-> > >       return cpu_suspend(0, psci_system_suspend);
-> > >   }
-> > > +static int psci_system_suspend_begin(suspend_state_t state)
-> > > +{
-> > > +    pm_set_suspend_via_firmware();
-> > > +
-> > > +    return 0;
-> > > +}
-> > > +
-> > >   static const struct platform_suspend_ops psci_suspend_ops = {
-> > >       .valid          = suspend_valid_only_mem,
-> > >       .enter          = psci_system_suspend_enter,
-> > > +    .begin          = psci_system_suspend_begin,
-> > >   };
-> > >   static void __init psci_init_system_reset2(void)
-> > 
-> > 
-> > I wanted to ask what the status of this patch is?
-> > 
-> > It turns out that since commit f3ac2ff14834 ("PCI/ASPM: Enable all
-> > ClockPM and ASPM states for devicetree platforms"), this fix is also
-> > need for Tegra platforms that have NVMe devices to ensure that they are
-> > suspended as needed. There is some more background in this thread [0].
+> Responses should be made by Wed, 25 Mar 2026 13:44:33 +0000.
+> Anything received after that time might be too late.
 > 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.167-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
 > 
-> Any feedback on this? I am not sure if this patch is purposely being
-> ignored, but if so, I would like to understand why.
+> thanks,
+> 
+> greg k-h
 
-It fell through the cracks, apologies.
+All tests passing for Tegra ...
 
-Lorenzo
+Test results for stable-v6.1:
+    11 builds:	11 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    132 tests:	132 pass, 0 fail
+
+Linux version:	6.1.167-rc1-g67c872a868ac
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
