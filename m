@@ -1,155 +1,179 @@
-Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011022.outbound.protection.outlook.com [52.101.57.22])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6DF3603D7;
-	Tue, 24 Mar 2026 08:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774339818; cv=fail; b=S7O14lk41aqoy/1PVKxgC94nGpuIKEg/WUUDbCamd3i+ffX4ymCkbRY5wFikhkLQ3fHxiqb6NnTF7FNgSqIgsJwxlyWW+xD8LjWea0M9zLil7YZsgURu3MZwUVZ0jkPslRTRyjLxIdU3XCcNKvmHTUYBaLRCjIMVFvtRJoFb7hY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774339818; c=relaxed/simple;
-	bh=TvWePUg0yeuUwlXpejnhNWHN6D2i2seWdyQqHg9kAgI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SXH92W7QmClo8a7mYl37YfSl1VumTDSdqR27sWycTZiD8ST3h2yctRFQS+kCcXrRUnjz5uriSZS+aEsIe3N7eXZdAOYIHBKlTNmBJlJtdrtF5yl6DsKZzX9sZlHI3RCX71TYwZfFtoj/nF8jnVeygJ4NCBv4zmjLLkEY+asKx6U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=C9QtFFcX; arc=fail smtp.client-ip=52.101.57.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4CF314A83;
+	Tue, 24 Mar 2026 08:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774340626; cv=none; b=cxEhz9YFpyc/vnFgT/fqmkzHdVA0J3bIzv95WoIQYtEtCBYZ6dSpqGRkS9rTdHmmbOYNPlZTHYEYEwWWv1Vst0V9phuO0ISAfR8xv92CMJC+bXbBNUND5yezt+MXpDDJbmyv2n1cKx2BMOwlIMCeNO4XBSnP8mgW6eUFVOHxiQk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774340626; c=relaxed/simple;
+	bh=YW1oumcShmJdUX2bVPw92WTp71r+w0EzqGKv/olyY1o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YqvjX4uTCXpXg7yi1qNHk1D2vzcR4GQl7KN8+61nodQHyYdjTsvWyFFS1rye+vFxwOTEQCKXqP7kYTIAdlhnPm75hLmFByjJeImuWtGs/otKBqSOs2k8QgwvhxbcHSEgZjmSARnWrluJV0NwSUV2CTMZgzfI24jjYxbVu2tSB0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f98KC4CZ; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="C9QtFFcX"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NPGNUvytKzaRAXYHViY5Q1DUUoIu56vqGL7FBy8j4Hb4qJ3U7slFu21CjK0gWlr0o3gup/sZjzO26AnSGIg8Yk581nHB4C+HU0zpLRHS2hKdSY/ApY0ORm9vkvSZGVlxrk3hfk0c0jbghN9NA2U3r48rX4mI8R3/qW25VilE/qDfFymSVeYNngq6ipgY0+rxLO64ZWk2bedd7m6ZOrEV5k+/vFECchDo5G88adBj9sBeBAMVYu2v4wwsqb74cv1JLi2ggRD6190rRiEGtHgQc9iRR/5CW+SjMaeIxNrGgaLtiir8BbV4xGjtN17ITseSXcgEejFNw2lQmbrX8ksT8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0u4rgBEdEZqtpeBS+meo7LgZGswkUiofJbEV6daQKdA=;
- b=kslxwqjq2gLKh/nDgfwJroZYlsq/8OBuAQuGb8JO7r0/p70TVfNSZhP04RJARkTVtTLqLLb1JvIGBn1qoO8Yl1iNi9EUlz/1xC98YJTrdAhv+Fe03Jfg5wg29mQsmRr+0Nwa9AmLxuxG5oKB14OFH/scCCrCWEEcmY/tWrzXca/Ei4miMmoDHr3O8r4l8HcmDLNzIuYoBLP9KVEDub7Z42WORNLRTg/k1cRVv8pe6CPatkKOm1y/nE3IfhKAGs6UkypUY3zi2/xxT6/J75P+lP74KHPuQ4s7E1TTwbSzyMIkRZUiOSvdR8T75v1tNiCBFLK8Ya1AuA0tr4oU8gnTaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0u4rgBEdEZqtpeBS+meo7LgZGswkUiofJbEV6daQKdA=;
- b=C9QtFFcXMrrfP9Kc5q4Mtz/rWnauVJ63h5xlj0FfFhBofIjW8W0cniBNa292ipBDmT/i983v3jstL8/JzFxRzryfSrVnpCWYODWmiFD1ovixL/Sv5gUB6QoPzkiNYLBL0jRO6m4TRCWB8eXY7BDRxEk6nCMYMgr+Im1uvPaUiYPE8eJxqGzcNaJ+DAssCnUfGu4pwaRbgyyBnvsPvLqFL6IqI1boBsg6rMMndFNDMyh2CCkHUpkDMtdofDxktlPdpTuM0XrJSPBX7bLNnky5I7NXSG9JlZkYnBq1LCFmhh9SOtQVNVW4m9zQ7Dm8swG5QfCCbuHBFOS6TCPWojWh/w==
-Received: from PH8P221CA0050.NAMP221.PROD.OUTLOOK.COM (2603:10b6:510:346::11)
- by SA5PPF590085732.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8ca) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.6; Tue, 24 Mar
- 2026 08:10:08 +0000
-Received: from CY4PEPF0000E9DB.namprd05.prod.outlook.com
- (2603:10b6:510:346:cafe::5) by PH8P221CA0050.outlook.office365.com
- (2603:10b6:510:346::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9723.31 via Frontend Transport; Tue,
- 24 Mar 2026 08:10:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CY4PEPF0000E9DB.mail.protection.outlook.com (10.167.241.74) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9723.19 via Frontend Transport; Tue, 24 Mar 2026 08:10:08 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 24 Mar
- 2026 01:09:47 -0700
-Received: from mmaddireddy-ubuntu.nvidia.com (10.126.231.35) by
- rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Tue, 24 Mar 2026 01:09:40 -0700
-From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
-	<mani@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-	<kishon@kernel.org>, <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
-	<Frank.Li@nxp.com>, <den@valinux.co.jp>, <hongxing.zhu@nxp.com>,
-	<jingoohan1@gmail.com>, <vidyas@nvidia.com>, <cassel@kernel.org>,
-	<18255117159@163.com>
-CC: <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Subject: [PATCH v3 4/4] misc: pci_endpoint_test: Add Tegra194 and Tegra234 device table entries
-Date: Tue, 24 Mar 2026 13:38:57 +0530
-Message-ID: <20260324080857.916263-5-mmaddireddy@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260324080857.916263-1-mmaddireddy@nvidia.com>
-References: <20260324080857.916263-1-mmaddireddy@nvidia.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f98KC4CZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1774340621; x=1805876621;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YW1oumcShmJdUX2bVPw92WTp71r+w0EzqGKv/olyY1o=;
+  b=f98KC4CZaeyfxG72WM3q5bNculu5cr2oPVcqctGYfy2+RGPWoAJjKuYc
+   bapjY04kxd1XNghpd73P4tJGwnjvTyBa7EXb8I/E/VNTZeHB8q0Le1mCR
+   vFEo9ZsVTVfbQ86sy0+AQW+zVIwq/tsOk7WpwgLJCfdrMw1lCADbmX68F
+   dYkUDBj81E2egEg9Reg26QNnwUHva3MZyWG/TGhatvnZCaEj6qKrIZe2i
+   gyMqLM0aojP2Lh2xc3VtZh/Wjt8zL17aAx6GYZFz1alL3/RvgAiIKfuVj
+   j1ax8dwqkU1YqTcQtlH7SeKUY7UhmNFvA8t/0MQvYLMbczeFTTDLjgabZ
+   A==;
+X-CSE-ConnectionGUID: lhTINTyIQBGAVB3YCA1CPQ==
+X-CSE-MsgGUID: jCWPLS3ZSX2hrWhRxHKgVw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11738"; a="75321931"
+X-IronPort-AV: E=Sophos;i="6.23,138,1770624000"; 
+   d="scan'208";a="75321931"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2026 01:23:39 -0700
+X-CSE-ConnectionGUID: la5BPmR+SsCZF91N9qYV7w==
+X-CSE-MsgGUID: quziYg/kR1KJj/tuViZhjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,138,1770624000"; 
+   d="scan'208";a="223500798"
+Received: from lkp-server01.sh.intel.com (HELO 3905d212be1b) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 24 Mar 2026 01:23:35 -0700
+Received: from kbuild by 3905d212be1b with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1w4x2y-000000004DX-3E8K;
+	Tue, 24 Mar 2026 08:23:32 +0000
+Date: Tue, 24 Mar 2026 16:22:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thierry Reding <thierry.reding@kernel.org>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] PCI: tegra: Add Tegra264 support
+Message-ID: <202603241635.M39jGMQX-lkp@intel.com>
+References: <20260320225443.2571920-5-thierry.reding@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9DB:EE_|SA5PPF590085732:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4d077bf7-99e9-4557-0491-08de897cc37c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|82310400026|36860700016|22082099003|56012099003|18002099003|921020;
-X-Microsoft-Antispam-Message-Info:
-	sUDYRgj0ZYEu/JvgB0g0DyySWwPTdzoBRW/RNbecACXb/zcw7YErZI0TBC5o9h7v3qaAdQ4mUy0ZIIQAWlNRDJB4wf37r8U0waTxLEEbw+8m2pF5BLVdbUJ7MWrcz4Zvk/cjhuTVxgnj9uuNbftM5SRYFbU7II/0l5ZMwW5pL4F5t5OJLNRcnwceB2X02O7NzR+KdrESLNXUTpbKmJgF3fkVlIMEA4LNuwJzGzDDOTUAUyyL3qJUEK7Sbm/x6/0/FbLbL//ps+qT9zsJ110zlpVbAF5K+S49cjqNwggZSY6Tfe18P0VbNQRj5pU0osYXTSaMGLvqGqsk7CD77Sa/NGTJOMxqGYhaco1pakRtwvZsO4Hw9KuQlo2adlGZuH7xOkM8vf8JZHTfWjGjxD2LExrufN2zLaAn1hLaVn2OJ9ij5VY67nGLuuhT9MbFMKJch1pyVIWk1/WVBH0BbggQ387OCIj5DThlcBdLAucP++y1BQjcMZidq3FQf72qOlZ2FKlfdiTQZtJnvBCpEiIxas4M/BBeaBT1vYU6YEtISklB30RahRIM0hFDVhaEEX1c3t4d2VqaMQQg9pFlBZRHgkE8LpD/rVYulowpmn/ygh+VPV3+AgVcVIryOJcPogTZuS0FPQK4Izx188c8X6C1htvDgTf1bVNWY2xg3Rr5wdVW4VMUwm7ZLQ3dN/VZHuV43e8EcM8RGDkfkJXNHJvCQrAY9oYhZR6/yJAhu9awdkjxOtF8hefnuxhJGnoOJZTgyQ0L7ri/m54Zg3aZ2pAZmTRv6NoD4fu8xq5pAXRLRFrSDM8acZ0BdobXmMy2bVR0
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(82310400026)(36860700016)(22082099003)(56012099003)(18002099003)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	EFC24zyAE8vOulbz+6YNUMCXQIMpfd3gXOfM2p45c1Vi2VOHxUxoiJxK4q3H4yglNM/aLqGceSlFyNvXiIh28Gjgcfbb2UkgbfHT8aJMjKXF/uXy5zHjtEflz1yovFtUB4We8pwe/zQBNUHge3u3NsJxKe+VuZ0Cs9ERq1EnWbFJuaQKis5rBCNOui9Xe8KMEeAqZYdt9PLxV/cAFxoomfYWACZyTRUd5Uy/pW0OqzP6zRPhIum658m6dAbNsdX8Q+kHMWJ5394M58XzGySXttz4fIgy97Dm2267osQMJcTam97amqYPhoceyibg1ze0uTlmsfFCBTpIKin3LWdOnyZAM23B8n2W2iYddquyFBPzsZevO1HdVWQT1xbq7ufGV2OwODiWCnAZpPkrKIyWRCwjBFfbuxRMUZRE55BrE+qwS8mlxmw033dPKSdD7y0+
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2026 08:10:08.0611
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d077bf7-99e9-4557-0491-08de897cc37c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000E9DB.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPF590085732
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260320225443.2571920-5-thierry.reding@kernel.org>
 
-Add PCI device IDs for Tegra194 (0x1ad4) and Tegra234(0x229b) Endpoint
-controllers, so that pci_endpoint_test can bind and run on these
-controllers.
+Hi Thierry,
 
-Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Reviewed-by: Niklas Cassel <cassel@kernel.org>
----
-v3: Fix review comment in v2
-v2: Remove pci_endpoint_test_data
+kernel test robot noticed the following build errors:
 
- drivers/misc/pci_endpoint_test.c | 5 +++++
- 1 file changed, 5 insertions(+)
+[auto build test ERROR on tegra/for-next]
+[also build test ERROR on next-20260323]
+[cannot apply to pci/next pci/for-linus drm-tegra/drm/tegra/for-next linus/master v7.0-rc5]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 55e128ed82f0..63f1e874719a 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -114,6 +114,9 @@
- 
- #define PCI_DEVICE_ID_ROCKCHIP_RK3588		0x3588
- 
-+#define PCI_DEVICE_ID_NVIDIA_TEGRA194_EP	0x1ad4
-+#define PCI_DEVICE_ID_NVIDIA_TEGRA234_EP	0x229b
-+
- #define PCI_ENDPOINT_TEST_BAR_SUBRANGE_NSUB	2
- 
- static DEFINE_IDA(pci_endpoint_test_ida);
-@@ -1438,6 +1441,8 @@ static const struct pci_device_id pci_endpoint_test_tbl[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_ROCKCHIP, PCI_DEVICE_ID_ROCKCHIP_RK3588),
- 	  .driver_data = (kernel_ulong_t)&rk3588_data,
- 	},
-+	{ PCI_DEVICE(PCI_VENDOR_ID_NVIDIA, PCI_DEVICE_ID_NVIDIA_TEGRA194_EP),},
-+	{ PCI_DEVICE(PCI_VENDOR_ID_NVIDIA, PCI_DEVICE_ID_NVIDIA_TEGRA234_EP),},
- 	{ }
- };
- MODULE_DEVICE_TABLE(pci, pci_endpoint_test_tbl);
+url:    https://github.com/intel-lab-lkp/linux/commits/Thierry-Reding/soc-tegra-Update-BPMP-ABI-header/20260323-093336
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
+patch link:    https://lore.kernel.org/r/20260320225443.2571920-5-thierry.reding%40kernel.org
+patch subject: [PATCH v2 4/5] PCI: tegra: Add Tegra264 support
+config: riscv-allyesconfig (https://download.01.org/0day-ci/archive/20260324/202603241635.M39jGMQX-lkp@intel.com/config)
+compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260324/202603241635.M39jGMQX-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202603241635.M39jGMQX-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/pci/controller/pcie-tegra264.c:302:16: error: use of undeclared identifier 'PCIE_LINK_WAIT_US_MIN'
+                   usleep_range(PCIE_LINK_WAIT_US_MIN, PCIE_LINK_WAIT_US_MAX);
+                                ^
+>> drivers/pci/controller/pcie-tegra264.c:302:39: error: use of undeclared identifier 'PCIE_LINK_WAIT_US_MAX'
+                   usleep_range(PCIE_LINK_WAIT_US_MIN, PCIE_LINK_WAIT_US_MAX);
+                                                       ^
+   drivers/pci/controller/pcie-tegra264.c:392:16: error: call to undeclared function 'tegra_bpmp_get_with_id'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+                   pcie->bpmp = tegra_bpmp_get_with_id(dev, &pcie->ctl_id);
+                                ^
+   drivers/pci/controller/pcie-tegra264.c:392:14: error: incompatible integer to pointer conversion assigning to 'struct tegra_bpmp *' from 'int' [-Wint-conversion]
+                   pcie->bpmp = tegra_bpmp_get_with_id(dev, &pcie->ctl_id);
+                              ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   4 errors generated.
+
+
+vim +/PCIE_LINK_WAIT_US_MIN +302 drivers/pci/controller/pcie-tegra264.c
+
+   278	
+   279	static void tegra264_pcie_init(struct tegra264_pcie *pcie)
+   280	{
+   281		enum pci_bus_speed speed;
+   282		unsigned int i;
+   283		u32 value;
+   284	
+   285		/* bring the link out of reset */
+   286		value = readl(pcie->xtl + XTL_RC_MGMT_PERST_CONTROL);
+   287		value |= XTL_RC_MGMT_PERST_CONTROL_PERST_O_N;
+   288		writel(value, pcie->xtl + XTL_RC_MGMT_PERST_CONTROL);
+   289	
+   290		if (!tegra_is_silicon()) {
+   291			dev_info(pcie->dev,
+   292				 "skipping link state for PCIe #%u in simulation\n",
+   293				 pcie->ctl_id);
+   294			pcie->link_up = true;
+   295			return;
+   296		}
+   297	
+   298		for (i = 0; i < PCIE_LINK_WAIT_MAX_RETRIES; i++) {
+   299			if (tegra264_pcie_link_up(pcie, NULL))
+   300				break;
+   301	
+ > 302			usleep_range(PCIE_LINK_WAIT_US_MIN, PCIE_LINK_WAIT_US_MAX);
+   303		}
+   304	
+   305		if (tegra264_pcie_link_up(pcie, &speed)) {
+   306			/* Per PCIe r5.0, 6.6.1 wait for 100ms after DLL up */
+   307			msleep(PCIE_RESET_CONFIG_WAIT_MS);
+   308	
+   309			dev_info(pcie->dev, "PCIe #%u link is up (speed: %s)\n",
+   310				 pcie->ctl_id, pci_speed_string(speed));
+   311			tegra264_pcie_icc_set(pcie);
+   312			pcie->link_up = true;
+   313		} else {
+   314			dev_info(pcie->dev, "PCIe #%u link is down\n", pcie->ctl_id);
+   315	
+   316			value = readl(pcie->xtl + XTL_RC_MGMT_CLOCK_CONTROL);
+   317	
+   318			/*
+   319			 * Set link state only when link fails and no hot-plug feature
+   320			 * is present.
+   321			 */
+   322			if ((value & XTL_RC_MGMT_CLOCK_CONTROL_PEX_CLKREQ_I_N_PIN_USE_CONV_TO_PRSNT) == 0) {
+   323				dev_info(pcie->dev,
+   324					 "PCIe #%u link is down and not hotplug-capable, turning off\n",
+   325					 pcie->ctl_id);
+   326				tegra264_pcie_bpmp_set_rp_state(pcie);
+   327				pcie->link_up = false;
+   328			} else {
+   329				pcie->link_up = true;
+   330			}
+   331		}
+   332	}
+   333	
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
