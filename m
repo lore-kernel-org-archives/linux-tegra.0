@@ -1,980 +1,197 @@
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010068.outbound.protection.outlook.com [52.101.56.68])
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013069.outbound.protection.outlook.com [40.93.201.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3C93A6B83;
-	Tue, 24 Mar 2026 05:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3C33A75A9;
+	Tue, 24 Mar 2026 06:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.69
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774331958; cv=fail; b=BB5P30lVgx2HcH8Rc4IIvSHMceGKyrVPFtOncHwa2KkuzB9yKCXrWoCAuxfVhrh1UkHKG+wgWr9am6Ef/h1hxHmj3Kfa+3WoDoluph+rS0ft7pZqyzrzHheczDnUcLyBUlBLKVfwLCTrOcYhEhmG09fnQXTEEcimpa/rA9TVu6E=
+	t=1774332069; cv=fail; b=CsDIS4fMW+vQvm1uv7fnPOdjw5UEwr6Em1Tw62NYhUwGn76ZjceHwbODycrkF26ETYbR9F0aLIQ1/5OHiweHJBP55JYTf16HazywuOsNlfDwksJ3pcmnfJZZKo4OrpxDStfMOl/fa1scPi3h09iGabay6SulxvmLWY6qPdTwRkY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774331958; c=relaxed/simple;
-	bh=mLF6GIY6gHLojYrav10k/tALKRwtD4MbaMwF9ObR3gc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C1qism8jHLE09PyV1bssxpXdtjULGMadhjFDHxcYSBVFAl73ZtAkuDzAF/4ngBcnw5mHoVt+v4plUw0/ac5whaPMz2OoWoWl6a83kn6nnTJkPi9KMjhwG0AXGWGaUh9S+WC4g4C8zNFVDnToDZGhiInj8gsFDq9OWJo4PaGMBZE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mw+Gv+ea; arc=fail smtp.client-ip=52.101.56.68
+	s=arc-20240116; t=1774332069; c=relaxed/simple;
+	bh=34hXBTb5r3Kpu0fs9hUiRTiHWg29jutudz3ZzJu/o68=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=o05oWt+UhizigqBfYVjvlrkhcpfvgg6p4SIIQj1YJoY6a/rwxEPDZUODLdQwKuYHHU2g+yaHkZ9uoIqmLvFwUyienZGruMddpirJ3PwviiXwAcQL3iJ45Edjrm9LvdImuzzsokgih/9jBb7DEr8ZgwNBx8JdBFwl8yjU1jRzRlY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NzOcOV3H; arc=fail smtp.client-ip=40.93.201.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mw+Gv+ea"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NzOcOV3H"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fgn/GKabVtcd3+eJxN0WDa5Al7GURWmym4M/16CezhmlWCDy5Tvkrv9dncCe1It8+tH2dJdXBm8Zdb/QyQTomxu4RJzqv1GpeggslDi5mYFoL4gtM+D3ZaT7/72ALRseU5KJ4K+KRjrlBSxNG5FigSETMHqhpyVr+YvptAco0PZR4xKP6YnrHpNLvqnDvinmI2ddjb8vWvZYIZLUTfWBQs5gjrs6qAmiHuTuXM/Diim08/bzsC390vrIoPelt3fnpg25jInmI2RoF2PD8brMaS58hJXdM9Smagijxiarwi42JCqCN8DU0e/hpHrHOFwTgOhGmUYboXZw7YLnLiy0wQ==
+ b=LkAh+eK7uZJaaL1B6yJnquF0nppsUMP/C1nvhVr8sByUxMbqfz/ApUA6rn//epWUyCLFk/lJTLjrn8nL0sISXqSwSfqn4S44jjSBi32Zk+YiUoK5sXSFEKG7H+PsuMG4DG5VDmMeJTLCDIdt8AFtU54nCh92lcM7gnEgLyD6fyxRsBZCTXJZW+I+H0hwnKIGbwB8AMPJ3nR0+66DsRYwFPvWXheCuJqAh1FIFj6PY5iUm//2YZ2slCfJicrhelz1zPHiF7YrUemVNOZFlaK2e07w9h+Vd0PlggR9MdfyjuzZMralNaAbL6mGnZa/rt/GZHtde328XJWJnefU4ag5MQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vrMoDYzuD5sFzrip88wj1+bD0XGV0NenBRDOmWd/7RQ=;
- b=fG+erDoKOOxeF6MTEb5MKxHr94j+kEMNNFmXD940RdJGTePbJfUKYazwZB9jVSrB+hugzNl/3ZoDyJ354qcBqlMv2wgAxzUGmMQPdhfep7yzBXtkZ5eg6Fx6AvH1M+K8cRuQKOABmbr88PyAoesHwAnEk/izp780CqXBD8ITYu+FtJb/rKi/s9/UekTFqY4edjX6UI0MvgrJ1c6VUK2+ZvAZuHcbM+8xfT8o8FvCTlI1INIOMDDkJMUeZv1e03T0CyUoUIjt4nZDyoiOMeVL/KuKBCzxZ5M2YiIuc2ljsUztDzWr/kfMptzOaeR4+l5bEyapOFzkNcXiVs5p7ek7Ag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
+ bh=qcVTfi90pV6swGLHPmbIIfEwpZSauxEyHTnGicUrBAs=;
+ b=okfEj6baKUYhrNLz3gFNYgrzR4+Zmj41hAHZNTfzKU464l/Ec/pv40gVgRb/GqVokDaDnVngzPZBfcgTZZv0HLFKhAHY4kws08V5JfV56EfJQuM+urK3femmGzubN4JDg4IOx0llQnTX5C1W5CnN/ygVyh8FF9wA28P3BcQyMDTIP4GVsEpkFmj5+gDfmcPZhLylxcHQmH2G9pb+6TvhJKMuD9UY0rAxlUpP4W8Vljdn3Xiar9pouhSHoV99NNc6wwu+Rhxr+l4ALWXmLHsbp8lijz6IxrqNWPhM2LXPzW2NWcdg373Y8CbmWdFb4/U8VuhISmrtXU7rL8lh1PkVDg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vrMoDYzuD5sFzrip88wj1+bD0XGV0NenBRDOmWd/7RQ=;
- b=mw+Gv+ea0kB4H/luHCxTb8+UdFIrJe7Q1CMaxY3bHeWPCctJpLf0t0UbmSANX/GMDf0cPfIFNI5QqJZNcYzVPKDNyIcKk8pXuqTTDiYXkItOlHazxpiZ2pMchK8yUhr+B0TeOQHMSqWWaRWQkQ2v6QjLpnngF0b2ZEHCnlEH8XVm3zM9AP0BicBaYahIatfXsbOK3Ce6i75Laxs2Lb/03RCt3F3TToQK6T431ExOQK2On6jH6Z39cWA46tdYnyJeolm7segDUQcU/+qqm68dMYbtpZaIgqx4MAIE/a6GedU0TLAvrUdGGTghouOWL9SnK5h0iMgVwh/bgm/PMme6hQ==
-Received: from BYAPR08CA0025.namprd08.prod.outlook.com (2603:10b6:a03:100::38)
- by SN7PR12MB6888.namprd12.prod.outlook.com (2603:10b6:806:260::11) with
+ bh=qcVTfi90pV6swGLHPmbIIfEwpZSauxEyHTnGicUrBAs=;
+ b=NzOcOV3H9I/hd4ShNL6KyinaPnbniXKSI9e0Fl9zKRm4LtNl2p88m8An4trv3F4glgC9Z+21qp2hq9Q1fCnJ06NE/7UEGk5poAZ2oXbwaJ8MKGdTCbt9br/4jSLdEvoZww2nyePYuGhzN0YWw0p6457bysm0QL44uJrK/JzeYrZnjMV5QxsiMU+vUkRxpdK5dNuE1/Wa3qjb4fD1gPCLscQSM2UqY0unkX1JTHSER91v4tZBRfpAd/u8JO7MM+XSXzvgSET+Y7T9N34EBjAaSxeIUMIGCZx9lyA2j5kdCLh9e4X2gE4LhhQMX68Q+ywDUUaoCLBDr8iWlm7aZriq3A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
+ by SA0PR12MB4477.namprd12.prod.outlook.com (2603:10b6:806:92::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Tue, 24 Mar
- 2026 05:59:06 +0000
-Received: from SJ1PEPF000026C6.namprd04.prod.outlook.com
- (2603:10b6:a03:100:cafe::1a) by BYAPR08CA0025.outlook.office365.com
- (2603:10b6:a03:100::38) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9723.31 via Frontend Transport; Tue,
- 24 Mar 2026 05:59:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ1PEPF000026C6.mail.protection.outlook.com (10.167.244.103) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9723.19 via Frontend Transport; Tue, 24 Mar 2026 05:59:06 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 23 Mar
- 2026 22:58:59 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 23 Mar
- 2026 22:58:58 -0700
-Received: from kkartik-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Mon, 23 Mar 2026 22:58:55 -0700
-From: Kartik Rajput <kkartik@nvidia.com>
-To: <ldewangan@nvidia.com>, <digetx@gmail.com>, <andi.shyti@kernel.org>,
-	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>, <akhilrajeev@nvidia.com>,
-	<smangipudi@nvidia.com>, <linux-i2c@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Kartik Rajput <kkartik@nvidia.com>
-Subject: [PATCH v10 RESEND 2/3] i2c: tegra: Add logic to support different register offsets
-Date: Tue, 24 Mar 2026 11:28:42 +0530
-Message-ID: <20260324055843.549808-3-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260324055843.549808-1-kkartik@nvidia.com>
-References: <20260324055843.549808-1-kkartik@nvidia.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.13; Tue, 24 Mar
+ 2026 06:01:05 +0000
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017%4]) with mapi id 15.20.9745.019; Tue, 24 Mar 2026
+ 06:01:04 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: linux-tegra@vger.kernel.org, Rosen Penev <rosenp@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv2] firmware/tegra: add COMPILE_TEST
+Date: Tue, 24 Mar 2026 15:01:00 +0900
+Message-ID: <2776817.iZASKD2KPV@senjougahara>
+In-Reply-To: <20260324015722.12507-1-rosenp@gmail.com>
+References: <20260324015722.12507-1-rosenp@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TY4P301CA0031.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:405:2be::17) To SJ2PR12MB9161.namprd12.prod.outlook.com
+ (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000026C6:EE_|SN7PR12MB6888:EE_
-X-MS-Office365-Filtering-Correlation-Id: d5faecf6-75e0-4ae1-b4ed-08de896a7592
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|SA0PR12MB4477:EE_
+X-MS-Office365-Filtering-Correlation-Id: d6602204-ee05-4af2-fac6-08de896abbda
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|1800799024|82310400026|376014|921020|22082099003|56012099003|18002099003;
+	BCL:0;ARA:13230040|1800799024|376014|10070799003|366016|56012099003|22082099003|18002099003;
 X-Microsoft-Antispam-Message-Info:
-	2yWHsgVHcB+LoIxCARS4jvOc570pfmeggCGrREbuRedarEfFLqM5uW9rT1f1F+0Y4VENMG0lMoY56Z9acz9yKZzxt5h4REurx3QJF6qjpBX8ErS93QKiBBpYWe4ZapNO65DwNThRdtxuqDW005cHIqUi6hDOyGvagh2S9tTwYSRdKaygZkLOFfDMHGrDbQEVuxKsiKXovt44ftbtE2cWldEyxW//xiEACTeQ6QJq6g9gtNe8xoiglWSgW7VtTMTEFkNUeD1MmEGEAECSqAWD9CiiB4kMvBi5UOb4eM9dgh7eFV+Lsm0nOOLRK93sf02UBYAy9Pvxd1iCwFEzQLrDyqGgPYsUAkxgxVAVvQXk9xJjYyJ633U61TnVA9pSaEKqB19Q3kQMftXwkJ0r0gqKfEx/rT7GIvXCxnOrb/rwpzHLTwX1lMP3BVlJeWnrS8wjWI21w2KJmq689QCacduMtFRFKfyfbI5VrcJcu44ZSYPdtXDc+jcFkIjRhIL6v2sAG8Kwz1mIt6jmCAs95v5MTvGkSuOxfwsEWfMV8GXIPM+prJVNse8bWKy2pT4vFXI+N1zCAQEF7eB/RWizyinfyOKlOuEdv5lN2b8y8mjp5H0khnwskfmrqazCpMGHT1K4yODcvadMoKrNCyr4z5ebbk5gJpVbQhEW4Nn8E6lLpKnQ7AmMXMaWE221T/T0KlBRcPSGK2zwyGbhE8MApmRbgOTKYFuOgghHAN3WS/c38uB4nmUnbZianVeOOR2WSraQ8f7NKOuxsVvP7UxO9Z7faHUtXMctmbaRLzs62KWqor39oPGYEM+d0JOzTs/uZmgc
+	89U73cJenVtck48dtqCECDr0wlkFN9JnwvMAQHizWGL658osCLnsV4PHf+LL8fEUcJ820yWXq7DTQ8R+xSYdGRENzMPyXbz+rVdO5H6OcFbO4PrkYmWvWFo2mOfx92pH5IG2xMOXPB5f+1wu45wE3EO6iAR67pt7z4I+QvbC4ZO+n2oUnIZJe7WDbbifU/1Cw9v5iQOF8a1fklYm/IakxKloHhkAn8ogRilrSzwLhTCa5yLEJRPJgQalJm95VW2OWi2SS4pjy/syJnbkRoqHczm8ufx6Kr+p/lVHBG2aDG9GZx8Lm1VsGEsFvFD5z0MgP7aojOUtG/WzUHPnn7K9xBQlTdNbgpvaYM/jx+AnYQDbFd4WoRt001ine6Ktd+TgIHs7EcoALOCYdC38shTcBTTf3CBXvXjhuFzk3HIKTKeRAI9C3l1uw7fVYcxWE56RXcTga/KPjwBLvfrOtlER3V7dFMJUxtIV/2pH7JJKsm25ErtdMctRyfKuNrY1J+Pso32aifgoBYv5RmUU/xfnE+72bx7Ax2g6DNojYOgw4+rPoEu6CkaEftxJHZH1MAwPPlcOxcvQufW4hmJOFOfZVqSVuE0PtKDV6SNVg/UnNnz0xtUT4RJp1VBOSTgHVzJ49o4CvzavgVk89EV/Cb5wwwoC6J9vm/vI4vgKDfQgtz4Vw25UFBAgoluDmAsw4EuFvj9QR8VAw/Q6pn93S8pC0eydTzfiFTKGt3mNg4kIShA=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(1800799024)(82310400026)(376014)(921020)(22082099003)(56012099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(10070799003)(366016)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
 X-MS-Exchange-AntiSpam-MessageData-0:
-	xEGxpkh+kWXHKZNmplKGp90qdJzMATrbEQhM2uDSio6ptCmuiDevIfXrWwKXHHRqdlGs4DYphA0WfFAG6Hn+wBOor3nVr796DFzoQ4DEvOCnreMtLzhidS87NsVtzt0MGk3wPrr/zESxkmTrsOx+a0G8QV9KXH8RohmlLBHjiwW5xoQ7aRzfn1S18BnimGoMBvWDw6pqEDYrHzWAvGC46ADBXwdyntIA5MIBWq3qASR6TCfRJOL/6N2jjfSLtrblV4sEzAjP4ptj752NDExS9Czgxf8BCPttICEkvV4OjB8wZKQ25HNHxFGnbVM11iCa4ag++ojK9DDYm3GdvhkeIveb+sFfJEdBHUR0kwaatJY2CX0hmfFyIYpCoEmgOs9Obi71MIsEOPrMW4Agy52rylsfSDUKPemGc488k3qDyphBZVTiP/oaIKvYbgYc8US/
+	=?utf-8?B?ZWpzbnJJdnJLUmxaTFhIdk15VW1rdXhlVDgyNENxYjhabkd2RURKSW9VbWEz?=
+ =?utf-8?B?RTBTQ0Y4OTZ3UjJGM3ArYUw4RlR6blJjUC94UkdidFVqNXN2bXQzRk01a3pV?=
+ =?utf-8?B?RHpEVDB0QVdkMW8yMm1rTHg0bDhMRFdBa21XOWVKNVlFRGk2UVcwak9maGQ2?=
+ =?utf-8?B?b0hlRjZlajJORE40akc5dlBCZ3ZhdUx5YkI1c1lYcHR5LzFuUWtsRGJsTzFB?=
+ =?utf-8?B?amFPRTFLdS9ja09LbVBsbnJkVmVraHBUQUlsT3daejRSRm5pbGdBTnlKLzR4?=
+ =?utf-8?B?SzRGZWNPU3VweUZTbXFMMTR0eHFFUWpwTmpZTStoVTNjZ05pOE9nR3UyaEtl?=
+ =?utf-8?B?KzkxZGFuNXQ5SGR4bm0rWmUwMXBBNTJPMXpyQzBjSlMvY0dkb2ZUMzl5WHRw?=
+ =?utf-8?B?d3U2cnd4Z1NtVDNxa0ZJMlg5bnh0QmJxbk5jOWZXb3NzQWljbzd3Y2hQN1Vz?=
+ =?utf-8?B?b28relphYTMvWUtqaFAzdHNmalMvaGRrTkxlM1JQL3BvMmYrQXJkTGNoWWU3?=
+ =?utf-8?B?bDdJWWJTd0tYa0RxWEVvL1ZFendZTlY1Q2Y1VWl6cWRVMFo0aVNjSzZYVTAy?=
+ =?utf-8?B?OWlab0xLQ1kxZk1hVWwxT0Nxb0lrTXlPSWZ4RnpBRGRidmY4cnZNd3JaazYv?=
+ =?utf-8?B?YWp3MXovMDkrZGRyS1MvS284dnd5WnpYVXJSMU0yQTVSWWJlb2tDaGczVDhz?=
+ =?utf-8?B?VlVLWXdIVWt2MGJONHRsWmFhVTlNMFcwYXVpN1lEV2hXNncvMmRQL29NL2VP?=
+ =?utf-8?B?aXdZYWZERGhVbzc5RmNzQk1hak8zYVQvWkJSR1N5VEYyYXdXZENibnNaSW5q?=
+ =?utf-8?B?cHpta3ZzTFVUQmpZWkVpR2d1aC9Ta1FTWGt2Tkd6ZldCbzhhQmRRd2wxcHJJ?=
+ =?utf-8?B?aDNENi9sV2thOHpLay9PUHl4L2xUQnlFMUY3bnZVUi9lSUJ2TkZQY2RaaWhm?=
+ =?utf-8?B?VGpUWFBkWXJQMklxZHpCWEJ3cWVGbngwT0w1MUFkLzFxb1RHdFkzc01EKzZR?=
+ =?utf-8?B?aWR5Z0RIYkNjdDFycjdERHg3NmErRFRLdnRKZ1crL21Fa3hTZ2gyRGlXZkI2?=
+ =?utf-8?B?M1o1akppSklxakhlQjY1RWNCMnNlakFJRytRTnNwSUI3aHRwdzFDdXV6VzRC?=
+ =?utf-8?B?YlNLc3E4bVRBNWRaMW9mT0ZqcUpHK0wrQXpQVnY2SzF0Z1UydlNjVGhEMXMv?=
+ =?utf-8?B?MGw0WWhQNVBPa2Y5SkZpYTBBRmhQc3dkVmN2dFZWZnZrdUFsYkM3TVVjVXBp?=
+ =?utf-8?B?Mkg0aEtWTDRHV0lvR2VVeTZiMkdxMVBJVmxlRVV6eEk0NGFwLzFyYUIvTURZ?=
+ =?utf-8?B?WHhzZUIwWjRQWC9sYzQ5aVE5TXFnbUpHZHB3dlRZK1R0TUxTNkY4ME5mWmdP?=
+ =?utf-8?B?MG5HY0xMZmFnL1dDZnhSck1ENkpDYjd1aGxSYmNUbjVNL0Nvc0twUytVRVJi?=
+ =?utf-8?B?WCtYU0w0Z0huU1EvOVp4MTAyV2NLdFdObkVtNXJOUzl5MXltcUJwcVI1L2Rj?=
+ =?utf-8?B?MWV4VGhyK1dDdk5SYjBFSjZtY2VFWDNpc0dKb040VGx4djUzYzRaQmRYUnNt?=
+ =?utf-8?B?emlGbzJvNmhYeGpBZzcrb2Z3aENXcXNTOEx4K2RreEZnSDRUbjE3cTZaTXMz?=
+ =?utf-8?B?SmFaZjBRNFNDNXZYSmVtZkNiemZiSXoxR1BCY284WUpPVkx1ME8ydEowQTVL?=
+ =?utf-8?B?bTJkYmZLUlpBNXZ4TDRhcUpSTU1Yc0VBbmRNY3hRMm9FTU5mQytWK1BZcnpx?=
+ =?utf-8?B?Q0ZUM3hNc2RKR1FyOTNYNzB5cW9HRmJIU0pyMXAzOG02cG9tSjE4QU91SzZO?=
+ =?utf-8?B?Y2lnN0NkblVUU05Sc1JYTU80bWZFaXovM3VWQ3A1ZG9LK25SUEkxZndFeG5H?=
+ =?utf-8?B?RFRuQTMxM252eHIyM215WUJ6MkQ0U29CbUVXY2NRa3lXbFZVeUtTU21HK1FG?=
+ =?utf-8?B?T1M5VVg3VUxiUERvb0xhN3E2ZWxZLytvMmxxNExRVGFuSnM5eFhwY2NaYUNL?=
+ =?utf-8?B?aU5wNFEzWXdhUWNuV2JyWFc4eS9xb1NjMG5QMGFJUkkrZDhQOGVQc1NFSzBX?=
+ =?utf-8?B?TFhKMDFXb3FlalQ3b1BCTzJQdEw2by9WTWdtVHduZFMyMjVaRGV6Z0w0SjJT?=
+ =?utf-8?B?aHhidnBOQTZNbzY3cWF3YXlCZmxUQUpqNlIzeU1QRGV3VXZVcm5JenJwWTdK?=
+ =?utf-8?B?cXphWE9rc2lNSlBTb3BpelFXS1BRY05KS0pHaTEwTStWTUNWQUxmUm9OOVF6?=
+ =?utf-8?B?KzN2U3ZPS3JVNDNSMHJFOG1DUXJhQWkybzNsOTErZFlOeFV0UmJRVytZTHRD?=
+ =?utf-8?B?VlVuaHlHeVU4M0xPS0F6WWx6VmR2NVZsRzRvemlPUTFsMlFycE9sWGdPN21h?=
+ =?utf-8?Q?q9V9XanP3Vn0RXH+qB6wcPqOJvQepeLrDrmi4CrMsYNIF?=
+X-MS-Exchange-AntiSpam-MessageData-1: d7tJyOUfpBjA8g==
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2026 05:59:06.4995
+X-MS-Exchange-CrossTenant-Network-Message-Id: d6602204-ee05-4af2-fac6-08de896abbda
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2026 06:01:04.6956
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5faecf6-75e0-4ae1-b4ed-08de896a7592
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000026C6.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6888
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: enDhiVN5wOOlvco5nyIx/FqFh7t+ohdlfBw8Ql3Dqr8P75FjBVjx7NEfHxd1kPZIRFKe+MphyfGtanrTasbdUQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4477
 
-Tegra410 use different offsets for existing I2C registers, update
-the logic to use appropriate offsets per SoC.
+On Tuesday, March 24, 2026 10:57=E2=80=AFAM Rosen Penev wrote:
+> For this driver specifically, there's no arch specific stuff needed.
+>=20
+> Build the tegra clk stuff as tegra_bpmp_init_clocks is defined there.
+> CLK_TEGRA_BPMP also depends on TEGRA_BPMP.
+>=20
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  v2: also build the tegra clk stuff.
+>  drivers/clk/Makefile           | 2 +-
+>  drivers/firmware/tegra/Kconfig | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index 760d9643705f..334d5c522394 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -154,7 +154,7 @@ obj-$(CONFIG_ARCH_STM32)		+=3D stm32/
+>  obj-y					+=3D starfive/
+>  obj-$(CONFIG_ARCH_SUNXI)		+=3D sunxi/
+>  obj-y					+=3D sunxi-ng/
+> -obj-$(CONFIG_ARCH_TEGRA)		+=3D tegra/
+> +obj-y					+=3D tegra/
 
-As the register offsets are now defined in the SoC-specific
-tegra_i2c_regs structures, the tegra_i2c_reg_addr() function is no
-longer needed to translate register offsets and has been removed.
+clk/tegra/Makefile doesn't separately check for ARCH_TEGRA, so this will ca=
+use=20
+much of it to get built on non-Tegra platforms as well.
 
-Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
----
-Changes in v9:
-	* Do not remove dvc_writel() and dvc_readl() calls.
-Changes in v8:
-	* Replace usage of dvc_writel() with writel_relaxed().
-	* Remove dvc_writel().
-Changes in v7:
-	* Fix Tegra256 reg offsets, change it to tegra264_i2c_regs as it
-	  supports SW mutex.
-Changes in v6:
-	* Do not remove dvc_writel().
-	* Keep DVC registers defined as a macro.
-	* Correct Tegra20 DVC register offsets.
-	* Remove sl_cnfg, sl_addr1 and sl_addr2 registers for DVC and VI
-	  as they are not used.
-Changes in v2:
-	* Replace individual is_dvc and is_vi flags with an I2C variant.
-	* Add tegra20_dvc_i2c_hw and tegra210_vi_i2c_hw in a separate
-	  patch.
-	* Use calculated offsets for tegra20_dvc_i2c_regs and
-	  tegra210_vi_i2c_regs.
-	* Initialize registers only if they are used on the given SoC.
----
- drivers/i2c/busses/i2c-tegra.c | 359 ++++++++++++++++++++++-----------
- 1 file changed, 237 insertions(+), 122 deletions(-)
+Cheers,
+Mikko
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index a336dfe855a4..2950930b5501 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -30,38 +30,29 @@
- 
- #define BYTES_PER_FIFO_WORD 4
- 
--#define I2C_CNFG				0x000
- #define I2C_CNFG_DEBOUNCE_CNT			GENMASK(14, 12)
- #define I2C_CNFG_PACKET_MODE_EN			BIT(10)
- #define I2C_CNFG_NEW_MASTER_FSM			BIT(11)
- #define I2C_CNFG_MULTI_MASTER_MODE		BIT(17)
--#define I2C_STATUS				0x01c
--#define I2C_SL_CNFG				0x020
-+
- #define I2C_SL_CNFG_NACK			BIT(1)
- #define I2C_SL_CNFG_NEWSL			BIT(2)
--#define I2C_SL_ADDR1				0x02c
--#define I2C_SL_ADDR2				0x030
--#define I2C_TLOW_SEXT				0x034
--#define I2C_TX_FIFO				0x050
--#define I2C_RX_FIFO				0x054
--#define I2C_PACKET_TRANSFER_STATUS		0x058
--#define I2C_FIFO_CONTROL			0x05c
-+
- #define I2C_FIFO_CONTROL_TX_FLUSH		BIT(1)
- #define I2C_FIFO_CONTROL_RX_FLUSH		BIT(0)
- #define I2C_FIFO_CONTROL_TX_TRIG(x)		(((x) - 1) << 5)
- #define I2C_FIFO_CONTROL_RX_TRIG(x)		(((x) - 1) << 2)
--#define I2C_FIFO_STATUS				0x060
-+
- #define I2C_FIFO_STATUS_TX			GENMASK(7, 4)
- #define I2C_FIFO_STATUS_RX			GENMASK(3, 0)
--#define I2C_INT_MASK				0x064
--#define I2C_INT_STATUS				0x068
-+
- #define I2C_INT_BUS_CLR_DONE			BIT(11)
- #define I2C_INT_PACKET_XFER_COMPLETE		BIT(7)
- #define I2C_INT_NO_ACK				BIT(3)
- #define I2C_INT_ARBITRATION_LOST		BIT(2)
- #define I2C_INT_TX_FIFO_DATA_REQ		BIT(1)
- #define I2C_INT_RX_FIFO_DATA_REQ		BIT(0)
--#define I2C_CLK_DIVISOR				0x06c
-+
- #define I2C_CLK_DIVISOR_STD_FAST_MODE		GENMASK(31, 16)
- #define I2C_CLK_DIVISOR_HSMODE			GENMASK(15, 0)
- 
-@@ -94,50 +85,38 @@
- #define I2C_HEADER_CONTINUE_XFER		BIT(15)
- #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
- 
--#define I2C_BUS_CLEAR_CNFG			0x084
- #define I2C_BC_SCLK_THRESHOLD			GENMASK(23, 16)
- #define I2C_BC_STOP_COND			BIT(2)
- #define I2C_BC_TERMINATE			BIT(1)
- #define I2C_BC_ENABLE				BIT(0)
--#define I2C_BUS_CLEAR_STATUS			0x088
-+
- #define I2C_BC_STATUS				BIT(0)
- 
--#define I2C_CONFIG_LOAD				0x08c
- #define I2C_MSTR_CONFIG_LOAD			BIT(0)
- 
--#define I2C_CLKEN_OVERRIDE			0x090
- #define I2C_MST_CORE_CLKEN_OVR			BIT(0)
- 
--#define I2C_INTERFACE_TIMING_0			0x094
--#define  I2C_INTERFACE_TIMING_THIGH		GENMASK(13, 8)
--#define  I2C_INTERFACE_TIMING_TLOW		GENMASK(5, 0)
--#define I2C_INTERFACE_TIMING_1			0x098
--#define  I2C_INTERFACE_TIMING_TBUF		GENMASK(29, 24)
--#define  I2C_INTERFACE_TIMING_TSU_STO		GENMASK(21, 16)
--#define  I2C_INTERFACE_TIMING_THD_STA		GENMASK(13, 8)
--#define  I2C_INTERFACE_TIMING_TSU_STA		GENMASK(5, 0)
--
--#define I2C_HS_INTERFACE_TIMING_0		0x09c
--#define  I2C_HS_INTERFACE_TIMING_THIGH		GENMASK(13, 8)
--#define  I2C_HS_INTERFACE_TIMING_TLOW		GENMASK(5, 0)
--#define I2C_HS_INTERFACE_TIMING_1		0x0a0
--#define  I2C_HS_INTERFACE_TIMING_TSU_STO	GENMASK(21, 16)
--#define  I2C_HS_INTERFACE_TIMING_THD_STA	GENMASK(13, 8)
--#define  I2C_HS_INTERFACE_TIMING_TSU_STA	GENMASK(5, 0)
--
--#define I2C_MST_FIFO_CONTROL			0x0b4
-+#define I2C_INTERFACE_TIMING_THIGH		GENMASK(13, 8)
-+#define I2C_INTERFACE_TIMING_TLOW		GENMASK(5, 0)
-+#define I2C_INTERFACE_TIMING_TBUF		GENMASK(29, 24)
-+#define I2C_INTERFACE_TIMING_TSU_STO		GENMASK(21, 16)
-+#define I2C_INTERFACE_TIMING_THD_STA		GENMASK(13, 8)
-+#define I2C_INTERFACE_TIMING_TSU_STA		GENMASK(5, 0)
-+
-+#define I2C_HS_INTERFACE_TIMING_THIGH		GENMASK(13, 8)
-+#define I2C_HS_INTERFACE_TIMING_TLOW		GENMASK(5, 0)
-+#define I2C_HS_INTERFACE_TIMING_TSU_STO		GENMASK(21, 16)
-+#define I2C_HS_INTERFACE_TIMING_THD_STA		GENMASK(13, 8)
-+#define I2C_HS_INTERFACE_TIMING_TSU_STA		GENMASK(5, 0)
-+
- #define I2C_MST_FIFO_CONTROL_RX_FLUSH		BIT(0)
- #define I2C_MST_FIFO_CONTROL_TX_FLUSH		BIT(1)
- #define I2C_MST_FIFO_CONTROL_RX_TRIG(x)		(((x) - 1) <<  4)
- #define I2C_MST_FIFO_CONTROL_TX_TRIG(x)		(((x) - 1) << 16)
- 
--#define I2C_MST_FIFO_STATUS			0x0b8
- #define I2C_MST_FIFO_STATUS_TX			GENMASK(23, 16)
- #define I2C_MST_FIFO_STATUS_RX			GENMASK(7, 0)
- 
--#define I2C_MASTER_RESET_CNTRL			0x0a8
--
--#define I2C_SW_MUTEX				0x0ec
- #define I2C_SW_MUTEX_REQUEST			GENMASK(3, 0)
- #define I2C_SW_MUTEX_GRANT			GENMASK(7, 4)
- #define I2C_SW_MUTEX_ID_CCPLEX			9
-@@ -159,6 +138,143 @@
-  */
- #define I2C_PIO_MODE_PREFERRED_LEN		32
- 
-+struct tegra_i2c_regs {
-+	unsigned int cnfg;
-+	unsigned int status;
-+	unsigned int sl_cnfg;
-+	unsigned int sl_addr1;
-+	unsigned int sl_addr2;
-+	unsigned int tlow_sext;
-+	unsigned int tx_fifo;
-+	unsigned int rx_fifo;
-+	unsigned int packet_transfer_status;
-+	unsigned int fifo_control;
-+	unsigned int fifo_status;
-+	unsigned int int_mask;
-+	unsigned int int_status;
-+	unsigned int clk_divisor;
-+	unsigned int bus_clear_cnfg;
-+	unsigned int bus_clear_status;
-+	unsigned int config_load;
-+	unsigned int clken_override;
-+	unsigned int interface_timing_0;
-+	unsigned int interface_timing_1;
-+	unsigned int hs_interface_timing_0;
-+	unsigned int hs_interface_timing_1;
-+	unsigned int master_reset_cntrl;
-+	unsigned int mst_fifo_control;
-+	unsigned int mst_fifo_status;
-+	unsigned int sw_mutex;
-+};
-+
-+static const struct tegra_i2c_regs tegra20_i2c_regs = {
-+	.cnfg = 0x000,
-+	.status = 0x01c,
-+	.sl_cnfg = 0x020,
-+	.sl_addr1 = 0x02c,
-+	.sl_addr2 = 0x030,
-+	.tx_fifo = 0x050,
-+	.rx_fifo = 0x054,
-+	.packet_transfer_status = 0x058,
-+	.fifo_control = 0x05c,
-+	.fifo_status = 0x060,
-+	.int_mask = 0x064,
-+	.int_status = 0x068,
-+	.clk_divisor = 0x06c,
-+	.bus_clear_cnfg = 0x084,
-+	.bus_clear_status = 0x088,
-+	.config_load = 0x08c,
-+	.clken_override = 0x090,
-+	.interface_timing_0 = 0x094,
-+	.interface_timing_1 = 0x098,
-+	.hs_interface_timing_0 = 0x09c,
-+	.hs_interface_timing_1 = 0x0a0,
-+	.master_reset_cntrl = 0x0a8,
-+	.mst_fifo_control = 0x0b4,
-+	.mst_fifo_status = 0x0b8,
-+};
-+
-+#if IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC)
-+static const struct tegra_i2c_regs tegra20_dvc_i2c_regs = {
-+	.cnfg = 0x040,
-+	.status = 0x05c,
-+	.tx_fifo = 0x060,
-+	.rx_fifo = 0x064,
-+	.packet_transfer_status = 0x068,
-+	.fifo_control = 0x06c,
-+	.fifo_status = 0x070,
-+	.int_mask = 0x074,
-+	.int_status = 0x078,
-+	.clk_divisor = 0x07c,
-+	.bus_clear_cnfg = 0x094,
-+	.bus_clear_status = 0x098,
-+	.config_load = 0x09c,
-+	.clken_override = 0x0a0,
-+	.interface_timing_0 = 0x0a4,
-+	.interface_timing_1 = 0x0a8,
-+	.hs_interface_timing_0 = 0x0ac,
-+	.hs_interface_timing_1 = 0x0b0,
-+	.master_reset_cntrl = 0x0b8,
-+	.mst_fifo_control = 0x0c4,
-+	.mst_fifo_status = 0x0c8,
-+};
-+#endif
-+
-+#if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
-+static const struct tegra_i2c_regs tegra210_vi_i2c_regs = {
-+	.cnfg = 0x0c00,
-+	.status = 0x0c70,
-+	.tlow_sext = 0x0cd0,
-+	.tx_fifo = 0x0d40,
-+	.rx_fifo = 0x0d50,
-+	.packet_transfer_status = 0x0d60,
-+	.fifo_control = 0x0d70,
-+	.fifo_status = 0x0d80,
-+	.int_mask = 0x0d90,
-+	.int_status = 0x0da0,
-+	.clk_divisor = 0x0db0,
-+	.bus_clear_cnfg = 0x0e10,
-+	.bus_clear_status = 0x0e20,
-+	.config_load = 0x0e30,
-+	.clken_override = 0x0e40,
-+	.interface_timing_0 = 0x0e50,
-+	.interface_timing_1 = 0x0e60,
-+	.hs_interface_timing_0 = 0x0e70,
-+	.hs_interface_timing_1 = 0x0e80,
-+	.master_reset_cntrl = 0x0ea0,
-+	.mst_fifo_control = 0x0ed0,
-+	.mst_fifo_status = 0x0ee0,
-+};
-+#endif
-+
-+static const struct tegra_i2c_regs tegra264_i2c_regs = {
-+	.cnfg = 0x000,
-+	.status = 0x01c,
-+	.sl_cnfg = 0x020,
-+	.sl_addr1 = 0x02c,
-+	.sl_addr2 = 0x030,
-+	.tx_fifo = 0x050,
-+	.rx_fifo = 0x054,
-+	.packet_transfer_status = 0x058,
-+	.fifo_control = 0x05c,
-+	.fifo_status = 0x060,
-+	.int_mask = 0x064,
-+	.int_status = 0x068,
-+	.clk_divisor = 0x06c,
-+	.bus_clear_cnfg = 0x084,
-+	.bus_clear_status = 0x088,
-+	.config_load = 0x08c,
-+	.clken_override = 0x090,
-+	.interface_timing_0 = 0x094,
-+	.interface_timing_1 = 0x098,
-+	.hs_interface_timing_0 = 0x09c,
-+	.hs_interface_timing_1 = 0x0a0,
-+	.master_reset_cntrl = 0x0a8,
-+	.mst_fifo_control = 0x0b4,
-+	.mst_fifo_status = 0x0b8,
-+	.sw_mutex = 0x0ec,
-+};
-+
- /*
-  * msg_end_type: The bus control which needs to be sent at end of transfer.
-  * @MSG_END_STOP: Send stop pulse.
-@@ -236,6 +352,7 @@ enum tegra_i2c_variant {
-  * @enable_hs_mode_support: Enable support for high speed (HS) mode transfers.
-  * @has_mutex: Has mutex register for mutual exclusion with other firmwares or VMs.
-  * @variant: This represents the I2C controller variant.
-+ * @regs: Register offsets for the specific SoC variant.
-  */
- struct tegra_i2c_hw_feature {
- 	bool has_continue_xfer_support;
-@@ -268,6 +385,7 @@ struct tegra_i2c_hw_feature {
- 	bool enable_hs_mode_support;
- 	bool has_mutex;
- 	enum tegra_i2c_variant variant;
-+	const struct tegra_i2c_regs *regs;
- };
- 
- /**
-@@ -351,40 +469,26 @@ static u32 dvc_readl(struct tegra_i2c_dev *i2c_dev, unsigned int reg)
- 	return readl_relaxed(i2c_dev->base + reg);
- }
- 
--/*
-- * If necessary, i2c_writel() and i2c_readl() will offset the register
-- * in order to talk to the I2C block inside the DVC block.
-- */
--static u32 tegra_i2c_reg_addr(struct tegra_i2c_dev *i2c_dev, unsigned int reg)
--{
--	if (IS_DVC(i2c_dev))
--		reg += (reg >= I2C_TX_FIFO) ? 0x10 : 0x40;
--	else if (IS_VI(i2c_dev))
--		reg = 0xc00 + (reg << 2);
--
--	return reg;
--}
--
- static void i2c_writel(struct tegra_i2c_dev *i2c_dev, u32 val, unsigned int reg)
- {
--	writel_relaxed(val, i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
-+	writel_relaxed(val, i2c_dev->base + reg);
- 
- 	/* read back register to make sure that register writes completed */
--	if (reg != I2C_TX_FIFO)
--		readl_relaxed(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
-+	if (reg != i2c_dev->hw->regs->tx_fifo)
-+		readl_relaxed(i2c_dev->base + reg);
- 	else if (IS_VI(i2c_dev))
--		readl_relaxed(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, I2C_INT_STATUS));
-+		readl_relaxed(i2c_dev->base + i2c_dev->hw->regs->int_status);
- }
- 
- static u32 i2c_readl(struct tegra_i2c_dev *i2c_dev, unsigned int reg)
- {
--	return readl_relaxed(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg));
-+	return readl_relaxed(i2c_dev->base + reg);
- }
- 
- static void i2c_writesl(struct tegra_i2c_dev *i2c_dev, void *data,
- 			unsigned int reg, unsigned int len)
- {
--	writesl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg), data, len);
-+	writesl(i2c_dev->base + reg, data, len);
- }
- 
- static void i2c_writesl_vi(struct tegra_i2c_dev *i2c_dev, void *data,
-@@ -405,12 +509,12 @@ static void i2c_writesl_vi(struct tegra_i2c_dev *i2c_dev, void *data,
- static void i2c_readsl(struct tegra_i2c_dev *i2c_dev, void *data,
- 		       unsigned int reg, unsigned int len)
- {
--	readsl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg), data, len);
-+	readsl(i2c_dev->base + reg, data, len);
- }
- 
- static bool tegra_i2c_mutex_acquired(struct tegra_i2c_dev *i2c_dev)
- {
--	unsigned int reg = tegra_i2c_reg_addr(i2c_dev, I2C_SW_MUTEX);
-+	unsigned int reg = i2c_dev->hw->regs->sw_mutex;
- 	u32 val, id;
- 
- 	val = readl(i2c_dev->base + reg);
-@@ -421,7 +525,7 @@ static bool tegra_i2c_mutex_acquired(struct tegra_i2c_dev *i2c_dev)
- 
- static bool tegra_i2c_mutex_trylock(struct tegra_i2c_dev *i2c_dev)
- {
--	unsigned int reg = tegra_i2c_reg_addr(i2c_dev, I2C_SW_MUTEX);
-+	unsigned int reg = i2c_dev->hw->regs->sw_mutex;
- 	u32 val, id;
- 
- 	val = readl(i2c_dev->base + reg);
-@@ -459,7 +563,7 @@ static int tegra_i2c_mutex_lock(struct tegra_i2c_dev *i2c_dev)
- 
- static int tegra_i2c_mutex_unlock(struct tegra_i2c_dev *i2c_dev)
- {
--	unsigned int reg = tegra_i2c_reg_addr(i2c_dev, I2C_SW_MUTEX);
-+	unsigned int reg = i2c_dev->hw->regs->sw_mutex;
- 	u32 val, id;
- 
- 	if (!i2c_dev->hw->has_mutex)
-@@ -482,16 +586,16 @@ static void tegra_i2c_mask_irq(struct tegra_i2c_dev *i2c_dev, u32 mask)
- {
- 	u32 int_mask;
- 
--	int_mask = i2c_readl(i2c_dev, I2C_INT_MASK) & ~mask;
--	i2c_writel(i2c_dev, int_mask, I2C_INT_MASK);
-+	int_mask = i2c_readl(i2c_dev, i2c_dev->hw->regs->int_mask) & ~mask;
-+	i2c_writel(i2c_dev, int_mask, i2c_dev->hw->regs->int_mask);
- }
- 
- static void tegra_i2c_unmask_irq(struct tegra_i2c_dev *i2c_dev, u32 mask)
- {
- 	u32 int_mask;
- 
--	int_mask = i2c_readl(i2c_dev, I2C_INT_MASK) | mask;
--	i2c_writel(i2c_dev, int_mask, I2C_INT_MASK);
-+	int_mask = i2c_readl(i2c_dev, i2c_dev->hw->regs->int_mask) | mask;
-+	i2c_writel(i2c_dev, int_mask, i2c_dev->hw->regs->int_mask);
- }
- 
- static void tegra_i2c_dma_complete(void *args)
-@@ -635,34 +739,34 @@ static void tegra_i2c_vi_init(struct tegra_i2c_dev *i2c_dev)
- 
- 	value = FIELD_PREP(I2C_INTERFACE_TIMING_THIGH, 2) |
- 		FIELD_PREP(I2C_INTERFACE_TIMING_TLOW, 4);
--	i2c_writel(i2c_dev, value, I2C_INTERFACE_TIMING_0);
-+	i2c_writel(i2c_dev, value, i2c_dev->hw->regs->interface_timing_0);
- 
- 	value = FIELD_PREP(I2C_INTERFACE_TIMING_TBUF, 4) |
- 		FIELD_PREP(I2C_INTERFACE_TIMING_TSU_STO, 7) |
- 		FIELD_PREP(I2C_INTERFACE_TIMING_THD_STA, 4) |
- 		FIELD_PREP(I2C_INTERFACE_TIMING_TSU_STA, 4);
--	i2c_writel(i2c_dev, value, I2C_INTERFACE_TIMING_1);
-+	i2c_writel(i2c_dev, value, i2c_dev->hw->regs->interface_timing_1);
- 
- 	value = FIELD_PREP(I2C_HS_INTERFACE_TIMING_THIGH, 3) |
- 		FIELD_PREP(I2C_HS_INTERFACE_TIMING_TLOW, 8);
--	i2c_writel(i2c_dev, value, I2C_HS_INTERFACE_TIMING_0);
-+	i2c_writel(i2c_dev, value, i2c_dev->hw->regs->hs_interface_timing_0);
- 
- 	value = FIELD_PREP(I2C_HS_INTERFACE_TIMING_TSU_STO, 11) |
- 		FIELD_PREP(I2C_HS_INTERFACE_TIMING_THD_STA, 11) |
- 		FIELD_PREP(I2C_HS_INTERFACE_TIMING_TSU_STA, 11);
--	i2c_writel(i2c_dev, value, I2C_HS_INTERFACE_TIMING_1);
-+	i2c_writel(i2c_dev, value, i2c_dev->hw->regs->hs_interface_timing_1);
- 
- 	value = FIELD_PREP(I2C_BC_SCLK_THRESHOLD, 9) | I2C_BC_STOP_COND;
--	i2c_writel(i2c_dev, value, I2C_BUS_CLEAR_CNFG);
-+	i2c_writel(i2c_dev, value, i2c_dev->hw->regs->bus_clear_cnfg);
- 
--	i2c_writel(i2c_dev, 0x0, I2C_TLOW_SEXT);
-+	i2c_writel(i2c_dev, 0x0, i2c_dev->hw->regs->tlow_sext);
- }
- 
- static int tegra_i2c_poll_register(struct tegra_i2c_dev *i2c_dev,
- 				   u32 reg, u32 mask, u32 delay_us,
- 				   u32 timeout_us)
- {
--	void __iomem *addr = i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg);
-+	void __iomem *addr = i2c_dev->base + reg;
- 	u32 val;
- 
- 	if (!i2c_dev->atomic_mode)
-@@ -681,11 +785,11 @@ static int tegra_i2c_flush_fifos(struct tegra_i2c_dev *i2c_dev)
- 	if (i2c_dev->hw->has_mst_fifo) {
- 		mask = I2C_MST_FIFO_CONTROL_TX_FLUSH |
- 		       I2C_MST_FIFO_CONTROL_RX_FLUSH;
--		offset = I2C_MST_FIFO_CONTROL;
-+		offset = i2c_dev->hw->regs->mst_fifo_control;
- 	} else {
- 		mask = I2C_FIFO_CONTROL_TX_FLUSH |
- 		       I2C_FIFO_CONTROL_RX_FLUSH;
--		offset = I2C_FIFO_CONTROL;
-+		offset = i2c_dev->hw->regs->fifo_control;
- 	}
- 
- 	val = i2c_readl(i2c_dev, offset);
-@@ -708,9 +812,9 @@ static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
- 	if (!i2c_dev->hw->has_config_load_reg)
- 		return 0;
- 
--	i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
-+	i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, i2c_dev->hw->regs->config_load);
- 
--	err = tegra_i2c_poll_register(i2c_dev, I2C_CONFIG_LOAD, 0xffffffff,
-+	err = tegra_i2c_poll_register(i2c_dev, i2c_dev->hw->regs->config_load, 0xffffffff,
- 				      1000, I2C_CONFIG_LOAD_TIMEOUT);
- 	if (err) {
- 		dev_err(i2c_dev->dev, "failed to load config\n");
-@@ -731,10 +835,10 @@ static int tegra_i2c_master_reset(struct tegra_i2c_dev *i2c_dev)
- 	 * SW needs to wait for 2us after assertion and de-assertion of this soft
- 	 * reset.
- 	 */
--	i2c_writel(i2c_dev, 0x1, I2C_MASTER_RESET_CNTRL);
-+	i2c_writel(i2c_dev, 0x1, i2c_dev->hw->regs->master_reset_cntrl);
- 	fsleep(2);
- 
--	i2c_writel(i2c_dev, 0x0, I2C_MASTER_RESET_CNTRL);
-+	i2c_writel(i2c_dev, 0x0, i2c_dev->hw->regs->master_reset_cntrl);
- 	fsleep(2);
- 
- 	return 0;
-@@ -776,8 +880,8 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	if (i2c_dev->hw->has_multi_master_mode)
- 		val |= I2C_CNFG_MULTI_MASTER_MODE;
- 
--	i2c_writel(i2c_dev, val, I2C_CNFG);
--	i2c_writel(i2c_dev, 0, I2C_INT_MASK);
-+	i2c_writel(i2c_dev, val, i2c_dev->hw->regs->cnfg);
-+	i2c_writel(i2c_dev, 0, i2c_dev->hw->regs->int_mask);
- 
- 	if (IS_VI(i2c_dev))
- 		tegra_i2c_vi_init(i2c_dev);
-@@ -822,12 +926,12 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	clk_divisor = FIELD_PREP(I2C_CLK_DIVISOR_HSMODE,
- 				 i2c_dev->hw->clk_divisor_hs_mode) |
- 		      FIELD_PREP(I2C_CLK_DIVISOR_STD_FAST_MODE, non_hs_mode);
--	i2c_writel(i2c_dev, clk_divisor, I2C_CLK_DIVISOR);
-+	i2c_writel(i2c_dev, clk_divisor, i2c_dev->hw->regs->clk_divisor);
- 
- 	if (i2c_dev->hw->has_interface_timing_reg) {
- 		val = FIELD_PREP(I2C_INTERFACE_TIMING_THIGH, thigh) |
- 		      FIELD_PREP(I2C_INTERFACE_TIMING_TLOW, tlow);
--		i2c_writel(i2c_dev, val, I2C_INTERFACE_TIMING_0);
-+		i2c_writel(i2c_dev, val, i2c_dev->hw->regs->interface_timing_0);
- 	}
- 
- 	/*
-@@ -835,7 +939,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	 * Otherwise, preserve the chip default values.
- 	 */
- 	if (i2c_dev->hw->has_interface_timing_reg && tsu_thd)
--		i2c_writel(i2c_dev, tsu_thd, I2C_INTERFACE_TIMING_1);
-+		i2c_writel(i2c_dev, tsu_thd, i2c_dev->hw->regs->interface_timing_1);
- 
- 	/* Write HS mode registers. These will get used only for HS mode*/
- 	if (i2c_dev->hw->enable_hs_mode_support) {
-@@ -845,8 +949,8 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 
- 		val = FIELD_PREP(I2C_HS_INTERFACE_TIMING_THIGH, thigh) |
- 			FIELD_PREP(I2C_HS_INTERFACE_TIMING_TLOW, tlow);
--		i2c_writel(i2c_dev, val, I2C_HS_INTERFACE_TIMING_0);
--		i2c_writel(i2c_dev, tsu_thd, I2C_HS_INTERFACE_TIMING_1);
-+		i2c_writel(i2c_dev, val, i2c_dev->hw->regs->hs_interface_timing_0);
-+		i2c_writel(i2c_dev, tsu_thd, i2c_dev->hw->regs->hs_interface_timing_1);
- 	}
- 
- 	clk_multiplier = (tlow + thigh + 2) * (non_hs_mode + 1);
-@@ -859,12 +963,12 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	}
- 
- 	if (!IS_DVC(i2c_dev) && !IS_VI(i2c_dev)) {
--		u32 sl_cfg = i2c_readl(i2c_dev, I2C_SL_CNFG);
-+		u32 sl_cfg = i2c_readl(i2c_dev, i2c_dev->hw->regs->sl_cnfg);
- 
- 		sl_cfg |= I2C_SL_CNFG_NACK | I2C_SL_CNFG_NEWSL;
--		i2c_writel(i2c_dev, sl_cfg, I2C_SL_CNFG);
--		i2c_writel(i2c_dev, 0xfc, I2C_SL_ADDR1);
--		i2c_writel(i2c_dev, 0x00, I2C_SL_ADDR2);
-+		i2c_writel(i2c_dev, sl_cfg, i2c_dev->hw->regs->sl_cnfg);
-+		i2c_writel(i2c_dev, 0xfc, i2c_dev->hw->regs->sl_addr1);
-+		i2c_writel(i2c_dev, 0x00, i2c_dev->hw->regs->sl_addr2);
- 	}
- 
- 	err = tegra_i2c_flush_fifos(i2c_dev);
-@@ -872,7 +976,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 		return err;
- 
- 	if (i2c_dev->multimaster_mode && i2c_dev->hw->has_slcg_override_reg)
--		i2c_writel(i2c_dev, I2C_MST_CORE_CLKEN_OVR, I2C_CLKEN_OVERRIDE);
-+		i2c_writel(i2c_dev, I2C_MST_CORE_CLKEN_OVR, i2c_dev->hw->regs->clken_override);
- 
- 	err = tegra_i2c_wait_for_config_load(i2c_dev);
- 	if (err)
-@@ -893,9 +997,9 @@ static int tegra_i2c_disable_packet_mode(struct tegra_i2c_dev *i2c_dev)
- 	 */
- 	udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->timings.bus_freq_hz));
- 
--	cnfg = i2c_readl(i2c_dev, I2C_CNFG);
-+	cnfg = i2c_readl(i2c_dev, i2c_dev->hw->regs->cnfg);
- 	if (cnfg & I2C_CNFG_PACKET_MODE_EN)
--		i2c_writel(i2c_dev, cnfg & ~I2C_CNFG_PACKET_MODE_EN, I2C_CNFG);
-+		i2c_writel(i2c_dev, cnfg & ~I2C_CNFG_PACKET_MODE_EN, i2c_dev->hw->regs->cnfg);
- 
- 	return tegra_i2c_wait_for_config_load(i2c_dev);
- }
-@@ -915,10 +1019,10 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
- 		return -EINVAL;
- 
- 	if (i2c_dev->hw->has_mst_fifo) {
--		val = i2c_readl(i2c_dev, I2C_MST_FIFO_STATUS);
-+		val = i2c_readl(i2c_dev, i2c_dev->hw->regs->mst_fifo_status);
- 		rx_fifo_avail = FIELD_GET(I2C_MST_FIFO_STATUS_RX, val);
- 	} else {
--		val = i2c_readl(i2c_dev, I2C_FIFO_STATUS);
-+		val = i2c_readl(i2c_dev, i2c_dev->hw->regs->fifo_status);
- 		rx_fifo_avail = FIELD_GET(I2C_FIFO_STATUS_RX, val);
- 	}
- 
-@@ -927,7 +1031,7 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
- 	if (words_to_transfer > rx_fifo_avail)
- 		words_to_transfer = rx_fifo_avail;
- 
--	i2c_readsl(i2c_dev, buf, I2C_RX_FIFO, words_to_transfer);
-+	i2c_readsl(i2c_dev, buf, i2c_dev->hw->regs->rx_fifo, words_to_transfer);
- 
- 	buf += words_to_transfer * BYTES_PER_FIFO_WORD;
- 	buf_remaining -= words_to_transfer * BYTES_PER_FIFO_WORD;
-@@ -943,7 +1047,7 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
- 		 * when (words_to_transfer was > rx_fifo_avail) earlier
- 		 * in this function.
- 		 */
--		val = i2c_readl(i2c_dev, I2C_RX_FIFO);
-+		val = i2c_readl(i2c_dev, i2c_dev->hw->regs->rx_fifo);
- 		val = cpu_to_le32(val);
- 		memcpy(buf, &val, buf_remaining);
- 		buf_remaining = 0;
-@@ -968,10 +1072,10 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
- 	u32 val;
- 
- 	if (i2c_dev->hw->has_mst_fifo) {
--		val = i2c_readl(i2c_dev, I2C_MST_FIFO_STATUS);
-+		val = i2c_readl(i2c_dev, i2c_dev->hw->regs->mst_fifo_status);
- 		tx_fifo_avail = FIELD_GET(I2C_MST_FIFO_STATUS_TX, val);
- 	} else {
--		val = i2c_readl(i2c_dev, I2C_FIFO_STATUS);
-+		val = i2c_readl(i2c_dev, i2c_dev->hw->regs->fifo_status);
- 		tx_fifo_avail = FIELD_GET(I2C_FIFO_STATUS_TX, val);
- 	}
- 
-@@ -1002,9 +1106,9 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
- 		i2c_dev->msg_buf = buf + words_to_transfer * BYTES_PER_FIFO_WORD;
- 
- 		if (IS_VI(i2c_dev))
--			i2c_writesl_vi(i2c_dev, buf, I2C_TX_FIFO, words_to_transfer);
-+			i2c_writesl_vi(i2c_dev, buf, i2c_dev->hw->regs->tx_fifo, words_to_transfer);
- 		else
--			i2c_writesl(i2c_dev, buf, I2C_TX_FIFO, words_to_transfer);
-+			i2c_writesl(i2c_dev, buf, i2c_dev->hw->regs->tx_fifo, words_to_transfer);
- 
- 		buf += words_to_transfer * BYTES_PER_FIFO_WORD;
- 	}
-@@ -1026,7 +1130,7 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev *i2c_dev)
- 		i2c_dev->msg_buf_remaining = 0;
- 		i2c_dev->msg_buf = NULL;
- 
--		i2c_writel(i2c_dev, val, I2C_TX_FIFO);
-+		i2c_writel(i2c_dev, val, i2c_dev->hw->regs->tx_fifo);
- 	}
- 
- 	return 0;
-@@ -1038,13 +1142,13 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	struct tegra_i2c_dev *i2c_dev = dev_id;
- 	u32 status;
- 
--	status = i2c_readl(i2c_dev, I2C_INT_STATUS);
-+	status = i2c_readl(i2c_dev, i2c_dev->hw->regs->int_status);
- 
- 	if (status == 0) {
- 		dev_warn(i2c_dev->dev, "IRQ status 0 %08x %08x %08x\n",
--			 i2c_readl(i2c_dev, I2C_PACKET_TRANSFER_STATUS),
--			 i2c_readl(i2c_dev, I2C_STATUS),
--			 i2c_readl(i2c_dev, I2C_CNFG));
-+			 i2c_readl(i2c_dev, i2c_dev->hw->regs->packet_transfer_status),
-+			 i2c_readl(i2c_dev, i2c_dev->hw->regs->status),
-+			 i2c_readl(i2c_dev, i2c_dev->hw->regs->cnfg));
- 		i2c_dev->msg_err |= I2C_ERR_UNKNOWN_INTERRUPT;
- 		goto err;
- 	}
-@@ -1087,7 +1191,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 		}
- 	}
- 
--	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
-+	i2c_writel(i2c_dev, status, i2c_dev->hw->regs->int_status);
- 	if (IS_DVC(i2c_dev))
- 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
- 
-@@ -1125,7 +1229,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	if (i2c_dev->hw->supports_bus_clear)
- 		tegra_i2c_mask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
- 
--	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
-+	i2c_writel(i2c_dev, status, i2c_dev->hw->regs->int_status);
- 
- 	if (IS_DVC(i2c_dev))
- 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
-@@ -1148,9 +1252,9 @@ static void tegra_i2c_config_fifo_trig(struct tegra_i2c_dev *i2c_dev,
- 	int err;
- 
- 	if (i2c_dev->hw->has_mst_fifo)
--		reg = I2C_MST_FIFO_CONTROL;
-+		reg = i2c_dev->hw->regs->mst_fifo_control;
- 	else
--		reg = I2C_FIFO_CONTROL;
-+		reg = i2c_dev->hw->regs->fifo_control;
- 
- 	if (i2c_dev->dma_mode) {
- 		if (len & 0xF)
-@@ -1161,7 +1265,7 @@ static void tegra_i2c_config_fifo_trig(struct tegra_i2c_dev *i2c_dev,
- 			dma_burst = 8;
- 
- 		if (i2c_dev->msg_read) {
--			reg_offset = tegra_i2c_reg_addr(i2c_dev, I2C_RX_FIFO);
-+			reg_offset = i2c_dev->hw->regs->rx_fifo;
- 
- 			slv_config.src_addr = i2c_dev->base_phys + reg_offset;
- 			slv_config.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-@@ -1172,7 +1276,7 @@ static void tegra_i2c_config_fifo_trig(struct tegra_i2c_dev *i2c_dev,
- 			else
- 				val = I2C_FIFO_CONTROL_RX_TRIG(dma_burst);
- 		} else {
--			reg_offset = tegra_i2c_reg_addr(i2c_dev, I2C_TX_FIFO);
-+			reg_offset = i2c_dev->hw->regs->tx_fifo;
- 
- 			slv_config.dst_addr = i2c_dev->base_phys + reg_offset;
- 			slv_config.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-@@ -1215,7 +1319,7 @@ static unsigned long tegra_i2c_poll_completion(struct tegra_i2c_dev *i2c_dev,
- 	ktime_t ktimeout = ktime_add_ms(ktime, timeout_ms);
- 
- 	do {
--		u32 status = i2c_readl(i2c_dev, I2C_INT_STATUS);
-+		u32 status = i2c_readl(i2c_dev, i2c_dev->hw->regs->int_status);
- 
- 		if (status)
- 			tegra_i2c_isr(i2c_dev->irq, i2c_dev);
-@@ -1274,14 +1378,14 @@ static int tegra_i2c_issue_bus_clear(struct i2c_adapter *adap)
- 
- 	val = FIELD_PREP(I2C_BC_SCLK_THRESHOLD, 9) | I2C_BC_STOP_COND |
- 	      I2C_BC_TERMINATE;
--	i2c_writel(i2c_dev, val, I2C_BUS_CLEAR_CNFG);
-+	i2c_writel(i2c_dev, val, i2c_dev->hw->regs->bus_clear_cnfg);
- 
- 	err = tegra_i2c_wait_for_config_load(i2c_dev);
- 	if (err)
- 		return err;
- 
- 	val |= I2C_BC_ENABLE;
--	i2c_writel(i2c_dev, val, I2C_BUS_CLEAR_CNFG);
-+	i2c_writel(i2c_dev, val, i2c_dev->hw->regs->bus_clear_cnfg);
- 	tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
- 
- 	time_left = tegra_i2c_wait_completion(i2c_dev, &i2c_dev->msg_complete, 50);
-@@ -1292,7 +1396,7 @@ static int tegra_i2c_issue_bus_clear(struct i2c_adapter *adap)
- 		return -ETIMEDOUT;
- 	}
- 
--	val = i2c_readl(i2c_dev, I2C_BUS_CLEAR_STATUS);
-+	val = i2c_readl(i2c_dev, i2c_dev->hw->regs->bus_clear_status);
- 	if (!(val & I2C_BC_STATUS)) {
- 		dev_err(i2c_dev->dev, "un-recovered arbitration lost\n");
- 		return -EIO;
-@@ -1317,14 +1421,14 @@ static void tegra_i2c_push_packet_header(struct tegra_i2c_dev *i2c_dev,
- 	if (i2c_dev->dma_mode && !i2c_dev->msg_read)
- 		*dma_buf++ = packet_header;
- 	else
--		i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
-+		i2c_writel(i2c_dev, packet_header, i2c_dev->hw->regs->tx_fifo);
- 
- 	packet_header = i2c_dev->msg_len - 1;
- 
- 	if (i2c_dev->dma_mode && !i2c_dev->msg_read)
- 		*dma_buf++ = packet_header;
- 	else
--		i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
-+		i2c_writel(i2c_dev, packet_header, i2c_dev->hw->regs->tx_fifo);
- 
- 	packet_header = I2C_HEADER_IE_ENABLE;
- 
-@@ -1352,7 +1456,7 @@ static void tegra_i2c_push_packet_header(struct tegra_i2c_dev *i2c_dev,
- 	if (i2c_dev->dma_mode && !i2c_dev->msg_read)
- 		*dma_buf++ = packet_header;
- 	else
--		i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
-+		i2c_writel(i2c_dev, packet_header, i2c_dev->hw->regs->tx_fifo);
- }
- 
- static int tegra_i2c_error_recover(struct tegra_i2c_dev *i2c_dev,
-@@ -1473,7 +1577,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 
- 	tegra_i2c_unmask_irq(i2c_dev, int_mask);
- 	dev_dbg(i2c_dev->dev, "unmasked IRQ: %02x\n",
--		i2c_readl(i2c_dev, I2C_INT_MASK));
-+		i2c_readl(i2c_dev, i2c_dev->hw->regs->int_mask));
- 
- 	if (i2c_dev->dma_mode) {
- 		time_left = tegra_i2c_wait_completion(i2c_dev,
-@@ -1648,6 +1752,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.enable_hs_mode_support = false,
- 	.has_mutex = false,
- 	.variant = TEGRA_I2C_VARIANT_DEFAULT,
-+	.regs = &tegra20_i2c_regs,
- };
- 
- #if IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC)
-@@ -1680,6 +1785,7 @@ static const struct tegra_i2c_hw_feature tegra20_dvc_i2c_hw = {
- 	.enable_hs_mode_support = false,
- 	.has_mutex = false,
- 	.variant = TEGRA_I2C_VARIANT_DVC,
-+	.regs = &tegra20_dvc_i2c_regs,
- };
- #endif
- 
-@@ -1712,6 +1818,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
- 	.enable_hs_mode_support = false,
- 	.has_mutex = false,
- 	.variant = TEGRA_I2C_VARIANT_DEFAULT,
-+	.regs = &tegra20_i2c_regs,
- };
- 
- static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
-@@ -1743,6 +1850,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
- 	.enable_hs_mode_support = false,
- 	.has_mutex = false,
- 	.variant = TEGRA_I2C_VARIANT_DEFAULT,
-+	.regs = &tegra20_i2c_regs,
- };
- 
- static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
-@@ -1774,6 +1882,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
- 	.enable_hs_mode_support = false,
- 	.has_mutex = false,
- 	.variant = TEGRA_I2C_VARIANT_DEFAULT,
-+	.regs = &tegra20_i2c_regs,
- };
- 
- static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
-@@ -1805,6 +1914,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
- 	.enable_hs_mode_support = false,
- 	.has_mutex = false,
- 	.variant = TEGRA_I2C_VARIANT_DEFAULT,
-+	.regs = &tegra20_i2c_regs,
- };
- 
- #if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
-@@ -1837,6 +1947,7 @@ static const struct tegra_i2c_hw_feature tegra210_vi_i2c_hw = {
- 	.enable_hs_mode_support = false,
- 	.has_mutex = false,
- 	.variant = TEGRA_I2C_VARIANT_VI,
-+	.regs = &tegra210_vi_i2c_regs,
- };
- #endif
- 
-@@ -1869,6 +1980,7 @@ static const struct tegra_i2c_hw_feature tegra186_i2c_hw = {
- 	.enable_hs_mode_support = false,
- 	.has_mutex = false,
- 	.variant = TEGRA_I2C_VARIANT_DEFAULT,
-+	.regs = &tegra20_i2c_regs,
- };
- 
- static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
-@@ -1902,6 +2014,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
- 	.enable_hs_mode_support = true,
- 	.has_mutex = false,
- 	.variant = TEGRA_I2C_VARIANT_DEFAULT,
-+	.regs = &tegra20_i2c_regs,
- };
- 
- static const struct tegra_i2c_hw_feature tegra256_i2c_hw = {
-@@ -1935,6 +2048,7 @@ static const struct tegra_i2c_hw_feature tegra256_i2c_hw = {
- 	.enable_hs_mode_support = true,
- 	.has_mutex = true,
- 	.variant = TEGRA_I2C_VARIANT_DEFAULT,
-+	.regs = &tegra264_i2c_regs,
- };
- 
- static const struct tegra_i2c_hw_feature tegra264_i2c_hw = {
-@@ -1968,6 +2082,7 @@ static const struct tegra_i2c_hw_feature tegra264_i2c_hw = {
- 	.enable_hs_mode_support = true,
- 	.has_mutex = true,
- 	.variant = TEGRA_I2C_VARIANT_DEFAULT,
-+	.regs = &tegra264_i2c_regs,
- };
- 
- static const struct of_device_id tegra_i2c_of_match[] = {
--- 
-2.43.0
+>  obj-y					+=3D tenstorrent/
+>  obj-$(CONFIG_ARCH_THEAD)		+=3D thead/
+>  obj-y					+=3D ti/
+> diff --git a/drivers/firmware/tegra/Kconfig b/drivers/firmware/tegra/Kcon=
+fig
+> index 91f2320c0d0f..ae21f460807d 100644
+> --- a/drivers/firmware/tegra/Kconfig
+> +++ b/drivers/firmware/tegra/Kconfig
+> @@ -3,7 +3,7 @@ menu "Tegra firmware driver"
+>=20
+>  config TEGRA_IVC
+>  	bool "Tegra IVC protocol" if COMPILE_TEST
+> -	depends on ARCH_TEGRA
+> +	depends on ARCH_TEGRA || COMPILE_TEST
+>  	help
+>  	  IVC (Inter-VM Communication) protocol is part of the IPC
+>  	  (Inter Processor Communication) framework on Tegra. It maintains=20
+the
+> @@ -13,7 +13,7 @@ config TEGRA_IVC
+>=20
+>  config TEGRA_BPMP
+>  	bool "Tegra BPMP driver"
+> -	depends on ARCH_TEGRA && TEGRA_HSP_MBOX
+> +	depends on (ARCH_TEGRA && TEGRA_HSP_MBOX) || COMPILE_TEST
+>  	depends on !CPU_BIG_ENDIAN
+>  	select TEGRA_IVC
+>  	help
+> --
+> 2.53.0
+
+
+
 
