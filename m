@@ -1,283 +1,152 @@
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012043.outbound.protection.outlook.com [40.107.209.43])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831563D811F;
-	Wed, 25 Mar 2026 12:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774443488; cv=fail; b=c1s8aT1EOxX5/kM8NQuT53u1BukKy1EHffhhS9xMzcxmKjCGiRJ6GD8+H6VipHNE+U2fGqsAk6qGsLL36IyEw+yPGBRdWVBkM9HsiIw+I0ZkVjz3jjIBafA664bNEaZCsop58xltOs2pGTgM7sCqvnuCVeBzojgwKbKV5Tf4G+c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774443488; c=relaxed/simple;
-	bh=9mTPM24P2grYElLAkIXnOBvQ6fnCGQ8Lla8qwyZTDkc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RrtLtAHIffzhOrW2OgqLvoplATtjnRdMXshWikQO/ROs/qDh/XSG4Ds8GL/oBj32N+ZTzpdAfPRYhMhRvjyRiqTRoRpNMxxZ/w03ohLTYh2yloV/g2U6+xHbzTSBXXKRW94oTdp9u2BGuCeHtWFGRvAOChAbjxJgoa72Tt3tRZk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hI9p9UNp; arc=fail smtp.client-ip=40.107.209.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20573D1CC1;
+	Wed, 25 Mar 2026 12:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774443512; cv=none; b=IaQp9xroNjbREykYk+md/hZsooy4ldDryHnIymywFrJtg/IYEHOyt+PrK47DMB3ibeQpvuO9Jjdv5cV+5uUamJogVlzUAJtyAGIBNba9WlABFA5A4oXJh7k8a2aZdCxw6533m0KaE3qFXVWAP3oh+lGzgR7mwZcFXKc0yJxxrGU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774443512; c=relaxed/simple;
+	bh=hD3wT6tjlm0FZ6f+/aByElhT2FOrNCcYidkpV2qsHBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E+NlKeZ/mUeM1S4LvD01amlbH/RpC3NpCALJOu5wSwv63fjFrDwz97eEXSpaSkhAOlTdpnIsaB9hGa5S3bkD5c1tSMzvyQiFBR7AfMAyGkgcKO0jPGBQ+DDfytnORrb5lxCEj1AwgGRWKOTamw9wK5j4cUhb3zcWtylngn1FWww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQxlz/Ib; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hI9p9UNp"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F0YjRSRMXi/4IWWKbp7GLSmmtOqsykgh6gvnkwS6NjhwfXDVILeYMScJLBqektr1gLPhvZ+5YRv/4iHgrmVvXMqK+mD2FXKQQKe1t+lK9/pnNPFTitZlf12YJ1urz0ymddYSCSOq1Vo2r5kDbp09utPOYFYUjmDY5yLUgfVQQ56StwFNMFAqCDq+LctB2iuuMwUu+MH7Fi6biuHKUielu6x/+JEbG4DBHeErUatCV950rQBnV39WlUbBGjxLq3gKPdt7kypeDnyvcoGzbwlRhSSYAxugCI8MHgFAd7aiVwKK+8fc4nMZwMJVw9D6nayAKx3o0DXzb2kDss+/90aiSw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/uQQ2kD0jYyvppGS/+9ZKZV0mr1xw2VTs/BC/OQ/qVg=;
- b=N274LZK6ZYXFNr/24e5WIs14SwqOFwluCDYH/8Ob/Ilxg2DFianHMcvPlYm67yh/5nE6XuFI42zyssyIA9ODzN+8TgcTDPXTwTLhaWXeRiA1Hwn4/c1dFrjq2m+CB9SjCUexe9UW0qDgraimGYohnn5gRhwqmVaAoZat4J855sl3MyrlANHP70tw6qthOdNvlG6PZe6TPQ8tfE7AcR/ZFMFp+HBXbKicQWihBZTgY7vkfmWfYPf6US5A5PN+uEqRq9O3uS9u4RUBPEXFICIC17dm5/IFC/0OhM+OkwA0UyRgXPzmjrClkHFGJX1Gan26gqsfWhK5NMpe/TI20q52Lw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/uQQ2kD0jYyvppGS/+9ZKZV0mr1xw2VTs/BC/OQ/qVg=;
- b=hI9p9UNpvrdJXS/UQOXrJ9j/ELq7+xz0J3+VTZoLj2G+QocPkXDWsxm0hQFfKRF3DZvFDMW2lEP97q80+akm7jTomuinEwtvX5v8XfanySQUyY0YpugKUglj4X4pAXZu5/Dy/nAc3V7P5UgMhV1TYsP+0l06FlJQnHX0NxmPLCzpPpXTfC6hsf8VSBOJHjQijT3ULHXg4xnAHSlXJbQoYq1WExX+b4QSJDOD6mPMyma/n/63lHtzz1IK1wgKxHasjLQXfa3ttBRcFrAqWKg+pcizaPTlBRNK8fxIxL6jjDDKarX/tltXXCfRx4wsXj+/SP5Wgi+0BOjN1jZf3njDmg==
-Received: from MN2PR12CA0010.namprd12.prod.outlook.com (2603:10b6:208:a8::23)
- by IA1PR12MB7637.namprd12.prod.outlook.com (2603:10b6:208:427::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Wed, 25 Mar
- 2026 12:58:02 +0000
-Received: from BL02EPF0001A0FB.namprd03.prod.outlook.com
- (2603:10b6:208:a8:cafe::22) by MN2PR12CA0010.outlook.office365.com
- (2603:10b6:208:a8::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9723.32 via Frontend Transport; Wed,
- 25 Mar 2026 12:58:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BL02EPF0001A0FB.mail.protection.outlook.com (10.167.242.102) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9745.21 via Frontend Transport; Wed, 25 Mar 2026 12:58:01 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 25 Mar
- 2026 05:57:41 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 25 Mar
- 2026 05:57:41 -0700
-Received: from sumitg-l4t.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Wed, 25 Mar 2026 05:57:38 -0700
-From: Sumit Gupta <sumitg@nvidia.com>
-To: <treding@nvidia.com>, <jonathanh@nvidia.com>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <bbasu@nvidia.com>, <sumitg@nvidia.com>
-Subject: [PATCH v2 2/2] soc/tegra: cbb: Add support for CBB fabrics in Tegra238
-Date: Wed, 25 Mar 2026 18:27:26 +0530
-Message-ID: <20260325125726.2694144-3-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260325125726.2694144-1-sumitg@nvidia.com>
-References: <20260325125726.2694144-1-sumitg@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQxlz/Ib"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB66CC4CEF7;
+	Wed, 25 Mar 2026 12:58:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774443511;
+	bh=hD3wT6tjlm0FZ6f+/aByElhT2FOrNCcYidkpV2qsHBs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KQxlz/IbSNGwOhT3DzvNOsfSEQt1Trr9V3reVh+TiD37vnf2gsPnZRxjc2v9djimX
+	 zMU/LDQbbDkjDlL6qlKPNDIpTVEWajhaKCtaaMMez7kvqueQMyFYqilRbGQNHKB92p
+	 Fd7K1J5qCCKVIe6YoJWQXn52wFXY48TaxohXvkWJXvWKIp3tsqvytiHiIqpX+lBj5F
+	 MNoqJFEtdc8Dy7VPxv+EHxlAy107SwOuVc0DolAaLp8AlE7A5qhSCc+G8+i/d55t/x
+	 9dCdhpHlqW3zUNrXl1yb5bexHRAYRLUUkF1pGxT1tcWij9kpZxIDZAsIlPvTGL38kh
+	 /vgu7BTL2ZPAQ==
+Date: Wed, 25 Mar 2026 13:58:29 +0100
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Akhil R <akhilrajeev@nvidia.com>, Frank.Li@nxp.com, 
+	acpica-devel@lists.linux.dev, alexandre.belloni@bootlin.com, conor+dt@kernel.org, 
+	devicetree@vger.kernel.org, ebiggers@kernel.org, fredrik.markstrom@est.tech, 
+	jonathanh@nvidia.com, krzk+dt@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-hwmon@vger.kernel.org, linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux@roeck-us.net, miquel.raynal@bootlin.com, 
+	p.zabel@pengutronix.de, rafael@kernel.org, robert.moore@intel.com, robh@kernel.org, 
+	smangipudi@nvidia.com
+Subject: Re: [PATCH 12/12] arm64: defconfig: Enable I3C and SPD5118 hwmon
+Message-ID: <acPX-clIX4UfBNdM@orome>
+References: <20260319-nano-manatee-of-vastness-fbafa1@quoll>
+ <20260319170929.14543-1-akhilrajeev@nvidia.com>
+ <67165a1f-9fa3-4853-b530-b1f9d6e4c2cf@kernel.org>
+ <acO4NKPDUayny-I4@orome>
+ <6342b6fd-9802-49d9-a269-ecb3b70b4604@kernel.org>
+ <ed3828b9-fd2d-46c1-b486-c5172f61eafa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FB:EE_|IA1PR12MB7637:EE_
-X-MS-Office365-Filtering-Correlation-Id: 22ac1dfb-972e-4bed-2d2e-08de8a6e25ff
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700016|376014|22082099003|56012099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	kp/Z15/qT7EKZTdwEKUgN2EhnNCYx3ZUpUV4ji4CgP72afvJ+xzCJPY32Esgu/sXEwvaF4Or0uTtM0Eym2ZNPlGaF5JSCNIEVUbkkHDTsMnDmrWutIvdKTRDak9SP6Q7qK2SymUZ35ZH7hssT6l+BSD1gFGeex4rPuyAltg/T9iWEWHBpgqvHj1zDGGf05aXhQrSTynXTxfW9ydwCcz5tAn/rHqDIWTlZ+qwX8/obOwP5DxROwUGxDPHQrMj0VasEYh/TN9dAtZSVlD25c5HuQOU7prefJ7I1x39w27ewfIqUgvpm4Y1gYycUbAdhc5he22DZm8AGT/PF9UDbRu4ms4ef6BKGMg9JlWmzKdsNlDn9XZVyrNjajjK45d9li97TCV87uXMQZFxc255QfbgGbB55UV8+OUElhQhjs9MslDhvJEzBuT/bItgK83g/J1ptvW9ju235rUmpVOcStmgRz7v8YW1NZqT5PDIcN6y9SGdOejAKcwov71cLYMTqMz8Wsrsn3wuwN+ACckPxu9olw/i6YwWxu7g9vKcS4+ieRPDNL0j8zFkc5+k3wzc4wE+6FTt+c56NLbWDnKzzXFCD1GAoL/aq51VSzrH7xZlKgE1PJvtZK+j9Poq25SvRsWZ7gnwCmhPin9BVTqksywlf7nKiK1N7ZO6GHAHuzwwHNuR3mE55H5retX/niIuem6+stbxWZX1C1Ng3Lb09BHrgZ+EFF7okMKazjHNfbsbWBJixC3BKy/wmEaHcSlzJFfxp7WKACdkcwsYDuv3We9pEg==
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700016)(376014)(22082099003)(56012099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	Bq9wPd76WCs5/7y765ZINerrZalVCMLVLhOot1CGKBPtIdOLWYTvWMVgxlM6zsQcgIYoq0Ke+Ep5PQqX//Z/HKQSSoQVwUgvV4Aodw5rvnL6ni98PrP+Y915lswtGbJSc6y3UmjBJfr4x6ainaTACH47YyVrqyF6xBBqPcxCjH26HMVFA5wEOZc/4hTI2teMM0eDxdW/tfg0fQBTXthN+GZwsyw9F3I91UMPUY6WxjV6yvUfaiFq2l725k1Fyld9vJ+UlcaJ9LJ0PQrDq+0R506Cxpp132RM4mfo++8RRwJTz49rTRD2lR+X6sgYyb8vIJPUc3khdPUksIsB9dHoVFsY4EFoKPAbZygByIRGjGt7fJXy3RvaFEP0/qwYx16w5QwWUGvGUrPagsIx/Dpo+6WKTs0ddT2c+4Oj2B4FhQne/zukfMxGBZjR+si63duv
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2026 12:58:01.9873
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 22ac1dfb-972e-4bed-2d2e-08de8a6e25ff
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A0FB.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7637
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hzpx7zw374bolivb"
+Content-Disposition: inline
+In-Reply-To: <ed3828b9-fd2d-46c1-b486-c5172f61eafa@kernel.org>
 
-Add support for CBB 2.0 based fabrics in Tegra238 SoC using DT.
-Fabrics reporting errors are: CBB, AON, BPMP, APE.
 
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
----
- drivers/soc/tegra/cbb/tegra234-cbb.c | 134 +++++++++++++++++++++++++++
- 1 file changed, 134 insertions(+)
+--hzpx7zw374bolivb
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 12/12] arm64: defconfig: Enable I3C and SPD5118 hwmon
+MIME-Version: 1.0
 
-diff --git a/drivers/soc/tegra/cbb/tegra234-cbb.c b/drivers/soc/tegra/cbb/tegra234-cbb.c
-index a9adbcecd47c..30f421c8e90c 100644
---- a/drivers/soc/tegra/cbb/tegra234-cbb.c
-+++ b/drivers/soc/tegra/cbb/tegra234-cbb.c
-@@ -89,6 +89,15 @@ enum tegra234_cbb_fabric_ids {
- 	T234_MAX_FABRIC_ID,
- };
- 
-+enum tegra238_cbb_fabric_ids {
-+	T238_CBB_FABRIC_ID  = 0,
-+	T238_AON_FABRIC_ID  = 4,
-+	T238_PSC_FABRIC_ID  = 5,
-+	T238_BPMP_FABRIC_ID = 6,
-+	T238_APE_FABRIC_ID  = 7,
-+	T238_MAX_FABRIC_ID,
-+};
-+
- enum tegra264_cbb_fabric_ids {
- 	T264_SYSTEM_CBB_FABRIC_ID,
- 	T264_TOP_0_CBB_FABRIC_ID,
-@@ -974,6 +983,127 @@ static const struct tegra234_cbb_fabric tegra234_sce_fabric = {
- 	.firewall_wr_ctl = 0x288,
- };
- 
-+static const struct tegra234_target_lookup tegra238_ape_target_map[] = {
-+	{ "AXI2APB", 0x00000 },
-+	{ "AGIC",    0x15000 },
-+	{ "AMC",     0x16000 },
-+	{ "AST0",    0x17000 },
-+	{ "AST1",    0x18000 },
-+	{ "AST2",    0x19000 },
-+	{ "CBB",     0x1A000 },
-+};
-+
-+static const struct tegra234_target_lookup tegra238_cbb_target_map[] = {
-+	{ "AON",         0x40000 },
-+	{ "APE",         0x50000 },
-+	{ "BPMP",        0x41000 },
-+	{ "HOST1X",      0x43000 },
-+	{ "STM",         0x44000 },
-+	{ "CBB_CENTRAL", 0x00000 },
-+	{ "PCIE_C0",     0x51000 },
-+	{ "PCIE_C1",     0x47000 },
-+	{ "PCIE_C2",     0x48000 },
-+	{ "PCIE_C3",     0x49000 },
-+	{ "GPU",         0x4C000 },
-+	{ "SMMU0",       0x4D000 },
-+	{ "SMMU1",       0x4E000 },
-+	{ "SMMU2",       0x4F000 },
-+	{ "PSC",         0x52000 },
-+	{ "AXI2APB_1",   0x70000 },
-+	{ "AXI2APB_12",  0x73000 },
-+	{ "AXI2APB_13",  0x74000 },
-+	{ "AXI2APB_15",  0x76000 },
-+	{ "AXI2APB_16",  0x77000 },
-+	{ "AXI2APB_18",  0x79000 },
-+	{ "AXI2APB_19",  0x7A000 },
-+	{ "AXI2APB_2",   0x7B000 },
-+	{ "AXI2APB_23",  0x7F000 },
-+	{ "AXI2APB_25",  0x80000 },
-+	{ "AXI2APB_26",  0x81000 },
-+	{ "AXI2APB_27",  0x82000 },
-+	{ "AXI2APB_28",  0x83000 },
-+	{ "AXI2APB_32",  0x87000 },
-+	{ "AXI2APB_33",  0x88000 },
-+	{ "AXI2APB_4",   0x8B000 },
-+	{ "AXI2APB_5",   0x8C000 },
-+	{ "AXI2APB_6",   0x93000 },
-+	{ "AXI2APB_9",   0x90000 },
-+	{ "AXI2APB_3",   0x91000 },
-+};
-+
-+static const struct tegra234_fabric_lookup tegra238_cbb_fab_list[] = {
-+	[T238_CBB_FABRIC_ID]  = { "cbb-fabric", true,
-+				  tegra238_cbb_target_map,
-+				  ARRAY_SIZE(tegra238_cbb_target_map) },
-+	[T238_AON_FABRIC_ID]  = { "aon-fabric", true,
-+				  tegra234_aon_target_map,
-+				  ARRAY_SIZE(tegra234_aon_target_map) },
-+	[T238_PSC_FABRIC_ID]  = { "psc-fabric" },
-+	[T238_BPMP_FABRIC_ID] = { "bpmp-fabric", true,
-+				  tegra234_bpmp_target_map,
-+				  ARRAY_SIZE(tegra234_bpmp_target_map) },
-+	[T238_APE_FABRIC_ID]  = { "ape-fabric", true,
-+				  tegra238_ape_target_map,
-+				  ARRAY_SIZE(tegra238_ape_target_map) },
-+};
-+
-+static const struct tegra234_cbb_fabric tegra238_aon_fabric = {
-+	.fab_id = T238_AON_FABRIC_ID,
-+	.fab_list = tegra238_cbb_fab_list,
-+	.initiator_id = tegra234_initiator_id,
-+	.errors = tegra234_cbb_errors,
-+	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
-+	.err_intr_enbl = 0x7,
-+	.err_status_clr = 0x3f,
-+	.notifier_offset = 0x17000,
-+	.firewall_base = 0x30000,
-+	.firewall_ctl = 0x8f0,
-+	.firewall_wr_ctl = 0x8e8,
-+};
-+
-+static const struct tegra234_cbb_fabric tegra238_ape_fabric = {
-+	.fab_id = T238_APE_FABRIC_ID,
-+	.fab_list = tegra238_cbb_fab_list,
-+	.initiator_id = tegra234_initiator_id,
-+	.errors = tegra234_cbb_errors,
-+	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
-+	.err_intr_enbl = 0xf,
-+	.err_status_clr = 0x3f,
-+	.notifier_offset = 0x1E000,
-+	.firewall_base = 0x30000,
-+	.firewall_ctl = 0xad0,
-+	.firewall_wr_ctl = 0xac8,
-+};
-+
-+static const struct tegra234_cbb_fabric tegra238_bpmp_fabric = {
-+	.fab_id = T238_BPMP_FABRIC_ID,
-+	.fab_list = tegra238_cbb_fab_list,
-+	.initiator_id = tegra234_initiator_id,
-+	.errors = tegra234_cbb_errors,
-+	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
-+	.err_intr_enbl = 0xf,
-+	.err_status_clr = 0x3f,
-+	.notifier_offset = 0x19000,
-+	.firewall_base = 0x30000,
-+	.firewall_ctl = 0x8f0,
-+	.firewall_wr_ctl = 0x8e8,
-+};
-+
-+static const struct tegra234_cbb_fabric tegra238_cbb_fabric = {
-+	.fab_id = T238_CBB_FABRIC_ID,
-+	.fab_list = tegra238_cbb_fab_list,
-+	.initiator_id = tegra234_initiator_id,
-+	.errors = tegra234_cbb_errors,
-+	.max_errors = ARRAY_SIZE(tegra234_cbb_errors),
-+	.err_intr_enbl = 0x3f,
-+	.err_status_clr = 0x3f,
-+	.notifier_offset = 0x60000,
-+	.off_mask_erd = 0x3d004,
-+	.firewall_base = 0x10000,
-+	.firewall_ctl = 0x2230,
-+	.firewall_wr_ctl = 0x2228,
-+};
-+
- static const char * const tegra241_initiator_id[] = {
- 	[0x0] = "TZ",
- 	[0x1] = "CCPLEX",
-@@ -1480,6 +1610,10 @@ static const struct of_device_id tegra234_cbb_dt_ids[] = {
- 	{ .compatible = "nvidia,tegra234-dce-fabric", .data = &tegra234_dce_fabric },
- 	{ .compatible = "nvidia,tegra234-rce-fabric", .data = &tegra234_rce_fabric },
- 	{ .compatible = "nvidia,tegra234-sce-fabric", .data = &tegra234_sce_fabric },
-+	{ .compatible = "nvidia,tegra238-aon-fabric", .data = &tegra238_aon_fabric },
-+	{ .compatible = "nvidia,tegra238-ape-fabric", .data = &tegra238_ape_fabric },
-+	{ .compatible = "nvidia,tegra238-bpmp-fabric", .data = &tegra238_bpmp_fabric },
-+	{ .compatible = "nvidia,tegra238-cbb-fabric", .data = &tegra238_cbb_fabric },
- 	{ .compatible = "nvidia,tegra264-sys-cbb-fabric", .data = &tegra264_sys_cbb_fabric },
- 	{ .compatible = "nvidia,tegra264-top0-cbb-fabric", .data = &tegra264_top0_cbb_fabric },
- 	{ .compatible = "nvidia,tegra264-uphy0-cbb-fabric", .data = &tegra264_uphy0_cbb_fabric },
--- 
-2.34.1
+On Wed, Mar 25, 2026 at 12:03:37PM +0100, Krzysztof Kozlowski wrote:
+> On 25/03/2026 11:59, Krzysztof Kozlowski wrote:
+> > On 25/03/2026 11:31, Thierry Reding wrote:
+> >> On Thu, Mar 19, 2026 at 06:15:14PM +0100, Krzysztof Kozlowski wrote:
+> >>> On 19/03/2026 18:09, Akhil R wrote:
+> >>>> On Thu, 19 Mar 2026 10:40:34 +0100, Krzysztof Kozlowski wrote:
+> >>>>> On Wed, Mar 18, 2026 at 10:57:25PM +0530, Akhil R wrote:
+> >>>>>> Add I3C subsystem support, DesignWare I3C master controller, and
+> >>>>>> SPD5118 hwmon sensor as modules to the defconfig.
+> >>>>>
+> >>>>> Why? If there is no user of that, why would we want it? Your commit=
+ msg
+> >>>>> should explain that.
+> >>>>
+> >>>> Ack. This is for Tegra410 which has a DesignWare I3C host controller.
+> >>>> I will add this in the commit message.
+> >>>
+> >>> Board or products. Not SoCs.
+> >>
+> >> Is this a new requirement? I see a bit of both in defconfig changes.
+> >=20
+> > Almost every review from me has it for 2-3 years... And it is a known
+>=20
+> And I already explained this to *you* 3 years ago:
+>=20
+> https://lore.kernel.org/all/ac8f30a7-fc72-9a44-74b3-a69001bfdaaf@linaro.o=
+rg/
+>=20
+> So how this could be a new requirement *now* if three years ago we had
+> exactly same discussion.
+>=20
+> I understand question for the first time, but why this being brought up
+> as "why is this a new thing" again?
 
+I have to admit I did not remember what we discussed, so I had to go
+read that exchange again. It sounds to me like we were not discussing
+the specific issue of a missing description as to which particular
+product needed this, but you were instead rejecting the idea of
+enabling drivers that were not strictly necessary like those for PCI
+devices because they were making your life more difficult by building
+drivers by default that you were not interested in.
+
+Here you're arguing that you want proof that this is going to be used
+by some upstream-supported device, which are two different things,
+because they might very well be drivers that you're not interested in
+but end up building if documented properly.
+
+So I find it a little hard to keep track of what is acceptable to you
+and what isn't. Are you objecting to this on the grounds of it bloating
+the kernel build or because you want documentation for what platforms a
+driver is being used on?
+
+Our action items will be different depending on what your answer is: if
+you want documentation about what device this will be used for, we'll
+get you that information. If your concern is that it bloats the build we
+drop the patch and will have to ask users to build their own
+configurations.
+
+Maybe to avoid these kinds of discussions in the past you can write down
+your rules about what should go into defconfig and what should not. And
+maybe we can eventually find consensus and find something that people
+can use as a reference.
+
+Thierry
+
+--hzpx7zw374bolivb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmnD2/EACgkQ3SOs138+
+s6HyxhAAgO3a+brFWZ1VdK5cf0wxZ0BcT69+soJxbRUx0kW51Bpa+Rf32/sKJPyK
+z5HNnVdrhbNVdh55vGKUfhGBbfckEIp3CimQG+thFA234k/0i+GuIVnNpYxUhupV
+49TA0Oim0rIIXT+WE3YHwx00T6CGaAmTOard+7V3EmYPs2rIPuIHZrEMTKKUSoGd
+jQzCMJjT0kcesHUFxkLmjU3ApA2jF3wBHqdnOcz8kheAM8LBfo1jlDKXrURntbP9
+hLt5tYwnbcLJDYafFZvR69oW90oOCDaqUiwuA3ecuQb//S0TqVMXscZ2GMqJu8PQ
+ydtsjoDdnu44/+40JG17MPZx3ecMbSEZWjii4wa8t9Hcg3IP9sk/JfZFBEer1pM4
+ey5dm/EutJw5b5/R0qmIvpGtV4aOVkun90bXls7w6FiIcGdwLrEj/y6LGsTwxs8L
+PuZfYe6xgyUYHfAyotPrsg0DM5JqMjr3q9qU87GOJYEMdua3Cx7U13nhfnnjiHKu
+3cveaUieh8WWMmrcIzvHuheaihR/l3i7DieFK54bMtsI6EZc3qqIZtyyNN8cDzQL
+p1b7fTASVX+HWr6UPqckgecKBW4mnhOA5gdyeOkwpHwdxJ8v0C+Mq3hdru1joH75
+s9braB6OkIoSzucV628+rkPmpuqEVrsgwCMLGmJOkUMKg/wLZhE=
+=M6Zu
+-----END PGP SIGNATURE-----
+
+--hzpx7zw374bolivb--
