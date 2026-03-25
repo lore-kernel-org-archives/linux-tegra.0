@@ -1,134 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80323C5542;
-	Wed, 25 Mar 2026 11:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D463CBE62;
+	Wed, 25 Mar 2026 11:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774436625; cv=none; b=MFUPAZykzQwYAIyT3cxNS2Zwe/rz3rNCvbW+PbBIQdEOOuJaVARBLEiTzfRyrCIC5k8gVngsi1I29es3PFWeOoMbzv/9yMdyg8WJ7eeILiAVNmarWMrpK3JcyDhMTv2ah/xMTsPTEpMj6bXPw1CSXl3/X6JpA9HhHsfZYNJ0H+A=
+	t=1774437183; cv=none; b=SDzHktVSPuO3k9LKxJ9IUn3Dg7ZeTnCQ9tqeuONNgnHFh9AcfURLZf++kFWN+c/AHqrQ8YAiW3wAVqsfnj0ZWqNoX2RjIIQMnTVAZBJz/ojVWNuffmxAaSajveqNIJIOkd/Bdjer8iH3/V+1ee5pswxrT0SYDuqYFbUZTDikGZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774436625; c=relaxed/simple;
-	bh=/OTs14n6e4lM+2UQQJLdG1GrLfT2+YR2cma9kWyjbe0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qQhLD2QqfAxIRbEqyvyl79YLSDHiOT4KyJYKRKZBGoGDpvznpQ+x2stwpnwj6TXr7zOyQINa9zKl7ePrHuURFDQSnQP6X9txaSfJmerqWmHh0VPJ21aNzL7R2/s6RYp7pyr1pKKwT0NKuzIXp5kuh9m4IRjGtZGsB6DrMJCKU9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BdtkAWcn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774437183; c=relaxed/simple;
+	bh=kCtS42tkLon9lDgRdKQo5dnjH0Y4km9Kc5WJOtpCfb4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jtMJo41cTgGEPbYuOeRxo7K6jqYJ7hs5gVHQqu3ebfB9sftHvBXzGZ9ghkjmY9mt4+tJONCJEWpj52TOrM2AL9SaeOgl6EPgPfhgMpT3BVRZWRwp1OlPlwzCP4vInMiT/VC78lsaYF3nXUuiDtTKxy8t5N6G74Qxo0Z6cqbPVcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=XdE1npEi; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BdtkAWcn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A877C2BC9E;
-	Wed, 25 Mar 2026 11:03:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774436625;
-	bh=/OTs14n6e4lM+2UQQJLdG1GrLfT2+YR2cma9kWyjbe0=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=BdtkAWcnVv1iui5vIOhjVQeBzxmTUsOApf/pYppOehfw4fCCm23F5mdbILAInpITD
-	 quLa2QHKJcxC5w2CejKLcCjM4Ba+go6RnakxNQCNlg0KVxxLBHRJH9Oxk+RZKDjRil
-	 XDM9eYDhFKTFd/2Z6IyZHONzwLWnWTtWEweNFxcfG3YHZRexjlwXW2N+bg+bylj2nY
-	 oRmWVoU5erBSoCOst/yDMC/dD146ddtMyUI/bclMj+3Nv0DyPd4nwmnNw7O1womYDM
-	 2PNU+D+X+yFqFzWuGc9TaLuzMlpxGm7t/fHLiFr1OofftlP4U6zmzYTGF0OcHf7grZ
-	 5+tmBrG6smRsA==
-Message-ID: <ed3828b9-fd2d-46c1-b486-c5172f61eafa@kernel.org>
-Date: Wed, 25 Mar 2026 12:03:37 +0100
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="XdE1npEi"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=i9+zBdvf0DkjXoBGF/RhYMecX9tHanlgS2GoOCgt2l0=; b=XdE1npEi+kb38Ism3Ddn/oo4sQ
+	oDo4ggORCEI2E/QMnWvHwlsKBa/sWWCgtBuPLOHLdXNJhldmMX1tTSN3TWOVfCYK+d0iOneByN/U3
+	OkEZ3vntNIWgI5k9htMQvgBQaHdMeNwx/MAnXmRxR9TDYWldYnE6eY4nACYBCrLVfswcTyKZtocZW
+	WePL4+zWloRMngaQywbBmWLqJxP/Z2d7G/VwYo5aHrN0RYcxCukY3S/sV7HR8vdbUCkf2kLJguTAG
+	BPjK+dVU/Wq/GttAR24EZ+rQN2sHMbOQafkUhdUlLzUIjJJ7zBvX19S85vYwaBAkHK07TyM9lJelL
+	dLUSfXTw==;
+Received: from authenticated user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.94.2)
+	(envelope-from <leitao@debian.org>)
+	id 1w5MAL-0092Be-7q; Wed, 25 Mar 2026 11:12:48 +0000
+Date: Wed, 25 Mar 2026 04:12:42 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jianqiang kang <jianqkang@sina.cn>
+Cc: gregkh@linuxfoundation.org, stable@vger.kernel.org, 
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org, thierry.reding@gmail.com, 
+	jonathanh@nvidia.com, skomatineni@nvidia.com, ldewangan@nvidia.com, treding@nvidia.com, 
+	broonie@kernel.org, va@nvidia.com, linux-tegra@vger.kernel.org, 
+	linux-spi@vger.kernel.org
+Subject: Re: [PATCH 6.12.y] spi: tegra210-quad: Protect curr_xfer check in
+ IRQ handler
+Message-ID: <acPDE9gBWneJWMn0@gmail.com>
+References: <20260324060832.724228-1-jianqkang@sina.cn>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/12] arm64: defconfig: Enable I3C and SPD5118 hwmon
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Akhil R <akhilrajeev@nvidia.com>, Frank.Li@nxp.com,
- acpica-devel@lists.linux.dev, alexandre.belloni@bootlin.com,
- conor+dt@kernel.org, devicetree@vger.kernel.org, ebiggers@kernel.org,
- fredrik.markstrom@est.tech, jonathanh@nvidia.com, krzk+dt@kernel.org,
- lenb@kernel.org, linux-acpi@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux@roeck-us.net, miquel.raynal@bootlin.com,
- p.zabel@pengutronix.de, rafael@kernel.org, robert.moore@intel.com,
- robh@kernel.org, smangipudi@nvidia.com
-References: <20260319-nano-manatee-of-vastness-fbafa1@quoll>
- <20260319170929.14543-1-akhilrajeev@nvidia.com>
- <67165a1f-9fa3-4853-b530-b1f9d6e4c2cf@kernel.org> <acO4NKPDUayny-I4@orome>
- <6342b6fd-9802-49d9-a269-ecb3b70b4604@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <6342b6fd-9802-49d9-a269-ecb3b70b4604@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260324060832.724228-1-jianqkang@sina.cn>
+X-Debian-User: leitao
 
-On 25/03/2026 11:59, Krzysztof Kozlowski wrote:
-> On 25/03/2026 11:31, Thierry Reding wrote:
->> On Thu, Mar 19, 2026 at 06:15:14PM +0100, Krzysztof Kozlowski wrote:
->>> On 19/03/2026 18:09, Akhil R wrote:
->>>> On Thu, 19 Mar 2026 10:40:34 +0100, Krzysztof Kozlowski wrote:
->>>>> On Wed, Mar 18, 2026 at 10:57:25PM +0530, Akhil R wrote:
->>>>>> Add I3C subsystem support, DesignWare I3C master controller, and
->>>>>> SPD5118 hwmon sensor as modules to the defconfig.
->>>>>
->>>>> Why? If there is no user of that, why would we want it? Your commit msg
->>>>> should explain that.
->>>>
->>>> Ack. This is for Tegra410 which has a DesignWare I3C host controller.
->>>> I will add this in the commit message.
->>>
->>> Board or products. Not SoCs.
->>
->> Is this a new requirement? I see a bit of both in defconfig changes.
+On Tue, Mar 24, 2026 at 02:08:32PM +0800, Jianqiang kang wrote:
+> From: Breno Leitao <leitao@debian.org>
 > 
-> Almost every review from me has it for 2-3 years... And it is a known
+> [ Upstream commit edf9088b6e1d6d88982db7eb5e736a0e4fbcc09e ]
+> 
+> Now that all other accesses to curr_xfer are done under the lock,
+> protect the curr_xfer NULL check in tegra_qspi_isr_thread() with the
+> spinlock. Without this protection, the following race can occur:
+> 
+>   CPU0 (ISR thread)              CPU1 (timeout path)
+>   ----------------               -------------------
+>   if (!tqspi->curr_xfer)
+>     // sees non-NULL
+>                                  spin_lock()
+>                                  tqspi->curr_xfer = NULL
+>                                  spin_unlock()
+>   handle_*_xfer()
+>     spin_lock()
+>     t = tqspi->curr_xfer  // NULL!
+>     ... t->len ...        // NULL dereference!
+> 
+> With this patch, all curr_xfer accesses are now properly synchronized.
+> 
+> Although all accesses to curr_xfer are done under the lock, in
+> tegra_qspi_isr_thread() it checks for NULL, releases the lock and
+> reacquires it later in handle_cpu_based_xfer()/handle_dma_based_xfer().
+> There is a potential for an update in between, which could cause a NULL
+> pointer dereference.
+> 
+> To handle this, add a NULL check inside the handlers after acquiring
+> the lock. This ensures that if the timeout path has already cleared
+> curr_xfer, the handler will safely return without dereferencing the
+> NULL pointer.
+> 
+> Fixes: b4e002d8a7ce ("spi: tegra210-quad: Fix timeout handling")
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> Link: https://patch.msgid.link/20260126-tegra_xfer-v2-6-6d2115e4f387@debian.org
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> [ Minor conflict resolved. ]
+> Signed-off-by: Jianqiang kang <jianqkang@sina.cn>
 
-And I already explained this to *you* 3 years ago:
-
-https://lore.kernel.org/all/ac8f30a7-fc72-9a44-74b3-a69001bfdaaf@linaro.org/
-
-So how this could be a new requirement *now* if three years ago we had
-exactly same discussion.
-
-I understand question for the first time, but why this being brought up
-as "why is this a new thing" again?
-
-Best regards,
-Krzysztof
+Acked-by: Breno Leitao <leitao@debian.org>
