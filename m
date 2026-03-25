@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DC83D1CCF;
-	Wed, 25 Mar 2026 14:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF57D220F3E;
+	Wed, 25 Mar 2026 14:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774447665; cv=none; b=XZBIUQ7utdeB2iZCR2/lHKAMYyZ0O0daHdhbSuV0ttzKwRuW5bIGjypAx1eNuyMnXMB3b4gFC/0gBixnVm53ldp3jbt21/GkX0DC0oGLQbrclP69dGz90DMAvgn7oyOhmVdY+JOReI+Ez/Tqgkh9+Cc+mDDUHcYdhT7Sh9rV1D0=
+	t=1774447779; cv=none; b=o0EYMt4R0AkbIHiHqGF1HQJKynYkN1Pkx6RWx57cLweAT1hi8kXkk2C2yY3nltqneLoy6LEamlSHihYd+e1ymcIWrLlmmfyQf6eYGtH7z/G/86lbYTDJ8ohqEs0sJ6ydCIsOQJWwyJuVKhOl95M8L51AjjPR73uV0nRDCaa0lOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774447665; c=relaxed/simple;
-	bh=DpURZcXkBbkFBwlbeNEBfAP/4j2pXtXvGs65Z8r1tnU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vqw8a2AFAAJLiBUw96M0J8CifZ01vle8CNN4X5uI1MzAt5aFWAQCDH6HXerjjzTNIlss2FRtfi5KLkK5HxBg0O4fa4f7YHB2bEYmjIgWPqZbeCUzzGIcXNn6yCf8PcfvuOrejC0hiBB1ev4J4d96E+YZUxbuJ4laEipe6bG4bzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KhXwXFB5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774447779; c=relaxed/simple;
+	bh=vweFY0qaJkBrjCPIQC3zKFQOMIxEWi6jNryJYY8EsZ0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=s+SuhWfwgheHxZPS4S1XpQ8pc/V+fhsJj3QNG6WoaJRHtps1mgkPUT4u8mEUu1gyqAq76kAPUYo2Oa5VMqQPrOyeulp6vKH8/Bgc9ehyq5ED9G2/yYkOPeom7lmciPdMLNcZdi9Tt9qf4axVTIH5AHc3/9YCc61GxSQzyn0bqtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZLMYWVRx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KhXwXFB5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF144C116C6;
-	Wed, 25 Mar 2026 14:07:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZLMYWVRx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3704C4CEF7;
+	Wed, 25 Mar 2026 14:09:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774447665;
-	bh=DpURZcXkBbkFBwlbeNEBfAP/4j2pXtXvGs65Z8r1tnU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KhXwXFB5LNz6aa+ELS2GXM9Q+eBg93c+8zFNhDXIBy3E2zp/GowL1RFP3H5NY4qDX
-	 4o7UU8e1vDEEE5Xin1ORdcZTTSWsd0V+eeUbSGqmERUs9Ba0rtja0NN4QWLYdEhi0C
-	 PhJvKUcBEvPVdpIfaOUBett0aGKu9Atvr5/i0dY5xgyNwPG1h2pjDWEx429lRbiHxX
-	 pcF+D3uEWBFJhJ+LvsIfROwcz6766iv6AFDfzrGVBx7rRusH17U8Fau1GGHeNuGIfC
-	 YEhXy0z/+tkkZzlBba0lF7Lm4z9cPQFGm/bJ0DIcglSRAl5kZFLGtdeN9hieoc85YB
-	 r8oysMvYiBo4A==
-Message-ID: <ded77d4e-7ec3-4f3c-863c-2c0ef490e494@kernel.org>
-Date: Wed, 25 Mar 2026 15:07:40 +0100
+	s=k20201202; t=1774447779;
+	bh=vweFY0qaJkBrjCPIQC3zKFQOMIxEWi6jNryJYY8EsZ0=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=ZLMYWVRxhQiBoLJB8Qtnh3DzBw5sb391U0MoXKoTjtdQXHAt5b1cegmNj/E4/8wlM
+	 kNFH2IXehGbIq8tw0s4VT8ajegyJmCduwz8sG9nU1Pp0CBMBMa0yfFwmxmR32MoB/H
+	 SJHRYOV4yZtpQ8fHebbMT3MJ4D6SjflmfZuuvYjNlZJX9Vz+iVrjjGXJctWQarT5Vo
+	 DMCK379rg+1ufwOiFFHoaRt7HnGPuKm1n2alfF0RcsKc00FWhInURjiRXMBRbeRf/s
+	 t4KQnEAD+/5y9bi/xQAhWECPgMV5dVHVZIxscGssXFcMvCu44BQbSnPoSMew6Ysyhw
+	 7CLa3kaEAR66Q==
+Message-ID: <5a0d431e-785c-4aef-8282-2a921865bb9e@kernel.org>
+Date: Wed, 25 Mar 2026 15:09:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -36,6 +36,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH V3 2/3] dt-bindings: net: Fix Tegra234 MGBE PTP clock
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Jon Hunter <jonathanh@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
  "David S . Miller" <davem@davemloft.net>, Eric Dumazet
  <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
@@ -46,7 +47,7 @@ Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
  linux-tegra@vger.kernel.org
 References: <20260325135811.148480-1-jonathanh@nvidia.com>
  <20260325135811.148480-3-jonathanh@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <ded77d4e-7ec3-4f3c-863c-2c0ef490e494@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -91,32 +92,39 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260325135811.148480-3-jonathanh@nvidia.com>
+In-Reply-To: <ded77d4e-7ec3-4f3c-863c-2c0ef490e494@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25/03/2026 14:58, Jon Hunter wrote:
-> The PTP clock for the Tegra234 MGBE device is incorrectly named
-> 'ptp-ref' and should be 'ptp_ref'. This is causing the following
-> warning to be observed on Tegra234 platforms that use this device:
+On 25/03/2026 15:07, Krzysztof Kozlowski wrote:
+> On 25/03/2026 14:58, Jon Hunter wrote:
+>> The PTP clock for the Tegra234 MGBE device is incorrectly named
+>> 'ptp-ref' and should be 'ptp_ref'. This is causing the following
+>> warning to be observed on Tegra234 platforms that use this device:
+
+                           ^^^^^^^^^^^^^ Tegra234 (see further)
+>>
+>>  ERR KERN tegra-mgbe 6800000.ethernet eth0: Invalid PTP clock rate
+>>  WARNING KERN tegra-mgbe 6800000.ethernet eth0: PTP init failed
+>>
+>> Although this constitutes an ABI breakage in the binding for this
+>> device, PTP support has clearly never worked and so fix this now
+>> so we can correct the device-tree for this device. Note that the
 > 
->  ERR KERN tegra-mgbe 6800000.ethernet eth0: Invalid PTP clock rate
->  WARNING KERN tegra-mgbe 6800000.ethernet eth0: PTP init failed
+> I don't understand that explanation.
 > 
-> Although this constitutes an ABI breakage in the binding for this
-> device, PTP support has clearly never worked and so fix this now
-> so we can correct the device-tree for this device. Note that the
+> Driver dwmac-tegra.c: ptp-ref
+> Binding: ptp-ref
+> DTS: ptp-ref
+> 
+> but you say that nothing was working correctly?
+> 
+> Judging by these three - driver+binding+dts - obvious fix is no fix
+> because everything was fine, so please clarify the exact problem.
 
-I don't understand that explanation.
-
-Driver dwmac-tegra.c: ptp-ref
-Binding: ptp-ref
-DTS: ptp-ref
-
-but you say that nothing was working correctly?
-
-Judging by these three - driver+binding+dts - obvious fix is no fix
-because everything was fine, so please clarify the exact problem.
+Correction - I missed in grep - there are ptp_ref users: tegra186 and
+tegra194, but how tegra234 could not work if it has correctly in DTS
+ptp-ref?
 
 Best regards,
 Krzysztof
