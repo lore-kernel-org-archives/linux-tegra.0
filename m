@@ -1,194 +1,188 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011015.outbound.protection.outlook.com [52.101.62.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6964C24DFF3;
-	Wed, 25 Mar 2026 13:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774444431; cv=none; b=QHnODjAYCDMZYk+26FvvLOpfnfzKrgC1E9PESGJVo2H8DcA1/iG713rWwsHJP/XoxLIzgxwLUwZlY41LHfr0dnjYT92VmwSQKklGol7KpHedulSeLQniyDH2qhREw0kFIZlD2G1afI1SB8yoLNiHf1/TyHEAE6L6XkUzCE+mvFo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774444431; c=relaxed/simple;
-	bh=adeypLH4Z74KNAFMkRjnUeG5Q/XEPuKzGE7SLt/uv7E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ADozisZmi1wiJQpMRSfg5kD7qyJRK71tAFjqu9VIkKN8ppCxfOA7H9/Z4D39Q8eSCl/nvZeC/sGw54rJGi6NWNScaH7aIuqqXlqdAncRdNLlBbXAx+OQuFYuIK+vpDY/JCnL+FtMd5bf70e0QfMX2uoD8VTKCqOndOxaTDDLy+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QixVQICm; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD032BD5A8;
+	Wed, 25 Mar 2026 13:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774446116; cv=fail; b=rpgyY9SkpIQnqnc251O0Blhtt847S4PAx/Ui2pMTIIef8jRk9fzDIEe1vhqn6tsr90Uv/7IZTlurKmhntqVS+dvrGC3XCpb1SGUjmba1LyMkQnfGjcQ4Mh5Z2roxRcRRnuvU7myqo9Bogs7upoo/nVfvIDDEVX2TmCTjab7CZds=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774446116; c=relaxed/simple;
+	bh=iMUg7JtwFWyXVzncdx0nzytetsXUo16hsgzGE2X/dQ8=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=MST1t3nN9pf1SofVSHubDinqy2ZCkXB50Q1iZWW6Et+Teg1JK9azpqvpNcBmR6tMJf5NyOgD/G6/8PTLLGS1XHcIR64rG3oOxnnYJKumCXCS2NFRmV6mGAi1QSRseJFe7i1qaJnRJTPvpH/dp7rm5/01F3WQ9HrHtXuA2Prcnas=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bIGemVPy; arc=fail smtp.client-ip=52.101.62.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QixVQICm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52DE7C4CEF7;
-	Wed, 25 Mar 2026 13:13:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774444431;
-	bh=adeypLH4Z74KNAFMkRjnUeG5Q/XEPuKzGE7SLt/uv7E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QixVQICmwxR1do0VXN8ey36RrvcUnH6mxGzIW1yiLk3H3bEBZe8NefSmOabsCcT4G
-	 Tv+QFx50+0IscUyp5UNgRlmUbpNSZkkftx8LNR8lyshtr4EmrB3JWCZX3uMBj4i9k3
-	 7gqqmK3vo6tYHkx0t2ZB6WavmknK7ERJueRLb1rAr3WGdEqApPsflJIWUYyEFztA5C
-	 51bTl6gNYKFoZhB/RWW5R9AIWiHOR+FgCw0XBbPInINMGOu4Uo9UegkGDKvJ52xP47
-	 XaBxWGgc2okE6Qz2ii490wrXH26YduMXY6vRkbvZMgtfw6JaQF9qwD5oJkmjWumMwc
-	 iJuIaUfddDqkA==
-Message-ID: <66ac3fc8-bc23-49cc-9f8c-6738a4671623@kernel.org>
-Date: Wed, 25 Mar 2026 14:13:44 +0100
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bIGemVPy"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QIyfAljAtyNh52nMoH1GWfMcVrbASmNRJKS8AGWGd+SSv8loWj4r/nsHO229T0cSv92o9QfCqYPd4GCXj5espSILUz1EJv8qEJH6Ttt8v20UeuRNirMbpffX+ZVOqdgX0i+DkQCt7/+aeBt9WuE7sEsRxt+URZXFx5ztssL6GvnaxRcBGayAiFB5zlOWhsaiNjmre4x2B7Sm791zKsgkEykWmaOSYm8IvJ0cwTRIxocu0cgQDa1B+9s7EDRRRPTE7PMYrgMzqzzc8FawCqwTFGiuxr+xbH0yMBZNOlnxEnIvt76A1TEtGMfGU5BRobWDnMZccoShtAsbcK6WYKvggw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BYbga98ZiTETqFdLGeijs+DqY3dCAyYo5vUQTwv0kK0=;
+ b=tDBk5v/E0at3ua7zv4Gfz6KYLmgknXkFUqt8CTTdjgyMzLWDEqCoWVkHHKKcQTuGXw1sINpHur8+2xVrRz4TTAK5Ua9X3OlH8H0mDGJhybDEf9Q3p47zl39rWYgGLfrWx8qnjG+mUsWTLiVENU1YKpZ7z8HZGdW6QRz1yyuneSh/uJ6id0hdMnr+6qQSTACBafZqaHJRFwvZHU1x5MgYT9pF/EDKAYQ0dKRYw6nckcyqpFETbLroRjJxb/jvbaW0yPylPnG5w5g7Mexinh7Msy2d5upYjp14yYwPODyNpsyuskJxFBOTawQgTgipCWDJWFMyw6jQFcjPvS+CW3vnlw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BYbga98ZiTETqFdLGeijs+DqY3dCAyYo5vUQTwv0kK0=;
+ b=bIGemVPyqqlyvrsgEb4tg4J3eibMoI5u6GlQjdKWiynfI9NgxVHk4PbzwensMKgEMNL/wNi7o/Vg9yu6kdbALwBEgTm6RCmrSLFa3rn3FI5amBJ1wTo2Sl+rop8f/VKHV+wQubIYnp5fQB05BPZc7GhmIbQUzvRDXJT21uKKwjATf2j3zfEQqjDfLzJCWXer1Chb3SaR3kb+mKjOojR6+Sn3zaBHFz2H/z2RGOyoDBE9z5OR5FlDdBKy/HZEit4/rvNhhd0ZAxthwVUabsF9rTqVWiEfGi8d5Yq0ajH4srCYbXM4eN4MozKVbSrnJHFByfhZRyyPaemolL2DlziT6Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
+ by MN6PR12MB8470.namprd12.prod.outlook.com (2603:10b6:208:46d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Wed, 25 Mar
+ 2026 13:41:52 +0000
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391%6]) with mapi id 15.20.9769.004; Wed, 25 Mar 2026
+ 13:41:52 +0000
+Message-ID: <954da5a0-1e85-4b43-9b7d-c1f025d5d1c7@nvidia.com>
+Date: Wed, 25 Mar 2026 13:41:47 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 2/3] dt-bindings: net: Fix Tegra234 MGBE PTP clock
+From: Jon Hunter <jonathanh@nvidia.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+ linux-tegra@vger.kernel.org
+References: <20260324121631.771628-1-jonathanh@nvidia.com>
+ <20260324121631.771628-3-jonathanh@nvidia.com>
+ <177439307874.2078673.11304788250514370726.robh@kernel.org>
+ <5e0a6a5a-dded-449d-8789-e2a5e0a169e8@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <5e0a6a5a-dded-449d-8789-e2a5e0a169e8@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO2P265CA0189.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a::33) To DS2PR12MB9750.namprd12.prod.outlook.com
+ (2603:10b6:8:2b0::12)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/12] arm64: defconfig: Enable I3C and SPD5118 hwmon
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Akhil R <akhilrajeev@nvidia.com>, Frank.Li@nxp.com,
- acpica-devel@lists.linux.dev, alexandre.belloni@bootlin.com,
- conor+dt@kernel.org, devicetree@vger.kernel.org, ebiggers@kernel.org,
- fredrik.markstrom@est.tech, jonathanh@nvidia.com, krzk+dt@kernel.org,
- lenb@kernel.org, linux-acpi@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux@roeck-us.net, miquel.raynal@bootlin.com,
- p.zabel@pengutronix.de, rafael@kernel.org, robert.moore@intel.com,
- robh@kernel.org, smangipudi@nvidia.com
-References: <20260319-nano-manatee-of-vastness-fbafa1@quoll>
- <20260319170929.14543-1-akhilrajeev@nvidia.com>
- <67165a1f-9fa3-4853-b530-b1f9d6e4c2cf@kernel.org> <acO4NKPDUayny-I4@orome>
- <6342b6fd-9802-49d9-a269-ecb3b70b4604@kernel.org> <acPWvjCJ426AyIQh@orome>
- <61ec49e8-9b60-467e-8ca9-c1246ae5caa2@kernel.org> <acPcM4dlvpdo3L59@orome>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <acPcM4dlvpdo3L59@orome>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|MN6PR12MB8470:EE_
+X-MS-Office365-Filtering-Correlation-Id: e005798b-d28c-4c2f-07a1-08de8a744580
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|10070799003|366016|56012099003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	aQvmdEuM2uWItcHWWGd0A7wMzBi7DKYxgEL4mXg/oCv2Khnrdj5au4I3hvqgjybyJzj8SWIgHvFMa9VyQsJ1yChYfwXRD2Iet1iN+L/AkE3Pc+CLUsq+nREelzMBw4OLMhbKludj6v3OHHpQmZyeatiGb7cVmzOGtFZLcETNiC1OioRIQFwQuvluvRg+fIfavjBohVM0jGajYUo0L1ShgaIbHu9xxNHYH4vHmm5pqdFGmffSGLd5WW3+ty890RacqE7lTGAs1br3YHGzBVSaldPq3DPlq32UU+gP+++DDt2j1o+xkBkrGd2rUDHYemekWL44hNWWFZzHu0AW6PJuVUQJZWORBDvrEoUHRzt5nnIMiLlf377wfDDha450ziNOmnU2+SHPRK3hXIBncI4TleKwpk+63tNq/UMMnCVee5OGPrz7SIsWShJtHwPCimRtWagsDi9QEz2WpfPLMFHB3PxD1JHp1h+Pbn/uo+/ZB7DWpEIXWXIHey79uyPndiOr6JZIliyDi0cU2HFmcbpZrhPXn4TUFKiFGm2+UyEtorDGPZsh4ySM9DsFWO+6mdftVY/At4FoHzMUQsg/5vMh+De0Xl25b+85K7rUMbG4HFgccxj7YZZmpGUz8nM+juRMOZsutQ+WBqT9yYpaZ4Ez3TkzbbIY6Of1idLYFdtR0JqtcI4h/HQbRW6HOPsMPcHDt1xzeYLfKowT3j2+j6ZnWF45l+Z1+kcZg1uTMd72c00=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(10070799003)(366016)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Wno2aWFkd0d5ZEU3VnFHeGUvVWhEUUplcVN1eTQzay9NQ0doaFhvNFFYRFVY?=
+ =?utf-8?B?SndsaXlrRTBTZHN6YjRNeGE5Qno4M3BhTUZsemtlWkhGVXZ1TUdob0x6MVhI?=
+ =?utf-8?B?OEVmbUo3T09XeXFTVFNzWWJHMURCN01iWkh2OWg5Qm9taHF3aE4rUVNHcVBw?=
+ =?utf-8?B?QWQ2WG5KSmJqRVF4U3RWU28rSmxML1RUdDVzalpneWRka0FGaDRmaUg1d2dy?=
+ =?utf-8?B?NEROUFA1M1ZvVFgwbnZLb2Z1bE05RU50amZWSmNETE96UTBZdnpDc3NpS3F2?=
+ =?utf-8?B?Nk1EcVc4bGRZMmF2NldsT1lmUFNFRmJvYWN1NUc0SzBzWGt5K3BIY0pIcXNW?=
+ =?utf-8?B?bWsvdDVyMm5qWVRoUVRTRHowZnhlL0RxS2lTQW5UcVFaTnJnWHZYdHN4MzFx?=
+ =?utf-8?B?anVIU2FEWkM2bTNoTkwzYmx2TEkxYndzRjRzWi9tMnE0NlZNVWNuUCtKMTha?=
+ =?utf-8?B?aVM5cW54VHBhcWgvUWI2RjlmTVFpRmhuUnA4TzQvRXM0SzAvVXdLeEpTNHQr?=
+ =?utf-8?B?Z3cvL1NMYlo3K0JBeC8vVUVhRXBERzVpeHE2MHFYSlh6WVF3ZUxFdHF2eFdw?=
+ =?utf-8?B?N2VRTEJ6VUhMZy9Va29icHUxbzJYcXo1ZjZQSHZzaldxVko3dzNrSnNVVi9t?=
+ =?utf-8?B?eHY3MTNKeUl4b0R3M0t1NmpoUlowWW01MWRzemRPckxyTzBsRVVlVy9aZXNj?=
+ =?utf-8?B?dXZEQkF4UklOWTFSakNUQkFUNTJGb29adll5UmNrMFNnTmVsbzJId0JqL2Jn?=
+ =?utf-8?B?VGxvYkd0MGV4bnJFSnBEamtMOHlrU1hQRm5kZEtkMHB5dlc2Uk9VVm56aVNE?=
+ =?utf-8?B?cGtrUFdnZjFvZ3RjeVRPSDVxZmtUQzVXSlFiaGZFWTJ0VUpwb0U0VmZ0MWtD?=
+ =?utf-8?B?b2N0a2F0QmRmSlBObVJRSHl4ZDM5U0wwYXBIV0hDMnptbmVJcXM2b0U2Skt4?=
+ =?utf-8?B?d0NCYlpZSHg3bkRqL3NsamtlelpyVzE2Ti9vNFdsRkhwTzFOUHBzaVZocWFz?=
+ =?utf-8?B?TVhzSmZaTG1SYzZndVFLNDZsbnFjQ2U4TTBsMmR1VkRORTMxdmUwVW5mMG52?=
+ =?utf-8?B?UytodXUzYk1TalZUYjcxbW41QkEzOXduTTJBWUwwd0xJditHYXFoVSt2eXRz?=
+ =?utf-8?B?REtXY0dWTHRVYjdzaFpmVVVPYzBwaE9Tb0QzTzBFUTNWamhHYVVvSHZDYlNC?=
+ =?utf-8?B?QmtaRGxvamhIWGRyaUNySXo0dGR1QmdrcDVMdWZCM2xGSURnZ0I0S2tJeTdO?=
+ =?utf-8?B?SnM0ZUVsa01MNll5RWVjeUwyTFZWRzN4WnVwWGVXK2NES0Mza3JsQU55ZmhO?=
+ =?utf-8?B?UVFRTEQ3OW9zRlVZUDIyVDVBOXprMlcrNmdmNlFDSHVUVDBYQmd3dDJjSlNS?=
+ =?utf-8?B?UEJBdFhjc3JBRjNPb21HZ1ZBTUZ5SzdqR2FYaVpIUmdnczlLN0xjeW0yenN6?=
+ =?utf-8?B?RFFTY0s5UDlVd3AxZzBzT2U0QUtaZllyTHIwNUVMQ0gvb0hkN2Z1SkdDWWYr?=
+ =?utf-8?B?K29ET0dCN0h3aVZ2azdnNnpMeVhLZmNIZEdzam5nMFd4OWcxTHY2NWs5WExN?=
+ =?utf-8?B?ZkI2QlFlNUJmKzZ5Zkg0R0RRbUhHY3JESE1KMzBiS2c5S3NPZUhQRFRQUWx6?=
+ =?utf-8?B?R0NRbmF6YW41TWFIRTdSdGdzbk9TMUovWDBzWkJGczBhMWpXcll4THdBcDBZ?=
+ =?utf-8?B?RFl4L1k5Q1EvQm1iTEdWc0huNXRBQVk5V3lHSEFQUi9wbEpEclFJUFlMOTk4?=
+ =?utf-8?B?WUNpTzRKaTR4ekhyekRIRWFEdzNEeElRV25nRk9QN2FaWTVxcTdyV0k2VzZj?=
+ =?utf-8?B?dVYyR0xYM1Q3cUNhQ1BreFpISmFNcFI3MlVjQ05BblFyZDc3ck4zZnphdGox?=
+ =?utf-8?B?M1FYSnQ4eDVQSWVUUzRnSFkyNlRhYTdTYUkzdFBaNWhUaWlLN3ZMdUxWNEVY?=
+ =?utf-8?B?WE9hSy9FQ3pJRVA0Z3BsajJGKzJYSU9Pd1pqTWNLRHV1SGJMZXc1TDRZdUdW?=
+ =?utf-8?B?K2F1T3FuS1lmSlN4cXFPVmFKUlAvYnFYckhZMlladkFPTlQ1Y1lQd2pHNjUy?=
+ =?utf-8?B?c2xQckhEVFN1ait3NUFSWGIvRGpJY3REczhEQjNiM2NVUmhlckRMWGt3R0oy?=
+ =?utf-8?B?NXc2SE5TOVU0YVJLOFlhYkJ3SWFRc0RzVGVtQWtLLzU1THZQdjF5N01uUkxP?=
+ =?utf-8?B?RzhUcVRSVjkwZTZFQVdadW5Sb2lZSEc0R090QklzUlNkcGJQTE5HcUsxK1dh?=
+ =?utf-8?B?Zm1LUnUyZExmemFoYXo2Z3BtcDY2blVYOFNmYjVRZEpVbmE0NlFoaGRVL21U?=
+ =?utf-8?B?NW1kSTJZVEJZRDVlczdjZnpXWjFQeVJ2ZGdQSnF4dmNuZGQ2ZnJ2dEJZRWhn?=
+ =?utf-8?Q?w+gB/EUL6rHtCpV2LzUCLRMzFxpPvvN8tjPW5Sqr/1fF7?=
+X-MS-Exchange-AntiSpam-MessageData-1: 1L5ehhJVMi/O5A==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e005798b-d28c-4c2f-07a1-08de8a744580
+X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2026 13:41:52.2545
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 48zKuqKzFoErW2BTEZjDEch34mpUbnF4bfQh5H3lciyn93wBZng/CZDmX78U3xdMpF9hr+kafTCihSNax4aV+A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8470
 
-On 25/03/2026 14:05, Thierry Reding wrote:
-> On Wed, Mar 25, 2026 at 01:47:44PM +0100, Krzysztof Kozlowski wrote:
->> On 25/03/2026 13:41, Thierry Reding wrote:
->>> On Wed, Mar 25, 2026 at 11:59:36AM +0100, Krzysztof Kozlowski wrote:
->>>> On 25/03/2026 11:31, Thierry Reding wrote:
->>>>> On Thu, Mar 19, 2026 at 06:15:14PM +0100, Krzysztof Kozlowski wrote:
->>>>>> On 19/03/2026 18:09, Akhil R wrote:
->>>>>>> On Thu, 19 Mar 2026 10:40:34 +0100, Krzysztof Kozlowski wrote:
->>>>>>>> On Wed, Mar 18, 2026 at 10:57:25PM +0530, Akhil R wrote:
->>>>>>>>> Add I3C subsystem support, DesignWare I3C master controller, and
->>>>>>>>> SPD5118 hwmon sensor as modules to the defconfig.
->>>>>>>>
->>>>>>>> Why? If there is no user of that, why would we want it? Your commit msg
->>>>>>>> should explain that.
->>>>>>>
->>>>>>> Ack. This is for Tegra410 which has a DesignWare I3C host controller.
->>>>>>> I will add this in the commit message.
->>>>>>
->>>>>> Board or products. Not SoCs.
->>>>>
->>>>> Is this a new requirement? I see a bit of both in defconfig changes.
->>>>
->>>> Almost every review from me has it for 2-3 years... And it is a known
->>>> thing since always in a bit different wording: we do not care about
->>>> downstream things and downstream products. defconfig does not serve
->>>> downstream at all, makes no sense outside of our (upstream) work.
->>>
->>> I don't understand why you're turning this into a downstream vs.
->>> upstream discussion. This is all code that is being submitted upstream,
->>> because we want these new platforms with I3C support enabled upstream.
->>> It's as simple as that.
->>>
->>>>> Some mention specific products, other mention SoCs. Does this
->>>>> requirement apply to DT platforms or also ACPI platforms?
->>>>
->>>> Just like kernel, applies to all platforms, regardless of firmware
->>>> interface.
->>>
->>> Hm... again, I don't think there's every been a rule to the effect of
->>> needing to specify a particular platform or product when adding a new
->>> defconfig change. There's plenty of things that we're enabling in the
->>> defconfigs because we think they are generally useful.
->>
->> And the commit msg MUST always explain WHY we are doing it, in this case
->> - why do you think it is generally useful.
->>
->> If you add new driver, it is usually obvious why it is generally useful.
->>
->> If you add defconfig change for dead stuff, it is not obvious. That's
->> why commit msg must provide arguments WHY do we want it, WHY do you
->> think it is useful for us.
+
+On 25/03/2026 06:18, Jon Hunter wrote:
 > 
-> You're making too many assumptions. What's your basis for calling this
-> dead stuff? Do you really think we'd be spending any time on this if it
-> wasn't going to get used?
-
-I don't know. That's why the commit msg explains that it is not dead
-stuff because we use it here and there.
-
-Let's read the commit msg:
-
-"Add I3C subsystem support, DesignWare I3C master controller, and
-SPD5118 hwmon sensor as modules to the defconfig."
-
-Helps nothing.
-
+> On 24/03/2026 22:57, Rob Herring (Arm) wrote:
+>>
+>> On Tue, 24 Mar 2026 12:16:30 +0000, Jon Hunter wrote:
+>>> The PTP clock for the Tegra234 MGBE device is incorrectly named
+>>> 'ptp-ref' and should be 'ptp_ref'. This is causing the following
+>>> warning to be observed on Tegra234 platforms that use this device:
+>>>
+>>>   ERR KERN tegra-mgbe 6800000.ethernet eth0: Invalid PTP clock rate
+>>>   WARNING KERN tegra-mgbe 6800000.ethernet eth0: PTP init failed
+>>>
+>>> Although this constitutes an ABI breakage in the binding for this
+>>> device, PTP support has clearly never worked and so fix this now
+>>> so we can correct the device-tree for this device. Note that the
+>>> MGBE driver still supports the legacy 'ptp-ref' clock name and so
+>>> older/existing device-trees will still work, but given that this
+>>> is not the correct name, there is no point to advertise this in the
+>>> binding.
+>>>
+>>> Fixes: 189c2e5c7669 ("dt-bindings: net: Add Tegra234 MGBE")
+>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>>> ---
+>>>   Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.yaml | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>
+>> My bot found errors running 'make dt_binding_check' on your patch:
+>>
+>> yamllint warnings/errors:
+>>
+>> dtschema/dtc warnings/errors:
+>> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/ 
+>> bindings/net/nvidia,tegra234-mgbe.example.dtb: ethernet@6800000 
+>> (nvidia,tegra234-mgbe): clock-names:3: 'ptp_ref' was expected
+>>     from schema $id: http://devicetree.org/schemas/net/ 
+>> nvidia,tegra234-mgbe.yaml
 > 
->> If you add defconfig change for device which no one (in terms of
->> upstream) can use, then automatically it is not useful. Whether this
->> change is like that - I do not know. That's why you have commit msg to
->> provide argument WHY maintainer should take it. And it is as simple as
->> one sentence explaining the upstream kernel user/use case of this
->> defconfig change...
-> 
-> Again, why are you making this about upstream vs. downstream? The goal
-> of these submissions is to make upstream capable of running on real
+> Yes this is expected until patch 3/3 is applied.
 
-Up to here:
-I do not make it upstream vs downstream. I expressed the same goal as
-you here.
+Well apparently somehow I managed to miss the example. I will fix that now.
 
-> devices that real people want to run (preferably upstream) Linux on.
+Jon
 
-But here not true. defconfig is ONLY upstream. The purpose of defconfig
-is not to give some libraries of configs for downstream trees, because
-it is useless for them. All downstreams or distros have their own
-defconfigs, thus defconfig role is *only* upstream. I do not make it
-"upstream vs downstream", but I make strong requirement of talking here
-only about upstream.
+-- 
+nvpublic
 
-Best regards,
-Krzysztof
