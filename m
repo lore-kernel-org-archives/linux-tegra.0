@@ -1,180 +1,137 @@
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012064.outbound.protection.outlook.com [52.101.53.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564C15B21A;
-	Wed, 25 Mar 2026 06:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774419499; cv=fail; b=dh3n6/ln9lY7Cn7YQklmJ8hbq39EiCAoZ3Fbf63SV2ynmzJ3FyBxybi0B3U28GhTX+uvv7IM5XeivYKme4OXIfPvqvhU5XXPO4PzWy116VFplGk3QCYtZcuHi8WDg5FljvqTapGfWwCwJmDz82Spi2sHzVi+wk+dWI/2yTXofkk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774419499; c=relaxed/simple;
-	bh=kLqOp88ldBQnLw4/fbmbxcZNXko14qsNDF5+tSCVa14=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=a32/+CJbhZ9Vi+bQG4uw2d1CyrpgZ/tf5quFRCU852QkJ8itOc9fQL3joNKqYGEJfYeRE5lFUXSEAK2d88M4A6/fz9SiGEg6Q0Ch27MotQgmfPBiz0Pi0bO3M9ayoU72939NJuN6BIK9B1kw97hoA2O3WIphQ+MJejOh4Ci2Ibk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kG1iM2Pf; arc=fail smtp.client-ip=52.101.53.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721DF35838E
+	for <linux-tegra@vger.kernel.org>; Wed, 25 Mar 2026 06:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774420973; cv=none; b=UK+zhguFGk5XIXEYLKnVmQqLOxrRcCDABcrwKK68GeDFbWfyYZIOftidc6IZdV9hWpH3Y/cxNWkeSkz++c2Asq6z1EuSNGdqVbIMl06rm79PEpsviCSbE65hIbqfM0ohQzxx/I6ILWBJFhi05Y/+03865sjQzdbXyA/leV++q8M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774420973; c=relaxed/simple;
+	bh=PxgRccVn8cF02TlACNrcwsh3WON1Nirb5TL1ReGEieE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tn4kZAaXM6+Vn6XAYQyWjclnvsJkm8kF0HvILhCtDHn8zIL9of95BUNdEFPt4dhGjfuL0UYttfBJ7phApFBlcef1/HpJ/N6usv60LXFEZsNN63BBctXcoTezlFcspXGMVLkjQaSsayjNF++mWymIhVBhTOJdmoWJjGXqq5MLS0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cPagIaJm; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kG1iM2Pf"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NiqRPyxNdM4ckO9x3IbhcJgBtDPVYx1ej6FE2NoVwxklO462/Qj38ytJypF+cFZKOa8PP+co/ooc4B4MCPbx89X+7Qg2aKIyiQICBVXmoFYJC2M6KSrxfVGz9xRGI4SJQUskrcOmOmtGT8w29naU+TatcYeTeZzwSzVUmzai8lJnyR8vLPlNyeqMHbaQoYoxCEJM2otJeD3bYUeVj7ubVwl/6PYerMuyF1cOAoyGqVU9UjqvYKE5hnDOAjPZ0MdSDc8SPGN+DC7FgwAlvIBoB0TQF16P44vYVtG2vzVKf8Qy0gtPrdA67dEyrLdtEzSQ517mTjTnfmh05JtVkBY1/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LyMdTw8w4/TXucX7wDCtsG/LV1FjpBrFXJ1SgL5Zkzc=;
- b=UDKXhUOGEfaoZnVF/xVEb6pSWnLjyASfi2AG0L3gCvA7N6AgSRxf1d1NW15Fyp0cGAJnN2guk13UuTZS85wQVzfwUe7sXeGJMgEvc/UBTv4F/jhVZZGmwkzqjbI1k/3LHEcqV91lHyTZTt+Cl/aFCoOvI/AITTb+xb2YFDCKhH79/2fi7o98nThycObaZD3LqzEifXbN0gy9b2S/2afVm9QHLe36nYO2oT2BD3wF60CfVaMzxMcLu6ddn4QMMaAv60bVlo7qq1rvkhT7JExFHgYIMI4H4PnMTvQEqIi0nVNHIWnY1DiOgzTIM/VW1Txz8vXTnwkbVRa5IeUNYEhHLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LyMdTw8w4/TXucX7wDCtsG/LV1FjpBrFXJ1SgL5Zkzc=;
- b=kG1iM2Pf/8gKHGdsVWBHXZ5spAP0LHi13M3VcbI1rTMCOoE59qsp0cpS+YRBGg0hZfOsmHdi9xbLWHtPKqgOgCMezKoH11iWBIk0cZyyOLaFaIhCAUFgohhlUhftVZNr4dkxqukhI8jV9osezBUpTwgSATGDO9nJUOywywQlGFtUdhfRfWHil9Hsm9e4T6MiKQelzBsxr6Tl8xBxZQM2A2f10+E9x16qT7DMedx3afvV9N0eaScGEtZjyrbaLstEJ8LXgMyi9Ohw/7Sjk31f1agTyRATqhFyHrP2/varNXmOHBBOMgLjq9B45wb1LlbSCgL5eZ9gpLib4dspyB239Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
- by PH7PR12MB7425.namprd12.prod.outlook.com (2603:10b6:510:200::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Wed, 25 Mar
- 2026 06:18:12 +0000
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391%6]) with mapi id 15.20.9769.004; Wed, 25 Mar 2026
- 06:18:12 +0000
-Message-ID: <5e0a6a5a-dded-449d-8789-e2a5e0a169e8@nvidia.com>
-Date: Wed, 25 Mar 2026 06:18:07 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/3] dt-bindings: net: Fix Tegra234 MGBE PTP clock
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
- linux-tegra@vger.kernel.org
-References: <20260324121631.771628-1-jonathanh@nvidia.com>
- <20260324121631.771628-3-jonathanh@nvidia.com>
- <177439307874.2078673.11304788250514370726.robh@kernel.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <177439307874.2078673.11304788250514370726.robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0053.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2ac::19) To DS2PR12MB9750.namprd12.prod.outlook.com
- (2603:10b6:8:2b0::12)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cPagIaJm"
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-8298fad2063so3098653b3a.3
+        for <linux-tegra@vger.kernel.org>; Tue, 24 Mar 2026 23:42:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1774420971; x=1775025771; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/6M4B+9kyrMtUcVVbXTu+8SlccYPDUcc3KdjZB1RGuY=;
+        b=cPagIaJmGj/19semEx7ShU5yUUW9rl+iH2EGWhB3EQdKGhquRqdzvs3UEF6eD9Oa5y
+         +oqWbXI5+AlsUs2I7/W9nZVl+Zg1P/oAtOyzB4wqYYbCw8DftL5KckkXc+eHyYcrwkPb
+         ceqyh+FhWdVOXCBwuInDqlndSFCBONEADL5LJZospY8fRCoCQFSg6UxxzT1lIIPwuP5M
+         m49n8gfn3ob7ttccau6j7/KSxEOkCEFi0x3A1zIrzWaL4YndJMG8NT0iQD99Z9gQQ/24
+         DaTjhXHR7AYnbe3SdY/ctVVDJsv6vfgJ9xSLMAiOa4BaCNma66FGLR3DGYW7k0TOoij7
+         RCKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774420971; x=1775025771;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/6M4B+9kyrMtUcVVbXTu+8SlccYPDUcc3KdjZB1RGuY=;
+        b=clclGPmiKReaioKUaBPTb25bnAcpQooHeeWUkj16gq+ieoyKInrG/1S63BIrvtwkPG
+         PeJfm/5ovqGtYfTkuwm43s5xyaYk0gN8RR57guwGiM88tbmntIl+ti0ss9z9ZII27pN3
+         oYyGbVC30gh+H5rSPHjNvDJjYae05XYTU+zjqyQXIZcMj3APVwrLLICNc7KFUxuMIbom
+         nxXxs3mHySIY+KzvMcJd44NYk3Kl+41r8qnszqwBoGTE91FrgcpOeMA9h+Qm9y9yGMD0
+         NKVvmiVJXnip9woYwV/wRqzI528f3hpMBUIe87HXa/qRBO7Nk1KvaKD+t0PCYqAdFQKx
+         ea9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXCQUNtVCcg7G0j4DrLdF8pcGDY3OYVE6HhWXjt4GjBY1e+UBoTUfZcSI3supC8lzc2M1y8fBqoRVRXOw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+6pQNutu+S9WplshLh6Te+UW3IajvWicrbrm0sK2IDncF781q
+	bo6GzmFd67maSMZ62RWjhIIcknSXol84xhYyebjzgaXDRsD8jlCN5SWE5Bzq6+2LeN4=
+X-Gm-Gg: ATEYQzwHCRY/OOo4TDHAwEg79hLcnNLdkTt2ViGFXJm2QHbx3iwhpRr1lEJiqXi4W65
+	wYOPmNP5KFk7JjVItMhqd9bX9fFMFtAKQqmCFhamfhvhSwikw++fXVHxpJeZvV4N8A1Foqppsky
+	zjTDjjfBVCsqCMNzS/aA2ILgdH3JdBf8mo0k+3zSaFuWUtLmgza0dUCvZU1v2hRdJgMidVqMX8l
+	8gfG66KLcHLEzMNMEcXhRKeHLjh0K+GttC23nGBZPwI/VgsQR051eqCjoBP9ZNHa+A1qQwV5/SC
+	C8xvKz1/cO8+m9I+S/rPKWp/ILR3lOUBU32ZEMe2ESH4nSUPdKkf0JULNpvnMTXNF/ME3dRtQoz
+	zM5TiyA1ECsHJGTL2tRpp2U7AT6OnwlzB7rdy3YPx7aTvKAypoUhgwmrTPdGsaWIJgJR2oULuzT
+	pJFTg6SFRpHkQjZaLUYPIpKc3/
+X-Received: by 2002:a05:6a00:b484:b0:82c:24a6:2a75 with SMTP id d2e1a72fcca58-82c6de79e34mr2217015b3a.10.1774420970591;
+        Tue, 24 Mar 2026 23:42:50 -0700 (PDT)
+Received: from localhost ([122.172.81.200])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82b0409b448sm14055926b3a.39.2026.03.24.23.42.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Mar 2026 23:42:49 -0700 (PDT)
+Date: Wed, 25 Mar 2026 12:12:47 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yi-Wei Wang <yiweiw@nvidia.com>, Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 1/5] pwm: tegra: Avoid hard-coded max clock frequency
+Message-ID: <2qvafxg3umwqeshf6eag3ep2zpyfwxbcdj57iorlcrus3tzrti@cpnkeirybxxo>
+References: <20260323-t264-pwm-v1-0-4c4ff743050f@nvidia.com>
+ <20260323-t264-pwm-v1-1-4c4ff743050f@nvidia.com>
+ <acKggw9F7oULLEuJ@monoceros>
+ <4405239.kQq0lBPeGt@senjougahara>
+ <acN7pSjuMkZl2yhV@monoceros>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|PH7PR12MB7425:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8420fe7e-d219-47d0-465a-08de8a364aca
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|10070799003|56012099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	irqqqPFK5n/dd+OQfPKUuYEMV6HaxpJMon6xiWCAggrxaebOqaissoKdOUMfHGqTB8DXw/pUUu5edYJ6c5q4aFepHuhzlJhpxCJ49LX3lb9DcWB57vt1Hs7/5uNhSMdUUZzxcVqxlPDJ/yh8NBN0THGntzXWnc04QZDrIvx4Um8gEVQmswxtTipR4cmi5zGG9EfvTVXcVaghWhDWHVjrNY0P2O6fM/VjkBFCszjnVReNjImAkOrNNwUNzRk2QJLTggMmbt42sLas4jVHpKpDu4+NfbDg2XEv3nc+IZHz9I1NDsyjhIgjDIz8Ci9DfwL1NV9kgESyMnk20M8DNHvDqgqkGcY2T/kgJxanvTWSJYFgrXr6qV043lMHWROVvbUmgx6y01YdBtF+hxOctLGL1FG13sFsL7/rAcCkAVJdpj12SmNh1jIO4W4UfLHeG0DRenMLfMyQ4IGUWlQzF/Jmh7WPjP/npDRfimFQeuxGtadJdYMi09TxmM0N47cEg5pgqVA1O95BJNaLh912U5sKyHxL0/efByR5hEUUPbpIrj9P7JnQ6NPO3s/mUSQ5AzrbiHXQkSD8rhjyWxRs91fTlO89VQcrDp/UgDmsLmT8sbb7FdccsjKSSm7yrbhhlbyYgqTT1Spk5dhjt2A2nqsqtq7HAWG8d1tDTZc3SVbI5Yme6D3C4PdWBVxnX39NlusuryQZgxaskEkdYB9uesWprU4sIv8DsStrItA9bL6EDmo=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(10070799003)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dGxMdHNvWnNBNEVHMWF6STEvVzRrUjQwbEFra1dTQUFQVGhqblZoUlQ4YzE2?=
- =?utf-8?B?OFRQZkN6cmdKMFppbGFJbnY3NDBNN2dYRm4vU0JPUnFNSnNWRjhIUldIeWJ2?=
- =?utf-8?B?Q2h4TllCWEpuSVNJUy9zVGFoS3VabXZ2QVZIUU5KRlFWOXJHTnhlS1hTV2s1?=
- =?utf-8?B?a0dzcEVYY05FcS9CT3dSc0V3VUlrLzdkQ1dTMXByem1QbmdaMy9uRTVZR3NG?=
- =?utf-8?B?ZEMwcVl6ZEFveDJVa1RoMUZNMmpDNFlzRVM1R0VTN3psZjVLODFFcjNyZHdy?=
- =?utf-8?B?UGozR0Z1bWtZWDNCQVRjVUplbWxYZGJ5RmxHSTVrR0xtYUlGUFFVN2hHMkkv?=
- =?utf-8?B?aGE4dFh3ZG5xekQ4dldXSDI2aE45bzl6cmdNNzNGUWRiRXA3TjZtMnVZMnYv?=
- =?utf-8?B?dzRkREVvV3JkNGljeUxFWUt1SXdybGZEVjJPR1lzckMwMHVYelVpVFdWRUcx?=
- =?utf-8?B?RFRWVy9rVWtEMytleGdnbXdXZHA5a3ZnUER0ZGpMckV4OWt5V2xSVCthUkhV?=
- =?utf-8?B?RE9SZm8zNDB4RmZGRzlucjg0aVlWSGJOUjJlVnhxc0VBcFd2NW9WR05MTE9Q?=
- =?utf-8?B?TFV1aU83bEl1ZFBmdEptVGMxN0JINUNHblRvTU5jZTA0QUR1bTYzbHk3UGlw?=
- =?utf-8?B?NkNSNlJVN0VRYkJkQk5vc0xudFRUTXZDeFhkMUZTMzhBYlJTbUdUaEFwazBt?=
- =?utf-8?B?SDE1cFVHdDEvdUNvQ0NiSDNMaGZ3dGdqMjUrZmhGaVE0cUozOTdkcDB4MCtM?=
- =?utf-8?B?Y3ZmRnZGd3I5TVF0bnNjQ0JkT3hneVM2V1M3NGVVaGg2NFBncTNyV1JROFlU?=
- =?utf-8?B?UzJXUFpuN3V6blBad3ZIV3U2NkVhUWZmaUlxVkRxb2ZVYlI1Q01hUjFJenUx?=
- =?utf-8?B?WXNhMVNhU3pJR2puTC8vY1h6NmI2bFpVRER4WnpoS0N5YXhvSnpFQ1lrdjdU?=
- =?utf-8?B?bWllczBaSGhGTFlWZW5ZWXd0djRPYS9wVFl2SXNwb0Z2aThLMkQ0R3lFa0x4?=
- =?utf-8?B?R0poWE1JUkJkK1N0QlN5V0JVMnBaaExVdzF0OWk0aENMdGhIMTJqZk1MbXNH?=
- =?utf-8?B?emZnblhvVmt1ZitLeGYvWFpQc0oyV3g1d0kvM0l4bTlGK3JjZ3dtZ3pTMjI4?=
- =?utf-8?B?Tkd4YmV3OFlMSHZYd0hNejhWN2lISnZZa3hqcWNQeVR5dm5nVndYdnR0STVY?=
- =?utf-8?B?NHRJS3U0eGFoKzhrWnBSQVNiOEprbndKcFo1d3orZ0h3V1VHbkhpZTJXaGp0?=
- =?utf-8?B?dDVyR3ljTGoxemlXOGNueG5IZmxSS1RDRWRCeGNXUENlWEZueDVMeVVBQS9I?=
- =?utf-8?B?N2lYVXd6emFFa2lYRlIwOGNDQXhDZHZCQWI3VkpJbXNra3Rsbkk0REkxbkRE?=
- =?utf-8?B?djFzZ0Flb3Jqa2pkOFMxLy94SGxRMzFFMDZoNVZiVXdjTC96ampEZUx6STFK?=
- =?utf-8?B?U1lVOWdmbmVCM2U2R0pGY1k2Y1FCTzQvc2psYU5Va2RMc2hWM1VWVEd2MHFQ?=
- =?utf-8?B?UDVZY1QyZmFWREhzRjh2bkNKT2VXVU5zMU1rSUh3MVNaNzZoUDJRZHRJMkRk?=
- =?utf-8?B?STR4VW5LbWVkTUxSejRNY1ZKUFZsZUZNdnFDL3lzRnB5WnpkUE14UEE4anhn?=
- =?utf-8?B?ODl0MGpkRHB5eXZYUDd1bGpXbW04cmNsRHVhYjJ2dm85VytyQzdWZmFpNHFM?=
- =?utf-8?B?TEpuZ0hodnFpQ0RRS3dCZytWTUZhSGdsWG1MQ0x5WVdkeE43ZTNSdDBVa002?=
- =?utf-8?B?bHozNXB4dU93NDVKQ1lqaldRNXhjN1ZsU3JYekVnSGgrUWpRTm1sQ25QVTFm?=
- =?utf-8?B?elJlQWQwc3hnbVIzWmhvVy9VaWRTS3Q2YmJ4bTAyTW9TamRxWHR5ZDFLU2FU?=
- =?utf-8?B?WVhOVE9IdUFWSHpKaHZJUElLTk1HSlgwTEJZL3l0ZklmK1Bvc3JLbjJ3UG1a?=
- =?utf-8?B?OXRBN2tuVCtIcnJmYXcxU0tEcElmazFzRFdaelZGcnEvNjFhb05kYS9ybGFM?=
- =?utf-8?B?U3I0NU5LeWhPWUttSDBzSnRndUUvSE90RWF5OGRiM1VSVDZRSCsxTGUxdlg3?=
- =?utf-8?B?TzA3MW10RUZ0NXVsYVhUcXkzN0FKZDZGY3BnVHU4cVZaWGVHcnlWd3hhN3hW?=
- =?utf-8?B?SmJZK2tKNys2VTI1UDlkaURXbmRTakMxR0xDS0x5R1JzYzkrT29pRHozWk90?=
- =?utf-8?B?RTJTWHh3T0tCV2NKYlgwNi81alVwYXRHbzhrT0VGUk9RYXdrd3FZS2VyS2o4?=
- =?utf-8?B?VUVFZHdGK0VnOHB2VTNCMUpSNzUvdFlRQzZQRUlUTktQVXlpc05yNVpXUWp3?=
- =?utf-8?B?Uzlqa2RXd2dCRWY3azUyMytSVU1aRFFuRFhoUXN2QUUySCt3Mm9oOGNsaXVa?=
- =?utf-8?Q?B40m5UKfcjySd//KYM/nw6Z73PmfHA8Ru2GeItPl0sqGZ?=
-X-MS-Exchange-AntiSpam-MessageData-1: vSsqkQjW9j1djA==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8420fe7e-d219-47d0-465a-08de8a364aca
-X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2026 06:18:12.1995
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jpT4aqokeLwQd0enPaBBG3lsIoZYQoEbMSsoj0p+fA6T1n6HDQrOIPMy4OOrL232Z48/210gb0UMf4002O5eUg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7425
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <acN7pSjuMkZl2yhV@monoceros>
 
+On 25-03-26, 07:12, Uwe Kleine-König wrote:
+> On Wed, Mar 25, 2026 at 09:34:55AM +0900, Mikko Perttunen wrote:
+> > On Wednesday, March 25, 2026 1:45 AM Uwe Kleine-König wrote:
+> > > On Mon, Mar 23, 2026 at 11:36:37AM +0900, Mikko Perttunen wrote:
+> > > > @@ -303,7 +300,7 @@ static int tegra_pwm_probe(struct platform_device
+> > > > *pdev)> 
+> > > >  		return ret;
+> > > >  	
+> > > >  	/* Set maximum frequency of the IP */
+> > > > 
+> > > > -	ret = dev_pm_opp_set_rate(&pdev->dev, pc->soc->max_frequency);
+> > > > +	ret = dev_pm_opp_set_rate(&pdev->dev, S64_MAX);
+> > > 
+> > > The documentation comment for dev_pm_opp_set_rate() reads:
+> > > 
+> > > 	Device wanting to run at fmax provided by the opp, should have
+> > > 	already rounded to the target OPP's frequency.
 
-On 24/03/2026 22:57, Rob Herring (Arm) wrote:
-> 
-> On Tue, 24 Mar 2026 12:16:30 +0000, Jon Hunter wrote:
->> The PTP clock for the Tegra234 MGBE device is incorrectly named
->> 'ptp-ref' and should be 'ptp_ref'. This is causing the following
->> warning to be observed on Tegra234 platforms that use this device:
->>
->>   ERR KERN tegra-mgbe 6800000.ethernet eth0: Invalid PTP clock rate
->>   WARNING KERN tegra-mgbe 6800000.ethernet eth0: PTP init failed
->>
->> Although this constitutes an ABI breakage in the binding for this
->> device, PTP support has clearly never worked and so fix this now
->> so we can correct the device-tree for this device. Note that the
->> MGBE driver still supports the legacy 'ptp-ref' clock name and so
->> older/existing device-trees will still work, but given that this
->> is not the correct name, there is no point to advertise this in the
->> binding.
->>
->> Fixes: 189c2e5c7669 ("dt-bindings: net: Add Tegra234 MGBE")
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->>   Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.yaml | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
-> 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.example.dtb: ethernet@6800000 (nvidia,tegra234-mgbe): clock-names:3: 'ptp_ref' was expected
-> 	from schema $id: http://devicetree.org/schemas/net/nvidia,tegra234-mgbe.yaml
+And that is correct, right ? This comment is talking about the max freq possible
+with each OPP and not the highest freq possible with the device. If a device
+supports 5 OPPs (0-4) and if we want to run at the freq mentioned in the OPP3
+entry in DT, then the caller must send a frequency such that clk_round_rate()
+returns the frequency of the OPP3.
 
-Yes this is expected until patch 3/3 is applied.
+In the above case though, we will end up running at the highest freq returned
+by clk_round_rate() and an OPP corresponding to that.
 
-Jon
+> > > I think using S64_MAX is technically fine (assuming there are no issues
+> > > with big numbers in that function), but still it feels wrong to use
+> > > something simpler than the comment suggests. Am I missing something?
+
+I think S64_MAX will work as well, unless clk_round_rate() returns a frequency
+higher than what the OPP table mentions. It may still work, but the values may
+be confusing and inconsistent.
+
+> > Looking at the history of the function, the comment was added in the commit 
+> > below. It seems like it used to be that the opp framework always used the fmax 
+> > of each OPP even if a lower rate was specified, but after the change, the 
+> > caller has to specify the fmax rate if they want that rate specifically. As 
+> > such I don't think it should be an issue in our case, as we're just using the 
+> > rate to find an OPP and don't have a specific one in mind.
+
+Right.
+
+> So the comment describing dev_pm_opp_set_rate() needs an update, right?
+
+Maybe, not sure. But as I mentioned earlier, it is written with the context of
+each OPP's highest freq.
 
 -- 
-nvpublic
-
+viresh
