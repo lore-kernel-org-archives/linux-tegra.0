@@ -1,152 +1,132 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010017.outbound.protection.outlook.com [52.101.61.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20573D1CC1;
-	Wed, 25 Mar 2026 12:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774443512; cv=none; b=IaQp9xroNjbREykYk+md/hZsooy4ldDryHnIymywFrJtg/IYEHOyt+PrK47DMB3ibeQpvuO9Jjdv5cV+5uUamJogVlzUAJtyAGIBNba9WlABFA5A4oXJh7k8a2aZdCxw6533m0KaE3qFXVWAP3oh+lGzgR7mwZcFXKc0yJxxrGU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774443512; c=relaxed/simple;
-	bh=hD3wT6tjlm0FZ6f+/aByElhT2FOrNCcYidkpV2qsHBs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E+NlKeZ/mUeM1S4LvD01amlbH/RpC3NpCALJOu5wSwv63fjFrDwz97eEXSpaSkhAOlTdpnIsaB9hGa5S3bkD5c1tSMzvyQiFBR7AfMAyGkgcKO0jPGBQ+DDfytnORrb5lxCEj1AwgGRWKOTamw9wK5j4cUhb3zcWtylngn1FWww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQxlz/Ib; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72D83D5646;
+	Wed, 25 Mar 2026 12:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774443545; cv=fail; b=JVYiNtG1IwPtFebRBsj0g34B/ZhjmtaBZ8+zEVy/ZyYPmAdgOoMf7Jtjc5e2Nep/fSPPRsZpDfyXczhBgQBpZsMuFb/slYJjUxwE7Xgz3YWQSncKln4p72alV/lRgyMyCZBKJF0W7zNXd6AjbyZ5TfdV3G6bGuHoQMkGfEGY1pM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774443545; c=relaxed/simple;
+	bh=bGow8OG2M1s2CXOxaPajovTaYs5WrhbB09AWVkPLv04=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CvCEHKygJnKgE818acTyQI5sr9FLTkpc/KpIjjhMYSOmoRsNhteZNzsGw2gpzt38GrLobwWtu2WolyfngjA73WrJIFVoaIsnCTHKGqRsHGTOBBTrUqQmC+LqOs5jEP/XxIXQqgb/IQ3DOQxX1A63d909WyYRZbuw4ZBMDyIPLKI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TzrjpC6o; arc=fail smtp.client-ip=52.101.61.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQxlz/Ib"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB66CC4CEF7;
-	Wed, 25 Mar 2026 12:58:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774443511;
-	bh=hD3wT6tjlm0FZ6f+/aByElhT2FOrNCcYidkpV2qsHBs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KQxlz/IbSNGwOhT3DzvNOsfSEQt1Trr9V3reVh+TiD37vnf2gsPnZRxjc2v9djimX
-	 zMU/LDQbbDkjDlL6qlKPNDIpTVEWajhaKCtaaMMez7kvqueQMyFYqilRbGQNHKB92p
-	 Fd7K1J5qCCKVIe6YoJWQXn52wFXY48TaxohXvkWJXvWKIp3tsqvytiHiIqpX+lBj5F
-	 MNoqJFEtdc8Dy7VPxv+EHxlAy107SwOuVc0DolAaLp8AlE7A5qhSCc+G8+i/d55t/x
-	 9dCdhpHlqW3zUNrXl1yb5bexHRAYRLUUkF1pGxT1tcWij9kpZxIDZAsIlPvTGL38kh
-	 /vgu7BTL2ZPAQ==
-Date: Wed, 25 Mar 2026 13:58:29 +0100
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Akhil R <akhilrajeev@nvidia.com>, Frank.Li@nxp.com, 
-	acpica-devel@lists.linux.dev, alexandre.belloni@bootlin.com, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, ebiggers@kernel.org, fredrik.markstrom@est.tech, 
-	jonathanh@nvidia.com, krzk+dt@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux@roeck-us.net, miquel.raynal@bootlin.com, 
-	p.zabel@pengutronix.de, rafael@kernel.org, robert.moore@intel.com, robh@kernel.org, 
-	smangipudi@nvidia.com
-Subject: Re: [PATCH 12/12] arm64: defconfig: Enable I3C and SPD5118 hwmon
-Message-ID: <acPX-clIX4UfBNdM@orome>
-References: <20260319-nano-manatee-of-vastness-fbafa1@quoll>
- <20260319170929.14543-1-akhilrajeev@nvidia.com>
- <67165a1f-9fa3-4853-b530-b1f9d6e4c2cf@kernel.org>
- <acO4NKPDUayny-I4@orome>
- <6342b6fd-9802-49d9-a269-ecb3b70b4604@kernel.org>
- <ed3828b9-fd2d-46c1-b486-c5172f61eafa@kernel.org>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TzrjpC6o"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=STBlD2szd+r7/ANS7wKqgfPyBPtW8Xh8fb7TYUDNX3zfSfFA/K+5NwZEoOeVXmvUqTNjYHKaqo62yRAPNeWAHYx4Npc2uY8TQtSODk7A7NBpz6o2d7jXDQ3Dffb1SYhEnkREGTpBrzodqD68gEW+w+mR4E6eTOLvi0HpFO0y739HWUEQTpOOon90CBcrvcVEikkIVz8P40OL/tI9IqgycfNsKJ30tmB0bGZYOubbdM5kKGjnmStQjGdBEuteKa735IBAVsgyRPPSB4uOxSscd0MOxlbf1Hr6VZpnH3shjee4NhpJQQuDFRkB4i1wTS/SiZZo2Vgw2yS+2P/DZOEbLw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EJqxBUlbJfiCCOCagn33i+DWqY3KSILUfDn2I6ZE8Ns=;
+ b=k1Xy/Rzo6DybXJUCir+1pReCj2VaoA+YZAts31zdrFn7nTs7L+7MavcPwejmJpfmPJGW8BtTveDbh5tHFvwqECvgAZXo3kHoAKiSFk+W5z6XRjcsnBjS7Ao1Sfx+PcZBSKIWkYNAJ2WbHyNmwWHuErrbj3bjfsd0AOvSHrURyTGvOTWtMIiGhFHMDNlPHZZdACArJaOtk04QAfD5pt0mTUaYuwxpkr0bQGVBvR/kT55h2DCZ3And3p78JKOVxbgvvlqjVvQ40a4eaPBm5E1CIQ9El+Uh74dOXHRmzdTvWDpEMaaleOXHKguxPUCRlOXChCwLKBrYTFu2icUc+wesJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EJqxBUlbJfiCCOCagn33i+DWqY3KSILUfDn2I6ZE8Ns=;
+ b=TzrjpC6oOGpaOWVTbJ2GBq2bRd6nxzlOnB92QCU7nstJMUNMv+qDnNTKcSuo2aT/VIRWPGduInOqNPLeORYPZgzmTp02VQFNLhi09SfnC1P23m1T8BvtEkT1fH856b27O7KY2GrZLBevH26nrBsIymf1drgmQpKsEIv+br+x73O1gtJq4a5kwEDfYWGFRRJyJuQ3RwG6THcCz/z3jNX7V9L0Lp5HsrwskfVJBWh8RMS8vqwoxdjzC0Czad6gD7Gw+okk22bcL8i1LPPvAr7xGM+2giuI6B7eZ1IR2ooDW83nmIU3TT/f/ZBVhwjzGkXK9E6965YUnr+wkW+fnGLN9g==
+Received: from BLAPR03CA0151.namprd03.prod.outlook.com (2603:10b6:208:32f::15)
+ by DS2PR12MB9799.namprd12.prod.outlook.com (2603:10b6:8:270::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.6; Wed, 25 Mar
+ 2026 12:57:46 +0000
+Received: from BL02EPF0001A0FF.namprd03.prod.outlook.com
+ (2603:10b6:208:32f:cafe::e7) by BLAPR03CA0151.outlook.office365.com
+ (2603:10b6:208:32f::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9723.31 via Frontend Transport; Wed,
+ 25 Mar 2026 12:57:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BL02EPF0001A0FF.mail.protection.outlook.com (10.167.242.106) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9745.21 via Frontend Transport; Wed, 25 Mar 2026 12:57:46 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 25 Mar
+ 2026 05:57:32 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 25 Mar
+ 2026 05:57:31 -0700
+Received: from sumitg-l4t.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Wed, 25 Mar 2026 05:57:28 -0700
+From: Sumit Gupta <sumitg@nvidia.com>
+To: <treding@nvidia.com>, <jonathanh@nvidia.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <bbasu@nvidia.com>, <sumitg@nvidia.com>
+Subject: [PATCH v2 0/2] soc/tegra: cbb: Add Tegra238 support
+Date: Wed, 25 Mar 2026 18:27:24 +0530
+Message-ID: <20260325125726.2694144-1-sumitg@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hzpx7zw374bolivb"
-Content-Disposition: inline
-In-Reply-To: <ed3828b9-fd2d-46c1-b486-c5172f61eafa@kernel.org>
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FF:EE_|DS2PR12MB9799:EE_
+X-MS-Office365-Filtering-Correlation-Id: ab2e7eb9-6111-4468-de39-08de8a6e1c9a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700016|18002099003|56012099003;
+X-Microsoft-Antispam-Message-Info:
+	GiAkrXPZTvD2aE9T1p3RkmWwcyiun/VQChYwAFpq6sjcy9IFLZlLewe3D/LngX0jZoSS2WkWTHGGdt41EgDNqwFhEivKrcN2zO/8VCUV9IrMyOsHL6/Jtsbig0d/fkEPSFatZf7rnpkqrqB57skEwGG2z8Om7BU9wqb4wMoHpHdTIqAll99Tyu14rpcNKYh+KPXKJ0FvU1brUl52MHxeKVINzZsryG9A5Fb9VCN5CWxpBFQ2goPUYzYOJu9cPXEs88nVziIsRR2/oyIkX6nDG5VIJVenc9G8sdNYePRZxoBJ/yCUrT7pvuj95thsUJ5/DpzxbtnIS7Eq1k4Sfi5SVFyM16LOqdO1KP0lhuw9vujY/jOZjxBkN6m3VKyXMYJLBO8BvKasvrLeOH//IC2bqSUbC2vsalK8EGiGeqBIe6/ghr2ZbBBWHh2fhTe0YDP+E4deFHKGkXepzMdys3yhj0lDYRZsBhy76RROOQj9TMQqG12Q3yQtQDg/dUxlTyPwfPpf1j1xlZxTlQgSwZYFWBNO/3a86yUsjxRWZocHBRHim5HFHXQDBtXaGAxoMGRWJjBpbFOGVui2lIYte/2B8RqTurRTTkMHsWBQz2rqj4TZ0RUTl/sUwOv08toTNZVR3HXnSty4hRQ2l9lZPQGciVqGjblCUbAbqVXURIDZSFRqH1djPVoamNYIZMU140YkbuAbwdOqpBbS/cBzOx8rxaDSUtm0ydkCL6Vji4TyiyjRiZT3wP0FeIQ1n6o70f/meHIwCvavNFugOlS7E/OLZA==
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700016)(18002099003)(56012099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	uXYir8uAGApI2NKodvreNiLeuP/+0RIbyFwnw4iuiDhll9NppkUfizioU6NklzgI1J98qiEP+2fbawhYREy++XQ+yw+ZLvUQOWwLFFAP5SxrGAp7LBYXB47Xtx0bBMvkSSzvc2Wgb069t1rkaGzMVo56TGHx6U2MCR5aRK8D/nvglnZIUdM6c6m8YdIlzLbYhii1Y3LnRSRytxszlABzYbt8cFrWXSao2ZqjWA82akWllsh1ikqjLgaYzGoO+E/nUbjwZjXyZyXQy9Ox3Px4178TMYhWzDnDjOyP19rWPwFG7s+yQ05cyzGz6e0RM0aMXgu8O18jvF4EB/Ue5HW72sopp0c4B+Coc/HeDteG+miKQcCwa0QGzLMmDMokv/+LET2JRJh45xioMfmAoSRWlC0WitobdCC2yICqXBxTX2Tx1ihwAvWtMCYcTMLGUviV
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2026 12:57:46.2219
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab2e7eb9-6111-4468-de39-08de8a6e1c9a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF0001A0FF.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9799
 
+Add support for Control Backbone (CBB) 2.0 based fabrics in Tegra238 SoC.
 
---hzpx7zw374bolivb
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 12/12] arm64: defconfig: Enable I3C and SPD5118 hwmon
-MIME-Version: 1.0
+The series includes:
+- DT binding updates for Tegra238 CBB compatible strings
+- Driver support for Tegra238 AON, APE, BPMP, and CBB fabrics
 
-On Wed, Mar 25, 2026 at 12:03:37PM +0100, Krzysztof Kozlowski wrote:
-> On 25/03/2026 11:59, Krzysztof Kozlowski wrote:
-> > On 25/03/2026 11:31, Thierry Reding wrote:
-> >> On Thu, Mar 19, 2026 at 06:15:14PM +0100, Krzysztof Kozlowski wrote:
-> >>> On 19/03/2026 18:09, Akhil R wrote:
-> >>>> On Thu, 19 Mar 2026 10:40:34 +0100, Krzysztof Kozlowski wrote:
-> >>>>> On Wed, Mar 18, 2026 at 10:57:25PM +0530, Akhil R wrote:
-> >>>>>> Add I3C subsystem support, DesignWare I3C master controller, and
-> >>>>>> SPD5118 hwmon sensor as modules to the defconfig.
-> >>>>>
-> >>>>> Why? If there is no user of that, why would we want it? Your commit=
- msg
-> >>>>> should explain that.
-> >>>>
-> >>>> Ack. This is for Tegra410 which has a DesignWare I3C host controller.
-> >>>> I will add this in the commit message.
-> >>>
-> >>> Board or products. Not SoCs.
-> >>
-> >> Is this a new requirement? I see a bit of both in defconfig changes.
-> >=20
-> > Almost every review from me has it for 2-3 years... And it is a known
->=20
-> And I already explained this to *you* 3 years ago:
->=20
-> https://lore.kernel.org/all/ac8f30a7-fc72-9a44-74b3-a69001bfdaaf@linaro.o=
-rg/
->=20
-> So how this could be a new requirement *now* if three years ago we had
-> exactly same discussion.
->=20
-> I understand question for the first time, but why this being brought up
-> as "why is this a new thing" again?
+v1[1] -> v2:
+- Add DT maintainers for review. Forgot to add earlier.
 
-I have to admit I did not remember what we discussed, so I had to go
-read that exchange again. It sounds to me like we were not discussing
-the specific issue of a missing description as to which particular
-product needed this, but you were instead rejecting the idea of
-enabling drivers that were not strictly necessary like those for PCI
-devices because they were making your life more difficult by building
-drivers by default that you were not interested in.
+Sumit Gupta (2):
+  dt-bindings: arm: tegra: Add Tegra238 CBB compatible strings
+  soc/tegra: cbb: Add support for CBB fabrics in Tegra238
 
-Here you're arguing that you want proof that this is going to be used
-by some upstream-supported device, which are two different things,
-because they might very well be drivers that you're not interested in
-but end up building if documented properly.
+ .../arm/tegra/nvidia,tegra234-cbb.yaml        |   4 +
+ drivers/soc/tegra/cbb/tegra234-cbb.c          | 134 ++++++++++++++++++
+ 2 files changed, 138 insertions(+)
 
-So I find it a little hard to keep track of what is acceptable to you
-and what isn't. Are you objecting to this on the grounds of it bloating
-the kernel build or because you want documentation for what platforms a
-driver is being used on?
+[1] https://lore.kernel.org/lkml/20260303155927.1885297-1-sumitg@nvidia.com/
 
-Our action items will be different depending on what your answer is: if
-you want documentation about what device this will be used for, we'll
-get you that information. If your concern is that it bloats the build we
-drop the patch and will have to ask users to build their own
-configurations.
+-- 
+2.34.1
 
-Maybe to avoid these kinds of discussions in the past you can write down
-your rules about what should go into defconfig and what should not. And
-maybe we can eventually find consensus and find something that people
-can use as a reference.
-
-Thierry
-
---hzpx7zw374bolivb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmnD2/EACgkQ3SOs138+
-s6HyxhAAgO3a+brFWZ1VdK5cf0wxZ0BcT69+soJxbRUx0kW51Bpa+Rf32/sKJPyK
-z5HNnVdrhbNVdh55vGKUfhGBbfckEIp3CimQG+thFA234k/0i+GuIVnNpYxUhupV
-49TA0Oim0rIIXT+WE3YHwx00T6CGaAmTOard+7V3EmYPs2rIPuIHZrEMTKKUSoGd
-jQzCMJjT0kcesHUFxkLmjU3ApA2jF3wBHqdnOcz8kheAM8LBfo1jlDKXrURntbP9
-hLt5tYwnbcLJDYafFZvR69oW90oOCDaqUiwuA3ecuQb//S0TqVMXscZ2GMqJu8PQ
-ydtsjoDdnu44/+40JG17MPZx3ecMbSEZWjii4wa8t9Hcg3IP9sk/JfZFBEer1pM4
-ey5dm/EutJw5b5/R0qmIvpGtV4aOVkun90bXls7w6FiIcGdwLrEj/y6LGsTwxs8L
-PuZfYe6xgyUYHfAyotPrsg0DM5JqMjr3q9qU87GOJYEMdua3Cx7U13nhfnnjiHKu
-3cveaUieh8WWMmrcIzvHuheaihR/l3i7DieFK54bMtsI6EZc3qqIZtyyNN8cDzQL
-p1b7fTASVX+HWr6UPqckgecKBW4mnhOA5gdyeOkwpHwdxJ8v0C+Mq3hdru1joH75
-s9braB6OkIoSzucV628+rkPmpuqEVrsgwCMLGmJOkUMKg/wLZhE=
-=M6Zu
------END PGP SIGNATURE-----
-
---hzpx7zw374bolivb--
