@@ -1,137 +1,87 @@
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721DF35838E
-	for <linux-tegra@vger.kernel.org>; Wed, 25 Mar 2026 06:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8E035294F;
+	Wed, 25 Mar 2026 07:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774420973; cv=none; b=UK+zhguFGk5XIXEYLKnVmQqLOxrRcCDABcrwKK68GeDFbWfyYZIOftidc6IZdV9hWpH3Y/cxNWkeSkz++c2Asq6z1EuSNGdqVbIMl06rm79PEpsviCSbE65hIbqfM0ohQzxx/I6ILWBJFhi05Y/+03865sjQzdbXyA/leV++q8M=
+	t=1774423861; cv=none; b=PeS9Hsthxm28nOXfDoOKN7Qf3st7zTg5z/HAkCJvj6XU1jy27sl9R5oWdjdTV5wwYygZOvLl0hR4nlQWnUw9lrXBWnERrXyavHSj4ACQ6Oj4ShXSbxSNFCYzemdMDC1SveXorvNW2VJk23mtF8p1PEErtmcIvgF6NKmtFhqD1pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774420973; c=relaxed/simple;
-	bh=PxgRccVn8cF02TlACNrcwsh3WON1Nirb5TL1ReGEieE=;
+	s=arc-20240116; t=1774423861; c=relaxed/simple;
+	bh=T+WQgv6CGi+A2a07WHGeBTAyLZMIg8BE4jhyIRJvFaQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tn4kZAaXM6+Vn6XAYQyWjclnvsJkm8kF0HvILhCtDHn8zIL9of95BUNdEFPt4dhGjfuL0UYttfBJ7phApFBlcef1/HpJ/N6usv60LXFEZsNN63BBctXcoTezlFcspXGMVLkjQaSsayjNF++mWymIhVBhTOJdmoWJjGXqq5MLS0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cPagIaJm; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=H3zd6+f7Nc1WfD9OZrbJZQLGInLaKp8HdYGGVqf5V5Bseu3HG48+HZGEJSwJhGC+puysFn1l+FbqoMVafcR3Fy3RwNERe9it4ITrprEy0Grv8LCSqtRwxuuy+Ea1muM1e4VBpJw12w7gIMjHNhhRW3Hi6RBz1cz6+Pd+kx73FEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s9M27qkL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cPagIaJm"
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-8298fad2063so3098653b3a.3
-        for <linux-tegra@vger.kernel.org>; Tue, 24 Mar 2026 23:42:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1774420971; x=1775025771; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/6M4B+9kyrMtUcVVbXTu+8SlccYPDUcc3KdjZB1RGuY=;
-        b=cPagIaJmGj/19semEx7ShU5yUUW9rl+iH2EGWhB3EQdKGhquRqdzvs3UEF6eD9Oa5y
-         +oqWbXI5+AlsUs2I7/W9nZVl+Zg1P/oAtOyzB4wqYYbCw8DftL5KckkXc+eHyYcrwkPb
-         ceqyh+FhWdVOXCBwuInDqlndSFCBONEADL5LJZospY8fRCoCQFSg6UxxzT1lIIPwuP5M
-         m49n8gfn3ob7ttccau6j7/KSxEOkCEFi0x3A1zIrzWaL4YndJMG8NT0iQD99Z9gQQ/24
-         DaTjhXHR7AYnbe3SdY/ctVVDJsv6vfgJ9xSLMAiOa4BaCNma66FGLR3DGYW7k0TOoij7
-         RCKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774420971; x=1775025771;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/6M4B+9kyrMtUcVVbXTu+8SlccYPDUcc3KdjZB1RGuY=;
-        b=clclGPmiKReaioKUaBPTb25bnAcpQooHeeWUkj16gq+ieoyKInrG/1S63BIrvtwkPG
-         PeJfm/5ovqGtYfTkuwm43s5xyaYk0gN8RR57guwGiM88tbmntIl+ti0ss9z9ZII27pN3
-         oYyGbVC30gh+H5rSPHjNvDJjYae05XYTU+zjqyQXIZcMj3APVwrLLICNc7KFUxuMIbom
-         nxXxs3mHySIY+KzvMcJd44NYk3Kl+41r8qnszqwBoGTE91FrgcpOeMA9h+Qm9y9yGMD0
-         NKVvmiVJXnip9woYwV/wRqzI528f3hpMBUIe87HXa/qRBO7Nk1KvaKD+t0PCYqAdFQKx
-         ea9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXCQUNtVCcg7G0j4DrLdF8pcGDY3OYVE6HhWXjt4GjBY1e+UBoTUfZcSI3supC8lzc2M1y8fBqoRVRXOw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+6pQNutu+S9WplshLh6Te+UW3IajvWicrbrm0sK2IDncF781q
-	bo6GzmFd67maSMZ62RWjhIIcknSXol84xhYyebjzgaXDRsD8jlCN5SWE5Bzq6+2LeN4=
-X-Gm-Gg: ATEYQzwHCRY/OOo4TDHAwEg79hLcnNLdkTt2ViGFXJm2QHbx3iwhpRr1lEJiqXi4W65
-	wYOPmNP5KFk7JjVItMhqd9bX9fFMFtAKQqmCFhamfhvhSwikw++fXVHxpJeZvV4N8A1Foqppsky
-	zjTDjjfBVCsqCMNzS/aA2ILgdH3JdBf8mo0k+3zSaFuWUtLmgza0dUCvZU1v2hRdJgMidVqMX8l
-	8gfG66KLcHLEzMNMEcXhRKeHLjh0K+GttC23nGBZPwI/VgsQR051eqCjoBP9ZNHa+A1qQwV5/SC
-	C8xvKz1/cO8+m9I+S/rPKWp/ILR3lOUBU32ZEMe2ESH4nSUPdKkf0JULNpvnMTXNF/ME3dRtQoz
-	zM5TiyA1ECsHJGTL2tRpp2U7AT6OnwlzB7rdy3YPx7aTvKAypoUhgwmrTPdGsaWIJgJR2oULuzT
-	pJFTg6SFRpHkQjZaLUYPIpKc3/
-X-Received: by 2002:a05:6a00:b484:b0:82c:24a6:2a75 with SMTP id d2e1a72fcca58-82c6de79e34mr2217015b3a.10.1774420970591;
-        Tue, 24 Mar 2026 23:42:50 -0700 (PDT)
-Received: from localhost ([122.172.81.200])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82b0409b448sm14055926b3a.39.2026.03.24.23.42.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2026 23:42:49 -0700 (PDT)
-Date: Wed, 25 Mar 2026 12:12:47 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yi-Wei Wang <yiweiw@nvidia.com>, Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 1/5] pwm: tegra: Avoid hard-coded max clock frequency
-Message-ID: <2qvafxg3umwqeshf6eag3ep2zpyfwxbcdj57iorlcrus3tzrti@cpnkeirybxxo>
-References: <20260323-t264-pwm-v1-0-4c4ff743050f@nvidia.com>
- <20260323-t264-pwm-v1-1-4c4ff743050f@nvidia.com>
- <acKggw9F7oULLEuJ@monoceros>
- <4405239.kQq0lBPeGt@senjougahara>
- <acN7pSjuMkZl2yhV@monoceros>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9M27qkL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D85FC4CEF7;
+	Wed, 25 Mar 2026 07:30:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774423860;
+	bh=T+WQgv6CGi+A2a07WHGeBTAyLZMIg8BE4jhyIRJvFaQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s9M27qkLmEGWvBvR/99BjIjP4EQ/GNcAWrKW7BuEV8n0Ooc5Lvi/yU6UhuTpUxipV
+	 KW4mNrQCY14i0iL/mhYBbBNr3C3rPc5S7RBe7/tX8HvdiiDGhX3YzrrG3M1u1uskZM
+	 H9IvEYOYdPeC9mAYsfWct6aDT68gVWHaO48gpLneyTCMPFDZsQrpcEsnSD6rzxETh/
+	 DGuj7Fit/+3VqysvE/afnxeKh0gJSfQLPEPWuAipoBwm3EEm2+xUprAxRLcjVP8B/D
+	 OPc9crQA70LAr2H9zYOWAQI6k3g/Lg950HPJ1x4TCkANKHqqiWu1wLbvxSdrpowUaa
+	 HriffsIDXsKrQ==
+Date: Wed, 25 Mar 2026 08:30:56 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-ide@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ata: ahci_tegra: remove kcalloc
+Message-ID: <acOPMJVsxpBltqGX@ryzen>
+References: <20260324211629.26924-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <acN7pSjuMkZl2yhV@monoceros>
+In-Reply-To: <20260324211629.26924-1-rosenp@gmail.com>
 
-On 25-03-26, 07:12, Uwe Kleine-König wrote:
-> On Wed, Mar 25, 2026 at 09:34:55AM +0900, Mikko Perttunen wrote:
-> > On Wednesday, March 25, 2026 1:45 AM Uwe Kleine-König wrote:
-> > > On Mon, Mar 23, 2026 at 11:36:37AM +0900, Mikko Perttunen wrote:
-> > > > @@ -303,7 +300,7 @@ static int tegra_pwm_probe(struct platform_device
-> > > > *pdev)> 
-> > > >  		return ret;
-> > > >  	
-> > > >  	/* Set maximum frequency of the IP */
-> > > > 
-> > > > -	ret = dev_pm_opp_set_rate(&pdev->dev, pc->soc->max_frequency);
-> > > > +	ret = dev_pm_opp_set_rate(&pdev->dev, S64_MAX);
-> > > 
-> > > The documentation comment for dev_pm_opp_set_rate() reads:
-> > > 
-> > > 	Device wanting to run at fmax provided by the opp, should have
-> > > 	already rounded to the target OPP's frequency.
+Hello Rosen,
 
-And that is correct, right ? This comment is talking about the max freq possible
-with each OPP and not the highest freq possible with the device. If a device
-supports 5 OPPs (0-4) and if we want to run at the freq mentioned in the OPP3
-entry in DT, then the caller must send a frequency such that clk_round_rate()
-returns the frequency of the OPP3.
+subject is a bit misleading:
+"remove kcalloc"
+you are removing devm_kcalloc(), so device managed.
 
-In the above case though, we will end up running at the highest freq returned
-by clk_round_rate() and an OPP corresponding to that.
 
-> > > I think using S64_MAX is technically fine (assuming there are no issues
-> > > with big numbers in that function), but still it feels wrong to use
-> > > something simpler than the comment suggests. Am I missing something?
+On Tue, Mar 24, 2026 at 02:16:29PM -0700, Rosen Penev wrote:
+> Combine allocations into one by using a flexible array member.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  drivers/ata/ahci_tegra.c | 15 ++++++---------
+>  1 file changed, 6 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/ata/ahci_tegra.c b/drivers/ata/ahci_tegra.c
+> index 44584eed6374..5972fe04ff3f 100644
+> --- a/drivers/ata/ahci_tegra.c
+> +++ b/drivers/ata/ahci_tegra.c
+> @@ -175,8 +175,9 @@ struct tegra_ahci_priv {
+>  	struct reset_control	   *sata_cold_rst;
+>  	/* Needs special handling, cannot use ahci_platform */
+>  	struct clk		   *sata_clk;
+> -	struct regulator_bulk_data *supplies;
+>  	const struct tegra_ahci_soc *soc;
+> +
+> +	struct regulator_bulk_data supplies[];
 
-I think S64_MAX will work as well, unless clk_round_rate() returns a frequency
-higher than what the OPP table mentions. It may still work, but the values may
-be confusing and inconsistent.
+Personally I'm not a big fan of flexible array members, as there can be
+only one. And if you use it you want to use counted_by().
 
-> > Looking at the history of the function, the comment was added in the commit 
-> > below. It seems like it used to be that the opp framework always used the fmax 
-> > of each OPP even if a lower rate was specified, but after the change, the 
-> > caller has to specify the fmax rate if they want that rate specifically. As 
-> > such I don't think it should be an issue in our case, as we're just using the 
-> > rate to find an OPP and don't have a specific one in mind.
+Yes, there are two device managed allocations. But is that so bad?
 
-Right.
+Since it is device managed, it will get freed on device removal anyway.
 
-> So the comment describing dev_pm_opp_set_rate() needs an update, right?
 
-Maybe, not sure. But as I mentioned earlier, it is written with the context of
-each OPP's highest freq.
-
--- 
-viresh
+Kind regards,
+Niklas
