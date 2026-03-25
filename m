@@ -1,329 +1,204 @@
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010031.outbound.protection.outlook.com [52.101.46.31])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C383E4C86;
-	Wed, 25 Mar 2026 15:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.31
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774453543; cv=fail; b=ubXg25dXkYGv+HJzhzuAVEALsE/Hp1uMSqpQ9NfpCm7J6cAeroY26JxyahUTBTgGwA3/OwYZD7Svzg2VgcxILI15b35MRHZ1wSekqD/qlsf38L6cNN3SbqZtBE3ZoFaTld1RXS+1M1Lya7e2CaFRDwo5C0DjcNGDrrEQIzbuxq4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774453543; c=relaxed/simple;
-	bh=7kokPLZ+jrcWgfpuqBZ8br3zWEZ9uhAPb+yL7kwKa3Q=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=dgvpnXFXMkTh65xsFlX4Lz68jqC0KfRU/tssjvKlq6AO35MXPKkiu8uGFfcxoCjFDX1mGwMr0owhlO+N8gqU/4PivnvEFEr/3G2tJqiWqvv5PEve009q2fLHrO0Tg0yADdjprGUPO1Ku+p48OSOvec/34w+2CPS3Bdk8OxkBqiM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uuEAHXPS; arc=fail smtp.client-ip=52.101.46.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB0B3E275D
+	for <linux-tegra@vger.kernel.org>; Wed, 25 Mar 2026 16:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774454506; cv=none; b=hEk9YCJqjPlaHCVM/mEtbqHxsoYSVkqnSob594ogjlObiuRZu8eg+aQL9/CTTPJ0pzBraopQ0WvC6J/ZzqronN5OH5625hMxeLFcELzNOAb/DW0ym2vhEnnGvF5OxPCtubO7OyGiAucNiHVVWHEiUQ/RfY1SC7LDYv/sETmPyE4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774454506; c=relaxed/simple;
+	bh=aldmRPDOiiniGw503t8LDK2MsDSx7z+uZZ/KCfzSBN4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rZ+9yOsO3XpYVZQfYRC1WRhs5x25WniB666wtTmNxZweNlUfN8XBeZ3DKGPG6MkTKnrKyImaCHoy5Otyabb0EePp5Mzd4u6KI4OdUxi4F4agbf6EUPEDoTdBMBrr54Z09J2z57IMfxJOK3hkEnmg+5hDVEIo8eH66eUhPHrl8ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gk0/ZngP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uuEAHXPS"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PdkgID8+NqbDP3WVaHjxN8bXIY3rrqLndgl8TqS+IiuvokGK9dPDGhO2I3NI5wMS+BMV4d+IuLphlVOvaBBDi0QkIG/whsopHUmQnC8+/KiZSUJrWn3t/Srt4jW8lv2KtKiSgWH9aEE3T2IAPcA3PrKc6EoRfKgPl/e8BIBq1CllRqnFIkncG3SrmPCOytLDeOuVhLscD23+CGWg3gHFSntDskraxMDDjLwMqeEKQ7sre9Gk0BzuYN/Lp2+96Drh13jGBY0hKVZsX4dcmN5k/KR/iREqZIrPGcKyrv/umhpNRE8e+YVWHLE26mmBbhQue8ynqWONhQZbTjRuiWVcuw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NkB2zl4u5F7twFsOTlBUyWOOiXQW8I4x8PA9OD8wKo4=;
- b=GAeQ0ZsFH1ZKycBq02UUTu/aoucO488b/QcM66Mw0uoY3ALIoXMME0Ni7jpGI6qIYgfMOqeZ4AE358kr8avaFngOI/f4bBpRYACSeSFncq7CKQNOD86O/MH2ZK4SibGPy/dp8l2MEIODuE9q867qE/FHVXZmSSpNHHwmJjxZUb9275HkgIPuMFz2+pQ48OpuTR6WsDLBx8pMf+0Z/PCvk9FD5X4uOh/cdGlj4PRocrnaXvDIX9J2PGrBQqO3H5FmdTt0JlnS8JGdBoxjCw6kBUAy5fINTX/FTmjPbf0IiViLvyF6nQ7mQoisSNh505BeN2EFv0KJ+HFnw/a13JvOHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NkB2zl4u5F7twFsOTlBUyWOOiXQW8I4x8PA9OD8wKo4=;
- b=uuEAHXPSf9dmIEVBdg1KvhIE5jP/WNkIyG8i3i+Ef8dhZKS9r31sDHxyUVhQw5R9zxIyiW/OiE+aKIoJGrY95oG/ujIybr8dIIZy7d6nlceqVmbkI4JuyMQ6ZH0lTR1gkGYUIkzv5U1wp/CfKmjlU7s/L3+Wijloh3G5BHnryuuMWi0Z4CW3ZpHH+3v/v0h3aoaKBlDp9W4b54Pyk8t6b0/FeOrF9OPBpyvulOpZomqAQIw4i4xe9n/JeZOZazAaxJXFZ48HbJk4hY7xMzy4N9H7Xcqtrp5BsV+R1RZ2j9dpRXHgOXfe3TmC613wOPWONrihpdqqmHBMQxa2m+JQ0g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
- by PH7PR12MB7307.namprd12.prod.outlook.com (2603:10b6:510:20b::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.21; Wed, 25 Mar
- 2026 15:45:39 +0000
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391%6]) with mapi id 15.20.9769.004; Wed, 25 Mar 2026
- 15:45:37 +0000
-Message-ID: <b6bae185-52cd-48bf-8638-53f68004f987@nvidia.com>
-Date: Wed, 25 Mar 2026 15:45:34 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] soc/tegra: pmc: Add PMC support for Tegra410
-To: Kartik Rajput <kkartik@nvidia.com>, thierry.reding@gmail.com,
- jirislaby@kernel.org, pshete@nvidia.com, chleroy@kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260324082847.550771-1-kkartik@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20260324082847.550771-1-kkartik@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DM6PR14CA0048.namprd14.prod.outlook.com
- (2603:10b6:5:18f::25) To DS2PR12MB9750.namprd12.prod.outlook.com
- (2603:10b6:8:2b0::12)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gk0/ZngP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E624C2BCB9
+	for <linux-tegra@vger.kernel.org>; Wed, 25 Mar 2026 16:01:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774454506;
+	bh=aldmRPDOiiniGw503t8LDK2MsDSx7z+uZZ/KCfzSBN4=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=Gk0/ZngPQjeGn36eOsdWZQWLWprEWy3AkR5hni/lE8ONxCfP3wN9iJXuu5vn2pyMJ
+	 nJiG+ExwL18ilB8uMi+50Px+48WLD35cA/KJzXl30cOrLm1XHkP6/u7CfzuhuMgYBp
+	 DDxza3CMzAS8sMQyLGYMo2oiYPpT8nggzBl8focYuTSXEM2IAcs5OZqZ1j3YzIY+XT
+	 1I001RKPlZrVl+U7XDdwRzb6asn8XwzNOGgT85IMqibPiISmDfL5M3GvsTJxSjcZ3J
+	 RB4byEEi8D5lGMQp3KZ85qQNPUmFfiaaLH5yO8GZd2D+YWbKD3ud9QCm4xCljSwmLN
+	 AM82iX3FkN6qw==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-38bf47a6f02so21100561fa.3
+        for <linux-tegra@vger.kernel.org>; Wed, 25 Mar 2026 09:01:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWtVCxkHHVB2lyKrqSdueI0qjrvo+YYIpI4Jg8ENTwfFMAxP5rjNzsKlVpIra4R2nVv7vt99RRPeKfZpA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzbkyv/RCdqWeuEudeQsJTX9jN56G2RLB303Rqg1H5b63TOf/qJ
+	4W7eZ0cPEqIkzP1kToI2Kj3CL8LyAE950IYkQt0yM0al7yQ7R+oVwWIcaJNmVrQWAn6pdfGHcOR
+	49Ktsyf76/lutWIlo+R0EB9lDe3/7LlM=
+X-Received: by 2002:a05:651c:1469:b0:38c:6b7:ad47 with SMTP id
+ 38308e7fff4ca-38c43072d48mr15879491fa.7.1774454504493; Wed, 25 Mar 2026
+ 09:01:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|PH7PR12MB7307:EE_
-X-MS-Office365-Filtering-Correlation-Id: 218027bb-29ec-4ce4-e8b9-08de8a858f4a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|10070799003|1800799024|376014|56012099003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	3SQ5SOHPxGh4s15F4xmyMg+V5eO+hc2C8mwmP8kiINw1aXCx3J8e1y8dvG+XVzmAiolRGSzNJ9kdRuzo+5iEvZ9aKHVpAEWUF24TQ6csY8Yr0XVWgZXvjBxyjBQhcgi7FU755y1AGBTiLUYm+by+vdJJTVlMSwsdyeme8OOX2SpQDVtuLvFA1qAHgeJUJvx9a33qPfH09Gnx+GgI1pKi+g5OHniKZ+t9LLH5ACu4MF5UD6Q0sopkRWHH1xztckajvjy8AdSWHnceYVCDiND6AtYwzfo0eEEHlKROTJKq/1VVVi7XGNA2mncOMlPDbVf78v/3xDkOYAdIMKNjLtJHY3xdPGnKrPs9mAXGd08cbka5KzFok/hAC7KcOjsFJNwgw38WOM0zpWYdPoXbHuJWAe1d00zMZSSGlSxmCt53Tyj0vhO9t6NJCpDDNf7bTFMz2FGYYoto2cyeJ0hYpw2Or2betZ7ygY/q8/SiQaHoTHu2m9LJS9j8Yk6wGtUhevOY05H3g+kyNh3VJi02dX/G6Ac0dGHwF27JHPmXaSL5LzozKMg/zaak5IoAa2ydn6pKCoUGeImJT2c9em16aEuN4/Og3xBlRkpU4feRY1M3U7wh2n5iN7P/uxBNWTX1DBE9zrCd6vczhw88oaLSSHOAo2qJr2bHm/611H+q61Kd7Qo7R3ThwlrkBabAMgZ77g2IS5keW5DblVC336QkEKdmNQLKlYBUwzadTe1afUrfXXg=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(1800799024)(376014)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?akllZFdVYW00aU4wSmFZQWgxQTNId2w1ZXEyR08wdkNtbmFhalhOVVpMMy85?=
- =?utf-8?B?N3BZblhqTzloM3llWDdZbjk1UVpKeDRMcGNHTmswcFNiS2lTdWZyYTFTbEJC?=
- =?utf-8?B?bUFtQ0QwMkM5ZXk1VURybkF6Z2lXMi9kUVlPMnJYSUZudEwzdHVYbzVHS0Jk?=
- =?utf-8?B?MlZjQ29vT0JFVUZ3MFlrbnZNd0FOLzAxSHlPUDUyTVlNQ2U5WFcwUzk3Rk1L?=
- =?utf-8?B?Qzhta01lV2YrRmdjVGhKU2ZhN3VjNHpYbXlDam9SQ2U4cnRjbU9yOEJMY2V2?=
- =?utf-8?B?blBuYWhqem16Tk5zaHVKNXRKNnM1UnhNUW90U0RWMkViaTdkOGw2RWd6blJR?=
- =?utf-8?B?WWNXV1M4MlB3aWNNQlVoSkZpeDd5Z0YvTktIelMzTHpFUkFqcHAvNnUvY3l5?=
- =?utf-8?B?R3FXdWdSU0QzWlhEOVJpWGhlVVp2NnlDbWNpUE9GWVM3NGc4b0lJRldqaWdu?=
- =?utf-8?B?Wk5xK1FTVVZwemQ1WlVLcHh3QnF2R3ZuN3NGU0RiQ2pvc1VtVTJ1bEYvcUts?=
- =?utf-8?B?SE81UWFoaEhtZHRiZzREVSs3UEVDR3dseDdWUjh1Z24rMjZuWGtabGRvL0Jo?=
- =?utf-8?B?Q1ZrVUZXYjhZTU9jbGV5ckJ1cC9DT0NtRmE3WlRzWTdoZEt6OEFzQ3daMjlk?=
- =?utf-8?B?Yzh5K09rRXhVTWg1N0ZNcFA5cjlsTjF4ZG5tTXQxQk9tSFRyd05LbzR1bk5R?=
- =?utf-8?B?c2FhUUVmTWJnZk1sMHAxU2dRZkpRL2xDdU5IZU5OQWZwL1FYa1U2RkN3U3Zl?=
- =?utf-8?B?ak9hcU1Xclg2ajMyREprL29jdW9Jd29iVmhlbjNsanh4eUJQWE5aR1RMd2hS?=
- =?utf-8?B?UWxhK3hoUlg4SmVzRmFML1FpUDZjWWROOXBHL3BuU1lJVnc2d2dqSXN2QmlD?=
- =?utf-8?B?TnhSQm1XQ1lBM2pmamFNVVhjY0RYYStpQmh3VXNBOUFQKzFUZ1IycFlXZCtG?=
- =?utf-8?B?SmNWWmtMZFNBT2lQUWdlL05UWGtRbU1JTGpwSSt3UFRaMkhYOXQrRExCdzRY?=
- =?utf-8?B?b2xwRFFyaTV0M2o1K3J2ZVV1ZThsVEgweVltZjZyeFhoaUNlME5wQmVtWEdr?=
- =?utf-8?B?R3RKNC9sRVRxR0VzV0VrT0krek80ejVRSFl6Wno3VU4zdUY4ZHg5Tkh0NHR1?=
- =?utf-8?B?ejV3UFgrRk14WFdXdDFodThFZzFLZnM1SlJSMkhwVFVaTUw1WG9IYThTQ0lL?=
- =?utf-8?B?emIrNkg5Z3Z2TWt1WEd4YmdSNi9uVW5LMVEra00zVzZmak53dkwwRS90UHFY?=
- =?utf-8?B?TkRJdEoxUDJ3STdaa2kzTVZOb200WWs3cCtQckxtaDErcDlzMFJnSXBCNndN?=
- =?utf-8?B?b0pQZ2k0YSsyMGxmenZkY2FzQkFoWllES1h2OVhyV08xaS95WjNjL3lraitD?=
- =?utf-8?B?a0hVSUx0cXhDalI0UTUrdkVTZmhLQXZBZkgzeGZMYU5XWjR1U0dCZ2hjWXpU?=
- =?utf-8?B?V0UzekdGRnlQM3ZnZU95Sm1BS0hqZGhKcnV0QW5tamlsVW51SFlsb29VcHdN?=
- =?utf-8?B?bHRCU0ZVMU5QYnBQYm0wNndiZmdlRy9yeVJtRWY3N3lUYnpFYUp6MG5lMEdt?=
- =?utf-8?B?UFpZUmIvNC9tRU80cGFGVU1neWM2QnNxbWVXVkRQMHUrSndvWHV1a0x1cVFB?=
- =?utf-8?B?U3NmVE50NzFzM09CRThSRmg4ditld0tyb0VHZkM0QytDSXVOTHJWTHpPTSto?=
- =?utf-8?B?V1VDaWJLVGtWQUJOY2NsN0pEWFhQY2EwaEVPajV3ZEFOR0pkeE0xUjVyNG1v?=
- =?utf-8?B?K2taRWxFcXlOcWVMa2l6ZnBBc254ekIxQTdzaGdqbXhTYTA5QVlqRnhxNC84?=
- =?utf-8?B?OW4xQW9sczR0Qmt4cHNOU1lDNGJ5Z2xWRkdWb1ZvMXJkV2lWeFp2a3ptZ0pI?=
- =?utf-8?B?enBiYkN4TUg5RjV3QXF4ZisrOHBHZWQvODg3T3dSQ3gvVW10SEovQTgzMVNh?=
- =?utf-8?B?b1FtRHhvL252YmZnRGhabE9Fd1JIK3J0emw5eUhHUWEwTG5NdkZJVzVoTHZY?=
- =?utf-8?B?SVh4bEZ2VUxxVWlQWDN0am8vbTBQdit6a25iU1pwNTRwTW9aUk42U05UZ0sr?=
- =?utf-8?B?V0c3emEzdDJjdWZGUWs3MjVSUXVLZzRNdGgzYmx6RXBWOTI2SUx3b2I5Qmho?=
- =?utf-8?B?V01IZEhkajJuMDY5MS92RzEvNEM2WVZGRVNLbzZ2YW51WUlPQlNXWWFnOG1C?=
- =?utf-8?B?b0hFaWZSVnlrTGVCSjBBaEk0WjZYc0l6S1A3U3U5RXBCalBRQUNISmU2bmFm?=
- =?utf-8?B?RkZwNTVkN2YzTTJ5V2htbS9hTytFRitNTlhLbjFxZUExcndPV09HMzF2UnlV?=
- =?utf-8?B?NXEzVUg1cm5mWEpWajJRbHhzUGlUdU1QdGpxYzF4T3hZSHZyUXZ4RUdwY2wr?=
- =?utf-8?Q?ZrVkV8JJNPMsQY0TUE9yl5Zq9Kme7PJh/NAILq8hD7rkg?=
-X-MS-Exchange-AntiSpam-MessageData-1: M6ErQqe2nLba9w==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 218027bb-29ec-4ce4-e8b9-08de8a858f4a
-X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2026 15:45:37.4451
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: M64/EBBzLJtCCxH43Yc0eCKMxlifSWV/bQ3vvJoi5Te0SVDKeJ8qxcsVNiFioVOwbI0WQreCX3f6LsRztbln9g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7307
+References: <20260324-deverr-v1-0-7e591cce33a3@gmail.com> <20260324-deverr-v1-3-7e591cce33a3@gmail.com>
+In-Reply-To: <20260324-deverr-v1-3-7e591cce33a3@gmail.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Thu, 26 Mar 2026 00:01:31 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66++ZtfJ_K=de9ah45sqK0sNDkPr0B64C_U+WMhW7jc-w@mail.gmail.com>
+X-Gm-Features: AQROBzDy-rsBXq4Ru9U4FVjZxHD70RtzjKuDaTmPj80U_CHIL3nYWTBGwt2KYN8
+Message-ID: <CAGb2v66++ZtfJ_K=de9ah45sqK0sNDkPr0B64C_U+WMhW7jc-w@mail.gmail.com>
+Subject: Re: [PATCH 03/10] i2c: sun6i-p2wi: Replace dev_err() with
+ dev_err_probe() in probe function
+To: Atharv Dubey <atharvd440@gmail.com>
+Cc: Till Harbaum <till@harbaum.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Laxman Dewangan <ldewangan@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>, Alain Volmat <alain.volmat@foss.st.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Patrice Chotard <patrice.chotard@foss.st.com>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Jean Delvare <jdelvare@suse.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com, 
+	Enrico Zanda <e.zanda1@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 24/03/2026 08:28, Kartik Rajput wrote:
-> Tegra410 uses PMC driver only to retrieve system reset reason using PMC
-> sysfs. Tegra410 uses ACPI to probe PMC, unlike device-tree boot it does
-> not use the early initialisation sequence.
-> 
-> Add PMC support for Tegra410, which uses the PMC driver to retrieve
-> the system reset reason via PMC sysfs.
-> 
-> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+On Wed, Mar 25, 2026 at 2:27=E2=80=AFAM Atharv Dubey <atharvd440@gmail.com>=
+ wrote:
+>
+> From: Enrico Zanda <e.zanda1@gmail.com>
+>
+> This simplifies the code while improving log.
+>
+> Signed-off-by: Enrico Zanda <e.zanda1@gmail.com>
+> Signed-off-by: Atharv Dubey <atharvd440@gmail.com>
 > ---
-> Changes in v2:
-> 	* Updated commit message.
-> ---
->   drivers/soc/tegra/pmc.c | 128 ++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 128 insertions(+)
-> 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index a1a2966512d1..f17dcfd0aeae 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -11,6 +11,7 @@
->   
->   #define pr_fmt(fmt) "tegra-pmc: " fmt
->   
-> +#include <linux/acpi.h>
->   #include <linux/arm-smccc.h>
->   #include <linux/clk.h>
->   #include <linux/clk-provider.h>
-> @@ -3095,12 +3096,30 @@ static void tegra_pmc_reset_suspend_mode(void *data)
->   	pmc->suspend_mode = TEGRA_SUSPEND_NOT_READY;
->   }
->   
-> +static int tegra_pmc_acpi_probe(struct platform_device *pdev)
-> +{
-> +	pmc->soc = device_get_match_data(&pdev->dev);
-> +	pmc->dev = &pdev->dev;
-> +
-> +	pmc->base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(pmc->base))
-> +		return PTR_ERR(pmc->base);
-> +
-> +	tegra_pmc_reset_sysfs_init(pmc);
-> +	platform_set_drvdata(pdev, pmc);
-> +
-> +	return 0;
-> +}
-> +
->   static int tegra_pmc_probe(struct platform_device *pdev)
->   {
->   	void __iomem *base;
->   	struct resource *res;
->   	int err;
->   
-> +	if (is_acpi_node(dev_fwnode(&pdev->dev)))
-> +		return tegra_pmc_acpi_probe(pdev);
-> +
->   	/*
->   	 * Early initialisation should have configured an initial
->   	 * register mapping and setup the soc data pointer. If these
-> @@ -4615,6 +4634,108 @@ static const struct tegra_pmc_soc tegra264_pmc_soc = {
->   	.max_wake_vectors = 4,
->   };
->   
-> +static const char * const tegra410_reset_sources[] = {
-> +	"SYS_RESET_N",		/* 0x0 */
-> +	"CSDC_RTC_XTAL",
-> +	"VREFRO_POWER_BAD",
-> +	"FMON_32K",
-> +	"FMON_OSC",
-> +	"POD_RTC",
-> +	"POD_IO",
-> +	"POD_PLUS_IO_SPLL",
-> +	"POD_PLUS_IO_VMON",	/* 0x8 */
-> +	"POD_PLUS_SOC",
-> +	"VMON_PLUS_UV",
-> +	"VMON_PLUS_OV",
-> +	"FUSECRC_FAULT",
-> +	"OSC_FAULT",
-> +	"BPMP_BOOT_FAULT",
-> +	"SCPM_BPMP_CORE_CLK",
-> +	"SCPM_PSC_SE_CLK",	/* 0x10 */
-> +	"VMON_SOC_MIN",
-> +	"VMON_SOC_MAX",
-> +	"NVJTAG_SEL_MONITOR",
-> +	"L0_RST_REQ_N",
-> +	"NV_THERM_FAULT",
-> +	"PSC_SW",
-> +	"POD_C2C_LPI_0",
-> +	"POD_C2C_LPI_1",	/* 0x18 */
-> +	"BPMP_FMON",
-> +	"FMON_SPLL_OUT",
-> +	"L1_RST_REQ_N",
-> +	"OCP_RECOVERY",
-> +	"AO_WDT_POR",
-> +	"BPMP_WDT_POR",
-> +	"RAS_WDT_POR",
-> +	"TOP_0_WDT_POR",	/* 0x20 */
-> +	"TOP_1_WDT_POR",
-> +	"TOP_2_WDT_POR",
-> +	"PSC_WDT_POR",
-> +	"OOBHUB_WDT_POR",
-> +	"MSS_SEQ_WDT_POR",
-> +	"SW_MAIN",
-> +	"L0L1_RST_OUT_N",
-> +	"HSM",			/* 0x28 */
-> +	"CSITE_SW",
-> +	"AO_WDT_DBG",
-> +	"BPMP_WDT_DBG",
-> +	"RAS_WDT_DBG",
-> +	"TOP_0_WDT_DBG",
-> +	"TOP_1_WDT_DBG",
-> +	"TOP_2_WDT_DBG",
-> +	"PSC_WDT_DBG",		/* 0x30 */
-> +	"TSC_0_WDT_DBG",
-> +	"TSC_1_WDT_DBG",
-> +	"OOBHUB_WDT_DBG",
-> +	"MSS_SEQ_WDT_DBG",
-> +	"L2_RST_REQ_N",
-> +	"L2_RST_OUT_N",
-> +	"SC7"
-> +};
-> +
-> +static const struct tegra_pmc_regs tegra410_pmc_regs = {
-> +	.rst_status = 0x8,
-> +	.rst_source_shift = 0x2,
-> +	.rst_source_mask = 0xfc,
-> +	.rst_level_shift = 0x0,
-> +	.rst_level_mask = 0x3,
-> +};
-> +
-> +static const struct tegra_pmc_soc tegra410_pmc_soc = {
-> +	.supports_core_domain = false,
+>  drivers/i2c/busses/i2c-sun6i-p2wi.c | 55 ++++++++++++++-----------------=
+------
+>  1 file changed, 20 insertions(+), 35 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-sun6i-p2wi.c b/drivers/i2c/busses/i2c=
+-sun6i-p2wi.c
+> index fb5280b8cf7f..dffbe776a195 100644
+> --- a/drivers/i2c/busses/i2c-sun6i-p2wi.c
+> +++ b/drivers/i2c/busses/i2c-sun6i-p2wi.c
+> @@ -194,22 +194,16 @@ static int p2wi_probe(struct platform_device *pdev)
+>         int ret;
+>
+>         of_property_read_u32(np, "clock-frequency", &clk_freq);
+> -       if (clk_freq > P2WI_MAX_FREQ) {
+> -               dev_err(dev,
+> -                       "required clock-frequency (%u Hz) is too high (ma=
+x =3D 6MHz)",
+> -                       clk_freq);
+> -               return -EINVAL;
+> -       }
+> +       if (clk_freq > P2WI_MAX_FREQ)
+> +               return dev_err_probe(dev, -EINVAL,
+> +                                    "required clock-frequency (%u Hz) is=
+ too high (max =3D 6MHz)",
+> +                                    clk_freq);
+>
+> -       if (clk_freq =3D=3D 0) {
+> -               dev_err(dev, "clock-frequency is set to 0 in DT\n");
+> -               return -EINVAL;
+> -       }
+> +       if (clk_freq =3D=3D 0)
+> +               return dev_err_probe(dev, -EINVAL, "clock-frequency is se=
+t to 0 in DT\n");
+>
+> -       if (of_get_child_count(np) > 1) {
+> -               dev_err(dev, "P2WI only supports one target device\n");
+> -               return -EINVAL;
+> -       }
+> +       if (of_get_child_count(np) > 1)
+> +               return dev_err_probe(dev, -EINVAL, "P2WI only supports on=
+e target device\n");
+>
+>         p2wi =3D devm_kzalloc(dev, sizeof(struct p2wi), GFP_KERNEL);
+>         if (!p2wi)
+> @@ -226,11 +220,9 @@ static int p2wi_probe(struct platform_device *pdev)
+>         childnp =3D of_get_next_available_child(np, NULL);
+>         if (childnp) {
+>                 ret =3D of_property_read_u32(childnp, "reg", &target_addr=
+);
+> -               if (ret) {
+> -                       dev_err(dev, "invalid target address on node %pOF=
+\n",
+> -                               childnp);
+> -                       return -EINVAL;
+> -               }
+> +               if (ret)
+> +                       return dev_err_probe(dev, -EINVAL,
+> +                                            "invalid target address on n=
+ode %pOF\n", childnp);
+>
+>                 p2wi->target_addr =3D target_addr;
+>         }
+> @@ -245,26 +237,20 @@ static int p2wi_probe(struct platform_device *pdev)
+>                 return irq;
+>
+>         p2wi->clk =3D devm_clk_get_enabled(dev, NULL);
+> -       if (IS_ERR(p2wi->clk)) {
+> -               ret =3D PTR_ERR(p2wi->clk);
+> -               dev_err(dev, "failed to enable clk: %d\n", ret);
+> -               return ret;
+> -       }
+> +       if (IS_ERR(p2wi->clk))
+> +               return dev_err_probe(dev, PTR_ERR(p2wi->clk),
+> +                                    "failed to enable clk\n");
+>
+>         parent_clk_freq =3D clk_get_rate(p2wi->clk);
+>
+>         p2wi->rstc =3D devm_reset_control_get_exclusive(dev, NULL);
+> -       if (IS_ERR(p2wi->rstc)) {
+> -               dev_err(dev, "failed to retrieve reset controller: %pe\n"=
+,
+> -                       p2wi->rstc);
+> -               return PTR_ERR(p2wi->rstc);
+> -       }
+> +       if (IS_ERR(p2wi->rstc))
+> +               return dev_err_probe(dev, PTR_ERR(p2wi->rstc),
+> +                                    "failed to retrieve reset controller=
+\n");
+>
+>         ret =3D reset_control_deassert(p2wi->rstc);
+> -       if (ret) {
+> -               dev_err(dev, "failed to deassert reset line: %d\n", ret);
+> -               return ret;
+> -       }
+> +       if (ret)
+> +               return dev_err_probe(dev, ret, "failed to deassert reset =
+line\n");
 
-Not needed since there are no powergates
+You could also simplify this whole block with
+devm_reset_control_get_exclusive_deasserted().
 
-> +	.num_powergates = 0,
-> +	.powergates = NULL,
-> +	.num_cpu_powergates = 0,
-> +	.cpu_powergates = NULL,
-> +	.has_tsense_reset = false,
+Either way,
 
-Not needed as you have a different probe function.
+Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
 
-> +	.has_gpu_clamps = false,
 
-It should not be necessary to explicitly set this because this is only 
-used if there are powergates.
-
-> +	.needs_mbist_war = false,
-
-Same with this.
-
-> +	.has_impl_33v_pwr = false,
-
-This is only needed for if you have IO pads.
-
-> +	.maybe_tz_only = false,
-
-Only used in early init and so also not needed.
-
-> +	.num_io_pads = 0,
-> +	.io_pads = NULL,
-> +	.num_pin_descs = 0,
-> +	.pin_descs = NULL,
-> +	.regs = &tegra410_pmc_regs,
-> +	.init = NULL,
-> +	.setup_irq_polarity = NULL,
-> +	.set_wake_filters = NULL,
-> +	.irq_set_wake = NULL,
-> +	.irq_set_type = NULL,
-> +	.reset_sources = tegra410_reset_sources,
-> +	.num_reset_sources = ARRAY_SIZE(tegra410_reset_sources),
-> +	.reset_levels = tegra186_reset_levels,
-> +	.num_reset_levels = ARRAY_SIZE(tegra186_reset_levels),
-> +	.num_wake_events = 0,
-> +	.wake_events = NULL,
-> +	.max_wake_events = 0,
-> +	.max_wake_vectors = 0,
-> +	.pmc_clks_data = NULL,
-> +	.num_pmc_clks = 0,
-> +	.has_blink_output = false,
-
-Not needed as there are no clocks.
-
-> +	.has_single_mmio_aperture = false,
-
-Not needed as you have a ACPI specific probe function.
-
-In general, I think that we should only init things here and need to be 
-explicitly initialised.
-
-Jon
-
--- 
-nvpublic
-
+>         init_completion(&p2wi->complete);
+>         p2wi->adapter.dev.parent =3D dev;
+> @@ -276,8 +262,7 @@ static int p2wi_probe(struct platform_device *pdev)
+>
+>         ret =3D devm_request_irq(dev, irq, p2wi_interrupt, 0, pdev->name,=
+ p2wi);
+>         if (ret) {
+> -               dev_err(dev, "can't register interrupt handler irq%d: %d\=
+n",
+> -                       irq, ret);
+> +               dev_err_probe(dev, ret, "can't register interrupt handler=
+ irq%d\n", irq);
+>                 goto err_reset_assert;
+>         }
+>
+>
+> --
+> 2.43.0
+>
