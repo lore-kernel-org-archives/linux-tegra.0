@@ -1,225 +1,202 @@
-Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010065.outbound.protection.outlook.com [52.101.201.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD55037475C
-	for <linux-tegra@vger.kernel.org>; Wed, 25 Mar 2026 23:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774481400; cv=none; b=SvO4XoccCDCcl07BsYLXTRE3d0tURlEVr+5js/iLT3IUP+whkp50Kq/BJgCe/P5ErwfwetgJNq05MBMxXqHgbRaP8hzYrYo3Qaxl1ARM7hkG2XJsg5pdZFdH102ACpALtnA8JbmO7FDZLwrCjrmAM5oSX3mgnWAcp4So1q9Lyjc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774481400; c=relaxed/simple;
-	bh=mLvr4LbWxK3l3yaPJ/LpQ1h0O1hbnOLYnavoq7f3sM8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Piwwtlwp6NfFzgfZbPpwQ5pJ2jhuTAf8Ri1ioCTfkSztLzR7cKTcrKkjhsPUpv8t9oZAtuEhcdGuHCIvz++PT7tMeUnZ7dQXXvY49ySe1xRd5DQJwzm+DWoCzMI5k56+qdHNzXz5wrsu0TrqfIo1tODk7KKLCq7z4NQL59b6onI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CSD5b+kH; arc=none smtp.client-ip=74.125.82.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF0813B5B3;
+	Thu, 26 Mar 2026 00:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774486061; cv=fail; b=r8IZTfvDW4iqxg6wCAeL71LDHykcMpcx4iDW3vO3Z8YkLGPMDgr9iPM9Id2eNiruQSDofsD1HtSgxqmASvLelaBvpn77GWzuMcYLq+x5wnzIq9LMFx8fhCzmnK5toq+lrpfzavHk09+8v/wDmny9NUVtzi+KNr6BRwC1Fh46XRI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774486061; c=relaxed/simple;
+	bh=3lP5lubRtlH6JKMsphHeFwBUTLyfTgcP08PyEm4ewu4=;
+	h=Content-Type:Subject:From:To:Cc:In-Reply-To:References:Date:
+	 Message-Id:MIME-Version; b=MS9eKpxrBpJec8fPxPYH/ZBbs0cS4w0Vxe9zUST2RwglYhR9qmqWEzEsM4IeHRonct8eJTMJ5TANWyitCMJjHuKwuoUvkGbGfQdc3gxecWD49BLUji99DGsK6kAGJLXn95TEKWBT5KMnbzMd+GLYK6C5V8OLXDfD+UF54LwlOK0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pmBYKt+W; arc=fail smtp.client-ip=52.101.201.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CSD5b+kH"
-Received: by mail-dl1-f43.google.com with SMTP id a92af1059eb24-12a71ade78cso474580c88.0
-        for <linux-tegra@vger.kernel.org>; Wed, 25 Mar 2026 16:29:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774481398; x=1775086198; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KbyKbyFuHp+6dsr0KIzDsUutYDB3nuzbv/Jgu2ebttc=;
-        b=CSD5b+kH9ZqDgar2SHAzMPOK7mDXuMmmZrHBb+gZ2Ax5xh/G8lJg9dXrWxAsBYCRRf
-         7jj1UbSb2esolz+unuCrBn03FbSAn0+QQ0/v1zq+70hT4PuDgMJJCWxVphxg+3W4N0h4
-         uMypRZMsu0rJrug8k6cVAgywDLabuf7nrUqz/8C/EtskLq/nvolMTyhnOwONGeibn8nv
-         jT7WRkINCBrzzfHKJSGSS386A3naVQMHUJTkCkjMjtCrOscWguV4aLkYKE5sq194l2rS
-         Gs3wTuf2Yda2/4eN9HROQpPjbsuuThmPRjO4MXqQh4FyA/kOfbWxiijOuBlx9QmWLusl
-         ZoIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774481398; x=1775086198;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KbyKbyFuHp+6dsr0KIzDsUutYDB3nuzbv/Jgu2ebttc=;
-        b=LIzE9dn41qnLj9z1vuRpSFvyBYbQz3vqvN8J6nRlvpLL1oh0OoIH6u/3HMwyEH0PTe
-         Raunc/SyIy5PGW9Syqcw56Sph5ZfpqJfbABnxhPaTfya/GadQlzV5rr5wmixZwIedYge
-         sGnAP2KIoguQTy5inlmZrfub7EICHutveTG11aiqF6U8AT7wFYRe14vs0WYjXuDRvdZH
-         OgnQ0MATWwgERPTfIF+WKEhWwKT065Z+9CXq8JCKQ8fW8pHVZQj5m+7X04GstaI60ubT
-         1rop0seqanBj/IPbXeJppo6wVrVxqaTWn87RYm0mdiSW/viiEso8E2BcQOVC7/sTrNtU
-         oBCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXVDzXSztjFLUlZz3aNS/K8I5IGxGXPvEvFFsd+/Kb7r4DAg5y3NQLDwi3BiTMdiPrIpLv6g7HMbhpYWg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDSqPeiMD9DpR98VCs9Ewsr6pLmiusmCQ9bRhkL52RquPr+XAq
-	tRbIABrSuvgVXGCvzHDkiaLtVO3v9C/I7TpInebOtquF/yeqKc/ZzMh6
-X-Gm-Gg: ATEYQzyaXWdXhZ43DWg6OPac+DlbqZoS7I72NtevGFZPEb3SZ2yRipAa9Xp1DIqAArG
-	mpTnzEkruekJhMcfFyCvHP3h8vHIuQaNqMUQNGeM7M364tdtUoe5xNUjoRHFGysJZM0u3P/6AR1
-	YhBjYA1GbU/aTIByE7AtC+/WwnDYRlKUIiCGocBjWXT/GG4Aa3L7MTPpf7ECotwZuR0vyffefcf
-	SlAVxuEXcjeeQX+Ai8Gu/4riwcxFpSopouGQac6HjwzsVDZL4HI5u/LizQ2IJNOY7GgtKVFA8rr
-	flm8ZFxTib7BYG229GucuNiuOqp34yCVCpsq9WLilPLYOx2exeUmY5PHwDDFmc+Own35Y4vRBxs
-	Mu0PG+uw+V5RBDNmcLIRxI9KKElp4R0GIrM3CvfuLv+R1nnrvI9Nxvxa2g8297ik7fhcjSJYliS
-	HULkRfXAUeWDOF9zoiYDPG6qjLK2WTMejbI75eH8eKuDk4eHVZPXK7JMN0WxAiKVca
-X-Received: by 2002:a05:7022:402:b0:122:8d:3688 with SMTP id a92af1059eb24-12a96eceb55mr2801523c88.22.1774481397800;
-        Wed, 25 Mar 2026 16:29:57 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2ebe:8:b7b4:352d:eb23:66e5])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-12aa7274231sm1355207c88.8.2026.03.25.16.29.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2026 16:29:57 -0700 (PDT)
-Date: Wed, 25 Mar 2026 16:29:54 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Marc Dietrich <marvin24@gmx.de>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Bartosz Golaszewski <brgl@kernel.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2] ARM: tegra: paz00: configure WiFi rfkill switch through
- device tree
-Message-ID: <acRtWZohqfDLbMKE@google.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pmBYKt+W"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ALyiS+of7iYpmCcMWZnwDqby1iecou30t0ZQrH9ghBSHSyuxDMSWm35db8LaAsRl0mOGi1emvFIXABjcH8AQIEIpisbfqMF4pLAFiUMBNl8xngaAhKcCQA8yqg+hlKeVLaMcsIwOEVJpf4YI/aNnTdpa6f5E2E1PNC4EJMWdbKxmpS3zYcI0dYaUUmG+4BzGqFiELkibx2KVaiQM14F8dEhZ/RncjAbwgoZ7GIe/CpZrB0Bj4pUyU0AK271xdifa/emvtsqclrn2tFBrb8hJ4bTbFrRKz+Eiqiq+P19bvIWy5oo5V2R4vFb9oty6xwdRsNQsu5qpDQ/KKWiG5Te2IA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=S4QG/tK/pHb1Qt++D1wRTl3B+usucQP4K3R1xsDvV/c=;
+ b=F/6OyuVeWHlkv/cgiy8RxJ8z6EfqyVCCCs7SneTKCfznakVRyRArcoilJEBwDC70HSW0S9dzG43+MSnHWjOqvxLwa2ohqaGdF5jJxTbhV3I5qtLkzhZRir9+g2VXF/jG/omibCtqh3JC2ti6SXSNaJxKyrvmt4H5BnCC8YtEFRQOEBcn7Nhht9+Z5TtEbTuFMXSzJXswdSt5YeFV/TA2kI1Wf6rPbxu4iM7S31FXMGW1VXHOntu0s+WpIrmG6iSLPHTALAJmTHbh2s+OwxGo8kkqG5eH4IqrGkGP7ltpB5z4UlcRQnsdj1SERPkun+msIvtfedS6fNAwjbQ213jdWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S4QG/tK/pHb1Qt++D1wRTl3B+usucQP4K3R1xsDvV/c=;
+ b=pmBYKt+WQ6tfpRdDTxi/aH9wORk1RUVeacTOQlP7I84zjaVGZ37FP9gHlJmgvkQHWOK44f1yWlo44sYLfAKL5Hia/fAC7a4Voy8u+aE71LcsaNOQa1u1VfG5esrehFRgDP3RKyxl1z3EKusMBBQxxXnFX8rm4sKadiSDDhN/pNIJngzNIMVl/+i53+EjD5/3BXWZDx6R75lHIWky6NHTgAoLDPj/YGAiP9qIwu2U9cjkYpbrvDrj1j5cSA3xhEm46gaW36KjuhbCNkaFEGWXk1lB1rJiN+yQic2B5DegSJnkqp+n3F9jePMyC8APwtnI49QWYGtMeRpUKmuPDRZyEA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
+ by DS0PR12MB7656.namprd12.prod.outlook.com (2603:10b6:8:11f::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.8; Thu, 26 Mar
+ 2026 00:47:34 +0000
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017%4]) with mapi id 15.20.9745.019; Thu, 26 Mar 2026
+ 00:47:34 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2 1/7] dt-bindings: pwm: Document Tegra194 and
+ Tegra264 controllers
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+In-Reply-To: <acPuMGhPw74roB1E@orome>
+References: <20260325-t264-pwm-v2-0-998d885984b3@nvidia.com>
+ <20260325-t264-pwm-v2-1-998d885984b3@nvidia.com> <acPuMGhPw74roB1E@orome>
+Date: Thu, 26 Mar 2026 09:47:30 +0900
+Message-Id: <177448605080.767719.1955302882683123394.b4-reply@b4>
+X-Mailer: b4 0.16-dev-ad80c
+X-ClientProxiedBy: TYCP286CA0043.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:29d::14) To SJ2PR12MB9161.namprd12.prod.outlook.com
+ (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|DS0PR12MB7656:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5be0beda-3178-4e22-7376-08de8ad144dc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|10070799003|1800799024|7416014|376014|18002099003|56012099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	Cn/TQwW9BfHmi+FdJMYcYNwdSRoSdEurpdSBaD2ETLJ7pbGvWSwm4IzldUcCl4FK1J0PmsaITClPxuf12bNC9J9zcyZEB5MmDQICYE32UiiJ6ga3GF4Gy5BrYznOTMPLOkQmlDFBt19qVWtv169oNLoC+QW6PfRWik6HilQKO2XVCtZUlrQpKPuv0RBOXAq5vSqplHTai8GSEGo5NJsphNarFy4qE9A7MXBx1m9bDRWXJv6xhLKKzrSsWM8ylgMVJFj/4gscvxBJETQ/vGjz7Yck4AKpxh6nsMb8SDGe39Sh+WwknOvE3PelNxMKWshokhi5FXVlBhGdsAgQHoFCj82p+Ju6vBH7o0KCWP3wUTp/CvdOAunFMqX19CJsb6EyYPMOmrgVGdmfJrWoirk0OGUiBFKww7gR9fXqOW3HuJ95u3tD4fKuI47vzJrplUXP8GKN11jn2i9N1g4SJWjI5ApBUUDqX6dgnfFewzU1eeuM9BxENuvNmWuAOYj49paO4wstqljAevzQb8dlZQTMtQmK+4/nAu3lRU//0B6ucqVHJ9qkzh/94OzJUVD2wZSETo+1zbQ9hm1jfzFWO7YVhwrtB/KBwUHCcjOc8+9Yg7nGEx3X960QRjV5NXzITp1jruc9yAd8i97lWLefbE8zP7BCvmUNa5p6QIU5osFsQnZe8btEuGSRQ5wwY43uf+kiGVpR4WnakysDSRKfDaj9UI3xJmCND4i0O6wfnZm+gaI=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(1800799024)(7416014)(376014)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Ykg4MUNGalpwa281R2ZTOGw1UFdvQVlGV21FV0g2RVlOcjQ0S2lHMFhHRWl2?=
+ =?utf-8?B?aGRXSjdHZnhJMXFzSTB2d3I5TndNQ2ZvSUtCcU1UVWs3Y2FzMm4xR0RmcEEy?=
+ =?utf-8?B?WVFJQUJ0MExoaGhzOWN2cjErL0Rzek95R245NmQvck01bmVvYnpTSEJEdzhq?=
+ =?utf-8?B?Rk4raThudWhpOWtTS3JVN0d6eE8ySDNhVGMwRml0VE1wOXQ1TE82S0s4c1Yz?=
+ =?utf-8?B?MCs2Z2IrY2pSOWFjYXdHanU5S0FLZjU5dzN2S2hnTTNGUTFDbTQ1NG1FOXlI?=
+ =?utf-8?B?Um5UaEtoRjk4UXBFQ29vMTFmN1NyRWthZGRNMVJ6cTVKR1ZQU3JHWkNTcTEw?=
+ =?utf-8?B?WmhRMlRPRE96V2x3THliZ0VMbTVGbUQ1OTRMU0JoV24vdU9reWxGUzdFTDM5?=
+ =?utf-8?B?d1RxbWVERDYzVjk1NzAzM1dTd2RvRzcwYUNRYnNoUFZwZW5ZM3FJbDhWa0tq?=
+ =?utf-8?B?YzJHZUNqU1pTMlhKeFN2OTR6M0puVkMvSTg5aDZzUndPbDQzMHF0LzI1U1My?=
+ =?utf-8?B?eFhpeW5zdkU2TXFDQzFxMkV1TzdGRzc0M3dxNHU4aHdWeHRrZHZhbkNDZDJm?=
+ =?utf-8?B?YmhPYyt5bDVDQ3ppWUtPdXMvWlBHTDFaNjFBUTlNRWY3cGpSR1ZZNzBlalpt?=
+ =?utf-8?B?Z3hJcjI2M3N0U3FlV09PRlVnU1YwSUdVaFhYb2tjbmtDamRPMTFEQzFKNGlC?=
+ =?utf-8?B?ZXlqUmlmSGhlV29tOWhpWjJDMllnbmhYYW5BVXZzTFdXTjlScm04YUtjbXlS?=
+ =?utf-8?B?Y2xwOTdUTFBBcWF1V01jalg3dHY1Y2VORWNZWkw5K3JDMTNIdjVDUjY1N1No?=
+ =?utf-8?B?R0Q5OWgvTDNSK052SC9UQWNXS2RzSlBiMW1kbDhOR3lkNTl5RTdienAzcWs5?=
+ =?utf-8?B?alhUUTFnd2JSSERlRzYxU3dxYytZL0NDdjNvZ2hwVXErT3ZyNVpzYkpSSWN4?=
+ =?utf-8?B?UkhQWXdFRkZ6bVJManlhTlc0YzVRWTZNMmN3dkdjQWNDUWg1NlRITytmQlp1?=
+ =?utf-8?B?VVZKb0tTRFRRQ2o2T1QvMXlxV0hvd3doR1lTays4b0lKL1FjcXg3WXJmMmNV?=
+ =?utf-8?B?Wkxjbitvc0luRWFuOGVTRlZqN0sxcDF5MnhXZldsVUpCZ1lhd1pmYzJQZWxV?=
+ =?utf-8?B?cFBGVWY2VUdzNEhhd0psRkpvTmVVMjF5dzdlS2xFcVRhK2h1MGswQXdrZElu?=
+ =?utf-8?B?cDBLT3hCSkM2b04xQmtSL2ZJUmNpREtlTnovcEVsVzZlSmQxWlpyQVV1STIy?=
+ =?utf-8?B?RG4xTHJKZVNLVTQrN0p5UGtaN3BLU3RxT3pSa0VWbnJHem9GNjlnVUxTSGZF?=
+ =?utf-8?B?amQySUNveUQzOFlWRTFheGtORmw1eTVXbGZkeGVmMzJZSjJGYUN5WXpPQTMw?=
+ =?utf-8?B?anNMS1lCSWRSQ1FMd0NrUk1ub3o4dWNyN1hDalpTd3VyZXNqSDFvTWsrRHVI?=
+ =?utf-8?B?Nnh2cHJSYjN0RXMwa24zN2hVTVdZenFOTWJOQjJ2RHR2Z0lpNmNQRERxa0d1?=
+ =?utf-8?B?NU81TEZYaWQ5WFJtK1BtNWwxSTNNcmZTRFN1Yys1N25YTnlGYWltdkZ0M0l5?=
+ =?utf-8?B?M2RDL0dNS094VFdUN200ZlZUT0tiWWxrV1ZYQ0MwUVEwd1RxcGZ2NTlCZWR5?=
+ =?utf-8?B?ZjJMaGF6eVBrZmRKcE5GMGpyZ2lEbmZmM2hFYzQ0Nll3UWQwcFhHOTNjdjlZ?=
+ =?utf-8?B?ZHhMR1pyZGw3b1ppenNBWkJrQVJYNDFwMUI4OXJJL1Z6Z2ptSGNMSlpHNThu?=
+ =?utf-8?B?ZVh1YnV0TzIyRzV2Y1FSVXgydGhPSityaVFSbjRtVnd2WnowemFHcHM2RHlQ?=
+ =?utf-8?B?RStPMWVRSmF2TThsZExDcXJ6SFA0M2pRTnQ3em1jQThsblZNSU1VWnJia1l1?=
+ =?utf-8?B?dm8yeTJtOE5zcGdKSlZKZ09qNTg1Tys0clAwNnVmYWdIMVhzakZrQzNEcWlY?=
+ =?utf-8?B?cTcwUnBIWDMyUWpydVVUaWQwTC9MeDRNbXdQK0d0WXA2THo4UTBqMnAvL3g4?=
+ =?utf-8?B?VnZuTytaRk9JTnRYeTA4bGJUbXdkUHpwTnRaVVVVSW0ySnVPYnYxSHgwQlQ4?=
+ =?utf-8?B?amdFQ3JpNlhnMndYVmttVUs0SG15SXpQcUJGaCtWQUg3cUVlUnR2K2ZkMjF2?=
+ =?utf-8?B?YmtycXltVDF1eVFkaElOcTc0SnY1RmFKZlVhNHlpNEdWc1J0KzFnSEsxaGhL?=
+ =?utf-8?B?elI4RmxPWG9QbVZLeWhWaGFXa1dpU0VDRWd3QnN1bW8zbElidzliMkt0aUJS?=
+ =?utf-8?B?WFV0V2NvbGRYMnVSS1huN2I5OGc5ZFM1WmNyWjNYcVlHczZmS0R6TUkrbmxC?=
+ =?utf-8?B?RDh0TGpmMnJwSGV3ZnBRTm02LzQvMVJjd1Z5WWZaRTRHV0QrUDFpM3hoYXNR?=
+ =?utf-8?Q?zyUWMT1crNaXVGTHAtF036D6ovBBaEkeEDq1yV0xt3snS?=
+X-MS-Exchange-AntiSpam-MessageData-1: DY37qynPNEyUQg==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5be0beda-3178-4e22-7376-08de8ad144dc
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2026 00:47:34.3025
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fbNbXhALBb00OOAFBGUDQg1GUL9OgRbkBeGFMbMmORgXsm76qJuYOjlfp98K7RMZdEH9JnX+xvSnwMiT1b9Oow==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7656
 
-As of d64c732dfc9e ("net: rfkill: gpio: add DT support") rfkill-gpio
-device can be instantiated via device tree.
+On 2026-03-25 15:22 +0100, Thierry Reding wrote:
+> On Wed, Mar 25, 2026 at 07:16:59PM +0900, Mikko Perttunen wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> > 
+> > The PWM controller found on Tegra264 is largely compatible with the one
+> > on prior generations, but it comes with some extra features, hence a new
+> > compatible string is needed.
+> > 
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> > ---
+> >  Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yaml | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yaml b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yaml
+> > index 41cea4979132..15706d2a808d 100644
+> > --- a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yaml
+> > +++ b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.yaml
+> > @@ -16,6 +16,8 @@ properties:
+> >        - enum:
+> >            - nvidia,tegra20-pwm
+> >            - nvidia,tegra186-pwm
+> > +          - nvidia,tegra194-pwm
+> > +          - nvidia,tegra264-pwm
+> 
+> I think this was lost during the earlier conversation we had on the
+> split of these patches. Krzysztof had pointed out that tegra194-pwm is
+> now a duplicate entry. I don't know exactly how it ended up like this,
+> but I'm pretty sure what I meant was:
+> 
+> 	- items:
+> 	    - const: tegra264-pwm
+> 	    - const: tegra194-pwm
 
-Add the declaration there and drop board-paz00.c file and relevant
-Makefile fragments.
+Ah, I see now.
 
-Tested-by: Marc Dietrich <marvin24@gmx.de>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
+> 
+> This mirrors the fact that this is in fact backwards-compatible with
+> Tegra194 but also has additional features that we need the Tegra264
+> compatible string for.
 
-V2:
-- added Marc's Tested-by
+The Tegra264 PWM controller is in fact not backwards compatible with
+Tegra194. It is close but not quite. I will drop the duplicate tegra194
+compatible string and update the commit message accordingly.
 
-V1:
-- https://lore.kernel.org/r/aY_BpRQmLdqOOW2K@google.com
+Mikko
 
- arch/arm/boot/dts/nvidia/tegra20-paz00.dts |  8 ++++
- arch/arm/mach-tegra/Makefile               |  2 -
- arch/arm/mach-tegra/board-paz00.c          | 56 ----------------------
- arch/arm/mach-tegra/board.h                |  2 -
- arch/arm/mach-tegra/tegra.c                |  4 --
- 5 files changed, 8 insertions(+), 64 deletions(-)
-
-diff --git a/arch/arm/boot/dts/nvidia/tegra20-paz00.dts b/arch/arm/boot/dts/nvidia/tegra20-paz00.dts
-index 1408e1e00759..d1093ad569e6 100644
---- a/arch/arm/boot/dts/nvidia/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra20-paz00.dts
-@@ -706,6 +706,14 @@ vdd_pnl_reg: regulator-3v0 {
- 		enable-active-high;
- 	};
- 
-+	rfkill {
-+		compatible = "rfkill-gpio";
-+		label = "wifi_rfkill";
-+		radio-type = "wlan";
-+		reset-gpios = <&gpio TEGRA_GPIO(D, 1) GPIO_ACTIVE_HIGH>;
-+		shutdown-gpios = <&gpio TEGRA_GPIO(K, 5) GPIO_ACTIVE_HIGH>;
-+	};
-+
- 	sound {
- 		compatible = "nvidia,tegra-audio-alc5632-paz00",
- 			"nvidia,tegra-audio-alc5632";
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index a2bb55bc0081..9e3abb14fbc1 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -15,5 +15,3 @@ obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
- 
- obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= pm-tegra30.o
- obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= pm-tegra30.o
--
--obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= board-paz00.o
-diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
-deleted file mode 100644
-index 3ec810b6f1a7..000000000000
---- a/arch/arm/mach-tegra/board-paz00.c
-+++ /dev/null
-@@ -1,56 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * arch/arm/mach-tegra/board-paz00.c
-- *
-- * Copyright (C) 2011 Marc Dietrich <marvin24@gmx.de>
-- *
-- * Based on board-harmony.c
-- * Copyright (C) 2010 Google, Inc.
-- */
--
--#include <linux/err.h>
--#include <linux/gpio/machine.h>
--#include <linux/gpio/property.h>
--#include <linux/platform_device.h>
--#include <linux/printk.h>
--#include <linux/property.h>
--
--#include "board.h"
--
--static const struct software_node tegra_gpiochip_node = {
--	.name	= "tegra-gpio",
--};
--
--static const struct property_entry wifi_rfkill_prop[] __initconst = {
--	PROPERTY_ENTRY_STRING("name", "wifi_rfkill"),
--	PROPERTY_ENTRY_STRING("type", "wlan"),
--	PROPERTY_ENTRY_GPIO("reset-gpios",
--			    &tegra_gpiochip_node, 25, GPIO_ACTIVE_HIGH),
--	PROPERTY_ENTRY_GPIO("shutdown-gpios",
--			    &tegra_gpiochip_node, 85, GPIO_ACTIVE_HIGH),
--	{ }
--};
--
--static const struct platform_device_info wifi_rfkill_info __initconst = {
--	.name		= "rfkill_gpio",
--	.id		= PLATFORM_DEVID_NONE,
--	.properties	= wifi_rfkill_prop,
--};
--
--void __init tegra_paz00_wifikill_init(void)
--{
--	struct platform_device *pd;
--	int err;
--
--	err = software_node_register(&tegra_gpiochip_node);
--	if (err) {
--		pr_err("failed to register %s node: %d\n",
--		       tegra_gpiochip_node.name, err);
--		return;
--	}
--
--	pd = platform_device_register_full(&wifi_rfkill_info);
--	err = PTR_ERR_OR_ZERO(pd);
--	if (err)
--		pr_err("failed to register WiFi rfkill device: %d\n", err);
--}
-diff --git a/arch/arm/mach-tegra/board.h b/arch/arm/mach-tegra/board.h
-index 7b3ef0dc9be1..86c3ea0d6b30 100644
---- a/arch/arm/mach-tegra/board.h
-+++ b/arch/arm/mach-tegra/board.h
-@@ -19,6 +19,4 @@
- void __init tegra_map_common_io(void);
- void __init tegra_init_irq(void);
- 
--void __init tegra_paz00_wifikill_init(void);
--
- #endif
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index 9ef1dfa7b926..f324a7e491d8 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -83,10 +83,6 @@ static void __init tegra_dt_init(void)
- 
- static void __init tegra_dt_init_late(void)
- {
--	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) &&
--	    of_machine_is_compatible("compal,paz00"))
--		tegra_paz00_wifikill_init();
--
- 	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) &&
- 	    of_machine_is_compatible("nvidia,tegra20"))
- 		platform_device_register_simple("tegra20-cpufreq", -1, NULL, 0);
--- 
-2.53.0.1018.g2bb0e51243-goog
+> 
+> Krzysztof also requested that we drop the latter part of, or reword, the
+> commit message because we always want the compatible string to be added,
+> regardless of backwards-compatibility, etc.
+> 
+> So I think maybe something like this would be better for the commit
+> message:
+> 
+>   The PWM controller found on Tegra264 is largely compatible with the one
+>   on prior generations, but it comes with some extra features. The new
+>   Tegra264-specific compatible string can be used to distinguish between
+>   the feature sets.
+> 
+> Thierry
 
 
--- 
-Dmitry
