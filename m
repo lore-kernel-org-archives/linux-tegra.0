@@ -1,28 +1,28 @@
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012056.outbound.protection.outlook.com [40.107.209.56])
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010041.outbound.protection.outlook.com [52.101.46.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7163DD51C;
-	Thu, 26 Mar 2026 11:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4763CF664;
+	Thu, 26 Mar 2026 11:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.41
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774523501; cv=fail; b=YCdwVwDjXyuiqPWKHZVO1yUIRHosSy2T2HCJ3Bv57gTQU9qonzbr7x4/mJ6He4QijfAOdjPS1rjTjl0E4U+ASgQiaR5Fteq92E2l63g6h2WlZdE4BELkdel2eWdNAde7XNGpUXMItcAFrpz0oPPJXF/TbmbLPnW/GafIz6sMhWE=
+	t=1774523507; cv=fail; b=rVwXkGShesrMfk47DMUfUsJd9DRy/qY95gU+vQ+3W6jXlkXOFUhXJo2CMXpkZui2EjU8RujEMKLfyG+I9L5P8+P16Jc5iaIezMlIqpceuPyx21gfDNCEsv6rTU2CO+uqtAZxzpmgVmhIn9SGOSVWbKPxNSyBL++V3EcwFqvUOwc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774523501; c=relaxed/simple;
-	bh=vKfFT1YFEoKsG2GaJe44jH426z5cDH1KrQkccOXsMtI=;
+	s=arc-20240116; t=1774523507; c=relaxed/simple;
+	bh=S1s9eEL+e6ZhFAmNEYpv65ZovJCBkkZwzR7yhlLIEow=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gNPoBvOb1QKMDrwktZyEgsA4/LmVMTMSRBmudcbdGXJVDIzU7CmKXeuADCIUpGobobMpplYoz2bQpULH0z47BSYCPpSJzCd+Z0eq7mU91oT889xgjpTmBfPb/YIy7eLvcsAiORb/3Gfp6W3a1dh2qq6NsWJMOj+pV3GKYufKdsg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qLGLE9Dz; arc=fail smtp.client-ip=40.107.209.56
+	 MIME-Version:Content-Type; b=OnFRWagsNORiCpJuHtQjCvJtL3OOKQ3twjoFXi9XzyGulFtBExa0HPhapFQRU9NMxrB1ujfzXUqubUCKfPir9fSVM3yiaKp5INshR9neoaa/hXOE/A+3MygvGF0q22hlT9z45SF5YaumQRtMPB6EPlsYK4f0s+dANP5SLIcQNhc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GqaIJq95; arc=fail smtp.client-ip=52.101.46.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qLGLE9Dz"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GqaIJq95"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QK/egrNIZtkcmpfhHb+ojFjjHB1C5ZOEMaj7CtjBF7YKCgFG788zm6uY1nfWDXhJSL5UW24z4rMQZ53drykMcpg6auQ39T8R9me/lQHFF3ea/JU8A//QX14SHCC9d9NdfT4mfh8OIjIcx+rUapQkDtr47lRwaJNtoulhHYwZ60a505v3t5Kflq6k59F/K4qa19oHmz9GKlgc6ZBtZoC34bNTnJSD0TezYCglyis5Rdx43q4mWsJ3QLur8BlWmLzkv5WkRMdFGb6YW4G6L90NA79IumO4St0VNAsoBRhOy9yO2ikT3FYEy241d66X3fWVhDg3rj70A18B2kDLupKw6A==
+ b=lI8s9X/5uVm9l8gMmTW3fn9Eiz+FAA/yYSeYraRcFktSMbosGvXtHnrHslquCg85j8ZfM4wKV99DcDbC5QUIfWkWRYJDsu9oDvIKISy07MEdBjioI86OAUY59RZVJDHHPOVpDOk4SXBy+jAJrNC23G3dXreRioj4wl7j/FNf+V3ZXWbVq++PN3y2NddWm/8m71Gy7HZCub/+ayop2n6aMNBV3gP1wMmX6P232YoGGcBGD+ZOcjmUsXovLPMrtZ4kK/4C1CLmrh4mXN1fDcM7J2u6lHulnMkdtqi/E2Scs87tMEVjI9NIESqKA6/pdP4I3eZe3mM34gRpSqvaGiBvfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zZMuVbfilvUkdYQ1T4/7OLMPVPQWnFNeX9D7L4R/Cbo=;
- b=gnGrpd1Uf7bKdYAJB30mQnV3XLyYbjJlKOVLbhIK1HMIrbjg6ewp0YQd1EDi/WbJZToFw6Lwe7faTUiC8HU4cvTWG+jar/P+FZQf5TEDd/qyGCdT6qXbJBBjbDRIsn+QBwsEFGa2uWr3k6y5ghwu16UdTRsk96E2l7dIfBJg1+OLX9HwCtBtkO1w6DeUHX7jS2sqW5f7bHYD76MdUa6JWZzWJ8vuiJqVRMs8nSsaXBEDIEeS3Ijdf1sDvbE6bFf9vVRihFtnPVTKQ1i0WFbfw7qsdMUSAsxkNtZrFER4tz3YV38k18PB71nHO1lsZ6+P9Rbx6x9qBnP9hZFTkPfYJw==
+ bh=GrBIbZMyVZaLHD0RxJdtH7oKyBdkos2HKFAeioE4AKs=;
+ b=Iaz8IQ+A9ZdkSCAGlYy0xFCYBDENWmZ90yz5QZa0pcUTaGfog9WBGkhJUapT0OkgPFZqvw8zpN835zW2oaQ6uQbQZCOf/H3Jx/c9LMWUXhrpndHsp5YWi44nDZmv4MfupEAU/a1uxvjvngoQoHu+9HYWw+tbUNdv9c8F4vRUP8qclvovqBKfW2SZhYKzrf6mmd5plhbuklaawBlmCFh/wD9BSHrL7Pa2fwwCTwGGuY1fbyToyuUlZUyf3xX0dfUUCADTmxuAn8NIOyvpKqDylX36e1YKZwCRX2q/xxs/ehuN0GJ1I8hEZG/QMdrn4yAAFsOe2Zk5wb7Jy2RcM6TboQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zZMuVbfilvUkdYQ1T4/7OLMPVPQWnFNeX9D7L4R/Cbo=;
- b=qLGLE9Dzcmd8gIVqPwwS1i6LiusBsuS9Q6mvAaU/Io7IMgVAHFfswIGZRoVTtUBH4aU6CjMtaJGGmnRUM2z5uTlW9L6Szz+8n6q+xNwx8mYdJRZlHdBynh9L6YMzQU2VUdX67wGPz1QhvlLSm25HggQhH+cNa6z0pWOIGEi3tCL1RpnoLKOXrAzWM2u3f9wW6rpGRXSo3sgjKS2iBGQWYlASwmtwbeNCiOs/fTnpoo46GPfMSAgTl+gd77d8HwBSlAE3uaTuSW0C2aL+NxDm2Y3Hd+wmy739eyfbJjoiwtmuT068bzQYAsHtCzuakP/vam5W9DAhmN2ADEelu4p62Q==
-Received: from PH7P221CA0076.NAMP221.PROD.OUTLOOK.COM (2603:10b6:510:328::32)
- by CH1PPF12253E83C.namprd12.prod.outlook.com (2603:10b6:61f:fc00::606) with
+ bh=GrBIbZMyVZaLHD0RxJdtH7oKyBdkos2HKFAeioE4AKs=;
+ b=GqaIJq95GW7cHTpcJYUN3q2VIfcLjCkA0LDm6uIr8mmH15kGw3I97jXZZs7SxmeEV1Ja3AzBsFMkTMoIRtWDcuTzJge1+GMYk16lAVK5iGaguEjsea/8jPZaSz7l2sQ4dVH4nTgSTbLFXz/CTgvrtn+S15BNBErqd5vKtPzLaqYnQePW7YMUhZrKrWqRl125fz1PjvdFJy8exA2bLVRClfGbTT5Tc3yIy2PBUz+A4Pjs8gWuczpys7jQFbYpI+cuuPdFoc3+TT5AZXs4zSt4G0EWFDYePA+tWepzVX7mkZ4UeViZDIZZojhozcebJpaGnQDtKcLXhN44oY2LHW4mFw==
+Received: from PH7P221CA0075.NAMP221.PROD.OUTLOOK.COM (2603:10b6:510:328::26)
+ by DS7PR12MB5885.namprd12.prod.outlook.com (2603:10b6:8:78::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.8; Thu, 26 Mar
- 2026 11:11:35 +0000
+ 2026 11:11:42 +0000
 Received: from SN1PEPF000397B5.namprd05.prod.outlook.com
- (2603:10b6:510:328:cafe::4b) by PH7P221CA0076.outlook.office365.com
- (2603:10b6:510:328::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9745.22 via Frontend Transport; Thu,
- 26 Mar 2026 11:11:35 +0000
+ (2603:10b6:510:328:cafe::e) by PH7P221CA0075.outlook.office365.com
+ (2603:10b6:510:328::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9723.32 via Frontend Transport; Thu,
+ 26 Mar 2026 11:11:42 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -51,18 +51,18 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
 Received: from mail.nvidia.com (216.228.118.233) by
  SN1PEPF000397B5.mail.protection.outlook.com (10.167.248.59) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9745.21 via Frontend Transport; Thu, 26 Mar 2026 11:11:34 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ 15.20.9745.21 via Frontend Transport; Thu, 26 Mar 2026 11:11:42 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
  (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 26 Mar
- 2026 04:11:23 -0700
+ 2026 04:11:35 -0700
 Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Thu, 26 Mar 2026 04:11:23 -0700
+ 15.2.2562.20; Thu, 26 Mar 2026 04:11:34 -0700
 Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.9) by mail.nvidia.com
  (10.126.190.180) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Thu, 26 Mar 2026 04:11:19 -0700
+ Transport; Thu, 26 Mar 2026 04:11:31 -0700
 From: Akhil R <akhilrajeev@nvidia.com>
 To: Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, Rob Herring
 	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -72,9 +72,9 @@ To: Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, Rob Herring
 	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>
 CC: Akhil R <akhilrajeev@nvidia.com>
-Subject: [PATCH v4 08/10] dmaengine: tegra: Use iommu-map for stream ID
-Date: Thu, 26 Mar 2026 16:39:45 +0530
-Message-ID: <20260326110948.68908-9-akhilrajeev@nvidia.com>
+Subject: [PATCH v4 10/10] arm64: tegra: Enable GPCDMA in Tegra264 and add iommu-map
+Date: Thu, 26 Mar 2026 16:39:47 +0530
+Message-ID: <20260326110948.68908-11-akhilrajeev@nvidia.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260326110948.68908-1-akhilrajeev@nvidia.com>
 References: <20260326110948.68908-1-akhilrajeev@nvidia.com>
@@ -90,163 +90,68 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000397B5:EE_|CH1PPF12253E83C:EE_
-X-MS-Office365-Filtering-Correlation-Id: 51e97dcc-ca22-47ae-e307-08de8b28715a
+X-MS-TrafficTypeDiagnostic: SN1PEPF000397B5:EE_|DS7PR12MB5885:EE_
+X-MS-Office365-Filtering-Correlation-Id: 40b119f2-01b3-4a39-da31-08de8b2875ce
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|82310400026|1800799024|36860700016|7416014|376014|921020|18002099003|22082099003|56012099003;
 X-Microsoft-Antispam-Message-Info:
-	Hg9mFpEDe1EgdbFgFT3s4h7Rjj1vSfzKXofl7yxMySC3Fs17n8ZO5cu0qwA9iDXvdc+emF1TuKh0OmK+kJvfxZOi1aP7DuRUKC7xL2poUP58ZZkt9G+lvaG3tV5DLlJlL1wuTLxEbQ3FnTHhOCGXfXYi8Kniyw7d3kZMbKyDkmlCTxBI6N3Mz/MsyOhRsUAr2JDBkhsNEG2gtWlV6esRr5BzH+yL2iEA6K0N9IajmyyrGBAHfLgZelQbrRDoZ+akaxse8MS65QZ2fOmAqrYHlW7gulbOufiWtEumvm16OV3NKFG0RbGYcKO8z21zs93EXVHPWWpDwW213P0HZ6420aSShgw9aT0EaNiXw6YOFFwKIzOnDR9WOsubQ8imWxaljLnIc6TMPRySQAdmo7qWr5fOiIVdKO+e6ePQkxg3YEcs4Q1OLnKPQj7ao/IrOO64rwYmQuA73lBewORUrgV0nXr+fi8B4RbqdFWCKXAtYYUFo6ytjm/ujrssqCybKDaidXsgytH81atvME9hxu1GPwxkY3H24lNI8LufGqo2mfvNkYrjRFWfk5oLoYDil5WWyLmFfNn+TD/xAQzV1nOKO9cKHDyRAKZuhkGDzNO7LvXH2R4QZVsOjOtucVXMnUJTIMW4iaesqVe+M1bYLBfYaxIVbGTj3+OaNrwe5E8n0ox7YBvuyuePVDVvCUqDDa+OavomhnN817W1ZRjTXRHEQAqEPLYyNRHiCPj472UpJkqc/gcM7DYXseOWg2TqFqnXYzjOI2gLZF1nXmay/mwN0asLcKi0MNtCciBr+qoRQ7oZatfX/nYervEtP7kAR1yt
+	3BQmY7MP6G2K1tp3dK9/p7wvTzxz+Wx1Tp7ySqOa13jzL31QQDP6Y2nlUzkcgg9eBLyaLky7CD7UOy9rfGj7bCPOm4KmOYOo2tmuHaUPZqJNrj3TsQXdhe/S9DN0BsxKp5b3Flz2mtjb1fsG7zne4BHYr03pXcOETWVBr9z9JELubh5TzusvpuIJPD7MjCVxAfdJaOwoZXOXnFk2hu42WFK6ws8c3Cs9/ZS4yFGvJGiAJ1WFirG+bpsNfI5WTo2Kk+o80J7dL4TT4hqxttVoZWCXH/biXTz99hAy1txnPGgw3sD2qs4uDLPeOAkzyqNCynQZ6+yxG6DdPLcaUp6et2uf4nuW+hMYg+TVmYDWBKlBKZGm4KrSSNv0uNTvG+30mn4YFKT5eWt1jS+fKLMZz4gANJMvZVQTBiad7+FBwxFGy+bDfNRVu52VyoMZi+d10ttLUsm+S091OG14oX+6Q4Gx6YwKXNiwvYuduqvHJ9dNVKTIBa94S1cGH0lfUi4wroa+1DCcXgj3TTRWpAABb7kMHBQA6vOC16yjNOhKAQGE38Ir3VNhbP1maUNxryjBU3OZPhwVgOG0+nWu7y5cRTEFp4oNR+nAzaWXgNRU+2f3Yhh7vDFrwmaSqE9GoaPPEaS55qOgV+Wx/OT6SKStXR0+HbCP3GvGwrXkoRw6VJmDvYLQANtbGQAJUBIQT8K0EVnd3OZvLu8RIf97u5mRrgXI3YaTYS59UU5f7yYLcLMJh1zxmy+H7MhLUK5+2JBphG8m0B7fV16mOhCSxTv0exlk2L+q9rxBjIhE502456D8D2oRo7tilpDikvAPo3Q4
 X-Forefront-Antispam-Report:
 	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700016)(7416014)(376014)(921020)(18002099003)(22082099003)(56012099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	xuwUoo0ui0CVViUZozaRDV9gZ/T/JD9tvhyaCWdKNlOjOWOcwDD7Ws7wiX4XXYn57pWsyhDWTJXWCdOt2VaYJhtzro4c4oUzkbqFZRkgRd7JZh0Ns09DjjGbD2v+nQC2KtyxRtvGKsc83Rzsr+7X/xcpM5GiGQtzocD2WmKr4pFx3ZULr4WxbOd3o8nLknnhBgWVNFUbogK6WG5Q8k4TQ2Thl2d5/c9ORVsM2k84PAGJgjcwxcUpIqkeMcd3yxBQY9Vx7Tho8uazSIVY3Ucslg/Os9darahcVnF3Q8xbaLcdrcLfziIjR4K0dQX3eYMXmAv6halxEC/6Mdy8FWMoGsdSii2QpKMTwv8KQUE8uJIMaqfm7dF6eFixyqosQ6GmyxToDNyrEqa4/nr4DUTGLF/7m+ehKty/2VNrHQSpxNvAfCttfnEK0v/Rc+1KfU91
+	l5FIqbwuIYt3r4fvC9oEsRJx9/g5LpEsqqqaEUrkD/ztw/Nb/VknNffaUdro6dM++2L40UN5J2ZkZHj9UlUWu7vTMbVFtE4sQKSmrbTH1J8DgxR79Qg8Jlg+gWvby1JGeRIvKFPgVS5cSbIzm8q5U18BljHzzpvNixozQUGTxdLUDz+GbUWOmRSmrPKeKEICOCVFjlS2kP2sLRQag57dSl6aam+XQxNhapwvbaSq2uWVmAYbxXwBj1mTMk5j31aqM6roj3dpRfsgtzey7K3QQuh5gDKghkO1gWTHTcL5rDUBDUEgBrIvkSNoEELHj6re+dpRUk+tOYQLZ8fhiaulu/pXCIdpNIppffmShjbKO9abxbqkjCsth67FW6HOSwWXPHO+U8bM8RNHlZ7/y82hjKtxRUNOzmKVYXeCd9n+nSqnQitpw55z2uXxxl064KDt
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2026 11:11:34.8830
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2026 11:11:42.3186
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51e97dcc-ca22-47ae-e307-08de8b28715a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40b119f2-01b3-4a39-da31-08de8b2875ce
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	SN1PEPF000397B5.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPF12253E83C
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5885
 
-Use 'iommu-map', when provided, to get the stream ID to be programmed
-for each channel. Iterate over the channels registered and configure
-each channel device separately using of_dma_configure_id() to allow
-it to use a separate IOMMU domain for the transfer. But do this
-in a second loop since the first loop populates the DMA device channels
-list and async_device_register() registers the channels. Both are
-prerequisites for using the channel device in the next loop.
-
-Channels will continue to use the same global stream ID if the
-'iommu-map' property is not present in the device tree.
+Enable GPCDMA in Tegra264 and add the iommu-map property so that each
+channel uses a separate stream ID and gets its own IOMMU domain for
+memory.
 
 Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
 ---
- drivers/dma/tegra186-gpc-dma.c | 59 ++++++++++++++++++++++++++++------
- 1 file changed, 50 insertions(+), 9 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi | 4 ++++
+ arch/arm64/boot/dts/nvidia/tegra264.dtsi       | 1 +
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/dma/tegra186-gpc-dma.c b/drivers/dma/tegra186-gpc-dma.c
-index 9bea2ffb3b9e..3b377f34be58 100644
---- a/drivers/dma/tegra186-gpc-dma.c
-+++ b/drivers/dma/tegra186-gpc-dma.c
-@@ -15,6 +15,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_dma.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/reset.h>
- #include <linux/slab.h>
-@@ -1380,9 +1381,13 @@ static int tegra_dma_program_sid(struct tegra_dma_channel *tdc, int stream_id)
- static int tegra_dma_probe(struct platform_device *pdev)
- {
- 	const struct tegra_dma_chip_data *cdata = NULL;
-+	struct tegra_dma_channel *tdc;
-+	struct tegra_dma *tdma;
-+	struct dma_chan *chan;
-+	struct device *chdev;
-+	bool use_iommu_map = false;
- 	unsigned int i;
- 	u32 stream_id;
--	struct tegra_dma *tdma;
- 	int ret;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
+index 7e2c3e66c2ab..58cd81bc33d7 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
+@@ -9,6 +9,10 @@ aliases {
+ 	};
  
- 	cdata = of_device_get_match_data(&pdev->dev);
-@@ -1410,9 +1415,12 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 
- 	tdma->dma_dev.dev = &pdev->dev;
- 
--	if (!tegra_dev_iommu_get_stream_id(&pdev->dev, &stream_id)) {
--		dev_err(&pdev->dev, "Missing iommu stream-id\n");
--		return -EINVAL;
-+	use_iommu_map = of_property_present(pdev->dev.of_node, "iommu-map");
-+	if (!use_iommu_map) {
-+		if (!tegra_dev_iommu_get_stream_id(&pdev->dev, &stream_id)) {
-+			dev_err(&pdev->dev, "Missing iommu stream-id\n");
-+			return -EINVAL;
-+		}
- 	}
- 
- 	ret = device_property_read_u32(&pdev->dev, "dma-channel-mask",
-@@ -1424,9 +1432,10 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 		tdma->chan_mask = TEGRA_GPCDMA_DEFAULT_CHANNEL_MASK;
- 	}
- 
-+	/* Initialize vchan for each channel and populate the channels list */
- 	INIT_LIST_HEAD(&tdma->dma_dev.channels);
- 	for (i = 0; i < cdata->nr_channels; i++) {
--		struct tegra_dma_channel *tdc = &tdma->channels[i];
-+		tdc = &tdma->channels[i];
- 
- 		/* Check for channel mask */
- 		if (!(tdma->chan_mask & BIT(i)))
-@@ -1446,10 +1455,6 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 
- 		vchan_init(&tdc->vc, &tdma->dma_dev);
- 		tdc->vc.desc_free = tegra_dma_desc_free;
--
--		/* program stream-id for this channel */
--		tegra_dma_program_sid(tdc, stream_id);
--		tdc->stream_id = stream_id;
- 	}
- 
- 	dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(cdata->addr_bits));
-@@ -1483,6 +1488,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 	tdma->dma_dev.device_synchronize = tegra_dma_chan_synchronize;
- 	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
- 
-+	/* Register the DMA device and the channels */
- 	ret = dmaenginem_async_device_register(&tdma->dma_dev);
- 	if (ret < 0) {
- 		dev_err_probe(&pdev->dev, ret,
-@@ -1490,6 +1496,41 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	/*
-+	 * Configure stream ID for each channel from the channels registered
-+	 * above. This is done in a separate iteration to ensure that only
-+	 * the channels available and registered for the DMA device are used.
-+	 */
-+	list_for_each_entry(chan, &tdma->dma_dev.channels, device_node) {
-+		chdev = &chan->dev->device;
-+		tdc = to_tegra_dma_chan(chan);
+ 	bus@0 {
++		dma-controller@8400000 {
++			status = "okay";
++		};
 +
-+		if (use_iommu_map) {
-+			chdev->bus = pdev->dev.bus;
-+			dma_coerce_mask_and_coherent(chdev, DMA_BIT_MASK(cdata->addr_bits));
-+
-+			ret = of_dma_configure_id(chdev, pdev->dev.of_node,
-+						  true, &tdc->id);
-+			if (ret) {
-+				dev_err(chdev, "Failed to configure IOMMU for channel %d: %d\n",
-+					tdc->id, ret);
-+				return ret;
-+			}
-+
-+			if (!tegra_dev_iommu_get_stream_id(chdev, &stream_id)) {
-+				dev_err(chdev, "Failed to get stream ID for channel %d\n",
-+					tdc->id);
-+				return -EINVAL;
-+			}
-+
-+			chan->dev->chan_dma_dev = true;
-+		}
-+
-+		/* program stream-id for this channel */
-+		tegra_dma_program_sid(tdc, stream_id);
-+		tdc->stream_id = stream_id;
-+	}
-+
- 	ret = devm_of_dma_controller_register(&pdev->dev, pdev->dev.of_node,
- 					      tegra_dma_of_xlate, tdma);
- 	if (ret < 0) {
+ 		serial@c4e0000 {
+ 			status = "okay";
+ 		};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra264.dtsi b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
+index af077420d7d9..b2f20d4b567a 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra264.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
+@@ -3244,6 +3244,7 @@ gpcdma: dma-controller@8400000 {
+ 				     <GIC_SPI 615 IRQ_TYPE_LEVEL_HIGH>;
+ 			#dma-cells = <1>;
+ 			iommus = <&smmu1 0x00000800>;
++			iommu-map = <1 &smmu1 0x801 31>;
+ 			dma-coherent;
+ 			dma-channel-mask = <0xfffffffe>;
+ 			status = "disabled";
 -- 
 2.50.1
 
