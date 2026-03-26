@@ -1,76 +1,120 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFCF423D2AB;
-	Thu, 26 Mar 2026 12:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67362309EE7;
+	Thu, 26 Mar 2026 13:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774529533; cv=none; b=GXUf23QfCmxC7ib/wzJjnqREOkMiRN50TBnPkjKrphfodAL+SYyOxbQ7GfFgyjiWq+GsNYEDlN3m5sQyJ40o0OygoflmYiE8AKdrS5Qf88zdgk58YyAjhWkJ+jVI8izQcf0kebgHqgGJsOi3Fo8xxt1EI4OQdgJp+1qnEeYZdZA=
+	t=1774533538; cv=none; b=YejZzIcNleUciiI6mL+IrY+PPbW7WjLRIkfkLadNp5NXlalvYeFns8rQb1aVGPNPRIblFRz0grPJZDMb5hnM5IpLp8eVkFToLJ8euPV1EXVxENPVROvAXnFLvhi428ugsvsYg1tHKjDvBuWecBVj1T8GDmwQrHHSIxS+NRulwis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774529533; c=relaxed/simple;
-	bh=DRCQnnvJqKguX1Qk+NH8PGbOpH/goqBVZcNSBiZzI5M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Bkc38odgHv4BP7vGuPN0RPRhdDdLfb4hVnxISpWJR9eY6pDA2GopDOaX6SmEwNX3i26ZfWCCgca2dNtwUlhjfBKE9yR1F/DHm1ci9lb8nRr+KTsq3oaygK+VTcxHhEznJtyy9nss1LyCI+IZl7F1VVL3AI53Fxfw7qTkGgZKafY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ocl1oRtd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774533538; c=relaxed/simple;
+	bh=3mcsVN7hQFeM4+9MxyY9r/WxHjo4nsRmsn1UCwDypGU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sbVVf69jjAcaUAxc44DF4x+0OQ0oNHzzti8mhOqOspgh/PpI9u3/9/k5R1rxL+88Inpj9PvrDTtz1bl1q9Tx3aUj5O46MXK1tTOAdY3ZYEZr7B4IFn2zui5sO3k+/qHgk3tfuaTtuorquoQ0vlGq9Z1PvdwWYS9RvSF4Nxmm7Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=frxCpEaj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ocl1oRtd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69AD8C2BC87;
-	Thu, 26 Mar 2026 12:52:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="frxCpEaj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABF32C116C6;
+	Thu, 26 Mar 2026 13:58:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774529532;
-	bh=DRCQnnvJqKguX1Qk+NH8PGbOpH/goqBVZcNSBiZzI5M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ocl1oRtdBDxteXhwpkJHfKwaWe+ewIQjxw6LbG0kjSTkpDsiZQomtCfUBANztxmFI
-	 m0ZUtae/Sr8/8PDu8Anu71CLgg7g414G9tJzgCr+eDuV3P2RNSrw1xnuVsKPVbvm62
-	 Nc0QIwI+dhP1OmT23FibPlg7Dd7jxssoKA56li5jqFJjRctYIMFK1rZa1pvxogeG9Y
-	 i4+GAQMyIvu/XKJpbcroZCX392I9nR57FeN8RYd7hkMRm+alyl66cgvf1T1B6wJFXW
-	 UPQMCvdAnFoNrk/Yb1dJHpzypEq3T1GvEGhGVOz3d7Af3jZVkNi6Rz+weIuAR1NgoW
-	 jnHRMjqBHGkhw==
-From: Thomas Gleixner <tglx@kernel.org>
-To: Tsai Sung-Fu <danielsftsai@google.com>, Jon Hunter <jonathanh@nvidia.com>
-Cc: Radu Rendec <rrendec@redhat.com>, Manivannan Sadhasivam
- <mani@kernel.org>, Marek =?utf-8?Q?Beh=C3=BAn?= <kabel@kernel.org>, Krishna
- Chaitanya
- Chundru <quic_krichai@quicinc.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Rob Herring <robh@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Jingoo Han <jingoohan1@gmail.com>, Brian Masney <bmasney@redhat.com>, Eric
- Chanudet <echanude@redhat.com>, Alessandro Carminati
- <acarmina@redhat.com>, Jared Kangas <jkangas@redhat.com>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v3 3/3] PCI: dwc: Enable MSI affinity support
-In-Reply-To: <CAK7fddBV6HHR-MTkRqH2gK=Ga16H6jjX0PsSaPUv-Cfef-WUbA@mail.gmail.com>
-References: <20251128212055.1409093-1-rrendec@redhat.com>
- <20251128212055.1409093-4-rrendec@redhat.com>
- <4e5b349c-6599-4871-9e3b-e10352ae0ca0@nvidia.com>
- <a8d841e870d6dbbabef7eadb774f2a58a96c57c7.camel@redhat.com>
- <cfe44924-3419-4f31-8ab3-87b769d21a5b@nvidia.com>
- <96c9d483f67be02fa1dba736fea465216d0c3269.camel@redhat.com>
- <87sebsdcte.ffs@tglx> <255713ca-bf91-4f7e-8df2-33b7b614a1bb@nvidia.com>
- <221f6dadb6d8ce06f30a24baaa2777e90d75b130.camel@redhat.com>
- <87h5s7bb5s.ffs@tglx> <87ecnbb2mn.ffs@tglx>
- <b5e33957-1b8d-436b-888e-2b6f13d30782@nvidia.com>
- <CAK7fddBV6HHR-MTkRqH2gK=Ga16H6jjX0PsSaPUv-Cfef-WUbA@mail.gmail.com>
-Date: Thu, 26 Mar 2026 13:52:08 +0100
-Message-ID: <87341meosn.ffs@tglx>
+	s=k20201202; t=1774533538;
+	bh=3mcsVN7hQFeM4+9MxyY9r/WxHjo4nsRmsn1UCwDypGU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=frxCpEajzDvRHsjz79Ytt/M+zQz0cMTWofCWcAnHEqapKf+466vaPbCh9SJ7lhLqN
+	 F9rpxDdPYEflsxf9Vyn1Drjyx1cVesBwhGmFEK4K9/mfNUBnUmYzPQ6H2IUWq85OlU
+	 799TM7IUoeRZhbMVKTwEvPzdp8jZqJObTGLSAb5GVRr6OjG17HX5FwbcZHRUTNRxYk
+	 P2r1pYVLvULS7qYRlO1DEKvBnJpGiBJGifHIe4jDV3TOKJ+1Pg6qQUqQVnPIPbnRBj
+	 a/FSH5DBX/CDVLFuwyAABbb/PdgCAF52wyiLY7HKJBqpkLZ2PDFAPUUw2l0MsAVyBg
+	 xOXEeQPUzclTQ==
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Thierry Reding <thierry.reding@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH v3 0/6] PCI: tegra: Add Tegra264 support
+Date: Thu, 26 Mar 2026 14:58:47 +0100
+Message-ID: <20260326135855.2795149-1-thierry.reding@kernel.org>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 26 2026 at 11:48, Tsai Sung-Fu wrote:
+From: Thierry Reding <treding@nvidia.com>
 
-Please do not top post and trim your replies as documented.
+Hi,
 
-> Do we have plan to land this feature upstream ?
+this series adds support for the PCIe controllers found on the Tegra264
+SoC. There are six instances, one of which is for internal purposes only
+and the other five are general purpose.
 
-# cd linux
-# git log v6.19.. drivers/pci/controller/dwc/pcie-designware-host.c
+The first two patches in the series add the BPMP support needed to power
+up/down the PCI link. Patch 3 contains the device tree bindings for the
+PCIe controller. Before adding the driver in patch 5, patch 4 introduces
+some new common wait times for PCIe and unifies the way that drivers use
+them. Finally, patch 6 adds DT nodes for the controllers found on the
+Tegra264 SoC.
+
+Regarding merging these patches, I think ideally I'd pick up the PCI
+driver patch into the Tegra tree because there is a build dependency on
+patches 1 and 2. Furthermore, patch 1 depends on another patch that's
+already in the Tegra tree, and there will be conflicts if it is merged
+in another tree. Alternatively I can provide a stable branch with
+patches 1 and 2 for the PCI maintainers to pull in.
+
+Let me know how you'd like to handle this.
+
+Changes in v3:
+- integrate PCI standard wait times patch into the series to maintain
+  bisectability
+- fix review comments from Mikko
+
+Changes in v2:
+- fix an issue with sanity-checking disabled BARs
+- address review comments
 
 Thanks,
+Thierry
 
-        tglx
+Thierry Reding (6):
+  soc/tegra: Update BPMP ABI header
+  firmware: tegra: bpmp: Add tegra_bpmp_get_with_id() function
+  dt-bindings: pci: Document the NVIDIA Tegra264 PCIe controller
+  PCI: Use standard wait times for PCIe link monitoring
+  PCI: tegra: Add Tegra264 support
+  arm64: tegra: Add PCI controllers on Tegra264
+
+ .../bindings/pci/nvidia,tegra264-pcie.yaml    |  149 +
+ arch/arm64/boot/dts/nvidia/tegra264.dtsi      |  248 +-
+ drivers/firmware/tegra/bpmp.c                 |   34 +
+ drivers/pci/controller/Kconfig                |   10 +-
+ drivers/pci/controller/Makefile               |    1 +
+ .../cadence/pcie-cadence-host-common.c        |    6 +-
+ .../cadence/pcie-cadence-lga-regs.h           |    5 -
+ .../pci/controller/mobiveil/pcie-mobiveil.c   |    4 +-
+ .../pci/controller/mobiveil/pcie-mobiveil.h   |    5 -
+ drivers/pci/controller/pci-aardvark.c         |    7 +-
+ drivers/pci/controller/pcie-tegra264.c        |  522 ++
+ drivers/pci/controller/pcie-xilinx-nwl.c      |    9 +-
+ drivers/pci/controller/plda/pcie-starfive.c   |    9 +-
+ drivers/pci/pci.h                             |    2 +
+ include/soc/tegra/bpmp-abi.h                  | 4565 +++++++++++++----
+ include/soc/tegra/bpmp.h                      |    8 +
+ 16 files changed, 4629 insertions(+), 955 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra264-pcie.yaml
+ create mode 100644 drivers/pci/controller/pcie-tegra264.c
+
+-- 
+2.52.0
+
