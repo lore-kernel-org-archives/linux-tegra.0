@@ -1,147 +1,165 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADDA28314C
-	for <linux-tegra@vger.kernel.org>; Thu, 26 Mar 2026 02:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774493296; cv=none; b=kxm7t+VGR+29Dzpr309vqlR1EhdHSzegdjqxo1FDVGKGCxzp46qtLbpzkFSqfuomUuCI1lSKdZcDJLGCjDlS7Fmp4AK/Z3ycR8ZWrxNmiisxXgnPV+k6Xk7MK2ES+mGor4mSDlAiM0Urr/K5iz6ldDuqdhPvxf79s6N47nc6flI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774493296; c=relaxed/simple;
-	bh=RrqD1NoUe4djEyb0fe5dsQb/o25xg9vxMy7cCsdcd7U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hf7WY02i4JK4ZL7nh2xnsPW1Wu3UQRIA8lJfLkhQgvgnXxsNlmEyxCuFodnx2mEORWC1SO+Nn9E/CnP9Dl1wR48VX6iFVBL1O7wGDOE7YV+tRpfN//MuKn/tb/TQswxvgAA2FpUB2qpwN4Yw6fZ28CxjduwiPps07dt/rxygK2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rl2PEuoi; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559AB3939CD
+	for <linux-tegra@vger.kernel.org>; Thu, 26 Mar 2026 03:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.173
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774496931; cv=pass; b=qAc0+eFViuEIVdvS6U233sz9AshmyRwiWhrLIUVmcL9oZu5gQiokkQdUxHP40jrM7uRJkFxmRYG9btz6v9LCoztf2VL/LlkHqjeC/34ZytR8op10+Awd9A8G7i1Y8lcFWs8Yu6T8BqhhIO1UO5S+3FsQWwhwzkAxBoacFFiYc8c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774496931; c=relaxed/simple;
+	bh=MH3p8Rq8n+uSxru3eIVnCkw7nOCUi0BFVhEsOO9JMXA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fvo+AdR1BCYZp7xF+fF8n7JXIlZn8gLeVoZ9Wusluj/zHr1z0z+mFs+VZM1tJdMU1Roeie9LqpXBNCg+iNbjT5e9C7/qpFx8hVoSLXhxNfERyI4/ZCVIVOVf5vfO6KO7k/WDb2blcg6uPhkOBBbgOJLsyBYE2/+AvFbOumFikPQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H6+cSRIt; arc=pass smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rl2PEuoi"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2aaed195901so2062555ad.0
-        for <linux-tegra@vger.kernel.org>; Wed, 25 Mar 2026 19:48:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H6+cSRIt"
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-50b268fba9aso5575501cf.3
+        for <linux-tegra@vger.kernel.org>; Wed, 25 Mar 2026 20:48:50 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1774496929; cv=none;
+        d=google.com; s=arc-20240605;
+        b=fQvpjmfwkakeRVLkl4q76sSpdycCsRwzOAl85Scwed0LPiThImFwUSZXpQmW2L6s+2
+         nKLJTSXUXxPyBOKzB+KsIZu+4clvD6e3hrYZrHUZEybpkkXI6NtAYiaY4UY2gX5FDRAL
+         AHCTRXQkLVW0rp4grhMRYefX1QwEZb7mPKwheaGLrwbPZe3525u52PgwaDFay4hwcZSF
+         P0kptKq7QGGrtU+vQhwtFu+mBolO+5KWcveXiPf2m+6OoZUeE4j6cRuL6KWoQKBGJ7rV
+         7Fwsu4QIbdlbwin+/LyIEFC4YVh+X8CGdfVJmQqt+WpWZgwO7Gc5bjpg3KE1FBhquvK4
+         JcUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=07/utsPXTfE9bIXIPc5MyGyaUqOr0SOGKlBDsG+5Q14=;
+        fh=czOwe4yKFv2/WdybbZwtcJNmWpJIIw2ORiL47zT8vKc=;
+        b=K6t5xh4u+FIc/BjcaXEZgrgm6IXnCxdmzC2goPpY8DPX59xFLN90GIaaZJUNQ7M3ZB
+         HryMJFpEeTlmkOZzFI0gwqjirvJUUleQ0FKpznR+YGcJoi4qzRbtKheBSM3nDxi5Uf9h
+         IKqAbLz4lCJKbZVrcJBmcWyuNYGRTHAJGsIHTf1PVpLSkrFvx1F8wfMD3D91dHe2lX6l
+         LZY9oCMuAXuRWjDtfRhlF6KJetTlvTbEzD/t9s1mRcsV1LSYr3t9YpNktpPYPiWk0Qd9
+         sRhRhgdxu5nNKNTwSZ7yB9XGU2k69+1nglG6b2/Ahlrt0BNckirCUCqJm0XKvgUEu+Fr
+         TsdA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774493295; x=1775098095; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dMEzcnIaH8BHyFA6RpTtAAlerD4BYMa9dkJNVe48taA=;
-        b=rl2PEuoizce2K29EK6r2vqeTUBfL6H5P8X+z8m/6spCgKm+v0Lnot03Y270GSVUTxJ
-         O2Vtm61MiVljiRN5YUq+WuGh+VjvsvCldrvTA3cHd1jDJ87p+R1g5voINnIuHl3TJKfA
-         N3eXliS3XuUtqUsgvU3ZVP3qYjWAO3AOW4Hl55ao9QwrIHjD28VQfASwWBACB/PHRwjx
-         W7OYpZJ2jBTTsZ9Y33S8MSiKoEuruMVscMfMzEiNchgt32VsaofcffaVaaaUPQdgFtME
-         9yRouzxLbqzEx7y14VZY7G6mGXeaOTKz5mYee27L17XU+NBIS86/RgV8lTh6eDfRl5+b
-         yx3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774493295; x=1775098095;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20251104; t=1774496929; x=1775101729; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dMEzcnIaH8BHyFA6RpTtAAlerD4BYMa9dkJNVe48taA=;
-        b=RGcuWP/GFw6lt6j9O6YxX+D/jYheqQbD6xelEyWZwFkp/V5imjCqAGcTpYCKXoOhNF
-         YnxUB1C5bJj3zw3aOagytlCrTgKT/iCJ+rg1ZoSasURtImgmLz56sJRDaCwAhBJR0StJ
-         cMUWHDu7nJbKmdDg4ebobVkn6jbZJkVIQPc/AuSQzQKR8ZRknkxa+9otxqsb4xtrJs9n
-         LsTkvMeVMagVdntPdsWQys92z14yNStIlJiBnzTd72+sQ4OpH+bX2SEoWK2t7nccn9wL
-         mLhTLgJ7X2r93K/9KRLk0Sz1KPrKWqnmfpRr65OZ6z5jFM3fqLUVIucKr72Fz1j9LOcg
-         p/cQ==
-X-Gm-Message-State: AOJu0YxzppWT6L9a7SzfwMo0JdDxthwNEy84AZWY8KlTED88XTIwUnun
-	DxCejN/bAthiutIYowYrJJ28cFXyhGe9BwhttRlcDYR8tclJifRcteKkauKXdBzV
-X-Gm-Gg: ATEYQzyt87aTzeC1+V7VPUy66Oz0sePCt76WNh+JjnZh83sSd2NYfasL6RGnS4+oUUm
-	f45oGQElODDZ75EH8cAKm1oUGcdoj9YRLck5EXnabAS7FJjebJArQ7QNHwKMkLhNhkoTHbMUWu5
-	spVxmvLP7IZOzmlrENKPyjrRrfobZByCjzbGnc/acePekq/AiKyd/xTVRStfvI9AQoZXvXkS7G7
-	QSxU7YLxFPJmet8br+LNarb7NhJjxak8k2sLJbhcjDUfZKZ/NJg0Rd2ZQaeDAvvjKBqIAXyWx2i
-	ybu0w9srkztbTRcx2ghOCA5uj4VXmsuOeEy1eWZFsNp+HOtBIxIzw/CILDP57XjdfTMFDW6b8E6
-	cyJYbAniL+jk2dwxpWbJ6gg2UC7wjk/+R2TbAM6s9zlyW5/ZmUmm5Q+DIQa3EjIhISexRuAEWl0
-	qFG48JjmvGUnZP0j1cK0Ot7lqmh54BtYYcRHci90ldKViZM0OkighVJkc/b83RUC3xlQ==
-X-Received: by 2002:a17:902:ebcb:b0:2ae:5eab:132e with SMTP id d9443c01a7336-2b0b0a35055mr67436305ad.12.1774493294597;
-        Wed, 25 Mar 2026 19:48:14 -0700 (PDT)
-Received: from ryzen ([2601:644:8000:5b5d::8bd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b0bc76bbdcsm13039695ad.5.2026.03.25.19.48.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2026 19:48:14 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-tegra@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCHv3] firmware/tegra: add COMPILE_TEST
-Date: Wed, 25 Mar 2026 19:47:56 -0700
-Message-ID: <20260326024756.63502-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.53.0
+        bh=07/utsPXTfE9bIXIPc5MyGyaUqOr0SOGKlBDsG+5Q14=;
+        b=H6+cSRIth+F0GnP4xYQ1m4BufU39k/GM9MsejKBhiy010mbT4ek6qz/3o1PpLbkDzv
+         jx6aYbGG2Bb9WVGxlQeMfOJDcbUtznjOUEg0tpJlg8HpwjRrJqZ75d5GmhXyeHUT2e/e
+         lgZpymrkeamayc0ra9guGldN+wM78IQ/C1PtTZChXxQt36KE2C5t7SA9Xw5cQFrVHXi9
+         RCfBt43WZXt1+oP2X6oURHPW/dK01+xFpWiw8jn4EKrW88LRGhcq1RI1qrtSvzIpVmlB
+         S8e+EsobtYyEbp+OhKHTb69NJWCbRziFKTLvhmYgFSwQOmdfkWNBt4+ge2MIwADh7Z21
+         2ybA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774496929; x=1775101729;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=07/utsPXTfE9bIXIPc5MyGyaUqOr0SOGKlBDsG+5Q14=;
+        b=tVu/zpnp6ryZRceFZyxHxtm7M1qZXBbJzXYVUgiCwaNdijiyBtOIK3DhqxxNlcmjIp
+         VtdoPxp8XjKn4BAeQlSnx5uXCgwp6fBCTdg5mCyd98oSB6WmV/hlc6KH3mOFAV8Or9a/
+         rIzWghcyfAeiB2FgM8wdGMUnnqgPSy1+U8/U+0SdvaoZGapbGQwIFxTWvHBGKOvFQ0hT
+         hZ1ZyUz1BnPK4MhdBmwWehNcUJ2mDfOh6ttNzCnrzeQoMOxl8jh8Ge4LZzm6z4rTveTf
+         RRUfFR+UAX23PfoG7tKdeDt6eVOf/6wMXsmaIky96j/YynRkfFwlU2YIfdi/c89XZ0f9
+         PXDw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/ruJfeHZxTq+fzaYB6Th4BQEumbrcIKDi5kckm9anpIa3FUVuAC8s0cFdn987EqV7SQfFIkPvIRZ93A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBxyzlt+IAr4cm+A85hdIhMs7S/wA8JBlhM8dB2lkmmzF4lfRI
+	WEpdlKoCcIRS1q9+wpSg8FpPNKNJdvfF7yBmwYq3ihJ//7hBV4dl0ZgqJ0cTZU/hX8l2Ze+NoPK
+	pohsg8ou3yt/WZplFTqxKQ0/YHGXMxraE+HZO4OgG
+X-Gm-Gg: ATEYQzwtgkN3vccptdiY+jGrhv8h172GD33MjxORbS7eW87EjHMpGwW/cCRMmH/62b/
+	o2RGKDG2HpfdFo9zY322P5pUvPLi7kWaHqQUB1MEU4ZAdvCJ6oJb38KvCYRNuewzmt7svJAdMqD
+	MbsCP8S5qB/YyHgpjtcan8+mnMscogFFdCjwA02+ffq5G26SS+TAAZKqTkpeb7bXrcPUb7rBsbB
+	K2cgRCXh6J6wLsu9c12cgOr/DIMNBii0BAGkP9fbU2h3mlXw7x8PNcloBVpyH8qHd1e8PcpOK7D
+	CkQ/GWmVKnTGLNZukZbiIeO6bU5nMM7kjtlrdKVJetHpfg5l
+X-Received: by 2002:a05:622a:281:b0:50b:5146:8803 with SMTP id
+ d75a77b69052e-50b80d3d8ddmr85893641cf.21.1774496928859; Wed, 25 Mar 2026
+ 20:48:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251128212055.1409093-1-rrendec@redhat.com> <20251128212055.1409093-4-rrendec@redhat.com>
+ <4e5b349c-6599-4871-9e3b-e10352ae0ca0@nvidia.com> <a8d841e870d6dbbabef7eadb774f2a58a96c57c7.camel@redhat.com>
+ <cfe44924-3419-4f31-8ab3-87b769d21a5b@nvidia.com> <96c9d483f67be02fa1dba736fea465216d0c3269.camel@redhat.com>
+ <87sebsdcte.ffs@tglx> <255713ca-bf91-4f7e-8df2-33b7b614a1bb@nvidia.com>
+ <221f6dadb6d8ce06f30a24baaa2777e90d75b130.camel@redhat.com>
+ <87h5s7bb5s.ffs@tglx> <87ecnbb2mn.ffs@tglx> <b5e33957-1b8d-436b-888e-2b6f13d30782@nvidia.com>
+In-Reply-To: <b5e33957-1b8d-436b-888e-2b6f13d30782@nvidia.com>
+From: Tsai Sung-Fu <danielsftsai@google.com>
+Date: Thu, 26 Mar 2026 11:48:36 +0800
+X-Gm-Features: AaiRm50LSOBGGeTsc-k8sx-ZC5DP0if3O1BxiToOLDGbs4CwHCrEIfEV5PdHh0Q
+Message-ID: <CAK7fddBV6HHR-MTkRqH2gK=Ga16H6jjX0PsSaPUv-Cfef-WUbA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] PCI: dwc: Enable MSI affinity support
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Thomas Gleixner <tglx@kernel.org>, Radu Rendec <rrendec@redhat.com>, 
+	Manivannan Sadhasivam <mani@kernel.org>, =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>, 
+	Krishna Chaitanya Chundru <quic_krichai@quicinc.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Rob Herring <robh@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, 
+	Brian Masney <bmasney@redhat.com>, Eric Chanudet <echanude@redhat.com>, 
+	Alessandro Carminati <acarmina@redhat.com>, Jared Kangas <jkangas@redhat.com>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For this driver specifically, there's no arch specific stuff needed.
+Hi,
 
-Build the tegra clk stuff as tegra_bpmp_init_clocks is defined there.
-CLK_TEGRA_BPMP also depends on TEGRA_BPMP.
+Do we have plan to land this feature upstream ?
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- v3: add a Kconfig symbol instead.
- v2: also build the tegra clk stuff.
- drivers/clk/Kconfig            | 7 +++++++
- drivers/clk/Makefile           | 2 +-
- drivers/firmware/tegra/Kconfig | 4 ++--
- 3 files changed, 10 insertions(+), 3 deletions(-)
+Thanks
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 8cc300b90b5f..56295cc2b74f 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -335,6 +335,13 @@ config CLK_LS1028A_PLLDIG
-           features of the PLL are currently supported by the driver. By default,
-           configured bypass mode with this PLL.
-
-+config CLK_TEGRA
-+	bool "Clock driver for Nvidia Tegra platforms"
-+	depends on ARCH_TEGRA || COMPILE_TEST
-+	help
-+	  This adds the clock driver support for Nvidia Tegra platforms
-+	  using common clock framework.
-+
- config COMMON_CLK_XGENE
- 	bool "Clock driver for APM XGene SoC"
- 	default ARCH_XGENE
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 3416eea558c6..0e1331bd6295 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -154,7 +154,7 @@ obj-$(CONFIG_ARCH_STM32)		+= stm32/
- obj-y					+= starfive/
- obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
- obj-y					+= sunxi-ng/
--obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
-+obj-$(CONFIG_CLK_TEGRA)			+= tegra/
- obj-y					+= tenstorrent/
- obj-$(CONFIG_ARCH_THEAD)		+= thead/
- obj-y					+= ti/
-diff --git a/drivers/firmware/tegra/Kconfig b/drivers/firmware/tegra/Kconfig
-index 91f2320c0d0f..ae21f460807d 100644
---- a/drivers/firmware/tegra/Kconfig
-+++ b/drivers/firmware/tegra/Kconfig
-@@ -3,7 +3,7 @@ menu "Tegra firmware driver"
-
- config TEGRA_IVC
- 	bool "Tegra IVC protocol" if COMPILE_TEST
--	depends on ARCH_TEGRA
-+	depends on ARCH_TEGRA || COMPILE_TEST
- 	help
- 	  IVC (Inter-VM Communication) protocol is part of the IPC
- 	  (Inter Processor Communication) framework on Tegra. It maintains the
-@@ -13,7 +13,7 @@ config TEGRA_IVC
-
- config TEGRA_BPMP
- 	bool "Tegra BPMP driver"
--	depends on ARCH_TEGRA && TEGRA_HSP_MBOX
-+	depends on (ARCH_TEGRA && TEGRA_HSP_MBOX) || COMPILE_TEST
- 	depends on !CPU_BIG_ENDIAN
- 	select TEGRA_IVC
- 	help
---
-2.53.0
-
+On Wed, Jan 28, 2026 at 1:09=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> w=
+rote:
+>
+> Hi Thomas,
+>
+> On 27/01/2026 13:34, Thomas Gleixner wrote:
+> > On Tue, Jan 27 2026 at 11:30, Thomas Gleixner wrote:
+> >> The below untested hack should confirm that theory.
+> >
+> > Actually looking at it deeper the solution is trivial because in this
+> > case writing the MSI message to the device is not required when the
+> > affinity changes because the message does not change. It is set once vi=
+a
+> > msi_domain_activate() and stays the same for the life time of the
+> > interrupt.
+> >
+> > So the below prevents the invocation of irq_chip_write_msi_msg() in
+> > msi_domain_set_affinity(), but I would recommend to investigate the
+> > actual underlying problem nevertheless:
+> >
+> > It is going to roar its ugly head at some other place sooner than later
+> > as there are tons of other places which guard against
+> > pci_dev::current_state !=3D PCI_D0.
+> >
+> > Thanks,
+> >
+> >          tglx
+> > ---
+> > --- a/kernel/irq/chip.c
+> > +++ b/kernel/irq/chip.c
+> > @@ -1495,7 +1495,7 @@ int irq_chip_redirect_set_affinity(struc
+> >       WRITE_ONCE(redir->target_cpu, cpumask_first(dest));
+> >       irq_data_update_effective_affinity(data, dest);
+> >
+> > -     return IRQ_SET_MASK_OK;
+> > +     return IRQ_SET_MASK_OK_DONE;
+> >   }
+> >   EXPORT_SYMBOL_GPL(irq_chip_redirect_set_affinity);
+> >   #endif
+> >
+>
+> Yes that does fix it!
+>
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+>
+> Thanks!
+> Jon
+>
+> --
+> nvpublic
+>
