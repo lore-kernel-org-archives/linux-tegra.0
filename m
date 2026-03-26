@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9634128506A;
-	Thu, 26 Mar 2026 08:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AFD3B6C1E;
+	Thu, 26 Mar 2026 08:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774513974; cv=none; b=JZN+kJsrx2euEZDdzzfkdRKObrIisZD6DVd60NQ75C51+Rb4w9VRBYuQGCK3YSKyP4Pvs6hpgcxaoLUF6dhaoIBEpNb0LTMFn0ZTDT58+wtfYXHJYCkKN3Y1rCLWBD+KIR2Cm7mhxAGubTN9mdiAbdtyrg7fUiU0YhzBNhdLTKw=
+	t=1774514188; cv=none; b=P0d3i9Yf5nwldbsacu9wGcmlzUujVjUqfxIL5CygUvzLyp1eoa6L6r0U59JhtPddNCir/x+L4k7zGV2wYtItb745a2wJF+HHQ2sAlX1jgzYl4qjuz/b9CY7T7zQtVpISHgAyLSrmQ1qs71oP1WKEphbOWJw61IheL3gcUq8tHX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774513974; c=relaxed/simple;
-	bh=7N6DCs6w4lwaNrc8nplqZYAKIoynQ0BIoe3R98tHZo8=;
+	s=arc-20240116; t=1774514188; c=relaxed/simple;
+	bh=1i0nNFABO9IcWj5T5hP3tWFtWMyMAwy/5TZSXO/JiaI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fHUOqRPNeFRt+rA04MggF6nQUCkYxNSJOwq8hRi8IvSn+zTg50HtYh4WgncN2u1oxMzOtxNRamBghqlZ6ngVmvGUHC2dfgtAN9uzvfs3j41QxSq+2jVCyjVAWeWw8cHMl1mZ8CNtgaP2TQyj8Iv7FWuNC8pJ3rsvrSZxXiB0W5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j5RLwB4m; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=pH/3EUoOu11T21YfGjqdF/s2R6k6XyMGoOxGvsaHXfleIqBxz8/QWuYHOpXkvrpBpTNU6jBHsGjvW08lEjQ486dGRHEc1faBLT2TSfO1oVJzXHbyMc5cpF5V2dhMzAoJc1j6PKA8yNTyCrE3bqUiv8i5b5yaBm8ajk+5KddA3qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikj6D374; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j5RLwB4m"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BADF8C19423;
-	Thu, 26 Mar 2026 08:32:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikj6D374"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57E05C116C6;
+	Thu, 26 Mar 2026 08:36:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774513974;
-	bh=7N6DCs6w4lwaNrc8nplqZYAKIoynQ0BIoe3R98tHZo8=;
+	s=k20201202; t=1774514187;
+	bh=1i0nNFABO9IcWj5T5hP3tWFtWMyMAwy/5TZSXO/JiaI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j5RLwB4mhSjAIbIkojluWbsyoV5NJ8KnCXPIRLdGJowWFWZ6zi8iN0C2sWJ+/IENT
-	 64ZGKgjnh3Q0D2BYQJ0gHui4P4WPjnPXb9I97NqAqsmF6/Gxjy/R6CABPzFucg6tZk
-	 ObGqjd1m9KFjITbk+Fuc1DcbKtGYTBBD/SE+DXiuD+7JrSs3b760mCaljM0lTOQqj4
-	 h8Way9dg8eOJohLIp4ss+wFBKvOeUrdXX7aUioOxzS0ND39ZHBjl+7O7Rur8psRVAG
-	 CpoDqH06ONCM565L+wa204itAZx3kYLOsitmc35115imWAuNGSiKDlzAWEIUZGg482
-	 co2W62RVQRMiw==
-Date: Thu, 26 Mar 2026 09:32:51 +0100
+	b=ikj6D374i7Zlq4OlKHSmBYmXTNGzrFdmB8PEULWSxexofBNQla1nhLxPkkfiJuJDL
+	 +CuPjajpXQa2Y0MLdrf1tNH2O0LLmNarCZ6/4H6GEF28aeS+N93PNPYlhBfbzhXHdj
+	 ayHQrlE6gNSO/gd3SG08k4VqRzsgXinMTpfqofyE7Sj4N5I5O4DPM9BOAGfn7YppRb
+	 dcdbpMUrs1pqyr9iwrHU0AV5E13nB4XcG7HSv7XP6kYXvWvYlREp7m2HQ6BBHqqOra
+	 x63Q6oZudxgAghMXuJ+Su3shqQG+EN7JSEb49+qRn9MhgieHSlOITM807l2HGSJ6Ll
+	 oDfTl1gA059FQ==
+Date: Thu, 26 Mar 2026 09:36:25 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH V3 1/3] net: stmmac: Fix PTP ref clock for Tegra234
-Message-ID: <20260326-gigantic-tentacled-hornet-cbdb8d@quoll>
-References: <20260325135811.148480-1-jonathanh@nvidia.com>
- <20260325135811.148480-2-jonathanh@nvidia.com>
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v2 1/7] dt-bindings: pwm: Document Tegra194 and Tegra264
+ controllers
+Message-ID: <20260326-portable-muscular-monkey-a1c3ab@quoll>
+References: <20260325-t264-pwm-v2-0-998d885984b3@nvidia.com>
+ <20260325-t264-pwm-v2-1-998d885984b3@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -47,74 +47,16 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260325135811.148480-2-jonathanh@nvidia.com>
+In-Reply-To: <20260325-t264-pwm-v2-1-998d885984b3@nvidia.com>
 
-On Wed, Mar 25, 2026 at 01:58:09PM +0000, Jon Hunter wrote:
-> Since commit 030ce919e114 ("net: stmmac: make sure that ptp_rate is not
-> 0 before configuring timestamping") was added the following error is
-> observed on Tegra234:
+On Wed, Mar 25, 2026 at 07:16:59PM +0900, Mikko Perttunen wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
->  ERR KERN tegra-mgbe 6800000.ethernet eth0: Invalid PTP clock rate
->  WARNING KERN tegra-mgbe 6800000.ethernet eth0: PTP init failed
-> 
-> It turns out that the Tegra234 device-tree binding defines the PTP ref
-> clock name as 'ptp-ref' and not 'ptp_ref' and the above commit now
-> exposes this and that the PTP clock is not configured correctly.
-> 
-> In order to update device-tree to use the correct 'ptp_ref' name, update
-> the Tegra MGBE driver to use 'ptp_ref' by default and fallback to using
-> 'ptp-ref' if 'ptp_ref' is not found.
-> 
-> Fixes: d8ca113724e7 ("net: stmmac: tegra: Add MGBE support")
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  .../net/ethernet/stmicro/stmmac/dwmac-tegra.c | 19 +++++++++++++++++--
->  1 file changed, 17 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-> index b4b39e6a169e..ec18ee46889f 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-> @@ -9,7 +9,7 @@
->  #include "stmmac_platform.h"
->  
->  static const char *const mgbe_clks[] = {
-> -	"rx-pcs", "tx", "tx-pcs", "mac-divider", "mac", "mgbe", "ptp-ref", "mac"
-> +	"rx-pcs", "tx", "tx-pcs", "mac-divider", "mac", "mgbe", "ptp_ref", "mac"
->  };
->  
->  struct tegra_mgbe {
-> @@ -216,6 +216,7 @@ static int tegra_mgbe_probe(struct platform_device *pdev)
->  	struct plat_stmmacenet_data *plat;
->  	struct stmmac_resources res;
->  	struct tegra_mgbe *mgbe;
-> +	bool use_legacy_ptp;
->  	int irq, err, i;
->  	u32 value;
->  
-> @@ -257,9 +258,23 @@ static int tegra_mgbe_probe(struct platform_device *pdev)
->  	if (!mgbe->clks)
->  		return -ENOMEM;
->  
-> -	for (i = 0; i <  ARRAY_SIZE(mgbe_clks); i++)
-> +	/*
-> +	 * Older device-trees use 'ptp-ref' rather than 'ptp_ref'.
-> +	 * Fall back to the legacy name when 'ptp_ref' is absent.
-> +	 */
-> +	use_legacy_ptp = of_property_match_string(pdev->dev.of_node,
-> +						  "clock-names", "ptp_ref") < 0;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(mgbe_clks); i++) {
->  		mgbe->clks[i].id = mgbe_clks[i];
->  
-> +		if (use_legacy_ptp && !strcmp(mgbe_clks[i], "ptp_ref")) {
+> The PWM controller found on Tegra264 is largely compatible with the one
+> on prior generations, but it comes with some extra features, hence a new
+> compatible string is needed.
 
-Why index 0 is not valid? And why -EINVAL would be considered as legacy
-clock present?
-
-> +			dev_warn(mgbe->dev,
-> +				 "Device-tree update needed for PTP clock!\n");
-> +			mgbe->clks[i].id = "ptp-ref";
+Same comments as before.
 
 Best regards,
 Krzysztof
