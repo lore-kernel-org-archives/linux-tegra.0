@@ -1,150 +1,125 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884993FF8B1;
-	Thu, 26 Mar 2026 15:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1760637755C;
+	Thu, 26 Mar 2026 16:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774539884; cv=none; b=CdH0RU/5ghrGn5U//UFzg1koCGgtNn0M3RfSoiIqp1EyyU+zJ/qN6Bxw3aJgcg8eFTQOASR5p/RIo3XnBK3+hFVfqELNFFKGl0GqtjRZOoYa5UN87aXh3KzMFYYKQZAAQ6/VQLJ0Ptfc6xOtOFeL3Dboq5Avw1X/tV4VK39T1j8=
+	t=1774544223; cv=none; b=Sipp7yutThkkR1p9CI5lTupFlgy8dhuhLOZrF+E94vAtUI7NOhZqeuUhW4c+lqHNml17Q4DK8n4j/09hkryqAq4+n9YQt3a6sFAumlwQO4MuKEjYq0K6O3opmBEhzVLwYxudDOxqYsug4E/ANGCDnMDMgzOCdcsnCcGI0e2q5Uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774539884; c=relaxed/simple;
-	bh=fegKwxX/JUwCF2Lx6tujwh9Zba20d9CylFdb5bDXNpU=;
+	s=arc-20240116; t=1774544223; c=relaxed/simple;
+	bh=tr+9fNAQNqGsuZCPn0EwTdspBeuzqbTTR89MFy19qdo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I9gSdQ+rkI0iEllqhH134dbFu75ReuVykSAe5b4hMSEpfdnkYxPGD1msLJvT9Kj8yyMTh8hbTw7qRLsk1PGVDSG3mnoRMdycy/rrS09du8l1JNB2yVgwaNDDJkkPP7QOkJpsyX67EH6udV4uuP70fN/xDa+7LrBIyKoWLowP+bQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FJppiSpM; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kbh2mL7acsTf1wimDzFcxj0EM/cStLBcBhDABO0jMxxNrxg5bPny3+BCNO42Y4zL5hvjGJUrO2Y3W9bPb5p3PWBJOmG0VENyOgN3YhuzS+zIxNar7v+T7bAP6KaCe0anPnYepjxXN10gb56qwEGnRt/vVTTcaRcCzdDDkCpUQUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=stOtUva7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FJppiSpM"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id A7AD7C56687;
-	Thu, 26 Mar 2026 15:45:06 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 59680601FA;
-	Thu, 26 Mar 2026 15:44:38 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D012C10450519;
-	Thu, 26 Mar 2026 16:44:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1774539877; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=LkNoR3D4UbafRdhgG19imB15t8UnwV/2QMs/xxLmVyU=;
-	b=FJppiSpMFzTcwEj8BcylcxckqdLi3AAFThxTsgjf1VxD813E3aBkMGWgw/R8+eBpwILq49
-	SIqEMogdAM0hHIpYOqpvRet+87Z47SIG9H9zRGzztKEagjZGSc4jC99LV/pEPGmnmE2hFR
-	j0aicGJlzLGjkOyveHO/MPNtvWTEuOVTmXN354hbJc3sOB2XwIbuNT8VMVJ7XwtFWFcCiX
-	WpySGxQl2dLbAeHYterMB/py0EmGIPFEY/G0Dr2QHaPgWHusv9ZuoJeS5EFUE01picFt2j
-	WdKopCMVh7tFY8NZVxQFvXnJXyafnRHn+K9a5syQrIxj5hxsj0ZHxN/KF4wAqg==
-Date: Thu, 26 Mar 2026 16:44:31 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Conor Dooley <conor@kernel.org>, Akhil R <akhilrajeev@nvidia.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Robert Moore <robert.moore@intel.com>, Len Brown <lenb@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Fredrik Markstrom <fredrik.markstrom@est.tech>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Suresh Mangipudi <smangipudi@nvidia.com>,
-	linux-tegra@vger.kernel.org, linux-i3c@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev,
-	linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH 01/12] dt-bindings: i3c: Add mipi-i3c-static-method to
- support SETAASA
-Message-ID: <202603261544313f63018c@mail.local>
-References: <20260318172820.13771-1-akhilrajeev@nvidia.com>
- <20260318172820.13771-2-akhilrajeev@nvidia.com>
- <20260318-tweed-herbicide-eb924ef056b8@spud>
- <20260326150503.GA2360967-robh@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="stOtUva7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFFC2C116C6;
+	Thu, 26 Mar 2026 16:56:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774544222;
+	bh=tr+9fNAQNqGsuZCPn0EwTdspBeuzqbTTR89MFy19qdo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=stOtUva7Sd7FQSWNmcGkhGLZugI5j7Fu2CtWbWqq0feqBH45KJVj1SwSgjEtshfuA
+	 u3XZes7NQeWH3mSRD0/1aqabnAxICLFxr028HePUwdbgtDlohLqz83XgB24EIwd+qj
+	 iddlTgjMFbQfNG3wepAs+pEMfZbkgg0qKGvcrzkPcUtVZwC4QD9tWWFqzoHk1si/Bz
+	 +GdPkwh4nzND9/SezB+7Zf5LDO9RAnXAqPmaPLhzUTamcxe/+8pIVwc288cmxAMrAu
+	 W/yFu9VJhOcGYgL+3t2hCwnspKUbtsy6CetHnzGSHNpFoF4i4woC/hpijnDmE97JpU
+	 DPDCLIctgg4IQ==
+Date: Thu, 26 Mar 2026 22:26:42 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Richard Zhu <hongxing.zhu@nxp.com>, 
+	Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@amlogic.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Greentime Hu <greentime.hu@sifive.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Chuanhua Lei <lchuanhua@maxlinear.com>, 
+	Marek Vasut <marek.vasut+renesas@gmail.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Pratyush Anand <pratyush.anand@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 0/2] PCI: dwc: Add multi-port controller support
+Message-ID: <nokpoxfotjlirqs735sse3f5copimqwmd7fblegrcozkmpkgae@6bw6u3qazbme>
+References: <20260305-dt-parser-v2-0-85836db8dc06@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260326150503.GA2360967-robh@kernel.org>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260305-dt-parser-v2-0-85836db8dc06@oss.qualcomm.com>
 
-On 26/03/2026 10:05:03-0500, Rob Herring wrote:
-> On Wed, Mar 18, 2026 at 05:31:50PM +0000, Conor Dooley wrote:
-> > On Wed, Mar 18, 2026 at 10:57:14PM +0530, Akhil R wrote:
-> > > Add the 'mipi-i3c-static-method' property mentioned in the MIPI I3C
-> > > Discovery and Configuration Specification [1] to specify which discovery
-> > > method an I3C device supports during bus initialization. The property is
-> > > a bitmap, where a bit value of 1 indicates support for that method, and 0
-> > > indicates lack of support.
-> > > Bit 0: SETDASA CCC (Direct)
-> > > Bit 1: SETAASA CCC (Broadcast)
-> > > Bit 2: Other CCC (vendor / standards extension)
-> > > All other bits are reserved.
-> > > 
-> > > It is specifically needed when an I3C device requires SETAASA for the
-> > > address assignment. SETDASA will be supported by default if this property
-> > > is absent - which means for now the property just serves as a flag to
-> > > enable SETAASA, but keep the property as a bitmap to align with the
-> > > specifications.
-> > > 
-> > > [1] https://www.mipi.org/specifications/disco
-> > > 
-> > > Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> > > ---
-> > >  .../devicetree/bindings/i3c/i3c.yaml          | 30 ++++++++++++++++---
-> > >  1 file changed, 26 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/i3c/i3c.yaml b/Documentation/devicetree/bindings/i3c/i3c.yaml
-> > > index e25fa72fd785..1705d90d4d79 100644
-> > > --- a/Documentation/devicetree/bindings/i3c/i3c.yaml
-> > > +++ b/Documentation/devicetree/bindings/i3c/i3c.yaml
-> > > @@ -31,10 +31,12 @@ properties:
-> > >        described in the device tree, which in turn means we have to describe
-> > >        I3C devices.
-> > >  
-> > > -      Another use case for describing an I3C device in the device tree is when
-> > > -      this I3C device has a static I2C address and we want to assign it a
-> > > -      specific I3C dynamic address before the DAA takes place (so that other
-> > > -      devices on the bus can't take this dynamic address).
-> > > +      Other use-cases for describing an I3C device in the device tree are:
-> > > +      - When the I3C device has a static I2C address and we want to assign
-> > > +        it a specific I3C dynamic address before the DAA takes place (so
-> > > +        that other devices on the bus can't take this dynamic address).
-> > > +      - When the I3C device requires SETAASA for its discovery and uses a
-> > > +        pre-defined static address.
-> > >  
-> > >    "#size-cells":
-> > >      const: 0
-> > > @@ -147,6 +149,26 @@ patternProperties:
-> > >            through SETDASA. If static address is not present, this address is assigned
-> > >            through SETNEWDA after assigning a temporary address via ENTDAA.
-> > >  
-> > > +      mipi-i3c-static-method:
-> > > +        $ref: /schemas/types.yaml#/definitions/uint32
-> > > +        minimum: 0x1
-> > > +        maximum: 0xff
-> > > +        default: 1
-> > > +        description: |
-> > > +          Bitmap describing which methods of Dynamic Address Assignment from a
-> > > +          static address are supported by this I3C Target. A bit value of 1
-> > > +          indicates support for that method, and 0 indicates lack of support.
-> > 
-> > I really am not keen on properties that are bitmaps, why can't we just
-> > use the strings "setdasa", "setaasa" etc?
+On Thu, Mar 05, 2026 at 11:50:35AM +0530, Sumit Kumar wrote:
+> This series adds support for multi-port PCIe controllers in the DesignWare
+> driver. Currently, the driver only supports a single Root Port with
+> controller-level properties, which doesn't work for multi-port controllers
+> where each port may have different configurations.
 > 
-> If this comes from a specification, then I'd tend to just copy it rather 
-> than invent our own thing. Obviously if is something structured 
-> fundamentally different from how DT is designed, then we wouldn't. But 
-> this is just a simple property.
+> This series introduces a per-port structure and parsing API that allows 
+> each Root Port to be configured independently via pcie@N child nodes in
+> device tree, while maintaining backward compatibility with existing 
+> single-port bindings.
 > 
 
-The issue being that the specification is not public so it is difficult
-to take any decision.
+This patch touches multiple host controller drivers. I'd appreciate if the
+platform maintainers could test this series and give their tested-by tag to make
+sure we don't regress.
+
+- Mani
+
+> Signed-off-by: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
+> ---
+> Changes in v2:
+> - Fix error code preservation in dw_pcie_resume_noirq() to return actual
+>   error from dw_pcie_wait_for_link() instead of hardcoded -ETIMEDOUT (Mani).
+> - Initialize ret variable to -ENOENT in dw_pcie_parse_root_ports() (Mani).
+> - dw_pcie_host_init(): Remove -ENOENT error skipping to make parsing
+>   failures fatal for now, add TODO comment about making properties
+>   optional later (Mani).
+> - Link to v1: https://lore.kernel.org/r/20260105-dt-parser-v1-0-b11c63cb5e2c@oss.qualcomm.com
+> 
+> ---
+> Sumit Kumar (2):
+>       PCI: API changes for multi-port controller support
+>       PCI: dwc: Add multi-port controller support
+> 
+>  drivers/pci/controller/dwc/pci-exynos.c           |   4 +-
+>  drivers/pci/controller/dwc/pci-imx6.c             |  15 +-
+>  drivers/pci/controller/dwc/pci-meson.c            |   1 -
+>  drivers/pci/controller/dwc/pcie-designware-host.c | 175 ++++++++++++++++++----
+>  drivers/pci/controller/dwc/pcie-designware.c      |  32 ++--
+>  drivers/pci/controller/dwc/pcie-designware.h      |  17 ++-
+>  drivers/pci/controller/dwc/pcie-fu740.c           |   6 +-
+>  drivers/pci/controller/dwc/pcie-intel-gw.c        |  13 +-
+>  drivers/pci/controller/dwc/pcie-qcom-common.c     |   5 +-
+>  drivers/pci/controller/dwc/pcie-qcom-ep.c         |   4 +-
+>  drivers/pci/controller/dwc/pcie-qcom.c            |   4 +-
+>  drivers/pci/controller/dwc/pcie-rcar-gen4.c       |  13 +-
+>  drivers/pci/controller/dwc/pcie-spear13xx.c       |   5 +-
+>  drivers/pci/controller/dwc/pcie-tegra194.c        |   4 +-
+>  drivers/pci/of.c                                  |   6 +-
+>  drivers/pci/pci.h                                 |   2 +
+>  16 files changed, 232 insertions(+), 74 deletions(-)
+> ---
+> base-commit: 097a6c336d0080725c626fda118ecfec448acd0f
+> change-id: 20251010-dt-parser-98b50ce18fc1
+> 
+> Best regards,
+> -- 
+> Sumit Kumar <sumit.kumar@oss.qualcomm.com>
+> 
 
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+மணிவண்ணன் சதாசிவம்
