@@ -1,104 +1,76 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D683CAE85
-	for <linux-tegra@vger.kernel.org>; Thu, 26 Mar 2026 11:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFCF423D2AB;
+	Thu, 26 Mar 2026 12:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774524519; cv=none; b=Be34LvPB/9KTW93V0ea3XO6XrTDSQPPSL9ji3QMHzMgiBMddNeE8UiiCgOe69z67IR0BykoMnNtHExGiIrHT+R0GiaNzuJmBoYVtE6NtjMCAkXBg9Ff5FBRE8pY67TNzPwSPjZfwL6zYpjWeHHO0xY4sUfWRzAXdeM2rPuu/uwo=
+	t=1774529533; cv=none; b=GXUf23QfCmxC7ib/wzJjnqREOkMiRN50TBnPkjKrphfodAL+SYyOxbQ7GfFgyjiWq+GsNYEDlN3m5sQyJ40o0OygoflmYiE8AKdrS5Qf88zdgk58YyAjhWkJ+jVI8izQcf0kebgHqgGJsOi3Fo8xxt1EI4OQdgJp+1qnEeYZdZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774524519; c=relaxed/simple;
-	bh=SuhWVLOpmME3KgNqo+uk5QsQtgbCDFvyt5EO1DDbThU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hX5qmX/HRgYq2a53C8ikiOXxnAFMJWCgwMxgk+Bl34pL6tyzlGVR6qQqmrWwrPTSwAjpQH2SjB8wilFFKV4el47jQFL5Rm6QzdFtdh6aeDJpoFuj/+o5U4ECOe6KZotK111nTnUtmiK5+25GUjBeUc5JRlzVBgM7k6pIf0IBBvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q2pnleWt; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774529533; c=relaxed/simple;
+	bh=DRCQnnvJqKguX1Qk+NH8PGbOpH/goqBVZcNSBiZzI5M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Bkc38odgHv4BP7vGuPN0RPRhdDdLfb4hVnxISpWJR9eY6pDA2GopDOaX6SmEwNX3i26ZfWCCgca2dNtwUlhjfBKE9yR1F/DHm1ci9lb8nRr+KTsq3oaygK+VTcxHhEznJtyy9nss1LyCI+IZl7F1VVL3AI53Fxfw7qTkGgZKafY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ocl1oRtd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q2pnleWt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1685FC116C6;
-	Thu, 26 Mar 2026 11:28:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ocl1oRtd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69AD8C2BC87;
+	Thu, 26 Mar 2026 12:52:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774524518;
-	bh=SuhWVLOpmME3KgNqo+uk5QsQtgbCDFvyt5EO1DDbThU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=q2pnleWt4pj8OpA4TImNSOokSKRZC4RJydJo9b3jUOLifA1YFa9cgWw19UPwoBY4P
-	 upGta3/VMJDYuxak0dgSFWaGQQ2q2JvOp5E8/9GHEmQulkCL+a0uR/h9aL9uNm0cOU
-	 0DKuU7+VfXjP2i01St+mAgyinGkB/HIh3grMN2+TKQPbodVg0DcJka2VIeaBARnOBj
-	 0AiSQ60kXrQapgaXrbH/B40Ggf5/9uUfTIMYUN+K1KeZ0T73OZCEe3WnDAQLclTUim
-	 BzQv4ay4tZC975JXYB1u+a3PLLhGBeP1EaEsF3Uh5I+gGlnsrjPhR44dlViahGxOXj
-	 RgqQX/uS26y1w==
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH] soc/tegra: bpmp: Use ENODEV instead of ENOTSUPP
-Date: Thu, 26 Mar 2026 12:28:31 +0100
-Message-ID: <20260326112831.2783853-1-thierry.reding@kernel.org>
-X-Mailer: git-send-email 2.52.0
+	s=k20201202; t=1774529532;
+	bh=DRCQnnvJqKguX1Qk+NH8PGbOpH/goqBVZcNSBiZzI5M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=ocl1oRtdBDxteXhwpkJHfKwaWe+ewIQjxw6LbG0kjSTkpDsiZQomtCfUBANztxmFI
+	 m0ZUtae/Sr8/8PDu8Anu71CLgg7g414G9tJzgCr+eDuV3P2RNSrw1xnuVsKPVbvm62
+	 Nc0QIwI+dhP1OmT23FibPlg7Dd7jxssoKA56li5jqFJjRctYIMFK1rZa1pvxogeG9Y
+	 i4+GAQMyIvu/XKJpbcroZCX392I9nR57FeN8RYd7hkMRm+alyl66cgvf1T1B6wJFXW
+	 UPQMCvdAnFoNrk/Yb1dJHpzypEq3T1GvEGhGVOz3d7Af3jZVkNi6Rz+weIuAR1NgoW
+	 jnHRMjqBHGkhw==
+From: Thomas Gleixner <tglx@kernel.org>
+To: Tsai Sung-Fu <danielsftsai@google.com>, Jon Hunter <jonathanh@nvidia.com>
+Cc: Radu Rendec <rrendec@redhat.com>, Manivannan Sadhasivam
+ <mani@kernel.org>, Marek =?utf-8?Q?Beh=C3=BAn?= <kabel@kernel.org>, Krishna
+ Chaitanya
+ Chundru <quic_krichai@quicinc.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Jingoo Han <jingoohan1@gmail.com>, Brian Masney <bmasney@redhat.com>, Eric
+ Chanudet <echanude@redhat.com>, Alessandro Carminati
+ <acarmina@redhat.com>, Jared Kangas <jkangas@redhat.com>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v3 3/3] PCI: dwc: Enable MSI affinity support
+In-Reply-To: <CAK7fddBV6HHR-MTkRqH2gK=Ga16H6jjX0PsSaPUv-Cfef-WUbA@mail.gmail.com>
+References: <20251128212055.1409093-1-rrendec@redhat.com>
+ <20251128212055.1409093-4-rrendec@redhat.com>
+ <4e5b349c-6599-4871-9e3b-e10352ae0ca0@nvidia.com>
+ <a8d841e870d6dbbabef7eadb774f2a58a96c57c7.camel@redhat.com>
+ <cfe44924-3419-4f31-8ab3-87b769d21a5b@nvidia.com>
+ <96c9d483f67be02fa1dba736fea465216d0c3269.camel@redhat.com>
+ <87sebsdcte.ffs@tglx> <255713ca-bf91-4f7e-8df2-33b7b614a1bb@nvidia.com>
+ <221f6dadb6d8ce06f30a24baaa2777e90d75b130.camel@redhat.com>
+ <87h5s7bb5s.ffs@tglx> <87ecnbb2mn.ffs@tglx>
+ <b5e33957-1b8d-436b-888e-2b6f13d30782@nvidia.com>
+ <CAK7fddBV6HHR-MTkRqH2gK=Ga16H6jjX0PsSaPUv-Cfef-WUbA@mail.gmail.com>
+Date: Thu, 26 Mar 2026 13:52:08 +0100
+Message-ID: <87341meosn.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Thierry Reding <treding@nvidia.com>
+On Thu, Mar 26 2026 at 11:48, Tsai Sung-Fu wrote:
 
-ENOTSUPP is not a SUSV4 error code and checkpatch will warn about it.
-It is also not very descriptive in the context of BPMP, so use the
-ENODEV error code instead. For the stub implementations this is a more
-accurate description of what the failure is.
+Please do not top post and trim your replies as documented.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- include/soc/tegra/bpmp.h | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+> Do we have plan to land this feature upstream ?
 
-diff --git a/include/soc/tegra/bpmp.h b/include/soc/tegra/bpmp.h
-index 822851ef4bf8..a33582590a3b 100644
---- a/include/soc/tegra/bpmp.h
-+++ b/include/soc/tegra/bpmp.h
-@@ -144,7 +144,7 @@ bool tegra_bpmp_mrq_is_supported(struct tegra_bpmp *bpmp, unsigned int mrq);
- #else
- static inline struct tegra_bpmp *tegra_bpmp_get(struct device *dev)
- {
--	return ERR_PTR(-ENOTSUPP);
-+	return ERR_PTR(-ENODEV);
- }
- 
- static inline struct tegra_bpmp *tegra_bpmp_get_with_id(struct device *dev,
-@@ -156,16 +156,19 @@ static inline struct tegra_bpmp *tegra_bpmp_get_with_id(struct device *dev,
- static inline void tegra_bpmp_put(struct tegra_bpmp *bpmp)
- {
- }
-+
- static inline int tegra_bpmp_transfer_atomic(struct tegra_bpmp *bpmp,
- 					     struct tegra_bpmp_message *msg)
- {
--	return -ENOTSUPP;
-+	return -ENODEV;
- }
-+
- static inline int tegra_bpmp_transfer(struct tegra_bpmp *bpmp,
- 				      struct tegra_bpmp_message *msg)
- {
--	return -ENOTSUPP;
-+	return -ENODEV;
- }
-+
- static inline void tegra_bpmp_mrq_return(struct tegra_bpmp_channel *channel,
- 					 int code, const void *data,
- 					 size_t size)
-@@ -177,8 +180,9 @@ static inline int tegra_bpmp_request_mrq(struct tegra_bpmp *bpmp,
- 					 tegra_bpmp_mrq_handler_t handler,
- 					 void *data)
- {
--	return -ENOTSUPP;
-+	return -ENODEV;
- }
-+
- static inline void tegra_bpmp_free_mrq(struct tegra_bpmp *bpmp,
- 				       unsigned int mrq, void *data)
- {
--- 
-2.52.0
+# cd linux
+# git log v6.19.. drivers/pci/controller/dwc/pcie-designware-host.c
 
+Thanks,
+
+        tglx
