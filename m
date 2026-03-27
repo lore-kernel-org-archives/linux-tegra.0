@@ -1,104 +1,168 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E70531F999;
-	Fri, 27 Mar 2026 15:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7947330330
+	for <linux-tegra@vger.kernel.org>; Fri, 27 Mar 2026 15:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774624725; cv=none; b=dQ92XxtLEAnjCwoE/k4nMumuIvlqsEceE4dkG+AeYf5zKGYfBjnFvgWD8NfmNMYwige4V83LZaYaE8bPdzBX+mongsiSFkSTxNxco/VO1zdVnfOHqNwEc3USqL5FI2/cEwEY83vJcRIPOU+wAybvc8gXLiBiepMzqesDIoBFIjw=
+	t=1774624729; cv=none; b=ieyut65xW0oFPnLJhbk70jtcMRVXVfuNG6zHtaeGsGA9RO5lKT6WdeZgJTr8FaPepwMYnQ45Uf7EMdajFxtsXOnJLP2C0D3f2+NKWwCvi4//b0EsoGb6DAG4vZ4pAq7fSlmPn6qE3ZQq2pEH6lHouuRGlCfb1op4+LS7NCoOEQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774624725; c=relaxed/simple;
-	bh=BRl7w35F+Nx4nZiloKXPb0hNGeT4yNF1MUfmbXxPOgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BqXrBu8y6Wycvemjc0WlUkn97kcbVQRJkE/BJGYmZpJK6nm8nPyKVCaxdmjt/0Re35rwy5rCOKqTnTkY3fSBe/NN4FYXOkM3cS4m0BpPBckKJMh5BInqYHM6khOS3X4mpBAxE9Kw+ZpiXs9OG4UaPKy2YfECg8pidoLTG0UmS0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dY4vpwP2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774624729; c=relaxed/simple;
+	bh=fjT2H6gzwBSp87QlI/2gBn1WubDk9flwC+mV3zKQvQY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=E63hWm5DiCt2LC3O6qpEYwP/LsW9WtAayh2cboYIuZO41U93gIwz7w3HyWjk+YQFA7Pyc/7am3LxYeO/tXD2aLKEp/8/yz0GBOtsIYovqIv8wmP+pAS2G2AIFuD8A/p7PCnIU2UhHKHMDPUB1P4NDhrTVAQrzNn0HTnsUJsXlxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=el4fZ9gv; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dY4vpwP2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E37BC19423;
-	Fri, 27 Mar 2026 15:18:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774624725;
-	bh=BRl7w35F+Nx4nZiloKXPb0hNGeT4yNF1MUfmbXxPOgc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dY4vpwP2u/TtjeDu6zGlUMDNNOaPHd8syT1LqyNCDgF3lU0qoo3T9aNlhE+hRRE+R
-	 xlRrvPGlVTEZvC7lIJtEnS1xu1lfyoYnL1I7sJgMTL0d0gmpiMrTWpx+eYrMs0Z+i7
-	 f6SYF1kSttQ6NOsymciFHYeueoeG8Ofhm5kweJi9zfGCKdPUP8NtP2B5wbVlpYwGgS
-	 1Qv6j0YjR6GZIYUsjKuN/DXFJG+aiC1nP7pEIkyJ/CSXSLQC/oFBATuiQ68vQZeNBA
-	 mnLUSrmRsEicxDAWpcLyg+EomtMecQ75m30Y2xrqO9HlkTf1OjsYBh2eZHt2fOFrVN
-	 uKSGde65Gjb5Q==
-Date: Fri, 27 Mar 2026 16:18:42 +0100
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] ARM: tegra: transformers: add connector node
-Message-ID: <acafk7munaGrCTK3@orome>
-References: <20260223065500.13357-1-clamor95@gmail.com>
- <20260223065500.13357-3-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="el4fZ9gv"
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-38c688bdc71so12213031fa.2
+        for <linux-tegra@vger.kernel.org>; Fri, 27 Mar 2026 08:18:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1774624726; x=1775229526; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Rd+AZ84x5Lizh7vwDeIK1vtXSM5ziqqkEbKt/AVL2kc=;
+        b=el4fZ9gvVWBxMxKWtuoBeLnRvQEb5KaPLdCrcg8JZNJikpuP0ugCnUh99PWErCyHf1
+         1SM9QW+AhnqFfSmn6tr3nm8VKE14gvZNp6vn80492K9Gpc1MnSPDeEU+ZKHovG0ARHXT
+         W+JghGa0xNKDFd4feSBOwlu6xm3CZ6H+q3oCTSF5fXGiFfYwI/d30oAfCKTsYDNAWjxk
+         c+IJq7eIN4HD1ZPOozaV2bgLKu6yF9gOoO3B9os+2ABbYZvIsvutP+L1WPtXPpjOXVuX
+         G4Yt6zIp3nsIPgGuPuYX1ma5kKGU3WXbWJDi8rcNhTp8/WOa17O6Wqm8rff96M93T/4T
+         DMRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774624726; x=1775229526;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rd+AZ84x5Lizh7vwDeIK1vtXSM5ziqqkEbKt/AVL2kc=;
+        b=ZWsmWXiRKwRucdqOQnCBLWvyB5iB+SUvOFLnmcVUPkDHIZVH3fjfYuuXE8bOec/bsW
+         COIwwhZXqLwa1YHLNBP+gKZirmOsui6b3uXT/IxYXQ2w5iMUhanruaVw+EZNr3b3BR97
+         Yjg4PgJ7YDjVQzCMYw7Ojj3xVbPgTItbtyo1VjELc0AK1Oev7if3XkwiNB5EONNBnPut
+         tmUqAjs9ncTivIfUH4tOLyQHY2YLAb5ggSCez11cnbMIvPsCWEC5DT6DsyAuxIdqW2vZ
+         XRALcAPg/Rc4vbcvatdTQKI7fCSueTt9DusOTZ282wxbMLu7sSRJfg8p6UCx3H/ziF97
+         3Y1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWKPB+ht2Dq9KMuWVyCw77r+kWet7MXRudokBfZMGfVH/5E2erB1tgJVXpPy+7NC6q30PuWN24IB3w2+A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNwo0zluaFCBx7Xh3IOw8dKfik9+nmC79yVWx+7pb8kh5ihqOE
+	IpSj+W0z79CeTleNkG2dJTQhuxWMw3ia1sp5phcl0yLqSwjDRkk+IZ5Tbi67CA==
+X-Gm-Gg: ATEYQzzwGZB9bI62SikCneUc3F61Ve7iZX8rb+bxja8Qpn7PvdKu8H4vD5sFJk6x6X5
+	4DnVETxdNiokA9SMGu8uHig3xHqOr5ph3lywQg7N5fBvIWd2GFxjDNfIZb0ERQD4zP09J1fvyti
+	7gDAdXoNthlpuDJ7s2Vu9AfOQfrEl2zbLTzagfae+/iFqN0xvHmmbBeDeycbboR/JO1Inx+u2WL
+	FBdAE9rNakqJh4gZdFd61CEy4WHn8UTbTKbyf6d6SWb5Y3bRypeWXhJwj5g7lONcJQiTAZMF5Gd
+	fI898O2KM+39Pqui0UD3gjll9CCYXPQu6PxBXoywo05q3zkTbWxL6gYwQyfOUjd7lwMvguErTyi
+	ObNoQatVR1ItfX+uS22g8Z82pJzWt8cgfIoQ6Nq9S8BUHejPY3KHuOXMeSEQM7DJLC88kofGFB0
+	oxw/PVRC8VWrsk0vwPynAz6LF5OsYlVg1F
+X-Received: by 2002:a2e:b894:0:b0:38b:50c7:8239 with SMTP id 38308e7fff4ca-38c73263251mr9097391fa.21.1774624725656;
+        Fri, 27 Mar 2026 08:18:45 -0700 (PDT)
+Received: from ehlo.thunderbird.net ([178.137.189.225])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-38c5330a952sm12096881fa.37.2026.03.27.08.18.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Mar 2026 08:18:45 -0700 (PDT)
+Date: Fri, 27 Mar 2026 17:18:44 +0200
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Thierry Reding <thierry.reding@kernel.org>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ =?ISO-8859-1?Q?Jonas_Schw=F6bel?= <jonasschwoebel@yahoo.de>,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] ARM: tegra: lg-x3: add missing nodes
+User-Agent: K-9 Mail for Android
+In-Reply-To: <acacdUaXVNIKHT2O@orome>
+References: <20260126101018.24450-1-clamor95@gmail.com> <acacdUaXVNIKHT2O@orome>
+Message-ID: <C4901815-931A-4DD0-A12D-6C082B3C1170@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="v4rbe2jimz4b2bgy"
-Content-Disposition: inline
-In-Reply-To: <20260223065500.13357-3-clamor95@gmail.com>
-
-
---v4rbe2jimz4b2bgy
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/2] ARM: tegra: transformers: add connector node
-MIME-Version: 1.0
 
-On Mon, Feb 23, 2026 at 08:55:00AM +0200, Svyatoslav Ryhel wrote:
-> All ASUS Transformers have micro-HDMI connector directly available. After
-> Tegra HDMI got bridge/connector support, we should use connector framework
-> for proper HW description.
->=20
-> Tested-by: Andreas Westman Dorcsak <hedmoo@yahoo.com> # ASUS TF T30
-> Tested-by: Robert Eckelmann <longnoserob@gmail.com> # ASUS TF101 T20
-> Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # ASUS TF201 T30
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../boot/dts/nvidia/tegra30-asus-tf600t.dts   | 21 +++++++++++++++++--
->  1 file changed, 19 insertions(+), 2 deletions(-)
 
-Two things about you commit messages that I have to fixup every time:
 
-  1. caps after the subject prefix
-  2. wrap commit message at 72 characters
+27 =D0=B1=D0=B5=D1=80=D0=B5=D0=B7=D0=BD=D1=8F 2026=E2=80=AF=D1=80=2E 17:05=
+:34 GMT+02:00, Thierry Reding <thierry=2Ereding@kernel=2Eorg> =D0=BF=D0=B8=
+=D1=88=D0=B5:
+>On Mon, Jan 26, 2026 at 12:10:14PM +0200, Svyatoslav Ryhel wrote:
+>> With the recent kernel updates, Tegra30-based LG smartphones now suppor=
+t
+>> several additional features, including an RGB-DSI bridge, DSI panels,
+>> MUIC, a charger, a battery temperature sensor, OTG mode, and capacitive
+>> buttons on the P895=2E Add required nodes to device trees=2E
+>>=20
+>> ---
+>> Changes in v2:
+>> - fixed dw9714 and tx13d100vm0eaa nodes
+>> - added video device pipes graph
+>>=20
+>> Regarding CHECK_DTBS output in v2:
+>> - nvidia,tegra30-pcie, nvidia,tegra30-gmi, nvidia,tegra30-kbc,
+>>   nvidia,tegra20-kbc, nvidia,tegra30-ahub are not documented yet
+>> - nvidia,tegra30-vi was adjusted and applied, change did not apper yet
+>>   (https://lore=2Ekernel=2Eorg/lkml/176860988748=2E1688420=2E1171712264=
+7073678=2Eb4-ty@nvidia=2Ecom/)
+>> - st,m24c08 appers undocumented though it seems to be different from
+>>   st,24c08, at least they google as separate devices=2E atmel,24c08 is =
+not
+>>   documented, though it is widey used in linux device trees and is
+>>   supported by driver=2E Here is one of examples:
+>>   https://git=2Ekernel=2Eorg/pub/scm/linux/kernel/git/next/linux-next=
+=2Egit/tree/arch/arm/boot/dts/allwinner/sun7i-a20-linutronix-testbox-v2=2Ed=
+ts?h=3Dnext-20260123#n33
+>> - onnn,mt9m114 does not have 'orientation' property, though it should
+>>   include it since it is generic for camera devices
+>> - ti,lp8720 and maxim,max77663 have txt documentation and are not yet
+>>   converted to DT schema
+>> - backlight in panel nodes was not added since lm3533 has no DT support
+>> - missing '#io-channel-cells' in ti,tsc2007 addressed in
+>>   https://lore=2Ekernel=2Eorg/lkml/20260122193549=2E29858-2-clamor95@gm=
+ail=2Ecom/
+>> - missing dsi controller properties of ssd2825 addressed in
+>>   https://lore=2Ekernel=2Eorg/lkml/20260123073411=2E7736-2-clamor95@gma=
+il=2Ecom/
+>> - missing '#io-channel-cells' in generic-adc-thermal was proposed in bu=
+t rejected
+>>   https://lore=2Ekernel=2Eorg/lkml/20250310075638=2E6979-2-clamor95@gma=
+il=2Ecom/
+>> ---
+>>=20
+>> Svyatoslav Ryhel (4):
+>>   ARM: tegra: lg-x3: add panel and bridge nodes
+>>   ARM: tegra: lg-x3: add USB and power related nodes
+>>   ARM: tegra: lg-x3: add node for capacitive buttons
+>>   ARM: tegra: lg-x3: complete video device graph
+>>=20
+>>  arch/arm/boot/dts/nvidia/tegra30-lg-p880=2Edts |  39 +++
+>>  arch/arm/boot/dts/nvidia/tegra30-lg-p895=2Edts |  79 +++++
+>>  arch/arm/boot/dts/nvidia/tegra30-lg-x3=2Edtsi  | 328 +++++++++++++++++=
++-
+>>  3 files changed, 429 insertions(+), 17 deletions(-)
+>
+>Patches 1-3 applied=2E Patch 4 has checkpatch has checkpatch warnings:
+>
+>	WARNING: DT compatible string "st,m24c08" appears un-documented -- check=
+ =2E/Documentation/devicetree/bindings/
+>	#255: FILE: arch/arm/boot/dts/nvidia/tegra30-lg-x3=2Edtsi:1243:
+>	+			compatible =3D "st,m24c08", "atmel,24c08";
+>
+>So I've left it out for now=2E
+>
 
-Both patches applied, thanks.
+st,m24c08 appers undocumented though it seems to be different from
+st,24c08 (in schema) at least they google as separate devices=2E atmel,24c=
+08 is not
+documented, though it is widey used in linux device trees and is
+supported by driver=2E Here is one of examples:
+=C2=A0=C2=A0https://git=2Ekernel=2Eorg/pub/scm/linux/kernel/git/next/linux=
+-next=2Egit/tree/arch/arm/boot/dts/allwinner/sun7i-a20-linutronix-testbox-v=
+2=2Edts?h=3Dnext-20260123#n33
 
-Thierry
+I assume patch 4 should be fine and most likely schema needs to be adjuste=
+d to cover this compatible (since it exists and is used)=2E
 
---v4rbe2jimz4b2bgy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmnGn9IACgkQ3SOs138+
-s6H8PQ//WDF56CankhI0lPuYlTAwtTyUwqBLWoyTKzs31bOKmybw9ca7lgvdRQjL
-59xuW/qbfCpXHOZAK6fZqcpRRQGgMZSP0P8izSrA40CXDNKO7S34DIxD8yfv+h8/
-d6cFnzQrxu/lMadP4YZ7tsujynCu+MHlYIUg44R0bdS9o9wtyc2OvlST0R9wk4J5
-jGZuKn65PUA40/nu2dM+fwCD/0HloGxhrBRaYx0Pdm6O32MwuVT5Yx7kAN7KnPKC
-OjGrq4Rxe8bt4XUCjM48aPZVAeHn0sh/hWBmxC98HneYwpzOnAx3bF7CU2m7RWpZ
-Nl+5ojqdg49r0opy3eQFTEES4NHlPI9M52nmOTS9KCIzJacRtmZ7pzQC/dLgykPv
-eSo1d5kte1xC75zDPqZp8QrZ+MSb7kealA/r0Zudy5cXd/DEhVl7dNjgzrW4+No4
-HM5TveOG23D432Gn0R7doqg1RdfiawmnRioRjzI4GmFRypt/XvfoXXo1LqfUkTil
-LiKoOqsrGw27IRoXwbZTQW37PB69fP+rPA/lQYGXjhHXJG/NmtRP+HbxJtxdwOoF
-21wS+ps27eEpVpoUGb93+wSdDt9tnrhOMtXVWWPfYmfhNyGviFou5y7OTI/BPblC
-roQZdXXlWmDulr42xacXH78uwNtTQye1TS2s+VaE5XgdBATv9HU=
-=pX+M
------END PGP SIGNATURE-----
-
---v4rbe2jimz4b2bgy--
+>Thierry
