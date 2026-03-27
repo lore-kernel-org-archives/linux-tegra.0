@@ -1,58 +1,127 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47362DA75A;
-	Thu, 26 Mar 2026 22:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1A12BE7BB;
+	Fri, 27 Mar 2026 06:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774565173; cv=none; b=m2vhwcoDnT+LUXLDEb+5dHtR1dB/Df08seGlW0Q4LwH11w+JQ64MZE9McMr9vd7tpOhQ6E0wriDmY/f12W3cRHFRuTZz8nUVaDR5eVRKM+BNn4Mj4he+13LHNhB+pVCdjnd+XLHJy8Xrg9xuiw6AcZZOfInknTaAKon79Cd+u8w=
+	t=1774594384; cv=none; b=ESnt93odZ5ccH6QecTRpZez+pzGT89aWC5NqsSD8Fhcz/j3N18YOpxXVT0+bixAVPmssGaNK2zDc0HvmLkXEMzWwqty9HsdNmXprVtVgMdG2+G+T5L5RQWwWNWpCSTFW4enPEy2xpyRC3lru1cdjUBoELDq43oS19HqYbTfoCEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774565173; c=relaxed/simple;
-	bh=09hdXevDu1/IwNG3Menqnf6eWM8T+7oRxKD5M3zx4vI=;
+	s=arc-20240116; t=1774594384; c=relaxed/simple;
+	bh=+6taD/KYX6s6aOGsQO53ivGa0KI2dG/K2GEdTZ29IxI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iq1UGUzXktwT8Hrsrr25MVCqfO4pN472CfznrMrsYAyJkbk3Fhg+NCuVlq/HKhe0fCLAC+imB3Un19RBV/VMF4dlDjRfh2K16E7wOWyXE595hzL6ftmx677E8KkcI3QvxN3RoI98H3FV0vvdx+Qfe86YlArnOb+vdYtyForBH2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PXWhVk7s; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=maY8VjJ4M8ub7rY6gutpF8eIFQyvtYi1+++x2DcJwHGfOX0f41dZIGa/Utm0EM31BBTovbZ3+CXl08C+ydUVpxWWk/i4kcyZ5hKkqJpgD7zVyXn0oEDR9CpUbgRk9lHRqxSD+owzeafQuMEczQJ88UbSl9Lvv+cLesXXTneo4VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uM9tWBQS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PXWhVk7s"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F054BC116C6;
-	Thu, 26 Mar 2026 22:46:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uM9tWBQS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5247EC19423;
+	Fri, 27 Mar 2026 06:52:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774565173;
-	bh=09hdXevDu1/IwNG3Menqnf6eWM8T+7oRxKD5M3zx4vI=;
+	s=k20201202; t=1774594383;
+	bh=+6taD/KYX6s6aOGsQO53ivGa0KI2dG/K2GEdTZ29IxI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PXWhVk7saJLTqVL3C5AxqZMn5XX5loYsQnzqf0Tr1phZnip9Nd+MCUKGp32lNsPb7
-	 Y+pgcDhEv+I3tVU/b+OGkXJDxCCaGgvQ5A7EPIJwVbbC7x1uNs1eYXAg4XLVOU4/SL
-	 V8Qy6FsnJCWaEZR9i07dpsdG60OjcPoR4mqA9a9lUE20vUFeD5OZJa4YevrcbB6uLW
-	 R5H30SKVhWW+9plytTSktuMqSM4jMDtt39d4/gPalh//z8aPV4P4yIFWb4YCby7laY
-	 WituCVPfbmI18CBgaxQojP9akDGfftxVPWoynIqmylQQ5WILFbB5iu9tjUhb3tU/qY
-	 k1mFiDuQ/Yp8w==
-Date: Thu, 26 Mar 2026 23:46:09 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Kartik Rajput <kkartik@nvidia.com>
-Cc: ldewangan@nvidia.com, digetx@gmail.com, thierry.reding@gmail.com, 
-	jonathanh@nvidia.com, akhilrajeev@nvidia.com, smangipudi@nvidia.com, 
-	linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 RESEND 0/3] Add I2C support for Tegra410
-Message-ID: <acW2-1Xvp4VARppV@zenone.zhora.eu>
-References: <20260324055843.549808-1-kkartik@nvidia.com>
+	b=uM9tWBQSBzeOskmqaDM0QvWoV4jUNiC4DsBlIKIFg7In21qbXcrgvL+npIdvVsRu4
+	 qrE69iQ+kiDSqXlcivHy16z+fEY80xVdn90vInQTF9nPU0Nfe7+PBampXS2wO/gG+p
+	 NgAISEoCyX1+VSpZjmfa/Wk2xePLkgGitS5duT/iqLt2Xz6gmhtYoyq/3bAsUtsGq+
+	 2OtE88H/kNHCxHKSKe13LzCtkcFHYUQtieBVLEZ/RgfH2fMVrGZXCU2jVD0wDWvbDI
+	 /UHVNy1S2RfsSIT/lKpdHdy0Vk/hccjI1KCqeAffyJ+BOUCNvP4IiTCz7QCM5HVlUz
+	 YXDRsPrcv0reg==
+Date: Fri, 27 Mar 2026 12:22:46 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-can@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, netdev@vger.kernel.org, 
+	spacemit@lists.linux.dev, UNGLinuxDriver@microchip.com, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	Nitin Rawat <quic_nitirawa@quicinc.com>
+Subject: Re: [PATCH v5 phy-next 10/27] scsi: ufs: qcom: keep parallel track
+ of PHY power state
+Message-ID: <gq4sswslkjaoe5hhxe2mz6z57uiumotqknkryadvfsstj4srx4@qgenqekgrqv4>
+References: <20260319223241.1351137-1-vladimir.oltean@nxp.com>
+ <20260319223241.1351137-11-vladimir.oltean@nxp.com>
+ <ezrcjjwtg5n76w4m65l27szu5mywx66ti3xuprkfcp3x6quvbf@2rew4zrnnbt2>
+ <20260325114309.3k7xkfrffpxp5xq4@skbuf>
+ <vu3cxpynr5mu2fzkrtmjcwijc5jz323wlnbc3r7lp2wxqmhydx@z5xhgf4myw2d>
+ <20260325115731.genmq2yew2p4dvbs@skbuf>
+ <20260326080444.gbesciaa5zwvcgoy@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260324055843.549808-1-kkartik@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260326080444.gbesciaa5zwvcgoy@skbuf>
 
-Hi Kartik,
+On Thu, Mar 26, 2026 at 10:04:44AM +0200, Vladimir Oltean wrote:
+> On Wed, Mar 25, 2026 at 01:57:31PM +0200, Vladimir Oltean wrote:
+> > On Wed, Mar 25, 2026 at 05:21:14PM +0530, Manivannan Sadhasivam wrote:
+> > > I believe I added the power_count check for phy_exit(). But since that got
+> > > moved, the check becomes no longer necessary.
+> > 
+> > FYI, the power_count keeps track of the balance of phy_power_on() and
+> > phy_power_off() calls, whereas it is the init_count keeps track of
+> > phy_init() and phy_exit() calls. They are only related to the extent
+> > that you must respect the phy_init() -> phy_power_on() -> phy_power_off()
+> > -> phy_exit() sequence. But in any case, both should be considered
+> > PHY-internal fields. The "Order of API calls" section from
+> > Documentation/driver-api/phy/phy.rst mentions the order that I just
+> > described above, and consumers should just ensure they follow that.
+> 
+> Ok, so we can close this topic of "checking the power_count not needed"
+> by linking to the conversation which spun off here:
+> https://lore.kernel.org/lkml/20260325120122.265973-1-manivannan.sadhasivam@oss.qualcomm.com/
+> 
 
-> Kartik Rajput (3):
->   i2c: tegra: Introduce tegra_i2c_variant to identify DVC and VI
->   i2c: tegra: Add logic to support different register offsets
->   i2c: tegra: Add support for Tegra410
+Sure.
 
-merged to i2c/i2c-host.
+> Mani, I spent some more time to figure out what's really going on with
+> this unexpected phy_power_off() call. Do you think you could
+> regression-test the patch attached?
+> 
 
-Thanks,
-Andi
+I tested the patch. But it fails ufs_qcom_power_up_sequence() if PHY was already
+powered on:
+
+[   31.513321] qcom-qmp-ufs-phy 1d87000.phy: phy initialization timed-out
+[   31.513335] ufshcd-qcom 1d84000.ufshc: Failed to calibrate PHY: -110
+[   31.565273] ufshcd-qcom 1d84000.ufshc: Enabling the controller failed
+
+Funny thing is, it didn't affect the functionality since the UFS core retries
+ufshcd_hba_enable() and in the error path of ufs_qcom_power_up_sequence(),
+phy_power_off() gets called and that causes the next try to succeed. So it is
+evident that, if PHY was already powered ON, it should be powered off before
+ufs_qcom_phy_power_on(). And due to the UFS driver design,
+ufs_qcom_power_up_sequence() can get called multiple times. So we cannot just
+remove phy_power_off().
+
+Below diff on top of your patch fixes the issue:
+
+```
+diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+index ed067247d72a..2c9fe03f349e 100644
+--- a/drivers/ufs/host/ufs-qcom.c
++++ b/drivers/ufs/host/ufs-qcom.c
+@@ -567,6 +567,8 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
+        if (ret)
+                return ret;
+ 
++       ufs_qcom_phy_power_off(host);
++
+        ret = ufs_qcom_phy_set_gear(host, mode);
+        if (ret) {
+                dev_err(hba->dev, "%s: phy_set_mode_ext() failed, ret = %d\n",
+```
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
