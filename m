@@ -1,40 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C790C3F23C9;
-	Fri, 27 Mar 2026 14:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C1D3F54AA;
+	Fri, 27 Mar 2026 14:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774621631; cv=none; b=uWccN80FjaSl+ZRMEcl4iT9CIbSKYFmLb3KAC8oGv7L6j0PzOKO68PxFm9dkBm9Z1ZVKLF7NhnbVNVYPteZmw2Jd74zXWn7BKCmGbFM1UtU2+n0gUdgZXrmD2xtwHgFoB97vz+t0H5EXAnE3L5cChsbZXvoi6xN5sCzob4mt5OI=
+	t=1774621889; cv=none; b=rAYQUp8y2TzPDDnJJHAqRhcnqjZmznMGi2CRsUI5sZwKb7f8eESWWxE/xQj399DG8ty0TibJP+49emFLmwrBN56LpdADaHB+r5y0d17lwCrqo6Y19y+1AbzW4MFYYK1cI+x0K1g5oGZ+Dn3JdfbNShbLTsR8x+aX1VNDT/ZrSN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774621631; c=relaxed/simple;
-	bh=/QeOB+Z7W09aV1b0ziQv/YIh9g569a7nv45izCn4ZV4=;
+	s=arc-20240116; t=1774621889; c=relaxed/simple;
+	bh=HVdFSd/GdvrYuE/uSDJrCEGC9Y9FE/iPTsDxEj8fqyE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bejOcK5/K10GLoP7EOYarLyHJRzJIJl3PnsNr3E7rFOZV82i/lyKZYvzybz9qEh1EFeVqtn0BO8BLalw8kOhnctbOEvXP3f3PaYYgOF+ZAea3NuOnSHyOQA49O9+X4laG5GLmdlJwWsuoWZYc1VKor1YTX96Au0b0j2eSc/0ii4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GWfVpPlh; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=IsujB8vBVpQNxEqFlL5bxr8l/QiVfi5lp2HiPXCfj314pz/JyesXvzWGA/5v0TrUVYSafs7Z9iOvb4OM6nClp8ZwwSebMiZup2FLYXAw1tOai9NiA5YfJMmTAUcCnDX9AWj8aP/NFIunfloMZoqCp3ACsWxnCe9xmmOfQT8IY0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JlLBYHMS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GWfVpPlh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 012E4C19423;
-	Fri, 27 Mar 2026 14:27:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JlLBYHMS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A265AC19423;
+	Fri, 27 Mar 2026 14:31:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774621631;
-	bh=/QeOB+Z7W09aV1b0ziQv/YIh9g569a7nv45izCn4ZV4=;
+	s=k20201202; t=1774621889;
+	bh=HVdFSd/GdvrYuE/uSDJrCEGC9Y9FE/iPTsDxEj8fqyE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GWfVpPlhSxyNfQsi+TL0X7lQRFB6Uf4vvmwHhR0ZDmvhd5uC9LIQMnCF1BS51S5cX
-	 yc3VYGwLA0gsvToug3oKHBB1XmK4gKEIFsD2l+HlFOT7T5zKCrYJCPz7izJx6KrSdr
-	 6LQzDDVshzIdaXX/D6x8nAPjK0HOvjDft71KkZfvnMU3hcfeOdM0qta3cCjk8JYirf
-	 nYFvNvwt2ano7MfHThAhczs0Xq0w5CBxXaoVumJ9uE08X//JrLBYPnSkyVykKijw5a
-	 8V1tMw1agddcMteZJjLrBCkcWAWWaXd47dPQDqLHuBQ2lOEx2i4aNbg7YKKrN5IcSc
-	 hsb/qhtp7OG0A==
-Date: Fri, 27 Mar 2026 15:27:08 +0100
+	b=JlLBYHMS5lnIhdzcTQttEXtlm8HQeTLrd7kGFBED+SU2CUPYJQNUsgXyYpSzO7qfY
+	 w84mz+gCfbbSEedxA3nSxlPKVav9k9/nVIm+BU4b54yQtfefFethmzCNjCVsazLc9f
+	 JIIaAzVAqEc9oLGTgYoEDYuH0hwRLo73EIr0HLGHKyXWGL6Tr0reLprTlwLSRVBu+Q
+	 X+nDRMhFitc18dvr0SkrrmD5x5oCqBQ9yxeOuupTQJvI3g2lC5Y9vBEaA6jL1W2RLK
+	 bv77a3vQMVEIA2x/p7isHX/uGjfmDU/7guhuQaQ+p2x2pSTlll3LgLmnm7Qcj3uot7
+	 AKRrkbuSkfiDQ==
+Date: Fri, 27 Mar 2026 15:31:26 +0100
 From: Thierry Reding <thierry.reding@kernel.org>
 To: Sumit Gupta <sumitg@nvidia.com>
-Cc: treding@nvidia.com, jonathanh@nvidia.com, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, bbasu@nvidia.com
-Subject: Re: [PATCH v2 0/2] soc/tegra: cbb: Add Tegra238 support
-Message-ID: <acaTo8UpTACvjO-3@orome>
-References: <20260325125726.2694144-1-sumitg@nvidia.com>
+Cc: treding@nvidia.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bbasu@nvidia.com
+Subject: Re: [PATCH 0/3] soc/tegra: cbb: Bug fixes for CBB 2.0 driver
+Message-ID: <acaUtjynT5Wu6Qw7@orome>
+References: <20260121101205.3186310-1-sumitg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -42,62 +41,52 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oejbgn3l2na3dgct"
+	protocol="application/pgp-signature"; boundary="ygno5qykbilu4jhs"
 Content-Disposition: inline
-In-Reply-To: <20260325125726.2694144-1-sumitg@nvidia.com>
+In-Reply-To: <20260121101205.3186310-1-sumitg@nvidia.com>
 
 
---oejbgn3l2na3dgct
+--ygno5qykbilu4jhs
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 0/2] soc/tegra: cbb: Add Tegra238 support
+Subject: Re: [PATCH 0/3] soc/tegra: cbb: Bug fixes for CBB 2.0 driver
 MIME-Version: 1.0
 
-On Wed, Mar 25, 2026 at 06:27:24PM +0530, Sumit Gupta wrote:
-> Add support for Control Backbone (CBB) 2.0 based fabrics in Tegra238 SoC.
+On Wed, Jan 21, 2026 at 03:42:02PM +0530, Sumit Gupta wrote:
+> Bug fixes for Tegra CBB 2.0 driver addressing resume handling,
+> fabric lookup table sizing, and cross-fabric timeout lookup.
 >=20
-> The series includes:
-> - DT binding updates for Tegra238 CBB compatible strings
-> - Driver support for Tegra238 AON, APE, BPMP, and CBB fabrics
+> Sumit Gupta (3):
+>   soc/tegra: cbb: set ERD on resume for err interrupt
+>   soc/tegra: cbb: fix incorrect ARRAY_SIZE in fabric lookup tables
+>   soc/tegra: cbb: fix cross-fabric target timeout lookup
 >=20
-> v1[1] -> v2:
-> - Add DT maintainers for review. Forgot to add earlier.
->=20
-> Sumit Gupta (2):
->   dt-bindings: arm: tegra: Add Tegra238 CBB compatible strings
->   soc/tegra: cbb: Add support for CBB fabrics in Tegra238
->=20
->  .../arm/tegra/nvidia,tegra234-cbb.yaml        |   4 +
->  drivers/soc/tegra/cbb/tegra234-cbb.c          | 134 ++++++++++++++++++
->  2 files changed, 138 insertions(+)
->=20
-> [1] https://lore.kernel.org/lkml/20260303155927.1885297-1-sumitg@nvidia.c=
-om/
+>  drivers/soc/tegra/cbb/tegra234-cbb.c | 35 +++++++++++++++++++++++++---
+>  1 file changed, 32 insertions(+), 3 deletions(-)
 
-Applied after adjusting the commit message as suggested by Krzysztof.
+Applied, thanks.
 
-Thanks,
 Thierry
 
---oejbgn3l2na3dgct
+--ygno5qykbilu4jhs
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmnGk7wACgkQ3SOs138+
-s6G/ZQ/7BwaUApwCYPzpAw1MzCOBKNAzVyLcuyL3QAvp9CzvS0VmfcdqeORpQS0D
-lYbk9bPbVXNKpyIYnB3Yhu+2KKBG5WJP+gdUVc1LRHgWpTbU5CjQNB6n+hG16G1S
-S0IjenIoRPj+IZFrnzn2HiAwwDbP/mzWX0HVTe9vrM+/hmT/CFXxWh8qGNdr1JBB
-yJDWg+u9A7xQMl80pAIVRFsq6o5ptsClFHeB74CCQtXeazPJw46H9639BG4Eb6Gb
-TshhBNCeo/1rbP2O1h05uMxmKoDirvaE6G8mTLDty7XweYeMBF8d6+PONG25XM10
-Jk89cnX8Ewiy99ag63xSMU9+q5U8b9UEmc/Ux99KONWHASON+zfGvVYEROspGe4o
-ies+hGBUYL9GcWKwLRtRu04AtVr2sg33nySzkpQQFiOHzcdi24I19dxNaY7fblPe
-D700tQJx7XWHQws64vB6I5cgST+/5sDOKx0qfSHQUTFB/U9honK3QFnsDggSPJVD
-iVdOdo7zUm/o5If1wY/MSjftAF/w8FLVudRT0kbno5VsKorGfS5k2VImTx1R45WA
-oFfEE5GLa0PHPspts/xNjQXOOCFvULuhHCY1dru74FxBwkkwviXlo3/NdQMI3U/V
-Qif5oxgDc+XykaR7LuKfbNP4S3SyFqDnjiVlAwDxYqQuG2Pux+A=
-=rIbU
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmnGlL4ACgkQ3SOs138+
+s6HeFw/9FtZGEADXkppzY7VTCXnfBjgNadrIK+2TyGNoVTYl2M64GLycDpFOoN8H
+SAcQkk6r4nXhSZylhLLGGBdEU/+4TfPRNh27S9dWFsKBEhds5t9NejXIpnViPBOk
+Zw/Xt2Vh7glWxSRfURDxrGCycR7D/nAQsCiMd1AR/4lESoUs0yuHWBtRg5SI98L3
+9t7ayOvi9skP1Yvgkb7iG6kWI6UkPvyXQExPWBO8+1IjbFtaYG6d1b2ZtlDoB/BU
+RzG+rnD1x3QZV7jRQk0XoboV/eicEHl6bMGNsTK3kBUhTg/dRrlnNCPp7g54ZG06
+a4LjAlHPmK9h5UewFnPwwuQrYbh9zn6GEuJwg/l5KXCjNaJz8/pbY4Aj6YpJDpnA
+bxcbmHrJ01/Te1iCHIaPyrNG/Z0hUXB4F9mQDtn29kub51KkRMR6CgLhoZ5AyIJX
+pVSsH93yOyU7QzOiKXkJnJp/puk4F5C1+PdOTjsAayoME3CXvv/xuXl4DvBodoSf
+XJF+zbLIzHHJcvwD9BNPnBuT5NxhubBeLKMYTJ81PPZ5HMgx0qyc3jRNvtGvCxN6
+kL3LHXWEEJUfqwovPWRcJppXXavHFAqZWBtIHzgijIR6gnELlYBzzQxG0hdfOnPH
+TONb0nqXQHUAiBgkFPxMsCSyVWx/B6cMkhvSUHq+kUCvJXc5w+8=
+=MBVX
 -----END PGP SIGNATURE-----
 
---oejbgn3l2na3dgct--
+--ygno5qykbilu4jhs--
