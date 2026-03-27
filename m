@@ -1,164 +1,176 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3FC22F177
-	for <linux-tegra@vger.kernel.org>; Fri, 27 Mar 2026 14:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112A03DA7E0
+	for <linux-tegra@vger.kernel.org>; Fri, 27 Mar 2026 14:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774620286; cv=none; b=q7THU026PkuSlWaKyN5FV0/roetHfemJPgK/qvF+SHNmVDUt1SvRKt6KNV6417yfDEuOCBapdJRf8d68rihF/Eud6VgTCHQztryOqki1nNsQ45inO0BYSY+b33IjLEoSbyXXtxC1twJKMTrzlvgXzRWG3HmBqJhHonsUgKo2eY4=
+	t=1774620393; cv=none; b=OKVTbn9dK/dY2yjn4YMhxCHhbKZ6/wtY8T7P3pF5/0S0Uo83FlXzFaGOYOmtma+hPHSGgx/17LZ9VfTIrCqYybAX8QpOFwmw6HA1GDAWiIVREQGEG+svUZrn9mGjFzVncjWfl6hSKu2sC0976xnGuvQZ+DrPL0Qv9+FMP+lfUC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774620286; c=relaxed/simple;
-	bh=q9V97Tr+6k2fCh537AkmCOo0/qg1EEGC6ygs46eoSNw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oWH0bVsPQVAeWsg7ejI2Picce3RK4b+OWt9fEh1mLWcLKz20TxPiX7Epa+uh3DqKIxrEuZuXuIB3klq6dNo1JR89eBFaw1jcSjtDO5kLtLexEHrbro8WFJzzs0TrsZ5E1zgg2h8sHeL0F3pCEOXK47aFYNhyxGjsMlJFHxQ9+qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oTCSg6E1; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1774620393; c=relaxed/simple;
+	bh=YG4r2XuxApAYu6LKzoe/5SwvEPoyF1OnlWcoZM1u4mI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VS61hgfoQhcP7jFkVlHP/8ue2gdKbd70YfKEBCz1FtaZK31HCv7oSv/nNd38k64INAC83QkQGoXVDoeLeR5nqDyY/1xjvc0HATi69Ff6GL80g9SEjv40szAo+9s1PGvVaUAm/4V24fbzYNIZ68pf9r/QUQ44PxZyllyLscKx5bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XJUcqaIg; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oTCSg6E1"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-48540d21f7dso24053135e9.0
-        for <linux-tegra@vger.kernel.org>; Fri, 27 Mar 2026 07:04:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJUcqaIg"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-43b5bded412so1571288f8f.0
+        for <linux-tegra@vger.kernel.org>; Fri, 27 Mar 2026 07:06:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1774620283; x=1775225083; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TnwOxiQgTrY2GQTcPVQdPC36P8UQNWjAuceWpM/pOE8=;
-        b=oTCSg6E1R8Drfgc/vnfQmcQJJZ5t4RwdAYzyvKsj2uVb6Q8woIlTPSShPn8E1ni2J/
-         bwW532e3faPT1djMherB3fiU6V0SHnuTpAF1NSdl2fLyeKv1LGdG2h2BOzGj0XfPEYxZ
-         WwbzKxXFtaovCGEQXSp/9/D3ebskF2IWVKZFwNThkRP8pi4v2kaYccrBfCe3FPMTRuRP
-         6EIU/zy+QI4BlCtX5Dk4fDUtaQbxgmqoO5oQP5dpUiZzPvsinCPTxeQBdbxvVA9JPgKc
-         6bN1tRPevSRHVWvh22pnXzthftR5j5igXSIMKm+WamfFDVFgiuCZlZDUcQ4gxt9lybma
-         LKUg==
+        d=gmail.com; s=20251104; t=1774620388; x=1775225188; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QSUpIlblw1Y8p0Flz+2ps8AGucj2y3pRw8IP0aJ+OJI=;
+        b=XJUcqaIgL71hXD8t8lZL96lttY7Xmh42IwKc368lwUvYfz9XpYn8Jd5XpIJeKwnEFm
+         e8eEcTukPFBgYursd0S1J82POhJmnJ07m/jPGknii0EALdeJQlpPYMXIfLBUfdubcFIj
+         v4nhPm+AeCgHb3KWllGs2ESKnlm4tp179tr921TTeSCc5Hr9eH1DjvukiwNCzf51SLoW
+         2MfPnhVEMpxMeVzt6APJbDIJZWCEvVK+wwNgO/1cEVZqpYH+ywjowG4JYq2Z2bxFnG7Z
+         6+zTinJphliFafoczfxB7EX2oh7tPuziJouOa+myu0yHg/jtkwyYv4++V98M6PyOO+TI
+         ywGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774620283; x=1775225083;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TnwOxiQgTrY2GQTcPVQdPC36P8UQNWjAuceWpM/pOE8=;
-        b=s890EzKtfB84w0M040JD/+RR/ZosOau8FKGHVdBH82+Wh15hEYfBRQrJoBEr4gXdmP
-         TkdnszyegAISJLRGngekkf0SQPUOZAEh2ucDu+AzhVriq1hgHCiYxucmTVKlwXebu7FO
-         YPrcWS6mMAX3+e/6mPi3G2XyP9kAf0lUbtBUGUvvDOr7SFSwoq/BH5x+rEvp1YAF6e8G
-         D9W6jSyina6WfaPL0LSRFkMT3ZHEfoIgygc4BTZJTbTJRVexbzg8TeA8Uul/atz8gCms
-         /jppWW4qSxqURpIlr/5pbCZvTPmg+lf+oDcsOcUj6N9rbczhu696W/ydUDCyoimj2nt2
-         hpSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUu47cIBdrDpZ0AuldW9TZKeFTiSy0coRLnqkutp3C+IxfSBCFCeFi9ws5KEWYNKTMhpH29l6SqT8OFMA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkWL70BmZwiZaI1kw1VLvdoVIGe4GGDT0m5euYon/UWbhrDqij
-	ff5PDD2J8K7uqsEhGphDSBmwg/YEvZg4rTJzSkhQ3FWlTfx1BiqdvcjaGW2eIMImu1E=
-X-Gm-Gg: ATEYQzybhkDBE8WFt25lBP0gzkNAk0/l7s2XvqptOM4s+NK3TLZdIgEviJ1tvvmDzLM
-	zawFzs/KrJI+IY5jQdOeRwJvuSPE+S/AURoDovPQR89Yx9aNpwrcHqAOs7vQCxv6pqWeKiF9o/2
-	B2WLF+JE0BURQuLlrWL24t5DB2q0vCmRit7kRya4y2GqOva7DfUSfccPRi5LMz1FXG2kbCoqcyE
-	Lv/jNZWgiqpVEEnKvDqUEAkr8uFTEGTt4LRNILfRfBWuGHDSsfUicl4FeAyKeNRtMxCjydlBuVU
-	XbSksyn2hLM1tBtNkjBZ1Ir1NmGTT1LQMlVAo2vjlEDqp2fvGy87nyDCxC6mh4JYb4ilTuDcv4e
-	SvTvYk9LcKhHUnt1lZIMSfEdglbez7d6zpssJG7zPSqZFPeaAKVSCO0R8LvIojT/Kb/WYp6eMLg
-	XsRlizFgMFj+Gks7B+O9aRBJP0PQNXdNNWSXWXgSKt2R0/Ql4B0S1SXIiEzOZ0588SCwlLIMan7
-	lzbH6AwkoFUgAz2xSWJK/w=
-X-Received: by 2002:a05:600c:3f16:b0:486:fdba:f5db with SMTP id 5b1f17b1804b1-48727c86862mr44979375e9.0.1774620283136;
-        Fri, 27 Mar 2026 07:04:43 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:106d:1080:81c2:60b3:ff00:9a5e? ([2a01:e0a:106d:1080:81c2:60b3:ff00:9a5e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48725eb5417sm27114795e9.3.2026.03.27.07.04.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Mar 2026 07:04:42 -0700 (PDT)
-Message-ID: <7d9675e6-3f02-49e8-b65a-9785d5b6a7c7@linaro.org>
-Date: Fri, 27 Mar 2026 15:04:39 +0100
+        d=1e100.net; s=20251104; t=1774620388; x=1775225188;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QSUpIlblw1Y8p0Flz+2ps8AGucj2y3pRw8IP0aJ+OJI=;
+        b=AFRwhq4e6Xup7vBJCc6ZBZYSTDfdRgkg6dVcnsz+GYcPEejJn/qRBmw2R7ikyrD/kd
+         t/YfJwtgaDepLdGMCCMlWYgXwPmH+bVWg3/c3Pe1biXJlOzMLm6cFBYfl6BGdrEP/ZVo
+         F7ULE0QlKm6Bye6v4t2iN0WyKBADHPVEEXZNYvQdxA76+eLfVb1o2wZuufLQNv1loRLi
+         UYzJZAY76ZxchlNdS4EenY+2lL6TF/FR8F+qqPVHuZhq+8vAS8jqqrxLIikH5e41A8nX
+         eG7LAbLK8MpWb+m98HSZ2wczbinOk43M4XOtzU6dZIjmMNbW/YwYNGFx26kSsEfjFp6j
+         SFCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/jP/QFYXEhCHdEFVQHmz0kxHzuTcp9L1sTlksr5bjPE5gCXHJom3eVuqmqwv8jZq0A0LThzVNGwKoDQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXfNbWDzqbklheJhbTlsmDJZ2PSseGXWnaJhF3Ynklqw3DM86K
+	U11WjJboN8xaZX45jWem43uNx0Z0zzIk8CGtyuROmYTgr20+9DbcMuSn
+X-Gm-Gg: ATEYQzxd5PXvZA3/KX/ImuEbyAt+tk0y/DDEex7W9owvk6L2tcTQ+fj0/qTmr77TdLO
+	BNwHzLFVE0mv1aaM8dpeAfYfU0e2TViBHiuxxi5KKVHcUwxB+61b299/ZEj/CzOs9DRx3mfTWmh
+	AhwfPx0ETiqKZbq7DFDRfR7u/cNrUa371Od1Wlc0RnGbmvQhMJi0oHXPCGI0uf3sTKex6ujIJlx
+	oaYxIbKE8C2xk/cgqS1cmCPhBkPxSexUtf2EFclibQRmoCbmxeAVb0sX6WItwqO3i1ewGwEbu/Z
+	c/EswPaRvlTiJjbPY8G5Uk7U0PhfTpJs2w4rMT0ZJCNV6zPY2hpk10GQIVk7EUFDQ5f8FvETqSc
+	9oX4+tbbcU+1Ilk6sN599RlT+wbPu7c0xRCnYEZAAR0MF3zw8UGg+ASAc6dehK6J94rZVh43Ntp
+	Wvyxdsm5x9w9DLjD1vc5Feb88EsCz3LTjCtiFVYoojlTMzsTsP9v0JMQ3UqKed+bylftLPnVHGB
+	pNNStuvIBMLiA==
+X-Received: by 2002:a05:6000:4212:b0:43b:95e9:413c with SMTP id ffacd0b85a97d-43b9ea6390fmr4110385f8f.44.1774620388098;
+        Fri, 27 Mar 2026 07:06:28 -0700 (PDT)
+Received: from orome (p200300e41f249a00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f24:9a00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b9192e305sm16052576f8f.8.2026.03.27.07.06.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Mar 2026 07:06:26 -0700 (PDT)
+Date: Fri, 27 Mar 2026 15:06:23 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Cc: Thierry Reding <thierry.reding@kernel.org>, 
+	Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/6] usb: xhci: tegra: Remove redundant mutex when
+ setting phy mode
+Message-ID: <acaNBQkGgQ_N6Krh@orome>
+References: <20260127-diogo-tegra_phy-v2-0-787b9eed3ed5@tecnico.ulisboa.pt>
+ <20260127-diogo-tegra_phy-v2-2-787b9eed3ed5@tecnico.ulisboa.pt>
+ <acJ50sQraVmy4zXs@orome>
+ <00aeda7a-e5e5-4779-b212-6e56c2c5ec31@tecnico.ulisboa.pt>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] PCI: dwc: Add multi-port controller support
-To: Sumit Kumar <sumit.kumar@oss.qualcomm.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Richard Zhu <hongxing.zhu@nxp.com>,
- Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@Amlogic.com>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Greentime Hu <greentime.hu@sifive.com>,
- Samuel Holland <samuel.holland@sifive.com>,
- Chuanhua Lei <lchuanhua@maxlinear.com>,
- Marek Vasut <marek.vasut+renesas@gmail.com>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Pratyush Anand <pratyush.anand@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- imx@lists.linux.dev, linux-amlogic@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20260305-dt-parser-v2-0-85836db8dc06@oss.qualcomm.com>
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Content-Language: en-GB
-In-Reply-To: <20260305-dt-parser-v2-0-85836db8dc06@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ktw4w3vv6m4wgb3m"
+Content-Disposition: inline
+In-Reply-To: <00aeda7a-e5e5-4779-b212-6e56c2c5ec31@tecnico.ulisboa.pt>
 
-Le 05/03/2026 à 07:20, Sumit Kumar a écrit :
-> This series adds support for multi-port PCIe controllers in the DesignWare
-> driver. Currently, the driver only supports a single Root Port with
-> controller-level properties, which doesn't work for multi-port controllers
-> where each port may have different configurations.
-> 
-> This series introduces a per-port structure and parsing API that allows
-> each Root Port to be configured independently via pcie@N child nodes in
-> device tree, while maintaining backward compatibility with existing
-> single-port bindings.
-> 
-> Signed-off-by: Sumit Kumar <sumit.kumar@oss.qualcomm.com>
-> ---
-> Changes in v2:
-> - Fix error code preservation in dw_pcie_resume_noirq() to return actual
->    error from dw_pcie_wait_for_link() instead of hardcoded -ETIMEDOUT (Mani).
-> - Initialize ret variable to -ENOENT in dw_pcie_parse_root_ports() (Mani).
-> - dw_pcie_host_init(): Remove -ENOENT error skipping to make parsing
->    failures fatal for now, add TODO comment about making properties
->    optional later (Mani).
-> - Link to v1: https://lore.kernel.org/r/20260105-dt-parser-v1-0-b11c63cb5e2c@oss.qualcomm.com
-> 
-> ---
-> Sumit Kumar (2):
->        PCI: API changes for multi-port controller support
->        PCI: dwc: Add multi-port controller support
-> 
->   drivers/pci/controller/dwc/pci-exynos.c           |   4 +-
->   drivers/pci/controller/dwc/pci-imx6.c             |  15 +-
->   drivers/pci/controller/dwc/pci-meson.c            |   1 -
->   drivers/pci/controller/dwc/pcie-designware-host.c | 175 ++++++++++++++++++----
->   drivers/pci/controller/dwc/pcie-designware.c      |  32 ++--
->   drivers/pci/controller/dwc/pcie-designware.h      |  17 ++-
->   drivers/pci/controller/dwc/pcie-fu740.c           |   6 +-
->   drivers/pci/controller/dwc/pcie-intel-gw.c        |  13 +-
->   drivers/pci/controller/dwc/pcie-qcom-common.c     |   5 +-
->   drivers/pci/controller/dwc/pcie-qcom-ep.c         |   4 +-
->   drivers/pci/controller/dwc/pcie-qcom.c            |   4 +-
->   drivers/pci/controller/dwc/pcie-rcar-gen4.c       |  13 +-
->   drivers/pci/controller/dwc/pcie-spear13xx.c       |   5 +-
->   drivers/pci/controller/dwc/pcie-tegra194.c        |   4 +-
->   drivers/pci/of.c                                  |   6 +-
->   drivers/pci/pci.h                                 |   2 +
->   16 files changed, 232 insertions(+), 74 deletions(-)
-> ---
-> base-commit: 097a6c336d0080725c626fda118ecfec448acd0f
-> change-id: 20251010-dt-parser-98b50ce18fc1
-> 
-> Best regards,
 
-Tested on meson-pci (boot log https://gitlab.com/amlogic-foss/abcd-linux-test/-/jobs/13677061036)
+--ktw4w3vv6m4wgb3m
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 2/6] usb: xhci: tegra: Remove redundant mutex when
+ setting phy mode
+MIME-Version: 1.0
 
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # On Bananapi M2S
+On Thu, Mar 26, 2026 at 02:17:33PM +0000, Diogo Ivo wrote:
+> Hello,
+>=20
+> On 3/24/26 11:48, Thierry Reding wrote:
+> > On Tue, Jan 27, 2026 at 03:11:48PM +0000, Diogo Ivo wrote:
+> > > As the PHY subsystem already synchronizes concurrent accesses to a PHY
+> > > instance with a core-internal mutex remove the driver specific mutex
+> > > synchronization.
+> > >=20
+> > > Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+> > > ---
+> > > v1->v2:
+> > > - New patch
+> > > ---
+> > >   drivers/usb/host/xhci-tegra.c | 4 ----
+> > >   1 file changed, 4 deletions(-)
+> > >=20
+> > > diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-te=
+gra.c
+> > > index 8b492871d21d..927861ca14f2 100644
+> > > --- a/drivers/usb/host/xhci-tegra.c
+> > > +++ b/drivers/usb/host/xhci-tegra.c
+> > > @@ -1357,15 +1357,11 @@ static void tegra_xhci_id_work(struct work_st=
+ruct *work)
+> > >   	dev_dbg(tegra->dev, "host mode %s\n", str_on_off(tegra->host_mode)=
+);
+> > > -	mutex_lock(&tegra->lock);
+> > > -
+> > >   	if (tegra->host_mode)
+> > >   		phy_set_mode_ext(phy, PHY_MODE_USB_OTG, USB_ROLE_HOST);
+> > >   	else
+> > >   		phy_set_mode_ext(phy, PHY_MODE_USB_OTG, USB_ROLE_NONE);
+> > > -	mutex_unlock(&tegra->lock);
+> > > -
+> >=20
+> > It looks to me like the mutex here is trying to protect against
+> > tegra->host_mode changing while we're setting a different mode. That
+> > doesn't seem to be taken care of by the PHY internal mutex.
+>=20
+> After taking another look at it I think I understand your point for the
+> mutex, but in that case wouldn't it also need to be held in the writer
+> of host_mode, tegra_xhci_id_notify()?
 
-Thanks,
-Neil
+Yes, I think it probably would need to. I don't know how likely it is,
+but I think the purpose of this is to protect against the ID notifier
+firing quickly in succession. Although, given that this runs on a work
+queue and work queue instances are non-reentrant to my knowledge, I
+don't think we need the mutex here after all.
+
+> This patch has been picked up as-is into usb-next so it would be nice to
+> figure this out before it gets merged in the next merge window.
+
+Given the above, I think it's fine. Maybe the commit message doesn't
+give a correct reason for why we don't need the mutex, but the resulting
+code looks like it should be fine regardless.
+
+Thierry
+
+--ktw4w3vv6m4wgb3m
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmnGjtwACgkQ3SOs138+
+s6Goig//SnPG7Rf8K0gKeOP5TZWyD90YKXfxg4roWTYyRNVHdUU2H14n31xJS1Oo
+pMQvSFpK/kjChe09fFOUecq5vW68Rrfm2+Vi5rqfW+GHUlGo+5S70gJ8lbpV4wOh
+Ee7fuEilJgSjIMVxxwQY6rupnrXIPufzsSHGwbtaSYy04ibP9vhDn2REJ0bkIuZc
+AWzBBUQXf+aDMyKkliS5Ll15t54oQRdjZp/c02Zd1ffBX/6vx2/lx7hbSTBEm8mF
+eTyQV9XU3so3X9+mmff5uYEOLkHOxEJgOOVdMW8XDrTTLqR+PgTJ44zoGcOnCrNk
+2sOuA8ThjZBqgmjmVvi1zTasc0jHB7McIwHD8XLHmBS1SM1k8y7Lwjzm3VXXqYOl
+aXaMCIEwzp+WeYuxLPDQp5Qj8HEbNmAqZMztnucMn0h6riFsFX1SICiQ7o8DXe3/
+qTPjRWL7qvtiJSBCN068/hZF6l0m2hIfJqflvmF9CqDd4wzAfUqgSZiavmwpJpYt
+refzB/wklao+yrD+cp895hPidxJVmG6omcleeczxJmVVKWm6pOYJP3LCLGezArVn
+phgVYhRDOUvKWQk6sgtCqJbf6h0T1Nf1YvN/Cu1y6MAB1tgGiMUV6JEVuhaPN+kd
+PnN3cFTF/8ATfGpMSArmO8l4VYoGHx5FxgE/LFRPED4LZgaGlZU=
+=g7fB
+-----END PGP SIGNATURE-----
+
+--ktw4w3vv6m4wgb3m--
