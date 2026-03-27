@@ -1,42 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90742D8795;
-	Fri, 27 Mar 2026 23:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65ABE2848B2;
+	Fri, 27 Mar 2026 23:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774655290; cv=none; b=AkYH/fW5+Qp7lgHBWdc0yOXToWbPcHDRGLI1XPfViDuqjd6fHT6u8w6tim2nSttOHgxaiiq87m2Hznt9y7M57IvV6XkpIKxRE/bJ/303yUZm9Jzhm+2FbAbo0GQM0lenGGDoMUms86eLamvDEM66my45VB9dOINb3tBgY8Uq7Bs=
+	t=1774655606; cv=none; b=Q2OQsuEN36OTYn4/UOWR9y3xPWdjVRvFJRjj/d2Pzd3zmXJJwR7ihZWprxMBW2i3mZWa3NNKfxL77cmFqWFMLismEUZBxP0HPHkZUpZOW/gMwnN7h4pcTdYW/gZm372YMOlcFcDUcGJrK5Egjamj4BFss1I85jQQ1SkxYfS2wYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774655290; c=relaxed/simple;
-	bh=gvuzInyL1s7mBPhcQ53ZyLAWB0v6xQc4KFMEABlBz5k=;
+	s=arc-20240116; t=1774655606; c=relaxed/simple;
+	bh=4uqL5/4EL6AQy+9VAdKQvIq0LGTDCVvjJICRgHmR4Es=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d4iql6Dd6CUg6xy6cFXtqTjWLslibtGTIgoZ9oDb/+QcW6nRwQazttdR2LTamxbRcg/WzrA8fjvoWzvtXiQXKFE7loW2bHIQRYmmWhuY64Ycvb+6tsnlQMyiChGXrM9FSkkd6lQ+uzjoeepGlvHuCrWYjMItkyy9yRKGsvzISAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TG2MgLlT; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=aiBw5m8xgjvBJRbNVQ0ZyYLZNLQky1hMtif1Jhkhy3LMnlJxqnyzgWnfwz9VXlAcp8zQvvYZy1qUClUsq7ubEIgeDcmgqlmcifGfD8qu39Mw7kjtDFlLc64hu2yRPXPKaHW1AIPX2h/Zx8tw7DnUVrzP7wq5MPG1CBB004GUSr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mx5CSkLC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TG2MgLlT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D937BC19423;
-	Fri, 27 Mar 2026 23:48:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mx5CSkLC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87A80C19423;
+	Fri, 27 Mar 2026 23:53:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774655290;
-	bh=gvuzInyL1s7mBPhcQ53ZyLAWB0v6xQc4KFMEABlBz5k=;
+	s=k20201202; t=1774655606;
+	bh=4uqL5/4EL6AQy+9VAdKQvIq0LGTDCVvjJICRgHmR4Es=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TG2MgLlTuJwVVVf3TbSMZhbnGTLkgnbXsmf9RZdgRw4KfdbuT8yj+46pmgrkc3nBS
-	 LcTQkQVhLUTniSQv5zatgCBcW+iJ6UBjtvFc2U9zzSqqRdEcZN31lDBMIJjRT2PMz6
-	 4T3WlHj7LuXsFxCRGzim1TyALY5KwXkJDNs0RkmFY+HSELA+MCY5FuFuXEXHm4+J26
-	 KLR1HXlWEPcaSZBOCGUDdHtogyo+T5nFBCuej55GNZJ5JB6j5PpBUyLcTosSni88QF
-	 vZYqJ6rviYe5tNGge5rPY7EECJsruvmsq1vAvbMW44x3XhcdVhprGX/J0jinls+xy2
-	 zkT0+O4EtboXg==
-Date: Sat, 28 Mar 2026 00:48:07 +0100
+	b=mx5CSkLC4wjQawKdrZEsC6w3kowLvw7+Mj0SCQs9SeSZfCA6PnubLRDHdtOYH4XhD
+	 DrDcFrSW05RxbAlyQS/S5KQ/AcQVO+2lOZyx8YDEhBKJGTkW9OwzUM0Vb6GCTYblpi
+	 /8EefStbWDdqmDuDmY4XnK9LDc8xCVRIiKyoLuRJD1pP4FUhopbC8P3m3lkSBd5BD8
+	 bKAk1U4O0CALSu1RokF1DuTAD+YW9guxkwKwJx+98c5omh+a9xlAv/FhdFyhBhZyh6
+	 MwoQfZmwbZL/NwDxW5zD+KCASyPbqXCcR30QJ8NlNYOJBpOzpPjQnf8AVmmdUc/yfq
+	 3P0nlsxkaOtmQ==
+Date: Sat, 28 Mar 2026 00:53:23 +0100
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/5] ARM: tegra: configure EMC and PMC
-Message-ID: <accWqpdggPTQLC8G@orome>
-References: <20260126191536.78829-1-clamor95@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Svyatoslav Ryhel <clamor95@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Sumit Gupta <sumitg@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 3/5] dt-bindings: memory: Add Tegra114 memory client
+ IDs
+Message-ID: <accXjw2BSCbzMyak@orome>
+References: <20260126190755.78475-1-clamor95@gmail.com>
+ <20260126190755.78475-4-clamor95@gmail.com>
+ <54043284-141e-421a-a54d-a018c884b324@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -44,62 +47,62 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="j3hiczsu5tlu2vze"
+	protocol="application/pgp-signature"; boundary="ttc7ojgydhtaud2i"
 Content-Disposition: inline
-In-Reply-To: <20260126191536.78829-1-clamor95@gmail.com>
+In-Reply-To: <54043284-141e-421a-a54d-a018c884b324@kernel.org>
 
 
---j3hiczsu5tlu2vze
+--ttc7ojgydhtaud2i
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 0/5] ARM: tegra: configure EMC and PMC
+Subject: Re: [PATCH v1 3/5] dt-bindings: memory: Add Tegra114 memory client
+ IDs
 MIME-Version: 1.0
 
-On Mon, Jan 26, 2026 at 09:15:31PM +0200, Svyatoslav Ryhel wrote:
-> Add nodes for ACTMON, EMC, PMC power domains and interlink them.
+On Tue, Feb 17, 2026 at 08:22:24AM +0100, Krzysztof Kozlowski wrote:
+> On 26/01/2026 20:07, Svyatoslav Ryhel wrote:
+> > Each memory client has unique hardware ID, add these IDs.
+> >=20
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> > Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+> > ---
+> >  include/dt-bindings/memory/tegra114-mc.h | 67 ++++++++++++++++++++++++
 >=20
-> Part of previous patchset: https://lore.kernel.org/lkml/20251125120559.15=
-8860-1-clamor95@gmail.com/
->=20
-> Plus added commit with power domains.
->=20
-> Svyatoslav Ryhel (5):
->   ARM: tegra: Add ACTMON node to Tegra114 device tree
->   ARM: tegra: Add External Memory Controller node on Tegra114
->   ARM: tegra: Add EMC OPP and ICC properties to Tegra114 EMC and ACTMON
->     device-tree nodes
->   ARM: tegra: add DC interconnections for Tegra114
->   ARM: tegra: configure Tegra114 power domains
+> This is never a separate commit. Squash with the binding.
 
-Unfortunately I can only apply patches 1 & 2, patches 3-5 seem to have a
-build-time dependency on the series at:
+You have previously requested that bindings and driver changes be
+applied together. If this header file is applied to your memory tree it
+means I cannot apply the corresponding DT changes until a release later
+because the defines are part of the header included in the DT bindings
+patch.
 
-    https://patchwork.ozlabs.org/project/linux-tegra/list/?series=3D489808
-
-It's probably best to integrate patches 3-5 with that series so the
-dependency is implicit.
+Seems a bit suboptimal. Do you have any good ideas on how to solve that
+particular issue? The only one that comes to mind is for you to pick up
+the DT changes as well, though that obviously runs a greater risk of
+causing merge conflicts down the road.
 
 Thierry
 
---j3hiczsu5tlu2vze
+--ttc7ojgydhtaud2i
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmnHFzcACgkQ3SOs138+
-s6FUbg/9Fc0V5576xeQ7ZJLZkoEJFxuuj7EjdjqpHQ/AUgn9hP1oGtFFx+tP2jOC
-QVWrZCeJaZi9pxBDcpRwFbq+nlnq3lFC0rpGhaU/pYMwGkrXuQAIfYBo0B0hJ1ip
-JS7apiuYCwOfzChMdEZDyhZZt9D41kNQ0FwSjPq5Uj8mdcKwU68KIk5tVwRrk1+U
-LNun5AkdvLk5NFZySqW7+6kTtXFXWddEmFx+h1Pi3S/001aKSxf7x6SP56AwKw/K
-cdpHZQzQU5Smc5GLxC1aUB95jujeM2LRyrbc6HzsVX2KaAMTUrafBPog73W6JZsx
-/Am1zUfcoa/heIowSqQv3T+4/xMjASOpxpdE4L1i3vx62io4cSOXOm0adL40X/lm
-/wPnreTjaGI7dVZiqBP7filsISJOxfMfiesnoKGjRWsVj6ApM52J5VzFAmzf/5U7
-c5QV4D8ynMbFcVnybVQSS3SQkoqNQnQJ+VNHHs+RvDo8kV9kB/TvNaMp6ATKaivs
-JrcpHxKjDPey9Urgefs1zN8o2h8rXLbWr6l6W1Dai+9havwxlGBC8D0vMd1Addrs
-QwWId5rpiKIBQVpgYOzt/rMwc3VLuyxCa5J2eVyDe989BQfL5/iauBu5XKphfsDO
-yvQj+jsW25/Kj4zGojwg4J0ajxWLabQwat5jvYAFOTekF+W/8xU=
-=wRfJ
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmnHGHMACgkQ3SOs138+
+s6GItRAAvq0DhDQOUCXxdJSvtavIVbxeeOEjgyInAa2CXy0aW0+IZeqRosvABfR0
+cvN/PPwHevS1hsX6DFztcmRa4aLnLy9LVvKOQQ96c6kJs2jnsXFU3/9IKsIjMMOO
+wqNNIpi9p0p06pbjei1VljniV1/sSbLb8rMWOitQR6ytiyCmofh6NnsShIT1+RV3
+26e6XuTAzOhI6P1R2u/pU7sqDAw5bxenpQ5D93oH7yAtZm7tbqnocrZQvllZAG51
+S5M7HytxDwNOFgQSpqzzHiCEa+m9A3Bbjg9HGJ5/PAIR2+eOcQXVMYdNLkCh5EzC
+BPCJs5qpaxzUins0RQmtiSGnzUHtO9MH66YUCtxO9kn20scIoefy0vDtV972efeg
+qRA5qzuR+e0w8m+DAnv82RfDfw2elYOomi5X9E/eHco8gKlOBBKsfFVeuTS8bRp1
+ZXWEFcb3yGabYZtle5wDoYdaniK981Bqw3ms9OaAN10SHccGPAVLLw/DEZlZovR5
+MZQcljLdmC4tdyVILRkpfDadQZPg7pfaycds33Cv6LMzEFfDO9BoIi2PHv6r4OK9
+4uQvW2UsCLzYmyIbxnFBy98m1TM0BJtD4MiHtdmFhXD5qCKDIcFPJRm47zuKVTxO
+pdMMS+XdqTBP4PYqT6VdTmXEtmdBKVatJ2vC1UTjeDurm0z4zW0=
+=neHu
 -----END PGP SIGNATURE-----
 
---j3hiczsu5tlu2vze--
+--ttc7ojgydhtaud2i--
