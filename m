@@ -1,122 +1,110 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4699372EC0;
-	Sun, 29 Mar 2026 14:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E910437AA83
+	for <linux-tegra@vger.kernel.org>; Sun, 29 Mar 2026 15:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774795734; cv=none; b=hzg3WxQb3wDw3WoWmDzkZZy2pruo6RvpdnMk3EzApZc9JO5vsN5W5HddiQ3l4FoSJZTt2n8iZNO5fJ7oC+bRz8AskfQoE/ibSK2WMpS19WR8jufMXaueCK/fnPZ6J/eGfY+fV8Z6cq58lEdCAveP6RimR3qKCRtEnQ8XFDwD324=
+	t=1774797053; cv=none; b=Q/G0Rf8nnIA42XYIw3ueVz4IqkTLrwsR/WGWT+LG//hq5PvAwc48aQIWPg5lIXGqrFGy99uV03AgKmQQuMp9/bSa/h4UTjMjDbeeeAkwmTrQN1bh132Y3TobDzBLfmIcbWEvhKBSps7MvFLwucFMs0wg2T8Bk3AIbh9a9XGutYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774795734; c=relaxed/simple;
-	bh=WpuLa+iR+7dPc/R2n3OibyMBDZqIk4vAA9bHtGje/bE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H/X+E0ssuz4UD2yNwOkGAesXEasp1YQCYcIq/YBKx3VbR2Xh5Lj+PMAf2drKHqStL+dzNntWpaJnPFpfj94uOcdKj+mjr8uXsIUuvd1w8B5IgdMxLB8jbC7gD4EZQpub/ioOGy8dT205fo9ulKysIwGoqbFeOTiG5EPViEZrJOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=F7yvNXzL; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1774797053; c=relaxed/simple;
+	bh=P2wTGkHTJGDVrYxmEmU2/P6KaIGmZDeFXomL2edPRdg=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=PJkb+vJrrjHMUXR7RvyM/5BAPIBkfMYvz6h5eE/UmwBiiqLwIRqryHrskTC/qZXtHhaPC+zkcM+cXnXB/bvSEbWGfgj/PLqr4a/gNjRL03dSG0AI6ohfDmBTQS2R7V9mlv+W5gMELtZLJboVJGZpvsrAl8BzFMguiqLR9fTzHkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwqnF1ou; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="F7yvNXzL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=6D55HdNBFgogkbxZ9B6R/xFqNQaywSSEdDJEMT48Flw=;
-	b=F7yvNXzLWcYYggmho/921Cdsj6BQqjQJgBSJHBEj4Vw9puKVQlnetagQ5l37K3
-	8ux/HqhEJB2aARWpwEBywajYM6gLq9/+4k1oxuO6opefsdSeHpQCrA3AzY1QeNfG
-	Klrgdk9QPyY/3nPqdQs2t6q70aBKgd0j18K2DHtpBNzRQ=
-Received: from [192.168.50.71] (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wCnr9J+O8lpUdKTCA--.51946S2;
-	Sun, 29 Mar 2026 22:47:27 +0800 (CST)
-Message-ID: <fbff8f2a-f4a9-4e06-b5ae-cfb554e73664@163.com>
-Date: Sun, 29 Mar 2026 22:47:26 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwqnF1ou"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A824C116C6;
+	Sun, 29 Mar 2026 15:10:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774797052;
+	bh=P2wTGkHTJGDVrYxmEmU2/P6KaIGmZDeFXomL2edPRdg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iwqnF1oubbdzl/60R4ybE+vt5J4BI7zfIck5GNPX8r9Fu+FW2CjuAbEMfT8edc4dC
+	 SUl225X87kEARiv1UBRoK+uGlDBMrppwwZ0W5rMoWw1bskFj7uN2tMA6wQQOVcRhMC
+	 +mf8pYui1pukoqFY7A/MpyYDxB3sKmFLZdBvVA3ED+S29YzkvMHLX1fA09mxqmjJ+N
+	 ydZxZivknIPuQpa+0cRwSpKwE08lrHNrsV7DritYX/IfDjG0yA36XOtmPQ7F+RI9hL
+	 wR35x4VI1xIprRbDgDdYB+kJXOUw7SgBdnr1WJHZM6rChtYcSS2ook5fOUldhpEvoh
+	 eZe8Fi0K6RAKQ==
+From: Thierry Reding <thierry.reding@kernel.org>
+To: arm@kernel.org,
+	soc@kernel.org
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL 1/7] dt-bindings: Changes for v7.1-rc1
+Date: Sun, 29 Mar 2026 17:10:38 +0200
+Message-ID: <20260329151045.1443133-1-thierry.reding@kernel.org>
+X-Mailer: git-send-email 2.52.0
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 0/5] PCI: of: Remove max-link-speed generation
- validation
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: lpieralisi@kernel.org, jingoohan1@gmail.com, mani@kernel.org,
- kwilczynski@kernel.org, bhelgaas@google.com, florian.fainelli@broadcom.com,
- jim2101024@gmail.com, robh@kernel.org, ilpo.jarvinen@linux.intel.com,
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, claudiu.beznea.uj@bp.renesas.com,
- linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
- linux-omap@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- shawn.lin@rock-chips.com
-References: <20260327164250.GA1513325@bhelgaas>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <20260327164250.GA1513325@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wCnr9J+O8lpUdKTCA--.51946S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJFyDCr18WF1UtFyfJr4rGrg_yoW5WrWDpa
-	y2kF40vry0qr43Xr4DX3W5Z3WYq3ZxurWjyryFg3s7Z3ZxCrsxXFyIvayFqF9Ikrsxury2
-	qF12qF4akFW7AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U7fHbUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbC7AC7X2nJO4BGqwAA3+
+Content-Transfer-Encoding: 8bit
 
+From: Thierry Reding <thierry.reding@gmail.com>
 
+Hi ARM SoC maintainers,
 
-On 3/28/26 00:42, Bjorn Helgaas wrote:
-> On Sat, Mar 14, 2026 at 12:55:17AM +0800, Hans Zhang wrote:
->> Hi,
->>
->> This series moves the validation from the common OF function to the
->> individual PCIe controller drivers.  To protect against out-of-bounds
->> accesses to the pcie_link_speed[] array, we first introduce a helper
->> function pcie_get_link_speed() that safely returns the speed value
->> (or PCI_SPEED_UNKNOWN) for a given generation number.
->>
->> Then all direct uses of pcie_link_speed[] as an array are converted to
->> use the new helper, ensuring that even if an invalid generation number
->> reaches those code paths, no out-of-bounds access occurs.
->>
->> For several drivers that read the "max-link-speed" property
->> (pci-j721e, brcmstb, mediatek-gen3, rzg3s-host), we add an explicit
->> validation step: if the value is missing, out of range, or unsupported
->> by the hardware, a safe default is used (usually Gen2). Other drivers
->> (mainly DesignWare glue drivers) rely on the helper to safely handle
->> invalid values, but do not yet include fallback logic or warnings.
->>
->> Finally, the range check is removed from of_pci_get_max_link_speed(),
->> so that future PCIe generations can be supported without modifying
->> drivers/pci/of.c.
-> 
-> Thanks for this series.
-> 
-> We still have a couple references to pcie_link_speed[] that bypass
-> pcie_get_link_speed().  These are safe because PCI_EXP_LNKSTA_CLS is
-> 0xf and pcie_link_speed[] is size 16, but I'm not sure the direct
-> reference is necessary.
-> 
-> The array itself is exported, which I suppose we needed for modular
-> PCI controller drivers, but we probably don't need it now that
-> pcie_get_link_speed() is exported?
-> 
->    $ git grep "\<pcie_link_speed\>"
->    drivers/pci/pci-sysfs.c:        speed = pcie_link_speed[linkstat & PCI_EXP_LNKSTA_CLS];
->    drivers/pci/pci.c:      return pcie_link_speed[FIELD_GET(PCI_EXP_LNKSTA_CLS, lnksta)];
->    drivers/pci/pci.h:extern const unsigned char pcie_link_speed[];
->    drivers/pci/pci.h:      bus->cur_bus_speed = pcie_link_speed[linksta & PCI_EXP_LNKSTA_CLS];
->    drivers/pci/probe.c:const unsigned char pcie_link_speed[] = {
->    drivers/pci/probe.c:EXPORT_SYMBOL_GPL(pcie_link_speed);
->    drivers/pci/probe.c:    if (speed >= ARRAY_SIZE(pcie_link_speed))
->    drivers/pci/probe.c:    return pcie_link_speed[speed];
->    drivers/pci/probe.c:            bus->max_bus_speed = pcie_link_speed[linkcap & PCI_EXP_LNKCAP_SLS];
+The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
 
-Hi Bjorn,
+  Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
 
-Yes, I also realized that this array is directly used in other places. 
-So I submitted this series and I would appreciate it if you could review 
-it to ensure its correctness.
+are available in the Git repository at:
 
-See also this series:
-https://patchwork.kernel.org/project/linux-pci/patch/20260315160057.127639-1-18255117159@163.com/
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.1-dt-bindings
 
-Best regards,
-Hans
+for you to fetch changes up to bed2f5b4de6c6fd8f8928f6373ad92e8795c370f:
 
+  dt-bindings: arm: tegra: Document Jetson AGX Thor DevKit (2026-03-28 01:05:24 +0100)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+dt-bindings: Changes for v7.1-rc1
+
+This contains a few conversions to DT schema along with various
+additions and fixes to reduce the amount of validation warnings.
+
+Included are also a new binding for the PCIe controller found on
+Tegra264 as well as compatible strings for the Jetson AGX Thor
+Developer Kit.
+
+----------------------------------------------------------------
+Sumit Gupta (1):
+      dt-bindings: arm: tegra: Add Tegra238 CBB compatible strings
+
+Svyatoslav Ryhel (1):
+      dt-bindings: display: tegra: Document Tegra20 HDMI port
+
+Thierry Reding (9):
+      dt-bindings: pci: Document the NVIDIA Tegra264 PCIe controller
+      dt-bindings: phy: tegra-xusb: Document Type C support
+      dt-bindings: clock: tegra124-dfll: Convert to json-schema
+      dt-bindings: interrupt-controller: tegra: Fix reg entries
+      dt-bindings: arm: tegra: Add missing compatible strings
+      dt-bindings: phy: tegra: Document Tegra210 USB PHY
+      dt-bindings: memory: Add Tegra210 memory controller bindings
+      dt-bindings: memory: tegra210: Mark EMC as cooling device
+      dt-bindings: arm: tegra: Document Jetson AGX Thor DevKit
+
+ Documentation/devicetree/bindings/arm/tegra.yaml   |  56 +++-
+ .../bindings/arm/tegra/nvidia,tegra234-cbb.yaml    |   4 +
+ .../bindings/clock/nvidia,tegra124-dfll.txt        | 155 -----------
+ .../bindings/clock/nvidia,tegra124-dfll.yaml       | 290 +++++++++++++++++++++
+ .../display/tegra/nvidia,tegra20-hdmi.yaml         |  13 +-
+ .../interrupt-controller/nvidia,tegra20-ictlr.yaml |  23 +-
+ .../memory-controllers/nvidia,tegra210-emc.yaml    |   6 +-
+ .../memory-controllers/nvidia,tegra210-mc.yaml     |  77 ++++++
+ .../bindings/pci/nvidia,tegra264-pcie.yaml         | 149 +++++++++++
+ .../bindings/phy/nvidia,tegra194-xusb-padctl.yaml  |  39 ++-
+ .../bindings/phy/nvidia,tegra20-usb-phy.yaml       |   1 +
+ 11 files changed, 649 insertions(+), 164 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.yaml
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-mc.yaml
+ create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra264-pcie.yaml
