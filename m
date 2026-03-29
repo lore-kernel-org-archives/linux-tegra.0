@@ -1,296 +1,204 @@
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F11E2FFFA5
-	for <linux-tegra@vger.kernel.org>; Sun, 29 Mar 2026 16:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.179
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774801130; cv=pass; b=Whmw0zOnobkHCaWaN5OF0jbAhb1eEsDn1NY2xb0frvKCQV0gbo30O4XCy2z2iOSBqBhZ/p2vqhgJPSdNfZyMjVj3rs8MY8fYlKr7zN7Jh6oAxltiziZVVhNt6o4NfSXR4ukVeGz3RV1BvAdXVrcDh2hVQ1SqZdFqb6e7p3G3G3g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774801130; c=relaxed/simple;
-	bh=xQqCvaSYvMDehLMpCAi2Exo2F9/DzAf4RUjSbu4AXqo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H+W0ulMeKyrH4zHwGuOELdrm3YQ+1v2nDp6PXPeyd015g/yuIyQkOaw6SWFIKDv2GwLj2Cov/ELppYEsxhN1j/ZnCDL2ij+9jZY2h/6b0N/p1kdiOHhDfDygrQbln0XMUTRH/bMiQyii8wU11uDlqjJ3NMJ9HpwjKQ7NX/yxtDo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FrzopNnu; arc=pass smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49B12DEA61;
+	Sun, 29 Mar 2026 20:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774817308; cv=none; b=HrbvfxlmuZts9dEFPxa7Tazoy//FphNbWtX98yTp/V6hiRzCuk7Qw4dfXONg6Djxdtp1Fc0HuDVNXjeLV7v8yP7zOvoJwmoCLfbycQ37LQKj6zl+f3i0/61L0NuTRgs0nxM1tRRVFoQH6VZQn6JLIu8q1GbZUlQ83rdDbhQhg1I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774817308; c=relaxed/simple;
+	bh=FRfIclqbGAMKvlimIjgixptcPvX/DfRkYbvjBjyjlr4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=eYGtf9AdsRSGXmMwGR5QjAnWw2b0R69JGoIqWUyh6eBxvSYnDrhNbDgSme8h/4sAqFl60wPNJmQxAtddOZk8wtHnjhRd0uC7x4nrossvE+FIqiE1SeACfmXxhQXaa0TG3oICX0mBhfVlg2df29F2YHKnz+F/LN9wCtFW0KOrTzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b=aCFNwrY8; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FrzopNnu"
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-46a9ae3f857so442271b6e.0
-        for <linux-tegra@vger.kernel.org>; Sun, 29 Mar 2026 09:18:48 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1774801127; cv=none;
-        d=google.com; s=arc-20240605;
-        b=Ib91fyxx3pq8kPfYyE3nOWI/y0yQi/lFkuVamgtEoV+7/T+1PWt4Pyu3dAbRS6trPz
-         8aV5ljw9KzzHfwONo49rpSFYg3Js/Lnojma9RXaT0GNySQlxzY7xzi7mXZ1IAJF6yKPV
-         XtFYd+vrjT1g0YFyDiZhh1UxcSbFsOip9bDsNnzmCyCTYncTxwEIkdiDcbr3zEJjvtp3
-         YQcWnhaY8yxoAWyYgJSVKLUJU0QqB5f1DUIYZxwXOZTjb5d4pUSqAO2xl6IaD51CFyYB
-         p4+J7HRXsBQ7ulL0ey9de65YQ2y0MNqw2kmlV+S4aRIoNAY2zCBtC6I9H8F2bdgxm/aI
-         iKLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=WxRWrohRC+fNvhhMsjBNKWfMlLneWiOcUehlHfN3ctw=;
-        fh=sNNE79FY5/W/DFjjJXNYDQ1zmIbq2rbPos6m6kscRcU=;
-        b=fPydCbaVXy15FTxzlN2ntp+MLkqt7+5kiHcIUs9g0Yq+rB16/WdydHJywmRA66kwSU
-         csyt0A0DAFXj0Hkl/o3d5E9wOuDDO2CLBNEbA9aV5lzU8JRxJWvvyPDLX/QDrh6MY1o8
-         e/adQlETS+9tcxmE9f9vzGzCNBzcl41T8QrseL+Ts3yty4JKIYfsX+zrlF7/L4SJDC9y
-         5QmlgGlfRbsVHeoHgEE+iDjd/shD+MfCW3Dda8VXbY4feyWRx3lYwr0ycKvaSMs/ARnp
-         P/GD2GYXWLueR3ObA2ZdY1oMpn3v0vpEaBCo5D8BDhr09QXCOdC36/U+R6BY0Nqks8zf
-         oPvA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774801127; x=1775405927; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WxRWrohRC+fNvhhMsjBNKWfMlLneWiOcUehlHfN3ctw=;
-        b=FrzopNnu1K3dOdZ3TusFe8IBsytL0sNJAtbEJkAi2Ep8ulCYvIgLXG4+vwzGZL2WTj
-         dcNudB5wUTfvIW5re3cUZG1++D3fhNZHa7genkw4HI1c7csQf1RXcAHwTh5tuOB3y5Ac
-         NhqgOzqMP+I9e1gDGtW9RHi0h9GiWlGWkoV8VZ9vMGW20CnRMLgxv93uoi+zKLL5PqT7
-         lihAloiFoH2AGTujWWUiAFI749sAv2zVeMRfU/ziSpIjWTK5dBcrG6sRO3MGavZt6fU9
-         E6j+o3xX2I0lIFURRwKtsQcu1qw4zO3iHzPjhkW81uQG0TxQUR40RLPD0mgcCnrfoU6b
-         yfXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774801127; x=1775405927;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=WxRWrohRC+fNvhhMsjBNKWfMlLneWiOcUehlHfN3ctw=;
-        b=adn57YMIfnBK26oEBIIoVlB/huMxJyJJPToq2jV2uSZ4KCWlYT68xrQwGycl+bqE0c
-         MWxNcPbAqeEryMyJxJ+jD9FhlacDb91Xy8NQY+mB3w4xss0DQT//TSI3TuG9Wc4tleF2
-         FVEn43B47ukqqzU3wdmh/+PpRwZMQhM4+h5KgmmEwfx9ZrLmrfX/T8vod5Z8iJ6m0qYv
-         J5OppUyALsbzjpQ9eHz5UaR1glNEx202W/aPn0r0WCq+0kqR/IdGyi0pHXCjvKSiREqU
-         UH8VDy+hFErRb9//DHhiJ2OPnjtcLihOY946Qc453YQYGpVDM58kvRWdTmPcJcKRFBOQ
-         9xCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWcdr8zs8CURpYcFVgeNe+bzc0IHmGd/m4RwgIOl3DvuPvx+eSjp49w8CbhM10eu7VNGe9IuUwW0G7Y1Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKv7mIKJMHlHKFtBp5li5KDZuO+zaCkP/yOGV7qU9OnbjkMjcE
-	GaGFTxrp6+oId2YhZ9TnyWnV9Jlh8STzHABLCgRRL3K9mjMP30agg2KvaZt3JKJf146CZwnUzGi
-	iEfwApwn0vsASEPe6IUwIzNle5a6fSEM=
-X-Gm-Gg: ATEYQzyKiRvczJlcPznPQDx8GGWYSlqsesgdjMlyc8MPdGqszf7HwCN1jCgnHoKl9T8
-	8pdpi5n0Oc2isSAfK8nl0kpjHJJGSonK0pJgyIjIahKVvaw2qiAQWK5/gbTRgs2RSHlNtZQrK43
-	jnT3XKvL1/41YN1mcpHXh3gpB42rddMMp7J0Q10lvXhP851BMsLhr1gzpaa0oqFxg25Mp9OrN/7
-	07yBFylZnMXI4LqsANM74xX7yphN2ehKJ9qrXzaZ3bkCEIa5FnoZ94+MFAjmBOgdn08Rvnmdg9h
-	+zngNv6c
-X-Received: by 2002:a05:6808:1909:b0:466:f25d:3281 with SMTP id
- 5614622812f47-46a8a535f24mr4527393b6e.29.1774801127539; Sun, 29 Mar 2026
- 09:18:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b="aCFNwrY8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1774817304; x=1775422104; i=marvin24@gmx.de;
+	bh=OtNcuLB3T8KYnUkH14k7NMFCJItLMiwi7/E76QEkjKQ=;
+	h=X-UI-Sender-Class:Date:From:To:cc:Subject:In-Reply-To:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=aCFNwrY8LXCJ42ZkBOKcpimcPi9vyD0F28U1EXv0Q3VbQlvNqAuRSpBJi250USxz
+	 cv4diT6xM4sGN8UEK6LcyasvAYFuV6XEwSqUAE16mX58Li4wJeQswjhS+3mdkNUpS
+	 2NPETT2LkfUTPlx5t604ErZdioGpIs3pFKjlphJntpMCIcjSz6grf+UZwfMpS5w2s
+	 DXZR4nZCfuqHZRMyHotG0HU0Ykk7FuWlUqdkXhTvmwB8i92RiCf/pCm9nRSQpCoE8
+	 giD0lXcZ8C8iw+4pQ99FYGThp9B/Z7dj39KoIu42AJOG0kyaZsT4u4hMk00/pAN7V
+	 krV8TCpXCjunmX/9Ow==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from client.hidden.invalid by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MVNB1-1vzdcd30tj-00IwUc; Sun, 29
+ Mar 2026 22:48:24 +0200
+Date: Sun, 29 Mar 2026 22:48:24 +0200 (CEST)
+From: Marc Dietrich <marvin24@gmx.de>
+To: Sebastian Josue Alba Vives <sebasjosue84@gmail.com>
+cc: ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] staging: nvec: validate battery response length before
+ memcpy
+In-Reply-To: <20260324195041.38343-1-sebasjosue84@gmail.com>
+Message-ID: <b23eb8ca-ef38-6288-0891-fe91148e11cd@gmx.de>
+References: <20260324195041.38343-1-sebasjosue84@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260327151112.5202-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20260327151112.5202-2-wsa+renesas@sang-engineering.com>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Sun, 29 Mar 2026 11:18:36 -0500
-X-Gm-Features: AQROBzAT0Y7MQA0Vu0exbVKBXS_ASbnND8ZlhVVTpfO0frVJ0Okq55qzNtMBYvo
-Message-ID: <CABb+yY3J2T5c4=dGaqPYi3L=88zgTqRn6AJwxBJ9Sqx6aDH8jw@mail.gmail.com>
-Subject: Re: [PATCH v3] mailbox: remove superfluous internal header
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Sudeep Holla <sudeep.holla@kernel.org>, 
-	Daniel Baluta <daniel.baluta@nxp.com>, Peter Chen <peter.chen@cixtech.com>, 
-	Fugang Duan <fugang.duan@cixtech.com>, 
-	CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
-	linux-acpi@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII; format=flowed
+X-Provags-ID: V03:K1:WKfW4+YMLfLZLHNi/WHZT3MAY3/XWAogRELxput+1HFw+zVNheI
+ IJH23CedrMEOVA55G5uYM/Z167aD2oKIwwYupbc4pOYhzT5KyRLFsMDzImQXOwqekBQSkEk
+ WKQhOBtmTxJdjxO6gABVqEgBkZemamQkZuBPE6ibMuAIfRse9uVxLt2YQ8Drr2kbA1IxqaV
+ yU7ndsD598z5EdU+crayg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:TWBZMhMQbsw=;XJIWqFlxuCDgEbE/N3DufyuaTYF
+ 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
+ 6HyDvHPi8m6
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 27, 2026 at 10:11=E2=80=AFAM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
+Hello Sebastian,
+
+On Tue, 24 Mar 2026, Sebastian Josue Alba Vives wrote:
+
+> In nvec_power_notifier(), the response length from the embedded
+> controller is used directly as the size argument to memcpy() when
+> copying battery manufacturer, model, and type strings. The
+> destination buffers (bat_manu, bat_model, bat_type) are fixed at 30
+> bytes, but res->length is a u8 that can be up to 255, allowing a
+> heap buffer overflow.
 >
-> Quite some controller drivers use the defines from the internal header
-> already. This prevents controller drivers outside the mailbox directory.
-> Move the defines to the public controller header to allow this again as
-> the defines are not strictly internal anyhow.
+> Additionally, if res->length is less than 2, the subtraction
+> res->length - 2 wraps around as an unsigned value, resulting in a
+> large copy that corrupts kernel heap memory.
 >
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Reviewed-by: Sudeep Holla <sudeep.holla@kernel.org>
-> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+> Add bounds checks before each memcpy to ensure the copy length does
+> not exceed the destination buffer size, and that res->length is at
+> least 2 to prevent unsigned integer underflow.
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Sebastian Josue Alba Vives <sebasjosue84@gmail.com>
 > ---
+> drivers/staging/nvec/nvec_power.c | 6 ++++++
+> 1 file changed, 6 insertions(+)
 >
-> Changes since v2:
-> * rebased to 7.0-rc5
-> * add tag (Thanks, Daniel!)
+> diff --git a/drivers/staging/nvec/nvec_power.c b/drivers/staging/nvec/nv=
+ec_power.c
+> index 2faab9fde..29beef0a7 100644
+> --- a/drivers/staging/nvec/nvec_power.c
+> +++ b/drivers/staging/nvec/nvec_power.c
+> @@ -193,14 +193,20 @@ static int nvec_power_bat_notifier(struct notifier=
+_block *nb,
+> 		power->bat_temperature =3D res->plu - 2732;
+> 		break;
+> 	case MANUFACTURER:
+> +		if (res->length < 2 || res->length - 2 > sizeof(power->bat_manu) - 1)
+> +			break;
+
+I think this check is a valid one, even if unlikely to fail. Could be a
+bit nicer by replacing sizeof() with a contant and storing res->length-2=
+=20
+to some variable, but I guess that's a matter of taste.
+
+Tested-by: Marc Dietrich <marvin24@gmx.de>
+
+Thanks,
+
+Marc
+
+> 		memcpy(power->bat_manu, &res->plc, res->length - 2);
+> 		power->bat_manu[res->length - 2] =3D '\0';
+> 		break;
+> 	case MODEL:
+> +		if (res->length < 2 || res->length - 2 > sizeof(power->bat_model) - 1=
+)
+> +			break;
+> 		memcpy(power->bat_model, &res->plc, res->length - 2);
+> 		power->bat_model[res->length - 2] =3D '\0';
+> 		break;
+> 	case TYPE:
+> +		if (res->length < 2 || res->length - 2 > sizeof(power->bat_type) - 1)
+> +			break;
+> 		memcpy(power->bat_type, &res->plc, res->length - 2);
+> 		power->bat_type[res->length - 2] =3D '\0';
+> 		/*
+> --=20
+> 2.43.0
 >
->  drivers/mailbox/cix-mailbox.c      |  2 --
->  drivers/mailbox/hi3660-mailbox.c   |  2 --
->  drivers/mailbox/imx-mailbox.c      |  2 --
->  drivers/mailbox/mailbox-sti.c      |  2 --
->  drivers/mailbox/mailbox.c          |  2 --
->  drivers/mailbox/mailbox.h          | 12 ------------
->  drivers/mailbox/omap-mailbox.c     |  2 --
->  drivers/mailbox/pcc.c              |  2 --
->  drivers/mailbox/tegra-hsp.c        |  2 --
->  include/linux/mailbox_controller.h |  5 +++++
->  10 files changed, 5 insertions(+), 28 deletions(-)
->  delete mode 100644 drivers/mailbox/mailbox.h
 >
-> diff --git a/drivers/mailbox/cix-mailbox.c b/drivers/mailbox/cix-mailbox.=
-c
-> index 443620e8ae37..864f98f21fc3 100644
-> --- a/drivers/mailbox/cix-mailbox.c
-> +++ b/drivers/mailbox/cix-mailbox.c
-> @@ -12,8 +12,6 @@
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
->
-> -#include "mailbox.h"
-> -
->  /*
->   * The maximum transmission size is 32 words or 128 bytes.
->   */
-> diff --git a/drivers/mailbox/hi3660-mailbox.c b/drivers/mailbox/hi3660-ma=
-ilbox.c
-> index 17c29e960fbf..9b727a2b54a5 100644
-> --- a/drivers/mailbox/hi3660-mailbox.c
-> +++ b/drivers/mailbox/hi3660-mailbox.c
-> @@ -15,8 +15,6 @@
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
->
-> -#include "mailbox.h"
-> -
->  #define MBOX_CHAN_MAX                  32
->
->  #define MBOX_RX                                0x0
-> diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.=
-c
-> index 003f9236c35e..22331b579489 100644
-> --- a/drivers/mailbox/imx-mailbox.c
-> +++ b/drivers/mailbox/imx-mailbox.c
-> @@ -23,8 +23,6 @@
->  #include <linux/slab.h>
->  #include <linux/workqueue.h>
->
-> -#include "mailbox.h"
-> -
->  #define IMX_MU_CHANS           24
->  /* TX0/RX0/RXDB[0-3] */
->  #define IMX_MU_SCU_CHANS       6
-> diff --git a/drivers/mailbox/mailbox-sti.c b/drivers/mailbox/mailbox-sti.=
-c
-> index b4b5bdd503cf..b6c9ecbbc8ec 100644
-> --- a/drivers/mailbox/mailbox-sti.c
-> +++ b/drivers/mailbox/mailbox-sti.c
-> @@ -21,8 +21,6 @@
->  #include <linux/property.h>
->  #include <linux/slab.h>
->
-> -#include "mailbox.h"
-> -
->  #define STI_MBOX_INST_MAX      4      /* RAM saving: Max supported insta=
-nces */
->  #define STI_MBOX_CHAN_MAX      20     /* RAM saving: Max supported chann=
-els  */
->
-> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-> index e63b2292ee7a..9d41a1ab9018 100644
-> --- a/drivers/mailbox/mailbox.c
-> +++ b/drivers/mailbox/mailbox.c
-> @@ -18,8 +18,6 @@
->  #include <linux/property.h>
->  #include <linux/spinlock.h>
->
-> -#include "mailbox.h"
-> -
->  static LIST_HEAD(mbox_cons);
->  static DEFINE_MUTEX(con_mutex);
->
-> diff --git a/drivers/mailbox/mailbox.h b/drivers/mailbox/mailbox.h
-> deleted file mode 100644
-> index e1ec4efab693..000000000000
-> --- a/drivers/mailbox/mailbox.h
-> +++ /dev/null
-> @@ -1,12 +0,0 @@
-> -/* SPDX-License-Identifier: GPL-2.0-only */
-> -
-> -#ifndef __MAILBOX_H
-> -#define __MAILBOX_H
-> -
-> -#include <linux/bits.h>
-> -
-> -#define TXDONE_BY_IRQ  BIT(0) /* controller has remote RTR irq */
-> -#define TXDONE_BY_POLL BIT(1) /* controller can read status of last TX *=
-/
-> -#define TXDONE_BY_ACK  BIT(2) /* S/W ACK received by Client ticks the TX=
- */
-> -
-> -#endif /* __MAILBOX_H */
-> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbo=
-x.c
-> index d9f100c18895..5772c6b9886a 100644
-> --- a/drivers/mailbox/omap-mailbox.c
-> +++ b/drivers/mailbox/omap-mailbox.c
-> @@ -22,8 +22,6 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/mailbox_controller.h>
->
-> -#include "mailbox.h"
-> -
->  #define MAILBOX_REVISION               0x000
->  #define MAILBOX_MESSAGE(m)             (0x040 + 4 * (m))
->  #define MAILBOX_FIFOSTATUS(m)          (0x080 + 4 * (m))
-> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
-> index 22e70af1ae5d..636879ae1db7 100644
-> --- a/drivers/mailbox/pcc.c
-> +++ b/drivers/mailbox/pcc.c
-> @@ -59,8 +59,6 @@
->  #include <linux/io-64-nonatomic-lo-hi.h>
->  #include <acpi/pcc.h>
->
-> -#include "mailbox.h"
-> -
->  #define MBOX_IRQ_NAME          "pcc-mbox"
->
->  /**
-> diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-> index ed9a0bb2bcd8..2231050bb5a9 100644
-> --- a/drivers/mailbox/tegra-hsp.c
-> +++ b/drivers/mailbox/tegra-hsp.c
-> @@ -16,8 +16,6 @@
->
->  #include <dt-bindings/mailbox/tegra186-hsp.h>
->
-> -#include "mailbox.h"
-> -
->  #define HSP_INT_IE(x)          (0x100 + ((x) * 4))
->  #define HSP_INT_IV             0x300
->  #define HSP_INT_IR             0x304
-> diff --git a/include/linux/mailbox_controller.h b/include/linux/mailbox_c=
-ontroller.h
-> index 80a427c7ca29..16fef421c30c 100644
-> --- a/include/linux/mailbox_controller.h
-> +++ b/include/linux/mailbox_controller.h
-> @@ -3,6 +3,7 @@
->  #ifndef __MAILBOX_CONTROLLER_H
->  #define __MAILBOX_CONTROLLER_H
->
-> +#include <linux/bits.h>
->  #include <linux/completion.h>
->  #include <linux/device.h>
->  #include <linux/hrtimer.h>
-> @@ -11,6 +12,10 @@
->
->  struct mbox_chan;
->
-> +#define TXDONE_BY_IRQ  BIT(0) /* controller has remote RTR irq */
-> +#define TXDONE_BY_POLL BIT(1) /* controller can read status of last TX *=
-/
-> +#define TXDONE_BY_ACK  BIT(2) /* S/W ACK received by Client ticks the TX=
- */
-> +
->  /**
->   * struct mbox_chan_ops - methods to control mailbox channels
->   * @send_data: The API asks the MBOX controller driver, in atomic
-> --
-> 2.51.0
->
-Applied to mailbox/for-next
-Thanks
-Jassi
