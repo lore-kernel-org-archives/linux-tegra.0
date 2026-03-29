@@ -1,30 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E910437AA83
-	for <linux-tegra@vger.kernel.org>; Sun, 29 Mar 2026 15:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853E037E2E1
+	for <linux-tegra@vger.kernel.org>; Sun, 29 Mar 2026 15:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774797053; cv=none; b=Q/G0Rf8nnIA42XYIw3ueVz4IqkTLrwsR/WGWT+LG//hq5PvAwc48aQIWPg5lIXGqrFGy99uV03AgKmQQuMp9/bSa/h4UTjMjDbeeeAkwmTrQN1bh132Y3TobDzBLfmIcbWEvhKBSps7MvFLwucFMs0wg2T8Bk3AIbh9a9XGutYw=
+	t=1774797055; cv=none; b=MzFKS3pk14krWWF4Tolk+3SJks2YP+3N2d0OrKgypwSY9gObbmS3sQZtEPqEnwZZKtSyZ0LS8zilh4SoYcqe9/ynikQ0hwzKGQ4euG4G6sIgCQRmzG0kQDdAsWnS2iqAe5IfKSD3CShBArpE0LScNZt9ll5PcYTL3ncMrtJu/DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774797053; c=relaxed/simple;
-	bh=P2wTGkHTJGDVrYxmEmU2/P6KaIGmZDeFXomL2edPRdg=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=PJkb+vJrrjHMUXR7RvyM/5BAPIBkfMYvz6h5eE/UmwBiiqLwIRqryHrskTC/qZXtHhaPC+zkcM+cXnXB/bvSEbWGfgj/PLqr4a/gNjRL03dSG0AI6ohfDmBTQS2R7V9mlv+W5gMELtZLJboVJGZpvsrAl8BzFMguiqLR9fTzHkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwqnF1ou; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774797055; c=relaxed/simple;
+	bh=ohMCJ+s4bInP/pmkvfOwZWL0zoadxQwlt8rMN1PDwgU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JMRUadTE8ny0SptshUO43Zg0ztsHsOz24ydw2R/ojz6YMzXvFyfD3cKZYEPO0ZkQ/wLxOKUtboeDljYvSLfPW4bPGGNNmnDnd+6tbLsnz642aUn47XCYJFGSJjvuhXAJKJfyKG07phJcVE7MdKyqD0hSeiRX8bcysRzeMZMv87E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KBn0vyJO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwqnF1ou"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A824C116C6;
-	Sun, 29 Mar 2026 15:10:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KBn0vyJO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF744C2BC9E;
+	Sun, 29 Mar 2026 15:10:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774797052;
-	bh=P2wTGkHTJGDVrYxmEmU2/P6KaIGmZDeFXomL2edPRdg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=iwqnF1oubbdzl/60R4ybE+vt5J4BI7zfIck5GNPX8r9Fu+FW2CjuAbEMfT8edc4dC
-	 SUl225X87kEARiv1UBRoK+uGlDBMrppwwZ0W5rMoWw1bskFj7uN2tMA6wQQOVcRhMC
-	 +mf8pYui1pukoqFY7A/MpyYDxB3sKmFLZdBvVA3ED+S29YzkvMHLX1fA09mxqmjJ+N
-	 ydZxZivknIPuQpa+0cRwSpKwE08lrHNrsV7DritYX/IfDjG0yA36XOtmPQ7F+RI9hL
-	 wR35x4VI1xIprRbDgDdYB+kJXOUw7SgBdnr1WJHZM6rChtYcSS2ook5fOUldhpEvoh
-	 eZe8Fi0K6RAKQ==
+	s=k20201202; t=1774797055;
+	bh=ohMCJ+s4bInP/pmkvfOwZWL0zoadxQwlt8rMN1PDwgU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=KBn0vyJOCg5l6xh4DCcDUaDzdNNjf6kNMXZLCTWlekLnSuINkPqGHqnUylK12Vw87
+	 fHb/vVnkedCLBOmtr/6Nzzo9O2xXCT64UnN9EWEFD8FWIU6avwSfTmZI4BTmqe4Zvg
+	 N69owR+OMNHK8n++DeK6a1C0n6tUsxIpQa3fBRqgAULzS23h+v/6K8AiXNYSz00hi0
+	 Bo6LlE+nHRHnF61wRb9zutgEd4ThpAvwNRF8DDl8QydcE58U/jhh0n0YZkxyvM0j8x
+	 Rd7TQTyHSBEKXJcbw9e0fkOD8jPzhIvYUs5CQBLBuedpALACzDOy7YPUeUJbs2+Wkv
+	 +8yXZZuYlCl2A==
 From: Thierry Reding <thierry.reding@kernel.org>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -32,10 +33,12 @@ Cc: Thierry Reding <thierry.reding@gmail.com>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 1/7] dt-bindings: Changes for v7.1-rc1
-Date: Sun, 29 Mar 2026 17:10:38 +0200
-Message-ID: <20260329151045.1443133-1-thierry.reding@kernel.org>
+Subject: [GIT PULL 2/7] soc/tegra: Changes for v7.1-rc1
+Date: Sun, 29 Mar 2026 17:10:39 +0200
+Message-ID: <20260329151045.1443133-2-thierry.reding@kernel.org>
 X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260329151045.1443133-1-thierry.reding@kernel.org>
+References: <20260329151045.1443133-1-thierry.reding@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -55,56 +58,57 @@ The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.1-dt-bindings
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.1-soc
 
-for you to fetch changes up to bed2f5b4de6c6fd8f8928f6373ad92e8795c370f:
+for you to fetch changes up to 4b23febb6b11cd06183bed3d21b87ba7d6a8a1e0:
 
-  dt-bindings: arm: tegra: Document Jetson AGX Thor DevKit (2026-03-28 01:05:24 +0100)
+  MAINTAINERS: Change email address for Thierry Reding (2026-03-28 01:41:07 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-dt-bindings: Changes for v7.1-rc1
+soc/tegra: Changes for v7.1-rc1
 
-This contains a few conversions to DT schema along with various
-additions and fixes to reduce the amount of validation warnings.
-
-Included are also a new binding for the PCIe controller found on
-Tegra264 as well as compatible strings for the Jetson AGX Thor
-Developer Kit.
+A number of fixes went into this for the PMC and CBB drivers. The PMC
+driver also gains support for Tegra264 and a Kconfig symbol for the
+upcoming Tegra238 is added. The various per-generation Kconfig symbols
+are now also enabled by default for ARCH_TEGRA in order to reduce the
+number of configuration options that need to be explicitly enabled.
 
 ----------------------------------------------------------------
-Sumit Gupta (1):
-      dt-bindings: arm: tegra: Add Tegra238 CBB compatible strings
+Jon Hunter (10):
+      soc/tegra: pmc: Add kerneldoc for reboot notifier
+      soc/tegra: pmc: Correct function names in kerneldoc
+      soc/tegra: pmc: Add kerneldoc for wake-up variables
+      soc/tegra: pmc: Remove unused AOWAKE definitions
+      soc/tegra: pmc: Add support for SoC specific AOWAKE offsets
+      soc/tegra: pmc: Add AOWAKE regs for Tegra264
+      soc/tegra: pmc: Add Tegra264 wake events
+      soc/tegra: pmc: Refactor IO pad voltage control
+      soc/tegra: pmc: Rename has_impl_33v_pwr flag
+      soc/tegra: pmc: Add IO pads for Tegra264
 
-Svyatoslav Ryhel (1):
-      dt-bindings: display: tegra: Document Tegra20 HDMI port
+Krzysztof Kozlowski (1):
+      soc/tegra: Make ARCH_TEGRA_SOC_FOO defaults for NVIDIA Tegra
 
-Thierry Reding (9):
-      dt-bindings: pci: Document the NVIDIA Tegra264 PCIe controller
-      dt-bindings: phy: tegra-xusb: Document Type C support
-      dt-bindings: clock: tegra124-dfll: Convert to json-schema
-      dt-bindings: interrupt-controller: tegra: Fix reg entries
-      dt-bindings: arm: tegra: Add missing compatible strings
-      dt-bindings: phy: tegra: Document Tegra210 USB PHY
-      dt-bindings: memory: Add Tegra210 memory controller bindings
-      dt-bindings: memory: tegra210: Mark EMC as cooling device
-      dt-bindings: arm: tegra: Document Jetson AGX Thor DevKit
+Sumit Gupta (4):
+      soc/tegra: cbb: Add support for CBB fabrics in Tegra238
+      soc/tegra: cbb: Set ERD on resume for err interrupt
+      soc/tegra: cbb: Fix incorrect ARRAY_SIZE in fabric lookup tables
+      soc/tegra: cbb: Fix cross-fabric target timeout lookup
 
- Documentation/devicetree/bindings/arm/tegra.yaml   |  56 +++-
- .../bindings/arm/tegra/nvidia,tegra234-cbb.yaml    |   4 +
- .../bindings/clock/nvidia,tegra124-dfll.txt        | 155 -----------
- .../bindings/clock/nvidia,tegra124-dfll.yaml       | 290 +++++++++++++++++++++
- .../display/tegra/nvidia,tegra20-hdmi.yaml         |  13 +-
- .../interrupt-controller/nvidia,tegra20-ictlr.yaml |  23 +-
- .../memory-controllers/nvidia,tegra210-emc.yaml    |   6 +-
- .../memory-controllers/nvidia,tegra210-mc.yaml     |  77 ++++++
- .../bindings/pci/nvidia,tegra264-pcie.yaml         | 149 +++++++++++
- .../bindings/phy/nvidia,tegra194-xusb-padctl.yaml  |  39 ++-
- .../bindings/phy/nvidia,tegra20-usb-phy.yaml       |   1 +
- 11 files changed, 649 insertions(+), 164 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
- create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.yaml
- create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-mc.yaml
- create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra264-pcie.yaml
+Svyatoslav Ryhel (2):
+      soc/tegra: pmc: Enable core domain support for Tegra114
+      soc/tegra: common: Add Tegra114 support to devm_tegra_core_dev_init_opp_table
+
+Thierry Reding (2):
+      soc/tegra: Add Tegra238 Kconfig symbol
+      MAINTAINERS: Change email address for Thierry Reding
+
+ MAINTAINERS                          |  14 +-
+ drivers/soc/tegra/Kconfig            |  20 ++
+ drivers/soc/tegra/cbb/tegra234-cbb.c | 169 ++++++++-
+ drivers/soc/tegra/common.c           |   5 +-
+ drivers/soc/tegra/pmc.c              | 662 ++++++++++++++++++++++-------------
+ 5 files changed, 611 insertions(+), 259 deletions(-)
