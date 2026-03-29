@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853E037E2E1
-	for <linux-tegra@vger.kernel.org>; Sun, 29 Mar 2026 15:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAA0379999
+	for <linux-tegra@vger.kernel.org>; Sun, 29 Mar 2026 15:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774797055; cv=none; b=MzFKS3pk14krWWF4Tolk+3SJks2YP+3N2d0OrKgypwSY9gObbmS3sQZtEPqEnwZZKtSyZ0LS8zilh4SoYcqe9/ynikQ0hwzKGQ4euG4G6sIgCQRmzG0kQDdAsWnS2iqAe5IfKSD3CShBArpE0LScNZt9ll5PcYTL3ncMrtJu/DQ=
+	t=1774797058; cv=none; b=XwVsS7dogCsCp6MelMm2xN5oaZlfFyXZmwbYRaeiYKsZBxg/Gm2/x1OpL/ixFKZv2lBzrd2vAI9DIoKGXW9UHPv75C5SCqMvYqV+Lc8hlnEuOOPVcWpMlSSfohs7uD4GkofPcbhQl8+0F7ap+jefhkRL1liwghw1aBr0bi8PouM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774797055; c=relaxed/simple;
-	bh=ohMCJ+s4bInP/pmkvfOwZWL0zoadxQwlt8rMN1PDwgU=;
+	s=arc-20240116; t=1774797058; c=relaxed/simple;
+	bh=kFoVyTMkyFn4pbXMTMOvST6cf5WTQ/PPBbZDBHunAIE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JMRUadTE8ny0SptshUO43Zg0ztsHsOz24ydw2R/ojz6YMzXvFyfD3cKZYEPO0ZkQ/wLxOKUtboeDljYvSLfPW4bPGGNNmnDnd+6tbLsnz642aUn47XCYJFGSJjvuhXAJKJfyKG07phJcVE7MdKyqD0hSeiRX8bcysRzeMZMv87E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KBn0vyJO; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:MIME-Version; b=ZGR3wAxH77utHfhqJMZCsVdtD+UzoUS9VRTzEmub8YKXnlJr14KE0L1LZEeA6Z+UrMdW3ENjDkpeePoPSSEjLeE4CTNi9iFbnLJsFNWTE6tylv+rij/SYWoprMf+XcQ9mgntmrqc6nHlMoN5QoGTefC1Qgd4Q7ingcEThtOq2B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R3YmLtxd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KBn0vyJO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF744C2BC9E;
-	Sun, 29 Mar 2026 15:10:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R3YmLtxd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78735C116C6;
+	Sun, 29 Mar 2026 15:10:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774797055;
-	bh=ohMCJ+s4bInP/pmkvfOwZWL0zoadxQwlt8rMN1PDwgU=;
+	s=k20201202; t=1774797058;
+	bh=kFoVyTMkyFn4pbXMTMOvST6cf5WTQ/PPBbZDBHunAIE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KBn0vyJOCg5l6xh4DCcDUaDzdNNjf6kNMXZLCTWlekLnSuINkPqGHqnUylK12Vw87
-	 fHb/vVnkedCLBOmtr/6Nzzo9O2xXCT64UnN9EWEFD8FWIU6avwSfTmZI4BTmqe4Zvg
-	 N69owR+OMNHK8n++DeK6a1C0n6tUsxIpQa3fBRqgAULzS23h+v/6K8AiXNYSz00hi0
-	 Bo6LlE+nHRHnF61wRb9zutgEd4ThpAvwNRF8DDl8QydcE58U/jhh0n0YZkxyvM0j8x
-	 Rd7TQTyHSBEKXJcbw9e0fkOD8jPzhIvYUs5CQBLBuedpALACzDOy7YPUeUJbs2+Wkv
-	 +8yXZZuYlCl2A==
+	b=R3YmLtxdwDDgWlDbmWBKnqV4hnQyybEDJMveoOKUIqNFkYFC3nqXvRHGTuiR7nofh
+	 VRQGWpFLEjdVgrVUfqXQfB1NV/a41GVmTmHB54w8+MCK4RE439Q37M1OKI4KT6GrFn
+	 DgvEDEJGLy64D5mPOPczZ/aNdrFLFlW2EX+H2ztm+SQIYdjt0ulCXu6/mSx3ZRoM9A
+	 0Fe7eoxknTOU8udloLkBUSQO6ZjH6OrQfXWIAYLYVIrbMGOeoq0FhzxiKkOJxjYRZG
+	 JfmD2nMPoHNJ6qVR75MXR+fYNau3ERP/809Q1gmuOeUF/ow8GrDA4ffDKZTL2Ylx4O
+	 zHb2ia9AX0B2g==
 From: Thierry Reding <thierry.reding@kernel.org>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -33,9 +33,9 @@ Cc: Thierry Reding <thierry.reding@gmail.com>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 2/7] soc/tegra: Changes for v7.1-rc1
-Date: Sun, 29 Mar 2026 17:10:39 +0200
-Message-ID: <20260329151045.1443133-2-thierry.reding@kernel.org>
+Subject: [GIT PULL 3/7] firmware: tegra: Changes for v7.1-rc1
+Date: Sun, 29 Mar 2026 17:10:40 +0200
+Message-ID: <20260329151045.1443133-3-thierry.reding@kernel.org>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260329151045.1443133-1-thierry.reding@kernel.org>
 References: <20260329151045.1443133-1-thierry.reding@kernel.org>
@@ -58,57 +58,33 @@ The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.1-soc
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.1-firmware
 
-for you to fetch changes up to 4b23febb6b11cd06183bed3d21b87ba7d6a8a1e0:
+for you to fetch changes up to e68d494b8946e9060e60427f365107194f90ba0d:
 
-  MAINTAINERS: Change email address for Thierry Reding (2026-03-28 01:41:07 +0100)
+  soc/tegra: bpmp: Use ENODEV instead of ENOTSUPP (2026-03-27 16:30:54 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-soc/tegra: Changes for v7.1-rc1
+firmware: tegra: Changes for v7.1-rc1
 
-A number of fixes went into this for the PMC and CBB drivers. The PMC
-driver also gains support for Tegra264 and a Kconfig symbol for the
-upcoming Tegra238 is added. The various per-generation Kconfig symbols
-are now also enabled by default for ARCH_TEGRA in order to reduce the
-number of configuration options that need to be explicitly enabled.
+This introduces a new API for the BPMP to be pass along a specifier from
+DT when getting a reference from a phandle. This is used to reference
+specific instances of the PCI controller on Tegra264. The ABI header for
+BPMP is updated to the latest version and BPMP APIs now use the more
+intuitive ENODEV instead of the non SUSV4 ENOTSUPP error code for stub
+implementations.
 
 ----------------------------------------------------------------
-Jon Hunter (10):
-      soc/tegra: pmc: Add kerneldoc for reboot notifier
-      soc/tegra: pmc: Correct function names in kerneldoc
-      soc/tegra: pmc: Add kerneldoc for wake-up variables
-      soc/tegra: pmc: Remove unused AOWAKE definitions
-      soc/tegra: pmc: Add support for SoC specific AOWAKE offsets
-      soc/tegra: pmc: Add AOWAKE regs for Tegra264
-      soc/tegra: pmc: Add Tegra264 wake events
-      soc/tegra: pmc: Refactor IO pad voltage control
-      soc/tegra: pmc: Rename has_impl_33v_pwr flag
-      soc/tegra: pmc: Add IO pads for Tegra264
+Thierry Reding (4):
+      firmware: tegra: bpmp: Rename Tegra239 to Tegra238
+      soc/tegra: Update BPMP ABI header
+      firmware: tegra: bpmp: Add tegra_bpmp_get_with_id() function
+      soc/tegra: bpmp: Use ENODEV instead of ENOTSUPP
 
-Krzysztof Kozlowski (1):
-      soc/tegra: Make ARCH_TEGRA_SOC_FOO defaults for NVIDIA Tegra
-
-Sumit Gupta (4):
-      soc/tegra: cbb: Add support for CBB fabrics in Tegra238
-      soc/tegra: cbb: Set ERD on resume for err interrupt
-      soc/tegra: cbb: Fix incorrect ARRAY_SIZE in fabric lookup tables
-      soc/tegra: cbb: Fix cross-fabric target timeout lookup
-
-Svyatoslav Ryhel (2):
-      soc/tegra: pmc: Enable core domain support for Tegra114
-      soc/tegra: common: Add Tegra114 support to devm_tegra_core_dev_init_opp_table
-
-Thierry Reding (2):
-      soc/tegra: Add Tegra238 Kconfig symbol
-      MAINTAINERS: Change email address for Thierry Reding
-
- MAINTAINERS                          |  14 +-
- drivers/soc/tegra/Kconfig            |  20 ++
- drivers/soc/tegra/cbb/tegra234-cbb.c | 169 ++++++++-
- drivers/soc/tegra/common.c           |   5 +-
- drivers/soc/tegra/pmc.c              | 662 ++++++++++++++++++++++-------------
- 5 files changed, 611 insertions(+), 259 deletions(-)
+ drivers/firmware/tegra/bpmp.c |   34 +
+ include/soc/tegra/bpmp-abi.h  | 4573 +++++++++++++++++++++++++++++++++--------
+ include/soc/tegra/bpmp.h      |   20 +-
+ 3 files changed, 3725 insertions(+), 902 deletions(-)
