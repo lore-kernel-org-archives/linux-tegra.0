@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAA0379999
-	for <linux-tegra@vger.kernel.org>; Sun, 29 Mar 2026 15:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FC33793AD
+	for <linux-tegra@vger.kernel.org>; Sun, 29 Mar 2026 15:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774797058; cv=none; b=XwVsS7dogCsCp6MelMm2xN5oaZlfFyXZmwbYRaeiYKsZBxg/Gm2/x1OpL/ixFKZv2lBzrd2vAI9DIoKGXW9UHPv75C5SCqMvYqV+Lc8hlnEuOOPVcWpMlSSfohs7uD4GkofPcbhQl8+0F7ap+jefhkRL1liwghw1aBr0bi8PouM=
+	t=1774797061; cv=none; b=IqWwi40r3UCah+hAqJHk8LUQSD8jUAGhpq9y0+PE5DA8oAIrC03FwLhi/u4WINHEV42Yd/unWaSJaD8kA4pzOeYdnU4327auc5afyLB5gq8UbPdJcd0d1RTYTFPbY0n6wjWFWwz7oA4GW6O1yTlYe8AlFZEozks/+TyingTfar8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774797058; c=relaxed/simple;
-	bh=kFoVyTMkyFn4pbXMTMOvST6cf5WTQ/PPBbZDBHunAIE=;
+	s=arc-20240116; t=1774797061; c=relaxed/simple;
+	bh=1V/ZmE92fpR02Fi0xVWMi+6+p0QBtEM2/+YEMgeWtQE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZGR3wAxH77utHfhqJMZCsVdtD+UzoUS9VRTzEmub8YKXnlJr14KE0L1LZEeA6Z+UrMdW3ENjDkpeePoPSSEjLeE4CTNi9iFbnLJsFNWTE6tylv+rij/SYWoprMf+XcQ9mgntmrqc6nHlMoN5QoGTefC1Qgd4Q7ingcEThtOq2B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R3YmLtxd; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:MIME-Version; b=Hd4X04qYDWuxWCAVqV2LmXK9SiPbWIUH3zwXa5ihkbYwI0czCC7bjSacEbS/6nTVMrGSkAwamj+SaOMsKdmeTQxT2tPB/eqJ47Q8AqWb4SpQOTQ/BHOcGbOwxMQmGc8Utb/4W7ZTIMrK/bvHOXi1+cb6HLHjJQcMjdSyaxkoRWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QXVJmdvR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R3YmLtxd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78735C116C6;
-	Sun, 29 Mar 2026 15:10:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QXVJmdvR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0DBFC116C6;
+	Sun, 29 Mar 2026 15:11:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774797058;
-	bh=kFoVyTMkyFn4pbXMTMOvST6cf5WTQ/PPBbZDBHunAIE=;
+	s=k20201202; t=1774797061;
+	bh=1V/ZmE92fpR02Fi0xVWMi+6+p0QBtEM2/+YEMgeWtQE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=R3YmLtxdwDDgWlDbmWBKnqV4hnQyybEDJMveoOKUIqNFkYFC3nqXvRHGTuiR7nofh
-	 VRQGWpFLEjdVgrVUfqXQfB1NV/a41GVmTmHB54w8+MCK4RE439Q37M1OKI4KT6GrFn
-	 DgvEDEJGLy64D5mPOPczZ/aNdrFLFlW2EX+H2ztm+SQIYdjt0ulCXu6/mSx3ZRoM9A
-	 0Fe7eoxknTOU8udloLkBUSQO6ZjH6OrQfXWIAYLYVIrbMGOeoq0FhzxiKkOJxjYRZG
-	 JfmD2nMPoHNJ6qVR75MXR+fYNau3ERP/809Q1gmuOeUF/ow8GrDA4ffDKZTL2Ylx4O
-	 zHb2ia9AX0B2g==
+	b=QXVJmdvRc4VDmPDKXgJhIms9hL6UNTQnVa44SQacZPTnvMB53IY1x7suwXpA7TDTn
+	 f/jBZ7b6t2BcoPALEmuE8+vLTb+CknqR1s7VaLLF/wdrwBUaxZL5mj2vpEUSZhyl2o
+	 L0eHbv5IvER9f16erJz4ZsS9CuxtQobUVucJ9b140dVBcnDoMy9VUTo0wAYpMNVyiv
+	 7g09OXp3q4jS5Y84y2ejLk9kuvyH1ojwMsvGZiC7D9F5UwVmWtqv7dexqIGWOFSNnb
+	 LYuvbKrPC1aWnLiMGeDSpj1ixMf838sOIkLt4R/7i/Dmb9ROs0z43pka46TYcGMv8U
+	 iLJj6YYTSgUfQ==
 From: Thierry Reding <thierry.reding@kernel.org>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -33,9 +33,9 @@ Cc: Thierry Reding <thierry.reding@gmail.com>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 3/7] firmware: tegra: Changes for v7.1-rc1
-Date: Sun, 29 Mar 2026 17:10:40 +0200
-Message-ID: <20260329151045.1443133-3-thierry.reding@kernel.org>
+Subject: [GIT PULL 4/7] ARM: tegra: Device tree changes for v7.1-rc1
+Date: Sun, 29 Mar 2026 17:10:41 +0200
+Message-ID: <20260329151045.1443133-4-thierry.reding@kernel.org>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260329151045.1443133-1-thierry.reding@kernel.org>
 References: <20260329151045.1443133-1-thierry.reding@kernel.org>
@@ -58,33 +58,45 @@ The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.1-firmware
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.1-arm-dt
 
-for you to fetch changes up to e68d494b8946e9060e60427f365107194f90ba0d:
+for you to fetch changes up to ce74a6c6d88ba9ee29a6b99ac97ffcded577c85d:
 
-  soc/tegra: bpmp: Use ENODEV instead of ENOTSUPP (2026-03-27 16:30:54 +0100)
+  ARM: tegra: paz00: Configure WiFi rfkill switch through device tree (2026-03-28 00:56:36 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-firmware: tegra: Changes for v7.1-rc1
+ARM: tegra: Device tree changes for v7.1-rc1
 
-This introduces a new API for the BPMP to be pass along a specifier from
-DT when getting a reference from a phandle. This is used to reference
-specific instances of the PCI controller on Tegra264. The ABI header for
-BPMP is updated to the latest version and BPMP APIs now use the more
-intuitive ENODEV instead of the non SUSV4 ENOTSUPP error code for stub
-implementations.
+Various improvements for Tegra114 boards, as well as some legacy cleanup
+for PAZ00 and Transformers devices.
 
 ----------------------------------------------------------------
-Thierry Reding (4):
-      firmware: tegra: bpmp: Rename Tegra239 to Tegra238
-      soc/tegra: Update BPMP ABI header
-      firmware: tegra: bpmp: Add tegra_bpmp_get_with_id() function
-      soc/tegra: bpmp: Use ENODEV instead of ENOTSUPP
+Dmitry Torokhov (1):
+      ARM: tegra: paz00: Configure WiFi rfkill switch through device tree
 
- drivers/firmware/tegra/bpmp.c |   34 +
- include/soc/tegra/bpmp-abi.h  | 4573 +++++++++++++++++++++++++++++++++--------
- include/soc/tegra/bpmp.h      |   20 +-
- 3 files changed, 3725 insertions(+), 902 deletions(-)
+Svyatoslav Ryhel (8):
+      ARM: tegra: Add SOCTHERM support on Tegra114
+      ARM: tn7: Adjust panel node
+      ARM: tegra: lg-x3: Add panel and bridge nodes
+      ARM: tegra: lg-x3: Add USB and power related nodes
+      ARM: tegra: lg-x3: Add node for capacitive buttons
+      ARM: tegra: Add ACTMON node to Tegra114 device tree
+      ARM: tegra: Add External Memory Controller node on Tegra114
+      ARM: tegra: transformers: Add connector node
+
+ arch/arm/boot/dts/nvidia/tegra114-tn7.dts        |  13 +-
+ arch/arm/boot/dts/nvidia/tegra114.dtsi           | 221 +++++++++++++++++++++++
+ arch/arm/boot/dts/nvidia/tegra20-paz00.dts       |   8 +
+ arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dts |  21 ++-
+ arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts     |  23 +++
+ arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts     |  33 ++++
+ arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi      | 174 +++++++++++++++++-
+ arch/arm/mach-tegra/Makefile                     |   2 -
+ arch/arm/mach-tegra/board-paz00.c                |  56 ------
+ arch/arm/mach-tegra/board.h                      |   2 -
+ arch/arm/mach-tegra/tegra.c                      |   4 -
+ 11 files changed, 482 insertions(+), 75 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/board-paz00.c
