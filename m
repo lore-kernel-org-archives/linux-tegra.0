@@ -1,113 +1,296 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDA536D4EA;
-	Sun, 29 Mar 2026 15:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774799447; cv=none; b=XEz9oEzntMMkkY8cehpi5GrEOSn4Ql4S/SUkkdibjudlzhtqMHn95WrHb/uJCY3H0QC5XBWxeZqBt60guGfQ0gUaZni8VgVfNBvb+op5+MSZKTZhdWCX4sDKbTM+Yjw1LROnPbfE2ywWE+ElXEllgZvyyaEA5KDf7PF38eGDv8o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774799447; c=relaxed/simple;
-	bh=pZ1YjtlNztckGR9ehBsAHqay77Yd8balGELRv/rE/m0=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=GtudlyPtjyralWs1EE4RjppzoChcxyGYaeJeAatQjl3rfSLuQUZuDcg2CI6JzBnGvARfwMvh6akQ6P31PMYtlWB085x5lsuV65xTtKiKrmHnugrQA1QXYuWQLVy9Imj6Fk9RBjzB3hWWTCh5070UN8BukqH9fhGJZ8upnxrlTLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G5QhtjCS; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F11E2FFFA5
+	for <linux-tegra@vger.kernel.org>; Sun, 29 Mar 2026 16:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.179
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774801130; cv=pass; b=Whmw0zOnobkHCaWaN5OF0jbAhb1eEsDn1NY2xb0frvKCQV0gbo30O4XCy2z2iOSBqBhZ/p2vqhgJPSdNfZyMjVj3rs8MY8fYlKr7zN7Jh6oAxltiziZVVhNt6o4NfSXR4ukVeGz3RV1BvAdXVrcDh2hVQ1SqZdFqb6e7p3G3G3g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774801130; c=relaxed/simple;
+	bh=xQqCvaSYvMDehLMpCAi2Exo2F9/DzAf4RUjSbu4AXqo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H+W0ulMeKyrH4zHwGuOELdrm3YQ+1v2nDp6PXPeyd015g/yuIyQkOaw6SWFIKDv2GwLj2Cov/ELppYEsxhN1j/ZnCDL2ij+9jZY2h/6b0N/p1kdiOHhDfDygrQbln0XMUTRH/bMiQyii8wU11uDlqjJ3NMJ9HpwjKQ7NX/yxtDo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FrzopNnu; arc=pass smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G5QhtjCS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84F98C116C6;
-	Sun, 29 Mar 2026 15:50:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774799446;
-	bh=pZ1YjtlNztckGR9ehBsAHqay77Yd8balGELRv/rE/m0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=G5QhtjCSnWIbLTSURYAqsSq//35U9CvraJrRSbM+NzNOTZ2kXrTozWPPUM1/+BMBR
-	 v+Fj6KmgDK63sTdEHWO7MdB2Xo7qRKaMQQypsil4zi83LYy1ozK45wlv16kx8BWW4E
-	 R+NkDdpe6pKVPy1YLtnjSopFgS2yKZfZHDON9AiHuFfGEh5kT7IGjYGTqnzMiuZZAF
-	 vosaM2dwemXTzVfggDKBxAS4dgp4KP9wvF43/jptI8GoQXePPR779SIq6fjI9ArAVZ
-	 N0hVXm57FVgypTPHcnu+0XWK3WxqlD5zc56aUdjsnzJh8MhACExYAwLrJBqx1huemf
-	 JjC2CNHy8feNQ==
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [GIT PULL] PCI: tegra: Changes for v7.1-rc1
-Date: Sun, 29 Mar 2026 17:50:39 +0200
-Message-ID: <20260329155040.1448158-1-thierry.reding@kernel.org>
-X-Mailer: git-send-email 2.52.0
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FrzopNnu"
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-46a9ae3f857so442271b6e.0
+        for <linux-tegra@vger.kernel.org>; Sun, 29 Mar 2026 09:18:48 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1774801127; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Ib91fyxx3pq8kPfYyE3nOWI/y0yQi/lFkuVamgtEoV+7/T+1PWt4Pyu3dAbRS6trPz
+         8aV5ljw9KzzHfwONo49rpSFYg3Js/Lnojma9RXaT0GNySQlxzY7xzi7mXZ1IAJF6yKPV
+         XtFYd+vrjT1g0YFyDiZhh1UxcSbFsOip9bDsNnzmCyCTYncTxwEIkdiDcbr3zEJjvtp3
+         YQcWnhaY8yxoAWyYgJSVKLUJU0QqB5f1DUIYZxwXOZTjb5d4pUSqAO2xl6IaD51CFyYB
+         p4+J7HRXsBQ7ulL0ey9de65YQ2y0MNqw2kmlV+S4aRIoNAY2zCBtC6I9H8F2bdgxm/aI
+         iKLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=WxRWrohRC+fNvhhMsjBNKWfMlLneWiOcUehlHfN3ctw=;
+        fh=sNNE79FY5/W/DFjjJXNYDQ1zmIbq2rbPos6m6kscRcU=;
+        b=fPydCbaVXy15FTxzlN2ntp+MLkqt7+5kiHcIUs9g0Yq+rB16/WdydHJywmRA66kwSU
+         csyt0A0DAFXj0Hkl/o3d5E9wOuDDO2CLBNEbA9aV5lzU8JRxJWvvyPDLX/QDrh6MY1o8
+         e/adQlETS+9tcxmE9f9vzGzCNBzcl41T8QrseL+Ts3yty4JKIYfsX+zrlF7/L4SJDC9y
+         5QmlgGlfRbsVHeoHgEE+iDjd/shD+MfCW3Dda8VXbY4feyWRx3lYwr0ycKvaSMs/ARnp
+         P/GD2GYXWLueR3ObA2ZdY1oMpn3v0vpEaBCo5D8BDhr09QXCOdC36/U+R6BY0Nqks8zf
+         oPvA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1774801127; x=1775405927; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WxRWrohRC+fNvhhMsjBNKWfMlLneWiOcUehlHfN3ctw=;
+        b=FrzopNnu1K3dOdZ3TusFe8IBsytL0sNJAtbEJkAi2Ep8ulCYvIgLXG4+vwzGZL2WTj
+         dcNudB5wUTfvIW5re3cUZG1++D3fhNZHa7genkw4HI1c7csQf1RXcAHwTh5tuOB3y5Ac
+         NhqgOzqMP+I9e1gDGtW9RHi0h9GiWlGWkoV8VZ9vMGW20CnRMLgxv93uoi+zKLL5PqT7
+         lihAloiFoH2AGTujWWUiAFI749sAv2zVeMRfU/ziSpIjWTK5dBcrG6sRO3MGavZt6fU9
+         E6j+o3xX2I0lIFURRwKtsQcu1qw4zO3iHzPjhkW81uQG0TxQUR40RLPD0mgcCnrfoU6b
+         yfXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774801127; x=1775405927;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=WxRWrohRC+fNvhhMsjBNKWfMlLneWiOcUehlHfN3ctw=;
+        b=adn57YMIfnBK26oEBIIoVlB/huMxJyJJPToq2jV2uSZ4KCWlYT68xrQwGycl+bqE0c
+         MWxNcPbAqeEryMyJxJ+jD9FhlacDb91Xy8NQY+mB3w4xss0DQT//TSI3TuG9Wc4tleF2
+         FVEn43B47ukqqzU3wdmh/+PpRwZMQhM4+h5KgmmEwfx9ZrLmrfX/T8vod5Z8iJ6m0qYv
+         J5OppUyALsbzjpQ9eHz5UaR1glNEx202W/aPn0r0WCq+0kqR/IdGyi0pHXCjvKSiREqU
+         UH8VDy+hFErRb9//DHhiJ2OPnjtcLihOY946Qc453YQYGpVDM58kvRWdTmPcJcKRFBOQ
+         9xCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWcdr8zs8CURpYcFVgeNe+bzc0IHmGd/m4RwgIOl3DvuPvx+eSjp49w8CbhM10eu7VNGe9IuUwW0G7Y1Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKv7mIKJMHlHKFtBp5li5KDZuO+zaCkP/yOGV7qU9OnbjkMjcE
+	GaGFTxrp6+oId2YhZ9TnyWnV9Jlh8STzHABLCgRRL3K9mjMP30agg2KvaZt3JKJf146CZwnUzGi
+	iEfwApwn0vsASEPe6IUwIzNle5a6fSEM=
+X-Gm-Gg: ATEYQzyKiRvczJlcPznPQDx8GGWYSlqsesgdjMlyc8MPdGqszf7HwCN1jCgnHoKl9T8
+	8pdpi5n0Oc2isSAfK8nl0kpjHJJGSonK0pJgyIjIahKVvaw2qiAQWK5/gbTRgs2RSHlNtZQrK43
+	jnT3XKvL1/41YN1mcpHXh3gpB42rddMMp7J0Q10lvXhP851BMsLhr1gzpaa0oqFxg25Mp9OrN/7
+	07yBFylZnMXI4LqsANM74xX7yphN2ehKJ9qrXzaZ3bkCEIa5FnoZ94+MFAjmBOgdn08Rvnmdg9h
+	+zngNv6c
+X-Received: by 2002:a05:6808:1909:b0:466:f25d:3281 with SMTP id
+ 5614622812f47-46a8a535f24mr4527393b6e.29.1774801127539; Sun, 29 Mar 2026
+ 09:18:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260327151112.5202-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20260327151112.5202-2-wsa+renesas@sang-engineering.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Sun, 29 Mar 2026 11:18:36 -0500
+X-Gm-Features: AQROBzAT0Y7MQA0Vu0exbVKBXS_ASbnND8ZlhVVTpfO0frVJ0Okq55qzNtMBYvo
+Message-ID: <CABb+yY3J2T5c4=dGaqPYi3L=88zgTqRn6AJwxBJ9Sqx6aDH8jw@mail.gmail.com>
+Subject: Re: [PATCH v3] mailbox: remove superfluous internal header
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Sudeep Holla <sudeep.holla@kernel.org>, 
+	Daniel Baluta <daniel.baluta@nxp.com>, Peter Chen <peter.chen@cixtech.com>, 
+	Fugang Duan <fugang.duan@cixtech.com>, 
+	CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+	linux-acpi@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Thierry Reding <thierry.reding@gmail.com>
-
-Hi Lorenzo, Bjorn,
-
-The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
-
-  Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.1-pci
-
-for you to fetch changes up to a0c0906bb09ee2f64690b3b8ffb458b4dbbcb26e:
-
-  PCI: tegra: Add Tegra264 support (2026-03-28 15:00:05 +0100)
-
-This is v3 of the Tegra264 PCI patches that can be found here:
-
-  https://lore.kernel.org/linux-pci/20260326135855.2795149-1-thierry.reding@kernel.org/
-
-This looks ready now, but if there's any more feedback, I will happily
-respin these driver patches.
-
-Note that the shortlog and the diffstat below include the dependencies
-from the Tegra tree, and that subset will go in through the ARM SoC tree
-as well. Effectively what's new in this pull request is just the two PCI
-patches, the rest is only included here to resolve the build time
-dependencies.
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-PCI: tegra: Changes for v7.1-rc1
-
-This set of patches uses standard wait times for PCIe link monitoring
-and build on top of that to add Tegra264 support. It also includes all
-the Tegra-specific build-dependencies.
-
-----------------------------------------------------------------
-Thierry Reding (8):
-      firmware: tegra: bpmp: Rename Tegra239 to Tegra238
-      soc/tegra: Update BPMP ABI header
-      firmware: tegra: bpmp: Add tegra_bpmp_get_with_id() function
-      dt-bindings: pci: Document the NVIDIA Tegra264 PCIe controller
-      Merge branch for-7.1/dt-bindings into for-7.1/pci
-      Merge branch for-7.1/firmware into for-7.1/pci
-      PCI: Use standard wait times for PCIe link monitoring
-      PCI: tegra: Add Tegra264 support
-
- .../bindings/pci/nvidia,tegra264-pcie.yaml         |  149 +
- drivers/firmware/tegra/bpmp.c                      |   34 +
- drivers/pci/controller/Kconfig                     |   10 +-
- drivers/pci/controller/Makefile                    |    1 +
- .../controller/cadence/pcie-cadence-host-common.c  |    6 +-
- .../pci/controller/cadence/pcie-cadence-lga-regs.h |    5 -
- drivers/pci/controller/mobiveil/pcie-mobiveil.c    |    4 +-
- drivers/pci/controller/mobiveil/pcie-mobiveil.h    |    5 -
- drivers/pci/controller/pci-aardvark.c              |    7 +-
- drivers/pci/controller/pcie-tegra264.c             |  522 +++
- drivers/pci/controller/pcie-xilinx-nwl.c           |    9 +-
- drivers/pci/controller/plda/pcie-starfive.c        |    9 +-
- drivers/pci/pci.h                                  |    2 +
- include/soc/tegra/bpmp-abi.h                       | 4573 ++++++++++++++++----
- include/soc/tegra/bpmp.h                           |    8 +
- 15 files changed, 4412 insertions(+), 932 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra264-pcie.yaml
- create mode 100644 drivers/pci/controller/pcie-tegra264.c
+On Fri, Mar 27, 2026 at 10:11=E2=80=AFAM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> Quite some controller drivers use the defines from the internal header
+> already. This prevents controller drivers outside the mailbox directory.
+> Move the defines to the public controller header to allow this again as
+> the defines are not strictly internal anyhow.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Sudeep Holla <sudeep.holla@kernel.org>
+> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+> ---
+>
+> Changes since v2:
+> * rebased to 7.0-rc5
+> * add tag (Thanks, Daniel!)
+>
+>  drivers/mailbox/cix-mailbox.c      |  2 --
+>  drivers/mailbox/hi3660-mailbox.c   |  2 --
+>  drivers/mailbox/imx-mailbox.c      |  2 --
+>  drivers/mailbox/mailbox-sti.c      |  2 --
+>  drivers/mailbox/mailbox.c          |  2 --
+>  drivers/mailbox/mailbox.h          | 12 ------------
+>  drivers/mailbox/omap-mailbox.c     |  2 --
+>  drivers/mailbox/pcc.c              |  2 --
+>  drivers/mailbox/tegra-hsp.c        |  2 --
+>  include/linux/mailbox_controller.h |  5 +++++
+>  10 files changed, 5 insertions(+), 28 deletions(-)
+>  delete mode 100644 drivers/mailbox/mailbox.h
+>
+> diff --git a/drivers/mailbox/cix-mailbox.c b/drivers/mailbox/cix-mailbox.=
+c
+> index 443620e8ae37..864f98f21fc3 100644
+> --- a/drivers/mailbox/cix-mailbox.c
+> +++ b/drivers/mailbox/cix-mailbox.c
+> @@ -12,8 +12,6 @@
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+>
+> -#include "mailbox.h"
+> -
+>  /*
+>   * The maximum transmission size is 32 words or 128 bytes.
+>   */
+> diff --git a/drivers/mailbox/hi3660-mailbox.c b/drivers/mailbox/hi3660-ma=
+ilbox.c
+> index 17c29e960fbf..9b727a2b54a5 100644
+> --- a/drivers/mailbox/hi3660-mailbox.c
+> +++ b/drivers/mailbox/hi3660-mailbox.c
+> @@ -15,8 +15,6 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/slab.h>
+>
+> -#include "mailbox.h"
+> -
+>  #define MBOX_CHAN_MAX                  32
+>
+>  #define MBOX_RX                                0x0
+> diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.=
+c
+> index 003f9236c35e..22331b579489 100644
+> --- a/drivers/mailbox/imx-mailbox.c
+> +++ b/drivers/mailbox/imx-mailbox.c
+> @@ -23,8 +23,6 @@
+>  #include <linux/slab.h>
+>  #include <linux/workqueue.h>
+>
+> -#include "mailbox.h"
+> -
+>  #define IMX_MU_CHANS           24
+>  /* TX0/RX0/RXDB[0-3] */
+>  #define IMX_MU_SCU_CHANS       6
+> diff --git a/drivers/mailbox/mailbox-sti.c b/drivers/mailbox/mailbox-sti.=
+c
+> index b4b5bdd503cf..b6c9ecbbc8ec 100644
+> --- a/drivers/mailbox/mailbox-sti.c
+> +++ b/drivers/mailbox/mailbox-sti.c
+> @@ -21,8 +21,6 @@
+>  #include <linux/property.h>
+>  #include <linux/slab.h>
+>
+> -#include "mailbox.h"
+> -
+>  #define STI_MBOX_INST_MAX      4      /* RAM saving: Max supported insta=
+nces */
+>  #define STI_MBOX_CHAN_MAX      20     /* RAM saving: Max supported chann=
+els  */
+>
+> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+> index e63b2292ee7a..9d41a1ab9018 100644
+> --- a/drivers/mailbox/mailbox.c
+> +++ b/drivers/mailbox/mailbox.c
+> @@ -18,8 +18,6 @@
+>  #include <linux/property.h>
+>  #include <linux/spinlock.h>
+>
+> -#include "mailbox.h"
+> -
+>  static LIST_HEAD(mbox_cons);
+>  static DEFINE_MUTEX(con_mutex);
+>
+> diff --git a/drivers/mailbox/mailbox.h b/drivers/mailbox/mailbox.h
+> deleted file mode 100644
+> index e1ec4efab693..000000000000
+> --- a/drivers/mailbox/mailbox.h
+> +++ /dev/null
+> @@ -1,12 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0-only */
+> -
+> -#ifndef __MAILBOX_H
+> -#define __MAILBOX_H
+> -
+> -#include <linux/bits.h>
+> -
+> -#define TXDONE_BY_IRQ  BIT(0) /* controller has remote RTR irq */
+> -#define TXDONE_BY_POLL BIT(1) /* controller can read status of last TX *=
+/
+> -#define TXDONE_BY_ACK  BIT(2) /* S/W ACK received by Client ticks the TX=
+ */
+> -
+> -#endif /* __MAILBOX_H */
+> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbo=
+x.c
+> index d9f100c18895..5772c6b9886a 100644
+> --- a/drivers/mailbox/omap-mailbox.c
+> +++ b/drivers/mailbox/omap-mailbox.c
+> @@ -22,8 +22,6 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/mailbox_controller.h>
+>
+> -#include "mailbox.h"
+> -
+>  #define MAILBOX_REVISION               0x000
+>  #define MAILBOX_MESSAGE(m)             (0x040 + 4 * (m))
+>  #define MAILBOX_FIFOSTATUS(m)          (0x080 + 4 * (m))
+> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+> index 22e70af1ae5d..636879ae1db7 100644
+> --- a/drivers/mailbox/pcc.c
+> +++ b/drivers/mailbox/pcc.c
+> @@ -59,8 +59,6 @@
+>  #include <linux/io-64-nonatomic-lo-hi.h>
+>  #include <acpi/pcc.h>
+>
+> -#include "mailbox.h"
+> -
+>  #define MBOX_IRQ_NAME          "pcc-mbox"
+>
+>  /**
+> diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+> index ed9a0bb2bcd8..2231050bb5a9 100644
+> --- a/drivers/mailbox/tegra-hsp.c
+> +++ b/drivers/mailbox/tegra-hsp.c
+> @@ -16,8 +16,6 @@
+>
+>  #include <dt-bindings/mailbox/tegra186-hsp.h>
+>
+> -#include "mailbox.h"
+> -
+>  #define HSP_INT_IE(x)          (0x100 + ((x) * 4))
+>  #define HSP_INT_IV             0x300
+>  #define HSP_INT_IR             0x304
+> diff --git a/include/linux/mailbox_controller.h b/include/linux/mailbox_c=
+ontroller.h
+> index 80a427c7ca29..16fef421c30c 100644
+> --- a/include/linux/mailbox_controller.h
+> +++ b/include/linux/mailbox_controller.h
+> @@ -3,6 +3,7 @@
+>  #ifndef __MAILBOX_CONTROLLER_H
+>  #define __MAILBOX_CONTROLLER_H
+>
+> +#include <linux/bits.h>
+>  #include <linux/completion.h>
+>  #include <linux/device.h>
+>  #include <linux/hrtimer.h>
+> @@ -11,6 +12,10 @@
+>
+>  struct mbox_chan;
+>
+> +#define TXDONE_BY_IRQ  BIT(0) /* controller has remote RTR irq */
+> +#define TXDONE_BY_POLL BIT(1) /* controller can read status of last TX *=
+/
+> +#define TXDONE_BY_ACK  BIT(2) /* S/W ACK received by Client ticks the TX=
+ */
+> +
+>  /**
+>   * struct mbox_chan_ops - methods to control mailbox channels
+>   * @send_data: The API asks the MBOX controller driver, in atomic
+> --
+> 2.51.0
+>
+Applied to mailbox/for-next
+Thanks
+Jassi
