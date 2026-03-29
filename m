@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FC33793AD
-	for <linux-tegra@vger.kernel.org>; Sun, 29 Mar 2026 15:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773AE379999
+	for <linux-tegra@vger.kernel.org>; Sun, 29 Mar 2026 15:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774797061; cv=none; b=IqWwi40r3UCah+hAqJHk8LUQSD8jUAGhpq9y0+PE5DA8oAIrC03FwLhi/u4WINHEV42Yd/unWaSJaD8kA4pzOeYdnU4327auc5afyLB5gq8UbPdJcd0d1RTYTFPbY0n6wjWFWwz7oA4GW6O1yTlYe8AlFZEozks/+TyingTfar8=
+	t=1774797064; cv=none; b=TQeFU2U9ANGf401kNn8pxVSjV7N2XURocj0s5gyrOWu7uPCpeSodoWDO3ZtYeGyQIQfM2b2Yx/ZTZt2w3lVgjan5WSMPHrNZvfsmLHukVYxaWceKzoqN+obl4rGaEgdvBpPCw9z1E2iKYJjuJO+BY6p8Yrzw/hoYnJOD+OIESbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774797061; c=relaxed/simple;
-	bh=1V/ZmE92fpR02Fi0xVWMi+6+p0QBtEM2/+YEMgeWtQE=;
+	s=arc-20240116; t=1774797064; c=relaxed/simple;
+	bh=M0Z1EGRJhk11Ga2j5XNT/BdQe2P0sTVW3/Z0KGEXD+Y=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Hd4X04qYDWuxWCAVqV2LmXK9SiPbWIUH3zwXa5ihkbYwI0czCC7bjSacEbS/6nTVMrGSkAwamj+SaOMsKdmeTQxT2tPB/eqJ47Q8AqWb4SpQOTQ/BHOcGbOwxMQmGc8Utb/4W7ZTIMrK/bvHOXi1+cb6HLHjJQcMjdSyaxkoRWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QXVJmdvR; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:MIME-Version; b=dQmsF6UfDX+kiyo1sxi+vmeGkSaRlhladldVpMGSs5aZeqioag05p5sRatpVgQ7vwC3WAdOceKPkVLvc0QyQ8QL/FyC6qWXkSdas4m+QPlVjhIRaE2/Hwpl4NvS0tkWSLjFdp79zDalwMD1EdLEjCSEPMvLeq6f0eYmc2Az0+4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gP148kpI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QXVJmdvR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0DBFC116C6;
-	Sun, 29 Mar 2026 15:11:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gP148kpI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94977C116C6;
+	Sun, 29 Mar 2026 15:11:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774797061;
-	bh=1V/ZmE92fpR02Fi0xVWMi+6+p0QBtEM2/+YEMgeWtQE=;
+	s=k20201202; t=1774797064;
+	bh=M0Z1EGRJhk11Ga2j5XNT/BdQe2P0sTVW3/Z0KGEXD+Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QXVJmdvRc4VDmPDKXgJhIms9hL6UNTQnVa44SQacZPTnvMB53IY1x7suwXpA7TDTn
-	 f/jBZ7b6t2BcoPALEmuE8+vLTb+CknqR1s7VaLLF/wdrwBUaxZL5mj2vpEUSZhyl2o
-	 L0eHbv5IvER9f16erJz4ZsS9CuxtQobUVucJ9b140dVBcnDoMy9VUTo0wAYpMNVyiv
-	 7g09OXp3q4jS5Y84y2ejLk9kuvyH1ojwMsvGZiC7D9F5UwVmWtqv7dexqIGWOFSNnb
-	 LYuvbKrPC1aWnLiMGeDSpj1ixMf838sOIkLt4R/7i/Dmb9ROs0z43pka46TYcGMv8U
-	 iLJj6YYTSgUfQ==
+	b=gP148kpIifBN/QiM9Y9Sy3Xf42W9rIziwv7KfS8VaUWrXW+jdq+bkLohGOEVauBx5
+	 0wnyP71rweuemwyGbq1gkVagcFFtq/Lqgo9pC1JwgJXLKJU5iV4bGZeGpIoUeBqdSJ
+	 tlcwOTUP574abdG1eZTdIfkQQZcSxPatKGPqywKIrDHFXZDDA0iNvuu9AqbPBHPdiZ
+	 7GeObhVnM/lY66JvRh4MS8Ms/1rb6KeoLd/HzmtaE9BPmBRkuguC/ugm0ox/hKqV8A
+	 TrrKhkU17ywNcEzVluAy8d1V/kZWjmO/k9f8jIjGXDE+6qPSyeFB8wvly3Mpzt3i+K
+	 16lWo4PcGYR6g==
 From: Thierry Reding <thierry.reding@kernel.org>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -33,9 +33,9 @@ Cc: Thierry Reding <thierry.reding@gmail.com>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 4/7] ARM: tegra: Device tree changes for v7.1-rc1
-Date: Sun, 29 Mar 2026 17:10:41 +0200
-Message-ID: <20260329151045.1443133-4-thierry.reding@kernel.org>
+Subject: [GIT PULL 5/7] ARM: tegra: Default configuration changes for v7.1-rc1
+Date: Sun, 29 Mar 2026 17:10:42 +0200
+Message-ID: <20260329151045.1443133-5-thierry.reding@kernel.org>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260329151045.1443133-1-thierry.reding@kernel.org>
 References: <20260329151045.1443133-1-thierry.reding@kernel.org>
@@ -58,45 +58,30 @@ The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.1-arm-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.1-arm-defconfig
 
-for you to fetch changes up to ce74a6c6d88ba9ee29a6b99ac97ffcded577c85d:
+for you to fetch changes up to 21e380f272415387454d81788f2d62642e1fe93a:
 
-  ARM: tegra: paz00: Configure WiFi rfkill switch through device tree (2026-03-28 00:56:36 +0100)
+  ARM: tegra: defconfig: Drop redundant ARCH_TEGRA_foo_SOC (2026-03-25 10:49:00 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Device tree changes for v7.1-rc1
+ARM: tegra: Default configuration changes for v7.1-rc1
 
-Various improvements for Tegra114 boards, as well as some legacy cleanup
-for PAZ00 and Transformers devices.
+Drop the various ARCH_TEGRA_*_SOC options from the default configurations
+since they are now enabled by default for ARCH_TEGRA.
 
 ----------------------------------------------------------------
-Dmitry Torokhov (1):
-      ARM: tegra: paz00: Configure WiFi rfkill switch through device tree
+Krzysztof Kozlowski (2):
+      soc/tegra: Make ARCH_TEGRA_SOC_FOO defaults for NVIDIA Tegra
+      ARM: tegra: defconfig: Drop redundant ARCH_TEGRA_foo_SOC
 
-Svyatoslav Ryhel (8):
-      ARM: tegra: Add SOCTHERM support on Tegra114
-      ARM: tn7: Adjust panel node
-      ARM: tegra: lg-x3: Add panel and bridge nodes
-      ARM: tegra: lg-x3: Add USB and power related nodes
-      ARM: tegra: lg-x3: Add node for capacitive buttons
-      ARM: tegra: Add ACTMON node to Tegra114 device tree
-      ARM: tegra: Add External Memory Controller node on Tegra114
-      ARM: tegra: transformers: Add connector node
+Thierry Reding (1):
+      Merge branch 'for-7.1/soc' into for-7.1/arm/defconfig
 
- arch/arm/boot/dts/nvidia/tegra114-tn7.dts        |  13 +-
- arch/arm/boot/dts/nvidia/tegra114.dtsi           | 221 +++++++++++++++++++++++
- arch/arm/boot/dts/nvidia/tegra20-paz00.dts       |   8 +
- arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dts |  21 ++-
- arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts     |  23 +++
- arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts     |  33 ++++
- arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi      | 174 +++++++++++++++++-
- arch/arm/mach-tegra/Makefile                     |   2 -
- arch/arm/mach-tegra/board-paz00.c                |  56 ------
- arch/arm/mach-tegra/board.h                      |   2 -
- arch/arm/mach-tegra/tegra.c                      |   4 -
- 11 files changed, 482 insertions(+), 75 deletions(-)
- delete mode 100644 arch/arm/mach-tegra/board-paz00.c
+ arch/arm/configs/multi_v7_defconfig |  4 ----
+ arch/arm/configs/tegra_defconfig    |  4 ----
+ drivers/soc/tegra/Kconfig           | 11 +++++++++++
+ 3 files changed, 11 insertions(+), 8 deletions(-)
