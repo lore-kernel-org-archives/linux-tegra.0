@@ -1,204 +1,185 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49B12DEA61;
-	Sun, 29 Mar 2026 20:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574462BEFE5
+	for <linux-tegra@vger.kernel.org>; Sun, 29 Mar 2026 21:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774817308; cv=none; b=HrbvfxlmuZts9dEFPxa7Tazoy//FphNbWtX98yTp/V6hiRzCuk7Qw4dfXONg6Djxdtp1Fc0HuDVNXjeLV7v8yP7zOvoJwmoCLfbycQ37LQKj6zl+f3i0/61L0NuTRgs0nxM1tRRVFoQH6VZQn6JLIu8q1GbZUlQ83rdDbhQhg1I=
+	t=1774818505; cv=none; b=rphr/pjDretwI3dhDKLkIdE3Yl0Bi75HkjTub4OxYG1sm0wc88b/2/qeBF4cGT1gqZUbSvY+cfpxejiy+T+lJFlfljRAFoz0AWgmsdrijCbcjWDRbzBr/Ke9nEcIPXsDzXgjamVkO1a2+AdN/jmAnBVcPILDGv//n7vU4Xu/++w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774817308; c=relaxed/simple;
-	bh=FRfIclqbGAMKvlimIjgixptcPvX/DfRkYbvjBjyjlr4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=eYGtf9AdsRSGXmMwGR5QjAnWw2b0R69JGoIqWUyh6eBxvSYnDrhNbDgSme8h/4sAqFl60wPNJmQxAtddOZk8wtHnjhRd0uC7x4nrossvE+FIqiE1SeACfmXxhQXaa0TG3oICX0mBhfVlg2df29F2YHKnz+F/LN9wCtFW0KOrTzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b=aCFNwrY8; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+	s=arc-20240116; t=1774818505; c=relaxed/simple;
+	bh=57DrXeQnUGc6iR/CXOWyyyVZBnQ5MkHIKUWHPpAsMcI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fZATnsQVnjAd1p6728uRIuKVvPtYffAvITvhYmXm+WCD+ySf6UbgntOSoZ1hmMfrfaCWNzTx2PLzrdSCeH1dbynQNR7Pz361NUk+5+GX0OF5HLaF4rkrZmXmTH+w+Z6nFb5n4ZApXZjIJ972GI0LtLndXDPY5jCzlt14FGLJbyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QYBXuNmh; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b="aCFNwrY8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1774817304; x=1775422104; i=marvin24@gmx.de;
-	bh=OtNcuLB3T8KYnUkH14k7NMFCJItLMiwi7/E76QEkjKQ=;
-	h=X-UI-Sender-Class:Date:From:To:cc:Subject:In-Reply-To:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=aCFNwrY8LXCJ42ZkBOKcpimcPi9vyD0F28U1EXv0Q3VbQlvNqAuRSpBJi250USxz
-	 cv4diT6xM4sGN8UEK6LcyasvAYFuV6XEwSqUAE16mX58Li4wJeQswjhS+3mdkNUpS
-	 2NPETT2LkfUTPlx5t604ErZdioGpIs3pFKjlphJntpMCIcjSz6grf+UZwfMpS5w2s
-	 DXZR4nZCfuqHZRMyHotG0HU0Ykk7FuWlUqdkXhTvmwB8i92RiCf/pCm9nRSQpCoE8
-	 giD0lXcZ8C8iw+4pQ99FYGThp9B/Z7dj39KoIu42AJOG0kyaZsT4u4hMk00/pAN7V
-	 krV8TCpXCjunmX/9Ow==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from client.hidden.invalid by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MVNB1-1vzdcd30tj-00IwUc; Sun, 29
- Mar 2026 22:48:24 +0200
-Date: Sun, 29 Mar 2026 22:48:24 +0200 (CEST)
-From: Marc Dietrich <marvin24@gmx.de>
-To: Sebastian Josue Alba Vives <sebasjosue84@gmail.com>
-cc: ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] staging: nvec: validate battery response length before
- memcpy
-In-Reply-To: <20260324195041.38343-1-sebasjosue84@gmail.com>
-Message-ID: <b23eb8ca-ef38-6288-0891-fe91148e11cd@gmx.de>
-References: <20260324195041.38343-1-sebasjosue84@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QYBXuNmh"
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-56b65ffbda3so3422708e0c.1
+        for <linux-tegra@vger.kernel.org>; Sun, 29 Mar 2026 14:08:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1774818502; x=1775423302; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SVkfdJP2KulZKEM0URtofZekmehI6WAdAhgF+udGJlg=;
+        b=QYBXuNmhrEM4+ehc8nYYU3k872EhjxsEghzm5IGgtDH8NKV20q/+ZAkEn7XYXzbbQf
+         cLPbR7dLcTa1jDRMl0TfNkUY2QhmayEQobOqI1w4gxGKwKZ9Jbv1pHfX8y8vmEJWtJpH
+         omKX1lUorfbUd9PUfy95kWLGNBb72sjleNpcUs8AKGOwrIfqFLNhmQZ+IiijnKEPfib+
+         wvq7tOpr+Yvh9W8uw3Kk6jiw1uFLSSNJPdGC3/E7eCi1pEzS8bMEP0KLfyTdSGK6m5MN
+         QLOhQOV6Lu3zK6QQevbAL3jUHOo20y38HiceWSGWVMYkUrwy69ktmjC4ohTwbi8xYPh2
+         9rXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774818502; x=1775423302;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SVkfdJP2KulZKEM0URtofZekmehI6WAdAhgF+udGJlg=;
+        b=KYJcVoChuRJEoUXqJaXSkRUVuw0nTfeRS6C9Nd8P7a9Nt7sUPConyTZCw7Vezi4Csx
+         j2ZPzR1Y6OQiJCsfgyhkxVvYea8fHRY0++zmkCJGYAS9rUebBHzW0DYQyQ41mNKyeurg
+         4HBB+tqbvyzHUxaPaXqMhiDc+tVMCHAFARF52Cm315+LV7/zc829BpR4Az7t7oZPVkD/
+         RvVmw6GrCdFKxFC2bdO0iPe94V3GP47JVQSKVoJ1rVnifrqebWz9KLbET7/VYKFdfRS0
+         YqbgTuG+4b4FIHEx+gcHUkM7i6ke0VnsoKDNm4mQwDiBu/neY5u10lNXpn7jeuXhiZjl
+         8EFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXlBTxozTv0RHHRpLkBedt6DiP3fZVnG/eymTBvRo3dS9OWSRWOSD8vVL0z1A2ZHK9Zs/HYWuyuGgGTqA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YytGH0E0iwY4Z31L5pfR2yWMSc+Jv9jPvFSBAY4LUpphq9cIrJk
+	gOnGO35SsSFX/g5u4noebCZTsLS4u74hSK8M77aw3F+nnfYtzYRMPlw8
+X-Gm-Gg: ATEYQzw+/b7gp9VE2lBANQJfMYjY+h2emf3l3bwN3ZrRcJpYTdIlZgkrwEThmtQihhF
+	teHU1FqEdLZxLpwd+eFAPnAL/WLYFVVUg5V5h+NlkeMiuwv/gkxa8452UocK1VkLhHmYHRUl+y6
+	tFGm82/rSDisLPwaFfdpLUm3QDWI1KS08hQjYaNCaIAWj50QgDpd+rp82CCycq1P2whF3vu28Mz
+	oaQe1cp5lFjPuzw+XsWkVWUOQB2artnrV+GoPDWK3UHO9AWTO1fcgsHzfyoadQam2F2o0/vUSzi
+	+rkq/xvaSOwdOz5OQwncr2sCIogI+vA+Lt6XL7H0QsPVeGEOYQMkSXh+4sKWpLg9MtCGb46cUCI
+	Wavbieep1WPO9CUWIVQOoOChoolXzvGFDgYdA+jwdyM553edLA1eL26PNDvf8FYCn9/FkYLfm8p
+	SDM+eAOBlEgEgTPN4d1uKHlmi0LiuZgSX8DA==
+X-Received: by 2002:a05:6122:8b1b:b0:56b:815c:961d with SMTP id 71dfb90a1353d-56d4a4d3b83mr4099294e0c.5.1774818502268;
+        Sun, 29 Mar 2026 14:08:22 -0700 (PDT)
+Received: from localhost.localdomain ([2a09:bac5:6d77:aa::11:1d6])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56d58a46f4dsm6284108e0c.15.2026.03.29.14.08.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Mar 2026 14:08:21 -0700 (PDT)
+From: Sebastian Josue Alba Vives <sebasjosue84@gmail.com>
+To: marvin24@gmx.de
+Cc: ac100@lists.launchpad.net,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	=?UTF-8?q?Sebasti=C3=A1n=20Alba=20Vives?= <sebasjosue84@gmail.com>
+Subject: [PATCH v2] staging: nvec: validate battery response length before memcpy
+Date: Sun, 29 Mar 2026 15:08:00 -0600
+Message-ID: <20260329210800.597697-1-sebasjosue84@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-X-Provags-ID: V03:K1:WKfW4+YMLfLZLHNi/WHZT3MAY3/XWAogRELxput+1HFw+zVNheI
- IJH23CedrMEOVA55G5uYM/Z167aD2oKIwwYupbc4pOYhzT5KyRLFsMDzImQXOwqekBQSkEk
- WKQhOBtmTxJdjxO6gABVqEgBkZemamQkZuBPE6ibMuAIfRse9uVxLt2YQ8Drr2kbA1IxqaV
- yU7ndsD598z5EdU+crayg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:TWBZMhMQbsw=;XJIWqFlxuCDgEbE/N3DufyuaTYF
- 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
- 6HyDvHPi8m6
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello Sebastian,
+From: Sebastián Alba Vives <sebasjosue84@gmail.com>
 
-On Tue, 24 Mar 2026, Sebastian Josue Alba Vives wrote:
+In nvec_power_notifier(), the response length from the embedded
+controller is used directly as the size argument to memcpy() when
+copying battery manufacturer, model, and type strings. The
+destination buffers (bat_manu, bat_model, bat_type) are fixed at
+30 bytes, but res->length is a u8 that can be up to 255, allowing
+a heap buffer overflow.
 
-> In nvec_power_notifier(), the response length from the embedded
-> controller is used directly as the size argument to memcpy() when
-> copying battery manufacturer, model, and type strings. The
-> destination buffers (bat_manu, bat_model, bat_type) are fixed at 30
-> bytes, but res->length is a u8 that can be up to 255, allowing a
-> heap buffer overflow.
->
-> Additionally, if res->length is less than 2, the subtraction
-> res->length - 2 wraps around as an unsigned value, resulting in a
-> large copy that corrupts kernel heap memory.
->
-> Add bounds checks before each memcpy to ensure the copy length does
-> not exceed the destination buffer size, and that res->length is at
-> least 2 to prevent unsigned integer underflow.
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Sebastian Josue Alba Vives <sebasjosue84@gmail.com>
-> ---
-> drivers/staging/nvec/nvec_power.c | 6 ++++++
-> 1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/staging/nvec/nvec_power.c b/drivers/staging/nvec/nv=
-ec_power.c
-> index 2faab9fde..29beef0a7 100644
-> --- a/drivers/staging/nvec/nvec_power.c
-> +++ b/drivers/staging/nvec/nvec_power.c
-> @@ -193,14 +193,20 @@ static int nvec_power_bat_notifier(struct notifier=
-_block *nb,
-> 		power->bat_temperature =3D res->plu - 2732;
-> 		break;
-> 	case MANUFACTURER:
-> +		if (res->length < 2 || res->length - 2 > sizeof(power->bat_manu) - 1)
-> +			break;
+Additionally, if res->length is less than 2, the subtraction
+res->length - 2 wraps around as an unsigned value, resulting in a
+large copy that corrupts kernel heap memory.
 
-I think this check is a valid one, even if unlikely to fail. Could be a
-bit nicer by replacing sizeof() with a contant and storing res->length-2=
-=20
-to some variable, but I guess that's a matter of taste.
+Introduce NVEC_BAT_STRING_SIZE to replace the hardcoded buffer
+size, store res->length - 2 in a local copy_len variable for
+clarity, and add bounds checks before each memcpy to ensure the
+copy length does not exceed the destination buffer and that
+res->length is at least 2 to prevent unsigned integer underflow.
 
 Tested-by: Marc Dietrich <marvin24@gmx.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Sebastián Alba Vives <sebasjosue84@gmail.com>
+---
+v2:
+  - Introduce NVEC_BAT_STRING_SIZE constant to replace hardcoded
+    buffer size (Marc Dietrich)
+  - Store res->length - 2 in local copy_len variable for clarity
+    (Marc Dietrich)
+  - Use NVEC_BAT_STRING_SIZE in strncmp call for consistency
+ drivers/staging/nvec/nvec_power.c | 41 +++++++++++++++++++++----------
+ 1 file changed, 28 insertions(+), 13 deletions(-)
 
-Thanks,
+diff --git a/drivers/staging/nvec/nvec_power.c b/drivers/staging/nvec/nvec_power.c
+index 2faab9fde..7b7980127 100644
+--- a/drivers/staging/nvec/nvec_power.c
++++ b/drivers/staging/nvec/nvec_power.c
+@@ -19,6 +19,7 @@
+ #include "nvec.h"
+ 
+ #define GET_SYSTEM_STATUS 0x00
++#define NVEC_BAT_STRING_SIZE 30
+ 
+ struct nvec_power {
+ 	struct notifier_block notifier;
+@@ -38,9 +39,9 @@ struct nvec_power {
+ 	int bat_temperature;
+ 	int bat_cap;
+ 	int bat_type_enum;
+-	char bat_manu[30];
+-	char bat_model[30];
+-	char bat_type[30];
++	char bat_manu[NVEC_BAT_STRING_SIZE];
++	char bat_model[NVEC_BAT_STRING_SIZE];
++	char bat_type[NVEC_BAT_STRING_SIZE];
+ };
+ 
+ enum {
+@@ -192,22 +193,36 @@ static int nvec_power_bat_notifier(struct notifier_block *nb,
+ 	case TEMPERATURE:
+ 		power->bat_temperature = res->plu - 2732;
+ 		break;
+-	case MANUFACTURER:
+-		memcpy(power->bat_manu, &res->plc, res->length - 2);
+-		power->bat_manu[res->length - 2] = '\0';
++	case MANUFACTURER: {
++		size_t copy_len = res->length - 2;
++
++		if (res->length < 2 || copy_len > NVEC_BAT_STRING_SIZE - 1)
++			break;
++		memcpy(power->bat_manu, &res->plc, copy_len);
++		power->bat_manu[copy_len] = '\0';
+ 		break;
+-	case MODEL:
+-		memcpy(power->bat_model, &res->plc, res->length - 2);
+-		power->bat_model[res->length - 2] = '\0';
++	}
++	case MODEL: {
++		size_t copy_len = res->length - 2;
++
++		if (res->length < 2 || copy_len > NVEC_BAT_STRING_SIZE - 1)
++			break;
++		memcpy(power->bat_model, &res->plc, copy_len);
++		power->bat_model[copy_len] = '\0';
+ 		break;
+-	case TYPE:
+-		memcpy(power->bat_type, &res->plc, res->length - 2);
+-		power->bat_type[res->length - 2] = '\0';
++	}
++	case TYPE: {
++		size_t copy_len = res->length - 2;
++
++		if (res->length < 2 || copy_len > NVEC_BAT_STRING_SIZE - 1)
++			break;
++		memcpy(power->bat_type, &res->plc, copy_len);
++		power->bat_type[copy_len] = '\0';
+ 		/*
+ 		 * This differs a little from the spec fill in more if you find
+ 		 * some.
+ 		 */
+-		if (!strncmp(power->bat_type, "Li", 30))
++		if (!strncmp(power->bat_type, "Li", NVEC_BAT_STRING_SIZE))
+ 			power->bat_type_enum = POWER_SUPPLY_TECHNOLOGY_LION;
+ 		else
+ 			power->bat_type_enum = POWER_SUPPLY_TECHNOLOGY_UNKNOWN;
+-- 
+2.43.0
 
-Marc
-
-> 		memcpy(power->bat_manu, &res->plc, res->length - 2);
-> 		power->bat_manu[res->length - 2] =3D '\0';
-> 		break;
-> 	case MODEL:
-> +		if (res->length < 2 || res->length - 2 > sizeof(power->bat_model) - 1=
-)
-> +			break;
-> 		memcpy(power->bat_model, &res->plc, res->length - 2);
-> 		power->bat_model[res->length - 2] =3D '\0';
-> 		break;
-> 	case TYPE:
-> +		if (res->length < 2 || res->length - 2 > sizeof(power->bat_type) - 1)
-> +			break;
-> 		memcpy(power->bat_type, &res->plc, res->length - 2);
-> 		power->bat_type[res->length - 2] =3D '\0';
-> 		/*
-> --=20
-> 2.43.0
->
->
