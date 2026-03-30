@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074213C6A45
-	for <linux-tegra@vger.kernel.org>; Mon, 30 Mar 2026 11:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4A63C870C
+	for <linux-tegra@vger.kernel.org>; Mon, 30 Mar 2026 11:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774870844; cv=none; b=HGvynnrcp4bRWoq/C8Gb4+9QbH6QPy3q4MABskcJZYcxvLyfAVBUl7y++8JehwhnjVMguDxXV3bWMVI8iIXatrmw9XiTuZ0F1kO7fNqsIQxy3ZsaG9qW8LV4SK6dFWkNiKjy8LfVax57UedeLpo0/bSzib19rN0aHfKryUfb/Ws=
+	t=1774871128; cv=none; b=YXKCcmmnMAXYTu1eWv18VTseJT0KIs5cbTBFrRK5QPkk40R4plW1Rl35Lg14KDGVDoyF+k21Km8EBw4lNshCigNZ7TfDr7AbzDbDhNlgBHFubfv+x6zHkDJHsmxXuq/UPDs1fa2OvdJoK3Ps7dyZ3gcMTkwXNNv4Kgxx9TTqxfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774870844; c=relaxed/simple;
-	bh=9QKKv/MJNfK4wnYIZ5u8Bg82kMFl+XFfFNUay1UF+Rs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=FxrZhceLTkU2Kwiz4YPHqMPvuM3hLqWvrPFGUxkOhebCr4sTQa+oQ0daZE4to9xrx3KLurwUhiEQ9n9YVzi6DroIzcZ1wMLQSFtA9DZckExuJpuGSVRaz9GVtwyd3Ea6qIeyXqI41ExrQn5ZnBhYF0r5YoFUWQ1hPWSkh+7SKvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=guMb6Wiy; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774871128; c=relaxed/simple;
+	bh=xAuRrCNkVfOL1dlC4RgS5Yw93+8Y9miVgG7onvUPc9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XI+l3AdKdieKvczb4QFyIViiln/6gKmY5FZilP3v/qWnNGd2FiokB+FXOvFMNWkth30M/hb7/4KH5hpFnTmLRzz8ydrAXuiVD5l/XbOKo+jAYeTFE9AtDXxcJZPCO/fMaM8cydx+EecV7cq82ofGSfbcb2k7ncP4sqVysv+uChg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pdc38o2h; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="guMb6Wiy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39ECBC2BCB2;
-	Mon, 30 Mar 2026 11:40:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdc38o2h"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6911BC4CEF7;
+	Mon, 30 Mar 2026 11:45:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774870843;
-	bh=9QKKv/MJNfK4wnYIZ5u8Bg82kMFl+XFfFNUay1UF+Rs=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=guMb6WiyIx+dTK/AmWGtCNWoG//OUYXZsBV+PSEFirwCO65+c/lsE0eiws8xQrWM7
-	 HtdOtyrXIoweS2EXb76m+KxLtf+6plMRZBQpq9EgbTl+VCDhzA6W+zLeKU6n3IgLGi
-	 W8MbgB2Ww0TLfYoR240go/K/RC5etfv728E1N49WSqxgryWgTxK9b9iCs/vOOdA5uY
-	 eHQ2Bj4mpgZXAaq+ksvhAZAtOjK9wpNPLgHg+Zh4uwxqEvltJ64GKq97EA4LfQs7HH
-	 pySHIRnEbiSpBn9N+tqeq7jNfusEH1AVlI1XpD4APTC0TX3l96n0kimhEx35FFYITS
-	 OVex5ScCyoavA==
-Message-ID: <cefdfe38-a638-45d5-8fae-5bd5c3fa6387@kernel.org>
-Date: Mon, 30 Mar 2026 13:40:40 +0200
+	s=k20201202; t=1774871128;
+	bh=xAuRrCNkVfOL1dlC4RgS5Yw93+8Y9miVgG7onvUPc9k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pdc38o2hO/YijyFOuUdktTl+uS4M7SKQZ9gxT2iWhkrl/zm+dLFCJ+VtSdh84zPoA
+	 HzA0DYepdGMH2KpSAVqmu8upMIrtUfoyo8lau5PiPzPOQ4BNf8h8bU3nSv6k9tOAWY
+	 1F8HmeLZDpcrCEEAH9CvzqpCn4ssW1Fu7Q5Y0HoH5s++xsZiz2ZjVubQWixan/dYq3
+	 M0uVZf7QmulcDiSIzwkraeg/ZXoJUM8iBjZ4mQ6dqiz/9b0gpu1v/scPRNBemRPyWD
+	 o6bHQZzrHSpSbTojPI6dL03ZBmWYo3sDtoyn9+PshRRqYjU9TsfXVTQj/RSyj1az+V
+	 7mx5u4OMgcpeg==
+Message-ID: <7b9bc5d1-7a1d-456c-b280-5f4dc969609d@kernel.org>
+Date: Mon, 30 Mar 2026 13:45:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,14 +35,14 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL 1/7] dt-bindings: Changes for v7.1-rc1
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [GIT PULL 6/7] arm64: tegra: Device tree changes for v7.1-rc1
 To: Thierry Reding <thierry.reding@kernel.org>, arm@kernel.org, soc@kernel.org
 Cc: Thierry Reding <thierry.reding@gmail.com>,
  Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org
 References: <20260329151045.1443133-1-thierry.reding@kernel.org>
- <406ca5ed-4a3e-48ba-94ad-d88c53b09299@kernel.org>
+ <20260329151045.1443133-6-thierry.reding@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -87,69 +87,61 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <406ca5ed-4a3e-48ba-94ad-d88c53b09299@kernel.org>
+In-Reply-To: <20260329151045.1443133-6-thierry.reding@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 30/03/2026 13:39, Krzysztof Kozlowski wrote:
-> On 29/03/2026 17:10, Thierry Reding wrote:
->> From: Thierry Reding <thierry.reding@gmail.com>
->>
->> Hi ARM SoC maintainers,
->>
->> The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
->>
->>   Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
->>
->> are available in the Git repository at:
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.1-dt-bindings
->>
->> for you to fetch changes up to bed2f5b4de6c6fd8f8928f6373ad92e8795c370f:
->>
->>   dt-bindings: arm: tegra: Document Jetson AGX Thor DevKit (2026-03-28 01:05:24 +0100)
->>
->> Thanks,
->> Thierry
->>
->> ----------------------------------------------------------------
->> dt-bindings: Changes for v7.1-rc1
->>
->> This contains a few conversions to DT schema along with various
->> additions and fixes to reduce the amount of validation warnings.
->>
->> Included are also a new binding for the PCIe controller found on
->> Tegra264 as well as compatible strings for the Jetson AGX Thor
->> Developer Kit.
->>
->> ----------------------------------------------------------------
->> Sumit Gupta (1):
->>       dt-bindings: arm: tegra: Add Tegra238 CBB compatible strings
->>
->> Svyatoslav Ryhel (1):
->>       dt-bindings: display: tegra: Document Tegra20 HDMI port
->>
->> Thierry Reding (9):
->>       dt-bindings: pci: Document the NVIDIA Tegra264 PCIe controller
+On 29/03/2026 17:10, Thierry Reding wrote:
+> From: Thierry Reding <thierry.reding@gmail.com>
 > 
-> Why are you taking subsystem patches? This was posted on 26th of March
-> and was not acked by PCI maintainers.
+> Hi ARM SoC maintainers,
 > 
-> How the bindings should go is already documented, so there is no
-> question here.
+> The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
 > 
-> The question was whether you can take them if subsystem maintainer is
-> non-responsive and yes, you can. You gave PCI maintainers one day before
-> applying it.
+>   Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
 > 
+> are available in the Git repository at:
 > 
->>       dt-bindings: phy: tegra-xusb: Document Type C support
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.1-arm64-dt
 > 
-> No acks, but that is waiting for one month so it is fine.
+> for you to fetch changes up to c70e6bc11d2008fbb19695394b69fd941ab39030:
+> 
+>   arm64: tegra: Add Tegra264 GPIO controllers (2026-03-28 01:36:46 +0100)
+> 
+> Thanks,
+> Thierry
+> 
+> ----------------------------------------------------------------
+> arm64: tegra: Device tree changes for v7.1-rc1
+> 
+> Various fixes and new additions across a number of devices. GPIO and PCI
+> are enabled on Tegra264 and the Jetson AGX Thor Developer Kit, allowing
+> it to boot via network and mass storage.
+> 
+> ----------------------------------------------------------------
+> Diogo Ivo (1):
+>       arm64: tegra: smaug: Enable SPI-NOR flash
+> 
+> Jon Hunter (1):
+>       arm64: tegra: Fix RTC aliases
+> 
+> Prathamesh Shete (1):
+>       arm64: tegra: Add Tegra264 GPIO controllers
+> 
+> Thierry Reding (6):
+>       dt-bindings: pci: Document the NVIDIA Tegra264 PCIe controller
 
-Ha, no, you did not even send it to maintainers, so how they could ack it?
 
-Nothing here was sent to the right people.
+This is unreviewed/unacked binding where PCI maintainers had 1 day to
+react to your v3. Maybe they had more time for previous versions, but
+nevertheless it is also part of other patchset, so it will get into the
+kernel other tree and nothing on v3 posting:
+https://lore.kernel.org/all/20260326135855.2795149-4-thierry.reding@kernel.org/
+gives hints that there will be cross tree merge.
+
+So no, that branch cannot be taken.
+
+Please get your code first reviewed with subsystem maintainers.
 
 Best regards,
 Krzysztof
