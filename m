@@ -1,54 +1,58 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5271837418C;
-	Mon, 30 Mar 2026 15:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F50C346E54;
+	Mon, 30 Mar 2026 15:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774885799; cv=none; b=fdTKgpgL9jjlFXNR/mw4BJrZSx6gow3WOgPGJzzviz72rJaoy1Zv9XWj3lpF4pa1ZouoUGyqBIAXYZTbAJTXtLEGuZGn03LsNvS+5ytxwo7iwQtbcFZU82ej0JOWGYIUpYjRwIlP6yBxGokgiKAzrV3fSPby/K4pUEee96gRXPc=
+	t=1774885811; cv=none; b=PAJVFdIh3Rb8nfvdt4hQ8uH12fjglT646ag5C6yckfQ47KGfgGez8pa8EYNvbqBEBa2G0zhjlQT7FoqssmHvr4bqHi0QOZVgrRyEF+Sa3TWMlPp3FKe4dFVodQ/MqXphP8GOhj0E5edIqdtEIEhgTzoGUFTF27MC7i6EuAVubqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774885799; c=relaxed/simple;
-	bh=jFzutPKmwR4H7YIu8Qn5NsraS/tWHjU6p8juKpQbHZI=;
+	s=arc-20240116; t=1774885811; c=relaxed/simple;
+	bh=fdcUswHsiVrzGL2tlgudlUXpNxOC1l5VB37WuEcFNbo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pz+fhIuYOqkaoKJv+wZhrFh0pUPwf2+D6bvBtacpoMu5K4jsSD6T7T5s6Io3/RaAn5zxBuvzB3jY2uWc38VY1krMaM50T5ATvZgcd3gA3U222xaB4UlnKEixNB3G4Z0glKtVQy2Odp1cMrCcQWs53QVOR9csidRq9Qnnwiak5Mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vHrrryRj; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=pDvAc9nbQOf5u1q7rU7O37scvXoBX7Cc2SlkzMvfneNgOqqAuRB564qdYFKYJETWu+rXIDPDkbT4m0EJh5SddZEbnDLaZ1ec7VABgC7dDtSWlazj+QRCNi855YtJs1cxf4vc3OyfI49/8TXIY/eYcgVlJOoVCp8xqYk49whf6VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iUkpoNDV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vHrrryRj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72CF4C4CEF7;
-	Mon, 30 Mar 2026 15:49:58 +0000 (UTC)
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iUkpoNDV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62B39C4CEF7;
+	Mon, 30 Mar 2026 15:50:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1774885798;
-	bh=jFzutPKmwR4H7YIu8Qn5NsraS/tWHjU6p8juKpQbHZI=;
+	s=korg; t=1774885810;
+	bh=fdcUswHsiVrzGL2tlgudlUXpNxOC1l5VB37WuEcFNbo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vHrrryRjA0bM6gE02Hgk52j7rXL80DitBIPY+THNyHjotnOi8l9UBC+i7qGIvh3tc
-	 gkBXQRES2o8DmFVTIC3xJ8Tiuc36211g4JD0rfXpJnLwf/YwrO7KIDq4e/vf9n1Cb4
-	 sMarwVgy4FoGVbkEESJaf1iVubPh6WsCLy6M2t4k=
-Date: Mon, 30 Mar 2026 17:49:55 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: =?iso-8859-1?Q?H=FCseyin?= Can Erdem <erdemhuseyincan09@gmail.com>
-Cc: marvin24@gmx.de, ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: nvec: fix block comment formatting
-Message-ID: <2026033037-dealt-handiness-a92e@gregkh>
-References: <20260318170604.10254-1-erdemhuseyincan09@gmail.com>
+	b=iUkpoNDVGUX3jN+nZo+ouFglsvxSMrNgf6g8nN/95bZPMtI9xPYbn0Blq4ma+Hky3
+	 f8NuX8D95Q1bzCXHyFzoLpAe1+0iIUJ76dEzxOb/aCZ27WzWn/249tcUz/AuTSJIaa
+	 3wm7wmoTXfPkQsJg+3aLQHZNwVr5Z7JO1HvjFRYc=
+Date: Mon, 30 Mar 2026 17:50:07 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Cameron Pinchin <c.w.pinchin@gmail.com>
+Cc: Marc Dietrich <marvin24@gmx.de>,
+	"moderated list:STAGING - NVIDIA COMPLIANT EMBEDDED CONTROLLER..." <ac100@lists.launchpad.net>,
+	"open list:STAGING - NVIDIA COMPLIANT EMBEDDED CONTROLLER..." <linux-tegra@vger.kernel.org>,
+	"open list:STAGING SUBSYSTEM" <linux-staging@lists.linux.dev>,
+	open list <linux-kernel@vger.kernel.org>,
+	CameronPinchin <cameronpinchin@cmail.carleton.ca>
+Subject: Re: [PATCH] staging: nvec: fix comment formatting
+Message-ID: <2026033004-speak-linseed-ca95@gregkh>
+References: <20260322023346.100296-1-c.w.pinchin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260318170604.10254-1-erdemhuseyincan09@gmail.com>
+In-Reply-To: <20260322023346.100296-1-c.w.pinchin@gmail.com>
 
-On Wed, Mar 18, 2026 at 08:06:04PM +0300, Hüseyin Can Erdem wrote:
-> The block comment in nvec_interrupt() does not follow the kernel
-> coding style. Multi-line block comments should have a * at the
-> beginning of each line, and the closing */ should be on its own
-> separate line.
+On Sat, Mar 21, 2026 at 10:33:46PM -0400, Cameron Pinchin wrote:
+> From: CameronPinchin <cameronpinchin@cmail.carleton.ca>
 > 
-> Signed-off-by: Hüseyin Can Erdem <erdemhuseyincan09@gmail.com>
+> Fix comment formatting to align with kernel-doc guidelines.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Cameron Pinchin <cameronpinchin@cmail.carleton.ca>
 > ---
 >  drivers/staging/nvec/nvec.c | 3 ++-
 >  1 file changed, 2 insertions(+), 1 deletion(-)
@@ -68,7 +72,8 @@ On Wed, Mar 18, 2026 at 08:06:04PM +0300, Hüseyin Can Erdem wrote:
 >  		} else if (status == (I2C_SL_IRQ)) {
 >  			nvec->rx->data[1] = received;
 > -- 
-> 2.47.3
+> 2.53.0
+> 
 > 
 
 
