@@ -1,132 +1,195 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4B940DFDE
-	for <linux-tegra@vger.kernel.org>; Mon, 30 Mar 2026 11:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C303D1716
+	for <linux-tegra@vger.kernel.org>; Mon, 30 Mar 2026 12:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774871196; cv=none; b=rKELrJM7AmtSbiyGuPVIohhKx9+Vh77rXYv6ySwXXgoXeqjRRm2Z+PYwX87FkXDFDC3sqLhhp06N9D97brhFJR+RgCK4rVZLGq+/nWcDZxZsKsWD+Tggf0S/PxpO8TCqFi7W6dT0t+cX35f8JA49nTMh6HUmp4o9B93XOXwgbm0=
+	t=1774875139; cv=none; b=BlNz3QyxdKyzYdaPMRFNJBeC2fQ9aKD9ULPJ7+QvhU4Dc4+sW1bwD7+74PiAqZ0oB3Gr6ArUb3PpHiO79HqYB1VP9BHW13Lt1zqbc11WrGmmoUHkR+wB19zKABJth0JUOZItYTD62iz65BVklTzGhOuE8rJYx8Rz3pHjeHhVQQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774871196; c=relaxed/simple;
-	bh=vNBRaBmxUML/9tvCHr/F0jTWJtIo36Ls04uYN9WKbQI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ho/nCtT2QrDSAt5tQP0U7Ef4vLI9D0aqClQxUudwt77UYpNoPyZSP6szQs9NTH6M6pirImjV0oa4JfpySxdETu+VkQo23Xl0yJUif82kpx7z0dT8cVtSX7dw5sT4gCvJ9DUVWdW1w+sM+h6LOGrHW8r0cLoPkz9dWYh54zU6PD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RzEby+oS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774875139; c=relaxed/simple;
+	bh=X0XeqVk1okPDExPdxveHKfJoDl26uOIaeLMRZyIoG0U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hA2CddFRCTDz6ARhiRa0C9qs+uMxh90842FhKng+MQpDIu8rlIAsBp8UVvIHz48nVrcvZrxJst6oyjgX8NOe44o0Nut/RRIi7wNPkTKDiH9hdME/42R7ZkpWPtK0YYEnTkElDb+Rt9Fvpwn8FlCGa5uPniTaZ0Us4HVf/2UDcw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QJ20CY/V; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RzEby+oS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 352A2C4CEF7;
-	Mon, 30 Mar 2026 11:46:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774871195;
-	bh=vNBRaBmxUML/9tvCHr/F0jTWJtIo36Ls04uYN9WKbQI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RzEby+oS5hA4ztdP34lTC7HWqKiGaf/mX4Vhjw+MUqBJEDsuhk5mFAmOzDfkKzvuQ
-	 +QhapPlgi64ILY8d/7zHw7il3PFnTdTlL4zSIpbhn9NslzspcGbnrSAhPuhG9FJF1F
-	 8T+gkBHx7KNETahPZmqOtH1KfevNMi/+VU/zIWqKiSST9cGYV72b+yQZVbLPoAns/d
-	 8dkvNPzp4OvfpBw/Iiz53+m8fBuYeamO0Mge+OFJWmj3KFrmvNURy9lVzNBxbcv83V
-	 exJkhvCkNd/i3SsEPts3FG20y23kIyf4oe84eBrtvnYrvkO9weKJGQd8/vTMNR5NRi
-	 PI2P1yAPaGAug==
-Message-ID: <058d79b7-3d4c-4f0a-a95f-b2e3582a4fa7@kernel.org>
-Date: Mon, 30 Mar 2026 13:46:32 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJ20CY/V"
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-60328e74517so1327196137.1
+        for <linux-tegra@vger.kernel.org>; Mon, 30 Mar 2026 05:52:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1774875137; x=1775479937; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2T5sC1X4d4lvAdzHYW3GejS6hGTQduK0sRiN708dk4s=;
+        b=QJ20CY/VupWwefOFzUflZGWD7YDVGN0rsW0a6JkR5HOAnCeXOqlbx7Ia7qZ42J5OiY
+         z7FaZ/ZiDUAM53+CIjxKEprQlT0U9VocUzppHlBHyE7D9k9YcuuZuIixL2DKow9uzt7n
+         rrG6lHOq7osTr3ITC4ORahVEVInVkn4+INIih0Sk/z0juCRmpU1Hjd5dE/IpR9hcFNDr
+         fDaPVsCCqkyPLpLaR9320C0BATVMLpVCLfKONUANa8oWNz65GOp6/f8cjCCZhRlxKnAn
+         f2bMgmA139VLFAeU5WqpiVJSltC1VKcM3n7WMxi8jdySXOOG5E+BA34XUEIjrnkAkrOO
+         lZ7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774875137; x=1775479937;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2T5sC1X4d4lvAdzHYW3GejS6hGTQduK0sRiN708dk4s=;
+        b=g7uh6syAmv09fC2FQVLGpGRw6BdNK0HaqRw221x+Rztg0Wk0tgrC4lEBJkyhOEgXsL
+         0wGXXm03lfblOZ/tbGsNTLudpWOfVU5uX2NIZ1swUiptLiXYA9kcExNhjsteGNi6cgtW
+         mijj6pP1rM82oSQrUtOPKhECJJMPrTAQhcOKeVFej0iNQOE1MAoGqNCHtjm0Z6WmGMMR
+         U6y+GXbmsw8WEA1HD4+XH7QGc38AoCU5i7rSzOxm9xOCGrWX7TFRZ94wsW37mSihT7W6
+         yS/XCW8nCo7mEwEk+Mjbb9co8hQ5oLaPNDHAl1gIDdpGu2YP3Xuk6pclHb2B53RNf80t
+         SVeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWG3N7XAJbcst4OgieVHIYGao5dbmGDuKbmednfGETR0ZftWizUmgebpN2blmW8e7HOo2Vrbqs44bjB2Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YycueSdcmLrKZEnzitFpmmf9QkbKQqHg0qeNrhNG/e8PRMK+jYh
+	n9cwSASji5RHfHfDzjvUT2h4Qg2R7W/cOLkGdEKhy7kKO8n3loiPW87N1KISOS6tP58=
+X-Gm-Gg: ATEYQzxp/yrBfxOvubUpiYmGIRRp5K7aRtrfdH7RzH5qo36x6zUjnAUNK1GeROZ72px
+	VUArH+jM5XDC5mq+BujNAToxazIjufZimacIQbiZr0F830K52giLECNzfdrGiewoOpiQ+H/qpho
+	+JZnhGalp8H+9IwrVjOQgU2rVCSh2hjPI2sgUCB/JtYa0WGBGghDSS+STZESWdEE34dw65HwCX+
+	wuSvsSNzAYKB8eNmN24mYGghPsDDjjyq4lILApzYyaBgxxNqBKiCcR4+fj/MKd2BoPVQCIn78GU
+	EtVwL6f6pi27P4GK9IokFV7o2/1D04wJ4tC5vuNRCctWKveHI81rw/w80043d/0MAaDRbDrBZ92
+	9/jg58pQuISrIPVgvwob7WhCPEmdyr1wiQyCPfGByDjGRtUj6FAaUd9icjSDkxxPZ6jSCTQLQgW
+	vVExLSKIDp6/8qMBSg1bcSBPhK
+X-Received: by 2002:a05:6102:26d5:b0:602:87b9:89ba with SMTP id ada2fe7eead31-604f925ae38mr3523377137.19.1774875136516;
+        Mon, 30 Mar 2026 05:52:16 -0700 (PDT)
+Received: from localhost.localdomain ([2a09:bac6:d6da:aa::11:1d6])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9539e4420d9sm6888389241.8.2026.03.30.05.52.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2026 05:52:15 -0700 (PDT)
+From: Sebastian Josue Alba Vives <sebasjosue84@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: marvin24@gmx.de,
+	linux-staging@lists.linux.dev,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	=?UTF-8?q?Sebasti=C3=A1n=20Alba=20Vives?= <sebasjosue84@gmail.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH v3] staging: nvec: validate battery response length before memcpy
+Date: Mon, 30 Mar 2026 06:52:00 -0600
+Message-ID: <20260330125200.820693-1-sebasjosue84@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL 4/7] ARM: tegra: Device tree changes for v7.1-rc1
-To: Thierry Reding <thierry.reding@kernel.org>, arm@kernel.org, soc@kernel.org
-Cc: Thierry Reding <thierry.reding@gmail.com>,
- Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20260329151045.1443133-1-thierry.reding@kernel.org>
- <20260329151045.1443133-4-thierry.reding@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260329151045.1443133-4-thierry.reding@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 29/03/2026 17:10, Thierry Reding wrote:
-> ----------------------------------------------------------------
-> ARM: tegra: Device tree changes for v7.1-rc1
-> 
-> Various improvements for Tegra114 boards, as well as some legacy cleanup
-> for PAZ00 and Transformers devices.
-> 
-> ----------------------------------------------------------------
-> Dmitry Torokhov (1):
->       ARM: tegra: paz00: Configure WiFi rfkill switch through device tree
-> 
-> Svyatoslav Ryhel (8):
->       ARM: tegra: Add SOCTHERM support on Tegra114
->       ARM: tn7: Adjust panel node
->       ARM: tegra: lg-x3: Add panel and bridge nodes
->       ARM: tegra: lg-x3: Add USB and power related nodes
->       ARM: tegra: lg-x3: Add node for capacitive buttons
->       ARM: tegra: Add ACTMON node to Tegra114 device tree
->       ARM: tegra: Add External Memory Controller node on Tegra114
->       ARM: tegra: transformers: Add connector node
-> 
->  arch/arm/boot/dts/nvidia/tegra114-tn7.dts        |  13 +-
->  arch/arm/boot/dts/nvidia/tegra114.dtsi           | 221 +++++++++++++++++++++++
->  arch/arm/boot/dts/nvidia/tegra20-paz00.dts       |   8 +
->  arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dts |  21 ++-
->  arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts     |  23 +++
->  arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts     |  33 ++++
->  arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi      | 174 +++++++++++++++++-
->  arch/arm/mach-tegra/Makefile                     |   2 -
->  arch/arm/mach-tegra/board-paz00.c                |  56 ------
->  arch/arm/mach-tegra/board.h                      |   2 -
->  arch/arm/mach-tegra/tegra.c                      |   4 -
+From: Sebastián Alba Vives <sebasjosue84@gmail.com>
 
-Why does the DTS branch has mach code? Tag message mentions legacy
-cleanup only and such cleanup should not cause mixing independent
-hardware description (DTS) with drivers.
+In nvec_power_notifier(), the response length from the embedded
+controller is used directly as the size argument to memcpy() when
+copying battery manufacturer, model, and type strings. The
+destination buffers (bat_manu, bat_model, bat_type) are fixed at
+30 bytes, but res->length is a u8 that can be up to 255, allowing
+a heap buffer overflow.
 
-Best regards,
-Krzysztof
+Additionally, if res->length is less than 2, the subtraction
+res->length - 2 wraps around as an unsigned value, resulting in a
+large copy that corrupts kernel heap memory.
+
+Introduce NVEC_BAT_STRING_SIZE to replace the hardcoded buffer
+size, store res->length - 2 in a local copy_len variable for
+clarity, and add bounds checks before each memcpy to ensure the
+copy length does not exceed the destination buffer and that
+res->length is at least 2 to prevent unsigned integer underflow.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202603301722.axpoITcy-lkp@intel.com/
+Tested-by: Marc Dietrich <marvin24@gmx.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Sebastián Alba Vives <sebasjosue84@gmail.com>
+---
+v3:
+  - Fix build error: add missing closing brace for TYPE case
+    compound statement (kernel test robot)
+v2:
+  - Introduce NVEC_BAT_STRING_SIZE constant (Marc Dietrich)
+  - Store res->length - 2 in local copy_len variable (Marc Dietrich)
+  - Use NVEC_BAT_STRING_SIZE in strncmp call for consistency
+ drivers/staging/nvec/nvec_power.c | 42 +++++++++++++++++++++----------
+ 1 file changed, 29 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/staging/nvec/nvec_power.c b/drivers/staging/nvec/nvec_power.c
+index 2faab9fde..30719e142 100644
+--- a/drivers/staging/nvec/nvec_power.c
++++ b/drivers/staging/nvec/nvec_power.c
+@@ -19,6 +19,7 @@
+ #include "nvec.h"
+ 
+ #define GET_SYSTEM_STATUS 0x00
++#define NVEC_BAT_STRING_SIZE 30
+ 
+ struct nvec_power {
+ 	struct notifier_block notifier;
+@@ -38,9 +39,9 @@ struct nvec_power {
+ 	int bat_temperature;
+ 	int bat_cap;
+ 	int bat_type_enum;
+-	char bat_manu[30];
+-	char bat_model[30];
+-	char bat_type[30];
++	char bat_manu[NVEC_BAT_STRING_SIZE];
++	char bat_model[NVEC_BAT_STRING_SIZE];
++	char bat_type[NVEC_BAT_STRING_SIZE];
+ };
+ 
+ enum {
+@@ -192,26 +193,41 @@ static int nvec_power_bat_notifier(struct notifier_block *nb,
+ 	case TEMPERATURE:
+ 		power->bat_temperature = res->plu - 2732;
+ 		break;
+-	case MANUFACTURER:
+-		memcpy(power->bat_manu, &res->plc, res->length - 2);
+-		power->bat_manu[res->length - 2] = '\0';
++	case MANUFACTURER: {
++		size_t copy_len = res->length - 2;
++
++		if (res->length < 2 || copy_len > NVEC_BAT_STRING_SIZE - 1)
++			break;
++		memcpy(power->bat_manu, &res->plc, copy_len);
++		power->bat_manu[copy_len] = '\0';
+ 		break;
+-	case MODEL:
+-		memcpy(power->bat_model, &res->plc, res->length - 2);
+-		power->bat_model[res->length - 2] = '\0';
++	}
++	case MODEL: {
++		size_t copy_len = res->length - 2;
++
++		if (res->length < 2 || copy_len > NVEC_BAT_STRING_SIZE - 1)
++			break;
++		memcpy(power->bat_model, &res->plc, copy_len);
++		power->bat_model[copy_len] = '\0';
+ 		break;
+-	case TYPE:
+-		memcpy(power->bat_type, &res->plc, res->length - 2);
+-		power->bat_type[res->length - 2] = '\0';
++	}
++	case TYPE: {
++		size_t copy_len = res->length - 2;
++
++		if (res->length < 2 || copy_len > NVEC_BAT_STRING_SIZE - 1)
++			break;
++		memcpy(power->bat_type, &res->plc, copy_len);
++		power->bat_type[copy_len] = '\0';
+ 		/*
+ 		 * This differs a little from the spec fill in more if you find
+ 		 * some.
+ 		 */
+-		if (!strncmp(power->bat_type, "Li", 30))
++		if (!strncmp(power->bat_type, "Li", NVEC_BAT_STRING_SIZE))
+ 			power->bat_type_enum = POWER_SUPPLY_TECHNOLOGY_LION;
+ 		else
+ 			power->bat_type_enum = POWER_SUPPLY_TECHNOLOGY_UNKNOWN;
+ 		break;
++	}
+ 	default:
+ 		return NOTIFY_STOP;
+ 	}
+-- 
+2.43.0
+
