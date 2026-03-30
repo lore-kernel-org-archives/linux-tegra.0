@@ -1,447 +1,166 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BB33A3E96;
-	Mon, 30 Mar 2026 09:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD10A25D1E9
+	for <linux-tegra@vger.kernel.org>; Mon, 30 Mar 2026 11:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774863415; cv=none; b=aixnnWQp/p0jbhACUlqUvPph7/0a8ikmxQFE7a17k1NgfQBGhf0odofCoPiMHR3aWZLHUduH20LwWEoOXKPhPX7wr94CJTBaNQ+6m3AVzFaqaCaCE44Uikdicr4IMC4oha6o6/MpwphOtlz2zJ3wMoM6lVGKjtWtppCxzUi0E2w=
+	t=1774870792; cv=none; b=avWPP5mGIKt87UPKrqHhJU/0eZaAQGDnDllIxEpgu7rmyk34gvukp3drTGqX1k65m7c7dgbPLWaMDW9O8aAi1x7Ov3bfjj/xHvhehJ0GYLMQ6yVudjvBPWsx3DKnLu6ycTPusNLDGzEDRwA9xHC7aPQl945IcHO7pFkUQVL35G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774863415; c=relaxed/simple;
-	bh=Dxo+2Ufg2CcWXxlSo8Ifdp4hA4ODMmBYIYL/vSgOdyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IxG/AlKRpE6nFZsYF2x49nB4qm3uv5z6eDLt6EUVa4b6ytajgnPSMSWD4EY/CAj9P/J2OUEA9jziBXBhdb8bjU710AiYdaf1ZLXBZsh3NrQJeWFE3cv4gKsDxB/7KqgWyoy2E9DU8nNX60ZLBeTDV2FyOntc8BlqLiWAQdAXuvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HuosuvKW; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1774870792; c=relaxed/simple;
+	bh=b/ampavt86PAu57HuZv/UNHbgnlk14x5mFwNDCZ00cA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GjYW6V71uNgboo3VqxIpQugWOtGoaupZJSsKdyaajXdnrG/3lw1Hwn3rgeLNP2nPK6nzAlIBRo61kNpQRpVeWcAP+hfjpk75IDYq4b+ptySKMaXwAE1JkSba4xXUP+DXTTZOaGRi8QvtcVIEOWYEHzMSkqnmd5/mPy1HozDjCHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LkjdYa9F; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HuosuvKW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1774863414; x=1806399414;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Dxo+2Ufg2CcWXxlSo8Ifdp4hA4ODMmBYIYL/vSgOdyA=;
-  b=HuosuvKWu4TAViTWTRrc8pd3NhsBGpbGt6cDxAnuUXTzThJHEGjRQCjK
-   o5cnM3d+ABPyyUH/moEI9Ukf4Y4XCDtkePSgIDLt0MaYyN9bPoUuL0+zn
-   UUutCENtcxbmqPtQZuuIo5N+HvuOE5XO+cAYko9lWfU445onCMVQrHmBV
-   an82to/fuJSs3LBXyIIcw0/9L6Ozt7bkGpPBAFHBFoUKAsGztR1BKTQBm
-   XtbWh6iodFlVU8myieab93MOKPeMEMtUfFM9VBq4twbP5J99LNjCTL1tx
-   cZpIn9GBd9APtkVGASU9wjdTxD4Ahxu0NWR0w7v0ycfaCSIlE2neNktzT
-   A==;
-X-CSE-ConnectionGUID: YJGY8YmMQuiFp2GGvh1jXw==
-X-CSE-MsgGUID: rYocplYDQi6YAM6/jEGzuQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11743"; a="76041951"
-X-IronPort-AV: E=Sophos;i="6.23,149,1770624000"; 
-   d="scan'208";a="76041951"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2026 02:36:53 -0700
-X-CSE-ConnectionGUID: if+G9b2RT2i+fj5n4Ki+5g==
-X-CSE-MsgGUID: aDSCmdUMRDKeVVjcuZSAQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,149,1770624000"; 
-   d="scan'208";a="219358518"
-Received: from lkp-server01.sh.intel.com (HELO 283bf2e1b94a) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 30 Mar 2026 02:36:50 -0700
-Received: from kbuild by 283bf2e1b94a with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1w793A-000000000uv-2AJe;
-	Mon, 30 Mar 2026 09:36:48 +0000
-Date: Mon, 30 Mar 2026 17:36:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sebastian Josue Alba Vives <sebasjosue84@gmail.com>, marvin24@gmx.de
-Cc: oe-kbuild-all@lists.linux.dev, ac100@lists.launchpad.net,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	=?iso-8859-1?Q?Sebasti=E1n?= Alba Vives <sebasjosue84@gmail.com>
-Subject: Re: [PATCH v2] staging: nvec: validate battery response length
- before memcpy
-Message-ID: <202603301722.axpoITcy-lkp@intel.com>
-References: <20260329210800.597697-1-sebasjosue84@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LkjdYa9F"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1098AC4CEF7;
+	Mon, 30 Mar 2026 11:39:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774870792;
+	bh=b/ampavt86PAu57HuZv/UNHbgnlk14x5mFwNDCZ00cA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LkjdYa9FevU1z0t+WxRQ78dGym4f2C2/8GwAgO9/SIrcKe2nhP9nxMncnPsMP6Y3P
+	 /bbRW61zXsGFM0f2hAal2XyFE+cIa06DyMHQZ43E0bUwGssoy33l5qpwQLLmEcigDi
+	 +PHP+wBLRLCO02RZ5c15qMp+tNK33OXmTYYAyVaSjkHBsyjE61vbbpCaflBEug4fzv
+	 l2hmB5A7cV3Q2Hw7I6k7SrujAfDWJbVFxhtFWC32aAMNyCX89V8HdsAU61W5Iz/46R
+	 GUh3w5AJjVG2PaapdVbLxRfmcWWGT3i3PZa53NwUzc8zFHfhcYPG7Ksq2iMGkPNBvh
+	 jp0LOJK/kHxiQ==
+Message-ID: <406ca5ed-4a3e-48ba-94ad-d88c53b09299@kernel.org>
+Date: Mon, 30 Mar 2026 13:39:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260329210800.597697-1-sebasjosue84@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL 1/7] dt-bindings: Changes for v7.1-rc1
+To: Thierry Reding <thierry.reding@kernel.org>, arm@kernel.org, soc@kernel.org
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+ Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20260329151045.1443133-1-thierry.reding@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260329151045.1443133-1-thierry.reding@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Sebastian,
+On 29/03/2026 17:10, Thierry Reding wrote:
+> From: Thierry Reding <thierry.reding@gmail.com>
+> 
+> Hi ARM SoC maintainers,
+> 
+> The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
+> 
+>   Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.1-dt-bindings
+> 
+> for you to fetch changes up to bed2f5b4de6c6fd8f8928f6373ad92e8795c370f:
+> 
+>   dt-bindings: arm: tegra: Document Jetson AGX Thor DevKit (2026-03-28 01:05:24 +0100)
+> 
+> Thanks,
+> Thierry
+> 
+> ----------------------------------------------------------------
+> dt-bindings: Changes for v7.1-rc1
+> 
+> This contains a few conversions to DT schema along with various
+> additions and fixes to reduce the amount of validation warnings.
+> 
+> Included are also a new binding for the PCIe controller found on
+> Tegra264 as well as compatible strings for the Jetson AGX Thor
+> Developer Kit.
+> 
+> ----------------------------------------------------------------
+> Sumit Gupta (1):
+>       dt-bindings: arm: tegra: Add Tegra238 CBB compatible strings
+> 
+> Svyatoslav Ryhel (1):
+>       dt-bindings: display: tegra: Document Tegra20 HDMI port
+> 
+> Thierry Reding (9):
+>       dt-bindings: pci: Document the NVIDIA Tegra264 PCIe controller
 
-kernel test robot noticed the following build errors:
+Why are you taking subsystem patches? This was posted on 26th of March
+and was not acked by PCI maintainers.
 
-[auto build test ERROR on staging/staging-testing]
+How the bindings should go is already documented, so there is no
+question here.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sebastian-Josue-Alba-Vives/staging-nvec-validate-battery-response-length-before-memcpy/20260330-083704
-base:   staging/staging-testing
-patch link:    https://lore.kernel.org/r/20260329210800.597697-1-sebasjosue84%40gmail.com
-patch subject: [PATCH v2] staging: nvec: validate battery response length before memcpy
-config: arm64-randconfig-003-20260330 (https://download.01.org/0day-ci/archive/20260330/202603301722.axpoITcy-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260330/202603301722.axpoITcy-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202603301722.axpoITcy-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/staging/nvec/nvec_power.c: In function 'nvec_power_bat_notifier':
->> drivers/staging/nvec/nvec_power.c:237:12: error: invalid storage class for function 'nvec_power_get_property'
-    static int nvec_power_get_property(struct power_supply *psy,
-               ^~~~~~~~~~~~~~~~~~~~~~~
->> drivers/staging/nvec/nvec_power.c:253:12: error: invalid storage class for function 'nvec_battery_get_property'
-    static int nvec_battery_get_property(struct power_supply *psy,
-               ^~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/staging/nvec/nvec_power.c:344:18: error: initializer element is not constant
-     .get_property = nvec_battery_get_property,
-                     ^~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/staging/nvec/nvec_power.c:344:18: note: (near initialization for 'nvec_bat_psy_desc.get_property')
-   drivers/staging/nvec/nvec_power.c:352:18: error: initializer element is not constant
-     .get_property = nvec_power_get_property,
-                     ^~~~~~~~~~~~~~~~~~~~~~~
-   drivers/staging/nvec/nvec_power.c:352:18: note: (near initialization for 'nvec_psy_desc.get_property')
->> drivers/staging/nvec/nvec_power.c:363:13: error: invalid storage class for function 'nvec_power_poll'
-    static void nvec_power_poll(struct work_struct *work)
-                ^~~~~~~~~~~~~~~
->> drivers/staging/nvec/nvec_power.c:387:12: error: invalid storage class for function 'nvec_power_probe'
-    static int nvec_power_probe(struct platform_device *pdev)
-               ^~~~~~~~~~~~~~~~
->> drivers/staging/nvec/nvec_power.c:434:13: error: invalid storage class for function 'nvec_power_remove'
-    static void nvec_power_remove(struct platform_device *pdev)
-                ^~~~~~~~~~~~~~~~~
-   drivers/staging/nvec/nvec_power.c:450:11: error: initializer element is not constant
-     .probe = nvec_power_probe,
-              ^~~~~~~~~~~~~~~~
-   drivers/staging/nvec/nvec_power.c:450:11: note: (near initialization for 'nvec_power_driver.probe')
-   drivers/staging/nvec/nvec_power.c:451:12: error: initializer element is not constant
-     .remove = nvec_power_remove,
-               ^~~~~~~~~~~~~~~~~
-   drivers/staging/nvec/nvec_power.c:451:12: note: (near initialization for 'nvec_power_driver.remove')
-   In file included from include/linux/device.h:32,
-                    from include/linux/platform_device.h:13,
-                    from drivers/staging/nvec/nvec_power.c:12:
->> drivers/staging/nvec/nvec_power.c:457:24: error: invalid storage class for function 'nvec_power_driver_init'
-    module_platform_driver(nvec_power_driver);
-                           ^~~~~~~~~~~~~~~~~
-   include/linux/device/driver.h:267:19: note: in definition of macro 'module_driver'
-    static int __init __driver##_init(void) \
-                      ^~~~~~~~
-   drivers/staging/nvec/nvec_power.c:457:1: note: in expansion of macro 'module_platform_driver'
-    module_platform_driver(nvec_power_driver);
-    ^~~~~~~~~~~~~~~~~~~~~~
-   In file included from include/linux/build_bug.h:5,
-                    from include/linux/container_of.h:5,
-                    from include/linux/list.h:5,
-                    from include/linux/module.h:12,
-                    from drivers/staging/nvec/nvec_power.c:11:
-   include/linux/compiler.h:276:44: error: initializer element is not constant
-     __UNIQUE_ID(__PASTE(addressable_, sym)) = (void *)(uintptr_t)&sym;
-                                               ^
-   include/linux/compiler.h:279:2: note: in expansion of macro '___ADDRESSABLE'
-     ___ADDRESSABLE(sym, __section(".discard.addressable"))
-     ^~~~~~~~~~~~~~
-   include/linux/init.h:251:2: note: in expansion of macro '__ADDRESSABLE'
-     __ADDRESSABLE(fn)
-     ^~~~~~~~~~~~~
-   include/linux/init.h:256:2: note: in expansion of macro '__define_initcall_stub'
-     __define_initcall_stub(__stub, fn)   \
-     ^~~~~~~~~~~~~~~~~~~~~~
-   include/linux/init.h:269:2: note: in expansion of macro '____define_initcall'
-     ____define_initcall(fn,     \
-     ^~~~~~~~~~~~~~~~~~~
-   include/linux/init.h:275:2: note: in expansion of macro '__unique_initcall'
-     __unique_initcall(fn, id, __sec, __initcall_id(fn))
-     ^~~~~~~~~~~~~~~~~
-   include/linux/init.h:277:35: note: in expansion of macro '___define_initcall'
-    #define __define_initcall(fn, id) ___define_initcall(fn, id, .initcall##id)
-                                      ^~~~~~~~~~~~~~~~~~
-   include/linux/init.h:306:30: note: in expansion of macro '__define_initcall'
-    #define device_initcall(fn)  __define_initcall(fn, 6)
-                                 ^~~~~~~~~~~~~~~~~
-   include/linux/init.h:311:24: note: in expansion of macro 'device_initcall'
-    #define __initcall(fn) device_initcall(fn)
-                           ^~~~~~~~~~~~~~~
-   include/linux/module.h:89:24: note: in expansion of macro '__initcall'
-    #define module_init(x) __initcall(x);
-                           ^~~~~~~~~~
-   include/linux/device/driver.h:271:1: note: in expansion of macro 'module_init'
-    module_init(__driver##_init); \
-    ^~~~~~~~~~~
-   include/linux/platform_device.h:295:2: note: in expansion of macro 'module_driver'
-     module_driver(__platform_driver, platform_driver_register, \
-     ^~~~~~~~~~~~~
-   drivers/staging/nvec/nvec_power.c:457:1: note: in expansion of macro 'module_platform_driver'
-    module_platform_driver(nvec_power_driver);
-    ^~~~~~~~~~~~~~~~~~~~~~
-   In file included from include/linux/device.h:32,
-                    from include/linux/platform_device.h:13,
-                    from drivers/staging/nvec/nvec_power.c:12:
->> drivers/staging/nvec/nvec_power.c:457:24: error: invalid storage class for function 'nvec_power_driver_exit'
-    module_platform_driver(nvec_power_driver);
-                           ^~~~~~~~~~~~~~~~~
-   include/linux/device/driver.h:272:20: note: in definition of macro 'module_driver'
-    static void __exit __driver##_exit(void) \
-                       ^~~~~~~~
-   drivers/staging/nvec/nvec_power.c:457:1: note: in expansion of macro 'module_platform_driver'
-    module_platform_driver(nvec_power_driver);
-    ^~~~~~~~~~~~~~~~~~~~~~
-   In file included from arch/arm64/include/asm/alternative.h:9,
-                    from arch/arm64/include/asm/lse.h:12,
-                    from arch/arm64/include/asm/cmpxchg.h:14,
-                    from arch/arm64/include/asm/atomic.h:16,
-                    from include/linux/atomic.h:7,
-                    from include/asm-generic/bitops/atomic.h:5,
-                    from arch/arm64/include/asm/bitops.h:25,
-                    from include/linux/bitops.h:67,
-                    from arch/arm64/include/asm/cache.h:40,
-                    from include/vdso/cache.h:5,
-                    from include/linux/cache.h:6,
-                    from include/linux/time.h:5,
-                    from arch/arm64/include/asm/stat.h:12,
-                    from include/linux/stat.h:6,
-                    from include/linux/module.h:13,
-                    from drivers/staging/nvec/nvec_power.c:11:
-   drivers/staging/nvec/nvec_power.c:457:24: error: initializer element is not constant
-    module_platform_driver(nvec_power_driver);
-                           ^~~~~~~~~~~~~~~~~
-   include/linux/init.h:314:50: note: in definition of macro '__exitcall'
-     static exitcall_t __exitcall_##fn __exit_call = fn
-                                                     ^~
-   include/linux/device/driver.h:276:1: note: in expansion of macro 'module_exit'
-    module_exit(__driver##_exit);
-    ^~~~~~~~~~~
-   include/linux/platform_device.h:295:2: note: in expansion of macro 'module_driver'
-     module_driver(__platform_driver, platform_driver_register, \
-     ^~~~~~~~~~~~~
-   drivers/staging/nvec/nvec_power.c:457:1: note: in expansion of macro 'module_platform_driver'
-    module_platform_driver(nvec_power_driver);
-    ^~~~~~~~~~~~~~~~~~~~~~
->> drivers/staging/nvec/nvec_power.c:462:1: error: expected declaration or statement at end of input
-    MODULE_ALIAS("platform:nvec-power");
-    ^~~~~~~~~~~~
+The question was whether you can take them if subsystem maintainer is
+non-responsive and yes, you can. You gave PCI maintainers one day before
+applying it.
 
 
-vim +/nvec_power_get_property +237 drivers/staging/nvec/nvec_power.c
+>       dt-bindings: phy: tegra-xusb: Document Type C support
 
-32890b98308613 Marc Dietrich       2011-05-19  236  
-32890b98308613 Marc Dietrich       2011-05-19 @237  static int nvec_power_get_property(struct power_supply *psy,
-32890b98308613 Marc Dietrich       2011-05-19  238  				   enum power_supply_property psp,
-32890b98308613 Marc Dietrich       2011-05-19  239  				   union power_supply_propval *val)
-32890b98308613 Marc Dietrich       2011-05-19  240  {
-297d716f6260cc Krzysztof Kozlowski 2015-03-12  241  	struct nvec_power *power = dev_get_drvdata(psy->dev.parent);
-fa799617865037 Pawel Lebioda       2014-07-03  242  
-32890b98308613 Marc Dietrich       2011-05-19  243  	switch (psp) {
-32890b98308613 Marc Dietrich       2011-05-19  244  	case POWER_SUPPLY_PROP_ONLINE:
-32890b98308613 Marc Dietrich       2011-05-19  245  		val->intval = power->on;
-32890b98308613 Marc Dietrich       2011-05-19  246  		break;
-32890b98308613 Marc Dietrich       2011-05-19  247  	default:
-32890b98308613 Marc Dietrich       2011-05-19  248  		return -EINVAL;
-32890b98308613 Marc Dietrich       2011-05-19  249  	}
-32890b98308613 Marc Dietrich       2011-05-19  250  	return 0;
-32890b98308613 Marc Dietrich       2011-05-19  251  }
-32890b98308613 Marc Dietrich       2011-05-19  252  
-32890b98308613 Marc Dietrich       2011-05-19 @253  static int nvec_battery_get_property(struct power_supply *psy,
-32890b98308613 Marc Dietrich       2011-05-19  254  				     enum power_supply_property psp,
-32890b98308613 Marc Dietrich       2011-05-19  255  				     union power_supply_propval *val)
-32890b98308613 Marc Dietrich       2011-05-19  256  {
-297d716f6260cc Krzysztof Kozlowski 2015-03-12  257  	struct nvec_power *power = dev_get_drvdata(psy->dev.parent);
-32890b98308613 Marc Dietrich       2011-05-19  258  
-162c7d8c4be2d5 Marc Dietrich       2011-09-27  259  	switch (psp) {
-32890b98308613 Marc Dietrich       2011-05-19  260  	case POWER_SUPPLY_PROP_STATUS:
-32890b98308613 Marc Dietrich       2011-05-19  261  		val->intval = power->bat_status;
-32890b98308613 Marc Dietrich       2011-05-19  262  		break;
-32890b98308613 Marc Dietrich       2011-05-19  263  	case POWER_SUPPLY_PROP_CAPACITY:
-32890b98308613 Marc Dietrich       2011-05-19  264  		val->intval = power->bat_cap;
-32890b98308613 Marc Dietrich       2011-05-19  265  		break;
-32890b98308613 Marc Dietrich       2011-05-19  266  	case POWER_SUPPLY_PROP_PRESENT:
-32890b98308613 Marc Dietrich       2011-05-19  267  		val->intval = power->bat_present;
-32890b98308613 Marc Dietrich       2011-05-19  268  		break;
-32890b98308613 Marc Dietrich       2011-05-19  269  	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-32890b98308613 Marc Dietrich       2011-05-19  270  		val->intval = power->bat_voltage_now;
-32890b98308613 Marc Dietrich       2011-05-19  271  		break;
-32890b98308613 Marc Dietrich       2011-05-19  272  	case POWER_SUPPLY_PROP_CURRENT_NOW:
-32890b98308613 Marc Dietrich       2011-05-19  273  		val->intval = power->bat_current_now;
-32890b98308613 Marc Dietrich       2011-05-19  274  		break;
-32890b98308613 Marc Dietrich       2011-05-19  275  	case POWER_SUPPLY_PROP_CURRENT_AVG:
-32890b98308613 Marc Dietrich       2011-05-19  276  		val->intval = power->bat_current_avg;
-32890b98308613 Marc Dietrich       2011-05-19  277  		break;
-32890b98308613 Marc Dietrich       2011-05-19  278  	case POWER_SUPPLY_PROP_TIME_TO_EMPTY_NOW:
-32890b98308613 Marc Dietrich       2011-05-19  279  		val->intval = power->time_remain;
-32890b98308613 Marc Dietrich       2011-05-19  280  		break;
-32890b98308613 Marc Dietrich       2011-05-19  281  	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
-32890b98308613 Marc Dietrich       2011-05-19  282  		val->intval = power->charge_full_design;
-32890b98308613 Marc Dietrich       2011-05-19  283  		break;
-32890b98308613 Marc Dietrich       2011-05-19  284  	case POWER_SUPPLY_PROP_CHARGE_FULL:
-32890b98308613 Marc Dietrich       2011-05-19  285  		val->intval = power->charge_last_full;
-32890b98308613 Marc Dietrich       2011-05-19  286  		break;
-32890b98308613 Marc Dietrich       2011-05-19  287  	case POWER_SUPPLY_PROP_CHARGE_EMPTY:
-32890b98308613 Marc Dietrich       2011-05-19  288  		val->intval = power->critical_capacity;
-32890b98308613 Marc Dietrich       2011-05-19  289  		break;
-32890b98308613 Marc Dietrich       2011-05-19  290  	case POWER_SUPPLY_PROP_CHARGE_NOW:
-32890b98308613 Marc Dietrich       2011-05-19  291  		val->intval = power->capacity_remain;
-32890b98308613 Marc Dietrich       2011-05-19  292  		break;
-32890b98308613 Marc Dietrich       2011-05-19  293  	case POWER_SUPPLY_PROP_TEMP:
-32890b98308613 Marc Dietrich       2011-05-19  294  		val->intval = power->bat_temperature;
-32890b98308613 Marc Dietrich       2011-05-19  295  		break;
-32890b98308613 Marc Dietrich       2011-05-19  296  	case POWER_SUPPLY_PROP_MANUFACTURER:
-32890b98308613 Marc Dietrich       2011-05-19  297  		val->strval = power->bat_manu;
-32890b98308613 Marc Dietrich       2011-05-19  298  		break;
-32890b98308613 Marc Dietrich       2011-05-19  299  	case POWER_SUPPLY_PROP_MODEL_NAME:
-32890b98308613 Marc Dietrich       2011-05-19  300  		val->strval = power->bat_model;
-32890b98308613 Marc Dietrich       2011-05-19  301  		break;
-32890b98308613 Marc Dietrich       2011-05-19  302  	case POWER_SUPPLY_PROP_TECHNOLOGY:
-32890b98308613 Marc Dietrich       2011-05-19  303  		val->intval = power->bat_type_enum;
-32890b98308613 Marc Dietrich       2011-05-19  304  		break;
-32890b98308613 Marc Dietrich       2011-05-19  305  	default:
-32890b98308613 Marc Dietrich       2011-05-19  306  		return -EINVAL;
-32890b98308613 Marc Dietrich       2011-05-19  307  	}
-32890b98308613 Marc Dietrich       2011-05-19  308  	return 0;
-32890b98308613 Marc Dietrich       2011-05-19  309  }
-32890b98308613 Marc Dietrich       2011-05-19  310  
-32890b98308613 Marc Dietrich       2011-05-19  311  static enum power_supply_property nvec_power_props[] = {
-32890b98308613 Marc Dietrich       2011-05-19  312  	POWER_SUPPLY_PROP_ONLINE,
-32890b98308613 Marc Dietrich       2011-05-19  313  };
-32890b98308613 Marc Dietrich       2011-05-19  314  
-32890b98308613 Marc Dietrich       2011-05-19  315  static enum power_supply_property nvec_battery_props[] = {
-32890b98308613 Marc Dietrich       2011-05-19  316  	POWER_SUPPLY_PROP_STATUS,
-32890b98308613 Marc Dietrich       2011-05-19  317  	POWER_SUPPLY_PROP_PRESENT,
-32890b98308613 Marc Dietrich       2011-05-19  318  	POWER_SUPPLY_PROP_CAPACITY,
-32890b98308613 Marc Dietrich       2011-05-19  319  	POWER_SUPPLY_PROP_VOLTAGE_NOW,
-32890b98308613 Marc Dietrich       2011-05-19  320  	POWER_SUPPLY_PROP_CURRENT_NOW,
-32890b98308613 Marc Dietrich       2011-05-19  321  #ifdef EC_FULL_DIAG
-32890b98308613 Marc Dietrich       2011-05-19  322  	POWER_SUPPLY_PROP_CURRENT_AVG,
-32890b98308613 Marc Dietrich       2011-05-19  323  	POWER_SUPPLY_PROP_TEMP,
-32890b98308613 Marc Dietrich       2011-05-19  324  	POWER_SUPPLY_PROP_TIME_TO_EMPTY_NOW,
-32890b98308613 Marc Dietrich       2011-05-19  325  #endif
-32890b98308613 Marc Dietrich       2011-05-19  326  	POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
-32890b98308613 Marc Dietrich       2011-05-19  327  	POWER_SUPPLY_PROP_CHARGE_FULL,
-32890b98308613 Marc Dietrich       2011-05-19  328  	POWER_SUPPLY_PROP_CHARGE_EMPTY,
-32890b98308613 Marc Dietrich       2011-05-19  329  	POWER_SUPPLY_PROP_CHARGE_NOW,
-32890b98308613 Marc Dietrich       2011-05-19  330  	POWER_SUPPLY_PROP_MANUFACTURER,
-32890b98308613 Marc Dietrich       2011-05-19  331  	POWER_SUPPLY_PROP_MODEL_NAME,
-32890b98308613 Marc Dietrich       2011-05-19  332  	POWER_SUPPLY_PROP_TECHNOLOGY,
-32890b98308613 Marc Dietrich       2011-05-19  333  };
-32890b98308613 Marc Dietrich       2011-05-19  334  
-32890b98308613 Marc Dietrich       2011-05-19  335  static char *nvec_power_supplied_to[] = {
-32890b98308613 Marc Dietrich       2011-05-19  336  	"battery",
-32890b98308613 Marc Dietrich       2011-05-19  337  };
-32890b98308613 Marc Dietrich       2011-05-19  338  
-297d716f6260cc Krzysztof Kozlowski 2015-03-12  339  static const struct power_supply_desc nvec_bat_psy_desc = {
-32890b98308613 Marc Dietrich       2011-05-19  340  	.name = "battery",
-32890b98308613 Marc Dietrich       2011-05-19  341  	.type = POWER_SUPPLY_TYPE_BATTERY,
-32890b98308613 Marc Dietrich       2011-05-19  342  	.properties = nvec_battery_props,
-32890b98308613 Marc Dietrich       2011-05-19  343  	.num_properties = ARRAY_SIZE(nvec_battery_props),
-32890b98308613 Marc Dietrich       2011-05-19 @344  	.get_property = nvec_battery_get_property,
-32890b98308613 Marc Dietrich       2011-05-19  345  };
-32890b98308613 Marc Dietrich       2011-05-19  346  
-297d716f6260cc Krzysztof Kozlowski 2015-03-12  347  static const struct power_supply_desc nvec_psy_desc = {
-32890b98308613 Marc Dietrich       2011-05-19  348  	.name = "ac",
-32890b98308613 Marc Dietrich       2011-05-19  349  	.type = POWER_SUPPLY_TYPE_MAINS,
-32890b98308613 Marc Dietrich       2011-05-19  350  	.properties = nvec_power_props,
-32890b98308613 Marc Dietrich       2011-05-19  351  	.num_properties = ARRAY_SIZE(nvec_power_props),
-32890b98308613 Marc Dietrich       2011-05-19  352  	.get_property = nvec_power_get_property,
-32890b98308613 Marc Dietrich       2011-05-19  353  };
-32890b98308613 Marc Dietrich       2011-05-19  354  
-162c7d8c4be2d5 Marc Dietrich       2011-09-27  355  static int counter;
-dc31fc6ce69e03 Fatih Yildirim      2021-02-12  356  static const int bat_iter[] = {
-32890b98308613 Marc Dietrich       2011-05-19  357  	SLOT_STATUS, VOLTAGE, CURRENT, CAPACITY_REMAINING,
-32890b98308613 Marc Dietrich       2011-05-19  358  #ifdef EC_FULL_DIAG
-32890b98308613 Marc Dietrich       2011-05-19  359  	AVERAGE_CURRENT, TEMPERATURE, TIME_REMAINING,
-32890b98308613 Marc Dietrich       2011-05-19  360  #endif
-32890b98308613 Marc Dietrich       2011-05-19  361  };
-32890b98308613 Marc Dietrich       2011-05-19  362  
-32890b98308613 Marc Dietrich       2011-05-19 @363  static void nvec_power_poll(struct work_struct *work)
-32890b98308613 Marc Dietrich       2011-05-19  364  {
-93eff83ff1640b Marc Dietrich       2013-01-27  365  	char buf[] = { NVEC_SYS, GET_SYSTEM_STATUS };
-32890b98308613 Marc Dietrich       2011-05-19  366  	struct nvec_power *power = container_of(work, struct nvec_power,
-32890b98308613 Marc Dietrich       2011-05-19  367  						poller.work);
-32890b98308613 Marc Dietrich       2011-05-19  368  
-32890b98308613 Marc Dietrich       2011-05-19  369  	if (counter >= ARRAY_SIZE(bat_iter))
-32890b98308613 Marc Dietrich       2011-05-19  370  		counter = 0;
-32890b98308613 Marc Dietrich       2011-05-19  371  
-32890b98308613 Marc Dietrich       2011-05-19  372  	/* AC status via sys req */
-32890b98308613 Marc Dietrich       2011-05-19  373  	nvec_write_async(power->nvec, buf, 2);
-32890b98308613 Marc Dietrich       2011-05-19  374  	msleep(100);
-32890b98308613 Marc Dietrich       2011-05-19  375  
-66ad85d13f56b4 Simon Guinot        2015-12-09  376  	/*
-66ad85d13f56b4 Simon Guinot        2015-12-09  377  	 * Select a battery request function via round robin doing it all at
-66ad85d13f56b4 Simon Guinot        2015-12-09  378  	 * once seems to overload the power supply.
-66ad85d13f56b4 Simon Guinot        2015-12-09  379  	 */
-93eff83ff1640b Marc Dietrich       2013-01-27  380  	buf[0] = NVEC_BAT;
-32890b98308613 Marc Dietrich       2011-05-19  381  	buf[1] = bat_iter[counter++];
-32890b98308613 Marc Dietrich       2011-05-19  382  	nvec_write_async(power->nvec, buf, 2);
-32890b98308613 Marc Dietrich       2011-05-19  383  
-32890b98308613 Marc Dietrich       2011-05-19  384  	schedule_delayed_work(to_delayed_work(work), msecs_to_jiffies(5000));
-32890b98308613 Marc Dietrich       2011-05-19  385  };
-32890b98308613 Marc Dietrich       2011-05-19  386  
-46620803c309d2 Bill Pemberton      2012-11-19 @387  static int nvec_power_probe(struct platform_device *pdev)
-32890b98308613 Marc Dietrich       2011-05-19  388  {
-297d716f6260cc Krzysztof Kozlowski 2015-03-12  389  	struct power_supply **psy;
-297d716f6260cc Krzysztof Kozlowski 2015-03-12  390  	const struct power_supply_desc *psy_desc;
-f5e3352e5185ef Marc Dietrich       2012-06-24  391  	struct nvec_power *power;
-32890b98308613 Marc Dietrich       2011-05-19  392  	struct nvec_chip *nvec = dev_get_drvdata(pdev->dev.parent);
-2dc9215d7c94f7 Krzysztof Kozlowski 2015-03-12  393  	struct power_supply_config psy_cfg = {};
-32890b98308613 Marc Dietrich       2011-05-19  394  
-f5e3352e5185ef Marc Dietrich       2012-06-24  395  	power = devm_kzalloc(&pdev->dev, sizeof(struct nvec_power), GFP_NOWAIT);
-4c42d979816a0b Somya Anand         2015-03-16  396  	if (!power)
-f5e3352e5185ef Marc Dietrich       2012-06-24  397  		return -ENOMEM;
-f5e3352e5185ef Marc Dietrich       2012-06-24  398  
-32890b98308613 Marc Dietrich       2011-05-19  399  	dev_set_drvdata(&pdev->dev, power);
-32890b98308613 Marc Dietrich       2011-05-19  400  	power->nvec = nvec;
-32890b98308613 Marc Dietrich       2011-05-19  401  
-32890b98308613 Marc Dietrich       2011-05-19  402  	switch (pdev->id) {
-32890b98308613 Marc Dietrich       2011-05-19  403  	case AC:
-32890b98308613 Marc Dietrich       2011-05-19  404  		psy = &nvec_psy;
-297d716f6260cc Krzysztof Kozlowski 2015-03-12  405  		psy_desc = &nvec_psy_desc;
-2dc9215d7c94f7 Krzysztof Kozlowski 2015-03-12  406  		psy_cfg.supplied_to = nvec_power_supplied_to;
-2dc9215d7c94f7 Krzysztof Kozlowski 2015-03-12  407  		psy_cfg.num_supplicants = ARRAY_SIZE(nvec_power_supplied_to);
-32890b98308613 Marc Dietrich       2011-05-19  408  
-32890b98308613 Marc Dietrich       2011-05-19  409  		power->notifier.notifier_call = nvec_power_notifier;
-32890b98308613 Marc Dietrich       2011-05-19  410  
-32890b98308613 Marc Dietrich       2011-05-19  411  		INIT_DELAYED_WORK(&power->poller, nvec_power_poll);
-32890b98308613 Marc Dietrich       2011-05-19  412  		schedule_delayed_work(&power->poller, msecs_to_jiffies(5000));
-32890b98308613 Marc Dietrich       2011-05-19  413  		break;
-32890b98308613 Marc Dietrich       2011-05-19  414  	case BAT:
-32890b98308613 Marc Dietrich       2011-05-19  415  		psy = &nvec_bat_psy;
-297d716f6260cc Krzysztof Kozlowski 2015-03-12  416  		psy_desc = &nvec_bat_psy_desc;
-32890b98308613 Marc Dietrich       2011-05-19  417  
-32890b98308613 Marc Dietrich       2011-05-19  418  		power->notifier.notifier_call = nvec_power_bat_notifier;
-32890b98308613 Marc Dietrich       2011-05-19  419  		break;
-32890b98308613 Marc Dietrich       2011-05-19  420  	default:
-32890b98308613 Marc Dietrich       2011-05-19  421  		return -ENODEV;
-32890b98308613 Marc Dietrich       2011-05-19  422  	}
-32890b98308613 Marc Dietrich       2011-05-19  423  
-32890b98308613 Marc Dietrich       2011-05-19  424  	nvec_register_notifier(nvec, &power->notifier, NVEC_SYS);
-32890b98308613 Marc Dietrich       2011-05-19  425  
-32890b98308613 Marc Dietrich       2011-05-19  426  	if (pdev->id == BAT)
-32890b98308613 Marc Dietrich       2011-05-19  427  		get_bat_mfg_data(power);
-32890b98308613 Marc Dietrich       2011-05-19  428  
-297d716f6260cc Krzysztof Kozlowski 2015-03-12  429  	*psy = power_supply_register(&pdev->dev, psy_desc, &psy_cfg);
-297d716f6260cc Krzysztof Kozlowski 2015-03-12  430  
-297d716f6260cc Krzysztof Kozlowski 2015-03-12  431  	return PTR_ERR_OR_ZERO(*psy);
-32890b98308613 Marc Dietrich       2011-05-19  432  }
-32890b98308613 Marc Dietrich       2011-05-19  433  
-f1e870c45be5b6 Uwe Kleine-König    2023-04-03 @434  static void nvec_power_remove(struct platform_device *pdev)
-3cdde3a3d55e64 Marc Dietrich       2012-06-24  435  {
-3cdde3a3d55e64 Marc Dietrich       2012-06-24  436  	struct nvec_power *power = platform_get_drvdata(pdev);
-3cdde3a3d55e64 Marc Dietrich       2012-06-24  437  
-3cdde3a3d55e64 Marc Dietrich       2012-06-24  438  	cancel_delayed_work_sync(&power->poller);
-c2b62f60f67e03 Marc Dietrich       2013-04-29  439  	nvec_unregister_notifier(power->nvec, &power->notifier);
-3cdde3a3d55e64 Marc Dietrich       2012-06-24  440  	switch (pdev->id) {
-3cdde3a3d55e64 Marc Dietrich       2012-06-24  441  	case AC:
-297d716f6260cc Krzysztof Kozlowski 2015-03-12  442  		power_supply_unregister(nvec_psy);
-3cdde3a3d55e64 Marc Dietrich       2012-06-24  443  		break;
-3cdde3a3d55e64 Marc Dietrich       2012-06-24  444  	case BAT:
-297d716f6260cc Krzysztof Kozlowski 2015-03-12  445  		power_supply_unregister(nvec_bat_psy);
-3cdde3a3d55e64 Marc Dietrich       2012-06-24  446  	}
-3cdde3a3d55e64 Marc Dietrich       2012-06-24  447  }
-3cdde3a3d55e64 Marc Dietrich       2012-06-24  448  
+No acks, but that is waiting for one month so it is fine.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>       dt-bindings: clock: tegra124-dfll: Convert to json-schema
+>       dt-bindings: interrupt-controller: tegra: Fix reg entries
+>       dt-bindings: arm: tegra: Add missing compatible strings
+>       dt-bindings: phy: tegra: Document Tegra210 USB PHY
+>       dt-bindings: memory: Add Tegra210 memory controller bindings
+>       dt-bindings: memory: tegra210: Mark EMC as cooling device
+
+That's even my subsystem and I did not ack it. You did not even sent it
+to me as requested by MAINTAINERS file (+dt is ignore alias), so
+obviously I did not even had a chance to ack it.
+
+And we even had few days ago talk were I explained you how these
+bindings must go. Seeing pull request completely ignoring that
+discussion is just huge surprise.
+
+No, it cannot go in. Send patches to proper maintainers first.
+
+Best regards,
+Krzysztof
