@@ -1,157 +1,185 @@
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010029.outbound.protection.outlook.com [52.101.61.29])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E64731F984;
-	Mon, 30 Mar 2026 14:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774882035; cv=fail; b=V11/7jbDu03HhLKpTPPhADc6ft7neHau/yKeWGcnrgN2b6bVFy11j3O7qQbWf2e5MZkIBi0dSpfsDrIfRKfSQIM48Mfe2Z0/h/82l21Z1hvh1a4IIrVI+T09qTZAAp496Ofx6t4FZjolNwcUyacUNqY71LaRqdEk7/B78JzA7Z0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774882035; c=relaxed/simple;
-	bh=S1s9eEL+e6ZhFAmNEYpv65ZovJCBkkZwzR7yhlLIEow=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A8r4Q4IRNVYLCZV6HtrDfFRjFMAudGpKOPh2GM8I4VdlNw68Ao8ZLehEw5QiaD8JN7baWZn6lwXjqxg6fsNnd9JGKKtQfiBQvPt1M+IVMBqVEu0oarKM/TScgu0p4PAMXG4i+1UkwmugNPBPP19rzGVSr/1lyqFutbQOLLzQ8nA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gMTSL5+K; arc=fail smtp.client-ip=52.101.61.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536343242BD;
+	Mon, 30 Mar 2026 14:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774882102; cv=none; b=hOPyN/o7zcFOyY2Z4Mcs0ncWb01Pqu+sd3tEKKdZo0pUUPNxgc6k0HlgKbxbzJ9QKwN/CmG46GJVYzpEPjp4LBAcOnHFx8X0hryT2xTgO3oZryPRl4shYvir1LlsLJVT9u+1yIaXA1881DuC7IsxQZE2jXiE2q0SDDJ18ugccRU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774882102; c=relaxed/simple;
+	bh=xpBPUcul1mxy76GdOsZONkg8Sx2okkRC6m5zBbw2K2U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bCxVOK5gjduDy4+muLIKiqt2uUZJWntcAkhXGYGiybs/xMJTETLZWHi0jP5Kso9hastE1dD25DYl5s5bzpKzdsUHoltrdBtKAzBSIwu4gjyyxAWYMC8faHFrHuJopVuAeKGKSACCneQmMaT2bC3pTJTFbEBMm4i7rQpslpqZd1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=byu97nM0; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gMTSL5+K"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OKSAOKVPOpyUGY9d5NXCU3hqJjb6JNLkHArfq/BXOdQ28CGwNtD6HlMCgVZApX0YGP+LYsOuzjQo3lTIKMb5Wy36Zcy9c6Wd5Rt7ZZW8gc/b3X2BlY0UIx1cHzAKz/LP60bVchfnnR2SCXEgSGkALhkwcG9CashppHbrebA8/ZOjkNXPHTCHXzZ6qPHuZyxQEp00fB48xofRwd564JSni/9MNUjNbJYIzv810fj7ZsdPHvatXdwCn4jXzM2PixM/Me0FKk998bIazTg0t8qyq22alCeV38NuzeAr7xVM6CUynd0ltREPTt438GxcYBCsUMqCNjeNTRv62pM/iQPkMQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GrBIbZMyVZaLHD0RxJdtH7oKyBdkos2HKFAeioE4AKs=;
- b=yCOl93LCv6nnLhWD+KCwcIDTrTPd6mxVM8Uud0Xa0T6P0jwJK/riNx+uXuTH4fG2rQEvQat+i/+wZP1WfuqPDdS6IzSRGTOw4tzO+9ThUHAI2zip0pych4Bf7sWU99jawpBzMw6B83tzGy6pe5mcH/VRHVzEzARNCDxJAwwz6xHmV0SKMqF9TPQURHjy9LZ5Wmij1ICuUGKZQ3TsvzUh3LN8PyUhN/E4Mp3rBQXOh/NU48V0sldiknQK+OTckKkA7jHsUz4YKw8ek6qZTqc+4XZ6jNggIdspLmGunAqujXQuUzz9JzUffyxX7XUQjScBwD5D3peiXMs5v9P2x3OH0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GrBIbZMyVZaLHD0RxJdtH7oKyBdkos2HKFAeioE4AKs=;
- b=gMTSL5+K9v9KSWz+wdAaq7lIu2L0R/gYFgkxPRCFBSvkcJUylXgRSUTI/5NTb866CAVOF9KQQGIJeVlmYWdww8zOOjcN7ftIPRNpa1PF6hNAy3MFZnnVyfYiHyTBQI+dDBPW1vbDqMeSvSrCfYPEuKOxn/0SR4AVoDadmZ9Z72MouN60VjRtKU02LJHxh9eb8LWgUxAc6URPe7dKXtGB7TAvmmQdQA3WOorHpHYewQZchMkhvavBq/fqy53awzt2Pb1QeHXJyQxdiMRoEpRQjCK/IZxVmltNHyQbgQ1h+ig7L509oJax2gXzFk2sbAO+PwjQuTohzKRy4QrYyqt0Yg==
-Received: from SJ0P220CA0024.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:41b::32)
- by CY5PR12MB6131.namprd12.prod.outlook.com (2603:10b6:930:25::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.15; Mon, 30 Mar
- 2026 14:47:08 +0000
-Received: from SJ1PEPF0000231C.namprd03.prod.outlook.com
- (2603:10b6:a03:41b:cafe::7d) by SJ0P220CA0024.outlook.office365.com
- (2603:10b6:a03:41b::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9745.28 via Frontend Transport; Mon,
- 30 Mar 2026 14:46:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ1PEPF0000231C.mail.protection.outlook.com (10.167.242.233) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9745.21 via Frontend Transport; Mon, 30 Mar 2026 14:47:06 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 30 Mar
- 2026 07:46:42 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 30 Mar
- 2026 07:46:42 -0700
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Mon, 30 Mar 2026 07:46:38 -0700
-From: Akhil R <akhilrajeev@nvidia.com>
-To: Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "Jonathan
- Hunter" <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, <dmaengine@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Akhil R <akhilrajeev@nvidia.com>
-Subject: [PATCH v5 10/10] arm64: tegra: Enable GPCDMA in Tegra264 and add iommu-map
-Date: Mon, 30 Mar 2026 20:14:56 +0530
-Message-ID: <20260330144456.13551-11-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260330144456.13551-1-akhilrajeev@nvidia.com>
-References: <20260330144456.13551-1-akhilrajeev@nvidia.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="byu97nM0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1774882101; x=1806418101;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xpBPUcul1mxy76GdOsZONkg8Sx2okkRC6m5zBbw2K2U=;
+  b=byu97nM0kVK6sXPi2Ars2jrEyZxmWIFEbIssuepZBxVJKiQO8OCfzkUh
+   Li17a95Y7r6c9HQ3LHnG4UKtGmWoa9txE43VXKHGfPCZeM3PO2FlnxcZS
+   DB2OPSxpz6J+aj3tgizdWB8QZn5gzI1lN9TO2VI1vVAPPvR0nzPRN+Q9W
+   UvIqpUA0E/tcHsD2pPvdjGJcoNOy+kuy99yQtYIhIS9zrCR5KsPLRxCM8
+   9ZhJwhVJWhXPqUbvh8oGkUon3UVgIGlS8c7gJEQxGpEUtxE6OCN0mreUm
+   PoDpYKpZ2ebRWdjfu2Qhtbj1OKgDae3mjDYsTbzMKkI2IVnYFrtTCCC6V
+   g==;
+X-CSE-ConnectionGUID: 5gdJG16QS9+WFOPeUskbCQ==
+X-CSE-MsgGUID: MmyPapJrSK2AbhJZvZNL7w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11743"; a="79779133"
+X-IronPort-AV: E=Sophos;i="6.23,150,1770624000"; 
+   d="scan'208";a="79779133"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Mar 2026 07:48:20 -0700
+X-CSE-ConnectionGUID: GeCJocUATueDNdJ/3Bzb9Q==
+X-CSE-MsgGUID: Uwruj5+6QpuBx/L3s5F1+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,150,1770624000"; 
+   d="scan'208";a="222767787"
+Received: from lkp-server01.sh.intel.com (HELO 283bf2e1b94a) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 30 Mar 2026 07:48:17 -0700
+Received: from kbuild by 283bf2e1b94a with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1w7DuY-000000001E5-1RHg;
+	Mon, 30 Mar 2026 14:48:14 +0000
+Date: Mon, 30 Mar 2026 22:47:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mikko Perttunen <mperttunen@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-pwm@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Yi-Wei Wang <yiweiw@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>
+Subject: Re: [PATCH v2 2/7] pwm: tegra: Avoid hard-coded max clock frequency
+Message-ID: <202603302251.AFXspVqF-lkp@intel.com>
+References: <20260325-t264-pwm-v2-2-998d885984b3@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF0000231C:EE_|CY5PR12MB6131:EE_
-X-MS-Office365-Filtering-Correlation-Id: da29a80c-1673-4eb6-b477-08de8e6b36c5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|1800799024|82310400026|376014|7416014|18002099003|56012099003|22082099003|921020;
-X-Microsoft-Antispam-Message-Info:
-	JrdLciRgfjTMAlAGftqlZSpVVk1CSjkrc/qnfXa8WQFjjhP6plmaeLcf3l64x5BJkgWPRveiVxBA/ZYychkCmI/Eid9gLJAUzdFgFwTbdidVSNMcqLtCntc5lc5TeQa6pvtcKq9gpdBvWsqylueBCKqUsIbLS3tseueCvwiqjbPHJ2gQj7rNyDclUDq7b8gGACFjkzK1wsLNxx4YdYwViaZsuvCEDyE8Rwpt5FnSyFLo/zLcBTWdLevqqwIgOU82pT1lE0X7j1JgrhnTgX8Q2fZhSLY1eTXFAPgwKhPQCDwMJ3oNmlnOnKF0ijwLkloVqiqUFlajt5bw/2ZDtueDAkMoSa9IGYoY57AECutEKfFt3di0bo35EbxiTgXaImjLNZZNmsTzvbZxPB17DUOwvnYdHHvtg+ccOtQbxnUmbzrhbvnvr6i0ZbqgKmcYfJlmW+JkQk6KGdDShOWZU02ds0KWaCq6uk9UFspGTh2NgRG+2lrrRD940bH+BfFinkepwB5gAcW6SFSVBm11h9VPkMeqTIMT1UH0EKReeXrFPTxdFpcvBiwOMydVZI5IJrPIiXe3ACYq3CodrXTCM3qE4r8bziCBXrmAXEAnwg8xW2GQbDFf5kfUpU0+HCHNziuJMjf/UMuPG96JYVYnmpVw+uDUQ5lXG4AH6ICDywfHKkTtz9CGeFjHdBVc+wclmORA7O814kwSyzV0r0/y8RlsmpIODNFbulCjfCKGzMPHb7vXThFYGr395DdyRBKSJ3pEcKW4/bzoC8dPBp4Ll063bI399cN4qW2LUD4ngNovE52f48fmBWawKsdy/sQld89H
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(1800799024)(82310400026)(376014)(7416014)(18002099003)(56012099003)(22082099003)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	9cd69k7S2nu7DrE4ts6bAChZBwlGfWkhzJEUstdgVbz5Yi0t021PgzFRV9MfztimGu92OkeZMwEM6+hpwKU0hp3j7GAGAlza+r9bvIN+XrE+HzP8uAGaGILgQpjZLOQhe+4l+Cp6YwOczygZ9DvSCUW8xO/VGCMaK1kTuJsFtpqWeB+8LHvtd56ptK0LMtjSS0Xcabgjuc9GkVO9lntyC1Wi3i99lS7cIx9LhctcVYQnqLrtx7R+UW+WxS32FFy7lyx7NA5PNdBZd2DN9r0JR0gczSgUWtXf7GW43cz2yT04Yi383X4RDm7EkzMBWX7hYzYxMw0FGqfjPNPg52ygHt88uf97wgiO40bSOQTeQl2cLQ8HEOwedU+zjC7t7vDAAx2AQx2sQc/meCAj2YR8oUYCNQ4qS7n2sN04EUBbauvA/ETcbplCtjiebXFnR476
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2026 14:47:06.3512
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: da29a80c-1673-4eb6-b477-08de8e6b36c5
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF0000231C.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6131
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260325-t264-pwm-v2-2-998d885984b3@nvidia.com>
 
-Enable GPCDMA in Tegra264 and add the iommu-map property so that each
-channel uses a separate stream ID and gets its own IOMMU domain for
-memory.
+Hi Mikko,
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi | 4 ++++
- arch/arm64/boot/dts/nvidia/tegra264.dtsi       | 1 +
- 2 files changed, 5 insertions(+)
+kernel test robot noticed the following build warnings:
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
-index 7e2c3e66c2ab..58cd81bc33d7 100644
---- a/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
-@@ -9,6 +9,10 @@ aliases {
- 	};
- 
- 	bus@0 {
-+		dma-controller@8400000 {
-+			status = "okay";
-+		};
-+
- 		serial@c4e0000 {
- 			status = "okay";
- 		};
-diff --git a/arch/arm64/boot/dts/nvidia/tegra264.dtsi b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
-index af077420d7d9..b2f20d4b567a 100644
---- a/arch/arm64/boot/dts/nvidia/tegra264.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
-@@ -3244,6 +3244,7 @@ gpcdma: dma-controller@8400000 {
- 				     <GIC_SPI 615 IRQ_TYPE_LEVEL_HIGH>;
- 			#dma-cells = <1>;
- 			iommus = <&smmu1 0x00000800>;
-+			iommu-map = <1 &smmu1 0x801 31>;
- 			dma-coherent;
- 			dma-channel-mask = <0xfffffffe>;
- 			status = "disabled";
+[auto build test WARNING on 11439c4635edd669ae435eec308f4ab8a0804808]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Mikko-Perttunen/dt-bindings-pwm-Document-Tegra194-and-Tegra264-controllers/20260329-233356
+base:   11439c4635edd669ae435eec308f4ab8a0804808
+patch link:    https://lore.kernel.org/r/20260325-t264-pwm-v2-2-998d885984b3%40nvidia.com
+patch subject: [PATCH v2 2/7] pwm: tegra: Avoid hard-coded max clock frequency
+config: hexagon-randconfig-r113-20260330 (https://download.01.org/0day-ci/archive/20260330/202603302251.AFXspVqF-lkp@intel.com/config)
+compiler: clang version 23.0.0git (https://github.com/llvm/llvm-project 2cd67b8b69f78e3f95918204320c3075a74ba16c)
+sparse: v0.6.5-rc1
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260330/202603302251.AFXspVqF-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202603302251.AFXspVqF-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/pwm/pwm-tegra.c:303:47: sparse: sparse: cast truncates bits from constant value (7fffffffffffffff becomes ffffffff)
+
+vim +303 drivers/pwm/pwm-tegra.c
+
+   266	
+   267	static int tegra_pwm_probe(struct platform_device *pdev)
+   268	{
+   269		struct pwm_chip *chip;
+   270		struct tegra_pwm_chip *pc;
+   271		const struct tegra_pwm_soc *soc;
+   272		int ret;
+   273	
+   274		soc = of_device_get_match_data(&pdev->dev);
+   275	
+   276		chip = devm_pwmchip_alloc(&pdev->dev, soc->num_channels, sizeof(*pc));
+   277		if (IS_ERR(chip))
+   278			return PTR_ERR(chip);
+   279		pc = to_tegra_pwm_chip(chip);
+   280	
+   281		pc->soc = soc;
+   282	
+   283		pc->regs = devm_platform_ioremap_resource(pdev, 0);
+   284		if (IS_ERR(pc->regs))
+   285			return PTR_ERR(pc->regs);
+   286	
+   287		platform_set_drvdata(pdev, chip);
+   288	
+   289		pc->clk = devm_clk_get(&pdev->dev, NULL);
+   290		if (IS_ERR(pc->clk))
+   291			return PTR_ERR(pc->clk);
+   292	
+   293		ret = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
+   294		if (ret)
+   295			return ret;
+   296	
+   297		pm_runtime_enable(&pdev->dev);
+   298		ret = pm_runtime_resume_and_get(&pdev->dev);
+   299		if (ret)
+   300			return ret;
+   301	
+   302		/* Set maximum frequency of the IP */
+ > 303		ret = dev_pm_opp_set_rate(&pdev->dev, S64_MAX);
+   304		if (ret < 0) {
+   305			dev_err(&pdev->dev, "Failed to set max frequency: %d\n", ret);
+   306			goto put_pm;
+   307		}
+   308	
+   309		/*
+   310		 * The requested and configured frequency may differ due to
+   311		 * clock register resolutions. Get the configured frequency
+   312		 * so that PWM period can be calculated more accurately.
+   313		 */
+   314		pc->clk_rate = clk_get_rate(pc->clk);
+   315	
+   316		/* Set minimum limit of PWM period for the IP */
+   317		pc->min_period_ns =
+   318		    (NSEC_PER_SEC / (pc->clk_rate >> PWM_DUTY_WIDTH)) + 1;
+   319	
+   320		pc->rst = devm_reset_control_get_exclusive(&pdev->dev, "pwm");
+   321		if (IS_ERR(pc->rst)) {
+   322			ret = PTR_ERR(pc->rst);
+   323			dev_err(&pdev->dev, "Reset control is not found: %d\n", ret);
+   324			goto put_pm;
+   325		}
+   326	
+   327		reset_control_deassert(pc->rst);
+   328	
+   329		chip->ops = &tegra_pwm_ops;
+   330	
+   331		ret = pwmchip_add(chip);
+   332		if (ret < 0) {
+   333			dev_err(&pdev->dev, "pwmchip_add() failed: %d\n", ret);
+   334			reset_control_assert(pc->rst);
+   335			goto put_pm;
+   336		}
+   337	
+   338		pm_runtime_put(&pdev->dev);
+   339	
+   340		return 0;
+   341	put_pm:
+   342		pm_runtime_put_sync_suspend(&pdev->dev);
+   343		pm_runtime_force_suspend(&pdev->dev);
+   344		return ret;
+   345	}
+   346	
+
 -- 
-2.50.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
