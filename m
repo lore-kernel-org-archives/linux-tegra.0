@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612ED3EDAA1
-	for <linux-tegra@vger.kernel.org>; Tue, 31 Mar 2026 09:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE023ED5B7
+	for <linux-tegra@vger.kernel.org>; Tue, 31 Mar 2026 09:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774949732; cv=none; b=mMwmT+BNG/FiqfUAmJF6RX51v8XDlDPq8IsboAt6H3sJ/tbNepHv5Ul1cosB92sBD7M/9QzAjjfbsGx3nks53/BmLoxTpL40LfgFGnh4X6KgZ5vR7rffoCXnDc2svQmPd8NnWGYTr8cEYJTq0IIVKqbVJycRr4QNm3w0pXTA04k=
+	t=1774950622; cv=none; b=T9xDqFT4lrQjYY1aeMrdmvi981AJNOPGXGjv9RrB5Uz8gU34NayZc+M6FFD9rXuY/m7Zh27mzJLvIxXpFyYr6k7SMkqVOxgzlWxqTy0Up4DwUjz4UoxmWWbWvaeWIiCXCZKWkoJP5Ehl9AdiV9ibWVS6q8cU+aDYae07TXZkswU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774949732; c=relaxed/simple;
-	bh=MLL2POGMVXzTnHIBJpfU1p1iRWDao/ze+iV7fL+FXGM=;
+	s=arc-20240116; t=1774950622; c=relaxed/simple;
+	bh=aWbxshUwPK4b60zClDczV0+9UC7TIJa1vs0Y0c/ymcQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B4mnTsNEfN8aa9CTcwPql9WqxEdmYDFII44i90TunbitdpVTM5n6kkwgJnun0x9Rhh/VuMFXybGrmjx0EKm+WQnvo8Us3F4IBnKyy+tJ/ggVMLUdNW7ibMvEXZORjwxWJNHI04wKjyRrf800xCet9/5lw8AQxqbpMXA5f9dZ5U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QdsilYRZ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=p/9JxEErapwgXUEew1w2hm+sdbLEp9ZFAUyLMM86pE6LlfsruJrw6fE1pgouOAiPUZLOoWgBh2Tswaa/kkrTj113GCsQ2vXXkBU9aGwGIG9V/ncPATqyw6KT0oh4WZAtgI93mcuOYLXt30aRE1ZqxcHvhYAEaTFRBPih3VrJrw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jkRTc/dj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QdsilYRZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D463C19423;
-	Tue, 31 Mar 2026 09:35:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jkRTc/dj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FF55C19423;
+	Tue, 31 Mar 2026 09:50:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774949732;
-	bh=MLL2POGMVXzTnHIBJpfU1p1iRWDao/ze+iV7fL+FXGM=;
+	s=k20201202; t=1774950622;
+	bh=aWbxshUwPK4b60zClDczV0+9UC7TIJa1vs0Y0c/ymcQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QdsilYRZDnINvGmzmdKyIGaRqzIGCnpe5qYWfIccZ7NZ6+Qpo/GCufEiaN9iRwUL4
-	 v159lp7jRXuLvD5rCR+1WasYQqzdgEugRNrhIVD7YPn42k8Yg84E9jm+ZLg9RItz74
-	 MFLSQoSQHFLXsCQ41MkLqECkpw2ca5GisdAYnCzQQr1gr1pYxswCxDzzCDvDdA4Zep
-	 3vL5GyhY4ER7IroMYZi3jqXVnGnuG28kxtx4jZYgU2v87yWG0+5xSRk83WLY/hTOYg
-	 aLYoM2ybcRywAmcLiv6akku45n57Ci3LzhHjKHZZbnYWv2iecfA0ogUGgQuWQVI8e6
-	 /v1SxJKjx5s5Q==
-Message-ID: <75edde3a-6ebd-41ea-87ac-468b807593c0@kernel.org>
-Date: Tue, 31 Mar 2026 11:35:28 +0200
+	b=jkRTc/djmmyttyMsoPdCVWAxJmnk8db5UYv/6Z6uyd1DVOPeUdujgH1NE9X+7hw7a
+	 soClCBBLrmWCGlC9ZRiiLnxTgZVMYRwAygv22/WDPJzFauPRV0IgoNPy+bFe+UuIf5
+	 cxz/wJVwF1Ztjd5lH8CfPgOaUgPj2EOYB5/J/koiAbImluDRa3PGxM0XE2bMZNfFBn
+	 Es4RZ/wj30XcKQKf124pZBxGBKGWTfZlrRCOYrMNTcZ7n9dH+//JMVuZqFpXGn9WKp
+	 Djs9yTbUi+E+sxoeXkjywkiFlUfsvHADWU00oyhwpL8JInzLI1ReT26nQUwFlXYikY
+	 6F492gwAX0oHA==
+Message-ID: <1bdf911d-383a-4ea3-9a33-f8ee6e8f26e4@kernel.org>
+Date: Tue, 31 Mar 2026 11:50:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,15 +35,13 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL 6/7] arm64: tegra: Device tree changes for v7.1-rc1
+Subject: Re: [GIT PULL 1/7] dt-bindings: Changes for v7.1-rc1
 To: Thierry Reding <thierry.reding@kernel.org>
 Cc: arm@kernel.org, soc@kernel.org, Thierry Reding
  <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>,
  linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20260329151045.1443133-1-thierry.reding@kernel.org>
- <20260329151045.1443133-6-thierry.reding@kernel.org>
- <7b9bc5d1-7a1d-456c-b280-5f4dc969609d@kernel.org> <act77WcvwYedN0Q8@orome>
- <e5327cd9-4aa1-4e26-b748-dd1af29e6fdb@kernel.org> <acuE-URAuRvmtd4u@orome>
+ <406ca5ed-4a3e-48ba-94ad-d88c53b09299@kernel.org> <act9hqxjL6wZ25dP@orome>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -89,40 +87,90 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <acuE-URAuRvmtd4u@orome>
+In-Reply-To: <act9hqxjL6wZ25dP@orome>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 31/03/2026 10:43, Thierry Reding wrote:
->>>>                   Maybe they had more time for previous versions, but
->>>> nevertheless it is also part of other patchset, so it will get into the
->>>> kernel other tree and nothing on v3 posting:
->>>> https://lore.kernel.org/all/20260326135855.2795149-4-thierry.reding@kernel.org/
->>>> gives hints that there will be cross tree merge.
->>>
->>> Maybe look at the cover letter:
->>>
->>>   https://lore.kernel.org/all/20260326135855.2795149-1-thierry.reding@kernel.org/
->>>
->>> I clearly pointed out the build dependencies and suggested a shared
->>> branch to resolve them in both trees. Given that the bindings were
+On 31/03/2026 10:25, Thierry Reding wrote:
+> 
+>>>       dt-bindings: phy: tegra-xusb: Document Type C support
 >>
->> No problem, that's a valid solution. Can you point me with a lore link
->> to the shared branch posting (these tags/pull requests must be posted on
->> the lists)? Or to an ack from PCI maintainers?
->>
->> The commit itself does not have an Ack, but maybe was just missed.
+>> No acks, but that is waiting for one month so it is fine.
 > 
-> Yes, the DT bindings patch does not have an Acked-by, but again, I
-> didn't think that was necessary, especially since we were going to have
-> a cross-merge anyway.
-> 
-> Here's the PR for PCI:
-> 
-> 	https://lore.kernel.org/linux-tegra/20260329155040.1448158-1-thierry.reding@kernel.org/
+> It's got a Reviewed-by from Rob and there were no corresponding driver
+> changes associated with it. There's literally no reason for this to go
+> in through a subsystem tree.
 
-Thanks, this solves my question. A note in the pull message (not
-necessarily in the tag) would also solve it, BTW.
+There are reasons - process and technical:
+1. It's a subsystem maintainer's patch, not yours. You rather should
+have reason to take someone else's patches.
+
+2. Conflict in that file.
+
+
+> 
+>>>       dt-bindings: clock: tegra124-dfll: Convert to json-schema
+>>>       dt-bindings: interrupt-controller: tegra: Fix reg entries
+>>>       dt-bindings: arm: tegra: Add missing compatible strings
+>>>       dt-bindings: phy: tegra: Document Tegra210 USB PHY
+>>>       dt-bindings: memory: Add Tegra210 memory controller bindings
+>>>       dt-bindings: memory: tegra210: Mark EMC as cooling device
+>>
+>> That's even my subsystem and I did not ack it. You did not even sent it
+>> to me as requested by MAINTAINERS file (+dt is ignore alias), so
+>> obviously I did not even had a chance to ack it.
+> 
+> Ugh... really? I was Cc'ed to you as a DT maintainer as well as the
+> devicetree mailing list, so I'm sure you've seen it. This had also been
+
+Really, you are supposed to use get_maintainers.pl. Not invent the CC
+list, not come with own filtered list.
+
+I understand that my non dt address disappears when running
+get_maintainers.pl on entire set.
+
+But if you sent that patch targetting subsystem instead of combining 6
+or 7 subsystems at once, it would pop up.
+
+And yes, you are not supposed to mix 7 different subsystems in single
+patchset. That's basic!
+
+But sure, let's skip memory controllers patch cc list and:
+
+> reviewed by Rob a long time ago, and honestly, it's also quite trivial.
+> It's been on the list for a month and there were no objections, so it
+> does pass all of the criteria you mentioned before.
+
+No objections because you did not cc people. How can you claim "no
+objections from person foo" if you do not cc person "foo", because you
+do not use get_maintainers.pl?
+
+Look, find me here phy mantainers:
+
+https://lore.kernel.org/all/20260223143305.3771383-7-thierry.reding@kernel.org/
+
+> 
+>> And we even had few days ago talk were I explained you how these
+>> bindings must go. Seeing pull request completely ignoring that
+>> discussion is just huge surprise.
+>>
+>> No, it cannot go in. Send patches to proper maintainers first.
+> 
+> Stop making these baseless accusations, Krzysztof. You were on Cc and
+
+Not using get_maintainers.pl so not ccing right address is not baseless.
+This is the fact.
+
+Neither phy, nor interrupts, nor clocks were sent to right people.
+
+You mixed 6 or 7 different subsystems in on patchset, but you call my
+remarks as baseless. You use several adjectives "trivial", "baseless",
+but no actual facts.
+
+Final commentary:
+Stop taking patches from other subsystems, just because you want to
+streamline your DTS. You are bypassing other subsystems review, other
+people trees, and that's not acceptable.
 
 Best regards,
 Krzysztof
