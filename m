@@ -1,155 +1,120 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD83D3D34A2
-	for <linux-tegra@vger.kernel.org>; Tue, 31 Mar 2026 07:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125913C0612
+	for <linux-tegra@vger.kernel.org>; Tue, 31 Mar 2026 07:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774943601; cv=none; b=ukSkNrotPbvKgPln7TugSficsVxQtflqkla/l9ZvekOmqz8QqF3qjnXmNiNpWjhCIWBOKqE7PDOF0syIlmQDHMLfFd1Mg6H2AxyMgcXcY6P77Z/jpTrK7mT4HuLsqqeZqdtd79SLAONj0U7szejmfCR5MQkTefJlPxGwqh59HQE=
+	t=1774943951; cv=none; b=MgjOOIKFoB92UTO9n/LFqAgk++RrMJGQpShpO3FSLEU+5JGJDiB/JhXe0YPvNUDhBxCv3Au/cg+pGS8deqhQoRrGtQkCFgiFXgmrR1noVqEDFXNeGeKAIJJXOW8F3AkE8O+AkSBhUivxVkhYexQPofI4jtQR+OA6c0he5S8mblY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774943601; c=relaxed/simple;
-	bh=boYlb4YvS37g0Ecx4Rh1sBQ8wiPdxAaggsMqCIxsMZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i8G1ACGqPGNoAK2hzuFzacSLBUdNeH5QussB/8Do0f8B6K8iFe+qPyHBKTiFbjPK5glGUXp9i2uxdavKUhRWZkHT4V2HIL7u9UJIY7YV1h9mpSy/TDPswFs9+4APUpzJvc9rohCSlCVTOIPx3PiXJwPrJX1h22dCqBgyDExhLW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glg1QJvj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774943951; c=relaxed/simple;
+	bh=AwS0Hd0NI6g1B78V6nyoqW097bar+lXSaJRQNLjpaqM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qi4P6aHEnJ1FRvKm804xftthvU52uAMfyknM63C9iHWQ7evY/nyzFCFktV74V5Ys+M5j28iucfkvQ4lSkP1S6ylhfQ2UIFw/3Vgm+sW89YtBgqBgvh+3Gd6S2OXE2eIiAsY3+O1LECEmP9TEydlSsvJgMox8h5QAvNe2JnnCzQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BXoMLNSE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glg1QJvj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 079DCC19423;
-	Tue, 31 Mar 2026 07:53:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BXoMLNSE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C616C19423;
+	Tue, 31 Mar 2026 07:59:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774943601;
-	bh=boYlb4YvS37g0Ecx4Rh1sBQ8wiPdxAaggsMqCIxsMZQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=glg1QJvjej3bqtlG2qlwmCjpGQJetuLUCx77GvoFhCvh0RWEnh4ztVghiHZV7sQan
-	 Ltwe71vDLS6AbSLXsmFf3kJwEVOpqhn4kRnR7o9ck8VBz/UG2OjbDkNv441NY+7zq7
-	 3Bt0ND5TRIFbGb7ahJ325UU2Lp6ElV92+LTm5EAGIOpH/qReddaTZk3QcZYMQNL//1
-	 OTiU/CrllwfywQJe6oLFEWfmB3Yp1XeHBivTjVvr54XohYObho94XrRO+7795w7I6/
-	 ocjOQ/SDILa4POfU3ZAFOhh4AVsjqd6XJ05Z8UUxnDisMXnfxaIbOvkbQR26rJ9s7X
-	 WLG/Omt25OA0Q==
-Date: Tue, 31 Mar 2026 09:53:18 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: arm@kernel.org, soc@kernel.org, 
-	Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [GIT PULL 6/7] arm64: tegra: Device tree changes for v7.1-rc1
-Message-ID: <act77WcvwYedN0Q8@orome>
-References: <20260329151045.1443133-1-thierry.reding@kernel.org>
- <20260329151045.1443133-6-thierry.reding@kernel.org>
- <7b9bc5d1-7a1d-456c-b280-5f4dc969609d@kernel.org>
+	s=k20201202; t=1774943950;
+	bh=AwS0Hd0NI6g1B78V6nyoqW097bar+lXSaJRQNLjpaqM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BXoMLNSEr+KEPpO/GQ3/5W1i8IJNzlPHMEmhRYa7IJvsz+UhGvKwXfKIhlBz2cxkM
+	 bsjKlLc8QxhXuBv6aSucbEj14DYRJWEbURB3KRlyiGyrV6u50Qhi/FruAPvL95X/Yt
+	 9dZN9c3iBe7HLRy981KXCx1m91wdhWXbgslXGLVyobYEYzE3HaQIxWAIpFFoPjdJfP
+	 8LGcr6EnLyAOXXDUozob0dkhj8XASXYbMGdRUCbZfh75THtNBgQt3qlINGn7+Laj4J
+	 LTDB2OVVmsc0wCv+wBpZpR/K4gf+KxBGl20wq4+em0cYqWejP3FHcXVYMIL5R5M1r+
+	 +V/zivXsOs96g==
+Message-ID: <63b6c9da-4c0e-497c-a2a6-8aa5e74e2adb@kernel.org>
+Date: Tue, 31 Mar 2026 09:59:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hho3lmqpafndqu6h"
-Content-Disposition: inline
-In-Reply-To: <7b9bc5d1-7a1d-456c-b280-5f4dc969609d@kernel.org>
-
-
---hho3lmqpafndqu6h
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
 Subject: Re: [GIT PULL 6/7] arm64: tegra: Device tree changes for v7.1-rc1
-MIME-Version: 1.0
+To: Thierry Reding <thierry.reding@kernel.org>, arm@kernel.org, soc@kernel.org
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+ Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20260329151045.1443133-1-thierry.reding@kernel.org>
+ <20260329151045.1443133-6-thierry.reding@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260329151045.1443133-6-thierry.reding@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 30, 2026 at 01:45:24PM +0200, Krzysztof Kozlowski wrote:
-> On 29/03/2026 17:10, Thierry Reding wrote:
-> > From: Thierry Reding <thierry.reding@gmail.com>
-> >=20
-> > Hi ARM SoC maintainers,
-> >=20
-> > The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5=
-f27f:
-> >=20
-> >   Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
-> >=20
-> > are available in the Git repository at:
-> >=20
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/te=
-gra-for-7.1-arm64-dt
-> >=20
-> > for you to fetch changes up to c70e6bc11d2008fbb19695394b69fd941ab39030:
-> >=20
-> >   arm64: tegra: Add Tegra264 GPIO controllers (2026-03-28 01:36:46 +010=
-0)
-> >=20
-> > Thanks,
-> > Thierry
-> >=20
-> > ----------------------------------------------------------------
-> > arm64: tegra: Device tree changes for v7.1-rc1
-> >=20
-> > Various fixes and new additions across a number of devices. GPIO and PCI
-> > are enabled on Tegra264 and the Jetson AGX Thor Developer Kit, allowing
-> > it to boot via network and mass storage.
-> >=20
-> > ----------------------------------------------------------------
-> > Diogo Ivo (1):
-> >       arm64: tegra: smaug: Enable SPI-NOR flash
-> >=20
-> > Jon Hunter (1):
-> >       arm64: tegra: Fix RTC aliases
-> >=20
-> > Prathamesh Shete (1):
-> >       arm64: tegra: Add Tegra264 GPIO controllers
-> >=20
-> > Thierry Reding (6):
-> >       dt-bindings: pci: Document the NVIDIA Tegra264 PCIe controller
->=20
->=20
-> This is unreviewed/unacked binding where PCI maintainers had 1 day to
-> react to your v3.
+On 29/03/2026 17:10, Thierry Reding wrote:
+> From: Thierry Reding <thierry.reding@gmail.com>
+> 
+> Hi ARM SoC maintainers,
+> 
+> The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
+> 
+>   Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
+> 
 
-Rob gave a reviewed-by on this about a week ago:
+I guess related to my question why patches were applied one day after
+the list:
 
-  https://lore.kernel.org/linux-tegra/177440189257.2451552.1819610183023562=
-6115.robh@kernel.org/
+Days in linux-next:
+----------------------------------------
+ 0 | ++++++++ (8)
 
-In my experience the PCI maintainers typically defer review of the DT
-bindings to DT maintainers, so I considered Rob's R-b sufficient.
+Commits with 0 days in linux-next (8 of 8: 100.0%):
+...
 
->                   Maybe they had more time for previous versions, but
-> nevertheless it is also part of other patchset, so it will get into the
-> kernel other tree and nothing on v3 posting:
-> https://lore.kernel.org/all/20260326135855.2795149-4-thierry.reding@kerne=
-l.org/
-> gives hints that there will be cross tree merge.
+So you exposed soc tree to all sort of integration issues. No, please
+keep them for some days in the next before you send them to soc, to
+allow people to test and eventually complain/report issues.
 
-Maybe look at the cover letter:
 
-  https://lore.kernel.org/all/20260326135855.2795149-1-thierry.reding@kerne=
-l.org/
-
-I clearly pointed out the build dependencies and suggested a shared
-branch to resolve them in both trees. Given that the bindings were
-reviewed by Rob and they are needed in both the subsystem tree
-(according to your own rules) as well as the DT tree (for validation),
-I included the bindings in the shared branch as well.
-
-Thierry
-
---hho3lmqpafndqu6h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmnLfWsACgkQ3SOs138+
-s6E8uhAAt9gLx6VJcH9q2Fa1SnnedHdWurpe+EEVfgkI2JvjY4BFkT7sWpTbfDWv
-MYEdL66aySIaKoHO/ZpJBQRhzIyVabsvjF3Kid8vAVJiZOSSYgsh28dI4cpqRwNw
-kxDo1jqCBmoGMYmhJWAugKf42nOeHHhDGNnZNFCC8qD5ToHMiKRQMDIuPU62bn2N
-whRGYpgxnoc8JnMrv0U7mM2UD14rNP3RmOltfP/IqTCUhND16bpPRsdLeGljSg4d
-xAJJhKT1Z/n9tMAfu4CqYOh6a+iZNM3Dd16+SBaaU1r2kKcLDyxDcUMq1aAE4DvU
-R9BddbvKVsT2HcpjIAM9y0f/AbV1zimNSvjJ7ajzoiK6ws4aFcbznwDGJ7tcncAc
-INK4/I/blKowDJmB2HW+wFvJO55WNJU+w0asvYGuy/lorS0D1ZZq9ezDE3LE7dzw
-fUU9YboeRd6lm2hI89+50+XkI1eii8gqIY1gI6wSYJR167N+8pmW3Oi272Fj3/RL
-4KuLkvdQl9mI0fJBOGPj88AwvsawlH1twmmWPkBwlEK7B8sRpKA6CWrMM2ZjaA45
-YAgn54SfQqV1UC5XlNuh5kypmUakUrSpuIC8o7yoFhAqgQ1Py1wOT0d4Om1c6074
-jrEFijI61iBv2P6iABbv33Y4aN7bqNYyW4LAsqOgOy8MRI75UI0=
-=W8iV
------END PGP SIGNATURE-----
-
---hho3lmqpafndqu6h--
+Best regards,
+Krzysztof
