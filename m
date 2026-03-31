@@ -1,68 +1,68 @@
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012005.outbound.protection.outlook.com [40.93.195.5])
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011025.outbound.protection.outlook.com [40.107.208.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6E33A6B77;
-	Tue, 31 Mar 2026 10:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46653ED5A2;
+	Tue, 31 Mar 2026 10:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.25
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774952661; cv=fail; b=k2uFRoG+x1D8paLTT0VdmlZdH5eYN0z1HBrA4JHVELXQvQEXhgAnk7dH9hsjpEzmp69sj13ox8lmRo8VhZgg6jX/kXaHuiBc8zURMrIWsBNEl1lWT5uUAiplg3awIhNqcM2Lp25ttTB+au6DxNdr6BIEGZFTeFYRk2n6jOcN7o4=
+	t=1774952674; cv=fail; b=WNmTt/37bHZdEcDMWex7miLeCaaP2Z1oVaWZt83vm8mm/GSmsGK15M5PxvyI+2dVMSu2aaazjMOGMDZGozBUia9rRDyfvEuMR63eGTf8f/0I4RItUkAA7ej8EWKD6WfBNEE/KtsiKLlFI5eHsXk0Wi0HCgFoTG8uv6Xl5jJMDEA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774952661; c=relaxed/simple;
-	bh=Ngs8EPNMcbZmCb7C00t2bDxa3rlI6qLzn7lzhHMz14M=;
+	s=arc-20240116; t=1774952674; c=relaxed/simple;
+	bh=B7XblN7s9HPvksPjnk+M4nT3M3Kif8DJwQoywMQ3JBE=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=krDl6QVoj2KKQIx5CwclWzozCsgRVolVlyRiYfkPrc1JIchAC3HWfshwg0uyqVTu40Xp5r73+Tlru2ZyFfnawQ0nqvGC79pFCrgZDPGXYJV3G+rg4cSQNhX+jT1lBzvB7MF2WsV+ldzx9ZoJelCC+d5UiqQqeSWnFoz2A2GVYoY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=I0TVemAU; arc=fail smtp.client-ip=40.93.195.5
+	 MIME-Version:Content-Type; b=tmsGbmbSbss/E9jJcBm65c+A3SwD3yAxuA5PZH+DlG5pYpAZJheJeivzYSUh+m4ykBmxgjPvVWj4phNabWLXzbjzAoL9F1lTBBR4UxOYpmyWTBJuq+u+yPcT5wZ982qQjKEGadpZ/jo/iC7IrRz8lI4nd8OF12pTwo7sN/0GW1I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rGGBYbRm; arc=fail smtp.client-ip=40.107.208.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="I0TVemAU"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rGGBYbRm"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=O5sclkp3pR661Hm7ThiJc7eGEyeCsE/4NFHi+PFusV877hR8PoB2d3+c488xJdtJnx5FM/z5yS5J8GbpGgEo6ajeKG+iGb8iqCHZkloZuquTawwR67bSsXrLVHN2IezTwxzmd084LhYP9zFfmaCD6bsOCAROrTRey5j937Bc5J9syG33V+aJWEa9hAvzm6QJzcC8QLhI6xZ4DiMqIHzvhxWpWqj3hbE6Pyu8Ixx7Gt/TSmvX+j7nf8RJo+0FlIfUddrhhq1WMfj5KNiq9KYp7EnvIPmuhw+rIsBuNNUccHRpS3jGkXZhICGQrD6qiIglW4ZvoSl8zHzEogX/1Oxozg==
+ b=cc0W+pvop6uz1h4TQjOhgEiuO60DJetMlGpSO6HOgWoauGD2JAUFRzhPExpBwvrAQsN7V9I69M1LKJNlhwEu3I0ft2xUTxsGK8Y7NPovmInr8NvA1aOPTRrrwxaPYPsOzbAlBJ5jZIZcS0A5y26cfrN4yGUdZRrKLY2sRkyBT03RowEr5pG1r9XKd3yind8vRY3pTsbFVifIeNCHfoPyn9zErF9sPHQgTBOCuCZumE+ae1CSbFDVJFP462B8u33mSlwp9s9tXt1fB1vxhBEi69blnRWrVp1pDYutgcJKiX7utsJJu4BQuvtiuOCFd4CEte6M+JxF17ov+/7jTlJzkw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KhxS1xYdxOO4vXubyanW9eEpLqgh+V2kvpwL19Nm5Hs=;
- b=JX9pbWT/m+5mTncfQRxqblue5aKghYRF4QG5iNbZlOc/vwGxZ+P7fbU4sUOCrmSYolbv+zodMpZmFzm5RqNFdtngBvDQD1f08awo0TqQ7/KMxAZs+TLomEN1FCUoDyEKOPDyjlzONVexBESRxb4pKNUM+FKwHxOtiWwLUH/x3zlnn2t+kBM+2MFBANP8QpszPARRIt59rIwuYUDZCrsL/xpDEVXKJmD0KPICXN3/0XX1kfxgAzxGskIFzwzqC1LEiWiI8froaaT93Vqzs3Sjc2rY6St4YbLUX8BsZaU/U9Ar5hsn39D7n/r6vld0jYCvrxsziuML8x4Xj2g3/5KneA==
+ bh=bcgqoLz13KFmKN3mR2UjKBEjCv+/Rw+s2cWv2ER+IHo=;
+ b=PgSHxTpCsn082C2dmGD+WAAxHRY/N8eGOTQeGJjQhzOvvg8JACyEkIAV2P6PhCpRGFWoVhiw5Y3raySh6vQWL0RDLzCIlm5ZI0Xg0p6SCTIVV0fjrHgYhTINMTh33HLAbZK4EzPvvtHKoqlAbWZVrfae7IdkplVKFNw1j2EPCh5qdD0wR3zzTSHDTH2E1YaDldgXjrrbBIHU+o6NLg5Omafd9Tp7hnYKd1rTVX4f3nYA2AkSf4l2qf4QM75cbzkVdJB8DoC+5FYCyA2bhGk1+duArnxUC6ZHStIuzxGB3wb+h9bPT0XbFhs0SmOHFcjZ2njOfil/657RyZA/W7+v3Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KhxS1xYdxOO4vXubyanW9eEpLqgh+V2kvpwL19Nm5Hs=;
- b=I0TVemAUyD9W2NV3WH4tt+valxAnzc1QvnqTQ4c9NUxGgCluKOGdVVAyHBbz6i7FUHfNSdu119ch60FIsCKJnvse7aDrJUIlKf0pdHkpqaN5RbGSIi5DhDTGPK2nIgBx1SxjBF9Z1PLSsN0Ugto+0pSfn6avYNXmFSucqXwHoH4umEjC+rUKLikFIL8TcaNhJ1uay6t+fh0UwmCOOF2ibd+mqFsfE7z8BjE0swyJrG7irZwwkUKcZ2fW8b01Fq+s+7dUWnzrNQTa29v1DYqGqypGTBotAKpnec5HE+8au0SLTjcYNY58SXLalw03msJ5DzzwRGPlTcjuw0LMGM4A/g==
-Received: from SA0PR12CA0029.namprd12.prod.outlook.com (2603:10b6:806:6f::34)
- by DS5PPFEC0C6BDA1.namprd12.prod.outlook.com (2603:10b6:f:fc00::668) with
+ bh=bcgqoLz13KFmKN3mR2UjKBEjCv+/Rw+s2cWv2ER+IHo=;
+ b=rGGBYbRm8TIgF+NHc1IMcFt2bWy9nqpOGcRjymIlNy/93xuJZjd92HHwqZoSzvP6v0BtakFfRta8RVYT4wsa3HZc72ytETvfpvAuo2GLJWLY+7Nf+qzarswC1c3d/QmMesFKidtje3S9xA13CsuIWzL0lNLUnDO2sQEtTIPCb7YQIldyQPCFioPr8lPGjcFaA3Q9WkGcyIPgzrdeeeI1K5UEtHPrOS/wlTlB3gAi+K0T7RpiNVteg7Y6DBTp+VKusA4WWjLjjWXJr/zYetgfs82B+v40KOhtqR3Ux6CEZfInbsZtuX5bSvW5KHI2BZsn/ytTSyZnYg9xJYXAUIhEvg==
+Received: from DM6PR05CA0044.namprd05.prod.outlook.com (2603:10b6:5:335::13)
+ by DM6PR12MB4154.namprd12.prod.outlook.com (2603:10b6:5:21d::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.16; Tue, 31 Mar
- 2026 10:24:12 +0000
-Received: from SN1PEPF000252A2.namprd05.prod.outlook.com
- (2603:10b6:806:6f:cafe::ce) by SA0PR12CA0029.outlook.office365.com
- (2603:10b6:806:6f::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.15; Tue, 31 Mar
+ 2026 10:24:23 +0000
+Received: from DS3PEPF0000C37C.namprd04.prod.outlook.com
+ (2603:10b6:5:335:cafe::14) by DM6PR05CA0044.outlook.office365.com
+ (2603:10b6:5:335::13) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9745.28 via Frontend Transport; Tue,
- 31 Mar 2026 10:23:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ 31 Mar 2026 10:24:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- SN1PEPF000252A2.mail.protection.outlook.com (10.167.242.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9745.21 via Frontend Transport; Tue, 31 Mar 2026 10:24:11 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ DS3PEPF0000C37C.mail.protection.outlook.com (10.167.23.6) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9745.21 via Frontend Transport; Tue, 31 Mar 2026 10:24:23 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 31 Mar
- 2026 03:23:56 -0700
+ 2026 03:24:14 -0700
 Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Tue, 31 Mar 2026 03:23:56 -0700
+ 15.2.2562.20; Tue, 31 Mar 2026 03:24:13 -0700
 Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.9) by mail.nvidia.com
  (10.126.190.182) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Tue, 31 Mar 2026 03:23:52 -0700
+ Transport; Tue, 31 Mar 2026 03:24:10 -0700
 From: Akhil R <akhilrajeev@nvidia.com>
 To: Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, Rob Herring
 	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -71,10 +71,10 @@ To: Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, Rob Herring
 	Philipp Zabel <p.zabel@pengutronix.de>, <dmaengine@vger.kernel.org>,
 	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>
-CC: Akhil R <akhilrajeev@nvidia.com>
-Subject: [PATCH v6 03/10] dt-bindings: dma: nvidia,tegra186-gpc-dma: Add iommu-map property
-Date: Tue, 31 Mar 2026 15:52:56 +0530
-Message-ID: <20260331102303.33181-4-akhilrajeev@nvidia.com>
+CC: Akhil R <akhilrajeev@nvidia.com>, Frank Li <Frank.Li@nxp.com>
+Subject: [PATCH v6 05/10] dmaengine: tegra: Use struct for register offsets
+Date: Tue, 31 Mar 2026 15:52:58 +0530
+Message-ID: <20260331102303.33181-6-akhilrajeev@nvidia.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260331102303.33181-1-akhilrajeev@nvidia.com>
 References: <20260331102303.33181-1-akhilrajeev@nvidia.com>
@@ -90,73 +90,668 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000252A2:EE_|DS5PPFEC0C6BDA1:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0d8b724c-cb9c-4b81-c823-08de8f0fa6db
+X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37C:EE_|DM6PR12MB4154:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6c5217f4-7a7b-4bf3-db7f-08de8f0fadb9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|1800799024|376014|7416014|82310400026|921020|18002099003|56012099003|22082099003;
+	BCL:0;ARA:13230040|36860700016|7416014|376014|1800799024|82310400026|921020|22082099003|18002099003|56012099003;
 X-Microsoft-Antispam-Message-Info:
-	y1F4b6hqaTHx0dtzV7C5+gPA5uRF64nlpRr/fxOS0VSAXjBe2bJjW+1nyyp7GgfJ57HTjvl0/agM/krJ0Nwtonqz8o0UkvH++F/pOEXN45ICT7qJAuOPqOudE8HHUh3NbCpXN2Tl/iRnSRzlSiqdfl1ID4rb+9y44fGSXacVMjVnP5YxHX8iidcP7b0Dh0/uHCFk0RDEM6Sg/+Cz5yEtani5fKV8BNiW9mGK4ZpQeU/hucPC/+gOBHBN1TPqk+GQDtL5KQ1Pi453CQ6/25sCDsZyEK2opLwhfMV3NVtqkOC8eXoiabJeQRqe952lLkdf0J8VqkO2tCSGJzsekCMrGau7m6+fjzkSScMgH4r0b5nAf+pZshrxDmFM7Dd0MYvL6/0A8Kv5+km95HxaAbUu+8kMSwsUj9ROyLRFFrdYCMxNNAWC3Uo0RHNOVbM+f+rIQ2BfXja9mjzTNibCc6x7qEizDRraux+u7LrM38hS4Ojsn1u4Sox1k8h036zXhBjlDLPId+HjLe3sQH5KXh1navrThkWk9dZOGoP+o6qNt2z4kzoezx8UXFrbRgpYUrYfEo5cdVBMSFQmZ6y3gQKnKJlhTP9ZDyDLIi2MnKHk0TRaCsvZ5LldOpkwvoaX+TBDVVxofh1PQ72ojwdsGpxKIDBPfwmZK5G4hMVtG7Y40cTYd4N7Yhu38BxoTVpQ4T8X0BjW75Lmb6cK6nUuAE26ZJGjm8BE1cVrN1bHJjggshyy72ahhcOdRMeq8v5yncSpgXI/gDqYVpZa0xcsU19zp9etAFZH4kLnzlbb3QD92xGTY7MiZay9Wp+ky25O7fcN
+	azFx7m4Wff2074RH6i+xHS+z2RqITyenk9y316eflXx63MFbeFVOwn+z+dlA3sbBStZfTPRYhI54M3i37ET2y0rCM7Aee5Ma+tQ+NOV8vRCo7hDO/qS6UQDul5XoM6XmY+k6D2DUhDMrZhgBnoELZlWXpMDaPm70A5C+ku5Y6Z6LrYpUMCfEGdH5hkg8n3/r2ulrejH54D+SvpuACn9zIraRzUw959QLl2ptXQU6oVe9iTX6/Ti6M7GWz+fLrcNdAq0R9tPDNIyEnGRgMZtmrRR8jU9AqGyqDbokaT7t7n4LcVQwq7ld2CZouavdvdhClcqIy+5LQT5REGbqDjoCBL2Ct/ZDKvWx1ZpO85SsE4K4SfonBiXPTt3nqzNwIwQj9rcZ63L6VOYkKVKwJIz9ZustcQW4f7V5fTjRFaLi0EwIsXZR/y8ODb79M/aSl9OV1lM/UZ8Va9YLlMXTm9OXh36jLle0uL8D5or8L3INrdWe3c6cOeTY2DJVAqYAH1JYLtBs6J+7FQow6joHNL2AL5ixhrpWKkSvaFPCvrKQ/uVY5d7baYZcwHf9FWUmo6A4VhGT1hgLQWstErzGnDuWXj85kc9mGkYJSS2/eS55QYhkm1O8mmfvhjGGNW1QoAKozBwjbqbsrgw9uRHCjIcihTU/PxugCxLMW+qhWz3n7oro8WvAC6+U3yl5wBRaWjupPmunorYoLDCWHCX4DxL6FEnJW76hXUZLAL/VHk2N6qECZj6OmQLhkCQaHb41Q/h+8v4m8cjKHRIWJ74HgW/amVoHz0XlZaBi8Mout6QNjTJAo39qh8aJvliSkea23fYA
 X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(1800799024)(376014)(7416014)(82310400026)(921020)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(7416014)(376014)(1800799024)(82310400026)(921020)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	HHfa4OphvnKmhnofNwCnr63tu+qQ7bHubXf/DNNBLP098rKm+EzgWSg+MJPnvA02R6YM/q1hc3qIPaYti9SS2ZHQdXXt4uS9AO7DDUnqVhTAsFViFVKl52IlfcE0BWWWsisqh8pu9zSmIqwvhysL4lxRhxu/1QYDuXdHFnsp26VxLSi58kOyYCc0vJit1dpuJx9U5NDmTLPpG7xBtkwUcjJJ4t0sXJphqRsIqUKWukAw5cf/qtwOb9yvoXeaw1cQpRihcW6yn4RFXtk/JXmHrlvTvaYQcz1Ewx3idchmzPYNFeycpEcMoWwMHBqqDqK34r0tgfCQwuEurZOsN90Of28OX0P+B62Uyni+hxslDqJVo89uJGFXza4qlWjP+qBOTrlQfJZY4hCmprtsYCq1bl62PCXZX5CMQzqDodEK/QS6ddIV7zJjDLJknzSVjPY3
+	f7mMzWI8nD2jIo0CizCX5m4x7skiajfd3lHX5UnOpb3FyU7CL/ZcM/PZ3zbe1c5N/abiVbM5YF1sb5TgLa5rqN0rKH9mLwrwukLSPfrl75j0O/8rQn7Po5Nw+gtVoSYlZTtqIVQPw92qCQGrNSDVFaYaju8E0bZYSb7LpsYvK8ZkvY3FfHqLqtLBPqQXynN7VVWKv6PZMMJXtLDCgX9YRjWcHh0sQNtMF5H7r15G8zEvzpBn7mtdWXpx3EIoLqFAmR1n0J6Jp8JR+jEC1UZZCxcs7on82u9SaVKK/izuxGaV53bnUY+HPJAGM3xcs6sCODBhW+o3NDNSWF3Dq1UYswiv64wAxR01bWcOB5Tfp1SqD6Eh9j8/U/nreBtzFynp1c9a9mCtnwY5xIy6yXWxfraLcKvwKoisJEucOnZXuXt/cIuVr1cAAaNR1a9KscuC
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Mar 2026 10:24:11.8526
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Mar 2026 10:24:23.3541
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d8b724c-cb9c-4b81-c823-08de8f0fa6db
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c5217f4-7a7b-4bf3-db7f-08de8f0fadb9
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF000252A2.namprd05.prod.outlook.com
+	DS3PEPF0000C37C.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPFEC0C6BDA1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4154
 
-Add iommu-map property to specify separate stream IDs for each DMA
-channel. This enables each channel to be in its own IOMMU domain,
-keeping memory isolated from other devices sharing the same DMA
-controller.
-
-Define the constraints such that if the channel and stream IDs are
-contiguous, a single entry can map all the channels, but if the
-channels or stream IDs are non-contiguous support multiple entries.
+Repurpose the struct tegra_dma_channel_regs to define offsets for all the
+channel registers. Previously, the struct only held the register values
+for each transfer and was wrapped within tegra_dma_sg_req. Move the
+values directly into tegra_dma_sg_req and use channel_regs for
+storing the register offsets. Update all register reads/writes to use
+the struct channel_regs. This prepares for the register offset change
+in Tegra264.
 
 Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 ---
- .../devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/dma/tegra186-gpc-dma.c | 282 +++++++++++++++++----------------
+ 1 file changed, 142 insertions(+), 140 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
-index 64f1e9d9896d..bc093c783d98 100644
---- a/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
-+++ b/Documentation/devicetree/bindings/dma/nvidia,tegra186-gpc-dma.yaml
-@@ -14,6 +14,7 @@ description: |
- maintainers:
-   - Jon Hunter <jonathanh@nvidia.com>
-   - Rajesh Gumasta <rgumasta@nvidia.com>
-+  - Akhil R <akhilrajeev@nvidia.com>
+diff --git a/drivers/dma/tegra186-gpc-dma.c b/drivers/dma/tegra186-gpc-dma.c
+index a0522a992ebc..b213c4ae07d2 100644
+--- a/drivers/dma/tegra186-gpc-dma.c
++++ b/drivers/dma/tegra186-gpc-dma.c
+@@ -22,7 +22,6 @@
+ #include "virt-dma.h"
  
- properties:
-   compatible:
-@@ -49,6 +50,14 @@ properties:
-   iommus:
-     maxItems: 1
+ /* CSR register */
+-#define TEGRA_GPCDMA_CHAN_CSR			0x00
+ #define TEGRA_GPCDMA_CSR_ENB			BIT(31)
+ #define TEGRA_GPCDMA_CSR_IE_EOC			BIT(30)
+ #define TEGRA_GPCDMA_CSR_ONCE			BIT(27)
+@@ -58,7 +57,6 @@
+ #define TEGRA_GPCDMA_CSR_WEIGHT			GENMASK(13, 10)
  
-+  iommu-map:
-+    description:
-+      Maps DMA channel numbers to IOMMU stream IDs. A single entry can map all
-+      channels when stream IDs are contiguous. In systems where the channels or
-+      stream IDs are not contiguous, multiple entries may be needed.
-+    minItems: 1
-+    maxItems: 32
+ /* STATUS register */
+-#define TEGRA_GPCDMA_CHAN_STATUS		0x004
+ #define TEGRA_GPCDMA_STATUS_BUSY		BIT(31)
+ #define TEGRA_GPCDMA_STATUS_ISE_EOC		BIT(30)
+ #define TEGRA_GPCDMA_STATUS_PING_PONG		BIT(28)
+@@ -70,22 +68,13 @@
+ #define TEGRA_GPCDMA_STATUS_IRQ_STA		BIT(21)
+ #define TEGRA_GPCDMA_STATUS_IRQ_TRIG_STA	BIT(20)
+ 
+-#define TEGRA_GPCDMA_CHAN_CSRE			0x008
+ #define TEGRA_GPCDMA_CHAN_CSRE_PAUSE		BIT(31)
+ 
+-/* Source address */
+-#define TEGRA_GPCDMA_CHAN_SRC_PTR		0x00C
+-
+-/* Destination address */
+-#define TEGRA_GPCDMA_CHAN_DST_PTR		0x010
+-
+ /* High address pointer */
+-#define TEGRA_GPCDMA_CHAN_HIGH_ADDR_PTR		0x014
+ #define TEGRA_GPCDMA_HIGH_ADDR_SRC_PTR		GENMASK(7, 0)
+ #define TEGRA_GPCDMA_HIGH_ADDR_DST_PTR		GENMASK(23, 16)
+ 
+ /* MC sequence register */
+-#define TEGRA_GPCDMA_CHAN_MCSEQ			0x18
+ #define TEGRA_GPCDMA_MCSEQ_DATA_SWAP		BIT(31)
+ #define TEGRA_GPCDMA_MCSEQ_REQ_COUNT		GENMASK(30, 25)
+ #define TEGRA_GPCDMA_MCSEQ_BURST		GENMASK(24, 23)
+@@ -101,7 +90,6 @@
+ #define TEGRA_GPCDMA_MCSEQ_STREAM_ID0_MASK	GENMASK(6, 0)
+ 
+ /* MMIO sequence register */
+-#define TEGRA_GPCDMA_CHAN_MMIOSEQ			0x01c
+ #define TEGRA_GPCDMA_MMIOSEQ_DBL_BUF		BIT(31)
+ #define TEGRA_GPCDMA_MMIOSEQ_BUS_WIDTH		GENMASK(30, 28)
+ #define TEGRA_GPCDMA_MMIOSEQ_BUS_WIDTH_8	\
+@@ -120,17 +108,7 @@
+ #define TEGRA_GPCDMA_MMIOSEQ_WRAP_WORD		GENMASK(18, 16)
+ #define TEGRA_GPCDMA_MMIOSEQ_MMIO_PROT		GENMASK(8, 7)
+ 
+-/* Channel WCOUNT */
+-#define TEGRA_GPCDMA_CHAN_WCOUNT		0x20
+-
+-/* Transfer count */
+-#define TEGRA_GPCDMA_CHAN_XFER_COUNT		0x24
+-
+-/* DMA byte count status */
+-#define TEGRA_GPCDMA_CHAN_DMA_BYTE_STATUS	0x28
+-
+ /* Error Status Register */
+-#define TEGRA_GPCDMA_CHAN_ERR_STATUS		0x30
+ #define TEGRA_GPCDMA_CHAN_ERR_TYPE_SHIFT	8
+ #define TEGRA_GPCDMA_CHAN_ERR_TYPE_MASK	0xF
+ #define TEGRA_GPCDMA_CHAN_ERR_TYPE(err)	(			\
+@@ -143,16 +121,6 @@
+ #define TEGRA_DMA_MC_SLAVE_ERR			0xB
+ #define TEGRA_DMA_MMIO_SLAVE_ERR		0xA
+ 
+-/* Fixed Pattern */
+-#define TEGRA_GPCDMA_CHAN_FIXED_PATTERN		0x34
+-
+-#define TEGRA_GPCDMA_CHAN_TZ			0x38
+-#define TEGRA_GPCDMA_CHAN_TZ_MMIO_PROT_1	BIT(0)
+-#define TEGRA_GPCDMA_CHAN_TZ_MC_PROT_1		BIT(1)
+-
+-#define TEGRA_GPCDMA_CHAN_SPARE			0x3c
+-#define TEGRA_GPCDMA_CHAN_SPARE_EN_LEGACY_FC	BIT(16)
+-
+ /*
+  * If any burst is in flight and DMA paused then this is the time to complete
+  * on-flight burst and update DMA status register.
+@@ -181,18 +149,24 @@ struct tegra_dma_chip_data {
+ 	unsigned int nr_channels;
+ 	unsigned int channel_reg_size;
+ 	unsigned int max_dma_count;
++	const struct tegra_dma_channel_regs *channel_regs;
+ 	int (*terminate)(struct tegra_dma_channel *tdc);
+ };
+ 
+ /* DMA channel registers */
+ struct tegra_dma_channel_regs {
+ 	u32 csr;
+-	u32 src_ptr;
+-	u32 dst_ptr;
+-	u32 high_addr_ptr;
++	u32 status;
++	u32 csre;
++	u32 src;
++	u32 dst;
++	u32 high_addr;
+ 	u32 mc_seq;
+ 	u32 mmio_seq;
+ 	u32 wcount;
++	u32 wxfer;
++	u32 wstatus;
++	u32 err_status;
+ 	u32 fixed_pattern;
+ };
+ 
+@@ -205,7 +179,14 @@ struct tegra_dma_channel_regs {
+  */
+ struct tegra_dma_sg_req {
+ 	unsigned int len;
+-	struct tegra_dma_channel_regs ch_regs;
++	u32 csr;
++	u32 src;
++	u32 dst;
++	u32 high_addr;
++	u32 mc_seq;
++	u32 mmio_seq;
++	u32 wcount;
++	u32 fixed_pattern;
+ };
+ 
+ /*
+@@ -228,19 +209,20 @@ struct tegra_dma_desc {
+  * tegra_dma_channel: Channel specific information
+  */
+ struct tegra_dma_channel {
+-	bool config_init;
+-	char name[30];
+-	enum dma_transfer_direction sid_dir;
+-	enum dma_status status;
+-	int id;
+-	int irq;
+-	int slave_id;
++	const struct tegra_dma_channel_regs *regs;
+ 	struct tegra_dma *tdma;
+ 	struct virt_dma_chan vc;
+ 	struct tegra_dma_desc *dma_desc;
+ 	struct dma_slave_config dma_sconfig;
++	enum dma_transfer_direction sid_dir;
++	enum dma_status status;
+ 	unsigned int stream_id;
+ 	unsigned long chan_base_offset;
++	bool config_init;
++	char name[30];
++	int id;
++	int irq;
++	int slave_id;
+ };
+ 
+ /*
+@@ -288,22 +270,22 @@ static void tegra_dma_dump_chan_regs(struct tegra_dma_channel *tdc)
+ {
+ 	dev_dbg(tdc2dev(tdc), "DMA Channel %d name %s register dump:\n",
+ 		tdc->id, tdc->name);
+-	dev_dbg(tdc2dev(tdc), "CSR %x STA %x CSRE %x SRC %x DST %x\n",
+-		tdc_read(tdc, TEGRA_GPCDMA_CHAN_CSR),
+-		tdc_read(tdc, TEGRA_GPCDMA_CHAN_STATUS),
+-		tdc_read(tdc, TEGRA_GPCDMA_CHAN_CSRE),
+-		tdc_read(tdc, TEGRA_GPCDMA_CHAN_SRC_PTR),
+-		tdc_read(tdc, TEGRA_GPCDMA_CHAN_DST_PTR)
+-	);
+-	dev_dbg(tdc2dev(tdc), "MCSEQ %x IOSEQ %x WCNT %x XFER %x BSTA %x\n",
+-		tdc_read(tdc, TEGRA_GPCDMA_CHAN_MCSEQ),
+-		tdc_read(tdc, TEGRA_GPCDMA_CHAN_MMIOSEQ),
+-		tdc_read(tdc, TEGRA_GPCDMA_CHAN_WCOUNT),
+-		tdc_read(tdc, TEGRA_GPCDMA_CHAN_XFER_COUNT),
+-		tdc_read(tdc, TEGRA_GPCDMA_CHAN_DMA_BYTE_STATUS)
+-	);
++	dev_dbg(tdc2dev(tdc), "CSR %x STA %x CSRE %x\n",
++		tdc_read(tdc, tdc->regs->csr),
++		tdc_read(tdc, tdc->regs->status),
++		tdc_read(tdc, tdc->regs->csre));
++	dev_dbg(tdc2dev(tdc), "SRC %x DST %x HI ADDR %x\n",
++		tdc_read(tdc, tdc->regs->src),
++		tdc_read(tdc, tdc->regs->dst),
++		tdc_read(tdc, tdc->regs->high_addr));
++	dev_dbg(tdc2dev(tdc), "MCSEQ %x IOSEQ %x WCNT %x XFER %x WSTA %x\n",
++		tdc_read(tdc, tdc->regs->mc_seq),
++		tdc_read(tdc, tdc->regs->mmio_seq),
++		tdc_read(tdc, tdc->regs->wcount),
++		tdc_read(tdc, tdc->regs->wxfer),
++		tdc_read(tdc, tdc->regs->wstatus));
+ 	dev_dbg(tdc2dev(tdc), "DMA ERR_STA %x\n",
+-		tdc_read(tdc, TEGRA_GPCDMA_CHAN_ERR_STATUS));
++		tdc_read(tdc, tdc->regs->err_status));
+ }
+ 
+ static int tegra_dma_sid_reserve(struct tegra_dma_channel *tdc,
+@@ -377,13 +359,13 @@ static int tegra_dma_pause(struct tegra_dma_channel *tdc)
+ 	int ret;
+ 	u32 val;
+ 
+-	val = tdc_read(tdc, TEGRA_GPCDMA_CHAN_CSRE);
++	val = tdc_read(tdc, tdc->regs->csre);
+ 	val |= TEGRA_GPCDMA_CHAN_CSRE_PAUSE;
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_CSRE, val);
++	tdc_write(tdc, tdc->regs->csre, val);
+ 
+ 	/* Wait until busy bit is de-asserted */
+ 	ret = readl_relaxed_poll_timeout_atomic(tdc->tdma->base_addr +
+-			tdc->chan_base_offset + TEGRA_GPCDMA_CHAN_STATUS,
++			tdc->chan_base_offset + tdc->regs->status,
+ 			val,
+ 			!(val & TEGRA_GPCDMA_STATUS_BUSY),
+ 			TEGRA_GPCDMA_BURST_COMPLETE_TIME,
+@@ -419,9 +401,9 @@ static void tegra_dma_resume(struct tegra_dma_channel *tdc)
+ {
+ 	u32 val;
+ 
+-	val = tdc_read(tdc, TEGRA_GPCDMA_CHAN_CSRE);
++	val = tdc_read(tdc, tdc->regs->csre);
+ 	val &= ~TEGRA_GPCDMA_CHAN_CSRE_PAUSE;
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_CSRE, val);
++	tdc_write(tdc, tdc->regs->csre, val);
+ 
+ 	tdc->status = DMA_IN_PROGRESS;
+ }
+@@ -456,27 +438,27 @@ static void tegra_dma_disable(struct tegra_dma_channel *tdc)
+ {
+ 	u32 csr, status;
+ 
+-	csr = tdc_read(tdc, TEGRA_GPCDMA_CHAN_CSR);
++	csr = tdc_read(tdc, tdc->regs->csr);
+ 
+ 	/* Disable interrupts */
+ 	csr &= ~TEGRA_GPCDMA_CSR_IE_EOC;
+ 
+ 	/* Disable DMA */
+ 	csr &= ~TEGRA_GPCDMA_CSR_ENB;
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_CSR, csr);
++	tdc_write(tdc, tdc->regs->csr, csr);
+ 
+ 	/* Clear interrupt status if it is there */
+-	status = tdc_read(tdc, TEGRA_GPCDMA_CHAN_STATUS);
++	status = tdc_read(tdc, tdc->regs->status);
+ 	if (status & TEGRA_GPCDMA_STATUS_ISE_EOC) {
+ 		dev_dbg(tdc2dev(tdc), "%s():clearing interrupt\n", __func__);
+-		tdc_write(tdc, TEGRA_GPCDMA_CHAN_STATUS, status);
++		tdc_write(tdc, tdc->regs->status, status);
+ 	}
+ }
+ 
+ static void tegra_dma_configure_next_sg(struct tegra_dma_channel *tdc)
+ {
+ 	struct tegra_dma_desc *dma_desc = tdc->dma_desc;
+-	struct tegra_dma_channel_regs *ch_regs;
++	struct tegra_dma_sg_req *sg_req;
+ 	int ret;
+ 	u32 val;
+ 
+@@ -488,29 +470,29 @@ static void tegra_dma_configure_next_sg(struct tegra_dma_channel *tdc)
+ 
+ 	/* Configure next transfer immediately after DMA is busy */
+ 	ret = readl_relaxed_poll_timeout_atomic(tdc->tdma->base_addr +
+-			tdc->chan_base_offset + TEGRA_GPCDMA_CHAN_STATUS,
++			tdc->chan_base_offset + tdc->regs->status,
+ 			val,
+ 			(val & TEGRA_GPCDMA_STATUS_BUSY), 0,
+ 			TEGRA_GPCDMA_BURST_COMPLETION_TIMEOUT);
+ 	if (ret)
+ 		return;
+ 
+-	ch_regs = &dma_desc->sg_req[dma_desc->sg_idx].ch_regs;
++	sg_req = &dma_desc->sg_req[dma_desc->sg_idx];
+ 
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_WCOUNT, ch_regs->wcount);
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_SRC_PTR, ch_regs->src_ptr);
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_DST_PTR, ch_regs->dst_ptr);
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_HIGH_ADDR_PTR, ch_regs->high_addr_ptr);
++	tdc_write(tdc, tdc->regs->wcount, sg_req->wcount);
++	tdc_write(tdc, tdc->regs->src, sg_req->src);
++	tdc_write(tdc, tdc->regs->dst, sg_req->dst);
++	tdc_write(tdc, tdc->regs->high_addr, sg_req->high_addr);
+ 
+ 	/* Start DMA */
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_CSR,
+-		  ch_regs->csr | TEGRA_GPCDMA_CSR_ENB);
++	tdc_write(tdc, tdc->regs->csr,
++		  sg_req->csr | TEGRA_GPCDMA_CSR_ENB);
+ }
+ 
+ static void tegra_dma_start(struct tegra_dma_channel *tdc)
+ {
+ 	struct tegra_dma_desc *dma_desc = tdc->dma_desc;
+-	struct tegra_dma_channel_regs *ch_regs;
++	struct tegra_dma_sg_req *sg_req;
+ 	struct virt_dma_desc *vdesc;
+ 
+ 	if (!dma_desc) {
+@@ -526,21 +508,21 @@ static void tegra_dma_start(struct tegra_dma_channel *tdc)
+ 		tegra_dma_resume(tdc);
+ 	}
+ 
+-	ch_regs = &dma_desc->sg_req[dma_desc->sg_idx].ch_regs;
++	sg_req = &dma_desc->sg_req[dma_desc->sg_idx];
+ 
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_WCOUNT, ch_regs->wcount);
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_CSR, 0);
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_SRC_PTR, ch_regs->src_ptr);
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_DST_PTR, ch_regs->dst_ptr);
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_HIGH_ADDR_PTR, ch_regs->high_addr_ptr);
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_FIXED_PATTERN, ch_regs->fixed_pattern);
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_MMIOSEQ, ch_regs->mmio_seq);
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_MCSEQ, ch_regs->mc_seq);
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_CSR, ch_regs->csr);
++	tdc_write(tdc, tdc->regs->wcount, sg_req->wcount);
++	tdc_write(tdc, tdc->regs->csr, 0);
++	tdc_write(tdc, tdc->regs->src, sg_req->src);
++	tdc_write(tdc, tdc->regs->dst, sg_req->dst);
++	tdc_write(tdc, tdc->regs->high_addr, sg_req->high_addr);
++	tdc_write(tdc, tdc->regs->fixed_pattern, sg_req->fixed_pattern);
++	tdc_write(tdc, tdc->regs->mmio_seq, sg_req->mmio_seq);
++	tdc_write(tdc, tdc->regs->mc_seq, sg_req->mc_seq);
++	tdc_write(tdc, tdc->regs->csr, sg_req->csr);
+ 
+ 	/* Start DMA */
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_CSR,
+-		  ch_regs->csr | TEGRA_GPCDMA_CSR_ENB);
++	tdc_write(tdc, tdc->regs->csr,
++		  sg_req->csr | TEGRA_GPCDMA_CSR_ENB);
+ }
+ 
+ static void tegra_dma_xfer_complete(struct tegra_dma_channel *tdc)
+@@ -601,19 +583,19 @@ static irqreturn_t tegra_dma_isr(int irq, void *dev_id)
+ 	u32 status;
+ 
+ 	/* Check channel error status register */
+-	status = tdc_read(tdc, TEGRA_GPCDMA_CHAN_ERR_STATUS);
++	status = tdc_read(tdc, tdc->regs->err_status);
+ 	if (status) {
+ 		tegra_dma_chan_decode_error(tdc, status);
+ 		tegra_dma_dump_chan_regs(tdc);
+-		tdc_write(tdc, TEGRA_GPCDMA_CHAN_ERR_STATUS, 0xFFFFFFFF);
++		tdc_write(tdc, tdc->regs->err_status, 0xFFFFFFFF);
+ 	}
+ 
+ 	spin_lock(&tdc->vc.lock);
+-	status = tdc_read(tdc, TEGRA_GPCDMA_CHAN_STATUS);
++	status = tdc_read(tdc, tdc->regs->status);
+ 	if (!(status & TEGRA_GPCDMA_STATUS_ISE_EOC))
+ 		goto irq_done;
+ 
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_STATUS,
++	tdc_write(tdc, tdc->regs->status,
+ 		  TEGRA_GPCDMA_STATUS_ISE_EOC);
+ 
+ 	if (!dma_desc)
+@@ -673,10 +655,10 @@ static int tegra_dma_stop_client(struct tegra_dma_channel *tdc)
+ 	 * to stop DMA engine from starting any more bursts for
+ 	 * the given client and wait for in flight bursts to complete
+ 	 */
+-	csr = tdc_read(tdc, TEGRA_GPCDMA_CHAN_CSR);
++	csr = tdc_read(tdc, tdc->regs->csr);
+ 	csr &= ~(TEGRA_GPCDMA_CSR_REQ_SEL_MASK);
+ 	csr |= TEGRA_GPCDMA_CSR_REQ_SEL_UNUSED;
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_CSR, csr);
++	tdc_write(tdc, tdc->regs->csr, csr);
+ 
+ 	/* Wait for in flight data transfer to finish */
+ 	udelay(TEGRA_GPCDMA_BURST_COMPLETE_TIME);
+@@ -687,7 +669,7 @@ static int tegra_dma_stop_client(struct tegra_dma_channel *tdc)
+ 
+ 	ret = readl_relaxed_poll_timeout_atomic(tdc->tdma->base_addr +
+ 				tdc->chan_base_offset +
+-				TEGRA_GPCDMA_CHAN_STATUS,
++				tdc->regs->status,
+ 				status,
+ 				!(status & (TEGRA_GPCDMA_STATUS_CHANNEL_TX |
+ 				TEGRA_GPCDMA_STATUS_CHANNEL_RX)),
+@@ -739,14 +721,14 @@ static int tegra_dma_get_residual(struct tegra_dma_channel *tdc)
+ 	unsigned int bytes_xfer, residual;
+ 	u32 wcount = 0, status;
+ 
+-	wcount = tdc_read(tdc, TEGRA_GPCDMA_CHAN_XFER_COUNT);
++	wcount = tdc_read(tdc, tdc->regs->wxfer);
+ 
+ 	/*
+ 	 * Set wcount = 0 if EOC bit is set. The transfer would have
+ 	 * already completed and the CHAN_XFER_COUNT could have updated
+ 	 * for the next transfer, specifically in case of cyclic transfers.
+ 	 */
+-	status = tdc_read(tdc, TEGRA_GPCDMA_CHAN_STATUS);
++	status = tdc_read(tdc, tdc->regs->status);
+ 	if (status & TEGRA_GPCDMA_STATUS_ISE_EOC)
+ 		wcount = 0;
+ 
+@@ -893,7 +875,7 @@ tegra_dma_prep_dma_memset(struct dma_chan *dc, dma_addr_t dest, int value,
+ 	/* Configure default priority weight for the channel */
+ 	csr |= FIELD_PREP(TEGRA_GPCDMA_CSR_WEIGHT, 1);
+ 
+-	mc_seq =  tdc_read(tdc, TEGRA_GPCDMA_CHAN_MCSEQ);
++	mc_seq =  tdc_read(tdc, tdc->regs->mc_seq);
+ 	/* retain stream-id and clean rest */
+ 	mc_seq &= TEGRA_GPCDMA_MCSEQ_STREAM_ID0_MASK;
+ 
+@@ -916,16 +898,16 @@ tegra_dma_prep_dma_memset(struct dma_chan *dc, dma_addr_t dest, int value,
+ 	dma_desc->sg_count = 1;
+ 	sg_req = dma_desc->sg_req;
+ 
+-	sg_req[0].ch_regs.src_ptr = 0;
+-	sg_req[0].ch_regs.dst_ptr = dest;
+-	sg_req[0].ch_regs.high_addr_ptr =
++	sg_req[0].src = 0;
++	sg_req[0].dst = dest;
++	sg_req[0].high_addr =
+ 			FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (dest >> 32));
+-	sg_req[0].ch_regs.fixed_pattern = value;
++	sg_req[0].fixed_pattern = value;
+ 	/* Word count reg takes value as (N +1) words */
+-	sg_req[0].ch_regs.wcount = ((len - 4) >> 2);
+-	sg_req[0].ch_regs.csr = csr;
+-	sg_req[0].ch_regs.mmio_seq = 0;
+-	sg_req[0].ch_regs.mc_seq = mc_seq;
++	sg_req[0].wcount = ((len - 4) >> 2);
++	sg_req[0].csr = csr;
++	sg_req[0].mmio_seq = 0;
++	sg_req[0].mc_seq = mc_seq;
+ 	sg_req[0].len = len;
+ 
+ 	dma_desc->cyclic = false;
+@@ -961,7 +943,7 @@ tegra_dma_prep_dma_memcpy(struct dma_chan *dc, dma_addr_t dest,
+ 	/* Configure default priority weight for the channel */
+ 	csr |= FIELD_PREP(TEGRA_GPCDMA_CSR_WEIGHT, 1);
+ 
+-	mc_seq =  tdc_read(tdc, TEGRA_GPCDMA_CHAN_MCSEQ);
++	mc_seq =  tdc_read(tdc, tdc->regs->mc_seq);
+ 	/* retain stream-id and clean rest */
+ 	mc_seq &= (TEGRA_GPCDMA_MCSEQ_STREAM_ID0_MASK) |
+ 		  (TEGRA_GPCDMA_MCSEQ_STREAM_ID1_MASK);
+@@ -985,17 +967,17 @@ tegra_dma_prep_dma_memcpy(struct dma_chan *dc, dma_addr_t dest,
+ 	dma_desc->sg_count = 1;
+ 	sg_req = dma_desc->sg_req;
+ 
+-	sg_req[0].ch_regs.src_ptr = src;
+-	sg_req[0].ch_regs.dst_ptr = dest;
+-	sg_req[0].ch_regs.high_addr_ptr =
++	sg_req[0].src = src;
++	sg_req[0].dst = dest;
++	sg_req[0].high_addr =
+ 		FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_SRC_PTR, (src >> 32));
+-	sg_req[0].ch_regs.high_addr_ptr |=
++	sg_req[0].high_addr |=
+ 		FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (dest >> 32));
+ 	/* Word count reg takes value as (N +1) words */
+-	sg_req[0].ch_regs.wcount = ((len - 4) >> 2);
+-	sg_req[0].ch_regs.csr = csr;
+-	sg_req[0].ch_regs.mmio_seq = 0;
+-	sg_req[0].ch_regs.mc_seq = mc_seq;
++	sg_req[0].wcount = ((len - 4) >> 2);
++	sg_req[0].csr = csr;
++	sg_req[0].mmio_seq = 0;
++	sg_req[0].mc_seq = mc_seq;
+ 	sg_req[0].len = len;
+ 
+ 	dma_desc->cyclic = false;
+@@ -1049,7 +1031,7 @@ tegra_dma_prep_slave_sg(struct dma_chan *dc, struct scatterlist *sgl,
+ 	if (flags & DMA_PREP_INTERRUPT)
+ 		csr |= TEGRA_GPCDMA_CSR_IE_EOC;
+ 
+-	mc_seq =  tdc_read(tdc, TEGRA_GPCDMA_CHAN_MCSEQ);
++	mc_seq =  tdc_read(tdc, tdc->regs->mc_seq);
+ 	/* retain stream-id and clean rest */
+ 	mc_seq &= TEGRA_GPCDMA_MCSEQ_STREAM_ID0_MASK;
+ 
+@@ -1096,14 +1078,14 @@ tegra_dma_prep_slave_sg(struct dma_chan *dc, struct scatterlist *sgl,
+ 		dma_desc->bytes_req += len;
+ 
+ 		if (direction == DMA_MEM_TO_DEV) {
+-			sg_req[i].ch_regs.src_ptr = mem;
+-			sg_req[i].ch_regs.dst_ptr = apb_ptr;
+-			sg_req[i].ch_regs.high_addr_ptr =
++			sg_req[i].src = mem;
++			sg_req[i].dst = apb_ptr;
++			sg_req[i].high_addr =
+ 				FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_SRC_PTR, (mem >> 32));
+ 		} else if (direction == DMA_DEV_TO_MEM) {
+-			sg_req[i].ch_regs.src_ptr = apb_ptr;
+-			sg_req[i].ch_regs.dst_ptr = mem;
+-			sg_req[i].ch_regs.high_addr_ptr =
++			sg_req[i].src = apb_ptr;
++			sg_req[i].dst = mem;
++			sg_req[i].high_addr =
+ 				FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (mem >> 32));
+ 		}
+ 
+@@ -1111,10 +1093,10 @@ tegra_dma_prep_slave_sg(struct dma_chan *dc, struct scatterlist *sgl,
+ 		 * Word count register takes input in words. Writing a value
+ 		 * of N into word count register means a req of (N+1) words.
+ 		 */
+-		sg_req[i].ch_regs.wcount = ((len - 4) >> 2);
+-		sg_req[i].ch_regs.csr = csr;
+-		sg_req[i].ch_regs.mmio_seq = mmio_seq;
+-		sg_req[i].ch_regs.mc_seq = mc_seq;
++		sg_req[i].wcount = ((len - 4) >> 2);
++		sg_req[i].csr = csr;
++		sg_req[i].mmio_seq = mmio_seq;
++		sg_req[i].mc_seq = mc_seq;
+ 		sg_req[i].len = len;
+ 	}
+ 
+@@ -1186,7 +1168,7 @@ tegra_dma_prep_dma_cyclic(struct dma_chan *dc, dma_addr_t buf_addr, size_t buf_l
+ 
+ 	mmio_seq |= FIELD_PREP(TEGRA_GPCDMA_MMIOSEQ_WRAP_WORD, 1);
+ 
+-	mc_seq =  tdc_read(tdc, TEGRA_GPCDMA_CHAN_MCSEQ);
++	mc_seq =  tdc_read(tdc, tdc->regs->mc_seq);
+ 	/* retain stream-id and clean rest */
+ 	mc_seq &= TEGRA_GPCDMA_MCSEQ_STREAM_ID0_MASK;
+ 
+@@ -1217,24 +1199,24 @@ tegra_dma_prep_dma_cyclic(struct dma_chan *dc, dma_addr_t buf_addr, size_t buf_l
+ 	for (i = 0; i < period_count; i++) {
+ 		mmio_seq |= get_burst_size(tdc, burst_size, slave_bw, len);
+ 		if (direction == DMA_MEM_TO_DEV) {
+-			sg_req[i].ch_regs.src_ptr = mem;
+-			sg_req[i].ch_regs.dst_ptr = apb_ptr;
+-			sg_req[i].ch_regs.high_addr_ptr =
++			sg_req[i].src = mem;
++			sg_req[i].dst = apb_ptr;
++			sg_req[i].high_addr =
+ 				FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_SRC_PTR, (mem >> 32));
+ 		} else if (direction == DMA_DEV_TO_MEM) {
+-			sg_req[i].ch_regs.src_ptr = apb_ptr;
+-			sg_req[i].ch_regs.dst_ptr = mem;
+-			sg_req[i].ch_regs.high_addr_ptr =
++			sg_req[i].src = apb_ptr;
++			sg_req[i].dst = mem;
++			sg_req[i].high_addr =
+ 				FIELD_PREP(TEGRA_GPCDMA_HIGH_ADDR_DST_PTR, (mem >> 32));
+ 		}
+ 		/*
+ 		 * Word count register takes input in words. Writing a value
+ 		 * of N into word count register means a req of (N+1) words.
+ 		 */
+-		sg_req[i].ch_regs.wcount = ((len - 4) >> 2);
+-		sg_req[i].ch_regs.csr = csr;
+-		sg_req[i].ch_regs.mmio_seq = mmio_seq;
+-		sg_req[i].ch_regs.mc_seq = mc_seq;
++		sg_req[i].wcount = ((len - 4) >> 2);
++		sg_req[i].csr = csr;
++		sg_req[i].mmio_seq = mmio_seq;
++		sg_req[i].mc_seq = mc_seq;
+ 		sg_req[i].len = len;
+ 
+ 		mem += len;
+@@ -1304,11 +1286,28 @@ static struct dma_chan *tegra_dma_of_xlate(struct of_phandle_args *dma_spec,
+ 	return chan;
+ }
+ 
++static const struct tegra_dma_channel_regs tegra186_reg_offsets = {
++	.csr = 0x0,
++	.status = 0x4,
++	.csre = 0x8,
++	.src = 0xc,
++	.dst = 0x10,
++	.high_addr = 0x14,
++	.mc_seq = 0x18,
++	.mmio_seq = 0x1c,
++	.wcount = 0x20,
++	.wxfer = 0x24,
++	.wstatus = 0x28,
++	.err_status = 0x30,
++	.fixed_pattern = 0x34,
++};
 +
-   dma-coherent: true
+ static const struct tegra_dma_chip_data tegra186_dma_chip_data = {
+ 	.nr_channels = 32,
+ 	.channel_reg_size = SZ_64K,
+ 	.max_dma_count = SZ_1G,
+ 	.hw_support_pause = false,
++	.channel_regs = &tegra186_reg_offsets,
+ 	.terminate = tegra_dma_stop_client,
+ };
  
-   dma-channel-mask:
+@@ -1317,6 +1316,7 @@ static const struct tegra_dma_chip_data tegra194_dma_chip_data = {
+ 	.channel_reg_size = SZ_64K,
+ 	.max_dma_count = SZ_1G,
+ 	.hw_support_pause = true,
++	.channel_regs = &tegra186_reg_offsets,
+ 	.terminate = tegra_dma_pause,
+ };
+ 
+@@ -1325,6 +1325,7 @@ static const struct tegra_dma_chip_data tegra234_dma_chip_data = {
+ 	.channel_reg_size = SZ_64K,
+ 	.max_dma_count = SZ_1G,
+ 	.hw_support_pause = true,
++	.channel_regs = &tegra186_reg_offsets,
+ 	.terminate = tegra_dma_pause_noerr,
+ };
+ 
+@@ -1345,7 +1346,7 @@ MODULE_DEVICE_TABLE(of, tegra_dma_of_match);
+ 
+ static int tegra_dma_program_sid(struct tegra_dma_channel *tdc, int stream_id)
+ {
+-	unsigned int reg_val =  tdc_read(tdc, TEGRA_GPCDMA_CHAN_MCSEQ);
++	unsigned int reg_val =  tdc_read(tdc, tdc->regs->mc_seq);
+ 
+ 	reg_val &= ~(TEGRA_GPCDMA_MCSEQ_STREAM_ID0_MASK);
+ 	reg_val &= ~(TEGRA_GPCDMA_MCSEQ_STREAM_ID1_MASK);
+@@ -1353,7 +1354,7 @@ static int tegra_dma_program_sid(struct tegra_dma_channel *tdc, int stream_id)
+ 	reg_val |= FIELD_PREP(TEGRA_GPCDMA_MCSEQ_STREAM_ID0_MASK, stream_id);
+ 	reg_val |= FIELD_PREP(TEGRA_GPCDMA_MCSEQ_STREAM_ID1_MASK, stream_id);
+ 
+-	tdc_write(tdc, TEGRA_GPCDMA_CHAN_MCSEQ, reg_val);
++	tdc_write(tdc, tdc->regs->mc_seq, reg_val);
+ 	return 0;
+ }
+ 
+@@ -1419,6 +1420,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 		tdc->chan_base_offset = TEGRA_GPCDMA_CHANNEL_BASE_ADDR_OFFSET +
+ 					i * cdata->channel_reg_size;
+ 		snprintf(tdc->name, sizeof(tdc->name), "gpcdma.%d", i);
++		tdc->regs = cdata->channel_regs;
+ 		tdc->tdma = tdma;
+ 		tdc->id = i;
+ 		tdc->slave_id = -1;
 -- 
 2.50.1
 
