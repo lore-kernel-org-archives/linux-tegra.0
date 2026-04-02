@@ -1,90 +1,174 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0472362137;
-	Thu,  2 Apr 2026 16:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4B13ECBDD
+	for <linux-tegra@vger.kernel.org>; Thu,  2 Apr 2026 17:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775149184; cv=none; b=iY1FHYfVl3EyK7WtvoXrTpmce/zOjd/PnDbHsPLL71honWXWwiPVNxkZa6x2nKmyLfR8NnNnPgCGQodHJ5cbJDRcNJkSgKn24ZQhow8q82Y2t4OlZvxtwTCvgA+jRiqdimRi9bsyBwEHfwRTxHkDxeUtj7EFevV7y2CoURp4G8o=
+	t=1775149629; cv=none; b=PRUScpNy32SiuvQsEAqKsk9lkOIgt8LoiZmsWG1bD+DPEYDy6qAfsAw2G9b8Rzlqk64dUyf6yHupCFe88m1crNxAXBWUGYiCCET8Cfpde54HkO9gaXwc7xva/nFmV5t0MpHF1qVyfMeHXnI49A6V2+4fGttxQJUc+kxuJggNjHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775149184; c=relaxed/simple;
-	bh=bs3HJXRezDszAXCL9RozlYwMQtCrsSyiFLc8vVRxzGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eqA5JdPTGud2BEk7fhUaN4jxKCrGA2gv9OE73pKQ13QR4S+h5MqPE2qkS1vWCOy+zaH0Aav7+IdHnjT5j/OzpnfSfNxuJ17jnOL4UbFFVRRY4H9jTjCpYmvnf2OZnLjdoYfQIpXTM9fAdPaIgSPU9vJF4HkyrN5L6TSVp1H4FzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kI7VfszE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775149629; c=relaxed/simple;
+	bh=pjCqOLmJ4hu1XzDffMUDURIAFvHzh4g7TG3XafIlPn8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=aj0qP5Ctgkra5wQZvRtTFkyln3RnSE41RpJsifsCM5loQj9Hxm8B6m9giOftYMByPKrwg6fnsddESIB6vOV8b6pxePStkg58DBKo9M38A+csJBhEX+W3pACe6X+MeRN9TAaC3FzF3l4fLojSw8xVBNjhXsWmkYxyj/m7R8Oa3xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NI41NAY3; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kI7VfszE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6272C116C6;
-	Thu,  2 Apr 2026 16:59:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775149183;
-	bh=bs3HJXRezDszAXCL9RozlYwMQtCrsSyiFLc8vVRxzGU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kI7VfszEYot20dHot4OG2o2I8+rbTT84X1oZzd3geu/g0xAkY8bgnqsCeKc0m4t06
-	 K1FJfknzugXFIorn1DY4ZGFdcqWgxDmbAQ9u53wIpoPYFIljpBgrM0Wt13VAvJO4mt
-	 cRseTlzRt2Mjyw5/cvssqPrxNjzOyJ6QbFxXsMcpfNQiMgO3ITiSZTFu6xdEOGrCSy
-	 5oW7PbNGlw/Hd5olXlJ5E2mOTRal7+/AakXWC4JHdhR89w+4C28sug4urrt3Z7yiiq
-	 ATHCnNscoYjMXpDzKbssi5/6JPq+hQ9XIyz3tXGRWOonXWOED0m+XPplbrP3RHx8ZA
-	 Tw+QPf6yqcZFQ==
-Date: Thu, 2 Apr 2026 22:29:34 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [GIT PULL] PCI: tegra: Changes for v7.1-rc1
-Message-ID: <lduiidifejglrep2laxzk2hep5rxpm3ysz5cwhdsglf6ciyjp4@z2dmnlvi7nhi>
-References: <20260329155040.1448158-1-thierry.reding@kernel.org>
- <ac5ZGItkKNEI_W1-@orome>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NI41NAY3"
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2b249975139so25712575ad.0
+        for <linux-tegra@vger.kernel.org>; Thu, 02 Apr 2026 10:07:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1775149619; x=1775754419; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5ceebF0cNoevtXZxXS/tupzteUV9Qk2AK74OlrZ5xNE=;
+        b=NI41NAY3v8ioJHB/zaJecieiy4H8OpVGK2LSHQ80ZVdcIKp0hxo+8ZSOegWMZBCdGJ
+         hb5PFeIg06tczKyeK+TmDkkVYfVh4DCJUR/BRwuGtNv9avMPuwE/chjpc2wYMNfkmU0V
+         10w0aSbbXARE9XNuDJ2txcnWFkl9Z+KJGP5uwJEbTK8oRNhcXtUHzMt8iJzSV2LldD7s
+         VyJeQ/0Pi/MmzXzQJcf0K2uZfn/UxELhzBBMFg99lPFakULQbD/Q4/h5RfQLc1iRma6J
+         CtTiJcCnZ8k7oM2LOvJJ7/+MGN8ymDF3/c97fkhStHPSQtW/tdP2cnY24d5Wpad0z1QJ
+         MlBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775149619; x=1775754419;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5ceebF0cNoevtXZxXS/tupzteUV9Qk2AK74OlrZ5xNE=;
+        b=GYQcvVKC6CCp7vEuQdYvuyzMjjc1IZFAhoe3mLWe9W3wRmJt7H95DNQfYSN+tNCfw4
+         YaDb1+wAdQx798V97cDbyDMqGNyc3xiGmAoQ2kDJKGFXTM68XYKXFMy/tqwxmdjPUHtY
+         Mj5AJf5aRbhd4+aQB8kTRDc6DNpUxZwALKRuvqotx2tCS6RVLch+7tZ0gfeQkiayfJ2l
+         yHHJzDiPGPeAge4zuLkkp3R7UBb/dqihDZLiuylnoOkaH1b4bOb20msIffsuaalylZRS
+         FLfdbw9GUiJlzWCOPkTLf4rEkM1V6OHJ6NVVBYn6KMVr6FMcshX32+yC95bTPRZ+8Mw+
+         frNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUf64zH/Qz7mpVIDPc5tBRVxP9jCOjA/E5mDjcSfBFxTwfaWcNhdlJVHz6+IoFirLz1aLNrMvn/nQAt0w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTDUxwYqh0Jka/FxASwMwAukyqLBa4W8k/sTGrvbb3HYs5ukAt
+	Aotxus4G/wzbX+o+30o70XGbv4c5V50J7I69AMulPKc3QK7AWCm0hNzwwL0RNbfjzKpUvg828U4
+	CeebSZAeNOoKLY4NuqIUUU8oJgg==
+X-Received: from ploe7.prod.google.com ([2002:a17:903:2407:b0:2b0:b03a:16ce])
+ (user=joonwonkang job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:903:3d0f:b0:2b2:4cd2:e174 with SMTP id d9443c01a7336-2b281811ef1mr573475ad.43.1775149618937;
+ Thu, 02 Apr 2026 10:06:58 -0700 (PDT)
+Date: Thu,  2 Apr 2026 17:06:39 +0000
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ac5ZGItkKNEI_W1-@orome>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.53.0.1213.gd9a14994de-goog
+Message-ID: <20260402170641.2082547-1-joonwonkang@google.com>
+Subject: [PATCH v3 0/2] mailbox: Fix wrong completion order and improper send
+ result in the blocking mode send API
+From: Joonwon Kang <joonwonkang@google.com>
+To: jassisinghbrar@gmail.com, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, thierry.reding@gmail.com, 
+	jonathanh@nvidia.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	Joonwon Kang <joonwonkang@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Apr 02, 2026 at 01:56:48PM +0200, Thierry Reding wrote:
-> On Sun, Mar 29, 2026 at 05:50:39PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <thierry.reding@gmail.com>
-> > 
-> > Hi Lorenzo, Bjorn,
-> > 
-> > The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
-> > 
-> >   Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
-> > 
-> > are available in the Git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.1-pci
-> > 
-> > for you to fetch changes up to a0c0906bb09ee2f64690b3b8ffb458b4dbbcb26e:
-> > 
-> >   PCI: tegra: Add Tegra264 support (2026-03-28 15:00:05 +0100)
-> > 
-> > This is v3 of the Tegra264 PCI patches that can be found here:
-> > 
-> >   https://lore.kernel.org/linux-pci/20260326135855.2795149-1-thierry.reding@kernel.org/
-> > 
-> > This looks ready now, but if there's any more feedback, I will happily
-> > respin these driver patches.
-> > 
-> > Note that the shortlog and the diffstat below include the dependencies
-> > from the Tegra tree, and that subset will go in through the ARM SoC tree
-> > as well. Effectively what's new in this pull request is just the two PCI
-> > patches, the rest is only included here to resolve the build time
-> > dependencies.
-> 
-> I'm retracting this PR. DT maintainers aren't happy about how I handled
-> this, so it'll have to wait for another release cycle.
-> 
+Hi team,
 
-JFYI, We don't pull from PCI patches from other trees. We only merge them by
-ourselves.
+This patch series fixes the two major issues in blocking mode.
 
-- Mani
+1) Wrong completion order in the send API as described in [1]:
 
+        Thread#1(T1)               Thread#2(T2)
+     mbox_send_message           mbox_send_message
+            |                           |
+            V                           |
+        add_to_rbuf(M1)                 V
+            |                     add_to_rbuf(M2)
+            |                           |
+            |                           V
+            V                      msg_submit(picks M1)
+        msg_submit                      |
+            |                           V
+            V                   wait_for_completion(on M2)
+     wait_for_completion(on M1)         |  (1st in waitQ)
+            |   (2nd in waitQ)          V
+            V                   wake_up(on completion of M1)<--incorrect
+
+2) Send API does not return the actual send result.
+
+This patch series contains two patches for each issue:
+  0001-mailbox-Use-per-thread-completion-to-fix-wrong-co.patch
+  0002-mailbox-Make-mbox_send_message-return-error-code-.patch
+
+The first issue has to do with multi-threads support. Given the
+discussion in [1] with the mailbox framework maintainer, it has been
+long thought that the mailbox framework is designed to support
+multi-threads although it missed the completion order issue at its
+introduction. The first patch of this series is to fix it.
+
+Alternatively, we could instead declare that the mailbox API does not
+support multi-threads [2]. However, it would be a sudden big change to
+the mailbox users after the long standing implication of supporting
+multi-threads. Plus, it would have disparity with the non-blocking mode
+which supports multi-threads already, which could also lead to confusion
+to the users by saying "non-blocking mode supports multi-threads whereas
+blocking mode doesn't". For this reason, the first patch in this series
+does not choose this alternative.
+
+The patch series rules out the case where tx_tick() is called twice or
+more for a sent message on the same channel. In theory, it could happen
+when timeout occurs. For example, one tx_tick() by the mailbox core due
+to timeout and another tx_tick() by the mailbox controller or client by
+accident or for any other reason. If it happens, the internal mailbox
+state could become inconsistent even on a single thread. Thus, this
+issue should be handled in an orthogonal effort later on.
+
+The second issue forces users to register tx done callback to get the
+actual send result although they are using the blocking mode send API.
+This behavior is different from typical blocking send APIs, which just
+return the actual send result directly, and so confusing to the users.
+Without knowing this additional requirement of the API, it would be
+prone to miss the send result check entirely. The second patch is to fix
+it by making the blocking mode send API return the actual send result.
+
+Change log of the first patch:
+ - v3: Rebase on the latest for-next branch.
+ - v2: Consider the case where timeout occurs and so tx_tick() is called
+   for a channel by one thread while another thread is having an active
+   request on the same channel. In that case, we mark the inactive
+   request as canceled and do not send it to the controller.
+ - v1: The previous solution in v0 tries to have per-message completion:
+   `tx_cmpl[MBOX_TX_QUEUE_LEN]`; each completion belongs to each slot of
+   the message queue: `msg_data[i]`. Those completions take up additional
+   memory even when they are not used. Instead, this patch tries to have
+   per-"thread" completion; each completion belongs to each sender thread
+   and each slot of the message queue has a pointer to that completion;
+   `struct mbox_message` has the "pointer" field
+   `struct completion *tx_complete` which points to the completion which
+   is created on the stack of the sender, instead of owning the
+   completion by `struct completion tx_complete`. This way, we could
+   avoid additional memory use since a completion will be allocated only
+   when necessary. Plus, more importantly, we could avoid the window
+   where the same completion is reused by different sender threads, which
+   the previous solution still has.
+ - v0: This first attempt tries to have per-message completion: [1].
+
+Change log of the second patch:
+ - No major change from v1.
+
+References:
+ - [1]: https://lore.kernel.org/all/1490809381-28869-1-git-send-email-jaswinder.singh@linaro.org
+ - [2]: https://lore.kernel.org/all/CABb+yY39rhTZbtA21MecYk-R9fh7VQQr5kZUgCw4z92mWhZ1Rg@mail.gmail.com/
+
+
+Joonwon Kang (2):
+  mailbox: Use per-thread completion to fix wrong completion order
+  mailbox: Make mbox_send_message() return error code when tx fails
+
+ drivers/mailbox/mailbox.c          | 98 ++++++++++++++++++++----------
+ drivers/mailbox/mtk-vcp-mailbox.c  |  2 +-
+ drivers/mailbox/tegra-hsp.c        |  2 +-
+ include/linux/mailbox_controller.h | 22 +++++--
+ 4 files changed, 85 insertions(+), 39 deletions(-)
+
+
+Thanks,
+Joonwon Kang
 -- 
-மணிவண்ணன் சதாசிவம்
+2.53.0.1185.g05d4b7b318-goog
+
