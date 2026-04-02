@@ -1,39 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F4D35957;
-	Thu,  2 Apr 2026 11:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4507C33263A
+	for <linux-tegra@vger.kernel.org>; Thu,  2 Apr 2026 12:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775131011; cv=none; b=RMJUgtCDJOkg4QSSckfyfzq8I2GqUwXiliDHmEpMTMqhIC13flJkVMTpbK/LBDGXMPrvQzAJMBoMri3pgc29TAT4dbAdvgAqMxanbrD0rYouEQZG6gNEvdbbVCPs+VaiuRTaw35a0M+pMhN80UmBDsursVvp+U4R/ZrWkGT1Kfo=
+	t=1775131241; cv=none; b=Eh6PBAn/kdgn1Lox/5fp8j+sIfheUzAuK637bxxzWwZZaXzwNMJtofsahVtF7lc/JhIie9dq7m4/eStfKGU2NETQoayqBwI6qhJLU9StrnG7EfVCsnesmR++Mixo6l8x+VuymwXHLZZ9HTKbGm4NjLr6vTw2K4e9LuX5idCVl/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775131011; c=relaxed/simple;
-	bh=qHCU7KuluEAoAYrPL6lU76Qh5ztSdBB3Rk7YSr8E/G0=;
+	s=arc-20240116; t=1775131241; c=relaxed/simple;
+	bh=ierkfmJympD62JiwLSPMCTfDznTkU9sslkcFOZra98c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N0fOaiksBLlAMo3xyCTHugs99SjJAn+wxgAhdQM6E06SKL1uriUHYGhs1c5yi6OlqjADTfW2qoF/be+R3mE5rbUwNG+v/LuVXf0mlmpaKNyWTwgDAvkTCc7PqDGnHVqCUEEip8Urhifi/q1s0mS/dy8hgglt9K9I37sxG6VGC84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QpWiI7ek; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=fQczmR8DXwV3tkI8n+2+SO33xpgKSScwEpOl/dVSp/NxyO8/6S+44lX5UGSkNfFln0RN4s/LkDtRJXA7NCDx5U3nJaajAKvaF4ZWqV9tf3rasBBXaD9frsm6AQ/HAYKsWhzqZXBL5uq7xrspYZUKwfSw1Ygu986uadw6z0QyQBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RJ/aLQnd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QpWiI7ek"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DC70C19423;
-	Thu,  2 Apr 2026 11:56:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RJ/aLQnd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04B17C116C6;
+	Thu,  2 Apr 2026 12:00:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775131010;
-	bh=qHCU7KuluEAoAYrPL6lU76Qh5ztSdBB3Rk7YSr8E/G0=;
+	s=k20201202; t=1775131240;
+	bh=ierkfmJympD62JiwLSPMCTfDznTkU9sslkcFOZra98c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QpWiI7ekZllBUgA55FaznDKG1bFcCKC2+4R4JtbHAzKkyWLLIyCXw7+2m0enLxC73
-	 g6e6UT8G38pZA71oYvaJ8IkdSl8QAnHOHk+JYeLKX6+vmhRdext5FoJC0Y4TyWXKQp
-	 AVhE0bVLVSNrhPs6WOFP0CZiY0AL5ybUqt4nlUDLm3zjKLizJV21M2taOlnn8G5KuM
-	 o9Wll3Q60a//L2kHi9u6pa8whDvPksfddKcvgUfd9b3rhu4CmlPQUvGdT5NLbP9aSw
-	 Wf759oAmL/lsxNZHVTKoYr07FbdfDGkL3fnIxm/Mb0eQ8eAy9JkoJxwIfVxBK4zSWx
-	 rU2eAydACfcBQ==
-Date: Thu, 2 Apr 2026 13:56:48 +0200
+	b=RJ/aLQndMAr/mh4Fzg3UMjzw+xcA+nRmdm58VaAr8hFyuR0z3GOmprTideMyEHRy6
+	 5x6bjRVmZK2FVPAM7sgcqVGXJwgShwBabqSJbvi0aEzKqJanT8QQRG00wxHltInbEj
+	 dLke3PC7B6ZoSkG9d5zReUMJ/o/JxHafJ1/t4zwBkF3htWk7EpcWz2y49QUmgjDyKQ
+	 x94hGWiswsRXPt3bfxwDOO5KJ9uCNd6HPjENtuM73r8uCp6vlhqRdq5fSnjziskMcB
+	 8DlQMFIsXrhvGdiQKP3IQ1q7VbjWBlUgbVAKNcvixgUUYIQv//zmfo9XMNSxGyOIYX
+	 oYePVPdNTH8UQ==
+Date: Thu, 2 Apr 2026 14:00:37 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [GIT PULL] PCI: tegra: Changes for v7.1-rc1
-Message-ID: <ac5ZGItkKNEI_W1-@orome>
-References: <20260329155040.1448158-1-thierry.reding@kernel.org>
+To: arm@kernel.org, soc@kernel.org
+Cc: Thierry Reding <thierry.reding@gmail.com>, 
+	Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [GIT PULL 1/7] dt-bindings: Changes for v7.1-rc1
+Message-ID: <ac5aLzMyfnxa-LLi@orome>
+References: <20260329151045.1443133-1-thierry.reding@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -41,22 +42,22 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sqygtkd3gjj3h2rc"
+	protocol="application/pgp-signature"; boundary="73fopvxzga67awj4"
 Content-Disposition: inline
-In-Reply-To: <20260329155040.1448158-1-thierry.reding@kernel.org>
+In-Reply-To: <20260329151045.1443133-1-thierry.reding@kernel.org>
 
 
---sqygtkd3gjj3h2rc
+--73fopvxzga67awj4
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [GIT PULL] PCI: tegra: Changes for v7.1-rc1
+Subject: Re: [GIT PULL 1/7] dt-bindings: Changes for v7.1-rc1
 MIME-Version: 1.0
 
-On Sun, Mar 29, 2026 at 05:50:39PM +0200, Thierry Reding wrote:
+On Sun, Mar 29, 2026 at 05:10:38PM +0200, Thierry Reding wrote:
 > From: Thierry Reding <thierry.reding@gmail.com>
 >=20
-> Hi Lorenzo, Bjorn,
+> Hi ARM SoC maintainers,
 >=20
 > The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f2=
 7f:
@@ -66,49 +67,93 @@ On Sun, Mar 29, 2026 at 05:50:39PM +0200, Thierry Reding wrote:
 > are available in the Git repository at:
 >=20
 >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegr=
-a-for-7.1-pci
+a-for-7.1-dt-bindings
 >=20
-> for you to fetch changes up to a0c0906bb09ee2f64690b3b8ffb458b4dbbcb26e:
+> for you to fetch changes up to bed2f5b4de6c6fd8f8928f6373ad92e8795c370f:
 >=20
->   PCI: tegra: Add Tegra264 support (2026-03-28 15:00:05 +0100)
+>   dt-bindings: arm: tegra: Document Jetson AGX Thor DevKit (2026-03-28 01=
+:05:24 +0100)
 >=20
-> This is v3 of the Tegra264 PCI patches that can be found here:
+> Thanks,
+> Thierry
 >=20
->   https://lore.kernel.org/linux-pci/20260326135855.2795149-1-thierry.redi=
-ng@kernel.org/
+> ----------------------------------------------------------------
+> dt-bindings: Changes for v7.1-rc1
 >=20
-> This looks ready now, but if there's any more feedback, I will happily
-> respin these driver patches.
+> This contains a few conversions to DT schema along with various
+> additions and fixes to reduce the amount of validation warnings.
 >=20
-> Note that the shortlog and the diffstat below include the dependencies
-> from the Tegra tree, and that subset will go in through the ARM SoC tree
-> as well. Effectively what's new in this pull request is just the two PCI
-> patches, the rest is only included here to resolve the build time
-> dependencies.
+> Included are also a new binding for the PCIe controller found on
+> Tegra264 as well as compatible strings for the Jetson AGX Thor
+> Developer Kit.
+>=20
+> ----------------------------------------------------------------
+> Sumit Gupta (1):
+>       dt-bindings: arm: tegra: Add Tegra238 CBB compatible strings
+>=20
+> Svyatoslav Ryhel (1):
+>       dt-bindings: display: tegra: Document Tegra20 HDMI port
+>=20
+> Thierry Reding (9):
+>       dt-bindings: pci: Document the NVIDIA Tegra264 PCIe controller
+>       dt-bindings: phy: tegra-xusb: Document Type C support
+>       dt-bindings: clock: tegra124-dfll: Convert to json-schema
+>       dt-bindings: interrupt-controller: tegra: Fix reg entries
+>       dt-bindings: arm: tegra: Add missing compatible strings
+>       dt-bindings: phy: tegra: Document Tegra210 USB PHY
+>       dt-bindings: memory: Add Tegra210 memory controller bindings
+>       dt-bindings: memory: tegra210: Mark EMC as cooling device
+>       dt-bindings: arm: tegra: Document Jetson AGX Thor DevKit
+>=20
+>  Documentation/devicetree/bindings/arm/tegra.yaml   |  56 +++-
+>  .../bindings/arm/tegra/nvidia,tegra234-cbb.yaml    |   4 +
+>  .../bindings/clock/nvidia,tegra124-dfll.txt        | 155 -----------
+>  .../bindings/clock/nvidia,tegra124-dfll.yaml       | 290 +++++++++++++++=
+++++++
+>  .../display/tegra/nvidia,tegra20-hdmi.yaml         |  13 +-
+>  .../interrupt-controller/nvidia,tegra20-ictlr.yaml |  23 +-
+>  .../memory-controllers/nvidia,tegra210-emc.yaml    |   6 +-
+>  .../memory-controllers/nvidia,tegra210-mc.yaml     |  77 ++++++
+>  .../bindings/pci/nvidia,tegra264-pcie.yaml         | 149 +++++++++++
+>  .../bindings/phy/nvidia,tegra194-xusb-padctl.yaml  |  39 ++-
+>  .../bindings/phy/nvidia,tegra20-usb-phy.yaml       |   1 +
+>  11 files changed, 649 insertions(+), 164 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra1=
+24-dfll.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra1=
+24-dfll.yaml
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/=
+nvidia,tegra210-mc.yaml
+>  create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra264=
+-pcie.yaml
 
-I'm retracting this PR. DT maintainers aren't happy about how I handled
-this, so it'll have to wait for another release cycle.
+Hi ARM SoC maintainers,
+
+Please ignore this for now. I'm dropping my set of patches from this
+because they upset the DT maintainers. I'll send another version with
+only Sumit and Svyatoslav's patches.
 
 Thierry
 
---sqygtkd3gjj3h2rc
+
+--73fopvxzga67awj4
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmnOWYAACgkQ3SOs138+
-s6G6Zw//QYfwJuUWFp0oCnT5XmsMnUIYQjEZ7Mb84h8F7NAoTGNuGU1SdZ/wMvWA
-L67jiQNK1ZbML3KngD2kwrraSXGN8Sk1L421cBZq/kLbw4U18R6mmPlnoeWbYt2z
-voD8D7NIr0queFKrNfsChepCM3UPOpMGIDi/De6fsj5Eir6wo0Lh28bXTSKiSN0w
-elPFQ9r43OK9wTpz5HAC2ouKiGGg/2KBgofvNyA0iLGTFg+kWnk+sdrIWn+CaBrO
-XqAqsbhx4tyduGA8ssg5y2nt8N14WoQWgFcRPS/d6XY/7/yrqyiNdN4EVtx/E2CC
-Xa9wGUOYG3zTPU3OA/r8eDzvdjUTHhZtwkDQcmLdCcFKWKIS1O9cKdvNOXXlK9JE
-/Qbi1rQ1Ryw89qRfTpu6FWQUC2uWVmK+n7+3mz8FAZXmWdsAByBiSp1wYA6wDdSz
-NTjEcoU+QhwPhYel/n7OmxACCXL6UeAarvM8MJANKeOcNuZ9vKCLi8v1mbxNkGN+
-T50bqdeyVnV/FQKvDTSswR+jg5x4gKnTQ3tXiKjNqubadyUc6e1Ucfm3Ee/YJ7JI
-SIzEP3X+9FUF8y2DBLtCpmbenSLvJrHwf9yVkWDuPHL9uM1YLU3dXoU2KDv64/uG
-4xxJd7Y3ALBFQxGkfs2wnXaURo49jytq9ClRcMh8/BhiuH6hQt4=
-=DzGB
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmnOWmUACgkQ3SOs138+
+s6HY9w//U1wmg6pZhB3XeSjKp1fsxhWV7HXitwfDidINbkUf6yxfXkBbk0VNz9C6
+Dnp7Gzo8Z6DV5+QNN16Bo1KBZ4qzAZhC6tWWiflp3DgXOk1kGKTlKjdLRQ+EP94Z
+P2vhYhySfu7JhPYmTisbUSe0cIRFTMpEm/r4acKKcBulXbwN82jNc+vfbFINMoR2
+pNWIkLFKYAvE5g4PKX5SO/XDml8OfH+rMc916W+aCX7XewdVIrelrclRMomxn9J7
+7J3AbuokctTHMUs2QI8j+R/2a9HY5bRuMZP2f2thsvXLc9Fb4Ew2hF505X1/Ua2/
+TCrF80KB74JW9LfZKoBxbs1MNRvDWYVZbxZmAd8CulHkhkbfRVjZs8c++fzhXK+r
+NtnifB7OHi+zerqpPgAQCGRze5Ju+inIwzHQBAGjP87LPN9e8PTAgrc1A8E48HBY
+HkfVe6NhJxwJHKMLYW9JI9ZHKOqEjI+eALVBj5DHMM+euWGgfV3bJsAYPp/VJtuI
+b9Q9N4HwLQ/RC3lEuGmBAdYYLCRkDuMeC62U4CMdVu5yIKrMeR+iln+ziMB9yv2j
+15eftq4chM3B7snbM1KpYZsvoMMINlN4uASrHe7BWerXm2focWfx9Cpm++bZ5yab
+W9E6cQA4sYZ28EFv/piLhxlO8P1AOH5be1lxQrjCkcILSEkBtgA=
+=MTeZ
 -----END PGP SIGNATURE-----
 
---sqygtkd3gjj3h2rc--
+--73fopvxzga67awj4--
