@@ -1,64 +1,113 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9983019D6;
-	Thu,  2 Apr 2026 08:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30FD3382CD;
+	Thu,  2 Apr 2026 08:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775119630; cv=none; b=AzC7aTMbxdsEaAzkKhqXH8k/UtbTl2Z6BLUvucoEZAb3uHZ7M+XF1e2LbBjQWpy7c5qofiJO3oiyIs8pXGyWv2t2rw7fGlZEYDMi9olqp+HRaqGTArJv/HsRDp9WQO6ZJx84UH7BaeaVO/E0Q44owHwz4LEqyC4MgOeMRmT8v6o=
+	t=1775119682; cv=none; b=BoO4JmZJRDRfK+OG4bGNZ8S4onDEiRik7bCktSTeh6WMwCSmeJKh+ZuJVdPIYcuGN0MJgCzHBLlpR5FgK870ckfLnFae9PcCLbmgWH3LwAHK1EXQFBAJVaQFS12csOXe2DgavubBZcuIxFdSU51zZ5yEyvuwCaL4PecAj8WlXm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775119630; c=relaxed/simple;
-	bh=5w1RcmBPhXcarJWdI8hRbcegLw1Xt/q9SGR3XY1XIrA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kr1wHpLQgQjwMXULeZmOJ/bLLCYvpSDsG38PTslMiHIznADPcevTvrllNHd2Icq3TWcPi7GGy7yK0p/vMTiHRuGSIqUp6o5EnpBAJXbh7Y0YEEggeQd5emWCP9fz0alWxbSvRet1D1HCEo+cH5MdUFmN/kxja855Y6TvwfP11nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DoU/gB+U; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775119682; c=relaxed/simple;
+	bh=shMDo4ski1yq5DvJBqMWJQ8whfxBWzqLV/MJfXlcldk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Pl8ngQNfc9rLR0YqliQt0uVX8CvBSnumue0b4RdKedOrcYwSKbTsdgBYbhUwU8PAO5lQrMx+o0H9Ht51fz2R0T6qhOVGl3yCyUCrRSGNlXa5A6Xn5AFPofZ1v1n6C5XXrTCY5SkFIKkp6qCE0XoLmfFDFDvrUL2U8DUiD1B1DcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e3bwZaxx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DoU/gB+U"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AB0AC116C6;
-	Thu,  2 Apr 2026 08:47:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e3bwZaxx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B983C116C6;
+	Thu,  2 Apr 2026 08:47:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775119630;
-	bh=5w1RcmBPhXcarJWdI8hRbcegLw1Xt/q9SGR3XY1XIrA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DoU/gB+Um1uzzqKRZrKXXIQlgB+foTV5N5Zjf7+rE1DEyyNKVi4CcGLbnWBAQ151P
-	 OAm1FGJ0+s8gWxXKKUgMhr7ACAZqySoZwEZ0KbVtvBa2Mq9naG0C6eSSZrUJh6tpIt
-	 Gedm+pGx3j9uk28QgI1sLUeFg6+luPqp2kmq59DiR9S3LBzsARPHK7KlXILeXM+6iT
-	 LNYsO72wkGaBOR+pIc+0txJ12B1uwm2iCDHkiXx3A0w+jrcWLPRdAjx6a0U2no20r+
-	 StM6n7m6KG8mK3tAr4VrHPDT6dDHOlzZOcMkJfOPovnY69A+xsWjrZtwHZk92yjZRW
-	 HDdrtLTtWtK9w==
-Date: Thu, 2 Apr 2026 10:47:08 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Suneel Garapati <suneelg@nvidia.com>
-Cc: dipenp@nvidia.com, jonathanh@nvidia.com, thierry.reding@gmail.com, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, amhetre@nvidia.com, sheetal@nvidia.com, 
-	kkartik@nvidia.com, robh@kernel.org, pshete@nvidia.com, timestamp@list.linux.dev, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: timestamp: Add Tegra264 support
-Message-ID: <20260402-neat-amiable-puma-d747ea@quoll>
-References: <20260401213831.187569-1-suneelg@nvidia.com>
- <20260401213831.187569-2-suneelg@nvidia.com>
+	s=k20201202; t=1775119682;
+	bh=shMDo4ski1yq5DvJBqMWJQ8whfxBWzqLV/MJfXlcldk=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=e3bwZaxxLpWEuQ7k04zcIjY+kER+eat2ouEn8N8LtCEmN1N0Vl19cmyvrIEvI7H90
+	 l183qdCV4qH4x3RCGA6Bavch1a7GZillMrpJTVEqj7d9t3KjQ3LIA9dHFX6t1chBoE
+	 Uztm5ajS+PHfFHHhpfzF5DBw0Cf1ZvFD7qOVXtxPD0G58zKVAZ+4hgo/VU6fBzQR6b
+	 3P81dR4y6GYaKKWDD+7QO1DgctpEIEDqxqrAnhhdmwcKC5bZFnnhdRzJP7MF/aTi9T
+	 7romdQxKenIu7EHXsO7AVfBtQnSi3LldQeHR33Bh3Vy9qlkIuT25pwGAna0C+0M7BA
+	 6UVEwfYFZizxA==
+Message-ID: <1902fb50-ed1e-49a3-b210-cd9167824c1b@kernel.org>
+Date: Thu, 2 Apr 2026 10:47:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260401213831.187569-2-suneelg@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: timestamp: Add Tegra264 support
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Suneel Garapati <suneelg@nvidia.com>
+Cc: dipenp@nvidia.com, jonathanh@nvidia.com, thierry.reding@gmail.com,
+ krzk+dt@kernel.org, conor+dt@kernel.org, amhetre@nvidia.com,
+ sheetal@nvidia.com, kkartik@nvidia.com, robh@kernel.org, pshete@nvidia.com,
+ timestamp@list.linux.dev, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260401213831.187569-1-suneelg@nvidia.com>
+ <20260401213831.187569-2-suneelg@nvidia.com>
+ <20260402-neat-amiable-puma-d747ea@quoll>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260402-neat-amiable-puma-d747ea@quoll>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 01, 2026 at 09:38:29PM +0000, Suneel Garapati wrote:
->    reg:
->      maxItems: 1
-> @@ -112,6 +114,7 @@ allOf:
->            contains:
->              enum:
->                - nvidia,tegra234-gte-aon
-> +              - nvidia,tegra264-gte-aon
+On 02/04/2026 10:47, Krzysztof Kozlowski wrote:
+> On Wed, Apr 01, 2026 at 09:38:29PM +0000, Suneel Garapati wrote:
+>>    reg:
+>>      maxItems: 1
+>> @@ -112,6 +114,7 @@ allOf:
+>>            contains:
+>>              enum:
+>>                - nvidia,tegra234-gte-aon
+>> +              - nvidia,tegra264-gte-aon
+> 
+> And why exactly the slices are variable here? Explain that in commit
+> msg.
 
-And why exactly the slices are variable here? Explain that in commit
-msg.
+s/Explain/Shortly describe/
 
 Best regards,
 Krzysztof
-
