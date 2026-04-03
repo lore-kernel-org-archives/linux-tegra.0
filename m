@@ -1,206 +1,145 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671D736681F
-	for <linux-tegra@vger.kernel.org>; Fri,  3 Apr 2026 08:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8237389452
+	for <linux-tegra@vger.kernel.org>; Fri,  3 Apr 2026 09:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775205841; cv=none; b=faZ5v6mWSmgYyzHpcyQJRW24gNlw9blLPkKw32Mx6p3lhRR4E8llIFS6x5tjHa7BZEWrDJTiDx9w22fKY9Uu6Q3HqRX+o0p+L1B0E1N3oCk6J4SqbmBxHVM4YTVSPm4FNJUq4G4rdsamXrpjLxrag1/diVN1NEGgyHePshXfQKM=
+	t=1775207030; cv=none; b=j3zSImVw30taqZQbCKO8D+ze/AmRuurh8p7TlGF8H2JJqDDQ0ZDBSmjhn+gR8Q3rdLEhf0ZnTjIGowrJHOc/WyRJVJ4n6wTmba7QidjCDq49uanbo79hQBKXwgRlSG7mDxFYaP5C1DhiDvBsqw/jaYEh9+F/VA0lOfsvpVS17ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775205841; c=relaxed/simple;
-	bh=UABZR7qEwcDSbZGHgIDkQE6KjxdgGL32H1ICuSWPHTI=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=g+3oaf6QexrXlpntPgMUWUU7CkDauiInwYvFMFvE/d+Snmo6TYt9sLV0vB6NVaT7KmaQhXMJouKNwsUdrw0aKPMIQMVsTeEa+lGB1/xMAJDfwnwhyVWe5t2NgWVwvyzcvXv5tw75e5jDTnMm1UZvCT7IxzX2fcqP5p4p2HpBOkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N0LdrMTy; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1775207030; c=relaxed/simple;
+	bh=OQ5bfwpNtqKoORzjqOgKNt+gU4CVOnEO9xS4ZGiG5dk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kTHeeJ/qUgdACaCc+7zF6hOGuODfGuyvNJ/R71DBEhIKeHti2vvh6X7coONVl5/zLP8YkopF7LVYe0LFPufeT37ksmC5KMSvIU0a5i7wcDLsfxpcynj0+HIBmOVg31x9D3oDPhuimbNPAKMY7X9k9Aj0zPr04rloejwBW9/qsKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=R4D1Hi7S; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Ohr8nwmG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N0LdrMTy"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1775205840; x=1806741840;
-  h=date:from:to:cc:subject:message-id;
-  bh=UABZR7qEwcDSbZGHgIDkQE6KjxdgGL32H1ICuSWPHTI=;
-  b=N0LdrMTyf4yx4DkIpOglTo/d9C+HwbWKvjFhaajDHHbJz9tBscqnyWoO
-   /rnc4m1SA+R54u7IkBwxLv8eM0HKFF9AP1KkW+GUYrdYXCz/PSohNnUVE
-   vocyLppqoZeNdw5rmbtxgU/8ikRm8lT8BmnekGXKTeUQNkQ9fWOgC9Mzx
-   38vK98QLoD0A6lc44PkwYSxQqwHRtr8Pgf79cAAQpXlZkbSL7KYEa1F8j
-   PWR6hnE6pHJNwxs2Cr/0aTq69fWggL9p6bPdEMg5hG6qdCGHHbEPRM1nr
-   c7omZATy0sQ3QVZRE/8q5tJM7i3Sy+AiqPF1IFWPjlcmoIyToBYKj7Dg4
-   A==;
-X-CSE-ConnectionGUID: +ldTdb74RRefl22j+fTQ1A==
-X-CSE-MsgGUID: PwNXjMCZR2SsjrfFdtDoAQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11747"; a="93852241"
-X-IronPort-AV: E=Sophos;i="6.23,157,1770624000"; 
-   d="scan'208";a="93852241"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2026 01:43:59 -0700
-X-CSE-ConnectionGUID: jvxwJR91TFywY4KdWcYSLw==
-X-CSE-MsgGUID: nlObDcg0Qz+TfQ++jP6TIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,157,1770624000"; 
-   d="scan'208";a="223943430"
-Received: from lkp-server01.sh.intel.com (HELO 064ad336901d) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 03 Apr 2026 01:43:58 -0700
-Received: from kbuild by 064ad336901d with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1w8a8B-0000000014P-3TxO;
-	Fri, 03 Apr 2026 08:43:55 +0000
-Date: Fri, 03 Apr 2026 16:43:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Thierry Reding <treding@nvidia.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-tegra@vger.kernel.org,
- Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Subject: [arm-tegra:for-7.1/pci 4/5]
- drivers/pci/controller/pcie-tegra264.c:228:27: warning: left shift count >=
- width of type
-Message-ID: <202604030544.CYytXhkh-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="R4D1Hi7S";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Ohr8nwmG"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6333AhML981428
+	for <linux-tegra@vger.kernel.org>; Fri, 3 Apr 2026 09:03:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	A512362zZQbuhvzw7LFit+apZtaCdvogNoibBWCfe+M=; b=R4D1Hi7SIJODx/P4
+	JgxrBUZLfnJulQb77W8eDWqj8cyuaKkI2BzhtKoY58I9oEVJOtEXqkR/T5CBoPCv
+	06L4q2FZBHcG4d7e+VFwitSBu7Qfc4ib1E42cgZ69z2fB/HJY7lcHpehU3d8fEN7
+	wQWPTwjKb7Oku5nUjO0oOYCw1+eXt+VUsXOOEpDR3PtSIOIlUSf/2HWmtulRHLfj
+	MqeR6gsEhhyEFZIvENqwS+yuQCKTLQf0SfLGOnun8xprvY4axqfWlS0+zvgAAcD1
+	4yf3+zijJhP3TBC7C9APioDAI6Zlku/M4zIO7WFwsr4WjbyQQV+s7gBnxPmMVdbR
+	yA4ELA==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d9tuptxwp-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-tegra@vger.kernel.org>; Fri, 03 Apr 2026 09:03:47 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-50b34223670so75887461cf.0
+        for <linux-tegra@vger.kernel.org>; Fri, 03 Apr 2026 02:03:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1775207026; x=1775811826; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A512362zZQbuhvzw7LFit+apZtaCdvogNoibBWCfe+M=;
+        b=Ohr8nwmG7jyrgqRvRJ/DMEioZtJYrXB6j8PUvoEjczuJbETVyA6joCjlNfplfvDCQ8
+         xQDW3tIZ8CBL0N5h6uO5eP0hKnbrUNEOle1KDULUqGT9VTCtALgrkwVBI9JjopqtiQ1I
+         S8QZDJWNducSwmgfSvLBF2YR3sHq7opwGYVF/gws7n4NsXXuEEIHxWZ10P20l5IY9S/M
+         YKqnGoLsFzFPODalb5BeJbnmQ+6tjlmaoJp6y6eM1l1TOL3t+5IOSbWfXZSL6zS+tAOY
+         xGdhanFZI9k9+eS1UZQqhVLL6sA/i0TjhQ+kpIVfRTwAgODvCb+XF+kdFU0gUkLc1FV5
+         Avyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775207026; x=1775811826;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=A512362zZQbuhvzw7LFit+apZtaCdvogNoibBWCfe+M=;
+        b=m/GenNFLVARNzlXho436aS4HySmxLkxd/Z1LbKqK42Ohp8AiPre7ibw2GJ3PV93ZBx
+         1HwZ5USBE4qcmtXii8hMN07nsv25INugo/lgLwwrgweYTm5Lm170W5mMPMPq8Eml0vpA
+         /cm12MyD/jnPHyRdWMymHoVcKBgDxxBqqMzWGFcLVuWEM6Fqabq9mfZtsik7PW6kD6jB
+         HS28lyj9tGtR/OjFsnv5NJSATjc+NB5T8/JHRvg7ZFen0iGYRxHkAOUL5XKhEHKbz6Uu
+         5e/zwJrSBrCY8tL9vKJd86jasENockCHNuq2xAslPc7U4O5OTTVJqoaL6HyK/4bIVMqr
+         Hm3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUo3QoUehQ/yEg88I06Dk5PGULC4U1rHiGEDQJPbim/txrEdG6i4YFXgnkn2q0guDv6hnlZNWaX+gMSmw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr8hB/5b85rftO0Da1IHsq8seyqCABYU75f/NXqeL5wXiXelUW
+	M+YL/N7E+xC+ftt69RDnfvo9kG0kEEonhgyP1fRqrsjT64tDUgO8RjkLioc5s4oI7kekNaUfPL6
+	tETW69c5JrswzrkWzHCRl3wEA2MtewG9fwwzTmkFqhkxI9/SITnnWZLFyF+T8on/piqJlRVMF2Q
+	==
+X-Gm-Gg: ATEYQzyGaORLnrHlZLXXofJ4dmFL04xypab2jYuJmhlTWj2m6GhVkGc/UFFbl91P5aZ
+	mHyrbSEs6SOR1ZB7z7bRYuNCnGrjlx1RAq7liddWBx+69s4QmO9iflIvvg/WLeq7QKfVFClI2mi
+	+TFwR9GXDL76JHxF/9vAwa21tWkIP3Ds1XVjXFTL2tcM6OC8sEyPhkB5UWmi+mT7p4TbnkBNDUh
+	isQk9hcIyyWMlNe55IO7a1GiYGDbBDv+N/PxzOLd+MOfbLFatHso1I2Q867GKUpg8yL03vVG06T
+	kdQOZ5lOWONFf5PMQnpZHPydynPvVZSkZN+MhkzCDAFGmAcG+2rcS42zhUlp/QzYaQ3g+CzKdb+
+	umye+aODoHBwC0sbZou0qVVXK1oU6+JobTckWocmLCmS5P2YOs9A=
+X-Received: by 2002:a05:622a:346:b0:50b:4bb6:d9b7 with SMTP id d75a77b69052e-50d62b58b81mr30891061cf.63.1775207026466;
+        Fri, 03 Apr 2026 02:03:46 -0700 (PDT)
+X-Received: by 2002:a05:622a:346:b0:50b:4bb6:d9b7 with SMTP id d75a77b69052e-50d62b58b81mr30890681cf.63.1775207025991;
+        Fri, 03 Apr 2026 02:03:45 -0700 (PDT)
+Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:b982:38c7:df87:b18f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488980df5afsm18723805e9.6.2026.04.03.02.03.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Apr 2026 02:03:45 -0700 (PDT)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+        linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] gpiolib: Make deferral warnings debug messages
+Date: Fri,  3 Apr 2026 11:03:42 +0200
+Message-ID: <177520702059.10090.7671588942831580065.b4-ty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260401133441.47641-1-jonathanh@nvidia.com>
+References: <20260401133441.47641-1-jonathanh@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDAzMDA3OCBTYWx0ZWRfX4eih8hG+zjIR
+ 5nMhp4E9Yx/2rxpGG1mmK1vPrAzS/hjsw3rH27wJOK7XpcXc/CL4j3GGa5wxUDwBb8OYfPHrV4R
+ cgRa/DrUza7mJ32YjWJtkrNifDHvW34c109IuJ3BDpUSc8paHhIYf3ooCIjrjdZtYgC+LDxm/9I
+ PuYbPifD6VH8Wdbtf6UrDP0yuW5UBszwDZcxM8vhlVU+mwyp4hO8y9RBd267xFfPfqvEvmFomfW
+ 70NgFFYQoZ9Zi2QLZ861cG1snU92wdhnUKgQaieuDWZkhEu/KdFVqxuX52/eJb/7LpYzTz0jeiw
+ fhVkpIjwj42EYlVZOIdZmRNqhyGmvrNzb9HttThugMKaVFT+RqPuS9wf39tqHkPoZlNMbD4FZ+l
+ W0AgqHcXMZG0uvvGofOi2yiDkx8GU7LrXSE8OWM0r8NIcxcYay1WH8C+WfOZeL+oQ1VX0BnTRHs
+ km3dr2/zXpFPR/y3Meg==
+X-Proofpoint-ORIG-GUID: _cKLCXBMRIJ5FpULY-oRzD3oCxEYs_Ws
+X-Proofpoint-GUID: _cKLCXBMRIJ5FpULY-oRzD3oCxEYs_Ws
+X-Authority-Analysis: v=2.4 cv=DZ0aa/tW c=1 sm=1 tr=0 ts=69cf8273 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=-YVWButmvYyXKJA-fhUA:9 a=QEXdDO2ut3YA:10
+ a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-03_02,2026-04-03_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 bulkscore=0 priorityscore=1501 suspectscore=0
+ adultscore=0 malwarescore=0 clxscore=1015 spamscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2604030078
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git for-7.1/pci
-head:   9aa0c83c7374a1aa096bad5ae3260bb8bc62d0c1
-commit: 270ae177795a7046f1e0ad2692f15b73b0ecf5d2 [4/5] PCI: tegra: Add Tegra264 support
-config: openrisc-allmodconfig (https://download.01.org/0day-ci/archive/20260403/202604030544.CYytXhkh-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 15.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260403/202604030544.CYytXhkh-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202604030544.CYytXhkh-lkp@intel.com/
+On Wed, 01 Apr 2026 14:34:41 +0100, Jon Hunter wrote:
+> With the recent addition of the shared GPIO support, warning messages
+> such as the following are being observed ...
+> 
+>  reg-fixed-voltage regulator-vdd-3v3-pcie: cannot find GPIO chip
+>   gpiolib_shared.proxy.6, deferring
+> 
+> These are seen even with GPIO_SHARED_PROXY=y.
+> 
+> [...]
 
-All warnings (new ones prefixed by >>):
+Applied, thanks!
 
-   drivers/pci/controller/pcie-tegra264.c: In function 'tegra264_pcie_check_ranges':
->> drivers/pci/controller/pcie-tegra264.c:228:27: warning: left shift count >= width of type [-Wshift-count-overflow]
-     228 |                 phys = hi << 32 | lo;
-         |                           ^~
-   drivers/pci/controller/pcie-tegra264.c:232:28: warning: left shift count >= width of type [-Wshift-count-overflow]
-     232 |                 limit = hi << 32 | lo | mask;
-         |                            ^~
-   drivers/pci/controller/pcie-tegra264.c:248:19: warning: left shift count >= width of type [-Wshift-count-overflow]
-     248 |         phys = hi << 32 | lo;
-         |                   ^~
+[1/1] gpiolib: Make deferral warnings debug messages
+      https://git.kernel.org/brgl/c/c0cd31bc3a92ac04147660a3821780f57b76bf1f
 
-
-vim +228 drivers/pci/controller/pcie-tegra264.c
-
-   152	
-   153	/*
-   154	 * The various memory regions used by the controller (I/O, memory, ECAM) are
-   155	 * set up during early boot and have hardware-level protections in place. If
-   156	 * the DT ranges don't match what's been setup, the controller won't be able
-   157	 * to write the address endpoints properly, so make sure to validate that DT
-   158	 * and firmware programming agree on these ranges.
-   159	 */
-   160	static bool tegra264_pcie_check_ranges(struct platform_device *pdev)
-   161	{
-   162		struct tegra264_pcie *pcie = platform_get_drvdata(pdev);
-   163		struct device_node *np = pcie->dev->of_node;
-   164		struct of_pci_range_parser parser;
-   165		phys_addr_t phys, limit, hi, lo;
-   166		struct of_pci_range range;
-   167		struct resource *res;
-   168		bool status = true;
-   169		u32 value;
-   170		int err;
-   171	
-   172		err = of_pci_range_parser_init(&parser, np);
-   173		if (err < 0)
-   174			return false;
-   175	
-   176		for_each_of_pci_range(&parser, &range) {
-   177			unsigned int addr_hi, addr_lo, limit_hi, limit_lo, enable;
-   178			unsigned long type = range.flags & IORESOURCE_TYPE_BITS;
-   179			phys_addr_t start, end, mask;
-   180			const char *region = NULL;
-   181	
-   182			end = range.cpu_addr + range.size - 1;
-   183			start = range.cpu_addr;
-   184	
-   185			switch (type) {
-   186			case IORESOURCE_IO:
-   187				addr_hi = XAL_RC_IO_BASE_HI;
-   188				addr_lo = XAL_RC_IO_BASE_LO;
-   189				limit_hi = XAL_RC_IO_LIMIT_HI;
-   190				limit_lo = XAL_RC_IO_LIMIT_LO;
-   191				enable = XAL_RC_BAR_CNTL_STANDARD_IOBAR_EN;
-   192				mask = SZ_64K - 1;
-   193				region = "I/O";
-   194				break;
-   195	
-   196			case IORESOURCE_MEM:
-   197				if (range.flags & IORESOURCE_PREFETCH) {
-   198					addr_hi = XAL_RC_MEM_64BIT_BASE_HI;
-   199					addr_lo = XAL_RC_MEM_64BIT_BASE_LO;
-   200					limit_hi = XAL_RC_MEM_64BIT_LIMIT_HI;
-   201					limit_lo = XAL_RC_MEM_64BIT_LIMIT_LO;
-   202					enable = XAL_RC_BAR_CNTL_STANDARD_64B_BAR_EN;
-   203					region = "prefetchable memory";
-   204				} else {
-   205					addr_hi = XAL_RC_MEM_32BIT_BASE_HI;
-   206					addr_lo = XAL_RC_MEM_32BIT_BASE_LO;
-   207					limit_hi = XAL_RC_MEM_32BIT_LIMIT_HI;
-   208					limit_lo = XAL_RC_MEM_32BIT_LIMIT_LO;
-   209					enable = XAL_RC_BAR_CNTL_STANDARD_32B_BAR_EN;
-   210					region = "memory";
-   211				}
-   212	
-   213				mask = SZ_1M - 1;
-   214				break;
-   215			}
-   216	
-   217			/* not interested in anything that's not I/O or memory */
-   218			if (!region)
-   219				continue;
-   220	
-   221			/* don't check regions that haven't been enabled */
-   222			value = readl(pcie->xal + XAL_RC_BAR_CNTL_STANDARD);
-   223			if ((value & enable) == 0)
-   224				continue;
-   225	
-   226			hi = readl(pcie->xal + addr_hi);
-   227			lo = readl(pcie->xal + addr_lo);
- > 228			phys = hi << 32 | lo;
-   229	
-   230			hi = readl(pcie->xal + limit_hi);
-   231			lo = readl(pcie->xal + limit_lo);
-   232			limit = hi << 32 | lo | mask;
-   233	
-   234			if (phys != start || limit != end) {
-   235				dev_err(pcie->dev,
-   236					"%s region mismatch: %pap-%pap -> %pap-%pap\n",
-   237					region, &phys, &limit, &start, &end);
-   238				status = false;
-   239			}
-   240		}
-   241	
-   242		res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ecam");
-   243		if (!res)
-   244			return false;
-   245	
-   246		hi = readl(pcie->xal + XAL_RC_ECAM_BASE_HI);
-   247		lo = readl(pcie->xal + XAL_RC_ECAM_BASE_LO);
-   248		phys = hi << 32 | lo;
-   249	
-   250		value = readl(pcie->xal + XAL_RC_ECAM_BUSMASK);
-   251		limit = phys + ((value + 1) << 20) - 1;
-   252	
-   253		if (phys != res->start || limit != res->end) {
-   254			dev_err(pcie->dev,
-   255				"ECAM region mismatch: %pap-%pap -> %pap-%pap\n",
-   256				&phys, &limit, &res->start, &res->end);
-   257			status = false;
-   258		}
-   259	
-   260		return status;
-   261	}
-   262	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
