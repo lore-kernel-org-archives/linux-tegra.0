@@ -1,116 +1,101 @@
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB478392815
-	for <linux-tegra@vger.kernel.org>; Fri,  3 Apr 2026 14:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FCF3C6A43;
+	Fri,  3 Apr 2026 15:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775227883; cv=none; b=lPRF3prb3udWblPC+7BzmeBog4ALWslf1vFahDtTtZoWCLpuYP2Wj+qdLVgBx4iyYLJqOYCCb/tEkSFuWuK98gRZphClrvvaVwI85B49/Y6/9R1diKtRc9h5YxhXngahtEeW5kZNvuPk7McBOJszd6Av56bXKCNJjzBNTjwpYhk=
+	t=1775229423; cv=none; b=POs27y26DxWQvX7NnRYvCswEiSSbB3v5jeyq51ujrPntbaKKSaYbeJEeuEsWOW4ghjQhwELqu1Vv18gkgIwgL1MNbpp98PrOq8rZ75Gazq4u4GKGsu5wRr1GBu2rynaLoLfXX03EWeQsFdC2OSxaWmcnyVKd+rp1C1wdsi/fHNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775227883; c=relaxed/simple;
-	bh=lzi8vanqoY23RZvoxmfl6DfLoVT0+U5Of4Av0npR8KQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nDoJZIpM8EMJAe48aptnJ0gA5JX5Erd8nyDlDIbi8yTqcv+D5GjBn+Zbu7SWQwIjzqaoQtenFB2sXg/ICXVHtkeJ2dzLkjx4McwXJ7UfZSAFOFyzCrvVaNubbszT9NUXk2Pqm2xDUbGtyidnkDX0CxoHppLb9PV/2y+1wG79YPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KFEIvQTc; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com
+	s=arc-20240116; t=1775229423; c=relaxed/simple;
+	bh=1QQFvoKpB2XfX6yKZk+AT0LvHS6NlKPqN9M6hnJ43Fw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LA4qCMqkPurCdiyU6jYAdo+jiuoDcukzOoRZuumjN9LnRbPoAbuIY1dmldWLUsn9KEKHpe0SUSr4CBTZMe7YeezJtD2sx1O+DS1f7LXLbNnec7X98C5Xm+CwN06FB1XjjlD7Ck3fDxb2XYyObli1r1bS9cJ3i9t6v3BNvBkc8WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mle45kw2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KFEIvQTc"
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2b0b339b8dbso20410945ad.0
-        for <linux-tegra@vger.kernel.org>; Fri, 03 Apr 2026 07:51:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1775227881; x=1775832681; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UsueJAB8iWMZmH12hTqYKPYVxfUoBPtsPuD5qctzJns=;
-        b=KFEIvQTcxayFA/382PfH+WayA5yJekNqxGLlSBajU76J27sEf46lei5Xn8zQp6OeUH
-         KcZ9BhTcHPVTIclssmpgmbDtjcubOh9DafzEdXeOdKl7gHH0FeWYqI5NSm3cpOKbWEr9
-         g3dDWzcg4VmaapDUKTcDPLUr5KMiKBFnjnA6Ch7XDYdA3EUDl0gJvSYnjhkA83Ue/kYi
-         6T+U7b9OPCkDeff3OtbBCIpxETm7ZUxBlUeFEVKoKWg8ar4InveULdQjyVpD5zKBWJwu
-         bIJDhSlOvohto8w6zSO9T1c2TlYp/Puc6DPLAscxTH5dNXTpCF2kErmxfqJoaPdroSJ+
-         kU4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775227881; x=1775832681;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UsueJAB8iWMZmH12hTqYKPYVxfUoBPtsPuD5qctzJns=;
-        b=WZx2BbqXZsWjI2kPXAT2ZcN5A7D+JvinXWlVSFN20He4PMA0mfjlh5j8Xi5VxSKXoF
-         AcUEUV+f96sO3ExCNFoKGm0QpsgM4zwhOiOyX0fpSo3L9YSOpP5myhTt7ZSOsuED4zt7
-         SIjiYOoU9nnO3myE9Jmxfy511OWsC671LEdfZr/dDdCcml8g3zqTnEuEEiE0/5VkOyqe
-         maDnX82CUU3dCM7z6po8H+l3KX6yysvXogsoG+TvJScwS0G1w7RX3e3A26j2E9Jl0kAw
-         seNFEVrNRUoxBfq0ys5NmMMMLMDz5HN4/FSPIE6JjGnfeoQ8g358WodXJPMzclBmiouK
-         u7HA==
-X-Forwarded-Encrypted: i=1; AJvYcCUprXA3stQPSHRvdihZeYZADqD01mQH9PBSIbqYPGRCmwtuqpiBG0+2EQFoEBx6YmTyJ19OTD9baV4BGQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHxvbN0hIkzrQmVe5v28YsODG5dCZ4KOoMh9CmOy2FC/2A7Bi+
-	rHYGEw5zdFCwpKPqvK5Rg4y2WfUxWZXkL4hskys2mz96kayLNZpI8MjBgpSA7DHtYUVnXFruFwN
-	9bMZUhPVCNYoTr9oPiwDwkChf6g==
-X-Received: from plblw8.prod.google.com ([2002:a17:903:2ac8:b0:2b0:af9b:aa3c])
- (user=joonwonkang job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:2ac5:b0:2b2:42da:25cc with SMTP id d9443c01a7336-2b28163ad55mr35530115ad.1.1775227881118;
- Fri, 03 Apr 2026 07:51:21 -0700 (PDT)
-Date: Fri,  3 Apr 2026 14:51:18 +0000
-In-Reply-To: <CABb+yY0ub51k-eFpPfgARXtwYjWzRSjbPDLtoMD77YQR8JH+=Q@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mle45kw2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC2B5C4CEF7;
+	Fri,  3 Apr 2026 15:17:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775229423;
+	bh=1QQFvoKpB2XfX6yKZk+AT0LvHS6NlKPqN9M6hnJ43Fw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mle45kw2ZXDtkpPYYWnrA5tWz+iaxFnJTA8l99IFfQxYhs4OACwmfnxPrrGTHeo0q
+	 GPKleLrXkmSbi3NHtH5laYXPKS1xTqzy+WhtLr21b36imt7mTiYG2Vjd6BrPHpiQ7u
+	 8CPTjg+/LIKDhZ279mvghiILU+CFWmMAykyhGnwYiRK1iHp/7n0jx7G3AMqpTO4Sy/
+	 MvyTRuSm1O6CrLtwEPsLjWTYXe3b8aZXwaZ6G+fGlLzEOoltnFoBgn/TNlbX/AFnyA
+	 yEJNYmDAww6n6Wcphl3qWVoLsxkcxhWz/TuEr3c+IimHUF61FWYo0QN8RH5RA7irkY
+	 s2VvE2MP2Pm5w==
+Date: Fri, 3 Apr 2026 16:16:58 +0100
+From: Simon Horman <horms@kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH V4 1/3] net: stmmac: Fix PTP ref clock for Tegra234
+Message-ID: <20260403151658.GJ113102@horms.kernel.org>
+References: <20260401102941.17466-1-jonathanh@nvidia.com>
+ <20260401102941.17466-2-jonathanh@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <CABb+yY0ub51k-eFpPfgARXtwYjWzRSjbPDLtoMD77YQR8JH+=Q@mail.gmail.com>
-X-Mailer: git-send-email 2.53.0.1213.gd9a14994de-goog
-Message-ID: <20260403145119.2581034-1-joonwonkang@google.com>
-Subject: Re: [PATCH v3 1/2] mailbox: Use per-thread completion to fix wrong
- completion order
-From: Joonwon Kang <joonwonkang@google.com>
-To: jassisinghbrar@gmail.com
-Cc: angelogioacchino.delregno@collabora.com, jonathanh@nvidia.com, 
-	joonwonkang@google.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-tegra@vger.kernel.org, matthias.bgg@gmail.com, stable@vger.kernel.org, 
-	thierry.reding@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260401102941.17466-2-jonathanh@nvidia.com>
 
-> On Thu, Apr 2, 2026 at 12:07=E2=80=AFPM Joonwon Kang <joonwonkang@google.=
-com> wrote:
-> >
-> > Previously, a sender thread in mbox_send_message() could be woken up at
-> > a wrong time in blocking mode. It is because there was only a single
-> > completion for a channel whereas messages from multiple threads could b=
-e
-> > sent in any order; since the shared completion could be signalled in an=
-y
-> > order, it could wake up a wrong sender thread.
-> >
-> > This commit resolves the false wake-up issue with the following changes=
-:
-> > - Completions are created just as many as the number of concurrent send=
-er
-> >   threads
-> > - A completion is created on a sender thread's stack
-> > - Each slot of the message queue, i.e. `msg_data`, contains a pointer t=
-o
-> >   its target completion
-> > - tx_tick() signals the completion of the currently active slot of the
-> >   message queue
-> >
-> I think I reviewed it already or is this happening on
-> one-channel-one-client usage? Because mailbox api does not support
-> channels shared among multiple clients.
+On Wed, Apr 01, 2026 at 11:29:39AM +0100, Jon Hunter wrote:
+> Since commit 030ce919e114 ("net: stmmac: make sure that ptp_rate is not
+> 0 before configuring timestamping") was added the following error is
+> observed on Tegra234:
+> 
+>  ERR KERN tegra-mgbe 6800000.ethernet eth0: Invalid PTP clock rate
+>  WARNING KERN tegra-mgbe 6800000.ethernet eth0: PTP init failed
+> 
+> It turns out that the Tegra234 device-tree binding defines the PTP ref
+> clock name as 'ptp-ref' and not 'ptp_ref' and the above commit now
+> exposes this and that the PTP clock is not configured correctly.
+> 
+> In order to update device-tree to use the correct 'ptp_ref' name, update
+> the Tegra MGBE driver to use 'ptp_ref' by default and fallback to using
+> 'ptp-ref' if this clock name is present.
+> 
+> Fixes: d8ca113724e7 ("net: stmmac: tegra: Add MGBE support")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
-Yes, this patch is handling the one-channel-one-client usage but when that
-single channel is shared between multiple threads. From my understanding, t=
-he
-discussion back then ended with how to circumvent the issue rather than whe=
-ther
-we will eventually solve this in the mailbox framework or not, and if yes, =
-how
-we will, and if not, why. I think it should still be resolved in the framew=
-ork
-for the reasons in the cover letter. Could you help to give a second review
-with regards to those aspects?
+The nit below notwithstanding this looks good to me.
 
-Thanks,
-Joonwon Kang
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+> ---
+>  .../net/ethernet/stmicro/stmmac/dwmac-tegra.c | 20 +++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
+> index b4b39e6a169e..3af2f001fada 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
+
+...
+
+> @@ -216,6 +216,7 @@ static int tegra_mgbe_probe(struct platform_device *pdev)
+>  	struct plat_stmmacenet_data *plat;
+>  	struct stmmac_resources res;
+>  	struct tegra_mgbe *mgbe;
+> +	bool use_legacy_ptp = false;
+>  	int irq, err, i;
+>  	u32 value;
+>  
+
+nit: As this is Networking code, please retain reverse xmas tree order --
+     longest line to shortest -- for local variable declarations.
+
+...
