@@ -1,237 +1,156 @@
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1D81DE894
-	for <linux-tegra@vger.kernel.org>; Fri,  3 Apr 2026 15:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775229595; cv=none; b=uuKUyTIkrUSS4JSskmjbekqrWLsSTn8xoH/EeMxGmxibNFTZB3SGFuuzglQFewYNpHmITcVZK5b9zdIU4S4jg6O0Hx6F/7oBWmL/SvHvGvVrtPkP85QkevXSharM0oerp2lVh/vlE26Lp+we+zf81w4dysNQMEOHCNk6izmTrQw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775229595; c=relaxed/simple;
-	bh=uA+6V46rf6BOemDNgqn1Ld9hPYGCKqeJGfmxwLPppmM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PsbXkgcfM6n/jAhApqW8ySQnld007JZcYrUGg+qOOdy8NF1YfnhwUCzZiS76H+dH/lNGH1bXNZcspZxa/aLkZn4M5kDQFkvdU6vHk9TSlfbqPN1z/DW9Ypvz/p7iVb4VeUYR0Syj3fcaMFt9Hvjv9cQuG9HlOB2ShI3z5K9sdx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oPAz2bJY; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B212517A5
+	for <linux-tegra@vger.kernel.org>; Fri,  3 Apr 2026 16:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775233204; cv=pass; b=IuBiwclW0j3GcpIiPFiIIFTMh7yldnjgZlk+ARhcwiHviDA9EgkUxCUaE/8Ax47dW1I67/QAdh202G1aACelqV0+xcWNOBkLqEGN/oMNRFMLjrng2Wmtt7NAJutl2NI2yzw5d9fCbP2ESaqUPAUAx0i5GN7wvWga/4k9lXOI/ow=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775233204; c=relaxed/simple;
+	bh=D1y1DSZ24fieEFS/2aK46LPRiEzKTQE6w5wGIEwhqyA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CcnPEF0QYcqTueh5HCCaOvXCSf1wgftihLoQD1+rwiLsPETP4EHkeKtNjWcEHdiX2LRuQcdWOrThkjOtXyVxIqOgjGZ2yK+avGSzjaDFFgl/FCXmWci8ObNQRG9U/qaTz6GdQk/qMeGXWTYS6IYZNZJGilw1jxCsYPFGa4xA+qY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LSqLh9dz; arc=pass smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oPAz2bJY"
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3594620fe97so4357404a91.1
-        for <linux-tegra@vger.kernel.org>; Fri, 03 Apr 2026 08:19:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LSqLh9dz"
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7d7eb85fb81so2115283a34.0
+        for <linux-tegra@vger.kernel.org>; Fri, 03 Apr 2026 09:20:03 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1775233202; cv=none;
+        d=google.com; s=arc-20240605;
+        b=V6QjLSCF4zoSEKsVvlU7kIW4HYxZvsXyoHPnDk5kw0UDwZXABtTzQOBp1LSQbkmyow
+         OIKog63sB+IDcravS3PFH1m0STyszKdk18p/enLOcuugl41IVUMnG/SDJt0alD3fxXId
+         ECZkee5Clf56/sfWduQVYBE/SqZJknZ0iI9HUH17Ip/AgZ6yXBJkrOBOqHw0GKJ16/RE
+         ao5z+zt6J3FbgHRlK5OalcOK2MX/eOvdKkElhISKZDitjWCG/1YHr8g9CuxHG3zdMmdQ
+         7rhyr1mipfT/eCle2Cw5u7XGDVFthsc7WfcnQSlR2nHCTnN+Sszkxe55b71MpxPQEuOI
+         lnhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=+V1E+/KFBONHYKrDP8YAiJIHIjVU2b7P8j+yHhcYHMc=;
+        fh=9JZq8trWPsHJfelEvWU5kHXhk3/02FK/TogASfOrW74=;
+        b=jGHyL9LDBEiSER5JegJzasSHng+pXnnE8xhqKn+WzatG/nK6vVOD3kBeg8KR8OOh8S
+         s+Ke+8gDcsK7Xs+kb0sZ5e2XfHYap55pqypC+fdn2wH9WgRbzwcaad94Xw2QaXx63sU2
+         Rrr3xBO1kwlrl6pc40JtVjX5vG56OW8wFgycKIAuVh5ziGG7I67P6KHfGcS/nAMQxb2B
+         sCmEziKL/dxEBdebpZwyiDEAGir1qjHSlrK8uwYpUN9iHYRfT2SY123AoSqSZz4abaXR
+         ubs5bOdNlKoSFumRJ3CVBbjJ6hx9xmZK3Ww0bwmWZGq0yQrs637L5qwVu35zEg0woxLs
+         V3XQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1775229592; x=1775834392; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uTxlcaECIOSPGuWyVGV6jMrdulKgnVXDtGKmH5N3sQ8=;
-        b=oPAz2bJYijjKA93RCct32bDF+otXfrANys3svf4OG1dqO42V50uTwy6xf9dEfa1J3Y
-         fVSvqhbzZSFonm/VNLYGxAQJtQBokZeMTE2z5AMQY59eri42H/PT4tlSrVb/rGZObI+k
-         qgtaS0ysi22NZBXb4MhpYR1vzwNTdXBuKUNZVXe8V6tKPAAfJsDs8v0rbtOitKlbuc3p
-         jB9ofUfsA3RjW//eM6mg6hqljhU/CGLEFxc6xQnJufGQXkFqM4Qh4s95KohfP1pEOswW
-         nhaVAZ+y2bAOm4fpbT4FtlTbm113PbVVXXBpT7m36boosh50+wE4K1QgBBf5Gz/H8shb
-         brmA==
+        d=gmail.com; s=20251104; t=1775233202; x=1775838002; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+V1E+/KFBONHYKrDP8YAiJIHIjVU2b7P8j+yHhcYHMc=;
+        b=LSqLh9dzKcgeO58OJAjNLJC3lkpslDPlFFLi0iEoIZqyBUC088MzlxzECPWTAUiS/Q
+         /ai81neGRzHMqoVFv9E/dqzsM5WBRYBDC82MKQ53uRrReJ6Eyp+vIOHTmMBw1clWx51X
+         GkNWd/Y8Q/UfzO5ZUzosW2rjL+0EHW8bEtIGBU27hUxiCc0suA5HbmmVYEGnh9KWdNT5
+         yDrqOhq1n72N9INnN6jJ2y2INxB5igtLJy+GVe7gldauZMdhN+blFzHFWnNGi3mCQHY9
+         JA11P1zzhc/ujHBWispYtjoD+ug/uzJdKLloyrOpphG1RWGZxhtUNbQz/y5st88LB427
+         9Dpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775229592; x=1775834392;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uTxlcaECIOSPGuWyVGV6jMrdulKgnVXDtGKmH5N3sQ8=;
-        b=dlUM4Lu0o+XKBhDVfLIPJeWzv4IJznx4D5lmXs93opEaMXstmp4n8xeMvKNku13qDK
-         hCGm1v01YTQz+8+RQ63yPOntj+XCFTsow/kZj1hR2SfcSeMTiQcSvS2XP4VLV1siZ8mE
-         FJPtQ3ak0rmbLZ8qiG1ly5bYcZPKDAi86OSieiMgK2RyHVnJ1Xgrx/svPiZi8FSmG1rV
-         yAFyJQ1zZHKbx4tgP6J6dhO6Vi1M7nFPntmJFDp/az8067V+VZkwRrupum9nU+10mfnH
-         UDH/kfKNpLJ6ZQPU25bJ0mxfev4G9yhFp6X/TpUfBZpHMONOACwt3S+pcSLno49CzKcl
-         DqOw==
-X-Forwarded-Encrypted: i=1; AJvYcCX897qOlir4lhYoTrQQqPXaA6y7kc4lpih73T01fgHCwMO8L5uFXd9VYPbb0VLsO/X030HqNIWfGHkw8w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaoEb8PM3ehxm8nupDJGjmC6ajaFNnyWqeA06S6qcznsRizrCn
-	lOiZIF+/5O3PUqtM9A+stvu3C82CRo53OLp6kopEmXlZoHuuQcTZIe+tp8rMQWPMAUs9BoWkoXO
-	Jy36nyBV3irEHgf+c10AYId8H0Q==
-X-Received: from pgcn23.prod.google.com ([2002:a63:7217:0:b0:c73:bace:526e])
- (user=joonwonkang job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:7354:b0:39b:e321:784f with SMTP id adf61e73a8af0-39f2f05041dmr3566398637.40.1775229591907;
- Fri, 03 Apr 2026 08:19:51 -0700 (PDT)
-Date: Fri,  3 Apr 2026 15:19:47 +0000
-In-Reply-To: <CABb+yY3hYcJ82QGor3w5KKHUGz9Pc1k64Jdf-94E4Yvv0DTeyQ@mail.gmail.com>
+        d=1e100.net; s=20251104; t=1775233202; x=1775838002;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=+V1E+/KFBONHYKrDP8YAiJIHIjVU2b7P8j+yHhcYHMc=;
+        b=di+SFBsgn6B89DOHs193aV4AnA8dxzcrNyaaS3f9OCfSzclqeJ0a+P9TRIrfpABeHB
+         p4jSfeW5FY+Pois/N5ShZZe8qo6mMgvYofTwbChMpnubTcY8sWVtE1H7A3/Qek16opVP
+         l04gXa052XGUz4wPjRRq9AOYJp9tTKO3yAxCG/GZdt8SbiI5PnD/gsx0Ai0OiLPmKJgh
+         cI1hWjrOFPBUgPrN5CFTnNhVExyEhcb2XCzufMFzxrEMj+Koz+nzU+yGSqFA/Y7Cs09n
+         jq2I+Od0m/A5ovGsPWo3GTUqh3lvFNn19ho8e9r844MU5k1UqkxC1/GflLDC5GSzy/6b
+         IciQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBlk0G+qCLVnoK1GkY2lz4p9/eg0hEBJPPHEMjrgs35shdcpX+BLvbvA6aySXTz/+CKdxlW6SpCLxX1A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYJ28tnazfRqcJfJGru1pX2MPMBrNqShZh28SAFJbEY4wt3SWT
+	tznY5Q9+naMrHH+CrTUCcUEUKEfsdAVeWl9X/4fMm7UOoDWTlHQ2cB+piZQk030D4SDaPKObDyP
+	3rkW2bfYf8+tYnuoPmrtpIvYMNhuxOTg=
+X-Gm-Gg: ATEYQzz4dYNY8Iu5RIXLfX1DWal+qEt+1Sz1OR/OY39idYVM2fR0jmyc30uyWhwkrJU
+	uS2vZzTuNHEMa5ZFwi2u5gqpSbVBrpyQv+6F+Ene4yPRaCeD+Ons/pjeJOKnca2xcWJYGJPqSRf
+	epdrbtYR8uQO3VmPuS60R35tjdXg27fzUBXlr6EGXFEKfYC3qR3lpErwqFRZ54k4GpwzR+ULTB6
+	sFC4Lupq9iDgdAS9eZU5WzkewHlygYCOdTBdW1sbp3tbXE1Al9d3qoCDH03OKfwvGdLaNXsTcY5
+	j8RoyVF+
+X-Received: by 2002:a05:6830:83ba:b0:7d9:ad90:5677 with SMTP id
+ 46e09a7af769-7dbb75d7260mr2353806a34.30.1775233202503; Fri, 03 Apr 2026
+ 09:20:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <CABb+yY3hYcJ82QGor3w5KKHUGz9Pc1k64Jdf-94E4Yvv0DTeyQ@mail.gmail.com>
-X-Mailer: git-send-email 2.53.0.1213.gd9a14994de-goog
-Message-ID: <20260403151950.2592581-1-joonwonkang@google.com>
-Subject: Re: [PATCH v3 2/2] mailbox: Make mbox_send_message() return error
- code when tx fails
-From: Joonwon Kang <joonwonkang@google.com>
-To: jassisinghbrar@gmail.com
+MIME-Version: 1.0
+References: <CABb+yY0ub51k-eFpPfgARXtwYjWzRSjbPDLtoMD77YQR8JH+=Q@mail.gmail.com>
+ <20260403145119.2581034-1-joonwonkang@google.com>
+In-Reply-To: <20260403145119.2581034-1-joonwonkang@google.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Fri, 3 Apr 2026 11:19:51 -0500
+X-Gm-Features: AQROBzBimCWicSTdSy1XOK425eepJ2fZaf0LPQosLeZZ5fVq1iHQtw7KN5njBvw
+Message-ID: <CABb+yY0uDQh-3cadPQONV=NJKjMtc4mJekgjmHYVaHnfHXvGZQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] mailbox: Use per-thread completion to fix wrong
+ completion order
+To: Joonwon Kang <joonwonkang@google.com>
 Cc: angelogioacchino.delregno@collabora.com, jonathanh@nvidia.com, 
-	joonwonkang@google.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-tegra@vger.kernel.org, matthias.bgg@gmail.com, stable@vger.kernel.org, 
-	thierry.reding@gmail.com, akpm@linux-foundation.org
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	matthias.bgg@gmail.com, stable@vger.kernel.org, thierry.reding@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-> On Thu, Apr 2, 2026 at 12:07=E2=80=AFPM Joonwon Kang <joonwonkang@google.=
-com> wrote:
-> >
-> > When the mailbox controller failed transmitting message, the error code
-> > was only passed to the client's tx done handler and not to
-> > mbox_send_message(). For this reason, the function could return a false
-> > success. This commit resolves the issue by introducing the tx status an=
-d
-> > checking it before mbox_send_message() returns.
-> >
-> Can you please share the scenario when this becomes necessary? This
-> can potentially change the ground underneath some clients, so we have
-> to be sure this is really useful.
+On Fri, Apr 3, 2026 at 9:51=E2=80=AFAM Joonwon Kang <joonwonkang@google.com=
+> wrote:
+>
+> > On Thu, Apr 2, 2026 at 12:07=E2=80=AFPM Joonwon Kang <joonwonkang@googl=
+e.com> wrote:
+> > >
+> > > Previously, a sender thread in mbox_send_message() could be woken up =
+at
+> > > a wrong time in blocking mode. It is because there was only a single
+> > > completion for a channel whereas messages from multiple threads could=
+ be
+> > > sent in any order; since the shared completion could be signalled in =
+any
+> > > order, it could wake up a wrong sender thread.
+> > >
+> > > This commit resolves the false wake-up issue with the following chang=
+es:
+> > > - Completions are created just as many as the number of concurrent se=
+nder
+> > >   threads
+> > > - A completion is created on a sender thread's stack
+> > > - Each slot of the message queue, i.e. `msg_data`, contains a pointer=
+ to
+> > >   its target completion
+> > > - tx_tick() signals the completion of the currently active slot of th=
+e
+> > >   message queue
+> > >
+> > I think I reviewed it already or is this happening on
+> > one-channel-one-client usage? Because mailbox api does not support
+> > channels shared among multiple clients.
+>
+> Yes, this patch is handling the one-channel-one-client usage but when tha=
+t
+> single channel is shared between multiple threads.
 
-I would say the problem here is generic enough to apply to all the cases wh=
-ere
-the send result needs to be checked. Since the return value of the send API=
- is
-not the real send result, any users who believe that this blocking send API
-will return the real send result could fall for that. For example, users ma=
-y
-think the send was successful even though it was not actually. I believe it=
- is
-uncommon that users have to register a callback solely to get the send resu=
-lt
-even though they are using the blocking send API already. Also, I guess the=
-re
-is no special reason why only the mailbox send API should work this way amo=
-ng
-other typical blocking send APIs. For these reasons, this patch makes the s=
-end
-API return the real send result. This way, users will not need to register =
-the
-redundant callback and I think the return value will align with their commo=
-n
-expectation.
+hmm.... how is this not single-channel-multiple-clients ?
+A channel is returned as an opaque token to the clients, if that
+client shares that with other threads - they will race.
+It is the job of the original client to serialize its threads' access
+to the channel.
 
-Regarding the change in the ground for some clients, could you help to clar=
-ify
-a bit more on what change, you expect, would surprise the clients?
+> From my understanding, the
+> discussion back then ended with how to circumvent the issue rather than w=
+hether
+> we will eventually solve this in the mailbox framework or not, and if yes=
+, how
+> we will, and if not, why.
 
-Thanks,
-Joonwon Kang
+It will be interesting to see how many current clients actually need
+to share channels. If there are enough, it makes sense to implement
+some helper api
+on top of existing code, instead of changing its nature totally.
 
->=20
-> Thanks
-> Jassi
->=20
->=20
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Joonwon Kang <joonwonkang@google.com>
-> > ---
-> >  drivers/mailbox/mailbox.c          | 20 +++++++++++++++-----
-> >  include/linux/mailbox_controller.h |  2 ++
-> >  2 files changed, 17 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-> > index d63386468982..ea9aec9dc947 100644
-> > --- a/drivers/mailbox/mailbox.c
-> > +++ b/drivers/mailbox/mailbox.c
-> > @@ -21,7 +21,10 @@
-> >  static LIST_HEAD(mbox_cons);
-> >  static DEFINE_MUTEX(con_mutex);
-> >
-> > -static int add_to_rbuf(struct mbox_chan *chan, void *mssg, struct comp=
-letion *tx_complete)
-> > +static int add_to_rbuf(struct mbox_chan *chan,
-> > +                      void *mssg,
-> > +                      struct completion *tx_complete,
-> > +                      int *tx_status)
-> >  {
-> >         int idx;
-> >
-> > @@ -34,6 +37,7 @@ static int add_to_rbuf(struct mbox_chan *chan, void *=
-mssg, struct completion *tx
-> >         idx =3D chan->msg_free;
-> >         chan->msg_data[idx].data =3D mssg;
-> >         chan->msg_data[idx].tx_complete =3D tx_complete;
-> > +       chan->msg_data[idx].tx_status =3D tx_status;
-> >         chan->msg_count++;
-> >
-> >         if (idx =3D=3D MBOX_TX_QUEUE_LEN - 1)
-> > @@ -91,12 +95,13 @@ static void msg_submit(struct mbox_chan *chan)
-> >
-> >  static void tx_tick(struct mbox_chan *chan, int r, int idx)
-> >  {
-> > -       struct mbox_message mssg =3D {MBOX_NO_MSG, NULL};
-> > +       struct mbox_message mssg =3D {MBOX_NO_MSG, NULL, NULL};
-> >
-> >         scoped_guard(spinlock_irqsave, &chan->lock) {
-> >                 if (idx >=3D 0 && idx !=3D chan->active_req) {
-> >                         chan->msg_data[idx].data =3D MBOX_NO_MSG;
-> >                         chan->msg_data[idx].tx_complete =3D NULL;
-> > +                       chan->msg_data[idx].tx_status =3D NULL;
-> >                         return;
-> >                 }
-> >
-> > @@ -116,8 +121,10 @@ static void tx_tick(struct mbox_chan *chan, int r,=
- int idx)
-> >         if (chan->cl->tx_done)
-> >                 chan->cl->tx_done(chan->cl, mssg.data, r);
-> >
-> > -       if (r !=3D -ETIME && chan->cl->tx_block)
-> > +       if (r !=3D -ETIME && chan->cl->tx_block) {
-> > +               *mssg.tx_status =3D r;
-> >                 complete(mssg.tx_complete);
-> > +       }
-> >  }
-> >
-> >  static enum hrtimer_restart txdone_hrtimer(struct hrtimer *hrtimer)
-> > @@ -286,15 +293,16 @@ int mbox_send_message(struct mbox_chan *chan, voi=
-d *mssg)
-> >         int t;
-> >         int idx;
-> >         struct completion tx_complete;
-> > +       int tx_status =3D 0;
-> >
-> >         if (!chan || !chan->cl || mssg =3D=3D MBOX_NO_MSG)
-> >                 return -EINVAL;
-> >
-> >         if (chan->cl->tx_block) {
-> >                 init_completion(&tx_complete);
-> > -               t =3D add_to_rbuf(chan, mssg, &tx_complete);
-> > +               t =3D add_to_rbuf(chan, mssg, &tx_complete, &tx_status)=
-;
-> >         } else {
-> > -               t =3D add_to_rbuf(chan, mssg, NULL);
-> > +               t =3D add_to_rbuf(chan, mssg, NULL, NULL);
-> >         }
-> >
-> >         if (t < 0) {
-> > @@ -318,6 +326,8 @@ int mbox_send_message(struct mbox_chan *chan, void =
-*mssg)
-> >                         idx =3D t;
-> >                         t =3D -ETIME;
-> >                         tx_tick(chan, t, idx);
-> > +               } else if (tx_status < 0) {
-> > +                       t =3D tx_status;
-> >                 }
-> >         }
-> >
-> > diff --git a/include/linux/mailbox_controller.h b/include/linux/mailbox=
-_controller.h
-> > index 912499ad08ed..890da97bcb50 100644
-> > --- a/include/linux/mailbox_controller.h
-> > +++ b/include/linux/mailbox_controller.h
-> > @@ -117,10 +117,12 @@ struct mbox_controller {
-> >   * struct mbox_message - Internal representation of a mailbox message
-> >   * @data:              Data packet
-> >   * @tx_complete:       Pointer to the transmission completion
-> > + * @tx_status:         Pointer to the transmission status
-> >   */
-> >  struct mbox_message {
-> >         void *data;
-> >         struct completion *tx_complete;
-> > +       int *tx_status;
-> >  };
-> >
-> >  /**
-> > --
-> > 2.53.0.1185.g05d4b7b318-goog
-> >
+Thanks
+Jassi
