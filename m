@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D302371CE0
-	for <linux-tegra@vger.kernel.org>; Fri,  3 Apr 2026 07:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8296D288C34
+	for <linux-tegra@vger.kernel.org>; Fri,  3 Apr 2026 07:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775201704; cv=none; b=oRmPk7LT50vLQ3CvWi3zNrqLOUSoNSgpzwTrTteycMHkYB5pfY0cELvg3nEUzVPFM8aqGvzzhdtlstBdYN3GNEznUYuFsjzZY9/qyR7VJ7df6d07Nk7OFOvw+FR8Mo8cGfu++Z2quhvGtiwXq9w30KqSg6bzcxzEJHszWmnLmO8=
+	t=1775201960; cv=none; b=OIBVZLtltuW9qgDHDucZDKfDX2xOkqeh3ZOKHgr+Gt4y09UKGgOcVHT1kmBElLzabgg060uZDyWZZlDwhC2G1Ooi0ZbHLcljxikFfBGuMz/3R4UdqY8ufkeatUwkGUeaF/Ak2VkXZunY/PywdBiwIMqAo5ooECKpOB3Y10pZhBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775201704; c=relaxed/simple;
-	bh=b88F/W5W1nSzHoIZaHpZ53hxpjDr1C+4WeW8L3mEIww=;
+	s=arc-20240116; t=1775201960; c=relaxed/simple;
+	bh=xPoa0BbChJ+jT0Cpnhz+hGgsAJtRwv/Nr2imXzBv2RA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bzhdw8VUnbCw6L9Tqi6/mYRWj5+gULPT3kAti2FtoyyG3JXccjLWe18AJ34DnnhDhLiDI4Dwu2lGOSbJVG37uKIvC2ve0pkGSeuqvHrHyaRYpjx4mLTlsUULNQ7mS1wHj73xeHa1T2OnLTCtrsViNmF/74yEcX4f1XjUfuAOXI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=azY2esPX; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=m49tNbuu1B7044ei/5gu4P9IHOs8xq/46sBtzhxcabRv4z7mlWnrc9FARsm1/ZfMcwvax3M0AoqkWJxbPRAG8szNlKmoq2cIiv3DwyF1x6OR2/YqzFqIMjphJ8lZLmaVEOSiO3n5HyBdRChto0zaJlACE12aH5OYOYtSSHo4jLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jXiWbQS0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="azY2esPX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A6EBC4CEF7;
-	Fri,  3 Apr 2026 07:35:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jXiWbQS0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3B8EC19424;
+	Fri,  3 Apr 2026 07:39:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775201704;
-	bh=b88F/W5W1nSzHoIZaHpZ53hxpjDr1C+4WeW8L3mEIww=;
+	s=k20201202; t=1775201960;
+	bh=xPoa0BbChJ+jT0Cpnhz+hGgsAJtRwv/Nr2imXzBv2RA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=azY2esPXY8lihI+oGh2n7H2qfdKrZ7yec0qZMnrlR2ax0CUFq+Qil8ENTh30PDWsg
-	 J5/y/alxsU6ITOf/iLsmmFFgobLIJ9zG37pheeFWtgGeCmYEAmPzWgwJZwGlVG7f/u
-	 ckGuHZ/FQAq04RoynrhGyTYbzcXS0b0KeIGCv8mx9uaqmHP9rE7I1Xqt2k5cUGvATn
-	 KcjfOOYvgB0i41VmzaYCdBkidByy1pr8G7Bz815NPuOdcVYh8JpgByfc0V3PKMjlfX
-	 18PCrrd34+FchL4zyexbzXfxqJiEiGaKuAG4fWoQSlQeYCmhBrVpDYZWDcM7yuEdHG
-	 IZifnKgxDSOVQ==
-Message-ID: <18acf94c-d1e1-4c42-b1a8-4cb230c3eea0@kernel.org>
-Date: Fri, 3 Apr 2026 09:35:00 +0200
+	b=jXiWbQS0n6UB8/ez3MJfN+TKpOBfyOQh9hohTDapCPl5RcEZrWKSFjufFIE19wFHQ
+	 NtJPfcuM9+op6A0/lZ+A/ckLAJbpHz8f3G+iDvpjY7HEYllOQTJKpOxBdCH29kPR/I
+	 lA+BoNfChOwlTe5MSk4HFbmQ2S4CI8muIrHeSsNyHZUP93KdQBRdIPQW6yEmOnNCZo
+	 9l/SvfXrDWAKt4ODCLvPiJ4hKBMs0C61fw+2jsf350em+WwSvtfS3PPBSuyUYOXWHx
+	 jxfI/aFN1C2Q9wg2ORyVl9rBzfoRYONTENTlrRnwmkDBZZm/qC9L6NQDtWWEeIqSmd
+	 u1sXqZNFWF9tQ==
+Message-ID: <6ffa564c-9026-49ca-a08d-c87a3f9b9b18@kernel.org>
+Date: Fri, 3 Apr 2026 09:39:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,13 +35,13 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL 6/7] arm64: tegra: Device tree changes for v7.1-rc1
+Subject: Re: [GIT PULL 1/7] dt-bindings: Changes for v7.1-rc1
 To: Thierry Reding <thierry.reding@kernel.org>, arm@kernel.org, soc@kernel.org
 Cc: Thierry Reding <thierry.reding@gmail.com>,
  Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org
 References: <20260329151045.1443133-1-thierry.reding@kernel.org>
- <20260329151045.1443133-6-thierry.reding@kernel.org> <ac5ahWb1I-qnaK_Y@orome>
+ <ac5aLzMyfnxa-LLi@orome>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -87,12 +87,12 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <ac5ahWb1I-qnaK_Y@orome>
+In-Reply-To: <ac5aLzMyfnxa-LLi@orome>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 02/04/2026 14:02, Thierry Reding wrote:
-> On Sun, Mar 29, 2026 at 05:10:43PM +0200, Thierry Reding wrote:
+On 02/04/2026 14:00, Thierry Reding wrote:
+> On Sun, Mar 29, 2026 at 05:10:38PM +0200, Thierry Reding wrote:
 >> From: Thierry Reding <thierry.reding@gmail.com>
 >>
 >> Hi ARM SoC maintainers,
@@ -103,63 +103,73 @@ On 02/04/2026 14:02, Thierry Reding wrote:
 >>
 >> are available in the Git repository at:
 >>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.1-arm64-dt
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.1-dt-bindings
 >>
->> for you to fetch changes up to c70e6bc11d2008fbb19695394b69fd941ab39030:
+>> for you to fetch changes up to bed2f5b4de6c6fd8f8928f6373ad92e8795c370f:
 >>
->>   arm64: tegra: Add Tegra264 GPIO controllers (2026-03-28 01:36:46 +0100)
+>>   dt-bindings: arm: tegra: Document Jetson AGX Thor DevKit (2026-03-28 01:05:24 +0100)
 >>
 >> Thanks,
 >> Thierry
 >>
 >> ----------------------------------------------------------------
->> arm64: tegra: Device tree changes for v7.1-rc1
+>> dt-bindings: Changes for v7.1-rc1
 >>
->> Various fixes and new additions across a number of devices. GPIO and PCI
->> are enabled on Tegra264 and the Jetson AGX Thor Developer Kit, allowing
->> it to boot via network and mass storage.
+>> This contains a few conversions to DT schema along with various
+>> additions and fixes to reduce the amount of validation warnings.
+>>
+>> Included are also a new binding for the PCIe controller found on
+>> Tegra264 as well as compatible strings for the Jetson AGX Thor
+>> Developer Kit.
 >>
 >> ----------------------------------------------------------------
->> Diogo Ivo (1):
->>       arm64: tegra: smaug: Enable SPI-NOR flash
+>> Sumit Gupta (1):
+>>       dt-bindings: arm: tegra: Add Tegra238 CBB compatible strings
 >>
->> Jon Hunter (1):
->>       arm64: tegra: Fix RTC aliases
+>> Svyatoslav Ryhel (1):
+>>       dt-bindings: display: tegra: Document Tegra20 HDMI port
 >>
->> Prathamesh Shete (1):
->>       arm64: tegra: Add Tegra264 GPIO controllers
->>
->> Thierry Reding (6):
+>> Thierry Reding (9):
 >>       dt-bindings: pci: Document the NVIDIA Tegra264 PCIe controller
->>       Merge branch for-7.1/dt-bindings into for-7.1/pci
->>       arm64: tegra: Fix snps,blen properties
->>       arm64: tegra: Drop redundant clock and reset names for TSEC
->>       arm64: tegra: Add PCI controllers on Tegra264
->>       arm64: tegra: Add Jetson AGX Thor Developer Kit support
+>>       dt-bindings: phy: tegra-xusb: Document Type C support
+>>       dt-bindings: clock: tegra124-dfll: Convert to json-schema
+>>       dt-bindings: interrupt-controller: tegra: Fix reg entries
+>>       dt-bindings: arm: tegra: Add missing compatible strings
+>>       dt-bindings: phy: tegra: Document Tegra210 USB PHY
+>>       dt-bindings: memory: Add Tegra210 memory controller bindings
+>>       dt-bindings: memory: tegra210: Mark EMC as cooling device
+>>       dt-bindings: arm: tegra: Document Jetson AGX Thor DevKit
 >>
->>  .../bindings/pci/nvidia,tegra264-pcie.yaml         | 149 +++++++++
->>  arch/arm64/boot/dts/nvidia/Makefile                |   2 +
->>  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |  12 +
->>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   2 -
->>  arch/arm64/boot/dts/nvidia/tegra234-p3701.dtsi     |   1 +
->>  arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi     |   1 +
->>  arch/arm64/boot/dts/nvidia/tegra234.dtsi           |   6 +-
->>  .../dts/nvidia/tegra264-p4071-0000+p3834-0008.dts  |  11 +
->>  .../boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi |  12 +
->>  arch/arm64/boot/dts/nvidia/tegra264.dtsi           | 336 +++++++++++++++++++--
->>  10 files changed, 500 insertions(+), 32 deletions(-)
+>>  Documentation/devicetree/bindings/arm/tegra.yaml   |  56 +++-
+>>  .../bindings/arm/tegra/nvidia,tegra234-cbb.yaml    |   4 +
+>>  .../bindings/clock/nvidia,tegra124-dfll.txt        | 155 -----------
+>>  .../bindings/clock/nvidia,tegra124-dfll.yaml       | 290 +++++++++++++++++++++
+>>  .../display/tegra/nvidia,tegra20-hdmi.yaml         |  13 +-
+>>  .../interrupt-controller/nvidia,tegra20-ictlr.yaml |  23 +-
+>>  .../memory-controllers/nvidia,tegra210-emc.yaml    |   6 +-
+>>  .../memory-controllers/nvidia,tegra210-mc.yaml     |  77 ++++++
+>>  .../bindings/pci/nvidia,tegra264-pcie.yaml         | 149 +++++++++++
+>>  .../bindings/phy/nvidia,tegra194-xusb-padctl.yaml  |  39 ++-
+>>  .../bindings/phy/nvidia,tegra20-usb-phy.yaml       |   1 +
+>>  11 files changed, 649 insertions(+), 164 deletions(-)
+>>  delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+>>  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.yaml
+>>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-mc.yaml
 >>  create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra264-pcie.yaml
->>  create mode 100644 arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834-0008.dts
->>  create mode 100644 arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
 > 
 > Hi ARM SoC maintainers,
 > 
-> DT maintainers objected to the way I wanted to handle the DT bindings
-> dependency here, so I'll drop the whole PCI stuff from this and redo the
-> PR.
+> Please ignore this for now. I'm dropping my set of patches from this
+> because they upset the DT maintainers. I'll send another version with
+> only Sumit and Svyatoslav's patches.
 
-It took me ages to get that information from you but finally you pointed
-me that this is shared with PCI, so it is fine.
+I plan to take this, because rejecting it won't improve anything and
+patches seems to be non-conflicting. In the future, please do not filter
+out addresses of other maintainers and their lists from
+get_maintainers.pl output for patches belonging to their subsystems. If
+the patchset becomes 50-Cc-patch-bomb, then standard rule of submitting
+patches applies - should be split.
+
 
 Best regards,
 Krzysztof
