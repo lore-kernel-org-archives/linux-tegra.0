@@ -1,156 +1,159 @@
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B212517A5
-	for <linux-tegra@vger.kernel.org>; Fri,  3 Apr 2026 16:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E594F30EF6B
+	for <linux-tegra@vger.kernel.org>; Fri,  3 Apr 2026 16:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.161.43
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775233204; cv=pass; b=IuBiwclW0j3GcpIiPFiIIFTMh7yldnjgZlk+ARhcwiHviDA9EgkUxCUaE/8Ax47dW1I67/QAdh202G1aACelqV0+xcWNOBkLqEGN/oMNRFMLjrng2Wmtt7NAJutl2NI2yzw5d9fCbP2ESaqUPAUAx0i5GN7wvWga/4k9lXOI/ow=
+	t=1775234209; cv=pass; b=Cvu41qJDxilHsWAUXlrMiO7rur6mUpPqaGvtR2HPJ1Y2Y2dcxgUutws1Ptt0iMCO+mwdNzuFirtdt0QLXAdLUeiSmlv180oOyGZ27V1+/I3UwXBbckUAN8E5yZrhBsedGXq6I9JSCFdTeBgfAFD1h5XSnhCfiZa7kKGqaryysDM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775233204; c=relaxed/simple;
-	bh=D1y1DSZ24fieEFS/2aK46LPRiEzKTQE6w5wGIEwhqyA=;
+	s=arc-20240116; t=1775234209; c=relaxed/simple;
+	bh=mhIYPi+ZTj650hQKyeIbVrsNYbY3op5BHueN/8Cl9Xs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CcnPEF0QYcqTueh5HCCaOvXCSf1wgftihLoQD1+rwiLsPETP4EHkeKtNjWcEHdiX2LRuQcdWOrThkjOtXyVxIqOgjGZ2yK+avGSzjaDFFgl/FCXmWci8ObNQRG9U/qaTz6GdQk/qMeGXWTYS6IYZNZJGilw1jxCsYPFGa4xA+qY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LSqLh9dz; arc=pass smtp.client-ip=209.85.210.49
+	 To:Cc:Content-Type; b=FIEbs1NDyW46ZhknENQ2rPQjUnoC3qF0FTgSw2iYiXSRCnwNguUGJ2TtmdWb4r6SbkdVh80ldtjMr8bW3R+sP9m8pwoBM0OFcibUAN3yqyk+cRBLCzRqgMSVLy6b2pFALL0gb7vSH72v0wsU48rzVAcBfE0oBX28q2SwYb7/MIE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ky0li6vr; arc=pass smtp.client-ip=209.85.161.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LSqLh9dz"
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7d7eb85fb81so2115283a34.0
-        for <linux-tegra@vger.kernel.org>; Fri, 03 Apr 2026 09:20:03 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1775233202; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ky0li6vr"
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-6836ab45de0so32315eaf.1
+        for <linux-tegra@vger.kernel.org>; Fri, 03 Apr 2026 09:36:47 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1775234207; cv=none;
         d=google.com; s=arc-20240605;
-        b=V6QjLSCF4zoSEKsVvlU7kIW4HYxZvsXyoHPnDk5kw0UDwZXABtTzQOBp1LSQbkmyow
-         OIKog63sB+IDcravS3PFH1m0STyszKdk18p/enLOcuugl41IVUMnG/SDJt0alD3fxXId
-         ECZkee5Clf56/sfWduQVYBE/SqZJknZ0iI9HUH17Ip/AgZ6yXBJkrOBOqHw0GKJ16/RE
-         ao5z+zt6J3FbgHRlK5OalcOK2MX/eOvdKkElhISKZDitjWCG/1YHr8g9CuxHG3zdMmdQ
-         7rhyr1mipfT/eCle2Cw5u7XGDVFthsc7WfcnQSlR2nHCTnN+Sszkxe55b71MpxPQEuOI
-         lnhw==
+        b=HVutfWZD9fETMb/3d7optDVHqqDbM4KsXa/WhT2IswP5a8J39DmDWmKWixNDnIqIhI
+         5yVKDkQTZgfl5AO1NYKyzlIv402VYrNry3K0WnlPXw/lbT0uYpkA5noqECqWaUX/cLqP
+         QGy/Q9r7ctF/b0xG7r1KxHXnWOkngoo0pdQOUkxQhzf+T6g2QJJA1lkGq+3WB5z4ZEqz
+         MpQRQtcvvkhyhowSu5LOdm0L/eemFIOex0pEE/zJdWfsNxMAv0b113weohNvoHMLb7uc
+         rUSzTqsHQFegw19touvbcw29PyfE+kQISp6fpqe4ygVSK+uisBBW48RnD80ilQsyDHkS
+         zvcQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=+V1E+/KFBONHYKrDP8YAiJIHIjVU2b7P8j+yHhcYHMc=;
-        fh=9JZq8trWPsHJfelEvWU5kHXhk3/02FK/TogASfOrW74=;
-        b=jGHyL9LDBEiSER5JegJzasSHng+pXnnE8xhqKn+WzatG/nK6vVOD3kBeg8KR8OOh8S
-         s+Ke+8gDcsK7Xs+kb0sZ5e2XfHYap55pqypC+fdn2wH9WgRbzwcaad94Xw2QaXx63sU2
-         Rrr3xBO1kwlrl6pc40JtVjX5vG56OW8wFgycKIAuVh5ziGG7I67P6KHfGcS/nAMQxb2B
-         sCmEziKL/dxEBdebpZwyiDEAGir1qjHSlrK8uwYpUN9iHYRfT2SY123AoSqSZz4abaXR
-         ubs5bOdNlKoSFumRJ3CVBbjJ6hx9xmZK3Ww0bwmWZGq0yQrs637L5qwVu35zEg0woxLs
-         V3XQ==;
+        bh=mhIYPi+ZTj650hQKyeIbVrsNYbY3op5BHueN/8Cl9Xs=;
+        fh=nPahoowW49gmYPlCGq/hi1mG1PsFQgfmAebmOCeb518=;
+        b=dk+aYIT21Ed0QEW5gfQD3qhvjbhpqvR4qRDHuGi/kx3r8Uh2qX3QeWc9XqJmDanL7t
+         WIybvXRicnhyaCRHvCaDYGuvruFgr8OD0kr8UfA2T5uFNqlO9NbEHhHlpIdrTH2nOWpE
+         UlzXibJe0jgMzcoZwFR/7ZHJw3Rsj5v65DJ77SFm1LMRcvQB5z6Qz5hKcVUhupDOM8dl
+         iAcads1y4xAIsNQVHlYHNlqQJwuTwtW4gxFRGJAw7C1Zzzls2LGwRTUIoj8pYx4ReaNO
+         f6JuPbVOuIVJwwSnFGLfZ2pWJJ5Z3jpm1un8mQCfhP/QwOgqfDiHAbMv9BAQJAnch8g/
+         v0Kw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775233202; x=1775838002; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1775234207; x=1775839007; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+V1E+/KFBONHYKrDP8YAiJIHIjVU2b7P8j+yHhcYHMc=;
-        b=LSqLh9dzKcgeO58OJAjNLJC3lkpslDPlFFLi0iEoIZqyBUC088MzlxzECPWTAUiS/Q
-         /ai81neGRzHMqoVFv9E/dqzsM5WBRYBDC82MKQ53uRrReJ6Eyp+vIOHTmMBw1clWx51X
-         GkNWd/Y8Q/UfzO5ZUzosW2rjL+0EHW8bEtIGBU27hUxiCc0suA5HbmmVYEGnh9KWdNT5
-         yDrqOhq1n72N9INnN6jJ2y2INxB5igtLJy+GVe7gldauZMdhN+blFzHFWnNGi3mCQHY9
-         JA11P1zzhc/ujHBWispYtjoD+ug/uzJdKLloyrOpphG1RWGZxhtUNbQz/y5st88LB427
-         9Dpw==
+        bh=mhIYPi+ZTj650hQKyeIbVrsNYbY3op5BHueN/8Cl9Xs=;
+        b=ky0li6vrd2pYiGVkSaMFBf7mfkcpE93MZ/J0rRq50oOw38Aux76GJbxTk+hczSxbKg
+         2sBqh05nGYid0jRDIQJTjihDRetjxLLJvX8pAvKcw2KHH3nn3yFZlt4jyS5nNKgeqJdx
+         jgnbxig6Do3Cy8Ff/ZWjK4y1edRtu72jfGNoRim2+2q6i08CJfeZXEh2fyOxdEO+WdY3
+         v7gRP2aK9fOyhGH0Tv+Slg1No9RwJlDv8YAjajPLLD0GbvN1JLWknp6lKSJtbxOE4ijF
+         buR9YWKhCKtVKAnWtmDQylLjGkf8dNo6wDZ9RJyxSTraJsJ4EQAfqqdB6KCqYtDIHSoK
+         Nh6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775233202; x=1775838002;
+        d=1e100.net; s=20251104; t=1775234207; x=1775839007;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=+V1E+/KFBONHYKrDP8YAiJIHIjVU2b7P8j+yHhcYHMc=;
-        b=di+SFBsgn6B89DOHs193aV4AnA8dxzcrNyaaS3f9OCfSzclqeJ0a+P9TRIrfpABeHB
-         p4jSfeW5FY+Pois/N5ShZZe8qo6mMgvYofTwbChMpnubTcY8sWVtE1H7A3/Qek16opVP
-         l04gXa052XGUz4wPjRRq9AOYJp9tTKO3yAxCG/GZdt8SbiI5PnD/gsx0Ai0OiLPmKJgh
-         cI1hWjrOFPBUgPrN5CFTnNhVExyEhcb2XCzufMFzxrEMj+Koz+nzU+yGSqFA/Y7Cs09n
-         jq2I+Od0m/A5ovGsPWo3GTUqh3lvFNn19ho8e9r844MU5k1UqkxC1/GflLDC5GSzy/6b
-         IciQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBlk0G+qCLVnoK1GkY2lz4p9/eg0hEBJPPHEMjrgs35shdcpX+BLvbvA6aySXTz/+CKdxlW6SpCLxX1A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYJ28tnazfRqcJfJGru1pX2MPMBrNqShZh28SAFJbEY4wt3SWT
-	tznY5Q9+naMrHH+CrTUCcUEUKEfsdAVeWl9X/4fMm7UOoDWTlHQ2cB+piZQk030D4SDaPKObDyP
-	3rkW2bfYf8+tYnuoPmrtpIvYMNhuxOTg=
-X-Gm-Gg: ATEYQzz4dYNY8Iu5RIXLfX1DWal+qEt+1Sz1OR/OY39idYVM2fR0jmyc30uyWhwkrJU
-	uS2vZzTuNHEMa5ZFwi2u5gqpSbVBrpyQv+6F+Ene4yPRaCeD+Ons/pjeJOKnca2xcWJYGJPqSRf
-	epdrbtYR8uQO3VmPuS60R35tjdXg27fzUBXlr6EGXFEKfYC3qR3lpErwqFRZ54k4GpwzR+ULTB6
-	sFC4Lupq9iDgdAS9eZU5WzkewHlygYCOdTBdW1sbp3tbXE1Al9d3qoCDH03OKfwvGdLaNXsTcY5
-	j8RoyVF+
-X-Received: by 2002:a05:6830:83ba:b0:7d9:ad90:5677 with SMTP id
- 46e09a7af769-7dbb75d7260mr2353806a34.30.1775233202503; Fri, 03 Apr 2026
- 09:20:02 -0700 (PDT)
+        bh=mhIYPi+ZTj650hQKyeIbVrsNYbY3op5BHueN/8Cl9Xs=;
+        b=XxOWf8rT2Bpc5k8qoL/XrLEkKgs1KvEZVPYOoE8qb5qlm5fuAhsBuJZwZS85llF+86
+         XsihehL3FvF3Qg9wxyo5TmM76qE5xLYu1FgE1694VHQGcNY57qMg12jjw0E3yk1QU/Bf
+         aj4xRBYroAeUpUZJgTLeP+DDJq/7ml8qlIAjRXYbQcvSYmqHS20FJ94DYYSQyyMikzCx
+         NmaWEzfAZmjC82mHunj+6uRu0AD6C91Js/gt1TY9AlTClf0qWB0IlOW66o2g+YG2+vTy
+         G4PcSU4JqcOSd37RkoawsIMAZCDIJts2vLp9NPKrqIxdgyx+gpradlwscrCK0xtFFv4f
+         hy5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV27C4KI7EwXHEFJmBMPnp1TfIJwuKWa4aYzcGNKZwPtBXa0zOpfbB4kp4fXZbPq9MtpLUpydJEhRecHw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7y+936z9POkC+pL1BJfvfotZkVp1cny9cruaGT2uVZpTeOUa/
+	FuTu+41pTZ6UYUM4ZRbU2Jyeqe6bXs1KoesBiTHPUjUo0JiE400h7DSMDgpOp1uYycBNufs4Jzk
+	JBruBcZXVjKp3DvjpjXRUgAXa0JMOVz0=
+X-Gm-Gg: ATEYQzweAaZpniToq1jZtsSlz2zLC7gZ/LvbED8kOxRuU/TMjLJ1EY1whjykqSn1/ST
+	FzooHrKgwN4xAzjtqAOY7574bYgruMJtCinWg7AxacJCVhdBS6RxUMb0X8eO+jbF7UmTEucnyTY
+	PmMWOnSDJJfIiht8jPaCDyRe+kQPz6ouQzsGj7Ln5792aa9yKtZB7XdKYtJ15LnTWlQqozBM4pE
+	1qw0rGmV7oD3hYVpg6zl/OyxUkYVul/0AnVe6pvqzoLgQ292pYRtkfcCOft99RB+ldttEly5B9Y
+	60VZ4NCk
+X-Received: by 2002:a05:6820:f023:b0:67e:1259:aac4 with SMTP id
+ 006d021491bc7-6821d747f8bmr1924347eaf.26.1775234206887; Fri, 03 Apr 2026
+ 09:36:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABb+yY0ub51k-eFpPfgARXtwYjWzRSjbPDLtoMD77YQR8JH+=Q@mail.gmail.com>
- <20260403145119.2581034-1-joonwonkang@google.com>
-In-Reply-To: <20260403145119.2581034-1-joonwonkang@google.com>
+References: <CABb+yY3hYcJ82QGor3w5KKHUGz9Pc1k64Jdf-94E4Yvv0DTeyQ@mail.gmail.com>
+ <20260403151950.2592581-1-joonwonkang@google.com>
+In-Reply-To: <20260403151950.2592581-1-joonwonkang@google.com>
 From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Fri, 3 Apr 2026 11:19:51 -0500
-X-Gm-Features: AQROBzBimCWicSTdSy1XOK425eepJ2fZaf0LPQosLeZZ5fVq1iHQtw7KN5njBvw
-Message-ID: <CABb+yY0uDQh-3cadPQONV=NJKjMtc4mJekgjmHYVaHnfHXvGZQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] mailbox: Use per-thread completion to fix wrong
- completion order
+Date: Fri, 3 Apr 2026 11:36:34 -0500
+X-Gm-Features: AQROBzCNnfUiQJss0MRPovDqMc4MnIhdZ3NJ2hHQRVK29Ar7Ti2BAIx3xKRl0IM
+Message-ID: <CABb+yY23aTXeXu6G-8sHjw32DCqmhsJLu2Mt-txenOgTBiyv+A@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] mailbox: Make mbox_send_message() return error
+ code when tx fails
 To: Joonwon Kang <joonwonkang@google.com>
 Cc: angelogioacchino.delregno@collabora.com, jonathanh@nvidia.com, 
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
 	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	matthias.bgg@gmail.com, stable@vger.kernel.org, thierry.reding@gmail.com
+	matthias.bgg@gmail.com, stable@vger.kernel.org, thierry.reding@gmail.com, 
+	akpm@linux-foundation.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 3, 2026 at 9:51=E2=80=AFAM Joonwon Kang <joonwonkang@google.com=
-> wrote:
+On Fri, Apr 3, 2026 at 10:19=E2=80=AFAM Joonwon Kang <joonwonkang@google.co=
+m> wrote:
 >
 > > On Thu, Apr 2, 2026 at 12:07=E2=80=AFPM Joonwon Kang <joonwonkang@googl=
 e.com> wrote:
 > > >
-> > > Previously, a sender thread in mbox_send_message() could be woken up =
-at
-> > > a wrong time in blocking mode. It is because there was only a single
-> > > completion for a channel whereas messages from multiple threads could=
- be
-> > > sent in any order; since the shared completion could be signalled in =
-any
-> > > order, it could wake up a wrong sender thread.
+> > > When the mailbox controller failed transmitting message, the error co=
+de
+> > > was only passed to the client's tx done handler and not to
+> > > mbox_send_message(). For this reason, the function could return a fal=
+se
+> > > success. This commit resolves the issue by introducing the tx status =
+and
+> > > checking it before mbox_send_message() returns.
 > > >
-> > > This commit resolves the false wake-up issue with the following chang=
-es:
-> > > - Completions are created just as many as the number of concurrent se=
-nder
-> > >   threads
-> > > - A completion is created on a sender thread's stack
-> > > - Each slot of the message queue, i.e. `msg_data`, contains a pointer=
- to
-> > >   its target completion
-> > > - tx_tick() signals the completion of the currently active slot of th=
-e
-> > >   message queue
-> > >
-> > I think I reviewed it already or is this happening on
-> > one-channel-one-client usage? Because mailbox api does not support
-> > channels shared among multiple clients.
+> > Can you please share the scenario when this becomes necessary? This
+> > can potentially change the ground underneath some clients, so we have
+> > to be sure this is really useful.
 >
-> Yes, this patch is handling the one-channel-one-client usage but when tha=
-t
-> single channel is shared between multiple threads.
-
-hmm.... how is this not single-channel-multiple-clients ?
-A channel is returned as an opaque token to the clients, if that
-client shares that with other threads - they will race.
-It is the job of the original client to serialize its threads' access
-to the channel.
-
-> From my understanding, the
-> discussion back then ended with how to circumvent the issue rather than w=
-hether
-> we will eventually solve this in the mailbox framework or not, and if yes=
-, how
-> we will, and if not, why.
-
-It will be interesting to see how many current clients actually need
-to share channels. If there are enough, it makes sense to implement
-some helper api
-on top of existing code, instead of changing its nature totally.
+> I would say the problem here is generic enough to apply to all the cases =
+where
+> the send result needs to be checked. Since the return value of the send A=
+PI is
+> not the real send result, any users who believe that this blocking send A=
+PI
+> will return the real send result could fall for that. For example, users =
+may
+> think the send was successful even though it was not actually. I believe =
+it is
+> uncommon that users have to register a callback solely to get the send re=
+sult
+> even though they are using the blocking send API already. Also, I guess t=
+here
+> is no special reason why only the mailbox send API should work this way a=
+mong
+> other typical blocking send APIs. For these reasons, this patch makes the=
+ send
+> API return the real send result. This way, users will not need to registe=
+r the
+> redundant callback and I think the return value will align with their com=
+mon
+> expectation.
+>
+Clients submit a message into the Mailbox subsystem to be sent out to
+the remote side which can happen immediately or later.
+If submission fails, clients get immediately notified. If transmission
+fails (which is now internal to the subsystem) it is reported to the
+client by a callback.
+If the API was called mbox_submit_message (which it actually is)
+instead of mbox_send_message, there would be no confusion.
+We can argue how good/bad the current implementation is, but the fact
+is that it is here. And I am reluctant to cause churn without good
+reason.
+Again, as I said, any, _legal_, setup scenario will help me come over
+my reluctance.
 
 Thanks
 Jassi
