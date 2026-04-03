@@ -1,232 +1,165 @@
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013067.outbound.protection.outlook.com [52.101.72.67])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286E02848BE;
-	Fri,  3 Apr 2026 03:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775185428; cv=fail; b=gzVPv5DbJ7EVX9cMgZ5jpfGuWRwSqfJlEQOEbf3/mfnzLov+hDaIgY/nlG+X11mO4ik5o7gnYHdogIaPwbnpRhLYShrenjiQeI86bsDUhG+IFmAdN7z/5cHK+XTkeGDOI2Z0+7HNE5dE3U6pdcOPopbVWSmMC+gUGQDTq+l7ePk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775185428; c=relaxed/simple;
-	bh=dR6zc9iYwyfp3jMywGHIaCCWEUkRpxi4jOAy+jlslFI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ZcBkH2o2Lm0WpcrCt0jRdLMR8SjyO4WgwjhHW6+n9x0RWMK8Z5pD5MpuvKuZZROFAGNdUo5vFiKjSCzMMzPNPPbcJMWe48OO5zUZkBHf9t14uqjYsq0hM0nR6HhXEAImcdvELD5BNvfoZHqMycTnqWqzq03xcTBq+8VnC7qz+Ng=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=V8IbWJEB; arc=fail smtp.client-ip=52.101.72.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D302371CE0
+	for <linux-tegra@vger.kernel.org>; Fri,  3 Apr 2026 07:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775201704; cv=none; b=oRmPk7LT50vLQ3CvWi3zNrqLOUSoNSgpzwTrTteycMHkYB5pfY0cELvg3nEUzVPFM8aqGvzzhdtlstBdYN3GNEznUYuFsjzZY9/qyR7VJ7df6d07Nk7OFOvw+FR8Mo8cGfu++Z2quhvGtiwXq9w30KqSg6bzcxzEJHszWmnLmO8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775201704; c=relaxed/simple;
+	bh=b88F/W5W1nSzHoIZaHpZ53hxpjDr1C+4WeW8L3mEIww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bzhdw8VUnbCw6L9Tqi6/mYRWj5+gULPT3kAti2FtoyyG3JXccjLWe18AJ34DnnhDhLiDI4Dwu2lGOSbJVG37uKIvC2ve0pkGSeuqvHrHyaRYpjx4mLTlsUULNQ7mS1wHj73xeHa1T2OnLTCtrsViNmF/74yEcX4f1XjUfuAOXI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=azY2esPX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="V8IbWJEB"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r7Ci9IgjBYJmxjzNiZTt4utv/NqVPTHnsHfIL+Gs4mIuMEuDEKOkY3A8/cQljKeqkxR8tkYlqET6O73rOSZvP7SUzF82fu9HPqV/GjDWCFWiAnQV6cqJdi+iUCHSV5PvwE6vlv/wgHTKmzdKHvunhjcOAZez0txRjVfoV2QCVZubW44JE1suLo2PAfGDS2PbqI54EOcFWDxRQ9g3X6M5chZtBupyyiVnN5vkEtDwkWrKfnddq40t5xrPd8BvmNqwfR96eCs4XevzJlbCHbsBwCUvXUU9/TVWYtTVJFuAKIyYhMHeFDQH7x8p7f4RRLfP/XGZYXhVGJEwjwfwNfM3oQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qgSfHn5mNE4VeK4DWKmdDgsReN/BlvTJow2Ir4X+9F8=;
- b=nWppCWWj09NIxqC1HfhFvJa+9UjjFetukqHtis8cmvRHXJsYXyJLBFWotiv2Q7zi2W122hrERnKetKu5RPh3PPVHlf6aiXQkOWN9EkLz6cA1kpWbqwFMxeT6erT03e8+WmsGk+s1WeF8vcOoI12MZhDru22N2AJV2soUwjpzqnhytkmaOGnA608zEgeFrGwLKQIx4PvhfhrXraL2zOM+fm1k/2xi5dtYaDHCyBdRutsZJKIFSZxTUVGZ0qn8XBeeUJWYhglb5QsF/Cfw95FXF0ZPI6T/EcHI8OpJr1aHOkjgyjIDDDexUo5lbawPbjKgDzlXnQKdIc/l2KBUJLU9Ng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qgSfHn5mNE4VeK4DWKmdDgsReN/BlvTJow2Ir4X+9F8=;
- b=V8IbWJEBFJ+Fzw5nCrtfsjf10TMGl+N6GcrG7Ta331Q6Q28PJF+iRZx4acuVe8JHdTVJTNlfEFskciK1pQkEenq2AIH5PgcHhhW/V95YT4oDOxYjw9v+H3QiM4Z76qzDXnhTv/i6cn8TyLcZP1goQh4H4vULP/zn95HFfkfHnKhFxCz1QEBbFli+yB5lVeaNj9ro9/vtGE4G8hXIO6nghNeEMK0HjvQmhlVJ/WxQMvRSBHb37zjjCnlqh1F+PW3Lo+eWeVegU0taqMJziq+/g7TURvV62IJyq6DXTNCfCRuz63FLT4EbNqtI06sREfmh7Uh1WUXGb7v2Hrp08TK0/w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PA4PR04MB9366.eurprd04.prod.outlook.com (2603:10a6:102:2a9::8)
- by PA1PR04MB11083.eurprd04.prod.outlook.com (2603:10a6:102:484::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.17; Fri, 3 Apr
- 2026 03:03:42 +0000
-Received: from PA4PR04MB9366.eurprd04.prod.outlook.com
- ([fe80::75e4:8143:ddbc:6588]) by PA4PR04MB9366.eurprd04.prod.outlook.com
- ([fe80::75e4:8143:ddbc:6588%6]) with mapi id 15.20.9769.018; Fri, 3 Apr 2026
- 03:03:42 +0000
-Date: Thu, 2 Apr 2026 23:03:33 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Sheetal <sheetal@nvidia.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Frank Li <Frank.Li@kernel.org>, Mohan Kumar <mkumard@nvidia.com>,
-	dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] dmaengine: tegra210-adma: Add error logging on
- failure paths
-Message-ID: <ac8uBTemDHCr4T6V@lizhi-Precision-Tower-5810>
-References: <20260323083858.2777285-1-sheetal@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260323083858.2777285-1-sheetal@nvidia.com>
-X-ClientProxiedBy: BYAPR06CA0031.namprd06.prod.outlook.com
- (2603:10b6:a03:d4::44) To PA4PR04MB9366.eurprd04.prod.outlook.com
- (2603:10a6:102:2a9::8)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="azY2esPX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A6EBC4CEF7;
+	Fri,  3 Apr 2026 07:35:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775201704;
+	bh=b88F/W5W1nSzHoIZaHpZ53hxpjDr1C+4WeW8L3mEIww=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=azY2esPXY8lihI+oGh2n7H2qfdKrZ7yec0qZMnrlR2ax0CUFq+Qil8ENTh30PDWsg
+	 J5/y/alxsU6ITOf/iLsmmFFgobLIJ9zG37pheeFWtgGeCmYEAmPzWgwJZwGlVG7f/u
+	 ckGuHZ/FQAq04RoynrhGyTYbzcXS0b0KeIGCv8mx9uaqmHP9rE7I1Xqt2k5cUGvATn
+	 KcjfOOYvgB0i41VmzaYCdBkidByy1pr8G7Bz815NPuOdcVYh8JpgByfc0V3PKMjlfX
+	 18PCrrd34+FchL4zyexbzXfxqJiEiGaKuAG4fWoQSlQeYCmhBrVpDYZWDcM7yuEdHG
+	 IZifnKgxDSOVQ==
+Message-ID: <18acf94c-d1e1-4c42-b1a8-4cb230c3eea0@kernel.org>
+Date: Fri, 3 Apr 2026 09:35:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB9366:EE_|PA1PR04MB11083:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6c403f58-2df2-4102-5eba-08de912d9c96
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|366016|19092799006|1800799024|376014|7416014|38350700014|18002099003|22082099003|56012099003;
-X-Microsoft-Antispam-Message-Info:
-	NzQ60NTy0jQkUmj9HTwRWo8h86kfyLO2Cg7oUFMV/QGoCkqcZn2cMIMrpqLFrnryIokYy1mbLm21zGB/Mp1a9cfr+pJ65x5eHex+XOjNgjsOY27e0t593usZ+9PrNSqHwvgi/RxKHkMKXTJM+IjiF5eR+iIqv+BC2hPoZ2BEbVI/G6xvEyIFI+21Y1VmJhS70ucUUNQeas/snuIKowEIM5xDnpy+2QG6LU5o9qfE23KbUGr0xAky59ymRFwIxL4wZWDMpU50NpCTcggWDvGusgBj9xGMwECql3rrvQ2q1vwkUe3vSr7OVnltxv8Qboaazq8papK8NL9ZZVXCTgQJvgughuFFP6DxRdOgSsPx8iDukYIN4pTz/siN5bpehDRtRw0e56CQbEejae8V8I1fhmsqSzznSURVufI4jhSh79HaMlDRT3Mt+CXuvSB8Yv92MNVSK8xbprYdjLkiKA7yrm07Bus8Qmv98kzq0sC1HGAPJ7nvrPW9g7GFJ47KkefqMYDbpI+ZJ6UPYwnX6IQbtwI+Obww0Kn4pBgeO5ztQe1rkIN7B8JqyyyBNqamgrMTZPiPb5qIwfqofl5B2tpMTPrcqqLfbSdWGRBXSPIMS/2bytCGpE55LKlWv2hyKh/aeArduaGo/EoD8xLVZoZsKwiExtg58I8sKeQfrrsPmMB2MWtsAaSqVCyuLrjTPrT+zYDeCSiPfC+vc6KH8ztjprY+SrnV2uxO7W0gkdWv15ULq7ToKOzYYPhAEWmdL+i/Su45aE6jZHPnvU3Q+Fb8qG1sGJVBi3fO83n23zlQnE4=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9366.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(19092799006)(1800799024)(376014)(7416014)(38350700014)(18002099003)(22082099003)(56012099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?E376JGMjTcE9d0aErurlbiPF7SJEWm3cVW4obOPCWj0F6b9rAMvqkKsua6lW?=
- =?us-ascii?Q?VvICEdt4XsCmaQlX6Rny6XqLQcbAjrNqFGP9VAKxg93n9OiYSvQFzA7/Vust?=
- =?us-ascii?Q?xMBPDgnsNJPCVBedNGz6rfl8UtCzJESfRPEjIVLN1hLIkhAdTG7f/GHStczl?=
- =?us-ascii?Q?+4Mxw2FduAk7mu7awFwajdpjA2Rlu1rlVBdBZy+VwLtke3RlqnGmuzTt5wi/?=
- =?us-ascii?Q?Xze9Jo+DdinqRYg1mkTnhxVAlRcngtP5ei3lqo0VeZoyx5rmZoBuS/XSEakz?=
- =?us-ascii?Q?q4L6FtJ2Ws7ZpLqJ6PDUaxQ0bZ8e89Jd0gKDOomTnUfu87jSAWqlVJYl45rf?=
- =?us-ascii?Q?2g6qm8X4ludI4lvZeAt2KY7wiGo51etelazhNcnvukfuNyat2KHk24dXmFTm?=
- =?us-ascii?Q?V93lTZe5l8mog7CEKS3oyeumCwK5TvlGDE6KVI/XLlc4EialPgo+/xaODyGz?=
- =?us-ascii?Q?wjURi3exatEDdhe7pTcVlh6FH3jiqSps7SadcH2hWCxoE3giqe1noyzOXn5K?=
- =?us-ascii?Q?oB3E5Zpgg2xLEbp6m5veSpKCcRwS+lIMp8/5Rjkbv51f/KuFU0pRZGPFkzmw?=
- =?us-ascii?Q?QOMKT3cg453/SXnOeCamvozXquEHb4muVVM6HTxaiFgJc9AhvZcvuo0QdpMO?=
- =?us-ascii?Q?z+EFDeJdwa0d1+PezNl4BZXYMtrq8Gt+ncFp5lG53KIxLYCBErX0A3Pffzo1?=
- =?us-ascii?Q?1v15K4q5tmn2rNiWhdWUCwmOYpI24cHjCOZ6fwH2sZzHcD5AeGSSp8I1qqyS?=
- =?us-ascii?Q?Z5OwSPAu51TRLQ+MQalm27ygK9KwqZREHkW5GlMRIqqa3kRk39Dx8YiO7xj4?=
- =?us-ascii?Q?GEbwk7oWd5TtQTNa/iIKtMcyRT4vcoRrbznFz0JpiX11ilo/MqzUH4ivReJc?=
- =?us-ascii?Q?Sf3BJDiUjTi97njBy8Uwwl18f8cG3j55ZGGBAdzZX95FOcVTt2oV3FEIHFtn?=
- =?us-ascii?Q?GFblw9Ja7iYgIZAw2IBFcUKV9Ok2QWHkM6OGaMQpZQ0tpbJdLzCzBRbOd22e?=
- =?us-ascii?Q?EfB9jno6wKnlByUtXLPxAQPkLCw/YTydssfg2mqyZ6V57r8fBdTX8inQWz3J?=
- =?us-ascii?Q?ZFwbN2H/7mg062SxCLcFrh8AEyd5PY28H0xUgWOkh9hknAEbhvA2dDg7of6d?=
- =?us-ascii?Q?KPQXQJLuF9TaxMcyYNtpVEmciGCFQN8oRTM6m0yBtGzrvqqONWM/JIfyL5Bt?=
- =?us-ascii?Q?XlkTqvsOAEWj1o4jZiJK1hO6MCJTFhobtdZzY0l7ZClHoeXBX0crCB/95jUO?=
- =?us-ascii?Q?8EQYMwpIRk5LIgXWEd5q7/f+bcrLxWew/tijZpc92evural9o3eHBjNUp1Ur?=
- =?us-ascii?Q?393QplJpEKKb44pxK+WDMxJraa/WodLXANdqPcbJDkN7TzHlHXFOKVt8axJv?=
- =?us-ascii?Q?Ub2+11Eq22aveusy1UeKOWpqF8IYqc7SypaaN/EcmmUqCbAur3PuYV/4f3ID?=
- =?us-ascii?Q?NjUCjQ4PcZE2ZtlNb4m6i04g/aLajEdUV6WAhwOLHKFja9sfi/anJWOmxypq?=
- =?us-ascii?Q?Gijv3rst8YoqfhhmEHdtVjG8uLPrgrZso5Qa8i5FDmn2ISGj8aFZZ4R1KcRG?=
- =?us-ascii?Q?zmjSLZVjchwVVLH1ysR7s6d+gbyMCcrzoozy1IXHfAFPIBXQag8Jt8V/HlJD?=
- =?us-ascii?Q?fS2Fj9yk4XEAOErFWYa7ZMJf2iAMdg3L/Ndxx7l5W81dQEus5hIqpwIE7X0z?=
- =?us-ascii?Q?11n5YH6mv3TMwveG4tVDQaCzRYuBXbKG5890AciFIKYk1lYs?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c403f58-2df2-4102-5eba-08de912d9c96
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9366.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2026 03:03:42.1767
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qM8zSs+Ag4iOvVK7i+UoQWMCXMNSo8hn2CQZaxynzr+qUI52Bq9ww9UoMUChracosZPTF4FUrDiFSY2Mf+06cQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB11083
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL 6/7] arm64: tegra: Device tree changes for v7.1-rc1
+To: Thierry Reding <thierry.reding@kernel.org>, arm@kernel.org, soc@kernel.org
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+ Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20260329151045.1443133-1-thierry.reding@kernel.org>
+ <20260329151045.1443133-6-thierry.reding@kernel.org> <ac5ahWb1I-qnaK_Y@orome>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <ac5ahWb1I-qnaK_Y@orome>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 23, 2026 at 08:38:58AM +0000, Sheetal wrote:
-> Add dev_err/dev_err_probe logging across failure paths to improve
-> debuggability of DMA errors during runtime and probe.
->
-> Signed-off-by: Sheetal <sheetal@nvidia.com>
-> ---
-> Changes in v3:
-> - Cast page_no to (unsigned long long) for %llu to fix -Wformat
->   warning on 32-bit builds where resource_size_t is unsigned int
-> - Remove redundant dev_err for devm_ioremap_resource failures since
->   the API already logs errors internally.
->
-> Changes in v2:
-> - Fix format specifier for size_t: use %zu instead of %u for
->   desc->num_periods to resolve -Wformat warning with W=1
->
->  drivers/dma/tegra210-adma.c | 37 +++++++++++++++++++++++++++-------
->  1 file changed, 30 insertions(+), 7 deletions(-)
->
-...
-> @@ -1047,38 +1058,45 @@ static int tegra_adma_probe(struct platform_device *pdev)
->  	res_page = platform_get_resource_byname(pdev, IORESOURCE_MEM, "page");
->  	if (res_page) {
->  		tdma->ch_base_addr = devm_ioremap_resource(&pdev->dev, res_page);
->  		if (IS_ERR(tdma->ch_base_addr))
->  			return PTR_ERR(tdma->ch_base_addr);
->
->  		res_base = platform_get_resource_byname(pdev, IORESOURCE_MEM, "global");
->  		if (res_base) {
->  			resource_size_t page_offset, page_no;
->  			unsigned int ch_base_offset;
->
-> -			if (res_page->start < res_base->start)
-> +			if (res_page->start < res_base->start) {
-> +				dev_err(&pdev->dev, "invalid page/global resource order\n");
->  				return -EINVAL;
+On 02/04/2026 14:02, Thierry Reding wrote:
+> On Sun, Mar 29, 2026 at 05:10:43PM +0200, Thierry Reding wrote:
+>> From: Thierry Reding <thierry.reding@gmail.com>
+>>
+>> Hi ARM SoC maintainers,
+>>
+>> The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
+>>
+>>   Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
+>>
+>> are available in the Git repository at:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.1-arm64-dt
+>>
+>> for you to fetch changes up to c70e6bc11d2008fbb19695394b69fd941ab39030:
+>>
+>>   arm64: tegra: Add Tegra264 GPIO controllers (2026-03-28 01:36:46 +0100)
+>>
+>> Thanks,
+>> Thierry
+>>
+>> ----------------------------------------------------------------
+>> arm64: tegra: Device tree changes for v7.1-rc1
+>>
+>> Various fixes and new additions across a number of devices. GPIO and PCI
+>> are enabled on Tegra264 and the Jetson AGX Thor Developer Kit, allowing
+>> it to boot via network and mass storage.
+>>
+>> ----------------------------------------------------------------
+>> Diogo Ivo (1):
+>>       arm64: tegra: smaug: Enable SPI-NOR flash
+>>
+>> Jon Hunter (1):
+>>       arm64: tegra: Fix RTC aliases
+>>
+>> Prathamesh Shete (1):
+>>       arm64: tegra: Add Tegra264 GPIO controllers
+>>
+>> Thierry Reding (6):
+>>       dt-bindings: pci: Document the NVIDIA Tegra264 PCIe controller
+>>       Merge branch for-7.1/dt-bindings into for-7.1/pci
+>>       arm64: tegra: Fix snps,blen properties
+>>       arm64: tegra: Drop redundant clock and reset names for TSEC
+>>       arm64: tegra: Add PCI controllers on Tegra264
+>>       arm64: tegra: Add Jetson AGX Thor Developer Kit support
+>>
+>>  .../bindings/pci/nvidia,tegra264-pcie.yaml         | 149 +++++++++
+>>  arch/arm64/boot/dts/nvidia/Makefile                |   2 +
+>>  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |  12 +
+>>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   2 -
+>>  arch/arm64/boot/dts/nvidia/tegra234-p3701.dtsi     |   1 +
+>>  arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi     |   1 +
+>>  arch/arm64/boot/dts/nvidia/tegra234.dtsi           |   6 +-
+>>  .../dts/nvidia/tegra264-p4071-0000+p3834-0008.dts  |  11 +
+>>  .../boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi |  12 +
+>>  arch/arm64/boot/dts/nvidia/tegra264.dtsi           | 336 +++++++++++++++++++--
+>>  10 files changed, 500 insertions(+), 32 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra264-pcie.yaml
+>>  create mode 100644 arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834-0008.dts
+>>  create mode 100644 arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
+> 
+> Hi ARM SoC maintainers,
+> 
+> DT maintainers objected to the way I wanted to handle the DT bindings
+> dependency here, so I'll drop the whole PCI stuff from this and redo the
+> PR.
 
-It is in probe function, return dev_err_probe(, -EINVAL, ...);
-check other place
+It took me ages to get that information from you but finally you pointed
+me that this is shared with PCI, so it is fine.
 
-> +			}
-> +
->  			page_offset = res_page->start - res_base->start;
->  			ch_base_offset = cdata->ch_base_offset;
->  			if (!ch_base_offset)
->  				return -EINVAL;
->
->  			page_no = div_u64(page_offset, ch_base_offset);
-> -			if (!page_no || page_no > INT_MAX)
-> +			if (!page_no || page_no > INT_MAX) {
-> +				dev_err(&pdev->dev, "invalid page number %llu\n",
-> +					(unsigned long long)page_no);
->  				return -EINVAL;
-> +			}
->
->  			tdma->ch_page_no = page_no - 1;
->  			tdma->base_addr = devm_ioremap_resource(&pdev->dev, res_base);
->  			if (IS_ERR(tdma->base_addr))
->  				return PTR_ERR(tdma->base_addr);
->  		}
->  	} else {
->  		/* If no 'page' property found, then reg DT binding would be legacy */
->  		res_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  		if (res_base) {
->  			tdma->base_addr = devm_ioremap_resource(&pdev->dev, res_base);
->  			if (IS_ERR(tdma->base_addr))
->  				return PTR_ERR(tdma->base_addr);
->  		} else {
-> +			dev_err(&pdev->dev, "failed to get memory resource\n");
->  			return -ENODEV;
->  		}
->
-> @@ -1130,6 +1147,7 @@ static int tegra_adma_probe(struct platform_device *pdev)
->  		tdc->irq = of_irq_get(pdev->dev.of_node, i);
->  		if (tdc->irq <= 0) {
->  			ret = tdc->irq ?: -ENXIO;
-> +			dev_err_probe(&pdev->dev, ret, "failed to get IRQ for channel %d\n", i);
->  			goto irq_dispose;
->  		}
->
-> @@ -1141,12 +1159,16 @@ static int tegra_adma_probe(struct platform_device *pdev)
->  	pm_runtime_enable(&pdev->dev);
->
->  	ret = pm_runtime_resume_and_get(&pdev->dev);
-> -	if (ret < 0)
-> +	if (ret < 0) {
-> +		dev_err_probe(&pdev->dev, ret, "runtime PM resume failed\n");
->  		goto rpm_disable;
-
-can you change to use devm_ firtly to elimiate goto first, then change to
-use
-	return dev_err_probe() pattern
-
-
-Frank
-
-> +	}
->
->  	ret = tegra_adma_init(tdma);
-> -	if (ret)
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to initialize ADMA: %d\n", ret);
->  		goto rpm_put;
-> +	}
->
->  	dma_cap_set(DMA_SLAVE, tdma->dma_dev.cap_mask);
->  	dma_cap_set(DMA_PRIVATE, tdma->dma_dev.cap_mask);
-> --
-> 2.17.1
->
+Best regards,
+Krzysztof
