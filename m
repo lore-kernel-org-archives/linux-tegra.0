@@ -1,213 +1,160 @@
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182913321C2
-	for <linux-tegra@vger.kernel.org>; Sat,  4 Apr 2026 11:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1AE2DB7BF
+	for <linux-tegra@vger.kernel.org>; Sat,  4 Apr 2026 12:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775303276; cv=none; b=kjB0pNhA7KsgNj2r6/74JR0ql7yW8ZIVz4P6EYWUdJR9V8i0X4hik7aPz3sD7sk3Wn56ceDI4/w+bxLBwNhFaAnRb2YClWS/eCfKnlbdDjpyvIDQM3zFeK1XrEICHN/KhrEAKI1n2T+Rr0XUVNxb8piwZhSOvjH+9R0nBEgi0Rc=
+	t=1775306672; cv=none; b=BujF6hc1o3JSVuy1tMbYmsVsd6kzG5d9tY+A++CeEKYA8SviwQARr3cBbzwxhjVcdXF3UwJ/AxPtf+gj9p8h271uK2jxHc4adoE96V+/iOwkTYufryhWwmkbq6yZiRf3HAY+IJSkD2JeLXvme38Fqjy7251tGqfd7W62egUR8qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775303276; c=relaxed/simple;
-	bh=dy8yhJzNiwRlEiywyAKmr/JdveTelkXEUEII/JcVTvg=;
+	s=arc-20240116; t=1775306672; c=relaxed/simple;
+	bh=6x4+gdTKW6z5iGkG21DDDihOqybDWtH12NpDzzaC5ZI=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PthxqE3izVaM8IhZqydGLPaYbFQ1eMz8MSGdzHytu2J4UlN7eWeYskN8Lk5uRK9UpV2dPcbR+ZJzRec3+jlFO8Ex5zs9xl+/QSmk+vZYUBuMNc82H22kzaO3ZnCXkYiJcbArJzabCqI+Mo9BSZSGA3ygBbiBv6O8Ud0ZOfv1qE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Lw1ACzpA; arc=none smtp.client-ip=209.85.214.201
+	 To:Cc:Content-Type; b=Y2kllAK0dDj8dmp+3RQjj1BTSNpVnGL8fkdK/YfppLlRK+c0xuBG+ULDInTSUnQSxnNa1bqyEzc581gVissxPlSm5yhGHatJcCMbJcETdImOkYjbUr50UwLq1XZR//pSdmgocTLmBvDnaeLaeGwsWqln89CjX95A0HItXhZX3KA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KjDDAt5k; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Lw1ACzpA"
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2b2489af602so24774395ad.1
-        for <linux-tegra@vger.kernel.org>; Sat, 04 Apr 2026 04:47:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KjDDAt5k"
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2b2523e0299so71929265ad.3
+        for <linux-tegra@vger.kernel.org>; Sat, 04 Apr 2026 05:44:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1775303274; x=1775908074; darn=vger.kernel.org;
+        d=google.com; s=20251104; t=1775306671; x=1775911471; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0G1qQkwBhPOCSaPNNZcA5R2UExCpSWly+t1LnZq/nHI=;
-        b=Lw1ACzpA7Y04E5a02q/Lc+FpOJdES0g9AoMhVBD0F9O5X2i0ymnCTtrb0Na9hQ27EW
-         xMn2GCo/I4S2sTh1Y8xEy8TsNe6bl4UF3OmJM7zKVW+M1cXapWkuSjHogwrWxGZiJ1MG
-         QXlG86Lt59FBoLGe88LAO5aOnS0v1JliuysHmnQlqccR1Y4lX1D0ZS2T2ngptzZM8kOi
-         OBWho+ReIq5Kpz8sCvYq28DRf80xt3hjftZ/vvquJoRWPBsHf/XIvRqGRyPBt5bVP0Cc
-         cPH0kJmn336XUeyeoMcWRKiTffbhbZDvIxhIqLCRct+9FQGX7jr+IDm/qpLq8XgyVdXf
-         GWhA==
+        bh=q1l0x4W+UvoXzUmEv9e5e/HxO0/QK/ip62Tt8sY3EdQ=;
+        b=KjDDAt5kGR0Iuq0ShmJgU1XnUrSQJ5FwFnWfziq13bwtnVB/cmgvoslH9ulhtJ5I1v
+         dQHuVgT2N/JAZttz+ofOadtku+MW9ZTQoYYmYwmCnYAupr3xZBfiU1yxm4fvUbSgrwnf
+         5HCHX8optEwRaXmDDQ5OvgA5XQLUM185mL4meaWIyEj6juTDSWwoYZECBHsEAVZTgSYG
+         8Qg/dFQmbvYljuP+ghE+GQz++KCtw91Zx6szxXmZikfnJ6rOytUil3ZGxuOm2lsqa0Rs
+         dAgNIkQ+1fdosVhMPrSQoL4cpPamogRdawdWD4nAVqbwdR7DblRHjoLzCeN5XJEJQF53
+         7Csw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775303274; x=1775908074;
+        d=1e100.net; s=20251104; t=1775306671; x=1775911471;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=0G1qQkwBhPOCSaPNNZcA5R2UExCpSWly+t1LnZq/nHI=;
-        b=FkOiUIRRVE6Pc7jrwYZkoU5ZCnmv0c7IEdX02L1syqdGkR2Ykt3r7cfPz6pqyhGFQJ
-         2oLG6NHaptCyEdXnkygdpLb/TE+OQXyREuGtm5WGZvCvjrv2hG3nq7SwgV3Rb48eXLnt
-         Rj7aLWNYkAq2XcA61SCqt//uK8/CcmWtU39SL09P9D4y8GpkzbcP5JJILaBMqViOslW+
-         JQwXG5gL4za87J73ZE+KrDDk8lIkJZ5DlU6tcAGqxD3jfoObjLZSdBHApQrS5Cpu9DxJ
-         W4+y3fB/qL2vVMdDFQXSfGM2JRlKZWlsZtjTzLQC0mQifqt54mZC3jYbeG1d+654JewT
-         GgMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWk6mdDiP47uS53AzoW6J7iWBXH5oSCwM7NvWuOEv3aFxecHe7tABWH3QO6ZpscIGuQjaHlAPfDWtKr0g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZRKbqx/NxohjHdu+H9iCX6yh4U1KqntefDci3QNs4i/5jlCF+
-	hs1UMFkZKAL1VqQaoNzO1/z3PVrZ0HPxlds7h/eGZPHVutS33tAgIflkcpF3IEdiZ6v+v9xCz2V
-	350plO6/Y7MOy2HV3pBxNoWfrog==
-X-Received: from plbjz3.prod.google.com ([2002:a17:903:4303:b0:2b0:6207:5fd3])
+        bh=q1l0x4W+UvoXzUmEv9e5e/HxO0/QK/ip62Tt8sY3EdQ=;
+        b=X8yzwNrYt/1LQWZ2XkxWBmo/5OdNgZWDa0kW7ITY6K7QOqZtq3yzQHq7t8sF41tEBr
+         Vf4zPs2u4g0HgPjEEjgkS/WOig0oiAPi87veh2DTobgZtly8xKBwlyrAT9b/R+WIT/XM
+         A6nLWH1RvE6v5KmdZ9/KlWSga/56DVAKxrbNYluBuhdRA38q1OSN/RH8DV841C7VFJ7A
+         RAnPrUln0Q9UL61cL8iktbTzRAmc7sDXVfNNh0/23s3qaLxvxm57xwijtYhUCBh57P0e
+         WB2seAnumnYuZGlKGHp4wSvTFsUk+NZDYE46ghvMxIikXF/yvZtK01/7/PowkEWjCybi
+         /AWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXw4QzehB8RgXVUFegPoyje+fscO6KztbV+XyKYUKMyEoXv2OX2GDI/a7cUqpvOmc1CdihybkeANIRkKQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV3cTtBPPYvF2giyKY2ZmeBmfecVkdMFifqGffuXNahDHXnpRd
+	L8JGjNTVnUUDGva5w2UBwrAUlzo5xFCaerVydipK4zjBuQ8VRR+V7nZ3CNRgwkP98lbYgwNRFIv
+	ONtNqfaFCivcqdvPVEd6ogxqC8A==
+X-Received: from plwg14.prod.google.com ([2002:a17:902:f74e:b0:2b0:5b0d:f4db])
  (user=joonwonkang job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:2ec8:b0:2b0:aebe:259 with SMTP id d9443c01a7336-2b2821a7fbemr58943675ad.19.1775303273972;
- Sat, 04 Apr 2026 04:47:53 -0700 (PDT)
-Date: Sat,  4 Apr 2026 11:47:51 +0000
-In-Reply-To: <CABb+yY23aTXeXu6G-8sHjw32DCqmhsJLu2Mt-txenOgTBiyv+A@mail.gmail.com>
+ 2002:a17:902:e748:b0:2b2:50bd:83b3 with SMTP id d9443c01a7336-2b281706f12mr64261875ad.10.1775306670477;
+ Sat, 04 Apr 2026 05:44:30 -0700 (PDT)
+Date: Sat,  4 Apr 2026 12:44:27 +0000
+In-Reply-To: <CABb+yY0uDQh-3cadPQONV=NJKjMtc4mJekgjmHYVaHnfHXvGZQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <CABb+yY23aTXeXu6G-8sHjw32DCqmhsJLu2Mt-txenOgTBiyv+A@mail.gmail.com>
+References: <CABb+yY0uDQh-3cadPQONV=NJKjMtc4mJekgjmHYVaHnfHXvGZQ@mail.gmail.com>
 X-Mailer: git-send-email 2.53.0.1213.gd9a14994de-goog
-Message-ID: <20260404114752.3052748-1-joonwonkang@google.com>
-Subject: Re: [PATCH v3 2/2] mailbox: Make mbox_send_message() return error
- code when tx fails
+Message-ID: <20260404124428.3077670-1-joonwonkang@google.com>
+Subject: Re: [PATCH v3 1/2] mailbox: Use per-thread completion to fix wrong
+ completion order
 From: Joonwon Kang <joonwonkang@google.com>
 To: jassisinghbrar@gmail.com
-Cc: akpm@linux-foundation.org, angelogioacchino.delregno@collabora.com, 
-	jonathanh@nvidia.com, joonwonkang@google.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	matthias.bgg@gmail.com, stable@vger.kernel.org, thierry.reding@gmail.com, 
-	lee@kernel.org
+Cc: angelogioacchino.delregno@collabora.com, jonathanh@nvidia.com, 
+	joonwonkang@google.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-tegra@vger.kernel.org, matthias.bgg@gmail.com, stable@vger.kernel.org, 
+	thierry.reding@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-> On Fri, Apr 3, 2026 at 10:19=E2=80=AFAM Joonwon Kang <joonwonkang@google.=
-com> wrote:
+> On Fri, Apr 3, 2026 at 9:51=E2=80=AFAM Joonwon Kang <joonwonkang@google.c=
+om> wrote:
 > >
 > > > On Thu, Apr 2, 2026 at 12:07=E2=80=AFPM Joonwon Kang <joonwonkang@goo=
 gle.com> wrote:
 > > > >
-> > > > When the mailbox controller failed transmitting message, the error =
-code
-> > > > was only passed to the client's tx done handler and not to
-> > > > mbox_send_message(). For this reason, the function could return a f=
-alse
-> > > > success. This commit resolves the issue by introducing the tx statu=
-s and
-> > > > checking it before mbox_send_message() returns.
+> > > > Previously, a sender thread in mbox_send_message() could be woken u=
+p at
+> > > > a wrong time in blocking mode. It is because there was only a singl=
+e
+> > > > completion for a channel whereas messages from multiple threads cou=
+ld be
+> > > > sent in any order; since the shared completion could be signalled i=
+n any
+> > > > order, it could wake up a wrong sender thread.
 > > > >
-> > > Can you please share the scenario when this becomes necessary? This
-> > > can potentially change the ground underneath some clients, so we have
-> > > to be sure this is really useful.
+> > > > This commit resolves the false wake-up issue with the following cha=
+nges:
+> > > > - Completions are created just as many as the number of concurrent =
+sender
+> > > >   threads
+> > > > - A completion is created on a sender thread's stack
+> > > > - Each slot of the message queue, i.e. `msg_data`, contains a point=
+er to
+> > > >   its target completion
+> > > > - tx_tick() signals the completion of the currently active slot of =
+the
+> > > >   message queue
+> > > >
+> > > I think I reviewed it already or is this happening on
+> > > one-channel-one-client usage? Because mailbox api does not support
+> > > channels shared among multiple clients.
 > >
-> > I would say the problem here is generic enough to apply to all the case=
-s where
-> > the send result needs to be checked. Since the return value of the send=
- API is
-> > not the real send result, any users who believe that this blocking send=
- API
-> > will return the real send result could fall for that. For example, user=
-s may
-> > think the send was successful even though it was not actually. I believ=
-e it is
-> > uncommon that users have to register a callback solely to get the send =
-result
-> > even though they are using the blocking send API already. Also, I guess=
- there
-> > is no special reason why only the mailbox send API should work this way=
- among
-> > other typical blocking send APIs. For these reasons, this patch makes t=
-he send
-> > API return the real send result. This way, users will not need to regis=
-ter the
-> > redundant callback and I think the return value will align with their c=
-ommon
-> > expectation.
-> >
-> Clients submit a message into the Mailbox subsystem to be sent out to
-> the remote side which can happen immediately or later.
-> If submission fails, clients get immediately notified. If transmission
-> fails (which is now internal to the subsystem) it is reported to the
-> client by a callback.
-> If the API was called mbox_submit_message (which it actually is)
-> instead of mbox_send_message, there would be no confusion.
-> We can argue how good/bad the current implementation is, but the fact
-> is that it is here. And I am reluctant to cause churn without good
-> reason.
-> Again, as I said, any, _legal_, setup scenario will help me come over
-> my reluctance.
+> > Yes, this patch is handling the one-channel-one-client usage but when t=
+hat
+> > single channel is shared between multiple threads.
+>=20
+> hmm.... how is this not single-channel-multiple-clients ?
+> A channel is returned as an opaque token to the clients, if that
+> client shares that with other threads - they will race.
 
-mbox_send_message() in blocking mode is not only for submitting the message=
- in
-the first place if we read through the API docs.
+They will race because of the current blocking mode implementation. With th=
+is
+patch, they should not race as it handles the known racing point. So, I thi=
+nk
+it will be important to decide whether to support multi-threads in blocking
+mode or not.
 
-From the API doc for `mbox_send_message()`:
-```
- * If the client had set 'tx_block', the call will return
- * either when the remote receives the data or when 'tx_tout' millisecs
- * run out.
-```
+> It is the job of the original client to serialize its threads' access
+> to the channel.
 
-From the API doc for `struct mbox_client`:
-```
- * @tx_block:		If the mbox_send_message should block until data is
- *			transmitted.
-```
+I can see the disparity with the non-blocking mode here. Currently, the cli=
+ent
+does not need to serialize its threads' access to the channel in non-blocki=
+ng
+mode whereas it needs to in blocking mode. It would be nice if the client d=
+oes
+not need to in both modes, but it may also depend on the necessity as you s=
+aid.
 
-With the docs, I think it is apparent that the API covers "transmission" of=
- the
-message, not only submission of it. If sumbitting is the sole purpose of th=
-e
-API, what does the API block for in the first place? We would not need the
-blocking mode at all then.
+> > From my understanding, the
+> > discussion back then ended with how to circumvent the issue rather than=
+ whether
+> > we will eventually solve this in the mailbox framework or not, and if y=
+es, how
+> > we will, and if not, why.
+>=20
+> It will be interesting to see how many current clients actually need
+> to share channels. If there are enough, it makes sense to implement
+> some helper api
+> on top of existing code, instead of changing its nature totally.
 
-The current return value of the API in failure cases is as follows:
-
- - When submission fails, returns failure.
- - When submission succeeds but timeout occurs during transmission, return
-   failure, i.e. -ETIME.
- - When submission succeeds but transmission fails without timeout, return
-   success.
-
-The third case looks problematic. This patch is focusing on this. There is =
-also
-disparity to handle the failure between timeout(the second case) and
-non-timeout(the third case). Why does it not return failure when non-timeou=
+I agree that we may need research on the current uses of channels and the
+necessity of shared channels. However, it may require non-trivial amount of
+time since it requires thorough understanding of the context of every clien=
 t
-error occurs during transmission whereas it does when timeout occurs during
-transmission? If the API is solely for submission, why does it return failu=
-re
-instead of success in the second case?
-
-In the third case, the controller(or the client) will inform the mailbox co=
-re
-of the transmission failure. Then, why not return that failure as a return
-value of the API despite having this information in the core?
-
-An alternative to fixing this issue would be adding the API doc by saying l=
-ike:
-
- - In blocking mode, the send API will return -ETIME when timeout occurs du=
-ring
-   transmission, but it will not return failure but success(since submissio=
-n
-   itself was successful before transmission) when other errors occur durin=
-g
-   transmission. Users have to register a callback to collect the error cod=
-e
-   when non-timeout error occurs.
-
-But, I think we can go away with this unnecessary confusion by fixing the A=
-PI
-just to return the error code when error occurs regardless of whether it is
-timeout or not. Then, we could simply say:
-
- - In blocking mode, the send API will return failure when error occurs.
-
-Since this patch is pointing out this anomaly of the send API's behavior, I
-am not sure what scenario we would need more. In other words, the current w=
-ay
-of working would be more surprising to the users than the fixed version of =
-it
-as it was when I found out this issue for the first time.
-
-Do you think that this change will cause any other problem on the client si=
-de
-than fixing the existing issue? If not, I am wondering why not go fix the
-issue with this patch.
+driver. At this point, I think we at least need a clear documentation in te=
+rms
+of multi-threads support as we have none now. Since it is obvious that
+multi-threads is not supported for now, I can create another patch to add t=
+his
+to the API doc to be clear. How do you think?
 
 Thanks,
 Joonwon Kang
