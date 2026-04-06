@@ -1,63 +1,63 @@
 Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D74531355C
-	for <linux-tegra@vger.kernel.org>; Mon,  6 Apr 2026 08:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06C3322B8B
+	for <linux-tegra@vger.kernel.org>; Mon,  6 Apr 2026 08:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775464464; cv=none; b=OrlGXKjtlJ/SEkDcP73/WAtkdHr/WaFGgNtLT+fCjHmsxXYyVt4FP+xIARMdO7MXd3hFhpowtsf68dfZ4ypAhNxVP3uXl74hdKL9KpuGRD0HPUUCCP5+vcRDNHylHYcMeRy/ChIAZq4c4HxHlqv1TcVmG69ZLSqVtmDvLCjruS0=
+	t=1775464465; cv=none; b=AgSpjmrKxlTXO6AHz71OxOCNGGYnG4Ck8dOuELJVeKvI8r4zf42lUkIg/pEo3f5HxnzhFhjBEmSzmBEju4dHPRTNPNlhEI79Ga6Q/fif7qnsxS0jMF3uakrph+YSAZ5OXDjH2uSFlAwv2+oaRnImVFBSuwbhxUc9o1p481Wu+sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775464464; c=relaxed/simple;
-	bh=3yrZD3kUqUFtnfW7CJEM53Vi/Lg2JOO94rBYam+onYQ=;
+	s=arc-20240116; t=1775464465; c=relaxed/simple;
+	bh=HqaU0WD4qknySxmo3vgnfGG3nfKchKcuwTT98vGyX1s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gPe/kJqcAtRd9OHSqQMtKG+Kj4D1zP9nBM2aXuTyoe91N+eZNSaVA+OyPoe8bu/XBUag3uGa2XF9b/F0CIvFe5up6PMaaAi0pgUQMjHSnL0rTw3hg9R/gEn/HmJUdXqDYyeQzMcn7GrnmE1ju3lL7u55gG3dwkfZlZ2PoCHqMkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OlRyGalY; arc=none smtp.client-ip=209.85.128.46
+	 MIME-Version; b=AWcmTAqf6/rAqGpo3kY/B/Avg+2mcXTk+ZY4z6LaGURAEM6ApzhW4g6dBnWJgThcB5joOE2mzZ3GwMEbbwU6kLgBDI7FlV4Zj+5nOxgJGw2qhoBvpDzo6o13cD3tcBzhSBMMQdeqVBDeYmYfZNSpGR7qf4iPZunfRJSOd4xgNdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H9bjBvQc; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OlRyGalY"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-488b3f8fa2bso4560805e9.1
-        for <linux-tegra@vger.kernel.org>; Mon, 06 Apr 2026 01:34:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H9bjBvQc"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-488afb0427eso7981895e9.1
+        for <linux-tegra@vger.kernel.org>; Mon, 06 Apr 2026 01:34:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775464460; x=1776069260; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1775464462; x=1776069262; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0ZzhB7vHBcFUBfR2BiDFSMeGlYuUMXHq/TSRPK44UZY=;
-        b=OlRyGalYLwppGeuRseetB9b6hmv3oDJutIVX7M0WfFcKNtxFX9NrggUoje1LOBRTW/
-         ER5Xzz9M0UWAT4zdD9d1NbvhhzmnKe8erG8+hZohcK937OfwLRpLpKwAHFHQzP7SuVcD
-         3J25P1rozWuhKnqekJjiGZvUx3xtgoROz3+rN+fOBApM1B2ce6nhg2e2D6x4xcC8x2vp
-         zlqQGc9uNq+fzh3+ZXRdBEuah1S++AyzEiC5hoDzJz1aMGeUzdSJ4X18vPSdxCuGTUgu
-         UY9l8oAERuUUW1qjKQlRU3bjmZNZ01fl99dJ2RwP93GmU132Poa7a9b7JDLnmmamnbXF
-         HWjQ==
+        bh=4YTTzhUw+OVdj5GKdKIu9/eMnQ1mrdczMdEmRIufD+s=;
+        b=H9bjBvQcCDU/GTcLbhzEu/+fWClxWxyLbLhDLuUN1Zs3MX1xUrXa7J/2ovn48UNihj
+         JgQxKlmNY9Hrf3FxLjHXmy/WJjkgHLTfmJV9aRoTDMu5NhMZhT06ubwY4b4de/IyKPJN
+         K/JPp1eAkb2T8+4X/qtWV8ZD3WM4KpsOnQePT7Hu8diiT6NfnaqpxFDgzJ0Bmt//Di5Z
+         cgLvY81UcTNHZmtZqLFxsgV0HSVUAWt7k7q/pRgvZUI6u3qSC5UdZKlVnTdY7cd3Uok4
+         9nTF9AzmMNJW3T3U8Cgy4+V4up106t7BZway+KSPdL7q07gwuechyvj/W1eInsL/uC10
+         LkOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775464460; x=1776069260;
+        d=1e100.net; s=20251104; t=1775464462; x=1776069262;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=0ZzhB7vHBcFUBfR2BiDFSMeGlYuUMXHq/TSRPK44UZY=;
-        b=QdIjbUtSawShehBCZV729W9vH/JnqKkc2ZJS+ytBc7QfIB1CVH7z8JSU3qMX7yb2jT
-         F6xMRltYS85HuNq/AN5TtqF5OVxRBzicTG0mVLMNzLkaGQ1NQVQwVcGfK+aov5/UEARo
-         H4nQCYOdt9eWuFitEE+/TNCnNH389m2LcYm9V0KqSdLokzDhGyY4ksK83QIc1rH0BTD3
-         QQqqNxRlKFxSCvLmjN1W52glYXQLatsl/o4vbXIXIWTmGrc9ozflQspHAsqw5BkFuzUj
-         P+JrBvkD9UTaey7bIswB8RpPgvQKHlyoA2oVQ1jWLSywbZKmpFF4Qi3QOgPZhDPvWeiB
-         8vSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrS6NTc5/Qf31ull2TfccMW/qY9tG3M1Thnt2cJYpZc2bDl6BX/IW0xCOEvmOh74+hVD8X+FRfiv/Vdw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoFVnHpvfm6HC/r2wruOOU4i7DVoDHf7CGhOytnWKYsQtLZ10h
-	uxQpeJ7i01DUnGRWOyR6MpP/HoRxC94FT8Mzpv1NgrwyF7gpb/and8Fx
-X-Gm-Gg: AeBDieu8Mc0ciEeteszGFvCQtfMOHV4xH0YRKlwu5JJkKEn7cTZlNp4OM+Gg4L0HMp6
-	ILSGfQR2+EBO82+u79oTNSfod2t2pdpsdvejbWsPtHpEoD6V2WopSd83PingTOkbZACeOskaqXf
-	4FF1VVA5c7bpHcg/RUjEoNvQTLjNnN1Hf5/blvIrflxiUSdk5sHvmWUkRRXPl2RCaahKR0kWxY1
-	qR1B83ECmbX9JF6d4zhIKNSBgcnwmYFm03L0XQH2t9dKTxFFfIIOuesNLY4dG+EkTkHzkvKq9YF
-	sI2iZ7dXd8NXgAJygwf1UZA0C5Clmnx2w5mHQ7Jsh0Hola1LaKzop+9mQRVW++6Or+funyFGKx5
-	kyDKLM9FseKNpKYfmmvaTTzZfJ+3kxdKhQaKwuy7puMmDprwIslab+RJvqCgTCOs69UJ4iq/ZHa
-	jXoE7/xjt52PYO
-X-Received: by 2002:a05:600c:1549:b0:485:3e00:944a with SMTP id 5b1f17b1804b1-4889949bd38mr160158885e9.9.1775464460023;
-        Mon, 06 Apr 2026 01:34:20 -0700 (PDT)
+        bh=4YTTzhUw+OVdj5GKdKIu9/eMnQ1mrdczMdEmRIufD+s=;
+        b=C1Wc4DPKlI/MocfZg6Xqzzaputu6KYGMA68DNGFo7ZQ3Roz/zSXeJ4DtsZNg4VBne+
+         cPXfw6dXxpW+pDjII+z/Y4lINgAlPseSkehlRiCQhDAlEvdJKGEhv6oDYaVfgR0I5KnP
+         cT/q47/38813C1gtKQ8hlC9zsliglr4EyAqvPzPUiDgtIWjwn1vXfEBaFEdxKJ4mOFDe
+         QntmUVaZ9YnJFpkwPcrkfIFwF6ACnghUjwL38/2Zwc0rCbCOhnf8mLf8Tw98BR8xbYv4
+         yjmdMU+y8IASmMCNohr3aqrgwo7ot01XKo4zA9hw6C1wgV9uJHTBXiw98KK7VQvCgc8h
+         TZTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCZH0PdT+dUmwnobh39Di+CAgimUN1hQVWpw17T4+YXog9PiLtL2v6CrWURnKM8jUCBMZ7dOUBUKSkXw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2LGE6o+Yi8SX6r8peGE/K11UANlPBjv9D5nsJFX8KU+Mmq1om
+	nzDJCv9YsUvCs6DoVIfLagbcUOUf6SwzAcaReGd0BQbUk4WTDJbEH7lR3FWgXEfS
+X-Gm-Gg: AeBDiesw1vbBqGB5/+fShoEhcD3YXjFPTMmCMJ853HyLJJND5sdNYZsCSlYPPecUElb
+	YQFg9F8mpvy6R1IIXPdKYo4wqvw+mEFlz8O6AKnDu277dmxLHfr+fZxIeyXupVj10IlYYjnc48t
+	KEqU1zaGt3jX+ou43FII1iFLH5CauTyjCqo5AgavWJiseEU3Pgq2K4izXqUgkK/lRDwSgBvXazG
+	nEHISRxVB+y04zfif/XtEHdgYRVA4wLanOastemNSmHy3LkTSXgiwcjAlCCitYwh1uvS/bty/Bc
+	1rkdkCx8/QvOOZYbqHX2/SGCLjVt6uUTlOGkmnEgMb+WOGR6lRlVtpBAFTIcd/3wYFqXsoprUF2
+	Hb9FPk9m0KJ75UtxSN8mY6OHPYCF8MIhsZlv938M9jRkKtVPJEoLhKHHOSdxqwQnMxHjqEGndHS
+	y52pNpxVKeMLfq
+X-Received: by 2002:a05:600c:a418:b0:488:af48:af11 with SMTP id 5b1f17b1804b1-488af48b6cbmr39672105e9.1.1775464462084;
+        Mon, 06 Apr 2026 01:34:22 -0700 (PDT)
 Received: from xeon ([188.163.112.56])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48899e7e83fsm84241315e9.24.2026.04.06.01.34.19
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48899e7e83fsm84241315e9.24.2026.04.06.01.34.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Apr 2026 01:34:19 -0700 (PDT)
+        Mon, 06 Apr 2026 01:34:21 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -70,9 +70,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 7/9] ARM: tegra: tf600t: Configure panel
-Date: Mon,  6 Apr 2026 11:34:02 +0300
-Message-ID: <20260406083404.31359-8-clamor95@gmail.com>
+Subject: [PATCH v1 9/9] ARM: tegra: tf600t: Invert accelerometer calibration matrix
+Date: Mon,  6 Apr 2026 11:34:04 +0300
+Message-ID: <20260406083404.31359-10-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260406083404.31359-1-clamor95@gmail.com>
 References: <20260406083404.31359-1-clamor95@gmail.com>
@@ -84,118 +84,33 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Configure DSI panel used in ASUS VivoTab TF600T.
+IMU calibration matrix used in the device tree is inverted when testing on
+the device which results in wrong screen orientation. Invert it to match
+the matrix dumped from the device.
 
 Tested-by: Andreas Westman Dorcsak <hedmoo@yahoo.com>
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- .../boot/dts/nvidia/tegra30-asus-tf600t.dts   | 62 ++++++++++++++++++-
- 1 file changed, 60 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dts b/arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dts
-index 9296e7970ce4..8b68bfef8dee 100644
+index 0bebea0cb8c4..5c634b0f3f46 100644
 --- a/arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dts
 +++ b/arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dts
-@@ -23,6 +23,7 @@ aliases {
- 		rtc0 = &pmic;
- 		rtc1 = "/rtc@7000e000";
+@@ -1091,9 +1091,9 @@ imu@69 {
+ 			vdd-supply   = <&vdd_3v3_sys>;
+ 			vddio-supply = <&vdd_1v8_vio>;
  
-+		display0 = &lcd;
- 		display1 = &hdmi;
+-			mount-matrix =	 "0", "-1",  "0",
+-					"-1",  "0",  "0",
+-					 "0",  "0", "-1";
++			mount-matrix =	 "0",  "1",  "0",
++					 "1",  "0",  "0",
++					 "0",  "0",  "1";
  
- 		serial1 = &uartc; /* Bluetooth */
-@@ -55,6 +56,37 @@ linux,cma@80000000 {
- 	};
- 
- 	host1x@50000000 {
-+		vi@54080000 {
-+			status = "okay";
-+
-+			csi@800 {
-+				status = "okay";
-+
-+				avdd-dsi-csi-supply = <&avdd_dsi_csi>;
-+			};
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					vi_ppa_input: endpoint {
-+						/* Link to the rear camera */
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					vi_ppb_input: endpoint {
-+						/* Link to the front camera */
-+					};
-+				};
-+			};
-+		};
-+
- 		hdmi: hdmi@54280000 {
- 			status = "okay";
- 
-@@ -68,6 +100,22 @@ hdmi_out: endpoint {
- 				};
- 			};
- 		};
-+
-+		lcd: dsi@54300000 {
-+			status = "okay";
-+
-+			avdd-dsi-csi-supply = <&avdd_dsi_csi>;
-+
-+			panel@0 {
-+				compatible = "hydis,hv101hd1";
-+				reg = <0>;
-+
-+				vdd-supply = <&vdd_panel>;
-+				vio-supply = <&vio_panel>;
-+
-+				backlight = <&backlight>;
-+			};
-+		};
- 	};
- 
- 	vde@6001a000 {
-@@ -1123,11 +1171,10 @@ pmic-sleep-hog {
- 			};
- 
- 			regulators {
--				vdd_lcd: vdd1 {
-+				vio_panel: vdd1 {
- 					regulator-name = "vddio_ddr_1v2";
- 					regulator-min-microvolt = <1200000>;
- 					regulator-max-microvolt = <1200000>;
--					regulator-always-on;
- 					regulator-boot-on;
- 					ti,regulator-ext-sleep-control = <8>;
- 				};
-@@ -2386,6 +2433,17 @@ vdd_5v0_bl: regulator-bl {
- 		vin-supply = <&vdd_5v0_bat>;
- 	};
- 
-+	vdd_panel: regulator-panel {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd_panel";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		gpio = <&gpio TEGRA_GPIO(L, 4) GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		vin-supply = <&vdd_3v3_sys>;
-+	};
-+
- 	hdmi_5v0_sys: regulator-hdmi {
- 		compatible = "regulator-fixed";
- 		regulator-name = "hdmi_5v0_sys";
+ 			/* External I2C interface */
+ 			i2c-gate {
 -- 
 2.51.0
 
