@@ -1,171 +1,298 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012048.outbound.protection.outlook.com [52.101.48.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CB83644DA
-	for <linux-tegra@vger.kernel.org>; Mon,  6 Apr 2026 06:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775458190; cv=none; b=dmGQ3LtEqg72CqLAQwEmLE2ZVV512WrOKqpFTK1+JIep9vxkPqTW4+/w75lUVjtdTGvrMjyfKfXMiNmgnXkFhmg0CwMmtcSEbyFvi7TZQ+YMwlHmS7T6iLFfVmXrQEvtX9Rvg1eXDB8GOV3DuqkMqGXsxKUIBlbJmvJpRoxwToc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775458190; c=relaxed/simple;
-	bh=667NQRhMGe5QZ07dEAVje+oTMyUEgodF0NM+DUxJ7mU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J3IUHZ9gFRFArft3qD9InA2w6va1uWmLHL0HGFaQglC9A+4oBF/hCmkhMEmF/GzZB787juUsnNh4cgWEBqrl7PQCqxzIUf2/fS/9TeVhYuZpdOZ8VdRMhRkY0zMrqNzohmmEOxt/IwkEiHkGu5WqEC9oa7Ff32UYm2Sa2Ay6ies=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JUg7Uh7D; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=S4nxQ8zh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82417217F27;
+	Mon,  6 Apr 2026 07:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775460064; cv=fail; b=fiqNKOYXo6cPM2mTbErpgfASJvaimC5sXHsFTpFHz6LOd8+v6MZDLYaJ6gjbGUhApgJZAlgij6Ib2TLYxSlvu6MFVRjnYSvuNW7Y86hpIn7p2DZpRX4EdfACtvwNA3nlaycp/RWsV3hQ7cKaDVjJatakfYR27z4s5SEcr2nzL30=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775460064; c=relaxed/simple;
+	bh=on2UMFcyTNpkdkD/ekV54/gksQXwJinMMIxFpx0SuoA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Nrg/CCdiAKhgd//HRNuACaMZeOIDzEmIlNvj2HbIVGlRgiJX9A8MZPGw8HBTpnjqbfZ4q+3VKeFhrPIwRPQ4k4FzKoV0kJbEmViXAujYbfmuC8c5AvOPYFscwxv6YxCem2wX7j/SOOwnFUFEGp3YcWwNcZMwqXhjpD6tLyLyQGk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Y+NAF58o; arc=fail smtp.client-ip=52.101.48.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JUg7Uh7D";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="S4nxQ8zh"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6366Y6pM2886881
-	for <linux-tegra@vger.kernel.org>; Mon, 6 Apr 2026 06:49:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=7FKUqa0/eV8
-	0ZcUlR/9DW5KuTSyrO47sCBBB0zKhyVY=; b=JUg7Uh7DjSWIm2m71DvDqq824fd
-	phWpeBaYcoitzBlmTaN9jzn1FPkTLSrzxmJD97VvuWVcwGg+vw0VH8WPjdxnF3IE
-	LVJ51OKX2Xy5bq9C1SBU/FgjiDeVI2FuCYvofdXVO77oWwBYuKzQq9f/Z/0/pHxg
-	60jywbKKs2FNUM16gN1aShvGFPerZPAUFHHBj+ebCHRQDxe4LRkUVcc7VMi97Ll0
-	LPSiGLLfF+YHqBCUof0UWaBMuKubK/ckNkQuVXhznkRYNDTrvLqw9fHxDd2UaZ9F
-	rO/O1/JZ9toJI3OPnK/jDVt7evf/dh/gXhVjRvGRkg7nWBlTED51kPrpD9A==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dauthc4k6-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-tegra@vger.kernel.org>; Mon, 06 Apr 2026 06:49:48 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-50d812c898cso43776261cf.1
-        for <linux-tegra@vger.kernel.org>; Sun, 05 Apr 2026 23:49:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1775458187; x=1776062987; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7FKUqa0/eV80ZcUlR/9DW5KuTSyrO47sCBBB0zKhyVY=;
-        b=S4nxQ8zhespjPGmK7lLGAr5jSJ26+uQwrgRScB/Tyj237WYmjDxj75EdRTFNQR83Gm
-         74PrbQGDtUBE3Nom8m+9AIWF8wm5dSy4N1wx51D5JZYEzkoZ1C4miuyP7NGwHTikqoyJ
-         ABlwM7NYURZ56cXci7yWn0AnQ6VbU4WWuDpcIEH6/Qe4xvIh5a1/WOFtU0FkLpfKV+ob
-         2QSAXNTiSVGfqSoJkoE9wZHl76eHpYcPWz4W5Kh9z7IZZM8CJQMnG/NDU+Z2UTF2P+8/
-         /+TSN2RLvd4mPSF0ntYB6yacAeh6a0jPFWo4fxol6vQixy432QUZfWffLP5h8whJ/cm4
-         NcwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775458187; x=1776062987;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=7FKUqa0/eV80ZcUlR/9DW5KuTSyrO47sCBBB0zKhyVY=;
-        b=kHwaH3QF6cU4twGjRnjf0LjSSgVSTcjI7eXeeTb/5rfkU4q3vPrNg0sHhha9LbHd/0
-         Isf6LuPYptg7pHHB26xFToIM2DxiNyQdiMufNrJIiZEKYvB0D5AGjGITSaJIpWrFOZw3
-         OOoWmluBCbWjuf2rzCV4TYLb94BcCLH320cUfVGFcwCvI+SNI4t2dT6PCRyLVURxRwFK
-         e5ZWCHbpinszgmKfCbshO7w0Vcbvf4tAjlXF7e8Sa8vmaTO/311LQMEQ6GXYPER5BIsu
-         LHQotpQTnVwt9Acp7K1+VZX2p62iebjjPIN10OjqaAu4esMm0VwYnYu++iJrq3z+XCVf
-         4QOA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+mQiDNSpx8M3oWfEiPoUeRU8bVl66jaSB6gPGE1CIqE99Gy/Kf6SZ5SN/gdbYTaFBe6pHMYYkzPW4Qg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFLOT3UvJ/VGElJOQG329QW6ijWO8N1m1ix22cbkMuHAjW37vg
-	zz2px703Nr1vOMdnA1fdrLpfQu1mTDAJSvaKvaAG148A2zhcQQxUPfDGqmCy1JeWyTiu4xqUQ9B
-	gbHE4WdCY2WW2sgPPHKs/1LtFj/sHMonvfdTL9qRXnyykkOy8s3TKblxVIG9hfU/pmA==
-X-Gm-Gg: AeBDietyYmUfm8O4o/Ok7jspvFLZ8lTYu3ljclMzSGu2bcUm/RTusuUOZ+8UFMgc14i
-	GWvnPqNUjIJKgnDSV69+U+QFoySW3FLhGI2VSTqWhjfvH/qhgPXdsBEiSBrBb0CWdKTGVwZWWDS
-	oT90RplnVXrKNLGK7nz7P4WzV0PUJQ7XeYfa62IjFTBWcPZxZBLaj3y7hfpREV0AGjAwD3mXCKZ
-	myPEkgB2S4i9tCuxg+u4UTelmdgM1EsURVAdWU+Gg+lGdBwyRWzoyFx8sN7rCk9hE3jnfQn2q3s
-	TJ66dvGVycjtbbzoOjTqNdkDhmGYSBtRIESDDvbYNZLnVDG4VUio6m10KXnmHSk+HheDugkoa/6
-	zG/iQBHucgXCXpjpTR9AvNH3adzBvPwBi0TI+
-X-Received: by 2002:a05:622a:256:b0:50d:84a7:72d0 with SMTP id d75a77b69052e-50d84a77971mr81301581cf.36.1775458187161;
-        Sun, 05 Apr 2026 23:49:47 -0700 (PDT)
-X-Received: by 2002:a05:622a:256:b0:50d:84a7:72d0 with SMTP id d75a77b69052e-50d84a77971mr81301211cf.36.1775458186249;
-        Sun, 05 Apr 2026 23:49:46 -0700 (PDT)
-Received: from quoll ([178.197.219.94])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d1e4d2738sm38990714f8f.24.2026.04.05.23.49.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Apr 2026 23:49:45 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Thierry Reding <thierry.reding@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: [PATCH 3/3] arm64: tegra: Correct Tegra234 p3740 interrupt flags
-Date: Mon,  6 Apr 2026 08:49:38 +0200
-Message-ID: <20260406064935.27968-6-krzysztof.kozlowski@oss.qualcomm.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260406064935.27968-4-krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260406064935.27968-4-krzysztof.kozlowski@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Y+NAF58o"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ej7KROzp5occIc3u3XoMtDl9XZHBxgLhewrJ5GYxZnEJDb9L2HwUdz0Wt1WspG8qzFdyJn1ajSdC+nI1E0wOwAdjx+nf06ohTicqB+XQVgG0mOhOtYoGx4akdBI8OAhF9cIWTnmqbIBH5mdhaysxRR3348m4sQcvQN8dc/zJGd1jaLOm5O4dGz1OaA/HwchHvol/TOGuzq2gZYGhb+IHF1unUZ8gVnUs967C7EpfOxOKCHi0tlD2s1/BVIMntb6iaqj9Ei8wkkRnHsiH4QHgpDgN84Wj1aOyHTwLrV8rUIIpRn7WxewWPqhZsNItlRIs3WNr0TPFo/BUPrC2cLWUOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LWPwHWQqNUnxkoMco2rP1VC4sq2MNepMZX6/V40A1JU=;
+ b=nvH8g+W3Xd1LijaiYskjlXCH4dkdufub31ikaNyQWlUa3EX48DCtB9gI6j3x53TbN/2tl0GX49PA7b5i9Be3jbMA7omkLeH/f0I/9Wv8Lv87UNlhNtt4MWdpyE/JOn+VkbjRCyHHN/ds5pqB2cP+WcgThpQI9c5eZkeTWTZt3ppmfL6WpMQ1JVb0HX2r3JSNHq1HskP/N6yWRR7E1GnY5l+Qno05ST2CPFU7cJTYPVmarAWlzhetqxIa2hb+NY+0QyfCdhXxqHRNEfEnr5EOaHS36Xo6Nz4QzUIjDHvaE+QjAAnXAYVtLlNbSQHaUODALyUgPwTr+Euz9W/Y1Zx+XA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LWPwHWQqNUnxkoMco2rP1VC4sq2MNepMZX6/V40A1JU=;
+ b=Y+NAF58ob30Vw1QALqYT6ynJ010rP7jpExd0fDG3JO/wRUzMRdjSz7LiRHcXZ4Db+ZMbCyaYmB+QXzYHM3lJMONyKpVbU0bpBuxwhSSNnJB310D1WPvNbPaygZ94Vlrc2UR3YJS7AuJ4x2lrhd60Luh7//Ty33JNIUiuWQVeYpeAtLoaabyZq5qhvKA5cCTAf9kdCpGknN6kBxUfYojFzQzsw+y/Uq6410Ri0BXB2vuf53idlBGTcme/ulisLQvRVQjOJmJ1Kde7skFlvgjKJHmszMwqdZRq5P/SgH9HWHmmSApr1a14bHgwss3Qo1JucH8b0riATrL8c5NAx1qlDg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BN5PR12MB9511.namprd12.prod.outlook.com (2603:10b6:408:2a9::14)
+ by PH8PR12MB6867.namprd12.prod.outlook.com (2603:10b6:510:1ca::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.15; Mon, 6 Apr
+ 2026 07:21:00 +0000
+Received: from BN5PR12MB9511.namprd12.prod.outlook.com
+ ([fe80::4d8d:5f91:6c3c:dc8c]) by BN5PR12MB9511.namprd12.prod.outlook.com
+ ([fe80::4d8d:5f91:6c3c:dc8c%4]) with mapi id 15.20.9769.018; Mon, 6 Apr 2026
+ 07:21:00 +0000
+Message-ID: <5e1d8c14-d5bc-47f1-83a1-969170adb0be@nvidia.com>
+Date: Mon, 6 Apr 2026 12:50:52 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] memory: tegra: Add T238 MC support
+To: Jon Hunter <jonathanh@nvidia.com>, krzk@kernel.org, robh@kernel.org,
+ conor+dt@kernel.org, =thierry.reding@kernel.org, sumitg@nvidia.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+References: <20260331112347.3897841-1-amhetre@nvidia.com>
+ <20260331112347.3897841-2-amhetre@nvidia.com>
+ <1ec86de6-9282-46fb-bdba-521ac25b5fc8@nvidia.com>
+Content-Language: en-US
+From: Ashish Mhetre <amhetre@nvidia.com>
+In-Reply-To: <1ec86de6-9282-46fb-bdba-521ac25b5fc8@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BMXP287CA0011.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:b00:2c::21) To BN5PR12MB9511.namprd12.prod.outlook.com
+ (2603:10b6:408:2a9::14)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1388; i=krzysztof.kozlowski@oss.qualcomm.com;
- h=from:subject; bh=667NQRhMGe5QZ07dEAVje+oTMyUEgodF0NM+DUxJ7mU=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBp01eByquHPkagS1bYatYCm6SgpAPhiCVyUBnnb
- PHWgFrLDC+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCadNXgQAKCRDBN2bmhouD
- 1+uLD/9BRfbs8ekHOFJcYXSjhLCsQA13iGrTTUvABL00NWF+4YG/WagQvdiSWF8h4V06oPo2TMq
- faXn6PDkO0mWrouXtDP3d1d7ydIhNwTE2jlKBpnlM4jVvuGS1AfBhxicH8XLks3iId+YqGe3GER
- EOuQm5aBdC8BTgH0MHUFL6zZy4zvto5b0kqbwrD+E3ktpwubpZQ1muCOna03njKAU2VMvGsrRwU
- Jk/6f7ShdgO+ZC7Tilopu22Flz6EzebQ+VLJra5cKhUWoDPvFG23eiyIVotREFNj8UL/zj1S5zm
- u/C6zGIwd6WzDtuTqW3imeXugVaLT5VM6N9DajrQ09i+NyxnYzgw/VGtwcqsaTOTroYUaf8MRHb
- qunGplCZTjUNEoM7H2aKn2qQlFhXQTwaKwbI+fKpB5QtjxiBbz76A9qqgVMuMBhV/j25oIAvRPF
- oqTbwkG9F2fZmcBrK4/YeBGImRzjJyTeMtitq2AW84sfm+7CwBNOCnwRDKs4OBpeaSV8Q5+5zOO
- 0X+JiEZOizapBO/iPFYT437dABwMpApEvA8T+fnVlZqy5QtHHRlHX0OukP4NTftK6zZ6Fr7rem+
- lMVbri8RSsuVJ6K67POMkAwsQBf7JM2Dpixy2W1YH/Cxoa/obDLpTTxfYSYJMDcmZz5BIorntMB fPFbb6lkGdwXIfg==
-X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDA2MDA2MSBTYWx0ZWRfXy9kVhr6qFARW
- iapqOxWlm29eF3sk/ndgvvQUqLH7g3u60L0KEpqOfI65W0YsgKhpKauhdcq6I2PJW4Ztda0xth5
- 4blF4uPGg/PknhKl3hjGSzLQ3xUWkKlzRa3sF12TTyUzTLrCU0bRGxONaaFw4uKyB+wDR82Zl7M
- x2xa75/qqcxPk5+OKsXdM2V26CLE1bKIKlIbOg9LCaAYp0ClnwN9Y8kUybJ4W7zp9xnnW/7jxjL
- OFopyhxvyBAvBgSHG7ML1+79wCNuwaz3QrWqOw74y1y0OiCkEf9/WSXX8lLFmJBdM0Dqq/D9gmL
- e5pMhjDQ7E2S9TPANtUY9D6KdNKboCFxDhxptP3zmxuIAWwK5LddyLNF8hVTFrdoDOciYxbgzl4
- zsjmPS1NUD440q7AzViWpJ1mNcduwcV7fISc5Qhm1D3cJ1AzY7ut0ZBTTic8AZLugLHi0w7Pji6
- +oM/wJYpI9wqk8ozh4w==
-X-Proofpoint-GUID: 3m58cqpPu1jHVnVwMmQu_WIVOf_7QhAp
-X-Authority-Analysis: v=2.4 cv=MIptWcZl c=1 sm=1 tr=0 ts=69d3578c cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=gOEeR9iKwsj33Yj5oN/cWg==:17
- a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22 a=EUspDBNiAAAA:8
- a=0oGBXvcucFHjQTZxw3UA:9 a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-ORIG-GUID: 3m58cqpPu1jHVnVwMmQu_WIVOf_7QhAp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-06_02,2026-04-03_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 suspectscore=0 lowpriorityscore=0
- priorityscore=1501 adultscore=0 impostorscore=0 phishscore=0 bulkscore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
- definitions=main-2604060061
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN5PR12MB9511:EE_|PH8PR12MB6867:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9812257e-cac6-454a-8b86-08de93ad0de2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|56012099003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	Pxcw64xcIv+9lDsqxX+kdeLn4rrdlqLgMuhNJsNEkrSYA2t0RwBbQdB7Un5Zv3WxDMmHp0kwSTLs99LEG+RKt0GGL29aZonTmUsHWqK5eigI9EIKYzA2RGPgwlck0IhsgQlBxb/WLGzzuER46PlcwJmQVVHbhKYfDgwNwWAYMA87hSCk/lETZzo+ZSpnQDtUgfljv6c2PWdPyw57IQGf0ZGPLhGJ/WtKB1VmbLoNeb3HFu7LJ1EdFGNn2ZHMEZPDnCS61aD5tUB6A2xigd/BoXSYUWZ6s0gtndovePncP/Zqd/uZdEgo1LT6+dyK+zck29+VDQnesmwr2L7xce4ZFBWNO1+Ce1ELVOxlsDG/9KPdGZrR53PP8HTJcU1p5PLOv9l5rIL9Msmecd/QvYgFR1jVU14ejdylWfnzuEeo1tuw19H0e92J2YIbgavxKN1wJpGXR2l0H4SLsZP7+JhegVy2bpkntaodtTuJDPQEkFZwt/OUx+8iUxBhEaSKAMFTwt/+9E8g422QeOjTnghq9ZNq/n4M73mAbIzRMWaUgIETq8HgKP16PSEqhcfBNqIJgEz4RQnJW7gk6tKpril9HZzZTLFKksIb6BU2YfnV+zAt3pQGToBrbHFgiwV9Uvbp+WXW6z70yQsrMCeWBhFdmZRE3jaJ337rHmcgKfsDwwIWFgn56Rtktj784DG+7MAR3Tgbzf0VpR5SGC1d0ONo266HQY9qik7JRzJCYrPf4eE=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN5PR12MB9511.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SGNqUkIwcTJpSE8xUmxRaHZBRHN2RVdsLzh6ZkpjVDlqQ2JGbCtmTU1BSXlW?=
+ =?utf-8?B?MCtpU0o1Vm5jZ1dCcEZDelRSWkRLLzMyVVp2Qkk3MTArZHViRnRvaE85MCth?=
+ =?utf-8?B?OW05RG84M3pvQzlZMGlPRll4RXFRWmRubVRzK2tjWnFtUVF5Q0Z1Rit5QXVV?=
+ =?utf-8?B?OURVWjUzRndBa0FwMTgyWXMvVkw0VElUbThOL0Y5QmZUelhyb2dIRExja0ln?=
+ =?utf-8?B?S1A3NGVGUWhFYkdMYXl1bmQ0SUx1ay9zRnJBZDZkTEZ1eVZ1cGhpNW01c2wv?=
+ =?utf-8?B?MDV2L3FlZmlwNjJCRFhlZUx1RTZSQytWc2ROeVBid0ozRVhEQUtLdGdqRlBL?=
+ =?utf-8?B?TjVKWVh0aWxmT0tYc3FwakFnZkRCL0JkcWJURTdaLzJSQUhlRCsrdUludGFE?=
+ =?utf-8?B?ZVNod0Q1aktSRWtmcWNtRS9zalJ2MHJ5MTQvQ2hBZTkzTklWV3NBVXE0T2Er?=
+ =?utf-8?B?S2xORHU3bi95dnMxczNlS0UyZ3M1SUlvS29LUENILzJXTHByVk5JQTVlM1J2?=
+ =?utf-8?B?NzJGOGJOemxaelBtRGloWVpGOUYvLzJVYlk2TEhQRXczaWtqR0luZW5USmNl?=
+ =?utf-8?B?UjhXd3RjcHM1M0paUGJqZ0dreEFnUEpiRldPUjZFODI3QldrdHVHM0NYMmNl?=
+ =?utf-8?B?N3hKTjNENXlkQ29XeU40bW42K3FEc2ZkckFUbHNpVXVkM0sycDl1cjE1cEVi?=
+ =?utf-8?B?SEtzcElRbjdLV0R4OE96UXpCTi9JelVXbDFDQk43RHgzUG1YbzhXaFp2SFJI?=
+ =?utf-8?B?Z1c0N280WFNsczFyeWEvbGZ1UCtXRDVXYnczbXR4NUwxUE15Z3dIRFBjZnFO?=
+ =?utf-8?B?cExxY2NYaUJZUjJ4RW5RUzhMU0VwTmVSZ3Q1SHhkZEExSlFacnBUOHVwYUZp?=
+ =?utf-8?B?M0tyTUFJTEs2L2NRZlJPcWR5Y283K3VHdFFlc0hsdmxWV09YSjZLeU5yWDZx?=
+ =?utf-8?B?TDlpMmx5dnY0L1R6bWJ4aTRYaVkvSTF6czNpeG9RaHlGdkpPcks1NnBhS1l0?=
+ =?utf-8?B?REV0RTAxNFpaOTN3ZGxmSDdHYVlyRkxiVHNMVzdFUmZZYkxNTWFmdjFwbjN2?=
+ =?utf-8?B?aUZLbjVMV2U2dkpIOTBpd05GSjcxeTlZRVBLQVhodkRoS0o0NHhQWkU5M3E1?=
+ =?utf-8?B?TnpVd3JIUVkyeDdwL3ZyRy9CdWxGVC9wNXBFR09xTUFuNmlnLzJ3TFA2SjFH?=
+ =?utf-8?B?elc0ay9nZlZLbW5aYmNFNS9yRUpwbVAyRE5oaG1aREJuVU9PY1g2NWY4cG5k?=
+ =?utf-8?B?ZXd4NGQ0WW9NTm5CNTQ5dHROeFExcmxrNmtSYjBVME85Y0tud01DVWRQWkpt?=
+ =?utf-8?B?SmZvZ0w2bTE0N2w5eEszcTJSWU5uOUZyTG9IMU9NU0Y5d081NXN0dWc5MXBl?=
+ =?utf-8?B?Sm0rdGJ6T1R2cDRZZVkyNUV2Z2RMN1c4ejZxTXFtWE5FSmNiYmRPdlFJUlQr?=
+ =?utf-8?B?R0U1UjFMZ1ZPTDgxbDZ1b3cxVUc2dzdNZitaVEFHQTdDVzMyMTlhNk94ZGx4?=
+ =?utf-8?B?dGxZNVRTZmI4UnBqVjZ1bCtRTzNpNlBaUExYVEZoRGJLS3IxMGMva29Ba2ZV?=
+ =?utf-8?B?M0VFTXhNZ3daYU5SOWhBMS9mYy9mRVRlTkIyK0lzdUZoaHdpclVjVnpVVTMw?=
+ =?utf-8?B?b21HUDljZm5XT2hNam1iUE4rd3FYU0FwSTNsRzd0dW5zSjB0aGdPZUw1THNS?=
+ =?utf-8?B?aUd5UjV1dXdmUTZaM2NjZXBiKzZFZTM4cWdYblB4Wnl5bEZya2JqQ284T2dn?=
+ =?utf-8?B?N01nODZGQ0NvSU91ZUdza3QycU44Qk1TSTUvRUc4dGo5TjFRbFljYXdQY3RY?=
+ =?utf-8?B?SWhEbFZneDRrWmZFNW1JeDR5Zm54c3NWa0RQUDNPV1Vpb2lFQitsMjdmZHNR?=
+ =?utf-8?B?MkhiRFJzeDVRbU9jakFiY3VGTlJySlR0ck9VUzdRd1ZYeHZSWDlqSTFqQTZI?=
+ =?utf-8?B?MUM0L2NGN3UzcTUxYVNqcW9HNGNubEhXaEx0NXZEMWpuWlZRMXdwTGRYM1dr?=
+ =?utf-8?B?QUQzSi9jRVNpV3N3Zjd5WnM5bU03TnF4Z2xpSFcvb1FUdXR1NVJwUXorN3RE?=
+ =?utf-8?B?YktLU2VNbXhpOHd1ZS9MR1FOK3VsYUlYOFVzUXl5ditQWTFSTG9Wd1gxcUxa?=
+ =?utf-8?B?d0VFNUtkeW1vbW5jeWgrL1JqcUc3N0s4QXBsMVAvSG9rcWljeHk0cXZ3cFg4?=
+ =?utf-8?B?dk5QeHNJQ0Rtdm81UkJ0S05sTmptNkFTUkEyUVd0bGZOb2daQzVqbU53bFlh?=
+ =?utf-8?B?Y2xUdnoxS3RYY2lQSzJwNnBsUDlvVFJudW5XVHhyNWQ2a2NkWk15ODlDYlNp?=
+ =?utf-8?B?a0NMdytuMng3QWNteUlxM0thN0lJOXc1TGxUUDlXNmlaNTNvSHJ1UT09?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9812257e-cac6-454a-8b86-08de93ad0de2
+X-MS-Exchange-CrossTenant-AuthSource: BN5PR12MB9511.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2026 07:21:00.7781
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6aKAku6brYjKrtCNnjn5HU4DiJi2Sc8b+oZwLOrgmrED96eZZkEd+s+/UVVJ+QAQtW1sSDGdEdJ68xJ53oQXvw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6867
 
-GPIO_ACTIVE_x flags are not correct in the context of interrupt flags.
-These are simple defines so they could be used in DTS but they will not
-have the same meaning:
-1. GPIO_ACTIVE_HIGH = 0 => IRQ_TYPE_NONE
-2. GPIO_ACTIVE_LOW  = 1 => IRQ_TYPE_EDGE_RISING
 
-Realtek RT5540 codec driver requests interrupt on rising edge, so correct
-the interrupt flags, assuming the author of the code wanted the similar
-logical behavior behind the name "ACTIVE_xxx", this is:
 
-  ACTIVE_HIGH  => IRQ_TYPE_EDGE_RISING
+On 3/31/2026 5:08 PM, Jon Hunter wrote:
+>
+>
+> On 31/03/2026 12:23, Ashish Mhetre wrote:
+>> Add Memory Controller driver support for Tegra238 SOC, including:
+>> - MC client definitions with Tegra238-specific stream IDs
+>> - Reuse of Tegra234 ICC operations for bandwidth management via BPMP-FW
+>> - Device tree compatible string "nvidia,tegra238-mc"
+>>
+>> Export tegra234_mc_icc_ops so it can be shared with the Tegra238 MC
+>> driver, as both SoCs use the same ICC aggregation and bandwidth
+>> management logic.
+>>
+>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+>> ---
+>>   drivers/memory/tegra/Makefile   |   1 +
+>>   drivers/memory/tegra/mc.c       |   3 +
+>>   drivers/memory/tegra/mc.h       |   6 +
+>>   drivers/memory/tegra/tegra234.c |   2 +-
+>>   drivers/memory/tegra/tegra238.c | 395 ++++++++++++++++++++++++++++++++
+>>   5 files changed, 406 insertions(+), 1 deletion(-)
+>>   create mode 100644 drivers/memory/tegra/tegra238.c
+>>
+>> diff --git a/drivers/memory/tegra/Makefile 
+>> b/drivers/memory/tegra/Makefile
+>> index 6334601e6120..0d50e37d43af 100644
+>> --- a/drivers/memory/tegra/Makefile
+>> +++ b/drivers/memory/tegra/Makefile
+>> @@ -10,6 +10,7 @@ tegra-mc-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210.o
+>>   tegra-mc-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186.o
+>>   tegra-mc-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra186.o tegra194.o
+>>   tegra-mc-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra186.o tegra234.o
+>> +tegra-mc-$(CONFIG_ARCH_TEGRA_238_SOC) += tegra186.o tegra238.o
+>>   tegra-mc-$(CONFIG_ARCH_TEGRA_264_SOC) += tegra186.o tegra264.o
+>>     obj-$(CONFIG_TEGRA_MC) += tegra-mc.o
+>> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+>> index d620660da331..10ef3c323e22 100644
+>> --- a/drivers/memory/tegra/mc.c
+>> +++ b/drivers/memory/tegra/mc.c
+>> @@ -49,6 +49,9 @@ static const struct of_device_id 
+>> tegra_mc_of_match[] = {
+>>   #ifdef CONFIG_ARCH_TEGRA_234_SOC
+>>       { .compatible = "nvidia,tegra234-mc", .data = &tegra234_mc_soc },
+>>   #endif
+>> +#ifdef CONFIG_ARCH_TEGRA_238_SOC
+>> +    { .compatible = "nvidia,tegra238-mc", .data = &tegra238_mc_soc },
+>> +#endif
+>
+> It is always better/preferred for the dt-binding patch to be 1st in 
+> the series. The above does not exist until after patch 2 is applied.
+>
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
----
- arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ack, I will resend with correct ordering.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts
-index 9ce55b4d2de8..97cede1fcb70 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3740-0002+p3701-0008.dts
-@@ -75,7 +75,7 @@ rt5640: audio-codec@1c {
- 				compatible = "realtek,rt5640";
- 				reg = <0x1c>;
- 				interrupt-parent = <&gpio>;
--				interrupts = <TEGRA234_MAIN_GPIO(F, 3) GPIO_ACTIVE_HIGH>;
-+				interrupts = <TEGRA234_MAIN_GPIO(F, 3) IRQ_TYPE_EDGE_RISING>;
- 				clocks = <&bpmp TEGRA234_CLK_AUD_MCLK>;
- 				clock-names = "mclk";
- 
--- 
-2.51.0
+>>   #ifdef CONFIG_ARCH_TEGRA_264_SOC
+>>       { .compatible = "nvidia,tegra264-mc", .data = &tegra264_mc_soc },
+>>   #endif
+>> diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
+>> index 649b54369263..d0da4a5f192d 100644
+>> --- a/drivers/memory/tegra/mc.h
+>> +++ b/drivers/memory/tegra/mc.h
+>> @@ -238,6 +238,11 @@ extern const struct tegra_mc_soc tegra194_mc_soc;
+>>     #ifdef CONFIG_ARCH_TEGRA_234_SOC
+>>   extern const struct tegra_mc_soc tegra234_mc_soc;
+>> +extern const struct tegra_mc_icc_ops tegra234_mc_icc_ops;
+>> +#endif
+>> +
+>> +#ifdef CONFIG_ARCH_TEGRA_238_SOC
+>> +extern const struct tegra_mc_soc tegra238_mc_soc;
+>>   #endif
+>
+> Does this work? Tegra238 is dependent upon stuff in Tegra234, but 
+> there is no guarantee that both of these CONFIG options are always 
+> enabled?
+>
+
+Good point, thanks for catching this Jon. If CONFIG_ARCH_TEGRA_238_SOC
+is enabled without CONFIG_ARCH_TEGRA_234_SOC, the build would fail
+since tegra234_mc_icc_ops wouldn't be compiled or declared.
+I'll fix this in V2 with combined Tegra234 and Tegra238 SOC guard for 
+struct.
+
+>>     #ifdef CONFIG_ARCH_TEGRA_264_SOC
+>> @@ -256,6 +261,7 @@ extern const struct tegra_mc_ops tegra30_mc_ops;
+>>   #if defined(CONFIG_ARCH_TEGRA_186_SOC) || \
+>>       defined(CONFIG_ARCH_TEGRA_194_SOC) || \
+>>       defined(CONFIG_ARCH_TEGRA_234_SOC) || \
+>> +    defined(CONFIG_ARCH_TEGRA_238_SOC) || \
+>>       defined(CONFIG_ARCH_TEGRA_264_SOC)
+>>   extern const struct tegra_mc_ops tegra186_mc_ops;
+>>   #endif
+>> diff --git a/drivers/memory/tegra/tegra234.c 
+>> b/drivers/memory/tegra/tegra234.c
+>> index 87b22038a5fb..9fbd34d4abe0 100644
+>> --- a/drivers/memory/tegra/tegra234.c
+>> +++ b/drivers/memory/tegra/tegra234.c
+>> @@ -1125,7 +1125,7 @@ static int tegra234_mc_icc_get_init_bw(struct 
+>> icc_node *node, u32 *avg, u32 *pea
+>>       return 0;
+>>   }
+>>   -static const struct tegra_mc_icc_ops tegra234_mc_icc_ops = {
+>> +const struct tegra_mc_icc_ops tegra234_mc_icc_ops = {
+>>       .xlate = tegra_mc_icc_xlate,
+>>       .aggregate = tegra234_mc_icc_aggregate,
+>>       .get_bw = tegra234_mc_icc_get_init_bw,
+>> diff --git a/drivers/memory/tegra/tegra238.c 
+>> b/drivers/memory/tegra/tegra238.c
+>> new file mode 100644
+>> index 000000000000..5abdca16a275
+>> --- /dev/null
+>> +++ b/drivers/memory/tegra/tegra238.c
+>> @@ -0,0 +1,395 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (C) 2026, NVIDIA CORPORATION.  All rights reserved.
+>> + */
+>
+> ...
+>
+>> +const struct tegra_mc_soc tegra238_mc_soc = {
+>> +    .num_clients = ARRAY_SIZE(tegra238_mc_clients),
+>> +    .clients = tegra238_mc_clients,
+>> +    .num_address_bits = 40,
+>> +    .num_channels = 8,
+>> +    .client_id_mask = 0x1ff,
+>> +    .intmasks = tegra238_mc_intmasks,
+>> +    .num_intmasks = ARRAY_SIZE(tegra238_mc_intmasks),
+>> +    .has_addr_hi_reg = true,
+>> +    .ops = &tegra186_mc_ops,
+>> +    .icc_ops = &tegra234_mc_icc_ops,
+>> +    .ch_intmask = 0x0000ff00,
+>> +    .global_intstatus_channel_shift = 8,
+>> +    /*
+>> +     * Additionally, there are lite carveouts but those are not 
+>> currently
+>> +     * supported.
+>> +     */
+>
+> I don't know what this means?
+>
+
+I have kept this comment similar to Tegra234. tegra_mc_get_carveout_info()
+function uses num_carveouts variable as upper limit for supported carveouts.
+On top of it, there are few lite carveouts which are supported by SOC 
+but are
+not used by the driver.
+It's redundant info IMO and can be removed from both Tegra234 and Tegra238.
+Jon, Can you please share your thoughts on this?
+
+Thanks,
+Ashish Mhetre
+
+>> +    .num_carveouts = 32,
+>> +    .regs = &tegra20_mc_regs,
+>> +    .handle_irq = tegra30_mc_irq_handlers,
+>> +    .num_interrupts = ARRAY_SIZE(tegra30_mc_irq_handlers),
+>> +    .mc_addr_hi_mask = 0x3,
+>> +    .mc_err_status_type_mask = (0x7 << 28),
+>> +};
+>
+> Jon
+>
 
