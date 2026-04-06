@@ -1,63 +1,63 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D75431D372
-	for <linux-tegra@vger.kernel.org>; Mon,  6 Apr 2026 08:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92CCD3161A3
+	for <linux-tegra@vger.kernel.org>; Mon,  6 Apr 2026 08:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775464462; cv=none; b=RVt/cKkMeAE/PplrpXeXW36JXd+N//SNq7oPc1y9tLzljOZnalZfSZg1JG6pTBj8qCRyzFzeUjJQRm+q1zUAQ5OwEmc3+zzs3dAZIUmP+0LE9v2GA/zG/tf9CczyrYl/jpdDp48ij6HNKLKg+pGsTJOXwSMxt7UuxEjxNeThVlc=
+	t=1775464464; cv=none; b=F4WsRIjd61zd5hCVpmj5y4KuMcHnfTjUp5FsAADiiqWP2K8+rF4VqlcgjDBrQ+oBJ4iXe5hHm2ODAuj5OdJhkZuCaBv6n0H0Q4OMdCX8Rfa/lg38b3zPRPMH4O2xNnl4+58Q0aZOpD0QLgw2fUtLzXMtH0YJ+FazYmoRlPeYYn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775464462; c=relaxed/simple;
-	bh=6aWC3dFXQ4/33G52UZnUQtWD/ZRkfe9fBbp8bFxNryw=;
+	s=arc-20240116; t=1775464464; c=relaxed/simple;
+	bh=9AkI0Nz1ZzMhKBtxhwDRab9jEHmljwJvezZnjRbkhVc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dvsx8Wo9HEhxdVQx/r+Xib+3VJcycgcDBnPunNmjDYCuXQHk1WTZgStx4aaIqG9laUtxyb9SBQjsDDhm43QE394eqqHV1iEfBUfz6G4DxdF+ZtEgJV9VDZdxlkvkN61pNNjiWocu+pPL244X0MjRC65GHRq+B5npidkGX97HR1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S9ZESV8r; arc=none smtp.client-ip=209.85.128.54
+	 MIME-Version; b=lXkny1hLgstWhVIpzT4f1G5ENugPCQSL7UvVH+QIi5gkonPJqo7WgX9sKkdn64Wrm+GUh/PGbQ5uz1GZmYlOomsQg4yn5DkdrZBY/Ah7z8pjO6C9pi93wi0o183oSYFQKJ38wNJ0GOkU2G0WnKsKV+XkVoOuvJiv1mtyi+9GLzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hkZlKqZu; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S9ZESV8r"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4838c15e3cbso27816155e9.3
-        for <linux-tegra@vger.kernel.org>; Mon, 06 Apr 2026 01:34:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hkZlKqZu"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-488a88aeec9so17731035e9.2
+        for <linux-tegra@vger.kernel.org>; Mon, 06 Apr 2026 01:34:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775464459; x=1776069259; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1775464461; x=1776069261; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1CYj/tCyiCEUxyQOP2HHnd+Hrau3oPbG8Ne1C/lnyZc=;
-        b=S9ZESV8rU6sgU9+zc2m0vp4VL4aLWb+KF55TkyaRZR+3K9w+VpXef5+bds258efES/
-         AsBHletqoAKdSj04Zq5FrPrHS6gm5UsPFNH7Eud3qsRuxSnyKWLoz1LVxyZqB8O1mBC9
-         hFtfnTYJGy9m/ZKQDBBWzZhbZEkf73wEiy7qfAfhEGgephgjIaUgy3lauR775UO2CWgd
-         3AUJ9qUF6P1gEOl8rCrlb221tm3pM8B+5OkJ5kvyw9JjR7A1wWhDe4+e31F1czYUVszE
-         kkeuUmG92pEcoZHEyWe5GwcpYVsB/vHk1xoeuatVZ8Ow/bNB3sCuiu0ylMcIhWWLnkte
-         LSWg==
+        bh=9nwdcazcd5nv+n45NTFsXMrutWV/muXgCl4fYEEYQm0=;
+        b=hkZlKqZueypbrjYiVbCWXD+EY+D9FBYyqaR8QpA4Tc+ZjYM8m5WhlWfKo7Cgiupn+p
+         U14ubhZHN4uYXfCr/dKr4O+F/u4+fIusbbGvHHuMfJRYBoOPeuGBi7kLgRnmv1n7JPoc
+         mu7NJ/6OtWtVnEmkq508+UOogRyWtT7F09UqNeXVIlrSHq05FKUpGEN4Bv73ut/Nf2Rx
+         woK4bKxBngSDTMfbuiP8CD01SvGGpTBO/bprzuOW2xspBUz3j4IZwaTYXJ5D4aHORvfI
+         mDYJD8CKvAMiW66TWGvnLjFSoX8xYhXyEb/GMQz/olS8aj6Z6ZjVG+AlLlgslSqwEa9n
+         ffRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775464459; x=1776069259;
+        d=1e100.net; s=20251104; t=1775464461; x=1776069261;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=1CYj/tCyiCEUxyQOP2HHnd+Hrau3oPbG8Ne1C/lnyZc=;
-        b=IgvXK/Ejb1P5G4cEYAH6DhQ4km+d9Pr7SeMZNC9okEi6bw4tr46kbQdOJmPfcV6Cxb
-         NsXkUJZguXaQg2AuPfjFeKkNEmto5DXt41gH8yj7LTHNVpAu9W9cCTxz1BHf6f9VprBS
-         24HOObDAv0GGisr9H1G/mIDjJoQuwMGrQ+ubzb8pNq4YaipdGULChLRPkLBm3OTUN3NN
-         J5QrpS+JsARIlWePaIQwMPpSbuyXAC5Ek1AeSclwr35EqqnDpdqYDOOSSBStxyRwjlBl
-         PopEN0TrIbFo/eX3uKerqZ+D++tL/vOLmEv1SY1ogkcOK5q7xKA72EM5l6HOfX6b5BRW
-         gecA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyHU/88LuRDQcTAkcXmT9jCpqt+dgk8l4X/rbge27ir+N5OZthpYxGX170mhXsvgpt6ur5p1KPB9X+hg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrHmqXb6ZhivHfcNQd0Ci2hYTOSoIHlq5dJSYhjdFZikl+DIX+
-	EbhysrYabZzzAEErKNJjY2S5kcfXNN6+HqUDKufSc8PzUOAEexuXFYBR
-X-Gm-Gg: AeBDieuGxpw5lvCGwuyzG8eDnpFYtuGt93bzNWio3RQG9s38RsQjEjttnHpCl4z0dpF
-	Jf7c+MSHWZAdm7VttNz4SniEE3CJfs8vi6p+Ji3hx5ZXgFd63heTJqjbpqqlRpl9ORAY0q6XwRK
-	GVYoSMJPv8XlA6S3J9lWNihyNDHDRTsPyuzQMcbzoZm0gvXDyg0hPG7vWmbzwtd5FlM1N1lJvMx
-	M1159Gn2xJNR8cchO6Hgz2zDwS1xvKV8YS04fYZKdz4dk1ybfMIInzdP/mYgZcN822qXVxa+qra
-	gs08vJI7xrxRg7bgYwhhwgaRbKrNV+x1f9r9kXiST8A19IqY8s+58qAYfx8sjMOWbAJtB+XK327
-	iZz983dgpyCaC9Jn/U6ozOgTRTYSkMPoDKVvPIb1xWgo859ZSFMuWGmrNRLIPFufk3Y3npxxtsf
-	ghHms66qKiXF/c
-X-Received: by 2002:a05:600c:3b1a:b0:486:fc5f:1ab9 with SMTP id 5b1f17b1804b1-48899775d8emr158863875e9.14.1775464458886;
-        Mon, 06 Apr 2026 01:34:18 -0700 (PDT)
+        bh=9nwdcazcd5nv+n45NTFsXMrutWV/muXgCl4fYEEYQm0=;
+        b=Jsm97gH8groRs2MSF3HvpGC8JP24tc/oqkIw79t+k9yFWKnhVSqOMqVvJi4OTHkcVn
+         VpGvs6yI1IQOIoUvBzPPmD4Owkrt/fr9VQcmZXZBsEQO2lKxQpFxgLjd7E3ZMdRCJYUX
+         Rfbuc+UPDchWiid0ifjkToFGas8CUBY2/KoqiXtzAsetb34b4H9klavmoIoUBPi8FeeJ
+         C4rolWDDMoxZhBmXsnZo13zkbI5NCSM8hOa/lvXI4Iivbs1bxNSYIJ2UnyKKl4jiEyqK
+         2MaNpZP2WumNfOvMfgV8lq+qtboc/PgnvbEWUpV2xTGzTIbz3jxYazshmCzbPa6bAQAX
+         2Kvw==
+X-Forwarded-Encrypted: i=1; AJvYcCX6cEmM1/UGi+3NsAaXxGsjchxoCUzLwqqO5uFG2hm/QslchLQhomGubdoxlNerDJTHRF5Z6X7Vp9+3bQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS27trCjikyV9ko6J64YxS5/atzxq/0bV+8hPF6ty8Dn+gah0D
+	NwprqKat+vj/YOYb9mMSw5CwkfulP2Gg4B3Xejcz2I+L6XJI2UZTgjAY
+X-Gm-Gg: AeBDieuvLBgomDqe7SZJQaFE5/q/EGROHuHog2VogWUJoRk0XFvJ7bAo/75NFPFfxln
+	NLODDELI1VVRkL/lLaxcuBI7wH58Z3VtYrp9jf7wDTWHM7YYmU1qZY5szWfu/WVn3LnT3c1EFbA
+	nSjDOMmTPd5GYFWR3uYfxvCC4xLLeg/IZEnIn/GpDO2CNdsGJ5iQo8A58TkrcaKvk40CHJNeU69
+	nG1EO+aYEVZIlhNxJdR4PITlMvsbq42Nmwp0GgEl5B9KwCsgC5RsxyZuGb1bxnNW7elYsaLs0xB
+	1VtMgdRKAU/VEBbKWQKvgpt65jbMBozHHSp0DOKub7nqq00MAxZ4YGHkuY2SJEZYDf1UYE/Smhu
+	zeEa+lH2q8ZCEvuik43UPyc6PqVEnBA5wngGhwo0CWDa3wcpUXBWm1LaQHI2F/vm8Kx39MEYJG2
+	RG1eLUBbXkFlVt
+X-Received: by 2002:a05:600c:8599:b0:488:aff1:a7cc with SMTP id 5b1f17b1804b1-488aff1a9ebmr40356075e9.9.1775464461027;
+        Mon, 06 Apr 2026 01:34:21 -0700 (PDT)
 Received: from xeon ([188.163.112.56])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48899e7e83fsm84241315e9.24.2026.04.06.01.34.18
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48899e7e83fsm84241315e9.24.2026.04.06.01.34.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Apr 2026 01:34:18 -0700 (PDT)
+        Mon, 06 Apr 2026 01:34:20 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -70,9 +70,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 6/9] ARM: tegra: transformers: Add connector node for common trees
-Date: Mon,  6 Apr 2026 11:34:01 +0300
-Message-ID: <20260406083404.31359-7-clamor95@gmail.com>
+Subject: [PATCH v1 8/9] ARM: tegra: tf600t: Drop backlight regulator
+Date: Mon,  6 Apr 2026 11:34:03 +0300
+Message-ID: <20260406083404.31359-9-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260406083404.31359-1-clamor95@gmail.com>
 References: <20260406083404.31359-1-clamor95@gmail.com>
@@ -84,98 +84,47 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-All ASUS Transformers have micro-HDMI connector directly available. After
-Tegra HDMI got bridge/connector support, we should use connector framework
-for proper HW description.
+Drop dedicated backlight regulator since the GPIO used in it is actually
+SFIO controlling backlight and setting it as GPIO causes backlight to
+freeze at maximum level.
 
-Tested-by: Andreas Westman Dorcsak <hedmoo@yahoo.com> # ASUS TF T30
-Tested-by: Robert Eckelmann <longnoserob@gmail.com> # ASUS TF101 T20
-Tested-by: Svyatoslav Ryhel <clamor95@gmail.com> # ASUS TF201 T30
+Tested-by: Andreas Westman Dorcsak <hedmoo@yahoo.com>
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- .../tegra20-asus-transformer-common.dtsi      | 22 ++++++++++++++++---
- .../tegra30-asus-transformer-common.dtsi      | 21 ++++++++++++++++--
- 2 files changed, 38 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dts | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra20-asus-transformer-common.dtsi b/arch/arm/boot/dts/nvidia/tegra20-asus-transformer-common.dtsi
-index 73c7ee378865..fe05cfd2312f 100644
---- a/arch/arm/boot/dts/nvidia/tegra20-asus-transformer-common.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra20-asus-transformer-common.dtsi
-@@ -79,9 +79,11 @@ hdmi@54280000 {
- 			pll-supply = <&hdmi_pll_reg>;
- 			hdmi-supply = <&vdd_hdmi_en>;
+diff --git a/arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dts b/arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dts
+index 8b68bfef8dee..0bebea0cb8c4 100644
+--- a/arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dts
++++ b/arch/arm/boot/dts/nvidia/tegra30-asus-tf600t.dts
+@@ -2192,7 +2192,7 @@ backlight: backlight {
+ 		compatible = "pwm-backlight";
  
--			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
--			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
--				GPIO_ACTIVE_HIGH>;
-+			port {
-+				hdmi_out: endpoint {
-+					remote-endpoint = <&hdmi_connector_in>;
-+				};
-+			};
- 		};
+ 		enable-gpios = <&gpio TEGRA_GPIO(H, 2) GPIO_ACTIVE_HIGH>;
+-		power-supply = <&vdd_5v0_bl>;
++		power-supply = <&vdd_5v0_sys>;
+ 		pwms = <&pwm 0 71428>;
+ 
+ 		brightness-levels = <1 255>;
+@@ -2422,17 +2422,6 @@ vdd_3v3_als: regulator-als {
+ 		vin-supply = <&vdd_3v3_sys>;
  	};
  
-@@ -1029,6 +1031,20 @@ key-volume-up {
- 		};
- 	};
- 
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "d";
-+
-+		hpd-gpios = <&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
-+		ddc-i2c-bus = <&hdmi_ddc>;
-+
-+		port {
-+			hdmi_connector_in: endpoint {
-+				remote-endpoint = <&hdmi_out>;
-+			};
-+		};
-+	};
-+
- 	i2cmux {
- 		compatible = "i2c-mux-pinctrl";
- 		#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi b/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi
-index d4a7bae51830..76db928b53bc 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi
-@@ -166,8 +166,11 @@ hdmi: hdmi@54280000 {
- 			pll-supply = <&vdd_1v8_vio>;
- 			vdd-supply = <&vdd_3v3_sys>;
- 
--			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
--			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
-+			port {
-+				hdmi_out: endpoint {
-+					remote-endpoint = <&hdmi_connector_in>;
-+				};
-+			};
- 		};
- 	};
- 
-@@ -1701,6 +1704,20 @@ key-volume-up {
- 		};
- 	};
- 
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "d";
-+
-+		hpd-gpios = <&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
-+		ddc-i2c-bus = <&hdmi_ddc>;
-+
-+		port {
-+			hdmi_connector_in: endpoint {
-+				remote-endpoint = <&hdmi_out>;
-+			};
-+		};
-+	};
-+
- 	vdd_5v0_bat: regulator-bat {
+-	vdd_5v0_bl: regulator-bl {
+-		compatible = "regulator-fixed";
+-		regulator-name = "vdd_5v0_bl";
+-		regulator-min-microvolt = <5000000>;
+-		regulator-max-microvolt = <5000000>;
+-		regulator-boot-on;
+-		gpio = <&gpio TEGRA_GPIO(H, 0) GPIO_ACTIVE_HIGH>;
+-		enable-active-high;
+-		vin-supply = <&vdd_5v0_bat>;
+-	};
+-
+ 	vdd_panel: regulator-panel {
  		compatible = "regulator-fixed";
- 		regulator-name = "vdd_ac_bat";
+ 		regulator-name = "vdd_panel";
 -- 
 2.51.0
 
