@@ -1,135 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA033932E0;
-	Tue,  7 Apr 2026 08:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2889B30CD82;
+	Tue,  7 Apr 2026 08:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775550522; cv=none; b=biDWrEBcTuiO4EcF+00akPVShx9yQqzYtarFl2d5bLun9YQYMMhp+UAAJTkrjXb1AG7xFgPUpMq8SFWfuMtfA+N9hA7ZEYLRzBMNu2I3b25f3cMyiZ+ozXvPIwrcZOMkyrezMHboyeXrVRGpgCU49RErfOT3iGbQNQ6qCF2MNjQ=
+	t=1775551617; cv=none; b=Xq9kHhkyvjwmM8wNF5mkuLZF51dalhGw7tUO3cd3AtAwp88ZPQiwfZgz9sfv+Iru6SMwfqsGtIZbXylgP6oHUKJEPy5S9jnMRvaMivyDlrR7rIuP4rqle9G0GhQrLgCjLnlqDGTwqBuT+v/eebxfuIJiP6fXUQ2HlJ3dgMROISw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775550522; c=relaxed/simple;
-	bh=TMh/80eYOICAABN55OY1l1N30tdiwSXaZ15pdc7Mxt0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NZ8zNgd7jojKSswjAe2VzS6SrPuAH5zYnRc5N5t8bgJjhGcHlXhc+BFT4ymn/QmJcLShF63xyrmz01nbUMm/VJynCqahd+JXMkrEGq0NgKBqkTBNGRsn47syWdmWJycQ+ebp83PkEv1oUDKMfTaBMPd241+ijXkqk2WIbQBhr08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTu8Yl9J; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HTu8Yl9J"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90C40C2BC9E;
-	Tue,  7 Apr 2026 08:28:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775550522;
-	bh=TMh/80eYOICAABN55OY1l1N30tdiwSXaZ15pdc7Mxt0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HTu8Yl9Jj8JV1bw/7ldvOxasAu7ztPQxNLx0+ZuPCMzOppCRicYln7Ph/wjB0GPxe
-	 rUWTj+b+ItrKgtIxfLQ6xiCjj6/H0EkluavhiuC1TDwnqdWrM0RtAcv/pNDKxsP4oi
-	 hZd8mHWMLqGvzS2hN/60/Sf52sknbl2YDu1x8MngYBKUNCf6zQWJx7dB72HWObfSI8
-	 dzZHGUCnSwHha4pYkAHfbYM8yN48lxTKdNJ2V4GEZr3RfF7WT8IOFVTObcDLIUVdts
-	 ABIP/4P/lpkSeoRlV7edZ9rX5aRgWzAHR3ZHL8f5QvMk3/OgD3FzVGpDU4RAKzTuES
-	 rnGqW+gbEmmIw==
-Date: Tue, 7 Apr 2026 10:28:39 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [GIT PULL] PCI: tegra: Changes for v7.1-rc1
-Message-ID: <adS_spOOPBkD8E1r@orome>
-References: <20260329155040.1448158-1-thierry.reding@kernel.org>
- <ac5ZGItkKNEI_W1-@orome>
- <lduiidifejglrep2laxzk2hep5rxpm3ysz5cwhdsglf6ciyjp4@z2dmnlvi7nhi>
+	s=arc-20240116; t=1775551617; c=relaxed/simple;
+	bh=WScGkQHvR7DFG40Qml3fjW2R7irgKbJ7gjaxBc7tTVM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=N5nl0YzQ3frM2Af1v9um90g/hBqkmZ3s090Irff87LqXSkSfOrNHzLmNRuduooqnsxx7vxRJOcldzYbFOwdPc9j9eTWUrue0do2f5dBpsnRkOa7fUEYGN1oq+Zwd6OrpXUrsv0wqc9Hvak8nCZKtdzUo26UB4sEr0ylRe/hWdDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from dfae2b116770.home.arpa (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowACXueB4xNRpdqk5DQ--.4556S2;
+	Tue, 07 Apr 2026 16:46:48 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] drm/tegra: rgb: Fix use-after-free and leak in tegra_dc_rgb_probe()
+Date: Tue,  7 Apr 2026 08:46:29 +0000
+Message-Id: <20260407084629.283151-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jlfnayivx7qgsm5f"
-Content-Disposition: inline
-In-Reply-To: <lduiidifejglrep2laxzk2hep5rxpm3ysz5cwhdsglf6ciyjp4@z2dmnlvi7nhi>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowACXueB4xNRpdqk5DQ--.4556S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZw45uryDGrWxCF1ktr1DZFb_yoWkAwb_CF
+	4UXrZ7Wr1SqFs5Ar17CrW3ZrZIkFn09r40qa1xta4fK3y7WF4UXFyq9rn8ZryUWan7KFnx
+	Ja1vvF4a9r47KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbTkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8ZwCF04k20xvY0x0EwIxGrw
+	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
+	14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
+	IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxK
+	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
+	0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUhTmhUUUUU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwsKA2nUmXe1mgAAs5
 
+Move the of_device_is_available() check before devm_add_action_or_reset()
+to avoid using np after it may have been freed (if the action registration
+fails). Also release np immediately when the device is not available to
+prevent a reference leak.
 
---jlfnayivx7qgsm5f
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [GIT PULL] PCI: tegra: Changes for v7.1-rc1
-MIME-Version: 1.0
+Fixes: 3c3642335065 ("drm/tegra: rgb: Fix the unbound reference count")
+Cc: stable@vger.kernel.org
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ drivers/gpu/drm/tegra/rgb.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-On Thu, Apr 02, 2026 at 10:29:34PM +0530, Manivannan Sadhasivam wrote:
-> On Thu, Apr 02, 2026 at 01:56:48PM +0200, Thierry Reding wrote:
-> > On Sun, Mar 29, 2026 at 05:50:39PM +0200, Thierry Reding wrote:
-> > > From: Thierry Reding <thierry.reding@gmail.com>
-> > >=20
-> > > Hi Lorenzo, Bjorn,
-> > >=20
-> > > The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5=
-b5f27f:
-> > >=20
-> > >   Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
-> > >=20
-> > > are available in the Git repository at:
-> > >=20
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/=
-tegra-for-7.1-pci
-> > >=20
-> > > for you to fetch changes up to a0c0906bb09ee2f64690b3b8ffb458b4dbbcb2=
-6e:
-> > >=20
-> > >   PCI: tegra: Add Tegra264 support (2026-03-28 15:00:05 +0100)
-> > >=20
-> > > This is v3 of the Tegra264 PCI patches that can be found here:
-> > >=20
-> > >   https://lore.kernel.org/linux-pci/20260326135855.2795149-1-thierry.=
-reding@kernel.org/
-> > >=20
-> > > This looks ready now, but if there's any more feedback, I will happily
-> > > respin these driver patches.
-> > >=20
-> > > Note that the shortlog and the diffstat below include the dependencies
-> > > from the Tegra tree, and that subset will go in through the ARM SoC t=
-ree
-> > > as well. Effectively what's new in this pull request is just the two =
-PCI
-> > > patches, the rest is only included here to resolve the build time
-> > > dependencies.
-> >=20
-> > I'm retracting this PR. DT maintainers aren't happy about how I handled
-> > this, so it'll have to wait for another release cycle.
-> >=20
->=20
-> JFYI, We don't pull from PCI patches from other trees. We only merge them=
- by
-> ourselves.
+diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
+index ff5a749710db..d7586fc820ce 100644
+--- a/drivers/gpu/drm/tegra/rgb.c
++++ b/drivers/gpu/drm/tegra/rgb.c
+@@ -215,13 +215,15 @@ int tegra_dc_rgb_probe(struct tegra_dc *dc)
+ 	if (!np)
+ 		return -ENODEV;
+ 
++	if (!of_device_is_available(np)) {
++		of_node_put(np);
++		return -ENODEV;
++	}
++
+ 	err = devm_add_action_or_reset(dc->dev, tegra_dc_of_node_put, np);
+ 	if (err < 0)
+ 		return err;
+ 
+-	if (!of_device_is_available(np))
+-		return -ENODEV;
+-
+ 	rgb = devm_kzalloc(dc->dev, sizeof(*rgb), GFP_KERNEL);
+ 	if (!rgb)
+ 		return -ENOMEM;
+-- 
+2.34.1
 
-To clarify this again: the build dependencies are non-trivial and they
-can't all go through the PCI tree because there are dependencies with at
-least the Tegra tree, hence why a shared branch seemed the best solution
-in this case.
-
-But I guess this is all too complicated for everyone involved, so we'll
-just try to get in the build dependencies for 7.1 and then defer the PCI
-driver until 7.2. That way everyone can follow their standard process.
-
-Thierry
-
---jlfnayivx7qgsm5f
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmnUwDQACgkQ3SOs138+
-s6F2qA//a+OQJYBw431CJFZ/5pvCts7DHrWD7yWIkF0uQsS3WuYbOP4WNzIco+Lr
-6j/hW5gVNgW7vulkEX1Ph49W+Fd2xp1JEztI2RIXxnqfqop1u1p6cjYLjeIUmAMj
-pw4yp0Km60XBaJJPDcslqktWjrsl3jWzyB6OJVGXfiACyFgGfd4EB4kaabwIjY7s
-PwMm/dHfrI0wzCYtcdcaS2z0/QYZRnlE8YBGVJUrVbTihDFUTIvP47p7WWcn3fJ1
-Ef9PNAV/6oyQtkBxClPAKkwRYjeupR1LuLWsbSDKjkEW4CJcGPn3eN5viZg8vuuI
-m6IOoEh5LEtffG+i34itIlYfzzZDGMaB/LHwu8ni/0E5i6P8i8pc9cn9FC2pr00r
-rABcS4CQenbpAwxF8m13vWgKCwndU415ZMRKBVm2OFJfoemkHFTl6amdyoVsTxwX
-3z1MNvSzOBbRBTQ4n9rL1aG18Q3qsoJsq9X8IySifnLm4UutnbVemVE939+cJ/jf
-DgU2TYXJ5Iz9X20F4BPhmP1xFOaUnduf7Lp1avsUyUWj1Ya095MXnZYF1rIj4/wq
-+YHBZHAAIjxtzMXetPGqjpvhmXUhGWf3YcmM4qYU8xGHLNzK82BlFCTTm3c9ku6p
-UeE+OpiqjQfVvAo158P7KLs9f+wyMTkLES17Xq2VNk3mSsKNinQ=
-=8ggv
------END PGP SIGNATURE-----
-
---jlfnayivx7qgsm5f--
