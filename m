@@ -1,67 +1,65 @@
-Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011001.outbound.protection.outlook.com [52.101.57.1])
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010042.outbound.protection.outlook.com [52.101.85.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB7A272803;
-	Tue,  7 Apr 2026 04:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47FB23507C;
+	Tue,  7 Apr 2026 05:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775535028; cv=fail; b=heB1AwiPRIdpsEUO6pdXuoSP8UAmYSWHUTBam6gfbMQpLMs1edXIBdVWYsvztCk5VMAp3UnNRQLF2xQ8/1ooyN5LlMof75ooHIC/vB0VgGKBWurTW5GVhc9jCsZAoMJFkw5rpBQ9iPYL65SwZBhmwY6+Tu0DcG0zw5gTSeTvS/Y=
+	t=1775538011; cv=fail; b=BthgPNUUdoxKLVmbFYC8dhFmuXiDd0mdmLqQ2hnlWfyCUq1RQRMEsUEwyN5rijEtobr1W0OKgKHYAkfq9cHXZkD8kqduO3/AnEwxpHdiQhl/gwZKNOpk0IZlVvpDzdR/hL1gU2OmqjSSDRM5vJsrUNKMsrEAW4kVtRje/aNCv6A=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775535028; c=relaxed/simple;
-	bh=9NVjM++DB0OvU8/eI845XwDRoAlMP+w70cmPK5/yDCU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DbQgeYLPgEy3ZQd+Xz/+lzTdEN90o+0+/v6laBuXY69KqIewh3siEXrnSWxXO8IjZ3T7LSP87a5ttyiEZ6D4vcHRe3pK638FSTgbJ9SG6vT+WO/ftbXWnXTJ3LguhK/1/dlN3La5vuCE2yQx8QuliAzZvtZD0NJDlT/Y7CtR914=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uZDmyQLe; arc=fail smtp.client-ip=52.101.57.1
+	s=arc-20240116; t=1775538011; c=relaxed/simple;
+	bh=0jKwSU0IkSEiMVsyNv6mnVNTGvWOuY0qRqxsErLPNM0=;
+	h=Content-Type:Subject:From:To:Cc:In-Reply-To:References:Date:
+	 Message-Id:MIME-Version; b=KNomvnc91EkQ7IUZ84488cm11Tf57u6lMZ+FOyTWbmi7JAPM7iUA88ts2mOg4DFlMAvOaBo6QB+OVnUJO42fTS7Z3ClJY02zwCboAaoewqPUIo8pct9zWbwvVLE9Hfh/bxSqQHfl4A/avxrN0lkWpKhHUOhSGehcGnYSc7sKdKs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=H4kVVh3Y; arc=fail smtp.client-ip=52.101.85.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uZDmyQLe"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="H4kVVh3Y"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eK8k/apzIx6azRWKoECcS1BUbdbzDZbPVDF3s0vbHZHIBQY6Jd99HA4czQVxk41LOc2R928VmWPhclaVKdUQjNaWUPU6BRaF/4ggDhR77zZKoM03rjY49O+huoVQvHjHq7kv1jC/Qqw6REFVivGRSMJXrMZhGvuMRuRZE+XHxmXSVkZn7Qcl6CQKgHjD11Wq38XohRCfH4XbQmE/3vle4RIO55cBBoL6G+De2rXt/oD+oE46bYw90uKlsgHyk0nD1vwigkgFsvJAkJO+889rRnlky7xDeWeOb3yNdV971G9TkfG7o7pSl1WKv1dOL7NDRrsoao9l4jacnfdW4NxuCw==
+ b=dIaJlE/HebljqWc8Ex4qz24ez1dy6k+9/P7hWbA2SpYH78VLWf++oIdEXxDpncTj2W0tHw41cDbHJtiqNAwSdk9UMC7Wt7HJDIj/ZiZ5oSGJV8DweNraJv9d+wWuYWaZU57Icl1mhzk5GFhjTTOTukBBqM9l2/lQlj2okMDBCm7BOyjwkNUUKAHDf8YPcLdEWMa4C+UmMU9dAAoh4VdeRzzCb7SqlEZg6YZ7bSeLDfwakc3WjMKhqX287lD7IseUznZ+OcnkBqRyKlgookhhowzSp1zDkPD4YJhsJWp1n23x1zI9Pfh3nvOADZzhj6oI0jAgibTX8ixTBBRvB/eBlg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t+H2RiAe/2/ZqiIJ+1H6rmNZYZeMvkI8tCp0XrmOQ0M=;
- b=YEJVuXeVgzywGq7S6laR5yAriE8nSRSE1cPj4cDZhQNq8+to0ttNDsLt/ouZys4j1tg1ZGwDVUqP74JKiuXIXcJR2c2ZX0sflD7px/OkPrpBnTl1QJ0yniDeZzv6vyy0ACnGA28XCuPx2cgSs0s/X3t6oN5Pn27gvWAvhgfvs9S9JRW/EIyHDVoIan93EU+aXiQibnPu/WkgtRKairyuByQk1BECBR4klkvxr82XbEY4fPF/EtOmyZ8Tkux8YciI9zXH4ylhKKGr+0Uz9+HgFTTH3PRDA+b2NLLAx4SkQqOgbl6v1c1cm3AWSQ20iRhgtBHYsl7RfWcKHhbGfCr5DA==
+ bh=DTGoDWiHsDzVxcqwDtg62igM559+SoQE57jwKg2HAZw=;
+ b=CwgYLsZIbeWlKkLexWYSi6mUu7VYFvIPZTXo9G8XcgMhDXrARIs6dQS9Gfek1x4Tb+aTqvXefQ5Esm4Q+QpvcUTAeCd3LDLCZ+4zZL/O0n8BkV5D0PW3I8Ae68y7XC8cicMUr1y9mxZedlY4y4YgpzSRPR69M7yJnSXFOeiCX+M2+Q2UrD8c1CAyX6DdBp/+/Vmkm6S18UUksPqKpz/eNuMFQl8cNRwt62BMIom5b9Gzs8mVF6fBV0YOeH+o2kcvoKk7vx297QNOT4RXI4Y7HnRtbvlbpHzFKu2qL7KrdXjv465x1H/1TsOt7d5KK//XHbPpV20LNJJ4QDAmZxIQig==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t+H2RiAe/2/ZqiIJ+1H6rmNZYZeMvkI8tCp0XrmOQ0M=;
- b=uZDmyQLefJFvEC7AR+fE8trZD+nu2kP72vyUmowYfeytfb8/Na2jvIZE3k+/tg/8sOBvrXJffIBB+5qPMc6Jb3uBsbNzOHdA/ZestFMc4FnS/3xFJRp1grVd/r7OBSLnuqqvDI/53plCnOtII/wD42qbg7v4VSnBaIpBa1bnLJEOHgMdXe52fMrNGIVrm7nWx2LSTim0KuGnaYggAhyLhkdmDCOzICA3l8rNrkB97iNhD/6SktLdGeYl7lhdMZudYrhmosF2qga149o1zDEXk637kUWUJOtFb5dfi3HxqAI7XKZbSjDGE9xFGL0/fzgP51XfNfbQW5YCZPKaig4yVQ==
+ bh=DTGoDWiHsDzVxcqwDtg62igM559+SoQE57jwKg2HAZw=;
+ b=H4kVVh3Y3+6ITaDOVxKmtdoyfoBrjHJvyjQD0NgTWCaKt7VuVmMuCLbakxhqAvhnm5VB2e3HEW0wiPHOAhvU9PmLJnIoonWeUye2x10TbdIwl1dIxEVIYhtogrbf9S2ZZZ9u6D7DZBFcLo2lXde0HgGcQMb2EFKYK1x/XRqz5M5/OaVIYA2GiZMtgnLT3OgW/6XYnJuJtWnn8PrhkQVQ5iWX5eE7bjKF88IcjI1JxQeDqkpivESjyUt8+0JCOImO5Xf8H/x64/MRAxJ076YBA4rLMdzEivfCprIYLEHfbFoa3jJ7ABmuS/+gXxaWPXv+FlVN0bDpdW4v2RhGALUlLw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by DS0PR12MB7876.namprd12.prod.outlook.com (2603:10b6:8:148::9) with
+ by DM4PR12MB7526.namprd12.prod.outlook.com (2603:10b6:8:112::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.17; Tue, 7 Apr
- 2026 04:10:16 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.19; Tue, 7 Apr
+ 2026 05:00:04 +0000
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017%4]) with mapi id 15.20.9769.015; Tue, 7 Apr 2026
- 04:10:15 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Thierry Reding <thierry.reding@kernel.org>,
- Aaron Kling <webgeek1234@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] Revert "arm64: tegra: Disable ISO SMMU for Tegra194"
-Date: Tue, 07 Apr 2026 13:09:10 +0900
-Message-ID: <oPjOdaRsQES6O8jgrehMZw@nvidia.com>
-In-Reply-To:
- <CALHNRZ8Zs2Zp80OgoU6R54=n76JgiYGbMvWD2iP9HpUFYO2big@mail.gmail.com>
-References:
- <20251101-tegra194-dc-mmu-v1-0-8401c45d8f13@gmail.com>
- <aZQ-cMn-3vI7UH7t@orome>
- <CALHNRZ8Zs2Zp80OgoU6R54=n76JgiYGbMvWD2iP9HpUFYO2big@mail.gmail.com>
-Content-Transfer-Encoding: quoted-printable
+ 05:00:04 +0000
 Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP286CA0270.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:455::16) To SJ2PR12MB9161.namprd12.prod.outlook.com
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v3] drm/tegra: Enable cmu for Tegra186 and Tegra194
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, dri-devel@lists.freedesktop.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Kurt Kiefer <kekiefer@gmail.com>, Jasper Korten <jja2000@gmail.com>
+In-Reply-To: <20260406-tegra-drm-cmu-v3-1-dfcb1dda4ad6@gmail.com>
+References: <20260406-tegra-drm-cmu-v3-1-dfcb1dda4ad6@gmail.com>
+Date: Tue, 07 Apr 2026 13:59:59 +0900
+Message-Id: <177553799938.445620.9574616162049290297.b4-review@b4>
+X-Mailer: b4 0.16-dev-37a06
+X-ClientProxiedBy: TY4P286CA0002.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:26d::19) To SJ2PR12MB9161.namprd12.prod.outlook.com
  (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -70,293 +68,126 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|DS0PR12MB7876:EE_
-X-MS-Office365-Filtering-Correlation-Id: bde10ecb-7210-4583-8d54-08de945b92ac
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|DM4PR12MB7526:EE_
+X-MS-Office365-Filtering-Correlation-Id: 00b6f75c-642b-4125-dffe-08de946287f2
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|10070799003|376014|18002099003|22082099003|56012099003;
+	BCL:0;ARA:13230040|1800799024|366016|7416014|10070799003|376014|18002099003|56012099003|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	KeSgNyu6LnlJITXnVIr6q40RYY/EiFe2XdeERPmFkAoFRpN4K0k1gUvaW4V27KG7HKi6zmqT+sZItlUotG2orE7ejruKNaqZaR6v3+sva1MmSVxU/YO0LRhIbhL8wUW5wh5d5Q8NUV35+mfAQe5hPEe2iicIRqTOuRKxx9r6FkdqaPydOECrV2QlduYYnuvtpUn8x+LwcqPDY1Swm6D0AMVI7mDWlaWOp9mizlKqSGysf00FmZB+o10z4L1t+mM5wJElUV+3G9BGgt3VbobbnFOk/h06uGv0Tv1XTlXLINDTyQnqljSvu8yQi/7l7wt4XJ/lof/e5Y9pnnvbhpdPNvCB5pWFMbakvDgzj+Y3WEKDvj4QQkvfT4xyMpi5Fn5YY+rbJzHaKz2PcBJK9bR+r7i/pvGCv+ubQynKEWveSudpNJflsvRBwidwlDr2Nk8O0uaFnuSIbLd9PEUx3iZ6+06lgM5ZA/o5gZIhkPVwt891/Cip4rLvkKjFIQ8A7cPeRZ2Kwfn2TmJmNi+1UFj5TLdZb/fOn4KLRJFvj8t7jbmSPMcBNDbEATONtChLryewSOLTgezk69Aob77lHqmKHKH2lpShNEuIbya/ITiQe6JkTAvYJv37Y4pDWsgBvWJW1UOf1qqkYPy0ODO2y5ty6BRclxXInMt4tfdmweQxlsBPu3fq+AXilJTqVqhYRhBojXe2TwwrkV2G6HSjhuHlJ1nG4gPQfIMrhpc+EkE60IM=
+	QZOKqIJ5Wve7TdTrhxqrbgi3bkrQPlsx84+mxRo8EFdk5/87My8MI0BeDcRUaVIcXTPpdOCkZtuk14reNu8KJ8fR3oF7GApr5icpQH1+QRMnt/4QF6MxV4Xg2qVZyJCRGxFrEZCvT1DSVD5vmZR8s90dlZYS6NqcpK+UawcGEjJ6yFRI5HQmkKddQLoA2niMTMtsktLXDX5dGGX/xoP1W2t+yeu3W1PpF7DXvvKw/jmUX5W2/ifKxquXG+YL3Oy17a3ohMw6bXaRo9DffuGR2Q3/J/NRAC8IGAqJ7TO50KAgPf3RMWBBP9f8UWVoTsETKfgtlp7Y4zRecgBlF0ilhCOLghVIUifmV8BqpVMyIudUZVdLXYUdU4FgbhIY5LLApY9Ss+u1RANPkc3xGGBNOyCpVkkmNb1o8AE9sckBxoSDsxVYJxJ3csCaZCWMkK4Xu8LSTQUO+ywnXuIalvQ18eoQVe7pLeii++lpHJbiLWlp0zEG4GTUOsae34edzm+dS9TbqyKMypkHad0li/fL9LU5LxvhF/iY5X6KKAFTGzx0qVW00yl1pcnrVujfb9V8M5Ox24AWyjvbCcjFOuXMxIN7UjyYkmWQQ8BJTqI97MvSyV/59LNgA6GoYxYSzt9mSRv1ilDhTKwZyCWPfRyfD4iYQTVHnPkGHXgBpUcNqaeRQwf1jWU+e77JV9LexTR/oBrAS2YIk/jjxLCr+jpndE8VQoCn8wuG4g+SLfUQyDw=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(10070799003)(376014)(18002099003)(22082099003)(56012099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(10070799003)(376014)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dEZ2STVKeHpWOTQ5SzI4WitPb1plMWJIVWlvMllHR1BhWVpESEsrSGpQNTRz?=
- =?utf-8?B?bnEwQWtQTkdPaFhuQ0NHckk0MHNKT0NEeDc2RGVIYXAwRXRlUTR3elM2NkRD?=
- =?utf-8?B?MjIzNll4T0k0eC9qR083RzU1cUUrbkZnaE5LaU9yNm9hS0xMUmt3ZWV5Z3Bs?=
- =?utf-8?B?cDdpTzA0NVVTVnR2MW5tZk56eklwM2JBOHFPOWNoa1AyVWp2Mzg5NDk3dCtD?=
- =?utf-8?B?azRVV3ZVbnY0aUJsand2VzM0RUl0em9PYnUzUTk3d1NsZE93L29TSXIvWHds?=
- =?utf-8?B?QlBrd1JiWUJMejVzbnZacmhNNXZqR3ZGbVdQc1gwQWovVUJHNmZIY3krRDVJ?=
- =?utf-8?B?UkRWK05OeXhmdVRZTVVBejYrWHNZdE5GS3lYWDB5aEpMZWxDWGV2eGRPdWYw?=
- =?utf-8?B?WCt6ZXRHZThyNmJNVGY4UVYvWHE2Zm53b2g3Q05pZlBEamNsZ0NuSXk1MmJx?=
- =?utf-8?B?M2htcmE4b2Z2ay92WFJvcGF0UGhIQ0VQTmRtRzBJUElidU1NVkQ4bGtKQW8w?=
- =?utf-8?B?KzRJRjZMUlpick10QjJ3NHB3WlZ2UElFUjRXVERGQXRTc3lPOVNHcC9RNEVT?=
- =?utf-8?B?UGl1VHI3UHRRTXpGKzh0Y0czWExwa2o2Z0RhaXhmcFFHVTRHSnRod2dIT3FI?=
- =?utf-8?B?VGN4dlZvTjJUSWR5SVdXMmpBVEV6Q1I2QXhUb3lZM0RzOWo0K09sQmNpNytu?=
- =?utf-8?B?TmhDM2dNV25sY3J5ZnR4VDhiM0d4SDRZZkxRZmNDNUF1L0Z4Tk1HbE56QTFx?=
- =?utf-8?B?Mm91SG02OTZNanJoSHVWUFVieGU0Z1J2TEM1bkI4THcwV25uL2JKUkVhTkJs?=
- =?utf-8?B?ZjJGRzczVVdmb3p4ZWpweTFUcmlTbWZwUGEwb0lBTmlMcGIwL0pLQ21MUlVJ?=
- =?utf-8?B?Z09WdFM4THZUZXk2VThoMUVKbXBXZEtsN2xLeGtVQWRKRXFta20veVBYSGtX?=
- =?utf-8?B?MUJobXFIZGFFSDVKamI3YnFrUStFYmxPOXhDSnV0Znh6MlR6cml5RlJSQXBy?=
- =?utf-8?B?Nk1lRk1ZbXFycEFPWGlsN05lQ2t0RnJkcEV0VUNJS0tQbWVwdHVNU09TNzZR?=
- =?utf-8?B?SFQ4WW5Pc1dWRUNPbWF5RWJtcUkzeUpaem9PWnNjeTBwT3pXeE8xdjd1RFZL?=
- =?utf-8?B?aXR2SVQyYXdveFVmY0JYaEJWWDNWVWk1OTBDTTVZL3RDd1ArWVFHTHVsYmZ3?=
- =?utf-8?B?amkrOTNvTXZsNkt3WHJFckMya2x6eEVvNWJud3BuNi96VmFrdVdxVExaMHJO?=
- =?utf-8?B?czRVdzVRU0puNEd2Z2s4MjkwMDVMRzhCN1BOTGo2dThTVjJKbnFuUTUvRUdI?=
- =?utf-8?B?K3F2RFFmL2lGUDdkdk1RZ3VsQmRrNExXRFpna3dtdlpzeUtKQythUXBnTnRm?=
- =?utf-8?B?ekhacytNWjJpalRqeG1scndpaHdRNm9QQWxPTUlhM3ZkUUl3c1pWZjJka0p3?=
- =?utf-8?B?RXZZbFJEZm5aRmgyaUtvVHlTaDA3RXpqakdDME9yUk1JK05nQVkrZktCRE9Z?=
- =?utf-8?B?ZGE0WjVEU2NPbnZZOG5UbElnSlZrTCs4YzA2ZnhJWS9UQWYwZW5ySjJ1NVln?=
- =?utf-8?B?VDJjUEpTWFNNRXhSdzFiMEN1dmlTMlVscC83L1VZdlJzeEVYRGR3YWZGZktJ?=
- =?utf-8?B?ZXFFQ2l0bVVGa2FMajQwd2s0MGtXekpJOU8xZHZHVjBxNlpQVlE0clVVVjhT?=
- =?utf-8?B?QVBPdmRXeVdMcEFzc09uYU9nTWw0dy9uU3ZMbnlOemVsbmFyWXJZQzkxeUxV?=
- =?utf-8?B?QXZBQnRlbEd1NlFqK3Z1NnU3K2RiY3JnRjlaTmxSMkw0WHBPSG9ScHI1YWt1?=
- =?utf-8?B?ZzlyRStEdU9UWjJ1KzI1eXJVQmxGUU9zUTRMMGZqb1FzOEtoeE8vZjV6dEYv?=
- =?utf-8?B?aW03b2QxMS9tMEhjZlJ0M1MvVXVDUGZaSWlDUytvUGsyMS8rSGN6UXNJWGd6?=
- =?utf-8?B?WUlSZjFVZS9HYmFONXJwQVl0NzgrVmxGWUd2SSt3Y3IxN2FwL0pFRmZLM0t3?=
- =?utf-8?B?cFFIcGNmUnZjWXBGMjE2c0RHdm90cnR2dUtFdG9rb3BKZENKeFVmeDlFdzBK?=
- =?utf-8?B?NGdRWmUrenFMUGxhL2NmMWNpOWVIUzhUVm9qaXM5QkxERXkzUEdncVp2b01H?=
- =?utf-8?B?NTFyREU2VmM5bWs2cUxUdDRtR3pqM3ovczJLdFNnSlhGcGxkYll2OEwvRWpr?=
- =?utf-8?B?dHZRWXhiQlhnWGVoL000a2hUZ1Z5eG0vdW5uMXJTUWtvbS91UkFBU1FWMm9Y?=
- =?utf-8?B?REt3ZFc2Vmg4c0hqc0JXb2k1a0o1S0x5d2drZlFBcXBybHJDaS8rbjltTFVp?=
- =?utf-8?B?SzU4SkxzMnRkUVlQd1hOb2p1OHZ3MzdWWXVPdEgrd1RDeEZCcmI2Q3JJQ3pS?=
- =?utf-8?Q?JjMHGKURGalzGoU885v2LhPxLCHdJVJK4FDfgFxgL33mT?=
-X-MS-Exchange-AntiSpam-MessageData-1: sx68VacuApn/rA==
+	=?utf-8?B?dDdmZnh5M3ZPZUJ4cW9vdnYvSUF2UC8vUi9lNEVWZHFLekNYVTAyaFB1UTBU?=
+ =?utf-8?B?UVlvV0hkWEdVcy9kVmJhMWVNMW1QdjV5ZWpZcUE2VnV1QW5XTG5hajZWaTZw?=
+ =?utf-8?B?dXUydllvcGxicXFSRkxWV1NNMmVNb0xITDlNUlpwdEQ5WmlEdEc2eUhIdUUx?=
+ =?utf-8?B?Z1JNNkcwVkp1MFJmU25ibERjaE02aHB4OVFMMHpnMlgrUWIyREM0SVVON05r?=
+ =?utf-8?B?bGtScDNqdWUweHQ1Wjd5NCtwOU9KZUltVFpya2pUbDZPK2szd3VEREwrYjM1?=
+ =?utf-8?B?bmZFQkVEVDlFVkpwNHVSbjJXNHRMODRueks2cVZsSzZINnF3cUVUVG9MR3Bo?=
+ =?utf-8?B?VzkvdWE3dWMrWkY3R3BGVEQ3cHpwRjZ2clkzRGIzd0JTS0NmK084aGtIdlNZ?=
+ =?utf-8?B?aml6NVI0UDdVZ3BlZnowYVliSHQ0ZTNKUC8wL21RZGV4MWdwVVRFNEIyY2lQ?=
+ =?utf-8?B?ckdWYlBoQ0hSSzI5UWZENFdFWkdTUFl6UjRqeEVnd0ZvSG8wSjZFU2daaEsy?=
+ =?utf-8?B?MG8ranRaQUEwWXdrckpaZ2hRL3g0NzJJSmJzOW95ZFR2VTVPdVFYYnhzTVdD?=
+ =?utf-8?B?aGlVMnJnSEh5bkViSlZSajFTTmJLTmMzdnk0c2hBM2h5YW4zdWpCTmE0UmIv?=
+ =?utf-8?B?dURSd1BUUElNNzdqVGtmSHY0L3ZJZ0cxay9neUlqUTBNMUVGT0M1SUNhRk9a?=
+ =?utf-8?B?cEwrQnUvaTd1anJLczhqdldVOWhVSnNrQUwzc1Z5dHgzd1o0eW42Qng5ZU90?=
+ =?utf-8?B?ZkovRVZWK2tad1Y2RERjMW5xNFppVkZQcUQ0cHpZNXk3ang4TUZKTGRuT2ox?=
+ =?utf-8?B?MnNJSFpPZkh6dmNqK0RCYUMra0s2QnhSTDBtUE5QdThLV1ZHNm1rK2FxWWZz?=
+ =?utf-8?B?SGNxNW9HcWs1RGFxWWkwOUltODFOcGRHaUUvM3hEcTNRekMySFkvYTc0TzU4?=
+ =?utf-8?B?a0YybDd2QWZRWFlrckpmZE0zNzdrWWtLb09HWW5lb1pkZzAzVWFXeis0ZGlo?=
+ =?utf-8?B?RGpVcFpsWGhzNkdTb0ZxUjhPYzRpTEZMSXlkYStRNU9TVXN4TnlXVnVpcDdM?=
+ =?utf-8?B?QWhFcGYrMGpWd2lkZnU1Tm11bnVCZE0xcmVKcHlCUzBpWUErcGpXSlpJNEVx?=
+ =?utf-8?B?ZTEvM3pQdTZEQmZHb051bU03NWtvZzJNa0FNSm95WS8zd3BacUxoN1hOekda?=
+ =?utf-8?B?WTlBeUVVT01IUGJjbTllNXIrNUFNUVFUOXl6eU5Ed0xDOGtwbk5WaE5nVlJx?=
+ =?utf-8?B?MTI4V2J6cE0zSjBvL1I5Y3U4N1lrbjQwSDFzUHBINHFJWW14cFRDNXJLTGNk?=
+ =?utf-8?B?L2VINkFiTm5YcFk3b3grWmJ4VkFyZWNGN3ZTZDh4ZFIreHowU2FRR29wWm12?=
+ =?utf-8?B?NENsT1dLMi92Q016VWsxZDNkTjJtbk5pS3RPbmpRMUpjWXJxS0Zsdk4vRmVi?=
+ =?utf-8?B?UlVnUjRDUE56KzlnL2RnOVBkVW1nY05yVG1ZdGQ5cmozaEp5ZUF5NTNvNkJi?=
+ =?utf-8?B?OUJpMXFDYmg0THR5d29WSmE1K3NvM2tFQUpMNFU1QzNZYkU0OUJ0amY0blRH?=
+ =?utf-8?B?bVVXRnFRTjJUM0F6L1JkdjE4VVBFYkJDeXRoSGp6RDJOOUZzYSs1TU55dndZ?=
+ =?utf-8?B?MUlSQkJBQzBVZUthQVZ2Z3NJb1J2QUtwNlNaRTQ0WVBoZ1Nrd21SbkRtM01S?=
+ =?utf-8?B?czBqQmxicWlzcDIxL205R3VkS2FRUGxRa0I4bWtSZGZ0UEhocjJrVUNudWN5?=
+ =?utf-8?B?b2dGQmZqN2NZM3c4eWJKWUx1K0RaS09VRTdjdGdwZWNUNEE5dGJiZ3pRWHp6?=
+ =?utf-8?B?aU5kbW9kTVVHMW9KTFAzMWdtTWtVM1luVktHWjZYWDljQjNsT2w5emxUMGRW?=
+ =?utf-8?B?bzNkeVdyNkNJMzM1M2c5eWhXSTk1S1o2djZLbTYreVZONUJnMXFBaWdwUjJF?=
+ =?utf-8?B?RUg4SkxJa240NzlyTjNwckw5MHFGTXFpWjBJbmVJbUNJWmxFNW5qUkhVcUVR?=
+ =?utf-8?B?SnVFdVl1ald6RzcwUkpCSjFyZUxaRi9KdkkwOHRMc3VkZ3hnSi92bTFaSjMy?=
+ =?utf-8?B?d1ZJSmcyNklmM0lTVjdJVXljNzViK3k0TXoyVzFXTW0xOXNPdkd6VjlTUStZ?=
+ =?utf-8?B?NzQ5bERwRUpvWHh0ckN2SW9ZQVBkUlpEVlVGRTFmait5bXFuMTVwRmpCakVt?=
+ =?utf-8?B?ZFIyVlBoV3E5cGZkdm9ubzVKeFZjOE00YjZZaGN4RjNESFJXbzNNZUltaERz?=
+ =?utf-8?B?MzJ6bDhBUXFyREliVEcvQ3ZGU2lGZ0xSUlZiUkFHL1p4aHFtTk91dzcrMHdZ?=
+ =?utf-8?B?SEZKczdIKzY0QTJ5N00zR2N1R3duL3dMVlZDeWVpSCswc01oazRsMVJ4aVpH?=
+ =?utf-8?Q?6v2v7dLOUm0t8lbA4GyqVF6EEuElCQY2hfuUEQLQEHnwh?=
+X-MS-Exchange-AntiSpam-MessageData-1: YJDLRZUX8wu7oA==
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bde10ecb-7210-4583-8d54-08de945b92ac
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00b6f75c-642b-4125-dffe-08de946287f2
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2026 04:10:15.8667
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2026 05:00:04.5820
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tYz95akY5uQcCc+LGvn/0urRa4pgewPZQ/l4LuG4VZQhdt7mj545qTmOKSM8NY/DXOPZBBRjahKy3CR1q+xRXg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7876
+X-MS-Exchange-CrossTenant-UserPrincipalName: lfIS0LQ3acalp6jKFdqaPsUozH0l7K7p+NlJeDd1fBDo8Es+NE2rhHh6JrvTHnCZyvhugcv41uf6perQ6Cr+Yg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7526
 
-On Monday, April 6, 2026 4:49=E2=80=AFPM Aaron Kling wrote:
-> On Tue, Feb 17, 2026 at 4:13=E2=80=AFAM Thierry Reding
-> <thierry.reding@kernel.org> wrote:
-> >
-> > On Tue, Feb 17, 2026 at 12:53:54PM +0900, Mikko Perttunen wrote:
-> > > On Thursday, January 22, 2026 7:22=E2=80=AFPM Mikko Perttunen wrote:
-> > > > On Tuesday, December 9, 2025 1:21=E2=80=AFPM Aaron Kling wrote:
-> > > > > On Mon, Nov 3, 2025 at 12:05=E2=80=AFPM Aaron Kling <webgeek1234@=
-gmail.com> wrote:
-> > > > > >
-> > > > > > On Mon, Nov 3, 2025 at 5:07=E2=80=AFAM Thierry Reding <thierry.=
-reding@gmail.com> wrote:
-> > > > > > >
-> > > > > > > On Sat, Nov 01, 2025 at 06:13:26PM -0500, Aaron Kling wrote:
-> > > > > > > > On Sat, Nov 1, 2025 at 6:01=E2=80=AFPM Aaron Kling via B4 R=
-elay
-> > > > > > > > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
-> > > > > > > > >
-> > > > > > > > > From: Aaron Kling <webgeek1234@gmail.com>
-> > > > > > > > >
-> > > > > > > > > This reverts commit ebea268ea583ba4970df425dfef8c8e21d0a4=
-e12.
-> > > > > > > > >
-> > > > > > > > > Mmu is now being enabled for the display controllers.
-> > > > > > > > >
-> > > > > > > > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > > > > > > > > ---
-> > > > > > > > >  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 +-
-> > > > > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > > > > >
-> > > > > > > > > diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/a=
-rch/arm64/boot/dts/nvidia/tegra194.dtsi
-> > > > > > > > > index 1399342f23e1c4f73b278adc66dfb948fc30d326..854ed6d46=
-aa1d8eedcdfbae1fdde1374adf40337 100644
-> > > > > > > > > --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> > > > > > > > > +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> > > > > > > > > @@ -1807,7 +1807,7 @@ iommu@10000000 {
-> > > > > > > > >                         #iommu-cells =3D <1>;
-> > > > > > > > >
-> > > > > > > > >                         nvidia,memory-controller =3D <&mc=
->;
-> > > > > > > > > -                       status =3D "disabled";
-> > > > > > > > > +                       status =3D "okay";
-> > > > > > > > >                 };
-> > > > > > > > >
-> > > > > > > > >                 smmu: iommu@12000000 {
-> > > > > > > > >
-> > > > > > > > > --
-> > > > > > > > > 2.51.0
-> > > > > > > > >
-> > > > > > > > >
-> > > > > > > >
-> > > > > > > > Question for Jon as the author of the commit being reverted=
-. The
-> > > > > > > > commit message states "we do not have a way to pass frame-b=
-uffer
-> > > > > > > > memory from the bootloader to the kernel". If I understand =
-this
-> > > > > > > > correctly, this is talking about seamless handoff. What doe=
-s this have
-> > > > > > > > to do with enabling mmu on the display controllers? Seamles=
-s does not
-> > > > > > > > work on any tegra arch as far as I'm aware, but Tegra194 is=
- the only
-> > > > > > > > one that doesn't have mmu enabled for the dc's. But enablin=
-g mmu
-> > > > > > > > allows for better and faster memory allocation. My initial =
-attempts to
-> > > > > > > > enable this didn't work because I tried to attach them to t=
-he main mmu
-> > > > > > > > unit, see the related freedesktop issue [0]. After noticing=
- in the
-> > > > > > > > downstream dt that the dc's are on a separate unit, I made =
-it work.
-> > > > > > > > And so far, it seems to work just as well as Tegra186. Then=
- when I was
-> > > > > > > > packaging up the change to submit, I found that this had be=
-en
-> > > > > > > > explicitly disabled. But I'm not seeing why. Am I missing s=
-ome
-> > > > > > > > additional factors?
-> > > > > > >
-> > > > > > > This isn't seamless handoff to the Tegra DRM driver for displ=
-ay, but
-> > > > > > > rather to simple-framebuffer. While this does technically wor=
-k, it also
-> > > > > > > causes a spew of SMMU faults during early boot because the fi=
-rmware does
-> > > > > > > not properly pass the SMMU mapping information to the kernel.
-> > > > > > >
-> > > > > > > In a nutshell what happens is that the firmware sets up the d=
-isplay
-> > > > > > > controller to scan out from a reserved memory region, but it =
-does so
-> > > > > > > without involving the SMMU, so it uses physical addresses dir=
-ectly. When
-> > > > > > > the kernel boots and the SMMU is enabled the continued access=
-es from
-> > > > > > > display hardware cause SMMU faults (because there is no mappi=
-ng for the
-> > > > > > > framebuffer addresses).
-> > > > > > >
-> > > > > > > That said, we did solve these issues and this may not be happ=
-ening
-> > > > > > > anymore with the most recent L4T releases, so it may be okay =
-to revert
-> > > > > > > this now. We should find out exactly which release includes a=
-ll the
-> > > > > > > needed changes so that it can be referenced in the commit mes=
-sage. I
-> > > > > > > want to avoid people running new kernels with an old L4T rele=
-ase and
-> > > > > > > then seeing these errors without any reference as to why that=
- might
-> > > > > > > suddenly happen.
-> > > > > >
-> > > > > > For reference, I have rolled back my Android usecase to use the=
- L4T
-> > > > > > r32.7.6 bootloaders on T194 for a variety of reasons. So I am u=
-sing
-> > > > > > cboot as the final bootloader and not edk2 as in L4T r34/r35. I=
- have a
-> > > > > > pending cboot patch to support simple-framebuffer handoff, but =
-haven't
-> > > > > > fully verified it as tegra-drm is currently unable to takeover =
-from
-> > > > > > simplefb like openrm does for t234. But all that to say that si=
-nce I
-> > > > > > no longer use r35 for t194 I don't have the setup to easily ver=
-ify
-> > > > > > which point release works here and what doesn't.
-> > > > >
-> > > > > Any further thoughts on this patch?
-> > > > >
-> > > > > Aaron
-> > > >
-> > > > FWIW,
-> > > >
-> > > > looks like the edk2 patch to update iommu-addresses --
-> > > >
-> > > > commit 6071946461389221d2314cbbae0377610b5b1f6a
-> > > > Author: Jan Bobek <jbobek@nvidia.com>
-> > > > Date:   Tue Mar 21 00:15:27 2023 +0000
-> > > >
-> > > >     feat(NvDisplayControllerDxe): update FDT with framebuffer info
-> > > >
-> > > >     On ready-to-boot and whenever FDT is installed, update FDT with
-> > > >     framebuffer mode information, base address and size.
-> > > >
-> > > >     Signed-off-by: Jan Bobek <jbobek@nvidia.com>
-> > > >     Reviewed-by: Ashish Singhal <ashishsingha@nvidia.com>
-> > > >
-> > > > is in since r36.2
-> > > >
-> > > > $ git tag --contains 6071946461389221d2314cbbae0377610b5b1f6a | gre=
-p "^r"
-> > > > r36.2
-> > > > r36.3.0
-> > > > r36.4.0
-> > > > r36.4.3
-> > > > r36.4.4
-> > > > r36.4.5
-> > > > r38.2
-> > > > r38.4
-> > > >
-> > > > Not so good for T194 since r36 only supports Orin.
-> > > >
-> > > > I'll look into getting this cherry-picked to r35.
-> > > >
-> > > > Mikko
-> > > >
-> > > >
-> > >
-> > > I looked into this and it appears a version of this is in r35, but it
-> > > only supports T234. However, I also found that at one point, L4T
-> > > bootloader configuration has been modified to place the display
-> > > controllers into SMMU bypass until otherwise configured by the kernel
-> > > -- which the kernel does in tegra_mc_probe_device.
-> > >
-> > > I think that means there is still potential for an issue where the
-> > > display continues to be on between tegra_mc_probe_device and tegradrm
-> > > reconfiguring it. However, I cannot reproduce that happening -- most
-> > > likely the display is being turned off before that because of a clock
-> > > or power domain being turned off.
-> > >
-> > > In any case, this means that we no longer need to pass the
-> > > framebuffer's information to the kernel. I think it would be good to
-> > > have some clarity to ensure the issue described above cannot happen,
-> > > but otherwise we should be able to enable IOMMU.
-> >
-> > The problem would happen if you enable some sort of early framebuffer
-> > support, such as simple-drm or simple-framebuffer. Maybe even efifb. I
-> > think it'd still be worth getting the iommu-addresses code into r35 if
-> > for nothing else but to have a bit more of a safety buffer for the
-> > future.
-> >
-> > If we don't and for some reason decide that we want early framebuffer
-> > support, it might be too late to get UEFI updated for Tegra194. I recal=
-l
-> > that the UEFI code for Tegra194 is different from the one for Tegra234,
-> > so it is probably not as trivial as a simple cherry-pick, but I'll try
-> > to do some digging and find the code that does this for Xavier.
->=20
-> Any updates on this?
+On Mon, 06 Apr 2026 02:47:31 -0500, Aaron Kling <webgeek1234@gmail.com> wrote:
+> Without the cmu, nvdisplay will display colors that are notably darker
+> than intended. The vendor bootloader and the downstream display driver
+> enable the cmu and sets a sRGB table. Loading that table here results in
+> the intended colors.
+> 
+> Co-developed-by: Kurt Kiefer <kekiefer@gmail.com>
 
-FWIW, in my testing with L4T versions with UEFI firmware, I'm not seeing=20
-any issues even if efifb is enabled. My inclination would be to merge,=20
-and we can work on issues related to early framebuffer separately.
+You need to include a Signed-off-by with each Co-developed-by tag.
+From submitting-patches.rst:
 
-Outside adding support to r35, one option is to make it so TegraDRM has=20
-to explicitly call tegra_mc_probe_device (not necessarily directly) when=20
-it has quiesced the hardware during probe. This would not allow seamless=20
-early framebuffer transition, but otherwise it should work. Implementing=20
-this for tegra-smmu would also allow us to get rid of the IOMMU API=20
-paths in TegraDRM and Host1x, which would be a great boon.
+    Co-developed-by: states that the patch was co-created by multiple developers;
+    it is used to give attribution to co-authors (in addition to the author
+    attributed by the From: tag) when several people work on a single patch.  Since
+    Co-developed-by: denotes authorship, every Co-developed-by: must be immediately
+    followed by a Signed-off-by: of the associated co-author.
 
-Cheers
+checkpatch.pl should also flag this.
+
+>
+>
+> diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
+> index 0559fa6b1bf7..973ab0bb15c9 100644
+> --- a/drivers/gpu/drm/tegra/dc.h
+> +++ b/drivers/gpu/drm/tegra/dc.h
+> @@ -103,6 +103,9 @@ struct tegra_dc {
+>  	const struct tegra_dc_soc_info *soc;
+>  
+>  	bool has_opp_table;
+> +
+> +	u64 *cmu_output_lut;
+> +	dma_addr_t cmu_output_phys;
+
+I think 'cmu_output_lut_phys' would be slightly clearer.
+
+>
+> diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+> index de8b2dfc4984..78e71a3ff026 100644
+> --- a/drivers/gpu/drm/tegra/sor.c
+> +++ b/drivers/gpu/drm/tegra/sor.c
+> @@ -2557,6 +2557,17 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+>  	value = tegra_dc_readl(dc, DC_DISP_DISP_COLOR_CONTROL);
+>  	value &= ~DITHER_CONTROL_MASK;
+>  	value &= ~BASE_COLOR_SIZE_MASK;
+> +	if (dc->soc->has_nvdisplay && dc->cmu_output_lut) {
+
+Checking for cmu_output_lut not being NULL shouldn't be necessary,
+since we fail probe if it's NULL. (Checking here gives the impression
+it might be NULL).
+
+Otherwise looks good to me. Main thing is the trailers in the commit
+message.
+
+Thanks!
 Mikko
 
->=20
-> Aaron
-
-
-
+-- 
 
