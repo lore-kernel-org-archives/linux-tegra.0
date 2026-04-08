@@ -1,196 +1,149 @@
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011042.outbound.protection.outlook.com [40.93.194.42])
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE183C9EE8;
-	Wed,  8 Apr 2026 13:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775655317; cv=fail; b=PXQNY8W6trQMc6Je6xXUSfvjO93rB/ZauiE5y6VOtdFp4mmGrneAZ7qF7nSMLkFyiWPRvJrPubeHZZRdX81QJaXsJisEMiMuJUXapwK9LPQgfaakw+AJS1ilDkj8xIcXI8FODb/YR7bB5lGRIKir+7aQMKPGWIClQxd7D+4HL5I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775655317; c=relaxed/simple;
-	bh=ZdL6zC5U+KwV0WvsjYnbuA55N4AEd1314qKQ9stdRvA=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jXUSGkfJjdVUEUjByLeiLA8kuqUJsTVsW5Q95H21+2a6HW31J0gidVXWFT730F/+Z48lT3Ks+XgeV2o3bUODrliUfHJnbfZcDrrs/Wbjpme6KrUztUmIbmll0gWBYLHhEoietQUBhpUOQmhH9PgoQhXi3OcabwUy6/IsLDLDgbk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JhRMrSjb; arc=fail smtp.client-ip=40.93.194.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1FA3D0919;
+	Wed,  8 Apr 2026 13:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775655973; cv=none; b=D0h+NKg1KLtmFy0q68yF83cw5GEPNSfitT1ZJ6Gn9vae28U1DvG8A6+v/YbRpB42sZnBQ/2J5Wm+gvGcbBMA7c4uP/UsJQ52h+pqOtrpqCdi4khFxnOmpn7ZN7BooTBQtQKwh+CyXxKAD7AEzM1z/hSAhgTvcq2WJeQR41wdcTg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775655973; c=relaxed/simple;
+	bh=L2VDqHhN7Ia7l+wKWCkvcm5lCLsUz8HKsNWtCrpGFt0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Fj442XIPQVrXm8E6EGNldZQ1sv5a7MPGXAfHJzEYPaTDEAofiOWPu0PxBw3xqVEdAk1if1OlgP5lqP0JLn2eCGD/x8GUgJ4ORu8tvqjRM7yMYnAw/J/VDvfWKT/gXhByDmPM6Xf5p8xMlyumuQlKDbzGq+8eqWtpuSxQ587e1PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=icQTJTsS; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JhRMrSjb"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=quJgtmrjcBeWP1QQsEygpk8GTy3xVRajeTDh/YJMG78JGnSdutB23CLAPO/M4qIxvY0hIiVCawzM6Ae1/nxljyh2uMTnXCIxFPRYBKku9Y60yD/a/QKqhY7bnIMOaw8vuahdIbSQCtGgus6v2l5z0tQYjITvvLFZVUU0kjyaSBJcRXRpm3YxnNqoZZJYaDgnrzlhplcg5ZNNUvNicybz0yE7PJ5GJcXqbBBipTU2gHWFmj4bCtYmbQb+jLYnOrRgE5J4y7FSGc8XG8hXAjiKsolom51KRBemODwbbRObupFkrmN5U+pCIjqdbTdbuREStcT/NGPioXejX1aL8wuSBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cRf8y/Xbm93UF9VirZ7Uem2Y/sAkeJtabHXYdoa+wis=;
- b=QRnA1YvfY15LmzZNvI3N0KZ6SM2olBz9YoOx9NwmNDbuItQuApD/iuIYrEYLnfFV7IedRZr6nkGxGRN+1zabLJ5/kU9RP6HZYmtbCvugOGF7K5HbyzUkK0vtwpFEnXw6cZC8i+8hgehbSmPUgpAEpgZNI73hZ7HZhYvlyDH0J1YmgKsk1nwFhD/Msd77sf33u+7bU9T6iXftEjevqqam8Id6J/qSGIM/+OPwwCu60O5PtQVMOcEaeP11T2GUU3+N4kcXlMxtKYf381yNphJw5ZD5P22A+U5spUylatD20Qqe/QBn3PMG8FzJWjoTQdEa8/B5THd0HfK9nVkoRKgbpA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cRf8y/Xbm93UF9VirZ7Uem2Y/sAkeJtabHXYdoa+wis=;
- b=JhRMrSjbashxHJZS2P96XecdZlyzQZVbi3uER+E5tWHeYkPNkBrrSNiOzxY0qBY2GBq+06tsDszAvYKQYWla8UHFVaTtmDqVXpOsT+YVoX1UahZdGSh8bvRYk00qfaSRMSecwHYMqtVVujrtCyz1UoPHrM732pgaiwNLYTtNfFjq7Xkuc3x5Rtepha3907irTX4N6gSe9/X41qnth5tdod/1tGCTwJQOlNwavVaxL2acO0cTQ6lDd/htIff+IslS/j65xxB2OddcwLPQuIhR39ppPvWv/n01y8vV3gpEFvhgDsvoQkEIF4BVb9oZBgeEcL5RGy3toTdGEUwTSpJL5w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
- by MW4PR12MB7167.namprd12.prod.outlook.com (2603:10b6:303:225::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.17; Wed, 8 Apr
- 2026 13:35:09 +0000
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391%6]) with mapi id 15.20.9769.016; Wed, 8 Apr 2026
- 13:35:09 +0000
-Message-ID: <56559431-b73b-4e3b-8554-7a72d78e2b67@nvidia.com>
-Date: Wed, 8 Apr 2026 14:34:59 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu: Always fill in gather when unmapping
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>
-Cc: Alexandre Ghiti <alex@ghiti.fr>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
- Baolin Wang <baolin.wang@linux.alibaba.com>, iommu@lists.linux.dev,
- Janne Grunau <j@jannau.net>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Joerg Roedel <joro@8bytes.org>, Jean-Philippe Brucker <jpb@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-sunxi@lists.linux.dev,
- Matthias Brugger <matthias.bgg@gmail.com>, Neal Gompa <neal@gompa.dev>,
- Orson Zhai <orsonzhai@gmail.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <pjw@kernel.org>, Samuel Holland <samuel@sholland.org>,
- Sven Peter <sven@kernel.org>, virtualization@lists.linux.dev,
- Chen-Yu Tsai <wens@kernel.org>, Will Deacon <will@kernel.org>,
- Yong Wu <yong.wu@mediatek.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
- Lu Baolu <baolu.lu@linux.intel.com>,
- Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>,
- Joerg Roedel <joerg.roedel@amd.com>, patches@lists.linux.dev,
- Samiullah Khawaja <skhawaja@google.com>, stable@vger.kernel.org,
- Vasant Hegde <vasant.hegde@amd.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <0-v1-664d3acaabb9+78b-iommu_gather_always_jgg@nvidia.com>
- <ee2c2044-e329-4cdd-ac35-9365824d3677@arm.com>
- <20260401173650.GD310919@nvidia.com>
- <ec51ef14-e360-43a6-ae62-44a939ec8027@arm.com>
- <20260402225121.GI310919@nvidia.com>
- <94576121-d4ff-47fd-9ff8-2a00ff4c5c2a@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <94576121-d4ff-47fd-9ff8-2a00ff4c5c2a@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PR1P264CA0171.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:347::17) To DS2PR12MB9750.namprd12.prod.outlook.com
- (2603:10b6:8:2b0::12)
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="icQTJTsS"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:Cc:To:Message-Id:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:
+	Reply-To:Content-ID:Content-Description:In-Reply-To:References;
+	bh=HcvFXUIAV4OQbqlH4vRJ5Y5Q1or2wmgdX0N00cKRyx0=; b=icQTJTsSdSmhWVsrOw6iMDEkcx
+	6dkFhyNoWBHaMJ0VLi4G6UlFOPn4sK5QKrI2Ix1ij1JhsJs8wAqvMMoaRuGbyTNyEi/PlpD6SbYnx
+	m6UmfFzG4L/YvdfpH6HjpSJ6gHoeWWGt98ZgAMSVw8HKlSLaN1zacWR/vXJMZdEcG0O1uGEI1Y399
+	1RggYcDakrgrFQrTY9pMoIrnm6ynwYrFSsgwFT4x7d9Vpz6ODkT15GIkfay1SU1i54Os2mrzY2qnG
+	I/FDKlYlmmvvV/ivcWTQjmBsXGw2MZ26TrNtqCtg7PdwXAKCv/EiA9whMVtQQwfs/tkTjhvInwtfP
+	1VGfMkIA==;
+Received: from authenticated user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.96)
+	(envelope-from <leitao@debian.org>)
+	id 1wATEN-008Snk-04;
+	Wed, 08 Apr 2026 13:46:07 +0000
+From: Breno Leitao <leitao@debian.org>
+Date: Wed, 08 Apr 2026 06:45:43 -0700
+Subject: [PATCH] spi: tegra210-quad: Fix false positive WARN on interrupt
+ timeout with transfer complete
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|MW4PR12MB7167:EE_
-X-MS-Office365-Filtering-Correlation-Id: c543b95d-558b-42da-372f-08de9573a709
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|1800799024|7416014|366016|376014|56012099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	Tm7EMfjbnelwIwQTP7uon7RLSSgXMZFyNxaAeMsjfJhrxdlTSRAEaeNNN7LNCNpHAoQT5YqWft8wUnflYuXdfDvQ3vGt+UlvtHN6EFJCngRQbvV5QprHGwCEp6ay4vW43bvO//jzqdjzEOR9+nQIXaCouTQiVMR36UerTIgf516caLOrKrqeNCJ3l3V+vDJXvM/8J8FHzatx8fLRgY1ZlI/0Z9OgcJCo7hgPjYlZ3CjdsZmR0Boq3ZQLinIPLE6qpyxPkgSCo8dk9OZFhCP3Q12gi3lWR83aIKlPY2L6YLcZJjrGtt2RbJDZDfCYgkGbnsHZRaRwpcGqfsdTACRHGivRYHKhstyRgdP8s6VSqvDM76MyMwyeOJBZaWwTwANOEUw3NRc/vB+awR1+ojP2osH3jVRAkRfpG6L0cLyfLodOjR7s/jM9RY0FS7rLwhW0cnrSdRy4q3JxxRNHXPZJFX0TsHzuRpwRfzOho9rmrDVPq5a5sA+l9MD6IECUXHyYG63U1WGzuqmfeHdgWUS4332dlCXCv5k1K0wVZyCnbHhcFOuZs99tGwlHPz7iv8rx9gkpLTN0eYPMhPJIdDz3Ovyh1Cu32fNiPZCoBxU2aHhRxKaZd2pszdumCBzUzlmro7L7bonS7UUeT5BdTFASiaOYom3xMLyS0q2krinNDNjb+uVAgPp3AoO3UbizIR9tEF59XIBO4h/EWQGSN66sht9yngCj1vtDPM3wxEvJ5pc=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(7416014)(366016)(376014)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZXZHcHRDeWUrcXdrK1kzRlpYNENPNUR3bzlFSlRZZk1uZE9MMWFxcjJleDRQ?=
- =?utf-8?B?UXR2NGxDRDBZdFJLNWY0YktraFNKR0QzR0lZM04zdkFGY1U1V1QyU2NBOVVJ?=
- =?utf-8?B?Q3dTRXh4NWlod1EvL045ZjJiVENxRWxzRjdaQVUzTzlGMUtDZU00L3dvOFk5?=
- =?utf-8?B?WmpxQ1hYak85ZzczMy95enRNSHIyUUxiZmZJUUU1cWlrZ0tMR282aUFWTXBR?=
- =?utf-8?B?eDJJejNYb04vNUpVVUptVjRjbE5SUHVTbGRPRCtNRHF4dmoyczJCNDI1WDdU?=
- =?utf-8?B?b0ttM21Db0E1Z3VEYXNKV3dWbHIrQ1hpNUtvaW5PMk1OMzIzZ2IxMU9NZWFs?=
- =?utf-8?B?YTFYZFZLcUJEaWQzbVhzUmlaOVFrdmRJeXZFUzZYMFZLQ0xicnpvaFJZeXRI?=
- =?utf-8?B?OVZndzBTeWJUODk4cjBjMWMyVXQrb3dJT0tkK1FkWlhrTFFSVHZndk40WFp0?=
- =?utf-8?B?dFgrd3JvS2hoemZsL2o5TlBXeTJiWnAxV3JYa2xZM0ZxVHBkbGFsa2VZK0R2?=
- =?utf-8?B?OGlLSFg3cFZKZnlMMzJZNlJ2eUVFRVVtUVVSRnBsVVg3b1NRRGMwMDgxS3Y0?=
- =?utf-8?B?UGh5K0pENFp2N1MyMlNWWDFoMXhvUjhXQS9PM1hhbitNd1BWVXVHUERpcUJp?=
- =?utf-8?B?Um9CNXFlR2ticTJFNXc5MjJ1R2oxSjdGSDhBVTFkQjJwV0thTmpoR2ZzdnM1?=
- =?utf-8?B?VmFDaTlsY2QvWUhnV3BsSHJJRDRPS2dZOTJCeUJEd2RsaS9TQTArbFBUdkg1?=
- =?utf-8?B?VDQwN1FheDhrZ3lYbEVQU29JQ3VudjlxSC9rK0N0YXYxSXZhWFEwUi9KUEFK?=
- =?utf-8?B?RGNwV1huSmFTQTNtQlJEZU9BWFlvajFTYVJmaVA0dDdONXk3L0ZzU0txcmR1?=
- =?utf-8?B?WjluWXZ0UHJmZURVR0pNcUVibkhzcGc1ZEpucGtzbUJMeDlYZUQ5K1kzRG0z?=
- =?utf-8?B?VmtaNGt1cFBFYWR4SEM1a3ZBdmQ2aHVPUy9Da3dZZE1PWkx5TmcxbUZwZ0NU?=
- =?utf-8?B?NmZxUHZ5L3FrZUVCNEFPeFYwR2lHRnlUcFpudWhrUkNNeXRmUW5leHhKNEJO?=
- =?utf-8?B?SWJaOEdOZUg0Z3RvYjRjVmtUdnYwaiswNkwvVFM3eHJBbnIrbk5DSkhtcFZX?=
- =?utf-8?B?YVNEM0l3eGYwSmlwQ1ViVFFqcWdTNGIzdUkvVlRKd1V5elM5eHlyZ0sxNXFJ?=
- =?utf-8?B?dGJyaHhrYVZ3RWhSSUQ0UUFrVGdvTHZKTnhOWVF0Nk1zenYwYkZvSHdoZGlG?=
- =?utf-8?B?NThMdFdjZFBGcnR2R3Fzdk5za2ZkemJzWXQ0eVRjamJ2SHVVNFZPVXhjWTVG?=
- =?utf-8?B?U3NrcGYyY2NRMEJzcDNSQVVDRkdkVmpwZnBKZktnM2EzVDc5dHFBcmJ0QVF5?=
- =?utf-8?B?SzJTRlZ6QnBmbEx1YWxBOUhBdjJhSHExK0dLVzVLblAxRE9KcE1Bb0VPdEQr?=
- =?utf-8?B?VEVjOUxtczNxN0xNU0hsTEhSYk5seEIxZzhFMGhWdTlweUdNdmRJQVJ2THAw?=
- =?utf-8?B?K2dkVkYwdzYxaSt5a1BXS3FwbUJGSjVaeXl0US94SGFDZDVOaXVZdVN6K3d4?=
- =?utf-8?B?VDNNc3ExSmh0TFdrRXRyeThPK0dNUDRDUzUvUWtXMVFFQ0NHNVhmQXhDdkVj?=
- =?utf-8?B?SkxkMVBiSGhmZElLbDFiY2ZnVUpCcXEzaHhvSDIxR0hpWjRsL211bDFCZE1O?=
- =?utf-8?B?bXlOZjQxTkJuVWw3Und2QlA4RVRWVmhVUzJNbXVjb3lDbUJVMjU5UzVmMWxY?=
- =?utf-8?B?SDNaMEt5emMxVzgyTHRNM05KNXZHRytNOEgzNFZ3VGZiQ09VMEk4cmlhcnkx?=
- =?utf-8?B?Vm9paWlIZDZPOWxVeFNqS284K2d3ZlZOUVJZK2tmRUFXWVZIYXBGTzA1RVVL?=
- =?utf-8?B?WnRJYlVwTGJ3b0xBUWRjbWRhYzloTkhHM0VMVUc4UmdzaWRWV2hmSk9OelYv?=
- =?utf-8?B?U1Bzd000QUJBa0pzZ0w2VzVhR3dxZjZLRHZ2T0ttSTQvZTlsODVOMFI2cmJL?=
- =?utf-8?B?dkZiOWk1UXpka2NEenZoZ0VUOEJ4dUNiSFk0TU9aZXE2czlhZWhvemZsTCt5?=
- =?utf-8?B?aHlMM1Rhb2V3aXRuK25qNnlETUIzMUYvVGNQUldqRXZFdGdDcUlYUGJDQlRO?=
- =?utf-8?B?bWQyV01DTnVIemN6VFRXUUhrZjM2L29zZE1zMzBETkFuV0IvWmsrSUZDN2Rr?=
- =?utf-8?B?SEZVVVNqdStya1RtSjRrWCtNSWUzZkNOampSRC9OMnhGNmxQRkN6aWtaMG5T?=
- =?utf-8?B?VTBPMVloVzhQcmhQMzZ3ZWY5UFZVQVFPTkxLaHpmQ3h5NDJBVWxWVnZ3NFhH?=
- =?utf-8?B?VG9FOHloUktIN3VvaHYrMjVDNkJER2N6VEthcG1KTUgvNmtDQVg0eXBRVHdk?=
- =?utf-8?Q?iV3QGXTYjM05+xpap8g3ywG5ALzpriTRMu+hjWiH6wArC?=
-X-MS-Exchange-AntiSpam-MessageData-1: o/lzCtSQbflfQQ==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c543b95d-558b-42da-372f-08de9573a709
-X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2026 13:35:09.0642
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9b47sY4jdmCqlJU4n7Y9abunpuQpWxLeCyU8+5R2q+Uxe0G40ZjegUeezD2iUQQYjVIV8lBd6jBpXNEGxJolvA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7167
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260408-tegra_warn-v1-1-669a3bc74d77@debian.org>
+X-B4-Tracking: v=1; b=H4sIAAZc1mkC/yXMQQrCQAwF0KuEv+7AdCxF5ioikqaxxsUomVaF0
+ ruLdvk2b0VVN63ItML1ZdUeBZnahiA3LpMGG5EJKaY+dvEYZp2cL2/2EkRlTMIH7tsBDeHperX
+ PPzudd9dluKvMvwHb9gUGTwG0bgAAAA==
+X-Change-ID: 20260408-tegra_warn-cecd2ca3a61b
+To: Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Sowjanya Komatineni <skomatineni@nvidia.com>, 
+ Laxman Dewangan <ldewangan@nvidia.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, song@kernel.org, kernel-team@meta.com, 
+ Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.16-dev-453a6
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2822; i=leitao@debian.org;
+ h=from:subject:message-id; bh=L2VDqHhN7Ia7l+wKWCkvcm5lCLsUz8HKsNWtCrpGFt0=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBp1lwa0fRGYKAfqmnbOnbUQt23sPW2yEc53EGC1
+ 1SJdRgmzL6JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCadZcGgAKCRA1o5Of/Hh3
+ bTk4D/9Zpiz9mjkCbo1M5qP26gFrQH6VOr4VwUL0PxpKTWaF5SJiMTM/uCT1s2RV26mwI5L279o
+ 5bP3/WfRuDU70jdy721FgOexf3RpqghxM+6x0zN9O71IdHZsGpdqKcRV6mV18rMVz0mM6gnwuaV
+ XyZNdsqHPam2ocM3YS2Dc/e2OmLd0R8CVqhKHJAgENK+myawra+B6+aBP2qsYriKZ6wV9PnuZCn
+ zeKFRVzi/C/thsR5Ils44MtMXxQsrv+QJFloY9m8dwQ794G6w9a9zfHN3KRXC56oiSFTBqddw+h
+ P4bP9fbdPID3JIG5MAmyeimBFfPQH1tJEnyK2RHzbV8961gf+QVrS4oUCgUYAuj0xWI26PScTsb
+ Sl+vIBcNmtBO/KV5gDGXFrud9Zhf2/z52qGSd7gz0OfpV3vlkc9D/+PvV5MCwpYIDWim9xNcp1y
+ ep4yfYJT1kSTestgmIbuh3sCzd2Dnl//XFGmbqALhg16+3X1pkEoDNuxhfpkzHKfWijGT52wG3t
+ XDKjXLW2THn+qVCqtL2Qcnke2BOFAE1+N7wsYL4BJxBmB/Ba+X3t5CeEnnw65lTESZNZvjxrWcX
+ SCK7hjuRFM/rxWfPminPsAl80RfrHZEBTVwfx2nQNwjM3PEb6XL0InSuq/aOsVssbD6Ifh4l4FD
+ k6KJuFXhF1bU8Sw==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+X-Debian-User: leitao
 
+The WARN_ON_ONCE/WARN_ON fired unconditionally on any completion
+timeout, including the recoverable case where the interrupt was lost but
+the hardware actually finished the transfer. This produced a noisy splat
+with a full call trace even though the driver successfully recovered via
+tegra_qspi_handle_timeout().
 
-On 08/04/2026 09:42, Jon Hunter wrote:
-> Hi Robin, Jason,
-> 
-> On 02/04/2026 23:51, Jason Gunthorpe wrote:
->> On Thu, Apr 02, 2026 at 07:11:13PM +0100, Robin Murphy wrote:
->>>>> @@ -2714,6 +2714,10 @@ static size_t __iommu_unmap(struct 
->>>>> iommu_domain *domain,
->>>>>            pr_debug("unmapped: iova 0x%lx size 0x%zx\n",
->>>>>                 iova, unmapped_page);
->>>>> +        /* If the driver itself isn't using the gather, mark it 
->>>>> used */
->>>>> +        if (iotlb_gather->end <= iotlb_gather->start)
->>>>> +            iommu_iotlb_gather_add_range(&iotlb_gather, iova, 
->>>>> unmapped_page);
->>>>
->>>> The gathers can be joined across unmaps and now we are inviting subtly
->>>> ill-formed gathers as only the first unmap will get included.
->>
->>>> We do have error cases where the gather is legitimately empty, and
->>>> this would squash that, it probably needs to check unmapped_page for 0
->>>> too, at least.
->>>
->>> Maybe try looking at the rest of the code around these lines...
->>
->> Okay, well lets do this one, do you want to send it since it is your
->> idea?
-> 
-> 
-> Any update on this? Boot is still broken on a couple of our boards.
+Since tegra210 uses threaded interrupts, the transfer completion can be
+signaled before the interrupt fires, making this false positive case
+common in practice.
 
+Almost all the hosts I sysadmin in my fleet produce the following splat:
 
-I just noticed that this is now broken on mainline as well as -next. Can 
-we get a fix in place before v7.0 is released?
+	WARNING: CPU: 47 PID: 844 at drivers/spi/spi-tegra210-quad.c:1226 tegra_qspi_transfer_one_message+0x8a4/0xba8
+	....
+	tegra-qspi NVDA1513:00: QSPI interrupt timeout, but transfer complete
 
-Thanks
-Jon
+Move WARN_ON_ONCE/WARN_ON to fire only on real unrecoverable timeouts,
+i.e., when tegra_qspi_handle_timeout() confirms the hardware did NOT
+complete. This makes the warning actionable instead of just polluting
+the metrics.
 
--- 
-nvpublic
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ drivers/spi/spi-tegra210-quad.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
+index 7cca5578eba31..db28dd556484b 100644
+--- a/drivers/spi/spi-tegra210-quad.c
++++ b/drivers/spi/spi-tegra210-quad.c
+@@ -1223,7 +1223,7 @@ static int tegra_qspi_combined_seq_xfer(struct tegra_qspi *tqspi,
+ 					(&tqspi->xfer_completion,
+ 					QSPI_DMA_TIMEOUT);
+ 
+-			if (WARN_ON_ONCE(ret == 0)) {
++			if (ret == 0) {
+ 				/*
+ 				 * Check if hardware completed the transfer
+ 				 * even though interrupt was lost or delayed.
+@@ -1232,6 +1232,7 @@ static int tegra_qspi_combined_seq_xfer(struct tegra_qspi *tqspi,
+ 				ret = tegra_qspi_handle_timeout(tqspi);
+ 				if (ret < 0) {
+ 					/* Real timeout - clean up and fail */
++					WARN_ON_ONCE(1);
+ 					dev_err(tqspi->dev, "transfer timeout\n");
+ 
+ 					/* Abort transfer by resetting pio/dma bit */
+@@ -1340,7 +1341,7 @@ static int tegra_qspi_non_combined_seq_xfer(struct tegra_qspi *tqspi,
+ 
+ 		ret = wait_for_completion_timeout(&tqspi->xfer_completion,
+ 						  QSPI_DMA_TIMEOUT);
+-		if (WARN_ON(ret == 0)) {
++		if (ret == 0) {
+ 			/*
+ 			 * Check if hardware completed the transfer even though
+ 			 * interrupt was lost or delayed. If so, process the
+@@ -1349,6 +1350,7 @@ static int tegra_qspi_non_combined_seq_xfer(struct tegra_qspi *tqspi,
+ 			ret = tegra_qspi_handle_timeout(tqspi);
+ 			if (ret < 0) {
+ 				/* Real timeout - clean up and fail */
++				WARN_ON(1);
+ 				dev_err(tqspi->dev, "transfer timeout\n");
+ 
+ 				if (tqspi->is_curr_dma_xfer)
+
+---
+base-commit: f3e6330d7fe42b204af05a2dbc68b379e0ad179e
+change-id: 20260408-tegra_warn-cecd2ca3a61b
+
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
 
