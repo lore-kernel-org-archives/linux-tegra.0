@@ -1,198 +1,138 @@
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012049.outbound.protection.outlook.com [40.107.200.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B955344DA2
-	for <linux-tegra@vger.kernel.org>; Wed,  8 Apr 2026 21:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042D739BFFE;
+	Wed,  8 Apr 2026 21:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.49
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775683210; cv=pass; b=UtQNM2FO5fmvuTUkBXltAQCCoPImkWnVwl2g2roOU0EPnJ6drE1wCMG8gsF8k81JmEQyMGLPywzM1DwK9Dqx0uJ9794/eDnIgt4MgY7nrSar7lS/vvgFa+s/C0XVF5xI7uwfNErjn1eyQh/BG8uQ6IYlE0bpzQxqNM0gzRzoAKg=
+	t=1775683519; cv=fail; b=az4IpdyqjT+z1vdtEl6YF+9aaOOWh5z8cdVwOCo1nlq1Kjfxlq1oEPfWPsYmNUq5+OC6sEYDqME2rLOAFJCRcdf0LbxCXCkkKAnU3EndudKcMjg+zv4zfi7mpVyZxHnK5ImOy2YnrVSX2DB9QG7Tv8EXHWjei0T17D59zu6nnFc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775683210; c=relaxed/simple;
-	bh=w6HuGbAt29hunfsVixF+Oz6nMbU+6+kA8Wt8FyAQRNA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QHNUT+qlYx8AnYfJU86fgfk9wBXadTjZz9bOlA5WcgXCa7L5l113yya6OF1fuLi/K3WjTMMtqpNA3JakOK9RX162qvfuLsvAKGbXuPBTqo1jt0R2MhxzeDyBvyoSVfJ2f1xI+KeElT3v7ZJasg9htRaX610hsgfWQKtRcuqmx1c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F8KQW8Bm; arc=pass smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1775683519; c=relaxed/simple;
+	bh=mIL6obZg+GSI4HU/Vqp/ZiWifBpbbsB/eLSh66XeT2U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pHxopkHBEDrm7DH5CZRAGhGXdTGE03y5D0DRBilsehQl2EtImS8+b1GP6X/dJv8EVxtJHY46Gu54gjd9kvjkAV/2ZdhXO1l8WbYM1KI1/pAol3R6d8fiuDIWiDYK3waXodSkBp9VIY1GetqjKcsnfE9UD8I1lZpAsEBkMDFm8pA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Cb6LsmRQ; arc=fail smtp.client-ip=40.107.200.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F8KQW8Bm"
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-38dd575bcf3so2020131fa.3
-        for <linux-tegra@vger.kernel.org>; Wed, 08 Apr 2026 14:20:09 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1775683207; cv=none;
-        d=google.com; s=arc-20240605;
-        b=gj4pb+xSqdFp6mIT6Bg4IBLfmfAvde5TAXghVkTanodsgSx7/y2IPo9zlp1LNMkoc3
-         xwqxK4Bg8iIs5PNuqVVzM66VqdbAnMgo0K1FIoC0+dJo8knUF3O+XW4suFeQDGCJjcra
-         FFDVfm+Bb8XHvIL0LEieqafrPCMnnKxx7EQcAopUKyzgrePL55E5s1j+jwBWU9r+mVxo
-         YeTZMcOafbpMzofJH2ypTj/oQLdZ8uNpIrRgpwOSjoa17prBe32jVcKFWyqDHIGYWigG
-         vIbyIshN18IM9XGdjRfH95gsQPLhqOaDE3IpCNAnbHzD3jLryNr4qPOklxUSm3e3XGwb
-         qCHA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=EMCMLECo02eXBhSDMm1eRN49LeGDrS1E5IJtLpRBGmI=;
-        fh=XNTFctSEdg/Je4Mw9KBMpJYsrIHfJCVjMNrFUNAVOXI=;
-        b=l1svLdmv6WcbgH7SgFl8hPHHuariOk+Qnoao81DBUJ7tIO5TnY4tEwf64+GPQaVeOo
-         QSe76xQGsMWTyamPDSFylE7ihQMOKev1u89u7N9A0/4pTZcv4j8WhZ0XYOvgvfhMxtrX
-         zZHLQpLETEGZZP3pA/m80Q4saqFrBaxLnl8e2YMn30S+5f+UxQvK0J7bBZZbO3IiBGJB
-         ScL7fOSYyIih+BJBI+9dQzNzo8Fvg1IH0uh1xMlZyslsHOTEPp827SbV1GZ4tEuxlJ4n
-         TPVCDP3mpYvcnU5anDnq9SQdTqqY321Vxvucq36phdqvR5yTvmuHrZG3GeKaHCg+w+P1
-         3l3w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775683207; x=1776288007; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EMCMLECo02eXBhSDMm1eRN49LeGDrS1E5IJtLpRBGmI=;
-        b=F8KQW8Bmb+MA6qkyODQLh88/V+GlS6du8nqcNK0ASAtXN7yk703km0+VX0zuqqRPgq
-         9pZprFTZxJdpbZayjTOwMqoqICtQ2iEs8Kzr5tloju6knt70LvX+E312hZVoDjGLfrLG
-         Cy8Kjn3anaSUyDbElFtmGMlIcemT+dK6BZ2hWLQV+sm7tevlcwyHfLLvhVbeWb1MSDs6
-         mxFqmRPDSkB05JPwUkYUpdaem1w4Uy4d7DIhEwLAJDN6/boGCPf94UbIMrixm5vObQfz
-         SmrORHqWgQ8tGFEaVcdy2QM2WS2sILWS04pytik1YJo0NtKTgZkTd5I6SFG1/KYnSVnf
-         w7rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775683207; x=1776288007;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=EMCMLECo02eXBhSDMm1eRN49LeGDrS1E5IJtLpRBGmI=;
-        b=ikqvvWCM0k7SWB187txczCXs0CLytf6+JX2FHO8lnCV7Tck75EPd1xby/v/+yaj245
-         oo3L487TjqM8BhQkipPkP+1oqXVeTTuRx8LbB7omiQOVG8jk9bIr1yV7SfTqr6B+npUa
-         YQJfEnVVv040pdO5LstEQgbEmH/Y0ZD5+lbUDe8Bt9EvSEObbGYoECDM/aa03FpoNiRL
-         v58Q2Af4XXkUNOGIlSM9tYDME3k27qIZt9SJjhi6FQPzzrpR1h8iJBBuQ2DRcQ8gW8D6
-         hlo3bq6XyQ/He9EkYr0CrHcrbYNMc2cLsd3d7ICNHBwzpZKMcAcDv9C1yw6yJEDsRCiN
-         Qb+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWL4BHrILjsM6rROLBwWbVYmQWn0E2eUJEdHUt+Jt2DFH2qmMt+sgyx0LeENmtKrWqO2H/ejM3OVN2BhQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmCVUwNRCy/BNQheX1wnsjlAqCP/NJ1so/Dtuq20n8U8HouaPK
-	5DZJ2FHFwxkdvWbl9zXulIK3gZsub0RmDOAW+O9BPMDkkytDA6FWApRgY5BphA4zyP+vl3vgAOj
-	YKLwIfJO0zCyCXC+dst/gWi/XEym1dTg=
-X-Gm-Gg: AeBDietncwcanuTFYosqt4QP/VzP+fuxKEh6Vgn0GWswOyUf3SU82mH2F/XkQ6MTqFq
-	84JuKlF40kM/ZqtkCm136zEu8atpkYLCcSZD/NBAQSkLqE/FGaAyjkTTq+NV4ZA8cLyoQjt+V+x
-	W9+SBFyc+f9/WJl8EgdXNFVG3B/XOBzV9XICxtCPoDF8jyjFBhV8tKPBCVdoDy7Sv0snn0oz9bm
-	xguwqy/e1TV6QeuodvZqAWjL+O4ajMTdtNFPeS8qtDXzpnKvOT0hD9BRkGslSvkFyxucg0sidQr
-	PH493sk+xeAxAKpZI6RstjZA9ti14ELRo8Xo/M0=
-X-Received: by 2002:a05:6512:3e0e:b0:5a3:c690:b4a6 with SMTP id
- 2adb3069b0e04-5a3e7a16b15mr368920e87.7.1775683207122; Wed, 08 Apr 2026
- 14:20:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Cb6LsmRQ"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iFW1gSnsj1kqi3v1d3AzGtIixgwUpPury6VleiBy3tasc7XyDWQfsI8Pk3KdKl+i5EWaXGNm///VrIxE90Yl4LsAUM5fy0L7CsL5UbThYwhN4c1f2YAnCwv6y5gEGZ0v1ScKcUmFlMpGQfhcyEUpGmPhKVxWKlJmPKWv/Y3zZ56x5uQafJJRhqbC11N9rfJH1GqhP8eZBbT1GH+utt+mX57a1ZsogrdACxTY3j88jRxMRgg8phYICcZt5oi7G8wM00VEs8fTvk5tNLXtp4UP2GWPmyfildji+8DThmTfxETXHcyI9cYlD26JRJjOs1usCDsIhK5Fz4VqBlLRbEuQeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RYHU7T86Z6Qj+89SXElA7/lPQ9gbxOmy9JDs1m1Gqc4=;
+ b=fyLjRlbfPUJxy4hRwnhldlmDq47R0oiAtISWC5469oNWRD1/smykgZaqVXnW1H7/BmXxx3+RGTC4a6Rhej+P9Usk4af+nrPylYcTYeYxEluZgd3sfMqOmiJfyVpw7MvrW/Rr3yyT6ylczoGtAh+622nckl7mFvOuOcweWmQfoKL2jFEO/igQn7bhhxlm3C5GFgwXAnl0ZK/9hLpBhSz5y2iL6InDobNMMl+KHcJu/g3n4fux9jqiWMQ0LgU2CQ8/g/un7GxWPupt/to2RYiBKSSytJAyQhZkHASqq6Bxk6NpHXZkN+3kG5kRCXyWWPVGlX7+5XIicsE13h7VZVAfTQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RYHU7T86Z6Qj+89SXElA7/lPQ9gbxOmy9JDs1m1Gqc4=;
+ b=Cb6LsmRQ2SJIIYbkB9dImUYQbm/cuxpLZgNOJK/MLGCjt1yKLb2IWmxPBoBwCj6AX5i4W5j8e1+F1awQ77FKcMiGbV7XZxSgRjfoZjrvZ+wCPlO4vj9YMZjc5rOHUYn7nSSEOkn5um2kjZxU3QuRB2Q51Px5knhsgDuAn9QHc1LXjyfeOU1ABAdMDaDIFiYXuMUjOmrtihMDUsJU84mMu1Gy7F72/r9kzBlQHHdHZEG1HDNdv0A3qDTI0pS3CtLYUxdlrVj+f9rA4prW1meNJ2CbLRnEJUrb3PXYm3cmWYPE+GnxeFcSa8II3h9oWHm5//ZGzDrbdKVLmWh5gFG9Cg==
+Received: from BN9PR03CA0636.namprd03.prod.outlook.com (2603:10b6:408:13b::11)
+ by SJ2PR12MB9140.namprd12.prod.outlook.com (2603:10b6:a03:55f::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.17; Wed, 8 Apr
+ 2026 21:25:11 +0000
+Received: from BN3PEPF0000B372.namprd21.prod.outlook.com
+ (2603:10b6:408:13b:cafe::b8) by BN9PR03CA0636.outlook.office365.com
+ (2603:10b6:408:13b::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9769.37 via Frontend Transport; Wed,
+ 8 Apr 2026 21:25:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN3PEPF0000B372.mail.protection.outlook.com (10.167.243.169) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9818.0 via Frontend Transport; Wed, 8 Apr 2026 21:25:10 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 8 Apr
+ 2026 14:24:49 -0700
+Received: from build-suneelg-jammy-20260204.internal (10.126.230.35) by
+ rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Wed, 8 Apr 2026 14:24:47 -0700
+From: Suneel Garapati <suneelg@nvidia.com>
+To: <dipenp@nvidia.com>, <jonathanh@nvidia.com>, <thierry.reding@gmail.com>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <amhetre@nvidia.com>,
+	<sheetal@nvidia.com>, <kkartik@nvidia.com>, <robh@kernel.org>,
+	<pshete@nvidia.com>, <timestamp@lists.linux.dev>,
+	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Suneel Garapati <suneelg@nvidia.com>
+Subject: [PATCH v2 0/3] Add Tegra264 HTE provider
+Date: Wed, 8 Apr 2026 21:24:10 +0000
+Message-ID: <20260408212413.217692-1-suneelg@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260407170308.100238-3-piyushpatle228@gmail.com>
- <20260408170818.70322-1-piyushpatle228@gmail.com> <20260408170818.70322-2-piyushpatle228@gmail.com>
- <f837da45-2b31-4788-a957-085d3f0570d0@nvidia.com>
-In-Reply-To: <f837da45-2b31-4788-a957-085d3f0570d0@nvidia.com>
-From: Piyush Patle <piyushpatle228@gmail.com>
-Date: Thu, 9 Apr 2026 02:49:26 +0530
-X-Gm-Features: AQROBzBUy-it-vv-kjO6ebLVhc04dn2olvWf_81zN6zTyAHrTx2NmaM7LrDNOQo
-Message-ID: <CAMB+xkaQAaJSZ6nJ_LN9zyRHxFAEMoydbb-BZc3t1qfr71Sd4A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] ASoC: tegra210_adx: simplify byte map get/put logic
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Mark Brown <broonie@kernel.org>, Sheetal <sheetal@nvidia.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-sound@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B372:EE_|SJ2PR12MB9140:EE_
+X-MS-Office365-Filtering-Correlation-Id: 87034d80-7e8c-4210-4cb4-08de95b550cf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700016|921020|56012099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	2VDJbeH2WDOT5DjC+cy9Uelm5WPviSC8rqyePIoh0vOBphCl6Y/vWJ2VUZfyzDo3Isjt63rcti9/EHGocNSUKHRFwHibgN3zSgne363UwQeomOWE7oH8lPT2+udHOATAfMRhJUjxn0WedWhACSDUg9C8vtxoz/SMVMplB4RM7J+M+nP05j+/pgILZtxESuFW2AWDlowuZk0DKE4ZdjjK3QUSvt0sXURGR9Jh/r5kNIkgzyaOYG+P4QgRniVWm4QAT6nAexrTWzcpd5hF83dUnrlOv7nTOzvVRbY675yLOE6Ojf9Mggx+O1CWLPBqJrQvpx9fGyvJN+55EUlT75jZ4RXEcRC+iHprkqcrVc8CzUhgPjpPwKTI4H2VSOEBFoYbbgaVMmdKZlVLb8K0cPE6au3o0VeZzypmDwUo9TTGJ9iSSAeDWR1+RQn7o8lAP5dJMOR2abknslpsMDxvc4Ks+uvIP9FR+0iTS8SNLT/ERlMcwSSCso68aCFqBkD45DK5Lfw3oiGR4yCt6b2dWvonY9sXJzS57n+kUR8lJue0TpmzT7Sh+0EGqvdIfJiEQjeh8o9T77NFIbsGzh5RzcBneuINFacvdYWyQgU6L6grDdSAHY+cSWbWbaH2apKLdLElhtqH+cnQMNfmcax1A7FM3xaHPsOeTfWUI45Ys8kIU5fE4c9XZ09l0u47ljerQys5GBGejN0fZ6SAka8J5ZI+B74HDNbK9VHMLOlox0ohVtxLxwN89pm2ovSIIJmXroVeyPI+nMbLG9cVs79BArw757TQKbJbURAMa3idTFvS8KI8BYr+2LaSeFHR5tBiefEmkDvOxQMy96YeiDjkyyFIfw==
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700016)(921020)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	Xsp/on7+gSZS9oxKuiT0w0U8aQT+/qD5FM/54YNx+XvkJLl/eJJ3/bNABgs684w1GWJW+k6MswnsZiMAQ2qTOyhp1JInsy6EMjVznvqldqnm/DHefHojtiK1GA/upJzMht05+QoBnupdDTYRCdCvbrINaw80+ZqmLi/OUPqaC0AGwX/7xJGPR3hkBekO2blCRJN+dXzWH0dZPf47vjtEQXW825m1rBxCRH/JY3Qwu4Pka8W1uauQfFNUf0HXYcGFXZ8DLz5ZV5/TbIf2aY2YjXg2qiFv7i3yelUnzyxAJR8SeuCucM4aPbQ00MFYn4g6tDJvi5FTqZ1kXYHyx/P4WV4vuyrQpUgG8faTUU7i11C6PJIlCZK0SlPQO40x4gZAP6F1xOHndVKyq/CIfAyUaDVrEux8rUBfW8uAaRbxkwF6jtxOzuffQ3iaICYzB67V
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2026 21:25:10.8753
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87034d80-7e8c-4210-4cb4-08de95b550cf
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B372.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9140
 
-On Wed, Apr 8, 2026 at 11:09=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
->
->
-> On 08/04/2026 18:08, Piyush Patle wrote:
-> > The byte-map controls ("Byte Map N") already expose a value range of
-> > [0, 256] to userspace via SOC_SINGLE_EXT(), where 256 is the
-> > "disabled" sentinel. The driver stored this state as a byte-packed
-> > u32 map[] array plus a separate byte_mask[] bitmap tracking which
-> > slots were enabled, because 256 does not fit in a byte. As a result
-> > get_byte_map() had to consult byte_mask[] to decide whether to
-> > report the stored byte or 256, and put_byte_map() had to keep the
-> > two arrays in sync on every write.
-> >
-> > Store each slot as a u16 holding the control value directly
-> > (0..255 enabled, 256 disabled). This is the native representation
-> > for what userspace already sees, so get_byte_map() becomes a direct
-> > return and put_byte_map() becomes a compare-and-store. The
-> > hardware-facing packed RAM word and the IN_BYTE_EN mask are now
-> > derived on the fly inside tegra210_adx_write_map_ram() from the
-> > slot array, which is the only place that needs to know about the
-> > hardware layout.
-> >
-> > The byte_mask scratch buffer is allocated dynamically using
-> > kcalloc() based on soc_data->byte_mask_size, removing dependency
-> > on SoC-specific constants. The byte_mask field is dropped from
-> > struct tegra210_adx.
->
-> So this was already the case. However ...
->
->
-> > -static void tegra210_adx_write_map_ram(struct tegra210_adx *adx)
-> > +static int tegra210_adx_write_map_ram(struct tegra210_adx *adx)
-> >   {
-> > +     const unsigned int bits_per_mask =3D BITS_PER_TYPE(*adx->map) * B=
-ITS_PER_BYTE;
-> > +     unsigned int *byte_mask;
-> >       int i;
-> >
-> > +     byte_mask =3D kcalloc(adx->soc_data->byte_mask_size, sizeof(*byte=
-_mask),
-> > +                         GFP_KERNEL);
-> > +     if (!byte_mask)
-> > +             return -ENOMEM;
-> > +
->
-> Now you are allocating this everytime this function is called (which
-> happens on RPM resume) instead of ...
+This patch series mainly adds support for the Tegra264 HTE provider.
+  - Update devicetree bindings to add Tegra264 support
+  - Add support in driver for Tegra264 chip including new tsc clock
+    parameters setup per SoC as values differ for Tegra264
+  - Populate device-tree nodes for Tegra264 GTE instances
+  - One of devicetree nodes has reference to gpio_aon node that is
+    dependent on this series [1]
 
-You're right, I was wrong here. I read Sheetal's v1comment as
-"allocate it dynamically" and over-corrected by moving the
-allocation into write_map_ram() itself.
+1 - https://patchwork.ozlabs.org/project/linux-gpio/patch/20260128085114.1137725-3-pshete@nvidia.com/
 
->
-> > @@ -700,16 +706,15 @@ static int tegra210_adx_platform_probe(struct pla=
-tform_device *pdev)
-> >
-> >       regcache_cache_only(adx->regmap, true);
-> >
-> > -     adx->map =3D devm_kzalloc(dev, soc_data->ram_depth * sizeof(*adx-=
->map),
-> > -                             GFP_KERNEL);
-> > +     adx->map =3D devm_kcalloc(dev,
-> > +                             soc_data->ram_depth * TEGRA_ADX_SLOTS_PER=
-_WORD,
-> > +                             sizeof(*adx->map), GFP_KERNEL);
-> >       if (!adx->map)
-> >               return -ENOMEM;
-> >
-> > -     adx->byte_mask =3D devm_kzalloc(dev,
-> > -                                   soc_data->byte_mask_size * sizeof(*=
-adx->byte_mask),
-> > -                                   GFP_KERNEL);
-> > -     if (!adx->byte_mask)
-> > -             return -ENOMEM;
->
-> ... here in the probe function, which makes more sense. IOW I am not
-> sure why you have changed this.
->
->
-The intent was only to drop the dependency on
-the SoC-specific TEGRA264_*_BYTE_MASK_COUNT
-constant; the lifetime should still be probe-scoped
+---
+Changes in v2:
+ - Devicetree bindings has nvidia,slices property deprecated for Tegra264
 
-For v3 I'll keep byte_mask as a member of struct tegra210_adx and
-allocate it once in probe() with:
+Suneel Garapati (3):
+  dt-bindings: timestamp: Add Tegra264 support
+  hte: tegra194: Add Tegra264 GTE support
+  arm64: tegra: Add GTE nodes for Tegra264
 
-  adx->byte_mask =3D devm_kcalloc(dev, soc_data->byte_mask_size,
-                               sizeof(*adx->byte_mask),
-                               GFP_KERNEL);
+ .../timestamp/nvidia,tegra194-hte.yaml        |  14 ++
+ arch/arm64/boot/dts/nvidia/tegra264.dtsi      |  19 +++
+ drivers/hte/hte-tegra194.c                    | 133 +++++++++++++++++-
+ 3 files changed, 161 insertions(+), 5 deletions(-)
 
-That keeps Sheetal's "no chip-specific constant" requirement (size
-is still soc_data->byte_mask_size) while avoiding the per-RPM-resume
-allocation.
-I think that would be better, Right?
+-- 
+2.34.1
 
-Same change in tegra210_amx.c.
