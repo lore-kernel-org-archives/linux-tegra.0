@@ -1,186 +1,151 @@
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010061.outbound.protection.outlook.com [52.101.193.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22BA385502;
-	Wed,  8 Apr 2026 08:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775637795; cv=fail; b=SSRP0nsFnHCa/SkomSugjU1qR+rn8bKu0Jb0D7yfBXuqrW4fZBYSmD642yAM36rjY5vzQJzdFC8qWBr3OsU0+9XlUqatR5oDraWQULkrX2hjOkBoaTlYmHGOeRxkIZXdWmdJu2pV5QzLq+fm6dI91sen2EW+V7HG3A9JPWyaRv0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775637795; c=relaxed/simple;
-	bh=4eO59B8ebg2ld4EcSFMIc6tc4jKTtVi6WxxlRk04Jws=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=fzT/OIi/IMxyEwfOQBjU4H6QEN/9Ofz9mH5zbRR/b5D3mtwiwTtMd8EfES9dvsWzCP+J8JPvKajtKv6NaZuKOc1CnMfxiGvjRDcvoNhv7QnfMCZZnySVwjaf1N5TfFk3fWE33Qj9jAH8hHyRzOdv1VJTAkghksU1hnj1sSjXvm0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=OnTOzqHs; arc=fail smtp.client-ip=52.101.193.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442913B8BA1
+	for <linux-tegra@vger.kernel.org>; Wed,  8 Apr 2026 11:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775649515; cv=none; b=IiKKpNS2RSPnrT+YU9c2MPyX2Kd4qXqGm62qaK8KeDUwN1+ig8kSx/kbLr/qL8hdEpKNfljLI4bm1LoTbH6gX4XICgzILfb3Jt5kYaE7nfPKqmYJ+ea5ENr+pHsctftWoRB2xndlnQ9jE4Eq7QSwlwStXeRD/nz9zhvJ0xiRJkI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775649515; c=relaxed/simple;
+	bh=WR4DGvfWQ9vg+1TnVPPV/BSBM4+13udBc144kk/FGoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kxMXI1qIZg5hFUUVnIAbl+l4xsaMozoMoqX/YoeO+Lt5jfjlBvw/TnIkb+2QDpMLFkXu9mSoJcu/oypWMPw32niVkDev98ZZCtjcZxvDG1mX9bctRT4WKNpWQRAM7EZgoZ/LvKNGycBx0gigsXoNadAM1ugjtmxi2fqu8YahKqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YmXfd9iy; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="OnTOzqHs"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W3zVg1NDYapL7Ctf5LnzzSuw0Z3GO5k3zkX84R5FSGLSsIysLuLHWGn/3X07o0D4s4WOQXWAWv1zMODGKji5ACC1Bs2M0d07RugbX1td5JuVrE6pMAuHncnK/Wn++XE4jActjSDT1eS2U8OqQ3fdudUuj2sw1Cozcw4LVcAM0Tr3vI04vJNwJdTOTYEybzZqV5IrYFLnBuqfvGaaiYsHuVqKuBx/gXsiTKUi2Zc1yJ5GyCEDDyl6Azk7PTQzFsi6jImZdtDVvzfu/JxZdIixwr6kvijCUk4FdzpWSiNT+6bUW7kxSv08Bn/Psb96ZdbIer0VPg4Qj5K+fEB1ZRyGVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VbcQxoDZhnjIgU3TmyOsDbuwnwPpBv/1SzTcDEi1Rms=;
- b=aRLYM38MH6taI8gvPM9RTzr0baqlY9/RDGXesxQcmRe2ao1X5bMiIXthKy1GqnJ4HYTG8QqZwrxyeCCiL3gylfIVDdpCl5XE/YS8cYDvYFPOWi31pdXodWzvJ87/ClsvrKiAX2eJQZK9+STerIvPAlQfKg+FO4l9FbUb5vYpAGUH3s0nlSQ2vpYEtp7VfZCcDVQn5RBfmHD7LrCQJ9CPrXrb66RHoX2k9xhsRXhUbFurUOZooaITNhrolb3iBXkVJOxyq7IMp65KYEzMJIT2kNuD//kGFq2TgIXpLYaVLL71UI09/CUm7ONc7XqnJaQEyOrf/7NlSEceXJ1Nu2uNZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VbcQxoDZhnjIgU3TmyOsDbuwnwPpBv/1SzTcDEi1Rms=;
- b=OnTOzqHsYmSd0FupfQgy39sW3Y88Ta82drOqmgV7Te6mmKESBMSiP0/Y7Xuu9HGvUjzN+hxw6hDGYoNSCQVXpn1Q+RNJj697ZJyaid8QOSWNA9EFtNEATcvANi8eI3WWgrrZym51XkVAzM+yKi/WRggm3Vk+0t7gAmpWj/gUY+/YhUF6Hyw3SGHqFnbCq8lng+c2rhYEaDDLO+hjoiWlrJOayEmvESs6p+jRCYnwSoZuzLJ8Itg4ouQ06RW7tyknmqrhTb8jv/0xHfOc5twuSFjnx7paWwSuXdQZNi1/fMCyEGFKahcq51nJPiswoORnVqigr29Bp575iMuVnynudw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
- by PH8PR12MB6892.namprd12.prod.outlook.com (2603:10b6:510:1bc::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.20; Wed, 8 Apr
- 2026 08:43:09 +0000
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391%6]) with mapi id 15.20.9769.016; Wed, 8 Apr 2026
- 08:43:08 +0000
-Message-ID: <94576121-d4ff-47fd-9ff8-2a00ff4c5c2a@nvidia.com>
-Date: Wed, 8 Apr 2026 09:42:54 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu: Always fill in gather when unmapping
-To: Jason Gunthorpe <jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>
-Cc: Alexandre Ghiti <alex@ghiti.fr>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
- Baolin Wang <baolin.wang@linux.alibaba.com>, iommu@lists.linux.dev,
- Janne Grunau <j@jannau.net>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Joerg Roedel <joro@8bytes.org>, Jean-Philippe Brucker <jpb@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-sunxi@lists.linux.dev,
- Matthias Brugger <matthias.bgg@gmail.com>, Neal Gompa <neal@gompa.dev>,
- Orson Zhai <orsonzhai@gmail.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <pjw@kernel.org>, Samuel Holland <samuel@sholland.org>,
- Sven Peter <sven@kernel.org>, virtualization@lists.linux.dev,
- Chen-Yu Tsai <wens@kernel.org>, Will Deacon <will@kernel.org>,
- Yong Wu <yong.wu@mediatek.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
- Lu Baolu <baolu.lu@linux.intel.com>,
- Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>,
- Joerg Roedel <joerg.roedel@amd.com>, patches@lists.linux.dev,
- Samiullah Khawaja <skhawaja@google.com>, stable@vger.kernel.org,
- Vasant Hegde <vasant.hegde@amd.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <0-v1-664d3acaabb9+78b-iommu_gather_always_jgg@nvidia.com>
- <ee2c2044-e329-4cdd-ac35-9365824d3677@arm.com>
- <20260401173650.GD310919@nvidia.com>
- <ec51ef14-e360-43a6-ae62-44a939ec8027@arm.com>
- <20260402225121.GI310919@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20260402225121.GI310919@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0002.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:150::7) To DS2PR12MB9750.namprd12.prod.outlook.com
- (2603:10b6:8:2b0::12)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YmXfd9iy"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-488ad135063so29776735e9.0
+        for <linux-tegra@vger.kernel.org>; Wed, 08 Apr 2026 04:58:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1775649513; x=1776254313; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k40FHMst7ZYaUpavfz/biELRzCmoNJ4RIF78KxcSSeg=;
+        b=YmXfd9iypGV2CumeGJ1C94Y5vNJGyqW9wa9wr7V209vRUiQ5b+PzwyGY2VCpkepj2h
+         d2jJg8k6fSJee0j7mgUhUtkNRGto94VMZRJCVsuHXRcfn1/RM060s6ZhDhLhurl/VXzN
+         +3YQODU4u6j4zUTo66PNPvZEZGLCfcGDSmZNQC202/vUA6bI2jVza4fLsxeRYOD/vwx9
+         ARKBqgpI8b0uCGmpg7FgDlAEyhPtsmEshrXsOKK7UBwJaWFuvVjDA19Kx/1OMhOb12/J
+         ZSe+/dmc0vbasCtut3sBoaQzsBQzjBu6m5r+SoRhEGl02sj5W0b0uKDG68RxcO1JiwlR
+         7Nrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775649513; x=1776254313;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=k40FHMst7ZYaUpavfz/biELRzCmoNJ4RIF78KxcSSeg=;
+        b=gW3O854uXQMeFbMFyOJMUH5uSdLhbcJoTpj9SYyLlwLwaRrfgfoKA1ropaI5lFKoz8
+         DeQ5xq70wwUPXU0huXDCKSTQcYOJYoSngSX63ZdB/gWw7VG0ELYuQhWLWfNvSMe1D8ef
+         qL2d2hyMBGsli1FXOn+zpc6H3fWhp3H1dckKCTPeTmACU27JPYmp2ofMRDckZi8jd+NC
+         vlUjphh/AejeMrary+RBAluxtni+Oa454kSY2GrWuEAhHMc+sRVaTq1RDeR9TGFqZezB
+         LGhF9j6bhtutMz8aZwDgOimX6Qp3NH8AoxXHZDQYjRC7M2PJLhwWiv50Hs/Gcv+7mV42
+         H+dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUd091a8yi0jFERT1g0qQzm2kf3r1aAyWi+uz6alb4ZnkzsUqK6oMR7y8/XpqXcznkNnfWBxBi/srCTWA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOsZIgpTjs0z9XTVdSN+8cx5xCBDqyPrlUz9S+QfcSdSnegQht
+	JlHPruYrLo6sLfrhio7YAci8+tnWD4SP0g5/EwN6xXMNNXfZgFp0RXKz
+X-Gm-Gg: AeBDieuurc01qJzB8OVD8YbDCj6MqOLGeAaYifZ8EPkt9wwe76VdUHzXMFwdDq64P+m
+	9nAKf2NdQVyFva8kfU9Kx/i9He3jpiCoK9Vl2sUMVxrdewWpn51mGUAIY6hJ3cUyZMCZrNX1BKv
+	Nt/W4j1wHjhLfK50V9TCTgi8WNCAsAS7NTDD0B+NGqRfSh1eKgGY5XEkzZcZ4JPfOw9Blp1iwWr
+	emMibWvsMhqsQQWcrMY6nQZvpo8bcc2VF+ZXSyB85g/f429zt2PBC7DL7dbsr2ytlk4vfxzQ2sk
+	LWXkqmnEGkbVb/jCun9Tdq3d2zvGbdujnxew/ewAe2DwAfH2Qh57ofNqvCBqlI7LEuIfgDogZBz
+	yLVVw1TwGJV5VqkwjYBPW/KxsrnuxOvx9pmPJ47WAxG1qCOu4SBIr1FGRAIqKrRyqpsVLhFr9Vj
+	eeVmhsbbzbVqhnXgrLtGLkxYj2ppQ1R8KNmDbWRfUSkSBOP+IOqcg/Q3pmHPyPUFfK
+X-Received: by 2002:a05:600c:3549:b0:471:700:f281 with SMTP id 5b1f17b1804b1-488997d5e5bmr274362495e9.25.1775649512422;
+        Wed, 08 Apr 2026 04:58:32 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4887e80a616sm1178015225e9.2.2026.04.08.04.58.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Apr 2026 04:58:31 -0700 (PDT)
+Date: Wed, 8 Apr 2026 12:58:27 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Cc: <bhelgaas@google.com>, <lpieralisi@kernel.org>,
+ <kwilczynski@kernel.org>, <mani@kernel.org>, <robh@kernel.org>,
+ <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <thierry.reding@gmail.com>,
+ <jonathanh@nvidia.com>, <kishon@kernel.org>, <arnd@arndb.de>,
+ <gregkh@linuxfoundation.org>, <Frank.Li@nxp.com>, <den@valinux.co.jp>,
+ <hongxing.zhu@nxp.com>, <jingoohan1@gmail.com>, <vidyas@nvidia.com>,
+ <cassel@kernel.org>, <18255117159@163.com>, <linux-pci@vger.kernel.org>,
+ <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, kernel test
+ robot <lkp@intel.com>
+Subject: Re: [PATCH 1/1] PCI: tegra194: fix min() signedness when capping
+ ASPM L1 entrance latency
+Message-ID: <20260408125827.7063fd83@pumpkin>
+In-Reply-To: <20260407145749.130753-1-mmaddireddy@nvidia.com>
+References: <20260407145749.130753-1-mmaddireddy@nvidia.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|PH8PR12MB6892:EE_
-X-MS-Office365-Filtering-Correlation-Id: 399663cc-b8aa-4c0f-7c70-08de954adc10
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|10070799003|7416014|376014|18002099003|56012099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	XtjnVNFzGNanKim7FzjMoGni+Y92NGaJMH3qZq9c7kABIBP029YoBgI8TA4jU4u8qWEYRsD67cTWFjeNnusFgAxZF0uWe1clqQPH1G96B4M02Bblqrcs5cEjCgMwnRzitEGvLij0NdEGeHoFxCRxOAJfMbUiXydxcRX5lKO7+P6JmgUMYN46jOZ+jWU7SXtoXmZi+YDzHXFYwF8R0BnGQbT5qzk7j79AqryTxz9QGrfkl3AZEGo4pQZ2tAgfNd0AwCVgXEiuj0hg3kGbvm/RF+AxVV6yRGOL9qbb5cm30E3bqQkcY/T2UaktE9aZ88pnFPTGCe1PaDo08CwuQBX5JBakUmG8wE8Q5HtZZumY8TkcdrKP6BuwveTeYJ9LkOGqkEHpggL98L6lmoRkpLqtCn9QsKA3/wydx979GBK+WShwpnlunR/oqjlT1AoIFOSqysWyR2KHAmF2n2TR32YOXLPN1rqZLOsyJcPbylCRSLvXJO7AOymB1pqcwxF/DgKGB7WNqjlI8qMG2Fz81nKRkTomjeKCfRqA0OJSiVHZHIyKItJnuQXlKa09/H3FZ6PjsDri9Y/bmF5g7a1pSEO87D5+WTmpxJzBqqvxJswZDPKX3ims/eTJwv0kVqhejeKOiylZt8ii+yHTbGi1zHcMpLvNI7DUysSyBERUdWFlycKN5EVbFEmkZ1VNCSpTavhFy2xRAC5OK0CiaOtmOjfp6ZcKs7jx2fYZTHUxKNm11JI=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(10070799003)(7416014)(376014)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eU13MTZXbzdidVgrTzJGNDV0WHJNZFZqQzMwM2FMSUltMGNmWWFsSElyNU81?=
- =?utf-8?B?Mml6NzVaY1FXQmdpb0JaeFRHTE9SUmMzcGpFVi9tYmxaMUVScDVsWXovaW5x?=
- =?utf-8?B?OHIxbGVYdHFyU2oxbmI2WGRGQmdKenJKbExzMUNqMlBjZDZBZVkyTWc3aUI1?=
- =?utf-8?B?dEJHcGhCRTZ1eCswRFE5Uk1XL2hNK0Y1MXNJanNLY3ZiOHppUnY2Zkw1SGE1?=
- =?utf-8?B?MEswaTBTWDdEMGFiVXhVY1ZNQkNCWExjQUNpejQvZEYvNGk4OE5jd0xqMGFO?=
- =?utf-8?B?NlBWa2dJNUp5dC9oZVRsazQwcjVlL1Ryb2hHMDhRMXYzS2taL25LbUhSNjU4?=
- =?utf-8?B?elNSNVVLMXlGd05ybm1wSThCNlJFdFp6cVZjMzFIWDVxMStFMkhNU1phZ3JS?=
- =?utf-8?B?Z3poVG9pSmhwL3JZeCtDUWcyTEhmSlVUdWRaUWxIQlQ3MmViWGFOK1JmeWFO?=
- =?utf-8?B?akR0a1R5c3VyTzVOc1IwL2RLV1FyU3plMHpHM3l2cnRPQmdyMFpZMDczNzZN?=
- =?utf-8?B?R3ZlRVhuU1JkL3RyRGlMUkdmbWx2ZDFjK2dSVmUxVlQ1bnZISDRibloydmgw?=
- =?utf-8?B?WTBTQTVSVWUyYmJDck8xM0xsSzhqalM3Y29qdXF5ZVZwWko4N3pkTTh5aGhq?=
- =?utf-8?B?dE9HTUY2VXFVVmV6YjZ4STg5Z1psQW1SbG1XNkJ3UURjc2VGRjF0QjlsSEgr?=
- =?utf-8?B?Z1VpM1FBcGQ0K002Zk1VS0JSMk84QlFlVjJhMW13OXdGYXZYaGw4NEJQMnRF?=
- =?utf-8?B?L2xhcUlUcXBZN3FyMEV4YnFuZWdoY2xkUEZrUTV2Mmszek8xS0J3QlZNNlRx?=
- =?utf-8?B?YzBLdWZZeTVKSnJyTzFlZkJjcmo4L1dDWkNhL0dnbDU1UXZyeENhZ3hmc2RB?=
- =?utf-8?B?ZUFqNVNMQ2JtalMxZEtTTnNpUWlIOXJ2N1FEZXRCUEg3cXAvWWlsVWx0VGxt?=
- =?utf-8?B?Z3FlT3dvMzU2T0V6WWtZbHN0Z1lqMjJKYUNtZDFXVzF2TFFWa2hZNjlibHpR?=
- =?utf-8?B?N0prV1llTzBqczJBeDFSdkM0b1ZNUEw2NzF0YkozVHNOUitsZm5lVEJTTTdZ?=
- =?utf-8?B?M041eXFQUE9raFF6U2U4dDdBb1NuK1AwWFBBOENXQXp5MklCaERzME50TVBo?=
- =?utf-8?B?THRSbEFCdWRtbmFkQWN6ZFJoOGxDaHVRcHg3WGNKOGVUWG5xblR5VTdHRnZG?=
- =?utf-8?B?ZUg2a2Fqb0Vzb0tVNDZkc2ZXbk9zWmdDMXk3S215UGYzaTVyamdNNkJHTHVv?=
- =?utf-8?B?MU1wRFhKdVNGZmQwLzZ2Yzc1OTRibVhCaE54UFVwWTVCejAzbE5HR2ZoQXYv?=
- =?utf-8?B?RjFQVGp4MFc3QnRvN2w3RENXSEgvZ1Izc3h3OEltRWJPV3hER0ZuZmVOekt6?=
- =?utf-8?B?bVF2L01pdUhhL0g5S3NKV3RMQm1CdWxYMGJBbE4vSUZWTm1odXk1YnBVRUJo?=
- =?utf-8?B?L3cwWEd1OFBUSFN2Yi94U2lDbUhyUmpQQ1hDWWJXWC9xOVY4VHdMQ3NPa3Vy?=
- =?utf-8?B?Q1JKdkxJTWtYbHAvdTF3SVd6U2lZWVExaWhhOE1vY1hsVXdhU28waHROT0l4?=
- =?utf-8?B?WFcyK0JPbHZwZUxJYytrQ1FjMnZJOVViMmNDR1hndnR2V1EzSUQ1UVA0K3dB?=
- =?utf-8?B?S2gzbkVmQ3JscjZGNktaUlFaM1FLM1dVbnptVEhHcTlmQ1dGZlBqQm9jWWRO?=
- =?utf-8?B?bjQxOHJmTmdnY2ZPNXN5SkNUWk40Z2YwMDlaZkJXL01EbFlxSTV5R0pJQkJ1?=
- =?utf-8?B?NmJYNGxTVWMvZFhXQ2xxL1hNWVZJQ1dEeHpvQTZsK2FUMDNnLzgzN2ZGbkIx?=
- =?utf-8?B?T3RxWStHYmcvdnlscndyamxhY0M1aHdoaDZwTXBpMDRFUDNtMmR5L2RDWG1a?=
- =?utf-8?B?a0x6c2tFamZkb0oyUkJRS0lpSTl1dzlYSmhsV0JvRDJyZDduaEcrL0ZkS2ta?=
- =?utf-8?B?Q1pDdG5WMFFRdXY3VEZkNlY1UWJuRHBQWGk0bVJVV2hiU0owTFJDN0o3VU5I?=
- =?utf-8?B?b01rNEc1Y3JyZERheGRVTXg2WkF6Z09wVk83OWRjS01HYlBSWmVZM2RQM2Uy?=
- =?utf-8?B?TDdqWjU2U2E3TGRycU8xbzNXY1AxT0w4c0tCbkMya3k4SkljanQxbkNFK3lL?=
- =?utf-8?B?TEtuN0IwdUd5ZTlvZCt4aEhGU05tYUJuM2I4cTRRUWpmUTBSZTZESmlzWVNL?=
- =?utf-8?B?Qm1ocllMMS9ZMi90QU9oTlhUZGsxQlV0M3VIMW1VaFE5ZHFDcDNQNUdtbERE?=
- =?utf-8?B?WjN3L0RMSDdib1Z2Tk92QlRtRXQ4UUt1NjdzbEhiNlduRHBRa0dYM1p5M09G?=
- =?utf-8?B?YjlBMGdLWW9xb01KMXloL1RxcVRRcGRnTnQ0bTk4dzZwWTIvaEcySEQxTVBa?=
- =?utf-8?Q?f7krKgkMUO6iXYFeRGoT9rNsEJ69AijxF9KOdY6yYmlzr?=
-X-MS-Exchange-AntiSpam-MessageData-1: tC0ARSF1jJSRFQ==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 399663cc-b8aa-4c0f-7c70-08de954adc10
-X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2026 08:43:08.7582
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KjR21b8s/0/+/kWHSj4IhuigronLbOtE4l4KXEHpGwTRKKkXCEYzkZ3vRMwAUx1XWDLNeqXWdmbKUESyVkbewg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6892
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Robin, Jason,
+On Tue, 7 Apr 2026 20:27:49 +0530
+Manikanta Maddireddy <mmaddireddy@nvidia.com> wrote:
 
-On 02/04/2026 23:51, Jason Gunthorpe wrote:
-> On Thu, Apr 02, 2026 at 07:11:13PM +0100, Robin Murphy wrote:
->>>> @@ -2714,6 +2714,10 @@ static size_t __iommu_unmap(struct iommu_domain *domain,
->>>>    		pr_debug("unmapped: iova 0x%lx size 0x%zx\n",
->>>>    			 iova, unmapped_page);
->>>> +		/* If the driver itself isn't using the gather, mark it used */
->>>> +		if (iotlb_gather->end <= iotlb_gather->start)
->>>> +			iommu_iotlb_gather_add_range(&iotlb_gather, iova, unmapped_page);
->>>
->>> The gathers can be joined across unmaps and now we are inviting subtly
->>> ill-formed gathers as only the first unmap will get included.
+> The DT property "aspm-l1-entry-delay-ns" is converted to microseconds,
+> then encoded for the L1 entrance latency register field as ilog2(us) + 1,
+> clamped to the hardware maximum of 7.
 > 
->>> We do have error cases where the gather is legitimately empty, and
->>> this would squash that, it probably needs to check unmapped_page for 0
->>> too, at least.
->>
->> Maybe try looking at the rest of the code around these lines...
+> ilog2() returns int type, while the upper bound is 7U (unsigned int).
+> The min() macro is implemented with __careful_cmp(), which rejects mixed
+> signed and unsigned operands at compile time via BUILD_BUG_ON_MSG in
+> minmax.h; that check trips on this pair, notably when building with W=1.
 > 
-> Okay, well lets do this one, do you want to send it since it is your
-> idea?
+> This combination fails to build (e.g. parisc allyesconfig, GCC 15, as
+> reported by the 0-day bot).
+> 
+> Use min_t(u32, ilog2(us) + 1U, 7U) so both sides of the comparison are
+> unsigned and consistent with aspm_l1_enter_lat.
 
+Adding 1U (rather than 1) is enough to make everything signed.
+Alternatively change the 7U to 7 and it will all be fine regardless of
+whether ilog2() returns a signed or unsigned result.
 
-Any update on this? Boot is still broken on a couple of our boards.
+Remember min_t(u32, x, y) is min((u32)x, (u32)y) and you wouldn't put in
+casts like that for any other arithmetic operation.
 
-Thanks
-Jon
+Note that for the compile to fail there has to be a code path where
+ilog2(us) isn't known to generate a non-negative value.
+ilog2(us) (probably) ends up as 'fls(us) - 1'. If that is implemented using a
+compiler builtin (because there is a single instruction) then gcc knows that
+the input can't be zero (from the max()), so knows that fls() can't return 0
+(which it does for 0), so knows it is never negative and the checks in min()
+pass.
 
--- 
-nvpublic
+parisc may be one of the architectures that ends up with a real function
+for fls() so the compiler doesn't know the result of ilog2() is
+non-negative.
+
+Just delete the U.
+
+	David
+
+> 
+> Fixes: 4a44cd65c9dd ("PCI: tegra194: Use aspm-l1-entry-delay-ns DT property for L1 entrance latency")
+> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202604051407.AODe3ddZ-lkp@intel.com/
+> ---
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index 393f75ce3df3..93d3452ac117 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -1147,7 +1147,7 @@ static int tegra_pcie_dw_parse_dt(struct tegra_pcie_dw *pcie)
+>  	if (!ret) {
+>  		u32 us = max(val / 1000, 1U);
+>  
+> -		pcie->aspm_l1_enter_lat = min(ilog2(us) + 1, 7U);
+> +		pcie->aspm_l1_enter_lat = min_t(u32, ilog2(us) + 1U, 7U);
+>  	}
+>  
+>  	ret = of_property_read_u32(np, "num-lanes", &pcie->num_lanes);
 
