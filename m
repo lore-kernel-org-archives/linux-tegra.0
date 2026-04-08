@@ -1,83 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C002325483;
-	Wed,  8 Apr 2026 17:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CF9284896
+	for <linux-tegra@vger.kernel.org>; Wed,  8 Apr 2026 19:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775670548; cv=none; b=PIh+3KmpMimnTguTUUVlXwNsyxmW09DHOnK9DV58Nr2kmcRzEUMZ0lGzEi/cuPA9411aMTxQUlsCJyxJzJPsRozbmvCKGm73zmfPFnqP9MfxxPAWwGnaIhYnrvkozIq8FDDVVwU2rMte+kg17R9z4xRybAjwQ/1BTldCbjovmBg=
+	t=1775678126; cv=none; b=X7dm/1ULFcNMzffedPur1biH+Z+8fELYMtf3gyObHuPK+vH1kPSJ78TuL0jL0JPr3lAWBYwha0HKfaqbTqhMquLhBAYKsx8SSifJYjl2VaqVHz1j2FfBxmQEKF1+WcLaOVgI3XPctFoilIngjA3iiovmZlz2iWtmPj4RCkJV8S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775670548; c=relaxed/simple;
-	bh=y1C9sKBLh0BII3lAyxD7NZdAehWq9IGiHty9aFRmQPU=;
+	s=arc-20240116; t=1775678126; c=relaxed/simple;
+	bh=hP0DBz2MnfHgUl3vIzfFDjwQPis63gKAesI6MjWY1NM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l95G06sOEgcvS77DdOkIkZquEVEbB5pMUxaXzepRRYLSVrIZ737pJdwq1TOWw+4fp2nEGmAXpcChLwAavcZs3wEM4/zYNC8kUZvsiZ44nbKj6VC3+iqDzAj9lBALJgqcucCHsItJKoOnpDO5haVDEi8772ovCM9PhrGoXWATEBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTFsSHeh; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=pD8CNDPOcR+nwAViYrXfeUqWhs6LSmlhteP2Gi9HRC9z4HfF9tbu15p3x8ID9IX9zdXopnJfds5+nVn19SwevGyyydgS2akLVlBJ+bn3Bi5loGFaERN4KcNusRorbstkLN9ULosFychqN+/3C2zSDvjYLDjUSJPXXVLCspO8eME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=qFu40S34; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTFsSHeh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AF30C19421;
-	Wed,  8 Apr 2026 17:49:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775670547;
-	bh=y1C9sKBLh0BII3lAyxD7NZdAehWq9IGiHty9aFRmQPU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gTFsSHehJ58HylEyauB69ZEjKqXYOwRvVTt3PI0vAWSeYS3xwPBQjcfZLSLmuecm+
-	 n5hsMrMg5wyX6lMg+yc3WFcStuPcS6kHeNHakuDTzbm7J+c5I60EkZ3iPpSxPAscBH
-	 J0nHcJGIu59EekzcRRP5hICOIwnLRUlBJbeWRYP5QEUFk3xbOLxC25rx4Eeie+lGeY
-	 ZwIkVCoT2EeuvgjOCUxyzJ/uWw/+VNbuTNSmqmxyasQPvckZWVoq+kvVglCn/CBrzy
-	 hXYuI9Nwr6n1DuJ/4/YQAmrrynj0c/0EuictKvylGuvNKbtfkYjZ+GJmP+pQo228ct
-	 WIcJ+vGKL57dQ==
-Date: Wed, 8 Apr 2026 18:49:02 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Piyush Patle <piyushpatle228@gmail.com>
-Cc: Sheetal <sheetal@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] ASoC: tegra210_amx: simplify byte map get/put
- logic
-Message-ID: <dd64b4f3-ebb4-4299-9d92-78576619b285@sirena.org.uk>
-References: <20260407170308.100238-3-piyushpatle228@gmail.com>
- <20260408170818.70322-1-piyushpatle228@gmail.com>
- <20260408170818.70322-3-piyushpatle228@gmail.com>
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="qFu40S34"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=kDGfj+dIHPPPtxem43wBR54tdlI5WONO4yOnjDFCHo8=; b=qFu40S34x3LPTlvHlJxgPpP1VE
+	5lcrapFLgKvUE5BdnKOsWZgZqznw3hd7hv/+YTmZLtc7DK0lveb5mHqcKDjVlYJSu7/D8mi2ul7E+
+	Lts+VGGD58x68+/ZE/xIWfP+d/MA16VoVwOvK8V/yrGjzdqVJOcO97zbX1rWd/NvHYZjKqfc0CkmY
+	M8GrxwLH4sLTBU1TG0kfa37TDUJQxDPwGAy/gIWFAAY3Jj2oTtV4fXrcmJB3mzLXLlj0QWHRH8nfG
+	Qj+cI5ctSa0AxCeMYOR7WyYSJS8eN+JDqUPhYrL/oSRnRreXppPbmQ0iRDehJwNeh4i6tn41QZG8P
+	S7PklMcg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34022)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1wAYzg-000000002kI-0bnN;
+	Wed, 08 Apr 2026 20:55:20 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1wAYze-000000003cL-2mUf;
+	Wed, 08 Apr 2026 20:55:18 +0100
+Date: Wed, 8 Apr 2026 20:55:18 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, joro@8bytes.org, will@kernel.org,
+	jgg@nvidia.com, iommu@lists.linux.dev, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] iommu: Ensure .iotlb_sync is called correctly
+Message-ID: <adayppUjhjNZNSeY@shell.armlinux.org.uk>
+References: <8982e3412563cf91e106d59228dfb6115024c75e.1775659257.git.robin.murphy@arm.com>
+ <bdad8adc-5c20-4fb5-90b0-b7ca4199a7a8@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="50lXXv5LztKTvnyt"
-Content-Disposition: inline
-In-Reply-To: <20260408170818.70322-3-piyushpatle228@gmail.com>
-X-Cookie: Often things ARE as bad as they seem!
-
-
---50lXXv5LztKTvnyt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <bdad8adc-5c20-4fb5-90b0-b7ca4199a7a8@nvidia.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, Apr 08, 2026 at 10:38:18PM +0530, Piyush Patle wrote:
-> The byte-map controls ("Byte Map N") already expose a value range of
-> [0, 256] to userspace via SOC_SINGLE_EXT(), where 256 is the
+On Wed, Apr 08, 2026 at 06:28:55PM +0100, Jon Hunter wrote:
+> 
+> On 08/04/2026 15:40, Robin Murphy wrote:
+> > Many drivers have no reason to use the iotlb_gather mechanism, but do
+> > still depend on .iotlb_sync being called to properly complete an unmap.
+> > Since the core code is now relying on the gather to detect when there
+> > is legitimately something to sync, it should also take care of encoding
+> > a successful unmap when the driver does not touch the gather itself.
+> > 
+> > Fixes: 90c5def10bea ("iommu: Do not call drivers for empty gathers")
+> > Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> > Closes: https://lore.kernel.org/r/8800a38b-8515-4bbe-af15-0dae81274bf7@nvidia.com
+> > Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> > ---
+> >   drivers/iommu/iommu.c | 6 ++++++
+> >   1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> > index 50718ab810a4..ee83850c7060 100644
+> > --- a/drivers/iommu/iommu.c
+> > +++ b/drivers/iommu/iommu.c
+> > @@ -2717,6 +2717,12 @@ static size_t __iommu_unmap(struct iommu_domain *domain,
+> >   		pr_debug("unmapped: iova 0x%lx size 0x%zx\n",
+> >   			 iova, unmapped_page);
+> > +		/*
+> > +		 * If the driver itself isn't using the gather, make sure
+> > +		 * it looks non-empty so iotlb_sync will still be called.
+> > +		 */
+> > +		if (iotlb_gather->start >= iotlb_gather->end)
+> > +			iommu_iotlb_gather_add_range(iotlb_gather, iova, size);
+> >   		iova += unmapped_page;
+> >   		unmapped += unmapped_page;
+> 
+> 
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Similar issues in this one.
+Tested-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
---50lXXv5LztKTvnyt
-Content-Type: application/pgp-signature; name="signature.asc"
+I think the commit message needs to spell out that the blamed commit
+causes random memory corruption which leads to data corruption and
+kernel oopses.
 
------BEGIN PGP SIGNATURE-----
+Thanks!
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmnWlQ4ACgkQJNaLcl1U
-h9Bz2Af/Wo8f8G/a2TXQrCYM1lD9Q40bU6oZ9dmxF+OPytDm6mvBE4lxcqcmPhiW
-UVwXaDVb8s0pJsDNz7nZBFq6PQ6phAE15RA4R3xiMsl1pTzknwmOG/HGNlR4D6BW
-g48KkSvTFlNG06Dbv0QJ4PY/QQcxwHkHpYpuTmu0fj6+2Q0U2/l7O9z4nVIT9F0z
-ioNYRg/mGVa0IeGlfMJY5uwsoJMCacIZNfoQtNI1SOHMPvup6M0jAkbRwBDH3AlE
-wtWG4JPtrRhztY9xm37hF7MhrWZNm5RxNrStb1s17sDvj4FfOwIq2UD/QfOjNgUG
-Y05MEFshdfj4gjnwHb3pMHGjL/xeFg==
-=/Kbw
------END PGP SIGNATURE-----
-
---50lXXv5LztKTvnyt--
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
