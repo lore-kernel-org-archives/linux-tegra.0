@@ -1,52 +1,45 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CF9284896
-	for <linux-tegra@vger.kernel.org>; Wed,  8 Apr 2026 19:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21683314C5;
+	Wed,  8 Apr 2026 20:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775678126; cv=none; b=X7dm/1ULFcNMzffedPur1biH+Z+8fELYMtf3gyObHuPK+vH1kPSJ78TuL0jL0JPr3lAWBYwha0HKfaqbTqhMquLhBAYKsx8SSifJYjl2VaqVHz1j2FfBxmQEKF1+WcLaOVgI3XPctFoilIngjA3iiovmZlz2iWtmPj4RCkJV8S4=
+	t=1775682000; cv=none; b=quVdOz5nQzutSO/FWULEudDBZKhOJwbz+TFKdC4LpeAGwksVMVoIQLHm1KweAal22iDA29xeRZyOk5Mcw6HU/n6q3y/Hns2dXo0XHFcNz7T/bSzGD8RjF9sBuJt4Z6gBkfU94miNTVzVPGmYm+XOUuppYmZiAcYp4NYMCgd4VQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775678126; c=relaxed/simple;
-	bh=hP0DBz2MnfHgUl3vIzfFDjwQPis63gKAesI6MjWY1NM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pD8CNDPOcR+nwAViYrXfeUqWhs6LSmlhteP2Gi9HRC9z4HfF9tbu15p3x8ID9IX9zdXopnJfds5+nVn19SwevGyyydgS2akLVlBJ+bn3Bi5loGFaERN4KcNusRorbstkLN9ULosFychqN+/3C2zSDvjYLDjUSJPXXVLCspO8eME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=qFu40S34; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	s=arc-20240116; t=1775682000; c=relaxed/simple;
+	bh=s4Gn6jvrKOTjgIRkNbleAZrl8eXjkvTuO45CE6gl4Pg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=szrSZYpAY56OLbn6oUdu4iQ6X0C9E7rQhNGsJWrS2t9tETb59pVogGfO+1tcACinDRM0ntY3hYuys9CUV/BkWLvtt9Jt3V0vMB5O4a/Xw4LM9tW1+I9zTOsyCKSMFW/3TZ+gX5uvwhID1SJ0APPIR0IH+Yr/kbFqPtRt84GHrvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BUGtMSTu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="qFu40S34"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=kDGfj+dIHPPPtxem43wBR54tdlI5WONO4yOnjDFCHo8=; b=qFu40S34x3LPTlvHlJxgPpP1VE
-	5lcrapFLgKvUE5BdnKOsWZgZqznw3hd7hv/+YTmZLtc7DK0lveb5mHqcKDjVlYJSu7/D8mi2ul7E+
-	Lts+VGGD58x68+/ZE/xIWfP+d/MA16VoVwOvK8V/yrGjzdqVJOcO97zbX1rWd/NvHYZjKqfc0CkmY
-	M8GrxwLH4sLTBU1TG0kfa37TDUJQxDPwGAy/gIWFAAY3Jj2oTtV4fXrcmJB3mzLXLlj0QWHRH8nfG
-	Qj+cI5ctSa0AxCeMYOR7WyYSJS8eN+JDqUPhYrL/oSRnRreXppPbmQ0iRDehJwNeh4i6tn41QZG8P
-	S7PklMcg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34022)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1wAYzg-000000002kI-0bnN;
-	Wed, 08 Apr 2026 20:55:20 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1wAYze-000000003cL-2mUf;
-	Wed, 08 Apr 2026 20:55:18 +0100
-Date: Wed, 8 Apr 2026 20:55:18 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Robin Murphy <robin.murphy@arm.com>, joro@8bytes.org, will@kernel.org,
-	jgg@nvidia.com, iommu@lists.linux.dev, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] iommu: Ensure .iotlb_sync is called correctly
-Message-ID: <adayppUjhjNZNSeY@shell.armlinux.org.uk>
-References: <8982e3412563cf91e106d59228dfb6115024c75e.1775659257.git.robin.murphy@arm.com>
- <bdad8adc-5c20-4fb5-90b0-b7ca4199a7a8@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BUGtMSTu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BED9C19421;
+	Wed,  8 Apr 2026 20:59:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775681999;
+	bh=s4Gn6jvrKOTjgIRkNbleAZrl8eXjkvTuO45CE6gl4Pg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=BUGtMSTus3N+1LcvoKhlsjUq44lgoBH+xHCQUTIG0kBg7RuDl7YZoDHtMeE4NQgwH
+	 Jrx/NmnsMfN64W9EW3YcwKtbkDt6ZLJLUVDN0CkCHv960kn5eA8ZT3lHrV2hejE6AG
+	 jt/LndxgWnJ1Wj5Go/c0mdMtEANJQhMRmIvce6HM8rSS6O22oPvN86kr2Jyhs2q8eT
+	 jcVv7/G4mqnTMQN3cNk2a+hAPmF2i4adEG94wZOd8wcxtP/lNkbR46aWrcebU7pqMq
+	 qwTOMK0bd4mzU2GXO68s/GnSReLJLcNbSEXSgSXb95mS2+IXvwaIplPgj/+I6y3ssW
+	 JWDJ2+ObdnfHw==
+Date: Wed, 8 Apr 2026 15:59:58 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
+	kishon@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
+	Frank.Li@nxp.com, den@valinux.co.jp, hongxing.zhu@nxp.com,
+	jingoohan1@gmail.com, vidyas@nvidia.com, cassel@kernel.org,
+	18255117159@163.com, linux-pci@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 09/14] PCI: tegra194: Allow system suspend when the
+ Endpoint link is not up
+Message-ID: <20260408205958.GA316081@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -55,53 +48,27 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bdad8adc-5c20-4fb5-90b0-b7ca4199a7a8@nvidia.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20260324190755.1094879-10-mmaddireddy@nvidia.com>
 
-On Wed, Apr 08, 2026 at 06:28:55PM +0100, Jon Hunter wrote:
+On Wed, Mar 25, 2026 at 12:37:50AM +0530, Manikanta Maddireddy wrote:
+> From: Vidya Sagar <vidyas@nvidia.com>
 > 
-> On 08/04/2026 15:40, Robin Murphy wrote:
-> > Many drivers have no reason to use the iotlb_gather mechanism, but do
-> > still depend on .iotlb_sync being called to properly complete an unmap.
-> > Since the core code is now relying on the gather to detect when there
-> > is legitimately something to sync, it should also take care of encoding
-> > a successful unmap when the driver does not touch the gather itself.
-> > 
-> > Fixes: 90c5def10bea ("iommu: Do not call drivers for empty gathers")
-> > Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> > Closes: https://lore.kernel.org/r/8800a38b-8515-4bbe-af15-0dae81274bf7@nvidia.com
-> > Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> > ---
-> >   drivers/iommu/iommu.c | 6 ++++++
-> >   1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> > index 50718ab810a4..ee83850c7060 100644
-> > --- a/drivers/iommu/iommu.c
-> > +++ b/drivers/iommu/iommu.c
-> > @@ -2717,6 +2717,12 @@ static size_t __iommu_unmap(struct iommu_domain *domain,
-> >   		pr_debug("unmapped: iova 0x%lx size 0x%zx\n",
-> >   			 iova, unmapped_page);
-> > +		/*
-> > +		 * If the driver itself isn't using the gather, make sure
-> > +		 * it looks non-empty so iotlb_sync will still be called.
-> > +		 */
-> > +		if (iotlb_gather->start >= iotlb_gather->end)
-> > +			iommu_iotlb_gather_add_range(iotlb_gather, iova, size);
-> >   		iova += unmapped_page;
-> >   		unmapped += unmapped_page;
-> 
-> 
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> Host software initiates the L2 sequence. PCIe link is kept in L2 state
+> during suspend. If Endpoint mode is enabled and the link is up, the
+> software cannot proceed with suspend. However, when the PCIe Endpoint
+> driver is probed, but the PCIe link is not up, Tegra can go into suspend
+> state. So, allow system to suspend in this case.
 
-Tested-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> +static int tegra_pcie_dw_suspend(struct device *dev)
+>  {
+>  	struct tegra_pcie_dw *pcie = dev_get_drvdata(dev);
+> -	u32 val;
+>  
+>  	if (pcie->of_data->mode == DW_PCIE_EP_TYPE) {
+> -		dev_err(dev, "Failed to Suspend as Tegra PCIe is in EP mode\n"); > -		return -EPERM;
+> +		if (pcie->ep_state == EP_STATE_ENABLED) {
+> +			dev_err(dev, "Tegra PCIe is in EP mode, suspend not allowed\n");
 
-I think the commit message needs to spell out that the blamed commit
-causes random memory corruption which leads to data corruption and
-kernel oopses.
-
-Thanks!
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Should this message say something about endpoint suspend not being
+allowed because the link is up?  IIUC, the endpoint *can* suspend if
+the link is down.
