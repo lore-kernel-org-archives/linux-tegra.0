@@ -1,91 +1,76 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A723C7E13
-	for <linux-tegra@vger.kernel.org>; Thu,  9 Apr 2026 12:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FB13C345F;
+	Thu,  9 Apr 2026 13:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775739593; cv=none; b=Cb8ayUDJPFQTDpZ9UBZtPTN6Xrg2VTE0DFTXARNJ1vP6RWEXmnst/XYCAxST+RQ8yXw8pDqcHZN8FJavGpRLfDTYt+ALeW8CkO6o3OwXiTxH4sdoaixcmWo4UQRzs7oO6KPumKwGUEEq1CK9Qeyx9K4eSj5OwFP7eL1if5gcEEw=
+	t=1775739699; cv=none; b=qeHgpV6opLsGUm2ljmMiZ/i6uSJ2CZRIQyDQ53txGSveCx714//wLJ9VGlJpW+v1rqwI+VwmE04kyxWGNanVW3HrP9WL0eJnwwACuxZlmTQOXH4Z5CPILfcTVqjJT98VFY3B26lRevfAMKojadpz+vfBJxIX2X1XeGoQKKGbNoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775739593; c=relaxed/simple;
-	bh=4mjSmwYwqDeDBCI+476/c2pzTgbI2J4XyUIYa4sKdpM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tUtS1dv8VnfEtIzN5lKjH4HbRmRg0PhUHJJz+iqTd52AZCMj3MlYvid9jHRyqQ1OpE+sazqYeI3diPSMiS7CRSeREB5wsu81yPnYGwT/VhR5lxBfA8Ji7z2U+V9nMpuwg0XdSiz+ID3TGs92bcmgwKct16rdWL4W4ROdMFaKoc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Iwe9vtEW; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1775739699; c=relaxed/simple;
+	bh=ErkqhB3XTMjrXF4/gzU2lN8NYsLR+G/xAykedOQYTWQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XNB1dldEmbuNXnOYagHWCtzZT91fyZ9zIt5/ccrxJjkmT6hbQOFlkJ8ZfWziACcaA4mXOl+m5qCTdW8LHsI4k+aFKLbQNAXj+7rukKPZ8SFwHsC8+CkEEZBSb2csXYz9lUDFVKJsqB4N2FpYcq8WMdGjvktrnSOJb1encsoxij4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oj9lkDOg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Iwe9vtEW"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 666172F9D;
-	Thu,  9 Apr 2026 05:59:45 -0700 (PDT)
-Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.85])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id EB5493F641;
-	Thu,  9 Apr 2026 05:59:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1775739591; bh=4mjSmwYwqDeDBCI+476/c2pzTgbI2J4XyUIYa4sKdpM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Iwe9vtEW7HobOS2KwDIt3cBb2OtwY9vxZbC1qoQ4p7XN7Qj5Ao79kXlkge11T6gvS
-	 jEUxIyqe4PxpTe7cVzH1llCYf05pDE6FnPZ3OVeFH6nTu557m88YtRi2gWt/Zb7MxN
-	 iEiiT0t192qabsf/oUGP6K0ty0xTzVrBrcvHYqCs=
-From: Robin Murphy <robin.murphy@arm.com>
-To: will@kernel.org,
-	joro@8bytes.org
-Cc: iommu@lists.linux.dev,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oj9lkDOg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A923C4CEF7;
+	Thu,  9 Apr 2026 13:01:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775739698;
+	bh=ErkqhB3XTMjrXF4/gzU2lN8NYsLR+G/xAykedOQYTWQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=oj9lkDOggpSM+xgiDGOL6MqaD8/1lWr2YS8pZKVJ1zkE/btZcxKND9Jf8EnMcnl8P
+	 UdnB9dxBSUahU1bFvvYEo6UxXzyrQEGbq+6f57whWhaPFI0OON4+ptSzB9c6+mMQig
+	 NG0Ljdxnm8MQ7aGq6PuRy3GJjmKpULO1N1bE2pkef6UzYM/vS/qXRRYrO46R05XImu
+	 lT/gjPwDKB1KhMcv81FVtkzpWCOrVgS8CRuYqhsQOsTMy8zRzz0C+qX946kf+LC7hW
+	 b/KNbLWRQtv9/X8XHDVt2iAng2F8dS3QJKdJaApO7iV9MzLppJ5nqqbfSDNujOIalU
+	 IdDcpph9uA6Dw==
+From: Will Deacon <will@kernel.org>
+To: joro@8bytes.org,
+	Robin Murphy <robin.murphy@arm.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	linux@armlinux.org.uk,
+	iommu@lists.linux.dev,
 	linux-tegra@vger.kernel.org,
 	Jon Hunter <jonathanh@nvidia.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH v2] iommu: Ensure .iotlb_sync is called correctly
-Date: Thu,  9 Apr 2026 13:59:41 +0100
-Message-Id: <3eed961d41d3a81460031dee9f1db066f1d2e111.1775739433.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.39.2.101.g768bb238c484.dirty
+	Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH] iommu: Ensure .iotlb_sync is called correctly
+Date: Thu,  9 Apr 2026 14:01:18 +0100
+Message-ID: <177573643352.3408469.5575202206607092720.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <8982e3412563cf91e106d59228dfb6115024c75e.1775659257.git.robin.murphy@arm.com>
+References: <8982e3412563cf91e106d59228dfb6115024c75e.1775659257.git.robin.murphy@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Many drivers have no reason to use the iotlb_gather mechanism, but do
-still depend on .iotlb_sync being called to properly complete an unmap.
-Missing or incomplete TLB maintenance at this point can then wreak all
-kinds of havoc, particularly in strict DMA mode where IOVAs may be
-reused right away, if DMA traffic for a subsequent new mapping hits a
-stale TLB entry and goes to the wrong physical address.
+On Wed, 08 Apr 2026 15:40:57 +0100, Robin Murphy wrote:
+> Many drivers have no reason to use the iotlb_gather mechanism, but do
+> still depend on .iotlb_sync being called to properly complete an unmap.
+> Since the core code is now relying on the gather to detect when there
+> is legitimately something to sync, it should also take care of encoding
+> a successful unmap when the driver does not touch the gather itself.
+> 
+> 
+> [...]
 
-Since the core code is now relying on the gather to detect when there
-is legitimately something to sync, it should also take care of encoding
-a successful unmap when the driver does not touch the gather itself.
+Applied to iommu (fixes), thanks!
 
-Fixes: 90c5def10bea ("iommu: Do not call drivers for empty gathers")
-Reported-by: Jon Hunter <jonathanh@nvidia.com>
-Closes: https://lore.kernel.org/r/8800a38b-8515-4bbe-af15-0dae81274bf7@nvidia.com
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Tested-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
-v2: Add tags, clarify implications in commit message [rmk]
+[1/1] iommu: Ensure .iotlb_sync is called correctly
+      https://git.kernel.org/iommu/c/7e0548525abd
 
- drivers/iommu/iommu.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 50718ab810a4..ee83850c7060 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -2717,6 +2717,12 @@ static size_t __iommu_unmap(struct iommu_domain *domain,
- 
- 		pr_debug("unmapped: iova 0x%lx size 0x%zx\n",
- 			 iova, unmapped_page);
-+		/*
-+		 * If the driver itself isn't using the gather, make sure
-+		 * it looks non-empty so iotlb_sync will still be called.
-+		 */
-+		if (iotlb_gather->start >= iotlb_gather->end)
-+			iommu_iotlb_gather_add_range(iotlb_gather, iova, size);
- 
- 		iova += unmapped_page;
- 		unmapped += unmapped_page;
+Cheers,
 -- 
-2.39.2.101.g768bb238c484.dirty
+Will
 
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
