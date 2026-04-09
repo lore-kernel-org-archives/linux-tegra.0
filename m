@@ -1,156 +1,126 @@
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012028.outbound.protection.outlook.com [52.101.48.28])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D443E1CE9;
-	Thu,  9 Apr 2026 17:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.28
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775754982; cv=fail; b=XDE5KOyWsCUSRD1sw6SLaU8nwAKpnhcb4FtSvZ8F5ZoKCRVCpPHm4EJI8epREHVqqza4NTbERS2kZ2eipHe1ZNnU2O21zRGeO89JuDt4cgejpLExbWk7lB2qQ8AEdedPOGTYPMsjvVwyy97Leob7EQf/j6CYdL12ouCuqztPgzg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775754982; c=relaxed/simple;
-	bh=i5Cqpv7arwRLDh14CdfUOy1N3kbfkdXZy6rPNmAhvkA=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=eK3Ig38tZlHBRKqYJq3octpRIud0guPZwzyZbrPhh2gIroeU+2gX5tRDvv0kjNjBQYHkOHrjZIJCZ2mBcZW/f3ISmMz4IrqXHUwN9cLZn3pGBUW39fLCSb6dZu6vSs/tU+r56vIULBHr5+j3nWDiltanKbtkFhUI9OtIUdzGXtk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kdthVLIe; arc=fail smtp.client-ip=52.101.48.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0945B2D6E58;
+	Thu,  9 Apr 2026 18:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775759800; cv=none; b=bweVx6/2apaeRnYQ3RsmYxckvSwS81QMfBRbj12b2idEzpg4hdRox2Z0DpZsssA+MA6xVTCuxv+1osyFejuPDjxstldMsmH+zfds0IA59hVdA6h+mQk+9L5eDMiLp9iuhC60bN+0d0nTJqNxNeOR25Y8Im/mZQf4vVrn5xZUgTo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775759800; c=relaxed/simple;
+	bh=pSLWhcviM5YvQ5fe+G4dcyEh1DqYJJXJ2+Z9AdgDKlI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ujQgmkdV+Q3Xj2iXauUvlyC7LrZvYcKWJKIOMr0kP4Dib2t+f9HPNv0Cf2N9ia/BQ3iDxAFj01pHAhds0RfBeJOXbyjCXzuX2lupuHNw5btVk4MESJ0H7RAcoCrpaVlx0XvRw89+FZjRDsvo9qy3qJBSmndAv4kcvieHgMwcPv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F6Fsjj3c; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kdthVLIe"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DJmwjNxOOSfvkiL+ju3qaFPusiphqwvXYFuNFUxe6qUonFDOwVWwBDUOOCQOIc2F7JTl9/20V9GwkE5S579QDhNShoTJrkcUcYIsCgiXTG/H4+CigSozv4/H+kHEqj8G5OADLzJ9Mz/642KHRr637oqvrqCwX8QShyhlNaHlXUtsRVw4bt1r/6itFkHFL/XzxT0GKIZyi7tQK88+2SzyzgFf/sZ0fDV9G9/EaLioZN4tjSNu7ZiVIHGFeGfSXRmZLQYjnvHZb8mXAMI2bxxBesvuLUsROPrBXxodfNG67yp6SkG9U/1h6DWa1pQJVQXwOx9llptWAr/L8qSe98rV1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FlzC3Ex5//6HpGH6QZPM1w9t5S7Zvt0PZ4+iBpmX4nE=;
- b=V5PrBcA9wrtSoWKCnw3ymor9e3qsLZSpRXq5rHeMyNW5DVPABcxg8hP2hjYYpLtuPmjPHg+iQg1BVXRqa+q5H1yMFrfzziIFez+p5PnzodHpJfX1+LuyRz+Bjhu7/AAMi9Bp01dud1x2SyS5HeIFtCa2r+9ST+H8dTvIv4eeY+OD9LVRTiPSlOLSUzHngW9W8838nNpKkF+2wDe+4l7meYGaXbxk1QUP0YifdL5gLu6hSxoqqq5TL4Fg3yhbsws9/UvS9kL5S4+PE16OpKT3HSHH9kNBU5HFpZj9kJwqvFRU8qaB8GbGU/S4Jgt9HwkZPKapK8zsoaZvu7JesIJuDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FlzC3Ex5//6HpGH6QZPM1w9t5S7Zvt0PZ4+iBpmX4nE=;
- b=kdthVLIe8kaYsvEerGjPBgG4ZaiH/9Gdll4BotqsCEmHDKjWGpdKcQZ0k2aKchvGgTjNkSdWPTJBGu/cDzE8TJd7aO6QIYW0hWWI3Yv//53VeOD6l9Udmwm2FLnuZagtBfYUgY5EzVhlWWBMl2W5JeY3FU9lJ4jADpOlJ05DXaJwKiSzVambimJ7ze2XKbm9RkImoMdRRUSKXUwKM2v7ICvBornfQDChcyffz7Ya/NF6F8gv8OTq4aoZZkmf7K2r8uLzKvYK64o0j5uBaNVq0kq7nFX2+lEs0do+UwClH8bakI+SuIGjyz9pR5LinIFcgvyB8y2PyC0MhKboB56V+g==
-Received: from MN2PR11CA0026.namprd11.prod.outlook.com (2603:10b6:208:23b::31)
- by DM4PR12MB6087.namprd12.prod.outlook.com (2603:10b6:8:b1::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.42; Thu, 9 Apr
- 2026 17:16:15 +0000
-Received: from MN1PEPF0000ECD5.namprd02.prod.outlook.com
- (2603:10b6:208:23b:cafe::ab) by MN2PR11CA0026.outlook.office365.com
- (2603:10b6:208:23b::31) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9769.41 via Frontend Transport; Thu,
- 9 Apr 2026 17:16:15 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- MN1PEPF0000ECD5.mail.protection.outlook.com (10.167.242.133) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9769.17 via Frontend Transport; Thu, 9 Apr 2026 17:16:13 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 9 Apr
- 2026 10:15:48 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Thu, 9 Apr 2026 10:15:48 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 9 Apr 2026 10:15:48 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@nabladev.com>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <rwarsow@gmx.de>,
-	<conor@kernel.org>, <hargar@microsoft.com>, <broonie@kernel.org>,
-	<achill@achill.org>, <sr@sladewatkins.com>, <linux-tegra@vger.kernel.org>,
-	<stable@vger.kernel.org>
-Subject: Re: [PATCH 6.19 000/311] 6.19.12-rc2 review
-In-Reply-To: <20260409091742.514769762@linuxfoundation.org>
-References: <20260409091742.514769762@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F6Fsjj3c"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7EA1C4CEF7;
+	Thu,  9 Apr 2026 18:36:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775759799;
+	bh=pSLWhcviM5YvQ5fe+G4dcyEh1DqYJJXJ2+Z9AdgDKlI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=F6Fsjj3csyLXDcjTiWIHUcaDDCT9vT04xo4JyuPpmR0NUBlm8nQHcIJ3HXITHA0MT
+	 of/aZhI2dkXZ0jtKFvHK9rPrukkPcNB+nN/ncpFQBwLTBVM5bfWRK4Vv3EvHpL+rRd
+	 3TtRuG4HWZvimCPWPkeUQchnVUHQEbuI7TI91h4Qk1ZmFDaug9HtSRRrU1739VJq1Q
+	 hjDZckOVStHM7Eaith6qprlzNb5enoLg8dJMiyRVRWuu3LhDAcpi5vWTyW1e7pYiqW
+	 o+I6sJd6lPc+4tXZCvAoyxzRsIDRvrl+ASw2Dvlt6kTH2tiEcpYwdy+7RttLJ6CDjl
+	 DyuNb2w3iacAw==
+Date: Thu, 9 Apr 2026 13:36:38 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
+	kishon@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
+	Frank.Li@nxp.com, den@valinux.co.jp, hongxing.zhu@nxp.com,
+	jingoohan1@gmail.com, vidyas@nvidia.com, cassel@kernel.org,
+	18255117159@163.com, linux-pci@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 9/9] PCI: tegra194: Use aspm-l1-entry-delay-ns DT
+ property for L1 entrance latency
+Message-ID: <20260409183638.GA490960@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <e4379ca0-f44f-465c-b29f-dc7c85d479ee@drhqmail202.nvidia.com>
-Date: Thu, 9 Apr 2026 10:15:48 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD5:EE_|DM4PR12MB6087:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2d2083f4-8b98-41b0-b670-08de965bb3ca
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700016|7416014|376014|56012099003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	lL8/5rKHyEPjLJA5+AXVYZfDuLzcUsB4M9hGFEVu3mvFeZdoaSxC67YZQn7uKE9LVbGsv+BOMz0FpVtCZ7+D0VV9QOlL1v40E5/gDxb5hq8uh2kc4jx4QdehWFg1D0Zq7lL+qPE1hhJRDiRRGzWzUdMPGnY+jdmpSv3QWxV+Ea47LLQURWJKO5AassXTivARhzaOz5Ubf73WPNiI2m5dIxSI8pArZtNROuSDkLX7nZN+PuqkBECg3QhMKG8TN+nu/XwxvLP3+Xkugze/8gl/Ub4jrfmi89KObEwXldsLBv7vfgaqkFE8Dt8Um/wXz7eYW4azkXlubt2Jdjs4JvxI2ur2vVAE9V6Qb+zYrUifUm91tCYiPfvh6Y4wQeiRtPFPv67nMpyF3B0aTJ9QJIq56PjRMru3OXORJVWYyIPVP3GTDjAB+NSFUQq11cT0sjBAo2df0rwNo5EFiUyTOck4F0PImd7kmQJlKd2S+gnmb2PS9C43G6afTvvvTLNNmwKp0knchp7DeGO8s+ecfUGSLwOjHP+9hWsQPoL4o+ANLmcnkHPXNO3Zu8dzyPpVvntVhS/TPAgtOJyQM66eXP3onqdxyVvCwE5WBKfE3gz7t8IRcHtf3usFP7fLz38SbIpYpz5lIDy98wFCyEm6FFrAo9Z/Sx4NMZLNpFrAqNUSRHCDAN7h4mQCO1JjU727V8jttzf7QEgh0amhOKuiQxEpcpX+3Ai4o/kRoMnxjcpORAF1ZNrJ1mm7U3zxlKkvPcQjLjm1HwGrob1dcYHSiGyOGg==
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700016)(7416014)(376014)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	X0BEuqytb21CvKzwt+IrV5peOh9YcAnYe7lWW2dX8Az8oFjTTWKqznkShxnemSKpjUHkBcyO5yjSbR8mHrXw5al7tTfiFHHAF2Ec6/34gOA3SXyX2Z0eDdApMMYuhodfpNZbO3eRBu9AqIo+yjEx0egS5EMwsdYvNzcsmHOR6/X/b8UTxyqrMHXJbYmc8sVLlez2TOmEWI+//AK0RSw0ZbHDKTfiQHKMfz2qpOpqgd96/PT7TSw6VhoAL/Ezq3HEyLgwUuAxb1D3LMANuS1ZimMp6B46dFC2cISqf/2irYvGX+E9+Nb81HEEoJGjLauapmNGmj0KQKWBj96Osx62SYUft3EzS4ncVq98kiLbOgeB4p6QX/H7wHbqzJr8jRlGqLS/b/L5R6yCBxxU7aD+Tw/u7XzIRoCJTqBJmEmeoyOqcAPBV7TEzXp26Qlh8Mwj
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2026 17:16:13.3975
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2d2083f4-8b98-41b0-b670-08de965bb3ca
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000ECD5.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6087
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260324191000.1095768-10-mmaddireddy@nvidia.com>
 
-On Thu, 09 Apr 2026 11:25:28 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.19.12 release.
-> There are 311 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, Mar 25, 2026 at 12:40:00AM +0530, Manikanta Maddireddy wrote:
+> Program ASPM L1 entrance latency from the optional aspm-l1-entry-delay-ns
+> device tree property instead of of_data. Convert the value from nanoseconds
+> to the hardware encoding (log2(us) + 1, 3-bit field). If the property is
+> absent, default to 7 (maximum latency).
 > 
-> Responses should be made by Sat, 11 Apr 2026 09:16:46 +0000.
-> Anything received after that time might be too late.
+> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+
+I dropped this patch from the pci/controller/dwc-tegra194 branch for
+now so we could get the rest in pci/next.
+
+> ---
+> Changes V8: Use aspm-l1-entry-delay-ns instead of of_data
+> Changes V1 -> V7: None
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.19.12-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.19.y
-> and the diffstat can be found below.
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 > 
-> thanks,
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index 3278353b2c29..a856a48362df 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/iopoll.h>
+>  #include <linux/kernel.h>
+> +#include <linux/log2.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_pci.h>
+> @@ -272,6 +273,7 @@ struct tegra_pcie_dw {
+>  	u32 aspm_cmrt;
+>  	u32 aspm_pwr_on_t;
+>  	u32 aspm_l0s_enter_lat;
+> +	u32 aspm_l1_enter_lat;
+>  
+>  	struct regulator *pex_ctl_supply;
+>  	struct regulator *slot_ctl_3v3;
+> @@ -710,6 +712,8 @@ static void init_host_aspm(struct tegra_pcie_dw *pcie)
+>  	val = dw_pcie_readl_dbi(pci, PCIE_PORT_AFR);
+>  	val &= ~PORT_AFR_L0S_ENTRANCE_LAT_MASK;
+>  	val |= (pcie->aspm_l0s_enter_lat << PORT_AFR_L0S_ENTRANCE_LAT_SHIFT);
+> +	val &= ~PORT_AFR_L1_ENTRANCE_LAT_MASK;
+> +	val |= (pcie->aspm_l1_enter_lat << PORT_AFR_L1_ENTRANCE_LAT_SHIFT);
+>  	val |= PORT_AFR_ENTER_ASPM;
+>  	dw_pcie_writel_dbi(pci, PCIE_PORT_AFR, val);
+>  }
+> @@ -1110,6 +1114,7 @@ static int tegra_pcie_dw_parse_dt(struct tegra_pcie_dw *pcie)
+>  {
+>  	struct platform_device *pdev = to_platform_device(pcie->dev);
+>  	struct device_node *np = pcie->dev->of_node;
+> +	u32 val;
+>  	int ret;
+>  
+>  	pcie->dbi_res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
+> @@ -1136,6 +1141,15 @@ static int tegra_pcie_dw_parse_dt(struct tegra_pcie_dw *pcie)
+>  		dev_info(pcie->dev,
+>  			 "Failed to read ASPM L0s Entrance latency: %d\n", ret);
+>  
+> +	/* Default to max latency of 7. */
+> +	pcie->aspm_l1_enter_lat = 7;
+> +	ret = of_property_read_u32(np, "aspm-l1-entry-delay-ns", &val);
+> +	if (!ret) {
+> +		u32 us = max(val / 1000, 1U);
+> +
+> +		pcie->aspm_l1_enter_lat = min(ilog2(us) + 1, 7U);
+> +	}
+> +
+>  	ret = of_property_read_u32(np, "num-lanes", &pcie->num_lanes);
+>  	if (ret < 0) {
+>  		dev_err(pcie->dev, "Failed to read num-lanes: %d\n", ret);
+> -- 
+> 2.34.1
 > 
-> greg k-h
-
-All tests passing for Tegra ...
-
-Test results for stable-v6.19:
-    11 builds:	11 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    133 tests:	133 pass, 0 fail
-
-Linux version:	6.19.12-rc2-g0d57c706dc2f
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
-                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra234-p3737-0000+p3701-0000,
-                tegra234-p3768-0000+p3767-0005, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
