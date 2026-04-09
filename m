@@ -1,115 +1,155 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011065.outbound.protection.outlook.com [40.107.208.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3733A451E;
-	Thu,  9 Apr 2026 16:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775753740; cv=none; b=Kk+lId4DWdHF3AzzfDTVb4LgWUh38ief3BIg74n08E/ttprTZvgTo1qvZ6gZuPfxtc+cITGZ34QMnAKYzu8olwbS8mwYrt1vbNhYLcx7POOhrJv7TMENH6lhdsh3cC1owO7ZqieZB9zekJQ8IvMxIicjQNdjkxMn2hLIxc/MORo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775753740; c=relaxed/simple;
-	bh=Sy7rh5K1WBTB9rOE/PjDplirdBoBlh6Bjfh7+yc2P/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tx1kIq742WumLMJCzPhcswOeoMDkbNlTsvhD8jMlyTueX/oDGXDKhPEWlCdPUG39hJeLfbt1DN/YqFcxZN/Vzyqalfhdtq9ccmADcJG4VRxdTWElQYQFfHdib3nRMazok7jkaPQb/a7KsGZxsjMAKg3A+ydIXTFlptS5+6sKQ+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PJCBDzcP; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AFC346AC2;
+	Thu,  9 Apr 2026 17:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775754972; cv=fail; b=r4XRQ/e7jyAC6lOqA7QdUx8zM9/T4aNpqtMp0x49pGn5JkSrE5tllIS53oEDbIOYD7eemoM6MsmhLlG5JZq1tcnXX7r5kJ4wUZBsl1FE88C+Op+T9X2Tqglc40owVl2NKpUKsSYzwhfkYjXSNBUW7UnaeGHnU2A6moAhDn0EWUE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775754972; c=relaxed/simple;
+	bh=aodlW73MOAsQvMSl+5Ak+W3y987TAIhoH2EM63QeI/8=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=MScuQzjuhLQEee4Ho8TaK2X7+ti5qePgcr/DBxJEy0Mshz0PTHqSnC8LjhP/sh2IOyGfM0ZkCWZT2E5HimquSSkxBxwvAedz3VQvVTpTS9m7L+zkER8LhGvePZ60wWS4b8M79btY04LN0sBg5gVM1Z9GxOekcU7JVPGj4GFcA6Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RJ91+P10; arc=fail smtp.client-ip=40.107.208.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJCBDzcP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EACFC4CEF7;
-	Thu,  9 Apr 2026 16:55:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775753739;
-	bh=Sy7rh5K1WBTB9rOE/PjDplirdBoBlh6Bjfh7+yc2P/A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PJCBDzcPDhcxKn1d7oK69PzRtX30A2zUtGBR0gsygWNDtOHgFmsLCv+EuAoghlzY/
-	 njrHesDGxa62iNPWF9b8tp5THRqN2FUM/1KH8bkoMySs/8pfoF4hMDVjNEXHzzjSxI
-	 pM+eG4u3dnag3MlYEy6sSJ7CUWyGtVnJolWFMDYyq6l58YGSZ0hnrhepb8RcuZGpYv
-	 fOlzB2iMJVYkdjowkcTPAn/GT+lfJN3J1uJJ0r1YOiBXOxOXpWLyKJiPjAI+mSqE96
-	 /E7OGDbCQ5ygCPQyyQN8o8Xh26lT0sdNKk0ygqxtTgj2ekhC1YDZdRLi9NgaXWEkRN
-	 AOdRQVbJQY8XA==
-Date: Thu, 9 Apr 2026 22:25:28 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Cc: linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, thierry.reding@gmail.com, 
-	jonathanh@nvidia.com, kishon@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org, 
-	Frank.Li@nxp.com, den@valinux.co.jp, hongxing.zhu@nxp.com, jingoohan1@gmail.com, 
-	vidyas@nvidia.com, bhelgaas@google.com, lpieralisi@kernel.org, 
-	kwilczynski@kernel.org, cassel@kernel.org, 18255117159@163.com
-Subject: Re: [PATCH 1/1] PCI: tegra194: fix min() signedness when capping
- ASPM L1 entrance latency
-Message-ID: <dlt7wnuuhxvkuzw4fqtprvkoagxibb3hsw5epqtj4l2yms6yku@pejcof2p3vg2>
-References: <20260407145749.130753-1-mmaddireddy@nvidia.com>
- <61133700-7024-4f72-98bf-ac8cc94b3a56@nvidia.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RJ91+P10"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VVN8YfGy0mju/rmJ5+rUEduTOvMipkNPnSpuDmKTsuZKB9NK6FJ3laFsOdSo+6KQExZxxm5/uv+NJyr0+QBIFWCae4Ad+vCka5NtgsERiCZEalMtRHZe/ZqY2oqR1F88Ki3ReFqsy1kDoKM73ot7kurrgrlCF1Cole1E6/KfLwfChDTWDIEuxurCkOUTSwhKh7yKgB8rN/LUDzGBUcAOx9cNZFSuQzOVtXz4cM+s3p0IAyLOSty1BVdBxY7P3QMFtWqZkN4zMy16ii73PLRs7CrWP8njD7GFR2gCBaKgQryfxeihOJQFXoSu+x0uLmzYLXVYKftQznCT33VFGZJ4vg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zPSy59OI1QYViamPwRDEjam69nSwW2tMLQjdAwNaIGY=;
+ b=RhI97WwgZQW9C3KfYsoqflyVZFS2yRCIwGwPq7LTi+dFhywcaxrQHiIonrEuOoADe6lLfTTD3jGln7VPketRkyq2QY81X/hMVgzppBohFkclmVgbKMZa7qpObK+f2OEo6OsMPB7meY54SNdFsBUk4VhaOpDTEiLUNsZ0+q4dXWF2XNpjgQ6WAckNFhRHuk4ZM8SiqpEgJPSDwFNN4e/XnHa3bVh7E63xZa8lo5TJmzrUMCG1Oh55NH0UkWm7JeLFMa+eFF3o7Kzqtr0OcAtayMFLnw+IAwYN1As7ZEPb0mmAxRwM8f+6hcytSzi5dlMLxX8ZIjVkZMJM7zcZTYpfuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zPSy59OI1QYViamPwRDEjam69nSwW2tMLQjdAwNaIGY=;
+ b=RJ91+P10ASzyKZpg4uFFji32Xgl0xfJClf4hyKtPWSOwy3nfpdlkhZ0LCVqQpvSaVpPa77xwYx8pCzH1GE67bHyMw+uDQKHtWSejWdJeIwiL59DbePGUl22paZ6c6nWynqhGLF3wtoVO2dyfuijh9rSbfZuZbj6nayQ/2kR+JvJM3MvdiOLr+WdWlv9zTb1qOM8PIawlLE1GnUXcJaJEhwyRdF12NMPOEG1OtFM9bUzzOHY5vZl1upuQ4M5DE7pU0XaG8QVg6WshubAM1DA0jOL8D0hgOSe28CXtDGOo3VmyyRPAJQCG9mbUbdYel97E8i9lsaXoPIcLsLCbdNBcyQ==
+Received: from IA4P220CA0003.NAMP220.PROD.OUTLOOK.COM (2603:10b6:208:558::12)
+ by MN2PR12MB4208.namprd12.prod.outlook.com (2603:10b6:208:1d0::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.19; Thu, 9 Apr
+ 2026 17:16:06 +0000
+Received: from BL6PEPF0001AB74.namprd02.prod.outlook.com
+ (2603:10b6:208:558:cafe::d1) by IA4P220CA0003.outlook.office365.com
+ (2603:10b6:208:558::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9769.41 via Frontend Transport; Thu,
+ 9 Apr 2026 17:16:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL6PEPF0001AB74.mail.protection.outlook.com (10.167.242.167) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9769.17 via Frontend Transport; Thu, 9 Apr 2026 17:16:06 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 9 Apr
+ 2026 10:15:40 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 9 Apr
+ 2026 10:15:40 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 9 Apr 2026 10:15:39 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@nabladev.com>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <rwarsow@gmx.de>,
+	<conor@kernel.org>, <hargar@microsoft.com>, <broonie@kernel.org>,
+	<achill@achill.org>, <sr@sladewatkins.com>, <linux-tegra@vger.kernel.org>,
+	<stable@vger.kernel.org>
+Subject: Re: [PATCH 6.12 000/241] 6.12.81-rc2 review
+In-Reply-To: <20260409091733.126574279@linuxfoundation.org>
+References: <20260409091733.126574279@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <61133700-7024-4f72-98bf-ac8cc94b3a56@nvidia.com>
+Message-ID: <a37f0f12-b7ee-49c8-9e29-b63718e5b723@rnnvmail202.nvidia.com>
+Date: Thu, 9 Apr 2026 10:15:39 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB74:EE_|MN2PR12MB4208:EE_
+X-MS-Office365-Filtering-Correlation-Id: 54366513-e583-48a0-f36b-08de965baf8d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|7416014|376014|1800799024|82310400026|56012099003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	BnBPlUeSwhcSdNVB4uhBY/aOnwxk8v4dOXU+3lDX8weAAYI9UiHYeX7FP7gDSiE4pexArv6oEWMgxKI1nRmTeFYkb8VE5V6fKO5HcbKA2+joKq/2NW/yS9znFP2mQQ48arU9z29NpjXOUw9HqYzw30/OhlcXW0lzBcZks3ggjojReMTr7yQxKQ1uSmX7zaKP/hFQrmqgJNa1LHEy+jVzkhgL7156kK2sTwo84ar4PaYjpwF97N1Rt5ZVfP+BB/YMnd89bZ/YB38gOhUlkskNM0HOOkF5ibg/2F2s9EcneFD0oc8BQiqQY/rri9wNy926d84gK9QXZ6ztJxdxEwZhEhHoAuKONaa/vtwB5q0hvIxxZeU4o+/lFKAesuE3Vk5PD2ROysDo7d4B0ns916le6RP7NZ7dirpcIvQ/854w+smUP6aq1/4jFg1j8LqpNwABZra7VGagEK4kZh05klmAMF9eDtusheSTHx1jc5QysvUfME5e4myIHPJ85iBATucIh6rW30rrX4xJDgXajbLY17CFLJ5ZTJvjBIxl7qvtYrE3ywI2cPMZbgDN5DIa0tjukbk6sBiccLkJVpm2KSMG29KBkn24QYeKQcvCg5F/zS+PkzsHM/RDSrgBasgLHroY7kWFBVaFjB6+Xa/SU1hZO/9uygqZ/o+VQGnZrwurj6EJdTvtt31YUTdsiMGbz1UCBkucNQtJHjCLjZtl693T/3AAeAnn3EwNju43U8lMkcHHVT3GGSBq4sMpqZXooRN7MdeF9jHxP7qcf4O+8FgpBw==
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(7416014)(376014)(1800799024)(82310400026)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	EFJ28F39114yY+wRttNVwf4hP1UGx1I+2KwDjN3zL8qaK6OcMfw5/B8gN0Cdmz3LUrrf9lDM0bnv8aXBOkvjXRaStFFknGDuYJuwcX/Ba6N8WiKNUROAhzX0YQuSsSWOD3KYUwi7W0EQQ8UvjQIAM8Hz5D83CyLORe+T5+jYi7YWKe3Tf3RHlWXZqLgeGGXPMbEriaasyDhBzkQcxCU4Bckk/VKiGg8kQNPHi+WfyPsllL0+4t6OlODcOYJ6RjHlTF5VsKhcCDOFlvgLML6H9Hi0K66oGmWjb8QGdH3zQ3sRi4n2LsVuPx59wrSFRz6iD7sqLrn457QcaZqtNOz6jyRsXt8m47uQ9fVfHD2kV/GM+9dckFuxdEyZWx77+BnUlk1qqBb53dMuHm7THAsfmRpEN4RkcW7yInC71Wo0TucdSMEq3EnV40bHIOSdCZHo
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2026 17:16:06.2901
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 54366513-e583-48a0-f36b-08de965baf8d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB74.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4208
 
-On Wed, Apr 08, 2026 at 11:27:28AM +0530, Manikanta Maddireddy wrote:
-> Hi Mani,
+On Thu, 09 Apr 2026 11:25:21 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.81 release.
+> There are 241 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> I added W=1 argument to make command to reproduce the issue, but I am not
-> able reproduce the issue at my end. I made this change based on the issue
-> description in
-> https://lore.kernel.org/oe-kbuild-all/202604051407.AODe3ddZ-lkp@intel.com/,
-> but I couldn't verify the fix since build is working fine with or without
-> this change.
+> Responses should be made by Sat, 11 Apr 2026 09:16:49 +0000.
+> Anything received after that time might be too late.
 > 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.81-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-You need to use the same config/compiler that was used by the bot. In this
-case, it used parisc-allyesconfig and hppa-linux-gcc (GCC) 15.2.0.
+All tests passing for Tegra ...
 
-- Mani
+Test results for stable-v6.12:
+    11 builds:	11 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    133 tests:	133 pass, 0 fail
 
-> Thanks,
-> Manikanta
-> 
-> On 07/04/26 8:27 pm, Manikanta Maddireddy wrote:
-> > The DT property "aspm-l1-entry-delay-ns" is converted to microseconds,
-> > then encoded for the L1 entrance latency register field as ilog2(us) + 1,
-> > clamped to the hardware maximum of 7.
-> > 
-> > ilog2() returns int type, while the upper bound is 7U (unsigned int).
-> > The min() macro is implemented with __careful_cmp(), which rejects mixed
-> > signed and unsigned operands at compile time via BUILD_BUG_ON_MSG in
-> > minmax.h; that check trips on this pair, notably when building with W=1.
-> > 
-> > This combination fails to build (e.g. parisc allyesconfig, GCC 15, as
-> > reported by the 0-day bot).
-> > 
-> > Use min_t(u32, ilog2(us) + 1U, 7U) so both sides of the comparison are
-> > unsigned and consistent with aspm_l1_enter_lat.
-> > 
-> > Fixes: 4a44cd65c9dd ("PCI: tegra194: Use aspm-l1-entry-delay-ns DT property for L1 entrance latency")
-> > Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202604051407.AODe3ddZ-lkp@intel.com/
-> > ---
-> >   drivers/pci/controller/dwc/pcie-tegra194.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> > index 393f75ce3df3..93d3452ac117 100644
-> > --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> > +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> > @@ -1147,7 +1147,7 @@ static int tegra_pcie_dw_parse_dt(struct tegra_pcie_dw *pcie)
-> >   	if (!ret) {
-> >   		u32 us = max(val / 1000, 1U);
-> > -		pcie->aspm_l1_enter_lat = min(ilog2(us) + 1, 7U);
-> > +		pcie->aspm_l1_enter_lat = min_t(u32, ilog2(us) + 1U, 7U);
-> >   	}
-> >   	ret = of_property_read_u32(np, "num-lanes", &pcie->num_lanes);
-> 
-> -- 
-> nvpublic
-> 
+Linux version:	6.12.81-rc2-g0ed76c578036
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra234-p3737-0000+p3701-0000, tegra30-cardhu-a04
 
--- 
-மணிவண்ணன் சதாசிவம்
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
