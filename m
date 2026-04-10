@@ -1,394 +1,181 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010044.outbound.protection.outlook.com [52.101.56.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332AE3DCD8E;
-	Fri, 10 Apr 2026 16:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775838873; cv=none; b=nPx5jN7pT5k8f8+7hF1q7pkyGNoMnd3ssl91+YZF1EoQnrL6oDDBlGwDxqQ9rC1au/TugLCOnv2LF2KEflYMBCjw5hlBlnQlVST/ArlFN74H26fi8EZ+ioQlxX0up7vJk8ZyDfqCjeDhGCa+zhMu8LoCaEIQb4hZPHrIi2/zIyY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775838873; c=relaxed/simple;
-	bh=0GNmJYWWFmVhVV4nIg36bDblcBd/4S2M8hMuiDQOjUk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t7etfmih4Tf6udtpHtZjIqtOqDh8BMD4Su7onp1NZyJEkdhcJkj7IK2FCXbArQNHqXOmFqpHHJOuKbo09vpL/MJmm5w2Fu0MBRyBi/87LaogJrY+uLw1ZJ+BitOy4efbCT8Au0pGoBwSxhyeYKJEeQ9OlcuLyxe5wEg2mjQ/HWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h6yRzHum; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5F91862;
+	Fri, 10 Apr 2026 18:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775847151; cv=fail; b=RzoupI5gP9JMQarn0wva6looY/Xbi4HytkZh1zhwVpgBPmJCH68wnlK6nRvV/dbj/ZGs35GeT9YFfF0jL/AY4YT57uPu3oBoHYw/cEe4d3/t3P3ebJu3+LtFK12SlqoclRhjMPW67+WLLs3rxUkdDaKxXNGMhIN8h0hQXUb/fK8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775847151; c=relaxed/simple;
+	bh=bSi7mfKOy1pluSaDFX3GDc7X3/BkgZdo77nO+isVugQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G+7OxTK0yjVTzyZQOiPAk1fFYDkElxzvlJxTtNKsKmj4xnB38vfEA/is0Z04JwHat9gqqss/sEDLVRFHs7XjcfrvgclczzNslRukw/gq6UnRxNtK31URiBH5vzcZwm+Qpg6fp1S75YwCp+6PiyxWyiT7f/p2YjhSPRYAPLPsoyc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KYBXPDIA; arc=fail smtp.client-ip=52.101.56.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h6yRzHum"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2098AC19421;
-	Fri, 10 Apr 2026 16:34:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775838872;
-	bh=0GNmJYWWFmVhVV4nIg36bDblcBd/4S2M8hMuiDQOjUk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h6yRzHumYoqUvW46IDcJv1biGCgOPkVYHTUQJAaejVyV7yGNVQJD+bZkpzsdPp/rz
-	 fDEMkqIQLmW3rSuKyrw1YbMsPwg2IqL+q9i/IaY+YrHznB2IeUwuAO7L1QnmSYtxMn
-	 En1ZeXUAkbMjJ10NH+F0uKR6SiHNvRE8ATe7whYZh9bbFh2w4zGdzRo9islLpHmw+a
-	 ahyobHPsqJ/PnCPQNt2AiNLrW7JKbmQSliRGjI6G1rQIJ7IpUEJgsl3DwxHmAOmaLx
-	 ZtVkMqX6UXr8VzRLZtfzqZEVQ7hhWAaN1QOxNfyvtcs1LfZHwEui7WZ47ODNMdsZOX
-	 khotrbWqMUKmA==
-Date: Fri, 10 Apr 2026 22:04:20 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>, 
-	Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, Michal Simek <michal.simek@amd.com>, 
-	Kevin Xie <kevin.xie@starfivetech.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Thierry Reding <treding@nvidia.com>, 
-	Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Subject: Re: [PATCH v4 3/4] PCI: tegra: Add Tegra264 support
-Message-ID: <ukeelrtmjgxxwlkkzsojygzo6us5ijshis66a4x2a44hg4bw25@hggglahvrajy>
-References: <20260402-tegra264-pcie-v4-0-21e2e19987e8@nvidia.com>
- <20260402-tegra264-pcie-v4-3-21e2e19987e8@nvidia.com>
- <iaoee5r5e2w52fap7ex23wdikbuvpjpesinedgjkehsedszhzo@64yoo2avmxle>
- <adTAVYEzfD9FQl8N@orome>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KYBXPDIA"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DTeeX7D6HzAsie/oZ+tnFQzNNFMlV1/6ZhHfNWGEUnBxYhz4mtbD5yw+28RuTzdEt5alcqF4layGoHlKLNUwmZdVROxke/ERj8pOPTM5MX0oRZeuL+WGvQAH+/oSdpXWU0vPsrJXV+LAZwCNupmQLaBALPbdmmENhxNEZxh37wvgZewoMQ4+C+CdTaZHUyFKywd//O2/gAilN5wyXI2UN/Rm0WticgguSSUUr+acAStTMm/m9/hQwzbDCYMTI7CPdWVwq9BfSyo5HmU3AyL/9zNusUlmpczMyt4lpJr7qbKhxASrdPI0We1whPevRGFQtwL/oOIpDH4KGIGZ/dUiWQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=r6+TjvvR3D3VhzQM/y8dlB60anVcqwqs0oyCKUYVjwo=;
+ b=SVLve5s5s2jLxsJOkVuElsbk6mnGYEObpneeDTXpojXyzK8UtwuS0rCqo+rgfsAdW97fGW4rI1KXg1ZL6w8MCAASDOyoUfN4C+TgMLGaqkCyEcP8Q3aEel3yhMnnRc1514PpsBMaY8KUv02BqhjIWV+gYhcJlCWTgT7kKTPODHDFCyyetHcDcm33tAsJve0JRwCxKdc466La7OY1P/R5Bd3A1q+Dskvilw8/bGz4dpqNJKcJPBkZh55NeH9TjZVyjFPbW4QEI11QSLnQxujNyMR62tdUsykPMjq++kEHVaN3sDXtIaEQU5hFjuu9cEOQaOe5JiOiVqoNpqGUGgHJWA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=r6+TjvvR3D3VhzQM/y8dlB60anVcqwqs0oyCKUYVjwo=;
+ b=KYBXPDIAsvV1QKI0dX1EsIi8EM80n3EIjj6KPtvBTxp1UXVbtqQ4psxPIMIoA4DYFlSyTK1oZlR/Lxh8kisHouV5KYr1LwqdSppJHcMX538ITG/ZYU2h7Tfc9wc58wS8ZYfPYDUupoPpHrhTgwN94BALo0Sl2Wc1jpIMaKsoKQwza9X2ZI3N6gDyRC73PUXgLHbt8FSxY8nLKVs8A8QrXd+mKylh5JA15RnBcCy4x9ETlLaN5qkhnjt+PNblB7J7Sjez/0k2mMxI3Td3iw+ZftDykWejdJXb/ZsAjsO97BlnHYVUUtzZq0UqfdExMzgOr4zg/69R8i0f4dQAMiY+Cg==
+Received: from DS7PR03CA0251.namprd03.prod.outlook.com (2603:10b6:5:3b3::16)
+ by CH3PR12MB8234.namprd12.prod.outlook.com (2603:10b6:610:125::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9791.34; Fri, 10 Apr
+ 2026 18:52:23 +0000
+Received: from CY4PEPF0000EDD0.namprd03.prod.outlook.com
+ (2603:10b6:5:3b3:cafe::70) by DS7PR03CA0251.outlook.office365.com
+ (2603:10b6:5:3b3::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9769.38 via Frontend Transport; Fri,
+ 10 Apr 2026 18:52:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CY4PEPF0000EDD0.mail.protection.outlook.com (10.167.241.196) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9769.17 via Frontend Transport; Fri, 10 Apr 2026 18:52:22 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 10 Apr
+ 2026 11:52:03 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Fri, 10 Apr 2026 11:52:03 -0700
+Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Fri, 10 Apr 2026 11:52:02 -0700
+Date: Fri, 10 Apr 2026 11:52:01 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+	<jpb@kernel.org>, <praan@google.com>, <smostafa@google.com>,
+	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<jonathan.cameron@huawei.com>
+Subject: Re: [PATCH v4 03/10] iommu/arm-smmu-v3: Store IOTLB cache tags in
+ struct arm_smmu_attach_state
+Message-ID: <adlG0QTAzdh9vA4M@Asurada-Nvidia>
+References: <cover.1773949042.git.nicolinc@nvidia.com>
+ <ceb8150f229ee7bd355ec42d23e422ae2185492e.1773949042.git.nicolinc@nvidia.com>
+ <20260409234223.GX3357077@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <adTAVYEzfD9FQl8N@orome>
+In-Reply-To: <20260409234223.GX3357077@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD0:EE_|CH3PR12MB8234:EE_
+X-MS-Office365-Filtering-Correlation-Id: 89f7a7b9-7b2c-49f0-154c-08de97324cef
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|7416014|376014|82310400026|1800799024|18002099003|22082099003|56012099003;
+X-Microsoft-Antispam-Message-Info:
+	DUf+DcM8mfjE/TiCKExRZOSduYfsWlRakRABRIELcQDRs5bau7+SwuKm9wdOshrEcZvYRq2r69xaI1v9QqEU+EciZafAKM6SUAf/7veOqOUaqUG8oQKR/L/UmUl/5yjszc3CvC9ydoIGgam/byLU0zSkjd5KywsuaMOATJVos/5RSEPUdmHo+egctld781CBTg7sb/nEiu3xdKEk7sTsPCjkIU7igQqVdq3uf1hosGgiVPJEFzdNIjMdGo/sFDFybrBpHymx+YI6xJ+VcFRzy0atv71J+1f6/FSHYO8Z06TN1tZKsFLEjGCzHFL7BfN0OPOlCQFN7Nf4DsEeHJGBjo/lnQ+C+JBKhbDQ6VY875u103Vzbp6WupY/NpkF4XLP0979zTEz9HzBWzPgvGCDNR4MELn6FTVfV6vrMbKXdFeQOg3emxkp9XB5Z3S6rKlp29KhtMUR/E+NRGYFWVNQw9FcQ0lGMQ/cg7Ca6nX7g9zf7JigCGyRoB8mG/y12VNa/O6KUFcyx6fIT5DLYrbSSO44tCe7eTwJqEPIaD8fdX0+c74yjLgEjmg/G/vczJXKuhy+lIECjVUxzxq+63DtYeDGPCbyF/phsAv+5r9j/o5eKB/78JRaa9suY0VtWlOrqENmuj0vkeLj/22OGGkj9Hg9kGLAX0Xl0Eto38ZmkcxMRC0/f6wDzho1wBvuO3C1Q1t6nj4+oYUbTr2GBv0gjZu+z2gNZJ4C1VUyFc7ME9gScMF98GkFulGt9XPwEkK4M6KHQknPlKxdQX7LenGjBw==
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(7416014)(376014)(82310400026)(1800799024)(18002099003)(22082099003)(56012099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	TZOAgE5qrIiA0Igx9vypCEarRhhs6VN1lbYGRAnV9BY8hRfPszPiu4UTyUnSGvyLmW8irkzzjTmDj9ELE0q7k3BfCfZ0lU7WpMd7Hsu7NbpNn1olfw+leBO1flc5Tp5TcD/FGp3m/4FFq3II/LI8/Veo2c5z26cNJSiohKgnCQcX47fxk2v1G+Bolztr7LhX+K2M9FDnedcMRKrhUx0Fb7SJvpjjjRX3KwwspDOQngYSL5WroIdH5MUSONQ1JObqeOhZhutRlzVRNT0Ksv+dnoznR8LLf499Vx7Lbecy/GJbERegDFhYLFENTDRPo0JpQnyl6dYHAjrwE5Sih41PFhaRdy65IwWchN6d22yfoS8lOZxCrsAPWGo1Q13sQCZ6ZoiazoeUtuwWBz3RuY+LAlKxuml0A1NhVxvoeYKTQaQ8fF3N8bhqcxd2A2+KEQUS
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2026 18:52:22.6776
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89f7a7b9-7b2c-49f0-154c-08de97324cef
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EDD0.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8234
 
-On Tue, Apr 07, 2026 at 11:38:28AM +0200, Thierry Reding wrote:
-> On Thu, Apr 02, 2026 at 11:02:02PM +0530, Manivannan Sadhasivam wrote:
-> > On Thu, Apr 02, 2026 at 04:27:37PM +0200, Thierry Reding wrote:
-> > > From: Thierry Reding <treding@nvidia.com>
-> > > 
-> > > Add a driver for the PCIe controller found on NVIDIA Tegra264 SoCs. The
-> > > driver is very small, with its main purpose being to set up the address
-> > > translation registers and then creating a standard PCI host using ECAM.
-> > > 
-> > > Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > 
-> > What is the rationale for adding a new driver? Can't you reuse the existing one?
-> > If so, that should be mentioned in the description.
+On Thu, Apr 09, 2026 at 08:42:23PM -0300, Jason Gunthorpe wrote:
+> On Thu, Mar 19, 2026 at 12:51:49PM -0700, Nicolin Chen wrote:
+> > So far, an IOTLB tag (ASID or VMID) has been stored in the arm_smmu_domain
+> > +static int __arm_smmu_domain_find_iotlb_tag(struct arm_smmu_domain *smmu_domain,
+> > +					    struct arm_smmu_inv *tag)
+> > +{
+> > +	struct arm_smmu_invs *invs = rcu_dereference_protected(
+> > +		smmu_domain->invs, lockdep_is_held(&arm_smmu_asid_lock));
+> > +	size_t i;
+> > +
+> > +	arm_smmu_inv_assert_iotlb_tag(tag);
+> > +
+> > +	for (i = 0; i != invs->num_invs; i++) {
+> > +		if (invs->inv[i].type == tag->type &&
+> > +		    invs->inv[i].smmu == tag->smmu &&
+> > +		    READ_ONCE(invs->inv[i].users)) {
+> > +			*tag = invs->inv[i];
 > 
-> Which existing one? Tegra PCI controllers for previou generations
-> (Tegra194 and Tegra234) were DesignWare IP, but Tegra264 is an internal
-> IP, so the programming is entirely different. I'll add something to that
-> effect to the commit message.
+> This users thing has become to hard to understand and it isn't how it
+> should be.
 > 
+> All writers *with the possibility of concurrent access* need to use
+> WRITE_ONCE since there is a RCU reader. IIRC that is just
+> arm_smmu_invs_unref()
+> 
+> The one in arm_smmu_invs_merge() is just writing to newly allocated
+> memory so it shouldn't be marked.
+> 
+> Only readers *with the possibility of concurrent access* should be
+> marked with READ_ONCE. IIRC this is just the invalidation walker.
 
-Yikes! I completely missed that this is a non-dwc driver. Sorry for the noise.
+I added a cleanup patch to the beginning of the series and corrected
+all the new reads/writes too.
 
-> > > diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
-> > > index 5aaed8ac6e44..6ead04f7bd6e 100644
-> > > --- a/drivers/pci/controller/Kconfig
-> > > +++ b/drivers/pci/controller/Kconfig
-> > > @@ -254,7 +254,15 @@ config PCI_TEGRA
-> > >  	select IRQ_MSI_LIB
-> > >  	help
-> > >  	  Say Y here if you want support for the PCIe host controller found
-> > > -	  on NVIDIA Tegra SoCs.
-> > > +	  on NVIDIA Tegra SoCs (Tegra20 through Tegra186).
-> > > +
-> > > +config PCIE_TEGRA264
-> > > +	bool "NVIDIA Tegra264 PCIe controller"
-> > 
-> > This driver seems to be using external MSI controller. So it can be built as a
-> > module. Also, you have the remove() callback for some reason.
-> 
-> Okay, I can turn this into a tristate symbol.
-> 
-> > > +	depends on ARCH_TEGRA || COMPILE_TEST
-> > > +	depends on PCI_MSI
-> > 
-> > Why?
-> 
-> I suppose it's not necessary in the sense of it being a build
-> dependency. At runtime, however, the root complex is not useful if PCI
-> MSI is not enabled. We can drop this dependency and rely on .config to
-> have it enabled as needed.
-> 
+> Places like this have to be protected by a lock or the whole thing is
+> wrong, so it should have a lockdep annoation.
 
-Yes. I think the rationale is to depend on the symbols that the driver needs for
-build dependency.
+Hmm, is the lockdep_is_held() in rcu_dereference_protected() enough?
 
-> > > diff --git a/drivers/pci/controller/pcie-tegra264.c b/drivers/pci/controller/pcie-tegra264.c
-> > > new file mode 100644
-> > > index 000000000000..3ce1ad971bdb
-> > > --- /dev/null
-> > > +++ b/drivers/pci/controller/pcie-tegra264.c
-> [...]
-> > > +struct tegra264_pcie {
-> > > +	struct device *dev;
-> > > +	bool link_up;
-> > 
-> > Keep bool types at the end to avoid holes.
+> Now what is the locking supposed to be? It looks wrong, it probably
+> wants to be arm_smmu_asid_lock, but arm_smmu_mm_release() doesn't grab
+> it.
 > 
-> Done.
-> 
-> > > +static int tegra264_pcie_parse_dt(struct tegra264_pcie *pcie)
-> > > +{
-> > > +	int err;
-> > > +
-> > > +	pcie->wake_gpio = devm_gpiod_get_optional(pcie->dev, "nvidia,pex-wake",
-> > 
-> > You should switch to standard 'wake-gpios' property.
-> 
-> Will do.
-> 
-> > > +						  GPIOD_IN);
-> > > +	if (IS_ERR(pcie->wake_gpio))
-> > > +		return PTR_ERR(pcie->wake_gpio);
-> > > +
-> > > +	if (pcie->wake_gpio) {
-> > 
-> > Since you are bailing out above, you don't need this check.
-> 
-> I think we still want to have this check to handle the case of optional
-> wake GPIOs. Not all controllers may have this wired up and
-> devm_gpiod_get_optional() will return NULL (not an ERR_PTR()-encoded
-> error) if the wake-gpios property is missing.
-> 
+> But why does arm_smmu_mm_release() need a tag in the first place? ASID
+> isn't going to be used when EPD0|EPD1 is set, so the tag can just be
+> 0. Probably make a patch with that change early on..
 
-Ok. In that case you can just bail out:
-	if (!pcie->wake_gpio)
-		return 0;
+I see. I added a cleanup patch.
 
-> > > +static void tegra264_pcie_bpmp_set_rp_state(struct tegra264_pcie *pcie)
-> > 
-> > I don't think this function name is self explanatory. Looks like it is turning
-> > off the PCIe controller, so how about tegra264_pcie_power_off()?
+> All the locking is important because this:
 > 
-> Agreed. The name is a relic from when this was potentially being used to
-> toggle on and off the controller. But it's only used for disabling, so
-> tegra264_pcie__power_off() sounds much better.
+> > +/* Find an existing IOTLB cache tag in smmu_domain->invs (users counter != 0) */
 > 
-> > > +{
-> > > +	struct tegra_bpmp_message msg = {};
-> > > +	struct mrq_pcie_request req = {};
-> > > +	int err;
-> > > +
-> > > +	req.cmd = CMD_PCIE_RP_CONTROLLER_OFF;
-> > > +	req.rp_ctrlr_off.rp_controller = pcie->ctl_id;
-> > > +
-> > > +	msg.mrq = MRQ_PCIE;
-> > > +	msg.tx.data = &req;
-> > > +	msg.tx.size = sizeof(req);
-> > > +
-> > > +	err = tegra_bpmp_transfer(pcie->bpmp, &msg);
-> > > +	if (err)
-> > > +		dev_info(pcie->dev, "failed to turn off PCIe #%u: %pe\n",
-> > 
-> > Why not dev_err()?
-> > 
-> > > +			 pcie->ctl_id, ERR_PTR(err));
-> > > +
-> > > +	if (msg.rx.ret)
-> > > +		dev_info(pcie->dev, "failed to turn off PCIe #%u: %d\n",
-> > 
-> > Same here.
+> Must be held as an invarient into the caller, meaning the caller must
+> hold arm_smmu_asid_lock while it has an active tag on the stack, and
+> that should be documented here. As well as a lockdep of course.
 > 
-> These are not fatal errors and are safe to ignore. dev_err() seemed too
-> strong for this. They also really shouldn't happen. Though I now realize
-> that's a bad argument, or rather, actually an argument for making them
-> dev_err() so that they do stand out if they really should happen.
-> 
-> > 
-> > > +			 pcie->ctl_id, msg.rx.ret);
-> > > +}
-> > > +
-> > > +static void tegra264_pcie_icc_set(struct tegra264_pcie *pcie)
-> > > +{
-> > > +	u32 value, speed, width, bw;
-> > > +	int err;
-> > > +
-> > > +	value = readw(pcie->ecam + XTL_RC_PCIE_CFG_LINK_STATUS);
-> > > +	speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, value);
-> > > +	width = FIELD_GET(PCI_EXP_LNKSTA_NLW, value);
-> > > +
-> > > +	bw = width * (PCIE_SPEED2MBS_ENC(speed) / BITS_PER_BYTE);
-> > > +	value = MBps_to_icc(bw);
-> > 
-> > So this becomes, 'width * (PCIE_SPEED2MBS_ENC(speed) / 8) * 1000 / 8'. But don't
-> > you want, 'width * (PCIE_SPEED2MBS_ENC(speed)) * 1000 / 8'?
-> 
-> This is M*B*ps_to_icc(), not M*b*ps_to_icc(), so we do in fact get the
-> latter. I almost fell for this as well because I got confused by some of
-> these macros being all-caps and other times the case actually mattering.
-> 
+> From what I can tell the final result is correct (aside from
+> arm_smmu_mm_release), just under documented.
 
-Oops, I was misleaded too. But you can simply do:
-	bw = Mbps_to_icc(width * PCIE_SPEED2MBS_ENC(speed));
+Re-checking the locking in these functions and updating the kdocs.
 
-> > > +	err = icc_set_bw(pcie->icc_path, bw, bw);
-
-And here you were setting the MBps, not Kbps.
-
-> > > +	if (err < 0)
-> > > +		dev_err(pcie->dev,
-> > > +			"failed to request bandwidth (%u MBps): %pe\n",
-> > > +			bw, ERR_PTR(err));
-> > 
-> > So you don't want to error out if this fails?
-> 
-> No. This is not a fatal error and the system will continue to work,
-> albeit perhaps at suboptimal performance. Given that Ethernet and mass
-> storage are connected to these, a failure to set the bandwidth and
-> erroring out here may leave the system unusable, but continuing on would
-> let the system boot and update firmware, kernel or whatever to recover.
-> 
-> I'll add a comment explaining this.
-> 
-
-Yeah, that'll help.
-
-> [...]
-> > > +static void tegra264_pcie_init(struct tegra264_pcie *pcie)
-> > > +{
-> > > +	enum pci_bus_speed speed;
-> > > +	unsigned int i;
-> > > +	u32 value;
-> > > +
-> > > +	/* bring the link out of reset */
-> > 
-> > s/link/controller or endpoint?
-> 
-> This controls the PERST# signal, so I guess "endpoint" would be more
-> correct.
-> 
-
-Yes!
-
-> > > +	value = readl(pcie->xtl + XTL_RC_MGMT_PERST_CONTROL);
-> > > +	value |= XTL_RC_MGMT_PERST_CONTROL_PERST_O_N;
-> > > +	writel(value, pcie->xtl + XTL_RC_MGMT_PERST_CONTROL);
-> > > +
-> > > +	if (!tegra_is_silicon()) {
-> > 
-> > This looks like some pre-silicon validation thing. Do you really want it to be
-> > present in the upstream driver?
-> 
-> At this point there is silicon for this chip, but we've been trying to
-> get some of the pre-silicon code merged upstream as well because
-> occasionally people will want to run upstream on simulation, even after
-> silicon is available. At other times we may want to reuse these drivers
-> on future chips during pre-silicon validation.
-> 
-> Obviously there needs to be a balance. We don't want to have excessive
-> amounts of code specifically for pre-silicon validation, but in
-> relatively simple cases like this it is useful.
-> 
-
-Ok, fine with me.
-
-> > 
-> > > +		dev_info(pcie->dev,
-> > > +			 "skipping link state for PCIe #%u in simulation\n",
-> > > +			 pcie->ctl_id);
-> > > +		pcie->link_up = true;
-> > > +		return;
-> > > +	}
-> > > +
-> > > +	for (i = 0; i < PCIE_LINK_WAIT_MAX_RETRIES; i++) {
-> > > +		if (tegra264_pcie_link_up(pcie, NULL))
-> > > +			break;
-> > > +
-> > > +		usleep_range(PCIE_LINK_WAIT_US_MIN, PCIE_LINK_WAIT_US_MAX);
-> > > +	}
-> > > +
-
-[...]
-
-> > > +	pm_runtime_get_sync(dev);
-> > > +
-> > > +	/* sanity check that programmed ranges match what's in DT */
-> > > +	if (!tegra264_pcie_check_ranges(pdev)) {
-> > > +		err = -EINVAL;
-> > > +		goto put_pm;
-> > > +	}
-> > > +
-> > > +	pcie->cfg = pci_ecam_create(dev, res, bus->res, &pci_generic_ecam_ops);
-> > > +	if (IS_ERR(pcie->cfg)) {
-> > > +		err = dev_err_probe(dev, PTR_ERR(pcie->cfg),
-> > > +				    "failed to create ECAM\n");
-> > > +		goto put_pm;
-> > > +	}
-> > > +
-> > > +	bridge->ops = (struct pci_ops *)&pci_generic_ecam_ops.pci_ops;
-> > > +	bridge->sysdata = pcie->cfg;
-> > > +	pcie->ecam = pcie->cfg->win;
-> > > +
-> > > +	tegra264_pcie_init(pcie);
-> > > +
-> > > +	if (!pcie->link_up)
-> > > +		goto free;
-> > 
-> > goto free_ecam;
-> 
-> It's not clear to me, but are you suggesting to rename the existing
-> "free" label to "free_ecam"? I can do that.
-> 
-
-Yeah, I was just asking for a rename.
-
-> > > +	err = pci_host_probe(bridge);
-> > > +	if (err < 0) {
-> > > +		dev_err(dev, "failed to register host: %pe\n", ERR_PTR(err));
-> > 
-> > dev_err_probe()
-> 
-> Okay.
-> 
-> > 
-> > > +		goto free;
-> > > +	}
-> > > +
-> > > +	return err;
-> > 
-> > return 0;
-> 
-> Done.
-> 
-> [...]
-> > > +static int tegra264_pcie_resume_noirq(struct device *dev)
-> > > +{
-> > > +	struct tegra264_pcie *pcie = dev_get_drvdata(dev);
-> > > +	int err;
-> > > +
-> > > +	if (pcie->wake_gpio && device_may_wakeup(dev)) {
-> > > +		err = disable_irq_wake(pcie->wake_irq);
-> > > +		if (err < 0)
-> > > +			dev_err(dev, "failed to disable wake IRQ: %pe\n",
-> > > +				ERR_PTR(err));
-> > > +	}
-> > > +
-> > > +	if (pcie->link_up == false)
-> > > +		return 0;
-> > > +
-> > > +	tegra264_pcie_init(pcie);
-> > > +
-> > 
-> > Why do you need init() here without deinit() in tegra264_pcie_suspend_noirq()?
-> 
-> That's because when we come out of suspend the link may have gone down
-> again, so we need to take the endpoint out of reset to retrigger the
-> link training. I think we could possibly explicitly clear that PERST_O_N
-> bit in the PERST_CONTROL register in a new tegra264_pcie_deinit() to
-> mirror what tegra264_pcie_init() does, but it's automatically done by
-> firmware anyway, so not needed.
-> 
-
-Hmm, so firmware asserts PERST# at the end of suspend? It is not clear to me why
-it is doing so. But for symmetry I'd like to do it in tegra264_pcie_deinit().
-
-Also, I'm not certain about the 'pcie->link_up' check here. If it is 'false',
-then probe() should've failed. So why do you need the check here anyway?
-
-Maybe you should get rid of this check and return the link status from
-tegra264_pcie_init() directly?
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Thanks
+Nicolin
