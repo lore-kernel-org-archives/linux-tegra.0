@@ -1,62 +1,64 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D75E37F8A2
-	for <linux-tegra@vger.kernel.org>; Sun, 12 Apr 2026 20:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78AE337FF48
+	for <linux-tegra@vger.kernel.org>; Sun, 12 Apr 2026 20:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776027168; cv=none; b=N0b7PKK/MC9g+G6XflqnvUT3gHXvsHcEnrWn4Y2J4cFhGDyxpwZln42/KeeKTyQ6f5g6ZzwiyUiNjpamzAtp2gXlF36WrIzIE+vmYSyP7RUQYap0PlWHfl0Y5yqwDZsmzQ1VnF5/6PJ+jAEo3mfzzDbg0De5RU5HATMfgnEUKd8=
+	t=1776027172; cv=none; b=kODELcQuTk+Tj5l5L3uC8v6sQCmoFF6SduI0empg03XCw6HWZ5Bg/Dbl+Mngmql2Rn84ny+h0NkP2WpdicyvfifOisazRKG8iUAyCJDkbIM+ZBPKp+aizgTWZZGLwYnboSL0mPYOJA2w4c22gg65G3cUO63uM2UarSwzuEYgYKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776027168; c=relaxed/simple;
-	bh=PT3xs71fHd+54WioIwbDh1RrwxMQVhrEdhvCl0wP16c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nG+Gze9TvqlsHBcTfJcRBHXDLh+qDEpDEDphZIq8dXFvrPVmbUiyIb42IcH4VP6Xj8PwH4U/eNdnLNvk7Bic90hRB8df4hP3ZQOI6DnifJwqQZOsn9C3JaLGZNLVagM8Az9ecZQyyWvjtrpXmmOiUADQQZQJF0tPkBRoHA8m50c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sTQhSVU/; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1776027172; c=relaxed/simple;
+	bh=V3bsKhIGaACHg6eM2xcGs/HQit58c7w+q2E2j1CAkeY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OliD1Iwa58KBHaJHiKb0AIGSVcS0my0L2dlRnPvx1aJPNbJnyzBTmR1nVYA1O25FQAjFtbvmtT0zlwEcOjYMaJWUJUhrIArlXw6+hNbUlvbubfhLFpAXC7R+UY19iltaLyj0VtoWK/CswKV4HyIoGzRlac0J7e4DFJjI8jKGiKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hgPxzRch; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sTQhSVU/"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-66bd4e0560fso4997203a12.0
-        for <linux-tegra@vger.kernel.org>; Sun, 12 Apr 2026 13:52:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hgPxzRch"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b9825ba7e8dso532079466b.3
+        for <linux-tegra@vger.kernel.org>; Sun, 12 Apr 2026 13:52:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776027166; x=1776631966; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NmfBAQ0D3Sa5sjeFp529b93qLEW05p6njf5APTbVpD8=;
-        b=sTQhSVU/IH83hnoGF0DodvRW+6ZsHGHWekDo0X1WpRCJYtf3Kht5EUpJL/2DLA3n6U
-         u50zP2rwJAPsnkz5kpguCeyHHj4BF4XIp6U5qN1VdXK0IjJLIViOAZb6o2SHVZuztwvM
-         A8IJ7QY/cy8U4uFV+sx3GJKum/oBmASwBaZqglNiF/WfluOS2ChjhDShVNVWLVgrux85
-         3kE6sQjHQ19ocgX49fCf0ra0bUJKz+sgn0nm+SMP8BwW8V5tfQTx70QwHs1+f760zrug
-         Y/Mv3Gr2My4K7X9B7seD72QCr03tNJPEeTPzwJqfenGiwD0iIz/0GWgMKpbL7HSy9/1Z
-         EcqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776027166; x=1776631966;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1776027169; x=1776631969; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NmfBAQ0D3Sa5sjeFp529b93qLEW05p6njf5APTbVpD8=;
-        b=KfsIvhkTcn5x9veavy2Kx+J+BInqXEb7FrjRggj0EjfZ4J9DIKZqAXbtobYuOQtq5B
-         gfwfcKy6yXT4T/jmtXr9MbPP4b/s/Ukl1H7WoMgjCugeUmCyGQxqv59S0j/vFcJW6ai+
-         pvHrn6QhBJrj4zucFSklER9Wp00Wgln0wSxihTv9Oeym9Z5rWUp5DOfzgJLmOy3nWhxf
-         7Na8bfqnwFFtZJtTw/qoefR9V08G3fOzjf42A1MObBID0b0Ai9rgM0ftHg1+2oOgqkp9
-         xKur0Ugj32B8es8jOMAaOhOQbItdkeFEP0MW3mJ3Hno6xR7JlAmA97nqPWaA3zgZ58Q+
-         zIAA==
-X-Gm-Message-State: AOJu0YxTw9qICrAZcHuKunOCTFSRfswFFvgXzD3PbFL+uyPGcfkCibxC
-	xpjlvGvkEa3e6YiuS3QnBlLPnxuAB2voHIq2RThs+dFFZ3xYUrGmqJ4gnZkG2Q+Bk7o=
-X-Gm-Gg: AeBDieuH1RujeC+LlmxwZCvAfGkv1z5rOwpEEzd3d0Vhyn3eTLLmrbKWaFQ5qz/C6S9
-	NUlNfC93RANI8VTvcG3orADH3IyVL9tB3Jo1lzLfpbixcZV0gVJRGYaj9jAQVtZgWKJ3Sy2ZqdF
-	a4n+jSwAWlPr3Wc+ByTY2E55U4mljtaUwsSFU0jW8J2hT6vD6VVpvR/COKwAd5+dKGC2CgODNWp
-	a8O22rSusIfDC5ykBix3jCor73awf2blqhM7TMLI63cvDPUXVnuEMk4M0g4DejOU9Kg1kTrGFlJ
-	RTrhIYHZnVG7EgSz7QARqZ7aiQpQ51LSwnP+xFrhxtz1BO+5fxoqD55KXG4EOPIjAAkgvzToS+7
-	7MHhOHE/38dcVeXJNV2D61chx2qOXpCvzaTXC2kYuvA7XsYjrzuzyOIcOes+kMdHYj62bQDvSQ0
-	2tlZZhHv6mU2R5dBMJvbdtqTwL3UtH/eke5bSRRmI8sjrRsGfCKao7cGdAGdDKDT+ld36FWgpmu
-	Xx3md80wL5RE3uktvbtCm2o37r0cRJzI5jmsUFtCtyJ6Ls9oiGjUc2/03Pr0GLzgU91XlAgaPEH
-	z/QL2WhLJfC39Pxf
-X-Received: by 2002:a17:907:1b22:b0:b97:fec5:eced with SMTP id a640c23a62f3a-b9d45b64482mr763764166b.0.1776027165602;
-        Sun, 12 Apr 2026 13:52:45 -0700 (PDT)
+        bh=ZsyBN8eqgGgLu6vT6sEQv8tzWdzbqq6eDTPaal4nWic=;
+        b=hgPxzRchTAuPXQGf+g7xsJUR487jBlBPP+t988slnWuQPcc/3AexiH5o7vut8s2wJA
+         HO7RAukpTJapG4GeoTOYyP0TS6t7B/wZ7Z/fXbx6klaIazKM3CxV/6GUkfqD30f0Nqob
+         HmIvJLMbpUDYK5oEkH7D/bQ5qhHkGvfJ6I/VFk3IBXCsJithZcO/YmYRNx9lhxTR/G7D
+         WWshUNwzuK6KomO1qBGSM6Kt5zu/++lQsY+s63J8/fWwADaYPPXdQgwpDgNgJKk8ql2l
+         c/OOqdR08MB6rObv6PDMvpVBjZIt1DeiS8uKx7SWJRFCJJokZNWOt2WIxKGXUTqYdn83
+         9LkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776027169; x=1776631969;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ZsyBN8eqgGgLu6vT6sEQv8tzWdzbqq6eDTPaal4nWic=;
+        b=JEgGnGuvn/gfmNkz+ejEmiHNkDErHnNsbEmjiygmZEH5IT4V2aHDW9nCKhv+DviC/y
+         6vaKypconJG6HAwETmz8LPOGaDd+L4Wjqe+zNLmDg1l+1BlNAAVxS0eqTkBLd07yFBcc
+         iEz61TZs3PfEto/zN03MDVDEKgIcuM3LQlNaRlzkAOZJXOsCejrK68iCtapXY4UyRIFi
+         nvM40OqNq5E7eOM/VYTDxZv1twR6kfXiPtS52IcNZIUeSIRhdE25bxUDxgH2wod1T/63
+         Ss7hQ28+1hTSo/6tc9PQ/m+Gl9vkvwUPYkFZRIf4QKMK95SG0q+0/KvJBh7Ljgvnz0lo
+         bw+Q==
+X-Gm-Message-State: AOJu0Yw3p7iutsKRyfKNJgxeiShmnE68hgXBT1h6V498jqKxmqd+K//K
+	XBr/qb/xKacL1iA+G0FRbHmu9EC96O728r0TB0dE/F0aY/wN6Dafoj/t9rnWv1wAnwg=
+X-Gm-Gg: AeBDietMhUT58oekWYLynh5LnP1hm9rf/L4I1S8CXwEysfNis9DG1TAIAkUFRDilqdM
+	Ivrt/F8Kd5g54zOCNp5Cbg5t9fdnzoFcx+KDH0hNo0XeU3eum2aUDPxPW1o7aCV3ADkQ83QGvD6
+	DtiRqf/4MuZQLmzYpHvGXIcmO3tum/KwZWwayTGbORHUpIrAtWw2Oh2qva5GxS/gwMgVDzkzGRB
+	94XP2emOkwdF+TpRKwBdBP1XCBEDDrDL0uUIj03styS3XoTGqImUKEZ/fiLvnOwqcCXcmSVV0CN
+	EDOAwQBPwdh4OQcDLPM46gtFFUhmJ3f+531kLh76EOyyZ3onWhgs1HTVrmnj/Lla1a+3VMdt3Oa
+	zFkSxR1cmPRPBgMQ2CBvtVnWaf6cS7JPdFU1exsAQpxilOlLBPJj0oe/gmzB0phMDNdBsM7l1s9
+	34KdtSm+S5GFR9ig5uLGZDyEyd1xfX5UT1VIkKWp39u/XqIx2hY3jMq1eblPb6hF7BY/WGCNA1Y
+	qEjOU8lBgXkg1mco7aL6MyPTtRQkhyjb5Wc0OnLM7WDfmkx2SYAQY7g7fRHM8ayHDvNZej4cvDt
+	vi47KA==
+X-Received: by 2002:a17:907:a603:b0:b97:c5e2:d7c9 with SMTP id a640c23a62f3a-b9d729bd51dmr596748166b.44.1776027168505;
+        Sun, 12 Apr 2026 13:52:48 -0700 (PDT)
 Received: from ahossu.residents.sin.openfiber.nl ([88.202.160.248])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b9d6dfd78f6sm263126266b.26.2026.04.12.13.52.43
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b9d6dfd78f6sm263126266b.26.2026.04.12.13.52.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Apr 2026 13:52:44 -0700 (PDT)
+        Sun, 12 Apr 2026 13:52:47 -0700 (PDT)
 From: Alexandru Hossu <hossu.alexandru@gmail.com>
 To: linux-tegra@vger.kernel.org
 Cc: marvin24@gmx.de,
@@ -64,10 +66,12 @@ Cc: marvin24@gmx.de,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Alexandru Hossu <hossu.alexandru@gmail.com>
-Subject: [PATCH 3/5] staging: nvec: fix use-after-free in nvec_rx_completed()
-Date: Sun, 12 Apr 2026 22:51:16 +0200
-Message-ID: <20260412205117.387125-1-hossu.alexandru@gmail.com>
+Subject: [PATCH 4/5] staging: nvec: fix pm_power_off teardown in tegra_nvec_remove()
+Date: Sun, 12 Apr 2026 22:51:17 +0200
+Message-ID: <20260412205117.387125-2-hossu.alexandru@gmail.com>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260412205117.387125-1-hossu.alexandru@gmail.com>
+References: <20260412205117.387125-1-hossu.alexandru@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -76,44 +80,36 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In nvec_rx_completed(), when an incomplete RX transfer is detected,
-nvec_msg_free() is called to return the message back to the pool by
-clearing its 'used' atomic flag. Immediately after this, the code
-accesses nvec->rx->data[0] to check the message type.
+The remove() function unconditionally sets pm_power_off to NULL regardless
+of whether this driver instance was the one that set it. There is even a
+FIXME comment acknowledging this. Additionally, nvec_power_handle is never
+cleared on removal, leaving a dangling pointer to freed device data.
 
-Since nvec_msg_free() marks the pool slot as available via atomic_set(),
-any concurrent or subsequent call to nvec_msg_alloc() could claim that
-same slot and overwrite its data[] array. Reading nvec->rx->data[0] after
-freeing the message is therefore a use-after-free.
-
-Fix this by saving the message type byte before calling nvec_msg_free(),
-then using the saved value for the battery quirk check.
+Fix both issues: check that pm_power_off still points to nvec_power_off
+before clearing it, and also clear nvec_power_handle at the same time.
 
 Signed-off-by: Alexandru Hossu <hossu.alexandru@gmail.com>
 ---
- drivers/staging/nvec/nvec.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/staging/nvec/nvec.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-index 952c5a849a56..75877038847f 100644
+index 75877038847f..9fe9b7a3491d 100644
 --- a/drivers/staging/nvec/nvec.c
 +++ b/drivers/staging/nvec/nvec.c
-@@ -498,11 +498,14 @@ static void nvec_rx_completed(struct nvec_chip *nvec)
- 			(uint)nvec_msg_size(nvec->rx),
- 			(uint)nvec->rx->pos);
+@@ -907,8 +907,10 @@ static void tegra_nvec_remove(struct platform_device *pdev)
+ 	nvec_unregister_notifier(nvec, &nvec->nvec_status_notifier);
+ 	cancel_work_sync(&nvec->rx_work);
+ 	cancel_work_sync(&nvec->tx_work);
+-	/* FIXME: needs check whether nvec is responsible for power off */
+-	pm_power_off = NULL;
++	if (pm_power_off == nvec_power_off) {
++		pm_power_off = NULL;
++		nvec_power_handle = NULL;
++	}
+ }
  
-+		/* Save before freeing to avoid use-after-free */
-+		unsigned char msg_type = nvec->rx->data[0];
-+
- 		nvec_msg_free(nvec, nvec->rx);
- 		nvec->state = 0;
- 
- 		/* Battery quirk - Often incomplete, and likes to crash */
--		if (nvec->rx->data[0] == NVEC_BAT)
-+		if (msg_type == NVEC_BAT)
- 			complete(&nvec->ec_transfer);
- 
- 		return;
+ #ifdef CONFIG_PM_SLEEP
 -- 
 2.53.0
 
