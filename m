@@ -1,78 +1,72 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E70D37E319
-	for <linux-tegra@vger.kernel.org>; Sun, 12 Apr 2026 20:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D75E37F8A2
+	for <linux-tegra@vger.kernel.org>; Sun, 12 Apr 2026 20:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776027149; cv=none; b=afYZOSMuE73bFwvTn7/kXtVyqERWca4zMvoScCYfw6PyIxFp1VyAIKsnp97CXCfNUwHVVxAKZhw+2ArHVG98sb18VX9OcNFA/7NAGzXUvDw9dhQ0MPXvMD1pRGvgyAEdHtph+XMdXrX0raIlbllJFSROvLUgSbalSEWPgyhgZ/g=
+	t=1776027168; cv=none; b=N0b7PKK/MC9g+G6XflqnvUT3gHXvsHcEnrWn4Y2J4cFhGDyxpwZln42/KeeKTyQ6f5g6ZzwiyUiNjpamzAtp2gXlF36WrIzIE+vmYSyP7RUQYap0PlWHfl0Y5yqwDZsmzQ1VnF5/6PJ+jAEo3mfzzDbg0De5RU5HATMfgnEUKd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776027149; c=relaxed/simple;
-	bh=DSV51EC4wDAZAtG63wE3QtVJJqfSvUl5AYHQrvro0uA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lrR8vlEq4tMqTYIMzNC121nV0dxzzpQZ45zp+7jkh1AjEVZdO/rFg5KaG7PRXWA9gnkggMbfIHEcW35WbrLJmEnti+F4cAnHxk/bcgp1/cdJmM1ygtXxwxiU/e38sasqYKU+t2iLSnlFqf1/NXTAvJl1o3radE0EyZjFJaliPt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k41bjSfo; arc=none smtp.client-ip=209.85.208.43
+	s=arc-20240116; t=1776027168; c=relaxed/simple;
+	bh=PT3xs71fHd+54WioIwbDh1RrwxMQVhrEdhvCl0wP16c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nG+Gze9TvqlsHBcTfJcRBHXDLh+qDEpDEDphZIq8dXFvrPVmbUiyIb42IcH4VP6Xj8PwH4U/eNdnLNvk7Bic90hRB8df4hP3ZQOI6DnifJwqQZOsn9C3JaLGZNLVagM8Az9ecZQyyWvjtrpXmmOiUADQQZQJF0tPkBRoHA8m50c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sTQhSVU/; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k41bjSfo"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6717d83f0ceso487096a12.3
-        for <linux-tegra@vger.kernel.org>; Sun, 12 Apr 2026 13:52:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sTQhSVU/"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-66bd4e0560fso4997203a12.0
+        for <linux-tegra@vger.kernel.org>; Sun, 12 Apr 2026 13:52:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776027146; x=1776631946; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1776027166; x=1776631966; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QVfujx2mt/GYaWZCYACzathtB/uLnH5k7JHfo05VG1E=;
-        b=k41bjSfob9NrM0TgUzeMXbM2AmVS7Lw1V2Nq/U6hcPWu7plszb10kPR46g2yXhiHdc
-         IAFdFv1OUT1QWmeFPPUsGPTJwjEsOU5B+r68v//d1yi87Rc2pd5odY+8OlH1JropRCoI
-         QuKz2z+OzVLYFjqyPpz/QpYTSJAkrxW2ibFw8kMqedYVMDnIYf4SWclRULkj/DycIQxG
-         YQdvo6X3dtf7KY5t2jJ/wRitcuDeEFZPS9pUKlrxRkDFKOsWpieY6vpctIYHKRIUZxV0
-         j4Y+FQDa6DBVSm4vmN5Twdi3HM/vsSMhPVvh9h7i2QJyewgATXFYRrUCuqKp7rERFTB0
-         uUeQ==
+        bh=NmfBAQ0D3Sa5sjeFp529b93qLEW05p6njf5APTbVpD8=;
+        b=sTQhSVU/IH83hnoGF0DodvRW+6ZsHGHWekDo0X1WpRCJYtf3Kht5EUpJL/2DLA3n6U
+         u50zP2rwJAPsnkz5kpguCeyHHj4BF4XIp6U5qN1VdXK0IjJLIViOAZb6o2SHVZuztwvM
+         A8IJ7QY/cy8U4uFV+sx3GJKum/oBmASwBaZqglNiF/WfluOS2ChjhDShVNVWLVgrux85
+         3kE6sQjHQ19ocgX49fCf0ra0bUJKz+sgn0nm+SMP8BwW8V5tfQTx70QwHs1+f760zrug
+         Y/Mv3Gr2My4K7X9B7seD72QCr03tNJPEeTPzwJqfenGiwD0iIz/0GWgMKpbL7HSy9/1Z
+         EcqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776027146; x=1776631946;
+        d=1e100.net; s=20251104; t=1776027166; x=1776631966;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QVfujx2mt/GYaWZCYACzathtB/uLnH5k7JHfo05VG1E=;
-        b=kvGmSqWc5uJrUEwZv6gU6RteIuBDbcZ9Flq6Kddae/LhXIkGJCLip1YzzhEzlbUsya
-         H6EOnw8PeaUAfGqV5fwvMeKdAFxdBE6CLoG8wYOD6A4TyZPxzs/sB4aQIUr0pj6LP98i
-         3obBU9+ebWBRCUnp4T25z42uXw1SjpvFdMBG3ui4zkS28/ZYVt96JyAfAo9e2TvH9m17
-         tRy6iy797iyX+5ip9Mk1yjcy4PnmdByegjl6Qu6rofFO+nJQLSvv2eeAnhZszrBW60yL
-         8rdeHjvsGIwHRQr5MzjzynYvVJGyIUZulQvwINBUT889yPLtJd0cT3/k7bvrHIwLfJOS
-         RAkQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/7uk1BI/P+VsvIGlCHGaZZjD8G/vR2ZUDZhySWRZzDUW6Xk5hReAHiTdb6wmWShMyYwKDZv3MtJvyyVg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YygV9H0vTyOV3pQWGuGTWsKy7mPtmp9WSkBY9CRWeMt5gOL31mD
-	R+UEBVTKm4My9X6vhcl+fszXpjLOKWrZHSK0lKkGyFY62C7b9lqJSVxR
-X-Gm-Gg: AeBDievsljIt1AIEuFBMFOiV5KRbSqlRA+u0AGGtDzinARJn/AX9YJxNTM6gnNPGx+H
-	XpYukoC859SaL6+Qo3T3u91tAzC92utyKcz0OMN1+G43TuCDKlbQ55p+Lwi34ENm4bwjMRYaw+T
-	/4c+VKukAYRLn1tAlfiT4T1Bmfk0GsNEkp5xP8EnFaZKgCnwXLXzNcZw92J1XqqX5dlc/3k2XqP
-	W9S/h/1PY/wIwIFJ8xyQynIg811X3wIjRUMHkd2JX62IWyWiu6QFl8k243JCCMaG1xGeqVKPYQ/
-	jFLtnJlZQVwahZ8/Qd7wPsDdo2cqvGUfEXVZtfXNPhetKjrubzQeqCkoJtGP/VDM32B1mDn8jH2
-	55jWrFw7O9SEFEGEghIDOUgH6AJOaDsgdumZ4Gy2xpAjmjMr3JdQdH8ljSBGyEltCfweQ/9/Ag/
-	+Gb7oB91dXUR3I2+TSKeXaIKz0YyEZxXH+hrMf8W0Xi5BdagP1rjpA2CqD/06hOF3Zl6IPd34Xd
-	8sFF2ImOdtutyMoDRMZMwv5rw/LrznKZiaqedVB825KVjnu9g8Eigfi4zC+2T9aUEYiF7hTlRiS
-	sBy2MQ==
-X-Received: by 2002:a05:6402:505c:b0:66b:b6e2:66e1 with SMTP id 4fb4d7f45d1cf-6707a47e6a3mr3822463a12.18.1776027146093;
-        Sun, 12 Apr 2026 13:52:26 -0700 (PDT)
+        bh=NmfBAQ0D3Sa5sjeFp529b93qLEW05p6njf5APTbVpD8=;
+        b=KfsIvhkTcn5x9veavy2Kx+J+BInqXEb7FrjRggj0EjfZ4J9DIKZqAXbtobYuOQtq5B
+         gfwfcKy6yXT4T/jmtXr9MbPP4b/s/Ukl1H7WoMgjCugeUmCyGQxqv59S0j/vFcJW6ai+
+         pvHrn6QhBJrj4zucFSklER9Wp00Wgln0wSxihTv9Oeym9Z5rWUp5DOfzgJLmOy3nWhxf
+         7Na8bfqnwFFtZJtTw/qoefR9V08G3fOzjf42A1MObBID0b0Ai9rgM0ftHg1+2oOgqkp9
+         xKur0Ugj32B8es8jOMAaOhOQbItdkeFEP0MW3mJ3Hno6xR7JlAmA97nqPWaA3zgZ58Q+
+         zIAA==
+X-Gm-Message-State: AOJu0YxTw9qICrAZcHuKunOCTFSRfswFFvgXzD3PbFL+uyPGcfkCibxC
+	xpjlvGvkEa3e6YiuS3QnBlLPnxuAB2voHIq2RThs+dFFZ3xYUrGmqJ4gnZkG2Q+Bk7o=
+X-Gm-Gg: AeBDieuH1RujeC+LlmxwZCvAfGkv1z5rOwpEEzd3d0Vhyn3eTLLmrbKWaFQ5qz/C6S9
+	NUlNfC93RANI8VTvcG3orADH3IyVL9tB3Jo1lzLfpbixcZV0gVJRGYaj9jAQVtZgWKJ3Sy2ZqdF
+	a4n+jSwAWlPr3Wc+ByTY2E55U4mljtaUwsSFU0jW8J2hT6vD6VVpvR/COKwAd5+dKGC2CgODNWp
+	a8O22rSusIfDC5ykBix3jCor73awf2blqhM7TMLI63cvDPUXVnuEMk4M0g4DejOU9Kg1kTrGFlJ
+	RTrhIYHZnVG7EgSz7QARqZ7aiQpQ51LSwnP+xFrhxtz1BO+5fxoqD55KXG4EOPIjAAkgvzToS+7
+	7MHhOHE/38dcVeXJNV2D61chx2qOXpCvzaTXC2kYuvA7XsYjrzuzyOIcOes+kMdHYj62bQDvSQ0
+	2tlZZhHv6mU2R5dBMJvbdtqTwL3UtH/eke5bSRRmI8sjrRsGfCKao7cGdAGdDKDT+ld36FWgpmu
+	Xx3md80wL5RE3uktvbtCm2o37r0cRJzI5jmsUFtCtyJ6Ls9oiGjUc2/03Pr0GLzgU91XlAgaPEH
+	z/QL2WhLJfC39Pxf
+X-Received: by 2002:a17:907:1b22:b0:b97:fec5:eced with SMTP id a640c23a62f3a-b9d45b64482mr763764166b.0.1776027165602;
+        Sun, 12 Apr 2026 13:52:45 -0700 (PDT)
 Received: from ahossu.residents.sin.openfiber.nl ([88.202.160.248])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6707082732csm2178795a12.29.2026.04.12.13.52.23
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b9d6dfd78f6sm263126266b.26.2026.04.12.13.52.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Apr 2026 13:52:24 -0700 (PDT)
+        Sun, 12 Apr 2026 13:52:44 -0700 (PDT)
 From: Alexandru Hossu <hossu.alexandru@gmail.com>
-To: linux-media@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Cc: thierry.reding@gmail.com,
-	jonathanh@nvidia.com,
-	skomatineni@nvidia.com,
-	luca.ceresoli@bootlin.com,
-	mchehab@kernel.org,
+To: linux-tegra@vger.kernel.org
+Cc: marvin24@gmx.de,
 	gregkh@linuxfoundation.org,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Alexandru Hossu <hossu.alexandru@gmail.com>
-Subject: [PATCH 1/5] staging: media: tegra-video: add NULL checks for of_device_get_match_data()
-Date: Sun, 12 Apr 2026 22:50:57 +0200
-Message-ID: <20260412205057.386856-1-hossu.alexandru@gmail.com>
+Subject: [PATCH 3/5] staging: nvec: fix use-after-free in nvec_rx_completed()
+Date: Sun, 12 Apr 2026 22:51:16 +0200
+Message-ID: <20260412205117.387125-1-hossu.alexandru@gmail.com>
 X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -82,67 +76,44 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-tegra_csi_probe(), tegra_vi_probe(), and tegra_vip_probe() all call
-of_device_get_match_data() to retrieve SoC-specific data from the device
-tree match table, but none of them check the return value for NULL before
-eventually dereferencing it.
+In nvec_rx_completed(), when an incomplete RX transfer is detected,
+nvec_msg_free() is called to return the message back to the pool by
+clearing its 'used' atomic flag. Immediately after this, the code
+accesses nvec->rx->data[0] to check the message type.
 
-In tegra_csi_probe(), the pointer is dereferenced on the very next
-statement via csi->soc->num_clks. In tegra_vi_probe(), it is dereferenced
-later via vi->soc->ops. In tegra_vip_probe(), vip->soc is stored and then
-dereferenced at runtime via vip->soc->ops->vip_start_streaming(). A NULL
-return would cause a kernel NULL pointer dereference in each case.
+Since nvec_msg_free() marks the pool slot as available via atomic_set(),
+any concurrent or subsequent call to nvec_msg_alloc() could claim that
+same slot and overwrite its data[] array. Reading nvec->rx->data[0] after
+freeing the message is therefore a use-after-free.
 
-Add a NULL check returning -ENODEV in all three probe functions, consistent
-with the defensive pattern already used in similar staging drivers such as
-drivers/staging/media/sunxi/cedrus/cedrus_hw.c.
+Fix this by saving the message type byte before calling nvec_msg_free(),
+then using the saved value for the battery quirk check.
 
 Signed-off-by: Alexandru Hossu <hossu.alexandru@gmail.com>
 ---
- drivers/staging/media/tegra-video/csi.c | 2 ++
- drivers/staging/media/tegra-video/vi.c  | 2 ++
- drivers/staging/media/tegra-video/vip.c | 2 ++
- 3 files changed, 6 insertions(+)
+ drivers/staging/nvec/nvec.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
-index 7842104ca933..33369a8c803a 100644
---- a/drivers/staging/media/tegra-video/csi.c
-+++ b/drivers/staging/media/tegra-video/csi.c
-@@ -781,6 +781,8 @@ static int tegra_csi_probe(struct platform_device *pdev)
- 		return PTR_ERR(csi->iomem);
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 952c5a849a56..75877038847f 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -498,11 +498,14 @@ static void nvec_rx_completed(struct nvec_chip *nvec)
+ 			(uint)nvec_msg_size(nvec->rx),
+ 			(uint)nvec->rx->pos);
  
- 	csi->soc = of_device_get_match_data(&pdev->dev);
-+	if (!csi->soc)
-+		return -ENODEV;
++		/* Save before freeing to avoid use-after-free */
++		unsigned char msg_type = nvec->rx->data[0];
++
+ 		nvec_msg_free(nvec, nvec->rx);
+ 		nvec->state = 0;
  
- 	csi->clks = devm_kcalloc(&pdev->dev, csi->soc->num_clks,
- 				 sizeof(*csi->clks), GFP_KERNEL);
-diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-index d1d934e361f7..f3b749f059f8 100644
---- a/drivers/staging/media/tegra-video/vi.c
-+++ b/drivers/staging/media/tegra-video/vi.c
-@@ -1907,6 +1907,8 @@ static int tegra_vi_probe(struct platform_device *pdev)
- 		return PTR_ERR(vi->iomem);
+ 		/* Battery quirk - Often incomplete, and likes to crash */
+-		if (nvec->rx->data[0] == NVEC_BAT)
++		if (msg_type == NVEC_BAT)
+ 			complete(&nvec->ec_transfer);
  
- 	vi->soc = of_device_get_match_data(&pdev->dev);
-+	if (!vi->soc)
-+		return -ENODEV;
- 
- 	vi->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(vi->clk)) {
-diff --git a/drivers/staging/media/tegra-video/vip.c b/drivers/staging/media/tegra-video/vip.c
-index 80cd3b113125..148c68ceb605 100644
---- a/drivers/staging/media/tegra-video/vip.c
-+++ b/drivers/staging/media/tegra-video/vip.c
-@@ -236,6 +236,8 @@ static int tegra_vip_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	vip->soc = of_device_get_match_data(&pdev->dev);
-+	if (!vip->soc)
-+		return -ENODEV;
- 
- 	vip->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, vip);
+ 		return;
 -- 
 2.53.0
 
