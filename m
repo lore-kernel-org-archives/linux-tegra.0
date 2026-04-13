@@ -1,63 +1,63 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EFA39A06A
-	for <linux-tegra@vger.kernel.org>; Mon, 13 Apr 2026 07:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C263A4535
+	for <linux-tegra@vger.kernel.org>; Mon, 13 Apr 2026 08:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776066795; cv=none; b=Myp/+yeCOT3XSt2sI9ZYSDoXFVGBrX5DB7eGmZKd96HHyD56Pcq9jjo8ZtCeLgX0OrNf/4fHoBNxfvxlwExwwASg8bDIn3rBB8QQIbyLWXHQtQSaJVmQ3mVb5JNhHROQzgnki996Em9yPITf2nqkjE0bBEpyPhcEMmLeI0xSmHI=
+	t=1776067409; cv=none; b=CUpRip5+z5ccTtWVzXDjulI4RUfMLHxa7tbdSCAeW/NAa3YQfxvLrynA7c2rfBFkj/kVp7hMYB5dSII9RfR/0QgpbI7b+MBKkTfLu4KQGv3vWINptS1KJw9YDvNz/WnnfSV5ZfBhs8V5pAkFG4h8YL4PCcPhwgGETJuVSNKy+2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776066795; c=relaxed/simple;
-	bh=qURxmoeHtBYQQZeErf/My6lgX3gSGhOBzfCSynLVIZY=;
+	s=arc-20240116; t=1776067409; c=relaxed/simple;
+	bh=wAPCziRy3gqwNYDXtdaW7ysNJai/VXJp9vLcAm4gnsE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jp0IjIDIcr1Nk8LhYHnL+J/NEugcoMfIrhV6IAzHdbTBpvkhApP2OAV+lBdR7ObbLsxFdAPrDkKzS5EgHfnecjvepcBn+RZ71Yb8KHkq+5nwG/d6N8o7Az6MkK8rkaEgnOsxqTA/I3WM6+EL0gHl6r6jKm7aJAgbZPZSsZnl5To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gIPnpE8v; arc=none smtp.client-ip=209.85.128.47
+	 Content-Type:Content-Disposition:In-Reply-To; b=qTT1RbH9iAdtU2cqBtMMZggXvIwkKDEjqiv3q/ASLcRSmSYeYp2zsJjjzvH3FF2NHaLh1BdB4jWISjtE9uzeMnfZVClmM7yWZDOjCRBFIUTLiIQ8rBOzTWKRVSnQcg3XhAaPFZjCSewoa+bvVZm4nXg/cZmFlouLPULt+oeQpSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CMmWv0N2; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gIPnpE8v"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-48334ee0aeaso38133905e9.1
-        for <linux-tegra@vger.kernel.org>; Mon, 13 Apr 2026 00:53:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CMmWv0N2"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-488d2079582so35606475e9.2
+        for <linux-tegra@vger.kernel.org>; Mon, 13 Apr 2026 01:03:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776066792; x=1776671592; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1776067406; x=1776672206; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5p9ZJZXABKCmpzl6zl3MItAQjfacdhE/eXpBJaxRNq8=;
-        b=gIPnpE8vbQ2exAGgrElXM9dU70STAef4BFQKq90nihInyVoyXpgKxCEw9mlrbFj/kb
-         S7S2h29ltdHHG1qeJlNWHgChOWm4Y/rRWEHgQfr7mtHD28Gwn5JRKrUgLV23IdRmzjfh
-         tH/sr/QfsRO6eB+jLU7niWKVOc4qQedHYsXeySRo8lNL/JvS0PFbu9kza7Kb9Q+Fcgt3
-         5RqJTNbgeTkk9JUtJyiUQGmRAmW158HQhRcDcZvh3ZWAPQA+nkuG31bU7MWKeIPNVyOz
-         00Pm/L89QHb1AycLywmnOIkay8/dEdX4WqzI71z0Oc6S6kpHojXywOsVeg+nNj899hpZ
-         oKDw==
+        bh=FdslTYfHiFdLBysZXJi70hRjVM/Tx0Yks32sBf4zOMo=;
+        b=CMmWv0N2LkqUZ+GdzdOIWJ9f4WUHdMtzWEXZmryjG5sI+1p8RCVHpJrP7Vk2u05CRz
+         OR8eHq4KPb6+8apkdcYIXTVT9xul/iMQ0jjzLnfIbcvn+fAWTCLLENgpcBMbY+VB+wjB
+         vghwXedtqYtDrEv83f2hZZz6y+TNKlbM1r9Ze+P527Wo/1t2Hyz4ndxPrSZjzQ45eFq/
+         4EtsPR4vplEMLqqCxgfK/Ke2R24VcN4neDM16EpwhxL8Z/P7KcXDERnRpiSSzSNuYbMb
+         WJLg2V3FMyI2qPDh1UABxr6cuZUc7dnD7Q9MsbGvWhDwo5Mhks17Qpu7bLXvR9lsU0D0
+         EvKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776066792; x=1776671592;
+        d=1e100.net; s=20251104; t=1776067406; x=1776672206;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5p9ZJZXABKCmpzl6zl3MItAQjfacdhE/eXpBJaxRNq8=;
-        b=JalueKgqPhUHtYpZnEfhFdM0IT8ode5CCx1MHtILEvZVcvlScdtbX+Kblo0HzeT7Nz
-         1EvAFhNupzUmTUlmAoLz6jnb3ZLAtZbNZpdDiZdqlHZE4L4c+IpHXWel9LlTcO023iXx
-         x8YI1srenBhvlkB2+HRLXbdcu2ZL+iSN+qO1GTkn0qfglPnZOui+Kvp9vL5JnXSSKJEu
-         Qj4GpwjT4ftfVs7qx/Ca8hPpbz7o9QGi86dnhetpKPgZQEJcRLmnJ+5AKxySb+4UC1Kz
-         VvTWvPH2MjPfn8HLc3Qohw4bPlTH19cZzwkRRhukzNZtydi91lh+gE3M0/LXku2vW0JJ
-         6uMA==
-X-Forwarded-Encrypted: i=1; AFNElJ9/6BgO7+0C7wZ7R/Kjc/nz5rJwd6y30bLgldTRrRFE4sSHkoOlZaQHXLnvH4H6iYVUIM8mUksv3KVA0A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTYCpnbiAhAODbtDNcDI7Kp5qus/dEaWMtogUREjRCIM/iIkWT
-	kquOQQ3eXdxlZWjx0zrOXoYOdJp7jZdIrvw0ZeDOqnrGJjgOqEnbhaIq
-X-Gm-Gg: AeBDietMF3rliSf+gxexMUU1uicnPw8Sc1CY9GpZYPooMLDDwtf9hX7TvzN/jG8cCsf
-	YWVi1ofCaLQbCXHu3fMVYc+87z5tzZNz8BcPdEDUAIk6w2uzRSVg6x4pQt3duSCeB6sZGQfEU/W
-	KrZIsw0i0HNfpoKX7hwb/iwLWUs/Cfs8oS9eShy5V3KF7XIshQHfDphpl8pgeJQc+tRDE8FeOPK
-	ipuJNRJtaDPs0JCk9O85/P0H9xa/RlNpv2HDSv/UjR8CKJ36tk9evzIHuoDkfdcd2J7ZEjqc05H
-	PtpDvt+HvWRuxhoDHHVyenpUvYVh/DnLyr80k0xxrTrf0isBtAO9xr7GT79kV6pJYYus4kwd3YG
-	SiRJdPr0b0vUfymGK9wSHXH5WrK7p+sZtw+jBz0ul+3bjV5kC6P4h7xRyX07jwz96nNtdAwONLj
-	XA150Z49oRS+h+3MN5UJBhPYr2i9rN9g==
-X-Received: by 2002:a05:600c:a11c:b0:487:2671:fb8f with SMTP id 5b1f17b1804b1-488d67fa40fmr115755205e9.8.1776066792070;
-        Mon, 13 Apr 2026 00:53:12 -0700 (PDT)
+        bh=FdslTYfHiFdLBysZXJi70hRjVM/Tx0Yks32sBf4zOMo=;
+        b=L1tDAz6ozPkgbZQGuWUSocAO7A1U5KLuCK8K1oLCP+B5AMfc+AdsQk27rzjuhSbw7G
+         XnsYG5KfZFrpEBxc312VvcRQVq6o7uT+nMXjz5B7r947TYSTPaOkwrzKUmkiKR7Au7+C
+         q5O2bKEu8MwTYQZv8poKKeP6RxZkGxVG4KoAtIhFkbJ3+iVOCkbeIAe7oFN85KCVKxob
+         sEVWy0yfwi4V7GCGSavGxvY1VnpU8hi6hRF/b0YUCOofWBYpXsNiWNKlyS9JYFDDCLUu
+         7TS/TMl5Yu3nvM4+CmIhsGX050xTyVnscSjoBKT0YAvNE45lyAmaqzT72XWMQ8jaRfP7
+         f3aA==
+X-Forwarded-Encrypted: i=1; AFNElJ+T6ntKtYm1Xz5gflPxuXV0873H5yDWcuSrgr3x5hLfD+oNInoTVCzKT6sruD3KmKHyHjc3sA+w88HQiQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzouVGcSb5HHZ6U8IlfvDw5h8XgEKHHsrpwvDwULuz8IzFQb8z9
+	IZj5zlHy5Y0vksj8C7sUn5Ara8vyupwdNo5Dd1UiTgEDP2Xgd31Q/DIx
+X-Gm-Gg: AeBDieugCrNfVTb2j1BsQdhmENrsqAWN43k3Xl4pCz0KHtapNu8yGNdJdoFqLJq7NY+
+	YuqskXLSkHpSk3eMRdFZuZ1hr5AzZp4TMWr1tYuUvBdD4032jf7Jnvm061x5VdPu+PcURQ93Iz6
+	NVK5wtfc0tlkXXtrQ+d0qKSClLBflsdZgSJQsaH0UC6jp6CoxjLOIyikT9BsulPF6BuL1jus9xw
+	sADxxbt8p9I5PuiYKnIDrP0WLsWbk25oH3hEMG+FcG0Emk+BqycLDrCHFJTX6jDwrY8qpMcqYfI
+	VSU3aXvG6kVPD4p/l7B2MxUkYoIvvrCQnvMLjkGlXliZLRJV9lSqr66KYZ/k1n/+9pPJReqJTRv
+	cXJHq/bNGDofAuqX7dyIurlS++L18vID9FO2iEkN6Kvg0ngTdfdxJTSxfeJP5mgtSQN6GOf+159
+	bCpiC06fE1MWtd3ZXKHtU=
+X-Received: by 2002:a05:600c:45ce:b0:488:a8f0:35bd with SMTP id 5b1f17b1804b1-488d67df745mr174646595e9.8.1776067404611;
+        Mon, 13 Apr 2026 01:03:24 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488d5934a6dsm303076735e9.11.2026.04.13.00.53.10
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488d5d703c1sm89816805e9.3.2026.04.13.01.03.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Apr 2026 00:53:11 -0700 (PDT)
-Date: Mon, 13 Apr 2026 10:53:08 +0300
+        Mon, 13 Apr 2026 01:03:23 -0700 (PDT)
+Date: Mon, 13 Apr 2026 11:03:20 +0300
 From: Dan Carpenter <error27@gmail.com>
 To: Hungyu Lin <dennylin0707@gmail.com>
 Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, skomatineni@nvidia.com,
@@ -65,10 +65,10 @@ Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, skomatineni@nvidia.com,
 	gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
 	linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: tegra-video: vi: validate format index before
- bitmap_set
-Message-ID: <adyg5BpDpi5I97-s@stanley.mountain>
-References: <20260412154843.29056-1-dennylin0707@gmail.com>
+Subject: Re: [PATCH] media: tegra-video: tegra210: ensure PHY is disabled in
+ pg_mode stop path
+Message-ID: <adyjSM70HcX5cq9s@stanley.mountain>
+References: <20260412163600.29925-1-dennylin0707@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -77,27 +77,31 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260412154843.29056-1-dennylin0707@gmail.com>
+In-Reply-To: <20260412163600.29925-1-dennylin0707@gmail.com>
 
-On Sun, Apr 12, 2026 at 03:48:43PM +0000, Hungyu Lin wrote:
-> tegra_get_format_idx_by_code() returns -1 when no matching format
-> is found. vi_tpg_fmts_bitmap_init() used the returned index directly
-> in bitmap_set(), which may lead to an out-of-bounds access when the
-> format is not present.
+On Sun, Apr 12, 2026 at 04:36:00PM +0000, Hungyu Lin wrote:
+> tegra210_csi_port_start_streaming() enables the CSI PHY regardless
+> of pg_mode, but tegra210_csi_port_stop_streaming() skips disabling
+> the PHY when pg_mode is set due to an early return.
 > 
-> This can occur when TPG is enabled on SoCs whose video_formats[]
-> table does not include the requested media bus formats.
-> 
-> Validate the index before calling bitmap_set().
+> Remove the early return so that the PHY disable path is always
+> executed, ensuring consistent teardown.
 > 
 > Signed-off-by: Hungyu Lin <dennylin0707@gmail.com>
 > ---
 
-This isn't a bug which can occur in real life since the index is
-always found...  If there were really a bug, like say someone were
-writing a new driver and messed up, then this would just paper over
-the issue and make the bug harder to find, so in a way it makes the
-code worse.
+The obvious complaint is that this patch needs a Fixes tag.
+
+The early return is suspicious but I don't believe you have tested this
+patch.  It would be better to not send untested patches like this,
+because there is a risk that the author wrote what they did deliberately.
+This code is six years old now, so the original author has probably
+moved on to a different project.  It's not necessarily that easy to
+review and test the patch.
+
+On the other hand, if someone from Nvidia wants to Ack this patch
+then of course we'll merge the v2 of this which has a Fixes tag.
+Just wait for someone from Nvidia to respond before resending.
 
 regards,
 dan carpenter
