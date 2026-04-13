@@ -1,78 +1,74 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E401396B76
-	for <linux-tegra@vger.kernel.org>; Mon, 13 Apr 2026 07:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EFA39A06A
+	for <linux-tegra@vger.kernel.org>; Mon, 13 Apr 2026 07:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776065863; cv=none; b=fks3buCLTH/EOthlXwsmXuORSm5r56T+VbKgjROwpWd37fDSTsDPWh8XMYdUh6zW9kelK6Vra+M9vmET8t32xMo+vR4kSKjPxPmMjLiF+zZPZuMAf5rhiDENXi0015LzaA9aFAy4VjTozcS2FzDIp0++t3+943F5O89zKzVDIkM=
+	t=1776066795; cv=none; b=Myp/+yeCOT3XSt2sI9ZYSDoXFVGBrX5DB7eGmZKd96HHyD56Pcq9jjo8ZtCeLgX0OrNf/4fHoBNxfvxlwExwwASg8bDIn3rBB8QQIbyLWXHQtQSaJVmQ3mVb5JNhHROQzgnki996Em9yPITf2nqkjE0bBEpyPhcEMmLeI0xSmHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776065863; c=relaxed/simple;
-	bh=SC3qj+zSPrXC7x148ssSlAOSsrLh6sGlRiQ6lldj1q8=;
+	s=arc-20240116; t=1776066795; c=relaxed/simple;
+	bh=qURxmoeHtBYQQZeErf/My6lgX3gSGhOBzfCSynLVIZY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i122ThhTFgGrCSB1gYyoaxa0eptTYOmZn8NqRKOBRQdn4HBVMB9RVC1HD4OzkTJ9CTAYv7KWzF3Pgr8FzHOcsltZS7d39ZhUuFVnR/QfuijNAhX1eBKpJFg4gibmCemiYSot6qG1uk+UhlO/YD13SPMjZPu7xcCSQF3VhDUxHkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y2wJYjxW; arc=none smtp.client-ip=209.85.221.45
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jp0IjIDIcr1Nk8LhYHnL+J/NEugcoMfIrhV6IAzHdbTBpvkhApP2OAV+lBdR7ObbLsxFdAPrDkKzS5EgHfnecjvepcBn+RZ71Yb8KHkq+5nwG/d6N8o7Az6MkK8rkaEgnOsxqTA/I3WM6+EL0gHl6r6jKm7aJAgbZPZSsZnl5To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gIPnpE8v; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y2wJYjxW"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-43d75312379so550482f8f.1
-        for <linux-tegra@vger.kernel.org>; Mon, 13 Apr 2026 00:37:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gIPnpE8v"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-48334ee0aeaso38133905e9.1
+        for <linux-tegra@vger.kernel.org>; Mon, 13 Apr 2026 00:53:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776065861; x=1776670661; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1776066792; x=1776671592; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=i0t7dfofWTApgTDHYz2jvCuOmi04UnlECznc19h2Ol4=;
-        b=Y2wJYjxW8dF+sxGCY6h6//xdFZjIdrWhDcMuhZ2OLcmpVZud991/hGeZvd0KEDilSC
-         CKE6kNNf6+xtyExxaCtoO4kfeN5I0ZB75iguSubit4OR9WSADV/gg2O1wxAjTWiubyvI
-         W5zR50ospipf1Wzs3JDGfQGjGyFFgWCSWqWFdqKRVoH2hmUQzBcJvQ7mXd6RFUJtYjeQ
-         pfrjDA6APBLF9GF1wwcel2uJQXOXLXIttCybTEEQ/geYoOXgbBV1xztvvFtrdEX4pa6N
-         EZKsBIizix5uvE2dG9Mdp2Cq3QmiRaUBeiO4bRwXHkX0t2mbcmgL3pka9RMTiYk66xkO
-         1vdA==
+        bh=5p9ZJZXABKCmpzl6zl3MItAQjfacdhE/eXpBJaxRNq8=;
+        b=gIPnpE8vbQ2exAGgrElXM9dU70STAef4BFQKq90nihInyVoyXpgKxCEw9mlrbFj/kb
+         S7S2h29ltdHHG1qeJlNWHgChOWm4Y/rRWEHgQfr7mtHD28Gwn5JRKrUgLV23IdRmzjfh
+         tH/sr/QfsRO6eB+jLU7niWKVOc4qQedHYsXeySRo8lNL/JvS0PFbu9kza7Kb9Q+Fcgt3
+         5RqJTNbgeTkk9JUtJyiUQGmRAmW158HQhRcDcZvh3ZWAPQA+nkuG31bU7MWKeIPNVyOz
+         00Pm/L89QHb1AycLywmnOIkay8/dEdX4WqzI71z0Oc6S6kpHojXywOsVeg+nNj899hpZ
+         oKDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776065861; x=1776670661;
+        d=1e100.net; s=20251104; t=1776066792; x=1776671592;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=i0t7dfofWTApgTDHYz2jvCuOmi04UnlECznc19h2Ol4=;
-        b=PXER3BMkKH3LyCCFqJLS2pia3SnEO0qfOv+3Yr2Owh87f0ECFQCkgiZWxmCJXgPdap
-         aBATcYvcvjN2mqY2MtcsjppVpaHllMmvZOmCpct0ZSp6A/F8r0rAvIA/oDbuq7zBHLXN
-         bSK4NwdSoiO+oYDAmd5XyWy4y3xLqhmvhu4hnnT3p1/AsICH2zJJ49Fp3HpQ1vhCpaQz
-         vLxY4XLGTRaG53eEjIVLj7yvp+Jooy8wBSiZsl3Eec88BXbosl3mcf2uklKnUW3JibS/
-         EZSScD54D177sPDM0v2tEh+KKbgTXTdgx5U5Q7mBigwggHBp0O81PXmdyDo9x4Ti2pyn
-         z4FQ==
-X-Forwarded-Encrypted: i=1; AFNElJ8rCMiql2qPLDp6Ovj/TZVwhlddDPNX/R0L3O20uS3sgHIUDiN75uA8KJpQYrZZzBmm/TLzZ5FksN9JYw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlLbp89DhnJBVWkbsWAh6H0uDb6U9RzEHAqprjGtI3G6619RzI
-	OT1s940TH7LAvj4sWJfBqlIMWzUkDuzkhnbT+CaP4zR4DOKtxD2eLcyny+QUcTAb
-X-Gm-Gg: AeBDievRvR6u4i0Oy6WzpMOMCz412b07XR8MIDwLyRq2PMHY6UCmn/7qtc074MgLUZR
-	dm4JSP/Dt272a9+ZNvjkiaeYziUinNkj1HYJXkQ3S/K1yWSS9E1YXJ8zBY0hJDw2Mb6+a4zxQJE
-	SDP+nAfM1CqYmeRNtndV5kKfWJ9IlZEnSWDPW53pzLG0c2MyvcO/4z+ALpj0SYMitk6e0R6vA6y
-	pJfsZAAL+j43hdbEcZtqhNOAj2ySXNV1viYeqB/hKMuvS9SX+4jvKh21tw98ntmr3QZlR5mE6hI
-	NR6seM2/TpVy8jWmv0dOvPLUk2JSFL49Am0qIpMOLHzYgV9NOgzvLBCH3wAsLYKPLH0OZ/qgsg8
-	gdG9hLgwr2N25ZjLicn12sAlmcnBOEg4s/Smcqmp8VxLxz4goCy9pZ+wikwgUim79tNOYRtBaze
-	opkH/E9UOL4kIOx2bbDAA=
-X-Received: by 2002:a05:6000:25ca:b0:43b:5091:39db with SMTP id ffacd0b85a97d-43d649740c0mr18904434f8f.13.1776065860668;
-        Mon, 13 Apr 2026 00:37:40 -0700 (PDT)
+        bh=5p9ZJZXABKCmpzl6zl3MItAQjfacdhE/eXpBJaxRNq8=;
+        b=JalueKgqPhUHtYpZnEfhFdM0IT8ode5CCx1MHtILEvZVcvlScdtbX+Kblo0HzeT7Nz
+         1EvAFhNupzUmTUlmAoLz6jnb3ZLAtZbNZpdDiZdqlHZE4L4c+IpHXWel9LlTcO023iXx
+         x8YI1srenBhvlkB2+HRLXbdcu2ZL+iSN+qO1GTkn0qfglPnZOui+Kvp9vL5JnXSSKJEu
+         Qj4GpwjT4ftfVs7qx/Ca8hPpbz7o9QGi86dnhetpKPgZQEJcRLmnJ+5AKxySb+4UC1Kz
+         VvTWvPH2MjPfn8HLc3Qohw4bPlTH19cZzwkRRhukzNZtydi91lh+gE3M0/LXku2vW0JJ
+         6uMA==
+X-Forwarded-Encrypted: i=1; AFNElJ9/6BgO7+0C7wZ7R/Kjc/nz5rJwd6y30bLgldTRrRFE4sSHkoOlZaQHXLnvH4H6iYVUIM8mUksv3KVA0A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTYCpnbiAhAODbtDNcDI7Kp5qus/dEaWMtogUREjRCIM/iIkWT
+	kquOQQ3eXdxlZWjx0zrOXoYOdJp7jZdIrvw0ZeDOqnrGJjgOqEnbhaIq
+X-Gm-Gg: AeBDietMF3rliSf+gxexMUU1uicnPw8Sc1CY9GpZYPooMLDDwtf9hX7TvzN/jG8cCsf
+	YWVi1ofCaLQbCXHu3fMVYc+87z5tzZNz8BcPdEDUAIk6w2uzRSVg6x4pQt3duSCeB6sZGQfEU/W
+	KrZIsw0i0HNfpoKX7hwb/iwLWUs/Cfs8oS9eShy5V3KF7XIshQHfDphpl8pgeJQc+tRDE8FeOPK
+	ipuJNRJtaDPs0JCk9O85/P0H9xa/RlNpv2HDSv/UjR8CKJ36tk9evzIHuoDkfdcd2J7ZEjqc05H
+	PtpDvt+HvWRuxhoDHHVyenpUvYVh/DnLyr80k0xxrTrf0isBtAO9xr7GT79kV6pJYYus4kwd3YG
+	SiRJdPr0b0vUfymGK9wSHXH5WrK7p+sZtw+jBz0ul+3bjV5kC6P4h7xRyX07jwz96nNtdAwONLj
+	XA150Z49oRS+h+3MN5UJBhPYr2i9rN9g==
+X-Received: by 2002:a05:600c:a11c:b0:487:2671:fb8f with SMTP id 5b1f17b1804b1-488d67fa40fmr115755205e9.8.1776066792070;
+        Mon, 13 Apr 2026 00:53:12 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d6f4bf2b4sm15213667f8f.20.2026.04.13.00.37.39
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488d5934a6dsm303076735e9.11.2026.04.13.00.53.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Apr 2026 00:37:40 -0700 (PDT)
-Date: Mon, 13 Apr 2026 10:37:37 +0300
+        Mon, 13 Apr 2026 00:53:11 -0700 (PDT)
+Date: Mon, 13 Apr 2026 10:53:08 +0300
 From: Dan Carpenter <error27@gmail.com>
-To: Alexandru Hossu <hossu.alexandru@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] staging: media: tegra-video: add missing error
- checks in vi_tpg_fmts_bitmap_init()
-Message-ID: <adydQWbkY7X68yVy@stanley.mountain>
-References: <20260412045245.GA2019381@kroah.com>
- <20260412084808.232010-1-hossu.alexandru@gmail.com>
+To: Hungyu Lin <dennylin0707@gmail.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, skomatineni@nvidia.com,
+	luca.ceresoli@bootlin.com, mchehab@kernel.org,
+	gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: tegra-video: vi: validate format index before
+ bitmap_set
+Message-ID: <adyg5BpDpi5I97-s@stanley.mountain>
+References: <20260412154843.29056-1-dennylin0707@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -81,51 +77,27 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260412084808.232010-1-hossu.alexandru@gmail.com>
+In-Reply-To: <20260412154843.29056-1-dennylin0707@gmail.com>
 
-On Sun, Apr 12, 2026 at 10:48:08AM +0200, Alexandru Hossu wrote:
-> tegra_get_format_idx_by_code() returns -1 when the requested format is
-> not found in the SoC format table. vi_tpg_fmts_bitmap_init() does not
-> check this return value before passing it to bitmap_set(). A negative
-> index converted to unsigned would result in an out-of-bounds memory
-> access, corrupting adjacent kernel memory.
+On Sun, Apr 12, 2026 at 03:48:43PM +0000, Hungyu Lin wrote:
+> tegra_get_format_idx_by_code() returns -1 when no matching format
+> is found. vi_tpg_fmts_bitmap_init() used the returned index directly
+> in bitmap_set(), which may lead to an out-of-bounds access when the
+> format is not present.
 > 
-> Add WARN_ON() guards so that any future SoC addition or Kconfig change
-> that exposes this path fails loudly rather than silently corrupting memory.
+> This can occur when TPG is enabled on SoCs whose video_formats[]
+> table does not include the requested media bus formats.
 > 
-> Signed-off-by: Alexandru Hossu <hossu.alexandru@gmail.com>
+> Validate the index before calling bitmap_set().
+> 
+> Signed-off-by: Hungyu Lin <dennylin0707@gmail.com>
 > ---
 
-patch 1 is missing.  Also the little change log under the --- is missing.
-https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
-And I want you do change the commit message to say that it's not a real
-life bugfix.
-
->  drivers/staging/media/tegra-video/vi.c | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
-> index afc7327ef318..d1d934e361f7 100644
-> --- a/drivers/staging/media/tegra-video/vi.c
-> +++ b/drivers/staging/media/tegra-video/vi.c
-> @@ -1017,7 +1017,7 @@ static int tegra_channel_setup_ctrl_handler(struct tegra_vi_channel *chan)
->  }
->  
->  /* VI only support 2 formats in TPG mode */
-> -static void vi_tpg_fmts_bitmap_init(struct tegra_vi_channel *chan)
-> +static int vi_tpg_fmts_bitmap_init(struct tegra_vi_channel *chan)
->  {
->  	int index;
->  
-> @@ -1025,12 +1025,22 @@ static void vi_tpg_fmts_bitmap_init(struct tegra_vi_channel *chan)
->  
->  	index = tegra_get_format_idx_by_code(chan->vi,
->  					     MEDIA_BUS_FMT_SRGGB10_1X10, 0);
-> +	if (index < 0) {
-> +		dev_err(chan->vi->dev, "format SRGGB10_1X10 not found\n");
-> +		return -EINVAL;
-
-Change tegra_get_format_idx_by_code() to return -EINVAL instead.
+This isn't a bug which can occur in real life since the index is
+always found...  If there were really a bug, like say someone were
+writing a new driver and messed up, then this would just paper over
+the issue and make the bug harder to find, so in a way it makes the
+code worse.
 
 regards,
 dan carpenter
