@@ -1,86 +1,94 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1885C226863
-	for <linux-tegra@vger.kernel.org>; Mon, 13 Apr 2026 05:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57077344040
+	for <linux-tegra@vger.kernel.org>; Mon, 13 Apr 2026 05:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776057712; cv=none; b=jcTa3YNUN20aHRiwj5oErxFxEqWLvfpBs9rRThpIiXS+LoFPpDnf7k/mtSCccNeYVGE9cboSK/yfoxN4ZA8lV2pS+wO8Oit7Q4BmMF+rS68JqfDn8kOQepeseHgV5j0tZJ7rRXDsxV26qVYSFJwBC1uPrSvkthcsx886nL8y8LI=
+	t=1776059496; cv=none; b=Iipt9BtfKhg8L6rIcQXXp/6D/RXgAs1YpBgD4guqjvYzF8cIwB63KwJNynBAmGKOUBZfxXIvYJDZ2ZEfktYV70kms2yszIITJf9tjvlqjarE214mlS4hlvYPqBAyhA5V+Y7xFTB0SMbozWnB5Zmsw+iQquG+kIjmQGU8Q1L64jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776057712; c=relaxed/simple;
-	bh=FbcdWUz+LzlC5UIGJNd7kkF95ZZIl4IOCm0ByFtZut8=;
-	h=Message-ID:Date:Content-Type:MIME-Version:From:To:Cc:Subject:
-	 In-Reply-To:References; b=F7BR3iAzouxsKRKvNy2s+sFa+melYtwxmQfvxkneDE/u/RtF0OYAQE7txZDbQC0OYGANRm7VzYqDoonBZwSu2YxhdCaz3y8x9+VlYSukESy7d+hJzUq8v5+zq4idAk0FkNlYMXppGNag0QRhMJcFByY0oVTu8xvRgKAcOkep/oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vzf3yRKl; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1776059496; c=relaxed/simple;
+	bh=eAlm22D/FTYm2yDyKa3B/r3DUVpjjOkJvimiyG+ILkA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CIZtML+buiP82uyrGGUPuFMlZfIwXvtSoL8hxKGTZTD0ii5ambWxjRo1z39rQeg1sVLXsnggGnMZ681ALLOxXdjCx+fDC6YPfbLrMOD4rn7uLibktA/CTUb0Vrz4tcqH+5BkuDVpQ+jbjiUpR6DnLXIkQVXr293LaOkf2Z//V0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b2/ATdxf; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vzf3yRKl"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b97f9587e6eso524407166b.3
-        for <linux-tegra@vger.kernel.org>; Sun, 12 Apr 2026 22:21:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b2/ATdxf"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2b299b3c739so16655075ad.3
+        for <linux-tegra@vger.kernel.org>; Sun, 12 Apr 2026 22:51:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776057709; x=1776662509; darn=vger.kernel.org;
-        h=references:in-reply-to:subject:cc:to:from:content-transfer-encoding
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FbcdWUz+LzlC5UIGJNd7kkF95ZZIl4IOCm0ByFtZut8=;
-        b=Vzf3yRKl1dNH2SWpkE4OxEpXLzCNo3Gs+xohtuS0xBNFb2344mFHKG4rSdrHOVFFfu
-         CoQnsw6CGroWOh12xaOfmf3y5NXEIAZuIsiGQ5N7ckJf3E2MRxygQF/VOjcdcpjlJGcs
-         MxQT3NsFkL9ZBKEvRrKky563KOJ2K7FGydWX69RVKmaIjt+5y82kfyLHy+pQs5aFZLmp
-         zDaxGbXW2iIq3G3fIBE36/FBJ86enmNPcLunFJ80I04lerh97E+rdGH3otuUxoyJXrEi
-         /i5zO+aoaVJlgBZ5fJsPeWTt73A1BIaalrZXsMbvFgFZUjL/sOY2N1sAcpW87kIbbcF5
-         wNaQ==
+        d=linaro.org; s=google; t=1776059495; x=1776664295; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AeQDQeBvQZOlrZs1SM9OmJqEmhvxKZeUuqXZlJxsEYw=;
+        b=b2/ATdxfxnnctyZAtdXJr037npcixLdJKbCeelJqjw62NYja4Iz5C+hMZ316rT2e8e
+         vkDdH0J+BRUVDqiC2nxq3YxYBj5/E46fAqGY6Um28IbrlIStDzgLJ5Ro86WvNjxv8bgT
+         k6GF/aUdou0rsX2EZbsTFXotC8XmcGZBWNJyUt19GTNxJhokk7tLqK1e5UP4BL0dyBAv
+         5DQUXwbisI/KbvOrltH3KoE3n4ujpwRzgH/M6noCjaq7rPbvt7LViXrmvMVkNHaeFMRM
+         15RSkx/T7KqWPctcXdzV6FIlsrRmthd4ZUGGLp5s9C14RH7dtHfOewXVYU1OdiK2JzPW
+         nXnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776057709; x=1776662509;
-        h=references:in-reply-to:subject:cc:to:from:content-transfer-encoding
-         :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20251104; t=1776059495; x=1776664295;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FbcdWUz+LzlC5UIGJNd7kkF95ZZIl4IOCm0ByFtZut8=;
-        b=CEF4IWa+eij4+SbiqqwEtUn7sC2ht/i4FTF/k0k0aFIbXrGi+QtfQe/lq++b9A1AxQ
-         HVe5VyEJdqHsUHS4kTurYNGgQZOOkPSSAGJBNFn+XByn7biHfhm+p/gV8Q6R1jFWq4AQ
-         D+8HXRoqTtRmhQavzDUYgBL+zeoIvAFPs6VP8B55tNLkjWl1WLwersW2i+W4OHYid96o
-         XXkzAyIEZ48l3jCHJaRxPRgM7slnCW07nEK6612LkyXE3JuqyBjq0fBzst72bhhSEVA0
-         /pFstrrLLicHXsN03PUNhmX2jg2BG2Nb1BCBQJW2I0Xk7/deFDYwjbhluwqeC1yMvko6
-         Z6ww==
-X-Forwarded-Encrypted: i=1; AFNElJ+PulsUs6KhfR06lm3ycPugdsgP3M/cISjmH/pTrtfdKU7DCrcAK7jGIBvSsjhOCuzFqSBfOyk18+uuHA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyclBsv1ukEpGJUXvbVVTewy8xxUnw0eliDy+zpvJSnRZavzMKI
-	zEuohO+J6lWIKWzBvG7q3pMG1tweCs/UkmohthmB1naYHKxsnbqA4Jg2
-X-Gm-Gg: AeBDieugeKoo+Z6bspzFDhb3vnJqAhyEVxayuYd6uiKCipCPgFdaY+YU7TDL5dNACIY
-	QbPHo8+VoKQrboMRSyJ+kh4G50t0o04ymJzarav1aHyk0RWHdPJWpOSxblvuA3m9vmxvRw0HdDV
-	oKrIT3VTA+jw6gJ0qd0DG3bMXBwBMVOXDuoKok6fPVIUtKD82yHf0UDHcrkxg4RG8Eg3gEMHpZq
-	jMShq6YASjQbnJQG9q8FOqs2XdyOlHnjwCh4ixi/IumgrQflw2qEIjc+NLTyxEp14q1QrM4AXIT
-	sK7N/Dzcnv2mq8yL6jAQOu7xxNhivch1Cl9PbtH58Yl7tqtx+kAwBUKMI1G5kHIH2FyR5kmVLB/
-	6tSybrRYn/oD/c9uqyORXw9zxMNCq5mt8pB7Zm5+xShaaFT2knv+kANiK/owUET4YjOIVrpZiI8
-	XSLsv5Hf7RT3wT7dxtT2Smv25YjWsdxpuURzF21of6BybtV/geGCe04YCBAnrNh9tMsyegFBH+y
-	6+SB++7/W+uCRalWeprK5SoGEvqYrDvnutvVsnoh6Dz3GVlZxP0ztlEzLL4IQ==
-X-Received: by 2002:a17:907:7251:b0:b9d:eeb9:b992 with SMTP id a640c23a62f3a-b9deeb9b9eemr68012066b.23.1776057709077;
-        Sun, 12 Apr 2026 22:21:49 -0700 (PDT)
-Received: from ahossu.localdomain ([88.202.160.248])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-671505caa61sm629377a12.14.2026.04.12.22.21.46
+        bh=AeQDQeBvQZOlrZs1SM9OmJqEmhvxKZeUuqXZlJxsEYw=;
+        b=d+n/yqrpy+EO1yNLxKuQ67Hgx783Kx1QoiUz4CiE/jlKLJ+Jaui3QCur/aGOqLVLfW
+         ZzGfAnr0CJMsWFh8OSwgXaQwYXBZdmOWIoLX+j1658/hySTh0xTjQqFmKyMpPxdVbmG2
+         c2YpDNTmbYCxNmO937Y7PeDIYmP1wGy7b01/55HbPB9ZshZKxPOi6i+gLqTI5LlBpPnk
+         ZZUAmSjtaLPqOQ5RssOU+zmI60Kb58Nr6sLkDiwNXhcuJwz3eqCGc9xhTjq8eNcILqfN
+         gP8cGVI4Nzqt/grZ9pps4dmhcfEgFxJ9IH7GqjhfY78HHQ/72Pto4+bt+ZMq4ZFuEDor
+         Ie4g==
+X-Forwarded-Encrypted: i=1; AFNElJ+8WnR0azQwlBvkLiP7LMQm7G1j3sdZ3uVh8AYhWkOXReJbpuzmBUX5ZaEppTj37LcPd3au3LOgNPtEfA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyE74U8gJ2vfHmfeotnDM4FK+qrTjH8wNo6J8v/RNFHJpEXxBAY
+	ni4MCE6Gw+MY1FJO2avRA48ICd2TAd56bGpt6vrIvVzg2RCRZX7nhCiW1zdpsr+XgeA=
+X-Gm-Gg: AeBDiesJZ/TZCm+A6/xK/Vd+U4nzPu7CqEYomZa2tRnI++XRUrrHDnS7RCKOSijAeau
+	UCHXV0KZefGLBwZjH9hYsDhBp9HoAbfAa4dSWaTGwJGd+NC0Brn/OpJuT09BOaVfmFMh3BZQHEe
+	/ib1gJ3mMzMikLrj3dcwQOeoWDh6tTuWZiIr8yOusnpCtT0P6omLx+zZGtXmknb9lGdGKWIp/FV
+	lPvNfk11KW53S0uguBINNmzzfs75mL46ESNE8+l8QIFVY/jTjA+u5XYDFNtw42Ex4eIPW7p6CT1
+	HIF9ZuZ5HSvSlAwrQyTXqgOhVhjMU+/yduNn4uHIRQ3ReCVF4ZsHMzW2ZacZ2mdP578Ww77gmXa
+	FdfnkZDJnhDxaSDKjuWwdaXcyeQZe733zLAkjtnVnjPZyPxdLnQEVZQ+t6ZuzHWtxfjZKQ+ySJT
+	tRluXN4NKvcxO3cq9e5dNeBlbr
+X-Received: by 2002:a17:902:cf4b:b0:2b4:5b82:a8e3 with SMTP id d9443c01a7336-2b45b82b920mr33230225ad.24.1776059494437;
+        Sun, 12 Apr 2026 22:51:34 -0700 (PDT)
+Received: from localhost ([122.172.81.200])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b2d4f2ec20sm108579865ad.66.2026.04.12.22.51.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Apr 2026 22:21:47 -0700 (PDT)
-Message-ID: <69dc7d6b.a70a0220.2403d.c1ad@mx.google.com>
-Date: Sun, 12 Apr 2026 22:21:47 -0700 (PDT)
-Content-Type: text/plain; charset="us-ascii"
+        Sun, 12 Apr 2026 22:51:33 -0700 (PDT)
+Date: Mon, 13 Apr 2026 11:21:31 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Pierre Gondois <pierre.gondois@arm.com>
+Cc: Sumit Gupta <sumitg@nvidia.com>, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, zhenglifeng1@huawei.com, 
+	treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com, ionela.voinescu@arm.com, 
+	ksitaraman@nvidia.com, sanjayc@nvidia.com, zhanjie9@hisilicon.com, corbet@lwn.net, 
+	mochs@nvidia.com, skhan@linuxfoundation.org, bbasu@nvidia.com, 
+	rdunlap@infradead.org, linux-pm@vger.kernel.org, mario.limonciello@amd.com, 
+	rafael@kernel.org
+Subject: Re: [PATCH] cpufreq: CPPC: add autonomous mode boot parameter support
+Message-ID: <zfoorh6tza4taswyr5zhxqn4rhcqzq4rtvz46eigoy25muxfls@tlbuypuwocvm>
+References: <20260317151053.2361475-1-sumitg@nvidia.com>
+ <4b1f100b-e699-43c1-a06b-5545056d174c@arm.com>
+ <b8debb30-67a5-4d2b-8c08-8fd287f7258e@nvidia.com>
+ <208360b1-36a5-419d-80f4-431914407f61@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From: Alexandru Hossu <hossu.alexandru@gmail.com>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, skomatineni@nvidia.com, luca.ceresoli@bootlin.com, mchehab@kernel.org, gregkh@linuxfoundation.org, linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] staging: media: tegra-video: add NULL checks for of_device_get_match_data()
-In-Reply-To: <20260412205057.386856-1-hossu.alexandru@gmail.com>
-References: <20260412205057.386856-1-hossu.alexandru@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <208360b1-36a5-419d-80f4-431914407f61@arm.com>
 
-On Mon, Apr 13, 2026 at 05:07 AM, Mikko Perttunen wrote:
-> These devices are only probed through device tree, so we know the
-> returned pointer is always non-NULL. Typically we don't check in such
-> cases.
+On 10-04-26, 15:47, Pierre Gondois wrote:
+> I need to ping Viresh to check if this is still relevant.
 
-Thanks for the explanation, will drop this patch.
+I think its okay to clear the min/max state in the kernel once and for all if
+you think it is not done nicely. As discussed earlier, try that in a fresh
+series which only does that part.
 
-Alexandru
+-- 
+viresh
