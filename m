@@ -1,62 +1,62 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2DB3AC0E7
-	for <linux-tegra@vger.kernel.org>; Mon, 13 Apr 2026 10:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812E61DF75A
+	for <linux-tegra@vger.kernel.org>; Mon, 13 Apr 2026 10:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776075916; cv=none; b=Lzwjyy1K8iaCkIlfR81IS0wvU+mX1icWQzJavr8HualLc73+tCuW3woKsZB70KAXb/i2z59iZgH4tss1nJVOWGEJHMnRwzjatuU8ZZTnUMdzNUVPdwavcGaPLjpqxKRycQJEn1H3/0da0xdrpHTqzEExL+jcySy0JIuaAhPvvqI=
+	t=1776076801; cv=none; b=tUn0HPhoKPVO38xk0Zhr+mmLU+DA+h/QlxEEA7R0hM++4vZ0KodVont3aswB5AIuVOzoI8wgsTY2oQkRb+5MkIwgE39n1bol7ZbRNC0tStKLoMeZIoLeefyp1HgNfB7ywX4ChE1j6QLeJo4rbFCSBQFu1gUsEMf85Z3YUtvsP8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776075916; c=relaxed/simple;
-	bh=tirnI60t2LsfBYva0tZOm3rtvSohyY6FmeFwIA3hr7k=;
+	s=arc-20240116; t=1776076801; c=relaxed/simple;
+	bh=QNf9fYuRbV6pofyWiCvhwQ8+2qT1V/f57gWB0ktbdBE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rWdx3U2NZcQkfKimkel1q7rMsbnkl4Hb+lEkZUsW0+J3jAtFha8qmI/IH9jXNWawsJCWNmAEN9lMWs7gBzYi1zaNZkolusTy56pzBBIp4hO2c6XyW03r63A4qHezv5T+5dQdvtXkungnGtk2T4logcVVs5nYqfby1DSyvzZXjCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AUMmMlJr; arc=none smtp.client-ip=209.85.221.46
+	 Content-Type:Content-Disposition:In-Reply-To; b=LLMRJlst8DXP2V/yLaW8PGhvNFnGP4sALR8EK3l0yBETMpo4OuXr4OHCPj4wK9UQcj6eqFqQnTska3p8mWV/BHz567nJxq80Kn9QdyHujuQg9uznvKNf5y9IhXG0Uh/gMzQDHC+UrNBhJ9kBYeUAGGbt6KybeCRbvGHX37ISKXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eqdT1FPa; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AUMmMlJr"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-43d73352cf2so848905f8f.1
-        for <linux-tegra@vger.kernel.org>; Mon, 13 Apr 2026 03:25:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eqdT1FPa"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-488b0e1b870so68077815e9.2
+        for <linux-tegra@vger.kernel.org>; Mon, 13 Apr 2026 03:40:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776075913; x=1776680713; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1776076799; x=1776681599; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pFl65q515usiQqNs+3hHpKzGMqiV4DMQZG4ZKRqr8MY=;
-        b=AUMmMlJrrHFDFUPjq0Lc2w9dijwVi+vgrXIgX5K77I/fAx0oVXIIvNblLOU+4CsfCc
-         h/K3I43wWaadzEaXt2Y0R3++dJy3QseQVbAUC3HaaS92y6YoqUL/tens1xcq9nyqMnSI
-         SHuvHGcnV8+4jjR1cN6CNt1A2J8SneX/65QcF3fj4nrfn50d2LU71jVZBltHkspxTKf7
-         k7/OjzKxvRJ1VkOM6tPoS1N8TAQwqZYdBUzt0tvzrnbaXF8s3P+SOKgNEltqjJfNP88a
-         N5e1dzzKnIym6tPQiYMjJiKHVLiWoxObKNGgyUaiT1kreKgDOvdj0Vo/naiXL2SoKAUo
-         odLQ==
+        bh=M3Qpde+l3zSHqtGuk+YhxsSmgAud6Ug9oUZZ4dBVL5c=;
+        b=eqdT1FPa6Ut2tNUnkNpJnkSV/tu6rZa0ArpYF06TyntokdVZKHObCa6eMrpGvnJoaV
+         PnlcGZdeiVPwHOIAU3WPweJpC2D0c6+0K+Jab0hvoZmd1efLiGelGOzV4vLOLccegk07
+         H9YYjScQ3kxxmfnhDM3gkLV/71ac15IxOjT5hrUed3Ei9gQ4P1EnHi0sbfwphtotSOH1
+         AmUF4mX3ml+SZfpNGO3RA83Yy85asDvUA11c6x35n31z1VGTjdo1wCvpl5L+5AhqNOQb
+         wvC2E2MuncQ3SxNZW0ti99Ihl550yV98tp0J7A93WM6+Zwufd52FKllZ2wTLANJppnUS
+         p9kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776075913; x=1776680713;
+        d=1e100.net; s=20251104; t=1776076799; x=1776681599;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pFl65q515usiQqNs+3hHpKzGMqiV4DMQZG4ZKRqr8MY=;
-        b=ZYk8iGKq5Wu+CHiZD9D9iPo7SERsnll6AeDOB6/DJNMbPI5AhARgpKFnBBIcbsNq3B
-         kWvkWHLNCaR+ETz1cP7M/HfIx8+dImsNODcl4mUCW5NMqhXrbc7mmVhrUb74EPvXQNCw
-         BzBJ9FNk6/I+hxB6cZBovBMFHnNl4hsJc6dtq/ZaxG1VvZP1esiIeowRch+O5Abyi79Y
-         rmvFjIk/+Q5hcrsU+2KyvucAAfElz3RYoU4Dx/UEt4U42N4gY6X116KHDg6F4A644Hgh
-         n3ELMJO2gkldKhF2REOOkz885YdwotFChbnoBoearq6YcZ3ScH3jfxTM4CIJbV7pg6ZA
-         d04A==
-X-Gm-Message-State: AOJu0YxnCjgR59NxoPSOJ5vbiY+O42kcrkeY++YGKdkTOHiYJTJIjp3n
-	a4xd9U8m9xUNnGUYFb1Mgcqr8ffL5FROKvHetdWsGpzcTV3N5RwwgYXB
-X-Gm-Gg: AeBDievZiFqxyUOKKi4dDLIzqn/TADavlGdLUuGguznaWVZCqqQtpsn5QoiJF90Xq9s
-	cRMWBeb3QzJB+HOu+5to3Mn0RbQDJrpuLsVaYvszXKQR1uDjowXIRSuHLE0/zUM+27hd2ouud3H
-	WFbkeIsDErFeFBXJKB8ewlGyzboBxhoJKNzExvtKtt+rdx+ZOGnnD/s3bR1uYMUxEtGRKYXhlwi
-	4RYi2ix31Q2drQ6m6g9XbxR7FFoyUDy1kR72xykMSVIKh1SPDrvmxt+mCah5naEszVH51+uH3sr
-	IzF7cc5XfDskxyqvZQmWEpK0enHq67DDnlFE+vFhS6BfJgCRCakSHX5VpJcJA7F27SWWu6iORYn
-	b61H/bMGwZdJXhWjTWj43/w0VcLNv//9zWatXMFXKh+ya7f9UX3YSmnR0WmKQZT4qwSATAg2zAu
-	Dm3HH5nVOjZen7HD5Tr9A=
-X-Received: by 2002:a05:6000:18a8:b0:43d:71b:204b with SMTP id ffacd0b85a97d-43d642cd3a0mr17848829f8f.39.1776075911391;
-        Mon, 13 Apr 2026 03:25:11 -0700 (PDT)
+        bh=M3Qpde+l3zSHqtGuk+YhxsSmgAud6Ug9oUZZ4dBVL5c=;
+        b=S1ATmU2F4FB4G/JLekd76brqItshUo0H6HNE9ZmGJ9EHr8+XpBnVCXZ8mWTkobL3ou
+         BekF4r5aZeV9vg+4mcVDFomDfCaoLlIW5n4O4yB5f0LsH50Dd9PWrkWyXMfhdf5IKQx/
+         XEpCOQZcALYs/IfU1w15PHDVaW7r9MVrJG/SKworJo39hsSPR2BnKRt9GIB1BKvS2NXJ
+         oLaw4LoFIGXwS56jFTGjfpyclxfWPPwJKou70y20ktXpP3XPSGCw/DwGWfRTqsx9UMYl
+         GcBMMTvH1xkv753hJhmxnWIytm+guq6WDSzTX5Vw9mpeFXCbageoW7unK4UVBq5PufkQ
+         4iQA==
+X-Gm-Message-State: AOJu0YxU6aT06TWEczicZYaDC51KdFXbPNHMRKingnAyCKdd53OHXHEX
+	jaJAPE+2MXrT6xarrWpqTaqotSW0LO/MR3E3hfl3vdsy8NoSsGrCnyTO
+X-Gm-Gg: AeBDiesv5lohz/nhe76Elbyqktan+skD7nd9wL/G3pf99G4DFpPLtA+8HbhyjMwt+u4
+	3lujD80qIKvV9pHNLS7GK1F5m7mrnDDmnSuHBQj2bDM0olZHxHk6CWaZxY6Xs60lMmOSR6Jn09m
+	jMS5cxkbJdwAY3m/BELQJx1d8KS67QqVmpPj9OuuMDAHn8v9HK8ENlUrFDPxSfkrfZaiFd5a7Rq
+	qKGOP9xB8hTdCa7MTDpwRhzBI8+jPwFQ5clDW5CXTG1drn6v+66cnY87OphEw0HRdJ0zQAcyHmP
+	1QWqTDUos4oMzNl2OEvvATd6ubmgvVm0G3WAVFrNhdX6ajH9ssfPK6+2nKYu29X0VAaLt4A7+OM
+	/R+DMvEQjkZs8fX4T+1G5tqWxA9Pz0INOFybAp/gzsXyug0MgC/zlGXb6Rp+w4r3MW1/6VzYUhj
+	5bgxLo/YZ45PApya6xF5U=
+X-Received: by 2002:a05:600c:8594:b0:485:46fd:7887 with SMTP id 5b1f17b1804b1-488d67f9a73mr119380225e9.13.1776076798374;
+        Mon, 13 Apr 2026 03:39:58 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d63e5c981sm33173904f8f.33.2026.04.13.03.25.10
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488d58bb830sm295312985e9.7.2026.04.13.03.39.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Apr 2026 03:25:10 -0700 (PDT)
-Date: Mon, 13 Apr 2026 13:25:07 +0300
+        Mon, 13 Apr 2026 03:39:57 -0700 (PDT)
+Date: Mon, 13 Apr 2026 13:39:54 +0300
 From: Dan Carpenter <error27@gmail.com>
 To: Alexandru Hossu <hossu.alexandru@gmail.com>
 Cc: linux-tegra@vger.kernel.org, marvin24@gmx.de,
@@ -64,9 +64,10 @@ Cc: linux-tegra@vger.kernel.org, marvin24@gmx.de,
 	linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 4/5] staging: nvec: fix pm_power_off teardown in
  tegra_nvec_remove()
-Message-ID: <adzEgwPBTTFVKBdS@stanley.mountain>
+Message-ID: <adzH-qGdFttuP7uq@stanley.mountain>
 References: <20260412205057.386856-4-hossu.alexandru@gmail.com>
  <69dcbf4a.050a0220.1d6d81.c4df@mx.google.com>
+ <adzEgwPBTTFVKBdS@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -75,36 +76,21 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <69dcbf4a.050a0220.1d6d81.c4df@mx.google.com>
+In-Reply-To: <adzEgwPBTTFVKBdS@stanley.mountain>
 
-On Mon, Apr 13, 2026 at 03:02:50AM -0700, Alexandru Hossu wrote:
-> On Mon, Apr 13, 2026, Dan Carpenter wrote:
-> > At this point, we're unloading the driver so nvec_power_handle is
-> > about to be freed. Is there any benefit to setting it to NULL?
-> 
-> nvec_power_off() dereferences nvec_power_handle to send the power-off
-> command to the EC. If pm_power_off somehow gets reassigned to
-> nvec_power_off after our driver unloads (e.g. by a re-probe), the stale
-> nvec_power_handle would point to freed memory.
+I haven't looked at if you can actually power off a system while an rmmod
+is in progress...  I feel like a real old grandpa when I say things like,
+"Back in my day you weren't supposed to call rmmod on a production
+system, the rmmod feature was only for debugging."
 
-I like to believe it's impossible to reprobe a driver before the
-rmmod has completed.  I'm not going to check on this, I'm just going
-to take it on faith.  :P
+But the bigger picture is that linux power off is a mess.  There are a
+dozen different ways to power off a system.  Here we have a driver
+which just takes over the power off process by assigning a function
+pointer.  Shouldn't we instead have a list of ways to shut down the
+system and have a standard way to pick which is the correct one?
 
-> 
-> Setting it to NULL makes the potential failure mode explicit rather than
-> a silent use-after-free. Since we are already inside the if() guard,
-> the cost is a single pointer store.
-
-So the bug here is that we're racing an rmmod against a poweroff and we
-trigger a bug.  And the fix is to change the use after free bug into a
-NULL dereference.  Both of rmmod and poweroff are privileged operations
-so you kind of get what you deserve if you do that.
-
-I understand that it costs nothing to do the nvec_power_handle = NULL;
-and if this were a new driver, I wouldn't comment on it.  (Although I
-know other people who would).  But for a new patch, I'm just not sold
-on this.  It makes the patch more confusing for no benefit.
+Instead of worrying too much about this one driver it would be better
+focus on the larger picture.
 
 regards,
 dan carpenter
