@@ -1,310 +1,218 @@
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010049.outbound.protection.outlook.com [52.101.61.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCB418872A
-	for <linux-tegra@vger.kernel.org>; Mon, 13 Apr 2026 01:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D261340DFAC;
+	Mon, 13 Apr 2026 03:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.49
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776044581; cv=pass; b=mBvGkUAjKUcAMl5SVx1INs8iVSrTTu3dWQctjPmxe1ZN3O5NMbQkPPMQ4A7JxbTN75CkTVIFmdCf7UvItr1cHL81t7wJ1Kcm2fJfyY3NZSn/e8X+sBL04MoMiBxps4Gd8Qi1EOM+honzLfZhk+qACtqic5aASH0y+M+22tVR280=
+	t=1776049638; cv=fail; b=ib/Gx2UC3qNThZirNRNvPY+sVrOB4saR3YCVffFFmrgjkmaB+7eNJAMH2NhTvcMIRBR45NFolp632GbYdcdCTzlD1+ytPqQwHP6UTyc1a3H8MLnAj398mIPYG+vNRqKsSZzEzzQqPlKsSWCe/FqFLP8Xy1S4bDsWFpCFG5Np6GQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776044581; c=relaxed/simple;
-	bh=qOI+HL01lOQlV/37/I6AGHvFI1YGoKNR8Wv08+v7GWs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mirOzGD9U8evdTk+09/nV2MU0Dl05hj6XfgDSoIrFi/G6IDYfRZU8Yonictrq2GXt9UksjuzHDe4cRcIh36YEzXVrndo8WCQmaNl9CAOOdm7rwO9AfdF+l3/3MkaI+lYEb1lW3Onmgf0F7PQAOaax/9Nf+x1rBoTewWw5A9y4js=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MAp2hMTp; arc=pass smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1776049638; c=relaxed/simple;
+	bh=xSW03ZOIoMebvJFpiHhQKzHHZiuDxivVStwWztjQKoQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Hl7lMsKbNxV04/zRpttZT6aeV2rydVX5tawifmgqpNXoPHZa+n04lLr+1e7gEdNrbhp9EJdKotxTjgX59CPLwfKJJui2S38FhMRLOVdxf/6OPJEVFvW1lcXK5VG/rBdthwy19u3ri613KfOQTl4K/el2THvp+EBNc5wOAt7/+7M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DXGWiN8F; arc=fail smtp.client-ip=52.101.61.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAp2hMTp"
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-42321c8b8f5so3154746fac.1
-        for <linux-tegra@vger.kernel.org>; Sun, 12 Apr 2026 18:42:58 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1776044578; cv=none;
-        d=google.com; s=arc-20240605;
-        b=bvY990FhM69V5HhfsmZBEHkry52d6m94lLk6usDBNJkCU5W24b2wu9e3LhgRIKmQKv
-         H7uNolVhLDIv1y1cd7bqjS+9jwJZR/f5C0Ip0rKXUdoF+R3seqbvhYt8kxkSf5m4mdST
-         PF7f6xk7azHmzTkz9RqNK5/qOmPfBf11SB/Vicm+3DoGfDr28CE902lp3LeFly0C1V1/
-         HbpSvhO3TBVnDP+gHUyupS1tPRKtrP9xr+NDXojxM4aHT0IRpendvQA2ARvKAFxsunfp
-         rndB5qs08DwuP/J8rwRW/Tn6S15BPYly6a5ra9OzxrvYapfNNj3+b2LIfEs6fw7SuVs5
-         kCJw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=ZpqWZ5OeBihZW+KiOWj3yc4NCjFh45eEbq7S9GQ1ONE=;
-        fh=RwCEF4qTXMw+nqUC8ni6sLuZsNMKygNYZ2gW6wM+NgY=;
-        b=G8/PozDQxsw8fjgkOBQq6NPThe83ZbiBq9yPyLbQ49UgdRLpKlXPi2bqb/MXooxDOc
-         cha4NF5tFaCkJkkhkYR84EUJ2D7P+lxntoKQ1k61C82Mie+3WHmn340d+3AQEv+g//gl
-         3Ek0waEuQ2YWmi0UJRv2lOTtjEG6RbH4WxC4sLYx2kQbhB/3VutTku6IT2/vFEGsKpuL
-         MYQpH35sFeo753C3IoqrocOlHx6f5egTyASdo6NcU+qbjcX3wjDt79WWjJ2MCtUIQXV+
-         3YESFw/ACdTkuTP+rmklJKZDouSn9PUvPJco4b7XOZc6z17ALZVFHLczuWfASE/9tJAV
-         pBYA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776044578; x=1776649378; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZpqWZ5OeBihZW+KiOWj3yc4NCjFh45eEbq7S9GQ1ONE=;
-        b=MAp2hMTp8z+yF+iYZPUK9xkSbrOpnVX7H8amirdZHFUIyRJqhLM1pEdaOR/yj6xXXi
-         Yb8iPC/unO8wtR/+Yv5oVo5vnOXBcGx0ohp09I1KUrqbDKOULacjMyiypeMWHsSH/uiM
-         4YCXBT8YbUje1jl237xUiaeDjzspkrA/gK/3osqxfcuhGg7myWm8Hh7DV2R5Y0CvKvrQ
-         u1LuWnqssp+mtBiZKBo9tv9ND+aMXi5E3jvnmfzJMIBuyASHPqX2NFMa+YHXuP7rqoWc
-         PmMgWQ5dcQ4yZyVc6WOlSMwjZsqFTr1Ms3gZhMNffDH9JwhhtLB9PZp39tYi7v5Fl61+
-         YSBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776044578; x=1776649378;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ZpqWZ5OeBihZW+KiOWj3yc4NCjFh45eEbq7S9GQ1ONE=;
-        b=lcq0BQ66VOXzoUyU6dWl5X+y5N6nNdwQHyqOowUWzjMdWaMqZgKCdVcroK+GolbbMx
-         IIE3E4xXus9ZkiP0zwFWelUnWtA11/MHNQO4DP3PqtcQL4IBm59bl372P7uSVebFAZl5
-         kfb2VtQKdqBwyR/ZM5fQA5bt7f4lL5dZcOJNaW40E77cEyUDLmhtfkbqFnjncQnpxRqZ
-         4Kw1PlEzsz1rSFstyAlm2fm3+Z5iyskKkbSjeZScwB9aws309PnK+NJ11Krv36xDhX/v
-         BVqAGHgjsLktj1zT9XzE2RjC5D+GAXCV+fUxlQdL/0Zx/JkhfqYL84w2gjvCRUhCKBJv
-         5b+A==
-X-Forwarded-Encrypted: i=1; AFNElJ8YfZU0UCuHIv+Sh5ywdq6LIfLoyaJ/1V98yJWj8ogzIjprcBCfCvDWlLYUd7hj+Zwd2PEDwKGJwmBRxw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4x3R4P//iR4HrhxGei3Rm7u+y0AwMjYnIxyQYkliuuXMoH2F2
-	6NNgIy28J0SSD7+52zSsW07ZhGxPyGZ2VcPY8wZv1l+JVhRUgcEP5AxgVwt4q7LTpt2M9JGYCdS
-	crRzmeJzcmq3KK+Kby2mkJntuFy7ofGM=
-X-Gm-Gg: AeBDietbv8RKd7VZNWxdwHKtoCq+gJCxNemhU521MuoUrzdB4uSx5emf2Sdp5zBLzOS
-	AtZihF0HTJTjD5gxYNtYHwstbvgcbMmzjJrhS4r6nCav5YSqYkQ17CzmclnQGypF/I6G1l7S4za
-	tQc+7zzZQVmOvVr54+9dYnCc1NPtN9CW4feO9VtUDxsAtcBEfianHHq236g03U5yA7neagiWqFR
-	ToFhMM4ACptC96ceKspo4xGmNdxfsCHurllJ60/m9hp/X/J2JiYqwwslFa3rNRGRZPDxIeMAf2C
-	smt1kGcG
-X-Received: by 2002:a05:687c:20c2:b0:41c:9797:d1e6 with SMTP id
- 586e51a60fabf-423e1e1318dmr5077336fac.14.1776044577979; Sun, 12 Apr 2026
- 18:42:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DXGWiN8F"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZCIYZqZ8056ZwZnqj8yaDIhbUBC57q3cnyHoVNK4vH4bvvBrfy6f5rZhIrq35+H7LsF4wObW/hRQ/FxuU8okMHBklOHbThKj+xd/ixg9H+00O6tLrI9RN1yoHb3lTvo3JJfvq2jrjkqaeKILowj8nyZj1KQp20nlCyKa5ek/djtaVYyNDqP3IlUEBP5J9Q98J6pAtHcW785TNYJQ1O2pri0PXUsjdgEXKXGMUTQQzr1WFfWBJIAtDQMZlCC0kvwB52/PuhAbjF7ieq5QJwBvLPaZDNh4d1PU3YFsyXZUFEtXCuzYlMmLvYAu6D0XYieEhai1r7xs6Wg2OYgknfzfUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OCYWU5l9SKAPERPdB/e8bVdQaCHxW1eRCG1T971uBQs=;
+ b=cw9S2C2a4tht/vMTopnqJiCpcKyd9vV1yTwQRGLKsFak6CQdRjohCYTXgKIqn/3T5hdvZ4KIpjYpmCbgp0pRrSLHo3ZYSJDViJOxAZ2PYHbQjtAe8SmF9wvJK5Xeh3xW+N33tOeT+l0axkkPkUfRVhMuKgfk4FWFFSZHu0wNGmQJIEenZ04pownNcK4MPVKA5Aee5oOcr/vauMiB81Y29Ey/lvrTf699cxmIJGKeQT63v4+7Gp7FEoNcpCwajOK2uDTrGOwdnuAYcrleOZwRfZmCB8MQNbjJ16BMfS4czWb90whDAND5NOmKuV0FfpxiBmwOKgIM+0HpPrB15voq9A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OCYWU5l9SKAPERPdB/e8bVdQaCHxW1eRCG1T971uBQs=;
+ b=DXGWiN8FmzlYHWUlHx4E3EHI7RCu3V8zL5DdfFGAyb7riokuycp1DmZIGfge4Ca7tD0SKRJDoAUQEF+VWZWi6e0SRCmSWbm7yeKBq1jzBM1Czukkbg+TwCuFGG+PQY7fPU0fTSmVAhrUkF/MKTlNICIUlIxLbC2izrp3KOg/UT0vMVglZc9Ja3t7hRl4AqLhtUaR9ZgtChI7NWZtpa9Ct0f9yj3N9Un76fYg2TKsBGC+Fak7PyPOYH+mIyh/naM9bUp/N5A6T/n+Jo6XGt7DvR7TWpTY+KMBBQiwn9tyEzQAuq9D3Lrj828pXS4AL+pDU1FhQZbjvgngdBsbtrQV8w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
+ by DS0PR12MB8815.namprd12.prod.outlook.com (2603:10b6:8:14f::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9791.35; Mon, 13 Apr
+ 2026 03:07:12 +0000
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017%4]) with mapi id 15.20.9769.044; Mon, 13 Apr 2026
+ 03:07:11 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+ Alexandru Hossu <hossu.alexandru@gmail.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, skomatineni@nvidia.com,
+ luca.ceresoli@bootlin.com, mchehab@kernel.org, gregkh@linuxfoundation.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Alexandru Hossu <hossu.alexandru@gmail.com>
+Subject:
+ Re: [PATCH 1/5] staging: media: tegra-video: add NULL checks for
+ of_device_get_match_data()
+Date: Mon, 13 Apr 2026 12:07:01 +0900
+Message-ID: <546FSeECSqm-ORhiEUYCVw@nvidia.com>
+In-Reply-To: <20260412205057.386856-1-hossu.alexandru@gmail.com>
+References: <20260412205057.386856-1-hossu.alexandru@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TY4P301CA0006.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:405:26f::10) To SJ2PR12MB9161.namprd12.prod.outlook.com
+ (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260410125105.39340-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20260410125105.39340-2-wsa+renesas@sang-engineering.com>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Sun, 12 Apr 2026 20:42:46 -0500
-X-Gm-Features: AQROBzD5VLydoqD-crkS8q5jKVQvu0Dgk3PHuV4kaQv0TPwaWMSf23DdaK7QoI0
-Message-ID: <CABb+yY0QydFqBQ2sPzrbDjoj1ODTe0FW_p_4jyBR8cP_gxg9XQ@mail.gmail.com>
-Subject: Re: [PATCH] mailbox: prefix new constants with MBOX_
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Peter Chen <peter.chen@cixtech.com>, 
-	Fugang Duan <fugang.duan@cixtech.com>, 
-	CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
-	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|DS0PR12MB8815:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8241dd82-bbc6-4672-4abe-08de9909c18b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|10070799003|366016|18002099003|56012099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	sxrhAP+ubU9cPPlKXwG7VbmG/Qa9Cf/qMvV59lzYc43NU9Z+Yfpwd4zgdd7lUDdSjE3xBB0irhm8yqsQEt3vNI8moccWSKoeZqVmDszz84OTI2WQCToFlWbAmgsczlH4buwpPKf7fKq7KfTjRhVSZ/vmqs/X0CihYeQpfefWcPikmm+pigbHdbBX1TeERWBIBuDJNwznXxLc2ALCxg54VeJ2mJ7mMq7RlA9uE6pM4UjBrwxas5/aw/A+Ym0oE8sFHYpmUTBdGBC2k8hiI53wosxTn0U0nYRS1xlX7RTbzbC0nnJWCrdVsDwZ9l+Opw3Ds2nVtPFE0uBHJePoUGNvwvpKo4OkZHS5JaxhL4+lQTbwdUVaN6SNZeOk0uddy/wLYnCHTcEdHSZcSVlb89Ybpwso9xRh9FydMlClUkVIUP9Fr56uxrOGAokeTQSoMY3fxBnsPLe1JqOiYo6Mb/oh2ozKIZ95gt3d7IxUQFVnn5VHDQZ1viSeet1KUPEXz+ypLgabxmFQQhi2jb/vtEQRkmY+0ThvA1Mjx1e/4EKEhPAHTtIZ6aj4UUjN1/JL5v+zQGeN5UBWsgzfG8ep4zTyM/z6KhDWBjB/NaXn0bm1WVDS+yzC4h4vSyRIDT5rKuxJXyzDNHeBQUOITJHR6j0w9h+bDmJTOz2XFj5b6arkZEmPzA+I/khsQfFIfh1tiwvHUtYgzzK8ihh3KEMl0kbDy9hxqGgdJyMWP8vG+x/jMLU=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(10070799003)(366016)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YnkvMzBLTzMrcG1VOW8yVlZYS2dCNndVL2MyQUdOazJrVWxUMEVUN3JuTlVn?=
+ =?utf-8?B?K2ttT1NPS2crenRoRWs5bkp2dS9GMXd0ZlQrWW5mbGRnSXVDUEgrS3RYbGNG?=
+ =?utf-8?B?eUttVm9qb0dVWHFJUUg0U2FRVE95NkwzTGVESW9pbHc4OXJzcmEyU0lLYmkw?=
+ =?utf-8?B?REdtZklZMzhiL3VBMmVFRkFzaGRhakFybm5IbnExdE5xQkJ3R2dHek54YmJK?=
+ =?utf-8?B?bHdGbjJQMXpLcGNxNjFoOXYzMW5UNDhvL0Z3ZllnM1VNQnc1RjdQWnVGcktK?=
+ =?utf-8?B?NG9mMmVaRytUYXRRZkpWOWVNMTh5SlJ1MEJaa3FFc0ZrNS8xYi93NHBtWDZZ?=
+ =?utf-8?B?TnhQc2tONDY4RWpXTjR5TisvRy9RL2YxdncxUlMzLzI1d2NkTE5OUXNyWEtp?=
+ =?utf-8?B?WllhSlNteEVuUVZ0d3FBZVQ0Z2VBYnppM1IwLzNqL2pJZ3phRXFXR2VMdVlX?=
+ =?utf-8?B?RStlZmpKNFQ2QmUzcTJiZ2E3WlMwQXYvQkxJR0lzS04vbGVxSDJVR1k1Qzlz?=
+ =?utf-8?B?dTJEM0NjK1U5VjJqYnh5UmRZV29sd3RVKy9aaVVHM2JMUlhZbkUzMG8yQWpy?=
+ =?utf-8?B?S3VYOGlaWUV4UnRmeVNOV3JzWjRtTzVMOTUwamR3UFJaSjJoK2c5c0s5UHRT?=
+ =?utf-8?B?b1JJelBhaW5zTzJkTDJzTUl1SlNCYmtrWm5WOU10VnRSMm5wQ3QxWTE1Zm45?=
+ =?utf-8?B?KzQ4NUFhRm9XNWU5U3U4WXVhMXErb0VzUHRKNUx5TFdrYVg4TVkvTVlpcWJB?=
+ =?utf-8?B?MTI0WldwdEZ4MXRBU1Zud2RoVWloeVpLakNlU1V1aEtraFF2SnNjUkRadytC?=
+ =?utf-8?B?ZE9YNTgzWEl6eEdubGVwc0NYVG4yQmdURERsakM2Tm9uK29hRWlUMzRyWGN6?=
+ =?utf-8?B?MFN2dm14NnN0dlY2T3ZudEFob2ZRR2lqaWZISkR0T296eUpoSkxSWGRzWUF6?=
+ =?utf-8?B?d0hTRmYzcWw1WWNucmJRdUszYU5LRUZ1SjNFeUNiOVRnZzUvMHhxZzV3UzRk?=
+ =?utf-8?B?aG5Ja1doVlFtWmFxQmw3ZUlkY2V1UzlxdXoxVmlWWWhyM2NXdGVPaGwvZjZU?=
+ =?utf-8?B?WFZaRG9sWjk3bG02ZG92NThZNzI0R1hKblhpSGdJVlpORGF6NmkwWWxtOFdO?=
+ =?utf-8?B?NS9TbFJoUkNncjV6RTYxRStMVnZOeGw5ek1neTd3QUN4cW1jdVg0YW5xREk5?=
+ =?utf-8?B?bEZydTZjR243bERnS2JKYWJCWjJlOGtrSTdXNnVVdG81ZS8yWWpRZ3hxbVhK?=
+ =?utf-8?B?ckZKRHBuOU13Z0tWZ2FWT0wwRGVjYVZCdWUyY0JsNzNKd29WZGovR254SzFF?=
+ =?utf-8?B?ektodlpkWUpvU1NBdFIyYzRVbnpTWm5OdFZUY2pIZDZvWVV5WUkvT2VLbk1D?=
+ =?utf-8?B?M01zdHNONkQ4UW9WdDFFOEtDVGJrSDVRQ3poeWcybVFSMDg1Z0oweEQ0M3NJ?=
+ =?utf-8?B?ZjVoeEhEdC80V1c5S002UmNWOFl2M2dsRHI4U1VYd1ZaK0tsU3BQT3d3YVNV?=
+ =?utf-8?B?S3pmZzcrSGhtajZYSlVNd0NUbzFkbm83N2Y3Ti94VnBRM2dRR3RVSWJDT2xh?=
+ =?utf-8?B?SmNPRlVKSW9qcEtnR0hrQUtEb21jYnpKV1g1b01LWm5xdUI0SFVDTEVCREw1?=
+ =?utf-8?B?MVIrTC9pMkM2NGZQVTlHN0xXWnNQRjJjMVg0MDJtc3cxOFhuQVhtZHhicGV0?=
+ =?utf-8?B?Wlgwc0dCaXllU0loYVBIYUdYVkduZEpabCtlTDRWVklQVm9GRGp0VUEyMmw2?=
+ =?utf-8?B?M255UUU3azUwT1AwK3duUmt5azBrMmlpNmRRaVgyQkEyZUtUQk93dUhvcFIz?=
+ =?utf-8?B?UEFJblFkU016RkhZQTl6Yk1JTlBPTStVTTlTVkJ4ZWpHMnJuWWFscTliYnhh?=
+ =?utf-8?B?ckJNOEkreHpBTnowWmdUVUpaYVpaSVYvQmpoKzd6eTFVdjMxTW1YQjlYWXFo?=
+ =?utf-8?B?b0ptQ0VoYUN5TEovT3BubGV5VjBoVjZjM3FUUlRNdTk3amM5YmVDa0pLbG9W?=
+ =?utf-8?B?TlhyQk1aMUtqTHNqUkxEdjNLU3B4TDVxVHd3Sk5FbUFVYjN4eWdmTE5WbHR5?=
+ =?utf-8?B?Um5ET0xiWndxTFFhYmZNVjhjS3VFNkY4TWI4UzJ4NFFSRU5JZjdTZ3IxQUVQ?=
+ =?utf-8?B?b1U2amJDbmVGY3J0QzU5N0RJVS9sRGxMcGRTNlhOMXlMcWRHK2FIbnJmYkVs?=
+ =?utf-8?B?enVGY3ptSUhjSkpYdnM4RDZld2JEeWYyWWErL0RXVi9qT3FnaEFUT2tUVmRT?=
+ =?utf-8?B?NHFQdXMwL2lBWXJaa2E5cXc3UlVuaXBrekt0bWJ1RENJR3hxcTIwRUxhdXlD?=
+ =?utf-8?B?VDBSM3QvSk02WTgrT1Jqa1ZuaEh2dWwyREdhai9aL2YyQWNqYUhPdU5SQVdS?=
+ =?utf-8?Q?nbIppWBsxZx+M0RfVqv6y9SP+THafVFxLZYxE0jl5YGh4?=
+X-MS-Exchange-AntiSpam-MessageData-1: J3tAn6sLBJVKRw==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8241dd82-bbc6-4672-4abe-08de9909c18b
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Apr 2026 03:07:11.7036
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JRhEfFGiZsWsofz6bk7Ug1nU8rnUsYSamvBw+Gtg1V7E3QS2e+7DyHQ4FZcOtiM+nvaSjGDhdZ38d9AeWnsfMA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8815
 
-On Fri, Apr 10, 2026 at 7:51=E2=80=AFAM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> Commit 89e5d7d61600 ("mailbox: remove superfluous internal header")
-> moved some constants to a public header but forgot to add a mailbox
-> specific prefix. Add this now to prevent future collisions on a too
-> generic naming.
->
-> Link: https://sashiko.dev/#/patchset/20260327151112.5202-2-wsa%2Brenesas%=
-40sang-engineering.com
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Monday, April 13, 2026 5:50=E2=80=AFAM Alexandru Hossu wrote:
+> tegra_csi_probe(), tegra_vi_probe(), and tegra_vip_probe() all call
+> of_device_get_match_data() to retrieve SoC-specific data from the device
+> tree match table, but none of them check the return value for NULL before
+> eventually dereferencing it.
+>=20
+> In tegra_csi_probe(), the pointer is dereferenced on the very next
+> statement via csi->soc->num_clks. In tegra_vi_probe(), it is dereferenced
+> later via vi->soc->ops. In tegra_vip_probe(), vip->soc is stored and then
+> dereferenced at runtime via vip->soc->ops->vip_start_streaming(). A NULL
+> return would cause a kernel NULL pointer dereference in each case.
+>=20
+> Add a NULL check returning -ENODEV in all three probe functions, consiste=
+nt
+> with the defensive pattern already used in similar staging drivers such a=
+s
+> drivers/staging/media/sunxi/cedrus/cedrus_hw.c.
+>=20
+> Signed-off-by: Alexandru Hossu <hossu.alexandru@gmail.com>
 > ---
->
-> This patch improves the above mentioned commit which already sits in
-> -next. It is not really a fix but it probably is still a good idea to
-> apply it before rc1 to avoid confusion.
->
->  drivers/mailbox/cix-mailbox.c      |  2 +-
->  drivers/mailbox/imx-mailbox.c      |  2 +-
->  drivers/mailbox/mailbox.c          | 22 +++++++++++-----------
->  drivers/mailbox/mtk-cmdq-mailbox.c |  2 +-
->  drivers/mailbox/omap-mailbox.c     |  2 +-
->  drivers/mailbox/tegra-hsp.c        |  2 +-
->  include/linux/mailbox_controller.h |  6 +++---
->  7 files changed, 19 insertions(+), 19 deletions(-)
->
-> diff --git a/drivers/mailbox/cix-mailbox.c b/drivers/mailbox/cix-mailbox.=
-c
-> index 8cfaa91b75bd..43c76cdab24a 100644
-> --- a/drivers/mailbox/cix-mailbox.c
-> +++ b/drivers/mailbox/cix-mailbox.c
-> @@ -413,7 +413,7 @@ static int cix_mbox_startup(struct mbox_chan *chan)
->         switch (cp->type) {
->         case CIX_MBOX_TYPE_DB:
->                 /* Overwrite txdone_method for DB channel */
-> -               chan->txdone_method =3D TXDONE_BY_ACK;
-> +               chan->txdone_method =3D MBOX_TXDONE_BY_ACK;
->                 fallthrough;
->         case CIX_MBOX_TYPE_REG:
->                 if (priv->dir =3D=3D CIX_MBOX_TX) {
-> diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.=
-c
-> index 22331b579489..246a9a9e3952 100644
-> --- a/drivers/mailbox/imx-mailbox.c
-> +++ b/drivers/mailbox/imx-mailbox.c
-> @@ -732,7 +732,7 @@ static struct mbox_chan * imx_mu_xlate(struct mbox_co=
-ntroller *mbox,
->         p_chan =3D &mbox->chans[chan];
->
->         if (type =3D=3D IMX_MU_TYPE_TXDB_V2)
-> -               p_chan->txdone_method =3D TXDONE_BY_ACK;
-> +               p_chan->txdone_method =3D MBOX_TXDONE_BY_ACK;
->
->         return p_chan;
->  }
-> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-> index 138ffbcd4fde..30eafdf3a91e 100644
-> --- a/drivers/mailbox/mailbox.c
-> +++ b/drivers/mailbox/mailbox.c
-> @@ -72,7 +72,7 @@ static void msg_submit(struct mbox_chan *chan)
->                 }
->         }
->
-> -       if (!err && (chan->txdone_method & TXDONE_BY_POLL)) {
-> +       if (!err && (chan->txdone_method & MBOX_TXDONE_BY_POLL)) {
->                 /* kick start the timer immediately to avoid delays */
->                 scoped_guard(spinlock_irqsave, &chan->mbox->poll_hrt_lock=
-)
->                         hrtimer_start(&chan->mbox->poll_hrt, 0, HRTIMER_M=
-ODE_REL);
-> @@ -162,7 +162,7 @@ EXPORT_SYMBOL_GPL(mbox_chan_received_data);
->   */
->  void mbox_chan_txdone(struct mbox_chan *chan, int r)
->  {
-> -       if (unlikely(!(chan->txdone_method & TXDONE_BY_IRQ))) {
-> +       if (unlikely(!(chan->txdone_method & MBOX_TXDONE_BY_IRQ))) {
->                 dev_err(chan->mbox->dev,
->                        "Controller can't run the TX ticker\n");
->                 return;
-> @@ -183,7 +183,7 @@ EXPORT_SYMBOL_GPL(mbox_chan_txdone);
->   */
->  void mbox_client_txdone(struct mbox_chan *chan, int r)
->  {
-> -       if (unlikely(!(chan->txdone_method & TXDONE_BY_ACK))) {
-> +       if (unlikely(!(chan->txdone_method & MBOX_TXDONE_BY_ACK))) {
->                 dev_err(chan->mbox->dev, "Client can't run the TX ticker\=
-n");
->                 return;
->         }
-> @@ -344,8 +344,8 @@ static int __mbox_bind_client(struct mbox_chan *chan,=
- struct mbox_client *cl)
->                 chan->cl =3D cl;
->                 init_completion(&chan->tx_complete);
->
-> -               if (chan->txdone_method =3D=3D TXDONE_BY_POLL && cl->know=
-s_txdone)
-> -                       chan->txdone_method =3D TXDONE_BY_ACK;
-> +               if (chan->txdone_method =3D=3D MBOX_TXDONE_BY_POLL && cl-=
->knows_txdone)
-> +                       chan->txdone_method =3D MBOX_TXDONE_BY_ACK;
->         }
->
->         if (chan->mbox->ops->startup) {
-> @@ -499,8 +499,8 @@ void mbox_free_channel(struct mbox_chan *chan)
->         scoped_guard(spinlock_irqsave, &chan->lock) {
->                 chan->cl =3D NULL;
->                 chan->active_req =3D MBOX_NO_MSG;
-> -               if (chan->txdone_method =3D=3D TXDONE_BY_ACK)
-> -                       chan->txdone_method =3D TXDONE_BY_POLL;
-> +               if (chan->txdone_method =3D=3D MBOX_TXDONE_BY_ACK)
-> +                       chan->txdone_method =3D MBOX_TXDONE_BY_POLL;
->         }
->
->         module_put(chan->mbox->dev->driver->owner);
-> @@ -531,13 +531,13 @@ int mbox_controller_register(struct mbox_controller=
- *mbox)
->                 return -EINVAL;
->
->         if (mbox->txdone_irq)
-> -               txdone =3D TXDONE_BY_IRQ;
-> +               txdone =3D MBOX_TXDONE_BY_IRQ;
->         else if (mbox->txdone_poll)
-> -               txdone =3D TXDONE_BY_POLL;
-> +               txdone =3D MBOX_TXDONE_BY_POLL;
->         else /* It has to be ACK then */
-> -               txdone =3D TXDONE_BY_ACK;
-> +               txdone =3D MBOX_TXDONE_BY_ACK;
->
-> -       if (txdone =3D=3D TXDONE_BY_POLL) {
-> +       if (txdone =3D=3D MBOX_TXDONE_BY_POLL) {
->
->                 if (!mbox->ops->last_tx_done) {
->                         dev_err(mbox->dev, "last_tx_done method is absent=
-\n");
-> diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmd=
-q-mailbox.c
-> index 547a10a8fad3..e523c84b4808 100644
-> --- a/drivers/mailbox/mtk-cmdq-mailbox.c
-> +++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-> @@ -728,7 +728,7 @@ static int cmdq_probe(struct platform_device *pdev)
->         cmdq->mbox.ops =3D &cmdq_mbox_chan_ops;
->         cmdq->mbox.of_xlate =3D cmdq_xlate;
->
-> -       /* make use of TXDONE_BY_ACK */
-> +       /* make use of MBOX_TXDONE_BY_ACK */
->         cmdq->mbox.txdone_irq =3D false;
->         cmdq->mbox.txdone_poll =3D false;
->
-> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbo=
-x.c
-> index 5772c6b9886a..535ca8020877 100644
-> --- a/drivers/mailbox/omap-mailbox.c
-> +++ b/drivers/mailbox/omap-mailbox.c
-> @@ -238,7 +238,7 @@ static int omap_mbox_startup(struct omap_mbox *mbox)
->         }
->
->         if (mbox->send_no_irq)
-> -               mbox->chan->txdone_method =3D TXDONE_BY_ACK;
-> +               mbox->chan->txdone_method =3D MBOX_TXDONE_BY_ACK;
->
->         omap_mbox_enable_irq(mbox, IRQ_RX);
->
-> diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-> index 7b1e1b83ea29..500fa77c7d53 100644
-> --- a/drivers/mailbox/tegra-hsp.c
-> +++ b/drivers/mailbox/tegra-hsp.c
-> @@ -514,7 +514,7 @@ static int tegra_hsp_mailbox_startup(struct mbox_chan=
- *chan)
->         struct tegra_hsp *hsp =3D mb->channel.hsp;
->         unsigned long flags;
->
-> -       chan->txdone_method =3D TXDONE_BY_IRQ;
-> +       chan->txdone_method =3D MBOX_TXDONE_BY_IRQ;
->
->         /*
->          * Shared mailboxes start out as consumers by default. FULL and E=
-MPTY
-> diff --git a/include/linux/mailbox_controller.h b/include/linux/mailbox_c=
-ontroller.h
-> index e3896b08f22e..a49ee687d4cf 100644
-> --- a/include/linux/mailbox_controller.h
-> +++ b/include/linux/mailbox_controller.h
-> @@ -15,9 +15,9 @@ struct mbox_chan;
->  /* Sentinel value distinguishing "no active request" from "NULL message =
-data" */
->  #define MBOX_NO_MSG    ((void *)-1)
->
-> -#define TXDONE_BY_IRQ  BIT(0) /* controller has remote RTR irq */
-> -#define TXDONE_BY_POLL BIT(1) /* controller can read status of last TX *=
-/
-> -#define TXDONE_BY_ACK  BIT(2) /* S/W ACK received by Client ticks the TX=
- */
-> +#define MBOX_TXDONE_BY_IRQ     BIT(0) /* controller has remote RTR irq *=
-/
-> +#define MBOX_TXDONE_BY_POLL    BIT(1) /* controller can read status of l=
-ast TX */
-> +#define MBOX_TXDONE_BY_ACK     BIT(2) /* S/W ACK received by Client tick=
-s the TX */
->
->  /**
->   * struct mbox_chan_ops - methods to control mailbox channels
-> --
-> 2.51.0
->
-Applied to mailbox/for-next
+>  drivers/staging/media/tegra-video/csi.c | 2 ++
+>  drivers/staging/media/tegra-video/vi.c  | 2 ++
+>  drivers/staging/media/tegra-video/vip.c | 2 ++
+>  3 files changed, 6 insertions(+)
+>=20
+> diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/me=
+dia/tegra-video/csi.c
+> index 7842104ca933..33369a8c803a 100644
+> --- a/drivers/staging/media/tegra-video/csi.c
+> +++ b/drivers/staging/media/tegra-video/csi.c
+> @@ -781,6 +781,8 @@ static int tegra_csi_probe(struct platform_device *pd=
+ev)
+>  		return PTR_ERR(csi->iomem);
+> =20
+>  	csi->soc =3D of_device_get_match_data(&pdev->dev);
+> +	if (!csi->soc)
+> +		return -ENODEV;
+> =20
+>  	csi->clks =3D devm_kcalloc(&pdev->dev, csi->soc->num_clks,
+>  				 sizeof(*csi->clks), GFP_KERNEL);
+> diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/med=
+ia/tegra-video/vi.c
+> index d1d934e361f7..f3b749f059f8 100644
+> --- a/drivers/staging/media/tegra-video/vi.c
+> +++ b/drivers/staging/media/tegra-video/vi.c
+> @@ -1907,6 +1907,8 @@ static int tegra_vi_probe(struct platform_device *p=
+dev)
+>  		return PTR_ERR(vi->iomem);
+> =20
+>  	vi->soc =3D of_device_get_match_data(&pdev->dev);
+> +	if (!vi->soc)
+> +		return -ENODEV;
+> =20
+>  	vi->clk =3D devm_clk_get(&pdev->dev, NULL);
+>  	if (IS_ERR(vi->clk)) {
+> diff --git a/drivers/staging/media/tegra-video/vip.c b/drivers/staging/me=
+dia/tegra-video/vip.c
+> index 80cd3b113125..148c68ceb605 100644
+> --- a/drivers/staging/media/tegra-video/vip.c
+> +++ b/drivers/staging/media/tegra-video/vip.c
+> @@ -236,6 +236,8 @@ static int tegra_vip_probe(struct platform_device *pd=
+ev)
+>  		return -ENOMEM;
+> =20
+>  	vip->soc =3D of_device_get_match_data(&pdev->dev);
+> +	if (!vip->soc)
+> +		return -ENODEV;
+> =20
+>  	vip->dev =3D &pdev->dev;
+>  	platform_set_drvdata(pdev, vip);
+> --=20
+> 2.53.0
+>=20
+>=20
+
+These devices are only probed through device tree, so we know the=20
+returned pointer is always non-NULL. Typically we don't check in such=20
+cases.
+
 Thanks
-Jassi
+Mikko
+
+
