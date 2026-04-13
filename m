@@ -1,91 +1,132 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C478D3B7774
-	for <linux-tegra@vger.kernel.org>; Mon, 13 Apr 2026 10:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32F53B19CE
+	for <linux-tegra@vger.kernel.org>; Mon, 13 Apr 2026 10:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776074575; cv=none; b=HCgnD2Q1l+DcLIQVxTdGTuSXLu0AIMm8zix/BECY4GXufGqE2ATx3svySB3Oq3Xl9s2J6TWxRrpJAZVWN1D3eQJbkN1MqpKuHsaYysIAsE0oMZLPp3oXNzUyoo6m7b+yu94bDclBLCK9GDOcxZYMAok8RRSigegZa376S61gK8o=
+	t=1776075384; cv=none; b=u92aKInPCuWsRbG+V6F4YtQub0r8cEDHczmilcNzRjbsgUGxjbRGXmcmy/q52Lo4yD6lnv7akECqE126KXljO5N+T9jBXeqlvVURfdLUEssGyIxT2QHnwwJUdM+Bh2QrA9NPFP1AhZtaGXxh1+hPt41UfqajAeOnK7yEoq/f1s0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776074575; c=relaxed/simple;
-	bh=jCS1ocvAKv8JD6gmGKMlriFZJ5S9rhifA0MxGTZuyqU=;
-	h=Message-ID:Date:Content-Type:MIME-Version:From:To:Cc:Subject:
-	 In-Reply-To:References; b=en7kYTe3wJMmRlegLwvhnh19RHQtXhWNpITyCtOooHMy06CMy5F8OLonLyrwPGJIeE3LDulUjqqfx9yDL5iXSg3quQmXrRwoU/8kOeIccpxUd6jzG2ejVdQRdSz/AIXNbX5Bx+hwZGxjDx4D7jF52xMDms3k+qzoxTcYG+jHKK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jQcsB2Am; arc=none smtp.client-ip=209.85.208.52
+	s=arc-20240116; t=1776075384; c=relaxed/simple;
+	bh=PBKLdUulI+4wyDp2nI9P3PFNUeySMHyOOvVbWnDw444=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qCw2PLTNW6T7EPEe91PFkRhhN0hl3eVDGjOc/AVmKu3jWjwkUgNODVtPRxhmv+Uevdv9MkhQP83gkwogmunXeXv+qsGDbgUyI0cL1L29drKVXIIEP0uG2U09NPldhMXFQdKPUc9PyXGbE41yhZ2hyV0ZVe3DEotfHlZiz9GfzDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R7jO8Tld; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQcsB2Am"
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-671ab90fc1fso351977a12.0
-        for <linux-tegra@vger.kernel.org>; Mon, 13 Apr 2026 03:02:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R7jO8Tld"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-66f8f556f39so5626400a12.0
+        for <linux-tegra@vger.kernel.org>; Mon, 13 Apr 2026 03:16:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776074572; x=1776679372; darn=vger.kernel.org;
-        h=references:in-reply-to:subject:cc:to:from:content-transfer-encoding
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jCS1ocvAKv8JD6gmGKMlriFZJ5S9rhifA0MxGTZuyqU=;
-        b=jQcsB2AmJ1gF6ptynG4aAp4nT2UuZUSUBocZmeMqbiaZY9WijE4C0HI1HqQ8LGlhdx
-         CU+0M8QXUCt1QXRbC/YRFNdOXGziW/ZmUXQw/r1QQmaVIJahF3vbDqRkQHOjZyALOy7l
-         P/xfScz6pj7kzmUhBJ4G243lVZifmnyUfpkZ2hVkXKizdUTiK531kjNhqGhvFu9IZBmS
-         5ljVnU6qtDrFbUBpNuSKezmvsiUKpC/rvG/A+xrqqzjnsknwpPAHYgIEsTLZJoszi2rU
-         s5nsFyGBYm+gFxed3jcZW/onfqNL+yfoypityKuCSv4oVnHrVZedegAynusFEaoiRlgv
-         MCjg==
+        d=gmail.com; s=20251104; t=1776075381; x=1776680181; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3e6stqMXmYaFiFCQxO4DpERHs9UT6BI5slx7/qV13Ew=;
+        b=R7jO8TldyQRDWHTX45jEMlmQhAQBaGzAg4WuFDafDGgCcleim1jje7urD6QS56BHGr
+         W2nBFkaIml9GoJ7GIedtnHuImOskv0DRVpaZyvUZDjnnemrWOCG0rWrBQmZuErAqGDW2
+         RNmLslzvX/HFh1LDIAkhRWt73rvUFdSlHaGMtNWzirLCD/cLa0ISzGfbrvuJQoLAiWUY
+         EHMOmjr8M0an3bwLZSxnAiVQe995sfDp3wagxoEXbZuPeWyq2xZtcNqk0ucToWTYcc45
+         q3AF/t7vQqP33Qv2ufB9Up3Mgk1xWKrtCcfnv1w7kt6lKqVBDAjgh7qcSAJ1H0I7WQ8S
+         wKLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776074572; x=1776679372;
-        h=references:in-reply-to:subject:cc:to:from:content-transfer-encoding
-         :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jCS1ocvAKv8JD6gmGKMlriFZJ5S9rhifA0MxGTZuyqU=;
-        b=kHibsmYjk3sJLtRsqBYWFyjw/lTAkROcLUx3Pvv5AW2WSTKgxfq8phr/VZQrmWon0P
-         4Ill54iKzPq+oqDqfzVA+1/r8PCk42OejjeZPvZMfEulKYN5neIiZUSMUEEI4EuTsVhk
-         zVQV9OuUpHWbkrsLPWsP6wC9U7jlfSNvHWhkYtpYviuMrZzWDZrfUBhLb7wwrs7Qr6sr
-         nzgSVH4D9GY7Uh53GaM3VLgaSq4JyYBAUJiMIXkF3dQoaRW9P/2S1iRiqlc1R9hdyo3p
-         27cQtth3tWEuVADRan+is9nPuBgaMmR1glYNvea4JxYcpOFpbSbjJyGfZ5IAMd7Ndwzi
-         GjuA==
-X-Gm-Message-State: AOJu0YwJ5H6M3YihaCxrIe0VbQEpKhHxa3g+1TcMHTXqfscsl1beJUKK
-	Pmr6xVKpPq0+APJIeyx45RNdVwumt+FBWxkyfXoxm8dmgJgUdBjoorvH
-X-Gm-Gg: AeBDievOh2F4AhDUNuGVlFGUiQXKY0cobX/D32kL/yB0D4nrNjp4y+7uyEjmlxpDFxH
-	qro+UmgAhR05k/KDbDqSTUwhSnRopzJcheoKi4B3670iHD6Hd9WCKwgNwCvWe61pqsJKb7r3pBk
-	4mJ3USoOUT9syVNwXr4hWfkNaUfxWLBbw0+xXFhD8kUnDW9oZSVGt1d5JjJpCnj464jxo70eRb9
-	EuZ57BH1uIrDsqV6GM7ViJuUT1RHXLA/P+8F6tMDj55h/KP8eNjbqZ0Ic3mGMOXUSgu/2DBugpo
-	bDGirdtdNvjl7VIQYoLAfyf3rFkMlGlUu8ME6aXaSlBBhnggYd4TlDs3rF+5K5MnpEEL5BddEll
-	JRERu7GsgnMdJf/zyYHDhkvXSA4jmVNu4p4Jgk7IKHxxu+DpYFabit4pmEQi+dSMRK1bFq6hi2t
-	S20nExmajvb3Sx1MKSfKgu/HVs2LJwOHwfgK8HfRpYPsHZL5z6bHXSa3YzmFihtfl7HrPHZx9HO
-	I9cxkIO7T7hvoKpdu2TqF5UIVYDMM0dwKN6FxYbc+XkQ+gX0aJyoUxSL+k5D0+oasPOGdzJ
-X-Received: by 2002:a05:6402:50c9:b0:670:8b7b:5004 with SMTP id 4fb4d7f45d1cf-6708b7b512amr5945847a12.25.1776074571883;
-        Mon, 13 Apr 2026 03:02:51 -0700 (PDT)
-Received: from ahossu.localdomain ([88.202.160.248])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-670702f071dsm2193723a12.4.2026.04.13.03.02.50
+        d=1e100.net; s=20251104; t=1776075381; x=1776680181;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=3e6stqMXmYaFiFCQxO4DpERHs9UT6BI5slx7/qV13Ew=;
+        b=EiNQ5idXcyHZieoIPjBtEyaStaj7WOTD0j+LZYDzLKz1QSxuIR88flx4N2Gx37kVVA
+         gyOjDJDL+HZgsIP/YBXv+asd2uc8/ConpaHZVWRgtl6Os7zwkQP3UBcuYi+Sk11eARTY
+         fVaHvDAoluIeNsghUhSSdPUENI5BuKviS06+ZSD8wAqsyZRQ8UwbXlmfuiKIOgp2KnM6
+         zj80BZIux8n2EuKzT+9zdlyozUjyM9ugseH17130vQ8nbepI3pQ7pd4hQBQeMap+My1P
+         amPxFVwd5Df5Y5+vP8gkFYSag/69d4WOKyksip/QvyEyyvMYjx0HELwp9MCWYZgR8Nfk
+         iw9w==
+X-Gm-Message-State: AOJu0YzjQpE7dZ/LbRgg6VJ5aGoBl1f4UJgJGBqzgdc/YCkmfdce5mrg
+	ujwa0MuJ4KuE51NLXkxcczcYGCzZnRlpFnBqwZS8UIN+r9Z+K/JyodeuE6+05Vpq2qk=
+X-Gm-Gg: AeBDiesjJU3ttn0sRLWZMNECGUDUFZAbyDCA0xT6hU+Vb9StN/RcLdvhO38c3ELzGtc
+	Sz6DVJ0DAY7G9ztEUSI9SIui7aP6f5Hyz/QVkb0CJ1T1sGwV+6eVVHGIl8F1fW6BwrUbPZUusUt
+	6chvxVLElUvmReSzjuESBivquOs3H64Kxay1bmTj0IlsmLXPQt4WcsRSh8u2raIx874DRjS0XJ+
+	AK9CXxCQAT/2DxlyLTa75dt02poECCSRlOZwBTaifUfHMwsDy9NfTuDR1hibjijOMHVZcHOlo98
+	8PBEVpOnYhw3XDl7/GtaqSHmXq3YJ4D1iVMgoVcjlYKqLd/RTHBwTIZlBq7T1e5VIjXPk5QRnkH
+	WATVxeySdPK9gAs0BkKaD83FZSxngkkx9VOCzfdovJbfyWyFrLuh7T6bGf7uEZkW1+2nWxGNcZB
+	NRYZk5teegiYl4+1FMUFpGTrFxJpfAHs5AxTUg2fGoH2W8MHcMdXifzJYLppNFB3kMyIkKrzpss
+	3kYT9QlrhHzcqRJ0+eUcaR1OSCXZmyslCqH3npQtH9zKvylBYuoD89cWV1je5/EIVH4P5pbIE2y
+	uSTZ2g==
+X-Received: by 2002:a17:907:1582:b0:b9a:cb5e:5354 with SMTP id a640c23a62f3a-b9d727a0815mr506275266b.16.1776075380789;
+        Mon, 13 Apr 2026 03:16:20 -0700 (PDT)
+Received: from ahossu.residents.sin.openfiber.nl ([88.202.160.248])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b9d6e5c5af1sm291657566b.39.2026.04.13.03.16.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Apr 2026 03:02:50 -0700 (PDT)
-Message-ID: <69dcbf4a.050a0220.1d6d81.c4df@mx.google.com>
-Date: Mon, 13 Apr 2026 03:02:50 -0700 (PDT)
-Content-Type: text/plain; charset="us-ascii"
+        Mon, 13 Apr 2026 03:16:20 -0700 (PDT)
+From: Alexandru Hossu <hossu.alexandru@gmail.com>
+To: linux-tegra@vger.kernel.org
+Cc: error27@gmail.com,
+	marvin24@gmx.de,
+	gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	hossu.alexandru@gmail.com
+Subject: [PATCH v2 1/3] staging: nvec: fix use-after-free in nvec_rx_completed()
+Date: Mon, 13 Apr 2026 12:14:53 +0200
+Message-ID: <20260413101453.495549-1-hossu.alexandru@gmail.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260412205057.386856-3-hossu.alexandru@gmail.com>
+References: <20260412205057.386856-3-hossu.alexandru@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From: Alexandru Hossu <hossu.alexandru@gmail.com>
-To: Dan Carpenter <error27@gmail.com>
-Cc: linux-tegra@vger.kernel.org, marvin24@gmx.de, gregkh@linuxfoundation.org, linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] staging: nvec: fix pm_power_off teardown in tegra_nvec_remove()
-In-Reply-To: <20260412205057.386856-4-hossu.alexandru@gmail.com>
-References: <20260412205057.386856-4-hossu.alexandru@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Apr 13, 2026, Dan Carpenter wrote:
-> At this point, we're unloading the driver so nvec_power_handle is
-> about to be freed. Is there any benefit to setting it to NULL?
+In nvec_rx_completed(), when an incomplete RX transfer is detected,
+nvec_msg_free() is called to return the message back to the pool by
+clearing its 'used' atomic flag. Immediately after this, the code
+accesses nvec->rx->data[0] to check the message type.
 
-nvec_power_off() dereferences nvec_power_handle to send the power-off
-command to the EC. If pm_power_off somehow gets reassigned to
-nvec_power_off after our driver unloads (e.g. by a re-probe), the stale
-nvec_power_handle would point to freed memory.
+Since nvec_msg_free() marks the pool slot as available via atomic_set(),
+any concurrent or subsequent call to nvec_msg_alloc() could claim that
+same slot and overwrite its data[] array. Reading nvec->rx->data[0] after
+freeing the message is therefore a use-after-free.
 
-Setting it to NULL makes the potential failure mode explicit rather than
-a silent use-after-free. Since we are already inside the if() guard,
-the cost is a single pointer store.
+Fix this by saving the message type byte before calling nvec_msg_free(),
+then using the saved value for the battery quirk check.
 
-Alexandru
+Fixes: d6bdcf2e1019 ("staging: nvec: Add battery quirk to ignore incomplete responses")
+Signed-off-by: Alexandru Hossu <hossu.alexandru@gmail.com>
+---
+v2:
+ - Add Fixes tag (Dan Carpenter)
+ - Remove obvious comment (Dan Carpenter)
+ - Move declaration to start of block (Dan Carpenter)
+
+ drivers/staging/nvec/nvec.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 952c5a849a56..2a3499dd4d63 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -494,6 +494,8 @@ static void nvec_tx_completed(struct nvec_chip *nvec)
+ static void nvec_rx_completed(struct nvec_chip *nvec)
+ {
+ 	if (nvec->rx->pos != nvec_msg_size(nvec->rx)) {
++		unsigned char msg_type = nvec->rx->data[0];
++
+ 		dev_err(nvec->dev, "RX incomplete: Expected %u bytes, got %u\n",
+ 			(uint)nvec_msg_size(nvec->rx),
+ 			(uint)nvec->rx->pos);
+@@ -502,7 +504,7 @@ static void nvec_rx_completed(struct nvec_chip *nvec)
+ 		nvec->state = 0;
+ 
+ 		/* Battery quirk - Often incomplete, and likes to crash */
+-		if (nvec->rx->data[0] == NVEC_BAT)
++		if (msg_type == NVEC_BAT)
+ 			complete(&nvec->ec_transfer);
+ 
+ 		return;
+-- 
+2.53.0
+
