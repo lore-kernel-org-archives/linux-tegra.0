@@ -1,145 +1,133 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CEB43BED5A;
-	Thu, 16 Apr 2026 14:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776350264; cv=none; b=j5MBQ19upruKDbYUYBaK7g6WF/8AUyhOsvcZ9xuCfFEDEJUI5+3yxMfXz0ZF2HTndV6d7uaykTRzGBGkuyZ2Aqhny1ssHpl4sX/nq6MLfZxn8YbpLp4bL9FzHuaOb6k5DckamYOKMVR+lCAqo4CI/p8eS7f2ozlEy3cHeBqa/O0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776350264; c=relaxed/simple;
-	bh=G+KnY9y9FdnNF9iVCsYYY5VVlBQ/sjKrA5+JI/RlTLg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=dBEzkdrfWxQgdaA9UWIQLzM4ACmb7VWlqYMiI9cPTk++zyfp/Sovlc80dXs6VQ3JQhPEGzsHRVqnH1rL+FXanGIwT4WjWD584gai4z5AKtXd+pir+auH/niUXUs2j10L5mYJ4maNxUmKIKMLMmMFqza+Xg/wwsTi4vbtYey1CcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NvlbDkpO; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8412F9D85;
+	Thu, 16 Apr 2026 18:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776363251; cv=pass; b=LIB9wzsK2C1wB4aWTf4hD8uZNLszEEPbPeZu+A9mz0Ds4VVdNqX8xagavcfQ+r1Bk/Wl2OAPlNYV8OS3JdP6oVLLkIVJawCkxq95q+vadu5e32yoOJFQwp2O6mEtm9FDJ8jv4GpqgRdtFFgY4wohU0lnpYuF81xkS7VoPk0Kj+o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776363251; c=relaxed/simple;
+	bh=vk40c9ez1h57fVsIzjSyatPkMNUBI72M+RLSobdlgLw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PCE5EUMYWRmaLUJQfgCRVtT+wubs1ZNMcTNQgAhdfhGrMQAgbBlEsrSZ8tEMiu1zk2KG2GqVjPEQ5/6BR/oSXYT5LgQPCIc2lRetnBuzUjtdZtqdjvJ3Mz2yPSTbxEqNzuEN0r19/QAQ9pA3fTL8sTwl66X1lyD4OBRcqpc4p/8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=IL8kKkhP; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NvlbDkpO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21F21C2BCB4;
-	Thu, 16 Apr 2026 14:37:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776350264;
-	bh=G+KnY9y9FdnNF9iVCsYYY5VVlBQ/sjKrA5+JI/RlTLg=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=NvlbDkpOkX2eVupOtyFCbP3DRuq7WY7ZyiuiJRl2cRJkhrdmnXJWiwRDm6+i8osVJ
-	 hEgXll92lkwnoyhrWTgyAmbPTqK+GrZng4pJynD+hCQYQRClBtiHoyx2FgkOCVjyNB
-	 PRPi8NLO7AiovljBdvexUpWlriHaJUtkIIyQIAFyedy9sB6sxPVe+G5q0yjnb/H2ly
-	 +XI4uk1O90wRBW82L2U/QsPQKtl2fjU4wH4sW9mulZKeYSvtY85JIpuSN+UA9XHRhv
-	 ziV1D+hU2IB66WIYjWeXBQP4UuGcAA7BV89FRg32YYYZLoVt0cEwFGg5loxLWg6RI3
-	 i4AJUfe+4StUw==
-Message-ID: <e3ab5e2d-9ed4-4921-acf4-71109aafcfc8@kernel.org>
-Date: Thu, 16 Apr 2026 16:37:36 +0200
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="IL8kKkhP"
+Received: from darkstar.musicnaut.iki.fi (unknown [83.245.248.121])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: aaro.koskinen)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4fxR3W6HrSz49PyT;
+	Thu, 16 Apr 2026 21:13:59 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1776363242;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GpSAM8UFpTnSpjttHs3Wu1kj1RSAFR37k9Z3Icr23N8=;
+	b=IL8kKkhPY5rw9Klw91YLNjFh7LbY4UXkayV44c/Eof0pr5E7VWYK85SmNtAs/2+91WyMZ9
+	yhgSwHCWhOd1GKBBMPm8PUHiT0qgA8lm+qjNr/AGu2wKMM1YC6a1odohN3Oy/89goSpJ6b
+	xOlzMN/NbU5k0RT3PMyty8Pqtnm7CN4Hps6Cs8lveAA7494xSt5ooFFzHe8hwp1IcBqKBx
+	dbqM0qUxa+HMvsVS4KyC6JjG2NZnlWTYBhn8sNk5j/6AdExtamfJRaN3PPdfuJn7+M5GYK
+	aTbh/2KGmvmiYPhVCeHrYwLNNYkU6utNgeaN9KvcS29jkGB75kkj4hFB8bHFnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1776363242;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GpSAM8UFpTnSpjttHs3Wu1kj1RSAFR37k9Z3Icr23N8=;
+	b=SbMRrJqpH+362U0Co7R8NPxZQ1W7zqgeYbepi6cQWqDK0SDY5VNlZAfSexXNx/VkXnsVTX
+	ijOhsRSsVjVpLXeLCT0OQYVXL/x9gjKQ1vn0apWrnuCowrou+qjPdXVHRBBHxftLNFQwag
+	Ba8suDmWs740/EAhKdc2Hbi1jPiFn+lzL406Y4jO0VHhf5sGdbZPwK57plJBmF75x8JglG
+	k3j2HPx6Vmp89IYRGTA4UEcnqPFPdNstA4WQyFnKeX+DGJ3Efh7Ie9u1hWgr2/JAWO+vcW
+	GQaigoivDK3roGItAwhXythG8slc2tUWJHYXGcFB6V73ZIsA4uSt/N79PhaFqg==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=aaro.koskinen smtp.mailfrom=aaro.koskinen@iki.fi
+ARC-Seal: i=1; a=rsa-sha256; d=iki.fi; s=lahtoruutu; cv=none; t=1776363242;
+	b=rxPaotNNO6Lo1IYlwpf4/d8K30TUYQKrneGwIORu+VDhrF8e+vrpdlU11qjgtxwadyIG8G
+	iZcrlfW0SKvEyMpihkdFF67whoUpbPk7pLz/tfpzmPSHLpPbJg46hDmbNzqOEE1PH6PKrz
+	SLrVdYONAhWSFbCnLWGJ+FCDTahHhbfMs0Y4CfCkD2QhdII65RlzlGIM7I27TbZFaBOizd
+	FYP7ZvvoUILzKiwPZ3D7wMOCk5Edwr+5kVMi05Lg5DGXGFst4h7gb17vQpld9i+C7QcjQf
+	lH2zX9LFug/wlfum2/5ORbefxDCbsib23bbgz4tHl7F94T4AJc5xvazbjtg/pw==
+Date: Thu, 16 Apr 2026 21:13:56 +0300
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Paul Walmsley <pjw@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] MAINTAINERS: Move Peter De Schrijver to CREDITS
+Message-ID: <aeEm5DavehkPmSgl@darkstar.musicnaut.iki.fi>
+References: <20260416131810.3116408-1-thierry.reding@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] arm64: defconfig: make Tegra238 and Tegra264 Pinctrl
- a loadable module
-To: Jon Hunter <jonathanh@nvidia.com>, pshete@nvidia.com,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de,
- bjorn.andersson@oss.qualcomm.com, conor+dt@kernel.org,
- dmitry.baryshkov@oss.qualcomm.com, ebiggers@kernel.org,
- geert@linux-m68k.org, krzk+dt@kernel.org, kuninori.morimoto.gx@renesas.com,
- linusw@kernel.org, luca.weiss@fairphone.com, michal.simek@amd.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com, robh@kernel.org, rosenp@gmail.com,
- sven@kernel.org, thierry.reding@kernel.org, webgeek1234@gmail.com
-References: <20260409131340.168556-1-pshete@nvidia.com>
- <20260409131340.168556-7-pshete@nvidia.com>
- <9408f231-7a12-425c-b8de-2990d3162bb3@kernel.org>
- <097f71e0-cbc8-44e3-ba60-8bac79cf5217@nvidia.com>
- <19f390ab-ffa9-4237-9f24-ead07b627a89@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <19f390ab-ffa9-4237-9f24-ead07b627a89@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260416131810.3116408-1-thierry.reding@kernel.org>
 
-On 13/04/2026 11:49, Jon Hunter wrote:
->>>> index dd1ac01ee29b..f525670d3b84 100644
->>>> --- a/arch/arm64/configs/defconfig
->>>> +++ b/arch/arm64/configs/defconfig
->>>> @@ -711,6 +711,8 @@ CONFIG_PINCTRL_SC8280XP_LPASS_LPI=m
->>>>   CONFIG_PINCTRL_SM8550_LPASS_LPI=m
->>>>   CONFIG_PINCTRL_SM8650_LPASS_LPI=m
->>>>   CONFIG_PINCTRL_SOPHGO_SG2000=y
->>>> +CONFIG_PINCTRL_TEGRA238=m
->>>> +CONFIG_PINCTRL_TEGRA264=m
->>>
->>> No, you just added as module. Why do we want them in upstream defconfig?
->>>
->>> Standard question, already asked Nvidia more than once.
->>
->> Yes :-)
->>
->> Prathamesh, what we need to do is ...
->>
->> 1. Add a patch to populate the pinctrl DT nodes for Tegra264 device.
->> 2. In this patch, only enable pinctrl for Tegra264 because we are
->>     lacking an upstream board for Tegra238 for that moment. In the commit
->>     message we should add a comment to indicate with Tegra264 platform is
->>     using this.
-> 
-> Thinking about this some more, I think I would prefer that we skip the 
-> defconfig patch and just add ...
-> 
->   default m if ARCH_TEGRA_238_SOC
-> 
->   default m if ARCH_TEGRA_264_SOC
-> 
-> ... in the respective Kconfig files for the drivers.
+Hello,
 
+On Thu, Apr 16, 2026 at 03:18:10PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Peter sadly passed away a while back. Paul did a much better job at
+> finding the right words to mourn this loss than I ever could, so I will
+> leave this link here:
+> 
+>   https://lore.kernel.org/lkml/alpine.DEB.2.21.999.2407240345480.11116@utopia.booyaka.com/T/#u
+> 
+> Co-developed-by: Paul Walmsley <pjw@kernel.org>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-I support this, I am trying to do something similar to Qualcomm. None of
-core SoC drivers should become a question to the user. We want one
-multiplatform image in general, so whoever chooses ARCH_TEGRA or
-ARCH_QCOM should get everything (while still being able to disable if
-needed).
+Thanks for doing this. I think also the m68k work should be mentioned?
 
-Best regards,
-Krzysztof
+A.
+
+> ---
+>  CREDITS     | 6 ++++++
+>  MAINTAINERS | 1 -
+>  2 files changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/CREDITS b/CREDITS
+> index 885fb05d8816..29fcfa679430 100644
+> --- a/CREDITS
+> +++ b/CREDITS
+> @@ -3645,7 +3645,13 @@ D: Macintosh IDE Driver
+>  
+>  N: Peter De Schrijver
+>  E: stud11@cc4.kuleuven.ac.be
+> +E: p2@mind.be
+> +E: peter.de-schrijver@nokia.com
+> +E: pdeschrijver@nvidia.com
+> +E: p2@psychaos.be
+>  D: Mitsumi CD-ROM driver patches March version
+> +D: OMAP power management
+> +D: NVIDIA Tegra clock and BPMP drivers, among many other things
+>  S: Molenbaan 29
+>  S: B2240 Zandhoven
+>  S: Belgium
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index ef978bfca514..ffe20d770249 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -26145,7 +26145,6 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git
+>  N:	[^a-z]tegra
+>  
+>  TEGRA CLOCK DRIVER
+> -M:	Peter De Schrijver <pdeschrijver@nvidia.com>
+>  M:	Prashant Gaikwad <pgaikwad@nvidia.com>
+>  S:	Supported
+>  F:	drivers/clk/tegra/
+> -- 
+> 2.52.0
+> 
+> 
