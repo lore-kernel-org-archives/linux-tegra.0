@@ -1,276 +1,129 @@
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011022.outbound.protection.outlook.com [52.101.52.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD5837F8AF;
-	Thu, 16 Apr 2026 11:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776340319; cv=fail; b=bPdkoZEZC88Tt1OQJd8SiLw40iVdPCLSw+zAjPlDg8v1Hg0MQwrMrDqNrgdCwRUJdr53+FlDFgVH7OJXGE3gdOVsWXq58gW/5FlNtAo0Yqf6kCTyZXF8xSihvtSYGru3aMGTMyPqv6hyUi8tnG21/T6vUwywXxf3TELYKMHZ9+M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776340319; c=relaxed/simple;
-	bh=S11LW3z1iTPP2d7WrXCA1g0HcKtLbUyVBKcvjh1mqqA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EjSHWM4Pulyfz90yTv6o3FC9KuVyV5v2/UAmixpNdLQKKGCMnvRWWm5FIB0eLMNqcKY99BAWRyacEIP6fJrJFxj9dutCFL9v4b5rMtztFBDeYZJxjnx/HEsEOZPkCnOnZj/F3/oc3D6+IVjv8LoervfwG1xX4vXXzQgL5kunZEU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BddX2gzC; arc=fail smtp.client-ip=52.101.52.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955B737C907
+	for <linux-tegra@vger.kernel.org>; Thu, 16 Apr 2026 12:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776341375; cv=none; b=hH63m3UG3Kn7Ra2+DqGD9ab0HuQNLxhGbUtaSPJc/4x9IqOgOBKcqd8q80qlTsb4KrcFCZ/I13aRXe5b2Fu+QN5W9cV1pIrWxWYC80STza57Sd0QFWCZz6O9bV5NnxdYHWy2quneKcCVUx0rXPKAN2GCBMQcqqGSwXDLmYYYY7k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776341375; c=relaxed/simple;
+	bh=knUH34kPAdl0Glqyp0IYrLw7Xc3rugSSyGH/rGCenqQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Kgj8ZjoQaUs1L/B5TpzmeueLeK1eMwskk1zoIMxW2+J4zWmp40X2NtlFFmjjA8NkLN65IRMjCbhW74XnKR+8rQ4XwEtE66mavq5B6tNfe92Iv4gyEaXVNRHhGWJex2+Nr044EVmNdF/dx/U67mtBJUWiO7lg0QqarzwI5gTVA7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cplZMRIY; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BddX2gzC"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=deAjk+WXLQyFZLTtE+fJNZmE16kmWIl4S7NuXxXvUsBJkLzojnvAdNCgBjkFRufoKgEcyh8qoyog5BiPvypoRlghHGsCmkJ3dKoUwOqnd7h0UkLcjuvq9J46kbMooOLfwdg9m7evALFziNeW7TcpPPrTJSYz8i9mU5/oR+7Wg2fhuxDoZzVFA6VeVqJFYsdxaLZyGqQAKurUcOi84aFli9S77XeiEQfalEJnP/3cxhyPD0lc/Bq4T7ZwzXpaFgoKLpIqZ/1nCbFuENoWAJGksvqqkgc+YFWacS2KjK6JRpJfNwH7tTDaLuPfvkAkMB7rsQ0VpNpx7DiFrvFEH0Lr0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aMvFitZRlfIOSAasfD3kc/GcM88s3DFn8aO0DGW4w2Y=;
- b=PPzLDrCpXEl/7PBqGwMTIDhZvDONpnANtR9Hgm4Zp2fX//1kgPQCUHfVDO2uoE6r9Uoph/1n1UT9uTQQsMtnM3/DZzVWpaaJbyrjNdCKVzMM9lnoj7la00fdblykLb3ehip1lO+d0M2/lasDA3c3F5trnJ0HBlos4ZeEVjjMc/8ZkR6R3dd7wJtlfibUgnGR3CWi3xi/lnBpVxZ5nlIZpKi9C7lpcXRA/TKshSEzFlkGngyJm1e1u4/hnNPZbTUA3B5tmXwk+bM3AUjBT/CmLiU2D6qbBoKSONb2OEQIQmy0lwqafAc/O59Ms4O0ORGg4Y2wB3Or+L4QxiGmJiW1Zw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aMvFitZRlfIOSAasfD3kc/GcM88s3DFn8aO0DGW4w2Y=;
- b=BddX2gzCRI615/vBCWtU4Eb8CsL4fln3uDmQLXSP9Pu8nMT782SfG/KwfKq7SchmItnCo92s3QBGr7yM0TM4FlyOO+KVTSOtXuJ6R1AiX0pVwuCtZOnZu/XeRpTrXwKyDNQ/+rEl+TCwhoNIx0H/H6F8NDkK5f5NQhOZaC0p4byndSc/74jTby+9/kw495vjnZUBGt6k4gFEXKmkm6uXyAN4H3DhjioSYgP00icSfZmRLAssbRoagD6HCkd1HbIW/BRwZP1bqUB2ZFtmMwohVZKcDuIHLZK5MdvT5VXkOwoaWDicc9Tzhl2/MYnZyP/LVo8ffzYAaBfP7NuI8gp8GA==
-Received: from SA9PR13CA0084.namprd13.prod.outlook.com (2603:10b6:806:23::29)
- by IA0PR12MB8906.namprd12.prod.outlook.com (2603:10b6:208:481::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9818.20; Thu, 16 Apr
- 2026 11:51:52 +0000
-Received: from SN1PEPF0002529E.namprd05.prod.outlook.com
- (2603:10b6:806:23:cafe::4e) by SA9PR13CA0084.outlook.office365.com
- (2603:10b6:806:23::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9769.49 via Frontend Transport; Thu,
- 16 Apr 2026 11:51:52 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SN1PEPF0002529E.mail.protection.outlook.com (10.167.242.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9769.17 via Frontend Transport; Thu, 16 Apr 2026 11:51:52 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 16 Apr
- 2026 04:51:41 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Thu, 16 Apr 2026 04:51:41 -0700
-Received: from kkartik-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Thu, 16 Apr 2026 04:51:38 -0700
-From: Kartik Rajput <kkartik@nvidia.com>
-To: Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter
-	<jonathanh@nvidia.com>, Christophe Leroy <chleroy@kernel.org>, Jiri Slaby
-	<jirislaby@kernel.org>, Prathamesh Shete <pshete@nvidia.com>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Kartik Rajput <kkartik@nvidia.com>
-Subject: [PATCH v3] soc/tegra: pmc: Add PMC support for Tegra410
-Date: Thu, 16 Apr 2026 17:21:34 +0530
-Message-ID: <20260416115134.1032155-1-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cplZMRIY"
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-c79662668bbso261539a12.1
+        for <linux-tegra@vger.kernel.org>; Thu, 16 Apr 2026 05:09:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1776341373; x=1776946173; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8l44xHaLOx+xTMPQRoRD77brBCTj78T5PJ1Dys9zxMU=;
+        b=cplZMRIYnZWgs5WYg4ul6/69W6whZand3yF8bYY8pa28BQoXh4e8RacslSjzMlZTH9
+         uawGXarkqfJ+ql/L19r1b3GXQQySryFHlKR9++AzBHKTur/vf3Hi1ctr1ABfvr9Ak21r
+         xNAaGz/cHhbi6+9gJplvuseVMNTWX1nSCUHIJ5T/DLVSfUsDTRXV6bfXxK+i6BXHcR7r
+         JTUrsJ/U+Z2MtoSWPe0g4ASkoayUqcHBygC+m7yc93gYklmhsf0al0RbOi/4O2JY4pkA
+         7DrQh5zit//f5u1keH1ZzedtGghwPMbfIE8Iyrv/8IDReNG73fvsb106MiEu4h7xBWkp
+         K77A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776341373; x=1776946173;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8l44xHaLOx+xTMPQRoRD77brBCTj78T5PJ1Dys9zxMU=;
+        b=sItDE3KC4fcDDhinV9+QWC68BK7o3Ra/PlWaHgpTIhwTQhH+9qUTriCchIpd339U6A
+         bZ0Ms0rtSGduQReDit8KP5DVGvi30QIhKp9ycec+mzMHvJIaAr2cDIqMVMr+s8zxwOCl
+         A6GMJEHzVcSH+NJYqtB0Xx59D6zgw2h3382tmpA1GZngBQX+RgugUq5CfCStfXv3YmWi
+         iPlZlfy5L2orU+W5PEG79gp7n6sVuYc0ufx6vnUdMPRf84gqSBkTQOvyH4OBEH9N9aqE
+         2X9+lVOvNr8xHsb7UERLVvZXKtr4wwGdzb7kLqwl9Uzi0uowMj8xMOLCx5nEB2BUVOLI
+         6V3g==
+X-Forwarded-Encrypted: i=1; AFNElJ9runM0pXJUK03R0Kid1IfOFLuKaDg9D8DKdjdfVmvLIQsD7rImbkOM4hFto4mCScqX3NkxxVvOqqXkGQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7h7W/mPKhXSyiDjPf0S9zvsF8H0EyEkl75vMut532YFDmBzb+
+	2E32ixayqqYd900Sybol478fPq3YnDCqNk69yqpu60otCHHGU+fsiMxs
+X-Gm-Gg: AeBDieu3A0uUzDgLWJ3bwII45k0YuJv1XtPGatmQ/GzKc6E3yG1C/aZwc5s3uW8rMze
+	zFAvAjbKT/51hVmzozg5g5LH91M7Jof6YI7vR5/NxxksO9xFOS8KG/tMKV7GJjHOyKnvj/ffvqR
+	TbLkTTuNrncZxn7YoUZlu5HBNAhKz8l33r69vlmzlmeuQuP3mHY4UHcEsEaIWYm5yWhhyMct7cE
+	VFTke05dMeSDSMjylKocnGGnNslWAvT/5nkOupFQm/pXNMyAnr/7RYzVcVrqwAn28KGLSlhjiSx
+	MkuQTREbcCTw20ZFXqY0r466xnRa1KXF6YN+F156Mt2+JWlbY9kn6hUE3z7GhdbDBJ0GXbmVPkC
+	LRZr7op6K9CbtDAIBI76+yNrzE4gkno3eHoOhubo++AfxB66gnuowosGSP2njyOqqI80YOINq4z
+	NXp/QqlLUx01cTSK9LTkiqohkkNenCAN0gwkiBX+LS9xVRJSz6q8lqDy50Okmm5eIP8JmXDL3Vg
+	6qWygn2P3BZiEVvadcsRyCCyzfaDS4=
+X-Received: by 2002:a05:6300:6b08:b0:3a0:129a:973f with SMTP id adf61e73a8af0-3a0129a9ae6mr15918942637.52.1776341372798;
+        Thu, 16 Apr 2026 05:09:32 -0700 (PDT)
+Received: from junjungu-PC.localdomain ([223.167.147.125])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c79581d6341sm4245089a12.30.2026.04.16.05.09.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Apr 2026 05:09:32 -0700 (PDT)
+From: Felix Gu <ustc.gu@gmail.com>
+Date: Thu, 16 Apr 2026 20:09:29 +0800
+Subject: [PATCH] gpu: host1x: mipi: Fix device_node reference leak in
+ tegra_mipi_request()
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002529E:EE_|IA0PR12MB8906:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5c3df78c-b8cd-49fa-b8ca-08de9bae8d03
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700016|82310400026|56012099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	4py77gEerzsKqX2nE+vOBNuglVTit24BgYSePEWoHJaodwz7VshQ9FhwgIwVtxUFSDzB57lEgSXbAm5SSs6iuJAgE9YSGH2ZH2wPS5KJ5mthxdSPKomT5HQb9O7cNtgJST2RxaN8chPEww/j1sz1VpKPd6UxsKeiNONu9Fq0QXLLI8YG3URRMyGt/qU4ScnAclag7fG1i2CNih7xhw+Jxv4eLFKNqUaPpzHDhV6NxiuxkHqdNJAMowEKCyTy/hnkT2Uf2gELLIsUKUZYbJtypaE4tzrl/BL7wlHHN4SwdCZ13PCCHCTQoqI7IMNCEzZofPpY8BwM/9knSFdsUzyRIYg+ArMvzwckoUmIYXsWnQe+bMpFCgAuI/cLqALe+ybwlUribzgH2nsPjSd/ct40vLPxxd1GfTF9QB5fe9GxpyWBHI+cHISC044QxfnlIzumbqqrcPab+yATwbugLQTotVqhpOuMihOzmtMZ2toitD/JSukVef4dmvtN3ep+HlymAyHMxZJU1gp8Kb7xZp2Tdjn6BNHphkZYdnRNPDqjVomb23+ZyCCHy5/Zj7qgpX+CvLidb5piuBjgxzVZbQCRhkjVUJLtbGgNzJ4A1N2H62TbtNOoWr05mMsSDM3EYoo8PQUPvGCRMY5kYxPpCkhsI0NO5mOO8sc8qVI4i4HXL5p+z3pIY6lVRu8AfQ7XtjhnW4ubEXFH+XyEGed8FyloDzljDjc9xDbgjMTPe9r4ibfBQFafJ1nKD9uoipc3+5SaWUe69OHgDKPjK5ceHtmG5Q==
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700016)(82310400026)(56012099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	0/llqmI2zlYaa5zuQUSIGhE2P08FOxlIC8jH1zJ+TtH+JizADOAnjeBw+RTANbg4ZIYW2YSjWpAXn9XDZcWb5rWiRmu7kEec1CTAGrb6O9vLRhexm24nFa82oT7W/7j8BCndMX7EIfiEzNaI+6OsQBEtOMYLEn1/gr799dhUxw+f8q5hTyE+ECARW7IsxHMrGWOs+KatY7VCt2LaLsetBG0iuMDzER0T1sspA/ZJiANJT0WiconUT2yXUK2Q03pc5mJuK3ufK7WmSEFOGiLpP/lfR8522Yd/YOOr5KsgYZruHKOoocPnIuLjXiFhw3KsE7RQVoL2THRp1t/an/4L6pp9tcCcFHnYUEUx21PxS0COtdCCgosbxpG8B8MgjDbxa6EuueEsJTh3qlVo+eAankPfPZpOljQPEbHc6qs3/27T9us16ySWMTDP8ePD0UiO
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2026 11:51:52.4238
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5c3df78c-b8cd-49fa-b8ca-08de9bae8d03
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002529E.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8906
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260416-mipi-v1-1-9c027175abdf@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAHjR4GkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDE0Mz3dzMgkxdi5S0JOPkZDMT81QTJaDSgqLUtMwKsDHRsbW1ALbbWvN
+ WAAAA
+X-Change-ID: 20260416-mipi-8dfb3cc647e4
+To: Thierry Reding <thierry.reding@kernel.org>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, 
+ Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc: Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Felix Gu <ustc.gu@gmail.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1776341371; l=1103;
+ i=ustc.gu@gmail.com; h=from:subject:message-id;
+ bh=knUH34kPAdl0Glqyp0IYrLw7Xc3rugSSyGH/rGCenqQ=;
+ b=ufNI0wiXlc4OTOmmF0jxOLfRsiv8Bi35YYGkHIae5wkX/CW+StNB3w6KThINmGtHYzUbUOplE
+ oltVs94d89BCzlnacTuP+TWPLL1gsEx0ZPZM0QE7qiWj8nQ0EB6728V
+X-Developer-Key: i=ustc.gu@gmail.com; a=ed25519;
+ pk=fjUXwmjchVN7Ja6KGP55IXOzFeCl9edaHoQIEUA+/hw=
 
-Tegra410 uses PMC driver only to retrieve system reset reason using PMC
-sysfs. Tegra410 uses ACPI to probe PMC, unlike device-tree boot it does
-not use the early initialisation sequence.
+In tegra_mipi_request(), when provider.np is not equal with args.np, it
+returns without calling of_node_put(args.np), causing a reference leak.
 
-Add PMC support for Tegra410, which uses the PMC driver to retrieve
-the system reset reason via PMC sysfs.
+Convert to use the existing goto out pattern to ensure proper cleanup.
 
-Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+Fixes: 767598d447aa ("gpu: host1x: mipi: Update tegra_mipi_request() to be node based")
+Signed-off-by: Felix Gu <ustc.gu@gmail.com>
 ---
-Changes in v3:
-	* Remove unused entries from tegra410_pmc_soc.
-Changes in v2:
-	* Updated commit message.
----
- drivers/soc/tegra/pmc.c | 101 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 101 insertions(+)
+ drivers/gpu/host1x/mipi.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 2ee6539d796a..f89de1969946 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -11,6 +11,7 @@
+diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
+index 01513b775d89..988681423981 100644
+--- a/drivers/gpu/host1x/mipi.c
++++ b/drivers/gpu/host1x/mipi.c
+@@ -114,8 +114,10 @@ struct tegra_mipi_device *tegra_mipi_request(struct device *device,
+ 	if (err < 0)
+ 		return ERR_PTR(err);
  
- #define pr_fmt(fmt) "tegra-pmc: " fmt
+-	if (provider.np != args.np)
+-		return ERR_PTR(-ENODEV);
++	if (provider.np != args.np) {
++		err = -ENODEV;
++		goto out;
++	}
  
-+#include <linux/acpi.h>
- #include <linux/arm-smccc.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-@@ -3117,12 +3118,30 @@ static void tegra_pmc_reset_suspend_mode(void *data)
- 	pmc->suspend_mode = TEGRA_SUSPEND_NOT_READY;
- }
- 
-+static int tegra_pmc_acpi_probe(struct platform_device *pdev)
-+{
-+	pmc->soc = device_get_match_data(&pdev->dev);
-+	pmc->dev = &pdev->dev;
-+
-+	pmc->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(pmc->base))
-+		return PTR_ERR(pmc->base);
-+
-+	tegra_pmc_reset_sysfs_init(pmc);
-+	platform_set_drvdata(pdev, pmc);
-+
-+	return 0;
-+}
-+
- static int tegra_pmc_probe(struct platform_device *pdev)
- {
- 	void __iomem *base;
- 	struct resource *res;
- 	int err;
- 
-+	if (is_acpi_node(dev_fwnode(&pdev->dev)))
-+		return tegra_pmc_acpi_probe(pdev);
-+
- 	/*
- 	 * Early initialisation should have configured an initial
- 	 * register mapping and setup the soc data pointer. If these
-@@ -4783,6 +4802,81 @@ static const struct tegra_pmc_soc tegra264_pmc_soc = {
- 	.max_wake_vectors = 4,
- };
- 
-+static const char * const tegra410_reset_sources[] = {
-+	"SYS_RESET_N",		/* 0x0 */
-+	"CSDC_RTC_XTAL",
-+	"VREFRO_POWER_BAD",
-+	"FMON_32K",
-+	"FMON_OSC",
-+	"POD_RTC",
-+	"POD_IO",
-+	"POD_PLUS_IO_SPLL",
-+	"POD_PLUS_IO_VMON",	/* 0x8 */
-+	"POD_PLUS_SOC",
-+	"VMON_PLUS_UV",
-+	"VMON_PLUS_OV",
-+	"FUSECRC_FAULT",
-+	"OSC_FAULT",
-+	"BPMP_BOOT_FAULT",
-+	"SCPM_BPMP_CORE_CLK",
-+	"SCPM_PSC_SE_CLK",	/* 0x10 */
-+	"VMON_SOC_MIN",
-+	"VMON_SOC_MAX",
-+	"NVJTAG_SEL_MONITOR",
-+	"L0_RST_REQ_N",
-+	"NV_THERM_FAULT",
-+	"PSC_SW",
-+	"POD_C2C_LPI_0",
-+	"POD_C2C_LPI_1",	/* 0x18 */
-+	"BPMP_FMON",
-+	"FMON_SPLL_OUT",
-+	"L1_RST_REQ_N",
-+	"OCP_RECOVERY",
-+	"AO_WDT_POR",
-+	"BPMP_WDT_POR",
-+	"RAS_WDT_POR",
-+	"TOP_0_WDT_POR",	/* 0x20 */
-+	"TOP_1_WDT_POR",
-+	"TOP_2_WDT_POR",
-+	"PSC_WDT_POR",
-+	"OOBHUB_WDT_POR",
-+	"MSS_SEQ_WDT_POR",
-+	"SW_MAIN",
-+	"L0L1_RST_OUT_N",
-+	"HSM",			/* 0x28 */
-+	"CSITE_SW",
-+	"AO_WDT_DBG",
-+	"BPMP_WDT_DBG",
-+	"RAS_WDT_DBG",
-+	"TOP_0_WDT_DBG",
-+	"TOP_1_WDT_DBG",
-+	"TOP_2_WDT_DBG",
-+	"PSC_WDT_DBG",		/* 0x30 */
-+	"TSC_0_WDT_DBG",
-+	"TSC_1_WDT_DBG",
-+	"OOBHUB_WDT_DBG",
-+	"MSS_SEQ_WDT_DBG",
-+	"L2_RST_REQ_N",
-+	"L2_RST_OUT_N",
-+	"SC7"
-+};
-+
-+static const struct tegra_pmc_regs tegra410_pmc_regs = {
-+	.rst_status = 0x8,
-+	.rst_source_shift = 0x2,
-+	.rst_source_mask = 0xfc,
-+	.rst_level_shift = 0x0,
-+	.rst_level_mask = 0x3,
-+};
-+
-+static const struct tegra_pmc_soc tegra410_pmc_soc = {
-+	.regs = &tegra410_pmc_regs,
-+	.reset_sources = tegra410_reset_sources,
-+	.num_reset_sources = ARRAY_SIZE(tegra410_reset_sources),
-+	.reset_levels = tegra186_reset_levels,
-+	.num_reset_levels = ARRAY_SIZE(tegra186_reset_levels),
-+};
-+
- static const struct of_device_id tegra_pmc_match[] = {
- 	{ .compatible = "nvidia,tegra264-pmc", .data = &tegra264_pmc_soc },
- 	{ .compatible = "nvidia,tegra234-pmc", .data = &tegra234_pmc_soc },
-@@ -4797,6 +4891,12 @@ static const struct of_device_id tegra_pmc_match[] = {
- 	{ }
- };
- 
-+static const struct acpi_device_id tegra_pmc_acpi_match[] = {
-+	{ .id = "NVDA2016", .driver_data = (kernel_ulong_t)&tegra410_pmc_soc },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, tegra_pmc_acpi_match);
-+
- static void tegra_pmc_sync_state(struct device *dev)
- {
- 	struct device_node *np, *child;
-@@ -4847,6 +4947,7 @@ static struct platform_driver tegra_pmc_driver = {
- 		.name = "tegra-pmc",
- 		.suppress_bind_attrs = true,
- 		.of_match_table = tegra_pmc_match,
-+		.acpi_match_table = tegra_pmc_acpi_match,
- #if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM)
- 		.pm = &tegra_pmc_pm_ops,
- #endif
+ 	mipidev = kzalloc_obj(*mipidev);
+ 	if (!mipidev) {
+
+---
+base-commit: 936c21068d7ade00325e40d82bfd2f3f29d9f659
+change-id: 20260416-mipi-8dfb3cc647e4
+
+Best regards,
 -- 
-2.43.0
+Felix Gu <ustc.gu@gmail.com>
 
