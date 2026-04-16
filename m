@@ -1,198 +1,276 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011022.outbound.protection.outlook.com [52.101.52.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F473D649D
-	for <linux-tegra@vger.kernel.org>; Wed, 15 Apr 2026 17:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776274480; cv=none; b=csje1DN993Cf34InxIPO1x10A+MR7wMO9noBXnT2hCw1E8kSiQCpIz8CSs8D2621yLLGwjCxMSQkwjA/TBLHYBlUlkdWhpaVmEpv0SJL+zDzXU+6+XYhmEOcViFtxABHmLM/F0LfUOt/BUOWibEY1Dt+PcZYjK8BUZdxO9rkxcU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776274480; c=relaxed/simple;
-	bh=PTd4B5uhCcPDIe5w9NIhHzaDs9hz6KZ6USjgaGgCaFQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IY6Tpt2Jx1p4EE8/Zzq8EI9uCbJIjOQDPqQMeYkDbhEPEaYfdyjvDAf/4+6eIEqswGoQsL//ehVqA2dLqkxTjY53FRIKDPqY33dd0taHWHB4ZIBovvG+FFm9Nwu9iTU9bkLXbe8EiQ0bBkAKMWuTENIhN2vj0b8YoiqB7xx1LQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gIzZLNQr; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=gJZ4Bkep; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD5837F8AF;
+	Thu, 16 Apr 2026 11:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.22
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776340319; cv=fail; b=bPdkoZEZC88Tt1OQJd8SiLw40iVdPCLSw+zAjPlDg8v1Hg0MQwrMrDqNrgdCwRUJdr53+FlDFgVH7OJXGE3gdOVsWXq58gW/5FlNtAo0Yqf6kCTyZXF8xSihvtSYGru3aMGTMyPqv6hyUi8tnG21/T6vUwywXxf3TELYKMHZ9+M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776340319; c=relaxed/simple;
+	bh=S11LW3z1iTPP2d7WrXCA1g0HcKtLbUyVBKcvjh1mqqA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EjSHWM4Pulyfz90yTv6o3FC9KuVyV5v2/UAmixpNdLQKKGCMnvRWWm5FIB0eLMNqcKY99BAWRyacEIP6fJrJFxj9dutCFL9v4b5rMtztFBDeYZJxjnx/HEsEOZPkCnOnZj/F3/oc3D6+IVjv8LoervfwG1xX4vXXzQgL5kunZEU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BddX2gzC; arc=fail smtp.client-ip=52.101.52.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gIzZLNQr";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="gJZ4Bkep"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63FFIXeO4053191
-	for <linux-tegra@vger.kernel.org>; Wed, 15 Apr 2026 17:34:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vbR6uymC69o6Z8rsQWYUozstbIH9JlydsnIlYMif8rU=; b=gIzZLNQr3c5GZpCJ
-	DAvLsiqk4yCnL+T32P+6t65uFnVeGd2BAl53FHVbbg2nXX57DxzV55EGKRtYNG69
-	tUKwuIUPSddrCy95Aofs1v1BEhC+BJiX/rdMX06n+/4vv7GlsdJH2bQVycq62kKi
-	0osILBVmxC4qNHfKWVjpniLeU+MiN18L25ako0u7QF+P0P9p16DBY0IJs8441zT9
-	ADJ7dUgvDlK3Qh52UJGE3buGYoT9tMgzv/ugXRs4Tk5EJhrkXGfMXEEJVfMRojvZ
-	2zezmIw0SvNZr69FLxes7jKlICbPW+dOc1xewDhjWlLgnjTJFMvMmuRnmjUqLb59
-	K42vQw==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dj7s5st0m-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-tegra@vger.kernel.org>; Wed, 15 Apr 2026 17:34:36 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2b249975139so143798545ad.0
-        for <linux-tegra@vger.kernel.org>; Wed, 15 Apr 2026 10:34:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1776274476; x=1776879276; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vbR6uymC69o6Z8rsQWYUozstbIH9JlydsnIlYMif8rU=;
-        b=gJZ4BkepBM9+RmfE+zrOBT+xEZ3akPjpEkxLq+HGDoR0J+6kzUerJxPx+HUonn59Dn
-         wH32HfI8wROIiDfPKbUejy9Vbdako5sVwAeJxuQNowZFF4URitcR1a01Ura5/E+CCXgM
-         Ig09Avfw7eGYel5Ts+WDji2NzMaCc0OLbXc6dRPxk86owJuiClYDBLuARizWFQjjpwHb
-         TAQExnh3RZEA+rA/lNLnPS1LQ+LbM19Pf5N7QlFpC7MWXCBxp1+usuNS+E+lVLRsAj7V
-         71kL+XRsLKbLfb5KFdGSv79yUrjgO2DCjq3+QfpgDTHmGuULuqq67rNQq+CBO1l5wlQ+
-         7U2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776274476; x=1776879276;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vbR6uymC69o6Z8rsQWYUozstbIH9JlydsnIlYMif8rU=;
-        b=EnnSXS8JGMlZmuf5xKkiwp5KBEpdTWySajCgmBJcKxdsFa/fsuWARaWjORcJctZJww
-         GVpPxaa+XVz2iyIHduCNOyK2wJZpaXp1MvkpxUfERxXk+UNBoyhy6vAcxT1aepi3YHGb
-         2mST+XyUTh5XE0BbzBc9YiBqspQAh1kVKX7+Q9ijzYx4XzNwub/Oz9x+yfPYYvPZIUSw
-         beQd+5mHItOCEyvuE3G5vN0MyX5oDdp01NbjY3KtsFsOMKzQtXiTrGTz/UCmXoiYRhLt
-         nSSK8S0gy8BAn+aeSB8uiBvc0GxI6MmHKwZPLPF42GMeeesS4v34A4OXYfjDvS5vL9ab
-         j3Ng==
-X-Forwarded-Encrypted: i=1; AFNElJ/PsIQkqQa51+UY6bdkS28x/z1ZYiOHSea3zJTADt5fkopnL/jjV9s0jH+BJqMeuV1vL+qhKRXykvUuZg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI8UWq8xAfuZOthvBQI8/FpLGqfu1YrCmvWadlX2yiC2eTjusP
-	gToLAb6o5pUaaM3NZ6mTsLeJr31sSDo1q6OcKM3FFbBrnTYzzJczBT8/bqrkgbaBekW1J038bw2
-	j7lDAgbDRQY2Okk7n4EjkhB6tEZp6cgHv5+Tkq9yf6lcvFd/Pb9gWabwENDQaOT0FDQ==
-X-Gm-Gg: AeBDiesBoW2IRZpnq0yBVTYYGMFRlR/md6jCC5kil3HoMtBWOA+AnyquAC5GT9xbRYD
-	+AGFTrPhkRUfcwD4Nh5p4cx+9QHkSvlJr91sKSLygXHpPolMlqX2oCIwfGthH7hDBL7cACR4vza
-	TBsdXDs4XIFSvodDDj7p4THIInPKc76Bo4TASd4IWDnwvk0NOcFGhs2wHkOjoJziXPLrwIzThuN
-	LTGo7MRcYpw8BAH6JI9ab0VB0rKX8/F75AOUl+p3FYh4YxxRWvBrQ+WMzHxa1pqf8fWzTmECFW4
-	U3QF7z1hxQtQ0O8yVj3lteimi2dyejMtgBmIRAgyR+sjAC6IEmZGzOWLwTd8IFstWI5bdj8GFL/
-	CL23RL2CYtN9jJeFeABGRLCV+WMsNDNURkZj9zeM4D4j+Cn9s8YaDaw==
-X-Received: by 2002:a17:902:6949:b0:2b2:b117:1e16 with SMTP id d9443c01a7336-2b2d5a459ffmr160044675ad.20.1776274475846;
-        Wed, 15 Apr 2026 10:34:35 -0700 (PDT)
-X-Received: by 2002:a17:902:6949:b0:2b2:b117:1e16 with SMTP id d9443c01a7336-2b2d5a459ffmr160044375ad.20.1776274475300;
-        Wed, 15 Apr 2026 10:34:35 -0700 (PDT)
-Received: from [10.206.105.200] ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b47810b70csm25397215ad.23.2026.04.15.10.34.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Apr 2026 10:34:34 -0700 (PDT)
-Message-ID: <c4f21420-c299-f161-2bf7-c9b79ca15037@oss.qualcomm.com>
-Date: Wed, 15 Apr 2026 23:04:26 +0530
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BddX2gzC"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=deAjk+WXLQyFZLTtE+fJNZmE16kmWIl4S7NuXxXvUsBJkLzojnvAdNCgBjkFRufoKgEcyh8qoyog5BiPvypoRlghHGsCmkJ3dKoUwOqnd7h0UkLcjuvq9J46kbMooOLfwdg9m7evALFziNeW7TcpPPrTJSYz8i9mU5/oR+7Wg2fhuxDoZzVFA6VeVqJFYsdxaLZyGqQAKurUcOi84aFli9S77XeiEQfalEJnP/3cxhyPD0lc/Bq4T7ZwzXpaFgoKLpIqZ/1nCbFuENoWAJGksvqqkgc+YFWacS2KjK6JRpJfNwH7tTDaLuPfvkAkMB7rsQ0VpNpx7DiFrvFEH0Lr0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aMvFitZRlfIOSAasfD3kc/GcM88s3DFn8aO0DGW4w2Y=;
+ b=PPzLDrCpXEl/7PBqGwMTIDhZvDONpnANtR9Hgm4Zp2fX//1kgPQCUHfVDO2uoE6r9Uoph/1n1UT9uTQQsMtnM3/DZzVWpaaJbyrjNdCKVzMM9lnoj7la00fdblykLb3ehip1lO+d0M2/lasDA3c3F5trnJ0HBlos4ZeEVjjMc/8ZkR6R3dd7wJtlfibUgnGR3CWi3xi/lnBpVxZ5nlIZpKi9C7lpcXRA/TKshSEzFlkGngyJm1e1u4/hnNPZbTUA3B5tmXwk+bM3AUjBT/CmLiU2D6qbBoKSONb2OEQIQmy0lwqafAc/O59Ms4O0ORGg4Y2wB3Or+L4QxiGmJiW1Zw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aMvFitZRlfIOSAasfD3kc/GcM88s3DFn8aO0DGW4w2Y=;
+ b=BddX2gzCRI615/vBCWtU4Eb8CsL4fln3uDmQLXSP9Pu8nMT782SfG/KwfKq7SchmItnCo92s3QBGr7yM0TM4FlyOO+KVTSOtXuJ6R1AiX0pVwuCtZOnZu/XeRpTrXwKyDNQ/+rEl+TCwhoNIx0H/H6F8NDkK5f5NQhOZaC0p4byndSc/74jTby+9/kw495vjnZUBGt6k4gFEXKmkm6uXyAN4H3DhjioSYgP00icSfZmRLAssbRoagD6HCkd1HbIW/BRwZP1bqUB2ZFtmMwohVZKcDuIHLZK5MdvT5VXkOwoaWDicc9Tzhl2/MYnZyP/LVo8ffzYAaBfP7NuI8gp8GA==
+Received: from SA9PR13CA0084.namprd13.prod.outlook.com (2603:10b6:806:23::29)
+ by IA0PR12MB8906.namprd12.prod.outlook.com (2603:10b6:208:481::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9818.20; Thu, 16 Apr
+ 2026 11:51:52 +0000
+Received: from SN1PEPF0002529E.namprd05.prod.outlook.com
+ (2603:10b6:806:23:cafe::4e) by SA9PR13CA0084.outlook.office365.com
+ (2603:10b6:806:23::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9769.49 via Frontend Transport; Thu,
+ 16 Apr 2026 11:51:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SN1PEPF0002529E.mail.protection.outlook.com (10.167.242.5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9769.17 via Frontend Transport; Thu, 16 Apr 2026 11:51:52 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 16 Apr
+ 2026 04:51:41 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Thu, 16 Apr 2026 04:51:41 -0700
+Received: from kkartik-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Thu, 16 Apr 2026 04:51:38 -0700
+From: Kartik Rajput <kkartik@nvidia.com>
+To: Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter
+	<jonathanh@nvidia.com>, Christophe Leroy <chleroy@kernel.org>, Jiri Slaby
+	<jirislaby@kernel.org>, Prathamesh Shete <pshete@nvidia.com>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Kartik Rajput <kkartik@nvidia.com>
+Subject: [PATCH v3] soc/tegra: pmc: Add PMC support for Tegra410
+Date: Thu, 16 Apr 2026 17:21:34 +0530
+Message-ID: <20260416115134.1032155-1-kkartik@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 1/3] drivers: base: Add generic context device bus
-Content-Language: en-US
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        ekansh.gupta@oss.qualcomm.com
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Danilo Krummrich <dakr@kernel.org>,
-        Thierry Reding <thierry.reding@kernel.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>, Arnd Bergmann <arnd@arndb.de>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Bharath Kumar <quic_bkumar@quicinc.com>,
-        Chenna Kesava Raju <quic_chennak@quicinc.com>,
-        linux-kernel@vger.kernel.org, driver-core@lists.linux.dev,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-References: <20260414-computebus-v1-0-4d904d40926a@oss.qualcomm.com>
- <20260414-computebus-v1-1-4d904d40926a@oss.qualcomm.com>
- <2026041418-volley-composer-6363@gregkh>
-From: Vishnu Reddy <busanna.reddy@oss.qualcomm.com>
-In-Reply-To: <2026041418-volley-composer-6363@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=A7Zc+aWG c=1 sm=1 tr=0 ts=69dfcc2c cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
- a=EUspDBNiAAAA:8 a=xRG3GzwA0ZaNjhFdG0MA:9 a=QEXdDO2ut3YA:10
- a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-ORIG-GUID: HP1c2lv75NayljpM_qx-CFBSe6XsotHF
-X-Proofpoint-GUID: HP1c2lv75NayljpM_qx-CFBSe6XsotHF
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDE1MDE2MyBTYWx0ZWRfX0q/Pov9xnVbM
- GiQZ5RvOI708QPMCZOMO/My10da9yieROs5w5n/ETDVb2CDZAwSigO+f0OyFs2+/4cCP3rCVJ/A
- BY23GuWT/oxdZ+KOwb6px0ySzSFZ6oGgObtRcoLeWoQ95NdJNBNJKx5oDWG3qqOCxEML/nEzwu3
- Fbjqr/uKdUfND+s2OXm3Ta4LAYvYD+LEzaMA1ze/L4k4PtzH2+ztiMfdnoQ83cg12lZdh94Rl7w
- hiUtVbWxfNELyskq9xTn0oHQ/LEnxI9voYRq/sKr30YjMqE0b8mMN7bSMMnsQ7IIJpQSdCjyofx
- 4fndRAAHpP94YwDm8rujPlgkTHUzdKo0uxV3wt2y18YQbZtu2qAA8cLNnKMKtxIKqdAqBsFWXc1
- kcgXTbwJCMJJzkU34zWbeqVkKu5StCNw7KahXzlxmeB5Q17UEWeq7l/nOoPg9OzH3/n9ZUk2bax
- H3MGf3/3Arje8XeoUGg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-15_01,2026-04-13_04,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 adultscore=0 bulkscore=0 priorityscore=1501
- phishscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2604070000 definitions=main-2604150163
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002529E:EE_|IA0PR12MB8906:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5c3df78c-b8cd-49fa-b8ca-08de9bae8d03
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|36860700016|82310400026|56012099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	4py77gEerzsKqX2nE+vOBNuglVTit24BgYSePEWoHJaodwz7VshQ9FhwgIwVtxUFSDzB57lEgSXbAm5SSs6iuJAgE9YSGH2ZH2wPS5KJ5mthxdSPKomT5HQb9O7cNtgJST2RxaN8chPEww/j1sz1VpKPd6UxsKeiNONu9Fq0QXLLI8YG3URRMyGt/qU4ScnAclag7fG1i2CNih7xhw+Jxv4eLFKNqUaPpzHDhV6NxiuxkHqdNJAMowEKCyTy/hnkT2Uf2gELLIsUKUZYbJtypaE4tzrl/BL7wlHHN4SwdCZ13PCCHCTQoqI7IMNCEzZofPpY8BwM/9knSFdsUzyRIYg+ArMvzwckoUmIYXsWnQe+bMpFCgAuI/cLqALe+ybwlUribzgH2nsPjSd/ct40vLPxxd1GfTF9QB5fe9GxpyWBHI+cHISC044QxfnlIzumbqqrcPab+yATwbugLQTotVqhpOuMihOzmtMZ2toitD/JSukVef4dmvtN3ep+HlymAyHMxZJU1gp8Kb7xZp2Tdjn6BNHphkZYdnRNPDqjVomb23+ZyCCHy5/Zj7qgpX+CvLidb5piuBjgxzVZbQCRhkjVUJLtbGgNzJ4A1N2H62TbtNOoWr05mMsSDM3EYoo8PQUPvGCRMY5kYxPpCkhsI0NO5mOO8sc8qVI4i4HXL5p+z3pIY6lVRu8AfQ7XtjhnW4ubEXFH+XyEGed8FyloDzljDjc9xDbgjMTPe9r4ibfBQFafJ1nKD9uoipc3+5SaWUe69OHgDKPjK5ceHtmG5Q==
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700016)(82310400026)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	0/llqmI2zlYaa5zuQUSIGhE2P08FOxlIC8jH1zJ+TtH+JizADOAnjeBw+RTANbg4ZIYW2YSjWpAXn9XDZcWb5rWiRmu7kEec1CTAGrb6O9vLRhexm24nFa82oT7W/7j8BCndMX7EIfiEzNaI+6OsQBEtOMYLEn1/gr799dhUxw+f8q5hTyE+ECARW7IsxHMrGWOs+KatY7VCt2LaLsetBG0iuMDzER0T1sspA/ZJiANJT0WiconUT2yXUK2Q03pc5mJuK3ufK7WmSEFOGiLpP/lfR8522Yd/YOOr5KsgYZruHKOoocPnIuLjXiFhw3KsE7RQVoL2THRp1t/an/4L6pp9tcCcFHnYUEUx21PxS0COtdCCgosbxpG8B8MgjDbxa6EuueEsJTh3qlVo+eAankPfPZpOljQPEbHc6qs3/27T9us16ySWMTDP8ePD0UiO
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2026 11:51:52.4238
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c3df78c-b8cd-49fa-b8ca-08de9bae8d03
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF0002529E.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8906
 
+Tegra410 uses PMC driver only to retrieve system reset reason using PMC
+sysfs. Tegra410 uses ACPI to probe PMC, unlike device-tree boot it does
+not use the early initialisation sequence.
 
+Add PMC support for Tegra410, which uses the PMC driver to retrieve
+the system reset reason via PMC sysfs.
 
-On 4/14/2026 10:19 PM, Greg Kroah-Hartman wrote:
-> On Tue, Apr 14, 2026 at 10:01:15PM +0530, Ekansh Gupta via B4 Relay wrote:
->> From: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
->>
->> Introduce a new generic bus type for synthetic context bank devices
->> that require IOMMU context isolation. This bus provides a shared
->> infrastructure for accelerator and GPU drivers that create virtual
->> devices representing IOMMU context banks.
->>
->> Currently, drivers like host1x implement their own bus types for
->> context devices. This generic implementation allows multiple drivers
->> to share the same bus infrastructure, simplifying the IOMMU subsystem
->> integration and reducing code duplication.
->>
->> Signed-off-by: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
->> ---
->>   drivers/base/Kconfig        |  3 +++
->>   drivers/base/Makefile       |  1 +
->>   drivers/base/context_bus.c  | 24 ++++++++++++++++++++++++
->>   include/linux/context_bus.h | 15 +++++++++++++++
->>   4 files changed, 43 insertions(+)
->>
->> diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
->> index f7d385cbd3ba..479bc4bb442b 100644
->> --- a/drivers/base/Kconfig
->> +++ b/drivers/base/Kconfig
->> @@ -4,6 +4,9 @@ menu "Generic Driver Options"
->>   config AUXILIARY_BUS
->>   	bool
->>   
->> +config CONTEXT_DEVICE_BUS
->> +	bool
-> 
-> So this is a context-free bus?  I.e. no documentation?
-> 
-> :)
-> 
-> This feels really odd, this "bus" isn't doing anything at all.  So why
-> do you need it and can't use auxbus or faux?
+Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+---
+Changes in v3:
+	* Remove unused entries from tegra410_pmc_soc.
+Changes in v2:
+	* Updated commit message.
+---
+ drivers/soc/tegra/pmc.c | 101 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 101 insertions(+)
 
-Looks like the device have specific iommu configuration (via 
-of_dma_configure()), then using the auxbus or faux bus types does not 
-have the bus notifier calls to iommu_release_device(). Please correct me 
-if I misunderstood?
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 2ee6539d796a..f89de1969946 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -11,6 +11,7 @@
+ 
+ #define pr_fmt(fmt) "tegra-pmc: " fmt
+ 
++#include <linux/acpi.h>
+ #include <linux/arm-smccc.h>
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+@@ -3117,12 +3118,30 @@ static void tegra_pmc_reset_suspend_mode(void *data)
+ 	pmc->suspend_mode = TEGRA_SUSPEND_NOT_READY;
+ }
+ 
++static int tegra_pmc_acpi_probe(struct platform_device *pdev)
++{
++	pmc->soc = device_get_match_data(&pdev->dev);
++	pmc->dev = &pdev->dev;
++
++	pmc->base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(pmc->base))
++		return PTR_ERR(pmc->base);
++
++	tegra_pmc_reset_sysfs_init(pmc);
++	platform_set_drvdata(pdev, pmc);
++
++	return 0;
++}
++
+ static int tegra_pmc_probe(struct platform_device *pdev)
+ {
+ 	void __iomem *base;
+ 	struct resource *res;
+ 	int err;
+ 
++	if (is_acpi_node(dev_fwnode(&pdev->dev)))
++		return tegra_pmc_acpi_probe(pdev);
++
+ 	/*
+ 	 * Early initialisation should have configured an initial
+ 	 * register mapping and setup the soc data pointer. If these
+@@ -4783,6 +4802,81 @@ static const struct tegra_pmc_soc tegra264_pmc_soc = {
+ 	.max_wake_vectors = 4,
+ };
+ 
++static const char * const tegra410_reset_sources[] = {
++	"SYS_RESET_N",		/* 0x0 */
++	"CSDC_RTC_XTAL",
++	"VREFRO_POWER_BAD",
++	"FMON_32K",
++	"FMON_OSC",
++	"POD_RTC",
++	"POD_IO",
++	"POD_PLUS_IO_SPLL",
++	"POD_PLUS_IO_VMON",	/* 0x8 */
++	"POD_PLUS_SOC",
++	"VMON_PLUS_UV",
++	"VMON_PLUS_OV",
++	"FUSECRC_FAULT",
++	"OSC_FAULT",
++	"BPMP_BOOT_FAULT",
++	"SCPM_BPMP_CORE_CLK",
++	"SCPM_PSC_SE_CLK",	/* 0x10 */
++	"VMON_SOC_MIN",
++	"VMON_SOC_MAX",
++	"NVJTAG_SEL_MONITOR",
++	"L0_RST_REQ_N",
++	"NV_THERM_FAULT",
++	"PSC_SW",
++	"POD_C2C_LPI_0",
++	"POD_C2C_LPI_1",	/* 0x18 */
++	"BPMP_FMON",
++	"FMON_SPLL_OUT",
++	"L1_RST_REQ_N",
++	"OCP_RECOVERY",
++	"AO_WDT_POR",
++	"BPMP_WDT_POR",
++	"RAS_WDT_POR",
++	"TOP_0_WDT_POR",	/* 0x20 */
++	"TOP_1_WDT_POR",
++	"TOP_2_WDT_POR",
++	"PSC_WDT_POR",
++	"OOBHUB_WDT_POR",
++	"MSS_SEQ_WDT_POR",
++	"SW_MAIN",
++	"L0L1_RST_OUT_N",
++	"HSM",			/* 0x28 */
++	"CSITE_SW",
++	"AO_WDT_DBG",
++	"BPMP_WDT_DBG",
++	"RAS_WDT_DBG",
++	"TOP_0_WDT_DBG",
++	"TOP_1_WDT_DBG",
++	"TOP_2_WDT_DBG",
++	"PSC_WDT_DBG",		/* 0x30 */
++	"TSC_0_WDT_DBG",
++	"TSC_1_WDT_DBG",
++	"OOBHUB_WDT_DBG",
++	"MSS_SEQ_WDT_DBG",
++	"L2_RST_REQ_N",
++	"L2_RST_OUT_N",
++	"SC7"
++};
++
++static const struct tegra_pmc_regs tegra410_pmc_regs = {
++	.rst_status = 0x8,
++	.rst_source_shift = 0x2,
++	.rst_source_mask = 0xfc,
++	.rst_level_shift = 0x0,
++	.rst_level_mask = 0x3,
++};
++
++static const struct tegra_pmc_soc tegra410_pmc_soc = {
++	.regs = &tegra410_pmc_regs,
++	.reset_sources = tegra410_reset_sources,
++	.num_reset_sources = ARRAY_SIZE(tegra410_reset_sources),
++	.reset_levels = tegra186_reset_levels,
++	.num_reset_levels = ARRAY_SIZE(tegra186_reset_levels),
++};
++
+ static const struct of_device_id tegra_pmc_match[] = {
+ 	{ .compatible = "nvidia,tegra264-pmc", .data = &tegra264_pmc_soc },
+ 	{ .compatible = "nvidia,tegra234-pmc", .data = &tegra234_pmc_soc },
+@@ -4797,6 +4891,12 @@ static const struct of_device_id tegra_pmc_match[] = {
+ 	{ }
+ };
+ 
++static const struct acpi_device_id tegra_pmc_acpi_match[] = {
++	{ .id = "NVDA2016", .driver_data = (kernel_ulong_t)&tegra410_pmc_soc },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, tegra_pmc_acpi_match);
++
+ static void tegra_pmc_sync_state(struct device *dev)
+ {
+ 	struct device_node *np, *child;
+@@ -4847,6 +4947,7 @@ static struct platform_driver tegra_pmc_driver = {
+ 		.name = "tegra-pmc",
+ 		.suppress_bind_attrs = true,
+ 		.of_match_table = tegra_pmc_match,
++		.acpi_match_table = tegra_pmc_acpi_match,
+ #if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM)
+ 		.pm = &tegra_pmc_pm_ops,
+ #endif
+-- 
+2.43.0
 
-> 
-> You say something about an iommu, but yet this has no information about
-> an iommu at all, so why are they somehow special?
-> 
-> You need to provide a lot more information here, sorry.
-> 
-> greg k-h
-> 
-> 
