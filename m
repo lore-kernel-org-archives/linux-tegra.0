@@ -1,137 +1,141 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFE137AA83
-	for <linux-tegra@vger.kernel.org>; Fri, 17 Apr 2026 07:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4A531B83B
+	for <linux-tegra@vger.kernel.org>; Fri, 17 Apr 2026 07:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776411441; cv=none; b=akp6RrrlluYPtXz7L4eZIWqSv6AWLKZ9beZolutRygDhUtnv3SFsYooAUtJ1HrMSw1aXWn0HLrz1te6ZBLhxANcWQzWNW2K8JOs2qDPIR2enwrzPY3AlKQAWxXzzYFXtDaKtkOctbSjDUEsj/HBPlYknAnt5KkOW/PjpBeeL6Lw=
+	t=1776412554; cv=none; b=s6zYyaVP3nuz8avqNDU1xjfNwDKQF/nsE3ynuuvdSnUK4YWVdKey/DrVIb1oJCdO8f2t8r4yqkOoqE9aef20q0RKusfBWV4dj9HQrPVdC2gv+C7GqGTQmKrHzwzIzrnruwNzA1zQHbD22drayVu5q8eLIVJHOD2J8rsp9ol5qdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776411441; c=relaxed/simple;
-	bh=ntjX0N5F41OJckwHhjFndO5tDkiyPj/m0ruzo3MkSbw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Cfh0OYZeiVQNvhxvelFhM+8RkFF0XvLJ3bmLLskWMhN5yiRXCWaVNHTXWjllvL6ctd8qjzpGw+pFQxarebP98Z8AtFkQlUJ6VxLOrvp59DjSupEbZRF50evg51ybf/XBq+D71rVhySI7oANKSgAdDGkxV60uTIAqUlRvn0edwuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9EEjVpq; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1776412554; c=relaxed/simple;
+	bh=JNeksg9S+lB98sqZfvaiYvzh63QDCtUQjEt4efnJmzI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YKPr22+iqfQfba3IbWEJaO2fMiwDkEEVvW5u2+2VWLt4oLKh6NFTX4Q0WE7YBu8QatezdIDdfQH6NWrNkZ9kwZ0E7mCG9Gjcc36vW/QRujSfyrUy4hsMsgdxoeDxwmOarmZKwsK/sRYZoC26xVdvr1f5vvSdBEtQZ2V6X9cXD3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9EEjVpq"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-38ce8a5bc20so4138501fa.1
-        for <linux-tegra@vger.kernel.org>; Fri, 17 Apr 2026 00:37:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776411438; x=1777016238; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pt779CeCGZE6QhsteVfBznH3GnAaSQgHdsYoK27GZto=;
-        b=X9EEjVpq/Xq3yNvXcjBcjw95UpQ4maA8e2T7l4RfOKVJx3CoVyQtgIRDZbyWRVL6F0
-         iH6XvhVEhzykk4AVWkBOW2GEEHaVIu+5mvvIXW1jNRUh2hJetJCAgXXbV0d8E23qfPjj
-         /rDhVhZhw/h2o/FddR5RTIZA1r7kiLA0kd954iqU2e8TbO6UrTPNVrFeVoqtmDhKA8P5
-         JFL9O6M0m94eyVuIo++scZKKUrbP2leezdCogVG8I92YHH8dIR+sFAI/dpXZaozCivgw
-         bP66/PLaNpk7CEASzAzsv7DrTJd824jd8B+0IfSnWBaM0VsXbnTCzdSwFc+YGRD08PoW
-         b2Ww==
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-56f8c77ca6aso326867e0c.2
+        for <linux-tegra@vger.kernel.org>; Fri, 17 Apr 2026 00:55:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776411438; x=1777016238;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Pt779CeCGZE6QhsteVfBznH3GnAaSQgHdsYoK27GZto=;
-        b=ebND2kCKAZjsww1pvlaadm+O04Dwf/jJLKg8tIBcvjwRCJ8uSOmM7mEmlx6JnEnoD0
-         h15w45Y8t0gqwo6Efn8YNFwej//1fu+ea7jbPCSEZKsdCttvNX9+biNB45ixJcHHM6Kx
-         EQC170ZMW13SBWFvtFE/L/BzNWdeLDFfUTnkL/kopSS4YPp5y0wLkVWf/SYvga68DHE6
-         0GL4wkyZdX03UuQ6kUr9uXmr5fOrF66fZ0WRw79aVxni4TF/3DtHy5tGo2O78S6CbzMF
-         8e2IIIYg7A2L0DuP+YLgUwrnxkupvftB/uVpY3VvTZTMvVSFNxTX51zGLm49MTLns9oJ
-         N+Xg==
-X-Forwarded-Encrypted: i=1; AFNElJ8e7W26DX6yxXhjEnBPVdzqgy7DoG3wdK49cWpRZWYflAJ6FZZt3SqsZWZWBrjfl7bXN9BObIm0VGacgQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjwSsqR2cKItZFIwckzzYaG7HoUjIe0QU4+22IXUrasNQXYVUY
-	lBmMw8QSWXG4IJmdjQdBqtEs5rvwpzCf3Y3CSa0BwQNXjJY0Ev5/vDgb
-X-Gm-Gg: AeBDievBG8e9hfjFl9Om+UkHIHhvxpO7X7s5bHeNqx4ooQ0We6YFs6NueYqEShWkXe9
-	cGXN4E/vflmVmlfI26Cx1dbLK0X/57Y0jtwmopHuoLDTUdRLag3FoYK5yYrmjww1rldncsYTwTo
-	+DUjGr2pxkCMbN9hq+ooksPhc5fDtezY3l5RZYrIicMTHhLD8awH0x/6AnUS08mH/ZmK9zUxCCF
-	5QZeMRfFdKn8FwV3FOpTBpTaVvlKIVLnu7mO6p1pUXfeRgX2ZQdoeta+Cy2AgWRW/yIavWNriG8
-	ICccL+qXbHNSrZq6dPrtQ1FCVksL2JHnKdYX5ipsEjJoTX80v9BlyGDlNliwvry+kaFAt6Hp7wq
-	59T90SK3DeX1wpFDEI9DBjKHHOEgg5cv5rPi/ZTTrAyUWktwX6NlvuD01nXz+8yLMgK0OobsXUw
-	A0R77YZAlewjdmJrGCND8LVjY=
-X-Received: by 2002:a05:651c:19a1:b0:38e:84e3:3476 with SMTP id 38308e7fff4ca-38ec7ac74acmr5569871fa.25.1776411437544;
-        Fri, 17 Apr 2026 00:37:17 -0700 (PDT)
-Received: from xeon ([188.163.112.56])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-38ecb5f64ebsm1692661fa.10.2026.04.17.00.37.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Apr 2026 00:37:17 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/1] clk: tegra: support 48MHz clock for pll_p_out1
-Date: Fri, 17 Apr 2026 10:34:52 +0300
-Message-ID: <20260417073452.23342-2-clamor95@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260417073452.23342-1-clamor95@gmail.com>
-References: <20260417073452.23342-1-clamor95@gmail.com>
+        d=1e100.net; s=20251104; t=1776412552; x=1777017352;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sYGvKR169qobRnTdQfak1Kyzy8QQtDe/iStEp2kI73Y=;
+        b=IxZgmcjfw5NFfuI/vYoreTneFh+AkBIK6aZhiJpct/QF7s6zKlvov4m0xO1cr3Drmo
+         KZHoyvoFlKgzQdxPzalZHPuXCcUSi/4K5sJGL79ng4LiE7OOMjlfXCH3Nck0DsWgKYM+
+         9TIcgHO9oNSBD/qYIFc7bbAB1yelLbEEbxpUh4zdLlHtmPbvnpHEnRIUM1Vcr0iY92JC
+         Tml4stYFVbPWMIe72cgFTMv1uI9ZEDFTeG8FB8iipm1yWoSg6pQpmucl0GrUzRlwInWS
+         FcUd5yDRCEyycdIdQdw9AseiUz58zxXLhHHAzZ17BRFDAZhPXhYuAjw5wB01MgUegnOu
+         5PAQ==
+X-Forwarded-Encrypted: i=1; AFNElJ//8tVArabvLILUsZ/zLv4ZqAb4aCGLhuphdVhBLE9jOLTPch2PTfYEKlXe3J7gzdIXASyMgbhSNShdBA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxlEqk/arYBTMqbCHZx7JTRJzAqGVTHqQ+HXqnADugZC2VNDIN
+	A2zhweMz89X7LoC648gHRxKUPuHhS4hOwQfCoCee914mi2LMoYc15ooFAjdGYhfE
+X-Gm-Gg: AeBDiet+oAFVJ0ytrnFn2SBa68PO4uBImKjjl0om55l5Mij20X5uYaweZAKA9YsL9pc
+	DqDJ3CsWI1gb0L8q51+6pwA4we4AEb7aL3J4lBawY5wyyXJw8cJFpcpkTbSc5c3Ptq+4/Cox7wl
+	iuXyr97L4YFCTaNp2q9EFUIMOUw+wApRDyMawQaS9p/JUgAFg/CLR1vW2ezkwu9wDGTspqXgs56
+	D0692hW0VjmOGzlNy8EXUCdyuunnNUhx0gfVNMQlxWJ+Zgj0HEzS83O3MXZr+yAGPP/vUr3oXv3
+	SJehnH67N/0sz1fy4kOcYczlV+JN8yshB6UyhXEgR25Q8zDmisWrXplD7hetlhqcnOGK+AIONKz
+	DV4mm7D8RuvyOg0ZH/i8ipSTYOYAfHIViMydXVd7DnCL3YX72b3xz3qHOasot1UkJje/W5RyzCw
+	cQUIafzVt2R9XtPKq98BCPDB7rfTLWKyHh5HLaIlqL97gnKXTkwtUE5suut7Jg3VNA7R7qFmc=
+X-Received: by 2002:a05:6122:421a:b0:56d:a755:ec7a with SMTP id 71dfb90a1353d-56fa5a400a4mr808017e0c.9.1776412552266;
+        Fri, 17 Apr 2026 00:55:52 -0700 (PDT)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56fa92f21bbsm433347e0c.11.2026.04.17.00.55.51
+        for <linux-tegra@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Apr 2026 00:55:51 -0700 (PDT)
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-605def5b800so302292137.0
+        for <linux-tegra@vger.kernel.org>; Fri, 17 Apr 2026 00:55:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ+3foph4nPlyyFLtVFNDe1XDXPpCdM8BEsqFTGidhEnjOxdCJNQUKgGHP125Td41pMc4BJAc5IUoScO1g==@vger.kernel.org
+X-Received: by 2002:a05:6102:4a84:b0:604:f29d:84be with SMTP id
+ ada2fe7eead31-616f4b50373mr742219137.3.1776412551117; Fri, 17 Apr 2026
+ 00:55:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20260416131810.3116408-1-thierry.reding@kernel.org> <aeEm5DavehkPmSgl@darkstar.musicnaut.iki.fi>
+In-Reply-To: <aeEm5DavehkPmSgl@darkstar.musicnaut.iki.fi>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 17 Apr 2026 09:55:40 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVxkOeAZqPsVRecOmQV+n=+ey=nFcdduiXvs9LBj-nNQQ@mail.gmail.com>
+X-Gm-Features: AQROBzAxAj1dJZMvY5l2s199UA8tSOX5OgUQyonlFdS__wBHgEBXO25Dv2sGHpo
+Message-ID: <CAMuHMdVxkOeAZqPsVRecOmQV+n=+ey=nFcdduiXvs9LBj-nNQQ@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Move Peter De Schrijver to CREDITS
+To: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Thierry Reding <thierry.reding@kernel.org>, linux-tegra@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, 
+	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Paul Walmsley <pjw@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Dmitry Osipenko <digetx@gmail.com>
+On Thu, 16 Apr 2026 at 20:14, Aaro Koskinen <aaro.koskinen@iki.fi> wrote:
+> On Thu, Apr 16, 2026 at 03:18:10PM +0200, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >
+> > Peter sadly passed away a while back. Paul did a much better job at
+> > finding the right words to mourn this loss than I ever could, so I will
+> > leave this link here:
+> >
+> >   https://lore.kernel.org/lkml/alpine.DEB.2.21.999.2407240345480.11116@utopia.booyaka.com/T/#u
+> >
+> > Co-developed-by: Paul Walmsley <pjw@kernel.org>
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+>
+> Thanks for doing this. I think also the m68k work should be mentioned?
 
-UEFI on Surface2 sets pll_p_out1 to 48MHz which is not supported
-by kernel and causes BUG() early on. Fix this by adding 48MHz
-clock support for pll_p_out1 along with 48MHz support for pll_a,
-main pll_p_out1 descendant.
+Indeed: Apollo Domain workstations, and Ariadne and Hydra Amiga
+Ethernet.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Jonas Schwöbel <jonasschwoebel@yahoo.de>
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- drivers/clk/tegra/clk-pll.c      | 1 +
- drivers/clk/tegra/clk-tegra114.c | 6 ++++--
- 2 files changed, 5 insertions(+), 2 deletions(-)
+Also: IBM PS/2, Microchannel, and Token Ring support.
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index d86003b6d94f..eae732320bec 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -564,6 +564,7 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 	switch (parent_rate) {
- 	case 12000000:
- 	case 26000000:
-+	case 48000000:
- 		cfreq = (rate <= 1000000 * 1000) ? 1000000 : 2000000;
- 		break;
- 	case 13000000:
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index a4f40533cc43..6a77742aaad2 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -363,13 +363,15 @@ static struct tegra_clk_pll_freq_table pll_a_freq_table[] = {
- 	{ 28800000, 282240000, 245, 25, 1, 8 },
- 	{ 28800000, 368640000, 320, 25, 1, 8 },
- 	{ 28800000, 240000000, 200, 24, 1, 8 },
-+	{ 48000000, 282240000, 147, 25, 1, 8 },
-+	{ 48000000, 368640000, 192, 25, 1, 8 },
-+	{ 48000000, 564480000, 294, 25, 1, 8 },
- 	{        0,         0,   0,  0, 0, 0 },
- };
- 
--
- static struct tegra_clk_pll_params pll_a_params = {
- 	.input_min = 2000000,
--	.input_max = 31000000,
-+	.input_max = 48000000,
- 	.cf_min = 1000000,
- 	.cf_max = 6000000,
- 	.vco_min = 200000000,
--- 
-2.51.0
+Peter is also still listed as the contact info in
+Documentation/ABI/testing/sysfs-driver-tegra-fuse
+and as DT bindings maintainer in
+Documentation/devicetree/bindings/reserved-memory/nvidia,tegra264-bpmp-shmem.yaml
 
+Thanks!
+
+> > --- a/CREDITS
+> > +++ b/CREDITS
+> > @@ -3645,7 +3645,13 @@ D: Macintosh IDE Driver
+> >
+> >  N: Peter De Schrijver
+> >  E: stud11@cc4.kuleuven.ac.be
+> > +E: p2@mind.be
+> > +E: peter.de-schrijver@nokia.com
+> > +E: pdeschrijver@nvidia.com
+> > +E: p2@psychaos.be
+> >  D: Mitsumi CD-ROM driver patches March version
+> > +D: OMAP power management
+> > +D: NVIDIA Tegra clock and BPMP drivers, among many other things
+> >  S: Molenbaan 29
+> >  S: B2240 Zandhoven
+> >  S: Belgium
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index ef978bfca514..ffe20d770249 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -26145,7 +26145,6 @@ T:    git git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git
+> >  N:   [^a-z]tegra
+> >
+> >  TEGRA CLOCK DRIVER
+> > -M:   Peter De Schrijver <pdeschrijver@nvidia.com>
+> >  M:   Prashant Gaikwad <pgaikwad@nvidia.com>
+> >  S:   Supported
+> >  F:   drivers/clk/tegra/
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
