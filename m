@@ -1,291 +1,176 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842FB36CDEF;
-	Fri, 17 Apr 2026 18:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776451308; cv=none; b=l4FNscTte6Ub9pmXnc66u3sFeLDgXoDE4nzMWAiYA8saT0HTaSp2ggWv9ljol8StxIGpOD5EckMrPeylaNckfaR4/2c9XPFPUJlwZkApwJX2M3UKkAPqYQ8z8ml4h24vMXYXFx+VTevO7kXdgyu69wN2qqP+RWf1X0uQ1FnEEbQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776451308; c=relaxed/simple;
-	bh=VU2MeVgHxa77WWtE+fhdD44wxcggQrgbHV03gm8eTvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dsYGwL/qFA/46sG+pIymB5S/LtDyEQdoY1oUQQfyrqf5tVXfUNDTyRWkJ7iPfIFRg9UouSKtoj5t7l+ntExcsjHaciXLpI8be1gj/NRZc8aVzp5VVp2y4f/bpgn7T9lt/MmT3Rn4eBV+AA5EZnKRaDETIguXs/lEvQT6SPbMjrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kTgh01cI; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F6E285C89
+	for <linux-tegra@vger.kernel.org>; Sat, 18 Apr 2026 02:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.161.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776480614; cv=pass; b=js4fbXYLxTtEfx6ES0KKy6NkyQDiLFQVDFiHkevsFOuYloRB94KBNZ7ouDHintjqi7JsFfN3Tu8o3bHEqYU+tCXfHxab1cLAI2L7BX4ueurX++O3LMqVcQ4yOcTsqDq4Tg9Clhb/8MKNCgzzB512T1K57mEZpm7tsiZxu7GGOM0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776480614; c=relaxed/simple;
+	bh=sTpB3zFGMA4+49UPAPJnoMPYvm1cGwiY/ChissLecvk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hg1zc71CRX5CoP/nr/vB0i51w+Amue7UwcDHYAw85I0NZhMq0ufdEXtIO+dadZkqCLN7+dSmaTxQCppYNoafQ9Bjf1pFv1uvKeHLRsLQReK0h19Kv0Q0mZeJi3F3sm+MDZs9xtKXOnsEpF9qx0uHfKw3Ev8ZsvzU+SzpCwIrqCo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L5NJc7Zz; arc=pass smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kTgh01cI"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1776451307; x=1807987307;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VU2MeVgHxa77WWtE+fhdD44wxcggQrgbHV03gm8eTvg=;
-  b=kTgh01cI3YHBHFqr/Zisnq9xWBwUkHo+SYBsp3J+KUidVbGZ+WSLjvHD
-   lHM7vLnkvyrbfU+C3yRhQZ7ef6yHDPAuWHKJkY/Eu2UsGa+zhMeXdQbSQ
-   q2ImBruLKen/vQKV29Qp7TlVhstRloqjVB3DfWreeHTbcGYFNURfpZ8wL
-   /L7oVHDu1jR8LUS4qz+3TUL18z9elf8mI4kGYAQwOTpPxUPYF56tGoeGO
-   nhVp+oIS/dISXSSl7o9AuWow9wkR5P9yEyVKYk3x6DdED53oDsEUBGr6m
-   1WOoNBKlq/v8mEOBHdeZb86uGaKPYHUgaxdq1wh5MPZ+EM5c5JmXaZOCz
-   Q==;
-X-CSE-ConnectionGUID: cWCoBJEKQmCTGCddewG5yg==
-X-CSE-MsgGUID: +pPGSxpVQSOQOZpzVYz/yA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11762"; a="77174196"
-X-IronPort-AV: E=Sophos;i="6.23,184,1770624000"; 
-   d="scan'208";a="77174196"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2026 11:41:46 -0700
-X-CSE-ConnectionGUID: KAoFnF3MSqy9Fe5y772rIA==
-X-CSE-MsgGUID: T7n+CjmTRyeYq1EtEBaUrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,184,1770624000"; 
-   d="scan'208";a="230248543"
-Received: from lkp-server01.sh.intel.com (HELO 7e48d0ff8e22) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 17 Apr 2026 11:41:07 -0700
-Received: from kbuild by 7e48d0ff8e22 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1wDo7k-000000000cq-31uK;
-	Fri, 17 Apr 2026 18:41:04 +0000
-Date: Sat, 18 Apr 2026 02:40:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Besar Wicaksono <bwicaksono@nvidia.com>, will@kernel.org,
-	mark.rutland@arm.com, james.clark@linaro.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
-	rwiley@nvidia.com, sdonthineni@nvidia.com, mochs@nvidia.com,
-	nirmoyd@nvidia.com, skelley@nvidia.com,
-	Besar Wicaksono <bwicaksono@nvidia.com>
-Subject: Re: [PATCH] perf/arm_pmu: Skip PMCCNTR_EL0 on NVIDIA Olympus
-Message-ID: <202604180247.SBxRBqqS-lkp@intel.com>
-References: <20260406232034.2566133-1-bwicaksono@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L5NJc7Zz"
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-6946d60f21fso166890eaf.2
+        for <linux-tegra@vger.kernel.org>; Fri, 17 Apr 2026 19:50:12 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1776480612; cv=none;
+        d=google.com; s=arc-20240605;
+        b=N8Od5IABgjHmc4gOQzwpCpHZAmvvg3SIDmBEiQQTGPvzUnVNNkoTQ2zSEXugWNuEVJ
+         q8xIN0QYdyRCzsQHDO7wOP4qIZdBUqw52eUNSy9abSWe/KTO3pIX2+HkhPeo7AdCrz7b
+         pGAJpKXs+rZrKI0ETXqrGN8fkTcm5rDATW+Dg1d60lCsS6Ew8EIyEm0SHzolWRo0+UwM
+         yVi7C+ggsgKVYeuZplwySHgVTxEL3s5sPS8GSALwKOOPsxv+gAndLmAoV45pjkogDNBr
+         0GxHXhGfnh/nkLNGcn2Il2idfJfpXQaP8arw+AGQmM9sjjo5gMKOl1KB892vBBQ3bnbG
+         pzjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=sTpB3zFGMA4+49UPAPJnoMPYvm1cGwiY/ChissLecvk=;
+        fh=OnzMlhcAir6UDOQ06LQvgXGLEXQGm94J0Z1r0NKVcvo=;
+        b=hByNYGR/jipk33VUoTQ7BnvZiXxdJY5M3egAFS1mkjFdtfAdnkQT1Ux4yctFjjSaWI
+         XyDRnsOe4VKwJlZgK82qPMJhfdeQo5QFILfxuwLybS7yhdfPKufJlY7AWmLeKZG1wNnc
+         2UBj1ZH6DHwFb1SYv78bif1gOF47l8nt3IE2VdX7zgMYxZHHuRDQ9cRm8wov0Q/fH8lG
+         klSCz2AgWCaomZg1p4ANl7NXrM0+m1Rxsmi3Hz9CADS8dt8RBi7CaATrH8EjAWJoWN7D
+         rvKYYRr0npw7nQRvfJdR+MrA/nRIEjHqLlToTxcZbnamJUUvrpAUugkiXkB+9PWBQV6a
+         vVsw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1776480612; x=1777085412; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sTpB3zFGMA4+49UPAPJnoMPYvm1cGwiY/ChissLecvk=;
+        b=L5NJc7ZzD0XXlkyFqphmwJmka1ifEx9lll7Ih42v1Pxw6TPc6HSqH1N2zLl5Udogbd
+         UeWodJKrbTNtEoaFGu2iYhcw9/yihXYsxUhcOIzAzQPSUzbl809K3yX3r+YGyaBfAGUh
+         TIyP0/iVY+aySRe8Y+mSD3V+wHus9MuP0Bj1xMWHM88XDNTq9q/rs+zFhsne6K7QtfQB
+         FIKhmeu1RJFRDH+5asPJYrsoreqXu9Kgzqtypuld0LWlUg6Lyi04fcBAlgUFFrsbEDhg
+         ZREqERpnbnpRhWMMgcuV6UJhLdIUlkGHN0DkUQMWrsTSJjY3u6UshQVnVev8mfsQS/6D
+         oyRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776480612; x=1777085412;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=sTpB3zFGMA4+49UPAPJnoMPYvm1cGwiY/ChissLecvk=;
+        b=jlVy/8JoQ9JesfwOMOOYJ/B8sANQsjHXu0QNzBIgoTvq4b86s+u8c1KsUDLiN85T0+
+         CM2rkUrlFpOCT0mOuhuvx3auI+HdAH9Q8tgqOemEAIHM8pYXcro3oN3o0Z9GYQusv/qs
+         vsKLPhLrVVmqiM5Szf121KAMezKNsdpsKkFMDtUulOInfbp+x5E3JBfYyyjgG3kG0WIO
+         eWsu8ggKNf/YdwohhGSy7mflcCKGhUdjNWIMmx2ZeYXa5vmp53hNegktxRv5ELB3cUG7
+         /NqLihcbVsJYRuRfpcnMwGUiOeS8bColUqBa7sd1OhK3WYkCS+OAlAfcvGr0PB/ohjiW
+         RlAg==
+X-Forwarded-Encrypted: i=1; AFNElJ+OHy3TLcXgEouzLtpkuTGPyExownpuIaKEGaMp82G9kcRL4bXy1zMKVEAQ/SSze2Ouefyb/SJi7y6VCA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRKO+VI25a+zyzOXlJMZKRI0aMj5Xn6jK8xd1WYO9bSqk6leqy
+	nreLPQc22wF5sjXEb97wN5TQbVmwNis6WOBjtQA1zyy2Rt7WjhdjNbmg4IGpw263ZLCAW8/z5n2
+	XmVKkuz3Y5OMw52ltQr3FAyKIl8nkYBs=
+X-Gm-Gg: AeBDiev4VGjXrQg7G6YqucwkOUJ2pFwU685LEe0XrmBiflBp4y9xkb5t2P4TfZXN8Nl
+	2XncXbq3D+woJzGtTF8XDpfMLJP1vKIV8HnflpD1JFZKQzZ+kNNqeI5iJhkwYKZz97Wk5gXaqar
+	Z2/tnPzQQG1slAS5RfHV/6UfNI3zthZbCV+apPZOmUPhoqJ2xaZI3qeLs/Dvk35M47NxWMb0IJF
+	yKdNNobeLdy5Rx/oXgpFNGVmAaGxk9DctqlwWuJL0NjRguXv/s0/QPvEKcQbZYNg270H58puibK
+	gQbw5ALIKdoGZZ0ejmc=
+X-Received: by 2002:a05:6820:604:b0:689:7cd7:259e with SMTP id
+ 006d021491bc7-69462f44c08mr3366697eaf.57.1776480611628; Fri, 17 Apr 2026
+ 19:50:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260406232034.2566133-1-bwicaksono@nvidia.com>
+References: <CABb+yY23aTXeXu6G-8sHjw32DCqmhsJLu2Mt-txenOgTBiyv+A@mail.gmail.com>
+ <20260417084335.2092188-1-joonwonkang@google.com>
+In-Reply-To: <20260417084335.2092188-1-joonwonkang@google.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Fri, 17 Apr 2026 21:50:00 -0500
+X-Gm-Features: AQROBzBa_VS1wWtSKDMjmtBp02-qplt4Nx2TejF_JEV5fvEqT0eLpBXx6xGnZnk
+Message-ID: <CABb+yY2yBZ+hgr-=Uh_sRk-TJZRfsk2AYtoS5rPtUN8kVsUScA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] mailbox: Make mbox_send_message() return error
+ code when tx fails
+To: Joonwon Kang <joonwonkang@google.com>
+Cc: akpm@linux-foundation.org, angelogioacchino.delregno@collabora.com, 
+	jonathanh@nvidia.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-tegra@vger.kernel.org, matthias.bgg@gmail.com, stable@vger.kernel.org, 
+	thierry.reding@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Besar,
+On Fri, Apr 17, 2026 at 3:43=E2=80=AFAM Joonwon Kang <joonwonkang@google.co=
+m> wrote:
+>
+> > On Fri, Apr 3, 2026 at 10:19=E2=80=AFAM Joonwon Kang <joonwonkang@googl=
+e.com> wrote:
+> > >
+> > > > On Thu, Apr 2, 2026 at 12:07=E2=80=AFPM Joonwon Kang <joonwonkang@g=
+oogle.com> wrote:
+> > > > >
+> > > > > When the mailbox controller failed transmitting message, the erro=
+r code
+> > > > > was only passed to the client's tx done handler and not to
+> > > > > mbox_send_message(). For this reason, the function could return a=
+ false
+> > > > > success. This commit resolves the issue by introducing the tx sta=
+tus and
+> > > > > checking it before mbox_send_message() returns.
+> > > > >
+> > > > Can you please share the scenario when this becomes necessary? This
+> > > > can potentially change the ground underneath some clients, so we ha=
+ve
+> > > > to be sure this is really useful.
+> > >
+> > > I would say the problem here is generic enough to apply to all the ca=
+ses where
+> > > the send result needs to be checked. Since the return value of the se=
+nd API is
+> > > not the real send result, any users who believe that this blocking se=
+nd API
+> > > will return the real send result could fall for that. For example, us=
+ers may
+> > > think the send was successful even though it was not actually. I beli=
+eve it is
+> > > uncommon that users have to register a callback solely to get the sen=
+d result
+> > > even though they are using the blocking send API already. Also, I gue=
+ss there
+> > > is no special reason why only the mailbox send API should work this w=
+ay among
+> > > other typical blocking send APIs. For these reasons, this patch makes=
+ the send
+> > > API return the real send result. This way, users will not need to reg=
+ister the
+> > > redundant callback and I think the return value will align with their=
+ common
+> > > expectation.
+> > >
+> > Clients submit a message into the Mailbox subsystem to be sent out to
+> > the remote side which can happen immediately or later.
+> > If submission fails, clients get immediately notified. If transmission
+> > fails (which is now internal to the subsystem) it is reported to the
+> > client by a callback.
+> > If the API was called mbox_submit_message (which it actually is)
+> > instead of mbox_send_message, there would be no confusion.
+> > We can argue how good/bad the current implementation is, but the fact
+> > is that it is here. And I am reluctant to cause churn without good
+> > reason.
+> > Again, as I said, any, _legal_, setup scenario will help me come over
+> > my reluctance.
+> >
+> > Thanks
+> > Jassi
+>
+> Hi Jassi, can we continue discussing this issue from where we left off la=
+st
+> time?
+>
+Long passionate essays are difficult to read, so I haven't yet. A
+simple description of some setup that you think is not supported, will
+keep the discussion focused.
+If your platform is supported but you think the api is not clear,
+updates to the documentation are welcome
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on soc/for-next]
-[also build test ERROR on linus/master v7.0 next-20260416]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Besar-Wicaksono/perf-arm_pmu-Skip-PMCCNTR_EL0-on-NVIDIA-Olympus/20260417-021859
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
-patch link:    https://lore.kernel.org/r/20260406232034.2566133-1-bwicaksono%40nvidia.com
-patch subject: [PATCH] perf/arm_pmu: Skip PMCCNTR_EL0 on NVIDIA Olympus
-config: arm-allyesconfig (https://download.01.org/0day-ci/archive/20260418/202604180247.SBxRBqqS-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 15.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260418/202604180247.SBxRBqqS-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202604180247.SBxRBqqS-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-         |                                                                 ^~~~~~
-   drivers/perf/arm_pmuv3.c:145:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_CACHE_REFILL_RD'
-     145 |         [C(L1D)][C(OP_READ)][C(RESULT_MISS)]    = ARMV8_IMPDEF_PERFCTR_L1D_CACHE_REFILL_RD,
-         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/perf/arm_pmuv3.h:123:65: warning: initialized field overwritten [-Woverride-init]
-     123 | #define ARMV8_IMPDEF_PERFCTR_L1D_CACHE_WR                       0x0041
-         |                                                                 ^~~~~~
-   drivers/perf/arm_pmuv3.c:146:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_CACHE_WR'
-     146 |         [C(L1D)][C(OP_WRITE)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_L1D_CACHE_WR,
-         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/perf/arm_pmuv3.h:123:65: note: (near initialization for 'armv8_vulcan_perf_cache_map[0][1][0]')
-     123 | #define ARMV8_IMPDEF_PERFCTR_L1D_CACHE_WR                       0x0041
-         |                                                                 ^~~~~~
-   drivers/perf/arm_pmuv3.c:146:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_CACHE_WR'
-     146 |         [C(L1D)][C(OP_WRITE)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_L1D_CACHE_WR,
-         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/perf/arm_pmuv3.h:125:65: warning: initialized field overwritten [-Woverride-init]
-     125 | #define ARMV8_IMPDEF_PERFCTR_L1D_CACHE_REFILL_WR                0x0043
-         |                                                                 ^~~~~~
-   drivers/perf/arm_pmuv3.c:147:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_CACHE_REFILL_WR'
-     147 |         [C(L1D)][C(OP_WRITE)][C(RESULT_MISS)]   = ARMV8_IMPDEF_PERFCTR_L1D_CACHE_REFILL_WR,
-         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/perf/arm_pmuv3.h:125:65: note: (near initialization for 'armv8_vulcan_perf_cache_map[0][1][1]')
-     125 | #define ARMV8_IMPDEF_PERFCTR_L1D_CACHE_REFILL_WR                0x0043
-         |                                                                 ^~~~~~
-   drivers/perf/arm_pmuv3.c:147:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_CACHE_REFILL_WR'
-     147 |         [C(L1D)][C(OP_WRITE)][C(RESULT_MISS)]   = ARMV8_IMPDEF_PERFCTR_L1D_CACHE_REFILL_WR,
-         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/perf/arm_pmuv3.h:134:65: warning: initialized field overwritten [-Woverride-init]
-     134 | #define ARMV8_IMPDEF_PERFCTR_L1D_TLB_RD                         0x004E
-         |                                                                 ^~~~~~
-   drivers/perf/arm_pmuv3.c:149:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_TLB_RD'
-     149 |         [C(DTLB)][C(OP_READ)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_L1D_TLB_RD,
-         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/perf/arm_pmuv3.h:134:65: note: (near initialization for 'armv8_vulcan_perf_cache_map[3][0][0]')
-     134 | #define ARMV8_IMPDEF_PERFCTR_L1D_TLB_RD                         0x004E
-         |                                                                 ^~~~~~
-   drivers/perf/arm_pmuv3.c:149:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_TLB_RD'
-     149 |         [C(DTLB)][C(OP_READ)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_L1D_TLB_RD,
-         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/perf/arm_pmuv3.h:135:65: warning: initialized field overwritten [-Woverride-init]
-     135 | #define ARMV8_IMPDEF_PERFCTR_L1D_TLB_WR                         0x004F
-         |                                                                 ^~~~~~
-   drivers/perf/arm_pmuv3.c:150:52: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_TLB_WR'
-     150 |         [C(DTLB)][C(OP_WRITE)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_L1D_TLB_WR,
-         |                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/perf/arm_pmuv3.h:135:65: note: (near initialization for 'armv8_vulcan_perf_cache_map[3][1][0]')
-     135 | #define ARMV8_IMPDEF_PERFCTR_L1D_TLB_WR                         0x004F
-         |                                                                 ^~~~~~
-   drivers/perf/arm_pmuv3.c:150:52: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_TLB_WR'
-     150 |         [C(DTLB)][C(OP_WRITE)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_L1D_TLB_WR,
-         |                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/perf/arm_pmuv3.h:132:65: warning: initialized field overwritten [-Woverride-init]
-     132 | #define ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_RD                  0x004C
-         |                                                                 ^~~~~~
-   drivers/perf/arm_pmuv3.c:151:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_RD'
-     151 |         [C(DTLB)][C(OP_READ)][C(RESULT_MISS)]   = ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_RD,
-         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/perf/arm_pmuv3.h:132:65: note: (near initialization for 'armv8_vulcan_perf_cache_map[3][0][1]')
-     132 | #define ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_RD                  0x004C
-         |                                                                 ^~~~~~
-   drivers/perf/arm_pmuv3.c:151:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_RD'
-     151 |         [C(DTLB)][C(OP_READ)][C(RESULT_MISS)]   = ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_RD,
-         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/perf/arm_pmuv3.h:133:65: warning: initialized field overwritten [-Woverride-init]
-     133 | #define ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_WR                  0x004D
-         |                                                                 ^~~~~~
-   drivers/perf/arm_pmuv3.c:152:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_WR'
-     152 |         [C(DTLB)][C(OP_WRITE)][C(RESULT_MISS)]  = ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_WR,
-         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/perf/arm_pmuv3.h:133:65: note: (near initialization for 'armv8_vulcan_perf_cache_map[3][1][1]')
-     133 | #define ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_WR                  0x004D
-         |                                                                 ^~~~~~
-   drivers/perf/arm_pmuv3.c:152:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_WR'
-     152 |         [C(DTLB)][C(OP_WRITE)][C(RESULT_MISS)]  = ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_WR,
-         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/perf/arm_pmuv3.h:149:65: warning: initialized field overwritten [-Woverride-init]
-     149 | #define ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_RD                      0x0060
-         |                                                                 ^~~~~~
-   drivers/perf/arm_pmuv3.c:154:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_RD'
-     154 |         [C(NODE)][C(OP_READ)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_RD,
-         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/perf/arm_pmuv3.h:149:65: note: (near initialization for 'armv8_vulcan_perf_cache_map[6][0][0]')
-     149 | #define ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_RD                      0x0060
-         |                                                                 ^~~~~~
-   drivers/perf/arm_pmuv3.c:154:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_RD'
-     154 |         [C(NODE)][C(OP_READ)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_RD,
-         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/perf/arm_pmuv3.h:150:65: warning: initialized field overwritten [-Woverride-init]
-     150 | #define ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_WR                      0x0061
-         |                                                                 ^~~~~~
-   drivers/perf/arm_pmuv3.c:155:52: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_WR'
-     155 |         [C(NODE)][C(OP_WRITE)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_WR,
-         |                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/perf/arm_pmuv3.h:150:65: note: (near initialization for 'armv8_vulcan_perf_cache_map[6][1][0]')
-     150 | #define ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_WR                      0x0061
-         |                                                                 ^~~~~~
-   drivers/perf/arm_pmuv3.c:155:52: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_WR'
-     155 |         [C(NODE)][C(OP_WRITE)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_WR,
-         |                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/perf/arm_pmuv3.c:984:26: error: array type has incomplete element type 'struct midr_range'
-     984 | static struct midr_range armv8pmu_avoid_pmccntr_cpus[] = {
-         |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/perf/arm_pmuv3.c:1000:9: error: implicit declaration of function 'MIDR_ALL_VERSIONS'; did you mean 'MODULE_VERSION'? [-Wimplicit-function-declaration]
-    1000 |         MIDR_ALL_VERSIONS(MIDR_NVIDIA_OLYMPUS),
-         |         ^~~~~~~~~~~~~~~~~
-         |         MODULE_VERSION
->> drivers/perf/arm_pmuv3.c:1000:27: error: 'MIDR_NVIDIA_OLYMPUS' undeclared here (not in a function)
-    1000 |         MIDR_ALL_VERSIONS(MIDR_NVIDIA_OLYMPUS),
-         |                           ^~~~~~~~~~~~~~~~~~~
-   drivers/perf/arm_pmuv3.c: In function 'armv8pmu_can_use_pmccntr':
->> drivers/perf/arm_pmuv3.c:1042:13: error: implicit declaration of function 'is_midr_in_range_list' [-Wimplicit-function-declaration]
-    1042 |         if (is_midr_in_range_list(armv8pmu_avoid_pmccntr_cpus))
-         |             ^~~~~~~~~~~~~~~~~~~~~
-   drivers/perf/arm_pmuv3.c: At top level:
-   drivers/perf/arm_pmuv3.c:984:26: warning: 'armv8pmu_avoid_pmccntr_cpus' defined but not used [-Wunused-variable]
-     984 | static struct midr_range armv8pmu_avoid_pmccntr_cpus[] = {
-         |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +984 drivers/perf/arm_pmuv3.c
-
-   980	
-   981	/*
-   982	 * List of CPUs that should avoid using PMCCNTR_EL0.
-   983	 */
- > 984	static struct midr_range armv8pmu_avoid_pmccntr_cpus[] = {
-   985		/*
-   986		 * The PMCCNTR_EL0 in Olympus CPU may still increment while in WFI/WFE state.
-   987		 * This is an implementation specific behavior and not an erratum.
-   988		 *
-   989		 * From ARM DDI0487 D14.4:
-   990		 *   It is IMPLEMENTATION SPECIFIC whether CPU_CYCLES and PMCCNTR count
-   991		 *   when the PE is in WFI or WFE state, even if the clocks are not stopped.
-   992		 *
-   993		 * From ARM DDI0487 D24.5.2:
-   994		 *   All counters are subject to any changes in clock frequency, including
-   995		 *   clock stopping caused by the WFI and WFE instructions.
-   996		 *   This means that it is CONSTRAINED UNPREDICTABLE whether or not
-   997		 *   PMCCNTR_EL0 continues to increment when clocks are stopped by WFI and
-   998		 *   WFE instructions.
-   999		 */
-> 1000		MIDR_ALL_VERSIONS(MIDR_NVIDIA_OLYMPUS),
-  1001		{}
-  1002	};
-  1003	
-  1004	static bool armv8pmu_can_use_pmccntr(struct pmu_hw_events *cpuc,
-  1005					     struct perf_event *event)
-  1006	{
-  1007		struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
-  1008		struct hw_perf_event *hwc = &event->hw;
-  1009		unsigned long evtype = hwc->config_base & ARMV8_PMU_EVTYPE_EVENT;
-  1010	
-  1011		if (evtype != ARMV8_PMUV3_PERFCTR_CPU_CYCLES)
-  1012			return false;
-  1013	
-  1014		/*
-  1015		 * A CPU_CYCLES event with threshold counting cannot use PMCCNTR_EL0
-  1016		 * since it lacks threshold support.
-  1017		 */
-  1018		if (armv8pmu_event_get_threshold(&event->attr))
-  1019			return false;
-  1020	
-  1021		/*
-  1022		 * PMCCNTR_EL0 is not affected by BRBE controls like BRBCR_ELx.FZP.
-  1023		 * So don't use it for branch events.
-  1024		 */
-  1025		if (has_branch_stack(event))
-  1026			return false;
-  1027	
-  1028		/*
-  1029		 * The PMCCNTR_EL0 increments from the processor clock rather than
-  1030		 * the PE clock (ARM DDI0487 L.b D13.1.3) which means it'll continue
-  1031		 * counting on a WFI PE if one of its SMT sibling is not idle on a
-  1032		 * multi-threaded implementation. So don't use it on SMT cores.
-  1033		 */
-  1034		if (cpu_pmu->has_smt)
-  1035			return false;
-  1036	
-  1037		/*
-  1038		 * On some CPUs, PMCCNTR_EL0 does not match the behavior of CPU_CYCLES
-  1039		 * programmable counter, so avoid routing cycles through PMCCNTR_EL0 to
-  1040		 * prevent inconsistency in the results.
-  1041		 */
-> 1042		if (is_midr_in_range_list(armv8pmu_avoid_pmccntr_cpus))
-  1043			return false;
-  1044	
-  1045		return true;
-  1046	}
-  1047	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Jassi
