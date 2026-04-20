@@ -1,52 +1,50 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793BC3B19A0;
-	Mon, 20 Apr 2026 13:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5583E024E;
+	Mon, 20 Apr 2026 13:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776691000; cv=none; b=gXqi2Hh8nFmzUcsL/7pdlHHAxlzv0GMGe8F/2PH+3+Bfzc980H3KPWd5oNPOr1itWslSk7FjhMx3uzKLNhoqoh3r/CuJlhmxq3nOhFFNQtpWSajhgkTL75/cYAVr9ivEtTyqtjfKHldVhLIMkFnGmaLBcg+0sAjX5LR4tVOBDYE=
+	t=1776691469; cv=none; b=dbaOGSigiiqEyRFOH63+SmuLEjzC7ofP7FCJ0gFC9OWO6N4nUce6PjaCGnSQvERLOnsXQ0S4zzMa962In8D9GOPxE9uuZdsCXPc/KPFpmwyr9qDh6f0eV4DxLNeHPjPIQawAcOWoO4JBIG+MiBYHRBAWLpUf/LZ2dsn5+fqYSy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776691000; c=relaxed/simple;
-	bh=sLlPteD7lQfoTv9dBR+y8MY+DTQXae9AAcAO6Liy7pM=;
+	s=arc-20240116; t=1776691469; c=relaxed/simple;
+	bh=mdTTLFFRGSvS9pVXxreZEr6WIIMFyUkAMBZmnwnFgGM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oFpI6eV0gURKQqERg+vyv1DtvM9p0H8OqqeToFm6jbzqoaPbPgUx8AzdZbHJcBJEWHkk9aQfiOHlsc3qRmllDP706UDwb0EcuIop4I0aGgHChl72puZqSUtEEy5LItzYsfbY94jMyAmxUTVBWn1kt2Ij+yn3AB5k0GNMqH5+6I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uL/ZFLdr; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=qmPPLdyYxtmOrWzJ1g2VVJVSJhrVSU8KKuwvm32ErYVKZL4KjjgY+n7hn4auO4C7Ml9mLrjxlg5sqWM+lLtF25CEHQgmzx154fC1haTgNdgh/VtTKeLfXKErGTK4cafvoUkZJ9RTDliC7wo4o+gkAmf27bgBcwwd7koIOVvBuLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ht8SJa56; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uL/ZFLdr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F666C2BCB7;
-	Mon, 20 Apr 2026 13:16:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ht8SJa56"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E1D4C2BCB4;
+	Mon, 20 Apr 2026 13:24:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776691000;
-	bh=sLlPteD7lQfoTv9dBR+y8MY+DTQXae9AAcAO6Liy7pM=;
+	s=k20201202; t=1776691468;
+	bh=mdTTLFFRGSvS9pVXxreZEr6WIIMFyUkAMBZmnwnFgGM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uL/ZFLdrFDsfRc52cvS4/vmu8/uUgKta+/DwqT2AiFT3trzpPthFQ+H0Xywb37AxO
-	 sZiGu5Cjvqi6UTJAX6GqRzwckTESb9DCa2c17hFg7+4XbVGKEmyr7My9HyKRytN8xt
-	 lwiR6aiNMhRvO272TOb6vXDjaltQZrFbS00XgWwHDczOS4s69Z/Fc157taZeewIGn8
-	 UC72BrlVo2xxtVCcFJef8sZs6QIfVppOm5Nvym32Lw5hiDGjRGPN3WZ+Bcy6zc2dC2
-	 gH4Pq3+vc13uTLm8claMFOFxCZIvaKgps6tYoitlFj6GTN7jQ46tr6AwXxycQmCLXS
-	 uTAJ2HCLQrFtw==
+	b=Ht8SJa563vBIdvtheNgt9tiBYHMZoa9Hz+7rjpLyO/o+rrpCqTbPDaOLEth6zt5Wu
+	 lWbMnNLYecz90pKu1r5cMtc6Qtf5QqV9nlJl/IclZ/4tZP+/96T97y5H1c8KXTHSR3
+	 6hSq3MuqMlXI8jHcCWrfL6TWY2YzVxrZ7g8+4QqUhZFv6u/Ce9ZydFGnu8Or2W2Hxe
+	 RCMbMB7hHuZI7oq7kx0/txJ8ssEffALSXNvspojoXxnvv8alroxYRtYLD5qTchu44N
+	 fES+MmgaXSc9A2pwlfp9A4sX5lv5kN1yU0OOAZCQNHo/T6JYzLHYJ6tQ+sm+31PZIg
+	 cU1TcKJHqqBaQ==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Vidya Sagar <vidyas@nvidia.com>,
-	Manikanta Maddireddy <mmaddireddy@nvidia.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
+Cc: Thierry Reding <treding@nvidia.com>,
 	Sasha Levin <sashal@kernel.org>,
-	lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
 	thierry.reding@kernel.org,
-	linux-pci@vger.kernel.org,
+	jonathanh@nvidia.com,
+	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 7.0-5.10] PCI: tegra194: Assert CLKREQ# explicitly by default
-Date: Mon, 20 Apr 2026 09:08:21 -0400
-Message-ID: <20260420131539.986432-35-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 7.0-6.12] arm64: tegra: Fix snps,blen properties
+Date: Mon, 20 Apr 2026 09:17:21 -0400
+Message-ID: <20260420132314.1023554-47-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260420131539.986432-1-sashal@kernel.org>
-References: <20260420131539.986432-1-sashal@kernel.org>
+In-Reply-To: <20260420132314.1023554-1-sashal@kernel.org>
+References: <20260420132314.1023554-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -59,354 +57,313 @@ X-stable-base: Linux 7.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Vidya Sagar <vidyas@nvidia.com>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit 01d36261ae331583e6bc2034e6aa75c101b83e1d ]
+[ Upstream commit 51f10c527a63dc4a71bce4b40fc53eee78bbbd52 ]
 
-The Root Port's CLKREQ# signal is shared with a downstream PCIe switch and
-the endpoints behind it. By default, APPL_PINMUX_CLKREQ_OVERRIDE only
-overrides the CLKREQ# input to the controller (so REFCLK is enabled
-internally); it does not drive the CLKREQ# output pin low. Some PCIe
-switches (e.g. Broadcom PCIe Gen4) forward the Root Port's CLKREQ# to their
-downstream side and expect it to be driven low for REFCLK, even when the
-switch does not support CLK-PM or ASPM-L1SS. Without driving the output
-pin low, link-up can fail between the switch and endpoints.
+The snps,blen property of stmmac-axi-config nodes needs to have 7
+entries in total, with unsupported burst lengths listed as 0.
 
-Clear APPL_PINMUX_CLKREQ_DEFAULT_VALUE so the CLKREQ# output pad is
-explicitly driven low. That makes the shared CLKREQ# line low on the wire
-and avoids link-up issues with such switches.
-
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Signed-off-by: Manivannan Sadhasivam <mani@kernel.org>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Reviewed-by: Vidya Sagar <vidyas@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-Link: https://patch.msgid.link/20260324191000.1095768-2-mmaddireddy@nvidia.com
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-Now I have all the information needed. Let me compile the full analysis.
+Now I have all the information needed for my analysis.
 
 ---
 
 ## PHASE 1: COMMIT MESSAGE FORENSICS
 
-### Step 1.1: PARSE THE SUBJECT LINE
-Record: [PCI: tegra194] [Assert (fix/enable)] [CLKREQ# output pin driven
-low by default to fix PCIe link-up failures with certain switches]
+**Step 1.1: Subject Line**
+- Subsystem: `arm64: tegra` (ARM64 device tree, Tegra SoC)
+- Action verb: "Fix" — direct bug fix language
+- Summary: Fix the `snps,blen` DT properties for MGBE Ethernet
+  controllers
+- Record: [arm64: tegra] [fix] [correcting snps,blen DT property to have
+  required 7 entries]
 
-### Step 1.2: PARSE ALL COMMIT MESSAGE TAGS
-- **Signed-off-by**: Vidya Sagar (original driver author), Manikanta
-  Maddireddy (author), Manivannan Sadhasivam (PCI maintainer), Bjorn
-  Helgaas (PCI global maintainer)
-- **Tested-by**: Jon Hunter (NVIDIA kernel lead for Tegra)
-- **Reviewed-by**: Vidya Sagar (original driver author), Jon Hunter
-- **Link**: `https://patch.msgid.link/20260324191000.1095768-2-
-  mmaddireddy@nvidia.com` (patch 2 in series)
-- No Fixes: tag (expected)
-- No Cc: stable (expected)
+**Step 1.2: Tags**
+- `Signed-off-by: Thierry Reding <treding@nvidia.com>` — Author is the
+  Tegra platform maintainer at NVIDIA.
+- No Fixes: tag, no Cc: stable, no Reported-by (expected for auto-
+  selection candidates).
+- Record: No notable tags beyond authorship. Author is the subsystem
+  maintainer.
 
-Record: Strong review chain - original driver author, NVIDIA Tegra
-kernel lead, and PCI subsystem maintainers all signed off/reviewed.
+**Step 1.3: Commit Body**
+- States: "The snps,blen property of stmmac-axi-config nodes needs to
+  have 7 entries in total, with unsupported burst lengths listed as 0."
+- This describes a DT schema violation — the property had 4 entries but
+  the driver requires 7.
+- Record: Bug is a malformed DT property that doesn't match the driver's
+  expectation.
 
-### Step 1.3: ANALYZE THE COMMIT BODY TEXT
-The commit explains that `APPL_PINMUX_CLKREQ_OVERRIDE` only overrides
-the CLKREQ# *input* to the controller (enabling REFCLK internally), but
-does NOT drive the CLKREQ# *output* pin low. Some PCIe switches (e.g.,
-Broadcom PCIe Gen4) forward the Root Port's CLKREQ# to their downstream
-side. Without driving the output low, **link-up can fail** between the
-switch and endpoints.
-
-Record: Bug = PCIe link-up failure. Symptom = endpoints behind PCIe
-switches don't enumerate. Root cause = CLKREQ# output pad not driven low
-when it should be.
-
-### Step 1.4: DETECT HIDDEN BUG FIXES
-Record: This IS a bug fix - it fixes a real hardware link-up failure.
-The language "assert... explicitly" and "avoids link-up issues"
-describes fixing broken behavior.
-
----
+**Step 1.4: Hidden Bug Fix Detection**
+- This is NOT a hidden fix — it's explicitly labeled "Fix." The
+  underlying bug is that `of_property_read_u32_array(np, "snps,blen",
+  axi_blen, 7)` fails silently when the property only has 4 entries,
+  leaving the stack buffer uninitialized.
+- Record: Direct bug fix, not disguised.
 
 ## PHASE 2: DIFF ANALYSIS
 
-### Step 2.1: INVENTORY THE CHANGES
-- **File**: `drivers/pci/controller/dwc/pcie-tegra194.c` (+2 lines)
-- **Change 1**: Add `#define APPL_PINMUX_CLKREQ_DEFAULT_VALUE BIT(13)`
-  in the register bit definitions
-- **Change 2**: Add `val &= ~APPL_PINMUX_CLKREQ_DEFAULT_VALUE;` inside
-  `tegra_pcie_config_controller()` in the `!supports_clkreq` block
+**Step 2.1: Inventory**
+- 1 file changed: `arch/arm64/boot/dts/nvidia/tegra234.dtsi`
+- 3 lines changed (each identical):
+  - `snps,blen = <256 128 64 32>;` → `snps,blen = <256 128 64 32 0 0
+    0>;`
+- Affects MGBE0, MGBE1, MGBE2 stmmac-axi-config nodes.
+- Record: Single DT file, 3 identical one-line changes. Scope:
+  minimal/surgical.
 
-Record: Single file, 2 lines added. Functions modified:
-`tegra_pcie_config_controller()`. Scope: single-file surgical fix.
+**Step 2.2: Code Flow**
+- Before: DT property has 4 u32 entries.
+- After: DT property has 7 u32 entries (3 trailing zeros for unsupported
+  burst lengths).
+- The stmmac driver calls `of_property_read_u32_array(np, "snps,blen",
+  axi_blen, AXI_BLEN)` where `AXI_BLEN = 7`. With only 4 entries,
+  `of_find_property_value_of_size()` checks `prop->length (16) < min
+  (28)` and returns `-EOVERFLOW`. The stack array `axi_blen[7]` is never
+  written. Then `stmmac_axi_blen_to_mask()` processes uninitialized
+  stack data.
 
-### Step 2.2: UNDERSTAND THE CODE FLOW CHANGE
-- **Before**: When `!supports_clkreq`, the code enabled CLKREQ# override
-  (bit 2) and cleared CLKREQ# override value (bit 3) - this overrides
-  the CLKREQ# *input* but left the *output pad default value* (bit 13)
-  unchanged (high by default)
-- **After**: Additionally clears bit 13, which explicitly drives the
-  CLKREQ# output pad low on the wire
+**Step 2.3: Bug Mechanism**
+- Category: **Uninitialized data** / **incorrect DT specification**
+- Mechanism: The DT property is too short, causing
+  `of_property_read_u32_array()` to fail, leaving a stack buffer
+  uninitialized. The uninitialized data is then used to configure the
+  AXI DMA burst length register for network hardware.
+- Record: Uninitialized stack data used for hardware DMA configuration.
+  The fix ensures the property has the correct count.
 
-Record: Before = REFCLK internally enabled but output pad floats high.
-After = REFCLK internally enabled AND output pad driven low.
+**Step 2.4: Fix Quality**
+- Obviously correct: all other DT files using `snps,blen` have exactly 7
+  entries (verified by grep across all arm64 DT files).
+- Minimal/surgical: 3 identical one-line changes.
+- Zero regression risk: adding trailing zeros only enables the driver to
+  read the property successfully, and zero entries are explicitly
+  skipped by `stmmac_axi_blen_to_mask()`.
+- Record: Fix is obviously correct, minimal, zero regression risk.
 
-### Step 2.3: IDENTIFY THE BUG MECHANISM
-Record: Category (h) Hardware workaround. The hardware register has a
-default-high bit for the CLKREQ# output pad that wasn't being cleared,
-causing PCIe link-up failures with switches that forward CLKREQ#.
+## PHASE 3: GIT HISTORY
 
-### Step 2.4: ASSESS THE FIX QUALITY
-- Obviously correct: just clearing one more register bit in a register
-  already being configured
-- Minimal/surgical: 2 lines total
-- Regression risk: extremely low - only affects Tegra platforms in the
-  `!supports_clkreq` path, only clears an additional bit that logically
-  should be cleared
-Record: Fix quality = excellent. Regression risk = negligible.
+**Step 3.1: Blame**
+- The buggy `snps,blen = <256 128 64 32>` was introduced by commit
+  `81695da63b977` ("arm64: tegra: Add AXI configuration for Tegra234
+  MGBE") by Thierry Reding, dated 2024-02-21, merged in v6.9.
+- Record: Bug introduced in v6.9 by the same author who is now fixing
+  it.
 
----
+**Step 3.2: Fixes tag**
+- No Fixes: tag present. The implicit fix target is `81695da63b977`.
 
-## PHASE 3: GIT HISTORY INVESTIGATION
+**Step 3.3: File History**
+- Recent changes to `tegra234.dtsi` are mostly DT cleanup/additions. No
+  related fixes.
+- Record: Standalone fix, no prerequisites.
 
-### Step 3.1: BLAME THE CHANGED LINES
-The `!supports_clkreq` code block was introduced in commit
-`56e15a238d9278` ("PCI: tegra: Add Tegra194 PCIe support", 2019-08-13,
-v5.4) and modified by `ff5c2bb9c6f5ee` ("PCI: tegra: Fix CLKREQ
-dependency programming", 2019-10-05, also v5.4).
+**Step 3.4: Author**
+- Thierry Reding is the Tegra platform maintainer at NVIDIA. He wrote
+  the original buggy commit and is now fixing it.
+- Record: Subsystem maintainer self-fix.
 
-Record: Buggy code has been present since v5.4, when the driver was
-introduced. The code exists in all stable trees since v5.4.
+**Step 3.5: Dependencies**
+- None. The fix is a pure DT property value change that applies
+  independently.
+- Record: No dependencies, applies cleanly standalone.
 
-### Step 3.2: FOLLOW THE FIXES TAG
-No Fixes: tag present. This is expected for candidate review.
+## PHASE 4: MAILING LIST RESEARCH
 
-### Step 3.3: CHECK FILE HISTORY
-The file has many commits since v5.4 but the `!supports_clkreq` block
-hasn't changed since ff5c2bb9c6f5ee.
+**Step 4.1: Original Submission**
+- Found via web search: patch is `[PATCH 09/10]` in a series "dt-
+  bindings: Various cleanups for Tegra-related bindings" posted
+  2026-02-23.
+- Part of a v3 cleanup series. While most patches in the series are DT
+  binding cleanups, this specific patch (09/10) is a genuine bug fix.
+- Record: Part of a larger DT cleanup series, but this patch is an
+  independent bug fix.
 
-Record: No prerequisites for this specific code block. The patch is
-standalone.
+**Step 4.2: Reviewers**
+- b4 dig found the original commit (81695da63b977) was reviewed and
+  tested by Jon Hunter (NVIDIA Tegra co-maintainer). The fix itself is
+  straightforward enough that formal review was likely implicit.
+- Record: Original buggy code was reviewed by Jon Hunter.
 
-### Step 3.4: CHECK THE AUTHOR
-Manikanta Maddireddy is an NVIDIA engineer working on Tegra PCI. Vidya
-Sagar (original driver author) reviewed the patch. Jon Hunter (NVIDIA
-Tegra kernel lead) tested and reviewed it.
-
-Record: Author is an NVIDIA Tegra PCI engineer. Original driver author
-and NVIDIA kernel team lead both reviewed/tested.
-
-### Step 3.5: CHECK FOR DEPENDENCIES
-The patch is patch 2 of a series (from the message ID). However, the fix
-is completely self-contained:
-1. The new `#define` doesn't depend on anything new
-2. The bit-clear operation is added to an existing code block
-3. No other functions or data structures are modified
-
-One concern: the diff context shows `DW_PCIE_VER_500A` /
-`DW_PCIE_VER_562A` macros, but the v7.0 tree uses raw hex values
-`0x490A` / `0x562A`. This means the commit was built on top of a tree
-with a version macro rename. However, this only affects context lines in
-the header area — the actual code change applies to a completely
-different part of the function.
-
-Record: Self-contained fix. Minor context mismatch in header defines
-area, but actual functional change applies cleanly.
-
----
-
-## PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
-
-### Step 4.1-4.5: MAILING LIST INVESTIGATION
-Lore.kernel.org was behind an anti-scraping challenge and could not be
-accessed. However:
-- b4 dig found the original CLKREQ fix (ff5c2bb9c6f5ee) was part of a
-  series
-- The commit was accepted through the PCI maintainer tree (Manivannan
-  Sadhasivam -> Bjorn Helgaas)
-- The strong review chain (Tested-by, Reviewed-by from original author
-  and NVIDIA kernel lead) provides high confidence
-
-Record: Could not access lore directly. Review chain provides strong
-confidence.
-
----
+**Step 4.3-4.5: Bug Reports / Stable History**
+- No specific bug report found. Likely discovered by the author during
+  code review / DT validation.
+- No prior stable discussion found.
 
 ## PHASE 5: CODE SEMANTIC ANALYSIS
 
-### Step 5.1-5.4: FUNCTION AND CALLER ANALYSIS
-`tegra_pcie_config_controller()` is called from:
-1. `tegra_pcie_init_controller()` (line 1526) — during initial
-   probe/boot
-2. `tegra_pcie_dw_resume_noirq()` (line 2346) — during resume from
-   suspend
+**Step 5.1-5.4: Key Functions**
+- `stmmac_axi_setup()` in `stmmac_platform.c` parses the DT property.
+- Called during stmmac platform driver probe for any device using
+  `snps,axi-config` DT phandle.
+- `stmmac_axi_blen_to_mask()` converts the burst length array to
+  register value.
+- The register value is written to hardware in `dwxgmac2_dma_init()` /
+  `dwmac4_dma_init()` / `dwmac1000_dma_init()`.
+- Impact: Affects AXI DMA configuration for MGBE Ethernet on Tegra234.
 
-Both are critical paths. The fix affects both initial boot and resume,
-meaning without the fix, PCIe link-up can fail both at boot and after
-suspend/resume.
+**Step 5.5: Similar Patterns**
+- All other arm64 DT files consistently use 7 entries for `snps,blen`.
+  Tegra234 was the ONLY outlier with 4 entries.
 
-The `!supports_clkreq` condition is determined by the `supports-clkreq`
-DT property (line 1138-1139). Systems without this property will hit the
-bug.
+## PHASE 6: STABLE TREE ANALYSIS
 
-Record: Critical paths affected (boot and resume). Impact depends on DT
-configuration.
+**Step 6.1: Buggy Code in Stable**
+- Commit `81695da63b977` was introduced in v6.9. It exists in stable
+  trees v6.12.y and any newer LTS branches.
+- It does NOT exist in v6.6.y (confirmed via `git merge-base --is-
+  ancestor`).
+- Record: Bug affects v6.9+ stable trees (v6.12.y at minimum).
 
----
+**Step 6.2: Backport Complications**
+- Pure DT change with no code dependencies. Should apply cleanly.
+- Record: Clean apply expected.
 
-## PHASE 6: CROSS-REFERENCING AND STABLE TREE ANALYSIS
+**Step 6.3: Related Fixes**
+- No prior fix for this issue found in any tree.
 
-### Step 6.1: DOES THE BUGGY CODE EXIST IN STABLE TREES?
-Yes. The driver was introduced in v5.4, and the specific code block has
-been unchanged since ff5c2bb9c6f5ee (also v5.4). All active stable trees
-(5.4.y through 6.12.y and 7.0.y) contain the buggy code.
+## PHASE 7: SUBSYSTEM CONTEXT
 
-### Step 6.2: BACKPORT COMPLICATIONS
-Minor context difference in the header define area (version macros
-changed upstream). The actual functional change in
-`tegra_pcie_config_controller()` applies cleanly to all stable trees
-since the `!supports_clkreq` block hasn't changed since v5.4.
-
-Record: Minor context adjustment needed for defines area. Functional
-code change applies cleanly.
-
----
-
-## PHASE 7: SUBSYSTEM AND MAINTAINER CONTEXT
-
-### Step 7.1: SUBSYSTEM CRITICALITY
-PCI controller driver for NVIDIA Tegra194/234 SoCs. Platform: ARM64
-Tegra (Jetson, automotive, embedded).
-
-Record: Subsystem = PCI controller (drivers/pci/controller/dwc).
-Criticality = IMPORTANT (affects Tegra platform users, including Jetson
-dev boards and automotive systems).
-
----
+**Step 7.1: Subsystem**
+- ARM64 Device Tree for Tegra234 MGBE (Multi-Gigabit Ethernet).
+- Criticality: IMPORTANT — affects Tegra234 network hardware users
+  (NVIDIA Jetson AGX Orin, etc.).
+- Record: [arm64/tegra DT] [IMPORTANT — Jetson platform network
+  hardware]
 
 ## PHASE 8: IMPACT AND RISK ASSESSMENT
 
-### Step 8.1: WHO IS AFFECTED
-Users of Tegra194/234 PCIe root ports with downstream PCIe switches that
-forward CLKREQ# (e.g., Broadcom PCIe Gen4 switches), on systems without
-the `supports-clkreq` DT property.
+**Step 8.1: Affected Users**
+- Users of NVIDIA Tegra234 platforms (Jetson AGX Orin) using MGBE
+  Ethernet controllers.
+- Platform-specific but widely deployed in industrial/embedded
+  applications.
 
-### Step 8.2: TRIGGER CONDITIONS
-- Triggered on every boot and resume when the hardware configuration
-  matches
-- Deterministic (not a race)
+**Step 8.2: Trigger Conditions**
+- Triggered on every boot when the MGBE driver probes. No special
+  configuration needed.
+- The AXI burst length read fails silently, so uninitialized data
+  configures DMA hardware.
 
-### Step 8.3: FAILURE MODE SEVERITY
-PCIe link-up failure = devices behind the switch don't enumerate =
-hardware doesn't work.
-Severity: HIGH (complete loss of PCIe functionality behind the affected
-switch)
+**Step 8.3: Failure Mode**
+- Uninitialized stack data used for DMA hardware configuration.
+- Could result in suboptimal network performance, potential DMA errors,
+  or undefined hardware behavior depending on what stack values happen
+  to be.
+- Severity: **HIGH** (hardware misconfiguration from uninitialized data,
+  affecting network DMA)
 
-### Step 8.4: RISK-BENEFIT RATIO
-- **Benefit**: HIGH — fixes complete PCIe link failure for affected
-  configurations
-- **Risk**: VERY LOW — 2 lines, clears one register bit, only affects
-  `!supports_clkreq` path on Tegra platforms
-- **Ratio**: Strongly favorable for backporting
-
----
+**Step 8.4: Risk-Benefit**
+- BENEFIT: High — fixes broken AXI DMA configuration for 3 MGBE Ethernet
+  controllers on Tegra234.
+- RISK: Very low — 3 identical one-line DT property changes, adding
+  trailing zeros, no code change.
+- Record: Very favorable risk-benefit ratio.
 
 ## PHASE 9: FINAL SYNTHESIS
 
-### Step 9.1: EVIDENCE COMPILATION
+**Step 9.1: Evidence Summary**
 
-**FOR backporting:**
-- Fixes real hardware link-up failures on Tegra platforms
-- Extremely small and surgical (2 lines)
-- Obviously correct (clearing a register bit to match intended behavior)
-- Strong review chain: original driver author, NVIDIA kernel team lead,
-  PCI maintainers
-- Tested by Jon Hunter
-- Falls into "hardware workaround" exception category
-- Code has been present since v5.4 — affects all stable trees
-- Affects boot AND resume paths
+FOR backporting:
+- Fixes real bug: `of_property_read_u32_array()` fails with only 4/7
+  entries, leading to uninitialized stack data being used for hardware
+  DMA configuration
+- Minimal, surgical fix: 3 identical one-line DT changes
+- Obviously correct: all other DT files use 7 entries
+- Written by subsystem maintainer (Thierry Reding, NVIDIA Tegra
+  maintainer)
+- Zero regression risk: trailing zeros are explicitly handled ("Burst
+  values of zero must be skipped")
+- Applies to v6.12.y+ stable trees
 
-**AGAINST backporting:**
-- No crash/security/data corruption — "just" link-up failure
-- Minor context difference in header area requires fuzz/adjustment for
-  backport
-- Part of a multi-patch series (patch 2/N) — though self-contained
+AGAINST backporting:
+- No explicit user report of symptoms (could mean it works by luck with
+  stack data)
+- Part of a larger series (but this patch is independent)
 
-### Step 9.2: STABLE RULES CHECKLIST
-1. Obviously correct and tested? **YES** — Tested-by and Reviewed-by,
-   trivial change
-2. Fixes a real bug? **YES** — PCIe link-up failure
-3. Important issue? **YES** — complete PCIe failure for affected
-   configurations
-4. Small and contained? **YES** — 2 lines in 1 file
-5. No new features or APIs? **YES** — no new features
-6. Can apply to stable trees? **YES** — minor context adjustment may be
-   needed
+**Step 9.2: Stable Rules Checklist**
+1. Obviously correct? **YES** — all other DT files have 7 entries
+2. Fixes a real bug? **YES** — uninitialized data used for HW
+   configuration
+3. Important issue? **YES** — hardware DMA misconfiguration
+4. Small and contained? **YES** — 3 one-line changes in 1 DT file
+5. No new features? **YES** — pure DT fix
+6. Can apply to stable? **YES** — clean DT-only change
 
-### Step 9.3: EXCEPTION CATEGORIES
-This falls into the **hardware quirk/workaround** category (explicitly
-allowed for stable).
-
----
+**Step 9.3: Exception Category**
+- DT update fixing existing hardware description — automatic YES
+  category
 
 ## Verification
 
-- [Phase 1] Parsed tags: Tested-by Jon Hunter, Reviewed-by Vidya Sagar +
-  Jon Hunter, SOBs from PCI maintainers
-- [Phase 2] Diff analysis: 2 lines added — 1 new #define + 1 register
-  bit clear in `tegra_pcie_config_controller()`
-- [Phase 3] git blame: buggy code block from ff5c2bb9c6f5ee (v5.4),
-  present in all stable trees
-- [Phase 3] git show ff5c2bb9c6f5ee: confirmed this was "PCI: tegra: Fix
-  CLKREQ dependency programming" — an earlier incomplete fix
-- [Phase 3] git show 56e15a238d9278: confirmed original driver added in
-  v5.4
-- [Phase 4] b4 dig found the earlier CLKREQ fix series at lore;
-  lore.kernel.org blocked by anti-scraping
-- [Phase 5] `tegra_pcie_config_controller()` called from
-  `tegra_pcie_init_controller()` (probe) and
-  `tegra_pcie_dw_resume_noirq()` (resume)
-- [Phase 5] `supports_clkreq` determined from DT property "supports-
-  clkreq" (line 1138-1139)
-- [Phase 6] Code exists in all stable trees since v5.4; context mismatch
-  only in header defines area
-- [Phase 8] Failure mode: complete PCIe link-up failure, severity HIGH
-- UNVERIFIED: Could not access lore.kernel.org to verify mailing list
-  discussion or whether patch 1 of the series has any relevance
-
-The fix is a small, surgical hardware workaround that fixes real PCIe
-link-up failures on Tegra platforms. It meets all stable kernel criteria
-and falls into the hardware workaround exception category.
+- [Phase 1] Parsed subject: "Fix" verb, arm64 tegra subsystem, snps,blen
+  property
+- [Phase 2] Diff: 3 lines changed in tegra234.dtsi, each adds `0 0 0` to
+  snps,blen property
+- [Phase 2] Verified AXI_BLEN=7 in `include/linux/stmmac.h` line 109
+- [Phase 2] Verified `of_property_read_u32_array()` calls
+  `of_find_property_value_of_size()` with min=28 bytes; property has 16
+  bytes (4 entries), so it returns -EOVERFLOW
+- [Phase 2] Verified `stmmac_axi_blen_to_mask()` skips zero entries
+  ("Burst values of zero must be skipped")
+- [Phase 3] git blame: buggy code from 81695da63b977 (v6.9), author:
+  Thierry Reding
+- [Phase 3] git merge-base: confirmed 81695da63b977 is in v6.12 but not
+  v6.6
+- [Phase 4] b4 dig: found original commit submission at lore (patch-id
+  match)
+- [Phase 4] Web search: fix is PATCH 09/10 of "dt-bindings: Various
+  cleanups for Tegra-related bindings"
+- [Phase 5] Verified all other arm64 DT snps,blen entries have exactly 7
+  values (grep across arch/arm64/boot/dts)
+- [Phase 5] Traced call chain: stmmac_axi_setup →
+  of_property_read_u32_array → of_find_property_value_of_size
+- [Phase 6] Bug exists in v6.9+ stable trees
+- [Phase 8] Failure mode: uninitialized stack data used for AXI DMA
+  register, severity HIGH
 
 **YES**
 
- drivers/pci/controller/dwc/pcie-tegra194.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 06571d806ab31..8ac9863fcc7ad 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -44,6 +44,7 @@
- #define APPL_PINMUX_CLKREQ_OVERRIDE		BIT(3)
- #define APPL_PINMUX_CLK_OUTPUT_IN_OVERRIDE_EN	BIT(4)
- #define APPL_PINMUX_CLK_OUTPUT_IN_OVERRIDE	BIT(5)
-+#define APPL_PINMUX_CLKREQ_DEFAULT_VALUE	BIT(13)
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+index 850c473235e36..04a95b6658caa 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+@@ -3621,7 +3621,7 @@ ethernet@6800000 {
+ 			snps,axi-config = <&mgbe0_axi_setup>;
  
- #define APPL_CTRL				0x4
- #define APPL_CTRL_SYS_PRE_DET_STATE		BIT(6)
-@@ -1454,6 +1455,7 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
- 		val = appl_readl(pcie, APPL_PINMUX);
- 		val |= APPL_PINMUX_CLKREQ_OVERRIDE_EN;
- 		val &= ~APPL_PINMUX_CLKREQ_OVERRIDE;
-+		val &= ~APPL_PINMUX_CLKREQ_DEFAULT_VALUE;
- 		appl_writel(pcie, val, APPL_PINMUX);
- 	}
+ 			mgbe0_axi_setup: stmmac-axi-config {
+-				snps,blen = <256 128 64 32>;
++				snps,blen = <256 128 64 32 0 0 0>;
+ 				snps,rd_osr_lmt = <63>;
+ 				snps,wr_osr_lmt = <63>;
+ 			};
+@@ -3663,7 +3663,7 @@ ethernet@6900000 {
+ 			snps,axi-config = <&mgbe1_axi_setup>;
  
+ 			mgbe1_axi_setup: stmmac-axi-config {
+-				snps,blen = <256 128 64 32>;
++				snps,blen = <256 128 64 32 0 0 0>;
+ 				snps,rd_osr_lmt = <63>;
+ 				snps,wr_osr_lmt = <63>;
+ 			};
+@@ -3705,7 +3705,7 @@ ethernet@6a00000 {
+ 			snps,axi-config = <&mgbe2_axi_setup>;
+ 
+ 			mgbe2_axi_setup: stmmac-axi-config {
+-				snps,blen = <256 128 64 32>;
++				snps,blen = <256 128 64 32 0 0 0>;
+ 				snps,rd_osr_lmt = <63>;
+ 				snps,wr_osr_lmt = <63>;
+ 			};
 -- 
 2.53.0
 
