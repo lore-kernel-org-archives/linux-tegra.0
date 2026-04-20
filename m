@@ -1,71 +1,92 @@
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37803CF677;
-	Mon, 20 Apr 2026 20:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776716857; cv=pass; b=lsAGVj/cIKNsjJEnJYrPRGPZM1TaVbPQ2hrwfZUeCT8CzDHFSl51N4oTAZI/GN0om8K+nfJqCEGyhh/Hl2IFEb0wUKhkh6fy4uQ13p3q/4JhxJKpDinCn+uIhFXxs3gMJ1Fh7Yq7Ahi3ZeQvW2UTcgmmp3vOpAd8NHrK36ujbg4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776716857; c=relaxed/simple;
-	bh=cj3oEJkumEVGjJPTfTJgi0TjxRJ6ug+ReRvXRBKNddM=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9DE37FF5F
+	for <linux-tegra@vger.kernel.org>; Mon, 20 Apr 2026 22:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776725782; cv=none; b=fnq16oI000tVPG3CgemlbTjX8uAl1UvsdigfS3JzZtLYfhezuZ1SuCd0EkSCBNndIYLvw2WdMtmqHnYxW9tZhVGzpjnJ4J7KsLSIu5OLT2FdjKkef0fmjJfWeKWHMnZ2TcaACpYXUc8AoOEdS0BzfKkWM4f9bLf52IQ/S7mM0yM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776725782; c=relaxed/simple;
+	bh=HxETj+r6/c62h5v/ZQo9q8wwwtXio08jZSnj3FSr8os=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=itl90VAhYisBcvyfPGYhCHqQwd6EFX7EcmyvzQIkiArBj8fu+eVwlhAZ5gWIz+tY950cGI0EuzaDOX+/Te7/LDqXBe6eNbFXZymjjLX6J6toaYD+YB1uyLr4QhTZaIx0qADaSs0G9YUfFC7+znSsPWVK4O0rKDgYmikj/zliqak=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=iMJAkfjN; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z9+iEyngu2ovbIqP1uno4ZgP+qLks5Yrqe0eUGejBYjhWb6WV0Ink4GatQims5BlKXxh9CRyHu5XtWxhgIj9QLdHX/Z4XS/w0uisZYEVL7R9blJFpmT4z7NxnCceTVEIn0gzl7/LznCeiD/JffrklbdlIZh+JUncyhK5UzHM8S4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=m6OruEcU; arc=none smtp.client-ip=209.85.167.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="iMJAkfjN"
-Received: from darkstar.musicnaut.iki.fi (unknown [83.245.248.121])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: aaro.koskinen)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4fzxqh24dhz49PsK;
-	Mon, 20 Apr 2026 23:27:28 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1776716849;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZqGedFnT3teWh1lHSoLCTJEgghEUYXuwf2j/pOcO/3c=;
-	b=iMJAkfjNWMJ/t4l0tl7Skz/7+NxghitzKZ73RRZGdOdocvREghbnFpwaz/dOmd4DFMLRGP
-	GekgwjWoxTR+cIuD62MoZL96Fykm4DO5UUCjPwo2hO6TGpz/XN2fyRXjl1qf6iaCcPXJ7r
-	5yu/oJf2kXJVvVmpNzNv19eNXT7z0gGDTd2O6Uijc6nF65z+Nn7t1H9ErwAtiX/3srx7Rc
-	JHgJV2UX645Q2lcKPvIFUsf0OO9XwAA9gqHBWbe8BwKFx78VfBUUYbnQRoJcV2YFqudRYm
-	2bN7kJaeUsG50Txo8SYj8WB/zh63tg7O5DsEVnZgML/B+KdJ9i0JWkTLBJbcOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=lahtoruutu; t=1776716849;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZqGedFnT3teWh1lHSoLCTJEgghEUYXuwf2j/pOcO/3c=;
-	b=ikKwXmpmObdgy/1/HFNmvxtjM8TbTeDriMJxEe01qtWMvEgLZgXKxbF0Zxcitcc+Aiylla
-	LQY9DZCdCB2u9TkglHyohmaQu0r7UZXJrGDXzEwBNGEB6wMMkykVPIcBG5zAgxK9eYysSz
-	A0BGTA0Z+uuIbrw5Hwagno5u/AWc7ebqCrEBARxb0NJx+sc2nQpwx9pAu8mvXUepUkjLQ6
-	uFJgOvdqYRhaGUeMjCCDrZLIP1Qmj3meQ8fG+r7xeCGudI29e7jEAJMF1iol454PmJe4tB
-	wnn08QCfAdX8asgB+W+xDpATpwhlZyiqV1w+pLWgmhR86wDJaFuZvzXluYPB6Q==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=aaro.koskinen smtp.mailfrom=aaro.koskinen@iki.fi
-ARC-Seal: i=1; a=rsa-sha256; d=iki.fi; s=lahtoruutu; cv=none; t=1776716849;
-	b=ZEMTNW0vb+/jCFIKwzM0bjWOt3tzAgJ7lN5hMe4l/Uhn4zKWRV/miVLv8RrEjKp+4fuuRD
-	iVPQVawli0L16/OHiIzRZS7JVbo82k6kTWZ+0OqQO0gMW94ktTIfeiyRYHGnS3GBXogvE3
-	wmLYpiDXvaGNEBhlrw1laoRgqE0FFWYS8I/S1DGvhk33kEnyaWbJ6K+X4cIdfyEgRBYxIz
-	yhsgiPU+Tqy5VjhswqIHf2UvcgaxegnOmvkQr2zILFbfsKunJGBzOamM48GyeygANPhVjz
-	zuRw4qA+6G2H63dDPN+bNjIy6+bYnVEKWJLHUCxSu3Sr/Yk6m/J0vQ2lJnDVxw==
-Date: Mon, 20 Apr 2026 23:27:25 +0300
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Thierry Reding <thierry.reding@kernel.org>, linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Paul Walmsley <pjw@kernel.org>
-Subject: Re: [PATCH v2 1/3] MAINTAINERS: Move Peter De Schrijver to CREDITS
-Message-ID: <aeaMLfrDCoyTrWet@darkstar.musicnaut.iki.fi>
-References: <20260417131549.3154534-1-thierry.reding@kernel.org>
- <CAMuHMdWeXS3ytgozp-mSrW4jcMRCW7_tbDTbMoEdXdbVj0dqJA@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="m6OruEcU"
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-4756e74f8edso2526728b6e.1
+        for <linux-tegra@vger.kernel.org>; Mon, 20 Apr 2026 15:56:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1776725780; x=1777330580; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HxETj+r6/c62h5v/ZQo9q8wwwtXio08jZSnj3FSr8os=;
+        b=m6OruEcUV+RxxHF5bmojsdSMXPifizCGbcAMnOS2vyEEt7WMtoiS56hMGC+2tTq5hI
+         cWMSBHKYq9h6Wdcm3WdUvQRzfdpKFE642w0IgAOy6u1YQcc/VCFDcuDcxnPFeBTXAzKj
+         atlGe+MmH87ibnTn3g2loYlYCq7dpEUxdFDMq3Vebt2uWaS5hLtTP3X9bQqFXSaEq2pf
+         RRbZhC7fK9J+KaWi6z7LblGXj1DPAfKnp4dbRahnfSRuuNHggTmdhLd5X5+5HOBQ9J8T
+         DRlo/GSJGKfqA8c1mRC0RfbUXTmRGsOD0YZjstgKZ3Mk915kiDhKi/QIo7sE4l8jZaUj
+         y5+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776725780; x=1777330580;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HxETj+r6/c62h5v/ZQo9q8wwwtXio08jZSnj3FSr8os=;
+        b=OLzhXEFKxLsSUoG0H2B8oBQggvE6O513uaaxkoWBgNk+mdFX9bTIo/7GlIDxqtZgGx
+         4smnzkA+pReOnOlFLIDF0YaWBqHSzW7mq63I50+Ljg7Ppi8JwQDf7k8K+9ICannU6OWR
+         dQYjAL7TZVLgykPr7UfNQpOUyEGigP0ymXCV5d1u873dhCUWq9ad5wnblu81RrQ6tVnX
+         jo0tc2Mz3cUnI1OsrBG+3tGlYnh9LUL/3hFD6PjlZZyZ1QnexoXGlnfA7jXFdHPSUTgi
+         0BhPStdGXZCH0a/g4eSyznY6UuP0a+wfvTLLO1p/ote5mgphuNAkJw1y18qBn85ezBpe
+         CIJw==
+X-Forwarded-Encrypted: i=1; AFNElJ8rdt7ySECHQSNIr9tIPLO1jLAx8hpvCUTxcxPv1r6AF+biR1c1YDSN5QcJTFYtoB8I271mApaGPY6m/w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeuQoewrfqlq7OI5/1Thl7Jt8/fOadLc9Bkzod/E9ap8iu9Ouv
+	W0NSTKNkUDfSFMvPiWj2609qs2Hwf3AcJjHoTUwgzjHeElYMP5RHAaYQmlXc6ZTjCP8=
+X-Gm-Gg: AeBDietgRm2ocsVjLZWLvXuhhpLrWAlKXjUFdBSnp7NmRtvJXK+aaIhtrYRlf9ciEXz
+	oBoSYNbDEIwy1QzkygQ4vbOJ/rF4bL0zNOLq0om0/hr0IT8wVIRa0O2JhyyI4+HTvzEHGqIIGyf
+	Y/UqGStUOe4kdjTCOuz0iWqSj2hG0fO0rt2Qhao/TssbduKSniraP57uVtWFsYQs4/TlGlj111x
+	xfweSFl9ob0TuKlxJ7dEt2ldCR1qCP1n7fFBq/D0JzAGlHrY+fkd07aBKRREINl4o+rP2LdeQaK
+	5nrkTxiXFRQBxCzu/oSu98mfrkjSLKnbIkVd9/f6fVVVg0lJoXyiCeW2oSzZGyHXm/raOLWKSET
+	1h6Eds60udlDHwBwpyHvXILCfUfv9C0jjy2jvZxpa1yqsDsgeKM1UzEXmwXP9bSmdPHHdLkVKj2
+	0/imvu7GND
+X-Received: by 2002:a05:6808:448a:b0:479:d2d3:a399 with SMTP id 5614622812f47-479d2d3bdb0mr3331712b6e.15.1776725780355;
+        Mon, 20 Apr 2026 15:56:20 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-4799fc19273sm7702863b6e.0.2026.04.20.15.56.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Apr 2026 15:56:19 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1wExXO-0000000F7qQ-3pLG;
+	Mon, 20 Apr 2026 19:56:18 -0300
+Date: Mon, 20 Apr 2026 19:56:18 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Vishnu Reddy <busanna.reddy@oss.qualcomm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	ekansh.gupta@oss.qualcomm.com,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Bharath Kumar <quic_bkumar@quicinc.com>,
+	Chenna Kesava Raju <quic_chennak@quicinc.com>,
+	linux-kernel@vger.kernel.org, driver-core@lists.linux.dev,
+	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+	iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+Subject: Re: [PATCH 1/3] drivers: base: Add generic context device bus
+Message-ID: <20260420225618.GP2577880@ziepe.ca>
+References: <20260414-computebus-v1-0-4d904d40926a@oss.qualcomm.com>
+ <20260414-computebus-v1-1-4d904d40926a@oss.qualcomm.com>
+ <2026041418-volley-composer-6363@gregkh>
+ <c4f21420-c299-f161-2bf7-c9b79ca15037@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -74,55 +95,20 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdWeXS3ytgozp-mSrW4jcMRCW7_tbDTbMoEdXdbVj0dqJA@mail.gmail.com>
+In-Reply-To: <c4f21420-c299-f161-2bf7-c9b79ca15037@oss.qualcomm.com>
 
-Hi,
+On Wed, Apr 15, 2026 at 11:04:26PM +0530, Vishnu Reddy wrote:
+> Looks like the device have specific iommu configuration (via
+> of_dma_configure()), then using the auxbus or faux bus types does not have
+> the bus notifier calls to iommu_release_device(). Please correct me if I
+> misunderstood?
 
-On Mon, Apr 20, 2026 at 08:50:06AM +0200, Geert Uytterhoeven wrote:
-> Hi Thierry,
-> 
-> On Fri, 17 Apr 2026 at 15:15, Thierry Reding <thierry.reding@kernel.org> wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > Peter sadly passed away a while back. Paul did a much better job at
-> > finding the right words to mourn this loss than I ever could, so I will
-> > leave this link here:
-> >
-> >   https://lore.kernel.org/lkml/alpine.DEB.2.21.999.2407240345480.11116@utopia.booyaka.com/T/#u
-> >
-> > Co-developed-by: Paul Walmsley <pjw@kernel.org>
-> > Co-developed-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-> > Co-developed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> 
->    "every Co-developed-by: must be immediately
->     followed by a Signed-off-by: of the associated co-author."
-> 
-> https://elixir.bootlin.com/linux/v7.0/source/Documentation/process/submitting-patches.rst#L506
-> 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+I think the general feeling is the open coding of_dma_configure()
+calls in host1x are not desirable, it should only ever be called from
+bus code.
 
-You can also change my Reviewed-by: to
+If you need to create struct device instances bound to the iommu
+somehow this needs to be much robustly designed than wrappering the
+host1x stuff in a new bus.
 
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-
-if needed.
-
-A.
-
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> > Changes in v2:
-> > - add more missing entries
-> 
-> Thanks!
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+Jason
