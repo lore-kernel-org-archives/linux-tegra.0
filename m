@@ -1,55 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D203D4A33F8;
-	Mon, 20 Apr 2026 13:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3111B4BC009;
+	Mon, 20 Apr 2026 13:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776691966; cv=none; b=mrHrbVt/JVXZ5y6Ln33NWYq3S9uS783slx66lH4EDUThSFSykdxpKL5714SPTWQ//3atlcTfneVxqeuV+OW4iQ51MKOIi6U7/DGzSc4xiiNR/+xVNmVx/51Ky/QsV7EYl7W8oOYMJ0brWjJQKC8Uy2cVdiazsR7QdprGs15RTZA=
+	t=1776691973; cv=none; b=nZPYUsys5NpD6Ybdcm6Fe6R6fEKCmvLuwRGyEg8FdyfxsYNFSSp242tHEqb2gJAFY948aMJvLYXcMXyFDWwd5FYbcTkUcwHQjFnE+46OaAUX4YurV2OQ/UNvbRIbnW7IaJ7IpRIox/nd/2l7XmnYxkVPD+hzpJpYKmmqctewvoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776691966; c=relaxed/simple;
-	bh=DIGKo2zsA17VauZZiZ1xLrJA3DEHB2BiyBYge1MHuEA=;
+	s=arc-20240116; t=1776691973; c=relaxed/simple;
+	bh=ygLoYx8ZSLC+bb1Qij8yqEMz1QBgFeofoq+0ubva8y8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ALeaIh8sgATRL39YDfIansLZ3IMykCx571DglxQnaVBAPyWwmYj0+C+FvINYX1bTN90RJ8J7Bo0UYA8eQlMuZ2AYD7z1vlTrzN/MT+zcdZSOB6rZucZcV1sthyAyuTcV5MepYzELHoCJCrzt3FV+5ff1OiZT8QOfaZ/WCmijHWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PPmNAD7T; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=A4NLoBfMPcKA3Oh4TIBPFSswBdEFb64W0EBHtxrosUorHx5TSFnOkD8PPhofTVNHWNuW4gBWwH5MJbiGuEcOj0ikj2XHO2k7b/hi+zMAQpHbFIgkYP1fH5XDkNVf7RskXS5aLZojVoBp6Lq8SIwMcDl6avEkJXARN6zYk8bxXSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhCQE5DU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PPmNAD7T"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF5D1C2BCB8;
-	Mon, 20 Apr 2026 13:32:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhCQE5DU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2347C2BCB6;
+	Mon, 20 Apr 2026 13:32:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776691966;
-	bh=DIGKo2zsA17VauZZiZ1xLrJA3DEHB2BiyBYge1MHuEA=;
+	s=k20201202; t=1776691973;
+	bh=ygLoYx8ZSLC+bb1Qij8yqEMz1QBgFeofoq+0ubva8y8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PPmNAD7Tkl1tRvmu9fzY98Fea2atYmuiAIqTrOEcozAgJN6ZuLsQCt50LUG2VH61Z
-	 b4h2PscPhnbvQ4JPrZ1wVsBkIqWSOi/yWSkAOG5Zb1Eo+wMyeu/Qi+6nPTLBG2QPzs
-	 1u7D+diuPfMWoV4Em2bn7EZvVZv+iOZoakgsbu8z6WOHLDyeDsj4fjYpN5yzTkYB0V
-	 1WOD8BFrF9aCtf9HB96Kmo3DRoPB3WGXonPGA9cwcK6Ep5eGwHCHdxPxkWq2Qh9RMV
-	 fd64xsc5/cYW/BQTXOe1cXj6yCsBsGRmy/zYB/uF/jndjXIzgiwY2DVB2ohtsY+omb
-	 vTitmzFwMz4YQ==
+	b=jhCQE5DUUdj1SeqHGNC472t5KiFU6bxNwWFdFOcCyG6QmmU5U6H4KG2FNLYcECodP
+	 EVfdgws/A7p2Qb2W96dhh0ldiXqgXjaAHvR7H9tSQkm56Jtz6ud/pXGqnmZ7IWLwEZ
+	 S7gmaAO1TSuuDcDHOV3WZnAihk2tBBqA8LOHXN/Zh8W1+v7P/GQmAu+HRPSHoTrvru
+	 ijREK+UGcf6cNiXsO140x7sGJnkERhVFGLwsOy9PO1CdPBpZYQPBKTmJN3Yfe6ndo6
+	 LJehrCq1GaE+02QZrL5HKR70Ynityrlq52ZWDYt0tRgkElnic7LlFKPYXk176jyf8X
+	 g7YZ8EtNqzP1g==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Jon Hunter <jonathanh@nvidia.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	Jakub Kicinski <kuba@kernel.org>,
+Cc: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
 	Sasha Levin <sashal@kernel.org>,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
+	linusw@kernel.org,
+	brgl@kernel.org,
 	thierry.reding@kernel.org,
-	treding@nvidia.com,
-	vbhadram@nvidia.com,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	jonathanh@nvidia.com,
+	linux-gpio@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18] dt-bindings: net: Fix Tegra234 MGBE PTP clock
-Date: Mon, 20 Apr 2026 09:21:29 -0400
-Message-ID: <20260420132314.1023554-295-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18] gpio: tegra: fix irq_release_resources calling enable instead of disable
+Date: Mon, 20 Apr 2026 09:21:33 -0400
+Message-ID: <20260420132314.1023554-299-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260420132314.1023554-1-sashal@kernel.org>
 References: <20260420132314.1023554-1-sashal@kernel.org>
@@ -64,30 +56,20 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.18.23
 Content-Transfer-Encoding: 8bit
 
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
 
-[ Upstream commit fb22b1fc5bca3c0aad95388933497ceb30f1fb26 ]
+[ Upstream commit 1561d96f5f55c1bca9ff047ace5813f4f244eea6 ]
 
-The PTP clock for the Tegra234 MGBE device is incorrectly named
-'ptp-ref' and should be 'ptp_ref'. This is causing the following
-warning to be observed on Tegra234 platforms that use this device:
+tegra_gpio_irq_release_resources() erroneously calls tegra_gpio_enable()
+instead of tegra_gpio_disable(). When IRQ resources are released, the
+GPIO configuration bit (CNF) should be cleared to deconfigure the pin as
+a GPIO. Leaving it enabled wastes power and can cause unexpected behavior
+if the pin is later reused for an alternate function via pinctrl.
 
- ERR KERN tegra-mgbe 6800000.ethernet eth0: Invalid PTP clock rate
- WARNING KERN tegra-mgbe 6800000.ethernet eth0: PTP init failed
-
-Although this constitutes an ABI breakage in the binding for this
-device, PTP support has clearly never worked and so fix this now
-so we can correct the device-tree for this device. Note that the
-MGBE driver still supports the legacy 'ptp-ref' clock name and so
-older/existing device-trees will still work, but given that this
-is not the correct name, there is no point to advertise this in the
-binding.
-
-Fixes: 189c2e5c7669 ("dt-bindings: net: Add Tegra234 MGBE")
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Link: https://patch.msgid.link/20260401102941.17466-3-jonathanh@nvidia.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Fixes: 66fecef5bde0 ("gpio: tegra: Convert to gpio_irq_chip")
+Signed-off-by: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
+Link: https://patch.msgid.link/20260407210247.1737938-1-samasth.norway.ananda@oracle.com
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
@@ -95,31 +77,22 @@ LLM Generated explanations, may be completely bogus:
 
 Error: Failed to generate final synthesis
 
- .../devicetree/bindings/net/nvidia,tegra234-mgbe.yaml         | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.yaml b/Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.yaml
-index 2bd3efff2485e..215f14d1897d2 100644
---- a/Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.yaml
-+++ b/Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.yaml
-@@ -42,7 +42,7 @@ properties:
-       - const: mgbe
-       - const: mac
-       - const: mac-divider
--      - const: ptp-ref
-+      - const: ptp_ref
-       - const: rx-input-m
-       - const: rx-input
-       - const: tx
-@@ -133,7 +133,7 @@ examples:
-                  <&bpmp TEGRA234_CLK_MGBE0_RX_PCS_M>,
-                  <&bpmp TEGRA234_CLK_MGBE0_RX_PCS>,
-                  <&bpmp TEGRA234_CLK_MGBE0_TX_PCS>;
--        clock-names = "mgbe", "mac", "mac-divider", "ptp-ref", "rx-input-m",
-+        clock-names = "mgbe", "mac", "mac-divider", "ptp_ref", "rx-input-m",
-                       "rx-input", "tx", "eee-pcs", "rx-pcs-input", "rx-pcs-m",
-                       "rx-pcs", "tx-pcs";
-         resets = <&bpmp TEGRA234_RESET_MGBE0_MAC>,
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 15a5762a82c25..b14052fe64ac6 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -595,7 +595,7 @@ static void tegra_gpio_irq_release_resources(struct irq_data *d)
+ 	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+ 
+ 	gpiochip_relres_irq(chip, d->hwirq);
+-	tegra_gpio_enable(tgi, d->hwirq);
++	tegra_gpio_disable(tgi, d->hwirq);
+ }
+ 
+ static void tegra_gpio_irq_print_chip(struct irq_data *d, struct seq_file *s)
 -- 
 2.53.0
 
