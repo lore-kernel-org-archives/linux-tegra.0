@@ -1,142 +1,111 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39F42475CF
-	for <linux-tegra@vger.kernel.org>; Tue, 21 Apr 2026 10:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32F137881D
+	for <linux-tegra@vger.kernel.org>; Tue, 21 Apr 2026 11:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776766240; cv=none; b=p+rEeQ3ZoNmMPp5J5npXQkiYol2JVF2TcztZA7AEfMQNFygsG4897KScBjGImGLl4qnE0V2IW5Rk3uVpYwp0qB/m4GtJUVs91NXo8ft120j6VRiI1bve5iJbYF7veD6fnZHNEKHRbvAP+1xDF+R/7PDtfs1FIEK8uambzZp7kc0=
+	t=1776772210; cv=none; b=mH2eXCfkI9FHNweZcObJ9buq55JY6xM3HytXIPsnmN7OixaSBz51fEYeAMYk6/4KM38IvYnKN106MdI1sAeb4meyWWBZWWv6jCXds2Yoa1Jxdnsp+HFRJmQE/TDPA6bDbUKcOuirsGIup9nevoZhb5XyQqkBm/eYL7ZrfqxmkDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776766240; c=relaxed/simple;
-	bh=f40Z2T6UXslhgeqPT0SLEpc3IntV+bpVpgRMsiLEyn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j/d4O2ModUnPd+mZKZbLMNyddSLLTaCzZrh7lsYyqYjJUDSDUCGSZpPSYtwv1bGWzLXQdLJR2SjQPOOcX5OSekI5Rd0eg+jsDzddw8M/3/oYDp47Ck+dfQCjK5coLzc1P6MsZBSlS4rtP5MjecK+IbmX0zPxI7pKNcT7l8zgBQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4IdtJpx; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1776772210; c=relaxed/simple;
+	bh=Cm0rUJBs8nzZ7M9T+A4E3JiYdq9Yfxltq88+2GfeWuw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LxS0XcIOi1W/uWxRifHmGJwvgy3Qz1rzxQL8vvel9z1nxBQGNW0UKqx19hn1yGwOS3Zk8fQ5T0TSvNrAC/OvCizTJHl0aaK/nH7wioFY4B42KPs+eR4bHu8g5sBB77oAGhav9U30I6SykJNYgaOVnsPc4M/jcG7wuH5pD6Qb+q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RnBlCt4Z; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4IdtJpx"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4852a9c6309so35859665e9.0
-        for <linux-tegra@vger.kernel.org>; Tue, 21 Apr 2026 03:10:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776766237; x=1777371037; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J8i26WnvEzqtjggoSSbd+ZCeLOG6Y3DS7nQqRJJ4EJQ=;
-        b=P4IdtJpxh3J4Ba/yQW9bqWB6yY/2B7O+vqosljSHnOLXbAb1Z6ePuWTerhDGAVQha8
-         87wk0IfuqqED3PtVpLhUAMn6lkY6mQfVe6SQsODNrGxsTjO1bevJj2Ke5qxdSdPmk+X7
-         VVqn/vlr9QvXVlGwEGhzu3qmIdjl/06h2NqByf+rWnoJ5kNpDXsLVlPHUla/5H+IOlCJ
-         RMGmk/1yhgbJUtEZTbWEt0Qw/7fPsa1VTzEBOfL5rwL4i/Kc7VySzQYuv6lKdHi70QWs
-         37KiNSuyvz7TLUjeC9pAl9koDNGrIo5Eb/kNTzjI56T6etFr2mqGpC6+qIm4s4rgilUL
-         NXIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776766237; x=1777371037;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J8i26WnvEzqtjggoSSbd+ZCeLOG6Y3DS7nQqRJJ4EJQ=;
-        b=PtMl9eiOe4XSAxBFmWp1J7kS+byZyekmBI40CPyk91D0MN5AAXIqZ8KZc3It6Ydw8N
-         WnVfhlrcvipkolXL8dHPQm2ELM4XyMAl/wYEKsKxKWmTSkO6g0mp/WDPCH4//CQxVIvS
-         W7bNx8kfa8U8yv9Ubf4WbId/9UqZMumMRbCPa7/UzBpS1fZCn8KuZk6Emo3Jh69HDPEB
-         zPmTdmN4YDpyMMed7OLm3sOQxUHoQvyPvUb1OJ74L8jCjHQvTA69+KQORth2ATiHuUN1
-         at2qdIV8tjWEIqmxMWKYysTlFsScRRu4PW6oogSTiHc3HwskfUZGbQm5IdtQGkwWZyu2
-         PhPA==
-X-Forwarded-Encrypted: i=1; AFNElJ/37ic1KNR3zA5i8IS5OZF05iE1PIxB/FPrvzg21JHK1/tJPYY+s6bOQosqU/xewt1Xh0noluHeOB7xSw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTz8vYGG+qyg73djECUK5KHmcTahpZwrlfmoNFJHvISm7DsnaK
-	S5po0fpEkdQpPpP0s7F313v2DYzQFaUTDFn+v7R7szbeaKdESeudihwX
-X-Gm-Gg: AeBDieuBvH/PWdlQPFeU1CSTNyU/rAH2z0hEnCd4dC2kc5Gcr019Kl+1OV8HUAz2mhY
-	ifJPRgNqbO/VrhvC+0munPZQPQJJUJqZ7H2oo6TfONl1Duf75qnHKPosXU4czqRm1VOGb0hUKPW
-	QdgyDAV5nWLd+2A6qBlfdHp1dPU/R3XTm7xNN1XNc+yfvQFAEZYlOOr55+H1KU8e3p0uHdvYp10
-	ytNDwQMcd+NULciWROKNZCWFjQhhJ3sH2jN9uDgwul0sXwl0WjbBCEqj7sKW93KYgJmoX+3m1Qa
-	RsCviundkmlAttbkGgGL0q3AHM2ctb8o3wodpwXy2sPsBJ+02cOEuQNhY6czF84tzALOE0SxNKM
-	kdgCJoBB65pDEwEVZagXQ+0YuSKaSxbg0HjYWxR05/mIBf1+926OSZgjELpf281s+NXu2WSS7Ev
-	5x50TedH7LkoaMrhNk8uhotYxvYY4NpAVShX8sCVFT9YjB5tKT/FLcR1iFnu/xFYU3ltq2vQpb5
-	2cb+jrxYm+xQYprdLvqEIeL
-X-Received: by 2002:a05:600c:890c:b0:485:3ff1:d5ed with SMTP id 5b1f17b1804b1-488fb739cd9mr198783905e9.1.1776766237036;
-        Tue, 21 Apr 2026 03:10:37 -0700 (PDT)
-Received: from orome (p200300e41f131500f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f13:1500:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4891cca5743sm149377755e9.9.2026.04.21.03.10.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Apr 2026 03:10:35 -0700 (PDT)
-Date: Tue, 21 Apr 2026 12:10:32 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Thierry Reding <thierry.reding@kernel.org>, 
-	Aaro Koskinen <aaro.koskinen@iki.fi>, linux-tegra@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, 
-	linux-m68k@lists.linux-m68k.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Paul Walmsley <pjw@kernel.org>
-Subject: Re: [PATCH v2 1/3] MAINTAINERS: Move Peter De Schrijver to CREDITS
-Message-ID: <aedM9A5vZSpg2ejS@orome>
-References: <20260417131549.3154534-1-thierry.reding@kernel.org>
- <CAMuHMdWeXS3ytgozp-mSrW4jcMRCW7_tbDTbMoEdXdbVj0dqJA@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RnBlCt4Z"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1776772207;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/NV8ykGGMcTaxZaQ2zUVOv41TqUrDMHc9m56orvpcOA=;
+	b=RnBlCt4ZxIxCvf6ccNH/ZmbQ3VUb7VE8+Pvl00WVCUnm2mRDhdwVUUtJFBlmDNbn3xvzUb
+	eUTMvQVXRkfykoPQvX/oi5+FqBbCOutpPVh4c3Yk8DFO2INJlCsDrfxCXo1JYYTZDh8Qzr
+	TzAW/UXOdEx2CXGJywRklTV2WRQx0g8=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-658-abVUpCZENIOyEYY_k6aGBQ-1; Tue,
+ 21 Apr 2026 07:50:05 -0400
+X-MC-Unique: abVUpCZENIOyEYY_k6aGBQ-1
+X-Mimecast-MFC-AGG-ID: abVUpCZENIOyEYY_k6aGBQ_1776772204
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3993C195608F;
+	Tue, 21 Apr 2026 11:50:04 +0000 (UTC)
+Received: from thuth-p1g4.redhat.com (unknown [10.44.49.140])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 23708195608E;
+	Tue, 21 Apr 2026 11:50:00 +0000 (UTC)
+From: Thomas Huth <thuth@redhat.com>
+To: Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: tegra: Replace __ASSEMBLY__ with __ASSEMBLER__
+Date: Tue, 21 Apr 2026 13:49:59 +0200
+Message-ID: <20260421114959.202327-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iljpeusu54227slh"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWeXS3ytgozp-mSrW4jcMRCW7_tbDTbMoEdXdbVj0dqJA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
+From: Thomas Huth <thuth@redhat.com>
 
---iljpeusu54227slh
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/3] MAINTAINERS: Move Peter De Schrijver to CREDITS
-MIME-Version: 1.0
+While the GCC and Clang compilers already define __ASSEMBLER__
+automatically when compiling assembly code, __ASSEMBLY__ is a
+macro that only gets defined by the Makefiles in the kernel.
+This can be very confusing when switching between userspace
+and kernelspace coding, or when dealing with uapi headers that
+rather should use __ASSEMBLER__ instead. So let's standardize now
+on the __ASSEMBLER__ macro that is provided by the compilers.
 
-On Mon, Apr 20, 2026 at 08:50:06AM +0200, Geert Uytterhoeven wrote:
-> Hi Thierry,
->=20
-> On Fri, 17 Apr 2026 at 15:15, Thierry Reding <thierry.reding@kernel.org> =
-wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > Peter sadly passed away a while back. Paul did a much better job at
-> > finding the right words to mourn this loss than I ever could, so I will
-> > leave this link here:
-> >
-> >   https://lore.kernel.org/lkml/alpine.DEB.2.21.999.2407240345480.11116@=
-utopia.booyaka.com/T/#u
-> >
-> > Co-developed-by: Paul Walmsley <pjw@kernel.org>
-> > Co-developed-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-> > Co-developed-by: Geert Uytterhoeven <geert@linux-m68k.org>
->=20
->    "every Co-developed-by: must be immediately
->     followed by a Signed-off-by: of the associated co-author."
->=20
-> https://elixir.bootlin.com/linux/v7.0/source/Documentation/process/submit=
-ting-patches.rst#L506
->=20
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+This is a completely mechanical patch (done with a simple "sed -i"
+statement).
 
-Good point. Thanks, I'll add that to the patch.
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+---
+ Note: This patch has been split from an earlier series of mine
+       to ease reviewing
 
-Thierry
+ arch/arm/mach-tegra/reset.h | 2 +-
+ arch/arm/mach-tegra/sleep.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---iljpeusu54227slh
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/arch/arm/mach-tegra/reset.h b/arch/arm/mach-tegra/reset.h
+index 51265592cb1ae..92a89713d5e57 100644
+--- a/arch/arm/mach-tegra/reset.h
++++ b/arch/arm/mach-tegra/reset.h
+@@ -21,7 +21,7 @@
+ 
+ #define RESET_DATA(x)	((TEGRA_RESET_##x)*4)
+ 
+-#ifndef __ASSEMBLY__
++#ifndef __ASSEMBLER__
+ 
+ #include "irammap.h"
+ 
+diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
+index 4718a3cb45a16..e332d261c1dbd 100644
+--- a/arch/arm/mach-tegra/sleep.h
++++ b/arch/arm/mach-tegra/sleep.h
+@@ -38,7 +38,7 @@
+ #define TEGRA_FLUSH_CACHE_LOUIS	0
+ #define TEGRA_FLUSH_CACHE_ALL	1
+ 
+-#ifdef __ASSEMBLY__
++#ifdef __ASSEMBLER__
+ /* waits until the microsecond counter (base) is > rn */
+ .macro wait_until, rn, base, tmp
+ 	add	\rn, \rn, #1
+-- 
+2.53.0
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmnnTRUACgkQ3SOs138+
-s6FtNA/+IOGgvf2lEqydkdm2yLiSq9mf9BZV7RmX1tRK5PKD53tIx45Jr6VhFbsA
-lUfLPKoMJaUJvC+a4SglqYSgjVTR/OXgqWIN8PkWlF7DedUL2pFsF68A8RY0Zz9H
-INvSyIIKld2hbW6rMvclNX9G3NKbYoGjNdO/+iBZ5Yg1rNN9fG6BP+QUFmA3TrCy
-5x45YruOqPkCcE6/9JslSP8F3xibDt30ZrR01QyBL3GawSrlR24+EpN9WxTlOT+M
-eo74keyH71q6J3tT2EiBXJXkB28XSh9ZSlEe0nfcERy0xxFFu9BoGrwCQaLIOGQR
-QWMu4eX/U58VInPR6ltYCv7prkAZf9bcrVE25ym3A8TtsdmK27KYbwWKND5Sjlhd
-R3p5/Hrtkjuyg1c06co4BUc+vu73LJ6hktpY9Iu2KLOIPRCC+Oh9TOcpkhmPrSK2
-JUpmvDinXx6XjUNVGrkfzcdbm6JUGMQiX4i0YEtR6uAb7zfi9VS5Ow5cfoQJu5ZP
-OvlcJt0vPbSUhNP4Sqg7xdvqU6g2/soQuh9Kf6Wt0MJPQQrtr0C20HhRxfDwNcId
-SIuS8X8BqPv63mRwVSAu0ENlqs4X3qD0059UV+cK+JhLf89cz51OgAFwguzBDX5p
-KS2X4VY3cTIEvF3AKA5/ZjcCPYtkJOkXqheTUcfvQuhuy9rHR4g=
-=YfYq
------END PGP SIGNATURE-----
-
---iljpeusu54227slh--
