@@ -1,27 +1,27 @@
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010032.outbound.protection.outlook.com [52.101.85.32])
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012013.outbound.protection.outlook.com [52.101.48.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B9027FB0E;
-	Tue, 21 Apr 2026 20:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79637327BF8;
+	Wed, 22 Apr 2026 06:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.13
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776803964; cv=fail; b=BvHgvghb+P3v6/R4ZeToGGwRX2i4zN5CxUBuqf8Imvc7lrc4KNYd4x3hBzUuytlRFJrUEe0GL72ID5XalN2sFznehap02o/dcMGd+yYDJ/CwBhOf2D7bZ6QqYnnBnFwtr6P0a+wJQsy+aLtOVr2U3308LEurTAVxsQNEOyqN194=
+	t=1776840124; cv=fail; b=gHXxGRjEYyHys1Cq2+MM91y3ThhLzAF9jOXFd8ycs0gozjDBW2wckxjiagJw8tEc5s1Hw3XTxI98jaMt+wdgS9Igg/4DSz+V/yQa4he2/4h8N9dJqvll+TEyu45AUQsA3iFMO05ye5FKGyhb712g/6OqY8guceyBOO7GYnG95e4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776803964; c=relaxed/simple;
-	bh=sHZYJb6teOoAtCp77LjkxoYStHyP0w3oUnRdC7+efgo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qjvxHryvkNbXGtmDpZsZHDKYbQ0EpLT5tEEw4/cXe1YblhyaZzSj48++VtGLkMLjeRPmOzD3qk3ZzN4IhLHeIGYxlZerznUHMjfX7ecKX60UYI7ovHEpOIp7PFXENwKJSLclIorFtkenug24UEMRvMGUmeNVp43iuj1s2NzMxLU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=oRNR9hgB; arc=fail smtp.client-ip=52.101.85.32
+	s=arc-20240116; t=1776840124; c=relaxed/simple;
+	bh=CCh138lmsq8e8YBK8iSo9BAajG2eFxx7FRjLQiNGbgY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tBFHifskXAkaKOzYMahwGJFVEcOVoiMtXejuilPNBA8nFq5bhnS69hVYdBJ5OBfxMJSGBr2dwBuFtIk+TQqnOyWRzzPNBbDeEHCiEhOey9A68Kl6CpTI3q4jFE5gnvrYm0/t+Z0d2qz51ahKW2KLXkBo60Up/bRMWLM0YN3vPsM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YQi7OiZd; arc=fail smtp.client-ip=52.101.48.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="oRNR9hgB"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YQi7OiZd"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zCzwOvP5Bf8x614IRmFjgL8QUY/FVCARJQx2YX7uVGoxehvTz76oa7xydGD9e2x0dMi1EhE9B6sCBZZgdy9MSOKSpnw0db82IgfeVXynY81zQ6P7aaCI/WFjBCU8xnYapXap6nTPTNGxbkoj7jEMuO14SKxUOym25OcAmp6x7bo0Uyp4GO4K+qOx5Ymn8mofAZ1kW7QR9vlnvjnknGjRT+oPASAMKrIj5lYiaZ3v5JMpngKYJC9a1h7o5FqWViWq/2wCWZ5sDGwICEdEniOSQ6oHHfjUr0isq7ZWsEnksoIBkAw8NMHTk1eo3PGl43LN35+AcTsL+zhz3usGU0Ns2A==
+ b=wAv3otf1YnmnV3rzC6URTm4qbwowLf3VqX16WIoUW8yccHPnyO/oOQfOKY2ICQ3RPUbxAWHAycjO4hKawrOZc38Mb+xzNnu3Dv1LUcPASBautx9NwVykFVhC8wDcnD0LzaMU5oM+5iTIVwCfLzdHgq3/qiIOpnNFyCrh76+7RJndW+yqEbA7Dmk/Yf2W2TlqWh5lnwppkt2V1XaYq+fDtjDtQH316J5FzTa0Mu93Pb/nQM5EAEZ/iIuWROQixZxHKFD5+Hns/BxqIyZyrc6AWnSyQuFRW1yC5xs2bdHZSQJA4Dy6Mt/p8zBsVYhsk4im7TDzknoD5PG5nBiiD0cWvQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rLQD/bHn08XpHg7HbA43UdSwR5dHTkh3qrSmQeO9Qxs=;
- b=h6gCxHNQdeNPSoYqZ3j65YhENp7yu4qHyC+JgeycKni20k1eIQ/i78jPm3JIejw97Wjwa3HlFzj+qXhWglC+JHdqi4ImxZEi0B6YTWeBALP7GPzkDogAkQ0v0vJ91gUl/04Zq9T/kwqfQZKsRENGFPUqtoGLjLiCrbrGrC7nvLgWVQR9qLkBFMTzchClI8pFYlqU/XJJaLwZ5BgCoNgrDrRaXgl8p/zerwcDAtcwQfMY9gxrZZiuaA8LuFLdGh5BTLBeyxHysE1OC2iP73lE4bOi7SRe2sdLSPPeT3BoisMx48+XAjlC2W+1bCVJllauNlkf5AalbD8KJGznD3Ya+A==
+ bh=hToOVopm+lRkVUB34y+lkJND2SYCsjff9a3fISnii1c=;
+ b=D4P9q1509FLZp7qhZk+Ch68wBAE5O96FzhrqnxE9vgkPa2dTp/VNI5uMRLAD33B5Fq6bxmKOryWjb7TKug8Dsq63G2L9igFZdMBseUv4NQCiY6OxtqHTtzooNTYPKjOrpF9wS2m4aHN8bAx8b70wCSVgmLraZiOnh9LWuc7m72Ureo+dkSEcS48E7z9uLp4RNa1zF96a+2c1ntVduGXDDUKOz6vkiiuf4OB9P0SSHmqwlNw5x7mVggn7p5PmKRl/RtW8T6MFoHBF/pLh9uAhpvk17YDZmdgJZAYG713frNSjXnAIgYFHXEUMPI7N9kNRMsqillYG5SSsymHHmMlatg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -29,18 +29,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rLQD/bHn08XpHg7HbA43UdSwR5dHTkh3qrSmQeO9Qxs=;
- b=oRNR9hgBXglum6LoRq897m8e22NziAdVz96sZOk2cEDwTl9b3njwZENvmh/OMez4XrVQbtX6ahIOcCa7Z5M+SaRFn/Qt/Zv+Yy+QoyfQRhjLInZnY7WjUKuExNFFJ1ZahuxqEtTTuvOWLgzeO4OojiloQVBP4O82ccNIgdHFs9P6dOincUWtusIW/QyxXsIeh0nxVB/J2GGIsGg5arimKmTZjsBwl8/1mQWosZWM/C6txYIKbzLMxbjavAuR0ote7Uhtvfb6Ml9AH0EJNVIhLoiUWAf9IF9JAlaOw9FSDoaD4iQMjiplgydtrwUk08Khy+/8YQr8wbhbT7Lpn06Vcw==
-Received: from CY5PR04CA0006.namprd04.prod.outlook.com (2603:10b6:930:1e::8)
- by SJ5PPFFA661D690.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::9ab) with
+ bh=hToOVopm+lRkVUB34y+lkJND2SYCsjff9a3fISnii1c=;
+ b=YQi7OiZdiws+Og3kxUC+ZzcEP7tSWciILqVOFdym53wuB7W3AjCAEq05k6x26UdSrss9+5uIkvjGuRgkGc/Bwj4G20xKhQaXYKb9Uzc2J5HxD97NRi521TjaI25bmOq1kQnsyAcSSkwG0dJjQEFCXpnfNvTlHF4VqiQN2oMITARIieBl9KMcfVmVBBcCe/V8z5xilYxh+ILoFmgc1AHaJyOfF3cJY/pInxs3JAbr56B4xAqUPSXKyleKj2ACyxao9DFCG7sgW+Xhf3ShgzJUigTJfyCVwNTIrd23FMMeMxrnrmFbJe6szabjyFd4etYpMfksDRtv/0VGP5pTjlL3Vw==
+Received: from CYXPR03CA0050.namprd03.prod.outlook.com (2603:10b6:930:d1::15)
+ by CH3PR12MB9343.namprd12.prod.outlook.com (2603:10b6:610:1c0::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9818.25; Tue, 21 Apr
- 2026 20:39:20 +0000
-Received: from CY4PEPF0000EE37.namprd05.prod.outlook.com
- (2603:10b6:930:1e:cafe::5c) by CY5PR04CA0006.outlook.office365.com
- (2603:10b6:930:1e::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9791.48 via Frontend Transport; Tue,
- 21 Apr 2026 20:39:20 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.17; Wed, 22 Apr
+ 2026 06:41:58 +0000
+Received: from CY4PEPF0000FCC5.namprd03.prod.outlook.com
+ (2603:10b6:930:d1:cafe::bc) by CYXPR03CA0050.outlook.office365.com
+ (2603:10b6:930:d1::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9791.48 via Frontend Transport; Wed,
+ 22 Apr 2026 06:41:58 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -48,30 +48,30 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.161 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.161) by
- CY4PEPF0000EE37.mail.protection.outlook.com (10.167.242.43) with Microsoft
+ CY4PEPF0000FCC5.mail.protection.outlook.com (10.167.242.107) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9846.18 via Frontend Transport; Tue, 21 Apr 2026 20:39:20 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ 15.20.9846.18 via Frontend Transport; Wed, 22 Apr 2026 06:41:58 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
  (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 21 Apr
- 2026 13:39:01 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ 2026 23:41:42 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 21 Apr
- 2026 13:39:01 -0700
-Received: from build-bwicaksono-noble-20251018.internal (10.127.8.11) by
- mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.2562.20 via
- Frontend Transport; Tue, 21 Apr 2026 13:38:59 -0700
-From: Besar Wicaksono <bwicaksono@nvidia.com>
-To: <will@kernel.org>, <mark.rutland@arm.com>, <james.clark@linaro.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
-	<vsethi@nvidia.com>, <rwiley@nvidia.com>, <sdonthineni@nvidia.com>,
-	<mochs@nvidia.com>, <nirmoyd@nvidia.com>, <skelley@nvidia.com>, "Besar
- Wicaksono" <bwicaksono@nvidia.com>
-Subject: [PATCH v2] perf/arm_pmu: Skip PMCCNTR_EL0 on NVIDIA Olympus
-Date: Tue, 21 Apr 2026 20:38:56 +0000
-Message-ID: <20260421203856.3539186-1-bwicaksono@nvidia.com>
+ 2026 23:41:42 -0700
+Received: from kkartik-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Tue, 21 Apr 2026 23:41:37 -0700
+From: Kartik Rajput <kkartik@nvidia.com>
+To: <ldewangan@nvidia.com>, <jonathanh@nvidia.com>, <akhilrajeev@nvidia.com>,
+	<vkoul@kernel.org>, <Frank.Li@kernel.org>, <thierry.reding@kernel.org>,
+	<digetx@gmail.com>, <pkunapuli@nvidia.com>, <dmaengine@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Kartik Rajput <kkartik@nvidia.com>, <stable@vger.kernel.org>, Frank Li
+	<Frank.Li@nxp.com>
+Subject: [PATCH RESEND] dmaengine: tegra: Fix burst size calculation
+Date: Wed, 22 Apr 2026 12:11:34 +0530
+Message-ID: <20260422064134.1323610-1-kkartik@nvidia.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -84,118 +84,71 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE37:EE_|SJ5PPFFA661D690:EE_
-X-MS-Office365-Filtering-Correlation-Id: 133db09d-71f4-4876-ef98-08de9fe6109a
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCC5:EE_|CH3PR12MB9343:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4a5b5fae-cb1f-4f3f-64cd-08dea03a408b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|376014|1800799024|82310400026|56012099003|18002099003;
+	BCL:0;ARA:13230040|82310400026|36860700016|376014|1800799024|921020|18002099003|56012099003;
 X-Microsoft-Antispam-Message-Info:
-	WXc5LZB8bkvMXw6BYm8Et+H5QdeNguJCX8AB0r2bDQHsvW9YMILVQIEtVnbUHo8DfLsWHL5jLIFwbKlWdB8aZYb+mzBHc7SvPW7rVN9W3sGqfN7nUpNjTsDF3ohT0LBQwCTe4Lax/P9lPs7O66foEVGRYd+m28YWJw3ATNcasRr+Xm3cDeXOrMZyDLpMi9Vn89rHWbXXPYecIeX4pImOtTTSisS4qOL1II3mALGKreZLG5IYPM4Bi6dYHa+z8e6WSMMcBAjWTTWPAWj+6Z8ts/3mz0U38pg8muW7k6srh77/zl7W8GTGCYWrHpAsVX+XtxPVYddLJZvt0IeGKuuMiohdllFMdRLFJTZaOJM6bX1E6fApgHdrrJ2IardzvTIuvOOs+Q1FvojoViGwd7VVEkILVw/9CAZ5L1NtsJK2fIlcAP3W/kTM9rHmFvstS+IXWwBFqJX2avDeTP3T1J9PHbCps9xYXvrGy0J0Px4tQqz03i3outesgOH115HkI9pfmWueNOlWjr9fFg4hzxoM0GO4d5GsK6l2bMcqzW7K1pHZlc/Hmajb98FyXlz5efYK+GzlIruWry9qPaBhYBIRS08esvggB/ddPti62SVbL9l0CuTDocsNSpPxJEFJIG75z5ThAm52FCdtUyrSY1g81UkmnChG1/ssBRxyywTEL5jj5Swc1smuVTjjEYySTJAxdj4K4331M6pO4aqwFGHmmBfPwN+6NcNU6oc452tMzf/uGws1kMaIMrhfqfMsnwdeG5EmBzZnvjT2v4RSnvkvrA==
+	jShiw859t9Cnqm0lMXcyvpWmV2E0I1FYyRA1aIn+NEy2jKHctraGl4dhmc7+/OO4S/OvmotAjnL49xDyNmolzZHamn6OOM8CWToEdHSUrOEAIQjy2Uqonzr1TOJXGdmPIV5eTrl1KXN5wXM8gGyTU+HKUd9NXnk5Fw6bBrXhG5clA1/runVp9156Wz8xo4VLxZnoQm5DHOsnJLjI2o+R/YBXkVZ62TA9fSdYH8ZfqaQdKboeCRXwoWjtOZIXVPkcXiTfMfkZowKu8RSnwBDcG2J3+bOIvZGvYGWsAx8MtThiJGoLE8MQ2IfDilelnHGaTwqnVepe5gDFtN6da7a2n5eGFbllJniMdeW7/oyRTA6BS25iz4oIpDoJ6xUpE45iwAVrd+4Fycb7pd2JFjVJMMYssDPiEoMfm91psqzK4PDH3Z08K2TeLxQWaI5RI4oPjIrwrJ4IcJ5Iuxc7RYn8jMduTgTRojj7eQk+gH6o+wu96fT1m4Ljn3ItJfe39MjsowPciO4uj/SuZk5/ytRnHeEBOOBBTOVt7q2PepS04d9PHO7dfMlGsJFvIeXTDNqQk8bqb1LhXetv4npvBMOxvBorjbx2B7bcRiphyQ4Vmn1aiT4TyYDMuvL+DwgU1B9YkCTgLT26G1bkUVPufsPvD7AJs4Lhfa1tAKIYG1IJNVw9iOi9rsgDkH41F/DN9ke/osfY7EJolKWUZPZuGkbH5A3zCCIH/4GgL5cxLYGQKHfnE8Bm87ELQsiPlGbobpJ59IAly68s+Sam3oGL2G559m7AL3JxGUDEblL19gOnmA14m8LKQjO/JtdYkItXT7Nx
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(376014)(1800799024)(82310400026)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700016)(376014)(1800799024)(921020)(18002099003)(56012099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	cocbFsb2GU6PKGP0KuzZMaxOfTNwBsqJ7tlKAjggLnKWu2LjnY/jRHWvar99VWE5/KYatWhY3fRywoPgL1VtW94B413GCAgwBUwBvVbtlRUsrjoh3nE+yz6EO+hc814R/mssidBzF/KTGKd35ME5NC0cZ7x6zvFoyxtaCKnAybN2byI756rEGpCqeeTwH7iSblXbLLe91pXWJTRgjKyB3pPSfsZuGbV2E+GwPW7SBIpRGUD1tBs7UmGw+lnA31X0rkJM8zfi13gAXR3/1dPv0Wkib4dzRTr7pFu70sypjRH5O6eSwhYTRVeN9UNMdTHzAhpCp81gQeDof4Vt4i+5JJhQChz6GCZW3CxjDTXijh0Lxi4KbhpmU0xUFwNqnlXb3k0sN23fEf+frBhOYK9I3K48e0VJgTpifBF23UtTHswVYEvv2SAihx6eqs+gsCw1
+	o/wORi2VebzSThtKQyls7NAn7xeV9kxEOkJ3bg0zGnHnlsrdW9cqLkoZ4E7dSC/hLG50nOHDoOeVX8GVtG0tcCcPggfv3SqMk7XE2PyeJO89xyKdxogrQlPQEL0JX2VaE119eSJljQGw9TTnOnK3O2+h/URvVZaRfLu3L0kLu4SPKb0udeAIfua5/uwpUNaF/cyFXeagVRNS18bH7TtvLNnXKx+pIYngIkmDI45Xzr+q8qmmA5e6O/7kTNPJQgwG5o92RjZs2zSQVMWEq6nWKcnNFW1PMhgU3mrJsQwuO9JtUX2+iSPdQqOaj0dpmIJL57FBV37Epp62F2pP2Bs2hKR+/co7JVj36FBuFev7RxPej1oWRTSiKfOQ0YS4GTT1+E3DPDM8CAzUae/uFGFU3JapeFMRZKetnpblMJD30Mpba7OH8mWukMgSUO5bi73z
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2026 20:39:20.1956
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2026 06:41:58.3407
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 133db09d-71f4-4876-ef98-08de9fe6109a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a5b5fae-cb1f-4f3f-64cd-08dea03a408b
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE37.namprd05.prod.outlook.com
+	CY4PEPF0000FCC5.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPFFA661D690
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9343
 
-The PMCCNTR_EL0 in NVIDIA Olympus CPU may increment while
-in WFI/WFE, which does not align with counting CPU_CYCLES
-on a programmable counter. Add a MIDR range entry and
-refuse PMCCNTR_EL0 for cycle events on affected parts so
-perf does not mix the two behaviors.
+Currently, the Tegra GPC DMA hardware requires the transfer length to
+be a multiple of the max burst size configured for the channel. When a
+client requests a transfer where the length is not evenly divisible by
+the configured max burst size, the DMA hangs with partial burst at
+the end.
 
-Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
+Fix this by reducing the burst size to the largest power-of-2 value
+that evenly divides the transfer length. For example, a 40-byte
+transfer with a 16-byte max burst will now use an 8-byte burst
+(40 / 8 = 5 complete bursts) instead of causing a hang.
+
+This issue was observed with the PL011 UART driver where TX DMA
+transfers of arbitrary lengths were stuck.
+
+Fixes: ee17028009d4 ("dmaengine: tegra: Add tegra gpcdma driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 ---
+ drivers/dma/tegra186-gpc-dma.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Changes from v1:
-  * add CONFIG_ARM64 check to fix build error found by kernel test robot
-  * add explicit include of <asm/cputype.h>
-v1: https://lore.kernel.org/linux-arm-kernel/20260406232034.2566133-1-bwicaksono@nvidia.com/
-
----
- drivers/perf/arm_pmuv3.c | 44 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
-
-diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
-index 8014ff766cff..7c39d0804b9f 100644
---- a/drivers/perf/arm_pmuv3.c
-+++ b/drivers/perf/arm_pmuv3.c
-@@ -8,6 +8,7 @@
-  * This code is based heavily on the ARMv7 perf event code.
-  */
- 
-+#include <asm/cputype.h>
- #include <asm/irq_regs.h>
- #include <asm/perf_event.h>
- #include <asm/virt.h>
-@@ -978,6 +979,41 @@ static int armv8pmu_get_chain_idx(struct pmu_hw_events *cpuc,
- 	return -EAGAIN;
- }
- 
-+#ifdef CONFIG_ARM64
-+/*
-+ * List of CPUs that should avoid using PMCCNTR_EL0.
-+ */
-+static struct midr_range armv8pmu_avoid_pmccntr_cpus[] = {
+diff --git a/drivers/dma/tegra186-gpc-dma.c b/drivers/dma/tegra186-gpc-dma.c
+index 5948fbf32c21..0aa3a02b2277 100644
+--- a/drivers/dma/tegra186-gpc-dma.c
++++ b/drivers/dma/tegra186-gpc-dma.c
+@@ -825,6 +825,13 @@ static unsigned int get_burst_size(struct tegra_dma_channel *tdc,
+ 	 * len to calculate the optimum burst size
+ 	 */
+ 	burst_byte = burst_size ? burst_size * slave_bw : len;
++
 +	/*
-+	 * The PMCCNTR_EL0 in Olympus CPU may still increment while in WFI/WFE state.
-+	 * This is an implementation specific behavior and not an erratum.
-+	 *
-+	 * From ARM DDI0487 D14.4:
-+	 *   It is IMPLEMENTATION SPECIFIC whether CPU_CYCLES and PMCCNTR count
-+	 *   when the PE is in WFI or WFE state, even if the clocks are not stopped.
-+	 *
-+	 * From ARM DDI0487 D24.5.2:
-+	 *   All counters are subject to any changes in clock frequency, including
-+	 *   clock stopping caused by the WFI and WFE instructions.
-+	 *   This means that it is CONSTRAINED UNPREDICTABLE whether or not
-+	 *   PMCCNTR_EL0 continues to increment when clocks are stopped by WFI and
-+	 *   WFE instructions.
++	 * Find the largest burst size that evenly divides the transfer length.
++	 * The hardware requires the transfer length to be a multiple of the
++	 * burst size - partial bursts are not supported.
 +	 */
-+	MIDR_ALL_VERSIONS(MIDR_NVIDIA_OLYMPUS),
-+	{}
-+};
-+
-+static bool armv8pmu_is_in_avoid_pmccntr_cpus(void)
-+{
-+	return is_midr_in_range_list(armv8pmu_avoid_pmccntr_cpus);
-+}
-+#else
-+static bool armv8pmu_is_in_avoid_pmccntr_cpus(void)
-+{
-+	return false;
-+}
-+#endif
-+
- static bool armv8pmu_can_use_pmccntr(struct pmu_hw_events *cpuc,
- 				     struct perf_event *event)
- {
-@@ -1011,6 +1047,14 @@ static bool armv8pmu_can_use_pmccntr(struct pmu_hw_events *cpuc,
- 	if (cpu_pmu->has_smt)
- 		return false;
++	burst_byte = min(burst_byte, 1U << __ffs(len));
+ 	burst_mmio_width = burst_byte / 4;
  
-+	/*
-+	 * On some CPUs, PMCCNTR_EL0 does not match the behavior of CPU_CYCLES
-+	 * programmable counter, so avoid routing cycles through PMCCNTR_EL0 to
-+	 * prevent inconsistency in the results.
-+	 */
-+	if (armv8pmu_is_in_avoid_pmccntr_cpus())
-+		return false;
-+
- 	return true;
- }
- 
+ 	if (burst_mmio_width < TEGRA_GPCDMA_MMIOSEQ_BURST_MIN)
 -- 
 2.43.0
 
