@@ -1,38 +1,38 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4536D3E9F97
-	for <linux-tegra@vger.kernel.org>; Thu, 23 Apr 2026 11:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995953E9F8E;
+	Thu, 23 Apr 2026 11:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776945259; cv=none; b=UYtz3t9Gngj/a2H7JJ0jN7GWpdeJ990Tqsial9WImorC76J2t1V3LHsIsCcJcHGioW5GPOCFlg7MuIBKAqSMj/M2veTTE9KE8+EnOi64ugWzKSrKnhri5k+OAAUicYnWYpsvJZ83iNjlgXwF5ZpHhx8ujw+VKTO05cqW/NMj2rE=
+	t=1776945395; cv=none; b=HypP+OXmne27WHep9VS9TLBjcgD/oz2R2WFeSEHQ8bP0GH+AdR0cf6GYuVljeqKDNwXbAdhXl3ZLdUrpsc10QwSkKR6unWXTLpSu0UORQZlNbotUGDTuVwCQAI4FA7aBQrTRW/YMTnfYlA6pLtLtXWQKMzFkY99E7Vgdj2Pe/4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776945259; c=relaxed/simple;
+	s=arc-20240116; t=1776945395; c=relaxed/simple;
 	bh=CKtBlpi84UvX0YqdqZoI+dNv38AVb0m67CslbD+JITY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Lhkw6lxId39vFJnUX3h/kNSiu3jmzNZNS76DVJ+RTd42V67qubvi3M/EjBevtdfVS9TmPZuYYfLY1b3csTj7psvxX71iGCSjsO+z/sdOy7AnNkqzW3gkZGGlj0qPrs05XNtILFQfJsoGn2jzL6jQv+A9HOmOEUFtFOndM4jmFow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=u04KJPJe; arc=none smtp.client-ip=185.246.85.4
+	 MIME-Version; b=J0a+KPkPF9KE2mBUci/tZH+Lsj1+Kv9sR6c2A7/X7MAeiKIQE5EMR5PyhWAKr94CoMNZlZkmk5CSqo6TIIUTKobEamKVIkme/lCvG5X4JZXT8abcjkIZXOSohPuWqaFfd9mkUybbuIzFf1HDIPc3NQgNSiWBWhAGEmMmd0l0T/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mjqLdQVI; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="u04KJPJe"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mjqLdQVI"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id AA6A04E42ACA;
-	Thu, 23 Apr 2026 11:54:14 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 2BEC71A33C5;
+	Thu, 23 Apr 2026 11:56:32 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 63F71604EB;
-	Thu, 23 Apr 2026 11:54:14 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C221D10460B5E;
-	Thu, 23 Apr 2026 13:53:46 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id E8909604EB;
+	Thu, 23 Apr 2026 11:56:31 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B504010460B5E;
+	Thu, 23 Apr 2026 13:56:12 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1776945250; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1776945388; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
 	bh=rdtm2Mh4NvOrdzs2o8Fw+gJ72Ofe3PZvxoUNrnpIO1Y=;
-	b=u04KJPJeSXFBhQCKkt2ZyvRWThFfZidRsxnYGqo6R+dyYSKJlvDD+mxl7yYbATWE5qRZfL
-	9R31Y8myN7D+SZ1mCmdZy3tVPAzk0CiJrQAb+lgVVn/2vGSsDiFwPHVXskGnhgZ6/eRAGO
-	tkfzQVeB88kRem3WOyssXTKj+qB/I/0ZkXzEcx4iMxMJGWlQQe8sE3MLORu9fEudmg5I/r
-	Fxtqtu9AqBMej3vNwWDkPYz7j9CXkRVuyYJ7wSOjM2GhjabZBAbKOflBREmZyU7rXTQ7XM
-	WIwwcE+nzmlILk0x4XpbRihQclnu2kfXZk/DoFJHeRPEevHJUFvmdwz+8bBxEA==
+	b=mjqLdQVI1Dc8aftGHQVv+VhIMXpBs21PQkP+S5UPz2nov+JL8kUvexa9RS9WZs1wb1xTac
+	BHw41yuxZLY3aFGe9t8eAMtgiV5a2Bu7hwJnOg3fDSN1VaofZBGicll679ZrmKpDvbhFyC
+	9sU1xF4fWXHO5bAMiCDeQ0rGjou3iGmYZlbKU37153HaOyuA/B7IyMR8psXISTcT+ES4iw
+	zbdVTMl2i5ZsqkVF+la3VxUllzn7e9TA3BhAJlHx5CFz6PaR3wNnyemgQxc4EAme59maCh
+	y4l0dDGqLufnPsAOcb/fNwvqenyLG1UlTEI8qhU6AdHBxQtcNxeFcNpp/vB72w==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -112,9 +112,9 @@ Cc: Hui Pu <Hui.Pu@gehealthcare.com>,
 	linux-samsung-soc@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: [PATCH 35/41] drm/rockchip: lvds: remove now-redundant call to drm_connector_attach_encoder()
-Date: Thu, 23 Apr 2026 13:53:28 +0200
-Message-ID: <20260423115334.444750-1-luca.ceresoli@bootlin.com>
+Subject: [PATCH v2 35/41] drm/rockchip: lvds: remove now-redundant call to drm_connector_attach_encoder()
+Date: Thu, 23 Apr 2026 13:55:44 +0200
+Message-ID: <20260423115550.444930-1-luca.ceresoli@bootlin.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
 References: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
