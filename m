@@ -1,84 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA04626E173;
-	Thu, 23 Apr 2026 13:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DEA37BE89
+	for <linux-tegra@vger.kernel.org>; Thu, 23 Apr 2026 16:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776951629; cv=none; b=lQ7VSDRCKTNwbo/n6yfj81vmnwwXP3KKAcqhOe5czHSK34jmApT0marDEl9QWy3dFv3C2mpBbMWmzws26O9K8nyAyyFcypPSrZznqvcl/vMcQ/BIs/0nnYHNnd+JPI/XZ3GBMxzxcAJ8NGDS/F/qO947cN8m2eZskaf1Y/KXlog=
+	t=1776962793; cv=none; b=Ph+xSd0N8zTMMlWz1y7t7QFYnJrPWeZbyzehfQ6WddSQE1utlZyZdijIL3l+BXss9LTYGvYpW4/8eFtvCpqiD4+/kRUk4sqLAZgSs0YkIKIRH0Mr237osts3wYlDiv+d8e7O/KcG5R5xxai1hl/rDgfz7pacg1Fq2fdkpllJzLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776951629; c=relaxed/simple;
-	bh=3KP4UVdXkAjUCLuoO/Zngx5JujLIt1ZAmsr3rv4yp5M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l/JRcLrJqFTLi/8W2HALgjlTFJqix7lh5b0jNf10175wOJAE8DghWyQfS3SuM8L3ri0DfdB5tkvEp///uUGmgYCxNL2hC9SKps5HKOLRX41Hzbk0bg/ep8rHIhFnnV8ZfprXpxW07+iZAEFtDIFP6ifibAI0Z1A9ByTFldJ7tc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=d51b2ao5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1776962793; c=relaxed/simple;
+	bh=S05j6aseg7c7u3xV5vOsljLds3FQ6L9R3JcogXmLNZs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=fXda2TC/s2mN3W2UPPbbIEqWOErU6zFCMY9URt91WUc5q72IxH/n/wfpiN0KkLkXXmrXO81Jqa6YVGcvuJ0qstzVY/ES1ghM6I7lkQe7N8SqR//FgU8SPuPayGCHQAELXud2scR3PI8ErqOzSH8+dUgYLpsBIgcY350lKUTUbEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=2l2tjOxb; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="d51b2ao5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7DEBC2BCAF;
-	Thu, 23 Apr 2026 13:40:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1776951629;
-	bh=3KP4UVdXkAjUCLuoO/Zngx5JujLIt1ZAmsr3rv4yp5M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d51b2ao5sf7XgHmfz7iMq57cj2OZF6xGfimWjCfRuSY0cxJxIeeynX8T6+uuCsAwQ
-	 QelMwuEkg4FlvKEstXscM6rkCKvWKSJS/rsmkYU1wU7PB/pRdg3xHq5U1ViGvA+c5o
-	 2ESF5wtWpLmggMSwRMhFBfaffFSNbnd27dGEbD6o=
-Date: Thu, 23 Apr 2026 15:40:26 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Vishnu Reddy <busanna.reddy@oss.qualcomm.com>
-Cc: Bryan O'Donoghue <bod@kernel.org>,
-	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Stefan Schmidt <stefan.schmidt@linaro.org>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-media@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	driver-core@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
-Subject: Re: [PATCH v2 03/13] gpu: host1x: Migrate to generic dma context bus
-Message-ID: <2026042330-recopy-corner-07d9@gregkh>
-References: <20260423-glymur-v2-0-0296bccb9f4e@oss.qualcomm.com>
- <20260423-glymur-v2-3-0296bccb9f4e@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="2l2tjOxb"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 8204BC5EF16;
+	Thu, 23 Apr 2026 16:47:10 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 11F65604EB;
+	Thu, 23 Apr 2026 16:46:29 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 66CE510720005;
+	Thu, 23 Apr 2026 18:46:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1776962785; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=S05j6aseg7c7u3xV5vOsljLds3FQ6L9R3JcogXmLNZs=;
+	b=2l2tjOxbp/muwVUTt1iYaIz8b7OLe+mJ2gwHjUl/Zi9B+c+A9VYP6Ja5C2fCxD7EBcL8KE
+	tj9o1FWt6yl5MwmosOaOCmM5hg14Gf6FQCD6xO4NlTRrX8rWJO7AXZiqzKJUGSdGNfq0dX
+	90/Fet3eusoHdXKPgHJviW0bm/BmWmkW8WJGQJXu+6RINWTT2CgIMhDV/YcJ+q/TJAH7GV
+	wy8CB9xvhkE+fTuzqLnN9+emGn4BkhcJVhKXnLTSZCbNekK5oVrGCbiUFXMRSBxTBCE1Lo
+	fGJwcmZCjXWgzqASXiN/aqIJ5NiJ8amWgtQeCTnheHeEOAEeGBshs0HQdugKjg==
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260423-glymur-v2-3-0296bccb9f4e@oss.qualcomm.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 23 Apr 2026 18:46:00 +0200
+Message-Id: <DI0OQ6JRMPTR.1FP9UHPJBYI7M@bootlin.com>
+Subject: Re: [PATCH v2 00/41] drm/display: bridge-connector: attach encoder
+ to the connector
+Cc: "Andrzej Hajda" <andrzej.hajda@intel.com>, "Neil Armstrong"
+ <neil.armstrong@linaro.org>, "Robert Foss" <rfoss@kernel.org>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
+ <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Sasha
+ Finkelstein" <fnkl.kernel@gmail.com>, "Janne Grunau" <j@jannau.net>, "Liu
+ Ying" <victor.liu@nxp.com>, "Douglas Anderson" <dianders@chromium.org>,
+ "Laurentiu Palcu" <laurentiu.palcu@oss.nxp.com>, "Lucas Stach"
+ <l.stach@pengutronix.de>, "Frank Li" <Frank.Li@nxp.com>, "Sascha Hauer"
+ <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
+ <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "Philipp
+ Zabel" <p.zabel@pengutronix.de>, "Paul Cercueil" <paul@crapouillou.net>,
+ "Anitha Chrisanthus" <anitha.chrisanthus@intel.com>, "Chun-Kuang Hu"
+ <chunkuang.hu@kernel.org>, "Matthias Brugger" <matthias.bgg@gmail.com>,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Kevin Hilman" <khilman@baylibre.com>, "Jerome Brunet"
+ <jbrunet@baylibre.com>, "Martin Blumenstingl"
+ <martin.blumenstingl@googlemail.com>, "Rob Clark"
+ <robin.clark@oss.qualcomm.com>, "Dmitry Baryshkov" <lumag@kernel.org>,
+ "Abhinav Kumar" <abhinav.kumar@linux.dev>, "Jessica Zhang"
+ <jesszhan0024@gmail.com>, "Sean Paul" <sean@poorly.run>, "Marijn Suijten"
+ <marijn.suijten@somainline.org>, "Tomi Valkeinen"
+ <tomi.valkeinen@ideasonboard.com>, "Sandy Huang" <hjc@rock-chips.com>,
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "Andy Yan"
+ <andy.yan@rock-chips.com>, "Thierry Reding" <thierry.reding@gmail.com>,
+ "Mikko Perttunen" <mperttunen@nvidia.com>, "Jonathan Hunter"
+ <jonathanh@nvidia.com>, "Icenowy Zheng" <zhengxingda@iscas.ac.cn>, "Jingoo
+ Han" <jingoohan1@gmail.com>, "Inki Dae" <inki.dae@samsung.com>, "Seung-Woo
+ Kim" <sw0312.kim@samsung.com>, "Kyungmin Park" <kyungmin.park@samsung.com>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>, "Alim Akhtar"
+ <alim.akhtar@samsung.com>, "Laurent Pinchart"
+ <laurent.pinchart+renesas@ideasonboard.com>, "Tomi Valkeinen"
+ <tomi.valkeinen+renesas@ideasonboard.com>, "Kieran Bingham"
+ <kieran.bingham+renesas@ideasonboard.com>, "Geert Uytterhoeven"
+ <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>, "Biju
+ Das" <biju.das.jz@bp.renesas.com>, "Marek Vasut" <marex@denx.de>, "Stefan
+ Agner" <stefan@agner.ch>, "Jyri Sarha" <jyri.sarha@iki.fi>, "Michal Simek"
+ <michal.simek@amd.com>, "Hui Pu" <Hui.Pu@gehealthcare.com>, "Ian Ray"
+ <ian.ray@gehealthcare.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <asahi@lists.linux.dev>,
+ <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-mips@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+ <linux-amlogic@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
+ <freedreno@lists.freedesktop.org>, <linux-rockchip@lists.infradead.org>,
+ <linux-tegra@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+ <linux-renesas-soc@vger.kernel.org>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+X-Mailer: aerc 0.20.1
+References: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com> <wanzalswb3lez6kyklprqojcnidab5fkxgu57lfka45w2rt4ic@xdatq5o7yiub>
+In-Reply-To: <wanzalswb3lez6kyklprqojcnidab5fkxgu57lfka45w2rt4ic@xdatq5o7yiub>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, Apr 23, 2026 at 06:59:32PM +0530, Vishnu Reddy wrote:
-> --- a/include/linux/host1x.h
-> +++ b/include/linux/host1x.h
-> @@ -462,7 +462,7 @@ struct host1x_memory_context {
->  	struct pid *owner;
->  
->  	struct device_dma_parameters dma_parms;
-> -	struct device dev;
-> +	struct device *dev;
+On Thu Apr 23, 2026 at 2:45 PM CEST, Dmitry Baryshkov wrote:
+> On Thu, Apr 23, 2026 at 11:16:54AM +0200, Luca Ceresoli wrote:
+>> This series simplifies using the bridge-connector by removing the need t=
+o
+>> attach the newly created connector to the encoder.
+>>
+>> =3D=3D Series description
+>>
+>> Currently all users of the bridge-connector must call
+>> drm_connector_attach_encoder() immediately after a successful
+>> drm_bridge_connector_init().
+>>
+>> This is an unnecessary burden for users. Move the call to the end of
+>> drm_bridge_connector_init() so all callers can be simplified.
+>>
+>
+> I don't know which one is more correct in this situation, but let it be
+> R-B for the series:
+>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>
+> Feel free to take the msm patches through drm-misc-next (A-b).
 
-Ah, nice try, but no.  You can't use a "generic" device for this type of
-thing (i.e. your dma context bus device), as that's not what this device
-really is.  Add the needed logic to the bus this real device lives on,
-don't try to work around it.
+Meaning: Acked-by on the msm patches + Reviewed-by on all the series,
+right?
 
-thanks,
+Thank you very much!
 
-greg k-h
+Luca
+
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
