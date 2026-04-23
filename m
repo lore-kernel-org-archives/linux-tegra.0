@@ -1,41 +1,41 @@
 Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576033E4C92;
-	Thu, 23 Apr 2026 09:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D3D3E4C69
+	for <linux-tegra@vger.kernel.org>; Thu, 23 Apr 2026 09:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776935911; cv=none; b=BluibCNAYVbv6cy98vMp4RArXv7Nnixa0X3KxH4MCBSmSyYO6Cvb9whfCPy0zv7xgRo8OR++FqqDHW3Hc+bxuYIfALFBoKBORKGXSZC9ZrkkdjoavIT9RnDeJI9qzk2lOqw9t2fQyvIQZM2xbIl5UzmKjRwTqGrzgB2sD2KxMvQ=
+	t=1776935930; cv=none; b=szt/R7qr59b1Vg87C0CQqpvvvyQhFeWbjiEhFt7JGavNI3C+R6VmoqMlSSxd0Xp39f99aiTN7oJHUSGzn9N7aYUEkw2O05xcdXBpBqodgzOOMbSUwV2zaVrMpcAojcXeEz26fkCq+v8NyRKWf2+UDByuhLvLOFsVWUEN+wKo06I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776935911; c=relaxed/simple;
-	bh=viXZcU4Co6hL1xspXvA+0ezJWB1HjYah2ZD3mKKP7Eo=;
+	s=arc-20240116; t=1776935930; c=relaxed/simple;
+	bh=c8kwj/UjyqKEmn6cTAZptLrH+S4OFYBxlXqFh5Jw6/Q=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=h1H/WVJxehJGht8JB4CgEEPB5v+dc7gjr3Zmr/Qt7ydBL6vppa7BoxnR9f/M33SEa3UYagQ53hndvxfTRu+AmrIFtFUw9OY9DKFFPz8lOP8Bvj/JxGndYb9EKAezueUYHdS9yw9IM/P/UNcPAmXSDn+qLAXm75BpCeBZX0W3E40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=U6lBAuEm; arc=none smtp.client-ip=185.171.202.116
+	 In-Reply-To:To:Cc; b=lpp63IfvZ1v3esovjAS+dmyeuUzzTXSyF3K1h/jYWCny3AKJdPy20alrG/gkMkDQwI4qYibgCtWt8k1xpkS/NR3yTLo3DNXm+M+tbdQIn48ZT4VlRvUBCRVkTF63xN0lfn+wEePn3JBhN2EHSnWEwOgokgCXZtMuH8LxGP1toKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ijf/QDDm; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="U6lBAuEm"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ijf/QDDm"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 1A1AFC5EF0D;
-	Thu, 23 Apr 2026 09:19:03 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 8466EC5EF0B;
+	Thu, 23 Apr 2026 09:19:19 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id CDEF460495;
-	Thu, 23 Apr 2026 09:18:21 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D01D510460BF2;
-	Thu, 23 Apr 2026 11:18:00 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 4C6CA604EB;
+	Thu, 23 Apr 2026 09:18:38 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 979C910460BE5;
+	Thu, 23 Apr 2026 11:18:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1776935896; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1776935913; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=aHaNwGRsoUdIwFjwTHJYKxtK/qocJVFaiYxjNfS379g=;
-	b=U6lBAuEmyZoHG3q1xl3CbQJPPneyiYCEs2YwZYqICXGZKWZxlXouP2n3L1ivPvaUSnPKXU
-	fhpVUTKQKxjk2kpBfupJ6TM1i3mBVsi1Jv5srkhYO9d57SlD+VDBRu4diJki5VAfCCyjWX
-	zOvF6Wkn0EEczft1Zh0BsxePmCOYutw+8BjK4xrWrAHmQWJO0cqHkIWolSA1xTr5VTFNVF
-	oqmowl1dchpbhH4fKl/7c8KUccb+TXEoY4UBq1LB4upmeVqbRkSVlaikFzRxlvokl807WL
-	TMnvZd2SrhELR2OIgjWw5NdXHMStrd5O2kHYN0EBRHJsnzIcXLxZYHO22bffrg==
+	bh=eYx7IOqgBWH75sp8rtfzDgWlREeGLJn8efXikvG6Twg=;
+	b=ijf/QDDmejsA8obTGAcFBsmkzdv1bKBCJOz5zmo1XDRUz1lqc6ESgd+djioKFpTKOc/8n/
+	4qe4eSSeM1e5Rw2oYe5LTYDyrorqZbLrKNvSbt8nY29ohkdrWi2TtWFSmWBhC6uu4MO3XJ
+	Gc2JG7Otef/6fUFo1atn1D40DJR2xETu9HA5CJy/5NJN27gX5CIUDZDt4jG20+gSP7TB7N
+	54TwNsY2NKeHJHDEFAE6Ck4wcXs8TG0UTTN3voBtYpkKWYqhH7luaCRx8+Sv0bGwVidMco
+	npeuNlBeKo0VAMAMPb1GPJZi7Qxgnkavfltu4oHI7eBi61iA+qT66WEjBEJJPg==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Thu, 23 Apr 2026 11:16:56 +0200
-Subject: [PATCH v2 02/41] drm: adp: remove now-redundant call to
+Date: Thu, 23 Apr 2026 11:16:57 +0200
+Subject: [PATCH v2 03/41] drm/bridge: adv7511: remove now-redundant call to
  drm_connector_attach_encoder()
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260423-drm-bridge-connector-attach_encoder-v2-2-2ae6ca69b390@bootlin.com>
+Message-Id: <20260423-drm-bridge-connector-attach_encoder-v2-3-2ae6ca69b390@bootlin.com>
 References: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
 In-Reply-To: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
@@ -110,24 +110,25 @@ X-Last-TLS-Session-Version: TLSv1.3
 drm_connector_attach_encoder() is now called by
 drm_bridge_connector_init().
 
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/adp/adp_drv.c | 2 --
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/adp/adp_drv.c b/drivers/gpu/drm/adp/adp_drv.c
-index 4554cf75565e..0a11820d5b8a 100644
---- a/drivers/gpu/drm/adp/adp_drv.c
-+++ b/drivers/gpu/drm/adp/adp_drv.c
-@@ -444,8 +444,6 @@ static int adp_setup_mode_config(struct adp_drv_private *adp)
- 	if (IS_ERR(adp->connector))
- 		return PTR_ERR(adp->connector);
+diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+index 6bd76c1fb007..f318080f1139 100644
+--- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
++++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+@@ -768,8 +768,6 @@ static int adv7511_connector_init(struct adv7511 *adv)
+ 		return PTR_ERR(connector);
+ 	}
  
--	drm_connector_attach_encoder(adp->connector, adp->encoder);
+-	drm_connector_attach_encoder(connector, bridge->encoder);
 -
- 	ret = drm_vblank_init(drm, drm->mode_config.num_crtc);
- 	if (ret < 0) {
- 		drm_err(drm, "failed to initialize vblank");
+ 	return 0;
+ }
+ 
 
 -- 
 2.53.0
