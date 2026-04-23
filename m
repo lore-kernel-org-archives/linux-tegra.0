@@ -1,42 +1,42 @@
 Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F5C3E3DB3;
-	Thu, 23 Apr 2026 09:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D9D3E3DB3;
+	Thu, 23 Apr 2026 09:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776936084; cv=none; b=nzI270eamQwfkO9MkxnBo7j6CH97gJOyZZiRpR1uF+2k1hJl+7V6On5LjonMSFDL1R91AgG4kHF564PduBbHpogm4PtuQ/zBsjl5ET9oCN8kkXSD/TCpEmgBq8iUFSFQu022v99kvPCmAJS9edVG8xX97Nuz25NR6E9X7HQz4JE=
+	t=1776936101; cv=none; b=tXuZz9SROYAUL+ZEpCZaxS9x9hk8vBPCQp3XQ0KMbqZ3zMohbpkL6+1SeSU8Q8JXDUD2CrnKMYcBFgZBX4NVfkdi5qL89tfnLOWRNwstBx3PtM1f1d5S6/coY38tCf9i+Oh9RsG7DGuEazTlnui1jqaX/ALzTO8TGfdu+q9jn7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776936084; c=relaxed/simple;
-	bh=PC3iVkKBa1xoSI1wmdTLtz0SKh0mO8JtklPO1GBa6eE=;
+	s=arc-20240116; t=1776936101; c=relaxed/simple;
+	bh=1WkT+9RJo1GgNIKQZhkVz+fCiusW0u1bg+VN+/pd+vQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=D8diuJRYphVHSGSCYeY4Q6S3jeFFfyKHjbQfmpBjX/SR7qBknWRms0vNRPqrhSqiw7uJdxIwXq2RNk+Roo6q/IOQnjARB8lrwoiynj+Aa2wc/Exv5jRAHvqR8VzmF/PAJyvZirij1/jCeh6d98BD/JMpnCACK7u3/WHk6tpH7G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WE7h3WUh; arc=none smtp.client-ip=185.246.84.56
+	 In-Reply-To:To:Cc; b=TbsZKWSMsRG7GHwG5h8NWGp602lnIWQTeRHxTUjyWEpR5wdeekib7OzBLgD97TZvDRH56H6IpkVzXJuQgSswTCe/iRYKKBxnL1W84oy+lBEw7EURbT7UimBzZlUW5tPFALL6FKpDNiK+Y5FBCYTw44nODBRnzhIgqd8VagILfGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ap32Szs7; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WE7h3WUh"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ap32Szs7"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 7E2CB1A33BC;
-	Thu, 23 Apr 2026 09:21:20 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id A0B5D1A33BD;
+	Thu, 23 Apr 2026 09:21:37 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 5027F604EB;
-	Thu, 23 Apr 2026 09:21:20 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CA6F910460B12;
-	Thu, 23 Apr 2026 11:21:01 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 69F1F604EB;
+	Thu, 23 Apr 2026 09:21:37 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3AE4C10460A92;
+	Thu, 23 Apr 2026 11:21:16 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1776936076; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1776936092; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=fCyyd+yp/MDsllqvrq1FGcvAMa6jyiIUvZ9O195R/iM=;
-	b=WE7h3WUhNBerBbTGOh6hqiIh1+3UJ+99rxgLxdS1RcyGauvHsc5b0/04kWu9HtQqY1fD8G
-	1t+o7vuBmPpU1pqksp46xMfSdoak7RTBlvuilQC3wVd3C2hMGkSKfuDVo6DR6XIo5bNzjc
-	rF1qQvRRKO3pkMNMCi8GiSTqiNKJ0BvF6KKM0h+lLJtLV3g6PcPc6ZYjMYQJgFBi+w6MwK
-	Tgz9o2olWU6R8F6VnXmYRw1+A2y0sn8pM3x4EFqOYVQPVgBpgRSRoWIKMsuO5MmpZ8rllF
-	c9xVMNCl5f51wLHlrp9WiodGTo7Hr4tx0KdwjLA4dBNhEjpi07TkyXzOPDw93w==
+	bh=CoQi3K/0LtPjlkd/ofY2xQBOg7L8vrBg6bgv49zK/6I=;
+	b=ap32Szs7o74unTJci2/Mp0ffJZTnCO8yzh6++TXA0UfN3oiEHSffW17s476WC4IZozxgCW
+	BzJLEwcBc1gYn/Xe1vhsUQkjrks7RFiqJL+ImIl31Kn2/KepZeRzKpRKTOk1yMWwKDI87f
+	oVfz0igvhSmvN4rv+iMcWkWlM3PnE7j1kU5KYBTaMLE8KR3/j0J5F38AsimwkUmNmrJCeT
+	YNEvBs01YES0vMs6dIEjn9eDzEjrhgLVqMOkchhdqUCHn8R+L0VXQlYSHuuHwUycFc4Kmy
+	esytq6NZ0yTTzguSuTsXLw1sDjBNzyxW+0lSywv9w8t9G1LdDdNj12M9Q5tyOA==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Thu, 23 Apr 2026 11:17:07 +0200
-Subject: [PATCH v2 13/41] drm/mediatek: mtk_dsi: remove now-redundant call
- to drm_connector_attach_encoder()
+Date: Thu, 23 Apr 2026 11:17:08 +0200
+Subject: [PATCH v2 14/41] drm/meson: encoder_cvbs: remove now-redundant
+ call to drm_connector_attach_encoder()
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260423-drm-bridge-connector-attach_encoder-v2-13-2ae6ca69b390@bootlin.com>
+Message-Id: <20260423-drm-bridge-connector-attach_encoder-v2-14-2ae6ca69b390@bootlin.com>
 References: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
 In-Reply-To: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
@@ -112,21 +112,22 @@ drm_bridge_connector_init().
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/mediatek/mtk_dsi.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/meson/meson_encoder_cvbs.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-index 5aa71fcdcfab..8be32cde2924 100644
---- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-@@ -936,7 +936,6 @@ static int mtk_dsi_encoder_init(struct drm_device *drm, struct mtk_dsi *dsi)
- 		ret = PTR_ERR(dsi->connector);
- 		goto err_cleanup_encoder;
- 	}
--	drm_connector_attach_encoder(dsi->connector, &dsi->encoder);
+diff --git a/drivers/gpu/drm/meson/meson_encoder_cvbs.c b/drivers/gpu/drm/meson/meson_encoder_cvbs.c
+index 41071d6e05e5..41ba6d2139ee 100644
+--- a/drivers/gpu/drm/meson/meson_encoder_cvbs.c
++++ b/drivers/gpu/drm/meson/meson_encoder_cvbs.c
+@@ -279,8 +279,6 @@ int meson_encoder_cvbs_probe(struct meson_drm *priv)
+ 		return dev_err_probe(priv->dev, PTR_ERR(connector),
+ 				     "Unable to create CVBS bridge connector\n");
+ 
+-	drm_connector_attach_encoder(connector, &meson_encoder_cvbs->encoder);
+-
+ 	priv->encoders[MESON_ENC_CVBS] = meson_encoder_cvbs;
  
  	return 0;
- 
 
 -- 
 2.53.0
