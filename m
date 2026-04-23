@@ -1,42 +1,42 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFEB36F437;
-	Thu, 23 Apr 2026 09:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F483E3C45;
+	Thu, 23 Apr 2026 09:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776936255; cv=none; b=hele2ZTLR4weCYUqRJVB4b35oYMjbHpDA8VHaqy5Uxjbh+/X8q4wsnr+hnndEF53T19iqq+VOaqvpWQ4KBxGaPKyFd+5sLfD2bIjj9RHu4xy/a2QBl86PJR+jmyAcU7PcQX4hqFMEweobzcyWZsL5tN9dB6N/fhwQduhR58bPfU=
+	t=1776936271; cv=none; b=Z6C4lfynbJqTNVJjTYaVm1/XcYJ2n8txWg7rflpinwCq3S2wmN/fLXfzsVqZCeMvD+yt2eWw+1kLubiIHMHEZ7kODHHog8aKXpmZsniag6cI2Cq5pFGFmQ3p5SjceDzaWcFWuwlMaijI0+mXNyYip9ouOcQ9b8uZz7qWfa0mk+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776936255; c=relaxed/simple;
-	bh=kpwEO2TRKidVcp+F6bStJG3lQ4ULPq3ep1aXHnBu+lE=;
+	s=arc-20240116; t=1776936271; c=relaxed/simple;
+	bh=ShS7BI3LDSkDXOjJk+wSPr4puS4ye4fbqA7KE5jZ9kI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dlJLv3JXJRJ4n8wdyZtZM/aXfSloijdJjTxy85qhC6O/fEh2zJZiC8BlE9omOcIuXZ8TP85bbfrEax59jYvaXWtidKg4VVacmPDTTft43A5m0c9mOYYVqggfOpDoZdGv/apkUKhpdjjwDEndtOnWqIapoHkUZjv+mdnedQgQZkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=n74CTXJU; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=Ebg0r5UmJrJuFEL+ObdnJuDi9nVTWhqw0KcM/lUlsBcWwOQEUHAbkQIknIko9CHslLb/1U0YH7A2jOH6uA2dozPDdva8W9s6Wawq5mHpkJjYx8nSXKWQfszvrrVhizaKfc0uGN0mCCoixGA32FIHp5LN4tHm3KdVP+RtB/wdnPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=zG08pZWq; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="n74CTXJU"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="zG08pZWq"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 39F634E42AC1;
-	Thu, 23 Apr 2026 09:24:13 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id C4EAF1A33BB;
+	Thu, 23 Apr 2026 09:24:28 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 05F73604EB;
-	Thu, 23 Apr 2026 09:24:13 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5942D10460B12;
-	Thu, 23 Apr 2026 11:23:54 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 92B5E604EB;
+	Thu, 23 Apr 2026 09:24:28 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 41D4B10460A92;
+	Thu, 23 Apr 2026 11:24:09 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1776936249; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1776936264; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=hHreTF5UsM+/5KFOm8ixdx5rwjisLGM2O64i/IkGzAY=;
-	b=n74CTXJU78zzsgPjKkGkghfxZ9OtKVBW5Bn3VfQOrmW213MFdXW84egqu1ul/3W/jxfqhP
-	jp42EpKbXOVvBnQGS3VivkrIeOnTCBFos5/Yvvy32eRi3uPTRjWZs9pZlNIJJ/IFa7sX5/
-	nBBbHWDhqge9+iIfRGIGqUA3O1bFXoQg9IkqRWh6H0PMaWVPJDV0HeVF0HxgxbnM0+fZjf
-	ZeM7T46FVWR6mD1cg+NLqYsLM1C4aXLtvUREbzaKYfVpZOMfczWkDKF213l1O0t8a4yafT
-	xcTFjd/tOvxMwT5cIDa1WYYIuA1Ngng4tmYCmFQHCoE6tirpaBysjSfCmWn6mA==
+	bh=j2LmI/f7V/mWd2ohfL021OYM/85ERPVQO+LtXKIb7T8=;
+	b=zG08pZWqS3rETrGk1bFI1yRRiK+EZh1ahGJF0Z90c//Dh0ELKRBK3HBS9/P2kS2NThErlc
+	txssIWicoduAqj+5KvAQSLdCeu/Bd+PtuJChtlBXU4idsfV6MEHAbsq4Zm2kSqgQ0ENCRa
+	0pareqbIbEEmgaHiuji9w9XOEptVa6XWlj/lp0hbyCBkKcmw9YjOINnphlggtTh26TQXOi
+	oW4HoM/VBfsG6TOF1npduiVhAmHEGFegOwJQrnbWHN3+L22k1T+Umy1x1hP1NSlihUrfVR
+	UVN8r3xV4DkerxpIGzyxcQQQ+lVDnQdSR2onu8UU6IOsdXPBArLb4Y7jckE4zA==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Thu, 23 Apr 2026 11:17:18 +0200
-Subject: [PATCH v2 24/41] drm: verisilicon: remove now-redundant call to
- drm_connector_attach_encoder()
+Date: Thu, 23 Apr 2026 11:17:19 +0200
+Subject: [PATCH v2 25/41] drm/exynos: exynos_dp: remove now-redundant call
+ to drm_connector_attach_encoder()
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260423-drm-bridge-connector-attach_encoder-v2-24-2ae6ca69b390@bootlin.com>
+Message-Id: <20260423-drm-bridge-connector-attach_encoder-v2-25-2ae6ca69b390@bootlin.com>
 References: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
 In-Reply-To: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
@@ -112,21 +112,22 @@ drm_bridge_connector_init().
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/verisilicon/vs_bridge.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/exynos/exynos_dp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/verisilicon/vs_bridge.c b/drivers/gpu/drm/verisilicon/vs_bridge.c
-index 2a0ad00a94d6..83c91d5ce397 100644
---- a/drivers/gpu/drm/verisilicon/vs_bridge.c
-+++ b/drivers/gpu/drm/verisilicon/vs_bridge.c
-@@ -365,7 +365,6 @@ struct vs_bridge *vs_bridge_init(struct drm_device *drm_dev,
- 		ret = PTR_ERR(bridge->conn);
- 		return ERR_PTR(ret);
+diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
+index 6884ea6d04eb..b80540328150 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp.c
++++ b/drivers/gpu/drm/exynos/exynos_dp.c
+@@ -118,7 +118,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+ 		return ret;
  	}
--	drm_connector_attach_encoder(bridge->conn, bridge->enc);
  
- 	return bridge;
+-	return drm_connector_attach_encoder(connector, dp->plat_data.encoder);
++	return 0;
  }
+ 
+ static void exynos_dp_unbind(struct device *dev, struct device *master,
 
 -- 
 2.53.0
