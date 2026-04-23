@@ -1,42 +1,42 @@
 Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AF93E4C74;
-	Thu, 23 Apr 2026 09:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C823BE62F;
+	Thu, 23 Apr 2026 09:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776935988; cv=none; b=EXwTZKiVQTYTQT8ai1uavuR6gMooqR6tDINJLMDwo9JaYStSY0QfKU9sZe8jf7gO4ULdPpRtHN95rQQo0R7H6omRwNykyhmaUTx0Yt8tWgQCzuNCLPZbEwDa4l1OXmw5L0oQa7oTKzxLl4GViXbGPtZMPoe+VcR0MPcZ4FAYBUk=
+	t=1776936005; cv=none; b=RZd4mSZeNeWAZFXkDPZDMKOTlyvNNheMkdxiCZilUJbHRiI+lpACfKgDPJrxPobR8T20UJ5YZlyNnpVkDEr/PEo+ETL1/fOPrSHNLBulfTuO5/WJQdSe4Bbfed838CbXG/Gno2na/4sy3V+U2Tqjy8fvAW7bqrpVveKJv2iVGDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776935988; c=relaxed/simple;
-	bh=Tx9rwtmXUqBoSwJeMbbEi+kDmkmzSBhRMJR5DGTFSEA=;
+	s=arc-20240116; t=1776936005; c=relaxed/simple;
+	bh=s7HLiZbLkVrgOHeTchG8p1KCmCw+ZJjj8IdfCmReG8g=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Rc8u0n539nvR9QoMKUXIEMP39ed6KUIiNKMoBF2cTkjzIzWgLXVIm1POFJuH5VWvpT9Itfk/NuaQT0o8eb32SChJKosnJ5cbKhHJw3ARk97GH5JyiiK67doLc8dKvAOcQiqU8rqaT8OSWetk7zdmzHoH2UHscK5XLVxHC6nHIbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=e60dy5DO; arc=none smtp.client-ip=185.246.84.56
+	 In-Reply-To:To:Cc; b=cWAR3h5DO6UBKH8LKmGJUZ5FY2vvbLrX96d7ZQAogzDHODDgSID9z0ZYDlY2csInDXqu1GdD/o4qUbBqyEqVwpfersx2YuJ57KOHYbJCEJhMtup/U6xduBQGkH7GOrv/pNszFin50ns8uXk/YmR6DFC18LDFG+9ab7mw6A+agvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FiIaBuEJ; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="e60dy5DO"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FiIaBuEJ"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 16E961A33BD;
-	Thu, 23 Apr 2026 09:19:46 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id EA5421A33BD;
+	Thu, 23 Apr 2026 09:20:02 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id CF32360495;
-	Thu, 23 Apr 2026 09:19:45 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 134CD10460B12;
-	Thu, 23 Apr 2026 11:19:26 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id B8BEA604EB;
+	Thu, 23 Apr 2026 09:20:02 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 176CA10460B45;
+	Thu, 23 Apr 2026 11:19:42 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1776935981; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1776935998; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=pADO8daDTzziz8FMU0bJt9nX+WLnq2chwwVkE9Y0FDE=;
-	b=e60dy5DOvyF6ZMDokcDXmpXmsDQEO4dGflhMKjXBcZNnNtxRu/OIJ+Kf1rO/8xmNKdIzIs
-	6TQGqXfYrTs+kMfMBj23kLGxSLirXWlZoI/ePEcDpLiLGdYkRUmWAVBC/CMP5F9hwB47zY
-	Wn2ZE11hMlRXYLO9y0YdkdwJqz46DpMTkR9LNfytdlWqbLnpLqs5sE0as5SDkFywYN3XMN
-	ywrWtZDSXAMrRPgItYQTCfSt5kv2tS/NYOBhgoLRGj04Nl/DysnDPqHUKGBVSAZzvfaFg5
-	Q1qv24h71jvrDFIREKgaLH8W5cX8Cs82U1j2vPQkCfb5YwI86ESrcqwi0n3svQ==
+	bh=ASEN5iSe+7KTh/SjT1+17CeS94d84Fgv4bTew10HK+Q=;
+	b=FiIaBuEJaDhAl+DzNbMlwjNi0Vz+rthytpomLSBrB1ubfQOmTNhrkgIANbSIy7CMifeYC7
+	nGKrgNtcFVxAJotRI8VdFF3OzrxMasRYyuDQlAgQSK6OlqLDdLeJxu8J1WfM9SLNgI+RaT
+	/+/LQjwR/+k2bYlXcKrFCNeNiu38ewQmHGxOblAYdcuJr4xBDB2TLxVT5n1myV0Hp21WlT
+	K5IeTaPu0H5aTsCqObm3tEAVESkoK9yA8O3vZY5hX72XKSP2Y1DHD/3IwNEOmoE9OO0Q8Q
+	g0bULMKIo2B+FAwZlHRi8sELtXFkcIdepUcdlEd6BaQ0cjMBkKpvIAuOGvYyhA==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Thu, 23 Apr 2026 11:17:01 +0200
-Subject: [PATCH v2 07/41] drm/imx: ldb: remove now-redundant call to
- drm_connector_attach_encoder()
+Date: Thu, 23 Apr 2026 11:17:02 +0200
+Subject: [PATCH v2 08/41] drm/imx: parallel-display: remove now-redundant
+ call to drm_connector_attach_encoder()
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260423-drm-bridge-connector-attach_encoder-v2-7-2ae6ca69b390@bootlin.com>
+Message-Id: <20260423-drm-bridge-connector-attach_encoder-v2-8-2ae6ca69b390@bootlin.com>
 References: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
 In-Reply-To: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
@@ -112,14 +112,14 @@ drm_bridge_connector_init().
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/imx/ipuv3/imx-ldb.c | 2 --
+ drivers/gpu/drm/imx/ipuv3/parallel-display.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/imx/ipuv3/imx-ldb.c b/drivers/gpu/drm/imx/ipuv3/imx-ldb.c
-index 730caf883e83..63d6a1e7c1bd 100644
---- a/drivers/gpu/drm/imx/ipuv3/imx-ldb.c
-+++ b/drivers/gpu/drm/imx/ipuv3/imx-ldb.c
-@@ -407,8 +407,6 @@ static int imx_ldb_register(struct drm_device *drm,
+diff --git a/drivers/gpu/drm/imx/ipuv3/parallel-display.c b/drivers/gpu/drm/imx/ipuv3/parallel-display.c
+index 6c505becb31d..0f06db95f00f 100644
+--- a/drivers/gpu/drm/imx/ipuv3/parallel-display.c
++++ b/drivers/gpu/drm/imx/ipuv3/parallel-display.c
+@@ -216,8 +216,6 @@ static int imx_pd_bind(struct device *dev, struct device *master, void *data)
  	if (IS_ERR(connector))
  		return PTR_ERR(connector);
  
