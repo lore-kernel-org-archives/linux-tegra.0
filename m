@@ -1,150 +1,157 @@
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC5C19C556
-	for <linux-tegra@vger.kernel.org>; Thu, 23 Apr 2026 09:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.177
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776938048; cv=pass; b=Uu2ltTe3l8TuBEpR7VP1T0m2iYULNm65B6TX975fNqSzDIpWByjrtELB5aDjMHrhZ32CcABRUnD8Ju5XH975LdVRBgji+VbX7lnLzXdSKGkJG9+utErlHTppR/jUDnZmfjvDxTznydOcvD726846k/nhw0DHWE95La5ZqG3ubCE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776938048; c=relaxed/simple;
-	bh=CPGxXH0S/Bc/wKAfhiZYyXlKlN2ulDQoXNch0A105Sk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gCPPyhfC0a1bQfnHxcJTbWTpKaqQvaS7dX0lNBlxGDuwx/7gROjrXTfgmwNPgmtIon2AoblcVvJoHVUOqda9rmWQ8iFPzorNukAMJiwouRt8ReX1SOqOxeqWDSIfWJ6ymj4rGkOl/1EZ7rT37xE5x2LNK7jcBRMNFvUzReOFaxA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eKfvVr/u; arc=pass smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4536D3E9F97
+	for <linux-tegra@vger.kernel.org>; Thu, 23 Apr 2026 11:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776945259; cv=none; b=UYtz3t9Gngj/a2H7JJ0jN7GWpdeJ990Tqsial9WImorC76J2t1V3LHsIsCcJcHGioW5GPOCFlg7MuIBKAqSMj/M2veTTE9KE8+EnOi64ugWzKSrKnhri5k+OAAUicYnWYpsvJZ83iNjlgXwF5ZpHhx8ujw+VKTO05cqW/NMj2rE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776945259; c=relaxed/simple;
+	bh=CKtBlpi84UvX0YqdqZoI+dNv38AVb0m67CslbD+JITY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Lhkw6lxId39vFJnUX3h/kNSiu3jmzNZNS76DVJ+RTd42V67qubvi3M/EjBevtdfVS9TmPZuYYfLY1b3csTj7psvxX71iGCSjsO+z/sdOy7AnNkqzW3gkZGGlj0qPrs05XNtILFQfJsoGn2jzL6jQv+A9HOmOEUFtFOndM4jmFow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=u04KJPJe; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eKfvVr/u"
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-463a0e14abfso3244008b6e.2
-        for <linux-tegra@vger.kernel.org>; Thu, 23 Apr 2026 02:54:06 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1776938045; cv=none;
-        d=google.com; s=arc-20240605;
-        b=DFoMqyoBw0MI3jMhFKijImSmK/LlTYqBL0HSBiJ73M3rz925rd/jhULj0fFtH8cVMb
-         Mo0tgjB32kf2X4T7GKu44SzpgIOMf0uI4+Qm92pUaoRl6NZnWODNqdgs/5Pp5bFTylzx
-         iWNGXkrCmlbZWaqmDloEqDxfc6d2xn+UFukHmocJ1eOUFnqSNYiFIeQAWu31Whv7Lh9r
-         jic2a0ZzMZi0rLcnxgeybAlecwKpVP80r4yaHTJ3XcDGqfDTkuGj2nYrHhgorG7EeCbk
-         jXK6WNon7y9nY0SAD/OPoRJy3fqr3pJ+9YdmD+GNdtTDw9ZmIhRklBT9YJEQTmUtain4
-         N5mA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=CPGxXH0S/Bc/wKAfhiZYyXlKlN2ulDQoXNch0A105Sk=;
-        fh=GV26nyEJWnR4vwht/9EPWbwkIKJw5Sx+GmeUxjbufLw=;
-        b=dr2UV77TwCBsAPTEyyI17aNh4EYatYZeGc7gJRYzIyfXuV6b4ZsfJD4Sn0aWnVVK25
-         oWwEzorhtXbrt/cX92bELv18pcNAh+YBWg8gxKoGEQRaKv5/32oIyhKOzICOCH6bk34b
-         uikuy3ia/NNVvC5/1FtLtH3pTNOH8pfZxGRIK0KukMDsD3Sn1xq4UPqBN7iVau8qMXs5
-         RnA5xT78GAgc0xsJKDDegiXS/WaKRN0xoyzA+fsi+5qjQZuETJbS1LYjJ20CUJvZGI99
-         0jm5+9ZlCx0mSXALuhZvN1JpUmiVj9C1r87YJYdlBWuObcwWKvPI3aZ5Ut69gS24O56N
-         B9ww==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776938045; x=1777542845; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CPGxXH0S/Bc/wKAfhiZYyXlKlN2ulDQoXNch0A105Sk=;
-        b=eKfvVr/u3U42PWKiqWeXkL7Al2b1Rz2+qaE4qCSFs00RQ/Ociti3Ke7yzB4ymWvb31
-         Q7RPJ+eeeD9MhZ3SmDupLjnsDbH61lu/1Z8j6yq+KmdCb78WElPK4Y80oxJqvAkjhAlO
-         kUSfVtrlLs7SMgdJ5lVghMqwJgLmOrvJ+NdmxjqCsAnsoar7m/tEuQ1wIZ5B1gN2h4/Q
-         wocgHlsLMXlhTQ6SEyntUaCi0Y5Zxv9MMzHJRlDJCiZmCvViz6jkS7XyIK85h7ACqIEg
-         /r2HXXfLHHI3h49srMcPbsizVPT7LDBbvkjsfTWZMzg6Zf0QrVedtYSnyfurc+MnnHZC
-         qgDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776938045; x=1777542845;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=CPGxXH0S/Bc/wKAfhiZYyXlKlN2ulDQoXNch0A105Sk=;
-        b=rsQheW1DR8aDdn1vMyJshiQuGxL7zS4KTtNV+TguVkfVqboXtAyGddConQDI1IZnyw
-         ids+c0d/SfO6katz0zyChqXpaZf0HJmRnXx8TWBVEAZGJXmKqndCidiRnIfqmFeUvBRF
-         y+hnMcPU898nAVnbFO7KCk50M4PnXoPzwpFnt8CAIXU6L+WsIRlc5wYNJWPuK7GltKlB
-         g45rIE5ypyhIDyCFjj9yl3VCHZdFVykwbRQ1fwtDxqM1G5r2Rp97aQvYj7eDXj3hdkbI
-         spjCVnG4Zh0rD0Q+hxwS4zuEXnHkVhQftRGQfCH2kebhu4Q10vOaDzSnL2zj8K9ygAHl
-         SQSw==
-X-Forwarded-Encrypted: i=1; AFNElJ/ZWkStrGbOVhXv43zJbRi1S7q+oGSuFjgjvQvhfQ0p3meHJNLOcikEqSOj5rjwn+0F1YUWJLaU2VX6qA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJrQYC7FfHpxGg2tUIkp9r+l3beiQrXRoHu4hiltlowS75DzOk
-	vn9viP7jGnrTQQHYSVIg0exDxQYA+r/KjJVcgbp/urraNhxR+BRSnOLtTYFxAvhKv6TUHW8e+vH
-	i9tLv4TPhQ/oJoxON8rQbqMSuvhxXD9c=
-X-Gm-Gg: AeBDieuanLvFk2QHhIUM8rqRWdOreD6GAeKhNPbab34XPO0OvigroP4JaI8s8vaBgaF
-	z2zxI083mMbgKr8afXZFNFMRb0K5gOiUG5S2wN/UAhYrNAdad6TWSyrPiUhUSSEQCGto1iuRaZZ
-	m8gT5a/5hcgEeIcJ9kpM1wv7d0oaAg7Fp1Nr3hR+Rh4I9BoV6rZaRbe1DGSalh0Z7sREcJuB2Ml
-	phiooqWRwyvT7R8c7WChklc7s9xg+7XnMnloLaeumZPLOKnr9OBywZG7GWpsWvcf9TDp6BbYfW9
-	gkGdjkfK+BzgzsE=
-X-Received: by 2002:a05:6808:198e:b0:479:ffcf:52e0 with SMTP id
- 5614622812f47-479ffcf5758mr4007159b6e.45.1776938045496; Thu, 23 Apr 2026
- 02:54:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="u04KJPJe"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id AA6A04E42ACA;
+	Thu, 23 Apr 2026 11:54:14 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 63F71604EB;
+	Thu, 23 Apr 2026 11:54:14 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C221D10460B5E;
+	Thu, 23 Apr 2026 13:53:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1776945250; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=rdtm2Mh4NvOrdzs2o8Fw+gJ72Ofe3PZvxoUNrnpIO1Y=;
+	b=u04KJPJeSXFBhQCKkt2ZyvRWThFfZidRsxnYGqo6R+dyYSKJlvDD+mxl7yYbATWE5qRZfL
+	9R31Y8myN7D+SZ1mCmdZy3tVPAzk0CiJrQAb+lgVVn/2vGSsDiFwPHVXskGnhgZ6/eRAGO
+	tkfzQVeB88kRem3WOyssXTKj+qB/I/0ZkXzEcx4iMxMJGWlQQe8sE3MLORu9fEudmg5I/r
+	Fxtqtu9AqBMej3vNwWDkPYz7j9CXkRVuyYJ7wSOjM2GhjabZBAbKOflBREmZyU7rXTQ7XM
+	WIwwcE+nzmlILk0x4XpbRihQclnu2kfXZk/DoFJHeRPEevHJUFvmdwz+8bBxEA==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Sasha Finkelstein <fnkl.kernel@gmail.com>,
+	Janne Grunau <j@jannau.net>,
+	Liu Ying <victor.liu@nxp.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Sandy Huang <hjc@rock-chips.com>,
+	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Marek Vasut <marex@denx.de>,
+	Stefan Agner <stefan@agner.ch>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Michal Simek <michal.simek@amd.com>
+Cc: Hui Pu <Hui.Pu@gehealthcare.com>,
+	Ian Ray <ian.ray@gehealthcare.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	asahi@lists.linux.dev,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mips@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	linux-rockchip@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH 35/41] drm/rockchip: lvds: remove now-redundant call to drm_connector_attach_encoder()
+Date: Thu, 23 Apr 2026 13:53:28 +0200
+Message-ID: <20260423115334.444750-1-luca.ceresoli@bootlin.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
+References: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260406-t210-actmon-p2-v7-1-91adf535cf8f@gmail.com>
-In-Reply-To: <20260406-t210-actmon-p2-v7-1-91adf535cf8f@gmail.com>
-From: Nicolas Chauvet <kwizart@gmail.com>
-Date: Thu, 23 Apr 2026 11:53:54 +0200
-X-Gm-Features: AQROBzB6Ma6rK33kPbC0P8ckfar4CGTiGrMI77fhAE395i1YzgbgIY4-PwQZ2gk
-Message-ID: <CABr+WTkGOQJu5z98szBK1qi_w2OhJbG11hBC0B+kB9=-+RJnJQ@mail.gmail.com>
-Subject: Re: [PATCH v7] memory: tegra210: Support interconnect framework
-To: webgeek1234@gmail.com
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Le lun. 6 avr. 2026 =C3=A0 08:36, Aaron Kling via B4 Relay
-<devnull+webgeek1234.gmail.com@kernel.org> a =C3=A9crit :
->
-> From: Aaron Kling <webgeek1234@gmail.com>
->
-> This makes mc and emc interconnect providers and allows for dynamic
-> memory clock scaling.
->
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
-> Changes in v7:
+drm_connector_attach_encoder() is now called by
+drm_bridge_connector_init().
 
-I've tried this patch (on top of the memory-controller-drv-7.1 tag
-which contains the base-commit mentioned).
-
-I have the following error at boot:
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
-OF: /actmon@6000c800: could not get #interconnect-cells for
-/memory-controller@70019000
-of: _read_bw: Mismatch between opp-peak-kBps and paths (1 0)
-tegra-devfreq 6000c800.actmon: _opp_add_static_v2: opp key field not found
-tegra-devfreq 6000c800.actmon: _of_add_opp_table_v2: Failed to add OPP, -22
-tegra-devfreq 6000c800.actmon: Failed to add OPP table: -22
-tegra-devfreq 6000c800.actmon: probe with driver tegra-devfreq failed
-with error -22
----
-But then, I can still have a usable display IIRC. Also worth noting
-that I add explicitly loaded tegra30-devfreq.
+ drivers/gpu/drm/rockchip/rockchip_lvds.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-If I add the next-patch that enables only interconnect-cells for MC
-and EMC (without the interconnect lines on dc0 and dc1),
-then in this case I'm experiencing some freeze at boot and the display
-does not work. (display stays black with some flickering while I
-should have a text console prompt).
-Nothing obvious from logs.
+diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.c b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+index 75f898a10cbc..7a0c4fa29f2f 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
++++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+@@ -628,12 +628,6 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
+ 			ret = PTR_ERR(connector);
+ 			goto err_free_bridge;
+ 		}
+-
+-		ret = drm_connector_attach_encoder(connector, encoder);
+-		if (ret < 0) {
+-			drm_err(drm_dev, "failed to attach encoder: %d\n", ret);
+-			goto err_free_bridge;
+-		}
+ 	}
+ 
+ 	pm_runtime_enable(dev);
+-- 
+2.53.0
 
-Using the original patch that enabled the interconnect in (and
-emc-tables passed from bootloader).
-https://lore.kernel.org/linux-tegra/20251021-t210-actmon-p4-v5-2-4a4dbc49fb=
-c8@gmail.com/
-This patch sometimes works, but I have some random behavior that
-sometimes prevents booting to userspace
-I'm suspecting some module load ordering issue, or maybe a state that
-isn't properly re-initialized on cold boot...
-
-When the system boots, the emc scaling seems to provide good results
-under gnome (no more flickering display with mesa-25.1.9).
-glmark2-wayland provided good results (except for one scene that
-breaks, as previously).
-So this looks promising...
-
-I will test again with 7.1-rc1+ and with a lower patch list. hopefully
-by the end of May.
