@@ -1,42 +1,42 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6642FE057;
-	Thu, 23 Apr 2026 09:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B2B35F5F3
+	for <linux-tegra@vger.kernel.org>; Thu, 23 Apr 2026 09:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776936175; cv=none; b=mg7GeYxtdBUmu+OvM4MGVItUssTryALargoDEYi2/gVGt+9VT1AeLVMgCK0xdMOuB/+TAu+E1RwDwqwtHHa+miPdHD0PKC47vTCbSZtoKv89X2kc5zqRWOlEz9E1JhKfPHAG1pF8OksVvNoJK6TIppcU0pTjzRcredhQ9uVH1Og=
+	t=1776936194; cv=none; b=aRCWKRRBuZlMUwCI09tyHdg7e6xgVfNlD9NFv6h27NQWqT9R514uD1JnWDleh7FUAcUKc2culBysuDStsiJ+nJldzf46ZeadNlEznYpUdvbAqNA2vKlhUyvDCazrfC2YpCWnX0Gfs+Hz1g7i96JeCyWmPjXuhBJj6KpRbLphG60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776936175; c=relaxed/simple;
-	bh=HlZ9I0GufavFKRnPK37ylHIFUMsDfztl12C0baMOdMU=;
+	s=arc-20240116; t=1776936194; c=relaxed/simple;
+	bh=Q+q8fm7PdUiBjtEoBx4i4UrWfDwhhBle+X9FnlQENLk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rDbDcfUuEHoXRAe9T693paeBSs3Atsx89KLwobgSTC/TyW0FDh2occGBCUUoqvQ6lgRZ0JwlZB5MPxNZ5FftbSLnZzmQLK5WFaEqhasamMZmOP0WlzlrcB93duI4NIaZVomh+QUyTrU3PN3GL+HtfZZEnrDzGl2/M0kpOFRCAgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=wS8GIDh5; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=sO/pxNQjgSxS6nBvwDRCQg9oenP8JFIkdq1suf2VQI4CUBjbto/Ry6GlbFMk+hREa9iAKlvc6mG0iRM1RvsX9LEOurIdfA4dpuxN70ESFm+ScgMvURO02qZWf8iXSYji8a6ft2dY68gToq52adr7ET+xazJl0PZ4kN2isaA3Iv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Dela7PCe; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="wS8GIDh5"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Dela7PCe"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 2A7814E42AC1;
-	Thu, 23 Apr 2026 09:22:53 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id E77311A33BC;
+	Thu, 23 Apr 2026 09:23:11 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id EF81B60495;
-	Thu, 23 Apr 2026 09:22:52 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 40E2210460A92;
-	Thu, 23 Apr 2026 11:22:33 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id BBAF860495;
+	Thu, 23 Apr 2026 09:23:11 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E1CE210460C10;
+	Thu, 23 Apr 2026 11:22:49 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1776936168; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1776936187; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=XwidxyoogX5GWOhGVcE3zNBKFfumjMOvx5cL+pFRRzU=;
-	b=wS8GIDh5S8G5udsC+ODnCYvu80TbR8LbfjWIZhgwZOcYDJIWqxMQT8t35DO0qnRhaFU1JY
-	eBXWxyAQzjkUJ2mXjMRYjVcei+OeMwhXZnAHihYgIEo/URKYDREktKPnkgd4r2jhFPLop6
-	Z3yecuDvdB/Bio7gKXxe3qcYOLQIy9QkxIX+kKuYO0+IUoiwKpRvH4zYuXlqn8pwktL75P
-	M5pg+nrFdqF6x35Ofn/wwS3iK6Co4rtvoFj1HxNEB2YTvb6JFnyaRuntdx/V8sGjGCmopu
-	0C7JynkQSFMEG/SAhBVgEEM/sin0k5qHtuDZLX0hPhUxs7zLoI2TRhL/sowmqg==
+	bh=9rSCpGcHOa1+mXR0a2bgn/kZdo39DrzyrKDarx7ZrvQ=;
+	b=Dela7PCeCwV0XP6Eyi/vlbmf9cbREWrhYbwPnig4s4rcV3znSzlbNANpR+ipalBu07dagp
+	7j8/FU1+/maQzP3BUPWOI6nmYPQlbyGFnBJ4lK/m5/sqBuzaFN7DeHLfRMyF4zgqoEMGoH
+	sJfzVnRGTwaTTQMcjm9Y0saGEOkpMT8Wv0xFpiRzpxVE4ph+WvNHtofcRHZ2UomfXz+mN8
+	kYlLp9KzVZwdQVCjy64+ebMaeeTzmtyxoHMAyh+6ZJMbWp1G8yjnC6Nk9p3fHVaPeDloIx
+	UxmZsqyPDFGPFOETUlH8ZFjR4jziTdzrNCahwz08HonIgA/IQuJjddG8gcdmDQ==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Thu, 23 Apr 2026 11:17:13 +0200
-Subject: [PATCH v2 19/41] rm/rockchip: cdn-dp: remove now-redundant call to
- drm_connector_attach_encoder()
+Date: Thu, 23 Apr 2026 11:17:14 +0200
+Subject: [PATCH v2 20/41] drm/rockchip: rk3066_hdmi: remove now-redundant
+ call to drm_connector_attach_encoder()
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260423-drm-bridge-connector-attach_encoder-v2-19-2ae6ca69b390@bootlin.com>
+Message-Id: <20260423-drm-bridge-connector-attach_encoder-v2-20-2ae6ca69b390@bootlin.com>
 References: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
 In-Reply-To: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
@@ -112,21 +112,21 @@ drm_bridge_connector_init().
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/rockchip/cdn-dp-core.c | 2 --
+ drivers/gpu/drm/rockchip/rk3066_hdmi.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/rockchip/cdn-dp-core.c
-index 177e30445ee8..f39450e12716 100644
---- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
-+++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
-@@ -1024,8 +1024,6 @@ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
+diff --git a/drivers/gpu/drm/rockchip/rk3066_hdmi.c b/drivers/gpu/drm/rockchip/rk3066_hdmi.c
+index 9066ee2d1dff..b64cbed26312 100644
+--- a/drivers/gpu/drm/rockchip/rk3066_hdmi.c
++++ b/drivers/gpu/drm/rockchip/rk3066_hdmi.c
+@@ -731,8 +731,6 @@ rk3066_hdmi_register(struct drm_device *drm, struct rk3066_hdmi *hdmi)
  		return ret;
  	}
  
--	drm_connector_attach_encoder(connector, encoder);
+-	drm_connector_attach_encoder(hdmi->connector, encoder);
 -
- 	for (i = 0; i < dp->ports; i++) {
- 		port = dp->port[i];
+ 	return 0;
+ }
  
 
 -- 
