@@ -1,148 +1,133 @@
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78C4364055
-	for <linux-tegra@vger.kernel.org>; Fri, 24 Apr 2026 07:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585F32E7621;
+	Fri, 24 Apr 2026 08:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777017445; cv=none; b=m4MSrb8M89ESYXV9RsSOmk/9RAuQfSkbCwAAiGGa1L2fHm9MUy/IXopE0pjKoU7/Yufv+Vy2NMOa4++zkmd+FTc9Uk+QBI646Ejwg51v7tVTu8EgI7chG/di0m38j3zspaFfDCF7638+i98BmjMePCkdgPdNnDal1AnYRnUHyq8=
+	t=1777017905; cv=none; b=AGf2eTax4UpbRpj6ywasjV8awyOyXDCNG18MbhF0crEX0AHRDi+wwab/SyctQrGcjzZeFoJK3sr15/MylfbyjldTiUU8oYledk0CE4Z4QMZlB7Kbk3V3S+5rmTlBZDVEQ9fDPFBr4njhd4+AzUFin7Ht3mr+cEtBXgh9Zwv3UQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777017445; c=relaxed/simple;
-	bh=BZaZ3g7ZBPkjQoz8nLCka6ZxevyTyp8FYNkCXs7p8Ww=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XoVZobdvUgZ79lTsd9NGg588L3kPXrMOdV9iUk/KYr3U3Hc4tuDxjK9XuOQiGTCIE4Okb/D993xpCJYJY718/Q1zX3LyfHcfMFscXaYP3n3vt6mnKoCPwcaGLyM6lDZyBIm7yVMbwF16mE6MLncm+Vpa8SY/DTo6OEpqq1sPcq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-42c0b0ffac1so2664724fac.2
-        for <linux-tegra@vger.kernel.org>; Fri, 24 Apr 2026 00:57:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777017441; x=1777622241;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+k21mzy1Q8IyL290m/XCuURamP2UyoHvl1hWQE5Pk/w=;
-        b=UoOB+9HT6cp0icDnXhNzqa9iA0YWAV4uXwj1i29p5/6dkkZY3Yxmk9fu+Va3HXYTl3
-         aFbY2cstC/Su1duZvoIBk2mhkHz/wHBcpLWR/2Qh9Adg3NXpqS2zVAUAJuQsLNvDmpCb
-         1nDuCfd04nYlgujp48GeqmI2Fc43XxVW5g3T269iIf+pgV5Jr7FnKnRIkkuWONrVng6U
-         ZDo4/RW3Lx+YpjAvq6zRjLNHv0UuACtJg6Z4oOeEcE0NBsrUBZSuDrBUCl/cbJpCvSG6
-         cdqD3tPWDr8cJV8Om6coKvntINYBXVnlIrl2ai5KSuP5yAtGhW0lPKJAe7aXhWci715/
-         aNMg==
-X-Forwarded-Encrypted: i=1; AFNElJ/6yAcB/C3h/L4TRunKPwNet53cbQzSI90o2M9kMkXQpjy45QKOn+O1Lvfb6tRV8JMIZ/qhTWTxEBzwFA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFR1GOIrhPhJT5eaxIYriLml3kj4HgLuRacu62FlfSAkZSSqhC
-	EHqBmoM+DzRS+5yp4+j5x+JRtNTBLNeDpG9vS9elbN3gjdFmDmCmNjSyMuuvXDwA0Hs=
-X-Gm-Gg: AeBDietobgdNH5lvbTwjgpCM99eL7plJ58Eg7V4XRz2GHBZHTm0bNimDh2HyQtjY/cA
-	iSCRVJy1ZTT/ta1+HzFkBXYFr6fUjdIt4/GybfPMbZAZ9oIq9SRn8aKagZ51ZZbM6Y65r8FwZ+7
-	D37bJOrnwEkTgtVXHaYrg98KsXkl9V0HDrpzlBMVgZZBCakuvBVYqPfWe4VqPftFZudg9+atSG3
-	QF/W4O511wVMEERwO8UvowevROVCLtYS7hZbODyNFpd64LjXFtspkAx6pfC2wIG1Ca8TioHfG5I
-	8/Ns8KfgnxxFDW3T7LsRV0g3Z163Fo+y9B7GLYoVArZHUifGSTkvIsInIQ3XWxOek69QwzcKmjh
-	NXU01s7vkQ7BOHrWZnhow+IWQXh9SO/3ywZBdPLVYxpA5v0yk4G/37IU+YMZ1BixjM4Exxbso4j
-	g/EmJNR2jOF0BGHWM6sPyyQBlk9r/ip6In7BxTLifGnr0WuOdMF3JWmJYCEmnL0O9MfTHsYHk=
-X-Received: by 2002:a05:6870:9a8b:b0:417:22e:e2d1 with SMTP id 586e51a60fabf-42abf23c02fmr19908387fac.2.1777017441448;
-        Fri, 24 Apr 2026 00:57:21 -0700 (PDT)
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com. [209.85.161.41])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-42fbe8a0bcbsm7435585fac.2.2026.04.24.00.57.20
-        for <linux-tegra@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Apr 2026 00:57:20 -0700 (PDT)
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-682fce74c06so6021223eaf.3
-        for <linux-tegra@vger.kernel.org>; Fri, 24 Apr 2026 00:57:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ9m/5oGKRfmw23mwn4cgPv3c7Phic6F2wkOMw0CCn8UloKrjTQRqFq+GLsYkGjJ3qFYRCEbgmMyMWxxDg==@vger.kernel.org
-X-Received: by 2002:a05:6102:38cb:b0:5e8:1d93:921a with SMTP id
- ada2fe7eead31-616f772e968mr14645934137.15.1777017023068; Fri, 24 Apr 2026
- 00:50:23 -0700 (PDT)
+	s=arc-20240116; t=1777017905; c=relaxed/simple;
+	bh=nsGmz/XOAFfWWCKHB/LqWDng5+yK0gywP/rNY2w0lAA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IjazCiu8tPrlD4L6MYiTNjAE4fkoETxJIRIMVYRrG3nNnMoHVtjSztPlVWq9OSAu3Ntv2AhMoNJGNJ8Nc8cvUa4ZrTlCM80EazPbYlMIrhAK1fhrCPLOH1V1wINjj4g3PMJhOOnXcFZlgunlgNm2Kbn6hDt1UJU+EJmGHf5DgwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from edelgard.fodlan.icenowy.me (unknown [112.94.102.10])
+	by APP-03 (Coremail) with SMTP id rQCowABnhNvRI+tpv7EHDw--.22752S2;
+	Fri, 24 Apr 2026 16:03:33 +0800 (CST)
+Message-ID: <1d54c67c3c1892805793e58e77ef5708cf5b7ca4.camel@iscas.ac.cn>
+Subject: Re: [PATCH v2 24/41] drm: verisilicon: remove now-redundant call to
+ drm_connector_attach_encoder()
+From: Icenowy Zheng <zhengxingda@iscas.ac.cn>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Dmitry Baryshkov	
+ <dmitry.baryshkov@oss.qualcomm.com>, Andrzej Hajda
+ <andrzej.hajda@intel.com>,  Neil Armstrong <neil.armstrong@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Laurent Pinchart	
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Sasha Finkelstein <fnkl.kernel@gmail.com>,
+ Janne Grunau <j@jannau.net>, Liu Ying <victor.liu@nxp.com>, Douglas
+ Anderson <dianders@chromium.org>, Laurentiu Palcu	
+ <laurentiu.palcu@oss.nxp.com>, Lucas Stach <l.stach@pengutronix.de>, Frank
+ Li	 <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Philipp Zabel	 <p.zabel@pengutronix.de>, Paul Cercueil
+ <paul@crapouillou.net>, Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, Matthias Brugger	
+ <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno	
+ <angelogioacchino.delregno@collabora.com>, Kevin Hilman
+ <khilman@baylibre.com>,  Jerome Brunet <jbrunet@baylibre.com>, Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>, Rob Clark	
+ <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang
+ <jesszhan0024@gmail.com>, Sean Paul	 <sean@poorly.run>, Marijn Suijten
+ <marijn.suijten@somainline.org>, Tomi Valkeinen
+ <tomi.valkeinen@ideasonboard.com>, Sandy Huang <hjc@rock-chips.com>, Heiko
+ =?ISO-8859-1?Q?St=FCbner?=	 <heiko@sntech.de>, Andy Yan
+ <andy.yan@rock-chips.com>, Thierry Reding	 <thierry.reding@gmail.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>,  Jonathan Hunter
+ <jonathanh@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, Inki Dae
+ <inki.dae@samsung.com>,  Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin
+ Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski	 <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Laurent Pinchart	
+ <laurent.pinchart+renesas@ideasonboard.com>, Tomi Valkeinen	
+ <tomi.valkeinen+renesas@ideasonboard.com>, Kieran Bingham	
+ <kieran.bingham+renesas@ideasonboard.com>, Geert Uytterhoeven	
+ <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Biju Das	
+ <biju.das.jz@bp.renesas.com>, Marek Vasut <marex@denx.de>, Stefan Agner	
+ <stefan@agner.ch>, Jyri Sarha <jyri.sarha@iki.fi>, Michal Simek	
+ <michal.simek@amd.com>
+Cc: Hui Pu <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	asahi@lists.linux.dev, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, 	linux-mips@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, 	linux-amlogic@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, 	freedreno@lists.freedesktop.org,
+ linux-rockchip@lists.infradead.org, 	linux-tegra@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, 	linux-renesas-soc@vger.kernel.org
+Date: Fri, 24 Apr 2026 16:03:29 +0800
+In-Reply-To: <20260423-drm-bridge-connector-attach_encoder-v2-24-2ae6ca69b390@bootlin.com>
+References: 
+	<20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
+	 <20260423-drm-bridge-connector-attach_encoder-v2-24-2ae6ca69b390@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
- <20260423115550.444930-7-luca.ceresoli@bootlin.com>
-In-Reply-To: <20260423115550.444930-7-luca.ceresoli@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 24 Apr 2026 09:50:10 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVbEV0b+MwCjqyc9Q0EjasD2hoN0rqWtjfmPPotZ19Lrw@mail.gmail.com>
-X-Gm-Features: AQROBzASdrVB_Aky8lNaIViGqa4fIOoRKTkBEjNLF-nFJbKyYgy5oQezNNnYjKM
-Message-ID: <CAMuHMdVbEV0b+MwCjqyc9Q0EjasD2hoN0rqWtjfmPPotZ19Lrw@mail.gmail.com>
-Subject: Re: [PATCH v2 41/41] drm: renesas: shmobile: remove now-redundant
- call to drm_connector_attach_encoder()
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sasha Finkelstein <fnkl.kernel@gmail.com>, Janne Grunau <j@jannau.net>, Liu Ying <victor.liu@nxp.com>, 
-	Douglas Anderson <dianders@chromium.org>, Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
-	Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Paul Cercueil <paul@crapouillou.net>, Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Sandy Huang <hjc@rock-chips.com>, 
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Icenowy Zheng <zhengxingda@iscas.ac.cn>, Jingoo Han <jingoohan1@gmail.com>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Marek Vasut <marex@denx.de>, 
-	Stefan Agner <stefan@agner.ch>, Jyri Sarha <jyri.sarha@iki.fi>, Michal Simek <michal.simek@amd.com>, 
-	Hui Pu <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, asahi@lists.linux.dev, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-CM-TRANSID:rQCowABnhNvRI+tpv7EHDw--.22752S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7GFWxKr15Xw1xXw48Jr4rGrg_yoWfWFc_uw
+	nY9F9rWrW5KFyDC3Z7Jrn5Zry2v3Z5uFW8uwnrt393KwsrAw18Z347Xry2v34UuFyUAFZF
+	kw4DWFZ7Ar4akjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVxYjsxI4VWxJwAYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I
+	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+	8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0
+	cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I
+	8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
+	c7CjxVAaw2AFwI0_ZF0_GFyUMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
+	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
+	67AKxVWrXVW8Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+	IIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
+	73UjIFyTuYvjxUxeOJUUUUU
+X-CM-SenderInfo: x2kh0wp0lqwv3d6l2u1dvotugofq/
 
-Hi Luca,
-
-On Thu, 23 Apr 2026 at 13:59, Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
-> shmob_drm_connector_create() can init the connector in two ways, based on
-> the 'if (sdev->pdata)':
->
->  1. manually in shmob_drm_connector_create(), or
->  2. delegating to drm_bridge_connector_init()
->
-> Whichever branch is taken, drm_connector_attach_encoder() is called
-> immediately after to attach the connector to the encoder.
->
-> Now drm_bridge_connector_init() calls drm_connector_attach_encoder() on the
-> connector so it is not needed anymore in case 2 and should be removed, but
-> it is still needed in case 1. Move drm_connector_attach_encoder() from the
-> common path to inside shmob_drm_connector_create() in order to get back to
-> a single drm_connector_attach_encoder() in both cases.
->
+=E5=9C=A8 2026-04-23=E5=9B=9B=E7=9A=84 11:17 +0200=EF=BC=8CLuca Ceresoli=E5=
+=86=99=E9=81=93=EF=BC=9A
+> drm_connector_attach_encoder() is now called by
+> drm_bridge_connector_init().
+>=20
 > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-For case 2:
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Icenowy Zheng <zhengxingda@iscas.ac.cn>
 
-As none of the old SH platform have been converted from
-sh_mobile_lcdc_fb to shmob-drm yet, case 1 cannot be tested.
+> ---
+> =C2=A0drivers/gpu/drm/verisilicon/vs_bridge.c | 1 -
+> =C2=A01 file changed, 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/verisilicon/vs_bridge.c
+> b/drivers/gpu/drm/verisilicon/vs_bridge.c
+> index 2a0ad00a94d6..83c91d5ce397 100644
+> --- a/drivers/gpu/drm/verisilicon/vs_bridge.c
+> +++ b/drivers/gpu/drm/verisilicon/vs_bridge.c
+> @@ -365,7 +365,6 @@ struct vs_bridge *vs_bridge_init(struct
+> drm_device *drm_dev,
+> =C2=A0		ret =3D PTR_ERR(bridge->conn);
+> =C2=A0		return ERR_PTR(ret);
+> =C2=A0	}
+> -	drm_connector_attach_encoder(bridge->conn, bridge->enc);
+> =C2=A0
+> =C2=A0	return bridge;
+> =C2=A0}
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
