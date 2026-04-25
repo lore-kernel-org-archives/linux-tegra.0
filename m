@@ -1,185 +1,149 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010043.outbound.protection.outlook.com [52.101.61.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B04C5CDF1;
-	Sat, 25 Apr 2026 05:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777095727; cv=none; b=JwYZeZeqL0sQ7k3Zc7Nc78/unXyAriXeD885CEwuVVwPGtBoFTpVOwU5eyRx7iaNu+QiAs6UQmTys8hyw57AFqGxjViw7g6H9fzA0mjhIdY2s2OqksWabL8HYIKgEOq4Vx5lmt6zKF9A4kBmSE4qo7OAp2HDawMiJ3YcUho+8as=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777095727; c=relaxed/simple;
-	bh=HPRnxwXK8vu5np6VX+55Q2Y3ogOkac72lAGyNzFWA/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R3Re49FwHaP8eIO03P1z7v2xQIt8wcGIVe9n6fs9hoy2KvmvjqeZJpBLEcvRtXmyvms0uuKH2OFpaxyaJ0FxTUmHL5A9sIwyi0Pqh6H6O1gBIMAR9CN32Rl10WEBOqdiOmn5ShTTwctS8WdeWcvF6cwZPEUppQKZVG9VwjTG9dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AIulHLRA; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1AA13AF2;
+	Sat, 25 Apr 2026 08:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777105912; cv=fail; b=SFBJQoxnGIuwF2mqOIjUmZRseX6rwLMdm07fn0jIXpQh/iCxI5uHNSadlj5R/+a66ovb9IPEw22mhVNTGbpjqrbhXzVsVc4C+rSXP68f0g5RvZBZpjouVhe/WR28UA8avhmtLPxX9DP9v0HJaVkzDYx7dDklFCga7+GYxl3JlaU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777105912; c=relaxed/simple;
+	bh=vkRgg4GxiEYTbX9+eHrat/iToFwBQ4HPKDbL19/BPEk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=WiVYM7ALxRCqcu8LNeGw3JBwcWPTYKXhFoQpj6ts5X1DsgHO0xHX/a9sOujRdW4T+HbaAuF854GBNPzFkuJBjpTeoVqgwoBZCRoHa4acY6if51P/Vpmwa4Pvb8CJ5sq+5KgQ2zA8hD0n6aZjFIQaEHpJdAgoseIO4/sPSnEeaYw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=U8oVnKAk; arc=fail smtp.client-ip=52.101.61.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AIulHLRA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F38FC2BCB2;
-	Sat, 25 Apr 2026 05:42:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1777095726;
-	bh=HPRnxwXK8vu5np6VX+55Q2Y3ogOkac72lAGyNzFWA/g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AIulHLRAKLlLErfT4LNX6qehizWiYSRf/7frr23MN5EuQV/uv1/GMEgWhNnYOC3S2
-	 P7aAr8Ifr31gNTvRcI/4Tu1+p8sDQj+AymmqnfPtX25X51hEmG9Qfc+0zfM+WqN3cH
-	 qxacBTLwV8747T2MjGJ/lwbO5Uglr0akF36/x8Rk=
-Date: Sat, 25 Apr 2026 07:42:04 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Vishnu Reddy <busanna.reddy@oss.qualcomm.com>,
-	Bryan O'Donoghue <bod@kernel.org>,
-	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Stefan Schmidt <stefan.schmidt@linaro.org>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-media@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	driver-core@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
-Subject: Re: [PATCH v2 02/13] drivers: base: Add generic dma context bus
-Message-ID: <2026042539-swab-active-21a5@gregkh>
-References: <20260423-glymur-v2-0-0296bccb9f4e@oss.qualcomm.com>
- <20260423-glymur-v2-2-0296bccb9f4e@oss.qualcomm.com>
- <2026042346-trustable-register-095a@gregkh>
- <06c04947-e72e-679b-493b-e112d693f391@oss.qualcomm.com>
- <2026042422-deem-chemist-8d0f@gregkh>
- <4c3fa710-f61a-4aad-622d-54909190cb9e@oss.qualcomm.com>
- <2026042428-blemish-helpline-7d8d@gregkh>
- <1e039dd5-da3f-19b2-ef98-29e64fdd925d@oss.qualcomm.com>
- <2026042442-luxurious-antonym-f20c@gregkh>
- <xuitjl6tzfl6nl4ds4vdy3637i5cqtjuqntcpqt5fnkx2ogcws@iapcavrwhyzv>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="U8oVnKAk"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IrjEqcifxmosepcBdCRdsCLn+qIHO+W8Bp+wvI5VyEaY9pF3ZWVDYKbUcfkRjAtsJJI2YK1vF8eByWfMpd/eQv3hk4UrTSBNz47QmGd4RpbaIfzore29CSkgyHmRKn3Pqx/k8GW5tXKa0AxD2oDuCF+SH94IWXvoS8QcVWcX73ZzIRqoGzwZXLl8NiWMCqJRNLnNH76luFY1DK2gywwaeI7rqUSiOX4DnqpNOldPweFNVwJWIhs3P875K9sRUS5tntZjAfi35gPmnchNTbnduAPYjtw/qsygutJ+WjHxZ7jPHqabQ1d+QQGMks+KPW3bnSPVgN7UrAEqxtU1Vdw29g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YBdMTZTci65vxo8CxD4DguxnUm8WzA6BDoUumquBCsE=;
+ b=IxhnOK4C8ysAUvYHwCoT6kUIPZvfBpK6SuX1t+K4zwjbnukitNDEcWvpE05ZG+DkPaXDOMfQDZZIYRSNpx7SGcHQVbLsIA7MH+ONIgq3NBSleftm28ICg/0O/xSd5vcbVtjxnMp8zmhd/DPQBFDlszdKPVWq+i2xclHVelwJ46wdUzZ7nhdzHzGp68rHk/IwYquHwuXOVPTf2KwPNwmJPG8UAsnwyScMHslrbbkfFo6WANblHqwXpfKIUGs+zgLvZn0fwcEdOIbtero6Q+Vgkbz5/kIM/TuHz8iSdh7BVhTs3DE5SjOLYG0ljcoQ+R2akP/b8VHE/izRhig/cOY3bQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YBdMTZTci65vxo8CxD4DguxnUm8WzA6BDoUumquBCsE=;
+ b=U8oVnKAkCvR614+JRNqy6WOBqlwfYzcLS0aUDWDW3GzWkvA0H78OqspFA3iX2KkRbn1mYqa4J71IN7OSangGzC0dobtAOFbsL7W9XDb+2BnJa9kH6BxCQmqIh2FSDh2mol8pLMiHqaaPOMiYibyOoLgsJj9WFZvrxuM1eFXPjYtX9ZgrCdTBkPs059WOCKMcwDUpUStu8iMfu7eqS9Qw7Vep06an8h/AkQ+Pizu33dahiITg6IbMnPoP9S6FbkCe1Fhz4yay6XmoN23VpHlKQdyY8Adq5PQjxvrNZTdATh1YISx3f6iGs2VtGp/wUzigni0IHX425HssCmI1sJT3pw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
+ by SA1PR12MB6948.namprd12.prod.outlook.com (2603:10b6:806:24f::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.12; Sat, 25 Apr
+ 2026 08:31:46 +0000
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391%6]) with mapi id 15.20.9870.012; Sat, 25 Apr 2026
+ 08:31:46 +0000
+Message-ID: <366aaf18-7424-4cb5-9df2-142c9988303c@nvidia.com>
+Date: Sat, 25 Apr 2026 09:31:42 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: tegra: ADX: simplify probe allocation
+To: Rosen Penev <rosenp@gmail.com>, linux-sound@vger.kernel.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20260425014244.439788-1-rosenp@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20260425014244.439788-1-rosenp@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0547.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:319::16) To DS2PR12MB9750.namprd12.prod.outlook.com
+ (2603:10b6:8:2b0::12)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xuitjl6tzfl6nl4ds4vdy3637i5cqtjuqntcpqt5fnkx2ogcws@iapcavrwhyzv>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|SA1PR12MB6948:EE_
+X-MS-Office365-Filtering-Correlation-Id: 479d86e5-cf94-4a75-1d85-08dea2a51641
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|10070799003|1800799024|376014|22082099003|56012099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	4S9307fWvq3JEyy8wcruq04rQuiRC2+Yh1D6k4IbVGy9jb8pgAt09Gjr1mi3wwclzLqaYu7tKdE76TtFtFZAtsuBND30nXP9TnbyoAdxI//o8Ii28hI8JT7IgrdcXGfSKHryP99pgojJMiyp68k9dCRbxaJdzhdtAyMyYT1zcAKWLEpOOcKDWtSssH8Osv/pM+H6POKYaP1aQB4SOCy58KN5T0dUNUl0RK6F0eUgGQzzIt390nYUtbjqR4t1M5w/XnKIocZpjsOsmqwd7wcoycdjrLCdbXsQWxTq7DZ1AKr3/Jhhw9aoCOayPMT1/3Got9NZUcXd4rltGYYLBey+LnbjoLmNHsffhaYbyvXm7awjJ7CAX23HhJg0UrEc7kRiLfx7FJaRbXpjMoBPjrauSkgo6vRI5KdLigLZfJ2PJCTRdyGV/R7FwHJIUB1lkqvqfUWSQVfjdPEiGh2H6l8Q/CAY0kMokm2/wNKbGbwVIZBRflDazXyI/8mwMyZr8PEfNTjaJkwUQir1xNC1T9yiW+6BZ/cN6FOiSGrMPCD7u+b2LME+gosf6zTeLFgt7E9Qs8qe3ZfEXrM4fHbjyOD2ht4CqZA28YNGQrFIiddQVcyXntpNupKwCdSjZhO7jHja98J8IhNbicKhD7cHTd5R1T89yEDPDF9YL0J9jo+UsyDntErA4teK+U/kjN3qHbia3lvu8L9soLb9HDi0lYG25NwXzqwocOHndrGvMJPJk88=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(1800799024)(376014)(22082099003)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TXk4VXZMTVNoTVF1NlcvdkZGVEsrTVVvemxMalZGeGxuL0RMeUhtNk5xT3Qz?=
+ =?utf-8?B?MGNSZ3hnL3doSVJIYmNrVHRNR1NxVkhHeHo0c3g2Nkp4RUlMM0hvZmsrWUdy?=
+ =?utf-8?B?dmMwb3dDWDIwZ3l0SEhES0k2bkJKNENHeEFZNTNnV3ZDN2VOZjRBZ2VtNlVS?=
+ =?utf-8?B?M09Zb1hmcUVQRThvcGZxbktGSFFDRmpuNVZ5bytYK1VXRlJRUkZLS3dhYXZB?=
+ =?utf-8?B?K243WDk4VHlHcFcxaGd2b2d4Q1lDbmhvcDJWNzNoRklydW53amZ4SDNkSHNC?=
+ =?utf-8?B?d1RUazZvNU1mbll4RndnUktOMnFadFVVS3FIUHhOWlRnRUt1eWZpaHpvTXdK?=
+ =?utf-8?B?ZUZtV3RmMjNvV1JsTk96TGpOcHEvNVZnMjI0WnMwZENhbVhZU0x3OU4xKzhF?=
+ =?utf-8?B?TWpSZm9OVVFkWloyU0lOOWJCTHVCbDYxYVZ4RnBoWVBxNFRXUnZqY1c5REw2?=
+ =?utf-8?B?RU5CZHlGYVZha2dJWFA4NnI4RVFlSHdFT05ZOHczd1ZqMmhPeEp5U1RuSk9O?=
+ =?utf-8?B?alc5bTN1emxHWlgxSWNDMkJBT0dTdzVlL0dxRVBHNDFEeVJFaHZJd29NS1VB?=
+ =?utf-8?B?a1E2YndDVzVtMTdyQ295OUhFZEVFdVRIeVhvaHVCajh5QXRRVFpvYjdlNTYx?=
+ =?utf-8?B?NGx6bm9WY0ZHQ05nUVMrdzN6ZFNuQ0d5d1dheUhhc3FUbVVkSzdzZWM0emJh?=
+ =?utf-8?B?U0pkc3BIOTFjR01YMUJRMmhYempvYXdSaDgyZWZNV0JCR25JeHRSaE5zVjRk?=
+ =?utf-8?B?N2ZvaDgvN2dRYUNaN2dPN2MrRm15UlFLaSttS1N1MFJmblh2UzlmMXhyb2tC?=
+ =?utf-8?B?MHJNSStET0hYZ0pOQU12WVNwRHJBZE5YK08rZGtKWGxKRlFwelQ2Y3Vxa2Jx?=
+ =?utf-8?B?eXVUWlBKNE12Skw5T1JyKytzQUFBTUJ0dXRDb09qWkdqZEg0eWlYd1hQcG8x?=
+ =?utf-8?B?NjVZbXcwcWl6OExHQVdBVXdURXVTcXpWYm1oRXdZb2h4K3BvQndQQzIxMjVX?=
+ =?utf-8?B?V1YvcDlKb3MyM0xOWnVmRHRZMlRZQ1JpVG5udnphZXBkNWVSSmptQ05SK0o2?=
+ =?utf-8?B?bnlvQk5zZVhBTnhuTUI2MGF1L2tLMXl4YXdybmttUmpnOFlYRXV3V2dHZEsy?=
+ =?utf-8?B?LzRkZDNhTEdvbVk1R01sWENrdDYrQXBwWldYa0I4dk9TVXExMGNSYTJ3RzZp?=
+ =?utf-8?B?TG1zbit1Rm1RMjZSdmQrdmw4ZUFwOWpDZUtrQzVWNXRndVZrQ3pCSEtPdVdC?=
+ =?utf-8?B?YnREVXNhRTlsYXRVU0J6S1hmUzhGQjJqYXdkZ2lFd3ZyaTczTHhWbXNMc1VR?=
+ =?utf-8?B?aGVHTFdkalQrLzNwQzUyaHIyR1VXM3FoVFMrdjVGYmlKUXg3V01BaVZ5ODU4?=
+ =?utf-8?B?ZU0wK1huN0NkY1dWczZhZkRiS3lUNDBWQTNUZm1SS3E5c0RKMUFtT2YzU0s2?=
+ =?utf-8?B?RmxyM0dQSm5HdjNDZTJCcVlxNTdsdklsM0E0RGNXQ3daN3JMRHRSelhWVTNn?=
+ =?utf-8?B?MHZQTUZ5YnZaeE9oQWd5dHNKNkNaSTNiWnpOMDUyeHZvYUZ3eHZaWVQvTzVW?=
+ =?utf-8?B?SWs0T3F3WURmOVA4cW9XSEZvL1oyMW9aQS9TNEZ4VW05ZURmKzdCVVZTN1pW?=
+ =?utf-8?B?L2xwREN6cytwT0hvZXgyVU1DMDZnS2EyUFdnZERwVUJsNEhYa0NVdGN4VzEv?=
+ =?utf-8?B?cDBpTVBDQ0lMRlVlU29qUFlDMnk5cmM3UjFoN2RTSkZVdU11SDVGbGpmaUY1?=
+ =?utf-8?B?Y3BkMWRmTVlWcUM4endNMGxIYXNvWDZBWEhqTkt6MGV3NGxueG5OaDFRNThX?=
+ =?utf-8?B?TWgwRFhUcjNrZnV5Wmk0UmxDZ2JLWXdBSWRBeExDUWZidDM1eE02VE1KbE8y?=
+ =?utf-8?B?UE05Wi9WdGxJbEU3UmJDT29TV216TDlCaVFQSE85VFRESEp6QUsxaWFEUkNF?=
+ =?utf-8?B?eGJJUlduZEVRZStjSFdVRURiZmVpMGw1dld6SmtHQTZmTW52WGtPWldHYy9V?=
+ =?utf-8?B?YTRDK1FqQ0RGRldscDBIWU1MNStJbHNHcXJHK21ucHlJckJoZHgwNkQwRXZE?=
+ =?utf-8?B?dUhqZ2xmSHdiMTV0c2xhRi9KRmcwOEJCQW9IcTNUek5Xamw5N1cyT3NoUnB3?=
+ =?utf-8?B?TkdmQkNPTDIwd2NnRWMyN09YNG1QVngrd1pEMm4reUNtQXQvWFQvaFlWMTRB?=
+ =?utf-8?B?ZnEyK0ozYkN6ejJiVmVGV1o4OHA0YmlaK09CNFN6M0pvRUxXcW9kWGt5dGgw?=
+ =?utf-8?B?MGswVDFvRlJmRVp1OXpsbzhmUDl2ZmJWOE1NVi94ZWZZVlVGelFEUVN4NnBZ?=
+ =?utf-8?B?SE03L1BvbkNZWDE0RHk2YUxsQXk2cUp6WXBPaC9hcC9Dd1pQeFdza2doeXdu?=
+ =?utf-8?Q?q7CJm2vNOrITptcMHbPNPJIoYgT9o9vHT189SvqiogWGd?=
+X-MS-Exchange-AntiSpam-MessageData-1: lL9Ob7z2k+D3qA==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 479d86e5-cf94-4a75-1d85-08dea2a51641
+X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Apr 2026 08:31:46.2764
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +k6qVoGejqBBkJPOjcSuRUwGag+Ank/I7WDGU2qud/XZ+35NrSSFZYOSYkiOugFtK5fuIneypikhDvkEojDeDQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6948
 
-On Fri, Apr 24, 2026 at 07:11:35PM +0300, Dmitry Baryshkov wrote:
-> On Fri, Apr 24, 2026 at 03:34:38PM +0200, Greg Kroah-Hartman wrote:
-> > On Fri, Apr 24, 2026 at 06:12:09PM +0530, Vishnu Reddy wrote:
-> > > 
-> > > On 4/24/2026 5:25 PM, Greg Kroah-Hartman wrote:
-> > > > On Fri, Apr 24, 2026 at 05:15:02PM +0530, Vishnu Reddy wrote:
-> > > >> On 4/24/2026 4:43 PM, Greg Kroah-Hartman wrote:
-> > > >>> On Fri, Apr 24, 2026 at 04:01:13PM +0530, Vishnu Reddy wrote:
-> > > >>>> On 4/23/2026 7:07 PM, Greg Kroah-Hartman wrote:
-> > > >>>>> On Thu, Apr 23, 2026 at 06:59:31PM +0530, Vishnu Reddy wrote:
-> > > >>>>>> From: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
-> > > >>>>>>
-> > > >>>>>> When a driver needs to create virtual device at runtime and map it to
-> > > >>>>>> an IOMMU context for memory isolation, there is no common bus available
-> > > >>>>>> for this purpose. Each driver ends up implementing its own bus type,
-> > > >>>>>> leading to duplicated logic across multiple drivers.
-> > > >>>>>>
-> > > >>>>>> host1x driver implemented its own bus type to attach an IOMMU context to
-> > > >>>>>> a dynamically created device. The Iris VPU driver now has the same
-> > > >>>>>> requirement. Rather than duplicating the same bus logic again, a shared
-> > > >>>>>> bus type is introduced under drivers/base that multiple drivers can use
-> > > >>>>>> directly.
-> > > >>>>>>
-> > > >>>>>> The bus takes care of creating a device and attaching the IOMMU context
-> > > >>>>>> to it based on the client inputs.
-> > > >>>>>>
-> > > >>>>>> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> > > >>>>>> Signed-off-by: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
-> > > >>>>>> Signed-off-by: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-> > > >>>>>> Signed-off-by: Vishnu Reddy <busanna.reddy@oss.qualcomm.com>
-> > > >>>>>> ---
-> > > >>>>>>  drivers/base/Kconfig            |  3 ++
-> > > >>>>>>  drivers/base/Makefile           |  1 +
-> > > >>>>>>  drivers/base/dma_context_bus.c  | 77 +++++++++++++++++++++++++++++++++++++++++
-> > > >>>>>>  include/linux/dma_context_bus.h | 26 ++++++++++++++
-> > > >>>>>>  4 files changed, 107 insertions(+)
-> > > >>>>> as you can not have a device on multiple busses at the same time, this
-> > > >>>>> makes no sense to me at all.  "dma context" is a bus-specific thing, so
-> > > >>>>> please add it to the bus that you are wanting it for.  It can't be a
-> > > >>>>> generic bus as that just doesn't work.
-> > > >>>>>
-> > > >>>>> Or what am I missing here?
-> > > >>>>>
-> > > >>>>> And why is DMA somehow "special" here from any other hardware attribute?
-> > > >>>> Let me give brief information which was discussed, in the initial series,
-> > > >>>> the iris VPU used platform bus for dynamically created devices and we got
-> > > >>>> the comment/suggestion from Robin to implement a proper bus_type with a
-> > > >>>> .dma_configure callback.
-> > > >>>>
-> > > >>>> https://lore.kernel.org/all/02b3d0f5-f94c-43cd-93af-97cfcf7751b1@arm.com/
-> > > >>>>
-> > > >>>> based on the discussion, implemented the dma_context_bus and used for iris
-> > > >>>> VPU devices instead of platform bus.
-> > > >>> Why not make a irus_vpu_bus where you can do what you want?
-> > > >> Initially iris_vpu_bus was introduced, and it was made generic based on the
-> > > >> discussion,
-> > > >>
-> > > >> https://lore.kernel.org/all/20260227-kaanapali-iris-v2-3-850043ac3933@oss.qualcomm.com/
-> > > > I don't really see that request here, I see a "make this better and more
-> > > > generic for other busses" but that does not mean "dump it into
-> > > > drivers/bus/ for someone else to maintain" :)
-> > > >
-> > > >>>> Here, the device have only one bus (dma_context_bus), not multiple buses.
-> > > >>>>
-> > > >>>> Regarding the "DMA" naming, the core operation of this bus is its
-> > > >>>> .dma_configure callback, which calls of_dma_configure_id() to map the device
-> > > >>>> to a corresponding IOMMU stream ID. The name "dma_context" reflects this
-> > > >>>> purpose.
-> > > >>>>
-> > > >>>> I am open to suggestions from you or Robin or anyone else, if there is a
-> > > >>>> better or preferred way to achieve this, I am happy to consider it and
-> > > >>>> rework the implementation accordingly.
-> > > >>> As there is only one user, just make this your own bus please and do all
-> > > >>> of the needed bus operations for your devices there (i.e. don't hang an
-> > > >>> "empty" device off of it.)
-> > > >> The reasoning behind to make it generic was to have more users - host1x,
-> > > >> Iris VPU, QDA on the generic context bus, instead of each of them having
-> > > >> their own. Let me know if you suggest to have the iris_vpu_bus.
-> > > > But you did not add such users here, so how would we know this?
-> > > >
-> > > > And still, I have no idea what this bus really is doing.  Is it dynamic?
-> > > > Is it self-describing?  Why not just use aux-bus?  What is it supposed
-> > > > to be doing and used for?
-> > > 
-> > > This bus will allow users to create a dynamic device and map to IOMMU stream
-> > > ID via .dma_configure callback which calls the of_dma_confgure_id() based on
-> > > the user inputs. This bus is under the iommu_buses list to register for bus
-> > > notifier callbacks for iommu_probe_device() and iommu_release_device() during
-> > > add and remove.
-> > 
-> > But a device is nothing on its own.  You can not just have a random
-> > 'struct device' hanging out there that does nothing but iommu, right?
-> > It should be doing something else that is very "bus" specific.
+
+On 25/04/2026 02:42, Rosen Penev wrote:
+> Reduce 3 allocations to one using a flexible array member.
 > 
-> Unfortunately, it is a pattern of IOMMU-only devices. All the actual
-> programmig is done through IO region associated with the main device,
-> while subdevices are mostly used for DMA buffer allocation.
+> Also use of_device_get_match_data. No error checking since it cannot be
+> NULL.
 
-Great, then you have a "host controller" for the devices, and children
-devices on that bus, with proper drivers binding to them.  Like all
-other normal busses.
+Sounds like that should be a separate patch. A patch should do one thing.
 
-Yes, writing a new bus is a bit more pain than it should be, one of
-these days someone will get around to making that simpler...
+Jon
 
-Along those lines, why aren't these new drivers in rust?  :)
+-- 
+nvpublic
 
-thanks,
-
-greg k-h
