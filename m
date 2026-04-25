@@ -1,305 +1,158 @@
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010032.outbound.protection.outlook.com [40.93.198.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6461237C107;
-	Fri, 24 Apr 2026 20:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777061971; cv=fail; b=EXNH2i50WCSFAdWH8OeWqzFU4L1qm9iA2GK7viwzNyYhcAtqB7U5Ozxuwp/rZ6tWhbTFsArhchcyhrs4+8wcIbbPWR9iR++movGoXj7hFSQ0sz7Azv2fsSBdSrIanJ5qJKPJLN/FxWi3J4qwXeM752hFyrMXmldLlJ+WlTcM3KA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777061971; c=relaxed/simple;
-	bh=UeTNcDOO/NJTVJYkr5n8XEJh8Jdwc0zMBefNOhVd/1o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G2prrbi713rD2H4VHu1gtRFZM0g3U5neFi9Wmj1U/QFUgfNF1MK/IpzDFWVAdQ4RTczgubp2I1k38xw3nur4WDVaPcBdXWpMiY5LGWdPW+yBHhvKMUBM2SsQxaCJlklzAbhJ0DJwkMx7cnHQ0brkqVjelsp8P7E+lG9nynQJMdE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dIV8kYTb; arc=fail smtp.client-ip=40.93.198.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80E2204F93
+	for <linux-tegra@vger.kernel.org>; Sat, 25 Apr 2026 01:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777081384; cv=none; b=ASvVY05BrF1Um3t717GNrFlvWRXBa2OUDsVmPHahwluzj9m8vuDunjIKGu81aUsVW91I0w8PpdPex4jE4lygxNDen2j/6jvzSKcdTTsYS+tcLKF3CJDo+QHIfawyqBjHI94HRFa4aL9myn2hqLDog4vlHKRwiGavdnONfYS30do=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777081384; c=relaxed/simple;
+	bh=+cdLIRk7vhwZO1mTjgtO6cxF+uoVQlfIJe72382/1X8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uN6wqxhjSugXR1J5/nAWxJYHMYz4Nd4pzwQ804XgpqIiLb9RNoH2ceCossbV2AAQjbXXvhPCy18yVeDjoziY+rP8nEuj+hVmRpHt7HrsGrwcvGYkgswUiObqQv77hEP+1ADkW1NXqzS75tYGlJwchxKz1rvh/UEGJqAQs0OB7Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G6Gfbe4r; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dIV8kYTb"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KSPSoNYyUapFsTJ+hgSv5+4jSQo0hSEZXm4xD+JGgW7AxcB+5bFkmEpimD0qFMfmodiKlUH3n+9DcsTL4jwzx8mNrgv+I3S5e3jqCIhq9ewrjXY+7pLCnYNxRMaz+KfeRStxdLXWZoFLf6I47NbR7sGzLrP2+cbf4gpRs1V4vXNk46+Y4IEx3/D3BNoKMLWPrnNFoGQAGn5OwJeCpedE1ZmTfpPg4g/mFOghSELMYrJqbSBpuB3vAX6Q+5VUoxjEV300CT+4rC+tAJ4aavZkNdtEIjJXcGXu8lgb7/csRMWky9DptRN4L9nzOy775TTZM1kexyrAlFfmxM2g2Gjgng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9v2w4pq1FLndtWxZUYPatJR+oW1t24IipFKyEGJ6ZoU=;
- b=JApSRMJItkEkGQPM+24MZ9oKrLF9tciU5yheKBeFzK3fw62kc8Sqo+sMiFt/OBwPQDTLikkO8ILCVWafHyjwk4QVE3RMThVF2Hlv5GYwI34F6cCzEzFGc6vY4XhZMZoYeybPyhEJoUxK3Bt41s/tlmnhaHHEjRQr6/ol2ZYHGYLLRRGq4TEocjE1hj9NWCUupojKDLbD4CO/dkdwG2nVgzTGBNpXoWi42rYGsJ/GCJAEP82phIp26MhfJpFcH6avNs7+mmWRuN7w1Y1CeyibZ/0GIMvI+5olWHzirCW+gmfQF7i0BJ4Xph6UsWYyu8eHr6pXUm01saL3O5wJp5zomg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9v2w4pq1FLndtWxZUYPatJR+oW1t24IipFKyEGJ6ZoU=;
- b=dIV8kYTbqKkgKoRBwdmbrrkEkOFY3+bavTKB9IaA2v96xPDvS1jSVI/TPczP7f3PDWTWkoHQhDK/S2wEufevlb8zsHwRLlFTI+7SRPdNdWETd3kodXfkICT1zUQtyBCpFSItvlkkLL72wU5/azaKfhPPMTX+vniDOsUdnEnwRq7jzHudlxU29SCKISkUg16/ihtDskbX5dljAUMQMbVp6z8QuZLzkK3fk5O22u/2PvyDTdzTztmujvkRO5ZqHEKZGb7uw5fD0Tvwrz6cLVlYXoWFkKFR1M478B4/3dciN8JNucgRrCUERYVISyEyk1yIHMWOHCwFm4BkxwQMRzWhVw==
-Received: from CH5P222CA0010.NAMP222.PROD.OUTLOOK.COM (2603:10b6:610:1ee::28)
- by PH7PR12MB6857.namprd12.prod.outlook.com (2603:10b6:510:1af::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.22; Fri, 24 Apr
- 2026 20:19:23 +0000
-Received: from CH2PEPF00000145.namprd02.prod.outlook.com
- (2603:10b6:610:1ee:cafe::53) by CH5P222CA0010.outlook.office365.com
- (2603:10b6:610:1ee::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9846.22 via Frontend Transport; Fri,
- 24 Apr 2026 20:19:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH2PEPF00000145.mail.protection.outlook.com (10.167.244.102) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9846.18 via Frontend Transport; Fri, 24 Apr 2026 20:19:22 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 24 Apr
- 2026 13:19:03 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 24 Apr
- 2026 13:19:02 -0700
-Received: from sumitg-l4t.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Fri, 24 Apr 2026 13:18:56 -0700
-From: Sumit Gupta <sumitg@nvidia.com>
-To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <pierre.gondois@arm.com>,
-	<ionela.voinescu@arm.com>, <zhenglifeng1@huawei.com>,
-	<zhanjie9@hisilicon.com>, <corbet@lwn.net>, <skhan@linuxfoundation.org>,
-	<rdunlap@infradead.org>, <mario.limonciello@amd.com>,
-	<linux-pm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <linux-tegra@vger.kernel.org>, <treding@nvidia.com>,
-	<jonathanh@nvidia.com>, <vsethi@nvidia.com>, <ksitaraman@nvidia.com>,
-	<sanjayc@nvidia.com>, <mochs@nvidia.com>, <bbasu@nvidia.com>,
-	<sumitg@nvidia.com>
-Subject: [PATCH v2] cpufreq: CPPC: add autonomous mode boot parameter support
-Date: Sat, 25 Apr 2026 01:48:14 +0530
-Message-ID: <20260424201814.230071-1-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6Gfbe4r"
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2ab46931cf1so65640735ad.0
+        for <linux-tegra@vger.kernel.org>; Fri, 24 Apr 2026 18:43:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1777081382; x=1777686182; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z7jfOZXdYS61UScW0k+/0N0W+wALOe5mQD08+f58S0o=;
+        b=G6Gfbe4rwPdKE9yQ1N9dR77SsaGX7INzaTIO5P3JFJHkv6EaucQ/fxW6QlI7+7acCE
+         9W7wAh2T+1Kw/PUNRaay4Eq6rcL9YAqS2EkIeY1+O6JYFBgMDWRtHW21FRMOw0qCFp/f
+         jlmOlF7AjXr4xpcIz+zYv3GD5GLz6tpuiz/1D97uryvXiKhcuOULbRy2rKoLLWw8oMd0
+         ZZDeifch6lO+6weuXgTy5yA49XxnazinE3xGPjBEpRKvst4Fn32zJ+szEiUEr1t3sRej
+         9NfkHFScdHDxf12rwpyT9kZawrk16CbJsdN66KPqJ6ulTHmksBuhYvhsRpkjMHjnh1gc
+         gY/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777081382; x=1777686182;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z7jfOZXdYS61UScW0k+/0N0W+wALOe5mQD08+f58S0o=;
+        b=Sq+1yYWLxSCR0eBcY0PtyKm90mDY/SDHqNFx26PaYNq/uyxM/lgugT8efJi/PBXNC/
+         vMBq25qUS54RZdQNpbFZPgaWLfU+iMzgdRu+3BdLRciikcukUN+rKedVmlozYmBby7Sa
+         eMKKiXVmEKzwLwNcsqKt72lBtxhxX4udohcJ926HQd//RY90ZprxQ6Whmcd/NplAy5Gx
+         2tNCEsHbY4PuaRwKhFiJlSNGKHA94uyrutFmcwsurdU780G53fJ8li09x0D8lge0Ru4e
+         24D4fd36Mn8fQaT6tJ5x9Uzk5slx0XSQ+IMq4JNPTU79kDqJTdXWrJpg5lUEKpy3pckn
+         a27Q==
+X-Forwarded-Encrypted: i=1; AFNElJ+TWZpw0U2siQfQMjn2UxbwtUgvdtsfsIs/yyiCvPrYPVnicxvLT8Wl1lFNRx+MPWCyHQRQ3xIQ1dFVgA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyJ9Ha+U8/9uYykMNiHCfGqWtkbTdlmTQzzaUg9P1Y3odNaRMj
+	V1e1sU/ybFlUoxQ/v8pRafthkeEfqtu992t3P0tjBHkqK3uqYGIW4i1g
+X-Gm-Gg: AeBDievRlwiZLSURHTLYq3tGG8P1sGZapcp7uRtzH63nzW7HmeGh6oudm2T8HgIVdpu
+	womD6gKZGD2KCbTeqwAfKv2cisyY82VRGUdzZq+ydub+a/kaLo1lNjA5Zqj3TZwq+tmNf39cXTv
+	Xz9GEj3Oadn2S1fEt996yPS98M2Yfouj9L0giHZAAWLlhEE3bX0ShubZNpsZtoZ7DQ8kqTiJzY0
+	wc4slTJEPgXNtQYxb8FzpN1yAdQp+Ib/IVFPpbyxgoJc1Cprl6GBXNWXKQjKXCpdcSn9aueXlgG
+	wCxwwmKbYi5c5mLYY6XuR4gB5j3lK20o+jydBm6sO46bpZDIYk3xKMRdhCTScgO6IcewbrAQZD0
+	Q0fVjdwLYzNnll/PVy0eXXOSzfE3Y0QhJTRQIuCNp6Un9VY1ceX45yJLMMd5EE2GoSMV3Th+8p6
+	UhuImXwz2eCd1RZFX4WIqKpvwBgnee+sSQLSKXcIq3RsRuMZef9xAA3oYadZSKvEpsoG+IlvR3h
+	qNCsEezzXjJYTZoBHtswQzdxQ==
+X-Received: by 2002:a17:902:e748:b0:2b4:5d0c:7a85 with SMTP id d9443c01a7336-2b5f9dbcd42mr318493365ad.3.1777081382212;
+        Fri, 24 Apr 2026 18:43:02 -0700 (PDT)
+Received: from ryzen ([2601:644:8000:5b5d::8bd])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b5faa494e1sm235306615ad.35.2026.04.24.18.43.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Apr 2026 18:43:01 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-sound@vger.kernel.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] ASoC: tegra: ADX: simplify probe allocation
+Date: Fri, 24 Apr 2026 18:42:44 -0700
+Message-ID: <20260425014244.439788-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000145:EE_|PH7PR12MB6857:EE_
-X-MS-Office365-Filtering-Correlation-Id: 257a86f5-ef2a-43a8-df11-08dea23ec633
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|82310400026|36860700016|921020|13003099007|56012099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	M6nixraRb6+hfkrj5gzb9NogRPFrDQUsiIeyDJ5q0x3wCGz0au2DNVAtzQ+PIDquGyEg+B2XTX59dBiMTYL7XLcQXGntEX0amrNK4gSNVfNJkGoZErkGvyXeni1AL0iu/CNQgj4BqvRZkNsEnfjqzXPjtN4mnp8ujkQysCIMwOqWLMC5SM02vU04T2IN/3pvy3ahfhmxe3K6BwrVVe0L2EtiFHlLt4ww1coWLrZ4DpyrLM/recYHmQv+8TuH8XR2tql1qX/8raWACOgTVh8c375ACny9ZEx9Ri1JncFWsoe0Vcy1W5hLNR+kQpUt1V//klfTwXqxA6KNrVOoKMMiyV5j+LMSRhXHR3yECdWB8FTPZiY06rpOpZ04C65iar4ppvN/Hyq2tXlzMbBpIRKG5+/b6RIUNWh2Fw7YrG9ypUVfDu33R3HOibk6I7flKLZ+iQY2ZiJL6uw3lTPWhF86WWIJxNvxCW5K1zE5SCKvxD6j+gXHtZ9xs74yChl8DYY8CFv+2aA+qmgJx1RSUxFlqQZAczOhzHhY4nKyg44Q7u7dqtTLD7JtCI/ng+yt9WagPqpnia80SrA9PEXf6b70277fyRKfpd4p0kb4pdXQk6qsE6KxTdP/WZMfk0hSUftcNi3TWx/+fp6i7IQcWhaP0qKzDyGK3IXh9pc+Fj9fvR68Kh5ZJta3H8JxJslJfrm3oWOxLSTOxZSIiBWlVH/jGEa2U069LmmCl11J8xbwqjGyaXC0ICCzdidRY30yxHHFwBPiC2nTG7LhmFbf9FjP2avTeuy5sqNdPpzQ0Q+G3jR4+zReEJzZEp4FKhhB/sLu
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(82310400026)(36860700016)(921020)(13003099007)(56012099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	lc8cLpEWDnaxK3t71iqLSTQ2N+HFGHWhRqq7U5oXRxXeJErlh+Kq6TIXyeLi6WwWYqtGePGtEmG0qpFquBSxpK1XGQfY/WurMba9NEcYeSqkPGH/Mv7fzx/aegMOzr49VzewVZ9tCTsg6eQJA8z2SXmCbNjY9LMOtpetPceGVQroVyTk54hQoxtKDe4J7q6DsLrQMxlqDHOIClvtGDQsJO9muXsZszx5w7rrrIT5OfxqQ7V98B3zya0vJZks9WXF1mfnts+IEUJRU0W6241B2M5Nz9Its9g2njczI6Qqhb/FnOZP4nif2Kq2LaYnqYNfr9Yv15FtUyQyVFLwnn8QSjg+ro4rU3JNJ2WEXJ9uT0lfBKNjXJZ5HlSAkvHsibzB7X9N8ay8ziIY2jfhZmkwr4w3GcEAfu7LuSeBmJlQPoL8+xyky1APGCEl885hE/GU
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2026 20:19:22.8578
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 257a86f5-ef2a-43a8-df11-08dea23ec633
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF00000145.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6857
 
-Add a kernel boot parameter 'cppc_cpufreq.auto_sel_mode' to enable
-CPPC autonomous performance selection on all CPUs at system startup.
-When autonomous mode is enabled, the hardware automatically adjusts
-CPU performance based on workload demands using Energy Performance
-Preference (EPP) hints.
+Reduce 3 allocations to one using a flexible array member.
 
-When auto_sel_mode=1:
-- Configure all CPUs for autonomous operation on first init
-- Set EPP to performance preference (0x0)
-- Use HW min/max_perf when available; otherwise initialize from caps
-- Clamp desired_perf to bounds before enabling autonomous mode
-- Hardware controls frequency instead of the OS governor
+Also use of_device_get_match_data. No error checking since it cannot be
+NULL.
 
-The boot parameter is applied only during first policy initialization.
-Skip applying it on CPU hotplug to preserve runtime sysfs configuration.
-
-This patch depends on patch [2] ("cpufreq: Set policy->min and max
-as real QoS constraints") so that the policy->min/max set in
-cppc_cpufreq_cpu_init() are not overridden by cpufreq_set_policy()
-during init.
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org> (Documentation)
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
-v[1] -> v2:
-- Call cppc_set_enable() unconditionally so CPPC is enabled for both
-  OS-driven and autonomous modes.
-- Init min/max from caps instead of cppc_cpufreq_update_perf_limits()
-  as policy->min/max aren't yet populated.
+ sound/soc/tegra/tegra210_adx.c | 24 ++++++++----------------
+ sound/soc/tegra/tegra210_adx.h |  2 +-
+ 2 files changed, 9 insertions(+), 17 deletions(-)
 
-[1] https://lore.kernel.org/lkml/20260317151053.2361475-1-sumitg@nvidia.com/
-[2] https://lore.kernel.org/lkml/20260423084731.1090384-2-pierre.gondois@arm.com/
----
- .../admin-guide/kernel-parameters.txt         | 13 +++
- drivers/cpufreq/cppc_cpufreq.c                | 89 +++++++++++++++++--
- 2 files changed, 97 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 0a1abed1b93c..751817b0573a 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1067,6 +1067,19 @@ Kernel parameters
- 			policy to use. This governor must be registered in the
- 			kernel before the cpufreq driver probes.
- 
-+	cppc_cpufreq.auto_sel_mode=
-+			[CPU_FREQ] Enable ACPI CPPC autonomous performance
-+			selection. When enabled, hardware automatically adjusts
-+			CPU frequency on all CPUs based on workload demands.
-+			In Autonomous mode, Energy Performance Preference (EPP)
-+			hints guide hardware toward performance (0x0) or energy
-+			efficiency (0xff).
-+			Requires ACPI CPPC autonomous selection register support.
-+			Format: <bool>
-+			Default: 0 (disabled)
-+			0: use cpufreq governors
-+			1: enable if supported by hardware
-+
- 	cpu_init_udelay=N
- 			[X86,EARLY] Delay for N microsec between assert and de-assert
- 			of APIC INIT to start processors.  This delay occurs
-diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-index 02db03d03755..672fc3058190 100644
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -28,6 +28,9 @@
- 
- static struct cpufreq_driver cppc_cpufreq_driver;
- 
-+/* Autonomous Selection boot parameter */
-+static bool auto_sel_mode;
-+
- #ifdef CONFIG_ACPI_CPPC_CPUFREQ_FIE
- static enum {
- 	FIE_UNSET = -1,
-@@ -656,6 +659,14 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	caps = &cpu_data->perf_caps;
- 	policy->driver_data = cpu_data;
- 
-+	/*
-+	 * Enable CPPC for both OS-driven and autonomous modes.
-+	 * The Enable register is optional - some platforms may not support it
-+	 */
-+	ret = cppc_set_enable(cpu, true);
-+	if (ret && ret != -EOPNOTSUPP)
-+		pr_warn("Failed to enable CPPC for CPU%d (%d)\n", cpu, ret);
-+
- 	min = cppc_perf_to_khz(caps, caps->lowest_nonlinear_perf);
- 	max = cppc_perf_to_khz(caps, policy->boost_enabled ?
- 			caps->highest_perf : caps->nominal_perf);
-@@ -711,11 +722,71 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	policy->cur = cppc_perf_to_khz(caps, caps->highest_perf);
- 	cpu_data->perf_ctrls.desired_perf =  caps->highest_perf;
- 
--	ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
--	if (ret) {
--		pr_debug("Err setting perf value:%d on CPU:%d. ret:%d\n",
--			 caps->highest_perf, cpu, ret);
--		goto out;
-+	/*
-+	 * Enable autonomous mode on first init if boot param is set.
-+	 * Check last_governor to detect first init and skip if auto_sel
-+	 * is already enabled.
-+	 */
-+	if (auto_sel_mode && policy->last_governor[0] == '\0' &&
-+	    !cpu_data->perf_ctrls.auto_sel) {
-+		/* Init min/max_perf from caps if not already set by HW. */
-+		if (!cpu_data->perf_ctrls.min_perf)
-+			cpu_data->perf_ctrls.min_perf = caps->lowest_nonlinear_perf;
-+		if (!cpu_data->perf_ctrls.max_perf)
-+			cpu_data->perf_ctrls.max_perf = policy->boost_enabled ?
-+				caps->highest_perf : caps->nominal_perf;
-+
-+		cpu_data->perf_ctrls.desired_perf =
-+			clamp_t(u32, cpu_data->perf_ctrls.desired_perf,
-+				cpu_data->perf_ctrls.min_perf,
-+				cpu_data->perf_ctrls.max_perf);
-+
-+		policy->cur = cppc_perf_to_khz(caps,
-+					       cpu_data->perf_ctrls.desired_perf);
-+
-+		/* EPP is optional - some platforms may not support it */
-+		ret = cppc_set_epp(cpu, CPPC_EPP_PERFORMANCE_PREF);
-+		if (ret && ret != -EOPNOTSUPP)
-+			pr_warn("Failed to set EPP for CPU%d (%d)\n", cpu, ret);
-+		else if (!ret)
-+			cpu_data->perf_ctrls.energy_perf = CPPC_EPP_PERFORMANCE_PREF;
-+
-+		/* Program min/max/desired into CPPC regs before enabling auto_sel. */
-+		ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
-+		if (ret) {
-+			pr_debug("Err setting perf for autonomous mode CPU:%d ret:%d\n",
-+				 cpu, ret);
-+			goto out;
-+		}
-+
-+		ret = cppc_set_auto_sel(cpu, true);
-+		if (ret && ret != -EOPNOTSUPP) {
-+			pr_warn("Failed autonomous config for CPU%d (%d)\n",
-+				cpu, ret);
-+			goto out;
-+		}
-+		if (!ret)
-+			cpu_data->perf_ctrls.auto_sel = true;
-+	}
-+
-+	if (cpu_data->perf_ctrls.auto_sel) {
-+		/* Sync policy limits from HW when autonomous mode is active */
-+		policy->min = cppc_perf_to_khz(caps,
-+					       cpu_data->perf_ctrls.min_perf ?:
-+					       caps->lowest_nonlinear_perf);
-+		policy->max = cppc_perf_to_khz(caps,
-+					       cpu_data->perf_ctrls.max_perf ?:
-+					       (policy->boost_enabled ?
-+						caps->highest_perf :
-+						caps->nominal_perf));
-+	} else {
-+		/* Normal mode: governors control frequency */
-+		ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
-+		if (ret) {
-+			pr_debug("Err setting perf value:%d on CPU:%d. ret:%d\n",
-+				 caps->highest_perf, cpu, ret);
-+			goto out;
-+		}
- 	}
- 
- 	cppc_cpufreq_cpu_fie_init(policy);
-@@ -1035,10 +1106,18 @@ static int __init cppc_cpufreq_init(void)
- 
- static void __exit cppc_cpufreq_exit(void)
+diff --git a/sound/soc/tegra/tegra210_adx.c b/sound/soc/tegra/tegra210_adx.c
+index d2f742ffc59d..3f6c068d00c8 100644
+--- a/sound/soc/tegra/tegra210_adx.c
++++ b/sound/soc/tegra/tegra210_adx.c
+@@ -676,17 +676,20 @@ static int tegra210_adx_platform_probe(struct platform_device *pdev)
  {
-+	unsigned int cpu;
-+
-+	for_each_present_cpu(cpu)
-+		cppc_set_auto_sel(cpu, false);
-+
- 	cpufreq_unregister_driver(&cppc_cpufreq_driver);
- 	cppc_freq_invariance_exit();
- }
+ 	struct device *dev = &pdev->dev;
+ 	struct tegra210_adx *adx;
+-	const struct of_device_id *match;
+-	struct tegra210_adx_soc_data *soc_data;
++	const struct tegra210_adx_soc_data *soc_data;
+ 	void __iomem *regs;
++	size_t alloc_size;
+ 	int err;
  
-+module_param(auto_sel_mode, bool, 0444);
-+MODULE_PARM_DESC(auto_sel_mode, "Enable CPPC autonomous performance selection at boot");
+-	adx = devm_kzalloc(dev, sizeof(*adx), GFP_KERNEL);
++	soc_data = of_device_get_match_data(&pdev->dev);
++	alloc_size = struct_size(adx, map, soc_data->ram_depth);
++	alloc_size += sizeof(u32) * soc_data->byte_mask_size;
 +
- module_exit(cppc_cpufreq_exit);
- MODULE_AUTHOR("Ashwin Chaugule");
- MODULE_DESCRIPTION("CPUFreq driver based on the ACPI CPPC v5.0+ spec");
++	adx = devm_kzalloc(dev, alloc_size, GFP_KERNEL);
+ 	if (!adx)
+ 		return -ENOMEM;
+ 
+-	match = of_match_device(tegra210_adx_of_match, dev);
+-	soc_data = (struct tegra210_adx_soc_data *)match->data;
++	adx->byte_mask = adx->map + soc_data->ram_depth;
+ 	adx->soc_data = soc_data;
+ 
+ 	dev_set_drvdata(dev, adx);
+@@ -703,17 +706,6 @@ static int tegra210_adx_platform_probe(struct platform_device *pdev)
+ 
+ 	regcache_cache_only(adx->regmap, true);
+ 
+-	adx->map = devm_kzalloc(dev, soc_data->ram_depth * sizeof(*adx->map),
+-				GFP_KERNEL);
+-	if (!adx->map)
+-		return -ENOMEM;
+-
+-	adx->byte_mask = devm_kzalloc(dev,
+-				      soc_data->byte_mask_size * sizeof(*adx->byte_mask),
+-				      GFP_KERNEL);
+-	if (!adx->byte_mask)
+-		return -ENOMEM;
+-
+ 	tegra210_adx_dais[TEGRA_ADX_IN_DAI_ID].playback.channels_max =
+ 			adx->soc_data->max_ch;
+ 
+diff --git a/sound/soc/tegra/tegra210_adx.h b/sound/soc/tegra/tegra210_adx.h
+index 176a4e40de0a..4406a4a74496 100644
+--- a/sound/soc/tegra/tegra210_adx.h
++++ b/sound/soc/tegra/tegra210_adx.h
+@@ -88,9 +88,9 @@ struct tegra210_adx_soc_data {
+ 
+ struct tegra210_adx {
+ 	struct regmap *regmap;
+-	unsigned int *map;
+ 	unsigned int *byte_mask;
+ 	const struct tegra210_adx_soc_data *soc_data;
++	unsigned int map[];
+ };
+ 
+ #endif
 -- 
-2.34.1
+2.54.0
 
