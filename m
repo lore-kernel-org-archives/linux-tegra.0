@@ -1,42 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E73840DFDA;
-	Sun, 26 Apr 2026 00:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384C23D544;
+	Sun, 26 Apr 2026 00:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777161787; cv=none; b=W+G0INebiluUQunIlCbxk5J0DK5blBuNgR7IPLs1ip/S3AyoWXwaoiWYn4QGq1Zj2DI/Tv1dHJFniL8anrSaeAyIpDfheUESZH1F2crGUugLePsehkQPr7zILnBRnFFqGf/I33Yukbewoo02o39Jk1av7SZIiGjYVEEGtTxYw9I=
+	t=1777161792; cv=none; b=MGmYeu/hImnXjR3i0QHewQfcWbAXxpx5jJmSJmefrQuk6B456NjRyHrYC0a/V+gTEdKwNkBqYjYQ5dXOHkmirrwOnkdSnEf5pml+F3qgVy0bcItwJAJXUtzf+lWgONZbGt/WKfvrs5hFmm4y/GpvEpFEfC+P+o/BiLPkSS4bTS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777161787; c=relaxed/simple;
-	bh=UKRM1hcCiFIy3YjCIeGUJWgvZ2WNyZQxMIWelrm3mcU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vArk0T8j4lS17LOKfKfwbkpX7FgnXrD2GAQtmR4InM8UGequMcDjHz4UOl0f8AVgfdUvszDxrUSxZA0Mijkyki8L3ygPvs4VSccrxvCI8lUho6Rd5o1jgAtQZMGmNCSbNH5KGA6qBHtGVsTLHGcOAWxTqRMILB6Ul9Rc3g1Nj1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r1tc8J6/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777161792; c=relaxed/simple;
+	bh=+O/Umb/ZYAjq527NytNL00ALTjlEFwQ5skbkPFWkgqQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nBK8/okxl9cfzRfvne+SuvLnomV0MvbwlKDtNrmBSPNWxyf0CH0lvC+rtVazMnS+0U2HDNM8uVvnC9DYh5Vfd83/ou304Jq/AUFlPbPL15jSulNuvy29BHy2NmSJ1vLQwNTRc/PZ7O5VrEf0aI7/w6uk97g819RkkyJ+Z9VxWE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=osHy50Ln; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r1tc8J6/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57194C2BCB0;
-	Sun, 26 Apr 2026 00:03:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="osHy50Ln"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6804C2BCB0;
+	Sun, 26 Apr 2026 00:03:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777161787;
-	bh=UKRM1hcCiFIy3YjCIeGUJWgvZ2WNyZQxMIWelrm3mcU=;
+	s=k20201202; t=1777161791;
+	bh=+O/Umb/ZYAjq527NytNL00ALTjlEFwQ5skbkPFWkgqQ=;
 	h=From:To:Cc:Subject:Date:From;
-	b=r1tc8J6/pSGk4TiJfden2r5oxgFtwTU6Md6EH247cB+uHzJApefCYJemuWjoOZDx6
-	 fs+oW/mCskvGDyCpBk6diLy0PLey0voKlyhYCb6oocxKcy/+e5/WCnL3ol2HPojCZo
-	 WiMDBhVuIL045YvxwXG5hRQZjKPBTRPozO+pxCgwKMHo2eHpMsOOWiX6ekKy4NLTS3
-	 697C70+ldpRMpgIYEA1QcaibZFwOD7R6absLisbrEQg/TD8vTK97Ze66yzpaIpSGl2
-	 CGBxnOBqv7iDJoY6CTJei8llLZ1HGcoPPG7rjVU7fidGQ5fQAbROBWpbMAlSe4yIFN
-	 W02LcAmRfWz6Q==
+	b=osHy50LniNL4jDtdCNjXKaH6VqEarx3uxf9xps0723ubaAIzirklHlvUUSWhfakip
+	 /eWmWFU6J1M2aqL9QqC1XvYtknzXkpnUVMRQKZVHpOcOfrYVhUb/GrUHds4sNH3LnM
+	 LpJ2VCzBOGtIPbaJAR98l94bdOBj4axkyk/ks4XcxGFTSwrRPJJBNfGplwnjw1RbVd
+	 BInvibsFMpFWxfkjAlKomQB3bX1oUi/4eXMsxBQCmW1D9DRADr8WT5dlp7dWJoq6Jg
+	 U83PITy4cW8o5h/nDUF0jInAVUa18JbzK7bm211YhhWoFjJ4qIumbN9XbZIWIK6ioh
+	 UhbOTk/jPfV5w==
 From: Sasha Levin <sashal@kernel.org>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Aaron Kling <webgeek1234@gmail.com>,
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Niklas Cassel <cassel@kernel.org>,
+	Vidya Sagar <vidyas@nvidia.com>,
 	Sasha Levin <sashal@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	linux-phy@lists.infradead.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] soc/tegra: Add PM dependency to SOC_TEGRA_PMC Kconfig
-Date: Sat, 25 Apr 2026 20:03:04 -0400
-Message-ID: <20260426000304.54912-1-sashal@kernel.org>
+Subject: [PATCH] phy: tegra: xusb: Make USB_CONN_GPIO select conditional on GPIOLIB
+Date: Sat, 25 Apr 2026 20:03:09 -0400
+Message-ID: <20260426000309.54959-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -44,64 +46,56 @@ List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 kconfiglint reports:
 
-  K006: config SOC_TEGRA_PMC selects PM_GENERIC_DOMAINS which depends on PM,
-        but SOC_TEGRA_PMC does not depend on PM
+  K006: config PHY_TEGRA_XUSB selects USB_CONN_GPIO which depends on
+        GPIOLIB, but PHY_TEGRA_XUSB does not depend on GPIOLIB
+  K002: config PHY_TEGRA_XUSB selects visible symbol USB_CONN_GPIO
+        which has dependencies
 
-SOC_TEGRA_PMC is an internal bool symbol (no prompt) that is selected by
-ARCH_TEGRA_*_SOC options to enable the Power Management Controller driver.
-It was originally introduced in commit 5e7d4c652941 ("soc/tegra: Implement
-Tegra186 PMC support") as a bare `bool` with no
-selects of its own.
+USB_CONN_GPIO was introduced in commit 4602f3bff266 ("usb: common: add USB
+GPIO based connection detection driver") with a hard dependency on GPIOLIB,
+since it needs GPIO pins to detect USB cable connection state.
 
-Over time, additional selects were added:
-- Commit 5098e2b95e8e ("soc/tegra: pmc: Select GENERIC_PINCONF") added
-  select GENERIC_PINCONF
-- Commit 28dbe8231066 ("soc/tegra: pmc: Select IRQ_DOMAIN_HIERARCHY") added
-  select IRQ_DOMAIN_HIERARCHY
-- Commit f880ee9e9688 ("soc/tegra: pmc: Add core power domain") added select PM_OPP and select PM_GENERIC_DOMAINS to
-  support core power domain voltage scaling
+Commit f67213cee2b3 ("phy: tegra: xusb: Add usb-role-switch support") added
+`select USB_CONN_GPIO` to PHY_TEGRA_XUSB to support USB role switching via
+GPIO-based detection. At that time, PHY_TEGRA_XUSB depended only on
+`ARCH_TEGRA`, and both the ARM32 and ARM64 ARCH_TEGRA Kconfig definitions
+select GPIOLIB, so the missing explicit GPIOLIB guard was not a functional
+problem — GPIOLIB is always available when ARCH_TEGRA is enabled.
 
-PM_GENERIC_DOMAINS is defined in kernel/power/Kconfig as:
+Later, commit 0d5c9bc7c680 ("phy: tegra: Select USB_COMMON for
+usb_get_maximum_speed()") added `depends on USB_SUPPORT` but still did not
+address the GPIOLIB gap.
 
-  config PM_GENERIC_DOMAINS
-      bool
-      depends on PM
-
-When commit f880ee9e9688 ("soc/tegra: pmc: Add core power domain") added
-the select, it did not add a corresponding `depends on PM` to
-SOC_TEGRA_PMC. This was not a functional problem because all callers of
-SOC_TEGRA_PMC are inside `if ARCH_TEGRA` blocks, and both the ARM32
-definition (arch/arm/mach-tegra/Kconfig) and the ARM64 definition
-(arch/arm64/Kconfig.platforms) of ARCH_TEGRA select PM. Thus PM is always
-enabled when SOC_TEGRA_PMC is selected in practice.
-
-However, the dependency chain is implicit rather than explicit. Add
-`depends on PM` to SOC_TEGRA_PMC to make the requirement explicit and
-prevent a theoretical misconfiguration if SOC_TEGRA_PMC were ever selected
-outside the ARCH_TEGRA context.
+The select can force USB_CONN_GPIO on without its GPIOLIB dependency being
+satisfied if the Kconfig dependencies were ever restructured. Make the
+select conditional with `select USB_CONN_GPIO if GPIOLIB` to make the
+dependency explicit. This mirrors how other drivers handle optional
+GPIO-dependent selects throughout the kernel.
 
 Assisted-by: Claude:claude-opus-4-6 kconfiglint
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/tegra/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/phy/tegra/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
-index 073346c1542ba..8b6fdb9ad1ea3 100644
---- a/drivers/soc/tegra/Kconfig
-+++ b/drivers/soc/tegra/Kconfig
-@@ -171,6 +171,7 @@ config SOC_TEGRA_FLOWCTRL
- 
- config SOC_TEGRA_PMC
- 	bool
-+	depends on PM
- 	select GENERIC_PINCONF
- 	select IRQ_DOMAIN_HIERARCHY
- 	select PM_OPP
+diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
+index 342fb736da4b1..f0734415fc94c 100644
+--- a/drivers/phy/tegra/Kconfig
++++ b/drivers/phy/tegra/Kconfig
+@@ -3,7 +3,7 @@ config PHY_TEGRA_XUSB
+ 	tristate "NVIDIA Tegra XUSB pad controller driver"
+ 	depends on ARCH_TEGRA && USB_SUPPORT
+ 	select USB_COMMON
+-	select USB_CONN_GPIO
++	select USB_CONN_GPIO if GPIOLIB
+ 	select USB_PHY
+ 	help
+ 	  Choose this option if you have an NVIDIA Tegra SoC.
 -- 
 2.53.0
 
