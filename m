@@ -1,39 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D974640DFDA;
-	Sun, 26 Apr 2026 00:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3F53B2AA;
+	Sun, 26 Apr 2026 00:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777161796; cv=none; b=d5T41k1n8QAvWTH7Q77AaPczcFfkh7LEQZPMkm8OM7ZMV82VY5fy6qXbCAcegHoFZVYr9aFwh+i6tNQBY1sRbnpMvu0v/piN7AxRVJpHHjFc7uhVqP85p3NFWo5vgn/ezeIqMq4xODTFOZNLxwvPhpqS+Qrdwjc6SBbnToPWxKA=
+	t=1777161799; cv=none; b=On+e2MPueRgQCxngNvVsi6yhKt5NjYAoHd4cxEZbfGnWmzYOM2pORbpGHW8EsY5VpX+3wY7TBgi+FIm+phr7JhLJQv5QaC0Nthj7isBlaJEjZD/NgnlVoypPUDxNrrvd4tWuaLo2npiApjApBifxWtG+egOV3VgUKTeUsLHPhU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777161796; c=relaxed/simple;
-	bh=zU9NcrYHhr2d6hlrDrC//RQLLp3HJAAxbg7gychWnIk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CHI4rR7dDV7RGQpR6Nqu6tKmZDhHYyV2AhzW23QGSWgF/nmS+Ki8mGvpRhdJq3MBzsCU6eoIhgmZMZ/ELXRq5xDSCdCVQgYtWP1XnBHvzqRTv/+Ew42o8iqOBQoLh5Pju4LdEBb8oeCPW3a/CahpRfd+m92OKVdLqcYBR7ZWv7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GTREQQAq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777161799; c=relaxed/simple;
+	bh=fRUVeoN8uvXw7MHUq4fqZfehszDdVoUoVfxpW6ndWIk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QrjhrnmIi+j5xU7Ct3k6qnfGb2mgWjGdlkGEY9BSYp02RUwEitpU+BCCOc7Hkoc3JS/bL76a0XRaosIgPo9696whAGktmsB09ak+wJ2x/syBAIj5JbcAUC7ark7lPDVGRLznZdfCaj38X60iq5xUoSdRRsbtc+/WhN9X4fP2wGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CJQp0/4O; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GTREQQAq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD547C2BCB0;
-	Sun, 26 Apr 2026 00:03:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CJQp0/4O"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62DA5C2BCB2;
+	Sun, 26 Apr 2026 00:03:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777161796;
-	bh=zU9NcrYHhr2d6hlrDrC//RQLLp3HJAAxbg7gychWnIk=;
+	s=k20201202; t=1777161799;
+	bh=fRUVeoN8uvXw7MHUq4fqZfehszDdVoUoVfxpW6ndWIk=;
 	h=From:To:Cc:Subject:Date:From;
-	b=GTREQQAqUuoxOAvms0auMK2O75FB8Oc2VVpK6Ae5anNUKri3EcUtUrxRe8vDBTEVI
-	 tRWhb74XAqF5h1H8W3tS+k0jB4XD4SA4JxSHWG1/tSAA63k5f7+zhpEpF6AFtkWVy5
-	 C2FqGRavX6zT5V98QIUfv369xr7tSh36Vzf97tvuobBW/NoCu6w2UDLqW9tjuLKx3/
-	 IeoYZ1AfmR01t3BCBisA9OJq1808cKWcUQoPGtDPoLJ8WkNbnqWteauNOm2PBEmLYq
-	 srdaE8QsWgwKFqI52p/jE9E9F0kGkA3U8qHYhVY4Wh5QMpGIhMX/jbuhY4d5u70qOo
-	 2USvoxHW4I4ww==
+	b=CJQp0/4OO4rWyi4pC9SdeJ/kgRi0DiG4k/ULR0Y6jZSwArk/Z9LC77E47ZGDpr1xV
+	 tLc2PQUcrzGejG6hvR5fW54tCy6m7mLQSSMqHaB7mAXWZpNJlAKrfAUZD4hAhW3aeL
+	 S8JFyhqvhkJe29AQKdS5pLHb8RXtWZ1KSblubfAhAZtPyKchRgCQpxdZJo37Xy3IXl
+	 Mm0I2yB/R5e9OFbWJgzfJn8uRHORaN2sQeblN7aBOf/OdyMxplGFET/45iRD27fS16
+	 VZBQdhZiLr6LuYVCnixACEhpoHGg8SOk5mkwk0ttFI/M5gXzcvrbimwP+UXifh5OUY
+	 lcfhBUJz+KOFw==
 From: Sasha Levin <sashal@kernel.org>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>,
-	Sasha Levin <sashal@kernel.org>,
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-media@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] firmware: tegra: Make TEGRA_IVC a hidden Kconfig symbol
-Date: Sat, 25 Apr 2026 20:03:14 -0400
-Message-ID: <20260426000314.55529-1-sashal@kernel.org>
+Subject: [PATCH] media: tegra-vde: Add HAS_IOMEM dependency to match SRAM select
+Date: Sat, 25 Apr 2026 20:03:16 -0400
+Message-ID: <20260426000317.55689-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -45,55 +47,53 @@ Content-Transfer-Encoding: 8bit
 
 kconfiglint reports:
 
-  K002: config TEGRA_BPMP selects visible symbol TEGRA_IVC which has
+  K002: config VIDEO_TEGRA_VDE selects visible symbol SRAM which has
         dependencies
 
-TEGRA_IVC was originally introduced in
-commit ca791d7f4256 ("firmware: tegra:
-Add IVC library") as a user-visible
-bool with a prompt ("Tegra IVC protocol"). At that time, TEGRA_BPMP
-depended on TEGRA_IVC, requiring users to manually enable it.
+VIDEO_TEGRA_VDE selects SRAM, which is defined in drivers/misc/Kconfig as:
 
-Recently,
-commit 78eb18020a88 ("firmware: tegra: Fix IVC dependency problems")
-recognized that TEGRA_IVC is library code that should be activated via
-`select` rather than user selection. That commit changed TEGRA_BPMP from
-`depends on TEGRA_IVC` to `select TEGRA_IVC`, and restricted TEGRA_IVC's
-prompt to only appear under COMPILE_TEST
-(`bool "Tegra IVC protocol" if COMPILE_TEST`). The commit message
-explicitly states: "The IVC code is library code that other drivers need to
-select if they need that library."
+  config SRAM
+      bool "Generic on-chip SRAM driver"
+      depends on HAS_IOMEM
 
-However, the `if COMPILE_TEST` qualifier still leaves TEGRA_IVC as a
-technically visible symbol, triggering K002 when TEGRA_BPMP selects it.
-Since TEGRA_IVC depends on ARCH_TEGRA, it cannot be independently enabled
-under COMPILE_TEST without ARCH_TEGRA anyway, limiting the value of the
-standalone COMPILE_TEST path. TEGRA_BPMP itself provides adequate
-COMPILE_TEST coverage for the IVC library through its own dependency chain.
+The NVIDIA Tegra video decoder driver was originally introduced in
+commit cd6c56feb591 ("media: staging: media: Introduce NVIDIA Tegra video decoder
+driver")
+as a staging driver with `depends on
+ARCH_TEGRA || COMPILE_TEST` and
+`select SRAM`. Since all Tegra SoCs have HAS_IOMEM, the SRAM dependency was
+implicitly satisfied for real hardware configurations.
 
-Complete the transition to a pure library symbol by removing the prompt
-entirely, making TEGRA_IVC a hidden bool activated only via select from
-TEGRA_BPMP. This is consistent with the intent expressed in 78eb18020a88.
+The driver was later de-staged in commit 8bd4aaf438e3 ("media: staging:
+tegra-vde: De-stage driver") and relocated to
+drivers/media/platform/nvidia/tegra-vde/ in commit 9b18ef7c9ff4 ("media:
+platform: rename tegra/vde/ to nvidia/tegra-vde/"). Throughout these moves,
+the `select SRAM` remained without a corresponding HAS_IOMEM dependency.
+
+Under COMPILE_TEST on a hypothetical architecture without HAS_IOMEM (such
+as UML in some configurations), the select would force SRAM on without its
+HAS_IOMEM dependency being met. Add an explicit `depends on HAS_IOMEM` to
+make the dependency chain complete and prevent this misconfiguration under
+COMPILE_TEST.
 
 Assisted-by: Claude:claude-opus-4-6 kconfiglint
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/tegra/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/nvidia/tegra-vde/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/firmware/tegra/Kconfig b/drivers/firmware/tegra/Kconfig
-index 91f2320c0d0f8..3a91627064390 100644
---- a/drivers/firmware/tegra/Kconfig
-+++ b/drivers/firmware/tegra/Kconfig
-@@ -2,7 +2,7 @@
- menu "Tegra firmware driver"
- 
- config TEGRA_IVC
--	bool "Tegra IVC protocol" if COMPILE_TEST
-+	bool
- 	depends on ARCH_TEGRA
- 	help
- 	  IVC (Inter-VM Communication) protocol is part of the IPC
+diff --git a/drivers/media/platform/nvidia/tegra-vde/Kconfig b/drivers/media/platform/nvidia/tegra-vde/Kconfig
+index 2fe13f39c95bb..f05fcc94decaf 100644
+--- a/drivers/media/platform/nvidia/tegra-vde/Kconfig
++++ b/drivers/media/platform/nvidia/tegra-vde/Kconfig
+@@ -2,6 +2,7 @@ config VIDEO_TEGRA_VDE
+ 	tristate "NVIDIA Tegra Video Decoder Engine driver"
+ 	depends on V4L_MEM2MEM_DRIVERS
+ 	depends on ARCH_TEGRA || COMPILE_TEST
++	depends on HAS_IOMEM
+ 	depends on VIDEO_DEV
+ 	select DMA_SHARED_BUFFER
+ 	select IOMMU_IOVA
 -- 
 2.53.0
 
