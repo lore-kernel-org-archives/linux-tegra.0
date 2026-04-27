@@ -1,132 +1,147 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A4C2AD35
-	for <linux-tegra@vger.kernel.org>; Mon, 27 Apr 2026 06:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF9F36C9D5
+	for <linux-tegra@vger.kernel.org>; Mon, 27 Apr 2026 06:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.48
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777270896; cv=pass; b=PusUxcY0ImMYXPlfFnQemNH/3RgXbg5R8DOQ9JIFC26jhIGJBsNOOYlCj2xDbL3Qo/BirJVNkN+oesDN2Klb/42+lNSM+OgXjl7oqjSAA2rje+LFI8ybeQp+fWtot/w5kJPidT6aW/dMKP3PrfgrUBP2vxtkGVCVwJSOF3iwKx4=
+	t=1777270960; cv=pass; b=dA80KmEsmYb9b3z5HIoA7FIeJP0gXXQLqL/VF/yUE8E7oNo8FmUvS9qsogGE4wPSKH5fe4sZsPX8y4IQz9tIfheifNHF9sUlRsM68bJd58mWE7DUgUK0tXdLHezP4e4gUQ0UOSO2vJE75D41N0TFhcOOusQwRuiREc4d7fq6PXo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777270896; c=relaxed/simple;
-	bh=cJx4Ml0i3L/4hVMTEGvJHmi/r9RzSaVF+1uTD1zxi0s=;
+	s=arc-20240116; t=1777270960; c=relaxed/simple;
+	bh=cCNQpvDhxGL3/coshEsXRMmxK3+a5HT0KF4sY1Umzn4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MqmIAf1WjfHZ6S6eJY6TBDAfAnK5CRJqdBdMNYupOaQoddj1AU8WU5e1O5RxES8ihI6yJatynYKWsFJy4Qkp+/IJ0vVoZbp9jRPQ4meov6113McSq4frYFidXNz7Hc1x7GJ53ZSRorR1PhYXyI8ohRMUGGRBARwn4kwxTb4lvvs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JT8mIdXC; arc=pass smtp.client-ip=209.85.128.42
+	 To:Cc:Content-Type; b=OKoDx2riFFT9dKN5UCLTn6CZXukKadfwR9wpa7DPCJdlFM/+G0PIJfQILOsWARlVbYqc52/tujNRvZM8rESlfDLv5j6m4JhuKKL/e1gw+i+Vvot4lqI2I1wC4/6hRCwuGowaL3QxhVmSDRZakC5bhX6Ihd8CcnWFay5KJY4IG5U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UIML4qYK; arc=pass smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JT8mIdXC"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-48374014a77so128840405e9.3
-        for <linux-tegra@vger.kernel.org>; Sun, 26 Apr 2026 23:21:34 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1777270893; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UIML4qYK"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-43d74086e5bso9421327f8f.0
+        for <linux-tegra@vger.kernel.org>; Sun, 26 Apr 2026 23:22:38 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1777270957; cv=none;
         d=google.com; s=arc-20240605;
-        b=jbA5zsG6/K3BnJwNI+b2SJtwPnswbjR9k5mhct3IxdFXsu8F2UxfOnkHLAphu6eLl/
-         RqZDIl5aZplGJB8IDLFkJiHBod6W8JJs1DoEYBYr9LhN4d4B2Sna95YNo65q/NtJG4M8
-         x6hSvup2yFnWUP3qBXnx+paRqKAYafENjxwbDy4/1tuxqz5tNmCgz3NgbrYMLNBgOGZJ
-         a+3Lb3mqIAlYflzo+wa7jTVAoyqNbPTfIfYNR0rK4HQFCtxsHXuATzHhL/2IzpYZ4wdg
-         1JF5tf0v7PaCfQEDfpjH0rVwLPY9qvEgAIWx3/qrjS9v7DHUa+F2GjBF+1AlwpTwxCqE
-         UgvA==
+        b=hR86B3C4DOn+BaqrIVDeuNVq71wBf6mG+BsOFYsnTQS2GrvcCUEPU5Q0tnFdpc/4/v
+         9+1/JUVr4bLuCQS4cVjDIlrghPEjWlBh+dftB3HHK15aloh4SHqITopgm0xnbsGvFpvC
+         lo8oLX+oA/CTY1kewMKt3cCjlyo8MVpq6dipFN3j+5Va03X3iDydQDa80hL+cBAbzWJT
+         TnuzPU7m5KkdfbeU+SVL6uMTPt5oS3hKjEBZkIGZNEyq4yGxA3xY6W6+h6ssUARSN3aO
+         spkQB2/sm+mVc7Q5t9Rwu8BkFJNe95eQPiEielRnuaKycrjWlmUwYnJ5s/cMjDy7k8aC
+         wr5g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=26Nw5FMPOIdr6H5yY5vEPu6PrXUhZvl0rF4GQFiyc60=;
-        fh=gwISWGW/RKRxWeV8N9ySoRbS3UACUZCzRV1mKTTmj0s=;
-        b=cF/gZxG49nncdHeVUsCKN07ZRlKac41Fmm+0o4LH8NPw72sOkG8Vs0p00Mq45dWdL6
-         IRMHfPZoZPTNH5hB1Lzeqx+uwT8zjDA5Ub0JZw3dYXXYSPXAFeRIsSP1F9o26X2IBG7E
-         UyM53e1G1SBN2aI1TIIih/jTkC8exnZgd8IOlcXdVCNs2qSuGJQPYBfi0+9mzK0cKJgg
-         KWSFdWDcLYAje6LwG0P5AfaeLFojkkLl7BFL8sx0mmfVFbs+TlP1mTK/yraPoTaCeS8B
-         qR+z587ALTJnWapfONlAVrQ93BdnY+iGSYLs9iANpr13G7MbotVJWXIf/oijIH2UlpBf
-         xIsg==;
+        bh=TAPUtgLCeg2rPN5wb/LbwTrSRKf1znENF+kSWITCphI=;
+        fh=8nIjvWJZ6QBqa080I08lGzWuYO4xwdLNcCJvCj3YHRs=;
+        b=g0pCjRLSvfSWbNrfv2J7E1Ys1KJnSbtNNwkruX7Iysvo84gNvWf8wBfrKA7I4GRU6O
+         HH6qeL09RVxNFwFT02Pjf4ydfC0IaEuhabvZ8wbEMxbWC94tLkANlIfDtP4RAXYJ0z6Z
+         Wtcn8qvEH9AVoiOyXZUJPexKAHS4BTyT7psa87aWJGXlVL3smCptmdvv7SGnRa5kR1Xp
+         lpad79u26NYrrI0+bWVMp1Txw0w+Gd1cefapsfTKrDrGZA0TNJorYsJEQSn9xlepyzu1
+         6DRM2fxWDGfakxfYTTur3tx5dSzXsO+cOYLA0vxK8JwFAIXczSFrbrcZ+CthmndWaW2L
+         g0lw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777270893; x=1777875693; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1777270957; x=1777875757; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=26Nw5FMPOIdr6H5yY5vEPu6PrXUhZvl0rF4GQFiyc60=;
-        b=JT8mIdXCyQoxPslYfAOKsy2ze0GoAHoXcGgpvYEbVtjPDG8qEbvmp6AwAUJF/IIU3D
-         BQX47sE0KuepkVvoi9T5faY7UrbrVM28/Br/FChmuwfRWffs4f3kAKAnxV8PEyXHAN/U
-         xpqe4fIqLfXkZ6d594GMoMVovJmFXXuLjbLQFJ5xKGkBbc73ZlSogXG5QRh3gPxV0qeH
-         2VCokMAr4RyISO6CpPC97holDlCZt0dM+R4TJR78iJCD3PB8LHW1WtfLia/3TLc3dLi6
-         p5uu0Pp/W9S8UVI9ncddSCuMgADXSY4fLq3BgT1walwxJ50LjODNvTf+guFfiw7doxps
-         3hXA==
+        bh=TAPUtgLCeg2rPN5wb/LbwTrSRKf1znENF+kSWITCphI=;
+        b=UIML4qYKM+np6FXBGkjEYG47hJigkAzP7srbHpieF1wjoa3LW8b7mhJ6bJebkGjhpZ
+         afm29hy0VaYEVVWabc3PAE6vR6eJvYuWUySKh8SnrtxkjJUvPDzNhY9oKk/iatXKm7OH
+         /kW9lb4C7wu2HirK9POowd2kMsXHfsMFxvQba9JRbqr+8EMpzSom9h4GW+mlpM48u0e+
+         ASm3wLkvjLRRsh46pYk6Ln/eOn0RDtqqfAVP1i+MJd/6F8Ce3hyq97hmKcJMcjZEzAzj
+         +nsSbKx/Kwa/FArgVtKUL5lARR9dGwvGVpily1hH5lqAzejOiFsDuCXiv1Qqbz4uA7MK
+         sevQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777270893; x=1777875693;
+        d=1e100.net; s=20251104; t=1777270957; x=1777875757;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=26Nw5FMPOIdr6H5yY5vEPu6PrXUhZvl0rF4GQFiyc60=;
-        b=Dw1sBqUc5l1v7lxLfRUK2qu67Xv1GOIW4N6d4jGcMLODCu7oKj6GOrZAjkiPpzaieJ
-         /U8D/3Dtfl2w1uCB8dqJ9ieNVZ3wPGVOEeBKHjWCwIP3YQ9P46ki2XqXKbwWfitYnWk0
-         oJTZpazmnMQ+fLiQ8Br2rvOZi0JaUfE/i/H3sBElGS8K4W8YI7xaqgUgu9JfynrQIE4e
-         qov6tqmFEh1ymf9LMa17SJMQmniqDB7LT2jMtL55owTN4peN6YR3i9O7A1x64lIGCUNf
-         8Vsicggs4pZ1QVy2TE6B/TaxBuk2DTUxXRwweNp2HkBKgZSoDZTJ10ZbtaSwybPEb+h9
-         rhPA==
-X-Forwarded-Encrypted: i=1; AFNElJ9dGO1un42Wk9Gcq6X9z8lq+kNEtsaIsr9iTXQPsYv/UIgizfzUD2I+KD8qWF/sJccGmxAVf1uweY+BOQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya4dzv6brjbeYg0oxjUzV1Vtf68cCa8f5neHiQ+ZoKBfmdtfpL
-	quapYZUR6RLI6SMdQdw954UQ9otYqF1S5obTOjeiHrNx411ZdnoK1pEjIHlDyAiAFq835t9Jm58
-	ax4DVGx3pZ3wOvJEs0DwpCM+8ny5zcEo=
-X-Gm-Gg: AeBDies47eV3eeeK/ax+VU1ZvnqUSYhKpXTmZ9sKv4WG4BDNVXhNNjUY8z9Ny82llzo
-	NYkWfuaob6ry4StXMsA1S9KVS0fW4N/deqGXszY4LdmeZbkhIHZjJsOLX4tpF8yLAkmuAldQspB
-	sOOtIyJS5m1zUQpReacitA3CGAVIBDOFuKRn/eH+owee5pp9SHWWAhzViosKNt9jBPgDbvmAW1e
-	4Wz0QPeup1g7N3HJxAjfvdy8MOgcg1gt4TP8d9a4z3SUzpO/3NKP6/S+NCFWkX5tQ+98W0dXFIA
-	BHfcmdgYDt7GuHgyOy8=
-X-Received: by 2002:a5d:5f82:0:b0:43d:7d6f:f540 with SMTP id
- ffacd0b85a97d-43fe3e237d3mr67161314f8f.45.1777270892625; Sun, 26 Apr 2026
- 23:21:32 -0700 (PDT)
+        bh=TAPUtgLCeg2rPN5wb/LbwTrSRKf1znENF+kSWITCphI=;
+        b=NenS4g+n/g0QqcmvwaNehOQZjUS8EfDktcIs/1f/ebKcK1PFbLQxz28kLReRPOVDGb
+         biryQ+HLYVAIm4h4qre7WAk1360vSIkQVGPkDf6x5WMS3nBj7F3DttBJYOh8zC5Xv8ds
+         idLoxtVhIPeVP9l1ocqefot0Ga2gaIxGI988MP4k9krZVg3pcfZA6wTh24JK67lD21jH
+         yzEunnacjk/A1pTulQ0b3yaY9E1ie+2Ain40Iq9O8ks+SVmKnQ08Gcp0C97VfM3fIMg1
+         NNZPTqL35PgE7d5ctvwHsgXJSNAQw2+QKmjYtXRUkFDn0GVsJbSEXl7k6tie8C1Mwgeo
+         FZ4w==
+X-Forwarded-Encrypted: i=1; AFNElJ/CuXMdgGM47IfZi8mzW030ffQSdHGmUehcQQ9fTw4HYQZgfYlIBnEuCapjU1ai0B36/YGUfRCC0Q/4iw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4Damwz4rVEoKkYa6iA3I84js8TCegep2yLDtRHfKFF2kc5mS4
+	EcDGMVoETdWXnTvXen39gApYEQ7OF4HcfFEuV5uWyFbid7nigfrT9p5Ys4p30l9TK9Jkp7iHUOa
+	Qd3ylitS2pDlq5RXXv5ZMD66ICgX4e70=
+X-Gm-Gg: AeBDieu95rlu1zaZ6KY4WF/19ERg9H7FQyRbd5edtlQM7HaVWZP/Li8Vxrg87Jw5aYw
+	u2l10JZ8cLih3Ku576xFYq1ZCObg+d3a+cOGc4s6CmzHRCo8rpRm3nvyh6VoG6r/BdVLSHQsxrM
+	VqruMxeC/gyWzycGhvGQ3rxRUwdFSN7GMnU9mbPtJ10ah5vLZYR7uP5cH6q1w2EsRAAd6GticRR
+	mvl+np+ySsf7VI3PaTHldgmJxlk0Ahn9jdi3JjOz43lIJ9pA64OfyGepcD5vMR69tNjf4h06q/U
+	Q68nY9mhEKIqqc9LCkc=
+X-Received: by 2002:a5d:5f82:0:b0:437:711c:8754 with SMTP id
+ ffacd0b85a97d-43fe3dc842bmr65390987f8f.7.1777270956678; Sun, 26 Apr 2026
+ 23:22:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260406083404.31359-1-clamor95@gmail.com>
-In-Reply-To: <20260406083404.31359-1-clamor95@gmail.com>
+References: <20260309075248.47730-1-clamor95@gmail.com>
+In-Reply-To: <20260309075248.47730-1-clamor95@gmail.com>
 From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Mon, 27 Apr 2026 09:21:21 +0300
-X-Gm-Features: AVHnY4LZgxzaEN3NV5oR0MAlVNP7HdThFbK1ln2A3qtcWIQrHlR3mniE5zkfnow
-Message-ID: <CAPVz0n0--Y5PGM_DDw549fWTu+z9COLmGHAM-a_ysx1vD1HYuQ@mail.gmail.com>
-Subject: Re: [PATCH v1 0/9] ARM: tegra: complete a few Tegra30 device trees
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Svyatoslav Ryhel <clamor95@gmail.com>, Ion Agorria <ion@agorria.com>, 
-	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+Date: Mon, 27 Apr 2026 09:22:24 +0300
+X-Gm-Features: AVHnY4LHLsGKQKTddU9Ol3ClWnqsWYnQ5Yf01s4atQPUjMHbboFRlCT-xHbdbow
+Message-ID: <CAPVz0n2rc5M4FRxiCK5cJ6usQxsfPhWjMCEpFucoZEuTfY7Pvg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/2] gpu/drm: tegra: add DSI support for Tegra20/Tegra30
+To: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, 
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D0=BF=D0=BD, 6 =D0=BA=D0=B2=D1=96=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 11:34=
- Svyatoslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+=D0=BF=D0=BD, 9 =D0=B1=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 09:53 Svyat=
+oslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> Configure camera support for ASUS Transformers, Google Nexus 7 and
-> LG X3 devices. Fix RTC on LG X3 devices. Lower throttling temperature
-> for LG P880. Add panel support for TF600T.
+> Tegra20/Tegra30 DSI is quite similar to Tegra114+ apart MIPI calibration
+> logic and clocks. With a few minor tweaks, existing tegra DSI driver
+> should work on Tegra20/Tegra30 devices just fine. Tested on
+> Motorola Atrix 4G (T20) and ASUS VivoTab RT TF600T (T30).
 >
-> Ion Agorria (1):
->   ARM: tegra: p880: Lower CPU thermal limit
+> This patchset depends on Tegra20/Tegra30 CSI bringup since both share
+> MIPI calibration logic. Ideally these patches should be picked after
+> CSI bringup but they will not break anything even if picked before
+> CSI patches.
 >
-> Svyatoslav Ryhel (8):
->   ARM: tegra: lg-x3: Complete video device graph
->   ARM: tegra: lg-x3: Set PMIC's RTC address
->   ARM: tegra: grouper: Add support for front camera
->   ARM: tegra: transformer: Add support for front camera
->   ARM: tegra: transformers: Add connector node for common trees
->   ARM: tegra: tf600t: Configure panel
->   ARM: tegra: tf600t: Drop backlight regulator
->   ARM: tegra: tf600t: Invert accelerometer calibration matrix
+> ---
+> Changes in v2:
+> - removed all MIPI calibration, it is handled within CSI bringup
+> - added per-soc structures into of_match
+> - added fix for hang caused by register access with uninited hw
 >
->  .../tegra20-asus-transformer-common.dtsi      |  22 ++-
->  .../tegra30-asus-nexus7-grouper-common.dtsi   | 128 ++++++++++++++
->  ...egra30-asus-nexus7-grouper-maxim-pmic.dtsi |   4 +-
->  .../tegra30-asus-nexus7-grouper-ti-pmic.dtsi  |   4 +-
->  .../boot/dts/nvidia/tegra30-asus-tf600t.dts   |  71 ++++++--
->  .../tegra30-asus-transformer-common.dtsi      | 159 +++++++++++++++++-
->  arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts  |  41 +++++
->  arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts  |  46 +++++
->  arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi   | 157 +++++++++++++++--
->  9 files changed, 595 insertions(+), 37 deletions(-)
+> Changes in v3:
+> - switched from version DSI to boolean flags
+> - added comment regarding Tegra30 clock configuration
+> - commits were picked:
+>   "clk: tegra20: reparent dsi clock to pll_d_out0"
+>   "ARM: tegra: adjust DSI nodes for Tegra20/Tegra30"
+> - commit adapted to recent DSI changes:
+>   "gpu/drm: tegra: dsi: move prepare function at the top of encoder
+>     enable" > "gpu/drm: tegra: dsi: re-add clear enable register if
+>     DSI was powered by bootloader"
+>
+> Changes in v4:
+> - switched to device_get_match_data and added check
+> - added comment regarding Tegra124+ quirk
+> - adjusted commit titles and message formatting
+> ---
+>
+> Svyatoslav Ryhel (2):
+>   drm/tegra: dsi: add support for Tegra20/Tegra30
+>   drm/tegra: dsi: re-add clear enable register if DSI was powered by
+>     bootloader
+>
+>  drivers/gpu/drm/tegra/drm.c |   2 +
+>  drivers/gpu/drm/tegra/dsi.c | 126 +++++++++++++++++++++++++++---------
+>  drivers/gpu/drm/tegra/dsi.h |  10 +++
+>  3 files changed, 107 insertions(+), 31 deletions(-)
 >
 > --
 > 2.51.0
