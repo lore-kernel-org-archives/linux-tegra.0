@@ -1,95 +1,100 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14BF30AD05;
-	Mon, 27 Apr 2026 10:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14EC72C86D
+	for <linux-tegra@vger.kernel.org>; Mon, 27 Apr 2026 13:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777285282; cv=none; b=DSSX5CcwmE3EszFKZJ9abQBslk6+DUkVDV5IEPbACAsXKTrzSQqyW5xhtkJcUl6IJOl1OPKXCmk4u3M8R/JjXjHvqdLTO7vWYc1o6PtGG7aMZijz9ffjIUzatmKRSbFfi8+FyO+BGzlbLT4Gaum6FPyuCt8/u4+WN7MJApVGNps=
+	t=1777296308; cv=none; b=dkzjHz8t1l/hr9U/kG4i2MjKBPqwejLpsmKYktWtFRpfQJQWLyJo+ZDOZltWflTy/dsUwVwZAEdCURGS21oaHCf4IlCAt0zjeY8+tn6m4aXy5cd7peeGsG8sviNIAXG9iJatK+ICo3GCh3+JJJISdmCiWFV8tAOhbCLYb/ZG/rU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777285282; c=relaxed/simple;
-	bh=1x2ug0f/EJYc9A6t4ILJ/dTuDb/McXn/ci0WuDylM5c=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RyCPcxWsFhvThITQvoCnqS0bcBXe9HJbaWl4RqCdvaLKNzBikyAnQ2xKavU4kzpBsIlKp5/XEN3+6Endnpil9VN1FRBGKtcnksSFIuZbQ8fxoGgEaEpJ6fPl60eTJA6Tun6V6iH6DqpFSMSsosfWqZSCd7EQwzl2eOgwTmFzKno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jYYb/LwI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777296308; c=relaxed/simple;
+	bh=BNG/Nt3+CmK9Hyh4BW3hQ4JifMYdLAzHQ5ZifotMSIw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RegPCWPMJ5/iojLku+6TzB0VLRiWmzoErsOdI0ugWOQ8NvggqSCLJGDt0eJt0OLxyeknvycp8TaKLOKP9Qsm/fG96usvDDLrnfNbTi9VQ1ZzRouug9MG3jyQuHQXsGUIWwf8ygbeOrjesiNQ8pxqkD5LFrc5YLOx6OVZZj3UsMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=quqNynFJ; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jYYb/LwI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48E09C2BCB4;
-	Mon, 27 Apr 2026 10:21:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777285282;
-	bh=1x2ug0f/EJYc9A6t4ILJ/dTuDb/McXn/ci0WuDylM5c=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=jYYb/LwIrHiUCZpi32Y/LxCDDcbonCUPYVPSwA33Vh5pbPy/lsw/ST4I+GNpDl7OP
-	 SaY33+eH5hkVy5LX7nNAwOwf+Qq9tuiEeDAWDiZfDKuw4R7UT+5wi1n7du0xYCYDBg
-	 MoVZakL0PUJbT+W0vmGpNMzKs+1ccZWHk2WewFjejHNTzRSdLDIfErTOeODl51FUCG
-	 0qPn3bEgYWauc+ayG4+QzMHt3aYfaK9Uka60O8XeBITeujOlhYo6n1bW1FEjKDRtbH
-	 XYd+wMtUaMI83cC5WEiLt7rPxnnVTk2DckKLhlfNENFn6/a4tKfz1xm5EyLfRZfi+l
-	 VAtCDGbMFb0ww==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Sasha Levin <sashal@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Svyatoslav Ryhel <clamor95@gmail.com>, 
- =?utf-8?q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
- linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20260426000249.54799-1-sashal@kernel.org>
-References: <20260426000249.54799-1-sashal@kernel.org>
-Subject: Re: [PATCH] ASoC: tegra: Remove stale snd-soc-tegra-utils
- composite module definition
-Message-Id: <177724580444.266775.11334935850320228755.b4-ty@b4>
-Date: Mon, 27 Apr 2026 08:23:24 +0900
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="quqNynFJ"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-488a14c31eeso84440025e9.0
+        for <linux-tegra@vger.kernel.org>; Mon, 27 Apr 2026 06:25:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1777296305; x=1777901105; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tIxTISlKz5zUY/5EeJFoGXkyj7v9D4tIsE5w4iprCUU=;
+        b=quqNynFJM1olmalJk/97D8eVqMRlx/yzJwk61qZeOpyXWaGIP7SJnVomWFEFbmBAqd
+         0M3lghHLLtE9tGq6xDRPkIigFhXItcvFGcW769IhXw82YNAue5iHDnjVQyUtSeCZtdx+
+         +nWsxKcf0LzOpRrzYbJb1D3Pqsy79yJ0ooLfF73pu9JMEq1UYzIqX6n1w1ncPlpnqirU
+         hnLT1L63Jo5jNI1qz4HU1NnDagDrfQlD+p7kxPGgAdrMehe+tO09DuSR8uP6LBlVgUpA
+         QkT84oThv4tg2Un380yWzTTeO1Lu3BhgJOrGnxFFuX0YyRArV99Z0CgQsvLcxy/wt14e
+         1xuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777296305; x=1777901105;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tIxTISlKz5zUY/5EeJFoGXkyj7v9D4tIsE5w4iprCUU=;
+        b=kr7t4kDgZjybbyYoYpnUR9GxxJON0EiW+bczFrqEkd2ZJDbC9se5QwpvlV0unAoiEo
+         EltrwQyD1MzDAajZvZaUZJ2QTBJ7m/SxDsp+Fc1fF7lpqicKaWtqJiuTKZ04OrlwZzOV
+         jpvgWfkPTE1RsVARy7lyqcQkSRSqBrFDd17qiO+RUSaWHzZUzxU8YET1KUxSSPN/uj62
+         YoEZ/sTbQk0TmYB812E8nfxOtvOPGjJ1aMKVNx/fepMRx73MpRNRoapUIeBv3PMqczUc
+         gMfMpxom/aXNU8ZfNz6SVsYIi3Zp5isd2gg4tVlD5ykUCTg8+vCTvB1SzUc6LWK4V/ER
+         XuWw==
+X-Forwarded-Encrypted: i=1; AFNElJ82asP+GpC9xKXbv7Zk4Xzo6EDQ63vLtLM8p2mEil6xoIdxy+EOHB+COHUcYQcLWsVxgnai9TYDRpSECQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbO49B3TVlEMWA4U80GL0xxtFIxSRxjhyUJA/owd5KPufWjfaX
+	2sJjXuY35KTDuoGDL/Zu0TqW+n763JrC9MUBl39fwiZi9IP9v/58P9WR
+X-Gm-Gg: AeBDievuPZXHxq0hg0K4ggYsCCQKh+53ReE3U52LoF7UaXTK2/CPDIVa5LQWXpdKDQr
+	gKxW3w+dFlq9hbVkmwpvHN2RSG9QKB2DQqqrlcsDO4rwb+3QvJZrPcmtp+H/SoSfxmUl+RZmju/
+	RK8xlUv1bvZv28cFt2pEBfaAVVbh0uOZWEEQ1OTOQO+QuJM6HBbzrttPqJb7JbkvDR9MmC4BN7S
+	12g2IOhOLZ+dkfyEJYpsLhonX/q/g9ptT5pYXwx92/K86UkZFl2MRMYa17nNEonTMBwUkLnjrnT
+	vsthp5PdsOpFbL/Qh6yRFF54GT1ERNaI3sGURHHFIJ+tM79pOvUHVcEAZv3IKmgWrZMc5Q4ATka
+	vVx8v1gqIGAfRo3musL8YiOmukqtF41ZB8n3//80n0sUb1UtWx74NvDCDbZzF/8EGTqNUqN8HXZ
+	jK+GxvXpGCx982cl/YksHsqao=
+X-Received: by 2002:a05:600c:3b11:b0:48a:525b:e148 with SMTP id 5b1f17b1804b1-48a525be2f8mr399514185e9.4.1777296305018;
+        Mon, 27 Apr 2026 06:25:05 -0700 (PDT)
+Received: from xeon ([188.163.112.56])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43fe4e3a166sm79933901f8f.19.2026.04.27.06.25.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Apr 2026 06:25:04 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/1] clk: tegra: support 48MHz clock for pll_p_out1
+Date: Mon, 27 Apr 2026 16:24:46 +0300
+Message-ID: <20260427132447.118272-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1163; i=broonie@kernel.org;
- h=from:subject:message-id; bh=1x2ug0f/EJYc9A6t4ILJ/dTuDb/McXn/ci0WuDylM5c=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBp7zifr34p931kUBCnIMRINKPgT0TqbD5kV/ach
- ZCr4yEKRRyJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCae84nwAKCRAk1otyXVSH
- 0PCVB/4vntDSlpApCCkVSkDOcYiCVwD5YRJn1vtBYiq99IV50QC3LyHczq0iHKMSp51H/bbi7UC
- /wY/qBhCVIF75rtbmIFtEPcs6F8dbavzPzwQHpYiG8wkgmA+EHNbnbuwE7IRuzIYY+MFn0r8fWV
- KQdikFg+zrtvYaU47DEOUOslpNpCohhIa8sW+F2VfCXl+KPy3PES+c1dH+zxaPphwf02QOHZ51L
- 2Cy1pK07h5COkVKVxdfXHaCyu3g5a9nv65UVP8nA+4giY1+qvIRhwvvxuHqw3kmPTikDORrDrp5
- 43NlMOkF9jaNDAfVbceC34kxu4LDhlOkbNKbB3ZnmTePw2rQ
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, 25 Apr 2026 20:02:49 -0400, Sasha Levin wrote:
-> ASoC: tegra: Remove stale snd-soc-tegra-utils composite module definition
+UEFI on Surface2 sets pll_p_out1 to 48MHz which is not supported
+by kernel and causes BUG() early on. Fix this by adding 48MHz
+clock support for pll_p_out1 along with 48MHz support for pll_a,
+main pll_p_out1 descendant.
 
-Applied to
+---
+Changes in v2:
+- aligned with downstream 3.4 kernel for tegra114 logic
+---
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.1
+Dmitry Osipenko (1):
+  clk: tegra: support 48MHz clock for pll_p_out1
 
-Thanks!
+ drivers/clk/tegra/clk-pll.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-[1/1] ASoC: tegra: Remove stale snd-soc-tegra-utils composite module definition
-      https://git.kernel.org/broonie/sound/c/dad701bdb743
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+-- 
+2.51.0
 
