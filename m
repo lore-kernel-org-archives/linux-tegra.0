@@ -1,153 +1,98 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC48397E9D
-	for <linux-tegra@vger.kernel.org>; Mon, 27 Apr 2026 07:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCDF399031
+	for <linux-tegra@vger.kernel.org>; Mon, 27 Apr 2026 08:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777276761; cv=none; b=AFjysNs/dXQ8NmFiTuFXRh2rVb/UyzMfocR+Ljh1MKQOfXDjHVMMVz9yheU+BcYLViS7PdU5IUhDlthHE/RUjWhFsctixIRBhmnzLys4RBR6ikaAAH89rurKQgix/jAapdmEOWxaDQo+MDADZVc1vT/o6jh5K3kV6JGyy4Eyw7k=
+	t=1777277943; cv=none; b=a/wZWQ3qbCuhMUFL5RAO/pR7DzMYaCFlKHXdeEuDqa7lBEHfy2iaE27c0iKlrs1mpgPhOQE+7GDFn9nwUpT6GNazi8xULkmsohGUpIBABKxLNQFCnOxNNpfK/H6ZDL3mYeDsprcTSA5GdEZjYN2uN3G7gLrTPD4uO08GSMi2MXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777276761; c=relaxed/simple;
-	bh=vaQBnSj+USdsWGGLHc7b19lPknCYSlB6+8xOYj/pZM8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JOtwpk8RYMZrexvMM3vmKS6Vv5jLFspjdlKBZOUDVYB1O5xNydqkbOKLHbVpSPVggr/bHWLZjCIK+6JCBjTK0bm0sfiyWIK3vejDlrMAGv1h+5BuMfvnrsSFq5/rARjSe+VfySOAgaCf9JVmMysDfmdKeJ7sDZp/rk4eAAZbFeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q7ZY84i1; arc=none smtp.client-ip=209.85.221.49
+	s=arc-20240116; t=1777277943; c=relaxed/simple;
+	bh=THkvd2xg4OaS55Hsbf7hoATE329XQJwwwcT/zqhgWtI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mnUyZfIgYWLI7I7lqKWf+fh06kbsii90qBeUuu4ymy9SwAO3XytPgoWjXZR1ch1a9wjx9mjlUpNL1N6N12OilXBB/Mz9DkOXjk8NoLkR7L1VCeyhYd44aXJFK4TAOhpVHHu6kxoGPa12HVds3TMWiu1zRS5FpRWGL9oVxYKgTYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iL7lUH2U; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q7ZY84i1"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-43d73352cf2so8307365f8f.1
-        for <linux-tegra@vger.kernel.org>; Mon, 27 Apr 2026 00:59:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iL7lUH2U"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-44261378651so1042847f8f.0
+        for <linux-tegra@vger.kernel.org>; Mon, 27 Apr 2026 01:19:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777276758; x=1777881558; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QbqtPYwCKpsoZO65V2/Zjei16diYD3VChr6pC5XBI0Q=;
-        b=Q7ZY84i1vtWwAZqu7OV6XfNy2YwHqxk4CUJwnlcCV9fFejpeTmzo6cGUYLoNyfDxjS
-         iJWjfwA5pf8NXYFKsWilZ4z+OlXkSutSua15Agq2R9IiUY+9M6KTEJHiGVdTJow24wyU
-         63CZPw6Mq8J8dgxr8Dk2ybxMbe78WwDYJaOmhisKyY6InSuMFvtu55qBY8eS569LLNcC
-         RR6Fz5DzhXMhn2nVwTHFSQUIFyC+TELClsoIHQga/zcNOJhKS9+ZdzemchTlQJD3+gk9
-         7ovw9DeF7lStkylg2WMALFWPLlbpym682lzMNca+nuFCLEpXc1IjaxD4csi9fYMEg+13
-         UP5g==
+        d=gmail.com; s=20251104; t=1777277940; x=1777882740; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kG/U8gUtyi4vRCmib+owYIy2NRNfDYiG7cZGNbkj1RQ=;
+        b=iL7lUH2Uv/dDQd0vj17mrWStSTP3dIdI228CHS2XkRjn+FNDwPQMDZ8xGJ/GNv/sfw
+         i2l7F0qOWmj9XZt+UWXmqqA6HtYS68GFBV1nIV2WQAAXiWQ/ElN9X/gcdOls2AigYjMO
+         Qc4nDr5fdyJZIyNOPp7gT98bbwu4vZBLL2L/f8znzyY4rBE1L24xNsHwBD7924XIDJbU
+         8ioKYbCg6EjQdcZEo8fzRU6lOFUwys2FwvoknZBgTxa84p/av5BDhWyplpGnsXDOUpph
+         UZnpWTQ01rq+oA4+DEIwZyaw8Kk3t2lBJ3Wel7R1mRYo42+cpNTMmkfPTGS8eYBOHka8
+         7YLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777276758; x=1777881558;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=QbqtPYwCKpsoZO65V2/Zjei16diYD3VChr6pC5XBI0Q=;
-        b=tKSVhRBh2UN0cYpw1jBD2tZ6ut0n1TXYoRwUFlrHVkLN3i2Xhu3rTyA1/eFkuX0sWA
-         c0B9RNcLIC3JHinlEteUDADX4uiwULYBNgo+xlebYlnV3KArDn1ZWhXJf1y/IWhcBjOw
-         r1V9MFQePHZOtV07tuMSEKVFlJAImj0/ajhfeX6qlZUp3rEHOpz90nOM+cdoGp0UL2ZU
-         P5O0OMNyzLSi5/7LhLEIcmnXgBxoQ1ONjbv7kw2cEOQIaHb2krGvxWrblwsYW7k3cPfN
-         K4MRwERln7kSUuhafIYaBtd2/ieuX7Eo1ky4/lpgsRGHm2kWCapW1lLN16WqD7mpeF33
-         jEvA==
-X-Forwarded-Encrypted: i=1; AFNElJ9TYO9WwO10ljiQjMUjPefmyrpqxCdWM9yx9zqF9lA7cns11YFKjGX5yw0ciUnaovdv9wRoYTMcDYz+LQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwv3z1hMueTPOSj6NhjXRZsMM11WL/toeZWeGnTvrG+zBeIYP9
-	tNyVLrI5VlNvg/QUSBPQmOidAe42wBwW4GDj6xONAPWf7kW6kVwNWoyO
-X-Gm-Gg: AeBDieuA6z+vT9tEdWcfKWDsdWN1NkM0qGVvhDn/M08q2mAS/MeljpyM3U9otYbqlvp
-	MQWnkJg+ze/ometcyCLo3XwZTDalLp0cUbuW2CBuZsUHkz1Fu8OsEjoL9q+wJTPhEM9PVRZO9kz
-	iLUdCnjWjgrEiiLPb5m05jw7exS+tOrt4Ly+98PnlLiVclEI7WK9wNUVDH91lgU33hl3B2mWzfS
-	WmkumwlCwFLWSK9wVaT/ct1+6QA3weGn4SdYKc/hX429arFne6ugithhGg8FN6Pm/kdJn+u+xd3
-	3mL2iHswYRIPS5zkP/p5Ypid8q5wTTvjykSIZXgm+AKb7i2jmimHGuJ9m58boFRN9uUarXZQ+Jh
-	FSvf8VI7zSHbPqvWyifmMsb7EBWaNA9iS8psXwgud+f1BX8dFxXI5NB37K9IvBBD1rBcAfj0G1u
-	jOLT0bmziS3KrqT+Tp8TBaJuE=
-X-Received: by 2002:a05:6000:24ca:b0:43e:a70d:7632 with SMTP id ffacd0b85a97d-43fe3e0b463mr65931197f8f.25.1777276758054;
-        Mon, 27 Apr 2026 00:59:18 -0700 (PDT)
-Received: from xeon ([188.163.112.56])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43fe4cb11b4sm79918386f8f.2.2026.04.27.00.59.17
+        d=1e100.net; s=20251104; t=1777277940; x=1777882740;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kG/U8gUtyi4vRCmib+owYIy2NRNfDYiG7cZGNbkj1RQ=;
+        b=n7CXr1Ii+H+e17JI6u58g4d2Fo9eT1Dur4aVf/P/ODCZLclBbZJOGvpX6muudzwPGQ
+         CETOKFWd6nIWGVNqDtKAyPVZybMWRM2xWXK8cbqs0RnM9wi75dj4SfKQbuF88SkS+glG
+         DBdIZ0aIB7zjBf1Qd6HLiVrF2MHHqFA5ePjhLhOsmD1aL4E98l8SeWVue86XNs+vBgkV
+         sKcdIK7uridmhvRpMqhKdooXAX4s3AjI4atLSNRID67zYyHmaLpwUhXmTsMQUlAgodwj
+         uHpHEGvOFNNa0Vs2FKbqh27lOInIcHroG63104kXcNw5g27rk4/UJlTJoXcYSjt09WMD
+         tn+w==
+X-Forwarded-Encrypted: i=1; AFNElJ9xahqvzozevS4j+m71AIHGfktGTuhqCH2lm2TCiAgB8B1IcvvhqY8V56SbuXfB8Vw2WdXk2rOSTdTR9w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1IPTNVhrYML4kNXx2jxeIe2UCJf4Slyy0WxVc7TE5qypeoZlu
+	PE9+uCaf4oty5fo/CqxS72KxunbrfsLTZhw+DPALgD3bAFsON2/MGfay
+X-Gm-Gg: AeBDiesi17mdRFCpwxNJqELM+6PW65VG3WMa6XcamOHnXmZfOZSHxyhIy7vRg2GOFO0
+	xuYxg9YKUcGWA1fRDWBruviqxPk9tIJxghFEngyCm8m9wswXxvxk5rjcSbwupDDyLuW13VItFX8
+	5YwJBDsSgVIBIOtLGnDow/WCm3Aq0DAKZDG2J0tNLVYp8c5HKdgQvD8lOFyNpi0cPE+LoTdVGcH
+	YAof9HLvB30vdhxx6RMi76nd9462GF5xq2Mk1pUqUXP/BzS6DhRxQp80a+1bp4qXneq7PQU2oSG
+	3Q9RM1sCKQ6S6BXuFtRrffeY9Vjexz3r+cOpb/jwJLrI79varGdx3zStw1g99ITNMoFQRIY6zl+
+	xL6YpSbQ091RnLIYdsy68yDNMMLWvYqDKkIu+5DC30AfHZem+jYcLRHmeOa+sz1vaAFNwHiwuti
+	/IheDqfbcK9mjAV8lcCC325NqkLKfJB2joejAGdWqZ3JNYfEDSB+iYKGSAcvgJ5zqmJiTEFwojy
+	beDbL+3kOQ7wc1tTzUtMw779arkepp0xF3NumtiCkJyMjCv4CjgB2Izh7W2K6gUWVPEGcQ=
+X-Received: by 2002:a05:6000:290c:b0:43d:772d:2b61 with SMTP id ffacd0b85a97d-43fe4073831mr61766799f8f.15.1777277940421;
+        Mon, 27 Apr 2026 01:19:00 -0700 (PDT)
+Received: from ahossu.localdomain ([82.78.232.184])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43fe4cc375dsm69920019f8f.14.2026.04.27.01.18.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Apr 2026 00:59:17 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Thierry Reding <thierry.reding@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Ion Agorria <ion@agorria.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/1] drm/tegra: gr2d/gr3d: Move pm_runtime_enable to gr*d_probe
-Date: Mon, 27 Apr 2026 10:58:56 +0300
-Message-ID: <20260427075856.85208-2-clamor95@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260427075856.85208-1-clamor95@gmail.com>
-References: <20260427075856.85208-1-clamor95@gmail.com>
+        Mon, 27 Apr 2026 01:18:59 -0700 (PDT)
+From: Alexandru Hossu <hossu.alexandru@gmail.com>
+To: gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Cc: marvin24@gmx.de,
+	error27@gmail.com,
+	Alexandru Hossu <hossu.alexandru@gmail.com>
+Subject: [PATCH v4 0/2] staging: nvec: fix use-after-free and pm_power_off teardown
+Date: Mon, 27 Apr 2026 10:17:11 +0200
+Message-ID: <20260427081713.3401874-1-hossu.alexandru@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Ion Agorria <ion@agorria.com>
+v4, full series as Greg requested. In v3 I resent only 2/2 as a
+standalone without including 1/2 — my mistake, sorry for the noise.
 
-The gr*d_remove() has pm_runtime_disable, this indicates it should be
-paired with pm_runtime_enable in the probe instead of being inside
-gr*d_runtime_resume().
+Changes from v2/v3:
+ - 1/2 is unchanged from v2
+ - 2/2: drop incorrect Fixes: tag (already dropped in v3)
+ - 2/2: carry forward Dan's Reviewed-by from v2
 
-Signed-off-by: Ion Agorria <ion@agorria.com>
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- drivers/gpu/drm/tegra/gr2d.c | 8 ++++----
- drivers/gpu/drm/tegra/gr3d.c | 8 ++++----
- 2 files changed, 8 insertions(+), 8 deletions(-)
+Alexandru Hossu (2):
+  staging: nvec: fix use-after-free in nvec_rx_completed()
+  staging: nvec: fix unconditional pm_power_off teardown
 
-diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
-index 21f4dd0fa6af..71f092d59d65 100644
---- a/drivers/gpu/drm/tegra/gr2d.c
-+++ b/drivers/gpu/drm/tegra/gr2d.c
-@@ -286,6 +286,10 @@ static int gr2d_probe(struct platform_device *pdev)
- 	for (i = 0; i < ARRAY_SIZE(gr2d_addr_regs); i++)
- 		set_bit(gr2d_addr_regs[i], gr2d->addr_regs);
- 
-+	pm_runtime_enable(dev);
-+	pm_runtime_use_autosuspend(dev);
-+	pm_runtime_set_autosuspend_delay(dev, 500);
-+
- 	return 0;
- }
- 
-@@ -367,10 +371,6 @@ static int __maybe_unused gr2d_runtime_resume(struct device *dev)
- 		goto disable_clk;
- 	}
- 
--	pm_runtime_enable(dev);
--	pm_runtime_use_autosuspend(dev);
--	pm_runtime_set_autosuspend_delay(dev, 500);
--
- 	return 0;
- 
- disable_clk:
-diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
-index 42e9656ab80c..33e88ca4d4c5 100644
---- a/drivers/gpu/drm/tegra/gr3d.c
-+++ b/drivers/gpu/drm/tegra/gr3d.c
-@@ -517,6 +517,10 @@ static int gr3d_probe(struct platform_device *pdev)
- 	for (i = 0; i < ARRAY_SIZE(gr3d_addr_regs); i++)
- 		set_bit(gr3d_addr_regs[i], gr3d->addr_regs);
- 
-+	pm_runtime_enable(&pdev->dev);
-+	pm_runtime_use_autosuspend(&pdev->dev);
-+	pm_runtime_set_autosuspend_delay(&pdev->dev, 500);
-+
- 	return 0;
- }
- 
-@@ -578,10 +582,6 @@ static int __maybe_unused gr3d_runtime_resume(struct device *dev)
- 		goto disable_clk;
- 	}
- 
--	pm_runtime_enable(dev);
--	pm_runtime_use_autosuspend(dev);
--	pm_runtime_set_autosuspend_delay(dev, 500);
--
- 	return 0;
- 
- disable_clk:
+ drivers/staging/nvec/nvec.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
 -- 
-2.51.0
+2.53.0
 
