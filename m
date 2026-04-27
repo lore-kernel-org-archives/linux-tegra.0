@@ -1,63 +1,63 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028813537E0
-	for <linux-tegra@vger.kernel.org>; Mon, 27 Apr 2026 07:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75693914E2
+	for <linux-tegra@vger.kernel.org>; Mon, 27 Apr 2026 07:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777273423; cv=none; b=iAMjWP+wKv1ccrg9GK7wWBcNHPulrptZaKq+lZu7UqIy+11wDmUZUusiI8U7ezuq8rr0ZBoJLADW54DgakIY4vSkgLQgQYJru9Bl35iVwk1WwRtCvBUsJg5++/2z1fQESs0u8zsSPDLV7TmPUZnW+p/UzNBVnLlmzc4FzLTe0cs=
+	t=1777273425; cv=none; b=p524Bv1ThABJaLmt1yb75+Yy+GljdgNaAJ8OUW8DgUljio4Zx3/PV9ZuGRhVosj2qNt3kwERlGvc6oJviTN2yMWkrrkWHn9vy7Hd1rKRgOwhGJo3sVgqFQk1KZ0V3CMWhOB5Dp0FlRbZydH9bnYAfNd3f1SMRJnzqp7qNwONypk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777273423; c=relaxed/simple;
-	bh=flMFDcMoilUKZ2HI+QqMrSzjnoRTTOGEem++WXzh2jM=;
+	s=arc-20240116; t=1777273425; c=relaxed/simple;
+	bh=84Dqsd4+a5f1NKPye0gyTGquAHxSzQnz5E8L5x6vjSk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GJWkn3LBTs4Y8vkZFQlDj0UhYwxneavSwcxaBsrkErIBN1lcK6iiwoqteoy4RbYYvf0lrUIP4JIejLV7nhZA79gSOyXptSA2uOOflRfKiloKjVz4LEwbupNsKu+17ZAhD00WeSWHKf+asT1ULLJHFp1q9lCN6HH8lda0o6yPtpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HeV+Wm3V; arc=none smtp.client-ip=209.85.221.43
+	 MIME-Version; b=qR1zajDWFYgQ8fT2dAXiLhU5hHR8jl745VfUwxHydiCmpPWxN3mYtcRScKXjv9Bkx3V2gCwPYon+T6DmrVSRW6x2PiODMh3iQDYrmvpyX9i/6UMnfmJ2iXDPb8oFRwLMb5uYt3XPCdKyymhQbnPF55vTUibyc6QI2/WdLwN9DfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KKUymfWs; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HeV+Wm3V"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-43d77f6092eso6839631f8f.2
-        for <linux-tegra@vger.kernel.org>; Mon, 27 Apr 2026 00:03:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KKUymfWs"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-43cfde3c3f3so10011095f8f.3
+        for <linux-tegra@vger.kernel.org>; Mon, 27 Apr 2026 00:03:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777273420; x=1777878220; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1777273421; x=1777878221; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fZ1HBa/aKFGSf/GyiqKwru3OQmj7Gbd7sN3EDBVCVtk=;
-        b=HeV+Wm3VaxrdZL1n97/dwwtsG/8UWxwPsj8jkaDGFHCvCzS0LRs4RaeLGJOKd84Jj0
-         tIdSIFE5PMLYhr7ubjvdUYWljUx1lTVhOEfOoXo7hgpN1Ecl3La2vFz2ga9HKjstwMCm
-         rlu7F9sdc0iFQ7on6iKKdeamEN73I69rA/sscQLZ1hY6rMaU9bWi8HmUjle2ff9IpACJ
-         2ayRa4RNhqMistt8dvTRsxTbVBKcv+gIK4/9FHae1cnGehzECEPRJfjnPh6qSawFgTco
-         Iqi+6tkavRUrBeltPqkmAxl6MhOGHW9xjasoX6PF/ANGf1ZuzVBro26mdb+lOPl/JYSv
-         xyLA==
+        bh=1CfO1Q8+JOBgDtlGnZkxxf2jPv4aks+RLJbYHeFtCGM=;
+        b=KKUymfWsG7qJfjuxz0mv5rENezIUVG2G+CXHS+4mJOKM4pZtiCgNhetoYOQOOvzEVV
+         kd6cnHPe+kcCJT3yKJ0+Ks55qDfxueNC2n/ddmvjcFlMdnKz4sKFDFpaWThZtILZ13Zl
+         hrECpWKl4SNkyV35egtchzUHL3Q5n5XylLzsgpWjl9XpXKSMjvng1XnuC76RUMVs7fu8
+         FRGHofLdqdFKvkPmp93j5srgCAZygn/NKsEvn1P0OLirOiFJammJw6evXsTBUjyliNE0
+         rYvF8EzOqOPi+go4i1YK0/hKvhC45kfxv79MSBrGQMTbIAIZifKU4T4Ac4fjvUhDM3o/
+         pPwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777273420; x=1777878220;
+        d=1e100.net; s=20251104; t=1777273421; x=1777878221;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=fZ1HBa/aKFGSf/GyiqKwru3OQmj7Gbd7sN3EDBVCVtk=;
-        b=PjNKs/JNrvYWCLhUaIAa5dR1A8LlqrNXOylirnVutwlU1lwD/0uuj1XOUVctlq8d+c
-         6Zav1cqR4mxLmFhepz/naiFkx+M0+lTKiP6PwFWmytlK19zi6lfdP2KrEb3mCvF6Ao5/
-         Q6wCtHAGGf0q6G7+w9BS8NDG4Y3zW0/7PW9J8MfYrXLIN2Dk1SNvUE3RWYpe3ErD0q4L
-         Rj3mt0X+mIPPXtJAm9DreOjnZ7xKZLctAZ4UqR4K3IPxbk5gZU5OdCWtzwl1Kz9WnmNP
-         RMZ/QZspHZe1MXTb665hjxfds8KG5J374vTfE08OejSxiFpPrvoHGPI4TEizrLgf+W0x
-         UcUA==
-X-Forwarded-Encrypted: i=1; AFNElJ8fpdNamiLBWCsDRCj3kB/ML8eAVFw+hG8EyxQaBPz/ysm2Y4rXWTely5PutHqhMaZcvveI0gCDjRdZvg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YySCk2TYt5fFJKHhSwKQm9Ac4SYq/tRsqRZB9F/NCfwq81OZ/3j
-	MjYw4rxk12TKEuCr0BeAEy960Hz0A+BfErkZHTbdPDIck8La0WxbnAXW
-X-Gm-Gg: AeBDieu4g8M6dfeBOERx8ZlXVyuhRdbTKtFByjyyoAcV/k6HAhK334JGssVw83s7QYO
-	GBrmf4v6CgdV8Ayrz10AJMqo0sCCyRHlE6ZJh8LfRKTpMj6lgIT3OWpw3xmh4h8/WLWp0Kl79td
-	ybFCHnPZNCzH6QhXiIATiDKKCsjg4uy+UT9X0ZM9XrPa1oFsVPFosvS3PXKf0r18eGmtToNH2dI
-	i/V7xozIuR9mVGRm+8pqeZkhJ0jc1kJ3qcS5Mcha8lDJrsAKR09gp1+YSDAq3Buy2Mhp2FG9ZVJ
-	RmYNd39/WAl6pkH+h91aMJ3k6vqeeyJyBcBYgy4gF7irCdmkiW02WmDq5P91QeZmnEgqF4vSAol
-	+QqFPAvRGpEHtgtgvUrrE5x411Z4VU8o/mWkyumiuZiDxG6mytPoLcHqLoW4ZS/el72JTcPlLzU
-	B9YEC/P86PdUB8+s9g1RpdsVE=
-X-Received: by 2002:a5d:5f46:0:b0:43d:761d:5423 with SMTP id ffacd0b85a97d-43fe3dcc03bmr63701741f8f.16.1777273420045;
+        bh=1CfO1Q8+JOBgDtlGnZkxxf2jPv4aks+RLJbYHeFtCGM=;
+        b=sVnaRFov5EBZbtZRBG/L91Qm1O0knxNjJ7TWKZwIe9+MeSaduZsnLrfnmNgZWZsfzP
+         YchLrfHec7IFqOrxZoRmyhiuEWBT75M4BPh0oEw7ngLBjB+SIWczgsu3NDb2IUGMNkzC
+         FQwqmOi7un1e09WEYWO92T+lcvUFleRAl0bQdw+rpHiPd5XAOmlQWbhqnfw+mVgWr4xE
+         zb4+vrRXPWudkMkpskwqm3zLBKq1kHLnHEGWRf1u3c2eI6jQC1DaUab52lecFn90ihg1
+         IyHOzXdU43ahJuzWRvy6SB2fndrADIergxmVKAgAVGnigtvtYke7iPknuiUubfX9Sgd+
+         eqkQ==
+X-Forwarded-Encrypted: i=1; AFNElJ8HqVykp2lvoPqmzGV2p+YEgiSVjRCMKbh15kTCKob8LyxcMMK1sPQm5dZGK0CWJTdAAkY0ANSb9Jjl3A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCy68/0nWKwi1I4eKIC8ogQixTDFMJ/UsYI6DKb/7zG8FAkcKv
+	d/LZx3Yqym9ssLXrqufubAqJ7/n2v3zJMOmXvl7sT/hTfX8i8n5xdESy
+X-Gm-Gg: AeBDievH7/Bn5RLedBqB/bFipAu7T24ADQ71cX6dNFiff4csLELh/9XpDVtk3p+QCtw
+	kq1y/Dl6oOXp/gcFcdhG4DMKvIPDj5WA7QuWrQtauG/zz6DHI0F0oFK79ABICVYdDiVoSUAc3DH
+	38hGlEVMe/PThmNiDbMrxklaejEwfoDpQr+dk5DEc+C2rEAwaZjuMkATPX23QSubbA8yAAjcamh
+	Dlfu/blDfjJ3lhjqkEPQFfhi6a6gd3Dx4v2uG1NJDLWMm834ccZJ2Aav5Wo5gE5TEDTcvn74aTm
+	/XTDfMHyDvcGE+lfEVBDkpSWPgBuwSqM7mF+k0uOBe9/+NtZDE4e27ggQk0kU6GTGvGM/C6J4Ev
+	+OkFyq7aQITjJldSx5EKs6EjeZP0XZlFQ8G+DvQTEDxlTbgfe8d2wb6J4HdVMPaXvlH8UI9Vt4Q
+	wAQgtEgEJ7sE/8jVs2g+KbT+A=
+X-Received: by 2002:a5d:40cc:0:b0:43f:e721:76bf with SMTP id ffacd0b85a97d-43fe721784amr45151305f8f.41.1777273420997;
         Mon, 27 Apr 2026 00:03:40 -0700 (PDT)
 Received: from xeon ([188.163.112.56])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43fe4e3a341sm84245734f8f.24.2026.04.27.00.03.39
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43fe4e3a341sm84245734f8f.24.2026.04.27.00.03.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Apr 2026 00:03:39 -0700 (PDT)
+        Mon, 27 Apr 2026 00:03:40 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -69,9 +69,9 @@ To: Krzysztof Kozlowski <krzk@kernel.org>,
 Cc: linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH v2 2/7] memory: tegra: Implement EMEM regs and ICC ops for Tegra114
-Date: Mon, 27 Apr 2026 10:03:07 +0300
-Message-ID: <20260427070312.81679-3-clamor95@gmail.com>
+Subject: [PATCH v2 3/7] dt-bindings: memory: Document Tegra114 External Memory Controller
+Date: Mon, 27 Apr 2026 10:03:08 +0300
+Message-ID: <20260427070312.81679-4-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260427070312.81679-1-clamor95@gmail.com>
 References: <20260427070312.81679-1-clamor95@gmail.com>
@@ -83,238 +83,232 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Prepare Internal Memory Controller for introduction of External Memory
-Controller.
+Include Tegra114 support into existing Tegra124 EMC schema with the most
+notable difference being the amount of EMC timings and a few SoC unique
+entries.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/memory/tegra/tegra114.c | 193 ++++++++++++++++++++++++++++++++
- 1 file changed, 193 insertions(+)
+ .../nvidia,tegra124-emc.yaml                  | 174 +++---------------
+ 1 file changed, 26 insertions(+), 148 deletions(-)
 
-diff --git a/drivers/memory/tegra/tegra114.c b/drivers/memory/tegra/tegra114.c
-index 02dd4e26288a..2cb153091228 100644
---- a/drivers/memory/tegra/tegra114.c
-+++ b/drivers/memory/tegra/tegra114.c
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2014-2026 NVIDIA CORPORATION.  All rights reserved.
-  */
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.yaml
+index f5f03bf36413..9398aae49093 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-emc.yaml
+@@ -16,7 +16,9 @@ description: |
  
-+#include <linux/device.h>
- #include <linux/of.h>
- #include <linux/mm.h>
+ properties:
+   compatible:
+-    const: nvidia,tegra124-emc
++    enum:
++      - nvidia,tegra114-emc
++      - nvidia,tegra124-emc
  
-@@ -1101,6 +1102,195 @@ static const struct tegra_mc_reset tegra114_mc_resets[] = {
- 	TEGRA114_MC_RESET(VI,       0x200, 0x204, 17),
- };
+   reg:
+     maxItems: 1
+@@ -29,6 +31,9 @@ properties:
+     items:
+       - const: emc
  
-+static void tegra114_mc_tune_client_latency(struct tegra_mc *mc,
-+					    const struct tegra_mc_client *client,
-+					    unsigned int bandwidth_mbytes_sec)
-+{
-+	u32 arb_tolerance_compensation_nsec, arb_tolerance_compensation_div;
-+	unsigned int fifo_size = client->fifo_size;
-+	u32 arb_nsec, la_ticks, value;
++  interrupts:
++    maxItems: 1
 +
-+	/* see 20.3.1.1 Client Configuration in Tegra4 TRM v01p */
-+	if (bandwidth_mbytes_sec)
-+		arb_nsec = fifo_size * NSEC_PER_USEC / bandwidth_mbytes_sec;
-+	else
-+		arb_nsec = U32_MAX;
+   "#interconnect-cells":
+     const: 0
+ 
+@@ -164,153 +169,12 @@ patternProperties:
+           nvidia,emc-configuration:
+             description:
+               EMC timing characterization data. These are the registers (see
+-              section "15.6.2 EMC Registers" in the TRM) whose values need to
++              section "20.11.2 EMC Registers" in the Tegra114 TRM or section
++              "15.6.2 EMC Registers" in the Tegra124 TRM) whose values need to
+               be specified, according to the board documentation.
+             $ref: /schemas/types.yaml#/definitions/uint32-array
+-            items:
+-              - description: EMC_RC
+-              - description: EMC_RFC
+-              - description: EMC_RFC_SLR
+-              - description: EMC_RAS
+-              - description: EMC_RP
+-              - description: EMC_R2W
+-              - description: EMC_W2R
+-              - description: EMC_R2P
+-              - description: EMC_W2P
+-              - description: EMC_RD_RCD
+-              - description: EMC_WR_RCD
+-              - description: EMC_RRD
+-              - description: EMC_REXT
+-              - description: EMC_WEXT
+-              - description: EMC_WDV
+-              - description: EMC_WDV_MASK
+-              - description: EMC_QUSE
+-              - description: EMC_QUSE_WIDTH
+-              - description: EMC_IBDLY
+-              - description: EMC_EINPUT
+-              - description: EMC_EINPUT_DURATION
+-              - description: EMC_PUTERM_EXTRA
+-              - description: EMC_PUTERM_WIDTH
+-              - description: EMC_PUTERM_ADJ
+-              - description: EMC_CDB_CNTL_1
+-              - description: EMC_CDB_CNTL_2
+-              - description: EMC_CDB_CNTL_3
+-              - description: EMC_QRST
+-              - description: EMC_QSAFE
+-              - description: EMC_RDV
+-              - description: EMC_RDV_MASK
+-              - description: EMC_REFRESH
+-              - description: EMC_BURST_REFRESH_NUM
+-              - description: EMC_PRE_REFRESH_REQ_CNT
+-              - description: EMC_PDEX2WR
+-              - description: EMC_PDEX2RD
+-              - description: EMC_PCHG2PDEN
+-              - description: EMC_ACT2PDEN
+-              - description: EMC_AR2PDEN
+-              - description: EMC_RW2PDEN
+-              - description: EMC_TXSR
+-              - description: EMC_TXSRDLL
+-              - description: EMC_TCKE
+-              - description: EMC_TCKESR
+-              - description: EMC_TPD
+-              - description: EMC_TFAW
+-              - description: EMC_TRPAB
+-              - description: EMC_TCLKSTABLE
+-              - description: EMC_TCLKSTOP
+-              - description: EMC_TREFBW
+-              - description: EMC_FBIO_CFG6
+-              - description: EMC_ODT_WRITE
+-              - description: EMC_ODT_READ
+-              - description: EMC_FBIO_CFG5
+-              - description: EMC_CFG_DIG_DLL
+-              - description: EMC_CFG_DIG_DLL_PERIOD
+-              - description: EMC_DLL_XFORM_DQS0
+-              - description: EMC_DLL_XFORM_DQS1
+-              - description: EMC_DLL_XFORM_DQS2
+-              - description: EMC_DLL_XFORM_DQS3
+-              - description: EMC_DLL_XFORM_DQS4
+-              - description: EMC_DLL_XFORM_DQS5
+-              - description: EMC_DLL_XFORM_DQS6
+-              - description: EMC_DLL_XFORM_DQS7
+-              - description: EMC_DLL_XFORM_DQS8
+-              - description: EMC_DLL_XFORM_DQS9
+-              - description: EMC_DLL_XFORM_DQS10
+-              - description: EMC_DLL_XFORM_DQS11
+-              - description: EMC_DLL_XFORM_DQS12
+-              - description: EMC_DLL_XFORM_DQS13
+-              - description: EMC_DLL_XFORM_DQS14
+-              - description: EMC_DLL_XFORM_DQS15
+-              - description: EMC_DLL_XFORM_QUSE0
+-              - description: EMC_DLL_XFORM_QUSE1
+-              - description: EMC_DLL_XFORM_QUSE2
+-              - description: EMC_DLL_XFORM_QUSE3
+-              - description: EMC_DLL_XFORM_QUSE4
+-              - description: EMC_DLL_XFORM_QUSE5
+-              - description: EMC_DLL_XFORM_QUSE6
+-              - description: EMC_DLL_XFORM_QUSE7
+-              - description: EMC_DLL_XFORM_ADDR0
+-              - description: EMC_DLL_XFORM_ADDR1
+-              - description: EMC_DLL_XFORM_ADDR2
+-              - description: EMC_DLL_XFORM_ADDR3
+-              - description: EMC_DLL_XFORM_ADDR4
+-              - description: EMC_DLL_XFORM_ADDR5
+-              - description: EMC_DLL_XFORM_QUSE8
+-              - description: EMC_DLL_XFORM_QUSE9
+-              - description: EMC_DLL_XFORM_QUSE10
+-              - description: EMC_DLL_XFORM_QUSE11
+-              - description: EMC_DLL_XFORM_QUSE12
+-              - description: EMC_DLL_XFORM_QUSE13
+-              - description: EMC_DLL_XFORM_QUSE14
+-              - description: EMC_DLL_XFORM_QUSE15
+-              - description: EMC_DLI_TRIM_TXDQS0
+-              - description: EMC_DLI_TRIM_TXDQS1
+-              - description: EMC_DLI_TRIM_TXDQS2
+-              - description: EMC_DLI_TRIM_TXDQS3
+-              - description: EMC_DLI_TRIM_TXDQS4
+-              - description: EMC_DLI_TRIM_TXDQS5
+-              - description: EMC_DLI_TRIM_TXDQS6
+-              - description: EMC_DLI_TRIM_TXDQS7
+-              - description: EMC_DLI_TRIM_TXDQS8
+-              - description: EMC_DLI_TRIM_TXDQS9
+-              - description: EMC_DLI_TRIM_TXDQS10
+-              - description: EMC_DLI_TRIM_TXDQS11
+-              - description: EMC_DLI_TRIM_TXDQS12
+-              - description: EMC_DLI_TRIM_TXDQS13
+-              - description: EMC_DLI_TRIM_TXDQS14
+-              - description: EMC_DLI_TRIM_TXDQS15
+-              - description: EMC_DLL_XFORM_DQ0
+-              - description: EMC_DLL_XFORM_DQ1
+-              - description: EMC_DLL_XFORM_DQ2
+-              - description: EMC_DLL_XFORM_DQ3
+-              - description: EMC_DLL_XFORM_DQ4
+-              - description: EMC_DLL_XFORM_DQ5
+-              - description: EMC_DLL_XFORM_DQ6
+-              - description: EMC_DLL_XFORM_DQ7
+-              - description: EMC_XM2CMDPADCTRL
+-              - description: EMC_XM2CMDPADCTRL4
+-              - description: EMC_XM2CMDPADCTRL5
+-              - description: EMC_XM2DQPADCTRL2
+-              - description: EMC_XM2DQPADCTRL3
+-              - description: EMC_XM2CLKPADCTRL
+-              - description: EMC_XM2CLKPADCTRL2
+-              - description: EMC_XM2COMPPADCTRL
+-              - description: EMC_XM2VTTGENPADCTRL
+-              - description: EMC_XM2VTTGENPADCTRL2
+-              - description: EMC_XM2VTTGENPADCTRL3
+-              - description: EMC_XM2DQSPADCTRL3
+-              - description: EMC_XM2DQSPADCTRL4
+-              - description: EMC_XM2DQSPADCTRL5
+-              - description: EMC_XM2DQSPADCTRL6
+-              - description: EMC_DSR_VTTGEN_DRV
+-              - description: EMC_TXDSRVTTGEN
+-              - description: EMC_FBIO_SPARE
+-              - description: EMC_ZCAL_WAIT_CNT
+-              - description: EMC_MRS_WAIT_CNT2
+-              - description: EMC_CTT
+-              - description: EMC_CTT_DURATION
+-              - description: EMC_CFG_PIPE
+-              - description: EMC_DYN_SELF_REF_CONTROL
+-              - description: EMC_QPOP
++            minItems: 97
++            maxItems: 143
+ 
+         required:
+           - clock-frequency
+@@ -318,9 +182,7 @@ patternProperties:
+           - nvidia,emc-auto-cal-config2
+           - nvidia,emc-auto-cal-config3
+           - nvidia,emc-auto-cal-interval
+-          - nvidia,emc-bgbias-ctl0
+           - nvidia,emc-cfg
+-          - nvidia,emc-cfg-2
+           - nvidia,emc-ctt-term-ctrl
+           - nvidia,emc-mode-1
+           - nvidia,emc-mode-2
+@@ -344,6 +206,22 @@ required:
+   - "#interconnect-cells"
+   - operating-points-v2
+ 
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - nvidia,tegra124-emc
++    then:
++      patternProperties:
++        "^emc-timings-[0-9]+$":
++          patternProperties:
++            "^timing-[0-9]+$":
++              required:
++                - nvidia,emc-bgbias-ctl0
++                - nvidia,emc-cfg-2
 +
-+	/*
-+	 * Latency allowness should be set with consideration for the module's
-+	 * latency tolerance and internal buffering capabilities.
-+	 *
-+	 * Display memory clients use isochronous transfers and have very low
-+	 * tolerance to a belated transfers. Hence we need to compensate the
-+	 * memory arbitration imperfection for them in order to prevent FIFO
-+	 * underflow condition when memory bus is busy.
-+	 *
-+	 * VI clients also need a stronger compensation.
-+	 */
-+	switch (client->swgroup) {
-+	case TEGRA_SWGROUP_MPCORE:
-+	case TEGRA_SWGROUP_PTC:
-+		/*
-+		 * We always want lower latency for these clients, hence
-+		 * don't touch them.
-+		 */
-+		return;
-+
-+	case TEGRA_SWGROUP_DC:
-+	case TEGRA_SWGROUP_DCB:
-+		arb_tolerance_compensation_nsec = 1050;
-+		arb_tolerance_compensation_div = 2;
-+		break;
-+
-+	case TEGRA_SWGROUP_VI:
-+		arb_tolerance_compensation_nsec = 1050;
-+		arb_tolerance_compensation_div = 1;
-+		break;
-+
-+	default:
-+		arb_tolerance_compensation_nsec = 150;
-+		arb_tolerance_compensation_div = 1;
-+		break;
-+	}
-+
-+	if (arb_nsec > arb_tolerance_compensation_nsec)
-+		arb_nsec -= arb_tolerance_compensation_nsec;
-+	else
-+		arb_nsec = 0;
-+
-+	arb_nsec /= arb_tolerance_compensation_div;
-+
-+	/*
-+	 * Latency allowance is a number of ticks a request from a particular
-+	 * client may wait in the EMEM arbiter before it becomes a high-priority
-+	 * request.
-+	 */
-+	la_ticks = arb_nsec / mc->tick;
-+	la_ticks = min(la_ticks, client->regs.la.mask);
-+
-+	value = mc_readl(mc, client->regs.la.reg);
-+	value &= ~(client->regs.la.mask << client->regs.la.shift);
-+	value |= la_ticks << client->regs.la.shift;
-+	mc_writel(mc, value, client->regs.la.reg);
-+}
-+
-+static int tegra114_mc_icc_set(struct icc_node *src, struct icc_node *dst)
-+{
-+	struct tegra_mc *mc = icc_provider_to_tegra_mc(src->provider);
-+	const struct tegra_mc_client *client = &mc->soc->clients[src->id];
-+	u64 peak_bandwidth = icc_units_to_bps(src->peak_bw);
-+
-+	/*
-+	 * Skip pre-initialization that is done by icc_node_add(), which sets
-+	 * bandwidth to maximum for all clients before drivers are loaded.
-+	 *
-+	 * This doesn't make sense for us because we don't have drivers for all
-+	 * clients and it's okay to keep configuration left from bootloader
-+	 * during boot, at least for today.
-+	 */
-+	if (src == dst)
-+		return 0;
-+
-+	/* convert bytes/sec to megabytes/sec */
-+	do_div(peak_bandwidth, 1000000);
-+
-+	tegra114_mc_tune_client_latency(mc, client, peak_bandwidth);
-+
-+	return 0;
-+}
-+
-+static int tegra114_mc_icc_aggreate(struct icc_node *node, u32 tag, u32 avg_bw,
-+				    u32 peak_bw, u32 *agg_avg, u32 *agg_peak)
-+{
-+	/*
-+	 * ISO clients need to reserve extra bandwidth up-front because
-+	 * there could be high bandwidth pressure during initial filling
-+	 * of the client's FIFO buffers.  Secondly, we need to take into
-+	 * account impurities of the memory subsystem.
-+	 */
-+	if (tag & TEGRA_MC_ICC_TAG_ISO)
-+		peak_bw = tegra_mc_scale_percents(peak_bw, 400);
-+
-+	*agg_avg += avg_bw;
-+	*agg_peak = max(*agg_peak, peak_bw);
-+
-+	return 0;
-+}
-+
-+static struct icc_node_data *
-+tegra114_mc_of_icc_xlate_extended(const struct of_phandle_args *spec, void *data)
-+{
-+	struct tegra_mc *mc = icc_provider_to_tegra_mc(data);
-+	const struct tegra_mc_client *client;
-+	unsigned int i, idx = spec->args[0];
-+	struct icc_node_data *ndata;
-+	struct icc_node *node;
-+
-+	list_for_each_entry(node, &mc->provider.nodes, node_list) {
-+		if (node->id != idx)
-+			continue;
-+
-+		ndata = kzalloc_obj(*ndata);
-+		if (!ndata)
-+			return ERR_PTR(-ENOMEM);
-+
-+		client = &mc->soc->clients[idx];
-+		ndata->node = node;
-+
-+		switch (client->swgroup) {
-+		case TEGRA_SWGROUP_DC:
-+		case TEGRA_SWGROUP_DCB:
-+		case TEGRA_SWGROUP_PTC:
-+		case TEGRA_SWGROUP_VI:
-+			/* these clients are isochronous by default */
-+			ndata->tag = TEGRA_MC_ICC_TAG_ISO;
-+			break;
-+
-+		default:
-+			ndata->tag = TEGRA_MC_ICC_TAG_DEFAULT;
-+			break;
-+		}
-+
-+		return ndata;
-+	}
-+
-+	for (i = 0; i < mc->soc->num_clients; i++) {
-+		if (mc->soc->clients[i].id == idx)
-+			return ERR_PTR(-EPROBE_DEFER);
-+	}
-+
-+	dev_err(mc->dev, "invalid ICC client ID %u\n", idx);
-+
-+	return ERR_PTR(-EINVAL);
-+}
-+
-+static const struct tegra_mc_icc_ops tegra114_mc_icc_ops = {
-+	.xlate_extended = tegra114_mc_of_icc_xlate_extended,
-+	.aggregate = tegra114_mc_icc_aggreate,
-+	.set = tegra114_mc_icc_set,
-+};
-+
-+static const unsigned long tegra114_mc_emem_regs[] = {
-+	MC_EMEM_ARB_CFG,
-+	MC_EMEM_ARB_OUTSTANDING_REQ,
-+	MC_EMEM_ARB_TIMING_RCD,
-+	MC_EMEM_ARB_TIMING_RP,
-+	MC_EMEM_ARB_TIMING_RC,
-+	MC_EMEM_ARB_TIMING_RAS,
-+	MC_EMEM_ARB_TIMING_FAW,
-+	MC_EMEM_ARB_TIMING_RRD,
-+	MC_EMEM_ARB_TIMING_RAP2PRE,
-+	MC_EMEM_ARB_TIMING_WAP2PRE,
-+	MC_EMEM_ARB_TIMING_R2R,
-+	MC_EMEM_ARB_TIMING_W2W,
-+	MC_EMEM_ARB_TIMING_R2W,
-+	MC_EMEM_ARB_TIMING_W2R,
-+	MC_EMEM_ARB_DA_TURNS,
-+	MC_EMEM_ARB_DA_COVERS,
-+	MC_EMEM_ARB_MISC0,
-+	MC_EMEM_ARB_RING1_THROTTLE,
-+};
-+
- static const struct tegra_mc_intmask tegra114_mc_intmasks[] = {
- 	{
- 		.reg = MC_INTMASK,
-@@ -1116,11 +1306,14 @@ const struct tegra_mc_soc tegra114_mc_soc = {
- 	.atom_size = 32,
- 	.client_id_mask = 0x7f,
- 	.smmu = &tegra114_smmu_soc,
-+	.emem_regs = tegra114_mc_emem_regs,
-+	.num_emem_regs = ARRAY_SIZE(tegra114_mc_emem_regs),
- 	.intmasks = tegra114_mc_intmasks,
- 	.num_intmasks = ARRAY_SIZE(tegra114_mc_intmasks),
- 	.reset_ops = &tegra_mc_reset_ops_common,
- 	.resets = tegra114_mc_resets,
- 	.num_resets = ARRAY_SIZE(tegra114_mc_resets),
-+	.icc_ops = &tegra114_mc_icc_ops,
- 	.ops = &tegra30_mc_ops,
- 	.regs = &tegra20_mc_regs,
- 	.handle_irq = tegra30_mc_irq_handlers,
+ additionalProperties: false
+ 
+ examples:
 -- 
 2.51.0
 
