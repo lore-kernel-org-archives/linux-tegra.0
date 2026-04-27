@@ -1,117 +1,270 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DBC37BE7D
-	for <linux-tegra@vger.kernel.org>; Mon, 27 Apr 2026 08:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21A339A074;
+	Mon, 27 Apr 2026 08:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777277959; cv=none; b=R73oogs2OPp5zzpqn7x+xddd1eSwAyxo7bzk35x/5pjTgSfEQoMZUl5C+Pi9IocPNpelRWT+Avdz0ry0X4AEnvEAo9/lY9C3pYBBptuaLdimHneaXobIqCezIfo7rr85Co9KQFvUWpV9R1B/IvbznZi16AOrrdmtfvvjV3sNDRo=
+	t=1777278277; cv=none; b=AUS7BTHctK3mk3MVVv7XaSPC5N8bk8WRArwxN2Yl94161biWOArvkAv2yVyKKcGiMTjUfFutrhQ4BGZDaSLhlXUJOYqkZYUG+GFYzskr9jLCR0RQslyP3NyoUcnLhLiXeuDuMCeL8HZYFV5ChaeYk1Y8CDZ4rIWjAkwq4GFWOaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777277959; c=relaxed/simple;
-	bh=kA12S5ceLFq7aTYPKmMulJyt/Aty2VxK8Ge3SmlcZxg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EFAceQsURNqiL4a/Zpg2HaW/LRoLL0JOtB3MdbwO1QIqedw6mw+RXda66iL63ptx4MUOxnBOLRwat6aSyqn86Qa0V99y9Ga/aXK0lJwxKgBlBfGI77gcI75OirFSNtpKgD7RBAH5LjFu7yvARh2hzrXa7/0Ni9mbq3soq+IHpNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BOUhTCno; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BOUhTCno"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-44509921fbcso308986f8f.3
-        for <linux-tegra@vger.kernel.org>; Mon, 27 Apr 2026 01:19:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777277956; x=1777882756; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BKuYbRG/YW/8TeEIKBYjuEmOZ3fK4A9BxisB2qvbDhg=;
-        b=BOUhTCnoyMFnVqNbKkAWZ1WRXsoj3tRc0SZy6VB0Au1xxza3V47hQCEQx/DWWuXxJI
-         aUufsx/jcGIBbxxABkfaOQdb2NpfYPf2BWyble2Dz7IgEius5Xir0xLFU4+06FQFXvfK
-         iyALkDTIVcvrz1KcCfVHdfxaiDZEhBgZZg9jCwLarhM5T952QWGq1NnJ4o6fjtHuxulw
-         7WojWKF4CIO/6HG5ALXOAJ5qbkQv2OeqOrt/n2a8l5zgUEHWSo1hA0O4xTS1/8vnhGob
-         J8oN14rTN1tvcfmh1AGGfOOmIIbe5K02HTkqe70JUj7Eozu3CZnbG0YkKlzNQt6LqXau
-         xAyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777277956; x=1777882756;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=BKuYbRG/YW/8TeEIKBYjuEmOZ3fK4A9BxisB2qvbDhg=;
-        b=I7w/2eKR+pL+oWSprX3QdcwzL6WSfdMwIhzbNvTlpHIEt6PFFuX7dqkahAlD3qPQvw
-         2sUKdr2B9cdcjGSDDM9TbAloF1rbNpwUcG9ZYnbc2ryeUWPNm35rJk5PqGgmivaAnJHp
-         X7AR46Gq9WJNvoa6KaC3Esq112UnQroI5YWEf9wlwbLnhrsIZhxcrhNQoudeYlMTLYas
-         odl3q1peRXIwKQY1DA9jsh0iZTzn8BSGdsPvpvBfJbDcB0LbPnPPmg5L2JQ7toAfG7r+
-         rOl7OtUmJkW+/Q1Z03pw7ApjaSeUJRsegoZWEs2/i13dMVxTEVVhvShhkPFIIswl8fGp
-         6Nvg==
-X-Forwarded-Encrypted: i=1; AFNElJ8afe11izC+GxACkh879dSyLHpJtQZSgCM/lQn+1dBfZ+hOdJhYO4ws/bIeUWjjcCsbDzWDFWgyMqenKg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa5Pcp8O3VGPy6QdRgCbyOav+9240A+8mS7DmGLggDteqRNnci
-	dvR2+RCasE8Bd0eE9NmsNlCB+wXp6kyWO7rDTbps+fsoJU3mXsGuro6S
-X-Gm-Gg: AeBDievizURP6B9zU3lfOqpNT/1Pzq7Cj5xI/qq10coHuDcRXFOmQtYUt+uiI3Hi6v5
-	QV/P2ILH8RXdDNWYZJ32WgR9dJ0NwlxHYFHU6H8MaqTPTmrfG1X48zQfg8EYLfB1x1em4ZFp5t9
-	tdg3w+8pHYzgj/mGf7MM+5z1I92fMr92nIZP1IZoiiK8gWoyWaOBePZDLFDxjE2xiqUUnQxG6mm
-	OqV5NV4886r6+S7mTSXjOQv4sFoMe+8L9EN8+YOOhwfsZh4y7P9T6fubkuNx+6NeQPOURH7YBsx
-	Wao/RKkunRPAU7idiAOBn7MhpxLWIXzVUBuDLfiGeGIbSutVO1M7iz0PVCB7gWizhg4hz8OqZYF
-	3nEWgerCb2YVWT5H4TQvWr6iuebmuEjoV7282l7mTnG6sRp/G8fol99swcSL2eHhYok0PvYKBjq
-	/a49YBJ9Os12ZN3m5TXTUFaRDeivvditRrq6JN0DvcbEOtViU+rlckamvKnsg+vGlPtogQTdr2Q
-	7FKl6bUHWKTT7ejOfkJ4omSTl72tQiBxFSJuAheYQiEvlYctS85c7EiOOH4PL4JcZPIhxU=
-X-Received: by 2002:a05:6000:2dc4:b0:441:37b5:c2f6 with SMTP id ffacd0b85a97d-44137b5c365mr14126935f8f.23.1777277956084;
-        Mon, 27 Apr 2026 01:19:16 -0700 (PDT)
-Received: from ahossu.localdomain ([82.78.232.184])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43fe4cc375dsm69920019f8f.14.2026.04.27.01.19.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Apr 2026 01:19:15 -0700 (PDT)
-From: Alexandru Hossu <hossu.alexandru@gmail.com>
-To: gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Cc: marvin24@gmx.de,
-	error27@gmail.com,
-	Alexandru Hossu <hossu.alexandru@gmail.com>
-Subject: [PATCH v4 2/2] staging: nvec: fix unconditional pm_power_off teardown
-Date: Mon, 27 Apr 2026 10:17:13 +0200
-Message-ID: <20260427081713.3401874-3-hossu.alexandru@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260427081713.3401874-1-hossu.alexandru@gmail.com>
-References: <20260427081713.3401874-1-hossu.alexandru@gmail.com>
+	s=arc-20240116; t=1777278277; c=relaxed/simple;
+	bh=JoGYb5w+i7KAOj6ztX7K6yR7qMHfcXzHYJAIVcebOaI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=c4hxC8BPc+pZTjH/YlpUCfHDNvWjacV/mznDYK7oQSw4pxSWdLlNGnIhjpEmXpO1OG+KcsWFj+3vTPQDgwJZCQ5uLxxT3s7wVhKQ8y4g1x76l93VPCF7vHFLZkGS2GnQrjEMu+SfBWfp1rqe6WabSarmuY5OAHPFVsFd8qptQgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=113.46.200.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.163.214])
+	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4g3xJp4TSGzmV6X;
+	Mon, 27 Apr 2026 16:18:02 +0800 (CST)
+Received: from kwepemf200017.china.huawei.com (unknown [7.202.181.10])
+	by mail.maildlp.com (Postfix) with ESMTPS id B59DB4056C;
+	Mon, 27 Apr 2026 16:24:29 +0800 (CST)
+Received: from [10.67.121.58] (10.67.121.58) by kwepemf200017.china.huawei.com
+ (7.202.181.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 27 Apr
+ 2026 16:24:28 +0800
+Message-ID: <a4ed690a-50d6-4bfe-8810-86a75d7b51e3@hisilicon.com>
+Date: Mon, 27 Apr 2026 16:24:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] cpufreq: CPPC: add autonomous mode boot parameter
+ support
+To: Sumit Gupta <sumitg@nvidia.com>, <rafael@kernel.org>,
+	<viresh.kumar@linaro.org>, <pierre.gondois@arm.com>,
+	<ionela.voinescu@arm.com>, <zhenglifeng1@huawei.com>, <corbet@lwn.net>,
+	<skhan@linuxfoundation.org>, <rdunlap@infradead.org>,
+	<mario.limonciello@amd.com>, <linux-pm@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <linux-tegra@vger.kernel.org>, <treding@nvidia.com>,
+	<jonathanh@nvidia.com>, <vsethi@nvidia.com>, <ksitaraman@nvidia.com>,
+	<sanjayc@nvidia.com>, <mochs@nvidia.com>, <bbasu@nvidia.com>
+References: <20260424201814.230071-1-sumitg@nvidia.com>
+Content-Language: en-US
+From: Jie Zhan <zhanjie9@hisilicon.com>
+In-Reply-To: <20260424201814.230071-1-sumitg@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemf200017.china.huawei.com (7.202.181.10)
 
-tegra_nvec_remove() unconditionally sets pm_power_off = NULL, even if
-nvec was not the one that registered it. This breaks any other driver
-that may have set pm_power_off to its own handler.
 
-Replace the unconditional assignment with a guarded check so that
-pm_power_off is only cleared if nvec was the one that set it.
+Hi Sumit,
 
-Also remove the stale FIXME comment, as the guard addresses exactly
-what it was asking for.
+In general, I would expect this parameter only toggles on auto_sel by
+default.  IIUC, other CPPC configurations (min/max/desired perf, EPP,
+enable) are optional and not closely related to this.
 
-Reviewed-by: Dan Carpenter <error27@gmail.com>
-Signed-off-by: Alexandru Hossu <hossu.alexandru@gmail.com>
----
- drivers/staging/nvec/nvec.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Why including those stuff here?
 
-diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-index 2a3499dd4d63..88c416ee0381 100644
---- a/drivers/staging/nvec/nvec.c
-+++ b/drivers/staging/nvec/nvec.c
-@@ -906,8 +906,8 @@ static void tegra_nvec_remove(struct platform_device *pdev)
- 	nvec_unregister_notifier(nvec, &nvec->nvec_status_notifier);
- 	cancel_work_sync(&nvec->rx_work);
- 	cancel_work_sync(&nvec->tx_work);
--	/* FIXME: needs check whether nvec is responsible for power off */
--	pm_power_off = NULL;
-+	if (pm_power_off == nvec_power_off)
-+		pm_power_off = NULL;
- }
- 
- #ifdef CONFIG_PM_SLEEP
--- 
-2.53.0
 
+Please see other questions inline.
+
+Thanks!
+Jie
+
+On 4/25/2026 4:18 AM, Sumit Gupta wrote:
+> Add a kernel boot parameter 'cppc_cpufreq.auto_sel_mode' to enable
+> CPPC autonomous performance selection on all CPUs at system startup.
+> When autonomous mode is enabled, the hardware automatically adjusts
+> CPU performance based on workload demands using Energy Performance
+> Preference (EPP) hints.
+> 
+> When auto_sel_mode=1:
+> - Configure all CPUs for autonomous operation on first init
+> - Set EPP to performance preference (0x0)
+> - Use HW min/max_perf when available; otherwise initialize from caps
+> - Clamp desired_perf to bounds before enabling autonomous mode
+> - Hardware controls frequency instead of the OS governor
+> 
+> The boot parameter is applied only during first policy initialization.
+> Skip applying it on CPU hotplug to preserve runtime sysfs configuration.
+> 
+> This patch depends on patch [2] ("cpufreq: Set policy->min and max
+> as real QoS constraints") so that the policy->min/max set in
+> cppc_cpufreq_cpu_init() are not overridden by cpufreq_set_policy()
+> during init.
+> 
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org> (Documentation)
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+> v[1] -> v2:
+> - Call cppc_set_enable() unconditionally so CPPC is enabled for both
+>   OS-driven and autonomous modes.
+Why adding this in v2?
+This looks like a separate issue since setting CPPC Enable reg doesn't seem
+to be related with autonomous control.
+> - Init min/max from caps instead of cppc_cpufreq_update_perf_limits()
+>   as policy->min/max aren't yet populated.
+> 
+> [1] https://lore.kernel.org/lkml/20260317151053.2361475-1-sumitg@nvidia.com/
+> [2] https://lore.kernel.org/lkml/20260423084731.1090384-2-pierre.gondois@arm.com/
+> ---
+>  .../admin-guide/kernel-parameters.txt         | 13 +++
+>  drivers/cpufreq/cppc_cpufreq.c                | 89 +++++++++++++++++--
+>  2 files changed, 97 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 0a1abed1b93c..751817b0573a 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -1067,6 +1067,19 @@ Kernel parameters
+>  			policy to use. This governor must be registered in the
+>  			kernel before the cpufreq driver probes.
+>  
+> +	cppc_cpufreq.auto_sel_mode=
+> +			[CPU_FREQ] Enable ACPI CPPC autonomous performance
+> +			selection. When enabled, hardware automatically adjusts
+> +			CPU frequency on all CPUs based on workload demands.
+> +			In Autonomous mode, Energy Performance Preference (EPP)
+> +			hints guide hardware toward performance (0x0) or energy
+> +			efficiency (0xff).
+> +			Requires ACPI CPPC autonomous selection register support.
+> +			Format: <bool>
+> +			Default: 0 (disabled)
+> +			0: use cpufreq governors
+> +			1: enable if supported by hardware
+> +
+>  	cpu_init_udelay=N
+>  			[X86,EARLY] Delay for N microsec between assert and de-assert
+>  			of APIC INIT to start processors.  This delay occurs
+> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+> index 02db03d03755..672fc3058190 100644
+> --- a/drivers/cpufreq/cppc_cpufreq.c
+> +++ b/drivers/cpufreq/cppc_cpufreq.c
+> @@ -28,6 +28,9 @@
+>  
+>  static struct cpufreq_driver cppc_cpufreq_driver;
+>  
+> +/* Autonomous Selection boot parameter */
+> +static bool auto_sel_mode;
+> +
+>  #ifdef CONFIG_ACPI_CPPC_CPUFREQ_FIE
+>  static enum {
+>  	FIE_UNSET = -1,
+> @@ -656,6 +659,14 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  	caps = &cpu_data->perf_caps;
+>  	policy->driver_data = cpu_data;
+>  
+> +	/*
+> +	 * Enable CPPC for both OS-driven and autonomous modes.
+> +	 * The Enable register is optional - some platforms may not support it
+> +	 */
+> +	ret = cppc_set_enable(cpu, true);
+> +	if (ret && ret != -EOPNOTSUPP)
+> +		pr_warn("Failed to enable CPPC for CPU%d (%d)\n", cpu, ret);
+> +
+>  	min = cppc_perf_to_khz(caps, caps->lowest_nonlinear_perf);
+>  	max = cppc_perf_to_khz(caps, policy->boost_enabled ?
+>  			caps->highest_perf : caps->nominal_perf);
+> @@ -711,11 +722,71 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  	policy->cur = cppc_perf_to_khz(caps, caps->highest_perf);
+>  	cpu_data->perf_ctrls.desired_perf =  caps->highest_perf;
+>  
+> -	ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
+> -	if (ret) {
+> -		pr_debug("Err setting perf value:%d on CPU:%d. ret:%d\n",
+> -			 caps->highest_perf, cpu, ret);
+> -		goto out;
+> +	/*
+> +	 * Enable autonomous mode on first init if boot param is set.
+> +	 * Check last_governor to detect first init and skip if auto_sel
+> +	 * is already enabled.
+> +	 */
+> +	if (auto_sel_mode && policy->last_governor[0] == '\0' &&
+> +	    !cpu_data->perf_ctrls.auto_sel) {
+> +		/* Init min/max_perf from caps if not already set by HW. */
+> +		if (!cpu_data->perf_ctrls.min_perf)
+> +			cpu_data->perf_ctrls.min_perf = caps->lowest_nonlinear_perf;
+> +		if (!cpu_data->perf_ctrls.max_perf)
+> +			cpu_data->perf_ctrls.max_perf = policy->boost_enabled ?
+> +				caps->highest_perf : caps->nominal_perf;
+Is it automatically adjusted when switching boost on and off?
+> +
+> +		cpu_data->perf_ctrls.desired_perf =
+> +			clamp_t(u32, cpu_data->perf_ctrls.desired_perf,
+> +				cpu_data->perf_ctrls.min_perf,
+> +				cpu_data->perf_ctrls.max_perf);
+Why do we need to clamp desire_perf here?
+> +
+> +		policy->cur = cppc_perf_to_khz(caps,
+> +					       cpu_data->perf_ctrls.desired_perf);
+> +
+> +		/* EPP is optional - some platforms may not support it */
+> +		ret = cppc_set_epp(cpu, CPPC_EPP_PERFORMANCE_PREF);
+Why setting this to PERFORMANCE by default?
+A platform can have its own default EPP value.  This would override that.
+> +		if (ret && ret != -EOPNOTSUPP)
+> +			pr_warn("Failed to set EPP for CPU%d (%d)\n", cpu, ret);
+> +		else if (!ret)
+> +			cpu_data->perf_ctrls.energy_perf = CPPC_EPP_PERFORMANCE_PREF;
+> +
+> +		/* Program min/max/desired into CPPC regs before enabling auto_sel. */
+> +		ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
+> +		if (ret) {
+> +			pr_debug("Err setting perf for autonomous mode CPU:%d ret:%d\n",
+> +				 cpu, ret);
+> +			goto out;
+Shouldn't this be pr_warn(), or even pr_err(), if it needs to bail out?
+
+However, IIUC setting min/max/desired perf is optional for auto_sel, so
+better to pr_info() and continue setting auto_sel?
+> +		}
+> +
+> +		ret = cppc_set_auto_sel(cpu, true);
+> +		if (ret && ret != -EOPNOTSUPP) {
+> +			pr_warn("Failed autonomous config for CPU%d (%d)\n",
+> +				cpu, ret);
+> +			goto out;
+Bailing out here would end up without DVFS support.
+Can we fall back to the normal OS directed mode?
+> +		}
+> +		if (!ret)
+> +			cpu_data->perf_ctrls.auto_sel = true;
+> +	}
+> +
+> +	if (cpu_data->perf_ctrls.auto_sel) {
+> +		/* Sync policy limits from HW when autonomous mode is active */
+> +		policy->min = cppc_perf_to_khz(caps,
+> +					       cpu_data->perf_ctrls.min_perf ?:
+> +					       caps->lowest_nonlinear_perf);
+> +		policy->max = cppc_perf_to_khz(caps,
+> +					       cpu_data->perf_ctrls.max_perf ?:
+> +					       (policy->boost_enabled ?
+> +						caps->highest_perf :
+> +						caps->nominal_perf));
+> +	} else {
+> +		/* Normal mode: governors control frequency */
+> +		ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
+> +		if (ret) {
+> +			pr_debug("Err setting perf value:%d on CPU:%d. ret:%d\n",
+> +				 caps->highest_perf, cpu, ret);
+> +			goto out;
+> +		}
+>  	}
+>  
+>  	cppc_cpufreq_cpu_fie_init(policy);
+> @@ -1035,10 +1106,18 @@ static int __init cppc_cpufreq_init(void)
+>  
+>  static void __exit cppc_cpufreq_exit(void)
+>  {
+> +	unsigned int cpu;
+> +
+> +	for_each_present_cpu(cpu)
+> +		cppc_set_auto_sel(cpu, false);
+> +
+>  	cpufreq_unregister_driver(&cppc_cpufreq_driver);
+>  	cppc_freq_invariance_exit();
+>  }
+>  
+> +module_param(auto_sel_mode, bool, 0444);
+> +MODULE_PARM_DESC(auto_sel_mode, "Enable CPPC autonomous performance selection at boot");
+> +
+>  module_exit(cppc_cpufreq_exit);
+>  MODULE_AUTHOR("Ashwin Chaugule");
+>  MODULE_DESCRIPTION("CPUFreq driver based on the ACPI CPPC v5.0+ spec");
