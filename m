@@ -1,58 +1,61 @@
-Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
+Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com [74.125.82.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA993BBA0B
-	for <linux-tegra@vger.kernel.org>; Tue, 28 Apr 2026 20:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102AD3D47BA
+	for <linux-tegra@vger.kernel.org>; Tue, 28 Apr 2026 20:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777406851; cv=none; b=GiUEZwr3Smc8kisZ0rlp2qNSN9FCD0Z5SeDPaDB2gB7uwrhkWlbBbm54s9oMnaTd8U9YJ2J6iXlCc+MBsHlefooMes3ovQyt/7YnTpitxAUSQHSAXBikiWZhFm+VzJAugUzBUVYj7TTv0wdUn/F21MqBBCOLFwXxQVFvg2GvwOs=
+	t=1777406853; cv=none; b=Bd1z0xCNiX0vCSAx/B0uS97tMNVuYN2m3kpYxzVs3jS8RHFo4iZ2Cw1vHS5CHejwkGk8CRhRPV0cwe/i4FIee8kyH1nPYsay9wCpku5o+NJcqDbPnQnYYBxwEFfjdt0kqCBqI8yUu5qIjSTerAdxUvRqgbUENtZdh5xrZcsXfoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777406851; c=relaxed/simple;
-	bh=ksXQeqM5axRgUsGjCWqfJTytSjsUbB4ll76rBVY/214=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DcMZ2qONL+mJl1qA8I2pqwQG/PWipQX2+/uyu4sFGxY1m6WFuZzvAwLzRIjN7MAv5Fhp3Dh2YVXp4QFvovH3xn7pQs+d7YK9GwGbn3Rk5qmafbtZt27QK0h1dzkp/CAnCAHlSc1KGAzFsHvqLqRHpA3CguZBT1dGbBv3y6Fpw+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gCWlP4++; arc=none smtp.client-ip=74.125.82.53
+	s=arc-20240116; t=1777406853; c=relaxed/simple;
+	bh=xlJmeP+PJelIrVWVbvw6zF4EvPRmj3ee8OfUipPJo0c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nc/1a0FfowAZP11g0GucrmYX4MjkRl+/2zuR2e3dp2f6Livb7b5PbXi/1yuXo/1G8DETtF/n/CCcv4Nk6YjEum2aC6Il5e7ShiRuQXnvmqx9pEAQLnn5ez8/oZZ/fKRi/PNrPYcbJY/+C0lWY9VLC/hpGnwsHGW4rQct+am5beI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hYGSZM89; arc=none smtp.client-ip=74.125.82.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gCWlP4++"
-Received: by mail-dl1-f53.google.com with SMTP id a92af1059eb24-12ddbe104ccso2053646c88.0
-        for <linux-tegra@vger.kernel.org>; Tue, 28 Apr 2026 13:07:29 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hYGSZM89"
+Received: by mail-dy1-f182.google.com with SMTP id 5a478bee46e88-2d9916deb14so20717608eec.0
+        for <linux-tegra@vger.kernel.org>; Tue, 28 Apr 2026 13:07:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1777406848; x=1778011648; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oKQRvM+woDu6KBLreGPcHmP1j9kbXpV/WZYBI8HqOII=;
-        b=gCWlP4++xcNr9+Gf+fqTnVbbgA8YOADh3IFpBiDZBsSn5havxoaKvL9GdHxwLKLxkb
-         zFVvECzbbn/CyuqATemdznWR14f6NLOH3Ym9iV/MhYVW/qYWL/D+PmltI62KSjKNKldh
-         sTwvpsTDTXXhYlZiGxNnSpDxvoDln+d4GWE/8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777406848; x=1778011648;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1777406851; x=1778011651; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oKQRvM+woDu6KBLreGPcHmP1j9kbXpV/WZYBI8HqOII=;
-        b=Pf0l2MLbyWbJ9ZRoFWzmN/BUlth1+ORSEGn16d5S0XrtQUwYUCsBAvGa1SdFaBndZ7
-         Z9r5V0HMOeGnnlu0Mup13Y4Ux+s+2GCDRmFehYdO/ttvw3m7K6+kRv6j9MQjWncXtM4y
-         oeUqrETLBO9uEEepbkwa8kzvJPKbJXKxw1+tuG+u1ZrImw5i0NWIQt4WrnnsCZLH/zNn
-         rL62rXqOytYUcFrXSzSkk5vnWC3M8hgGyNRWXF2PdLwqOc8/qisQUzpFE72+0j1NwnbF
-         W1aPK8jJlNMLkuvTe2MwwtnLRVf13Spu88a/ifS+/vKq7WT3/kSyBBBZmRyx4qNFYxR6
-         J8SQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/3EOJ5fUEQsgn8KBAgztf+WWCqO9pENfOL43oxUgpQXhFM3AVrYAwjUKcJIZtn1zgKdF5meufTs0GH0w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSAWDogkH9BbnxQyUTVWkKXc385fWVWojwJ4m9j6Uf2jmE6oSr
-	wrl7K4F5IlZpkxExJeg3joktrh6PXTtnlBnz0LGF+wGmdAhzeIoU/5TSkkARZ2kNaw==
-X-Gm-Gg: AeBDietrxB9m0vYcFOErpXDkRC2airbIULEoqtCcgy7THW9Wpmf12VYjzzHdMT0v4Pz
-	LBA4fnE4EEUcI1UAdn24Q8r6lf+gVBrbBD/lnZMsJ/gT1/BsAj0mnSJpUdXono/HMivaM2NQ1/e
-	QfMRH2VOHpp9qaQ7Z+qIEGXFFmqJIrpr6dtunTT7yZ+myKjiLmyhdxVsov7PAepdAUzte9v8GpP
-	td6JWHjWsqiH9qp7O9GUknwUME/5BRd8gWylRwkUxySxhkwqMpYzMSl4alPPHL5Wkr2YBn1rh+0
-	E6F1x3s66+wKwqDPy2iPXYGTsMTh2sWDjEAO5IgcFn2amgZQ3gCyXugCXRxA2ojeqc8cIGU6mY7
-	9Wb75sIoeJul5Pw5MK2ASJhjHNnCkl44sOruTAxxnrIrynyYW52hkMxaV4lf87GMRHXT8OqJCtf
-	Bv2zMcCe2J2IdgqV9gC5r8u2GJrw11/OUUXzboZ1ledWd5e1oxr+4yRqsPVSW/XcaETSrCUKpc
-X-Received: by 2002:a05:7022:fe06:b0:12d:de3f:d84d with SMTP id a92af1059eb24-12dde3fdd97mr1431757c88.38.1777406848179;
-        Tue, 28 Apr 2026 13:07:28 -0700 (PDT)
+        bh=oZddyefkooDQKnc5O6I7CXwcRuSu4lPrXGIxW3LQfo4=;
+        b=hYGSZM897QKQ5m+LAhH+lO8SS8phly+jGg8Ckq7yAM4gpBYqZprOmOi+vB/G0NglCG
+         sGYCaSwiZKRJxJtfzqU50x/OCyuMNMmVuFBqXF3yfnpcLwLCqSJ6sYvPAEen+OiSuybQ
+         ywMtsaehpdFVYctkpSpR4gNQJFeZtxTGQbtVQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777406851; x=1778011651;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=oZddyefkooDQKnc5O6I7CXwcRuSu4lPrXGIxW3LQfo4=;
+        b=VqWf5VKEJonqXC1QLYIfcGrjpJRaaDW3q5ngVYI80gkhuO6sltRM3w0loIZqvyPfUo
+         m29YKuHnDNNsC+G/6KtgMcWcHQSLnAyd9UvnPRN6lE3IWWD8ZnS5805iCCijSzI5jtXB
+         w0+Au9REGb9hGcPjfnqWoO+VpQZ4cpoQK/49QgrFe38c3Cv8kkMallVcDYtoRz+Pp8iC
+         IUq7l+AGc3gQJnocqdg79ND1pDPMTZFxoefzHorAp3pncCvxiotN+SX+VT5aHSCDBiNW
+         23Xr8kObDDCBCNJKqWNhs7D1p/tHFR1ea/j03/+RGNPCtgVsOdXcBicvHqJ53uagDTh+
+         wlvw==
+X-Forwarded-Encrypted: i=1; AFNElJ8BDZb4DRnvkPkVlD7xCBmZU82uqmHNifRAnPKuyun4G+abrRhlIThpl1wZ+qKXOMs9F9XPwm0SR5prFA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIlNUJQiqWHnMonsHkiQfn6oSgcH2q2P2xPCVYM992bpwy+PqC
+	1Tw/acdiQfqRfNubJJ2nLX9vccidVxyJqXYRSIR8G53gi7aWTS7xoevzhYeG7Xmj52xcHl64EJi
+	aeo0=
+X-Gm-Gg: AeBDietANEjpg2+foP6pNI6rITkusXhZvm37KvtLusuKPgomfDKol2MHKpbUWhBv2Rd
+	uWHk8J/trQGnu0kbctzZeLXyR3X6FlKEXTd2LTSzyy5haTjeO8e2nZPgvXTxexXkc0ivLMwdVQK
+	c+3DSN6NSzFajILi7WaDqSW546LQWdsrQ9Q+EE0esuWX0lMO7FM3K9oqVrnboUpgIhVCaYkJs8W
+	Nk1ZJcwQ2cdLGTh4BGvgpxuw1FSMUW4Ps59wT6E0t9DKsu42x7rvDdu2PZJEwF9aAnvVWV67ScH
+	R9vKvFUr9M2Yl+RCYxpJ1RSUzojp53gIGgE9bbPzSO2yJsPA1JtmkiCvSVwl9GMAgnOCFcR9J+I
+	oYPiK68Ue9odIWxyqLQeU/XTuJ5HfWn7omgX8RR/9YIR7QjiGCnDESO8LpxAn7zMfiKP1Ukgy7J
+	6h2S96SaM1F8VZvOHFG0STW4KJX2N+leOP5oh2PRAR3PqYh9ERvnYsxhnVcW4U0MQPXtzPvW/a
+X-Received: by 2002:a05:7300:fd08:b0:2ed:e17:d50b with SMTP id 5a478bee46e88-2ed0e17d6eemr1499097eec.30.1777406851181;
+        Tue, 28 Apr 2026 13:07:31 -0700 (PDT)
 Received: from localhost ([2a00:79e0:2e7c:8:4ff5:9607:c7e5:48f3])
-        by smtp.gmail.com with UTF8SMTPSA id a92af1059eb24-12ddd93abadsm2784062c88.6.2026.04.28.13.07.25
+        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-2ed0a10650esm2873589eec.22.2026.04.28.13.07.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Apr 2026 13:07:27 -0700 (PDT)
+        Tue, 28 Apr 2026 13:07:30 -0700 (PDT)
 From: Brian Norris <briannorris@chromium.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -78,10 +81,12 @@ Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/7] dts: Add /firmware/#{address,size}-cells to Chromium-based DTs
-Date: Tue, 28 Apr 2026 13:06:52 -0700
-Message-ID: <20260428200712.2660635-1-briannorris@chromium.org>
+Subject: [PATCH 1/7] arm64: dts: rockchip: Add #{address,size}-cells to Chromium-based /firmware
+Date: Tue, 28 Apr 2026 13:06:53 -0700
+Message-ID: <20260428200712.2660635-2-briannorris@chromium.org>
 X-Mailer: git-send-email 2.54.0.545.g6539524ca2-goog
+In-Reply-To: <20260428200712.2660635-1-briannorris@chromium.org>
+References: <20260428200712.2660635-1-briannorris@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -129,84 +134,42 @@ This leads to errors like the following:
 
 [    7.763870] coreboot_table firmware:coreboot: probe with driver coreboot_table failed with error -22
 
-This series adds appropriate #{address,size}-cells to the device trees
-used on Arm Chromebooks to work around the problem.
+Add appropriate #{address,size}-cells to work around the problem.
 
-Note that Google provides bootloader updates for some devices that add
-{address,size}-cells [1], but these are only delivered via Google OS
-updates. Not all users receive Google software updates, and even if they
-do, not all devices still receive bootloader updates from Google.
-
-This problem was first noticed in OpenWrt, where some Chromium-based
-routers ran into the same issue:
-
-https://github.com/openwrt/openwrt/issues/21243
-
-Relevant OpenWrt fixes: https://github.com/openwrt/openwrt/pull/22951
-
-There is also discussion at [2].
-
-I've currently only tested:
-1) the aforementioned OpenWrt routers (with non-upstream DTS/DTB)
-2) RK3399 Gru/Kevin Chromebook (patch 1)
-3) Qualcomm SC7280 Herobrine (patch 7)
-
-I assume the others should follow the same pattern. I don't know if I've
-covered every relevant Depthcharge-using device, but I've made a good
-attempt to identify them all.
-
-I reviewed Depthcharge code history and found that this problematic
-bootloader behavior dates back to at least 2014, with the Tegra/Nyan
-device. Older devices may have similar DTB structures, but I'm not sure
-if they have the same address-cells problems. In any case, these changes
-shouldn't hurt even if a device was not affected.
-
-Brian
+Note that Google has also patched the Depthcharge bootloader source to
+add {address,size}-cells [1], but bootloader updates are typically
+delivered only via Google OS updates. Not all users install Google
+software updates, and even if they do, Google may not produce updated
+binaries for all/older devices.
 
 [1] https://lore.kernel.org/all/20241209092809.GA3246424@google.com/
     https://crrev.com/c/6051580 ("coreboot: Insert #address-cells and
     #size-cells for firmware node")
 
-[2] [regression] of: mis-parsing Depthcharge's /firmware
-    https://lore.kernel.org/all/aeKlYzTiL0OB1y3g@google.com/
+Closes: https://lore.kernel.org/all/aeKlYzTiL0OB1y3g@google.com/
+Fixes: 6e5773d52f4a ("of/address: Fix WARN when attempting translating non-translatable addresses")
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+---
 
+ arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Brian Norris (7):
-  arm64: dts: rockchip: Add #{address,size}-cells to Chromium-based
-    /firmware
-  ARM: dts: rockchip: Add #{address,size}-cells to Chromium-based
-    /firmware
-  ARM: dts: nvidia: Add #{address,size}-cells to Chromium-based
-    /firmware
-  ARM: dts: samsung: Add #{address,size}-cells to Chromium-based
-    /firmware
-  arm64: dts: mediatek: Add #{address,size}-cells to Chromium-based
-    /firmware
-  arm64: dts: nvidia: Add #{address,size}-cells to Chromium-based
-    /firmware
-  arm64: dts: qcom: Add #{address,size}-cells to Chromium-based
-    /firmware
-
- arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi           | 5 +++++
- arch/arm/boot/dts/nvidia/tegra124-venice2.dts         | 5 +++++
- arch/arm/boot/dts/rockchip/rk3288-veyron.dtsi         | 5 +++++
- arch/arm/boot/dts/samsung/exynos5250-snow-common.dtsi | 5 +++++
- arch/arm/boot/dts/samsung/exynos5250-spring.dts       | 5 +++++
- arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts    | 5 +++++
- arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts     | 5 +++++
- arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi          | 5 +++++
- arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi        | 5 +++++
- arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi      | 5 +++++
- arch/arm64/boot/dts/mediatek/mt8188-geralt.dtsi       | 5 +++++
- arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi      | 5 +++++
- arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi       | 5 +++++
- arch/arm64/boot/dts/nvidia/tegra132-norrin.dts        | 5 +++++
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts         | 5 +++++
- arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi          | 5 +++++
- arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi        | 5 +++++
- arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi          | 5 +++++
- 18 files changed, 90 insertions(+)
-
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
+index 7eca1da78cff..2f9e39671efc 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
+@@ -18,6 +18,11 @@ chosen {
+ 		stdout-path = "serial2:115200n8";
+ 	};
+ 
++	firmware {
++		#address-cells = <2>;
++		#size-cells = <2>;
++	};
++
+ 	/*
+ 	 * Power Tree
+ 	 *
 -- 
 2.54.0.545.g6539524ca2-goog
 
