@@ -1,122 +1,104 @@
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF3E24677F
-	for <linux-tegra@vger.kernel.org>; Tue, 28 Apr 2026 18:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B775F47B401
+	for <linux-tegra@vger.kernel.org>; Tue, 28 Apr 2026 18:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777402240; cv=none; b=Hp8oFZMQbLPZ7NK2dqUf9iBoGhyBNK3IzFWQJOpMn6jvhcump3ToTgyj5CGvC5xC28I1KNgXkNLF5B8o1lIbsmZ3jCpUcRJs2InSs7SkvN35b6ETxrxYozy9ML86qfy47nNd/4CVOh8p0E/Oi1ANAV48UFio31GqXT36s36Xmkc=
+	t=1777402761; cv=none; b=r9vrLlaOKTNo/DBjcdb8JsfipxeZ5BaQCf7xdNuwUhRneNW4FEzNlj0bIPo8bT7lBA/E2TutiLyR4ablkeiSdYtW6J5xhdiHnPaIJkGp3ptdeDr7ThO6JirCQC1wSFZsEWBedoPLOMsfKIjA9xS+8V2S60Ei1+mqPwRKUW5wq6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777402240; c=relaxed/simple;
-	bh=uDaNoagHys08JDYY0sUwwSl3qH/ea5LeNwTnG/ymv1o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a9aKMJqenErF89m+5Xgm0IVFLvPaS2QVeR3lJPUk51X5xrdcOipUZ2yDhdDfMOox1nBjjT71II6PXTu3k5PNBhf4zBpAQSMngU9wBUlLHSphn0sc964TR8EK3F6aDrDWB1QFj+O8XnIUYHMl/Kb9/H5LK0l9UQNNNeWOW066v/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i2Q3nQ/q; arc=none smtp.client-ip=209.85.167.169
+	s=arc-20240116; t=1777402761; c=relaxed/simple;
+	bh=6a9Orqs4M+G9Ps0bWLS4aQAcCVzvmv1AumdBspToX0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qDjxI/+9Coy4zzOEAO5rYciqjUrqZAsvIzlFj2lyZqoi5axziB/DOsKihHWsHORNSiZSn11yznfo6I4D8b8Nfp91vDmm7ppkQTCrSYvWju5m6h0HY5z1OpowdtEXwZJhiTR5YMeMRagyKSoYo/KzVKBPefx0p6cqvkjAKgiUdak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iy+Xi6L5; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i2Q3nQ/q"
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-479fc1fc048so5115138b6e.1
-        for <linux-tegra@vger.kernel.org>; Tue, 28 Apr 2026 11:50:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iy+Xi6L5"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-488ad135063so107162465e9.0
+        for <linux-tegra@vger.kernel.org>; Tue, 28 Apr 2026 11:59:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777402238; x=1778007038; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QIv1W6wjvbNHFz0BT7UvNZrlsknFtuu9/9aZ0cJuVUQ=;
-        b=i2Q3nQ/qHAaiQPTyEg8UMAwGeHzScRfn0cd+9RKCxmLt5Sp6swsFzNJTeHu0NMDwtp
-         EIfNzAexSpuFl2mhOZWaFmPXPmTOhS5dakbl7j1flkQ5T4rLK86qN8cRSA53WHs/izWO
-         qFWCbuIryfztUd2XuWUXJE8lxIprp34Nna42k/pfN71N+bSagmat9ozSiDHjwFDb30/3
-         7XaFAfOGYfd0+VcXyFejYUhYePokE0NCPjtdMjMCnjtpg995xdj07rkpKkdpsvtGPRnM
-         k4LVfJ5YaX6Fh9GZD/chdrQmpPpkAr8mwwjc0U6V5JfsmGZ3f3miYuOORBrKUMMmNPFk
-         g+aQ==
+        d=gmail.com; s=20251104; t=1777402758; x=1778007558; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iXO2sWkYj08jDd50w1qkyZoYNw3zJTVw3EQTk5oc1B8=;
+        b=iy+Xi6L5tNxo7dbhFAp7TjRoDU/fX7dJZZsBbr8WxwdCyCdxJeukYdoe6MsGEulxym
+         LoezibCGUSm4SBY3THjTcPHzPOPOB2muiTRZpTzSwmsvaO4ie90G0Ku4R5DxBoGT6Ue9
+         p5M4Akt8xBlGfUEkzUp4axo9jGMrtTUpJnO4DhvydPa3TuBa+EznCA3XBPgTuafkI9uT
+         41oATH9bb19X7q3YYF9wnEq79BijYYt7D5pf6S+o/BCRu6cTok3p+bcyIi6gyBztBoLF
+         3PqfyDshmbDJTFSeIQRghpcg+JoM07jezQu8GtQbOrNuYr5va64/TUI4Q0A7LuqXyvdv
+         ms3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777402238; x=1778007038;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QIv1W6wjvbNHFz0BT7UvNZrlsknFtuu9/9aZ0cJuVUQ=;
-        b=R09cdTgkhD2Rm5NU8LINpfYMNNiZDO78yi6MFJtwANTG3eVypdWd/Kmsp7leuF1bb5
-         ixfVuyH1fGVxIN8hpcy04pLb4rH70QWprJHc3QIX1XyYM2Ye49DvtlPvvMWgJpnELEd+
-         G9ZsEFMFVT1J2ig2c6xFjOuNb+3YMTptaS+oN74/eKhNWUN+novZy7TBX2edkqVVjFBj
-         lbt+vnhjXOFa4VwG6VjeoxFgIEt9Gd1i7ACB1le+yRq4R3UNzizqoag4dM9yCMhTa28+
-         IeXoXmSbbXHNRza0jUcFhWKUFUrAiXuac5U0OklvqwNABHEH/rMLXjNK2udrRQXwSDAA
-         lfzg==
-X-Forwarded-Encrypted: i=1; AFNElJ8Cbbf4tiltymc67OHo3V9zSTRy5rNUvLQHZlm6QN289rtxe2PbUtiuMnLrLioulwZPNdClx7wGIVBANQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJH5xMK90SrJRnnsAMTh5S4dJlYiOUwC58CBGm56b8Cj3INAR1
-	RjiflsomU67rP9GPSeRXH/IPf9NTdM9HUS4WwZl0i+uBqXXjS6bacwriowtOMDs3qg==
-X-Gm-Gg: AeBDietVYDLNyThGDPflDJXbiK6HtSmjsb43KebH7w2Rk41kVOz4TWpePhdoFjYpyMA
-	nJgW1DW90smWMNWgDbXTcufa+jba6IzqnK6IQkLRzHPILWl4u8dBP70cLQx8ATwDJtHr2NYkwF2
-	InDA8AJzodWaFY59M29MSVKLL3vVeUvLOY3E4pLAD8k05xNGCkMJUhUVAi7iEa+KixbL8Xmhwv2
-	+26AGS1glbdNEB8BNaqn8BIyjp2936SSYrD/jL9BUUfL5LmHuGvh+E6x+XawwKo2FuGauLRbQnj
-	K3L9mFlnX6dQ2atotSYPoQZqSuAse+9jU7PU35Ab+LjGYRiazJe9a3osLmHW2xDWWjyio5m2/nm
-	OhD0S3Jpg6giM0LBOlixN6A7885slYWmKiy+xvQwrrsHUUlYNhQ8s7Rl9l0wndGvDtVdgXeGnBO
-	Zke8siBQ3mCJhG51FJ867Qjb/8dtZsG6AxQ3dZ4zjhLYETW1fdDRsyjdwmnh/fv76s7ytT2kSd6
-	fT9Ank1pPdqWrXu76yspREZ8rk=
-X-Received: by 2002:a05:6808:30a7:b0:467:2f84:b0c6 with SMTP id 5614622812f47-47c28d69514mr2327577b6e.8.1777402238476;
-        Tue, 28 Apr 2026 11:50:38 -0700 (PDT)
-Received: from MSI.hitronhub.home (24-40-252-177.fidnet.com. [24.40.252.177])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-47c291c314fsm2008443b6e.16.2026.04.28.11.50.37
+        d=1e100.net; s=20251104; t=1777402758; x=1778007558;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iXO2sWkYj08jDd50w1qkyZoYNw3zJTVw3EQTk5oc1B8=;
+        b=gxvQ9SWIj7a0KaFMPy0rYjsJ6XBE0mxmWlxwAPYFb9H5/bG7VYmYjc1dtzZMadFqaa
+         cyTR+WgiQclpHSSaqzMM0ngABSDSSTAX/bmPM/qzYgtXGMHMdMgddd1OorWp7xDv7Tcj
+         VB2t6bbhNngOcAjEZaC1Lg95ILXsvg1LmFSXswfqYqMmLH+L1qfU5d1qQeixsEMweicB
+         LqoxZaFcJUJz1JFC4anNi0UjltOiyGDQGPk3yg9qiX8mp5u+3iDQoTUIbaN1yARuQVvz
+         NtsRG5hmgd9BtM9RlcJVZSNOM35CtXafHjMeTTNorrH0TIok4nCoVPVXSd71BuYgf35U
+         I+aw==
+X-Forwarded-Encrypted: i=1; AFNElJ9ovFwd3yVYWp9uqgceFZY0ttxtyNcWIsj2Rqn23gpKzyQ33PR6IvZCTleE546ndlga/ZDpQUYWbpW5WA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqutbDgQNCVxcprCyeoVqDYiSXN8uqB2rfAws6UEbrfuXmM8BY
+	lZxgAHxfFhiw46yvbeLNgexj2gMdXT8mF5hbqLLBm1sCGSITg1Ugn3g2
+X-Gm-Gg: AeBDietjKMv8jWXyCaR9W7rqT1rBV5r4QBz4v0n//rEuHSZG7mmiUKQm/XjOAI1s8u9
+	MrJiaZfdIlQ5JEaA1Z8ga2k7u7KLmWvoRJ0+tjVZJ7ZnqrJv+j2MbzEw2Olf9NmZBK7Av+meqTW
+	aTV2RiYhdTY0V2b7vU4jEL4un3PMFywZdVBxmHP5qNNbm6dlwNkVP+GxlL/1APO55SZU1ttGXku
+	weqMRuOBDVGt6itOn2vwvqB+IhwquuRByA8TKUMZRF2WN6drH+HTW/aFCaopIpdQm7B5e7M0Elw
+	K1lnhVQJ+NmEXtpp+Pq7EXUtQEVDHsW0Dwuy2DbkLU99hp2ZM/xoHvlzeAbRvD8MVUZ0rtx2m7d
+	a9N5SSJchFnVsGcpjVxXQI6nAk1FakxbNkx08s7RYbHqnNi5Vcri7zJC/AGW8sDktNl1WggitAx
+	3Q/AUQj3sRN9e0GFx60xeqitqI+xd+FbqBWscGJ1MP
+X-Received: by 2002:a05:600c:6610:b0:489:1ba8:5bf0 with SMTP id 5b1f17b1804b1-48a7b54009cmr13442935e9.21.1777402757968;
+        Tue, 28 Apr 2026 11:59:17 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4463fa89038sm8391584f8f.26.2026.04.28.11.59.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Apr 2026 11:50:37 -0700 (PDT)
-From: Marc Hanna <marchanna111@gmail.com>
-To: linux-media@vger.kernel.org
-Cc: linux-staging@lists.linux.dev,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com,
-	skomatineni@nvidia.com,
-	luca.ceresoli@bootlin.com,
-	mchehab@kernel.org,
-	gregkh@linuxfoundation.org,
-	Marc Hanna <marchanna111@gmail.com>
-Subject: [PATCH v2] staging: tegra-video: Align wrapped function arguments
-Date: Tue, 28 Apr 2026 13:50:24 -0500
-Message-ID: <20260428185024.853-1-marchanna111@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Tue, 28 Apr 2026 11:59:17 -0700 (PDT)
+Date: Tue, 28 Apr 2026 21:59:14 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: Marc Hanna <marchanna111@gmail.com>
+Cc: linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	thierry.reding@gmail.com, jonathanh@nvidia.com,
+	skomatineni@nvidia.com, luca.ceresoli@bootlin.com,
+	mchehab@kernel.org, gregkh@linuxfoundation.org
+Subject: Re: [PATCH v2] staging: tegra-video: Align wrapped function arguments
+Message-ID: <afEDgrzzxGf_VM5B@stanley.mountain>
+References: <20260428185024.853-1-marchanna111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260428185024.853-1-marchanna111@gmail.com>
 
-Align wrapped arguments in tegra20.c
-to follow kernel coding style.
+The subject still says the patch is aligning function arguments when
+the patch is about long lines.
 
-v2:
-- Fix From header
-- Update commit message per review feedback
 
-Signed-off-by: Marc Hanna <marchanna111@gmail.com>
----
- drivers/staging/media/tegra-video/tegra20.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+On Tue, Apr 28, 2026 at 01:50:24PM -0500, Marc Hanna wrote:
+> Align wrapped arguments in tegra20.c
+> to follow kernel coding style.
+> 
+> v2:
+> - Fix From header
+> - Update commit message per review feedback
+> 
+This goes under the --- cut off line.
 
-diff --git a/drivers/staging/media/tegra-video/tegra20.c b/drivers/staging/media/tegra-video/tegra20.c
-index e513e6ccb776..eb1fc5b7e2cd 100644
---- a/drivers/staging/media/tegra-video/tegra20.c
-+++ b/drivers/staging/media/tegra-video/tegra20.c
-@@ -552,7 +552,8 @@ static void tegra20_channel_vi_buffer_setup(struct tegra_vi_channel *chan,
- 	case V4L2_PIX_FMT_YUYV:
- 	case V4L2_PIX_FMT_YVYU:
- 		tegra20_vi_write(chan, TEGRA_VI_VB0_BASE_ADDRESS(TEGRA_VI_OUT_1),  base);
--		tegra20_vi_write(chan, TEGRA_VI_VB0_START_ADDRESS(TEGRA_VI_OUT_1), base + chan->start_offset);
-+		tegra20_vi_write(chan, TEGRA_VI_VB0_START_ADDRESS(TEGRA_VI_OUT_1),
-+				 base + chan->start_offset);
- 		break;
- 	/* RAW8 */
- 	case V4L2_PIX_FMT_SRGGB8:
-@@ -565,7 +566,8 @@ static void tegra20_channel_vi_buffer_setup(struct tegra_vi_channel *chan,
- 	case V4L2_PIX_FMT_SGBRG10:
- 	case V4L2_PIX_FMT_SBGGR10:
- 		tegra20_vi_write(chan, TEGRA_VI_VB0_BASE_ADDRESS(TEGRA_VI_OUT_2),  base);
--		tegra20_vi_write(chan, TEGRA_VI_VB0_START_ADDRESS(TEGRA_VI_OUT_2), base + chan->start_offset);
-+		tegra20_vi_write(chan, TEGRA_VI_VB0_START_ADDRESS(TEGRA_VI_OUT_2),
-+				 base + chan->start_offset);
- 		break;
- 	}
- }
--- 
-2.43.0
+> Signed-off-by: Marc Hanna <marchanna111@gmail.com>
+> ---
+  ^^^
+here.
+
+https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
+
+regards,
+dan carpenter
 
