@@ -1,60 +1,60 @@
-Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com [74.125.82.46])
+Received: from mail-dy1-f178.google.com (mail-dy1-f178.google.com [74.125.82.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409A13CCA15
-	for <linux-tegra@vger.kernel.org>; Tue, 28 Apr 2026 20:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939153D47B5
+	for <linux-tegra@vger.kernel.org>; Tue, 28 Apr 2026 20:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777406860; cv=none; b=a7Om6PXSV6AbCX518AttcdSgvhENZzm7D8BIXHTHHps354WvvOkXhXpB7ZKcJRyV0K0MT08/SDk2k8Nrh8F2JCNhSkIxCwQlaBSQl9jYrwcEyzgT1C/mVeFZJCQntJqDcNvhMevbiiGstfL0OPK8lqelt+oagPbjUESF/IQbZYE=
+	t=1777406864; cv=none; b=L9eV8XnyE+AEm2skC/oUOwq+3QMpfS+GYrWK3DOK1RnL+aPkqS8sbI1Y2Mlp+E9tbwItnNuyIa837mrl0+dwNxYeGKq04Z/G4OK5q9FEIH/LsRYic0cSvJOpv0oMhLlH9Ytsq9hvcG8j9oiUjbf2clm3iLYLRKNDJoCVED39W5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777406860; c=relaxed/simple;
-	bh=pccXu/UZ0/UgmYrUTp8RKqR5INDSko9XT3nrfNvRcuk=;
+	s=arc-20240116; t=1777406864; c=relaxed/simple;
+	bh=70ZUw+XXwGiBv0Z/9jZE4a1D1ZLPbnBPjY6fYI2V8PE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uTwjX+4Kp1rVwrjalReDdHoRqCc2yPx5SH9DLJxr4dD817gflglbrxQNec7KgvOCpvstkxnSH7odk8+qoq9/ADnHOIUB+JwRjUT20HMs9nyNpqZxdv1mCtBuwyQaQRtB3hHcc0OHmuP7Jvgfo/8lzdAQUOAFIlVdbh0WFWfrB5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YsZSCazp; arc=none smtp.client-ip=74.125.82.46
+	 MIME-Version; b=sFYafhNV3KyPzkFQrs2UtBSjZheVX1PS2Gib2bhdgdaoQexkLSKZxJND8ApVMXORSFmySVbJZWLb4ytjK9d7dqdPRXNooiLPj8kY9AhGZ5sJdkxofNx3jd/0KhKrfCm+GHygZxdrC9JREDr+1Jq1bfkvyPA1cYqGpe2garTf0NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Qn13UAMR; arc=none smtp.client-ip=74.125.82.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YsZSCazp"
-Received: by mail-dl1-f46.google.com with SMTP id a92af1059eb24-12c726f46baso15211950c88.1
-        for <linux-tegra@vger.kernel.org>; Tue, 28 Apr 2026 13:07:39 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Qn13UAMR"
+Received: by mail-dy1-f178.google.com with SMTP id 5a478bee46e88-2dec803f9f0so164100eec.0
+        for <linux-tegra@vger.kernel.org>; Tue, 28 Apr 2026 13:07:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1777406858; x=1778011658; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1777406862; x=1778011662; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uToK6kNcjQgBzaJfDVLEV8EKOZh7WlLcbjBebhI/n24=;
-        b=YsZSCazpGJCwN1OHhygeQxjMvJ61gGu+mZ8LXay0+dPCXVw4xGB7j/uyrJVCh97r2D
-         FMBgU3xmB49yHnGUh9bDt4ugHcJf1SNdc12w1J3iols17UMOBz1eWS0Vvuf5S8AoTjLW
-         74dutQn67ErHSMv126frgLeUagzwt5H7UJ1rw=
+        bh=iwWtduOWgbcJH/5sVxzLGAMHPFkXvP7oJuezZGoggcs=;
+        b=Qn13UAMRZfoao+u239MgZ436ALKacTJNllhkXBwljUxtYAkf/4H3vIX6BKD2lt/mgv
+         zED4/iQ/9UWhwcPmPzDKusfBCmnUXGK3KBS/O9y7UXApKUh+us/WLbzrO4VZC3SEEEph
+         IFPVUuLPF5S15/zztgmOGbJ7qULLzCwtpoN9c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777406858; x=1778011658;
+        d=1e100.net; s=20251104; t=1777406862; x=1778011662;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=uToK6kNcjQgBzaJfDVLEV8EKOZh7WlLcbjBebhI/n24=;
-        b=CkI2rwTcuz4eRb9a3Hif9b1CgzzD2wkEDmQe6R6IB+j0m0gbJUGDrtpgvHV+U7eM6x
-         lYguAoBjU9T2LU1pGEOjvRz0c0vKBeIWRzBTG2Yfvrvga9rMuHYdkpjk5cyMUhdyi16n
-         j9lCHg2/uFm2OXDeKY/BDHOeJ6BNQm6muQqhjqlWu4RJM6OcSHC77XPxAPCzgMYUD+4w
-         BK/4yKK6Ll7xgDXOI28AYBLF31ZOAonNIGF/INEeS3FsqlQeO/cZlWGKc+FMRje8lfFl
-         sjZxjfhwWi1qmhUSlU+WIn33i7AtjdTuzX/K0gX9Z8LqG/jB9XByF1PML1uhxx5DffnE
-         MgAA==
-X-Forwarded-Encrypted: i=1; AFNElJ/8aNet0c2sFNMCBJWdFDbjqkFfgNpD28wkit0cSURt4mu3YvTamkwuzmn4bVbKqFQIuwPzEcvYfbvsVg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yybj46Eu+Jg9eZCL91WzagUxxn6uTs5AZ3j9g1OfHrk3M/DsaIT
-	/CN5WlB3ZLMytg+JgJWUkLXyVGLN53s6F7/JIdda//WOEezrn9Trw7GJHxQJnYLNMg==
-X-Gm-Gg: AeBDieuMNiYLN6dDICHdgdJCfYiPN88oWgLuKaU9IBRyTw2qEgPcxPQ0o+yyHcTVK22
-	HOfIp8aKAxShg67rEdDaaXnQctboWycb0mD8QXLgBageoKYj9LRQ+tjeqh9P5wUAsPn8YCGGvs2
-	15Az8bt/5x+Q2ClFmcoxvwfa5Ayxh6gzySrWC65gsh2g38e+xWcjHOZb+i+UcQgR3MmDTC0NONQ
-	vVRP5x2DOuRdFkMuqIGmFNXUJmWFLSjsfm1EIwy3wgTOZuWXAf5VXH98TVvUkpgBjXk3pZMUzni
-	JIn0WrIxBRJwPrCfW0CVEPxrna+LYL7srNjUqkKk6Cmne6j6NOD87qwOvzvJpUlxxaqAZFKI13Y
-	L2YJMzdTXZoMURrC9KFkvyz0Od6/BfVuSptifIDZbVKIgQfljWGGF+p6q4P0tDyl6GAi0FjQq2U
-	LolU3XQuMg++hqlho8YAqiosPXbrvUo8jOBIPgRpy5CwjA5r9b1t+oIM1OwM2uafvF7jyVTi88
-X-Received: by 2002:a05:701b:2505:b0:12d:e126:b7c7 with SMTP id a92af1059eb24-12de126b941mr735154c88.14.1777406858194;
-        Tue, 28 Apr 2026 13:07:38 -0700 (PDT)
+        bh=iwWtduOWgbcJH/5sVxzLGAMHPFkXvP7oJuezZGoggcs=;
+        b=SLE0S92Q6MqeM/Vm2HPhCecETsjOBy/bVvocvo+SZ/GWt7H5lME/pLmYHfntVP4GW2
+         5InLYPMyA+7ZPTt2VxA0yGFmXSY3oknnbu6L61hFaXfiDd5f0UodMzeKAMvKz4tmSdiy
+         ZluZU1lqC7Kk4Vb+KL0hWhHugOvZQv667B6mg8z9M95gDMUwjkdTDTtctmx7ArgX0pot
+         GyboqBY31bnagn9apI96AnuWzwP9CUCidbMRgQOAsA9RpRa20/xg0+6GqT5AfIG7ohOT
+         r6Hw/a0TsAjqL4ghNCAW2Z02/IwhMPKB43Llq4RjbvC4jegmMdKRihvbGGEOMxoefuWo
+         NtwQ==
+X-Forwarded-Encrypted: i=1; AFNElJ+QFHSHaXN1Em/z//ngZE88KQI9iLvO0fpyD7RxEtdcEzD3XmozE8FmsYecC+y7od3Tc+uV8FvSyhChrA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOA2zh3haZ/LnXL6T2xjWDQx0CV+ldtsoejJB9MoiIfrrve4Ly
+	auavLJnU/vQPLhfILG576MGO6VxtGSWPY76kG3COrkzvpKsQadUepi8GgdApfkN5Pw==
+X-Gm-Gg: AeBDievDd59iHavhjW19m21/hWnR8/YQSdgvvwgLCWJGpAZtx8TjLb7wbCQzZdKFmBq
+	6yzQB6eqstXt2gfVPq89AvYtau9StYb+LfQc45l9YK0cZNOqpIBEVFQr1BPunVc7odL2Qm6bkZa
+	bABU/Sd/vGDUKL/i5BB45z4wIRcpu99ZlUcrBm+hnaYemXVGEgJNZJzRY50IroxekdoSJWM+vpj
+	ip+3znGc5y31LU0fQGFn5UCk3dymVCckXlkG+tkMTOB3V9jMETByYKTW99r+Tmm2hk+hfMJtR4R
+	MAd+kHno30p81u3k1osA9RZKldwirnHJqFbdDl+FQTNNp1WhI4LNBvrBPQDVPxSNERqsXJdQy5e
+	oa0uErl1mId/Kj+/LEpWSVmC1f++bEVCyeGgBJlPuLFApchMIXTES7QyOgF/fnzNB/yl05rS+3t
+	dOK5hsYqDv9SvFxOjcvg8ni9AGaBdR/HDWKqEVotlzOKq9AD5Zq0LwAcI0OHonv0GBRudzgyjB
+X-Received: by 2002:a05:7301:3d17:b0:2be:ca4:e114 with SMTP id 5a478bee46e88-2ed1b4057a0mr129402eec.9.1777406861689;
+        Tue, 28 Apr 2026 13:07:41 -0700 (PDT)
 Received: from localhost ([2a00:79e0:2e7c:8:4ff5:9607:c7e5:48f3])
-        by smtp.gmail.com with UTF8SMTPSA id a92af1059eb24-12ddd933044sm2796623c88.5.2026.04.28.13.07.36
+        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-2ed09fb712bsm3068754eec.12.2026.04.28.13.07.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Apr 2026 13:07:37 -0700 (PDT)
+        Tue, 28 Apr 2026 13:07:41 -0700 (PDT)
 From: Brian Norris <briannorris@chromium.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -80,9 +80,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/7] ARM: dts: nvidia: Add #{address,size}-cells to Chromium-based /firmware
-Date: Tue, 28 Apr 2026 13:06:55 -0700
-Message-ID: <20260428200712.2660635-4-briannorris@chromium.org>
+Subject: [PATCH 4/7] ARM: dts: samsung: Add #{address,size}-cells to Chromium-based /firmware
+Date: Tue, 28 Apr 2026 13:06:56 -0700
+Message-ID: <20260428200712.2660635-5-briannorris@chromium.org>
 X-Mailer: git-send-email 2.54.0.545.g6539524ca2-goog
 In-Reply-To: <20260428200712.2660635-1-briannorris@chromium.org>
 References: <20260428200712.2660635-1-briannorris@chromium.org>
@@ -137,16 +137,18 @@ Fixes: 6e5773d52f4a ("of/address: Fix WARN when attempting translating non-trans
 Signed-off-by: Brian Norris <briannorris@chromium.org>
 ---
 
- arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi   | 5 +++++
- arch/arm/boot/dts/nvidia/tegra124-venice2.dts | 5 +++++
- 2 files changed, 10 insertions(+)
+ arch/arm/boot/dts/samsung/exynos5250-snow-common.dtsi | 5 +++++
+ arch/arm/boot/dts/samsung/exynos5250-spring.dts       | 5 +++++
+ arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts    | 5 +++++
+ arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts     | 5 +++++
+ 4 files changed, 20 insertions(+)
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi b/arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi
-index 974c76f007db..89a749cb8933 100644
---- a/arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi
-@@ -14,6 +14,11 @@ chosen {
- 		stdout-path = "serial0:115200n8";
+diff --git a/arch/arm/boot/dts/samsung/exynos5250-snow-common.dtsi b/arch/arm/boot/dts/samsung/exynos5250-snow-common.dtsi
+index 65b000df176e..a64cdec3a2ef 100644
+--- a/arch/arm/boot/dts/samsung/exynos5250-snow-common.dtsi
++++ b/arch/arm/boot/dts/samsung/exynos5250-snow-common.dtsi
+@@ -30,6 +30,11 @@ chosen {
+ 		stdout-path = "serial3:115200n8";
  	};
  
 +	firmware {
@@ -154,15 +156,15 @@ index 974c76f007db..89a749cb8933 100644
 +		#size-cells = <1>;
 +	};
 +
- 	/*
- 	 * Note that recent version of the device tree compiler (starting with
- 	 * version 1.4.2) warn about this node containing a reg property, but
-diff --git a/arch/arm/boot/dts/nvidia/tegra124-venice2.dts b/arch/arm/boot/dts/nvidia/tegra124-venice2.dts
-index df98dc2a67b8..059ee6c5b13c 100644
---- a/arch/arm/boot/dts/nvidia/tegra124-venice2.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra124-venice2.dts
-@@ -18,6 +18,11 @@ chosen {
- 		stdout-path = "serial0:115200n8";
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
+ 		pinctrl-names = "default";
+diff --git a/arch/arm/boot/dts/samsung/exynos5250-spring.dts b/arch/arm/boot/dts/samsung/exynos5250-spring.dts
+index d126fccdcaf3..a337fd9e3473 100644
+--- a/arch/arm/boot/dts/samsung/exynos5250-spring.dts
++++ b/arch/arm/boot/dts/samsung/exynos5250-spring.dts
+@@ -33,6 +33,11 @@ chosen {
+ 		stdout-path = "serial3:115200n8";
  	};
  
 +	firmware {
@@ -170,9 +172,41 @@ index df98dc2a67b8..059ee6c5b13c 100644
 +		#size-cells = <1>;
 +	};
 +
- 	memory@80000000 {
- 		reg = <0x0 0x80000000 0x0 0x80000000>;
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
+ 		pinctrl-names = "default";
+diff --git a/arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts b/arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts
+index 3759742d38ca..f24356784492 100644
+--- a/arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts
+@@ -50,6 +50,11 @@ chosen {
+ 		stdout-path = "serial3:115200n8";
  	};
+ 
++	firmware {
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++
+ 	fixed-rate-clocks {
+ 		oscclk {
+ 			compatible = "samsung,exynos5420-oscclk";
+diff --git a/arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts b/arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts
+index bb019868b996..3df27eddba15 100644
+--- a/arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts
+@@ -49,6 +49,11 @@ chosen {
+ 		stdout-path = "serial3:115200n8";
+ 	};
+ 
++	firmware {
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++
+ 	fixed-rate-clocks {
+ 		oscclk {
+ 			compatible = "samsung,exynos5420-oscclk";
 -- 
 2.54.0.545.g6539524ca2-goog
 
