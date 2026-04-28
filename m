@@ -1,206 +1,223 @@
-Received: from jpms-ob01.noc.sony.co.jp (jpms-ob01.noc.sony.co.jp [211.125.140.164])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F331144BC87;
-	Tue, 28 Apr 2026 13:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.164
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BBB43DA39;
+	Tue, 28 Apr 2026 13:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777381672; cv=none; b=ZbjW+raAi4k0FgbrjOckihhYhyoJA3AQFwlClchYmxwH4PMSKhtpXCT0ynR8alsiXbLMLS71H/MgAfqFcBcZZY+blUKCj3g+nSUMnUbou3z0bQ9ejNrsJoOua3sTeJVzRhiV3BLwN53g3x53Xi078S3pZB7V7pyXfYmOr8Fu0n4=
+	t=1777383614; cv=none; b=qhVweuokkDPGwAeu2U5tf7H8QHEInJiaEK4QOpq6CQxlUzweuVh7iHfkF2NXZ0QxLfGvKtZZqsdiNfEOw/nOO7EJY0qFJ4vGdBz6z7WQ2STIrHMFCFKZmKlpke+//4CbeOxi5lko/pKg/wOLe5uX/8biz7Kkvwvj7sUUnkudo8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777381672; c=relaxed/simple;
-	bh=OchKKLt9+Cgb8fGyJziupP2A1Fqw+PSpxW1pYFq9XJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KWTvJG1dCNXssVT/zV04O3co6e0w8Vs4/cGbxzXtVBaUPSHzmcmpDtQdX8S9IyWr3vqDyQDy0SJTta/347o9sB0j6itAWR8Yb1E9QQPC6yB2/Et3LVZPZQqbapv1GfkiAZ86G76HGGhDdgX93AhaHOPakKVXm6oi5qZy0ubyT+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=dIq020Nc; arc=none smtp.client-ip=211.125.140.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
+	s=arc-20240116; t=1777383614; c=relaxed/simple;
+	bh=DY37OnpoYjjW+GFpmDYkzr+BXySsTF4/pHUAAopHjvA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=slL67D5Pb0oXGXNGd6GcDGDQ9SiSh4NCwHbWwmTxOvDwJzawFlIIiZwHrdRw6kNf+MF0tNQrguXOv/sOlQyFZud0kgNFQDTOGbLi4pnGrvUMtf2/PqEQdoXFadmgtWo9dRb7Stl2PP/lPNXthvDdP2tcREiR9paYYoV2kDr6Fpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=qRLoVPjW; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="dIq020Nc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=sony.com; s=s1jp; t=1777381670; x=1808917670;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tBn8VqLDSKuQcw7PUXmOHeUfy7B2aRFPY4QqUqpeL/s=;
-  b=dIq020NcrTPvbnExuJ58jMnsbZ0FeQ89QQi4FtPovCr1LdgUYg7rbnc3
-   nUsHavrZFIwIHwFHo8MbfWVqoEk4oyekywXWqdT5rr3131Qc8o15zZoj2
-   gsXiEGUcupFBs4LkN7e7ei7UqPcu8WTCII4fxbeUBWXlqKfL5oyeVViRs
-   I0i/f384LnH3FcQRyp6zVg0fSFBqPwTOmDEYSWB2nzyq+3Z2FYW2oOauP
-   GkPW3jIFgHf8Ut86O9qCFBmFMuXQN5o0e0GZLEQfAy3Wney6ZLQLCv9eb
-   3eHhb4OiHtwoHDpWd6rV07B2oArK1lsauPylQp6/xJKSPFeR7M5scak9E
-   Q==;
-X-CSE-ConnectionGUID: OB5Ql42NSq2AYIwhtEDRfg==
-X-CSE-MsgGUID: t6kLOp5AQxCjic2m4rFRzQ==
-Received: from unknown (HELO jpmta-ob02.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::7])
-  by jpms-ob01.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2026 22:07:42 +0900
-X-CSE-ConnectionGUID: dQXwq35VQs6FZkNfdUoPYQ==
-X-CSE-MsgGUID: CInvrjD1Rz2rtwWAUCwLvQ==
-X-IronPort-AV: E=Sophos;i="6.23,204,1770562800"; 
-   d="scan'208";a="604129736"
-Received: from unknown (HELO JPC00244420) ([IPv6:2001:cf8:1:573:0:dddd:eb3e:119e])
-  by jpmta-ob02.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2026 22:07:42 +0900
-Date: Tue, 28 Apr 2026 22:07:41 +0900
-From: Shashank Balaji <shashank.mahadasyam@sony.com>
-To: Gary Guo <gary@garyguo.net>, Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Boqun Feng <boqun@kernel.org>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Aaron Tomlin <atomlin@atomlin.com>, Mike Leach <mike.leach@arm.com>,
-	Leo Yan <leo.yan@arm.com>, Rahul Bukte <rahul.bukte@sony.com>,
-	linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, driver-core@lists.linux.dev,
-	rust-for-linux@vger.kernel.org, linux-doc@vger.kernel.org,
-	Daniel Palmer <daniel.palmer@sony.com>,
-	Tim Bird <tim.bird@sony.com>, linux-modules@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] kernel: param: initialize module_kset before
- do_initcalls()
-Message-ID: <afCxHUrjr3Z22U6V@JPC00244420>
-References: <20260427-acpi_mod_name-v4-0-22b42240c9bf@sony.com>
- <20260427-acpi_mod_name-v4-1-22b42240c9bf@sony.com>
- <DI3Z28IZZOT9.349TTWNN9VDMB@garyguo.net>
- <afABOMT_s9DvF6NY@JPC00244420>
- <DI4QQA6EGIA1.N8WRFWVKG91S@garyguo.net>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="qRLoVPjW"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 445ED4E42B5C;
+	Tue, 28 Apr 2026 13:40:10 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 026AB601DF;
+	Tue, 28 Apr 2026 13:40:10 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C6AAE10728BFF;
+	Tue, 28 Apr 2026 15:39:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1777383605; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=DY37OnpoYjjW+GFpmDYkzr+BXySsTF4/pHUAAopHjvA=;
+	b=qRLoVPjWicMlOER4CBoXDyZ31IS3N9wzfHFsgyWbAAFF/gci+qsFmTs0vCeqFcMtumISls
+	Tj3oY/2Cdf6m/7gztcQrTJLdN0ggRvFVqgt+JH8FxO2/nx+GfiibBB7tr9VdYd2pRAyZX1
+	XAXF0QiFbh370lTIQPb7xonACEwx2kQTWqUUcXxmMBeCKnlqHPelpK3fTwkngZn/4NCD/d
+	KE58A7C2KizgbREMj4kyFapvuVzo03ASQ8lKHF89cbbYlD9WTUWuW4Ve1tF5Yw+ztjpBH4
+	MjEA//3NGYT7/zO8OOYAeAWTnaFj1l+B1bRPPqqwsMjaj7jeo7/wmSi84hXibw==
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DI4QQA6EGIA1.N8WRFWVKG91S@garyguo.net>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 28 Apr 2026 15:39:43 +0200
+Message-Id: <DI4TW9XECX53.17TEZPCSWTH1A@bootlin.com>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v2 00/41] drm/display: bridge-connector: attach encoder
+ to the connector
+Cc: "Hui Pu" <Hui.Pu@gehealthcare.com>, "Ian Ray"
+ <ian.ray@gehealthcare.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <asahi@lists.linux.dev>,
+ <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-mips@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+ <linux-amlogic@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
+ <freedreno@lists.freedesktop.org>, <linux-rockchip@lists.infradead.org>,
+ <linux-tegra@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+ <linux-renesas-soc@vger.kernel.org>
+To: "Icenowy Zheng" <zhengxingda@iscas.ac.cn>, "Dmitry Baryshkov"
+ <dmitry.baryshkov@oss.qualcomm.com>, "Andrzej Hajda"
+ <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
+ <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
+ "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Sasha Finkelstein"
+ <fnkl.kernel@gmail.com>, "Janne Grunau" <j@jannau.net>, "Liu Ying"
+ <victor.liu@nxp.com>, "Douglas Anderson" <dianders@chromium.org>,
+ "Laurentiu Palcu" <laurentiu.palcu@oss.nxp.com>, "Lucas Stach"
+ <l.stach@pengutronix.de>, "Frank Li" <Frank.Li@nxp.com>, "Sascha Hauer"
+ <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
+ <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "Philipp
+ Zabel" <p.zabel@pengutronix.de>, "Paul Cercueil" <paul@crapouillou.net>,
+ "Anitha Chrisanthus" <anitha.chrisanthus@intel.com>, "Chun-Kuang Hu"
+ <chunkuang.hu@kernel.org>, "Matthias Brugger" <matthias.bgg@gmail.com>,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Kevin Hilman" <khilman@baylibre.com>, "Jerome Brunet"
+ <jbrunet@baylibre.com>, "Martin Blumenstingl"
+ <martin.blumenstingl@googlemail.com>, "Rob Clark"
+ <robin.clark@oss.qualcomm.com>, "Dmitry Baryshkov" <lumag@kernel.org>,
+ "Abhinav Kumar" <abhinav.kumar@linux.dev>, "Jessica Zhang"
+ <jesszhan0024@gmail.com>, "Sean Paul" <sean@poorly.run>, "Marijn Suijten"
+ <marijn.suijten@somainline.org>, "Tomi Valkeinen"
+ <tomi.valkeinen@ideasonboard.com>, "Sandy Huang" <hjc@rock-chips.com>,
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "Andy Yan"
+ <andy.yan@rock-chips.com>, "Thierry Reding" <thierry.reding@gmail.com>,
+ "Mikko Perttunen" <mperttunen@nvidia.com>, "Jonathan Hunter"
+ <jonathanh@nvidia.com>, "Jingoo Han" <jingoohan1@gmail.com>, "Inki Dae"
+ <inki.dae@samsung.com>, "Seung-Woo Kim" <sw0312.kim@samsung.com>, "Kyungmin
+ Park" <kyungmin.park@samsung.com>, "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>, "Laurent Pinchart"
+ <laurent.pinchart+renesas@ideasonboard.com>, "Tomi Valkeinen"
+ <tomi.valkeinen+renesas@ideasonboard.com>, "Kieran Bingham"
+ <kieran.bingham+renesas@ideasonboard.com>, "Geert Uytterhoeven"
+ <geert+renesas@glider.be>, "Magnus Damm" <magnus.damm@gmail.com>, "Biju
+ Das" <biju.das.jz@bp.renesas.com>, "Marek Vasut" <marex@denx.de>, "Stefan
+ Agner" <stefan@agner.ch>, "Jyri Sarha" <jyri.sarha@iki.fi>, "Michal Simek"
+ <michal.simek@amd.com>
+X-Mailer: aerc 0.20.1
+References: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com> <cf2c91396eb3017aa51dd9c840badffddca2f7ec.camel@iscas.ac.cn>
+In-Reply-To: <cf2c91396eb3017aa51dd9c840badffddca2f7ec.camel@iscas.ac.cn>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Adding Tegra maintainers.
+Hello Icenowy,
 
-On Tue, Apr 28, 2026 at 12:10:50PM +0100, Gary Guo wrote:
-> On Tue Apr 28, 2026 at 1:37 AM BST, Shashank Balaji wrote:
-> > Hi Gary,
-> >
-> > On Mon, Apr 27, 2026 at 02:29:55PM +0100, Gary Guo wrote:
-> >> On Mon Apr 27, 2026 at 3:41 AM BST, Shashank Balaji wrote:
-> >> > module_kset is initialized in param_sysfs_init(), a subsys_initcall. A number
-> >> > of platform drivers register themselves prior to subsys_initcalls
-> >> > (tegra194_cbb_driver registers in a pure_initcall, for example). With an
-> >> > upcoming patch ("driver core: platform: set mod_name in driver registration")
-> >> > that sets their mod_name in struct device_driver, lookup_or_create_module_kobject()
-> >> > will be called for those drivers, which calls kset_find_obj(module_kset, mod_name).
-> >> > This causes a null deref because module_kset isn't alive yet.
-> >> >
-> >> > Fix this by initializing module_kset in do_basic_setup() before do_initcalls().
-> >> > Modernize the pr_warn while we're at it.
-> >> >
-> >> > Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> >> > Suggested-by: Gary Guo <gary@garyguo.net>
-> >> 
-> >> I didn't suggest this change :)
-> >> 
-> >> I suggested `pure_initcall`, which is just a one line change.
-> >
-> > Oops, sorry about the misattribution.
-> >
-> >> diff --git a/kernel/params.c b/kernel/params.c
-> >> index 74d620bc2521..ac088d4b09a9 100644
-> >> --- a/kernel/params.c
-> >> +++ b/kernel/params.c
-> >> @@ -957,7 +957,7 @@ static int __init param_sysfs_init(void)
-> >>  
-> >>  	return 0;
-> >>  }
-> >> -subsys_initcall(param_sysfs_init);
-> >> +pure_initcall(param_sysfs_init);
-> >>  
-> >>  /*
-> >>   * param_sysfs_builtin_init - add sysfs version and parameter
-> >> 
-> >> pure_initcall is level 0 so it happens before all other init calls. Does it not
-> >> work?
-> >
-> > tegra194_cbb_driver registers itself in a pure_initcall too. We wouldn't
-> > want the ordering of its registration and module_kset init to be link order
-> > dependent.
-> 
-> It's the only device driver that does this. And I don't think it's supposed to.
-> 
-> >From documentation:
-> 
-> > A "pure" initcall has no dependencies on anything else, and purely
-> > initializes variables that couldn't be statically initialized.
-> 
-> I understand that given large amount of drivers registering themselves during
-> core/arch_initcall that there might be regressions if all of them are moved, but
-> surely we can demote these two specific tegra driver to core/postcore_initcall?
-> This will still be called earlier than init_machine call which happens during
-> arch_initcall.
-> 
-> Looks like the tegra CBB driver is just doing error logging anyway.
+On Sat Apr 25, 2026 at 5:22 PM CEST, Icenowy Zheng wrote:
+> =E5=9C=A8 2026-04-23=E5=9B=9B=E7=9A=84 11:16 +0200=EF=BC=8CLuca Ceresoli=
+=E5=86=99=E9=81=93=EF=BC=9A
+>> This series simplifies using the bridge-connector by removing the
+>> need to
+>> attach the newly created connector to the encoder.
+>>
+>> =3D=3D Series description
+>>
+>> Currently all users of the bridge-connector must call
+>> drm_connector_attach_encoder() immediately after a successful
+>> drm_bridge_connector_init().
+>>
+>> This is an unnecessary burden for users. Move the call to the end of
+>> drm_bridge_connector_init() so all callers can be simplified.
+>>
+>> =C2=A0* Patch 1 adds a drm_connector_attach_encoder() call at the end of
+>> =C2=A0=C2=A0 drm_bridge_connector_init()
+>> =C2=A0* The other patches remove drm_connector_attach_encoder() after al=
+l
+>> =C2=A0=C2=A0 drm_bridge_connector_init() calls, ordered from the simples=
+t ones
+>> =C2=A0=C2=A0 (only the last one is somewhat non-obvious)
+>>
+>> The Cc list is huge due to the many drivers touched. I sent v1 to a
+>> reduced
+>> Cc list to ensure there is an agreement about the overall idea. That
+>> seems
+>> to be the case, so now it's time to copy all drivers maintainers.
+>>
+>> It would be nice to apply all of this series at once to avoid
+>> duplicated
+>> calls to drm_connector_attach_encoder() in the interim. That would be
+>> harmless beacuse drm_connector_attach_encoder() is idempotent, but
+>> unpleasant.
+>>
+>> =3D=3D Additional rationale (for the curious)
+>>
+>> Besides making the usage of the bridge-connector a bit simpler, this
+>> series
+>> is in preparation for DRM bridge hotplug. Here's why, feel free to
+>> skip if
+>> you don't care.
+>>
+>> The old bridge hotplug proposals I have sent in the past [1] were
+>> based on
+>> a hotplug-bridge driver to sit between the last fixed bridge and the
+>> first
+>> hotplugged bridge. Discussion with the community led to the need of
+>> removing the hotplug-bridge and let common DRM code handle hotplug.
+>> The
+>> common place of code that appears the most suitable for hotplug
+>> handling is
+>> the bridge-connector, which is by now the recommended way to handle
+>> connector instantiation after a bridge chain.
+>>
+>> So I'm in the process of extending the bridge-connector to be the
+>> central
+>> point to handle bridge hotplug. Turns out the need to call
+>> drm_connector_attach_encoder() after drm_bridge_connector_init() has
+>> returned is adding big headaches to such work. So I'm send this long
+>> but
+>> simple series to both simplify bridge-connector usage and remove one
+>> obstacle from the bridge hotplug work. This series is relevant by
+>> itself
+>> anyway.
+>>
+>> [1]
+>> https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-26-9d6f2c9c3=
+058@bootlin.com/
+>>
+>> =3D=3D Grand plan
+>>
+>> This is part of the work to support hotplug of DRM bridges. The grand
+>> plan
+>> was discussed in [0].
+>
+> Just see the bridge hotplugging thing, is it possible for DRM drivers
+> to declare bridges attached to themselves after this?
+>
+> Loongson 7A1000 PCH can only output DPI signals, so nearly all products
+> with it are shipping with some kind of external bridges, but currently
+> drm/loongson does not support them (all display connectors are now seen
+> as DPI ones, and connectors behind non-transparent bridges won't work).
+>
+> The bridges are going to be accessed by the DDC I2C busses of 7A1000,
+> and are not declared with device tree (systems with 7A1000 never ship
+> with device trees, and Linux currently matches a built-in device tree).
+> (Bridges being on the DDC I2C also introduces some dependency for them
+> to depend on the drm/loongson driver.)
+>
+> Loongson have defined some kind of VBIOS declaring what bridge is
+> behind, and their non-mainline driver just contains driver codes for
+> all possible bridges. (Sui Jingfeng previously tried to mainline such
+> practice, and of course it's rejected because of code duplicity.)
 
-That's a good point, Gary. Thanks!
+I'm afraid your question goes a bit beyond my knowledge, the hotplug work
+I'm carrying on is focuses on DT platforms.
 
-Hi Thierry and Jonathan,
+My limited understading of non-DT platforms is that a card driver must
+instantiate all components and tie them together, which assumes it has to
+know them somehow (ACPI, hardcoded, whatever). Others can probably comment
+better about this.
 
-You can find the context for this email in this patch:
-https://lore.kernel.org/all/20260427-acpi_mod_name-v4-1-22b42240c9bf@sony.com/
+As a general principle, when devices can be mixed and matched by the board
+designer, hardcoding them is a bad design choice. Think of bad old board
+files written in C, which were unmanageable and got replaced exactly by
+device tree. So my opinion is that DRM encoders and bridges should know as
+little as possible about the following bridge, connector or panel that
+follows them.
 
-TL;DR: tegra194_cbb_driver and tegra234_cbb_driver are the only drivers
-registering themselves as early as in a pure_initcall. This is a problem
-on two fronts:
-1. Philosophical: As Gary pointed out, pure_initcalls are intended to purely
-initialize variables that couldn't be statically initialized. But these
-are doing driver registrations.
-2. module_kset not initialized at pure_initcall stage: This is needed to
-set the module sysfs symlink. Since module_kset is not alive yet during
-pure_initcalls, registering these drivers panics the kernel.
+Luca
 
-We would like to do the tegra cbb driver registration in a core_initcall
-(or some later initcall works too), and move module_kset initialization
-to a pure_initcall. Like this:
-
-diff --git a/drivers/soc/tegra/cbb/tegra194-cbb.c b/drivers/soc/tegra/cbb/tegra194-cbb.c
-index ab75d50cc85c..2f69e104c838 100644
---- a/drivers/soc/tegra/cbb/tegra194-cbb.c
-+++ b/drivers/soc/tegra/cbb/tegra194-cbb.c
-@@ -2342,7 +2342,7 @@ static int __init tegra194_cbb_init(void)
- {
-        return platform_driver_register(&tegra194_cbb_driver);
- }
--pure_initcall(tegra194_cbb_init);
-+core_initcall(tegra194_cbb_init);
-
- static void __exit tegra194_cbb_exit(void)
- {
-diff --git a/drivers/soc/tegra/cbb/tegra234-cbb.c b/drivers/soc/tegra/cbb/tegra234-cbb.c
-index fb26f085f691..785072fa4e85 100644
---- a/drivers/soc/tegra/cbb/tegra234-cbb.c
-+++ b/drivers/soc/tegra/cbb/tegra234-cbb.c
-@@ -1774,7 +1774,7 @@ static int __init tegra234_cbb_init(void)
- {
-        return platform_driver_register(&tegra234_cbb_driver);
- }
--pure_initcall(tegra234_cbb_init);
-+core_initcall(tegra234_cbb_init);
-
- static void __exit tegra234_cbb_exit(void)
- {
-
-Would this work?
-
-Thanks,
-Shashank
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
