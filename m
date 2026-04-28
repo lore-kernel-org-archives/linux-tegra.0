@@ -1,114 +1,113 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com [74.125.82.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A923BFE3A
-	for <linux-tegra@vger.kernel.org>; Tue, 28 Apr 2026 21:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777412617; cv=pass; b=GICBv831uTwdpfihnp1twSxoJiGqc7BitlvcRpCsB10OVSSfK3Cwihv3ZETCGzWPwYaS2OhtTu/T4hBGEgKYrVnycngy4m3AtKW90OpjAj8NPbnp+/bHgeIeQv70WIgz53vwIANysvJ6XIvhDBoyqdVbeMhmzHohTYbk0RfrGuw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777412617; c=relaxed/simple;
-	bh=cUgK2Kfj5omPDpTxVPnIw7yYPrhwYT39UaRAh23oDLI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iz3e+OObemmXR4jvzEk/r+SxQX0Mm2XZ5xG7RS55F7Rt7GrATtNp2FR5l3c6UqIaLHLvKF55rpCkLz4elNs4dVQYlmC+KKmtFNsRAMNtlMvz5hYqx2PDXV/WQ+m3BTUgWNzjNtqmEseo7kS2Seu1r3h28a25mYpjLQnQ7f0thM0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=google.com; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RtM7H2al; arc=pass smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFC0311C2F
+	for <linux-tegra@vger.kernel.org>; Tue, 28 Apr 2026 22:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777414561; cv=none; b=rpHmXr2ezpNAlD4V07aXugu2XhYcgB2yYCJEk6G8nqk/RNcOdq4+TrLGj1vMM2Rb9s7FSJevq8Ia9yed8RmqFRbqYCICSspE8SUQBl6MjCd2cjw7wKEJP3FfHX6sGbPKngRRCY0SIxRTBblnGHHwjvTiRLvAHXpE7Iaj1nDGDCo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777414561; c=relaxed/simple;
+	bh=YRXa3SqUBnSgR/YtBhUZuZAmwoEQPel0vDrvl4dz9MA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R7kjZah38E9WQZ7WbuWixEj96YsZv03lMPV7sgdFckdvBdE8yOoxWfviTEXlK99GiUFLTxOhvAoPYt+Q0KvI8VQLjscVBWDD6boPJxpFrbBevS0MkbYx+CaHSkAI9YkmuXrUOXT8SXGvb4/lxFbtipKyj8ynwhuCT0GRVzASWwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=d+Y0enTr; arc=none smtp.client-ip=74.125.82.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RtM7H2al"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-488940ccfa6so5185e9.1
-        for <linux-tegra@vger.kernel.org>; Tue, 28 Apr 2026 14:43:35 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1777412614; cv=none;
-        d=google.com; s=arc-20240605;
-        b=BWMkYKY7RWXNmMZnfahBWRfClb2H5v6S+c4F8uisIOWU1tkqApJAGpF++8K9Lh+8Mg
-         jdmgABdAgyU7n5ut8LwkMmDJtL8yPrAzWdgYwjdGxMvunUoMjsM/1PebjwE1X/t9kTrY
-         qJO4JaduNTMbGyr/DvwLtTZunVtMhNwBgBKE/Yiwt/6BMFZPLbqxBGbCll3sUmY9aDAF
-         6G/Smk5urUTA6+fRt8JdJtOghDAgIpzTveD+FNqyGY7qHs3MN8/XhnBgE48Iq03VgU4X
-         fSZPVq9BKm5WIBSe2GkXBbzx1p/ETXnwWfOCu0KSzSzvqAbp2BOUaY2LEbnYVZPZbKQo
-         uaNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=cUgK2Kfj5omPDpTxVPnIw7yYPrhwYT39UaRAh23oDLI=;
-        fh=7fHxu4/Jo/xmlpP0vZGT8xXZJWTPaD93MsqbYZLuRxA=;
-        b=MX809Xo7NESbjImd3ovuizLdfavwYz70GLQf5tl1RPHsATe/tWioEHJkGHsJKeUMxC
-         JK/Ep96hE1Vf3dJIZsP5zc/DdE/qWwmh2qJut27zfTuswbiUfaMwjmsM3zLIwC8lAWZ2
-         6bLs00MgfIKMxtBjazIsRMW/y5OhvwMyYKfjioO/oATy7NlqM345LyaF+HD0DQyU7NkB
-         u5GWRjcBZuyWAt59lvnzFCYl6IZ2UV25OyJKhZlBg6cWJy8FtE4ffFNwpqxN7g6sieHV
-         7YIfCPdlZvJmv7FFG72lWjpq7iolacuwfqQPJJg+cMOFQZFcJ3Fw0UUwXTaAzgayOCeG
-         BQtw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d+Y0enTr"
+Received: by mail-dy1-f179.google.com with SMTP id 5a478bee46e88-2e221a71e19so12019708eec.0
+        for <linux-tegra@vger.kernel.org>; Tue, 28 Apr 2026 15:15:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1777412614; x=1778017414; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cUgK2Kfj5omPDpTxVPnIw7yYPrhwYT39UaRAh23oDLI=;
-        b=RtM7H2alnCMVAaGDmjy59M8Gwp7eHD+fQMMsYihCog4+AGXfK+HEf1d9LmCx8gykeo
-         +/gs4xjnFFUbOndufNdp/L7rxB22zO6/iacal+Nr09pUF0lPUltc1YOd/d5VJ6Wqr34L
-         D3cjV4KEF/F3SUm7t5OOUIBIDgK9rMqH6Dys0=
+        d=chromium.org; s=google; t=1777414559; x=1778019359; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IRuOpUnKlyxobyVU18RBjJjL20LQKeUc7Tn5BEfMoeM=;
+        b=d+Y0enTrpOWWO4xe6U18GjzzSoS5d9ADQxWLx11uyITMLza3yHptDlg2sE56m8dVYy
+         317JgmmSPSDR7cKxiClEijzpIBcWaCGgtktww5s9izwLd5o+5QgZCHaoWR9vVxxS/38L
+         PoBaaYo9p32j6CN00g6p2Cq4ctKqOJDZODjPA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777412614; x=1778017414;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cUgK2Kfj5omPDpTxVPnIw7yYPrhwYT39UaRAh23oDLI=;
-        b=g6iTo2LXKn2kBs32N+fIp49nP7vt/C4cTsvt2f6OvS+ehC1p1NvxB9zA+RWa6YxNr3
-         z7kGFP7DKi28hHfpFT9Tke6h+Guz6X+p3LWj+xmQgO0DFre22Y61itUsJkf921Soy1Hx
-         mluLTmwmxaQnOOOvIj4nlsJhfZVDPKrL5Vvc6ClUv6Bdilg+IRvtW9NYeAL4L0wgjcfm
-         yaEF6rEakFCrEj928OTF9Pm8EaJnjMY9PepCLXbRuiEQnQm9yaARhfH4ZhNNA6HoFlmS
-         +DxGCIq3q1PM/xz4Im46Q9uGI+KQciOsFUd/xYf7+vnUu8hhEsUu7jWGsMSe5J6IOhl6
-         Kgzg==
-X-Forwarded-Encrypted: i=1; AFNElJ/nKoLHKDheLRKi4SKo+YQ5ipm6HqSNI+yhGGlFWt5s1Dj4kSn6mwBXpntCVc2tmcCiQL7tVmRhAYWUXQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoUU1nndz1BgV9wvRCkr0Zb/9QsuQAAUellhCGAKLok0Hl6tc0
-	TW+9ScsMdzxmlzyQWWBA3eluPOMh8xfKoIK/XWwrR63FIKc+0GbIl1R1QCz19joSbzk4b+PaP/M
-	1iR0505VFo/dGBMb1SY+jNFabSggpbKp3mJp2pc3K
-X-Gm-Gg: AeBDietxOqlGzVxfnCHmnDF2mxZEnuZ25+XTr0QA2i08VouUp9tyOE4Shj9Ba23ZYb2
-	O8Srf2mxnbDKNuyqwry5Me5/Yq1YJEV8m5g+jMd21bOYvnbZf14G6UMBHlcWutgCJFq7RwmdEdb
-	Q/0w9+F0QFf7QAJ7vLqfz+NrXuSSh86QMokKcjfBKejReZQVdZxN9qa8Idt+ZmZe5U3Pj6H05lJ
-	ivdDkz/6X5iACqT0zaY46pDpWfcfc5iUxihOBJvujYQACmQfO8vEZJZPlKjgWjizaGJIPlVDJmO
-	xIGYPfLgpaZxdmmbn0+cPIr3pbFRM++n06fF0p9LtMKCAFVRkkDGoEcqTQ==
-X-Received: by 2002:a05:600c:530c:b0:48a:5f32:62d0 with SMTP id
- 5b1f17b1804b1-48a7ba07d5dmr322355e9.12.1777412613805; Tue, 28 Apr 2026
- 14:43:33 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1777414559; x=1778019359;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IRuOpUnKlyxobyVU18RBjJjL20LQKeUc7Tn5BEfMoeM=;
+        b=f/Ei0X4RFJtTxJR5drvUirbbv69KucHzH0azUskR99qY3H86KjnPMeEUz6mwUY2LIy
+         dRRkn9U//yVQGRbzNJBIcw5r97BKukyVvUy67WrwmBrtaJ0jhXpuxd5g3+6awmW1M9gw
+         RaKMggyrfg26QS172wViyVmOMoUi6BxeHNA48X2BnS1H+3gQD2a6vCBBJfdNPb4snJJw
+         ZS/CIYAG8/5v0do51MyJHyI15GvtCq2a8NNRBOAEbkTX7e8MjPRl7PIJgJnFgNR/gG/j
+         uT8xsMKJDTqZvzrLijBNbvTPI8Zac4PViDnKwvx4mV7AeDOSEhlGE4XFZj2mK0zLiSeb
+         gKKA==
+X-Forwarded-Encrypted: i=1; AFNElJ/xQMZ5Qb3yvuP0XgXQQ/cmoju86Q30CAEF9yhPBYFfOn61/0A3JrTESqT9QpMqElQNEYhAAkzOtpVdKQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+kHzZy08tXGQA6mZTglSSy+N+o7xUmg3H4aGPusTYZjGJ0KNQ
+	PBOLVUBumOnwpwG7aoNeZUyz880USqKOyIo/UmRu/FLWru6q1ZX3pGGgd94gwR7ROQ==
+X-Gm-Gg: AeBDieubo7uN1KTP5jBWyPKthLYBzxheGbyQL+oBSA9RTR+NYIxlB0UpT55okEyfcie
+	C9ubZXp2i5GMj8BMvMybabiqwJHexztzFxsACWvHue2/jr+9Azb5PBUsw2yKT2WmAUOIrpBpM5S
+	M69A2EAnXivMhk7tRN/zD5wQ7O6/XGrlZ94AnRPU9uExdYBT//5F24PxixXWv9n3KAA1LmM3s/5
+	5Te+5BceY3lvR2/4+SE8XjQO+QUgjaD3Rzo82bYTQQMvXUxnK7cChN6hPq3JntXPYPtI9rMMbyp
+	IVBBHDUvhBDR8sO9R5fLdqnksJmskLOjliu0gxSXU2jx/fwKB12/VDgCr1ysUQpPaMsB9Krspjq
+	jQaQM3ZhHQSDXxW3NlLCTX2HHE9xMCTDjG2EUFmQ0y9EcHs9f7ccrI/AlqHHG5ft7DJunXafL99
+	UKJRoUptey2WTuSk9/dQL07+DtqwmJ9OtMHEYyitCXQEcv3veNaWKjz+SnihL4+ZTrGWc75vcz
+X-Received: by 2002:a05:7301:fa10:b0:2ed:75d:fe40 with SMTP id 5a478bee46e88-2ed0a084038mr2613645eec.15.1777414558981;
+        Tue, 28 Apr 2026 15:15:58 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e7c:8:4ff5:9607:c7e5:48f3])
+        by smtp.gmail.com with UTF8SMTPSA id 5a478bee46e88-2ed1c070523sm162156eec.19.2026.04.28.15.15.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Apr 2026 15:15:58 -0700 (PDT)
+Date: Tue, 28 Apr 2026 15:15:55 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Julius Werner <jwerner@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
+	Doug Anderson <dianders@chromium.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
+	linux-rockchip@lists.infradead.org,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/7] dts: Add /firmware/#{address,size}-cells to
+ Chromium-based DTs
+Message-ID: <afExm9HeB-FMmP4P@google.com>
+References: <20260428200712.2660635-1-briannorris@chromium.org>
+ <CAODwPW-YuhQxyGSeahp8+i-bz_hAvPQQCNWxaZCjrbvkHOQa7A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260428200712.2660635-1-briannorris@chromium.org>
-In-Reply-To: <20260428200712.2660635-1-briannorris@chromium.org>
-From: Julius Werner <jwerner@chromium.org>
-Date: Tue, 28 Apr 2026 14:43:21 -0700
-X-Gm-Features: AVHnY4LgrR9BMoyPVl-dbhODH2S76f3l5WcQRNgpXekO-MzmQp39W8EwHdrUnso
-Message-ID: <CAODwPW-YuhQxyGSeahp8+i-bz_hAvPQQCNWxaZCjrbvkHOQa7A@mail.gmail.com>
-Subject: Re: [PATCH 0/7] dts: Add /firmware/#{address,size}-cells to
- Chromium-based DTs
-To: Brian Norris <briannorris@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	devicetree@vger.kernel.org, Doug Anderson <dianders@chromium.org>, 
-	linux-arm-kernel@lists.infradead.org, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	chrome-platform@lists.linux.dev, linux-rockchip@lists.infradead.org, 
-	Julius Werner <jwerner@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAODwPW-YuhQxyGSeahp8+i-bz_hAvPQQCNWxaZCjrbvkHOQa7A@mail.gmail.com>
 
-> I reviewed Depthcharge code history and found that this problematic
-> bootloader behavior dates back to at least 2014, with the Tegra/Nyan
-> device. Older devices may have similar DTB structures, but I'm not sure
-> if they have the same address-cells problems. In any case, these changes
-> shouldn't hurt even if a device was not affected.
+On Tue, Apr 28, 2026 at 02:43:21PM -0700, Julius Werner wrote:
+> > I reviewed Depthcharge code history and found that this problematic
+> > bootloader behavior dates back to at least 2014, with the Tegra/Nyan
+> > device. Older devices may have similar DTB structures, but I'm not sure
+> > if they have the same address-cells problems. In any case, these changes
+> > shouldn't hurt even if a device was not affected.
+> 
+> I can confirm that Nyan was the first Arm device shipping with
+> depthcharge. Note that the Exynos devices are all older and shipped
+> with an old fork of U-Boot that probably handled this very differently
+> (I believe they had `/firmware/chromeos` but not `/firmware/coreboot`,
+> so they wouldn't have had a `reg` node and should need no `ranges`).
 
-I can confirm that Nyan was the first Arm device shipping with
-depthcharge. Note that the Exynos devices are all older and shipped
-with an old fork of U-Boot that probably handled this very differently
-(I believe they had `/firmware/chromeos` but not `/firmware/coreboot`,
-so they wouldn't have had a `reg` node and should need no `ranges`).
+OK, so that makes patch 4 unnecessary:
+
+  [PATCH 4/7] ARM: dts: samsung: Add #{address,size}-cells to Chromium-based /firmware
+
+If I respin this, I can drop it. Or if it otherwise looks good,
+presumably folks can just skip patch 4.
+
+Thanks,
+Brian
