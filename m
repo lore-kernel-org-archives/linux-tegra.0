@@ -1,499 +1,300 @@
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012025.outbound.protection.outlook.com [40.107.200.25])
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013052.outbound.protection.outlook.com [40.93.196.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1F33A3E94;
-	Wed, 29 Apr 2026 07:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFADA3B9DA1;
+	Wed, 29 Apr 2026 09:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.52
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777446522; cv=fail; b=Lwkje4sdJQ24JiBGu4LndmyoetIrXnhtMCL0OlEDYjxYhZx6LrO80pNVEybLrTkpJ/WuLw9QZZqJgP37rLihiZ68hfOJtKAJSGOtkA57EYcmxr9xcNpXcz+C/4Da0VZrXjg/hucly+0YbAkfEGSffqZ7pDKyKoZ7W3ywBJIwaZE=
+	t=1777453867; cv=fail; b=HCM2PHmwPlFwM30JOPqO+u8r/VvUE/JJkLlpVxzA5E8z6+9KbBAd8C+sTJPprJLD3iwdHMQjuiR5nWU120N6V4E0d3lmk0UJAYKmtn9E5bKhX80ONNGLhL41LweNRy8xOKqdmHFWglvc3TAfzUUadz7H9ksCS3BQ5TToX9wOwQc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777446522; c=relaxed/simple;
-	bh=7AiPRadnNRLUnsdZAEPbLImlsMxubns5oejUKwr6s5g=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=frx4DVHOoQzrsZpjvJIuOZtdrLXZrQA9gSj8K4AeqB+w76rdbxDzb9amq/AS5mOyEtgREwkRcM36BTRE3OC5JtTUVQYmuWL8Lun4A3pxAoaPhcc+mIdtYl0FI2e33TM8oSyOIFrkNQqhuR8l+INa/7XLIHXvghQ1D7YA7MDnfDg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kIxAdjUJ; arc=fail smtp.client-ip=40.107.200.25
+	s=arc-20240116; t=1777453867; c=relaxed/simple;
+	bh=NJdplK0C9QK99wyzT3zbwQ440E/AQDLF5SGbL0RLEug=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Sk2ZbRK0jbCOPu7ehcS76/nPk75KVbZUTxrGncPwnc0ntZ3PiGC4oWirA9sZQQwIICLfQFIBy4FvaqTTbid36VJaUP4/dHj1S4Rddtss3TGdFrfs7RQLIvmoC0I/NLO42nmnVCZqX6jMnmgOxo4GLRiz12n+cMyhU+F3alMupYE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=g6nWsXCi; arc=fail smtp.client-ip=40.93.196.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kIxAdjUJ"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="g6nWsXCi"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bji4gvdiE2pJ5OHWRogdmjbQ+WQU/ep8LWdSZaUMNYw2dV8GiACouKqu0ACdqmWpA3q4lBdgmIk89IhSec97Q5c+1qgrfNIDidG1nXX9aNk+sDbgRlzGm4iTgIVPxez0UCESAckjXuqiY4sAie1kdxHEximX9/GEONHVC0KQCufgG8C/1NucfflYbi6JMFQO9cxmCU3CZ15JwszZ87yJreD1qB0JfXW9thg1CYP8jfZ5CKvWRLo/HU+9UZwRm/QQODBXTazzjGouVG//Rm2UwNvcnm5SqAIChU1IF2lRUFNrEnzOYY6aS83VLpQX0MZAMtgpvIkYCpDokX+jlq2j2w==
+ b=EjZbyFfsfOK9iCJY7xxtLxzHleKZVnzoFzbkyLEl1wTbmGArz9wv9mFeGzFFP+dI8S5O/y6dSQek8wUPiZiJQizuCFOmbCNov9+sySEQPb23cIN07+Pxmz1Aqo+FxPHw+qThiOxS0unxpSoa5VUwhyTq1vKoZvXncrP8I3uofC2v2KdDgUe2ZbmSyhIwP0HHaVJNpFx/S7P6Zmt7xrL/ZugtbCRGiLuUYJc+x5soDDJEwZ8EyST5IRcFYHxgcE4+blPtytrY41GrpDC+OoYKmlAqXTJ35ADAf4c2zn++4AWdIxmPHAuWm0VL1U1PDn5rEtlQ7TawoMbswbNmWF4Mpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HHLGhJUjmkk91bt2maFVbnNxKMbmcLuBihe9DX9myTk=;
- b=vb1LOml1Yt6d91xCbLfdK7go3tWJQfGgAb2c73hlWspBkpqBVOQ5BZpej8y8yB1T+abh2ZHSrM7u3HOBvIZhM9dtU4qLYXD51dqgZAu461Nm+q5igEXuXiXCIkf55/BlwD2VHJziA+09qCDbzisZPIx4nKvVVKDvzqPkcZyatw73/Nq92lPwOJXlgJfnLNxtm/0KShrb8cyh1si9YVpBnjIvfiS3IYnlBSFvJLYUjsizd1gJ6kYVc/kWIHGmtpzWZfnpP2Czhx6KFjGkNT/yecw5My9HfJElCbj1qoFQz23xlf6UMFwI87dvcnohurtiuRqBPqjPRsj0Zo4A311E9Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
+ bh=ShEfvG4M3Ap8U6u8Kv29ELoHnvhCbwMWunFYqLE0pfg=;
+ b=yAd4vau90gHLI87WItGcTOtP97+3RTbDfpX3wSSbwva0SGAPdQmakzGp8hjRnSOQIqMsdUuB/yse0KZej3Zcx2xEHtqlkYqFImgootHMfYtUj7YX/G8YgUtFBLd5xFmPEYfcE1NoQe3xxsXwIxL+L1SgJQvsFNEIZxWWJ8JnV6qPO4I6sFlrmhihffnJTPUGXf5oCYFTuO4dYzy5qEfxs3t6VN7y/8K1WT41HzPPuEj53Ya3Iqd2Q5kE6GDsLgZQASDhdYySmwxU7UC2LnW6kNr1xTAC/yRjzLO6G0UXknUSYBtof+zl+XyDWSh/qHVqxEvFR4dem8V9qxAEJrh0Nw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HHLGhJUjmkk91bt2maFVbnNxKMbmcLuBihe9DX9myTk=;
- b=kIxAdjUJxfPiRq0k5OjpTpzG3Kj242jDYzp0Hhsy/Oh40NuwkZvrNoR1ccxGPXG9uVywvmEWeZacLulQEf+sWbFOsgH8nF/0ZNs48Q3snVeLKytpNfhsnnXe1cS2Qhp/bXSxfGjFfkgGETHignoAuKtZm8lVFmz6V69gHlzpPTY91VnxKtUB7HZeDq0hptLwbjrrM6PGYEj0fGycJPzO4vn5MVsSrKNZ7KixWjhLwSXOMVbdR1hmrLBkbHcPN+LWiLnxxZyElO7TUDSe/ABDaVMQoTRwW/ibmxCRJtSAqdMfk1MZm+3Z1J7+DwJHD+ObLfWHid8+gKzlm21Ge6ZsqQ==
-Received: from BL0PR02CA0008.namprd02.prod.outlook.com (2603:10b6:207:3c::21)
- by MN2PR12MB4206.namprd12.prod.outlook.com (2603:10b6:208:1d5::18) with
+ bh=ShEfvG4M3Ap8U6u8Kv29ELoHnvhCbwMWunFYqLE0pfg=;
+ b=g6nWsXCijUVH9uzLqr2n5+kfS+SaeFAkTExhrCpcaUVZS88eH2XRRE2VJKuG0F95QL8dgALSDai0XgmqmTZ2vZqIazvhjsXHpOrQeqcVyX0gFXUo45XfOgNZPU8763I0J1/JqhEUi+WnQjBMR7v5w38RH+SPFWBYnyRT/jcNW1kGHEM30UVHy27+J/bOtYDrOe5evfl77KAyfzsbFi6yYt4KJ0k1eAnRYFqFnMyODG712EQTTwk7Csb10u6BUqxvyNngVD49eoen0Sz/GO6pMnH33ZN7Zr7bZl3agRB6j6bnw8sg09LcOh6d5Y2OP053OqICUNiYvXfYT8BWzHnngA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
+ by IA0PR12MB8646.namprd12.prod.outlook.com (2603:10b6:208:489::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.20; Wed, 29 Apr
- 2026 07:08:28 +0000
-Received: from MN1PEPF0000ECD6.namprd02.prod.outlook.com
- (2603:10b6:207:3c:cafe::19) by BL0PR02CA0008.outlook.office365.com
- (2603:10b6:207:3c::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9846.29 via Frontend Transport; Wed,
- 29 Apr 2026 07:08:28 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- MN1PEPF0000ECD6.mail.protection.outlook.com (10.167.242.135) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9846.18 via Frontend Transport; Wed, 29 Apr 2026 07:08:28 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 29 Apr
- 2026 00:08:12 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 29 Apr
- 2026 00:08:11 -0700
-Received: from build-sheetal-bionic-20251202.nvidia.com (10.127.8.14) by
- mail.nvidia.com (10.129.68.7) with Microsoft SMTP Server id 15.2.2562.20 via
- Frontend Transport; Wed, 29 Apr 2026 00:08:11 -0700
-From: Sheetal <sheetal@nvidia.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-CC: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, "Thierry
- Reding" <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>,
-	Sameer Pujar <spujar@nvidia.com>, Mohan Kumar <mkumard@nvidia.com>, "Kuninori
- Morimoto" <kuninori.morimoto.gx@renesas.com>, <linux-sound@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Sheetal
-	<sheetal@nvidia.com>
-Subject: [PATCH v2] ASoC: tegra: Add per-stream Mixer Fade controls
-Date: Wed, 29 Apr 2026 07:06:03 +0000
-Message-ID: <20260429070603.2791011-1-sheetal@nvidia.com>
-X-Mailer: git-send-email 2.17.1
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.16; Wed, 29 Apr
+ 2026 09:10:59 +0000
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391%6]) with mapi id 15.20.9870.013; Wed, 29 Apr 2026
+ 09:10:59 +0000
+Message-ID: <77285dd6-e240-4944-a034-a4bc3acf4052@nvidia.com>
+Date: Wed, 29 Apr 2026 10:10:50 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] phy: tegra: xusb: Fix per-pad high-speed termination
+ calibration
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Wei-Cheng Chen <weichengc@nvidia.com>, jckuo@nvidia.com,
+ vkoul@kernel.org, neil.armstrong@linaro.org, thierry.reding@gmail.com
+Cc: linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, waynec@nvidia.com, wtsai@nvidia.com
+References: <20260304102649.3670783-1-weichengc@nvidia.com>
+ <82f3ca77-7b8f-41b8-85fb-c502bc343778@nvidia.com>
+ <fde997f6-c0a8-430b-8e45-38a490e683ad@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <fde997f6-c0a8-430b-8e45-38a490e683ad@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0P220CA0025.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:a03:41b::16) To DS2PR12MB9750.namprd12.prod.outlook.com
+ (2603:10b6:8:2b0::12)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD6:EE_|MN2PR12MB4206:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7523ed52-9f93-4bbb-475b-08dea5be1d14
+X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|IA0PR12MB8646:EE_
+X-MS-Office365-Filtering-Correlation-Id: 272d0ec2-99bf-43a5-7995-08dea5cf3ac1
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|30052699003|36860700016|376014|18002099003|56012099003;
+	BCL:0;ARA:13230040|376014|1800799024|10070799003|366016|18002099003|56012099003|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	dyw+rO9+gkZXf0ynNsONLHRlsiKkG0NcuKl+s2BwQa2pWlxn0bP2QPMcHir2jdC8D4ObDt6fpDxPS4oJU+MpbIrOn4l0sRZBMWm0q2EZ/9Ackz93VylYtYgF4ml4dfZqK/nMYd2B42gZQwVQNG9Zzir+g2IHCoksM6U/U5bENjQhZs/1r0isER48fr4mI322AMza7bUjqTRi+aLKPJtbHytP4BRFU+qzv7tynqrZ72xW3GsDLhwMgGX3bpcLAtR0Ph3sGH+SyDaFYkGGe6m03VAH0vzUgb7N74maAYOGr6voRLl5vqlvyxXva2ddQgT9baY52Tf4ab9PElYXrD9iCbJplC+EXg0QUuLveuF/0gWWX0WC0d0N1rFYOcpmv1eqykut8p4fI+sPEXukbemtPZJGVLefthj+GsATTRt1zj/qhCdNsGqGRXRgTy5L7PrGPY9JibGiKArY12uv3f/5QqUifbCL1JTlla4Z4Cz88fRMQROmbA/j10FUloDYppBJRuqWfLmwDp+6XbsFz3rzThPii9xB+pGvnhQe/79wiY2x7d60spitipB+sAiXuHwZFPz+SIXFn3NJjMdqR8BST6iyMdkDxJfttEwkMSzbaKaFOGzUSxgfp+jn9yclp4R/kUy6iSpAVtBy9+1WcpYEJWgmngO9ugJs/Pt5voxS34Xn7LAmlzyit16Uo6BfbtR0LpmG9zi9Z/vWbqfHVhAW4y4wat1cFjwTRjp/z3pRfy1/JImrSCMUZvQjJYvIgaVwC4m6BNi5c34XlzpMQypRkg==
+	R1xFgKIeOpAvQAmyBOuRRlHlqamWxANJzufLu1H+eXrXPR6f1DKAJ50r4oVOwadCWag0RFsclummFn1Y+nJxN+Oy2ra1vWw5d51GUrZ30MZ2NFUMbNZjJ2njevDSLxdsbJgO6y+WmKRtX3q1RWcaXZAoMtPIxBZRLrP6npKF5gcS3NtToma4PF+Igifl7YinkIWIU338VZ3sYSKMAAUEkI+vS5zWMZuHAK78u+3NLzgJ8x1Au/cx6RJ6nyQxLIDUY0iF6dMOeUAUGyp4zLosfM/VG6VDVxbqRyUBxO+d26LM0LQUVnM0VbIQrEtQQtjBxzmzSPdsCq/SNA5cMQf/KRClN2z0ubjNiQPqDqlr9F/YH5SVhiptR4P+1VqS9NsDhmbFti9DEY7IlY1oe1JQ9gi7QU/0J4hfOn+dmYcEwZpkr/rt51dUrQXJ/EjtF4hcpbPAEethtXQTGG4CPUdcxqNZILeQubWvjoPo0uNx5RUHvSP1EInl7hDtzTyekyN18vEi3YLD6pPwAr9J5YzlEhtujEXdY3aHfomOSqFID3Iqpl1j5lGIY8XyqOljbvVJTEHB4FY0B47scIpDGhT3iuYZgjp7IMkVfRvXL7xkrwsYs3eSpWoH8NxfjZ5S78F7WgzFZQl99LrQHej8LGtiHrcFwbuNoA704rUHKPN1r0pfPBeFjM6jouIC5StUBL2PkL3OzBgCTgSWeRJitpRfnTfqyXkFA+2bw2Xquxf8J5Y=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(30052699003)(36860700016)(376014)(18002099003)(56012099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(10070799003)(366016)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
 X-MS-Exchange-AntiSpam-MessageData-0:
-	QIYji629KRlKgL01mXGhgp7zCTuzvEwGYBvr/TQQganc6kxIIDXf9FZk7EoT4GFUEifngPyptuJfyaRH5C09bUtRsJBHMXHzHaMCJ7VD8NBBy4vuj9tZkL2C6kiTLbbnrc7jBL4CHahn91bod3GzBUjuroel2gSjza0XE6Wyki3V+BmRdcTZwLl29oITikYgq5oZdS6nMI9sb3TuWk4h8eKYZHdXI5nfRmKa+RvqWnGrikKAFdNQCeQfo02CPPtjnFfBsXmjRSNa1F7nj1BGlRCF5wKpdM8vM3fXDPaT5PcrgB8gV1ij8VQaPOCsm0pmLlvuqKzDlEdbF1uyenJrv/NKdFQs9bUs8Srq1rzy7OsyRR5QnDwPmu5wsQI6AXNXffd+qpI9H0TtOW3720f0uUaMiAM2ypSxz9smKsgmbAXdqzv24zLcOV2OiF2TZToS
+	=?utf-8?B?Y1JMU2drOXEwV3JqTXpteVpBbXNvaWFJNVQzTjZSbzJDRFhTWFd6ejVtNnQr?=
+ =?utf-8?B?aTk5YlM2ZHVaajVRSXJVQ0FwZ2N6cUdNTEFqVnpxd2lEcUo2aGo1WWJ6eXJa?=
+ =?utf-8?B?a3JpZThXVVhpR2pxeUlnZVIrVU1VYnV3LzlWVHF3WVRXbHZPQmNRenk2TDQ4?=
+ =?utf-8?B?SXFyMTN6cks1THMwbmVUYVNaVG85VVBldnNXNS9YcmtGeStKNjk1SzVZZ0p6?=
+ =?utf-8?B?ZFpJTjREYjg4U25XZXVCVGxCSjhuYUdjYXdvd2paaFNyd2hZYXIybVZEdXQw?=
+ =?utf-8?B?aDJ1SkJFc0NLdzRLeW10Yys5OUpOWVVERnNoRWpCZGhRVW5hTlhscGJSditF?=
+ =?utf-8?B?YmxlT3pTOEVSbjFWckRSdFdMSWtHTk91aUFRbkI3UmJqZjVzZE5OS29oVTIz?=
+ =?utf-8?B?bXIxYkNnYkM0ajVZWDVEb1RianBCUXArTVJMKzFja3R4QlNrK0RrazBTdGVa?=
+ =?utf-8?B?YytWZmhPcWZST1hqTlFNbzdpTGVuVDBEbVlTd2h5ZWs1ZjVhalVveXdVYWlY?=
+ =?utf-8?B?ZGZCQXFZaUpnYzMxMkpKTzlVa3FWM3ZPZzc4SmV0NFM4eU82L0l2aXowN2dx?=
+ =?utf-8?B?TDk3bnBwNm5SeU5rM1VCMGtsb2dTRTF5ZlFmZ0ovaVlzVVNramJYVU5oV1Q2?=
+ =?utf-8?B?MHBZYlhzZjM4RVMxUmxOWTV1L1o2anpaZXlIVEJPQ1pNdHZkVkE0bjF3Mk5x?=
+ =?utf-8?B?Rnp2b01nN1lRbHI5RmNHQkF4WHRmcG1mUDZ3ZjJpSVYydTBLSUNobHV3dUFo?=
+ =?utf-8?B?RUZKcTFUSnZWU0hXbjMwY2lwTmlNVkU4eXhXTUVidkowTDhoUHZBaER4NnVZ?=
+ =?utf-8?B?eGVCSTExV29kTE16UmNSRFM5VEpuMjB4MzhTYlkyQ3ZyZTZCbnFQaGowUUNM?=
+ =?utf-8?B?WnY5NzQ2dlFMc1hRK0x5YmVXS0hCM0JQRm5PSGc2NFRMdDNqamFXNStmRG00?=
+ =?utf-8?B?OU0wSjVrQ1p5emczVzBiUk5qM0xhK0ZnNGwreXovUCtrTFhsMzlSelZUMDNC?=
+ =?utf-8?B?Q3A4SkRNOEY4Undaa2Nsd3VZeUk4NS9WRWNUVVlud2dpSnFmZUE2bE8rYmlu?=
+ =?utf-8?B?N2R0MC90M1pGeWFxdkZ4VlJxVzU1V2pUMlBjQjlRMEtmaENxZmN2Uk9CRzVj?=
+ =?utf-8?B?T3czZHo3d1A1YWFPNlNtSTl2RGNHUlFKYnRub3JEVFNvM3dyaThLaGx5cm0x?=
+ =?utf-8?B?VHJ5VXlsWjVWb1BUOUd2aTRRUitUd0ZnajZza1NVSDRDcEFOQVBZZVBDYUF3?=
+ =?utf-8?B?Zk45VWphdlg0NTUwQmYwMUZNQ0JCUzBhNDI5Um95ZzQrZ3JidXlSRkQ4UTlW?=
+ =?utf-8?B?dXZvSUR6OEh2SGtqK3Ewa3VBMXFtblBIeXlOcmdBcmFsejFwOWppdTZyUHFC?=
+ =?utf-8?B?dDQzeEVHVHFJeEc5ak1KOHoyVUIyallJZTBsWUV5a0s2SEFad0daQUpiRlgz?=
+ =?utf-8?B?bnVwUUdMUWI0ODk4TWRrbDBiV05oOGxFbUFEaGttWlFIV1N6ZDJxNGttN3cx?=
+ =?utf-8?B?WHJ6eHd0bmlaZjZySU1PK28rSDI3dSs4UEQzWjFlS3pHeURjb0prbS9zVDNy?=
+ =?utf-8?B?NVR5QXN1MUpiVEJGVmwrNmVuWCt0aDlpbmp4VFI3eTFRVUxvdFRzU0N1clQ1?=
+ =?utf-8?B?THBra2lsUENGb25LV0c3T2p6M0E4Q3JCbVNNUllDNnRXZ29sWlM1em14bWF5?=
+ =?utf-8?B?b0tzZ2dEeTBKY3ZBQU5FejkrV0RSUWMzejZJMS9OQWNtbXp2OGlpVTZmWmNB?=
+ =?utf-8?B?L2loZjNBYXkyVXc0S2ZpWVlqb2dHSmJKMzRRVjhUYVdSUi94SjM4R240VWZZ?=
+ =?utf-8?B?ZmcvZlNuQnRIQUhXUm5vUlNxeXQxUjZqODRhZG1rZVpCMWF2WkNmMjVKZ1ZU?=
+ =?utf-8?B?RWRSdE95U1FERnBuZXJDalNEekdyZGR2QnNKUGNlS1ZzZ1Bubm9tWVA2QTgw?=
+ =?utf-8?B?eHg0YmE4UUsyMnk4ODQ3T0xwbXVkUGZDaXBJRkhjTURUSzNFS1cwOW16Wlpj?=
+ =?utf-8?B?SnQ0b2N2VnpHL2NTOEhwM0ZVTC9WbHlsV2R3UlV5R00vVUdCV2VZUGw3cVhs?=
+ =?utf-8?B?QTNwY1ozazNMb3Y0dE0wSk9ob3JMaXhvSXpMV2kvdGNLbXFrVTFRanFHblZ3?=
+ =?utf-8?B?WVlRRy8zRHRxYnA5K1h6dzlUWWZGa0VqWkNHV3AvbzVMM0hYUHFkU3VkWkpB?=
+ =?utf-8?B?YXJvRTZpeVIyR3FzejAzUWJRb2lrdk52V0s3b2JTcXluSXdTSjFjVVVuQ2ND?=
+ =?utf-8?B?VlNTNXlaUzY2aS9DU3d1QksyLzMwaTlrUWFwcWNrRStveTFKU1dERlJiaFE5?=
+ =?utf-8?B?Qi9yd2I3dkdTNUxXa2xnUUNsQW5YN01tb1ROenRYQU11bGJXWGRBSkp3V1JJ?=
+ =?utf-8?Q?C8gtQHBl8Reribn4kfLQGhRbnfq46tiDIx9G3HciLPl9S?=
+X-MS-Exchange-AntiSpam-MessageData-1: qN124gVNLD4kHw==
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2026 07:08:28.1418
+X-MS-Exchange-CrossTenant-Network-Message-Id: 272d0ec2-99bf-43a5-7995-08dea5cf3ac1
+X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2026 09:10:59.6881
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7523ed52-9f93-4bbb-475b-08dea5be1d14
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000ECD6.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4206
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: K7UpOx/wIqx6mKYawnbQWY63lfvxqcyX4r9gE7E2vKXR8KWsG+u7myIu2JlwKTPdZWr2qa2pVC8EpAQx7nC7iw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8646
 
-Add per-stream fade controls for the Tegra mixer to allow
-independently configuring target gain and fade duration for each of
-the 10 input streams (RX1 through RX10).
+Hi Vinod,
 
-The following controls are added per stream:
-  "RXn Fade Duration" - fade duration in samples (N3 parameter)
-  "RXn Fade Gain"     - target gain level for fade
+On 17/04/2026 09:23, Jon Hunter wrote:
+> Hi Vinod,
+> 
+> On 24/03/2026 09:11, Jon Hunter wrote:
+>>
+>> On 04/03/2026 10:26, Wei-Cheng Chen wrote:
+>>> From: Wayne Chang <waynec@nvidia.com>
+>>>
+>>> The existing code reads a single hs_term_range_adj value from bit field
+>>> [10:7] of FUSE_SKU_CALIB_0 and applies it to all USB2 pads uniformly.
+>>> However, on SoCs that support per-pad termination, each pad has its own
+>>> hs_term_range_adj field: pad 0 in FUSE_SKU_CALIB_0[10:7], and pads 1-3
+>>> in FUSE_USB_CALIB_EXT_0 at bit offsets [8:5], [12:9], and [16:13]
+>>> respectively.
+>>>
+>>> Fix the calibration by reading per-pad values from the appropriate fuse
+>>> registers. For SoCs that do not support per-pad termination, replicate
+>>> pad 0's value to all pads to maintain existing behavior.
+>>>
+>>> Add a has_per_pad_term flag to the SoC data to indicate whether per-pad
+>>> termination values are available in FUSE_USB_CALIB_EXT_0.
+>>>
+>>> Fixes: 1ef535c6ba8e ("phy: tegra: xusb: Add Tegra194 support")
+>>> Cc: stable@vger.kernel.org
+>>> Signed-off-by: Wayne Chang <waynec@nvidia.com>
+>>> Signed-off-by: Wei-Cheng Chen <weichengc@nvidia.com>
+>>> ---
+>>>   drivers/phy/tegra/xusb-tegra186.c | 33 ++++++++++++++++++++++++-------
+>>>   drivers/phy/tegra/xusb.h          |  1 +
+>>>   2 files changed, 27 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/ 
+>>> xusb-tegra186.c
+>>> index bec9616c4a2..4452e73fb82 100644
+>>> --- a/drivers/phy/tegra/xusb-tegra186.c
+>>> +++ b/drivers/phy/tegra/xusb-tegra186.c
+>>> @@ -20,8 +20,8 @@
+>>>   /* FUSE USB_CALIB registers */
+>>>   #define HS_CURR_LEVEL_PADX_SHIFT(x)    ((x) ? (11 + (x - 1) * 6) : 0)
+>>>   #define HS_CURR_LEVEL_PAD_MASK        0x3f
+>>> -#define HS_TERM_RANGE_ADJ_SHIFT        7
+>>> -#define HS_TERM_RANGE_ADJ_MASK        0xf
+>>> +#define HS_TERM_RANGE_ADJ_PADX_SHIFT(x)    ((x) ? (5 + (x - 1) * 
+>>> 4) : 7)
+>>> +#define HS_TERM_RANGE_ADJ_PAD_MASK    0xf
+>>>   #define HS_SQUELCH_SHIFT        29
+>>>   #define HS_SQUELCH_MASK            0x7
+>>> @@ -253,7 +253,7 @@
+>>>   struct tegra_xusb_fuse_calibration {
+>>>       u32 *hs_curr_level;
+>>>       u32 hs_squelch;
+>>> -    u32 hs_term_range_adj;
+>>> +    u32 *hs_term_range_adj;
+>>>       u32 rpd_ctrl;
+>>>   };
+>>> @@ -930,7 +930,7 @@ static int tegra186_utmi_phy_power_on(struct phy 
+>>> *phy)
+>>>       value = padctl_readl(padctl, 
+>>> XUSB_PADCTL_USB2_OTG_PADX_CTL1(index));
+>>>       value &= ~TERM_RANGE_ADJ(~0);
+>>> -    value |= TERM_RANGE_ADJ(priv->calib.hs_term_range_adj);
+>>> +    value |= TERM_RANGE_ADJ(priv->calib.hs_term_range_adj[index]);
+>>>       value &= ~RPD_CTRL(~0);
+>>>       value |= RPD_CTRL(priv->calib.rpd_ctrl);
+>>>       padctl_writel(padctl, value, 
+>>> XUSB_PADCTL_USB2_OTG_PADX_CTL1(index));
+>>> @@ -1464,17 +1464,23 @@ static const char * const 
+>>> tegra186_usb3_functions[] = {
+>>>   static int
+>>>   tegra186_xusb_read_fuse_calibration(struct tegra186_xusb_padctl 
+>>> *padctl)
+>>>   {
+>>> +    const struct tegra_xusb_padctl_soc *soc = padctl->base.soc;
+>>>       struct device *dev = padctl->base.dev;
+>>>       unsigned int i, count;
+>>>       u32 value, *level;
+>>> +    u32 *hs_term_range_adj;
+>>>       int err;
+>>> -    count = padctl->base.soc->ports.usb2.count;
+>>> +    count = soc->ports.usb2.count;
+>>>       level = devm_kcalloc(dev, count, sizeof(u32), GFP_KERNEL);
+>>>       if (!level)
+>>>           return -ENOMEM;
+>>> +    hs_term_range_adj = devm_kcalloc(dev, count, sizeof(u32), 
+>>> GFP_KERNEL);
+>>> +    if (!hs_term_range_adj)
+>>> +        return -ENOMEM;
+>>> +
+>>>       err = tegra_fuse_readl(TEGRA_FUSE_SKU_CALIB_0, &value);
+>>>       if (err)
+>>>           return dev_err_probe(dev, err,
+>>> @@ -1490,8 +1496,8 @@ tegra186_xusb_read_fuse_calibration(struct 
+>>> tegra186_xusb_padctl *padctl)
+>>>       padctl->calib.hs_squelch = (value >> HS_SQUELCH_SHIFT) &
+>>>                       HS_SQUELCH_MASK;
+>>> -    padctl->calib.hs_term_range_adj = (value >> 
+>>> HS_TERM_RANGE_ADJ_SHIFT) &
+>>> -                        HS_TERM_RANGE_ADJ_MASK;
+>>> +    hs_term_range_adj[0] = (value >> HS_TERM_RANGE_ADJ_PADX_SHIFT(0)) &
+>>> +                HS_TERM_RANGE_ADJ_PAD_MASK;
+>>>       err = tegra_fuse_readl(TEGRA_FUSE_USB_CALIB_EXT_0, &value);
+>>>       if (err) {
+>>> @@ -1503,6 +1509,17 @@ tegra186_xusb_read_fuse_calibration(struct 
+>>> tegra186_xusb_padctl *padctl)
+>>>       padctl->calib.rpd_ctrl = (value >> RPD_CTRL_SHIFT) & 
+>>> RPD_CTRL_MASK;
+>>> +    for (i = 1; i < count; i++) {
+>>> +        if (soc->has_per_pad_term)
+>>> +            hs_term_range_adj[i] =
+>>> +                (value >> HS_TERM_RANGE_ADJ_PADX_SHIFT(i)) &
+>>> +                HS_TERM_RANGE_ADJ_PAD_MASK;
+>>> +        else
+>>> +            hs_term_range_adj[i] = hs_term_range_adj[0];
+>>> +    }
+>>> +
+>>> +    padctl->calib.hs_term_range_adj = hs_term_range_adj;
+>>> +
+>>>       return 0;
+>>>   }
+>>> @@ -1708,6 +1725,7 @@ const struct tegra_xusb_padctl_soc 
+>>> tegra194_xusb_padctl_soc = {
+>>>       .num_supplies = ARRAY_SIZE(tegra194_xusb_padctl_supply_names),
+>>>       .supports_gen2 = true,
+>>>       .poll_trk_completed = true,
+>>> +    .has_per_pad_term = true,
+>>>   };
+>>>   EXPORT_SYMBOL_GPL(tegra194_xusb_padctl_soc);
+>>> @@ -1732,6 +1750,7 @@ const struct tegra_xusb_padctl_soc 
+>>> tegra234_xusb_padctl_soc = {
+>>>       .trk_hw_mode = false,
+>>>       .trk_update_on_idle = true,
+>>>       .supports_lp_cfg_en = true,
+>>> +    .has_per_pad_term = true,
+>>>   };
+>>>   EXPORT_SYMBOL_GPL(tegra234_xusb_padctl_soc);
+>>>   #endif
+>>> diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
+>>> index d2b5f956513..810b410672f 100644
+>>> --- a/drivers/phy/tegra/xusb.h
+>>> +++ b/drivers/phy/tegra/xusb.h
+>>> @@ -436,6 +436,7 @@ struct tegra_xusb_padctl_soc {
+>>>       bool trk_hw_mode;
+>>>       bool trk_update_on_idle;
+>>>       bool supports_lp_cfg_en;
+>>> +    bool has_per_pad_term;
+>>>   };
+>>>   struct tegra_xusb_padctl {
+>>
+>> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+>> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> 
+> I guess this was missed for Linux v7.1. If you don't have any concerns 
+> can you pick this up for v7.2 once v7.1-rc1 is out?
 
-A strobe control commits all pending fade configurations:
-  "Fade Enable"       - applies staged gain/duration for all pending
-                        streams and starts the fade
+OK to pick this up now? It would be great to get this into -next.
 
-A read-only status control reports per-stream fade state:
-  "Fade Status"       - per-stream state for all 10 RX inputs
-                        -1 = inactive, 0 = active, 1 = complete
+Thanks!
+Jon
 
-Usage example (fade 2 streams simultaneously):
-  amixer -c <card> cset name="RX1 Fade Duration" 1024
-  amixer -c <card> cset name="RX1 Fade Gain" 12000
-  amixer -c <card> cset name="RX2 Fade Duration" 2048
-  amixer -c <card> cset name="RX2 Fade Gain" 15000
-  amixer -c <card> cset name="Fade Enable" 1
-
-Signed-off-by: Sheetal <sheetal@nvidia.com>
----
-Changes in v2:
-- Replaced packed triplet control with per-stream "RXn Fade Duration"
-  and "RXn Fade Gain" controls, plus a "Fade Enable" strobe to commit
-  all pending fades atomically (Mark)
-- Added duration == 0 validation to prevent divide-by-zero (Mark)
-- Fixed configure_gain using stale values by separating staging (put)
-  from apply (strobe), so values are stored before hardware write (Mark)
-- Fixed BIT(31) * BIT(6) integer overflow on 32-bit systems by using
-  BIT_ULL
-- Added pm_runtime_resume_and_get() error checking in put_fade_enable
-  and get_fade_status
-- Split fade_enable into two passes: configure gain first, then enable
-  sample count for all streams to start fading near-simultaneously
-- Added TEGRA210_MIXER_GAIN_MAX and TEGRA210_MIXER_FADE_DURATION_MAX
-  macros to replace magic numbers in control definitions
-
- sound/soc/tegra/tegra210_mixer.c | 236 ++++++++++++++++++++++++++++++-
- sound/soc/tegra/tegra210_mixer.h |  20 ++-
- 2 files changed, 249 insertions(+), 7 deletions(-)
-
-diff --git a/sound/soc/tegra/tegra210_mixer.c b/sound/soc/tegra/tegra210_mixer.c
-index ce44117a0b9c..f461303fba25 100644
---- a/sound/soc/tegra/tegra210_mixer.c
-+++ b/sound/soc/tegra/tegra210_mixer.c
-@@ -151,10 +151,17 @@ static int tegra210_mixer_configure_gain(struct snd_soc_component *cmpnt,
- 	for (i = 0; i < NUM_DURATION_PARMS; i++) {
- 		int val;
- 
--		if (instant_gain)
-+		if (instant_gain) {
- 			val = 1;
--		else
--			val = gain_params.duration[i];
-+		} else {
-+			if (i == DURATION_N3_ID)
-+				val = mixer->duration[id];
-+			else if (i == DURATION_INV_N3_ID)
-+				val = (u32)(BIT_ULL(31 + TEGRA210_MIXER_PRESCALAR) /
-+					    mixer->duration[id]);
-+			else
-+				val = gain_params.duration[i];
-+		}
- 
- 		err = tegra210_mixer_write_ram(mixer,
- 					       REG_DURATION_PARAM(reg, i),
-@@ -173,6 +180,175 @@ static int tegra210_mixer_configure_gain(struct snd_soc_component *cmpnt,
- 	return err;
- }
- 
-+static int tegra210_mixer_get_fade_duration(struct snd_kcontrol *kcontrol,
-+					    struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct soc_mixer_control *mc =
-+		(struct soc_mixer_control *)kcontrol->private_value;
-+	struct snd_soc_component *cmpnt = snd_kcontrol_chip(kcontrol);
-+	struct tegra210_mixer *mixer = snd_soc_component_get_drvdata(cmpnt);
-+
-+	ucontrol->value.integer.value[0] = mixer->duration[mc->reg];
-+
-+	return 0;
-+}
-+
-+static int tegra210_mixer_put_fade_duration(struct snd_kcontrol *kcontrol,
-+					    struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct soc_mixer_control *mc =
-+		(struct soc_mixer_control *)kcontrol->private_value;
-+	struct snd_soc_component *cmpnt = snd_kcontrol_chip(kcontrol);
-+	struct tegra210_mixer *mixer = snd_soc_component_get_drvdata(cmpnt);
-+	unsigned int id = mc->reg;
-+	u32 duration = ucontrol->value.integer.value[0];
-+
-+	if (duration == 0)
-+		return -EINVAL;
-+
-+	if (mixer->duration[id] == duration)
-+		return 0;
-+
-+	mixer->duration[id] = duration;
-+	mixer->fade_pending[id] = true;
-+
-+	return 1;
-+}
-+
-+static int tegra210_mixer_get_fade_gain(struct snd_kcontrol *kcontrol,
-+					struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct soc_mixer_control *mc =
-+		(struct soc_mixer_control *)kcontrol->private_value;
-+	struct snd_soc_component *cmpnt = snd_kcontrol_chip(kcontrol);
-+	struct tegra210_mixer *mixer = snd_soc_component_get_drvdata(cmpnt);
-+
-+	ucontrol->value.integer.value[0] = mixer->gain_value[mc->reg];
-+
-+	return 0;
-+}
-+
-+static int tegra210_mixer_put_fade_gain(struct snd_kcontrol *kcontrol,
-+					struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct soc_mixer_control *mc =
-+		(struct soc_mixer_control *)kcontrol->private_value;
-+	struct snd_soc_component *cmpnt = snd_kcontrol_chip(kcontrol);
-+	struct tegra210_mixer *mixer = snd_soc_component_get_drvdata(cmpnt);
-+	unsigned int id = mc->reg;
-+
-+	if (mixer->gain_value[id] == ucontrol->value.integer.value[0])
-+		return 0;
-+
-+	mixer->gain_value[id] = ucontrol->value.integer.value[0];
-+	mixer->fade_pending[id] = true;
-+
-+	return 1;
-+}
-+
-+static int tegra210_mixer_get_fade_enable(struct snd_kcontrol *kcontrol,
-+					  struct snd_ctl_elem_value *ucontrol)
-+{
-+	ucontrol->value.integer.value[0] = 0;
-+
-+	return 0;
-+}
-+
-+static int tegra210_mixer_put_fade_enable(struct snd_kcontrol *kcontrol,
-+					  struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *cmpnt = snd_kcontrol_chip(kcontrol);
-+	struct tegra210_mixer *mixer = snd_soc_component_get_drvdata(cmpnt);
-+	int id, err, changed = 0;
-+
-+	/* Configure gain for all pending streams */
-+	for (id = 0; id < TEGRA210_MIXER_RX_MAX; id++) {
-+		if (!mixer->fade_pending[id])
-+			continue;
-+
-+		err = tegra210_mixer_configure_gain(cmpnt, id, false);
-+		if (err) {
-+			dev_err(cmpnt->dev,
-+				"Failed to configure fade for RX%d\n", id + 1);
-+			return err;
-+		}
-+
-+		changed = 1;
-+	}
-+
-+	if (!changed)
-+		return 0;
-+
-+	/* Enable sample count for all pending streams */
-+	err = pm_runtime_resume_and_get(cmpnt->dev);
-+	if (err < 0)
-+		return err;
-+
-+	for (id = 0; id < TEGRA210_MIXER_RX_MAX; id++) {
-+		if (!mixer->fade_pending[id])
-+			continue;
-+
-+		if (!mixer->in_fade[id]) {
-+			err = regmap_update_bits(mixer->regmap,
-+						 MIXER_REG(TEGRA210_MIXER_RX1_CTRL, id),
-+						 TEGRA210_MIXER_SAMPLE_COUNT_ENABLE,
-+						 TEGRA210_MIXER_SAMPLE_COUNT_ENABLE);
-+			if (err) {
-+				dev_err(cmpnt->dev,
-+					"Failed to enable sample count for RX%d\n",
-+					id + 1);
-+				pm_runtime_put(cmpnt->dev);
-+				return err;
-+			}
-+			mixer->in_fade[id] = true;
-+		}
-+
-+		mixer->fade_pending[id] = false;
-+	}
-+
-+	pm_runtime_put(cmpnt->dev);
-+
-+	return 1;
-+}
-+
-+static int tegra210_mixer_get_fade_status(struct snd_kcontrol *kcontrol,
-+					  struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *cmpnt = snd_kcontrol_chip(kcontrol);
-+	struct tegra210_mixer *mixer = snd_soc_component_get_drvdata(cmpnt);
-+	u32 count;
-+	int id, err;
-+
-+	err = pm_runtime_resume_and_get(cmpnt->dev);
-+	if (err < 0)
-+		return err;
-+
-+	for (id = 0; id < TEGRA210_MIXER_RX_MAX; id++) {
-+		if (!mixer->in_fade[id]) {
-+			ucontrol->value.integer.value[id] = TEGRA210_MIXER_FADE_IDLE;
-+			continue;
-+		}
-+
-+		regmap_read(mixer->regmap,
-+			    MIXER_REG(TEGRA210_MIXER_RX1_SAMPLE_COUNT, id),
-+			    &count);
-+
-+		if (count >= mixer->duration[id]) {
-+			ucontrol->value.integer.value[id] = TEGRA210_MIXER_FADE_COMPLETE;
-+			regmap_update_bits(mixer->regmap,
-+					   MIXER_REG(TEGRA210_MIXER_RX1_CTRL, id),
-+					   TEGRA210_MIXER_SAMPLE_COUNT_ENABLE, 0);
-+			mixer->in_fade[id] = false;
-+		} else {
-+			ucontrol->value.integer.value[id] = TEGRA210_MIXER_FADE_ACTIVE;
-+		}
-+	}
-+
-+	pm_runtime_put(cmpnt->dev);
-+
-+	return 0;
-+}
-+
- static int tegra210_mixer_get_gain(struct snd_kcontrol *kcontrol,
- 				   struct snd_ctl_elem_value *ucontrol)
- {
-@@ -396,14 +572,37 @@ ADDER_CTRL_DECL(adder3, TEGRA210_MIXER_TX3_ADDER_CONFIG);
- ADDER_CTRL_DECL(adder4, TEGRA210_MIXER_TX4_ADDER_CONFIG);
- ADDER_CTRL_DECL(adder5, TEGRA210_MIXER_TX5_ADDER_CONFIG);
- 
-+static int tegra210_mixer_fade_status_info(struct snd_kcontrol *kcontrol,
-+					   struct snd_ctl_elem_info *uinfo)
-+{
-+	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
-+	uinfo->count = TEGRA210_MIXER_RX_MAX;
-+	uinfo->value.integer.min = TEGRA210_MIXER_FADE_IDLE;
-+	uinfo->value.integer.max = TEGRA210_MIXER_FADE_COMPLETE;
-+
-+	return 0;
-+}
-+
-+#define FADE_CTRL(id)							\
-+	SOC_SINGLE_EXT("RX" #id " Fade Duration", (id) - 1, 0,		\
-+		       TEGRA210_MIXER_FADE_DURATION_MAX, 0,		\
-+		       tegra210_mixer_get_fade_duration,			\
-+		       tegra210_mixer_put_fade_duration),		\
-+	SOC_SINGLE_EXT("RX" #id " Fade Gain", (id) - 1, 0,		\
-+		       TEGRA210_MIXER_GAIN_MAX, 0,			\
-+		       tegra210_mixer_get_fade_gain,			\
-+		       tegra210_mixer_put_fade_gain),
-+
- #define GAIN_CTRL(id)	\
- 	SOC_SINGLE_EXT("RX" #id " Gain Volume",			\
- 		       MIXER_GAIN_CFG_RAM_ADDR((id) - 1), 0,	\
--		       0x20000, 0, tegra210_mixer_get_gain,	\
-+		       TEGRA210_MIXER_GAIN_MAX, 0,		\
-+		       tegra210_mixer_get_gain,			\
- 		       tegra210_mixer_put_gain),		\
- 	SOC_SINGLE_EXT("RX" #id " Instant Gain Volume",		\
- 		       MIXER_GAIN_CFG_RAM_ADDR((id) - 1), 0,	\
--		       0x20000, 0, tegra210_mixer_get_gain,	\
-+		       TEGRA210_MIXER_GAIN_MAX, 0,		\
-+		       tegra210_mixer_get_gain,			\
- 		       tegra210_mixer_put_instant_gain),
- 
- /* Volume controls for all MIXER inputs */
-@@ -418,6 +617,28 @@ static const struct snd_kcontrol_new tegra210_mixer_gain_ctls[] = {
- 	GAIN_CTRL(8)
- 	GAIN_CTRL(9)
- 	GAIN_CTRL(10)
-+
-+	FADE_CTRL(1)
-+	FADE_CTRL(2)
-+	FADE_CTRL(3)
-+	FADE_CTRL(4)
-+	FADE_CTRL(5)
-+	FADE_CTRL(6)
-+	FADE_CTRL(7)
-+	FADE_CTRL(8)
-+	FADE_CTRL(9)
-+	FADE_CTRL(10)
-+	SOC_SINGLE_EXT("Fade Enable", SND_SOC_NOPM, 0, 1, 0,
-+		       tegra210_mixer_get_fade_enable,
-+		       tegra210_mixer_put_fade_enable),
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Fade Status",
-+		.info = tegra210_mixer_fade_status_info,
-+		.access = SNDRV_CTL_ELEM_ACCESS_READ |
-+			  SNDRV_CTL_ELEM_ACCESS_VOLATILE,
-+		.get = tegra210_mixer_get_fade_status,
-+	},
- };
- 
- static const struct snd_soc_dapm_widget tegra210_mixer_widgets[] = {
-@@ -579,6 +800,7 @@ static bool tegra210_mixer_volatile_reg(struct device *dev,
- 	case TEGRA210_MIXER_GAIN_CFG_RAM_DATA:
- 	case TEGRA210_MIXER_PEAKM_RAM_CTRL:
- 	case TEGRA210_MIXER_PEAKM_RAM_DATA:
-+	case TEGRA210_MIXER_RX1_SAMPLE_COUNT:
- 		return true;
- 	default:
- 		return false;
-@@ -632,8 +854,10 @@ static int tegra210_mixer_platform_probe(struct platform_device *pdev)
- 	dev_set_drvdata(dev, mixer);
- 
- 	/* Use default gain value for all MIXER inputs */
--	for (i = 0; i < TEGRA210_MIXER_RX_MAX; i++)
-+	for (i = 0; i < TEGRA210_MIXER_RX_MAX; i++) {
- 		mixer->gain_value[i] = gain_params.gain_value;
-+		mixer->duration[i] = gain_params.duration[DURATION_N3_ID];
-+	}
- 
- 	regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(regs))
-diff --git a/sound/soc/tegra/tegra210_mixer.h b/sound/soc/tegra/tegra210_mixer.h
-index a330530fbc61..b7c896dec2e8 100644
---- a/sound/soc/tegra/tegra210_mixer.h
-+++ b/sound/soc/tegra/tegra210_mixer.h
-@@ -9,6 +9,7 @@
- #ifndef __TEGRA210_MIXER_H__
- #define __TEGRA210_MIXER_H__
- 
-+
- /* XBAR_RX related MIXER offsets */
- #define TEGRA210_MIXER_RX1_SOFT_RESET	0x04
- #define TEGRA210_MIXER_RX1_STATUS	0x10
-@@ -79,12 +80,26 @@
- #define TEGRA210_MIXER_RX_LIMIT		(TEGRA210_MIXER_RX_MAX * TEGRA210_MIXER_REG_STRIDE)
- #define TEGRA210_MIXER_TX_MAX		5
- #define TEGRA210_MIXER_TX_LIMIT		(TEGRA210_MIXER_RX_LIMIT + (TEGRA210_MIXER_TX_MAX * TEGRA210_MIXER_REG_STRIDE))
-+#define TEGRA210_MIXER_SAMPLE_COUNT_SHIFT	24
-+#define TEGRA210_MIXER_SAMPLE_COUNT_ENABLE	BIT(TEGRA210_MIXER_SAMPLE_COUNT_SHIFT)
- 
- #define REG_CFG_DONE_TRIGGER	0xf
- #define VAL_CFG_DONE_TRIGGER	0x1
- 
- #define NUM_GAIN_POLY_COEFFS 9
--#define NUM_DURATION_PARMS 4
-+#define TEGRA210_MIXER_GAIN_MAX			0x20000
-+#define TEGRA210_MIXER_FADE_DURATION_MAX	0x7fffffff
-+
-+#define TEGRA210_MIXER_PRESCALAR	    6
-+#define TEGRA210_MIXER_FADE_IDLE	    (-1)
-+#define TEGRA210_MIXER_FADE_ACTIVE	  0
-+#define TEGRA210_MIXER_FADE_COMPLETE	1
-+
-+enum {
-+	DURATION_N3_ID = 2,
-+	DURATION_INV_N3_ID,
-+	NUM_DURATION_PARMS,
-+};
- 
- struct tegra210_mixer_gain_params {
- 	int poly_coeff[NUM_GAIN_POLY_COEFFS];
-@@ -94,6 +109,9 @@ struct tegra210_mixer_gain_params {
- 
- struct tegra210_mixer {
- 	int gain_value[TEGRA210_MIXER_RX_MAX];
-+	u32 duration[TEGRA210_MIXER_RX_MAX];
-+	bool in_fade[TEGRA210_MIXER_RX_MAX];
-+	bool fade_pending[TEGRA210_MIXER_RX_MAX];
- 	struct regmap *regmap;
- };
- 
 -- 
-2.17.1
+nvpublic
 
