@@ -1,64 +1,64 @@
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012049.outbound.protection.outlook.com [52.101.48.49])
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010013.outbound.protection.outlook.com [52.101.85.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F3A3C13E3;
-	Wed, 29 Apr 2026 09:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8F03BF69A;
+	Wed, 29 Apr 2026 09:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.13
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777454979; cv=fail; b=mMgG1MO7dn6pYCUOCJFjFKQnCxveRbdvFFhgobkvp0OlBOcCOPr2PYywQhcKQQvVpW0nPP4UBXfzRjluKg592YKlHJNUOzsJAG2l8c6nqfaDNUCCkwv6cwaksjL5Lh2049CdN8ltJ066hSDAk4BaTSJfe4KXPaF+zRlYVggelMY=
+	t=1777455554; cv=fail; b=YuHm4eKXVLdJRAJlPwqjdL/0D6EgosxkyBsYfDAlGdXrE1SDrT9iwD9C7+b/L1MaYZ8lMLJSVWE92pvYild9Uc93b4aJ3hJzk4T98RHs3wthhfO/bnF4EnpPVBoKqF4RW84XEF56iuN/L2dztspex6CjaZu7fccfrMM/NrSr44A=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777454979; c=relaxed/simple;
-	bh=3NqQbgXYvg+/TgaqK4nvH1xt9ZYxV2DC+s9QpXkHuhk=;
+	s=arc-20240116; t=1777455554; c=relaxed/simple;
+	bh=vWE8GZC9TgIa1b1BY5BVXO2Sn6NCR0Sm3ckGPDHNATU=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=d3NW49UTXD9yTUaKdYEWVnQvahKmwZ+E8SdF4i+KmyhlnVfFsb6ZW/bWNN1QbYVbz14wwwkZt6bmQAwSR649b78FaSTXVFuZ3Hmos2iuUZWJFgUARQGbucy/JAoFH8Q1vcLa9jMv/EjUhCic1H3aiX7oMxO2kBY1p4kTTZxubh8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GBONFiVQ; arc=fail smtp.client-ip=52.101.48.49
+	 Content-Type:MIME-Version; b=VwS6SMwj9VQbik26L3CO2hNJQbrYzaauJM7y45e3rD1i7Zzqj5qiFEgksDZSkp+4uTQQSPfvv4GFBkxhnJZXXmh0fv6K28ZMCHhEISrvI6aAF+wdPeYLlQKzziUky3RCD6qrNaEruYmxczy59QIb7ys6B1x7XlsHDaP64gPcN5s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BcZw4NNH; arc=fail smtp.client-ip=52.101.85.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GBONFiVQ"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BcZw4NNH"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IVaH0eM/ZEXOfsI+bl6uumhaI7B8ITsrn4gj1SfDj3MOWgenP8GOOrEQIwYOCuOi0/AMkiQXl/6JExJpaedgwpQDyyDU52fyy1HYgYlCDj+QII97mkPDGHLl6OaUVNpw8PVFn390nh0HiSTghVRYgZIWNUzUyTcC4zdTozhOgM2Fxepmgd6QwbDj1y4V5Iu02GGFAyYbB1VlF2JhsRFsTY79i/4R4mnrA0Ijiq+hJbfGICLIc1n66Q8ycNgaMh7Sly3FayK1sXppxq10A27SRCw/tACXu38Xf58MSuGaHLqwzRVIVtqB598ZQY9I5FDwTxnWqErOjfvzqHFORba2Dg==
+ b=EDHbw0cakD00sAPSoNV8De2+f1IdpuCzaon9cSRFZVhP2DcaOSHifnn5sWYAt85Om37zCzWPA6RaqJO/t5ybI8fYVImo08F5Ju1XVrq/zuKKpOWwLoPjVisdGpdouGZwkVDnoNwMn96ZxgjnwlgLbLx92t1+neM0aAz9F4eQsMxz3R6xMxN7LSH8UsC2255kkPKAj3mywy/S8gLc+ahQNCH5zJcMdXWAVKLjaYCsAB7ffxM4h7HSC0QBJP9WJecwKhG8RWV95GfrxuUl1EmSJHoOM5gYtE/hX3FF3Y7j+oPaIKGuP+BfZ0OTTVAPATii3Tify1yKYyJuO/AG67+ldA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1UvwYSTHkOALZQkputzdiasBggyWROw0dkQ01FmHmwY=;
- b=yVPAzaa1tBgisVBlah2D19vsA1MRDAFrGLYHVRra3FxgYrc6BjbJlJnk/oOg2tsiuL0lJ1YUyLW4q5TXoHNVAOR2YsEFk7ZIJg7NejB4HKvKnsBYAqEenI2Tl0oC+HPkHXgsY/lpkQzDHeiabHJomPe7dS51guixgtrwTirhqJbK+/7SvctHPLswD1TFEnipiTr/wJVlSi9Qvuzo/6Zej0a/XVLX2v8iuDQ7YyP7MzTblXaIS3ejZf82OJfRuZY7YSj6pNpJ+S0oWt7w8MdPm+Xx0GEz6aaJrPGixgO5O3+dvXQz0/nFi2GwDzSK5u9k9TOu7ZwPbbgnLyjpHVgQwg==
+ bh=KMxe/N+wBBXnH1iC8hK/AJ3v0ZpfpuIJqUWcT4jo3oM=;
+ b=SmimPr8JI60jp6e8aqApcC/eQ8SVvFVmetRWOf4aNq0/kr7Thx+6wJvFFN9h2IQdV3Ix8KDBeVrhMsLBp3kHOOf+FrGKcL+kZS1iZ/FXTqMJdKZM8BIfsOsAOqdN+CcFHyPsAWfKBIbBvXRH0lE0lGNTAlGExx1qAQsbNWgHnGdLSu1uVWHnZzD4w2GX9X29uqAam6p+gBL307HiLN9LI7UOphOTG0isFatbP0kbWIJFSq1E+njoW5UzTYLZdExpE/jSlLI3YVn1tD706W5IohmFBB6XRPLsySz+r/4BQmVsEKm3agamciCshuZOP68AFHqA8L/E3O6wQxeFpKgQcQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1UvwYSTHkOALZQkputzdiasBggyWROw0dkQ01FmHmwY=;
- b=GBONFiVQNOCKpFAC0KgCMUd4eX8Gh/fPtK4wywL28gXt3qgVjHNE9iUFzwTxO0NaXcuWkLLFIwJrqOr8MC1dDiHJA/s2SGVnHtlXkLg4Erw1/3tvc8P67DSURqBP5o30NwZoJpOD4pSX3oNt9DqNk0vwPa0gGjejXjuGxC6nE1dzpJIk5iSyTfFk46f6xiWMv84Ua6TN1qX2II/8ThqhHz59nuGBSvgO84SUFPt/kz1gIxC/YMmvvSORoQXju14uTj9F1TOUzsfD6hhoe/0T8fQKEZfzobrz8qfHQiK2Ge0Li8U0aCKcij5Q7zo2qLmreq22AYJw5BdNKAC86oZ0Jg==
+ bh=KMxe/N+wBBXnH1iC8hK/AJ3v0ZpfpuIJqUWcT4jo3oM=;
+ b=BcZw4NNHqOcjPASx8/q9zf5UOWXb+QXkFtC8Uv5hLXOXm1Hdeayd5upm8T0L4G1zHk0t9dSLq9BnVA3/6hZ1Of8fKnpHJTqOHD48zyaoRyxnShx6Ok1y3GCQsMLYpEtx9Bx/sTQdVFLcLGdkyKTU4rZvE9QVqdlkckiXoSBcSOXUyO3DO0W7VSARgUAMaHMk+4bFMKVMq9sQEXO0bDUT0MH6T3SYM1hd1S9JMH1mYL2KdftesDEG+RY1parmQvcpvrHf3ZTrDsknusOqMYr5+5CrelqtvwESdKf7c6i/O1TmBGYtNywy4GfpYjQ4hcG7nij8KNEkbw8EGVFhaeYsdg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from LV5PR12MB9754.namprd12.prod.outlook.com (2603:10b6:408:305::12)
- by CY3PR12MB9654.namprd12.prod.outlook.com (2603:10b6:930:ff::13) with
+ by MN0PR12MB6342.namprd12.prod.outlook.com (2603:10b6:208:3c1::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.12; Wed, 29 Apr
- 2026 09:29:33 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.18; Wed, 29 Apr
+ 2026 09:38:59 +0000
 Received: from LV5PR12MB9754.namprd12.prod.outlook.com
  ([fe80::9667:3c95:27d2:73da]) by LV5PR12MB9754.namprd12.prod.outlook.com
  ([fe80::9667:3c95:27d2:73da%7]) with mapi id 15.20.9870.020; Wed, 29 Apr 2026
- 09:29:33 +0000
-Message-ID: <acde30a6-23b1-4f1e-8f09-ddfe20f22390@nvidia.com>
-Date: Wed, 29 Apr 2026 10:29:28 +0100
+ 09:38:58 +0000
+Message-ID: <e134911f-e4cc-41ab-be41-0c559790acde@nvidia.com>
+Date: Wed, 29 Apr 2026 10:38:52 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/2] memory: tegra: Add T238 MC support
-To: Ashish Mhetre <amhetre@nvidia.com>, krzk@kernel.org, robh@kernel.org,
- conor+dt@kernel.org, =thierry.reding@kernel.org, sumitg@nvidia.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org
-References: <20260427073419.567360-1-amhetre@nvidia.com>
- <20260427073419.567360-3-amhetre@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v3 0/6] Add Tegra238 and Tegra264 pinctrl support
+To: pshete@nvidia.com, linusw@kernel.org, thierry.reding@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: webgeek1234@gmail.com, rosenp@gmail.com, linux-tegra@vger.kernel.org,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260427134231.531222-1-pshete@nvidia.com>
 Content-Language: en-US
-In-Reply-To: <20260427073419.567360-3-amhetre@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20260427134231.531222-1-pshete@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ2PR07CA0002.namprd07.prod.outlook.com
- (2603:10b6:a03:505::25) To LV5PR12MB9754.namprd12.prod.outlook.com
+X-ClientProxiedBy: SJ0PR03CA0190.namprd03.prod.outlook.com
+ (2603:10b6:a03:2ef::15) To LV5PR12MB9754.namprd12.prod.outlook.com
  (2603:10b6:408:305::12)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -67,559 +67,134 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV5PR12MB9754:EE_|CY3PR12MB9654:EE_
-X-MS-Office365-Filtering-Correlation-Id: e3d0c642-9230-449f-2e19-08dea5d1d26e
+X-MS-TrafficTypeDiagnostic: LV5PR12MB9754:EE_|MN0PR12MB6342:EE_
+X-MS-Office365-Filtering-Correlation-Id: ed07a7d9-f868-4ce2-32c1-08dea5d323b1
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|10070799003|1800799024|22082099003|56012099003|18002099003;
+	BCL:0;ARA:13230040|1800799024|10070799003|366016|376014|7416014|56012099003|22082099003|18002099003;
 X-Microsoft-Antispam-Message-Info:
-	+xRVzBGhFFSvHbQ3CxQhCrOjORrejkSFGb37Nl0tmrKPUJ2n8xjSVwi9UkjeRNOuoixvv/NrE976AU+7eayE1LcOIR70kQmjDcfRJm8Wc77nm1Qd0P4cCXmIYlWhf7MmDpxsajUy53fTWUZt4KhWCoAjRLxWvv0qZulbCBBiw4sJdJbXUdQutV0SP48OI+YJkKsxJSiKdVS3x9QbbBYSrsylCu2un7hPFo29r57yxNOhgwq2dbFt5MU0jFu0XIhiPElnDFfTiZU0DAdWABo/k2Y0/LsqnyF3K94SPmvpC94iGTCYk19Uk4XdvFDl38tiMV2hmOTjfKc9TjIjhmMj9+nPk5VeT0ohdNYmkcVrNic1RMKnETKmXhjG6ChUePZCY63MNJq3F9BjNnouXxj4ZEbWrNlHQZse4cXxEsHEopjVqnszwuRuDR/Rw3Ps0lWg5vko6t87fRZtIHLcIZjhzm2UJTlSNiUl6NhBwL7y13scXNB+35b+KJM2Kz9FfE60ZnMN7URbzGbcFixaks+E8h/dbklEIJV+eqN47cjbgvW7mhxHhe643NyOlVoh3kbF+2QPVVbg3Vewy9EpSm20e+Ey9LcVkxlwEI5taOOxeQvOBfqEQKiP1hDN5jIX/xysMbfdC1JpCXkwtoCgUab+pJ7RD+OCUTU1a2/+m6108BfUWOOmkbfTdMXDNxwHppRT7msviBYrwnjyKg3vxbiwmstbktcWX/UZgmXRl3xste0=
+	iCtMBjeGXpPJ3BXc1tlzrSDVBr6Xnv5bSySXPxxRxM53qcpax9JZ7DQbljem7ke0SqGHGgJCOEk4Bl1WUUFL3bdc5mVkZtrXXnEB9MxPwbq/HDCBE3hbsx/HaIZCcLNvxgjfn+cqdxdSQL6bQ1vYrmdxqaujcClhfWQk1c7FPweNCa04YnhRrSXNFl1M4kV7TFYLHaK9GN3ojqCvcEGBW2uryUO07Mhp5kOWpElJRJGMol5FkWPPXXqKsMPsI4mNZ9rrwK8Sx4aip6eeqWbNXd43OwCllJgpPGVGNkZDAz/z2CemdepI6GQOc98u3xfG/fa6qvoFgsA8XwykDI99rNsda6entibC74NxAGiKEWx6BSMeUZFE/tWUc95E5uiKHLm7Zro0c3C7Qyt5VVMoPgVJi7toMUa6wjM4MApSYwiI5wmVsPBxJJqPhar2S8zpNKr7hSHIu/oScIuZ52IpkzwELOi0g52r9zqEY+ueFmXmi2Fs5m/a6+ZglyaylgWT+ya/EMqaBvV7OhFpt/zUpM2Qrqi71Nc9ycthRGLyo/gkKlv5utUQ4S4V9hpPYnVT/5vrnSDwNhy0HdODP1TksAQ+38uz+n//Qy4PurpdHrUCvEjympxT9yuOZ4zNCsJZEe0jzjm9q+LbJIIwj8HrLbwptdX7iy+ZgyfCRiWszNWhn79bzzi+Ivvwy+EOtXWcdeoXtwbFaVzf7PncF2hZlijXSFyt7nNJHY7vQcYGmEU=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV5PR12MB9754.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(10070799003)(1800799024)(22082099003)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV5PR12MB9754.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(376014)(7416014)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Qko3SlJMMncySjR6MVhVcVY0YTRYY0QxSjJPZWtrOS9wa0VLeHJ6cjRlNFc4?=
- =?utf-8?B?TjBqV1cxd1hXY2prQUdXKzRHTmwzYmZMajRGQm50T3paS0p4RUh4eVgwbDBK?=
- =?utf-8?B?UjZQdXBicnRNL1V4L3diWkRsYVFBWnlHUXp3MDBGNHc4eXNoUXpMeFJtMzNI?=
- =?utf-8?B?alZyb21iMk9ySFlESTZXM09KWjFGbnlORUJIZm54VE9IM1JUelZTRlZUOUxS?=
- =?utf-8?B?cC9ZVmRQSS94cGZpN0RhVlk0VSszdkVwTVgyRXVoMnJwQjhrKzF0N1lveGpE?=
- =?utf-8?B?UmN0Z1FRTE12S1l1WDM4L3ArKzFjNGhTOGx0Q21iZUtocjZjeHl4MU43cDNI?=
- =?utf-8?B?VGprTjFGOUQyN0Z0Vk95S2pqc3YwZlFWeFhVMmpuc0RvS0owcUI3dFM0MGQ1?=
- =?utf-8?B?WEJVU3c3Y2E1SWRnQW1mTjdtVkUyckd1b2pnOTV0alVmcitmakVyUjE5SThs?=
- =?utf-8?B?ZnhsQngxZlVteUthNkNsN2gvaFpYYlJrN2JRN2I2VWI4VSs0cDBPS1hiT1da?=
- =?utf-8?B?VFZUUFl2eGV1clk2OVZ4SXc2TSt5WFg3NUEvRGU3Vmh0aUY4dENJekVWeU8x?=
- =?utf-8?B?VkhOVlVYNVloNlFoK0VZSWhsNUZZb3RONHk2T2dyUFR1UE1NcHJ6OTdVVnBk?=
- =?utf-8?B?WTUzajJ5T0IrZlozbFRsRFZQM0RBZnJhdnQ0dE02cG1Yc1RaQmp4ZUZBS3po?=
- =?utf-8?B?RTVyTHhPYUJHM2Qvem1QUTk3eGE4bHdnalg0cG1acmFSQzIyOFFCV1BnaUlx?=
- =?utf-8?B?YkxXcHVFdEE3OVhvZUNVTndwR0FVbFBobmZKNFFIR2owRlVwajM1R0x3MEhx?=
- =?utf-8?B?T2VraFNzWnZPMXRWMEJlVThFMC9VeWVPendlWkZBZ3E1UjM0eXQ4eDlnVUNC?=
- =?utf-8?B?UjZrSm5LTkx2WlVnRGYvenlZb2ExSGJoZmJobVJhcmcxQUYwbUhNb2ZqM2c3?=
- =?utf-8?B?QkpqZEtRYkdHWDdIWmIvakJ6c1FBWW56K2NvYzJ3cmpxZHVtN1kxVDRGYnZw?=
- =?utf-8?B?VzBPMlp3bitoSnpHTS9oaWhoRmZ1N3J2dm9xRGQwdHUvVW8yNjFmcEUveTEz?=
- =?utf-8?B?TlNJWTNJU251L1Z2UUMwRkdHa0xzS0pDYjZsd1g2V0gzWDlRYlhQNFA0d01i?=
- =?utf-8?B?QkoveFA0RzNYR1FpeEU2K3VWQU1lNjAxUVdQYmpaZnVsVVZzOHJ3OXlhSTRv?=
- =?utf-8?B?TFA5VGE4K1NTMlh3UnRRakxtTFcwc0pKcHJjdjhUYnZaQ2xLOU04MnAzbG9D?=
- =?utf-8?B?ZGM5c25qa3JnUW9ZSG5jRnFtWkxzM2dORTU4cUF6MXdKK0RlVXBCbnJhUHBr?=
- =?utf-8?B?QWl5K2pzTDNORGtZM3VHdWFoY3pBY216RXRpRlZqeEVEYjFIWlo2SWpRYjJq?=
- =?utf-8?B?VnJMRE1meEhxMlFiL2pKSWVrNjJ2amtuU3ZGMTBSeDN6b0dZZ0tDblVmV2Nl?=
- =?utf-8?B?bEdNTTBvRUc4OVVJTFVnTnRnWFBYdnRXQWZwaWpuWkRCV3M1T2hvY0RsWDNO?=
- =?utf-8?B?OVl1UGpkd2NDNlRZbSttc2taRmFMTW9IelBoQ0tVcHZPdmh0T2hNRWZ4OC9O?=
- =?utf-8?B?MzdXQk1FeGNSQ1BhQ1hzbUtSbWpmTkJCemw3OTJUSkdhRW9jaWVwVlZMZUl2?=
- =?utf-8?B?Uit5M2RkM0dETW1rM0tQVDRFQ2FCaDZ3YkcxWHltVEU3eHR5dEhjWEttYWVP?=
- =?utf-8?B?OEJsVVZDV1k4OGVHMjg1QUwxWENra1hFTm8vU0t0bk40cVRWRHQybEFiR2ZB?=
- =?utf-8?B?bW1tUTZvaDI3NjlaLzZySEhrMVFMTDNXNUYzVUVHOFVrM0xZaFNBVGtTUnBB?=
- =?utf-8?B?ZGZmRFlDb0QzTlJJWTFhdHVwTEZKYzVPclZCVG1iMGhoYUl3alhQcjF6UmtB?=
- =?utf-8?B?b3hMRkVla2dBVmFEQm95MHhCdC80U2N3dmRlN0RDNnYxekhSMWJ6b3I5M21i?=
- =?utf-8?B?eEpiUDRYZGdNN1lhMGd2eHNSMlZhVGdVSG9Id3JwNGRybFFXdlRtMGJWMEFp?=
- =?utf-8?B?ZzlPQktkYVU3TGZMMlRBcVZFaW01YjN6cW5CS203Qm9XMHc0NW9tVGpnWnhK?=
- =?utf-8?B?QjVRSXpkQ0JlSnVwS1JScDZ6VnczWlFqUk9PbGQ2MnUraGFFdDRpU2xGTm1h?=
- =?utf-8?B?UldaSkIzUFltTnNHMFozelNPeHZCendqNHlIM0tIZXV0UEJaOU9acnJON0sx?=
- =?utf-8?B?ZVZzUFkyYTlKaEZZemNGUFhIL2U3NXVnRGFWcXk1RjRxQ2RPV2ZVdTNpc1dx?=
- =?utf-8?B?Yk54cGdmU1pkWkpYV3oxeGJCTHZCOVo5bWdrdnFmRmdCMGJhL0pWMVhRcStE?=
- =?utf-8?B?NVJjWWlUQUw5NVVJV0duZmlwcG1hZTlDVkNUSXpMSXc4ODVGSWVVdnNqc3h3?=
- =?utf-8?Q?dCDx+fa5C3VU1SFxhlHLW2kXKJTZxHzxuDTDwqRo+rgiq?=
-X-MS-Exchange-AntiSpam-MessageData-1: ceDlveBRK2b0mw==
+	=?utf-8?B?S0RCSUpHd2ZvcUhMbkkyM3Q4NzJLSlc2WUhMV1l0bnl5UmE2eWx0NEFxeS9N?=
+ =?utf-8?B?MldtUWNUWUtwbFZDNVl6Q2FqemhyeTJmNEVZb3ZyWW5iWmtFMjFIWHdkeHF2?=
+ =?utf-8?B?Q1FYVTJFeS8ramJSdW9tK2cwa2VyWkdLNEpYR1E4bTlIRSt4M1N0SVRvYm5P?=
+ =?utf-8?B?MTl6bGhhaWxDcFM5ZFA3bnczUHFrdGVTZi9GWVVETXJlcVRJWW9tODRndWlo?=
+ =?utf-8?B?UzZrUCs3a1dMZWJjWG9hVVFhUFFJTGZoL0R1LzhSTHMrbFlyS1JyTmpZN2hx?=
+ =?utf-8?B?RnlSN2Jrc01Kb0VnaWlRS0toaXduOXpzRmNaaXh3ZHlvTTljL2JPd1lnc3hy?=
+ =?utf-8?B?TXlFQTFjeDREbWVkemQrb2cwNlJBWUFkWDVnN1dJQkQvMjZzWUM0bVIxTkJG?=
+ =?utf-8?B?Q3duOGVZV2NpMFlvWElnWFk3YVF4WVlhSnFHRjZSbGRDaDVQR2JZNkZjQ1Nv?=
+ =?utf-8?B?T0ZtZDBiQ1NPWFR4N0VpUHpWTE03d1BhbHU5QXFVV2hDWWtRbW1nakl0eU9B?=
+ =?utf-8?B?SEZNdmJSQXM3bWFpWStoNkxpOVUzQXdvbDdlT0JFRVppM3llSUMycUtqaFpD?=
+ =?utf-8?B?d0NYNUNsUXp4WjZ6MWMwMjR0SXc2OUdKODZiLzBuN0t3bk55dUpwQ1c3b25K?=
+ =?utf-8?B?UE5Xb21UM3JGWHcrM1p0MHhiaXd3cmw1azZQbXIvOVVpblA2cGN3dXhQTlBE?=
+ =?utf-8?B?OWlNemJDMjhod29oaENsbzRWNnZVYXJUMzhNWU56R3RjMkRYWFdwVTMxdzlt?=
+ =?utf-8?B?NUpoRHhFNWNicWtHa0Z2MWRnSmdGMFpqbGFxeWhjSXZyVlp0R1ZBRm8zUFEr?=
+ =?utf-8?B?MnFWaVlyZS9QbEg0NU0rZTdJVnROZHR1UkR4L0ZwbmtUUnZPa1FQaDlZY2E2?=
+ =?utf-8?B?Z2g0RmJsZE1zeittTEdaZGhBaUZHNzNBcklFeE15SVJSV2xBZEx4QVdWZW82?=
+ =?utf-8?B?Z2xrR0Z5U1Y3Y3hRaDZ1cDkvU3VsZEJWSjk4QXNoUDk0ejFNc3kzbUtBcGFL?=
+ =?utf-8?B?U1pyM2dRalNQa2hHc2pycklRMWtqSk1RaWx1dHBwR29wY3pxSUxFZmRyYWZZ?=
+ =?utf-8?B?Q1VWeTBzaW4rVnBtUU5mQjFUckVkYkY4cWtwVzBGNk9YNnA2cG5qN0VMVFZW?=
+ =?utf-8?B?YUtidms4VFJiVnB6ZXBXVmJvSUg4SzBteUY5WFc2UERua1lPMTk3TVc5emNx?=
+ =?utf-8?B?U0FPenhlSnpLa3JIYW1EZE9Wck81QThDTnlZNUxwMlk3TXBCSnhpb09ubXcz?=
+ =?utf-8?B?TXVWMElCVVpUSnRCaUNGMWxncnVCZ1lLM0UzQXBsOVFQYVdrZ3QraFNqRmR6?=
+ =?utf-8?B?eDFhS3hBQVQvSDZjSlluNElpMG1GNW11UGlqOEdiOUoyd0lxOFNGM0Z1RkFh?=
+ =?utf-8?B?anVzTjhOWC9pNmFpZW5SMEs4RU1FaU5HNE1GaW1DelRScWxmRkxaMlRqUHpY?=
+ =?utf-8?B?U2RPZE1ITEQvMlNldURTYTBRTVNyRnMzd0ZpSFc4bmNJaWR5N25ZbmpkS2Y1?=
+ =?utf-8?B?U2drRFdoaERGblliN2NsU3hMVUk4ZDZybjI0K29ITDlNU1p4T0NvQjZYSEM5?=
+ =?utf-8?B?TWp1MUdWcGMxRXlzWkpDRHJ3eWhXN0RGT0ZjQnl4MVhnYUM2NVRSN203RmtI?=
+ =?utf-8?B?YjlTZ2d3cEcyRXF4aHNzbmlGMU5TdGhCMTFnYkxMc1pJcFN4dExEK2JTVGdS?=
+ =?utf-8?B?M0tBLzE0SVl1R3ZkdG5oMVhkcTRTYldkRGNPSXF2OWQ4MHdXdWdFeFcwYUU5?=
+ =?utf-8?B?Q3QrVHpyZk81bjBGZzRxRWlZL21qK2hMbHdCdjd3ZnFYZmpCNnpjZ3hLT0Rq?=
+ =?utf-8?B?WFlDZ2tqQjJwRDA5Rkl4ZktmQ0UwL0JPdGdDWHB3TjBLWExINktaNWFLNFFk?=
+ =?utf-8?B?cUNBc2ZXMndrTXNDWEJvNUZVQlA1cHljbXdHUnRYZzBCdDROZjBBWndQdy9N?=
+ =?utf-8?B?dk5GU1RQckxlaHp6ZFJrYjJwY1kvdjI0b3hZYmtVanlUOU5BRkI1NW9tZVBx?=
+ =?utf-8?B?R0JpaGxNM3VtTFNMQXcvcmwrY3AxL3lGZW04eC9qYkQ0NnZyS0lTbVZ4eEpx?=
+ =?utf-8?B?NDlQTVVnLzFVNHVhem90dm5lTUc1UGVJSWROaEFNK0hML2VRd0tJeDlJMjB6?=
+ =?utf-8?B?ZFF3Z1NvQ3h2VjhtMFZhK25HbWRLNjNkZkhvOGRCODRzazg0SW94bVlKZDE1?=
+ =?utf-8?B?WTVsYmF6aDRUYlByRm5SSFJsWjl6SVRKQUp6dnRXdEVwZTBmaDh6WlFNMzF0?=
+ =?utf-8?B?ME84eFovQjNNcm8veHVFUU1DalNkdWVQbnczZGZzVFd6REpxMlNYNEtJY2J5?=
+ =?utf-8?B?MEdpcmdNQkVoMnRtWS9DQW5xcjgyb092OU4yWkd5OGdvUFBMa1VaM2xUZ0Er?=
+ =?utf-8?Q?GOQohtiID9Gn6FrgXo9gslRxEBA58PsX0Yh6xKHrKCZk6?=
+X-MS-Exchange-AntiSpam-MessageData-1: H43mPib7BfDXWw==
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e3d0c642-9230-449f-2e19-08dea5d1d26e
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed07a7d9-f868-4ce2-32c1-08dea5d323b1
 X-MS-Exchange-CrossTenant-AuthSource: LV5PR12MB9754.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2026 09:29:33.1100
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2026 09:38:58.9334
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sl2GRYpW112LSFvfWv29DpDCoDuwvUXdDW6LbwTenBUitZ1yAjuqngajv/Hc+BO60hsB6Ts5xZTmd7CycUw3IA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY3PR12MB9654
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3fRL6fDPjTtOadN5WWIO82XQpSTNOcICQHLR5+99S3t4Pi8IuHENWx9yoVowPNKxT2qfEnnQLE6+bTchqK0sMQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6342
 
 
-On 27/04/2026 08:34, Ashish Mhetre wrote:
-
-We prefer to use 'Tegra238' and not T238. However, don't worry too much 
-about that unless there are other comments.
-
-> Add Memory Controller driver support for Tegra238 SOC, including:
-> - MC client definitions with Tegra238-specific stream IDs
-> - Reuse of Tegra234 ICC operations for bandwidth management via BPMP-FW
-> - Device tree compatible string "nvidia,tegra238-mc"
+On 27/04/2026 14:42, pshete@nvidia.com wrote:
+> From: Prathamesh Shete <pshete@nvidia.com>
 > 
-> Export tegra234_mc_icc_ops so it can be shared with the Tegra238 MC
-> driver, as both SoCs use the same ICC aggregation and bandwidth
-> management logic.
+> Add pinctrl driver support for Tegra238 and Tegra264 along with the
+> corresponding device tree binding documentation. Additionally, export
+> tegra_pinctrl_probe() to allow the drivers to be built as loadable modules.
 > 
-> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
-> ---
->   drivers/memory/tegra/Makefile   |   1 +
->   drivers/memory/tegra/mc.c       |   3 +
->   drivers/memory/tegra/mc.h       |   9 +
->   drivers/memory/tegra/tegra234.c |   2 +-
->   drivers/memory/tegra/tegra238.c | 391 ++++++++++++++++++++++++++++++++
->   5 files changed, 405 insertions(+), 1 deletion(-)
->   create mode 100644 drivers/memory/tegra/tegra238.c
+> Changes in v3:
+>    - Wrap commit message to 75 chars per line (v2 was too short).
+> Changes in v2:
+>    - Drop the "arm64: defconfig: make Tegra238 and Tegra264 Pinctrl ..."
+>      patch and instead add 'default m if ARCH_TEGRA_{238,264}_SOC' to
+>      the PINCTRL_TEGRA238 / PINCTRL_TEGRA264 Kconfig entries so the
+>      drivers are auto-enabled as modules.
+>    - New patch "arm64: tegra: Add pinctrl nodes for Tegra264" that
+>      describes the three Tegra264 pin controllers (pinmux_main,
+>      pinmux_aon, pinmux_uphy) in tegra264.dtsi.
+>    - dt-bindings (Tegra238 and Tegra264 pinmux):
+>       * Add 'required: compatible, reg' to the top-level schemas.
+>       * Switch 'unevaluatedProperties: false' to
+>         'additionalProperties: false' on the top-level schemas.
+>    - Reword commit messages to use imperative mood.
 > 
-> diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Makefile
-> index 6334601e6120..7c2fca12076b 100644
-> --- a/drivers/memory/tegra/Makefile
-> +++ b/drivers/memory/tegra/Makefile
-> @@ -10,6 +10,7 @@ tegra-mc-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210.o
->   tegra-mc-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186.o
->   tegra-mc-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra186.o tegra194.o
->   tegra-mc-$(CONFIG_ARCH_TEGRA_234_SOC) += tegra186.o tegra234.o
-> +tegra-mc-$(CONFIG_ARCH_TEGRA_238_SOC) += tegra186.o tegra234.o tegra238.o
->   tegra-mc-$(CONFIG_ARCH_TEGRA_264_SOC) += tegra186.o tegra264.o
->   
->   obj-$(CONFIG_TEGRA_MC) += tegra-mc.o
-> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-> index d620660da331..10ef3c323e22 100644
-> --- a/drivers/memory/tegra/mc.c
-> +++ b/drivers/memory/tegra/mc.c
-> @@ -49,6 +49,9 @@ static const struct of_device_id tegra_mc_of_match[] = {
->   #ifdef CONFIG_ARCH_TEGRA_234_SOC
->   	{ .compatible = "nvidia,tegra234-mc", .data = &tegra234_mc_soc },
->   #endif
-> +#ifdef CONFIG_ARCH_TEGRA_238_SOC
-> +	{ .compatible = "nvidia,tegra238-mc", .data = &tegra238_mc_soc },
-> +#endif
->   #ifdef CONFIG_ARCH_TEGRA_264_SOC
->   	{ .compatible = "nvidia,tegra264-mc", .data = &tegra264_mc_soc },
->   #endif
-> diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
-> index 649b54369263..e94d265d7b67 100644
-> --- a/drivers/memory/tegra/mc.h
-> +++ b/drivers/memory/tegra/mc.h
-> @@ -240,6 +240,14 @@ extern const struct tegra_mc_soc tegra194_mc_soc;
->   extern const struct tegra_mc_soc tegra234_mc_soc;
->   #endif
->   
-> +#if defined(CONFIG_ARCH_TEGRA_234_SOC) || defined(CONFIG_ARCH_TEGRA_238_SOC)
-> +extern const struct tegra_mc_icc_ops tegra234_mc_icc_ops;
-> +#endif
-> +
-> +#ifdef CONFIG_ARCH_TEGRA_238_SOC
-> +extern const struct tegra_mc_soc tegra238_mc_soc;
-> +#endif
-> +
->   #ifdef CONFIG_ARCH_TEGRA_264_SOC
->   extern const struct tegra_mc_soc tegra264_mc_soc;
->   #endif
-> @@ -256,6 +264,7 @@ extern const struct tegra_mc_ops tegra30_mc_ops;
->   #if defined(CONFIG_ARCH_TEGRA_186_SOC) || \
->       defined(CONFIG_ARCH_TEGRA_194_SOC) || \
->       defined(CONFIG_ARCH_TEGRA_234_SOC) || \
-> +    defined(CONFIG_ARCH_TEGRA_238_SOC) || \
->       defined(CONFIG_ARCH_TEGRA_264_SOC)
->   extern const struct tegra_mc_ops tegra186_mc_ops;
->   #endif
-> diff --git a/drivers/memory/tegra/tegra234.c b/drivers/memory/tegra/tegra234.c
-> index 87b22038a5fb..9fbd34d4abe0 100644
-> --- a/drivers/memory/tegra/tegra234.c
-> +++ b/drivers/memory/tegra/tegra234.c
-> @@ -1125,7 +1125,7 @@ static int tegra234_mc_icc_get_init_bw(struct icc_node *node, u32 *avg, u32 *pea
->   	return 0;
->   }
->   
-> -static const struct tegra_mc_icc_ops tegra234_mc_icc_ops = {
-> +const struct tegra_mc_icc_ops tegra234_mc_icc_ops = {
->   	.xlate = tegra_mc_icc_xlate,
->   	.aggregate = tegra234_mc_icc_aggregate,
->   	.get_bw = tegra234_mc_icc_get_init_bw,
-> diff --git a/drivers/memory/tegra/tegra238.c b/drivers/memory/tegra/tegra238.c
-> new file mode 100644
-> index 000000000000..938c8985600e
-> --- /dev/null
-> +++ b/drivers/memory/tegra/tegra238.c
-> @@ -0,0 +1,391 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2026, NVIDIA CORPORATION.  All rights reserved.
-> + */
-> +
-> +#include <soc/tegra/mc.h>
-> +
-> +#include <dt-bindings/memory/tegra234-mc.h>
-> +#include <dt-bindings/memory/nvidia,tegra238-mc.h>
-> +#include <linux/interconnect.h>
-> +#include <linux/tegra-icc.h>
-> +
-> +#include <soc/tegra/bpmp.h>
-> +#include "mc.h"
-> +
-> +static const struct tegra_mc_client tegra238_mc_clients[] = {
-> +	{
-> +		.id = TEGRA234_MEMORY_CLIENT_HDAR,
-> +		.name = "hdar",
-> +		.bpmp_id = TEGRA_ICC_BPMP_HDA,
-> +		.type = TEGRA_ICC_ISO_AUDIO,
-> +		.sid = TEGRA238_SID_HDA,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0xa8,
-> +				.security = 0xac,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_HDAW,
-> +		.name = "hdaw",
-> +		.bpmp_id = TEGRA_ICC_BPMP_HDA,
-> +		.type = TEGRA_ICC_ISO_AUDIO,
-> +		.sid = TEGRA238_SID_HDA,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x1a8,
-> +				.security = 0x1ac,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_SDMMCRAB,
-> +		.name = "sdmmcrab",
-> +		.bpmp_id = TEGRA_ICC_BPMP_SDMMC_4,
-> +		.type = TEGRA_ICC_NISO,
-> +		.sid = TEGRA238_SID_SDMMC4A,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x318,
-> +				.security = 0x31c,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_SDMMCWAB,
-> +		.name = "sdmmcwab",
-> +		.bpmp_id = TEGRA_ICC_BPMP_SDMMC_4,
-> +		.type = TEGRA_ICC_NISO,
-> +		.sid = TEGRA238_SID_SDMMC4A,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x338,
-> +				.security = 0x33c,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_APER,
-> +		.name = "aper",
-> +		.bpmp_id = TEGRA_ICC_BPMP_APE,
-> +		.type = TEGRA_ICC_ISO_AUDIO,
-> +		.sid = TEGRA238_SID_ISO_APE0,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x3d0,
-> +				.security = 0x3d4,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_APEW,
-> +		.name = "apew",
-> +		.bpmp_id = TEGRA_ICC_BPMP_APE,
-> +		.type = TEGRA_ICC_ISO_AUDIO,
-> +		.sid = TEGRA238_SID_ISO_APE0,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x3d8,
-> +				.security = 0x3dc,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_NVDISPLAYR,
-> +		.name = "nvdisplayr",
-> +		.bpmp_id = TEGRA_ICC_BPMP_DISPLAY,
-> +		.type = TEGRA_ICC_ISO_DISPLAY,
-> +		.sid = TEGRA238_SID_ISO_NVDISPLAY,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x490,
-> +				.security = 0x494,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_NVDISPLAYR1,
-> +		.name = "nvdisplayr1",
-> +		.bpmp_id = TEGRA_ICC_BPMP_DISPLAY,
-> +		.type = TEGRA_ICC_ISO_DISPLAY,
-> +		.sid = TEGRA238_SID_ISO_NVDISPLAY,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x508,
-> +				.security = 0x50c,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_BPMPR,
-> +		.name = "bpmpr",
-> +		.sid = TEGRA238_SID_BPMP,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x498,
-> +				.security = 0x49c,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_BPMPW,
-> +		.name = "bpmpw",
-> +		.sid = TEGRA238_SID_BPMP,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x4a0,
-> +				.security = 0x4a4,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_BPMPDMAR,
-> +		.name = "bpmpdmar",
-> +		.sid = TEGRA238_SID_BPMP,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x4a8,
-> +				.security = 0x4ac,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_BPMPDMAW,
-> +		.name = "bpmpdmaw",
-> +		.sid = TEGRA238_SID_BPMP,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x4b0,
-> +				.security = 0x4b4,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_APEDMAR,
-> +		.name = "apedmar",
-> +		.bpmp_id = TEGRA_ICC_BPMP_APEDMA,
-> +		.type = TEGRA_ICC_ISO_AUDIO,
-> +		.sid = TEGRA238_SID_ISO_APE1,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x4f8,
-> +				.security = 0x4fc,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_APEDMAW,
-> +		.name = "apedmaw",
-> +		.bpmp_id = TEGRA_ICC_BPMP_APEDMA,
-> +		.type = TEGRA_ICC_ISO_AUDIO,
-> +		.sid = TEGRA238_SID_ISO_APE1,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x500,
-> +				.security = 0x504,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_VICSRD,
-> +		.name = "vicsrd",
-> +		.bpmp_id = TEGRA_ICC_BPMP_VIC,
-> +		.type = TEGRA_ICC_NISO,
-> +		.sid = TEGRA238_SID_VIC,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x360,
-> +				.security = 0x364,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_VICSWR,
-> +		.name = "vicswr",
-> +		.bpmp_id = TEGRA_ICC_BPMP_VIC,
-> +		.type = TEGRA_ICC_NISO,
-> +		.sid = TEGRA238_SID_VIC,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x368,
-> +				.security = 0x36c,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_NVDECSRD,
-> +		.name = "nvdecsrd",
-> +		.bpmp_id = TEGRA_ICC_BPMP_NVDEC,
-> +		.type = TEGRA_ICC_NISO,
-> +		.sid = TEGRA238_SID_NVDEC,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x3c0,
-> +				.security = 0x3c4,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_NVDECSWR,
-> +		.name = "nvdecswr",
-> +		.bpmp_id = TEGRA_ICC_BPMP_NVDEC,
-> +		.type = TEGRA_ICC_NISO,
-> +		.sid = TEGRA238_SID_NVDEC,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x3c8,
-> +				.security = 0x3cc,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_NVENCSRD,
-> +		.name = "nvencsrd",
-> +		.bpmp_id = TEGRA_ICC_BPMP_NVENC,
-> +		.type = TEGRA_ICC_NISO,
-> +		.sid = TEGRA238_SID_NVENC,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0xe0,
-> +				.security = 0xe4,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_NVENCSWR,
-> +		.name = "nvencswr",
-> +		.bpmp_id = TEGRA_ICC_BPMP_NVENC,
-> +		.type = TEGRA_ICC_NISO,
-> +		.sid = TEGRA238_SID_NVENC,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x158,
-> +				.security = 0x15c,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_PCIE0R,
-> +		.name = "pcie0r",
-> +		.bpmp_id = TEGRA_ICC_BPMP_PCIE_0,
-> +		.type = TEGRA_ICC_NISO,
-> +		.sid = TEGRA238_SID_PCIE0,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x6c0,
-> +				.security = 0x6c4,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_PCIE0W,
-> +		.name = "pcie0w",
-> +		.bpmp_id = TEGRA_ICC_BPMP_PCIE_0,
-> +		.type = TEGRA_ICC_NISO,
-> +		.sid = TEGRA238_SID_PCIE0,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x6c8,
-> +				.security = 0x6cc,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_PCIE1R,
-> +		.name = "pcie1r",
-> +		.bpmp_id = TEGRA_ICC_BPMP_PCIE_1,
-> +		.type = TEGRA_ICC_NISO,
-> +		.sid = TEGRA238_SID_PCIE1,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x6d0,
-> +				.security = 0x6d4,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_PCIE1W,
-> +		.name = "pcie1w",
-> +		.bpmp_id = TEGRA_ICC_BPMP_PCIE_1,
-> +		.type = TEGRA_ICC_NISO,
-> +		.sid = TEGRA238_SID_PCIE1,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x6d8,
-> +				.security = 0x6dc,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_PCIE2AR,
-> +		.name = "pcie2ar",
-> +		.bpmp_id = TEGRA_ICC_BPMP_PCIE_2,
-> +		.type = TEGRA_ICC_NISO,
-> +		.sid = TEGRA238_SID_PCIE2,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x6e0,
-> +				.security = 0x6e4,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_PCIE2AW,
-> +		.name = "pcie2aw",
-> +		.bpmp_id = TEGRA_ICC_BPMP_PCIE_2,
-> +		.type = TEGRA_ICC_NISO,
-> +		.sid = TEGRA238_SID_PCIE2,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x6e8,
-> +				.security = 0x6ec,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_PCIE3R,
-> +		.name = "pcie3r",
-> +		.bpmp_id = TEGRA_ICC_BPMP_PCIE_3,
-> +		.type = TEGRA_ICC_NISO,
-> +		.sid = TEGRA238_SID_PCIE3,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x6f0,
-> +				.security = 0x6f4,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_PCIE3W,
-> +		.name = "pcie3w",
-> +		.bpmp_id = TEGRA_ICC_BPMP_PCIE_3,
-> +		.type = TEGRA_ICC_NISO,
-> +		.sid = TEGRA238_SID_PCIE3,
-> +		.regs = {
-> +			.sid = {
-> +				.override = 0x6f8,
-> +				.security = 0x6fc,
-> +			},
-> +		},
-> +	}, {
-> +		.id = TEGRA_ICC_MC_CPU_CLUSTER0,
-> +		.name = "sw_cluster0",
-> +		.bpmp_id = TEGRA_ICC_BPMP_CPU_CLUSTER0,
-> +		.type = TEGRA_ICC_NISO,
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_NVL1R,
-> +		.name = "nvl1r",
-> +		.bpmp_id = TEGRA_ICC_BPMP_GPU,
-> +		.type = TEGRA_ICC_NISO,
-> +	}, {
-> +		.id = TEGRA234_MEMORY_CLIENT_NVL1W,
-> +		.name = "nvl1w",
-> +		.bpmp_id = TEGRA_ICC_BPMP_GPU,
-> +		.type = TEGRA_ICC_NISO,
-> +	}
-> +};
-> +
-> +static const struct tegra_mc_intmask tegra238_mc_intmasks[] = {
-> +	{
-> +		.reg = MC_INTMASK,
-> +		.mask = MC_INT_DECERR_ROUTE_SANITY | MC_INT_DECERR_GENERALIZED_CARVEOUT |
-> +			MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
-> +			MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
-> +	},
-> +};
-> +
-> +const struct tegra_mc_soc tegra238_mc_soc = {
-> +	.num_clients = ARRAY_SIZE(tegra238_mc_clients),
-> +	.clients = tegra238_mc_clients,
-> +	.num_address_bits = 40,
-> +	.num_channels = 8,
-> +	.client_id_mask = 0x1ff,
-> +	.intmasks = tegra238_mc_intmasks,
-> +	.num_intmasks = ARRAY_SIZE(tegra238_mc_intmasks),
-> +	.has_addr_hi_reg = true,
-> +	.ops = &tegra186_mc_ops,
-> +	.icc_ops = &tegra234_mc_icc_ops,
-> +	.ch_intmask = 0x0000ff00,
-> +	.global_intstatus_channel_shift = 8,
-> +	.num_carveouts = 32,
-> +	.regs = &tegra20_mc_regs,
-> +	.handle_irq = tegra30_mc_irq_handlers,
-> +	.num_interrupts = ARRAY_SIZE(tegra30_mc_irq_handlers),
-> +	.mc_addr_hi_mask = 0x3,
-> +	.mc_err_status_type_mask = (0x7 << 28),
-> +};
+> Link to v1:
+> https://lore.kernel.org/linux-tegra/20260409131340.168556-1-pshete@nvidia.com/
+> 
+> 
+> Prathamesh Shete (6):
+>    pinctrl: tegra: Export tegra_pinctrl_probe()
+>    dt-bindings: pinctrl: Document Tegra238 pin controllers
+>    pinctrl: tegra: Add Tegra238 pinmux driver
+>    dt-bindings: pinctrl: Document Tegra264 pin controllers
+>    pinctrl: tegra: Add Tegra264 pinmux driver
+>    arm64: tegra: Add pinctrl nodes for Tegra264
+> 
+>   .../pinctrl/nvidia,tegra238-pinmux-aon.yaml   |   82 +
+>   .../nvidia,tegra238-pinmux-common.yaml        |   73 +
+>   .../pinctrl/nvidia,tegra238-pinmux.yaml       |  219 ++
+>   .../pinctrl/nvidia,tegra264-pinmux-aon.yaml   |   80 +
+>   .../nvidia,tegra264-pinmux-common.yaml        |   84 +
+>   .../pinctrl/nvidia,tegra264-pinmux-main.yaml  |  167 ++
+>   .../pinctrl/nvidia,tegra264-pinmux-uphy.yaml  |   78 +
+>   arch/arm64/boot/dts/nvidia/tegra264.dtsi      |   15 +
+>   drivers/pinctrl/tegra/Kconfig                 |   20 +
+>   drivers/pinctrl/tegra/Makefile                |    2 +
+>   drivers/pinctrl/tegra/pinctrl-tegra.c         |    2 +
+>   drivers/pinctrl/tegra/pinctrl-tegra238.c      | 2056 +++++++++++++++
+>   drivers/pinctrl/tegra/pinctrl-tegra264.c      | 2216 +++++++++++++++++
+>   13 files changed, 5094 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra238-pinmux-aon.yaml
+>   create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra238-pinmux-common.yaml
+>   create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra238-pinmux.yaml
+>   create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra264-pinmux-aon.yaml
+>   create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra264-pinmux-common.yaml
+>   create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra264-pinmux-main.yaml
+>   create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra264-pinmux-uphy.yaml
+>   create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra238.c
+>   create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra264.c
+> 
+
+
+For the series ...
 
 Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 
