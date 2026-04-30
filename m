@@ -1,174 +1,184 @@
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013004.outbound.protection.outlook.com [40.107.159.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8020D3BED31;
-	Thu, 30 Apr 2026 13:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.4
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777554855; cv=fail; b=Gbgl2e6PczPPpE4Tt4TkEQcUjXkgBzf/ya9Sr5ByGrz41/HnlCLCO9Y+HdfMyHV/qRL0ArRbcmOt6vRiwcv+/bnzZMZeZdHEVHjzxWdAnkqe3PxdJKPKlfCd5cOLwJcEO3TG94Eiopu31ga/tV/KfcncU8idzDo58DRtzd0qpMU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777554855; c=relaxed/simple;
-	bh=AH1A5skINbAs8sroMIR+LWPYDhJVTblL2ruVJDBMxOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bXujIYbrVxY5+v8N4SGHFLodhVv9pr8CdA6gwTpKYAZ/tczt9IQZVxEP3KlmQy2K0hGf4uFaQ9waYS0UkSY9h2Vd+Q6iNwNKWxRA2EESCYla8tz8WsvcUVQA4dxZTkjJ+SDtd4onunfLRyFA/UKuTOZINUJvV6PRuBmZLBX5fm8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Ha51BWrG; arc=fail smtp.client-ip=40.107.159.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4372A3A3830
+	for <linux-tegra@vger.kernel.org>; Thu, 30 Apr 2026 21:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777585343; cv=none; b=ISU0mEv3Ddibv12aq63I9IxEfGAciydWcIg1YCRub4+GnP90lTjhI68UtVpnXTmrQ+t22Sz8y86hoOBIvaaisIDMbUG9/CNWt1JwI3Y7yvWvAMgbdGRnqyRbDyKmVZATqAzbZ784y4cy1RHE+XXtIjMbfLkC9bgcy1mM0SAuNzk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777585343; c=relaxed/simple;
+	bh=VjuwkmWTRytJbDUFZ8FgrsM6SQXVC7FBHKMz8U+rjwY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j/tYdV8F6sw//UgJtfD+d3kR9fZbOKrsMt7+RZhtTAcilG09ss4wPFbX2pJXXhvKSVwmpzAvFwn44R3j+8R7ZL1ndWxeMKYSPYD3h2s4zWVY/+hoVGgwBee7ulv3JSwW2SDIg20TTuwkLkjbuMoFO5nV/CDPhZ/sjOv4YopVFV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hcLk+M3z; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ha51BWrG"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RLhdMTISKU7PRkyW6hdPNgraN2Gz2+t3bhE3Ps34yTmK9Nm6NM/dxtRJvJo7VCxLaI5iLTKeUTaBg/Fxg68rA90LWmnUqmqmSpNrU9/sm1A7PlJ3AndOXyWK1t3lmQenF0CHIWUhIODEOJFJwg93AOO2sCsveNz/zC5lNr1mNccxcONnH4MEKt1G3+nCzNwX5bEEUqcboCLDSQrluk10V3iNieFG6AU2GsjCIl0vw6mDaq5klyPRDlpVBBCDulX6fqZvd2mGzkSGmz+0wNiyrHfSmIRuMO+97rHCOAFY3Yu7mR0rMEEQEEdKJuZo5mbWmi4qPiwTk/sBh3syBQRwGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ir7o8M6GivbIaDlTA/aJPIPbDzPTKaLGkUcXrqV20XE=;
- b=fMsk6UqnihgPu2FEwiIfF78nXhPaea+aBLVr6NBSWCoywUHgtSAjwHhOdREGYjn834qtf2HQmsnMjdVjE/fR3QkMnepM2SbrBLKBYsMA45gOkU+WEZW6ADguCB40kjnl2xR3HM+9k6F2cDMriOZdu4kGTrAUuMW2UHvT88bo26Qr5SmAeteW2XQWiZ9rMTrl9oe6+1LLQr9arlx5C/txzI+Mu5BpOIoIjCAxw7jWOgonQDlGy+21khlVK5lJyVcrVZkwzDsnkGmXZdisxV6PhnoMJ51+mS8K1fViOauQjerXAST1TC5coDPrEW6kg0nXXwvfNH7ayUFbqn/lqdPMpA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ir7o8M6GivbIaDlTA/aJPIPbDzPTKaLGkUcXrqV20XE=;
- b=Ha51BWrGR4kddN0/cHpg4c3jCRBqMMkMLyJcc5ePTRMy1tuxgodL0rl8b1oBjAcAH+yiUwez4P15vCpDkiBTNFjlu1qy6/omHWyORiGyX6ECZuEwS6PvMEPJp3tvjcY5l+9yffrO52IL99wPk2lnarnIZwbnD3po3F9czkjexl+adXAlmGt0DucJr3TpGttDhOM0Zre4X2IppJRYEkKOnXCwkyx3ve70X6YLG4OxK4hmON1Pb5eaLfMqkasaL3pl3i24ibgz0XfYQrB9Cj90SbwGs00eS1/mXLkp3EFpbMWnVHK9OYaCdyhpvbfBXid5hcfqqnoPOzKDVTmNz3w6Sw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM9PR04MB8585.eurprd04.prod.outlook.com (2603:10a6:20b:438::13)
- by PAXPR04MB8319.eurprd04.prod.outlook.com (2603:10a6:102:1c3::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.20; Thu, 30 Apr
- 2026 13:14:08 +0000
-Received: from AM9PR04MB8585.eurprd04.prod.outlook.com
- ([fe80::f010:fca8:7ef:62f4]) by AM9PR04MB8585.eurprd04.prod.outlook.com
- ([fe80::f010:fca8:7ef:62f4%4]) with mapi id 15.20.9846.025; Thu, 30 Apr 2026
- 13:14:08 +0000
-Date: Thu, 30 Apr 2026 16:14:03 +0300
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-can@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-	linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-	spacemit@lists.linux.dev, UNGLinuxDriver@microchip.com,
-	Markus Schneider-Pargmann <msp@baylibre.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH v7 phy-next 17/27] phy: introduce phy_get_max_link_rate()
- helper for consumers
-Message-ID: <20260430131403.2elptecuozimo76s@skbuf>
-References: <20260430110652.558622-1-vladimir.oltean@nxp.com>
- <20260430110652.558622-18-vladimir.oltean@nxp.com>
- <CAMuHMdWbeeRmLf6Ae0Fr0un=-z7z5ONc_hDdjebP=KVkXHPbhw@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWbeeRmLf6Ae0Fr0un=-z7z5ONc_hDdjebP=KVkXHPbhw@mail.gmail.com>
-X-ClientProxiedBy: VI1PR07CA0251.eurprd07.prod.outlook.com
- (2603:10a6:803:b4::18) To AM9PR04MB8585.eurprd04.prod.outlook.com
- (2603:10a6:20b:438::13)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hcLk+M3z"
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-8ec37d52c0dso144429085a.0
+        for <linux-tegra@vger.kernel.org>; Thu, 30 Apr 2026 14:42:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1777585341; x=1778190141; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QaqCe9pe6XmQZeTZUwBv7+3qnfbWH0HbjUSW3TsEOPw=;
+        b=hcLk+M3z6dh8f24GUb69wfl3EBooN+OmRdyXXGIhx5mtAzftaFB0NuasmwChOZY5yM
+         cgWZbxgj8dF3V5cXJlLE1qRo+vlOBugijysdU1gI5XArjyYhiFfTIux6y8L9SX4Zen4+
+         LtDMCoKT6tKiiNb9WwOLp6vcVFm7mGyg/ofTcF3MQbSGfdZ9y7UL6vGNQsUiOsvEoCkH
+         1izALh+fgrhST8GJ50yRCBcdwiUnuoybYclXpAMUTA+7zf0QlU1s6f8oom4DubeHLdmd
+         FgaN2WLcPJdNDsC7+zBXAwNh8tSVfC8T8lvvAnpvYGXX/QnzPvghp97c3uB7rdFMnLSQ
+         5wLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777585341; x=1778190141;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QaqCe9pe6XmQZeTZUwBv7+3qnfbWH0HbjUSW3TsEOPw=;
+        b=cPiL4L7BYmW3Pi/7iaEv7FuuXrh4pKL+5CyVnH82FD6KCeQRmRaBE9ffLVvtrTBXDp
+         y/Z5GgaDrR44WAgCx99JE0eHBuQMbtBCIxL3MvpXOZYovyEbwJqJKpyDE2zOYntACNj0
+         1ws+PW1vnFY2SgXiS9LGwQ9Puto/g858y007whxFHpDbk302ixG0OyDQiYdD88LQ2npc
+         XJ80mSuBSBhqcj3uDGdPdz2Kcp936flQJP0nDIbLCnDqHoWVKByEYC26pjsMLNfnE8wJ
+         /OUi2DO50FiNuMaYcPJ4ot2+mTiirfirYlxqesLQqbx5IBfjiw0i9sWZV/ztEd3LfeJE
+         k8eQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/CCu3a8nDuaPPZdDIQyh4dwKQ85cDhL5vYtQWesvt+TUt+A062+rTXQNeUaPFp40Rl1unIS5VyTzUOnQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+3Q52p1DbNImR+V+CLpGLvm9tQEKMwWuyu7ihhvrElz/BT0s3
+	N0g4is9BpbBRrzg080HzZmhtoMpD3DekMVwCcG2fpvZwr79jDyGKZ6MM
+X-Gm-Gg: AeBDieuuPDbruL1NTYqYlPcb4ZvuEA/byrsxLHtRvE30enafGCdEiOdHPkycgLLPa4w
+	7tA+xzaoqd9lVY41zKludsleVqKMAep44SjpunxyJgD95BEv1ryoblqV/MUnvBarB1u6E29flsT
+	x/foUic8Vwzd0/LOkboePKTBj3/UpfMpTb9zktaysPFjt53zmrUzPLDYPd4c6eDK8jt06OZ2Moa
+	1oxfvVbddf7uXKET5sS3VhKYSYSijGIRH/yh0wGp3hk1yLrWgmV4/NoGxdCFjhEzreJxn8EI+Iv
+	jBVt1LKLlsVCBIPLxERrPpoZYsfx6tZDJR/xj9RYdiVKUcX5lIDUY5sI0RAer29d8dlhk7V/dxa
+	xVFaHGhsvzdvP8R5XlORxPtloIX5411Mft3PASNqNyiz4GTEdR1nE385WXNTZthIScG7ZoEWpay
+	MbJoPAXFpclSgN2rmKQxHuuMqZF5LKtkSj4tI3yhoZL9r66Z341qIrX34y78zIi8isV//3GkF1X
+	ad2QPOss3myKbLZF2kZk/vkPgrSE+xo58POxAngfmfo5w==
+X-Received: by 2002:a05:620a:46aa:b0:8eb:92a5:5c6c with SMTP id af79cd13be357-8fa8884277cmr779003485a.33.1777585341293;
+        Thu, 30 Apr 2026 14:42:21 -0700 (PDT)
+Received: from ryzen ([2601:644:8000:5b5d:7285:c2ff:fe45:8a32])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8fbf420e984sm24378185a.47.2026.04.30.14.42.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Apr 2026 14:42:20 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-sound@vger.kernel.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] ASoC: tegra: ADMAIF: allocate with a single kzalloc
+Date: Thu, 30 Apr 2026 14:42:02 -0700
+Message-ID: <20260430214202.58405-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR04MB8585:EE_|PAXPR04MB8319:EE_
-X-MS-Office365-Filtering-Correlation-Id: 30868a1a-e1ac-4785-a287-08dea6ba5ca6
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|10070799003|19092799006|366016|7416014|376014|22082099003|56012099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
- zG4OVrLhrR2CtNxfHJ+fxxLlwDVlo1AU9V0vSMrDQg5bpwrhVd/yPdZ3GTlbTCldqDLGgClISrdkibbiRwYW7/VxQHqV+KxY2m043uwPU9fSaBbar+ZxNl14hUH/033+zaDU1WABuyomn7zqljYvcccXo6zzY6F+3gQvCmD0XTI5CUNsn5OLh0T8xK40rfo1/Lf9p9bxU7cqzdDjVB0OvZVnPA0t/j16J8tn8zCvOEfFTHkEmMGg4kYdGQTePTGYczjsygdioNretm0IcKDN3GA/kfuCLP274g9Iy50Srhhke6z/JOqL58fitmGGDqTt6th5u60u6dXsb6Uj7WNfmzSnAlnCm5xp6mzmcOO2Xz4GNzx6Y5YsNphv3DpdgmQ4CTciQlYr33lUG7K/QlPbZOApzWu8dSvD5eKv0SZuU7ryto9aYJ+UJhGg55KiQ6b1Z6/iETwBoeJ1XU1UC0EGFv79HSSZEF1Czspy44c3CPJAmifSioc6xUmFYgEx8pgqJHkUMMQTbZxExl1xYc5F2dAf+ehSFS11W1zxo7OBLdCbzYeKh0Ez077DOieFnv0qH4dSvTGUR4qT3Eqafz/BhMFRNLR93afpj9yq4xbKvrtTjzEUzLQ95wp6wEAHa5cK2UewbNwIfkSnQXw+QfqfQtxEbdrD+aBZu9YRGEAbB5DrWHoaFOh9wI9zcvlGJOAStWak7Ur61oZ/AkUXN0yYXWj1vtz7+Kscu3CMWd7BqjA=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8585.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(19092799006)(366016)(7416014)(376014)(22082099003)(56012099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?DaWeOPM0rFyvex+WWp5ITc8x4qrI5NGNETDRXepVXtKOhi9/+dvqGxNncnC2?=
- =?us-ascii?Q?bJtZTthLSeN3n8g11s/dNjMAzIjn1/VAtr6OP3QfR9R37W5h9pnqXDy3sDB3?=
- =?us-ascii?Q?RKtleIKTKJgvyOhN2XBiH2dtXrvwwYKLNIsq9q7XmIb5jP/eJnF8igtO2t+1?=
- =?us-ascii?Q?VeyZFdOqSVq42JdrWfAw/fxcrzfOQ1fsH6EpzxAI5Y7T/yZafCmpwkmv1qPv?=
- =?us-ascii?Q?s6QtsQMU/5W/s3IsWm3QSLo7fFoPU6XXbvXuLFDU/lQI//HQDPLCOiWwdOHp?=
- =?us-ascii?Q?/nI3yVtZiFLqE6OiaY0cuNPn9xbCXBz4LdJ032yHIK7JNneIWRBfRu1eTI+h?=
- =?us-ascii?Q?FXRsou20xrvMjnvu+hwb9W5e7NcL0RqnBRZb0Z/4KUFRs+yKwc305QD6ipCf?=
- =?us-ascii?Q?9SDR2O9wEyv4jlsB40D9CehLALM5bQXOEIK+Yci8HTouxU9Q12+aGjKttA4F?=
- =?us-ascii?Q?JZrS5EecPXOPzCnpX6GbMAQVrWvqZC4ZPAm+6Ie3ea/FOoVoElAOmE70IgKk?=
- =?us-ascii?Q?MXKYpfcimbNVGIeFMEY3XcRNFSUH1+4kivS3xhDo1kCVeqJu7do65iRl0QKe?=
- =?us-ascii?Q?aih4+SEqUx654qV94j38IvP1nAwZIykMcRNc7O90jDlvzGC+3P08UaOBZAee?=
- =?us-ascii?Q?R8NJBgBszRHD1j0U+bFX95Zn9Q24eJSPYprP90LbG9PcI/gwtsDzZxIpLRty?=
- =?us-ascii?Q?jLpU46dpAsNsSV3DJUiEchZMhjiKvyEK/18ii/icjY4Frd+teqTRLyLuMDR4?=
- =?us-ascii?Q?ZRJKm9LphwKdrM6orWgnKJ8pZ+7C7qp47sCmcWHfl9RL0CV9mciFKBUlrCqb?=
- =?us-ascii?Q?+M1VjSIvWKDtA8a3WCVXVys87fB8bp+YMwEFxg0lg+UflqVp405cAi96u/R5?=
- =?us-ascii?Q?3FcZzbEol7/wu8dE1i5kxF3P784DjjGsu2NMr+76R4z7SwLAYRcETTk521Db?=
- =?us-ascii?Q?QwYpxhma51yDPvKF3aCAGgq0pRTNiNu2WaG1QzBAA0dhfkuNnfFMb7FSr73d?=
- =?us-ascii?Q?kswdUjWNlPf88AKcqeqsqhbEBOU6MWlspG+jCv8W47cNMNmFw8r2pw2Ivpav?=
- =?us-ascii?Q?k0x1vu3WqRGwAVlkZrgt/SH30SgjeDjlO6NEFk0gqVo7D/O+ml8znDwOOR3H?=
- =?us-ascii?Q?4Wzf9fAYBIUYPc3/lxw1G5+pjCV6IqcmJrdIYEV5N6vIh2WRPYe6eUNSdfJE?=
- =?us-ascii?Q?MKVHfFpYyBD+rQLjSFCQO+0MMr3wkp48zhB1pgpbyne2S/27qxNauKfpPc+9?=
- =?us-ascii?Q?FvGd9i5NmdGS27b0YSbVpx+WHQCD+jwfsI3zd96ese3uuCfzzBThHc045b+P?=
- =?us-ascii?Q?kKlAhCqPsMJJXw9IN8/40bQvzUYxKYFHAaNvM1tTc850yM0kMM2OR32cMZ+j?=
- =?us-ascii?Q?uvYK6IUpBDrpfg9vUAFE0ztnR6hlXQA6QCmluRSjgyNpnpv9mBzOVrF+tC8X?=
- =?us-ascii?Q?4mhf5EhwmR5dKV6DTCW//KlY+d8he1x7siRCLd0HdehelPvY9DLksN33tX+5?=
- =?us-ascii?Q?Q5twCDgk8BMP3DRTjTk1LPaPqOhgYY/wcnRqsQNMSkuIhVqblRBOwvD00v+w?=
- =?us-ascii?Q?FmWBOxVlrKqpM0TDPSzLcROy7L3OKxFZO7AQRMsGdEFP0xDYLhQ34N+Tc4If?=
- =?us-ascii?Q?of+Nq/+Cdp2GnTqDFe2wwOGxF9aq055hHlhpxuRtalbdALHYLFEwaxbhY5DQ?=
- =?us-ascii?Q?OzjqueXmRCQYJei5oNejuC9aLMCMIpF2lgOZOFggHDTuXSwzAY5FdjP6HfKa?=
- =?us-ascii?Q?vSkh0RQfm0sD5lMQQV5vDKvD+kSsVJ9WmKFTyuORV8DeUwkI/FhENd5aYVWB?=
-X-MS-Exchange-AntiSpam-MessageData-1: +FM0dUh4+P1/QtJYMlCx5UgQ7Z0z6huRmuE=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 30868a1a-e1ac-4785-a287-08dea6ba5ca6
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8585.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2026 13:14:08.3527
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: O+VO9Uo5tAfPp1U/YaBx1A7LlceKzVPqUF/50dds5Vafhpn61OZf6qHabYRl6Z9sm9SsgcFDEpimlVx67Ms/ww==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8319
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 30, 2026 at 01:59:53PM +0200, Geert Uytterhoeven wrote:
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be> # rcar_canfd
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+Consolidate the allocations for capture_dma_data and playback_dma_data
+into a single kzalloc by using a flexible array member at the end of
+the tegra_admaif struct. This reduces the number of allocations from
+three to one, simplifies error handling, and improves memory locality.
 
-Thanks.
+sound/soc/tegra/tegra210_admaif.c | 28 ++++++++++------------------
+ sound/soc/tegra/tegra210_admaif.h |  2 +-
+ sound/soc/tegra/tegra_isomgr_bw.c |  1 +
+ 3 files changed, 12 insertions(+), 19 deletions(-)
 
-> > --- a/include/linux/phy/phy.h
-> > +++ b/include/linux/phy/phy.h
-> > @@ -57,6 +57,7 @@ int phy_notify_disconnect(struct phy *phy, int port);
-> >  int phy_notify_state(struct phy *phy, union phy_notify state);
-> >  int phy_get_bus_width(struct phy *phy);
-> >  void phy_set_bus_width(struct phy *phy, int bus_width);
-> > +u32 phy_get_max_link_rate(struct phy *phy);
-> 
-> This (and all the existing getters) should take a "const struct phy *".
+diff --git a/sound/soc/tegra/tegra210_admaif.c b/sound/soc/tegra/tegra210_admaif.c
+index a1c2757a3932..7299c6bfcf15 100644
+--- a/sound/soc/tegra/tegra210_admaif.c
++++ b/sound/soc/tegra/tegra210_admaif.c
+@@ -11,6 +11,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
++#include <sound/dmaengine_pcm.h>
+ #include <sound/pcm_params.h>
+ #include <sound/soc.h>
+ #include "tegra_isomgr_bw.h"
+@@ -912,35 +913,26 @@ MODULE_DEVICE_TABLE(of, tegra_admaif_of_match);
+ 
+ static int tegra_admaif_probe(struct platform_device *pdev)
+ {
++	const struct tegra_admaif_soc_data *soc_data;
+ 	struct tegra_admaif *admaif;
+ 	void __iomem *regs;
+ 	struct resource *res;
++	size_t alloc_size;
+ 	int err, i;
+ 
+-	admaif = devm_kzalloc(&pdev->dev, sizeof(*admaif), GFP_KERNEL);
++	soc_data = of_device_get_match_data(&pdev->dev);
++
++	alloc_size = struct_size(admaif, capture_dma_data, soc_data->num_ch);
++	alloc_size += sizeof(*admaif->playback_dma_data) * soc_data->num_ch;
++	admaif = devm_kzalloc(&pdev->dev, alloc_size, GFP_KERNEL);
+ 	if (!admaif)
+ 		return -ENOMEM;
+ 
+-	admaif->soc_data = of_device_get_match_data(&pdev->dev);
++	admaif->playback_dma_data = admaif->capture_dma_data + soc_data->num_ch;
++	admaif->soc_data = soc_data;
+ 
+ 	dev_set_drvdata(&pdev->dev, admaif);
+ 
+-	admaif->capture_dma_data =
+-		devm_kcalloc(&pdev->dev,
+-			     admaif->soc_data->num_ch,
+-			     sizeof(struct snd_dmaengine_dai_dma_data),
+-			     GFP_KERNEL);
+-	if (!admaif->capture_dma_data)
+-		return -ENOMEM;
+-
+-	admaif->playback_dma_data =
+-		devm_kcalloc(&pdev->dev,
+-			     admaif->soc_data->num_ch,
+-			     sizeof(struct snd_dmaengine_dai_dma_data),
+-			     GFP_KERNEL);
+-	if (!admaif->playback_dma_data)
+-		return -ENOMEM;
+-
+ 	for (i = 0; i < ADMAIF_PATHS; i++) {
+ 		admaif->mono_to_stereo[i] =
+ 			devm_kcalloc(&pdev->dev, admaif->soc_data->num_ch,
+diff --git a/sound/soc/tegra/tegra210_admaif.h b/sound/soc/tegra/tegra210_admaif.h
+index 304d45c76a9a..fd9877aa95d3 100644
+--- a/sound/soc/tegra/tegra210_admaif.h
++++ b/sound/soc/tegra/tegra210_admaif.h
+@@ -229,13 +229,13 @@ struct tegra_admaif_soc_data {
+ };
+ 
+ struct tegra_admaif {
+-	struct snd_dmaengine_dai_dma_data *capture_dma_data;
+ 	struct snd_dmaengine_dai_dma_data *playback_dma_data;
+ 	const struct tegra_admaif_soc_data *soc_data;
+ 	unsigned int *mono_to_stereo[ADMAIF_PATHS];
+ 	unsigned int *stereo_to_mono[ADMAIF_PATHS];
+ 	struct regmap *regmap;
+ 	struct tegra_adma_isomgr *adma_isomgr;
++	struct snd_dmaengine_dai_dma_data capture_dma_data[];
+ };
+ 
+ #endif
+diff --git a/sound/soc/tegra/tegra_isomgr_bw.c b/sound/soc/tegra/tegra_isomgr_bw.c
+index fa979960bc09..c0f300fb3d38 100644
+--- a/sound/soc/tegra/tegra_isomgr_bw.c
++++ b/sound/soc/tegra/tegra_isomgr_bw.c
+@@ -6,6 +6,7 @@
+ 
+ #include <linux/interconnect.h>
+ #include <linux/module.h>
++#include <sound/dmaengine_pcm.h>
+ #include <sound/pcm_params.h>
+ #include <sound/soc.h>
+ #include "tegra_isomgr_bw.h"
+-- 
+2.54.0
 
-Yeah... Let's see what other review comments pop up (including Sashiko,
-which would be seeing this series for the first time) and decide
-afterwards whether to make the argument const for the new getters as
-part of a separate set, or in v8.
-
-I don't think that modifying the existing getters is in scope for this
-27 patch set.
