@@ -1,291 +1,212 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AFC346AC3
-	for <linux-tegra@vger.kernel.org>; Thu, 30 Apr 2026 09:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777540212; cv=pass; b=sDnxujO/O/d0LvVDwAIfB1BAMl/lUk5VZqPk4YCHTSt/iIgtmUT72lofSQHI2PKkC0+R6EY6CPuSvLnbYuz6Jtg0h7Rnha5XWizoRZH10PGObOFQ8DkXNq8EofNKeCtlEBCNS1i06ZnvAJ9UyiWJEE7ZKfEIsseAz0ztUVOJlqU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777540212; c=relaxed/simple;
-	bh=YAIuhcF+H7kfNG3j2tbQ/OMQAUa1gSJ4rfyK6EkXFKI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MNT/ZuEjfJeXl5LvPre9n1QJiE/igWocmXhTX1lRB3pw1inVOkA37An19jOqaHAkyXEa2q2bGN+/EtB5r/iX9Ey/6opseD+NeroBiUQG0lxKm56zra3CiUGxVia3c9faTsTmzdM3jFAWENcX+BrEGbSGH+tilAqv2U3EFypTQQc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jD7PJ5c0; arc=pass smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F81B3A0B1F;
+	Thu, 30 Apr 2026 09:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777540739; cv=none; b=OSdG4d/FRqwbpm5kH2e3La/S0PzAPD6dCzJt+q4g87LTrfZaOx4Dc0PmkjD0GEjCDuhyxbSYSD2d0mJzXz7kp0D4WusEwAc0R8/V0Zx7/yt1Kur83G//gUtVBfK1PyY1qpgl9CUaiUs8ON7NZif3DCJ2CAcFeH3LNNAoWCNA8wI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777540739; c=relaxed/simple;
+	bh=UJL6OelUXsdUY30x9NgFXQIVtEbTmLIWMXWCnrTOyiM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Lo3FxxM7A834zVlJ8gkHzMuAwHo27VYJFK/L7l+0TnEB1zK1Pc0brFn1PsUbF1zT8mUD9MorcnxUN1lSivRK4DL1V4Y/6sO8LNdYay704ng0+N6/LGT3/YzA3+ra+CKrsjdJ1IugQM9fXgLizdh6meAC9yu5nrwyl8VtRIxqHvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jl75Y6bE; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jD7PJ5c0"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-43d75312379so1091469f8f.1
-        for <linux-tegra@vger.kernel.org>; Thu, 30 Apr 2026 02:10:10 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1777540209; cv=none;
-        d=google.com; s=arc-20240605;
-        b=BILtrZahf2Ia5n5ANdkwayyZwZaxHu9UE8hJ8+vbnMYtpfOy5SlaVdt93wHzq3HSUs
-         Tgixu58E7F/boPtXDotff4f2x5751RNjldkIIG1Im8tZ6iiBmRz+J2aQGtgar6Hf+eVp
-         kmGNdvPz9J2jxKVNlHdL3eu5R3KZGtkeRinQG5UglUa4npxbIjGYeOzvmGH8Ufm7F1Um
-         AMa4lDbVdaDYjOONv6CknyILSR0etbhW2zXZBYt/2CC5r2QhHW7WYM2Yv6YWXkz68nAC
-         mVf313TGuML5wtZ8SI89FVQENDq/fxmFfC9JDIE0OE/hOBZe9Z3z6OZ8EeZKiDlnj51M
-         +8rg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=uNayLLCXFFg34wv8nX5d4Vm4GrWa+HjlsC1+5DIJvb4=;
-        fh=/4wm6AT5e/COE7QcsDZsIS8dzQExXSPgoQZlxmQ/GjM=;
-        b=CzZq9ebWl/KJzi4WZAqmbFqU0chTiqV4VvTye6T8VFmLTXvUV/ucj7VOmZblHCSC7o
-         rJ2piS8c1rumYmqYum1Rbcalvw+e8vfw0SuvK2mxxGcKB9mc+zGo5m1EUFqvf3QiywNq
-         1ldey+3YZyjsyEH4eqFPxrkTTz58djp68zLO5bfLLZtVCyk+r4qwbBEgo33rTDTM8PzW
-         paF+sE51j5/v+o3F6OTjTFSQ4Zz5jpqukgAB8B8Lgpt5EYVdPhRVIT9ZcOiXXvpqBc1r
-         2Yg/Qujq5z6/2ZDzAoBYQ8mafVkb1oomKmj+83mWwU07GUKbmBh/XvPEreZ8dUJGVBoe
-         uRig==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777540209; x=1778145009; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uNayLLCXFFg34wv8nX5d4Vm4GrWa+HjlsC1+5DIJvb4=;
-        b=jD7PJ5c0WjV4M+BZy6d4iEHsFG7QdpJ+zeTIInx4bLsxuyI1ZcA3UA+jVrs+voDyxo
-         +Wk8hQUE1sfhZg6P4CSZJQ7FGjoGTsiz/6q0QgPMG3Ze1xi8ybnm4aVjJc6mcOfYVBz1
-         NXZBTk6eSUlrYucrx5RWw3aswDQPiy22a+dokBfxFUP4t4QUNsCciz3cMAdZqMpO5bte
-         meNY2Psx8NIhISne5yU1Fu3JfyREHKrlzZc9bEoeelbnnft+NwEbBgC3I5DnbQ1bXdqH
-         41UphdcYx/Lx4vhuosZg/EMdA26qc4ryQeLPkUgMWqlyUomPxai5KYisvrJwhpQ/KjQ3
-         jZ3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777540209; x=1778145009;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=uNayLLCXFFg34wv8nX5d4Vm4GrWa+HjlsC1+5DIJvb4=;
-        b=mkKeTy2c+4TzbH6VLR2quGIny6LzuPGUIMgEobpKrYiMKuMPzTIWN+Qo1P+zq2N27V
-         mfK0A8GmyozcUKXMyrF0XOqAZBnjvxwvQ/fS4hhprSb6NH5Zhd0oJnVRZoXqUtsLYPwI
-         2/RXRmd4Q/TDjCG49ElM9tOsXJ/p2Wqv2UKSkdP0h/EmU4A4s+FbMcAcZa0IfBmoqwyU
-         nGTXymoZAomjkihVNLc+aJye7ulhWhHxIOAJZx/3MamuzhBc/RKLGG6V+8InL/xZzKUZ
-         A+oZhhqO+mK2a4aYmFMlvUlB4SeAKgONVl7ZwRKDVJvlQYkpKEL57dMuK8Y5Z6X0d83t
-         Y6ug==
-X-Forwarded-Encrypted: i=1; AFNElJ/e1gK61tTgVy9czVb9PrtBKEMCpTg90ye6/IZ8u6SMEmyPz1t8SxOvO8l6V/VbQNw9uDBazb3os563mQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzohzN5cIA3U9a4IfKceHzNEd3yr8XH3M2jD5xiiV3LWQEVNDDI
-	6DqpXe+oOe8XtO/FDfbhPG7Ql7VZNcXpdb2hk8iInBzjEN1sH3Dmsogdy2MQ0x75xPw7XRfKd9Q
-	Ju0NaxTqxlgtkIf59pB8bR4cSbxaVAR8=
-X-Gm-Gg: AeBDies08lzfHfI4J5iQMOf/N4QEns568edTDGt/6Ntd+eZixdKMB9EBPyFQoteKLsb
-	DBRI6YSYeFtVKASdhrySjgN9dLuZ+WQY9B1MBptVs03j2BBMbaoZhx0+0uk9zRY+uARzKZyl+DS
-	r4Vt6hQcZ4cmXdTUyZVSNik+RrBT5AYUpiXt+TFvZPsdK+gfx2qD1C7yBYHvm1jmCusUR+Elfl1
-	dTocfsp5U9CwrCe2S/aRREeM7pKeK7ntgVNSXIWx+eD7ST1vPr1nz5LWgVyh/z4iwDIIhpQS8H2
-	+HpCdTX23yYTY2NRIc4=
-X-Received: by 2002:a05:600c:a412:b0:48a:65ab:8059 with SMTP id
- 5b1f17b1804b1-48a8607972amr22587615e9.13.1777540208950; Thu, 30 Apr 2026
- 02:10:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jl75Y6bE"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 8F667C5CD62;
+	Thu, 30 Apr 2026 09:19:34 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id E9B706053C;
+	Thu, 30 Apr 2026 09:18:49 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E3A8E1072B84F;
+	Thu, 30 Apr 2026 11:18:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1777540726; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=kPzFTYl8s/0qzQL977XUmLm+EjuPVHwAvy6zvNV2190=;
+	b=jl75Y6bEL+7XH1zwiNW+c6qdRlqqlGGwLUpQ85RtTJdu9EpHAcCly7th2dkRJqgvBNtrOi
+	m2QfOXlLwq71dPBT0OgjxI68dJM3R2cB+iqkYi+0XspHjpHCoF+EBBUkZg5KaK9Ge507iz
+	kqv6ZoGGXkW8Sf95ZaByPAT/w9zxdFH418OSOYfew2Xz2glDUB3n85brvXZfGs5i95VpeD
+	3qzwbW2V/v/ub1Uw3wAAOmhwm9AQuiqFqc4ERnz9TZ2T+PdNiUahf2hsk6fdwzSWKMnhlC
+	YsCVptaZkFgjdrCmR7033Fh8MbPK2PhMdRWJYtWVA5m52jQShDFOY9mIO9MHIA==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Janne Grunau <j@jannau.net>, Liu Ying <victor.liu@nxp.com>, 
+ Douglas Anderson <dianders@chromium.org>, 
+ Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
+ Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Paul Cercueil <paul@crapouillou.net>, 
+ Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Icenowy Zheng <zhengxingda@iscas.ac.cn>, Jingoo Han <jingoohan1@gmail.com>, 
+ Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+ Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
+ Jyri Sarha <jyri.sarha@iki.fi>, Michal Simek <michal.simek@amd.com>, 
+ Sasha Finkelstein <k@chaosmail.tech>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Hui Pu <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ asahi@lists.linux.dev, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
+ linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
+ linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+In-Reply-To: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
+References: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
+Subject: Re: [PATCH v2 00/41] drm/display: bridge-connector: attach encoder
+ to the connector
+Message-Id: <177754070456.1321073.15208749896191583310.b4-ty@b4>
+Date: Thu, 30 Apr 2026 11:18:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260427075856.85208-1-clamor95@gmail.com> <SGKRjIZyS4mU2gPAiUbKJg@nvidia.com>
- <CAPVz0n16zCgCZwPXWMPg=KiYLwc3beBzVqYVB96in7zn0Wkxqw@mail.gmail.com> <soBCUeXPQ72A3pDzGjjMng@nvidia.com>
-In-Reply-To: <soBCUeXPQ72A3pDzGjjMng@nvidia.com>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 30 Apr 2026 12:09:57 +0300
-X-Gm-Features: AVHnY4Je3sxCo-rN1StvJwz9cYuHqAYEyt3eRd6sgOWUegGJDGG9BA1xaOhYGlA
-Message-ID: <CAPVz0n24mV5z_gqBtG9SXAvbu8EbAmNwrMEEa6XbGz_pUb4SVA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] drm/tegra: gr2d/gr3d: Move pm_runtime_enable to gr*d_probe
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Thierry Reding <thierry.reding@kernel.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, Ion Agorria <ion@agorria.com>, 
-	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-=D1=87=D1=82, 30 =D0=BA=D0=B2=D1=96=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 11:3=
-8 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Thursday, April 30, 2026 5:04=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > =D1=87=D1=82, 30 =D0=BA=D0=B2=D1=96=D1=82. 2026=E2=80=AF=D1=80. =D0=BE =
-09:23 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > >
-> > > On Tuesday, April 28, 2026 1:57=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > > > =D0=B2=D1=82, 28 =D0=BA=D0=B2=D1=96=D1=82. 2026=E2=80=AF=D1=80. =D0=
-=BE 04:53 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > > >
-> > > > > On Monday, April 27, 2026 4:58=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > > > > > From: Ion Agorria <ion@agorria.com>
-> > > > > >
-> > > > > > The gr*d_remove() has pm_runtime_disable, this indicates it sho=
-uld be
-> > > > > > paired with pm_runtime_enable in the probe instead of being ins=
-ide
-> > > > > > gr*d_runtime_resume().
-> > > > > >
-> > > > > > Signed-off-by: Ion Agorria <ion@agorria.com>
-> > > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > > > ---
-> > > > > >  drivers/gpu/drm/tegra/gr2d.c | 8 ++++----
-> > > > > >  drivers/gpu/drm/tegra/gr3d.c | 8 ++++----
-> > > > > >  2 files changed, 8 insertions(+), 8 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/teg=
-ra/gr2d.c
-> > > > > > index 21f4dd0fa6af..71f092d59d65 100644
-> > > > > > --- a/drivers/gpu/drm/tegra/gr2d.c
-> > > > > > +++ b/drivers/gpu/drm/tegra/gr2d.c
-> > > > > > @@ -286,6 +286,10 @@ static int gr2d_probe(struct platform_devi=
-ce *pdev)
-> > > > > >       for (i =3D 0; i < ARRAY_SIZE(gr2d_addr_regs); i++)
-> > > > > >               set_bit(gr2d_addr_regs[i], gr2d->addr_regs);
-> > > > > >
-> > > > > > +     pm_runtime_enable(dev);
-> > > > > > +     pm_runtime_use_autosuspend(dev);
-> > > > > > +     pm_runtime_set_autosuspend_delay(dev, 500);
-> > > > > > +
-> > > > > >       return 0;
-> > > > > >  }
-> > > > > >
-> > > > > > @@ -367,10 +371,6 @@ static int __maybe_unused gr2d_runtime_res=
-ume(struct device *dev)
-> > > > > >               goto disable_clk;
-> > > > > >       }
-> > > > > >
-> > > > > > -     pm_runtime_enable(dev);
-> > > > > > -     pm_runtime_use_autosuspend(dev);
-> > > > > > -     pm_runtime_set_autosuspend_delay(dev, 500);
-> > > > > > -
-> > > > > >       return 0;
-> > > > > >
-> > > > > >  disable_clk:
-> > > > > > diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/teg=
-ra/gr3d.c
-> > > > > > index 42e9656ab80c..33e88ca4d4c5 100644
-> > > > > > --- a/drivers/gpu/drm/tegra/gr3d.c
-> > > > > > +++ b/drivers/gpu/drm/tegra/gr3d.c
-> > > > > > @@ -517,6 +517,10 @@ static int gr3d_probe(struct platform_devi=
-ce *pdev)
-> > > > > >       for (i =3D 0; i < ARRAY_SIZE(gr3d_addr_regs); i++)
-> > > > > >               set_bit(gr3d_addr_regs[i], gr3d->addr_regs);
-> > > > > >
-> > > > > > +     pm_runtime_enable(&pdev->dev);
-> > > > > > +     pm_runtime_use_autosuspend(&pdev->dev);
-> > > > > > +     pm_runtime_set_autosuspend_delay(&pdev->dev, 500);
-> > > > > > +
-> > > > > >       return 0;
-> > > > > >  }
-> > > > > >
-> > > > > > @@ -578,10 +582,6 @@ static int __maybe_unused gr3d_runtime_res=
-ume(struct device *dev)
-> > > > > >               goto disable_clk;
-> > > > > >       }
-> > > > > >
-> > > > > > -     pm_runtime_enable(dev);
-> > > > > > -     pm_runtime_use_autosuspend(dev);
-> > > > > > -     pm_runtime_set_autosuspend_delay(dev, 500);
-> > > > > > -
-> > > > > >       return 0;
-> > > > > >
-> > > > > >  disable_clk:
-> > > > > > --
-> > > > > > 2.51.0
-> > > > > >
-> > > > > >
-> > > > >
-> > > > > Oof, looks like I had managed to really bungle this with my earli=
-er
-> > > > > patch. Thanks for fixing it!
-> > > > >
-> > > >
-> > > > Hello Mikko!
-> > > >
-> > > > Thank you for taking time and looking into this patch. Don't be so
-> > > > harsh to yourself, PM is easy to mess and hard to set properly. Thi=
-s
-> > > > patch does fix gr*d access but it does not resolve the issue itself=
-.
-> > > > PM should be set in the init/exit rather then probe/remove. I have =
-v2
-> > > > which fixes this and one more minor issue and I will send them late=
-r
-> > > > on.
-> > >
-> > > Thanks! Why do you think it's necessary to enable runtime PM in init?
-> > > If you look at the commit I referenced below (in 'Fixes'), we've had
-> > > some issues in the past with doing pm_runtime_enable outside of probe=
-,
-> > > where the engine's power domain would be left enabled even when it is
-> > > idle.
-> > >
-> > > gr2d/gr3d I suppose wouldn't be in practice affected by that issue
-> > > though given they aren't in their own power domains.
-> >
-> > WDYM, gr2d and gr3d have their own power domains.
->
-> Ah, my bad, didn't look far enough in the device tree.
->
-> >
-> > If the master device is unbound and rebound, gr2d_init() will run again=
-, but
-> > pm configuration is only located in this probe function which will not
-> > run again, while pm disable are both in exit and remove. This results
-> > in pm issue we are observing.
-> >
-> > Solution would be either do everyting in probe/remove, or init/exit.
-> > Probe/remove will lead to domain being turned on even if engines are
-> > idle. Init/exit seems to me more suitable and we have tasted this
-> > configuration for a quite while in the grate DRM version.
->
-> Yes, we should only do it in one place. Where are you observing the
-> domain being turned on when idle?
->
-> Genpd turns on the domain before probe is called, and it should turn
-> it off again after probe if probe had enabled runtime PM and the usage
-> count is zero. That's what we have currently for the newer engines like
-> VIC and it's working.
->
-> We used to have it in init/exit, but then we were seeing the domain
-> sometimes being left on at boot, which makes some sense since as probe
-> didn't enable runtime PM, genpd would leave the domain powered after
-> probe. The domain would then also never get powered off when init
-> enabled runtime PM. I assume the reason this only happened sometimes
-> was that it was dependent on if the init function or the genpd
-> post-probe code ran first.
->
-> Based on that we should have the runtime PM handling in probe/remove,
-> to ensure genpd turns off the domain after probe when there are no
-> users.
->
-> Mikko
->
 
-Thank you for an explanation, I will adjust v2 accordingly (configure
-PM in probe/remove).
+On Thu, 23 Apr 2026 11:16:54 +0200, Luca Ceresoli wrote:
+> This series simplifies using the bridge-connector by removing the need to
+> attach the newly created connector to the encoder.
+> 
+> == Series description
+> 
+> Currently all users of the bridge-connector must call
+> drm_connector_attach_encoder() immediately after a successful
+> drm_bridge_connector_init().
+> 
+> [...]
 
-> >
-> > Best regards,
-> > Svyatoslav R.
-> >
-> > >
-> > > Cheers
-> > > Mikko
-> > >
-> > > >
-> > > > So for now this patch should not be picked.
-> > > >
-> > > > Best regards,
-> > > > Svyatoslav R.
-> > > >
-> > > > > FWIW, I've been working on adding some nightly testing for Host1x=
-/
-> > > > > TegraDRM, so hopefully we'll be able to catch such things easier
-> > > > > in the future.
-> > > > >
-> > > > > Fixes: 62fa0a985e2c ("drm/tegra: Enable runtime PM during probe")
-> > > > > Acked-by: Mikko Perttunen <mperttunen@nvidia.com>
-> > > > >
-> > > > >
-> > > > >
-> > >
-> > >
-> > >
-> > >
->
->
->
->
+Applied, thanks!
+
+[01/41] drm/display: bridge-connector: attach the encoder to the created connector
+        commit: dcad6dd16e87a6dcc78ab05f64c704cec2809db9
+[02/41] drm: adp: remove now-redundant call to drm_connector_attach_encoder()
+        commit: f96e621e90dfeb35676604b223f42f721e7c364f
+[03/41] drm/bridge: adv7511: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 4f88126e09160fa5c226e786982d433aba0345c4
+[04/41] drm/bridge: ite-it6263: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 7ecf62396ed7883eda3bb949df7f95e5a1048b17
+[05/41] drm/bridge: ti-sn65dsi86: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 1977688f60eab4c92dca15c8b7e6b19635902ee0
+[06/41] drm/imx/dcss: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 4b29d25b55fc28ab6065500a60693b093ad05366
+[07/41] drm/imx: ldb: remove now-redundant call to drm_connector_attach_encoder()
+        commit: dd7784328061fba1fba919d8879ed65ea30feeae
+[08/41] drm/imx: parallel-display: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 5c18883f8050b1f6fdb35050cf9dad64779f6ee9
+[09/41] drm/imx/lcdc: remove now-redundant call to drm_connector_attach_encoder()
+        commit: b490bc69f1c11d8335dbd628d5e32db8986f848c
+[10/41] drm/ingenic: remove now-redundant call to drm_connector_attach_encoder()
+        commit: bc9e6392403e316c9d6e337b7cf28543051cb28e
+[11/41] drm/kmb/dsi: remove now-redundant call to drm_connector_attach_encoder()
+        commit: d731d87126d43936ab74804785446f67a2d60d0c
+[12/41] drm/mediatek: mtk_dpi: remove now-redundant call to drm_connector_attach_encoder()
+        commit: c21f9adc83c5edf0b990cd068283d3c831b43074
+[13/41] drm/mediatek: mtk_dsi: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 41bfe06bb3cae68c0b3e21c5181c49f68db67e18
+[14/41] drm/meson: encoder_cvbs: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 82da98ea371dff7a9ece58083846556b043bec9a
+[15/41] drm/meson: encoder_hdmi: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 013adec1a93dcd052c6eb1769609eee661983ca9
+[16/41] drm/msm/dp: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 6108b5b7219e3f3f947922f4faa8ccbc570210d2
+[17/41] drm/msm/hdmi: remove now-redundant call to drm_connector_attach_encoder()
+        commit: f7ed1d3dde56b98e065b950d1044a0f655b194ba
+[18/41] drm/omapdrm: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 7b229305be6300c90e6f005784f9f53d4d23d579
+[19/41] rm/rockchip: cdn-dp: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 86909f184b4f045f4d85dd2ca957811c1184aa1c
+[20/41] drm/rockchip: rk3066_hdmi: remove now-redundant call to drm_connector_attach_encoder()
+        commit: d5304653b60edb79bfb71209ebbd4b57001ab003
+[21/41] drm/tegra: hdmi: remove now-redundant call to drm_connector_attach_encoder()
+        commit: c0670fc1e75782a9dd0cd94acb7b262077b3f720
+[22/41] drm/tegra: rgb: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 04ce2e375f6dde267f53995d81c48ab31dc06b52
+[23/41] drm/tests: bridge: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 6d303956b41f870240a23d4896ec12e420026637
+[24/41] drm: verisilicon: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 6d65baa60f0d7c305eb63b738163c1e35d0eef20
+[25/41] drm/exynos: exynos_dp: remove now-redundant call to drm_connector_attach_encoder()
+        commit: d627f7e6318906da2b95ac60616af7501d5145a5
+[26/41] drm: rcar-du: encoder: remove now-redundant call to drm_connector_attach_encoder()
+        commit: fa38bb8dc2e852e2979593b965779b8cca532014
+[27/41] drm: renesas: rz-du: rzg2l_du_encoder: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 88bcd924cd85a29658a60418f6e60a0f912f990c
+[28/41] drm/rockchip: analogix_dp: remove now-redundant call to drm_connector_attach_encoder()
+        commit: b7e25e250ea405f1c65256494b56e0f6443cc96a
+[29/41] drm/rockchip: dw_dp: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 8015bfccca36672e412dae4240886c71278c5b3c
+[30/41] drm/rockchip: dw_hdmi_qp: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 14a25df41b19aba228e66c0d9578e6e6b3cc58f9
+[31/41] drm/rockchip: inno-hdmi: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 6db094d4ce87fb4caf90db9863bb6a8b427b15c9
+[32/41] drm/msm/mdp4: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 4e833e078f3d40d4f4a24c162210a1b7855f1539
+[33/41] drm/msm/dsi: remove now-redundant call to drm_connector_attach_encoder()
+        commit: f9274ba1dff8b0adff22e8d877ec1e85bb14d0c3
+[34/41] drm/mxsfb/lcdif: remove now-redundant call to drm_connector_attach_encoder()
+        commit: da3918b645a5efe6fad2aa53b84a4d98c3df999c
+[35/41] drm/rockchip: lvds: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 24202edb689ead20411568251792a31103b9bde0
+[35/41] drm/rockchip: lvds: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 24202edb689ead20411568251792a31103b9bde0
+[37/41] drm/tilcdc: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 055673da01cdb130732ee556db58f7408392c1b8
+[38/41] drm: zynqmp_kms: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 42ccccb38ca8bac394faeb30c924ad542f5f1bee
+[39/41] drm/imx: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 2b727270b955b72cf6f47c5883bdc6f997f0e06f
+[40/41] drm/rockchip: rgb: remove now-redundant call to drm_connector_attach_encoder()
+        commit: d5d8e04dc0557437b19039206012305166df2bf7
+[41/41] drm: renesas: shmobile: remove now-redundant call to drm_connector_attach_encoder()
+        commit: 6533278b0deb14de860035dd1913e1e55e781e60
+
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
+
