@@ -1,126 +1,263 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010050.outbound.protection.outlook.com [52.101.193.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEAE19D092;
-	Thu, 30 Apr 2026 05:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777528800; cv=none; b=sq1Myu9QmYomOnOaeD14/8pdoZli0plNCB1080ir5u6CgkIx3UaORskI9Yds5YyShCoJk/XJO79oPfaMsFPnC6hlMvPpGnVF7BBZSMGqFgo1smUUiNPFw35XealJMOX/KsXwvkSxh9OmsZMduw5HEiPP9pl9MqfJLAu0nPWMejg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777528800; c=relaxed/simple;
-	bh=VILLUmaEI3VxYczJPbzj72pY8Mq3pBWIFnAWWa4Byvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HhQuj5FFf1a7aGVKYLUreCZF57cbvk5dTt2Knc6XTPqzea8iuSVtAxJxqfaaGk063RozBXcqD7A8cmoFy3DXlXcB0IhJnLmGtiEL/yNOd7M246oBKxJok6BadIt6QpeAYqcgoILKY0BOFup1pZHkOZaXXWYl+r/Bfqgf/Qy2LUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PG6+z9J7; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1F740DFB4;
+	Thu, 30 Apr 2026 06:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777530206; cv=fail; b=tD+BFEW25QMFYnyW0+LbdB64kJ4DAjsja1MvqGVFkClgyi3xSp3uNGzhMfTT22zct2ylFz1HTbfY4lnhx7rV+K/JHO7OHhWPykkM5KxZtHZjTX400LCKpbP2LutOCAA0sgWEpiw2j8MURhkIPoFT/2RiPxVWPMRz1VGUwofSygw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777530206; c=relaxed/simple;
+	bh=LjGGISeCzHDi+GGEhBqhCGGZlbCtX8WHh4UMMX4Pams=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MDlHUUnT8FpZ8tKqF2ANg0ezI3Tv07nc9Vg+XEQ4cbMe9iLTef57dwdTmTusN/bm/op5luXH3LaNCWDi8zYwqzrFyG7GpZql5URqD9R1OUsZlXaiqPubwpUmRZi1SkUPSXgDFnYPtPrX1tLeKeOh9Bw7Eurgg/Qvh1V8GHMdWCs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=I7QJZ7xW; arc=fail smtp.client-ip=52.101.193.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PG6+z9J7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CE22C2BCB8;
-	Thu, 30 Apr 2026 05:59:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777528799;
-	bh=VILLUmaEI3VxYczJPbzj72pY8Mq3pBWIFnAWWa4Byvk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PG6+z9J7FQZBNNLhhLtp1wXWUuqFN+d6gT8Z+jiVbpfrr2pzJVOfvzL6/ZpF6JdhX
-	 9Pwp3BHPR4MsKRxH77+trF0PKx48BNYxHXiWS4DXKbxWBtzHYHCRdRu8+craG4qZDc
-	 owWoKx890oN6Ts/0VBxtxT2fx1uAfsin3scVIyu/J6jJg091jreOoroCfxq95WvIGG
-	 y7zNIv4NLMqQqieCzYQTgy6nwr2XmvxyHmYgoO47spy6B0rUX0Zof2U3A2wkyG1svB
-	 9NlRE80V7Gq+P2ClocdkEwotkbLdRKt2I1nqKWu79xhgLAT5cuPLlG6P4TV33I8fr2
-	 lhW7wWOVzvHZw==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 897321AC585D; Thu, 30 Apr 2026 06:59:57 +0100 (BST)
-Date: Thu, 30 Apr 2026 14:59:57 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Sheetal <sheetal@nvidia.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sameer Pujar <spujar@nvidia.com>, Mohan Kumar <mkumard@nvidia.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ASoC: tegra: Add per-stream Mixer Fade controls
-Message-ID: <afLv3S6kWnt0D6PW@sirena.co.uk>
-References: <20260429070603.2791011-1-sheetal@nvidia.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="I7QJZ7xW"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=It5mWtgBqZ86uRaMbv0kNalOSlZxgoS9XXYSwpzl2RJBMCoFwApAFAmz0rjbjanogjZ3LLpUuYe6k5RoW7PIh7v8yKm4goGXftz71niSKK86lRw+uk8kBbXyMpzg5K8bsoRTDuwYxc3zEkIPO4RhaGEUJ7WHPLx43rZKL06wp42V7UxZNBw5/E8965Fz/mb3RmITrXxgMf4qY/2iMB0sqrTOOM0vzC0+OKV2Mq8EMj4jONSVSQ64Yu8dqAcJHr0mkdtch3WFkf9jzUbGxCDAQA3hW4ZHB1++YNX4D/MjJwBAGZd0bpvxP9p6Ypnqqi+A6yaosPQ8yLB3W2fF2eIvxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aFsCPe6jAWYAsqP+wBYhlmoBNppSZ6W88RoeSy9J0Fw=;
+ b=GCT4jrSMedeH5D9smXrvEO5GtBKl4Wp2KHCsv8yFiN7e9zjxWYEx8/Vlf22raafEpOgU/Th4py3hPygZ8N+8X1sP2rv1HiVka5o8T3PtEqjTh+CyGBvBls3zKzrJ8pMzIRwM+KORcsR6/l7D63OubCHe81EAhB9RxaWxAglk/Rg13uTSegquFc6Wtz+Oi0yH9jADc971xevBkzBxa+blFTQd3vwn87aame5HNybHRTa+fia7bDENnWXUbbQ3csML3bZVARAqXaGTzZ9Gww6K2JjnZVGZVWfZ68PY+BUEpqA0UTRfpSA/L0MIAUco1/E8LgX5SOlbUFfc+hvbbTieLg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aFsCPe6jAWYAsqP+wBYhlmoBNppSZ6W88RoeSy9J0Fw=;
+ b=I7QJZ7xWPkbs1KtNi1a6pI0/Ldx1FoyRoIEQZAvUDEtewp516pC4iYfGiVlE5iKwJLNnAMVZyfnHM6j4TRQxzP6WK/yH6Fnc6qeN+auVFtMep7nQ7PAnBRBwammNsMfld2W/ICbpUy9T9Q33FjZFp1yu7BHMk63rrU0K4YHdaiT9OEPMzHE7dmm9GRvs0z6p2Qnx5L+gE3H0X1lkJ2vkhjl4egYku1GiowPGq203CSy8FKo3wNlpDM6mr/UNQv0sGwVxOaSiAyNzRGMJ9ZDET3IVRUiub8IRA5ZDLc8oOmfthCk4HWQpo/UV/ZfD9RyWN9C9ZfE8OyYNuwIXa8fbJA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
+ by PH0PR12MB5677.namprd12.prod.outlook.com (2603:10b6:510:14d::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.20; Thu, 30 Apr
+ 2026 06:23:20 +0000
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017%4]) with mapi id 15.20.9870.020; Thu, 30 Apr 2026
+ 06:23:20 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Thierry Reding <thierry.reding@kernel.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Ion Agorria <ion@agorria.com>,
+ dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v1 1/1] drm/tegra: gr2d/gr3d: Move pm_runtime_enable to gr*d_probe
+Date: Thu, 30 Apr 2026 15:23:14 +0900
+Message-ID: <SGKRjIZyS4mU2gPAiUbKJg@nvidia.com>
+In-Reply-To:
+ <CAPVz0n0q77SVN7=47fEQR9ASQUnLoEgaGh3tJihxLSe9UhrPaw@mail.gmail.com>
+References:
+ <20260427075856.85208-1-clamor95@gmail.com>
+ <gUUml1BmSZiZjQ7gY5A_cg@nvidia.com>
+ <CAPVz0n0q77SVN7=47fEQR9ASQUnLoEgaGh3tJihxLSe9UhrPaw@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: OS0PR01CA0148.jpnprd01.prod.outlook.com
+ (2603:1096:604:27::23) To SJ2PR12MB9161.namprd12.prod.outlook.com
+ (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ELuvR44kxn05ZwYn"
-Content-Disposition: inline
-In-Reply-To: <20260429070603.2791011-1-sheetal@nvidia.com>
-X-Cookie: 667:
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|PH0PR12MB5677:EE_
+X-MS-Office365-Filtering-Correlation-Id: a0113f5e-7373-49d2-9727-08dea680f93f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|376014|1800799024|366016|22082099003|56012099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	ejpbwU9lyfqXsfYgKn91RKXJP1hySOT1zL/1ySE2UCeK0oAh7qtHMEOF+7jxXsDbH1CV6nG1bUXSBpSqcM0PwKsHGxe8pbkpw55mCyG9Db0B5Mq+jXQ3UAIsxCohceJNmwkIC7DdHT1kA+0jMTzLErBzzQaEl5GRqCjP0vuLicqoB9X6wtTtiXEb25aAy780fWnpIdp5jJl5yB079/FjM6DnAODOzIMlszY8IMEO1E/9H0osdecExi1RrNIwaNYS6VryhnYGCWXo4AbOLrcOi649AE/3vA6Q41e9oJ64mTZSgXnvljL58MjwjAUV7zsx/fXJeXRho21/RC6MbWqmBOFglhhAEtiXgNQAmXU10LrF9DfZ6As4sMeAzb52+RLUyxxa13pc+BWzZz4f4KABWCQ2MR+eVjHtKkem4cyGI6zwLUBTeVoGvREvdAI1VU451q81oatUcfkponvZ+dw20s7RWNcKjGOKE1jiOk9vnEUiuaXcnquOakInGEWDJctE0uTu5xONuQrHPB/pSg1H9ixh8eXd+6T4GmUgsco+Uo7eiWzl/drMEjJz6PhChCpMYnfREaCdYSgjidf10Kn20UhlkZVrPSfxDrZ/yPAAcCUjLhOR6eun6QV2xwo0GSP5ZOUC9Ve32Cgjs2H5NxbweeUBAm1NiTBKYIT3eETG71JcW4wp6kUWKFmusem/Uky8GHkrGY8IK5/eMlBqS2hw1TEy7GBpVtfGsBObuVTlY24=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(1800799024)(366016)(22082099003)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cUF0djNpRkhmVExCQVYvVENiU1lxbUxrMzlLalBnU3JvWVhYNkQwaDY1cG0y?=
+ =?utf-8?B?WVI1Zk9yOUJDNFpTb1Bpb1NtNkthNzBTN1BxZWdMTmpVNm1GekxzTlNVc3Ny?=
+ =?utf-8?B?QnpXemxmWXgwcVpadzN5WlFvaTI3UEF2Z1FtODRGR0xwaEV3aFBtRXNxTkxr?=
+ =?utf-8?B?US9UQXFlQ25YR0xHblh3TkFqRXFKd3JtOFVkOGFXeS9uL2hZMzBzbkNXUUpB?=
+ =?utf-8?B?ZXNVd0FpZDl0cVBkSG1BbExBL2pQa1IrOWxKS25jdWV6Z3diYWFYb2JuakpC?=
+ =?utf-8?B?NUVaRUdpbmNTMzZCMDAyMVVwblIvbnAwazhjNFRkOWxuVllHb2RFU3FxajFK?=
+ =?utf-8?B?ZVA2a00ra1VRNUJGaEVOekNHSU9mSDBBT3pLa2lSUDdBQjlIT1RYcG1wK1RH?=
+ =?utf-8?B?YnMyaklqNXh2bjhlOGlmaXhBWUN0R0lSV0FCdm5iL0g1bytSbGJMOG1uSFkx?=
+ =?utf-8?B?T2dKUmx5NnVNTFlIRzhQM2c0b1ZHUERjODZJc3lOSE5jdmljcWhFQjBlUVJQ?=
+ =?utf-8?B?eGVHYTR1YXZxVi9LQVdtNm1aNkJINHFvb20zVk10RTV4VjUvblo5YnZkNmlC?=
+ =?utf-8?B?NTAyU2gwdHJ1NHVHWlhCdWRKSm1wRVVRTDFaY2RUY1lBVU9DNFFjVVh5L1Jz?=
+ =?utf-8?B?OVg1enpUU3ROZzdhb3Q5Y01KaGRxVzBwNUhvalR3RDQyOFVHMzA5YnV0N3d5?=
+ =?utf-8?B?QmtVdFdXUGhrMFFlQk5yWVZ6QlcwejFpZzBGd3E3eTZrc1NIakVwZkNqVW5U?=
+ =?utf-8?B?LzQ3bkdVWEVidnVOOUxJRDBBejU0NVZTNXFNTDRnRXFYRXZXVVlyTGc5NUtF?=
+ =?utf-8?B?dHkydnl0eHF1dVRGdmxsVTJnUEZQWXdJb0J0aFBFUEhaUCsyWGhGNUNjOGwr?=
+ =?utf-8?B?L2JRcmExcjJlcEFtY2psRXhRR3Z6OFozK0UzcTVZSnBpYmszTWsxRXlDV1FY?=
+ =?utf-8?B?WVB1OFFOM2ZzdUJNS3VxUlpVSFhoZTc2OXJEdmhMMnlOQmpIUTZTenRvb2xR?=
+ =?utf-8?B?V3A1K1dnSE8xT3hKMXRSQzZXMitabjlodVl5aWxzOVFpNVVSbmRERXJVMm9W?=
+ =?utf-8?B?TUcyRzh2WmVIYXhYQ0dCR3FoQUdQQ0wyekR2aDZpY3FxUDQ2NTB3MWJQN09X?=
+ =?utf-8?B?cFlCVEZ3Z05QRzVWRUVzdE91c0lMZ0VEazlwdXpJT245MEtVQXJoeFJwUGl3?=
+ =?utf-8?B?cjYvVU5VeEg4b25PWmlLMlJ0WFg0NFd5OS83MjRCSHhQSnNUVnc0ZzBhY1dY?=
+ =?utf-8?B?eFdjcndvM0dtLzBtbUpnWU5YSXdxV2tZZ2luYnY1SnlEQ1RsZERPUkN1SHhV?=
+ =?utf-8?B?TlBPRmxSNVJHdm9EMGxwMCtFbnQ2eWlkOVpQQy9YY2lEa09GV3BZa0VUS3A5?=
+ =?utf-8?B?YnpCdjhtc2dDOS8vbnBzb3VidjdyMmJsUkZOMFBHVmdQZE9zUVNjS0tVckJX?=
+ =?utf-8?B?a0gyTWhQZUZLRTlYK3BNRHE2cmQ2RUR6ZHBEdWxDbGF6cWFmamIzMWZyRGND?=
+ =?utf-8?B?dkJjeGhSYVhyV1VwRTFMdENUV0YzZXI4VDJOVlJMZDJtbzhDb29naEw5T1Mv?=
+ =?utf-8?B?Lyt4VUtDTzMzclJHOENhZUU5Rm1HclRjME5lREpNZDdHQXhDNkJzdVZFK0Rp?=
+ =?utf-8?B?eW1Td3BjUHNReTdzNG1DSk1PRU5UcXBaTDN0WjdIMHNhL0g1QVpJSHB5cUZh?=
+ =?utf-8?B?aTd2M3B5cXY5UWg2TXlWeU9RakNDOERaSEFQWDB5UTE3U2ZNbGIyMVd3V09o?=
+ =?utf-8?B?SXh6UjQ4L1cydWdXM3dqTXFoUmkwa21LS0NrUzNuUURQU3lxRnBZNjdySG5B?=
+ =?utf-8?B?UzdOaU56UGtUQzVSN2dZOFhlSXcrbGVPaXRGT0RsUW8rR09kU0NhaDI1Yjh5?=
+ =?utf-8?B?WEs5VlBUTTFYcndyUEhQRWFEZ2FIT0FRd3h5OHVkRnRDSVlibGNyd2FiSjBp?=
+ =?utf-8?B?ZXExZVgraERZTWJYcHZOQjg5a1BzY2ZZUXJPWmYvbldoV2Z3WFMzb0Z4VE5W?=
+ =?utf-8?B?STdBSG1XS1FlamhLZXZhRmV2WU9aWVJPRzVyZWFMZW8xMmxlaEYxcEVhSS9u?=
+ =?utf-8?B?Q2x2Kzcvdm1kVU5qWU5xR2xITUlkeGV5aG1QSVdjWkVXTGJZK1hPSnZPWWN2?=
+ =?utf-8?B?QkRDTHBKamNOSTVmL2FSWlphampEWW5KYU81Ynh1WTNiWHZqYjNlSkhiWlhk?=
+ =?utf-8?B?b3FPZ2drMkxaVHdGV05BeWJjM3BLUTl1YmxETkFHaXRKUzVKLzhqRDZVUkVi?=
+ =?utf-8?B?enRJQ1Q3bm9LcUd5R2t0MWdTL2JkeGxBNUtXMytmUnlNWHNobHBxdWl1d3Fh?=
+ =?utf-8?B?aWZTSmZDMm56cEZSbXBvVUI1NVN6TUpQV1VEV1pFdkRkNzRQYVErZGpaejM3?=
+ =?utf-8?Q?NCCfqVwYO2o11J1KSEgtroo4cdMmIwXGEIGcSSbZZ8d6L?=
+X-MS-Exchange-AntiSpam-MessageData-1: hhykhcMfuSB1jw==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a0113f5e-7373-49d2-9727-08dea680f93f
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2026 06:23:20.3640
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ieNF4xsjS8CFh9zb69aufL7dGt2/PLApHKpurgheBOXRGEG+nzZ+9KeMB+IraDM0CnezuE2zpAZWLsZ/HRX+3w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5677
+
+On Tuesday, April 28, 2026 1:57=E2=80=AFPM Svyatoslav Ryhel wrote:
+> =D0=B2=D1=82, 28 =D0=BA=D0=B2=D1=96=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 04=
+:53 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Monday, April 27, 2026 4:58=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > > From: Ion Agorria <ion@agorria.com>
+> > >
+> > > The gr*d_remove() has pm_runtime_disable, this indicates it should be
+> > > paired with pm_runtime_enable in the probe instead of being inside
+> > > gr*d_runtime_resume().
+> > >
+> > > Signed-off-by: Ion Agorria <ion@agorria.com>
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  drivers/gpu/drm/tegra/gr2d.c | 8 ++++----
+> > >  drivers/gpu/drm/tegra/gr3d.c | 8 ++++----
+> > >  2 files changed, 8 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2=
+d.c
+> > > index 21f4dd0fa6af..71f092d59d65 100644
+> > > --- a/drivers/gpu/drm/tegra/gr2d.c
+> > > +++ b/drivers/gpu/drm/tegra/gr2d.c
+> > > @@ -286,6 +286,10 @@ static int gr2d_probe(struct platform_device *pd=
+ev)
+> > >       for (i =3D 0; i < ARRAY_SIZE(gr2d_addr_regs); i++)
+> > >               set_bit(gr2d_addr_regs[i], gr2d->addr_regs);
+> > >
+> > > +     pm_runtime_enable(dev);
+> > > +     pm_runtime_use_autosuspend(dev);
+> > > +     pm_runtime_set_autosuspend_delay(dev, 500);
+> > > +
+> > >       return 0;
+> > >  }
+> > >
+> > > @@ -367,10 +371,6 @@ static int __maybe_unused gr2d_runtime_resume(st=
+ruct device *dev)
+> > >               goto disable_clk;
+> > >       }
+> > >
+> > > -     pm_runtime_enable(dev);
+> > > -     pm_runtime_use_autosuspend(dev);
+> > > -     pm_runtime_set_autosuspend_delay(dev, 500);
+> > > -
+> > >       return 0;
+> > >
+> > >  disable_clk:
+> > > diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3=
+d.c
+> > > index 42e9656ab80c..33e88ca4d4c5 100644
+> > > --- a/drivers/gpu/drm/tegra/gr3d.c
+> > > +++ b/drivers/gpu/drm/tegra/gr3d.c
+> > > @@ -517,6 +517,10 @@ static int gr3d_probe(struct platform_device *pd=
+ev)
+> > >       for (i =3D 0; i < ARRAY_SIZE(gr3d_addr_regs); i++)
+> > >               set_bit(gr3d_addr_regs[i], gr3d->addr_regs);
+> > >
+> > > +     pm_runtime_enable(&pdev->dev);
+> > > +     pm_runtime_use_autosuspend(&pdev->dev);
+> > > +     pm_runtime_set_autosuspend_delay(&pdev->dev, 500);
+> > > +
+> > >       return 0;
+> > >  }
+> > >
+> > > @@ -578,10 +582,6 @@ static int __maybe_unused gr3d_runtime_resume(st=
+ruct device *dev)
+> > >               goto disable_clk;
+> > >       }
+> > >
+> > > -     pm_runtime_enable(dev);
+> > > -     pm_runtime_use_autosuspend(dev);
+> > > -     pm_runtime_set_autosuspend_delay(dev, 500);
+> > > -
+> > >       return 0;
+> > >
+> > >  disable_clk:
+> > > --
+> > > 2.51.0
+> > >
+> > >
+> >
+> > Oof, looks like I had managed to really bungle this with my earlier
+> > patch. Thanks for fixing it!
+> >
+>=20
+> Hello Mikko!
+>=20
+> Thank you for taking time and looking into this patch. Don't be so
+> harsh to yourself, PM is easy to mess and hard to set properly. This
+> patch does fix gr*d access but it does not resolve the issue itself.
+> PM should be set in the init/exit rather then probe/remove. I have v2
+> which fixes this and one more minor issue and I will send them later
+> on.
+
+Thanks! Why do you think it's necessary to enable runtime PM in init?
+If you look at the commit I referenced below (in 'Fixes'), we've had
+some issues in the past with doing pm_runtime_enable outside of probe,
+where the engine's power domain would be left enabled even when it is
+idle.
+
+gr2d/gr3d I suppose wouldn't be in practice affected by that issue
+though given they aren't in their own power domains.
+
+Cheers
+Mikko
+
+>=20
+> So for now this patch should not be picked.
+>=20
+> Best regards,
+> Svyatoslav R.
+>=20
+> > FWIW, I've been working on adding some nightly testing for Host1x/
+> > TegraDRM, so hopefully we'll be able to catch such things easier
+> > in the future.
+> >
+> > Fixes: 62fa0a985e2c ("drm/tegra: Enable runtime PM during probe")
+> > Acked-by: Mikko Perttunen <mperttunen@nvidia.com>
+> >
+> >
+> >
 
 
---ELuvR44kxn05ZwYn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 29, 2026 at 07:06:03AM +0000, Sheetal wrote:
-> Add per-stream fade controls for the Tegra mixer to allow
-> independently configuring target gain and fade duration for each of
-> the 10 input streams (RX1 through RX10).
 
-> +static int tegra210_mixer_get_fade_status(struct snd_kcontrol *kcontrol,
-> +					  struct snd_ctl_elem_value *ucontrol)
-> +{
-
-> +		if (count >=3D mixer->duration[id]) {
-> +			ucontrol->value.integer.value[id] =3D TEGRA210_MIXER_FADE_COMPLETE;
-> +			regmap_update_bits(mixer->regmap,
-> +					   MIXER_REG(TEGRA210_MIXER_RX1_CTRL, id),
-> +					   TEGRA210_MIXER_SAMPLE_COUNT_ENABLE, 0);
-> +			mixer->in_fade[id] =3D false;
-> +		} else {
-> +			ucontrol->value.integer.value[id] =3D TEGRA210_MIXER_FADE_ACTIVE;
-> +		}
-
-Is the _FADE_COMPLETE state a good idea here?  Only the first read after
-a fade will show it, and functionally it's the same as _IDLE - there's
-no current fade running. =20
-
-Also is there any overhead to having the sample counting enabled?  This
-is the only thing that turns it off AFAICT so if userspace doesn't look
-at the control we'll just leave it running indefinitely.  Perhaps a
-timer to disable might be useful?  It's generally a bit odd that we have
-a write to the hardware in a get().
-
-> +	SOC_SINGLE_EXT("Fade Enable", SND_SOC_NOPM, 0, 1, 0,
-> +		       tegra210_mixer_get_fade_enable,
-> +		       tegra210_mixer_put_fade_enable),
-
-Fade Switch.
-
->  struct tegra210_mixer {
->  	int gain_value[TEGRA210_MIXER_RX_MAX];
-> +	u32 duration[TEGRA210_MIXER_RX_MAX];
-> +	bool in_fade[TEGRA210_MIXER_RX_MAX];
-> +	bool fade_pending[TEGRA210_MIXER_RX_MAX];
->  	struct regmap *regmap;
->  };
-
-gain_value is used by the existing RX n Gain Volume controls, don't we
-need separate data for the fade controls here, or should we just have
-the new Fade Gain controls?  Having the separate controls is more
-complicated.
-
---ELuvR44kxn05ZwYn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmny79wACgkQJNaLcl1U
-h9DydAf/T97FNM3DJU21+ekLVDuQYxuinNrazGteFkDOnbd9lM1t9wcxqb4958Ds
-qi9VFgUnjSBSP+kmK3gSs4l5+QsrXRHariwSKh8pdWuaTUlAOuRljbBxwevToVae
-kj7JuGD/lj2f66OECG6UTAbfHvbsOHhVdTjFHPZ2XHFQmJ/ChIGOj9T2igj+gDGC
-LJqDb/W0DMfEgVifq+RFff3PNepm8DhzgDJ4r5p7mf8DAk6wW/Hp9gW1oVuqOpJH
-8UY/Q5F3QLKKO8BLDfeQnxuzLyayVgsdaSIz0Xgf9KxidDCxcKNM6VeZzmpCNQqF
-A5jy+fnCxnC2OOYECGTUYK0+yJd/Pg==
-=YDWg
------END PGP SIGNATURE-----
-
---ELuvR44kxn05ZwYn--
