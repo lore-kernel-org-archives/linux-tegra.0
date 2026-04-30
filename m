@@ -1,212 +1,197 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011005.outbound.protection.outlook.com [52.101.62.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F81B3A0B1F;
-	Thu, 30 Apr 2026 09:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777540739; cv=none; b=OSdG4d/FRqwbpm5kH2e3La/S0PzAPD6dCzJt+q4g87LTrfZaOx4Dc0PmkjD0GEjCDuhyxbSYSD2d0mJzXz7kp0D4WusEwAc0R8/V0Zx7/yt1Kur83G//gUtVBfK1PyY1qpgl9CUaiUs8ON7NZif3DCJ2CAcFeH3LNNAoWCNA8wI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777540739; c=relaxed/simple;
-	bh=UJL6OelUXsdUY30x9NgFXQIVtEbTmLIWMXWCnrTOyiM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Lo3FxxM7A834zVlJ8gkHzMuAwHo27VYJFK/L7l+0TnEB1zK1Pc0brFn1PsUbF1zT8mUD9MorcnxUN1lSivRK4DL1V4Y/6sO8LNdYay704ng0+N6/LGT3/YzA3+ra+CKrsjdJ1IugQM9fXgLizdh6meAC9yu5nrwyl8VtRIxqHvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jl75Y6bE; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338B73A6406;
+	Thu, 30 Apr 2026 09:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777541981; cv=fail; b=SSjCNcEQLRBAmpC6ZXgYFy/wAqZc+KZwUAbpXEVU74q+hzIXyiK/bQ4lqUiSTogFuxDxVkeCnKl70IJ0+SHm7UZJI3+kA+CKNxm4O58KTuWSmeF07cJmLIotarVG1Pz+EiNuH2fyLScYbKVLoxgikn1AOjFNKLHvipbwBhFusN8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777541981; c=relaxed/simple;
+	bh=CAtZTp8uBN2+0QI5gy1Mie3TU1nJQOniOGJc675xMvw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Wi150yoiSGgDBJ7mighHONfEuCgSMx4XLY81WDQYQ1cnDgXBJ3R5m2YTipfX0zRGL+02CYptO03DEPuCika+W3inRNUPPcxua1ZTJ6sKn2zEIoWTGyhNGG5tl/XswNaLYgxrcO6i5pOmFUp4ZfGInXAhyFLZEhA6Q+lCZWVL3aY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HhhFAPnS; arc=fail smtp.client-ip=52.101.62.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jl75Y6bE"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 8F667C5CD62;
-	Thu, 30 Apr 2026 09:19:34 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id E9B706053C;
-	Thu, 30 Apr 2026 09:18:49 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E3A8E1072B84F;
-	Thu, 30 Apr 2026 11:18:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1777540726; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=kPzFTYl8s/0qzQL977XUmLm+EjuPVHwAvy6zvNV2190=;
-	b=jl75Y6bEL+7XH1zwiNW+c6qdRlqqlGGwLUpQ85RtTJdu9EpHAcCly7th2dkRJqgvBNtrOi
-	m2QfOXlLwq71dPBT0OgjxI68dJM3R2cB+iqkYi+0XspHjpHCoF+EBBUkZg5KaK9Ge507iz
-	kqv6ZoGGXkW8Sf95ZaByPAT/w9zxdFH418OSOYfew2Xz2glDUB3n85brvXZfGs5i95VpeD
-	3qzwbW2V/v/ub1Uw3wAAOmhwm9AQuiqFqc4ERnz9TZ2T+PdNiUahf2hsk6fdwzSWKMnhlC
-	YsCVptaZkFgjdrCmR7033Fh8MbPK2PhMdRWJYtWVA5m52jQShDFOY9mIO9MHIA==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Janne Grunau <j@jannau.net>, Liu Ying <victor.liu@nxp.com>, 
- Douglas Anderson <dianders@chromium.org>, 
- Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
- Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Paul Cercueil <paul@crapouillou.net>, 
- Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Andy Yan <andy.yan@rock-chips.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Icenowy Zheng <zhengxingda@iscas.ac.cn>, Jingoo Han <jingoohan1@gmail.com>, 
- Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
- Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
- Jyri Sarha <jyri.sarha@iki.fi>, Michal Simek <michal.simek@amd.com>, 
- Sasha Finkelstein <k@chaosmail.tech>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- asahi@lists.linux.dev, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
- linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
- linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-In-Reply-To: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
-References: <20260423-drm-bridge-connector-attach_encoder-v2-0-2ae6ca69b390@bootlin.com>
-Subject: Re: [PATCH v2 00/41] drm/display: bridge-connector: attach encoder
- to the connector
-Message-Id: <177754070456.1321073.15208749896191583310.b4-ty@b4>
-Date: Thu, 30 Apr 2026 11:18:24 +0200
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HhhFAPnS"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GrQ7SVsgP/YUqR5qiV4xDquRsU4narGxn/AvWorSuPgWaPKeUnVaPSbwulZO6hlO8NV2M5vJX2xDOt6gVKFKDb/K6ZDJEEzhJUwr2UDo0E0W5hFK2JjvqCBhyb5sNMmzoND9a0dL8sJ9nHs5ntaXUOF5rxwA2WymRpOEdlCPp9VWgpPsfG35LQ07uxIDd5p3eNkztMJEaJ9dr8OaqnYiWYg99arX8hn/C4i0HFWPOeLs+7dEI41Mgo6AXnquzaduEPKmkVzXSe5eGlPaPSqf1rKuu2YG1CmWEYxFPLzlVuto5rmD959W2Okfp1MhG6Ji8I0d9OJlSGgbpF+ivqfVZw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CGoeTSeTvEDkdv6FR15oEmUyxwLRjVgAC4gBFlaY1ZU=;
+ b=Edf1dVe7y3lTBBfPTElijIgSuQWRbNbrHSi6bn4VPH3lSr6kXlhCtZIaaZmSFpwavL3084xHwmzdmbs4PdD7E0ov13JIWp0dn3OB2ygJlVRMx3IdS23RXbLDgLTCxQkllzNV5NplLGD9AO2dLI4sg0ysvmqNOqqLKwvgYxSkRsAgaJ8GnjnBZNC3yKDIiuq6FhpOr7lLJMxav0/K6Npgg5qMZJayDI1kj5HOZfvF5iLAlUyXPLPLAJwSnkPfcErDnF1IQyaaeLGTeXWGKwEBCqi2f+lCOW/2XVbAVyEukKbdcJjQciDN4qHw2HmS3ERBi1kVv7FztUwdvZ3twXFN3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CGoeTSeTvEDkdv6FR15oEmUyxwLRjVgAC4gBFlaY1ZU=;
+ b=HhhFAPnSzhAGm9Fe3CZInBQK2dfEH3uynTM8yOzhJYGOrxF1OQgyX8MjkuBE5pTPVH/XbmMj71kvsQzZuxVnMHbXQ+0xeKxk1Yo3KL/1spr1wR+IoTbu3OccGGhH5FhHbLruLwDs7i3HFeahwQl1nkDYprBFK6hcj0aSb2oqD5Yw2+WEaPmV9HXlk58FMFxFWpYiW991yMrizsUWNnP50aATGfGFUPljSlNAxVMKDhJcIXePI5jTgbthnnIsR9OIogRL1un9sgB9WSDqjwi6E+Hq+Usd6EJON9CsmuaRYDzFU0bPX7/1UxGCrFhTjt8A+4bC9V75EDEjxfq1vonOlA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BN5PR12MB9511.namprd12.prod.outlook.com (2603:10b6:408:2a9::14)
+ by CH2PR12MB4245.namprd12.prod.outlook.com (2603:10b6:610:af::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.21; Thu, 30 Apr
+ 2026 09:39:35 +0000
+Received: from BN5PR12MB9511.namprd12.prod.outlook.com
+ ([fe80::4d8d:5f91:6c3c:dc8c]) by BN5PR12MB9511.namprd12.prod.outlook.com
+ ([fe80::4d8d:5f91:6c3c:dc8c%4]) with mapi id 15.20.9870.013; Thu, 30 Apr 2026
+ 09:39:35 +0000
+Message-ID: <f60904dd-1337-42a5-9759-d3282c99f502@nvidia.com>
+Date: Thu, 30 Apr 2026 15:09:29 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 1/2] memory: tegra: Wire up system sleep PM ops
+To: Jon Hunter <jonathanh@nvidia.com>, krzk@kernel.org,
+ thierry.reding@kernel.org
+Cc: ketanp@nvidia.com, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+References: <20260430070954.1005564-1-amhetre@nvidia.com>
+ <20260430070954.1005564-2-amhetre@nvidia.com>
+ <536e3912-9351-4825-b25b-776e4cd4c748@nvidia.com>
+Content-Language: en-US
+From: Ashish Mhetre <amhetre@nvidia.com>
+In-Reply-To: <536e3912-9351-4825-b25b-776e4cd4c748@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR05CA0189.namprd05.prod.outlook.com
+ (2603:10b6:a03:330::14) To BN5PR12MB9511.namprd12.prod.outlook.com
+ (2603:10b6:408:2a9::14)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15.2
-X-Last-TLS-Session-Version: TLSv1.3
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN5PR12MB9511:EE_|CH2PR12MB4245:EE_
+X-MS-Office365-Filtering-Correlation-Id: ac55da48-9a98-4c59-0704-08dea69c63b3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|1800799024|22082099003|18002099003|56012099003;
+X-Microsoft-Antispam-Message-Info:
+	AAzCtCIiQloSyKk/VYurfu2xeAlvbh2OSe4FFD1c5TcgI4PNbi8AUCb+Ad+wfF70xggeUmwMdJSe+jOTEBgdP14xtrzZfyIYL/6h4s1pN1aLU8XiEaq42niQSjJBSoXxHW0ZE93u1qDr2JC8HPL9ExRqFq/l0T8iF54ChTLeXC86ADvQydHkQ5QKwJl5VM3yMdBmb8At1krf3Vhy0nFRQmcQTVIY0vefxKWR3esXALJ+iE+5KhjwCM/SDHhVKF1OAPjP65LjZdLn6xjybsuIP1LNJJRerJevxmb10ZfAYS4MaK2qjkOvLU48wZQEdd7TqHe3SPWFugIgbYKJOwpiYrTpxbyqzMaJMXQehZ2b0Q7EurJF8gS2hV2zIYHC+/aBeQd4z9wBqJD+Mp162W90y7pUA2VdAMhWTUwB4UoObR+UnHHArcw2WYnOCiQs65uI3DC1YsmCHfEdruPisk6B+vCG9WdvpKtxo9tDxWGj+AVk5ESNJdpzhTlkmh+YeFgGubsU+oxeDD1cz0qhHp1s9gtCug3GEIlTk8hJe2yU550ouwxZov/wZ3Q3nVYCt9CoiVQAZRadP5xuEMSpGp9UhwaKxKZVKzdA3OJUFUhfs/P7IulyAkkN8gU+E1/8y+5zfeRaG9HEmQ4TDdiYYaWUtVYFhCNx1mk5sU5yz2jiE+5kmmwHiMFddtU0PvslrIiJtL0OQvtVnKbUu0ETT7/PhLorkvf6hCIS6yzPl4DYo/k=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN5PR12MB9511.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aGorZUJxaEJEcnFhY2pubnMyRDZEMGJzeU5XOXlCNElDMEtGV0tPbnRjT21W?=
+ =?utf-8?B?V2Z5U0pJYzh1S1FTZCtFZFpqbXNKbVBvc3lnRFV6b3UzUG9La1hUUXlHQlpw?=
+ =?utf-8?B?bURrR0JpKzFzcUNTL1UyRkdrTG9PUWpmRHJTeVZPMy8rRmMzKzA1Sy9WUnZw?=
+ =?utf-8?B?eWRGY0dqdkFrNGk2M09NZFB6eTd1OXlRRzFJTHZ3NEVGRi8wSGx6cm16d3Ba?=
+ =?utf-8?B?SGhjQm9vVzB1c2l1MUZyT2YxL282NkFuMllRNGZkcTk1UFMvQ3hwVndmNDBh?=
+ =?utf-8?B?ZjVBbTdoU2RHN2xwWXBOdnN5UjBoNDQ5cm1uUVNaSEhxVldUZXFDOFRram10?=
+ =?utf-8?B?QU05ZS9XRjVoRkg4TDUzYkF6d0o1OFF6T09wak00eW9FVndzNVFMbEhvbXZ3?=
+ =?utf-8?B?a2EzdnhOVmU1ak5pSEdJQituaGlUZ1lzUjRDUTZOYXBycWxpUENTVVQzMm5C?=
+ =?utf-8?B?bm9TdmQ3WTN2UDFhc0QxRXBqYVlSaEdZODBleXQ4M09IdXVqL1doUEI1LzBq?=
+ =?utf-8?B?WVBTTjdZV01rTk95K0p3SFZCalRGYWdZdnd5Q1lzNWFmd3RMcTYzMkkzT0o5?=
+ =?utf-8?B?WSszRWo2OG5qV0didHlUT05rQ2l6V1FRVkNKNjJBNGdPdklnTXdJb1BFK1RJ?=
+ =?utf-8?B?TjFqdE5IdWdpem1vQVdZcnV6eFpQVTdvTG9Fdml2VGdrY1JlRTlQUkk3NVZL?=
+ =?utf-8?B?c1RBYXNCNE11bW1KNHI5V0k1TkcxVXlPbHlVUjlMdTNDOCtwQlYxODdCbFhQ?=
+ =?utf-8?B?aWlydGU1ck1sa3dLaGNqcFRmV0ZlYUJRemNWaWw1a2FaMGNTWDJZN2tnVzNW?=
+ =?utf-8?B?ZHpJYk40cmVnVDZkYml0ZVAxYk1hcUE5eVpqMjM2Zk5hOUF2NmQyV2xDQ1ha?=
+ =?utf-8?B?WkFWTDNSdGhRVHlIZDRkTTN0NHFDSVJVdzV3T0pBVmk0S1BJZmZHZTNweFhy?=
+ =?utf-8?B?VjRTVzlMWDdzUnh0OGVyUG54T2txRWlQakZtYzMzb2JzNWpFendMT3cwNnZa?=
+ =?utf-8?B?Mi9Fei9pVnBVZG1IZmRzZVJ2R2RBc0xiMlR6bUJTdk91OE5wcTRaekNyOHJW?=
+ =?utf-8?B?QVplZi9mRFR0ODlNZFNqZUU5NWdIMjBxZ0VYUXJxazlhY1daUjNaL0ZHTXNp?=
+ =?utf-8?B?aHJOalRXaHNQbnJaWnFNWDV4MmtPenpTVDRBdTdOWGxuM3BBK3l5YjNZbWNo?=
+ =?utf-8?B?dXZsb1hDR2VyeGFiVkVvV3dVZXEyS2gxNnptSHVyeC82K00xNUw4R2hmT09I?=
+ =?utf-8?B?bHVrM1o5S3M2SjFXbkJ0M3R2OSs5OEM3aUlwSjh5T1BKTGpEQjR5N1JGVkpG?=
+ =?utf-8?B?TVJKaFBhY2ZIc3JMY2ZFMXRCeHA2V1JEMVBWTHVXeTMyMjRmRHQxTElYN1hk?=
+ =?utf-8?B?WUt3WDA3OTNFNXNiUEN6K0JrUk92eGFEUDR0Z2VwTTg5MTJCZVprbnR5S3No?=
+ =?utf-8?B?MTB1WlRIdUNqallyZ1ZwaTE2NTJ0ajQvd1Bja3NjS3NtVDF2ckRnaGlOYkxC?=
+ =?utf-8?B?RmxmWmkva283UEF3YkhPM29YZ1MwdTdLUVJZbHJQNytpOTdSVGYzWW4rTmRo?=
+ =?utf-8?B?T2NmeHZxRmVreEZ0d1EzT3BCcXJCbFpUU3lUbUlDRlFZaFBqM1RVR2I3WFJw?=
+ =?utf-8?B?cHJlRTNhNklxeGxCTDRJR1N4WUZ3UGRiZEpqeHJyNHFZTGplOGJvZDBUSDZu?=
+ =?utf-8?B?RVoyQlZPUERRUGxtME84RXhwTUNxQlFnWlRrT2JzYXBKcUdUeUdPUEV6UXJq?=
+ =?utf-8?B?OTFzRThVdmtaWXJIN0sycG9pTUlOY1YwNWN2NUgxSnFhRy9NMS9qQUgrYW1Z?=
+ =?utf-8?B?c3NtRUkrZ3lOZG1rcU9nNnpwWDBoWEZJT1BkSDVoWXM1S1N0YVJkYndkbWRx?=
+ =?utf-8?B?LzNNbXpQNFdDMWI5aW13ZEl4Mmtxa0pDMU9LSjUzaEFXVkd2OGlOZTU3N0FZ?=
+ =?utf-8?B?bTUvOStCWlhmNGZXeDhWNlVUN2FmOVB4b2V2WVk1SVU4TGdidGxmYkI0b2Zk?=
+ =?utf-8?B?WnJveDI1NVFhaThMaG1LMUNmeXY4QVVESVVnRDQrcHNodG9yVW1aREg0Zyto?=
+ =?utf-8?B?cjlCRklxYWNpRVZ1R2pGYlA5a2lYaFd2Z1JockIvWXo4RHpTQjU3WmYwZm0w?=
+ =?utf-8?B?YWNYR1MwMkF5elRoOU1GMktzMjRCbTFTUm1WL0Q3UEd3aTVtcXhFN3U5SVVS?=
+ =?utf-8?B?a09CSlZDaUNlamp2di8xRVhIR29LbldNdGptM3JiV2xXNCtmT0krUUxwV241?=
+ =?utf-8?B?ays4ai82NDdYM1VRSHhHdnREUlQ3ZHcvRHQ1QVV5aGxmQTJ6THVoQkd0OCtW?=
+ =?utf-8?B?R21ta1BZSlRtRDlTbllMT1AwTnVmWU1KK2NaQkUvV2IrY2d4c2lMdz09?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac55da48-9a98-4c59-0704-08dea69c63b3
+X-MS-Exchange-CrossTenant-AuthSource: BN5PR12MB9511.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2026 09:39:35.2679
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: W07NwXSB5fwzcC+Ar9CkmIRP3G3KdmUmofsk9gMmcYeafaRQQVxZ2JwQz3sip+BpDAi5xZ49qfrbMS63axfrag==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4245
 
 
-On Thu, 23 Apr 2026 11:16:54 +0200, Luca Ceresoli wrote:
-> This series simplifies using the bridge-connector by removing the need to
-> attach the newly created connector to the encoder.
-> 
-> == Series description
-> 
-> Currently all users of the bridge-connector must call
-> drm_connector_attach_encoder() immediately after a successful
-> drm_bridge_connector_init().
-> 
-> [...]
 
-Applied, thanks!
+On 4/30/2026 2:09 PM, Jon Hunter wrote:
+>
+>
+> On 30/04/2026 08:09, Ashish Mhetre wrote:
+>> The tegra-mc platform driver does not register any dev_pm_ops, so the
+>> the SoC-specific ->resume() is never invoked (e.g. tegra186_mc_resume)
+>> on system wake. On Tegra186 and later this means MC client Stream-ID
+>> override registers are not reprogrammed.
+>>
+>> Register a dev_pm_ops on the tegra-mc driver and route the system
+>> resume callback into mc->soc->ops->resume() so the existing SID
+>> restore path runs again on wake.
+>>
+>> No suspend callback is needed as the resume path reprograms all MC
+>> state from the static SoC tables, so there is nothing to save.
+>>
+>> Fixes: fe3b082a6eb8 ("memory: tegra: Add SID override programming for 
+>> MC clients")
+>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+>> ---
+>>   drivers/memory/tegra/mc.c | 14 ++++++++++++++
+>>   1 file changed, 14 insertions(+)
+>>
+>> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+>> index d620660da331..343ac0018eba 100644
+>> --- a/drivers/memory/tegra/mc.c
+>> +++ b/drivers/memory/tegra/mc.c
+>> @@ -13,6 +13,7 @@
+>>   #include <linux/of.h>
+>>   #include <linux/of_platform.h>
+>>   #include <linux/platform_device.h>
+>> +#include <linux/pm.h>
+>>   #include <linux/slab.h>
+>>   #include <linux/sort.h>
+>>   #include <linux/tegra-icc.h>
+>> @@ -1010,10 +1011,23 @@ static void tegra_mc_sync_state(struct device 
+>> *dev)
+>>           icc_sync_state(dev);
+>>   }
+>>   +static int tegra_mc_resume(struct device *dev)
+>> +{
+>> +    struct tegra_mc *mc = dev_get_drvdata(dev);
+>> +
+>> +    if (mc->soc->ops && mc->soc->ops->resume)
+>> +        return mc->soc->ops->resume(mc);
+>
+> I noticed that the tegra186_mc_resume never fails and always returns 
+> 0. Given that this is the only resume handler, it seem that we should 
+> change this to a void return type and then we can avoid the extra 
+> return here. This also simplifies the next patch. So may be we should 
+> add one more patch to change the return type for this resume callback.
+>
+> If we ever need to return a error code in the future we can add back, 
+> but if we don't need it now, then I don't see why we should keep this.
+>
+> Jon
+>
 
-[01/41] drm/display: bridge-connector: attach the encoder to the created connector
-        commit: dcad6dd16e87a6dcc78ab05f64c704cec2809db9
-[02/41] drm: adp: remove now-redundant call to drm_connector_attach_encoder()
-        commit: f96e621e90dfeb35676604b223f42f721e7c364f
-[03/41] drm/bridge: adv7511: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 4f88126e09160fa5c226e786982d433aba0345c4
-[04/41] drm/bridge: ite-it6263: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 7ecf62396ed7883eda3bb949df7f95e5a1048b17
-[05/41] drm/bridge: ti-sn65dsi86: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 1977688f60eab4c92dca15c8b7e6b19635902ee0
-[06/41] drm/imx/dcss: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 4b29d25b55fc28ab6065500a60693b093ad05366
-[07/41] drm/imx: ldb: remove now-redundant call to drm_connector_attach_encoder()
-        commit: dd7784328061fba1fba919d8879ed65ea30feeae
-[08/41] drm/imx: parallel-display: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 5c18883f8050b1f6fdb35050cf9dad64779f6ee9
-[09/41] drm/imx/lcdc: remove now-redundant call to drm_connector_attach_encoder()
-        commit: b490bc69f1c11d8335dbd628d5e32db8986f848c
-[10/41] drm/ingenic: remove now-redundant call to drm_connector_attach_encoder()
-        commit: bc9e6392403e316c9d6e337b7cf28543051cb28e
-[11/41] drm/kmb/dsi: remove now-redundant call to drm_connector_attach_encoder()
-        commit: d731d87126d43936ab74804785446f67a2d60d0c
-[12/41] drm/mediatek: mtk_dpi: remove now-redundant call to drm_connector_attach_encoder()
-        commit: c21f9adc83c5edf0b990cd068283d3c831b43074
-[13/41] drm/mediatek: mtk_dsi: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 41bfe06bb3cae68c0b3e21c5181c49f68db67e18
-[14/41] drm/meson: encoder_cvbs: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 82da98ea371dff7a9ece58083846556b043bec9a
-[15/41] drm/meson: encoder_hdmi: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 013adec1a93dcd052c6eb1769609eee661983ca9
-[16/41] drm/msm/dp: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 6108b5b7219e3f3f947922f4faa8ccbc570210d2
-[17/41] drm/msm/hdmi: remove now-redundant call to drm_connector_attach_encoder()
-        commit: f7ed1d3dde56b98e065b950d1044a0f655b194ba
-[18/41] drm/omapdrm: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 7b229305be6300c90e6f005784f9f53d4d23d579
-[19/41] rm/rockchip: cdn-dp: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 86909f184b4f045f4d85dd2ca957811c1184aa1c
-[20/41] drm/rockchip: rk3066_hdmi: remove now-redundant call to drm_connector_attach_encoder()
-        commit: d5304653b60edb79bfb71209ebbd4b57001ab003
-[21/41] drm/tegra: hdmi: remove now-redundant call to drm_connector_attach_encoder()
-        commit: c0670fc1e75782a9dd0cd94acb7b262077b3f720
-[22/41] drm/tegra: rgb: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 04ce2e375f6dde267f53995d81c48ab31dc06b52
-[23/41] drm/tests: bridge: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 6d303956b41f870240a23d4896ec12e420026637
-[24/41] drm: verisilicon: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 6d65baa60f0d7c305eb63b738163c1e35d0eef20
-[25/41] drm/exynos: exynos_dp: remove now-redundant call to drm_connector_attach_encoder()
-        commit: d627f7e6318906da2b95ac60616af7501d5145a5
-[26/41] drm: rcar-du: encoder: remove now-redundant call to drm_connector_attach_encoder()
-        commit: fa38bb8dc2e852e2979593b965779b8cca532014
-[27/41] drm: renesas: rz-du: rzg2l_du_encoder: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 88bcd924cd85a29658a60418f6e60a0f912f990c
-[28/41] drm/rockchip: analogix_dp: remove now-redundant call to drm_connector_attach_encoder()
-        commit: b7e25e250ea405f1c65256494b56e0f6443cc96a
-[29/41] drm/rockchip: dw_dp: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 8015bfccca36672e412dae4240886c71278c5b3c
-[30/41] drm/rockchip: dw_hdmi_qp: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 14a25df41b19aba228e66c0d9578e6e6b3cc58f9
-[31/41] drm/rockchip: inno-hdmi: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 6db094d4ce87fb4caf90db9863bb6a8b427b15c9
-[32/41] drm/msm/mdp4: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 4e833e078f3d40d4f4a24c162210a1b7855f1539
-[33/41] drm/msm/dsi: remove now-redundant call to drm_connector_attach_encoder()
-        commit: f9274ba1dff8b0adff22e8d877ec1e85bb14d0c3
-[34/41] drm/mxsfb/lcdif: remove now-redundant call to drm_connector_attach_encoder()
-        commit: da3918b645a5efe6fad2aa53b84a4d98c3df999c
-[35/41] drm/rockchip: lvds: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 24202edb689ead20411568251792a31103b9bde0
-[35/41] drm/rockchip: lvds: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 24202edb689ead20411568251792a31103b9bde0
-[37/41] drm/tilcdc: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 055673da01cdb130732ee556db58f7408392c1b8
-[38/41] drm: zynqmp_kms: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 42ccccb38ca8bac394faeb30c924ad542f5f1bee
-[39/41] drm/imx: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 2b727270b955b72cf6f47c5883bdc6f997f0e06f
-[40/41] drm/rockchip: rgb: remove now-redundant call to drm_connector_attach_encoder()
-        commit: d5d8e04dc0557437b19039206012305166df2bf7
-[41/41] drm: renesas: shmobile: remove now-redundant call to drm_connector_attach_encoder()
-        commit: 6533278b0deb14de860035dd1913e1e55e781e60
+Okay, I'll update the return-type in new patch and send V3.
 
-Best regards,
--- 
-Luca Ceresoli <luca.ceresoli@bootlin.com>
-
+Thanks,
+Ashish Mhetre
