@@ -1,150 +1,155 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013017.outbound.protection.outlook.com [40.107.201.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E3A1D6DA9
-	for <linux-tegra@vger.kernel.org>; Fri,  1 May 2026 00:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777593696; cv=none; b=ElRpc+egBEYdbUPGF5qWw61yudArQpzlQcneeg6EqoHU7Ln7Xf+1Vv7nnact2B6rxH0ZFUJ7VLqj8qn2HezJRaRGnR4QkDEJc87a492pL8tKBDGX/O8ya83QUvsE+R7sE2Reo07jr0fKtohrEQOMiLHbHP9Wd+7UsWlPH6F6bFs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777593696; c=relaxed/simple;
-	bh=rWDl9l88s5smH4oJB25R8ZD9EUfLZO6b7a2lfjBov+o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QSfr2N+b2BxxBKKkRgZ+CG73hDGjAcFfHtdd5wHHwLrCLWjK+Ia35kwOh/CN7Q7dzbrRa6/k8E2pwxG0KsFFAXULpri3aDjUxaCf3G7beidZ2GrdeSrQ8jjGDpL/hzk1sqUev8FuSCcZpAJ5oGYSzwuYbhJDnYDoZYVKPBW37rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QwpWFuIy; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5446940DFC5;
+	Fri,  1 May 2026 00:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777595245; cv=fail; b=PT+Nb5I2LjMs+/GbQIoZX5btXzAvWnjSBHd5ZUc9Ujh4CAvndabImFwRC3li9AUCUDyINNcRSBJpWB6hoVEerImqo3BJyJ+XnrAOZaY6Q8EfgN9warxQc3CD/TiOWkRg/e4kPK0oqAVfGiOtZAE1nMCGdwfPCc+lJ1ypeCXyVLw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777595245; c=relaxed/simple;
+	bh=VmoGKkI7NuJwulbhvTqV0QTHX+4aatQIeLcAJQ/xayA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=pNqOMyI3TDJaeAJ644+/lX1O4OFYfZljN+k3Fdq3lVQhsb47pIqjKAR9T+ylYDyHzRJcrQZwbm5FwwL/yq8NKHuiwy36Ql26YjO5rg9SaJ/AmHAm+ymxoKqffIx4Y24QXnkeSfh4CTaQtGECXrhfPBw7BpVld/8b+0e5gcMyD6U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=e2zCkzJ1; arc=fail smtp.client-ip=40.107.201.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QwpWFuIy"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-baa8c78ac7fso195353866b.0
-        for <linux-tegra@vger.kernel.org>; Thu, 30 Apr 2026 17:01:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1777593693; x=1778198493; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o6F0Zles587cKnPSm5xIL1UTxvPC2KivgOEAzPu9dSY=;
-        b=QwpWFuIygISrHvrZkFfk+KE0RS/I2OMvWXgVnQojG+GK81DAkQES6zovBZiYBP1Fpn
-         Zu5EEjcOCNzMqzCsREWvy5ty2lp6nnvT/TE5FxkEpg6wsRrP8u+Ca9WeK5g9Ha7v4ePp
-         n2KkNK/sleNstrA9I2PWOH65ep5HryVV93Wos=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777593693; x=1778198493;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=o6F0Zles587cKnPSm5xIL1UTxvPC2KivgOEAzPu9dSY=;
-        b=emfadBW67EtzzVr6esEmwGIbgH595EcQueBifrQ/dbI/RVFmzMDbywLh3qMgwgDGPD
-         8H311L80GPX5YUROoknXZqCWqFOLPrZOenYaMwm5Ar99qE1McxD+c4ZegzxcOVNTYR+J
-         LDU0PZsX5HPu7RlqtWrw/yL+2rjpVTxMBSUypVMHiyEtfZNuuZEBFeR0hvlVgkIaHwf1
-         EnfDJ9sKQWsFbZLwmY/ypbiL0PtbrV/AkT74K+Ksu2o9rmuQWERmx2THY7PgMHdO3MRW
-         DTn0PpQVnh9iXNdIzoNgedbw/aMbhuxMkMXA8rx7GZ0MWUDabGzYHjvmx1leN/4Tysf7
-         H4jA==
-X-Forwarded-Encrypted: i=1; AFNElJ+4+eBsA8CFY7aBVRCaUHiGJzGV3bRWNiAuIBjHDx6ojmURfYq/8fakLWGdsSex1Ana29mJVGxVsLWqag==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu/QBuwIrGUuBf1K+dabkWg53wfBxSZ7AXLPXEaMPU85CIOC0b
-	+KIbdfZ/CuRBBr29zQ6lAsgF11we7eY4A1SI2KpUoakWZsuXsECMG711pYafAOHvEwe3rkCzmpL
-	DFIOw59Pi
-X-Gm-Gg: AeBDieuIqesi9YfphXQZJ8cytB1tWXcN/FQGP5DUENmtHuMjHbPI0WzJofM2Hc9o0nQ
-	YmM4/0AsMPVVqKZ1N87q4EMST2R/4m2Csku7WKxg6/h65c+BDUi21u5LyxnwhnBbZtJDCbXRr5L
-	qW3sKVWS1Nrnagm+YaLwWyUzi9DGX5XDhgz+3etanFl56JkHZbPhiQ12COMMZF2y/Uvfyl9x75H
-	39ShpJ2WNTxNnWGjg6/ALlk6jOO6qy9wq2PDtfnBSEeAfytH+WKZ25McC49OvncPXqwdIqid3Hl
-	g3jh7C48j+y3Os+ix98YPzqw22sgRHEPWDI9oQIH0X1h66HfHlDY/OANInUcPkH+KIrXfPvSwjT
-	EmqTszRxSCYx5lTK7DUO6iGObXpGniZHQF68sE0FKmuTTC96GETCSH9F5st6E4geFr3WmWHTskd
-	yyPnhi5oCcfm/oghkTjRvHa4Wnfw5BAer9PDVqu7v8+moKnZbFyfIciBhVwwD6OWj7sKvqxq2C
-X-Received: by 2002:a17:907:3e25:b0:bbe:4727:a7bb with SMTP id a640c23a62f3a-bbe4727a92amr139234366b.0.1777593693387;
-        Thu, 30 Apr 2026 17:01:33 -0700 (PDT)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bbe6d06f3a4sm49548966b.32.2026.04.30.17.01.33
-        for <linux-tegra@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Apr 2026 17:01:33 -0700 (PDT)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-bb962ce4dcfso245126366b.1
-        for <linux-tegra@vger.kernel.org>; Thu, 30 Apr 2026 17:01:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ8VLlY/hFKvWBM2CKRhHqipxca4BxBc328/Zu0Ik6ajOmmUdL/q+IcfRMBI7l6ci0hmvggyPHuXZUMmDw==@vger.kernel.org
-X-Received: by 2002:a5d:584a:0:b0:43d:6a0c:9571 with SMTP id
- ffacd0b85a97d-4493dcd3c71mr8939823f8f.11.1777593275557; Thu, 30 Apr 2026
- 16:54:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="e2zCkzJ1"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vZ97yC/Y0+e9s/jws4HMzHIKfabQr1LgJ/DU2qlKm3dB04r+Lm5Wb2MfyrMh4t+T0SNgPuhmM4Q9PDt+xS2HOjVYl5x14Ntj1suhC1UGK8IxHOnxvEyBw9gEj5w+gq+kwi5zeljzKHhvRoELFQ4znAUgrV9yg45Bq/SIWkIUdI8iQN6aXqNVTvOHKMbMsIW0Denaegao1k7pVv0qjpPeVLFILYaNhfDOpIBcwgL0qExzQtbmej6TTd3ZpDHaKi9BwyrlVeJVfiTqlHM3K+DAt8HNaLpzQjqN66NoI9V0Me+6+CmOGPui+XNL1QLNLCpCsQ1yH4+3PtllKSs8JX/iUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VmoGKkI7NuJwulbhvTqV0QTHX+4aatQIeLcAJQ/xayA=;
+ b=QnATk5JrceLZ+NSQaUNkMeYuMDEjnt6LC2ZaGacetDuRHWw/2BacK5UhUNWwVX8thOlDIg8opgmU+VLTzAO+oaf9uIoVGOOTbTB0/ta34K88J8bQ2SlFI0vc1SOQNZogMPK97qjKALsQ3r8VbX+jeJbJHsiZjpbYVjetyfZCKFiTGqCvmtgE1HrIxOwhTfD5FJFGwYYSm8wUD5XeS75VyzOna4jRFLX/kR0n9d8VSHOwPZMcbECz92e7lDAPFKMZamPO/ewhn1ucztOCtpPkZTtGGCYws1UH0Hf/MZyyERjwjEwcBob1clhe1VQMoo7FOCw3HrUVbUD0v0Jqo6y/vg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VmoGKkI7NuJwulbhvTqV0QTHX+4aatQIeLcAJQ/xayA=;
+ b=e2zCkzJ1h4e2sZNiigbtO7FJldd9OUZmziplNY0amdHBUa79kZ1O1WOMsgWmuPHB9dme+CcyByFymKcr9CoRinvCFqYVkQQF1FRL6eh6LP5y8KDuHLdT6HIXi5UWtwMjNQVL+qilp3W/cJK3+LJIIPfpaGrPeOEYfP0BMqAj8gOSBcTOod+3JOCKN2GTZhi/rimbzbiasB8FYDeYqv4/IrxyvpA/GIB/Dxk6v/nsOow2q1qYy1ydN554dN24vfZCGOooLpPMb9Vraaf1o4oLAQuXUDksyjBP2lrumKLuRude0RHqkFPRe0G0TpQHcnLEkM3lPxzdE+aLpkNhZ0WAOg==
+Received: from DS0PR12MB8442.namprd12.prod.outlook.com (2603:10b6:8:125::12)
+ by LV8PR12MB9449.namprd12.prod.outlook.com (2603:10b6:408:204::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.21; Fri, 1 May
+ 2026 00:27:18 +0000
+Received: from DS0PR12MB8442.namprd12.prod.outlook.com
+ ([fe80::c4df:b439:571:4591]) by DS0PR12MB8442.namprd12.prod.outlook.com
+ ([fe80::c4df:b439:571:4591%6]) with mapi id 15.20.9870.020; Fri, 1 May 2026
+ 00:27:18 +0000
+From: Matt Ochs <mochs@nvidia.com>
+To: Besar Wicaksono <bwicaksono@nvidia.com>
+CC: "will@kernel.org" <will@kernel.org>, "mark.rutland@arm.com"
+	<mark.rutland@arm.com>, "james.clark@linaro.org" <james.clark@linaro.org>,
+	"yangyccccc@gmail.com" <yangyccccc@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>, Thierry Reding <treding@nvidia.com>, Jon
+ Hunter <jonathanh@nvidia.com>, Vikram Sethi <vsethi@nvidia.com>, Rich Wiley
+	<rwiley@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>, Nirmoy Das
+	<nirmoyd@nvidia.com>, Sean Kelley <skelley@nvidia.com>
+Subject: Re: [PATCH v3] perf/arm_pmu: Skip PMCCNTR_EL0 on NVIDIA Olympus
+Thread-Topic: [PATCH v3] perf/arm_pmu: Skip PMCCNTR_EL0 on NVIDIA Olympus
+Thread-Index: AQHc2CMVnUUPaHwN1E6xtk7y25sENLX4UjWA
+Date: Fri, 1 May 2026 00:27:18 +0000
+Message-ID: <4BC7B5BD-9160-4A6A-B18F-E788CF340E8A@nvidia.com>
+References: <20260429215614.1793131-1-bwicaksono@nvidia.com>
+In-Reply-To: <20260429215614.1793131-1-bwicaksono@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DS0PR12MB8442:EE_|LV8PR12MB9449:EE_
+x-ms-office365-filtering-correlation-id: e632dc8b-7cbd-4f51-3956-08dea7186704
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|1800799024|366016|18002099003|56012099003|22082099003|38070700021;
+x-microsoft-antispam-message-info:
+ XoXqy7vFfklF6N+kk0TmMjjsKEMpARhpAiD/C6pu/GOLoKNqQeo7BVWfyg6BgcaAsoEDaoYEqQ/IAmyiCKugusBXT72KPFO+NJRghZnYjc5K2cCEZmml3ry+KNmu1jToGOcOseW9/m2QUmf8LwxvmSRCdjQxdMCvXAifDQcLHfj5unSSIHElre1ooqKOIQMNzna56EvqbZ4qXLYyVRfFNZG0JdL3Ewn1dZ3Jd7gdrRam5fgjBjC+gGw2mWT8w4Tpv9u3vFX4IgGkbfNJQLhPYiNkBoeqGLzrBHZaWNRNjHe8Ya1lVX3tLBkVNvg8tr4XbXzibKxyz9mPnm0Hp33eFk3S4MfrYia8ZQhQPjn6/N9b0JTccyaxvlEmpby4edL5eYAl3otWnOl+rPSwdUTxPjm5QPEJBDywVN8CCc02uGzeCIbgFRDhUSP6f6I8L4GhLgHjrHMi0qPj8BUBzOX2r1BR1csmrE2qS0KQF7AEA9uC6MUfDhuiYfitu5fQybrmRYVwmoeILC4PwcT0b7tXD7YYt1sULWTgtv5Phq3hnNfsk7/g6Idtz1Hn8sKBZr5zUvX27xIj2ifJseIMl7PHP+B3wInrkwY9rUtfkHlZfrtYpNfmKD6TJB3SigAQD+ksGec2K8SYUdjeNoCgPillJU6NWH8NV3UahKC/bSQcV5aVVU4uCND4wtvhuvdMdo7OagA8aDQfs8Avjp1EdKr0Ro//TcwpCjyjzr2N7ogt/KBOQswo9It8g2HhE+wFFaBY
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB8442.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(18002099003)(56012099003)(22082099003)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?H91dXT258IJhL/211DM0Hvq5NRz3ciQTvYYkU9SeWPmrdQuFU38pIWIWqb65?=
+ =?us-ascii?Q?lC6B/P4bjQmd5Wj66ZTsnrNSN3YPRMIxJCEGeApfEko6TXIi9jBE4AAOCJf8?=
+ =?us-ascii?Q?ScPpmToy5bX/IExdXBpF6tB1bB+mCwnrLdWf8QRW3bpcyRolRKFZuia1Z4xr?=
+ =?us-ascii?Q?fMzIWNDgpGc4KhP4sL6uqaPDBk2/Y01D7ZokJ6Y3+wBoP3DK+CTrQBd5Hpdq?=
+ =?us-ascii?Q?XhycIBEL/bCsrqQT8ciRAAe9M+m5pSxao57uvmCDF6hTGnaWXkDdIQkMnZ0o?=
+ =?us-ascii?Q?aEK7FUrel7cysi6T6KyKiJw0+k4P1I18f3SIvlC8tMkjAgyOjI30FYF7Jd/M?=
+ =?us-ascii?Q?kl7KFfYZic3i5Bhs4pSiwLmTVwS13+b/JOcCabi7MeI6Js1lTtI1wz9ijgJh?=
+ =?us-ascii?Q?wIhh55UdgNrvprhIrhQUg9lCRRfvBEoyRjaBQfTtv/9XQGuzSYwrVe/sCyx0?=
+ =?us-ascii?Q?s5pkdyEOrWDHJUEufocrZwIwRAssIJ40ZlPn5JbMYqbC+TXGTbVYpfZxddPj?=
+ =?us-ascii?Q?aFF8NuYOavhMKfFUq6FdzDHIT2BtSPEFCx08kGeu0Th7CO8KI/DjLYFGeGhH?=
+ =?us-ascii?Q?8FcB1DlOlIJI35g6af8XsdASqZTAA4PzcVvualay6C4xDr6vcOsJ+82no1mt?=
+ =?us-ascii?Q?tNR1Ao+LORSwhcrhUOSylq9EDXkS5RvCuepUjIqftzcXQU3PjpKUp/PAJwbx?=
+ =?us-ascii?Q?Uesy8KXaYvbBJxszl5Ah6E+zgkJQdfpwMyNUH3ebfb+cs6NgSbcZZJD/TUiN?=
+ =?us-ascii?Q?z8mQ3d90rf9mdHuO7mger5CTkxM3DV9voQvCVeyPPDbKluaGB8KjKf7EVILi?=
+ =?us-ascii?Q?m8oZJ+XOPcCKM0ktombnIaEeEb60hBcx499zm+kLarw9+1A4bkDqaIHw5eMR?=
+ =?us-ascii?Q?VyeXIGH6FYY23uWkzTHmZgUifftfyYkg4ykPcsCGPvGVvs7Y2M+OFtkDnq0U?=
+ =?us-ascii?Q?MDR5fVUZbfyjknCdttVx6w1gRrT6AK4IJTq1h4XPgVzaKwIql+Wnc+NVE7IA?=
+ =?us-ascii?Q?fMdCZBFvVWpHIXTNI0ygrmK55YaSDJxQUKSCYlD2NbrKYTFtkAY7kfSJTyWI?=
+ =?us-ascii?Q?1wTrifopbe7ZvT7MjDTuwDe9KhQRBZkwYiXv2OBsvE6/StySnuKSdqPpQIeU?=
+ =?us-ascii?Q?CSYQreG1L+q749+Hdwr1w8dbLr6TmJ3xIAN9zPyi7UmWYnqAmFvPHJQaY3fc?=
+ =?us-ascii?Q?3jw8JtDt4WafBA6tAz7/4J8r2MTPsquMqTPfNjzJoTEc+jZNo8ZyxICQBRHz?=
+ =?us-ascii?Q?sj/zmUP1vxbAPWYVkbMcmpnqSVOfYQOQwD5dgHSAh01OOuoE/PcAlccE2NFF?=
+ =?us-ascii?Q?8c3qFTbuHzwLy2Qp0kwSaLf0l8UvA7doFuiaw8nO6O3OC6dR5175ocpi23Cl?=
+ =?us-ascii?Q?f3kWMt+Mf6vYtNtstHtNhBHDwh0pwF/GJniVyuJWuWc/rYuPoVlks/nuhHp7?=
+ =?us-ascii?Q?t00+4kUAweSrZsSdu8wHUH/OBTjNEqPlAjb8vqMRyk8wFOJfRH0Qs3+zNLzo?=
+ =?us-ascii?Q?S7vaQJMi7RaDGYoRPnbfmEltPuO5Ug8jm2ssk3WCS49bWcgexdV6q84uNuIP?=
+ =?us-ascii?Q?Di9SlsHkQ7sZi3LCnKLpdLixSbjF+BCIvYJHRPV96nVqkoMf4Fq92dg4RKsc?=
+ =?us-ascii?Q?c6nIpio22UExWmfvqTuvHfcSDxvb1eQsXBoDD7PxRiK4KE9n4XqC4w8id+zP?=
+ =?us-ascii?Q?5eUglet2uCu6x2O0HejPqpo7AGBiYhi0uooliYjVgDGNTNSwzQlBn6M8ZAr5?=
+ =?us-ascii?Q?7SH2SoxQRg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <5C3220BB1279BE4EA63CEBA5172FFCD5@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260428200712.2660635-1-briannorris@chromium.org> <20260428200712.2660635-3-briannorris@chromium.org>
-In-Reply-To: <20260428200712.2660635-3-briannorris@chromium.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 30 Apr 2026 16:54:24 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VFCEEBKYY8Wnt6JEK_N4NaUvvhWXYR1pbt6teLL=zYeA@mail.gmail.com>
-X-Gm-Features: AVHnY4Kl-1ca-wbSwPcS9uBBAU6zbdhWLbd9Fj0fAjnpUI5H2rQOrfd8cK8P088
-Message-ID: <CAD=FV=VFCEEBKYY8Wnt6JEK_N4NaUvvhWXYR1pbt6teLL=zYeA@mail.gmail.com>
-Subject: Re: [PATCH 2/7] ARM: dts: rockchip: Add #{address,size}-cells to
- Chromium-based /firmware
-To: Brian Norris <briannorris@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev, 
-	linux-rockchip@lists.infradead.org, Julius Werner <jwerner@chromium.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, cros-qcom-dts-watchers@chromium.org, 
-	linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB8442.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e632dc8b-7cbd-4f51-3956-08dea7186704
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 May 2026 00:27:18.2270
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: M3SGhK6FDB1HseCQeKlHjgDsm/2L/JjqMDGNW3AbVzUpXLjV6U7uF+ZqBAGDAoxDQEak/43eAHmFy+5CUzikjw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9449
 
-Hi,
 
-On Tue, Apr 28, 2026 at 1:07=E2=80=AFPM Brian Norris <briannorris@chromium.=
-org> wrote:
->
-> Chromium/Depthcharge bootloaders may dynamically add a few device nodes
-> to a system's DTB under a /firmware node. A typical DT looks something
-> like the following:
->
-> / {
->         firmware {
->                 ranges;
->
->                 coreboot {
->                         compatible =3D "coreboot";
->                         reg =3D <...>;
->                         ...;
->                 };
->         };
-> };
->
-> Notably, the /firmware node has an empty 'ranges', but does not have
-> address/size-cells.
->
-> Commit 6e5773d52f4a ("of/address: Fix WARN when attempting translating
-> non-translatable addresses") started requiring #address-cells for a
-> device's parent if we want to use the reg resource in a device node.
-> This leads to errors like the following:
->
-> [    7.763870] coreboot_table firmware:coreboot: probe with driver corebo=
-ot_table failed with error -22
->
-> Add appropriate #{address,size}-cells to work around the problem.
->
-> Note that Google has also patched the Depthcharge bootloader source to
-> add {address,size}-cells [1], but bootloader updates are typically
-> delivered only via Google OS updates. Not all users install Google
-> software updates, and even if they do, Google may not produce updated
-> binaries for all/older devices.
->
-> [1] https://lore.kernel.org/all/20241209092809.GA3246424@google.com/
->     https://crrev.com/c/6051580 ("coreboot: Insert #address-cells and
->     #size-cells for firmware node")
->
-> Closes: https://lore.kernel.org/all/aeKlYzTiL0OB1y3g@google.com/
-> Fixes: 6e5773d52f4a ("of/address: Fix WARN when attempting translating no=
-n-translatable addresses")
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> ---
->
->  arch/arm/boot/dts/rockchip/rk3288-veyron.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> On Apr 29, 2026, at 16:56, Besar Wicaksono <bwicaksono@nvidia.com> wrote:
+>=20
+> PMCCNTR_EL0 may continue to increment on NVIDIA Olympus CPUs while the
+> PE is in WFI/WFE. That does not necessarily match the CPU_CYCLES event
+> counted by a programmable counter, so using PMCCNTR_EL0 for cycles can
+> give results that differ from the programmable counter path.
+>=20
+> Extend the existing PMCCNTR avoidance decision from the SMT case to
+> also cover Olympus. Store the result in the common arm_pmu state at
+> registration time, so arm_pmuv3 can keep using a single flag when
+> deciding whether CPU_CYCLES may use PMCCNTR_EL0.
+>=20
+> Use the cached MIDR from cpu_data to identify Olympus parts and avoid
+> reading MIDR_EL1 in the event path.
+>=20
+> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
+
+Verified on NVIDIA Vera (Olympus CPUs) with UEFI SMT disabled. Confirmed
+that grouped cpu_cycles events show ~1x ratio (both on programmable
+counters) with the patch vs ~15x inflation without it.
+
+Tested-by: Matthew R. Ochs <mochs@nvidia.com>
