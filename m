@@ -1,43 +1,43 @@
 Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011021.outbound.protection.outlook.com [52.101.52.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907BA3CA4B3
-	for <linux-tegra@vger.kernel.org>; Fri,  1 May 2026 14:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB523CBE6E
+	for <linux-tegra@vger.kernel.org>; Fri,  1 May 2026 14:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.21
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777645768; cv=fail; b=F6I9g/71EVoMTeS+PUpXl3eEQogQqrqMw2JJatSgO4MahS6eGAnmPD/9lFC1dCBVcoaKKuQ342mkOzzKAS3wINMPOcCX8eUoYPoLATNZghztnM7II2RamRDvWnlqMRMADkGoX72F/9HywrAc+s3Tcs5uRLtPAltWInYX3CRC6uQ=
+	t=1777645770; cv=fail; b=FMidHa+WtGoS25tJIqGScKttl+1G40/CrumEygmoNydmAnPcTQ1SXWoneW+RcxxrRf+vhjUKtOnwhpU4xPaRoODsrhubw+2iFPQpwowUno885BZJS9no7ziU0AM5x1jjLFECMWi6/sg/fNlc/Lby4+ydv/3JY0VXMixdr5PACy4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777645768; c=relaxed/simple;
-	bh=qD0LZ6bDnQ4zYwFuloWD3o8VwcR+nzHS7qO0LCfq+GI=;
+	s=arc-20240116; t=1777645770; c=relaxed/simple;
+	bh=HeDOCrrXKa0ncxY88pk1d0VVBLQdFhWkoTqoZ2BGxSQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=R8BNAhBR0MfXEkQ2HpxlWNW5EFAHz6/6NoUMBvCvWFEDIBeiYdVBvRDDf8M+Bp3x5WiksgQqkSXvYEQPGfTrvWejaGuS29bwT7y9WxcVVSFYc/uOK/ygZ+aZ6Q2ZNMkWGd8rXP8p0lWYUkXk30CAKR19DfDdc7WpNt5DPjRdPmk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FyiVBIrS; arc=fail smtp.client-ip=52.101.52.21
+	 Content-Type:MIME-Version; b=otdlVrxhUPiNSWx3CAiO+MVIjO9EWwCQY0bOfD3o+WpiC5Sm13x6apUk88mSEAq2gkywQaWjRjir962yoT+5XnFe/x+VaJQg0izNASUv/idRyxn9/1uL+W9RWC7ojAVD1q0ky/HCgB798JQjTsEa9n8nhwAPUMhTaSexYEET64k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YxCen9cV; arc=fail smtp.client-ip=52.101.52.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FyiVBIrS"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YxCen9cV"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T2AJWHeaPshmRicOenVuUPTnyp4lP+UMyjs0pDR2uerwoyZSk2AQZ4ESUSyEo5JtEWqrC/BTMU13tnXbD7OLH5oJZXbYfmf12rB1/SUpr6/DpDuKwh8+DCvNXpFtYbBYq+BML4VvDaePVGxcyDxX12/s9vr6f9FeDv3GkDKTVS1Iqe6/QqHlShzDEoa5/mwAdpc3GIzVEfXdLBM+J/DN9qzCWsbsIWh4PiqXbNubHMqBbSdvkHzIsc9QbUqtvQ7Gug1kZPvrgKRR9SmS8oAxPj/5AEojrSOBogEiGeyvAiSZNW/kaZZSzEeNN0LXWb9HRA1z8H4FafzHhGuswR6D3g==
+ b=FuLntN6mpoMKQwwiY4M9XZ7OZh7LdDVcZHVDZSb5YooKm5hDRz4y7XOxhbPKO+tHof2JYWxqaayPZGHmtwtP+WWqeE1tkAMg5aC7Dk+hygSCNe/lu+rgr4Gv4xpe+AN3NlDMg0cWIX5XGCyq/zBaTf7b5Emu1Vpi+ubxC9psnUA4VlUQre9bryWUQv0ktdkFkQi3q2b48879q7mLdR6HlxrOclovdfV0w2ruYoESP24g26SQ8sn/WaR0hqRsMdhXoxgl32Mdprwb3FoayC4aRGXfWBHRh8ZVm8WlZNJyWJC1+YlQhKCqJUUzxEXkXF73sE7SDw6bouM8u7vohOC5oA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n1uhfAmuA8YY+eLYAKMut3jF20w/vgKNBzm/D/EpeDU=;
- b=oP3rf0Fwu7G73b4mj58giCf0Th3T6m29gKs5iwn68Wpq8HA61BP+AdyOGroz85MggdCeztL5ZclPqyYx2AEUTCxoOBJkPmrsnBh8FPquQ+Rimo3Ni2sFSc1tMrwYZm9r+Qcc+wjL3N8Df8ZwNZ9IR1BZmufKWTydu5cUgYGvZiK7fcYjYlZihKdD6EoCPgSVowN0LHrbO+1dbJe+InyUVOj2YJsqUVSiU7a0Aln9DNVmYQpsUQKhYSfzKRCrDLONAFUSAHKra9t7KZ0b3CATaD+pqUF+FGars1s5fshsvdw7wufIy1miWLqIcqXUgPsGZ9VaV74wIoxRmJkCtiTjaw==
+ bh=/RYIXocgMM5PzB9N2mYiUcD0fy2ktzu64bjEhQcjwNY=;
+ b=k31VC86k5f04PIJsnMf3Vxcx3c3tV+UYThriIbIoY4uLAhlyIX0EvYt4/WUHqLh0lmNj87FHwKzrxpb3CP5Z48BGbIlUbTmlFGoOSlMDQs2cy9C5S9BEUe/LMEI1mN+kj8QvDSTb1yuLJReYpLPDaine8GsiaAWRyoM9zLUV8sSr+CZKrj+vLh7u9qHrcPJFLvEOdYKS3HMXe+2RKV1AOgtyRSArZeZaGb71AG+DpPeQy2ajLub1zKv9cgumzyvAtv6Y7ycZhD2QXMMcC139geWx6QHi4sglYzeWi3YIutSEGqqHt2gukv1mcm8jjMDFVASKPaRRln2pLN3qITFHmg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n1uhfAmuA8YY+eLYAKMut3jF20w/vgKNBzm/D/EpeDU=;
- b=FyiVBIrSnpBq4OIUOqsWemzbaXIcr5e1JzLPsukc+IBM3zVX9iav7s9Zw4Z0V/2J5gHI8uKVkjIM8JuwAaJAcPbK4BU2DWtU5WOuqtduZlklNI1kqDnIQg/Fr7erkIePM6f7llppQ/nR053F+pwoPWYZfF0BlLjVavTxEBSVlO/+rmsm3hmayV5RPWRjGz7OYgkBv9S1vFVS3/rsyhd7PJUwMMgk5MdePBNgPdjkRA78pRhdpJOB6ANvYiq+ooJNC/YdWzy+ta3GL3cPHbI3JZ6daBx04jiiUVoSWcKNwTZCpWUHu+6zY+PItbMyHDzlcHPYKDGtgzX7tY0/89lWyw==
+ bh=/RYIXocgMM5PzB9N2mYiUcD0fy2ktzu64bjEhQcjwNY=;
+ b=YxCen9cVoGo8yHvSSQH95jIEEbVhm74PFDF8Dw3BnlyZlnDZqBfLG0XrhZN183ehLpn0ah1FHMuYioVBlIvnx3D4LD2vSdnkDtlr2pCR71FaesJSQhyRRQ9FwVwyBWzxb2W5LrDWbdelDqb3ckF07tMMX2D2ke3GkadUS3Ifw/bD0qJdxgVAYtAfO/QUJY4tDanmtDB3RJEkIlLwx1JYbBOhFkiaDhe/LjsCveFzMWZQA8pOk1b0pBsYM0B1lti4PEXKLrzVuw8akjFLlee3IzuiMOGw/sWkVMBCjxDrKWODMjJMPGCMU5apqeVS+E3jO5HcTc2gvdp2HP9f6YP1YA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
  by SA1PR12MB8096.namprd12.prod.outlook.com (2603:10b6:806:326::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.23; Fri, 1 May
- 2026 14:29:22 +0000
+ 2026 14:29:21 +0000
 Received: from LV8PR12MB9620.namprd12.prod.outlook.com
  ([fe80::299d:f5e0:3550:1528]) by LV8PR12MB9620.namprd12.prod.outlook.com
  ([fe80::299d:f5e0:3550:1528%5]) with mapi id 15.20.9870.022; Fri, 1 May 2026
@@ -57,15 +57,15 @@ Cc: David Matlack <dmatlack@google.com>,
 	patches@lists.linux.dev,
 	Samiullah Khawaja <skhawaja@google.com>,
 	Mostafa Saleh <smostafa@google.com>
-Subject: [PATCH 2/9] iommu/arm-smmu-v3: Use the HW arm_smmu_cmd in cmdq selection functions
-Date: Fri,  1 May 2026 11:29:11 -0300
-Message-ID: <2-v1-b7dc0a0d4aa0+3723d-smmu_no_cmdq_ent_jgg@nvidia.com>
+Subject: [PATCH 9/9] iommu/arm-smmu-v3: Directly encode TLBI commands
+Date: Fri,  1 May 2026 11:29:18 -0300
+Message-ID: <9-v1-b7dc0a0d4aa0+3723d-smmu_no_cmdq_ent_jgg@nvidia.com>
 In-Reply-To: <0-v1-b7dc0a0d4aa0+3723d-smmu_no_cmdq_ent_jgg@nvidia.com>
 References:
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: BL1P221CA0004.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:208:2c5::15) To LV8PR12MB9620.namprd12.prod.outlook.com
+X-ClientProxiedBy: BL1P221CA0040.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:208:5b5::15) To LV8PR12MB9620.namprd12.prod.outlook.com
  (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -75,240 +75,410 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SA1PR12MB8096:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1312e880-e10a-46af-94b1-08dea78e0851
+X-MS-Office365-Filtering-Correlation-Id: b0032a06-8315-434b-3444-08dea78e07ba
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|56012099003|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	frAEzBoDYkSQS4nn8UWgKAe8tHfJOX98vBzrG/qZV31K9Q3pM8MNLcR8OUGMkIPuLWGhKQK9iP3X8vXAr571R/iaz3E1/VPM6hZXQ6JejzJ8rTwOcxbiliIr6s2RBTQAJzLif8WGFJ3YBm4cjkoJc29LoYOYbZKCZp7agKCOTxMFvPCzjSsTR82JAtEarLEqAWLYhfzVwqkaNTw7lACO5LA8PepijvmR4tBATg4vRMUVXgz1x+zUggu899Wwab7raQ0hwbmRiFR4pydc65EoBRli1sX/m5SJqHTKAyhtwIm/TXb2FhE4iYZ7eeLTyfhdXHK/EVLSQAxhsbtSuFDj/a9CFregFWBSE+aaQb7xaezBFMlItr2eVTChOprBenxOFfAvY1gM5lS94FK6S7F8bQGU7Brcr3M1Elej2FWZ6BGRJ2lbmahGzHkYSsQ2h984yH1eiU3zCER3JX5utAV4LAF3E0oG8ZoB9ojIzTFNruFjb45UbLk6NC6hUOARPLnwiCtbwM0ecPIN6PHZiAAVSVu7UT2k5C1T7huVCwILMmkKVt57KTgX1uHtBGDbsIAcynBUtmkMwH5bvZk/FzPQOuZH9gmQaQLGxhvy7J+XWZzKWigoCPD7+hlm5q+u3T5TCs7+QNLoENBP2mvHJ3JMCS/8siPWt24xARhD9eRql7iidIzMq5PrAMvfnpFUc2v1
+	dZBKz35QRhazgiJ1oxnAiv7kPjcVwAsja/+rgQgb6Z1NP6w3Fbkb1izVdPKXuVirQfAmxz3UDHJO7oPChbVJeqSqwFWlI0K8Z0goB+Apc4zRE/xdGP0pYqMpllQR1iiGLF1nQ0Q++6BbyBnoUgyPiiW/KVoy3m24bHv1Fr/5bDpPbntVzc0jn1Rvu/OgISYedkTkK1K/TACDyabN4MTpM0nRtXWUxHhOyTDTcEXJcdOka7Jbzgtn1csOPjJPlz2GuMyUuPJO3dnumylWCdpndjxPfohlUtGp+nFMBlMDowwzAuuDM3f2tDkbHgGk/1opTgJEqevHkOA+FufJdwIdpYQizaWqthS9O7YVdrpGae1EON7Yb2/+FRKYZYuYqCZiM6gqYbpWkO4zealiDI7RQqtezwnUhASVNgwikzJDWXR/zdem3Fl71282DVoYKjjSEhPksNvWxts3lE2clU6aC2aqXVittFK4E6WsRhDy3O0nPbxV29d30OLe/PwZhjl9FTzdb5BqCysyjPXVBtFhbWusxNNZjUjm2dCRno4SXIF7+na1GYosS89JIaOWks8YsCvSKiDjUvvz0O1j09jTPEmwvE+tDZkEd198lf2NoL8odhIaaCn5toiaRQXfWOXpfBWO7gmc4ybc2BKgYNzZSJIKU+pkeS1tRwXyBGQjUsqh+iPM2UkRjXyX3zcDg1pJ
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?VCxv9iCTEKmj492Klh5MF4xsvPt3yPQBM5hhFgyMKGxNmsi7wHFol1lnbpRV?=
- =?us-ascii?Q?0JazwXXA2sPq5b/YimEDqXsZ7nkLCxz58ONb8sWXLMqavol8RFOORKAPRC2g?=
- =?us-ascii?Q?76axBYKPABbZXLgQDqJ0fIvXiktb8N1zNlamAv9EkbZsQD2BBhNdWlroscLK?=
- =?us-ascii?Q?CKzsS/Gcv5UElh8wXh3FijNpLeFitSR22O8IcSOkTN1tfTJqox6k6FQOESyE?=
- =?us-ascii?Q?X9B7TH+Nph1+NPiAH1ylqhHEs/V8xmbCVHUq3BvXUKvSceisnNo14lWfkqxR?=
- =?us-ascii?Q?A1W99jAK/h1iZwjDwWhWKenvs8QaL1tQGsV+Zrdm2CJjtk9vrULgXCuOvxtf?=
- =?us-ascii?Q?of4brogZeHUT8jv3s9Wq6Bre5onLyRpkdynXKlSrK9X74WyoUlPeXCggl6Li?=
- =?us-ascii?Q?0daebhy8dLC79rU9IWBikF0td4AWrmJbnhDMcrBCJI/fQIku7Vus45wrJ4Cn?=
- =?us-ascii?Q?lW/159+OcbOv/WhzqIzjXcIAnIBsRuhoJ3mOYSIs6QVLvhJz2vh9iboykw5U?=
- =?us-ascii?Q?LK3fDsdpQFSXzvwX78k6RC/hg7cgkyW05JYq7KZF+tcslyUDG4vP9WipHiEV?=
- =?us-ascii?Q?4act1hJibyE2plpnK6u0kNjRxhoXVDVlCRIx7Z09kVbd7Y5Pfo3H0ge2rGSN?=
- =?us-ascii?Q?UZjO5dK1mRTS1VA8id+OA4hShEAfXCqyodRrxqdVvQrqWUHD04s1WojueGhR?=
- =?us-ascii?Q?++m7mHnb1YyTrApLfcD0pcUCK/WdJ+MR9jl+G+iPlsadboPudIZOZ4LEuSD2?=
- =?us-ascii?Q?iGCLCYNeu1Ll9DC0E+P2z9A0BEYmR+j1obZ9dFLrkKNwTzK0I8VT89bE7RZH?=
- =?us-ascii?Q?jRNvoPTDZMnHD7saW1abIb9xpu+wK85P/1fw42uvcH5ht3xS11iNBD5T57f8?=
- =?us-ascii?Q?d7lwNao6OKXUWZnjnhvM9UqRxBif9HB02aoIcrtwm0yoUii62Q9Ae/3mG1kJ?=
- =?us-ascii?Q?WAWlUeWx19xBJi2MlAoaZDyXaNxNaQ75rjZ7/BmLG4cR0aAcqIRIeqYftJGR?=
- =?us-ascii?Q?C8OP4atR5QY9CkMm5vS3uvGA9suTaiNXXICg1jVUnBZKh2ZdgppS7Wyuq2hB?=
- =?us-ascii?Q?BZwhHr0FhV2aeyS2w4dHoPMQ+oZETVe2LkFuJML9oI00Ah1HQ7L2xLd1EPgU?=
- =?us-ascii?Q?DHLZc0O5/hUNmbsBwe4ISqUJ/Q2QcwcOLzUlwLhNc7f2AzitZE6eQuCKnyNu?=
- =?us-ascii?Q?KpG/cRYnUWlSQBcDVVBvDAXPJesXv7jjvvfmEwbo24k2XPMozminZNtywVJ3?=
- =?us-ascii?Q?Lis8YBXFT7kVVhws1nuyObhIhL7FYA7R5UZ9Eek68FOV3JdnlgWvfxMvjg6g?=
- =?us-ascii?Q?ns5xSVflpXDFHWEXfbeOyPGWUxlWNNRJigLHfiWTqSXZEiiqJ1rhWfJHVreI?=
- =?us-ascii?Q?y8eG0ML18aPPm1fx/fGx08HAcTd2tBhhrLM+EnrfWtBJp7GqrQhiM4+hmmJO?=
- =?us-ascii?Q?Pl6hop2cBeMi53yPoQ3TJj1we3hDB/8OnrdxOeQAiobmFuEtzZMVuCy9Huer?=
- =?us-ascii?Q?Aicyd2xaHw1yxsPog5OzvvBBsgGQw3+A6FYV+asYbr64XdWHdyhy7pbE4Ssq?=
- =?us-ascii?Q?L2P9yVqNxMgRfUma9wh4zlpx673wPwSbufQPqPDdh1F4CcNMgoKk8FRqQ6P5?=
- =?us-ascii?Q?vmdPuWYyZqOZ5aadPVls/LqRxFa51S5VXKWAJUagPCPbNpvUnsz1H0NVXACn?=
- =?us-ascii?Q?2FYDo03Dy8mvC15ljsaZNjDnhPJc7rYeKldKDF+ZV53ckcSa?=
+	=?us-ascii?Q?HmFVdSmm7lBgW7QuoH1Hl9WJTAgXAWFIhLRDIenAuYEd3duBXOuuI5fomP9b?=
+ =?us-ascii?Q?sHChh6WuqTaayw5HwMwnEtahrLk1diDJj5NDK+qHeU+uFlUfYwbXLy2fQjTI?=
+ =?us-ascii?Q?iD1tZjWjit1WI74wjgTB6+6fFzkP28N2wp6TeNBW45AiBJFzoXsOABmr6UYo?=
+ =?us-ascii?Q?/x6bLoiC56Dq1vYFZtz2fcfLLAnu8zw32EZZ9HWOqD6quxJqcL1L7vYoXsLR?=
+ =?us-ascii?Q?KLgJX6j362le4HnWNT5xgmef5UAWExILYj4QQCNIaqHaDXy70aSsa9ie4ZGI?=
+ =?us-ascii?Q?vyMifdWzwLfzBy1KYSFMcRMuuddpHiVzlnTATTgdaAtD42mmMz48GovrasT1?=
+ =?us-ascii?Q?SphHtKJkbOBVYFkFFvrLf/9XKOFDrCsHtHgnyF5qu3lP4jgpFXomDn65VRrw?=
+ =?us-ascii?Q?W63jMWGDI01YCDLHFw0jv0J0LS+sMc2ys50ItRMDIWjXRcl5O0gxUuO3XI2W?=
+ =?us-ascii?Q?ekbBH9dWqCVkCda5oCr/jiL3Ipd9QTVI9ysA8Ng/UCqYbAzZaZ3ESzjbmpDp?=
+ =?us-ascii?Q?23DE70uH7J18vW9MuXxZtW9ryro8QFhjqCUaVIruiWkjLGWEhwL996PHYJjT?=
+ =?us-ascii?Q?iaSFgUSR0iINJ8Oy3zIi/z0YJz2pbJmy2cMhEQom9aw70SWyQZczPtflJByO?=
+ =?us-ascii?Q?Ad+iNbu4eqetHyzfb+oCM2iCxMvTjQxTEb02303ZpYyS25MElBRwU7fDwMtz?=
+ =?us-ascii?Q?JasD8My+aSUG/RYNu0e/Dt9gwYtOy1PUhultZG9OFN4cig0U364BIo2ESD7S?=
+ =?us-ascii?Q?xYOE9nX5aAJIPooXNq0rSIEXsmqiOXLxHUYE5fgW/WaVZ8MROiKtREsac8Js?=
+ =?us-ascii?Q?PuSp0rqWH++T5H8sA9wXrJG2KObFUvDE7jrl19M52NOZXYI/JIYzxaiNHzqm?=
+ =?us-ascii?Q?yv5G4GfrthYi2QA4GAolwGiCXRBQIS6CygftKUPRja7gOtTjSH2SQA+kxK+H?=
+ =?us-ascii?Q?OTSE4iB22U5LQ5fD2hcMnVB7SSODuxpyn824Qffn+CkO0BPd+HnpsrR+Fj5K?=
+ =?us-ascii?Q?rid++21pQ2Jq4ocV+CK5VyRK8FL+mEU2C4p/L9oPOtkBGNmHNOv0PsRUlCWR?=
+ =?us-ascii?Q?szNoJRNfKxgRRkmCCFZqJY5JnS19QQGTW4041+nrvHmBFg6yKaZ1XS1IpvHg?=
+ =?us-ascii?Q?JMoVzasIzDzLl6a/LnY0rFSjBnlToZsDYGz026puYOJLR+P9qADKaP22m1Xg?=
+ =?us-ascii?Q?qxtrLjL1qR8D6p78Mbhl7Y2zAOhn1DbDAemBkM+zaaebJg7q0vRxsQHmE4vk?=
+ =?us-ascii?Q?JWGpzb+9l3b6zsPMAU30slGUWWZjtohf0eUEuvKwfSs5L9v5rvhsnNUAO5WF?=
+ =?us-ascii?Q?yeAqcG21yB4nk5xEd4V2NFAxcBctiS22Xr1lHO00dBErMETpGqzfxfU9Jd6b?=
+ =?us-ascii?Q?dlI07eW3pDnw7TXL9ApRyP9y+cdxCrqVUi5yJqbhZjlLDcJb12dfDmdgJUa2?=
+ =?us-ascii?Q?E+p6zf4Pw5Jny07LkGuSfkG7mkkPLcJLgUZzxcQVjWpBe+HBFnJT3J7gNgEV?=
+ =?us-ascii?Q?UaS49D78lFyIBB5TK7uEK7gTM/ErXmNf5dh6AdCPlk9PZeuty7xLr/vDd0UH?=
+ =?us-ascii?Q?8RJuM1bWAvYNy96eJHthlX/EZV9vPbN/o1Jb1E7F21VH6+Q6QWQ+35/i9Lmt?=
+ =?us-ascii?Q?W3bTaEBY0iYtYU5NzOKqVF62nz72vV2Wo/p/iGUYHGnDNnq0FEMowzCWyYkf?=
+ =?us-ascii?Q?ZLUzJ/M2HkQDatHFEmHbTx/Vc54Pa5e9OY7gUCcaS42GwyXr?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1312e880-e10a-46af-94b1-08dea78e0851
+X-MS-Exchange-CrossTenant-Network-Message-Id: b0032a06-8315-434b-3444-08dea78e07ba
 X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2026 14:29:20.3273
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2026 14:29:19.3524
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qtZBMOn7nGLGimjH0DGdQKdtbYtA1/upod8Y4IUzJn9LAplXSiasRHuovFww7jDy
+X-MS-Exchange-CrossTenant-UserPrincipalName: eVD2YNOMsorvaA5kK3p1dwPRiI3CVcGdJdbHkoQu49x6csEs65gJp6r2d3LML3i6
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8096
 
-Start removing the use of struct arm_smmu_cmdq_ent, starting at the
-lower levels of the call chain. Change the functions that determine what
-cmdq to issue the batch to into using struct arm_smmu_cmd directly.
+TLBI is more complicated than all the other commands because the
+invalidation loop builds a template command from the struct
+arm_smmu_inv which is then expanded into many TLBI commands for the
+invalidation.
 
 Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 ---
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 47 ++++++++++++-------
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  8 ++--
- .../iommu/arm/arm-smmu-v3/tegra241-cmdqv.c    |  8 ++--
- 3 files changed, 38 insertions(+), 25 deletions(-)
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 170 +++++++-------------
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h |  35 ++--
+ 2 files changed, 71 insertions(+), 134 deletions(-)
 
 diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index e8d7dbe495f030..5cdeaec890592f 100644
+index 8147b9cdcc6b99..9be589d14a3bd4 100644
 --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
 +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -371,12 +371,12 @@ static int arm_smmu_cmdq_build_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
+@@ -268,53 +268,6 @@ static int queue_remove_raw(struct arm_smmu_queue *q, u64 *ent)
  }
  
+ /* High-level queue accessors */
+-static int arm_smmu_cmdq_build_cmd(struct arm_smmu_cmd *cmd_out,
+-				   struct arm_smmu_cmdq_ent *ent)
+-{
+-	u64 *cmd = cmd_out->data;
+-
+-	memset(cmd_out, 0, sizeof(*cmd_out));
+-	cmd[0] |= FIELD_PREP(CMDQ_0_OP, ent->opcode);
+-
+-	switch (ent->opcode) {
+-	case CMDQ_OP_TLBI_NH_VA:
+-		cmd[0] |= FIELD_PREP(CMDQ_TLBI_0_VMID, ent->tlbi.vmid);
+-		fallthrough;
+-	case CMDQ_OP_TLBI_EL2_VA:
+-		cmd[0] |= FIELD_PREP(CMDQ_TLBI_0_NUM, ent->tlbi.num);
+-		cmd[0] |= FIELD_PREP(CMDQ_TLBI_0_SCALE, ent->tlbi.scale);
+-		cmd[0] |= FIELD_PREP(CMDQ_TLBI_0_ASID, ent->tlbi.asid);
+-		cmd[1] |= FIELD_PREP(CMDQ_TLBI_1_LEAF, ent->tlbi.leaf);
+-		cmd[1] |= FIELD_PREP(CMDQ_TLBI_1_TTL, ent->tlbi.ttl);
+-		cmd[1] |= FIELD_PREP(CMDQ_TLBI_1_TG, ent->tlbi.tg);
+-		cmd[1] |= ent->tlbi.addr & CMDQ_TLBI_1_VA_MASK;
+-		break;
+-	case CMDQ_OP_TLBI_S2_IPA:
+-		cmd[0] |= FIELD_PREP(CMDQ_TLBI_0_NUM, ent->tlbi.num);
+-		cmd[0] |= FIELD_PREP(CMDQ_TLBI_0_SCALE, ent->tlbi.scale);
+-		cmd[0] |= FIELD_PREP(CMDQ_TLBI_0_VMID, ent->tlbi.vmid);
+-		cmd[1] |= FIELD_PREP(CMDQ_TLBI_1_LEAF, ent->tlbi.leaf);
+-		cmd[1] |= FIELD_PREP(CMDQ_TLBI_1_TTL, ent->tlbi.ttl);
+-		cmd[1] |= FIELD_PREP(CMDQ_TLBI_1_TG, ent->tlbi.tg);
+-		cmd[1] |= ent->tlbi.addr & CMDQ_TLBI_1_IPA_MASK;
+-		break;
+-	case CMDQ_OP_TLBI_NH_ASID:
+-		cmd[0] |= FIELD_PREP(CMDQ_TLBI_0_ASID, ent->tlbi.asid);
+-		fallthrough;
+-	case CMDQ_OP_TLBI_NH_ALL:
+-	case CMDQ_OP_TLBI_S12_VMALL:
+-		cmd[0] |= FIELD_PREP(CMDQ_TLBI_0_VMID, ent->tlbi.vmid);
+-		break;
+-	case CMDQ_OP_TLBI_EL2_ASID:
+-		cmd[0] |= FIELD_PREP(CMDQ_TLBI_0_ASID, ent->tlbi.asid);
+-		break;
+-	default:
+-		return -ENOENT;
+-	}
+-
+-	return 0;
+-}
+-
  static struct arm_smmu_cmdq *arm_smmu_get_cmdq(struct arm_smmu_device *smmu,
--					       struct arm_smmu_cmdq_ent *ent)
-+					       struct arm_smmu_cmd *cmd)
+ 					       struct arm_smmu_cmd *cmd)
  {
- 	struct arm_smmu_cmdq *cmdq = NULL;
- 
- 	if (smmu->impl_ops && smmu->impl_ops->get_secondary_cmdq)
--		cmdq = smmu->impl_ops->get_secondary_cmdq(smmu, ent);
-+		cmdq = smmu->impl_ops->get_secondary_cmdq(smmu, cmd);
- 
- 	return cmdq ?: &smmu->cmdq;
- }
-@@ -924,16 +924,16 @@ static int __arm_smmu_cmdq_issue_cmd(struct arm_smmu_device *smmu,
- 				     struct arm_smmu_cmdq_ent *ent,
- 				     bool sync)
- {
--	u64 cmd[CMDQ_ENT_DWORDS];
-+	struct arm_smmu_cmd cmd;
- 
--	if (unlikely(arm_smmu_cmdq_build_cmd(cmd, ent))) {
-+	if (unlikely(arm_smmu_cmdq_build_cmd(cmd.data, ent))) {
- 		dev_warn(smmu->dev, "ignoring unknown CMDQ opcode 0x%x\n",
- 			 ent->opcode);
- 		return -EINVAL;
- 	}
- 
- 	return arm_smmu_cmdq_issue_cmdlist(
--		smmu, arm_smmu_get_cmdq(smmu, ent), cmd, 1, sync);
-+		smmu, arm_smmu_get_cmdq(smmu, &cmd), cmd.data, 1, sync);
+@@ -894,16 +847,6 @@ static void arm_smmu_cmdq_batch_init_cmd(struct arm_smmu_device *smmu,
+ 	cmds->cmdq = arm_smmu_get_cmdq(smmu, cmd);
  }
  
- static int arm_smmu_cmdq_issue_cmd(struct arm_smmu_device *smmu,
-@@ -948,42 +948,55 @@ static int arm_smmu_cmdq_issue_cmd_with_sync(struct arm_smmu_device *smmu,
- 	return __arm_smmu_cmdq_issue_cmd(smmu, ent, true);
- }
+-static void arm_smmu_cmdq_batch_init(struct arm_smmu_device *smmu,
+-				     struct arm_smmu_cmdq_batch *cmds,
+-				     struct arm_smmu_cmdq_ent *ent)
+-{
+-	struct arm_smmu_cmd cmd;
+-
+-	arm_smmu_cmdq_build_cmd(&cmd, ent);
+-	arm_smmu_cmdq_batch_init_cmd(smmu, cmds, &cmd);
+-}
+-
+ static void arm_smmu_cmdq_batch_add_cmd_p(struct arm_smmu_device *smmu,
+ 					  struct arm_smmu_cmdq_batch *cmds,
+ 					  struct arm_smmu_cmd *cmd)
+@@ -934,21 +877,6 @@ static void arm_smmu_cmdq_batch_add_cmd_p(struct arm_smmu_device *smmu,
+ 		arm_smmu_cmdq_batch_add_cmd_p(smmu, cmds, &__cmd); \
+ 	})
  
-+static void arm_smmu_cmdq_batch_init_cmd(struct arm_smmu_device *smmu,
-+					 struct arm_smmu_cmdq_batch *cmds,
-+					 struct arm_smmu_cmd *cmd)
-+{
-+	cmds->num = 0;
-+	cmds->cmdq = arm_smmu_get_cmdq(smmu, cmd);
-+}
-+
- static void arm_smmu_cmdq_batch_init(struct arm_smmu_device *smmu,
- 				     struct arm_smmu_cmdq_batch *cmds,
- 				     struct arm_smmu_cmdq_ent *ent)
- {
--	cmds->num = 0;
--	cmds->cmdq = arm_smmu_get_cmdq(smmu, ent);
-+	struct arm_smmu_cmd cmd;
-+
-+	arm_smmu_cmdq_build_cmd(cmd.data, ent);
-+	arm_smmu_cmdq_batch_init_cmd(smmu, cmds, &cmd);
- }
- 
- static void arm_smmu_cmdq_batch_add(struct arm_smmu_device *smmu,
- 				    struct arm_smmu_cmdq_batch *cmds,
--				    struct arm_smmu_cmdq_ent *cmd)
-+				    struct arm_smmu_cmdq_ent *ent)
- {
--	bool unsupported_cmd = !arm_smmu_cmdq_supports_cmd(cmds->cmdq, cmd);
- 	bool force_sync = (cmds->num == CMDQ_BATCH_ENTRIES - 1) &&
- 			  (smmu->options & ARM_SMMU_OPT_CMDQ_FORCE_SYNC);
-+	struct arm_smmu_cmd cmd;
-+	bool unsupported_cmd;
- 	int index;
- 
-+	if (unlikely(arm_smmu_cmdq_build_cmd(cmd.data, ent))) {
-+		dev_warn(smmu->dev, "ignoring unknown CMDQ opcode 0x%x\n",
-+			 ent->opcode);
-+		return;
-+	}
-+
-+	unsupported_cmd = !arm_smmu_cmdq_supports_cmd(cmds->cmdq, &cmd);
- 	if (force_sync || unsupported_cmd) {
- 		arm_smmu_cmdq_issue_cmdlist(smmu, cmds->cmdq, cmds->cmds,
- 					    cmds->num, true);
--		arm_smmu_cmdq_batch_init(smmu, cmds, cmd);
-+		arm_smmu_cmdq_batch_init_cmd(smmu, cmds, &cmd);
- 	}
- 
- 	if (cmds->num == CMDQ_BATCH_ENTRIES) {
- 		arm_smmu_cmdq_issue_cmdlist(smmu, cmds->cmdq, cmds->cmds,
- 					    cmds->num, false);
--		arm_smmu_cmdq_batch_init(smmu, cmds, cmd);
-+		arm_smmu_cmdq_batch_init_cmd(smmu, cmds, &cmd);
- 	}
- 
- 	index = cmds->num * CMDQ_ENT_DWORDS;
--	if (unlikely(arm_smmu_cmdq_build_cmd(&cmds->cmds[index], cmd))) {
+-static void arm_smmu_cmdq_batch_add(struct arm_smmu_device *smmu,
+-				    struct arm_smmu_cmdq_batch *cmds,
+-				    struct arm_smmu_cmdq_ent *ent)
+-{
+-	struct arm_smmu_cmd cmd;
+-
+-	if (unlikely(arm_smmu_cmdq_build_cmd(&cmd, ent))) {
 -		dev_warn(smmu->dev, "ignoring unknown CMDQ opcode 0x%x\n",
--			 cmd->opcode);
+-			 ent->opcode);
 -		return;
 -	}
 -
-+	memcpy(&cmds->cmds[index], cmd.data, sizeof(cmd.data));
- 	cmds->num++;
+-	arm_smmu_cmdq_batch_add_cmd_p(smmu, cmds, &cmd);
+-}
+-
+ static int arm_smmu_cmdq_batch_submit(struct arm_smmu_device *smmu,
+ 				      struct arm_smmu_cmdq_batch *cmds)
+ {
+@@ -2450,12 +2378,14 @@ static void arm_smmu_tlb_inv_context(void *cookie)
+ 
+ static void arm_smmu_cmdq_batch_add_range(struct arm_smmu_device *smmu,
+ 					  struct arm_smmu_cmdq_batch *cmds,
+-					  struct arm_smmu_cmdq_ent *cmd,
++					  struct arm_smmu_cmd *cmd, bool leaf,
+ 					  unsigned long iova, size_t size,
+ 					  size_t granule, size_t pgsize)
+ {
+ 	unsigned long end = iova + size, num_pages = 0, tg = pgsize;
++	u64 orig_data0 = cmd->data[0];
+ 	size_t inv_range = granule;
++	u8 ttl = 0, tg_enc = 0;
+ 
+ 	if (WARN_ON_ONCE(!size))
+ 		return;
+@@ -2464,7 +2394,7 @@ static void arm_smmu_cmdq_batch_add_range(struct arm_smmu_device *smmu,
+ 		num_pages = size >> tg;
+ 
+ 		/* Convert page size of 12,14,16 (log2) to 1,2,3 */
+-		cmd->tlbi.tg = (tg - 10) / 2;
++		tg_enc = (tg - 10) / 2;
+ 
+ 		/*
+ 		 * Determine what level the granule is at. For non-leaf, both
+@@ -2474,8 +2404,8 @@ static void arm_smmu_cmdq_batch_add_range(struct arm_smmu_device *smmu,
+ 		 * want to use a range command, so avoid the SVA corner case
+ 		 * where both scale and num could be 0 as well.
+ 		 */
+-		if (cmd->tlbi.leaf)
+-			cmd->tlbi.ttl = 4 - ((ilog2(granule) - 3) / (tg - 3));
++		if (leaf)
++			ttl = 4 - ((ilog2(granule) - 3) / (tg - 3));
+ 		else if ((num_pages & CMDQ_TLBI_RANGE_NUM_MAX) == 1)
+ 			num_pages++;
+ 	}
+@@ -2493,11 +2423,13 @@ static void arm_smmu_cmdq_batch_add_range(struct arm_smmu_device *smmu,
+ 
+ 			/* Determine the power of 2 multiple number of pages */
+ 			scale = __ffs(num_pages);
+-			cmd->tlbi.scale = scale;
+ 
+ 			/* Determine how many chunks of 2^scale size we have */
+ 			num = (num_pages >> scale) & CMDQ_TLBI_RANGE_NUM_MAX;
+-			cmd->tlbi.num = num - 1;
++
++			cmd->data[0] = orig_data0 |
++				FIELD_PREP(CMDQ_TLBI_0_NUM, num - 1) |
++				FIELD_PREP(CMDQ_TLBI_0_SCALE, scale);
+ 
+ 			/* range is num * 2^scale * pgsize */
+ 			inv_range = num << (scale + tg);
+@@ -2506,8 +2438,17 @@ static void arm_smmu_cmdq_batch_add_range(struct arm_smmu_device *smmu,
+ 			num_pages -= num << scale;
+ 		}
+ 
+-		cmd->tlbi.addr = iova;
+-		arm_smmu_cmdq_batch_add(smmu, cmds, cmd);
++		/*
++		 * IPA has fewer bits than VA, but they are reserved in the
++		 * command and something would be very broken if iova had them
++		 * set.
++		 */
++		cmd->data[1] = FIELD_PREP(CMDQ_TLBI_1_LEAF, leaf) |
++			       FIELD_PREP(CMDQ_TLBI_1_TTL, ttl) |
++			       FIELD_PREP(CMDQ_TLBI_1_TG, tg_enc) |
++			       (iova & ~GENMASK_U64(11, 0));
++
++		arm_smmu_cmdq_batch_add_cmd_p(smmu, cmds, cmd);
+ 		iova += inv_range;
+ 	}
+ }
+@@ -2538,19 +2479,22 @@ static bool arm_smmu_inv_size_too_big(struct arm_smmu_device *smmu, size_t size,
+ /* Used by non INV_TYPE_ATS* invalidations */
+ static void arm_smmu_inv_to_cmdq_batch(struct arm_smmu_inv *inv,
+ 				       struct arm_smmu_cmdq_batch *cmds,
+-				       struct arm_smmu_cmdq_ent *cmd,
++				       struct arm_smmu_cmd *cmd,
++				       bool leaf,
+ 				       unsigned long iova, size_t size,
+ 				       unsigned int granule)
+ {
+ 	if (arm_smmu_inv_size_too_big(inv->smmu, size, granule)) {
+-		cmd->opcode = inv->nsize_opcode;
+-		arm_smmu_cmdq_batch_add(inv->smmu, cmds, cmd);
++		struct arm_smmu_cmd nsize_cmd = *cmd;
++
++		u64p_replace_bits(&nsize_cmd.data[0], inv->nsize_opcode,
++				  CMDQ_0_OP);
++		arm_smmu_cmdq_batch_add_cmd_p(inv->smmu, cmds, &nsize_cmd);
+ 		return;
+ 	}
+ 
+-	cmd->opcode = inv->size_opcode;
+-	arm_smmu_cmdq_batch_add_range(inv->smmu, cmds, cmd, iova, size, granule,
+-				      inv->pgsize);
++	arm_smmu_cmdq_batch_add_range(inv->smmu, cmds, cmd, leaf,
++				      iova, size, granule, inv->pgsize);
  }
  
+ static inline bool arm_smmu_invs_end_batch(struct arm_smmu_inv *cur,
+@@ -2585,38 +2529,39 @@ static void __arm_smmu_domain_inv_range(struct arm_smmu_invs *invs,
+ 			break;
+ 	while (cur != end) {
+ 		struct arm_smmu_device *smmu = cur->smmu;
+-		struct arm_smmu_cmdq_ent cmd = {
+-			/*
+-			 * Pick size_opcode to run arm_smmu_get_cmdq(). This can
+-			 * be changed to nsize_opcode, which would result in the
+-			 * same CMDQ pointer.
+-			 */
+-			.opcode = cur->size_opcode,
+-		};
++		/*
++		 * Pick size_opcode to run arm_smmu_get_cmdq(). This can
++		 * be changed to nsize_opcode, which would result in the
++		 * same CMDQ pointer.
++		 */
++		struct arm_smmu_cmd cmd =
++			arm_smmu_make_cmd_op(cur->size_opcode);
+ 		struct arm_smmu_inv *next;
+ 
+ 		if (!cmds.num)
+-			arm_smmu_cmdq_batch_init(smmu, &cmds, &cmd);
++			arm_smmu_cmdq_batch_init_cmd(smmu, &cmds, &cmd);
+ 
+ 		switch (cur->type) {
+ 		case INV_TYPE_S1_ASID:
+-			cmd.tlbi.asid = cur->id;
+-			cmd.tlbi.leaf = leaf;
+-			arm_smmu_inv_to_cmdq_batch(cur, &cmds, &cmd, iova, size,
+-						   granule);
++			cmd = arm_smmu_make_cmd_tlbi(cur->size_opcode,
++						     cur->id, 0);
++			arm_smmu_inv_to_cmdq_batch(cur, &cmds, &cmd, leaf,
++						   iova, size, granule);
+ 			break;
+ 		case INV_TYPE_S2_VMID:
+-			cmd.tlbi.vmid = cur->id;
+-			cmd.tlbi.leaf = leaf;
+-			arm_smmu_inv_to_cmdq_batch(cur, &cmds, &cmd, iova, size,
+-						   granule);
++			cmd = arm_smmu_make_cmd_tlbi(cur->size_opcode,
++						     0, cur->id);
++			arm_smmu_inv_to_cmdq_batch(cur, &cmds, &cmd, leaf,
++						   iova, size, granule);
+ 			break;
+ 		case INV_TYPE_S2_VMID_S1_CLEAR:
+ 			/* CMDQ_OP_TLBI_S12_VMALL already flushed S1 entries */
+ 			if (arm_smmu_inv_size_too_big(cur->smmu, size, granule))
+ 				break;
+-			cmd.tlbi.vmid = cur->id;
+-			arm_smmu_cmdq_batch_add(smmu, &cmds, &cmd);
++			arm_smmu_cmdq_batch_add_cmd(
++				smmu, &cmds,
++				arm_smmu_make_cmd_tlbi(cur->size_opcode, 0,
++						       cur->id));
+ 			break;
+ 		case INV_TYPE_ATS:
+ 			arm_smmu_cmdq_batch_add_cmd(
+@@ -3359,24 +3304,21 @@ arm_smmu_install_new_domain_invs(struct arm_smmu_attach_state *state)
+ 
+ static void arm_smmu_inv_flush_iotlb_tag(struct arm_smmu_inv *inv)
+ {
+-	struct arm_smmu_cmdq_ent cmd = {};
+-	struct arm_smmu_cmd hw_cmd;
+-
+ 	switch (inv->type) {
+ 	case INV_TYPE_S1_ASID:
+-		cmd.tlbi.asid = inv->id;
++		arm_smmu_cmdq_issue_cmd_with_sync(
++			inv->smmu,
++			arm_smmu_make_cmd_tlbi(inv->nsize_opcode, inv->id, 0));
+ 		break;
+ 	case INV_TYPE_S2_VMID:
+ 		/* S2_VMID using nsize_opcode covers S2_VMID_S1_CLEAR */
+-		cmd.tlbi.vmid = inv->id;
++		arm_smmu_cmdq_issue_cmd_with_sync(
++			inv->smmu,
++			arm_smmu_make_cmd_tlbi(inv->nsize_opcode, 0, inv->id));
+ 		break;
+ 	default:
+ 		return;
+ 	}
+-
+-	cmd.opcode = inv->nsize_opcode;
+-	arm_smmu_cmdq_build_cmd(&hw_cmd, &cmd);
+-	arm_smmu_cmdq_issue_cmd_with_sync(inv->smmu, hw_cmd);
+ }
+ 
+ /* Should be installed after arm_smmu_install_ste_for_dev() */
 diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-index 092179f689e9f1..6d73f6b63e64a9 100644
+index 538380de7d48a0..16353596e08ad8 100644
 --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
 +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-@@ -641,13 +641,13 @@ struct arm_smmu_cmdq {
- 	atomic_long_t			*valid_map;
- 	atomic_t			owner_prod;
- 	atomic_t			lock;
--	bool				(*supports_cmd)(struct arm_smmu_cmdq_ent *ent);
-+	bool				(*supports_cmd)(struct arm_smmu_cmd *cmd);
- };
- 
- static inline bool arm_smmu_cmdq_supports_cmd(struct arm_smmu_cmdq *cmdq,
--					      struct arm_smmu_cmdq_ent *ent)
-+					      struct arm_smmu_cmd *cmd)
- {
--	return cmdq->supports_cmd ? cmdq->supports_cmd(ent) : true;
-+	return cmdq->supports_cmd ? cmdq->supports_cmd(cmd) : true;
+@@ -583,6 +583,21 @@ static inline struct arm_smmu_cmd arm_smmu_make_cmd_sync(unsigned int cs,
+ 	return cmd;
  }
  
- struct arm_smmu_cmdq_batch {
-@@ -815,7 +815,7 @@ struct arm_smmu_impl_ops {
- 	void (*device_remove)(struct arm_smmu_device *smmu);
- 	int (*init_structures)(struct arm_smmu_device *smmu);
- 	struct arm_smmu_cmdq *(*get_secondary_cmdq)(
--		struct arm_smmu_device *smmu, struct arm_smmu_cmdq_ent *ent);
-+		struct arm_smmu_device *smmu, struct arm_smmu_cmd *cmd);
- 	/*
- 	 * An implementation should define its own type other than the default
- 	 * IOMMU_HW_INFO_TYPE_ARM_SMMUV3. And it must validate the input @type
-diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-index 83f6e9f6c51d6b..b4d8c1f2fd3878 100644
---- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-@@ -367,9 +367,9 @@ static irqreturn_t tegra241_cmdqv_isr(int irq, void *devid)
++/*
++ * TLBI commands - the non-sized variants just need opcode + asid/vmid.
++ * For sized variants the caller sets up data[0] with the immutable fields
++ * (opcode + asid/vmid) and the range loop fills in per-iteration fields.
++ */
++static inline struct arm_smmu_cmd
++arm_smmu_make_cmd_tlbi(enum arm_smmu_cmdq_opcode op, u16 asid, u16 vmid)
++{
++	struct arm_smmu_cmd cmd = arm_smmu_make_cmd_op(op);
++
++	cmd.data[0] |= FIELD_PREP(CMDQ_TLBI_0_ASID, asid) |
++		       FIELD_PREP(CMDQ_TLBI_0_VMID, vmid);
++	return cmd;
++}
++
+ /* Event queue */
+ #define EVTQ_ENT_SZ_SHIFT		5
+ #define EVTQ_ENT_DWORDS			((1 << EVTQ_ENT_SZ_SHIFT) >> 3)
+@@ -643,26 +658,6 @@ static inline struct arm_smmu_cmd arm_smmu_make_cmd_sync(unsigned int cs,
+ #define MSI_IOVA_BASE			0x8000000
+ #define MSI_IOVA_LENGTH			0x100000
  
- /* Command Queue Function */
- 
--static bool tegra241_guest_vcmdq_supports_cmd(struct arm_smmu_cmdq_ent *ent)
-+static bool tegra241_guest_vcmdq_supports_cmd(struct arm_smmu_cmd *cmd)
- {
--	switch (ent->opcode) {
-+	switch (FIELD_GET(CMDQ_0_OP, cmd->data[0])) {
- 	case CMDQ_OP_TLBI_NH_ASID:
- 	case CMDQ_OP_TLBI_NH_VA:
- 	case CMDQ_OP_ATC_INV:
-@@ -381,7 +381,7 @@ static bool tegra241_guest_vcmdq_supports_cmd(struct arm_smmu_cmdq_ent *ent)
- 
- static struct arm_smmu_cmdq *
- tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu,
--			struct arm_smmu_cmdq_ent *ent)
-+			struct arm_smmu_cmd *cmd)
- {
- 	struct tegra241_cmdqv *cmdqv =
- 		container_of(smmu, struct tegra241_cmdqv, smmu);
-@@ -409,7 +409,7 @@ tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu,
- 		return NULL;
- 
- 	/* Unsupported CMD goes for smmu->cmdq pathway */
--	if (!arm_smmu_cmdq_supports_cmd(&vcmdq->cmdq, ent))
-+	if (!arm_smmu_cmdq_supports_cmd(&vcmdq->cmdq, cmd))
- 		return NULL;
- 	return &vcmdq->cmdq;
- }
+-struct arm_smmu_cmdq_ent {
+-	/* Common fields */
+-	u8				opcode;
+-	bool				substream_valid;
+-
+-	/* Command-specific fields */
+-	union {
+-		struct {
+-			u8			num;
+-			u8			scale;
+-			u16			asid;
+-			u16			vmid;
+-			bool			leaf;
+-			u8			ttl;
+-			u8			tg;
+-			u64			addr;
+-		} tlbi;
+-	};
+-};
+-
+ struct arm_smmu_ll_queue {
+ 	union {
+ 		u64			val;
 -- 
 2.43.0
 
