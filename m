@@ -1,113 +1,92 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCE13FA5C2;
-	Mon,  4 May 2026 19:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A479351C22;
+	Tue,  5 May 2026 01:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777922842; cv=none; b=UMm/dn5oAGNpZIOwMWp+nsodBhPGk1O48EauFMH4GUCnUXx4HtoMpENCvctzbbNWpv0AurUsonsV2l5ZZNvJ1E1l6qUQ3/eeGufp6FNaG/vW8jNmlNrKoFyrH64k8Haio9YWS8SIHYkjk+gYeyc93Euq/pFG4oE+AZbIflUFMEk=
+	t=1777943344; cv=none; b=cVW0z7CTq6+GtqS+7vYN4dN/Lr/3sljpTzBRbrW4dpvNOIHgllnL+nzXWVdw4ZhyboH9RM9zSHpPejcWkwRZnMtME2mmeyCePGF+jFRaBYHASNpTbEAX1dbHHRQOvryRkdoKz9aCY0mWY32xUA0rijFCIc4uiCHbQerZJ9EbQIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777922842; c=relaxed/simple;
-	bh=pQ8x2z5zy31JcNHoKfUVoU4UMbyxbAb3ewMKvBf9Nig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qmpslszq7D2itLgqaSCSny5zW2Qz7XmrjvzwcI0ECkG9btG9air0aOhPY6UFum8LG3hx5Cvr56Zv0xZySMHdaASF2Qcb08kpa/nO3yrIjIOL55UJFIafOW91ybNubQFHSxARh+rVYaxabPqyNfYCQvCXlZS5kzeh5U420sqi/Co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ua2wkKQE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777943344; c=relaxed/simple;
+	bh=TpGYXCaAFTOqebHvjztPC+qbVAYxHWhPNx008iiZQp0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=LbdYPjMIAPZ4bbaTY1Y+AcNL4iiecTi6rjedxmrSnK69ZiZtx0HTCN/WYcEsEWimkO4e8tWygO61bMEk9+EpZH7/WidwRs/mUHJk1MhQSsXLFLbuFm5EpF9NpDmFdH5fKJ1T+HPSL348RpmrJu3B1Thp6DJK9vjT3ZgcbBXyD4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DMsHh4M6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ua2wkKQE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FEF2C2BCB8;
-	Mon,  4 May 2026 19:27:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DMsHh4M6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC2B4C2BCB9;
+	Tue,  5 May 2026 01:09:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777922841;
-	bh=pQ8x2z5zy31JcNHoKfUVoU4UMbyxbAb3ewMKvBf9Nig=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ua2wkKQEJkOWTR+uPDKsJAIolWixSStdxkDysoCenk2NEu5Zk5+jsKKiSU8hqvsgg
-	 0WZnrp84pvJmaoFWGW3azsrhve4WuSGtUSiemPUrrdmDHmkYCesieIr+aiOYAdfxsB
-	 fFycUdTa6v1Fb0NnH+xHUNgiNk0hfjkBDzGK4sMmIlYiPp2/WYAOXfSq2u6Cp3tVav
-	 MN1mxaQUr+mixd1jVsvSDXE04fPs3H7W3jcGTCGSm66aISTJ85siKCYhWtI1+NAeer
-	 Qkk7HQzUuNZPA96inkSW8S/jx9wTzZyLOqZmWoHme4t1VRiTrp3YzUvU9cT2pQ0ctd
-	 rpUhdMbj/Nhhg==
-Message-ID: <01ea0e45-4957-4bc1-b851-9c1b51cc9283@kernel.org>
-Date: Mon, 4 May 2026 21:27:17 +0200
+	s=k20201202; t=1777943344;
+	bh=TpGYXCaAFTOqebHvjztPC+qbVAYxHWhPNx008iiZQp0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=DMsHh4M6qdvwacvzCJwyFc7Gtf+zRpjXlmy2efcs6wg7CZ2F5qdbuQH/XCoppdkZO
+	 Tj5d3JRY0jIp38LdvPQkG39WqAUnktqxa1+aqNn4vHqTuESKwfqaOwoZHSao9IMkgL
+	 qqafecAklTJF9OPF6FJ1bKdLto9vRw+5sVe6zvMUOABwsmCGxOsGp3sdRjnb7boC9h
+	 Q9QA199eq4QZazPtQyh56j4GOe6v2Ox2jWmWxFU0VTlzUw7k7H7f3qfABKpFyct0+T
+	 24Zb9zg4W2dSv+Uneo+NM7dnvC2PgxZRVlk9a8gj6Xz94ZfBXUSP8Pp9GV2ECBGamA
+	 McSD8G8gLPqkQ==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, phucduc.bui@gmail.com
+Cc: Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Sheetal <sheetal@nvidia.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20260429102743.103197-1-phucduc.bui@gmail.com>
+References: <20260429102743.103197-1-phucduc.bui@gmail.com>
+Subject: Re: [PATCH] ASoC: tegra: Use guard() for mutex locks
+Message-Id: <177789999646.458539.912040697689212199.b4-ty@b4>
+Date: Mon, 04 May 2026 22:06:36 +0900
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] dt-bindings: memory: Document Tegra114 Memory
- Controller
-To: Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- Rob Herring <robh@kernel.org>, Svyatoslav Ryhel <clamor95@gmail.com>,
- Mikko Perttunen <mperttunen@nvidia.com>
-References: <20260427070312.81679-1-clamor95@gmail.com>
- <20260427070312.81679-2-clamor95@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260427070312.81679-2-clamor95@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1107; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=TpGYXCaAFTOqebHvjztPC+qbVAYxHWhPNx008iiZQp0=;
+ b=kA0DAAoBJNaLcl1Uh9AByyZiAGn5Qy2iyjgQFLwDiiUWEnpDKH71X5BFWPmjdsMc1y+RkonGp
+ YkBMwQAAQoAHRYhBK3maKpnVxi1n+Kf6iTWi3JdVIfQBQJp+UMtAAoJECTWi3JdVIfQYy0H/1fO
+ rXO9HddOf3wHCkzOFP6QtXfKybcBXc568T6LijmesaxVew9l9YzBhs8LJly8wAteD6enomhfVEo
+ GCQRvjQO8QgmwfWJRqi4wjh53boEfDNElyyClUZO+Vf7KbiJ5/WmCRkyi57iCSV3DxVvaI5BPNz
+ 8kH/5Y1R2nokfkMmkJ4ZvWjjbWGiV127zDKz3GAs7Mv/vdG8P0lH65QMumuyZZSnCslneb04jug
+ svmdBlBDmqEeGM1BBhpEgvnMwrl89LYbkZhuL2zaIyGukEQjCIvNCAvHc1T4rzIcE7ryt4ok1yz
+ RJYEjSOvpHWfX+RsVR2Xf+NF5FvT1+Xr8sKUgZ8=
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On 27/04/2026 09:03, Svyatoslav Ryhel wrote:
-> Add Tegra114 support into existing Tegra124 MC schema with the most
-> notable difference in the amount of EMEM timings.
-> 
-> Each memory client has unique hardware ID, add these IDs.
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../nvidia,tegra124-mc.yaml                   | 31 +++------
->  include/dt-bindings/memory/tegra114-mc.h      | 67 +++++++++++++++++++
+On Wed, 29 Apr 2026 17:27:43 +0700, phucduc.bui@gmail.com wrote:
+> ASoC: tegra: Use guard() for mutex locks
 
-Thierry,
-I put the header on dedicated branch, so I can provided them via stable tag.
+Applied to
 
-Best regards,
-Krzysztof
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.2
+
+Thanks!
+
+[1/1] ASoC: tegra: Use guard() for mutex locks
+      https://git.kernel.org/broonie/sound/c/b5a1493d9479
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
