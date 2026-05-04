@@ -1,117 +1,171 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D293E317A;
-	Mon,  4 May 2026 18:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4492B3E7145
+	for <linux-tegra@vger.kernel.org>; Mon,  4 May 2026 19:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777920812; cv=none; b=ePq54jVUJ+8SS7PJKoK4cE08ep2RtXAkegUsopm++w83QBtmymqn7ScEQlN1QaEUFyKjibDIGIgvfUrPcANx3Hg5d15cGLy7DDF1hSv8Kel//TQLXeEgUyaFN74mn4bYQxDCHNoA+jrQ+IP9IUIBWDzRZ8avwWTXRhZgtWyqTxw=
+	t=1777921215; cv=none; b=sgX7t+jmEkkxx3IsfBSi6nkBbngHDsMaZSQUt1k1e/uhDOzIimPGYD4ZK70VvgLTtijzn0S5uxYOUigLbu/eCpm+47A9ks+c3gWihbT28ZX+tIC7CEW/dt87zGdvRo39cgYxqF6lSVdy1H4fTf3eYMoZRySbdL65zWVeN3TRBAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777920812; c=relaxed/simple;
-	bh=K7rEYXj2aDAjl3JFEhh2h7o9xXnt0nLI5GvMy/EbI/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PGrYI7v1oHSIwvlCgApGvbbLW52Wq3lc4bwdrhBdq3rIe45SdVmxyxUCFpI0aPCt8jvni0R6rKC3+kuno5CMk7haI04FuElUpyLW1QhDpNxn6IcBBPxGcA+bjUBZo+sSma5zyOiBsmxfNjxN708WfRMySOHClKQ42M47NXDWHJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sboq43ix; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777921215; c=relaxed/simple;
+	bh=rhkAj0+0uw80V6/71DOfXd9ESsZBH+TI2rR56De4lbI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RBbyFLH5ECMZM5+xaEdaGE2bECj4cFwWFM7sydu20JghfJeODMK07n4F4YMIO2GKUuOcZOPvwH91CgZepxFamBI96wjNJ+tZbISspW+j+Nn+vcGwUzucuneuNS5YYF3z7HzmOn52okq2pqbqXJ8omQlL6zToIY4pB7ui87uoirQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lLiudyen; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Rd/uKHtK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sboq43ix"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B372C2BCB8;
-	Mon,  4 May 2026 18:53:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777920812;
-	bh=K7rEYXj2aDAjl3JFEhh2h7o9xXnt0nLI5GvMy/EbI/k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Sboq43ixUK7s9yt3ns9s+U+kX2XwWc+vagrXO/aQGeVQgLOQpTKFr7mrUVreVnMcH
-	 MftF87ryfp+JLkId67/5AQ17k9llg0DXPIeOu2mEX0heFMY7KS8erwJK9KDqgpZE2X
-	 6PHM6qXEF2yE6z7NwDqeJ3E0222qs6ntLFV8Z181QQ9ZGPUYmi0VsdDrDxCTGwt517
-	 mjy3PEmhaPOuoWtWv4KfVEWNWrXd16tf1PGi5L7utFOue4UeJtYtOcb1FjrItat4K4
-	 rSj4Po87FE6sLHvg+w0+hXftE47U/qLEAPe1580BxL94ndEXiY6TuK0p8eqfdkI79d
-	 4LeHsd4V7Ldpg==
-Message-ID: <495dad9d-3095-493e-aee4-9a2cbbe9c587@kernel.org>
-Date: Mon, 4 May 2026 20:53:28 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lLiudyen";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Rd/uKHtK"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 644DrK2e331251
+	for <linux-tegra@vger.kernel.org>; Mon, 4 May 2026 19:00:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=3AGBR4RTiOOZHXO8PM+os3
+	gG1hCr4zVelaYWYDfiLRQ=; b=lLiudyen0ndsFEDXqt+Bizv31kYU4ZzAJ2SXmc
+	IRLEx4scxELg0ozqHBAZecbbTfsXoL119pNi50zHi9w178JC7G0yP4viuWMV2s/+
+	fyYC9y4UojujaeAlPgUK9KNL7pFiD/E+dZgjdFfLMyp7Vq7IDdvgwtlfUvT3ZhA3
+	F1sBpqik7tbY6zzxL5e3RSFS6+kCxi6oYYv9P2SDWBd9ReSNmFkk0XcyHwAI+Bxy
+	UPb1Z4nifvPHmdJzJ+jm/MK+NNoIujcD3p4SA/wsyjBMN/n14EiKFHJjcmAMUQqL
+	A76wAiVfD47cPLIHw4+bcLM/UsIOJRAXZrNlHeV2izObbncg==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dxvr1974t-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-tegra@vger.kernel.org>; Mon, 04 May 2026 19:00:13 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-50d9a6a853bso105691351cf.0
+        for <linux-tegra@vger.kernel.org>; Mon, 04 May 2026 12:00:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1777921212; x=1778526012; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3AGBR4RTiOOZHXO8PM+os3gG1hCr4zVelaYWYDfiLRQ=;
+        b=Rd/uKHtKaC+Ru52kg56/ce5QVpFBP9uRpuXgoh9dIP3IQHFptz7SkIZtlbVKBLalR9
+         2krDNBpK4SN5XIylEdkn9k0syiR9/4EX0hnBc/3L/gTPMYsLwBUGktzBENprbDbU/ELJ
+         dCYeU7Cq8iZ/q/Hv5zJrVi5VkYAAxEV5zDL1suic8ndyP66Ryr1niivCpldCUyR9Q30u
+         +IWZpiPpkS/bwkFGs9FPZJeXXSeKgdghWLlyNrlfrHYqw4z/hx97YQa0uIeF5grdxf1l
+         4/hIFzYwTmUgHXr89aeg66gLDpgUp/8yeHaXCDzFVws1s2DDPOSyrveQKE0MxcIdMKOX
+         SBAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777921212; x=1778526012;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3AGBR4RTiOOZHXO8PM+os3gG1hCr4zVelaYWYDfiLRQ=;
+        b=mcvLkZnAUDXlKVc1fOa481oOD6k6d3fgwgEvttghce1P4HsSPnVUYOlXfw37fQ1trk
+         FYbwcHlPV7pqw5tRMKB3GSHL3S1dg8ofDbblhjUiNCmB6hBS51AjR/RHTRVXtqw4Kc5n
+         raEqqmy7xODo/xeU7m6CUuH0wnzfJQspeN1Bd5XigLEJN0kJY/KcZKVLa9T6tmTeb88x
+         2pfAiOyYAR7p8AWhazYggwDfqZHTZ5GlZazH0BVcDWEyTKgOmYpmIWdjEQvDTHj/9V0e
+         236wJ3GGI2J4RHsBjS9q6NcZ4ubgxQsqw5NAwJdaHoAgGphRo9P2ktVVL7j/4mboJzev
+         LFaQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9tIc5GdC9YamnNsM8hnDAy242ypjvuMi58bZSN/+/pLV+LJ9zVoQSGCio4ovLbKpV0E8kPnIZHqVQCwQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YymkW2wWdMd2XFFwtCdYO59u6ZeNJJMnjEOOjMYjPEkJRXL2a5l
+	PwsHdClziok0eAdssjKBS7C5HiVpFyjC1+yX64E/0xF61pEaLJxEjZmZpMWcVA9lIIuYBuAe9T5
+	oxvWkHIoDW8TyOXC44ll9DBGpcPP4G7CFxnRrk59tY+89FSKr16jcVYyB6iJ55P/xJA==
+X-Gm-Gg: AeBDiet6norLHhzOGOxuiIXq1UcsE5zwAOr7JMbBZq7Uc/LLqKzmRtttMh/x7RfiCMF
+	m1aKfPSkxr9pz4J8Nzb6C+IxhtAoaqfSidEiIGflhK659NVQPNcPzTPmJYWS8Z8H6oSwdhw/4wq
+	Gy3VnMjJbQYpZoweIx5meUqW//IOlHc5GzSrJie2lOg/8tiE07x7X4SbZ7HPRFJ+ok3kW4bK7O8
+	17Bi7tuckmkmKEb+W+uEl39ZuhVU4xIdXqNlsyVYq4yJRFtN63c3tUp/EpU0EQi73Veh0hG99g1
+	bWZ1hJX/8n6PkrU9hClgKPVmSSfpwmk6kWKr1p8Cucb15e39ON1omwIaNEw1iYRHNrveg7Ijw7X
+	dlurNY3wO/pLr6omaYzHMDATs1q/8fILdeRIKcrDIFKxdTIU=
+X-Received: by 2002:a05:622a:54e:b0:50d:83e0:3216 with SMTP id d75a77b69052e-5104bf522famr152893821cf.49.1777921211709;
+        Mon, 04 May 2026 12:00:11 -0700 (PDT)
+X-Received: by 2002:a05:622a:54e:b0:50d:83e0:3216 with SMTP id d75a77b69052e-5104bf522famr152892331cf.49.1777921210697;
+        Mon, 04 May 2026 12:00:10 -0700 (PDT)
+Received: from quoll ([178.197.219.94])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a8ff04927sm102847035e9.36.2026.05.04.12.00.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 May 2026 12:00:09 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Thierry Reding <thierry.reding@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: [PATCH 1/2] memory: tegra114-emc: Do not print error on icc_node_create() failure
+Date: Mon,  4 May 2026 21:00:05 +0200
+Message-ID: <20260504190004.747509-3-krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/7] memory: tegra: Add Tegra114 EMC driver
-To: Svyatoslav Ryhel <clamor95@gmail.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Mikko Perttunen <mperttunen@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org
-References: <20260427070312.81679-1-clamor95@gmail.com>
- <20260427070312.81679-5-clamor95@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260427070312.81679-5-clamor95@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1181; i=krzysztof.kozlowski@oss.qualcomm.com;
+ h=from:subject; bh=rhkAj0+0uw80V6/71DOfXd9ESsZBH+TI2rR56De4lbI=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBp+Oy0yqxmoNNIcmLU96BDXwku1MJVdAgyiiJPZ
+ s6SsSzJr6OJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCafjstAAKCRDBN2bmhouD
+ 146xD/0f0OZFXcmBKb3W4XKS/6tOp+AFMXsmN5dovdDUuMYt7WSDMlKG2U2+VaIYbKLzAgHtVPh
+ QGk92+u8b8JLY/kIS8BUO2g3U7QnLh2zKCkg2dlLqMXsJYAxGWWNv9IEQkghs+vhe6qqEODLNYJ
+ sWX9LRscYZ7v07TR9LhKfe9ayUsDPLeVbKcr9sHB6hJnFIa01SBa94egnAaSrCRk4M03/xFttHa
+ +X5NoH4IpDWVXJ9K89iCVQIsIVDIUm582nVTk3jLcidSKbRbZIuTOt4QNWnq0V2vW0WljD/9lZx
+ F9YGjVfuYfTrxtNcyrB3rKMP35OmT67bU2XT5WtP8CgieDVEMus4hkNqHX0LD+YcI1i0HesH3u5
+ Ak7T3OF4x/vx3qydRcv3Awl6m+1myXEXxEl5sPskRH2yuizGzHbdX4ZciC351Ek5O404vmzf9co
+ 2PVRzF4kDpoAgsRNX9/TH7KcYUQkDUmbWtNRgHxMr1JB1tOmVhyIFzZyQteWH1FN5knKkVYEZ2z
+ iPvD4IlJIEiB/D7Hzl4hCkK4b8IfFjbSjlQzTnJAQJ4uBpj/Z76jKru4Fy4Pd69Oa1i0McFqHXf
+ 7/Vr8WTp2ZkofTHsigLInN5wTxh3MxHFbZ4KkYdIGGjU0tnfmhE2rgFlKzQ3BNYYbg+COBBrYH1 aWiJvy8sTT6vM3A==
+X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: dwUjlOGgo0yQ9zm9WkEE3wA3_kgPLu2H
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA0MDE3MiBTYWx0ZWRfXyb/1iUErhvLm
+ 2+SEm8i3iL9zXrQvdmrXtilg6KNO9MinJLVT4I3OgrLgZwboVCwfEQPN2OsVFRt91OXDbV33vDQ
+ hWzdfOcaTou+qGCBa4WgejjxwFZxK+IyzgkxOa8GySzepBpds3obeHwtnos3PHKEZBLQUpmM8bh
+ C4YwOsnn6KK0kLLfKIeYoEJwY3/Uqv0wbbuAZA5yqUYel3j/XKocmn1Kd9YR7B1KrdhJIx9tsDT
+ maFPlUSs16vmJuIKzfLSOMDHcSlxTBRbgXSxko4RifId9+/cxenkcGG14ETSrIl3NfjsxTN7Mgj
+ jTqVCsdYoxiwgji+PS2oc8EGdFTuzelzCp8ERnOsWh5pza8fd8kZekQzUiG4L7ni9KfGHUSdEHP
+ qr/0NcLuScWBJEyjpLD09Eg9OsoB0mbTnM8aPcVqMznZTTwduP2h5CZsqwO3WKDODJdV9Zb5I3/
+ ip5g1sgzWPwm+/xgRIg==
+X-Proofpoint-GUID: dwUjlOGgo0yQ9zm9WkEE3wA3_kgPLu2H
+X-Authority-Analysis: v=2.4 cv=RvL16imK c=1 sm=1 tr=0 ts=69f8ecbd cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=gOEeR9iKwsj33Yj5oN/cWg==:17
+ a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
+ a=EUspDBNiAAAA:8 a=ydqbyjLzeJJycWZoebYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-04_05,2026-04-30_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 spamscore=0 clxscore=1015 priorityscore=1501 bulkscore=0
+ impostorscore=0 malwarescore=0 lowpriorityscore=0 suspectscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604200000 definitions=main-2605040172
 
-On 27/04/2026 09:03, Svyatoslav Ryhel wrote:
-> Introduce driver for the External Memory Controller (EMC) found in
-> Tegra114 SoC. It controls the external DRAM on the board. The purpose of
-> this driver is to program memory timing for external memory on the EMC
-> clock rate change.
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  drivers/memory/tegra/Kconfig        |   13 +
->  drivers/memory/tegra/Makefile       |    1 +
->  drivers/memory/tegra/tegra114-emc.c | 1353 +++++++++++++++++++++++++++
->  3 files changed, 1367 insertions(+)
->  create mode 100644 drivers/memory/tegra/tegra114-emc.c
+icc_node_create() is alloc-like function, so no need to print error
+messages on its failure.  Dropping one label makes the code a bit
+simpler.
 
-I applied this but again this re-introduces OLD patterns which were removed.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+---
+ drivers/memory/tegra/tegra114-emc.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-Don't send old code or downstream. This was fixed half a year ago.
+diff --git a/drivers/memory/tegra/tegra114-emc.c b/drivers/memory/tegra/tegra114-emc.c
+index be6c699cb656..0af73dde99c0 100644
+--- a/drivers/memory/tegra/tegra114-emc.c
++++ b/drivers/memory/tegra/tegra114-emc.c
+@@ -1202,10 +1202,8 @@ static int tegra114_emc_interconnect_init(struct tegra_emc *emc)
+ 
+ 	/* create External Memory Controller node */
+ 	node = icc_node_create(TEGRA_ICC_EMC);
+-	if (IS_ERR(node)) {
+-		err = PTR_ERR(node);
+-		goto err_msg;
+-	}
++	if (IS_ERR(node))
++		return PTR_ERR(node);
+ 
+ 	node->name = "External Memory Controller";
+ 	icc_node_add(node, &emc->provider);
+@@ -1233,7 +1231,6 @@ static int tegra114_emc_interconnect_init(struct tegra_emc *emc)
+ 
+ remove_nodes:
+ 	icc_nodes_remove(&emc->provider);
+-err_msg:
+ 	dev_err(emc->dev, "failed to initialize ICC: %d\n", err);
+ 
+ 	return err;
+-- 
+2.51.0
 
-Best regards,
-Krzysztof
