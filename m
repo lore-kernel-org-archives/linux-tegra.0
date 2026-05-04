@@ -1,516 +1,482 @@
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010003.outbound.protection.outlook.com [52.101.85.3])
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012007.outbound.protection.outlook.com [52.101.66.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E4530C601;
-	Mon,  4 May 2026 10:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17AD212FAD;
+	Mon,  4 May 2026 11:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.7
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777888906; cv=fail; b=nZZJf8r2wfbXPrT8y5tkGyqBV/ikmmxZRESIYm62uJZ1RTLVu7tN0M/Cqv4BZDY0iOS4ptBqUJRmUUQ42eQ8mpdjqhbIIMOBJ0SyGUoHn0TkRNcwHvwfPJr7aCbY6iLgjgjXvsQK0g5RgVCiqrN0t7GU27rYSYFZkMgCcEgteFA=
+	t=1777895318; cv=fail; b=o8/XzwYye3d7+sHsOBbEy+3Fk7ypN3qw962rhv4n8WCkNEEWie6kqQPw6QwW+E+4ToyV+JUsMm4dowNAp5q2bMyMI5f3Q7XqG+PRxve/M5Gmdm6s3Qo2ODU+H3a8hzEqlyNJ6/9C3SIeFqyw0JOm0OWWSF5ajxKwDNd12ht/VP0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777888906; c=relaxed/simple;
-	bh=iGgQ60DCZcoiQDs8HBg9ptSgfFnDp7UITbfRPYo7RAs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=e6ZhiL05/o9T/z1gKgbWwlMRfaJQIRoxIdBp+kDMp8uIsmrrRdNnttPKWfC4LG5G0A11Ppaijgl6H4s/MXL6c4OIU4UrwqqPFrqFg/Tdj+H0/O3Zldy9JE+1IZKYPOOCZBbBxXDLQ8rDYoInTgSKWg5g4raVTLrdTJ0NzTx9qZc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=koajbdzq; arc=fail smtp.client-ip=52.101.85.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1777895318; c=relaxed/simple;
+	bh=0z0usvvJxmIeP0lSVniP1a86lhKtOVSjXfvDBLv1V4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=niPo/JmrbfmIAVwLgNfmagRz4pRtH13Q9FGq0/fKAo6Bt/6xmYYeIi6MRBvFBWwsFunLTVXQgsARJyUZwjIrVe/VQ9jlXF/S+4DbRtAR0pi78G1162WHqwfTFoopzbzZ2+Wk6O/m48k8YhEbw4BxjUQtDzwCX+w4AHa9LGbJRRs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=dYbtJvg7; arc=fail smtp.client-ip=52.101.66.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="koajbdzq"
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="dYbtJvg7"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oQWcipA1IozuW5D07PzB1RRtn3RjYY5bzB89wlfOaZ5Enk7lY1kBXWxxUwj9r2U4opj6i8IBxpQw70wTRhXFNYgZvloIUK+KmHUyA6TCE14QhhAyDBPIrbw6fBdqR9edlIe+0Zi4ZKOTGXDH5Q+SWLAmAC56Yff/qV4Oamow0Svn8Gs1U+dRSwQfXlFucrsnEkr4N8uHUAWGowzj8ocMc3LOK4zbYp5RiAefC317ue3FrpDKYksdO/BBSGoBgV8FZcbf4eIgdeR0w5tn5/7r2ue5MtzgmuDzHrobbJuUBwrJWM68ZFFH38PntjZni+/k8SR6hEP/AsfyLKN8b/IrSw==
+ b=bQJulNwV79eiJkukHZtU177gTLEEzbXtSPnDwgYMvyne3+Mh8AQXCXx1dwJyVFeAcqpdKJ537BAq1bVtfJQkeiXQkbu5+yaGzI3cRfztQE0MVDPFa1gaNHRfFmp0E8WBnE1X6QVkBfcy8LdkcEBm388ADdHtB+g706Hz2ZyF5XCrjM5eF5O9lvEFLYaDCbHzPVcJFWtm5AnMmuK6eT3/GE9rlKPDnS6jJ6r+elcHDAZMO0OjIddJp7dPVKikPDK6jLndrGP9OwUgcjyvYNF/JPQ2XV4FdZiXKoVmfv/ahXiHXIUneSSdMyEuydzsgRRcHM+9hjjNL/BRNyloB484tQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UYwiVJpwz/MX1NDY4Jx1oTxPzKVBDsEUIf1yTO9SXWs=;
- b=TevYukm3wvbLa7eb3b3VC7pxt6UrhJhWjCoF6RWwAw4gzmbnYyrm4EL9xxhJbb6Ukwbtuv7tizdN5JuHDTPQFtvIjiTuXX8X1KY7Wt33hJoxPPfJqhq7YK/nVjwZS/1c6+J5bYp9navSI4h5jHoA8dLXcPORVU/mon5ArZtJarw54IA6owQKgHeR0SgNYeeoRuCyAkEIBKP+nwPmF5hOWlJsY9Yr9Eu8NljIx9UeArtCGQ+qhqVjB+hfxj8Hxp45Fnrh7vdk5EoORf+5grtqtAMHFlZW79fkljX1elXD/HdwnhV/wKtI0dbGgt1lq3QgvwylkfQpkoN2fuA2P2JwBw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=kuJ5TrsI/7xa0NUQqdrHUy+n3N/zC1iSMjSRl4BbBNs=;
+ b=uWmBYV8wL6vN/aaTb0heieb4Ntd7G3A9WXZUtaa2ueos5GMMffFcCCed8F75DOG1v6usXYwOyt/s8WZvpWz5Uo2IzhZPBR4cNWU7vrolT4esPg4L4Mv9J9bsVyCaoKSyQyIgLTvc9n/dB+lnN7x99bNKSjJ9pkueDeAHJeT/EL/++61MVyBW7ZfjCaWUYsxKYBmTht09rBt9eMiI5m/SO77TBef7PsNKPmtNvyYtRnFJRF9Qktj0S2kdz8WDHHEfLecKIZFrGnUaDmppwP/tp2tvXNgN1H6yFbzI61V5exyFXqP/714DSpW0Xs9wpJR/rSXTRlWOcBZ5X6988rec/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UYwiVJpwz/MX1NDY4Jx1oTxPzKVBDsEUIf1yTO9SXWs=;
- b=koajbdzqITUq8WR2NRhVKZ3HCdAN8pq8Lfd6IEAa6h+x6dBwwiBtWhsolF03KNQDuCwYPlKY1Md/PVu9okp6kRk7M0jf8NUA0bUuYhuZ8IW7eM2B57fa/l8b+ZTblpN8EJiTZuTYMXGlLXIHRdAO3SBArkS6OIo0kgQm2waOrpzwkQnH67VImwcS6WxiSvb7GMAf1ZbFCxJDVkZ7JCI9kBHNKUt4zjQ27tOZAHz5EP/XjcAuBZlIk5q1urfi3pi6UhXM3kUf4O7rt9kuOpnxtZ6i5DegleWRai36iRP1mPszThM5ciMqucmgjIJ+d4F0b2I1BRVvT0U2ZMl3/Gz2Mw==
-Received: from DM6PR02CA0067.namprd02.prod.outlook.com (2603:10b6:5:177::44)
- by SA5PPFF3CB57EDE.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8eb) with
+ bh=kuJ5TrsI/7xa0NUQqdrHUy+n3N/zC1iSMjSRl4BbBNs=;
+ b=dYbtJvg77mI8SWmWDrlL7pWGMAg96UvtIle1GKLgLMaNYc3UfmEaCPrVKCq5qOJ/pW6UXWZQTLwUhJNCd6eXodFZ0hnAHvGjXUOHg+jhnmsV45U7qU3L2QqpsP1GHw+mc4judm1guQy3i4SD7Ef/36Twlp1eZLQSgZ4gPN9J1CGoPq1C9L1ZnHaCqIp3lgKpqe+/sVGwQk3N11VtwkptDylaoCqCEHrNYj/c97b57icmY4SG/oH9xfG/SxC/yYz710AsBixGJkQP2H+r5dGBdKiqTAv/PV9VU1GfEPcLBIbUA0Sy35hnNEZOwN1bw+gHNaLtWKOGV8sMHbEKpET6xA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM9PR04MB8585.eurprd04.prod.outlook.com (2603:10a6:20b:438::13)
+ by VI2PR04MB10286.eurprd04.prod.outlook.com (2603:10a6:800:21e::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.26; Mon, 4 May
- 2026 10:01:34 +0000
-Received: from DS2PEPF00003448.namprd04.prod.outlook.com
- (2603:10b6:5:177:cafe::13) by DM6PR02CA0067.outlook.office365.com
- (2603:10b6:5:177::44) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9870.25 via Frontend Transport; Mon,
- 4 May 2026 10:01:33 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DS2PEPF00003448.mail.protection.outlook.com (10.167.17.75) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9891.9 via Frontend Transport; Mon, 4 May 2026 10:01:33 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 4 May
- 2026 03:01:15 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 4 May
- 2026 03:01:14 -0700
-Received: from build-sheetal-bionic-20251202.nvidia.com (10.127.8.14) by
- mail.nvidia.com (10.129.68.6) with Microsoft SMTP Server id 15.2.2562.20 via
- Frontend Transport; Mon, 4 May 2026 03:01:13 -0700
-From: Sheetal <sheetal@nvidia.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-CC: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, "Thierry
- Reding" <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>,
-	Sameer Pujar <spujar@nvidia.com>, Mohan Kumar <mkumard@nvidia.com>, "Kuninori
- Morimoto" <kuninori.morimoto.gx@renesas.com>, <linux-sound@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Sheetal
-	<sheetal@nvidia.com>
-Subject: [PATCH v3] ASoC: tegra: Add per-stream Mixer Fade controls
-Date: Mon, 4 May 2026 10:00:51 +0000
-Message-ID: <20260504100051.3820808-1-sheetal@nvidia.com>
-X-Mailer: git-send-email 2.17.1
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.25; Mon, 4 May
+ 2026 11:48:32 +0000
+Received: from AM9PR04MB8585.eurprd04.prod.outlook.com
+ ([fe80::f010:fca8:7ef:62f4]) by AM9PR04MB8585.eurprd04.prod.outlook.com
+ ([fe80::f010:fca8:7ef:62f4%4]) with mapi id 15.20.9870.023; Mon, 4 May 2026
+ 11:48:32 +0000
+Date: Mon, 4 May 2026 14:48:28 +0300
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: linux-phy@lists.infradead.org
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-can@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+	spacemit@lists.linux.dev, UNGLinuxDriver@microchip.com,
+	Bart Van Assche <bvanassche@acm.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Chanho Park <chanho61.park@samsung.com>
+Subject: Re: [PATCH v7 phy-next 09/27] scsi: ufs: exynos: stop poking into
+ struct phy guts
+Message-ID: <20260504114828.n7r7kujaegusdkbw@skbuf>
+References: <20260430110652.558622-1-vladimir.oltean@nxp.com>
+ <20260430110652.558622-10-vladimir.oltean@nxp.com>
+Content-Type: multipart/mixed; boundary="oquvkzttypru676v"
+Content-Disposition: inline
+In-Reply-To: <20260430110652.558622-10-vladimir.oltean@nxp.com>
+X-ClientProxiedBy: VIXP296CA0008.AUTP296.PROD.OUTLOOK.COM
+ (2603:10a6:800:2a9::7) To AM9PR04MB8585.eurprd04.prod.outlook.com
+ (2603:10a6:20b:438::13)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003448:EE_|SA5PPFF3CB57EDE:EE_
-X-MS-Office365-Filtering-Correlation-Id: a6e150b5-4b5c-4557-2712-08dea9c41f4d
+X-MS-TrafficTypeDiagnostic: AM9PR04MB8585:EE_|VI2PR04MB10286:EE_
+X-MS-Office365-Filtering-Correlation-Id: fad5a451-f99b-4b4e-5a49-08dea9d310da
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700016|82310400026|18002099003|56012099003;
+ BCL:0;ARA:13230040|366016|6049299003|19092799006|7416014|376014|10070799003|1800799024|4053099003|56012099003|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	ISmtJxWGQrl+R4OXDI9GcFLLTlfQkutnErdHxIUidm75LruTJ0cnpTZTAExYuKVhfPD4e4z6gCdJu1PsFXzRoisu1/DmaBtb/eKILbsqEfPh7ytwFGw/ljXVoQlfYVG2Xl2MBBCyCy8xjANL+x+DOXLqHLeVoGyHNNwd0qYz2uSGlhFOdnH+wLgTU3z9kMJFK1rfGZ6ljIR5+m43G2x/3LwcXJfY2FlT3jnCOWPgT1sIZ7IVAFBIDJAAA+yWflJPuK2KpW3D4nqkQVCoKUIh3UU9Dl/6U8JU+CeqiyZLcat+0Fmh3GBrLH4AnlE4vwKST5S7DxTqVGo2n1+qEG1AzDqNXhFIrrDxCxHfojfHvw9ftIuR303daZvzoCtPtnzWgKpe+Mh3W74Lv1tZMAjFykoORVEK0AJjoixPlVtdaZVkn1yg/ez98+fhmVDLoCb29ynTg1JFWyjK0HYL6YJ2ek/0iYHXYPdRfOrpGd1an2Kl7LnzakbScrxfCVLUMrltlT6fyvsYoEr6wFXtIHxJbLUZIFyoo6gsmpmFYUgYT1lxABdgwBVQjVRSgsWdwVgQLmbWss7n4OggxdaJBW5WQVaQhnJNoXyPD0dBv4h5EhlvMnnl+fKfM7tiNwiGjHfRWhHVUoX6Ta4xQr8YcnlU2/DNq50rqmmlTHD0MQzrUYc2wFBoNBzWEndTNAOrX3nHLyXNAQCFry7Elubd9JEguBaIsjKIuaT94zsnCNUVjSs=
+ qDLPZu5qYj9KN27LUIv3EUhwOORB6LjoJgGq88OqyxSbx4QbMN6GWl4xaxhh7CBm6Paj9Nb3+Fb0q6S8UhgFEti0SUMIINjAafDJWeUWD9OPiVrlPEeFeLW7IRyshjpySWcoFlTOLOXGA6jTmV8r9Ri4YOBI9hP060w0ViigKdG0vp9owYHWlpRQ3/fPWwpPfK3CrmUr+ZwmfrTE+OduX3EjD3fVoV7y5nJZ4H5jgAMN9YikY0LCVj87hKi5gqoiEdcs4STC9WZEHeOuUA9uuqGcYgYmIH6Xc6CP2E7NFo/t+5TXCSEfTtnx0MS1mf3Jm2WZrd9vySsMe6mWHJBwoFC2HebuAWSEvSF57fbSp/HdDSiD0Lm9q54Irea2rnSwUItMSJMFz4xt68ZGiayi+a/qHWF7Pa2kRUMaLkoZe2doMtXvSuWRYpH2IDOL6zb/6sMwSWUXjESKQNciEcCyqjQZwfFNOdeWVoB8S523MMUvqOBRvqrQcAjvj3RnN5EGeDHh/5+1AzA5Qiuppwa7Omge/+17eAjJUGKkvwNkuJzEz5etCinwDvwJo2kyXS0cSxrw/PnozTkX6xtaVb16u6LQwDKypVszkDZJza17dx++i09FW4qClFDT2zaHPO+L/J3M/dp8ILU+ANb/MThLmMu7a0OZWp4Cp11PqVuIyGG6iMrKUxxz4Ez+8nbyKELh
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700016)(82310400026)(18002099003)(56012099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8585.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(6049299003)(19092799006)(7416014)(376014)(10070799003)(1800799024)(4053099003)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
 X-MS-Exchange-AntiSpam-MessageData-0:
-	aGvOPzOPeEuR5xqnbYnHhZdw3L82oWp/AIGhyKpH8wFbyWGWpN1ZoL3kSF3fHa+ChYhWvaCznItYUvQntQCKqkHJIxlrpd7++nSyEFThMg4dulKjm4ULhSkZu57My+87oTV006YAiRZeDpksdxhyWstmLNVduLqh1TBbeLJx+m8xEiYdhMufS0eIZuHBtjZ9Li0CnMEMSKXOhFsvAKQN6s11VzqMpGZv8uBIPeP2vEZQOZx2cwEAzI08bjg6ob1b07h1aQDTuKYrXUT5gsdCca/L2xPg3TgnO1rLJVy74Lbn32hRBJJj8QVQNGDpsv2GoQM8C/ZiLLRmwU28EojHm396DUZ9ji1lW8ccbmsNB9KisAL6U1OX6XTqUj9R3KXxlM8F1rjNNhtGe9jebcVJP0e3IMPLj8JPNLLrzhq0aLDTi9+EUjGhLuCPoqR5eR23
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 May 2026 10:01:33.5506
+ =?us-ascii?Q?b+vjs4nLpKCTHK7OBy8RtNuxJBaaLoShYtumy2aCVMblYmFrZR86GQUXpSK6?=
+ =?us-ascii?Q?oepI6W2vxB8SANoZEkfaWJcwYFznGh3Kom6KmvFkPXhQnsAJyyG9i4YXt6Nq?=
+ =?us-ascii?Q?H4eheO3rSp2c/XcceJJMWETW3qOppAAa87+4exocQPiKkmo6EG9Dtl2Ap4iG?=
+ =?us-ascii?Q?QTSR5XHeOaphAHzwNbeq2dBObQh2aiM9vbtSvmDdHBYkz8zxVSdgxmXkbEQ6?=
+ =?us-ascii?Q?9Wn63hI2PBL+dHzHMqn3xET61VSq63SElL8bctKPNFg1n2RJz2+KSONlGiIo?=
+ =?us-ascii?Q?kpM6k+QoDqqIQw5DqMEpeg3hIkinVNDZEOwsFpqPlAObq9/KSRrBBIWNlD5e?=
+ =?us-ascii?Q?/ymSAT9uUjVL6fsIy/qT8B+7d91L2uNyDeNxI3F9MARXODDF0xsZ4fnVOJ8V?=
+ =?us-ascii?Q?jsUwMLLrmxB28Vcu5ZSAlmkCrW7QLnEFAKTb/dF0BRoh6fMBMACMHp/TVFM3?=
+ =?us-ascii?Q?WC+Sxw3PFtHLNw9/DA43E47HY2gUv2T5pVwsk48CqZjBnd7QZVPlewf8ezw7?=
+ =?us-ascii?Q?iov1MplVQc2xgtTOnbT425h0UBUzaVW0WWnbwc5Pa0lQDbOazNqhxU/ha0UM?=
+ =?us-ascii?Q?imlUpbK7NPmZYv/p9mQXW+uQiVaT94AFeE0Mz2ZkZKeJqJbZnI3ZcYJ77w2B?=
+ =?us-ascii?Q?pGm7J26qYV2KtPekkjSHAz+v79JyEn+V1PbzJFdZc2vaiAh+tcmWdG/6066p?=
+ =?us-ascii?Q?chBIdIkiexDzS1SxRQzkMZelQIUAH54/ZF7SJOd4mWQmABasusKuLF2zmXrI?=
+ =?us-ascii?Q?ivBquIRIIRE3pKLQBaYaGxTU+HeiZzN9DknUbUglEYFLGOMeEOnTz3DzdAl2?=
+ =?us-ascii?Q?CYH/Cd9JBo4iiDQ+9mywmQNKV1kz5mDAKh3u4StYUPXJac2m6iZP6qWup8o2?=
+ =?us-ascii?Q?lI2rlbxGekw4lqz0Q2agXYCrbsJwrjh9BWh1RhFG1bgH2Ra3upFgxSFYU+PM?=
+ =?us-ascii?Q?UDQoORL7wdHFEGIxukdtX7kIsr8cfRoYVpKupKwXOR6u3/SYQS9oW9ceJVJe?=
+ =?us-ascii?Q?QpEZFHQlA4UpOX7eUu9iFrVwFTNIFaJ0VxZQXB2Q6SSBUkbhmpZRlEal0Dff?=
+ =?us-ascii?Q?VtHJZH2SnaXnVAc1Rl1LmBimecCaaRwuZEpX19UvE5T575uX7/xmxL2ufTaf?=
+ =?us-ascii?Q?pydJBEyiayWk2nJ8FGEwVsJUUwTu+FEXFJXYHRlH2uQQG9JtRPI3oGhX8iF1?=
+ =?us-ascii?Q?AWNsvlmlc91oCSzaLRziIxFVXIkwhdTANxxEOkBcSbeOOBq4zyv+iRyi+eJ1?=
+ =?us-ascii?Q?69F092bXIedwiwJmbBErphD3pJQmdRLPgjOiE6c71m84kHFPX8IYVLXOC0bb?=
+ =?us-ascii?Q?cUvwfcYoN7HNS+eQQsfn3ugl5y1et5fCagCoN7eu7y1VgLrRDOEzO5hFwqRg?=
+ =?us-ascii?Q?NmSbNCDXn7PCT9v+xwy8wX2TnGG+Y2jhh6k6KnLhh090Y3pdy4xA02iwGvcH?=
+ =?us-ascii?Q?SXwWQ+Jchp1vOBpe091eSo6khn84VTZci0nSN7RmtoamNSsV3+mb7HZLf2Qm?=
+ =?us-ascii?Q?PPSCAgQfySin78HBVuaCJwsQC+saeTnat3ZNB121ZMrfYtItvBqGO8qMe9xz?=
+ =?us-ascii?Q?EzjOtmJU5T4nud/PxzZHWVILtmitdCI1XV88i4IzMvuf3tt3HyQ3GWav8Qn3?=
+ =?us-ascii?Q?g2lrLaEXN8UUxfWO2ocs6QvLAE3Rpg1vf0Hw1kvgRrjNoR2ZTRh29dOxjZb+?=
+ =?us-ascii?Q?/26ERto3tUOVzlIX793VFUu55jjQzzN0jVig9a2um6+MyRV6NF0ECiWjh1Jn?=
+ =?us-ascii?Q?wyjbhu/w9kEhsWkUq8XmeXThly4hrxUfLU1Mn1w+u419+L7DI3v23aMbEj92?=
+X-MS-Exchange-AntiSpam-MessageData-1: po77R0ECpxvMqA==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fad5a451-f99b-4b4e-5a49-08dea9d310da
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8585.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 May 2026 11:48:32.1691
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a6e150b5-4b5c-4557-2712-08dea9c41f4d
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF00003448.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPFF3CB57EDE
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: owIwq/kM2PqBPikT4lRxifucAefCEGeCRaQpBogOvxGbkXJcadWu7qrGZ9IJTp3cZ8/zuiJ1tGZGUaYa6Mx+pQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10286
 
-Add per-stream fade controls for the Tegra mixer to allow
-independently configuring target gain and fade duration for each of
-the 10 input streams (RX1 through RX10).
+--oquvkzttypru676v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The following controls are added per stream:
-  "RXn Fade Duration" - fade duration in samples (N3 parameter)
-  "RXn Fade Gain"     - target gain level for fade
+Sashiko says:
+> commit 76ded6c0290bdb192c2ae1af9a2e6a47fc39c9a1
+> Author: Vladimir Oltean <vladimir.oltean@nxp.com>
+> 
+> scsi: ufs: exynos: stop poking into struct phy guts
+> This commit modifies the Exynos UFS driver to stop directly accessing the
+> generic PHY's power_count. Instead, it tracks the PHY power state internally
+> using a new phy_powered_on flag to properly handle link retries and
+> suspend/resume operations.
+> 
+> > diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
+> > --- a/drivers/ufs/host/ufs-exynos.c
+> > +++ b/drivers/ufs/host/ufs-exynos.c
+> [ ... ]
+> > @@ -1513,6 +1516,9 @@ static void exynos_ufs_exit(struct ufs_hba *hba)
+> >  {
+> >  	struct exynos_ufs *ufs = ufshcd_get_variant(hba);
+> >
+> > +	if (!ufs->phy_powered_on)
+> > +		return;
+> > +
+> >  	phy_power_off(ufs->phy);
+> >  	phy_exit(ufs->phy);
+> >  }
+> 
+> Does this introduce a regression where initialization resources are leaked
+> if the driver is unbound while suspended?
+> Looking at exynos_ufs_suspend(), the PHY is powered off and phy_powered_on
+> is set to false, but phy_exit() is intentionally not called so the PHY
+> remains initialized:
+> exynos_ufs_suspend()
+>         if (!ufshcd_is_link_active(hba) && ufs->phy_powered_on) {
+>                 phy_power_off(ufs->phy);
+>                 ufs->phy_powered_on = false;
+>         }
+> If an unbind or fatal error occurs while in this suspended state,
+> exynos_ufs_exit() will see phy_powered_on as false and return immediately.
+> The initialization reference and any resources allocated by phy_init()
+> would never be released since phy_exit() is completely skipped.
+> [ ... ]
 
-A strobe control commits all pending fade configurations atomically:
-  "Fade Switch"       - applies staged gain/duration for all pending
-                        streams and starts the fade
+I think I've been looking at this issue all wrong, not considering why
+the UFS HCD driver calls phy_exit() -> phy_init() at runtime and what
+can be done about that.
 
-A read-only status control reports per-stream fade state:
-  "Fade Status"       - per-stream state for all 10 RX inputs
-                        0 = idle, 1 = active
+I have replaced this patch with the one attached, which I will be sending
+for v8.
 
-Usage example (fade 2 streams simultaneously):
-  amixer -c <card> cset name="RX1 Fade Duration" 1024
-  amixer -c <card> cset name="RX1 Fade Gain" 12000
-  amixer -c <card> cset name="RX2 Fade Duration" 2048
-  amixer -c <card> cset name="RX2 Fade Gain" 15000
-  amixer -c <card> cset name="Fade Switch" 1
+--oquvkzttypru676v
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0001-scsi-ufs-exynos-use-dedicated-API-for-updating-PHY-b.patch"
 
-Signed-off-by: Sheetal <sheetal@nvidia.com>
+From c687a8568c6c7837bb0bd539bf14343d7d0c63a1 Mon Sep 17 00:00:00 2001
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+Date: Mon, 4 May 2026 14:00:51 +0300
+Subject: [PATCH] scsi: ufs: exynos: use dedicated API for updating PHY bus
+ width
+
+I am trying to get rid of code instances where PHY consumers (like the
+Exynos UFS HCD) poke inside struct phy fields, in order to further turn
+struct phy into an opaque data structure.
+
+The ufs-exynos.c driver interacts with phy-samsung-ufs.c in order to
+power it on and to update the lane count. For the later purpose, it
+(ab)uses phy_set_bus_width().
+
+The phy_set_bus_width() function is a PHY provider function, not a
+consumer one, and I am calling its use from ufs-exynos.c an abuse
+because
+(1) commit 8feed347d33b ("phy: add phy_get_bus_width()/phy_set_bus_width()
+    calls") clearly states so.
+(2) phy_set_bus_width() only alters phy->attrs.bus_width, and does not
+    call into phy_ops at all. So a consumer that makes a call to
+    phy_set_bus_width() will not produce any hardware change in the
+    provider at all.
+
+This is where the Exynos UFS HCD driver decided to be creative and
+hijacked phy_init() to pick up the bus_width attribute.
+
+This requires a very careful dance where the PHY consumer needs to
+simultaneously juggle two requirements:
+- the UFS PHY needs to pick up the updated lane count in its
+  samsung_ufs_phy_init() handler for the phy_init() call
+- phy_init() calls need to be balanced with phy_exit(), otherwise
+  subsequent phy_init() calls don't make it into samsung_ufs_phy_init()
+  and just leave the PHY with an elevated init_count
+- phy_power_on() can't be called without phy_init()
+
+This is why the following bug fix commits exist:
+3d73b200f989 ("scsi: ufs: ufs-exynos: Change ufs phy control sequence")
+7f05fd9a3b6f ("scsi: ufs: exynos: Ensure consistent phy reference counts")
+
+Currently the UFS HCD driver tries to keep the PHY init_count and
+power_count in tight lockstep, but even this is error-prone. For
+example, if exynos_ufs_suspend() runs and then exynos_ufs_exit(),
+the PHY power_count will underflow.
+
+If we address the root issue first (phy_init() abused to pick up new
+lane count) by introducing a new PHY consumer method which actually does
+call into the PHY provider driver, then we are able to absorb the entire
+UFS HCD dance and update the lane count without altering the PHY
+init_count or power_count.
+
+Then we are much more free to call phy_init() from wherever we want, and
+same goes for phy_power_on().
+
+It is typical to call phy_init() right after phy_get(), and doing so
+will naturally balance it with phy_exit().
+
+We can also leave the phy_power_on() call to be on demand, placed inside
+exynos_ufs_pre_link(). Because this call can be made multiple times and
+is not balanced with anything else, we need a consumer-specific "bool
+phy_powered_on" which ensures that we call phy_power_on() at most once,
+and that exynos_ufs_exit() only calls phy_power_off() if phy_power_on()
+was previously called. Using the phy->power_count for this purpose is
+undesirable because
+(a) it is going away
+(b) the PHY API supports multiple consumers for the same provider, so it
+    cannot offer an equivalent helper because it doesn't want consumers
+    to interfere with each other
+
+Inside the new samsung_ufs_phy_request_bus_width(), I've sanity checked
+that the bus width is either 1 or 2 lanes. This coincides with
+samsung_ufs_phy_config() which only configures LANE_0 and LANE_1.
+
+Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 ---
-Changes in v3:
-- Rename "Fade Enable" to "Fade Switch" (standard ALSA naming for
-  boolean controls) and rename associated function names accordingly
-- Add separate fade_gain[] field so "RXn Fade Gain" and "RXn Gain
-  Volume" controls are independent; put_fade_switch copies fade_gain
-  to gain_value before configuring hardware
-- Make get_fade_status read-only: removed regmap writes; only
-  software-side in_fade flag is cleared on completion to prevent
-  misreads after 32-bit sample counter rollover
-- Disable sample count before re-enabling in put callback to restart
-  the counter from zero, allowing new fades to replace active ones
-- Add switch off support: writing 0 disables sample count for all
-  fading streams, writing 1 starts pending fades
-- Remove FADE_COMPLETE state; simplify to binary IDLE(0)/ACTIVE(1)
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Bart Van Assche <bvanassche@acm.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>
+Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Chanho Park <chanho61.park@samsung.com>
 
- sound/soc/tegra/tegra210_mixer.c | 262 ++++++++++++++++++++++++++++++-
- sound/soc/tegra/tegra210_mixer.h |  19 ++-
- 2 files changed, 274 insertions(+), 7 deletions(-)
+v7->v8:
+- rewrote commit after Sashiko pointed out the new handling is still
+  not correct:
+  https://sashiko.dev/#/patchset/20260430110652.558622-1-vladimir.oltean@nxp.com
+- removed Reviewed-by, Tested-by and Acked-by tags from Alim, Bart and
+  Peter
+v6->v7: collect tags from Martin and Peter
+v5->v6: collect tags from Alim Akhtar
+v4->v5: collect tag, add "scsi: " prefix to commit title
+v3->v4: none
+v2->v3:
+- add Cc Chanho Park, author of commit 3d73b200f989 ("scsi: ufs:
+  ufs-exynos: Change ufs phy control sequence")
+v1->v2:
+- add better ufs->phy_powered_on handling in exynos_ufs_exit(),
+  exynos_ufs_suspend() and exynos_ufs_resume() which ensures we won't
+  enter a phy->power_count underrun condition
+---
+ drivers/phy/phy-core.c                | 18 +++++++++++
+ drivers/phy/samsung/phy-samsung-ufs.c | 30 ++++++++++++------
+ drivers/ufs/host/ufs-exynos.c         | 45 ++++++++++++++++++++++-----
+ drivers/ufs/host/ufs-exynos.h         |  1 +
+ 4 files changed, 77 insertions(+), 17 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra210_mixer.c b/sound/soc/tegra/tegra210_mixer.c
-index ce44117a0b9c..91eb7c4c077f 100644
---- a/sound/soc/tegra/tegra210_mixer.c
-+++ b/sound/soc/tegra/tegra210_mixer.c
-@@ -151,10 +151,17 @@ static int tegra210_mixer_configure_gain(struct snd_soc_component *cmpnt,
- 	for (i = 0; i < NUM_DURATION_PARMS; i++) {
- 		int val;
- 
--		if (instant_gain)
-+		if (instant_gain) {
- 			val = 1;
--		else
--			val = gain_params.duration[i];
-+		} else {
-+			if (i == DURATION_N3_ID)
-+				val = mixer->duration[id];
-+			else if (i == DURATION_INV_N3_ID)
-+				val = (u32)(BIT_ULL(31 + TEGRA210_MIXER_PRESCALAR) /
-+					    mixer->duration[id]);
-+			else
-+				val = gain_params.duration[i];
-+		}
- 
- 		err = tegra210_mixer_write_ram(mixer,
- 					       REG_DURATION_PARAM(reg, i),
-@@ -173,6 +180,200 @@ static int tegra210_mixer_configure_gain(struct snd_soc_component *cmpnt,
- 	return err;
+diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+index 21aaf2f76e53..6305efe210d6 100644
+--- a/drivers/phy/phy-core.c
++++ b/drivers/phy/phy-core.c
+@@ -606,6 +606,24 @@ int phy_validate(struct phy *phy, enum phy_mode mode, int submode,
  }
+ EXPORT_SYMBOL_GPL(phy_validate);
  
-+static int tegra210_mixer_get_fade_duration(struct snd_kcontrol *kcontrol,
-+					    struct snd_ctl_elem_value *ucontrol)
++int phy_request_bus_width(struct phy *phy, int bus_width)
 +{
-+	struct soc_mixer_control *mc =
-+		(struct soc_mixer_control *)kcontrol->private_value;
-+	struct snd_soc_component *cmpnt = snd_kcontrol_chip(kcontrol);
-+	struct tegra210_mixer *mixer = snd_soc_component_get_drvdata(cmpnt);
++	int ret;
 +
-+	ucontrol->value.integer.value[0] = mixer->duration[mc->reg];
-+
-+	return 0;
-+}
-+
-+static int tegra210_mixer_put_fade_duration(struct snd_kcontrol *kcontrol,
-+					    struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct soc_mixer_control *mc =
-+		(struct soc_mixer_control *)kcontrol->private_value;
-+	struct snd_soc_component *cmpnt = snd_kcontrol_chip(kcontrol);
-+	struct tegra210_mixer *mixer = snd_soc_component_get_drvdata(cmpnt);
-+	unsigned int id = mc->reg;
-+	u32 duration = ucontrol->value.integer.value[0];
-+
-+	if (duration == 0)
++	if (!phy)
 +		return -EINVAL;
 +
-+	if (mixer->duration[id] == duration)
-+		return 0;
++	if (!phy->ops->request_bus_width)
++		return -EOPNOTSUPP;
 +
-+	mixer->duration[id] = duration;
-+	mixer->fade_pending[id] = true;
++	mutex_lock(&phy->mutex);
++	ret = phy->ops->request_bus_width(phy, bus_width);
++	mutex_unlock(&phy->mutex);
 +
-+	return 1;
++	return ret;
 +}
++EXPORT_SYMBOL_GPL(phy_request_bus_width);
 +
-+static int tegra210_mixer_get_fade_gain(struct snd_kcontrol *kcontrol,
-+					struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct soc_mixer_control *mc =
-+		(struct soc_mixer_control *)kcontrol->private_value;
-+	struct snd_soc_component *cmpnt = snd_kcontrol_chip(kcontrol);
-+	struct tegra210_mixer *mixer = snd_soc_component_get_drvdata(cmpnt);
-+
-+	ucontrol->value.integer.value[0] = mixer->fade_gain[mc->reg];
-+
-+	return 0;
-+}
-+
-+static int tegra210_mixer_put_fade_gain(struct snd_kcontrol *kcontrol,
-+					struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct soc_mixer_control *mc =
-+		(struct soc_mixer_control *)kcontrol->private_value;
-+	struct snd_soc_component *cmpnt = snd_kcontrol_chip(kcontrol);
-+	struct tegra210_mixer *mixer = snd_soc_component_get_drvdata(cmpnt);
-+	unsigned int id = mc->reg;
-+
-+	if (mixer->fade_gain[id] == ucontrol->value.integer.value[0])
-+		return 0;
-+
-+	mixer->fade_gain[id] = ucontrol->value.integer.value[0];
-+	mixer->fade_pending[id] = true;
-+
-+	return 1;
-+}
-+
-+static int tegra210_mixer_get_fade_switch(struct snd_kcontrol *kcontrol,
-+					  struct snd_ctl_elem_value *ucontrol)
-+{
-+	ucontrol->value.integer.value[0] = 0;
-+
-+	return 0;
-+}
-+
-+static int tegra210_mixer_put_fade_switch(struct snd_kcontrol *kcontrol,
-+					  struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *cmpnt = snd_kcontrol_chip(kcontrol);
-+	struct tegra210_mixer *mixer = snd_soc_component_get_drvdata(cmpnt);
-+	int id, err, changed = 0;
-+
-+	err = pm_runtime_resume_and_get(cmpnt->dev);
-+	if (err < 0)
-+		return err;
-+
-+	/* Switch off: disable sample count for all active fades */
-+	if (!ucontrol->value.integer.value[0]) {
-+		for (id = 0; id < TEGRA210_MIXER_RX_MAX; id++) {
-+			if (!mixer->in_fade[id])
-+				continue;
-+
-+			regmap_update_bits(mixer->regmap,
-+					   MIXER_REG(TEGRA210_MIXER_RX1_CTRL,
-+						     id),
-+					   TEGRA210_MIXER_SAMPLE_COUNT_ENABLE,
-+					   0);
-+			mixer->in_fade[id] = false;
-+			changed = 1;
-+		}
-+
-+		pm_runtime_put(cmpnt->dev);
-+		return changed;
-+	}
-+
-+	/* Stop active fades on pending streams before reconfiguring */
-+	for (id = 0; id < TEGRA210_MIXER_RX_MAX; id++) {
-+		if (!mixer->fade_pending[id])
-+			continue;
-+
-+		if (mixer->in_fade[id]) {
-+			regmap_update_bits(mixer->regmap,
-+					   MIXER_REG(TEGRA210_MIXER_RX1_CTRL, id),
-+					   TEGRA210_MIXER_SAMPLE_COUNT_ENABLE, 0);
-+			mixer->in_fade[id] = false;
-+		}
-+
-+		mixer->gain_value[id] = mixer->fade_gain[id];
-+		err = tegra210_mixer_configure_gain(cmpnt, id, false);
-+		if (err) {
-+			dev_err(cmpnt->dev,
-+				"Failed to configure fade for RX%d\n", id + 1);
-+			pm_runtime_put(cmpnt->dev);
-+			return err;
-+		}
-+
-+		changed = 1;
-+	}
-+
-+	if (!changed) {
-+		pm_runtime_put(cmpnt->dev);
-+		return 0;
-+	}
-+
-+	/* Enable sample count for all pending streams */
-+	for (id = 0; id < TEGRA210_MIXER_RX_MAX; id++) {
-+		if (!mixer->fade_pending[id])
-+			continue;
-+
-+		err = regmap_update_bits(mixer->regmap,
-+					 MIXER_REG(TEGRA210_MIXER_RX1_CTRL, id),
-+					 TEGRA210_MIXER_SAMPLE_COUNT_ENABLE,
-+					 TEGRA210_MIXER_SAMPLE_COUNT_ENABLE);
-+		if (err) {
-+			dev_err(cmpnt->dev,
-+				"Failed to enable sample count for RX%d\n",
-+				id + 1);
-+			pm_runtime_put(cmpnt->dev);
-+			return err;
-+		}
-+
-+		mixer->in_fade[id] = true;
-+		mixer->fade_pending[id] = false;
-+	}
-+
-+	pm_runtime_put(cmpnt->dev);
-+
-+	return 1;
-+}
-+
-+static int tegra210_mixer_get_fade_status(struct snd_kcontrol *kcontrol,
-+					  struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *cmpnt = snd_kcontrol_chip(kcontrol);
-+	struct tegra210_mixer *mixer = snd_soc_component_get_drvdata(cmpnt);
-+	u32 count;
-+	int id, err;
-+
-+	err = pm_runtime_resume_and_get(cmpnt->dev);
-+	if (err < 0)
-+		return err;
-+
-+	for (id = 0; id < TEGRA210_MIXER_RX_MAX; id++) {
-+		if (!mixer->in_fade[id]) {
-+			ucontrol->value.integer.value[id] = TEGRA210_MIXER_FADE_IDLE;
-+			continue;
-+		}
-+
-+		regmap_read(mixer->regmap,
-+			    MIXER_REG(TEGRA210_MIXER_RX1_SAMPLE_COUNT, id),
-+			    &count);
-+
-+		if (count >= mixer->duration[id]) {
-+			ucontrol->value.integer.value[id] = TEGRA210_MIXER_FADE_IDLE;
-+			mixer->in_fade[id] = false;
-+		} else {
-+			ucontrol->value.integer.value[id] = TEGRA210_MIXER_FADE_ACTIVE;
-+		}
-+	}
-+
-+	pm_runtime_put(cmpnt->dev);
-+
-+	return 0;
-+}
-+
- static int tegra210_mixer_get_gain(struct snd_kcontrol *kcontrol,
- 				   struct snd_ctl_elem_value *ucontrol)
+ /**
+  * _of_phy_get() - lookup and obtain a reference to a phy by phandle
+  * @np: device_node for which to get the phy
+diff --git a/drivers/phy/samsung/phy-samsung-ufs.c b/drivers/phy/samsung/phy-samsung-ufs.c
+index 00e570d699f3..5d7b842bff1a 100644
+--- a/drivers/phy/samsung/phy-samsung-ufs.c
++++ b/drivers/phy/samsung/phy-samsung-ufs.c
+@@ -161,16 +161,6 @@ static int samsung_ufs_phy_clks_init(struct samsung_ufs_phy *phy)
+ 	return devm_clk_bulk_get(phy->dev, num_clks, phy->clks);
+ }
+ 
+-static int samsung_ufs_phy_request_bus_width(struct phy *phy, int bus_width)
+-{
+-	if (bus_width != 1 && bus_width != 2)
+-		return -EINVAL;
+-
+-	ss_phy->lane_cnt = phy->attrs.bus_width;
+-
+-	return 0;
+-}
+-
+ static int samsung_ufs_phy_init(struct phy *phy)
  {
-@@ -396,14 +597,37 @@ ADDER_CTRL_DECL(adder3, TEGRA210_MIXER_TX3_ADDER_CONFIG);
- ADDER_CTRL_DECL(adder4, TEGRA210_MIXER_TX4_ADDER_CONFIG);
- ADDER_CTRL_DECL(adder5, TEGRA210_MIXER_TX5_ADDER_CONFIG);
+ 	struct samsung_ufs_phy *ss_phy = get_samsung_ufs_phy(phy);
+@@ -213,6 +203,26 @@ static int samsung_ufs_phy_power_off(struct phy *phy)
+ 	return 0;
+ }
  
-+static int tegra210_mixer_fade_status_info(struct snd_kcontrol *kcontrol,
-+					   struct snd_ctl_elem_info *uinfo)
++static int samsung_ufs_phy_request_bus_width(struct phy *phy, int bus_width)
 +{
-+	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
-+	uinfo->count = TEGRA210_MIXER_RX_MAX;
-+	uinfo->value.integer.min = TEGRA210_MIXER_FADE_IDLE;
-+	uinfo->value.integer.max = TEGRA210_MIXER_FADE_ACTIVE;
++	struct samsung_ufs_phy *ss_phy = get_samsung_ufs_phy(phy);
++
++	if (bus_width != 1 && bus_width != 2)
++		return -EINVAL;
++
++	ss_phy->lane_cnt = phy->attrs.bus_width;
++
++	if (phy->init_count)
++		samsung_ufs_phy_init(phy);
++
++	if (phy->power_count) {
++		samsung_ufs_phy_power_off(phy);
++		return samsung_ufs_phy_power_on(phy);
++	}
 +
 +	return 0;
 +}
 +
-+#define FADE_CTRL(id)							\
-+	SOC_SINGLE_EXT("RX" #id " Fade Duration", (id) - 1, 0,		\
-+		       TEGRA210_MIXER_FADE_DURATION_MAX, 0,		\
-+		       tegra210_mixer_get_fade_duration,			\
-+		       tegra210_mixer_put_fade_duration),		\
-+	SOC_SINGLE_EXT("RX" #id " Fade Gain", (id) - 1, 0,		\
-+		       TEGRA210_MIXER_GAIN_MAX, 0,			\
-+		       tegra210_mixer_get_fade_gain,			\
-+		       tegra210_mixer_put_fade_gain),
+ static int samsung_ufs_phy_set_mode(struct phy *generic_phy,
+ 				    enum phy_mode mode, int submode)
+ {
+diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
+index fb616d1599eb..b90876b268db 100644
+--- a/drivers/ufs/host/ufs-exynos.c
++++ b/drivers/ufs/host/ufs-exynos.c
+@@ -959,6 +959,40 @@ static void exynos_ufs_phy_exit(struct exynos_ufs *ufs)
+ 	phy_exit(ufs->phy);
+ }
+ 
++static int exynos_ufs_phy_power_on(struct exynos_ufs *ufs)
++{
++	int ret;
 +
- #define GAIN_CTRL(id)	\
- 	SOC_SINGLE_EXT("RX" #id " Gain Volume",			\
- 		       MIXER_GAIN_CFG_RAM_ADDR((id) - 1), 0,	\
--		       0x20000, 0, tegra210_mixer_get_gain,	\
-+		       TEGRA210_MIXER_GAIN_MAX, 0,		\
-+		       tegra210_mixer_get_gain,			\
- 		       tegra210_mixer_put_gain),		\
- 	SOC_SINGLE_EXT("RX" #id " Instant Gain Volume",		\
- 		       MIXER_GAIN_CFG_RAM_ADDR((id) - 1), 0,	\
--		       0x20000, 0, tegra210_mixer_get_gain,	\
-+		       TEGRA210_MIXER_GAIN_MAX, 0,		\
-+		       tegra210_mixer_get_gain,			\
- 		       tegra210_mixer_put_instant_gain),
- 
- /* Volume controls for all MIXER inputs */
-@@ -418,6 +642,28 @@ static const struct snd_kcontrol_new tegra210_mixer_gain_ctls[] = {
- 	GAIN_CTRL(8)
- 	GAIN_CTRL(9)
- 	GAIN_CTRL(10)
++	if (ufs->phy_powered_on)
++		return 0;
 +
-+	FADE_CTRL(1)
-+	FADE_CTRL(2)
-+	FADE_CTRL(3)
-+	FADE_CTRL(4)
-+	FADE_CTRL(5)
-+	FADE_CTRL(6)
-+	FADE_CTRL(7)
-+	FADE_CTRL(8)
-+	FADE_CTRL(9)
-+	FADE_CTRL(10)
-+	SOC_SINGLE_EXT("Fade Switch", SND_SOC_NOPM, 0, 1, 0,
-+		       tegra210_mixer_get_fade_switch,
-+		       tegra210_mixer_put_fade_switch),
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Fade Status",
-+		.info = tegra210_mixer_fade_status_info,
-+		.access = SNDRV_CTL_ELEM_ACCESS_READ |
-+			  SNDRV_CTL_ELEM_ACCESS_VOLATILE,
-+		.get = tegra210_mixer_get_fade_status,
-+	},
- };
- 
- static const struct snd_soc_dapm_widget tegra210_mixer_widgets[] = {
-@@ -579,6 +825,7 @@ static bool tegra210_mixer_volatile_reg(struct device *dev,
- 	case TEGRA210_MIXER_GAIN_CFG_RAM_DATA:
- 	case TEGRA210_MIXER_PEAKM_RAM_CTRL:
- 	case TEGRA210_MIXER_PEAKM_RAM_DATA:
-+	case TEGRA210_MIXER_RX1_SAMPLE_COUNT:
- 		return true;
- 	default:
- 		return false;
-@@ -632,8 +879,11 @@ static int tegra210_mixer_platform_probe(struct platform_device *pdev)
- 	dev_set_drvdata(dev, mixer);
- 
- 	/* Use default gain value for all MIXER inputs */
--	for (i = 0; i < TEGRA210_MIXER_RX_MAX; i++)
-+	for (i = 0; i < TEGRA210_MIXER_RX_MAX; i++) {
- 		mixer->gain_value[i] = gain_params.gain_value;
-+		mixer->fade_gain[i] = gain_params.gain_value;
-+		mixer->duration[i] = gain_params.duration[DURATION_N3_ID];
++	ret = phy_power_on(ufs->phy);
++	if (ret) {
++		dev_err(ufs->hba->dev, "Failed to power on PHY: %pe\n",
++			ERR_PTR(ret));
++		return ret;
 +	}
- 
- 	regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(regs))
-diff --git a/sound/soc/tegra/tegra210_mixer.h b/sound/soc/tegra/tegra210_mixer.h
-index a330530fbc61..bcbad08cbb9d 100644
---- a/sound/soc/tegra/tegra210_mixer.h
-+++ b/sound/soc/tegra/tegra210_mixer.h
-@@ -79,12 +79,25 @@
- #define TEGRA210_MIXER_RX_LIMIT		(TEGRA210_MIXER_RX_MAX * TEGRA210_MIXER_REG_STRIDE)
- #define TEGRA210_MIXER_TX_MAX		5
- #define TEGRA210_MIXER_TX_LIMIT		(TEGRA210_MIXER_RX_LIMIT + (TEGRA210_MIXER_TX_MAX * TEGRA210_MIXER_REG_STRIDE))
-+#define TEGRA210_MIXER_SAMPLE_COUNT_SHIFT	24
-+#define TEGRA210_MIXER_SAMPLE_COUNT_ENABLE	BIT(TEGRA210_MIXER_SAMPLE_COUNT_SHIFT)
- 
- #define REG_CFG_DONE_TRIGGER	0xf
- #define VAL_CFG_DONE_TRIGGER	0x1
- 
- #define NUM_GAIN_POLY_COEFFS 9
--#define NUM_DURATION_PARMS 4
-+#define TEGRA210_MIXER_GAIN_MAX			0x20000
-+#define TEGRA210_MIXER_FADE_DURATION_MAX	0x7fffffff
 +
-+#define TEGRA210_MIXER_PRESCALAR	    6
-+#define TEGRA210_MIXER_FADE_IDLE	    0
-+#define TEGRA210_MIXER_FADE_ACTIVE	  1
++	ufs->phy_powered_on = true;
 +
-+enum {
-+	DURATION_N3_ID = 2,
-+	DURATION_INV_N3_ID,
-+	NUM_DURATION_PARMS,
-+};
++	return 0;
++}
++
++static void exynos_ufs_phy_power_off(struct exynos_ufs *ufs)
++{
++	int ret;
++
++	if (!ufs->phy_powered_on)
++		return;
++
++	ret = phy_power_off(ufs->phy);
++	if (ret)
++		dev_warn(ufs->hba->dev, "Failed to power off PHY: %pe\n",
++			 ERR_PTR(ret));
++
++	ufs->phy_powered_on = false;
++}
++
+ static int exynos_ufs_phy_update_bus_width(struct exynos_ufs *ufs)
+ {
+ 	struct ufs_hba *hba = ufs->hba;
+@@ -979,10 +1013,7 @@ static int exynos_ufs_phy_update_bus_width(struct exynos_ufs *ufs)
+ 	if (ret)
+ 		return ret;
  
- struct tegra210_mixer_gain_params {
- 	int poly_coeff[NUM_GAIN_POLY_COEFFS];
-@@ -94,6 +107,10 @@ struct tegra210_mixer_gain_params {
+-	if (generic_phy->power_count)
+-		phy_power_off(generic_phy);
+-
+-	return phy_power_on(generic_phy);
++	return exynos_ufs_phy_power_on(ufs);
+ }
  
- struct tegra210_mixer {
- 	int gain_value[TEGRA210_MIXER_RX_MAX];
-+	int fade_gain[TEGRA210_MIXER_RX_MAX];
-+	u32 duration[TEGRA210_MIXER_RX_MAX];
-+	bool in_fade[TEGRA210_MIXER_RX_MAX];
-+	bool fade_pending[TEGRA210_MIXER_RX_MAX];
- 	struct regmap *regmap;
- };
+ static void exynos_ufs_config_unipro(struct exynos_ufs *ufs)
+@@ -1524,7 +1555,7 @@ static void exynos_ufs_exit(struct ufs_hba *hba)
+ {
+ 	struct exynos_ufs *ufs = ufshcd_get_variant(hba);
  
+-	phy_power_off(ufs->phy);
++	exynos_ufs_phy_power_off(ufs);
+ 	exynos_ufs_phy_exit(ufs);
+ }
+ 
+@@ -1739,7 +1770,7 @@ static int exynos_ufs_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op,
+ 		ufs->drv_data->suspend(ufs);
+ 
+ 	if (!ufshcd_is_link_active(hba))
+-		phy_power_off(ufs->phy);
++		exynos_ufs_phy_power_off(ufs);
+ 
+ 	return 0;
+ }
+@@ -1749,7 +1780,7 @@ static int exynos_ufs_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+ 	struct exynos_ufs *ufs = ufshcd_get_variant(hba);
+ 
+ 	if (!ufshcd_is_link_active(hba))
+-		phy_power_on(ufs->phy);
++		exynos_ufs_phy_power_on(ufs);
+ 
+ 	exynos_ufs_config_smu(ufs);
+ 	exynos_ufs_fmp_resume(hba);
+diff --git a/drivers/ufs/host/ufs-exynos.h b/drivers/ufs/host/ufs-exynos.h
+index abe7e472759e..683b9150e2ba 100644
+--- a/drivers/ufs/host/ufs-exynos.h
++++ b/drivers/ufs/host/ufs-exynos.h
+@@ -227,6 +227,7 @@ struct exynos_ufs {
+ 	int avail_ln_rx;
+ 	int avail_ln_tx;
+ 	int rx_sel_idx;
++	bool phy_powered_on;
+ 	struct ufs_pa_layer_attr dev_req_params;
+ 	struct ufs_phy_time_cfg t_cfg;
+ 	ktime_t entry_hibern8_t;
 -- 
-2.17.1
+2.34.1
 
+
+--oquvkzttypru676v--
