@@ -1,82 +1,125 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80D433F5AB;
-	Tue,  5 May 2026 13:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B0F3EE1C4;
+	Tue,  5 May 2026 16:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777989269; cv=none; b=OFuIbga120Dl48AZ6PCw1R/R3hGDWfj3LxjrsC5Csl2goVpqj/hmAUmMfqtYvX3qjGef6zLTsGZOlSpUO3JYNh9EdgVZog8qrRiQjVB3tnN/DCyc204XwqfInM4XBnGBw+bXK07WxybLjZRgzcR7wp4BT8PCa2wIRdA63YeXi3o=
+	t=1777998391; cv=none; b=b2XqrhMSx9cgqNL5aIJy/EEMCa4y7XwGuepE7hurErLXRA/YP+qllxrFRA6frgYh6ik4XxdbRKMG3XxjzkJ5CpIYcU/98fjbb+v02TWZrWiYpLGc2cW3qHOoHeERPPSI7gFQjYbtQab9wwxkU+/yVJgo2bijO+gucVg7GiOaj/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777989269; c=relaxed/simple;
-	bh=HgMDzCsD6nKDEpte2Nom5A3uyp8JErThwaHo4rnlPUw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=apkmzjPpzsInpx9ZbQn+0JZr+qwWslKdkEzuahOZbGf/7G7WBwWa9D+xpkhDpWBCd3k/kYoLzxvbWZUO22+jPZ+UovFdMvizaVoTaKTH8tWc3kUZb0WzrpWiK2kqVH5jLGc0TQLk6ECeLCnmlSVujExwBqKsiyp3zO6WM3v/ApI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UnBW2Wyk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777998391; c=relaxed/simple;
+	bh=d9oRhAaRGwydDiDuK7BhCRvRWDp8pOBlU9+d0qcoLXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=YjO8IVpMtSzCXGDC2g79qdmSNbTcXozg1SPKqgVjg/MPfo+j/eJYcAoIiSrMv0yC2XUaaLSE6CFwkfpe0i40Hb0Ukrk+jajW6M67+pxCmfcbur3xRzWfG3w1C/EKjxUMVnc8yjw1nBI3bv2L42x3uN9ljDkWbOiEsxuHHHZEPM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3c57A43; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UnBW2Wyk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39206C2BCB4;
-	Tue,  5 May 2026 13:54:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3c57A43"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D7D5C2BCB4;
+	Tue,  5 May 2026 16:26:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777989268;
-	bh=HgMDzCsD6nKDEpte2Nom5A3uyp8JErThwaHo4rnlPUw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=UnBW2Wykn4e2i8bLpXDRMto01W8hcWii8yMFtHAUsf3FMfqRWmr9ZtLNylPinQe79
-	 FIE2sVtGTChfbVpK2baeH9JrECnKhxGM0R4evuMZej8hDhTBf7Uzl1TBi+LGabV6Fz
-	 6aUz7SdJEG6UawGlDjGpUVODLAtb/6syB0Vs0FzgU4xlipR4Jl3pk7vQukbFdUQaq3
-	 YnwVku34NuTSnFLtRWrXMsGtni9HnL9SGoRjT6J+wSFhMPGKTTebQQojglAy24I62L
-	 4JFeuxnN8+Ka5dRYUCW3mZosyhnbd+Ccolq6mKCsgUkVbmM2KI8pfrABTkMIXD+ICi
-	 1uUJKojqC0T5Q==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] memory: dt-bindings: tegra for v7.2
-Date: Tue,  5 May 2026 15:54:17 +0200
-Message-ID: <20260505135417.282344-2-krzk@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=k20201202; t=1777998391;
+	bh=d9oRhAaRGwydDiDuK7BhCRvRWDp8pOBlU9+d0qcoLXY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=P3c57A43Ly9U95oakv1tzSfsBDMAQvbGX3L5fDur0PPxN8g/BkGWOrF0IQ1vnb8kn
+	 q5FpFULXXt5CFm8Sy/qdB+pGfZ+595OPQ/+H2h/dpiAmaAvc14vlTx4Z7a774smhAG
+	 mRi8mWrUgi+n3TQ7klBwMiCHYz3eCKtTXeoo5Vugwd9W8wFUQWC/qxp4tUJmAVvLgS
+	 jHSgvFYD9WkXPVvCXJZvfwe/RjozMVbFHi4OoCu3mLeSQZDLHCSt79QQSlDeG2UmtL
+	 GPSyoqLckepvJjFkRnrQa3yfyKh+iIz18B0bEQzeLYkJERNnopW8hE0+mQWVZV5SLC
+	 bwYA1sJR8mQqw==
+Date: Tue, 5 May 2026 11:26:29 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-can@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+	spacemit@lists.linux.dev, UNGLinuxDriver@microchip.com,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Manikandan K Pillai <mpillai@cadence.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Tom Joseph <tjoseph@cadence.com>
+Subject: Re: [PATCH v8 phy-next 01/31] PCI: cadence: Preserve all error codes
+ in cdns_plat_pcie_probe()
+Message-ID: <20260505162629.GA734488@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1263; i=krzk@kernel.org; h=from:subject; bh=HgMDzCsD6nKDEpte2Nom5A3uyp8JErThwaHo4rnlPUw=; b=kA0DAAoBwTdm5oaLg9cByyZiAGn59omi7SUl927zYQ10duy0wGG+dkSmpVuGGBT/iuXoKaWoQ YkCMwQAAQoAHRYhBN3SYig9ERsjO264qME3ZuaGi4PXBQJp+faJAAoJEME3ZuaGi4PXFoIQAIZ6 Sm7H9o53PeCWz0oNI1rSWfZV0MyTwfCXtbiOaCG791V9zksNBmhnDQRnzHxLjI/bnDcHX2hpcKC IWh2qELjILbZ9REFDS+WQ8mSfdcstbb7QMQphrKW9I2RRgWRt+c7icN7Bl9Vg3+ezcEiyyq2jEr L+kPNZlYMgPMxEdwAKrgecOWAc/ng5qBnhgiodlv2/tBOdzbpzyI7xQ/2FrIRXha8lVvUikhtqH wA1Mb3yE0qoz1ZZZip53LVFRgM7zt1WwFKO8MQJGdau8uZOaQNQE0OYPacay95ymdzUvyY3sjyt jdUPWqB7ITNQS/22ijyfhVC8WrQtbuswnHNNCm25c4fXaTYbbg90R0Xz2N9SnW+VZ3Nv9wCV9Bj PSMpuoKRF1xAYKyAqWq57AmUcq8/EyRakIletCRlCrpQu3y/HSypPwvEPBMgTFfLSjAX71sFLFD e4jBXCTbwMAM51PlGRvaOH4eF528521/FWm1rjWUpK5k4TMzwPsSFFcJTfj68w1P4Kp8DnN1BfR NivEZF/Ad8qOEcJ6gYLGdh6FfAZlWMsLriwq6NlyvUFgjKs3dl4mWIs4F/c/Fg1fRNp74kPz1OK Cx9UZx+D5ygyE5pqmu4zK9rc2W7KVtyF1WRngfeCNfq6oYw6QIuYBFV4Juyt9lxl9Ir20+Yf9ts iRzAo
-X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260505100523.1922388-2-vladimir.oltean@nxp.com>
 
-Hi Thierry,
+[+cc Tom, author of bd22885aa188 in case there's something subtle here]
 
-Shared tag between memory drivers and Tegra.
+On Tue, May 05, 2026 at 01:04:53PM +0300, Vladimir Oltean wrote:
+> The blamed commit functionally changed the error path of
+> cdns_pcie_host_probe(), now cdns_plat_pcie_probe().
+> 
+> When the old code path executed "goto err_get_sync", the PCIe controller
+> probe function propagated the pm_runtime_get_sync() error code. The new
+> code doesn't, and returns 0.
+> 
+> Similarly for the "goto err_init" previously triggered by
+> cdns_pcie_host_init() errors, and now triggered by
+> cdns_pcie_host_setup() and cdns_pcie_ep_setup() errors. These are not
+> propagated and will result in probing success, which is incorrect.
+> 
+> Fixes: bd22885aa188 ("PCI: cadence: Refactor driver to use as a core library")
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> ---
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
+> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Cc: Manikandan K Pillai <mpillai@cadence.com>
+> Cc: Manivannan Sadhasivam <mani@kernel.org>
+> Cc: Rob Herring <robh@kernel.org>
 
-Best regards,
-Krzysztof
+I guess this driver is orphaned.
 
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
+> v7->v8: patch is new, issue was flagged by Sashiko
+> https://sashiko.dev/#/patchset/20260430110652.558622-1-vladimir.oltean@nxp.com
+> ---
+>  drivers/pci/controller/cadence/pcie-cadence-plat.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence-plat.c b/drivers/pci/controller/cadence/pcie-cadence-plat.c
+> index b067a3296dd3..8b12a46b5601 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence-plat.c
+> +++ b/drivers/pci/controller/cadence/pcie-cadence-plat.c
+> @@ -126,7 +126,7 @@ static int cdns_plat_pcie_probe(struct platform_device *pdev)
+>  	while (phy_count--)
+>  		device_link_del(cdns_plat_pcie->pcie->link[phy_count]);
+>  
+> -	return 0;
+> +	return ret;
 
-  Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
+This affects cases where pm_runtime_get_sync(),
+cdns_pcie_host_setup(), or cdns_pcie_ep_setup() return failure.
 
-are available in the Git repository at:
+Seems right to me to fail the probe when these fail.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git tags/memory-controller-drv-tegra-dt-bindings-7.2
+Not all users of pm_runtime_get_sync() check for failure, but I think
+all the other controller drivers that do check return failures from
+the .probe().
 
-for you to fetch changes up to a4f97f9467661602bd6bf614bcee884502794d43:
-
-  dt-bindings: memory: Document Tegra114 External Memory Controller (2026-05-04 20:45:47 +0200)
-
-----------------------------------------------------------------
-DT bindings for memory controller drivers Tegra SoC
-
-Devicetree bindings used by memory controller drivers and DTS for Tegra
-SoCs.
-
-----------------------------------------------------------------
-Svyatoslav Ryhel (2):
-      dt-bindings: memory: Document Tegra114 Memory Controller
-      dt-bindings: memory: Document Tegra114 External Memory Controller
-
- .../memory-controllers/nvidia,tegra124-emc.yaml    | 174 +++------------------
- .../memory-controllers/nvidia,tegra124-mc.yaml     |  31 +---
- include/dt-bindings/memory/tegra114-mc.h           |  67 ++++++++
- 3 files changed, 101 insertions(+), 171 deletions(-)
+>  }
+>  
+>  static void cdns_plat_pcie_shutdown(struct platform_device *pdev)
+> -- 
+> 2.34.1
+> 
