@@ -1,284 +1,142 @@
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013051.outbound.protection.outlook.com [40.93.196.51])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4D3388371;
-	Tue,  5 May 2026 11:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777980417; cv=fail; b=Ttvtr+b2ixFmTG+7chvHLJFDXAgEtNF+hFNiLmliQsSdn1Z5i7PaXVg+fOTCynoPxGuxO/SinOCqxP12jMwJBOqaB7P/RvLMeVFcVZCL5eYQ+6nKHARf2+vS99JkMp3ShNnxAGGzhg3mjGKII2SCAq9i/hRsHPxC35/kDB65zKs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777980417; c=relaxed/simple;
-	bh=+DQS9sGsna191CcOM6Eei6PJGvVA8PrNWn+rfhTJCFM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q1zxjVUIuR9zDdrm8y+NA6GvUVCQaGvafApUJbiERAbZ3E9AIoB/KIUYN8wMKECrhU1s63mRKyZAfRpMVEqU5nGiegWs+dBaFT5NuDt14GnUEgwn1jqI6JRm3oIzXYOCsl6UbdqyEuCJVT/VEQ42WeyuoHfh7ygZ30C5Syc7wek=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SZHaYhaj; arc=fail smtp.client-ip=40.93.196.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA8839B482
+	for <linux-tegra@vger.kernel.org>; Tue,  5 May 2026 12:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777983033; cv=none; b=bs6DXQ0zah41e9uw76spE9NhsU9PRNHT7YoWzyJ2IoUQDNAKqLQ0+rWmKJQLm/jYFoAw+u9G/430VVjz2Hse6Pl8BM8No5UxG4Gx5MArK0LH1L9S7BrB6nJHBBxSqMFD3sQbEYYvAGZDBXIziwHQ589zX8N8Yw3eeDKN2L0iPxk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777983033; c=relaxed/simple;
+	bh=m+OmXuXGMU6wUk+WZ1RB6GmPxqyzm9AXjy954KVhZ80=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=SPZgCvVlgenKTlIuo8pSw3sZuofJVrW6aVuP7+7yGdgkuD3X1UjcM4kN/s72+EWDnYMfGEXIg+T3gxWtbSyQhwzFEFP5PqzIXOZAvwZL/X0zdpo0gSSacIrY5sFF2+Ssdv/QbdGCvTRE52TV2/xmOtdBaEe34SP8ClvQybZxD9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JhI6/+dm; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=akrP1jbO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SZHaYhaj"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Tb+8P6ytTjw64R77zRdyyh0LblNEOHeu3bG4zc/8yDmd61ct8/Gda4in8Z2t/gXnvm4BEOhxQJ5MM+n3HW9hlRt1gf5QRvcTIgJJ0XEY5Z56hxeP8S51PaAdyLbpZtsTEoBgoZyHRWmJJ7Ou6/TXux7Yu3fFOAkFn3C+sUGrYnsv91MfIpMf5KTkGYTi2OTSWVxd9LuSSd/RNvrdADaKG63WWadWSAhFfpPxKFLt6CnOpM7nSavjVkDNK5CrofdbMuqCuW2awMp3/zvyenI6FpSVzRuNPI4Dcwk4Ju869U8p/YU4Q+AacDHVQIzTXZ0rUAHbR10u0700qZLfwJFy6A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u/4fdVaTfcKwTqvfPw+ohtwAaQ5TWeKuRUEHEI5QajY=;
- b=q4NjztLom/CR5Eu/9EfLEwfsra7N8n7AH0Ptg+GHoJkf7Jkh7gVzlAxdGD7HgnWSsyukbw+B4HefmzR6UQZOaBe3u4t/nP+f8+jraK3sYYK6geKaRcEcCqA8Qaoh2O0IvU89JRj5iDdZqaHlH2mWsWAWj9FpNgRBmiAD+huYlmX1TnCRIH6+FQFBsrDWgApOVpE9DQoi4Tbd/eLGc6oTPSIopf+RF/D9j3YXCD0Us4YYXzvEj9AoNnO4gMUVBU7gnWIJq9njTgR/lDdRh0GOF7gt5CglWwJ0n7oFYKlNs+aSdeU3RGu8Yrrmco6mBtQE0BjnzyBxCnVvznRqLEyxEg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u/4fdVaTfcKwTqvfPw+ohtwAaQ5TWeKuRUEHEI5QajY=;
- b=SZHaYhajeVhnc/RqB1GdkpK3eCl9+C7yUKhOJ6Yt4AsAwRdT8YePnHuFhgOSnJsJQ3HRfJ7MYxS0yVw6tEGdQmZIavWkeCtclgAKZ7FNH8ziRt1H5VrVcl6Bd1Cl5XRBXhVOyvk0Z4H8ZW15hBj42eRjqI4n+iQlZksurSgr4fIwEVgA49Ki8DcQaFbxV4AmBEW5IbsPQLsk/1HtRwiwj3vVz1HEvXyKoJ0XeW/SgWRpiVne669K9TQM1Midnz4YxvxAYXPLWf2NIs0OB9XK1Y24q4+CWNAKv45/F7bcv1IKKzQg4Cup7Hc9wiruo0C/IxwQ0ogzzX026tE6t7rOEA==
-Received: from CH2PR16CA0022.namprd16.prod.outlook.com (2603:10b6:610:50::32)
- by BL1PR12MB5755.namprd12.prod.outlook.com (2603:10b6:208:392::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.27; Tue, 5 May
- 2026 11:26:51 +0000
-Received: from CH2PEPF0000009F.namprd02.prod.outlook.com
- (2603:10b6:610:50:cafe::46) by CH2PR16CA0022.outlook.office365.com
- (2603:10b6:610:50::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9870.25 via Frontend Transport; Tue,
- 5 May 2026 11:26:50 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CH2PEPF0000009F.mail.protection.outlook.com (10.167.244.21) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9891.9 via Frontend Transport; Tue, 5 May 2026 11:26:50 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 5 May
- 2026 04:26:33 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 5 May
- 2026 04:26:33 -0700
-Received: from 5b171f0-lcelt.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Tue, 5 May 2026 04:26:31 -0700
-From: Wei-Cheng Chen <weichengc@nvidia.com>
-To: <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>,
-	<thierry.reding@kernel.org>, <jonathanh@nvidia.com>
-CC: <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <waynec@nvidia.com>, <wtsai@nvidia.com>,
-	<weichengc@nvidia.com>
-Subject: [PATCH] xhci: tegra: Fix ghost USB device on dual-role port unplug
-Date: Tue, 5 May 2026 19:26:30 +0800
-Message-ID: <20260505112630.217704-1-weichengc@nvidia.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JhI6/+dm";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="akrP1jbO"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6457EPPe366314
+	for <linux-tegra@vger.kernel.org>; Tue, 5 May 2026 12:10:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YJDA9Dw9DQRR6r6ZVUHzUEY6axXFWifKuuHs5zUrzRI=; b=JhI6/+dmrPEccOCg
+	tYg6BDsttRs89uzgbwa/6JVgnQGpIEsFnyxrz46yINXWj1+O06G4/bXWrjML+BDs
+	exLUELVYWW1cSAzbA0grX/Yip7KkVddkeeRxEn50uGINmO6QJn+pqUzsi7VU9w9F
+	PkRv1hq+90j1eLaWAmaxOaJs8g9csJ2eUSk7bakk15X81kp9Z75G0XWv9Os5YIni
+	q4t25xRwgH2ir+8X8zxPseRqN93aaToUq5gYNn3FxssOJvREsBm7yIwVVt25ru+6
+	2yhS1qJUGQHMERAdLp81MOvbMzltd/5V6O1xaz9+ILuA9gmC7yBjsja/DZV/fJrz
+	eRGBRg==
+Received: from mail-ua1-f72.google.com (mail-ua1-f72.google.com [209.85.222.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dxvn6vc32-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-tegra@vger.kernel.org>; Tue, 05 May 2026 12:10:29 +0000 (GMT)
+Received: by mail-ua1-f72.google.com with SMTP id a1e0cc1a2514c-95cfe3d4c16so4333113241.3
+        for <linux-tegra@vger.kernel.org>; Tue, 05 May 2026 05:10:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1777983029; x=1778587829; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YJDA9Dw9DQRR6r6ZVUHzUEY6axXFWifKuuHs5zUrzRI=;
+        b=akrP1jbOOaToUc2g0r/0/Gtel4mJLnCGg6otWof1jTKmZfi79MupLa+YgdTljIo0vN
+         OF/TLcAJgPNy7kpOBgCWGPEvNXy52MgcqEdnfB33hWBONo6xbeGL5mj6jMSfpJyUwBCL
+         5QQVYAs2j9Rz+688AysEPc+XI37DqfFbkZ2sjoul6d1RPmg0MvPbnhLKRePpGsoPo67Q
+         q+HxwdvB3FAIhoZzfUmal9hXKPNVAMMz2S4nkx8mzoHF2duVzBoqdU/I2JpDkqTQ65Ik
+         xCnpCHM2LcDU5D9lPDthxPQsdm+tl8gLHSNt7+1WtbKHcLZyHgcvHcg22cS4HpKCRHBw
+         ZvtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777983029; x=1778587829;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YJDA9Dw9DQRR6r6ZVUHzUEY6axXFWifKuuHs5zUrzRI=;
+        b=RHiGsuasYVS33RjAfalGxwthmVBSn9suvcX27LJm7hR4E5zJ1Tcf3e4syonOHWYwig
+         L9aZAFisjCgaOKMz2YlBPBRQdY1whzxzwC/roqF/JBe6c5aUDv70Frg2in/PpdJuQAaU
+         C0UIP2Xlo7+iJ0XjvlJTSUXqp/9hYU3nvb/lNGjmqbj3yw/enq3IpCdVWp7Xa71kJ9Z2
+         DfWT2Ze7a81/kA9jKNkDMnsuvxvCMseX7QaYXRFhFSdDPzRKVNjCI2ztSyLCae3PB/Y7
+         lutMsBIxymHsv2LDHCZrdDq02cgyS3JnOhN9DtZ1aJStqPuI9+gB2Wdhks+KBw0joS4z
+         N2OQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/JAqcFUhuZg38ag8Pn+w6PAlMCChiccJqmE3cbrjjPUYYVwucYkqutNgZ8WM91J/mYZmW77uLsikznFg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6aajyomMWX5TUrCmn/ipoKX4Lgwz7P7ATxQBWPI0k05grcm6t
+	KIqlyWJt62srhhryqAhPgYfsQTfh9L1w5OdgAoEERs81BmiVyjKQII5v1v4AJp/nuL7x6R7gL8V
+	MLPJgGYNeaHmZNkYtFFb+PlHfvDJGxNADars0y9qNKoB8JPp2LtorI+Q9Mwi2G8Hyvw==
+X-Gm-Gg: AeBDievxsVsBNzVV1iLR88EmSZVOnpVWROUv2kh0nCpilsFmBxwolOE2DpOG0nNYU6A
+	l3aMpyLNUsEtMoLLCjJJRVKHgEp9bKXDrZSCQ0g4/ony7qBa7SZV55xJVW+ZGBLYLcq8+NCCp3w
+	Kxf0ElGQ04k/i5Yvd1zcVKjUgmC+mqiUzyAgwOahbgJfsCNo4QtjU9j36pWEw7FxmOR7M/czLJB
+	a8HsYlV98qm4wDhlI+eh5WrEaLoQtVbAwHaKY8LDgopGRNfXaj04ucasCdMGYaePyM3NwOrF35t
+	xrmdtYKIERM+cVz5VP8pb4OKykQkOT6mm9r5CjyGIJkDHpUf/zoRVEsCFCpRmqaHZO2wSt7FdKX
+	RymMp/vPsGcrNxDnkYYg/1zyVUrQOGKEsd2O/cBfSCQge5wVZsVs1lfIMUyHOVsalngXo5tFtbJ
+	lUJNPZVLMFt3t0WCOC
+X-Received: by 2002:a05:6122:3c44:b0:56f:7c7e:f33a with SMTP id 71dfb90a1353d-57547fd53a0mr1224776e0c.0.1777983029118;
+        Tue, 05 May 2026 05:10:29 -0700 (PDT)
+X-Received: by 2002:a05:6122:3c44:b0:56f:7c7e:f33a with SMTP id 71dfb90a1353d-57547fd53a0mr1224731e0c.0.1777983028778;
+        Tue, 05 May 2026 05:10:28 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:3d0:c2e8:9f02:5c9d? ([2a05:6e02:1041:c10:3d0:c2e8:9f02:5c9d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a8eba865fsm312206105e9.10.2026.05.05.05.10.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 May 2026 05:10:27 -0700 (PDT)
+Message-ID: <3075fe5c-e8c3-4439-be5c-0f6eb2fb6e48@oss.qualcomm.com>
+Date: Tue, 5 May 2026 14:10:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000009F:EE_|BL1PR12MB5755:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3af72f45-a4ea-46e5-07de-08deaa9933b0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700016|56012099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	kcRU+xrTaqD84GeMKXHQ2cwZ5kfP58GRhj3IzbtphVaZWxBgPZA0+4diLjRmMGULui64RbPJ3tbriICVD52eYtzrrUwKWS1Mb0Fj8s9clF0/NqPinoWbcP4RGQtuxZUNkysyxqqlggSQViXxGpKSek6G7mJAO6riW6Ky5A3J7SLKZVHDjGVeEjdsvfAM+zEVzXttkq0UkaBjp3Mta7nOZe3sT8Z8HqyYlIbERzpdrbhDZoDHbEKNqmw+zjuzeT/e/TrMt7SJMNrvb44G0KyzBimY2ShaOZY0gNa3/EAAyHIgxNMp6pzFXeuUs8qUkQjCe7FtUuqzW1mNaZ4QAPdTzSH5Ll9vhUZQygIQ5Ld2nXGvKCePXXZH1nyrHmH1ZziNadaBvoMwgfEoD15RJxPqJl5OF9CzzdySRmmDhFZ99d0xvbv313dpD9jaY8TTBsH8r3x5yeNgtOoe8qj8SFIbOEdSlXm3qM5jIOcofooG33W4iI6SNvqwlP/Rd3+4/sWtFsbAUzva/wBdKr67h7f4YJU191QHREDvw9mTpT6t+l3MTvFuJ09BdfYuT8NAuptmmZJyeOMw0mtYKmZvKXiCCw9haNVbDWXLe6w6AtViYgpz0hlmprbwtpnytbP4XAVnD27/h47ZorsGXTLKFX0f6WylJ0vdulogvwThlGwKUvN5yJMu6N+YJYhFcIiZFbuOuSxZcbIEGME2vu1qCSRVFmgcsN1Kejj5258kHJUY0ss=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700016)(56012099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	cT6NsAFuQXqunc+fJPj5YQxE0semjOvVxuHqq1KFYgYyfdxWYko3miOEvbl1z40s1aMq+J+GWGWLi3DhOEeWemAfUwt35kkaMoPgcFq0+iCkkDn6Pz8XNI5pgm3K02d1bblYo5Tvbw3hGzOoeBbHMuWf5xbV0TlCP4APIG8KWGXSmY99VqJn8DfmrXl3iHUXWH82XRyXqzZl9U32TcO6lcRWRP9GAI/Q7HdkbH0OT6duSKJo6gNMBwNfYyhC+n8tbCTTd1Qyet1qsg0Izh3g3CWD+KyPQV+Uq9jkvi0rXC5lLkfOxn1TX+5gY6g/gU9SrUPKykRiuoEVKI7ipEcQHkbw/VLVVFLVv920DigvOFZ3CwRSkaE0RoZNwMoG5DDPSusfk0mG1rrXdosd9Z65tQxCsD0P8qsaWLOVFHy3IlgRYcBbhyFYlxshEUPlgPK/
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2026 11:26:50.5585
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3af72f45-a4ea-46e5-07de-08deaa9933b0
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000009F.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5755
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] drivers/thermal/tegra/soctherm: Use
+ devm_add_action_or_reset() for clock disable
+From: Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>
+To: rafael@kernel.org, daniel.lezcano@kernel.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com
+Cc: rui.zhang@intel.com, lukasz.luba@arm.com, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20260424160019.41710-1-daniel.lezcano@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20260424160019.41710-1-daniel.lezcano@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: atOlW3JYK_q9QUcbS-yysgTMpq4RFQAG
+X-Authority-Analysis: v=2.4 cv=Z+vc2nRA c=1 sm=1 tr=0 ts=69f9de35 cx=c_pps
+ a=ULNsgckmlI/WJG3HAyAuOQ==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22 a=EUspDBNiAAAA:8
+ a=TJ0kvanGE02mnE8zDPUA:9 a=QEXdDO2ut3YA:10 a=1WsBpfsz9X-RYQiigVTh:22
+X-Proofpoint-GUID: atOlW3JYK_q9QUcbS-yysgTMpq4RFQAG
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA1MDExNCBTYWx0ZWRfX1yFfvn+ZDtNH
+ rxeFr9BBdZhcW6dF8s3zKxTWs+UdOEFT92t99iO9L/Mt85CXLbeAuaFdDoWaMi9Aezf1vNvokwg
+ NfgaOnYfcynacjRD6/CKdC/U6lGt0OsJfD7vFiPRosOe8moK6su+RTQw63h5mYU3oNx6JO/K9b6
+ 2fg8TDTvZl92q3cY97xTM7QyFAMX5eCA3t+42uUZ6pggguUESge8LWGCoK5V9wYKiGIWCbh9p4b
+ LESDJRbQfRX2G7v+44VqzUcayVWb88jjbl4dA+9UvZgSF2+O8RXCzML3w4nyLnR1wo5dS4ivxjz
+ q8FiQove0gi5TYDcLs8xxcbdQ1NuwJdLw+rtVAtusHKM0Vz/rYQ0bOOk4XKJAUeAoNCIscvM3+L
+ Ywo2jMboBnaABgqMa/69HsNkzkz0Vz6LQcUAs8b96yGea3HmNOopx6XFG0euVlzqro59QwZUcOI
+ kGZFvVCQR8uTNmgDZ7g==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-05_02,2026-04-30_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 adultscore=0 impostorscore=0 malwarescore=0
+ bulkscore=0 priorityscore=1501 lowpriorityscore=0 suspectscore=0
+ clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604200000
+ definitions=main-2605050114
 
-When a USB device is unplugged from the dual-role port, the device-mode
-path in tegra_xhci_id_work() explicitly clears both SS and HS port power
-via direct hub_control ClearPortFeature(POWER) calls. This preempts the
-xHCI controller's normal disconnect processing -- PORT_CSC is never
-generated, the USB core never sees the disconnect, and the device remains
-in its internal tree as a ghost visible in lsusb.
+On 4/24/26 18:00, Daniel Lezcano wrote:
+> Replace the manual error handling paths disabling the clocks with
+> devm_add_action_or_reset(). This ensures the clocks are properly
+> disabled on probe failure and driver removal, while simplifying the
+> code by removing the explicit error paths.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>
+> ---
 
-Add an otg_set_port_power flag to control whether the dual-role switch
-path performs explicit port power management. SoCs that need it
-(Tegra124 / Tegra210 / Tegra186) set the flag; later SoCs (Tegra194 and
-beyond) rely on the PHY mode change to handle disconnect naturally and
-skip all port power calls.
+If nobody is against these two changes, I'll apply them
 
-Within the port power path, otg_reset_sspi additionally gates the SSPI
-reset sequence on host-mode entry for SoCs that require it.
+Thanks
 
-Flags set per SoC:
-  Tegra124, Tegra186  -> otg_set_port_power
-  Tegra210            -> otg_set_port_power, otg_reset_sspi
-  Tegra194 and later  -> (none)
-
-Fixes: f836e7843036 ("usb: xhci-tegra: Add OTG support")
-Cc: stable@vger.kernel.org # v5.7+
-Signed-off-by: Wei-Cheng Chen <weichengc@nvidia.com>
----
- drivers/usb/host/xhci-tegra.c | 73 ++++++++++++++++++++---------------
- 1 file changed, 41 insertions(+), 32 deletions(-)
-
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index d2214d309e9..d5637b37636 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -247,6 +247,7 @@ struct tegra_xusb_soc {
- 	bool has_ipfs;
- 	bool lpm_support;
- 	bool otg_reset_sspi;
-+	bool otg_set_port_power;
- 
- 	bool has_bar2;
- };
-@@ -1352,12 +1353,13 @@ static void tegra_xhci_id_work(struct work_struct *work)
- 	struct tegra_xusb_mbox_msg msg;
- 	struct phy *phy = tegra_xusb_get_phy(tegra, "usb2",
- 						    tegra->otg_usb2_port);
-+	bool host_mode = tegra->host_mode;
- 	u32 status;
- 	int ret;
- 
--	dev_dbg(tegra->dev, "host mode %s\n", str_on_off(tegra->host_mode));
-+	dev_dbg(tegra->dev, "host mode %s\n", str_on_off(host_mode));
- 
--	if (tegra->host_mode)
-+	if (host_mode)
- 		phy_set_mode_ext(phy, PHY_MODE_USB_OTG, USB_ROLE_HOST);
- 	else
- 		phy_set_mode_ext(phy, PHY_MODE_USB_OTG, USB_ROLE_NONE);
-@@ -1366,41 +1368,43 @@ static void tegra_xhci_id_work(struct work_struct *work)
- 								    tegra->otg_usb2_port);
- 
- 	pm_runtime_get_sync(tegra->dev);
--	if (tegra->host_mode) {
--		/* switch to host mode */
--		if (tegra->otg_usb3_port >= 0) {
--			if (tegra->soc->otg_reset_sspi) {
--				/* set PP=0 */
--				tegra_xhci_hc_driver.hub_control(
--					xhci->shared_hcd, GetPortStatus,
--					0, tegra->otg_usb3_port+1,
--					(char *) &status, sizeof(status));
--				if (status & USB_SS_PORT_STAT_POWER)
--					tegra_xhci_set_port_power(tegra, false,
--								  false);
--
--				/* reset OTG port SSPI */
--				msg.cmd = MBOX_CMD_RESET_SSPI;
--				msg.data = tegra->otg_usb3_port+1;
--
--				ret = tegra_xusb_mbox_send(tegra, &msg);
--				if (ret < 0) {
--					dev_info(tegra->dev,
--						"failed to RESET_SSPI %d\n",
--						ret);
-+	if (tegra->soc->otg_set_port_power) {
-+		if (host_mode) {
-+			/* switch to host mode */
-+			if (tegra->otg_usb3_port >= 0) {
-+				if (tegra->soc->otg_reset_sspi) {
-+					/* set PP=0 */
-+					tegra_xhci_hc_driver.hub_control(
-+						xhci->shared_hcd, GetPortStatus,
-+						0, tegra->otg_usb3_port+1,
-+						(char *) &status, sizeof(status));
-+					if (status & USB_SS_PORT_STAT_POWER)
-+						tegra_xhci_set_port_power(tegra, false,
-+									  false);
-+
-+					/* reset OTG port SSPI */
-+					msg.cmd = MBOX_CMD_RESET_SSPI;
-+					msg.data = tegra->otg_usb3_port+1;
-+
-+					ret = tegra_xusb_mbox_send(tegra, &msg);
-+					if (ret < 0) {
-+						dev_info(tegra->dev,
-+							"failed to RESET_SSPI %d\n",
-+							ret);
-+					}
- 				}
--			}
- 
--			tegra_xhci_set_port_power(tegra, false, true);
--		}
-+				tegra_xhci_set_port_power(tegra, false, true);
-+			}
- 
--		tegra_xhci_set_port_power(tegra, true, true);
-+			tegra_xhci_set_port_power(tegra, true, true);
- 
--	} else {
--		if (tegra->otg_usb3_port >= 0)
--			tegra_xhci_set_port_power(tegra, false, false);
-+		} else {
-+			if (tegra->otg_usb3_port >= 0)
-+				tegra_xhci_set_port_power(tegra, false, false);
- 
--		tegra_xhci_set_port_power(tegra, true, false);
-+			tegra_xhci_set_port_power(tegra, true, false);
-+		}
- 	}
- 	pm_runtime_put_autosuspend(tegra->dev);
- }
-@@ -2553,6 +2557,7 @@ static const struct tegra_xusb_soc tegra124_soc = {
- 	.scale_ss_clock = true,
- 	.has_ipfs = true,
- 	.otg_reset_sspi = false,
-+	.otg_set_port_power = true,
- 	.ops = &tegra124_ops,
- 	.mbox = {
- 		.cmd = 0xe4,
-@@ -2593,6 +2598,7 @@ static const struct tegra_xusb_soc tegra210_soc = {
- 	.scale_ss_clock = false,
- 	.has_ipfs = true,
- 	.otg_reset_sspi = true,
-+	.otg_set_port_power = true,
- 	.ops = &tegra124_ops,
- 	.mbox = {
- 		.cmd = 0xe4,
-@@ -2640,6 +2646,7 @@ static const struct tegra_xusb_soc tegra186_soc = {
- 	.scale_ss_clock = false,
- 	.has_ipfs = false,
- 	.otg_reset_sspi = false,
-+	.otg_set_port_power = true,
- 	.ops = &tegra124_ops,
- 	.mbox = {
- 		.cmd = 0xe4,
-@@ -2673,6 +2680,7 @@ static const struct tegra_xusb_soc tegra194_soc = {
- 	.scale_ss_clock = false,
- 	.has_ipfs = false,
- 	.otg_reset_sspi = false,
-+	.otg_set_port_power = false,
- 	.ops = &tegra124_ops,
- 	.mbox = {
- 		.cmd = 0x68,
-@@ -2708,6 +2716,7 @@ static const struct tegra_xusb_soc tegra234_soc = {
- 	.scale_ss_clock = false,
- 	.has_ipfs = false,
- 	.otg_reset_sspi = false,
-+	.otg_set_port_power = false,
- 	.ops = &tegra234_ops,
- 	.mbox = {
- 		.cmd = XUSB_BAR2_ARU_MBOX_CMD,
--- 
-2.43.0
+   -- Daniel
 
