@@ -1,86 +1,92 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7732F43D4E1;
-	Wed,  6 May 2026 11:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FC843CEFC;
+	Wed,  6 May 2026 12:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778067491; cv=none; b=W80r2eD/wl8WZwknCLq8RFlBW0nLsrbJ3TIULhvVbBhuJ+tTSaKyFI0U5lfJIp+oXa7SWSNfKXA33b/yRPXFF18eimTsjh9CHtMcXlEWAX26QblfL+R3Sm2522RON94o/aYlPvEFnX0MEnMYI7YG6BzGYpMNoBZybDCaZFfyFEY=
+	t=1778070097; cv=none; b=lNRtETWDo4Y7+5wP3YfOIhNx0oinM/KaJLt8d3ENnWjoQFsRprlm4rseqzbW8NksKUaRNgBwCSuekLag6La0ecjtWMxwEaU8QER1RGPRFcQ+zxJJkpy6fRSGaulPxii/j3rCmVILA38nerd7Ztofb9dzZFFfDsZrs4569USus7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778067491; c=relaxed/simple;
-	bh=4sdC7kwKSXuS6KgRZzxsbtJl62bxQOYB9GQUjBKu4sQ=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=Od8TsEamCxURx66fomw7iL3A46wzNGSLAnCmVmK2fw6VEfsuHWbuGHyd2Qc11CfT3kBeyUnwTMH8G3XAGacWGQH3OpxdRQpJC1mikKASDNT9WVmf4qZdPsYII40XP2CaadqAwBlyui2e/HmTSlEPSMaA5Db6grMMeX1aEljJjcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=e1wsCWxA; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1778070097; c=relaxed/simple;
+	bh=t3hbP7AubYp2C3nJfkuMIJM/a1DKJTDOt/tBbj3XISQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qJ2j7WibK9XE0kkKedXx7SLJH2+ZamL0ZjCOokjX2XASz/yZVHpQT9yyWJSVQbBM+sDuVNJ24kr6Du6WkJ0XphYQ43BhWJxjy/aZ1UC4HcUQFX4FMQZLVgNjXc7nRXSXGDG3ZAVI0i1zkRQ4QrVDh0spx1TTNgWUbPWifzYPw08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WTUibB+y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="e1wsCWxA"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 0476F4E42C07;
-	Wed,  6 May 2026 11:38:06 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id CD7F66053C;
-	Wed,  6 May 2026 11:38:05 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6A4E9102F1D29;
-	Wed,  6 May 2026 13:38:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1778067485; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=LQcm/xArV6CJVfiI15lYMkR7QKqELsBqKy8G3M2hjoE=;
-	b=e1wsCWxAaWftZoU4FBEJx+l2Spsa/qIv/l6/3EaHfxVCX2x045rfr7cK3mLyprm6BT7jHo
-	yUpimppLOGLKHBoBavKT3QbpYFtbT09szsCPTfb8zE7vzOECcfOuXeWhg2YEy0uvoxZ4UP
-	OekVuMP//mj9p+JPLSg7qP+kQ32ac95qjLcdw9gULZ9hft8PQRMyEJyBierUrVe68MCVU7
-	Q27H01aTIWhoORW26FR/b8wguwoH2b3XFYRYZKy0g/kArjF2KhCX4soMIAsgRFZ+Tydiu9
-	A2JJjHAWaV+ZBGm+IBMqxq/CZwXgreH9i0rkslRuMuxussKAoqncyjm0HiyIQQ==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTUibB+y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3ACAC2BCB8;
+	Wed,  6 May 2026 12:21:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778070096;
+	bh=t3hbP7AubYp2C3nJfkuMIJM/a1DKJTDOt/tBbj3XISQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WTUibB+y8GyqoowmuKM8+ovNKS77fRx8/vjuE6rgloJBlMrA8gRRLKFLK4IU939MH
+	 Cu2zMUhNbemjCYlUHyHvTR0u8fUz5nNyFVFXRY7nVTxT9h+MWpv8pUW0Y7qmIgcTdE
+	 FF/0DtbB+awOVVIQ6n4lFrhulvhvWMQa1lZDgbP98g6uGMGBIZQ2fYPLl6PVSHRs8/
+	 nizGoOrmlFu4AHpU9zPdPOh/g19viA8oy36W0W+QDOJ7jpBXRetnYDBeDzgWoKBYOR
+	 q62oroFPZLBrKk/oA4kq96bJJ8yCM+yNS3zZzXE4NUlCtBkFtY1raNaCcw7YvhhjVI
+	 /upQhf1T5NchQ==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id 21D9E1AC587D; Wed, 06 May 2026 13:21:34 +0100 (BST)
+Date: Wed, 6 May 2026 21:21:33 +0900
+From: Mark Brown <broonie@kernel.org>
+To: Sheetal <sheetal@nvidia.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sameer Pujar <spujar@nvidia.com>, Mohan Kumar <mkumard@nvidia.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] ASoC: tegra: Add per-stream Mixer Fade controls
+Message-ID: <afsyTS8XL3HuXIRI@sirena.co.uk>
+References: <20260506102032.1644851-1-sheetal@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v2 1/1] media: tegra-video: vi: fix invalid u32 return
- value in format lookup
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Hungyu Lin <dennylin0707@gmail.com>
-Cc: thierry.reding@kernel.org, jonathanh@nvidia.com, skomatineni@nvidia.com, 
- luca.ceresoli@bootlin.com, mchehab@kernel.org, gregkh@linuxfoundation.org, 
- hverkuil+cisco@kernel.org, dan.carpenter@linaro.org, 
- linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-In-Reply-To: <20260506075745.28574-2-dennylin0707@gmail.com>
-References: <20260506075745.28574-1-dennylin0707@gmail.com>
- <20260506075745.28574-2-dennylin0707@gmail.com>
-Date: Wed, 06 May 2026 13:37:56 +0200
-Message-Id: <177806747690.1370967.12191518933369462727.b4-review@b4>
-X-Mailer: b4 0.15.2
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dy75Tbp2warPCQ8+"
+Content-Disposition: inline
+In-Reply-To: <20260506102032.1644851-1-sheetal@nvidia.com>
+X-Cookie: Alex Haley was adopted!
 
-On Wed, 06 May 2026 07:57:45 +0000, Hungyu Lin <dennylin0707@gmail.com> wrote:
-> tegra_get_format_fourcc_by_idx() returns a u32 but uses -EINVAL to
-> signal an out-of-bounds index. This results in a large unsigned
-> value being returned, which may be interpreted as a valid fourcc.
-> 
-> Returning 0 is not a valid fourcc either. This condition should
-> never happen, so use WARN_ON_ONCE() to catch unexpected out-of-bounds
-> access and return a valid fallback format instead.
-> 
-> Suggested-by: Hans Verkuil <hverkuil+cisco@kernel.org>
-> Signed-off-by: Hungyu Lin <dennylin0707@gmail.com>
 
-Being a fix it should have a Fixes tag and Cc stable. I think the right
-commit is 3d8a97eabef0, so:
+--dy75Tbp2warPCQ8+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-+Cc: stable@vger.kernel.org
-+Fixes: 3d8a97eabef0 ("media: tegra-video: Add Tegra210 Video input driver")
+On Wed, May 06, 2026 at 10:20:32AM +0000, Sheetal wrote:
+> Add per-stream fade controls for the Tegra mixer to allow
+> independently configuring target gain and fade duration for each of
+> the 10 input streams (RX1 through RX10).
 
-With that added:
-+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> +			else if (i == DURATION_INV_N3_ID)
+> +				val = (u32)(BIT_ULL(31 + TEGRA210_MIXER_PRESCALAR) /
+> +					    mixer->duration[id]);
+> +			else
 
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+I'll apply this but there's one small issue which can be addressed
+incrementally: if the duration is very small (32 or less) then we'll
+overflow the u32 and generate nonsense values.  Either constraining the
+minimum or doing the maths with a 64 bit value would avoid the issue.
 
+--dy75Tbp2warPCQ8+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmn7MkkACgkQJNaLcl1U
+h9Ai0Qf/cPNIwpqGXVY2FnIqmaX+Ns9G9ioqwgdLQzB5EolNGkz6McWFNoc6L+Nj
+WoNxnp/g/lJ/+6DTdWoaUgRNFswvzSiyNMOm4VG2pqojhu4CdTknTz/B3X1FNDaE
+rI+oFomiVV6D/9gM9q2IJK/lHe09v9HNLMQVfpns4bydROD+aTjYiMQy/oX9hGwH
+v4XZE3E8bYeaBqiWsxW7tPAooHF9YJK3Qu1jXFNHRuzIwFkR/NnTxN5o4hBUm9Ln
+wBSr3P5twPXevbamfavAO/RthseRqVEl01uaDJtWjyFlxwCXEvq9ihmHqW5WOlBT
+lu09CUSrQNtdKXBg9e9DmdtejF1BkQ==
+=OIxD
+-----END PGP SIGNATURE-----
+
+--dy75Tbp2warPCQ8+--
