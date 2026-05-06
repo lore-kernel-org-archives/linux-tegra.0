@@ -1,92 +1,142 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FC843CEFC;
-	Wed,  6 May 2026 12:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8FF477982;
+	Wed,  6 May 2026 13:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778070097; cv=none; b=lNRtETWDo4Y7+5wP3YfOIhNx0oinM/KaJLt8d3ENnWjoQFsRprlm4rseqzbW8NksKUaRNgBwCSuekLag6La0ecjtWMxwEaU8QER1RGPRFcQ+zxJJkpy6fRSGaulPxii/j3rCmVILA38nerd7Ztofb9dzZFFfDsZrs4569USus7g=
+	t=1778074932; cv=none; b=iXnhc+SU/tnYxsPm9n9XeesxW8FQ2VF21a8ZQ3KwWMAA+fbN4w+fSqY3Lr233cRVAbJ8oDRGlbYvwWg75Rfv5Pa238XVY185cCLImeY95tM3L/yPave/o/C/81wxGoNmfrtsVJF5b//mB15Zl9KeWXFG0cQ8lj0ijqaiKvKvUso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778070097; c=relaxed/simple;
-	bh=t3hbP7AubYp2C3nJfkuMIJM/a1DKJTDOt/tBbj3XISQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qJ2j7WibK9XE0kkKedXx7SLJH2+ZamL0ZjCOokjX2XASz/yZVHpQT9yyWJSVQbBM+sDuVNJ24kr6Du6WkJ0XphYQ43BhWJxjy/aZ1UC4HcUQFX4FMQZLVgNjXc7nRXSXGDG3ZAVI0i1zkRQ4QrVDh0spx1TTNgWUbPWifzYPw08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WTUibB+y; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778074932; c=relaxed/simple;
+	bh=c3IdukSqkdizYR+nvOsMFSfRacrCTihLpGMwf0DytCw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cEtyFQzO4O6AA4LjXVzlBEYb7dTDuy8AwTzceEtJYelPo2GWmrprMI7x38knuiFste0EIuBZCvEX7apnyAkXLJr/TPOdPf0rtMLcd74uZcmTM83qbou9K5gdEUTa4JHVFPN1E1eaXRZxc0NDZQ2Fcl1Q/aRH80YiJefDsn05l/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKJ4RV3L; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTUibB+y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3ACAC2BCB8;
-	Wed,  6 May 2026 12:21:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKJ4RV3L"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BA64C2BCB8;
+	Wed,  6 May 2026 13:42:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778070096;
-	bh=t3hbP7AubYp2C3nJfkuMIJM/a1DKJTDOt/tBbj3XISQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WTUibB+y8GyqoowmuKM8+ovNKS77fRx8/vjuE6rgloJBlMrA8gRRLKFLK4IU939MH
-	 Cu2zMUhNbemjCYlUHyHvTR0u8fUz5nNyFVFXRY7nVTxT9h+MWpv8pUW0Y7qmIgcTdE
-	 FF/0DtbB+awOVVIQ6n4lFrhulvhvWMQa1lZDgbP98g6uGMGBIZQ2fYPLl6PVSHRs8/
-	 nizGoOrmlFu4AHpU9zPdPOh/g19viA8oy36W0W+QDOJ7jpBXRetnYDBeDzgWoKBYOR
-	 q62oroFPZLBrKk/oA4kq96bJJ8yCM+yNS3zZzXE4NUlCtBkFtY1raNaCcw7YvhhjVI
-	 /upQhf1T5NchQ==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 21D9E1AC587D; Wed, 06 May 2026 13:21:34 +0100 (BST)
-Date: Wed, 6 May 2026 21:21:33 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Sheetal <sheetal@nvidia.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sameer Pujar <spujar@nvidia.com>, Mohan Kumar <mkumard@nvidia.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] ASoC: tegra: Add per-stream Mixer Fade controls
-Message-ID: <afsyTS8XL3HuXIRI@sirena.co.uk>
-References: <20260506102032.1644851-1-sheetal@nvidia.com>
+	s=k20201202; t=1778074932;
+	bh=c3IdukSqkdizYR+nvOsMFSfRacrCTihLpGMwf0DytCw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=IKJ4RV3Lyv8oxdqtjJC6OIC/6rXY29IuJvTiT4NZTUHacP2c3bEAL5u8IO525gAAd
+	 GdHYJPixovH2tJ8+/ccpTRSbFwSioKJNQ0jfXXpXj62CSlxnJLfRrzPvFFZbyJH94k
+	 rmpOM5pmePtSKhc8yDNIiM9V0/1k6GFBaDGv+RMER+VjW6gNDG+AWSkPQLUlP3inFG
+	 uR9VwrRzsa+NntueV5w8T5/9dFLPyDU2dBoZYPsGuM40wjmmpeFzNxHoRadZPM8Hyv
+	 n3WTP6W9EXxusJxeDt6+bufGSq2+lKWQI3Lah8LnOBM4/ec9qAMzlA6hhQ83qfsP7o
+	 KCbzR1+7uhdcw==
+From: Thierry Reding <thierry.reding@kernel.org>
+Subject: [PATCH 0/9] soc/tegra: pmc: Clean up legacy code
+Date: Wed, 06 May 2026 15:41:51 +0200
+Message-Id: <20260506-pmc-v1-0-a6de5da7216b@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dy75Tbp2warPCQ8+"
-Content-Disposition: inline
-In-Reply-To: <20260506102032.1644851-1-sheetal@nvidia.com>
-X-Cookie: Alex Haley was adopted!
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXM0QpAMBjF8VfRd201iymvIhfMwafM2pCSdzdc/
+ up/zkUBnhGoSi7yODjwaiOyNCEztXaE4D6alFRaFlILtxiRK/S5QamBgmLpPAY+v5e6+R32bob
+ Z3ind9wOZhJpCZwAAAA==
+X-Change-ID: 20260506-pmc-42ed4ce76ee5
+To: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Lyude Paul <lyude@redhat.com>, 
+ Danilo Krummrich <dakr@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ Mathias Nyman <mathias.nyman@intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ nouveau@lists.freedesktop.org, linux-media@vger.kernel.org, 
+ linux-pci@vger.kernel.org, linux-usb@vger.kernel.org, 
+ Thierry Reding <treding@nvidia.com>
+X-Mailer: b4 0.15.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2907; i=treding@nvidia.com;
+ h=from:subject:message-id; bh=c3IdukSqkdizYR+nvOsMFSfRacrCTihLpGMwf0DytCw=;
+ b=owEBbQKS/ZANAwAKAd0jrNd/PrOhAcsmYgBp+0UviFY8FRKErx+gWaVIw1aQqo3vpgLFBeSK2
+ QOwKU74fluJAjMEAAEKAB0WIQSI6sMIAUnM98CNyJ/dI6zXfz6zoQUCaftFLwAKCRDdI6zXfz6z
+ oSXDD/91cqDJQm1CmiDEX3o7Unl38MlUu/CfFtYMDWyUZ7eThkCtVRzHXCEt+Z5P92fpge0puXf
+ aQpRSV7kenNh18JhSWj/5+XyhAf6NgIP1IC7KvnU9Rb0ttmUPc44abwaGNIdl9JUY2P8a8DFwUb
+ B8olNHLzudEKDrxFtwQJuA+LbBT/B7LjdtvVTmjg6Hgpz82Lv4IwUJIIB9/rvGBz07pKPtvqNlF
+ 8AXnGwpWBSmJBVD/Bg5tMVlTFcI8CuWM0uSfqF7Fe8QjWgyPcAQ17+anPVPDUeflenhlEOrB8FH
+ d4hRnk3mE3bAsDflRt/8LQpkz4A6Vs/zwwcBVKwRDCXALnqI6jcpsUotp/Ub16lFCK5KYYd7VIa
+ uVd5k7E3ku4W5EFiLk26KGUyi6WPtbHXM8YphtwwrXaB9bNDnTUcKXG8o2AERJLO/9hKSqMys43
+ NtPtcMZXCS6SKQIFNR3QTOVTGrj+Bri3RAfwXpBeI7WXUuYjQLsKSe1sdC7fJfWfOusR7pdXLYA
+ zIVEx3IjPndD4GaTjdKJTopPr1a/M6afg8r63ZXCO4u6fwxTaC854gRdvm6J/yhFnE2JPjqRKK0
+ MSLNxv5xE1gMA37VuJq0jspEaXgC2N1nXEOBBMofoTN/HpGi8XfvXqzpfkn6YgWci9bGIj+8rZg
+ oJJjuQE+3aztG1A==
+X-Developer-Key: i=treding@nvidia.com; a=openpgp;
+ fpr=88EAC3080149CCF7C08DC89FDD23ACD77F3EB3A1
 
+The Tegra PMC has accumulated a bit of cruft over the years. Most of the
+legacy code has since been replaced by standard APIs, but for certain 32
+bit platforms we cannot get rid of all remnants, unfortunately.
 
---dy75Tbp2warPCQ8+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In addition, future SoC generations can have multiple instances of the
+PMC, making some of the old APIs unusable. Preliminary work was merged
+recently to allow passing a PMC instance to the custom PMC APIs to solve
+this problem.
 
-On Wed, May 06, 2026 at 10:20:32AM +0000, Sheetal wrote:
-> Add per-stream fade controls for the Tegra mixer to allow
-> independently configuring target gain and fade duration for each of
-> the 10 input streams (RX1 through RX10).
+This series of patches is a final cleanup pass that makes use of the new
+APIs in existing drivers. At the end of the series, only some old 32-bit
+support code will use the old APIs, so they can be made exclusive to the
+32-bit ARM builds (which is about as good as it's going to get).
 
-> +			else if (i == DURATION_INV_N3_ID)
-> +				val = (u32)(BIT_ULL(31 + TEGRA210_MIXER_PRESCALAR) /
-> +					    mixer->duration[id]);
-> +			else
+Note that the first 6 patches can be applied to subsystem trees
+independently since they only rely on patches that were merged into 7.0.
+Patch 8 depends on these patches being applied, so some coordination is
+needed. The simplest solution would probably be to merge them all
+through the Tegra tree, if everyone agrees. Otherwise, maintainers
+should feel free to apply patches to their subsystems and I'll monitor
+things and apply the last three patches once all others have landed.
 
-I'll apply this but there's one small issue which can be addressed
-incrementally: if the duration is very small (32 or less) then we'll
-overflow the u32 and generate nonsense values.  Either constraining the
-minimum or doing the maths with a 64 bit value would avoid the issue.
+Thanks,
+Thierry
 
---dy75Tbp2warPCQ8+
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+Thierry Reding (9):
+      ata: ahci_tegra: Explicitly specify PMC instance to use
+      drm/nouveau: tegra: Explicitly specify PMC instance to use
+      drm/tegra: Explicitly specify PMC instance to use
+      media: vde: Explicitly specify PMC instance to use
+      PCI: tegra: Explicitly specify PMC instance to use
+      usb: xhci: tegra: Explicitly specify PMC instance to use
+      soc/tegra: pmc: Create PMC context dynamically
+      soc/tegra: pmc: Remove unused legacy functions
+      soc/tegra: pmc: Move legacy code behind CONFIG_ARM guard
 
------BEGIN PGP SIGNATURE-----
+ drivers/ata/ahci_tegra.c                           |  17 +-
+ drivers/gpu/drm/nouveau/include/nvkm/core/tegra.h  |   2 +
+ drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c |   9 +-
+ drivers/gpu/drm/tegra/dc.c                         |  14 +-
+ drivers/gpu/drm/tegra/dc.h                         |   1 +
+ drivers/gpu/drm/tegra/gr3d.c                       |   9 +-
+ drivers/gpu/drm/tegra/sor.c                        |  16 +-
+ drivers/media/platform/nvidia/tegra-vde/vde.c      |  15 +-
+ drivers/media/platform/nvidia/tegra-vde/vde.h      |   1 +
+ drivers/pci/controller/pci-tegra.c                 |  20 +-
+ drivers/soc/tegra/pmc.c                            | 412 +++++++++------------
+ drivers/usb/host/xhci-tegra.c                      |  38 +-
+ include/soc/tegra/pmc.h                            |  81 +---
+ 13 files changed, 305 insertions(+), 330 deletions(-)
+---
+base-commit: 7fd2df204f342fc17d1a0bfcd474b24232fb0f32
+change-id: 20260506-pmc-42ed4ce76ee5
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmn7MkkACgkQJNaLcl1U
-h9Ai0Qf/cPNIwpqGXVY2FnIqmaX+Ns9G9ioqwgdLQzB5EolNGkz6McWFNoc6L+Nj
-WoNxnp/g/lJ/+6DTdWoaUgRNFswvzSiyNMOm4VG2pqojhu4CdTknTz/B3X1FNDaE
-rI+oFomiVV6D/9gM9q2IJK/lHe09v9HNLMQVfpns4bydROD+aTjYiMQy/oX9hGwH
-v4XZE3E8bYeaBqiWsxW7tPAooHF9YJK3Qu1jXFNHRuzIwFkR/NnTxN5o4hBUm9Ln
-wBSr3P5twPXevbamfavAO/RthseRqVEl01uaDJtWjyFlxwCXEvq9ihmHqW5WOlBT
-lu09CUSrQNtdKXBg9e9DmdtejF1BkQ==
-=OIxD
------END PGP SIGNATURE-----
+Best regards,
+--  
+Thierry Reding <treding@nvidia.com>
 
---dy75Tbp2warPCQ8+--
