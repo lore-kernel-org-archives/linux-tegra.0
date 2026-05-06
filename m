@@ -1,94 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CDD747798B;
-	Wed,  6 May 2026 14:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40003466B65
+	for <linux-tegra@vger.kernel.org>; Wed,  6 May 2026 16:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778076476; cv=none; b=B5ayhfvOSBcr5R77VpyeCGv4sTEzZXcdrFiteg/y1QpvY/ozuLea69645CT9QJR/3oqmTVZH30mzq3JT9bnwTyOcITf4hXSVWYaRaDo0RDqoJzFuhjC7e60/hjeX+sH+hfp4oxauGhZn1vqPG74K0+MDeLTK/xT1pDT+oC1d4gY=
+	t=1778084063; cv=none; b=f8ubzI6Rm1zbi0KvlnRuA0HFiCgi+P6+fNuhwla+8N7bkc/1q+Np/dc/1ApCMvlQyo+ey+cT3JNLmjIbgDZ3ejFmWxbGuiCugckQi6Kx0PdzBtAoWXovQavEheg1S9/RDV/qPZhkFuEWPYuMWH+tceGWjNrVqlxtjPyHxQRhXgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778076476; c=relaxed/simple;
-	bh=cQlnEwAXRpnNanjvzfKUqX/rIx5TBMYTuUgvbOozgHw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=tMXoDyC9VrjY+5rX+BWVkKKRxe4CvJ9NvR/40sE9BlLXGAoKKbdXRMh7oicBqjdWzcw4kSo/TKA8dtylF0j5gmUgSFmWCe4Nl61x5tzUioz4InBTjRLJHVclTQNO1mWLcORRon33hj5u6hzgspBU8vq+vih5EwWfMb+cWKn4Kps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nHgouN9g; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778084063; c=relaxed/simple;
+	bh=T+hwVHoy+/HW70H4b4ny1tz+u9z10JcY5ob6OwvauXQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i09QBIsaUcFudWskchTf1axjdDl0rgYoue9bFk+E+o4XsrBwHgorjdFUkYnyPN1ZoWx/Rl4W+7sxO0w3P9ygf271UjJXOYfvdNDnFg3kG8uXOS6cO2t6EuQAXFhySbQqpiFWgu1yb+VUtVZeK7Wddiu3JhDI/86q2Kw+JqrsObM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oqAg1DQL; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nHgouN9g"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5412AC2BCB0;
-	Wed,  6 May 2026 14:07:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778076475;
-	bh=cQlnEwAXRpnNanjvzfKUqX/rIx5TBMYTuUgvbOozgHw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=nHgouN9gINhTwXFiYi2DxwBxXH2sgOZudmJHZbHv8Ev03GlvHmEQdrvrG+uB9WDKN
-	 P0f+CDua+TnwG3Uahh9YVWG4qRa5US2U63Qa9vIEsfrvbTlpTUNHUPaHwMenMpAf9U
-	 JjcktYlbOZksli9U7T9yEA66NRVUyKyFucoBsjRZDoRR8mcke6PBfGMLE8agdDtjMW
-	 HfyQv14z0yg/rMI7aWUuMDTlEI2tMcog8CQfYJzw8lrG1Bh4v/Sev8T+yjlMi8wpM7
-	 6tri/d5kNS3YDGPltBYKwi7K5ZZIVimYJH359RcXlEnknurcVe0SMcEpcNLPsp+pY3
-	 QiXSKopOEXuiw==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Sheetal <sheetal@nvidia.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Sameer Pujar <spujar@nvidia.com>, 
- Mohan Kumar <mkumard@nvidia.com>, 
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
- linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20260506102032.1644851-1-sheetal@nvidia.com>
-References: <20260506102032.1644851-1-sheetal@nvidia.com>
-Subject: Re: [PATCH v4] ASoC: tegra: Add per-stream Mixer Fade controls
-Message-Id: <177807013262.624351.14072023020143249146.b4-ty@b4>
-Date: Wed, 06 May 2026 21:22:12 +0900
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oqAg1DQL"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-59dea72099eso6693687e87.0
+        for <linux-tegra@vger.kernel.org>; Wed, 06 May 2026 09:14:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778084056; x=1778688856; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QpS9p5To8P4BftdAlsDaBegfX21bw2fBoqWrx1dYiXE=;
+        b=oqAg1DQLyT1XmAPaltQ+v5D5NGDIUFmqL8DMIIgdEXMsXXu8D11qsPAtu7mycGuWIN
+         u2jGvpcEqLaxG2CqMcsBt6HFrhfmjqQJif2P/CjuB1e2CLyomhLQ58/A/mq3aBtNC0ra
+         FjL4kjdxZh9uUrx97XmXVPvgxEb2You1mx9bPwdAekIi8rnbh77547Htce3/Pm+T8af/
+         4ArDZwLqL/XaEKpR9AT7GlNzyACVwwrpT49MNaVbgGO2Viku2SMFqhM4OGfTKkd3aAuL
+         LMqZdQ0GKmgsiOZszGaknj/YovO8af3f65RcEoq+gAFf8t0gTMSOvEYDv3PX8huWQQdR
+         rEWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778084056; x=1778688856;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QpS9p5To8P4BftdAlsDaBegfX21bw2fBoqWrx1dYiXE=;
+        b=J1BqxUlmjnEX8HVRfQ7WpiVXvnC2GUV7ut8yMMJfkvyYPlHEWVagnrlsVWTh5lyrIP
+         ntab9jEevPC0wsCKRXNGIbLI35GiCUT9mP2H9uRcauHJoTupkjmm2O9cC7bJ3+YJzWM1
+         ZbngichRwv9X5q5nJZxw/cwDWcyTXr7tH1Mf2PvHosxPRFpidBZN8v9pzEHIgxDfel7l
+         IfmcWYIRQu5RVGNt8DLcFrsf6OlWdTuAeYiHULdEC9ZXCnUBRZnBIM30KXFtC7velkiI
+         bfYIJgAPU8NkmdwrcFkxEt7pFHF7wF41kw1V6raPbdurxZvFgoz4OC0LFrIb2OX6pk3/
+         phPw==
+X-Forwarded-Encrypted: i=1; AFNElJ8/+/MnHGzWMEp4CURTh0nUUcT4A900bChtFUvVqb4mtq1Bn/f53Xw1KSkbOzsZDM++x+6HDvbX2MMhKg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnlvBb6A+0iHwpC6jTeqPgWAxZxE5lZXSWTa1cWLpb/Lz9cEud
+	EOVEdVBPCoa6CZCd+mBlvKwCm70QjlKKeXGniqwBTZavA4ONfXYzWgRs
+X-Gm-Gg: AeBDiesOJ6LSLNP4tKqoSi87rR88Ez1qvf7wg5xtMR1u1XUeEm+MlC6DyShxZbvvTuC
+	Q4y3pDZxik15zcI4aG+TDd7+ZYcjH6tcumtLSjyia1OJZQV67J3wp5UPgDzHXu7xlIrv5LVmc5b
+	BwHyzD2BSafmx31DdBgrgUV0xTxQdyW9nZLjhlQOGxWPBwWcSe6OdlxOmQ1rBykDUPzX7tRx+V9
+	5MG60/5gXKzeKe8h9t1cdC5e/5vw35bqZ/jkvo9ef+dnc1S9AEz70jiPYhhTDQ1pLsMoOrz7IhC
+	0/4Bt0rkk4EWOkoqotdtPL3L+tBfAe58dKV8ngKkbj/c6h0pyq9M2rC5GiiHGn4VG+6a6nJA45w
+	tjOFlMg1cl1T941qogzbRhejlYHce7yPqNu4oKz2KVCr1wGFjZAaIkWngLArc3IPet2NfsSreaZ
+	nSGEV198CyGPaCgJLU3a615fp9vcTZaWXdF+EN6KX0Xjmrc9c8W4PcgU4AGZ+x5N+2eI0HLfro6
+	A==
+X-Received: by 2002:a05:6512:308b:b0:5a8:89c5:2c0f with SMTP id 2adb3069b0e04-5a889c52e35mr1306160e87.25.1778084055726;
+        Wed, 06 May 2026 09:14:15 -0700 (PDT)
+Received: from [192.168.2.20] (109-252-156-195.dynamic.spd-mgts.ru. [109.252.156.195])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a86aa3d540sm3844372e87.17.2026.05.06.09.14.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 May 2026 09:14:14 -0700 (PDT)
+Message-ID: <9af23def-ffa7-4f68-8aa1-ab080b6c1c4f@gmail.com>
+Date: Wed, 6 May 2026 19:14:07 +0300
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1107; i=broonie@kernel.org;
- h=from:subject:message-id; bh=cQlnEwAXRpnNanjvzfKUqX/rIx5TBMYTuUgvbOozgHw=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBp+0s4C2Fkg9GPKPt2URXcGk6sVE2GzKwqUpfZt
- qQmTDYCk7WJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaftLOAAKCRAk1otyXVSH
- 0HSkB/wP2aiYrccXO6hDWncmKF7jG6ds84OhYrfdLEq/FH2k7rgU+cKvU07I+x425UcDmeZ9axX
- 4fyn+nnSAoYpCrj+SOKoytOuUwxL6z/j0QdDn7th5VUeVP+CpakKAsm3xBCYf5aESf0zDToCmQc
- sMNTm3eG3e53Q7KWeyC1JPBlKcT1h5KkvuBrY1Dq7V7LuxKlcFDqTaeb/j4tjauwz7nCNrWXGBg
- Lj5VdDdr8kSkkE7CIaNsyLUyDTco1lhqLeEBElgNs1oHL2PctCc6mCqVBld8eTn0N4r/q0Hj74q
- tAJLcSiV19fJqPVrESgdV1KjBDvxMwozAx6jLjJLfTLbJ4zR
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] media: nvidia: tegra-vde: Fix iommu_map_sgtable()
+ return value check
+To: Mikko Perttunen <mperttunen@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
+ <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+References: <20260421-iommu_map_sgtable-return-v1-0-fb484c07d2a1@nvidia.com>
+ <20260421-iommu_map_sgtable-return-v1-4-fb484c07d2a1@nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20260421-iommu_map_sgtable-return-v1-4-fb484c07d2a1@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 06 May 2026 10:20:32 +0000, Sheetal wrote:
-> ASoC: tegra: Add per-stream Mixer Fade controls
+21.04.2026 07:02, Mikko Perttunen пишет:
+> Commit "iommu: return full error code from iommu_map_sg[_atomic]()"
+> changed iommu_map_sgtable() to return an ssize_t and negative values
+> in error cases, rather than a size_t and a zero.
+> 
+> Update tegra_vde_iommu_map() to correctly check for errors from
+> iommu_map_sgtable.
+> 
+> Fixes: ad8f36e4b6b1 ("iommu: return full error code from iommu_map_sg[_atomic]()")
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+>  drivers/media/platform/nvidia/tegra-vde/iommu.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/platform/nvidia/tegra-vde/iommu.c b/drivers/media/platform/nvidia/tegra-vde/iommu.c
+> index b1d9d841d944..824d2aa80a43 100644
+> --- a/drivers/media/platform/nvidia/tegra-vde/iommu.c
+> +++ b/drivers/media/platform/nvidia/tegra-vde/iommu.c
+> @@ -25,6 +25,7 @@ int tegra_vde_iommu_map(struct tegra_vde *vde,
+>  	unsigned long shift;
+>  	unsigned long end;
+>  	dma_addr_t addr;
+> +	ssize_t map_err;
+>  
+>  	end = vde->domain->geometry.aperture_end;
+>  	size = iova_align(&vde->iova, size);
+> @@ -36,11 +37,11 @@ int tegra_vde_iommu_map(struct tegra_vde *vde,
+>  
+>  	addr = iova_dma_addr(&vde->iova, iova);
+>  
+> -	size = iommu_map_sgtable(vde->domain, addr, sgt,
+> -				 IOMMU_READ | IOMMU_WRITE);
+> -	if (!size) {
+> +	map_err = iommu_map_sgtable(vde->domain, addr, sgt,
+> +				    IOMMU_READ | IOMMU_WRITE);
+> +	if (map_err < 0) {
+>  		__free_iova(&vde->iova, iova);
+> -		return -ENXIO;
+> +		return map_err;
+>  	}
+>  
+>  	*iovap = iova;
+> 
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.2
-
-Thanks!
-
-[1/1] ASoC: tegra: Add per-stream Mixer Fade controls
-      https://git.kernel.org/broonie/sound/c/36645381b864
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Acked-by: Dmitry Osipenko <digetx@gmail.com>
