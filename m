@@ -1,147 +1,234 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27462D1907
-	for <linux-tegra@vger.kernel.org>; Wed,  6 May 2026 09:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DD93ED5B5
+	for <linux-tegra@vger.kernel.org>; Wed,  6 May 2026 09:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778060281; cv=none; b=iRMzOY6Zm+dEtS8skbAaAGrZypIltVufPFvhfOaw9xdJcA7yD9JBlzyxPhRgdu0cqAV974x+dIxEy2KZZQflYB2ZdNxWBscKLpVHd8GTDPoSTA6BZ3AKPmtZUREenTzJSFSp89LjhIsNOm//NNN9Ph0ZGfSzAbkYf6Sh1M259FM=
+	t=1778061066; cv=none; b=aUW86tDii15YrEw5Y3zpZxT/7fSfkl1vcfm02YNQG85KmHT9TTJHXDaM1LIKxFDogz7aKSUvpvkk5+jGzCYSJnWZp28AY+RmVeMldtvG9wFL/KZg0t4t/3uPA/Y8hE+/pAZ1Mwg0Dw1VTYExOJFb1tqBH/B823bFTXfQF9MXxTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778060281; c=relaxed/simple;
-	bh=qr0ZiLB9ps2AVAiHqe6DE5oXw1vLc5bxId3xZMuHxWQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=H2CYD8lCu5ppfhlhyuTJxNvohtl22U8oU2aWpXAyhh4TnAVAo3B4CSp66xPfnGKbEkdqlZoiHbthkFx0t/ZBgqvWSr/5WvtLDoKAbg38RmEZLUuOTLvTiKQQZ6M4rHcuVK74wN1BfnEgFNLcc4ZXv8v/G+fk+aa/sQwY1mwJ7g8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aCGHThI8; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=LvDJqWuV; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1778061066; c=relaxed/simple;
+	bh=vfrATgQHWoLdism2lue+ijTptYIlhESry+/AqSEnFWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fr0tTRMP8LpTLF8HOcxfilZyF2RlWeqqyo7EoT9IqSir2jcPq3TAT73nz1OZvFR0V4AXXEbQzxdQgJW5DFXzkKcOJID1IXhjRnvnRbcziHFPD82K+scMhz40FYsfJbfzmN/b+vSXP3szsQFpCAmKC6/7nEhGWLjoXsV2Ww7+v8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VaSODnhT; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=GpZ/frAN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aCGHThI8";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="LvDJqWuV"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6468Zwcl443144
-	for <linux-tegra@vger.kernel.org>; Wed, 6 May 2026 09:37:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7s+0qxdlCAN7+C0UZ4qVMPuFKE1Jpl403dvIhapVC3o=; b=aCGHThI8+xqnNP47
-	1V5hQbi2vxrSnRHadLez/6ke9qHEC+15f0ZL3nvu6rGaLMM1w8FO2lJsXARR9J/N
-	J07NrjEedeTtwb6QWNLpRtTJRGi14GiAPFI7gs4oRf5V+ZFTxOseb1wkvHB9aqMT
-	nHgf6Ey3UaFOOcBkrgEc/DzEYBYaDqZ4UV+myKREUzDWaSTPwwwk+J5udSh+XCA+
-	Klksst+wugFxivHwO21f9FaPVSSc++PqDYWKpjbC0jxeRKD12EsbO4C/bm08yQ6p
-	jWX1X21bR3kqUb3HTBvhU3KHUobaT1OjeYkJ3knps1587ggzoBnHbnsbPksJjZYW
-	Bg9IAw==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e0299g8as-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-tegra@vger.kernel.org>; Wed, 06 May 2026 09:37:59 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-51009190feeso144708581cf.2
-        for <linux-tegra@vger.kernel.org>; Wed, 06 May 2026 02:37:59 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VaSODnhT";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="GpZ/frAN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1778061062;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vfrATgQHWoLdism2lue+ijTptYIlhESry+/AqSEnFWE=;
+	b=VaSODnhTPaDyXnlJfUgHWCOJZ998M4B7vIy4m/P0I+xiJp8qbpO8BArJo34uJp3ToL3cVi
+	kJ0CtjiwEW7Lxouh29EWyT89SVaASLzOUZewkDM8YmWeL+6ZdDybLomL8PWZ4nIazuAlF/
+	E5VWB2B7n93IR5ilEFiZ3ipinLBXyuI=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-652-_HT5egHzOI-2NP1rb5u7tQ-1; Wed, 06 May 2026 05:51:01 -0400
+X-MC-Unique: _HT5egHzOI-2NP1rb5u7tQ-1
+X-Mimecast-MFC-AGG-ID: _HT5egHzOI-2NP1rb5u7tQ_1778061060
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-44f65835b77so1432814f8f.2
+        for <linux-tegra@vger.kernel.org>; Wed, 06 May 2026 02:51:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1778060279; x=1778665079; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7s+0qxdlCAN7+C0UZ4qVMPuFKE1Jpl403dvIhapVC3o=;
-        b=LvDJqWuVNRaMWTBA1dQQmd74DsC0QdWz4ua7bkoWC7SLrLIO5LwIYy2PjxLZStqLJZ
-         T62BHVVvvfQe6EeSoHFu9/2nafJIN0d8BVeUtqE/0/5Y/ab+qEq78Y9dHaNfgb6lme9f
-         dMf85PhgSHGypli8NrEpnC+7N+JVZi7NVvX4q8ymnGl6b4qI34VcVtyfSppClvc9REah
-         67fDnFl/S6/ELrscjjgFPQeB6B40wvN44k17/Ii09qY1cpxqnjY7feZ7RFSJLrG8AbIo
-         IL4aawLgVHHGNuUABSKdr/XDQ1eDUgiu+ORMkVmwcuOCXeIIoQlx1GhW1YLx/VysoJM4
-         j2xw==
+        d=redhat.com; s=google; t=1778061060; x=1778665860; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vfrATgQHWoLdism2lue+ijTptYIlhESry+/AqSEnFWE=;
+        b=GpZ/frANu8fF7WKTCYKQ8un0TZtS6/X0KvQ8ZchUH6Sc9IKcsS5nquQggGCVme046G
+         FyaK/1lD8o9pipiL585NnZr/ChEXgARLDGMzVkBDFKxxHiPpyubl5XdFNRSlThvhnbyw
+         aeFhEK8YuKUxRRO1naSZ6tEkqVWF7ViXflgSdJhOX3GrYLTHkLpDGJX+t21mV1VqSyXs
+         pTsDfStdU2v4ZtAcxpn3e6AFhDKe8qJpOeWuPxjvlS9Lzs/dBn66HvkNdQuA2HvtlRSA
+         lVj8LZVqtoYxf1QuuHrcXDiLHKO8htS1wf4fA5DfFmcpMxSWqwJYb424sIKqhUcyMH/Z
+         VTuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778060279; x=1778665079;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7s+0qxdlCAN7+C0UZ4qVMPuFKE1Jpl403dvIhapVC3o=;
-        b=e1eGZXgKgoBfVLXKkKtQjU1+jEK2SKEv0EInpyEHmDbljUNoP5/VrPqOePzkphxp1r
-         P990hjoNOHwtfSI5EuucdiDY5MG/TWSj0s0kSf4ojr144VfAb1Woti1UKsK86fQuFYhB
-         OykFkhA9VMPT2+pS/UgQ4lDu5bfQFSqm1Ci8SObRfEWxVGuKnRKBKAcOHoZChr9LxTZj
-         X6HyL5lMmdkbQX4ekRLRDpd1RhkE4uZi/QqWu7RW/ByJMOWVUUdEOQZM459cMxLYRHW+
-         IT0nDctrNrXIKRw2WYNOcgnYOCM21Sgh1xE4CkoW2lrmb7QRPTnsSV7Qj8SBC5VFDkGR
-         EpWA==
-X-Forwarded-Encrypted: i=1; AFNElJ/1YCRlN7zCD5xJVzsWJiBN89vcRhkb6xSZajIywAYSz0cL4uKdU91o+yLR+GLQ/QFu993crnlZOk1rvQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3m4xDGNA2GbRx+Xiz4j/t/nCx7IOfCyHr76nC9S5//gulqTqd
-	4TyZlV+Iikuc7um8hW0ZbrNuLjwaD7W7bCjGgGWq9PZ+JbbeKxbxSswtGSX/X2qIcQPtyQqQyA9
-	EJoV0CcHLJmyQJBXRZi9PPTjxoVYsPkIDH/S+++SBRq/na6rhE4KVzp/EDyTn4a48Ow==
-X-Gm-Gg: AeBDievPoxYrbM9Bztx4lNcFgfIDvN9vngJf/m48iCaK3iUKgv1kCUe/LWgy5gqYAbc
-	IKSJX7zZIZ7c6vwzu9Sjgu7n1nmb+VAnuF4YbF36d59kvqKXI0Z2WX4/rUeQJESc7JWNtuvUZCO
-	WctMSJb+0MfCOaQjnPCGpr/PCsfmu04bh13/ThZzKWNK+LMggt4uhVtBM6K6+007T3fywBgPG2J
-	oJYc5p5BcZubOk5ysKN2fQuh/ZRzrgrLkHD4bYjehUU17rOz1Vx2LBvR6gkXK3E+Fv6cYVFNOq3
-	IhaD/D8XMgWHMai1xMQLxSoeDH3358cunKQORqj5qKSZy7VFFC8WFDWHzCgSTpbTFDcRTq1CA4W
-	f8MZbxxUDIun8RK821bV0SknBwU7vY5DudcqordGduyCQIhKBMKUhfqBJPnoRuLepmqrFwIU2yp
-	nb02KiAvfEdlBk4RQH3Mk=
-X-Received: by 2002:a05:622a:6096:b0:50b:4337:179a with SMTP id d75a77b69052e-51461bdb369mr34218771cf.3.1778060279160;
-        Wed, 06 May 2026 02:37:59 -0700 (PDT)
-X-Received: by 2002:a05:622a:6096:b0:50b:4337:179a with SMTP id d75a77b69052e-51461bdb369mr34218481cf.3.1778060278755;
-        Wed, 06 May 2026 02:37:58 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:41ef:7b80:b3e8:2c1a? ([2a05:6e02:1041:c10:41ef:7b80:b3e8:2c1a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e538a547bsm38519455e9.5.2026.05.06.02.37.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 May 2026 02:37:58 -0700 (PDT)
-Message-ID: <d60b7b44-37e4-47ae-9af4-0c8d24b6c599@oss.qualcomm.com>
-Date: Wed, 6 May 2026 11:37:57 +0200
+        d=1e100.net; s=20251104; t=1778061060; x=1778665860;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vfrATgQHWoLdism2lue+ijTptYIlhESry+/AqSEnFWE=;
+        b=cKI7B2DdhQWqaCrpi6Y2DPZwpGwH9hPpTG4LDCHoFwSpD99Mu7jgR0f+VWZGq6rWvc
+         3NN005aVCbNH0Q3Dfs5rCgyqH6dbFHDdf4PPssB63+h1LZRjpg8otrSKKudVAui55jwr
+         XBNtWTMDeOZtxu8bCPpXSP64ORkbUQVOlGi1UaTJR9HE86WPgscpVOog1opJuWT3zdaD
+         KA6CM/dnI/vhN6+23E2KYYNvf+d6XYgLkKXdnvqsCyUloSKYF7WTDxFQ+17tBcqmM13T
+         Y2/Af+RdbXnRkYj0mvZ9ocf6Qat1r9GCXFb6W6lhQqs/bbyFs2ielFKCOcZDSgvHUAY+
+         ANzA==
+X-Forwarded-Encrypted: i=1; AFNElJ/M8Jc6iMuikpTAl0CCuspQlYNE3at8JJvw9bKiu5W9tmPCUtrcXecGnAhHUC0Wg0honF8+nGpGfbOjmg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf29raJJMY8Be2f+zMRRCfZ2A3EGrPgec04F83cEqKp9ucKlmU
+	Qh3ha/v2OjxzVAhUukFTQ+a+DtpO9FsGxjayUpIwT6Y2h+d6ayOsDWOfxqA08hGQmipXryIlaCo
+	go07f3cgqB1MxUpEbXZ5W/Ti9YEvbgXcyzKPma83vJjeXvf1iLkR3wtExirMUkoPC
+X-Gm-Gg: AeBDievXOY/jS10CVgjmo2XIVjozqIy6NyJugoXOAz5kR1XnmRnFPU+j/7jLJhBUxsp
+	YN98NS6ZUEdiH2n/LIOyRUxVrZix6r/6TGdyDOBIjV+4s9xT+Tr+bJfxgwvaeDt/OTk2Dr5iKGZ
+	iUm/tsxL+oeTg8lw6MG4/+RiA+JQ++6cKy624Iyxvx3ckxb+y8uN+3io+vNazYKa+QFPiFRwHmn
+	vCdfx8zRS2gQXJ78oo3aRDU+zT03gh0S01OiKSsztzpl/mSElhYLi/5ciFmRuqHPu5IKb+1JEEH
+	RmFzTLaxSAiOMQj1IlFzYysr72/NIVrskeLEX+oSY+4E+9mrp+npaQ+9rGnVxqup4+lMAukr/pz
+	/0YfJ00EW
+X-Received: by 2002:a5d:5f83:0:b0:446:ef9a:8f41 with SMTP id ffacd0b85a97d-4515da970a0mr4473823f8f.40.1778061060052;
+        Wed, 06 May 2026 02:51:00 -0700 (PDT)
+X-Received: by 2002:a5d:5f83:0:b0:446:ef9a:8f41 with SMTP id ffacd0b85a97d-4515da970a0mr4473777f8f.40.1778061059498;
+        Wed, 06 May 2026 02:50:59 -0700 (PDT)
+Received: from localhost ([2a01:e0a:b25:f902::ff])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45054b02abbsm10793056f8f.18.2026.05.06.02.50.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 May 2026 02:50:58 -0700 (PDT)
+Date: Wed, 6 May 2026 11:50:58 +0200
+From: Maxime Ripard <mripard@redhat.com>
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Mike Rapoport <rppt@kernel.org>, Sumit Garg <sumit.garg@kernel.org>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2 06/10] dma-buf: heaps: Add support for Tegra VPR
+Message-ID: <20260506-tentacled-unicorn-of-typhoon-cb4edb@houat>
+References: <20260122161009.3865888-1-thierry.reding@kernel.org>
+ <20260122161009.3865888-7-thierry.reding@kernel.org>
+ <20260123-meteoric-butterfly-of-imagination-fd691f@houat>
+ <aY3nov29aBGWw93Y@orome>
+ <20260218-voracious-orchid-malamute-febce0@houat>
+ <afJSQbArB8USb6mt@orome>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] drivers/thermal/tegra/soctherm: Use
- devm_add_action_or_reset() for clock disable
-From: Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>
-To: rafael@kernel.org, daniel.lezcano@kernel.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com
-Cc: rui.zhang@intel.com, lukasz.luba@arm.com, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-References: <20260424160019.41710-1-daniel.lezcano@oss.qualcomm.com>
- <3075fe5c-e8c3-4439-be5c-0f6eb2fb6e48@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <3075fe5c-e8c3-4439-be5c-0f6eb2fb6e48@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=fMMJG5ae c=1 sm=1 tr=0 ts=69fb0bf7 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22 a=EUspDBNiAAAA:8
- a=dtrGPWWTKDy4za8dmv8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-ORIG-GUID: SaUTwsaELA-67-e-qhmFqgYifxm6anC1
-X-Proofpoint-GUID: SaUTwsaELA-67-e-qhmFqgYifxm6anC1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA2MDA5MyBTYWx0ZWRfX2gPxxJEx9Ev8
- TOueh1n+K+LSsS7DGHqlRcykhoI7Ll+yWIYSpdghzC4igqc4smoQOoMMIoox5AA1CpEFwG3oxod
- r81v96Esc+Tm6OUG4lJtHvxk+pp94aDo6S/AhYdjSWqWjH5Wx9U9Hu0O8mVbFYWXQkBlJ6DsGwY
- UxdyHDBSbNFGlQFA/edfLx6eysRnYMPLT5u3qrqV66xmb6iyJwPLJetXVBqGzvpqgQMQWkmOzlQ
- SKjV4GU26WFSAmor/0E1Le7p0u/koQUSKm1TXRMZinov0qC2tlwhom8yaIJru6wkGJMXRXGNq1T
- VZwx0M+qjndd4JJWUtDYKC/kTDX41UQVHQgNBQytm70Fl4JuH9uh1JXuQk8BZRzJHf0QDDtWb/j
- JX7fa1AlY4yCC3nwApfkg4kzI/7qs0F7K9Aax3/ehAK4w9Qp+MYd1yAwZOYhWCf+OfNtbWFZRi5
- SZkenbGAJohnYTVJ+hw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-05-05_03,2026-04-30_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 phishscore=0 priorityscore=1501 suspectscore=0
- lowpriorityscore=0 bulkscore=0 impostorscore=0 spamscore=0 malwarescore=0
- clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604200000
- definitions=main-2605060093
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="sztjivasnlwpybgk"
+Content-Disposition: inline
+In-Reply-To: <afJSQbArB8USb6mt@orome>
 
-On 5/5/26 14:10, Daniel Lezcano wrote:
-> On 4/24/26 18:00, Daniel Lezcano wrote:
->> Replace the manual error handling paths disabling the clocks with
->> devm_add_action_or_reset(). This ensures the clocks are properly
->> disabled on probe failure and driver removal, while simplifying the
->> code by removing the explicit error paths.
->>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>
->> ---
-> 
-> If nobody is against these two changes, I'll apply them
-> 
-> Thanks
-> 
->    -- Daniel
-> 
 
-Applied, thanks
+--sztjivasnlwpybgk
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 06/10] dma-buf: heaps: Add support for Tegra VPR
+MIME-Version: 1.0
+
+Hi Thierry,
+
+On Wed, Apr 29, 2026 at 08:49:58PM +0200, Thierry Reding wrote:
+> On Wed, Feb 18, 2026 at 10:42:22AM +0100, Maxime Ripard wrote:
+> > On Thu, Feb 12, 2026 at 03:50:09PM +0100, Thierry Reding wrote:
+> > > On Fri, Jan 23, 2026 at 02:30:14PM +0100, Maxime Ripard wrote:
+> > > > Hi,
+> > > >=20
+> > > > On Thu, Jan 22, 2026 at 05:10:05PM +0100, Thierry Reding wrote:
+> > > > > From: Thierry Reding <treding@nvidia.com>
+> > > > >=20
+> > > > > NVIDIA Tegra SoCs commonly define a Video-Protection-Region, whic=
+h is a
+> > > > > region of memory dedicated to content-protected video decode and
+> > > > > playback. This memory cannot be accessed by the CPU and only cert=
+ain
+> > > > > hardware devices have access to it.
+> > > > >=20
+> > > > > Expose the VPR as a DMA heap so that applications and drivers can
+> > > > > allocate buffers from this region for use-cases that require this=
+ kind
+> > > > > of protected memory.
+> > > > >=20
+> > > > > VPR has a few very critical peculiarities. First, it must be a si=
+ngle
+> > > > > contiguous region of memory (there is a single pair of registers =
+that
+> > > > > set the base address and size of the region), which is configured=
+ by
+> > > > > calling back into the secure monitor. The memory region also need=
+s to
+> > > > > quite large for some use-cases because it needs to fit multiple v=
+ideo
+> > > > > frames (8K video should be supported), so VPR sizes of ~2 GiB are
+> > > > > expected. However, some devices cannot afford to reserve this amo=
+unt
+> > > > > of memory for a particular use-case, and therefore the VPR must be
+> > > > > resizable.
+> > > > >=20
+> > > > > Unfortunately, resizing the VPR is slightly tricky because the GP=
+U found
+> > > > > on Tegra SoCs must be in reset during the VPR resize operation. T=
+his is
+> > > > > currently implemented by freezing all userspace processes and cal=
+ling
+> > > > > invoking the GPU's freeze() implementation, resizing and the thaw=
+ing the
+> > > > > GPU and userspace processes. This is quite heavy-handed, so event=
+ually
+> > > > > it might be better to implement thawing/freezing in the GPU drive=
+r in
+> > > > > such a way that they block accesses to the GPU so that the VPR re=
+size
+> > > > > operation can happen without suspending all userspace.
+> > > > >=20
+> > > > > In order to balance the memory usage versus the amount of resizin=
+g that
+> > > > > needs to happen, the VPR is divided into multiple chunks. Each ch=
+unk is
+> > > > > implemented as a CMA area that is completely allocated on first u=
+se to
+> > > > > guarantee the contiguity of the VPR. Once all buffers from a chun=
+k have
+> > > > > been freed, the CMA area is deallocated and the memory returned t=
+o the
+> > > > > system.
+> > > > >=20
+> > > > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > >=20
+> > > > Aside from the discussion on CMA, it doesn't look like the heap def=
+ines
+> > > > anywhere the attributes of the allocated buffers this heap provides.
+> > >=20
+> > > Attributes like what? Where would you expect the driver to define thi=
+s?
+> > > I don't see anything in struct drm_heap_export_info that sounds like
+> > > what you expect, nor does the allocation ABI provide any means of
+> > > reporting attributes.
+> > >=20
+> > > There's also not a whole lot to this, other than that the memory
+> > > allocated by this can't be accessed by anything other than a select s=
+et
+> > > of devices. You can't have any CPU access to these buffers (the hardw=
+are
+> > > will refuse to let the CPU read from this memory) either, which is
+> > > hinted at by the fact that no mmap() operations are allowed.
+> > >=20
+> > > Can you elaborate what you're looking for?
+> >=20
+> > Are the buffers you're getting when allocating cacheable? uncacheable?
+> > mappable? physically or virtually contiguous? etc.
+> >=20
+> > See
+> > https://docs.kernel.org/userspace-api/dma-buf-heaps.html#heaps
+>=20
+> The CPU doesn't have access to the contents of these buffers, so
+> cacheable or uncacheable aren't really meaningful, but I guess they are
+> unmappable in that sense. The buffers are physically contiguous, but I
+> think "protected" is the right name for the heap since it most
+> accurately describes what the purpose (and access pattern) is.
+
+Yeah, that's what panthor has been using too:
+https://lore.kernel.org/r/20260505140516.1372388-1-ketil.johnsen@arm.com
+
+--sztjivasnlwpybgk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCafsPAQAKCRAnX84Zoj2+
+duZVAX4rZKstjm4yGIoK4/qxMtpVXLGWXrhCS66Fx3Nz2VUdigwaNxKdo0VUnHgz
+6sVzgJsBfRq2AlW+F/stHpXM0fMsHUXere2S6tyHKPw8gwt6dAO5rXziaIeIl7HL
+rUTTJPnxiQ==
+=nQPK
+-----END PGP SIGNATURE-----
+
+--sztjivasnlwpybgk--
+
