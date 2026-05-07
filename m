@@ -1,212 +1,144 @@
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013052.outbound.protection.outlook.com [40.107.201.52])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF27E33F369;
-	Thu,  7 May 2026 07:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778138633; cv=fail; b=aiU+b39AfDtMNsfaCPrmiVNrkGThecWqyE4rI0wMtasGgC7ByioqYR6wxi+gFrIcQPOVnXFJ5k/flCK1pz6ECKyBKh+XRYBz1wDqDbVCrLbvoRKm9lcmtj++i7rOz4aV+MkvzQZ+twkz5lyp9tOuivzv+9PJuhI7NPavVnjy7ck=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778138633; c=relaxed/simple;
-	bh=4YA9vNiFfTKF6l3rd9GU+tEZMtKuYjTC0VjeOBQdfWc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=WlWbjFoclXUqQRDnTsqo1nPnVtOcTXDS0RVVUTm6kbIkccgRTpeG2Mi9bYIUvnjGy+OWs799yStLQgblWclGcoUrtXdEnH4HNYbozT2IqSa2Jt1655RubQiV+5yp38zWOXtBscLleZxgLDMh/HsrjVDwm4xw++6RH5ppcDJtFcE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fap59XZJ; arc=fail smtp.client-ip=40.107.201.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30373BBA05
+	for <linux-tegra@vger.kernel.org>; Thu,  7 May 2026 09:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778145056; cv=none; b=N2Am/p0qeUmX19D08AAioHELTq5GU5T+zwWyRchm042SRDp1WGHMHaGReWM5JHHVVk8hPktD5mh9X8nfw7QuEkk722O2Oidn2hPMIA9Qyv0umtw3HXuA1LXrMStFY97zPoayuuM0LVm4ZUQwTjG0wnN3c0UJCWBPF7TMWgcHBGo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778145056; c=relaxed/simple;
+	bh=cSbnmKIeK5PiH7jDW+BQqyiKxH8RY05vb4L396PVn/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QcPfjeWHoqmeVZKYzoub60Uidf1OvakunXea09TbcMJoCgWond6wsofB6CfvRzh1Sag2wfg733beDtvIxfBF0nH1S5sMcgADjZsFqeq6UdP0lD1OGiYtzAz/9s1n1+/eTYdaRxnc43I+PmVrCPTiu2oFA7Tibhg65MGNMtnNMdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aaj2kPf7; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=eaayxXqs; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fap59XZJ"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GuIpDOUJDJEeBXSuyGGpC3LDbR/6t55wj4cswBJjYnSCJLyZgx44lHnWnXNwIgr4aCr2fVco3r+Gveg5REEsOexK3xdysWbrxDvzYtFy3QzUm59kMvofuMq9CADNHW3TA0/Gi3eyJOGMhg/lOR++UiRUJ0YP4WX/lHnXdFE94idu/q8v2Ycs+ytjR4FaxDqjIgtBz2A4F1ZsOv4Xx11KzbAoMOJwMcuL5hmwHTWxJH/Oe0Vuj67imdEu8z1xUXFk+KICDIn5H+XpZ9N/OtEd46LoeWyVzM4XTga+s+LAXh0DAFFb0EnUbP1SJYho5iYlyX7Ka3Csq5esgqEyR5Bk9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eoZPyr2Ygb8H8HaClS/tzcWiPmkXaXL8/ivhAuZj4J0=;
- b=Y9FdWNNaFknaT4YvfkFvdEQMs928rppFpMa49h1Kw0tqXly10+DICBGvBB3T2NDCCfbQPGotO/Cl2VR78tM9z6ey6Qp3F3oNUtxSmn3XdIHpE71dQ/DVy2vGSG/q9X1KnU/95OyqXHFhyF/LugI0L+xIN3GUYTcusOdAoCAgAbm/GatEFeX2Zafxru/Wbv1VzGD9QJxGM7n7t4BktC+jhXXgsiKPEHErQSbH/PS+WMU0sKn4TALTBBVbBsX2k5kORr+9yJ6pQA0F0o3VObi8YRFC4xgWqJK37gIjv7XWmo9/jagRb+BpM2Ff6M+6SS9+q83uQLqDn6i5/Vl+/1IfZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eoZPyr2Ygb8H8HaClS/tzcWiPmkXaXL8/ivhAuZj4J0=;
- b=fap59XZJXUP58qIm5eHnNkpBQUl9XkZ58lV6ATi3haosFwQfY+CjdNgB6jXvZbVkwQwzhnlxVfuJ4KEyok7P0HDAGR5pRpiLOi72fbmg6XxrqFZi8Kmhj7iTptjbjMxs7LnHLt/oU20kTc5KTIk4CrmRbKLJb3QCxiZxVkn5mIUKbWBh0OQPpRpRgFJTtHJpHPBm8gobbQ6WcmvZAoIhR58CTcaMerZ4tMZrV3vmNClqRtcnsyFlnH8gDHOQE0QmO8XpKly3LxMw3hkc1EUBNrvRd4X6W/dIm7tUZGDDtGjVxifQ4zktpLpTZ1hZVUcqRF1wGoGE71KNnNJwDeHSyA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
- by CY8PR12MB7122.namprd12.prod.outlook.com (2603:10b6:930:61::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.15; Thu, 7 May
- 2026 07:23:44 +0000
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391%6]) with mapi id 15.20.9891.008; Thu, 7 May 2026
- 07:23:44 +0000
-Message-ID: <550181b1-7612-4b01-92d9-3257bb488d8d@nvidia.com>
-Date: Thu, 7 May 2026 08:23:39 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] i2c: tegra: fix error handling in tegra_i2c_xfer()
-To: Saurav Sachidanand <sauravsc@amazon.com>, wsa+renesas@sang-engineering.com
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Dmitry Osipenko
- <digetx@gmail.com>, Andi Shyti <andi.shyti@kernel.org>,
- Thierry Reding <thierry.reding@kernel.org>,
- Kartik Rajput <kkartik@nvidia.com>, Akhil R <akhilrajeev@nvidia.com>,
- linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260506195319.44810-1-sauravsc@amazon.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20260506195319.44810-1-sauravsc@amazon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0098.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:191::13) To DS2PR12MB9750.namprd12.prod.outlook.com
- (2603:10b6:8:2b0::12)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aaj2kPf7";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="eaayxXqs"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6477pYUw1424511
+	for <linux-tegra@vger.kernel.org>; Thu, 7 May 2026 09:10:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=fiLRyqVWGS0Ix+7Et8ZETjKI
+	EZ4pzdPJfw5gz/TlT3w=; b=aaj2kPf7Vt70KA2i3+8H5rqr4GaTBRUxUXfFCAIX
+	1wdBO8jPUfsMqMrznswtbQ2P2Sc+PW6u3Lv/QSqcGF6r0+iMf3u3kaQtK6o9hdEQ
+	CbqLEGnxg2KU0oLYXWLl4EXauJIGscXmUQ7FkaJ5ATmeVNCi9CPdyPreNdMhujls
+	lo2BJ7dWx4/ULLNGvksEnomZ1gSIjLo9AVuTUsGBgxibOK+a9ikaCy7nV2o1vnKy
+	+7+q98leDPrDHpE1aow5LsCT1+nLVzy8Pwfnb6CvPbz7NcYllukprl0QwQL2LNMG
+	cMQ0cNd/S3qW7IY5fCfePp5fy9uOvRNQhHlP8BRedEPrmQ==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e0pqframq-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-tegra@vger.kernel.org>; Thu, 07 May 2026 09:10:43 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-50ff051e189so12105521cf.2
+        for <linux-tegra@vger.kernel.org>; Thu, 07 May 2026 02:10:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1778145043; x=1778749843; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fiLRyqVWGS0Ix+7Et8ZETjKIEZ4pzdPJfw5gz/TlT3w=;
+        b=eaayxXqsFRTvarNydVcHFRARBFPSw+J57YxMg9pETfh8Dga987mHzV4BWW/Np7q1u6
+         g3MtwRlgZ4/rQksxVHQQC8hyu5qCqtpMHtKyd/wNSMP8q0I6bp86lycopKq+FeOBuKPo
+         NpLT19srU4rmTZH1UMu+19x9fCIuFl9TIfS1sdKzQMGIv97rsHnoH7SWVVHEjjqsZywM
+         Sxpft5Hd5cGHKWV3zLyFrAyDiFaSJiq/qQhN3Or2GP0TXk2ZJ93X7KCxnZnPEaxGHYwv
+         kf7u6M0+fxHKa3WueAMgXYneJGNfFvv1cPPfyy1cFfYmezT+GzBajtZi47wIu8toiRii
+         68ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778145043; x=1778749843;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fiLRyqVWGS0Ix+7Et8ZETjKIEZ4pzdPJfw5gz/TlT3w=;
+        b=Iz2rm/x+zetKYJadBSXvsAeq2UETezI/4YlpZSvnF1jAR/YdokRf5Yz+SZlikk4zG8
+         XuDr+U5/d4gSW5VfBVbDtBpqJD9DHWxjGmUxKi6qUjSyvES5uBrj/JcJpwbZgaBbjLa/
+         Mk1tkQargkAIm+S9YS04GpDwJGpp7FVbUJ2pFxDM94kfzkBnGLguQ3y/1J3s9cp0WeB8
+         gkzUDfJkAIMUMQkFCkormLFe6EGUWAefwD7o7iNtclIYdoauz+irc9kiuTEhJC00cwAL
+         zmTDI23BYi+HkGJpAcW6NxYRW+R9Nuq1itaOoBOTJFyBENwO8UaS6v9nPS42281sNRDP
+         /ftw==
+X-Forwarded-Encrypted: i=1; AFNElJ/6qWudX/VRBXzXjpbO/KEUyVy7xHt6z9M1mdnNe34B88pfzC+7Z4E94exxturEouv6KDIHm67ubLQNcA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWGDcUD/klkE9iJf4MzDzBFv6W6GMvWJx0B2ARr10iXDV46IMi
+	UMoPMqqjjFH2GBHfPV8DH8fKnDNIwMiBE/x8WOlEvqmdfAFapTTCxQQCO4WIlhWmXkUExviPDwH
+	MZIkcF90tTUt1KRkOMazgny7ztmDQThIe0ymehTe884P4rGC4hUIeazkJ2+igTNmIiA==
+X-Gm-Gg: AeBDievahGX53rU7CgRn66rULGT8Jf6qQvb9lsqHKK23b2MhUDikjSLCiyFTGN8kDlJ
+	/1kVETrQQcN0caG2kW2riurQ4FshNrPlj+sKdoblcxUvlNxCNLjao0seccpCsiHYuYPDUPo1TE3
+	Pfq2jgi/L0355RyanqTGy0MYBn9pagsNrF+uASL8Zd+zl9ZVbIdUmAc2sCKS3JKhqDsLxzceQR3
+	rcyU/A7kCSHltgT/BUKegokMiUWGhG3poyDX9W4ZjMvNV1TxA+knkLrgiQ3yRIv4/thzcoyyKou
+	i3oS55BezteutRzHN7zEKVa7IX0z0wYSdzBJFn0lTteOxYNQ45foXiJF9RIYIEe8PHZ6nx2sbpm
+	gWzpJkBPzxf5NIKPIpgWJvD1GvxUVcHhUW7f30kwzmpSuznhhbft55DLCJIcOBdTcaLrEe3ghbC
+	hYuKPDp8tR8iC8w+zSEtwinoPTLY09/Ip3R/R1YEG4JPVbFQ7gM+ndPyc7
+X-Received: by 2002:a05:620a:2848:b0:8d0:82e:7423 with SMTP id af79cd13be357-904d69d8e00mr989744385a.44.1778145043097;
+        Thu, 07 May 2026 02:10:43 -0700 (PDT)
+X-Received: by 2002:a05:620a:2848:b0:8d0:82e:7423 with SMTP id af79cd13be357-904d69d8e00mr989741085a.44.1778145042666;
+        Thu, 07 May 2026 02:10:42 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a86e65fdf6sm3822632e87.78.2026.05.07.02.10.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 May 2026 02:10:40 -0700 (PDT)
+Date: Thu, 7 May 2026 12:10:39 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+Cc: cristian.marussi@arm.com, sudeep.holla@kernel.org, cw00.choi@samsung.com,
+        kyungmin.park@samsung.com, myungjoo.ham@samsung.com,
+        konradybcio@kernel.org, andersson@kernel.org,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        arm-scmi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, jonathanh@nvidia.com,
+        thierry.reding@kernel.org, digetx@gmail.com, conor+dt@kernel.org,
+        krzk+dt@kernel.org, robh@kernel.org
+Subject: Re: [RFC V6 0/8] arm_scmi: vendors: Qualcomm Generic Vendor
+ Extensions
+Message-ID: <mplk3qvyslzazuolwlcgy6fb6ta7ts63x3dq5wwybyejaxpyh3@fctfzjkyxi55>
+References: <20260507062237.78051-1-sibi.sankar@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|CY8PR12MB7122:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6e481c5f-8d0f-4042-9df7-08deac099240
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|366016|376014|1800799024|22082099003|18002099003|56012099003;
-X-Microsoft-Antispam-Message-Info:
-	khRf3uccR9Jr2lyo3G9m1zRRbt3ffgAAwKv037tQDANLKWqcoJaGkb/Jg/CQ0oFD4N8+uERBKpWYgM52oXXe1XIvTvxkMBEuC8AgblGTTISvJXWsBzCIeX1AY5UYSXQTJlngNRIe/XwTVEoj5ng0NEKUF1tVs/OR5nTyvANzgkQKJO39Yr59ul2u1fZWDvs7T2Lc3ce4/eYo/PIwkBn7JY7NrAF1GgRBjZRwpM5JvZV6O+Syx7uitpYiRbCZmzLjOKLgtfiXWvQY1hvEetZ8+zWJ77Dqt4K2XzhknIRJDGue04EhE7ItM4HBVP6Pa2wrT1Bt4KQwsA2wVxDzMmbKAKW8VYtRwA7e9nx1ssCXMsqiHmM5DSFkpvyYUkRqYN0NdLyShjdyvvBX3ii/AKw4XykyRQFY/0C4prPtQzxmvd80tfUVA2z/gev2D6i9Sl2Gv4s1DKqweUWiEb0NvSeugA9XDtmIoWk2CBUSsir6w9lKulnSJ0loBDt8SFgRoERBQdC9Gc1f4vIyZ8qFA/mj2IunpS/AQerUwLW0zKRR8WrSDdDQ+3efiCh+SzV8IkgbJ9aJB5EPISX+Ze0ZboxDtZC3O8D10Vi2yjt9mn/rkQk4lFAGWebICiCbaAaU7EsVSkWRodpQMW0KeTWTRYpefIP6cEFD2URPDV70YDr3v7BI3W+8E8bIWL084zBlozFp
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(376014)(1800799024)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?U0hieFRMMHNSRlJzMkp1eFhkRWw4c0NFSy9VWjVjWHprZXcwTXdpSUI3bVF4?=
- =?utf-8?B?YzZqcjBscWlKYWI2K3YvK2ljZnhydXY4bDNsZVF2djliU2FBQjVaemNSYjN4?=
- =?utf-8?B?U3FUK1p3ejNrWVlqQUhSdlR3SW82K1VNN0l1Y1BDMzI0d0lnV2lodzBqazRo?=
- =?utf-8?B?bVRDUVMvcGdudnNXRHNkQlViYXVrcFRpWW04K1BtaExrUTJGQTB2MGhVYkxS?=
- =?utf-8?B?L0FTSVVNS0xsb3FXSXJBcGk4ZUswUjYzS1hCZ3ZkdGRPSVpaUXBka2dnNHpS?=
- =?utf-8?B?ZDhucjcvVlZZYVhUMlV0ZzRnTXFiblFPQWdySTNTM2hRSFh1VUU4VkFnYThp?=
- =?utf-8?B?UExKNFhlQkhCa2dpZ3k4cUI2a1krSlNGVUZ0ZWNzSXNJMTUzdW4rM1E1SVdJ?=
- =?utf-8?B?allJV2Y1WDFqU0tKMi9uV1RXcEp6UEpHaVY1THM5Y2JXMVgxaGVtY3pCTU5o?=
- =?utf-8?B?MjV3M1NQNW5lTjJzNWt4YlN5SHRNYlAxdnJnWGJYYlNLeTduM2RWUnZrMXBp?=
- =?utf-8?B?R0ZqT2JkMjVYbzU3WjR1WW41bVBndzQxbk9SWC9haFdqRkhzdHVrazA4U2pp?=
- =?utf-8?B?aktzcWEyM3VBYzVVN3hQT1h2cnp2cVg1aEVSVEFTOGJlZ1NmZWdYYVo2Qms1?=
- =?utf-8?B?OGFiQ1F2Z3R6ODZRMWZtQlJVeWhIWWY2RTJjNkg1M2p3a1AwM0VMUzZvcTcy?=
- =?utf-8?B?Zm5iQ2NRMUhNY25vdWRyT01HM2hCN2dPYWdVNUhXUTg2M0xxN2twanEzSDNv?=
- =?utf-8?B?V0wrWDFKaGh4bEh6SGt2TVdVNjhJS1NldFYreTlWS01HVTc3R2FHeXU0dk5D?=
- =?utf-8?B?c1M5M01IMHFPblNLWFpGUG1vNndmaFEyRXI3NVZXZm84djhFVDFuY1dEbWFV?=
- =?utf-8?B?WXJSYWVxN2IvR0NYNFZPdkV3SzZ0MGpUQmZ0MlZTSXFZUTVOeGhFcVFsaGlY?=
- =?utf-8?B?dG5maDE3SS9LN25UbWJSenVDUGhOb2hTQTQrZ1A1Q1dZRzMzdktOTElDc0tQ?=
- =?utf-8?B?Y240SWNubkJtU2VwdnJibFFsYXdTdXdFaGtjL2hwOTNaSUVLTGlqdzhRWFIr?=
- =?utf-8?B?dTVRbkxlZlVWaUcyTlhmdm1oYThSTUhhUTY0bE1yckovSHRTN1ArZ2NyNVBR?=
- =?utf-8?B?KzN3dHYvckZnWDZnWUxEcWRYZjB0WnBNVDR0dkNqYkJsd1NUdmFxSTd3SFUv?=
- =?utf-8?B?NzY5dnpxUnFXYldYeVc3SW9CU0lmVWsvY0MxK0ZCWnJpRmd0NnI2RDFkQUNQ?=
- =?utf-8?B?MkFzUGE4azd2bEoyMy93ZlR5MndvQTFKVHBPUlE2ZGxySEsvRGVZSmlwU214?=
- =?utf-8?B?THgvcWVPejdQZTAwcDZSL3l5RU9HZWJLNEdLZ2xaaHNMZ1NKM1B4MU1mcDVK?=
- =?utf-8?B?SlZ6OUN3S1VCRjgxWjRZNG5scnNkQkhhVGN4MnhoNm1PdXVSQVR5NWVmM2p3?=
- =?utf-8?B?YkljeTdDVDVmdEZEd3E3SzBqemoyZllGeDNjZVQxYUdyYWpUUFhPdUo3dS96?=
- =?utf-8?B?WFpaNU5EOTdlbzVwVkc1NzQ1MUJIQnprZ3lGMEF3cXBhZ2R4dlpGTUJ1QzVB?=
- =?utf-8?B?bDZsbThJUnAzWmkrdUlJNHViNjVnbnV6bVhNbC93QjhGU29qUjgxVE9hSnIx?=
- =?utf-8?B?dktWK2tYaW5SY2EvNWw2WHdhNVJPM3VJa1dMVEQ0Q0pBVVBMTW5ic2JXUnkw?=
- =?utf-8?B?bHIydXlvWlZxZXd1RjZtSVVlVm9JU2NKRWcrY0VGcDRuVTZPaGhNdnoyQkVv?=
- =?utf-8?B?SmcrVzVpV1R6UkJqSU9xQk5OdTZXYmYwVEIwY0I0MFowRSt3eWFrMWNXZTlv?=
- =?utf-8?B?cHM3a0NNRUtuOWF4SksxRlJ2L05iZHBNak5qV3VRTnAybmNmN0V2TDZmb2ZG?=
- =?utf-8?B?MUp4UWlmSnJ3bHVrejU0VkdNT1R0WDRLN1lvTytCNlR6MllQd244LzloMkd6?=
- =?utf-8?B?RWFRUnBTRG80aE9ZdGl4ZzdrK0VaTXBiRDl3UUkzUERjTVRyd1VMUHR4Zklr?=
- =?utf-8?B?czk1cDVLNlBlUWdiN2Zlb2ErTUUyUHo4RVNaT0RtK3F3S0pQdmFtUlp5VkVB?=
- =?utf-8?B?MUZ1b1B1dmlmQWkxWlVvdjl4ZFNJb3Era0RSUlV2a1J4NjJuUEsyTEZ4ZEdt?=
- =?utf-8?B?T2VKMkNQMENGZHROYStEVWJBUml4WFVoVmI5TEpjdEJRTVpNMnhVV20xcXBq?=
- =?utf-8?B?bVdiQjNseTBPWlF5OGgvZzZHUkx2MTZPTE53VkE1SXZodTlkNDBsT21aUmV4?=
- =?utf-8?B?cXBzdEpSaE82OGdvVWdLWFErVHppTHdNRzVWTTNpbHhmVytySkVqaTFRUWtQ?=
- =?utf-8?B?V0cwOFlCUWdzbHNWNHhlTTZ3b3pJb0Q0Y0VsMTFrTUZDNTU4dUsyTk1idkI5?=
- =?utf-8?Q?ruhd3oHGrM57siM8XqrNp0Ed3rq4GwHnZ+jzlTDRLoheM?=
-X-MS-Exchange-AntiSpam-MessageData-1: Z/TWvbySq7oHxA==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e481c5f-8d0f-4042-9df7-08deac099240
-X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2026 07:23:44.2890
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kPl/OuWEEvnrzMUmAA0rw3WO6n2pjOGiBPop5P7iW1mm9/SxXgv7A41VcgPmJkaL1ugXn32nRDExoa5/rK7lRw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7122
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260507062237.78051-1-sibi.sankar@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=TJB1jVla c=1 sm=1 tr=0 ts=69fc5713 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22 a=RJIkCpciCD5dGSa3Y80A:9
+ a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA3MDA5MSBTYWx0ZWRfX8ES1r9jyBUgm
+ AW52DhTq7eqiTzyP7Y934wu9wiD3R5DyfdCgiuMq/1wcpQYzrAyWBWrFrEtIMzOyoOiHWvwyuGt
+ kCP3iiGNl6JPvJASLfR2s9nXiYcKdhFipIQr3yNodXRDgi3pfKTcPfyb49H6nZqG4S8g6jJoTsu
+ TtDPeYyf4TF1eA6nlLQ3g82cwfMTDGI/f/GUrZxDlr5S7Gfb9EQj26Mk+WXytSNdo3t/3D28+m7
+ imPTtkhxFe+3D0VA45ZZDzwtXiaBVN0ZuwHPGwZAdN2jNqbzpJCEwlfMt/ZQHMGDODdet6QImm2
+ DbbaJPXv1LTYJASrhgErHIHkDHISW5GLoGz/Ca3tOm5Lz6dlAcqsW9/3xU8Qgxt1cXGL0ZZzk0u
+ 1PRbSYAqaLkHpuv05CvN8KvwJ0gQV26ehSAvGQ2ztb+6QWS+XQZ7g3YiuFonb/iu2x39FJ3vU4w
+ xxgVRE+vtThExwxT5GA==
+X-Proofpoint-GUID: 1MltQT9e9K8DRR7B2ycB5c_R-jfc2akY
+X-Proofpoint-ORIG-GUID: 1MltQT9e9K8DRR7B2ycB5c_R-jfc2akY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-06_02,2026-05-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 lowpriorityscore=0 malwarescore=0 impostorscore=0 bulkscore=0
+ phishscore=0 priorityscore=1501 adultscore=0 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604200000 definitions=main-2605070091
+
+On Thu, May 07, 2026 at 11:52:29AM +0530, Sibi Sankar wrote:
+> The QCOM SCMI vendor protocol provides a generic way of exposing a number of
+> Qualcomm SoC specific features (like memory bus scaling) through a mixture of
+> pre-determined algorithm strings and param_id pairs hosted on the SCMI
+> controller. On Qualcomm Glymur and Hamoa SoCs, the memlat governor and the
+> mechanism to control the various caches and ram is hosted on the CPU Control
+> Processor (CPUCP) and the method to tweak and start the governor is exposed
+> through the QCOM SCMI Generic Extension Protocol.
 
 
-On 06/05/2026 20:53, Saurav Sachidanand wrote:
-> Fix two bugs in the SW mutex path introduced by commit 6077cfd716fb
-> ("i2c: tegra: Add support for SW mutex register"):
-> 
-> 1. If tegra_i2c_mutex_lock() fails, the function returns without calling
->     pm_runtime_put(), leaking the runtime PM reference acquired by the
->     preceding pm_runtime_get_sync(). Add the missing pm_runtime_put()
->     before returning.
-> 
-> 2. tegra_i2c_mutex_unlock() unconditionally overwrites ret, which may
->     already hold a transfer error from tegra_i2c_xfer_msg(). If the
->     transfer failed but the unlock succeeds, the error is silently lost
->     and the function incorrectly reports success. Use a separate variable
->     for the unlock return value and preserve error priority:
->     transfer error > unlock error > message count.
-> 
-> Fixes: 6077cfd716fb ("i2c: tegra: Add support for SW mutex register")
-
-Although this is fixing issues associated with one patch, this is fixing 
-two different issues and so I think that this should be split into 2 
-patches.
-
-> Signed-off-by: Saurav Sachidanand <sauravsc@amazon.com>
-> ---
->   drivers/i2c/busses/i2c-tegra.c | 10 ++++++----
->   1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index 9fd5ade774a0b..704942d10d69d 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -1656,7 +1656,7 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
->   			  int num)
->   {
->   	struct tegra_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
-> -	int i, ret;
-> +	int i, ret, ret2;
->   
->   	ret = pm_runtime_get_sync(i2c_dev->dev);
->   	if (ret < 0) {
-> @@ -1666,8 +1666,10 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
->   	}
->   
->   	ret = tegra_i2c_mutex_lock(i2c_dev);
-> -	if (ret)
-> +	if (ret) {
-> +		pm_runtime_put(i2c_dev->dev);
->   		return ret;
-> +	}
->   
->   	for (i = 0; i < num; i++) {
->   		enum msg_end_type end_type = MSG_END_STOP;
-> @@ -1698,10 +1700,10 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
->   			break;
->   	}
->   
-> -	ret = tegra_i2c_mutex_unlock(i2c_dev);
-> +	ret2 = tegra_i2c_mutex_unlock(i2c_dev);
->   	pm_runtime_put(i2c_dev->dev);
->   
-> -	return ret ?: i;
-> +	return ret ?: ret2 ?: i;
-
-I can't say I am a fan of this. I wonder if we would be better off 
-removing the return value from tegra_i2c_mutex_unlock() and just WARN if 
-this ever happens? If the unlock did fail, the actual I2C message may 
-still have been sent and the next time we try to send a message I assume 
-that the lock would fail anyway and we would not be able to send further 
-messages.
-
-Jon
+Could you please clarify, does this apply to the common commercial
+Glymur and Hamoa laptops?
 
 -- 
-nvpublic
-
+With best wishes
+Dmitry
