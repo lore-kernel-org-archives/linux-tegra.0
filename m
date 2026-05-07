@@ -1,170 +1,97 @@
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pdx-out-005.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-005.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.13.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1E732B9A9
-	for <linux-tegra@vger.kernel.org>; Thu,  7 May 2026 21:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778187914; cv=pass; b=nb9xV5prN53jsaPMD64gelj9aQZmpvol39jG5BuTH7Vca6WAvJZauhrJ4zqlA43M4g55t/QaqtAA+Zk5oH4tv3mBpHy2GggpFRzuyRrNTv+G95mrmn+5CqTZ1M4zc8prGyfrqMiYfpb76Tn8lPBH59QhqR9vfD/jfcx8RSeE3y0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778187914; c=relaxed/simple;
-	bh=jE+/jUqv7pNoCfzauPI8lFa2VQ2OKNCvpXHgcRT4LRE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q2q4ZMzrmxDhHwni0S6czd7nhMBDOCv5vnBi0alEQEu7E4qYYEHRd4etbP7PqKoUkAiOAjRFhYAaqy9uKOf7yGAStIN+EbRLqivG1dpEay8yU795QQERfwDbMuKNDhByaDdVhd7H2qGC6qzN5eiAIQGK4tT/hF+omE5H4s1Cozo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UQT7y8zJ; arc=pass smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF151607A4;
+	Thu,  7 May 2026 22:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.13.214.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778191940; cv=none; b=QVcRadz1taL3qBImWS7EywPgF3gzacKZymr6Plumoj9c0WUm4cJ1Xa4WU1b+0sOlSX6W/5T1tCK66MUg6nDSJZ9B1FRqYYvEJsZ5kfknez3Uvieegsd5y9IIvuZAy44yzKFlPgxU9sPOlcHBKrYOxVUS9oAverugGc/QT3kceQQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778191940; c=relaxed/simple;
+	bh=5Iz1jW22WJF8MTTgi637YMsleySLpdqtcYdy2AI90bM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oT3Ekmm1RM228C3B8zzrt/DGVIJi+/K4czZBWXDcpmRemlBnJ9ekU6BMhDNMlHzm8ssFxOg6iPBbymbu8tyfL817K4hwxC1RCW43uLfBAJvmltYGm+pu4IPH0267KZLgiWg5zvDO0HL0iD3/MUsxLR9pEjASikvxGW24WvMkcFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=TSYvSS/O; arc=none smtp.client-ip=52.13.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQT7y8zJ"
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-4233e152457so923497fac.1
-        for <linux-tegra@vger.kernel.org>; Thu, 07 May 2026 14:05:12 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1778187912; cv=none;
-        d=google.com; s=arc-20240605;
-        b=Wi/9K58V+/R+SARjGxdhTUrdSxyTfKkY0I6KQkyVOiwdMUJTGmHzqd3XxJ5kdCDdsW
-         NB+OGE3pRKbZwXxsT85mcaFo13ZdxS5gEh1lkeR1OxEDw1ZkY5Q7ug/IGDKOLK1PDwyv
-         LDB/CUK4yDRPViIaNs//f4b8nH9LgegZ2elXsBlkcj1PliNTzfZQHDgs0X12MNwgLuMA
-         NPW+/a7OeOZi/XEFC26iitKJpZiSFigqrkEPTFH6sNIHmp799z5OWlPYqWiTOyepUA3s
-         08+L95/lkCrLKv7E0glBrXq00eTmbIk5JOuDmLoKJ7d0lmjyWxthNy+SbJPUuhupCd6B
-         ws1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=uM69f/OhaRvPDM2WKfYEa4uqX5GcZJHERLXCxzT36H0=;
-        fh=cpv4nNBAXsX/JNLUCw2jEp4C5OK8T3PXQSFoOMdBO8g=;
-        b=DyG6l7G7yn0y2mf33WZrTaKDMHUgdsNeDXBx1u9tP1xpM+ASjU++xGRN2yTTGwA5Gj
-         UPHnSEZcsKlpFtuIfeSvqwHD8Syy0xsty4pqdfoxjWg0MtW2h7JP9hW/OhnE0xY77hg5
-         GtFkPRTchoD64YdqbfuDesd0x1X7KeHyCdtXTxA+XEaVGKiV6mOtGuPf7EjJobLeL+zK
-         Co5mdPTXW4NaHZe44quPNp3QFueeGOPHFtWSfZzoIu9aB3iN3xY/f0fm2U1K/CfwSIk1
-         YRor8apHsEzrytjfL0IFuK+pPD3m9wA3nZejFcjH0hGuCxOba3Yg+5bbE0TLwm48tIDJ
-         sMkA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="TSYvSS/O"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778187912; x=1778792712; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uM69f/OhaRvPDM2WKfYEa4uqX5GcZJHERLXCxzT36H0=;
-        b=UQT7y8zJUNngkSy3gAzw+8rnMY8/4vXj/C4XUhtCXuZKbCwGD1IWospAmNDp/u9H9V
-         cSkI/H6ZBC4CzjZu2TDCmDKKSEQPgRdM8rrTSnu4gcJGMNVEYa1+bFqCs6kuPIERcSwa
-         AI5AdSSbFFPiTo5Ta0VV2TpmL2PewmKgmzqYVBJvyvSs34Z8C24fdEmKzUX1zT1EIqhf
-         xivwaVHal57PDDpLd83JYYT312jJRAWhT5qJAsbEMizoQuSjfDJmBf0IbltnBAGDBuZj
-         F7en4wISZsCo8VHYNqRg6vWpT7zaVBcibcye+4tXhU+mKTNrVJEPWfZJooijv/Leu5zy
-         bbLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778187912; x=1778792712;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=uM69f/OhaRvPDM2WKfYEa4uqX5GcZJHERLXCxzT36H0=;
-        b=oMDBLKOnIYTLH0Hh8CySg2VUtdIMVc/rSJgPEGwE2S1pNRs50kxqG+l+S+TsnWxtHS
-         1XayWQOFwH7qeyiWuX2dSz/drN1ndPxooD+LkRg5yseni6itlZkPvIJCX81Ga4Zk0dB4
-         CJQbbRYnS39wG9TW5y4Fdg1oL8kZmDNkfpDxOw/jbBr0GjCv5YdAWQ+sFRpFrTMqUI5K
-         QH1VxMvJoWBtO1ADINVzAk+ImGKEKAVlhff4eNVVyKKd5yJJ+rwUksLeM45wJ3eOeHOl
-         dwDSBJbIH6QmZvyIbmStncZaBaMSVb829LjDb2KNUaPVai1EVIxdI46J+7+uQnxUnFYo
-         TLvw==
-X-Forwarded-Encrypted: i=1; AFNElJ+CJzgRcT4G3vpBnsUS4d6DEVle0FF989Ixpg6Jn2t39TN6OL4QqSAQXTaUk7kLpSOuThWKs0rDXm5ggA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywo/mKfdCaYOgyJUAKuUGKCtexqJPGGWI438UUr3zr4jeKSYqdt
-	vO1kllsXQA10yPNIfs1ojpWayQD1ypYLXj/ktWjrGOzaF5c+wvTfwkWJGM7fP7IKQ8NZ3zpPBhF
-	mPEDwcq8pYIe/+4fjnEN94qsRCwsEECY=
-X-Gm-Gg: AeBDieskswilOMfHezz3tEbsuLb9vBDo/gM9FvFY3Do7AjeFkdbcObAAIeFBoETFjFU
-	2nhCmfdAD/2bhaC3Gc7nRvJtmTfkvBmiFdinXSLyd6EpN7Q8tzrSnSRtKrMhc+mzxgrfmGqeyTD
-	deFeRx73nUbt0a6ZmUxncUwMFrL9FaDdXTsTRpiNLSEvpDFY4TIyMemmNmpKvoDRmy0HCXKVUM7
-	VF7gu1amiqEU1QwQUyczGqq5ty6IoiH5dqDehvtJ+LSy+KczIyVztKE0Dac+7HgRL5fQK8CVqWx
-	YZMyN6A1jkNdRO0J8DIngfzHXE0Ud9pdO30LhQ==
-X-Received: by 2002:a05:6870:9120:b0:40a:605b:518a with SMTP id
- 586e51a60fabf-434f64f0e2bmr6401085fac.27.1778187911702; Thu, 07 May 2026
- 14:05:11 -0700 (PDT)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1778191939; x=1809727939;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Me6vW1zg1ICKmqO5GfPSrEQwd7B1POaq2QXbncQv7ds=;
+  b=TSYvSS/Or7Shu2z0cd0AEuPxQzTsIqVy4s5jx1n23PVlkQk5J+lodWNc
+   caMOsvXqHJBGCo3+uzJtgaNejg4uSrL54DRFtxE/Bwt0PstjO3/VRkEiW
+   Ut5p+bB4d0UvcKPF6Dhz4hiP2bp2x3SrKbEa3xB+MIcWgNDvMJFpjs6FV
+   P+q554BA+ulvsfglJ/NRp/+FxSWcDPfRu0UksNA49t6dCnXW2n+5EvOCl
+   pCt8S6+DV1UOfgdSgqP0Dwoa8ujLUKD7u8KkkQeeniXWUARZfry7EpcF7
+   tIhu8IH6npjEZoMbevKTsDkIAUCNLpnSky9nHqdGnZkIJSeM0rmC24jC0
+   A==;
+X-CSE-ConnectionGUID: DdjVrFrBQsKPNHwT5hJwmg==
+X-CSE-MsgGUID: TL3LNifsQIyQrsIuYv0ESQ==
+X-IronPort-AV: E=Sophos;i="6.23,222,1770595200"; 
+   d="scan'208";a="19124264"
+Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
+  by internal-pdx-out-005.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2026 22:12:15 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [205.251.233.182:4691]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.41.42:2525] with esmtp (Farcaster)
+ id 966878fe-4ee1-48c7-9c60-ac4acb547e0f; Thu, 7 May 2026 22:12:14 +0000 (UTC)
+X-Farcaster-Flow-ID: 966878fe-4ee1-48c7-9c60-ac4acb547e0f
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.37;
+ Thu, 7 May 2026 22:12:13 +0000
+Received: from dev-dsk-sauravsc-1a-8777b848.eu-west-1.amazon.com
+ (172.19.118.34) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.37; Thu, 7 May 2026
+ 22:12:11 +0000
+From: Saurav Sachidanand <sauravsc@amazon.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+CC: Akhil R <akhilrajeev@nvidia.com>, Kartik Rajput <kkartik@nvidia.com>,
+	Thierry Reding <treding@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>,
+	<linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Saurav Sachidanand <sauravsc@amazon.com>
+Subject: [PATCH v2 0/2] i2c: tegra: fix error handling in tegra_i2c_xfer()
+Date: Thu, 7 May 2026 22:11:43 +0000
+Message-ID: <20260507221145.62183-1-sauravsc@amazon.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260506195319.44810-1-sauravsc@amazon.com>
+References: <20260506195319.44810-1-sauravsc@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260507022213.29290-1-dennylin0707@gmail.com>
- <20260507022213.29290-2-dennylin0707@gmail.com> <CAGEkeHc2MiJenQnyHa8wwYxpZfaBwZpy3=iXJCjAjvXrs9UsiQ@mail.gmail.com>
-In-Reply-To: <CAGEkeHc2MiJenQnyHa8wwYxpZfaBwZpy3=iXJCjAjvXrs9UsiQ@mail.gmail.com>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date: Thu, 7 May 2026 23:04:51 +0200
-X-Gm-Features: AVHnY4Jo1IyTHyb9HmNlTOZ-S9HjOMOViUseCpdHPNPhWjhasIYCpZvP3cqqYK8
-Message-ID: <CAPybu_1RvjRQ5ySkJum3AzTX9-bxmNmkcMMK7Q-Q14tZPSQHnQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] media: tegra-video: vi: fix invalid u32 return
- value in format lookup
-To: Denny Lin <dennylin0707@gmail.com>
-Cc: mchehab@kernel.org, gregkh@linuxfoundation.org, luca.ceresoli@bootlin.com, 
-	thierry.reding@kernel.org, jonathanh@nvidia.com, skomatineni@nvidia.com, 
-	digetx@gmail.com, hverkuil+cisco@kernel.org, dan.carpenter@linaro.org, 
-	linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D036UWC004.ant.amazon.com (10.13.139.205) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-Hi Denny
+Fix two bugs in the SW mutex path introduced by commit 6077cfd716fb
+("i2c: tegra: Add support for SW mutex register"):
 
-On Thu, May 7, 2026 at 6:06=E2=80=AFAM Denny Lin <dennylin0707@gmail.com> w=
-rote:
->
-> Hi,
->
-> The media CI reports a missing Signed-off-by from Ricardo Ribalda,
-> but this patch was submitted directly by me and has not been handled
-> by any committer yet.
->
-> I believe this is a false positive.
+1/2: Fix pm_runtime reference leak when tegra_i2c_mutex_lock() fails.
+2/2: Make tegra_i2c_mutex_unlock() return void with WARN to avoid
+     silently losing transfer errors.
 
-It is indeed a false positive. Sorry about that
+Changes since v1:
+- Split into two patches (Jon)
+- Make tegra_i2c_mutex_unlock() return void with WARN instead of
+  propagating the error value (Jon)
 
-Regards!
->
-> Could you please confirm?
->
-> Thanks,
-> Hungyu
->
-> On Wed, May 6, 2026 at 7:22=E2=80=AFPM Hungyu Lin <dennylin0707@gmail.com=
-> wrote:
-> >
-> > tegra_get_format_fourcc_by_idx() returns a u32 but uses -EINVAL to
-> > signal an out-of-bounds index. This results in a large unsigned
-> > value being returned, which may be interpreted as a valid fourcc.
-> >
-> > Returning 0 is not a valid fourcc either. This condition should
-> > never happen, so use WARN_ON_ONCE() to catch unexpected out-of-bounds
-> > access and return a valid fallback format instead.
-> >
-> > Suggested-by: Hans Verkuil <hverkuil+cisco@kernel.org>
-> > Fixes: 3d8a97eabef0 ("media: tegra-video: Add Tegra210 Video input driv=
-er")
-> > Cc: stable@vger.kernel.org
-> > Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> > Signed-off-by: Hungyu Lin <dennylin0707@gmail.com>
-> > ---
-> >  drivers/staging/media/tegra-video/vi.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/m=
-edia/tegra-video/vi.c
-> > index f14cdc7b5211..456134a9e8cf 100644
-> > --- a/drivers/staging/media/tegra-video/vi.c
-> > +++ b/drivers/staging/media/tegra-video/vi.c
-> > @@ -80,8 +80,8 @@ static int tegra_get_format_idx_by_code(struct tegra_=
-vi *vi,
-> >  static u32 tegra_get_format_fourcc_by_idx(struct tegra_vi *vi,
-> >                                           unsigned int index)
-> >  {
-> > -       if (index >=3D vi->soc->nformats)
-> > -               return -EINVAL;
-> > +       if (WARN_ON_ONCE(index >=3D vi->soc->nformats))
-> > +               return vi->soc->video_formats[0].fourcc;
-> >
-> >         return vi->soc->video_formats[index].fourcc;
-> >  }
-> > --
-> > 2.34.1
-> >
->
+v1: https://lore.kernel.org/all/20260506195319.44810-1-sauravsc@amazon.com/
 
+Saurav Sachidanand (2):
+  i2c: tegra: fix pm_runtime leak on mutex_lock failure
+  i2c: tegra: make tegra_i2c_mutex_unlock() return void
 
---=20
-Ricardo Ribalda
+ drivers/i2c/busses/i2c-tegra.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
+
+-- 
+2.47.3
+
