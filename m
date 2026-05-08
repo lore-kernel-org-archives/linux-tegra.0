@@ -1,179 +1,105 @@
-Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com [113.46.200.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3339258CD7;
-	Fri,  8 May 2026 02:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B1337D135
+	for <linux-tegra@vger.kernel.org>; Fri,  8 May 2026 07:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778207634; cv=none; b=pjoKoTtR1RF4jaE7K0n7msOz8heLtqUF7EDGpt98xCekuTYFRjw/pVfH/3JMtHhoVqaf3Mjx3lpom0YF3yp1uj1TGbHCtzH90/xbx3apHi7ahPaFJagdgDbHMcl4I8zneCOS3tweKjnM4JaCXatVlDHPN0gPUItVMukdDvBDwZo=
+	t=1778225392; cv=none; b=UGhsRPHYkjkLo2nlrprqkLcNsjzVw1qhN0aXydVZFF7gfqVrFevSeEScSFeZ6emrfWFmF6qB64DWfTeGLi0W/r0fXS9mxgtdt67yY20a9wo8JxWl8iPuvWqBjGVaVSgjkmmhMNqWGOohXaD+rOdTp652CxDRuSH1cYd7WWk4Tvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778207634; c=relaxed/simple;
-	bh=33Kzi1QqQaOxup3HteWzWB4sskTQYnde6JYurTvGCjw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NGFsSrISImWZEmFCLT2F7IFQSfspoJG6D3KPJOHmxc2Tzusn3HajrdKzbjvVe5MWA76cjQaq2eUvQcUvBl+tNDA+6EUAFtaSdGWQzE7pfPJekxipFjTigWNYR9CRE9ugeQcrnb2do92PGnGalGIHqjoxx5BXou79F2jAJgbCNaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=113.46.200.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.163.127])
-	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4gBXzc50SkzKmT6;
-	Fri,  8 May 2026 10:26:04 +0800 (CST)
-Received: from kwepemf200017.china.huawei.com (unknown [7.202.181.10])
-	by mail.maildlp.com (Postfix) with ESMTPS id E8FCF40572;
-	Fri,  8 May 2026 10:33:40 +0800 (CST)
-Received: from [10.67.121.58] (10.67.121.58) by kwepemf200017.china.huawei.com
- (7.202.181.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 8 May
- 2026 10:33:39 +0800
-Message-ID: <a9324a65-9da9-4e35-8c78-a054fb24bc8d@hisilicon.com>
-Date: Fri, 8 May 2026 10:33:39 +0800
+	s=arc-20240116; t=1778225392; c=relaxed/simple;
+	bh=QA9hR0bSYIQ5D64x8sjWe6pmUWzl9IwQcukTQJ+tl4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NhhJO4tCMSCFRN+h0Ji4Hybw17o1s28hRFLpoZYvLWvFatc6gt1Y1p+HH1vWm0SZzdAN3I8069R+RwK7VsYuIPWGk8lgSduHWY+ie9AAozr2ddnFYFIn3aIOp1s+NMWRrNqrgQeIMUKrS46RHOrSLiTVbZEYh/rhLVYikpVPzkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SIL+Qctd; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SIL+Qctd"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2ba3b9bcf69so54135ad.0
+        for <linux-tegra@vger.kernel.org>; Fri, 08 May 2026 00:29:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1778225388; x=1778830188; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gtzgOVlx3+XiZk8bPWEWW2C41hmZeWg0/ZKf/2wFHh8=;
+        b=SIL+QctdCUe4ThHAKyC2VTVRxYqC+O/JUjABuZg0by0/tlfAPE4fr5woozEPS5x9A0
+         VN3mIPlm6CUOV+++R5USnChLTnBHKE3VItqsZhe2hewwXQajnRhl4hBq4hxgNkUq5UzW
+         P9XjjiZhW4lTzhIxhHwqwmhcalA6tuGIgCMVMvfWkMVM9s9vinTFzGiAwFA9c3hBktsz
+         fKrxcJr2QMNwZhlsXsvKxdJ/YM1SR3/dbd4I/eY6Z1wBI6SiYQ3hgfXBxr8Q2uAewUB1
+         ditHU67ZvdJsJz5Iu2ZlDG+9eeByTvs26J+fhDESmz1TsYo+8ZI2EBoSkVag/yTByI06
+         0cAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778225388; x=1778830188;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gtzgOVlx3+XiZk8bPWEWW2C41hmZeWg0/ZKf/2wFHh8=;
+        b=GSWV4pmhIEdzNEQwZQojhaCfeb+s5WcnPjy9v97Xn5HurAVX1mG87CPBJOinjZYyJr
+         XDKoUfYu1sgtHODfiqqav40nV6XWtaugL9DjHdJoEql3tXP+uE3oiiXaUCamnnNTO/Sx
+         I1VOTVb4vzWP5wkKxEpRY+l2hqNIm6LRIhz6M9xlTY9buLSc4aOx6mmETXUkehZeYrNS
+         3zZeN2J2gMpOwO6sDdVO9DL24aiOzkQq5sN7s6qxoEgqLGnSwv7Ww5yyBU/rxJ5iz+HO
+         OUEusGy5Kp3F6dRXPD7AamIisD8ZLag4fgGhx7/aepQE7oBTurpXmUPU9blGKNEHJhBw
+         kgBQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/lEh0r9ZcMSJ2WWuGpXpokL2tBdmy9KWQzk7CzWoSdg4yYEXmP49qN51NQkpaG1g/ybuu98PDcQxy5nA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVCKFTFrRm68mt8Pa+xWiAwnrzMJRa+NBK33y8bEJeGihSyIfL
+	N8RP0R2/fZ6Qicj3PQ4uE9Pba0s/eYfKGj3A4YJ17La9IBqJChhAUbMzXb9rcxw3eA==
+X-Gm-Gg: Acq92OFWYSzTx6c9DorATQpkIppaNAju6HMamZqrXMF/F7xl4CLnn2nCBxm9amO5THV
+	uTQuinxE+sCfQD1kKtxxqASeArepIEbY+FMTFiA3yX1mkNfOrox7oHm7delSJO1nHOxVKlt/Jjz
+	n6dbPDgepwXWeZpb2lMdR1lO2pV8GS+Je1lbkyXJRzhUCFeguu/z/0tBTvHLjCR4Z1AcTi5xWRj
+	VqLuqUslKj4iivR5RjAfGmvvCQcdwZOSqyJTTP1LYVvktWoKcFOGwLDw52ioTz8Os9EToARdH06
+	ediPalPYECcnpFBfwI3g8nqMK1Py5kc+kz+5IbgNpcVG4dH2f4vxLOF6s6hiWvypvI3U2Mfp1yL
+	AvQ3kd8t9SfgLGQuaQ0d6K1XR9cA/5dojSrfnndp9uiA6y1MeFfvB9w/C+Lfn9903SldwTUqeI2
+	emiy5Ak2aDPwiFiTC/M6rwjXnr93G0ISD1Uy1LIAC1F+4iwwwRgvWH535veb5h9bCtFSWx
+X-Received: by 2002:a17:903:3c6d:b0:2b2:70ba:305c with SMTP id d9443c01a7336-2bae9a8bf41mr2914125ad.8.1778225386989;
+        Fri, 08 May 2026 00:29:46 -0700 (PDT)
+Received: from google.com (44.234.124.34.bc.googleusercontent.com. [34.124.234.44])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2baf1e9fd64sm10355055ad.69.2026.05.08.00.29.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 May 2026 00:29:46 -0700 (PDT)
+Date: Fri, 8 May 2026 07:29:39 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: iommu@lists.linux.dev, Jonathan Hunter <jonathanh@nvidia.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	Robin Murphy <robin.murphy@arm.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Krishna Reddy <vdumpa@nvidia.com>, Will Deacon <will@kernel.org>,
+	David Matlack <dmatlack@google.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
+	Samiullah Khawaja <skhawaja@google.com>,
+	Mostafa Saleh <smostafa@google.com>
+Subject: Re: [PATCH 1/9] iommu/arm-smmu-v3: Add struct arm_smmu_cmd to
+ represent the HW format command
+Message-ID: <af2Q47MaAECnRzvY@google.com>
+References: <0-v1-b7dc0a0d4aa0+3723d-smmu_no_cmdq_ent_jgg@nvidia.com>
+ <1-v1-b7dc0a0d4aa0+3723d-smmu_no_cmdq_ent_jgg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] cpufreq: CPPC: add autonomous mode boot parameter
- support
-To: Sumit Gupta <sumitg@nvidia.com>, <rafael@kernel.org>,
-	<viresh.kumar@linaro.org>, <pierre.gondois@arm.com>,
-	<ionela.voinescu@arm.com>, <zhenglifeng1@huawei.com>, <corbet@lwn.net>,
-	<skhan@linuxfoundation.org>, <rdunlap@infradead.org>,
-	<mario.limonciello@amd.com>, <linux-pm@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <linux-tegra@vger.kernel.org>, <treding@nvidia.com>,
-	<jonathanh@nvidia.com>, <vsethi@nvidia.com>, <ksitaraman@nvidia.com>,
-	<sanjayc@nvidia.com>, <mochs@nvidia.com>, <bbasu@nvidia.com>
-References: <20260424201814.230071-1-sumitg@nvidia.com>
- <a4ed690a-50d6-4bfe-8810-86a75d7b51e3@hisilicon.com>
- <bc06c3ab-0286-4e1e-a615-e704b267c21a@nvidia.com>
-Content-Language: en-US
-From: Jie Zhan <zhanjie9@hisilicon.com>
-In-Reply-To: <bc06c3ab-0286-4e1e-a615-e704b267c21a@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemf200017.china.huawei.com (7.202.181.10)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1-v1-b7dc0a0d4aa0+3723d-smmu_no_cmdq_ent_jgg@nvidia.com>
 
-
-
-On 5/5/2026 8:29 PM, Sumit Gupta wrote:
-> Hi Jie,
+On Fri, May 01, 2026 at 11:29:10AM -0300, Jason Gunthorpe wrote:
+> Like STE/CD, add a wrapper struct around the u64 array to represent the
+> already FIELD_PREP'd command data. Unlike the STE/CD this is a u64
+> because the command submission path will have the swap to le64.
 > 
+> This makes the API clearer when a u64 is referring to a formatted
+> command and makes the following changes easier to follow.
 > 
-> On 27/04/26 13:54, Jie Zhan wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> Hi Sumit,
->>
->> In general, I would expect this parameter only toggles on auto_sel by
->> default.  IIUC, other CPPC configurations (min/max/desired perf, EPP,
->> enable) are optional and not closely related to this.
->>
->> Why including those stuff here?
->>
->>
->> Please see other questions inline.
->>
->> Thanks!
->> Jie
+> Move the command constants out of the struct and into an enum alongside
+> the rest of the constants defining the HW format so the entire HW format
+> is self contained and independent of struct arm_smmu_cmdq_ent.
 > 
-> These together provide a known, predictable autonomous mode boot.
-> min/max/desired seeding ensures HW has a known starting bound (BIOS
-> may leave them unset).
-> EPP=PERFORMANCE_PREF is needed as BIOS defaults often bias toward
-> energy saving, and admins on many CPU systems shouldn't have to script
-> per CPU sysfs writes at every boot to undo that.
-Hi Sumit,
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 
-The min/max/desired perf might be a slightly different case, but the EPP
-value should probably follow the default if there is?
-Otherwise, users may complain that their BIOS defaults don't work and find
-out it's driver's fault.
+Reviewed-by: Pranjal Shrivastava <praan@google.com>
 
-Alternatively, we may also make an assumption that we ignore BIOS EPP
-config, but not sure if that's suitable?
-
-(Perhaps let's just discuss in the bottom trunk because the main issue is
-pretty much the same.)
->>
->> On 4/25/2026 4:18 AM, Sumit Gupta wrote:
->>> Add a kernel boot parameter 'cppc_cpufreq.auto_sel_mode' to enable
->>> CPPC autonomous performance selection on all CPUs at system startup.
->>> When autonomous mode is enabled, the hardware automatically adjusts
->>> CPU performance based on workload demands using Energy Performance
->>> Preference (EPP) hints.
->>>
->>> When auto_sel_mode=1:
->>> - Configure all CPUs for autonomous operation on first init
->>> - Set EPP to performance preference (0x0)
->>> - Use HW min/max_perf when available; otherwise initialize from caps
->>> - Clamp desired_perf to bounds before enabling autonomous mode
->>> - Hardware controls frequency instead of the OS governor
->>>
->>> The boot parameter is applied only during first policy initialization.
->>> Skip applying it on CPU hotplug to preserve runtime sysfs configuration.
->>>
->>> This patch depends on patch [2] ("cpufreq: Set policy->min and max
->>> as real QoS constraints") so that the policy->min/max set in
->>> cppc_cpufreq_cpu_init() are not overridden by cpufreq_set_policy()
->>> during init.
->>>
->>> Reviewed-by: Randy Dunlap <rdunlap@infradead.org> (Documentation)
->>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
->>> ---
->>> v[1] -> v2:
->>> - Call cppc_set_enable() unconditionally so CPPC is enabled for both
->>>    OS-driven and autonomous modes.
->> Why adding this in v2?
->> This looks like a separate issue since setting CPPC Enable reg doesn't seem
->> to be related with autonomous control.
-> 
-> In v2, moved it out of the auto_sel specific check.
-> Agree that cppc_set_enable() is general CPPC enablement and can be split
-> into a separate patch in v3 if preferred.
-> 
-Yeah it should be a separate patch I think.
->>> - Init min/max from caps instead of cppc_cpufreq_update_perf_limits()
->>>    as policy->min/max aren't yet populated.
->>>
->>> [1] https://lore.kernel.org/lkml/20260317151053.2361475-1-sumitg@nvidia.com/
->>> [2] https://lore.kernel.org/lkml/20260423084731.1090384-2-pierre.gondois@arm.com/
->>> ---
->>>   .../admin-guide/kernel-parameters.txt         | 13 +++
->>>   drivers/cpufreq/cppc_cpufreq.c                | 89 +++++++++++++++++--
->>>   2 files changed, 97 insertions(+), 5 deletions(-)
->>>
-...
->>> +
->>> +             policy->cur = cppc_perf_to_khz(caps,
->>> +                                            cpu_data->perf_ctrls.desired_perf);
->>> +
->>> +             /* EPP is optional - some platforms may not support it */
->>> +             ret = cppc_set_epp(cpu, CPPC_EPP_PERFORMANCE_PREF);
->> Why setting this to PERFORMANCE by default?
->> A platform can have its own default EPP value.  This would override that.
-> 
-> The boot option targets performance oriented use cases on many CPU
-> systems, avoiding sysfs scripting across all CPUs on every boot.
-> The BIOS default EPP (often biased toward energy saving) would otherwise
-> steer HW away from that goal. Admins can still re-tune EPP at runtime via
-> the existing energy_performance_preference_val sysfs.
-> 
-Yeah, avoiding scripting makes sense for sure.
-The thing is how do we do this nicely.
-
-For now we need to consider follow either the BIOS default or the driver
-default.
-They seem to be exclusive since there isn't a clear way to support both at
-the same time.
-
-So, are we going to support the BIOS default case?
-For example, users can config a default EPP in the BIOS setup menu.
->>> +             if (ret && ret != -EOPNOTSUPP)
->>> +                     pr_warn("Failed to set EPP for CPU%d (%d)\n", cpu, ret);
->>> +             else if (!ret)
->>> +                     cpu_data->perf_ctrls.energy_perf = CPPC_EPP_PERFORMANCE_PREF;
->>> +
-...
+Thanks,
+Praan
