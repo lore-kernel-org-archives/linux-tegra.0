@@ -1,80 +1,75 @@
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com [74.125.224.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABADC175A99
-	for <linux-tegra@vger.kernel.org>; Thu,  7 May 2026 23:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D7C1E9919
+	for <linux-tegra@vger.kernel.org>; Fri,  8 May 2026 01:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778196116; cv=none; b=tjn2h3qEPd/z5KwgcOHeQYQAI+Z+pIztTLdqRtpySCPeuAq5MKioLJ3nFZ9JHoSbT0fzu1oK4fOgmOJ3wAwTDYaU5CGfJt19hsVhfSMbrAgnCtlU5ysLlthYXYcfIlaD8gV8Ll44mmMwPKlB0nnwOUkfQGzh76HdlxBFqLiJKdw=
+	t=1778205453; cv=none; b=DV/NEupUUZlwrVX4Nq+H/YQ/sOlG5Brfl0rIyHVLIx63IE2q80aO40BOE18hcl3OOzNABvBNcOt/fFzafkOo5w7QV5OHSqBIhZpB8kgod7E8jYn8ftI3LVRYA1DMM3lfMk7z4H+Pv/jvdiXNbjJFfSPRjEcljGGk8agS6P9qNn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778196116; c=relaxed/simple;
-	bh=/7jMOqiqfS5E2Aa8V7nTqrJGxlbfE7BVeWQEGpFRgbQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kt9zNKnkp6skqMyWhwvxUsMPJyOIckNwLL7RIkeY4lQiW/kcuv8abxdYdr7q2jfUjLHw17AVW/n4iYvfPwsdjDlNEGgcxJwf9J6/Lo8sG5GzEykoIWw5FXhSJrhhzZT8ERvGekSlFVY9c473Ds9hcs+1a2lJ2nCjPNrkqntWU0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sBpkTEJp; arc=none smtp.client-ip=209.85.215.182
+	s=arc-20240116; t=1778205453; c=relaxed/simple;
+	bh=0YjRBe2CBFMPAOctK7QuiXIxfcyjyHVuiiuEWUAXfQ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U3DeJEccAPeePFN1m11Fly5394WglX2ehNIWlPxxX5pHUWPuTkSRzMXFjHrkbIOLZ/bS5IRcQJY8faeQ94VTO6/+TjXvxicxDz0HZ/T7LDBSraDm8gglTudnayfCe+hd1WIQgFAhLGdGjLKVGS96V2U4WjrvLepfHRyT89COt2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BwJ4j4qA; arc=none smtp.client-ip=74.125.224.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sBpkTEJp"
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-c8021c8c42fso508348a12.3
-        for <linux-tegra@vger.kernel.org>; Thu, 07 May 2026 16:21:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BwJ4j4qA"
+Received: by mail-yx1-f42.google.com with SMTP id 956f58d0204a3-651c5d525f6so1707231d50.3
+        for <linux-tegra@vger.kernel.org>; Thu, 07 May 2026 18:57:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778196115; x=1778800915; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1778205452; x=1778810252; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gqk0bhbr2l3f7IDwzLFxsnylMpESKM7ghHU7R8b35rk=;
-        b=sBpkTEJpzYsRNV0AbinK7c5oWYCuTeSL4wLPYHAN30/Zi4ptIEROuxetZ5tRtUY3Er
-         KHtcGrmU0YP2TOY2slqFOcdm744tj3vemm4QeVWURNkWctYZbvXR3b+fcaDpkoG5XsKJ
-         bmbA+ZS6PzwLj2hGbg5dGyYTu7cUzbDeOeMg4+edSqlv4whe7npShrpHpmLUA9En/2wz
-         fhen9+jjGUtwua7lBqrBYudoKYM9NAUjA0+XWXWTPskN3wv6qKJgC5zte139+3U8tpNI
-         Y++NSp1WzsGR+toETJ2XwdvbSyqQGWDuxa9vAsnqSof0cE9QE2uQXH7y9xP37V6DgSJ8
-         ET+Q==
+        bh=SuIfT0xIr/EuF6poYtCVM6j6KRvCMpUYP1PE4jbf4xk=;
+        b=BwJ4j4qA7A7VqmtgUAtErNV133xom3YqA4BzargXBBjFtXUa4Cc6mbTqS95Ri8HXqH
+         CEFJyie1YJ85nme7CFyRJlXmQdg6ywseKKbFy6CfwbNexMfSp4Ns08ZC2RSPd38qpjn3
+         wdzs/Fm7aNV71pJvmwDVCZrdiomwv4+exW7lfwQ+aLzoB+6Cs17JXUYmlAXTGR24NoJ3
+         OUBHJUBmwWUDrLH55Yh7c0mK4dQBz1cYsgLH/offVPLNyWWHx1nB5M9wmNasC8RUx/jD
+         T40ZgRJnHAb+HngVVtmLH31Cf+53U+p9elJolN7BFPsBjDr4l9Dx+JxVrVwZtWbjhEUy
+         kI3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778196115; x=1778800915;
+        d=1e100.net; s=20251104; t=1778205452; x=1778810252;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gqk0bhbr2l3f7IDwzLFxsnylMpESKM7ghHU7R8b35rk=;
-        b=Xwpk/xrEZg+e9+xw4GiRplnazMNjq8Pown1mCoSPCe2x3kKyzCwnacWFTAn04DpaPq
-         obds2Z/dJqva+W5zBd90Qt9eFYfrAtEnxA7+HWurt3liMeUfVWztQeqg5IDvrd7NrUba
-         NW1a7ggz7aSH5LQeC8zXTcSghG47Wvh3FBKedXrxFc8pY7ordEB92zySIVfFZ0u3bvnu
-         VGQ/wF8yuy5sBcxrs7abV3/a0Uq1xUKPK1iW9UFDcdixoZ89PWGy1jEJJg/SM5Ft/WyD
-         QlOeVU40RhEpf9OV+Eed5A8fTshmiJt+KNYG/jZ4fxWF+k/jv1k3Qr1RK+DbfO3BXon5
-         u2AA==
-X-Forwarded-Encrypted: i=1; AFNElJ82Oi9Ni8mtopn6RaUFwis5CtShV2g1/mC9NEG7/jYQNYUbkjNXn+JqwlFOIjG9IolNPr+2UhUP2rT6/Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNvAFP8duVmajYHAaTrtnTDkWOi0WkbyYpi+kfpSDl5SoIwpl5
-	8R2DkF/0EO/xTZPHhW8kWvNxSf6vdNonIX8tqhCT287J8s5s4IeQ9Rfd
-X-Gm-Gg: Acq92OFnWUX8jm6iMyHNSdZUdrxlb0npKFo23G1ON+9wset4A46QNxjTMFCfCh/FqFq
-	XmqaZG6vYhGpMQpZsiEOtV3VuYEOX9Iqj90aFeb6zC3Q7g4Rwdp1btCtgVhgFFteNHU3LhqVpK6
-	jGmlppB5eQr5qHClcXEbGFY5amwHTstmSEn7JgCV48KLImSVFHDVqJs5WPDRfZqqIUUl4v2mmoL
-	vh3PgACiNU5a7kRyfbYq9ErRcYuGpM42/zCnsl/FSKSUqiPXMW4ODO0ggPslUc/6pWkypbbmbJD
-	iU1PFc6Yn5if5T3nVJQWE9awEmrm5vHF7KstA+8P1mKrc82eKttwWvAHZJJtHEvxMbPJrcoicMn
-	MqPyUOZYYl9JblKzs8WDw0jW/AXcJVvEoEt+4mREuLod3KUX5OK3CApYVg9yQYr9qmUpUNSGYsZ
-	VAJ2dtDG+dGWlvXuH4ZmlHkVRAQS778i4rxZZUjbmA8WU9aMWrFjGfJDu3uKHH9ejF4tdXmYYjN
-	gIqbanOGEzUejnuS5y+ANvkUcxJJ5XqpGo=
-X-Received: by 2002:a17:903:28c:b0:2b2:45b7:306e with SMTP id d9443c01a7336-2baf0cf2c98mr2125795ad.3.1778196110299;
-        Thu, 07 May 2026 16:21:50 -0700 (PDT)
-Received: from ryzen ([2601:644:8000:5b5d:7285:c2ff:fe45:8a32])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2bae752f766sm9064475ad.2.2026.05.07.16.21.48
+        bh=SuIfT0xIr/EuF6poYtCVM6j6KRvCMpUYP1PE4jbf4xk=;
+        b=s7q+BTgOX2Y55hTGzmuEVl46wIFYl15P2JEhLrsMHh7TeB4itw6aE8cwWs/UYbEyEk
+         8NNLnhvoLBTm7pDZAu2jA+8PpzV+Z50e5PGStY/aVCdrgQtLP22bu7rJd9zVSCQ86mJV
+         JHvUwy30ooUR3HcDlbwwtHPAV6xd6dyo6XER+65DhGHK6ddM4TMB1Bab594AVJe4AB7k
+         uxwYXQyDpq5flTARICW6MStzN25tRspdQUkblj4alDaUyeTJ1mX/wIOazd3p5kUwihDK
+         xF8MAiVMeMuuqy/PJOY0pqmh/097mTioObZdSO3hkHiFgtBDLgstL0kJLFrev3VJQdTj
+         4R0w==
+X-Forwarded-Encrypted: i=1; AFNElJ+Gzsfb/hLVQglz6V24nAgnI7ACBwfEbrcABnmpoh3+kNi/6TG2ypFKJtd8JW0Vvp5Uq/BGzWWanqH9gw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJTCeY5DTc3p1Nx85XUgshclv5saFI0wmuXd4YOXrXuJMy6qe4
+	F5f0Bx3EQrXw7CBuWROlZn0YnyPgPlDAwUemIN5z48v1Mhpgve28FIAH
+X-Gm-Gg: Acq92OG4AD1MNiZppX91c36TqUIGnZl4r/P+a4VKxwZFW32wwZ+y89JyeRzponkFcO5
+	sZx3gPdVn2HAvPdbdAAnrgd7FPG+iBThL5HagxgESYp20Lov5aLqaThKVN8CJhwvazKz4fSt11X
+	J+E+6SrymbSH/gplMIPWPpZGe4F+w4DNEthDMa7w+4rEHmpC4GxiwPbJ5Sw9GyfgRuFCHnPgk2U
+	fGH63MDTVMnSz3k2rIhXUOTShIVitugV7b4c0Um6+YLDBkUBG0pFy+S/mMBmHwCGjbyOjwqPmo2
+	3s/uZwSNrTXMppzdxelDUVkYPDKVLinyTwS6msOVx7AcTxcATJ1sk5dxMjFi8aQ0bh7lEWu2zN8
+	2L75Ji76VY/JqpB757F/XYeSD8/bOMU8h6v1kemcqnyw/9THUlfVVdx+ugaC5SYN7fIrggkJJMj
+	nI7ssnOe3t1QLEyZKebzxuiRh2yQ9vO+Wa2ARwLLHdGKU8Eqt5ytrMZQyK46ahKKFVpsdBrkpKs
+	grNhI9Kz5AFZVycAm/xbBOHSOaYB6mK71s=
+X-Received: by 2002:a53:cf0d:0:b0:651:c8a5:fdd0 with SMTP id 956f58d0204a3-65c79df7703mr8504287d50.46.1778205451625;
+        Thu, 07 May 2026 18:57:31 -0700 (PDT)
+Received: from tux ([2601:7c0:c37e:2360::111d])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-65d96c36171sm102786d50.20.2026.05.07.18.57.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 May 2026 16:21:49 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-sound@vger.kernel.org
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
+        Thu, 07 May 2026 18:57:31 -0700 (PDT)
+From: Ethan Tidmore <ethantidmore06@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
 	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
-	linux-kernel@vger.kernel.org (open list),
-	llvm@lists.linux.dev (open list:CLANG/LLVM BUILD SUPPORT:Keyword:\b(?i:clang|llvm)\b)
-Subject: [PATCH] ASoC: tegra: tegra210-mixer: Use div_u64() for 64-bit division
-Date: Thu,  7 May 2026 16:21:31 -0700
-Message-ID: <20260507232131.438589-1-rosenp@gmail.com>
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>,
+	Kees Cook <kees@kernel.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ethan Tidmore <ethantidmore06@gmail.com>
+Subject: [PATCH] memory: tegra: Fix possible null pointer dereference
+Date: Thu,  7 May 2026 20:57:16 -0500
+Message-ID: <20260508015716.652347-1-ethantidmore06@gmail.com>
 X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -84,48 +79,44 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A MIPS allmodconfig build with LLVM fails during modpost:
+The function tegra114_emc_find_timing() has the possibility of returning
+null and it's return value 'timing' is dereferenced before it is
+checked for null.
 
-  ERROR: modpost: "__udivdi3"
-  [sound/soc/tegra/snd-soc-tegra210-mixer.ko] undefined!
+Place dereference after null pointer check.
 
-tegra210_mixer_configure_gain() divides a 64-bit BIT_ULL() value by the
-fade duration. On 32-bit MIPS, clang emits a call to __udivdi3 for that
-plain C division, but that compiler helper is not exported to modules.
+Detected by Smatch:
+drivers/memory/tegra/tegra114-emc.c:520 tegra114_emc_prepare_timing_change()
+warn: variable dereferenced before check 'timing' (see line 515)
 
-Use div_u64() for the inverse duration calculation so the driver uses the
-kernel's 64-bit division helper instead of emitting a compiler runtime
-call.
-
-Assisted-by: Codex:GPT-5.5
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
+Fixes: dce208b5405f4 ("memory: tegra: Add Tegra114 EMC driver")
+Signed-off-by: Ethan Tidmore <ethantidmore06@gmail.com>
 ---
- sound/soc/tegra/tegra210_mixer.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/memory/tegra/tegra114-emc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/tegra/tegra210_mixer.c b/sound/soc/tegra/tegra210_mixer.c
-index f05617b5f433..bfdd457f740c 100644
---- a/sound/soc/tegra/tegra210_mixer.c
-+++ b/sound/soc/tegra/tegra210_mixer.c
-@@ -7,6 +7,7 @@
- #include <linux/clk.h>
- #include <linux/device.h>
- #include <linux/io.h>
-+#include <linux/math64.h>
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-@@ -157,8 +158,8 @@ static int tegra210_mixer_configure_gain(struct snd_soc_component *cmpnt,
- 			if (i == DURATION_N3_ID)
- 				val = mixer->duration[id];
- 			else if (i == DURATION_INV_N3_ID)
--				val = (u32)(BIT_ULL(31 + TEGRA210_MIXER_PRESCALAR) /
--					    mixer->duration[id]);
-+				val = div_u64(BIT_ULL(31 + TEGRA210_MIXER_PRESCALAR),
-+					      mixer->duration[id]);
- 			else
- 				val = gain_params.duration[i];
- 		}
+diff --git a/drivers/memory/tegra/tegra114-emc.c b/drivers/memory/tegra/tegra114-emc.c
+index be6c699cb656..fc3bf1a28630 100644
+--- a/drivers/memory/tegra/tegra114-emc.c
++++ b/drivers/memory/tegra/tegra114-emc.c
+@@ -512,14 +512,16 @@ static int tegra114_emc_prepare_timing_change(struct tegra_emc *emc,
+ 	enum emc_dll_change dll_change;
+ 	unsigned int pre_wait = 0;
+ 	u32 val, mask;
+-	bool next_dll_enabled = !(timing->emc_mode_1 & 0x1);
+ 	bool last_dll_enabled = !(last->emc_mode_1 & 0x1);
+ 	bool update = false;
++	bool next_dll_enabled;
+ 	unsigned int i;
+ 
+ 	if (!timing)
+ 		return -ENOENT;
+ 
++	next_dll_enabled = !(timing->emc_mode_1 & 0x1);
++
+ 	if (next_dll_enabled == last_dll_enabled)
+ 		dll_change = DLL_CHANGE_NONE;
+ 	else if (next_dll_enabled)
 -- 
 2.54.0
 
