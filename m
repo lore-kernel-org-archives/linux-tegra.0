@@ -1,63 +1,63 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C50C4219EE
-	for <linux-tegra@vger.kernel.org>; Fri,  8 May 2026 17:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032318F7D
+	for <linux-tegra@vger.kernel.org>; Fri,  8 May 2026 17:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778259646; cv=none; b=BHbrPuKiaV+keq69w4qzOMy1GTaEnDxsgDtaBJY09VLDEa4ZRYwZ1UVFDBOE6BI5q8YE1IGaG8a0ylfyiPy/v2GbitLlROACmeQbdiMhssb+SgcIhvhWWgD5xMLpo10pSOQ/uNE6JhvFUMH7+R1aOVLpfHVfg4uH2EDLktMUjTs=
+	t=1778260644; cv=none; b=jSD2YgPaiEsWraWsDZojGCKufl5ccCPQWDc3bSvwOORJMot3gC/18qNVJts8PkzHnjtaFDXMTvgv3mqA66EnIEhHRDMXCc/sJVgLGpn8SElmFpTcQZ/UvUU/9b7aUyqmYiK/fZ5GuRVSGoP0XK6Fl07vBM4QeoJqD79AX01gxW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778259646; c=relaxed/simple;
-	bh=LQZWr2unc8sVlAWk2yUZEeONw0MTY23swA4fe2VvNAE=;
+	s=arc-20240116; t=1778260644; c=relaxed/simple;
+	bh=QvqG1+1JxnbU/5V2L4JChPDrJZMs7pfUYqcMmN79wGk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GbpNTW06bdOmx9Ii5HuIEtxHayGt7Az2FbtAcum2bUzLJgWL6aI4+5MrtA+DB4M4ZeOBzHqND3W3rCqbzu+sm0Jju7dvkLwcd1IkPKo7dmkNIZZhAv7mf52FHQtXT56hqcxuZq1CGx0Y68nDOsbVV4leKEDYC1EL4dDocyMMrt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TwyLLJJZ; arc=none smtp.client-ip=209.85.214.178
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rdh0e9Tsv5Y0v82Ht/32d4kpSeRPys7iE3bg0ANSBFzTFsdFUYZ39T97qzKJlAKMwd8zxnB0n8DzJiY74AmcfMt4rWp99E2tFbPIndrdTYzP26cnkE/rbzBq1ShCOmqXVbdI8S/pPEwdWIkJfTvR9RBUwM/ntpYceutS6ES0Ry8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D4noQf+m; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TwyLLJJZ"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2b2e8b95bdbso1045ad.0
-        for <linux-tegra@vger.kernel.org>; Fri, 08 May 2026 10:00:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D4noQf+m"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2ba3b9bcf69so325ad.0
+        for <linux-tegra@vger.kernel.org>; Fri, 08 May 2026 10:17:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1778259641; x=1778864441; darn=vger.kernel.org;
+        d=google.com; s=20251104; t=1778260642; x=1778865442; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KSX0WcNOlkvsZCAblteUbbAr85dTr3acCULxV7BG/80=;
-        b=TwyLLJJZHduO6wDBtBxPIh8tV1UdyoMhVnWBJgcPbXxrfiwozBGjAShmPuGHO7TwXb
-         ir6r8taijW1c9p53qVaaJILIx19DZ7mgUSja71/+sJRuO9OlNEssHW+RJrCtBz28r0dt
-         MeU2CMQnUyl/edBTRXZeMc41+LTrRllLixTzCVRMsWg+NMzOJbJ8OP37vWPMmvZBH7UQ
-         nQDuzu0mhob6nF0fclSALTE/WaTJVnp51cZz5CIa+k/rduYn6UKx08V4pNQ0YVYQgtFV
-         minW/mhRXdzeTEGZhoSrBSYeHMDieV6nWR5HcizoC/vT/veFVH2+dh+0OQW9bxToZLaQ
-         QlSA==
+        bh=TI7X52J6aApGzF9MwcE5Wp5s+0QmxzGTZI8IYa2JNaY=;
+        b=D4noQf+m+vt0DecUjylSBEeobNneyrIe2cLEy+w5zlb9IeDFRF2Z8pR9MnSkuLyZqT
+         g9Mj/boT4KIqatNDPvQmOswHpqEEfnq/N6GMOYFZ88Iy9hV2UKq9ABwPAFWvezIVUUrC
+         XkN6OtspkGLBIZpYfI7H/DWeSqPUYWtDcgCTwkGOvwHym9Stp5jhQQ97/SQtXYQtgvWG
+         pW7NVgaNKT+J2RxXrvvTvYoy7QsthDWOFrJYUWBbi6qhQP2vVpCODTBj9pU56jT6wJ0/
+         dQ29cbDMDRxgDR+FB97YSM0NZEgocx0BVU7tne8V3peW8sfDbAEOiJpZoXGjzsjAclTk
+         AFUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778259641; x=1778864441;
+        d=1e100.net; s=20251104; t=1778260642; x=1778865442;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KSX0WcNOlkvsZCAblteUbbAr85dTr3acCULxV7BG/80=;
-        b=sVk/P/a1ppF5XsV1M/dRBZoKVmqlZ6g1u9MX6UV0j0RahzYoAjJupjwmSOcG2x/UeL
-         npfRVVotUr+stAAuUTyT/lCq8Qqpr9Q1hxICpvkO2+FHwUA8bEQghEy+tqFi5/3MTEH7
-         BSXl13mgc4Vdi+Hhs35v7kllBKyzD14Sznq/oD8fmXHm4hYZWH3nOmyjEtZ0AtIIcT+x
-         TlHI1QPWpRRISnnbb1bhnSWVkOs713vLA4F7joLz5eDehpsE2q+527SMDeFWBiaug5u5
-         L6UoOjAAC0iv5mtdC06ysyEtvNHKqhZ0SGQ9jpPF6EfU6sws+n4wteX6t9ACYc+z/L3p
-         hcOA==
-X-Forwarded-Encrypted: i=1; AFNElJ+VYi2uW8ZEOYxIWD91eZV284Qq3ZwLZcg3czeLiTHv0W8aRonzgOZj48/YFo04R5lgQWu/2TEi86dijA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8ujbnX7e9KiqPI4DVHBzqYuIzRRDN1NgamQXBP0wiSVsR3VXk
-	OGoZfaLQp1eRPGqUsDn0wZ8QeMNPxGkayEtwClQcdPTTlPKLNuSnG+kEwmzSc6VxPA==
-X-Gm-Gg: Acq92OHPfOE1QObyFGbdiXCT0X/b3qeptVZOjZ+qWtT1DI8lY4xFSbS0xDcg5aWPWCz
-	eCgx3BxCChmweDy+TdOcXF3N01NmzXRNBrgzcnpgKPWn2GoLKaA8icIyZXF1dGRPqW+VPBIENrW
-	g7U0nDoiNHH07PSAi3Od4rM/vr3WoxvBT3SavqgqM4eSpqoK//LKHY85Mey4cCQ1hqQ0makuM4R
-	ohM3/xdhEMK5FSQi9UwJ6Lh5ihxTbGS2+RYbPRemyH6c0FGR8IXTk6pNc/NVdwRMIgVp4OOMr+/
-	j9ZOd/o81aIdnV8lKFZCefVEvblPsjBCTtVlN9Ka9+T3lvAAdEpvZ+Mr/m1oisDrnmSeA67kC2z
-	fBUFjNJulvV9TPdwhYWd80B84WDTqdH/9dqk06YZJlx+fKVbdsrZd3MpbHlDZVivf9enumDaaeg
-	AB+42q9erZeMd+77SG8rQIX85gMLbEbQ8bm6aRRy/X2bpJ3oEKAwZq02JC555wVzJtN1Ki
-X-Received: by 2002:a17:902:da87:b0:2ba:f71:57a8 with SMTP id d9443c01a7336-2bae9e663eamr4007225ad.10.1778259640757;
-        Fri, 08 May 2026 10:00:40 -0700 (PDT)
+        bh=TI7X52J6aApGzF9MwcE5Wp5s+0QmxzGTZI8IYa2JNaY=;
+        b=bsy1/udPBXi8pMNvdKjIcXjaQYcXwxWsVIAihgr7GSEGwtSvBXeYQBjhv8tBEF3iuT
+         70aaCO2DdTNjrrOituoYTEQge6M+PYeUVB8me1QDYNYuzjAcUlfl1mmxX0b+R085jyOl
+         h/Cp77MUy1I8IcJ2Ph/AbPz1axL9XNYnn/blpQ6tMmvq+aduT5B9hbSoje4J7442QAjp
+         EFQuRV057dTTLu9Jpsyi9F0M4jVrvPiJxJyaipGisJd9KstfV3fEZEyPIhsQzAhKLKze
+         TkStYxCBq2o86fPJmmh/K7STJexhCRIXsQOTqj+oesgZjqF2YNh0pTxiFonz296MQn35
+         Lh6Q==
+X-Forwarded-Encrypted: i=1; AFNElJ8Ksbt3dyYia7lrWG5tR4H5F1Yx0bqXAZxBrAPrPtjt38/MdlsV3eGapR6tI7JqIQjN0jasLEyH3D/fwg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+PEAZN+rRdHG/+3Kd/AXJ+8IM/r6eSEMEoQKRVazWyDb7yPCh
+	NQaY2VCzQsDP47Zm8/34Zegvufzde1zLGA0yhwMd769uVUIR3DOe+QbaHwxB2GBpAQ==
+X-Gm-Gg: Acq92OFTm3l5WL0QfRNXIoZEYLFD3tIkondNPRBmoSkqjrGjXoqiwGjgQOhpW9Ckejr
+	KwmkKxUUKezQPWMgxj2vXwPLafImLevL53JYWGE27dpNPYYLdqoXZa0Nt8egKKSsK0BBsyQ9S9N
+	Zepz4OJ1hO3uUjg9M7KbvKiqrMDYriSwrFTnHzbvFBbpgNOokEka4wO2F65Pdxsm7EteiwgE/uM
+	BFH+lPvE/Gn1ADCqFeIC5CbjcvISRou7PMVoKwillHUQrxQswylx0Q4OxQUx8dvgj00j7uZKTOb
+	hQft6cZ8BnY6/26xHBdCRfluHC2RdvqpvCEDdR3UYM0xeMCsjvcL1haB1C3j/8g2UFPjDpKk5FL
+	EMJJLBMMngsR2whJdPugDvxhUKRdFfOElFvcEteLisE42JWgLx7ke3bXf3JWKVtbVc9HQiY8T6u
+	lLPJLuAthkGg/ejmPxdsfCexSmU46DS0fXsnnbgbbhXyx7p4vsNUvcPilDKgmq+t4HzOzT
+X-Received: by 2002:a17:902:cecd:b0:2ae:45cc:aeb6 with SMTP id d9443c01a7336-2bc74753517mr64435ad.6.1778260641297;
+        Fri, 08 May 2026 10:17:21 -0700 (PDT)
 Received: from google.com (44.234.124.34.bc.googleusercontent.com. [34.124.234.44])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2baf1d26944sm25742125ad.10.2026.05.08.10.00.36
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-367c2ccfbeasm311186a91.13.2026.05.08.10.17.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 May 2026 10:00:39 -0700 (PDT)
-Date: Fri, 8 May 2026 17:00:32 +0000
+        Fri, 08 May 2026 10:17:20 -0700 (PDT)
+Date: Fri, 8 May 2026 17:17:14 +0000
 From: Pranjal Shrivastava <praan@google.com>
 To: Jason Gunthorpe <jgg@nvidia.com>
 Cc: iommu@lists.linux.dev, Jonathan Hunter <jonathanh@nvidia.com>,
@@ -70,13 +70,13 @@ Cc: iommu@lists.linux.dev, Jonathan Hunter <jonathanh@nvidia.com>,
 	Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
 	Samiullah Khawaja <skhawaja@google.com>,
 	Mostafa Saleh <smostafa@google.com>
-Subject: Re: [PATCH 3/9] iommu/arm-smmu-v3: Use the HW arm_smmu_cmd in cmdq
- submission functions
-Message-ID: <af4WsCVOlOFBzy_Z@google.com>
+Subject: Re: [PATCH 5/9] iommu/arm-smmu-v3: Remove CMDQ_OP_CFGI_CD_ALL from
+ arm_smmu_cmdq_build_cmd()
+Message-ID: <af4amt7Pzmq-xpLf@google.com>
 References: <0-v1-b7dc0a0d4aa0+3723d-smmu_no_cmdq_ent_jgg@nvidia.com>
- <3-v1-b7dc0a0d4aa0+3723d-smmu_no_cmdq_ent_jgg@nvidia.com>
- <af2ebtfgOPzJMXFK@google.com>
- <20260508160041.GF9254@nvidia.com>
+ <5-v1-b7dc0a0d4aa0+3723d-smmu_no_cmdq_ent_jgg@nvidia.com>
+ <af2w01YI01Av0Wg5@google.com>
+ <20260508160236.GG9254@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -85,61 +85,52 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260508160041.GF9254@nvidia.com>
+In-Reply-To: <20260508160236.GG9254@nvidia.com>
 
-On Fri, May 08, 2026 at 01:00:41PM -0300, Jason Gunthorpe wrote:
-> On Fri, May 08, 2026 at 08:27:26AM +0000, Pranjal Shrivastava wrote:
-> > >  /* Should be installed after arm_smmu_install_ste_for_dev() */
-> > > @@ -4823,7 +4826,8 @@ static int arm_smmu_device_reset(struct arm_smmu_device *smmu)
-> > >  {
-> > >  	int ret;
-> > >  	u32 reg, enables;
-> > > -	struct arm_smmu_cmdq_ent cmd;
-> > > +	struct arm_smmu_cmdq_ent ent;
+On Fri, May 08, 2026 at 01:02:36PM -0300, Jason Gunthorpe wrote:
+> On Fri, May 08, 2026 at 09:45:55AM +0000, Pranjal Shrivastava wrote:
+> > On Fri, May 01, 2026 at 11:29:14AM -0300, Jason Gunthorpe wrote:
+> > > Nothing uses this, just dead code.
+> > > 
+> > > Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+> > > ---
+> > >  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 3 ---
+> > >  1 file changed, 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> > > index b3ef001ce80d23..ef0907b1a2204f 100644
+> > > --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> > > +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> > > @@ -290,9 +290,6 @@ static int arm_smmu_cmdq_build_cmd(struct arm_smmu_cmd *cmd_out,
+> > >  		cmd[0] |= FIELD_PREP(CMDQ_CFGI_0_SID, ent->cfgi.sid);
+> > >  		cmd[1] |= FIELD_PREP(CMDQ_CFGI_1_LEAF, ent->cfgi.leaf);
+> > >  		break;
+> > > -	case CMDQ_OP_CFGI_CD_ALL:
+> > > -		cmd[0] |= FIELD_PREP(CMDQ_CFGI_0_SID, ent->cfgi.sid);
+> > > -		break;
+> > >  	case CMDQ_OP_CFGI_ALL:
+> > >  		/* Cover the entire SID range */
+> > >  		cmd[1] |= FIELD_PREP(CMDQ_CFGI_1_RANGE, 31);
 > > 
-> > This shouldn't be uninitialized, we only seem to be setting ent.opcode
-> > later in the function. 
+> > CMDQ_OP_CFGI_CD_ALL is also present in arm-smmu-v3-iommufd.c
+> > I'm wondering if we should remove this from the iommufd.c file too?
 > 
-> Yes, that's how the existing code is.
+> > This op code seems to be unused since 5.15, if a guest is running the
+> > same Linux driver, it will never generate this command anyway.
 > 
->         struct arm_smmu_cmdq_ent cmd;
+> Yes
+>  
+> > Unless we care about Guest VMs running non-Linux OSes, 
 > 
->         cmd.opcode = CMDQ_OP_CFGI_ALL;
->         arm_smmu_cmdq_issue_cmd_with_sync(smmu, &cmd);
+> We certainly do :)
 > 
->                 cmd.opcode = CMDQ_OP_TLBI_EL2_ALL;
->                 arm_smmu_cmdq_issue_cmd_with_sync(smmu, &cmd);
+> And who knows, Linux might start using it someday!
 > 
->         cmd.opcode = CMDQ_OP_TLBI_NSNH_ALL;
->         arm_smmu_cmdq_issue_cmd_with_sync(smmu, &cmd);
-> 
-> > Since arm_smmu_cmdq_build_cmd reads other fields
-> > of ent to build the cmd, we are potentially sending stack garbage in ent
-> 
-> Ah, it is tricky, it doesn't:
-> 
-> static int arm_smmu_cmdq_build_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
-> {
->         memset(cmd, 0, 1 << CMDQ_ENT_SZ_SHIFT);
->         cmd[0] |= FIELD_PREP(CMDQ_0_OP, ent->opcode);
-> 
->         switch (ent->opcode) {
+> Guest emulation has to cover all the commands a guest is allowed to
+> execute, and that is what the iommufd code is doing.
 
-Right!
+Alright, it makes sense to keep it in iommufd fir diverse guests.
+No further concerns.
 
->         case CMDQ_OP_TLBI_EL2_ALL:
->         case CMDQ_OP_TLBI_NSNH_ALL:
->                 break;
-> [..]
->         case CMDQ_OP_CFGI_ALL:
->                 /* Cover the entire SID range */
->                 cmd[1] |= FIELD_PREP(CMDQ_CFGI_1_RANGE, 31);
->                 break;
-> 
-> Only opcode is used, so it's "fine"
-> 
-> Later patches remove ent and this trickyness so let's just leave it:
-
-Ack. Sure. No strong feelings here. 
-
+Thanks,
 Praan
