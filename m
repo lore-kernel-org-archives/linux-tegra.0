@@ -1,122 +1,179 @@
-Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com [74.125.224.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com [113.46.200.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D7C1E9919
-	for <linux-tegra@vger.kernel.org>; Fri,  8 May 2026 01:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3339258CD7;
+	Fri,  8 May 2026 02:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778205453; cv=none; b=DV/NEupUUZlwrVX4Nq+H/YQ/sOlG5Brfl0rIyHVLIx63IE2q80aO40BOE18hcl3OOzNABvBNcOt/fFzafkOo5w7QV5OHSqBIhZpB8kgod7E8jYn8ftI3LVRYA1DMM3lfMk7z4H+Pv/jvdiXNbjJFfSPRjEcljGGk8agS6P9qNn4=
+	t=1778207634; cv=none; b=pjoKoTtR1RF4jaE7K0n7msOz8heLtqUF7EDGpt98xCekuTYFRjw/pVfH/3JMtHhoVqaf3Mjx3lpom0YF3yp1uj1TGbHCtzH90/xbx3apHi7ahPaFJagdgDbHMcl4I8zneCOS3tweKjnM4JaCXatVlDHPN0gPUItVMukdDvBDwZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778205453; c=relaxed/simple;
-	bh=0YjRBe2CBFMPAOctK7QuiXIxfcyjyHVuiiuEWUAXfQ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U3DeJEccAPeePFN1m11Fly5394WglX2ehNIWlPxxX5pHUWPuTkSRzMXFjHrkbIOLZ/bS5IRcQJY8faeQ94VTO6/+TjXvxicxDz0HZ/T7LDBSraDm8gglTudnayfCe+hd1WIQgFAhLGdGjLKVGS96V2U4WjrvLepfHRyT89COt2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BwJ4j4qA; arc=none smtp.client-ip=74.125.224.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BwJ4j4qA"
-Received: by mail-yx1-f42.google.com with SMTP id 956f58d0204a3-651c5d525f6so1707231d50.3
-        for <linux-tegra@vger.kernel.org>; Thu, 07 May 2026 18:57:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778205452; x=1778810252; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SuIfT0xIr/EuF6poYtCVM6j6KRvCMpUYP1PE4jbf4xk=;
-        b=BwJ4j4qA7A7VqmtgUAtErNV133xom3YqA4BzargXBBjFtXUa4Cc6mbTqS95Ri8HXqH
-         CEFJyie1YJ85nme7CFyRJlXmQdg6ywseKKbFy6CfwbNexMfSp4Ns08ZC2RSPd38qpjn3
-         wdzs/Fm7aNV71pJvmwDVCZrdiomwv4+exW7lfwQ+aLzoB+6Cs17JXUYmlAXTGR24NoJ3
-         OUBHJUBmwWUDrLH55Yh7c0mK4dQBz1cYsgLH/offVPLNyWWHx1nB5M9wmNasC8RUx/jD
-         T40ZgRJnHAb+HngVVtmLH31Cf+53U+p9elJolN7BFPsBjDr4l9Dx+JxVrVwZtWbjhEUy
-         kI3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778205452; x=1778810252;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SuIfT0xIr/EuF6poYtCVM6j6KRvCMpUYP1PE4jbf4xk=;
-        b=s7q+BTgOX2Y55hTGzmuEVl46wIFYl15P2JEhLrsMHh7TeB4itw6aE8cwWs/UYbEyEk
-         8NNLnhvoLBTm7pDZAu2jA+8PpzV+Z50e5PGStY/aVCdrgQtLP22bu7rJd9zVSCQ86mJV
-         JHvUwy30ooUR3HcDlbwwtHPAV6xd6dyo6XER+65DhGHK6ddM4TMB1Bab594AVJe4AB7k
-         uxwYXQyDpq5flTARICW6MStzN25tRspdQUkblj4alDaUyeTJ1mX/wIOazd3p5kUwihDK
-         xF8MAiVMeMuuqy/PJOY0pqmh/097mTioObZdSO3hkHiFgtBDLgstL0kJLFrev3VJQdTj
-         4R0w==
-X-Forwarded-Encrypted: i=1; AFNElJ+Gzsfb/hLVQglz6V24nAgnI7ACBwfEbrcABnmpoh3+kNi/6TG2ypFKJtd8JW0Vvp5Uq/BGzWWanqH9gw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJTCeY5DTc3p1Nx85XUgshclv5saFI0wmuXd4YOXrXuJMy6qe4
-	F5f0Bx3EQrXw7CBuWROlZn0YnyPgPlDAwUemIN5z48v1Mhpgve28FIAH
-X-Gm-Gg: Acq92OG4AD1MNiZppX91c36TqUIGnZl4r/P+a4VKxwZFW32wwZ+y89JyeRzponkFcO5
-	sZx3gPdVn2HAvPdbdAAnrgd7FPG+iBThL5HagxgESYp20Lov5aLqaThKVN8CJhwvazKz4fSt11X
-	J+E+6SrymbSH/gplMIPWPpZGe4F+w4DNEthDMa7w+4rEHmpC4GxiwPbJ5Sw9GyfgRuFCHnPgk2U
-	fGH63MDTVMnSz3k2rIhXUOTShIVitugV7b4c0Um6+YLDBkUBG0pFy+S/mMBmHwCGjbyOjwqPmo2
-	3s/uZwSNrTXMppzdxelDUVkYPDKVLinyTwS6msOVx7AcTxcATJ1sk5dxMjFi8aQ0bh7lEWu2zN8
-	2L75Ji76VY/JqpB757F/XYeSD8/bOMU8h6v1kemcqnyw/9THUlfVVdx+ugaC5SYN7fIrggkJJMj
-	nI7ssnOe3t1QLEyZKebzxuiRh2yQ9vO+Wa2ARwLLHdGKU8Eqt5ytrMZQyK46ahKKFVpsdBrkpKs
-	grNhI9Kz5AFZVycAm/xbBOHSOaYB6mK71s=
-X-Received: by 2002:a53:cf0d:0:b0:651:c8a5:fdd0 with SMTP id 956f58d0204a3-65c79df7703mr8504287d50.46.1778205451625;
-        Thu, 07 May 2026 18:57:31 -0700 (PDT)
-Received: from tux ([2601:7c0:c37e:2360::111d])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-65d96c36171sm102786d50.20.2026.05.07.18.57.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 May 2026 18:57:31 -0700 (PDT)
-From: Ethan Tidmore <ethantidmore06@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>,
-	Kees Cook <kees@kernel.org>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ethan Tidmore <ethantidmore06@gmail.com>
-Subject: [PATCH] memory: tegra: Fix possible null pointer dereference
-Date: Thu,  7 May 2026 20:57:16 -0500
-Message-ID: <20260508015716.652347-1-ethantidmore06@gmail.com>
-X-Mailer: git-send-email 2.54.0
+	s=arc-20240116; t=1778207634; c=relaxed/simple;
+	bh=33Kzi1QqQaOxup3HteWzWB4sskTQYnde6JYurTvGCjw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NGFsSrISImWZEmFCLT2F7IFQSfspoJG6D3KPJOHmxc2Tzusn3HajrdKzbjvVe5MWA76cjQaq2eUvQcUvBl+tNDA+6EUAFtaSdGWQzE7pfPJekxipFjTigWNYR9CRE9ugeQcrnb2do92PGnGalGIHqjoxx5BXou79F2jAJgbCNaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=113.46.200.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.163.127])
+	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4gBXzc50SkzKmT6;
+	Fri,  8 May 2026 10:26:04 +0800 (CST)
+Received: from kwepemf200017.china.huawei.com (unknown [7.202.181.10])
+	by mail.maildlp.com (Postfix) with ESMTPS id E8FCF40572;
+	Fri,  8 May 2026 10:33:40 +0800 (CST)
+Received: from [10.67.121.58] (10.67.121.58) by kwepemf200017.china.huawei.com
+ (7.202.181.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 8 May
+ 2026 10:33:39 +0800
+Message-ID: <a9324a65-9da9-4e35-8c78-a054fb24bc8d@hisilicon.com>
+Date: Fri, 8 May 2026 10:33:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] cpufreq: CPPC: add autonomous mode boot parameter
+ support
+To: Sumit Gupta <sumitg@nvidia.com>, <rafael@kernel.org>,
+	<viresh.kumar@linaro.org>, <pierre.gondois@arm.com>,
+	<ionela.voinescu@arm.com>, <zhenglifeng1@huawei.com>, <corbet@lwn.net>,
+	<skhan@linuxfoundation.org>, <rdunlap@infradead.org>,
+	<mario.limonciello@amd.com>, <linux-pm@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <linux-tegra@vger.kernel.org>, <treding@nvidia.com>,
+	<jonathanh@nvidia.com>, <vsethi@nvidia.com>, <ksitaraman@nvidia.com>,
+	<sanjayc@nvidia.com>, <mochs@nvidia.com>, <bbasu@nvidia.com>
+References: <20260424201814.230071-1-sumitg@nvidia.com>
+ <a4ed690a-50d6-4bfe-8810-86a75d7b51e3@hisilicon.com>
+ <bc06c3ab-0286-4e1e-a615-e704b267c21a@nvidia.com>
+Content-Language: en-US
+From: Jie Zhan <zhanjie9@hisilicon.com>
+In-Reply-To: <bc06c3ab-0286-4e1e-a615-e704b267c21a@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemf200017.china.huawei.com (7.202.181.10)
 
-The function tegra114_emc_find_timing() has the possibility of returning
-null and it's return value 'timing' is dereferenced before it is
-checked for null.
 
-Place dereference after null pointer check.
 
-Detected by Smatch:
-drivers/memory/tegra/tegra114-emc.c:520 tegra114_emc_prepare_timing_change()
-warn: variable dereferenced before check 'timing' (see line 515)
+On 5/5/2026 8:29 PM, Sumit Gupta wrote:
+> Hi Jie,
+> 
+> 
+> On 27/04/26 13:54, Jie Zhan wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> Hi Sumit,
+>>
+>> In general, I would expect this parameter only toggles on auto_sel by
+>> default.  IIUC, other CPPC configurations (min/max/desired perf, EPP,
+>> enable) are optional and not closely related to this.
+>>
+>> Why including those stuff here?
+>>
+>>
+>> Please see other questions inline.
+>>
+>> Thanks!
+>> Jie
+> 
+> These together provide a known, predictable autonomous mode boot.
+> min/max/desired seeding ensures HW has a known starting bound (BIOS
+> may leave them unset).
+> EPP=PERFORMANCE_PREF is needed as BIOS defaults often bias toward
+> energy saving, and admins on many CPU systems shouldn't have to script
+> per CPU sysfs writes at every boot to undo that.
+Hi Sumit,
 
-Fixes: dce208b5405f4 ("memory: tegra: Add Tegra114 EMC driver")
-Signed-off-by: Ethan Tidmore <ethantidmore06@gmail.com>
----
- drivers/memory/tegra/tegra114-emc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+The min/max/desired perf might be a slightly different case, but the EPP
+value should probably follow the default if there is?
+Otherwise, users may complain that their BIOS defaults don't work and find
+out it's driver's fault.
 
-diff --git a/drivers/memory/tegra/tegra114-emc.c b/drivers/memory/tegra/tegra114-emc.c
-index be6c699cb656..fc3bf1a28630 100644
---- a/drivers/memory/tegra/tegra114-emc.c
-+++ b/drivers/memory/tegra/tegra114-emc.c
-@@ -512,14 +512,16 @@ static int tegra114_emc_prepare_timing_change(struct tegra_emc *emc,
- 	enum emc_dll_change dll_change;
- 	unsigned int pre_wait = 0;
- 	u32 val, mask;
--	bool next_dll_enabled = !(timing->emc_mode_1 & 0x1);
- 	bool last_dll_enabled = !(last->emc_mode_1 & 0x1);
- 	bool update = false;
-+	bool next_dll_enabled;
- 	unsigned int i;
- 
- 	if (!timing)
- 		return -ENOENT;
- 
-+	next_dll_enabled = !(timing->emc_mode_1 & 0x1);
-+
- 	if (next_dll_enabled == last_dll_enabled)
- 		dll_change = DLL_CHANGE_NONE;
- 	else if (next_dll_enabled)
--- 
-2.54.0
+Alternatively, we may also make an assumption that we ignore BIOS EPP
+config, but not sure if that's suitable?
 
+(Perhaps let's just discuss in the bottom trunk because the main issue is
+pretty much the same.)
+>>
+>> On 4/25/2026 4:18 AM, Sumit Gupta wrote:
+>>> Add a kernel boot parameter 'cppc_cpufreq.auto_sel_mode' to enable
+>>> CPPC autonomous performance selection on all CPUs at system startup.
+>>> When autonomous mode is enabled, the hardware automatically adjusts
+>>> CPU performance based on workload demands using Energy Performance
+>>> Preference (EPP) hints.
+>>>
+>>> When auto_sel_mode=1:
+>>> - Configure all CPUs for autonomous operation on first init
+>>> - Set EPP to performance preference (0x0)
+>>> - Use HW min/max_perf when available; otherwise initialize from caps
+>>> - Clamp desired_perf to bounds before enabling autonomous mode
+>>> - Hardware controls frequency instead of the OS governor
+>>>
+>>> The boot parameter is applied only during first policy initialization.
+>>> Skip applying it on CPU hotplug to preserve runtime sysfs configuration.
+>>>
+>>> This patch depends on patch [2] ("cpufreq: Set policy->min and max
+>>> as real QoS constraints") so that the policy->min/max set in
+>>> cppc_cpufreq_cpu_init() are not overridden by cpufreq_set_policy()
+>>> during init.
+>>>
+>>> Reviewed-by: Randy Dunlap <rdunlap@infradead.org> (Documentation)
+>>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>>> ---
+>>> v[1] -> v2:
+>>> - Call cppc_set_enable() unconditionally so CPPC is enabled for both
+>>>    OS-driven and autonomous modes.
+>> Why adding this in v2?
+>> This looks like a separate issue since setting CPPC Enable reg doesn't seem
+>> to be related with autonomous control.
+> 
+> In v2, moved it out of the auto_sel specific check.
+> Agree that cppc_set_enable() is general CPPC enablement and can be split
+> into a separate patch in v3 if preferred.
+> 
+Yeah it should be a separate patch I think.
+>>> - Init min/max from caps instead of cppc_cpufreq_update_perf_limits()
+>>>    as policy->min/max aren't yet populated.
+>>>
+>>> [1] https://lore.kernel.org/lkml/20260317151053.2361475-1-sumitg@nvidia.com/
+>>> [2] https://lore.kernel.org/lkml/20260423084731.1090384-2-pierre.gondois@arm.com/
+>>> ---
+>>>   .../admin-guide/kernel-parameters.txt         | 13 +++
+>>>   drivers/cpufreq/cppc_cpufreq.c                | 89 +++++++++++++++++--
+>>>   2 files changed, 97 insertions(+), 5 deletions(-)
+>>>
+...
+>>> +
+>>> +             policy->cur = cppc_perf_to_khz(caps,
+>>> +                                            cpu_data->perf_ctrls.desired_perf);
+>>> +
+>>> +             /* EPP is optional - some platforms may not support it */
+>>> +             ret = cppc_set_epp(cpu, CPPC_EPP_PERFORMANCE_PREF);
+>> Why setting this to PERFORMANCE by default?
+>> A platform can have its own default EPP value.  This would override that.
+> 
+> The boot option targets performance oriented use cases on many CPU
+> systems, avoiding sysfs scripting across all CPUs on every boot.
+> The BIOS default EPP (often biased toward energy saving) would otherwise
+> steer HW away from that goal. Admins can still re-tune EPP at runtime via
+> the existing energy_performance_preference_val sysfs.
+> 
+Yeah, avoiding scripting makes sense for sure.
+The thing is how do we do this nicely.
+
+For now we need to consider follow either the BIOS default or the driver
+default.
+They seem to be exclusive since there isn't a clear way to support both at
+the same time.
+
+So, are we going to support the BIOS default case?
+For example, users can config a default EPP in the BIOS setup menu.
+>>> +             if (ret && ret != -EOPNOTSUPP)
+>>> +                     pr_warn("Failed to set EPP for CPU%d (%d)\n", cpu, ret);
+>>> +             else if (!ret)
+>>> +                     cpu_data->perf_ctrls.energy_perf = CPPC_EPP_PERFORMANCE_PREF;
+>>> +
+...
