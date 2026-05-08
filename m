@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A79B3C3448;
-	Fri,  8 May 2026 10:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26ABD3CCA11;
+	Fri,  8 May 2026 10:24:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778235846; cv=none; b=gDeJb9WQZvK+n+UTYaQ5VTRDxBVmAm5eRj2UPbJgd0MNTUJpPhjJdfemLyIxz2Ekdom/UtKNRmVUlFErx5LXaDsSRprIhYtQmB2/SE3KyENJeY3CxCQ1fygOObaHB28LRuoImmOVlBDNIhKdNFr/gnTjZBmVw9GzoIzjYWseefk=
+	t=1778235877; cv=none; b=oLtrVtAfepcD1HVY8/LoN1mGYRTkhDzQVTT+QK3NR6y1y/KlJMsfDRFT21uqar/eYIApUCWiwnW4+34F81Q3BzRAyIvO37OjMNtbhjWkjvxwrqxMxnQAFOgqZQSSdmlc575+HCshCAxdBOhHJ0yi6YP7X7Pmsj1HV1SG6kSgm5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778235846; c=relaxed/simple;
-	bh=tLbGCaMW7HS2+Ed/xbt8mxA3kcVWU4kqWs83F+SLhDA=;
+	s=arc-20240116; t=1778235877; c=relaxed/simple;
+	bh=ZrmXcwK6NoeXzcPjGAuxnjjl9o5HFUIxXDwc0uFI3iY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i3znKAnWmKBHKBhhXL2+w5baFKtqY+VC23FpAoApKYbCBC1C7NLbXtsqIGFSxIAucRXyLO3RHRsKQmVFsd1lQlR80xI82H3TFu1xTT+H5e0ZNsW3PlWR832gz42fN4gyoehldEaAtLupSzTYGktmqtLGi+llHsSBb90lxI0ve4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TPzekmsG; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=tsuOCSxR3rYRdnGekQVR0fINKMkeanrdAvIs7r4HZ7GJ+Za+rLgQueG+7XjkwO3V9okh6c23gwf77u3rEZSRTh0XlQHk4LKQdecTboJ5h1Sz2OqxMWdauWtNaVuS3kLLyIqF4+1HSfYLDWqqlrVglTtacBugWwJVN7ny0SCIZew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2QAgu6G; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TPzekmsG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B312C2BCB8;
-	Fri,  8 May 2026 10:24:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2QAgu6G"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38AE7C2BCB0;
+	Fri,  8 May 2026 10:24:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778235845;
-	bh=tLbGCaMW7HS2+Ed/xbt8mxA3kcVWU4kqWs83F+SLhDA=;
+	s=k20201202; t=1778235876;
+	bh=ZrmXcwK6NoeXzcPjGAuxnjjl9o5HFUIxXDwc0uFI3iY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TPzekmsGM75H7czsrKkPP9QYX9wFITvRgAisdd2I2rtu65TMN7lzlps+QUMs32xa5
-	 gfBjm0ho+WxwlZJ9nkKzuLSnJWL9SEEvWGc2py9M6Ky5Wh/DlBxfeO1aKKXr1M6/J+
-	 ct7aATl99TYy+Dve6BVDL7qvLMJTu5HRPJk0Q1HUNgfGlsI1H8tHMYyXAbZFMmVBtb
-	 oj4A9d3cU9dmOkXL15Y2rTZA0sf5RzaLxSfN2ARP6WpkFrWETyNMsiHGg9EQdzYtvA
-	 QR2ATWr9brnYD6PCYD+ntqKDFyNYzQVBW2w+nWQwdNCAOwo+wLiluN66Vp6z23Ag7Z
-	 25CpDlsapxr9g==
-Date: Fri, 8 May 2026 12:24:02 +0200
+	b=i2QAgu6G1pEoE8R5ifG8pXAC5Z+bOxIPTs7piI+PN9i19XmuAfKgGndVHoDAvA7zs
+	 HzR+R7H83pCzif6DQv8vk0U+1fi8n1K/8GEJv0jVxym4yL5V2+wv4C/Zoc6GGrS136
+	 BtILp6YDvWocQBAhrvWjgTCx8VJ509uSv1zI5vJStnYk+F0wUJ8uF4l22404YBeyzc
+	 xMZZxM8Nijr1xBRfKKSqDiW0ezg4dLiyY4Qois1LGc+nUERQHNXbDHx/7GofPi/YEK
+	 4Km+GY9Q0NOIPr3PRJlXitT/T0x3faXF/gFKBL5vnufRdcXNicqEb5no4ZHGfTnp7q
+	 pjV6xCKhEGv+w==
+Date: Fri, 8 May 2026 12:24:33 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
 To: Saurav Sachidanand <sauravsc@amazon.com>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
 	Akhil R <akhilrajeev@nvidia.com>, Kartik Rajput <kkartik@nvidia.com>, 
 	Thierry Reding <treding@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, 
 	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] i2c: tegra: make tegra_i2c_mutex_unlock() return
- void
-Message-ID: <af24ztuMvHkdyAx3@orome>
+Subject: Re: [PATCH v2 1/2] i2c: tegra: fix pm_runtime leak on mutex_lock
+ failure
+Message-ID: <af25yiUXoxiWFcIU@orome>
 References: <20260506195319.44810-1-sauravsc@amazon.com>
  <20260507221145.62183-1-sauravsc@amazon.com>
- <20260507221145.62183-3-sauravsc@amazon.com>
+ <20260507221145.62183-2-sauravsc@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -46,62 +46,53 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fanibai5f4hjr2fx"
+	protocol="application/pgp-signature"; boundary="wfkyon33mwz4s2b3"
 Content-Disposition: inline
-In-Reply-To: <20260507221145.62183-3-sauravsc@amazon.com>
+In-Reply-To: <20260507221145.62183-2-sauravsc@amazon.com>
 
 
---fanibai5f4hjr2fx
+--wfkyon33mwz4s2b3
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/2] i2c: tegra: make tegra_i2c_mutex_unlock() return
- void
+Subject: Re: [PATCH v2 1/2] i2c: tegra: fix pm_runtime leak on mutex_lock
+ failure
 MIME-Version: 1.0
 
-On Thu, May 07, 2026 at 10:11:45PM +0000, Saurav Sachidanand wrote:
-> tegra_i2c_mutex_unlock() returning an error that overwrites the transfer
-> result causes silent loss of I2C transfer errors. If the transfer failed
-> but the unlock succeeded, the error was lost and the function incorrectly
-> reported success.
+On Thu, May 07, 2026 at 10:11:44PM +0000, Saurav Sachidanand wrote:
+> If tegra_i2c_mutex_lock() fails, the function returns without calling
+> pm_runtime_put(), leaking the runtime PM reference acquired by the
+> preceding pm_runtime_get_sync(). This prevents the device from ever
+> entering runtime suspend.
 >=20
-> Rather than propagating the unlock error (which is not actionable by the
-> caller - the I2C message may have been sent regardless), convert the
-> function to return void and WARN on the unexpected condition. If the
-> unlock fails, subsequent lock attempts will fail anyway, making the error
-> visible on the next transfer.
-
-Technically I don't think it's guaranteed that a subsequent lock attempt
-will fail. For example, if the SW mutex was somehow held by some other
-owner while trying to unlock, by the time we try to lock later on that
-owner might have released the SW mutex again.
-
-Obviously if we've managed to lock the SW mutex but fail to unlock
-because somebody else was holding it, it means that the other party did
-not respect the SW mutex protocol, in which case anything goes.
-
-Anyway, this looks good to me, so:
+> Add the missing pm_runtime_put() before returning on lock failure.
+>=20
+> Fixes: 6077cfd716fb ("i2c: tegra: Add support for SW mutex register")
+> Signed-off-by: Saurav Sachidanand <sauravsc@amazon.com>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---fanibai5f4hjr2fx
+--wfkyon33mwz4s2b3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmn9ucAACgkQ3SOs138+
-s6HqYA/8DeUcRvmUFCv0lt/fI7UyBsRfmZxiHpdO0u9qySfmLKFULYKYKWRRmztx
-4KXWsxo09gornmPydTuk7ce8Xta/ru50kWkQ3Pwj0UqYemgYPS4OPRwautaKSGsL
-N8E6+b13h8+Rz1vTx3BbI9k/NDKF/evF1LxYcpuZ/JuFIRenwAZYt7QAYqlSfUn7
-ZbxxY9sXixZQrfKC+p/Ak7dMpUtyMHELLPxoppNyqbaLrjzCPRjXSbfQt15g46j8
-C6SdHKofs8cfjihbGoLSWyI6vXNQ+ud8VtdAiBv85fAk39npxffd+5BI1N8O5rp/
-7XHbx/MGPgSspJ3uV90EK6IUdSR2OlEzO0us4Zr5/IQWiRln7+zbvoIJF7NBWoyx
-ehuX7sdUzeNono61xsopyBG023BRBnJZkSq2L9zY14/OlYjLEDKDQ9qKEIvOdLlO
-H8dUoSitVyx3X7lXKx84SjKfZrBixa/wboYe17jp17+hXGlakt6VFBkhBcObTIlC
-zAEsp4caYNOZXLRp8tmYSCQlX5vMeJrvDg/obQ7TVF8MUR7wH+ls3lTiQZvcklNi
-T4CQHog8RnUgEetsn+MZ5Tf2aUq0cqkRqcuXNXKlB5ed/QODmxLHmAShtU2nUzie
-gTP8//gYJE9pZsDj/V6Q/8CYn/LL2/Ao298eV7g1qwqWGkmBl+M=
-=DPJs
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmn9ueEACgkQ3SOs138+
+s6EI8w//Q425l2AeGmqHjL8Z1rWbjoOiczIm5dDMAR8ivBVfO7emQL7oHJA5vsHJ
+ZTHT0/cs0VBESpFIDiCMMXhJXujmzf0fc78sG+ILuyxKGnvoUy/J4r5IKoHtMrQF
+QfJuA2I5jliE8fuIQkVfbnj7vy8OkmNNZngNWoufPorwH37J2crt1ZHercaHnwGd
+XONYXGEUKqRl8AFBPSJw8YQnAIS6zQ4mO5be6sq4Zn6YmQlM03ASeCV3DUXPEl/P
+BFjAltUl3E0Fn5UMuMB6BBHOOtlu53j0drMGn1KUCMk8JmjkKU90+Q6vZvDrHchA
+eOU+qkIerddBUuFdb5tOwMv2yB+MpkrlpDfTZZPkgWQXssht3ofm/XQ00Ng5k4NX
+nhfrYWz+QAYOVnxzBdGo2a69bJknUU6z4zu+r2IkxmRcSDy6Vo6qpRgN1GEoEc5p
+JbMSsdfOzO2jabAUx7tQVHTwnNNdr6QmeV7V8tcI36MtHX91/CYCtmqWgkPBMOcc
+vPOaTxM8qA2UBBVQq1ULdzsYuqVvoS9es/hcO3ZspPOkpIGSVcmNKQUVImeeoLeZ
+A1f14Oh0E2lSURnu88kcczjJrJe/k5PLicve0jIyDIdzc2HcpEzhU3f5PGrKNegw
+PEW+2uJWNSmv2jr9peXQtYqTxAuyIjGplFCNAGLzRyvTaxH20X4=
+=gfD2
 -----END PGP SIGNATURE-----
 
---fanibai5f4hjr2fx--
+--wfkyon33mwz4s2b3--
