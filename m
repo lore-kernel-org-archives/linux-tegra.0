@@ -1,102 +1,156 @@
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012049.outbound.protection.outlook.com [52.101.53.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC4A38AC8B;
-	Sat,  9 May 2026 13:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778334828; cv=none; b=Xl0YO84vxrK3RDl/UJWrVN9h5KqQChUg/qmPZ/DJzpXD7J/FVFt+QyRPKT1NAyBbkQKT8556JONKD8JLyleIaSsoD0BRXixPyUZFqbrYYYdq8EXadytTlulXLzpfZud9RRi3KMq60RZzrhnn18E2wkcroVyeX8SetqirXRDYvh4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778334828; c=relaxed/simple;
-	bh=XslxQDWUqHuPR9kl+dCUY8yQGz2G39WEj2ulGmwl8e0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZL/vHaueM54wvZ+Vbof7MUs+gU6ePI+X8KeF9eeoLb83BgyNw3H71rEOwBHYgwpRF7yenaC80XM4lJpmOzruAosGpXz97N641cAB83YlnWnLesRb5uXBIAEtXYKBJ3bDkIZEO7DhIISOsT0hCEtDJnfb1rG2R1yNgqxbmRfyLG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=XC8ZlNs3; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A241334C1F
+	for <linux-tegra@vger.kernel.org>; Sat,  9 May 2026 16:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778345651; cv=fail; b=Rbr3SD75fHw1dDIKZSBsDYxZvLavd3Vnj5zaHNvPpZCkAwVN34NFhlZMgQMm7vYnxgMcaBtLu5E2Hw0fc7wLwk6Br9BasSxQZfbX4xy+gP3OUN0BX3dAiEBuPjrD/ROEAthpuwqMkoVYvljTG6KKcg7fSNMBovia27zIMoY9UGk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778345651; c=relaxed/simple;
+	bh=SQGnMjZXV0WEv24+RAnzRCnscF6SkgJ59XH5FPt7uQk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=n2o6NEI3OXvahTPRt3o0hnyXK8bEvwt41GSif8IynnJVuNLUKWB3m/TMuO7FcF3M+pbWR4TTUAi0nBy33MVnRKlrn/oSFRoqaVSWIi2lTrsHj7Cg3tJsbURp1PDGr2Fvb/RxWaqucmpuVl2eoAfEoga7SRqzDKMq52jwnZ+5xi4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=a1RU1Rdx; arc=fail smtp.client-ip=52.101.53.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XC8ZlNs3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=mI
-	OPut41WSK0wYvb6vxdmeoEPL8RRyCrJZJUvtEZxAE=; b=XC8ZlNs3NhGX18IY9t
-	j6I6UhqXs73kv2pIp/r9Gt5lUsDCkK0iccAYOOx8W7o1m7VhAxFqoode05hmjDj/
-	cpYcpOSUU/AFOqZfeipmG2LaOlBLEi/vLumvaHFGT7P+0sPXLINCJd5ShbVRSCEG
-	M2yZDdph28Cc/jCHv0gpHkUyM=
-Received: from Precision-7960.. (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDXLzL8O_9p486jAQ--.37610S2;
-	Sat, 09 May 2026 21:51:57 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: bhelgaas@google.com,
-	lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	mani@kernel.org,
-	jingoohan1@gmail.com
-Cc: mx@lists.linux.dev,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	sophgo@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev,
-	linux-tegra@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH 0/3] PCI: dwc: Cache PCIe capability offset and simplify drivers
-Date: Sat,  9 May 2026 21:51:49 +0800
-Message-Id: <20260509135152.2241235-1-18255117159@163.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="a1RU1Rdx"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uDEYNyvG75T+B3eK6BpvhL5YtVejT+DVI+U2hn3R2Ou0rC9r+EcSICniY272My/zk0Oath5IHKEjF2+cpKQccBULu05GpLxr9DM3hlK29ejnI0aMJ1Nc6qKBQ/jChX10Lk8g4ay5VYDAKsj1yQEpilIAV4dKpK9JsG0bECNybuBDHIB5sxImqWwm/SCjO2o1nVT2+FfWv6QDSYqqGkwlI53WIAUHr0SHG05n6c5shAbN3ryCNw59wBcPp/FxztOj3Di/AV0ibIlNtYj/FbHyekFs1TDYb243nTBRqnZvVGJaH4NCMhbM4Hb1Te443Sl6jpP7SB7zSqhwGRXaPoD1RA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+306wj3e1bAWNCJw5Soq2MlQFgMYoSZG5jLsfZ1UUxo=;
+ b=hWb3pRKoDMYAmDy5dOFTjeVyaWIu0eyaNsSz8/aBMTCdQZL4O6tG6sitvbsb2lBSWIfZHbj8CcufT1ifqpkMUmsvoRKCS3gWqk5Qr+RHcdUyDle6FlRpsIgBBQ5KRa8q9YPYLhBFhP65cZsw/HzOKDBxi6TdwS65/jhPyqdTEIzzUQaIGegRsNVkfsEEEs7CwyoRC30QBwhJ8vm5nRu7EV3MqTU8TmHtqEbztcRuhHlicUqmTTL9/5AjapZx7IARsFI4dIr+BTVYyXfzqCd6/yVFQk+6oVlp2Xg+Szc/4QvtQWb1/Qmx8MIgLwioIoyXEamkyVMh5yI+Lw8BvzJaRg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+306wj3e1bAWNCJw5Soq2MlQFgMYoSZG5jLsfZ1UUxo=;
+ b=a1RU1RdxZzNr1/qJOsJZXaY3tCrU9iRRlY0dCyeq9GDTWvRLdhmuQPKtpF3zzi3cMmwozGOduLXcmhk+Ec3IZ3m2iK8qSReunF8kZCvfDE7Eocj/StoUanWv6LE4NWp8WA+bziExj6OFlkpmdDP26w1pV8ZseR8bRdkV7da39ZkJJn6w6UIcX7bQzHKAKTrfru3vVFfdePbtsHnX9LX3LAiT/+Zw4RkZHsvdnKusAIDbhoG/S+LVmzNBpKS/NfwRTPfjU9mVGSYemF5/5M8xelnoSzf0GykbTahaRHvwcVTMqUIMdcFw/E8owh9ath7BKGwx0Kl+7k+yrckz3lBn6w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by SN7PR12MB7978.namprd12.prod.outlook.com (2603:10b6:806:34b::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.21; Sat, 9 May
+ 2026 16:54:02 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::299d:f5e0:3550:1528]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::299d:f5e0:3550:1528%5]) with mapi id 15.20.9891.019; Sat, 9 May 2026
+ 16:54:02 +0000
+Date: Sat, 9 May 2026 13:54:01 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Pranjal Shrivastava <praan@google.com>
+Cc: iommu@lists.linux.dev, Jonathan Hunter <jonathanh@nvidia.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	Robin Murphy <robin.murphy@arm.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Krishna Reddy <vdumpa@nvidia.com>, Will Deacon <will@kernel.org>,
+	David Matlack <dmatlack@google.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
+	Samiullah Khawaja <skhawaja@google.com>,
+	Mostafa Saleh <smostafa@google.com>
+Subject: Re: [PATCH 7/9] iommu/arm-smmu-v3: Directly encode CMDQ_OP_ATC_INV
+Message-ID: <20260509165401.GL9254@nvidia.com>
+References: <0-v1-b7dc0a0d4aa0+3723d-smmu_no_cmdq_ent_jgg@nvidia.com>
+ <7-v1-b7dc0a0d4aa0+3723d-smmu_no_cmdq_ent_jgg@nvidia.com>
+ <af3NH0cihPUQ8PST@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <af3NH0cihPUQ8PST@google.com>
+X-ClientProxiedBy: YT4PR01CA0038.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:fe::29) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXLzL8O_9p486jAQ--.37610S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Cw1kuFy3ZryfAw4ruFWxWFg_yoW8CF1rpa
-	y5tFWIyF1rtF4avF4Yy3WDuF13t3Z7AFWDK39xW3WSvFyaka1UXr1rtryrtr9rtrWIqr13
-	Kr1Uta47GF4fJFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziO6pDUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbCwx1oDGn-O-395gAA3x
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SN7PR12MB7978:EE_
+X-MS-Office365-Filtering-Correlation-Id: 89eb2f74-eab6-4aed-0ad6-08deadeb92ca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|1800799024|376014|18002099003|56012099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	LU/wZE0NuvXEV/NPi9SqNnGGPFTWqLVNPB8FcH99NuCS2dIVwWDiRRn3Ve72cgdTeOq5E7YitLYcaqhOZb0gKTH+USRnCyheVwUd83UkqaPkAoGhpf4N+KLjCd4U9uzJf86to0JL8oPXQZSRf3/f1N2fulu5siwLOPbASEvy3wAfnBL1eP2BCs84DZWAPDX65M78A9SnZI6GwbOCxennXnLgZSykxBniT1x/Y7xIAKq/URGt5qswT+5BmOoTFldtgpNpZ+VepTQIDuDfzt+c8UZXG1gb2qB/E4olIPkCoAIk71FHobOot7nD/Lnu+yBY/9icC9ZO9K0OF5kJKi/nUQvdKpFmI/Q6f+Rhpzlq7LdpOvE86bvd5kSAPa+cHiv5/gGTNzxXMmK5xdwajOUdMrlm8EXulvahdbqYo++MoJMxqTZSDwliutXZvjMW0yyLiBJLG02cT1LHn42e0CJP4T5KUSBCpCc2vX0nmn8sixJmclBVUQdbVO7tOnmDvwF3zq90FMtud/tY0X7QZj25owFLcUMqYWg05CFIZqVKfMN46OL1Iq1ykaFwKSNgM0sFBqTr6mRT7V4VKhNFWfOrMHZ4Kg+yeyyLcNMDBH3npUUSfe0r1y0mvfwGHA0OBwvlT+mdJc6OUkpwaedxQk5AJ70KvofyOPKBQrtVJ6ceJAzsJVOj22GUZ+kRGYpLzBvo
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?z7aU3lNItMNFPieCxLXvW+mSkmQ/5bsbQKB1IIXA6UObC2YwpZ50KWOBJL3C?=
+ =?us-ascii?Q?OZ8MldO7VznQLE2e6HRQmA/hKUgsCOqVtsOYKhZNIKwCkzG3Z3VS3mGcU8Z8?=
+ =?us-ascii?Q?GhcQV+Hy5YiMKyCOHNlEV8SRYc+jaMREjz1ZsmZHo07KA6rNcjnp08nVVXa0?=
+ =?us-ascii?Q?AYo9IYAqLHkBXZAH1f1RKazHckrDz4Yc7Io9W4D7nAQRTh+kgf5YM+PLiZtk?=
+ =?us-ascii?Q?8Qm3SRgL2G4SOQfGrdKTOjUt/MBh0Z2wOiNk3UvUEziivOILJvwUOlfNHoaR?=
+ =?us-ascii?Q?/eJlDYqaZR/rTOrBuVm/up6jpR+I2nghvwGxPq7oHnBxgrSYSkCWOMbmFG96?=
+ =?us-ascii?Q?y7WfystgkiHr3camxR5O/dHwyyheCNNsTVk/LjPXVCPZJaL7eEakY3lUsqeS?=
+ =?us-ascii?Q?gIxl+ksA2FkUtqW/xBJQ5bkxWW6jS4QopLY4TnK/QFRbdwDSj9xtzjSztbea?=
+ =?us-ascii?Q?6ZHA76dl/hYz2oI9sUzxYJzTj9l24GAhIHg0wHpEydUxctOYFVks9kc8Mp8l?=
+ =?us-ascii?Q?T9Fr0BpzN0Zipl8LEygoIS+dLHTbsdI3SVl+i4QtfzJEWph468+q+qvpkCkC?=
+ =?us-ascii?Q?pULu8PtlBtBfHw64tp66JNOm/ORqkA1AzvGPHToekLXZZ9mbZkjesLRu6nkq?=
+ =?us-ascii?Q?laKV1tYEs4gyTI9rGRSjjwWCBRysei/g+38BR10ifpvDP5a7YInbxGiwWcZo?=
+ =?us-ascii?Q?fsspDkIbiG87bEvND9O9JLj63zl3JT3Upw2q3RNrZONRj+AX/DNzpqyQcXoU?=
+ =?us-ascii?Q?W3z2wENr5AFH8lFS6R/FpTHOkLWN5PVKMJ3cqUgZKfo3gp44Q2ZAD8pWiRb9?=
+ =?us-ascii?Q?aIbZ87IVOqdnARTgrEk8q1/qwRW1Fqy0svMwZg912IDzj5zzjEsDWsHCM3tL?=
+ =?us-ascii?Q?iMnl98cmepKrxQWfBhOCsWa0gh53jTpU0/0dhAX7H/cyPf18xizxCHk7LdXL?=
+ =?us-ascii?Q?635mQgLOyb0OQcIirkGgQUeNcoaNhR3LxmKGQ2JmGO/TfotYJ8SdqCYCyjvO?=
+ =?us-ascii?Q?nL0jOALorRBw1u4czoSGM1QvZDkq+iXSVcqIB+rBMvIU8GURjOpiOpodcy2s?=
+ =?us-ascii?Q?T+Of0k42kosVAgCchhK7rdt3XjjDlwhxmReDIpc8tfDnN99EboHHP1DPCrZx?=
+ =?us-ascii?Q?qliEODEyoLEMgjZbcFrCjBZPQE6dR3kpTiQahDpxsVFz7FKI1gjNGMX0cbTj?=
+ =?us-ascii?Q?ecxdW2nYMj8P9XG49R8sl3aDqX/PLTmm19TKSl0LENYa64A4K3fZC0gAjO6H?=
+ =?us-ascii?Q?lYbseBJkt5wzvGf1fkPKklXQxSFJ4Qxgu23V4W9VkbVGSQfVknUGQh66rxiO?=
+ =?us-ascii?Q?I038TRWaATQ7K74V+LDszQRJ8mdeqv6Zd/JZgF5obrwzrJTrOXszAnKCPy3B?=
+ =?us-ascii?Q?aY0zNJEyM6xqmIs2sxc12T9OXugveXAGHo8C1L3yNOZB8kSd0ko55Cd8/eBd?=
+ =?us-ascii?Q?Y2gjCbb8pllE998v4rCZFy0OXzE0FnBu3iEaqrSzyYmFnPUm/b+CLqhDX4rt?=
+ =?us-ascii?Q?cl6MRJNHyULKOeApv2O3NGEdnnLmTLxId3FnmIJwJeCI4NWnYIKSPNl8OOpQ?=
+ =?us-ascii?Q?aReHALNOFYb4esXKY5Zvxhn0Zcoq8527j5Qr2T+MvGaf7iME4k4fviWStZzz?=
+ =?us-ascii?Q?IwOMzKJD2ftfLKLpBmwVvzZjakCTN6Q0YMJsiHNg0Cv74u0pPQd8fL5wRJaz?=
+ =?us-ascii?Q?SS6ayOxRgo/wI7mYOsOv7cdMzpY8yZxKPjUj4CsGioTmRq4i?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89eb2f74-eab6-4aed-0ad6-08deadeb92ca
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2026 16:54:02.7082
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: K5MGMuVS6fhslcrf2CKHQJnXHFJ86Q2+4+YqmWmx2Ypxtb84d23qYDYovywKm6u8
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7978
 
-The DWC PCIe core and its many platform drivers repeatedly call
-dw_pcie_find_capability(pci, PCI_CAP_ID_EXP) to obtain the offset of the
-PCI Express Capability structure. This is wasteful and makes the code
-verbose. And some even search for the PCI_CAP_ID_EXP offset value within
-the suspend/resume functions.
+On Fri, May 08, 2026 at 11:46:39AM +0000, Pranjal Shrivastava wrote:
+> On Fri, May 01, 2026 at 11:29:16AM -0300, Jason Gunthorpe wrote:
+> > Add a new command make function and convert all the places using
+> > ATC_INV.
+> > 
+> > Split out full invalidation to directly make the cmd instead of
+> > overloading size=0 to mean full invalidation.
+> > 
+> > Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+> > ---
+> 
+> Nit: I guess it's worth mentioning that we remove CMDQ_ATC_0_GLOBAL as
+> we don't set ent->atc.global = true anywhere in the driver anymore.
 
-Add a cached pcie_cap field in struct dw_pcie and a helper
-dw_pcie_get_pcie_cap() to initialize it once at probe time. Then replace
-all explicit capability searches with the cached value across the
-entire dwc subtree.
+I added this:
 
-Hans Zhang (3):
-  PCI: dwc: Add pcie_cap field and helper in designware header
-  PCI: dwc: Use cached PCIe capability offset in core
-  PCI: dwc: Simplify platform drivers using cached capability offset
+In section "3.9.1 ATS Interface" of F.b the specification says:
 
- drivers/pci/controller/dwc/pci-imx6.c         |  6 +--
- .../pci/controller/dwc/pci-layerscape-ep.c    |  4 +-
- drivers/pci/controller/dwc/pci-meson.c        |  4 +-
- .../pci/controller/dwc/pcie-designware-ep.c   |  4 +-
- .../pci/controller/dwc/pcie-designware-host.c |  4 +-
- drivers/pci/controller/dwc/pcie-designware.c  | 16 +++---
- drivers/pci/controller/dwc/pcie-designware.h  | 17 +++++++
- drivers/pci/controller/dwc/pcie-dw-rockchip.c | 15 +++---
- drivers/pci/controller/dwc/pcie-eswin.c       |  3 +-
- drivers/pci/controller/dwc/pcie-fu740.c       |  2 +-
- drivers/pci/controller/dwc/pcie-intel-gw.c    |  2 +-
- drivers/pci/controller/dwc/pcie-qcom-ep.c     | 11 ++--
- drivers/pci/controller/dwc/pcie-qcom.c        | 24 ++++-----
- drivers/pci/controller/dwc/pcie-sophgo.c      |  8 ++-
- drivers/pci/controller/dwc/pcie-spacemit-k1.c |  5 +-
- drivers/pci/controller/dwc/pcie-spear13xx.c   |  6 +--
- drivers/pci/controller/dwc/pcie-tegra194.c    | 51 +++++++------------
- 17 files changed, 85 insertions(+), 97 deletions(-)
+  When the SMMU returns an ATS Translation Completion for a request that
+  had a PASID, the Global bit of the Translation Completion Data Entry
+  must be zero.
 
+Even though it faithfully forwards the G bit through to the ATS
+invalidation command there is no way to create G mappings so there is
+never any need to send a G invalidation. Thus don't expose global in the
+new helpers and leave CMDQ_ATC_0_GLOBAL unused.
 
-base-commit: 70390501d1944d4e5b8f7352be180fceb3a44132
--- 
-2.34.1
-
+Jason
