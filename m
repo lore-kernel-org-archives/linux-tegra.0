@@ -1,96 +1,83 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00A83BB48;
-	Sat,  9 May 2026 00:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC04B2BDC0F;
+	Sat,  9 May 2026 02:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778285624; cv=none; b=uoSjIGvet38wGLR6NefYHdhK+3/AugiuA8KynhU1efar9pLwYNAU/NC/DYxpSVGqWgy+t6+gPCEwH6R8rNHfkChVSpsEeI4iAfmfGPKwE8QH/ufwvHgZq67Y0AgHwWxANWEen/+9t61dzEzh29kUfd/eBCD8JHrUZ3l29lEYP8o=
+	t=1778292525; cv=none; b=gIU6oYXipZhZRd50tfdlcyxwmHNPYV0a4v3FVdLNTIdKJNn5BGmTgMOOxypxYuzukUFtB01z8YFHm+/b48l/RzXMUMYEfv15U3DjOk1r1B2yNORcPzRucvxuwAZcWRCKkirD8v2eSCjJdZ/utxmRQTzMgUJC8eYIkOgKbm4l6qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778285624; c=relaxed/simple;
-	bh=/ecytL0oAx5Ld6PTkFmYbXYxh2xyc5JcmTqjqxsjMik=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Hmu17YfhvHSQbhfMOJGzv/2LvamAThgl8nlvcLOIGGaBCRHRY0+JuOu7TofTKe9s6OrP+hFtAMDqJz2fz278jS9r5opFf7bzXOpXAEYeAIZMCpVQw+qXvcpG3rptWNdCUwp9YoFt79PvrXXb4TgIcihXWBa5qLVMylX/ynstrfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TSFeZg5B; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778292525; c=relaxed/simple;
+	bh=KgkbFJ3/6OaGWC01MXEGMQogKNXOnRDZa18BoowgJfI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=USvc6tRWMIVU7M7L7MWQ8mcYNB/LMAy4O8XIEvPsN6zSBlCpy8FM2f2huLJNjVdyhV9LGYnfTJ8Y6FVUIBSclV7OKGAhZH2fkfGg7SJ40Jiy+44wLwOToHAxnYw6EXOuXeFslNQmIxy6aF1fHoKvNNvCq6fpj6XNcWNRxdXgrdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YOrmW/Cn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TSFeZg5B"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6C09C2BCB0;
-	Sat,  9 May 2026 00:13:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YOrmW/Cn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6216BC2BCB4;
+	Sat,  9 May 2026 02:08:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778285624;
-	bh=/ecytL0oAx5Ld6PTkFmYbXYxh2xyc5JcmTqjqxsjMik=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=TSFeZg5BvwFcbzHvLdipCuAa8qoC5gj0XT2Mdz9hxcS0t1ljMUxTHYkpA7j+CL6oE
-	 q79nxhzYdQatXOlp3fgd2mtRGCfiJEL9G2kpGJwx5IuBA5hwE8SF0vvYvYsLhZPV/n
-	 Q0ccVBP+gRPYT2HHJviOtIoRjsxPCItqNV5QLA20X8EhRC0mbllvGhfk5QDOKC7KEW
-	 Y872LI9y3sbdiIep0CI+g++L0qAv/DR1cGgHRrU+GVubxVYTm0QaduMnsrc2oDmJQ8
-	 0p28xf60d6VYB3CyyTBjq2ube7S5vz5VbzsAlA4s9ch5/KIbNPx10PoiGRxxAnzZzK
-	 mh/pVbjQsFoSA==
-From: Mark Brown <broonie@kernel.org>
-To: linux-sound@vger.kernel.org, Rosen Penev <rosenp@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- llvm@lists.linux.dev
-In-Reply-To: <20260507232131.438589-1-rosenp@gmail.com>
-References: <20260507232131.438589-1-rosenp@gmail.com>
-Subject: Re: [PATCH] ASoC: tegra: tegra210-mixer: Use div_u64() for 64-bit
- division
-Message-Id: <177820154024.916152.3561938548534364041.b4-ty@b4>
-Date: Fri, 08 May 2026 09:52:20 +0900
+	s=k20201202; t=1778292525;
+	bh=KgkbFJ3/6OaGWC01MXEGMQogKNXOnRDZa18BoowgJfI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YOrmW/CnyYudLMeJxjLw8okgsYiKYNsdyHkdQBj4QCET1pO/I1qhWQGCw3rKWqAQk
+	 tLhkYIgSOwOob1ClimwucoeDt6Le40foH/7EFZHzrSvhaWSa4OaU0VXeSMA6gqlW1E
+	 yjay8R1UO9wF6AUt/x9ZGGLI9piJQ4yd3evc7/odsufg9FppMOKHR+IkqNVxyMN64N
+	 NLydQmWXB3e6dSgn8hpupTPkRDaovflIUTekSqobYkMZS9N13Q3ykL4L1k6mgx6CwN
+	 wm/ugeEDA4PFohqqLlUrr3SO9C2eIWV9FAQooiVheyDE5VFGwIfGdq/HkmULdV7z4h
+	 y+0sQhOuwS9lw==
+From: Sasha Levin <sashal@kernel.org>
+To: stable@vger.kernel.org,
+	jassisinghbrar@gmail.com
+Cc: Sasha Levin <sashal@kernel.org>,
+	sudeep.holla@arm.com,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	joonwonkang@google.com,
+	Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 6.18.y] mailbox: Fix NULL message support in mbox_send_message()
+Date: Fri,  8 May 2026 22:08:38 -0400
+Message-ID: <20260509015927.agent5-0002@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260507062107.2927600-1-joonwonkang@google.com>
+References: <20260507062107.2927600-1-joonwonkang@google.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1141; i=broonie@kernel.org;
- h=from:subject:message-id; bh=/ecytL0oAx5Ld6PTkFmYbXYxh2xyc5JcmTqjqxsjMik=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBp/nwvSLAZh/1jMiuKH1AOYXdSE8Wb+OoBCdOYQ
- LE3nQlXPByJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaf58LwAKCRAk1otyXVSH
- 0JjbB/9lmEoXmnJS2o2tSyfaNxH+R7UCa1oCU5UaOKAVdoqYQsOPQTSuMOUmc5ilqPsXF7T/cx3
- +C/EDwU1c6DE25HmZoJPXel61wUh/G9lGCYoJ8LNur+90w+6rsUyOwH1lRk5pls9nxYyV31TkF+
- s0WCkQh6rM1kxXlPf+jyvQ81XfzNA0wCqsJb/hPqjidYiDo2K0bxfb5tKWyFBkU+LD3aldcvk7Z
- PuqNrFyPZgIjEI1limpojzvrdqWBUaGOmaNn4MVsYxw8gg2DsvRbrwUkppvwfM2pn/7NNDx4HsQ
- levtHctid7d8n62VjOFe/QtgIuK0fmFhTAeSiwUHphk9Q2p1
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Transfer-Encoding: 8bit
 
-On Thu, 07 May 2026 16:21:31 -0700, Rosen Penev wrote:
-> ASoC: tegra: tegra210-mixer: Use div_u64() for 64-bit division
+On Thu, May 07, 2026 at 06:21:07AM +0000, Joonwon Kang wrote:
+> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+> index ff292b9e0be9..7a2baeca2ba4 100644
+> --- a/drivers/mailbox/pcc.c
+> +++ b/drivers/mailbox/pcc.c
+> @@ -361,7 +361,7 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
+>  	if (pchan->chan.rx_alloc)
+>  		handle = write_response(pchan);
+>
+> -	if (chan->active_req) {
+> +	if (chan->active_req != MBOX_NO_MSG) {
+>  		pcc_header = chan->active_req;
+>  		if (pcc_header->flags & PCC_CMD_COMPLETION_NOTIFY)
+>  			mbox_chan_txdone(chan, 0);
 
-Applied to
+This pcc.c hunk does not apply on 6.18.y: commit 5378bdf6a611 ("mailbox/pcc:
+support mailbox management of the shared buffer") was reverted upstream by
+f82c3e62b6b8, and that revert is already queued in 6.18 as 2cafad617431.
+write_response() and the active_req-driven txdone path no longer exist in
+pcc_mbox_irq() on 6.18, so this hunk is both syntactically inapplicable and
+semantically unnecessary.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.2
+Could you send a v2 omitting the pcc.c hunk? The other three hunks
+(mailbox.c, tegra-hsp.c, mailbox_controller.h) apply cleanly and I'm
+happy to queue those for 6.18.y.
 
-Thanks!
-
-[1/1] ASoC: tegra: tegra210-mixer: Use div_u64() for 64-bit division
-      https://git.kernel.org/broonie/sound/c/04b8f96b1088
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
+--
 Thanks,
-Mark
-
+Sasha
