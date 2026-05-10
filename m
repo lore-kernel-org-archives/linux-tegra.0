@@ -1,45 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F18236657B;
-	Sun, 10 May 2026 12:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DBD381B17;
+	Sun, 10 May 2026 12:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778415829; cv=none; b=a0fM+4BsTWtVBNQ8GBxbP1ZPr1Xea83akOhr2rxY8rpMBIG9Io21icRetD8ugTNqnf18bfWkP1QmOmjOOX01dOfqFCaPXvPYCXpSxNjWBJAzQVH4vRmfjzgpMf6AEa7INXoC7CL6xSVESh4JGFwibORB3OFxY5SPhBJ6YLex+xs=
+	t=1778416309; cv=none; b=MFrDCmpCBav8iaxUM4pugY1aD4TuvzFCC0bXHvS9pobk28M6NR231N14PpuyNphRMsulEfnZaew3uNiDXhaqQycioziYz+jh1cM4ZMbUioderaImqTFY6vURpNe7xpSY4eLQPrHjl3ZgMugCHVDcjTPINi8Lel1DhGfaL+y//yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778415829; c=relaxed/simple;
-	bh=x1WogqHFVAt69woD/1Gf7Lf61vggakdMrNHQ3WQm5Yg=;
+	s=arc-20240116; t=1778416309; c=relaxed/simple;
+	bh=rYTVoUJlOhx6RpXKgdLOgKe0eiYOtQiy1WmXvoW1AEg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=iNVYE4mqee6C48tiLc0UwgVUnIej+WlqJlYgebgD9dfp2xyGZRcf+hw9Nek558LyEByZPCKQ7gJuO97GuT00v4qqsHpHcNA1az3R+S1xGedpcEB3JCOLlCTmt8snlp5f5qdkYrhghn+W248xcsIfEB6StTCQTVV5dvSIRb7pZ5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JgCk0u3s; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=K/ewO+Mi7rFZCLPgrwIaDiBExwbMRInXqykPx2Bdgc9btunjj+sn9Y7kcOKH7SbW+xpbaR+GugIu1TtODITbJbEPyf2Tr9nCxutQYNMCSYRSxA2UWI9cVzOAv+rUCY1zRjdjDO5bXiVToqgUBsIwmV5WwSmKbvTb3u6yYB1zsmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jFUgWkye; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JgCk0u3s"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96487C2BCB8;
-	Sun, 10 May 2026 12:23:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFUgWkye"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50945C2BCFB;
+	Sun, 10 May 2026 12:31:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778415828;
-	bh=x1WogqHFVAt69woD/1Gf7Lf61vggakdMrNHQ3WQm5Yg=;
+	s=k20201202; t=1778416308;
+	bh=rYTVoUJlOhx6RpXKgdLOgKe0eiYOtQiy1WmXvoW1AEg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=JgCk0u3sKA1e8f+nIhQbrj8DuqU8X0ml4I4RpPPTnqlAThnQE/HCnec8Ian6oZExP
-	 YP6lJaQFa1Cu2JZeG9pF8m2Dp5dyPPHUBwqh0T5KlUyeeGBaLQMnVNZYyZMsLlmuNW
-	 219aeKJMZbk2zOcXMGHF6cWM4VGncHUc6+OWqv80CErr0gSFgPVedZ+q8k0LRXAfvh
-	 ViqAXYCYya0TDeWkUW3HpXIJj4b3gpFetVDXdu4y5W+SOJVv00gLEIEILhjZvqE6Qb
-	 WrfvmRyL9GLyoQvPrqbi9zdTQXlpR03htjep8HTaxpXcOk+DB2ZEnxXWrM2XbZZl+S
-	 aG9mhG/1CXSog==
+	b=jFUgWkyevAQAqAmOH0fekKaGkiwlHpWNb68zIEUx0hFLD0rRXm7tb5o3XkoXWcRj5
+	 2Esw4whwBb8jiAYNA9F/ZHQRa7xDsRV8T/UQp98xMg3+tSHrS7PhBMtY01QeCElLJI
+	 1X6FNCJ0GfBbD5rvdI/r1aLVZ8ZrvdLXCaYyPhc8FQp7d5/mhNDHa5MwOLude1xnkX
+	 LLpSP69vN0lCi/fQ5gfvwu+wrepNZRsAsPKFUWYdrk7ZXQJirzEr5dtWgfXTrFlrt/
+	 Opc311r4zPiJCWShvwZjBiIMZgDb9wHPgMdcMaYqeuKoC2b1VysqxyxJdaHmjsRJ6d
+	 xgCWNf+BXi9rw==
 From: Vinod Koul <vkoul@kernel.org>
-To: Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
+To: Sasha Levin <sashal@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
  Thierry Reding <thierry.reding@kernel.org>, 
- Wei-Cheng Chen <weichengc@nvidia.com>
-Cc: Wayne Chang <waynec@nvidia.com>, WK Tsai <wtsai@nvidia.com>, 
- linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20260504033305.2283145-1-weichengc@nvidia.com>
-References: <20260504033305.2283145-1-weichengc@nvidia.com>
-Subject: Re: [PATCH v2] phy: tegra: xusb: Fix per-pad high-speed
- termination calibration
-Message-Id: <177841582520.420676.17804594742388538049.b4-ty@kernel.org>
-Date: Sun, 10 May 2026 17:53:45 +0530
+ Jonathan Hunter <jonathanh@nvidia.com>, Niklas Cassel <cassel@kernel.org>, 
+ Vidya Sagar <vidyas@nvidia.com>, linux-phy@lists.infradead.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20260426000309.54959-1-sashal@kernel.org>
+References: <20260426000309.54959-1-sashal@kernel.org>
+Subject: Re: [PATCH] phy: tegra: xusb: Make USB_CONN_GPIO select
+ conditional on GPIOLIB
+Message-Id: <177841630492.434434.10037791395679049058.b4-ty@kernel.org>
+Date: Sun, 10 May 2026 18:01:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -51,20 +50,20 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Mon, 04 May 2026 11:33:05 +0800, Wei-Cheng Chen wrote:
-> The existing code reads a single hs_term_range_adj value from bit field
-> [10:7] of FUSE_SKU_CALIB_0 and applies it to all USB2 pads uniformly.
-> However, on SoCs that support per-pad termination, each pad has its own
-> hs_term_range_adj field: pad 0 in FUSE_SKU_CALIB_0[10:7], and pads 1-3
-> in FUSE_USB_CALIB_EXT_0 at bit offsets [8:5], [12:9], and [16:13]
-> respectively.
+On Sat, 25 Apr 2026 20:03:09 -0400, Sasha Levin wrote:
+> kconfiglint reports:
+> 
+>   K006: config PHY_TEGRA_XUSB selects USB_CONN_GPIO which depends on
+>         GPIOLIB, but PHY_TEGRA_XUSB does not depend on GPIOLIB
+>   K002: config PHY_TEGRA_XUSB selects visible symbol USB_CONN_GPIO
+>         which has dependencies
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] phy: tegra: xusb: Fix per-pad high-speed termination calibration
-      commit: da110228b54f2e2143d97ea7151e0dc22e539d67
+[1/1] phy: tegra: xusb: Make USB_CONN_GPIO select conditional on GPIOLIB
+      commit: 18af47764d75bf2cd6297289255fd7f83967e7cf
 
 Best regards,
 -- 
