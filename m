@@ -1,104 +1,232 @@
 Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076051F5858
-	for <linux-tegra@vger.kernel.org>; Sun, 10 May 2026 05:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BCA248886
+	for <linux-tegra@vger.kernel.org>; Sun, 10 May 2026 05:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778392244; cv=none; b=LJilnTMJeA8GtUfhBy/l19wHuECuxEgiWQDMc/L+nHD8qsOTZnZqVwkxhV631UjQVBgs7qCN/JxrOky9VmUO3ag9gemvw103dZZ4CHYU/+aCL4Ja8tmDbq74LyzpNb+SpqwcLCI+74V27tKYbdypJjXtLFxH2IuRdEwQ5qHOvzs=
+	t=1778392697; cv=none; b=pnz+lxh0n9GVxxbvnAGOtoAZBh+WfO6WmJTKFQnNhojLPYznXI6GSeH2RYceTViX3r+9aH/cRTBCSTfNUtgMA399U1Aux//Koh4E/aqAnfo7orpjUaIME26sCMSAv3qdKSrqJ1T3e4GUnVoW5vG6ufP0VR40ICpXENJQzQr4Ro0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778392244; c=relaxed/simple;
-	bh=XL+vINExhFuMQTTP70V6I3aF4N0+NgyPBdsvLAORuQk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nCjP66M/HvKLIbhVKHQ3v6N3Dz1xHdL/BOK/pnyC3VlGTo86rBdvCxnDnO4l641e7zOUFyjVrY3UqT56j7+Bi8wz5kYlpUTh29RleJ+8ukfslwEijnw6M0kKNr+roHy3HzqkWztlnDJ0aayDqT37WFmWEPy4l1iP2sdtYC9u2LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NfTe331j; arc=none smtp.client-ip=209.85.214.201
+	s=arc-20240116; t=1778392697; c=relaxed/simple;
+	bh=Lq/ueWM/AB4IC60AiiI03UXnPNsQQSOHqsWz+/zeDCk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=SFSC9RtCOX7lfz0as7ZwjPUisk5Q/ulYSCnqst8bKr6RcpKCoXBInIyxf8X4UDPZXD6J1VIBzqz3lw4jWSS7N50wJbNdAXWzsiBD2SfSO5ckvKgEQPnLWcl7brpTbZA5Ahl0W1x8+fKBuXsZ95+pomCWNV+IvDPMEUkxJSb4UY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uNAsrMIt; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NfTe331j"
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2baf7378ad0so18218075ad.0
-        for <linux-tegra@vger.kernel.org>; Sat, 09 May 2026 22:50:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uNAsrMIt"
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2b4530a90fdso82540735ad.1
+        for <linux-tegra@vger.kernel.org>; Sat, 09 May 2026 22:58:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1778392241; x=1778997041; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kzZRn2JWPQtIOhL+COPBbPzW8EvBz5JnXb+/L/c5we4=;
-        b=NfTe331j3/0S8EF/GYhmVozvEoD65S7lkyOMaowt9XKA+1ZhQzJVINYpmFufZPMjyM
-         I594OLTh3KEi04c/EzPKcoF+NAmU7CNWnGjpgH49AkRIQ3EIOVPZni6IWb06QG4fCm8u
-         7lyxH0sQAUJro7CywGUEJ7HehUqBOBf+Fvx0QtA+dP3C3DVsR3hKZ/rSMlme+WyAK8mB
-         v5XIZ27WyxgxWf8r4mXHGMqd86gt3xdz+u9HwHD2MQOTGKbzZ9TgrYvTLb9JMEhfiB1f
-         sBHVOkgNLga+Traf3+XNXjUqMiBqUOS5hrNJpw+w/psncb6rXGvM+u8ueilFx0R+K7TV
-         QoTQ==
+        d=google.com; s=20251104; t=1778392694; x=1778997494; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=02FEpfqnOksLNZlovsl9fXdj4f/QI9yL1mFs8SDMyuE=;
+        b=uNAsrMItE9LOZuwEj+dkz6cngPwtSWSFMLr1+LRaB8psp5H0oSHb0z6ul96rvBFPGP
+         TStMjVt+009jlkw6VKZXKyDfNh1YHQXJ1laMcNTbINdsmWgz7vUBohjaKnHReMPv7mdP
+         17Imi9jpIuYUejB3Ni4NM/haZrZgyrPvdgoOjkMourObk5aUt8Vxj/t5Ps4CBC5kZQHM
+         jypWiEl1AZGhn9dS6JvPH1M7m41ytdwhD+dnkKSXcRQ3U0aBXhdd6GyamjNcNfifSYxH
+         zLcaAVAHAOaqhBQQucCL7VAxIeEIJCZy1QR2zU3dd9af7k4X776HKfutwUIDZ+SGKBM3
+         soRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778392241; x=1778997041;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kzZRn2JWPQtIOhL+COPBbPzW8EvBz5JnXb+/L/c5we4=;
-        b=i4xeXaBt5NnZ+qFYjL2a/QZwDINc7OI1qDLgh3PxJdoGx5+OCzI+J/ITpw8MO357/L
-         q6YU3j7bWLF3UZ+72ysxLX/U7rNBBttIBX0F3KbLFBILehAM5iZA0BDTjd1/cO5z7CNV
-         XOKf5/VED0ymY5ttcBJS+QzhYsqxAENPsH7QqxC/AgHZBVFOBujpVv9s410EQfw+GPzn
-         QiqBNTCqWQLFUPJ472gbT1szWL63fw1ro2yk71W8e2DdCDQAjIUgFi4Dz3ryO74TN3gg
-         XsSfJyPoubnoZ+vKwPyphm54SGEX6Y++DsZUOskvfEB64R6YdmeErf97q/LLVuLaNNaC
-         JtJA==
-X-Forwarded-Encrypted: i=1; AFNElJ8mRP+yekpMOHtAvnp+5Q3ZIYbGvwSPiTKWgQcqAZGp8BAGc3v5OSh6Tht8d4xkJIH1ZlmAw2JXiyRRrg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQTzH0esmxKoNGKw+VbCCE9mDWjGs162/VpPe7ATq25QGN8qOD
-	9W+PLv9QHI3rCkdn9G0zUhy1J4eKvEDsInOHJMm9Auic5vUhDkvKYgt/zuzy3z0mgaeY1TvNKjw
-	+DOifPZA80Qk4AkKczREEeVdErQ==
-X-Received: from pllj9.prod.google.com ([2002:a17:902:7589:b0:2b2:5092:b66e])
+        d=1e100.net; s=20251104; t=1778392694; x=1778997494;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=02FEpfqnOksLNZlovsl9fXdj4f/QI9yL1mFs8SDMyuE=;
+        b=gLB5x5M6cYPW/ND2d3pE6uaHeaa1nGT6zDF/cAMsXn7WPdYdsByIRyIbkob4Sdacl9
+         1NO0LKk4LyjDPsxsOZRa5Rzs+NpgqXBNhMmM/kIfuqCaXwvNQpm5qiq+zjx2JKmCChss
+         l6mWRwkhZXJCKJFWFlzanYe2wF7GcFQHrcRE7wvf66C9/kdMC8cvsppQowThvARZragb
+         fSMCcT0LXiSIhziZuzzlmEj3orcTLCjmbf6Y2LzmWd5q4TNKAcyF2D/0SBRX41GV66Vg
+         tE7pgbgY5MNC8cuL4n7iVE9nrtkAZwMkZkOcWDubx0uTFTYGMGLZ4afuAZ9o7HGiJuUj
+         HyWw==
+X-Forwarded-Encrypted: i=1; AFNElJ8iA8scABkx2j5gAmqH1C95dneT4Hrn0XOMjTbXJhWlLsw5Q3S8DiUISYjp25H3uR9tQb+Pab3oxQlV+g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTBx0sW+FG5fA0b9aosfom6r8+1YAXMZZg9Rc1V6z1irPXgME0
+	oH+TjLCfqR05xjOSstPJF39eZ6GRDvvy5KZjEmr605zb8bfGTHeC5atIlIHmD/KXsvw19wtP0en
+	drRl+3DgrXjHBG0Yea4LtP/QBbA==
+X-Received: from plhn9.prod.google.com ([2002:a17:903:1109:b0:2b7:b346:a2c7])
  (user=joonwonkang job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:13ce:b0:2bc:7d5d:e2b7 with SMTP id d9443c01a7336-2bc7d5de4ffmr45251655ad.36.1778392241199;
- Sat, 09 May 2026 22:50:41 -0700 (PDT)
-Date: Sun, 10 May 2026 05:50:39 +0000
-In-Reply-To: <20260509015927.agent5-0002@kernel.org>
+ 2002:a17:903:3dc8:b0:2ba:4ad9:70f6 with SMTP id d9443c01a7336-2ba7a32346dmr157161015ad.31.1778392694015;
+ Sat, 09 May 2026 22:58:14 -0700 (PDT)
+Date: Sun, 10 May 2026 05:58:10 +0000
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20260509015927.agent5-0002@kernel.org>
 X-Mailer: git-send-email 2.54.0.563.g4f69b47b94-goog
-Message-ID: <20260510055039.793085-1-joonwonkang@google.com>
-Subject: Re: [PATCH 6.18.y] mailbox: Fix NULL message support in mbox_send_message()
+Message-ID: <20260510055810.796976-1-joonwonkang@google.com>
+Subject: [PATCH v2 v6.18.y] mailbox: Fix NULL message support in mbox_send_message()
 From: Joonwon Kang <joonwonkang@google.com>
-To: sashal@kernel.org
-Cc: dianders@chromium.org, jassisinghbrar@gmail.com, jonathanh@nvidia.com, 
-	joonwonkang@google.com, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	stable@vger.kernel.org, sudeep.holla@arm.com, thierry.reding@gmail.com
+To: sashal@kernel.org, stable@vger.kernel.org, jassisinghbrar@gmail.com
+Cc: sudeep.holla@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com, 
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, joonwonkang@google.com, dianders@chromium.org
 Content-Type: text/plain; charset="UTF-8"
 
-> On Thu, May 07, 2026 at 06:21:07AM +0000, Joonwon Kang wrote:
-> > diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
-> > index ff292b9e0be9..7a2baeca2ba4 100644
-> > --- a/drivers/mailbox/pcc.c
-> > +++ b/drivers/mailbox/pcc.c
-> > @@ -361,7 +361,7 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
-> >  	if (pchan->chan.rx_alloc)
-> >  		handle = write_response(pchan);
-> >
-> > -	if (chan->active_req) {
-> > +	if (chan->active_req != MBOX_NO_MSG) {
-> >  		pcc_header = chan->active_req;
-> >  		if (pcc_header->flags & PCC_CMD_COMPLETION_NOTIFY)
-> >  			mbox_chan_txdone(chan, 0);
-> 
-> This pcc.c hunk does not apply on 6.18.y: commit 5378bdf6a611 ("mailbox/pcc:
-> support mailbox management of the shared buffer") was reverted upstream by
-> f82c3e62b6b8, and that revert is already queued in 6.18 as 2cafad617431.
-> write_response() and the active_req-driven txdone path no longer exist in
-> pcc_mbox_irq() on 6.18, so this hunk is both syntactically inapplicable and
-> semantically unnecessary.
-> 
+From: Jassi Brar <jassisinghbrar@gmail.com>
 
-Indeed. Thanks for letting me know of this. My local environment was quite
-a bit behind the latest.
+commit c58e9456e30c ("mailbox: Fix NULL message support in mbox_send_message()") upstream.
 
-> Could you send a v2 omitting the pcc.c hunk? The other three hunks
-> (mailbox.c, tegra-hsp.c, mailbox_controller.h) apply cleanly and I'm
-> happy to queue those for 6.18.y.
+The active_req field serves double duty as both the "is a TX in
+flight" flag (NULL means idle) and the storage for the in-flight
+message pointer. When a client sends NULL via mbox_send_message(),
+active_req is set to NULL, which the framework misinterprets as
+"no active request". This breaks the TX state machine by:
 
-Sure, I will send a new version.
+ - tx_tick() short-circuits on (!mssg), skipping the tx_done
+   callback and the tx_complete completion
+ - txdone_hrtimer() skips the channel entirely since active_req
+   is NULL, so poll-based TX-done detection never fires.
 
-Thanks,
-Joonwon Kang
+Fix this by introducing a MBOX_NO_MSG sentinel value that means
+"no active request," freeing NULL to be valid message data. The
+sentinel is defined in the subsystem-internal mailbox.h so that
+controller drivers within drivers/mailbox/ can reference it, but
+it is not exposed to clients outside the subsystem.
+
+Fifteen in-tree callers send NULL (doorbell-style IPCs on Qualcomm,
+Tegra, TI, Xilinx, i.MX, SCMI, and PCC platforms). All were
+audited for regression:
+
+ - Most already work around the bug via knows_txdone=true with a
+   manual mbox_client_txdone() call, making the framework's
+   tracking irrelevant. These are unaffected.
+
+ - Poll-based callers (Xilinx zynqmp/r5) are strictly better off:
+   the poll timer now correctly detects NULL-active channels
+   instead of silently skipping them.
+
+ - irq-qcom-mpm.c was a pre-existing bug -- the only Qualcomm
+   caller that omitted the knows_txdone + mbox_client_txdone()
+   pattern. Fixed in a companion commit ("irqchip/qcom-mpm: Fix
+   missing mailbox TX done acknowledgment").
+
+ - No caller sets both a tx_done callback and sends NULL, nor
+   combines tx_block=true with NULL sends, so the newly reachable
+   callback/completion paths are never exercised.
+
+Also update tegra-hsp's flush callback, which directly inspects
+active_req to wait for the channel to drain: the old "!= NULL"
+check becomes "!= MBOX_NO_MSG", otherwise flush spins until
+timeout since the sentinel is non-NULL.
+
+The only tradeoff is that 'MBOX_NO_MSG' can not be used as a message
+by clients.
+
+Reported-by: Joonwon Kang <joonwonkang@google.com>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Jassi Brar <jassisinghbrar@gmail.com>
+Signed-off-by: Joonwon Kang <joonwonkang@google.com>
+---
+v2: Remove the obsolete change for drivers/mailbox/pcc.c.
+v1: Add the MBOX_NO_MSG check to drivers/mailbox/pcc.c.
+
+ drivers/mailbox/mailbox.c          | 15 ++++++++-------
+ drivers/mailbox/tegra-hsp.c        |  2 +-
+ include/linux/mailbox_controller.h |  3 +++
+ 3 files changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+index 617ba505691d..9622369cab66 100644
+--- a/drivers/mailbox/mailbox.c
++++ b/drivers/mailbox/mailbox.c
+@@ -52,7 +52,7 @@ static void msg_submit(struct mbox_chan *chan)
+ 	int err = -EBUSY;
+ 
+ 	scoped_guard(spinlock_irqsave, &chan->lock) {
+-		if (!chan->msg_count || chan->active_req)
++		if (!chan->msg_count || chan->active_req != MBOX_NO_MSG)
+ 			break;
+ 
+ 		count = chan->msg_count;
+@@ -87,13 +87,13 @@ static void tx_tick(struct mbox_chan *chan, int r)
+ 
+ 	scoped_guard(spinlock_irqsave, &chan->lock) {
+ 		mssg = chan->active_req;
+-		chan->active_req = NULL;
++		chan->active_req = MBOX_NO_MSG;
+ 	}
+ 
+ 	/* Submit next message */
+ 	msg_submit(chan);
+ 
+-	if (!mssg)
++	if (mssg == MBOX_NO_MSG)
+ 		return;
+ 
+ 	/* Notify the client */
+@@ -114,7 +114,7 @@ static enum hrtimer_restart txdone_hrtimer(struct hrtimer *hrtimer)
+ 	for (i = 0; i < mbox->num_chans; i++) {
+ 		struct mbox_chan *chan = &mbox->chans[i];
+ 
+-		if (chan->active_req && chan->cl) {
++		if (chan->active_req != MBOX_NO_MSG && chan->cl) {
+ 			txdone = chan->mbox->ops->last_tx_done(chan);
+ 			if (txdone)
+ 				tx_tick(chan, 0);
+@@ -246,7 +246,7 @@ int mbox_send_message(struct mbox_chan *chan, void *mssg)
+ {
+ 	int t;
+ 
+-	if (!chan || !chan->cl)
++	if (!chan || !chan->cl || mssg == MBOX_NO_MSG)
+ 		return -EINVAL;
+ 
+ 	t = add_to_rbuf(chan, mssg);
+@@ -319,7 +319,7 @@ static int __mbox_bind_client(struct mbox_chan *chan, struct mbox_client *cl)
+ 	scoped_guard(spinlock_irqsave, &chan->lock) {
+ 		chan->msg_free = 0;
+ 		chan->msg_count = 0;
+-		chan->active_req = NULL;
++		chan->active_req = MBOX_NO_MSG;
+ 		chan->cl = cl;
+ 		init_completion(&chan->tx_complete);
+ 
+@@ -477,7 +477,7 @@ void mbox_free_channel(struct mbox_chan *chan)
+ 	/* The queued TX requests are simply aborted, no callbacks are made */
+ 	scoped_guard(spinlock_irqsave, &chan->lock) {
+ 		chan->cl = NULL;
+-		chan->active_req = NULL;
++		chan->active_req = MBOX_NO_MSG;
+ 		if (chan->txdone_method == TXDONE_BY_ACK)
+ 			chan->txdone_method = TXDONE_BY_POLL;
+ 	}
+@@ -532,6 +532,7 @@ int mbox_controller_register(struct mbox_controller *mbox)
+ 
+ 		chan->cl = NULL;
+ 		chan->mbox = mbox;
++		chan->active_req = MBOX_NO_MSG;
+ 		chan->txdone_method = txdone;
+ 		spin_lock_init(&chan->lock);
+ 	}
+diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+index ed9a0bb2bcd8..7991e8dba579 100644
+--- a/drivers/mailbox/tegra-hsp.c
++++ b/drivers/mailbox/tegra-hsp.c
+@@ -497,7 +497,7 @@ static int tegra_hsp_mailbox_flush(struct mbox_chan *chan,
+ 			mbox_chan_txdone(chan, 0);
+ 
+ 			/* Wait until channel is empty */
+-			if (chan->active_req != NULL)
++			if (chan->active_req != MBOX_NO_MSG)
+ 				continue;
+ 
+ 			return 0;
+diff --git a/include/linux/mailbox_controller.h b/include/linux/mailbox_controller.h
+index 80a427c7ca29..1db0069c27c5 100644
+--- a/include/linux/mailbox_controller.h
++++ b/include/linux/mailbox_controller.h
+@@ -11,6 +11,9 @@
+ 
+ struct mbox_chan;
+ 
++/* Sentinel value distinguishing "no active request" from "NULL message data" */
++#define MBOX_NO_MSG	((void *)-1)
++
+ /**
+  * struct mbox_chan_ops - methods to control mailbox channels
+  * @send_data:	The API asks the MBOX controller driver, in atomic
+-- 
+2.54.0.563.g4f69b47b94-goog
+
