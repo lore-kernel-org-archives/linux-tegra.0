@@ -1,229 +1,73 @@
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417CA31A575
-	for <linux-tegra@vger.kernel.org>; Sun, 10 May 2026 06:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F18236657B;
+	Sun, 10 May 2026 12:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778394980; cv=none; b=Aym2ij9mJYOEhwyrmpBcGeoKO3ZsT2rBfxYYVZ0rA5TG3RfDAu4ihN4M6u7Hi3L2D2P+lrP20SPdN0NUfwwIFNBssW2H1U/6S0syO2V9wduBknaSHjf00jZPfaJwZmNS/IS91DjPKpHFAuX42J1KJX0usyR0Eud5TABEZ6/8Fks=
+	t=1778415829; cv=none; b=a0fM+4BsTWtVBNQ8GBxbP1ZPr1Xea83akOhr2rxY8rpMBIG9Io21icRetD8ugTNqnf18bfWkP1QmOmjOOX01dOfqFCaPXvPYCXpSxNjWBJAzQVH4vRmfjzgpMf6AEa7INXoC7CL6xSVESh4JGFwibORB3OFxY5SPhBJ6YLex+xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778394980; c=relaxed/simple;
-	bh=phdnQxRsFNGzKAcu/4enEnu/G9ERVK1WGTbPg6FbUOo=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=B3HPHKwtUGRxk/UrNgNrJXjT4ux8SRCSnkPzgVIOeQ3d+CnmALGsuu6L5l655FT42J2RgglSCI8GJCoVVd5mEcrKbe0A4jQzDmSk0UFLnbNV6CNawfgGHM1ATfftWcuzdRPpIsIF2kxUU9IgSwQ7cPhZVPbFFd/oaumdINp+ssA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EEGpFHB7; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com
+	s=arc-20240116; t=1778415829; c=relaxed/simple;
+	bh=x1WogqHFVAt69woD/1Gf7Lf61vggakdMrNHQ3WQm5Yg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=iNVYE4mqee6C48tiLc0UwgVUnIej+WlqJlYgebgD9dfp2xyGZRcf+hw9Nek558LyEByZPCKQ7gJuO97GuT00v4qqsHpHcNA1az3R+S1xGedpcEB3JCOLlCTmt8snlp5f5qdkYrhghn+W248xcsIfEB6StTCQTVV5dvSIRb7pZ5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JgCk0u3s; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EEGpFHB7"
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2bc977e6aedso4974155ad.2
-        for <linux-tegra@vger.kernel.org>; Sat, 09 May 2026 23:36:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1778394978; x=1778999778; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3aQJiZTRBJkBFZ975taZr8YJVOyVprFYSJVw8C+91Rk=;
-        b=EEGpFHB7hgOWisUab5fuBgHikJsPBDGMWZVyKFieo9qsBTK34jPDeGWCryYLyjP/SB
-         UUNHx0a/46RbmQAQOm/lbA4rFQeDy2nTq0tE3oT37x9jQ6dpqKMJ/jnMUEHgdYFnDWQR
-         Fm+YKNWq9E5fHpPY0g584J5GTdPTBXXZ8cMNybQaj0Z+U3AVskXetx1pEMq18oNfzk2R
-         W0j0V/ZDSo2slWVUATRgYzxqxIXhE8aDg1euxiFW5+WFkNqw2jvriRcwpVEcCU0raeWX
-         Uhf5gSujk3lrSOb+g8l2Wux7lnh9Lj0h+rqao1Ako3eEfOhxbglDkmp6g4+bSCOGDn81
-         6sMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778394978; x=1778999778;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3aQJiZTRBJkBFZ975taZr8YJVOyVprFYSJVw8C+91Rk=;
-        b=DDIkfX7HDh6sdeV6yDufo4hIda77N4wlbWyLuqFNg8OzIV2mJerYxBqc+UMUsLYXFH
-         jl044DH1sDr5FhXJkt4YInDwd4VS5M1kEDGxTzTxU+8XJ229uczTZfIonbm+OzWjELdL
-         xrqDfoMxe9f/12Zl896uctckRCxBvwZpTuFvjES/MS03xjRkWbpqRj3nOdpxIBuen0ND
-         04Wn7MdoQO/u/bLPZf7f4PWFh+AsiJ9JTAAjpDDmpqQJCJvko55B/r39E9S2WhyiiTFV
-         CxPTz78jZPQZD5MWwQmAL3u6eht53f/MBb36tEXI3Apn80XmD0XkBLEYiK4kJTlf71fI
-         5naw==
-X-Forwarded-Encrypted: i=1; AFNElJ+/yzPUboIRU4xR23urEDsxYuwzEJNQJ5rxJNKEZuku/FUekTXsiP/2PwcAFoRRprfmBkMomg7uStgtew==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM/NB8XeQ52BR5j8NIXvgG02ALjjHIn1/Px01Qef4azChfXq9O
-	L0+VtbIUAkTt1EBJdMmoOhT/iQ7IQmjsT7Tos03YtNh/IBqZaeJ0vrwf/n6pbE8/kO5RrpJfNua
-	TpaxPUrDoNWw63LvmoB5WaAWMxQ==
-X-Received: from plkz6.prod.google.com ([2002:a17:902:7086:b0:2ba:8f0:838b])
- (user=joonwonkang job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:388d:b0:2ba:3b71:5814 with SMTP id d9443c01a7336-2baf0d4b827mr90924315ad.18.1778394978235;
- Sat, 09 May 2026 23:36:18 -0700 (PDT)
-Date: Sun, 10 May 2026 06:36:12 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JgCk0u3s"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96487C2BCB8;
+	Sun, 10 May 2026 12:23:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778415828;
+	bh=x1WogqHFVAt69woD/1Gf7Lf61vggakdMrNHQ3WQm5Yg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=JgCk0u3sKA1e8f+nIhQbrj8DuqU8X0ml4I4RpPPTnqlAThnQE/HCnec8Ian6oZExP
+	 YP6lJaQFa1Cu2JZeG9pF8m2Dp5dyPPHUBwqh0T5KlUyeeGBaLQMnVNZYyZMsLlmuNW
+	 219aeKJMZbk2zOcXMGHF6cWM4VGncHUc6+OWqv80CErr0gSFgPVedZ+q8k0LRXAfvh
+	 ViqAXYCYya0TDeWkUW3HpXIJj4b3gpFetVDXdu4y5W+SOJVv00gLEIEILhjZvqE6Qb
+	 WrfvmRyL9GLyoQvPrqbi9zdTQXlpR03htjep8HTaxpXcOk+DB2ZEnxXWrM2XbZZl+S
+	 aG9mhG/1CXSog==
+From: Vinod Koul <vkoul@kernel.org>
+To: Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Wei-Cheng Chen <weichengc@nvidia.com>
+Cc: Wayne Chang <waynec@nvidia.com>, WK Tsai <wtsai@nvidia.com>, 
+ linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20260504033305.2283145-1-weichengc@nvidia.com>
+References: <20260504033305.2283145-1-weichengc@nvidia.com>
+Subject: Re: [PATCH v2] phy: tegra: xusb: Fix per-pad high-speed
+ termination calibration
+Message-Id: <177841582520.420676.17804594742388538049.b4-ty@kernel.org>
+Date: Sun, 10 May 2026 17:53:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.54.0.563.g4f69b47b94-goog
-Message-ID: <20260510063613.1158801-1-joonwonkang@google.com>
-Subject: [PATCH RESEND 6.12.y] mailbox: Fix NULL message support in mbox_send_message()
-From: Joonwon Kang <joonwonkang@google.com>
-To: sashal@kernel.org, stable@vger.kernel.org, jassisinghbrar@gmail.com
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	joonwonkang@google.com, dianders@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-From: Jassi Brar <jassisinghbrar@gmail.com>
 
-commit c58e9456e30c ("mailbox: Fix NULL message support in mbox_send_message()") upstream.
+On Mon, 04 May 2026 11:33:05 +0800, Wei-Cheng Chen wrote:
+> The existing code reads a single hs_term_range_adj value from bit field
+> [10:7] of FUSE_SKU_CALIB_0 and applies it to all USB2 pads uniformly.
+> However, on SoCs that support per-pad termination, each pad has its own
+> hs_term_range_adj field: pad 0 in FUSE_SKU_CALIB_0[10:7], and pads 1-3
+> in FUSE_USB_CALIB_EXT_0 at bit offsets [8:5], [12:9], and [16:13]
+> respectively.
+> 
+> [...]
 
-The active_req field serves double duty as both the "is a TX in
-flight" flag (NULL means idle) and the storage for the in-flight
-message pointer. When a client sends NULL via mbox_send_message(),
-active_req is set to NULL, which the framework misinterprets as
-"no active request". This breaks the TX state machine by:
+Applied, thanks!
 
- - tx_tick() short-circuits on (!mssg), skipping the tx_done
-   callback and the tx_complete completion
- - txdone_hrtimer() skips the channel entirely since active_req
-   is NULL, so poll-based TX-done detection never fires.
+[1/1] phy: tegra: xusb: Fix per-pad high-speed termination calibration
+      commit: da110228b54f2e2143d97ea7151e0dc22e539d67
 
-Fix this by introducing a MBOX_NO_MSG sentinel value that means
-"no active request," freeing NULL to be valid message data. The
-sentinel is defined in the subsystem-internal mailbox.h so that
-controller drivers within drivers/mailbox/ can reference it, but
-it is not exposed to clients outside the subsystem.
-
-Fifteen in-tree callers send NULL (doorbell-style IPCs on Qualcomm,
-Tegra, TI, Xilinx, i.MX, SCMI, and PCC platforms). All were
-audited for regression:
-
- - Most already work around the bug via knows_txdone=true with a
-   manual mbox_client_txdone() call, making the framework's
-   tracking irrelevant. These are unaffected.
-
- - Poll-based callers (Xilinx zynqmp/r5) are strictly better off:
-   the poll timer now correctly detects NULL-active channels
-   instead of silently skipping them.
-
- - irq-qcom-mpm.c was a pre-existing bug -- the only Qualcomm
-   caller that omitted the knows_txdone + mbox_client_txdone()
-   pattern. Fixed in a companion commit ("irqchip/qcom-mpm: Fix
-   missing mailbox TX done acknowledgment").
-
- - No caller sets both a tx_done callback and sends NULL, nor
-   combines tx_block=true with NULL sends, so the newly reachable
-   callback/completion paths are never exercised.
-
-Also update tegra-hsp's flush callback, which directly inspects
-active_req to wait for the channel to drain: the old "!= NULL"
-check becomes "!= MBOX_NO_MSG", otherwise flush spins until
-timeout since the sentinel is non-NULL.
-
-The only tradeoff is that 'MBOX_NO_MSG' can not be used as a message
-by clients.
-
-Reported-by: Joonwon Kang <joonwonkang@google.com>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Jassi Brar <jassisinghbrar@gmail.com>
-Signed-off-by: Joonwon Kang <joonwonkang@google.com>
----
- drivers/mailbox/mailbox.c          | 15 ++++++++-------
- drivers/mailbox/tegra-hsp.c        |  2 +-
- include/linux/mailbox_controller.h |  3 +++
- 3 files changed, 12 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-index b4d52b814055..383c54d353ee 100644
---- a/drivers/mailbox/mailbox.c
-+++ b/drivers/mailbox/mailbox.c
-@@ -59,7 +59,7 @@ static void msg_submit(struct mbox_chan *chan)
- 
- 	spin_lock_irqsave(&chan->lock, flags);
- 
--	if (!chan->msg_count || chan->active_req)
-+	if (!chan->msg_count || chan->active_req != MBOX_NO_MSG)
- 		goto exit;
- 
- 	count = chan->msg_count;
-@@ -97,13 +97,13 @@ static void tx_tick(struct mbox_chan *chan, int r)
- 
- 	spin_lock_irqsave(&chan->lock, flags);
- 	mssg = chan->active_req;
--	chan->active_req = NULL;
-+	chan->active_req = MBOX_NO_MSG;
- 	spin_unlock_irqrestore(&chan->lock, flags);
- 
- 	/* Submit next message */
- 	msg_submit(chan);
- 
--	if (!mssg)
-+	if (mssg == MBOX_NO_MSG)
- 		return;
- 
- 	/* Notify the client */
-@@ -125,7 +125,7 @@ static enum hrtimer_restart txdone_hrtimer(struct hrtimer *hrtimer)
- 	for (i = 0; i < mbox->num_chans; i++) {
- 		struct mbox_chan *chan = &mbox->chans[i];
- 
--		if (chan->active_req && chan->cl) {
-+		if (chan->active_req != MBOX_NO_MSG && chan->cl) {
- 			txdone = chan->mbox->ops->last_tx_done(chan);
- 			if (txdone)
- 				tx_tick(chan, 0);
-@@ -257,7 +257,7 @@ int mbox_send_message(struct mbox_chan *chan, void *mssg)
- {
- 	int t;
- 
--	if (!chan || !chan->cl)
-+	if (!chan || !chan->cl || mssg == MBOX_NO_MSG)
- 		return -EINVAL;
- 
- 	t = add_to_rbuf(chan, mssg);
-@@ -331,7 +331,7 @@ static int __mbox_bind_client(struct mbox_chan *chan, struct mbox_client *cl)
- 	spin_lock_irqsave(&chan->lock, flags);
- 	chan->msg_free = 0;
- 	chan->msg_count = 0;
--	chan->active_req = NULL;
-+	chan->active_req = MBOX_NO_MSG;
- 	chan->cl = cl;
- 	init_completion(&chan->tx_complete);
- 
-@@ -492,7 +492,7 @@ void mbox_free_channel(struct mbox_chan *chan)
- 	/* The queued TX requests are simply aborted, no callbacks are made */
- 	spin_lock_irqsave(&chan->lock, flags);
- 	chan->cl = NULL;
--	chan->active_req = NULL;
-+	chan->active_req = MBOX_NO_MSG;
- 	if (chan->txdone_method == TXDONE_BY_ACK)
- 		chan->txdone_method = TXDONE_BY_POLL;
- 
-@@ -549,6 +549,7 @@ int mbox_controller_register(struct mbox_controller *mbox)
- 
- 		chan->cl = NULL;
- 		chan->mbox = mbox;
-+		chan->active_req = MBOX_NO_MSG;
- 		chan->txdone_method = txdone;
- 		spin_lock_init(&chan->lock);
- 	}
-diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-index 76f54f8b6b6c..8ef8b444de61 100644
---- a/drivers/mailbox/tegra-hsp.c
-+++ b/drivers/mailbox/tegra-hsp.c
-@@ -497,7 +497,7 @@ static int tegra_hsp_mailbox_flush(struct mbox_chan *chan,
- 			mbox_chan_txdone(chan, 0);
- 
- 			/* Wait until channel is empty */
--			if (chan->active_req != NULL)
-+			if (chan->active_req != MBOX_NO_MSG)
- 				continue;
- 
- 			return 0;
-diff --git a/include/linux/mailbox_controller.h b/include/linux/mailbox_controller.h
-index b91379922cb3..1689031c58c9 100644
---- a/include/linux/mailbox_controller.h
-+++ b/include/linux/mailbox_controller.h
-@@ -11,6 +11,9 @@
- 
- struct mbox_chan;
- 
-+/* Sentinel value distinguishing "no active request" from "NULL message data" */
-+#define MBOX_NO_MSG	((void *)-1)
-+
- /**
-  * struct mbox_chan_ops - methods to control mailbox channels
-  * @send_data:	The API asks the MBOX controller driver, in atomic
+Best regards,
 -- 
-2.54.0.563.g4f69b47b94-goog
+~Vinod
+
 
