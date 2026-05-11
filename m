@@ -1,63 +1,63 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3E23FAE0A
-	for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 13:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7535E3FA5FA
+	for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 13:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778507853; cv=none; b=YxM8usTNSgnNDE1XGfXGcolIKd8kGUIbXXy4ILO9lM1yK0EcqtszAJMBiBfUg68el95jK2EQDdmsds74GnjD2BSzz+O+Q/ds28n2Vwd2ASF68u01b3xWDGsyZfimxk9i2FumHobkTBbB7VwCNlUnRWHLYyMYamVuNWOI+IqKIc8=
+	t=1778507856; cv=none; b=CpApyr86w34427lkH9ftT+koc4NOb9iXAL3TrAiPpy6gOGeETXrI//9xDq1lE2EM3hpYkUvJSdhs05jfVb8LestjzS2RekGbBuhe+PkJvOlncGRgjX94mhHoaDXPDa62faBTeeseLuppscw8MUyrcGmc+XOyAJbxNVpfq9QoGuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778507853; c=relaxed/simple;
-	bh=ibm/ZDHMWfIYB/a+JVogHL3zgQTqT1cxj2txge0qJK4=;
+	s=arc-20240116; t=1778507856; c=relaxed/simple;
+	bh=E1H1+nd/RwnK9LuWJGKbmqe8Wgfvhjt2SMIIonrseao=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Zx23GpFCbbpGxKqnEZIleHidfgglkR6s1yBFHVrpla0tNcsgK4smWywWKzW3WXTmoN2VPz9hdbsrhZEB69TgohThvtFh+adFZtWMjMayOC2FMOfzOAWntZS8KPENb0BeKT9qr9oKCs7sIfwnVWX2XvyK/ucvUFm1vd3AiYT8S9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oqztsxt0; arc=none smtp.client-ip=209.85.208.41
+	 MIME-Version; b=fr5N794Gudq7ql6XmNu13+PjSDpHPmKYjyj1vidmgxUq1PyW89fxnIClYoPVVr95hfuC28hEAdCsyfuyoD8asq30uWipY6KqX2rMM9RJCNLP4THaPvhcHowXgC5JB8231C9IzFT8LT+gEzmH2rGWFBjW03T++Few44JwHkCnqwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EZxQ5kuP; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oqztsxt0"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6746d0b2b4aso6544804a12.3
-        for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 06:57:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EZxQ5kuP"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-bb91b426e40so723859966b.0
+        for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 06:57:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778507844; x=1779112644; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1778507847; x=1779112647; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+yZ2RV9klSfc79KrOIT+9nKykbDSPRLRaZkXlnlwwJM=;
-        b=Oqztsxt08VSED0yBq9y7gCvbNeIQsWzh6qCP6bEWpOdaH42iP9LOw/D6fGAQi8O7pP
-         8+T/5rP9lXkGXz2utuy3yO0zDbfmXhzJypfb6BgwM6PSQX0GCpNEM14v5BFNjmOov3Gn
-         vxaPdFefs6gvL0p3aCWOocLQqQo5BTYQrDwktwEq8VWzDpzN8toh2+prb+Ng2NNrP0xz
-         XhX00H0+39dIbVI/dH+NyThiFKEqNozZZR3B+4A0iu+cG+u6cxhhiHfjz21bwZ3E+ghv
-         4ZmQ7dgxb+4CkXeqhSUYaY50vct0v3vg3gyhxjPtxPBDVISq/a2x1EKKCpekXefD/C50
-         KmJQ==
+        bh=BY8lqIlaX558zAJe1pNahwarYdn7KKAgYehteYdm61E=;
+        b=EZxQ5kuPJDd822ELEn5XyU1VzeTw1w+Mjno0plhe6QQMrVl4pJkiu9MJGF7kX8Xo4l
+         gvM7IsTcSy+siGPSHFUR3253RsEOXHUFH+obV8+28ygPaOsSLAnxoqts3fG168PMYZCS
+         ALmmejwb4IxfNAMVXGTTK0UHND39pxpuqwy67e6qFOMIwDEhmvVYmI3gzBOXbL+okxDE
+         SvHv1ML8ayH1IPCCpJZuTAzu2+FS2xu7RQ0KsGgAbHcX9vDjEesCGTtqIQRzhN5dXlEI
+         6apD2MAkvfWbtQlWVHMWPJ9SNcVinNv0amZ6p8f0RGdzZaLGPT1Jq+6mmhQ1S1ayOtVZ
+         2VjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778507844; x=1779112644;
+        d=1e100.net; s=20251104; t=1778507847; x=1779112647;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=+yZ2RV9klSfc79KrOIT+9nKykbDSPRLRaZkXlnlwwJM=;
-        b=HLu2yBV5peT8jOcN4R6OaVPRksrEqRmRaOOTUEceoM7XFQa+saVVAiFuuPPL5G7cef
-         1MsxCxd4i3y+nvwVQKpnx79i5IlWVLhMJe8HfVL0XUZ726wJtEhwCCn6LVDBouiXFzZW
-         QRQybho6CplzmkXCE/X2lfK21wpJUgo+jkSV1yZM3AbbHyXKguLrizYA2RBT/P+eurvY
-         pmDTdU7nC0QrB/LqCH1LjPW8GEaqysk5fjSShWppHkkodwmL9Ys9jj74AKWKL0t3XxMH
-         WFO+gez7qBxxAos0XkVjoOd0gcUGKVpDpKQD4P/5ur9pXqD9ldkBOZbmPjY5d0H2Ya9k
-         bdWw==
-X-Forwarded-Encrypted: i=1; AFNElJ/YKRTBijnEEu0zXM/CXfpdDzuoGtTzUUVZx2oAaSr5UpizkfO8KaD7MxCJRv5gAG2XzuBnZ+7TzHD/Lg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4VNNxfNcyiJjbrTJN11PkQokGWwcX9wHbIRnICGs9UwRn2AEX
-	lNwg09nODBMA4oLCfqepyVH+yOGkdQ7pPWXK4Ko+wgOpldxDh3yZvRXW
-X-Gm-Gg: Acq92OF4mOoFSZS7e0StubLOaH1AdDHSsyPGIykkOHNmjptl3uFbEYHVDYMYvJo/yLr
-	sPXsHj52moANikh8Xn5Im0Fxmv12WjTC5nD+qxCVusy4SVp8DceS46z3weV4O7YmzmoKwycqT//
-	WfgzlzrRTGRfufq654QjPIWtSXot5FQ00I3lgyXIVJsYsOxoVFf48sxWsyhPSEEOiiaD6zYB1RD
-	5DCEbDZcY8f7wYGNFzuLy/OOF47GkV2mFX3Oa/Z0dMdBfKeOrQ7Y0fm5RV9JQnQBmoQwn2eZXV0
-	5NAJrwTiAj3IKxc1XLcxQRtx1wH81JbUe5ujK106fAL97qvoB+F1fND4A2iwJYRDo1t7kCFQTwX
-	MvkVPaVZItWpPKf5tqpl4JFGLnFH9AeW5EISH5aZjRkNVaRWiG543KcwiOtOGZHATnWxIuvmPsl
-	fKXVJmwH7oQx58
-X-Received: by 2002:a05:6402:5297:b0:67e:2498:dc7e with SMTP id 4fb4d7f45d1cf-67e2498ddc9mr9228829a12.11.1778507844261;
-        Mon, 11 May 2026 06:57:24 -0700 (PDT)
+        bh=BY8lqIlaX558zAJe1pNahwarYdn7KKAgYehteYdm61E=;
+        b=scp5ZvT4cbYBV/S/pYkf61uIX5JEj/lZIRaJZf32+No+i31kUV9X9W3zp5ZRyA7ajW
+         Mbihx1qm3/WrPcPqdtn//CwKbOnCJHw2T2qw66xNJDY3bio5u59i4Q2baR0S33/LVyBa
+         0YtVoM3JfEvv1H3GKnQfHjiPve3XS46blHNH/uBh7L9sQGn/BB+okDkgTf3mKUeBra15
+         XGMzvexlvd9ofH6JzGtixxonD2FuPChyVWzOmubigaeoQ53Esp2qKweVlOx6H/K3K5j6
+         2SZznYX+7kjTsPrDDuObMicLFubnMJGuUOYVuWGaS94HEl9G7xxVEMiCWUJyvwdHFD/X
+         IK1A==
+X-Forwarded-Encrypted: i=1; AFNElJ8fXyHOABE1hEchMqZt5NszrfTbdEIUhFENoPvTjfVMzR6lxEEgM7wdfsbkG+KJRoo9jLM/Pog+lJibTQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYUi+lvgUPo76DR7zdRlsU/4QVPK1m6KUchvmF0COPk2Ci1/Rn
+	eSqF8vfgK0DC1oH50yeQqzevqaQ5LfOOy68jyrPUtmRanqkqIkVA24NP
+X-Gm-Gg: Acq92OENWE09ffQAZIhsdMTR+mhxQVmDsAof5vF6SIOCvPwnwQq0fYy//Y5zzTXPw5H
+	572pNPB0FMYFdXAHIJqTYVLZEx7IivKzfOQS/EaRCgBlKX15raI3ds+fsFpPPeRYLEXhzYhvTCY
+	vdrnmr3/zeAn8PR7U+fFkxaAG+GN/pGrJnCUCdpRSkUgZ2bqMwWhwMqskTdjWttGGM4WCI0BTx7
+	xml4P2JWhApH4d3oWnP+o7Y77bDYwyoqRhZNv9lCKuo92UmPak/ixnLfmGaBFRly+hc5LE6qsVr
+	Z52uPc6pM67OKwIpej37srTe8ikRwC713YT8RXCRVKiwpk+wHid2Fen6ml9wSTNwgKUqJogcUdo
+	gsHW4pgSC0zQ8aEmnJ52Jr30hpkYk12rrG7LilYnHAp8X4pPBZ8rgnWn/e9KLirfmP8OITfXPs1
+	tH8UXJxmMy1g6L
+X-Received: by 2002:a17:907:fdcb:b0:b9d:3e5e:fd32 with SMTP id a640c23a62f3a-bc56a6498c3mr1324021866b.8.1778507846254;
+        Mon, 11 May 2026 06:57:26 -0700 (PDT)
 Received: from xeon ([188.163.112.56])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-67ef0b3b904sm3685357a12.1.2026.05.11.06.57.22
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-67ef0b3b904sm3685357a12.1.2026.05.11.06.57.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2026 06:57:23 -0700 (PDT)
+        Mon, 11 May 2026 06:57:25 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Andrew Lunn <andrew+netdev@lunn.ch>,
 	"David S. Miller" <davem@davemloft.net>,
@@ -80,9 +80,9 @@ Cc: netdev@vger.kernel.org,
 	linux-phy@lists.infradead.org,
 	linux-tegra@vger.kernel.org,
 	linux-usb@vger.kernel.org
-Subject: [PATCH v1 1/6] dt-bindings: usb: ci-hdrc-usb2: Document nvidia,external-control property
-Date: Mon, 11 May 2026 16:56:56 +0300
-Message-ID: <20260511135703.62470-2-clamor95@gmail.com>
+Subject: [PATCH v1 2/6] usb: chipidea: tegra: Avoid controller/PHY init if bus is externally controlled
+Date: Mon, 11 May 2026 16:56:57 +0300
+Message-ID: <20260511135703.62470-3-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260511135703.62470-1-clamor95@gmail.com>
 References: <20260511135703.62470-1-clamor95@gmail.com>
@@ -94,34 +94,83 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document the nvidia,external-control property required, for example, for
-USB lines in HSIC mode connected to a modem, where the modem requires
-precise control over the USB bus to properly enumerate all its stages and
-intermediate devices.
+If the USB controller and PHY are externally controlled, then the
+registration of the controller and the PHY initialization should be
+skipped, since these configurations must be done by the device that
+controls the bus to work correctly.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/usb/chipidea/ci_hdrc_tegra.c | 36 +++++++++++++++++-----------
+ 1 file changed, 22 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml b/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml
-index 691d6cf02c27..a13c1ef49a57 100644
---- a/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml
-+++ b/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml
-@@ -75,6 +75,13 @@ properties:
-     type: boolean
-     deprecated: true
+diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
+index 372788f0f970..593390a818d1 100644
+--- a/drivers/usb/chipidea/ci_hdrc_tegra.c
++++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+@@ -32,6 +32,7 @@ struct tegra_usb {
+ 	struct clk *clk;
  
-+  nvidia,external-control:
-+    description:
-+      Indicates that the controller is configured externally and that the host
-+      should not attempt to touch it. Usually used by a modem which requires
-+      precise bus configuration.
-+    type: boolean
+ 	bool needs_double_reset;
++	bool externally_controlled;
+ };
+ 
+ struct tegra_usb_soc_info {
+@@ -312,20 +313,25 @@ static int tegra_usb_probe(struct platform_device *pdev)
+ 	if (device_property_present(&pdev->dev, "nvidia,needs-double-reset"))
+ 		usb->needs_double_reset = true;
+ 
++	if (device_property_present(&pdev->dev, "nvidia,external-control"))
++		usb->externally_controlled = true;
 +
-   ulpi:
-     type: object
-     additionalProperties: false
+ 	err = tegra_usb_reset_controller(&pdev->dev);
+ 	if (err) {
+ 		dev_err_probe(&pdev->dev, err, "failed to reset controller");
+ 		goto fail_power_off;
+ 	}
+ 
+-	/*
+-	 * USB controller registers shouldn't be touched before PHY is
+-	 * initialized, otherwise CPU will hang because clocks are gated.
+-	 * PHY driver controls gating of internal USB clocks on Tegra.
+-	 */
+-	err = usb_phy_init(usb->phy);
+-	if (err)
+-		goto fail_power_off;
++	if (!usb->externally_controlled) {
++		/*
++		 * USB controller registers shouldn't be touched before PHY is
++		 * initialized, otherwise CPU will hang because clocks are gated.
++		 * PHY driver controls gating of internal USB clocks on Tegra.
++		 */
++		err = usb_phy_init(usb->phy);
++		if (err)
++			goto fail_power_off;
++	}
+ 
+ 	/* setup and register ChipIdea HDRC device */
+ 	usb->soc = soc;
+@@ -342,12 +348,14 @@ static int tegra_usb_probe(struct platform_device *pdev)
+ 	if (of_usb_get_phy_mode(pdev->dev.of_node) == USBPHY_INTERFACE_MODE_ULPI)
+ 		usb->data.flags &= ~CI_HDRC_SUPPORTS_RUNTIME_PM;
+ 
+-	usb->dev = ci_hdrc_add_device(&pdev->dev, pdev->resource,
+-				      pdev->num_resources, &usb->data);
+-	if (IS_ERR(usb->dev)) {
+-		err = dev_err_probe(&pdev->dev, PTR_ERR(usb->dev),
+-				    "failed to add HDRC device");
+-		goto phy_shutdown;
++	if (!usb->externally_controlled) {
++		usb->dev = ci_hdrc_add_device(&pdev->dev, pdev->resource,
++					      pdev->num_resources, &usb->data);
++		if (IS_ERR(usb->dev)) {
++			err = dev_err_probe(&pdev->dev, PTR_ERR(usb->dev),
++					    "failed to add HDRC device");
++			goto phy_shutdown;
++		}
+ 	}
+ 
+ 	return 0;
 -- 
 2.51.0
 
