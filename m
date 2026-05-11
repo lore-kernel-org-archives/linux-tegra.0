@@ -1,124 +1,140 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47C531F99E
-	for <linux-tegra@vger.kernel.org>; Sun, 10 May 2026 19:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778439607; cv=none; b=pq1FPTacX1DAWW14jpOVEv7c/kwgbeizgTBK5u61HaGp1rAUvZ1aHoN6osSctGhydvVkUYwhyEQZrRiaCkEorfLX8czDGG4zhr7Z6WWTto7LA8dL35YycL0X6ZWkc/CQi202cI1oqWnivk1zc7H7J+ytlWyglSKbRthexDl+41k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778439607; c=relaxed/simple;
-	bh=Bvc212FwGt0vxmNS1oiSrfkzUZX2D+Zt999xDLx+UQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Li+4p7NrAtC2dhZG49mGgFGYbkyFuPG7noxkuFbNBUiIstUHjbUTmyF/+QRDvENd6oksvOqZHNTx06lBDejR0SkImqmClMSfklymyu4NpYYSsX29Dl4sk79BRjno5PdNXKArndH8a9Ip0Odx+EjcMkiJWtqnwJQDfmN9aATAaNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l99ddn6X; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7400236EA8B
+	for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 03:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778468766; cv=pass; b=u6V39NxO1wQHIft3QMfrPXbp6Hv7jUXJ3fP701goCG+scm4meflgI2Lru4yLIG64cdY4HjEumlsYeRHPZ4RVLV6uEBp27197BCe+jAB1TGxqWZQpFokHK7GtftGaW1q+hgdw8deAMMm5U/aRktSdqx/OTWMUpWMkH09EGPACZWE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778468766; c=relaxed/simple;
+	bh=E8rkKROlN2DBsFDy2zAwmFjvflwBkizPuT2WdL5S2YI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OkuHyyr6qDO4IB4W8iv0b7xa+Xyj7t6SE7XvWLLXDnN7ofZ3QhW3UCAtzvRR8WyHGOXICGHBnCn3wXLAoAswJMoo42nE1p5wQG5tIAdp0FMFifcxLlFXWzWqzrUIqd6+JAHDhjzjeo9bhIOif6e9Bt8z3aurKuOWIKHzpHAgMec=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DDUvF+Jy; arc=pass smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l99ddn6X"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2b46da8c48eso325ad.1
-        for <linux-tegra@vger.kernel.org>; Sun, 10 May 2026 12:00:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DDUvF+Jy"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5a40d02b58bso2758854e87.3
+        for <linux-tegra@vger.kernel.org>; Sun, 10 May 2026 20:06:01 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778468759; cv=none;
+        d=google.com; s=arc-20240605;
+        b=EvQKv7UIy374Lx+hzlSvUWfDKCOE4C5XR5uFk/oI9inKbHWBvZP0cvsr75kd/rZELw
+         ltnUomqVTVWEgXG+gUZhUCJJCX5PlK0dwvN8P81pWoZ2IoCyXNd3x1Sg0YDYLDB2fO+0
+         iup1wpJFm5bL8rFTfpDhQokhXnq0LRunK6+eNdq6rQDMNXc9KZKm7j9OB5Wu8CC3+mtS
+         qtA0LauUMUddEtPtPQ4wGZuMnBolcbe07DvkrXXgD8a8tVF6YMW24uqprQY32xS4L5FK
+         1lhTyrn9lWwGVrC2idmx8XzZgylvB7t9+vc+7eYj7xqpflcbCLnR5EKIkrxshkWGL7hl
+         lK8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=E8rkKROlN2DBsFDy2zAwmFjvflwBkizPuT2WdL5S2YI=;
+        fh=dCyTThM2pBl05YaGf30DJLrMrQ0pxGTtC+4zA3+q4kM=;
+        b=TsqafCFlCxy3UNYmfzSdN4uNXsBuoBKb9a2Cr99BfCTzxi3DwCfIRGLZYbxhtQxys7
+         X1FLFerCXxiQ2pDeG7iwe/cSe/nJdGm4+XJ/5A5X2wNwNgEMjbKhUr6kQqv/dgkO5dO4
+         svJx2NfFusoG8lij9OVn6F/Wt78JWx9QvURpDF3teyO+NTiUQBisYZNd843cvCaL7YOr
+         n/rqUi5eEwAcBw8iU7AR2vkihOOXkNlUYGJXWgVsUYDkWtcXmMroOGhnk6jm/jlcS+as
+         qY0D+5OGI07USNn4htoqvhzGUuyYD6lnHcits7JKjGGkHHQPXkWySZRxjAXKQewTQ1nc
+         MBjQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1778439605; x=1779044405; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bMsfc8Zbf8JIkTQeMv/NJIxXAe3vZVoXdywLBqyZ2Qs=;
-        b=l99ddn6X9gJPoncZdNaC4oLOYLv7UA/duUKGUEFNASqPh4djCId5cwZgvx3EfNh61K
-         ecA4qIngJaLNmY3HvOHrb8S5ttPwjuMZaI/ufbsgURoEuum/LMuC3hXPizkoG9iNc/cT
-         24j2uXJYhad3U7aQB6z3FdlahpWuerb1IoEsTGVubuLzUZEpoC17zDaX//QHQFnc9MCp
-         sPcew8MNk20vy9CXLjoVKGXXc2Z6h7inOcBdE6QIf63RlKz1qXaRY5dDkGc23n1T1oBJ
-         4EiPB1S/q4Px62J5z4LbaV40lr0A2LXczbiwOHpHE2gcyzKUzVb94VXYF7WFA9Orj3qr
-         dQEw==
+        d=gmail.com; s=20251104; t=1778468759; x=1779073559; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E8rkKROlN2DBsFDy2zAwmFjvflwBkizPuT2WdL5S2YI=;
+        b=DDUvF+Jy4tDy4uCcRvmAR5WRe12s4aL+/HVtPX/7+ZabTbWtl3KH0/y1FURc6RFd4f
+         9d7J3ce6+KTVZKnx3uvqDEMGsRZIq8OzEB1HDMgv7Qen0noWAE0RG3gesqheV6cqL4AZ
+         zqa5HVyzRhXS0cj/sXg7ivyToftZ8ij8JGsMHOyUoTjjaDgcOTefJDlhoGpo+PZo1pvU
+         3rI4iAxkEB/pK3Xz/CC0nIgCWP8B+SQfUkzhcJLMh8QMhgNqztMPr3UYNW+vBYDItbUO
+         nR0PBErouzVFlbD4NV1pz6ExJorfbqxbpGWcI4mpGSwhu+zmDavJL3Nq4zBMNelFzwP9
+         7bMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778439605; x=1779044405;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bMsfc8Zbf8JIkTQeMv/NJIxXAe3vZVoXdywLBqyZ2Qs=;
-        b=hFX2enoJN7KBrWmL+Kkwfxrh728jcvgmXwfYORRkJvq/TZjZwR/0bKE9M1nRD0/Bkx
-         GE2SqcRabCHAGqJR3/Yni0c3K4OVJWYqs2Cm0czA6w5Fw4ZSvgo+1PXegCa05dTs8/Zf
-         pEXWOorcaaoXaU7c1+peBAvkxzEeCC62nl+nGvC2Kjkdk2UjXMXRIaU5adv2Uwt2uT+1
-         jLtjYvBOXjCl7M5VNTqtbue/84vixMm5UgqZoPHgqiMiFpdfDs15tEVxErv4cqu5Ypjt
-         MZJ4DL99cvglGMRrFu1FaSY3OOMvA+YFGrO6lA23yV+UI6q8++1gZM3Wmiozm1Da5UKX
-         uXlQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/WnljpdP9w6VCPQio0mxCdKXrYKFGFCihBYroeUYOC5AtQgWLbW9je9pa1Ua/5NAzZVO0goHgbmVac9w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFQcRp7QsBntm1wimR+wIzF2J+/VtWx/1fGelGA2jP0hrd8MhA
-	sMT6niCBKAQcuk2GhudCpLzHSeayaXCXct7WTz/7PTA/oPMqr68Cx2ee4vLa6MZEjQ==
-X-Gm-Gg: Acq92OHOD2QmSloLmpqczHweZzx/pNENwNC2IWZFlPPpMUlpD5myJBj7QTeCji7QKWb
-	RqHG+3wSDZl7sGDbhxo2PSQQAqq6Wwh0JOezO3N/zeEaOVhDZKEavLg8nEwXCn0+k/tVe185tmG
-	wZ0BCBNK5Pz+g25r5XOJEr/GGHydDVuI46RN5S8AAwb4q3G+PwlHid9pHUdf3+ZcdJ0LeWaSlu0
-	yg3jYX1uJu15bl6XZnoU38Rweh/sIrvZpM+s0QzTqF2lKrQasYjhJwk+l2lDATXmmVtwQMPECW2
-	voL+2BDECsoaLEpArQQMjVxl8nTNxDqQ2YuJrXtfZ60rrDgoGQ5K6TXb909fY8ohbeNDlI5l003
-	tMCwoE2EhIakZ0bPolVeV1bpCW7rp/G91dhX4ezP//loG0aU2LB9lymOmyC8ZVop2Ki7WM/Q5Xm
-	X2gHUJo3gotZ+88Pnb5pQu1Mw0xhk5Bm+ALaMFpNThWLkpYWMUV2DOKj+lVFW/i6EbVN4k
-X-Received: by 2002:a17:903:8ce:b0:2b4:641a:6b7c with SMTP id d9443c01a7336-2bc7868490cmr2499495ad.13.1778439604484;
-        Sun, 10 May 2026 12:00:04 -0700 (PDT)
-Received: from google.com (44.234.124.34.bc.googleusercontent.com. [34.124.234.44])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-839685a8125sm18060689b3a.61.2026.05.10.12.00.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 May 2026 12:00:03 -0700 (PDT)
-Date: Sun, 10 May 2026 18:59:57 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: iommu@lists.linux.dev, Jonathan Hunter <jonathanh@nvidia.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	Robin Murphy <robin.murphy@arm.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Krishna Reddy <vdumpa@nvidia.com>, Will Deacon <will@kernel.org>,
-	David Matlack <dmatlack@google.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
-	Samiullah Khawaja <skhawaja@google.com>,
-	Mostafa Saleh <smostafa@google.com>
-Subject: Re: [PATCH 6/9] iommu/arm-smmu-v3: Directly encode simple commands
-Message-ID: <agDVrTUTAIt1DpZ6@google.com>
-References: <0-v1-b7dc0a0d4aa0+3723d-smmu_no_cmdq_ent_jgg@nvidia.com>
- <6-v1-b7dc0a0d4aa0+3723d-smmu_no_cmdq_ent_jgg@nvidia.com>
- <af3KDBt8vhClSKEF@google.com>
- <20260508173736.GH9254@nvidia.com>
- <af5C_ax1a3LbtL1Q@google.com>
- <20260508233629.GI9254@nvidia.com>
+        d=1e100.net; s=20251104; t=1778468759; x=1779073559;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=E8rkKROlN2DBsFDy2zAwmFjvflwBkizPuT2WdL5S2YI=;
+        b=drdpKgrxuVsgNuYznhd8D0FB/Sm9mH05ji+PEPdN2u0B045jUD12Kd3lL18nIqGC0G
+         KfyqPG2aBuq+1f22K+bA5hqMKJ1Mt+xjqZ6p0WI8JAmPxigwzc8ypHr9XUUGVuXddeIA
+         5c5svaqAT7lJqu+ZsfQDwfsU9u42yYLrTfM1pSHe3cDmmRWveRFuz2/BE1ny7Ez+Tk2K
+         vUhOTxerYdei8/4Yttgi73rPBsENC0OaZ2MqRQLnJUJOKg2Pc0pk87/dczIYgf587CmW
+         SZkYYguRrGn5yIFyNAuytxyj0sqvVQzZqiLX3BZNQxc03LRlvGe3ZKsQwvwloJFNAiJy
+         4E1Q==
+X-Gm-Message-State: AOJu0Yxn4d/honGWzkFR119/3wAhA1SHpdMXFfDaMRdpVAMFM3ZFg5J4
+	CMAJvcY/YiAC4K7Hzt/t1EZwunSjii3AEnyQXLNh5r4LCMCC2oHSFAw8j7fBB6xuQTEW+L7ZpNc
+	YgqGfJzSrl5B5GWrtz5QGUJbZvjjK1xcqUQ==
+X-Gm-Gg: Acq92OGafarTLYYKCDjPO5ziGbmAUlyBavSeLAiJE8Qrh4VTolrTBYoFpXHWvk1lzxt
+	qaJNQ0sD+9dxYaOYE3TTsptgstE5Ki8YaakNa5nYe60xuqO4Z006R7EPMjo9A1xbIF/3yIPD22w
+	I/p1Ekh7gjRTWzayCk94Dob3RespY/t10L2lUOrWYBGEKP1uBFuie/SLGh0Y2iD2vAWRqPtsVO8
+	mzlC7fAGKKUCV+H5aKKxurSRvTjIl4kQxFQuJXVVH+QrARLVAOlNN1rF/U9q459xHZ9bDi8nB78
+	7KemGR6EVBt5xnSc5gzN/aka6PgqMbbExECt3Dj0gEywDJwvDebJR7unVRgn4Hxl0Pae
+X-Received: by 2002:a05:6512:1386:b0:5a8:757b:80ff with SMTP id
+ 2adb3069b0e04-5a887ae07ebmr7444031e87.12.1778468759265; Sun, 10 May 2026
+ 20:05:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260508233629.GI9254@nvidia.com>
+References: <CALHNRZ8uHmx3nqpg1-F6RCprDavx3nY55en5gJds54RU8MDR5Q@mail.gmail.com>
+ <4vpqn2iv23pejsx4uxt7p2ojwy67pdzy5bihce7zpnp766f56j@2sr3d4fw4qwp> <CALHNRZ_4WaAuJmpTnvdpn10=vw5SXcv-5Qq+UX-T_pG4Snba7A@mail.gmail.com>
+In-Reply-To: <CALHNRZ_4WaAuJmpTnvdpn10=vw5SXcv-5Qq+UX-T_pG4Snba7A@mail.gmail.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Sun, 10 May 2026 22:05:47 -0500
+X-Gm-Features: AVHnY4KgND-0dHuqGkFDQosr9I-GGnOSrz5cSXpeG4NuHIWVbaXE6_kzul7nJ2I
+Message-ID: <CALHNRZ9152Ox=Y230zmFM_eywsOtr0Z07CYLKZH+hGbOhRmF7w@mail.gmail.com>
+Subject: Re: [REQUEST] Release Firmware to Match Current Driver Support
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 08, 2026 at 08:36:29PM -0300, Jason Gunthorpe wrote:
-> On Fri, May 08, 2026 at 08:09:33PM +0000, Pranjal Shrivastava wrote:
-> > > > > +static void arm_smmu_cmdq_batch_add_cmd_p(struct arm_smmu_device *smmu,
-> > > > > +					  struct arm_smmu_cmdq_batch *cmds,
-> > > > > +					  struct arm_smmu_cmd *cmd)
-> > > > 
-> > > > Nit: Same here, why not  __arm_smmu_cmdq_batch_add_cmd? I understand
-> > > > that _p just means we'll aceept ptr.. but the name's kinda wonky.
-> > > 
-> > > Which becomes a fairly widly used public entry point, so I didn't want
-> > > to have the __
-> > > 
-> > > Though there is no external user of arm_smmu_cmdq_issue_cmd_p()
-> > > 
-> > 
-> > It's just that we're calling "arm_smmu_cmdq_batch_add_cmd_p" at one
-> > place and using `arm_smmu_make_cmd_<cmd_name>` at the other. It makes
-> > one think what's "_p" in issue_cmd, only to realize "_p: pointer variant
-> > 
-> > I guess I didn't like the new _p ones but I guess it's fine. Happy to
-> > leave it at your discretion.
-> 
-> I don't much care for the _p (and yes it means pointer variation) but
-> do like it better than __ and failed to come up with another idea :)
-> 
+On Fri, Nov 14, 2025 at 2:17=E2=80=AFPM Aaron Kling <webgeek1234@gmail.com>=
+ wrote:
+>
+> On Fri, Aug 1, 2025 at 4:56=E2=80=AFAM Thierry Reding <thierry.reding@gma=
+il.com> wrote:
+> >
+> > On Thu, Jul 31, 2025 at 04:22:32PM -0500, Aaron Kling wrote:
+> > > This was originally discussed on the freedesktop issue tracker [0],
+> > > but there hasn't been a response there in 6 months. So I'm reopening
+> > > the discussion here.
+> > >
+> > > * Nvdec firmware. The driver has been in the kernel for over three
+> > > years and there's still no available freely licensed firmware to use
+> > > with it.
+> > > * T234 vic firmware. The driver has supported the arch for almost
+> > > three years and freely licensed firmware still isn't available.
+> > > * Nvjpg firmware. The driver is awaiting final approval, probably
+> > > worth it to release the firmware with everything else.
+> > >
+> > > * T194 nouveau firmware. This does not have driver support, but there
+> > > has been some interest in working on it. Making the firmware
+> > > available, even if it isn't merged to linux-firmware, would be one
+> > > less blocker for someone that doesn't work at Nvidia to work on
+> > > support.
+> > >
+> > > Aaron Kling
+> > >
+> > > [0] https://gitlab.freedesktop.org/drm/tegra/-/issues/4
+> >
+> > I will continue to look into this, but it'll not be high priority. Too
+> > many other things going on.
+>
+> After some discussion with nouveau developers, it was pointed out to
+> me that the gsp on ga10b doesn't do much and the setup is more like
+> prior tegra gpus. And that it wouldn't make sense to support ga10b on
+> nova. So I would like to expand the request for gv11b nouveau firmware
+> to also include ga10b. Perhaps not directly pushed to linux-firmware
+> until they can be verified working, but made available so driver
+> development can happen.
 
-Yea, I can't come up with much either (without __ or _p), maybe we could
-leave this as is..
+It has been over eight months since the last response. Nvjpg driver
+support has been merged in the meantime. Has any progress been made on
+any of the firmware releases?
 
-The only alternatives in my mind are arm_smmu_cmdq_issue_cmd_ptr() which
-is similar.
-
-Thanks,
-Praan
+Aaron
