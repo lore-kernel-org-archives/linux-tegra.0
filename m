@@ -1,63 +1,63 @@
 Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6943A8759
-	for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 07:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2983A9D9C
+	for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 07:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778485775; cv=none; b=Tpkny+fFkNIZV8GBD0oIy90l6cJyX80/eB4GEHrNWYloCDZuxfQylsAYcuj4mRKIwKZA5/TxQ/kCnVXDhUU0Kd/4WEDb59U6jAa32tiUfxoaHev8ZdzGBW3x63w4P4/VllZ9jDolyWTTmHQ8oMTuFq9c/5rBSThu0POfsLs46vY=
+	t=1778485777; cv=none; b=aYLwfS8NmJBhmjwyqO3XXqV6sksb6A82ZTkf+MT7tPgJNtyDi9eqraxi9Ors4fIVYmXz2Q+IhKSavVnVDVGenAYr72o03viiGBnrOtB37JVPNVm5SgoM76Q03KX6kodHjszi1pHaGmG5rJlxnx5L6XOPiVw/lg7QwYBjDUJY/Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778485775; c=relaxed/simple;
-	bh=PKFdbLOtezmddcHtLj3hd26ATJxGdOHkO0A6JXK5y1k=;
+	s=arc-20240116; t=1778485777; c=relaxed/simple;
+	bh=HvRnVDts5ARzEgDQd1uxaF/Ni636zkJ9D8rxyroqkjc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jUB5jRqy0AXMqZxxl/oD76eQRX/PXLEOtD7VFZdtwOVDZNRnMmMH0liMwY+H4H4Ki1jjxoqD09qajVN3JCtXrXERORUvtLbtHW194Gmeut3hQE3/vQsIiQzdknVPJNVxbOnHSF76hvgNmJvJuamI1oKVLkrfXmBuPar7/410iio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e1muvo8S; arc=none smtp.client-ip=209.85.167.44
+	 MIME-Version; b=nf0umK9WewGFr8+YfV/oPKE0OzhscwphWSQJZ9Opgl/iZbRSvww2QTtDCT/FuL6g92Rn7NbrZPHkb+oNDikPSCcqvPw4X/ECTqzoQm7rV/RFRZyJ4JQIdYWiKyfdUChxuSOF2U/sSdvBvX8CSjryr4TJATBh4xA+SN8quf6/Zok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YdVEZZFA; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e1muvo8S"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5a8cb92f26aso686551e87.1
-        for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 00:49:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YdVEZZFA"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5a8c94cefcdso531837e87.0
+        for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 00:49:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778485759; x=1779090559; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1778485763; x=1779090563; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=B403X2O1b8FGNNeGhrK0Mv2epOELGQnn1++DaG9H56c=;
-        b=e1muvo8Slq/kR6z4gGStjHgCUHJX9kUIVl1C/UtK3/Yk+iWHXbKOmntyZfRjndxR8k
-         enn4L7lzqqxibN0jq/insFVuwTU8OkyenOMxLGzGScyRDA1aZnTvEu9FULfkgbIFoKg8
-         jy0ZTODEIkWMi9C8nRhl7SX9xZx0NJO1PNW8GeZSs/sqcvlELsFUGkxCdPx2O0xl3YKo
-         l6q8xH0Ah/zgsXMTMmKE2hj8vFOYAY+/He4+JcstkAKnvnz7OYotzD0cRFJm95WPIozF
-         4q1SIt0VSaaF3qR160Q0Wpa1LGbyRmq94DAiIyKDE0KFvgTaTxs9qX0JsHUAXaGSifAn
-         LBPw==
+        bh=bd49eOxiPUr+nKhdQNMwO1I+nWDzaH1EHGVy7eWJkcs=;
+        b=YdVEZZFAE6cVPajPHpEjMvXPeXCk/cMH90hT1Vy4PuOFg3IQsdsFVm1pMvw1rKWEay
+         B22r8MRYi2d087w2nzbm0BJrlDe6zoDRnDZ9wT1dZZUshezjEpJkZlROs4CahFaetlsl
+         UBmdDojRAO0ZCluC/oCs4a5oZ94swucKJ/XQygsJbGI1SUMPc8Nnu15B8U/z9rYdUbDc
+         rhklGu666Z/vtvXEbkEndiAc8990hwzujQWFGWJyiUaFQjRSGaCx3UE11afKxEQIfcpP
+         H003mC0v1fyo6zJYTuodhmSYyOtUxfhGTbJ/g587qOOa0vlZ5EE9ITExWKGkH5KjX3zG
+         o2NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778485759; x=1779090559;
+        d=1e100.net; s=20251104; t=1778485763; x=1779090563;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=B403X2O1b8FGNNeGhrK0Mv2epOELGQnn1++DaG9H56c=;
-        b=InY6wEGNd12uB9XcEcYeiJyQ/ynH5Jig0ga2vZ4P34uUZoEpJvCuOoYCdke6OHQqjb
-         wt8Ps4qRVp+eiINkSiEzTaDB1l7CH1cJof513jEqKFlvVP9klIkzzusER8Xnuf5IwXgQ
-         a30sMZtA549qoOmk8aqDTvGdnmuMAHP87XwYUz3L2V1mRCFgOhokBAnJ8l7oZsGZxlK3
-         pTOUY5AE9Dnq+7o2XUWjBoezwCM3CXbx9s7m9uUaXjA5GgHjvqp5exETPMIzOzcQ1309
-         Qk7SeNBJsDZ3tWF10DC0gNXCOqltPbXMzGdedG9U06gP6/J1MMIiSa9fEgmFCBU0ckH7
-         FMow==
-X-Forwarded-Encrypted: i=1; AFNElJ/TMnhOzr2gNpgZUDjAd60Y4zCv6yD+a8yJSDrEUClUv9UfQw62pEJYVminQcg/ucajUPwaG9PYyLyooA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLzRmjpH0Re5baSWD5pqUSAVWc9j2rew6DAzBoABbThNGy2i0/
-	NaL3/w2DBdS/tkc0sYqkj2iRZDCsL4cHL80igfoYnc4PcWMAxmHD1gsE
-X-Gm-Gg: Acq92OGFZitvx+tR7l34dbpPdbhg1AKnenoxfE9Epf4tHVzqOQZitwWTlE2dy1VVykh
-	c/4dM7v36bU8b7Y4ZX9DxGdosXbPcItQo1x1/Loyo4OFi7CulUP9d0hpV07R4WogVo7FWrLdC+F
-	L/d1/W6uG+gzIkh9aNggN4qDR3jQV5G8dy0fWj3i/zvn+uWRRXMijAakKCETb+BkbjY1z91HteG
-	5i1F9NFRw+mURnwIXX20HCmWqo472zLA7c/YR2zB8mGzBroE6zjhLzKjc0YcznRIN4AVRHp1BM0
-	IeEKncUwSOBSzGiLY2KBM1WpuTy5QfL+bu3Xe7NOAPO/0YQnizUuxpKbXgEpSMLkHzRhW/8HskK
-	on20mtA/b03zKoSq0IP1Z8Y0+uMAQ3UyLJfK5M/I1+T6Xo5IqBBOGGicMOyg1+3Lvbg48w3NwYh
-	FszrIpREDe+XDTI1KFBHS5z9I=
-X-Received: by 2002:a05:6512:401f:b0:5a2:843f:5800 with SMTP id 2adb3069b0e04-5a887cde847mr7386529e87.23.1778485758654;
-        Mon, 11 May 2026 00:49:18 -0700 (PDT)
+        bh=bd49eOxiPUr+nKhdQNMwO1I+nWDzaH1EHGVy7eWJkcs=;
+        b=PT5B+ckDaghuDHIH/q+IL1ZnBilnX4yoEw/8IVQxZw5LJn/cAegzQm5QnsNsc8xSit
+         kzFJhkJvGd2+PlOqo19s824lMjlWaTtofqQHT6dBZi5YVRGcy/nMPVSdkhv3+1HSpNTD
+         TvLVetFR8dxDpeu4XPDrZ2AyHZzEVWdFo96MiGO6uRdd+uE2j8eaYNAqQif2ha1LFlmb
+         c21kwO8+Xx+fqWF14qA3UvZT18FVYAo+mqajdrvqfze0Gn4OZAJWVsfCxWxUgErcZDjL
+         Uu9DOhJWqXeqzVjwj6JTZlrjCTW4i5ZXPcmYHrp9Ln9EjkavfFR3KnSElmzFesbFUeV8
+         UIDg==
+X-Forwarded-Encrypted: i=1; AFNElJ99+fp9OCfvQhE73ei9zb+iLgA0ULLjEL4cEt2KXswoh0zoN/7Usb9ihtN5QxHMuFl2P/bhcSqS7tqg6Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUjmr4at0oHgWUAwkJes2ubu5eoS+6VKuRrpmZPD99QvMKJpvH
+	A4VD4OR8jZM9fZP+B5RYILvYnT5bhL1PFAUuiKR/ujKgDvSOHe5j2kgIR/TEyw==
+X-Gm-Gg: Acq92OHjv+ADDBlYJjPtbT0vzIR+9SsqmkcoVnh8bFIdEIe3ZMAQbpJj5z4j8Ik3X4k
+	9QHSOVrElsSAuUFFFgx4F+qx8pzBdMUGS4nt7uBzU/ECcoA9cChkXZ7zaL4WBGvZblt1LcXUeOK
+	fEhQCEpG+nsgt3uKn+27KvylrAFp5P+k86/t+RcrE3Yrli7k0+F8LkaIiEE2k3MJ0AT1ymchKnG
+	/Qsu8GH2hdDawh1grUdqPYryL5LyBHOYyHf6/M7HeUyeBjvRo4f7jws8ApuOBQI+xo/APUEJeS9
+	1D3yWaA+LBlgNMFI5XXqRFOzQM8XJwZwINHRlIYIQJFNxQHwAKgEuy0hDUASKTOHfnwlpTo7WA1
+	D606NTan10WVWUjAuHd9k1h19TfztltK1vRk3Fp/cttgwYlsNlqxTTC5crhhxF2vMTrOfVj+7iv
+	4ePa+OGkPKBIO1xm6xokGEQao=
+X-Received: by 2002:a05:6512:3d8a:b0:5a8:a558:63b3 with SMTP id 2adb3069b0e04-5a8b709b088mr2382639e87.30.1778485763421;
+        Mon, 11 May 2026 00:49:23 -0700 (PDT)
 Received: from xeon ([188.163.112.56])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a8a94cac4esm2507271e87.0.2026.05.11.00.49.17
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a8a94cac4esm2507271e87.0.2026.05.11.00.49.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2026 00:49:18 -0700 (PDT)
+        Mon, 11 May 2026 00:49:21 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -70,9 +70,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/9 RESEND] ARM: tegra: lg-x3: Set PMIC's RTC address
-Date: Mon, 11 May 2026 10:48:52 +0300
-Message-ID: <20260511074859.24930-3-clamor95@gmail.com>
+Subject: [PATCH v1 5/9 RESEND] ARM: tegra: transformer: Add support for front camera
+Date: Mon, 11 May 2026 10:48:55 +0300
+Message-ID: <20260511074859.24930-6-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260511074859.24930-1-clamor95@gmail.com>
 References: <20260511074859.24930-1-clamor95@gmail.com>
@@ -84,28 +84,192 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-LG X3 devices have the PMIC's RTC module located at a non-standard
-address. Set the correct address.
+Add front camera video path. Aptina MI1040 camera is used on all supported
+ASUS Transformers, but only TF201 and TF700T will work since on
+TF300T/TG/TL front camera is linked through an additional ISP.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ .../tegra30-asus-transformer-common.dtsi      | 138 +++++++++++++++++-
+ 1 file changed, 137 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi b/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-index d2a5904cebed..60e8a19aa70e 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-@@ -1297,7 +1297,8 @@ pwr_i2c: i2c@7000d000 {
+diff --git a/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi b/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi
+index 0e06136042a9..d4a7bae51830 100644
+--- a/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi
++++ b/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi
+@@ -2,6 +2,7 @@
  
- 		pmic: max77663@1c {
- 			compatible = "maxim,max77663";
--			reg = <0x1c>;
-+			reg = <0x1c>, <0x48>;
-+			reg-names = "pmic", "rtc";
+ #include <dt-bindings/input/gpio-keys.h>
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/media/video-interfaces.h>
+ #include <dt-bindings/thermal/thermal.h>
  
- 			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
- 			#interrupt-cells = <2>;
+ #include "tegra30.dtsi"
+@@ -73,6 +74,91 @@ trustzone@bfe00000 {
+ 	};
+ 
+ 	host1x@50000000 {
++		vi@54080000 {
++			status = "okay";
++
++			csi@800 {
++				status = "okay";
++
++				avdd-dsi-csi-supply = <&avdd_dsi_csi>;
++
++				/* CSI-A */
++				channel@0 {
++					reg = <0>;
++
++					nvidia,mipi-calibrate = <&csi 0>; /* CSIA pad */
++
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++
++						csia_input: endpoint {
++							data-lanes = <1 2>;
++							/* Add rear camera */
++						};
++					};
++
++					port@1 {
++						reg = <1>;
++
++						csia_output: endpoint {
++							remote-endpoint = <&vi_ppa_input>;
++						};
++					};
++				};
++
++				/* CSI-B */
++				channel@1 {
++					reg = <1>;
++
++					nvidia,mipi-calibrate = <&csi 1>; /* CSIB pad */
++
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++
++						csib_input: endpoint {
++							data-lanes = <3>;
++							remote-endpoint = <&front_camera_output>;
++						};
++					};
++
++					port@1 {
++						reg = <1>;
++
++						csib_output: endpoint {
++							remote-endpoint = <&vi_ppb_input>;
++						};
++					};
++				};
++			};
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++
++					vi_ppa_input: endpoint {
++						remote-endpoint = <&csia_output>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++
++					vi_ppb_input: endpoint {
++						remote-endpoint = <&csib_output>;
++					};
++				};
++			};
++		};
++
+ 		hdmi: hdmi@54280000 {
+ 			status = "okay";
+ 
+@@ -1173,6 +1259,36 @@ light-sensor@1c {
+ 			vdd-supply = <&vdd_3v3_sys>;
+ 		};
+ 
++		/* Aptina 1/6" HD SOC (MI1040) */
++		front-camera@48 {
++			compatible = "aptina,mi1040";
++			reg = <0x48>;
++
++			clocks = <&tegra_car TEGRA30_CLK_CSUS>;
++
++			reset-gpios = <&gpio TEGRA_GPIO(O, 0) GPIO_ACTIVE_LOW>;
++
++			vddio-supply = <&vdd_1v8_cam>;
++			vdd-supply = <&vdd_1v8_cam>;
++			vaa-supply = <&avdd_2v85_fcam>;
++
++			orientation = <0>; /* Front camera */
++
++			assigned-clocks = <&tegra_car TEGRA30_CLK_VI_SENSOR>,
++					  <&tegra_car TEGRA30_CLK_CSUS>;
++			assigned-clock-rates = <24000000>;
++			assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_P>,
++						 <&tegra_car TEGRA30_CLK_VI_SENSOR>;
++
++			port {
++				front_camera_output: endpoint {
++					bus-type = <MEDIA_BUS_TYPE_CSI2_DPHY>;
++					link-frequencies = /bits/ 64 <384000000>;
++					remote-endpoint = <&csib_input>;
++				};
++			};
++		};
++
+ 		gyroscope@68 {
+ 			compatible = "invensense,mpu3050";
+ 			reg = <0x68>;
+@@ -1310,7 +1426,7 @@ ldo4 {
+ 
+ 				/* LDO5 is not used by Transformers */
+ 
+-				ldo6 {
++				avdd_dsi_csi: ldo6 {
+ 					regulator-name = "avdd_dsi_csi,pwrdet_mipi";
+ 					regulator-min-microvolt = <1200000>;
+ 					regulator-max-microvolt = <1200000>;
+@@ -1685,6 +1801,26 @@ hdmi_5v0_sys: regulator-hdmi {
+ 		vin-supply = <&vdd_5v0_sys>;
+ 	};
+ 
++	vdd_1v8_cam: regulator-viocam {
++		compatible = "regulator-fixed";
++		regulator-name = "vdd_1v8_cam";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		gpio = <&gpio TEGRA_GPIO(BB, 4) GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		vin-supply = <&vdd_1v8_vio>;
++	};
++
++	avdd_2v85_fcam: regulator-avcam-front {
++		compatible = "regulator-fixed";
++		regulator-name = "vdd_2v85_fcam";
++		regulator-min-microvolt = <2850000>;
++		regulator-max-microvolt = <2850000>;
++		gpio = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		vin-supply = <&vdd_3v3_sys>;
++	};
++
+ 	sound {
+ 		nvidia,i2s-controller = <&tegra_i2s1>;
+ 
 -- 
 2.51.0
 
