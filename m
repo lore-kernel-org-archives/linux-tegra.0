@@ -1,192 +1,361 @@
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010046.outbound.protection.outlook.com [52.101.56.46])
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010022.outbound.protection.outlook.com [52.101.56.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EBD3A2541
-	for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 08:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4243BC68D;
+	Mon, 11 May 2026 09:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.22
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778486555; cv=fail; b=P010NRobH1EajMWw2L4FRFtN2Y/9Y1uwje+BBdWeN+feW0lw44MCIydjUFeOe6GmHBIi8lnHpas+4VaXmOWVXIo+sXnY3G5BnfsTkgLBR5xs/khRKocBSnSK2YDyG8TPMX6p3NHI5HgEyaMOQpfL9PQ6FXE18/1P/wn6yS6BDTk=
+	t=1778491551; cv=fail; b=TMP1E/pd5eQymr61UPNbxfyc4dPMDAQ4xyw34dM02rTbvXe3vsGbV0b2tZEaVg8pkv7vkQbA8qzlSaZwKmYf2ZYEXaq7hY0meZZ7AJKBp+waJabJDu5O04diarc6B5y+B05symfo4ov62NjDvljHiRSfgT1itcM2vGRhXH+SIoM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778486555; c=relaxed/simple;
-	bh=PiQ2m02W7genbk6/o2JJ0DQyd5jmScVDbIzZtJA3tNk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=O5gdL7Bn1AqSi3cUwsbV+tyxulsigvV/1mf+oe/A7kAPv9XgmwVN0qKn0J/Qp1LcbZ8yxlZKmQrWSDUWsMTAf2ystBscKV3yiigHbuz8XqXTRKnwPRl8l6nou3HD/7LN079in1l28Lbrx0+btRDg/VfV+mJ3N9+vu5/wZrL1NR0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=L7MugfcY; arc=fail smtp.client-ip=52.101.56.46
+	s=arc-20240116; t=1778491551; c=relaxed/simple;
+	bh=sWDTQNCT/JRvubzT6BmfEUqGGn3fRjb1s1I6QOO9wNo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rx3qxNz6ks9Ypt6z8LQHA2eat+M0bDIlz3a9vJ0nqtfgLLAM5PIt4TZJa9qt9LYIryVtqs6e8+tDXRLH6vLoKsxeC0ImgVoBYTzm3g/Dim3RwXCplmKD9yvDDjH++vvhLHW4h4SBavhlvd7kBzCzeNrQ/huZ05q6Sr0j1+jXc00=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LQ4yvMYR; arc=fail smtp.client-ip=52.101.56.22
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="L7MugfcY"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LQ4yvMYR"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XwDwX/0E81ejDxREYYoUO4NKFaqC3kF0fK1Fq73zP9zZBAtvRSa6kkZ/ZA8Bj1ISqB1Hwl7BZTPYtOtWeVG6Jc+Wat58EvY4b6eVjKihmsnjplqWYyYy32SIixMmrkVZF5j2s2PipBb4hsf/Pqfj4Hnb+iCr9MfG66GzLTkoBSEGz5nbsPRKkjBZ5L1Frim1X35jfrGe7ch7Muh4ccep2gksxNqCZtCCGHL/HMwTzCgk/Gjc2ZGygKMBMj5jzR0PSOgbT05uhGYLi+e4LMHLuHPJeUyj1s/FH18T+NKzCxV2cIS7H1SY8vW8XPPV4pdw/zS2YtYhS9vo6TDCWHcz1A==
+ b=laF6isljG04ak/53Rp7FZ2V+sYw3A1ye+6+q8RtMvgJC+P0tyhrMy//F0vuiLwm0O1tbVeQgNXcCPoaLaA8LttM7zC2Ti9fIo8N+msE6NitePLTR2gajGpbtlTKBAReEoV+IFBhAd7icYb61fGNI0zj6X//taxCry9Y6TlCICsfkKIwYDx+8rBslXStC/6slwl3rqHfi5TtbVTyqyax0vp5VgndahrGpP3Fg6auswYdBnJL8afLIQ38Ff9XzVikmLq+dsn81HzjdmolLlD34lAcVzVaYIDdZGnp1ZdI55pztKs9FwVqGw0Dw2J8cqbm4FYKhgJcGE3Z6tVbVJpyyZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PiQ2m02W7genbk6/o2JJ0DQyd5jmScVDbIzZtJA3tNk=;
- b=O4tjE29Zzpv/yZB0tw3gy/C7qRnnVEQ7Ccy8R9XOnywb/WNYnYGVEisIeCF49HYqWDJCJicdmI7QeZfIvFnDoAD7Jscrd7F7k+N9RMwg0kbKxQF6s/ybCRTtYFoT5mUBiO0ffH9ur4H/u6nl7skjiSqG2A6X+ZXkJUKUBPUroGnkK1ygg0GRV5gPmCF/wcelSwAANmnkaFRLQdycJ+GZ7YMFi+BCWJ/mZdba1fINo6C9J8wjrgM+aCiasSnFY+8A+PQm9DH9pn62+nHKhYR+3eD5J0CifMlponggBel+AIcNIQo7xRfMqf3Ruc7FxClJH55wAUTNSj2PtjCvKwFQ6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
+ bh=MOC/Unb5Rcif3lxUlvEYEV9A9eQdFG3W/MViCsn/MOw=;
+ b=B9kia05A3AsDEU1MQKhqHP9SDs4PF0xNJJTeHSOcrytjNou5azDRe7WN2X3RTlNUfIcr5Im3U9Ja1xX8dJoaXwtlHVoTTnKD/Ib0Loo6WIZi3WGETfY5jH7Iooj/p1Uy+IXCvrL7pdhVlEwwZi3/K+aurXT4EysRchM05/NNEIMwg1NSMnNDUhROGvAavWpujZBgTP6D/Pbm0fVCX9y/DuV7QvVU6pNoL6sGDrGBsSpJWhDLbP8vBlRSxmrPefjXIJtlm8tYDY9cJapR4nact8Uo/g2uPa2MDdoMIhzcChShH4qzAG51tWK7OfLAhkmwAIqui5K4QiwTbhfpwEE9BA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PiQ2m02W7genbk6/o2JJ0DQyd5jmScVDbIzZtJA3tNk=;
- b=L7MugfcYh36jUkxgXBhsk7L583f0vFt5qq7TsDG0eZl4sUq5+nNUW+DL8AxZzVp4764oAevJC3d5qRfFq9zFSMiKXKUNLvbQFQ7KxK8HE450HobsJkyiiK0lDa/oVOWRTtqGY3DeGV0KHNuwSIV0wc27iJSvYvrcw/PZyWIuau47py0bo0RKVRuLEAVymL5awNmUNIRtFDkbN/Auw58f0bZfyUkYzHul0JE+zZz7thMo86ayy/THppNyVKa5i/j2eTAfyzDmhfZne3eZFOzQ+Al0A1vAZHAHENp0SjPLIMs2OP0myilpCdg7Bzjn0xmyyDfuGwAkdKKD/gVXA7uBgA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by PH7PR12MB6586.namprd12.prod.outlook.com (2603:10b6:510:212::21) with
+ bh=MOC/Unb5Rcif3lxUlvEYEV9A9eQdFG3W/MViCsn/MOw=;
+ b=LQ4yvMYRNDIUQsPdztOTMZsBGeue4UbU6PLXoy9XJLb7XkAXhXFDnHlGe73hcR3cJP1pABosd/mBXbMiGQ4cRclVBvi9QJSgzgm1t5q/Vd6uEVtuUnacXmcK0WKxPfLHCUwLF+3uZwxtwraR2yyGSfA4JucyDQvjjJblv1h8YhbNnHx6B1UdIIeysqi0AksU8HmhyoNdAWYnN07GuFW90nOHmDhpN8AZAJKpJV1wiLfytKz0K0na79LpLcMR9d0igkUpMmlmh7jMOV7kdu6Vkp0NFajzHRTwYDW1PnAsb2vVfDriC2bZ8S0vnKbCUw6OBhxNJfJ65bXXt6Nj2oyRkg==
+Received: from PH5P220CA0010.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:34a::13)
+ by BY5PR12MB4035.namprd12.prod.outlook.com (2603:10b6:a03:206::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.22; Mon, 11 May
- 2026 08:02:20 +0000
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017%4]) with mapi id 15.20.9891.021; Mon, 11 May 2026
- 08:02:20 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
- Aaron Kling <webgeek1234@gmail.com>
-Cc: linux-tegra@vger.kernel.org
-Subject: Re: [REQUEST] Release Firmware to Match Current Driver Support
-Date: Mon, 11 May 2026 17:02:10 +0900
-Message-ID: <78vIAjaWTgyGORO7lyOZcw@nvidia.com>
-In-Reply-To:
- <CALHNRZ9152Ox=Y230zmFM_eywsOtr0Z07CYLKZH+hGbOhRmF7w@mail.gmail.com>
-References:
- <CALHNRZ8uHmx3nqpg1-F6RCprDavx3nY55en5gJds54RU8MDR5Q@mail.gmail.com>
- <CALHNRZ_4WaAuJmpTnvdpn10=vw5SXcv-5Qq+UX-T_pG4Snba7A@mail.gmail.com>
- <CALHNRZ9152Ox=Y230zmFM_eywsOtr0Z07CYLKZH+hGbOhRmF7w@mail.gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP286CA0137.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:31b::15) To SJ2PR12MB9161.namprd12.prod.outlook.com
- (2603:10b6:a03:566::20)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.23; Mon, 11 May
+ 2026 09:25:44 +0000
+Received: from CY4PEPF0000E9D6.namprd05.prod.outlook.com
+ (2603:10b6:510:34a:cafe::91) by PH5P220CA0010.outlook.office365.com
+ (2603:10b6:510:34a::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9891.23 via Frontend Transport; Mon,
+ 11 May 2026 09:25:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CY4PEPF0000E9D6.mail.protection.outlook.com (10.167.241.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.25.13 via Frontend Transport; Mon, 11 May 2026 09:25:43 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 11 May
+ 2026 02:25:27 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 11 May
+ 2026 02:25:27 -0700
+Received: from build-sheetal-bionic-20251202.nvidia.com (10.127.8.14) by
+ mail.nvidia.com (10.129.68.6) with Microsoft SMTP Server id 15.2.2562.20 via
+ Frontend Transport; Mon, 11 May 2026 02:25:26 -0700
+From: Sheetal <sheetal@nvidia.com>
+To: Vinod Koul <vkoul@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
+	Frank Li <Frank.Li@kernel.org>
+CC: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding
+	<thierry.reding@kernel.org>, Sameer Pujar <spujar@nvidia.com>,
+	<dmaengine@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Sheetal <sheetal@nvidia.com>
+Subject: [PATCH v5] dmaengine: tegra210-adma: Add error logging on failure paths
+Date: Mon, 11 May 2026 09:24:58 +0000
+Message-ID: <20260511092458.1299793-1-sheetal@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|PH7PR12MB6586:EE_
-X-MS-Office365-Filtering-Correlation-Id: 215d3544-a2c4-4977-e5b8-08deaf33a03a
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D6:EE_|BY5PR12MB4035:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9d3f77ef-dcd4-4188-6413-08deaf3f46cf
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|10070799003|366016|56012099003|22082099003|18002099003;
+	BCL:0;ARA:13230040|376014|36860700016|1800799024|82310400026|18002099003|56012099003;
 X-Microsoft-Antispam-Message-Info:
-	D896Q8z088BG64iIIOTBk6ssEy97roEqfdSUOy2xmQuDMhgUDb2uTmuVnRVbDXfpYJh042DYfm08PWQnm8TNPPeLaKCl3udHrOSPXtcSQkStBU3D8J+X8a0VembBn+fT965LJQCF21eGaahmG0VOuSS7hDD1G6g3/VpV81GNt/MNiYn91i+4YmMcma7bpdd4tDywj2uw6IyXQCSFcwnjz/yrqV/y4xFRV064OYBWyFv3jXS0InJh5SAyB2hFkBB8kwTKDzXvbPkuYV1N3CRiq+W/wTzpvjsEZHGmf7spd7PNAy9INHbOka2LwcieuT0iCnMny28QWDcmQoHYFK+2I3mpuWHE8Zzug5mU9MPsqUx0b4RDOwTrM7StPLC+tNtj1mmPF6Jf1NWsJriq/ZQvnaLjf951lVqpHU43FEfedq+FsJ8/r5GWZymjO7ZfmolAKymAbsJ6w2/octnq7keRFwk1dfGM4pWG3NV6LNzYfF9lLSoGj2rpu2/tgtDfhAWYBHRKehE7jTwwH/3H4OIlrIgNbYnyahBLdIHAOUv48vgHardmh2mHnKcHwnrY5zMJSJ6mU0eDixCyewnWgQx9IrfjwXtvLztU4ZH9SD8+EfdEpQAV1fqociKwmc6uAciFRgzHaqM5zTb48XRChpY/GEUO2i67exW8RBhLCrnDD7yuEUoS7OTyFiU+v283RGMaUDA77/TgdxJiuf04MVOqHA==
+	Ko8Dq0IEri6XrudIhODvskH8AeiRmyHXZpb24cXnERUNV6cL2c04XznUqyVgqNi3U9/nx3z2ikvOmaNSvsAwkp5GDN5RkB7KVQnFi0dkuaRvJtwwVblttFklgXg6nZKNCIt0FB5t++EQlfOaAbfQfFa9TSTB8DgGQLFgr4oxPlGjZ4TorwksVQGTedIxlDqWDAWPPpWaisqCAspmX5ul1LnajYg3u2pRbCqSYXRdzBiy2mchCG9AAjjTW5zgcP/yKX4kVsBoQEgx2pyZtf6QBDc4Fyw8/PNbNsCCC4bXSEPRYjbDKk1lF+XAW9MN/3dWpGZewmgBg0MztcCYQOWeMFjcFsYGVMdBfwLE7LsIp9GmFdlJnjRnGGsYtmwPpEA8A1HDkDy0jb2ZahCvWucBc7m9Xjag1HpBzNqv05MMKtPaU6kV57g5lO1qcHffhb/1VgRVt+P9y4M6o0UIP0DXXvj5vAsIMX5ubXV1gg/0v7MvWxTZ/FyRdBH2w8g+XT/1JeahXReYii+MqpiBH+OSt508ss53+yB6tv6CjKLKk9kjtv+uRbTtWlEEEdi7pddX3mCC68EVEgvwxh+yEuWTrei+JQUGmNprPE9NdFn28i+6dsvqxdPllJCpzl3Q8y5t1NtdFeg62dUdG3TyezU64aVSudBir57T/sO2hPCon2Imq87qVz0WeSuWeQS5x06LbPRKZKl2GXEvOebLWcO6YdSRpuCAIM1Obv4Ru65t3p0=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(10070799003)(366016)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700016)(1800799024)(82310400026)(18002099003)(56012099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cFdzcGluS0Jyb0lWNmNtdnF3bGRJK0kxRk9weTVKb2VGMFNEZGJNK2xHTTZ3?=
- =?utf-8?B?U2tOV004Wm5ITzdHYzMwajhOVURUb2xPemRwd3N6TTk0UUhuL1FYeWREWjEw?=
- =?utf-8?B?OTdoU1RzWDJVdTdoUERNTGpOVmpPNVg2bWY5cjRYdld3U1NwTUEzODR5ZTJT?=
- =?utf-8?B?K1hNb3UrdlFCTCtjaVNRNkgrMnNtT3dEajNvTlpMRXJ3WlpKOEc4Zjl1Y2tK?=
- =?utf-8?B?N0RGbUJIdkcwT1Yzb0hTc3BvcHU0VklxWWEvSmhRYjJLbjZCUTFUUDZEZnI2?=
- =?utf-8?B?clJBT2lIWHZGSmNRcjJTdU9rNGFDTktjc3lESWpoN3NGRWxGU1BOTGVWNXow?=
- =?utf-8?B?WWdVMnJtRFFNWSszekQzd1h2a3huamlYWjRRZFJwMUtwVzJ4blVWdkNRc3BZ?=
- =?utf-8?B?czhQU1JmYy9qUllDUmZpRkdHdTFzdmpjVk9yaXp1N2ZLWHhmVjJTeFMyNXNX?=
- =?utf-8?B?SFVNaXVhL2llekNpZVR0OTFPeVEyYzgvWSt6SE5RNG1PU01GWUpBUkptaHZH?=
- =?utf-8?B?dXlzU2wxcktOcXBHS21XWlRnN0NJb0EwUEhJc24zUHpPSktJUnZqZWNpMW0z?=
- =?utf-8?B?Z3NzNGpKekc5dzZjL24wVm5LQkxaOENVdG5DSmIwaDBZSFdFdEF3WmI4c3o3?=
- =?utf-8?B?bFJDTWk0dVBtRnVvMlBtKzN4QUFQUWZiRDlDYVNIQk5TWFV4d0Rza0FlRkkz?=
- =?utf-8?B?UWJoRy80OGFKWnZGS0ZPL042ekNybm81L294dFNYUmhhZjQzcHcxeEk3NU1l?=
- =?utf-8?B?MTZyZDJVbTFxSHF6a09wTk4yS3RBSmJxYUdaVmZIcmtLT3RiaXRETEh0YVVM?=
- =?utf-8?B?bnUxSmtkODErUnNHN2Z5bEJCSjhYU1hleHNwc0hUU2Y2bVRhdEVnUDBPRjZJ?=
- =?utf-8?B?Wi9qUzlucEJKYVdFcEVzUURuazZQMG1OYStwWlF5MnhSM2g1U3Jmb0dPOEgx?=
- =?utf-8?B?ZW1lakZWMTB1SjBrczNSeEdpeno3MU5wN0YrNHdaeG5rTHR5anZOM1BQWXFQ?=
- =?utf-8?B?NE9xbnJ3QWhQaDJWNzM4WUVWbUJmbEVCcjFMVzM4TmtZZW9rRkFCejdob09s?=
- =?utf-8?B?K2tYNU5NajgwenhvUW14ZnlvQ0JoRlpSNnRWbUlQc29qYjdCU2xtRmZXNm95?=
- =?utf-8?B?bjVWd2NqTlNkUm1yLzh6RVNqT1lJQWlxZUxuUGd2R2o3ZG1Kei8vWmxTMmFs?=
- =?utf-8?B?U0ZyeXpKbDJ2emwzQWRCZHdja2V3SktQZzQ4VXhJNmt5Z0VsNXlQRVllSnJr?=
- =?utf-8?B?WUkxSHl1NWlGRXhPMnE3N0pyR2FZY05qR21kWTA2SFZzUXBvL3UzOEdVei9W?=
- =?utf-8?B?ZUJyclN1ZllHM1dPLzY1OFdZTElDQllSRlZpVjZOVTR5cmxESk1rc0dDbjFG?=
- =?utf-8?B?ZGdsdlBUamhvUXpHTjl0cFFVRmNidkMxcVRhemhpZU14dHNJbCsvQzZIR21w?=
- =?utf-8?B?Nk5GUVg4a1M3MkdiU3Z3cjBrUDZxN3M3ZlNNcGhoMUxzRXI4eUxXNUdRdTFC?=
- =?utf-8?B?c2lFamd4Qnd3dzRjMUpiZjF0Q1p0YU13TUJaaXJiZGdscHZVcjNlMnFTWktC?=
- =?utf-8?B?MTNGMFZJWkNpTENEcFczRW5mQmNJRytFaXRDWVE2cklYbXliVlVmL1BDM2ln?=
- =?utf-8?B?Z3NRTllMVXZFRUVXN1JDVGJmWDZxU015L3oyZFViakFYS056amU0NU5CQUNQ?=
- =?utf-8?B?cko5Tno4Z0liOUdPL0NNNzBUcXFOc0tNOEg3eE9YcWtyOW8xMnNBVFRKclBZ?=
- =?utf-8?B?ZW9UelltTnZRbGlTTDdFbHhjNm5hSytWenNLWHFvZWQwNFlKeERDMXZnaXRI?=
- =?utf-8?B?QWY0Sk1iWDRubkhoOHZPVndyeEZacGxKSVd1a1NEY1RHUG9rb09xOUtHL016?=
- =?utf-8?B?VDFmNnB4T0t6dWhpbXg2Y09HTk1sQnQ2dGliV1ZNRzF5NFVHUFIxdVQ2MEd0?=
- =?utf-8?B?R1NEc1o5TWFOTENxVVhQU1preUNRdklKYkM0bS9ZVkR4RlVSeWYwZCsvYjkr?=
- =?utf-8?B?ejZCYXdQcEVVekZsTVA3MSs4RS83QXdTcCtFeTVaSXBDRnh0SnczWXZTZHY3?=
- =?utf-8?B?ckM1U2Z0M3lZL3ArTUI0S1JKWTg3R3J0dXpyeUlBcG1jL1NLQlViT1hzSUJ6?=
- =?utf-8?B?MXNmaUZqelpvYlFmUEtycHAyQlo5V0tDOENHbFFJYnZnRGdzOW9welpIbElQ?=
- =?utf-8?B?aklZU2NDOUE1dHorMnI4aWU5Q2ZZMlU5RzhDa3JNZklXRDlzNVZJcFhFbE9i?=
- =?utf-8?B?YWVUNFN0b3RuVzBVZ0tyWXF1ZzA3WDduSEZtcGhSay9aWVQ4Mjl2OVN1WjhC?=
- =?utf-8?B?Z2MzVzlDaWp1YXRWYzRsVDIvR1hLV041OUdJT2dYbW1tZVFTSW5XMzNrelN6?=
- =?utf-8?Q?YsInjHkeMu9wTQfYXzf7MzWqoJ9Xg6QsanCcdYLNzjxov?=
-X-MS-Exchange-AntiSpam-MessageData-1: tH8D9QQIiiKi0A==
+	PhjiO/bsN0EqLlckIHf1tHJ7vpH7+tdq8ZaXBdT4EaCw+rmMZnk4Bw27YK7qj0KJCHkexTw+McfXsX/2YcfvRop00FN5jaX1sJQrsIS1/70v21oEqVxdF7RRnVFvzZ+upZngPzVh3JnOOczdZVz6DAGSE0qMKW4aywrZoYAA9kF6K609UwFtNcQJWtYkV5TJ5v2DnrLh+ooJX84ptVX9Im60VTN6ei2k18qBQh3LvjqHq2e8f/NtgoP9omCHW5JgNGv4451D0XDPdHkrOyeafoYCtMn2wcDtQjKR9hGHxTUakp87aHc0fjaty87wRPX1SxyOkVq9+3tO2+ZTFkkKad2lAxFwxRNRd3PjGirdlRzzY8VtMZy8utgJJwA0UHrNCYL8vTXdwk/kOM8sn310pYfATRarsD31tfzQfkb4SPkDmcotJJTt2Ms7EmwRFNIo
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 215d3544-a2c4-4977-e5b8-08deaf33a03a
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2026 08:02:20.1435
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2026 09:25:43.7930
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d3f77ef-dcd4-4188-6413-08deaf3f46cf
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lnVm1heA4VX+N4ICd2Z6LkQpSctgLVX7YCxUXO2kQuNao2lbkRkhKLIX2C79nWEnpfZiJCtd4QxBDrjA9ksOmA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6586
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9D6.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4035
 
-On Monday, May 11, 2026 12:05=E2=80=AFPM Aaron Kling wrote:
-> On Fri, Nov 14, 2025 at 2:17=E2=80=AFPM Aaron Kling <webgeek1234@gmail.co=
-m> wrote:
-> >
-> > On Fri, Aug 1, 2025 at 4:56=E2=80=AFAM Thierry Reding <thierry.reding@g=
-mail.com> wrote:
-> > >
-> > > On Thu, Jul 31, 2025 at 04:22:32PM -0500, Aaron Kling wrote:
-> > > > This was originally discussed on the freedesktop issue tracker [0],
-> > > > but there hasn't been a response there in 6 months. So I'm reopenin=
-g
-> > > > the discussion here.
-> > > >
-> > > > * Nvdec firmware. The driver has been in the kernel for over three
-> > > > years and there's still no available freely licensed firmware to us=
-e
-> > > > with it.
-> > > > * T234 vic firmware. The driver has supported the arch for almost
-> > > > three years and freely licensed firmware still isn't available.
-> > > > * Nvjpg firmware. The driver is awaiting final approval, probably
-> > > > worth it to release the firmware with everything else.
-> > > >
-> > > > * T194 nouveau firmware. This does not have driver support, but the=
-re
-> > > > has been some interest in working on it. Making the firmware
-> > > > available, even if it isn't merged to linux-firmware, would be one
-> > > > less blocker for someone that doesn't work at Nvidia to work on
-> > > > support.
-> > > >
-> > > > Aaron Kling
-> > > >
-> > > > [0] https://gitlab.freedesktop.org/drm/tegra/-/issues/4
-> > >
-> > > I will continue to look into this, but it'll not be high priority. To=
-o
-> > > many other things going on.
-> >
-> > After some discussion with nouveau developers, it was pointed out to
-> > me that the gsp on ga10b doesn't do much and the setup is more like
-> > prior tegra gpus. And that it wouldn't make sense to support ga10b on
-> > nova. So I would like to expand the request for gv11b nouveau firmware
-> > to also include ga10b. Perhaps not directly pushed to linux-firmware
-> > until they can be verified working, but made available so driver
-> > development can happen.
->=20
-> It has been over eight months since the last response. Nvjpg driver
-> support has been merged in the meantime. Has any progress been made on
-> any of the firmware releases?
->=20
-> Aaron
+Add dev_err/dev_err_probe logging across failure paths to improve
+debuggability of DMA errors during runtime and probe.
 
-I have the multimedia engine firmware files on my todo-list. I'm
-planning to send these out after Tegra264 VIC support is ready to send.
-Unfortunately there have been some delays in that.
+Use return dev_err_probe() pattern consistently in the probe function,
+and dev_err in non-probe functions. Also convert existing dev_err calls
+in probe to dev_err_probe for consistency.
 
-Mikko
+Signed-off-by: Sheetal <sheetal@nvidia.com>
+---
+Changes in v5:
+- Use ACQUIRE() for runtime PM active handling and devm_pm_runtime_enable()
+- Use dmaenginem_async_device_register() and direct dev_err_probe() returns
+- Use managed IRQ mapping cleanup to remove probe unwind labels
 
+ drivers/dma/tegra210-adma.c | 123 ++++++++++++++++++++++++--------------------
+ 1 file changed, 68 insertions(+), 55 deletions(-)
 
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index 14e0c408ed1e..6987bf6ec648 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -335,8 +335,16 @@ static int tegra_adma_request_alloc(struct tegra_adma_chan *tdc,
+ 	struct tegra_adma *tdma = tdc->tdma;
+ 	unsigned int sreq_index = tdc->sreq_index;
+ 
+-	if (tdc->sreq_reserved)
+-		return tdc->sreq_dir == direction ? 0 : -EINVAL;
++	if (tdc->sreq_reserved) {
++		if (tdc->sreq_dir != direction) {
++			dev_err(tdma->dev,
++				"DMA request direction mismatch: reserved=%s, requested=%s\n",
++				dmaengine_get_direction_text(tdc->sreq_dir),
++				dmaengine_get_direction_text(direction));
++			return -EINVAL;
++		}
++		return 0;
++	}
+ 
+ 	if (sreq_index > tdma->cdata->ch_req_max) {
+ 		dev_err(tdma->dev, "invalid DMA request\n");
+@@ -665,8 +673,11 @@ static int tegra_adma_set_xfer_params(struct tegra_adma_chan *tdc,
+ 	const struct tegra_adma_chip_data *cdata = tdc->tdma->cdata;
+ 	unsigned int burst_size, adma_dir, fifo_size_shift;
+ 
+-	if (desc->num_periods > ADMA_CH_CONFIG_MAX_BUFS)
++	if (desc->num_periods > ADMA_CH_CONFIG_MAX_BUFS) {
++		dev_err(tdc2dev(tdc), "invalid DMA periods %zu (max %u)\n",
++			desc->num_periods, ADMA_CH_CONFIG_MAX_BUFS);
+ 		return -EINVAL;
++	}
+ 
+ 	switch (direction) {
+ 	case DMA_MEM_TO_DEV:
+@@ -1020,6 +1031,17 @@ static const struct of_device_id tegra_adma_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, tegra_adma_of_match);
+ 
++static void tegra_adma_irq_dispose(void *data)
++{
++	struct tegra_adma *tdma = data;
++	int i;
++
++	for (i = 0; i < tdma->nr_channels; ++i) {
++		if (tdma->channels[i].irq > 0)
++			irq_dispose_mapping(tdma->channels[i].irq);
++	}
++}
++
+ static int tegra_adma_probe(struct platform_device *pdev)
+ {
+ 	const struct tegra_adma_chip_data *cdata;
+@@ -1029,8 +1051,8 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 
+ 	cdata = of_device_get_match_data(&pdev->dev);
+ 	if (!cdata) {
+-		dev_err(&pdev->dev, "device match data not found\n");
+-		return -ENODEV;
++		return dev_err_probe(&pdev->dev, -ENODEV,
++				     "device match data not found\n");
+ 	}
+ 
+ 	tdma = devm_kzalloc(&pdev->dev,
+@@ -1056,7 +1078,8 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 			unsigned int ch_base_offset;
+ 
+ 			if (res_page->start < res_base->start)
+-				return -EINVAL;
++				return dev_err_probe(&pdev->dev, -EINVAL,
++						     "invalid page/global resource order\n");
+ 			page_offset = res_page->start - res_base->start;
+ 			ch_base_offset = cdata->ch_base_offset;
+ 			if (!ch_base_offset)
+@@ -1064,7 +1087,9 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 
+ 			page_no = div_u64(page_offset, ch_base_offset);
+ 			if (!page_no || page_no > INT_MAX)
+-				return -EINVAL;
++				return dev_err_probe(&pdev->dev, -EINVAL,
++						     "invalid page number %llu\n",
++						     (unsigned long long)page_no);
+ 
+ 			tdma->ch_page_no = page_no - 1;
+ 			tdma->base_addr = devm_ioremap_resource(&pdev->dev, res_base);
+@@ -1079,7 +1104,8 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 			if (IS_ERR(tdma->base_addr))
+ 				return PTR_ERR(tdma->base_addr);
+ 		} else {
+-			return -ENODEV;
++			return dev_err_probe(&pdev->dev, -ENODEV,
++					     "failed to get memory resource\n");
+ 		}
+ 
+ 		tdma->ch_base_addr = tdma->base_addr + cdata->ch_base_offset;
+@@ -1087,8 +1113,8 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 
+ 	tdma->ahub_clk = devm_clk_get(&pdev->dev, "d_audio");
+ 	if (IS_ERR(tdma->ahub_clk)) {
+-		dev_err(&pdev->dev, "Error: Missing ahub controller clock\n");
+-		return PTR_ERR(tdma->ahub_clk);
++		return dev_err_probe(&pdev->dev, PTR_ERR(tdma->ahub_clk),
++				     "failed to get ahub clock\n");
+ 	}
+ 
+ 	tdma->dma_chan_mask = devm_kzalloc(&pdev->dev,
+@@ -1104,11 +1130,18 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 					 (u32 *)tdma->dma_chan_mask,
+ 					 BITS_TO_U32(tdma->nr_channels));
+ 	if (ret < 0 && (ret != -EINVAL)) {
+-		dev_err(&pdev->dev, "dma-channel-mask is not complete.\n");
+-		return ret;
++		return dev_err_probe(&pdev->dev, ret,
++				     "dma-channel-mask is not complete.\n");
+ 	}
+ 
+ 	INIT_LIST_HEAD(&tdma->dma_dev.channels);
++
++	ret = devm_add_action_or_reset(&pdev->dev, tegra_adma_irq_dispose,
++				       tdma);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "failed to add IRQ cleanup action\n");
++
+ 	for (i = 0; i < tdma->nr_channels; i++) {
+ 		struct tegra_adma_chan *tdc = &tdma->channels[i];
+ 
+@@ -1127,26 +1160,33 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 					cdata->global_ch_config_base + (4 * i);
+ 		}
+ 
+-		tdc->irq = of_irq_get(pdev->dev.of_node, i);
+-		if (tdc->irq <= 0) {
+-			ret = tdc->irq ?: -ENXIO;
+-			goto irq_dispose;
+-		}
++		ret = of_irq_get(pdev->dev.of_node, i);
++		if (ret <= 0)
++			return dev_err_probe(&pdev->dev, ret ?: -ENXIO,
++					     "failed to get IRQ for channel %d\n", i);
++		tdc->irq = ret;
+ 
+ 		vchan_init(&tdc->vc, &tdma->dma_dev);
+ 		tdc->vc.desc_free = tegra_adma_desc_free;
+ 		tdc->tdma = tdma;
+ 	}
+ 
+-	pm_runtime_enable(&pdev->dev);
++	ret = devm_pm_runtime_enable(&pdev->dev);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "failed to enable runtime PM\n");
++
++	ACQUIRE(pm_runtime_active_try_enabled, pm)(&pdev->dev);
+ 
+-	ret = pm_runtime_resume_and_get(&pdev->dev);
++	ret = ACQUIRE_ERR(pm_runtime_active_try_enabled, &pm);
+ 	if (ret < 0)
+-		goto rpm_disable;
++		return dev_err_probe(&pdev->dev, ret,
++				     "runtime PM resume failed\n");
+ 
+ 	ret = tegra_adma_init(tdma);
+ 	if (ret)
+-		goto rpm_put;
++		return dev_err_probe(&pdev->dev, ret,
++				     "failed to initialize ADMA\n");
+ 
+ 	dma_cap_set(DMA_SLAVE, tdma->dma_dev.cap_mask);
+ 	dma_cap_set(DMA_PRIVATE, tdma->dma_dev.cap_mask);
+@@ -1170,53 +1210,26 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 	tdma->dma_dev.device_pause = tegra_adma_pause;
+ 	tdma->dma_dev.device_resume = tegra_adma_resume;
+ 
+-	ret = dma_async_device_register(&tdma->dma_dev);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "ADMA registration failed: %d\n", ret);
+-		goto rpm_put;
+-	}
++	ret = dmaenginem_async_device_register(&tdma->dma_dev);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "ADMA registration failed\n");
+ 
+ 	ret = of_dma_controller_register(pdev->dev.of_node,
+ 					 tegra_dma_of_xlate, tdma);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "ADMA OF registration failed %d\n", ret);
+-		goto dma_remove;
+-	}
+-
+-	pm_runtime_put(&pdev->dev);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "ADMA OF registration failed\n");
+ 
+ 	dev_info(&pdev->dev, "Tegra210 ADMA driver registered %d channels\n",
+ 		 tdma->nr_channels);
+ 
+ 	return 0;
+-
+-dma_remove:
+-	dma_async_device_unregister(&tdma->dma_dev);
+-rpm_put:
+-	pm_runtime_put_sync(&pdev->dev);
+-rpm_disable:
+-	pm_runtime_disable(&pdev->dev);
+-irq_dispose:
+-	while (--i >= 0)
+-		irq_dispose_mapping(tdma->channels[i].irq);
+-
+-	return ret;
+ }
+ 
+ static void tegra_adma_remove(struct platform_device *pdev)
+ {
+-	struct tegra_adma *tdma = platform_get_drvdata(pdev);
+-	int i;
+-
+ 	of_dma_controller_free(pdev->dev.of_node);
+-	dma_async_device_unregister(&tdma->dma_dev);
+-
+-	for (i = 0; i < tdma->nr_channels; ++i) {
+-		if (tdma->channels[i].irq)
+-			irq_dispose_mapping(tdma->channels[i].irq);
+-	}
+-
+-	pm_runtime_disable(&pdev->dev);
+ }
+ 
+ static const struct dev_pm_ops tegra_adma_dev_pm_ops = {
+-- 
+2.17.1
