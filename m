@@ -1,265 +1,172 @@
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013032.outbound.protection.outlook.com [40.93.196.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B72377020;
-	Mon, 11 May 2026 13:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778506977; cv=fail; b=bzBw1gmds9CXJ+PP9jjDZ2uHCkCyV3GjmB3apBkSCQIxcO2HpheFr2gmwt2qDd/+8QP1FqJliXK94PkHtM3+GgxvmBQutklx/ji3MVAYChLLTLEtO7Ax3mWYwpe7vhKEPjnbtaqSo9Az3orROksGmwT4PVWEc86H1Caidq7LV+4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778506977; c=relaxed/simple;
-	bh=+yh43JQrTJZ5JZJRzWsWPmfjXSY2ul5IP9xxp7/74fA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=lflxtvXsewkgAIG+PV+rsnZj77Qp0D8HBWt4GbeATJRGCGz81GqsAcechJFUb6RPz6iwy2XkLlh3WqpZ50silXUIFSCRJJsk9LN0dTYGRrQlDDpyN+8TPIQoY6w9lpNio1wVOXPqG5FCjzdpD67o2NUNQQo60ZcbgxXd8cJBBlk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QeAjmU8W; arc=fail smtp.client-ip=40.93.196.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099383FA5E5
+	for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 13:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778507848; cv=none; b=XiBqjEtII3ax6x7WJyoM+HBujosbAGSo8RDvVdbXy5+s2Tv3Es4xppJs6whgu0b6J7n9UqoVS5aKVuvjg0GQeD6OiQ5k+XEqbFwF6EFcwR/ApjilT4lLK8Nrl+c3uQf+3BoGXWuEmfsAOELxFSebfijnZxrTS9FNVzZ2JIsnE6s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778507848; c=relaxed/simple;
+	bh=kC4DSO7lEOOKLgNDNQTeigNoYcFvo7FOe74XyG/nGrE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EXypnxsepe+vtfNDsSbOz+u5Pjsg0MMRXbSuplZcxy3zH+MztVa5grOzOPUiOHMm9bIH2tB1sNUGzSgQ8y2IJilXqvgT8J1B1h/Zcr8z48PP4l7IlnINTegvHPU6IBXoLpD54sIvQmBGCG1lErUk8v88NjvxN29snMme4whk0a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O6s1o+Eo; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QeAjmU8W"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LvnTjHFQNFg+oVRfvcl7hgsqkIqRK5Hr3nLaneDLVlbrpl05xxbnB83x5S4oM3C2NlIwMt1H0bbzn2Mr/BE86gL+UmYWfxMD8iqxfMYc4WPP29CrWxhd10LQkEtKtZXRiiVfEQwrR3jYDr/N55puRyBfGXsUhA1TywyR0SaN8ViJtl31hcDs7CCf5iHr9ZQ5t9edl/hHyA4dc6FXDlVNxTZ9bJW15Z8R9hZd2YvW1+f+kqmZyD+NvBJnh8ORmT3+1mK+3TsbJQJJDSuWLNsqvKFUpSRcjmGawBoltVlXSA431t2CnjgNRfjOn2GbiX0uk0i2gb+72mkyiFRGl6c0nQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AQAD9TQk2Zlh41Gc676T1jVhFnzMpjG/OBq0i7AZ+OM=;
- b=fDvV56fm2iF3tgGyHTd4sIv5/p5oaHsNxCMv5DW7vvUCfh1kOjF0sa678BebfwfqQ0yYpEva8Qt+eIaEpUuu5T1VrgA59m1//n3ZDeoqkroSStq5twxVYe+KeHLxFm9jwAIZJayh+8nVyh0wDe5xSsiDpUS/j3x+3kfO2Ft9vMmfJ11fA34uY68CfmW1WM9uz1d7bLO7a0XYRQ7EKi4vcIQVLW+4WoHTgWUTzz2hoUuiZx7jHwpsXazTyP0K2jcU4QXBrQnDX6yWrvnn279HR7kreZEYgBPr3XmGOqVGPGYJcJ5o7Uf5P4nWJu4Z+vDf1TY+72HbKpyXRxUnVm5kRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AQAD9TQk2Zlh41Gc676T1jVhFnzMpjG/OBq0i7AZ+OM=;
- b=QeAjmU8WYSb43Gsar9y1vwPRKrJ4dYJf9NNsicmltO6aqRp71OnrHZ3qrq5NkYylFA3PpHebVkQX9prJRFmJ7YVGKgokkrp5/0mvWMhfd2XVkWCmDl6JBtbu5eIdgVDNeNP1yav9p8QIITtqEe3ahDn7jTSval0nk3OLleTAVtSX9CiZtTd7S5iExhXnnGYyB3+UM4QfwTf/lBVDTSlr9zyCKxqy8j4IGyBsxsYFwUa9cEubFuvN3HFTBz8jI4mg5sUPapLx401gND3ITkGSmTHIV7qk5QvSxLH0/0Z4ZQD6kUDvTozX5M3DHtTYo3sCpxoD+Zt1a0Lc9KkFfhTDeQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BN9PR12MB5179.namprd12.prod.outlook.com (2603:10b6:408:11c::18)
- by CH0PR12MB8551.namprd12.prod.outlook.com (2603:10b6:610:186::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.23; Mon, 11 May
- 2026 13:42:51 +0000
-Received: from BN9PR12MB5179.namprd12.prod.outlook.com
- ([fe80::cf08:f59b:d016:c95f]) by BN9PR12MB5179.namprd12.prod.outlook.com
- ([fe80::cf08:f59b:d016:c95f%4]) with mapi id 15.20.9891.021; Mon, 11 May 2026
- 13:42:51 +0000
-Message-ID: <ddb44aeb-c810-43e7-8a37-4e61a16e612d@nvidia.com>
-Date: Mon, 11 May 2026 19:12:40 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] cpufreq: CPPC: add autonomous mode boot parameter
- support
-To: Jie Zhan <zhanjie9@hisilicon.com>, rafael@kernel.org,
- viresh.kumar@linaro.org, pierre.gondois@arm.com, ionela.voinescu@arm.com,
- zhenglifeng1@huawei.com, corbet@lwn.net, skhan@linuxfoundation.org,
- rdunlap@infradead.org, mario.limonciello@amd.com, linux-pm@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
- vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com,
- mochs@nvidia.com, bbasu@nvidia.com, sumitg@nvidia.com
-References: <20260424201814.230071-1-sumitg@nvidia.com>
- <a4ed690a-50d6-4bfe-8810-86a75d7b51e3@hisilicon.com>
- <bc06c3ab-0286-4e1e-a615-e704b267c21a@nvidia.com>
- <a9324a65-9da9-4e35-8c78-a054fb24bc8d@hisilicon.com>
-Content-Language: en-US
-From: Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <a9324a65-9da9-4e35-8c78-a054fb24bc8d@hisilicon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DM6PR05CA0048.namprd05.prod.outlook.com
- (2603:10b6:5:335::17) To BN9PR12MB5179.namprd12.prod.outlook.com
- (2603:10b6:408:11c::18)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O6s1o+Eo"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-672645dbfeaso4528712a12.0
+        for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 06:57:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778507843; x=1779112643; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jKhdwsAy/86G+JOwXd2p+pdbXnbrja7bwh3PVXwh7m4=;
+        b=O6s1o+EokPZ/vWnPsmsKyx5Ei9uZcDJWti+ZFv8hC+jHsWr6oAPXk0pIAR0Cqv8fDu
+         Xy8CkOJJ30Mx1ekmPtxKUg28YkVeziO8oiMX1cH2iEsMAOdXbKVE1QC+ShJvh2MyHyoQ
+         uuPgIU8AVRu0cNLHP9g3Gi6bkV3ZVIIOWN5vcKzQvxDofG/oXfh0H0NAB6RnQz8H8pTa
+         +5ZGui77KCjsXMSqI4NYjoRgePzAwsJt6xWhVuiDAgm6R8XD5+YqdM3IIjbLF4OtbnnN
+         IC13ErPxw0Ai3qnXNMwbDQ6G67Mlnz4Es9JHQHTLjJl43kEzW7ZYAF7pu9r4Vmq1pRF6
+         I/Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778507843; x=1779112643;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jKhdwsAy/86G+JOwXd2p+pdbXnbrja7bwh3PVXwh7m4=;
+        b=hw8px1WF1kpyvrmv04NivJrVDk/ZBwkd/2j1QDGgkej8un9M4WobHn9nFA/65FkJWb
+         qDhrHYD1HpQu4+Sd001zLtJAPsSACov92rtK+UtDFN4z1ZsnAGKa0Y2XtcuusDJPRSm8
+         bC33zA108JBC6CIGhgK3y3TcB1LmJRUDH+L3mlva7Z5TmItlSGwc4/srBOJ7Qt8J6SmY
+         yCGmwxn4CuRWWlcaERBMduWq/77f9bQIELKSJM3SaVjklzUl77FzNtn5At5/ZNsl3RoC
+         3cNq8UAwopQUQkFjj99BOm5VvFk3w5yQuWpVB267KJWVx1SaGr6btLRsmvPuSDyPKIdg
+         TJlg==
+X-Forwarded-Encrypted: i=1; AFNElJ+OtrqjZmYVa6Xl7VEPShhSe1pT/HEI2KWOV3Q9k0zo5hu92RFHs2brOllQ1TLEk00ZGObp7nyWBXZA+Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc6qAxY0WcN9mv+2kTub5rpA8AR9hEWSkZGjGJWKTx36/f/HF1
+	KWgs91vQLGuGJ+itGCsZX99++BdDRdk+O7R6mi85rsE+z6rkbgxYZtE6
+X-Gm-Gg: Acq92OEHx9zqgJS+1ul4zWT1buSXd/5FvUsu1jffF6pHCc9vJ1ECJkPRHmjxFdq6aW2
+	tP6kDHKMTkvvgAPls75a1gIkNyVeLEtOWZNegtSwmKBtoFktfkK5zct7Kql+IZd47RnQqGkV3iX
+	/6YZOqyHqnFyFpw4STLx40TlL1xyCNq8kVJSSjsn8FpdePQ5QP1Mi/TMNzC5QVMBT+RMXLRFVoZ
+	t7HF3mPLS0bD9L54ixQP86bgr5/7A1sm7m+VPhk9WbLPQjMXa7/s663GS+hzVIK8/VpG8mGxu8K
+	v8qiUHInH2R4k0GwU5ANj/iTacOzunyh2wmpx4tYhYzSSOieP4tSFfpiNwUEoGsUgnS2xBsSCGL
+	k/wPnEgbheYStYMlM3BGzRxvk3AobmOAP6tUicDpsvnjS+LoEapHsAUEunaM0hPDcnX45JUQx2G
+	rJM8Tt1taLPCo3
+X-Received: by 2002:a05:6402:278c:b0:67d:a63a:deb1 with SMTP id 4fb4d7f45d1cf-67da63adf40mr11744584a12.5.1778507842405;
+        Mon, 11 May 2026 06:57:22 -0700 (PDT)
+Received: from xeon ([188.163.112.56])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-67ef0b3b904sm3685357a12.1.2026.05.11.06.57.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 May 2026 06:57:20 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Peter Chen <peter.chen@kernel.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH v1 0/6] Add support for Infineon/Intel XMM6260 modem
+Date: Mon, 11 May 2026 16:56:55 +0300
+Message-ID: <20260511135703.62470-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN9PR12MB5179:EE_|CH0PR12MB8551:EE_
-X-MS-Office365-Filtering-Correlation-Id: fa91d808-8d45-4f03-834c-08deaf6331ea
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020|22082099003|18002099003|56012099003|3023799003|11063799003;
-X-Microsoft-Antispam-Message-Info:
-	xGIDo4h/C+eR+vm9Ya/X5gsoLRzxf/8zNE6ggCpGyKn2AmH4pvYEV8Q+J+bzJ2nzxTrf4PNc7TONsYnrt1q1YnfPexW92oWuNTg1aTy25mDgjpG5xLXUfBeigoGrLfoh5JI+VMMqnKmzVqSmSCHnEJnaoWlaZLYdpvAJGw767v/HfpBJryDtW+sg0fItAI+jky7xWH+1ufHcOxcs/9Sm8t00gCV8l/ik0dozQeo8Jx/NhHW2+0SCiu/Zfdkiw9BZMCOA2l3DP7sJYNczQ+lZJcKKlSCeR4W2vhz8PEfhUKhgPh8u1t3er1t7qMmdI0TnuDcti30CsIuzzBo49cUPEOwCxGO1ffzyPXUGIsX6b9Qhm6wWyeFitX3rHtrL9xhKXxjSgPOj4g4Kqr3nQbtBtpLtkhDY9cywoa6sYEPjykfYgcBMBHAfpd9P3Md3L27kfEKdcgio20UmsQWAJyt7THFOoCy7cuUUyfH4fCeERAU/0WP3BfqDsQSZ7rEx0Rs9RbOPYpZ5J2uVN9B1lswOAWUxby5L0FDMgw53AYZ6ZSF8qRAAQF1YEATcu6FD7iStIZE4wndQdk1job1haX78OxQdfAjUvak/5y/ljfn6d57iSjW9D0xNA9oYTtiXf3ay7+B/aOvTbPRBsyLGO/c6dBlyxiqHJ0im/2bYckievxk/Ai8Wx7S2FCiETUQnbQZeiSU0hnaQ6V7m+dpebCOMj8gFfSA9rpMti5rV+u27jdeUqbbWqk/fn7nv11DfzSgf
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5179.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020)(22082099003)(18002099003)(56012099003)(3023799003)(11063799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b2NINHZZUlI1L1RneVJiNjU3K1pjdVpsQnNUS1RJM3ZFUVYySStxSmVUanFz?=
- =?utf-8?B?VlRpb3VLbzVad1Q0ZW9YMHoxSWRDWUUzYm93NlIzZXJFUTVEUERaalN6ODJu?=
- =?utf-8?B?K1hOZXJlekNzRHp3Z09IN214alpYeTlDZXJIckZYRDFYVUJaMm5QSFhZZEJm?=
- =?utf-8?B?N1JmVGRuNHFjNDIzVmJyNElBSjZGdlpSMFlxOERiL25laGRIRllVRGtqVE5x?=
- =?utf-8?B?TEJlL0VvcUpLYk53OUhQVjlxcUsxaHVaVmpaUlcvdVRSeHJXem1leXZ0MEhm?=
- =?utf-8?B?M0MyWlNmS0I0YlFVU3A0ZEt2a0h2c09TUjF2ZzRnYXJzNGhEYlNMaDZzdHl4?=
- =?utf-8?B?MWU1dTBPRmUxbW5vUFl6M2Fxems1R0pvOTUrbzJ0Zzc1U1p0dHM0K2dtNitS?=
- =?utf-8?B?b1VqUFQ1MEtFZGxIcnRhQmdZTjh6ZWRlRm00d3ZkSFVwZjViazUxN1ZnWGtW?=
- =?utf-8?B?MlE2YU9QZGY5VDdBcTMzWTBQdDJVOG1BQm1VazRUNWtCMGVEcGpnL2xDeXRi?=
- =?utf-8?B?N0FOV09HU3FQQURYdEV2VFZQd2tqSlRBd29lVjlVVE4zWUo3SU55ZDlWeFFo?=
- =?utf-8?B?dzR5T1hwQzZaWWVDQ1RjK1M5bU9qTXFuSFVWRnlxMEVtU1BxZmJjbWtJbDdu?=
- =?utf-8?B?UVRMby9pWk1mc0NqWFhLVDNaTEMySjkzcG50aExLVkpYakx3NFJEMDlwR0J1?=
- =?utf-8?B?WVNLK2F1SUNiUEdQTCt3MlZpY25QbTdLYVlyNmpZbFNoRzl0YjFBTHZHdC9D?=
- =?utf-8?B?QTdSb0I2c0ZER3FzbzFQMU9LZFozaFdlQXQwbjF6aU4zVWs4aXpEb3BQdXhB?=
- =?utf-8?B?ODhiNG9BbXVxSm42dStSY1V3SVRMaVJwQTdpQnI4NTJKUmhyQTJjdVFWSG41?=
- =?utf-8?B?dVk4UlVMM1JXT21KTDlVTURsT1BUNzZiNUtETjluclU0NkIrUUFFOEdTMUF2?=
- =?utf-8?B?SXJtVHRVT05MNCtKRXJXdUhadm03bm13QnVGcmV0WXM1Z083YUM5TEN0L3Fx?=
- =?utf-8?B?UngwOVlPOXlTcDNMaGp3Qk5VYWdobjRvR1diMjlJWC9MTXFlS0pwazZLUGZE?=
- =?utf-8?B?ZmNTS2pkYXZNUkV2Q0xWTkgyRk05YjErbUU2WTE3UlRCU0EvV0Fxc2FGZEsw?=
- =?utf-8?B?VkV5N1RIWjR1ZEJRWGxaQW5oR0JaQjF2bEZRaGgrejl0QzFiSTB3U0trci9m?=
- =?utf-8?B?SnpYOHpsaElob2k5NGZjQkUrMkdPYmR4dTZERmtRMTdCMzNRR2Q1V3dIYWxh?=
- =?utf-8?B?QkZVT0tDaEFZRHRnYkwzd1gxRjhjSStTM1ZUeXgvY08zWGQ1N3ZUWkVudUo0?=
- =?utf-8?B?VUpKR2RNRHU2NlJJSDYrZzNVY2tQRktJMlNXUVhBTWZXNWE3blgraUxYYzlR?=
- =?utf-8?B?OEJkSnM1R2pURE9MVFA1OGVCSDhXVnBrZWxzOXBSZDZIVFFYUkRSeGdiMS9Z?=
- =?utf-8?B?Sk10TERjZWY4MTdZZDU5dWEvY2V4eTNoeFhkQVU4NDhOS0NkdkpYU3Nxa3VY?=
- =?utf-8?B?YUpXZ3BNV3BtQTZRTTR5VDFFTnJYeG03c214TnVEOGp6cTJaSTkwZFIzRjVZ?=
- =?utf-8?B?VENSUEdBYmk0WEhvaHorMnJrUkN2YndxQzQzL1RUTUNxeUIyaE94RGdibTYw?=
- =?utf-8?B?K3g1R2xaY3VhOFpuVTMzemErdWZ0aUdFa0Q5QkcxOUZDaFZnZmtXOFJCclhs?=
- =?utf-8?B?dkxncGowdWVtdmJWVVA0U3JBZmFEWStHbHRQZGZDRVFLV3ZzMEVieG1IMCtC?=
- =?utf-8?B?ZVJXU3A3UFRSSzNXdkJzZHFmbmFCZWdYQ2luN3A0QzQrYmg5ajNOYWw4TFpi?=
- =?utf-8?B?Y21uMWljNURFZVhKbk5HT3pIVTM4OGpWbkxvS1lqeEYwRHV6UUxoL3ZPMWY5?=
- =?utf-8?B?RG4xK0hyV05RRGtmS1V0VzE2UzJBWkcyUnloZkVBQ1h4V0hVZVdxZjRSMDgr?=
- =?utf-8?B?bUEzM0VYRDNvUmhza0s1T09mWnZpWmY3YXJFQzgwcVZQcEhlcm41biswNWgr?=
- =?utf-8?B?SFZqQ3FVMFEyNjFJM3BHNFduSGpraWZDbVI4ek1ucUNBQ2NibU5QWUM2OG9C?=
- =?utf-8?B?czNuYnI5VmNySFdsUkFzS3RaM1MzT3U2d1FPKy92QWQyengvMlZVZW5QQVpi?=
- =?utf-8?B?OTRQbFFpU2FIcVlXMElCckJSVGRDWUZiMC90MXZmSEthaWF6T0tRampRY09J?=
- =?utf-8?B?RTFVZEtaTVFGQktDV294ckFTTlh4WnBQajN4TDJQdkxjM0xmbC83Qm1sc2di?=
- =?utf-8?B?UHRMWDk0dHJzYVduQWRhMk5ObWhWUmdEcVhqQjhFalFJMmdiVlVnRksxdnF3?=
- =?utf-8?B?MlMvMndHZ01kT0ZGZWMwQkJUV2ZSRjNPYTBCeDRteldTNmF1NTQ5Zz09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa91d808-8d45-4f03-834c-08deaf6331ea
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5179.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2026 13:42:50.9066
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6e+B6aOt8Lapu3V3Uc6/xdfEi3pM6WkAtjSFPHpIOIvQwRnycmvc1OzGFcaAS5u6ejkTSkGblPV03k+HURFeiw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8551
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+The Infineon/Intel XMM6260 is a 3G-focused, slim modem platform designed
+for smartphones, data cards, and Machine-to-Machine (M2M) applications.
 
-On 08/05/26 08:03, Jie Zhan wrote:
-> External email: Use caution opening links or attachments
->
->
-> On 5/5/2026 8:29 PM, Sumit Gupta wrote:
->> Hi Jie,
->>
->>
->> On 27/04/26 13:54, Jie Zhan wrote:
->>> External email: Use caution opening links or attachments
->>>
->>>
->>> Hi Sumit,
->>>
->>> In general, I would expect this parameter only toggles on auto_sel by
->>> default.  IIUC, other CPPC configurations (min/max/desired perf, EPP,
->>> enable) are optional and not closely related to this.
->>>
->>> Why including those stuff here?
->>>
->>>
->>> Please see other questions inline.
->>>
->>> Thanks!
->>> Jie
->> These together provide a known, predictable autonomous mode boot.
->> min/max/desired seeding ensures HW has a known starting bound (BIOS
->> may leave them unset).
->> EPP=PERFORMANCE_PREF is needed as BIOS defaults often bias toward
->> energy saving, and admins on many CPU systems shouldn't have to script
->> per CPU sysfs writes at every boot to undo that.
-> Hi Sumit,
->
-> The min/max/desired perf might be a slightly different case, but the EPP
-> value should probably follow the default if there is?
-> Otherwise, users may complain that their BIOS defaults don't work and find
-> out it's driver's fault.
->
-> Alternatively, we may also make an assumption that we ignore BIOS EPP
-> config, but not sure if that's suitable?
->
-> (Perhaps let's just discuss in the bottom trunk because the main issue is
-> pretty much the same.)
->>> On 4/25/2026 4:18 AM, Sumit Gupta wrote:
->>>> Add a kernel boot parameter 'cppc_cpufreq.auto_sel_mode' to enable
->>>> CPPC autonomous performance selection on all CPUs at system startup.
->>>> When autonomous mode is enabled, the hardware automatically adjusts
->>>> CPU performance based on workload demands using Energy Performance
->>>> Preference (EPP) hints.
->>>>
->>>> When auto_sel_mode=1:
->>>> - Configure all CPUs for autonomous operation on first init
->>>> - Set EPP to performance preference (0x0)
->>>> - Use HW min/max_perf when available; otherwise initialize from caps
->>>> - Clamp desired_perf to bounds before enabling autonomous mode
->>>> - Hardware controls frequency instead of the OS governor
->>>>
->>>> The boot parameter is applied only during first policy initialization.
->>>> Skip applying it on CPU hotplug to preserve runtime sysfs configuration.
->>>>
->>>> This patch depends on patch [2] ("cpufreq: Set policy->min and max
->>>> as real QoS constraints") so that the policy->min/max set in
->>>> cppc_cpufreq_cpu_init() are not overridden by cpufreq_set_policy()
->>>> during init.
->>>>
->>>> Reviewed-by: Randy Dunlap <rdunlap@infradead.org> (Documentation)
->>>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
->>>> ---
->>>> v[1] -> v2:
->>>> - Call cppc_set_enable() unconditionally so CPPC is enabled for both
->>>>     OS-driven and autonomous modes.
->>> Why adding this in v2?
->>> This looks like a separate issue since setting CPPC Enable reg doesn't seem
->>> to be related with autonomous control.
->> In v2, moved it out of the auto_sel specific check.
->> Agree that cppc_set_enable() is general CPPC enablement and can be split
->> into a separate patch in v3 if preferred.
->>
-> Yeah it should be a separate patch I think.
->>>> - Init min/max from caps instead of cppc_cpufreq_update_perf_limits()
->>>>     as policy->min/max aren't yet populated.
->>>>
->>>> [1] https://lore.kernel.org/lkml/20260317151053.2361475-1-sumitg@nvidia.com/
->>>> [2] https://lore.kernel.org/lkml/20260423084731.1090384-2-pierre.gondois@arm.com/
->>>> ---
->>>>    .../admin-guide/kernel-parameters.txt         | 13 +++
->>>>    drivers/cpufreq/cppc_cpufreq.c                | 89 +++++++++++++++++--
->>>>    2 files changed, 97 insertions(+), 5 deletions(-)
->>>>
-> ...
->>>> +
->>>> +             policy->cur = cppc_perf_to_khz(caps,
->>>> +                                            cpu_data->perf_ctrls.desired_perf);
->>>> +
->>>> +             /* EPP is optional - some platforms may not support it */
->>>> +             ret = cppc_set_epp(cpu, CPPC_EPP_PERFORMANCE_PREF);
->>> Why setting this to PERFORMANCE by default?
->>> A platform can have its own default EPP value.  This would override that.
->> The boot option targets performance oriented use cases on many CPU
->> systems, avoiding sysfs scripting across all CPUs on every boot.
->> The BIOS default EPP (often biased toward energy saving) would otherwise
->> steer HW away from that goal. Admins can still re-tune EPP at runtime via
->> the existing energy_performance_preference_val sysfs.
->>
-> Yeah, avoiding scripting makes sense for sure.
-> The thing is how do we do this nicely.
->
-> For now we need to consider follow either the BIOS default or the driver
-> default.
-> They seem to be exclusive since there isn't a clear way to support both at
-> the same time.
->
-> So, are we going to support the BIOS default case?
-> For example, users can config a default EPP in the BIOS setup menu.
+The modem is typically connected via the application processor's USB line
+in HSIC mode. To function correctly, the modem must control this line, as
+it requires precise timing to initiate or de-initialize the USB connection.
+This control is necessary to successfully enumerate the next stage of the
+USB device loader (moving from firmware loading to the actual device
+interface for example).
 
-To consider the BIOS default case, we can extend the parameter to accept
-an EPP mode in v3:
-- cppc_cpufreq.auto_sel_mode=performance / =1 (EPP=performance)
-- cppc_cpufreq.auto_sel_mode=default / =2 (preserve BIOS EPP)
+Patches 1 and 2 adjust the Tegra-specific portion of the Chipidea USB
+controller to allow for the disabling of automatic PHY and USB controller
+registration. This is achieved by adding the nvidia,external-control
+property/flag. It does not affect any existing configurations, but it
+allows the USB line to be registered or deregistered by an external
+device — in this case, the modem.
 
-Thank you,
-Sumit Gupta
+Patches 3 and 4 add support for the generic portion of the
+Infineon XMM6260 baseband modem, which was used in many Tegra-, OMAP-,
+and Exynos-based devices circa 2012. This driver provides power sequences,
+manages initial communication with the application processor, handles the
+SoC-specific modem PHY, and verifies that the modem USB device appears
+correctly.
 
-....
+Patches 5 and 6 implement support for the Tegra-specific modem physical
+layer, which handles the registration and unregistration of the USB
+controller.
+
+While current support is relatively basic, this configuration already
+allows the modem device to appear in the dmesg of my device
+(LG Optimus Vu (P895)):
+
+[    9.427014] ci_hdrc ci_hdrc.1: EHCI Host Controller
+[    9.431488] ci_hdrc ci_hdrc.1: new USB bus registered, assigned bus number 1
+[    9.457197] ci_hdrc ci_hdrc.1: USB 2.0 started, EHCI 1.00
+[    9.460370] usb usb1: New USB device found, idVendor=1d6b, idProduct=0002, bcdDevice= 6.16
+[    9.468470] usb usb1: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+[    9.475597] usb usb1: Product: EHCI Host Controller
+[    9.480508] usb usb1: Manufacturer: Linux 6.16.0+ ehci_hcd
+[    9.485913] usb usb1: SerialNumber: ci_hdrc.1
+[    9.490862] hub 1-0:1.0: USB hub found
+[    9.494005] hub 1-0:1.0: 1 port detected
+[    9.657191] usb 1-1: new high-speed USB device number 2 using ci_hdrc
+[    9.844726] usb 1-1: New USB device found, idVendor=1519, idProduct=0020, bcdDevice=12.74
+[    9.850530] usb 1-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[    9.857594] usb 1-1: Product: HSIC Device
+[    9.861606] usb 1-1: Manufacturer: Comneon
+[    9.865627] usb 1-1: SerialNumber: 0123456789
+[    9.908739] cdc_acm 1-1:1.0: ttyACM0: USB ACM device
+
+Svyatoslav Ryhel (6):
+  dt-bindings: usb: ci-hdrc-usb2: Document nvidia,external-control
+    property
+  usb: chipidea: tegra: Avoid controller/PHY init if bus is externally
+    controlled
+  dt-bindings: net: Document Infineon/Intel XMM6260 modem
+  net: usb: Add Infineon XMM6260 Baseband modem support
+  dt-bindings: phy: tegra: Document Nvidia Tegra XMM6260 PHY
+  phy: tegra: Add support for Nvidia Tegra XMM6260 PHY
+
+ .../bindings/net/infineon,xmm6260.yaml        |  72 ++++
+ .../bindings/phy/nvidia,tegra-xmm6260.yaml    |  58 +++
+ .../devicetree/bindings/usb/ci-hdrc-usb2.yaml |   7 +
+ drivers/net/usb/Kconfig                       |  15 +
+ drivers/net/usb/Makefile                      |   1 +
+ drivers/net/usb/baseband-xmm6260.c            | 335 ++++++++++++++++++
+ drivers/phy/tegra/Kconfig                     |  12 +
+ drivers/phy/tegra/Makefile                    |   1 +
+ drivers/phy/tegra/phy-tegra-xmm6260.c         | 144 ++++++++
+ drivers/usb/chipidea/ci_hdrc_tegra.c          |  36 +-
+ 10 files changed, 667 insertions(+), 14 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/infineon,xmm6260.yaml
+ create mode 100644 Documentation/devicetree/bindings/phy/nvidia,tegra-xmm6260.yaml
+ create mode 100644 drivers/net/usb/baseband-xmm6260.c
+ create mode 100644 drivers/phy/tegra/phy-tegra-xmm6260.c
+
+-- 
+2.51.0
 
