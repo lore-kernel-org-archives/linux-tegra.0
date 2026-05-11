@@ -1,63 +1,63 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5681F3FBEAC
-	for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 13:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638253F7898
+	for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 13:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778507863; cv=none; b=FLXgrNpWRy9DURqvbEiMDtvwjr0l1J6CiNHtEmkd2WN35+SmLCSKpZY5QsB86qQgjB5kTXEnKRc2IgFLFHJAL3a7Zb33mFFVZzRDq8vi3zRJwZc46if5+IH61JzSSAxUYnrR9us4mBb12VyRQCSWGFQjp7wJyj4UVBCfpG1/CME=
+	t=1778507865; cv=none; b=BhSP1D1aWebVVI0Xwq2pS2zjOmmRXOnsPJLcTJSvGDlaV8ZsHtGsybtbezEf7TWDrivr/kQQXSKtll3LmJgaHp7wvCNR+geyUMW6aMbhH9pAi5I8o/50uM4TknRyl+j0GIBk/4wjaZqjpSfRNKjA70epMAyz0M1qheuEihGktCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778507863; c=relaxed/simple;
-	bh=DQcI0kwaHzVx7Qs6ED7T70odRLTczs+nCkruvRLsQN0=;
+	s=arc-20240116; t=1778507865; c=relaxed/simple;
+	bh=//xeqBDO+FAC+aa1qPeAepE9RtXXW3YKKxu7v7xKkuw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SDA1oNGjgRN8kco99E0q9VJ2jQ7WGB25h6TkLTbHQAPmTfDHs/L+pAuffpcUspBkVvIR+7GeU/b51HE33MMNLFk+iOanhM0JEEtAzD4gCBIWoHpi0eCynnxr9DX3tECbrX9LLJb9ViBtSqSzRS71uIKMR8fbnnbqAVQgYWd/ISM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MzkNX5Qe; arc=none smtp.client-ip=209.85.208.47
+	 MIME-Version; b=fbditJ+jD2FpRPkLno0k6wpurszpchlJnjPn50C0ogL1FVw0eu2vmksYdAlo7YUWvlA44xcUHH6MK1f5QlFdbyrs8vnRb2qHqKzq6qa9Y7fC+w6Y7UoSqM6crmDRZLf0lN6dx4TYTBDWMfdjn4fAza00IJ5IzVzaSEMY2xBRHTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cF7H620Y; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MzkNX5Qe"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-67389cf78b0so7861269a12.2
-        for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 06:57:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cF7H620Y"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b79f8f7ea43so686717466b.2
+        for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 06:57:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778507852; x=1779112652; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1778507857; x=1779112657; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rESskTJRprzdwEOE8g7SuHaYWt4FLnX54fziSgA+Tro=;
-        b=MzkNX5QeTKOBfizYW6LUoupYsvm+tm+79R2q9zn/BWeZGhieb33g4NSTpKXH6zl6MY
-         qezJp57iRz9YJtYwQ96WdoSp/1xGLk3/3HgEBkIPWf0KaqxJ+ILQuLYu0AF33enorKQP
-         lUzqVI6fQFpr1fEjP4TnfpuW4RLG38QxSxFpkx86k+Vf88p4kCLe8maW2z2ZMdeX9Qku
-         r09Hu56Q6Y8GBkyF7ymRsYJLVjLMKNp1zX42McX4l88P5w3TvYSWL9BKHqidEj59cfhe
-         lIKMQjXWy3XrFHAhTXShnfOWACh/Rm8CsQh/Xhxr7XMrhR0dHeKHv7YEbZHRrQI91O3L
-         2W5A==
+        bh=2O8Su9Gk1Lf9CS4xvd/yWBGZ4wDlTJeCYsl5Z1xTugo=;
+        b=cF7H620YRQdAAB6av+O7l8dQp8lR1njATPv1q3DMnueWOX33L0/xEEN7Gr2Y7up8CK
+         tzAr7mYz2wMEs+QttSiBu+7ddSAnjzpT7VCh/usSCX/MfMCbybBMRxLc0qK/gX1yz6qJ
+         /BBZvl2To8Xkqlyg6lh+l2Y8k+FhTzAHQYTeEh3hd33LAbXREsdHpERz9jckZZIN7g2a
+         vOt1rgXDkHsdBj5NEvJoAYQM5INfe/9zSQz20mG4TX4olcYtig99+8rRakm4vZ0ijNDF
+         UmiJQodssNZrdJKdjMXQf9YluXVnuqUL1z5kjGtaNXYtNDcAD/aCCiGqWizX5+aRFIUW
+         RrEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778507852; x=1779112652;
+        d=1e100.net; s=20251104; t=1778507857; x=1779112657;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=rESskTJRprzdwEOE8g7SuHaYWt4FLnX54fziSgA+Tro=;
-        b=sMoD7sXRoaEM8dTC/7QdcqadxgAC7QPDyVMob4N3MaAmVTn4jIts+1b46qkHtT0b7x
-         FgMsByIi0lM2KBdbr32VASessNaFxB46XZS9ljxrqnXYsfJ5kzImFVDCI9gj0JG/MVxQ
-         84rGhlmfPW50S3JrcmXQygbe8ZN51YKr9VWwpzCttEA+MnExL2m0BHkh1FcbDCXY1VBf
-         FWZB1BPolQ1Oxj5wFCt/J2aR3wDHVVlVixBl6NuH6N53+wGDhQOZ34ygDkqPd5H9jKlq
-         5vUPs3M7Wlx/HeEhk/3ITg/ZOIIJQPQWHn28PB4ZRl/Y63Tb4dW0ykiFGRRmt5oaZMWd
-         y4FQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/Bxr+NomPgWaDUk3kGhcdXQrSktwSkQLszgfSECGQJi87nTyqPeZu8c4Fq4ktKwHaau89n0txua3xmKA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM4Zolt/ZRfcyOE90rM2V7lwiAEMCfLjl4JtwXJb/8JpngSb0Z
-	yUcPQ2KE8c1avHSHoXZif+D4pW9JhNef+9jgW04RPdC9p8ZAuV7zG2r/
-X-Gm-Gg: Acq92OGZKSfyx7znvGPwVAmXvgB20Pa9531oOlnLX/crco/LWD0NnM3e3cKHicU7iWf
-	irrx7Dj1VlQsnMNEHjyhGVllWdCbR2JRd1MJV/p/4RurmpmmZaZoSew7/DvH6CSFcK1ebJMLFJ4
-	Y/E4Cv5RpSCq6Ruq7/3Hw5cuQicAMuePRFw/nubfk3Ud9JhgfP3qB3ILdATIE1IFhXUVAGzAkby
-	HBGnPlWuAjnVG7O8l0cANuM25vo9wNLx2Cn4mcCeQ0nJWHD7k281NzFsI6erS8fC3UH8Y1Ubhu2
-	RrS+9nhnPLUTyb/V/OlFhwW6lBEOOkHAMnoSe3apPg/NKIiOiVZ74QTxP5KvxwhU4Wd67EiqHMX
-	yWKZyemvpfCWHM+Awo33y54/Uji9SmNzW7mVK2uRWUvs1uPBLO2mikHn8QMmoq8BDLK/z0XLRcC
-	/gFtgNc/SWjiCx
-X-Received: by 2002:a05:6402:455a:b0:66a:8002:fe17 with SMTP id 4fb4d7f45d1cf-67ef09a34a1mr5628664a12.13.1778507852037;
-        Mon, 11 May 2026 06:57:32 -0700 (PDT)
+        bh=2O8Su9Gk1Lf9CS4xvd/yWBGZ4wDlTJeCYsl5Z1xTugo=;
+        b=MoFrFslb9EUnhnh0JZHrfZB2Qg6BMcHhlCNV+xCy6RYMCb018H4feUkTw0bTifrd/Y
+         HtO9Ir8nIoM7Mel1o5hfvaDzwfAlJ+HAlXIxQGKLJSc07LQIttYV/fwIUyeWaHBT98tW
+         4jRF1JFgDDV5I2n/Jeag4dLJVL+2zhVkSiRH9t4ulKzhltCniWAZfCL/xM3EupvwQXQZ
+         elrC2RI/ISoLmT1E/8+ra9F8UbqBlaftD0ZaknFMMtGNbgo4JrMB4voFmjze/2UUaGv3
+         Y4e09JdJsGw3u1+WFWvYFtEXch5/74xBr40xYSZ403ejvAB+EWNmmtOVPFHe84zDA1TL
+         6vVw==
+X-Forwarded-Encrypted: i=1; AFNElJ8IMs1/5iWdYAL7KsDRUl63mM+eweI7YiqFoUAZ+VMMjgLRKvSR9n7zDnTF8FjT2YabUKzrt9aQMfKaYQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSkKNNmKGMoW2ENqm+wUbg60MZQB410+FIdSXYgZMhgO6kH4Fj
+	6BC5OZX1SPc6eXi3BTSq+IThdVQ1L3ROZInJ+D+wYCQmfoOKATT2lAAv
+X-Gm-Gg: Acq92OGU918R9hCfE76EaNHV+Tg9cNjapVJqXEDZ8FypumA1iPtS57Xlpkeo/OYvdJV
+	/nnfI+/994DyVQa99Uu5uo5BHWlCv5hmx7mXLqgVVvWIlq7G/0uJYAJP0whiL/nafRJwzYEGXGk
+	aom14lDuAJ5kHA1gLLVFaEKE4aIsciZECvnMiJQdyPAM6hdY/MZ2hjfmbNBVP9f76DOgVdoPGoP
+	slTEI9VndXlaY/yj2N6e7+ai+mmS8De6vxg+hth1rEkl5JhpIOhm7lEVtAAAx3TCXyLwFKR5nRe
+	oXMdoP4Vr7gKBgd7C0wRGLM94JgOz1BGN7j9NjcETPqbLXvRnlQnE1Vzejpnh2xq0h7H1giloH9
+	06oK+Vg8ReD4p6aff7WR9MsK5qO+jMIKnDeSi9qL/areKGqPBi+cCQ6ey+sWMRjBCL19Rikp668
+	202zjTma3A66+3
+X-Received: by 2002:a17:907:c18:b0:bb8:b536:55dd with SMTP id a640c23a62f3a-bc56d713f3bmr1489015866b.41.1778507856804;
+        Mon, 11 May 2026 06:57:36 -0700 (PDT)
 Received: from xeon ([188.163.112.56])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-67ef0b3b904sm3685357a12.1.2026.05.11.06.57.29
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-67ef0b3b904sm3685357a12.1.2026.05.11.06.57.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2026 06:57:31 -0700 (PDT)
+        Mon, 11 May 2026 06:57:36 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Andrew Lunn <andrew+netdev@lunn.ch>,
 	"David S. Miller" <davem@davemloft.net>,
@@ -80,9 +80,9 @@ Cc: netdev@vger.kernel.org,
 	linux-phy@lists.infradead.org,
 	linux-tegra@vger.kernel.org,
 	linux-usb@vger.kernel.org
-Subject: [PATCH v1 4/6] net: usb: Add Infineon XMM6260 Baseband modem support
-Date: Mon, 11 May 2026 16:56:59 +0300
-Message-ID: <20260511135703.62470-5-clamor95@gmail.com>
+Subject: [PATCH v1 6/6] phy: tegra: Add support for Nvidia Tegra XMM6260 PHY
+Date: Mon, 11 May 2026 16:57:01 +0300
+Message-ID: <20260511135703.62470-7-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260511135703.62470-1-clamor95@gmail.com>
 References: <20260511135703.62470-1-clamor95@gmail.com>
@@ -94,412 +94,196 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Infineon/Intel XMM6260 is a 3G-focused, slim modem platform designed
-for smartphones, data cards, and Machine-to-Machine (M2M) applications.
-The modem is usually connected via the application processor's USB line
-in HSIC mode; however, to work properly, the modem must control this line
-
-Dmesg with modem appearing on LG Optimus Vu (P895):
-
-[    9.427014] ci_hdrc ci_hdrc.1: EHCI Host Controller
-[    9.431488] ci_hdrc ci_hdrc.1: new USB bus registered, assigned bus number 1
-[    9.457197] ci_hdrc ci_hdrc.1: USB 2.0 started, EHCI 1.00
-[    9.460370] usb usb1: New USB device found, idVendor=1d6b, idProduct=0002, bcdDevice= 6.16
-[    9.468470] usb usb1: New USB device strings: Mfr=3, Product=2, SerialNumber=1
-[    9.475597] usb usb1: Product: EHCI Host Controller
-[    9.480508] usb usb1: Manufacturer: Linux 6.16.0+ ehci_hcd
-[    9.485913] usb usb1: SerialNumber: ci_hdrc.1
-[    9.490862] hub 1-0:1.0: USB hub found
-[    9.494005] hub 1-0:1.0: 1 port detected
-[    9.657191] usb 1-1: new high-speed USB device number 2 using ci_hdrc
-[    9.844726] usb 1-1: New USB device found, idVendor=1519, idProduct=0020, bcdDevice=12.74
-[    9.850530] usb 1-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
-[    9.857594] usb 1-1: Product: HSIC Device
-[    9.861606] usb 1-1: Manufacturer: Comneon
-[    9.865627] usb 1-1: SerialNumber: 0123456789
-[    9.908739] cdc_acm 1-1:1.0: ttyACM0: USB ACM device
+Nvidia Tegra XMM6260 PHY is a hardware configuration used in Tegra SoCs
+to provide proper interaction between the application processor and the
+modem, as well as control over one of the SoC's USB lines for the modem.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- drivers/net/usb/Kconfig            |  15 ++
- drivers/net/usb/Makefile           |   1 +
- drivers/net/usb/baseband-xmm6260.c | 335 +++++++++++++++++++++++++++++
- 3 files changed, 351 insertions(+)
- create mode 100644 drivers/net/usb/baseband-xmm6260.c
+ drivers/phy/tegra/Kconfig             |  12 +++
+ drivers/phy/tegra/Makefile            |   1 +
+ drivers/phy/tegra/phy-tegra-xmm6260.c | 144 ++++++++++++++++++++++++++
+ 3 files changed, 157 insertions(+)
+ create mode 100644 drivers/phy/tegra/phy-tegra-xmm6260.c
 
-diff --git a/drivers/net/usb/Kconfig b/drivers/net/usb/Kconfig
-index 52a5c0922c79..503f24a3cfa6 100644
---- a/drivers/net/usb/Kconfig
-+++ b/drivers/net/usb/Kconfig
-@@ -642,4 +642,19 @@ config USB_RTL8153_ECM
- 	  CONFIG_USB_RTL8152 is not set, or the RTL8153 device is not
- 	  supported by r8152 driver.
- 
-+config USB_NET_XMM6260
-+	tristate "Infineon XMM626X Baseband HSPA/HSUPA modem"
-+	depends on GPIOLIB && OF && USB_CHIPIDEA
+diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
+index 342fb736da4b..41b5ce460f37 100644
+--- a/drivers/phy/tegra/Kconfig
++++ b/drivers/phy/tegra/Kconfig
+@@ -18,3 +18,15 @@ config PHY_TEGRA194_P2U
+ 	help
+ 	  Enable this to support the P2U (PIPE to UPHY) that is part of Tegra 19x
+ 	  and 234 SOCs.
++
++config PHY_TEGRA_XMM6260
++	tristate "NVIDIA Tegra XMM6260 PHY driver"
++	depends on ARCH_TEGRA && USB_NET_XMM6260 && USB_SUPPORT
++	select GENERIC_PHY
 +	help
-+	  Select this if you want to use an Infineon XMM626X modem, found in
-+	  devices such as the LG Optimus 4X P880, LG Optimus Vu P895, Samsung
-+	  Galaxy S II (GT-I9100), and Galaxy Nexus (GT-I9250). This driver
-+	  handles the modem configuration and provides a stable way to expose
-+	  the modem's USB interface. To establish a connection, you will first
-+	  need a userspace program to send the correct commands to the modem
-+	  through its CDC ACM port, as well as a DHCP client.
++	  Enable this to support XMM6260 modem found in various Tegra devices
++	  with cellular capabilities, like LG Optimus 4X P880, LG Optimus Vu
++	  P895, Google Nexus 7 (2012) 3G and ASUS Transformer Pad 3G TF300TG.
 +
 +	  To compile this driver as a module, choose M here: the module will
-+	  be called baseband-xmm6260.
-+
- endif # USB_NET_DRIVERS
-diff --git a/drivers/net/usb/Makefile b/drivers/net/usb/Makefile
-index 4964f7b326fb..ffa532c7d7d6 100644
---- a/drivers/net/usb/Makefile
-+++ b/drivers/net/usb/Makefile
-@@ -42,3 +42,4 @@ obj-$(CONFIG_USB_NET_CDC_MBIM)	+= cdc_mbim.o
- obj-$(CONFIG_USB_NET_CH9200)	+= ch9200.o
- obj-$(CONFIG_USB_NET_AQC111)	+= aqc111.o
- obj-$(CONFIG_USB_RTL8153_ECM)	+= r8153_ecm.o
-+obj-$(CONFIG_USB_NET_XMM6260)	+= baseband-xmm6260.o
-diff --git a/drivers/net/usb/baseband-xmm6260.c b/drivers/net/usb/baseband-xmm6260.c
++	  be called phy-tegra-xmm6260.
+diff --git a/drivers/phy/tegra/Makefile b/drivers/phy/tegra/Makefile
+index eeeea72de117..829e298ee56c 100644
+--- a/drivers/phy/tegra/Makefile
++++ b/drivers/phy/tegra/Makefile
+@@ -9,3 +9,4 @@ phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_186_SOC) += xusb-tegra186.o
+ phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_194_SOC) += xusb-tegra186.o
+ phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_234_SOC) += xusb-tegra186.o
+ obj-$(CONFIG_PHY_TEGRA194_P2U) += phy-tegra194-p2u.o
++obj-$(CONFIG_PHY_TEGRA_XMM6260) += phy-tegra-xmm6260.o
+diff --git a/drivers/phy/tegra/phy-tegra-xmm6260.c b/drivers/phy/tegra/phy-tegra-xmm6260.c
 new file mode 100644
-index 000000000000..658f5351fab7
+index 000000000000..7511de1333aa
 --- /dev/null
-+++ b/drivers/net/usb/baseband-xmm6260.c
-@@ -0,0 +1,335 @@
++++ b/drivers/phy/tegra/phy-tegra-xmm6260.c
+@@ -0,0 +1,144 @@
 +// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2011 NVIDIA Corporation
-+ * Copyright (C) 2023 Svyatoslav Ryhel <clamor95@gmail.com>
-+ */
 +
-+#include <linux/array_size.h>
-+#include <linux/devm-helpers.h>
-+#include <linux/delay.h>
 +#include <linux/device.h>
 +#include <linux/err.h>
 +#include <linux/export.h>
 +#include <linux/gpio/consumer.h>
 +#include <linux/mod_devicetable.h>
 +#include <linux/module.h>
-+#include <linux/notifier.h>
++#include <linux/of_platform.h>
 +#include <linux/phy/phy.h>
 +#include <linux/platform_device.h>
-+#include <linux/property.h>
 +#include <linux/regulator/consumer.h>
-+#include <linux/rfkill.h>
 +#include <linux/usb.h>
++#include <linux/usb/chipidea.h>
++#include <linux/usb/phy.h>
 +
-+#define BASEBAND_XMM_INIT_DELAY		5000
-+
-+#define BASEBAND_PRODUCT_ID_XMM6260	0x0020
-+#define BASEBAND_VENDOR_ID_COMNEON	0x1519
-+
-+enum ipc_ap_wake_state {
-+	IPC_AP_WAKE_IRQ_READY,
-+	IPC_AP_WAKE_INIT1,
-+	IPC_AP_WAKE_INIT2,
-+	IPC_AP_WAKE_L,
-+	IPC_AP_WAKE_H,
-+	IPC_AP_WAKE_UNINIT,
++struct tegra_usb_device {
++	struct ci_hdrc_platform_data data;
++	struct platform_device *dev;
 +};
 +
-+struct baseband_xmm_data {
++struct tegra_xmm6260_phy {
 +	struct device *dev;
-+	struct rfkill *rfkill_dev;
-+	struct phy *mphy;
-+
-+	struct gpio_desc *reset_gpio;
++	struct platform_device *usb_dev;
++	struct usb_phy *usb_phy;
 +	struct gpio_desc *enable_gpio;
-+
-+	struct gpio_desc *ipc_cp_gpio;
-+	struct gpio_desc *ipc_ap_gpio;
-+
-+	struct regulator *vbat_supply;
-+
-+	struct delayed_work modem_work;
-+	struct notifier_block nb;
-+
-+	enum ipc_ap_wake_state ap_state;
-+
-+	bool powered; /* tracks usb bus state */
-+	bool inited; /* tracks modem state */
 +};
 +
-+static int baseband_xmm_usb_notifier_call(struct notifier_block *nb,
-+					  unsigned long action, void *data)
++static int tegra_xmm6260_phy_power_on(struct phy *phy)
 +{
-+	struct baseband_xmm_data *priv =
-+		container_of(nb, struct baseband_xmm_data, nb);
-+	struct usb_device *udev = data;
-+	u16 product = le16_to_cpu(udev->descriptor.idProduct);
-+	u16 vendor = le16_to_cpu(udev->descriptor.idVendor);
-+
-+	switch (action) {
-+	case USB_DEVICE_ADD:
-+		/* Infineon XMM6260 ID 1519:0020 */
-+		if (vendor == BASEBAND_VENDOR_ID_COMNEON &&
-+		    product == BASEBAND_PRODUCT_ID_XMM6260) {
-+			cancel_delayed_work_sync(&priv->modem_work);
-+			priv->inited = true;
-+		}
-+		break;
-+	}
-+
-+	return NOTIFY_OK;
-+}
-+
-+static void baseband_xmm_reset(struct baseband_xmm_data *priv)
-+{
++	struct tegra_xmm6260_phy *mphy = phy_get_drvdata(phy);
++	struct tegra_usb_device *usb = platform_get_drvdata(mphy->usb_dev);
 +	int ret;
 +
-+	ret = regulator_enable(priv->vbat_supply);
-+	if (ret)
-+		dev_err(priv->dev, "failed to enable vbat power supply\n");
++	gpiod_set_value_cansleep(mphy->enable_gpio, 1);
 +
-+	gpiod_set_value_cansleep(priv->enable_gpio, 0);
-+	msleep(50);
++	ret = usb_phy_init(mphy->usb_phy);
++	if (ret) {
++		gpiod_set_value_cansleep(mphy->enable_gpio, 0);
++		return dev_err_probe(mphy->dev, ret,
++				     "failed to init USB PHY\n");
++	}
 +
-+	gpiod_set_value_cansleep(priv->reset_gpio, 1);
-+	msleep(200);
-+	gpiod_set_value_cansleep(priv->reset_gpio, 0);
-+
-+	msleep(50);
-+
-+	/* falling edge trigger to CP */
-+	gpiod_set_value_cansleep(priv->enable_gpio, 1);
-+	usleep_range(50, 100);
-+	gpiod_set_value_cansleep(priv->enable_gpio, 0);
-+	msleep(20);
-+}
-+
-+static int baseband_xmm_set_block(void *data, bool blocked)
-+{
-+	struct baseband_xmm_data *priv = data;
-+
-+	if (blocked) {
-+		if (priv->inited && priv->powered) {
-+			phy_power_off(priv->mphy);
-+
-+			msleep(500);
-+
-+			gpiod_set_value_cansleep(priv->reset_gpio, 1);
-+			regulator_disable(priv->vbat_supply);
-+
-+			priv->powered = false;
-+			priv->inited = false;
-+		}
-+	} else {
-+		if (priv->inited)
-+			return 0;
-+
-+		priv->ap_state = IPC_AP_WAKE_IRQ_READY;
-+		baseband_xmm_reset(priv);
-+
-+		priv->powered = false;
-+		priv->inited = false;
++	usb->dev = ci_hdrc_add_device(&mphy->usb_dev->dev,
++				      mphy->usb_dev->resource,
++				      mphy->usb_dev->num_resources,
++				      &usb->data);
++	if (IS_ERR(usb->dev)) {
++		gpiod_set_value_cansleep(mphy->enable_gpio, 0);
++		usb_phy_shutdown(mphy->usb_phy);
++		return dev_err_probe(mphy->dev, PTR_ERR(usb->dev),
++				     "failed to register USB controller\n");
 +	}
 +
 +	return 0;
 +}
 +
-+static const struct rfkill_ops baseband_xmm_rfkill_ops = {
-+	.set_block = baseband_xmm_set_block,
-+};
-+
-+static void baseband_xmm_work(struct work_struct *work)
++static int tegra_xmm6260_phy_power_off(struct phy *phy)
 +{
-+	struct baseband_xmm_data *priv =
-+		container_of(work, struct baseband_xmm_data, modem_work.work);
++	struct tegra_xmm6260_phy *mphy = phy_get_drvdata(phy);
++	struct tegra_usb_device *usb = platform_get_drvdata(mphy->usb_dev);
 +
-+	switch (priv->ap_state) {
-+	case IPC_AP_WAKE_INIT1:
-+		if (priv->powered)
-+			return;
++	ci_hdrc_remove_device(usb->dev);
++	usb_phy_shutdown(mphy->usb_phy);
 +
-+		phy_power_on(priv->mphy);
-+		priv->powered = true;
-+		break;
++	gpiod_set_value_cansleep(mphy->enable_gpio, 0);
 +
-+	case IPC_AP_WAKE_INIT2:
-+		priv->ap_state = IPC_AP_WAKE_IRQ_READY;
-+
-+		phy_power_off(priv->mphy);
-+
-+		priv->powered = false;
-+		priv->inited = false;
-+
-+		msleep(500);
-+		break;
-+
-+	default:
-+		break;
-+	}
-+};
-+
-+static irqreturn_t baseband_hostwake_interrupt(int irq, void *dev_id)
-+{
-+	struct baseband_xmm_data *priv = dev_id;
-+	int state = gpiod_get_value(priv->ipc_ap_gpio);
-+
-+	switch (priv->ap_state) {
-+	case IPC_AP_WAKE_IRQ_READY:
-+		if (!state) {
-+			priv->ap_state = IPC_AP_WAKE_INIT1;
-+			schedule_delayed_work(&priv->modem_work, 0);
-+		}
-+
-+		break;
-+
-+	case IPC_AP_WAKE_INIT1:
-+		if (state) {
-+			priv->ap_state = IPC_AP_WAKE_INIT2;
-+			schedule_delayed_work(&priv->modem_work,
-+					      msecs_to_jiffies(BASEBAND_XMM_INIT_DELAY));
-+		}
-+
-+		break;
-+
-+	default:
-+		break;
-+	}
-+
-+	return IRQ_HANDLED;
++	return 0;
 +}
 +
-+static int baseband_xmm_probe(struct platform_device *pdev)
-+{
-+	struct baseband_xmm_data *priv;
-+	struct device *dev = &pdev->dev;
-+	unsigned long irqflags;
-+	int irq, ret;
++static const struct phy_ops tegra_xmm6260_phy_ops = {
++	.power_on = tegra_xmm6260_phy_power_on,
++	.power_off = tegra_xmm6260_phy_power_off,
++	.owner = THIS_MODULE,
++};
 +
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
++static int tegra_xmm6260_phy_probe(struct platform_device *pdev)
++{
++	struct phy_provider *phy_provider;
++	struct device *dev = &pdev->dev;
++	struct device_node *usb_node;
++	struct phy *generic_phy;
++	struct tegra_xmm6260_phy *mphy;
++
++	mphy = devm_kzalloc(dev, sizeof(*mphy), GFP_KERNEL);
++	if (!mphy)
 +		return -ENOMEM;
 +
-+	priv->dev = dev;
-+	platform_set_drvdata(pdev, priv);
-+
-+	priv->vbat_supply = devm_regulator_get(dev, "vbat");
-+	if (IS_ERR(priv->vbat_supply))
-+		return dev_err_probe(dev, PTR_ERR(priv->vbat_supply),
-+				     "failed to get vbat regulator\n");
-+
-+	/* Own modem gpios */
-+	priv->reset_gpio = devm_gpiod_get_optional(dev, "reset",
-+						   GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->reset_gpio))
-+		return dev_err_probe(dev, PTR_ERR(priv->reset_gpio),
-+				     "failed to get reset GPIO\n");
-+
-+	priv->enable_gpio = devm_gpiod_get_optional(dev, "enable",
++	mphy->enable_gpio = devm_gpiod_get_optional(dev, "enable",
 +						    GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->enable_gpio))
-+		return dev_err_probe(dev, PTR_ERR(priv->enable_gpio),
++	if (IS_ERR(mphy->enable_gpio))
++		return dev_err_probe(dev, PTR_ERR(mphy->enable_gpio),
 +				     "failed to get enable GPIO\n");
 +
-+	/* CP - AP connections */
-+	priv->ipc_cp_gpio = devm_gpiod_get_optional(dev, "cp-wake",
-+						    GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->ipc_cp_gpio))
-+		return dev_err_probe(dev, PTR_ERR(priv->ipc_cp_gpio),
-+				     "failed to get CP wake GPIO\n");
++	usb_node = of_parse_phandle(dev->of_node, "nvidia,usb-bus", 0);
++	if (IS_ERR(usb_node))
++		return dev_err_probe(dev, PTR_ERR(usb_node),
++				     "failed to parse modem USB bus\n");
 +
-+	priv->ipc_ap_gpio = devm_gpiod_get_optional(dev, "ap-wake", GPIOD_IN);
-+	if (IS_ERR(priv->ipc_ap_gpio))
-+		return dev_err_probe(dev, PTR_ERR(priv->ipc_ap_gpio),
-+				     "failed to get AP wake GPIO\n");
++	mphy->usb_dev = of_find_device_by_node(usb_node);
++	of_node_put(usb_node);
++	if (!mphy->usb_dev)
++		return dev_err_probe(dev, -ENODEV,
++				     "failed to get modem USB bus\n");
 +
-+	/* Modem PHY */
-+	priv->mphy = devm_phy_optional_get(dev, NULL);
-+	if (IS_ERR(priv->mphy))
-+		return dev_err_probe(dev, PTR_ERR(priv->mphy),
-+				     "failed to get modem PHY");
++	mphy->usb_phy = devm_usb_get_phy_by_phandle(dev, "nvidia,usb-bus", 1);
++	if (IS_ERR(mphy->usb_phy))
++		return dev_err_probe(dev, PTR_ERR(mphy->usb_phy),
++				     "failed to get USB PHY");
 +
-+	/*
-+	 * Strting from ver 1145 modem starts in READY state. AP wake
-+	 * interrupt keeps low util CP starts to initiate HSIC hw. AP
-+	 * wake interrupt goes up during CP HSIC init and then it goes
-+	 * down when CP HSIC is ready.
-+	 */
-+	priv->ap_state = IPC_AP_WAKE_IRQ_READY;
-+	priv->inited = false;
++	generic_phy = devm_phy_create(dev, NULL, &tegra_xmm6260_phy_ops);
++	if (IS_ERR(generic_phy))
++		return dev_err_probe(dev, PTR_ERR(generic_phy),
++				     "failed to create PHY\n");
 +
-+	devm_delayed_work_autocancel(dev, &priv->modem_work, baseband_xmm_work);
++	phy_set_drvdata(generic_phy, mphy);
++	mphy->dev = dev;
 +
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return dev_err_probe(dev, irq, "failed to get IRQ\n");
-+
-+	/*
-+	 * Systems using device tree should set up interrupt via DT,
-+	 * the rest will use the default edge both interrupt.
-+	 */
-+	irqflags = dev->of_node ? 0 : IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING;
-+
-+	ret = devm_request_threaded_irq(dev, irq, NULL,
-+					&baseband_hostwake_interrupt,
-+					IRQF_ONESHOT | irqflags,
-+					"modem-hostwake", priv);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "failed to register IRQ %d\n", irq);
-+
-+	priv->rfkill_dev = rfkill_alloc("xmm-modem", dev, RFKILL_TYPE_WWAN,
-+					&baseband_xmm_rfkill_ops, priv);
-+	if (priv->rfkill_dev) {
-+		ret = rfkill_register(priv->rfkill_dev);
-+		if (ret < 0) {
-+			rfkill_destroy(priv->rfkill_dev);
-+			return dev_err_probe(dev, ret,
-+					     "failed to register WWAN rfkill\n");
-+		}
-+	} else {
-+		return dev_err_probe(dev, PTR_ERR(priv->rfkill_dev),
-+				     "failed to allocate WWAN rfkill\n");
-+	}
-+
-+	priv->nb.notifier_call = baseband_xmm_usb_notifier_call;
-+	usb_register_notify(&priv->nb);
-+
-+	baseband_xmm_reset(priv);
-+	priv->powered = false;
++	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
++	if (IS_ERR(phy_provider))
++		return dev_err_probe(dev, PTR_ERR(phy_provider),
++				     "failed to register PHY\n");
 +
 +	return 0;
 +}
 +
-+static void baseband_xmm_remove(struct platform_device *pdev)
-+{
-+	struct baseband_xmm_data *priv = platform_get_drvdata(pdev);
-+
-+	rfkill_unregister(priv->rfkill_dev);
-+	rfkill_destroy(priv->rfkill_dev);
-+
-+	usb_unregister_notify(&priv->nb);
-+	phy_power_off(priv->mphy);
-+
-+	gpiod_set_value_cansleep(priv->reset_gpio, 1);
-+	regulator_disable(priv->vbat_supply);
-+}
-+
-+static const struct of_device_id baseband_xmm_match[] = {
-+	{ .compatible = "infineon,xmm6260" },
-+	{ }
++static const struct of_device_id tegra_xmm6260_phy_match[] = {
++	{ .compatible = "nvidia,tegra-xmm6260" },
++	{ /* sentinel */ }
 +};
-+MODULE_DEVICE_TABLE(of, baseband_xmm_match);
++MODULE_DEVICE_TABLE(of, tegra_xmm6260_phy_match);
 +
-+static struct platform_driver baseband_xmm_driver = {
++static struct platform_driver tegra_xmm6260_phy_driver = {
 +	.driver = {
-+		.name = "baseband-xmm6260",
-+		.of_match_table = baseband_xmm_match,
++		.name = "tegra-xmm6260-phy",
++		.of_match_table = tegra_xmm6260_phy_match,
 +	},
-+	.probe = baseband_xmm_probe,
-+	.remove = baseband_xmm_remove,
++	.probe = tegra_xmm6260_phy_probe,
 +};
-+module_platform_driver(baseband_xmm_driver);
++module_platform_driver(tegra_xmm6260_phy_driver);
 +
 +MODULE_AUTHOR("Svyatolsav Ryhel <clamor95@gmail.com>");
-+MODULE_DESCRIPTION("Baseband Infineon XMM6260 driver");
++MODULE_DESCRIPTION("Tegra XMM6260 PHY driver");
 +MODULE_LICENSE("GPL");
 -- 
 2.51.0
