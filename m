@@ -1,94 +1,93 @@
-Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com [74.125.82.173])
+Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com [74.125.82.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7663A9DB5
-	for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 07:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCEF93B6BE4
+	for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 07:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.179
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778485917; cv=pass; b=l3IIqpInxV5rApH9I13J1JLapNLKGtAct/5kYTUOZRis9GOD4BfQ92fePSQYLQussrE2w5g5btEFEK9+Gf5csDJ4DND9VnwXltpma+gViFxirZTgIIeSYfudLQO8viIfewe4jtVF301uGVoKpIo/6cAmBTh0Vq7bvl46xl3UItw=
+	t=1778485941; cv=pass; b=Wrs0+dmxoCuonsKrbAgdcwsCpGOxPWajKweBfSI3LLwVtgpRIOAGlL/GnutfWzx0rWg/lOUVpsSaqM6pPG5OclofmXAVMsrskgX+TDIEcdQ5JvIo0zTAN7dHHsJA+nMuwIlfH7OvFbLrc3Y1QNnH88iYTvABWmLp0XOIvRUVA84=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778485917; c=relaxed/simple;
-	bh=bCx3idiUgw6FJ/orVDV8cPd6ZVl8C6kyuoO1CVbDxWo=;
+	s=arc-20240116; t=1778485941; c=relaxed/simple;
+	bh=gZ8uSKeyXSL7MsPeYFybFKjoeB8keoIiq7+A1hmdnEg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hNyt7uJdJDXlCe7rq5lTfRY+6iPdsFYwFwxX5GDX/y16OL/q7nDW3QbYj39nDOIJHva4IzmCJXI0rEwIbCd2k/1mBw7OjDRZ2pABi5U+iG942bzKh+QzUgoGIRM2ODcf73k/Usw+6oZsuskMgNjqTxaB3rW8VZlIPjxhS65gSdg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OqEcliXn; arc=pass smtp.client-ip=74.125.82.173
+	 To:Cc:Content-Type; b=LX1YiIrT/iQYEkYJIMZ5x9oynSrdeZS/nd+X/Diw11GtF9HjV8nUDJlDVlYlxWSNS2LCuK+ijjsKEzw7Sy+InpbxxQofquHs89VqSq4uXy65U14f4eUzQy8ppygZsYWrpjMUpHtKXmISQGpTSkevOJgQcFoAMXElOinl85X7WAM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BKZeldFj; arc=pass smtp.client-ip=74.125.82.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OqEcliXn"
-Received: by mail-dy1-f173.google.com with SMTP id 5a478bee46e88-2f00a567cfaso2789912eec.0
-        for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 00:51:49 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1778485908; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BKZeldFj"
+Received: by mail-dy1-f179.google.com with SMTP id 5a478bee46e88-2f0ad52830cso5757033eec.1
+        for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 00:52:12 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778485930; cv=none;
         d=google.com; s=arc-20240605;
-        b=XwmaA9+u69JSmSUNhzE9RtzA9Un905UYJMAMC++nh9L8ZtmtM2OoniZ8dexg1/wjyS
-         Fk7K3cPCOGSIRh7wf2dhpJxKGQ+wW/xblOctCe2uLX1FZEOtDO447QMsYpub1PSOoRI/
-         4MGFYcKGoI3R0aTJNfktbbKN2KHUkmIwoqxN3HQjCsEUbFua2MLJgqsYwT7YIXOhjzGV
-         rX7NMvGt97m36LU782cgV78u5qC0WI/y6fAMG7i/daqtPsA6FRE4CcWw1q+VBaHEs6N8
-         vyPU4xavIEstiBvICsmIBEHaNFd9EAPiOH84ZYXzD26YP7u4WMt58YZ4VqL4iwzpCWjM
-         jwgA==
+        b=YmIKhLxX7tMVWcTwnMRrBzz02kWWZte53hJls/IIFXA2mwSGauayFgFZtEL2SNTVoW
+         OXT3j4Y2kcNea5obmjfDI/B1LOz9fikBapF8FB9JjrBYGDzkz6pDtyp4I8a/gFVhC+iT
+         Sq9zcIms1yqG/NaEqjtKg8MSplQXsxwcuI8MKdZlfQiUG9ENJ1y7x/cm0b9APvTaidE4
+         5dKsW3kNGMwA9gMh1rv8txr2PcSqAgEGUVzETLSJPY8LoQZYlPHGjtb8Lh4W4h2V98Oo
+         QKzs0/lNYIihPl36hML1YEGWPtwhthkof4uME/2NFVNwoxxp6qJUcQRXqU1rzIQop3bb
+         1tjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=HfSXgZ6aPkpcMY0bgCjU5DFBgjmnCeqKhXkXLLdbLpc=;
-        fh=uu+AJ0sv8PEZDWw60VO+9PPrLDt55ojzApA8mhkej+Y=;
-        b=Gp+Nov4wi+aJx2vmGBSp4f7+qOLFHHIRLkaU7Pk0j3mWhCmHDrxDWGffOUWOikf0t6
-         WdQ6q8zlFrXtfMhGiYXwDxmQMysRbesd5/Hha+Na87SZMv21BMu1tGewyJu8lwRf3yUx
-         dA9l+CLGd3+luObar1bwNQd3lsuOMxVV86TtpvzCyCp/MCMXzPZawSf6rajkpLYDsYOs
-         icAVUndtbyS0grv5lqJ2cdJ7+gTq5UxBlJNSninYxBc2kN17hZP6HfUwzgBQlVGaixzz
-         jckw+nDooGB5GprQzeOgk/KOJdmgAY+TCV0LONpDWqfu+gL1yff6QmCDhCjKszUXgSr/
-         0xtQ==;
+        bh=SHic2oJH49jsGKC2elmibl6ONEIbwrHFjQoTaB+s6YI=;
+        fh=oZhE6kCgznkv0gK7+ZQt+rN3NoU5sjEOvtthPxm0HEo=;
+        b=P8k8HSoHHvBNvgcolH1Tu0s9gQF0Yrgw17jBR+OR6jPXqUlung91L7H4rD3ehlDqPN
+         mdFQDZlCQO18YR1r9W75NyErzdnnNPYCyyxk25AVph6rHoaq5oMYFClugWF867Ol8WOs
+         stVyaduzdzkITN5HgsRCTA1xV2+uIk7QbZbpWFdDMZZ+uqW6dNSD4TFLyldcHtqqoet/
+         imk3p5YKDCVYW5OtYlxsy0Dhr+QsNxtPIKxRq6p40OKQfkBmkQtxZOcUdznPK1BdiPql
+         I9HBpvdj/fvxbNsOyEXvWy5ciXQXrKCleALA4/RrEOsSouncttdeSbgFqSjifqoEdMLi
+         Wa4A==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778485908; x=1779090708; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1778485930; x=1779090730; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HfSXgZ6aPkpcMY0bgCjU5DFBgjmnCeqKhXkXLLdbLpc=;
-        b=OqEcliXnh5R3VBLlUVzq4/J5A3grhtY+4qJFZr3CYtqcI64hxeyZh2dSF5vv0cU6o6
-         Eykk5DtmU9t5u8MGWohv8ZMKwvBeQSYFpjudIcG+HXM4QdjFhoT4N3PhMsLY0eovH8J3
-         zbHYbGcRD49VVvMK/JR/eQdPuWFR7bM1TATIFyFYYDhDwYTKrF+Eq8Vd44lJWrPcpn5v
-         5TPF4sBHilYJIxcX8F4jBB+lEE5020+WYK0gHLAo4yT6fiiqfqy8yk+2k2vMcLRrGu07
-         sY97dJ8N42BtXFDpfGLG7TmvLla3dQfrf0vUVXtRQ1hKFL2iZbs6e+XxQ4haMf/GfwCx
-         F3YA==
+        bh=SHic2oJH49jsGKC2elmibl6ONEIbwrHFjQoTaB+s6YI=;
+        b=BKZeldFj5AL3LkO0kPB+j+l52ccnMSznlh3uUo+Z9oy7IkuTjHUc8SqQU/dr9KqWkM
+         aBFtTls83gU2/53pIutv45cVyxSz+vkHrgVZCXnorXu/xGIydkUgsGXiBqVxd/IOZDu2
+         frNrixS9jux2JAwA3lNpjQf9ooF/gz8MdV51qeFRt0Df/LrxFmFY7b/lKmE/N8BoE4Qu
+         aOYkkrKNwncpiQlZhfgRgNj+p1U8ppAXWjaX/HRBs8FwmljftTcOnhVJrRgVIEqPTo45
+         X1cL2F6oD6bYA4XnXqSdPTECSDUokCAArKmlFgSl3yUDinoeRhLy/U62xaLMTZcDsytF
+         BkqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778485908; x=1779090708;
+        d=1e100.net; s=20251104; t=1778485930; x=1779090730;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=HfSXgZ6aPkpcMY0bgCjU5DFBgjmnCeqKhXkXLLdbLpc=;
-        b=oXqOoHUsXGm0FKVYDmAo8PF1jgXezeiSYle7ZXDID+6F8qpWAmi3wLMu5Xaaej1Gvl
-         7qfY73YWbl/oD4h9xuHoqAWl2kYtmkXN4TDp9kwNn0GFTyuc6UFQv1c5Z0JURT8zAeal
-         snGjpC6PRKj8cjy02gi3zOa8PZi0AondhUDqlUYFL+jM7FyajJjAPufLu6qVJvodDw7+
-         U2/xAnPsEknquRYVl9epaGQ4SoQjtmlaXN2LqLNMrA/WYQWZ9eFKaHsWCBDSbGH183Z8
-         MMOfwq7fWzrKrVtlI47jYHmSf2ZDcFCUGhUmlbonJ7MInTx98rz8E2vA04WY5/s8NbHY
-         SyNw==
-X-Forwarded-Encrypted: i=1; AFNElJ8FdzLXB7ZOwVgEG1irrtAGj3V40EtUYEphB0tY/LsFHliFuYPYpuANMkrU5Lyj3qaglCCNTbQRyMjdUA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzn2LdZ+VrKpkouxWIuo0y4R16ec2Xd2sPxxJFuctDC29xTJJMh
-	k6W6t2KnNdMKH/5JrQ90EhmWUA6NCtYugyc6enytRZVXQe2fNfGpO/3CSm44dN2S4v45itFQ/BR
-	G9bmAnCq1kBurepV6W+SLOueCSpQz1WM=
-X-Gm-Gg: Acq92OFo89fMPe+YUmbgTJp3s6t5WqtGHesZo4oOpho6BI9PiuI1XTAkshIcjWDLT1s
-	nJQlSLbEOA5xd99ErjTXUHGmU5PpLKbb8oFXDDO02h4fJadXIc9Nveu3FBjbm6LQHm05zHnFam+
-	VFakXDWdxUvYQrq9ZkcK8u2TVZ4JnHAIGmtt+JEYOLCFCaNZWOsVI+xMqSkZY5n0cl+VL53wUjR
-	U0R/tfua3hwt19f0IQ9XS1PDKBtEm5qgU35ayAXiU65Sl9xnT5FG2H+zQHgkGQC8KREIGPF6G1o
-	tpXLQcslRveGDL1k2lg=
-X-Received: by 2002:a05:7300:bc83:b0:2f0:c593:986a with SMTP id
- 5a478bee46e88-2f6debcee11mr6739515eec.0.1778485907772; Mon, 11 May 2026
- 00:51:47 -0700 (PDT)
+        bh=SHic2oJH49jsGKC2elmibl6ONEIbwrHFjQoTaB+s6YI=;
+        b=JmlEgqM0SMpbFCMlKF9DYSzVfVHxyIbIwRv8EvbN7/D82hCVaKq31Fj/F71XLE2cnF
+         B8RMoaAh1x6CuFylI5+oJLaZSbinvYOXFfqmqVZwQLAtispOKr0pU7xJ0i/lSJm+I+CN
+         8lINn8u+G4mbbz3xpyKsZEL91ck3zgbijeQNeqBG9IskbLgqdEYvZ4rD22AKr08xX86H
+         0f91317vHfAX51H0TT9bKqzxPx3jnIvw2RveWAwcxO59QBN17bmjSDxCEjnMcS+mmQdd
+         hW/VGVIKH7dpYCF0bAyolABp3b8LAuC6ah+xBFHQrj+rZN113cO7SL0lsdLlQr7Nv5Au
+         51lA==
+X-Forwarded-Encrypted: i=1; AFNElJ9hqDNdEhSXROnoGFVg9VKmy1AuVSTDdQD2rdWrILerDf9+VltekCzelifNAgWhgmYXmiLEwrRWxtNh9g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyvpdpj2k2QTypqj9YsIKwLuaPlMr0VAHu6AdF74l8Mottljewd
+	la4JU1lbkYOhpVkUjDbCZdY53RiM7GNcIOMexg3i6pFwIe2vRlrbiwRsYPev9p2ediAs9L+m10z
+	ziNAdPKuQ51sOvSBD7bZXPTOhRkLSkaE=
+X-Gm-Gg: Acq92OFj9dGaIurkLGV71B0FkW4Nnk0PTBXcp3L1W0TI49sGonNC6OmBKRjfvVh9cfV
+	ZH0wHig/N1I/+aikcP5OSqfFMafLLCZi7XvBdBlP2OQXv4+p3oXrmDy1MQ41P3HscDGLRQDrupe
+	tenAubNr+Ob9Wuz8ei6n8gCsya10cBS4Qj02sAnu2vsTz4DlvpVsrVJHGN8TzHfjYQg4gOQq4Nu
+	ucPLe16CoUXwcqEzQBFtbWjpY/JIT/Nm5YqCjFvSz6FkZM5JyOJ3U6B/V/DYa0fUvG1ERlWRQKU
+	ApmNNZql
+X-Received: by 2002:a05:7301:4601:b0:2fc:9aa8:83da with SMTP id
+ 5a478bee46e88-2fc9aa88c76mr1869973eec.29.1778485929756; Mon, 11 May 2026
+ 00:52:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260511074752.24745-1-clamor95@gmail.com> <20260511074752.24745-4-clamor95@gmail.com>
-In-Reply-To: <20260511074752.24745-4-clamor95@gmail.com>
+References: <20260511074752.24745-1-clamor95@gmail.com> <20260511074752.24745-5-clamor95@gmail.com>
+In-Reply-To: <20260511074752.24745-5-clamor95@gmail.com>
 From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Mon, 11 May 2026 10:51:36 +0300
-X-Gm-Features: AVHnY4KL4_Xj5WSC6cZ4ru0Vt3ilf_DPaUiiJoBVqluNaOn2k_t2uTZaJjI3xIw
-Message-ID: <CAPVz0n22wg=71LkMSP-_N7opwdLU5yxRBbXYboh_x6WMvDFL2g@mail.gmail.com>
-Subject: Re: [PATCH v1 3/5] gpu/drm: host1x: mipi: add Tegra20/Tegra30 MIPI
- calibration logic
+Date: Mon, 11 May 2026 10:51:58 +0300
+X-Gm-Features: AVHnY4IivgDDcg6H6JpbYVndDKJmB-ke1DQdhmpnseZc-qoh0dGzWT-RrSUld4w
+Message-ID: <CAPVz0n3nFT4RfgzfL0rVi0ZxB8O-Q0v8Syf3Gu+OHSv_y5YXQQ@mail.gmail.com>
+Subject: Re: [PATCH v1 4/5] gpu/drm: tegra: dsi: add support for Tegra20/Tegra30
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
 	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
 	Jonathan Hunter <jonathanh@nvidia.com>, Svyatoslav Ryhel <clamor95@gmail.com>, Ion Agorria <ion@agorria.com>, 
@@ -101,14 +100,16 @@ Content-Transfer-Encoding: quoted-printable
 =D0=BF=D0=BD, 11 =D1=82=D1=80=D0=B0=D0=B2. 2026=E2=80=AF=D1=80. =D0=BE 10:4=
 8 Svyatoslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> Tegra20/Tegra30 have no dedicated MIPI calibration device and calibration
-> registers are incorporated into CSI. Lets reuse Tegra114 calibration
-> framework and add Tegra20/Tegra30 as a special case.
+> Tegra20/Tegra30 are fully compatible with existing tegra DSI driver apart
+> clock configuration and MIPI calibration which are addressed by this patc=
+h.
 >
 > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > ---
->  drivers/gpu/host1x/mipi.c | 82 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 82 insertions(+)
+>  drivers/gpu/drm/tegra/drm.c |  2 ++
+>  drivers/gpu/drm/tegra/dsi.c | 69 ++++++++++++++++++++++---------------
+>  drivers/gpu/drm/tegra/dsi.h | 10 ++++++
+>  3 files changed, 54 insertions(+), 27 deletions(-)
 >
 
 Please ignore this. This patch was send by mistake. Sorry for inconvenience=
