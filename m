@@ -1,63 +1,61 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3ADD3A2550
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386703A1E9E
 	for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 07:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778485568; cv=none; b=eQHa2b0xYB2MXf1A5VUrRK+DxLgMIlfuNRV2RIM7kWyJroLtHtkIpL6EXEyFio/Ub9XwRIcxn/FVfh5s5AaWTCTO39EJk6kYGvlEpE2JwQGP8znAfMfO5WsTU/QkMlx61OLRmunN7RNvRG+PkDFH6dqSY1h5UqJHny8jaZ0wqv8=
+	t=1778485570; cv=none; b=q9zp79ylDR6Vd4NUlxwH3VsY+6aPohC3amy70M7/6r35IJ1ux6rLHXpshKxvk6mmXrbEcpqnI2D4rxFcLKZLX8TwI8i9clHV/auf8ymWjsaVlqF7kqJ2/MjZpFM7S/KNVuy/M5VnTSybr4SYB9jB0ElBCR5uGgKQXdhrHYe7WIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778485568; c=relaxed/simple;
-	bh=BfCGLduhY9yG7QLq78Hh4dR6ZPzK4zm1QeyS8EzRSxY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Sl+IHnEIv0wES8ZYu0atbpvHQqe2vJlPDEwHzWUl/SC+Q6LydmubMJ7AvaSVrWzdRGGzUzQN0BjFFPIfp+k/4Ym0hR7BXLLOmcXoddb2ScGAs4hJeYUax8Wd2dnfWG1J8f6ui4TR3c9D2fOiOVDya2AKeJ5UpD6cVnIFnLyB9rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aO3hKW45; arc=none smtp.client-ip=209.85.167.52
+	s=arc-20240116; t=1778485570; c=relaxed/simple;
+	bh=c+EH/hXRJdrpmjmHibfkAOD6Pb40AA262yyOb7eHym8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RpBO46JtLz/V6xbSwLaxPigzeiPtaTwUvhnaOEeWd8RjjjqBqFMqil5TyruXAw/zb6l/wISUAuR1K/9gqpNHp/mx2uzntJ3lar8g3AHpj6fYP/0tgjOuyivDop3FMSC2lHrNv6YahrIcyVLCSI8OKaCRB9l6CFrOJ6SFEU6g/Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qcIC1GQ8; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aO3hKW45"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5a865d1547aso4592652e87.1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qcIC1GQ8"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5a748d5ece4so3796290e87.2
         for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 00:46:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778485559; x=1779090359; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4/vo+yztL0AmH8P24goXzbtezovr3DoQGmWB3EtlnhE=;
-        b=aO3hKW45Fn84MTLwS5chnFAYR97siQkzudd+X3vXRyqRwUH+B9e4Ce1/bl4I8UURrM
-         p7E+qc7dKC4jCiBjOQ8NMz+VB5ZOEydbC5AZ3wgE41EIQCXe3i8MFisA3szAjb0KgAiV
-         YMAx93Obi3/ieseDmSS0e5cwEJaI5/qqvkpg7C4RVKnzMwEphBqdv28g5huqG55vj1vq
-         B0dLlENy3MYDW+RHJef74W0YRvzCccqudT+PKQxE2XHEKsmZmNETqKqu8sq+HGxMtkDB
-         5sGPfPp1QmTL7cUGkfCIXPI4VYfm7JNJnrnyyuycSRln3kkoc15tikWp668OY35IQ9Uz
-         D1fg==
+        d=gmail.com; s=20251104; t=1778485556; x=1779090356; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hQSj4yb9M7hPwSpBxDj8hHK3jRimcbsKCK5DUSyRAe0=;
+        b=qcIC1GQ8pucBYrQYfrU3BseQErBW2g4CjGFrqg/ZHZF3FeoaL3UlobYoEqbFEjODIw
+         lfvoFnUhjblwGuH/3FVl3ocr5N00YViBvQIUd0Pg/eYmS+9vuz8OghkQiGh6gYsZU5MD
+         NxYgd4zn19+Kh2tOYTlQxpOPavxx6fRYtTItIbfbUbzU13OPnb3NcL9FilfjGteTdjZ4
+         0Pl9SBpvM2Tn2zavntGCjePeyF2Oh7UGdBzeAzieWnoFTGv147c2jAzcK9TBmg3mogx1
+         sJrsvr7ZeUwY/Yi0wfIQz7vi6lGv9pC5u68Y6wKPcDqCnj7mFDv5e/HXkhMdyuMIm79l
+         jpmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778485559; x=1779090359;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4/vo+yztL0AmH8P24goXzbtezovr3DoQGmWB3EtlnhE=;
-        b=mZn66GX3ZRKRmpWK+w7+scAR6Y0pO02q8jOcX9CaIdMonXOUy1cXBf39m+OVjvOt88
-         hlGtwaRXXUOVSFUUYg7z9ufHqSZ6HGGaSNExU/w6ZcCJ/A8s6EcopIkEvyz7WerNDxkr
-         NlfaKi8pLYxDM1fuBWviiuIc5cRn9sduil/w3lYVNjAaO9cdBsyCWeJyT2PtbzqXUAp7
-         3vDghDYYAdI0RD82+l1hGUFmTqoCPoPKR620i0259WJdwu6aawFXumLpjxgm97OGc9f9
-         p5eKGFDqagnvNsheiIO79otjLir4qqGQc/PmA2W8XbJn4ypN6vLJtLITbdoeaiicRcEj
-         KhlQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/HgfuNcdNY9V1SYkDO7YRfCj8OVVSqw8+fr0gpA0sMhQHMbRduztV72/P5KbIT1dM0gvAO1KGFh+/yvw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9UDoyO9C9C35JOteQ6oc76m4DCn4nryNkseo8YB20ZuTa/EtB
-	yd7alE9FD9fr9ct3Gd3cLn/4yR/SNuYgGvfPHMhVEeWmZdIx0WMxulnB
-X-Gm-Gg: Acq92OGzSiABsn56Gi1xrzPb+uCpnVFmucBRqsUqMoiTePE5UqcvYt4lEB/6u79sfWm
-	jxueYqXWPN4d3Oo1MYYQ/zeX9bLk1PBzJFJ9Ke7qFTfxC0Iy5Eq77OF8MnhgbHlb02zNflkNaV2
-	G/my7cCYqZNVyMesZlwQmMZLSMBTQJsUr9mWSk9Fc2UXvq2uzb0+AkdeujPGg4sAfo9f6EkgL9W
-	4xJvEbeqz+4Ueifi2fADaWjKAiffj44hMjz2mJ8Z/8s9yuZGioV734BbTaN7BZ0eGBwdh0EqZ7J
-	H0dHAuzYwh6/Pgl3eN05ns51tSzA7IdnpJu1JpLdL3drFxq0HVVZVTmwVmc/9Z4MurYic9nqNTI
-	/RbIRFuq2HJkTqj5687UaXx33VnEW0fRahZj1GrpuTBFsWjH0IDoAm8kIie9R+1bdLDtR5pRK8G
-	NMRFbwe38N4V9m
-X-Received: by 2002:a05:6512:114f:b0:5a8:6cd7:3203 with SMTP id 2adb3069b0e04-5a899b90511mr5387467e87.3.1778485558513;
-        Mon, 11 May 2026 00:45:58 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1778485556; x=1779090356;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hQSj4yb9M7hPwSpBxDj8hHK3jRimcbsKCK5DUSyRAe0=;
+        b=VPCNWthy0022vFJpWQTbEcKe2KFbqjFtX6Lj2ZwSV4rur2bs+7k8aGPyajZjtXD16h
+         xkr5hoo3Ug1SJVk4Ji9pItvH9gp86n28CMFcSLdgHHZGc5hbiLlpo/RiqcS6i0sq6a1J
+         vyTXhj4oTyOi6hkW4Fm4zP6ZXnMEAq/WjJin8dC6FFPRe3VvJ9EFSQz4TWLYM8mQ0NDY
+         uql/ZCc3naSE1F5Al1r30thYcpmxFNMDBrQ1QfXUo0AP5g7BbMl2gvnLPNs+JgEMuncC
+         r0s6pxuyDYIYPIMBXyz8Kz0TzYell0J+5IPUbervd6NO9XYtBwD2oEKkfdXSofyynsg2
+         ev8A==
+X-Forwarded-Encrypted: i=1; AFNElJ+gyRVgmpsyMD7msASkXROzd1Zos/N0UD3FH+xW9MUijotEKqNklNRCiAc9ob5PVwpnhY7y+S/LVffR6w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYsWdTgBbf7g6RmVupX8G7d3JCPWxRsS1e2aiMt8hLVT+KcRiy
+	bNEUwhaHZ+WUvmNBaTzcn/mRnmilUzhuPVOuN6+qbzSDp8t7eBu6pH/R
+X-Gm-Gg: Acq92OF02hpcLsnk9hzOEtFr8D+sVEZXGTn8H/XxQ44N+1gMk/NomrePe1/ua1338A7
+	6fMhy8ue+MePqmQL4XMCxkMk5DXbfMgMdskKXV+G488FuXNbEK7j15Xsevk5f13BPj5Yf+bE7Ro
+	B8ZigqvOKUrk/TyUkvnDKP/gtYFrHAV5YGRXh7KJ+IDD8l6QbXXF9yB01kARd+k+ExTFIzZE8zo
+	8iG7D+LLudawItnruDltve/8X0r+T8vzX3aYJU27FCATOfM4LqVm0+nkdhS3yjCfWb4X+kUsScR
+	1W0FnMauKMAcJ/Y3ggRHN58G0Xca+9rv0TFMV13jEVBAPsSftG7gy35H4XbZF7XjfBOwcEnrLsX
+	9DEJEd1KjH63CN6tSJfAyDIeLvthtKnmw7LX92Jk/6QEwqO30Czl3fhHbIrS5MuBtfcFRyEuDET
+	njnvXfKSx8CFVv
+X-Received: by 2002:a05:6512:308b:b0:5a8:89c5:2bee with SMTP id 2adb3069b0e04-5a889c52ce3mr9201102e87.39.1778485556237;
+        Mon, 11 May 2026 00:45:56 -0700 (PDT)
 Received: from xeon ([188.163.112.56])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a8a952705asm2404394e87.32.2026.05.11.00.45.57
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a8a952705asm2404394e87.32.2026.05.11.00.45.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2026 00:45:58 -0700 (PDT)
+        Mon, 11 May 2026 00:45:55 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Thierry Reding <thierry.reding@kernel.org>,
 	Mikko Perttunen <mperttunen@nvidia.com>,
@@ -69,12 +67,10 @@ To: Thierry Reding <thierry.reding@kernel.org>,
 Cc: dri-devel@lists.freedesktop.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2 RESEND] drm/tegra: dsi: re-add clear enable register if DSI was powered by bootloader
-Date: Mon, 11 May 2026 10:45:37 +0300
-Message-ID: <20260511074538.24563-3-clamor95@gmail.com>
+Subject: [PATCH v4 0/2 RESEND] gpu/drm: tegra: add DSI support for Tegra20/Tegra30
+Date: Mon, 11 May 2026 10:45:35 +0300
+Message-ID: <20260511074538.24563-1-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260511074538.24563-1-clamor95@gmail.com>
-References: <20260511074538.24563-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -83,55 +79,49 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Original commit b22fd0b9639e ("drm/tegra: dsi: Clear enable register if
-powered by bootloader") was added to address the issue of DSI being in an
-unknown state after the bootloader, ensuring correct panel configuration.
-This worked fairly well under the assumption that the bootloader had set
-up DSI; however, in cases where it did not, the device would hang because
-a DSI read was called before the DSI hardware was ready.
+Tegra20/Tegra30 DSI is quite similar to Tegra114+ apart MIPI calibration
+logic and clocks. With a few minor tweaks, existing tegra DSI driver
+should work on Tegra20/Tegra30 devices just fine. Tested on
+Motorola Atrix 4G (T20) and ASUS VivoTab RT TF600T (T30).
 
-Removing this workaround results in the issue described in the original
-fix: the panel initialization sequence fails and the panel gets stuck in
-an undefined state. This is especially noticeable with command mode panels
+This patchset depends on Tegra20/Tegra30 CSI bringup since both share
+MIPI calibration logic. Ideally these patches should be picked after
+CSI bringup but they will not break anything even if picked before
+CSI patches.
 
-In order to properly address this issue, the original workaround is
-restored and placed after the DSI hardware is prepared for R/W operations.
-This fixes behavior for both cases: where DSI is set by the bootloader and
-where DSI is untouched.
-
-I have tested this change on Tegra20 (Motorola Atrix 4G),
-Tegra114 (NVIDIA Tegra Note 7 and ASUS Transformer Pad TF701T), and
-Tegra124 (Xiaomi Mi Pad) with U-Boot, using both bootloader-initialized
-DSI and untouched DSI.
-
-Fixes: b22fd0b9639e ("drm/tegra: dsi: Clear enable register if powered by bootloader")
-Fixes: 660b299bed2a ("Revert "drm/tegra: dsi: Clear enable register if powered by bootloader"")
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/gpu/drm/tegra/dsi.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Changes in v2:
+- removed all MIPI calibration, it is handled within CSI bringup
+- added per-soc structures into of_match
+- added fix for hang caused by register access with uninited hw
 
-diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-index fbab10bc5c41..e7fdd8c7ac12 100644
---- a/drivers/gpu/drm/tegra/dsi.c
-+++ b/drivers/gpu/drm/tegra/dsi.c
-@@ -936,6 +936,15 @@ static void tegra_dsi_encoder_enable(struct drm_encoder *encoder)
- 		return;
- 	}
- 
-+	/* If the bootloader enabled DSI it needs to be disabled
-+	 * in order for the panel initialization commands to be
-+	 * properly sent.
-+	 */
-+	value = tegra_dsi_readl(dsi, DSI_POWER_CONTROL);
-+
-+	if (value & DSI_POWER_CONTROL_ENABLE)
-+		tegra_dsi_disable(dsi);
-+
- 	state = tegra_dsi_get_state(dsi);
- 
- 	tegra_dsi_set_timeout(dsi, state->bclk, state->vrefresh);
+Changes in v3:
+- switched from version DSI to boolean flags
+- added comment regarding Tegra30 clock configuration
+- commits were picked:
+  "clk: tegra20: reparent dsi clock to pll_d_out0"
+  "ARM: tegra: adjust DSI nodes for Tegra20/Tegra30"
+- commit adapted to recent DSI changes:
+  "gpu/drm: tegra: dsi: move prepare function at the top of encoder
+    enable" > "gpu/drm: tegra: dsi: re-add clear enable register if
+    DSI was powered by bootloader"
+
+Changes in v4:
+- switched to device_get_match_data and added check
+- added comment regarding Tegra124+ quirk
+- adjusted commit titles and message formatting
+---
+
+Svyatoslav Ryhel (2):
+  drm/tegra: dsi: add support for Tegra20/Tegra30
+  drm/tegra: dsi: re-add clear enable register if DSI was powered by
+    bootloader
+
+ drivers/gpu/drm/tegra/drm.c |   2 +
+ drivers/gpu/drm/tegra/dsi.c | 126 +++++++++++++++++++++++++++---------
+ drivers/gpu/drm/tegra/dsi.h |  10 +++
+ 3 files changed, 107 insertions(+), 31 deletions(-)
+
 -- 
 2.51.0
 
