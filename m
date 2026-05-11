@@ -1,140 +1,143 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7400236EA8B
-	for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 03:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778468766; cv=pass; b=u6V39NxO1wQHIft3QMfrPXbp6Hv7jUXJ3fP701goCG+scm4meflgI2Lru4yLIG64cdY4HjEumlsYeRHPZ4RVLV6uEBp27197BCe+jAB1TGxqWZQpFokHK7GtftGaW1q+hgdw8deAMMm5U/aRktSdqx/OTWMUpWMkH09EGPACZWE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778468766; c=relaxed/simple;
-	bh=E8rkKROlN2DBsFDy2zAwmFjvflwBkizPuT2WdL5S2YI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OkuHyyr6qDO4IB4W8iv0b7xa+Xyj7t6SE7XvWLLXDnN7ofZ3QhW3UCAtzvRR8WyHGOXICGHBnCn3wXLAoAswJMoo42nE1p5wQG5tIAdp0FMFifcxLlFXWzWqzrUIqd6+JAHDhjzjeo9bhIOif6e9Bt8z3aurKuOWIKHzpHAgMec=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DDUvF+Jy; arc=pass smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DD72E63C;
+	Mon, 11 May 2026 05:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778476717; cv=none; b=N8CeBkoHSEQwKpChSrpRrzPa7hfuK6tIE83vcfH9HqVdb4U5ORxareL9fIhZqj489JLD3MByevtOwFPEwl0bH36Dr4fouNLwNhIm09Se7mjqh3czg2aQUlJdyeHdBPiu+HcFSLP6jTMP36poxqvJUeAPFhY7j5YrROB6y5M+YW4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778476717; c=relaxed/simple;
+	bh=DlsXme9lwoqKsJyGSBaGtI+ozuQkDWi5uzvbU8C2c5I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QB49FcpI5Tlzf0hQEdMDb1kLODH+vIxCcFehjB9eeRTsPdC5EJ6n3ZMQ6ERYPr5pwnquKvWZRNT0J2Lqwj5HWKaKB1CuSoW7MwFFeK/dtZISddaTsat41GYyQiCxxlBadkKc42SU5Es6lwlDv7F1uJBTPWg2NN87LUsdbLUWfD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A0IPhONn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DDUvF+Jy"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5a40d02b58bso2758854e87.3
-        for <linux-tegra@vger.kernel.org>; Sun, 10 May 2026 20:06:01 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1778468759; cv=none;
-        d=google.com; s=arc-20240605;
-        b=EvQKv7UIy374Lx+hzlSvUWfDKCOE4C5XR5uFk/oI9inKbHWBvZP0cvsr75kd/rZELw
-         ltnUomqVTVWEgXG+gUZhUCJJCX5PlK0dwvN8P81pWoZ2IoCyXNd3x1Sg0YDYLDB2fO+0
-         iup1wpJFm5bL8rFTfpDhQokhXnq0LRunK6+eNdq6rQDMNXc9KZKm7j9OB5Wu8CC3+mtS
-         qtA0LauUMUddEtPtPQ4wGZuMnBolcbe07DvkrXXgD8a8tVF6YMW24uqprQY32xS4L5FK
-         1lhTyrn9lWwGVrC2idmx8XzZgylvB7t9+vc+7eYj7xqpflcbCLnR5EKIkrxshkWGL7hl
-         lK8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=E8rkKROlN2DBsFDy2zAwmFjvflwBkizPuT2WdL5S2YI=;
-        fh=dCyTThM2pBl05YaGf30DJLrMrQ0pxGTtC+4zA3+q4kM=;
-        b=TsqafCFlCxy3UNYmfzSdN4uNXsBuoBKb9a2Cr99BfCTzxi3DwCfIRGLZYbxhtQxys7
-         X1FLFerCXxiQ2pDeG7iwe/cSe/nJdGm4+XJ/5A5X2wNwNgEMjbKhUr6kQqv/dgkO5dO4
-         svJx2NfFusoG8lij9OVn6F/Wt78JWx9QvURpDF3teyO+NTiUQBisYZNd843cvCaL7YOr
-         n/rqUi5eEwAcBw8iU7AR2vkihOOXkNlUYGJXWgVsUYDkWtcXmMroOGhnk6jm/jlcS+as
-         qY0D+5OGI07USNn4htoqvhzGUuyYD6lnHcits7JKjGGkHHQPXkWySZRxjAXKQewTQ1nc
-         MBjQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778468759; x=1779073559; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E8rkKROlN2DBsFDy2zAwmFjvflwBkizPuT2WdL5S2YI=;
-        b=DDUvF+Jy4tDy4uCcRvmAR5WRe12s4aL+/HVtPX/7+ZabTbWtl3KH0/y1FURc6RFd4f
-         9d7J3ce6+KTVZKnx3uvqDEMGsRZIq8OzEB1HDMgv7Qen0noWAE0RG3gesqheV6cqL4AZ
-         zqa5HVyzRhXS0cj/sXg7ivyToftZ8ij8JGsMHOyUoTjjaDgcOTefJDlhoGpo+PZo1pvU
-         3rI4iAxkEB/pK3Xz/CC0nIgCWP8B+SQfUkzhcJLMh8QMhgNqztMPr3UYNW+vBYDItbUO
-         nR0PBErouzVFlbD4NV1pz6ExJorfbqxbpGWcI4mpGSwhu+zmDavJL3Nq4zBMNelFzwP9
-         7bMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778468759; x=1779073559;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=E8rkKROlN2DBsFDy2zAwmFjvflwBkizPuT2WdL5S2YI=;
-        b=drdpKgrxuVsgNuYznhd8D0FB/Sm9mH05ji+PEPdN2u0B045jUD12Kd3lL18nIqGC0G
-         KfyqPG2aBuq+1f22K+bA5hqMKJ1Mt+xjqZ6p0WI8JAmPxigwzc8ypHr9XUUGVuXddeIA
-         5c5svaqAT7lJqu+ZsfQDwfsU9u42yYLrTfM1pSHe3cDmmRWveRFuz2/BE1ny7Ez+Tk2K
-         vUhOTxerYdei8/4Yttgi73rPBsENC0OaZ2MqRQLnJUJOKg2Pc0pk87/dczIYgf587CmW
-         SZkYYguRrGn5yIFyNAuytxyj0sqvVQzZqiLX3BZNQxc03LRlvGe3ZKsQwvwloJFNAiJy
-         4E1Q==
-X-Gm-Message-State: AOJu0Yxn4d/honGWzkFR119/3wAhA1SHpdMXFfDaMRdpVAMFM3ZFg5J4
-	CMAJvcY/YiAC4K7Hzt/t1EZwunSjii3AEnyQXLNh5r4LCMCC2oHSFAw8j7fBB6xuQTEW+L7ZpNc
-	YgqGfJzSrl5B5GWrtz5QGUJbZvjjK1xcqUQ==
-X-Gm-Gg: Acq92OGafarTLYYKCDjPO5ziGbmAUlyBavSeLAiJE8Qrh4VTolrTBYoFpXHWvk1lzxt
-	qaJNQ0sD+9dxYaOYE3TTsptgstE5Ki8YaakNa5nYe60xuqO4Z006R7EPMjo9A1xbIF/3yIPD22w
-	I/p1Ekh7gjRTWzayCk94Dob3RespY/t10L2lUOrWYBGEKP1uBFuie/SLGh0Y2iD2vAWRqPtsVO8
-	mzlC7fAGKKUCV+H5aKKxurSRvTjIl4kQxFQuJXVVH+QrARLVAOlNN1rF/U9q459xHZ9bDi8nB78
-	7KemGR6EVBt5xnSc5gzN/aka6PgqMbbExECt3Dj0gEywDJwvDebJR7unVRgn4Hxl0Pae
-X-Received: by 2002:a05:6512:1386:b0:5a8:757b:80ff with SMTP id
- 2adb3069b0e04-5a887ae07ebmr7444031e87.12.1778468759265; Sun, 10 May 2026
- 20:05:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A0IPhONn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F31ABC2BCB0;
+	Mon, 11 May 2026 05:18:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778476717;
+	bh=DlsXme9lwoqKsJyGSBaGtI+ozuQkDWi5uzvbU8C2c5I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A0IPhONnhKqguTZYEEPJfmmarergtLTe7mSrEWz5PN6QF7cnCSYkd/psKMt4cjrOA
+	 iPMZg2uf0DMUlg80+8RIvT6HZyor+xgMmBfmWNyMmJMfIDrRn9Dt7l/BQpjFalaRxn
+	 H7UXcyE2WHjJMAVqakihPkV1OUbFTRvxNK6I16Vcb6e3rL6der9faCerOOxCyiFn6C
+	 sxeaPKDNEjql2Hzl93lyBYKXl9/ShZTiBz6jAoAzt5uhiyhs756PQ2ybYTYgJGs6uI
+	 SiAI5AQKrpi7bWoZ+YmwJPK+xeL3gnS8t2PuKFUvZjdbLOxWJ07vze0/pdsRPsoXFS
+	 A/cGX5Bsb1I6w==
+Date: Mon, 11 May 2026 10:48:23 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, 
+	manivannan.sadhasivam@oss.qualcomm.com, Thierry Reding <treding@nvidia.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	"David E. Box" <david.e.box@linux.intel.com>, Kai-Heng Feng <kai.heng.feng@canonical.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Chia-Lin Kao <acelan.kao@canonical.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, 
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
+	Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
+ set by BIOS for devicetree platforms
+Message-ID: <fb6uzh3jfes3hky6fblpsh2vvg3daij5ogecydiuhmytxbglcb@tdqjcoxuymsk>
+References: <20260122152903.GA1247682@bhelgaas>
+ <8d8b2244-2bf0-48cf-8fb8-9e47e197a62d@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALHNRZ8uHmx3nqpg1-F6RCprDavx3nY55en5gJds54RU8MDR5Q@mail.gmail.com>
- <4vpqn2iv23pejsx4uxt7p2ojwy67pdzy5bihce7zpnp766f56j@2sr3d4fw4qwp> <CALHNRZ_4WaAuJmpTnvdpn10=vw5SXcv-5Qq+UX-T_pG4Snba7A@mail.gmail.com>
-In-Reply-To: <CALHNRZ_4WaAuJmpTnvdpn10=vw5SXcv-5Qq+UX-T_pG4Snba7A@mail.gmail.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Sun, 10 May 2026 22:05:47 -0500
-X-Gm-Features: AVHnY4KgND-0dHuqGkFDQosr9I-GGnOSrz5cSXpeG4NuHIWVbaXE6_kzul7nJ2I
-Message-ID: <CALHNRZ9152Ox=Y230zmFM_eywsOtr0Z07CYLKZH+hGbOhRmF7w@mail.gmail.com>
-Subject: Re: [REQUEST] Release Firmware to Match Current Driver Support
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8d8b2244-2bf0-48cf-8fb8-9e47e197a62d@nvidia.com>
 
-On Fri, Nov 14, 2025 at 2:17=E2=80=AFPM Aaron Kling <webgeek1234@gmail.com>=
- wrote:
->
-> On Fri, Aug 1, 2025 at 4:56=E2=80=AFAM Thierry Reding <thierry.reding@gma=
-il.com> wrote:
-> >
-> > On Thu, Jul 31, 2025 at 04:22:32PM -0500, Aaron Kling wrote:
-> > > This was originally discussed on the freedesktop issue tracker [0],
-> > > but there hasn't been a response there in 6 months. So I'm reopening
-> > > the discussion here.
-> > >
-> > > * Nvdec firmware. The driver has been in the kernel for over three
-> > > years and there's still no available freely licensed firmware to use
-> > > with it.
-> > > * T234 vic firmware. The driver has supported the arch for almost
-> > > three years and freely licensed firmware still isn't available.
-> > > * Nvjpg firmware. The driver is awaiting final approval, probably
-> > > worth it to release the firmware with everything else.
-> > >
-> > > * T194 nouveau firmware. This does not have driver support, but there
-> > > has been some interest in working on it. Making the firmware
-> > > available, even if it isn't merged to linux-firmware, would be one
-> > > less blocker for someone that doesn't work at Nvidia to work on
-> > > support.
-> > >
-> > > Aaron Kling
-> > >
-> > > [0] https://gitlab.freedesktop.org/drm/tegra/-/issues/4
-> >
-> > I will continue to look into this, but it'll not be high priority. Too
-> > many other things going on.
->
-> After some discussion with nouveau developers, it was pointed out to
-> me that the gsp on ga10b doesn't do much and the setup is more like
-> prior tegra gpus. And that it wouldn't make sense to support ga10b on
-> nova. So I would like to expand the request for gv11b nouveau firmware
-> to also include ga10b. Perhaps not directly pushed to linux-firmware
-> until they can be verified working, but made available so driver
-> development can happen.
+On Thu, May 07, 2026 at 11:25:23AM +0100, Jon Hunter wrote:
+> Hi Bjorn, Mani,
+> 
+> On 22/01/2026 15:29, Bjorn Helgaas wrote:
+> > [+cc NVMe folks]
+> > 
+> > On Thu, Jan 22, 2026 at 12:12:42PM +0000, Jon Hunter wrote:
+> > > ...
+> > 
+> > > Since this commit was added in Linux v6.18, I have been observing a suspend
+> > > test failures on some of our boards. The suspend test suspends the devices
+> > > for 20 secs and before this change the board would resume in about ~27 secs
+> > > (including the 20 sec sleep). After this change the board would take over 80
+> > > secs to resume and this triggered a failure.
+> > > 
+> > > Looking at the logs, I can see it is the NVMe device on the board that is
+> > > having an issue, and I see the reset failing ...
+> > > 
+> > >   [  945.754939] r8169 0007:01:00.0 enP7p1s0: Link is Up - 1Gbps/Full -
+> > >    flow control rx/tx
+> > >   [ 1002.467432] nvme nvme0: I/O tag 12 (400c) opcode 0x9 (Admin Cmd) QID
+> > >    0 timeout, reset controller
+> > >   [ 1002.493713] nvme nvme0: 12/0/0 default/read/poll queues
+> > >   [ 1003.050448] nvme nvme0: ctrl state 1 is not RESETTING
+> > >   [ 1003.050481] OOM killer enabled.
+> > >   [ 1003.054035] nvme nvme0: Disabling device after reset failure: -19
+> > > 
+> > >  From the above timestamps the delay is coming from the NVMe. I see this
+> > > issue on several boards with different NVMe devices and I can workaround
+> > > this by disabling ASPM L0/L1 for these devices ...
+> > > 
+> > >   DECLARE_PCI_FIXUP_HEADER(0x15b7, 0x5011, quirk_disable_aspm_l0s_l1);
+> > >   DECLARE_PCI_FIXUP_HEADER(0x15b7, 0x5036, quirk_disable_aspm_l0s_l1);
+> > >   DECLARE_PCI_FIXUP_HEADER(0x1b4b, 0x1322, quirk_disable_aspm_l0s_l1);
+> > >   DECLARE_PCI_FIXUP_HEADER(0xc0a9, 0x540a, quirk_disable_aspm_l0s_l1);
+> > > 
+> > > I am curious if you have seen any similar issues?
+> > > 
+> > > Other PCIe devices seem to be OK (like the realtek r8169) but just
+> > > the NVMe is having issues. So I am trying to figure out the best way
+> > > to resolve this?
+> > 
+> > For context, "this commit" refers to f3ac2ff14834, modified by
+> > df5192d9bb0e:
+> > 
+> >    f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree platforms")
+> >    df5192d9bb0e ("PCI/ASPM: Enable only L0s and L1 for devicetree platforms")
+> > 
+> > The fact that this suspend issue only affects NVMe reminds me of the
+> > code in dw_pcie_suspend_noirq() [1] that bails out early if L1 is
+> > enabled because of some NVMe expectation:
+> > 
+> >    dw_pcie_suspend_noirq()
+> >    {
+> >      ...
+> >      /*
+> >       * If L1SS is supported, then do not put the link into L2 as some
+> >       * devices such as NVMe expect low resume latency.
+> >       */
+> >      if (dw_pcie_readw_dbi(pci, offset + PCI_EXP_LNKCTL) & PCI_EXP_LNKCTL_ASPM_L1)
+> >        return 0;
+> >      ...
+> > 
+> > That suggests there's some NVMe/ASPM interaction that the PCI core
+> > doesn't understand yet.
+> > 
+> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/controller/dwc/pcie-designware-host.c?id=v6.18#n1146
+> 
+> 
+> I want to revisit this issue. From my perspective low-power suspend has now
+> been broken on some of our Tegra platforms (that have NVMe devices) since
+> v6.19 and so far this is no resolution to this issue. The patch that was
+> proposed to fix this [0] has been rejected by qualcomm and although this
+> does workaround the issue, my confidence that this is the right fix is now
+> low.
+> 
 
-It has been over eight months since the last response. Nvjpg driver
-support has been merged in the meantime. Has any progress been made on
-any of the firmware releases?
+The referenced patch is now merged into arm-soc for v7.2:
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=7602c0ec0bbfd3985d49f4f0cad281c1414008c9
 
-Aaron
+I hope this takes care of the issue you are dealing with.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
