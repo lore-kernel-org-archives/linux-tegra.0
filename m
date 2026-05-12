@@ -1,243 +1,259 @@
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012062.outbound.protection.outlook.com [52.101.53.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com [74.125.82.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC95313267;
-	Tue, 12 May 2026 09:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A423AE713
+	for <linux-tegra@vger.kernel.org>; Tue, 12 May 2026 09:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.174
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778576887; cv=fail; b=OSGy5zWLodGjW2DwGXdHdU5R4DI6pepkYDKdEqG9Xmn/3b6zkjn055m9N8Mku1lVWDuAtsMDzFOKT51aEFWWjRO8NQRltwinS+r1dTCewCIOqgXHpCDnG34QUtq+WusC9neTRY7z/3b3HMDRYdHhnOLy8KNblKa3Sx9HLAWUpRo=
+	t=1778577258; cv=pass; b=hE92WCuixp3SF4QJozRzMNLhTpchOqwnxdTkhaGL925ZuQt46WUKRmCrIWtVuC1GljnK9/Ki8dudE+glgr4cAaXaqrTSSuyENfjIause5a1FbQFvlaFEKAsOzKJ+T+fo5eRDnKy3gqs/krq2ufb7/JHAXZsWLGZuDPQKPY25Zag=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778576887; c=relaxed/simple;
-	bh=sGhagKF8D/dGZyE9sweEsOvovtj985bFmPIVN8o8A2U=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=krq/vZ67l+bkkpzxoU8Y9rdg/WLySDjsiuwsKriqjvs40uT5c/4oVj3kDlCikgd67AHCCxU++ulka+K6/nw0OMkvouiVBLFxqtYmVaXzCaQOtdZuB1S3iNjZe3hV4vZalFg2pVrt5PhnKGEpsnQRJhe7g5h3/aYu3DthqyQhqj0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BSWEWcHF; arc=fail smtp.client-ip=52.101.53.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1778577258; c=relaxed/simple;
+	bh=U5Mj/jS6IBak6dPGMQzKnxIz7rYyqJxSv4wWkZocyPU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LeoZ2DNCaDFkk28rc/XiraLTK/jX9uB1C+TgSrWHuymSTb4qbT8hBHL5eIb7GrC5dxHm/0k1fR9BjVvVw9ks/oJobK28SRaK2ygghuArOknGj3NJ/APhEd7/tvo3JGHPONS2bxOlmKxkzX5oPFY5TOr6r1O7NRE0vIWoyaX9ByI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GSPEDZuu; arc=pass smtp.client-ip=74.125.82.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BSWEWcHF"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NlJH3vZzvYak4CpQJYKCXhsqlbQBCth0pQut3d2uFk4Rm0zJMl0hQGh+VpetCTQyMeOuQPrFE4qj868wYaNAHzjz8f48SnvB4eYjDNA1a9Sd/L+X6ZSBFYeFZleIoY3jKE1zUppzO/Ml9g0B89IqPT474cgLtYghGqbnPtvc9/VfzOnjIEQnF4F4NsI6C4t4DmLgDmJEPdptalgtUwG3dfe7idWrXALgWXqm63dKISofyfmPk4qw7IHeO3ldO3xtwDu0B146Ci6+6hj4qJrQkhD2E5KlZZLLDnsxY7aySlnHZ5FcbRgAcMWjq5kRXhu9y/KOlvVnD+cyLKmIecj1Yg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T9QzAAl68wtZoJQd0DnxRnCA8MhxTHhlTljt9q9Acjs=;
- b=ky3s+7yEoPqIGwjvhLEJG3h302JdQqkSHq5xo2fgpQlo/+LyTdGf3HghXsJtJ+eDJXNRNS41qc9MAOp4ztV0kq05fEvn3m8rT2nAIfx1yvP3zLd2Zdt2erCxNw10z4/spd/9+uFhzkm5SP+/fawY3rVyTLSRR+3GVvf8tcvi2xLj9r7LoO3+3y0fmY+Jd/l9NOvqdkfg/BjqZUtUw93sv3sJAivxd6nb0pA7U9eMn7mhM3Z0sr0IiZoIQ8hy+Lft9WjwStwYh8VCRe8zONYjdeb0QO7bxCaX0bupP/FQmwr4qiJaUmbQRL99jT6CauwqJitpnDuVSKIuxC0OtqE5lg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T9QzAAl68wtZoJQd0DnxRnCA8MhxTHhlTljt9q9Acjs=;
- b=BSWEWcHF2RJM9/c1IL1BZIg7ylaLsOWQN5cZg351TCXkOix3PTsWGrbv+rembRI2+lavGlA8dyjxkAidy5ky4auyU6SPyYjmB+qUYMi1GajtVfAvHSHpiaNxCwMgzkXDoz6zJUuGP8yyLSsG7Lxatb1BAOxjtiAO5mKM+YUT6F2O/rSJBlYO5BC6RMRTR2vMniNzdxmnmMIxcbUoSZIj9xRdi0s6yLCRCBB78h9FdAN1FFy3eUfBqeLZltQC5GWo6MmE+EofkYz17W8DEXv1T1qtpsdXlyCx85vV9qFj4HWK39mC1qpf0p/judQ1dZ8jtOI8WFaFe+xa3QghjER8fg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
- by SN7PR12MB7980.namprd12.prod.outlook.com (2603:10b6:806:341::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.23; Tue, 12 May
- 2026 09:07:56 +0000
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391%6]) with mapi id 15.20.9913.009; Tue, 12 May 2026
- 09:07:56 +0000
-Message-ID: <daa93cc4-090a-4eb0-91c3-029e0b037b71@nvidia.com>
-Date: Tue, 12 May 2026 10:07:50 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
- set by BIOS for devicetree platforms
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
- manivannan.sadhasivam@oss.qualcomm.com, Thierry Reding <treding@nvidia.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- "David E. Box" <david.e.box@linux.intel.com>,
- Kai-Heng Feng <kai.heng.feng@canonical.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Chia-Lin Kao <acelan.kao@canonical.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- linux-nvme@lists.infradead.org
-References: <20260122152903.GA1247682@bhelgaas>
- <8d8b2244-2bf0-48cf-8fb8-9e47e197a62d@nvidia.com>
- <fb6uzh3jfes3hky6fblpsh2vvg3daij5ogecydiuhmytxbglcb@tdqjcoxuymsk>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <fb6uzh3jfes3hky6fblpsh2vvg3daij5ogecydiuhmytxbglcb@tdqjcoxuymsk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PR3P189CA0044.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:102:53::19) To DS2PR12MB9750.namprd12.prod.outlook.com
- (2603:10b6:8:2b0::12)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GSPEDZuu"
+Received: by mail-dy1-f174.google.com with SMTP id 5a478bee46e88-2ef38cf04f0so8049984eec.1
+        for <linux-tegra@vger.kernel.org>; Tue, 12 May 2026 02:14:15 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778577255; cv=none;
+        d=google.com; s=arc-20240605;
+        b=U36DMU15eiJsjLUz6k1or1YxtoGQLDvstwvVNwTvzi4ZmGdjPJwVtwa128ByuCe9P/
+         jM+0GPw4korqurRSzojot7LEeOZH+th5EZdPfyQ4q0LMrcOKsjt245/Nwu+1HXzNuS/j
+         ysQTdBRDmcsYAWuxYJ6i0ipUcjUJFOpRMvOTqMncmJiTydOQRdimAxK4lu3Q1MeHEBq3
+         4IkSiSW0PuLgYD8ZXKnP7XKDrjRqGBm9OgS4P1WZoOkgAENLyBh15i19oLO5x00PDK9b
+         mPHswXoSQ++CUlPTflhMDnwrJX9bquhTozPxEORrX+7lHfH80h8InUOF+C/SY3tT4Utk
+         TgxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=wLpXl5QYagjlZCBE/xNrRjwHqn2mCjrPyJN9NfCIzLY=;
+        fh=Bd3j1/khKajDZj2togUh654V2ULWmyblLZGiMbCoJ3s=;
+        b=EYUHDIsQf3yt9o7YApm8QofZcgEzt0lx4Q1YQ5UwTb/5OlxTURtEIXyBkE17Ouve4C
+         p7kMa/Iktemk3omQw5IjdoSZnhIYSrABZJWXd6VI6MSnx+1IIoV17Zs0nWlVPpYg6pId
+         NVFdIlw14m/IrcOeG3At+0qIFj9N0wcIW31ezxX5c/2E2xZVyP4scK4nMmf8qNIHPeSL
+         cE4imozJzF+ojf7H5poUokq/HQl4AOSeeQl1CzYAAkt5l+TpKZm6k+5ADt8LwjrQnNVr
+         VUWQFeCFSGeAsYbWCUqGnqpbYCLTP01//onHY29NxUgdlmwuTJ/HWCUCEn9v/heMYIgH
+         Ie0w==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778577255; x=1779182055; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wLpXl5QYagjlZCBE/xNrRjwHqn2mCjrPyJN9NfCIzLY=;
+        b=GSPEDZuuZ31Z+22dTEDRByST0/vCvq68t1D91nerRwYoArdfxg7W5/Mme1qiOlepi6
+         FRLzMnKPG/Tt1+YCHHImv/D0RmhNeMBfJA+SPH2lm2AQx8od/5IOkc1WOOQSXCgCHnrg
+         1W4k710vYtjIOut8/9X6vWP3IUF/jy6semioFVQLKlJFCtnqht/jwnhEojw1Uc0KO5qh
+         9Faqalbmk2+j/2LIIS2sYCblIukJuzBWESC+v/pAVADwfvDL8XmurbTCugzhCXJfSa39
+         AawmXB2O1sSVRGAPCtVNnFmiJL49ZELzH+vIfuxXTjdtp+wWLOLutDHoXOdJqJ8PaQsc
+         dz0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778577255; x=1779182055;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=wLpXl5QYagjlZCBE/xNrRjwHqn2mCjrPyJN9NfCIzLY=;
+        b=d/79GhZXVOkU1rXHB40UPQiEVH4zSARn3JAphHlcbVa98XAafb1QQ60zjujIiFOdKs
+         1d2EidnUorsiEDAkpetfDYueuo1DkuXaKInWvErKFyBVO6zUEUVVCzpqeDHumVIEohxd
+         WJVsYnvihUz6l1qhysA8YGI5i8Uird+WKOT4GJxmf/nwlt/yidjWMbsfIDKNMsUS0YKq
+         Ygbbq85utFS0Z8Y9f2AQbuCV/wj0XldEcMmn2EwlTUfZVcnmHdXHsur42N+yyy3D1Kbw
+         //7X9QYPxORAHuejhMPruqiAV1s/qoeMDhxmJWILIuF439FiBG2e9/Q5WazGyDuDIdTZ
+         MJuw==
+X-Forwarded-Encrypted: i=1; AFNElJ9sRKAGDW/RngolCvSpMbatX43duOLzD3ApXyFoRoiAvy+CdEikgjlveHYGvG04PF4cfRkwpdEKsFvzsw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4eyHB2egqg87TOydHjtUGCu1hwPoeM8jkyz3RhC5lZv6OxzhO
+	Ha/5U7mW3g8QMXndtOm+YBT3DokF2JyaN/1bfipXy49XglvQxGd/LAr/rQ/BUjEhyORrvw4+TM6
+	5a1/5Z+aO/EQGHE8liQXMp+9S5hPWgcI=
+X-Gm-Gg: Acq92OHRG0LXkBrX1ye3JvX4OGvIL4UL1+JGM5AulFQtpjxd7mYHvmHu7Dvn/Z/CJ1l
+	1tPhGGP0G8QcfuWqJx5JVN6fOyQsTqrMb1SeUfQ+rO8TWXVdt9QtfuSLwUjyEzuOXSki9YutfRA
+	e0np/aDHohoGcbx0ZisR77CMIonHFTROaDl3BgjXsvPlZh4A1McGgIc0vC7S+FiPIvciJ3UuGka
+	wU0/IW+o1gkwuuWjbg31flMExNp2wNuPjn3MEFZy+YWB3Qz6I5ffBNxDG41ZmYp3AeKPVH8BwLG
+	JFC4y1j6
+X-Received: by 2002:a05:7300:6da2:b0:2c5:50fe:c795 with SMTP id
+ 5a478bee46e88-2fb4bffa2c9mr6829180eec.29.1778577254951; Tue, 12 May 2026
+ 02:14:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|SN7PR12MB7980:EE_
-X-MS-Office365-Filtering-Correlation-Id: e09265a6-54cf-44c5-a0f3-08deb005f504
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|11063799003|56012099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	NbYr1Y5KIznVwVovOKiWiEEcUmUliD6RdJw8CKP8lXtf524mFXKya2VIURsqRsHGby0CcnjQZ64Kqee1Onrx/XvsTffZpm9o2scDhuVYTpFN8V+0lDtlBUvi8WnQjpAbQrSLqyUtHqtNA/Xca/+NvkvBjesL4gQSr9X4968ri5y9fN2WnfdE1GwV51LxXViZadP70+QZpnMG6J9oOAn/3F9jVBSGpWxt43927brgl7tG6fPL9xB6ViM58//oIEBAUx0snSqCFZeTjpRIB3VmZYpCFxg0ePU3DZiicZ1zNQ9kDkxBco74a8YiGg+UITXNIe+uOSkcVBOpTFJFqY7vm9CCaBCcjvF3nlRkX9+ngT42G82WZePAvrG+e3xl97UkmAi3oCJ2nUKk+G0coVUXJZ1LqUq270kXX5IliUNTrCs8Jc3gN+jefK7qgGy911CVZk9bbfNmchOs1D37C11JOrSUKhCdO56ibVGPyZAaNqEEOG0qT40i48HoW+QpOyTePwUCU8mTpmemswC44tyIgpAn1GA9X/mUyxvATKqsnHw30ylBHTKyveJJkCBstqBWxcps0P9t8o4eB2W4w2hfrk3j+DmgLGJ8njL+kxZMaAvqyBJxXYH6q6e6PXYq8tdt7SRGV6Q4aRgjKh5ucMw1pQRh2P5+177WvgrsQadSBcXTcbb9rUWdQLp1bSp5ru3b
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(11063799003)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SnUwU005bGZZcmVlOWFzeTNjTHFkdEsycExLT2NVam5jMGVwY1l5aUZOUFJE?=
- =?utf-8?B?RWtwTkxmQjRYYzJmNFpjZHEzZGdsT2tjcU1wcUk1Yk8xOEhyWnI5RXFQZkFj?=
- =?utf-8?B?N1FnOW9ST0F6Nnd1YTJrcE5JQWllc000cHlZTkZ1dnZHQTZnQ2x4OXJxbHVM?=
- =?utf-8?B?dzRZVWI2WTlOM01IVXI3ZUlaSU9wR3RSQXJQQlBBUHdkL05sMDhycTNJL2ZH?=
- =?utf-8?B?b3I4OVlHQ0NWWmY3SmVvdlNtUW41aWRJMnNPTm54dGN2OVV6UTQxblo1cWdO?=
- =?utf-8?B?T1FwelZzdW41NUtmK1p5a3pOOG5TUDVZZDVUTEtTQTZZNUdxeEFCWVZjMk1m?=
- =?utf-8?B?bDB0VEo4YVpFVEtNMHBCd2UzeU4rd1M5dU56Y3YyeVZiVklrd1JtUm93dnhY?=
- =?utf-8?B?OG02OW9YM0xROGE5NlNIRTc2R1NheGdVMWVxOWtkZGg5aW1UUFlHdTdNQk9Y?=
- =?utf-8?B?SWd6cEhBTE9YYkhkZWxHanpWek9Sb1lZeGEyQ3pjczZieUlHQzVMYWJzc1V6?=
- =?utf-8?B?eWxXcXd0OUxzSzR5UlljdWtYaWkzVGdtSDZ5bnQ3OFpQTVFrV1k0YjdUZjJz?=
- =?utf-8?B?MTFzSmR2WTFaWHAzUmZXRHk0TkJLdVlwbmxpVkZNeTVEeGFML1NrVDBDOHAz?=
- =?utf-8?B?aFVBWVBVYTJUTkE5cElvUU9iS2hJUkdWVUVRSUxEb2dobWtWRitoYWRNVnQ0?=
- =?utf-8?B?L1l1RkFrNDl0bm56c212VDYvN0M5Umt0cjI4dmw0VGhNMC93cm41Q05mZEFq?=
- =?utf-8?B?K1ZmdUU1SEc3dXl4UjNUbmZHWnJuZzh3d3NLR2dLK3E4LzBpMng3RG9TaUI3?=
- =?utf-8?B?ZDZDTnczOFJva08rSGM3QzF2SUYwajNWb2NwU3pXd2lxZXJldEFZUWM5UFFa?=
- =?utf-8?B?RnBQT3lqQzg2bDZvb0Nmck1ESnZqYnljN1lsV2RPdEt2Y1VLaFJhKzdVMmE2?=
- =?utf-8?B?eWE2QzkvUUM0eHV1V3NtU1hMSUd2TjcwVGlPSkhQYWxYU3ZNRFRWUFl3ZEY0?=
- =?utf-8?B?MlVyaUpiem12d3dVTC9CL2VlelNnRFZTUEgySHRTYjIycGRFd3JBazN5YTlq?=
- =?utf-8?B?d1dBdDZPQWhIcjJjOFI5OG44MVVNY0ZveXlvYWVsR3dOWit6NDY4UVVFQ3Fv?=
- =?utf-8?B?RjBIWlNxdi9BUDRVaEtrcDJab01ia092SlFkUkFJWnFFYVhndWRCUVl2S1pJ?=
- =?utf-8?B?UXFZR1VpbmRla0xlNDI1NzBUOTdhVmtWQjlMSjkvYzVvaFRCSlFwSEtXUmJC?=
- =?utf-8?B?M01NZGVrR0R5NnQ2VXdndjlXbUFyM3VmTTlqUks1WVJJUExSdW9RYjFtckNp?=
- =?utf-8?B?UGlieGdST3k5dkEraTh0czJwNTkwYzZzVHk1RjBVNk9XUTVxa2lvaVpDVW1T?=
- =?utf-8?B?M3U5NllGaU9udXpWWGdzcjZZODRST09DKzlKdm9QOTk3WU5yTzdER3Vvb3hB?=
- =?utf-8?B?ZkpvS0wrSkJOVHF5ZTY2ZnZ2NDlVdGFtNTRQcFkwVFhxQUZuVWkxd1ZtZlc4?=
- =?utf-8?B?ZlhvM3RCMkpOMmZrdjJEYlhRc29iQTNpNDFTS0Z3OE9jbzFlM2djVFgrWE5H?=
- =?utf-8?B?bloxd0U0OERiK1JuSTJ5SHU4TmVSSy9Neml1TnJ3WWRkYkNkdEVJY0lWZ2pz?=
- =?utf-8?B?QnV0K0wvRVY2MmcwRHBSQ2tUWE5jdjVZU3c0NkVVY1Z3dGxTaWRXWk1MeUQv?=
- =?utf-8?B?RjE3MFd2RDJ6YmI2RHM0RWtVUDdGYjJyeVJ3S3EvOWZKMlptcEV0WldYVkxj?=
- =?utf-8?B?Sy84d3lqcmVUdHRLdG85MkhDQ1pQYkt4RnR5UVozdmFNU1dSWFdvMDcvVFdG?=
- =?utf-8?B?M29QU2RqQzBHcHBlU3F2QVNqR1E5dnNLL2lJNVVONjNqVDZWb3dCZ3pVSHZm?=
- =?utf-8?B?d0t1dVNpbXo3YnNLRW1oWnZUNGsxR0hrRVlTcFNHYVJJMTZtTkZSUUM1R1Z0?=
- =?utf-8?B?dUJncCtVc0hLR3pVUUt1T2cwTGlrQTBlOXN2c2kwa0NKdittWFQvYzBMeXF0?=
- =?utf-8?B?dmRURHRHL2lhakFkS0hSNURLMGJjbnJnRU9SekVQT2tNd2F1L29ZRlNFdGJF?=
- =?utf-8?B?Z1d1dG9aQmtveFlMeGZST0lHS0twOE0vL25oZWg3YUMxSkZXVTd1VkNhSGVp?=
- =?utf-8?B?SE5wczlLYThoUTk2S3hqTEN4N1NCcnA1OFNZUndsc3ZKYXMzZW1VQ3JmMUc5?=
- =?utf-8?B?ZFRLWDlXMEdTN0tKSlpDSnM4Mm5CZ2k1YTV3YUxLUXNObG5TSXZwRTRqeHR3?=
- =?utf-8?B?Q3gzWTM4dnoxdzFrSHFmY1YwakR6aytsc2EzMFFwVHB0MGg1b05ORDAyTHN6?=
- =?utf-8?B?dXRlQWVGRW9MWWt5UVhZM0tqVVoxSmlTeUllZG5tUmdwcE5aUXJ0QT09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e09265a6-54cf-44c5-a0f3-08deb005f504
-X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2026 09:07:56.6054
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OmQG54zDgOQYH1tyUkn4lTxkMW7AlXC7VtSKGjuG661BpjD1sMXNJbfJdI5vwTh39UjmzQnEeS1STyuvyKRX7g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7980
+References: <20260511135703.62470-1-clamor95@gmail.com> <20260511135703.62470-3-clamor95@gmail.com>
+ <agJ/T8nBGWEoblmd@nchen-desktop> <CAPVz0n173syW9rXy7Qt_N=mChe6WBRLvjRDypcJEC50hPL4OMQ@mail.gmail.com>
+ <agLb6mgP45jHjvNt@nchen-desktop>
+In-Reply-To: <agLb6mgP45jHjvNt@nchen-desktop>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Tue, 12 May 2026 12:14:03 +0300
+X-Gm-Features: AVHnY4Ll14i93n_o4smARXMAmGSl_VWfrjFQ8sVQ8lXsJQoJqBmOJp3dhjRuJ_8
+Message-ID: <CAPVz0n1Cgbik1_HvKO9i7ATr4OkS6yE_bwMw__yY_pNi0gQJNw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/6] usb: chipidea: tegra: Avoid controller/PHY init if
+ bus is externally controlled
+To: "Peter Chen (CIX)" <peter.chen@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+=D0=B2=D1=82, 12 =D1=82=D1=80=D0=B0=D0=B2. 2026=E2=80=AF=D1=80. =D0=BE 10:5=
+1 Peter Chen (CIX) <peter.chen@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On 26-05-12 09:13:40, Svyatoslav Ryhel wrote:
+> > =D0=B2=D1=82, 12 =D1=82=D1=80=D0=B0=D0=B2. 2026=E2=80=AF=D1=80. =D0=BE =
+04:16 Peter Chen (CIX) <peter.chen@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> > >
+> > > On 26-05-11 16:56:57, Svyatoslav Ryhel wrote:
+> > > > If the USB controller and PHY are externally controlled, then the
+> > > > registration of the controller and the PHY initialization should be
+> > > > skipped, since these configurations must be done by the device that
+> > > > controls the bus to work correctly.
+> > > >
+> > >
+> > > I find you only control USB controller device add at PHY driver, most=
+ of USB drivers
+> > > has PHY control, for chipidea, it has PHY control at core.c, would pl=
+ease try to
+> > > adapt for it?
+> > >
+> >
+> > Usually yes, but this is not the case for Tegra unfortunately. As you
+> > can see Tegra specific section of Chipidea driver specifically
+> > describes why it has to set PHY manually.
+> >
+> > /*
+> >  * USB controller registers shouldn't be touched before PHY is
+> >  * initialized, otherwise CPU will hang because clocks are gated.
+> >  * PHY driver controls gating of internal USB clocks on Tegra.
+> >  */
+> >
+> > So in order to provide correct work of USB when set by an external
+> > device, both PHY and controller init/add must be skipped.
+>
+> You could call generic PHY APIs at ci_hdrc_tegra.c, after PHY init or pow=
+er on,
+> call controller initialization.
+>
 
-On 11/05/2026 06:18, Manivannan Sadhasivam wrote:
-> On Thu, May 07, 2026 at 11:25:23AM +0100, Jon Hunter wrote:
->> Hi Bjorn, Mani,
->>
->> On 22/01/2026 15:29, Bjorn Helgaas wrote:
->>> [+cc NVMe folks]
->>>
->>> On Thu, Jan 22, 2026 at 12:12:42PM +0000, Jon Hunter wrote:
->>>> ...
->>>
->>>> Since this commit was added in Linux v6.18, I have been observing a suspend
->>>> test failures on some of our boards. The suspend test suspends the devices
->>>> for 20 secs and before this change the board would resume in about ~27 secs
->>>> (including the 20 sec sleep). After this change the board would take over 80
->>>> secs to resume and this triggered a failure.
->>>>
->>>> Looking at the logs, I can see it is the NVMe device on the board that is
->>>> having an issue, and I see the reset failing ...
->>>>
->>>>    [  945.754939] r8169 0007:01:00.0 enP7p1s0: Link is Up - 1Gbps/Full -
->>>>     flow control rx/tx
->>>>    [ 1002.467432] nvme nvme0: I/O tag 12 (400c) opcode 0x9 (Admin Cmd) QID
->>>>     0 timeout, reset controller
->>>>    [ 1002.493713] nvme nvme0: 12/0/0 default/read/poll queues
->>>>    [ 1003.050448] nvme nvme0: ctrl state 1 is not RESETTING
->>>>    [ 1003.050481] OOM killer enabled.
->>>>    [ 1003.054035] nvme nvme0: Disabling device after reset failure: -19
->>>>
->>>>   From the above timestamps the delay is coming from the NVMe. I see this
->>>> issue on several boards with different NVMe devices and I can workaround
->>>> this by disabling ASPM L0/L1 for these devices ...
->>>>
->>>>    DECLARE_PCI_FIXUP_HEADER(0x15b7, 0x5011, quirk_disable_aspm_l0s_l1);
->>>>    DECLARE_PCI_FIXUP_HEADER(0x15b7, 0x5036, quirk_disable_aspm_l0s_l1);
->>>>    DECLARE_PCI_FIXUP_HEADER(0x1b4b, 0x1322, quirk_disable_aspm_l0s_l1);
->>>>    DECLARE_PCI_FIXUP_HEADER(0xc0a9, 0x540a, quirk_disable_aspm_l0s_l1);
->>>>
->>>> I am curious if you have seen any similar issues?
->>>>
->>>> Other PCIe devices seem to be OK (like the realtek r8169) but just
->>>> the NVMe is having issues. So I am trying to figure out the best way
->>>> to resolve this?
->>>
->>> For context, "this commit" refers to f3ac2ff14834, modified by
->>> df5192d9bb0e:
->>>
->>>     f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree platforms")
->>>     df5192d9bb0e ("PCI/ASPM: Enable only L0s and L1 for devicetree platforms")
->>>
->>> The fact that this suspend issue only affects NVMe reminds me of the
->>> code in dw_pcie_suspend_noirq() [1] that bails out early if L1 is
->>> enabled because of some NVMe expectation:
->>>
->>>     dw_pcie_suspend_noirq()
->>>     {
->>>       ...
->>>       /*
->>>        * If L1SS is supported, then do not put the link into L2 as some
->>>        * devices such as NVMe expect low resume latency.
->>>        */
->>>       if (dw_pcie_readw_dbi(pci, offset + PCI_EXP_LNKCTL) & PCI_EXP_LNKCTL_ASPM_L1)
->>>         return 0;
->>>       ...
->>>
->>> That suggests there's some NVMe/ASPM interaction that the PCI core
->>> doesn't understand yet.
->>>
->>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/controller/dwc/pcie-designware-host.c?id=v6.18#n1146
->>
->>
->> I want to revisit this issue. From my perspective low-power suspend has now
->> been broken on some of our Tegra platforms (that have NVMe devices) since
->> v6.19 and so far this is no resolution to this issue. The patch that was
->> proposed to fix this [0] has been rejected by qualcomm and although this
->> does workaround the issue, my confidence that this is the right fix is now
->> low.
->>
-> 
-> The referenced patch is now merged into arm-soc for v7.2:
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=7602c0ec0bbfd3985d49f4f0cad281c1414008c9
-> 
-> I hope this takes care of the issue you are dealing with.
+And what it will give? Modem used in Tegra devices exposes its output
+as USB device on an HSIC line. At the same time modem requires a
+precise control when USB should be registered, to be able to register
+and unregister it. This cannot be done by linking modem's phy to usb
+controller, quite the opposite, controller must be linked to modem's
+phy.
 
-Well yes this patch does fix issues for us. However, I am still a bit 
-confused about this whole thing given that this patch does not work for 
-all qualcomm platforms. Anyway, I guess we have not seen any other 
-issues so far with the above and so may be we can consider this closed 
-for now.
-
-Thanks
-Jon
-
--- 
-nvpublic
-
+> >
+> > > Peter
+> > >
+> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > ---
+> > > >  drivers/usb/chipidea/ci_hdrc_tegra.c | 36 +++++++++++++++++-------=
+----
+> > > >  1 file changed, 22 insertions(+), 14 deletions(-)
+> > > >
+> > > > diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chi=
+pidea/ci_hdrc_tegra.c
+> > > > index 372788f0f970..593390a818d1 100644
+> > > > --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
+> > > > +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+> > > > @@ -32,6 +32,7 @@ struct tegra_usb {
+> > > >       struct clk *clk;
+> > > >
+> > > >       bool needs_double_reset;
+> > > > +     bool externally_controlled;
+> > > >  };
+> > > >
+> > > >  struct tegra_usb_soc_info {
+> > > > @@ -312,20 +313,25 @@ static int tegra_usb_probe(struct platform_de=
+vice *pdev)
+> > > >       if (device_property_present(&pdev->dev, "nvidia,needs-double-=
+reset"))
+> > > >               usb->needs_double_reset =3D true;
+> > > >
+> > > > +     if (device_property_present(&pdev->dev, "nvidia,external-cont=
+rol"))
+> > > > +             usb->externally_controlled =3D true;
+> > > > +
+> > > >       err =3D tegra_usb_reset_controller(&pdev->dev);
+> > > >       if (err) {
+> > > >               dev_err_probe(&pdev->dev, err, "failed to reset contr=
+oller");
+> > > >               goto fail_power_off;
+> > > >       }
+> > > >
+> > > > -     /*
+> > > > -      * USB controller registers shouldn't be touched before PHY i=
+s
+> > > > -      * initialized, otherwise CPU will hang because clocks are ga=
+ted.
+> > > > -      * PHY driver controls gating of internal USB clocks on Tegra=
+.
+> > > > -      */
+> > > > -     err =3D usb_phy_init(usb->phy);
+> > > > -     if (err)
+> > > > -             goto fail_power_off;
+> > > > +     if (!usb->externally_controlled) {
+> > > > +             /*
+> > > > +              * USB controller registers shouldn't be touched befo=
+re PHY is
+> > > > +              * initialized, otherwise CPU will hang because clock=
+s are gated.
+> > > > +              * PHY driver controls gating of internal USB clocks =
+on Tegra.
+> > > > +              */
+> > > > +             err =3D usb_phy_init(usb->phy);
+> > > > +             if (err)
+> > > > +                     goto fail_power_off;
+> > > > +     }
+> > > >
+> > > >       /* setup and register ChipIdea HDRC device */
+> > > >       usb->soc =3D soc;
+> > > > @@ -342,12 +348,14 @@ static int tegra_usb_probe(struct platform_de=
+vice *pdev)
+> > > >       if (of_usb_get_phy_mode(pdev->dev.of_node) =3D=3D USBPHY_INTE=
+RFACE_MODE_ULPI)
+> > > >               usb->data.flags &=3D ~CI_HDRC_SUPPORTS_RUNTIME_PM;
+> > > >
+> > > > -     usb->dev =3D ci_hdrc_add_device(&pdev->dev, pdev->resource,
+> > > > -                                   pdev->num_resources, &usb->data=
+);
+> > > > -     if (IS_ERR(usb->dev)) {
+> > > > -             err =3D dev_err_probe(&pdev->dev, PTR_ERR(usb->dev),
+> > > > -                                 "failed to add HDRC device");
+> > > > -             goto phy_shutdown;
+> > > > +     if (!usb->externally_controlled) {
+> > > > +             usb->dev =3D ci_hdrc_add_device(&pdev->dev, pdev->res=
+ource,
+> > > > +                                           pdev->num_resources, &u=
+sb->data);
+> > > > +             if (IS_ERR(usb->dev)) {
+> > > > +                     err =3D dev_err_probe(&pdev->dev, PTR_ERR(usb=
+->dev),
+> > > > +                                         "failed to add HDRC devic=
+e");
+> > > > +                     goto phy_shutdown;
+> > > > +             }
+> > > >       }
+> > > >
+> > > >       return 0;
+> > > > --
+> > > > 2.51.0
+> > > >
+> > >
+> > > --
+> > >
+> > > Best regards,
+> > > Peter
+>
+> --
+>
+> Best regards,
+> Peter
