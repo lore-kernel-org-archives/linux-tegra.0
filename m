@@ -1,217 +1,182 @@
-Received: from jpms-ob02.noc.sony.co.jp (jpms-ob02.noc.sony.co.jp [211.125.140.165])
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010041.outbound.protection.outlook.com [52.101.56.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3751C2D5922;
-	Tue, 12 May 2026 02:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.165
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778552535; cv=none; b=SVuOTZmgVsgUEwQiIHguDU20EXfhmaSb1N47X0CTfLIpqoKUmif22c35ehme7tw4zSyrc9nXTpPvrEWago/2lV5O1K+eTM7pyfimj8ieMpi2Qq5k6cl42gxuP4QUxaUnFOXw6zniZIn2tSOKfaj3SUSSB10urfeN+sgQk7mpZ4M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778552535; c=relaxed/simple;
-	bh=GklZYUKJX6KCfliVPjcXd8Jfg1EfG4Yx/dYPm0oFv3I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JuS2SEH9iDLLPVvuBkvwabBy4WaOBxQrAczujUA0ouyVL7MgStiOcCLTd6643ZA3fXA0WbuBaVrdMcCFzAmEYhawdcffV80q9v9EV9oIMkFZ9yjFalzWuiz1sMaW5GQPhhwDv8cTm5NmotQRmroRUknCrOYHwqHAhELeYLZ1bz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=AvBtndsj; arc=none smtp.client-ip=211.125.140.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0B31FC7C5;
+	Tue, 12 May 2026 03:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778557750; cv=fail; b=TeyWfhvlXzEq1yFGK3ggVkKM+ZePlAvEJGbQQPmePcObiQ2hIX1L3lgFISfXU1ibVqAfLbnBAPcEDv49dRVdNZs9LyBT/xHyNUqEOmShISm4D1YlfRUJ3XQbuXloZTuvZfA19XO5sZ1jkygsrBMFkR17n0YN21d0ApC0RLB348s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778557750; c=relaxed/simple;
+	bh=eztzXSkubUZLBk2u6XLMaJZ4iZa9Ee86XkOboq40T78=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oE/Sngd2YPLwSAy9l+Rkri2CTk71TnbsC8Tdat5nWXknksDJyF/eQyMqEG+wcHoQFIgdDtGOaQsfpQ4LEntPg01CVToUAg7z3K7dJrHD9bG3O+MRbgEp01HAdQVfCJB0tlR44N8qnOelNVh5HjQP1CUufnERV/coCpeu4/8f+uY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nzD5eKvV; arc=fail smtp.client-ip=52.101.56.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="AvBtndsj"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=sony.com; s=s1jp; t=1778552534; x=1810088534;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hPXs4xfe9WaD1xaFn0d8PPw/gVNLx2J4xPkxz7s4xqs=;
-  b=AvBtndsjAm+PUvUuKW8nrsOYmtuyoaeIXv3dXGIFar4Yu/JE11qgZfGx
-   GQHf2+arX9TBC4x1+jSa24toOLhNr36rWB6l26yXWb8Rso2ZtXUSIe1dU
-   xEyc1uKMblh/pEeFBiaKVHDcnAGZenGiVkRORZff1ej3A9kTIdnFka1L6
-   RFf97bO1f0sPVkkzxwOyWBcnL9SKDZIbnoMohtBtYkKq10U+g/I8HefpI
-   rZm2ENfpNyk/cs9e1ymui/cu78lYw/PSw9UlDyjAK3yjO1fmGNKyeqy3B
-   5WpKrvPcBVXObiVU0kVqvfS2BqQoQlTebA8g0sBI65YBz8npAsi3NtpNJ
-   w==;
-X-CSE-ConnectionGUID: kZC+Y2dPQDWo7xh8pyAsew==
-X-CSE-MsgGUID: EIn/X9iGRR2/cnYone0EVA==
-Received: from unknown (HELO jpmta-ob02.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::7])
-  by jpms-ob02.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2026 11:12:02 +0900
-X-CSE-ConnectionGUID: E4sXDblmSuKgQZmCqCcvnA==
-X-CSE-MsgGUID: Qwx43BEcSKO83PNWSCJ4AQ==
-X-IronPort-AV: E=Sophos;i="6.23,230,1770562800"; 
-   d="scan'208";a="606139396"
-Received: from unknown (HELO JPC00244420) ([IPv6:2001:cf8:1:573:0:dddd:6b3e:119e])
-  by jpmta-ob02.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2026 11:12:01 +0900
-Date: Tue, 12 May 2026 11:12:00 +0900
-From: Shashank Balaji <shashank.mahadasyam@sony.com>
-To: Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Gary Guo <gary@garyguo.net>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Boqun Feng <boqun@kernel.org>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Aaron Tomlin <atomlin@atomlin.com>, Mike Leach <mike.leach@arm.com>,
-	Leo Yan <leo.yan@arm.com>, Rahul Bukte <rahul.bukte@sony.com>,
-	linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, driver-core@lists.linux.dev,
-	rust-for-linux@vger.kernel.org, linux-doc@vger.kernel.org,
-	Daniel Palmer <daniel.palmer@sony.com>,
-	Tim Bird <tim.bird@sony.com>, linux-modules@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] kernel: param: initialize module_kset before
- do_initcalls()
-Message-ID: <agKMcA7a_UqMua5V@JPC00244420>
-References: <20260427-acpi_mod_name-v4-0-22b42240c9bf@sony.com>
- <20260427-acpi_mod_name-v4-1-22b42240c9bf@sony.com>
- <DI3Z28IZZOT9.349TTWNN9VDMB@garyguo.net>
- <afABOMT_s9DvF6NY@JPC00244420>
- <DI4QQA6EGIA1.N8WRFWVKG91S@garyguo.net>
- <afCxHUrjr3Z22U6V@JPC00244420>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nzD5eKvV"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CZEVTMRz0wFi00ejMJysqzKQcfVSzg3y3j5HEaw/drOo+Aoa6SeX7C8SV8CO/sCdRQQ3i8XKWruSrQUK/kolEEqf3bkrzfbGXRcsxpOuTPZqN66KEaAHOMyiRlBvn8o2Ih0coBa3FOceOk8MJX8FjMUF5dWmkkC2+nFnN6S6zmEfjOa/qvOjuwnl0nztxbwDzKWG+vxd1XN0GFPhj1msuj8aTAPhPEXgKgPAzQjRj/xUtzk6ituecP1aPAX2ev9B9LVzn3ktH/bLcq9afretqoM5jCeDO1sXhQGFMOeXfTQcyoHTJRJ+NXKkS9XWbVh49+pxr1cnQMFBCH4LbstjVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5ecMQe61b8N3/ZS8u5Y6p0n0ZLxDZrZSDlb5LGNE3tE=;
+ b=XvPG56m9W8J3xffszDqM11n9bQx273Pg+WI5jXHZXvuuecd6Dzz7HlLpWojkXbvf26KP7JHw9eZLVkFZLyP0Swm9dkCDUwiCe3FsVgam6LPaVbp76rDS1ju0Ygym8XEhyxLelHYTl6al/ZBaDynNKFerKuMLHMswfV8n9oP6+ZbVN7VSvufD+MNns48rOu0COQu1mU49oN+LxB4wBOGt8PH9ji71tvhPO+ceXKc9a1OrPJ67sNu4Gtd5O6V4bMzFRYSSIYarglsjPS7ENmfP/vRnSSO1VFLtxtciarK33agXGyH2rGZQn7979RAzzjhDTwedVMlAHBVoMRP6jS4z/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5ecMQe61b8N3/ZS8u5Y6p0n0ZLxDZrZSDlb5LGNE3tE=;
+ b=nzD5eKvVX2lxhbBjY93mBwfRoWLFSQTbn/sjM5I6q8PtfMsijxV1LMrqI3RCeejMvIzRV0QPjlrIXeIQVyWwCz28efkyc6K/CcAPC0MxqwJVYPu/r7so9NpvLXls5SRVfRzaGcjLrbLn+FJdcQVmIQ3Hi/Pdd9h2bIiOaip+U952eAsT1kvCs/leOJNc68Y68L1sLbES8+Lw0hGj9uWgw9Ox9QwFyA6R4iyHqEBtKcfF0/Feg6DGYXWCAbDfFwCj0thpHXqbJMtLr1jl3lG+zTNo+sVQ0GsH5F7P3xa6AMsYh0Od6jSXGmA7a8Li4l8A+B+zib1v65Z6Zz5NBe5bhw==
+Received: from MW4PR03CA0360.namprd03.prod.outlook.com (2603:10b6:303:dc::35)
+ by DS0PR12MB9445.namprd12.prod.outlook.com (2603:10b6:8:1a1::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.23; Tue, 12 May
+ 2026 03:49:03 +0000
+Received: from MWH0EPF000C6189.namprd02.prod.outlook.com
+ (2603:10b6:303:dc:cafe::59) by MW4PR03CA0360.outlook.office365.com
+ (2603:10b6:303:dc::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9891.23 via Frontend Transport; Tue,
+ 12 May 2026 03:49:03 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ MWH0EPF000C6189.mail.protection.outlook.com (10.167.249.121) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.25.13 via Frontend Transport; Tue, 12 May 2026 03:49:03 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 11 May
+ 2026 20:48:44 -0700
+Received: from mmaddireddy-ubuntu.nvidia.com (10.126.231.37) by
+ rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Mon, 11 May 2026 20:48:36 -0700
+From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
+	<mani@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+	<kishon@kernel.org>, <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
+	<Frank.Li@nxp.com>, <den@valinux.co.jp>, <hongxing.zhu@nxp.com>,
+	<jingoohan1@gmail.com>, <vidyas@nvidia.com>, <cassel@kernel.org>,
+	<18255117159@163.com>
+CC: <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Subject: [PATCH v2] PCI: tegra194: Use aspm-l1-entry-delay-ns DT property for L1 entrance latency
+Date: Tue, 12 May 2026 09:18:21 +0530
+Message-ID: <20260512034821.1320714-1-mmaddireddy@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <afCxHUrjr3Z22U6V@JPC00244420>
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000C6189:EE_|DS0PR12MB9445:EE_
+X-MS-Office365-Filtering-Correlation-Id: cbf9e444-873f-4728-b7ce-08deafd968ec
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|36860700016|376014|82310400026|11063799003|3023799003|56012099003|921020|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	pg+F2XR8frh8JhxD9AxhkRGkIbOzzyvyzuudFRaJyqUVWvCZ0/D87JhwQhribgS8EtNk/jdHj3GOPqFF9jGdap+GCLVRFSrmuiqFQhJGEaNMQNiYpevbzeBDx7IKxCHGCqSbdrYJdFEiEm/8ZpoNT5xNMa7oUfO6IzZqwbSbn/t2rqh6U6aC5xTTyJuFliJmU3SZg+EeYWUF/y9slNEOz3428C8V+zSm6wif3e7K/0boUZNVq09KSdlTZDRzpq2odv74zzuT4UmC6iagQO/7c6OSQc3pBXFUNIhm2YmxKU7Qz2cmDTynuh1Vh6kALO74n6wSpnFnJGDeP8a7IKl+hgPvFvDHfVkqeK4WXKjFHhJXAVS3Pn+0JRGOuRLrL1ParYRjGBCNc5wADgLrz/LTcp2J2XU0EtHua1l4xlBmg+h0Jcy1tkhPOetclbCfCOCf9kp+hmyqpcyw2SjDCrvYMQmWwhJ5L4fxjZa3r6975V/8AOwgMDTgvqmW/92Zyb9B9OgrRdHKPvkSknhAEAo2EXlI72X0wiIGxMeiTGwa57OgIexigD4t6EmfYaSt2S4zQw+2g4XbuLl2FLyCJxaU3iyrgPrBCJFmdgWxp5HbnNc0a8DPyHVdRaKFHkrp1QaZHuESUpo0fYIGSqzf4DOWRjOysa/NkWLXC9/v4fNxeTsv0ucy2206+RZVnqclBArwYCrmtcfirYKgG6FNE6f1x7s0gOh+69bVss9I+tqM+f6iPPkKEkTOhlyN9elpGVRHN10JoyLCzg3u+d/uJd60qw==
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(36860700016)(376014)(82310400026)(11063799003)(3023799003)(56012099003)(921020)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	f18g1QyUfC3lfR375X5XQjFex1E+iaMhaOaDx911NdaanwxpAncOaynNsoeds9P6LhYRDOCAoZ7h+ajtEObcON5cBdbEW2sb0XQj077pmV+5mw8LRKNx3GrhvWk2JwXSGIFSiju5i/9k4XeJBLdJI6VwMwTcKheRXkcybjVI8TvsrszxEOeSfj08lhBsC2v22ZIIq+CH8ypKf7/6wWX3Zv2XcI/DwmG6IaP2f7kFoepVIxMkEoBzybT7pcIVvSLYi0229GanhOHGnCQpWzqulaN3H9hrd9N/oveDakI7MkKOT6mYdNmGIzyTAytRRzvX0Wg6GLhXAtM3inn1wN26PFyKeJUXIImbhW+Gw28JIBsI48B8ooaocyWvPBuBiwBD+xw955j/txuJf2sGNprswf2ZVsmiywQpN4Pr0WJyzGsowcOqVdm2v22CpZ6ku3Qz
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2026 03:49:03.4850
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cbf9e444-873f-4728-b7ce-08deafd968ec
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000C6189.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9445
 
-Hi Thierry, Jonathan,
+Program ASPM L1 entrance latency from the optional aspm-l1-entry-delay-ns
+device tree property. Convert the value from nanoseconds to a hardware
+encoded 3-bit value that is equal to log2(ns/1000) + 1. If the property
+is absent or greater than 7 (the maximum latency value supported), then
+default to 7.
 
-Just following up on the below, would moving tegra194_cbb_driver and
-tegra234_cbb_driver from pure_initcall to core_initcall work for you?
+Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+---
+V2: Fixed commit message as per review comments.
 
-Thanks,
-Shashank
+ drivers/pci/controller/dwc/pcie-tegra194.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-On Tue, Apr 28, 2026 at 10:07:41PM +0900, Shashank Balaji wrote:
-> Adding Tegra maintainers.
-> 
-> On Tue, Apr 28, 2026 at 12:10:50PM +0100, Gary Guo wrote:
-> > On Tue Apr 28, 2026 at 1:37 AM BST, Shashank Balaji wrote:
-> > > Hi Gary,
-> > >
-> > > On Mon, Apr 27, 2026 at 02:29:55PM +0100, Gary Guo wrote:
-> > >> On Mon Apr 27, 2026 at 3:41 AM BST, Shashank Balaji wrote:
-> > >> > module_kset is initialized in param_sysfs_init(), a subsys_initcall. A number
-> > >> > of platform drivers register themselves prior to subsys_initcalls
-> > >> > (tegra194_cbb_driver registers in a pure_initcall, for example). With an
-> > >> > upcoming patch ("driver core: platform: set mod_name in driver registration")
-> > >> > that sets their mod_name in struct device_driver, lookup_or_create_module_kobject()
-> > >> > will be called for those drivers, which calls kset_find_obj(module_kset, mod_name).
-> > >> > This causes a null deref because module_kset isn't alive yet.
-> > >> >
-> > >> > Fix this by initializing module_kset in do_basic_setup() before do_initcalls().
-> > >> > Modernize the pr_warn while we're at it.
-> > >> >
-> > >> > Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > >> > Suggested-by: Gary Guo <gary@garyguo.net>
-> > >> 
-> > >> I didn't suggest this change :)
-> > >> 
-> > >> I suggested `pure_initcall`, which is just a one line change.
-> > >
-> > > Oops, sorry about the misattribution.
-> > >
-> > >> diff --git a/kernel/params.c b/kernel/params.c
-> > >> index 74d620bc2521..ac088d4b09a9 100644
-> > >> --- a/kernel/params.c
-> > >> +++ b/kernel/params.c
-> > >> @@ -957,7 +957,7 @@ static int __init param_sysfs_init(void)
-> > >>  
-> > >>  	return 0;
-> > >>  }
-> > >> -subsys_initcall(param_sysfs_init);
-> > >> +pure_initcall(param_sysfs_init);
-> > >>  
-> > >>  /*
-> > >>   * param_sysfs_builtin_init - add sysfs version and parameter
-> > >> 
-> > >> pure_initcall is level 0 so it happens before all other init calls. Does it not
-> > >> work?
-> > >
-> > > tegra194_cbb_driver registers itself in a pure_initcall too. We wouldn't
-> > > want the ordering of its registration and module_kset init to be link order
-> > > dependent.
-> > 
-> > It's the only device driver that does this. And I don't think it's supposed to.
-> > 
-> > >From documentation:
-> > 
-> > > A "pure" initcall has no dependencies on anything else, and purely
-> > > initializes variables that couldn't be statically initialized.
-> > 
-> > I understand that given large amount of drivers registering themselves during
-> > core/arch_initcall that there might be regressions if all of them are moved, but
-> > surely we can demote these two specific tegra driver to core/postcore_initcall?
-> > This will still be called earlier than init_machine call which happens during
-> > arch_initcall.
-> > 
-> > Looks like the tegra CBB driver is just doing error logging anyway.
-> 
-> That's a good point, Gary. Thanks!
-> 
-> Hi Thierry and Jonathan,
-> 
-> You can find the context for this email in this patch:
-> https://lore.kernel.org/all/20260427-acpi_mod_name-v4-1-22b42240c9bf@sony.com/
-> 
-> TL;DR: tegra194_cbb_driver and tegra234_cbb_driver are the only drivers
-> registering themselves as early as in a pure_initcall. This is a problem
-> on two fronts:
-> 1. Philosophical: As Gary pointed out, pure_initcalls are intended to purely
-> initialize variables that couldn't be statically initialized. But these
-> are doing driver registrations.
-> 2. module_kset not initialized at pure_initcall stage: This is needed to
-> set the module sysfs symlink. Since module_kset is not alive yet during
-> pure_initcalls, registering these drivers panics the kernel.
-> 
-> We would like to do the tegra cbb driver registration in a core_initcall
-> (or some later initcall works too), and move module_kset initialization
-> to a pure_initcall. Like this:
-> 
-> diff --git a/drivers/soc/tegra/cbb/tegra194-cbb.c b/drivers/soc/tegra/cbb/tegra194-cbb.c
-> index ab75d50cc85c..2f69e104c838 100644
-> --- a/drivers/soc/tegra/cbb/tegra194-cbb.c
-> +++ b/drivers/soc/tegra/cbb/tegra194-cbb.c
-> @@ -2342,7 +2342,7 @@ static int __init tegra194_cbb_init(void)
->  {
->         return platform_driver_register(&tegra194_cbb_driver);
->  }
-> -pure_initcall(tegra194_cbb_init);
-> +core_initcall(tegra194_cbb_init);
-> 
->  static void __exit tegra194_cbb_exit(void)
->  {
-> diff --git a/drivers/soc/tegra/cbb/tegra234-cbb.c b/drivers/soc/tegra/cbb/tegra234-cbb.c
-> index fb26f085f691..785072fa4e85 100644
-> --- a/drivers/soc/tegra/cbb/tegra234-cbb.c
-> +++ b/drivers/soc/tegra/cbb/tegra234-cbb.c
-> @@ -1774,7 +1774,7 @@ static int __init tegra234_cbb_init(void)
->  {
->         return platform_driver_register(&tegra234_cbb_driver);
->  }
-> -pure_initcall(tegra234_cbb_init);
-> +core_initcall(tegra234_cbb_init);
-> 
->  static void __exit tegra234_cbb_exit(void)
->  {
-> 
-> Would this work?
-> 
-> Thanks,
-> Shashank
-> 
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 9dcfa194050e..c9716d614451 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -18,6 +18,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/iopoll.h>
+ #include <linux/kernel.h>
++#include <linux/log2.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_pci.h>
+@@ -272,6 +273,7 @@ struct tegra_pcie_dw {
+ 	u32 aspm_cmrt;
+ 	u32 aspm_pwr_on_t;
+ 	u32 aspm_l0s_enter_lat;
++	u32 aspm_l1_enter_lat;
+ 
+ 	struct regulator *pex_ctl_supply;
+ 	struct regulator *slot_ctl_3v3;
+@@ -715,6 +717,8 @@ static void init_host_aspm(struct tegra_pcie_dw *pcie)
+ 	val = dw_pcie_readl_dbi(pci, PCIE_PORT_AFR);
+ 	val &= ~PORT_AFR_L0S_ENTRANCE_LAT_MASK;
+ 	val |= (pcie->aspm_l0s_enter_lat << PORT_AFR_L0S_ENTRANCE_LAT_SHIFT);
++	val &= ~PORT_AFR_L1_ENTRANCE_LAT_MASK;
++	val |= (pcie->aspm_l1_enter_lat << PORT_AFR_L1_ENTRANCE_LAT_SHIFT);
+ 	val |= PORT_AFR_ENTER_ASPM;
+ 	dw_pcie_writel_dbi(pci, PCIE_PORT_AFR, val);
+ }
+@@ -1115,6 +1119,7 @@ static int tegra_pcie_dw_parse_dt(struct tegra_pcie_dw *pcie)
+ {
+ 	struct platform_device *pdev = to_platform_device(pcie->dev);
+ 	struct device_node *np = pcie->dev->of_node;
++	u32 val;
+ 	int ret;
+ 
+ 	pcie->dbi_res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
+@@ -1141,6 +1146,15 @@ static int tegra_pcie_dw_parse_dt(struct tegra_pcie_dw *pcie)
+ 		dev_info(pcie->dev,
+ 			 "Failed to read ASPM L0s Entrance latency: %d\n", ret);
+ 
++	/* Default to max latency of 7. */
++	pcie->aspm_l1_enter_lat = 7;
++	ret = of_property_read_u32(np, "aspm-l1-entry-delay-ns", &val);
++	if (!ret) {
++		u32 us = max(val / 1000, 1U);
++
++		pcie->aspm_l1_enter_lat = min(ilog2(us) + 1, 7);
++	}
++
+ 	ret = of_property_read_u32(np, "num-lanes", &pcie->num_lanes);
+ 	if (ret < 0) {
+ 		dev_err(pcie->dev, "Failed to read num-lanes: %d\n", ret);
+-- 
+2.34.1
+
