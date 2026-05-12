@@ -1,116 +1,119 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com [74.125.82.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5A72BE7D1
-	for <linux-tegra@vger.kernel.org>; Tue, 12 May 2026 05:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8FF42847B
+	for <linux-tegra@vger.kernel.org>; Tue, 12 May 2026 06:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.169
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778563790; cv=pass; b=Wi3V8gZ6UGB9Za5JKHyagdUBhFUV6SuE5E+l0AVyKefO1EbOlcwykxlBsJ4k0bK0fGSE9j7Cok3YY/F9lCj09ANUnf556RU8Lat3p3e0yD6ZQcR2RfeorYa3TsmpRicH57XeoBiHdJSgJYQHHduWBuY0xrTxJigz63sE2EheH5E=
+	t=1778565986; cv=pass; b=pd38NcxdNwzBcNDM0rxQesniRvoea2dJ1S39XyZtwafG2q962FKbx5NA8dNUtSqR626afNYqWJ7p6PIsThuaeweZiZkZFb3x/bxVCRPBxuR9ga+oEsqre7YQkKt3nCzyUa+o+9uKCjhI7txPMne0PxDQWKerEiLPBWzIS+7p5oM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778563790; c=relaxed/simple;
-	bh=dfl2eq4XdvwzzwMISw+3fb93nWUCpKg9Ggc5uZLfkQ8=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=JB/lr6ug06YZcxNufKpohv+SPCzk42Rr6RsAIgWJSAoQguNil9fqYU3czbgFeuLzi7OWseCmn+5iNF+HEuMm9/kV7fR24t2wAGMcFbXucCEXjG5aNgm4Kg2gIfxatZOvDwFF+El0p/eDFyx5ByBAEhmQlDeyyvMIznPPzj5SU28=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jk+qqriG; arc=pass smtp.client-ip=209.85.167.54
+	s=arc-20240116; t=1778565986; c=relaxed/simple;
+	bh=yxZL62iX8pebWS6AofBmV9FGACpi7rIEMuv0C7XnSII=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tsvR9aZCy5cBbqkqbbwsPDwPZuhayBCV4gay4mrHHZP4Y0DCnO+OKrTACnEtkCK/J4MqAZXMoyTw2nqoV4MJ9XRli6JDJlETQlgIS3+TUVq58Lb/Asr+nya7oPDfm+XJURG4QSyq6fWHvkvA3mb6QfLhJI2MwOYUfrvwekA8lmg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=tEHWRCep; arc=pass smtp.client-ip=74.125.82.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jk+qqriG"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5a40cfab24dso5636226e87.2
-        for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 22:29:48 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1778563787; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tEHWRCep"
+Received: by mail-dy1-f169.google.com with SMTP id 5a478bee46e88-2f7ca62a3c4so5218791eec.0
+        for <linux-tegra@vger.kernel.org>; Mon, 11 May 2026 23:06:12 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778565970; cv=none;
         d=google.com; s=arc-20240605;
-        b=SOSUa/X7CIfx9DJr+hrYkZCON3AtFfvBW+XEHf2Q6ETeubM4zptKIL6JWvsWX1cVZW
-         QsYBDEJgtpasnWZvUg761BVl/wrHK+zerwEtCmVq1VKUHjkwvUg32I1PUqKQ7G9Frc4F
-         nsUKVQBqCF6C+k1waSlW/g1VUxax1SEYk8gHkJdBaUgnCam7uhevqYJ2iGVx82TA6uFD
-         HZoaOBM652i4WJeIgLPPBAk76udBqa5zFCnbuy/ALTIJkqbHGZFeXkKjkGuZkjhrkO+C
-         ahrnIOgY5awzVezufGrAPKlTz62px8O4P8aY2i4XjG5DBzlhFx4HTRZ4BxZ/0XfRVlF2
-         yD8A==
+        b=bslCfBDhOn8wWZKmyUkub0mLan9IHEaFcYmRJaboozgdXmJmthj+QfScWmWLPiVvbP
+         qOuw4c1y9Q9bluVvu4VvO0WJ8Qp/enJxSfGzM+j+yEVl0958WvWsHZ53EDW4Jifx0IeB
+         EapC0JfZJdb6RYaiR783jia4POBcL/q6yU1oY+qC58IbIM/Zv6ILIGZJwr66pFxoSDqj
+         dbCd9M4NuoyZMgOEjL7YvSgaY3v+h81mfYFlG+5+6Gr1bUd8RvifuEROHpC52NFrk0Wf
+         0hUqkRhZ05LWRkQ+/Ao+ITFFV/HBDcObAl4m5kwvGVfH66YkcZXzJbb0ik/1RvhyTWSo
+         qUCQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=to:subject:message-id:date:from:mime-version:dkim-signature;
-        bh=dfl2eq4XdvwzzwMISw+3fb93nWUCpKg9Ggc5uZLfkQ8=;
-        fh=alV3uZGOJS46HNqpJneiGGoE0k+6KnyOVsL8ccygG5w=;
-        b=gU+/6FmBjhOIM+eH5GwoRuuuiJJ7/if94SirUQOQW3rKMAleCAQH79tr7+5aocjApj
-         rEnF4rf0LmEysQVUjiVs/3TtPCA6spsdcMhPxsgeF2WP1GxvElmshnK4j06iL3ldoubF
-         N5YYyAwKm/3wkWfMG0qMrRdVk0OYYJVK3GpAadTtvFjtbq1v4vWG9jprTVla/LQ0i7Qt
-         4NodcdFhGJYvLVpXepREWNXABFrk6TzNf+i54yjpmQS8augcY+bUUc0TSig3+8AK3kN0
-         gRTxiRbMkE8J2pV6X+gppYxwcTMWQQM2LTebbeuA3ZjY6DvWQo4hDZf9H/yUXbp+G7MA
-         PMaQ==;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=CrrmqA1MIjLw7p2PiJAG2cpDnb+P9Y0HrkTx6QFkzK8=;
+        fh=R1kV3RZs0nOGiRjyxaYoUlzO3j+IUL5+htkc4HFjKtE=;
+        b=SegITW0cEXJauXYe+wAjKE4BjNyWdyjcNfYgbUUAGYPvpRNTLSeXS6qaImNyGRfTRa
+         2nmp1kK1iFAQp7zzrpF1W24p1ebaqIweCmL9695muBV30AbU3M1WlWR++56SDQVWARzz
+         i13DCrW4syPldUdR/KVOg26Lp57wHsaaHEJPCEsSvy2oKPyQuuv8fUOB9oJl6uhylQHn
+         8/FW1I/5GqeLxp6LSPOSx4qN83GnmJ2FAkCoRddOYYKKBywjSQPVRa3QzxSQJaqeLaXz
+         S52H31zP/I2gcSH889blC+BREG2dFKh+yLsXbrQ0XTccn9GpzLiQsiYe1hMM0+R33hIX
+         lGgg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778563787; x=1779168587; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dfl2eq4XdvwzzwMISw+3fb93nWUCpKg9Ggc5uZLfkQ8=;
-        b=jk+qqriGcba6QM+fVfUY7b/SXCz0ewZhj0W79Rp13MorqID5ayTuruH6fzg1C1ptmi
-         aubWUA/KAqmjRcJKPtGcG4YlodIV1Jp9+RMQiEQip922F7dBFGObKcXGb/ZHWeAXBxov
-         sWNxnLUUTowRe5u2AXrX+W1TSYME5mSlPfkPpNqw2rbQDPxAvK0xoYfMBLfwyZXgSYkc
-         FoVeyoovTgrk+D38S2lFkokjTROojosmY3/3cCMjk+68sSMjwwiIAJnZWdCwZjh+Dt7a
-         J495QPd7WelrVlwVZqCgvHL0PiHOSJS48hQecXekZ9uY0qMf4Wtkl3itPMx8TB1N+v+u
-         5FFA==
+        d=gmail.com; s=20251104; t=1778565970; x=1779170770; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CrrmqA1MIjLw7p2PiJAG2cpDnb+P9Y0HrkTx6QFkzK8=;
+        b=tEHWRCepdx5nmp6yIVCYqQVzLmcrQesovgaR9iEkViVeFajmSrIpSEYelr2lD2XxoP
+         xh5y8Zvqn+p86e68KD2mvaQiqYvCBtE5yPAPTikVo2xqoL3Tzv1bOvc6AoLsBX9tMQ5x
+         bYKhs3w7Wz6+rTS0+0PdymwNuR6Mrju/sIlosbiQTM7eQulfT33DGAwgDmm2ablH56dQ
+         bWpBu7X7LqvzKybeZhNl7lGCCxcAzvLmd3Uqv1PZtG5EGNwdM3TqVIVGnx8neXBuwl/W
+         L4ZL2IYFzfr7AuRSPKZt2mLvNKX42PoQwoqq4VK13MoKe4InA0vqbgWOu8BlRN8yU7AO
+         0QiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778563787; x=1779168587;
-        h=to:subject:message-id:date:from:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dfl2eq4XdvwzzwMISw+3fb93nWUCpKg9Ggc5uZLfkQ8=;
-        b=a+P1kQ9oba8smTt+8mnMxqXkoINX0f/Yz2WBZ2b6Q7CARkt4LmzmIFMZwvEAtBaeon
-         Kci42zQa/FhLewp/aSXP31quBOYeOcVLxDyoi1v0mFVoASUwjqouyK4sGtEN6wXwmqLj
-         s9Mc6SZ/Wu0ehaP6rnwbzNKn0+RQG+zYpAb8RjgJTE6gUQLARSeIXa/Lp6uHAOVL8o2+
-         9djj8PuXfq2dAERU/i8llOt8U3rmSR8IMyxRPpGS0N9WKTRcpmrG+EAZRIBebh2Zx/FU
-         9ERGKkwb6fu5glFswfO/iwJN+Int1UOLDQ+2Os5jme+m6HgZII9EV6Ae1g9o89ugctll
-         XnOw==
-X-Gm-Message-State: AOJu0Yw0WOevCe0ooqh98MpUKg2wluo2wjV2AyHcRa0UJHfOaCllukqR
-	yom8VvQw6OuxZD85c1UjKTxIXjP+EyXoLclnWOppAyEkMnXwnUiWLrKRgEuSmkEWJmJ09VFOxnj
-	rsKdwrv5tOF5WKCCCDS/0c0lzGfdCZuSpRXtJ
-X-Gm-Gg: Acq92OFGkvrd5P7bBU3aswmhi1JcjSlrjZnnfy4AgBohrOxpg6Heh+9+YN4XBjcsXqu
-	C655YvnnT/496GDkcLQOElA27iBhTY1ZwUer4FMDmFkyVg7qJm5tW8V1M66tzdv1smZA9ISD7Ud
-	apQai9wQ2R+VYtq3LBsRHusyo9X0Sq3YCbqTkwm0+0ABUe1ssZHCqZJD5fILFZH1Ac4FYkUeTvM
-	K7ZRfe+O060vfs2oxr7wxzOVi0Twqbs/gPChIAR5Rh4G2j1QX8Mww/zFWtWoCNwR+Vto2PWPRoP
-	z8P7pbPkkFQgM8KvYU65xwD7gGE0hGdE5RjTJli+zwT2ijsbLiUjtdTvhUM4NWCKVLMf
-X-Received: by 2002:a05:6512:2252:b0:5a4:52d:4abc with SMTP id
- 2adb3069b0e04-5a8a949f19amr5519345e87.8.1778563786826; Mon, 11 May 2026
- 22:29:46 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1778565970; x=1779170770;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=CrrmqA1MIjLw7p2PiJAG2cpDnb+P9Y0HrkTx6QFkzK8=;
+        b=qZ/xenbVPNcoPFNmHLzcvk59qt4u1B1fv37KCQdvJNRDH15mAJ8t+7K1oYNGW1o0K8
+         wgV1Jg9Eoqjf/eInTkruabyGzQqDhYaAWtTNdwPhFq5uWWvYdv5kU+mQBasFXsvIgptg
+         yiq7wUMHzHMA4OnNuqQg5nRiPOunSPQEuZDNzPAxqcv5qhDG9JWob7Mko6UQKBiWxEMB
+         qK+05qTmIG0F+BhGZnmzO2Y+8fCn8P1Msrb8lRuhFMAxIXA34zYNcv+HlQaEV4cVKmbP
+         KAf5ZMcXxXprunXgYys7oewTihfZ/MSBfeGV9JpqlYyF47U/l7oNHybVBR7YwLC9hqGV
+         H5lA==
+X-Forwarded-Encrypted: i=1; AFNElJ9dZqMc9p42z9n9u7Pw/4vJcHPBEVf/EPwNjPnDX0BRboydpdY4IC5b7wUpgF2j6UbYgrIj1z/KfV2Exg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJK2F8pVG1T63y/hDOAbzbUgZ0zoQh4OGuTMWoEdnKBmZ1n7PM
+	4rZx2B3KpN/k6C9lFuIhX0g3cQ8VpArzcJe8Y7JtsohmFOYqCPDcWFY9Y3YYixEy3JUlFjPhf3J
+	s3/q7b3n7Nc8gROUIWkOAmAupYWXS4sw=
+X-Gm-Gg: Acq92OGTe8Gv4wFtiZk/AHghS6Fw92+plBk6wM6jG/etDiqib6QMjjbat/pS6N1I/bE
+	+c8JW86mS8fttpmGXwaCMt/CDJvlhHOaQRe2WPCYILjZ0TudO12Vn73c42ncrbnW7kefVyF4XIa
+	dLXD/Qv+rxkcgZL27GLB7vHJBqiHpYpNyL5DWWdKd07idz78qC96Y2sT5oV2PU0y7Bz45B4HLoD
+	viGsV3P06Rr9ulO8AzqHcYKM9CoLxfeJziKQn7cR31Tw649/th3NCOHW0WHAQctUId1kumZGCME
+	6S6nrvo/
+X-Received: by 2002:a05:7300:d70d:b0:2f5:3f62:37b4 with SMTP id
+ 5a478bee46e88-2f54c080b64mr13761984eec.8.1778565969672; Mon, 11 May 2026
+ 23:06:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Tue, 12 May 2026 00:29:35 -0500
-X-Gm-Features: AVHnY4Kwsv7b2fXRf5ywwfias53-xE1lZIqqHODDodSMGEK2NJ1hWGs7ABH5zC0
-Message-ID: <CALHNRZ9mmf_4OagcooO-s+SU1KrggT5_ZwM--ambxZKXN-oQDg@mail.gmail.com>
-Subject: [BUG] drm/tegra: DMA buffers are not always freed
-To: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20260511135703.62470-1-clamor95@gmail.com> <20260511170548.0065fd07@kernel.org>
+In-Reply-To: <20260511170548.0065fd07@kernel.org>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Tue, 12 May 2026 09:05:58 +0300
+X-Gm-Features: AVHnY4J1P3ErzmBnYdLDEn2tVC5ojwqEMUhGov68STEE-MFG5Dk8UXTF_hePr8Q
+Message-ID: <CAPVz0n3wcgaXzSLAMT=Yt=+FC=n7ufkn_CAaKNcyTr=a+7bdTQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/6] Add support for Infineon/Intel XMM6260 modem
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Thierry Reding <thierry.reding@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Peter Chen <peter.chen@kernel.org>, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is an issue with tegra-drm where some buffers get created, then
-freed, but the dma buffer never gets freed. Causing display controller
-memory allocations to start failing after the leaks fill up cma.
+=D0=B2=D1=82, 12 =D1=82=D1=80=D0=B0=D0=B2. 2026=E2=80=AF=D1=80. =D0=BE 03:0=
+5 Jakub Kicinski <kuba@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Mon, 11 May 2026 16:56:55 +0300 Svyatoslav Ryhel wrote:
+> >   dt-bindings: usb: ci-hdrc-usb2: Document nvidia,external-control
+> >     property
+> >   usb: chipidea: tegra: Avoid controller/PHY init if bus is externally
+> >     controlled
+> >   dt-bindings: net: Document Infineon/Intel XMM6260 modem
+> >   net: usb: Add Infineon XMM6260 Baseband modem support
+> >   dt-bindings: phy: tegra: Document Nvidia Tegra XMM6260 PHY
+> >   phy: tegra: Add support for Nvidia Tegra XMM6260 PHY
+>
+> You need to split this more on subsystem boundaries.
 
-I created an issue on the freedesktop issue tracker [0] with a patch
-with some debug logs I added, then a log from Android that contains
-these logs. CMA is set to 512MB, and when allocations start to fail,
-the unfreed allocations add up to just shy of 500MB, where it's
-reasonable to expect that 8MB contiguous is no longer available. The
-log was generated on a Jetson TX2 NX, but I have seen this leak on
-other archs as well, this also does not appear to be limited to soc's
-with nvdisplay.
-
-This does not appear to be a userspace issue. The graphics allocator
-works as expected for other soc vendors. And as the logs show, the
-delete dumb buffer ioctl is called, but is not always followed by the
-dma buffer getting freed. I have also observed this issue with a
-gralloc that uses the tegra gem create and such, this is not unique to
-dumb buffers, that's just the last log I had when deciding to post the
-issue to lkml.
-
-What I primarily intend to ask here is how to further debug this
-issue. I'm not finding any direct path between the delete dumb ioctl
-handling and gem release or tegra bo free. Can someone point me to the
-pieces in the middle I'm missing, where the logic is to decide is a
-buffer should be freed?
-
-Aaron
-
-[0] https://gitlab.freedesktop.org/drm/tegra/-/work_items/9
+Yes, I will in v2. I needed an initial patchset combined to have a
+reference point and show that all patches are logically linked.
