@@ -1,116 +1,257 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9E23563DD;
-	Wed, 13 May 2026 17:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778691633; cv=none; b=LisKKkrkEbtFy7gIdQjrXgkYMA6GdywIkKC2rLJXzesgwtLuhj9M+a6sc1sYJTe1R9N+qkTY/RQ2g0l0tC/FSjSuPVR1QMisRF5h70HF0KkBJ+Ga6hXuy8qZpi9q7Ml9pN31K8bkvrwH+uOc6qMq1cj/KtyCzvDGchT4YYwrT74=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778691633; c=relaxed/simple;
-	bh=H+WlKgMjdyEQTBnDx0xCTFAelGgSo4QMvk58RSoQtmk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BCwDKx7LvxWcFIQWh0eD+oYNopte7zHBRtFbrnqh+pyLXRIWc01SaCsu1amPk+4LyGR7em77Unv9BwZkD1ck/dtKH46SjMUvT5ktUnAUq+9dE3xg9j67ols3JDfMu5+xA1YWEDAh8IfoFoRfA3uwQVGrZiVJiboa8AeaBuTl924=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=J/La2af8; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com [74.125.82.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124BE3911C0
+	for <linux-tegra@vger.kernel.org>; Wed, 13 May 2026 17:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.177
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778693425; cv=pass; b=ZTUg0vGEchSvybnkhJNm4XVCfPVvSXUz7ci0qh2QBXaoJYTn3lDlyEDOJlpEqNx0j1Gxo9a/IOYUjZsU2ek6A901d08c8O3HKu3rg8VzlJ+Ab+KC/zGUGPH6h9H2Wdcq89YI42LzLfk2Hlp7AJ/ktGS8xUIsbSkbdDjJGWT463I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778693425; c=relaxed/simple;
+	bh=JPLT6FMeldEbFhJ09K/mL4agPV0DXAvQaThe6y1REcc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cPkb6Jp+d5nkCL1vfRLVFIbosJEg5+Jis99Bf1bHOjCm/u/M0Y+60w331GwLIBk06teNf8jvXQFwpTwVxra/fifU0fGkzp8blZENwuK5baJnSQwYVd++c+N3vuHqyWKpjWOkqrVqV5zhBghYgMOQdWkOjkMWUqgsIkk3RjLuqvM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Myb2qtmm; arc=pass smtp.client-ip=74.125.82.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="J/La2af8"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A9425165C;
-	Wed, 13 May 2026 10:00:23 -0700 (PDT)
-Received: from [10.57.24.48] (unknown [10.57.24.48])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E2F33F7B4;
-	Wed, 13 May 2026 10:00:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1778691628; bh=H+WlKgMjdyEQTBnDx0xCTFAelGgSo4QMvk58RSoQtmk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=J/La2af8Sm6mvK0GrqnjYMUnHO48R9nZvOAcZsGEdcvXbedbZV/jqLa85gbx27Qz0
-	 rscpuBDu46A238ASzw5w4QATWUiRUy6JABB0VbM+apCuxtYdQniCoiN7A047WMxB4Q
-	 x/UI+hNZyOPfR2pvX/1f/ry6iR7Gz1hANRobhsCM=
-Message-ID: <436ce846-bd9e-45bb-bdc2-d2a0fd00dc25@arm.com>
-Date: Wed, 13 May 2026 18:00:18 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Myb2qtmm"
+Received: by mail-dy1-f177.google.com with SMTP id 5a478bee46e88-2f36da5c8fbso6975514eec.0
+        for <linux-tegra@vger.kernel.org>; Wed, 13 May 2026 10:30:22 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778693422; cv=none;
+        d=google.com; s=arc-20240605;
+        b=C9SeKEA7Dpue3+edu5ebi2Mi6RqWb4NTtXlYv4y7ci94nxxToHG2gONQEyC8aKGogz
+         VVmZkNrTHCX6Xpt7uWj8MfoZqwPIi0yOFFB9CLnynXdiLOQ92xG5wMsp284DBpgGqqLs
+         FauXBsEXToF6ZfT3q+re0HrW7kBo4dF1g4g4D5+sIVZNRWzyNcsdl1dTKwQHVhq3YHOJ
+         FRrFzTtkIfiBn+6Ybz8lOjYjCmHKmDvlAGaJYCYwO3d+mpkfztv/V9wdnG5L29mC/8kw
+         fiAl4i3Ppib/Y1CCKlH9hLaKd9CsgS3X8vZNMXHSyW+/fAGi/VqjMRzDjczipRwi+Kcu
+         KDcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=YDUAur+XoWH6JFWlom4UBKGDg0H33xYVizwbBkMvANo=;
+        fh=17p5kk7t4IF2c7fPIfv0FugZuPXxiagBqRmJSmN3uIY=;
+        b=CTjwgF6hgUIuUwL56aPLLuzfULNAS1zHk4cUrWP2CmSKiDKx4nCRDGbJ/jcIl6CmHh
+         2HEZJ7zdukMZrFsbjd85A/urVTgVyIhYjAOelZN7Z54lIVjq+bFJZWGvf9CNqEJxdkbE
+         psCvHvF7vMt1a8H4OhvklliDbRJEb/uSx6RU+t/0DDuLx6HK5efi1AOa3MAhbxBFlaJ0
+         FzEuM4lRvRNVmlA+XKDaBuZFOXvijYawIvHrlunq1V/Tu2okFtyOhlKNPwKQNxdtBD+W
+         q4qA4pKMRR9iyqVRpFoNs2oaC1nwVEZf4r3tZHiy80sH+GOC12q06WE+5qjVts8gJOuZ
+         7MOQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778693422; x=1779298222; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YDUAur+XoWH6JFWlom4UBKGDg0H33xYVizwbBkMvANo=;
+        b=Myb2qtmmEWFHOlXmcUwS8JtGLmsuI7inrmcQU+iPTH42mxnoa1ZxH9YLyLmmoPoVac
+         pTB+UbXzRJ9vMcAYAcvh7XMp8mWMm+QAX6m2+HZKbXJk6pSNXB1rA5D5HpHpvI+XMj3Q
+         /Ai7ZLztC6F9LvQUrKNwk11s+jjCqsWpuddo0O+K4vlBS0xLHZu1b4/I9yK8Aj6Hqey2
+         94SKVCluyhtdUv0ezOIkw9yj+cGUpOrs9Zrp3Ut8bo05fMomAOF9qoBpaujprOYUMmtp
+         gI+KIN9inWDtqC9bxQKllgKE0p7uf9EoUCakd48EApwwOBJCCplAWHdiRy/GNfgsk5wd
+         7jyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778693422; x=1779298222;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=YDUAur+XoWH6JFWlom4UBKGDg0H33xYVizwbBkMvANo=;
+        b=q+vCRsNgZr6A/7IeCINiKssXgfVJah0Uw/P6ZSexBPMErq4SIZqQNkuzAIpn+Gi+yN
+         HKWNgJMGDiKe64KTlvP4E4vAcYIJUn+q+NXvPKW9sQYJv1ge1WKkh0JdJHhiGLA0QyAc
+         SMW38vXAnI2H9xzLSvdNxdu0wn8kMj0c8V4nIyaCQxd3GOQ4ruJhC7AjOSrJUoptZZJ9
+         eQm+fq+1imXuiRowbi1IjVm+jdtzxJVo9Si8KzSvzzPtDhsc83dW3WprBCtlQ/txyU8U
+         pus2dFo1HZ7ahUaAzUGm6/j1GvJ9Ihi+M7m9ovUjaoDw3jE4dsSFoI4PVtlg/6B6qrJe
+         XyXw==
+X-Forwarded-Encrypted: i=1; AFNElJ+g4ddH0sPnTnKaTixC2Tx1uGG0D36doyeiRruz0ijiKD0eEhCXoIYoVfUmj1gUxmyqjXu+fKDjTx858A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGzFn6EVRej3r8Fl21nIB1kAJL6nDhSn3ljeSi31LLE4ze8UqB
+	7yv8FZuNsPt2DUB9ByuGoZsr+qtIRiSHxuJaM8gWTl+WRlpv+YpM1MxxbTkmZTFe4+HGzdFKdqE
+	vnGbCtXRUqAVHmrEgNFQgGNb50NvbWgc=
+X-Gm-Gg: Acq92OF/L8AQ0bAQhV1qQkwP5OlbQ6gc9JPrOIqUgUMyrzF/szgsKfODqYYuVsmYo+c
+	HmS83sgDAHSKB4hsk2YHrZZXynRIkqSP6OuA8Ir305d4anKB5jo0veldguXEzOHr4Jrq+ujswS5
+	VwpmnCse2w2Y3/DXvmCk5O667dx2tpPbI9kiO13n5ggjjM6x1HIIpubdiTj5hDfk/X+GjakrpJ/
+	sduuDGqNWSYthlb5y+VJu71K7A6/N/k4ozvKnAPg3EOAUAjSHyko8guaAewcb/MG/bkXxF+PcGD
+	DeFAbihcEgjRqq+RVMk=
+X-Received: by 2002:a05:693c:2b08:b0:2f3:c3d4:382f with SMTP id
+ 5a478bee46e88-301181aa331mr2513866eec.8.1778693422110; Wed, 13 May 2026
+ 10:30:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC V6 0/8] arm_scmi: vendors: Qualcomm Generic Vendor
- Extensions
-To: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, andersson@kernel.org,
- sudeep.holla@kernel.org, konradybcio@kernel.org, myungjoo.ham@samsung.com,
- kyungmin.park@samsung.com, cw00.choi@samsung.com, cristian.marussi@arm.com,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
- dmitry.baryshkov@oss.qualcomm.com, jonathanh@nvidia.com,
- thierry.reding@kernel.org, digetx@gmail.com, conor+dt@kernel.org,
- krzk+dt@kernel.org, robh@kernel.org
-References: <20260507062237.78051-1-sibi.sankar@oss.qualcomm.com>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <20260507062237.78051-1-sibi.sankar@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20260511135703.62470-1-clamor95@gmail.com> <20260511135703.62470-3-clamor95@gmail.com>
+ <agJ/T8nBGWEoblmd@nchen-desktop> <CAPVz0n173syW9rXy7Qt_N=mChe6WBRLvjRDypcJEC50hPL4OMQ@mail.gmail.com>
+ <agLb6mgP45jHjvNt@nchen-desktop>
+In-Reply-To: <agLb6mgP45jHjvNt@nchen-desktop>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Wed, 13 May 2026 20:30:10 +0300
+X-Gm-Features: AVHnY4LbEcLazP490SpFW2HazY7KluRMMma2mmpgzBcW68oL5O3KVQGdtgY1RmI
+Message-ID: <CAPVz0n2yGALm1Z0j0j6_MaqAOZGL+a8EgCWYQpW0QN1YVf96EQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/6] usb: chipidea: tegra: Avoid controller/PHY init if
+ bus is externally controlled
+To: "Peter Chen (CIX)" <peter.chen@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+=D0=B2=D1=82, 12 =D1=82=D1=80=D0=B0=D0=B2. 2026=E2=80=AF=D1=80. =D0=BE 10:5=
+1 Peter Chen (CIX) <peter.chen@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On 26-05-12 09:13:40, Svyatoslav Ryhel wrote:
+> > =D0=B2=D1=82, 12 =D1=82=D1=80=D0=B0=D0=B2. 2026=E2=80=AF=D1=80. =D0=BE =
+04:16 Peter Chen (CIX) <peter.chen@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> > >
+> > > On 26-05-11 16:56:57, Svyatoslav Ryhel wrote:
+> > > > If the USB controller and PHY are externally controlled, then the
+> > > > registration of the controller and the PHY initialization should be
+> > > > skipped, since these configurations must be done by the device that
+> > > > controls the bus to work correctly.
+> > > >
+> > >
+> > > I find you only control USB controller device add at PHY driver, most=
+ of USB drivers
+> > > has PHY control, for chipidea, it has PHY control at core.c, would pl=
+ease try to
+> > > adapt for it?
+> > >
+> >
+> > Usually yes, but this is not the case for Tegra unfortunately. As you
+> > can see Tegra specific section of Chipidea driver specifically
+> > describes why it has to set PHY manually.
+> >
+> > /*
+> >  * USB controller registers shouldn't be touched before PHY is
+> >  * initialized, otherwise CPU will hang because clocks are gated.
+> >  * PHY driver controls gating of internal USB clocks on Tegra.
+> >  */
+> >
+> > So in order to provide correct work of USB when set by an external
+> > device, both PHY and controller init/add must be skipped.
+>
+> You could call generic PHY APIs at ci_hdrc_tegra.c, after PHY init or pow=
+er on,
+> call controller initialization.
+>
 
+I was tinkering with Chipidea driver for Tegra a bit. If you meant to
+use flag only to control usb controller device init and leave PHY to
+be handled by controller, then yes, that is possible and that is
+better approach.
 
-On 5/7/26 07:22, Sibi Sankar wrote:
-> The QCOM SCMI vendor protocol provides a generic way of exposing a number of
-> Qualcomm SoC specific features (like memory bus scaling) through a mixture of
-> pre-determined algorithm strings and param_id pairs hosted on the SCMI
-> controller. On Qualcomm Glymur and Hamoa SoCs, the memlat governor and the
-> mechanism to control the various caches and ram is hosted on the CPU Control
-> Processor (CPUCP) and the method to tweak and start the governor is exposed
-> through the QCOM SCMI Generic Extension Protocol.
-> 
-> This series introduces the devfreq scmi client driver that uses the memlat
-> algorithm string hosted on QCOM SCMI Generic Extension Protocol to detect
-> memory latency workloads and control frequency/level of the various memory
-> buses (DDR/LLCC/DDR_QOS). The DDR/LLCC/DDR_QOS are modelled as devfreq
-> devices, with the governor set to remote devfreq governor. This serves as
-> a way to get a basic insight into the device operation through trans_stat
-> and provides for ways to further tweak the parameters of the remote
-> governor.
-> 
-> Transtat data for DDR/LLCC/DDR_QOS is now available in this series:
-> 
-> #cat llcc/trans_stat
->>From  :   To
-> 315000000 479000000 545000000 725000000 840000000 95900000010900000001211000000   time(ms)
-> 315000000:         0         3         6         6         6         7         0        30    143956
-> 479000000:         2         0         7         1         1         1         0         3       356
-> 545000000:         7         6         0         5         5         0         0        10      1200
-> 725000000:         3         0         5         0         6         1         0         6      2172
-> 840000000:         8         2         3         2         0         4         0        12      1188
-> 959000000:         3         0         1         2         2         0         0        13       272
-> 1090000000:         0         0         0         0         0         0         0         0         0
-> 1211000000:        35         4        11         5        11         8         0         0     21684
-> Total transition : 253
-> 
-> QCOM SCMI Generic Vendor protocol background:
-> It was found that a lot of the vendor protocol used internally was
-> for debug/internal development purposes that would either be super
-> SoC specific or had to be disabled because of some features being
-> fused out during production. This lead to a large number of vendor
-> protocol numbers being quickly consumed and were never released
-> either. Using a generic vendor protocol with functionality abstracted
-> behind algorithm strings gave us the flexibility of allowing such
-> functionality exist during initial development/debugging while
-> still being able to expose functionality like memlat once they have
-> matured enough. The param-ids are certainly expected to act as ABI
-> for algorithms strings like MEMLAT.
-> 
-> Thanks in advance for taking time to review the series.
-> 
-
-Based on this description I have a few questions:
-1. Why we don't use SCMI notifications for this purpose?
-2. Is it safe to assume that there was no extra frequency change
-    during that polling sampling period?
-3. Shouldn't we sample 2x faster than the changes that we try to
-    observe?
-4. IIRC there was some extension in the SCMI protocol for performance
-    domains which allows to expose the stats like the one above but in
-    the shared memory. Why we couldn't use this? It would be more robust.
+> >
+> > > Peter
+> > >
+> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > ---
+> > > >  drivers/usb/chipidea/ci_hdrc_tegra.c | 36 +++++++++++++++++-------=
+----
+> > > >  1 file changed, 22 insertions(+), 14 deletions(-)
+> > > >
+> > > > diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chi=
+pidea/ci_hdrc_tegra.c
+> > > > index 372788f0f970..593390a818d1 100644
+> > > > --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
+> > > > +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+> > > > @@ -32,6 +32,7 @@ struct tegra_usb {
+> > > >       struct clk *clk;
+> > > >
+> > > >       bool needs_double_reset;
+> > > > +     bool externally_controlled;
+> > > >  };
+> > > >
+> > > >  struct tegra_usb_soc_info {
+> > > > @@ -312,20 +313,25 @@ static int tegra_usb_probe(struct platform_de=
+vice *pdev)
+> > > >       if (device_property_present(&pdev->dev, "nvidia,needs-double-=
+reset"))
+> > > >               usb->needs_double_reset =3D true;
+> > > >
+> > > > +     if (device_property_present(&pdev->dev, "nvidia,external-cont=
+rol"))
+> > > > +             usb->externally_controlled =3D true;
+> > > > +
+> > > >       err =3D tegra_usb_reset_controller(&pdev->dev);
+> > > >       if (err) {
+> > > >               dev_err_probe(&pdev->dev, err, "failed to reset contr=
+oller");
+> > > >               goto fail_power_off;
+> > > >       }
+> > > >
+> > > > -     /*
+> > > > -      * USB controller registers shouldn't be touched before PHY i=
+s
+> > > > -      * initialized, otherwise CPU will hang because clocks are ga=
+ted.
+> > > > -      * PHY driver controls gating of internal USB clocks on Tegra=
+.
+> > > > -      */
+> > > > -     err =3D usb_phy_init(usb->phy);
+> > > > -     if (err)
+> > > > -             goto fail_power_off;
+> > > > +     if (!usb->externally_controlled) {
+> > > > +             /*
+> > > > +              * USB controller registers shouldn't be touched befo=
+re PHY is
+> > > > +              * initialized, otherwise CPU will hang because clock=
+s are gated.
+> > > > +              * PHY driver controls gating of internal USB clocks =
+on Tegra.
+> > > > +              */
+> > > > +             err =3D usb_phy_init(usb->phy);
+> > > > +             if (err)
+> > > > +                     goto fail_power_off;
+> > > > +     }
+> > > >
+> > > >       /* setup and register ChipIdea HDRC device */
+> > > >       usb->soc =3D soc;
+> > > > @@ -342,12 +348,14 @@ static int tegra_usb_probe(struct platform_de=
+vice *pdev)
+> > > >       if (of_usb_get_phy_mode(pdev->dev.of_node) =3D=3D USBPHY_INTE=
+RFACE_MODE_ULPI)
+> > > >               usb->data.flags &=3D ~CI_HDRC_SUPPORTS_RUNTIME_PM;
+> > > >
+> > > > -     usb->dev =3D ci_hdrc_add_device(&pdev->dev, pdev->resource,
+> > > > -                                   pdev->num_resources, &usb->data=
+);
+> > > > -     if (IS_ERR(usb->dev)) {
+> > > > -             err =3D dev_err_probe(&pdev->dev, PTR_ERR(usb->dev),
+> > > > -                                 "failed to add HDRC device");
+> > > > -             goto phy_shutdown;
+> > > > +     if (!usb->externally_controlled) {
+> > > > +             usb->dev =3D ci_hdrc_add_device(&pdev->dev, pdev->res=
+ource,
+> > > > +                                           pdev->num_resources, &u=
+sb->data);
+> > > > +             if (IS_ERR(usb->dev)) {
+> > > > +                     err =3D dev_err_probe(&pdev->dev, PTR_ERR(usb=
+->dev),
+> > > > +                                         "failed to add HDRC devic=
+e");
+> > > > +                     goto phy_shutdown;
+> > > > +             }
+> > > >       }
+> > > >
+> > > >       return 0;
+> > > > --
+> > > > 2.51.0
+> > > >
+> > >
+> > > --
+> > >
+> > > Best regards,
+> > > Peter
+>
+> --
+>
+> Best regards,
+> Peter
