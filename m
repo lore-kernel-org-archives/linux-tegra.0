@@ -1,94 +1,233 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012030.outbound.protection.outlook.com [52.101.53.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58B735E93B;
-	Thu, 14 May 2026 12:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778762446; cv=none; b=uzi+s4uW1KsmZbAuHUm5HQw9sl8IO0uDCrDxLxkPdehgYTAimS+Of3ZuGkvHTonuo7u+ywuhzkbnUHminPQcaqoMstl0N1r+U/q/C/mclfY+bN+SEOP0CRJpz76idTmRL+54yaYsJdYgkJ+fgxVu2EZxW9v107xYCXXKKgjvfVg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778762446; c=relaxed/simple;
-	bh=iWCSZhdPb+8cBMuEmy8gSvTQVeilWYLmuEzyouzd7YI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ioznIQJHJ8oQhxAVLQdfk7z11ejNEfHYSpJJArBizh4+3GTHhn7rlzvDYZ8UzTedm7yPb4ihYTzkClvpZAvvpy0QVMPar+9icdILR7t9aXtaWFinlR+QnuvIcFbIOWkPFONSvdKP2VAR/fdJVmQDzmeSxudlJYOSfyDpLp7nM18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aX870/BR; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7937B22068D;
+	Thu, 14 May 2026 12:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778762955; cv=fail; b=p1qIyJOQjj5+NrHAMcEAvKmIYzCdaVM+9vJIH4ISCHM+ahz9bp0EGffryx5c9yzu+jza0T0FtA2wjg5FkmWSkwvcShfs6WA4f4uMBvd8q8ieQtkCtrABZkDCnHQBjft/J1Jfq5jSfyQ/Uzp++3GTHOmFUrLH21xsCSeUNeYRT5g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778762955; c=relaxed/simple;
+	bh=lWaIiZ16+Irk3FCmiYso28au8ssM+SoZrsopXbsaDBk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tcP+68VUOc/uDVjFQmTkY/ozW6tdrqsiVPa2r/6m97pbD6czg1CvWaY74x2x6r6/7M/cVROaX1WCv7LSHrcy+zO0s/H6Y1xL1SLfoS4KiYTTgC5kxtKmMAj0MpU3mXm7PwjJbE+tTPG8cw8g2/HR93fkyCp7P5R1JjbXtSCaAe0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ocYxtk8S; arc=fail smtp.client-ip=52.101.53.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aX870/BR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A76AC2BCB3;
-	Thu, 14 May 2026 12:40:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778762446;
-	bh=iWCSZhdPb+8cBMuEmy8gSvTQVeilWYLmuEzyouzd7YI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aX870/BR4AkM531xo6QouLrnsue0uIXWdlOfArk/WJtHsanCKyTM2w9zXR28xVImI
-	 aR1ocP432CLGhdFFPANZ2zxuptdM6K4VLf6i9Ku61mNVNhnCi1OxvyG6QZsbxTgtz/
-	 k+TrwGz1rJ2PnAItjV2X6NpSsPFw0BwtEgIddkekqyUdA1cT+b/48EbhV4Dnh5Ff+F
-	 l4gysj8udrc7yx7I+I4SOFbO1zqwGK5j5nxHfAPzLQi4V6OqqS9IEaTTq1vfxaRbI8
-	 sZ055fcAAnQbZClSRkkMy80vdQdMAopGR7BxGlvCJ2QbKHk3kq+7ZbEwpra5IycTF9
-	 BybhmCNHu4eIw==
-Date: Thu, 14 May 2026 13:40:40 +0100
-From: Sudeep Holla <sudeep.holla@kernel.org>
-To: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-Cc: Lukasz Luba <lukasz.luba@arm.com>, linux-arm-msm@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@kernel.org>, andersson@kernel.org,
-	konradybcio@kernel.org, myungjoo.ham@samsung.com,
-	kyungmin.park@samsung.com, cw00.choi@samsung.com,
-	cristian.marussi@arm.com, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	arm-scmi@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-pm@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com,
-	jonathanh@nvidia.com, thierry.reding@kernel.org, digetx@gmail.com,
-	conor+dt@kernel.org, krzk+dt@kernel.org, robh@kernel.org
-Subject: Re: [RFC V6 0/8] arm_scmi: vendors: Qualcomm Generic Vendor
- Extensions
-Message-ID: <20260514-towering-heavenly-earwig-b18feb@sudeepholla>
-References: <20260507062237.78051-1-sibi.sankar@oss.qualcomm.com>
- <436ce846-bd9e-45bb-bdc2-d2a0fd00dc25@arm.com>
- <5494a379-1e49-4551-a5f0-50d0bd7cd7d0@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ocYxtk8S"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=c6aeOrAnZMDYAQ3WIMZMXKG0zBVkGQhPfivmIC73bpl+ewno+9mcnj/dLUcIqJAAfyFWF/XAJ0ywlFMi9ZO+La8QeMaLwQ5bOSSVZrZthR6X7Qo9NcBeo3+/hmPK8gDJ7TdVjFYq2bQakun1ah00/NoXjqSIlcMO6hgZFytwKrmMID0/9m50WZcldS+YWWvUJJd3uNkkTARhq3Wpsh3cFynk+x/E080LTualKb0jutKYDKP/dNxxf7vWCIvEcmERMcReUmaTsI/72ZvzqBYDI6OiFPu6iT9ZjoKy8zycOMyAKTLMSyzpEpEaT4+1+ojPnNyXTWtbbsz/3KueIqiakg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DSTfPlQ9FQwAulzXu3MnTyRMptjJl9qLqldiQfxMbtI=;
+ b=QD8HAthueNTHYN8iyUvNfqI+me2MlfySoJdno0Uhngt9K4mSVVRzXobUpLn9piTJaf/OY9XrES6J37V5DS7ZKk8kJoPR9Ymr3p8J6ItI6q9XgdG6osgahXSmjwN0LLO4anfbCa/st1w986GhqnNhdptE3xTL8KbPbCTptyJHCD8MPOAMMHnzXdKq6Uk4Z5V5OS6ybfOPPTvEqRdTgaFgqQ2kmChJJ3ERnuvzWz+TtvMTF+uT3sqAiFG97JKYKUnL9D7jlL2nQDrMif7ptMsJKXPpEDsS4EbDkGA2NCW4G5uUQpS6B3I8cRQk861uSdOUNQeUwNiWRpZM2CgpdTE4Sw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DSTfPlQ9FQwAulzXu3MnTyRMptjJl9qLqldiQfxMbtI=;
+ b=ocYxtk8SUQuBqEc0YmtaF16OfIm59GcYeHdiLZapkwYfup9GwVgqvBOhACdc5IvGo+1bpXvt4pyjQq76BtYu9LGcisgDjhoZ7DGmTS5pslaVq5wC7Rv8Ikzl7C01Nffy2uaA5RnAD9TZ+6jAKT0TVIr7hgn68MBfHFqD1JC7HTrFcdgYg0JkydoY5gT4BK5qJ00aIsqpaMzvs0plbzJsmhUXLiibjZGuVKtG+JXMWFdr4nTWN0folTrbrEuvwVs9WvlryVZ/ZS5zQIRmOw26eeUfgfYejk7xea/6VyJ9RQCOYsryIl/MajScejvn32wubESK/Qrafc1cBxaP1Bbhzw==
+Received: from BY5PR17CA0040.namprd17.prod.outlook.com (2603:10b6:a03:167::17)
+ by LV8PR12MB9133.namprd12.prod.outlook.com (2603:10b6:408:188::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9913.12; Thu, 14 May
+ 2026 12:49:07 +0000
+Received: from SJ5PEPF000001F6.namprd05.prod.outlook.com
+ (2603:10b6:a03:167:cafe::f5) by BY5PR17CA0040.outlook.office365.com
+ (2603:10b6:a03:167::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9913.12 via Frontend Transport; Thu,
+ 14 May 2026 12:49:07 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ5PEPF000001F6.mail.protection.outlook.com (10.167.242.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.25.13 via Frontend Transport; Thu, 14 May 2026 12:49:07 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 14 May
+ 2026 05:48:50 -0700
+Received: from build-pshete-focal-20260330.internal (10.126.230.37) by
+ rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Thu, 14 May 2026 05:48:49 -0700
+From: Prathamesh Shete <pshete@nvidia.com>
+To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+CC: Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter
+	<jonathanh@nvidia.com>, Prathamesh Shete <pshete@nvidia.com>,
+	<linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/2] dt-bindings: gpio: Add Tegra238 support
+Date: Thu, 14 May 2026 12:48:34 +0000
+Message-ID: <20260514124835.108532-1-pshete@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5494a379-1e49-4551-a5f0-50d0bd7cd7d0@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F6:EE_|LV8PR12MB9133:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1f148728-f18a-4171-9e45-08deb1b72fcd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|7416014|1800799024|36860700016|11063799003|18002099003|56012099003;
+X-Microsoft-Antispam-Message-Info:
+	lruy8PG7GyKDKiuLnxrZdpPC/kyHQuk8x9Fzl2i2MwJiXQydeD0Dg9IzHMmu/zOp5kSdU6xrI7HPfH5KipBe/2ROBJC9dz3ZiOnBrYbk9Rl9/HhsavJHs6FW/Ryh3AQEO5bV/y7sZVH2Ba9eP9qNaylUTL9enNylGC0SOYvJ0xiVx358MpjB3Jcd2CUFM1cPCj1Iu2WjUpoLgOXa7XKK4vtdjJAE5qZFF5QDKsh84awuEzpVWXmswUEk14XvQGZ8ogHD1yBQVciLJ62lm95jhAIS3IgUUM+z9/IeMNZ8Vu0MUy8XQjBSc5YlNZ7a2C3B4WMGsS9JmWeGp/D27eDvJFgLOFA9zeNiRGOXZ+uIwbRl0a01zHEfxU2Lmzq8dF7L7FsapQ9m5WUxqkhOl2ObUt0387u7/ifXd18778B9vWRA7AF81zz56TVlqqiqi4TyC1RwTAptQsUqt5aTxCac1b5uVZtcwiNxCTYYuSuWjFTjG0klMTBitT8VRN/O+DrIO7fyMf4lbbpJ+2zARuV9c1dB52xQ2j6yqv104jfv986GPCv634HtEe8B+Pt3KZMD8uIPY0fHOhQdoWoKJm68bgTPs3r/2gUzkdLMnjdcvjkPxxqZOlMdS3lmQvdQmlavh2OVPBBbM6q20x4twIxX8PWXgxpVSZuYiW5FnsavIdVKOib0ibUrGXo0oy7V8rOH1FGIPp5qm0cesnRemaLtn5tUW5cpVedBHdnOQqTdIVk=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(1800799024)(36860700016)(11063799003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	8Rw212EpI/8jjVTlLeMbKrmuA4ZOETv3jzGQdOmqCCxoSmnx+rUfBeHvtWmFnXo+kydtwFIuF09gQlbwXKEvZbVD7bqqZWjCZMu8J5uzha+aV8QNyoaMmuM02/HL1rHHzO4ft0ETH7WiQYZOi3er2OgtfWkBuGEWDQQ3pbHMW9IusMh/57z/f5gA963BwuWIq7Ce5Dg/ho18fbHb4bVKkXE1Ow9HLwQWoZ8LlmwDNxqd8tgFJkOi0N8oIb9+7h243tusWJ2SIWZ/7bWdQ6HeJswX7CMQ2yTKyBKHU1DoAcmWVAtifJw24WVQJA6isDHI265W/A89MGuxXKj//tL0rWUGEWXshZtSxaILHVNuvpzHzE0Da7pZxfv3rHMNRctH37btfc04miKTMizhIGP/bziOxF91/vOeN4DgsR4qtLPKu83VO5JG+G2tiyyp7HSw
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2026 12:49:07.1887
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f148728-f18a-4171-9e45-08deb1b72fcd
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001F6.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9133
 
-On Thu, May 14, 2026 at 05:11:41PM +0530, Sibi Sankar wrote:
-> 
-> On 5/13/2026 10:30 PM, Lukasz Luba wrote:
-> > 
-> > 
+Extend the existing Tegra186 GPIO controller device tree bindings with
+support for the GPIO controllers found on Tegra238. Tegra238 has two
+GPIO controllers: the main controller and always-on (AON) controller.
+The number of pins is slightly different, but the programming model
+remains the same.
 
-[...]
+Add a new header, include/dt-bindings/gpio/nvidia,tegra238-gpio.h,
+that defines port IDs as well as the TEGRA238_MAIN_GPIO() helper,
+both of which are used in conjunction to create a unique specifier
+for each pin.
 
-> 
-> > Based on this description I have a few questions:
-> > 1. Why we don't use SCMI notifications for this purpose?
-> 
-> 
-> This is an attempt to retrofit firmware, that is already out in the wild
-> running on X1E laptops and Glymur which continues to use the same firmware, into
-> generic linux frameworks, so that it provides some useful information to
-> user rather than it being a complete black box.
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+---
+ .../bindings/gpio/nvidia,tegra186-gpio.yaml   |  6 ++
+ .../dt-bindings/gpio/nvidia,tegra238-gpio.h   | 58 +++++++++++++++++++
+ 2 files changed, 64 insertions(+)
+ create mode 100644 include/dt-bindings/gpio/nvidia,tegra238-gpio.h
 
-We cannot accept changes that rely on firmware interfaces that are not well
-defined. This is not a comment on any specific interface, but if an interface
-is not specified with the same level of rigor as a standard specification, it
-should not be expected to receive mainline support.
-
-> We already have a ton of firmware changes suggested by Sudeep/Cristian that
-> will be taken into account for the next generation of SoCs, will make sure
-> this is accounted for as well :)
-
-It is helpful to know this but also unfortunate as we have only just begun
-reviewing the interface and refining its shape. Please do not rely solely on
-the review completed so far, as the interface may still evolve. Until it is
-merged, it should not be considered accepted. This is why I am insisting that
-the interface document be reviewed and accepted before any driver changes are
-made.
-
+diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
+index 17748dd1015d..adeb3b3a2902 100644
+--- a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.yaml
+@@ -85,6 +85,8 @@ properties:
+       - nvidia,tegra194-gpio-aon
+       - nvidia,tegra234-gpio
+       - nvidia,tegra234-gpio-aon
++      - nvidia,tegra238-gpio
++      - nvidia,tegra238-gpio-aon
+       - nvidia,tegra256-gpio
+       - nvidia,tegra264-gpio
+       - nvidia,tegra264-gpio-uphy
+@@ -163,6 +165,7 @@ allOf:
+               - nvidia,tegra186-gpio
+               - nvidia,tegra194-gpio
+               - nvidia,tegra234-gpio
++              - nvidia,tegra238-gpio
+               - nvidia,tegra256-gpio
+               - nvidia,tegra264-gpio
+               - nvidia,tegra264-gpio-uphy
+@@ -180,6 +183,7 @@ allOf:
+               - nvidia,tegra186-gpio-aon
+               - nvidia,tegra194-gpio-aon
+               - nvidia,tegra234-gpio-aon
++              - nvidia,tegra238-gpio-aon
+               - nvidia,tegra264-gpio-aon
+     then:
+       properties:
+@@ -192,6 +196,8 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - nvidia,tegra238-gpio
++              - nvidia,tegra238-gpio-aon
+               - nvidia,tegra264-gpio
+               - nvidia,tegra264-gpio-uphy
+               - nvidia,tegra264-gpio-aon
+diff --git a/include/dt-bindings/gpio/nvidia,tegra238-gpio.h b/include/dt-bindings/gpio/nvidia,tegra238-gpio.h
+new file mode 100644
+index 000000000000..8a616a1df54c
+--- /dev/null
++++ b/include/dt-bindings/gpio/nvidia,tegra238-gpio.h
+@@ -0,0 +1,58 @@
++/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
++/* Copyright (c) 2026, NVIDIA CORPORATION. All rights reserved. */
++
++/*
++ * This header provides constants for binding nvidia,tegra238-gpio*.
++ *
++ * The first cell in Tegra's GPIO specifier is the GPIO ID. The macros below
++ * provide names for this.
++ *
++ * The second cell contains standard flag values specified in gpio.h.
++ */
++
++#ifndef _DT_BINDINGS_GPIO_TEGRA238_GPIO_H
++#define _DT_BINDINGS_GPIO_TEGRA238_GPIO_H
++
++#include <dt-bindings/gpio/gpio.h>
++
++/* GPIOs implemented by main GPIO controller */
++#define TEGRA238_MAIN_GPIO_PORT_A   0
++#define TEGRA238_MAIN_GPIO_PORT_B   1
++#define TEGRA238_MAIN_GPIO_PORT_C   2
++#define TEGRA238_MAIN_GPIO_PORT_D   3
++#define TEGRA238_MAIN_GPIO_PORT_E   4
++#define TEGRA238_MAIN_GPIO_PORT_F   5
++#define TEGRA238_MAIN_GPIO_PORT_G   6
++#define TEGRA238_MAIN_GPIO_PORT_H   7
++#define TEGRA238_MAIN_GPIO_PORT_J   8
++#define TEGRA238_MAIN_GPIO_PORT_K   9
++#define TEGRA238_MAIN_GPIO_PORT_L  10
++#define TEGRA238_MAIN_GPIO_PORT_M  11
++#define TEGRA238_MAIN_GPIO_PORT_N  12
++#define TEGRA238_MAIN_GPIO_PORT_P  13
++#define TEGRA238_MAIN_GPIO_PORT_Q  14
++#define TEGRA238_MAIN_GPIO_PORT_R  15
++#define TEGRA238_MAIN_GPIO_PORT_S  16
++#define TEGRA238_MAIN_GPIO_PORT_T  17
++#define TEGRA238_MAIN_GPIO_PORT_U  18
++#define TEGRA238_MAIN_GPIO_PORT_V  19
++#define TEGRA238_MAIN_GPIO_PORT_W  20
++#define TEGRA238_MAIN_GPIO_PORT_X  21
++
++#define TEGRA238_MAIN_GPIO(port, offset) \
++	((TEGRA238_MAIN_GPIO_PORT_##port * 8) + (offset))
++
++/* GPIOs implemented by AON GPIO controller */
++#define TEGRA238_AON_GPIO_PORT_AA 0
++#define TEGRA238_AON_GPIO_PORT_BB 1
++#define TEGRA238_AON_GPIO_PORT_CC 2
++#define TEGRA238_AON_GPIO_PORT_DD 3
++#define TEGRA238_AON_GPIO_PORT_EE 4
++#define TEGRA238_AON_GPIO_PORT_FF 5
++#define TEGRA238_AON_GPIO_PORT_GG 6
++#define TEGRA238_AON_GPIO_PORT_HH 7
++
++#define TEGRA238_AON_GPIO(port, offset) \
++	((TEGRA238_AON_GPIO_PORT_##port * 8) + (offset))
++
++#endif
 -- 
-Regards,
-Sudeep
+2.25.1
+
