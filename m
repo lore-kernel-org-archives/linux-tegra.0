@@ -1,62 +1,65 @@
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013045.outbound.protection.outlook.com [40.107.201.45])
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010026.outbound.protection.outlook.com [52.101.46.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5051C3B19A0;
-	Thu, 14 May 2026 08:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF59A271443;
+	Thu, 14 May 2026 08:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.26
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778745816; cv=fail; b=p+Xt0FDI/l/ct/O2ctzya4oAkCjlRRWtOqmLkYLGrJ0yokuKRpW5xzk52HitwrkPf8GAUBUtk+bw3R77qfUC9EKVBAs6TGDqOiESl5y0qiFglKCDhuyDb6uI8WRhfwE6FSrPUR9L6PAs76ane30kRJZ0OVLUzQ7VUE7ME+5CxCA=
+	t=1778746680; cv=fail; b=VuBo1Hbut44N4heX2oJPb6mpwiGztrURF6J2U8wyx3L8LgFVooLVtJRF6sasGNUP8VuZ1+nGPk/hpY1LtsIyZL9zWILFP+wraBywqocRgwHrJVbHblWFiHyNgrB8wmau9xc4xiS9JWZyKCaYA0bXS0ibC72oSRdLdppK1Q79AME=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778745816; c=relaxed/simple;
-	bh=KrX91zWvv/u1xQdFYNDkLstreSVNnmJFojkIdgvNcqA=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=exRog92x6D9pwh+fUWVjhlvjNw594KZmyV2hcmqegXMgmhJY7HfvfcyoWvncBnctsoOP5RXpyaQAWJqWcX6mV5ulOf1qCjrg3Oj8geB2nJVY8hHKXXRXWFR4jW4XBN3OSeMGqRo3AzuHu5OJABNHiTvC/puATgasoc65mkKZpYs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NCx5Z5mQ; arc=fail smtp.client-ip=40.107.201.45
+	s=arc-20240116; t=1778746680; c=relaxed/simple;
+	bh=IkONeupp8J9C423okMaDvCHXH5SMQgPIGcy5MiRtTtw=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=J50B8xONaCFBITpLIB4W92J5Czk6QV3XQmiawpQcNUpu8BiZcNmlcVWvhbd9dEmSfljzkD7dLXH+0FEA0joyLxy/BLeuFuHM1xXt1CzSd3agWLWr84kyFuneeHGmSULH9f0imXdHIR3uXddk+UTCG/vPbTxKfl8HdFAkGZYLeD8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FkfxVMZn; arc=fail smtp.client-ip=52.101.46.26
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NCx5Z5mQ"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FkfxVMZn"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=E/395c01Qn6yutgXaVjIPSwsIRlUOZL97r6jvEDHSrAqwXsq4QmNACTmoZUMR8fpCesF67Tgd+bTdUhA4zVavbDMHTVOS+MuxFrBpi2tdyDHtjHJ8p+FlQ7w84EJO0P0j9az8gTbjmoPGDq17fmyp/DbAOOD1UIM9aEEQdfNYG8h59Y+msyO4jBkeDhyvVXp41yM+afTpuJV5IWujFE1xqm1JkQVaOKW0ovzEEiP8PMO+VJL5FcZ9HqqpqEjgIQXhovuPH6x0kef2GbqKOiwBGGwvec0cx7nRV2L8ny5WF8kamNpMzHDLl7miEtPYOUIc6bN9LfIHAW3598rf8AH2w==
+ b=MRZv1aXAxda4FjxmxOiB5wjs1cw78iart3H3ILMYV6Slws52/5mb2Vs09BFthek46cbPe/jpQzCDU5fjf3p9pQRDdMX+ZtDVFxaJvtSCoa6uRJekksi9GInnI0Ai7yzwQuBSsCI4xI3j8+neV51p4F3KxEW4QUHDqLl6Mb5WTP7UeHrTXzlzTYwz7EkUfoEl3CVCx8bkYsBNZQXVyRXZUsuBb4VedaHxArYtY9mPU58eXJvMNpicv4TmnEbXRgcorC0tirFkmP+5dyQudfr7uRdWfLHOasMUktf7+fcgtFx4Q1bhPmw2wMUuxYkcPy8d1u2d3NHIangOrdhERFZBSw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m/xMHwkLrujIFt3Osc7IyY8b9pvxuZ/4aNh9oWIVHJE=;
- b=jf+vrsqFmC9ji5NP02LmAS/X4TXBp4ajA3skgj//5SdocH3Tk+B2MiI3yYeXA+cJKXQabUX13B+D6sW4nrTel1xqzaysMuahTWg04/eN5C+Pwegfmx985bcLSTfG+3xHZAwfzjek44QIeXnR7gnCXgYGD5AJRvY0fB2VN8tAPdStV9yCa4YHwbjXbZ0RlqIZUA178L4Pc1uvF1ywZmNO2qZnCsASnb9qQmiBCIHe2pKm3uT9m4mjEgLSmH605rC1cqN6nFS12ifmTMptGFyWpHw5UFbLJSxiIbuZO4AWY2Ca1J4+kdliDc4HtChPLAstRuhS0wafehaD0fLXftlAjQ==
+ bh=zxv8zaKprDuAnW7mXyeuSUTCeGO/1DPdtKX9vmHX+Fk=;
+ b=JtHRY6VQ/IadbCVKjhCqO4dTofFh6QmpELRanETc+GtRfkO7sCx8dogHI84M2vXhTNFUu7KgQl2XLR5iHwyLAJZpFTjyg4wWjjkeR+bIas6MVuxwnrSs+zh6yIRjtrVZuZTIqf6c4DNxNyNLhR8txB9FUitcfnbnWUdl2QWyshLMQ/gXZRGRETv+qRw/curT4uGQQrDsxyRhGDHCttKd3CdY38R1/WQeTdGHlVnBPmZvOa3v8gz3czdQJKpqNyyDFIzphqXRE7o1wQqCEVPa5NjGdZj6WERm7GwdIG8ConsFKDKODLUimr62lHkltWjY0C3mPSw1feXlLmGGAEGQGA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m/xMHwkLrujIFt3Osc7IyY8b9pvxuZ/4aNh9oWIVHJE=;
- b=NCx5Z5mQgQYDxDYjej/ev8kJ0hjSRBcdjmY88pUKaMD7PzjVnJVE6NnUGCd6XR8VDkP3o4qESRknpjH1+vsDSA7y62gE2NjhRQEwEa3Jrh/qUAa2LttfGpQQhmBIcAEGWhiQL7XbDH46vMNmksykfdn2vee365ZfG46UxDkmMbNVkRTPSN9zHU0WePPlOHa192gg0vV/4f4JqpQ+AdGEFhotgualVg8l5p78fKppyyq3fY+m92y2f6HQWBZstXma+FvanZoEG0NNIyxQkxm2/l4LfAD8kEO1i3dIn4Y80h8NRmU8DW29VKxgGngcum3hnthAEC1Jrg9kroVCsS06AQ==
+ bh=zxv8zaKprDuAnW7mXyeuSUTCeGO/1DPdtKX9vmHX+Fk=;
+ b=FkfxVMZn5VLfwrg5J1x/MjaU474LfQYx96tu/REqSIwNIqMF4iOlfnXAxdKoBsZVOemfQWJq3a/qK8tSJxVx0LYJdobf7p6jX/tzOGmfQD2eZ39HYD1NTxK7QXZOwN4PVzA1M69FUcgZv6XEJPqnpRaav7AsR5DWpZ1G6pSGetwNy217e9fPvegEY+1TOdclzI61Kw8gHX28UdPqJJVLxoEdBE/dsjoTqoa0e08q23irALETgNoFJSA5Nyh695nHo6klF7l6+YJbm8/DqTvVhBjaj41XbS3JhBlnRDluQkLE0PmHjO2oiYTJ+LmIKLbTfpu+fnodvd5cM/orPvTJJg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
- by SJ5PPF6D27E3EA3.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::998) with
+ by IA1PR12MB6603.namprd12.prod.outlook.com (2603:10b6:208:3a1::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9913.11; Thu, 14 May
- 2026 08:03:31 +0000
+ 2026 08:17:54 +0000
 Received: from DS2PR12MB9750.namprd12.prod.outlook.com
  ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
  ([fe80::56a8:d6bf:e24c:b391%6]) with mapi id 15.20.9913.009; Thu, 14 May 2026
- 08:03:31 +0000
-Message-ID: <2a75a688-2bd8-4f74-83cd-7da80538795e@nvidia.com>
-Date: Thu, 14 May 2026 09:03:27 +0100
+ 08:17:53 +0000
+Message-ID: <53e92651-44b0-44fc-8340-28a3b311d06b@nvidia.com>
+Date: Thu, 14 May 2026 09:17:49 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] soc/tegra: fuse: Use device-specific instance in
- suspend/resume
-To: Kartik Rajput <kkartik@nvidia.com>, thierry.reding@kernel.org,
- kees@kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260514053518.2402597-1-kkartik@nvidia.com>
-Content-Language: en-US
+Subject: Re: [PATCH v3 0/6] Add Tegra238 and Tegra264 pinctrl support
 From: Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20260514053518.2402597-1-kkartik@nvidia.com>
+To: pshete@nvidia.com, linusw@kernel.org, thierry.reding@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: webgeek1234@gmail.com, rosenp@gmail.com, linux-tegra@vger.kernel.org,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260427134231.531222-1-pshete@nvidia.com>
+ <e134911f-e4cc-41ab-be41-0c559790acde@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <e134911f-e4cc-41ab-be41-0c559790acde@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PA7P264CA0035.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:34b::18) To DS2PR12MB9750.namprd12.prod.outlook.com
+X-ClientProxiedBy: LO4P265CA0075.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2bd::16) To DS2PR12MB9750.namprd12.prod.outlook.com
  (2603:10b6:8:2b0::12)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -65,124 +68,151 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|SJ5PPF6D27E3EA3:EE_
-X-MS-Office365-Filtering-Correlation-Id: d7b1e34a-4bc9-4474-3090-08deb18f49e4
+X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|IA1PR12MB6603:EE_
+X-MS-Office365-Filtering-Correlation-Id: 82745dc7-6ac5-47ee-0d6c-08deb1914c0f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|22082099003|18002099003|56012099003|11063799003;
+	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|4143699003|22082099003|18002099003|56012099003|11063799003|3023799003;
 X-Microsoft-Antispam-Message-Info:
-	G0Tza4KmSovhA+JyYn29+Nu8l9pg8I95L1kl2Vc5TCLh7/EtSCrcGb42zaGMUOVAIn5gML1n8Ecgb8c+9aYI0o73AbEwhXAMD4JPOMH65TpYceupeGmsDGCn+MPb3M/miqe82/2KZ3Wu6vj+W+gai2e8O+pXUQ9IBgMwpGGQVqv+ESHCbdND6l3KwrIToqB3KFbEA9J7YEYceinAyQVwjBXxcJtrZlI9JGyI6Dof4+/SByiwIZegQ4Xlopsi1/3gQ68ACvlL/z9GDbJvUQZoRKlSyrkbU8ZSpSyfnw7PmdZhSKR0viMpJ33cLsBCq9S3sgLgB0/4JtvHoM3tcAYYi5c618IppQg19eAr0aJM/+sZPGJSGsRxd2ywSIodlh5YHNu+cd7ywhKvjDptebrqI1g3B07FdTScuxNo3wzukYDrSHCI1wPbz/r+zg29fkLvs9wpHpcLxwEYjM6KVO8CwumnW5hc8gI6gC1Q39aPp384hD9PHc7E0BLFj5DSHIfXkbQJnDTvM8XTiPbYpeytgcbwLGnjRirz7tveyOmmM0CDOOTM4yKCeOBqfH+HhDMVpw2CAG8IzF5A6ef6c3q56jLu0FoF47d7ZbKcfLb3ppguD4u0Mb+X04ypJVYZP64dovWoXabU35NxYItAyrVRHNT9itMvi/yaf6iUzJVV8MWqg+7Bnl+6d26AmpsAouNP
+	5IJBDotND5Wz9AMP4dK1OLtaT7Q1tLZ4PEMfUw0ayRmv6lXGQ0ZKHGw/Py9ywyLETlQ+WkIQrU+EHHGa1Jif0x2vWDL30CAhv4SAdsLJlKpLIg47MaxT0czBLwroUwt/X/JCEF06mwvCLhAE6Izz13O+0Ph8KtyvgEHpZLVdj8q115FnFz0dVulcQZTazhRtZ5SFqiDPNKMQxWhlxENQpTCguHXuRcPyDBxiFfmEQMoBKRGNNREk7cmj4xDg4eYGHq8q8UrrT4zpa7Cv0/7G4UD4j6H/Vxeak0lqY48ca29iUZDTWnxnVGDGwTymkyMoaFwamrixiRjJivQJojZyfrA/jlOvFF57pyz5YxvXvhS7LKcQEM2TY0LZ/M9Mk2vgSAsd9GFNQgiEs1eTfGKEZGZarcY8MxkVggi4cFlDbWRHvghd35OR/VSTJzB7LsTINgCo6fRR5Yy6HeXuEsX6iI/MM0f1Gznxdt1HaOhTwHn1cbag/d+6kV8LqUIvknbSi5i1SWZ2tKc8o/Ryj83MGqi9eg3n0Er2UEyeymzCTU+ubFg5qY+fczU+BTQx+I3vvzQwwWcrJZtGxnjG/y4iPTdkYI0frNz/bvZ1q5wAK6ygnWTxhS+kGS5K4ncxQoYK+34WvaAgkgepdMOv5E2IOO3mfvWhLiWPC23c6JgPHDrPCR/NCFwu+7VmDbIC1JA3
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(22082099003)(18002099003)(56012099003)(11063799003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(4143699003)(22082099003)(18002099003)(56012099003)(11063799003)(3023799003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SDBRVHZlZDJNa3VnbnVMZDlDOXJxL2Z3dk9Sblo1ZElpZ1p6ZXR6ZUxpWE91?=
- =?utf-8?B?OXRFWmVJV0l1MVhONlpmYzl0dUlseW43anNwNjYyZElOdituZ0p6ZnZLQ1lt?=
- =?utf-8?B?NHFrS0NBbVA3Zk5jZzlFcEF1dU1zb3VxNkFCdVYyZGhOYlU1OG5NN0g2WkdG?=
- =?utf-8?B?eVc5ZFFXMHZ5c0Jibmd2YW9WTVRTOWg0YVRPRlExbFNUaWpZYkhUVWRvOGVa?=
- =?utf-8?B?Zmg3M1N4OUk2ZlJ4Zk9DV2ppcXRqcUUzbGxrSy9kbGdDWkpJMjZ1dEFXQmQz?=
- =?utf-8?B?bXgwd1Y4cVIvdkpRV2l6SlRDL0dVelQyVVNxQ0lOWlA3Vmg0WDlocTRIK1hW?=
- =?utf-8?B?ZEFvUXllZUMrWWV5VmlnaXJOMy9QVkJYdFlTMkFyY0M2WU9hZ0laSjhyMGZt?=
- =?utf-8?B?aEhDbzdkWjFkOE9JSFZjbVVmMG9PQndMZTV4cnNuQjFiR01mQmU0RldaWTUz?=
- =?utf-8?B?d1I2ZTFQQW1BSEhKN3duWWY3cThBN25ySDdvUFNoSytOS0FtRkxXNVJpMXkw?=
- =?utf-8?B?ZjM1SGJBNFMwM25xbXlxemRuTi9rQmgzdmJoVjM0UlM4cVBJUFdmTExRRm5F?=
- =?utf-8?B?THpYRW9nL3hEblhJWDk3aks5K0FJenY3b1JEK1NqdUhDZ3VXd05VdnhmZ1hl?=
- =?utf-8?B?ekxhbWlhYkd1RG5EZ0VjMjFJTUVnaGNhQkFQOHNQK0FaaHdtZnpIL1ZIWnJq?=
- =?utf-8?B?dUVETXFWOGVoZFpwVjRFK2I5a29VNlcwLytReVJ6YkNKdGhJSlMzaFErc2xt?=
- =?utf-8?B?TktUNEtZcWc5QWZsOER5ZlFqajZydldpdmxvaW4vc29hL0NwV1hVdlhxZ002?=
- =?utf-8?B?QTB0a3lkU3NpTVJUWWFhZFdJdXBXZ3l2WDI1Z2JYVVd1S0xRMDNtMTlWRUlM?=
- =?utf-8?B?bG1IYmlrc0JFZWFBU2hVT0gzak1hK3c4VVFnMEVsQzZCZ1NwYWZoOGdmSnJh?=
- =?utf-8?B?aHhIY2cxTm4zc3Jib29SMkhqc2ZIRmx0RGJqMUZoK3FmWEN0RnpxeStJMmNj?=
- =?utf-8?B?UG83ODgvS2ZpbkJ5SWsrYzMyeUQ2aHMzLzRzdDByaExRbjRlNUVOSWVTODJJ?=
- =?utf-8?B?MzlTVEU4dldHV0RzaktBU3hyLzQ1ZGVyeHdDVnc3RmYwelBpK1cySHhpME5B?=
- =?utf-8?B?UmoySmtoSXhicmZ4a3QrREs4dFpqNnBKT0RKUmtWV1V1aUJ0UmFyK3lqSVRP?=
- =?utf-8?B?UjUyeVZ4V1owelh0SFNuWkZWaUJaMFJaM09QNWdpSndIV3lVa3VEeDdUa1Zv?=
- =?utf-8?B?YWZwV1cveHlFcU50YjhqWTRNYnZQY1JibUxmTTJkdU5tY0duZ1ZndUNaUUQy?=
- =?utf-8?B?SVZxUWFISVZhZlpKS1ZvQmhjM2JGNHNURXZZb0VhT2I5RG1tZXdQNGdWN3Nr?=
- =?utf-8?B?eENaczFETlBkUU95S1JWb3ZneE95MGtTeG1yRFZ1VnllQVNaaTM1R1ZzWVpQ?=
- =?utf-8?B?M3VjcFNORVhTRXhlRHZ4Q01nOHR6RmhXdExsdWh0K1lyZ3pucjR3NzBxWjI4?=
- =?utf-8?B?MG1CaUY5LzlvcmFWb210d0sxaTYyKy9VTFQ2SDc2MzRyQnFRZy9xbjdVWWg2?=
- =?utf-8?B?bUJ2UHRMb0I5K09GOTh0ajU3aVpmTnlZRmlra05VbUloRWQyOU9KbmIwb3B3?=
- =?utf-8?B?ZEFsazY3S3dyM2JvUWowUWZHN3doQVZtZlczekNrNHFZdmEvVFhISEgxN091?=
- =?utf-8?B?NFBlVEhocitXbWQ5RUlDN0M0clBQSERwOWV6UWpJcjViMlUySUJqek9Uc0R3?=
- =?utf-8?B?MlVaYU1uTEYycDJNRytRTit5bk9qcFp3bTlxSzUzcCsxNnBXWkU2UEk2dElp?=
- =?utf-8?B?dU9SL1p2OXN1WXNVWC9ETTI3bGJINVVXWXR3Q25VMFN6ekdENXhEL2tvVVk5?=
- =?utf-8?B?TFlHSzJxZS9UUzZIclphNWhSSXlUYXJJem4rUWtBd1JBVjRBQ0FQY3N1TVM1?=
- =?utf-8?B?SEZ5RU1RRlFWWkFVcmNQNmh4VmxGZUF2a252aDVxVW53VDJaQVNPSHRLVmRa?=
- =?utf-8?B?R1pxQmVqQ0xKN1cwWDhOWHRlS0tJM1cxaWpjeVNvQUJ0OXFPZGZ5aHVJcXJD?=
- =?utf-8?B?MHNsY3FOZHdMUEtRMUtHMGZQV3p1cElJY3JFTW5Wb1oyTUxJbHZsdHNXS0Zm?=
- =?utf-8?B?TmxaWFB3dHBqU0ZPbXJENlIxdzlrRlVtdkMrQktudFhXS25tSk9kditmUm1y?=
- =?utf-8?B?R29yVmtqaThMYmh0andBWGlPV0Ztb3MvMFIrWXFIVVJkWXRaWFEzR1EvR0ls?=
- =?utf-8?B?T3EzQS9mVXdqVm5hQm52bDNpTkF3QkNiSE1Ta1VMNG9sQ1d6aFh1MUxGQjlz?=
- =?utf-8?B?amU5dEYxalpjYVJZNytZZFI3UUhtU2ovZytQcEd1SytVVGtwdDFxQT09?=
+	=?utf-8?B?TDdrUjJGc2VWUzBOT3piWmExdmpGd2U4RU9zd3doV2x2eWQ0d3RIbm4wK1pv?=
+ =?utf-8?B?amFCcnUzNXhRTm5hdGxHZHgyM1hQeGowUENOMHVRMXJaNnM0WW9oa1dzZXR1?=
+ =?utf-8?B?YUhtejVRNVFUTm1aMTRjTWFDdERNOTlGL3MvdXFXaFF0Vnl5bU5DOWFFUlI0?=
+ =?utf-8?B?WnZYcHpJeHNyK3ovSFRCVEw0WEpub29nYisvMjIzMGZyMXo1RmRnQnhaSUhR?=
+ =?utf-8?B?SzQ5SmNEQ2VFRDNTYWprS1NMNWowcU1mY0t1RzVmVjVWd2lhZ2RZRUhZTDVa?=
+ =?utf-8?B?aDlQaTR2N3NaMlNCd0pIVVdSZ2VhMGo0aTNwSmxUZ1p1VGh0LzVrMXlwQ1U4?=
+ =?utf-8?B?Mm12YTlvTFU4L29rNCtoRUUweWdvYjJWa2ZYMHNyVExNeVpUd0JBeDJ2YzN0?=
+ =?utf-8?B?dE96dFd2OXVRaUk4Y29OSWZWVVA5WU9oWkNhaVhRVzJqNGJSQld2YTVwK0Rz?=
+ =?utf-8?B?NWExZ1gzQk9iUFd0UTRrcXlxNWVPeXZKc3RhblFLRXkzTG1BU2krdnowdGdm?=
+ =?utf-8?B?aVlHT2RNS2VucDRxWFJnRnNkQ092RHB6QmluNG5CMzJoSVdwblJNUVh1bUVB?=
+ =?utf-8?B?TXlVV2diL0djeFBsYjBYZ0VQNGp6RjRSNSt1UGsxT0RpeXRDYUlzOHFZaXRX?=
+ =?utf-8?B?ZnAyRHoyYTZtUkRiVDhsY2ZiZFhSbjZqaGpwUFIwMGlMWUhoeEliRVhKRWRl?=
+ =?utf-8?B?OURSeGY2bFl1aEJlTEUzM2ljelZKNExFaTV0WEY4NUdWSnlyMTFlU2NaYkQ2?=
+ =?utf-8?B?dEVrSzE0K3lIY1hXeDM1cFFlTGdwc3Z0SmhIUjYvUkliTGR2bzFCbXRWMzhY?=
+ =?utf-8?B?QkZWUG5ZSmJWSkxkaUVUbVNTUU5JWEJodWlIeHF1OHVwY1dMKzkyUnVVek1v?=
+ =?utf-8?B?ZCs1OGJ6OGVwdzhaMGF2ODhCa084OUtUVkY0eHhOUGlyQ2thYm00OHQ2QXVO?=
+ =?utf-8?B?UzdreEJDeDQ0UXlycDNlVGp0TkJxaGh5a2hWY0FGSGU4NXg0OVFZQitDdDh1?=
+ =?utf-8?B?SVpQNWNNaFRHQ1J5MEtrdlVuQ0syR1ZuOUlwbDMxQ2g1OHZjVHJQZnd6d0kv?=
+ =?utf-8?B?VGs3cEN2YW1keGt4TWd6MmY0Ryt1dFRhT1QreE5ncmt2ckZoeUJpc2dpbks5?=
+ =?utf-8?B?VmMxOHN0Y1J0UGlDN1RuYjBxTElXLzlqVHU3bHBUVmdvTURpNEZmQWVXamR6?=
+ =?utf-8?B?NTd0T1huTmZaTlYyakhNeTltSUpvNDkzVWdKaWliWERjZDJHcXVtaGxhbzEz?=
+ =?utf-8?B?QnBRMkFWVnNXUUJFZUFtYTNuWWpoOE83bHhoWDUvTFFXbCtrQTZzaHJ3d3h0?=
+ =?utf-8?B?eE1ydmhFbVpNWTZpaldiWDVTOXRoeUQrREQrUHV0MHM4VVRJeCtDOGZHOW0z?=
+ =?utf-8?B?OUtkVGdYL1g3K09PL1NEMnlBVWR3VWxUSkZmangwK0JUU25iS0xvaWxERUVw?=
+ =?utf-8?B?bEoxZ0UrcStYRlk4eXdFdUdPK1IwTnVKbXVRMWJoT1FxTmZycVlHOS9NUm1G?=
+ =?utf-8?B?VnVSZTRLUWZlUTA5MGJqZmRwVnoxd2cvM2hTcWxkcmc2YnJoK1UyU3lybG13?=
+ =?utf-8?B?SzJDK0VYWnc1UEhQbEpxbnFxT0ZLLzJ0TlpsSGZmaTgyNHZxcEYxYnU5VEdl?=
+ =?utf-8?B?NmZTelIrSVZRaVJyc2tzbDJSZi85Y3VkRmhLOHF3QkltWk1yRE5sQ3ZheWM0?=
+ =?utf-8?B?WUhORE9ZUDRvRnJNN3BvUy9DU0NzNEYxalR1eXRhSTlrclgzT3RLbTFjc0Ra?=
+ =?utf-8?B?MmdjaTFxYWoyVWh1bU9iNkpsdEU4YUVoVm9pMENNVzJvRHFHOXFVb08zbVRn?=
+ =?utf-8?B?OUtKVE9keEdUWXFpU3lzRUlvVjloeCtmdGhhME9XazdqRjlpdWhya1g0VlJS?=
+ =?utf-8?B?ZmFVR0xJTTdEMDNFRDlwakF5WndBMytUOGtLc1IyZmFUclF5Zm1XdTZ5OXk2?=
+ =?utf-8?B?cjBzazlFZ05aUUdQTGlndG1wVXkyUVNRaEdKOENFdWJpYmhGY0ZVREdJTVRj?=
+ =?utf-8?B?MlBqempZZEZvdkpQakJaWDJCWXlYSWJYUURpTnVhRDBaUXJieGREL0g5UzZK?=
+ =?utf-8?B?Tzl4ZGZVMFpnaVY0VlkxNklXQ3BSd3ZvVmE2aDJua3orc0JDWmtSUkFuYmNY?=
+ =?utf-8?B?L3NaRTY4TXZPVlpPWFB5SlU1TnZXdFpJT0xUamhYSlhLdm9heDR2L1NHa1ps?=
+ =?utf-8?B?WGNNNGZZYVVhWTZtdXlNZGtydjdnaXVGZW5jVG5VSUkzaVNySHhGM0NtYTA2?=
+ =?utf-8?B?ZXAxcjEwZmg0VG9aVzNUbTJyUE5ld3RCRnRHbEZwMWEvODJRSlowTURvREdm?=
+ =?utf-8?B?STQ4ZnB1M2Q1SHUyM3ovbnFsQkR4NGpJcnZQNXEwMHQzWU4zWnY0dz09?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7b1e34a-4bc9-4474-3090-08deb18f49e4
+X-MS-Exchange-CrossTenant-Network-Message-Id: 82745dc7-6ac5-47ee-0d6c-08deb1914c0f
 X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2026 08:03:31.3221
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2026 08:17:53.9487
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VY96LBUehk0whyWfqWjAnbLZHcerza1f93mq/RPxoxtFGK0XdmAL0q3OstZ7aAoJM7CqKXn6tOWvHIg6ja6NsQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF6D27E3EA3
+X-MS-Exchange-CrossTenant-UserPrincipalName: rD2yFs4CMmC3J/JkJAH+Yxq4teEVaasD5ho+shzVAyIa2UQKCpEyZ4skPlkq5w+J+XtDVEK1AQl01AteTOvX/w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6603
 
+Hi Linus,
 
-
-On 14/05/2026 06:35, Kartik Rajput wrote:
-> Avoid using the default fuse instance in suspend/resume callbacks, as it
-> always runs the suspend/resume callbacks for the default instance rather
-> than the device’s own.
+On 29/04/2026 10:38, Jon Hunter wrote:
 > 
-> Get the correct fuse instance by using `dev_get_drvdata()`.
+> On 27/04/2026 14:42, pshete@nvidia.com wrote:
+>> From: Prathamesh Shete <pshete@nvidia.com>
+>>
+>> Add pinctrl driver support for Tegra238 and Tegra264 along with the
+>> corresponding device tree binding documentation. Additionally, export
+>> tegra_pinctrl_probe() to allow the drivers to be built as loadable 
+>> modules.
+>>
+>> Changes in v3:
+>>    - Wrap commit message to 75 chars per line (v2 was too short).
+>> Changes in v2:
+>>    - Drop the "arm64: defconfig: make Tegra238 and Tegra264 Pinctrl ..."
+>>      patch and instead add 'default m if ARCH_TEGRA_{238,264}_SOC' to
+>>      the PINCTRL_TEGRA238 / PINCTRL_TEGRA264 Kconfig entries so the
+>>      drivers are auto-enabled as modules.
+>>    - New patch "arm64: tegra: Add pinctrl nodes for Tegra264" that
+>>      describes the three Tegra264 pin controllers (pinmux_main,
+>>      pinmux_aon, pinmux_uphy) in tegra264.dtsi.
+>>    - dt-bindings (Tegra238 and Tegra264 pinmux):
+>>       * Add 'required: compatible, reg' to the top-level schemas.
+>>       * Switch 'unevaluatedProperties: false' to
+>>         'additionalProperties: false' on the top-level schemas.
+>>    - Reword commit messages to use imperative mood.
+>>
+>> Link to v1:
+>> https://lore.kernel.org/linux-tegra/20260409131340.168556-1- 
+>> pshete@nvidia.com/
+>>
+>>
+>> Prathamesh Shete (6):
+>>    pinctrl: tegra: Export tegra_pinctrl_probe()
+>>    dt-bindings: pinctrl: Document Tegra238 pin controllers
+>>    pinctrl: tegra: Add Tegra238 pinmux driver
+>>    dt-bindings: pinctrl: Document Tegra264 pin controllers
+>>    pinctrl: tegra: Add Tegra264 pinmux driver
+>>    arm64: tegra: Add pinctrl nodes for Tegra264
+>>
+>>   .../pinctrl/nvidia,tegra238-pinmux-aon.yaml   |   82 +
+>>   .../nvidia,tegra238-pinmux-common.yaml        |   73 +
+>>   .../pinctrl/nvidia,tegra238-pinmux.yaml       |  219 ++
+>>   .../pinctrl/nvidia,tegra264-pinmux-aon.yaml   |   80 +
+>>   .../nvidia,tegra264-pinmux-common.yaml        |   84 +
+>>   .../pinctrl/nvidia,tegra264-pinmux-main.yaml  |  167 ++
+>>   .../pinctrl/nvidia,tegra264-pinmux-uphy.yaml  |   78 +
+>>   arch/arm64/boot/dts/nvidia/tegra264.dtsi      |   15 +
+>>   drivers/pinctrl/tegra/Kconfig                 |   20 +
+>>   drivers/pinctrl/tegra/Makefile                |    2 +
+>>   drivers/pinctrl/tegra/pinctrl-tegra.c         |    2 +
+>>   drivers/pinctrl/tegra/pinctrl-tegra238.c      | 2056 +++++++++++++++
+>>   drivers/pinctrl/tegra/pinctrl-tegra264.c      | 2216 +++++++++++++++++
+>>   13 files changed, 5094 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/pinctrl/ 
+>> nvidia,tegra238-pinmux-aon.yaml
+>>   create mode 100644 Documentation/devicetree/bindings/pinctrl/ 
+>> nvidia,tegra238-pinmux-common.yaml
+>>   create mode 100644 Documentation/devicetree/bindings/pinctrl/ 
+>> nvidia,tegra238-pinmux.yaml
+>>   create mode 100644 Documentation/devicetree/bindings/pinctrl/ 
+>> nvidia,tegra264-pinmux-aon.yaml
+>>   create mode 100644 Documentation/devicetree/bindings/pinctrl/ 
+>> nvidia,tegra264-pinmux-common.yaml
+>>   create mode 100644 Documentation/devicetree/bindings/pinctrl/ 
+>> nvidia,tegra264-pinmux-main.yaml
+>>   create mode 100644 Documentation/devicetree/bindings/pinctrl/ 
+>> nvidia,tegra264-pinmux-uphy.yaml
+>>   create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra238.c
+>>   create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra264.c
+>>
 > 
-> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
-> ---
->   drivers/soc/tegra/fuse/fuse-tegra.c | 5 +++++
->   1 file changed, 5 insertions(+)
 > 
-> diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-> index 291484595dcf..f38107d04ed6 100644
-> --- a/drivers/soc/tegra/fuse/fuse-tegra.c
-> +++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-> @@ -259,6 +259,7 @@ static int tegra_fuse_probe(struct platform_device *pdev)
->   
->   static int __maybe_unused tegra_fuse_runtime_resume(struct device *dev)
->   {
-> +	struct tegra_fuse *fuse = dev_get_drvdata(dev);
->   	int err;
->   
->   	err = clk_prepare_enable(fuse->clk);
-> @@ -272,6 +273,8 @@ static int __maybe_unused tegra_fuse_runtime_resume(struct device *dev)
->   
->   static int __maybe_unused tegra_fuse_runtime_suspend(struct device *dev)
->   {
-> +	struct tegra_fuse *fuse = dev_get_drvdata(dev);
-> +
->   	clk_disable_unprepare(fuse->clk);
->   
->   	return 0;
-> @@ -279,6 +282,7 @@ static int __maybe_unused tegra_fuse_runtime_suspend(struct device *dev)
->   
->   static int __maybe_unused tegra_fuse_suspend(struct device *dev)
->   {
-> +	struct tegra_fuse *fuse = dev_get_drvdata(dev);
->   	int ret;
->   
->   	/*
-> @@ -295,6 +299,7 @@ static int __maybe_unused tegra_fuse_suspend(struct device *dev)
->   
->   static int __maybe_unused tegra_fuse_resume(struct device *dev)
->   {
-> +	struct tegra_fuse *fuse = dev_get_drvdata(dev);
->   	int ret = 0;
->   
->   	if (fuse->soc->clk_suspend_on)
+> For the series ...
+> 
+> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 
-So now we have both local and global variables called 'fuse'. It would 
-be better to have a different name to distinguish between these.
+Please can you let us know if you are OK to pick these up? Would be good 
+to get them into -next if there are no objections.
 
+Thanks!
 Jon
 
 -- 
