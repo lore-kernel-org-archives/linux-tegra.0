@@ -1,138 +1,111 @@
-Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com [74.125.82.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BA5407595
-	for <linux-tegra@vger.kernel.org>; Fri, 15 May 2026 08:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.175
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778834403; cv=pass; b=U3fW8hwut9HAb0Kh09H5IcHG1/gFX91Npael8RZJKOuH8mi8a4HWJsRQRoVY7CP4yzN9jas2iwpQFAbcYKhI+p2Q4Hx4B4W5XE1RV34+HCMoKfe6Ltqf5aMf56z256VWynli8lkh4HV51Hz1gnPyZWqiQ9QpoEsj2VpWP2eEelY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778834403; c=relaxed/simple;
-	bh=1lcRrzpWt3IYTyxqjcwZ50t5ZeMwNrUNQTJrko/WnXY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PqdBn6sqVDFVBrt91OaUlij8cX5tkTswO+sTIigGdHRsbkpVDjs0ZHJLJL3za9IEDyriIBakM61q3jquOYNpJMyNE9xuguFIw7Oq1NpXwgbGnSga7kaHmcJNC3XD+FQpbPrUXgmSeKow4B+xxMDK4Vaz3uO6yGTUpEksIQPnE8c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=is7nxtqS; arc=pass smtp.client-ip=74.125.82.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8AA543C051;
+	Fri, 15 May 2026 09:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778836982; cv=none; b=mz49hZb+pJisf8HEiI3GY7oRrPC0Z1YQwzk60Np9KfLTKfDJc9YkUGYTUMiII5bsu3zzFMfcuJ6YyKu8eQMCHAkfT/ehqY6vWFLVSLztTKuZgtE2uT+j3KfjdNK/V/ubRV6lH6dr4Mi/VzwdBYB+yKUFFqsX9pzmSASqJTBUnKs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778836982; c=relaxed/simple;
+	bh=2RawwmkVBXDwBk1ISsvfjcJewyE1qgHJGFnhYrJ5dzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JeapMqHXwb1RT+evCmGAs4I9rblA8ZBG4HHNtNsztG18SVAUDfiHYaVUrTN6iXvrsY6gbk6H0uxZqEyiMJsQ+K3SWhIyV/INqg2L4DYCpJOQ6BdpfUZHxhKPxMgWj6IbHThSpmn9VhNVKdxUtj1XEdWLkpwYu3TL0y73eIEIJm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=cPamcTzp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=a76gKWAL; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="is7nxtqS"
-Received: by mail-dy1-f175.google.com with SMTP id 5a478bee46e88-2ee990e8597so15189388eec.1
-        for <linux-tegra@vger.kernel.org>; Fri, 15 May 2026 01:40:01 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1778834401; cv=none;
-        d=google.com; s=arc-20240605;
-        b=eaX/1d38c5uxQKEfpgXKpIdNEc2yPDu8nkjD8cDFeBeCaRZ0NpWd2KJWZYbNfWBCBP
-         n1RVmj3kppTm7Luk8gVpY+otkMD9R5zrI+XufjyYnq4Cmg0gXeyZN4J8THYyOFFqbWV+
-         L62Xso68Ep2ZZ7zE4Qmlyzj4t5Ltrhheyv3NeYMp9LJbgOw5aYQPdTSOFV3cTkR7KVMH
-         znuluWXTwS3Fyl4Gh6dPoWp0YLVV15tTsmWUkdQfl7WpsQxwN2XtZhR7q6AOMq0889cC
-         Kt68QHVRY9ftIFFHWI0kVFFc4JyLlNvPkylxXskUKhFbP68j0OnR0k4KOAeP5CzDMhIb
-         W1vw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=V9o04x0HaWnrCGllcDop+2XHXFTs0K8A0nGkD2mPC7Y=;
-        fh=vP9AL+lbKq9KGM6/dNaBI4/Z+OQBICYG3+Cu2C3QbZA=;
-        b=hLbBDLLQl53uOnhJOde3XMAO2/t+HCSXx+5626NXRz7xoTGavDgjmZmdhpMMZ7PyHM
-         y51BwTxLKhfpXpcJXsX0wHe4tbRNKA1F8M29w7O/O0zNh7SE3y+80vQw5L7kwZuah7O9
-         ucXpB5b4UUDaf14hjXKwoZwoXgn8imskgHdZCYXaXFl+9qvJQ9P9gQ8dKC5aIVcyIBW7
-         20ELrOZ/YOQPYPxjrJ05xC2aQErPcnlGfOnwRlNSJjeRYWY2XyiAQW0cMUrUqUzEuFmL
-         oypojMy6TCoxum/VoAjY8vBfnOZNSy1zmFe4+y7J7e5E+rscbaCL9YFaWwM6KReMYSUP
-         VsWA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778834401; x=1779439201; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V9o04x0HaWnrCGllcDop+2XHXFTs0K8A0nGkD2mPC7Y=;
-        b=is7nxtqSJzzSE1pIDEQia6X3GSzhFzuBSbS/XUZb/kHd9ERKtuHxKogbrcbJ5GUkNb
-         27AYr1G27EkQ/WlQHWkPcWk2sgv7RHeoHkgM+jgiesZPmndMf74tJLUystiYEsPOZzKD
-         qrwZhTSICUW9/gXkg6p1bOgYxNGHV92nIorQQcCQWMBs1/nZhbrAiTrh2aNY+vM1rw6G
-         h8t0tOp3nMEY5qcXy1+28v2lA+/X2h4SOFTWUc0ML8oTxj5RFr4AOr6hkQDAXy9a4xgo
-         B2GTvjziYm5MskgdWfnkp8O3gC+dXWdS72lkrkG0+s+MeyOr1XEWdqzofVqak63doJda
-         qAqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778834401; x=1779439201;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=V9o04x0HaWnrCGllcDop+2XHXFTs0K8A0nGkD2mPC7Y=;
-        b=dKJtw3KUZhUp4DIsRmVfQvP2/mNy90quEdZUPQdiV7BPZOfVqlJ/ypBk+NAFeF+JM6
-         C+DuVja7HA78xjA7e5LdiWSADrkTNKy2ZaZyyoX4HMA2t6MyK/DpgfOfqaEXKGo/sTWg
-         EeFMJPRJZycPEARle1OX9HVTBNBPmfh/9+OXFOxACFLaJhPEaCJLUJMkF4OF2ZjTTcmT
-         hAjM8D0dfOjeTBxrXJ/cqgL891tFqtl2ZYuy70ivFSysWkfpFHZvpIJybLs1WKAv/iJR
-         Afuot43+8UchmN5naVoLG+TXXG0aiqCXRIC+OgnYWsgzxyJn9AFT32AKefbep72vZPoH
-         OV6g==
-X-Forwarded-Encrypted: i=1; AFNElJ9CRKa2mJqFDsBasyLkJQ+GePzYcGoI22Y7R+L6n2ELRG0m2B0G9rhidhpl2ivp5eUA2k3yW+SkjFuWFQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGO2qXvGVWJclAPIb/eOtldz5n9J/ejKD/iE9c/Ip+CwdieFDL
-	spFXrdLSSez+HHFSXHg8sMb15Vig8OAHHxdCxVnzo5GdDOfv1h1TKhpQ7QZzWK9LgZk0pamndfn
-	tH33av77IR7lOtqsR81q3shjsQe3Fkyg=
-X-Gm-Gg: Acq92OEA5orotzQJ+ORbVzz1LO91/xvnq9DTEiAiHKEDmANmFW1i36tkWz5Q11foe8r
-	1luObTdOfa0QwsRi2LxZ4hMXANYqWUDOUL8P6pTgZNHq5ppPkvEUe1UwmhnwpOSdso+vH+s+RYE
-	JHv2fs88Vv9z3He3sURAMtrH2HHBaiKMQForYL/ihtELGmPtWyWtO/X7QfrkclHJGi4w7foggSq
-	7AEjjWfMrzrA3L0QPvnehXxlD7ZGZtbz82Xg2/+/O4A4czisiydCfv8Vm1FsXqhiewzToq57xY+
-	Yj+rrljeopOntIlFTlY=
-X-Received: by 2002:a05:7300:a504:b0:2e5:8ec2:82c9 with SMTP id
- 5a478bee46e88-303986a15f3mr1535796eec.26.1778834400799; Fri, 15 May 2026
- 01:40:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="cPamcTzp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="a76gKWAL"
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id 99BEAEC0174;
+	Fri, 15 May 2026 05:22:57 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Fri, 15 May 2026 05:22:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1778836977; x=1778923377; bh=q96tmKAn+e
+	bcJPtQWPTeFfc3MZ0hJxJazaZMbMSIg4U=; b=cPamcTzph60rCmRg1gGzUdEehg
+	bWTgQdOgiNzQpwrQ7laObJij13+vfBqhN5uT+Bj6x07D3Yttf7hlYnm6zzBh/MCc
+	i5xswumWg95MYtA82I5fZNeR737QuVKwRahS5YSytlFn9AfTj6A3UghCWlQ/cTuj
+	9+L9YsOKmuKohBHx9RCTzsmKpPdtHDf9h+tZc+7xi/6mzQQFJwg3Ncaz0NxKe0Oj
+	0GjkMgaimiYzbUZ8WxolxteZ6FpCSNjVI8pC7c0G56vBR2E+0xrJLU0zzJbe+dH6
+	acv/bFF9thlI8BRoW7hk8ZHsX0oz3bKfuQG5zx9GbwkNf/lDjMC6A5fnjgdg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1778836977; x=1778923377; bh=q96tmKAn+ebcJPtQWPTeFfc3MZ0hJxJazaZ
+	MbMSIg4U=; b=a76gKWALpkdauPoNet+pvvxSWD1jkvVEPd1YXmQxLDFdmPGlIZo
+	FELJ57nBIGxMull08N33C4X91aXizZlHIB2sJ9pwslIn1ym3erEhCCddjKdEfNiE
+	oFPBzFscoLehwfrQfaVNT4hb2Cqb7wERVyxP/vW9tgW5ZX23reXWiM5QJb8JuK5O
+	yt/qkafqCAfT8CLD18GPcphBHP80aeW2Q/9ATtnH3pcK/xAjZDu43cZxqDi5/zjN
+	xFJ1wxDIxpb8PIQjxg6vlqE999ue6YjEz+FlDXBSFdqrXRPNwyFrGt7DhTCjoGXJ
+	ExBDkJu64KJVeuPQjSGfdKT58f3NaI2ee9A==
+X-ME-Sender: <xms:8eUGap-ePxLbraJpxg_B-MRdxlYdPULF20eR4lfLs-EArg8Y0wE-0w>
+    <xme:8eUGailXfgzExjfD9P_50-uBpgY1xsrV5Boi_FJjni65YGOGzu-c-JcKQ-YDv0PHi
+    q9DLsE3DCw1FO28Yse4LhJ11O5y2nK4WOc2y-0G6SVfKbmD>
+X-ME-Received: <xmr:8eUGakkDEhQVMSv2z4M0azJByqeEyZxjx43nGU6kP6-TjUC7RiMDrvSRjZDUfJUv5YKHZ22Y1xyu7qIeKwS8i3H5kg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddufedttddvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghgucfm
+    jfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepheegvdevvd
+    eljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefhgfehkeetnecuvehluhhsthgv
+    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrd
+    gtohhmpdhnsggprhgtphhtthhopedvvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    ohepjhhoohhnfihonhhkrghnghesghhoohhglhgvrdgtohhmpdhrtghpthhtohepshgrsh
+    hhrghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehjrghsshhishhinhhghhgsrhgrrhesghhmrg
+    hilhdrtghomhdprhgtphhtthhopehsuhguvggvphdrhhholhhlrgesrghrmhdrtghomhdp
+    rhgtphhtthhopehthhhivghrrhihrdhrvgguihhnghesghhmrghilhdrtghomhdprhgtph
+    htthhopehjohhnrghthhgrnhhhsehnvhhiughirgdrtghomhdprhgtphhtthhopehlihhn
+    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
+    hnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:8eUGavjLjRxboZzCjs_70phyWBq1aKL4lYsaEW62gtgVAwV0MaWy8w>
+    <xmx:8eUGatUBiUITBvyXES_fPRRxb3FHnc5fNwa08dCx9cMUkrbw5XSyDg>
+    <xmx:8eUGahhtgaCVgs2HQ2M3R-yzqmk5qdql2Wbrcst6iawhMWGr-3DOrA>
+    <xmx:8eUGah5D_EnlWnUyNq4Cf9IWraFg3aBEaiypGWXjcSci784aC6Za5Q>
+    <xmx:8eUGapVYJ_kcUOvtzzWx0PLS49evdgqncvs8ioSG3ho-tT4y3H8K2el5>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 15 May 2026 05:22:56 -0400 (EDT)
+Date: Fri, 15 May 2026 11:23:02 +0200
+From: Greg KH <greg@kroah.com>
+To: Joonwon Kang <joonwonkang@google.com>
+Cc: sashal@kernel.org, stable@vger.kernel.org, jassisinghbrar@gmail.com,
+	sudeep.holla@arm.com, thierry.reding@gmail.com,
+	jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-tegra@vger.kernel.org,
+	dianders@chromium.org
+Subject: Re: [PATCH v2 v6.18.y] mailbox: Fix NULL message support in
+ mbox_send_message()
+Message-ID: <2026051523-mud-darling-2bc6@gregkh>
+References: <20260510055810.796976-1-joonwonkang@google.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260511135703.62470-1-clamor95@gmail.com> <20260511135703.62470-4-clamor95@gmail.com>
- <20260515-precious-ginger-lori-d1fde7@quoll>
-In-Reply-To: <20260515-precious-ginger-lori-d1fde7@quoll>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Fri, 15 May 2026 11:39:49 +0300
-X-Gm-Features: AVHnY4LhmWA2BwD0V1_j_6xstdiR56JxjkYZue9zoJ3Q1jLukX8MObrLmKvfP2I
-Message-ID: <CAPVz0n3mvBLracMWGNuJ8kKUvAVZ+JRTJVkZGyq5MkuSobd8NQ@mail.gmail.com>
-Subject: Re: [PATCH v1 3/6] dt-bindings: net: Document Infineon/Intel XMM6260 modem
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <peter.chen@kernel.org>, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260510055810.796976-1-joonwonkang@google.com>
 
-=D0=BF=D1=82, 15 =D1=82=D1=80=D0=B0=D0=B2. 2026=E2=80=AF=D1=80. =D0=BE 11:1=
-8 Krzysztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Mon, May 11, 2026 at 04:56:58PM +0300, Svyatoslav Ryhel wrote:
-> > +  ap-wake-gpios:
-> > +    description: GPIO connected to the EINT3 pin
-> > +    maxItems: 1
-> > +
-> > +  cp-wake-gpios:
-> > +    description: GPIO connected to the EINT2 pin
-> > +    maxItems: 1
-> > +
-> > +  phys:
-> > +    maxItems: 1
-> > +
-> > +  vbat-supply:
-> > +    description: Supply connected to the VBAT lines.
->
-> This should be rather name of the pin on this device, not the provider
-> name. VBAT suggests the latter. Please double check.
->
+On Sun, May 10, 2026 at 05:58:10AM +0000, Joonwon Kang wrote:
+> From: Jassi Brar <jassisinghbrar@gmail.com>
+> 
+> commit c58e9456e30c ("mailbox: Fix NULL message support in mbox_send_message()") upstream.
 
-There is no documentation on this device from Infineon, I have used
-schematics of the P895 where this modem is used. According to it power
-supply is connected to pin with name VBAT (and yes, I am not mixing it
-up since supplies have different names)
+What about 7.0?  We need that one too, right?
 
-> Rest looks fine, with respect to Sashiko comment on description:
->
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
->
-> Best regards,
-> Krzysztof
->
+Please submit patches for all relevant branches.
+
+Now dropping these backports from our review queues, please resend them
+all.
+
+thanks,
+
+greg k-h
