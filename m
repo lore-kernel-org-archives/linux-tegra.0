@@ -1,160 +1,187 @@
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011018.outbound.protection.outlook.com [52.101.52.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B83C3A9625
-	for <linux-tegra@vger.kernel.org>; Fri, 15 May 2026 03:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F263CAA48
+	for <linux-tegra@vger.kernel.org>; Fri, 15 May 2026 04:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.176
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778816137; cv=fail; b=klqKbXE8XNIEbNP5z0O6JVtWBbty9/5Bfd6YB5FIuBU4bZKfnhBrmP15Oyu2xnoPQdigris4c/xyZ1H9g6awG5SYGyHqMvWWBC4dpJLJ/hP3+cqZrV9HruRUXIYoG0OIOj7iowZn+njw2DvCdcmhNdBqPpTtLHiUL6xBFFzjeVI=
+	t=1778819423; cv=pass; b=JvnFsdS7D+/AES81/QlqBc53ca6XFPZc+NHs/xytF7suqNu4/bw2oarMMtmbr6GA3SoERe9CRHN5We57sLPi6fmcFGKDZ4t+R2gJPxEhNMGhovImTG6ppbk+t+uCLjAkZ5FOzlmIcMJnkjw+DE8pLucRN7PT25doyBbDpk+f/r4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778816137; c=relaxed/simple;
-	bh=1Yx1UgsJhmLdSvdDBcLx/WplduQ003+qJLUvRkL4PcE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hA5T0xreag/noTFNl6PU4O0jxIAFMm6Va+qVlSklORorpAy4/OWYhMQHVGBM4P2+FAi0k0J2MPdulNOMRwVwiPctymjib9SqHKgRGzkAb4HXKZfRaOqZHwNQtg22oQuq3huC4vkFM7W5lmDz/M3h6cEVbciqIDiwFKDlvh6BeF8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZrlBWvSN; arc=fail smtp.client-ip=52.101.52.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1778819423; c=relaxed/simple;
+	bh=ErpV5Q9aO8CtpXnIYlr1TjML/GGAT1epacCJTC2ieJw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PblzwHx/kNI9bbfV2o2JHDiuJVGKszNEA8+xKKj1jntZqKKQGU6W78hKS32T29IXkNJIqH155kqTALX4oA4wMo35BqxrJcCwsDTU+H6AxcTA7psK1+6ffJa6MVRqBCf4H9H6wkiqotvhvDwsaE0ca7dF5mAGc5d5tLOu/PxljPI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xa/BDfV2; arc=pass smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZrlBWvSN"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sD5JV29QkinGgO1WeIbn8Rfkz9/CPUN9b9DDsjPB0g0xHiiuPMX9OI3SSUmNFe4eJtG9AFmGI00VEQqh5oJL303I4Cc6zkv3Rk2U1LuDwrq08Xcu7DowidSh8M0/RWPfzI0aGoGcUtUVqfdk/X8cyevfsSUCcl0tG6MBB9OoXRRfI85Bg7ATmkqpcoD3BseuGZEoqi6hGGajcHdkj2ibb9/ebhL4ymX+y9tn6yXpI/EKzCzVAD/mMRDIzM1go3IT5KVzffLjSqnFDTow+TSg3/OwtIhaRnWaa90r5n5GiWppaEhp6m2Rn6eKDk55qXAPV1QLBCiTMtH6cjtpGa2fHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EItuEazXeLLZ/GyD0MeYt1zKjv6bBvb2vGiQxHQZqN8=;
- b=LY5668iw4gGe4aEoDvu+zt7zauYlhC5yS1tufX3i/RlI9oMAB00/Y1EX/LpClOd+f3pq1BKC10zIJO8MImZDnoctydhIywyDMOIGWElqKkYxUlZ8/Ezf7HTaBN3ZXkqSHhC8SO1DSmDsKeUEelh8+dyO/6kjKToRazgiztc9DTZKVAdy82MaQxs+mZGYOxFLQm2m3IO/gncsOS4TaSenwgUQqzuQSrjtiDqlTIZCbiUFhOX9PLvl54RMIc7TP+l7Nt2gsqRUPk0eVqIZvcolLeNKM9qZUGCZCaUn0v69SgJAB5zNPAihFGl2yKjAyx5jFJwB5a0W9t/ZLy+wPqG+JA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=lists.linux.dev smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EItuEazXeLLZ/GyD0MeYt1zKjv6bBvb2vGiQxHQZqN8=;
- b=ZrlBWvSNaMFpVxkTb9FIm21nk4xdIuCI0GEx1bPrreC7mGFE8dGVV2ibYuDg5eQMYxa5viZkuxS/n48SbGxD9wv8gGC/rzD3lNP764o5Dsa3slureZ7wi0F0EGEn6vgeGyABqPEkHjYOnb/myBHUuCDs3DxS8UhC9rvdT7RQyw/iPTK9Rk1t4u/vcPChsnIPYcX0DdP5f3MWLaTZj8FbOEvxzOKIxuZCx8Z4AwypxkAp1guYLtXJO2tg1w/ZJeEGfhk8LAu+8Ue5OJFxKVYWUL6RN2zXrogo70AizVnWl72yvB/MlWS66G0P5+qdcJnEG1VKMdsroo8M5jrzfwXkOw==
-Received: from CY8PR12CA0050.namprd12.prod.outlook.com (2603:10b6:930:4c::18)
- by CH3PR12MB9453.namprd12.prod.outlook.com (2603:10b6:610:1c9::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9913.11; Fri, 15 May
- 2026 03:35:29 +0000
-Received: from DS3PEPF0000C37F.namprd04.prod.outlook.com
- (2603:10b6:930:4c:cafe::a8) by CY8PR12CA0050.outlook.office365.com
- (2603:10b6:930:4c::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.25.19 via Frontend Transport; Fri, 15
- May 2026 03:35:28 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- DS3PEPF0000C37F.mail.protection.outlook.com (10.167.23.9) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.25.13 via Frontend Transport; Fri, 15 May 2026 03:35:28 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 14 May
- 2026 20:35:15 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Thu, 14 May 2026 20:35:15 -0700
-Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.126.190.182)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 14 May 2026 20:35:14 -0700
-Date: Thu, 14 May 2026 20:35:13 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <iommu@lists.linux.dev>, Jonathan Hunter <jonathanh@nvidia.com>, "Joerg
- Roedel" <joro@8bytes.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-tegra@vger.kernel.org>, Robin Murphy <robin.murphy@arm.com>, "Thierry
- Reding" <thierry.reding@kernel.org>, Krishna Reddy <vdumpa@nvidia.com>, "Will
- Deacon" <will@kernel.org>, David Matlack <dmatlack@google.com>, Pasha
- Tatashin <pasha.tatashin@soleen.com>, <patches@lists.linux.dev>, Pranjal
- Shrivastava <praan@google.com>, Samiullah Khawaja <skhawaja@google.com>,
-	Mostafa Saleh <smostafa@google.com>
-Subject: Re: [PATCH v2 0/9] Remove SMMUv3 struct arm_smmu_cmdq_ent
-Message-ID: <agaUcQ7zFPcjid0K@Asurada-Nvidia>
-References: <0-v2-47b2bf710ad5+716ac-smmu_no_cmdq_ent_jgg@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xa/BDfV2"
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-393a44854d2so67508651fa.3
+        for <linux-tegra@vger.kernel.org>; Thu, 14 May 2026 21:30:21 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778819420; cv=none;
+        d=google.com; s=arc-20240605;
+        b=WZppQYjL3AGYgpWpdezWDDpVK7th+B/kWXC6oHVlzmQRwXVSn81nd+QQPcVFxWEPh+
+         9Fr5cjOlfLKFL6Aj0zYe5LKZlKd+T6ie+NWzs7z4/Us2j/RvBSvfdjd65g6M+Pt86t3M
+         +vtRNTij+bLsXa9nNuTx2GeNBIxrskayGP5hnmY6S00mqKwCoTZqc6QA9XrTxIGRvhp5
+         0J5//Qe2jRa39TOcmaJtzL5WsUBdb57EBYvziwBH1IutkU0Plgg/k8m8atFTs50pQpYf
+         lsHHIJ39BYQb+y0Ucsc5hRrNSIJmBQaNbRbGBUfOK8/FCK0JeY6J0+lvG9Ttj8Elxw3E
+         0QeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=ErpV5Q9aO8CtpXnIYlr1TjML/GGAT1epacCJTC2ieJw=;
+        fh=D0nATSRYxkKI3uxr7crp2d3W/VvMXazkZGaGX/gSxr4=;
+        b=lQpXdZQdu9FS0gfYsyBnvRVL8Blj8/GIDLyMW4S6wEZ4QimJSDphv/FjEk7KyKvhHC
+         XWBdt4h8BClwrSaC8CWZpCROEy/iK369stLGc7vikRHmQaYw6/064pBVOanqlZ16tXVF
+         eYwt9/koaNMGMzcP4ghYgF0X5EjDNaoUjy2hG6VZT+cjwwpmadoYWEtt/P7xUoPqHVFD
+         pZ3+WtXaUEZhBSEYoBlP5alswUJCK9EiHh5RMyHO3U2Ypt/U043u2DNTACuUj3l35tGT
+         8FsqqQdYX6Up8VMJy88uzu2wWzbDZhetGJKC3d8XDOMkgQIuQwooyOkARyjXMjcb0Lyl
+         u7Qg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778819420; x=1779424220; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ErpV5Q9aO8CtpXnIYlr1TjML/GGAT1epacCJTC2ieJw=;
+        b=Xa/BDfV23rBoAi0hVgIorRXJBFdkGd0Gi3n40N+Co7R8umoFKtdaR4q+HQS7aaHoTs
+         gqGWZfWMeHRYMoAX9k2noIm1BVNUHwecz/ev8i8Kf2GJL1q7ftmX7InGamdPsFmEoO2q
+         LAEhPEeXNg9LblvNjzLPKPWQ423KLgLQxj7pETDmyRWo4iNoze0ZwHE5x1czcIfR2KUm
+         hAehLr+IyCuMX28XZmsFIQT7k7WhHUbZ40OJijELacwhqtoPhLcuz4hF9nOSm1zmdWkU
+         ZSf1+aR2wbLvl4fIR+OxJ5tztbdf/LFaU1igen+ZSF4xKyePYcIQewmVY5GExAu3hVjE
+         xt6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778819420; x=1779424220;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ErpV5Q9aO8CtpXnIYlr1TjML/GGAT1epacCJTC2ieJw=;
+        b=EZJITCb7FDP3bfEjbW25SO5k1xH/y8LkaZLKbuGhwEcvhIs7sv9wrpPcAzfSsNFL7Z
+         Zm1NOR7GOS7CubO+QxlPcHj6/vluM0fKLKCGMJ4fRysraOGkj4pqzOqMoTAHB6BxtvSB
+         agJ81LhJMy14e4V8SjasFgO9DfkDEaQTy4o/LHREFfhgYx6bUlEcTbWSMz4ok1gL+vAu
+         ih7aW1mS6iLx7fEIKVkZNEPePkW9k5bko+5n1NpPaDUA++eXdiIKUn1Qq1aVMbA1e+fG
+         6WZDR9daJqEqQwmmxsopRIXfzYJNeT+0ZFXjntTNa4hgj8YGi0bXlCtT/H49EyhcbGnM
+         0umQ==
+X-Gm-Message-State: AOJu0Yy5/e8s+3q0UXiUhLNn+V9wQzzuiJu9pF3E4qBkZXfC2moSdbbU
+	xDBYq8puaXWePFPwTO3RM4LaowW4iWclT00LBS6G5hbJDpLrVTVf8yx8lbjKl9yZOxcMrtqxWV3
+	nvk2OX4AN5bUuIUMySucdpfxaEmcbVAs=
+X-Gm-Gg: Acq92OFxNlDyvnwH79X/4CPbY42h7+okvSolXOBrwcHWjDtj3Dm+gkXEI9HJaZpjkPJ
+	XaBD/mNzuuKoZgtpAbRNTIGR9aL0LdKXpcvK0UdpVfZ4P4txV5aPmOp6zypf120MoprES/E6Pvo
+	4/zW6Os+NwJ1RzS59TuULaR59DiKWufAJmIvkAbgkZ0AmTlzbPqsFye55FKgXVtqeRPkSc/XrSD
+	xngve3HGCaJk3Y9ESMnLblOpXSeT//GU3xsupvKiRQuy6iKya8nIzTtdBI/HSnxHhhzqyaM5txO
+	VyVaH42deRf5kPwiaQgUzKpfR0Pjco4xmTQdQzn/Acz5772EVgmdPKett6ZNfqOVmWY+Xboj+kS
+	NLh4=
+X-Received: by 2002:a2e:9059:0:b0:38e:58c7:cd1 with SMTP id
+ 38308e7fff4ca-39561dc13c1mr3692541fa.21.1778819419755; Thu, 14 May 2026
+ 21:30:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <0-v2-47b2bf710ad5+716ac-smmu_no_cmdq_ent_jgg@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37F:EE_|CH3PR12MB9453:EE_
-X-MS-Office365-Filtering-Correlation-Id: 05eb3162-3187-4bd2-8a6c-08deb233026e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700016|7416014|22082099003|11063799003|13003099007|56012099003|3023799003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	9AREEX+zwytufM6kING8XoJX/CBEa3N6kCDhY17js0yNS+Us43wAeBaSFi9z93Ee1p4etnhsq+wVBq0wtgfcLwwDpwp1ilMOZJdAjw/Q6y8WklaFdjRVYLxyyox9jQK98nqHs02gVm2dLMgyTfnEvdsE5bZfPkitwM2j0HDGmPNkGrh88grD4vxS4FK3Cagc3Vg6T9hP4OD9+5u1Lav8i2ntQHS6jhlo2v3B/k9PnJ81IkJJfi5MjpkKLEnLfdpiW8jEZCmMyVCqtH2k0PDrLsjbF/MthRoTtFJsDFxfKOJv98UJLszuTgkDjDIgF/VfMwdEHtI2PGFs8FU8GxAmOe2TcDlEmmQH5rIP9LqpWcHMooVEBGlgwrxtDdybFO3xBbMEhXTTb0bCZmQ1P1jM0uClVgzOG76G9mH84VvKBOsvUEaHERPMrdRJBm7Aok+3a7v5tGFx1Qa3KMapbyOW1uULgbdDVBCvzOxMPoMMX1s/4CzsDqODpUpehhIRLFaXD2WkDPGbvNagH+CKwp7aQPX1L8wAi6rl+82Besqn6NL4/PPsFRIfTmyGjSCF5VHGS7tlcYCBR6rGQ4ZFXlgzX9/hm/HJkRKyuvpVxQTEKs22RJz6vVHsfhliXrQd2dP7Q4vGpSuoLf8eBZN2eXcXyGVLSRPAVg0tIVvO7yDGCKrpz3WCvC0GDN8nPUMNGUopt76HjL6vxS7AVHBQLWEr1V6+inQYmRbOkJR9k5PkLUg=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700016)(7416014)(22082099003)(11063799003)(13003099007)(56012099003)(3023799003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	kCtJQteg6R5vItujmBcsPAehZzqy1qGyMfBKluu47PWt/8M1EAr72++FaylyWFotJrvr3DeVWBp8eKJ19YGT/g+rH/HKyAxiWhwFIaKZl6fSIVb8udMx2v1jfyodLQOd6byMFtoEYBgt1TPgRoJJY7168fPAWbSQUwjTB6JwofvCmArX2YyTuj3+80r8o8j6jn/I4FSPKtiqyHIH5Y3yZpNZGAZMPUw3oSZzIc4brP+F5cHGz385tqGo4l8BfRzg8/zYWROGUC0kgjw9iks2+CzzZ3ocjwFztisUxJV4zmohJjlkFiQdul7eYUWQNUmgCBHSaEqsIx9AnME1gHHCJOZ7mAlUFpwHY8YFciSE1j6rjq1ySVqAb8EHJ7IuV4yZQlzUPHWvd+XRR73jh/psUm/3SGXq5/SSTSafoYxMqlNgZgUFJfPQvtX3YgAA7Ew8
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2026 03:35:28.5496
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05eb3162-3187-4bd2-8a6c-08deb233026e
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF0000C37F.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9453
+References: <CALHNRZ9mmf_4OagcooO-s+SU1KrggT5_ZwM--ambxZKXN-oQDg@mail.gmail.com>
+ <I47hlmySTbquW1VgZFOofQ@nvidia.com> <CALHNRZ_EjqA4aeqZhmicRwdpMxjKp1QpwLW98dyRa36HBX8aDA@mail.gmail.com>
+ <QKr0fha2SnWy9Cj9I74wxw@nvidia.com>
+In-Reply-To: <QKr0fha2SnWy9Cj9I74wxw@nvidia.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Thu, 14 May 2026 23:30:07 -0500
+X-Gm-Features: AVHnY4KMxQxcdb0xOeM8iOKKVIXWOA-iHaJh2OHO8vszrzLtndX_JaZ-2BAd_9Y
+Message-ID: <CALHNRZ8MZmPiWtKHkcQwu3_1Jf5rU8pZQL4h1AfHtuEdY3XjPg@mail.gmail.com>
+Subject: Re: [BUG] drm/tegra: DMA buffers are not always freed
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 13, 2026 at 08:57:39PM -0300, Jason Gunthorpe wrote:
-> [ This is part of the patch pile to move SMMUv3 over to the generic page
-> table:
-> 1) Introduction of new gather items and RISCV usage
->   https://patch.msgid.link/r/0-v2-b5156f657dc1+25f-iommu_riscv_inv_jgg@nvidia.com
-> 2) Remove SMMUv3 struct arm_smmu_cmdq_ent
-> 3) Organize the SMMUv3 invalidation flow so iommupt can use it
-> 4) Use the generic iommu page table for SMMUv3
-> 
-> The whole branch is here:
->    https://github.com/jgunthorpe/linux/commits/iommu_pt_arm64/
-> ]
-> 
-> The invalidation logic has this multi-step process where it first
-> writes the command into a 32 byte struct arm_smmu_cmdq_ent, then it
-> calls a function which converts it into a 16 byte HW struct, and
-> sometimes it then edits the HW struct a little bit before passing it
-> off to the batch or submission functions.
-> 
-> Instead just generate the HW struct directly by moving the FIELD_PREP
-> blocks out of the big case statement and into helper functions. Call the
-> right function in all the places that were building arm_smmu_cmdq_ent.
-> 
-> Add a type for the CMDQ entry similar to the STE/CD types that wraps the
-> two u64s for clarity and use it everywhere.
-> 
-> This is intended to have no functional change. It makes the following
-> patches work better and removes a bunch of LOC. I've run several AI tools
-> with instruction to look for functional changes, which did find one subtle
-> mistake in PRI response.
-> 
-> The removal of arm_smmu_cmdq_build_cmd() also achieves what Mostafa is
-> doing in the pkvm series by making the command formation entirely header
-> based with the arm_smmu_make_cmd_*() mini inlines.
-> 
-> This series has no dependencies. Several people have already tested this
-> on various ARM systems along with the full iommupt conversion.
-> 
-> v2:
+On Thu, May 14, 2026 at 9:39=E2=80=AFPM Mikko Perttunen <mperttunen@nvidia.=
+com> wrote:
+>
+> On Wednesday, May 13, 2026 1:26=E2=80=AFPM Aaron Kling wrote:
+> > On Tue, May 12, 2026 at 10:26=E2=80=AFPM Mikko Perttunen <mperttunen@nv=
+idia.com> wrote:
+> > >
+> > > On Tuesday, May 12, 2026 2:29=E2=80=AFPM Aaron Kling wrote:
+> > > > There is an issue with tegra-drm where some buffers get created, th=
+en
+> > > > freed, but the dma buffer never gets freed. Causing display control=
+ler
+> > > > memory allocations to start failing after the leaks fill up cma.
+> > > >
+> > > > I created an issue on the freedesktop issue tracker [0] with a patc=
+h
+> > > > with some debug logs I added, then a log from Android that contains
+> > > > these logs. CMA is set to 512MB, and when allocations start to fail=
+,
+> > > > the unfreed allocations add up to just shy of 500MB, where it's
+> > > > reasonable to expect that 8MB contiguous is no longer available. Th=
+e
+> > > > log was generated on a Jetson TX2 NX, but I have seen this leak on
+> > > > other archs as well, this also does not appear to be limited to soc=
+'s
+> > > > with nvdisplay.
+> > > >
+> > > > This does not appear to be a userspace issue. The graphics allocato=
+r
+> > > > works as expected for other soc vendors. And as the logs show, the
+> > > > delete dumb buffer ioctl is called, but is not always followed by t=
+he
+> > > > dma buffer getting freed. I have also observed this issue with a
+> > > > gralloc that uses the tegra gem create and such, this is not unique=
+ to
+> > > > dumb buffers, that's just the last log I had when deciding to post =
+the
+> > > > issue to lkml.
+> > > >
+> > > > What I primarily intend to ask here is how to further debug this
+> > > > issue. I'm not finding any direct path between the delete dumb ioct=
+l
+> > > > handling and gem release or tegra bo free. Can someone point me to =
+the
+> > > > pieces in the middle I'm missing, where the logic is to decide is a
+> > > > buffer should be freed?
+> > > >
+> > > > Aaron
+> > > >
+> > > > [0] https://gitlab.freedesktop.org/drm/tegra/-/work_items/9
+> > > >
+> > >
+> > > If the issue is specific to buffers that get used with display, I hav=
+e
+> > > an idea of what the issue is -- there is some circular reference
+> > > counting with the BO cache in the host1x driver, and that means that
+> > > BOs that end up in the cache never get released.
+> >
+> > As far as I know, this only affects display controller buffers. Though
+> > unfortunately, I have limited ways to test the media engines right
+> > now.
+>
+> I've been working on some more userspace for the media engines.
+> Hopefully I can get that in shape soon.
 
-Sanity tested with SVA and nesting cases.
+Great to hear. My android use case unfortunately has some very
+specific requirements, namely a c2 aidl hal. But maybe with more
+examples of the uapi in action, I can try looking at one again.
+Though, my last attempt using the existing nvdec example had my head
+spinning in about 3 seconds flat between that and the c2 api.
 
-Tested-by: Nicolin Chen <nicolinc@nvidia.com>
+> >
+> > > Let me do some testing locally and I'll send out a patch once ready.
+> >
+> > Sounds good, thanks.
+>
+> I posted a fix, please give it a try. Incidentally, on my side I don't
+> have that much testing set up for the display :)
+
+My initial test run on p2972 using swiftshader is looking good for
+this specific issue at least. Part way through a vts run and I haven't
+got any allocation fails, far past where I got them previously.
+However, this may have peeled back that onion to another problem. I'm
+getting stack traces from shared plane atomics, and a lot of mmu
+faults during the graphics tests. I'll see if I can narrow down a
+simple reproduction and trace down the cause. And I'll check the bo
+caching patch on a few other devices, then post a tested-by on there
+if they work.
+
+Aaron
