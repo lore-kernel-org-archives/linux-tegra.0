@@ -1,131 +1,108 @@
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010053.outbound.protection.outlook.com [52.101.56.53])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9CB3D34BB
-	for <linux-tegra@vger.kernel.org>; Fri, 15 May 2026 20:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778877130; cv=fail; b=FZRluM46qS9sI/DzxilqUBVL3CGypxu5XIvysrkJfni04P/3Nokr1LBOTSDTyeFy9B5JgwNMt2CGGLEsvgdBWrlWQV+xhQquXyXLavIcnqzJkNvhBXjDqW6DxIdPFrmUthzXbSjoIU3cqSNRFin3zZfECZ0Zlre9n8kA2/1I0B4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778877130; c=relaxed/simple;
-	bh=gKqSdepqtUWxQs1AAdWgBxXSBAGzSKpGo9FvLaohrq0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r6wWPYhlZGbEgOk+PM5Cjp9I0MyCmfv2wGRqsCiM37EgSx4DiX46gGd4Kumf02kJar5T+yAL1EuN9eqtYuGuD0JliMzDpx/X1xfztOwDyEncLWaKBxxLUIiSf7pxN3bmKAhTr/jng5v6fpWX86lcJNX42sXYk1lCcrWTORuU+/A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Yqc2W+MK; arc=fail smtp.client-ip=52.101.56.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F0C23A9BD;
+	Fri, 15 May 2026 20:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778877339; cv=none; b=PHgBG+CHpr2CBxFuuzfDB/nI3DlfIAscT+qTXSB/mEgPSf7ZmttwrptDkU6sHyr50XaasiREHRQA7FMiwrtvGjD3DslGvlyI5Bhs/TjWPDxLcEHbZQhDlkqtCNWabBUyXPXZ+0FrOvsL6OiRIipGw+0HL7BYCzoeq/OfcNpxOmo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778877339; c=relaxed/simple;
+	bh=H2euLxjrfczkBblxLchszB8NvqvYOl3jHXk+BNY5O+0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Ts1Vec0EOcVGq+pjXieaqA/T1Q3OUe3Q9QCXBCczsRNlO/9dFwmtULcqJgdY3XomKQr/0dn2q9wF5g30dCvRJsAsCsLo1SOAgr/6CY7mkiRcIl+khLj/j4ZoTpPVhvmNd7TtTETBud8fHpwQGPXv9IvJl+IYKpGZkhFrH7u6Y14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PndDtqoS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Yqc2W+MK"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wPskRSBx/rh5U7USKi1jmVTOmbW4cMPPaYr5p5KYiGNFmtOUjBkENKmWoxKEAv7PtynJnSL7pt0fLBBLzT5PLTfq+ldOAQP/8ZMglAIBoRP8WL+XQgOloFd8BGlbDu67yi3T+UdrJk2crPLIeAh6ndvQ0lfg02RYDxfw/R3VbETi9qAisfbPmAKU5/VkbyZ3bh3Gf4LRXGG3ndLokP6dsEMKodoT/gcztYTawPMyjM2ReUpV+sZu37tLFA33+mOlOBedm+Cj29DxgIXGnssuehmkyjAy4dZhQB9NjK7NFKrBiN4eJSgOFKy3NWXT+1rb5N3XnVI0W5JoOmqjpWfwzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zIHeYRIxnN+foIbgDfdSp7j/A1NQWc9zd8vydpkOjAk=;
- b=mqBf9yC1R9TbiAVSHaqiTcBlAYMEYrXAGxvp+E4yaR38RAE1yV+rcBxJNL2B/AP/0YzfhK3eVJqc8oUOJeKFvboVDMJjh/OzJJH2clofAL5kEO9Ag6EwaEJoXKjGyadbxOMF74Fb9LhNu8ubhoVSB83DqCCGJZZMFPsVP+9BEAQMrEzih55JaZ33K2eAfbuEn4PnIjJNBXhZexq14ANERiKp7RVmjDws14EiYKBXSGD4FWWf6yCUfoPsMyZMRxISf+deCajPXZxIXGyrUzJ4WwT4nS232b57kWDVuz98xti63WZJcvVrndog6nSqQvRw42yCg6IEwIz60s0iAWQ0mA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=lists.linux.dev smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zIHeYRIxnN+foIbgDfdSp7j/A1NQWc9zd8vydpkOjAk=;
- b=Yqc2W+MK/3ZZgWxTLbeZ6U7NqwBJo4gw81GfmXyxSZRhedoNh4XnbEPW64Jur066acdpAwoKkzTLjcVnFc4h+EvrvAQ/FnCtbThitnEjKBGM1kSzrPIfs2p2KMjq70+wpjSTzQXuE9XvKQrmpJCxVdkgMSEA5fXNU5FOY8W6nYIy+H/LiojSfYU6GNjWvtDoh19WihBK21p+1MkJqQo2pEH+s2oJTZHekEBqIse0TPBN7/HW1Loyx7YcG2Vborn7lScSmaj9fK1m7WMJRYarL7r9DrflHsyY93GOVVU48LUAUhZGp4QEShudZHpe1eT2vsy2aEAyAG+Rbw0/bOIdug==
-Received: from BY1P220CA0048.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:59e::6)
- by DS5PPF7671D5CC0.namprd12.prod.outlook.com (2603:10b6:f:fc00::653) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9913.12; Fri, 15 May
- 2026 20:32:01 +0000
-Received: from SJ5PEPF000001F2.namprd05.prod.outlook.com
- (2603:10b6:a03:59e:cafe::2a) by BY1P220CA0048.outlook.office365.com
- (2603:10b6:a03:59e::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9891.23 via Frontend Transport; Fri,
- 15 May 2026 20:32:00 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ5PEPF000001F2.mail.protection.outlook.com (10.167.242.70) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.25.13 via Frontend Transport; Fri, 15 May 2026 20:32:00 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 15 May
- 2026 13:31:39 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 15 May
- 2026 13:31:38 -0700
-Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.129.68.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Fri, 15 May 2026 13:31:37 -0700
-Date: Fri, 15 May 2026 13:31:36 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <iommu@lists.linux.dev>, Jonathan Hunter <jonathanh@nvidia.com>, "Joerg
- Roedel" <joro@8bytes.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-tegra@vger.kernel.org>, Robin Murphy <robin.murphy@arm.com>, "Thierry
- Reding" <thierry.reding@kernel.org>, Krishna Reddy <vdumpa@nvidia.com>, "Will
- Deacon" <will@kernel.org>, David Matlack <dmatlack@google.com>, Pasha
- Tatashin <pasha.tatashin@soleen.com>, <patches@lists.linux.dev>, Pranjal
- Shrivastava <praan@google.com>, Samiullah Khawaja <skhawaja@google.com>,
-	Mostafa Saleh <smostafa@google.com>
-Subject: Re: [PATCH v2 2/9] iommu/arm-smmu-v3: Use the HW arm_smmu_cmd in
- cmdq selection functions
-Message-ID: <ageCqIQs1cMbZqHd@Asurada-Nvidia>
-References: <0-v2-47b2bf710ad5+716ac-smmu_no_cmdq_ent_jgg@nvidia.com>
- <2-v2-47b2bf710ad5+716ac-smmu_no_cmdq_ent_jgg@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PndDtqoS"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 43470C2BCF5;
+	Fri, 15 May 2026 20:35:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778877339;
+	bh=H2euLxjrfczkBblxLchszB8NvqvYOl3jHXk+BNY5O+0=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=PndDtqoSXfxQjdS1kcLeVBQ1in+2OnsTn7lvgDBA/O3/ZTo2dzixMeqNVMua1/yKq
+	 Hoarm7lzEzvl/7MX0W/mQCwmgBaT7qGm3rAh7zxd8RAbyPWj3HlNhdan3dUCGnTgh9
+	 tTsr91aAjhTZu+5dJlp9GBHBe5o4XhLLlb4+P+cGJfDkxHB7b5/x2gL6JX7NT8bB22
+	 uZ9G3ufegWPIPzups+7NfARuYthEukB4F8pNrPsdh+Ekj11TS+Gkqg/ZAWdUXhcWbg
+	 Xda8DRx2mlvXfvF0xyCRWKMvD7HzA+K36e27pZ5xrADinQt9RaSPJn6zNXobIe0F8v
+	 vbtbZoygEyKZg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3892FCD343F;
+	Fri, 15 May 2026 20:35:39 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Fri, 15 May 2026 15:35:29 -0500
+Subject: [PATCH 3/3] arm64: tegra: Add iommu and dma properties for
+ Tegra194 QSPI
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <2-v2-47b2bf710ad5+716ac-smmu_no_cmdq_ent_jgg@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F2:EE_|DS5PPF7671D5CC0:EE_
-X-MS-Office365-Filtering-Correlation-Id: eadcdd22-f252-4d78-723c-08deb2c1047a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|1800799024|82310400026|7416014|376014|18002099003|22082099003|11063799003|56012099003|4143699003;
-X-Microsoft-Antispam-Message-Info:
-	VY6WzdyQrOG8xvkt/m+/sDupL3i7853DK8P0MRdNQhhXiLm4hCZaLssdy+qQn923OVphB5dSaUE26fUnFp1FT5MNYVR1t+wgTz8EzI6/5oGtSQkWlBo/JcDOnsfS85kqqVnXdT15xyw4jl9skYcY2lAaoVOvTXDEU6VwyLbuGxMCY6Hx36pkJ/xy+oAJQCNrfNcG37lBPCDkJ4jeNUXJnpcOoGGBgOGMN1lGjqWzWz3Zt0D+sQu0nYt+aSF+zM9N34+Oyy8JliN5vkPl4fnlekIXvlRo1UGBDoKCjkh/TZFuLlSgGhcyxTjgS0M9glnj4wfl0lJM2Eh9QlIAXI2KyVU5Bkszq16VkKTvNkZVgVEXRQ6FLz5sSci30/lfCu4dqMtj6fi0bB+2hIzZUrB3mLN48pFE1lF9bvMchR7+eF49Xuk6zSSdiElOAgfemMj3XqoAMWHWsoVDzqhTkFVbTgGjLqlYF2T1t9TOae1PwkcCpxB7kE+obSeV0Cm4DWP1OhF93Zx1QITM/ljHzExrPfYuvz8DECjVCTumfLIv98PLJxfsVHMFrssa8ZxO1McSjWvL6+rSjYgJLmaIRYM3oczZd2EwmgRKdjP/pJXKvq6QNXphViL7P+1h05eRRBAE6jwvFj2s+uju0g5ynCCFtHzTEf6fr8esf3Evo/MRUZjFrODxydKs8YKDWNQht4N6Glv4qD0j6sDQq5y754F/Inv6iw6UE/gte3DmUJOJsLA=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(1800799024)(82310400026)(7416014)(376014)(18002099003)(22082099003)(11063799003)(56012099003)(4143699003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	3sSjJHb/gb/1Q78UD2kt4+ymDgRtrg8QfTl330o+r/8N2dNK8AHlbIf3NJljAQy6Uultmhe+LJUoNApSUTtEmVp6AMhVABHFaXTooHC3ELyTtNlf1cruiQbym4AzFmrGbIFGgMJcX42qAQwvY9ItpQFBQneSqrSt7QChdx961S2rEu+a7gdj0Y38wqsIehFGUb+uLfSEyhpJvCCSiQXY1LWOWc2cXeHkoK3WyP15BwlnVbMBhKGppuD/1eJO+RJOeB4H0TtY/7lJaB7pBB8wH/tdn0DAkidR03YB0WsmgBglvwfhIoRQoDDt4g//+005YnBKaW4YFro7Y8gjIjT/PFEpkkvlzUDPUookUp6zTEUeZKaI7qe0F6A5G9ykUuLWODAVbbMAOcFagcp4u1DUsWpnCdl6VSO4EFWOLZft5rYkmv6cBd0lDsa44gfbRrMg
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2026 20:32:00.5406
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: eadcdd22-f252-4d78-723c-08deb2c1047a
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001F2.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPF7671D5CC0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260515-tegra194-qspi-iommu-v1-3-57dfb63cd3d6@gmail.com>
+References: <20260515-tegra194-qspi-iommu-v1-0-57dfb63cd3d6@gmail.com>
+In-Reply-To: <20260515-tegra194-qspi-iommu-v1-0-57dfb63cd3d6@gmail.com>
+To: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-spi@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1778877338; l=1187;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=Np/pDfMhrl4vh3eC9VslgUn4DVBcUQmUCasGPdu9S6s=;
+ b=XNElFQVNTMTXCC1rsHQEhqgqighB+BXthtnfT1GQGvp9+UcgAvg2MufyoHJKVYT7dCA8LSXGx
+ ImTaWbQKrbrBQPjCga4kRxY7DIcgD6WmFx8mv8dZq6NsB2fS3mxUkZ9
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-On Wed, May 13, 2026 at 08:57:41PM -0300, Jason Gunthorpe wrote:
-> Start removing the use of struct arm_smmu_cmdq_ent, starting at the
-> lower levels of the call chain. Change the functions that determine what
-> cmdq to issue the batch to into using struct arm_smmu_cmd directly.
-> 
-> Reviewed-by: Pranjal Shrivastava <praan@google.com>
-> Reviewed-by: Mostafa Saleh <smostafa@google.com>
-> Tested-by: Pranjal Shrivastava <praan@google.com>
-> Tested-by: Mostafa Saleh <smostafa@google.com>
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+From: Aaron Kling <webgeek1234@gmail.com>
 
-Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
+Without iommu and dma enabled, flash storage such as the spi-nor on the
+p3668 module times out and cannot complete any transfers.
+
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 1d659454a6f9fe..0e0a20befe9e68 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -923,6 +923,10 @@ spi@3270000 {
+ 				 <&bpmp TEGRA194_CLK_QSPI0_PM>;
+ 			clock-names = "qspi", "qspi_out";
+ 			resets = <&bpmp TEGRA194_RESET_QSPI0>;
++			iommus = <&smmu TEGRA194_SID_GPCDMA_0>;
++			dma-coherent;
++			dmas = <&gpcdma 5>, <&gpcdma 5>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
+ 
+@@ -1013,6 +1017,10 @@ spi@3300000 {
+ 				 <&bpmp TEGRA194_CLK_QSPI1_PM>;
+ 			clock-names = "qspi", "qspi_out";
+ 			resets = <&bpmp TEGRA194_RESET_QSPI1>;
++			iommus = <&smmu TEGRA194_SID_GPCDMA_0>;
++			dma-coherent;
++			dmas = <&gpcdma 6>, <&gpcdma 6>;
++			dma-names = "rx", "tx";
+ 			status = "disabled";
+ 		};
+ 
+
+-- 
+2.53.0
+
+
