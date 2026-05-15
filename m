@@ -1,201 +1,255 @@
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012014.outbound.protection.outlook.com [40.107.200.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com [74.125.82.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BA33E025D;
-	Fri, 15 May 2026 07:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE98D3DFC70
+	for <linux-tegra@vger.kernel.org>; Fri, 15 May 2026 07:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.46
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778828987; cv=fail; b=ZgIybLmrBsJHWPjjoalkjyZBEQhsCvoLZLLijIzVzrhW6V4Ap8RE05iUy0nbfVFLtzxfz7VBPMwsslPHeYBbGGT2NKx5ujhMq5gAGeMtZt/f3uW71mRqDbbjdQd6CXyBzH+bflMsMx77QLIJXZpc6Y2XxZs95bUpUBMOajIKWng=
+	t=1778830627; cv=pass; b=j+nLPtJrsCD6Cbg0cRpkpHcyqBzTDOR2TFRB/F9g+EF5LEQIvcOlM4Bc6Ho5C+OBTeR3BkCPDrbUxjXGDFedmkzWnCzWQhqJgX4GO6IeMVGvhb2dqEF4VNPhe63sVC5okRgcX+Ipsm3ugBwac05/KrQlHIqXaUUXw1qsy8CVHzw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778828987; c=relaxed/simple;
-	bh=68U2Kqa+te7Ae8SRw88kMIDXb68bu6bYOZw6FXxnVIs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dNnt7LZdJJ5hOyrAyBp/gnA4h7Ib8oE9A0PVz5XMrDmRRkyYgXb7B1xVBAwmdp2Ck53QnC9wkIOrZEEhK7gWMQh93oHpfwIZ7Yfg7O3+aj2qD6G20BEfifhTeXyo8y69lNwzkHPI21r1tJVGqJRAvStqP+VzR/V1LcTO9mW4iDA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uuSgKALS; arc=fail smtp.client-ip=40.107.200.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1778830627; c=relaxed/simple;
+	bh=v9Wn1R9NxB8uD0AzvrpO9w4i+cfd6RbJfWSmMML/eas=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R3yhpMSkGryksvSQ85kGThdXBNXbmuIF/AFsfNqM6dvuYvALuNy+HvTNnEFVvCGzuJpC2A8OQyaFVA5/L64GI54IfnHxvlu9E4DQn/jmWlxWREubz7wWfwtvwWHFQ8waQwdixgfn4V8jgkCoPz6CBN5nB034LiHLxAgiTFMdh8U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bCGmKyQY; arc=pass smtp.client-ip=74.125.82.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uuSgKALS"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RfqNB4in+huBiva6n0meKSaiouNxbB/Ndi+659iATNc6viu92Q+OP+Guf2LM7JQNNmOhEbgZVITxxxCcb3iW8sgE7tnnLttp8BiIq8JwbuSuz8XEGS+QhzamctMDFA8n5YIRufgm5d1dA8rlKadgLA2syn1N0cQonDfYfbNUUb9jkIhxhEarJivGGJbxTadSXJ5gCywmt5ZSbP88HeHG0SEd1pfiWn3yti20Uan50ml9rIS5b/a62IEJdR/mgeWmdlRlJPJdWP0VLtsk1Jqk3EV4UO3Bh5/5ELbDk0Oh9DKyUB3o+OUKbxL1+UR8himWLZLMxpPRTpVhUzNAQxXdcw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AJtdrYPAtXaqRdCZtfAq/F3/atWN6XaO1vmvAFeyAGU=;
- b=XWYiOD+Mf8gQ4VRj1XtQgm+rJ4yoIQtBawomW0WNbLhhkuyfbPG5ZFGn6G6mfcUIfazLBpYQCKQILOQ44R2R3uJpr7IbmEQgsOk+3XqbnEfUVQzefExRv2HYWOEfr9O3IbA9//spOpEcimyzCKoHCAKEy/AILjQNR5bLiMZoF/tNoLvMXkng3fYxyvAxjB3n6BpwnuIQlmSrIzVKDaoOQJZOd31Vtb+RWJjEL6j/OkkhXdTVqDxH+vUIDTX/VTsfONdIEvpJiTjMFTd/c+YceWYfvuSXY5sYFy2rLHJoStWgeCTTls9Uha+hH4yIRTpqhNuLopOPtdbb3k6tnnbYQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AJtdrYPAtXaqRdCZtfAq/F3/atWN6XaO1vmvAFeyAGU=;
- b=uuSgKALS4tqdRp0kHGwUuq821KnZapySdVdIJpoSH656fPRFhXfj4opPNezROV/ZdngmB9KVUx0OVGFjLJuNVR+/rKReWp+C5ySfErAru6V35gEwL09yFJ7aLA+9/T/E/UR1kwmKp1ZNrJmydw7DwUByDweBFrlIp/mqFjTn1QytLwtPdVdLeDITKpuwo+gVIXr37/lbWORfeq5PRL54U91pvsaTaware/9xZYDL94sEMNRhS+Cxk5nYra2W1Ye5zpIP/MpWRq6FFDaZitnw70aQhsejk+ztoS3zsD+tMGdOztF3vqdvlgwHi69yHZi2DYqbOrSsFmmcqBhjGl8Vqg==
-Received: from SJ0PR13CA0013.namprd13.prod.outlook.com (2603:10b6:a03:2c0::18)
- by MN0PR12MB6272.namprd12.prod.outlook.com (2603:10b6:208:3c0::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.25.19; Fri, 15 May
- 2026 07:09:39 +0000
-Received: from CO1PEPF00012E7D.namprd03.prod.outlook.com
- (2603:10b6:a03:2c0:cafe::66) by SJ0PR13CA0013.outlook.office365.com
- (2603:10b6:a03:2c0::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.25.19 via Frontend Transport; Fri, 15
- May 2026 07:09:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CO1PEPF00012E7D.mail.protection.outlook.com (10.167.249.52) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.25.13 via Frontend Transport; Fri, 15 May 2026 07:09:38 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 15 May
- 2026 00:08:24 -0700
-Received: from mmaddireddy-ubuntu.nvidia.com (10.126.231.37) by
- rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Fri, 15 May 2026 00:08:17 -0700
-From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
-	<mani@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-	<kishon@kernel.org>, <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
-	<Frank.Li@nxp.com>, <den@valinux.co.jp>, <hongxing.zhu@nxp.com>,
-	<jingoohan1@gmail.com>, <vidyas@nvidia.com>, <cassel@kernel.org>,
-	<18255117159@163.com>
-CC: <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Subject: [PATCH v3 1/2] PCI: tegra194: Use aspm-l1-entry-delay-ns DT property for L1 entrance latency
-Date: Fri, 15 May 2026 12:37:52 +0530
-Message-ID: <20260515070753.3852840-2-mmaddireddy@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260515070753.3852840-1-mmaddireddy@nvidia.com>
-References: <20260515070753.3852840-1-mmaddireddy@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bCGmKyQY"
+Received: by mail-dl1-f46.google.com with SMTP id a92af1059eb24-1309f4ee97fso11199610c88.1
+        for <linux-tegra@vger.kernel.org>; Fri, 15 May 2026 00:37:05 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778830625; cv=none;
+        d=google.com; s=arc-20240605;
+        b=BD+OK6WqO1+ijM6vgjLYxgjEX0Et5HpLDCxk23304QQuDotu7ysix/dwpZ5rshHzEV
+         pW2WdOyQIdAZ2rEcXzcKM4Bd3M79SHc/GSXRYmlk6gxAavEk1yjuY49Sxyy78rlZYP1K
+         UjbU4akg8iwfZgdbledNw+3xVzxLrxM40RFQqVWvwcPjMeBhnRl0XzXr3ns3anxHuSIe
+         JEeMlnlnnfeypd6SZ4wsuCiaL0Sq07aSinsaN7VJm7jBJ7peb/EdGhmhzMwYzFKVB9Ds
+         vZgEiQznvtRfLHKwrw1PtoaChjfZczVkj5mpPNDP2u9Rp3CwGquuZgW3t65/1m1V+lcB
+         ceZw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=NGjsU1/O6Qd2VzZsEHIRxKkGqBUr56OKbf0ka9VzVNg=;
+        fh=RMoTG2fwNrfBE2+GoldCeNpoOfpRAHqAc4+0FYQbmpQ=;
+        b=OGn2LI4YZ6ZrmWqtXoL/o81flBlERiLvB5F9EVcUKK7QQ6LyZM5G+3lz8MCkr2tCyK
+         RRBB2H9rs/pi/qwuRJHyYFmu6zCxuRBSyac9xKheob5ME0d2ov+gyNqduoSW1vSmXgYj
+         y/X/LLHENBiDNZewBrXvkNySdHdJD3yGFv+XVSVLwTzXwqfk6RhZQCvr1ZDGt6bpTntq
+         n0r71OqEeIRC9+jj8N4IKSnCQdpA/fOwnex258CRNVWhU0qsYm1fzYnzyQDkpAy2sSgJ
+         NUY3qXFb6LxXwj9TryJVIlEj1XTgWQA8AnsqRb7W8iNxVA34SfZZ5UtamI6j1dIocFbB
+         wuVQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778830625; x=1779435425; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NGjsU1/O6Qd2VzZsEHIRxKkGqBUr56OKbf0ka9VzVNg=;
+        b=bCGmKyQYwZXdoaTXH0vzh7q+BBGhBso84NFO6X9z/MqzFpPzsKH9ZxVgMlMhT7ih68
+         XWuTE0WM7ru111g+wW3WHxJDZ+9zzsga009AXktAGg5wfmzuIxC4kaR9XvAOdcLu3bx5
+         Z0fAGTyejVFi88gSzwv4Bh9rCHRJhA73jxZQBkH23aPJcjw0kMNzfmjNRAt5g67/rjTz
+         Xp9mB4/UZbWTXQzrkJ5NTNJVUaflC8VRFcOoLyF5AEEpufm/dbjp3KdzFbCrfn++2Pbw
+         RQ0brLr/W/FqkzoLb/hlheUSczvA5T3ehKQt+CjTcRiAH2RqNWxGl++m1O6ym2hTzWqw
+         mk/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778830625; x=1779435425;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=NGjsU1/O6Qd2VzZsEHIRxKkGqBUr56OKbf0ka9VzVNg=;
+        b=g+1wWD+9fbZDk47jBMiMspmh9YkoNkvkh+6OSXS/JP1bZHkTtSpv7WdSGiR7Nu8GB9
+         YuINQBz7irjwKfA7wg4MrWyZ99SOnK1WWjWd93qmTDuD1pgSFZ0HISLGu2XlxFTBTIug
+         8l7vkOWbvEP3lAZaIRX/Zom1Rbepgci+Nle1EeY07+bPlx/IRTJUuTBIUgqtjV/aZdwn
+         FN7CGg4vcMv1MLEeQ19pi5QPmKVI+f6+ARpKE3CB0vtqzBtRW7SjmeJ+s1xlfrRM0D6P
+         6BIHPlWEg9k+AUTSQzzqkyL6B1vtThe24AhHrWkKB+B3eefdZnqx6NCjK74/cikSakBv
+         0L4w==
+X-Forwarded-Encrypted: i=1; AFNElJ+PC066mSveISefCzAHaMxoHMDBU+sF51pcpfVWCmkLSU0LYTHasVU1m+4d7O92JW67Bn2xtC94hPsEHQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFEkIdC57kKrfq+I0+THe05zPi569uJogyVAjAI+lYctvLvNhf
+	qhnRi4yoPTP9KrjXYsjd5uHfnpfy5/30aK9f8F8TmeqPujiz98lwAboYY4YWLOkoH5bSE8PZwtS
+	yYg9mo/+fD9hb1VW+4fWKguhmlH6Jwk0=
+X-Gm-Gg: Acq92OG7IVqqOYqosn/YvaGMhAaSKzi9dZNJ5s/gKj+LwBNjucPz7D6mGJYiXbUApdE
+	3/GrbYt8bscXseOpCcASxI+7EGq5sd/fUzOB3Ud/8bxXI/TIOKpssoPYhuK66PULGJncrhTwkFA
+	KgQJ8TnmEd5jXynq4KirTkDOqFm2pp5Kh90NHTw/bW6Yx12lRUnOdy22mBxgsE+awkMYbulQv1P
+	Vvbk9wwwjFak5MvcQJ6/ZC7F+tr3OFfF6ALsiWWtRqUJu4Y+QfQbxr2CEGTaLCD5hD5iAFisQJi
+	Puyuaqpl
+X-Received: by 2002:a05:7300:b10b:b0:2f3:986d:2d01 with SMTP id
+ 5a478bee46e88-3039868d07fmr1247518eec.19.1778830624718; Fri, 15 May 2026
+ 00:37:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF00012E7D:EE_|MN0PR12MB6272:EE_
-X-MS-Office365-Filtering-Correlation-Id: 074afe4b-70ca-4b24-f3ea-08deb250edaa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|7416014|36860700016|82310400026|56012099003|22082099003|18002099003|11063799003|921020;
-X-Microsoft-Antispam-Message-Info:
-	8AVR+UD9xTpcRxD2M9YnIhS12cysQEGatGyNHgIFxn/lvYpAxheWmOn8RVST4IjilY2hoFaVmCi5dReqWI5TCLnWWNOg6pgVXAeioYKWYPHpGdbJQtLF/OQkFlyikiaCoMKZi2j1sXSA1oSxM6cmsh84TLQFD68Dowrm5Nfw5maLOGkOKRaBkvHi2Py4VejHTjfWMA1BpeDWGHTU5g3tkBNq1VLbMxmxKvcmuldZQfLnyOnUhflXUWQEMGgxQ9Hj1DgVH8Vv0HOfpWaNFVHrj1dh2Cn+DYYHot787a2Pa1K4iMoVevX4L1qmFhgcf00xFIxVIVOKZAwW5GobyY2n+fpBL+mhuzQBXu2QwpJ8rxxa6nDIm/O/4mWJj8R7qkN1BQ3kiDtsvvnZOXaVQJaYBIQqRT9gbLJc3Y5gV39SqYsjPflT0J36fUHRBgGTkq6TTqWWfTievC7jWbeQeXrC5gaJK0uZOOLvFOYfvqY8RxGLlD0zZX5csw5k9+kxQ0OF2v6SmhgEq5tW7i5LkP/oMl7IehOqzQaVshoOMA+VHSA4Lb0wRd8ZtNwnYA8yVof+5Bm3SvWzSEmCYPx2S06ubYcMrG55qrN0heaRolKvNW4BybUDGAAd7XL5LKcqhA9oc4/o5sK0NgOc6OLR+xPakHoM1iAToRojud8Rp/BZezkcvO4zy1JMQdigj49R4gWYQXhnDSTNsqX6x9M0Kw3XqoN0Sy+sFMSlMQZCZ04pyJvo78wpdzUqSYABwqwQk1SZXIuEXsgsvpRqdkIcwabHXQ==
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(36860700016)(82310400026)(56012099003)(22082099003)(18002099003)(11063799003)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	Fj8O/HBDIZ5ZgqRhzqzX50mvt+Iw4dBu42E+iVyHUm5JURmlyaWs8wpwWX2pmvr64bkF6GkixiPdlO54FS0X/rfgVs8oNnk/5dnAs/CDAt5EL8R2EIe4rEfcX3vxN5T/kdUHxMyuJ8bzQqFHMWAnVzYjYyuHxoqfIp/qSd/5FZeGWsPM2/w7hJPw9ykYnjWkUwdCOqvG/Y+jdKTa2jWuFJJcY05nMX2MfqRA4OniEkEctmEJcezPbol8kl81KMDXrIVVCyVtRT8TumWPRp3Iwa4nGV4vhVKep4qFF0ljSZco1Nv1j3hdlv2xtg6M4aa2ipefdVyFFO/yFoQOiGDWicvugHD291+I6FIyQdy+bkCSD93dCAt1iRQ4B47TvP4qWLiXEHgqmIvOMepwKXzPVEF1PNslfSnaOYTzvbl6pv4aNqiy18YEZqLXuB2rI3p3
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2026 07:09:38.6329
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 074afe4b-70ca-4b24-f3ea-08deb250edaa
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF00012E7D.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6272
+References: <20260503163842.213489-1-clamor95@gmail.com> <20260503163842.213489-3-clamor95@gmail.com>
+ <CAPVz0n1N4YHDPW=gsUZWZmRZbt8xQB1V8JWn6cyM75fo7H020w@mail.gmail.com> <yUGHnUTQTKW8E9_u4r6I9Q@nvidia.com>
+In-Reply-To: <yUGHnUTQTKW8E9_u4r6I9Q@nvidia.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Fri, 15 May 2026 10:36:52 +0300
+X-Gm-Features: AVHnY4JzXMAApBNZ5wqO34OO89oihr8_LAAIa35jMjef7VdzRh3okcZk_JAMTcI
+Message-ID: <CAPVz0n2vZ7p_7C6zsau0600JQM08Zyo3x09h=it6Z+=mXV5FMw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] drm/tegra: gr2d/gr3d: Contain PM in the gr*d_probe/gr*d_remove
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Ion Agorria <ion@agorria.com>, 
+	Thierry Reding <thierry.reding@kernel.org>, dri-devel@lists.freedesktop.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Program the Synopsys DesignWare PORT_AFR L1 entrance latency field from the
-optional aspm-l1-entry-delay-ns device tree property (nanoseconds).
+=D1=87=D1=82, 14 =D1=82=D1=80=D0=B0=D0=B2. 2026=E2=80=AF=D1=80. =D0=BE 07:0=
+7 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Monday, May 4, 2026 3:36=E2=80=AFAM Svyatoslav Ryhel wrote:
+> > =D0=BD=D0=B4, 3 =D1=82=D1=80=D0=B0=D0=B2. 2026=E2=80=AF=D1=80. =D0=BE 1=
+9:38 Svyatoslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> > >
+> > > From: Ion Agorria <ion@agorria.com>
+> > >
+> > > The current power management configuration causes GR2G/GR3D to malfun=
+ction
+> > > after resume. Reconfigure all PM actions to be handled within the GR*=
+D
+> > > probe and remove operations to address this.
+> > >
+> > > Fixes: 62fa0a985e2c ("drm/tegra: Enable runtime PM during probe")
+> > > Acked-by: Mikko Perttunen <mperttunen@nvidia.com>
+> > > Signed-off-by: Ion Agorria <ion@agorria.com>
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  drivers/gpu/drm/tegra/gr2d.c | 11 ++++-------
+> > >  drivers/gpu/drm/tegra/gr3d.c | 11 ++++-------
+> > >  2 files changed, 8 insertions(+), 14 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2=
+d.c
+> > > index e4148b034af7..ffcd076b5831 100644
+> > > --- a/drivers/gpu/drm/tegra/gr2d.c
+> > > +++ b/drivers/gpu/drm/tegra/gr2d.c
+> > > @@ -100,9 +100,6 @@ static int gr2d_exit(struct host1x_client *client=
+)
+> > >         if (err < 0)
+> > >                 return err;
+> > >
+> > > -       pm_runtime_dont_use_autosuspend(client->dev);
+> > > -       pm_runtime_force_suspend(client->dev);
+> > > -
+> > >         host1x_client_iommu_detach(client);
+> > >         host1x_syncpt_put(client->syncpts[0]);
+> > >         host1x_channel_put(gr2d->channel);
+> > > @@ -286,6 +283,10 @@ static int gr2d_probe(struct platform_device *pd=
+ev)
+> > >                 return err;
+> > >         }
+> > >
+> > > +       pm_runtime_enable(dev);
+> > > +       pm_runtime_use_autosuspend(dev);
+> > > +       pm_runtime_set_autosuspend_delay(dev, 500);
+> > > +
+> >
+> > Hello Mikko!
+>
+> Hello!
+>
+> >
+> > I have used same setup as in VIC. May you please take a look to sashiko=
+'s check
+> > https://sashiko.dev/#/patchset/20260502124055.22475-1-clamor95%40gmail.=
+com
+> >
+> > I do agree with statement that pm_runtime_enable should be before
+> > host1x_client_register since this same approach is widely used in the
+> > media subsystem too.
+>
+> Yep, I agree as well.
+>
+> >
+> > But I am more interested in your thoughts regarding sashiko's
+> > gr2d_exit situation reasoning.
+>
+> It sounds accurate to me, there is probably a real issue. I expect
+> there to be in general some driver unbind related issues, since it
+> (particularly when the device is in use) isn't really being tested.
+>
+> FWIW, in an ideal world, it would probably make more sense to do the
+> IOMMU handling on the platform device side, since the device's memory
+> accesses are not related to host1x. But we can't really do that right
+> now.
+>
+> For the time being, I don't think fixing this is particularly critical
+> since other things will go wrong as well if root causes .exit to happen
+> while the engine is executing. I can't say offhand what the proper full
+> solution would be.
+>
 
-Convert delay to whole microseconds with ceiling division (DIV_ROUND_UP),
-then derive the 3-bit hw encoding as the minimum of order_base_2(us) and 7.
-If the property is not present or cannot be read, default to 7.
+Thank you for sharing your thoughts on this topic. I will adjust
+accordingly in v3
 
-Hardware encoding (PORT_AFR L1 entrance latency, bits 27:29):
-
-  +--------------------------+----------+
-  | Advertised maximum       | Code     |
-  +--------------------------+----------+
-  | Maximum of 1 us          | 000b     |
-  +--------------------------+----------+
-  | Maximum of 2 us          | 001b     |
-  +--------------------------+----------+
-  | Maximum of 4 us          | 010b     |
-  +--------------------------+----------+
-  | Maximum of 8 us          | 011b     |
-  +--------------------------+----------+
-  | Maximum of 16 us         | 100b     |
-  +--------------------------+----------+
-  | Maximum of 32 us         | 101b     |
-  +--------------------------+----------+
-  | Maximum of 64 us         | 110b     |
-  +--------------------------+----------+
-  | Rest                     | 111b     |
-  +--------------------------+----------+
-
-Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
----
-V2: Fixed commit message as per review comments.
-V3: Fixed encoding to handle all cases per above table.
-
- drivers/pci/controller/dwc/pcie-tegra194.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 9dcfa194050e..5309a2f1356d 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -272,6 +272,7 @@ struct tegra_pcie_dw {
- 	u32 aspm_cmrt;
- 	u32 aspm_pwr_on_t;
- 	u32 aspm_l0s_enter_lat;
-+	u32 aspm_l1_enter_lat;
- 
- 	struct regulator *pex_ctl_supply;
- 	struct regulator *slot_ctl_3v3;
-@@ -715,6 +716,8 @@ static void init_host_aspm(struct tegra_pcie_dw *pcie)
- 	val = dw_pcie_readl_dbi(pci, PCIE_PORT_AFR);
- 	val &= ~PORT_AFR_L0S_ENTRANCE_LAT_MASK;
- 	val |= (pcie->aspm_l0s_enter_lat << PORT_AFR_L0S_ENTRANCE_LAT_SHIFT);
-+	val &= ~PORT_AFR_L1_ENTRANCE_LAT_MASK;
-+	val |= (pcie->aspm_l1_enter_lat << PORT_AFR_L1_ENTRANCE_LAT_SHIFT);
- 	val |= PORT_AFR_ENTER_ASPM;
- 	dw_pcie_writel_dbi(pci, PCIE_PORT_AFR, val);
- }
-@@ -1115,6 +1118,7 @@ static int tegra_pcie_dw_parse_dt(struct tegra_pcie_dw *pcie)
- {
- 	struct platform_device *pdev = to_platform_device(pcie->dev);
- 	struct device_node *np = pcie->dev->of_node;
-+	u32 val;
- 	int ret;
- 
- 	pcie->dbi_res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
-@@ -1141,6 +1145,15 @@ static int tegra_pcie_dw_parse_dt(struct tegra_pcie_dw *pcie)
- 		dev_info(pcie->dev,
- 			 "Failed to read ASPM L0s Entrance latency: %d\n", ret);
- 
-+	/* Default to max latency of 7. */
-+	pcie->aspm_l1_enter_lat = 7;
-+	ret = of_property_read_u32(np, "aspm-l1-entry-delay-ns", &val);
-+	if (!ret) {
-+		u32 us = DIV_ROUND_UP(val, 1000);
-+
-+		pcie->aspm_l1_enter_lat = min_t(u32, order_base_2(us), 7);
-+	}
-+
- 	ret = of_property_read_u32(np, "num-lanes", &pcie->num_lanes);
- 	if (ret < 0) {
- 		dev_err(pcie->dev, "Failed to read num-lanes: %d\n", ret);
--- 
-2.34.1
-
+> Thanks
+> Mikko
+>
+> >
+> > Thank you!
+> >
+> > >         return 0;
+> > >  }
+> > >
+> > > @@ -367,10 +368,6 @@ static int __maybe_unused gr2d_runtime_resume(st=
+ruct device *dev)
+> > >                 goto disable_clk;
+> > >         }
+> > >
+> > > -       pm_runtime_enable(dev);
+> > > -       pm_runtime_use_autosuspend(dev);
+> > > -       pm_runtime_set_autosuspend_delay(dev, 500);
+> > > -
+> > >         return 0;
+> > >
+> > >  disable_clk:
+> > > diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3=
+d.c
+> > > index 47b0c6c56bfd..cd5554e2117f 100644
+> > > --- a/drivers/gpu/drm/tegra/gr3d.c
+> > > +++ b/drivers/gpu/drm/tegra/gr3d.c
+> > > @@ -109,9 +109,6 @@ static int gr3d_exit(struct host1x_client *client=
+)
+> > >         if (err < 0)
+> > >                 return err;
+> > >
+> > > -       pm_runtime_dont_use_autosuspend(client->dev);
+> > > -       pm_runtime_force_suspend(client->dev);
+> > > -
+> > >         host1x_client_iommu_detach(client);
+> > >         host1x_syncpt_put(client->syncpts[0]);
+> > >         host1x_channel_put(gr3d->channel);
+> > > @@ -517,6 +514,10 @@ static int gr3d_probe(struct platform_device *pd=
+ev)
+> > >                 return err;
+> > >         }
+> > >
+> > > +       pm_runtime_enable(&pdev->dev);
+> > > +       pm_runtime_use_autosuspend(&pdev->dev);
+> > > +       pm_runtime_set_autosuspend_delay(&pdev->dev, 500);
+> > > +
+> > >         return 0;
+> > >  }
+> > >
+> > > @@ -578,10 +579,6 @@ static int __maybe_unused gr3d_runtime_resume(st=
+ruct device *dev)
+> > >                 goto disable_clk;
+> > >         }
+> > >
+> > > -       pm_runtime_enable(dev);
+> > > -       pm_runtime_use_autosuspend(dev);
+> > > -       pm_runtime_set_autosuspend_delay(dev, 500);
+> > > -
+> > >         return 0;
+> > >
+> > >  disable_clk:
+> > > --
+> > > 2.51.0
+> > >
+>
+>
+>
+>
