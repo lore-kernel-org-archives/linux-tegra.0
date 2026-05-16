@@ -1,155 +1,73 @@
-Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA7B2701CB
-	for <linux-tegra@vger.kernel.org>; Sat, 16 May 2026 00:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403D92EB10;
+	Sat, 16 May 2026 10:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778892395; cv=none; b=CQEKW7CCLe9W1yhipNTenOqx4/490v9Gc7vjGjtYkwjZcpA6iIcZ13J6cet1/Pf79oKvQVgS4ORbpxbv8UrPPrPoUqmwJBT6rRR56LUMDomKtbkVJucoTUYqJNcGHhvA4OqI8D8ItcHJjmHQPD/zDOro3wHiyNHHhHMsjw2cflA=
+	t=1778926195; cv=none; b=KKbSLJfokWz7Y8ZErwGdSHDOXP6x5kr/SLgeuwTyVoAqs+2goZnxQ+JgfQQZoBqGaVRFmyEcOe7l3gX+FZGWVaNWqaPd3P+POlqzFUZ2clm4KsSukqi5a6L908ETcSxYu6IKPzNdLqbbXE61zjMksksEYx7qaNlkXkIggI5AtW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778892395; c=relaxed/simple;
-	bh=+yBByH+X4c1uoMXYjK5+sjqKUIapyqynpZtSyRIaqE4=;
+	s=arc-20240116; t=1778926195; c=relaxed/simple;
+	bh=jt+/+A1eUmlY9go1il/cICrFK2cN/3rDf7lknui0NyI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KVJ0LR4sgDGVbyn0aR01Z1nF/LYsy6/oyDrncjGeDqOC4EUF6PQQWUiOesVIVxbuWQwsiYrF3JIrqMP3or58CxFUiI0oGTuhRIClwlRhFW0DNSwDUvxhbCG8rv732SHRVp0pZkcBUrK4Xb+TTL5ouOBmXMf7D0Ccd0IHpzhdF80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aPomQGOz; arc=none smtp.client-ip=74.125.82.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yd7MSYsBHz43QfnUibg/kVpj6OxMq4+1xoVqNnC6gSDBUkFk6F2HU3tta/k1R7tYDV521AO0FHBs3Dt3H1q+6tljw0P+ImMzlwnRRMy0Cik2bOFFevbxkgvlF5MlxYNxD+ViOf/VnOaWnb+7UJXqTb0Fi2ezH2lCAfllT3SeUl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IWrH7Swb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aPomQGOz"
-Received: by mail-dl1-f41.google.com with SMTP id a92af1059eb24-133362c30cfso12c88.0
-        for <linux-tegra@vger.kernel.org>; Fri, 15 May 2026 17:46:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1778892392; x=1779497192; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xi6UMXsamXS4nO8ukGa9Mfe0AvlJid/kwLk/3dcmb4k=;
-        b=aPomQGOzkpQTLh+p706blq6zZKvGnVCmrkOgh5YbGrhWjZn3sPqo/rD2dthXQV1quP
-         N8WP5HBAWFWHnvqKM0PPOuTQSfeAYJA0EwTIafT2A7HqLhIMbxnK4Y9CK61/xLLrYIh7
-         965OjldYmd+bS8AchgLaNj7J/kBZZC70sCH+zrgzkRF/WqlmVRaGKHIQtQGkhJbsuh5h
-         3zlffpEJJV8TGlal8eKGKHbkc7+Et14f9tpnjNH1TrNp+uvDQPn6x7Ht9DedhmyKEL3h
-         ALxhVu4afa4NkDkvu3cHvlK1M1O3fjsowWn6bjaVm5Zq9WWh1PYkRQeKpmRQd9uaZj5g
-         AlRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778892392; x=1779497192;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xi6UMXsamXS4nO8ukGa9Mfe0AvlJid/kwLk/3dcmb4k=;
-        b=MTHshI9aHu8TGW+sUjwKxNV+/LdppccaYacJNQucb/CpaA0yzG2gWKHfIo1WpqPjKD
-         Uu4VNOBiah6pvZ3HH6S7j9qgkPfHPVQdaEOgseyvPFErAYPAcYjFrLeZ5jaLM9Yj/PP3
-         FoXUGQ60NhHrBuDk6PK0eFKsRkD0e6K/6DLELdgLApG2HT4tcB65VApygOKE+o+pCck5
-         wckxVYw3cNx7wPtBDmUvvjEorgAODDmQCX1pjEFpiKdOYwHtWrh8zbLBK3YUHE2pBk/B
-         2o7A1vyw7WqJbaRurzYRIapM7vX3KLd3rCJn3/nkkrkdY2cVg6Q4RdgmermPb5gj7Iff
-         FH3Q==
-X-Forwarded-Encrypted: i=1; AFNElJ+9mf9AaiEP4P+AlIOAbwRzbXAPIaLYH6d4tSuhNCtScjwvVUtdRs2f1UMcQmKX2BwklxSzSUcAK7kI7g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmtwIpTq35VU2jcp+SMEN9cBXgd2MfoUnj5Ix7PEgoztF7Oaih
-	hF1MmrKP5pIRwBPo5PfZc65uR+2qWcz8T2cWGHf+O7/uSVbaUTRCRxfazQ0JS3bnJg==
-X-Gm-Gg: Acq92OFKiAPeU0v68uBm78SZbz3Q0VQ5dthbSYZSFdQphwPNxzbzeU7DHjOCIQXLn6i
-	MEBDV+Ia/WSbF29v4D/Q4ILLf+W6NR71x3EDwlkl1VQ/jO6ipD/9dFnsXwj4G4YZrlRGt6oj4ih
-	WzZLsAuNdpcheJ92QEmBezJX8yFlmGO5iw/oWwngWgURUYV9dMYtf7kum5/fWvP32McYk6p5yjN
-	IbPUYBJSLvPEzwD/s54nurNPqw5JuTIuAluRjKrSiDTO+poKloqPhpC3BDZI7fM/A7P6lsMYpvF
-	oKGqJIKh3KhzAIoL8hF+IgRaxj3j73tF0TBuaJKqiFFpa1JrZ3BnlvwR+2TSb7lAl3dT2H0rwUT
-	ZBrcPGRsZ/5niVpatu41+FK8GH6Cr8d+LrNYltEJpAWG+S7lpWffEUW7cih3wKE5hb6EOVPyPRg
-	DLCkrRsFr676PGXeaXqpuQtDrV8YZFXnvvOLHTLGwTfqp2xhadzMNA4hnWfU7IH0lSCUwGGg==
-X-Received: by 2002:a05:7022:fa02:b0:134:f1e8:e59a with SMTP id a92af1059eb24-1354506413fmr21692c88.27.1778892391267;
-        Fri, 15 May 2026 17:46:31 -0700 (PDT)
-Received: from google.com (153.46.83.34.bc.googleusercontent.com. [34.83.46.153])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-134cbcb93f3sm11830580c88.3.2026.05.15.17.46.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 May 2026 17:46:30 -0700 (PDT)
-Date: Sat, 16 May 2026 00:46:26 +0000
-From: Samiullah Khawaja <skhawaja@google.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: iommu@lists.linux.dev, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Joerg Roedel <joro@8bytes.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-tegra@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>, 
-	Thierry Reding <thierry.reding@kernel.org>, Krishna Reddy <vdumpa@nvidia.com>, Will Deacon <will@kernel.org>, 
-	David Matlack <dmatlack@google.com>, Nicolin Chen <nicolinc@nvidia.com>, 
-	Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev, Pranjal Shrivastava <praan@google.com>, 
-	Mostafa Saleh <smostafa@google.com>
-Subject: Re: [PATCH v2 0/9] Remove SMMUv3 struct arm_smmu_cmdq_ent
-Message-ID: <age-DpeiCWBj7UPu@google.com>
-References: <0-v2-47b2bf710ad5+716ac-smmu_no_cmdq_ent_jgg@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IWrH7Swb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B2BFC19425;
+	Sat, 16 May 2026 10:09:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778926194;
+	bh=jt+/+A1eUmlY9go1il/cICrFK2cN/3rDf7lknui0NyI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IWrH7SwbaB+LI0I6mOsbP2FSGr+CZW9dCQn58ip43QzXMsh2u/4AiB+AY/Dt0wngi
+	 1MWZpOPYlVWzDAS6LleGJB12NR+x43+241BauXEzq8MKBB9VSozIiXHdXEiEZkcADS
+	 j/zF3ef4nIZpr9BOzfTHcfUYpJ32Y03Dj0i+DJ+m4bSOs0sgV++1L2YYhifxVz2pnZ
+	 lqX168gjU7myrYDhzIDSmgdENfNLFMeTP4cj0HF1FWvKWUEiUV2pjWw6bxh3JZanSp
+	 0XzmSTDj5l7zFCLMnm5DXDju+HZBjNY84e6aX0dSswG2yLuOyg3FzNe4yEd5qCScm+
+	 Mm6vwUzACmTcQ==
+Date: Sat, 16 May 2026 12:09:52 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sumit Gupta <sumitg@nvidia.com>
+Cc: treding@nvidia.com, jonathanh@nvidia.com, robh@kernel.org, 
+	conor+dt@kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	devicetree@vger.kernel.org, bbasu@nvidia.com
+Subject: Re: [PATCH] memory: tegra264: Add full set of MC clients
+Message-ID: <20260516-cautious-smart-ferret-230db8@quoll>
+References: <20260515171911.1929868-1-sumitg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0-v2-47b2bf710ad5+716ac-smmu_no_cmdq_ent_jgg@nvidia.com>
+In-Reply-To: <20260515171911.1929868-1-sumitg@nvidia.com>
 
-On Wed, May 13, 2026 at 08:57:39PM -0300, Jason Gunthorpe wrote:
->[ This is part of the patch pile to move SMMUv3 over to the generic page
->table:
->1) Introduction of new gather items and RISCV usage
->  https://patch.msgid.link/r/0-v2-b5156f657dc1+25f-iommu_riscv_inv_jgg@nvidia.com
->2) Remove SMMUv3 struct arm_smmu_cmdq_ent
->3) Organize the SMMUv3 invalidation flow so iommupt can use it
->4) Use the generic iommu page table for SMMUv3
->
->The whole branch is here:
->   https://github.com/jgunthorpe/linux/commits/iommu_pt_arm64/
->]
->
->The invalidation logic has this multi-step process where it first
->writes the command into a 32 byte struct arm_smmu_cmdq_ent, then it
->calls a function which converts it into a 16 byte HW struct, and
->sometimes it then edits the HW struct a little bit before passing it
->off to the batch or submission functions.
->
->Instead just generate the HW struct directly by moving the FIELD_PREP
->blocks out of the big case statement and into helper functions. Call the
->right function in all the places that were building arm_smmu_cmdq_ent.
->
->Add a type for the CMDQ entry similar to the STE/CD types that wraps the
->two u64s for clarity and use it everywhere.
->
->This is intended to have no functional change. It makes the following
->patches work better and removes a bunch of LOC. I've run several AI tools
->with instruction to look for functional changes, which did find one subtle
->mistake in PRI response.
->
->The removal of arm_smmu_cmdq_build_cmd() also achieves what Mostafa is
->doing in the pkvm series by making the command formation entirely header
->based with the arm_smmu_make_cmd_*() mini inlines.
->
->This series has no dependencies. Several people have already tested this
->on various ARM systems along with the full iommupt conversion.
->
->v2:
-> - Collect tags and add a commit message note about ATS
->v1: https://patch.msgid.link/r/0-v1-b7dc0a0d4aa0+3723d-smmu_no_cmdq_ent_jgg@nvidia.com
->
->Jason Gunthorpe (9):
->  iommu/arm-smmu-v3: Add struct arm_smmu_cmd to represent the HW format
->    command
->  iommu/arm-smmu-v3: Use the HW arm_smmu_cmd in cmdq selection functions
->  iommu/arm-smmu-v3: Use the HW arm_smmu_cmd in cmdq submission
->    functions
->  iommu/arm-smmu-v3: Convert arm_smmu_cmdq_batch cmds to struct
->    arm_smmu_cmd
->  iommu/arm-smmu-v3: Remove CMDQ_OP_CFGI_CD_ALL from
->    arm_smmu_cmdq_build_cmd()
->  iommu/arm-smmu-v3: Directly encode simple commands
->  iommu/arm-smmu-v3: Directly encode CMDQ_OP_ATC_INV
->  iommu/arm-smmu-v3: Directly encode CMDQ_OP_SYNC
->  iommu/arm-smmu-v3: Directly encode TLBI commands
->
-> .../arm/arm-smmu-v3/arm-smmu-v3-iommufd.c     |  24 +-
-> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 475 +++++++-----------
-> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   | 248 +++++----
-> .../iommu/arm/arm-smmu-v3/tegra241-cmdqv.c    |  16 +-
-> 4 files changed, 350 insertions(+), 413 deletions(-)
->
->
->base-commit: d8fa633ffaf43316bc3ee8d7b21366cc92c02002
->-- 
->2.43.0
->
->
+On Fri, May 15, 2026 at 10:49:11PM +0530, Sumit Gupta wrote:
+> Extend the Tegra264 MC dt-bindings header and tegra264_mc_clients
+> table to cover the full set of memory clients exposed by the SoC.
+> Client name is used for MC fault reporting. Clients managed by the
+> bandwidth manager in BPMP additionally carry their bpmp_id and type.
+> 
+> Entries in tegra264_mc_clients[] are sorted in increasing order of
+> their client IDs, which matches the order of the override and
+> security register offsets used in previous SoCs.
+> 
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>  drivers/memory/tegra/tegra264.c              | 564 +++++++++++++++++--
+>  include/dt-bindings/memory/nvidia,tegra264.h | 287 ++++++++++
+>  2 files changed, 819 insertions(+), 32 deletions(-)
+> 
 
-Sanity tested on non-coherent rockchip rk3588s with nvme.
+Please run scripts/checkpatch.pl on the patches and fix reported
+warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
+patches and (probably) fix more warnings. Some warnings can be ignored,
+especially from --strict run, but the code here looks like it needs a
+fix. Feel free to get in touch if the warning is not clear.
 
-Tested-by: Samiullah Khawaja <skhawaja@google.com>
+Best regards,
+Krzysztof
+
