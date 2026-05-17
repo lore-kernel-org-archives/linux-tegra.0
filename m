@@ -1,107 +1,108 @@
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541122E1EFC
-	for <linux-tegra@vger.kernel.org>; Sun, 17 May 2026 06:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F562F3C26
+	for <linux-tegra@vger.kernel.org>; Sun, 17 May 2026 09:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778997978; cv=none; b=lDxNw5WAoCoAbK76fVkkNOC9aC/uvAyukYH5kmtI78y8Vr1ozXPQPRw1DarQD1SUO7OD8AYDS0yObrXc03n6pyXyenDCbUL+1QdqnWta5Hi8tn1VNkJ6lHBEBe604vzLeDawUBaLS2GM+ncv3rSAn5znVXCNFQmzy4zPLtciN1Q=
+	t=1779009315; cv=none; b=or5SoJNGbRTs0eB4gwbkqWt60L/PgBTE3kqT4Md6P6utmG2zi3Vr4x2XOU7woEXPWdR7YCS/rJz+x/oRfkrCbD6rrzaYikZJ75eHCUqDW3jpA01hdO9+HXbOjCjprLhIqln3Qj6bP3x0AOZNlpdOF1UDCRMSliBhNmo5MOBNcI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778997978; c=relaxed/simple;
-	bh=WURkIoNSx7cpBfeNmDjEHI4iCOu0FPGWs5wvUfkxOAo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iauJKT/6S03KB9QJ+UTgS2AQzFl+pPlDTYDaHq7xkmC6TxLjHH9DsATa6ciVaAKB5bfrX4yIX8uyBMM88Nsa5l/ZkOqGdymRoLB6GeJvlH1coE7jCDDC2tUU3E5+z5M8iq74ojHr/lqwv/h0/OZhkVL91/ZXZkrv0vzdFLA6L0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IIMImiAc; arc=none smtp.client-ip=209.85.210.52
+	s=arc-20240116; t=1779009315; c=relaxed/simple;
+	bh=PB1CYBgtuICXGpFOifwOOxdvuLuw5VwYDkwQQ7M00Fo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XiLXP8griPVXJWZ8c+Mu8A5Q+ZCkYC1it9KX8oUGryhN1PLq8rh18jF1E42pmAWDXIbaJvv+Y0iUk8UAg5+WXWTBPZjjeILxCqQlal76ysDcNgAp0DPxxkun5l0XHbuShYvvYw1TjmsqSdkzlmQjoqUxeH7AWHJKU5avm5uwzcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PhPMfUPm; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IIMImiAc"
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7dcd9061b1aso1256398a34.2
-        for <linux-tegra@vger.kernel.org>; Sat, 16 May 2026 23:06:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PhPMfUPm"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-488a9033b2cso7952465e9.2
+        for <linux-tegra@vger.kernel.org>; Sun, 17 May 2026 02:15:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778997976; x=1779602776; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1779009312; x=1779614112; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6gmKXteedUEtXr055uhX+38a7zvo9Ud/r154o82WzWM=;
-        b=IIMImiAc9SmgDDNHeTbyU1ntqTW1QxtZbysBDtFPjgyXCONWy+HAuBXLxLGx+xYMfN
-         xxJK5OXd8VUKi9UAF7gZeRPNYHM6C/HtlO+JKN3k7kLlPypcTj7GN9YkjUO6RdntjljA
-         awtTF2aFqkTLj4NtbhZaTQLadDKT9lSufPPR74xKjGHT2Q6gOnAbVF67Ot2HgDdBADIr
-         wjl5jjTvDkw6QnYiPYODpYgv74MpXftiznwk7bYLQqRCAEWDUM3C1QZt3/qAnzXVTjbK
-         sfQJ/uyQ1GCXLoXHaMwCh51IaeG4vxmnRxkBPGFoXt84i0iJ3o5JKK6qf7h/mYUoCdux
-         tanA==
+        bh=0jmEAFXkvGaEuEol7IecG4O5py6NDPChMnuva5JHJCI=;
+        b=PhPMfUPmMyu9dvLQ9x5ngbeSnwDV75X6wdVSB4WIWUM1F6CRT89OtRwKo+2nNJ9rsg
+         KS0m8lFePS6CCCe6GtdPPUkmrsRq/gR1GDVguitPoHBexM3CsVpjU4vZFV3sh7LQksm7
+         cpKqq9GRCm2ZDu0Vm7LK/wNjF/Wk3+HEYCVn5h/TsoUtJFxKrokZlS6gzatYsD3hqDKE
+         QTUWgU/7rRGtzehlpY+80xelqFJYfxQP6VnW7L7bl+BFemu2vLISKnNcRRMXEFW0JxCh
+         GKz/eo/b+82pSVnjOnGBL9L59cvgwNcH4mthT5ybKsjocQiSy/srnVYcL185F+394Cw7
+         CrWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778997976; x=1779602776;
+        d=1e100.net; s=20251104; t=1779009312; x=1779614112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6gmKXteedUEtXr055uhX+38a7zvo9Ud/r154o82WzWM=;
-        b=VjPI03q0p8FzTWfYpqRm78BgicurzlYQGGewyDAkbfD4a/jXYWRju9pbnkKuWVfl2s
-         6/K2i40deCkZH6zITNAvfSMMloECaPmoCPWBkfC3tbTVp8PyBmJRsJmasZRBOBoJte8c
-         Pi8miftb638y/BXS+4cB8t3iJ1JUxnvM0S4BGuZkZSJU+ubLIyEwE2RzNsBIqslvNY2R
-         s09aViJmtTRNTfdJ8T+1nGf8sHEB30wfCCGMJPM8uwvS3ZNSpR8Lun6ppBY4NjX3RRSr
-         UtqnLjsAisC1m+6AM7sH6pYiTx5nCR2k436UOyDOPhp1H4eSp2+TF6PdjEtJWAQE+3+f
-         MO8g==
-X-Forwarded-Encrypted: i=1; AFNElJ9a4DpfhC6Q0Dwrn6xSPPGHh5EITah6SDCU5iR4AxSeqaJdxpre+cWSaiDQE8VvmYzdJ/OFSkoFNp7ZAA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz90OL4LT4d9sNteKyO3juwcfW0HygJ5aHqfcRv5KAoXlds8LZJ
-	68GUoykyVDWUYazplJAYzhprOdrcXusxNLZnXKNiHKetbjd24TcfQxT2
-X-Gm-Gg: Acq92OH7uplt6d8SiIc/QLcXNpQTAOiiEUGw9UOzmQjDV8GL5/RSh14Pe+qqMENHKS9
-	sDnN6RUqIiy6koHnGrlRJ9xeoNbxMT4ge5cClsnShuMa0e+LWAy2/FnawqCHKI08nTV01N3DA4l
-	siGnQLAPXF0P4PuaLjQro4LBbVzFt4aWREyBAVgves10u2qP9pL8VvSk1nAaV3XcH9UNPeGwfU2
-	mI6K9Kh0rz8te/6WW0dZwZHmpiZwVTST+i5Z0f3kmjzE97ef1xp6uB233tupN11WCpkUCYwyaff
-	NwtVWq+DOcqXKgcNhVY13H8ZvfgwcsoQMJ9MnvE1mu1oE8YvkehqvJjEWwG1Aw/tX3TfGpy/Ua8
-	/AsjWAbgrl1gMDT7vWQWr0CFRXMKealCty6K1bQZv5MM4E84zX2xc3PiMBsUyPYWweOZ0HzmuA4
-	3I4mqXkMCiYp9EMwESwIEMHpuwsdkQprcfDu1/0ooaMwjIACxQAQ/7
-X-Received: by 2002:a05:6830:d01:b0:7d7:ed69:81b2 with SMTP id 46e09a7af769-7e4ea071959mr7144526a34.5.1778997976305;
-        Sat, 16 May 2026 23:06:16 -0700 (PDT)
-Received: from pop-os.. ([2806:264:548c:885a:a314:9972:40f1:1f4d])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7e55b7cd6c0sm5550998a34.4.2026.05.16.23.06.15
+        bh=0jmEAFXkvGaEuEol7IecG4O5py6NDPChMnuva5JHJCI=;
+        b=Jy/aiU0F0YrwV+n0h0RAJmYkDE+1kYxxvZ1koEa/rUHVfEvkAoVeNjz7zweM8kk/U/
+         vGzslwSB0icg5mZfWRJTFIMlb/g2uP7AmdgosXB4DCI4FSHUf83xkCJHDv4cyrlWb2rs
+         L2sJbDsuyMGJTriTZyBjZqPhZOBGqE73I11VWKnYoeZUNQHSBIi5F77N22OHcIxI4bQ0
+         Kd7SkfBMsrcbuQK5ZSII0sFYL25egN76rsRQhRY+AstSArm4BB9UGeIMZSe0pJOv91ru
+         YJ2wYfSYIUT8XvIXvORDcAlcu8yd6UxL/zM7/W1t33MGjXzlYG14DiF3jlwieEd8cp/W
+         tP4w==
+X-Forwarded-Encrypted: i=1; AFNElJ8sGKuG2yfmy8jKeWr0uCn/DfGdZiext6uQkBRoSCmYJpERukAcr6Eev5PJmvnNH6LUpWafkGAsaukr6Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIz3ZuUNBLsl3IItjP+3CN5/QEj7eRZFo2CI2GoLp8AgQaum2t
+	FzXwTFJd6QGRbRhX2SQOA9R8/IQg9bTknJHp+60J/eZeD8xV6jYexILB
+X-Gm-Gg: Acq92OEIr6rep05UPgV3y2wF+pzdput7OVG0byPnhvTtzPJvLn3U11sofLLsy6zORL5
+	euP2CDXRnEnoNxnFki5qjWNK4jhhLDCmj5KkwBDVlXExqYTnySmkBceY2rK8V621FnECdYYfmaJ
+	WLUYGLHv+bkXAMPWgOu+IcIUeunJleImf+P4uk92FRmVEjryv1SGrw1Wms/Camg27LFvLBLrywn
+	VAEvcnHLBEQ9IzJHZEdPxHdQb0Vmlp1oEiQrJFyczk3bGn3XWW4t3wsTa3rrhOcI4dySu2Xm3jA
+	6FYxAOkzHlNW1WlpVOnH0ObSygRBm1atTF2XXe7pqHiTENeCFuXppKo70X2C75dYMJiTmap3i6I
+	/wrIPpLB2i7pQIyLnLPS6EDMWT05F2836ocCm0JaclMVqqgK6WXcE5pbdhGc5iNVK3e0WQK5BIx
+	eHCTywqTesZuS5
+X-Received: by 2002:a05:600c:4ed0:b0:490:778:4fec with SMTP id 5b1f17b1804b1-49007785052mr21015875e9.33.1779009312286;
+        Sun, 17 May 2026 02:15:12 -0700 (PDT)
+Received: from xeon ([188.163.112.61])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45da0a17a22sm29560235f8f.22.2026.05.17.02.15.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 May 2026 23:06:15 -0700 (PDT)
-From: =?UTF-8?q?Diego=20Fernando=20Mancera=20G=C3=B3mez?= <diegomancera.dev@gmail.com>
-To: thierry.reding@kernel.org,
-	jonathanh@nvidia.com,
-	skomatineni@nvidia.com,
-	luca.ceresoli@bootlin.com,
-	gregkh@linuxfoundation.org
-Cc: mchehab@kernel.org,
-	linux-media@vger.kernel.org,
+        Sun, 17 May 2026 02:15:11 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Thierry Reding <thierry.reding@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Ion Agorria <ion@agorria.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: dri-devel@lists.freedesktop.org,
 	linux-tegra@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	=?UTF-8?q?Diego=20Fernando=20Mancera=20G=C3=B3mez?= <diegomancera.dev@gmail.com>
-Subject: [PATCH] staging: media: tegra-video: prefer using the BIT macro
-Date: Sun, 17 May 2026 00:05:11 -0600
-Message-ID: <20260517060511.231437-1-diegomancera.dev@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] drm/tegra: gr2d/gr3d: Move pm_runtime_enable to gr*d_probe
+Date: Sun, 17 May 2026 12:14:48 +0300
+Message-ID: <20260517091450.46728-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Replace open-coded bit shifts (1 << 28) with the standard kernel BIT
-macro. This improves code uniformity, matches style guidelines, and
-prevents accidental signed overflow issues.
+The gr*d_remove() has pm_runtime_disable, this indicates it should be
+paired with pm_runtime_enable in the probe instead of being inside
+gr*d_runtime_resume().
 
-Signed-off-by: Diego Fernando Mancera Gómez <diegomancera.dev@gmail.com>
 ---
- drivers/staging/media/tegra-video/tegra20.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v3:
+- pm_runtime_enable moved before host1x_client_register
 
-diff --git a/drivers/staging/media/tegra-video/tegra20.c b/drivers/staging/media/tegra-video/tegra20.c
-index e513e6ccb..08fa234af 100644
---- a/drivers/staging/media/tegra-video/tegra20.c
-+++ b/drivers/staging/media/tegra-video/tegra20.c
-@@ -177,7 +177,7 @@ enum tegra_vi_out {
- #define       CSI_SKIP_PACKET_THRESHOLD(n)		(((n) & 0xff) << 16)
- #define TEGRA_CSI_PIXEL_STREAM_CONTROL0(n)		(0x0018 + (n) * 0x2c)
- #define       CSI_PP_PAD_FRAME_PAD0S			(0 << 28)
--#define       CSI_PP_PAD_FRAME_PAD1S			(1 << 28)
-+#define       CSI_PP_PAD_FRAME_PAD1S			BIT(28)
- #define       CSI_PP_PAD_FRAME_NOPAD			(2 << 28)
- #define       CSI_PP_HEADER_EC_ENABLE			BIT(27)
- #define       CSI_PP_PAD_SHORT_LINE_PAD0S		(0 << 24)
+Changes in v2:
+- remove pm from gr2d_exit along with pm from gr2d_runtime_resume
+- move register map initialize before host1x_client_register
+---
+
+Ion Agorria (1):
+  drm/tegra: gr2d/gr3d: Contain PM in the gr*d_probe/gr*d_remove
+
+Svyatoslav Ryhel (1):
+  drm/tegra: gr2d/gr3d: Initialize address register map before HOST1X
+    client is registered
+
+ drivers/gpu/drm/tegra/gr2d.c | 19 +++++++++----------
+ drivers/gpu/drm/tegra/gr3d.c | 19 +++++++++----------
+ 2 files changed, 18 insertions(+), 20 deletions(-)
+
 -- 
-2.43.0
+2.51.0
 
