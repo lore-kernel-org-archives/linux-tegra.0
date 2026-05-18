@@ -1,69 +1,66 @@
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011064.outbound.protection.outlook.com [40.107.208.64])
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011018.outbound.protection.outlook.com [40.107.208.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5143D1FECAB;
-	Mon, 18 May 2026 03:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86EF1FECAB;
+	Mon, 18 May 2026 03:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.18
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779076616; cv=fail; b=cKUOCFnlrDLbwi6j5+DuhCQzBh0/5xxUQXjrC4Zm+Qn/UYmckHIxRqaD8hINhw0mcy843wXRACQFUlDdvCpBPFrngELdkjPyzfy6KPILFJjTwH30iirQoFl82fUrx4NyC37kR4c1YuAHnorLFtTQRkTVRR/L3btzWFvYdSpj/Yg=
+	t=1779076625; cv=fail; b=mx2BGXCvL9mJBtxaHJNNB0K8KP0raN4v3O2PxO7xj+Lt61S457d64HAG/4tnVAHWfrASJDCET4Ofp6asq/6r/9lzT/64k6F9e7zPUGRny1EnIUkDKrcRzTrUaKhXrOUtMICS8TRgpr1oCZ5a/wL7wT+e8/NPBmnrMAWZgvHeEuM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779076616; c=relaxed/simple;
-	bh=pYg2cLi8BBtCId2bBw65JRLtgA7lxj2F4dbM3eI1hQQ=;
+	s=arc-20240116; t=1779076625; c=relaxed/simple;
+	bh=tPEbkJcQhrqzNDEVvOkOSiroOv+iTkTy0F/rpMxbv3U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=n0QkyumNC20/Sd1wzb/TvCmiB1SVRYEn05880Kn3oKSuk2LECJfVHT2UgwLDUUWPb297JGI2t4UwOctBrTtv8cos9Us49HttQjJrOSlixBrNjOAPlRI7J9a43+mNV6uOdMwLFlo9ma0lfP9P/YkF/+W4zO3OipnfKL5JFYisBgE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=l3H/5uEN; arc=fail smtp.client-ip=40.107.208.64
+	 Content-Type:MIME-Version; b=p4mAuxGXwAkjewb0Wst68pjksuXSt+XIn3AHIm5W4NOYrmXTHUvnFE1bCE1tb1Pn6qvsn5FhZHqEVGfiyOqCSfoOPy3bHVgn2AIYSEv4XQesogRF6+V2KbbfAY92ScVbhhqcDfdWldR+NOF7BHZvKOVIayIhqyLvHk/WAdGykx4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XY3sAQoh; arc=fail smtp.client-ip=40.107.208.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="l3H/5uEN"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XY3sAQoh"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AtSJIxGILGcjC+yEe9xQ4d4VRHjl2OqYMYLIovRucgXEp3wZSbX4m02+n+TrVRIWyM5Z/9LtCN6GBfCbckScFRveUIwse2FPGObcN0QpmQpKKPSjmJMNWSEpHA8YTAFbJrgttLD2PYDqWo3jXtRe1Cq9SPY3VhMKZlrT/fReDAnsr644LPcr0jSVUntE9VnRSPN8jQ1kJuGMKLxkhHAMca7H59CqMjH6V/36zPZgc5XSpDZndr5uSp4Q0+h+a7YAE6Uma73B2fIRUY0b3RgCuk1fyexAf9nVe3UvPW/dmjyX3Iap/aOm1AA6oIE8K2W4L3SqOBmihq9slXWDPCd8sA==
+ b=hF/IL8l0Hf48kvadepT3kp/wTDGdaleXDl+VxswIx52br8IfYws12KawU8Qojf3Tn3bIUhtn1n0DV6fc+qPb3gtH8+m2L/38wvOBl+ggbV4Q2mPAe1X3fJG5vsXjFNCMzt4/ep/k1120ERObAlYp4PBuHhS00NjSywpucdd/knfKV+lc8KUpNZfqw7N8OLBrjZbUz0Uuh8vaFvIhzuSAbQkq29ttVqJ6oTiUBQDdHJTELh/Pz6DQkoah/pc1MUl6sh+CM6GKwiBSibiwS/AL4XvjfLxz94BMxQuT8+MLLWszpXHWTQuX/2VfOqHJLod/4RP16x8/CMPn3qPJWZdDoQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=i6NXCb+oJWo6nKQgeeJwawKEkW/7dLceuHvvzqv5gW0=;
- b=DWktiYXiUgtFs7jrVuDPb3vpa+SRRYHiG3GTnNIioAjFHfs5fAC1kmehzUi66DQiok/jIc03Iy9iycNfaVAu8yTXH8yfN/Zk2aCduBkreOCGiOjicY7l8J3UOPg7mKknnZFqiJGVZLZwxAcshYgLIvq0IdXQ4vXjnhHMBAjuY5asejnwdArXQqyFcVsoWUEY3e9XbXYr52GVLbR7v5KDt0XBvhM87NKxdevBViT+R2vVpQ2ORkpkaIg31WspXQikLB8lqFBpkwMUwOOlZThyr/xERU3kvyjmCkqVqs7SQ/obq1Zp0z6pbriBSp81bx2NflESORIbVeu5RuZ9Ws0N+g==
+ bh=7xuaMuidrTX7CPCP3fmvOLUne8WkKlKadZ85BkveoKc=;
+ b=mYIqzXhoUy5RwR+zsMOP/ypUOaUzin2V2683eQ2MC+uD+1HTp0iXg2sCSyFd8flj/o81wnNmN+v6ytv6KKpNwSXU28h9ZmFnKDUQF+K4JbKcd6O3RoIcsSHV9AdjRWLrmVOYNu7FUP+Qx6OQ8RVZoty15dO3DaxGP7rOCoxQAt3H0r2RrceMPLeWYI7bU1GdQe5aPzgqZY7bf05QfhHnUHqkrWW/LUzB4jLwlSNiJVRVpxIBqo89RjF1d6dTyp/9UUJ0N6i0P2S1cUKEk/FQ4gDif74bYCbFKR5YCcykI5kJTzMrEeUJLrI7gaqAXRe7A/WN0wqJvaYdCvKKp5uGAA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=i6NXCb+oJWo6nKQgeeJwawKEkW/7dLceuHvvzqv5gW0=;
- b=l3H/5uENfI03yzMk0azS+fZXpGBfAUesIkwBdjp7zlVwbKK9XVM657Sxy6Nw2q+GZ/8YhDYWFqVpZIz6QN7FRqGM2AhyfCeywjYbF/W8JNv7l/quoUHLxzaf0q609s2mdxKRqODPP9PFQ9QsJOxWcDW57lj+MkhujrDjym13YCQkBEGtJd9n1ZzyVnr0O3r5Y9VPPm7I3Cyr+7hVDpNW43DQbw6KADBH0dlMSrYqiHCTgDGFPQwdFoekMcvLLh5xDdG664cLOLKaDigeyzTelxN8rK52YJ5qSuhDJ/hUOmqtAYfhzinKJtbwZmngTEpOFtZwL0+3eo88l9ZeF7w0Fg==
+ bh=7xuaMuidrTX7CPCP3fmvOLUne8WkKlKadZ85BkveoKc=;
+ b=XY3sAQohvhKBxMzslAR0GjZgCudDKTF79tl5mgNGuRQbVe5T/+KUCnd3WbduWEzfbe40CpVMcewDyMjNYxFPkIx8P3ts8o5z52k+wDFsurStit7HGEcr51yz4FtKvpN5ncvpQYnJxfIGkuia9vm2PdhdFyOOkXcA5u6He9PC0CrPc3EZvy4ZKsqC+khmAEpfyM0AW2nUBzJqDPQeGpWOE6AKZ8yui0okOcYDWi4h8XEMp8WkWhsygODuMecg7KBIlg+7SWsbsbPiUjiV6SjtiV8j8cd6mO4J+iwErwhXhBe1Df+mbjUSl5lKAGfH25eugRghUp5+i98e9Ea/jIHleQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
  by DS0PR12MB7972.namprd12.prod.outlook.com (2603:10b6:8:14f::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.25.23; Mon, 18 May
- 2026 03:56:48 +0000
+ 2026 03:57:00 +0000
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017%4]) with mapi id 15.21.0025.020; Mon, 18 May 2026
- 03:56:48 +0000
+ 03:57:00 +0000
 From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Aaron Kling <webgeek1234@gmail.com>
+To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>
 Cc: Thierry Reding <thierry.reding@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jonathan Hunter <jonathanh@nvidia.com>, Akhil R <akhilrajeev@nvidia.com>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>, dri-devel@lists.freedesktop.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-crypto@vger.kernel.org
-Subject: Re: [PATCH 1/2] gpu: host1x: Allow entries in BO caches to be freed
-Date: Mon, 18 May 2026 11:12:46 +0900
-Message-ID: <vTpFv1KrTcGkVeSTU1oWRQ@nvidia.com>
-In-Reply-To:
- <CALHNRZ8-UKV1aVf6z_8uKOQ5eP1aP_7SEVJAtQ0fvCuAybb37Q@mail.gmail.com>
+ Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Yi-Wei Wang <yiweiw@nvidia.com>
+Subject: Re: [PATCH v4 4/7] pwm: tegra: Parametrize enable register offset
+Date: Mon, 18 May 2026 11:30:22 +0900
+Message-ID: <JtkNSow1ScKHJF9O5ji4Xg@nvidia.com>
+In-Reply-To: <agn7SP3ETY4XCX4h@monoceros>
 References:
- <20260515-host1x-bocache-leak-v1-0-a0375f68aeab@nvidia.com>
- <20260515-host1x-bocache-leak-v1-1-a0375f68aeab@nvidia.com>
- <CALHNRZ8-UKV1aVf6z_8uKOQ5eP1aP_7SEVJAtQ0fvCuAybb37Q@mail.gmail.com>
+ <20260331-t264-pwm-v4-0-c041659677cf@nvidia.com>
+ <20260331-t264-pwm-v4-4-c041659677cf@nvidia.com> <agn7SP3ETY4XCX4h@monoceros>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP286CA0371.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:79::7) To SJ2PR12MB9161.namprd12.prod.outlook.com
+X-ClientProxiedBy: TYCPR01CA0129.jpnprd01.prod.outlook.com
+ (2603:1096:400:26d::16) To SJ2PR12MB9161.namprd12.prod.outlook.com
  (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -73,346 +70,194 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|DS0PR12MB7972:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2f7423bc-3b9c-4976-18b6-08deb4917c6f
+X-MS-Office365-Filtering-Correlation-Id: 8a31b091-4e7f-4994-be76-08deb4918346
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|10070799003|1800799024|56012099003|22082099003|18002099003|4143699003|11063799003;
+	BCL:0;ARA:13230040|376014|366016|10070799003|1800799024|56012099003|22082099003|18002099003|4143699003|11063799003;
 X-Microsoft-Antispam-Message-Info:
-	HUizJsc0hpiIvhiYG97scfEZG12wEzyYRVL9bQRX0V+vpYKAvR2Sl9OaK+Uz74z0g7KTY90ZIh14ozt4Z2DV3162Al/h1xSXHpfxJryVEWvKFcvWPanrYkLfteLTpLKhxkKoakS0m0URjWWgGuNkIBgcGZNshsLDbJ33l+JEGctMT9rXRC+tyC5ljW75jJWJnC/7/dwpeE7gYjEOKmJyDPlXu5eJSQ8EHzKmAh/RvoGKX1+PGqgaOyWNgB+7G/FpsZvp0wPf7TC+VCb+4D+CIDLX+7Xv5VTmV0w5UveYNaWA+Guvvgz3aCcqIxsI5zqfDaYGCtAQJCxGnPSK8TkRe15t943aj72jmN/YmhRdt24zkZinOfgLLwsFyDpF+RlLye8dk2hdHgGD/xt1NXFMNqLV01SilQ7L/uQ5DJx/Jzp68xa253WO2LPY2XYMgnxRX8Z0LdQih3ehW8UeAqVFOi9UYCYuoSU60y7lczyOS9umcJz5vMTDcroSuiPaORSDfLnxgkKGHr4ILrmy+VXwktdw5rSsvYA9RZg8t6v4sxhM7UEW0FVU3VGtLnpRqKpEB8O3ZDLSR1wYtKXdu0t+Tz6gLE6qW++j/sNnt4ejLEwk2ScHkhOpfNOXu3Yx3dWW8l7UQyoQyCCnI0u80NHzZ6wHHvXh23B46lqRlGGbQWSFGpb5RYlPf1qxIHn4S5tV
+	cTSJh9e33niQmSs3tqNfqw0JHRIwRRUGYhzBBT+SfeUcN9XV2D6toi8oM1PpGEk/urfGOEFxPjWQyjGJKi4mm1ysDbikWpqShVZLt1/eq8jR2iWfcFgUx/8qhClFcn+YqtV+aPnbhrd+3yncOz/pv6MPQrvfVxh1hDVhjxrVQaM+rFwweSBXF835n6odla6HoLUmevcfMOFV5I70WLgZjvdm4CQWJOgCBzGDEcD8NVaW/j4X0xN+8X2wNYC+0aZFY1XVPzKJS+7oCFEJ6lknmO263EF0ARKLKWVwqUJUhHqbpW1E8133CqFCCPXMzIZ34ZuWyW6MiWeHT5uHTanYHAERBnCW5yuSy/pFPcZvZnUiNcQLioMf8avfbhvLLSWlV4Mlfk1oPazy7/tKRcSByAPaMnFcQD261CGRU8y1uUnH13HpDJ0bcSQEeo4VtuzTFdcMtjdgQu4UpZRC/v2px3JJdMYHX2HGE2G1EPtcb32XYsMBnqS7b7zKqCB7BD/OMvUM3O2elRfNklgHRPysS+S5jAJxVTxA70Psju8d3jGYTWXZ2QFDFRFvuWgv6/3Uru32/rwYtZmjUUTf9lA8mT6uaq9RpNrbKCT74ZswWHf32FZQkKIRDSSmvyPmb4psX1UGarCCOZbL3/qs4aU1NLWkhfnpwMLpbTfGiY+05KHgz00r8V5PSVKyG460Kbi9
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(10070799003)(1800799024)(56012099003)(22082099003)(18002099003)(4143699003)(11063799003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(10070799003)(1800799024)(56012099003)(22082099003)(18002099003)(4143699003)(11063799003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ck12ZkZVZDJBcWQrUjNCaDVlS3l2Y3VmTW5kcC9Nd1UrcWJLQ1hjR3c4N1o0?=
- =?utf-8?B?UENtNjE3MUtPQmdWd0x4QWZjM2t4a0NOUXRGZlpOd0Z3ZzAxSldJYkZWVVNB?=
- =?utf-8?B?QW5xZjZtR2RDU2tYeTZ4MkNYOEtLQnlSOUYyZnlSeE9qeVBHQUR3Y3R6WUZZ?=
- =?utf-8?B?NzJzUHY1THlybW1yMThtUmhUSHhyR3luL3RnbmZhbG04TStFR2ZHaVNmN0g1?=
- =?utf-8?B?Y3VWdWNiMG8yS1BZSVZJL0hKaWg4aXlsSFRiT1JHY0pRcXh0TEV4TmliT3d2?=
- =?utf-8?B?eHhEa3VxK3pNYmFQRVZiTzJ4TEhqTTA3WFdQZ0FBSkZQZ1NXNysyako3bU16?=
- =?utf-8?B?amJIdlZYb2JGOVMxY0hTOUhoWTJmNWtIUFEwRjhuK0pPWUpwVWhmRExLeklF?=
- =?utf-8?B?TjRyVW1VZHJQTG16R0JGWUh0T2JrZlQ1VnU0SDlNQUFIQUxnd2REZ1dhNVRH?=
- =?utf-8?B?NkNMTUpHVUFPQ1IvaUFXKzBLc2k1T1lOdkowMStVelJFZGE5TjcvdUVtZlc1?=
- =?utf-8?B?RU9JRTltZUVSMmdSMTVUUTJkQ0tkdEp6VkJJeUNjMUtyVUoxODFKUTFTSGpv?=
- =?utf-8?B?TUZmVmNnblJVQXI3VTQ1RHBGVHYzb2dTVG54Ulk5NzcrL3hCVHJKSzJOTm8y?=
- =?utf-8?B?R2VhNDdMQkgxWlc4U05Ea21YTXQyN1VLZzBpak9uajVkcFk4R1FHdithaUtZ?=
- =?utf-8?B?YTB4NWRBL1VzSFZoSythRFVMVHIrZmtBeURvWk53RW01SE1mazVla3pheUF6?=
- =?utf-8?B?SDlaeDZoUm5palBBakpQeXBqWmpET1JVTktOUnRYQnlvZnFiaEd3RUUvSXpu?=
- =?utf-8?B?WTM0djN0eklJMEFHc1IyN3lvVEo4RVlQMUYwcVhUbGRhVjAyWVdEOUJrdHU5?=
- =?utf-8?B?YzBXVGIycmRkc1orS0x0RHdOaG1kT3RkLzlwK1YyOFpyaG9KdE5IVHBKN3Nu?=
- =?utf-8?B?QjRZVm5qQWEyT2hIcFFkcUxtU2J3Sk1kbzQzRnQyTHpnNVQ3ZHg0Z2ZQcFNE?=
- =?utf-8?B?TGNRYmQybXNaMmVMamtJejVKUVd5RHpkMlVLeE50WXpoMmQ5MHdnVnRwNmpw?=
- =?utf-8?B?Z1VwN3lkN0FKci9KMFB2T1BxTkZaNWdVOVJZamd4VnFNU3AwZlBTNnFhRGN5?=
- =?utf-8?B?YkxjZExBOGlhNTNkZ2VJWE1YR1g5OFJaazRwNzF6eGo1VGVSNHRiaWJucFJL?=
- =?utf-8?B?S3FBLzFVRnpmNUhUalR5SHN0M1VFaE5GSHZhS25CdFVuWFA2My9vbU16akx0?=
- =?utf-8?B?ZTFtWWhJY2w2NzJRWGRyVXc4cUtqbzBDRWZXZXJSSm5WTlc3T2QvbXpzV0dT?=
- =?utf-8?B?UTl0RW14V25CODFab2s3UnNGTFlLeHRXTGg1dnJEZC9ZZUJybW1BRHVHRmFr?=
- =?utf-8?B?dTR6SU8rNWVQc2VnekQxekNmTFhkUGdzNEhTLzhzcTFqcXpKYkpuTHZub1NP?=
- =?utf-8?B?a1pNbjVvWlArS2RiMlpudEFNc0xJUDFHSWdDWFY5QmxXWlY3QklCV3p4aXA3?=
- =?utf-8?B?K01lVS9PNko5aTVUM0IwSG1zRDdXK1pwSS9uM2xwS0dOM3ZXVis5eFNGNHQy?=
- =?utf-8?B?bitReEk5TzlqRWpiR01ObTFpYUkvVjlZWXhrbFZZcytoUnpRZlNLSCtKRmZO?=
- =?utf-8?B?NlprYUpPTVQrZnlIckxaZXpVUWVnQ3pIMDdRUVRnYnhFNVNiNGRySStRbHhE?=
- =?utf-8?B?cGJmcVRjYzFtc2pZNFpPZ2JCekQzRkw4eEt6WGZJREtVQ01sQzJrdG56clBR?=
- =?utf-8?B?cjJjdFlqSFRLbmhWT09xcHd1cHc2QzdOWEJ1U25KV2xTWXQ0TWVFd1hvSkFG?=
- =?utf-8?B?MXBna0F5a1BXR2xhU0JFekVpM2hQSVp2MUppZXZ0OE1taStmb2dOMFRPSk5Q?=
- =?utf-8?B?YU9id0ZHYi80VXovMGlWTE9JYXJPaGk0OVptQ25RR01GbVhMTFN0RjRnZmNa?=
- =?utf-8?B?UC9NWHZkTGlHbitKRHVQT2tqdUFFMWtFQjJkQ3B6T3QyWVJtbmZSTW95OXBO?=
- =?utf-8?B?TDg1NGVZN25NUXRsVjIzbmxVQWpiK2VKSGtBMmhLaTVXUXB0U1k1a3ZMY1Rj?=
- =?utf-8?B?bzJvT25mZlBCTDZxWUVzV0FOS1orUk9nQnFNV2NPRE1VVWtJL1QyQnF0Nllz?=
- =?utf-8?B?S3pWcFdkQnI4aTNFeVE3d0ZFVnRkWkIyQ1IweVRxVjkwU0hJTGFIMm9rbUR6?=
- =?utf-8?B?VzgwM1ZlYlRGTXdZMmlRVDJ1a2hLTEdHTlZYTTl2eXUxalIzMWUxK3FOd3Nn?=
- =?utf-8?B?M1FCZHp5UjlLdU12bXRnWVpkcXJ1L1UyZ1U5QzdwUlBWT25uMVlvYkIzTXVm?=
- =?utf-8?B?NU9ZSHY2RjM1dlB0cnhCZlhUWExhVjZMUjMwYU5GeTlXSmNlbjhGQXpHMjlz?=
- =?utf-8?Q?ohnxTLiKxL3CbKJkJT8UdMP0fDWL7+2X910EGMSo+/8mM?=
-X-MS-Exchange-AntiSpam-MessageData-1: vLWhcLqfokDCYg==
+	=?utf-8?B?TmYzb0M2NmNnUWo1K1lVaE04ZHFTM3gvcGUrOUxQNE1yS2FrK1ZhZE9PWlA1?=
+ =?utf-8?B?NGtjYXM4bDNEZlNQUnNYWEpNbmkwd0JaU1NWRXNVNjFJL0lmVmRYUFJ2Mlds?=
+ =?utf-8?B?MEhVczJOOFVVM0FMWDg5U3Uza0xzVUF3TWdpUDVWNEFSUjIzYk1kbmh4dTQr?=
+ =?utf-8?B?My9FZ0pRVC9jdnE3dnZTTVhNZzd3dUxNL1lVb25weTM0eDhWaWh0TXVCRm5r?=
+ =?utf-8?B?eHdDS3VjQU1JWGhWMGNDY1h1VkJVcGFVQXBValJzWmFiTGRJYlNvVGdJMGpU?=
+ =?utf-8?B?djkydm5DMmZ3RzlCYnBzUTBZSThRMHBEc1J0UlBoR1VuWmw0c3FwNFhFYTBR?=
+ =?utf-8?B?cUNmN3BPNk91RGYwWmxuenV4Vm85RXYzTkw4TjN2eGR4UmtwNGVWOFFwa1JG?=
+ =?utf-8?B?dlhMdnZkYzdEZy9NRXl6M3JYRC9OdHowc3hhQ3E2M21Da05VQ2V3Z1ltQWls?=
+ =?utf-8?B?aS9TdXppZTMyUFJvU1BrNVAzbERhc2R4cW5QYmJkYjAwYlRTdHVObzk2YXJ1?=
+ =?utf-8?B?QS9Zb1Q3bzh0dnA0cHd4WHM5aGNCS2FjdXRmcTM4VnVZb1hNRzdjeUlYSTVj?=
+ =?utf-8?B?dloxR09SZUp5Z2FqTURXQjJGRmRGVll4Ry9rQVhianR5WEtpUVV4UW11NEty?=
+ =?utf-8?B?RG56WWtVMC9UV3oyd1NxK1VpYUt2c21WRUcwdTEycGxSd1ZtTE1YUzZTZHEw?=
+ =?utf-8?B?aFZUc2JBTC9QZXBQdStwU1VLaTdmSk5sZXlUT1ZxZ2R4R3BOTWJIN2tKcHBh?=
+ =?utf-8?B?dElQUm8vK1BkZitYV3Z2cDlURFlud0NTS2h6VS95d01Ycm1rVVA5K3FBMFJp?=
+ =?utf-8?B?Z0hCNmNsOEdsb254ZXN1Ty93ZlZIMjBrNElLY0QzRG1PcmN6WVZuU2FHdEJz?=
+ =?utf-8?B?SUVKKzNnTFNNMzQ1bFNITXpDOStoZzZsakVIRnFOaWc5cUZybFNNY1NucHpF?=
+ =?utf-8?B?dHJsQ25oRk44OTVMTUtGeXhEdGJpc0g0WkxqSDE0YXNjL25WU0kzaHJ0Z1k1?=
+ =?utf-8?B?VG1kSWJDVEx1ZTRpWlVBbDB4OE4rUUZxeFhxdnZjaytRNGE2WG1lWGtxdEh4?=
+ =?utf-8?B?K2d6ek1KdG82Yjl4elZ2RXVZZFJ0SlJpNzl5MFh4OHFiUDVVZ2xmS3BTdTZ5?=
+ =?utf-8?B?a2xFSlZSK094YTVrcEZVK29oYW1sMHNhd1FBTURqNGVlOTRGYkJYelBiUm1M?=
+ =?utf-8?B?Y0UvV0tSQjlKY25na2NpdlRLWmhqZDZwZ1ZRY1JNZVNhUWtldXBVMm5GRnN4?=
+ =?utf-8?B?VFg5NjR2WDNlczZFK2xRRjRWbkVpek9oRjhsMHdndUMwV1Rra3JRZEcvQ2VP?=
+ =?utf-8?B?N2l1T1FiWGZpeVA2UmJoWWNxLzBleVlPTnR0SjRMK0VrSmtVU0dGNnAvNkpX?=
+ =?utf-8?B?aHI1QVBDTlRsekROS1A5MkRWbGdNMHUrd1h6RWdhWTlNbUpodGxENllsTEZn?=
+ =?utf-8?B?VGJMWHZJS2EwMUFYeXZ4SlcrWWdQeUsyN0l0aGREcVgxRG9yc2lmeFZQZGFX?=
+ =?utf-8?B?NjB3TW9YUkxwNXV5QTZHMnlxeUVVbHB0blpBSENPYzEycFZENG1HRnpjbGFx?=
+ =?utf-8?B?S1h6ZjNVZXZ4cUtZYTVIOTlPa1premVoRHp3NHJMZFNBSG9rTHpKck84QjNj?=
+ =?utf-8?B?bGt3N3BhYjJiV2F5OTZRalBQWHJhVVNEbXRianZkYVdyZEN4VXJDVEFySWRj?=
+ =?utf-8?B?TmNEQWFvRjdzWFlEdHdTSVJ0a0o5K0o0anpWemFubnRmazk4Z3pCL0FLRlYr?=
+ =?utf-8?B?NCtJUTR3ZkVIa09yeTRpcHlLYlBwdHdMeWVkN1lnSmg0WXptY0tQSER2RHBX?=
+ =?utf-8?B?N20xaFhNdTB2b3Nib2lpTGlncm9adExER0lMc0hheFVvdHM0ZmRmcGx4VWg5?=
+ =?utf-8?B?RVowTFB1cERtWEpoRzJHYXpESHpuazhRajdGZWpkWXFxR2t0bjhzY3FsT0xW?=
+ =?utf-8?B?cXZlbGNpdlphbmE4RWhKSEdIUWc3bSs3bjNqV2FHNXVpREVza0FtOUVLT1Vr?=
+ =?utf-8?B?V2RHcHg4enVGek83TUtYWmp2YWh1bDB2TldDNGQ0RW9BaElsVklnWEpwSUYr?=
+ =?utf-8?B?UDFMT2djcXluMVFBSHVEU3RQMXlobnM5UTRKMDRKeDhDZ21UM1NJWHlNRzBO?=
+ =?utf-8?B?cTFEZndhZUtGcmYxR0dFenVvZ05hT0Q2NHN2dUZVQjdpeDFHS1VHWjdlVU4x?=
+ =?utf-8?B?RWN5ckV6MElQN0o4R0lHeUFkRWdNK2NVRzJrUnJVNXpUOHNKam1BSkhIa0Nv?=
+ =?utf-8?B?QWYvRWxxNzdaZW1YM2NiMG03c3ZOOGJuQmlwMXVTTHZjTlhNRiswQWZIdzNj?=
+ =?utf-8?B?b3pKdnkyYTB1YU11V3dKUStXZHR4Z0lCZm8xWlBTb0VoVEh4THZkaDk0TFNi?=
+ =?utf-8?Q?gm5YRIzr3+jHhfcyHkqJxxvYHEKaUSAYHx0VoVPDvgjua?=
+X-MS-Exchange-AntiSpam-MessageData-1: cRdMQt2kGie1Ig==
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f7423bc-3b9c-4976-18b6-08deb4917c6f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a31b091-4e7f-4994-be76-08deb4918346
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 May 2026 03:56:48.5748
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 May 2026 03:57:00.0893
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: J94WEafJF6yHL53vui2eZW1uDeVZNe8PSwC3RXGRhMFh9sh9CTD/jTek3hxFPgo1qqUGfWjiP/NfJzuQUiUtWQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6uppeAQpkrWfwI2yaGO1GSiMddteDVKl0InXb1IAZhDDjlJevwgLSXjCvrYCEDUPMG+TcavwLEZXXeqFWpXB6w==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7972
 
-On Monday, May 18, 2026 5:02=E2=80=AFAM Aaron Kling wrote:
-> On Thu, May 14, 2026 at 9:35=E2=80=AFPM Mikko Perttunen <mperttunen@nvidi=
-a.com> wrote:
-> >
-> > When a buffer object is pinned via host1x_bo_pin() with a cache, the
-> > resulting mapping is kept in the cache so it can be reused on subsequen=
-t
-> > pins. Each mapping held a reference to the underlying host1x_bo (taken
-> > in tegra_bo_pin / gather_bo_pin), so as long as a mapping was cached,
-> > the bo itself could not be freed.
-> >
-> > However, the only way to remove the cached mapping was through the free
-> > path of the buffer object. This meant that if a bo got cached, it could
-> > never get freed again.
-> >
-> > Resolve the circularity by holding a weak reference to the bo from the
-> > cache side. This is done by having the .pin callbacks not bump the bo's
-> > refcount -- instead the common Host1x bo code does so, except for the
-> > cache reference.
-> >
-> > Also move the remove-cache-mapping-on-free code into a common function
-> > inside Host1x code. This is only called from the TegraDRM GEM buffers
-> > since those are the only ones that can be cached at the moment.
-> >
-> > Reported-by: Aaron Kling <webgeek1234@gmail.com>
-> > Fixes: 1f39b1dfa53c ("drm/tegra: Implement buffer object cache")
+On Monday, May 18, 2026 2:35=E2=80=AFAM Uwe Kleine-K=C3=B6nig wrote:
+> Hello,
+>=20
+> On Tue, Mar 31, 2026 at 11:12:16AM +0900, Mikko Perttunen wrote:
+> > On Tegra264, the PWM enablement bit is not located at the base address
+> > of the PWM controller. Hence, introduce an enablement offset field in
+> > the tegra_pwm_soc structure to describe the offset of the register.
+> >=20
+> > Co-developed-by: Yi-Wei Wang <yiweiw@nvidia.com>
+> > Signed-off-by: Yi-Wei Wang <yiweiw@nvidia.com>
 > > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 > > ---
-> >  drivers/gpu/drm/tegra/gem.c    | 13 ++-------
-> >  drivers/gpu/drm/tegra/submit.c |  3 +--
-> >  drivers/gpu/host1x/bus.c       | 60 ++++++++++++++++++++++++++++++++++=
-+++++++-
-> >  include/linux/host1x.h         |  7 +++++
-> >  4 files changed, 69 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-> > index d2bae88ad545..2377e2b76397 100644
-> > --- a/drivers/gpu/drm/tegra/gem.c
-> > +++ b/drivers/gpu/drm/tegra/gem.c
-> > @@ -69,7 +69,7 @@ static struct host1x_bo_mapping *tegra_bo_pin(struct =
-device *dev, struct host1x_
-> >                 return ERR_PTR(-ENOMEM);
-> >
-> >         kref_init(&map->ref);
-> > -       map->bo =3D host1x_bo_get(bo);
-> > +       map->bo =3D bo;
-> >         map->direction =3D direction;
-> >         map->dev =3D dev;
-> >
-> > @@ -170,7 +170,6 @@ static void tegra_bo_unpin(struct host1x_bo_mapping=
- *map)
-> >                 kfree(map->sgt);
-> >         }
-> >
-> > -       host1x_bo_put(map->bo);
-> >         kfree(map);
-> >  }
-> >
-> > @@ -509,17 +508,9 @@ static struct tegra_bo *tegra_bo_import(struct drm=
-_device *drm,
-> >  void tegra_bo_free_object(struct drm_gem_object *gem)
-> >  {
-> >         struct tegra_drm *tegra =3D gem->dev->dev_private;
-> > -       struct host1x_bo_mapping *mapping, *tmp;
-> >         struct tegra_bo *bo =3D to_tegra_bo(gem);
-> >
-> > -       /* remove all mappings of this buffer object from any caches */
-> > -       list_for_each_entry_safe(mapping, tmp, &bo->base.mappings, list=
-) {
-> > -               if (mapping->cache)
-> > -                       host1x_bo_unpin(mapping);
-> > -               else
-> > -                       dev_err(gem->dev->dev, "mapping %p stale for de=
-vice %s\n", mapping,
-> > -                               dev_name(mapping->dev));
-> > -       }
-> > +       host1x_bo_clear_cached_mappings(&bo->base);
-> >
-> >         if (tegra->domain) {
-> >                 tegra_bo_iommu_unmap(tegra, bo);
-> > diff --git a/drivers/gpu/drm/tegra/submit.c b/drivers/gpu/drm/tegra/sub=
-mit.c
-> > index 3009b8b9e619..e5841857c937 100644
-> > --- a/drivers/gpu/drm/tegra/submit.c
-> > +++ b/drivers/gpu/drm/tegra/submit.c
-> > @@ -76,7 +76,7 @@ gather_bo_pin(struct device *dev, struct host1x_bo *b=
-o, enum dma_data_direction
-> >                 return ERR_PTR(-ENOMEM);
-> >
-> >         kref_init(&map->ref);
-> > -       map->bo =3D host1x_bo_get(bo);
-> > +       map->bo =3D bo;
-> >         map->direction =3D direction;
-> >         map->dev =3D dev;
-> >
-> > @@ -117,7 +117,6 @@ static void gather_bo_unpin(struct host1x_bo_mappin=
-g *map)
-> >         dma_unmap_sgtable(map->dev, map->sgt, map->direction, 0);
-> >         sg_free_table(map->sgt);
-> >         kfree(map->sgt);
-> > -       host1x_bo_put(map->bo);
-> >
-> >         kfree(map);
-> >  }
-> > diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-> > index f814eb4941c0..772e05a7b45b 100644
-> > --- a/drivers/gpu/host1x/bus.c
-> > +++ b/drivers/gpu/host1x/bus.c
-> > @@ -887,6 +887,20 @@ int host1x_client_resume(struct host1x_client *cli=
-ent)
-> >  }
-> >  EXPORT_SYMBOL(host1x_client_resume);
-> >
-> > +/**
-> > + * host1x_bo_pin() - Create a DMA mapping for the buffer object
-> > + * @dev: Device onto which DMA map to
-> > + * @bo: Buffer object to map
-> > + * @dir: DMA direction
-> > + * @cache: Cache in which to store mapping, or NULL
-> > + *
-> > + * Creates a DMA mapping pointing to @bo for @dev. The refcount of @bo=
- is incremented
-> > + * until host1x_bo_unpin is called.
-> > + *
-> > + * If @cache is specified, the mapping is also stored in the cache and=
- not released
-> > + * until @bo is freed (refcount drops to zero). This improves performa=
-nce when a buffer
-> > + * is pinned and unpinned frequently as in the case of display use.
-> > + */
-> >  struct host1x_bo_mapping *host1x_bo_pin(struct device *dev, struct hos=
-t1x_bo *bo,
-> >                                         enum dma_data_direction dir,
-> >                                         struct host1x_bo_cache *cache)
-> > @@ -899,6 +913,7 @@ struct host1x_bo_mapping *host1x_bo_pin(struct devi=
-ce *dev, struct host1x_bo *bo
-> >                 list_for_each_entry(mapping, &cache->mappings, entry) {
-> >                         if (mapping->bo =3D=3D bo && mapping->direction=
- =3D=3D dir) {
-> >                                 kref_get(&mapping->ref);
-> > +                               host1x_bo_get(bo);
-> >                                 goto unlock;
-> >                         }
-> >                 }
-> > @@ -908,6 +923,8 @@ struct host1x_bo_mapping *host1x_bo_pin(struct devi=
-ce *dev, struct host1x_bo *bo
-> >         if (IS_ERR(mapping))
-> >                 goto unlock;
-> >
-> > +       host1x_bo_get(bo);
-> > +
-> >         spin_lock(&mapping->bo->lock);
-> >         list_add_tail(&mapping->list, &bo->mappings);
-> >         spin_unlock(&mapping->bo->lock);
-> > @@ -918,7 +935,12 @@ struct host1x_bo_mapping *host1x_bo_pin(struct dev=
-ice *dev, struct host1x_bo *bo
-> >
-> >                 list_add_tail(&mapping->entry, &cache->mappings);
-> >
-> > -               /* bump reference count to track the copy in the cache =
-*/
-> > +               /*
-> > +                * Bump the mapping reference count to track the mappin=
-g in the cache,
-> > +                * but do not bump the BO's refcount. This allows the B=
-O to still get freed,
-> > +                * triggering the release of the cache mapping through
-> > +                * host1x_bo_clear_cached_mappings.
-> > +                */
-> >                 kref_get(&mapping->ref);
-> >         }
-> >
-> > @@ -948,9 +970,17 @@ static void __host1x_bo_unpin(struct kref *ref)
-> >         mapping->bo->ops->unpin(mapping);
-> >  }
-> >
-> > +/**
-> > + * host1x_bo_unpin() - Release an established DMA mapping of a buffer =
-object
-> > + * @mapping: Mapping to release
-> > + *
-> > + * Unmaps the given @mapping, unless it is cached. Decreases the refco=
-unt on
-> > + * the underlying buffer object.
-> > + */
-> >  void host1x_bo_unpin(struct host1x_bo_mapping *mapping)
-> >  {
-> >         struct host1x_bo_cache *cache =3D mapping->cache;
-> > +       struct host1x_bo *bo =3D mapping->bo;
-> >
-> >         if (cache)
-> >                 mutex_lock(&cache->lock);
-> > @@ -959,5 +989,33 @@ void host1x_bo_unpin(struct host1x_bo_mapping *map=
-ping)
-> >
-> >         if (cache)
-> >                 mutex_unlock(&cache->lock);
-> > +
-> > +       host1x_bo_put(bo);
-> >  }
-> >  EXPORT_SYMBOL(host1x_bo_unpin);
-> > +
-> > +/**
-> > + * host1x_bo_clear_cached_mappings() - Remove all cached mappings poin=
-ting at a bo
-> > + * @bo: Buffer object to release mappings of
-> > + *
-> > + * Drops references to any mappings pointing to @bo left in any caches=
-. This must
-> > + * be called by any host1x_bo implementers that may be pinned with cac=
-hing enabled
-> > + * before freeing the bo.
-> > + */
-> > +void host1x_bo_clear_cached_mappings(struct host1x_bo *bo)
-> > +{
-> > +       struct host1x_bo_mapping *mapping, *tmp;
-> > +       struct host1x_bo_cache *cache;
-> > +
-> > +       list_for_each_entry_safe(mapping, tmp, &bo->mappings, list) {
-> > +               cache =3D mapping->cache;
-> > +               if (WARN_ON(!cache))
-> > +                       continue;
-> > +
-> > +               mutex_lock(&mapping->cache->lock);
-> > +               WARN_ON(kref_read(&mapping->ref) !=3D 1);
-> > +               __host1x_bo_unpin(&mapping->ref);
-> > +               mutex_unlock(&mapping->cache->lock);
-> > +       }
-> > +}
-> > +EXPORT_SYMBOL(host1x_bo_clear_cached_mappings);
-> > diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-> > index 5e7a63143a4a..d8f052a85b75 100644
-> > --- a/include/linux/host1x.h
-> > +++ b/include/linux/host1x.h
-> > @@ -143,6 +143,12 @@ static inline struct host1x_bo_mapping *to_host1x_=
-bo_mapping(struct kref *ref)
-> >         return container_of(ref, struct host1x_bo_mapping, ref);
-> >  }
-> >
-> > +/**
-> > + * struct host1x_bo_ops - operations implemented by a host1x_bo provid=
-er
-> > + *
-> > + * @pin: create a DMA mapping. Implementation must not touch the bo's =
-refcount.
-> > + * @unpin: destroy a DMA mapping. Implementation must not touch the bo=
-'s refcount.
-> > + */
-> >  struct host1x_bo_ops {
-> >         struct host1x_bo *(*get)(struct host1x_bo *bo);
-> >         void (*put)(struct host1x_bo *bo);
-> > @@ -181,6 +187,7 @@ struct host1x_bo_mapping *host1x_bo_pin(struct devi=
-ce *dev, struct host1x_bo *bo
-> >                                         enum dma_data_direction dir,
-> >                                         struct host1x_bo_cache *cache);
-> >  void host1x_bo_unpin(struct host1x_bo_mapping *map);
-> > +void host1x_bo_clear_cached_mappings(struct host1x_bo *bo);
-> >
-> >  static inline void *host1x_bo_mmap(struct host1x_bo *bo)
-> >  {
-> >
-> > --
-> > 2.53.0
-> >
+> >  drivers/pwm/pwm-tegra.c | 17 ++++++++++++-----
+> >  1 file changed, 12 insertions(+), 5 deletions(-)
+> >=20
+> > diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+> > index 358c81cea05b..b925ef914411 100644
+> > --- a/drivers/pwm/pwm-tegra.c
+> > +++ b/drivers/pwm/pwm-tegra.c
+> > @@ -61,6 +61,7 @@
+> > =20
+> >  struct tegra_pwm_soc {
+> >  	unsigned int num_channels;
+> > +	unsigned int enable_reg;
+> >  };
+> > =20
+> >  struct tegra_pwm_chip {
+> > @@ -197,8 +198,9 @@ static int tegra_pwm_config(struct pwm_chip *chip, =
+struct pwm_device *pwm,
+> >  		err =3D pm_runtime_resume_and_get(pwmchip_parent(chip));
+> >  		if (err)
+> >  			return err;
+> > -	} else
+> > +	} else if (pc->soc->enable_reg =3D=3D PWM_CSR_0) {
+> >  		val |=3D PWM_ENABLE;
+> > +	}
+> > =20
+> >  	pwm_writel(pwm, PWM_CSR_0, val);
+> > =20
 >=20
-> I have verified this on a Jetson AGX Xavier devkit, a Jetson Xavier NX
-> devkit, a Jetson TX2 devkit, and a Jetson TX2 NX in a p3509 carrier.
-> No longer seeing allocation failures nor am I seeing any obvious
-> regressions. I am currently unable to boot any t210 device to Android
-> userspace to verify those for various preexisting reasons, and Android
-> recovery does not reallocate buffers to stress this issue.
->=20
-> Tested-by: Aaron Kling <webgeek1234@gmail.com>
->=20
-> Aaron
+> The patch is a bit artificial because we don't have a driver yet where
+> `pc->soc->enable_reg =3D=3D PWM_CSR_0` doesn't hold. But it looks strange=
+ to
+> me that there is no enable bit set for the pc->soc->enable_reg !=3D
+> PWM_CSR_0 case. So I tend to want these changes in squashed into another
+> patch such that the combined patch handles the enabling completely.
 
-Thank you!
+Patches 3-5 are all preparatory for patch 6 which finally is enabling
+Tegra264. Would you like all of these patches squashed?
+
+FWIW, the reason there is no pc->soc->enable_reg !=3D PWM_CSR_0 case is
+that this function only writes PWM_CSR_0. So if it's anything else we
+don't need to take care to preserve the enable bit. It's a bit janky
+but I wasn't immediately able to find anything nicer without a larger
+refactoring.
+
+>=20
+> > @@ -213,6 +215,7 @@ static int tegra_pwm_config(struct pwm_chip *chip, =
+struct pwm_device *pwm,
+> > =20
+> >  static int tegra_pwm_enable(struct pwm_chip *chip, struct pwm_device *=
+pwm)
+> >  {
+> > +	struct tegra_pwm_chip *pc =3D to_tegra_pwm_chip(chip);
+> >  	int rc =3D 0;
+> >  	u32 val;
+> > =20
+> > @@ -220,20 +223,22 @@ static int tegra_pwm_enable(struct pwm_chip *chip=
+, struct pwm_device *pwm)
+> >  	if (rc)
+> >  		return rc;
+> > =20
+> > -	val =3D pwm_readl(pwm, PWM_CSR_0);
+> > +
+>=20
+> A single empty line is enough.
+
+Sorry, will fix.
+
+Thanks
+Mikko
+
+>=20
+> > +	val =3D pwm_readl(pwm, pc->soc->enable_reg);
+> >  	val |=3D PWM_ENABLE;
+> > -	pwm_writel(pwm, PWM_CSR_0, val);
+> > +	pwm_writel(pwm, pc->soc->enable_reg, val);
+> > =20
+> >  	return 0;
+> >  }
+> > =20
+> >  static void tegra_pwm_disable(struct pwm_chip *chip, struct pwm_device=
+ *pwm)
+> >  {
+> > +	struct tegra_pwm_chip *pc =3D to_tegra_pwm_chip(chip);
+> >  	u32 val;
+> > =20
+> > -	val =3D pwm_readl(pwm, PWM_CSR_0);
+> > +	val =3D pwm_readl(pwm, pc->soc->enable_reg);
+> >  	val &=3D ~PWM_ENABLE;
+> > -	pwm_writel(pwm, PWM_CSR_0, val);
+> > +	pwm_writel(pwm, pc->soc->enable_reg, val);
+> > =20
+> >  	pm_runtime_put_sync(pwmchip_parent(chip));
+> >  }
+> > @@ -398,10 +403,12 @@ static int __maybe_unused tegra_pwm_runtime_resum=
+e(struct device *dev)
+> > =20
+> >  static const struct tegra_pwm_soc tegra20_pwm_soc =3D {
+> >  	.num_channels =3D 4,
+> > +	.enable_reg =3D PWM_CSR_0,
+> >  };
+> > =20
+> >  static const struct tegra_pwm_soc tegra186_pwm_soc =3D {
+> >  	.num_channels =3D 1,
+> > +	.enable_reg =3D PWM_CSR_0,
+> >  };
+> > =20
+> >  static const struct of_device_id tegra_pwm_of_match[] =3D {
+> >=20
+> > --=20
+> > 2.53.0
+> >=20
+
+
 
 
