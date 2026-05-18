@@ -1,68 +1,68 @@
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010052.outbound.protection.outlook.com [40.93.198.52])
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012041.outbound.protection.outlook.com [52.101.43.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D7737649E;
-	Mon, 18 May 2026 11:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DAE3F6C55;
+	Mon, 18 May 2026 11:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.41
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779104467; cv=fail; b=eo/1AmIWfHFNnxTLfdbzcM5vZXSlAu0sga7n31o5MuC0lxzgfH1RjNSQECSub3heK1ZDKhLJKoDfyjlz6irnVKykJviUWS3RQkjYjs6tup1ZTyMeKuU0RmDdYB3EfZFv5V6v4e13LS1g+chyGN9wZVM0BppHKRdU0yHhmCZIFng=
+	t=1779104469; cv=fail; b=B/qZsD6a8d+nl64CWLawPKXYizhuam0qHypEJlLArpUTxBB+PTvd+iORENwo4AFVd9XwSYHmzq42B/LFcIsATZYQ4CVkY8fDHxVDeflP699t6+LIsHeO3Y0mEpgBpsCscptpQ6Dj9jedOERjgI9XNP6aY29TOdRjl2FAFki6edY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779104467; c=relaxed/simple;
-	bh=v8wBT4ny7BC3IV8zZMgz9eg1JrV7Dg5+Ba8U2Nx7C2w=;
+	s=arc-20240116; t=1779104469; c=relaxed/simple;
+	bh=nSpaOhp7JQo37Ppr+8YZAKaei5HEaI1GyAUNACQluRA=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hSBj/PslK5qKHWM06D8ELZKWz7t1w9JNKI4VsHEpDCz6Ui77eNIhixn4b6S8mtd1wuVPDxkpnZxcNjADA2PCN+IoFopJ1fwXskzYQw5NnmungCfWCQ12VBonXGTh/sbrqQVIGPgaAIn91WCvWLk3UAO0aYujjdYhB3z16v96TwM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FFPpU8SM; arc=fail smtp.client-ip=40.93.198.52
+	 MIME-Version:Content-Type; b=XM3lWNRS1hIlL02ASUqfQTV3k1o59drH9CqlxwjRcc/eBno+/b49U6AInHLFniO3vHpZZnLBhyNrTFEmYrAr0QH68zUhH5n1/Wp1aZc5Os2FejffSMp31WRc1f8ZzZ5pgSXUkWPIAwj2L4mjbiCzB+WIC9CquSeJ1rABn+vym+A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Cd727YRQ; arc=fail smtp.client-ip=52.101.43.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FFPpU8SM"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Cd727YRQ"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j/nRR4E7GL0FBuMkEIfTMJELqw+WbU4UVeG4t9eAlXs70XQIq2kzEZ1Wc7BqotIYbyh6OVZaLIxgu/Ud0KfAf5jCDahQnVMEjYHEP6AeoNJjUag41xMEsIVoX0eaHA0OZa+kx8A4a755hdqT4J0cSHPVwhcVVlAkMoVL4J2IIt17ioLgd8coNjGQ+Ot6zvXw6FpFmA6AwMSymZ8K0KRmDnVYNohwwTGu390Hp2Wq9BpFlH5ImDi28CW249NH0wlu6u7PHf+5sj6satVHBxky0mFW94pDvXR7t0msi1YjJL0w/7IC2bBG4xnA4bH3mTAYwEDxvkhrx/SFWQC4wjrOeg==
+ b=dQJa5bnxHacIdHLQZjnMXe8q+zRCLFhtBxUjDS/RyEQiX1Hz68AnfwCIBk3Wl1nCLxuciUSiA0tsSabm+yUieQArVUZB2Amt58uph9tk5XnrWhNbe/oe3VlLXOgBTDl+PkkwwSzeLK6KZVa+PeGmI4ZahJ3L7VjaOKLuO3YgdD4Fd7kPt9SMh7yk07tv2XL6TEA6/9wM9qnhxlkTpbpn5o+8pXzAfTT4AHekHFxgOcHbnnjcDzPrEQcE/g2ruRUVJv231GbUOm704xxfUgSam/8VPCLrxQnpDNWNnsD/+WA860WGkvmIEOMz16fdi9XP942PALWEEiRpDUPO/P/uqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=a2SRCVCu1TGmJEoclyV6rk8C5YaiooeSnVcai4ufYtw=;
- b=meUV/wAPNxy2ZdsRVvgklWn/CUUS31y1zjrLf+O57M1Bbd++R/H0Om/swWV2Tok7JHC4fl8WEPq7dri7K+dsxvj4p/JR950kNNZjwTQNY34/ygH0tfD2K2gWx6a4qjiUsIFLkjQBXOln7CfexDZ7bSgJzhON2Np8AOWfZ2Oaxf4Xp8vsbzUdXtCiFZtXLWEPkWEIn6+1wBGCt2QE9ZJ0QUj2IVh3KftfFuCk94w6kpfPZP1CixKaP6jvdsWb3BusiouYHp1zm/IpLJMGnoiKbz9YZlac6EtUB5WxKjIWG8JB97AEj9I9OK0GlabaS6Q+GJwZ+EQQWuEhrEV8QHszrg==
+ bh=VFawLTOj2bgZ5Q52p6jwRTREsDJuLNRWERHKeTBWKwg=;
+ b=irP62OpJJ8gJiPXhnDWzAaCrtUH7r1LkLKXkAa+Z0KLTcF75yTuzYBnuOHVaQnQEMvb4v8WY6iWRJdJXT/227GxyzDgCHoMFq7JD4O4vu5fnBgdisPkuJXoODoSBcegZh9RFe9iR0IKD9VHpnYZm438a7h63V7ObLS9JW1TWNYnkxu/7JnBm+PLcL513gAqIu8Z2tnE4evT3JHCKQrRkOIJ/sGoWorUrllnKvHm3ddNxXn5hFPgwLIsBUMwcgqZjevy6+A82Wb0NQYp/LdBiuO063L+8Ywin9wryX7Kv2QBe802SN9ighvu9ltq4mcri6BQcNQ6G/dlfdvhgcxEEKw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ 216.228.118.232) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a2SRCVCu1TGmJEoclyV6rk8C5YaiooeSnVcai4ufYtw=;
- b=FFPpU8SMV/d8Ln1mJgoDAOdfpwbXGVFSdv6RX1R7pz0WjGDxtOB1V/vFK80YWoqoegOWpu5ykP1BNh0salRB3qNDwONKPk0SO1NtjYEL0bapL/72Vr2Op33v2M74HMa37r4r4N2xH0JvEgt+FMLDi9iLfS3EobH/lfDbMqEXBYmgKIkOTkh6w6rj/y2YYgqFMpiz107OxL/c9Hw3rEGthw1nCNu7dM4HLKMj64/rC329Brna0uDGG0FMj4aIU0KniAoR9KOgjJRO99xrCXxGsoZiZCKDqr1jxKgrnnKnTzUnn8XkHQbqRaiKWt8z2rvFXqHuQKIPHLcG+BM5J4uoGA==
-Received: from SA9PR13CA0128.namprd13.prod.outlook.com (2603:10b6:806:27::13)
- by CY3PR12MB9555.namprd12.prod.outlook.com (2603:10b6:930:10a::14) with
+ bh=VFawLTOj2bgZ5Q52p6jwRTREsDJuLNRWERHKeTBWKwg=;
+ b=Cd727YRQqMpYt97GpT4FJy/I8GRLeNhb+VWlqjEt//p13aYhILpKuJ1jhtK9ETEnOFVTk4/ZM1/ZauwT3GYSLGZ/ftJpXA/xOA2Fhp7e+Wh5QQcXIKylDZEnDF5kbwJrHMNvj5+nR7sZvSl/gqz5cBSbFBo8+ymYbSJGCKH8IEnSuvMy9i3wmnP2vO9wMmGH3OyqdnoTz0UnnBiVFsU46h6LvOxPeaUNw/RQaPdnjsMpuKeQU3cOrbMTD/d3tycUmdBeX8nNtUnWTuBm+lFom1wS2cyVuLph5yGwnpRIjijaLhfyjml6+zqu6GkMd028A/1jiPTiOe065ijlkkmgeA==
+Received: from SJ0PR03CA0019.namprd03.prod.outlook.com (2603:10b6:a03:33a::24)
+ by DS0PR12MB7897.namprd12.prod.outlook.com (2603:10b6:8:146::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.25.23; Mon, 18 May
- 2026 11:40:53 +0000
-Received: from SN1PEPF000397B2.namprd05.prod.outlook.com
- (2603:10b6:806:27:cafe::7f) by SA9PR13CA0128.outlook.office365.com
- (2603:10b6:806:27::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.48.13 via Frontend Transport; Mon, 18
- May 2026 11:40:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.25.24; Mon, 18 May
+ 2026 11:40:54 +0000
+Received: from SJ1PEPF000023D8.namprd21.prod.outlook.com
+ (2603:10b6:a03:33a:cafe::c6) by SJ0PR03CA0019.outlook.office365.com
+ (2603:10b6:a03:33a::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.25.23 via Frontend Transport; Mon, 18
+ May 2026 11:40:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- SN1PEPF000397B2.mail.protection.outlook.com (10.167.248.56) with Microsoft
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SJ1PEPF000023D8.mail.protection.outlook.com (10.167.244.73) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.48.11 via Frontend Transport; Mon, 18 May 2026 11:40:53 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ 15.21.71.0 via Frontend Transport; Mon, 18 May 2026 11:40:54 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 18 May
- 2026 04:40:39 -0700
+ 2026 04:40:45 -0700
 Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Mon, 18 May 2026 04:40:38 -0700
+ 15.2.2562.20; Mon, 18 May 2026 04:40:43 -0700
 Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.9) by mail.nvidia.com
  (10.126.190.180) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Mon, 18 May 2026 04:40:35 -0700
+ Transport; Mon, 18 May 2026 04:40:40 -0700
 From: Akhil R <akhilrajeev@nvidia.com>
 To: Laxman Dewangan <ldewangan@nvidia.com>, Dmitry Osipenko
 	<digetx@gmail.com>, Andi Shyti <andi.shyti@kernel.org>, Thierry Reding
@@ -71,9 +71,9 @@ To: Laxman Dewangan <ldewangan@nvidia.com>, Dmitry Osipenko
 	<linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>
 CC: Akhil R <akhilrajeev@nvidia.com>
-Subject: [PATCH v2 3/4] i2c: tegra: Update Tegra410 I2C timing parameters
-Date: Mon, 18 May 2026 17:10:12 +0530
-Message-ID: <20260518114013.62065-4-akhilrajeev@nvidia.com>
+Subject: [PATCH v2 4/4] i2c: tegra: Fix NOIRQ suspend/resume
+Date: Mon, 18 May 2026 17:10:13 +0530
+Message-ID: <20260518114013.62065-5-akhilrajeev@nvidia.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260518114013.62065-1-akhilrajeev@nvidia.com>
 References: <20260518114013.62065-1-akhilrajeev@nvidia.com>
@@ -89,69 +89,142 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000397B2:EE_|CY3PR12MB9555:EE_
-X-MS-Office365-Filtering-Correlation-Id: ac97a691-fb21-4a69-6c03-08deb4d2516e
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D8:EE_|DS0PR12MB7897:EE_
+X-MS-Office365-Filtering-Correlation-Id: 42f861b7-9731-4873-c5a3-08deb4d251d3
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700016|376014|921020|22082099003|18002099003|56012099003|3023799003|11063799003;
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700016|376014|18002099003|22082099003|56012099003|921020|11063799003;
 X-Microsoft-Antispam-Message-Info:
-	GwYY9+W0lwYIsgjtexNakRhJG5ZXcxxKWfIdDWgwGvufokH+LldAGQwX6CKzYCvy2fvkTcde9vdzL4gaVxg+PKy9gCQhKsfzn+Pu0u6iJkM0C+i9iwq7kd4kxOZJbGV2oqhzaknknTdYlwl8P4Cdt9ns/NQjecG+rCSJRIuHdfB/uIlHBtixCUL41FAr2m4BrHcJL3k3rCIotYzc0PFWHfxXR1NB/HXoIuLgQ70xuGalSM1SX36vbqrnGF5dFRzXdL1HxSzqNRMeINNAqJQQElyU8a3lYA6YEpVD6GyOi3Ir0XK0A9jWEmpYm0sJNbegT9kN8byB6kVSfej4sBXP812YkAIz23loxH/gOt9be67OrC5DmyJ5bF2fPZrbigJJat3w3HbdslBdBdGBTZnB4W7OiMOXiS692B6RNCM6FN/OmeG6N7cjBji7RIktgdO8aDgEARnmlT9ghGoXH29gXf5IPMgl4WbZY6LcKfuVPWNnt/lLhaZrNBofdwXCnFv1L9OKiAXO1ngUTB6b66lTwAG2ZL0NXrKtgSAbOZWPBzsTirXeK3MZg7+4Vz3bNXLuyWp6E4UgJCtaZRKS5R+YUoImdwzaZut5MQQ3w9/bTp3ymwy7zY3QN0dF7hYqlQ4/9gI/GYi5dMXzy4XHGugRFbf9IyWapRjtAAiLvGVz/pNIaANk5hJwN65WePv8Q/aYs2cgSvNNQWFGt1dp5YYuDspDKfOJBGkQtFxhXaxg0M7y/MgKIztVSh3/mW4TqgcLbiyuNL8lFsB//+VaPv1N5Q==
+	W/jLs6G4l838A8a6T9+aOcd+wwuJrIVZGQdrzN1VSaZFadG0wqjJz4eMJ99CNO3la3DcLNzWGDQdD95PQLjB+7S4ecq3dB+z4XD8XWWFh7Y08X35VD5baz31RbwDWuHG0WK+Vq4aJhHBLm7otgLD1RfCOvqN7+72YMzpZanKeWeDix+CyhE8YPDTo2va4ZALg//LPHHXgvW4xR1ZJQK7//3uYTody1IsnIp6xiSKkcx/TyMWmaTlWrKAYfFTeaEr5JBK8T0XXn4bO8Fmkf/WdO3h3PpUurwog2eJPXiVePcYTHaiOqp7BEB+GSKxzLl6nosfUNYh0k8Zxe30rXkEy98w09lBglg6KCXWuNcM8M3J58Zv9evqmi0kA4qBvZNEf+8SYA0eh77NorjQX7xUaPln2485CTxNGXniR03pxTZ71nShVLpjhbzozQHQOrO3FM/Z/yfNfg+yfFLzJgdBviHFfbwbN33rypbMZKpGXoj2J4UaFRPtCwLOduS1BB9IAKMaK62FjJj8vWdo86RZZ9Mlb6aA4FicGmi0X1B+BSDX28rrnny4BjKWuGtCCJ+y463Zx39gvOyNTJgTpDzc8Xel6lw2qBEFLLaArYzubuVM2OctFJ+Y7dWWV68LZgWFsr1EVMPkWyd97JpoHFX/i8Q1r839p3lqzNuEYOzSpMiq0/OvGV5To8BoYLCt3IEmFAxZKOsWLTUUTCQpGZGwUldOTqPjJi6i6iBcZGD2AQFNlkDs3BfJJCetoGGNE1AZRpQPrSqqso323GoDaADB5Q==
 X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700016)(376014)(921020)(22082099003)(18002099003)(56012099003)(3023799003)(11063799003);DIR:OUT;SFP:1101;
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700016)(376014)(18002099003)(22082099003)(56012099003)(921020)(11063799003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	r4oxjw43fjtyD7JQzvNN5bNyPE82pyWOQKHWZPgVpdENb8ZuTPvhsfCH30cfZuaC30rOeALR9MHzOg42Qkq0K5eiAmMP8RwYC9VK96xPg3HmUgdGNtPv4PSY0ENc/ZALn64nOKfvTGNEpLUfEcwCD0rl1ZAiO/P3yY+MBhOXbltTPlt+Z3bPp7T1mu9Zqrn8zPcYebymrOX4tD4SY1dBai8dJNZsad6n/Eyiz2j5khiYNKjH49PGPQvSeWeGLeg8umZ9WEO4H4En2ZrxeZ0YwPt8XlL0R8AOrT2JgJwQj11U9wvxgUXpxjvqCRaj2vuAf1PSu0jyDZMi+1gCXD3mfKKLas/r2qJGERmXef1tbNqmEhcpeX0c2AS0IQ4wKauCaEPAabJNVy0gR/mj+ATxhGfm354OGbPY1MHA2k+S+J4fzgZF8v+kEhjx9Z6LbDIG
+	wIXjfRUXUzBR6+SiN+622pBnfomxRTcSyzSHpmE3Dv/0ASrrcke+jtMf2Mfz8oVVZvNbTlYmgJHARfFt4Hbw7SHkptgKrmU/5mKZJ7BvFdO8QN+57mFbPvLuRyZNAzVjF/VkTK9msc7lmGID8r/eJqaxAmkcPPeOyTP8PdqjTCKCJb3GKAMB1jaFmU7xGq1E6XOi/PSO/XDXcPAfwb1YF1SOAaUcZdyJKAOLDpEmx3Q2GnXMZwaf6EP38IS+glsuh70ZgFy9xTOR6gKBtdnGdAe+Mh1YIjDiBiG8XLhAgJq2ubF90rEnRkkQKqnyHIAdq5hTw6o5yi/Xwj2t5c8vmrfUZUYk6UHPnKsmC8J2/Jd1R7t1qz8Ew2c5ARhE55MjK8DmjgySmqP0yj5BFoyFV8VejP9+fl7Bm2XkFwJOj4rjQ0Zjt2qx2pyMK+5z9gGp
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 May 2026 11:40:53.4257
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 May 2026 11:40:54.1935
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac97a691-fb21-4a69-6c03-08deb4d2516e
+X-MS-Exchange-CrossTenant-Network-Message-Id: 42f861b7-9731-4873-c5a3-08deb4d251d3
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF000397B2.namprd05.prod.outlook.com
+	SJ1PEPF000023D8.namprd21.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY3PR12MB9555
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7897
 
-Update Tegra410 I2C timing parameters based on hardware characterization
-results. This adjusts the fast mode and HS mode settings to be compliant
-with the I2C specification.
+The Tegra I2C driver relies on runtime PM to wake up the controller before
+each transfer. However, runtime PM is disabled between the system suspend
+and NOIRQ suspend. If an I2C device initiates a transfer during this
+window, the I2C controller fails to wake up and the transfer fails. To
+handle this, the controller must be kept available for this period to
+allow transfers.
 
-Fixes: 59717f260183 ("i2c: tegra: Add support for Tegra410")
+Rework the I2C controller's system PM callbacks such that the controller
+is resumed from runtime suspend during system suspend and it stays
+RPM_ACTIVE throughout the suspend-resume cycle until it is runtime
+suspended back in the system resume. The clocks are disabled in NOIRQ
+suspend and enabled back in NOIRQ resume by calling the controller's
+runtime PM functions directly.
+
+Fixes: 8ebf15e9c869 ("i2c: tegra: Move suspend handling to NOIRQ phase")
+Assisted-by: Cursor:claude-4.6-opus
 Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
 ---
- drivers/i2c/busses/i2c-tegra.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 53 +++++++++++++++++++---------------
+ 1 file changed, 30 insertions(+), 23 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index f96a118249b3..93677bd2d3b1 100644
+index 93677bd2d3b1..a24b6ef26dbe 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -2138,9 +2138,9 @@ static const struct tegra_i2c_hw_feature tegra264_i2c_hw = {
- static const struct tegra_i2c_hw_feature tegra410_i2c_hw = {
- 	.has_continue_xfer_support = true,
- 	.has_per_pkt_xfer_complete_irq = true,
--	.clk_divisor_hs_mode = 1,
-+	.clk_divisor_hs_mode = 2,
- 	.clk_divisor_std_mode = 0x3f,
--	.clk_divisor_fast_mode = 0x2c,
-+	.clk_divisor_fast_mode = 0x2f,
- 	.clk_divisor_fast_plus_mode = 0x11,
- 	.has_config_load_reg = true,
- 	.has_multi_master_mode = true,
-@@ -2156,8 +2156,8 @@ static const struct tegra_i2c_hw_feature tegra410_i2c_hw = {
- 	.thigh_fast_mode = 0x2,
- 	.tlow_fastplus_mode = 0x2,
- 	.thigh_fastplus_mode = 0x2,
--	.tlow_hs_mode = 0x8,
--	.thigh_hs_mode = 0x6,
-+	.tlow_hs_mode = 0x5,
-+	.thigh_hs_mode = 0x2,
- 	.setup_hold_time_std_mode = 0x08080808,
- 	.setup_hold_time_fast_mode = 0x02020202,
- 	.setup_hold_time_fastplus_mode = 0x02020202,
+@@ -2426,29 +2426,38 @@ static int __maybe_unused tegra_i2c_runtime_suspend(struct device *dev)
+ }
+ 
+ static int __maybe_unused tegra_i2c_suspend(struct device *dev)
++{
++	/*
++	 * Bring the controller up and hold a usage count so it stays
++	 * available until the noirq phase.
++	 */
++	return pm_runtime_resume_and_get(dev);
++}
++
++static int __maybe_unused tegra_i2c_suspend_noirq(struct device *dev)
+ {
+ 	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+-	int err;
+ 
+ 	i2c_mark_adapter_suspended(&i2c_dev->adapter);
+ 
+-	if (!pm_runtime_status_suspended(dev)) {
+-		err = tegra_i2c_runtime_suspend(dev);
+-		if (err)
+-			return err;
+-	}
+-
+-	return 0;
++	/*
++	 * Runtime PM is already disabled at this point, so invoke the
++	 * runtime_suspend callback directly to put the controller down.
++	 */
++	return tegra_i2c_runtime_suspend(dev);
+ }
+ 
+-static int __maybe_unused tegra_i2c_resume(struct device *dev)
++static int __maybe_unused tegra_i2c_resume_noirq(struct device *dev)
+ {
+ 	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+ 	int err;
+ 
+ 	/*
+-	 * We need to ensure that clocks are enabled so that registers can be
+-	 * restored in tegra_i2c_init().
++	 * Runtime PM is still disabled at this point, so invoke the
++	 * runtime_resume callback directly to bring the controller back up
++	 * before re-initializing the hardware. The adapter is then marked
++	 * resumed so that consumers can issue transfers from their own
++	 * resume_noirq() handlers and onwards.
+ 	 */
+ 	err = tegra_i2c_runtime_resume(dev);
+ 	if (err)
+@@ -2458,24 +2467,22 @@ static int __maybe_unused tegra_i2c_resume(struct device *dev)
+ 	if (err)
+ 		return err;
+ 
+-	/*
+-	 * In case we are runtime suspended, disable clocks again so that we
+-	 * don't unbalance the clock reference counts during the next runtime
+-	 * resume transition.
+-	 */
+-	if (pm_runtime_status_suspended(dev)) {
+-		err = tegra_i2c_runtime_suspend(dev);
+-		if (err)
+-			return err;
+-	}
+-
+ 	i2c_mark_adapter_resumed(&i2c_dev->adapter);
+ 
+ 	return 0;
+ }
+ 
++static int __maybe_unused tegra_i2c_resume(struct device *dev)
++{
++	pm_runtime_put(dev);
++
++	return 0;
++}
++
+ static const struct dev_pm_ops tegra_i2c_pm = {
+-	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend, tegra_i2c_resume)
++	SET_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend, tegra_i2c_resume)
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend_noirq,
++				      tegra_i2c_resume_noirq)
+ 	SET_RUNTIME_PM_OPS(tegra_i2c_runtime_suspend, tegra_i2c_runtime_resume,
+ 			   NULL)
+ };
 -- 
 2.50.1
 
