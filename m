@@ -1,274 +1,171 @@
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011002.outbound.protection.outlook.com [52.101.62.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB30D31F9BC;
-	Tue, 19 May 2026 18:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779214272; cv=none; b=qdtQDtDi2xUVDyEkK+wsSHUnhkj2QU9plxzd5RKjDMXeU56spuNxzipFagg9xdHAuDsIV2dPHzIS3scs8Pl5O9n87FGDr/VmSe6QMtNvALO8EQ94oh29rcEsHjihKsxje5V8WdeahQkBt2PCt+HTxueTw70pi0VRRNwpc+o6LH4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779214272; c=relaxed/simple;
-	bh=JzQwf96uMmsVwEgkPAHiiVgbsti/Ucve70FpeHK2mBA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R+DGkK2Msi0+h02XrNsI7fKZkN3fleMxnBpCVwwCbeNWzRVt/E4OHvGsXfqFAg7gnsFm4wtMfoloC1JD34RDYWgOKfk7WzKniPJVIG3cMIhx00hkI30omR2Cymh/DEjSjMGCeEcfbon5L55KScWZBzFY9zuZaHB7oXeyK9cPRwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf02.hostedemail.com (lb01a-stub [10.200.18.249])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 14E01A0817;
-	Tue, 19 May 2026 18:11:03 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf02.hostedemail.com (Postfix) with ESMTPA id C50FE80011;
-	Tue, 19 May 2026 18:11:00 +0000 (UTC)
-Date: Tue, 19 May 2026 14:10:59 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Artur Kowalski <arturkow2000@gmail.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Thierry
- Reding <thierry.reding@kernel.org>, Mikko Perttunen
- <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>
-Subject: Re: [PATCH] gpu: host1x: trace: fix string fields in host1x traces
-Message-ID: <20260519141059.77435501@fedora>
-In-Reply-To: <20260519-host1x-tracing-v1-1-55afb8cbd186@gmail.com>
-References: <20260519-host1x-tracing-v1-1-55afb8cbd186@gmail.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC746345CAF;
+	Tue, 19 May 2026 18:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779215772; cv=fail; b=lsaUrKBXO5rYFSBbNaf39qcyX68YskKELZ1tZ0w1ema2eiPQuADcaByKRRC2RT7WhQKRERRDTrdw0ZlU7M4zUxkPJOS3EkY+6YRUTEHUNJpgoHa1aJGV4G7EW3sQ2QvOAsT6swsEKeVE2h3zKvl/DHbO1Bxwc88HyXOgk9nsPno=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779215772; c=relaxed/simple;
+	bh=nRfT/2tr19/5y21c6Zwj6OZFjMuNA8eBmNLZ35DpMG8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=W5yv8HyXK4My6EW3C9qHP6oXJexO1Y3yslSgn/EHviPyRZ/07fJ8bSTy7nHQaQ1WoUCXtL8zAy/k/IXwe/sCY5dQ0TD10tPhjdxcNetftwTZ6E8TfGBrrNM10bT9VBeT1gXl3yxKUYR1giWFPn9WI+PFm7A/jZohgsqVv+pUvBM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=W0UMBx5M; arc=fail smtp.client-ip=52.101.62.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="W0UMBx5M"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XnKUc1Zb+gccgkuq1WVeDB1+KboCwwYulTns9VO49PAYspLevLP8gFTSVxo8RPyZaEPk4N+xk3avv2MH2yurK5z7MID8LkFBxu+NDRRq9fG226XqlWxbxAp/QNRgr1LeUQTVz3N4v9yb90/McwFYCdWtpxTeuJ0zqOLb6qU0Wj70YCCDaXz3uf7Kiay9oABKryiiQqg5VIS7FIecwSH54EAABuqT1wCDG1TmgpvF5wdTIMd21QLJkhpA7WTQ4rP1xzjxC4k/vULh493XZrMPbSGr/c6z8Nt7J8DWLOZujQRy6WT9Cv4AXAmLrjtBnqOBQm4Ii92TonNPYSbrURtORg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6ECAwqlkHa3c5owqTddAJyShfgqC3NZfJKa2/NHo/cE=;
+ b=FhVOneDNgJhdKdVsdgBmVRh39SWs/55AdrCVHq2dvxTg7irFI7mPhrd1oJLZTJadw2qZ2/UAPJpXMgIyNt6KjxVF2Db00OteDkqn9ok8y9WGc+H1YVBqNL85aRFjqo3Zi2ad2qjOqOcSmmnbxmLJbI3SAxoL5fPpmp5FowVQn2XqDvwmtmJe5KpYsMzvY2UkseEZiB2TB534E1LLouuJ1QzmdYW9ZWn+bcStqIUjpOxAE0k2I/f1X/Ya/gwYzDown4/OIHEtCVz2UmJuFmlyT+Gcw6UxhY9CUEcgIss6n6/0qNhWZXY44Hk1NQh8w9nJ0sBH7WDOwepUmqlQxm5D7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6ECAwqlkHa3c5owqTddAJyShfgqC3NZfJKa2/NHo/cE=;
+ b=W0UMBx5M2nX1gmAWSZy1bp700Y+N2gp6g04zRc/cew3RYiFbjvg2aPZiIMjF+tyeQyXgWDvIQfuEGzqVtI9GMQ0RAYhL+PMPVorMq0YPKLwCQya9A3SXVNFePS0RmwZVM0BR5Nq/8S9c1+ivMGdvdLBD51/pYctXkeVIuQWoaCQiQ1PATSgUHw/PRfrD/1DdvYilKp8T+SS2A+xGB39iaLgimrqDzBImPDqc6V3OnqcZNIpPon1Df7H0LD1LZtLYO4uj3G8TqQ+L+Pg9UBpu6HBkdXADbHuSObUR6hmSazLkcgjw2SRIWCHNDcHbwT4VjfxfakMIFemoM8YMHX4ADg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
+ by SA1PR12MB7104.namprd12.prod.outlook.com (2603:10b6:806:29e::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.14; Tue, 19 May
+ 2026 18:36:07 +0000
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391%6]) with mapi id 15.21.0025.022; Tue, 19 May 2026
+ 18:36:07 +0000
+Message-ID: <7ac5582f-9165-41a2-a130-2f465e6d77d9@nvidia.com>
+Date: Tue, 19 May 2026 19:36:02 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] arm64: tegra: Add iommu and dma properties for
+ Tegra194 QSPI
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thierry Reding <thierry.reding@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260515-tegra194-qspi-iommu-v1-0-57dfb63cd3d6@gmail.com>
+ <d10a46b8-2a01-45d8-b1a4-7d003fdb25bd@nvidia.com>
+ <91fc534a-6529-4880-8c92-a8713118242d@nvidia.com>
+ <CALHNRZ_Ke_pC4tept4_vGOB0ArwjcaMu=mc=wJrQ0x79MKid-A@mail.gmail.com>
+Content-Language: en-US
+From: Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <CALHNRZ_Ke_pC4tept4_vGOB0ArwjcaMu=mc=wJrQ0x79MKid-A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0023.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:151::10) To DS2PR12MB9750.namprd12.prod.outlook.com
+ (2603:10b6:8:2b0::12)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: C50FE80011
-X-Stat-Signature: xpqcsbqo78gty1mpegkwoku973y7mr1h
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/W3c424qVsGyfVgXyV2tsCvJap8oBrAyI=
-X-HE-Tag: 1779214260-996226
-X-HE-Meta: U2FsdGVkX19Qk5MP3D1yA12AY63lGkW9bVcsE3UjuzhkbvObzIv/XXvjSZiLZYe/r/eoxFZCiWBKSUPiTosSq9qucfNUOQq3P388mMt6wvGFKkpxDV/CmNS9ykP2MNrhPchDAZFoGAyxdurxjrIp25KxqRwYx/UO4Tgvr5ufr07G41oTmat36nK+LT+D5P60cO5EJP9ff6lNv1OPgH4ahtMSzJUMdVE79WCpvnWuk0HsbpiY/WC1qTH0Y+D+LGx/8agi8k5LJI4lutJDpQs5yFTYP69DS82S9ilZU0LsUJMAUElzvxkRaTJRUtNcjDzlRV0FHBww6LJWWZot6RXzKozddZwo/tYjgpXefYMS9XmoMJpbLcUsqfEqZ51VROcgACS2b6BKyZQJo7VU/39Kdw==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|SA1PR12MB7104:EE_
+X-MS-Office365-Filtering-Correlation-Id: 028d7871-3517-4a35-d21f-08deb5d57d66
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|4143699003|18002099003|56012099003|22082099003|11063799006;
+X-Microsoft-Antispam-Message-Info:
+	WyxQQsfAdvZfZFCsjJnbwXcSI92XeYumqr6Y7K5STuGH4Rxat5TAFhAHJa62iU+f/r3hYI5rWN6ND3qW+r925CQZlQQA/VVCZ5z9oyZTUDCRIORp/aio68jaojH5Hy8gBPlxfZzKAbK7Q+1qD5OAYxtnOE0GImWWNU+o663C7YJrnSA7tvtt+rnK73+Lm1oB1QPX1+bn2pOChG/wGk+W8FJzsPzmI7q4w15MyIvLz+U4+xQasZy1cXUicjEIzFTTsS6edJHBH2/BOa9RmGoNLWzqGP97Mb2t72Dc4s9pyGzWAgxlfiOzB2OYvhSCW2G/UrOk4QN7Sl0KY0D6qXOobXjtnL0VBjwy6kx68h5OXDAOTNkjz1H+MhY1prhgnVnqxHXXFrTB9jL7SL7wGS9YcpqwDkSeGw628tGduaLH46xm7alBKsYN7+Bz4DPo/t6paxUBzC/nzzJ6kKWlq47WxnXCIt9Y6t122LKaxlHzueodk12Jy9KwoOj4aLyQ9F7cYDeXWSVh6lj7AOJRUdoLFQRpwgXHoNivih+Ozd0HzcMspFlqE+yZOPQpAACwOj+6yXH9e1irOGlEPAzyMQKas9xd/+BlQzjJeuC7DSXg4cAD5WEj6AXOMi1t9sZra27ggNy0/8OjZv1GSKcdF0OvDuFUCFvgDAcfrSo8ZhQBJdAqR1lwF/Odci9jC5d3ieWC
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(4143699003)(18002099003)(56012099003)(22082099003)(11063799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?R2M0cm9jb21BSmFoN1A5ekdVYy92OHpxc1FBd0dyRDJsL21FUW96bFd0aFo4?=
+ =?utf-8?B?cXdaZGg0VytxelVwWjNkdUl5azZvY1N3VVh0OWR1eCs2WEMzQzVSVkluTlE2?=
+ =?utf-8?B?VjJ0dTlNejJ5L2N0emxBeWE2bVRnN1NEekdCLzQvUEdtU1ZmcktFdldpa00y?=
+ =?utf-8?B?MU5xcnpRN0dSV2tvTzJoVlcyTUJFQnZGaG5pOXdlYkJZbFkxTjV1REpFWnd4?=
+ =?utf-8?B?TU1MQ1JUQ1ZtVEFPUzM3SCtobHo2QmpCYXVjaW1Idkw4ajRvcFRkZ2NMMjBN?=
+ =?utf-8?B?MkJxK1o3MDlkSGx5UjBjNjJSWXNvalYvV3lITklSWWVsUDJXOTJ6dFV0NS9G?=
+ =?utf-8?B?YWpEYUNGQnVkOUNNcklORjMvSGt0NjdhZTBKMEZZTi90NlhGRnRGdDV2N3JI?=
+ =?utf-8?B?eEhZV0FuWC9uOFAvbnlPZ1lnU2pkR0xlOEVha2FmZ2w1WjhCRTkzYlpkS2Vz?=
+ =?utf-8?B?WG1DY1pObnZRR0lQZk5TS3F6TXpaNWhQeDdWT0RTeGE0c3JBM1V3U0l1Y2RV?=
+ =?utf-8?B?WWI0Y1poNW5rbU5wRnZGaXlFdjBpTTZyckNmZm93L0V5bDZqNHVPaFZxSW5H?=
+ =?utf-8?B?RksxdG10bnpOd1ZlTTh4UEp4UnBLSDRvWTUwU1lnNjhmK1daSDBydWNFQTFn?=
+ =?utf-8?B?UG1mOCt1b2tvK0V4RWRLd0JPOTFKY202N0tIaUN5WXAyMXdOdFBTU0tHOFBY?=
+ =?utf-8?B?a2ptWnkyYlNQblBONTdndTBLYURjSVRMWXJSaXRyUmdNOW54eHJ5aCtGWVh0?=
+ =?utf-8?B?Y3lxV0N0YjF1YzFCVFdZR3dpaEhnMlRzQm5rRFh4eGVTY0ZWdTRibU8zN2J3?=
+ =?utf-8?B?VGp0d1lENTRPRVFTSlBTL1pDRzQ4SDlZL01QMWlpQnRITXJZSUQ2MnliZjAv?=
+ =?utf-8?B?WjhVMGVoUHpoYnJZazBqT0w5Y2NiTkQ5RTBHUEp5anIxM0ZSY1R2a2laYkVa?=
+ =?utf-8?B?TUdLSXJ6eFJQY05VbnVTanlyWk1qZ1ZNcWIyY1NpeVZxR3kzb0RNNlBzaE9w?=
+ =?utf-8?B?dnBGalNLZi82U0dXZnd5eDMxRno0bnpkTnQvODhtTmhlVFVsNzNtUEt4bTRs?=
+ =?utf-8?B?L1Vza1dsUjNtYklvbzFUdzhGeWZGclBLTFk3TmFZemx6YXJ4U3pjSDFpdEN4?=
+ =?utf-8?B?bUU0T05xSU8wY0lqUlBRbU4rNlkzdnZDMTU3bmkvVGVHQnYzZ2ZISjJscm8v?=
+ =?utf-8?B?MHJJNkxmSlZCS1lDTTR6UGZWejhOcFloN3crTjZqdWlReHAwY0ZBWktoMTJQ?=
+ =?utf-8?B?SkZ2dGM3aWhCeU43aTJTWnRDaGZna2xZVXdzc0xjNWJMSW1jSW52VGlmcmhT?=
+ =?utf-8?B?THRFME1CMlA1YmZmOWNUQXlLL2tQOGZpYXhvNi93cW5sVjF5eEFXR0ZkVkdh?=
+ =?utf-8?B?WFhJSi93MnlDSkVuSmR0cjlhTmlCMTZRN3h0TW1NWnVVUUlibzhCRkxCaDRk?=
+ =?utf-8?B?czZUdk9NM1FBemsvT2tqQVo3eWp3bkcvdmdrcEtlL242RmtHOHh3YlQ4VHZn?=
+ =?utf-8?B?ZGl3Mjl2WllFQkNEcXRaWjNJNnhHYTF6bThLd0NDM0JnV2ZoMFc2amdpZkJV?=
+ =?utf-8?B?dFlna3I5S0V3cjA3YVlGQzI1LzNNU3kxN3hrVWY0UzVFUmFSdzV5Z3lPbG92?=
+ =?utf-8?B?U3dySkkyLzNRQWQzdHZwd2hKV1dNSFZoMWxsN2Q0Y1I0a1JhNVh2Q3lJdTRC?=
+ =?utf-8?B?L1ZRMFVCbExteVRZNTkrMGlSa1VZcGNuZ2wwOWNmRjkwZVoxcW1kVCs5eWdP?=
+ =?utf-8?B?MFhWdVlMbE9zTDNJNHo5UlBCNUhvYWdkem5oV0VWZ1pkS1dYR2JMeWRBbzZ1?=
+ =?utf-8?B?Y09UaklXbEZvSEl1YzJsazdsMCtFTHlxRUgyTkgvc21kNkZOUS9jelhHMnVE?=
+ =?utf-8?B?Q1kySDJPd2pjRlVUclpDWDRWQkhaQ1lVYTY3RUpkSDQ0OUplYnhJQzU2NlQr?=
+ =?utf-8?B?eGpsOHN1Zk9peThIZGpFL1dCc1loSHE2YjMweWZmaFJnNkpvSSsrK3hFeFgr?=
+ =?utf-8?B?NUU1WlRVdkljUXh4VHFoTXFKT0crRHJ5emd0T08vdEFMQkQ1UlhRU0loNHAv?=
+ =?utf-8?B?L0RWMWIyc3VZM3QvK0lzdmNidGRYK1M3TUpvblg4VDkyL0xUeW1SSTZLaVl2?=
+ =?utf-8?B?eHdNSVpVcXlVUmNOZTZoL01RL3N3MmZqalFFeXU0YW9KamV0N01lbFREVTlD?=
+ =?utf-8?B?S05pWXVZVjQwSzJkODY3L3BhOUNzcEdkVGhxSTJNMGtiWnVXaC83NUw0SWty?=
+ =?utf-8?B?MWlQTkF2aDBmdmRkaW9BNldCUUdmRm54MU1EeXZQdTYxd3kwNFRSZkFZdHZa?=
+ =?utf-8?B?TmZEbkZYc0IweGVUNVM0VGtHd3RVMGJkbWl6am4zSlNLMDRuUkFxQT09?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 028d7871-3517-4a35-d21f-08deb5d57d66
+X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 May 2026 18:36:07.0646
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hbZwnke8fVXTVqmLfRs4Pxo6nvLgO7sEQQw5MirPqIP/bLhjZtQlYLtRwyrgjixv87EXOkHMlgjPkwyrFtOjrQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7104
 
-On Tue, 19 May 2026 12:16:43 +0200
-Artur Kowalski <arturkow2000@gmail.com> wrote:
 
-> Use __assign_str and __get_str as required by tracing subsystem. Fixes
-> string fields being rejected by the verifier and unreadable from
-> userspace.
+On 19/05/2026 17:48, Aaron Kling wrote:
 
-Does anyone use these tracepoints? The fact that they have been broken
-for 5 years and nobody noticed makes me think they are useless.
+...
 
-I rather remove them than fix them, but if someone thinks that these
-are still useful then by all means apply this patch.
+> I could update the commit message to be more like 'Enable DMA support
+> for Tegra194 QSPI', sure.
 
-Acked-by: Steven Rostedt <rostedt@goodmis.org>
+Thanks.
 
--- Steve
+> The primary kernel version I'm working on currently is 6.18,
+> specifically googles android common kernel fork of it. I also
+> replicated the issue on 6.12 and android-mainline which is currently
+> 7.0-ish.
 
+So I also observed issues with Linux v6.18. However, Linux v7.0 is 
+working fine for me.
 
-> 
-> Tested on v6.18.21.
-> 
-> Signed-off-by: Artur Kowalski <arturkow2000@gmail.com>
-> ---
->  include/trace/events/host1x.h | 50 ++++++++++++++++++++++---------------------
->  1 file changed, 26 insertions(+), 24 deletions(-)
-> 
-> diff --git a/include/trace/events/host1x.h b/include/trace/events/host1x.h
-> index 1ba84b738e46..1b6aeb7b177b 100644
-> --- a/include/trace/events/host1x.h
-> +++ b/include/trace/events/host1x.h
-> @@ -21,9 +21,11 @@ struct host1x_bo;
->  DECLARE_EVENT_CLASS(host1x,
->  	TP_PROTO(const char *name),
->  	TP_ARGS(name),
-> -	TP_STRUCT__entry(__field(const char *, name)),
-> -	TP_fast_assign(__entry->name = name;),
-> -	TP_printk("name=%s", __entry->name)
-> +	TP_STRUCT__entry(__string(name, name)),
-> +	TP_fast_assign(
-> +		__assign_str(name);
-> +	),
-> +	TP_printk("name=%s", __get_str(name))
->  );
->  
->  DEFINE_EVENT(host1x, host1x_channel_open,
-> @@ -52,19 +54,19 @@ TRACE_EVENT(host1x_cdma_push,
->  	TP_ARGS(name, op1, op2),
->  
->  	TP_STRUCT__entry(
-> -		__field(const char *, name)
-> +		__string(name, name)
->  		__field(u32, op1)
->  		__field(u32, op2)
->  	),
->  
->  	TP_fast_assign(
-> -		__entry->name = name;
-> +		__assign_str(name);
->  		__entry->op1 = op1;
->  		__entry->op2 = op2;
->  	),
->  
->  	TP_printk("name=%s, op1=%08x, op2=%08x",
-> -		__entry->name, __entry->op1, __entry->op2)
-> +		__get_str(name), __entry->op1, __entry->op2)
->  );
->  
->  TRACE_EVENT(host1x_cdma_push_wide,
-> @@ -73,7 +75,7 @@ TRACE_EVENT(host1x_cdma_push_wide,
->  	TP_ARGS(name, op1, op2, op3, op4),
->  
->  	TP_STRUCT__entry(
-> -		__field(const char *, name)
-> +		__string(name, name)
->  		__field(u32, op1)
->  		__field(u32, op2)
->  		__field(u32, op3)
-> @@ -81,7 +83,7 @@ TRACE_EVENT(host1x_cdma_push_wide,
->  	),
->  
->  	TP_fast_assign(
-> -		__entry->name = name;
-> +		__assign_str(name);
->  		__entry->op1 = op1;
->  		__entry->op2 = op2;
->  		__entry->op3 = op3;
-> @@ -89,7 +91,7 @@ TRACE_EVENT(host1x_cdma_push_wide,
->  	),
->  
->  	TP_printk("name=%s, op1=%08x, op2=%08x, op3=%08x op4=%08x",
-> -		__entry->name, __entry->op1, __entry->op2, __entry->op3,
-> +		__get_str(name), __entry->op1, __entry->op2, __entry->op3,
->  		__entry->op4)
->  );
->  
-> @@ -100,7 +102,7 @@ TRACE_EVENT(host1x_cdma_push_gather,
->  	TP_ARGS(name, bo, words, offset, cmdbuf),
->  
->  	TP_STRUCT__entry(
-> -		__field(const char *, name)
-> +		__string(name, name)
->  		__field(struct host1x_bo *, bo)
->  		__field(u32, words)
->  		__field(u32, offset)
-> @@ -114,14 +116,14 @@ TRACE_EVENT(host1x_cdma_push_gather,
->  					words * sizeof(u32));
->  		}
->  		__entry->cmdbuf = cmdbuf;
-> -		__entry->name = name;
-> +		__assign_str(name);
->  		__entry->bo = bo;
->  		__entry->words = words;
->  		__entry->offset = offset;
->  	),
->  
->  	TP_printk("name=%s, bo=%p, words=%u, offset=%d, contents=[%s]",
-> -	  __entry->name, __entry->bo,
-> +	  __get_str(name), __entry->bo,
->  	  __entry->words, __entry->offset,
->  	  __print_hex(__get_dynamic_array(cmdbuf),
->  		  __entry->cmdbuf ? __entry->words * 4 : 0))
-> @@ -134,7 +136,7 @@ TRACE_EVENT(host1x_channel_submit,
->  	TP_ARGS(name, cmdbufs, relocs, syncpt_id, syncpt_incrs),
->  
->  	TP_STRUCT__entry(
-> -		__field(const char *, name)
-> +		__string(name, name)
->  		__field(u32, cmdbufs)
->  		__field(u32, relocs)
->  		__field(u32, syncpt_id)
-> @@ -142,7 +144,7 @@ TRACE_EVENT(host1x_channel_submit,
->  	),
->  
->  	TP_fast_assign(
-> -		__entry->name = name;
-> +		__assign_str(name);
->  		__entry->cmdbufs = cmdbufs;
->  		__entry->relocs = relocs;
->  		__entry->syncpt_id = syncpt_id;
-> @@ -151,7 +153,7 @@ TRACE_EVENT(host1x_channel_submit,
->  
->  	TP_printk("name=%s, cmdbufs=%u, relocs=%u, syncpt_id=%u, "
->  		  "syncpt_incrs=%u",
-> -		  __entry->name, __entry->cmdbufs, __entry->relocs,
-> +		  __get_str(name), __entry->cmdbufs, __entry->relocs,
->  		  __entry->syncpt_id, __entry->syncpt_incrs)
->  );
->  
-> @@ -161,19 +163,19 @@ TRACE_EVENT(host1x_channel_submitted,
->  	TP_ARGS(name, syncpt_base, syncpt_max),
->  
->  	TP_STRUCT__entry(
-> -		__field(const char *, name)
-> +		__string(name, name)
->  		__field(u32, syncpt_base)
->  		__field(u32, syncpt_max)
->  	),
->  
->  	TP_fast_assign(
-> -		__entry->name = name;
-> +		__assign_str(name);
->  		__entry->syncpt_base = syncpt_base;
->  		__entry->syncpt_max = syncpt_max;
->  	),
->  
->  	TP_printk("name=%s, syncpt_base=%d, syncpt_max=%d",
-> -		__entry->name, __entry->syncpt_base, __entry->syncpt_max)
-> +		__get_str(name), __entry->syncpt_base, __entry->syncpt_max)
->  );
->  
->  TRACE_EVENT(host1x_channel_submit_complete,
-> @@ -182,19 +184,19 @@ TRACE_EVENT(host1x_channel_submit_complete,
->  	TP_ARGS(name, count, thresh),
->  
->  	TP_STRUCT__entry(
-> -		__field(const char *, name)
-> +		__string(name, name)
->  		__field(int, count)
->  		__field(u32, thresh)
->  	),
->  
->  	TP_fast_assign(
-> -		__entry->name = name;
-> +		__assign_str(name);
->  		__entry->count = count;
->  		__entry->thresh = thresh;
->  	),
->  
->  	TP_printk("name=%s, count=%d, thresh=%d",
-> -		__entry->name, __entry->count, __entry->thresh)
-> +		__get_str(name), __entry->count, __entry->thresh)
->  );
->  
->  TRACE_EVENT(host1x_wait_cdma,
-> @@ -203,16 +205,16 @@ TRACE_EVENT(host1x_wait_cdma,
->  	TP_ARGS(name, eventid),
->  
->  	TP_STRUCT__entry(
-> -		__field(const char *, name)
-> +		__string(name, name)
->  		__field(u32, eventid)
->  	),
->  
->  	TP_fast_assign(
-> -		__entry->name = name;
-> +		__assign_str(name);
->  		__entry->eventid = eventid;
->  	),
->  
-> -	TP_printk("name=%s, event=%d", __entry->name, __entry->eventid)
-> +	TP_printk("name=%s, event=%d", __get_str(name), __entry->eventid)
->  );
->  
->  TRACE_EVENT(host1x_syncpt_load_min,
-> 
-> ---
-> base-commit: ab5fce87a778cb780a05984a2ca448f2b41aafbf
-> change-id: 20260519-host1x-tracing-e2d608ec5e37
-> 
-> Best regards,
-> --  
-> Artur Kowalski <arturkow2000@gmail.com>
+> I was not normally seeing issues on boot, though I think I did hit
+> that a couple times when jumping around versions. Where I had trouble
+> was active use of the flash chip, like read/writing the slot metadata
+> for a/b support or writing the flash for inline bootloader updates.
+> The issue wasn't always triggering a cbb panic, but it was (almost?)
+> always timing out and failing to read or write the flash chip.
+
+OK, then you are doing more significant testing that I am. I was just 
+seeing issues on boot, but with Linux v7.0 I no longer see issues on boot.
+
+Jon
+
+-- 
+nvpublic
 
