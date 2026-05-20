@@ -1,134 +1,100 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0123DDDCB
-	for <linux-tegra@vger.kernel.org>; Wed, 20 May 2026 12:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10F13EAC74;
+	Wed, 20 May 2026 14:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779278605; cv=none; b=IOSoW45CL4HlbyLSpxJ9yImUvEAWbzNHcJ76mNFbGibol6iHmHVA3thgCvQ6sSCAjgsyqgKQx07HvDoI0VhC/T485pRoZDXlg+WFlwH6xfj8zADPywnpuvCWzrs+/b2B7kNlMLG06Q8YDOOUlL0hj6cnSuX4OL9AgdtBuCf9W6I=
+	t=1779286901; cv=none; b=PQoftHDZ+8QuT91T0013rmQYPt42DAPYAtLL6H3da5wLVE+JZDZyuMh1gZVsbTK1+jYSmB54JEpfocteXGbRH0p4a6X+3wbBlc84WOIy+RukvepPRA+BMajjaGSGrSsteJyOlb5iP/66MljSNZ02/YGiIMjcEEOjWHOKJqzCDtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779278605; c=relaxed/simple;
-	bh=CtnAB2ZbclNUYrpWW7beXYEowxt1rzkSH4c465Z18Qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XcPFPUnF8l597NN+NRujADwDkIaqnYLoXry0KKp7Pxh9WTaukOSms+uHIO4x4oeZvlr+gP0KF2LEw0os2NdkWj1TM0EmEW9ZUW+W1afPq9cJLlk/PLEiDbUZ9qNEnpf62U3X3ldTwzEomc0ErK+v2Oskz/C+zYwsGSujIFu6h6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i5qiWtqp; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1779286901; c=relaxed/simple;
+	bh=GDgiypVIwA/PQvdX7RyrKY/+g5n+NMwhEKvQxfGp7xE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bqz6Ept4mHi8WX3+KQs08o/aTDNKTqqDUWD+MrY4CROasMNN97xoDrGAasUfUh36pV92zAYH6moKnnRRsbKpxix8xMkwgpCYjeqfu+g+31OHu2s9nsQwrkS3EJ9O4TVecMEpo1Ac4Obod4LPLSTIu+y5htkF8p8esSBerubbEmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=qKOs1rSH; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5qiWtqp"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-44ce78ab5feso4033052f8f.0
-        for <linux-tegra@vger.kernel.org>; Wed, 20 May 2026 05:03:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779278602; x=1779883402; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CtnAB2ZbclNUYrpWW7beXYEowxt1rzkSH4c465Z18Qc=;
-        b=i5qiWtqpWVIqvgyi56dBjpao3pSyOKqILxqU4RH8qgRUShA5P0ZwUuV0mWv5sbojiu
-         iaeLU5I1f/4k9wG0h/SApvllXzY6HjcIuutlVjbY/HIzaBKwgSVcRiDCKxYLZv+9SesX
-         wP2ob9zinx1AYD9oKXbTMLK6tb9jCOeR4pe9oUpvB8FhzRDuYNSMVqf3uDnAVpAHR78a
-         dTk1lVAsIXh22sJs4q/7d4Z3tZoMPcVka5WxFQup1rGyV4TmkNL7Bxgd22oAzY0WoU/H
-         pJqN58/LPE+wvRe6n6+oQFl63Vs4ULwPv7Cqnadm8WIBRaJMmOvOu4XvFzXdQFJnfKb5
-         WCEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779278602; x=1779883402;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CtnAB2ZbclNUYrpWW7beXYEowxt1rzkSH4c465Z18Qc=;
-        b=fODgkqDKraHHJxhpcLwu9tlQniAORsdlhB6MQj/rMY5TAspy/QqLFqE+ALDRSDAGMt
-         7zWIVENmAJSGMDvoRlXCKr++FK6xIfj6Z6BQTJofgRz6vhun7lExiGMtVodalFPEcq4K
-         AFHqsKkke0xlC9FJGq6qxD4FqhTmnscXwup67rkWYNy+agmbr9MsoZB4/gkFdhtODmAO
-         Wc8Yl4s/umoAhl1c0GLe/XC1Gpd8cHXrC/XdWSzXiJSjd4C8fAJ3msH7U6+ERzobt/tA
-         YD+CJiIRz42gncOFcSkl9TFo/MugmDamOUivw0g3IiO9Ch2nuZFFyxG/y6xgjkhjueo8
-         j/nQ==
-X-Forwarded-Encrypted: i=1; AFNElJ8R+pe1wYkoUULwU1xWkAi/F5wZzRitWyjit2RcpE9ocozrap9y7Vq0yCOGUVAhAGcJqdhsNZuLqT4p3Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWtAcOFkmy3hQpS7FIS8UF/3ZQMwEM8wyih66XL+h6WMsH7q5O
-	DGqjLXwzktbdDq8AOdYxsQO77Eggx7iZy2Q83uyPEw+pMevlA1ZhkzQv
-X-Gm-Gg: Acq92OHgvb1w6wOSIlBjKLQJ9ZmpLh0zJ9dxj6ur2x8PG5aBDq7TLyGKrc4btUAjf5V
-	Ks1CRaJAAfu1L7b7lsMpEahBdGiXHBUqLsYVxr1Zk8+NPGTlosqsPLFZv9lfU76wCBtuK1szQGy
-	ZNb5+jjqHlLbHKp4NVQ9c4h4ji4oYskxOhzmaY53XHDFXeL3nUm9S3hwmJeLYTu27tkbUtqx1Uh
-	CyYya4bAdoND7JgULwmOefDvh0Ysi984e2AvQGzhX0EmA+IuFCuH+sQSQ38D///ZcqV3eViX1WB
-	Ed49FzibeZz8nVvF0/rFs+43Snjp18z08p3x0aG038AIJe7k3vR97NwjS7DE9N+6VDdO8rTk2SS
-	DzE1zHnJ3dWtzrap/2glDlUuJQI6PuBEXJVx/PTSrWD79E2C2ll5pNaBfqh3W1p2qkvPzdzwcKo
-	j8ViSmg3D2laJulSgGf/pKhTzXZFlssGlZW/o5NMET71LY1396OGGPYHUo0zrDnvFiYfvf5KFx0
-	4V7Fiw4/il1kA==
-X-Received: by 2002:a05:600c:491e:b0:48e:978f:c45a with SMTP id 5b1f17b1804b1-48fed455991mr226125105e9.19.1779278602148;
-        Wed, 20 May 2026 05:03:22 -0700 (PDT)
-Received: from orome (p200300e41f291e00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:1e00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48febe6b60csm193175225e9.6.2026.05.20.05.03.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 May 2026 05:03:20 -0700 (PDT)
-Date: Wed, 20 May 2026 14:03:17 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Artur Kowalski <arturkow2000@gmail.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	Thierry Reding <thierry.reding@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Subject: Re: [PATCH] gpu: host1x: trace: fix string fields in host1x traces
-Message-ID: <ag2iF9bZJcBQ93lh@orome>
-References: <20260519-host1x-tracing-v1-1-55afb8cbd186@gmail.com>
- <20260519141059.77435501@fedora>
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="qKOs1rSH"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=GDgiypVIwA/PQvdX7RyrKY/+g5n+NMwhEKvQxfGp7xE=; b=qKOs1rSHUfFyQjQ2QU90qLmsEG
+	E4rO+KqFDvZdMnNVkhT2xM9SqMD/CMUMADckAN8zJzIgHiiRGrfYvDLfVYwvte7zRaDJPjinr9dN7
+	W41mCtDYikWfvkdAm1kyTt5Ns2JB93TsQ4vLGQVdLdw8UDj+b5s76SDCSf59Tvpostexn9puA2nth
+	1WSXxPyw1cawkSEQwtUp6XpmyN9Z6+X49zn1Jkj0dxFSvWFTrY7Udx+xmwDa/G9o8rsguZyCHlSmu
+	oG53XHOV5DRGeBYTKUVFMdMkD5aBSLI4rVQszy9k+eZF8tHtjXWW6HmPSv6IqLIL+WyoyuC5IVfQI
+	V1VVfT8w==;
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-phy@lists.infradead.org, Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ linux-can@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
+ netdev@vger.kernel.org, spacemit@lists.linux.dev,
+ UNGLinuxDriver@microchip.com, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Subject:
+ Re: [PATCH v8 phy-next 15/31] drm/rockchip: dw_hdmi: avoid direct dereference
+ of phy->dev.of_node
+Date: Wed, 20 May 2026 16:21:24 +0200
+Message-ID: <3758596.1xdlsreqCQ@phil>
+In-Reply-To: <20260505100523.1922388-16-vladimir.oltean@nxp.com>
+References:
+ <20260505100523.1922388-1-vladimir.oltean@nxp.com>
+ <20260505100523.1922388-16-vladimir.oltean@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="d6arr666wdzokuxu"
-Content-Disposition: inline
-In-Reply-To: <20260519141059.77435501@fedora>
-
-
---d6arr666wdzokuxu
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] gpu: host1x: trace: fix string fields in host1x traces
-MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, May 19, 2026 at 02:10:59PM -0400, Steven Rostedt wrote:
-> On Tue, 19 May 2026 12:16:43 +0200
-> Artur Kowalski <arturkow2000@gmail.com> wrote:
+Hi Vladimir,
+
+Am Dienstag, 5. Mai 2026, 12:05:07 Mitteleurop=C3=A4ische Sommerzeit schrie=
+b Vladimir Oltean:
+> The dw_hdmi-rockchip driver validates pixel clock rates against the
+> HDMI PHY's internal clock provider on certain SoCs like RK3328.
+> This is currently achieved by dereferencing hdmi->phy->dev.of_node
+> to obtain the provider node, which violates the Generic PHY API's
+> encapsulation (the goal is for struct phy to be an opaque pointer
+> with a hidden definition, to be interacted with only using API
+> functions or NULL pointer checks, for the case where optional variants
+> of phy_get() did not find a PHY).
 >=20
-> > Use __assign_str and __get_str as required by tracing subsystem. Fixes
-> > string fields being rejected by the verifier and unreadable from
-> > userspace.
+> Refactor dw_hdmi_rockchip_bind() to perform a manual phandle lookup
+> on the "hdmi" PHY index within the controller's DT node. This provides
+> a parallel path to the clock provider's OF node without relying on the
+> internal structure of the struct phy handle.
 >=20
-> Does anyone use these tracepoints? The fact that they have been broken
-> for 5 years and nobody noticed makes me think they are useless.
->=20
-> I rather remove them than fix them, but if someone thinks that these
-> are still useful then by all means apply this patch.
->=20
-> Acked-by: Steven Rostedt <rostedt@goodmis.org>
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> Reviewed-by: Heiko Stueber <heiko@sntech.de>
 
-I know that Mikko used them a lot early on, but this driver is pretty
-mature now, so we rarely need this low level of tracing. I'll defer to
-Mikko on whether we still need these.
+there is now already more stuff depending on this change [0], and
+the change itself also is sort of independent of the whole
+phy-series. And somehow this series itself sadly hasn't gotten
+much review yet.
 
-Thierry
+So would you be ok with me just picking this one patch for the
+drm-misc-tree?
 
---d6arr666wdzokuxu
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Thanks
+Heiko
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoNowIACgkQ3SOs138+
-s6EmzxAAtBKSWrGlDxj+qSzQteKD0zS9CKlL5opFtbzDlSDXgJvEjK6vr6dhIXsy
-lo65nAdDGzecxHLrchhx90CM1Xnex4QBCQW3XvoXnqi0/O/MqkEvyjYYLV3gleUN
-/Nzd+0P5gQHmizLjew6pb2krhLLHyKxSWgiidTcaSfv9q3rmAxn/8aAM0mfzS1vv
-jMLhFnhLqwJttHjJxAkBGwG3EEr9Un4WHBqgXSaNCkW3Daky3xtNCE6AX3tpDp+6
-kMz+GKl4dvJ68H/wyLe+5KcxaRQBhxQq1Xn4XBxsRqmlONQgCZPNzUrBXq4Dr8tm
-oHfmQnlecryMR2SSrC16HVLbCaPWzNAjosK7ru7jyIsItxNj46UZZ47t/0/DKqHf
-CIVuVq8FPw2I4DIpsTpPACEvyfrXf9OylNjnHYIWdRvDkgOMKBLKtWqNv/eSdfwO
-40x+qNczPl6zz7BLB/5FEemEdfPdVIm5w70kOq0zeG6T4EglNJPWCj8dswr7nOD3
-FrmdOGbdDpxQxI4UiuMbsoSTU8mo5z+DqoE+YWkwH8jm4m4cp4tH2JdIlT20ZUcC
-sInAaMw/u4dPX8OTfWNCTED0S5sNMb7E5Yzy5s2c1yc0MQ0fDPYjPt4MPloupNR6
-lET8uxSahuvpLSevsopbI//mq4F7M0wGsgoXFb4qXk7pxgGxMu8=
-=tzJP
------END PGP SIGNATURE-----
+[0] https://lore.kernel.org/dri-devel/20260518193748.2482823-1-jonas@kwiboo=
+=2Ese/
 
---d6arr666wdzokuxu--
+
