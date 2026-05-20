@@ -1,76 +1,75 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60573D6479
-	for <linux-tegra@vger.kernel.org>; Wed, 20 May 2026 11:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0123DDDCB
+	for <linux-tegra@vger.kernel.org>; Wed, 20 May 2026 12:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779277750; cv=none; b=NIeMrDAiLzMXubhfK/XPGpdNPDvjDHws2wsI2SULLlXUDvaZgyTPyeSVsRkqrEFjXjn1VwfGlbdqKP4U3EYXDh1n5TTwsuIqsHkw0WYps8Y8DopdMCrpr5jOHxuQ/C6lNSVLcgejNPVk2VSt4xE3OA4slsFk0tH8satrbJOpDow=
+	t=1779278605; cv=none; b=IOSoW45CL4HlbyLSpxJ9yImUvEAWbzNHcJ76mNFbGibol6iHmHVA3thgCvQ6sSCAjgsyqgKQx07HvDoI0VhC/T485pRoZDXlg+WFlwH6xfj8zADPywnpuvCWzrs+/b2B7kNlMLG06Q8YDOOUlL0hj6cnSuX4OL9AgdtBuCf9W6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779277750; c=relaxed/simple;
-	bh=SAKdMRrwrxyrUR3iGZMh/3C0jSAZRWttw8Mi6ze60HE=;
+	s=arc-20240116; t=1779278605; c=relaxed/simple;
+	bh=CtnAB2ZbclNUYrpWW7beXYEowxt1rzkSH4c465Z18Qc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sJw9WwOp9a3rcP4CNpbr6whTTImEeW7R2wNdC/2f2nIuJTU1M9gOStXmjFdsR6cvVvjJamRDxVMk6fQJ9ZnAgMO8u5TYzYvI2I+IEiAboPhNVAyeky5nkZT5cZWkMZqlZw3+ZMurraqL+8N7NJRVsu1QHtxts5Uo8GVN3XnSZaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ay6reLMA; arc=none smtp.client-ip=209.85.128.44
+	 Content-Type:Content-Disposition:In-Reply-To; b=XcPFPUnF8l597NN+NRujADwDkIaqnYLoXry0KKp7Pxh9WTaukOSms+uHIO4x4oeZvlr+gP0KF2LEw0os2NdkWj1TM0EmEW9ZUW+W1afPq9cJLlk/PLEiDbUZ9qNEnpf62U3X3ldTwzEomc0ErK+v2Oskz/C+zYwsGSujIFu6h6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i5qiWtqp; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ay6reLMA"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4896c22fcbaso39797795e9.0
-        for <linux-tegra@vger.kernel.org>; Wed, 20 May 2026 04:49:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5qiWtqp"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-44ce78ab5feso4033052f8f.0
+        for <linux-tegra@vger.kernel.org>; Wed, 20 May 2026 05:03:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779277747; x=1779882547; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1779278602; x=1779883402; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z6/8aj4m+D5ybmDyl9iVOYQPhVs0pvuYJTLfV4l6glw=;
-        b=Ay6reLMAFfVEOIptSzKk0Ytu/Z0XOXYRGzb6MOMtcVA45wEd9YsbLOMw2QQ6hgWkuf
-         Hg0aR5FsD3zHRVsYx2DGBcnyDZrXmFXnmG7uOTn1CoE34d7G5PueeC/jMMkEbFPLg1z2
-         Lup121gw44HTXUtYo+4w4QRb96rYFG6/ml4musDu2/gPpvCXUPPuivB4xP43huX5M+8v
-         i68v6ctVp0H25oT6xzBmAc7YsVCzJKddfLiVNo1bWoAnO0gMz4lY5CN6cx85cBkGSSvT
-         uUJ+iJanoIZUXrS83IRzBGv7fp3/RwBvA9S0MUZdY/1rS7owvPKtPQkdSR3guYuUzVDW
-         s1fQ==
+        bh=CtnAB2ZbclNUYrpWW7beXYEowxt1rzkSH4c465Z18Qc=;
+        b=i5qiWtqpWVIqvgyi56dBjpao3pSyOKqILxqU4RH8qgRUShA5P0ZwUuV0mWv5sbojiu
+         iaeLU5I1f/4k9wG0h/SApvllXzY6HjcIuutlVjbY/HIzaBKwgSVcRiDCKxYLZv+9SesX
+         wP2ob9zinx1AYD9oKXbTMLK6tb9jCOeR4pe9oUpvB8FhzRDuYNSMVqf3uDnAVpAHR78a
+         dTk1lVAsIXh22sJs4q/7d4Z3tZoMPcVka5WxFQup1rGyV4TmkNL7Bxgd22oAzY0WoU/H
+         pJqN58/LPE+wvRe6n6+oQFl63Vs4ULwPv7Cqnadm8WIBRaJMmOvOu4XvFzXdQFJnfKb5
+         WCEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779277747; x=1779882547;
+        d=1e100.net; s=20251104; t=1779278602; x=1779883402;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Z6/8aj4m+D5ybmDyl9iVOYQPhVs0pvuYJTLfV4l6glw=;
-        b=kGkEisDOfgISaszgve2b5gXGSPmP66+0sPM75ThlO18ST4M1jonOELq2pnf5J8l2HA
-         EtwJTsyeVB0mcHX77is04Jx84gcIRzBB1+vZiT5hE4zTka+7lJpzfe99ZWhkgSU8jnU9
-         3mVrnh3WW55bWzgszZva3mbUXhstGFfZqSu7SIoWCE/BALzG0Bn5mm5bqATsULjjjeOs
-         J2zQfb29L9v578EbROH+ZUziofQzTuKIs/JrajuO7IYL/rAdnF1S2l78XfRH6CF2Gh+3
-         ivV0acw1wiP97ppYdJBkkz4298aKE37mCUk00YQMr8NraGqDwgWiATc4vH46wGaxYOTg
-         8UJg==
-X-Forwarded-Encrypted: i=1; AFNElJ8WRa8Y5ox9uHtkP2T0KWML4o/uOCjG7UX+AgKO5cLlXy0BKEfTyO7apeE66fAiBNyvLy596JbCutAONw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYZ4WPBWExlhYqhxUnR7F+zFhkWgMaaBbDLLDAxh10LHItMfrS
-	7/FLjowtWhycaGfTEAcl4sNhzhE+Fd9BWbFo9kAPFlhF9Ll6bmRcSJ+3
-X-Gm-Gg: Acq92OEXxO/syAcSCqkNoyCZNGSSey3TOtbyZucla876gpHy9zQKIh27Ds7slzISvIe
-	IEa2+mnp6rpdd3JXeend9l4C1x4sDiI5wWqveWiOd+Xjn2WsuIb4sXM7R97FFPSHnH6NadDpmlV
-	nO6ZrjjRviSyNjAJJ696FxFlqed5ar56SCSlh/WdFo+CO32yd3Q3nPrkdpO0lOrrQwLdAD6z1Nb
-	9j6Za9gN1fNKKg2NoIlLZxxKV3K8FxV6wpgerv7ePNzIpDrlY8ostTpSzgAwhviCVURYop8iH/k
-	UGSVVvdcnKq18QR7LOqBcRPN8+puBF92BTrMSpedukDSp/th0KsdoGtuYfE2U/71l956q/2ATfJ
-	kEpZAvnhywBigPrOg5vawYoG97Usl9poOJCECNFb6ucJK9CBWTRik7mZntXzNoL5Uvdz8cMJ2TS
-	9+YKMqKuTHU1uktORC9+yCpqLblk+xVo6qk8MCMhMBQxmD6Y+gtGIgBF5J6W1EVBt3Qh4FzdpWv
-	EXfCpjdATN6CQ==
-X-Received: by 2002:a05:600c:a11c:b0:48f:a75e:c21 with SMTP id 5b1f17b1804b1-48fe5fcdee9mr274348865e9.6.1779277747103;
-        Wed, 20 May 2026 04:49:07 -0700 (PDT)
+        bh=CtnAB2ZbclNUYrpWW7beXYEowxt1rzkSH4c465Z18Qc=;
+        b=fODgkqDKraHHJxhpcLwu9tlQniAORsdlhB6MQj/rMY5TAspy/QqLFqE+ALDRSDAGMt
+         7zWIVENmAJSGMDvoRlXCKr++FK6xIfj6Z6BQTJofgRz6vhun7lExiGMtVodalFPEcq4K
+         AFHqsKkke0xlC9FJGq6qxD4FqhTmnscXwup67rkWYNy+agmbr9MsoZB4/gkFdhtODmAO
+         Wc8Yl4s/umoAhl1c0GLe/XC1Gpd8cHXrC/XdWSzXiJSjd4C8fAJ3msH7U6+ERzobt/tA
+         YD+CJiIRz42gncOFcSkl9TFo/MugmDamOUivw0g3IiO9Ch2nuZFFyxG/y6xgjkhjueo8
+         j/nQ==
+X-Forwarded-Encrypted: i=1; AFNElJ8R+pe1wYkoUULwU1xWkAi/F5wZzRitWyjit2RcpE9ocozrap9y7Vq0yCOGUVAhAGcJqdhsNZuLqT4p3Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWtAcOFkmy3hQpS7FIS8UF/3ZQMwEM8wyih66XL+h6WMsH7q5O
+	DGqjLXwzktbdDq8AOdYxsQO77Eggx7iZy2Q83uyPEw+pMevlA1ZhkzQv
+X-Gm-Gg: Acq92OHgvb1w6wOSIlBjKLQJ9ZmpLh0zJ9dxj6ur2x8PG5aBDq7TLyGKrc4btUAjf5V
+	Ks1CRaJAAfu1L7b7lsMpEahBdGiXHBUqLsYVxr1Zk8+NPGTlosqsPLFZv9lfU76wCBtuK1szQGy
+	ZNb5+jjqHlLbHKp4NVQ9c4h4ji4oYskxOhzmaY53XHDFXeL3nUm9S3hwmJeLYTu27tkbUtqx1Uh
+	CyYya4bAdoND7JgULwmOefDvh0Ysi984e2AvQGzhX0EmA+IuFCuH+sQSQ38D///ZcqV3eViX1WB
+	Ed49FzibeZz8nVvF0/rFs+43Snjp18z08p3x0aG038AIJe7k3vR97NwjS7DE9N+6VDdO8rTk2SS
+	DzE1zHnJ3dWtzrap/2glDlUuJQI6PuBEXJVx/PTSrWD79E2C2ll5pNaBfqh3W1p2qkvPzdzwcKo
+	j8ViSmg3D2laJulSgGf/pKhTzXZFlssGlZW/o5NMET71LY1396OGGPYHUo0zrDnvFiYfvf5KFx0
+	4V7Fiw4/il1kA==
+X-Received: by 2002:a05:600c:491e:b0:48e:978f:c45a with SMTP id 5b1f17b1804b1-48fed455991mr226125105e9.19.1779278602148;
+        Wed, 20 May 2026 05:03:22 -0700 (PDT)
 Received: from orome (p200300e41f291e00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:1e00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48fe4c8d39esm392216045e9.7.2026.05.20.04.49.05
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48febe6b60csm193175225e9.6.2026.05.20.05.03.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 May 2026 04:49:05 -0700 (PDT)
-Date: Wed, 20 May 2026 13:49:03 +0200
+        Wed, 20 May 2026 05:03:20 -0700 (PDT)
+Date: Wed, 20 May 2026 14:03:17 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
-To: webgeek1234@gmail.com
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	linux-spi@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] arm64: tegra: Add iommu and dma properties for
- Tegra194 QSPI
-Message-ID: <ag2fjPWwKJmrdYMl@orome>
-References: <20260515-tegra194-qspi-iommu-v1-0-57dfb63cd3d6@gmail.com>
- <20260515-tegra194-qspi-iommu-v1-3-57dfb63cd3d6@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Artur Kowalski <arturkow2000@gmail.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	Thierry Reding <thierry.reding@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Subject: Re: [PATCH] gpu: host1x: trace: fix string fields in host1x traces
+Message-ID: <ag2iF9bZJcBQ93lh@orome>
+References: <20260519-host1x-tracing-v1-1-55afb8cbd186@gmail.com>
+ <20260519141059.77435501@fedora>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -78,66 +77,58 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="icyuwag5sedcnnuj"
+	protocol="application/pgp-signature"; boundary="d6arr666wdzokuxu"
 Content-Disposition: inline
-In-Reply-To: <20260515-tegra194-qspi-iommu-v1-3-57dfb63cd3d6@gmail.com>
+In-Reply-To: <20260519141059.77435501@fedora>
 
 
---icyuwag5sedcnnuj
+--d6arr666wdzokuxu
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 3/3] arm64: tegra: Add iommu and dma properties for
- Tegra194 QSPI
+Subject: Re: [PATCH] gpu: host1x: trace: fix string fields in host1x traces
 MIME-Version: 1.0
 
-On Fri, May 15, 2026 at 03:35:29PM -0500, Aaron Kling via B4 Relay wrote:
-> From: Aaron Kling <webgeek1234@gmail.com>
+On Tue, May 19, 2026 at 02:10:59PM -0400, Steven Rostedt wrote:
+> On Tue, 19 May 2026 12:16:43 +0200
+> Artur Kowalski <arturkow2000@gmail.com> wrote:
 >=20
-> Without iommu and dma enabled, flash storage such as the spi-nor on the
-> p3668 module times out and cannot complete any transfers.
+> > Use __assign_str and __get_str as required by tracing subsystem. Fixes
+> > string fields being rejected by the verifier and unreadable from
+> > userspace.
 >=20
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> Does anyone use these tracepoints? The fact that they have been broken
+> for 5 years and nobody noticed makes me think they are useless.
 >=20
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/d=
-ts/nvidia/tegra194.dtsi
-> index 1d659454a6f9fe..0e0a20befe9e68 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> @@ -923,6 +923,10 @@ spi@3270000 {
->  				 <&bpmp TEGRA194_CLK_QSPI0_PM>;
->  			clock-names =3D "qspi", "qspi_out";
->  			resets =3D <&bpmp TEGRA194_RESET_QSPI0>;
-> +			iommus =3D <&smmu TEGRA194_SID_GPCDMA_0>;
-> +			dma-coherent;
-> +			dmas =3D <&gpcdma 5>, <&gpcdma 5>;
-> +			dma-names =3D "rx", "tx";
+> I rather remove them than fix them, but if someone thinks that these
+> are still useful then by all means apply this patch.
+>=20
+> Acked-by: Steven Rostedt <rostedt@goodmis.org>
 
-dmas and dma-names are the only properties that you should need here.
+I know that Mikko used them a lot early on, but this driver is pretty
+mature now, so we rarely need this low level of tracing. I'll defer to
+Mikko on whether we still need these.
 
 Thierry
 
---icyuwag5sedcnnuj
+--d6arr666wdzokuxu
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoNn68ACgkQ3SOs138+
-s6Hluw/+N5YaDbztosRTGmjR7qpOpnOt2ap9RA/wL/yIT1zPeTymNmeR+HOyzmDm
-zMxAxZCth+e5lbRSAdkCUImrsTDOvPylnrxsMIk7/WM52Q7A5HUmmaujEoRg6NwU
-dOOw4eooJjOvNmlIviygSlhGt0nnU4euc8xCemDY3YCaXZCMwB1AvQMJUEWPPQD/
-873dKL/l0rgY6UcEuFsFj4gSRR095Mn61X1hj6Y+fBt/CQ2d+/anIKWHU7/LdqKS
-TTLWVVfHeMBt5JqGtt5AooCVf9/z711S2M+JW9gM1DLeBzvUMBvnK7FF+bQcrnFI
-LWy7sVf7GaFZGup3ZwSnsQbFBnNLktos8ACer0jcHYqimqVybKQQsDFb2ja4YYv5
-ZJjTFZQKM4YX2PjHQd3dI3ljR9nDI01p5rVJFa2JaYDwh9qT/X1BRSHfv9Y7Ekdd
-aJkRSP2/HEUzo0F1B0d+c7/BbDoUHznzsLf6FjmXKjA+AmTiBSzqrCXANsJ0N06v
-/At1XtTSMrnwai1tD+Ny3IRk8RyB+8mjaZ8l4GmjLx0gyD33Y7dU7icHmjY2Vz2m
-x9L5p6aNC9S5N2vhcmcaCR9tMLlgsc2YP3JTlBqd682dORV5DuSq+K/7QmjvOybT
-75Pf05MjZvaE8LSWBiDJuRwmhak9vVGNlNi424TXco1GAD0U+yw=
-=JrGA
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoNowIACgkQ3SOs138+
+s6EmzxAAtBKSWrGlDxj+qSzQteKD0zS9CKlL5opFtbzDlSDXgJvEjK6vr6dhIXsy
+lo65nAdDGzecxHLrchhx90CM1Xnex4QBCQW3XvoXnqi0/O/MqkEvyjYYLV3gleUN
+/Nzd+0P5gQHmizLjew6pb2krhLLHyKxSWgiidTcaSfv9q3rmAxn/8aAM0mfzS1vv
+jMLhFnhLqwJttHjJxAkBGwG3EEr9Un4WHBqgXSaNCkW3Daky3xtNCE6AX3tpDp+6
+kMz+GKl4dvJ68H/wyLe+5KcxaRQBhxQq1Xn4XBxsRqmlONQgCZPNzUrBXq4Dr8tm
+oHfmQnlecryMR2SSrC16HVLbCaPWzNAjosK7ru7jyIsItxNj46UZZ47t/0/DKqHf
+CIVuVq8FPw2I4DIpsTpPACEvyfrXf9OylNjnHYIWdRvDkgOMKBLKtWqNv/eSdfwO
+40x+qNczPl6zz7BLB/5FEemEdfPdVIm5w70kOq0zeG6T4EglNJPWCj8dswr7nOD3
+FrmdOGbdDpxQxI4UiuMbsoSTU8mo5z+DqoE+YWkwH8jm4m4cp4tH2JdIlT20ZUcC
+sInAaMw/u4dPX8OTfWNCTED0S5sNMb7E5Yzy5s2c1yc0MQ0fDPYjPt4MPloupNR6
+lET8uxSahuvpLSevsopbI//mq4F7M0wGsgoXFb4qXk7pxgGxMu8=
+=tzJP
 -----END PGP SIGNATURE-----
 
---icyuwag5sedcnnuj--
+--d6arr666wdzokuxu--
