@@ -1,152 +1,159 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013051.outbound.protection.outlook.com [40.93.201.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D31362136
-	for <linux-tegra@vger.kernel.org>; Wed, 20 May 2026 17:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0EA031F98E;
+	Wed, 20 May 2026 19:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.51
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779298204; cv=pass; b=DSXGl6d1+nEed6FJodaoq6YJFaMbsDCOXl0A6mLomqDstLcFrZnFE9r7inaVgsyNDScKzeW4RP4OxCYRg3GM5hw8JpS1eAbFBkuSsNZOaKDBDbt9K4GY0J4YNiJyV4QO4Vl+5VYOKaSFA+3Fw3EkOioEzblDeJaK0sMRZhv7eBg=
+	t=1779304962; cv=fail; b=PnZcHvyOfZnEry0vjV5YMDIg9BtlrOo7V/xhXtZZxD9G0Y5N/7qv85iD5+ywM/LOEOqEK00lXMp4SyiEzxu4AhhRtPxREhQtyo4VoqkdqEP+xZJAYjfU1YQlykobZ5zcO5hl+DxjF5QAiz8CP5t4XPr3ba3vMIkSUIs3OeQcqSQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779298204; c=relaxed/simple;
-	bh=AxJKt3npx/5olYpRGoq298LXQ/po4wFjS8RwWFAvF84=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IcjgI9Vlke9Y2f5s5r281DvVKvWqgarVjHq4GB1I7qS2P5rlYzvXc2Yv9UKFmcOi1VK2Cn1Ktu3BeL3AmVzELsXIcEbaIjPPWNRXWAbRXzLE0/KFf20lfYEli1ip/bfxPVfwDZo36s+qNVVDTDgs9Ot0/kmfo+6Jd+mCMkhvFQk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pCiTtgM9; arc=pass smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1779304962; c=relaxed/simple;
+	bh=DTQf8uF6/3fN2dlkuQNhMv6bmaapxkXSDGGprScROpU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JsVqh/zWKRs1fIbZNeVN1fY1w+nw+lqRhKN8yqfyLblTHqdtFNq6wCN2Oc9xS5cZbSiNdZwyhLMq4gdS73Z+1en+DCYdp4TVmTELi+3V2w+HlTi65Q53aYYxz7ECVYGC3eti+rGR1CRGFGJIjFk6hf/USL0YGERP76TMmVYHef8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eDg8TG9v; arc=fail smtp.client-ip=40.93.201.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pCiTtgM9"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-39380e79936so54939321fa.2
-        for <linux-tegra@vger.kernel.org>; Wed, 20 May 2026 10:30:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1779298201; cv=none;
-        d=google.com; s=arc-20240605;
-        b=CTKIq8Wdn8Tw00592oxdFEYRVUyS5YJi48A+58TMNv2fF12z3R+q9T52w+LJN75DkZ
-         Am2M6DlQ2INdzvWEN0g6kFaarKxYfN7Zkdpgo5AAdrKg0JwErppDIGOby4uj73oyoBPx
-         5hFL3mNM+ZM3/rbd8zSwuLjeGOwn3lY1eOf2P4u+DOZK7jlpcawC4lhcBglec7kKqZ8E
-         JS8va0Tr58SY6Z8v8MRjIrbjSTtNzDxN0d4HAaZdHumki33BBqvNTubwSUX5PfW1kdzB
-         UJwxwHfGgguOcQ1gJQLD6Wku0sjQ7swnJlcoTxS6d5BiXEJXLPmUbm2pZa5YulwsxXsY
-         pseQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=sqX6X7nWtjyIR3qederrBeJlDMfIxrgMnvzCbwNNfdY=;
-        fh=5st7bL0qytHZiJkYZeOBai6xEj92lU7NSt0c0mbBP2s=;
-        b=Lg092u2tmFaXKfQ7pSNjsGQoxDbsKE8fVn/SDlG6oEXEfEZMfPZbF7DACzGmMB4Oyy
-         A8L/0Pt70/1Y360tATlLm/K2utucUgzXsAntfghc7Jo2FZtQhDZ0cyVTzSdzikQEkRL7
-         43pQxrCyHywaXzi+bI27/HZu7GKpAwZbBhGzJ8GPUzzmkgfgcqOp0/ZaIE2XrqAR8FEv
-         BzUbXIT5rzVXXn+cmzYcDbj4VWVuybXeDbzCq/nYSI7qVR0ng/ZChiYw723i/HSnzVqz
-         /2v8l/x4KCyTrL15oX/OhMaK+9PPkmNa71tijgN+7/ub/iWzc407CD13kwG4XQ5C1UAZ
-         s/Sg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779298201; x=1779903001; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sqX6X7nWtjyIR3qederrBeJlDMfIxrgMnvzCbwNNfdY=;
-        b=pCiTtgM9+8Bg8icQNwyyQj8BmgJ4pc7kwCekh88YUppF1+v4ke+830RzDiJ08r5jK5
-         IR5P9TAhoz1+ma6fv6i9QUVg4X5u0k8cV9NOJZt/rnDPBGuRo/M+2nIor5TPltBPA4gk
-         TOQMUj5m8g9D6JHlv4mpZsVxstIs8m+u0Z5jEDttAsJ21VdKEWjirrKSGzyVrSQwWS5T
-         oTlgHZRnDVeWwKWYyJQ+AVfqI0By7JqiyN20e85pLwjpRRbYnX4F5mePTouyuaqYPNIo
-         c++oS6LQaCvrpAXGjDyNCGry1+AeWM7EnE95UUJ/qXzbWkkzf1kkvEII8C9rYBPwat/M
-         1FZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779298201; x=1779903001;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=sqX6X7nWtjyIR3qederrBeJlDMfIxrgMnvzCbwNNfdY=;
-        b=oBtMwwyzc7p4jQIHE2BMN49Q9Va/tXt5KfK+ZuoeELWigNMNcZ4H7QEc9cxWjABRsv
-         ogmQsqyJhmpfY1ShpqTuoewofEtSSoguifDVZN0uvN4iPQUkt1X1ALlWg4os9OFEPZgB
-         aznA4V9wbTNvghgG8f3KcASpT8BDBe8pdm3ECivFf2OHaWqbSNKm0/ZMf/J2Pav/e7Xf
-         /RvfF/mj65RsHnJsdNPYXHJTn8cvuJZ4sJ3Dfz5hCouB6VII7L/Hb1ob2B0RTHqE0mUz
-         Jz0N5YK1oUdqSLypVsfh49QolwyQgacl3aNLr2oiPdpsqdujcZadrYnIoBFaqfuV5Z1N
-         2qrg==
-X-Forwarded-Encrypted: i=1; AFNElJ/ThtC+kbdf3jsxgMHoatIJa2F2r8w2EFkLtp60BkbtbTjcP2rMrtqSsTsu+kiKwKn/Cp46o6nOQGV1ZA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTrSpklOAEH8rmylXa6YVH7SO3o0GD/oVs82zOXxIheKTUKfvy
-	dAIKo2iVzstVY972JKCa/7Hv5LCPruIFf+kEHXV89kRZYdLaTUBOVDORBIZ4LxOEffojMcDhRaA
-	tJlirmrHLAJnMs1q1Yv/Pa/80x0CFa2c=
-X-Gm-Gg: Acq92OGsZ1/qanXIFY2Ix1W9bw2Fp4wFj80kt26wn5chf+0Ql7JHQKgN83FdRyW5BYR
-	6euv3PfmgxiysCqd56ZXDZTcXNYUltkhS4mZZ2wrryG6bVQjEvX29i6oBi3ZiTemQj3DO3W+uE7
-	6t+5UcVnZtP7VNZo/PlOvJLtyIJavYgsq+e3YerwH5b3utVRQsVObggf/HpvIgBU/ItvSoy/Vf6
-	6eMWqCmR6AjnPOW79pI6UiWtMoOuyjkd3KIpfHaW2j/tUN1Fiog++RWM7fNLEV3C6697QMQX09b
-	744iiy6iBCnR2BkaYd9P7rJQKYv9g2ynvuMvsQxHdDJjF4NAQ9x16/L4Cdrr7oM50KXoJQcuzii
-	yIi8=
-X-Received: by 2002:a05:651c:4187:b0:394:378:b53c with SMTP id
- 38308e7fff4ca-39561f312afmr68643811fa.29.1779298200654; Wed, 20 May 2026
- 10:30:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eDg8TG9v"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ImHubwkqXpfiaemvr/8ORPzEbcdcQlxQztc6huIkL/xgJWE2uEVklfqMMp+kAcWVcCGJT65npEGR4SiI3DKiukFSxa3Jd/TaOYc30gPiJitPy3YLjXEmiOpl1SNIWq9936uNczBfAGJNuKo2ZWztXjxmbNCpRtTzNr0BMzl5F8LUlghmknIVDnqgGMUWcm4oHmCz7t8GW8sTjU4ZAlZnsJELlKL3yYnqpof5sk71+j+egCfGRMiDIg2L6Xr4aHECvh5NnJ9CRscTSkf6r5P87sYxgcW5cTkjAaQj0yJifPEJlFHCj+R1IibJLYrWyvzc5JC3dwD3kLqVtn6sFLChSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Le5w/1lACj27sVw+b2UFKEAbfDYiNFG3xgN3sjRhuz0=;
+ b=lIP1yeXSzR4n3homYJAyl4JTT2huKzX7n6G3vKsVZvP/Q+l856/11t2SEOb55SeK/pCIrbuUlyM6Ymkwq0k0UPgBgoOh85MrScimfz7OjOwwrTJ4TIrZK0OE4g5kWsmWLt6vTKJTUEetkKDDGt0ygJAFrYOVX6z5GzmPKIrXTddEugi09o0Ub2OAyXK2ZPbLhAuLM2snTdLWSUQMRVTD7U66BJBQnLLH3ZfM/lE2DBWgmR5CIgGhv7EnKSF6chXnmOQok+4c2K5q/LujfLsu3r7gaT6a6XcPTJiiahD6F78I1VgvZ+c/Wk9SyQ0U9JNgwt0TUgkPLnGI1D0HHD8MFg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=debian.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Le5w/1lACj27sVw+b2UFKEAbfDYiNFG3xgN3sjRhuz0=;
+ b=eDg8TG9vp2JHLfWsb79Ydi3Guga35bNhyjD/NVkmFKa2mVGVsCKeIOUz+CNAvOVUkM6pnk4QPsU9d45/fJX7WbKqUv4oH1o/n1LxO1qJNPGon4b3V/tgICcS+1zw26foN997bWLqlfaP9pwXvlXSFS3jh355D1XubcuJm54zWACpxUzGcZGso3Q7IOi7eVgx+MsJzcGuzn4KF0RQeMxP3iQLB5E217XdbFATTesseLay/Sl0/dHPVglwP6hUY2V89uE7w3dWvKROYr+oIK348T/1naaT0VmRIglNSGosaxc3cqBIKpBBOar5m2/s3bYIHH+3Fqop4Iup3y/3SJ9oug==
+Received: from MN2PR07CA0012.namprd07.prod.outlook.com (2603:10b6:208:1a0::22)
+ by DS0PR12MB7803.namprd12.prod.outlook.com (2603:10b6:8:144::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9913.11; Wed, 20 May
+ 2026 19:22:35 +0000
+Received: from BN3PEPF0000B373.namprd21.prod.outlook.com
+ (2603:10b6:208:1a0:cafe::e) by MN2PR07CA0012.outlook.office365.com
+ (2603:10b6:208:1a0::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.48.16 via Frontend Transport; Wed, 20
+ May 2026 19:22:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN3PEPF0000B373.mail.protection.outlook.com (10.167.243.170) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.71.0 via Frontend Transport; Wed, 20 May 2026 19:22:33 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 20 May
+ 2026 12:22:11 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 20 May
+ 2026 12:22:11 -0700
+Received: from build-va-bionic-20260204.nvidia.com (10.127.8.12) by
+ mail.nvidia.com (10.129.68.8) with Microsoft SMTP Server id 15.2.2562.20 via
+ Frontend Transport; Wed, 20 May 2026 12:22:10 -0700
+From: Vishwaroop A <va@nvidia.com>
+To: Breno Leitao <leitao@debian.org>
+CC: Vishwaroop A <va@nvidia.com>, Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>,
+	Laxman Dewangan <ldewangan@nvidia.com>, Sowjanya Komatineni
+	<skomatineni@nvidia.com>, Suresh Mangipudi <smangipudi@nvidia.com>, "Krishna
+ Yarlagadda" <kyarlagadda@nvidia.com>, <linux-tegra@vger.kernel.org>,
+	<linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] spi: tegra210-quad: Convert to hard IRQ with high-priority workqueue
+Date: Wed, 20 May 2026 19:22:10 +0000
+Message-ID: <20260520192210.70216-1-va@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <ag3ReYsoyCh-niZH@gmail.com>
+References: <20260519155108.4092518-1-va@nvidia.com> <20260519155108.4092518-2-va@nvidia.com> <ag3ReYsoyCh-niZH@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260515-tegra194-qspi-iommu-v1-0-57dfb63cd3d6@gmail.com>
- <20260515-tegra194-qspi-iommu-v1-3-57dfb63cd3d6@gmail.com> <ag2fjPWwKJmrdYMl@orome>
-In-Reply-To: <ag2fjPWwKJmrdYMl@orome>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Wed, 20 May 2026 12:29:49 -0500
-X-Gm-Features: AVHnY4LvroBWjQk9zP1yNxXjFt1vwSYbmuS4SgnDFGII4R-emIrKxrHn6Q0vFZ0
-Message-ID: <CALHNRZ9+X-QMmse-+KOAgt4psobecQvizqXMPufx-BnEd2wujA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: tegra: Add iommu and dma properties for
- Tegra194 QSPI
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B373:EE_|DS0PR12MB7803:EE_
+X-MS-Office365-Filtering-Correlation-Id: 278ac4aa-1e17-4c8a-7e39-08deb6a52490
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700016|376014|82310400026|4143699003|11063799006|18002099003|56012099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	+gvYnluQ4smujHZ8V4RyB9BQBn+gyQIJdlDK227pAfMVk0HgIkDsyZA7G619g7zDRZ2TcFYSRoydnXbzEdWe80m20TE0DXjbMImPp2HQ0T6gcJ24nBXyoU6Iozuy37BbVWaMbReWPqvSZhgm/wTLY/x8v0kn33MQery5bmXkZrfcJMLyHaw0uC0CjfWWOJHtCLZyhECUa7F3IxDAO0pW6A7BqPIsAiXJt/IKd12Us7Z4fJ0PjIlZIEWuqWAaYmkYOHx/DyuK3xAUETwRfprY4Cri4oWZs3h24mCIBXTe236KftjaIBlq5JpJd/+AVIYC+gTpP1CBDdTvMaR2n1RtHVPZaizA6ZIkZZP41UDY2NwygGvWpv9mcgKs4MTihuVfbLpYM5wC/qO/+K92lMcfiil/FxKDy4tmIt4HINrkBvm713lDJp5fujo+1+FGPdqhkkb1lHVyCMDMLOdmaJqXShY27dSvdCETQFT8JOIQLU2OmLmI7h6yNTQgPh/8WdrguN+kjOnrxOSkBdki2Bn6zSUzVrVvR1Qmupt3kqXdUyS2+ixAbdNk0+kD/7buOE9Cy2wF2uCKAZIvgzcdtbDFr3NUw5tksxcJVUWutYJ8S0eBF/Ht1Qh1emjMldXart60ajg05StpmzDZgbXvZUFtxHumfXoAtcEkyy1PG6kpOKqeBcG45bG8G/uSQQtk4aAM8hbkWXSGrlFb42e27SE4OTY70X58Xr9Id5Z9MoUhud8=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700016)(376014)(82310400026)(4143699003)(11063799006)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	7fx8trRwOLXo+zgv57InRY+7M4P6ZlQTDwxSNzJwgZLHyYdhZ6La3KdUt7WoDQZvmaHWKRrn65CxLffNHZAAk9OWTabc65Uea+ayoOWUIfEJzTk4MVRCBZo+fqbq73cuMUT/hczEobETtugoXY7mHMR9cudb1xp7WJtmdcKkhFkG4SrtvhAaSIZTdTkHIm4bTTbGU4BzFgC+tw3dgpnKJ9iVmeh7YB1QGcwWamIFKwXV8tnPgNhIJCODk2pMGPNbw1vEm5mVf2wHJBDUrF2esoCcusymrcGa+6VaJCfb52YbzrcSfw8PxM85ZahNSHo8x+VSJQIOpl6Z3lVHmYfDC1dvCgWfL+uC4oC/wygQQ8ovPqOxGuhM3L5t9QI1oY5+5tx6Kiwa7RyhsE3dx/PmCDJPclp9uBIqe+DnHRRy+sCrZP8BMkZUi6dtZo8yc2Lh
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2026 19:22:33.0595
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 278ac4aa-1e17-4c8a-7e39-08deb6a52490
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B373.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7803
 
-On Wed, May 20, 2026 at 6:49=E2=80=AFAM Thierry Reding <thierry.reding@gmai=
-l.com> wrote:
+On Wed, May 20, 2026 at 08:25:23AM -0700, Breno Leitao wrote:
+> > +     status = tegra_qspi_readl(tqspi, QSPI_TRANS_STATUS);
+> > +     if (!(status & QSPI_RDY))
+> > +             return IRQ_NONE;
+> > +
+> > +     spin_lock(&tqspi->lock);
 >
-> On Fri, May 15, 2026 at 03:35:29PM -0500, Aaron Kling via B4 Relay wrote:
-> > From: Aaron Kling <webgeek1234@gmail.com>
-> >
-> > Without iommu and dma enabled, flash storage such as the spi-nor on the
-> > p3668 module times out and cannot complete any transfers.
-> >
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > ---
-> >  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot=
-/dts/nvidia/tegra194.dtsi
-> > index 1d659454a6f9fe..0e0a20befe9e68 100644
-> > --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> > +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> > @@ -923,6 +923,10 @@ spi@3270000 {
-> >                                <&bpmp TEGRA194_CLK_QSPI0_PM>;
-> >                       clock-names =3D "qspi", "qspi_out";
-> >                       resets =3D <&bpmp TEGRA194_RESET_QSPI0>;
-> > +                     iommus =3D <&smmu TEGRA194_SID_GPCDMA_0>;
-> > +                     dma-coherent;
-> > +                     dmas =3D <&gpcdma 5>, <&gpcdma 5>;
-> > +                     dma-names =3D "rx", "tx";
->
-> dmas and dma-names are the only properties that you should need here.
+> Can you help me to understand what the tqspi->lock protects? I am still
+> a bit confused by this lock, but at the first glance, I am wondering if
+> you don't need to have the lock while reading the status.
 
-This is where I started and it didn't work. Without the iommu
-properties, I get endless mmu faults upon accessing the qspi flash
-device:
+Good question. The QSPI_TRANS_STATUS read before the lock is a hardware
+register read (MMIO) used as the IRQF_SHARED ownership check -- we read
+QSPI_RDY to determine if this interrupt belongs to us. If not, we
+return IRQ_NONE immediately. Taking the lock before this check would
+serialize against every unrelated interrupt on the shared line for no
+benefit, since we're reading hardware state that no software path can
+modify concurrently.
 
-[   62.313833] tegra-mc 2c00000.memory-controller: axisw: secure write
-@0x00000003ffffff00: VPR violation ((null))
-[   62.324542] arm-smmu 12000000.iommu: Unhandled context fault:
-fsr=3D0x402, iova=3D0xcd21d000, fsynr=3D0x80012, cbfrsynra=3D0x820, cb=3D1
+The only CPU-side write to QSPI_TRANS_STATUS is the write-1-to-clear
+inside tegra_qspi_mask_clear_irq(), which happens under the lock at
+line 1655, after we've already confirmed the interrupt is ours. The
+register is also cleared at the start of each new message in
+tegra_qspi_setup_transfer_one() -> tegra_qspi_mask_clear_irq(), but
+that runs before the transfer is started and interrupts are unmasked,
+so there's no overlap with the ISR.
 
-I know downstream kernels aren't always (normally...) the arbiter of
-sanity, but I did pull these from the Nvidia downstream 5.10 kernel,
-which is where Nvidia was starting to try to align with mainline
-paradigms. All of these properties are set there.
+The lock itself protects the software state that is shared between
+the ISR, the workqueue bottom-half, and the timeout handler running
+in the transfer thread. Specifically, curr_xfer is read and NULLed
+by handle_cpu_based_xfer/handle_dma_based_xfer under the lock, and
+checked by the timeout handler under the lock, so concurrent access
+is serialized. The ISR writes status_reg, tx_status, and rx_status
+under the lock before scheduling the workqueue; the workqueue and
+transfer thread read them after the scheduling barrier or completion
+respectively, so the lock provides the write-side ordering.
 
-If the qspi node isn't supposed to set iommu directly, then there's a
-larger problem here that I don't even know where to begin to look
-into. All I can say is that dma fails with faults if they are not set
-and works when they are.
+The trans_status caching (tqspi->trans_status = status) before the
+lock is safe because the ISR is the sole writer in interrupt context.
+The only reader is handle_timeout, which reads it under
+spin_lock_irqsave after wait_for_completion_timeout expires. The
+setup path resets it to zero under the lock before starting each
+transfer, well before the ISR can fire.
 
-Aaron
+Vishwaroop
