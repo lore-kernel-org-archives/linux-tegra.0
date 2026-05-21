@@ -1,234 +1,179 @@
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012018.outbound.protection.outlook.com [40.93.195.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BBD372B23
-	for <linux-tegra@vger.kernel.org>; Thu, 21 May 2026 09:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779354285; cv=none; b=BPkseiKUJ1k5FvlbRR+0MHRYUjbQ4qrqdNKUX1KcVBB/ZyYW95bYu3Hfj+PiaeNmzRAdlfiw9WuBvRgyeGDF4gvuzUTr4qQiOCbksyAM0qBC6dat3luGC0rPAFBpyARVjAFwgyIQ3dTmXd+M83x7xwiGBJS6Qq1y+M7nda466qM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779354285; c=relaxed/simple;
-	bh=WXqyDP2WNgily0u8Lr9ZKcp8fbMxSlVPzEqcVTVrC3w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Jw5wLrb+QjmMJ2ee/GKMTy93fBbrWHl4g0PLPe3bDlVokbdswlSi1bRa8+GufzQTT6lb8ecQ1+/bV1Utx51uO/HAyfpjQxgOk6R3Qng6Kdj0eLZeQi5BgeVO+DWrJj1iMRt1vM2vzbgVWrhGFEhydZ+ccXCWOzweGn4O5MKUL18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jJiexMpB; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7674E2D7D27;
+	Thu, 21 May 2026 09:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779355141; cv=fail; b=lme3cHpcXJxy59VsV4oq7NLx5S03MkEuGlAyQfepRhVR8/pxvaWveyf+/WBCOMkeJgfoaZE5jfR8fgL0btgAwDi6i8FyyW6MTx5e9Q5xe6DwUJ+VDsoiXnHz+kkaMLcDbR79r9qgR6jBKparmCU+WE4Qi5eMeG7acbARxVkiYh8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779355141; c=relaxed/simple;
+	bh=CuCIgDibJojUjZHOfl/xEN78oYrWKT2+v6B62K4kL2w=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Z4HRPAWQO1YQkndiWM03cb0KTEcbzbL9dq+KbSe+wfj1C/XEelddvxOD3IT6+ek8xvlouV5QkvMbeD52JCh2mM1+fA2on1C43Oc8tNU9+0MTY4rFobhmtEXXXt06Zf+AO/nUlsUkPny/y/oHogO4CJgUQ7a2qo5Pl2ZCvKoomSQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=D1qgFyM7; arc=fail smtp.client-ip=40.93.195.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jJiexMpB"
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-367fd7b8825so5937382a91.0
-        for <linux-tegra@vger.kernel.org>; Thu, 21 May 2026 02:04:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1779354283; x=1779959083; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=me5xxEdS5RmvRxAYfqP7SoJKhExweEkQR6HZlR29D38=;
-        b=jJiexMpBsIImU952SZYilrK0yfgDaIc3VBCL+kIC3ILi4TNq/2x2TKrvO+Q0Wzb1si
-         73/9SJ6nmaRKyFwYxQMjefNpy7UTIsB4wfeKIcK5A2U7MOwUPN19CJGSPPPl48vBU7BJ
-         WGawdB2Q+dYMT9APJk9NmSQ+OEkNBz1O7u0nV+Syq+Yjeb+yhjnRWxY471dQW7Z5EOuf
-         QaapKC+4CXA4DVprucgOiH3C+97CleeSU3YVxazmObzogBk52VvPTmjmC/EHDbndP5Ul
-         7VfFRUtIboFJxshqqliu/cOfoiCsJBqIaTIJ4U0KrhE8pzsjvc96PL9SwKF8zCmjqJ51
-         XNFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779354283; x=1779959083;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=me5xxEdS5RmvRxAYfqP7SoJKhExweEkQR6HZlR29D38=;
-        b=gb+kaTHfdPL0o196no6EM3W0OzXrjQ+iGd2MWSS8glUbKtUVw2W9Setn4LdwbpaAkS
-         CTKwfTJUU7DN76iqQw0jbhzdbN29wv39EKFugf1v9ozjU4EXfAQC2yRgh1d2eTbp3ZYJ
-         L/W2ywK1yBzFfB1GGzE0PqkO8gAf/wQ9LAzDVR84VUTqELvDGDEYV8Uk2By0yL0p7/CK
-         1kPgoW34vH0oGy/XyplYcIiBTEkd8Fp688wNUoXtqPq1Up0WVLJQfQv/kUM2UkMZWF27
-         o49N4bSiOqf5S3P+Z/aI8upf/VYJ1bErGi1KAZtyokH8J5WOuIYgNFtJ35rGKE/UaX48
-         QNSw==
-X-Forwarded-Encrypted: i=1; AFNElJ9H+6liNv9RhGgvK0dWNcbnWvkZ7qU7bzgxa1wM7vPGj+Wq7XCxzoj2h+/j0l8UcUVPduLxZs5Elar6aw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkzQyK69usB2MzOd9PLpaKS/sCW+uHh6XOO4FFLDrN7lPVSHnN
-	gv/zqpX5Qcgxv6dQ1FbTlHckwjcF4uHChGpwjWrIylHenUZPel4bBty/OfbM4BIc3+fFHllYC7o
-	t2XRcOC6pTo7U+DxzFb1+TrFe/Q==
-X-Received: from pjbco1.prod.google.com ([2002:a17:90a:fe81:b0:366:3645:4115])
- (user=joonwonkang job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:2f8d:b0:366:132:fda6 with SMTP id 98e67ed59e1d1-36a45180833mr2175577a91.11.1779354282756;
- Thu, 21 May 2026 02:04:42 -0700 (PDT)
-Date: Thu, 21 May 2026 09:04:33 +0000
-In-Reply-To: <20260521090433.1353240-1-joonwonkang@google.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="D1qgFyM7"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a6Ee0mxBdcnZX+q2hsW9kLkx9IQM/ANWSxyfoy/Sm/hjWrZQHykq1BJOGmyyBTWBsPERm8HPbw9sJ4aOupttM+BcOCbcGBrH3Fy7GXDaqe6VTV14KVlYJmoMBwSDiMiXeNWxjb1qIAmpSaOeBFe0azzlHjZfixnnt53T+KYlOeZBQVXNTV0QwAR09Wuhp3DUnWYXnzxD1nsySN2IaJfHFSAtRjqNWtturoyjz2OzIqGbaIHDvQLC4GVZiJ1HCvQbJaGrkmpyujshA6zyzV9oRA/1ijs55BuXhV2aIyHKVwWerw6wR+LHtWZ4aRdJRxhlmhFHKdiHKpDh2iEPuZ1g1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=N5TXRUS7NaBx0RdYzS85Q/0rrSyXCc4xq53bP15r/ew=;
+ b=j5b2DWkv/5f+jyXwjQLdVGDyIFrlq1Sdlm1jknnbNuBDmYX6hzHF3stRt6Sidwx1R4r663a2/AFin0Jj2uaJ0ZEfRuwKE/NEba5LVJLLGgtr1w6NQrE1l2De9wNBss/ZiLe0hls5qES2OW3vd1qGycdtXx5vFl9ZDlfUVq5gLo5KN3UILcVTwtF2//7/Z4knudOe0MEMjoYoykc8OMiez2x3p27l+idfMDj9nWoIRKP8ZaY8WUrY2YrdHYxBgr4aFSmtJKAoHTjWQy8JPgKK6/Y7KzeWJ20Ouefe3YXRu5zs0EwVgb5C25y62yNLrSAW78suBy4SopAuILXPuAJVDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N5TXRUS7NaBx0RdYzS85Q/0rrSyXCc4xq53bP15r/ew=;
+ b=D1qgFyM7IcbnPSV7ZVaDf6o5jYyVOI0BOcsUYMng4yfHM6dTSNuyoKZNHPG/gwdE4cPL9ZLCp+blsRukVZjG2ozZvzGRChblUyKYq1WScp3HUTCU4mudpeONcFZlS2ybMGmAlahvCWQgNfKeOMBntjdLJiUGiWsfOvlZr9vO+XJ+yqxKXrQcRyNPtKOznOofSBPOok3g60BBDzfxz9FytLReDNvagCs5SKZk7N9v4S1wTl4FcnObhhKtbnZ5zMG8R4cVgQ4Givt2NPPC9LkIhmA02phc1+hfT67+HaLCvqgOcQgxoTbzueBeyxaX1hy0LwhgCPd5KycB8j2SK0QbOw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
+ by SJ0PR12MB6989.namprd12.prod.outlook.com (2603:10b6:a03:448::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.14; Thu, 21 May
+ 2026 09:18:55 +0000
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391%6]) with mapi id 15.21.0048.016; Thu, 21 May 2026
+ 09:18:55 +0000
+Message-ID: <f0858c30-40df-457b-a2c6-820600800f76@nvidia.com>
+Date: Thu, 21 May 2026 10:18:48 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.18 000/957] 6.18.32-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@nabladev.com, f.fainelli@gmail.com,
+ sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
+ sr@sladewatkins.com,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20260520162134.554764788@linuxfoundation.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20260520162134.554764788@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR2P281CA0138.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:9e::7) To DS2PR12MB9750.namprd12.prod.outlook.com
+ (2603:10b6:8:2b0::12)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260521090433.1353240-1-joonwonkang@google.com>
-X-Mailer: git-send-email 2.54.0.746.g67dd491aae-goog
-Message-ID: <20260521090433.1353240-3-joonwonkang@google.com>
-Subject: [PATCH v7.0.y] mailbox: Fix NULL message support in mbox_send_message()
-From: Joonwon Kang <joonwonkang@google.com>
-To: sashal@kernel.org, stable@vger.kernel.org, jassisinghbrar@gmail.com, 
-	greg@kroah.com
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	joonwonkang@google.com, dianders@chromium.org, sudeep.holla@arm.com, 
-	linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|SJ0PR12MB6989:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6bc84d85-c508-424e-209e-08deb719fb2a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|22082099003|56012099003|18002099003|11063799006;
+X-Microsoft-Antispam-Message-Info:
+	IvfS+tAcmak4T0Srr+lEwi2FekiYlh9znu7OplzwEVzt9D+WMvcjeoMqbKpdN7xIPYdKCD6NtWVkTs6dTeeBtljVOwP4ifx7mEGTLcuP1ZbWEBuR2SgX0stnjmVIGLhazy/LqD3Yexd61HMYb6+aFgCaxjIF98dlJX8aMTlw2sh14yxDtVyeXtKxc/t+uoZ3COL5FTWc0ieCqHKt9a0UH4fIfiLOoRfBFlxYq+Np9Tw2yLUfV50t8jVDkii886xJvkeawtIYMZTCIwWkNcDAwYNyMAJjISdh7cMiuMOZ5JDUmEhFsK2UT5/v5o+r+gqVNzF5VqeX1kXGOgY3tUtCulkv+YW8IcppXoMIvcUzKO1k4xFvzB59w+1FFYNOox079M97iSm51mIV/LAKhpKzvzn6EYhdwygw44JKnUYYq9jpydDcRx47NvAPleFcGOabCgXscuqgx+Xo3AavsxQZi44yeLFrkqrC7yFjalVze9K5iiavUsU3lvzIRpq2TriV3aywZIW44wwIe8FHhEdLg3HQMFPJyM6JQhwlExYq8lgB/gK3gbYZ66omDoz8aankoRQElEaESS9Wp9uXnLsV72RwSev3QwGc2ouy0ZEfvoqEx34VYcNdIKhL5cXiJAa6QDzlTc9jXD2V+aZStuRf9KjomIvGR1v88NX3EIzzKlQe5EpuVm4Hohp5Idar8R8VcS9ZebdifLa23I207zQqjA==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(22082099003)(56012099003)(18002099003)(11063799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Q3NhQit1VXEvUEk2OHJONkl5UUtDSFhYUmFKZlRraVBhak5nWTFQNTR0Y0dn?=
+ =?utf-8?B?SjAwbWpYSXdWc3EvTFJiaGM2OUY3ajBJeFJ1U1pXMUd5WjkrN25GcStlbHVR?=
+ =?utf-8?B?TEVlZVBRQ2ZqUk41V0ZicmZLZjlXTitiS1dIaElEekNTajExUFNKRmliOHNn?=
+ =?utf-8?B?TjlRNHg0cjFoVmlueWViRkdUdy9pcGJxS1RNckhYdXUwczNOUS85MG93SVVk?=
+ =?utf-8?B?OU8zMVNHNkFOazczenpkWGhlQk9PaGxGY1orUWQ3L3o1QlRmZk9SMnYxWkJn?=
+ =?utf-8?B?cGN2ZTFvU0VHQUp6SVp3clgzYUdVL2tDL2hPYkJaQWh1UDMvV2ZobDl0QVMw?=
+ =?utf-8?B?MTlYREt1d3VQTWdZK0RYbkw5NEVkUWQ5cExpSEViaVRyd2VCK3Y1RnJ4NFRu?=
+ =?utf-8?B?RG9rOHRwTEhYMnd6K1Ryb2l0UEJuWENKS0NYNWdlNkJTd0IrQnB3SjFXL2FJ?=
+ =?utf-8?B?THF4T3BIMTlHNDZwNS8xQ2ZDY3RRWVF0SFBLYWM2REllcXhVRXF2MWJhQXNo?=
+ =?utf-8?B?dVgvNzBMeXNpS3BFYVA5RUF2aEx0RjJqUzRDdm1VZkwweGRxSHJpZ3ZTLzRk?=
+ =?utf-8?B?VjNDQklwSzlDWWdBUTZDUjVsKzBwSzhRc3dKdHQxNjR3a1NKenR6VDJDYVRn?=
+ =?utf-8?B?MDBkSEpEQ2s3SVloVmVVbUFtQ3QxaUJnSkNKd2Jkc0t3VXNVUlVJSElzZ09m?=
+ =?utf-8?B?WE9uTk90bzI0SkZwd1JVWXhxYmd5SEFOcXU5SWw1NFBTMi8vQllGWUZFQllX?=
+ =?utf-8?B?dldKQlJDVVpYZjltUVI0UFVYMzdzNXZIa0luU0k2Y2kzNW95L1dra3BhQnlU?=
+ =?utf-8?B?TVlJWGl0RG5YR1I3YndpMnI1SjFzNElMNlp3M3NXcXVUZzVxQnluWFJPWXBX?=
+ =?utf-8?B?Y3lUU29rT1BvYkpjcmswYkZLZHJPUW9LK2J2YzMrNVFwSjQzNlFwb1cya1p6?=
+ =?utf-8?B?dC9xM05UZ09iOHhJTG0xeVB5dENDeDhFVDBaV2ZldG1jN3Y2RDB2N2FtNGFp?=
+ =?utf-8?B?Ym9VL0tuSWdRbVdrUzdIVW8rQ3FPT0dpaVQ2ZHNIZHM1VGZneGxTYnFNNnU0?=
+ =?utf-8?B?YkNMaGlBNVBia290SFFSMWxDclJlSVVyMWQvZytLZG1mS0MvMURjQ1RjV3g5?=
+ =?utf-8?B?ay9QR2ZjaXN1UjdYMnBmeStEY2lxL0p0d0pua01UUUY0WDhidm5UaTgxYjZ2?=
+ =?utf-8?B?U0VnNmszQWtZdm9heXRwWG1OUE5GQlZuT3czMWo1ek9YUlRxdjhYd3J4dGt5?=
+ =?utf-8?B?UkJ1TlpaZHI1Q1loTGt2aHRlZVpUcWo3TGdnNE16dmxFbG9Cb1dabDg4ZS82?=
+ =?utf-8?B?ZlBLd0k2NE16UFU5QXhjWVIvUFFnc04xN3I1TFZPMmJKR3Uvc04wN2o0ZHl4?=
+ =?utf-8?B?bG1EMUsxazZ0U05Kc09qZDNyR0lzQ0hTQTJta3JOWlpETURhb3BtdzZ3amJp?=
+ =?utf-8?B?NkU5SThxc2Y1RkR4WFhtbXRiZGFnRmRUQ29XUW5jWUhXTDlMMFI2K2V5RzFw?=
+ =?utf-8?B?VTg2MmM4bUY4Mno5OFlYYnM0cHpNVDdkRncwcXZ0NmMyVng4NnBrZ3ZjdW5j?=
+ =?utf-8?B?cEVFOEJRU1lXZkZHbnlmY1ZmVUZVdlBlbUllZjlMa0hBQTBleFRvNDE2eHdY?=
+ =?utf-8?B?Y3pxWkljdVdFbTFSSjJWZW9MZVgvd0plaDZjOXI3dTJaRGxZZS9yZ01KSzA4?=
+ =?utf-8?B?WGYzUnNiekhhMXA0U3hhcUpON2x4cW5ZOFJENDg3a2JHVWlVUWs1L1E0OU5h?=
+ =?utf-8?B?dUZ3SnN1NFlyVTlsTzQrUFJlT0p2ZUtzQmRlMUMyQVVUQTRHUlVUdGYvQWU2?=
+ =?utf-8?B?MEFsOGpFT2FwWEU3UVZUV25uS1V5L2krdDcyeUNVRUtIWllyWW9HalpHdU9H?=
+ =?utf-8?B?bjd0bmQxV3NWSm0wQWRTSkxEdFExSnhZaFR0bG13SEROWTZicTZ6OE1kMGo3?=
+ =?utf-8?B?ZzZQRzlHMHRqK25ZczB2eWZlTjFnMUJtOGpzeDdrZ2lXT3dabTdSSVZKK1Fh?=
+ =?utf-8?B?VVlOSHNpTHM4RkFobW5tVCtxSnVlRzdTbCt1UDlKTzZQSEdRU3RGTEVsOWNj?=
+ =?utf-8?B?a3NmRlhwNHhmMHh5TWloWFFTbnVnL2Fla0YxWUFiaXZNeWRQejRwcnM5cVBp?=
+ =?utf-8?B?MURWS3U2M0Y0MkcvUGI2aE1qMmgxWDliTWxmRnJiK21ZZE5QK2tWUyttYW5F?=
+ =?utf-8?B?blpjVzBpRllvTHB4Zi9rS0J1dzcxY3F3VU9mcGRBMXNQTVAxaitCaUhTb3RP?=
+ =?utf-8?B?SEFPYVA1SjFKMVZadFZFU1ZKTnFhUjlPZVBGaVFodkQ1MWgraHpZRVJJZkN2?=
+ =?utf-8?B?VnFpWFUrWElRRVJDbUxIUEdmK1c1RHpLeUcweDdHc0hhSlArbVkwZz09?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6bc84d85-c508-424e-209e-08deb719fb2a
+X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2026 09:18:55.1070
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: a+x+ZXxH+DFxU3+iQ2HqB+Ngp8BCZ2P54pj62kak5A2JMbig6DhTU+s9hDhRy40dkFSwzWRY0bLUPuBtKijaxw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6989
 
-From: Jassi Brar <jassisinghbrar@gmail.com>
 
-commit c58e9456e30c ("mailbox: Fix NULL message support in mbox_send_message()") upstream.
+On 20/05/2026 17:08, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.18.32 release.
+> There are 957 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 22 May 2026 16:20:16 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.18.32-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.18.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-The active_req field serves double duty as both the "is a TX in
-flight" flag (NULL means idle) and the storage for the in-flight
-message pointer. When a client sends NULL via mbox_send_message(),
-active_req is set to NULL, which the framework misinterprets as
-"no active request". This breaks the TX state machine by:
 
- - tx_tick() short-circuits on (!mssg), skipping the tx_done
-   callback and the tx_complete completion
- - txdone_hrtimer() skips the channel entirely since active_req
-   is NULL, so poll-based TX-done detection never fires.
+All tests passing for Tegra ...
 
-Fix this by introducing a MBOX_NO_MSG sentinel value that means
-"no active request," freeing NULL to be valid message data. The
-sentinel is defined in the subsystem-internal mailbox.h so that
-controller drivers within drivers/mailbox/ can reference it, but
-it is not exposed to clients outside the subsystem.
+Test results for stable-v6.18:
+     10 builds:	10 pass, 0 fail
+     28 boots:	28 pass, 0 fail
+     158 tests:	158 pass, 0 fail
 
-Fifteen in-tree callers send NULL (doorbell-style IPCs on Qualcomm,
-Tegra, TI, Xilinx, i.MX, SCMI, and PCC platforms). All were
-audited for regression:
+Linux version:	6.18.32-rc1-gb7adc4ce3f26
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                 tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+                 tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+                 tegra210-p2371-2180, tegra210-p3450-0000,
+                 tegra234-p3737-0000+p3701-0000,
+                 tegra234-p3768-0000+p3767-0005, tegra30-cardhu-a04
 
- - Most already work around the bug via knows_txdone=true with a
-   manual mbox_client_txdone() call, making the framework's
-   tracking irrelevant. These are unaffected.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
- - Poll-based callers (Xilinx zynqmp/r5) are strictly better off:
-   the poll timer now correctly detects NULL-active channels
-   instead of silently skipping them.
+Jon
 
- - irq-qcom-mpm.c was a pre-existing bug -- the only Qualcomm
-   caller that omitted the knows_txdone + mbox_client_txdone()
-   pattern. Fixed in a companion commit ("irqchip/qcom-mpm: Fix
-   missing mailbox TX done acknowledgment").
-
- - No caller sets both a tx_done callback and sends NULL, nor
-   combines tx_block=true with NULL sends, so the newly reachable
-   callback/completion paths are never exercised.
-
-Also update tegra-hsp's flush callback, which directly inspects
-active_req to wait for the channel to drain: the old "!= NULL"
-check becomes "!= MBOX_NO_MSG", otherwise flush spins until
-timeout since the sentinel is non-NULL.
-
-The only tradeoff is that 'MBOX_NO_MSG' can not be used as a message
-by clients.
-
-Reported-by: Joonwon Kang <joonwonkang@google.com>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Jassi Brar <jassisinghbrar@gmail.com>
-Signed-off-by: Joonwon Kang <joonwonkang@google.com>
----
- drivers/mailbox/mailbox.c          | 15 ++++++++-------
- drivers/mailbox/tegra-hsp.c        |  2 +-
- include/linux/mailbox_controller.h |  3 +++
- 3 files changed, 12 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-index 617ba505691d..9622369cab66 100644
---- a/drivers/mailbox/mailbox.c
-+++ b/drivers/mailbox/mailbox.c
-@@ -52,7 +52,7 @@ static void msg_submit(struct mbox_chan *chan)
- 	int err = -EBUSY;
- 
- 	scoped_guard(spinlock_irqsave, &chan->lock) {
--		if (!chan->msg_count || chan->active_req)
-+		if (!chan->msg_count || chan->active_req != MBOX_NO_MSG)
- 			break;
- 
- 		count = chan->msg_count;
-@@ -87,13 +87,13 @@ static void tx_tick(struct mbox_chan *chan, int r)
- 
- 	scoped_guard(spinlock_irqsave, &chan->lock) {
- 		mssg = chan->active_req;
--		chan->active_req = NULL;
-+		chan->active_req = MBOX_NO_MSG;
- 	}
- 
- 	/* Submit next message */
- 	msg_submit(chan);
- 
--	if (!mssg)
-+	if (mssg == MBOX_NO_MSG)
- 		return;
- 
- 	/* Notify the client */
-@@ -114,7 +114,7 @@ static enum hrtimer_restart txdone_hrtimer(struct hrtimer *hrtimer)
- 	for (i = 0; i < mbox->num_chans; i++) {
- 		struct mbox_chan *chan = &mbox->chans[i];
- 
--		if (chan->active_req && chan->cl) {
-+		if (chan->active_req != MBOX_NO_MSG && chan->cl) {
- 			txdone = chan->mbox->ops->last_tx_done(chan);
- 			if (txdone)
- 				tx_tick(chan, 0);
-@@ -246,7 +246,7 @@ int mbox_send_message(struct mbox_chan *chan, void *mssg)
- {
- 	int t;
- 
--	if (!chan || !chan->cl)
-+	if (!chan || !chan->cl || mssg == MBOX_NO_MSG)
- 		return -EINVAL;
- 
- 	t = add_to_rbuf(chan, mssg);
-@@ -319,7 +319,7 @@ static int __mbox_bind_client(struct mbox_chan *chan, struct mbox_client *cl)
- 	scoped_guard(spinlock_irqsave, &chan->lock) {
- 		chan->msg_free = 0;
- 		chan->msg_count = 0;
--		chan->active_req = NULL;
-+		chan->active_req = MBOX_NO_MSG;
- 		chan->cl = cl;
- 		init_completion(&chan->tx_complete);
- 
-@@ -477,7 +477,7 @@ void mbox_free_channel(struct mbox_chan *chan)
- 	/* The queued TX requests are simply aborted, no callbacks are made */
- 	scoped_guard(spinlock_irqsave, &chan->lock) {
- 		chan->cl = NULL;
--		chan->active_req = NULL;
-+		chan->active_req = MBOX_NO_MSG;
- 		if (chan->txdone_method == TXDONE_BY_ACK)
- 			chan->txdone_method = TXDONE_BY_POLL;
- 	}
-@@ -532,6 +532,7 @@ int mbox_controller_register(struct mbox_controller *mbox)
- 
- 		chan->cl = NULL;
- 		chan->mbox = mbox;
-+		chan->active_req = MBOX_NO_MSG;
- 		chan->txdone_method = txdone;
- 		spin_lock_init(&chan->lock);
- 	}
-diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-index ed9a0bb2bcd8..7991e8dba579 100644
---- a/drivers/mailbox/tegra-hsp.c
-+++ b/drivers/mailbox/tegra-hsp.c
-@@ -497,7 +497,7 @@ static int tegra_hsp_mailbox_flush(struct mbox_chan *chan,
- 			mbox_chan_txdone(chan, 0);
- 
- 			/* Wait until channel is empty */
--			if (chan->active_req != NULL)
-+			if (chan->active_req != MBOX_NO_MSG)
- 				continue;
- 
- 			return 0;
-diff --git a/include/linux/mailbox_controller.h b/include/linux/mailbox_controller.h
-index 80a427c7ca29..1db0069c27c5 100644
---- a/include/linux/mailbox_controller.h
-+++ b/include/linux/mailbox_controller.h
-@@ -11,6 +11,9 @@
- 
- struct mbox_chan;
- 
-+/* Sentinel value distinguishing "no active request" from "NULL message data" */
-+#define MBOX_NO_MSG	((void *)-1)
-+
- /**
-  * struct mbox_chan_ops - methods to control mailbox channels
-  * @send_data:	The API asks the MBOX controller driver, in atomic
 -- 
-2.54.0.746.g67dd491aae-goog
+nvpublic
 
