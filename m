@@ -1,179 +1,101 @@
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012018.outbound.protection.outlook.com [40.93.195.18])
+Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7674E2D7D27;
-	Thu, 21 May 2026 09:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779355141; cv=fail; b=lme3cHpcXJxy59VsV4oq7NLx5S03MkEuGlAyQfepRhVR8/pxvaWveyf+/WBCOMkeJgfoaZE5jfR8fgL0btgAwDi6i8FyyW6MTx5e9Q5xe6DwUJ+VDsoiXnHz+kkaMLcDbR79r9qgR6jBKparmCU+WE4Qi5eMeG7acbARxVkiYh8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779355141; c=relaxed/simple;
-	bh=CuCIgDibJojUjZHOfl/xEN78oYrWKT2+v6B62K4kL2w=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Z4HRPAWQO1YQkndiWM03cb0KTEcbzbL9dq+KbSe+wfj1C/XEelddvxOD3IT6+ek8xvlouV5QkvMbeD52JCh2mM1+fA2on1C43Oc8tNU9+0MTY4rFobhmtEXXXt06Zf+AO/nUlsUkPny/y/oHogO4CJgUQ7a2qo5Pl2ZCvKoomSQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=D1qgFyM7; arc=fail smtp.client-ip=40.93.195.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B60372EDA;
+	Thu, 21 May 2026 09:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779355408; cv=none; b=NwPFi5snZsqUU0NeoJNJW0b9DQ8811DFXTXFK8ZbKgXn+6gVd4QpKFoINHZpI61TDZ0UMyYuOGyzYye2B5qd8yePr4kOP60c7TAtr4YeO8nVGSPelbNRAKqzCU6RU5NqZSUdEGAQm3+qTLtgglLPjij1/7LwAlol7IynU9qjHG4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779355408; c=relaxed/simple;
+	bh=HUaw0GYFktM4i/W6aor9kZD5qgYVMQfqE6Onquu5g4c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g6T2TwMCrE3YsfxC9jdeTctQSNS811Lpn1KEMXe3J7h4l0+zm4xyYlm3TRF+SvfQpplmBIR5dIacloownlFiG9Ft1EbKth+qQQ+RPifcARunC37rKD+zg6yij4nD7gU+9TsGSm8ArJ12IiSNP7JI2cz/rz0NuE0fQQIOLNgsb9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=jngC8ob9; arc=none smtp.client-ip=193.136.128.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="D1qgFyM7"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a6Ee0mxBdcnZX+q2hsW9kLkx9IQM/ANWSxyfoy/Sm/hjWrZQHykq1BJOGmyyBTWBsPERm8HPbw9sJ4aOupttM+BcOCbcGBrH3Fy7GXDaqe6VTV14KVlYJmoMBwSDiMiXeNWxjb1qIAmpSaOeBFe0azzlHjZfixnnt53T+KYlOeZBQVXNTV0QwAR09Wuhp3DUnWYXnzxD1nsySN2IaJfHFSAtRjqNWtturoyjz2OzIqGbaIHDvQLC4GVZiJ1HCvQbJaGrkmpyujshA6zyzV9oRA/1ijs55BuXhV2aIyHKVwWerw6wR+LHtWZ4aRdJRxhlmhFHKdiHKpDh2iEPuZ1g1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=N5TXRUS7NaBx0RdYzS85Q/0rrSyXCc4xq53bP15r/ew=;
- b=j5b2DWkv/5f+jyXwjQLdVGDyIFrlq1Sdlm1jknnbNuBDmYX6hzHF3stRt6Sidwx1R4r663a2/AFin0Jj2uaJ0ZEfRuwKE/NEba5LVJLLGgtr1w6NQrE1l2De9wNBss/ZiLe0hls5qES2OW3vd1qGycdtXx5vFl9ZDlfUVq5gLo5KN3UILcVTwtF2//7/Z4knudOe0MEMjoYoykc8OMiez2x3p27l+idfMDj9nWoIRKP8ZaY8WUrY2YrdHYxBgr4aFSmtJKAoHTjWQy8JPgKK6/Y7KzeWJ20Ouefe3YXRu5zs0EwVgb5C25y62yNLrSAW78suBy4SopAuILXPuAJVDA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=N5TXRUS7NaBx0RdYzS85Q/0rrSyXCc4xq53bP15r/ew=;
- b=D1qgFyM7IcbnPSV7ZVaDf6o5jYyVOI0BOcsUYMng4yfHM6dTSNuyoKZNHPG/gwdE4cPL9ZLCp+blsRukVZjG2ozZvzGRChblUyKYq1WScp3HUTCU4mudpeONcFZlS2ybMGmAlahvCWQgNfKeOMBntjdLJiUGiWsfOvlZr9vO+XJ+yqxKXrQcRyNPtKOznOofSBPOok3g60BBDzfxz9FytLReDNvagCs5SKZk7N9v4S1wTl4FcnObhhKtbnZ5zMG8R4cVgQ4Givt2NPPC9LkIhmA02phc1+hfT67+HaLCvqgOcQgxoTbzueBeyxaX1hy0LwhgCPd5KycB8j2SK0QbOw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
- by SJ0PR12MB6989.namprd12.prod.outlook.com (2603:10b6:a03:448::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.14; Thu, 21 May
- 2026 09:18:55 +0000
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391%6]) with mapi id 15.21.0048.016; Thu, 21 May 2026
- 09:18:55 +0000
-Message-ID: <f0858c30-40df-457b-a2c6-820600800f76@nvidia.com>
-Date: Thu, 21 May 2026 10:18:48 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.18 000/957] 6.18.32-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@nabladev.com, f.fainelli@gmail.com,
- sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
- hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
- sr@sladewatkins.com,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20260520162134.554764788@linuxfoundation.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20260520162134.554764788@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0138.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9e::7) To DS2PR12MB9750.namprd12.prod.outlook.com
- (2603:10b6:8:2b0::12)
+	dkim=pass (2048-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="jngC8ob9"
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id F36F1600300F;
+	Thu, 21 May 2026 10:23:22 +0100 (WEST)
+X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
+Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
+ by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
+ with LMTP id X5vN4DKspH5q; Thu, 21 May 2026 10:23:21 +0100 (WEST)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id E0B1D600300D;
+	Thu, 21 May 2026 10:23:20 +0100 (WEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
+	s=mail2; t=1779355400;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qQNSCTh24/TxAkpNclCRhegFcgT71o0jMtEZ8taZbrc=;
+	b=jngC8ob9ah2AEwzTgyCuZNkzZjVq3WfouXc91sT//xjgQ8Wg7QYm4XuyEH3FsRQ4jU8RE/
+	tkNGbG9S1tBN1TWHRLpoow0ulXeLvJ6DztetAG6tufeOjx1rX6yejqa3KgGseL8yZYe4a/
+	PQvN2P7sKyqvha0VpiRd2Og0xE7qKoiNzFyxiOK/rKlZH9R99So3YVGmkczatvWXpwsJb7
+	1nDFe3mgPgBhGDKu84f+fQ+9kGA03re5vHmrZVQkpKB4i0mt2rtJOLRpbGeXD73SJT583A
+	gyZPAUBG2nohB5VrY8b8N0iTpsUSG/zeMOwbu3ZEX6rlNJQgGmKIIrBcvNhB/g==
+Received: from [192.168.96.1] (unknown [89.214.153.114])
+	(Authenticated sender: ist187313)
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 245FF360257;
+	Thu, 21 May 2026 10:23:16 +0100 (WEST)
+Message-ID: <367bb557-81a0-4286-8788-0e7272cc4d02@tecnico.ulisboa.pt>
+Date: Thu, 21 May 2026 11:23:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|SJ0PR12MB6989:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6bc84d85-c508-424e-209e-08deb719fb2a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|22082099003|56012099003|18002099003|11063799006;
-X-Microsoft-Antispam-Message-Info:
-	IvfS+tAcmak4T0Srr+lEwi2FekiYlh9znu7OplzwEVzt9D+WMvcjeoMqbKpdN7xIPYdKCD6NtWVkTs6dTeeBtljVOwP4ifx7mEGTLcuP1ZbWEBuR2SgX0stnjmVIGLhazy/LqD3Yexd61HMYb6+aFgCaxjIF98dlJX8aMTlw2sh14yxDtVyeXtKxc/t+uoZ3COL5FTWc0ieCqHKt9a0UH4fIfiLOoRfBFlxYq+Np9Tw2yLUfV50t8jVDkii886xJvkeawtIYMZTCIwWkNcDAwYNyMAJjISdh7cMiuMOZ5JDUmEhFsK2UT5/v5o+r+gqVNzF5VqeX1kXGOgY3tUtCulkv+YW8IcppXoMIvcUzKO1k4xFvzB59w+1FFYNOox079M97iSm51mIV/LAKhpKzvzn6EYhdwygw44JKnUYYq9jpydDcRx47NvAPleFcGOabCgXscuqgx+Xo3AavsxQZi44yeLFrkqrC7yFjalVze9K5iiavUsU3lvzIRpq2TriV3aywZIW44wwIe8FHhEdLg3HQMFPJyM6JQhwlExYq8lgB/gK3gbYZ66omDoz8aankoRQElEaESS9Wp9uXnLsV72RwSev3QwGc2ouy0ZEfvoqEx34VYcNdIKhL5cXiJAa6QDzlTc9jXD2V+aZStuRf9KjomIvGR1v88NX3EIzzKlQe5EpuVm4Hohp5Idar8R8VcS9ZebdifLa23I207zQqjA==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(22082099003)(56012099003)(18002099003)(11063799006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Q3NhQit1VXEvUEk2OHJONkl5UUtDSFhYUmFKZlRraVBhak5nWTFQNTR0Y0dn?=
- =?utf-8?B?SjAwbWpYSXdWc3EvTFJiaGM2OUY3ajBJeFJ1U1pXMUd5WjkrN25GcStlbHVR?=
- =?utf-8?B?TEVlZVBRQ2ZqUk41V0ZicmZLZjlXTitiS1dIaElEekNTajExUFNKRmliOHNn?=
- =?utf-8?B?TjlRNHg0cjFoVmlueWViRkdUdy9pcGJxS1RNckhYdXUwczNOUS85MG93SVVk?=
- =?utf-8?B?OU8zMVNHNkFOazczenpkWGhlQk9PaGxGY1orUWQ3L3o1QlRmZk9SMnYxWkJn?=
- =?utf-8?B?cGN2ZTFvU0VHQUp6SVp3clgzYUdVL2tDL2hPYkJaQWh1UDMvV2ZobDl0QVMw?=
- =?utf-8?B?MTlYREt1d3VQTWdZK0RYbkw5NEVkUWQ5cExpSEViaVRyd2VCK3Y1RnJ4NFRu?=
- =?utf-8?B?RG9rOHRwTEhYMnd6K1Ryb2l0UEJuWENKS0NYNWdlNkJTd0IrQnB3SjFXL2FJ?=
- =?utf-8?B?THF4T3BIMTlHNDZwNS8xQ2ZDY3RRWVF0SFBLYWM2REllcXhVRXF2MWJhQXNo?=
- =?utf-8?B?dVgvNzBMeXNpS3BFYVA5RUF2aEx0RjJqUzRDdm1VZkwweGRxSHJpZ3ZTLzRk?=
- =?utf-8?B?VjNDQklwSzlDWWdBUTZDUjVsKzBwSzhRc3dKdHQxNjR3a1NKenR6VDJDYVRn?=
- =?utf-8?B?MDBkSEpEQ2s3SVloVmVVbUFtQ3QxaUJnSkNKd2Jkc0t3VXNVUlVJSElzZ09m?=
- =?utf-8?B?WE9uTk90bzI0SkZwd1JVWXhxYmd5SEFOcXU5SWw1NFBTMi8vQllGWUZFQllX?=
- =?utf-8?B?dldKQlJDVVpYZjltUVI0UFVYMzdzNXZIa0luU0k2Y2kzNW95L1dra3BhQnlU?=
- =?utf-8?B?TVlJWGl0RG5YR1I3YndpMnI1SjFzNElMNlp3M3NXcXVUZzVxQnluWFJPWXBX?=
- =?utf-8?B?Y3lUU29rT1BvYkpjcmswYkZLZHJPUW9LK2J2YzMrNVFwSjQzNlFwb1cya1p6?=
- =?utf-8?B?dC9xM05UZ09iOHhJTG0xeVB5dENDeDhFVDBaV2ZldG1jN3Y2RDB2N2FtNGFp?=
- =?utf-8?B?Ym9VL0tuSWdRbVdrUzdIVW8rQ3FPT0dpaVQ2ZHNIZHM1VGZneGxTYnFNNnU0?=
- =?utf-8?B?YkNMaGlBNVBia290SFFSMWxDclJlSVVyMWQvZytLZG1mS0MvMURjQ1RjV3g5?=
- =?utf-8?B?ay9QR2ZjaXN1UjdYMnBmeStEY2lxL0p0d0pua01UUUY0WDhidm5UaTgxYjZ2?=
- =?utf-8?B?U0VnNmszQWtZdm9heXRwWG1OUE5GQlZuT3czMWo1ek9YUlRxdjhYd3J4dGt5?=
- =?utf-8?B?UkJ1TlpaZHI1Q1loTGt2aHRlZVpUcWo3TGdnNE16dmxFbG9Cb1dabDg4ZS82?=
- =?utf-8?B?ZlBLd0k2NE16UFU5QXhjWVIvUFFnc04xN3I1TFZPMmJKR3Uvc04wN2o0ZHl4?=
- =?utf-8?B?bG1EMUsxazZ0U05Kc09qZDNyR0lzQ0hTQTJta3JOWlpETURhb3BtdzZ3amJp?=
- =?utf-8?B?NkU5SThxc2Y1RkR4WFhtbXRiZGFnRmRUQ29XUW5jWUhXTDlMMFI2K2V5RzFw?=
- =?utf-8?B?VTg2MmM4bUY4Mno5OFlYYnM0cHpNVDdkRncwcXZ0NmMyVng4NnBrZ3ZjdW5j?=
- =?utf-8?B?cEVFOEJRU1lXZkZHbnlmY1ZmVUZVdlBlbUllZjlMa0hBQTBleFRvNDE2eHdY?=
- =?utf-8?B?Y3pxWkljdVdFbTFSSjJWZW9MZVgvd0plaDZjOXI3dTJaRGxZZS9yZ01KSzA4?=
- =?utf-8?B?WGYzUnNiekhhMXA0U3hhcUpON2x4cW5ZOFJENDg3a2JHVWlVUWs1L1E0OU5h?=
- =?utf-8?B?dUZ3SnN1NFlyVTlsTzQrUFJlT0p2ZUtzQmRlMUMyQVVUQTRHUlVUdGYvQWU2?=
- =?utf-8?B?MEFsOGpFT2FwWEU3UVZUV25uS1V5L2krdDcyeUNVRUtIWllyWW9HalpHdU9H?=
- =?utf-8?B?bjd0bmQxV3NWSm0wQWRTSkxEdFExSnhZaFR0bG13SEROWTZicTZ6OE1kMGo3?=
- =?utf-8?B?ZzZQRzlHMHRqK25ZczB2eWZlTjFnMUJtOGpzeDdrZ2lXT3dabTdSSVZKK1Fh?=
- =?utf-8?B?VVlOSHNpTHM4RkFobW5tVCtxSnVlRzdTbCt1UDlKTzZQSEdRU3RGTEVsOWNj?=
- =?utf-8?B?a3NmRlhwNHhmMHh5TWloWFFTbnVnL2Fla0YxWUFiaXZNeWRQejRwcnM5cVBp?=
- =?utf-8?B?MURWS3U2M0Y0MkcvUGI2aE1qMmgxWDliTWxmRnJiK21ZZE5QK2tWUyttYW5F?=
- =?utf-8?B?blpjVzBpRllvTHB4Zi9rS0J1dzcxY3F3VU9mcGRBMXNQTVAxaitCaUhTb3RP?=
- =?utf-8?B?SEFPYVA1SjFKMVZadFZFU1ZKTnFhUjlPZVBGaVFodkQ1MWgraHpZRVJJZkN2?=
- =?utf-8?B?VnFpWFUrWElRRVJDbUxIUEdmK1c1RHpLeUcweDdHc0hhSlArbVkwZz09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6bc84d85-c508-424e-209e-08deb719fb2a
-X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2026 09:18:55.1070
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: a+x+ZXxH+DFxU3+iQ2HqB+Ngp8BCZ2P54pj62kak5A2JMbig6DhTU+s9hDhRy40dkFSwzWRY0bLUPuBtKijaxw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6989
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] mfd: max77620: override PSCI poweroff handler on
+ Pixel C
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20260514-smaug-poweroff-v1-0-30f9a4688966@tecnico.ulisboa.pt>
+ <20260514-smaug-poweroff-v1-3-30f9a4688966@tecnico.ulisboa.pt>
+ <ag65LXrLLbbeTbTb@orome>
+Content-Language: en-US
+From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+In-Reply-To: <ag65LXrLLbbeTbTb@orome>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-On 20/05/2026 17:08, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.18.32 release.
-> There are 957 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+
+On 5/21/26 09:52, Thierry Reding wrote:
+> On Thu, May 14, 2026 at 04:47:21PM +0200, Diogo Ivo wrote:
+>> On Pixel C, shutdown must be handled by the MAX77620 PMIC rather
+>> than the PSCI SYSTEM_OFF call, whose firmware implementation is:
+>>
+>> __dead2 void tegra_system_off(void)
+>> {
+>>          ERROR("Tegra System Off: operation not handled.\n");
+>>          panic();
+>> }
 > 
-> Responses should be made by Fri, 22 May 2026 16:20:16 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.18.32-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.18.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> Ugh... sounds very familiar. We have similar stub implementations on
+> Jetson TX1 and/or Nano, if I remember correctly. Luckily newer platforms
+> seem to have proper implementations for these.
 
+Yes, on my TX1 I was encountering the same problem. However in that case
+is it possible to update the firmware with a proper implementation?
 
-All tests passing for Tegra ...
+> Thanks for doing this. I might want to take inspiration from this for
+> these older Jetson platforms.
 
-Test results for stable-v6.18:
-     10 builds:	10 pass, 0 fail
-     28 boots:	28 pass, 0 fail
-     158 tests:	158 pass, 0 fail
+My pleasure!
 
-Linux version:	6.18.32-rc1-gb7adc4ce3f26
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                 tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
-                 tegra194-p3509-0000+p3668-0000, tegra20-ventana,
-                 tegra210-p2371-2180, tegra210-p3450-0000,
-                 tegra234-p3737-0000+p3701-0000,
-                 tegra234-p3768-0000+p3767-0005, tegra30-cardhu-a04
+Diogo
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
-
--- 
-nvpublic
-
+> Thierry
