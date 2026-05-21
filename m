@@ -1,54 +1,54 @@
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8AB9368D5C
-	for <linux-tegra@vger.kernel.org>; Thu, 21 May 2026 09:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BBD372B23
+	for <linux-tegra@vger.kernel.org>; Thu, 21 May 2026 09:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779354283; cv=none; b=YX7xFCYc866Xrhn+8zOqg5/QQ7jXSvwhwv2qP3hryJD4V2o/v+U2ZOhIOFzH/wRIuSjHmrg/bh1T+SCSgROGRGdUyRTWfZep8aBqfXe1QFWks7gdjNOQoRZSCQ1FLsSxTYygu6IVb1kact1d2rmru96+LTEicYtzDlMJ+dxBQVg=
+	t=1779354285; cv=none; b=BPkseiKUJ1k5FvlbRR+0MHRYUjbQ4qrqdNKUX1KcVBB/ZyYW95bYu3Hfj+PiaeNmzRAdlfiw9WuBvRgyeGDF4gvuzUTr4qQiOCbksyAM0qBC6dat3luGC0rPAFBpyARVjAFwgyIQ3dTmXd+M83x7xwiGBJS6Qq1y+M7nda466qM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779354283; c=relaxed/simple;
-	bh=07NSKHICgCN3pWwcM2NlZ2C6aALUEOm7y9usKcSSRKQ=;
+	s=arc-20240116; t=1779354285; c=relaxed/simple;
+	bh=WXqyDP2WNgily0u8Lr9ZKcp8fbMxSlVPzEqcVTVrC3w=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LWbAxNbwD+W9FXvj3zVufyo81fnYJIWySy0OTq2JPIbnTFQoeAYwUqV1qf0IU5BWYrJj5d9+XhFYnqiyB6G+tqxrYf/lpvw3FyaikeeeKUXu9Pc8WZwbKZGFdSDwpab8UmBqT7kSBSV9bH0ulJQfptU9zww4+QRbkLVUA3IkCvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HVLaCFgQ; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=Jw5wLrb+QjmMJ2ee/GKMTy93fBbrWHl4g0PLPe3bDlVokbdswlSi1bRa8+GufzQTT6lb8ecQ1+/bV1Utx51uO/HAyfpjQxgOk6R3Qng6Kdj0eLZeQi5BgeVO+DWrJj1iMRt1vM2vzbgVWrhGFEhydZ+ccXCWOzweGn4O5MKUL18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jJiexMpB; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HVLaCFgQ"
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-c850fcc89d1so539910a12.1
-        for <linux-tegra@vger.kernel.org>; Thu, 21 May 2026 02:04:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jJiexMpB"
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-367fd7b8825so5937382a91.0
+        for <linux-tegra@vger.kernel.org>; Thu, 21 May 2026 02:04:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1779354281; x=1779959081; darn=vger.kernel.org;
+        d=google.com; s=20251104; t=1779354283; x=1779959083; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CFeqTPO/75EomKS7CanmkqdMcPboUUUckwg42QFpRDY=;
-        b=HVLaCFgQ5AStcp7yy4W38dml1KoMJX4Yq0IhWGckfP+26AxprMzB+Q7RlsPC8N+jgD
-         2w2D+e5zHjw1LcfDy6pzidRQO0WjV0sl7vr6tkmgebCZFyJBSb0eNIXFbxrq9knAAFNh
-         t+P7yZC8rtxIZ+ff5A50cxdNreH/oHYhwXPfQWHEKii3AkrjS8mig/iqXm+EN9CVigVM
-         BJQdQ2+nDzdOY6AfYvcj0WhRcRuvPL7ljYV9UzG49JnT9hIVyrXuoEael2+wHPS/ITGA
-         k3fjreFjSmTSpzTHRGo7V3Wl89sd7a9J+E4Hxn72n+fAb9AxGxK9jswt9aAJHsRMV6dl
-         N8Yg==
+        bh=me5xxEdS5RmvRxAYfqP7SoJKhExweEkQR6HZlR29D38=;
+        b=jJiexMpBsIImU952SZYilrK0yfgDaIc3VBCL+kIC3ILi4TNq/2x2TKrvO+Q0Wzb1si
+         73/9SJ6nmaRKyFwYxQMjefNpy7UTIsB4wfeKIcK5A2U7MOwUPN19CJGSPPPl48vBU7BJ
+         WGawdB2Q+dYMT9APJk9NmSQ+OEkNBz1O7u0nV+Syq+Yjeb+yhjnRWxY471dQW7Z5EOuf
+         QaapKC+4CXA4DVprucgOiH3C+97CleeSU3YVxazmObzogBk52VvPTmjmC/EHDbndP5Ul
+         7VfFRUtIboFJxshqqliu/cOfoiCsJBqIaTIJ4U0KrhE8pzsjvc96PL9SwKF8zCmjqJ51
+         XNFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779354281; x=1779959081;
+        d=1e100.net; s=20251104; t=1779354283; x=1779959083;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CFeqTPO/75EomKS7CanmkqdMcPboUUUckwg42QFpRDY=;
-        b=FNEuReGUR8LyT65y75IYIz74yAUwbS2OBiKDTtsp2mtU454BiCLysLXmM7Y4EzZJv3
-         P3yzgD+sEliCCJUYDos/dF/xW0fReQ1G64tg4B+FWnoZ0qiRkbU/486ixXkYp5aJtCNK
-         EcnpVtj3Z7fJknLh0IUdUxPuy23NGfuGciptjBagra8OcETISEHn6yKIhX5ccGeXd+HA
-         BD+08Azf4gXDjFEpEe0YYZ8aySq5WoRUYP0h3U4JJ96sLqLhe+7R+i8gHD053QnW3d07
-         S+d/wRSQW+iQAFOYN9jwoeuWCL9WjIUcrv8KqlhiHqCYrb6i4+XgYcs7OoLpRN0Rv7e+
-         /CSg==
-X-Forwarded-Encrypted: i=1; AFNElJ+8bSjAAuyEvDm+Kc6LkZoGfCG7l/Y7UJ8I/E3zMXtLj91uqzToRPfSxzLz0lUV1ZFc05kCuls6rsp8Ww==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIPDhvffapOFLQPhvKj6ycTpQ8/IugcuDTotoVxDfEkUU7g9Mz
-	mJ3/L9zFTobmLRdIsi48KgnLP7IbMqWzqd4QWr47UtdaLfMr9urB8GXdyqUPNqSRa0y/FAhi0yb
-	9vqGj+fXEHJvwDGUTxDHHwSPd3Q==
-X-Received: from pfmm4.prod.google.com ([2002:a05:6a00:2484:b0:835:20c7:97df])
+        bh=me5xxEdS5RmvRxAYfqP7SoJKhExweEkQR6HZlR29D38=;
+        b=gb+kaTHfdPL0o196no6EM3W0OzXrjQ+iGd2MWSS8glUbKtUVw2W9Setn4LdwbpaAkS
+         CTKwfTJUU7DN76iqQw0jbhzdbN29wv39EKFugf1v9ozjU4EXfAQC2yRgh1d2eTbp3ZYJ
+         L/W2ywK1yBzFfB1GGzE0PqkO8gAf/wQ9LAzDVR84VUTqELvDGDEYV8Uk2By0yL0p7/CK
+         1kPgoW34vH0oGy/XyplYcIiBTEkd8Fp688wNUoXtqPq1Up0WVLJQfQv/kUM2UkMZWF27
+         o49N4bSiOqf5S3P+Z/aI8upf/VYJ1bErGi1KAZtyokH8J5WOuIYgNFtJ35rGKE/UaX48
+         QNSw==
+X-Forwarded-Encrypted: i=1; AFNElJ9H+6liNv9RhGgvK0dWNcbnWvkZ7qU7bzgxa1wM7vPGj+Wq7XCxzoj2h+/j0l8UcUVPduLxZs5Elar6aw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkzQyK69usB2MzOd9PLpaKS/sCW+uHh6XOO4FFLDrN7lPVSHnN
+	gv/zqpX5Qcgxv6dQ1FbTlHckwjcF4uHChGpwjWrIylHenUZPel4bBty/OfbM4BIc3+fFHllYC7o
+	t2XRcOC6pTo7U+DxzFb1+TrFe/Q==
+X-Received: from pjbco1.prod.google.com ([2002:a17:90a:fe81:b0:366:3645:4115])
  (user=joonwonkang job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:1908:b0:829:8cfb:df45 with SMTP id d2e1a72fcca58-8414acdd152mr2147460b3a.15.1779354280643;
- Thu, 21 May 2026 02:04:40 -0700 (PDT)
-Date: Thu, 21 May 2026 09:04:32 +0000
+ 2002:a17:90b:2f8d:b0:366:132:fda6 with SMTP id 98e67ed59e1d1-36a45180833mr2175577a91.11.1779354282756;
+ Thu, 21 May 2026 02:04:42 -0700 (PDT)
+Date: Thu, 21 May 2026 09:04:33 +0000
 In-Reply-To: <20260521090433.1353240-1-joonwonkang@google.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -58,8 +58,8 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20260521090433.1353240-1-joonwonkang@google.com>
 X-Mailer: git-send-email 2.54.0.746.g67dd491aae-goog
-Message-ID: <20260521090433.1353240-2-joonwonkang@google.com>
-Subject: [PATCH RESEND v2 v6.18.y] mailbox: Fix NULL message support in mbox_send_message()
+Message-ID: <20260521090433.1353240-3-joonwonkang@google.com>
+Subject: [PATCH v7.0.y] mailbox: Fix NULL message support in mbox_send_message()
 From: Joonwon Kang <joonwonkang@google.com>
 To: sashal@kernel.org, stable@vger.kernel.org, jassisinghbrar@gmail.com, 
 	greg@kroah.com
@@ -124,9 +124,6 @@ Reviewed-by: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: Jassi Brar <jassisinghbrar@gmail.com>
 Signed-off-by: Joonwon Kang <joonwonkang@google.com>
 ---
-v2: Remove the obsolete change for drivers/mailbox/pcc.c.
-v1: Add the MBOX_NO_MSG check to drivers/mailbox/pcc.c.
-
  drivers/mailbox/mailbox.c          | 15 ++++++++-------
  drivers/mailbox/tegra-hsp.c        |  2 +-
  include/linux/mailbox_controller.h |  3 +++
