@@ -1,121 +1,90 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B7433B6F9;
-	Thu, 21 May 2026 16:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E1637E2ED
+	for <linux-tegra@vger.kernel.org>; Thu, 21 May 2026 19:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779380682; cv=none; b=NldpbM4xowqn5HXR7YbRu+stcXZiCrFgZHpdfKcbp2+GvQoUQGVZ81YgOfAwxTW+8frEsvL24xp/cqTSmRqbwLp7ayTZCFCFG6WK74DI29atAkU344hHACsVxZa2aDjhTtCAfPj86m9bC0Gl6nOYxqvLt+zQu3Vk+xVD5ETnPd4=
+	t=1779392901; cv=none; b=UX2MjiI5vBSi4tqdUuHQOmvTwF3BkpHh1chFdShXpzjWcC8sWiSop8eiFBKOofYO0BSXWveI7EFVSHlbcYQ1vnRMwwL5SNWn6rK6Sd52WHURuHu55Slm0gKg9/MV1CUFKJXGrBzZN/fGoccmumD631bh4vzBpYOPeG3QWMpAqtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779380682; c=relaxed/simple;
-	bh=MLWZXLeTqSvLcz8wPu1MtFWu1KwlNVzWwtB4U3otJuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CM65XjHlDcoyg5DthAfg3gpKOuIKYHbnB9GKMJ/soTW3Zprv44/yYE1fDNchKICaNMAY+XqcFVECr1mlUuD6qovWPhqjnmX6UZjhlDBPRLYwlF8wd1KABifo5ImN9XjjquBhniOdHTzeyyLfyAynIXa/Tg1RF/RwRezVOwsU8k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oTuUMrLM; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779392901; c=relaxed/simple;
+	bh=pRCXFdGi9s622ImYkQNgba2+/ovbSQJWewde8xOLc4Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C2PiPBFwRmVDr81XBIX9Bkl9OHV5iSD0zu39lbFKNPyVVURXu3GDzj1WeSZpwdi2yKGAozBUfJow51eAw+HVcuTLq5phnZWzX+puCTcmpN9wlVjqaAL4Aw9L0rVmuWDWJdYLDBun+MmrctA+9rUraCgTf6FJA1wwhqNitIYpmLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uqZb1z2L; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oTuUMrLM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 988511F000E9;
-	Thu, 21 May 2026 16:24:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779380681;
-	bh=ksaTnf0cqRZNXRWIsXImk13kcKMosFx8tMXi881IeTg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=oTuUMrLMrINhZ0HC8rI2RyPAEwsTZARy4XoUfq2JHYVySSBMhIlOSBZ70vjw6UJMD
-	 3KEYhdncefsrE+EtmGcUmb+JCP9bZkYXbZdS6raEeDsuXBNTqa07PdlUpyIicOIQ8/
-	 j40I2zrLvJMeXnw++vObStveSjzhIMYpR9q1c2PVHxD5xtoOio4HqvdhSUzAQCjLd8
-	 qO4ExBq7TQC9yMS832pBSMFV68NCm3ZA5XLoGo8YUoQrcBGEyP1W8voUJgxoF+wS+V
-	 wQJm21t/4ap+4bVdMJ5UX7L6LUy3JWspBAgUY4m7NhfMt5J8aHwbQMB3fORk7wUog1
-	 w4zKSNzlJTFaQ==
-Date: Thu, 21 May 2026 17:24:36 +0100
-From: Lee Jones <lee@kernel.org>
-To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/4] power: sys-off: fix Pixel C shutdown via
- MAX77620
-Message-ID: <20260521162436.GG3591266@google.com>
-References: <20260514-smaug-poweroff-v1-0-30f9a4688966@tecnico.ulisboa.pt>
- <177929432727.2891971.15568098895295536822.b4-ty@b4>
- <31ef61bd-6672-440a-a52e-eedb950d3d03@tecnico.ulisboa.pt>
- <20260521104136.GA2921053@google.com>
- <f98bcd81-29c6-4df2-8040-d17686b28f45@tecnico.ulisboa.pt>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uqZb1z2L"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1779392895;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wU6zsubCn0ah+j+4xU4qCKcCbrwywE58iPsoguqJF4A=;
+	b=uqZb1z2LgEXezxp4m5BmoZRQwh5Fs/jJeFvuMow8RplrkkR7miQyr54bJ3kT5lvAUq9oU7
+	l176qordYBHMO5Rla12gbpaj1i2RGriHpjcB32LzIgr3wz3iE/xbbBOP3jTCnlCaILbswQ
+	wdL+g1PcarFBpfF6l7kIzovQVQdX2BM=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Thierry Reding <thierry.reding@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] drm/tegra: dp: use str_plural in drm_dp_link_train_{full,fast}
+Date: Thu, 21 May 2026 21:46:59 +0200
+Message-ID: <20260521194658.366737-3-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f98bcd81-29c6-4df2-8040-d17686b28f45@tecnico.ulisboa.pt>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1335; i=thorsten.blum@linux.dev; h=from:subject; bh=pRCXFdGi9s622ImYkQNgba2+/ovbSQJWewde8xOLc4Y=; b=owGbwMvMwCUWt7pQ4caZUj3G02pJDFn8iUb6gsHcAkx/v9zxfCm5Nm1piorB/wUVqtXLHqbNX bP2J+/ajlIWBjEuBlkxRZYHs37M8C2tqdxkErETZg4rE8gQBi5OAZjIIR+Gf7aVGTE/zFhcngba mwqv6D5QkDLVVmqCj1GsyAJtnf/LBRh+s7MKHGXOfZeiGDnFcR7rrOKg8hcqF7tPfZirFrNx+sY 2TgA=
+X-Developer-Key: i=thorsten.blum@linux.dev; a=openpgp; fpr=1D60735E8AEF3BE473B69D84733678FD8DFEEAD4
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 21 May 2026, Diogo Ivo wrote:
+Replace the manual ternary "s" pluralizations with str_plural() to
+simplify the code. This also corrects the "0 lanes" case.
 
-> 
-> 
-> On 5/21/26 12:41, Lee Jones wrote:
-> > On Thu, 21 May 2026, Diogo Ivo wrote:
-> > 
-> > > Hi Lee,
-> > > 
-> > > On 5/20/26 18:25, Lee Jones wrote:
-> > > > On Thu, 14 May 2026 16:47:18 +0200, Diogo Ivo wrote:
-> > > > > This series migrates PSCI and MAX77620 poweroff handling to the
-> > > > > sys-off framework and fixes shutdown on the Pixel C (Smaug).
-> > > > > 
-> > > > > The first two patches replace legacy pm_power_off usage in the PSCI
-> > > > > and MAX77620 drivers with sys-off handlers. Besides aligning both
-> > > > > drivers with the modern poweroff infrastructure, this removes the
-> > > > > global callback dependency and allows multiple handlers to coexist
-> > > > > with explicit priorities.
-> > > > > 
-> > > > > [...]
-> > > > 
-> > > > Applied, thanks!
-> > > 
-> > > Thanks for applying the patches! Just a question and an observation:
-> > > 
-> > >   - I'm assuming you were ok with merging [2/4] despite the possible
-> > >     deadlock since this risk is already present in mainline in the same
-> > >     form so we're not actually making things worse, is that so?
-> > 
-> > Did you see the text below?
-> 
-> Yes, but patch 3 is not addressing the possible deadlock hence my
-> question.
-> 
-> > Both patches 2 and 3 are applied.
-> > 
-> > >   - The observation is that the comment about overriding PSCI is only
-> > >     true after (and if) a reworked [1/4] is actually merged.
-> > >     If it isn't then patch [3/4] is actually working around another handler
-> > >     in soc/tegra/pmc.c where a handler that only does work for the Nexus
-> > >     7 is actually registered at FIRMWARE level for all platforms that
-> > >     probe that driver (I will send out a patch shortly to only register
-> > >     the handler on the Nexus 7).
-> > 
-> > I assume the other patches will be applied soon.
-> > 
-> > If this causes some kind of issue - let me know later on in the cycle
-> > and I'll remove whatever patches you ask me to.
-> 
-> The PSCI patch [1/4] has a fundamental issue and needs a respin to be
-> applied.
-> 
-> In connection with this it might then become easier to quirk the PSCI
-> driver rather than the PMIC driver, so for the moment I'll ask you to
-> drop [3/4] until I propose the changes to the PSCI maintainers and see
-> the feedback and at that point we can either completely drop [3/4] or
-> reapply it; sorry for the noise.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ drivers/gpu/drm/tegra/dp.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Done.
-
--- 
-Lee Jones
+diff --git a/drivers/gpu/drm/tegra/dp.c b/drivers/gpu/drm/tegra/dp.c
+index 990e744b0923..3cb194f5ce36 100644
+--- a/drivers/gpu/drm/tegra/dp.c
++++ b/drivers/gpu/drm/tegra/dp.c
+@@ -4,6 +4,8 @@
+  * Copyright (C) 2015 Rob Clark
+  */
+ 
++#include <linux/string_choices.h>
++
+ #include <drm/display/drm_dp_helper.h>
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_print.h>
+@@ -668,7 +670,7 @@ static int drm_dp_link_train_full(struct drm_dp_link *link)
+ 
+ retry:
+ 	DRM_DEBUG_KMS("full-training link: %u lane%s at %u MHz\n",
+-		      link->lanes, (link->lanes > 1) ? "s" : "",
++		      link->lanes, str_plural(link->lanes),
+ 		      link->rate / 100);
+ 
+ 	err = drm_dp_link_configure(link->aux, link);
+@@ -724,7 +726,7 @@ static int drm_dp_link_train_fast(struct drm_dp_link *link)
+ 	int err;
+ 
+ 	DRM_DEBUG_KMS("fast-training link: %u lane%s at %u MHz\n",
+-		      link->lanes, (link->lanes > 1) ? "s" : "",
++		      link->lanes, str_plural(link->lanes),
+ 		      link->rate / 100);
+ 
+ 	err = drm_dp_link_configure(link->aux, link);
