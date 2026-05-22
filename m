@@ -1,64 +1,64 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3683CBE73
-	for <linux-tegra@vger.kernel.org>; Fri, 22 May 2026 10:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0993C9EF6
+	for <linux-tegra@vger.kernel.org>; Fri, 22 May 2026 10:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779446273; cv=none; b=KcU8+QJJ5XPdCbC6kUEoiKnsBfhClRn6/s57GTaMYVTCtVSJeEd+mY611WAySBGOMsa3x4fYlbKr6KQVnBgXs54uT2938PnpXkMae15445we1N6CTJ7Cjp8g4r9jD04hdyVZB1PQN3+qbvjpeF5hLcgkE0na3QNANnE3PygY/vI=
+	t=1779446309; cv=none; b=a+Kkr3QOGxGPSbQ2e7UMAeb7bx9I9eRVB3VuhyEuLrDCAsY3Tx1rZPdnx5M+xTPVuPqsQqQle3w8tbHL6AV/bWPWXRNY+q+AFjOeDESl00piXOFZWcPqIls1CvK3KtbngpB/cVED5d0GutxtmLxiZV2KB+/s/nlcnWWPuqyoONU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779446273; c=relaxed/simple;
-	bh=xmvYCQFNtdHb9SAiwitPLZkSLacbtKoh0Ho+lnvKGbo=;
+	s=arc-20240116; t=1779446309; c=relaxed/simple;
+	bh=/wJ57xNPnCf8dH8DjzmbGHCzUBmnFHtfYvzgs74xh6k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=miwStxkoI6+EKagyYSiBYgq7Z4ux8taMatZ+AI8imdDqrZhyYLAKpmwmpTaJHWMNKcfUagCZohyKXLT+99RDCnNY1xT7SonDS91gNl/f2AyOfJYh234NgOY5G3MorY+Kc6CocLshG2b1023+4WoJkffsjurUNNYvUb1ITWiuwX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dQrTl8lh; arc=none smtp.client-ip=209.85.128.54
+	 Content-Type:Content-Disposition:In-Reply-To; b=YFnkfzk7cvKuNx51OO1C19PVjsBabAhFL1XwGzlmbh6MqzScYmI00PKucWN1Tsox1nboWmwzNeMZPugsk4xK6oVheJcwmz1HJIG5tdAG1rLec+TVOjyS3W78f7DUDamtiIYczZ//tjdThXyHNPmh/5UXLGVaTaPIKgXmCUAX+Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JQHxNiJn; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dQrTl8lh"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-490426d72f7so6161225e9.3
-        for <linux-tegra@vger.kernel.org>; Fri, 22 May 2026 03:37:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JQHxNiJn"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4891d7164ddso37373315e9.3
+        for <linux-tegra@vger.kernel.org>; Fri, 22 May 2026 03:38:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779446266; x=1780051066; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1779446306; x=1780051106; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QEhebhuCV6jMeZvMs5spESVnf7KoklTppjIaJgmVf+k=;
-        b=dQrTl8lh5fbHe5/Ifg/PThU/8J2+FV4KBWLt++ph86R7tvmB4gpLzWiE+ZgU/2jNGo
-         5drfN1Hm4ydcXKZCZl+rYR+tAoRFRbyLkn6s9UqhJgzkQcvdU8Gmn9yNy9QslmxL/gpu
-         bELhiuXKrVq1sfG32kMipwt+g8IqXMTuUHERTu9ygV1Xz7zBNP7Xh0cOgdPQ55V8YSr6
-         1ShH3PpOmujiAcJEALVGtJK/6zGEPped/GZAPmEIywLCmiRbXdkQS0rryUETxxCTjHfy
-         AogaUj3cczA0mX65NYU7jrhEBTWTTGfRoC5jExF/JIN+k/SMse20VQtAmfTHj29eTRtl
-         aXPw==
+        bh=mLsUocanVpLcdr3xQCUl3kNzYIEe9clsefrb8kWlcvk=;
+        b=JQHxNiJnKrHq3OULqFsFgAz2seUp3wkoDGf56P609Lz8zcvIRqceYfvhxA02DLMXYU
+         mMwnJptOGIzJxZymhJHIjbWvLCmeuj8n7UIOICLHS1gmmNzKr8p2KhNzX6DVGRlIPlpF
+         VSz47h5C310AHM5l0xhftcy5tNUaVEPxRuSyak2yNSeWwErCCIpAyjoV+RbORQCkxRmX
+         m3NVnxQYrV1baXShcz2azKhJZtASpm5UrCWmDSnwFuG70S1h9x8Z4yPPgKS4c91gBA64
+         MA64GSY7llXVpYA9LFZ9x/2syM5AohGARrIEuPf7aGGumOsihGLkUvpC+Z11FmkpZpfI
+         muiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779446266; x=1780051066;
+        d=1e100.net; s=20251104; t=1779446306; x=1780051106;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QEhebhuCV6jMeZvMs5spESVnf7KoklTppjIaJgmVf+k=;
-        b=lZZqtGNSRPsIQNVyMc7//odNEfzk44OIGZyQLsw6kJ82zyfxl33VHqTqPro72uMeta
-         wfRfWP5YnHf4oOBO/la8LitZo+1Oa5LhHYDXxce1I/gHy342GyujOp6UOmS+w2IZ1I4L
-         cvSLlqA+0VgiTg40HpatjGSf7M8YzhHeFS0yIxANfLNe68trbbRlERLngR8MXJ4iA5lT
-         FTjgwJTfmo5h/qv6CbzyKytj7O1HMEfmr5GUfEd+zYugxtUmp3EVpvDLUguK0gSBDE7o
-         IuK1DH5oYCaD9ewxyy1iP8eV0glNbuSWPvnt8JRGQn0nJy4DFfcItwdQf2kM4SiHiZLs
-         a7pA==
-X-Forwarded-Encrypted: i=1; AFNElJ+Avti9YeuHHeHAWe6dfU2Kh32DVAP3oOyv1AREHre2XocGJ78gdZHgs/sG6p22uN/zkdT/zS25zqC0xA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlKqfEi8exc2RWSuY5yDD5Wmp1MkXiecWAoTyjSrySosO5yLAS
-	xu2ZkWrQR/epvWuZWWSVhQ1VpdNh46P9Od9tSt1Iv5Ep94CvIaDps6oL
-X-Gm-Gg: Acq92OFubi28d+B9Ew945E8RVD6iVKdTz6e7mvPjN7IzGXXCZxOKtGH/nNv73gvfL/k
-	aX7NNMApGyMD48g33H/wfuKWLFH+mFyV7rHZCeM/uTCX7bZ3nna7zB1QCTZME7k+cs5Ozj/lZaV
-	H/rGwP7/aWDg35poU/ObVu7VaQjHGXagcj18MTENLstvO9wgnbujx7sj8OL/J0T0GQuPwOU0nqh
-	EYxsRcSUIM/dKguvpSfOahuy2PVr4XtsSJnXsCHtD/gB53/EwQA7jCn4lvlyFe8giYnNXhyur2W
-	kL+kZ7XvJ+0dx54S+O+b0iC1i9eK0/wNYhdrNx05Hk58+MNP2PZWXKPwhjmJQ8fSAro2JbG94jx
-	MxDg7QkmTrf9QaZPYLIqSpdgVrZw61DGto5KTL702vC3DeS+tQEB6uas0zVF1365f/SyOTDlL2U
-	D85a/qPLWf2dqZ6OPkcxbGpKLTARlefzS7zIni2Gtvf6TNQJYrW0E93aGZgYPAD5KLHWQJw6/I4
-	TZqZX+oL4h07Q==
-X-Received: by 2002:a05:600c:5298:b0:48f:e230:1d12 with SMTP id 5b1f17b1804b1-490428dd63emr39137895e9.31.1779446265889;
-        Fri, 22 May 2026 03:37:45 -0700 (PDT)
+        bh=mLsUocanVpLcdr3xQCUl3kNzYIEe9clsefrb8kWlcvk=;
+        b=Dc33YUTnWDo+ly4h9DXaw2GCkzL9q2Ym2RvKr+7O5Su72RRbydvQ4cbYXD3GYX/BPy
+         EctD3gZkqvxpR3orfl1QJiahcvg0N75urvg1itVO44H5BlubluyF6WaaGkMuQF/hMHbw
+         P/BuwdBBbVReUkxXz1rrCnoNvkgsUPsCu6IiThJMxGboVcLevI8hk7c/XnZA/mjFvdcQ
+         AfvqYAqqnOfFhHEH1OLSbIzynVuumnYXiZMFUNShFqPZCfzFNBKa25BDZO0od/BWY8yo
+         OTRDBfDl/m+b+rA9/guWsAK2foXzKzQwT8vGy2OmOuhisrzeCu0eESoBScs0fVkVPypZ
+         v73w==
+X-Forwarded-Encrypted: i=1; AFNElJ9GWk5rIN0EWXGJibxlVo0rZHjRelve+Ml84SFKy9WL4xOEBTEaIa5K0m1GDbT9HCCTL4B6yfrBWY1FAA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9FxkF/dk21vPg/G/B9cNRa7aBr7QiDehTrjybdswvINooFrsl
+	SJSh+IY0KA8dVeEfiLzZistDzdGMcaKxcKhsdHW0XlDKHw/LsME+W6xs
+X-Gm-Gg: Acq92OE8qFBaupKXh2Qq1IkypAxSeETgS6Kaq42oh/XcOij09vswidbABNoplQoB8PL
+	bs6ZoBkrlWgyck/0ZUuuwYDsJcvIg+fmVq/cg5EpwuwTNK9MOXT+kzleumUUYycPps+sFRw/bSo
+	GNn9PTlfCy/nhdqMnuJZVeJEhtqRMCX1RC84mRxLUG7RzzIeM13jeqmAc7ES1cRzjDk4wU6kVmM
+	Wp+PCtWnvPasIN4MVLCtq/GyMbbHIT82pXueeU/S9YAC7r0KEVZCuRP2OCu0HJxxsnw9oRiwKSc
+	kaCS/rr/Ma7Rls73Ito1ftXsmgVv3wdn7Nm0zAEFZb2+RvpIc7LDvaVCXevX6voU61EsI5YcgfG
+	Qyy7M5Lw72oNCnxLs1C4sf61D8RVplbnDvMouRbppBCO2cK+8mnFUAyPvcyLqDaGEF/Urn9OPSk
+	B6fGQLCNUwMp0CJdZO74rrqGhpjw8S3c0iASI3Pd50D+xOOAffvzjWJBI5Q1oJ3Gm7ygVIcwOrD
+	Rb19HqAiM8+Hg==
+X-Received: by 2002:a05:600c:3e0c:b0:488:ac01:72de with SMTP id 5b1f17b1804b1-49042489c30mr44798295e9.5.1779446305909;
+        Fri, 22 May 2026 03:38:25 -0700 (PDT)
 Received: from orome (p200300e41f291e00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:1e00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490454a0b9asm33058255e9.11.2026.05.22.03.37.43
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490428d63f8sm13240135e9.18.2026.05.22.03.38.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 May 2026 03:37:44 -0700 (PDT)
-Date: Fri, 22 May 2026 12:37:42 +0200
+        Fri, 22 May 2026 03:38:24 -0700 (PDT)
+Date: Fri, 22 May 2026 12:38:22 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Akhil R <akhilrajeev@nvidia.com>
 Cc: Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, 
@@ -66,11 +66,11 @@ Cc: Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
 	Laxman Dewangan <ldewangan@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
 	dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 08/10] dmaengine: tegra: Use iommu-map for stream ID
-Message-ID: <ahAxVwpUJES7NB8q@orome>
+	linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH v6 09/10] dmaengine: tegra: Add Tegra264 support
+Message-ID: <ahAyF4i51x5ldppq@orome>
 References: <20260331102303.33181-1-akhilrajeev@nvidia.com>
- <20260331102303.33181-9-akhilrajeev@nvidia.com>
+ <20260331102303.33181-10-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -78,190 +78,49 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ioswetuwxrwk65qn"
+	protocol="application/pgp-signature"; boundary="4oagdshx4rnxulqg"
 Content-Disposition: inline
-In-Reply-To: <20260331102303.33181-9-akhilrajeev@nvidia.com>
+In-Reply-To: <20260331102303.33181-10-akhilrajeev@nvidia.com>
 
 
---ioswetuwxrwk65qn
+--4oagdshx4rnxulqg
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 08/10] dmaengine: tegra: Use iommu-map for stream ID
+Subject: Re: [PATCH v6 09/10] dmaengine: tegra: Add Tegra264 support
 MIME-Version: 1.0
 
-On Tue, Mar 31, 2026 at 03:53:01PM +0530, Akhil R wrote:
-> Use 'iommu-map', when provided, to get the stream ID to be programmed
-> for each channel. Iterate over the channels registered and configure
-> each channel device separately using of_dma_configure_id() to allow
-> it to use a separate IOMMU domain for the transfer. However, do this
-> in a second loop since the first loop populates the DMA device channels
-> list and async_device_register() registers the channels. Both are
-> prerequisites for using the channel device in the next loop.
->=20
-> Channels will continue to use the same global stream ID if the
-> 'iommu-map' property is not present in the device tree.
+On Tue, Mar 31, 2026 at 03:53:02PM +0530, Akhil R wrote:
+> Add compatible and chip data to support GPCDMA in Tegra264, which has
+> differences in register layout and address bits compared to previous
+> versions.
 >=20
 > Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  drivers/dma/tegra186-gpc-dma.c | 53 ++++++++++++++++++++++++++++------
->  1 file changed, 44 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/dma/tegra186-gpc-dma.c b/drivers/dma/tegra186-gpc-dm=
-a.c
-> index 9bea2ffb3b9e..cd480d047204 100644
-> --- a/drivers/dma/tegra186-gpc-dma.c
-> +++ b/drivers/dma/tegra186-gpc-dma.c
-> @@ -15,6 +15,7 @@
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/of_dma.h>
-> +#include <linux/of_device.h>
->  #include <linux/platform_device.h>
->  #include <linux/reset.h>
->  #include <linux/slab.h>
-> @@ -1380,9 +1381,13 @@ static int tegra_dma_program_sid(struct tegra_dma_=
-channel *tdc, int stream_id)
->  static int tegra_dma_probe(struct platform_device *pdev)
->  {
->  	const struct tegra_dma_chip_data *cdata =3D NULL;
-> +	struct tegra_dma_channel *tdc;
-> +	struct tegra_dma *tdma;
-> +	struct dma_chan *chan;
-> +	struct device *chdev;
-> +	bool use_iommu_map =3D false;
+>  drivers/dma/tegra186-gpc-dma.c | 30 ++++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
 
-No use in initiazising this since you immediately assign to it the
-return value of of_property_present() below.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
->  	unsigned int i;
->  	u32 stream_id;
-> -	struct tegra_dma *tdma;
->  	int ret;
-> =20
->  	cdata =3D of_device_get_match_data(&pdev->dev);
-> @@ -1410,9 +1415,10 @@ static int tegra_dma_probe(struct platform_device =
-*pdev)
-> =20
->  	tdma->dma_dev.dev =3D &pdev->dev;
-> =20
-> -	if (!tegra_dev_iommu_get_stream_id(&pdev->dev, &stream_id)) {
-> -		dev_err(&pdev->dev, "Missing iommu stream-id\n");
-> -		return -EINVAL;
-> +	use_iommu_map =3D of_property_present(pdev->dev.of_node, "iommu-map");
-> +	if (!use_iommu_map) {
-> +		if (!tegra_dev_iommu_get_stream_id(&pdev->dev, &stream_id))
-> +			return dev_err_probe(&pdev->dev, -EINVAL, "Missing iommu stream-id\n"=
-);
-
-Looks like checkpatch.pl would complain about this being too long.
-
->  	}
-> =20
->  	ret =3D device_property_read_u32(&pdev->dev, "dma-channel-mask",
-> @@ -1424,9 +1430,10 @@ static int tegra_dma_probe(struct platform_device =
-*pdev)
->  		tdma->chan_mask =3D TEGRA_GPCDMA_DEFAULT_CHANNEL_MASK;
->  	}
-> =20
-> +	/* Initialize vchan for each channel and populate the channels list */
->  	INIT_LIST_HEAD(&tdma->dma_dev.channels);
->  	for (i =3D 0; i < cdata->nr_channels; i++) {
-> -		struct tegra_dma_channel *tdc =3D &tdma->channels[i];
-> +		tdc =3D &tdma->channels[i];
-> =20
->  		/* Check for channel mask */
->  		if (!(tdma->chan_mask & BIT(i)))
-> @@ -1446,10 +1453,6 @@ static int tegra_dma_probe(struct platform_device =
-*pdev)
-> =20
->  		vchan_init(&tdc->vc, &tdma->dma_dev);
->  		tdc->vc.desc_free =3D tegra_dma_desc_free;
-> -
-> -		/* program stream-id for this channel */
-> -		tegra_dma_program_sid(tdc, stream_id);
-> -		tdc->stream_id =3D stream_id;
->  	}
-> =20
->  	dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(cdata->addr_bits));
-> @@ -1483,6 +1486,7 @@ static int tegra_dma_probe(struct platform_device *=
-pdev)
->  	tdma->dma_dev.device_synchronize =3D tegra_dma_chan_synchronize;
->  	tdma->dma_dev.residue_granularity =3D DMA_RESIDUE_GRANULARITY_BURST;
-> =20
-> +	/* Register the DMA device and the channels */
->  	ret =3D dmaenginem_async_device_register(&tdma->dma_dev);
->  	if (ret < 0) {
->  		dev_err_probe(&pdev->dev, ret,
-> @@ -1490,6 +1494,37 @@ static int tegra_dma_probe(struct platform_device =
-*pdev)
->  		return ret;
->  	}
-> =20
-> +	/*
-> +	 * Configure stream ID for each channel from the channels registered
-> +	 * above. This is done in a separate iteration to ensure that only
-> +	 * the channels available and registered for the DMA device are used.
-> +	 */
-> +	list_for_each_entry(chan, &tdma->dma_dev.channels, device_node) {
-> +		chdev =3D &chan->dev->device;
-> +		tdc =3D to_tegra_dma_chan(chan);
-> +
-> +		if (use_iommu_map) {
-> +			chdev->bus =3D pdev->dev.bus;
-> +			dma_coerce_mask_and_coherent(chdev, DMA_BIT_MASK(cdata->addr_bits));
-> +
-> +			ret =3D of_dma_configure_id(chdev, pdev->dev.of_node,
-> +						  true, &tdc->id);
-> +			if (ret)
-> +				return dev_err_probe(chdev, ret,
-> +					   "Failed to configure IOMMU for channel %d\n", tdc->id);
-> +
-> +			if (!tegra_dev_iommu_get_stream_id(chdev, &stream_id))
-> +				return dev_err_probe(chdev, -EINVAL,
-> +					   "Failed to get stream ID for channel %d\n", tdc->id);
-
-There are also a few very long lines here. Make sure to run checkpatch
-on these patches and remove all warnings. For dev_err_probe() some of
-these might be okay. Otherwise, one alternative might be to reduce the
-nesting here and push the inner "if" into a separate function.
-
-Thierry
-
-> +
-> +			chan->dev->chan_dma_dev =3D true;
-> +		}
-> +
-> +		/* program stream-id for this channel */
-> +		tegra_dma_program_sid(tdc, stream_id);
-> +		tdc->stream_id =3D stream_id;
-> +	}
-> +
->  	ret =3D devm_of_dma_controller_register(&pdev->dev, pdev->dev.of_node,
->  					      tegra_dma_of_xlate, tdma);
->  	if (ret < 0) {
-> --=20
-> 2.50.1
->=20
-
---ioswetuwxrwk65qn
+--4oagdshx4rnxulqg
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoQMfYACgkQ3SOs138+
-s6H+LxAAvJAdB4gkHH/VReijvfuBRUZI8hgE0C7QRu1SO/IkqBuVM7HL/IGYYIY5
-7IynUar4cZB+OsIX9TbFp6zB9VLjF5aRC1ndZRgey8LZdhv34U67s8biyaXw+qwe
-moHoFKmB1nju2iDoHu/xjV3KuZdSiRxLqSZZVnq1smixM16Y8z+finMhOqJ3tCU2
-kTRMsL6EfqhN1eR2fruDlq2LrRVlOg2VWAMxuNcDavWyvBr71RuE8U6bBE123D7x
-rCBSe99e3ugPTkVMNeSNAUeT6X01nXMta5a+MWsSQzf1webFdq6viJ1yj1rubj8Q
-++jg58C4vjLjiQ94B4ahN1OQ/skCTcbH9e6Zb2FemZedW05PlTPjp3G1JLAJr9Je
-kyf3IYoR+GisKmBL1OofWlNSqtLseF1Aml6BehQGrFGyCSQVLz0AbSepmHMdryk7
-eGlC1c8EXFYSF6P7pRd6y9O30F/nCzPdXTLTWF1W1K/kB+flL+ediLlatogP3WHQ
-0QvjBTd4/z20ixHWbdsE3qNx547ZHm4jRlxLzPAa6KcQyYaPYYeHa8XMoP1fPFbs
-NA1qsXBjNWnw5h+KqYvZdGy81rWECwYYQrjLb+j5xfzhyqDrWF5maicbYpglfDQg
-XThxzbRHx0n2WR+dM0zp+1uADdemXw5/8x4KFpC1GRHr1+EDLVA=
-=j0ph
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoQMh4ACgkQ3SOs138+
+s6FfphAAs+xOd5AbT8+y/eH+MoUKuhrW0ACB8ym66bqs+OCu+VVuM9p6LR7+6Mux
+2+AFLpjeYRRdRYHjzoAsdnUo0VnC/+IFrrqOdoTD8npmeo2SveLrJx+f+BQJ4McM
+aHS06cHVboDMya7H3UWHieyto9IZcEmAQjudHId+FPg6rYs3rjbDI2r71M2PM5Ns
+nkjaOnkF9S/zPaUptXfdATyviC3yseTgJ36x6N0zKh9EKs1r+kcwlMchCu3k4M/e
+uAOx0TEw1Jr12BwQRevhHWPn7JQAbq6a5aSsP4y6Ubvoe0JZIg28+FMFjLC0OvLp
+3RMXYpH/0ovuRq3ruMN2NIdpAVZrAnd6OBCAb6c8bQ875+PrkCuQWNhzkV5GsqCN
+XNTZRbHAXRfc6Oh/HkxR0rB/US58pr170vp06VeeKsPvpaZYaLT/a+gpVrhyytnZ
+0fHu/2sGTgXGdgDdSK37XFlqgCtOMluSPDPrf+mNyDYWorMNK5zrHDIlbIDsZdyT
+z4aCMtFdeZhIQSf0IZse1Yi6Kp4pCJEc6836c2FwSDm4iy1o0sH9g8qnvRC1jgej
+3FxbqdYz6rvsT/Ri3MdhfZJC+J7vgpZvO5Fptkc9Y4b0OfeisLlRNxMJdIZqDoq2
+BIo1f/fukHUAiDdo79dDfnLb/UViqXKst2JZCqdgOykedZy9E4M=
+=Y6T/
 -----END PGP SIGNATURE-----
 
---ioswetuwxrwk65qn--
+--4oagdshx4rnxulqg--
