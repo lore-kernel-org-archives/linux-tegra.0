@@ -1,153 +1,139 @@
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012044.outbound.protection.outlook.com [40.93.195.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7153BB11C;
-	Fri, 22 May 2026 09:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779440980; cv=fail; b=TNQDkTHZy31Jy/y49OjKCi03hWCXnBvBL+sz0G06P/pqOAyQlO/SePH0eq08iY37u1HDvcdtv9BmtDsBdqzKrYGeGrW72dyI+l6zVt9XjC1xP0/0RwOVzsHaSGg4zNDL1KyuYKfCNRfP5IOMNcEY9+qKK9LRnXWki0Tz62ROZvg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779440980; c=relaxed/simple;
-	bh=SCDf9N7Qwype9bxBdoBcjLxHRbpVoYzaf3mZUor0mWU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S9PuuQ0vOoosQhBaVktFJYyFU/F7ZWeRoAmqxahvQK7x2T34L9z8JLU1+Kbe/xJTR/SNTJ68dPlktLTPQJBRwwEP5fUtl593SFa5qWrP51aFzO2rJGdYFPrsGHbM+Y0MaRM1dmdjRPeEjhC+V5Ejfjdr7ruI80guguyGZJksokI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QxRgaA7i; arc=fail smtp.client-ip=40.93.195.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAB83C4B93
+	for <linux-tegra@vger.kernel.org>; Fri, 22 May 2026 10:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779444557; cv=none; b=TPwa30LPL7Zds8wjZ59yTOOHQMYCa3hMw3uyBWyt8qm4Ze5V+GL+F271jRMqRSUWcBCJTyBpNaNpJSxo/CJ6CotIzxbYEOuQ8jGYwPpImASHbpY3JIZGW2s+Ew9jvIzVQ9LhgLhnDy0otu2LRIqzPG09jQha9Y69ZChSL+q+Nxk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779444557; c=relaxed/simple;
+	bh=tXc0GLTLQkLv5ed8xLAOzgZ/WOFmTaW0lEw88YWLwMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XcAb4/5Sx2XFI1hhbOrBjJXfwvL0bqNXGM6t6cdkAZKJ2IyIyxZEGZNS0+NRzg4clGALNU9eUXIrFt4oREhOe6SjoQ+1ctIMIEwKs8ARKTvp6NH2RZTncWnNLQFh4W3Q/Waftm2yLVbunawXClwPePHhBGjJ+A3lGlqy1S5fG2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j+I5Ehaq; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QxRgaA7i"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P0WP+B3ADdFgzfYt/0ELSWAl1yvLSc1HcT0SFhJ6waTH4vr2/RfarZ1/hipYOXPN7I7iohBVoavO87Avl92LP6JBJZCibfR9AwVXaSzwookwYKXYfixjtDpkMLz80VXFa6UmBf+TWkr094OECnhSgpPzRM0CWS6+4yzNMzbX05Bc9FuYo+9pxn5aNTxLBDcJKaUTRWoksUdJQTr0WKSRNiBGZ9asGHKi6IDmMKpcRsPxOZnCKWn5ALV6xoLMdDX2HwVmfUHo9TsDi0dMaKnqlZh8iD4I9yYaaz3TN+j2hqsTMj3pHKMFhlSAlt9YjhZ/MvNkFLEFkgNSvzTiQyrFLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SCDf9N7Qwype9bxBdoBcjLxHRbpVoYzaf3mZUor0mWU=;
- b=YHDcGam939oKV7mXIZvHKjv+LcDvcpVwcTGsw8Kah1foF7ZxEDfabs3hFHRVoX/eAcan9wrY2/m7/rAvjrZQP+kKmdDgCGlSqVx0oS0DTbUQdo3OkQ9Em74ZsSl2Nps8ylbZdpb8vEi3a50ue0PS6ymj7Hg9yjG9eb9vsHTM4osRnZqCgqtu0QpYuGpNcQwQBbS3b69KWBg+EeLOgP+KbFHPcju6V5IKP9vXDfWkYdNJNaKN7B/HlMqxO8le6V2UtCBZqRetRerT8i5lYaU+wV4fS+u442sLNnbKQt4ksZLLIHtC/QSxNJzyGqYh7kMFoH7t50J8vmmDSbKzTofglQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=debian.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SCDf9N7Qwype9bxBdoBcjLxHRbpVoYzaf3mZUor0mWU=;
- b=QxRgaA7iJMqrRz2lr5KE/11bilXfYjZBQGxPRfk+z7FeVCKd459sMc7/kpI2YAjaYCpisucJaOidlVqGq3/NLo3wYD4tUW07j4cTpkCHwRvdaFBw6vwhlev/mpNXLVW2tS0dAoXSZ8HVEgDm68+hhDJSoCvJwIJOYeGqG+rPguaV3Zi3eEl0RamP12DMVWIeA+JA9Ri4SnlXvpmeYkjDubP1R6HXHWkTHoXRkmGF+Zic0EJkMH4zxbK4hGKZ86ldQKFumydoPxBKSKt0MK2bywJDO4vxOr/+cv5/dRgvruBhl7uTCGicbA8u5qf1XNTdHk0qInrZrjPMUAyni0lIig==
-Received: from SJ0PR13CA0151.namprd13.prod.outlook.com (2603:10b6:a03:2c7::6)
- by MN2PR12MB4253.namprd12.prod.outlook.com (2603:10b6:208:1de::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.14; Fri, 22 May
- 2026 09:09:35 +0000
-Received: from SJ5PEPF000001CB.namprd05.prod.outlook.com
- (2603:10b6:a03:2c7:cafe::1d) by SJ0PR13CA0151.outlook.office365.com
- (2603:10b6:a03:2c7::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.71.8 via Frontend Transport; Fri, 22
- May 2026 09:09:34 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- SJ5PEPF000001CB.mail.protection.outlook.com (10.167.242.40) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.71.7 via Frontend Transport; Fri, 22 May 2026 09:09:34 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 22 May
- 2026 02:09:18 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Fri, 22 May 2026 02:09:17 -0700
-Received: from build-va-bionic-20260204.nvidia.com (10.127.8.12) by
- mail.nvidia.com (10.126.190.181) with Microsoft SMTP Server id 15.2.2562.20
- via Frontend Transport; Fri, 22 May 2026 02:09:17 -0700
-From: Vishwaroop A <va@nvidia.com>
-To: Breno Leitao <leitao@debian.org>
-CC: Vishwaroop A <va@nvidia.com>, Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>, Sowjanya Komatineni
-	<skomatineni@nvidia.com>, Suresh Mangipudi <smangipudi@nvidia.com>, "Krishna
- Yarlagadda" <kyarlagadda@nvidia.com>, <linux-tegra@vger.kernel.org>,
-	<linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] spi: tegra210-quad: Convert to hard IRQ with high-priority workqueue
-Date: Fri, 22 May 2026 09:09:17 +0000
-Message-ID: <20260522090917.220650-1-va@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <ag8dgimI3SfTo1Uy@gmail.com>
-References: <20260519155108.4092518-1-va@nvidia.com> <20260519155108.4092518-2-va@nvidia.com> <ag3ReYsoyCh-niZH@gmail.com> <20260520192210.70216-1-va@nvidia.com> <ag8dgimI3SfTo1Uy@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j+I5Ehaq"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-49041e84237so5671135e9.1
+        for <linux-tegra@vger.kernel.org>; Fri, 22 May 2026 03:09:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1779444554; x=1780049354; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4zz81ZxdfpEspL0BWo4PKiQavHk71+JXORK+v8WVheM=;
+        b=j+I5EhaqgmEyqiI/EWYUdEL4+5FRAESVrhF3MHjlg1PkuuQwj08RNRYqcOcj6kteQX
+         n0Cd3nkamEak0C0cUuAqpxvlS6HEfl5aStC0Uoup/5pR2bMdTMlQm7PDDy4SF7I9UhBg
+         LTAymzVm9JOXSD1PuPa5glyAZR9xAFiLEg0/S4Uy/aXQjHnslt1PC6ZD90V/E3aMlb9h
+         8CLmwSeH+htPuG9i0aentvC2V3nWkotVEiXXMj0P361pkZA4iKsyQ8DSAEyrThtk2AR1
+         pCvLdsePPNaBDpfdX1GufcJlD9D03cdA5dwpaYF1iF2UmBJ3Z0w5/Osu9TIS1ES8Id4a
+         lGGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779444554; x=1780049354;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4zz81ZxdfpEspL0BWo4PKiQavHk71+JXORK+v8WVheM=;
+        b=Ew3uzq+W6ubCkMk0HFR8gevgWHMc6SDX4/4URelEi8OvJWTVtFGsZvfXek1KwAztDK
+         rKo9XZdVlQgqCTNd7JyUVWWCkByyChcAxqKF/YqpHQGkxk+IEXLyIvK5bxFW/T9qcwMk
+         rvSYbXAYi+OW7htTfTN/1En45cmXvagcNHrfUqI+U8TcCvryCCa0FAOMjeB/t+c7ZzJZ
+         gRwID5h81AUhdsQfX3PV8kydP5Vo4Vy9guWyU5Xp0535dJLkIdGNTHdY/WMfrOwYOlAj
+         EDHylB3t9UtJh7eZ/Jc0qEJNze1HElRDHfxxEmLSbCht5FlYaPmK6jsMtmzs1TZRvAbg
+         ToXA==
+X-Forwarded-Encrypted: i=1; AFNElJ89sx05fRtjX3z6Y2ZYP+nAMsA5a0euNi6Wr08nhyz9IXxGnu8ZHc/fbuMvYmVF26Iu0Rke1Sry2Rh/Zw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS+octXII/Ec0OtrzHTKgxJXNPvVLjKnBdXPa5hj92VIjmze/y
+	BEY4sjhFv/rBbgnxX0QkRWIbwIgT4TTVdEHJVRcf8xn4FTwsx/UmOFcc
+X-Gm-Gg: Acq92OEioUNENRNQEQtI7TvzjeM2e2tQODrxSJ810oebOt5Kqlts4o+vctd+ApaA9VR
+	SFDSy+uPBP0OSWtv26Lh3qBHzYiAk/+SImNFfFByynl4ZwYGeWsxtaSegfDs0LxO+SjmFMFdc7P
+	8aU5s0/tTjlLLwe+swR03cOpJDsVtz4tUnKFNenvCM8ObwDliK+WRUEx41qlclVu/vMVeBJL+AF
+	GrpqCXFJ83h3OR45W9MIDnP14jCInpXtmKOXNfdAwSjCq1gH3ZW4de3aGsrnZpbbfbFah23CEzN
+	VYP7isDa6VlqVF3ANhzdRQzbBA8fS0cLcpPGCKw8lnoUr/CUlcBhRXJlwPKp+qFaEr6XUDD1+2u
+	GH27iSWeDmh/udHXpJpRZoUeLw+ZNAy8GS3F9Q59InzS3WvjYFEzV3Vf+nfYL78BOEbQ2QuvFYH
+	CaO40bq5rkUCXtuETViE5XZoZCf3URe+BGet0XzlYCER7YzLI/mOjj7nOw+sN+n69pAn8p4/KlQ
+	Ey3MmuQrE5k9w==
+X-Received: by 2002:a05:600c:1992:b0:48a:79d8:a8d6 with SMTP id 5b1f17b1804b1-4904245f54cmr27207905e9.7.1779444553576;
+        Fri, 22 May 2026 03:09:13 -0700 (PDT)
+Received: from orome (p200300e41f291e00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:1e00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490428e03d4sm16430345e9.9.2026.05.22.03.09.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 May 2026 03:09:11 -0700 (PDT)
+Date: Fri, 22 May 2026 12:09:09 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Akhil R <akhilrajeev@nvidia.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Laxman Dewangan <ldewangan@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 01/10] dt-bindings: dma: nvidia,tegra186-gpc-dma: Make
+ reset optional
+Message-ID: <ahArPRE7rddUDQxm@orome>
+References: <20260331102303.33181-1-akhilrajeev@nvidia.com>
+ <20260331102303.33181-2-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CB:EE_|MN2PR12MB4253:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5f166e21-bfd5-4761-5d22-08deb7e1d759
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700016|1800799024|82310400026|11063799006|4143699003|6133799003|56012099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	m5huMNOPJTRXO+QrGoC9WYefd4mmBzAD9CBwnJLOQ63vrWso8Gh1AQJGEoYP1X8lIhqzV1HGfwPnqCYn90Ada4cjMK+DMuO5z1la97HB9BKIzMmn47Yfnl9catCaNJ7km1ZOFpNXjF8yNOBDZpdVAIaLhdkz3LvLuymPbFRFOD0qAl0A3HQnR85925/wWxbsFwr1BpYA9bZPeODuna03/jeMuS7RcYGy0DCFxw49R/9AGeGtcobaLlvRyr8EciA97rJ9ct4MO5r5k8Tq44APO/l7LoOsHlJwqhzOMuFDyd14iVnMN4X7mCHREfzgTlzYR1E7BShkBw2pEbcX2YdZtRtgg1qNMCsMjg7eji422vcxoTN/6Nu0r3C13TaFPQmrxPjE1m0JifCNh31CJ5mBoFm0BYkYw+cnMRZRQwK6UT6Sbmfx9xjpmWR8EMDFfn3/dCs2yqq5V+rYdZbUsnX1WKVR7gyu5fEPY0p99YiQf3XtEHoZofN6k6r6UhkQfmJfhAVwTjEMvNoNn4KpULmXqT1TY7DFMuAvG0uS+Z7bm3OoZVXWNgVz/NFMYS9TQvxyDjz6sFOsNrSDwi2zi+rwRhRLpG3bamh80jYEIb0sSrs2hX3MixcPKT4IKzQ5l9yaPDdoLRiGu4lwtiRl8mEj0esusn8bcqkUPXEQSyRIdFZzHVLvks91nEekPShtlNCEEsjsZpsBYwl+UHPL9c5DYLf3zEwXOlhsw6qRzdJc3UI=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700016)(1800799024)(82310400026)(11063799006)(4143699003)(6133799003)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	H13L/DXlWcTspNNt3ee/rrtyens/6TG0RuUc48hD89WD/YjxhQINGoBe8Nd498Q57mpwNoTA2qNZ8C/3NDr+HHF0uYgobbCRiX2PRGf8oycM0KAADSGUf27sKpbAyU1Bf/ClsLlFupNPxVQ4jtlIBFqZAEFuPvHSKk1EoS4NaImEZU60Au8O5eS+lJ7Smf0DSNR3yks9kBxLaQpEeJyElHjACsGGOnrmwP8p+65a46p3rqGnkmQa2bCvBrH4CCpI6kVgib0KtQP+MRBbA0rCHtx7YMt09zlMGHLNeIks7Fa75ZVQ9IFEZB1C1SKdhCwLsIRxj+uN2cOxTfIbPL60fp5goXhULs7OXeH/9eSF02dnFxo7Ziq1f3f7ze7yzTDyL9mmEj+vEZJ6tL8WQ8q3dmus6SffQJ/4aKhSBuWxzX5BNtfcphTtsiemhwpc5xec
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2026 09:09:34.1067
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5f166e21-bfd5-4761-5d22-08deb7e1d759
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001CB.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4253
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cba7btxxm4dnjqoy"
+Content-Disposition: inline
+In-Reply-To: <20260331102303.33181-2-akhilrajeev@nvidia.com>
 
-On Thu, May 21, 2026 at 08:04:08AM -0700, Breno Leitao wrote:
-> If the lock is really only guarding curr_xfer / status_reg / tx_status
-> / rx_status, why hold it across those register accesses at all?
 
-Thanks for pushing on this, it's a fair question and worth spelling
-out more carefully.
+--cba7btxxm4dnjqoy
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 01/10] dt-bindings: dma: nvidia,tegra186-gpc-dma: Make
+ reset optional
+MIME-Version: 1.0
 
-The lock spans the register accesses because the FIFO_STATUS read and
-the tx_status / rx_status / status_reg writes form one update -- the
-software fields are populated directly from that read. The bottom-half
-(handle_cpu_based_xfer at line 1467) and the timeout handler (which
-calls into handle_cpu_based_xfer at line 1098 after releasing its own
-acquisition at line 1092) both read tx_status and rx_status under the
-same lock. Splitting the lock so the read is outside would let those
-callers observe partially updated software state.
+On Tue, Mar 31, 2026 at 03:52:54PM +0530, Akhil R wrote:
+> On Tegra264, GPCDMA reset control is not exposed to Linux and is handled
+> by the boot firmware.
+>=20
+> Although reset was not exposed in Tegra234 as well, the firmware supported
+> a dummy reset which just returns success on reset without doing an actual
+> reset. This is also not supported in Tegra264 BPMP. Therefore mark 'reset'
+> and 'reset-names' properties as required only for devices prior to
+> Tegra264.
+>=20
+> This also necessitates that the Tegra264 compatible be standalone and
+> cannot have the fallback compatible of Tegra186. Since there is no
+> functional impact, we keep reset as required for Tegra234 to avoid
+> breaking the ABI.
+>=20
+> Fixes: bb8c97571db5 ("dt-bindings: dma: Add Tegra264 compatible string")
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../bindings/dma/nvidia,tegra186-gpc-dma.yaml | 23 +++++++++++++------
+>  1 file changed, 16 insertions(+), 7 deletions(-)
 
-The mask_clear_irq call is inside the same critical section because
-it is the W1C that retires the interrupt source the ISR just consumed.
-Pairing it with the FIFO_STATUS read and the software writes ensures
-that any subsequent acquirer of the lock sees either "interrupt is
-pending and software fields are stale" or "interrupt is retired and
-software fields are current" -- never the middle state.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-handle_cpu_based_xfer holds the lock across its FIFO drain and
-sub-transfer restart for the same reason: the restart calls
-tegra_qspi_unmask_irq, which can re-trigger the ISR before the
-handler finishes setting curr_xfer = NULL at line 1497. Releasing
-the lock only after that assignment lets the next ISR's critical
-section start from a consistent state.
+--cba7btxxm4dnjqoy
+Content-Type: application/pgp-signature; name="signature.asc"
 
-TRANS_STATUS is read outside the lock because that read precedes the
-sequence -- it is the IRQF_SHARED ownership check, a single readl
-with no associated software state and no RMW. The two CPU-side paths
-that clear it are tegra_qspi_mask_clear_irq inside the ISR's locked
-section (line 1655) and tegra_qspi_mask_clear_irq from
-setup_transfer_one (line 862), which runs before the controller
-unmasks its interrupts, so it cannot overlap with an ISR.
+-----BEGIN PGP SIGNATURE-----
 
-Vishwaroop
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoQK0UACgkQ3SOs138+
+s6EvWw//RWCFZQ9T5C4dp8mVROoGcJewvvJHj46nkOp0utsLoYqLxlyBAndZ4kjp
+EXuaATKAZbfG2HAMtwunnvWgwGfFYzQzNqfO4bqXAKGltGU8X5NPai06UZ4ljxYR
+WTsV0ZexSKoOXL4jaKU/ZRabzsXm63ldoMpfJv4ahxyoWH6Y2kOqILa7FLlb7GHS
+FvCyV9lb6CWA+QA5opFdz3qqC+WxhYaKET1F4q5xbFD5PagVYShaEaYt8MRv0iil
+AMyn/NwaX6lOjGTL1CpvJ/jnmlf2Gu7temInUkZANF8wJzYY0xVU4J00bzryvsXO
+eSzZwAemjwGTyLF1hsMbmSyqjLLHe7eDq/Y4DEKX3xFGVSd8zKy/vN+zUhFp+9HQ
+oxRLORiWrIC8nCgMC7weCZ3ufNIf9Oh+IMxcx9bYghGkOFcwPw/mQB29LmZ7zuyi
+IqY9bdEILNNqnTXrULGByqQ2ywvZkZItadnWV1WgXeHRHdLNLzgy7ZfaQsdnBG+w
+6WrRkzN8o26x3rtL8umBdxgUrjPomamGU0F97/zy8+aHzrT8/AvL03008euSMliV
+sF5OyIHPVRCgyKhe1nuOWXX56BT9+R66zECG68/tWN9OBU25SNy5Q8pYH7x577Xf
+IxAPlE5nxcOYxP4CAZfTCnEoq7uYRM/zhhLM/ocmPMkvwZchP7g=
+=T5zQ
+-----END PGP SIGNATURE-----
+
+--cba7btxxm4dnjqoy--
