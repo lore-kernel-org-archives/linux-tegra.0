@@ -1,84 +1,116 @@
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC09A408009
-	for <linux-tegra@vger.kernel.org>; Thu, 21 May 2026 19:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F422D5436
+	for <linux-tegra@vger.kernel.org>; Fri, 22 May 2026 01:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779392903; cv=none; b=ERbuT2TOcHbH+bYhmaM5HX4J/Zp7zhr4uIfguXDo/hHfSpXM5SczJ9VvTY8qfx3+FgrxfnJvGVqApAkJw+8Bj3ytGnsnhAyT6wqj01WzQy73mJkwW/wBHIiUdblTtVMEl1it09qDl0EkpOh42d4PBDMD+Z8xB/Or+grfj8N7sX8=
+	t=1779415156; cv=none; b=WFfIXbyYtaCDr6kH4ls5egHt5zrHXSA2lwx+FKyFQuHaBPaWS97zL8fVZLdp4Y93UdRlo+uwP9BtPsZX9W/CM2kCS3+V4Lu23bI6596I0MC0yauxAYiV87zFArG/9LDyHe/3zvUIJGSaQ6JyaWATq84vT5WCrkCH61uFaWlZ+kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779392903; c=relaxed/simple;
-	bh=cuEE8mJZ2JCkrLzPutO2sbOWRw90RT1D++ufnmzO2EY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QkTBn27fpZLCE4ENlwu2WBpubinhkXdDcJQYwLQ4EaGoWfJ+pNM7N6tH6QoYE4b9FeKIwaVKe2Ilp28eTDbQL/zHCyprg4+ovKcN1Z3tSTum9E5jKiyOjdY1qpQAgZg8/tZbYuX+gB/ktShtNLEI6h3f9+IwNAhFs2Uwzxoqias=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=T9owrkld; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1779415156; c=relaxed/simple;
+	bh=huyYowgvyax3xM4nR3JNAVCXHtYOlOr5UQVQ27KgG48=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ght/WcNxppRCSwEC4iwu1cYC4GsAArLNIZxr/EH6jGPpDzTVw16dHLNwK85lyDxYPnhFrTjggu9oxBQ1jNPEZEFoKGMn9mUzihtdhNNTqnWMXlHQ3krv0Qkci4OyEEJvnfHHk0Gh7pbycurR1nSs23+6Sx/YHmZzNlsCoqrxLZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YgO9ixdW; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="T9owrkld"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1779392896;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WlU3IQM2OYRl7N1ScizGGel8YM6cCC0xlGR922rswK4=;
-	b=T9owrkldtadUvPGu8pwURLc9gsNTEL9Qm7UZVCYUFVQfdNGO0fCp0oV0sDk4Oc4QCnLWDA
-	zSrY9twWH2HXrEOGXgp4tVmdmeqpv9qqhoDGZB/o3u5dhz7JVWzkn6Jzt+fbaaqo7C+YjJ
-	ULlOO2U+X3TjImM6fEo3UyRVrFS8pPk=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Thierry Reding <thierry.reding@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm/tegra: sor: use str_plural in tegra_sor_dp_link_configure
-Date: Thu, 21 May 2026 21:47:00 +0200
-Message-ID: <20260521194658.366737-4-thorsten.blum@linux.dev>
-In-Reply-To: <20260521194658.366737-3-thorsten.blum@linux.dev>
-References: <20260521194658.366737-3-thorsten.blum@linux.dev>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YgO9ixdW"
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-c827313dac0so3583054a12.1
+        for <linux-tegra@vger.kernel.org>; Thu, 21 May 2026 18:59:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1779415154; x=1780019954; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w1F/N153wlHEFYgairICUXmOEte2iOLSjR7LBFRFOk0=;
+        b=YgO9ixdWMK/Uhew17Hg8c4WZSDnXKzrgJ+AhLIPnLeUNx6uq5P8e6ocxpiTeKiApUT
+         lOnr1b/UUe/alsdrdcBygqaomcT+mFbdzwqb3JWXOYA9Vpg7UjTi0oE/1Z8n5ksxt7Xv
+         4ZbzKcR82wYT6mFbbKAhGs8gXBQ+DMHtMiBckDcKxb4GITv9F32aNOw1oJlKYJtoa6dc
+         xxfFKmM8GiWnaYjlsDZTlj3Y/JXfEqh/SXZd3o7WFZyZewHWHRHIqc9Q3Yo31NIfT/hS
+         4TSE8jERHUUWap8R7VHukH/F1PNYcnfEExEm4Hoesql1iqN5BMA3XOLsP20YfUSrLymq
+         zCIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779415154; x=1780019954;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w1F/N153wlHEFYgairICUXmOEte2iOLSjR7LBFRFOk0=;
+        b=ihdR6hEoW77/FRDJVmyhCHXON6IFf432LV/YkBLV7lLZUGwnCy5JdhOnd0DYJPxl14
+         CW2CivsS7bIBhEHctbky8QtR9zfa+bNY97o2rZYaeYVuPyd3fNnZhbz1meXCHxAsUptz
+         hV3TzjCRh8bdbzqrq+cbfFpdzqje4kh5GeGQREUD/Q1/Tu4FMWVicBg18ZDnlduxSbe3
+         XEiGlxQxYnBEcVW9W21M7Y3PDfOysvA7x7YjH5tHjoJmzfIpFk9Jdi07rB/spj5snRhx
+         658aVo7N4TNb5BkdQD/v65YCRUSv6LnBr8goxfamHhp2PlvS4LQcPNzTS1JQ9WhyKzYp
+         J7SQ==
+X-Forwarded-Encrypted: i=1; AFNElJ8XmFmXpsyG6bueH0dz11FLO65DfomeYepj5gVdC4adsOoAQAli43iZqZQNyCk06j50t0ybCulBmKvhpw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+h+viJrzsnGOeKr41zbRIGGzI38KL3SMv1ukeQiolOeZ+1cgN
+	1Y5ci3NM3jYADAAIrtPVn2OqAwJTy3u1GGmx1DWZcUDyNG+yf3vXMD/3sxe6cuMP
+X-Gm-Gg: Acq92OFbEBWFD2gAJ/+HV0dIeATpdiF/ttFYYwOW9C1UkjOxfLnewl2HHHR6WW1pUwJ
+	m691m6ziIDtI07wbwvpfu5kUMkP0yDH7zTOquAvxEoQajcs3Wi6vHzWCQ3Uh2TA+LJE/iMLN57d
+	wAcuC/HB4Sde2+LqzFjO4TkxmtSGFT50Ps6AuKdh7KIr7448OInPbeOmGCiSVM8wWn+/bRq8GHM
+	eZYFUMX4mmG4nhoXhwznS09a8ItCaM2oIb+NGFCs4P5Exnj+onSUlOTKOOk2XVGrw9tTktuMUrd
+	l6tTSA9cQvHWElJW5oXeqkvRM/Q5If1IM8TQxDrh11odP/bPAPfeLUNSHqb9XcNxmuQMPYAw4/l
+	4w6Vbs+2yTUiFZZoc/v7ghnGNKS8TIOXUGX4wvdhjljOt6oTCqbSF2vM2AR9b3V3abaOuZhpViK
+	4reFPrqfeDCR6YdsjSrCXEVikSyZmMMYHEWVkKbscPd/eWQoZOGe5TMuuuWKU++Po7jcE2cANAD
+	WXse1/h3n7PGbG19SAkEOctp8aNZyh/T0eZuET2lxptdw==
+X-Received: by 2002:a17:902:f601:b0:2bd:4bc3:2995 with SMTP id d9443c01a7336-2bea22bb7c8mr53857845ad.22.1779415153758;
+        Thu, 21 May 2026 18:59:13 -0700 (PDT)
+Received: from ryzen ([2601:644:8000:5b5d:7285:c2ff:fe45:8a32])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2beb0aafab8sm5806695ad.0.2026.05.21.18.59.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 May 2026 18:59:12 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-sound@vger.kernel.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] ASoC: tegra: ADX: use of_device_get_match_data
+Date: Thu, 21 May 2026 18:58:56 -0700
+Message-ID: <20260522015856.741656-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=926; i=thorsten.blum@linux.dev; h=from:subject; bh=cuEE8mJZ2JCkrLzPutO2sbOWRw90RT1D++ufnmzO2EY=; b=owGbwMvMwCUWt7pQ4caZUj3G02pJDFn8iRbnLlZcPPHS/qKsleH3J7U6oQkpEnyCV8s+rdpu8 WalUkVYRykLgxgXg6yYIsuDWT9m+JbWVG4yidgJM4eVCWQIAxenAEyE7R0jw6fOrRMObJVirV6S sC+7MIpP6nkI02m7RxePHV6eExNSsYjhn6nbYadNNfxnnOKzNpgUTzyxhvXym/3yjzLOXv5oeOH rTE4A
-X-Developer-Key: i=thorsten.blum@linux.dev; a=openpgp; fpr=1D60735E8AEF3BE473B69D84733678FD8DFEEAD4
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Replace the manual ternary "s" pluralization with str_plural() to
-simplify the code.
+Remove open coding of the function to simplify the code.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
- drivers/gpu/drm/tegra/sor.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/soc/tegra/tegra210_adx.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index de8b2dfc4984..93e5ffd4f206 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -13,6 +13,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
- #include <linux/reset.h>
-+#include <linux/string_choices.h>
+diff --git a/sound/soc/tegra/tegra210_adx.c b/sound/soc/tegra/tegra210_adx.c
+index 12371f895234..a2c28369fbc8 100644
+--- a/sound/soc/tegra/tegra210_adx.c
++++ b/sound/soc/tegra/tegra210_adx.c
+@@ -677,17 +677,16 @@ static int tegra210_adx_platform_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct tegra210_adx *adx;
+-	const struct of_device_id *match;
+-	struct tegra210_adx_soc_data *soc_data;
++	const struct tegra210_adx_soc_data *soc_data;
+ 	void __iomem *regs;
+ 	int err, i;
  
- #include <soc/tegra/pmc.h>
++	soc_data = of_device_get_match_data(dev);
++
+ 	adx = devm_kzalloc(dev, sizeof(*adx), GFP_KERNEL);
+ 	if (!adx)
+ 		return -ENOMEM;
  
-@@ -940,7 +941,7 @@ static int tegra_sor_dp_link_configure(struct drm_dp_link *link)
- 	err = tegra_sor_power_up_lanes(sor, lanes);
- 	if (err < 0) {
- 		dev_err(sor->dev, "failed to power up %u lane%s: %d\n",
--			lanes, (lanes != 1) ? "s" : "", err);
-+			lanes, str_plural(lanes), err);
- 		return err;
- 	}
+-	match = of_match_device(tegra210_adx_of_match, dev);
+-	soc_data = (struct tegra210_adx_soc_data *)match->data;
+ 	adx->soc_data = soc_data;
  
+ 	dev_set_drvdata(dev, adx);
+-- 
+2.54.0
+
