@@ -1,182 +1,132 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010057.outbound.protection.outlook.com [40.93.198.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7847E394464
-	for <linux-tegra@vger.kernel.org>; Fri, 22 May 2026 13:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779455170; cv=none; b=KGUM1E9KR1y+EwRtAMk5K/daUKrCc5WnO26CLJy7QLtWWO9qLD+kdxNMXjAkpZ2HM6Q3ma6xP/lm647r/PNrLhk4JkqEZKUH6hMChK3uiT+YnbkOUrzgJ4QwvWcJ7uGGFtvf3xCouud/6K7dh9CNkN+m0XQQYjVqkznYaVztq7Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779455170; c=relaxed/simple;
-	bh=CrUvmAcH/6UNtp+fwPwFwq2VX4Qbk2+mAnahh35JAFY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F+DyuVO6oSPIGiWQUfiKe0PNRKluABukmIjDldGtYuEjP349/mOC3gLOOyILFTDWOyvV5EGWDP8BVueg70UqIQ6UabPnXCutOX4GSoRUQQXN8luRaSWy3Rz6LJmEji4RVjnZAE9bM9OCJWArNLp9C8ogPeH9Tdsxop9SqClSFyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GCvjmOv7; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C26D2FDC27
+	for <linux-tegra@vger.kernel.org>; Fri, 22 May 2026 15:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779465543; cv=fail; b=mDPiP3ONlpklGYRA6AH/CSWo31y+R1hfOyGuRjrTG89bpgnfpMVjwra/vPEQvONcu6V9zbQk96k/qr4wWctb1A7wXbkXOm9j+JgimLpcDyv5iQ8XZUXTOeNVspZeRXvdoQDeC2m/5/cHOhu3r6mB/XjFAsthpUIHcem/IDrYJXY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779465543; c=relaxed/simple;
+	bh=o6n95cgvsF4EYyevfr3yHh0H42qpw9/z4URmrc6F2Ps=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S6ezMswNOGxIHlPIn/HRmuYhkdbBwDi4/F+wuc4uWIPx7Y/nbkHK/80+kyWYnpcnRA9lrqPO7PeprR5EzsAnAl5Bb2yZM+H1KX8Y1IO922/vfB/EP7y81JVWyGEIeuacLHY1cg3HLXz/wNH0LWm4czpGbhs60iupfb0C/pL/nOY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jq0GXRGE; arc=fail smtp.client-ip=40.93.198.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GCvjmOv7"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-459bf19e87bso4373038f8f.1
-        for <linux-tegra@vger.kernel.org>; Fri, 22 May 2026 06:06:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1779455167; x=1780059967; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0Z6hIMYgqhMrKKBiL1MJIdjEE5Rl1yfiYAVBlDccynQ=;
-        b=GCvjmOv7KQT9SVb9mXVrcYk5eIJtVltpgU6yD81NYa0lQ7PYQkeQu+GQFMUm9fpKX7
-         gSWAMcR2KUYmErl8Ek8ZLeUGw1A29ra7VF7T6Dx7J2atLlzsV3VMNraxxEOAAlQ0tlXS
-         KJYL5ZWeB/p5dzRwaXP+1FhO4fG+belzQqTNgqLGeD1T9nZfsDSC0qSNjdzEIso+m9I+
-         w/uGD+Qe7j1T/n0wkVU6+p9D0gzrSxO03HbVZEqhsQx4MZtz1Js/SLclCYDswXCCWv1w
-         oldaK3ReKKl0wqVk2TMKfjUSzJpN09INiV+puKTCvd5PCDzugUFR9wQHnGMbL6pbzSEC
-         LQ+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779455167; x=1780059967;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0Z6hIMYgqhMrKKBiL1MJIdjEE5Rl1yfiYAVBlDccynQ=;
-        b=qCd3xPJiLOnRmvIjLMqkhb0SM/wUd6+vTvPA9O8ITz7E2bisGs9IXRKFFCm3x2z9ln
-         zvkgq4UolhYBlau5SFH3XmzDcyVv3U7C938RmsWMJjMGaD1hRWZoIn/gFhs2qVmZE6Rz
-         0a72egSQ7RQkFjVccgvXT4pzkAa4H3HcRqqUnzhURvsVuVqAceofK2+zGb4cOJbnhc84
-         FYSiTthYvceY3kguuyyTPsQGAGS0DY6URIkB9/yq9HLsVV5HKt3JNF3hlCsIiIn982RA
-         7bwxgmr6XkqwPi6cUPSPHMf2i9Z/lP/NarfGv0HdUs8+rh4Y97dJJallKbx36e8Dftug
-         PK8g==
-X-Forwarded-Encrypted: i=1; AFNElJ9FaKQ44V4AIRaWFV5qkrDhIazPpkRwlxszedc1+ue1/OB+K8EzsalwtTMVm1zCNQOGdRq+/8cHJHDJHw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl2CrCFaioNjp+qocB43jU1B5Fx0R16y/JoA5Edi8+pOHPiN3U
-	7d/Ap2b1ZOUg8KqblrEECEurm/Uw9qCEp1I9K12synqqOZcv9CxPVoI5Iq10ME8NIfo=
-X-Gm-Gg: Acq92OFJV1rdsWmRnuQzNOO6jmM6DcSIVqy8Zfx5k256gGiKQr1rUhiyY1wqnDNVe5V
-	AaIEhixjHElEnqHe19pV9oSHWGU4pl4xmLvj5Ewf4qKkkVe1Ppz6zguzUb/MK3MpCjfY7/TQHe/
-	HDVlnw7HWTdpwFjTFLRMJYa0q9GchOAXWvq2ywBC8F4KDfq8IR7qJohuZvOymI6ScTDqbmW9zbk
-	Ri6jsYWsXpj3BkbMibY/vxGpHbxcRXvZa0DKR62ulLAEBQ3D+oHM9OHH03L999pjWDi3XPX5ejy
-	btNjKPCEgM84oM1KCLjqP1tmwSLeXaUeFrh5vyfxYWrkBY39/yokFk8Fi2zoe/ix0BAoGEaXSc/
-	Ub2q3GdiaLBct2G24E4hJfB7JxorMlPUUiIaAYSSyIXo4OFYh/GjD/cZliGC0pPsTa68xeyivVb
-	R7NAsuimLU115mEbVhS8nwR0pNB0qdXMeS3v6qPYCOP3H3S0yWG3MKDdQ=
-X-Received: by 2002:a05:6000:2384:b0:441:3144:efc5 with SMTP id ffacd0b85a97d-45eb38e4fd0mr5515739f8f.42.1779455166814;
-        Fri, 22 May 2026 06:06:06 -0700 (PDT)
-Received: from [192.168.42.79] (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45eb6d71688sm4196400f8f.33.2026.05.22.06.06.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 May 2026 06:06:06 -0700 (PDT)
-Message-ID: <a0b17be8-f7dd-4d05-bc6f-28b32d0b0785@suse.com>
-Date: Fri, 22 May 2026 15:06:04 +0200
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jq0GXRGE"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hZBN6bLOaRmNNpnBeKusLXPRj+mBuP0J78dYZhBBb1Zqsi3oGo3DeLdX4Tl+aT1vb8Rqnw4i+meTXLL1wNYFLpOQ59eEWZ9v+d+nbFY4meU+dmRjz+jpYrfOtIvReCgGlJv26P8onEgNZKJr7lg+9lrEzQWAUedMrYzi5DmeogeBbo6N0lYFh/GgbKEsgVO9mM1+abZlerpevPJkY0JI5Vkcr3znVqnzVjX1nqDNyOcFAPhxkqq+UZ6c3WWAayWmG27i77O/LbsuYOfcXdgUihNYrbpApGi5bbrkCGh4/Qu3KhxVP9NFg2ZbBBUY9KqKrozN3WCJ89qUxaKR+csdUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h1IfMuCZe+iCQ6UELQiU0Ml0V0JrMwy9cFavuYk3JSg=;
+ b=k/A8VX+n/QCmOODlkL2pH8j0wVQpJzYIGGi2zqXYfEJ9llLuAcmPOrf857h3OO3Rirzl5Z6RVSOdHMWF/u7VDGWS60Om6SQPUKUMZDtHZ+i0IcsilCHS8bSfZuOzUyKwf9Ct2acUFKTmlsfetFi1MKYO2WEb4OO8hKFIeF6EN7QpelWw30py5ED0emxn/lgGOWbcOSh/r0JyLBoQPMjr9khOSTgarDB206rOAcgEfunhCYGBfIya46aN1fsi+gak/eRT9m+4ypybQBRATUkQNI/6gM9HvY+h+Yir0yepEe8Lw6rbifQ0NnLRnYaGvwclwoyftCmRgMPSNYWCGTUnxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h1IfMuCZe+iCQ6UELQiU0Ml0V0JrMwy9cFavuYk3JSg=;
+ b=jq0GXRGEj0japI27rqiUc4Cm0k3y946Rno08gVwpC5nvBzk3GyFvMyTa+Rj1zq49F/+I+g3sclQBY3Uod/cjA64U+iaS5klXp6knbZL24WMRs+YX3tAyuIZaR+ygFYBmk4BPQ+21elcZj5tQLgy6cShHYLgxzf9NxJW+QJfYywuYaGuK7fPNB7WVPTSYthdZPHzjkUA0WS/XD17jun87fdg2LxCS0qs84qFh54fF7PyvUStxU2Sqwm2XCKqBaWIhNIMiMQTn9CqdVUjpxQb0rPTOD5ta0meTUVd6fDwYfGPoGJ3RbqyOf3s/Yyuqwup4BLiWAfH68R6FhNYahGzBbQ==
+Received: from DS1PR05CA0012.namprd05.prod.outlook.com (2603:10b6:8:457::9) by
+ SJ2PR12MB9190.namprd12.prod.outlook.com (2603:10b6:a03:554::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.48.17; Fri, 22 May 2026 15:58:56 +0000
+Received: from DS2PEPF000061C8.namprd02.prod.outlook.com
+ (2603:10b6:8:457:cafe::44) by DS1PR05CA0012.outlook.office365.com
+ (2603:10b6:8:457::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.71.9 via Frontend Transport; Fri, 22
+ May 2026 15:58:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DS2PEPF000061C8.mail.protection.outlook.com (10.167.23.75) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.71.7 via Frontend Transport; Fri, 22 May 2026 15:58:54 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 22 May
+ 2026 08:58:35 -0700
+Received: from moonraker.home (10.126.231.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 22 May
+ 2026 08:58:33 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Thierry Reding <thierry.reding@kernel.org>
+CC: <linux-tegra@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] soc/tegra: pmc: Populate powergate debugfs only when needed
+Date: Fri, 22 May 2026 16:58:24 +0100
+Message-ID: <20260522155824.76002-1-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/4] kernel: param: initialize module_kset in a
- pure_initcall
-To: Shashank Balaji <shashank.mahadasyam@sony.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
- James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Jonathan Corbet <corbet@lwn.net>,
- Shuah Khan <skhan@linuxfoundation.org>, Luis Chamberlain
- <mcgrof@kernel.org>, Daniel Gomez <da.gomez@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, Aaron Tomlin <atomlin@atomlin.com>,
- Mike Leach <mike.leach@arm.com>, Leo Yan <leo.yan@arm.com>,
- Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>, Rahul Bukte <rahul.bukte@sony.com>,
- linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, driver-core@lists.linux.dev,
- rust-for-linux@vger.kernel.org, linux-doc@vger.kernel.org,
- Daniel Palmer <daniel.palmer@sony.com>, Tim Bird <tim.bird@sony.com>,
- linux-modules@vger.kernel.org, linux-tegra@vger.kernel.org,
- Sumit Gupta <sumitg@nvidia.com>
-References: <20260518-acpi_mod_name-v5-0-705ccc430885@sony.com>
- <20260518-acpi_mod_name-v5-2-705ccc430885@sony.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20260518-acpi_mod_name-v5-2-705ccc430885@sony.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF000061C8:EE_|SJ2PR12MB9190:EE_
+X-MS-Office365-Filtering-Correlation-Id: aa4f8ad4-f5a3-4b26-a009-08deb81b06bc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|1800799024|376014|82310400026|56012099003|18002099003|5023799004|11063799006;
+X-Microsoft-Antispam-Message-Info:
+	05TuMalGnNEZFQ50TfXAas+9QXwGrnMtpbeY6eCXqQ2oZmAVkWhfZ7p88DGJHk123mLvz0uEUbQeq9MjANwZqP7Aj+ksspwfcBfBq1ka9osT2YLwLE2UJl95wXCyZMP+dnDVy8LcPuzcUhCNyR5UbNeN9NnjiPd/Kpn5o2cljEUuruKZBmHu4kGWO8p/UV6Zhg6QwUuFnyAS9ZIYyKfBuk7wDu76KNkBZmLJxRBKTBvto9VrNMXdw9gg0MDZyBnPBL1Q/Ujx3LZXEDUAo8Z6fxgtx+ESiDR9FMyokUWSTulBu5Y9W4iU4MrjsaUlBy6ZBFsVfsYDIq7wlDOQmBozRK08n9K2QMWmBn8sVbgjfJX8Q/jjo+XzjymdS7U753zZRd/mA8jzZ33bRmj+9CLhNZcCdn5fpplLymjUUeFCx/OH/d6gssW/4CGCCGBaXGoq0GXwFlpuDKEkW8eavzmWbLoyowLw/MMdwZMilp0sY4e6BXc/9GqyqbXOPwfKwXSv/66IdEoZR/WuGUvyIiDFcJRkRjAgUgjpC85T6yKk5qI1aJOZKOnGS0EhAo5iS+74+yHx6xspojjiDe71+t2wUH/VNSpyFjJJlTDeFnCG0Zq+MZ1WzK4wFNFO4lFApmUTX6b9aHTWyOrzSRJuA/oOVvV07f80Go3+oSkh7CGQqAxY1MUHdUeJJAu36s2xo+b+L+rKy7jj4XpOf+fsi8yuzixuPZA8G0iAQMdcaoSa+vA=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(1800799024)(376014)(82310400026)(56012099003)(18002099003)(5023799004)(11063799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	28qHMITqETvnh6KkaCb4qT5U/0e5dywWv4l7rUIBskOB1e81/VdFo410HYcobPaFJooUz+Qt19QD3E5fRwVSmnvmRXVRCGV8U01MA9h6WDwjvhjZUV5b1VEgWrTxJl+iqNW21tOh3U8zlIJdc2XEoeYYNxbN5fBigzI5X2IlwPIO3xuU8UVVuBWfGO6zYMMdUHG4Pk/qj6MUWifca5tPbtsTfz6JSQyoX9/0pkhcQ9O2oo1joLfTU6+d0f80p9YRhABXPuNhI3GdepjTkziiJEduRU4HKaVW7yKmFpPBCML/pfCSbWXlscmPP8/loPAFMB/zTTvJUTy+uDm5mXObEEzSgtnBqmmbMs177S1YN9bj6MgpAzzO6GzQvBgZ8H6f/oI4LjcV+s8+CrRtsRlcf+WUpdu5dgnJIMeZHFgu037bmnDTjtiGTokElaiSiB/H
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2026 15:58:54.8486
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa4f8ad4-f5a3-4b26-a009-08deb81b06bc
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF000061C8.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9190
 
-On 5/18/26 12:19 PM, Shashank Balaji wrote:
-> Commit "driver core: platform: set mod_name in driver registration" will set
-> struct device_driver's mod_name member for platform driver registration. For a
-> driver to be registered with its mod_name set, module_kset needs to be
-> initialized, which currently happens in a subsys_initcall in param_sysfs_init().
-> The tegra cbb drivers register themselves before module_kset init, in a
-> core_initcall. This works currently because lookup_or_create_module_kobject(),
-> which dereferences module_kset via kset_find_obj(), is not called if mod_name
-> is not set, which is the case now.
-> 
-> So in preparation for the commit "driver core: platform: set mod_name in driver registration",
-> move module_kset init to pure_initcall level, ensuring it happens before tegra
-> cbb driver registration.
-> 
-> Suggested-by: Gary Guo <gary@garyguo.net>
-> Co-developed-by: Rahul Bukte <rahul.bukte@sony.com>
-> Signed-off-by: Rahul Bukte <rahul.bukte@sony.com>
-> Signed-off-by: Shashank Balaji <shashank.mahadasyam@sony.com>
-> ---
-> Patch 4 depends on this patch
-> ---
->  kernel/params.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/params.c b/kernel/params.c
-> index 74d620bc2521..ac088d4b09a9 100644
-> --- a/kernel/params.c
-> +++ b/kernel/params.c
-> @@ -957,7 +957,7 @@ static int __init param_sysfs_init(void)
->  
->  	return 0;
->  }
-> -subsys_initcall(param_sysfs_init);
-> +pure_initcall(param_sysfs_init);
->  
->  /*
->   * param_sysfs_builtin_init - add sysfs version and parameter
-> 
+The 'powergate' debugfs node is used to show the state of the powergates
+but for some devices the 'num_powergates' is 0 and so it displays
+nothing. Therefore, only populate this debugfs entry for devices where
+num_powergates is greater than 0.
 
-The change looks ok to me functionality-wise. Sysfs is initialized
-earlier in do_basic_setup() and other code, such as classes_init(),
-calls kset_create_and_add() similarly early.
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/soc/tegra/pmc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-One minor issue is that pure_initcall() was originally intended for
-static variable initialization. The file include/linux/init.h says:
-
-| /*
-|  * A "pure" initcall has no dependencies on anything else, and purely
-|  * initializes variables that couldn't be statically initialized.
-|  *
-|  * This only exists for built-in code, not for modules.
-|  * Keep main.c:initcall_level_names[] in sync.
-|  */
-| #define pure_initcall(fn)		__define_initcall(fn, 0)
-
-The patch stretches the intended use of pure_initcall() somewhat in this
-regard. However, other code already appears to do the same, so I guess
-this is ok.
-
-Additionally, I think it would be good to update the comment preceding
-param_sysfs_init(). It currently says:
-
-| /*
-|  * param_sysfs_init - create "module" kset
-|  *
-|  * This must be done before the initramfs is unpacked and
-|  * request_module() thus becomes possible, because otherwise the
-|  * module load would fail in mod_sysfs_init.
-|  */
-
-I suggest changing it to something like follows:
-
-This must be done before any driver registration so that when a driver comes
-from a built-in module, the driver core can add the module under /sys/module
-and create the associated driver symlinks.
-
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 2ee6539d796a..3f9771dd22a5 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -3284,7 +3284,8 @@ static int tegra_pmc_probe(struct platform_device *pdev)
+ 	if (pmc->soc->set_wake_filters)
+ 		pmc->soc->set_wake_filters(pmc);
+ 
+-	debugfs_create_file("powergate", 0444, NULL, pmc, &powergate_fops);
++	if (pmc->soc->num_powergates)
++		debugfs_create_file("powergate", 0444, NULL, pmc, &powergate_fops);
+ 
+ 	return 0;
+ 
 -- 
-Thanks,
-Petr
+2.43.0
+
