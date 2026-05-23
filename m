@@ -1,63 +1,63 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F095356775
-	for <linux-tegra@vger.kernel.org>; Sat, 23 May 2026 08:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9B7362153
+	for <linux-tegra@vger.kernel.org>; Sat, 23 May 2026 08:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779525040; cv=none; b=h1584E9fEso8vnYgPkEovC62U3gFjNgNTQUbkAxhJECF2lDT+QS/YC5suzajtUG56C+UGPlFLy71wkcPtcLltH3YOZn6yNWDvlo+Ka94Vjfhq4n5Qn/QnxWvz9qU0NusrUKnRBM1u/0oZFhqLK0RLQY+pVO4UC92CKimLGF6J80=
+	t=1779525043; cv=none; b=OEuBbpPCWMBDvkxis8zEXw+LhYZjR/Y6/Kxn9JHLJ2JE6icvnJBhdq9LJ1ZgNsaHgc59Q9iNyDCTmfOKT8lJIi0aNv56ruvFRFnebEFtpj7pC9WU+f3kI7u1NYpoD6niseG00vBKss9Mfdk2LbFJsl4T7kUnCEdrK8LY57TmCsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779525040; c=relaxed/simple;
-	bh=RFk4nd6bXVOHvzs0Um8Cm7YAd9OzwjBPCs0pyzgoFWk=;
+	s=arc-20240116; t=1779525043; c=relaxed/simple;
+	bh=b4zUqL1Ke9Cs6I32xqzsUT0DCZF3QkH23uPT8sySGAk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WiEj+yeyAGWNyLmFnGt6V5J48yBZU8Pr01edN8Cnn6djgbglbytcAOTcSXXR7g8tCc6/cJeFUN+3fIVJK9rmKD17On87Jp0MCDlGvJVmiAB/Nx0J0et9T1ovDWWRay0EjVbhzI5GAmZ0EtuJCj/JawikrlV7ARTIylh3okR88p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oc675ppB; arc=none smtp.client-ip=209.85.218.48
+	 MIME-Version; b=gDPv4YKmNJdj8gbmvZX3v6JtNjFWr8d1GsbXRkAlL4um5NwhbnwlZrhCZUbxrs/3FJoQf5rnZ3RGcWTXGRLc1KnaGzfktOknCAUC+L+CxsFjC2hOUyUTrS/lIVsld6Rfv1TMfyrkR9FMq+yZ5sJElKDh7wlMs8trEXdEFcTIAfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pjqg9z0F; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oc675ppB"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-bd8f9889a8cso919979466b.1
-        for <linux-tegra@vger.kernel.org>; Sat, 23 May 2026 01:30:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pjqg9z0F"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-bd8f6ef4ba6so1183053966b.3
+        for <linux-tegra@vger.kernel.org>; Sat, 23 May 2026 01:30:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779525037; x=1780129837; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1779525040; x=1780129840; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=csVvMr98OyRGdIIeLSoE7oflCBXwh48FuWRULAXXVcU=;
-        b=oc675ppBo2F7gBEfP/n/NeUIwg8MU3fq00oAODh9iYz+WyRmsqF7EAMqZEPUfBbCIZ
-         be2eLhO+UrtGyqPXm3Tx5+FZ4uQ/ChWj5Nk4tkIQ7XKJZD/+ZfTWOpet5eXIJyNqyPcO
-         Z44NSPBPYZDnXTOQi6dF/vfH5V0J2dCjI+SfmQ+ljRR/CBgeCVW1poUsfIn5FdoyB8Uh
-         zkpgHwyP44saQ2CqXh8ax8wzelauBobar0t06WjKMhUq+YnD3pyFa5LH/2tQGV/sG8Af
-         aUq0olDHM3JTodU8hXyOcls+SwxSkD6v4gleByWrfA7JGOWDOYt7GzAhxCz70/GtZ/JW
-         7nrA==
+        bh=F6p+M6SIjzcIcxd3MTES1MZkiaQb7Dr/HC9nyX3iDS8=;
+        b=pjqg9z0FRTFWOuubUxmbZQzuonL3Ld0EMv+22tPnGPy/3yg1zS2z5zYYujAOoCmLom
+         qXZqIYR3fHZnSjkM7YhU4PuwPoCTJlnQE4aT0Jc+E3KovC7H3jYsQntqSgsx/flPJbVg
+         A7g+pg7mX9UH961QTOOvkcIU0eej4wOfnbd9sstKhMCuH/ewLMvPoq9aFWH47Aml+guC
+         /Pm5NNjWjoeVqbM5a4VRaHWoI5C5PHR7kKF+pSM3ZYo5120MX16/Nk7VbIggH1edwPKu
+         hVpoVMjYC1DIKounLREek5RP8EDslzt95E69mZY9J8tGljAipPJy21hlf8MlF6jfDxuo
+         sTuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779525037; x=1780129837;
+        d=1e100.net; s=20251104; t=1779525040; x=1780129840;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=csVvMr98OyRGdIIeLSoE7oflCBXwh48FuWRULAXXVcU=;
-        b=hUKc9pz82ZO2S4/GyDlCXnu3R13E0sJLvtgiWPRc2ZCca9b17t8Mr206QmsnZD6AiU
-         cjw9HpA7M3UE8so91athBGxYCIc+jKNki6sgZSqSAzk+umqIjPhU3lNWAGSfCQHLE9y8
-         Jr5PrhWQNyv1RCMn+rjb5WPXGxMGtSDHIRwD8bir9gbJPrw3fWZKAYvzLbEkJXfRpo+a
-         NGnlEQqcP7hWIxs+Cb8/0nK9Jq0bd5RBgardi6xxe0n5sMk4R2uRArLu3UwcAeebaoA2
-         LbZYm03z4vEDeLLsdsFzykXUIJ7q3o3b1SbisiDxywsnercWQcLhsBx+hsDJdmZmzjE6
-         Rr3A==
-X-Forwarded-Encrypted: i=1; AFNElJ9cUfikJfRhGfL2D+A4qhCIroetE0jWxQFgdkMVst2g/z+k/U1mKl4FzLXCNhOtIfYPisFI5IoCcR+FmA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVhdqdDlQpU6CGWJNxgtu8cTToGZst86vxncMkNanxMtjKUJb6
-	jCNynX8G8IrzRR+Envk9mDvxK2gaGOR+O6gM0VubFlXXnuoU+PYqt1Uz
-X-Gm-Gg: Acq92OHxEGPXR0K/XjS8luqj+GMnUCxNrlglX1G2dgHHuTiTOaLWYRx9SMrrNXusdiq
-	qAMp+hPcm7QOFkcUAC5U0aH4lRHUtmd3bhQ1ZechUYXleMl0GNlFBE+rlUZmMeMWyUlINhTQUu2
-	XSww6ocLLtpGIHbvL+vS7KzVR/W745sPxB+DO+h23wTi9BcGYtyBedh5dU+Mr7dqzRpzrWg/It2
-	oz57E3gyMElmHN6+MCWqePzQNB0qlbfFRPGeN3jdG28yw3Yoy44z0Mw6e037D+Kwh7ogeKrDICF
-	4T/c5EGBXCuWH1QTBYMY9aRyj+1ipvy7UGe70hViWoFDEpv7ad/w3kNHbJ4XX932vaiMHNt5nO8
-	ghbXkHGiBmnpXJj+5CA/k7tfdc80RUd1ahPU+AqrrrCgwu1EMh7Q1o1H0swZM/6UI1jWQTaQOEz
-	yqUHz1YCml+Sosm3EHZqwP0jI=
-X-Received: by 2002:a17:907:3ea2:b0:bdb:b76c:4dd0 with SMTP id a640c23a62f3a-bdd263c954cmr455094666b.40.1779525036960;
-        Sat, 23 May 2026 01:30:36 -0700 (PDT)
+        bh=F6p+M6SIjzcIcxd3MTES1MZkiaQb7Dr/HC9nyX3iDS8=;
+        b=gKniLVtKQkC4D8z1k+v7W1AzCRtdG5iKfaOlKiaYcT7HLpIwD/HX2cqVDfOfkwYRMp
+         jdkyGFGLYOuLCTSVYFRM02nbRyk9X/u5CLbx/DRtZYQLN8OiiWS+yuOUpNqMniI1FmMV
+         D0uVHV60XaPQZyS+dhBB00fXZ6HOLFFlvClfQLQa9DdeUbDOAznIXzrHEcbJYGk1jscT
+         66Qm0HvXhvFUilUP1syXZxrylvfdBfEiPPscR24Sf8SLtYrXLYIQd4tiahnYl4uElACs
+         yvNgvXUbls9HH4SUqZ1KBWUy9fIPuIIziZ9BWBpSQM+etzmruajhY9F0NUgFQoipn6l1
+         WkxA==
+X-Forwarded-Encrypted: i=1; AFNElJ+28ai039GTWMIJoBkhfS6x3Uzh5fKUZsmk5kXXXrAmBTa4MmEIfjiMldkMibXpzeWNu5LQw254k2Fv9A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YznMyorkxHPipIurdcisSWnbK88K8BiYNOt+OvN/YldDjbwAC1E
+	fovdOPVZexF682Rs7tLLEdnj4IOBVQSUzFlQLMiUHwUef5FIYc4IRDL9
+X-Gm-Gg: Acq92OG7SpW42zdUcXiqDSZjfkNLZUr6wU6kTHiHeu06h1CdnWy02A5AJeEu5UZ0LoZ
+	Kb0hEs+A3QbJ+hTIFM70nFgusbKQK/OmjzYsuK5nYt/3gmzbc71BcmLVKc/8jokmHji78hnnaYD
+	JARJLnhMAUbiYRq0ysmFz2vYZYDYPTqB+7QeRzycvNqbMtF9mTuZv9d86uWGgY10u5GZ/gfsxBa
+	ihotgZ5dm4QId1OnMI8Mhq/GsdsYbGm9S8NFVMN7b5FJ5xiD98c7Ys4bJCz4HkqpNMy9HeKmaaC
+	9zbRK0xR4PCgHdhZdtTUw5ubWxpWvmGr6qC361TY2Rn1wtssfXKoHNwo4zl4vpkOupKOwsIhgqV
+	zOk6LCD78prkYxiUsf45UsaGRIhc7Mw52qRTmLkHxbaJ5Awf1yWScX7wIXnAsRIUFfFhJqpdgbd
+	ZBGAk+wnq1AZ0T
+X-Received: by 2002:a17:907:74a:b0:bcf:5de8:567f with SMTP id a640c23a62f3a-bdd2580c412mr414994766b.28.1779525040277;
+        Sat, 23 May 2026 01:30:40 -0700 (PDT)
 Received: from xeon ([188.163.112.61])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-688bb62b6dfsm1651856a12.30.2026.05.23.01.30.34
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-688bb62b6dfsm1651856a12.30.2026.05.23.01.30.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 May 2026 01:30:35 -0700 (PDT)
+        Sat, 23 May 2026 01:30:38 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Rob Herring <robh@kernel.org>,
@@ -73,9 +73,9 @@ Cc: linux-usb@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/4] dt-bindings: usb: Move Tegra-specific Chipidea USB properties into a dedicated schema
-Date: Sat, 23 May 2026 11:30:09 +0300
-Message-ID: <20260523083013.46372-2-clamor95@gmail.com>
+Subject: [PATCH v2 2/4] dt-bindings: usb: chipidea,usb2-tegra: Document nvidia,external-control property
+Date: Sat, 23 May 2026 11:30:10 +0300
+Message-ID: <20260523083013.46372-3-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260523083013.46372-1-clamor95@gmail.com>
 References: <20260523083013.46372-1-clamor95@gmail.com>
@@ -87,152 +87,34 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move all Tegra-specific Chipidea devices and their properties into a
-dedicated schema file, by analogy with i.MX.
+Document the nvidia,external-control property required, for example, for
+USB lines in HSIC mode connected to a modem, where the modem requires
+precise control over the USB bus to properly enumerate all its stages and
+intermediate devices.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- .../bindings/usb/chipidea,usb2-tegra.yaml     | 88 +++++++++++++++++++
- .../devicetree/bindings/usb/ci-hdrc-usb2.yaml | 22 -----
- 2 files changed, 88 insertions(+), 22 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/usb/chipidea,usb2-tegra.yaml
+ .../devicetree/bindings/usb/chipidea,usb2-tegra.yaml       | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/usb/chipidea,usb2-tegra.yaml b/Documentation/devicetree/bindings/usb/chipidea,usb2-tegra.yaml
-new file mode 100644
-index 000000000000..78046f8a63ad
---- /dev/null
+index 78046f8a63ad..d99a18900b5a 100644
+--- a/Documentation/devicetree/bindings/usb/chipidea,usb2-tegra.yaml
 +++ b/Documentation/devicetree/bindings/usb/chipidea,usb2-tegra.yaml
-@@ -0,0 +1,88 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/usb/chipidea,usb2-tegra.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Tegra USB2 ChipIdea USB controller
-+
-+maintainers:
-+  - Svyatoslav Ryhel <clamor95@gmail.com>
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - nvidia,tegra20-ehci
-+          - nvidia,tegra20-udc
-+          - nvidia,tegra30-ehci
-+          - nvidia,tegra30-udc
-+          - nvidia,tegra114-udc
-+          - nvidia,tegra124-udc
-+      - items:
-+          - enum:
-+              - nvidia,tegra114-ehci
-+              - nvidia,tegra124-ehci
-+              - nvidia,tegra210-ehci
-+          - const: nvidia,tegra30-ehci
-+
-+  operating-points-v2:
-+    description: A phandle to the OPP table containing the performance states.
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+
-+  nvidia,phy:
-+    description: phandle of usb phy that connects to the port. Use "phys" instead.
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    deprecated: true
-+
-+  nvidia,needs-double-reset:
-+    description: Indicates double reset or not.
-+    type: boolean
-+    deprecated: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - resets
-+
-+allOf:
-+  - $ref: chipidea,usb2-common.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/tegra30-car.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    usb@7d000000 {
-+        compatible = "nvidia,tegra30-udc";
-+        reg = <0x7d000000 0x4000>;
-+        interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
-+        phy_type = "utmi";
-+        clocks = <&tegra_car TEGRA30_CLK_USBD>;
-+        resets = <&tegra_car 22>;
-+        reset-names = "usb";
-+        phys = <&phy1>;
-+        power-domains = <&pd_core>;
-+        operating-points-v2 = <&usbd_dvfs_opp_table>;
-+
-+        dr_mode = "otg";
-+
-+        hnp-disable;
-+        srp-disable;
-+        adp-disable;
-+
-+        usb-role-switch;
-+        extcon = <&charger>, <&extcon>; /* vbus, id */
-+        vbus-supply = <&usb_otg_vbus>;
-+
-+        port {
-+            usb_in: endpoint {
-+                remote-endpoint = <&connector_out>;
-+            };
-+        };
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml b/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml
-index 691d6cf02c27..5abca0572714 100644
---- a/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml
-+++ b/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml
-@@ -17,20 +17,8 @@ properties:
-           - chipidea,usb2
-           - lsi,zevio-usb
-           - nuvoton,npcm750-udc
--          - nvidia,tegra20-ehci
--          - nvidia,tegra20-udc
--          - nvidia,tegra30-ehci
--          - nvidia,tegra30-udc
--          - nvidia,tegra114-udc
--          - nvidia,tegra124-udc
-           - nxp,s32g2-usb
-           - qcom,ci-hdrc
--      - items:
--          - enum:
--              - nvidia,tegra114-ehci
--              - nvidia,tegra124-ehci
--              - nvidia,tegra210-ehci
--          - const: nvidia,tegra30-ehci
-       - items:
-           - const: xlnx,zynq-usb-2.20a
-           - const: chipidea,usb2
-@@ -65,16 +53,6 @@ properties:
-       - description: register offset
-       - description: phy index
+@@ -40,6 +40,13 @@ properties:
+     type: boolean
+     deprecated: true
  
--  nvidia,phy:
--    description: phandle of usb phy that connects to the port. Use "phys" instead.
--    $ref: /schemas/types.yaml#/definitions/phandle
--    deprecated: true
--
--  nvidia,needs-double-reset:
--    description: Indicates double reset or not.
--    type: boolean
--    deprecated: true
--
-   ulpi:
-     type: object
-     additionalProperties: false
++  nvidia,external-control:
++    description:
++      Indicates that the controller is configured externally and that the host
++      should not attempt to access it. This is usually used by a modem that
++      requires precise bus configuration.
++    type: boolean
++
+ required:
+   - compatible
+   - reg
 -- 
 2.51.0
 
