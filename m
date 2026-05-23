@@ -1,61 +1,63 @@
 Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17C91448D5
-	for <linux-tegra@vger.kernel.org>; Sat, 23 May 2026 06:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA9D2F7AD2
+	for <linux-tegra@vger.kernel.org>; Sat, 23 May 2026 06:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779518900; cv=none; b=K3lFPwV4IBox1gZohI+ewFDSUI+jMjstiUJoYzFK1M1JIXuxo+cX0mD1tBQVoc+YZUDuUv7tbInZ/XA1MBBVtUGukohdKd4MS9jaV/9Cyz7bIvNyO9gHN5oZuKyzKLLVMeEKV/MlZidgA+sGsWkPHIYvIPwM4GoL09Nl1AqJPyo=
+	t=1779518905; cv=none; b=K/8loHNDCpu1YlnduCw2SJt4QLL4U+LHeBeIy5Xg5nZIcjFI3Wzzwe0xNzeO9cBOz2o7v2GANaPvLkJ/erdFIWaBsM+FPe/3VnNWulShFxnvEL2WNl4zx0+ZH5fTKb/Uq61p297H1L6v959deT+InN1bHkFJg4v6fEHwCANf+b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779518900; c=relaxed/simple;
-	bh=OhJBIZtPSl37iTCor/8pHea1pmiMgmwQ3W0MWlsm5UI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D6rGDaWFYTjV137t7fSHiqW2WG+7/SO2+o7KTFvrMGmAaI9qFeWT1klhgBsCXQ15iqPYR+ZPoy9dp5X8lcUWklsmcFeGJD7rMT9hB99SQhVdrBbqxhaHfKjqtRi8XuZdI1wm+0O/ZTbBZ2jcjp57iV6Q1r7/ob6Pwtqqp4VRcas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QUQ1ShLF; arc=none smtp.client-ip=209.85.208.48
+	s=arc-20240116; t=1779518905; c=relaxed/simple;
+	bh=ruHWhs/NAmjUK/E6UKPL9THibS9Ul5SiTJSCwblcQ2k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=W/SU672HawsEcGZR/pCOef2Zx9Bt9TvtO3BDKpWJV40FC92GTdwKV1tthgc55pkf4/GPgX/FkinBtv6QzBDvIYTgr0kd8NlWBOaf1KFYNseIds9G/bzfcKtJgE85PpfWsqqEf6GkKIoDN6OEWabZ3r9lBOZa6ZhF6kH61J+f5gY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BKLxM6w7; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUQ1ShLF"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6870ad8072eso4337538a12.0
-        for <linux-tegra@vger.kernel.org>; Fri, 22 May 2026 23:48:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BKLxM6w7"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-687d82dd690so1235368a12.2
+        for <linux-tegra@vger.kernel.org>; Fri, 22 May 2026 23:48:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779518898; x=1780123698; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cvbKAQfeepNA8bbLBATd/Y6PlNgiV7+B2hbMPq8f+ok=;
-        b=QUQ1ShLFbRsDHw/iED4/qX5BTpySdMzjsXNV31xtfjUo6zXlGLLBtVUYs190B3/4Tk
-         OzoHLiXlYzmE6os926HGB0SkFPh1y66N604yIAxouff8qO5oDg9dM2r2y+E0l5rNGfQ5
-         +IameCPWAe7DqcoeLu7Pb5Ayg9DAIrgNgoAUGAL5Flf/kOcDuGMf5l/HyKaACnB1eWYp
-         B1vqnFruOW5Wq9jXV12y9dEMRwJrCxSYHlRMkfW5vOZKa3V6xHW052ADz1YTVMvyOLny
-         1T8+GNMiIZC8IlLdv8BjIh967DPw95NhyNzO/jrLPW4tY0v8ch0CqVk3GjEzXierfPvL
-         UNag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779518898; x=1780123698;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1779518902; x=1780123702; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cvbKAQfeepNA8bbLBATd/Y6PlNgiV7+B2hbMPq8f+ok=;
-        b=DPuyx0isLmdZw5HB1oWVyVTw6YIbV0JXj51gbdv3UaYZ3TjfS2qzLgs/hZ5H5y/Vvt
-         tMhQHJUMBO2lrKkTkuIxkqYJtJ8+AJZ+55lQpjl4RzyQRlvRqV/UvW4Glr0D4wLO5ADs
-         mQ9BPHG/48+gYEbPX99i3JGbgbm8frJSLVAU8vJqhZAMg+SJp0wn3g34E4dJqR6XGtNB
-         5PbAcLMFqjdrXoEc3uFcMMofgnBZMIQbOg1cvON7k7wA7AibJWXgmacsULnd9BgR9RO7
-         ThrSnfkbxjofH9Jq6U8p+h79lOBOhB2dAXg9i0m0q4WY442xfJggZmWIg8swW5J/mTfk
-         ey+w==
-X-Forwarded-Encrypted: i=1; AFNElJ9sFfbDzg0yfInPgCH4hOJoIkJKwblsDsqls60bZlkFcuIAQxS1M1mBhpnUvA1UE1uPi5kbxUY+DtC+4w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmK+nhdmjTpYlOMajvKCWgJtzD40bz681iZSeR8YcMsqjC10zy
-	gZJpCtcJm1xeyG93yUZBTcCm8PfN3e3yt6e6rZDMhH+R8L381IzY32yW
-X-Gm-Gg: Acq92OFXykEEngekgCOCTggB5GKCFRNssT8LELVM724IflFwITTbRWGGqVn1VdBdqIZ
-	HRPFhHVowSk4hB2rbnb6iO8delDdXy95vGSf493PnNMEStsGycc6ig+OEnlXmfZcGg+UeOdpW/m
-	M5+4L9BIpUdw1vU2yrqaoJRCJ2QAJEPkqsPwOyHot/8m3JIBl7/RZ8iODSNSt+716Fg3L9sNPhk
-	PxcF9n7lLjZXEFoOuBrg3NC4eTqHfXGXNbWpaPztOfmfEQpb+KydqVRAUE2XKXQ7BVC14X2qjuH
-	8byqtARL877AyVHWk5PELgbboQN/KGhnAxo2PVAYmR75wvSYUK8kEDeNRmaRizrJ1rrJLo+d5j/
-	Et8wV6cTZmbouvUzwZ5Xgc/q4kZnHwYQtl1kcssXJC6WjIBBSlXM6h51MO3PXV4Fsn0XJAKAwVn
-	NqAj68IRd8HrQq4+VByFgn0FA=
-X-Received: by 2002:a05:6402:4049:10b0:688:e2f1:bb2f with SMTP id 4fb4d7f45d1cf-688e2f1d224mr1253439a12.5.1779518897892;
-        Fri, 22 May 2026 23:48:17 -0700 (PDT)
+        bh=uQNJLijS1LXC3DyCF2fRyHh6+k3ll0IPAv+Qb62GcJI=;
+        b=BKLxM6w7XhZTtxUt7w2IQgp+Hv9g6ksT1AiYqS+RCy9152kW8O7T3uKEGxegTDG2TV
+         uUF7uqBn6ej4FJ6lnSQSC8oXpzD1YAlyELnNUDbaGndHHGwCgS7Ykn36xmR2ofoWeX+P
+         77xuMn2t3qvPDJJHYsGpgWG2Kt2DsNOqTKwFMqiJOz5KFqg76Me16kKRqr3jypiiger3
+         gO7StR2V0ivgmyJ7/RbH/0T1sMubnh3vayp3nsqEwNPWNAFqrNknDY9cDdaqTviElCrq
+         FJkJfjJ25v8RW0J0F+TW1HzCeyjqvCNVhE3yX82GjmwpBmkdmEfhmHc+dY5ZMN3ADKZ6
+         jGvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779518902; x=1780123702;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=uQNJLijS1LXC3DyCF2fRyHh6+k3ll0IPAv+Qb62GcJI=;
+        b=WsRU8E8PidYtlJstxe72QjtYAwHUQWhXD3et+cODhCwz0azUroiQDDJkB3njzL/VzK
+         wYSwwDHOIZX5X/E89QIgaz4sJRcq/1YNNPmWPnZvH79n8TzHZKYPuYp0/eotbCmwLQqh
+         nakod7m6zbRUcPxUgqhtrZX2ggjKzQjo5BIOMfe2wL3pz8AURHaKDzHEcx4KRTL4AiRx
+         F9O8nliJYZD+NiekDeOU75pqBXV3LHXnL+ZRfjEc9I7lNXOVfL9szmAT7SKY7PymOlYj
+         mNhhHGGEj02RwW1TRVF4+Sx7shQRRY1zDvAlZgZDarCkb3wAThMyitLGXN/8/mZeLYyu
+         EExA==
+X-Forwarded-Encrypted: i=1; AFNElJ87goTl8Wl5hsDm01BVIA+2ofO3XqHUcbinICLl+3YeGsBc2rfWqyYKtBBPbh40MluwmAkMFnUi96OpgQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+SM3eM9eGTVhJ5o6Eo9SZwzRgQSEI2jmakZ+xbFEgMJmfayQ3
+	rz+TnTOSarS56dxhxFt1JbAzRomxe12xsIFM8MVsblzTlhjXp08Zbdm0
+X-Gm-Gg: Acq92OFNPVb6jVCswULQQH3gk6XlT43Iuwca81T23V2hsStI9wta0R/JaUH2W8l+Q5W
+	2wtC+ki+7yIMeCxpaIx0jjS+lCalRne8hiTyTWalH557oJ/qxL6S1NGzj0prBfcbU/jUiZW5RX7
+	RDeNyyHI8GCFi9XkFdzdkahzBvJ9VtAyYe5qzZlu8YmfbQPXqrQfaAR4TG1BjstiGzIn+sBl0z0
+	u9NAvOyZGX+QaTRkWVuKZlWUxS8mzzWu01oaRQ46kzjYdocp7oic6QpxKvdT4PX+zSFm0UrqIiU
+	gGeBP4WKFsvSNi4BEF4/fjfK6Ih8oe74732zP80ZdMmbH9gLdmSobeIrwq5Ft9kwSBTVmk29VHS
+	UZzYNnyMxVtJPiLiNGihxTYO4JvZpE0MaS0aHgKZhqxPJpHFd+r4tOlv9pjLdWYwH2LUiDS0dP+
+	FI8tAR2J3bWzqV
+X-Received: by 2002:a05:6402:3896:b0:680:1e7:cfa4 with SMTP id 4fb4d7f45d1cf-6889cc78d76mr3740625a12.24.1779518902334;
+        Fri, 22 May 2026 23:48:22 -0700 (PDT)
 Received: from xeon ([188.163.112.61])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-688bb62b6dfsm1532272a12.30.2026.05.22.23.48.13
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-688bb62b6dfsm1532272a12.30.2026.05.22.23.48.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 May 2026 23:48:15 -0700 (PDT)
+        Fri, 22 May 2026 23:48:20 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Thierry Reding <thierry.reding@kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
@@ -69,10 +71,12 @@ Cc: linux-media@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/1] staging: media: tegra-video: vi: improve VI graph building logic
-Date: Sat, 23 May 2026 09:47:49 +0300
-Message-ID: <20260523064750.35553-1-clamor95@gmail.com>
+Subject: [PATCH v2 1/1] staging: media: tegra-video: vi: Improve media graph building logic
+Date: Sat, 23 May 2026 09:47:50 +0300
+Message-ID: <20260523064750.35553-2-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260523064750.35553-1-clamor95@gmail.com>
+References: <20260523064750.35553-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -89,17 +93,146 @@ media_entity_get_fwnode_pad helper to verify and retrieve the correct pad
 linked to an endpoint, rather than assuming the endpoint ID matches the
 pad ID.
 
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
-Changes in v2:
-- fixed use of NULL fw pointers in debug prints
----
-
-Svyatoslav Ryhel (1):
-  staging: media: tegra-video: vi: Improve media graph building logic
-
  drivers/staging/media/tegra-video/vi.c | 78 ++++++++++++--------------
  1 file changed, 35 insertions(+), 43 deletions(-)
 
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+index f14cdc7b5211..24e4bd438678 100644
+--- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -1468,7 +1468,6 @@ static int tegra_vi_graph_build(struct tegra_vi_channel *chan,
+ 	struct tegra_vi *vi = chan->vi;
+ 	struct tegra_vi_graph_entity *ent;
+ 	struct fwnode_handle *ep = NULL;
+-	struct v4l2_fwnode_link link;
+ 	struct media_entity *local = entity->entity;
+ 	struct media_entity *remote;
+ 	struct media_pad *local_pad;
+@@ -1478,70 +1477,64 @@ static int tegra_vi_graph_build(struct tegra_vi_channel *chan,
+ 
+ 	dev_dbg(vi->dev, "creating links for entity %s\n", local->name);
+ 
+-	while (1) {
+-		ep = fwnode_graph_get_next_endpoint(entity->asd.match.fwnode,
+-						    ep);
+-		if (!ep)
+-			break;
++	fwnode_graph_for_each_endpoint(entity->asd.match.fwnode, ep) {
++		struct fwnode_handle *remote_parent __free(fwnode_handle) = NULL;
++		struct fwnode_handle *sink_ep __free(fwnode_handle) = NULL;
++		int src_idx, sink_idx;
+ 
+-		ret = v4l2_fwnode_parse_link(ep, &link);
+-		if (ret < 0) {
+-			dev_err(vi->dev, "failed to parse link for %pOF: %d\n",
+-				to_of_node(ep), ret);
++		src_idx = media_entity_get_fwnode_pad(local, ep,
++						      MEDIA_PAD_FL_SOURCE);
++		if (src_idx < 0) {
++			dev_dbg(vi->dev, "no source pad found for %pfw\n", ep);
+ 			continue;
+ 		}
+ 
+-		if (link.local_port >= local->num_pads) {
+-			dev_err(vi->dev, "invalid port number %u on %pOF\n",
+-				link.local_port, to_of_node(link.local_node));
+-			v4l2_fwnode_put_link(&link);
+-			ret = -EINVAL;
+-			break;
++		remote_parent = fwnode_graph_get_remote_port_parent(ep);
++		if (!remote_parent) {
++			dev_dbg(vi->dev, "no remote parent found for %pfw\n",
++				ep);
++			continue;
+ 		}
+ 
+-		local_pad = &local->pads[link.local_port];
++		local_pad = &local->pads[src_idx];
+ 		/* Remote node is vi node. So use channel video entity and pad
+ 		 * as remote/sink.
+ 		 */
+-		if (link.remote_node == of_fwnode_handle(vi->dev->of_node)) {
++		if (remote_parent == of_fwnode_handle(vi->dev->of_node)) {
+ 			remote = &chan->video.entity;
+ 			remote_pad = &chan->pad;
+ 			goto create_link;
+ 		}
+ 
+-		/*
+-		 * Skip sink ports, they will be processed from the other end
+-		 * of the link.
+-		 */
+-		if (local_pad->flags & MEDIA_PAD_FL_SINK) {
+-			dev_dbg(vi->dev, "skipping sink port %pOF:%u\n",
+-				to_of_node(link.local_node), link.local_port);
+-			v4l2_fwnode_put_link(&link);
+-			continue;
+-		}
+-
+ 		/* find the remote entity from notifier list */
+ 		ent = tegra_vi_graph_find_entity(&chan->notifier.done_list,
+-						 link.remote_node);
++						 remote_parent);
+ 		if (!ent) {
+-			dev_err(vi->dev, "no entity found for %pOF\n",
+-				to_of_node(link.remote_node));
+-			v4l2_fwnode_put_link(&link);
++			fwnode_handle_put(ep);
++			dev_err(vi->dev, "no entity found for %pfw\n",
++				remote_parent);
+ 			ret = -ENODEV;
+ 			break;
+ 		}
+ 
+ 		remote = ent->entity;
+-		if (link.remote_port >= remote->num_pads) {
+-			dev_err(vi->dev, "invalid port number %u on %pOF\n",
+-				link.remote_port,
+-				to_of_node(link.remote_node));
+-			v4l2_fwnode_put_link(&link);
+-			ret = -EINVAL;
+-			break;
++
++		sink_ep = fwnode_graph_get_remote_endpoint(ep);
++		if (!sink_ep) {
++			dev_dbg(vi->dev, "no sink ep found for %pfw\n",
++				ep);
++			continue;
++		}
++
++		sink_idx = media_entity_get_fwnode_pad(remote, sink_ep,
++						       MEDIA_PAD_FL_SINK);
++		if (sink_idx < 0) {
++			dev_dbg(vi->dev, "no sink pad found for %pfw\n",
++				sink_ep);
++			continue;
+ 		}
+ 
+-		remote_pad = &remote->pads[link.remote_port];
++		remote_pad = &remote->pads[sink_idx];
+ 
+ create_link:
+ 		dev_dbg(vi->dev, "creating %s:%u -> %s:%u link\n",
+@@ -1551,8 +1544,8 @@ static int tegra_vi_graph_build(struct tegra_vi_channel *chan,
+ 		ret = media_create_pad_link(local, local_pad->index,
+ 					    remote, remote_pad->index,
+ 					    link_flags);
+-		v4l2_fwnode_put_link(&link);
+ 		if (ret < 0) {
++			fwnode_handle_put(ep);
+ 			dev_err(vi->dev,
+ 				"failed to create %s:%u -> %s:%u link: %d\n",
+ 				local->name, local_pad->index,
+@@ -1561,7 +1554,6 @@ static int tegra_vi_graph_build(struct tegra_vi_channel *chan,
+ 		}
+ 	}
+ 
+-	fwnode_handle_put(ep);
+ 	return ret;
+ }
+ 
 -- 
 2.51.0
 
