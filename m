@@ -1,80 +1,80 @@
-Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com [74.125.82.170])
+Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com [74.125.82.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1C03EFD13
-	for <linux-tegra@vger.kernel.org>; Wed, 27 May 2026 10:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C993EFFB5
+	for <linux-tegra@vger.kernel.org>; Wed, 27 May 2026 10:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.175
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779876666; cv=pass; b=d9TOd5Tw3XftKcpTaQBXdGCOXKhmTcb0BCi8bz0laC6j4pzPMSrqC7Qh/3ghXkPyJdS+vfU5byfr2Ey5NxchvSwsyHvv9XbjMgBkxazj7lW/sjeuu6NhR+U631QU5pasOd7LZn9LoAmA1LdYCyZ+7enjaKjm4lugTBw13rGim6Y=
+	t=1779876755; cv=pass; b=eav2x/mSjuU0qn46FeFlP5TQQIaNHNnoRt/s7ctZqSCwytPQMzZM4PBWgzy6rcpGUSvIYmk3QLuwEVEHjE/ftXtTGCfjGQRgNCmmFE1ac21uTyViJZs/FxHM3TuRwU1wubrGpsTba1s9qFS4PeeaFRix92+8CgbSYFtSBoSjbSE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779876666; c=relaxed/simple;
-	bh=iA7eFj30FwPY+Y6qxChdK9CcYuJg/yF5Xqwa6oQ7PDQ=;
+	s=arc-20240116; t=1779876755; c=relaxed/simple;
+	bh=Wg+/hg7+nyKZCEjWmGG1RgGiKovcVUPAwnl36vyVNXw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NrxOV0ht+4qaOMP+jCGGBdlme0RhAIOJYbRLqYVaYEWazMWx9DkD+WGWAXPF/ArPGRfpLF/WjbyI7C6B1nH6ylcJnYMGkDNS3MnBOzdzlw4HT5jg//dsuXlSJFpjuCZAxWNH8pEEXRC4H88XAWyJaFlbpaOyqoLVYYG+/0FAEmU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GJp2vse5; arc=pass smtp.client-ip=74.125.82.170
+	 To:Cc:Content-Type; b=O0dGVxg1qzN+ix6GZGTMp3+U1UbyGXh9lwnYagAydjXPND3orGrriK5F5Ix4zKTPM30UIx3r4JLYMPvPPsy1NJg25OWMg7T3v0QIXHDB8+/TGdJhP9mv5qQHwhymrts1hVbxBmQOia4F9+42UUKByJB2gIm5TivnEB+L4NsY8rc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qF/+WQDv; arc=pass smtp.client-ip=74.125.82.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GJp2vse5"
-Received: by mail-dy1-f170.google.com with SMTP id 5a478bee46e88-30455f77e0eso1548896eec.0
-        for <linux-tegra@vger.kernel.org>; Wed, 27 May 2026 03:11:01 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1779876654; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qF/+WQDv"
+Received: by mail-dy1-f175.google.com with SMTP id 5a478bee46e88-303dbfbec77so13679551eec.0
+        for <linux-tegra@vger.kernel.org>; Wed, 27 May 2026 03:12:23 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1779876738; cv=none;
         d=google.com; s=arc-20240605;
-        b=VcP+I95Ix51rmwX112KkgBqZ6N7pO/j4mjtkKlpCYEpHmi9JfFbOzeWECT9IKzGzSV
-         hI8obOkrCZETvu8mVFNYhmtR7eVBS3xg/Lx7VnlI8cxVOtRF3oyYlSeG6wD5Q+uOboVW
-         oEImDg8+LAqELp2i+gUr6AFLrOdZ3m+Le2VcwiSHNFUalkknqG2H047N1pDY/boON7Fw
-         W2X0feijBh5rFUoPekHpJlaUgTAQ5JKJDSzGY+Fadf/jC3oTsK1c94iHBdWCeOzYXwTb
-         +yMA05cnz2WLTeCEHUtcIjjogd+iCwEwifCdBHNO6GGwvuFdIFYkN+ekuXaBBQQklN7a
-         aFoA==
+        b=WensGTgf81WQJObyk3U9+uUrs3qJzlfJWHefPdFuQiS7raOvccktvS14GhJPzMEsnu
+         fCsXkGNaF0Hw+rEwBQCS7+b6bLt2efVQO+OKaE88mfKSt42vpq/44ijZtJGXAUqP91k9
+         G28J7IsYBIzuqvuOELuLcmNEEIjk0Zx2QcbaC5B3jhDnR2ahfbTHIQ8rqUC+K82GT6Hs
+         AU6U5aAtxZ1bi8y1BPnbn+029O3RtIN3l+3sC4TDpKBB5p3VlZTNxNS+pNsmaHcKc/vw
+         st5krMHq6bVWHfop08gz3duTU7ygT8UxifgAXy62URdcrmWI9t3edPpa6Y/yeU5vLPlQ
+         bt1Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=iA7eFj30FwPY+Y6qxChdK9CcYuJg/yF5Xqwa6oQ7PDQ=;
-        fh=i4J2yuR7K1jUNio+fbfVYDZmBDNu4HAv8uiLBB+KYWs=;
-        b=MnNnpZO2u3cDQzhzPWvgIyaSmTWJxJQYdzN9CuzgPsrhHiD2t0mEpCWOr8h1CfBPnv
-         b2ZbTBQ9eMOfK6Kc5EeUQbGNhG2HeLEUTgU4PCYnr5huQ1GgD6cyVj0zaWKJSopuFUBC
-         8MN3MM2qGcvCW/PCLK2mL92REpH1KUgXRSKs1HZQNPOH5pjxod6DI29w50ocaI/Txuj3
-         OnU9gk/C/rY2xH/dyrtksSbUlc55gzEGZHUAn/VtAcUGGHoPDa+wf8oL0XHRr3hcMyzB
-         XfS6aXXrZGC0C4OKptkANBdGhBY7B/YKMAkAuqmRYaOG697bpaH5hc+Jt43GwV068uYG
-         Zw8w==;
+        bh=Wg+/hg7+nyKZCEjWmGG1RgGiKovcVUPAwnl36vyVNXw=;
+        fh=BqQAaar/mGZEHjp3J7w4goTkETKeGEZkji7m15wRuVk=;
+        b=Nh5DghYaXrBBO/KscoiijEa2msv2d9sq+U2Pl6BzFNE47+gg5mHkUbyj9cvgZ0Rzat
+         ZX+jLzVFDFL2+Due0Cb6YQhG8kxJD6LooJz+1oeAAXolbrgLi+VpP6Pm3O9G2vmZQUKY
+         nWIFU4xo28/NWLpAE/X3N9l0xnQ7yFKNniQ/AbtHKX44MjFwH0etoSeSG8YYekX/PGGx
+         kUA9mfhgDJLFtdo8wUlDgCu+o5TRm9qR9OT5My2uyiBN5le1JvvP9bop46HM4r7JQ0mw
+         1Wk923nAPaDIJUGLqrLwM+/QMSBO9RqDm2pg4bGSs35z3bqkYNNUfZXipqZuHpBrcUv2
+         thUQ==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779876654; x=1780481454; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1779876738; x=1780481538; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iA7eFj30FwPY+Y6qxChdK9CcYuJg/yF5Xqwa6oQ7PDQ=;
-        b=GJp2vse5YsJVaZxxuX7fCeHJIdJTtvCWs6NHSgCw3wbINK1G57plmcnOvU4Riw8koG
-         xXb4LUDkrbZVZxMf0gKXlb+G0fE7BO6rV+E9sKZKxUmcD6L7WMH/XuTWSA/VLkakaaeG
-         eTi3nSRu510vCW4qMitn3zaWuqzIs9N0KjpnS53z8LojQRt8b27yYNqd9hhh5Oq8/zGS
-         3K5L7PQudGgDC7vtPt8144P9loo2GEhTsN3EYJRw7MmWX+4adjrWlmD1eFrpHoKpEOVx
-         QMWaXZn117BqqUnbtF/6ZwY1gobYIqzK4xpuzaz53cit1RXZeMcO53QD7xkhV91opFX9
-         ZypA==
+        bh=Wg+/hg7+nyKZCEjWmGG1RgGiKovcVUPAwnl36vyVNXw=;
+        b=qF/+WQDvehovBfLN/fdTMiOVeDCzPvU2g5K09E8CULiQusXbmdCOg5Vas1wTfTWOyO
+         VKv3Lp8VNz8bcqunlx0DjMytCHNQ2ebGiV8gTGkJ/EEQykom3fWHqpj5XwdkqLXROe73
+         2rBonfqNVQ1gzlC+eqp4a2i3T2KltGx+9EzZHNL9cvAGcNc92sq0bX3tLtuQ0Bl1y9Ly
+         38vsEvDcJcG/lzoqewR98H4/Z2x+xRPZ1gfPmhqk1iRtJpomcZsFANhRurHYu5zlB13S
+         JdGpXVZOUv54NztdpLt6Nd1hXShPrHKw2zQKW+0lyPWJOHllWqFhcaJqAs76vWFwFMQJ
+         iyCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779876654; x=1780481454;
+        d=1e100.net; s=20251104; t=1779876738; x=1780481538;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=iA7eFj30FwPY+Y6qxChdK9CcYuJg/yF5Xqwa6oQ7PDQ=;
-        b=lAAx4gENOgxrn/zHqCKhwp5h8dmgQCufPCnrVCveWLROBIHfB93kYli4cMD+U57rQD
-         duiB/cojIJjcjLOJsyC+cqXjb5NRMOM5zDB3RZSWAbEXTv/OPhG1GO7LeFEmLf17hcvc
-         p0cebrP7/sIum330jNhZxuuR87FC77GMim6BE4uRpB1cvERNS+RqELpYtr6x93/XWZac
-         nWvHE4/6pD9b/bn3B2lkrScCRByy8EMNgnWMSQVHmtnXvEBr6CQ7I5ZpW4FFDB2sJYBq
-         gzerIFDeqg5rqEArfeyICxarVE0la1fj+pXXG/h4kSp3Rczgr+M3hb/oIXZAamcq+PQL
-         7L7w==
-X-Forwarded-Encrypted: i=1; AFNElJ8XcJotuekfZpcYRuHFQbhQwn+OptTikUuAtWouCm+iEJ3BecNsR+ELztcMyP0OHQagWxTjSO9LCm/nvA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYP3ivvnUq4tWVhrA6GCSx9CXeO9rG5ocN0sjkXcDFi5r3muuM
-	M76CKFUyRNOQth6dvQwHYDMNBK9w9G3ySSESdjIjf1y3sVQBgDnZI9wCjtGZDkcpENgh5Ruu09I
-	7jrf8X+7X1smgIa6nzNlDdjmOYk/DCVI=
-X-Gm-Gg: Acq92OFxZDsAqRaBCcd2aOg5UXWxj6Db3UVJbtXDJoS1DzXzZpb7MbdlJzZ0t67ekRJ
-	qe7NGeyPQ6X4QN3RqJtpALY4ukooKvB1r/ZEjNmc1KEBlFdabODKDzL77HtD5SMPzNRsuJA4Kb1
-	A9Z5lz6uJskrfvCMgzIyG5kJXRSTKx6wK5Rwo+pgEtDE0RZOMRssmgDcbEOZUHnGWuFQyGTyRqA
-	9YuMR6IQSZRHidM2SYpvrVoCx5fIvPLOOvljJl4AguWIS2P5q9L2Zod5IX+B6WkIzd+t7OCAikc
-	aL5ThIGe
-X-Received: by 2002:a05:7300:e8ae:b0:304:6ee5:634a with SMTP id
- 5a478bee46e88-3046ee5933dmr7165588eec.1.1779876653501; Wed, 27 May 2026
- 03:10:53 -0700 (PDT)
+        bh=Wg+/hg7+nyKZCEjWmGG1RgGiKovcVUPAwnl36vyVNXw=;
+        b=ZRZFqUYnsCPh9igex9sdQpfY9B7KemNVetx7w2yYE8dZ4cDMyRxdZIQAlGPMg5GhLU
+         vddD2iRUAyFodci/6zVgoILPoljaBLBFU0VEb6LiLK/hlmQXz5yDprQxLpxThJRFcXNM
+         BXKqWHXq+KzzsKHuQdyl14gNqkuCad93qhT8QsJthaBkYXbchntyWOn2kenddypEb7gi
+         SxNehtLbDabWnRtcqI9fmQL4ttuvfXay4R3SJD/fuGybFp/rCvjK92cvLaU0SfXqbIt4
+         Nb8wlCaZKuoOkjUHxmhBvT3aLczQE9gMs4aAEu66StyS3nnjeDw2JelQwTgJgE2Iqjhz
+         qVpw==
+X-Forwarded-Encrypted: i=1; AFNElJ9guPYpXxKSdds6jCK+GTd7yLPSRFt8u7V4GBgAgRO797QK2sw1QIM6PW+/yFbRY+uvucJwW+1pyMd9Kw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGb1Wkwtn77pdil5s14de4G6cu3Ms5bRHlR73GrwVLpj9ZVOA5
+	mUo5l2S/qxL7eU7qnwnyuvj30dkkIz/2pmMxvJ886jA6dtHwsgeYEoxmTKmUJeW9SmS5nxBQK6n
+	HHpWvsAd3u3bpggOGN100pcM0zWwYqds=
+X-Gm-Gg: Acq92OFMKVrRp5LYRe6DyWksd/2u055w3ANj2EB16GkF7PJjWcEHfnjuGCIST0ohIRK
+	Aq9CfTUhE/M247dPxHNstASH7FEUBXkCUC77hpulRMWfmrTctdsQnDfl1z9w6kGcdXTgeXF7ZlY
+	XClegZj4pdpxHT4Zpn8kv/6YHvQ22m+F3SwK9JIci9W6wc+yMPOPSrcjC3Tw3oUgSjPTPxnYvMn
+	04elBEejF6mM+uGU/8yqgIPsS8ciyR0nkFqz0OVDTPOYofsAVEhQmAG3dBm3bV8Xvng7ddXYeI3
+	IQCw9oDcemHVrCsUYPk=
+X-Received: by 2002:a05:7300:8b1f:b0:2e0:1f09:d924 with SMTP id
+ 5a478bee46e88-30448f30884mr10881349eec.5.1779876738394; Wed, 27 May 2026
+ 03:12:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -92,141 +92,137 @@ References: <20260523085102.51000-1-clamor95@gmail.com> <20260523085102.51000-2-
  <CAPVz0n3X8Gw2Yo9VgwhV0uAqvArGXbvmzw=cZVJw=4BEH_E7_w@mail.gmail.com>
  <CAMRc=Mf4W9hoP7FAbxQTNLaG3M9W+GmvQSMECbzzdQLU_+5D4A@mail.gmail.com>
  <80e102be-04c3-4591-8e75-ddf859d3a877@kernel.org> <CAPVz0n3_wueX1yeZ=MDfSMy3UaQa80-nGg1b7ZQuCTneOaQDkQ@mail.gmail.com>
- <CAMRc=Me+o6qo_r3TBUCrhPp1=r-fMq3jaQW1=H91H1mM5LYAnA@mail.gmail.com>
-In-Reply-To: <CAMRc=Me+o6qo_r3TBUCrhPp1=r-fMq3jaQW1=H91H1mM5LYAnA@mail.gmail.com>
+ <0c4fe9b9-3ec6-4988-b579-776cf37585ca@kernel.org>
+In-Reply-To: <0c4fe9b9-3ec6-4988-b579-776cf37585ca@kernel.org>
 From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Wed, 27 May 2026 13:10:41 +0300
-X-Gm-Features: AVHnY4LLttSZN8UY67Go0DyygvbspMSgWMlZ5vFyfsjMlbcLjpdZvBGh1o3fdfs
-Message-ID: <CAPVz0n14vc5NpuoHHX+8HvZ3HWyfELFRr0SYw7NcMmn1LsEttQ@mail.gmail.com>
+Date: Wed, 27 May 2026 13:12:06 +0300
+X-Gm-Features: AVHnY4JVHBTAzYKWqKZ1aNYZfr9MQmwwhT7RAGqWEdq99-uTkLrfBBwZV1kiBT8
+Message-ID: <CAPVz0n0=u_bObb0Nnf8dH6MBbH7T3hY7V01GHnmnt4pCB4WxSw@mail.gmail.com>
 Subject: Re: [PATCH v2 1/2] dt-bindings: soc: tegra: Document Nvidia Tegra
  modem pwrseq
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D1=81=D1=80, 27 =D1=82=D1=80=D0=B0=D0=B2. 2026=E2=80=AF=D1=80. =D0=BE 12:1=
-5 Bartosz Golaszewski <brgl@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+=D1=81=D1=80, 27 =D1=82=D1=80=D0=B0=D0=B2. 2026=E2=80=AF=D1=80. =D0=BE 12:2=
+0 Krzysztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> On Wed, 27 May 2026 11:06:11 +0200, Svyatoslav Ryhel <clamor95@gmail.com>=
- said:
+> On 27/05/2026 11:06, Svyatoslav Ryhel wrote:
 > > =D1=81=D1=80, 27 =D1=82=D1=80=D0=B0=D0=B2. 2026=E2=80=AF=D1=80. =D0=BE =
 11:26 Krzysztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
 > >>
 > >> On 27/05/2026 09:55, Bartosz Golaszewski wrote:
-> >> > On Tue, 26 May 2026 15:41:58 +0200, Svyatoslav Ryhel <clamor95@gmail=
-.com> said:
-> >> >> =D0=B2=D1=82, 26 =D1=82=D1=80=D0=B0=D0=B2. 2026=E2=80=AF=D1=80. =D0=
+> >>> On Tue, 26 May 2026 15:41:58 +0200, Svyatoslav Ryhel <clamor95@gmail.=
+com> said:
+> >>>> =D0=B2=D1=82, 26 =D1=82=D1=80=D0=B0=D0=B2. 2026=E2=80=AF=D1=80. =D0=
 =BE 16:14 Bartosz Golaszewski <brgl@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >> >>>
-> >> >>> On Tue, May 26, 2026 at 2:55=E2=80=AFPM Svyatoslav Ryhel <clamor95=
-@gmail.com> wrote:
-> >> >>>>
-> >> >>>>>>>
-> >> >>>>>>> The node attached to the pwrseq provider device should represe=
-nt a real
-> >> >>>>>>> hardware component. Are the enable-gpios and power-supply line=
-s connected
-> >> >>>>>>> to the modem package?
-> >> >>>>>>
-> >> >>>>>> Yes, enable-gpio is connected to the modem and signals that USB=
- is set
-> >> >>>>>> and ready to work with the modem, while power-supply is an opti=
-onal
-> >> >>>>>> supply connected to the modem's vbus input.
-> >> >>>>>>
-> >> >>>>>
-> >> >>>>> The modem is a hard-wired USB device? Do you implement it as a
-> >> >>>>> platform driver or a USB driver?
-> >> >>>>>
-> >> >>>>
-> >> >>>> It is not a traditional USB device. XMM6260 is an embedded modem =
-used
-> >> >>>> in the Tegra phones, it is linked with the AP using USB line in H=
-SIC
-> >> >>>> mode. The driver is implemented as a platform device since it doe=
-s not
-> >> >>>> interacts with the exposed USB device directly, it just ensures t=
-hat
-> >> >>>> USB device is properly configured and is ready for IPC.
-> >> >>>>
-> >> >>>>> Is there a connector of any kind that could be used as the HW
-> >> >>>>> component represented by the pwrseq device?
-> >> >>>>
-> >> >>>> I assume control over USB line is the HW base, but as I have said=
-, I
-> >> >>>> can integrate binding in the modem node itself, and pwrseq can ge=
-t all
-> >> >>>> it needs from the match. Pwrseq framework states "This framework =
-is
-> >> >>>> designed to abstract complex power-up sequences that are shared
-> >> >>>> between multiple logical devices in the Linux kernel." it does no=
-t say
-> >> >>>> that it must represent some specific hardware.
-> >> >>>>
-> >> >>>
-> >> >>> No, not at all. We just can't make up any imaginary, logical "pwrs=
-eq"
-> >> >>> devices and describe them in DT bindings.
-> >> >>>
-> >> >>
-> >> >> Ye, ye, sure, pwrseq framework is quite flexible and I am not stati=
-ng
-> >> >> this bindings is mandatory.
-> >> >>
-> >> >>>> Using pwrseq allows modem driver to be SoC independent since USB =
-line
-> >> >>>> handling is moved into SoC specific power sequence, and this mode=
-m is
-> >> >>>> used in Exynos and OMAP too with similar setup but they all have
-> >> >>>> different USB controllers. Maybe you can point me where SoC speci=
-fic
-> >> >>>> USB controller handling can be implemented?
-> >> >>>>
-> >> >>>
-> >> >>> I'm not sure I'm following. Can you atrephrase or point me where O=
-MAP
-> >> >>> and Samsung implement it?
-> >> >>>
-> >> >>
-> >> >> They did not.
-> >> >>
-> >> >> The XMM6260 modem is used not only in the Tegra phones but in the O=
-MAP
-> >> >> and Exynos based too. Replicant tried to implement support locally
-> >> >> with midas devices and they had some progress. From what I have see=
-n
-> >> >> generic implementation I am proposing will work with any of those 3
-> >> >> SoCs maybe with some slight tweaks, only part that is totally
-> >> >> different and SoC specific is how USB controller used by the modem =
-is
-> >> >> handled (well and IPC but that is out of scope of this patchset
-> >> >> anyway).
-> >> >>
-> >> >> Obviously, non of the 3 vendors have submitted any mainline patches=
-,
-> >> >> everything is in the downstream forks. I have investigated a bit ho=
-w
-> >> >> this modem works on my Tegra phone and re-implemented it to work wi=
-th
-> >> >> mainline kernel (I don't have Exynos and OMAP devices to play with)=
-. I
-> >> >> have come up with generic platform driver which handles modem
-> >> >> configuration and a SoC specific part which performs USB controller
-> >> >> bind/probe when modem is ready to handle the USB. ATM this SoC
-> >> >> specific part is available and tested only for Tegra devices.
-> >> >>
-> >> >
-> >> > Are you familiar with the PCI pwrctrl code that lives under
-> >> > drivers/pci/pwrctrl/? It seems to be solving a somewhat similar issu=
-e for
-> >> > PCI devices that are hardwired and powered externally. Maybe you cou=
-ld use
-> >> > some of that code for your USB use-case?
+> >>>>>
+> >>>>> On Tue, May 26, 2026 at 2:55=E2=80=AFPM Svyatoslav Ryhel <clamor95@=
+gmail.com> wrote:
+> >>>>>>
+> >>>>>>>>>
+> >>>>>>>>> The node attached to the pwrseq provider device should represen=
+t a real
+> >>>>>>>>> hardware component. Are the enable-gpios and power-supply lines=
+ connected
+> >>>>>>>>> to the modem package?
+> >>>>>>>>
+> >>>>>>>> Yes, enable-gpio is connected to the modem and signals that USB =
+is set
+> >>>>>>>> and ready to work with the modem, while power-supply is an optio=
+nal
+> >>>>>>>> supply connected to the modem's vbus input.
+> >>>>>>>>
+> >>>>>>>
+> >>>>>>> The modem is a hard-wired USB device? Do you implement it as a
+> >>>>>>> platform driver or a USB driver?
+> >>>>>>>
+> >>>>>>
+> >>>>>> It is not a traditional USB device. XMM6260 is an embedded modem u=
+sed
+> >>>>>> in the Tegra phones, it is linked with the AP using USB line in HS=
+IC
+> >>>>>> mode. The driver is implemented as a platform device since it does=
+ not
+> >>>>>> interacts with the exposed USB device directly, it just ensures th=
+at
+> >>>>>> USB device is properly configured and is ready for IPC.
+> >>>>>>
+> >>>>>>> Is there a connector of any kind that could be used as the HW
+> >>>>>>> component represented by the pwrseq device?
+> >>>>>>
+> >>>>>> I assume control over USB line is the HW base, but as I have said,=
+ I
+> >>>>>> can integrate binding in the modem node itself, and pwrseq can get=
+ all
+> >>>>>> it needs from the match. Pwrseq framework states "This framework i=
+s
+> >>>>>> designed to abstract complex power-up sequences that are shared
+> >>>>>> between multiple logical devices in the Linux kernel." it does not=
+ say
+> >>>>>> that it must represent some specific hardware.
+> >>>>>>
+> >>>>>
+> >>>>> No, not at all. We just can't make up any imaginary, logical "pwrse=
+q"
+> >>>>> devices and describe them in DT bindings.
+> >>>>>
+> >>>>
+> >>>> Ye, ye, sure, pwrseq framework is quite flexible and I am not statin=
+g
+> >>>> this bindings is mandatory.
+> >>>>
+> >>>>>> Using pwrseq allows modem driver to be SoC independent since USB l=
+ine
+> >>>>>> handling is moved into SoC specific power sequence, and this modem=
+ is
+> >>>>>> used in Exynos and OMAP too with similar setup but they all have
+> >>>>>> different USB controllers. Maybe you can point me where SoC specif=
+ic
+> >>>>>> USB controller handling can be implemented?
+> >>>>>>
+> >>>>>
+> >>>>> I'm not sure I'm following. Can you atrephrase or point me where OM=
+AP
+> >>>>> and Samsung implement it?
+> >>>>>
+> >>>>
+> >>>> They did not.
+> >>>>
+> >>>> The XMM6260 modem is used not only in the Tegra phones but in the OM=
+AP
+> >>>> and Exynos based too. Replicant tried to implement support locally
+> >>>> with midas devices and they had some progress. From what I have seen
+> >>>> generic implementation I am proposing will work with any of those 3
+> >>>> SoCs maybe with some slight tweaks, only part that is totally
+> >>>> different and SoC specific is how USB controller used by the modem i=
+s
+> >>>> handled (well and IPC but that is out of scope of this patchset
+> >>>> anyway).
+> >>>>
+> >>>> Obviously, non of the 3 vendors have submitted any mainline patches,
+> >>>> everything is in the downstream forks. I have investigated a bit how
+> >>>> this modem works on my Tegra phone and re-implemented it to work wit=
+h
+> >>>> mainline kernel (I don't have Exynos and OMAP devices to play with).=
+ I
+> >>>> have come up with generic platform driver which handles modem
+> >>>> configuration and a SoC specific part which performs USB controller
+> >>>> bind/probe when modem is ready to handle the USB. ATM this SoC
+> >>>> specific part is available and tested only for Tegra devices.
+> >>>>
+> >>>
+> >>> Are you familiar with the PCI pwrctrl code that lives under
+> >>> drivers/pci/pwrctrl/? It seems to be solving a somewhat similar issue=
+ for
+> >>> PCI devices that are hardwired and powered externally. Maybe you coul=
+d use
+> >>> some of that code for your USB use-case?
 > >>
 > >>
 > >> I pointed to PCI already:
@@ -241,39 +237,25 @@ ld use
 > >> Krzysztof
 > >
 > > Krzysztof, why are you so mean? Yes, I misunderstood you and sent this
-> > schema. However, I am not stating or arguing that it must be applied
-> > or whatever. I am just looking for a proper solution to issue I am
-> > currently facing.
-> >
 >
-> Krzysztof reviews hundreds of patches so his fuse is quite short, don't t=
-ake
-> it personally, he's a nice guy in real life. :)
+> Just to recap:
 >
-> > Anyway. That does not matter, what matters is how to organize
-> > everything I have regarding this modem into a logic set. This is why I
-> > am looking for maintainer suggestions.
-> >
-> > How I see it ATM:
-> > - I will remove this schema entirely and add usb-gpio (trigger for
-> > modem that USB is ready), vbus supply (yes, modem has this line too
-> > you can check in the P895 schematic) and infineon,usb-bus which
-> > represents HSIC connection to the modem to the modem schema itself.
-> > Obviously, I will add detailed descriptions of each component.
-> > - I will resent patch 2 of this pwrseq with the modem patchset to have
-> > a bigger picture. Pwrseq will obtain needed data from the modem node
-> > itself (Bartosz Golaszewski are you fine with this?)
+> https://lore.kernel.org/all/CAPVz0n09ZP1i2tasdTvnt8RvjhALvUYjv9u_EGRtnXPO=
+YQtuqQ@mail.gmail.com/
 >
-> As in: the modem driver will be the pwrseq provider? Sure, sounds good.
+> And enormous discussion wasting our time here:
+> https://lore.kernel.org/all/CAPVz0n0u7uhL8_FQFiuB7DrnL++ecbaEKEoV7N2PgTVR=
+BVECkw@mail.gmail.com/
+> because you were pushing your solution. I run out of spare time to
+> handle endless discussions with you because you reject standard comments
+> and expect long discussions with multiple justifications for standard
+> (and documented in writing bindings) DT rules.
+>
+> So here I told you to do like USB and PCI. This patchset is nothing like
+> them.
 >
 
-No, consumer. Modem calls SoC specific pwrseq.
+You are creating an entire database of discussions we had. I am flattered.
 
-> > - I will try to get control over Tegra USB controller in the pwrseq
-> > without need in externally-controlled flag I have proposed for
-> > chipidea driver. I hope my idea will work.
-> >
-> > Will this be acceptable for both of you?
-> >
->
-> Bart
+> Best regards,
+> Krzysztof
