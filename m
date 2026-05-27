@@ -1,198 +1,170 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CFA3DDDD8;
-	Wed, 27 May 2026 08:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0863B9933
+	for <linux-tegra@vger.kernel.org>; Wed, 27 May 2026 08:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779870379; cv=none; b=TMPWUt4Y5Wo/h1atNLEw5BQJ0J7oQjXTfUnkIx9SDxtUS5anBieCc/wc2IUrx9ab+vt7zmcD3k7awNwSp55wGeeUX3ZZdAMXz7Vun9C369XYVNv/6VesGm3ESR/8Ff6q8yeHwScbIkbCL1zFiOqb1A3+vIOodZShKkhGrejB6Lg=
+	t=1779870539; cv=none; b=U4SpytUWTXUiG/xlP7DFWJPCbu9E8SuVtlTBPe9sRXyqfDIn+Dt6yF3Glf1A6ndAPPx7AcagMNYA+vlfd56V0PZ7UQ2UKxEQ0PhcO9XVpxXwGlCUdePN9Q7Ql2Dd/6Abycm6QvDYuGpNwocsfQbfRmVkbIV602a5RpMWKD2RLYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779870379; c=relaxed/simple;
-	bh=wELmMqQMKPQVnQoyqxhvIKJj+l+KjZk34ipwEWiKUZY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ohfOQOa6PoF9gljYicRz83KlbIaVCVpzdZhBjrGH4Hj4YBami/6SJVjYiJNcvFpfZfH1Zt1lsAdzFvRhdgY9EdDTedqCcDM7o31LWF57EgDX6hV9I5KMG76766HwfpJ0owPBrayPUD+mMrO9pEnLptv8ELvfl32MPKFCEMTNcZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hMdiLjrA; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779870539; c=relaxed/simple;
+	bh=dnKKV4k9imrwOYYrkrG7utWup+ZEdJNlE4/zhl36kBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rs/dxGn4cz7xAFX7OD6HdhSkGZMgEj/tpKeQkX6LVqXi8FYPI0b5c8uMOrGki4V/aXLUNQwk1UgNSbeVYbZ+sjM9vXWfffvz5ZtR1lRCPcnkgec/vo5uWCIju5+JjZ5JuGGyLTPAnubrKYmzo7cisl+QxU3usLTtBHLpRwsZUYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hq698nOU; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hMdiLjrA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEFE61F000E9;
-	Wed, 27 May 2026 08:26:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779870378;
-	bh=QbbI6LJ8D/oqI9AUNN1vA+4MeQPnFFzVFq9SdF3C0yw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=hMdiLjrAANXVG9odb/GrV6dfxu/BoflQZOULRmsvCN6Wv2UU7A9LcyuDRrgCt4MLq
-	 gvSjZH9Lsy8H5/iUBtgPui8cy0KUagMyfSq49tz2h1NJvW0s0coN7oSugSKS9DjKEM
-	 bLtrOTiOcexr4W87DD87PclAZ1LrZByrfKnH8Nku+engY7X11mQoCUUoE+nRX6Yp9/
-	 ZXubdI5PongGSKLiOg5QI2XhEAXd8+4y+l+gDy8nCxMD3ibOWCyxDe7kjGeTk1nf8H
-	 4hJUzmBrhEL22sW6WKWBf+WsdQC7xkiqDogRNIIw3XDPQlbZVSpXJ6S1SQwn/vrm1Z
-	 3UKVH2B2zdSsg==
-Message-ID: <80e102be-04c3-4591-8e75-ddf859d3a877@kernel.org>
-Date: Wed, 27 May 2026 10:26:12 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hq698nOU"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-452169ae568so7389638f8f.3
+        for <linux-tegra@vger.kernel.org>; Wed, 27 May 2026 01:28:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1779870536; x=1780475336; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RXP90BLkmwM022fcUvwY7xPlmUwoYsB+/2erQUJ8WqM=;
+        b=Hq698nOUn4wUZTU18JpCC2UeibTPT3RxLM11uHaERs5WIG4PXnTt7IFoKvxGKOfO2s
+         rUIBjxBYd8QjS18JjHhqBAZ9cohwcCNPxgF7tare23DAQX1t8OoVZ21lyFkNBUgbanK1
+         DDHx+Zs5vNTHU+KwTKWgjUXittWyo//W64HFduvlrUMr1OZeFNadh7Wpnz95NLYxKJMy
+         zXGdMkzOhsbzRUZA+W5fmYl5izkAFj7ywlGylCy6e8DqLf2vTcy3crbNN3zlwdsY3pb4
+         1GyadCEIQbENK7HaZjyrj+XxRtLprmxbcePVkAkQE03rml9oT+HvVcKtHXPrZE9SARBX
+         wr4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779870536; x=1780475336;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RXP90BLkmwM022fcUvwY7xPlmUwoYsB+/2erQUJ8WqM=;
+        b=q0xdx34Rvy6gZMUBBKGxfNS7E2Yw/NTPhSK/IM24hkqH4nKIG/qyA00yepF4LRTgkv
+         dibsDetZsdNZ8oZWDaFiBVN9LD1ZotG32RTc16GpdZS0QtzYlNB7DgKZQeLSIA2csF8x
+         BOyxXAaOYsUlIhH2sfgC9XuRMnA089vz1S3MER7OOD+qDVv3fg5gOhNl9e31kto9I6Bb
+         04VI+xHbTFCYBK8iQCG6uFYiltBsb5ofpxxXdl6HGM3FekNLETNyx5L5lhHvlWhWLpdH
+         JlawhszBicuDNeAFWApYgJBWYQZ/k6f8p6AXpqykpW/D/GT5+2xjwsMIKZ15LLFYoqnM
+         nzQw==
+X-Forwarded-Encrypted: i=1; AFNElJ/QJJsPTGLw7XU/gGd7kC0Cx4xlaOY5LjzyFvmBcMN70g2GHlAjkssHYnKR3Q9Vv6Cr2qAlunHT0YDGxA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzlR4+HuaqxuzT0c3pp6cITKutSUN5TCYEFpoHe5tTWK+6wvRU
+	3NihEpJymFkcCrxS2pAlltSQCRZswD5OnwPI3v1TfktsXiBKUylV8qRo
+X-Gm-Gg: Acq92OGHxbaECtDBe11p6r6GzoctUWHIzIaYzr+pvobjcmdh7Hqla5kLvuo77Bb1ubM
+	XjY8w63hBT2Gs94fwMtmI+CrtPrjkCBdXaOWcr+16rK0aIpoNqIoKROJrp93Jxz7VVb3lpDh13R
+	ENtD9JePrdTl+olbFscT1a3HxT6LuGT+xGXxVrb8HldftC++/oIzdet/Dpw8tLaB5dRUsOf8ge6
+	pWEKRedi9gmaoeZP5OrlX5+Powev8oqDdkfNrOonNPu7d+F+KwU7FtkJbiM0nUMpzNXks7cHy6D
+	GhQCUb2jgFkbXa111dGq5+8uE0k5J4b4f3CORHliI27C6mk/1LAyRrgvEgOvU43++LjK5ODPreD
+	XhxClbavQdysWPov1Xiu13l7qR+WeeUQmokrShxlOukfiEmDG+R4VwD0bPdSAD/Ymdpx1SkY9Ol
+	bGBBZeitNd2qV4QBwb08Uv1DQHxKf3GcmqAQO+4QHyJnbRd7d62jaRMT2QBUTvhi2GlRbO8MK2f
+	8A9DU5H/C5SuQ==
+X-Received: by 2002:a05:6000:4b07:b0:43c:cf25:f29a with SMTP id ffacd0b85a97d-45eb3689049mr34779824f8f.8.1779870536122;
+        Wed, 27 May 2026 01:28:56 -0700 (PDT)
+Received: from orome (p200300e41f1bda00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:da00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45edb5c27e7sm4474850f8f.35.2026.05.27.01.28.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 May 2026 01:28:54 -0700 (PDT)
+Date: Wed, 27 May 2026 10:28:51 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Thierry Reding <thierry.reding@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof Wilczy??ski <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
+	Michal Simek <michal.simek@amd.com>, Kevin Xie <kevin.xie@starfivetech.com>, 
+	Aksh Garg <a-garg7@ti.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v5 2/4] PCI: Use standard wait times for PCIe link
+ monitoring
+Message-ID: <ahanoZgDwq3v6x8M@orome>
+References: <20260526-tegra264-pcie-v5-0-84a813b979d7@nvidia.com>
+ <20260526-tegra264-pcie-v5-2-84a813b979d7@nvidia.com>
+ <ahV_r6NJWnmJptT2@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: soc: tegra: Document Nvidia Tegra
- modem pwrseq
-To: Bartosz Golaszewski <brgl@kernel.org>,
- Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20260523085102.51000-1-clamor95@gmail.com>
- <20260523085102.51000-2-clamor95@gmail.com>
- <CAMRc=MfXVwD2u0e115RapnyLzf5JRjWMs=2PSNzMnm0GDd7aaQ@mail.gmail.com>
- <CAPVz0n1G5Yu2X5f+=q90RAbnsWi9psMq-L5tWDMM4JRC4R_mPg@mail.gmail.com>
- <CAMRc=Me4G-YqKoFan3epofXk2OWzxY1iPE1mP=uwEjs9wgA6Cw@mail.gmail.com>
- <CAPVz0n2P-zB1_uetZN9pVcQChK+FkdQowbF4Z0YZOBQBsB76WQ@mail.gmail.com>
- <CAMRc=MfAAE4UtnW4S1=pY+2yvS6Hsd-U9+uveUFtPGoJPrv6aA@mail.gmail.com>
- <CAPVz0n2COsDL+fNBAuKr1ty_AVe9sK5yNJithkXex6GNa1T_Tw@mail.gmail.com>
- <CAMRc=Mc9g=yezRtAtRMzh7t-pSoyoKQEtxrb5U0oeFAbcjb6Ew@mail.gmail.com>
- <CAPVz0n3X8Gw2Yo9VgwhV0uAqvArGXbvmzw=cZVJw=4BEH_E7_w@mail.gmail.com>
- <CAMRc=Mf4W9hoP7FAbxQTNLaG3M9W+GmvQSMECbzzdQLU_+5D4A@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CAMRc=Mf4W9hoP7FAbxQTNLaG3M9W+GmvQSMECbzzdQLU_+5D4A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-On 27/05/2026 09:55, Bartosz Golaszewski wrote:
-> On Tue, 26 May 2026 15:41:58 +0200, Svyatoslav Ryhel <clamor95@gmail.com> said:
->> вт, 26 трав. 2026 р. о 16:14 Bartosz Golaszewski <brgl@kernel.org> пише:
->>>
->>> On Tue, May 26, 2026 at 2:55 PM Svyatoslav Ryhel <clamor95@gmail.com> wrote:
->>>>
->>>>>>>
->>>>>>> The node attached to the pwrseq provider device should represent a real
->>>>>>> hardware component. Are the enable-gpios and power-supply lines connected
->>>>>>> to the modem package?
->>>>>>
->>>>>> Yes, enable-gpio is connected to the modem and signals that USB is set
->>>>>> and ready to work with the modem, while power-supply is an optional
->>>>>> supply connected to the modem's vbus input.
->>>>>>
->>>>>
->>>>> The modem is a hard-wired USB device? Do you implement it as a
->>>>> platform driver or a USB driver?
->>>>>
->>>>
->>>> It is not a traditional USB device. XMM6260 is an embedded modem used
->>>> in the Tegra phones, it is linked with the AP using USB line in HSIC
->>>> mode. The driver is implemented as a platform device since it does not
->>>> interacts with the exposed USB device directly, it just ensures that
->>>> USB device is properly configured and is ready for IPC.
->>>>
->>>>> Is there a connector of any kind that could be used as the HW
->>>>> component represented by the pwrseq device?
->>>>
->>>> I assume control over USB line is the HW base, but as I have said, I
->>>> can integrate binding in the modem node itself, and pwrseq can get all
->>>> it needs from the match. Pwrseq framework states "This framework is
->>>> designed to abstract complex power-up sequences that are shared
->>>> between multiple logical devices in the Linux kernel." it does not say
->>>> that it must represent some specific hardware.
->>>>
->>>
->>> No, not at all. We just can't make up any imaginary, logical "pwrseq"
->>> devices and describe them in DT bindings.
->>>
->>
->> Ye, ye, sure, pwrseq framework is quite flexible and I am not stating
->> this bindings is mandatory.
->>
->>>> Using pwrseq allows modem driver to be SoC independent since USB line
->>>> handling is moved into SoC specific power sequence, and this modem is
->>>> used in Exynos and OMAP too with similar setup but they all have
->>>> different USB controllers. Maybe you can point me where SoC specific
->>>> USB controller handling can be implemented?
->>>>
->>>
->>> I'm not sure I'm following. Can you atrephrase or point me where OMAP
->>> and Samsung implement it?
->>>
->>
->> They did not.
->>
->> The XMM6260 modem is used not only in the Tegra phones but in the OMAP
->> and Exynos based too. Replicant tried to implement support locally
->> with midas devices and they had some progress. From what I have seen
->> generic implementation I am proposing will work with any of those 3
->> SoCs maybe with some slight tweaks, only part that is totally
->> different and SoC specific is how USB controller used by the modem is
->> handled (well and IPC but that is out of scope of this patchset
->> anyway).
->>
->> Obviously, non of the 3 vendors have submitted any mainline patches,
->> everything is in the downstream forks. I have investigated a bit how
->> this modem works on my Tegra phone and re-implemented it to work with
->> mainline kernel (I don't have Exynos and OMAP devices to play with). I
->> have come up with generic platform driver which handles modem
->> configuration and a SoC specific part which performs USB controller
->> bind/probe when modem is ready to handle the USB. ATM this SoC
->> specific part is available and tested only for Tegra devices.
->>
-> 
-> Are you familiar with the PCI pwrctrl code that lives under
-> drivers/pci/pwrctrl/? It seems to be solving a somewhat similar issue for
-> PCI devices that are hardwired and powered externally. Maybe you could use
-> some of that code for your USB use-case?
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="y57fabq4zbjqmwuy"
+Content-Disposition: inline
+In-Reply-To: <ahV_r6NJWnmJptT2@wunner.de>
 
 
-I pointed to PCI already:
-https://lore.kernel.org/lkml/20260518-mustard-rabbit-of-ecstasy-eed3b6@quoll/
+--y57fabq4zbjqmwuy
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 2/4] PCI: Use standard wait times for PCIe link
+ monitoring
+MIME-Version: 1.0
 
-And emphasized to describe hardware, not drivers. This binding AGAIN
-describes drivers, so we did not move forward at all.
+On Tue, May 26, 2026 at 01:10:39PM +0200, Lukas Wunner wrote:
+> On Tue, May 26, 2026 at 10:53:11AM +0200, Thierry Reding wrote:
+> > Instead of defining the wait values for each driver, use common values
+> > defined in the core pci.h header file. Note that most drivers don't use
+> > the millisecond waits, but rather usleep_range(), so add these commonly
+> > used values to the header so that all drivers can use them.
+>=20
+> Hm, why not just replace usleep_range() with msleep() and use the existing
+> macro instead of defining new ones?
 
+I'm trying to somewhat unify the implementations across drivers without
+changing behaviour. I don't have a way of testing any of these drivers,
+so keeping the existing implementation and just switching out the symbol
+seemed like a good compromise.
 
-Best regards,
-Krzysztof
+> > +++ b/drivers/pci/pci.h
+> > @@ -63,6 +63,8 @@ struct pcie_tlp_log;
+> >  /* Parameters for the waiting for link up routine */
+> >  #define PCIE_LINK_WAIT_MAX_RETRIES	10
+> >  #define PCIE_LINK_WAIT_SLEEP_MS		90
+> > +#define PCIE_LINK_WAIT_US_MIN		90000
+> > +#define PCIE_LINK_WAIT_US_MAX		100000
+>=20
+> If you absolutely positively want to add a new macro, consider
+> 90 * USEC_PER_MSEC instead of 90000.
+
+That seems rather useless to me. We have a _US infix in those symbolic
+names, so it's obvious what the unit is, so nobody should be confused as
+to the purpose of these. I suppose if you want to make sure it
+correlates to the SLEEP_MS variant we could maybe do:
+
+  #define PCIE_LINK_WAIT_US_MIN (PCIE_LINK_WAIT_SLEEP_MS * USEC_PER_MSEC)
+
+Then again, I count 2 drivers (in linux-next) that use the existing
+PCIE_LINK_WAIT_SLEEP_MS, one of which multiplies by MILLI to get at the
+US version (so it could easily be converted to the US_MIN version). Only
+pcie-designware.c uses msleep() with PCIE_LINK_WAIT_SLEEP_MS, so it is
+clearly the outlier.
+
+Maybe I should just go all the way and drop the SLEEP_MS symbol and
+replace usage by the US versions?
+
+> Moreover, consider using fsleep() instead of adding an additional MAX
+> macro.
+
+This would then be changing behaviour again for all the drivers.
+
+Thierry
+
+--y57fabq4zbjqmwuy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoWq0EACgkQ3SOs138+
+s6HatRAAg8da90RqnHjyUFhXOqP7Cjo9/fYMdwG9qKAW71wcGfZM2pK1xmC/LV0g
+MIyhmSbMyevnALrOnbkobpjgl5QbrSNXE2CqxEKR49UlV0o2lATFB+EJlmtPiSN3
+7Q464BWjHaibyl6UU5/FV9VDV0pJK5JQfH/x6I+G27E+XQqzMerQeYuq/Gl3ZLQf
+1VZqhztZQ7U/GQBX2g+8FO06udWT0JDk5eNXwrqjg11zIG1C5rXkam1kmgXKYB4w
+YDg5TN7DAqnWeSyE0j6DYVXNImRv3X+MvVW5fH09eJ5yE5m8KXdr26kDKTQ+n931
+TTuyEB+mDL+FjI8JRMSU7nHPs3T16m4CtADOSx5UItd3EnHi/gIJMkmsbdo7P5yq
+LNYGdCameYwMq2r7NO65c9R6H7ARCA81z8frzhj8cT9LyNmwwpLwPnc77oBArl/o
+DsdZknA8CG5mHmZOvtcQkTfrdKTJQVolANFj8ARi1pg5p30uGNORSnDrsHSyCygR
+8oZSWZr5pKs+aYMYk5c2HgNUQ2IHgEaFkTjdBVpOCTzTXX665DNQH+vANxV91jmx
+oM5yyVFbEhPq2SdXpSuXAhDqjqLFWckgdB2NFdQ+A0qvjkUzyHqNsYBirxrtU4Cn
+DGjDBzWzYCnn4KcL8eLVcYxybJBsBD+JwfOUv/k3QCFRDwtoqt8=
+=BbZl
+-----END PGP SIGNATURE-----
+
+--y57fabq4zbjqmwuy--
