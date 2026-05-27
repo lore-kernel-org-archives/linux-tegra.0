@@ -1,126 +1,160 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19593D1A99
-	for <linux-tegra@vger.kernel.org>; Tue, 26 May 2026 17:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F373CD8AD
+	for <linux-tegra@vger.kernel.org>; Wed, 27 May 2026 07:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779816810; cv=none; b=BrkLZilNISgprJeY+NJBtJp2fMeXI1AAs0fRDPraNWkKr3fE12K36YqIZ0GlreqFQUAjabwAt0epUX52wsaSxhSlwQYlHrvFC9HHf9xnxfzd85MZG0foUti2JcoTgQLIRsxMQeDBAlYnDMu/Y0vfiZ62WKeAjQvHE/t++lvkWSc=
+	t=1779868506; cv=none; b=cqeK2DwIPT1RgwE3thRuKAYeFAJzY73q1Z9TLVRTpsPjdT5J9mR7eo/Mn7yW8YCYIcdhS3EVi6s8kwPJK7Tp+N6Q/6t/AIIWSeTcOcl7dNdMlZptLeewAGXrS356Tq9VdMOgUcLIE0C6hsHV1GZeb9UKyPF4OpyvzJbkIKkJroQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779816810; c=relaxed/simple;
-	bh=LW6TETeHjL+fglhVxCHaKVxVSS3JRAg/Qi2e9zqaEzg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hmBM8LdlJCU1S9ALwGPXe4m8NOXJwlOgoJgK2DskeY2HB1BLIHYWZ5NE36itpNzh85jF8dowfnBfwOh6xwWIU1m00dYunrR+zgTvrfU/jh1Annp/ZM40v5UiwgPREAz9rplpLdR7xTvaeGTvQjFulUoS2X9nMYUtrky4TqA5Pgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a1wX8yio; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=sBn7yYTF; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1779868506; c=relaxed/simple;
+	bh=TinoBZ5FTOzSVqA4vf8A548fMG5R5EFZFN4mybwiaj8=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Msg7Bd84GoNLpK4jZBxDlOMslR2g+E/e+JMQWAV6ILiVMUhJqpvfYGW6QP6pyj6UlhvqczEoeP45xRP5UroYGWNteaP2h96FB6ypZLdvpPZIJQc9YN9GTydgpHD4EFN6m4Yd90RtpbRjL1OpufyJuPxpqU4vaKVINtzRf6Gc5rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBpZwvnt; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a1wX8yio";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="sBn7yYTF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1779816808;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HrMGWUD7bN1xTbHsv/rQIrdvT4St0f/kcy/BRJit+uc=;
-	b=a1wX8yio+rD9N0jwj2NJY1fPB0y/MssOzfWOBP6P8iXhrcZF4TgWr8hlmo6E9BFg5Fmk6N
-	cUlZVfjXrrKPWNFiURVtOf6bDAsY4zDVeZ4VqPFAZ+aNwtaX+ixZ6wVx814EUSjF30hup0
-	FCNYaRKFLo+ul+Pfer9zr9sKKHIoSrA=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-391-GXECVYyqNI2-JjMSLgse-g-1; Tue, 26 May 2026 13:33:25 -0400
-X-MC-Unique: GXECVYyqNI2-JjMSLgse-g-1
-X-Mimecast-MFC-AGG-ID: GXECVYyqNI2-JjMSLgse-g_1779816805
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-516d09e77e6so106140581cf.3
-        for <linux-tegra@vger.kernel.org>; Tue, 26 May 2026 10:33:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1779816805; x=1780421605; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HrMGWUD7bN1xTbHsv/rQIrdvT4St0f/kcy/BRJit+uc=;
-        b=sBn7yYTFoxfR1S3/kQkIjKca7GuBFHfYGFycKNfzFvJ3Qogc0ECHeRzXbKWaTp8vo4
-         y/R+klz1z+7gQxS62/H6jRsgmKKaYJMeVVcpjH0A8RPNdEMkai2qyPTDfP0kIWOX9QMp
-         /Dwgv7f6UH3fU/ffO6pwjurBZjPtuJnWPer6kN/tFeV7sGNpgKcR+xrclysZN+IzK5S5
-         OHwMba3wiFSGoCvgDyYMonbPrN4UVYphUADF62F/qWxqTivcdyn57+vvx2V60Mrqsszu
-         81t7BmL/XsdtoEV4rd8vcCCD8dABdrIhG4RqiDd+M+Iobj0978Gr7UO6BXrWaaebNgAw
-         C2uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779816805; x=1780421605;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=HrMGWUD7bN1xTbHsv/rQIrdvT4St0f/kcy/BRJit+uc=;
-        b=Yh4H0kM14zQDFAm2JJWDqcZy48Jf/pVurfLWPL7JetBqKytISdnT4UHLuPORGTp9ML
-         b82Sg4cM5T+8ylU5zbIJJWujJSi+R9md4ojdURbXvGY73vm+p6dJJoKkeGSy4CxwCf7y
-         nIbgv6B1jN9YkexGkTVbHoWmhH+bCaTnyz278+t1ISHhko868RlxBgwjJjMO7eoC0CyF
-         MnWsIVlAH8YK3rpGb0j4VekSAQkmeExZEPmdOKKbsVnD3q+KvOgmZWLl7sYK+mDkCXNC
-         rD+chXiNqofjhZKW8zH91QqOX0iuPCopm/xHsx1QkFBlBHKT6Yp1yXTsg7Aqw/bp3T6G
-         m9DQ==
-X-Forwarded-Encrypted: i=1; AFNElJ+xRtzB59PacdgIFOWoxBXvYufd4/TFblNasdYk6pQFdBO9mlBdzuoMYFmhmu52daw5KtLIFvvo4tWzHw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVZYIjWbFj/mD+4Roxltizx15+vEnm5fLc5imjKeS8fv+ytQC4
-	DAv5dd55vnNGG604ryLlsGlx67k+4uZGpcfTw57i2CutddBkXSelJm3+CFpBi6/Y1Obh16UBBCE
-	geh5KNvRmFsOhOCIey4ArpXrdA0Rcc/tOm/AKFy3S0CbpphTuA48jbxlOcoCW4B5Y
-X-Gm-Gg: Acq92OEZrXEs1MjiLFeKe2NAU2ERXpo9B95VWO8+cW6WosMWKXoJYavk12YBjQCDg1U
-	mpMdo9TJLb7yNop+oj701z4FEk1cNkRxTyyfmpzTgg5R4JNYVZL36wSb379G+Yci/sa9bNzjP/r
-	G5HQAPbfZ31x4cjJvhranSNLLDDQIpp1A/fkU3K61RI5mJ6zTsbIFu3SeSPIzm0Ne7y7bonpaqn
-	BAGUAkFLpMnpOMl6MmRKnl5M9z/enUagRKK2jKAYHXI0PcsZsF0F3Fc4HvDT6TePXiHc+MUDjOE
-	aDX554h9BeHGzQ1MgoxQVslHdYZgep4Ln6HQjDGNGyHeOqjwuFl0kRuRKc7WLbCn7TbqiPZ219W
-	Wul1wvTIcMVzBb68V3Ng8mjmf8ncwtTuM8ftsp9P2eBbKvQY+o6d510nM
-X-Received: by 2002:a05:622a:1493:b0:516:e7ca:bcdf with SMTP id d75a77b69052e-516e7cad800mr171439861cf.31.1779816804941;
-        Tue, 26 May 2026 10:33:24 -0700 (PDT)
-X-Received: by 2002:a05:622a:1493:b0:516:e7ca:bcdf with SMTP id d75a77b69052e-516e7cad800mr171439071cf.31.1779816804332;
-        Tue, 26 May 2026 10:33:24 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8cc80ded529sm147182776d6.16.2026.05.26.10.33.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 May 2026 10:33:23 -0700 (PDT)
-Date: Tue, 26 May 2026 13:33:22 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: "Alexander A. Klimov" <grandmaster@al2klimov.de>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: tegra: tegra124-emc: fix krealloc() memory leak
-Message-ID: <ahXZYtZM3KrF3hgn@redhat.com>
-References: <20260526061321.6123-1-grandmaster@al2klimov.de>
- <20260526061321.6123-2-grandmaster@al2klimov.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBpZwvnt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CE601F00A3A
+	for <linux-tegra@vger.kernel.org>; Wed, 27 May 2026 07:55:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1779868505;
+	bh=TinoBZ5FTOzSVqA4vf8A548fMG5R5EFZFN4mybwiaj8=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=IBpZwvntlzDZda5S4ksMbHKk2oECsb3PmTK1002SfoskyX2IaGDrlwyNicf7twiy/
+	 TK+M3L+mk9MRFC/Cuom5GYjinqb9hF7vzwHDWDPXU4HhqxF3FBy5d+t3tgxL4Ws+Bl
+	 NXbDjk7BhkBXWWpJkMUU1d4tj6GG6jDrnh5Bdr9W97j7izkMSc/gPRA5Hgu4aNAK4/
+	 eC9AoIQjuCs+or2mtlGky4+0qkUpch6bFzIO81ugnf/cnLShR5ioHlxF7kC/OqE7V/
+	 4xEG31dRTE1jsqZKoJXanDzEnGM9wjvoXL9chy/WD5h5ZeWVIC5bCZjONx5DNo6TK3
+	 q0VS622CGc7BA==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5aa4a628ab0so557538e87.2
+        for <linux-tegra@vger.kernel.org>; Wed, 27 May 2026 00:55:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ8EcW0oTPWF0Vv5p8uGoWYMunxJUdmC5Cx8EpEPY1g72ph3tBmx7MIZmq9p47xSaL3QRl4KADWzh5QZdA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyP+7nMw4tvFa9QoWcRrw64FkyMO77OYVhSwFKjO1euEMVgBk6
+	k85HtT4Dfhc/puJo8iVpv92bI8sMuXrBnIZR8NbDcEo3UmBQd7KbAVrP7eHfOTArRUdAToQy56k
+	g2wvlHVv6f39kPOIctbxs9hu8ingjBLfX9Y9E+tvHRQ==
+X-Received: by 2002:a05:6512:1595:b0:5aa:116d:ae0b with SMTP id
+ 2adb3069b0e04-5aa3232a168mr6419026e87.16.1779868503859; Wed, 27 May 2026
+ 00:55:03 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 27 May 2026 03:55:02 -0400
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 27 May 2026 03:55:01 -0400
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <CAPVz0n3X8Gw2Yo9VgwhV0uAqvArGXbvmzw=cZVJw=4BEH_E7_w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260526061321.6123-2-grandmaster@al2klimov.de>
-User-Agent: Mutt/2.3.1 (2026-03-20)
+References: <20260523085102.51000-1-clamor95@gmail.com> <20260523085102.51000-2-clamor95@gmail.com>
+ <CAMRc=MfXVwD2u0e115RapnyLzf5JRjWMs=2PSNzMnm0GDd7aaQ@mail.gmail.com>
+ <CAPVz0n1G5Yu2X5f+=q90RAbnsWi9psMq-L5tWDMM4JRC4R_mPg@mail.gmail.com>
+ <CAMRc=Me4G-YqKoFan3epofXk2OWzxY1iPE1mP=uwEjs9wgA6Cw@mail.gmail.com>
+ <CAPVz0n2P-zB1_uetZN9pVcQChK+FkdQowbF4Z0YZOBQBsB76WQ@mail.gmail.com>
+ <CAMRc=MfAAE4UtnW4S1=pY+2yvS6Hsd-U9+uveUFtPGoJPrv6aA@mail.gmail.com>
+ <CAPVz0n2COsDL+fNBAuKr1ty_AVe9sK5yNJithkXex6GNa1T_Tw@mail.gmail.com>
+ <CAMRc=Mc9g=yezRtAtRMzh7t-pSoyoKQEtxrb5U0oeFAbcjb6Ew@mail.gmail.com> <CAPVz0n3X8Gw2Yo9VgwhV0uAqvArGXbvmzw=cZVJw=4BEH_E7_w@mail.gmail.com>
+Date: Wed, 27 May 2026 03:55:01 -0400
+X-Gmail-Original-Message-ID: <CAMRc=Mf4W9hoP7FAbxQTNLaG3M9W+GmvQSMECbzzdQLU_+5D4A@mail.gmail.com>
+X-Gm-Features: AVHnY4Lt6npNCIf-HQwre2EThWE1lIb8ewUMXlF5zYGKxytOXdvRZmQqD1cgohY
+Message-ID: <CAMRc=Mf4W9hoP7FAbxQTNLaG3M9W+GmvQSMECbzzdQLU_+5D4A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: soc: tegra: Document Nvidia Tegra
+ modem pwrseq
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 26, 2026 at 08:13:13AM +0200, Alexander A. Klimov wrote:
-> Don't just overwrite the original pointer passed to krealloc()
-> with its return value without checking latter:
-> 
->     MEM = krealloc(MEM, SZ, GFP);
-> 
-> If krealloc() returns NULL, that erases the pointer
-> to the still allocated memory, hence leaks this memory.
-> Instead, use a temporary variable, check it's not NULL
-> and only then assign it to the original pointer:
-> 
->     TMP = krealloc(MEM, SZ, GFP);
->     if (!TMP) return;
->     MEM = TMP;
-> 
-> Fixes: 888ca40e2843 ("clk: tegra: emc: Support multiple RAM codes")
-> Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
+On Tue, 26 May 2026 15:41:58 +0200, Svyatoslav Ryhel <clamor95@gmail.com> s=
+aid:
+> =D0=B2=D1=82, 26 =D1=82=D1=80=D0=B0=D0=B2. 2026=E2=80=AF=D1=80. =D0=BE 16=
+:14 Bartosz Golaszewski <brgl@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>>
+>> On Tue, May 26, 2026 at 2:55=E2=80=AFPM Svyatoslav Ryhel <clamor95@gmail=
+.com> wrote:
+>> >
+>> > > > >
+>> > > > > The node attached to the pwrseq provider device should represent=
+ a real
+>> > > > > hardware component. Are the enable-gpios and power-supply lines =
+connected
+>> > > > > to the modem package?
+>> > > >
+>> > > > Yes, enable-gpio is connected to the modem and signals that USB is=
+ set
+>> > > > and ready to work with the modem, while power-supply is an optiona=
+l
+>> > > > supply connected to the modem's vbus input.
+>> > > >
+>> > >
+>> > > The modem is a hard-wired USB device? Do you implement it as a
+>> > > platform driver or a USB driver?
+>> > >
+>> >
+>> > It is not a traditional USB device. XMM6260 is an embedded modem used
+>> > in the Tegra phones, it is linked with the AP using USB line in HSIC
+>> > mode. The driver is implemented as a platform device since it does not
+>> > interacts with the exposed USB device directly, it just ensures that
+>> > USB device is properly configured and is ready for IPC.
+>> >
+>> > > Is there a connector of any kind that could be used as the HW
+>> > > component represented by the pwrseq device?
+>> >
+>> > I assume control over USB line is the HW base, but as I have said, I
+>> > can integrate binding in the modem node itself, and pwrseq can get all
+>> > it needs from the match. Pwrseq framework states "This framework is
+>> > designed to abstract complex power-up sequences that are shared
+>> > between multiple logical devices in the Linux kernel." it does not say
+>> > that it must represent some specific hardware.
+>> >
+>>
+>> No, not at all. We just can't make up any imaginary, logical "pwrseq"
+>> devices and describe them in DT bindings.
+>>
+>
+> Ye, ye, sure, pwrseq framework is quite flexible and I am not stating
+> this bindings is mandatory.
+>
+>> > Using pwrseq allows modem driver to be SoC independent since USB line
+>> > handling is moved into SoC specific power sequence, and this modem is
+>> > used in Exynos and OMAP too with similar setup but they all have
+>> > different USB controllers. Maybe you can point me where SoC specific
+>> > USB controller handling can be implemented?
+>> >
+>>
+>> I'm not sure I'm following. Can you rephrase or point me where OMAP
+>> and Samsung implement it?
+>>
+>
+> They did not.
+>
+> The XMM6260 modem is used not only in the Tegra phones but in the OMAP
+> and Exynos based too. Replicant tried to implement support locally
+> with midas devices and they had some progress. From what I have seen
+> generic implementation I am proposing will work with any of those 3
+> SoCs maybe with some slight tweaks, only part that is totally
+> different and SoC specific is how USB controller used by the modem is
+> handled (well and IPC but that is out of scope of this patchset
+> anyway).
+>
+> Obviously, non of the 3 vendors have submitted any mainline patches,
+> everything is in the downstream forks. I have investigated a bit how
+> this modem works on my Tegra phone and re-implemented it to work with
+> mainline kernel (I don't have Exynos and OMAP devices to play with). I
+> have come up with generic platform driver which handles modem
+> configuration and a SoC specific part which performs USB controller
+> bind/probe when modem is ready to handle the USB. ATM this SoC
+> specific part is available and tested only for Tegra devices.
+>
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+Are you familiar with the PCI pwrctrl code that lives under
+drivers/pci/pwrctrl/? It seems to be solving a somewhat similar issue for
+PCI devices that are hardwired and powered externally. Maybe you could use
+some of that code for your USB use-case?
 
+Bartosz
