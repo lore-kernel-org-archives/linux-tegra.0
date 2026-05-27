@@ -1,67 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mailout2.hostsharing.net (mailout2.hostsharing.net [83.223.78.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E99C15C14F;
-	Wed, 27 May 2026 14:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB2A175A77;
+	Wed, 27 May 2026 17:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779893566; cv=none; b=I8Qs7v1nfixF9+/Vx7zj06xprVlyeEYCyQ5D1p8UY1NnnhrzqgtOItWtVCvy3fUOtPge/YJNv2tXPSsbeuWxOBEwuFidzS1itRKDXnSCDwhp6bp6IL2qyK/GeLg6WGDwZxquhnAmK2rQwhvVi5RkvUIht192J3iCp/85k2FUja0=
+	t=1779902588; cv=none; b=gUrC1yjwHe6fA5138Bs/OsowmtPsR1wLuKviN5qMtDv0oX3JeURg4BLdB671k5mTPcUDV2ECfTkRY6eYCewBd8IsbOaREyqB6scn2tvGZI2YnkDMjsHnNXvOcgOSRTflAnUL189ykZpsZJMfR1kS7uytvN5Gi3ja6EOgs1matXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779893566; c=relaxed/simple;
-	bh=rtPvwG+3fqUaMtOFIQdLaUBsXIAC/LKVB6/JUSUbv3Q=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kCjWxiQeMFYlwJz6KEHNndPoNJ0tob4D36D1GUWmbYRuJ5rTfhZ1Rr6EJZg+BujT33Oev2+3w1NtQQG9PptNrdYEZGelXGXLAs8lYyib4ujaU687+5ypMZI0Cg/OpOGiKX3jXi0ltKoX4o8g3ccNrxp+fKlm+fMSYjM+IFEw2aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NwnH5VWc; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NwnH5VWc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFCAC1F000E9;
-	Wed, 27 May 2026 14:52:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779893565;
-	bh=+t/0qagdb5R8yEIz4yhU//H49+ALK22ZyYomfGIvc/o=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=NwnH5VWcRm24TTVZFTnEEr5PhrLkIKE/gVp0kUaPb6eXhGweV9MY6qd70jZKrjEMu
-	 v8n3iyiN7pGHBRH+GIg2lQmow4pGNYyOgaJcUkT/ksh/NonFSvvvDwM71fsTFLdIfz
-	 +JxbnGScnPTXvVMQ+zG3U8LagJ4V5HBE7s3Pw3nq2on0ivLuC/w+0bSGCpAtNkGIsC
-	 jQ0CJPg4scf8bVbx6n+c3ceE2rg1fugUbXhx2nf4vKId+k2cjFDsKcwscrQo33nVDC
-	 G4dNS/KWrZ0TxoPpRWs7z3fPrhdbShbgoVMaNbjY1wxxjjBetFSPdGNnMVMIlNByPY
-	 GWUjS4ZUhbHww==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: treding@nvidia.com, jonathanh@nvidia.com, robh@kernel.org, 
- conor+dt@kernel.org, linux-kernel@vger.kernel.org, 
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, 
- Sumit Gupta <sumitg@nvidia.com>
-Cc: bbasu@nvidia.com
-In-Reply-To: <20260518124306.2071481-1-sumitg@nvidia.com>
-References: <20260518124306.2071481-1-sumitg@nvidia.com>
-Subject: Re: [PATCH v2 0/3] memory: tegra264: Add full set of MC clients
-Message-Id: <177989356257.30733.13162342811130693491.b4-ty@b4>
-Date: Wed, 27 May 2026 16:52:42 +0200
+	s=arc-20240116; t=1779902588; c=relaxed/simple;
+	bh=EG+edTsXg11LXb/S00DjCVoO4co/7ZDo+mROtcbOsIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YHkBQoRM+8dNT56Nh/XHLvGtX751PgHjCBKs5ClkmweizALjw1+bMovqx1OlFRqN82r1b1Zhx9R/UufJuT7fMtoXhPr2/w8GX2i0ANKaHzyKL6L3HBHgbRaaPHK7R0YKywD686DRwnCl6NcVi4DGigm1RrzNhx3Lwxg2FIDgBus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=pass smtp.mailfrom=wunner.de; arc=none smtp.client-ip=83.223.78.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wunner.de
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384
+	 client-signature ECDSA (secp384r1) client-digest SHA384)
+	(Client CN "*.hostsharing.net", Issuer "GlobalSign GCC R6 AlphaSSL CA 2025" (verified OK))
+	by mailout2.hostsharing.net (Postfix) with ESMTPS id 0D13B10DF9;
+	Wed, 27 May 2026 19:22:56 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id F2D18610672A; Wed, 27 May 2026 19:22:55 +0200 (CEST)
+Date: Wed, 27 May 2026 19:22:55 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Thierry Reding <thierry.reding@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczy??ski <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
+	Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Kevin Xie <kevin.xie@starfivetech.com>, Aksh Garg <a-garg7@ti.com>,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH v5 2/4] PCI: Use standard wait times for PCIe link
+ monitoring
+Message-ID: <ahcob7HMbyGvFgxc@wunner.de>
+References: <20260526-tegra264-pcie-v5-0-84a813b979d7@nvidia.com>
+ <20260526-tegra264-pcie-v5-2-84a813b979d7@nvidia.com>
+ <ahV_r6NJWnmJptT2@wunner.de>
+ <ahanoZgDwq3v6x8M@orome>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ahanoZgDwq3v6x8M@orome>
 
+On Wed, May 27, 2026 at 10:28:51AM +0200, Thierry Reding wrote:
+> On Tue, May 26, 2026 at 01:10:39PM +0200, Lukas Wunner wrote:
+> > On Tue, May 26, 2026 at 10:53:11AM +0200, Thierry Reding wrote:
+> > > Instead of defining the wait values for each driver, use common values
+> > > defined in the core pci.h header file. Note that most drivers don't use
+> > > the millisecond waits, but rather usleep_range(), so add these commonly
+> > > used values to the header so that all drivers can use them.
+> > 
+> > Hm, why not just replace usleep_range() with msleep() and use the existing
+> > macro instead of defining new ones?
+> 
+> I'm trying to somewhat unify the implementations across drivers without
+> changing behaviour. I don't have a way of testing any of these drivers,
+> so keeping the existing implementation and just switching out the symbol
+> seemed like a good compromise.
 
-On Mon, 18 May 2026 18:13:03 +0530, Sumit Gupta wrote:
-> Extend the Tegra264 MC dt-bindings header and tegra264_mc_clients[]
-> table to cover the full set of memory clients exposed by the SoC.
+It looks like the code was copy-pasted from one driver to the next
+and I applaud every effort to deduplicate, unify and simplify things.
 
-Applied, thanks!
+I don't quite see how using msleep() instead of usleep_range()
+should result in breakage.  The drivers are just polling for
+link up for an amount of time and as long as you're not decreasing
+that amount, everything ought to be fine.  Moving to msleep()
+should never decrease the amount.
 
-[1/3] memory: tegra264: Skip clients without bpmp_id or type
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/c3ce114d81e39cd83f7bf9c5c46020bb7695b017
-[2/3] dt-bindings: memory: tegra264: Add full set of MC client IDs
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/16868fd4b7ecf241b74123e1bb23fd08d05a2e09
-[3/3] memory: tegra264: Add full set of MC clients
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/d530ed059dac445dc5b81d564adf1952b5c4adba
+> Then again, I count 2 drivers (in linux-next) that use the existing
+> PCIE_LINK_WAIT_SLEEP_MS, one of which multiplies by MILLI to get at the
+> US version (so it could easily be converted to the US_MIN version). Only
+> pcie-designware.c uses msleep() with PCIE_LINK_WAIT_SLEEP_MS, so it is
+> clearly the outlier.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzk@kernel.org>
+Konrad Dybcio went ahead and replaced usleep_range() with msleep()
+in that driver, kudos to him.  Cf. b262518262f5 ("PCI: dwc: Use msleep()
+in dw_pcie_wait_for_link()").  If you could just carry over that change
+to the other drivers that would be great.
 
+Thanks,
+
+Lukas
