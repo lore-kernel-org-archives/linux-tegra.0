@@ -1,42 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A166737F00F;
-	Thu, 28 May 2026 12:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4B83E5576;
+	Thu, 28 May 2026 12:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779970167; cv=none; b=q9w/jxNmj7V8mL7rsZ0ofggttQWiW1ea1WOpUvYruWkFe9M8e0jcJq3SGK/8s4u7sHReKO6iKk7P5mmlH/AVSFwa96VzyMPDDVDlNpesXTYY739hhif087NPYz59mIgRClWoklTAy9hgtaB/64ojZgFKXIGyycvUtVCtN/u//XU=
+	t=1779970276; cv=none; b=ZVeewjjB7KpO2mU3WjxyejVD7wO+XsqwRcf/R/uZI1SfVCyXx2+Unz6bGxyerLdC80a3l4hUWATRiHU/E2LFFWhmfCdxsfY4bXZ/hcO/XpYPHjiaZrFBcot40shvyPn9A5hPuYqOYVDzZHdEZC+m91JRhECwAzL+thCUoJ6Ibis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779970167; c=relaxed/simple;
-	bh=8bY/o/O10DMH1lKbmb5R8CQrxM/qm8tbdI4/wFtdzrg=;
+	s=arc-20240116; t=1779970276; c=relaxed/simple;
+	bh=tGIC/AyQACA+lR256/z7ZDVfaq5pMMadhUh5Wwxw6SE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mLB/VdkMwAbcBIpMzXeJ+DiZqrNb6RrNuUsVMozraZOoA2nFgzfHRTykS45hqddlcW9XpFd4zxSHDxeSjzxmIouy9x0TYOt5YuMWgNdIBOzx8IAb/E8dANkivVMzow++VLo6aETakud77r1aBVqaOa9+wJAe76r2t2EyMzGBxbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KbM4Fwjo; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=cZ00aQGuXWaaecmHWh77aDhRq9G5OWQ1hnrw6ZHdei+iqzVW/H+wF3Y7+n9igjvt1jNpevb33NSGn3yyHhqbuCyiVQDzFuft+BcBWqXZnfMGTxNnpHq1SYNj/DEeMAVbhjSG1G2HI1i8GtuCeKZsfCxdWLBtIa6WwycUVlZxxcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YEiQQ4K4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KbM4Fwjo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF12C1F000E9;
-	Thu, 28 May 2026 12:09:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YEiQQ4K4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A795E1F000E9;
+	Thu, 28 May 2026 12:11:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779970166;
-	bh=6EsIe6+QcTk8dNWj4zK1Rd5fuD0TttLl9s4Yfx92BeY=;
+	s=k20260515; t=1779970273;
+	bh=bXnftk/OKOffma6hnrgGhxCRMA65PWP8cZj4tNQWqKA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=KbM4FwjoMr5keIYGy7CsRrRWFBXa+scPxzlVNJs90A9xACLh8MwMhWzi6xtDEerQt
-	 4NWV6PEclMG36IGwGM/x41Wk26FbKE0kbplDFSdr76fyr9eoUfc+7k6Qpym+NHOkol
-	 liT1jwgNPTbzBlKnmGMHLOytmecI77kC1dI7stKni+WeSxvojO1RW31gKNKWlpbWLH
-	 Pm9+TjKfHZdLjS5It3cmbqpKgI0DdB/FNO9BvrG1Cxg0O+6qesFja9YfQ39KFew6DV
-	 JzEW9XzIky+1PGhY1uHTKIKvCg7sg8rRBQ1yVVzDVXxNOTQ7HA+dr6kRkc+3BCCOco
-	 Ip57rp+XdCr3Q==
-Date: Thu, 28 May 2026 14:09:23 +0200
+	b=YEiQQ4K4iXk//kQRPbUqsgU2KxNTN9prTrOyc8q/D5jw0UA5yBuhwzY5hRo9PUCZi
+	 X8roXwThGjczMuwGC/Ndiw2h2PD2W0h7Kkpc6GPHF7Luc6eygin1AIvfRRWLKg9X8v
+	 +xoWr6Q35ZnrkgYrErLudsOp2YxI9syEnQFWEDYzwpr1/iiowuYGX+8BykRKHjsij6
+	 Jv9wj0v0SqqHdUC44QfBqFbychXTHU1y+/cFkmIuuT2USmL/02rQjOdBrt5GYI6tJd
+	 OrVP8/cc9jUua6mnE9kdqm9J+3X2REi6mf21GKgCUxj5O5gAnp63ILy47mP6GIOS6x
+	 t4Dp6TQ+zNRAg==
+Date: Thu, 28 May 2026 14:11:10 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] drm/tegra: dp: use str_plural in
- drm_dp_link_train_{full,fast}
-Message-ID: <ahgwaOX8TJlpZP0u@orome>
-References: <20260521194658.366737-3-thorsten.blum@linux.dev>
+To: Artur Kowalski <arturkow2000@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] gpu: host1x: trace: fix string fields in host1x traces
+Message-ID: <ahgw0zZhY_-RMwUA@orome>
+References: <20260519-host1x-tracing-v1-1-55afb8cbd186@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -44,50 +42,53 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tuovdn66hye2i6w4"
+	protocol="application/pgp-signature"; boundary="4opbyer3wpfx6z6r"
 Content-Disposition: inline
-In-Reply-To: <20260521194658.366737-3-thorsten.blum@linux.dev>
+In-Reply-To: <20260519-host1x-tracing-v1-1-55afb8cbd186@gmail.com>
 
 
---tuovdn66hye2i6w4
+--4opbyer3wpfx6z6r
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/2] drm/tegra: dp: use str_plural in
- drm_dp_link_train_{full,fast}
+Subject: Re: [PATCH] gpu: host1x: trace: fix string fields in host1x traces
 MIME-Version: 1.0
 
-On Thu, May 21, 2026 at 09:46:59PM +0200, Thorsten Blum wrote:
-> Replace the manual ternary "s" pluralizations with str_plural() to
-> simplify the code. This also corrects the "0 lanes" case.
+On Tue, May 19, 2026 at 12:16:43PM +0200, Artur Kowalski wrote:
+> Use __assign_str and __get_str as required by tracing subsystem. Fixes
+> string fields being rejected by the verifier and unreadable from
+> userspace.
 >=20
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> Tested on v6.18.21.
+>=20
+> Signed-off-by: Artur Kowalski <arturkow2000@gmail.com>
 > ---
->  drivers/gpu/drm/tegra/dp.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  include/trace/events/host1x.h | 50 ++++++++++++++++++++++---------------=
+------
+>  1 file changed, 26 insertions(+), 24 deletions(-)
 
-Both patches applied, thanks.
+Applied, thanks.
 
 Thierry
 
---tuovdn66hye2i6w4
+--4opbyer3wpfx6z6r
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoYMHMACgkQ3SOs138+
-s6GZ9A/+NK7XAH7VW4nq1/fYZDrFrMsV1SkeL33baIKmphllBPJBmTRkJuCsUMvs
-Va9CAR+GT93IQy9EhiFuFqndHf/T5o6vSFi/E/fsxCXcU9ss5/0VhPaq3Sa56TI0
-vE4+FZoKv1kfD4YcJX/sGTl2tJy/998vPjOWbt0pJYe5I7q6/+xkS59a6OwcqNNW
-JSV8nSgwf7L3TyO9uAVPE4RXYZHdFEc0nhWoLWDHB/o3h46vfzHrf3Tz0QmgfRUS
-wKtAJGibDKV5DUAEHfA41PYek16aVimm8NiRLQ2eDjeZDKBJOY4oBXtMn1dNb+qw
-bB6qtI3A69pniQqIjU3sOW9neZUGz0QLpJygTShtQgyrAE9pEiSE0T80dQE8qUdy
-EJm3PtLpcOkqolkxONuwwyJFiJBn5WN7n8aQMaCNSKVhKHcwHTD9VfqugONaidbk
-9qKMYZ3m+5uet1p9SfaQY5k7H3/RyGBebdLIy2Whesqy9Xk3Z0s4kqxvghwC42Ql
-AXEOC91Vk79scoXt3DY2aM9mPW7N8nolNAl4QWzRaHq+lrzWS/K/k0cYgi6C8M17
-JmPtQmPUGacvNU2J4uHmLuzPoZD6YEAf+L/87Zr8itnGNUYxfjoj8OvbOs3d+6Ec
-x9SzlHNQ0MnQRpWeuJxamDZQ72l5P2tfkrb3IEuky93QJeLV1TE=
-=mIBc
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoYMN4ACgkQ3SOs138+
+s6GH1Q//QR5ThdWyD+g/p4MSrhw98bH62IOxAtpe0ifT/+xa/SVQYwSyyzxS7j+B
+hZRwdPu7HBwZoiJAVFChO+13MSehk8XAyi/S2Z4detl7Vpqbsdls9KRHXFQF4hBk
+t96Oljv5U9IYHKGBNYQ04WcYGdOHgZ7wAv+OPAZc9VaUJs+xdT9k1RqjCZmDwdlR
+u4MBPgtcq6a7xUMHZjFkHKxyuFkDjmmEw0DB1m2xH8jpuAp+U29jq//3cMoHEi3H
+VnFnLX6SOj3GEpjg4OqhqTDzDkC89tcGtTSkVRINiVsAPmKIoqCP7S9+YLpIaAEe
+TOyNz8EZAXIz3+TofsBtVbNAM3ZmknWyxli8xmi4Mu/hK4DIlHubcWMJMwAyt9M6
+GwQqVlM82wDjuqDGMJcQbVpLRSf6GeTLrMJXjVApPnEu0skEyq/9REEVxkZ5k5xj
+acNr7mxo2H/2FIkUeFXvtGg2iV6NpA5djiP4oFlYikjJDY1pEn3ClwfGI5j8hNVb
+A1dwbzS2C32uB9eDZVe+KkZo8ZHn1gq65FwOuFHHMC66ACXFS/j43FF83NO4aWeD
+erkFNmMVDuBd2UcgazconHV4jENOI+guevPphNTmowi7X5qziuRlkyEKvse+Lod1
+M7G7R4WsT4wY3ZBUfKoqax3u1qziTPD3cY+Q30J36gd538ZbXM4=
+=+Jze
 -----END PGP SIGNATURE-----
 
---tuovdn66hye2i6w4--
+--4opbyer3wpfx6z6r--
