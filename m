@@ -1,46 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFDC3F076F;
-	Thu, 28 May 2026 13:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1FB3E63AA;
+	Thu, 28 May 2026 13:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779973542; cv=none; b=pRcvi6T3FxmzVJWWI5es0zYGkxMn0EQVwpvKXZ50wRIHRhInozSETgUcngFaKjT8i6Duy0QaOMSrJJrKxorWIq5BD5zyCSRCUzJa9tDAm9OHEXU6ulpkn2leGzJnPdBVZxa91yzUbJJVj/g5Hd2ajdIfE1kFkHzHbiEz9DRn7eI=
+	t=1779974799; cv=none; b=YiPrNAwVTsxtRYIhxezBwg0Tn2lA+qw6LFM4nqlT+W/f7MwluAhp1FIelSXyMHM5YT+BdZFCxTa758jchMPk4GEwpv+D3hcD+jtVVNWVd4CBX6pEMdsRhmJsgElxdIkZDt5gNjrzAMsRQdyxXlilJ2o1Ii1vtjk8DP8uAv87MhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779973542; c=relaxed/simple;
-	bh=gINEsxKfuGKP0owHnt6CylUoIYmC9eGGrb0tVFOK9UE=;
+	s=arc-20240116; t=1779974799; c=relaxed/simple;
+	bh=WTV7owk3xTBgYmB0YqBNGgY0enCzkcA88aG3Sz/9EHg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YUQKXCqPI/8yJPqVjH2R46sk29iQrmHBWAvIRRFn1exWieZWg1wF23E78lEi25CXaEosWI/M1FjZW0uuN23hm9OhuUJS+HEeFwd4ETz3ctQJFaKXqu2tqwZVjsK4T12oYotqw4t4DZ4LoKNfISvx3mmdEyQtLjnbRARiiF0wg0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PDokGC4S; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=UFZi10UCk9EYiXhYGCmS3BxiaOMIA4evL2Dgi94TdLGt/FSagzFrOzVis23qzmBO6xOnRn50bELyu/BoC6e5fLSbcP+1tXO2kzUFYh2u4SAl7FlLs7Qf/ks8zQm7rb6huc6nujT9x0J8D9lmLdFTz2R3EbRT4aIKIRlYAO1Serc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Meq1RrhC; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDokGC4S"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAB081F000E9;
-	Thu, 28 May 2026 13:05:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Meq1RrhC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D7321F000E9;
+	Thu, 28 May 2026 13:26:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779973541;
-	bh=PTYzl5Y4HRBmuEKR5F+r8gh4CXlrXKQujjB+KpSqDAk=;
+	s=k20260515; t=1779974797;
+	bh=k0op08fi4dIlx7FSGGHWRQ2CCQpXuVEI+MVlftBMVAg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=PDokGC4SnOC3ZBQx4f3oiQTHh91g5/3wHitxR3UczHXqdQFB1EEVDwxWnPT4WEzzL
-	 6xYU9s04DhC3jlQZxvB7h5lZFAHKjT19tGM28xOlRELCmUW6HtW7384PU0VBV1v0+9
-	 l42ZenXjMGD3QDGknKlazanv7QwxP0R/fNJcUj9nMW4A2hJB1hfZvfMbE+Brp/GpEA
-	 jIzI7XgIFejCVLgXVexz4ZuCSslUmEP1Io0L+phpQdmhMoXhwfPKLvGPIrDrVyfTIE
-	 PYdo4B6f3ozW6tH2l6j81hcYpC0cPCj561tBnSwBU5avW2EkuQ3romjo3mmvw4Wrr0
-	 s1N2ltUMjt61Q==
-Date: Thu, 28 May 2026 15:05:38 +0200
+	b=Meq1RrhCGrVqLcOSlmB5ZWO46tEXKuIu88diDPFQ58ibt2Mwlae/vFNqBLclQREQq
+	 HFcQOy/Q3Tvp86rNWy1z5eRGRJSZbX+ots9vLAtym/9OuVm6taUvsC3qq613B5qMOY
+	 sIPYCntVqFYof32HeewXZq7pLeIZwG/YDOxr+iBD5x6NIJ/xu46Wp7obYh6Tr686wr
+	 2TfKSN0rrWsDXio3KftlntECCE/tlqvS2O7ipTkmDF2ahuIgQojm2oHWzGoP7w5LPO
+	 AX8+526R+zj9CJwoxzq73wfx9MU7RnsYhLoWvbIl2JU2OlqeA+mbPiLzRI4N70sT0K
+	 4j/cEP2ZnnPOQ==
+Date: Thu, 28 May 2026 15:26:35 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com, 
-	jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	bbasu@nvidia.com
-Subject: Re: [PATCH] memory: tegra: add multi-socket support to the memory
- interconnect
-Message-ID: <ahg5_Lm51AcfkQm_@orome>
-References: <20260521140546.3023819-1-sumitg@nvidia.com>
- <2caba07a-511e-453c-8e1e-f2b07b84a096@kernel.org>
- <58ae92f3-3e6d-4f60-970e-76ee4d7dbd4e@nvidia.com>
- <2ba14e8a-1664-48fe-ba99-c81100de78f4@kernel.org>
- <ahgr7EevWJ-unfSV@orome>
- <ad3c49f1-044f-445c-a586-675252f157ae@kernel.org>
+To: Souradipto Das <souradiptodas6@gmail.com>
+Cc: mperttunen@nvidia.com, tzimmermann@suse.de, airlied@gmail.com, 
+	simona@ffwll.ch, jonathanh@nvidia.com, dri-devel@lists.freedesktop.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/tegra: hdmi: Open-code drm_simple_encoder_init()
+Message-ID: <ahhCedXvVJdXSvDi@orome>
+References: <20260502143420.7850-1-souradiptodas6@gmail.com>
+ <20260513100501.6468-1-souradiptodas6@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -48,86 +43,58 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="q5rbsc7kqxht2hgo"
+	protocol="application/pgp-signature"; boundary="2uatf3uivvrbypoz"
 Content-Disposition: inline
-In-Reply-To: <ad3c49f1-044f-445c-a586-675252f157ae@kernel.org>
+In-Reply-To: <20260513100501.6468-1-souradiptodas6@gmail.com>
 
 
---q5rbsc7kqxht2hgo
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
+--2uatf3uivvrbypoz
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] memory: tegra: add multi-socket support to the memory
- interconnect
+Subject: Re: [PATCH v2] drm/tegra: hdmi: Open-code drm_simple_encoder_init()
 MIME-Version: 1.0
 
-On Thu, May 28, 2026 at 02:20:07PM +0200, Krzysztof Kozlowski wrote:
-> On 28/05/2026 13:56, Thierry Reding wrote:
-> >>>>>
-> >>>>> -     mc->debugfs.root =3D debugfs_create_dir("mc", NULL);
-> >>>>> +     if (!mc_debugfs_root)
-> >>>> That's a probe path and you created a singletone. Looks like prevent=
-ing
-> >>>> async probing for no real reason.
-> >>>>
-> >>>> I am very against singletons and debugfs does not look like justified
-> >>>> exception.
-> >>>
-> >>> The singleton was added so multi-socket MC/EMC instances could
-> >>> share a "mc"/"emc" parent. I'll drop it in v2.
-> >>>
-> >>> On single-socket SoCs, the "mc"/"emc" names will be unchanged.
-> >>> On multi-socket SoCs, each instance will create a top-level debugfs
-> >>> dir named with dev_name(). Same pattern in tegra186-emc.c.
-> >>>
-> >>>  =C2=A0 if (dev_to_node(mc->dev) =3D=3D NUMA_NO_NODE)
-> >>>  =C2=A0 =C2=A0 =C2=A0 mc->debugfs.root =3D debugfs_create_dir("mc", N=
-ULL);
-> >>>  =C2=A0 else
-> >>>  =C2=A0 =C2=A0 =C2=A0 mc->debugfs.root =3D debugfs_create_dir(dev_nam=
-e(mc->dev), NULL);
-> >>
-> >> You assume this is fully synced, so you as well could do a look up and
-> >> then use what you found or create new dir. If you think that is racy, =
-so
-> >> is this approach... How are other drivers handling per-device debugfs
-> >> directories? Do they also create such in the top-level? I think no.
-> >=20
-> > I think we want a top-level directory for a bit more structure in
-> > debugfs. But I also think we want to create that top-level directory in
-> > the module's init function rather than _probe.
+On Wed, May 13, 2026 at 03:35:01PM +0530, Souradipto Das wrote:
+> The helper drm_simple_encoder_init() is a trivial wrapper around
+> drm_encoder_init() that only provides a static drm_encoder_funcs with
+> .destroy set to drm_encoder_cleanup(). Open-code the initialization
+> with a driver-specific instance of drm_encoder_funcs and remove the
+> dependency on drm_simple_kms_helper.
 >=20
-> I was thinking about this as well but that would mean your driver will
-> create it on every multi-arch kernel.
+> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Signed-off-by: Souradipto Das <souradiptodas6@gmail.com>
+> ---
+> v2:
+>   - Remove stray blank line
+>   - Patch is compile-tested only=20
+>   - No functional changes.
 >=20
-> This should be then moved to some core bus (and there are examples of
-> that, e.g. USB), except there is no core-MC bus code to do that.
+>  drivers/gpu/drm/tegra/hdmi.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
 
-We have a utility function (soc_is_tegra()) that we've used in similar
-situations in the past. We haven't used them in a little while, but it
-could be useful here. It's not for free, but should be fairly quick to
-error out early on multi-arch kernels.
+Applied, thanks.
 
 Thierry
 
---q5rbsc7kqxht2hgo
+--2uatf3uivvrbypoz
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoYPZ8ACgkQ3SOs138+
-s6HyABAAnuICmD8JR6CQ5rnCQDyg8JoB+dWDh7tFtwnjQz3p33sOAc18p9cXONbu
-SSbhAqKV70dtddI4s/os+O7zua9VZM5QV340oaTWoAtihUpzgz7+4PjTKcUAtcoJ
-6tB+AmLhlGbnrmGW9OWmaQlC252qvIj3bOmLOLpGhzVHhmr/km5dXldFONQ9pJfQ
-UjasCaptPK6rZkMHMv6PkxnYpx2d2+p6zcvLUjNmqrhr3bxGJhWvV2nTghxv4fi6
-YxytHEo/6RDoNey9mFQUq9BaxbqdDqTJqDJw7BX4ZdaWpIvpcry3On9hRdW4cnJt
-8H6vLJGXkDLJkdjZWZqSFXJbFTk+hYuhHJ66NMowQfoILRToU9maRWYFJ3+WNX+v
-7RbfI++7zmRxx1+TE+UkUmvcdVj6ZLQ4kytScmhmZMW5cIbB/jY3dvVulIfqTebV
-8LUGFCPTUkdTwZzDL17j3v3hTxNYT+oI5ntmuKl2X6rR4BMTBMUJqJYwTBdrHc94
-QKioW2+zr549Agm9H8rUW/E4wFb1sKBAGADlttGH+WjjGcKKWPLJGyCgLa0Xpc86
-zotocD8s8rEVHNKHk8fPDCpN5d/wFChOCF+cyNifv3HH3ayvlhgeBY6pM8+tCxpp
-FOveR6tQVS7u4Y6yjeYijgv7FNH2j7axQ22bht9n4OzYPl6eDjg=
-=w631
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoYQogACgkQ3SOs138+
+s6G76Q/+NSDJ1zyIOzZ1aUMUcToEYH1VL1ClX8C4YIH0R/1HXx0YUC18NDZsUqIJ
+FHWbn1Ltv7fCxXn09YqT3eh5OlWmEg3HiujUpRKByR3DScZOhHk80bfAddYENrJ6
+nXlhpjxvoKHOrXFFwJGM89s0LWSyY5wkrgqMMfzp3D3lESUqryU4yu4/Ly9uO7aq
+7IQUiDCUeFRI8Qcx38GKhc+b/8NH6vVkgT4ooZHvgn3Z0ecVOsFK5JjAfaS3KNel
+ROgFMSfprDGDkDxGMm1V+F08q00KGQ8DiEo82SCYYKbZHwoQah9f4zrNiN4tZD+1
+7iIBmhRRsEW2S5B5Tw3aYmtOwGYvaWs4ZHbrPmhsl4RIHfuxbfZAidNLi2RloeB4
+pKChDEGpnva1nOCylknFFWJFf30V7zgxkfqQK+yny9wnS+5C5HHx3l6XAkrzxqlf
+JjTRMwNuIqAKdUSb3AIHfXBxDZL3VC3WnVr2TzdtnZPesv2VKY6m7Q0NqJVG8VIu
+qHyBUGaWoAYstol5Vw+9JZcN63QDFXyPpO4VhpsqLiBD87JeHNfg65tb3cMDZjpr
+y8vRhgu8xMawSxkbru/mouruznNYXFOIDVEvFJ6OWcZ7LcJ8UajaHknJSMfP9FrO
+Zb+yzqb92tQiZSq51U+lbc3DxR4pLxPAUoFWsai0Gp1uwW/+0zU=
+=cQ5I
 -----END PGP SIGNATURE-----
 
---q5rbsc7kqxht2hgo--
+--2uatf3uivvrbypoz--
