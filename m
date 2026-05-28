@@ -1,40 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEE134B1A5;
-	Thu, 28 May 2026 13:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA90199EAD
+	for <linux-tegra@vger.kernel.org>; Thu, 28 May 2026 13:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779975026; cv=none; b=alp4s2y8Bos6alMJDL4t0lqkVshfRMBpVsa2LNlrVPZCNq1sejG9LjYHUQjZTB8fIir2Gaz37oQ/EeCF9eiE0ujn1IsZGenwcyIdhtsP8z4u6bWR5DRJqYZufIkvdkxUCSppo3qHLpakYG+pZ9j3fn43HU3J1sLItrc9OHsga+M=
+	t=1779975958; cv=none; b=cMxtHFO828P/wVED7Hkv33+u5EV8g5lI5oAAa1GLuatSozmLQULmxyKGQ7M1QD4uXXVt0e9zJTEOHSY/jivpF4mX8wFUs2rsPis/i5oQn2lJgLcw0ELMJ2CkLQYk7Yi822bP2XMdAGvXIOE9Gl+x/R0iGtbjZ2BxHRq2P+yEFUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779975026; c=relaxed/simple;
-	bh=rRjo9QdIYAFH2t17fWfm0YKt3nkBEeg2K9oJENP1rtQ=;
+	s=arc-20240116; t=1779975958; c=relaxed/simple;
+	bh=/7cpGcFdexUFmXcKYOfi6JEpPdIpJY3b4zW7MNFPG3Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hq6EeozDsU+0sNHkrIAmTcIE9IS4p5/jX0PCE3462SmMB8m6XcblgnIdEKZzJqV8pd/U5sADqQhwlTLgEEvHUlQtsLuTKN6I8pOCG6NCHiZpcARW5ZmRtSOikbbKuWUlYCDKIvckpTLK8wh28UMosNGa9vPgMM9rROt5QrCLMLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cnk/Iud8; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=WSeqg1yrca3meuNHOgKY45zyxvWNYYfDo9NxYfSgautpuKBTC9pMAIiuR0UrfC18R2xylBlprmdgirSCP6z0A/FnUuaSZftI6ti6b6PT4+25KlLuxWNV0BtYRtkFpcWdwWpwopgeUSJFt89hfmOMRtk1eIXjh3en1zvVx8mhaf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=arm9cXMv; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cnk/Iud8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20DC81F000E9;
-	Thu, 28 May 2026 13:30:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="arm9cXMv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A23FF1F000E9;
+	Thu, 28 May 2026 13:45:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779975024;
-	bh=Y8rVMr4dqWUmgMWiltbXDUURPAIIqisuvdyrjOXRRr8=;
+	s=k20260515; t=1779975957;
+	bh=Uq9PfcT9oNnQ9+pZTlegE9YsQku1WA8KL9XtpyGLILE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=cnk/Iud8BGdfiTt92TmGHO5r3e9biuU3K+BZGLeb+21QwVCYmjH0a32VKX5ASSMQ4
-	 iEqTHcGpfDVBpSgQAj5xH/CcMItA+Y/btOQyJ6QI3xhUroq1yoWOCR7umnUfDjyPxb
-	 YUN7J57pqZhfO0yC87yng22Hy5EH342KYL2K4AqJAtJIFG0hVKXgpNV5rdy+93kMLu
-	 1bTXp8UuXy1+JJJCmQS8gwtqTzl+7DiltAMg0Xmom3D9YOcpuiAqh1Ihn/e8qtimFe
-	 5Q9rAeWCzKsaJCmIPw2sQjEk0xvWc/sZEM6Tho5MmKelsOl1HobgLjpfUHAHuh1L4h
-	 r1Ak8b3m9LyQg==
-Date: Thu, 28 May 2026 15:30:22 +0200
+	b=arm9cXMvV+O8GtGvyHEejAgBBpEshl3KQG/SwHEWR+K8aC47nftWygGYzVc8HzYtt
+	 lJ/JKLcn1nut4RuvUhABgQkf/o0pTCJB46sOZYdE8544pke6U1549fmhuzI0rOslmW
+	 9Y3/0/lu/qkYrtWtMv0j5EUSI4WtwxWiPU684FBkMeoQ3sE/ao7zZKxVZLhXnlOAQ/
+	 O2KHUopK36qa7z+ZbfZ0IQpos2GG85UrRGkj0RTQlVVXOl+MAXtk/Ly0ODpWHkOMjA
+	 SmTGLaGqf8vB2KQ4wq//8Uy04bmIfaES1kMd7+5wm/88sAbl8dZClHDk6Gfl9Vnpkw
+	 hop47aDC69gyg==
+Date: Thu, 28 May 2026 15:45:54 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-To: shayderrr <darknessshayder@gmail.com>
-Cc: thierry.reding@gmail.com, cyndis@kapsi.fi, airlied@linux.ie, 
-	simona@ffwll.ch, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] host1x: bus: Fix missing ops null check in error teardown
-Message-ID: <ahhDR8dtEJ7Fpl3d@orome>
-References: <20260517170456.84927-1-darknessshayder@gmail.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: dri-devel@lists.freedesktop.org, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	linux-tegra@vger.kernel.org, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Subject: Re: [PATCH v3] drm/tegra: tegra_drm.h: fix all uapi kernel-doc
+ warnings
+Message-ID: <ahhHA-U5LHclxZYJ@orome>
+References: <20260427184454.693794-1-rdunlap@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -42,58 +45,82 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4k3tk77o7e7dsbxu"
+	protocol="application/pgp-signature"; boundary="hrmst3avf3g2aerj"
 Content-Disposition: inline
-In-Reply-To: <20260517170456.84927-1-darknessshayder@gmail.com>
+In-Reply-To: <20260427184454.693794-1-rdunlap@infradead.org>
 
 
---4k3tk77o7e7dsbxu
+--hrmst3avf3g2aerj
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] host1x: bus: Fix missing ops null check in error teardown
+Subject: Re: [PATCH v3] drm/tegra: tegra_drm.h: fix all uapi kernel-doc
+ warnings
 MIME-Version: 1.0
 
-On Sun, May 17, 2026 at 12:04:56PM -0500, shayderrr wrote:
-> In host1x_device_init(), the error teardown paths do not check
-> client->ops before dereferencing it, unlike the forward init paths
-> which correctly guard with 'client->ops &&'. This can result in a
-> NULL pointer dereference if client->ops is NULL.
+On Mon, Apr 27, 2026 at 11:44:54AM -0700, Randy Dunlap wrote:
+> Add 2 struct member descriptions and convert #define macro constants
+> comments to kernel-doc comments to eliminate all kernel-doc warnings:
 >=20
-> Fix by adding the missing client->ops check in both the teardown
-> and teardown_late labels.
+> Warning: include/uapi/drm/tegra_drm.h:353 struct member 'cmdbuf' not
+>  described in 'drm_tegra_reloc'
+> Warning: include/uapi/drm/tegra_drm.h:353 struct member 'target' not
+>  described in 'drm_tegra_reloc'
 >=20
-> Signed-off-by: shayderrr <darknessshayder@gmail.com>
+> Warning: include/uapi/drm/tegra_drm.h:780 This comment starts with '/**',
+>  but isn't a kernel-doc comment.
+>  * Specify that bit 39 of the patched-in address should be set to switch
+> Warning: include/uapi/drm/tegra_drm.h:832 This comment starts with '/**',
+>  but isn't a kernel-doc comment.
+>  * Execute `words` words of Host1x opcodes specified in the
+>  `gather_data_ptr`
+> Warning: include/uapi/drm/tegra_drm.h:837 This comment starts with '/**',
+>  but isn't a kernel-doc comment.
+>  * Wait for a syncpoint to reach a value before continuing with further
+> Warning: include/uapi/drm/tegra_drm.h:842 This comment starts with '/**',
+>  but isn't a kernel-doc comment.
+>  * Wait for a syncpoint to reach a value before continuing with further
+>=20
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Acked-by: Mikko Perttunen <mperttunen@nvidia.com>
 > ---
->  drivers/gpu/host1x/bus.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-I don't think this can ever happen because all clients do implement the
-ops structure, but since we have them in the code above, makes sense to
-be consistent.
+> v2: add kernel-doc comments for #define constants (thanks, Mikko)
+> v3: rebase & resend
+>=20
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Mikko Perttunen <mperttunen@nvidia.com>
+> Cc: linux-tegra@vger.kernel.org
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Simona Vetter <simona@ffwll.ch>
+>=20
+>  include/uapi/drm/tegra_drm.h |   16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 
 Applied, thanks.
 
 Thierry
 
---4k3tk77o7e7dsbxu
+--hrmst3avf3g2aerj
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoYQ24ACgkQ3SOs138+
-s6GE9RAAgvpcWkFK3LA0tc8S6Ay0mqVowCASm5wwnR7UQSfTyo7G4sYivZ5w3/vS
-vgmt0mzoJf4KcnPlJXksA1omYKekaon2i2NLG9tMfARWw9yc5C89TwWElQnFuU7P
-ebuJMqWwrAyZ/9ic7MSOcDtzjdn0sgFWU/NT47R+Yg17HFxPV72xYAca2Y19KwGU
-0Lnw2C0xLEOuXzCqwv2RTG07Ko8CcXvR/AsqTBeAWPBTE2M0KfxFgR4VjxJ8COou
-eCvnpg2eeJnTr8pMbOCEMv+DPbvA7U3myvSJx36a8td7jA5yNZpirnMHWmKlOE/L
-LeHPDBkatPz/69IxYvoG7XT5gbi+1zUEX6wy3/w0jrU+o7h4yi9PUp22Q7bdtTnB
-7In1zcg/Q/OeIyP2A7vQfu374Nzvdz+MuHQXaUF04yiONy6SDH9OYvjEIjcvDkAe
-BnKKgy4r7/RVLBEl4BQDSWLDrG2nwLfagm+Wy2BXkzWcN8gNLJiB8MtZWLtZsKI/
-V0NcfML33MuqSZvr4payRjTxLsyaj+ApoeQq5HhPQRXVYKnxuhisytGj0dk5Xdlu
-Ix/l4VgcPLTsFl5h9Hz8cvGCPbqmUUCRFC5V4L+uZCAtc1UWJ9rhAp9Cj4S/Zur5
-8rU/9CFvZ+ENmQxqiEo9+2Wt6aj9Ze55Yt4RQlWv5r8HN9jhibI=
-=Z7YB
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoYRxAACgkQ3SOs138+
+s6FlmQ//WgZaowhnnd0vtyNvaTTZLm5F8oExC+UsiGrSFJhaeDxUtFiF6P0OzRhD
+hXklIEc4Jn8lXmoFUzwrARQ17rge3Z6E3sdWBE5EoFl8MZzTW55NHQtW0ceY3PVj
+BgTA6cQISURycIhN9KglhP/mucHvZ9E5Z/5tz22Zd3TtOs6ss/Lca4AgPmD6hn81
+qVawafDZGw7uN/v3EY714XUkL8xgGQl7QXSQrbWcpMnNxE6rZDDq1TFYiuCUdiKO
+2q3ZOCbemrd53dEY6/LdoNTnr7576eNEVmBC/AcvfP4wAGVgSjRZqyTdCgvot7jW
+1CHJ0NvJMCPatwR1wnGngEiJgN9bRnPQstl9iWxfiMvOnrP+5FCDfwfawyI02xPa
+LpZvsegu/NEFDEEuAekgfhRcwRfnYxkjGBIdqCAj1rvAXhFVcdwHeS/HgTDMZ27Y
+/B02V+MpjgHoXPAR/u6C1S+BsezqUdqAN1vgaDJ0xn9uQN310BnzyoIDftU4B85T
+1GEdmu/N9hDQZGV4mdFjKnfRU/J9TXyH1UoFF2OhF932bMVmIrkpxWBmBOvMlyHL
+kj+CEVhwRE9XZW6naj29ZCcw70R9wRPwn2J5hNIsZE+a31tVMFpU+/P7NebP3zr7
+bPQw6KJFFRu1mwLovuxCRa2Nj4yHhu2wut9lNIoYZ0/sNsKtJ7c=
+=yOyu
 -----END PGP SIGNATURE-----
 
---4k3tk77o7e7dsbxu--
+--hrmst3avf3g2aerj--
