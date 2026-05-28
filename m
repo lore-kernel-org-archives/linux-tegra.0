@@ -1,103 +1,159 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012046.outbound.protection.outlook.com [40.107.200.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1F22E7398;
-	Thu, 28 May 2026 15:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779980827; cv=none; b=ZlGfdDpIcSrhi9m98GqmoUGgX9sEkQ2+DtUvUQWyLSoVwYpIEC4I5rGVE1udUfWtlmXkcZekUgyPsj8XJDVPZRzh8bYMK5LXwpZBZeVn7FmzXXO/42ga0UQV1rorW/l2ftGNm70goZrJROp1ckJo/+hn/JeWRqSFbWCwHlhUNyA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779980827; c=relaxed/simple;
-	bh=AwSvtwInSR2c7gXAHmUxrSdW9Ds/fFAcqQthTHS+sgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JtjVLInIvtzLYzBL5vJnvNX73cCfCySQih2/gS4asaEtw+Ku9puM5YexY4enq6zc2gRQAjIm8Yraz0KOsu1s0sucDgkI3I1fDR6tgZVTSFedvqmr48JUtoNPbNJHZM1IG9tNBYf+AGp61Ul6oXz08TKGt48mhECNsQkl2y+3W7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q0ZC1e84; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427193FFABE;
+	Thu, 28 May 2026 16:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779984408; cv=fail; b=onjTmTtR6H7vvdt9Az1JTFxRecvBqqRfK5LpJKcuG6PFaBFbocop5SjH+jsnKJkBn7uwaoFtKIx4hzkRzHJ43HJSlZ+ZYWi1L+h8/cQvNlkWCjPJtM/sCeNorYu1Bg+3vY0NMjeejujKqFnqq+UWFVP4TqpoNaXE1vjNqOS5oxA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779984408; c=relaxed/simple;
+	bh=zeaIJuIXq7yEKH8iBARY1vABlsSRwAtXlmNoGQM1aMc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=RxQE5XmY/aoObAbUI2mOjpATBEO9U7dqQQ0DlRrNhM6SGMOcpsppvByojDrGshHY0lIdeKN+vL2L2aLurYVdmXX8xyu7m7ZuB4BiTkJUDJXTEjHQ+J1j0O7+tg7V9QlIEaBIS3aZuM8MgYC7CK1C4YRlW/3EzMSZDnoawXSMLcY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gdgfoVpO; arc=fail smtp.client-ip=40.107.200.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q0ZC1e84"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ABD91F00A3D;
-	Thu, 28 May 2026 15:07:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779980826;
-	bh=h500BwDEUT+p3Ty+F27njgVX/ebHmMvwaBgrjJow7tM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Q0ZC1e84yQQqiIr7YM9N/gNMxDmiGZfgXgeOY1/M/JJ7a3KBUohJbDPgjbRPqQUjf
-	 3aCIXa/2Qt0ot5ExXV1YcB12RVugO0WJ6GQJ+XICmC3F2W5OquFPnByALZHvrdkLcd
-	 /jvstIEpGCibe2d4e72ejEAEDENL5lq1c5meyciPpdyhXo9qzSPVOf4tZc6Uw/u989
-	 dQZ4P6pcdPCaYCeh0tCN6QwiigI0WCyUhQLoEW4i+SWSLx5odt2e6lrh6dfTz2osqW
-	 vuO+sJU7uqb0IiYBsp0NqdGmrnSXlh8blFILigUbczkPOmaHEOVpwrDkOKrN999Pho
-	 ZVht9o0IDT75g==
-Date: Thu, 28 May 2026 17:07:03 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Clark <robin.clark@oss.qualcomm.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org
-Subject: Re: [PATCH 2/4] drm/tegra: Fix iommu_map_sgtable() return value check
-Message-ID: <ahhaC4bILxrnE1l3@orome>
-References: <20260421-iommu_map_sgtable-return-v1-0-fb484c07d2a1@nvidia.com>
- <20260421-iommu_map_sgtable-return-v1-2-fb484c07d2a1@nvidia.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gdgfoVpO"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MnxhxWBjSyb3Lifx21EeWY3+ZI+9HOsqXbeBW+UdywyYZWSzibUdUps65OUQE60HqVBEQZtuf7/kCmU4HNPmP+sMPvbelVk9SakkFN+Ei9FCanVSHo9dS/moJam9s3cf5Y/S/pwFersxMw2D1W7TDJO2lTPjTQVLRltmzkpA3O91OLvIaKpLiG7EHPqcUj4xxlmVT21zpaFXtd5O57VgiI4ZVuKeRrAk8Fetd0Gcn9z0L5fUv0REzinnBT/4et/h9PPoo5LquOj1vrwmjmCSCBztIXHhM+CTaLYI7uxET2Kw0VR3oENnku8BAFXXe36ScH8n7OCQDwLMCSu0rjTsUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DvjAQL7iCr9FAHVnlfylXlZtwi97p6dK/ANh8lXRvhs=;
+ b=coFSjzy5vZNi5g2LUfs/aE3S1pHmvyQ4C4j0XeSPKLgm0fqAUsDF6aHoodeZQ936CajVLu6CFjceW1ivBa1L4hFoRl3PeJ5JbDoZ3Ej7fZ41PanV050sTIJ9Dmk70khd1p75U9QbtrnlaR7+5Mu+MD6pagOlzZnikMZnjHk2Akua9W2isQkg/0MhPVbyhbFD50duJUWRFik9TwOyz4Sh+zEDofF8JFYJ8ysNFrmxNMnhRU/IDI3zHncjYhwAy+FIpDYvdTexj6ELzRH3abci3xwzgkDPnFs30Bzen95RC5L5T4bGugLGB35DGZ1JILq85ABUSY+kTQ511FrwPK8wrw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DvjAQL7iCr9FAHVnlfylXlZtwi97p6dK/ANh8lXRvhs=;
+ b=gdgfoVpOBzXBIXTEkR4lYnRDl9k/BHa9mawGK0G1u7Y4aztqXpZvFAaFAFjT85n/o4B0gULK7g5eFHM1ZRNkgQhL/T9i9ZQtuIjGYmnvsekvFZHvDUfZfh49XYOc/3UbzNlPt6hH/27ZeatBqqJosQjKsRpsQ8X0n+QJ3gUPT5xSafZzrQMDG1uvG2qdgv8wgOqleX7qWaLJXMG5V9aobg3AQLfyvTJ8iteET2ixK60gO5Q4ue8SjrkF58ZBPjUsONVufTXpehL9+WPGtFb+S/gozvCZr+SFE+SHl4g5sUfwA16nvMG9oot8IfuFz8Lo34HJSIBy5SOSheufTjzwcg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BN5PR12MB9511.namprd12.prod.outlook.com (2603:10b6:408:2a9::14)
+ by SJ0PR12MB6967.namprd12.prod.outlook.com (2603:10b6:a03:44b::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.13; Thu, 28 May
+ 2026 16:06:41 +0000
+Received: from BN5PR12MB9511.namprd12.prod.outlook.com
+ ([fe80::4d8d:5f91:6c3c:dc8c]) by BN5PR12MB9511.namprd12.prod.outlook.com
+ ([fe80::4d8d:5f91:6c3c:dc8c%4]) with mapi id 15.21.0071.011; Thu, 28 May 2026
+ 16:06:41 +0000
+Message-ID: <c9390279-24d9-46d4-a644-797395c2eb2c@nvidia.com>
+Date: Thu, 28 May 2026 21:36:34 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] iommu/arm-smmu-v3: Detect Tegra264 erratum
+To: Robin Murphy <robin.murphy@arm.com>, will@kernel.org, joro@8bytes.org,
+ jgg@ziepe.ca, nicolinc@nvidia.com
+Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20260528101617.4068249-1-amhetre@nvidia.com>
+ <20260528101617.4068249-2-amhetre@nvidia.com>
+ <f25b769a-d89f-46c6-a3d2-9fa35882b848@arm.com>
+Content-Language: en-US
+From: Ashish Mhetre <amhetre@nvidia.com>
+In-Reply-To: <f25b769a-d89f-46c6-a3d2-9fa35882b848@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA5PR01CA0170.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:1cf::19) To BN5PR12MB9511.namprd12.prod.outlook.com
+ (2603:10b6:408:2a9::14)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="luqt5i2skuahmce6"
-Content-Disposition: inline
-In-Reply-To: <20260421-iommu_map_sgtable-return-v1-2-fb484c07d2a1@nvidia.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN5PR12MB9511:EE_|SJ0PR12MB6967:EE_
+X-MS-Office365-Filtering-Correlation-Id: cd937fc9-1b05-4881-6a12-08debcd31b17
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|366016|56012099006|4143699003|11063799006|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	BtnebXoQW0LyQtR8AeszJHt5mxCytPgsJWflw73spkXfaELEREi1kqgBuClt1kLfqap7wECMUGNUZxIU3o1WQXXeonXoBBwOjtZwMguHgD0Dq67Iqwez9HoMOrA2xJMMKdqqK8DY0lMSS72gIBOYeVtWwa2K+M2A7VObLcUwJNZl1Bhffrcl8tIwgfjPB3gMhqjuhTx9DRJPOZe1EeF4qrBE+wbkNnmC1+9amLzdze4nq1VRsyCNRtRjHk/2D5jpqnBVPcYjXZzq+J2+m7wxTzLvo5+xkIFJin800Wpj0CIvn1KVZmtkASVNMqzTkD4EC3CONFQjB+RhRt95ndzwCQiVXA0T7mebbgkHE9HCBPLQRTdecBQm8RAnJuJbs0jx+otn0Gjxcy4gX2wU1veQ6sj11F0XDMlG0pj5ldKTJrbkh2vDASuRBlbpdQb+hIiNNvZUEGbP79kuhubVZsD4RExH3vJrrTrFonv4/3P146XAn6UsWiFfAuuoeFVcu6aEpfuGWNfkGjPoo+jXf02xaAKeqZBGe7bGP73LyMtlN+FOE6/r+CAZNQ5Tywy3COKO2uJX+wQYRg4l/EkJPcx/eeyIYdmgS9na29OW2y1JDamUBPAaLzEDEtXN5Y24XxJC6NYi9a8jMkSsD5UvPgJzObj2iBkqGI9QqE8U5VoG75PL0LPXbjF3fxXxl+BSTBjn
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN5PR12MB9511.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(56012099006)(4143699003)(11063799006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RVFDaisxS0tyN3JOckUvbkRqaDlNYVZpQzJ6dVBkWVlpNStYd25MekJwOS9I?=
+ =?utf-8?B?Ti9rOGpPYUlDWXQxWXN3dWh6WDZUNWNhTGJSaDZpZDgzNWo4UGZTWnBwMXFK?=
+ =?utf-8?B?SVFXSTMrVTUxVDZWY29WT0ZhZEI2WnJML2VSVmh4TXgxaTNXSU5Da0l0WmRC?=
+ =?utf-8?B?QTZFdTl6enYvSE5wcnJZbEt6Y3JJOGQ4bzlybWxreWx2bk4xc2duSDI4SU9w?=
+ =?utf-8?B?TEhiSmxjaStxa3ZjRDhScVpKRlozdkNxT1BQdVZWTzdsdEtsNzRxcHkxMWVs?=
+ =?utf-8?B?NWxQekx0VVIrc3ZWenBIbzNmSllZY2FtOHpUUFJsSlNUNXhjSG9jb01UaTBB?=
+ =?utf-8?B?MGFjMk10WGN1UVFIci9MNVo4dmtkQnpXSmtyQi9KNjhUcDVjTndSSnZlb2I2?=
+ =?utf-8?B?OFk2QkR5eGtDam1Oa2VSVndMY21VUndYMDdOWGZGdmhGMnpoU2ZRbnZsTjhw?=
+ =?utf-8?B?NHV0UisweVlhejdNK1VST3lZWVBnZjhyK2xhV1ZwUVFSWDBUem5QUSs3aTVh?=
+ =?utf-8?B?RXpGV2ZJRjNWek95bEZaZ3huUWVLYlJCUU9MRkhXczE5SzFrTERGSzFqQklF?=
+ =?utf-8?B?WXdZRDhUVHNJRWp2R2VBYTJ0SWcrdGZxMmtBNUorV0xHWXFBYjkxUXBtdzQ1?=
+ =?utf-8?B?L2diWnhmc25UWW1xcW15ZnRPU3lCWG5wR3MxK2JrN2ZwVDhjaTR3VzlldDEx?=
+ =?utf-8?B?ZmxBc0NvVXgvbTJTZlQzM216SVdQZFM4ZnQ4eURKM3pPVTMwenhHRExKWHhP?=
+ =?utf-8?B?ak01eDlSVkJlTXU1Ni9mK1lCS0FIbWlTWkNPUmw0Y1hVK3A0aWdrUm5Hc0lP?=
+ =?utf-8?B?NnRySWVoOURYNzFjbndGVHJ2SjJZdW00NXBQNUZRd3ZQbU11SThxMUppc3pr?=
+ =?utf-8?B?d1RZMEZtYW1xZVpkZm9TM1Z5U0RzMU8xcDV2OUNJQzdHaE5MMHA3dThWYUty?=
+ =?utf-8?B?KzlFb2dJWlVyMXFkbU1aZnhuZkx5bU0yY2ZveGo0RWU0ZWdJTEp2K1NmYjF5?=
+ =?utf-8?B?aW9qdzFHcHFEbVBKcWNvUVFXWmcwNnVCSU5YZ01GN1pzSGZnNEk0RVZ5MTBD?=
+ =?utf-8?B?LzFkM3I3VE9sRUkvTWFJTjVWUnJLb2kwZXl6TklCcUJkWjJ1UUpLb1BkT1hV?=
+ =?utf-8?B?VXd0MVRybTUvZ1ExaG8ydjBHUnJWTDFTTGFaSjNyWG1hRW1FYXVTMUJCWDly?=
+ =?utf-8?B?Vk90K2JGQ0lRRWtNRVZFcml4Y01jVGhaR1J2RnY1ejVsUjllOHdlcENxOEkw?=
+ =?utf-8?B?d0dtMnFKYU45K3ZiRitidFhxK2lTUnlxOFNWWTNhSUJOWkU5Q2hOQVoxRWlm?=
+ =?utf-8?B?N0RRZjE4MCtabTBabzJEZ2RBOEQ0dmI1eWg3UllqMFNuT2RGRzZxS2lvS0Rp?=
+ =?utf-8?B?QzE0YVBZbmh3bGxlZ2NBeXN5S2crdUR3UlZObVJBSlhUV1lQVGxUa3FiQnA3?=
+ =?utf-8?B?Nlg2V1VldFRaQXBCcnIvdkl6Y21zeC9mRGU1SkVhMGRlSGRIVkJpQWdQd043?=
+ =?utf-8?B?MmxRYlRsUnpPMUNyOTFSZ294YlJTWFlrclE3cXA2Nlgyd3pQRGlvTnJlTnp4?=
+ =?utf-8?B?QVZBU1YwWGN4cnVzbVgzMjdraFJmOUVEejNUYklyaDM1bkxmU2R6c3NGVEJV?=
+ =?utf-8?B?NGpKRmZNQ2ZpQ1N6cCtpb3hsQWo0aTZYaGM5eDlMWDlodTJrWVAvUXZzV0ZI?=
+ =?utf-8?B?UC9LY1RSTjdaeVFGNVI5UHBxbi9PbTFUMHdDdHZVUG5vSGlWdGZGdG1ackk1?=
+ =?utf-8?B?eFNmTlJUU1JjSnlVeGRVT1RJMm1TOUJNK2VrU3A3ZkMzalk4OVp5WDdyWVps?=
+ =?utf-8?B?amRLUC96d2kvWkMraGc1WG8vTG5PY1IzMlFiR1gxZzNic2pTdnNJdkwyRW9u?=
+ =?utf-8?B?TlBTWnFDOHV1c1FTaWszR3BVRWlDa1VLOXkxaHVjelRoY2hYeEg2dDBhTHQv?=
+ =?utf-8?B?clZTYjl0TnFtRmlUcFd3ak93Nmw0K0RwL3VKekw4QW84S0s1dUJKRWFPR1Bv?=
+ =?utf-8?B?ZWtIOElOcXpRNHN0RkhVSGhpZUcwb2d4VkhNWEI3N0RGMStVVUtYNnVDWjd0?=
+ =?utf-8?B?U01ZMUhHSXdVcm45eEJpZEdHaHh5WWMrTVVzWXhhUDhPYUVFd1A2b2NZQlF2?=
+ =?utf-8?B?ZXhnSkppRElRZ00yTlJ4S1NkTnJuRkhudWtrNlBQN2lGTXRTbkduSE9hU0h1?=
+ =?utf-8?B?SnoremNRYVdaalJSWFpOTkpNTDZqcmtuT3RRejdtYUMrWlNSN2pFRVNvRkRH?=
+ =?utf-8?B?SUhkMDdhblYwNVBHcjRJaDZlOFNrK3hCSitqYzM2RWN5eEpoVU14UEUyeDdv?=
+ =?utf-8?B?RWpQMWZhWE5iQlRreWM5K0ZRdVNBZkkxWGx6aGF5TENpZWlDZkZBZz09?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd937fc9-1b05-4881-6a12-08debcd31b17
+X-MS-Exchange-CrossTenant-AuthSource: BN5PR12MB9511.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2026 16:06:41.3774
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3zow4x3H80CS667vB1V4StP2g8uUsMYempOqPcKQLdGqXJIRYwE0QfCK3AxSqbQmXwfFUupHISyX5jYk9DTbaQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6967
 
 
---luqt5i2skuahmce6
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/4] drm/tegra: Fix iommu_map_sgtable() return value check
-MIME-Version: 1.0
 
-On Tue, Apr 21, 2026 at 01:02:37PM +0900, Mikko Perttunen wrote:
-> Commit "iommu: return full error code from iommu_map_sg[_atomic]()"
-> changed iommu_map_sgtable() to return an ssize_t and negative values
-> in error cases, rather than a size_t and a zero.
->=20
-> Update tegra_bo_iommu_map() to correctly check for errors from
-> iommu_map_sgtable.
->=20
-> Fixes: ad8f36e4b6b1 ("iommu: return full error code from iommu_map_sg[_at=
-omic]()")
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  drivers/gpu/drm/tegra/gem.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+On 5/28/2026 4:04 PM, Robin Murphy wrote:
+> On 2026-05-28 11:16 am, Ashish Mhetre wrote:
+>> Tegra264 SMMU is affected by erratum where a TLB entry can survive an
+>> invalidation that races with concurrent traffic targeting the same
+>> entry. The hardware-recommended software workaround is to issue every
+>> CFGI/TLBI command (each followed by CMD_SYNC) twice. The second issue is
+>> guaranteed to evict the entry. ATC_INV is not affected and must not be
+>> doubled.
+>>
+>> Add the ARM_SMMU_OPT_TLBI_TWICE option and set it on instances matching
+>> the existing "nvidia,tegra264-smmu" compatible. No callers consume the
+>> option yet, next patch wires the workaround into the CMDQ issue paths.
+>
+> Can you not detect this implementation from IIDR like for our other
+> workarounds? Otherwise what about ACPI? 
 
-Applied, thanks.
+Neither IDR nor IIDR flags this Tegra264-specific bug. We cannot
+detect it from any HW register, so we have to rely on the Tegra264
+device tree.
+Regarding ACPI, the bug is in Tegra264 only, and Tegra264 is
+device-tree-only. It doesn't support ACPI/IORT as of now.
 
-Thierry
-
---luqt5i2skuahmce6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoYWhcACgkQ3SOs138+
-s6ElFRAAkeWsm6H131lpF3ZXxxy+dw9NzX5hV718YdAxoduSvNCiSo6TtMd/VThL
-Zv87c8tYmxdXjrz3HwXLrfWRQsO56d3nFbZH2brMMV4SDixycgKAAaPMH13UH5xF
-WplQjm2az0ToTLlCnqca/u8u2uDCm7U5qpuydMFwv4R6T1fXkXP1bddperSuZQCu
-Q9VyNz3B3IMcb4Se41KO180poWwNk2wdRIjbmznYZjjtfWJF3fDwcz8eNtgd5Uzv
-J+87GApeZu2p0gusVCJAauD57SdA1xABSNZXKAqXpe30XYIkPN1f4fuJvqcocyxd
-WlCn9s2xMEcegm+gZQOQFSLiOjKF4Efn5NwS/ZF6wp5Q5mPzRCg/zPSQo5FC6TPP
-R9Yinz26rb/H3DnAEpHiUs7Mo6ovjxAJH1BVlEYWPlIZxk9T1keJt8jHeey9X/NF
-noHtBcQCGfPfPsdaI6VFu+fOEgB+ziW+XDZjqVZ5CDXtFJ1U/j/eGGva3g2m2aP6
-MBbT2y5frc2EeIcCN2tu0Pjsl32kIkdxS9agJ8CosenTrWlhRtAZK6yiOAUxuDQk
-O3miB1VVzujulsZI+cpiAMzpVRtHxuNI+dcugypcES+yqR2uUbmhyG1mZ+oFXe16
-DMqdt2tLo6w3wW5MkjWXZhBQ8CvPzFYOq/htE1dAmjwS/N56gBM=
-=ZyOE
------END PGP SIGNATURE-----
-
---luqt5i2skuahmce6--
+Thanks,
+Ashish Mhetre
