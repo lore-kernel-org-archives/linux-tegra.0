@@ -1,43 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E0F377009;
-	Thu, 28 May 2026 14:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4872E7386;
+	Thu, 28 May 2026 15:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779978041; cv=none; b=CByOkv05Ezo47B5lr7ixjYVI+/+sU/Gtn5LEhtI9lUzLusNWEHRytZHCWXk1W8oY62LzPsQo5esGWYA1vxFCdExVNKOxhrLZkMyf4eDf6485Q+A0ohYrSV/HyHYMEg41qLmkYI3IpU1uuqI7wwxpQsEXIK89hNHWY+xJAeh9UaU=
+	t=1779980453; cv=none; b=oy54IscPYiCXCydt8nO/gozEDZ+qQRUOmmNuxrfDt7T4Eis8hjtDsPOuIoI4GmtyWQG7+BwmAHHCWWJLWicKP8rnV48kVC+ovpryTcXQ8pXV14BY3jRVA/bV8MxwphpN5Ba92JmlOaOui1JlQmMstNnMMIflMW+tWmvrvw1h+68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779978041; c=relaxed/simple;
-	bh=NkRlrtz4Eb2Y9Rsf0oIU+5DDjXqHLy2+kgmyPB0McWI=;
+	s=arc-20240116; t=1779980453; c=relaxed/simple;
+	bh=C8+F947I1fjn97oClLWvSCKMl0BytmuZpN6zhPxCLVo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j8wlS53WBJud8A+NoPEjhNDDgwNCN8bTyaLYr9hINcr8xm9XdeF8Bw151IC2sO31QSTHVQ6N1kN4TGnvDyOeUwoypDz2X05qji39cU0I62vBtCOFKtgj/9+LULKnUZAZeBOlAvFAYzkM7WFgVIb1bh9olOWWPpJdGPIxWHY5Dz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KMPbH9MC; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=NkhsdZQG3ZztNK3MWWAznH6z/3kGC17EDAxPihqdGqanQ3iUMthjIBhmZYSILONEhjD3MZ+5qS11sUnqBrNYQj8xhAD86GR/uVK+DsdcKM+L12whqC80fl0QNtnvCBAhcLghpI/bKZIQIJ2D+mf6k3AnuDZedFhSVBfry/nOEFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CW1cG04q; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KMPbH9MC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAB731F00A3A;
-	Thu, 28 May 2026 14:20:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CW1cG04q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 609F11F00A3A;
+	Thu, 28 May 2026 15:00:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779978039;
-	bh=owd3yHcdZZk9kVBZfXXRZcFgZI3DQoqnNBNYxcexvmI=;
+	s=k20260515; t=1779980451;
+	bh=fEk+dJ1SWRk5UPrfJPRcYdVOwkCaI4AUWGG1t43aaCQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=KMPbH9MCmF9mOEsS1NCjDqSBVX6tA37KmiqpwOmyO/6qlDnDJGjM9eP1vfZNhJFDM
-	 HmWrThGx5s2FaItFKeci91fl4MS1Spz5C0mpVhANv6pMdlmF60GIZplxFhK+8avCL5
-	 He5wkqagXhCe05KYx1seLWY9nln28qhh+SIrxVFDsgbBeUiz5QSOuYtiPdkg++F+qB
-	 FNeha83pm0hEZpttwjoEdzekjg2F4anH2Y90qqC2NKQaND/rbQ1Mdm34+ux5V3etnO
-	 ncTekxVCvE22Npl3kSILz9HFRBNRBTfr7PuPkE0jWs0pY31qkkjAa0hu8ukXjd+THA
-	 jJfEejhqD0QJA==
-Date: Thu, 28 May 2026 16:20:37 +0200
+	b=CW1cG04qRzIGkj9JLdFQPGug9g7zNvY5LRdI0m+2XXVJT2Qf8oj/J9kFpv/AyOwf0
+	 1WL59SnlbHEmdfCxW5X+Q8tN7+8rgFymgMB9xQqsnjcPK5/sGSz2XUvnV0zrff2xY7
+	 NvYothYVyiTjK3S458314Vw92NC5OQMpvX3gYH7OtBXGG7bOW/ubJQlURntSeyMXpK
+	 K8HlW9Z5uKWhkS/qLpno7Ejwm4nDgHygAzS9pg3yeINh6IRtuyxSOdJ2N6NN67WPmU
+	 nqzIXzGSAv3pDDY6YDIXcqzMiNDk5NxeO2jS921eQJQ4qSduztXX02OH0jm5mgCwhU
+	 NTVKO67WjEKhg==
+Date: Thu, 28 May 2026 17:00:49 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Felix Gu <ustc.gu@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/tegra: dc: Fix device node reference leak in
- tegra_dc_has_output()
-Message-ID: <ahhPH___c7pTjYUZ@orome>
-References: <20260128-dc-v1-1-a88205826301@gmail.com>
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	simona@ffwll.ch, airlied@gmail.com, mperttunen@nvidia.com, 
+	thierry.reding@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] gpu: host1x: fix missing
+ 'host1x_context_device_bus_type'
+Message-ID: <ahhYZtcmggWzUrbI@orome>
+References: <20260123140512.609167-1-ben.dooks@codethink.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -45,57 +43,67 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="y6dsoxirkzmzvozk"
+	protocol="application/pgp-signature"; boundary="rcnt2e3b54rlmvwc"
 Content-Disposition: inline
-In-Reply-To: <20260128-dc-v1-1-a88205826301@gmail.com>
+In-Reply-To: <20260123140512.609167-1-ben.dooks@codethink.co.uk>
 
 
---y6dsoxirkzmzvozk
+--rcnt2e3b54rlmvwc
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] drm/tegra: dc: Fix device node reference leak in
- tegra_dc_has_output()
+Subject: Re: [PATCH v2] gpu: host1x: fix missing
+ 'host1x_context_device_bus_type'
 MIME-Version: 1.0
 
-On Wed, Jan 28, 2026 at 12:43:10AM +0800, Felix Gu wrote:
-> The of_for_each_phandle() macro increments the reference count of the
-> device node it iterates over. If the loop exits early, the reference must
-> be released manually.
+On Fri, Jan 23, 2026 at 02:05:12PM +0000, Ben Dooks wrote:
+> The drivers/gpu/host1x/context_bus.c does not include
+> any declaration of host1x_context_device_bus_type, and
+> after including "context.h" it also showed that there
+> are two definitons in the kernel, so fix those two
 >=20
-> In tegra_dc_has_output(), the function returns true immediately when a
-> match is found, failing to release the current node's reference.
+> Fix by removing the definition in context.h and include
+> <linux/host1x_context_bus.h> in context_bus.c
 >=20
-> Fix this by adding a call to of_node_put() before returning from the loop.
+> Fixes the following sparse warning:
+> drivers/gpu/host1x/context_bus.c:9:23: warning: symbol 'host1x_context_de=
+vice_bus_type' was not declared. Should it be static?
 >=20
-> Fixes: c57997bce423 ("drm/tegra: sor: Add Tegra186 support")
-> Signed-off-by: Felix Gu <ustc.gu@gmail.com>
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> --
+> v2:
+>   - removed fixes line
+>   - changed to include into the c files directly
 > ---
->  drivers/gpu/drm/tegra/dc.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  drivers/gpu/host1x/context.c     | 1 +
+>  drivers/gpu/host1x/context.h     | 2 --
+>  drivers/gpu/host1x/context_bus.c | 1 +
+>  3 files changed, 2 insertions(+), 2 deletions(-)
 
-Sorry for missing this earlier. Applied now, thanks.
+Applied this with Mikko's comments worked in. I also updated the commit
+message a tiny bit and added a predeclaration of struct
+host1x_memory_context in context.h out of an extra abundance of caution.
 
 Thierry
 
---y6dsoxirkzmzvozk
+--rcnt2e3b54rlmvwc
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoYTzIACgkQ3SOs138+
-s6GxaRAAjgANXnfe1wgqu6b9m4HuFdaycpwxk4CcV3WwqHprSpxl1qFYVt1ibS7t
-VeTme3TXMEQfWtWtjpmZP+v57XEl4GYqJbkwfWxe07IQ8J69VlW9SO1zuD0r2fDf
-4Tne3aFpMyzAcnw6xdzwMKss3AG2kZSRCXL8lKStb9ukJBuodwjnCPyr7Rwb9I8R
-6sEskI+ZrNxAQYhpO29NRnmMcbpF2ISammOI5BxpLJ3lidf1va0lP5J9C2v+g9Ev
-50kAAmX+PmWJK8rVyKvrxVhjVA9fCFglWyGFxXk0Dv5Xe1f4dfPSLpBklKuxi3Xo
-HnmFPiyagcl2edZmjzfpfptkrgpEtbqkWR6/K/KmcqVi6DOqNzRaZZO7yaSdKBat
-19AggK170KetHSoynu2dFWNtH/z/NIhfEUTgZuZbXaQaaX+rvD0++RgcuzklISr+
-6pT8QG8/aKTmuYZtvmOxyDwRGML+gR3LS2HkazV2c5JriN0xsZsZjWgt8a7NfVdv
-UZajs6ifGkCtSa6zN8hiDeLw1yNBj1MNNb5f1qSnY0/jlNsnAZAxb1E8zE5fV4TI
-9GGF3GZJzq6ILu2BIJ8cEWI3VTUbDEHD/eb8SJjt7hedRqU6fv/kgZNvDMA4cX8z
-a+tVDxRXRhsxjbQhPh0z/HitFPVSe5JTHJ4mlJ2HniKMEuuXqcA=
-=2DYb
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoYWJ4ACgkQ3SOs138+
+s6EbGRAAui5Bi4kM6mv6rFbyz+VQwQSr4SaU3dU1ETZoZwUrXoJrh+hoXWMzTdGr
+arc6oabXwYy4BA5279dtwqj05gOUo+x7KsKLFb7beRq/qXfM38hJ4EdU4cTBuREh
+CLbhy2BUBxrsR+7G48hFOuXojejxLyB3j9R71BbYlGHV7NpZ+3LOooqF4ZOFMFUR
+W4mFzxbcN6tM9G496+QiEQJnVaQQiNGH6Z/5lo0kxwQn9tOXAN7zRX9lI2ozbMLD
+sJLkoxteh902M2r9UiYUP1gyGYzb1x72+i91euij20lXUd+4vA45NXH86xWryphu
+ak6K9stgpQrXgkjJgriVw2iyIoQCX37lcnNfSllQn9g60JB9oJpaNW1OcDS4qT2m
+RFsxkxBcGW+TF1KSh+yEgqeXC477muvnyay4spNqXGDkB3hGo06HUOSbELH7OyFK
+OHAIus8aNSLgfSqrChy7lhWFEMIbuJWADqtEN6MfU7uGFWqjbyGzUPfZE589aYdX
+HaxyFQXcBwbTXGeqG6UHE+CDRGzrQX7Sx2k6F2uVxPrUIh6yeCtqZmaxc57JSrf+
+/ieAvyvvWChOOuyVDKM7Egb5h4JYjwhevnRD3yj6R14KcsL05TTdelxA+GLtcDf3
+CKRCamoC8c+SeWf7xDfHaWPXNhihD2WAOW5jXsyxxZxcOUXVfFo=
+=4YbH
 -----END PGP SIGNATURE-----
 
---y6dsoxirkzmzvozk--
+--rcnt2e3b54rlmvwc--
