@@ -1,41 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4872E7386;
-	Thu, 28 May 2026 15:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C85735898;
+	Thu, 28 May 2026 15:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779980453; cv=none; b=oy54IscPYiCXCydt8nO/gozEDZ+qQRUOmmNuxrfDt7T4Eis8hjtDsPOuIoI4GmtyWQG7+BwmAHHCWWJLWicKP8rnV48kVC+ovpryTcXQ8pXV14BY3jRVA/bV8MxwphpN5Ba92JmlOaOui1JlQmMstNnMMIflMW+tWmvrvw1h+68=
+	t=1779980810; cv=none; b=h3z4drI2CFQr/HrjdzqV7yKvFFKpbLp67kVZfaBwwB2YtRHUsaonwCs3wH1DF2yUakw1fpDEzqGe1S/jPakshERjVseODaDaTt/ZBSLi9jnqM4r7C0BH6IvTY1YHCVA8qIkQeHZ9+wtuN0miSPHyOw0xNHmxD2SAcjgPdnsv6xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779980453; c=relaxed/simple;
-	bh=C8+F947I1fjn97oClLWvSCKMl0BytmuZpN6zhPxCLVo=;
+	s=arc-20240116; t=1779980810; c=relaxed/simple;
+	bh=BJvRrKptkp4JGf0Yy59hD3vxSgepeXzCbF/RDAPH0y8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NkhsdZQG3ZztNK3MWWAznH6z/3kGC17EDAxPihqdGqanQ3iUMthjIBhmZYSILONEhjD3MZ+5qS11sUnqBrNYQj8xhAD86GR/uVK+DsdcKM+L12whqC80fl0QNtnvCBAhcLghpI/bKZIQIJ2D+mf6k3AnuDZedFhSVBfry/nOEFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CW1cG04q; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=BsREkv+/SZLwYg/cZN1ZAXRbY4OK6oPgGz4QAUkaT4/9AQmmNEJREHo8ffDfjOGVuSVIBECYzRCngIYSKYoUsT7WejppcLS4uTdVPyqOyluyvm548Yg1DTd2dRiU+LBL0NvSuPsAYdtbz8mwmPtGTWkMx4ZAGVnT92BlfZMQBjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q9ocXmfN; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CW1cG04q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 609F11F00A3A;
-	Thu, 28 May 2026 15:00:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q9ocXmfN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA2811F000E9;
+	Thu, 28 May 2026 15:06:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779980451;
-	bh=fEk+dJ1SWRk5UPrfJPRcYdVOwkCaI4AUWGG1t43aaCQ=;
+	s=k20260515; t=1779980809;
+	bh=c8uxKDeozKtw7HhpWHZre9JGy+bOINHNRMoLgA/eKYc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=CW1cG04qRzIGkj9JLdFQPGug9g7zNvY5LRdI0m+2XXVJT2Qf8oj/J9kFpv/AyOwf0
-	 1WL59SnlbHEmdfCxW5X+Q8tN7+8rgFymgMB9xQqsnjcPK5/sGSz2XUvnV0zrff2xY7
-	 NvYothYVyiTjK3S458314Vw92NC5OQMpvX3gYH7OtBXGG7bOW/ubJQlURntSeyMXpK
-	 K8HlW9Z5uKWhkS/qLpno7Ejwm4nDgHygAzS9pg3yeINh6IRtuyxSOdJ2N6NN67WPmU
-	 nqzIXzGSAv3pDDY6YDIXcqzMiNDk5NxeO2jS921eQJQ4qSduztXX02OH0jm5mgCwhU
-	 NTVKO67WjEKhg==
-Date: Thu, 28 May 2026 17:00:49 +0200
+	b=Q9ocXmfNTfoni/BH+FLS5BRReOswvnj9TI77F5FJoQ9tbi8N6PiXxVov73pQuR+zV
+	 Z2VNVEt3c+xDsDlT5YgyBpD0HZpGUS+w9eK+h4/K5/xrApsYRcEjL1MZXrz9fBk5Yq
+	 FZZK3nGAGQE6BCDUnpc352dkT6gMwXbO7opycSWfLW7cfXjVTDp4vagYpztci50YlB
+	 kOsl1OaNqcKYRG70JisL8un20vRx4Mh4hYic52t0ER+8Rhq9dtjZ9CffvH5V2dfMh0
+	 aBJwGtUxKrTErAvxEwkbU6KC36VF2okVU6EInLUERYanGkUSMGb7jbTKrH0HJqx6dc
+	 fANY3xEsIJrcQ==
+Date: Thu, 28 May 2026 17:06:46 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	simona@ffwll.ch, airlied@gmail.com, mperttunen@nvidia.com, 
-	thierry.reding@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] gpu: host1x: fix missing
- 'host1x_context_device_bus_type'
-Message-ID: <ahhYZtcmggWzUrbI@orome>
-References: <20260123140512.609167-1-ben.dooks@codethink.co.uk>
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org
+Subject: Re: [PATCH 1/4] gpu: host1x: Fix iommu_map_sgtable() return value
+ check
+Message-ID: <ahhZ_Enh2TAWFxDg@orome>
+References: <20260421-iommu_map_sgtable-return-v1-0-fb484c07d2a1@nvidia.com>
+ <20260421-iommu_map_sgtable-return-v1-1-fb484c07d2a1@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -43,67 +50,58 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rcnt2e3b54rlmvwc"
+	protocol="application/pgp-signature"; boundary="hqgt5icxz7r7yoip"
 Content-Disposition: inline
-In-Reply-To: <20260123140512.609167-1-ben.dooks@codethink.co.uk>
+In-Reply-To: <20260421-iommu_map_sgtable-return-v1-1-fb484c07d2a1@nvidia.com>
 
 
---rcnt2e3b54rlmvwc
+--hqgt5icxz7r7yoip
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] gpu: host1x: fix missing
- 'host1x_context_device_bus_type'
+Subject: Re: [PATCH 1/4] gpu: host1x: Fix iommu_map_sgtable() return value
+ check
 MIME-Version: 1.0
 
-On Fri, Jan 23, 2026 at 02:05:12PM +0000, Ben Dooks wrote:
-> The drivers/gpu/host1x/context_bus.c does not include
-> any declaration of host1x_context_device_bus_type, and
-> after including "context.h" it also showed that there
-> are two definitons in the kernel, so fix those two
+On Tue, Apr 21, 2026 at 01:02:36PM +0900, Mikko Perttunen wrote:
+> Commit "iommu: return full error code from iommu_map_sg[_atomic]()"
+> changed iommu_map_sgtable() to return an ssize_t and negative values
+> in error cases, rather than a size_t and a zero.
 >=20
-> Fix by removing the definition in context.h and include
-> <linux/host1x_context_bus.h> in context_bus.c
+> pin_job() also was incorrectly assigning to 'int', which could cause
+> overflows into negative values.
 >=20
-> Fixes the following sparse warning:
-> drivers/gpu/host1x/context_bus.c:9:23: warning: symbol 'host1x_context_de=
-vice_bus_type' was not declared. Should it be static?
+> Update pin_job() to correctly check for errors from iommu_map_sgtable.
 >=20
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> --
-> v2:
->   - removed fixes line
->   - changed to include into the c files directly
+> Fixes: ad8f36e4b6b1 ("iommu: return full error code from iommu_map_sg[_at=
+omic]()")
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 > ---
->  drivers/gpu/host1x/context.c     | 1 +
->  drivers/gpu/host1x/context.h     | 2 --
->  drivers/gpu/host1x/context_bus.c | 1 +
->  3 files changed, 2 insertions(+), 2 deletions(-)
+>  drivers/gpu/host1x/job.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 
-Applied this with Mikko's comments worked in. I also updated the commit
-message a tiny bit and added a predeclaration of struct
-host1x_memory_context in context.h out of an extra abundance of caution.
+Applied, thanks.
 
 Thierry
 
---rcnt2e3b54rlmvwc
+--hqgt5icxz7r7yoip
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoYWJ4ACgkQ3SOs138+
-s6EbGRAAui5Bi4kM6mv6rFbyz+VQwQSr4SaU3dU1ETZoZwUrXoJrh+hoXWMzTdGr
-arc6oabXwYy4BA5279dtwqj05gOUo+x7KsKLFb7beRq/qXfM38hJ4EdU4cTBuREh
-CLbhy2BUBxrsR+7G48hFOuXojejxLyB3j9R71BbYlGHV7NpZ+3LOooqF4ZOFMFUR
-W4mFzxbcN6tM9G496+QiEQJnVaQQiNGH6Z/5lo0kxwQn9tOXAN7zRX9lI2ozbMLD
-sJLkoxteh902M2r9UiYUP1gyGYzb1x72+i91euij20lXUd+4vA45NXH86xWryphu
-ak6K9stgpQrXgkjJgriVw2iyIoQCX37lcnNfSllQn9g60JB9oJpaNW1OcDS4qT2m
-RFsxkxBcGW+TF1KSh+yEgqeXC477muvnyay4spNqXGDkB3hGo06HUOSbELH7OyFK
-OHAIus8aNSLgfSqrChy7lhWFEMIbuJWADqtEN6MfU7uGFWqjbyGzUPfZE589aYdX
-HaxyFQXcBwbTXGeqG6UHE+CDRGzrQX7Sx2k6F2uVxPrUIh6yeCtqZmaxc57JSrf+
-/ieAvyvvWChOOuyVDKM7Egb5h4JYjwhevnRD3yj6R14KcsL05TTdelxA+GLtcDf3
-CKRCamoC8c+SeWf7xDfHaWPXNhihD2WAOW5jXsyxxZxcOUXVfFo=
-=4YbH
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoYWgYACgkQ3SOs138+
+s6GqTBAAwdxQxm9pX/VxKeekH9QcutZH2UVnE3Piqkgk4WWWPGo+OJe0eP8rYRz1
+k24+EwaUd+TCg8hwLmi/ReXPiDEB5aIT1nbnCMi6a88ND9a+hnTydA27jSO4Gtip
+Yahkuixea/PETVHJ1QgBx6ZZBVY227qbdDrrSFCDHkqXgquFYcEq/y1GcCPNI6v3
+Q5pKK9anrZDdGSLmML3X1+djUHS1G16/H3AG3xoabDRrQkA/C1wwN7sa1eFRTdGy
+CvAl1aTketmwRuw5nPn46fVBlTbsP/oVyr+KclRI8ctkMXFMq74f0fs4DyOlqdAy
+AKkXXpppda3yiy1r10NAC03D7EdDKcIkO0Y98KxANFj5FQoa1FI4Tp3H5ikAh58I
+hQuXi2WCoLe10G4jrJrGLstvUhgJVrP0WbCa1xGdDAe8AZfH/NUEadDFSkQ+Gl8X
+7fGdUYkUrDnjTPUrvJWiOZj9fk3TQbsrGKIFeu0TJp2+rO22jocolSvSvLX1lL4t
+XfYPcbsCu7xQQPNqDLTid+hoX/w7cRhPUSrQAhEM6OPtn1s+6pDRT0qkXb7hu6bn
+7SyijlTJZ0l3a5XziROyiiIZ4T672pAeQmzI5i3+xBRTATutOuciF+UAcQfu4afo
+CBmYMaAZDyDSCIPAvXaQ5OEE7nPap7sQdz9jNvw+w9ltQlSKfLw=
+=uYsw
 -----END PGP SIGNATURE-----
 
---rcnt2e3b54rlmvwc--
+--hqgt5icxz7r7yoip--
