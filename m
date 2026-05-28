@@ -1,137 +1,115 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAAD3321D4;
-	Thu, 28 May 2026 06:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17602302165;
+	Thu, 28 May 2026 07:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779950652; cv=none; b=Ln0x8XDWP6LItz0LNv7qQ+cFGQYNiD9SQOZ0JYIZzRM3OvwyvHP11J7k0FGRQXs/W33xduX3bmNUbArm4rGdnNMSxLvDyah9f7XVojd9fnup9gh33HzdLaNT3p2trM3+WlHjIeKVW2gKs+O9qVw+LTrUzOmbnFYIR+O+Ypv4TWc=
+	t=1779953026; cv=none; b=K3iAskE0zxikRx1Jwv+tgsha2y6mI8xrmRTDtFlU0pG9Z5cMi7rp5Iy3erIJ6izmN9WXc0UPlsaA0Dq1NecRzDoWy7YejczkHm1eXf8JF1UE3/6oxSTl1i/4Q3qqvVEMjcV4C7JHrDEuR4UDJ55fSqSUuBJmm6eV4GJURMIgcSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779950652; c=relaxed/simple;
-	bh=CmoccOtHd/HuFqbzqIM8b0j+gcLsc4s2zkjBXEQGNPo=;
+	s=arc-20240116; t=1779953026; c=relaxed/simple;
+	bh=Zy5v+QiVqPaiWY6X6etBKWrLzURWCG9Oa3/2r6VHqGk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ozt++HhU/Ypq4AnxKnxTxhH8tAaZnHJl0kY9Ayqwuap7ZTLSxdqm4JiX7oNt1aBPwoZEifjI27ZXIDx+DUygikkfwP9RViSPlwb6g6qixazybfOGVGHYQgNJJOeC5RmlTHhVjymTyo2uRRkkVdX1An0hfyQlIea3xqw/oMu5ZXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DMf+bZHr; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=lvFXGZfbKCxw+txcvM5CVi/z8ZjpG82p8YMufNuW10o4yhU7e/SaTPvfJsmerkSvBbjsG8drBB793srLHkS4uR+PW1KbF21HRBk3Vjr58VGjpZu6S+qJTZuXqLaXJnL7+JJYIfoQnN/dSrIC2VJyBVRnNse0NWFtiry+dyZ5IPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cLeGCz2a; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DMf+bZHr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B14A1F00A3A;
-	Thu, 28 May 2026 06:44:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cLeGCz2a"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6955A1F000E9;
+	Thu, 28 May 2026 07:23:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779950650;
-	bh=8uOQcDGbXZlb6q8u3GvJiWkXjn3EaSa5gllpC9TQbrU=;
+	s=k20260515; t=1779953024;
+	bh=geJsUxa2oXdzbMeenZeNEivegTBsADtrNWwGH2tR0dg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=DMf+bZHrQTcd9uXj5YaqJ2NMKllNWB6er4xNsT03rFDsQLoZ/iEIAYctOP1m4jqhp
-	 Cp1mby8xWctFOfyvR/sLyQugVI1nbSEOPIYlnLcNqgnEos7+ymmVccpbPl75Mns///
-	 9GVqaoiK5KY7cJy8ON7ZUGyJR47SQoRcIKt4GvDfy0cbfp/8jGRbyQz2GRGD7NCdms
-	 Lu8UkXAG7SAVhN+ZHb2df7AjXVXzmgiPqKXeVjlCB9/ijtB9DtTLSB9XUdkKzL806h
-	 1KVouHE54G5rUEvNLIAQ2vf8UyV7AuT3uX/km/qBCRdx3umAiCYj2ztZ0uiZJ2fRor
-	 7TQu1CQzBGjKQ==
-Date: Thu, 28 May 2026 08:44:07 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Thierry Reding <thierry.reding@gmail.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof Wilczy??ski <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
-	Michal Simek <michal.simek@amd.com>, Kevin Xie <kevin.xie@starfivetech.com>, 
-	Aksh Garg <a-garg7@ti.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v5 2/4] PCI: Use standard wait times for PCIe link
- monitoring
-Message-ID: <ahfj-uhNTlk-byvU@orome>
-References: <20260526-tegra264-pcie-v5-0-84a813b979d7@nvidia.com>
- <20260526-tegra264-pcie-v5-2-84a813b979d7@nvidia.com>
- <ahV_r6NJWnmJptT2@wunner.de>
- <ahanoZgDwq3v6x8M@orome>
- <ahcob7HMbyGvFgxc@wunner.de>
+	b=cLeGCz2aaMXcd769PORmRrjGRS4DeiTKAZven9bOCaW52bbBf85xPxbUDCC7TQETM
+	 p7R2w5KQwvCjZq71l4Kp/3zQj/8zHgjDS2eWnEzmCV82WQPtXFRH64k8UXgnDvIlNP
+	 ydjCgJ3cbf3dYFP3mg4ozvflzMdPOKVXOQd0fp2/Sci//4BU59oK5o5pXanxe8VjnI
+	 Xu8wGwFxKj3P+9qhB7sCdB0TcwqfA9aMmn9TC2P3x8keJt320uCsN4KGb5SlQv9kZt
+	 Liudc5QcUE+9SNYKJVMk5QGiZn+rOUtyJHXmnT+jkIJfymKkJkEOYl7PWONd6V9egN
+	 dseUkrDQ1rcqg==
+Date: Thu, 28 May 2026 15:23:39 +0800
+From: "Peter Chen (CIX)" <peter.chen@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>, Xu Yang <xu.yang_2@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] usb: chipidea: tegra: Avoid controller/PHY init
+ if bus is externally controlled
+Message-ID: <ahfte9D4TsbgzFQx@nchen-desktop>
+References: <20260523083013.46372-1-clamor95@gmail.com>
+ <20260523083013.46372-4-clamor95@gmail.com>
+ <CAPVz0n0jpnPFh0f=CWHufzZ+e24xsem5DFTKdFu6sczCLk08Fg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uc3lgg4pj4krpin7"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ahcob7HMbyGvFgxc@wunner.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPVz0n0jpnPFh0f=CWHufzZ+e24xsem5DFTKdFu6sczCLk08Fg@mail.gmail.com>
 
+On 26-05-25 17:43:42, Svyatoslav Ryhel wrote:
+> сб, 23 трав. 2026 р. о 11:30 Svyatoslav Ryhel <clamor95@gmail.com> пише:
+> >
+> > If the USB controller and PHY are externally controlled, then the
+> > registration of the controller and the PHY initialization should be
+> > skipped, since these configurations must be done by the device that
+> > controls the bus to work correctly.
+> >
+> > Since USB PHY in Tegra controls clock gates required by the controller
+> > itself, Chipidea core PHY management is not suitable for Tegra.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  drivers/usb/chipidea/ci_hdrc_tegra.c | 32 ++++++++++++++++++----------
+> >  1 file changed, 21 insertions(+), 11 deletions(-)
+> >
+> 
+> Hello there!
+> 
+> This patch is required because I could not find an acceptable way to
+> manually remove and add a platform device. I will explain the details
+> below and hope that someone can give me some suggestions on how to
+> handle this situation.
+> 
+> The Tegra USB controller is the root node, and it is bound and probed
+> automatically. This is perfectly fine for ordinary use cases. On the
+> other hand, the modem used in Tegra 3 devices requires the USB
+> controller to be registered at the exact moment when the modem is
+> ready to handle USB. If this window is not respected, the modem will
+> not expose the USB device, and all you get is a cascade of enumeration
+> failures.
 
---uc3lgg4pj4krpin7
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 2/4] PCI: Use standard wait times for PCIe link
- monitoring
-MIME-Version: 1.0
+Could you add USB controller device node as the child node for modem,
+and dynamic creating USB controller device during modem probe?
 
-On Wed, May 27, 2026 at 07:22:55PM +0200, Lukas Wunner wrote:
-> On Wed, May 27, 2026 at 10:28:51AM +0200, Thierry Reding wrote:
-> > On Tue, May 26, 2026 at 01:10:39PM +0200, Lukas Wunner wrote:
-> > > On Tue, May 26, 2026 at 10:53:11AM +0200, Thierry Reding wrote:
-> > > > Instead of defining the wait values for each driver, use common val=
-ues
-> > > > defined in the core pci.h header file. Note that most drivers don't=
- use
-> > > > the millisecond waits, but rather usleep_range(), so add these comm=
-only
-> > > > used values to the header so that all drivers can use them.
-> > >=20
-> > > Hm, why not just replace usleep_range() with msleep() and use the exi=
-sting
-> > > macro instead of defining new ones?
-> >=20
-> > I'm trying to somewhat unify the implementations across drivers without
-> > changing behaviour. I don't have a way of testing any of these drivers,
-> > so keeping the existing implementation and just switching out the symbol
-> > seemed like a good compromise.
->=20
-> It looks like the code was copy-pasted from one driver to the next
-> and I applaud every effort to deduplicate, unify and simplify things.
->=20
-> I don't quite see how using msleep() instead of usleep_range()
-> should result in breakage.  The drivers are just polling for
-> link up for an amount of time and as long as you're not decreasing
-> that amount, everything ought to be fine.  Moving to msleep()
-> should never decrease the amount.
->=20
-> > Then again, I count 2 drivers (in linux-next) that use the existing
-> > PCIE_LINK_WAIT_SLEEP_MS, one of which multiplies by MILLI to get at the
-> > US version (so it could easily be converted to the US_MIN version). Only
-> > pcie-designware.c uses msleep() with PCIE_LINK_WAIT_SLEEP_MS, so it is
-> > clearly the outlier.
->=20
-> Konrad Dybcio went ahead and replaced usleep_range() with msleep()
-> in that driver, kudos to him.  Cf. b262518262f5 ("PCI: dwc: Use msleep()
-> in dw_pcie_wait_for_link()").  If you could just carry over that change
-> to the other drivers that would be great.
+Peter
 
-Alright, I see you really don't like usleep_range(), so msleep() it'll
-be.
+> 
+> The solution as I see it right now: The modem has a power sequencing
+> driver, and the USB controller can either be autoprobed and
+> unregistered in the pseq probe and then registered/unregistered in the
+> on/off sequences, or it can have a status = "reserved" set in the USB
+> node and manually register/unregister it during the pseq on/off
+> sequences. This would eliminate the need for this patch.
+> 
+> The problem I have faced is that I cannot properly and manually
+> control the USB controller driver to bind -> probe it and remove ->
+> unbind it from within powerseq.
+> 
+> Help is appreciated. Thanks!
+> 
+> Best regards,
+> Svyatoslav R.
 
-Thierry
+-- 
 
---uc3lgg4pj4krpin7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoX5DcACgkQ3SOs138+
-s6H9qQ/9FvVWlaICBU/gs8tDIB7XU9zULjHm6whhbpBn3uuDB6PqFKfGbFmLL5ch
-lDezqyqIUjvskd88UahBE3f5AnEFDrqK9AstxY2VQn8/Iu60WsLlU578H2vGxshG
-nCDRQZW2pQ5d85TaWhYZwOnSM0rFCbmhlPeiI1EiSuGyPDp/7IpIi3p2LC/IERee
-LCmtj4bW6zQMPU6kXjJI8SfGcD67YkJHmTKPmuhcqeG6ni27BPXEJ/kzz2BfQ+1c
-OdCJElFdOUtLONNLUeK5gEetp9VV1SOeZ4urDMJLG12RkP8++ql3rs/jvl8wlkGK
-RFbCzXsV91mi11beDpSR8MSNew80qXMZ+qZO+VTqGv5fcRCqmoKo2t4GzQ+AB1zj
-nRxWk6QeB0+yzVUyetGjuSzMMo7pzgEOcBQ0UgJam58kk7Sgz9dej1VR2//8GLbR
-bkZw5uvmRtdJ0MGsQyDxgnGpZUaFLqxvomlRt3rMF9d43fU+viuHUHe0qAMLV4O0
-EXnwmEjVqZMOqi9gbEt38d8lk5AhgC9RilRlG8/gzQNF4agL6U1S4cD5WVzrLzjV
-TTMydaK+xfTTcCrHsSrrq0c3AzQng0TR12M5DzPGNq1gENxVYL2VQ5W3zBPMKiSl
-X06TvyKmS6rpAK8F7Bm+4BG44Bd7QrqbKbtixgWNN33xe45+td8=
-=0mcj
------END PGP SIGNATURE-----
-
---uc3lgg4pj4krpin7--
+Best regards,
+Peter
