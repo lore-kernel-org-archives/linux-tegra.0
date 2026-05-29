@@ -1,182 +1,161 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B003BE65C;
-	Fri, 29 May 2026 09:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558033D2FFB
+	for <linux-tegra@vger.kernel.org>; Fri, 29 May 2026 12:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780047716; cv=none; b=uFXZ1bKU2YCCfyoUQzmYmvY8WHJ8oxL7sSdzxDUKxxMBcocAf1QHN9HW+bT464/P7WY228YbQXh35sItBpPoqMNh+3LQKu55j8lf+tLriJoMy5LwLUN19TNOdF/OroNIlheG/gydtP5ex8HTQC6jiwiubD2XEt7oBzSvD8zQtmU=
+	t=1780057841; cv=none; b=tXESQ1TKHTP4TEL3kiyMRvnmChEmI07WPkEIzyzze4cyQKd1hFjgnwx+wEaC1FprtJspUOalMwV5xDvcW6cmbGLBiGyGnLaXegXdkrmwPPS+zckv7/kD/2hI1XgoUA1oX4BV4NslKUKU00F3oaGhsa5D9R8EFejzQ3sSN0SnW3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780047716; c=relaxed/simple;
-	bh=7GHVraZ3a3dP9NyKaTJuNJ0p0Ir9cdaIwdui00yvYls=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f8dQX/5vPq7RYsIIDc0R3jL+AUkDD022HayQQf7z+x5M1JniLyPnC8GAfelwpYn0Cg2T4iOJB8dgwkQ8NJ/5L19Hsp0An4nbVsOkd6EINXarhnvstHLbr19LgiFm6tw6nPeiatKDV2u/sCsqsMg0eRDSd9Ik4hij4igbMUPdhZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V46jvatu; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780057841; c=relaxed/simple;
+	bh=DyC2Vib28wfmR0aQeTVBW3Gj7i6krsTikQR4U1MQqJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GxxKTS25GLU6WKqsmbjPEtA0ooMwafOm1KZyuGxIq/qLv+sY+ReKptNPXT9I9ZxzJfxmRhubXTxkGYE+4MUeMHX1zeG0Ai3sNIceh4FDjfMY9mO8ohMSE53AYkRr4nDIYMoJXw4IdHiEWVhSQMUrO829Io5mLT+MUuIAOF3dFwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X6baG0qQ; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V46jvatu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C7D01F00893;
-	Fri, 29 May 2026 09:41:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780047712;
-	bh=Bo34nD4/JJ35MpvXhFaNLlUZZllsnL/xS0yGA4huxz0=;
-	h=From:To:Cc:Subject:Date;
-	b=V46jvatuenoWMU3dxDQ933HTcJNi292pLAXzLqpxhox9ne6vqPj6Q4eg8exebuEnf
-	 HgYyTHWXhiYOcpqh1gLiSdHVpXy4FHE8p1Byk5TfpghHROSaW40CI2F6NsmIQ+ST1B
-	 r6HK0MX0CuC7LqkzL1JW444eJf1qzc0zHD5SWOu0T+wveGMCCasaPkAtiej0VVv538
-	 QPXH60CwMcp3SGPzicvGcDuNG+29U0pkVbBM/ZOOMhSBULMVUqjAHrNEXleRZC6Z1S
-	 s6TicYD3tEV75gET7YblGlbD++fQFtiQY4+kIYrNoRkhmiZ+qGewf3u45l95D7qCz4
-	 fN1/O4LkosiHA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Linus Walleij <linusw@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prathamesh Shete <pshete@nvidia.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-gpio@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X6baG0qQ"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5a40502e63bso14059002e87.0
+        for <linux-tegra@vger.kernel.org>; Fri, 29 May 2026 05:30:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1780057839; x=1780662639; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RKvGtal20Qw6UoC2q1rlPNZH8iLMvVd+YalFphindlw=;
+        b=X6baG0qQ9+5iikH9EaVYaZCeBrJCQI34VNxMX87h8Hh1Hw5okcU3PG1Oy/aTHbMXBL
+         WIRLQtp7FxOp7D6dGcVsFixs/AWj8sfLm3GbVa+1mjNXyoBeRNSCnrQIHTM8gnTq9tog
+         RKjrw0jgDAHcMx2ujuWy1gQrkzdVNpUDsNCXbd/nJa8y098VGSLW7meTTsmP614l9JCN
+         w6CpXsVULvL1ri/KrBfbTd0Wdu0k8eTwZEawxLDTlioIacXqHjuwqD7tbnu4AU9Q675Z
+         D198VlXIc8Cp67lDMhL4Y3AHhBrP7ZzknJb1qpzIsqQqNq/fhDACqDxKlxi/12H4Se+L
+         nmlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780057839; x=1780662639;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RKvGtal20Qw6UoC2q1rlPNZH8iLMvVd+YalFphindlw=;
+        b=UKm2eFanacN/swSiFskcfblkECRiLDK49dPUGB4M+PUT0L1WeLz2bV/PXlTFQIIDs2
+         BAm4epJLkxL0Hmty9gwA4WoBPuLTJGUD2tVFTSr2aedSgkE8Z8nUkdvg+FQ7nwgQuK+b
+         5X/UlCytF76j1cVPC77A5HQfv7gHBxE0encpVf8K3ilht/MerqdME0zYjg3SkiMM6PLp
+         nwKlLqbnnEWkHZA8o8FW0V6AR6IuX2AFE4T21o+YkT1usjOI3DbAHB+zPjyx+0yI9Fo/
+         MZ9Xy6PD3xnvtu5Yk3PzpDwkRheNFsxEK6fcRZxEBFzcW2oNsODuLW1ZJVof3yLQA3ab
+         oHPw==
+X-Forwarded-Encrypted: i=1; AFNElJ/4N3k8Zn7JzU4OewvOVB2gRX/QtyieuuuC3H1LgtTTYyUXKcwu4pxvFE+Z8/fsdlJGiPO8jkA+zkRrag==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqAPpQQBddf8O957N8wLXu8MbWBzBscupAes9Kg1nJVGKpvQWo
+	Y0R5gA41zVXV9DlxB1TYV8tEaHd1yDnkcLzkMCKBgCOxuq800A1l8jkf
+X-Gm-Gg: Acq92OGNzZZgVsTenSGOC1cPqrbhkRsWTnXolPKFXlJ4b4oWEdCuLvjhbKNUpPnGqMJ
+	DkeLmzYCKZqK9kYcfJ87lE9TcR8p8nfzBRp1Dxwhe4ejMRikJxgbUcRZvmG5pihhwnZ3hPWa22O
+	zASaivFaH51SlAVvh4PW3bedTwGFCLTZEvsomBhxgni4miuNsR14E8vYg2s+Aes1nM1mbLZJAi/
+	SgLzJjcGj1RXEVnx+RHuRPyPUPDvLT1rog4V1iD8j6yNeMbEy0zfNRwlkODWqIFl+zjjlgk6Eue
+	v0PbsmLk92pXGPzodImbHPBNIBDYz0JcvdxSBEVSu077g1aJKEeYdIkyS4aGPttX+S9PDMYMvl9
+	TgME9KioLhQWLCjJIca9l4AVwimx6m/8/yyqZ8NgcaTZkLl2u7qbAmbhD97mFgD8Dxs7KDCcCNh
+	Xfbw4Bjg/eIXtUs4kd8ghYJxpgw7CfhjWBAYrf7PXet7PNS59V2GXtmEbNEX5Ub1BPzUULa3GO1
+	CYJgO9THqYCZcltY77WN8SB/2d01V5p8B0=
+X-Received: by 2002:a05:6512:3407:b0:5a8:847a:decd with SMTP id 2adb3069b0e04-5aa5942c555mr888849e87.6.1780057838196;
+        Fri, 29 May 2026 05:30:38 -0700 (PDT)
+Received: from orome (p200300e41f1bda00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:da00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5aa5b00a5f4sm260919e87.0.2026.05.29.05.30.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 May 2026 05:30:35 -0700 (PDT)
+Date: Fri, 29 May 2026 14:30:33 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Thierry Reding <thierry.reding@kernel.org>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: tegra238: remove unused entries
-Date: Fri, 29 May 2026 11:41:20 +0200
-Message-Id: <20260529094143.1872822-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+Subject: Re: [PATCH v4 0/2 RESEND] gpu/drm: tegra: add DSI support for
+ Tegra20/Tegra30
+Message-ID: <ahmG1x5GtztLg-CP@orome>
+References: <20260511074538.24563-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ugsdrugixr4n33iu"
+Content-Disposition: inline
+In-Reply-To: <20260511074538.24563-1-clamor95@gmail.com>
 
-From: Arnd Bergmann <arnd@arndb.de>
 
-The -Wunused-const-variable check points out a number of added
-entries that are currently not referenced:
+--ugsdrugixr4n33iu
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 0/2 RESEND] gpu/drm: tegra: add DSI support for
+ Tegra20/Tegra30
+MIME-Version: 1.0
 
-drivers/pinctrl/tegra/pinctrl-tegra238.c:1169:27: error: 'soc_gpio86_phh3_pins' defined but not used [-Werror=unused-const-variable=]
- 1169 | static const unsigned int soc_gpio86_phh3_pins[] = {
-      |                           ^~~~~~~~~~~~~~~~~~~~
-drivers/pinctrl/tegra/pinctrl-tegra238.c:1165:27: error: 'uart5_cts_phh2_pins' defined but not used [-Werror=unused-const-variable=]
- 1165 | static const unsigned int uart5_cts_phh2_pins[] = {
-      |                           ^~~~~~~~~~~~~~~~~~~
-drivers/pinctrl/tegra/pinctrl-tegra238.c:1161:27: error: 'uart5_rts_phh1_pins' defined but not used [-Werror=unused-const-variable=]
- 1161 | static const unsigned int uart5_rts_phh1_pins[] = {
-      |                           ^~~~~~~~~~~~~~~~~~~
+On Mon, May 11, 2026 at 10:45:35AM +0300, Svyatoslav Ryhel wrote:
+> Tegra20/Tegra30 DSI is quite similar to Tegra114+ apart MIPI calibration
+> logic and clocks. With a few minor tweaks, existing tegra DSI driver
+> should work on Tegra20/Tegra30 devices just fine. Tested on
+> Motorola Atrix 4G (T20) and ASUS VivoTab RT TF600T (T30).
+>=20
+> This patchset depends on Tegra20/Tegra30 CSI bringup since both share
+> MIPI calibration logic. Ideally these patches should be picked after
+> CSI bringup but they will not break anything even if picked before
+> CSI patches.
+>=20
+> ---
+> Changes in v2:
+> - removed all MIPI calibration, it is handled within CSI bringup
+> - added per-soc structures into of_match
+> - added fix for hang caused by register access with uninited hw
+>=20
+> Changes in v3:
+> - switched from version DSI to boolean flags
+> - added comment regarding Tegra30 clock configuration
+> - commits were picked:
+>   "clk: tegra20: reparent dsi clock to pll_d_out0"
+>   "ARM: tegra: adjust DSI nodes for Tegra20/Tegra30"
+> - commit adapted to recent DSI changes:
+>   "gpu/drm: tegra: dsi: move prepare function at the top of encoder
+>     enable" > "gpu/drm: tegra: dsi: re-add clear enable register if
+>     DSI was powered by bootloader"
+>=20
+> Changes in v4:
+> - switched to device_get_match_data and added check
+> - added comment regarding Tegra124+ quirk
+> - adjusted commit titles and message formatting
+> ---
+>=20
+> Svyatoslav Ryhel (2):
+>   drm/tegra: dsi: add support for Tegra20/Tegra30
+>   drm/tegra: dsi: re-add clear enable register if DSI was powered by
+>     bootloader
+>=20
+>  drivers/gpu/drm/tegra/drm.c |   2 +
+>  drivers/gpu/drm/tegra/dsi.c | 126 +++++++++++++++++++++++++++---------
+>  drivers/gpu/drm/tegra/dsi.h |  10 +++
+>  3 files changed, 107 insertions(+), 31 deletions(-)
 
-Remove them for now, they can just be added back if they get
-used in the future.
+Applied, thanks.
 
-Fixes: 25cac7292d49 ("pinctrl: tegra: Add Tegra238 pinmux driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/pinctrl/tegra/pinctrl-tegra238.c | 96 ------------------------
- 1 file changed, 96 deletions(-)
+Thierry
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra238.c b/drivers/pinctrl/tegra/pinctrl-tegra238.c
-index 421da334151c..c765b6b880e5 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra238.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra238.c
-@@ -1074,102 +1074,6 @@ static const unsigned int pwm7_pee1_pins[] = {
- 	TEGRA_PIN_PWM7_PEE1,
- };
- 
--static const unsigned int soc_gpio49_pee2_pins[] = {
--	TEGRA_PIN_SOC_GPIO49_PEE2,
--};
--
--static const unsigned int soc_gpio82_pee3_pins[] = {
--	TEGRA_PIN_SOC_GPIO82_PEE3,
--};
--
--static const unsigned int soc_gpio50_pee4_pins[] = {
--	TEGRA_PIN_SOC_GPIO50_PEE4,
--};
--
--static const unsigned int soc_gpio83_pee5_pins[] = {
--	TEGRA_PIN_SOC_GPIO83_PEE5,
--};
--
--static const unsigned int soc_gpio69_pff0_pins[] = {
--	TEGRA_PIN_SOC_GPIO69_PFF0,
--};
--
--static const unsigned int soc_gpio70_pff1_pins[] = {
--	TEGRA_PIN_SOC_GPIO70_PFF1,
--};
--
--static const unsigned int soc_gpio71_pff2_pins[] = {
--	TEGRA_PIN_SOC_GPIO71_PFF2,
--};
--
--static const unsigned int soc_gpio72_pff3_pins[] = {
--	TEGRA_PIN_SOC_GPIO72_PFF3,
--};
--
--static const unsigned int soc_gpio73_pff4_pins[] = {
--	TEGRA_PIN_SOC_GPIO73_PFF4,
--};
--
--static const unsigned int soc_gpio74_pff5_pins[] = {
--	TEGRA_PIN_SOC_GPIO74_PFF5,
--};
--
--static const unsigned int soc_gpio80_pff6_pins[] = {
--	TEGRA_PIN_SOC_GPIO80_PFF6,
--};
--
--static const unsigned int soc_gpio76_pff7_pins[] = {
--	TEGRA_PIN_SOC_GPIO76_PFF7,
--};
--
--static const unsigned int soc_gpio77_pgg0_pins[] = {
--	TEGRA_PIN_SOC_GPIO77_PGG0,
--};
--
--static const unsigned int soc_gpio84_pgg1_pins[] = {
--	TEGRA_PIN_SOC_GPIO84_PGG1,
--};
--
--static const unsigned int uart2_tx_pgg2_pins[] = {
--	TEGRA_PIN_UART2_TX_PGG2,
--};
--
--static const unsigned int uart2_rx_pgg3_pins[] = {
--	TEGRA_PIN_UART2_RX_PGG3,
--};
--
--static const unsigned int uart2_rts_pgg4_pins[] = {
--	TEGRA_PIN_UART2_RTS_PGG4,
--};
--
--static const unsigned int uart2_cts_pgg5_pins[] = {
--	TEGRA_PIN_UART2_CTS_PGG5,
--};
--
--static const unsigned int soc_gpio85_pgg6_pins[] = {
--	TEGRA_PIN_SOC_GPIO85_PGG6,
--};
--
--static const unsigned int uart5_tx_pgg7_pins[] = {
--	TEGRA_PIN_UART5_TX_PGG7,
--};
--
--static const unsigned int uart5_rx_phh0_pins[] = {
--	TEGRA_PIN_UART5_RX_PHH0,
--};
--
--static const unsigned int uart5_rts_phh1_pins[] = {
--	TEGRA_PIN_UART5_RTS_PHH1,
--};
--
--static const unsigned int uart5_cts_phh2_pins[] = {
--	TEGRA_PIN_UART5_CTS_PHH2,
--};
--
--static const unsigned int soc_gpio86_phh3_pins[] = {
--	TEGRA_PIN_SOC_GPIO86_PHH3,
--};
--
- static const unsigned int sdmmc1_comp_pins[] = {
- 	TEGRA_PIN_SDMMC1_COMP,
- };
--- 
-2.39.5
+--ugsdrugixr4n33iu
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoZhuUACgkQ3SOs138+
+s6ED7A//cJerqjiX8am4Jd3tndfUpExblFmlthrQAelKsGPTaEcB7tFzABRj1vIy
+u1EXMrk4xBMmPw/VNY4HG5hK/mnGzmcUD1HO52X/dKCAVWbbSO3NJ5exA2+Qrag/
+8qRP+YHS57dJEtO6yb04+rejedAd0QHIr0/Oim3qmthtBFzDb7+f2YqXTNtOhLBL
+SFLVvaYTUNTdgaHQCOVkU/GCbpag+ylV6jG5+mSpfgXUirbeqhvgP0y4+zJubUzC
+W6mZ8zRGG3nkC9clSNlyqP/4eUfATiwLR1AtCrCkfTcArNynT6Nf2m26MZbnhp6/
+3spmOYASeH1YvLX/s0G4wNIpIbmwm5Nql4EgFUOGUIZrCDmTJORAEFcrTyj02fjp
+U6U+IhOkMj9185wDPPoQOGCqg6KtdN+ZhQcKeVXJEbHWqrN6Ad7DyzVylwuep3A5
+R3KdsdUKHBSeIygIsW1I87Q2Vx32HYUg/9oHk2zbrAWY+OdrSgaxhijD7rTHakTG
+ryDYHHuC/mZSY4QGF63m4zKRQjpBecb/zZm8/dAt3A/CTAtWCVJarPcp7gRB974I
+Gb1IRoNUPbEZ4/vIJY1YpDGpcalb/vp3hC1pI4zwRHJ+Acpxdhx7sov9sm53/DM/
+BaBTswD1Ef7cjSCKYE1h7/QaimAi34oGDw3Jjt/w4GAksFXgYUY=
+=ZtnO
+-----END PGP SIGNATURE-----
+
+--ugsdrugixr4n33iu--
