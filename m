@@ -1,215 +1,185 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012002.outbound.protection.outlook.com [52.101.43.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B713655DA
-	for <linux-tegra@vger.kernel.org>; Fri, 29 May 2026 15:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780068233; cv=none; b=pz0JbRc6zuqhdNIhpK3MTPTpxYDYD3HOq7mIEQIgxFHB+bcA7Fr4TRdwmFhXrrbMjZ5alEzWpWnq/dV1Ja5CZ1dWdbXdQWkww5Ju5/QL9V4LodRjxgECd21ORAoyHUWYrBZ82ocLW/vRoDZuefWaXQq5FigonZ42PSZSo+Xc3T4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780068233; c=relaxed/simple;
-	bh=MiBkhI2mDzZSe3LK7scfx+No/5aiHrTQgkdkU68eQZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QUxyKRyt6h6LsNFikZdx8aESuTkHSI95Ig+dsFnY3RKKhx1A+wIejxOVyUBjOKyCmONwq8K5+XGyPQS/PcsN4j2jtS+t5DP4Z9Lj+E2vXDa2r3t01GWBkpvEJbAZwFefwliXIcRVXN1Q+FXSE4r15aUZhemVOOMF2l4gMQbqaX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jcpoJdrL; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E250D3E317B;
+	Fri, 29 May 2026 15:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780068664; cv=fail; b=aplbBQq829ga/+U77xh1CgxgsRQGwDK+xinvsgejyII2W/eoP3FyMjtHcV/IA3WHvQPd56ZpCUWJ+pjtEYln2mIdo3+eAN8l6eHg9yL8kW+qvflADuAmmfAxvh6OPoShhpRZdgbn1Pzuh3q925NC5BiTtSwPET8wmqHkLHnD1K8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780068664; c=relaxed/simple;
+	bh=n+lLhMXCdPETfUucWBjrNJgvDUeWFJPQh9F251Uy8Ww=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=KZif8oSuaAGYSowb5GtZJ545wrxqodwuOhsWT41Ey076Ii2hiChF/SUjryHrA/e/5C4yxJifLPbZquwjgNVbNST4AXlB16x+b2CfYJlpg3DzNEMWW5sEp8EGorCfT7TLHXKyLfUafV28hvWXQWAWjSIhYkItbEP+ZhIb8JJhLcw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cNNlxPMM; arc=fail smtp.client-ip=52.101.43.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jcpoJdrL"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5aa4b131940so3344064e87.0
-        for <linux-tegra@vger.kernel.org>; Fri, 29 May 2026 08:23:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780068230; x=1780673030; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ThQUZuW5VRWez/JlJU4j6KX1teKKMbK4v4DvPnWcYsM=;
-        b=jcpoJdrLJHRPkSrUn/YUsG9uVhEa5MVO3ee4eR8LUdtDkSUgddXG0KwjSUWXZI65+P
-         Z44JvdrvYT2ZjdCXZw/LmppBUfEC3hwWz5y6BXbzA7JrsAlFFQpl95d7O/sslNJ+RUO2
-         naljQuxc7vLmqqQT37RBNWx+/+GAbNfUR50EprIPPwvZINFGixu1+sSsOu25HdlfDAtN
-         V6YJmK5yg8dEjPVL7BacqOfa/1GO05XWKzKIwJZE+mZ6ImT/ylBXQSXyFU4kE+dy3n9C
-         DrIf3weQPm0maN8579vaSD/I/woEjCj4vT5mMTlX8ypin4uteRpkEPs8vm5GZUsTG+e8
-         NK7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780068230; x=1780673030;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ThQUZuW5VRWez/JlJU4j6KX1teKKMbK4v4DvPnWcYsM=;
-        b=Y1jxEac7S4D4rkjYTM7K3hFDYd16n+Z3LuP1LKUwQdtZBJvJHW0Or/UWH6pXDJZMHP
-         hCCr74fxCnm5tvySGcBCZ1VV+5m5mxqs4DTRnvjPWuAlKCKZToLpTClwkgrX29V1USdu
-         Kv7oCChL8aagm9+kK5SyY2QLWJkAKKe/RiRTeS0EhVzqc+2vos235M2BnKf51Cy8c0v/
-         1ktZ4eutMzLxBhaJENXeLWkYJ10t+69c+mE4zCdwnt+1B5Evt64k1PAoDbpyU2S+f2ZZ
-         MS22OREVSFURR0gL0AO3HsISH0JjRxZAlF82exlQCc5O3gDXEvR5yJ6PPIDAZbN4EfDo
-         Qq7Q==
-X-Forwarded-Encrypted: i=1; AFNElJ+Zp5vOEdCWb8IyPiw+kpkHKR1e1voJsGbldYOQOhxRJz/3jHvhyw4FvxFVG39iwfKcJSJh/nvZNdkoQw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq2wrpmF8q6Um0HXx6H76VxaDIgz6oFEh7p9IW5X+yLZpFbT27
-	yv/pVCUzSvTFeqUie8n3vOHr4GjOdmwj8bQIgbfMsulUF28CoGRc6czo
-X-Gm-Gg: Acq92OG8aBwDC/Nlc1c1nXp9VKTnxuciWFLAGG44GSfFTI1It0HaGjQXai7OsB9a6Lw
-	VDKer/iLf7zHBlZvE7nNYrzy8T/9D8E+SBbIjt5wHq5xtpoGFxPfstKC4276oW6+2y+TPJw/6yx
-	XKrzzDwaxNYWjzbOz+CyRhCEDFvhHr//kpXmBEfLVWGj3Rbl8kEyYDCnTOvcDR1pzbkHSRM6rzW
-	HL4I4Pma/1bG22TEbXYHU9lzyO+vEVgwvDBkFI52Z/R4Y7o420qWwXupBqtSFzZb37XoO4Oyhib
-	5B8lAJFz+AA3A1vXzBRzFnmQCU7dGFusNaVjHO5EPgLoTYIQEA4J/5Qu6+zKyz0U0wAIplpzMkd
-	rJJE9gjSSX8icqiGGXPSmlEvSeg+g+E3HaMCv/cioZZr2JIVrR2lQ300QyqUsmJ2uGS+AO1cRYK
-	XWJR93kkbdvBNiEA/n76fD36LpdR4xO0syULux0tsZ1ZmWVk69+PZ+WrsQ8KBkLNP4CSYArzwgd
-	osXkFw56CbUAeTnqqwC/NPq
-X-Received: by 2002:a05:6512:4055:20b0:5aa:5e91:228f with SMTP id 2adb3069b0e04-5aa609222b2mr64351e87.35.1780068229791;
-        Fri, 29 May 2026 08:23:49 -0700 (PDT)
-Received: from orome (p200300e41f1bda00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:da00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5aa5b0726e8sm338501e87.25.2026.05.29.08.23.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 May 2026 08:23:47 -0700 (PDT)
-Date: Fri, 29 May 2026 17:23:45 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: Thierry Reding <thierry.reding@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, treding@nvidia.com, jonathanh@nvidia.com, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, bbasu@nvidia.com
-Subject: Re: [PATCH] memory: tegra: add multi-socket support to the memory
- interconnect
-Message-ID: <ahmuTcpUdsHYKTPu@orome>
-References: <20260521140546.3023819-1-sumitg@nvidia.com>
- <2caba07a-511e-453c-8e1e-f2b07b84a096@kernel.org>
- <58ae92f3-3e6d-4f60-970e-76ee4d7dbd4e@nvidia.com>
- <2ba14e8a-1664-48fe-ba99-c81100de78f4@kernel.org>
- <ahgr7EevWJ-unfSV@orome>
- <ad3c49f1-044f-445c-a586-675252f157ae@kernel.org>
- <ahg5_Lm51AcfkQm_@orome>
- <ef3185ce-6a6f-4234-96a3-383480ba8216@nvidia.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cNNlxPMM"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JCP6rUhfnCmEAS+lAHsNf6xc6p5JpszM9Jb0TvGiGwi6qpELRtBMc+kh5yz5DJz3OE1G5oBjKDfZ1RugRAyJv2jC1uvGvFdng137CwiLG7ZU9TtWqbf5xn+Hk/5754LwBXAcNFQWODVFAxG6sUm876zNH2qbAmbRoHSDXfMBw1csik4FLgiqoWxBmsQU6I6O/QtaXCtG/NdCE44CSyLL02gkTF8zfR/Ck12a9kYT+adBsENx4TZi8HO7fyt6Mcn+ub/Cv+nBST6GzsxnWpq/1v+eVFbvajIy1cn92o1q9nk0gpsLw7el+G1tTozXNQnEPg+zMIrZw5HUTUebgK0JJQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fqetpnWjdlOkH4fl/GxIjltWCPbqMaBpTr+P8J1pThw=;
+ b=EtB99XnCNh6+wGJwlAC9XpnB0fF+2tqX24unpHXE9b1vllWbP8rSwfMLyIag9Hva0r4zO1yogbpphjPexoSjp67/lVcQusLjCXNo9gvMh/6ikQ+Mv3X5Oqgay7z4YVXhHXBddBnIwiJVoCWrOf0iPZo2TPEJFHigDsgDiOdOl2sqobG4H/SZMbrojjRmR3PnKFP5MIYTB7r5OnBO6KTzLp4sPfgj/K0S2S9NIklIJMhGjgcQXH8x9bUiB8HTmQ7MNfF4uFNgPLCLvfWP4EgMUGXANxs/6IkXxahNvJ7O1CuqJTvjILEdGW0R5Bc2xP0YtK/SJsmFzlrXtDrCiHWjRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fqetpnWjdlOkH4fl/GxIjltWCPbqMaBpTr+P8J1pThw=;
+ b=cNNlxPMMpaFKZkasld/lrRBDGIN19ZgCq8c7faXdWYR/vG5i/I8UMYoytHD2mDQ30GXsInu0XM8MCvu/v0A8z+5HNNGCUZauntQuG5DSXyLzAB8hbLJ+TsUU84c9DeqfJ9hrSkSAGJD8xpNtJCRNEBUmb1wYCtpP05H+oCae+ueqOSxOgmHi4Iqw9v0L/OWVeGyDZ9bw3wT2HOGi2vbtGpBIjQQdAdTeQXuYslerfSQgbbLMwJagt8wc8MYp6v1itVjNTZgBoHdSxbwQvl7C9Z5xgj0ZzK1UbS4oTGt1OQBAetX5PEN3nUGY5kS4qebxgQI/K1Ju4mlE/pD1uiqYRg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
+ by MN0PR12MB6197.namprd12.prod.outlook.com (2603:10b6:208:3c6::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.12; Fri, 29 May
+ 2026 15:30:59 +0000
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391%6]) with mapi id 15.21.0071.011; Fri, 29 May 2026
+ 15:30:59 +0000
+Message-ID: <f66ac57c-230e-440a-a3c6-10fa43cb1075@nvidia.com>
+Date: Fri, 29 May 2026 16:30:54 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: tegra: Support unique names for multi-socket
+ platforms
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+ Timo Alho <talho@nvidia.com>
+References: <20260522163034.80330-1-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20260522163034.80330-1-jonathanh@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: GV2PEPF000239E4.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:158:400::179) To DS2PR12MB9750.namprd12.prod.outlook.com
+ (2603:10b6:8:2b0::12)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ryfbkxhx436xo7ir"
-Content-Disposition: inline
-In-Reply-To: <ef3185ce-6a6f-4234-96a3-383480ba8216@nvidia.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|MN0PR12MB6197:EE_
+X-MS-Office365-Filtering-Correlation-Id: f2503a38-8f3d-4896-df2c-08debd9748c3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|1800799024|376014|366016|18002099003|11063799006|22082099003|6133799003|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	rVymot/MO+c7PxarDZRzalrcdJg/L742+NqchUwWQ2rzX9/WkoDqxT27ZyRpIzzG1y0HrEGmq44uVNZdJCua8fqj5CxbxPVO+GdJ9C9hVQBo+hex4i89VhcQjZ2meLtl/gXZHUwOeYina2BGFy+bxgX1EaEexanTkc9GK7buCNZSXZfDwyaPRg1dR7SB5se0K1hLgMmu1y0T4N66XFXigyLLP9uJr2PlR+kjPa/5wZpX7guxLIYe2Mn+PskH8OACqS/MiN12IC/+9R4sjbO0Rj4ihpF+sdzcqEt3+b3DzjpfYzwOFJ8ZBctSCcjLBtPYg4fjgnHlcKeROE2PGbcmNjbwcmsI3JAb2tgS9u6YbesEuubienTM5FFA/3YU7s70Wa1qI27dMJrw9+SpNlHpjzZikR5ZUMNTEvkjRt4sHOFsTQEsy8/7m7fubTdTLWccJFwToLYNNiDy4pHCoPxi8THWJ3tCfgLou2NvC6vNtHJFB9vhR4yB4iazE8BQrN9y4znLCRTEykG04JcrrtxU/2QNZZpiVNDfHtKl6Z6kp3MY+AWQ3asv7dVB7UJMoTQ4eau6S2WOqvYeFilwsgHL/vfC1rEstV17Y2Lk0aIEcXXmjMNCCV9tyi1Zzo6mMlDlurfEDgUMNzJ/6LTN3SQu5u3M8bQYy0ZGx5Mj/IbuP9e2GxskWKVi4bI0XVDGL8cjD2x1iPr/LvQ8v4Mxgbx/SA==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(376014)(366016)(18002099003)(11063799006)(22082099003)(6133799003)(56012099006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?T3UyT2R2QzVqZ3BjV2VZSjdBY0cvcnR6MzJPQk5SekY3WGhHejlOR2lPY3J2?=
+ =?utf-8?B?OXNsZGNjOUlqa2JMOEFKMDIrMExiRkdUTnA5RFEwNVMyaUFBZDlCODZ5bTQr?=
+ =?utf-8?B?alNkZG9jM3B2ZFhpRWY3TkNKZFVyOHNNNngxeC9yZW5Na3EvV3FXcGVUY0Uv?=
+ =?utf-8?B?bC9wTDVKRkh3WGIrZEk4d0QvM3A1eldVUTFFeUUxcThLeFF5dUJYbTdUUUZR?=
+ =?utf-8?B?SEZUU3FJb0wvM3huTlFCZURFWkJwWVRxZjUrK0MzcEFjNkFIb0YwVGhrTmw3?=
+ =?utf-8?B?eTlFc1ZpeEJqTzF6NHRnOUpyMkVWSWw1Y3JzWWlydGdKeGxtYU1ZV0FUZGRG?=
+ =?utf-8?B?elZZZXIxdGVKLzhFSDNlajBzSWxjbElVZ2J1VHQ1R2xvS0wzZWFUVVJEOTVK?=
+ =?utf-8?B?MGVILzZoNEh5VDZIWjBVWmVOaWlsaGZ5a1FXYThlbTRONi9IS0t6bnlPWWk2?=
+ =?utf-8?B?b2lIa3AwSWIvRG1nL1F4SkpHaGFRSDZuY0drWGtSZ3diNUNsMldjeS80L3dy?=
+ =?utf-8?B?dVRERHQzVXd4TmFNWEEyYnJUcG9mait0dVBJWGM5NW1RbDV3MWt5Zi9sL291?=
+ =?utf-8?B?cHZMcDc1eUczeTRVZVE4bWhIRkFIR2ZURVdMNUNQdXQvcHE1RjVlS0pFOVIr?=
+ =?utf-8?B?bE5NK3NGRWdZa2Z3TlZrR2VqVWdHNGpPNGxwb3VXbmdqbUlMd2E3U1pPOEFL?=
+ =?utf-8?B?QlpVdFpNRE1XcVFoZ3dVQzRNTEl0N1gzTENDQWtrbGtiUnFYUDBtS3dyNXA0?=
+ =?utf-8?B?T3VGdGdpdnVVQWZyZlZJVWhHTmNrZ09ZeTQyZk1aa3lDMmc3cmNFMmNYSWMr?=
+ =?utf-8?B?R0s3a3NFSFkwT1BueHlCYlIxL3ZVVnRjL0IzYUZFeXYraVI1UGY2OHU0WW9a?=
+ =?utf-8?B?dkdUc1V3LzQ0U0VvWGpjZCtGdHMrdUwzZm0yNVYwVmFHaGpnVHFmK2QwZzFC?=
+ =?utf-8?B?Y0thYjZXcWVwdE1qRmVpcTFDdFhOMVd6bk5WWFJUSnFFTEtxcndsSXZyWlFw?=
+ =?utf-8?B?UTVUQlowU09RMlQ3UDFXaVhvRXRQcTZ2bmNMSVdVTDBJYmlIQ2xXQ1BRRFpK?=
+ =?utf-8?B?blBmeTloMlFyZ2dxMVNTMDBsWHhmTWVjd2RZK0s4dVNVRHg5YnUyMnpObWlr?=
+ =?utf-8?B?bEM0eWpHOUhNSDhSQU9yalpsRGVSbzhCYzdyZ2ZCdWtzZWJjTG9xNzJoRnlD?=
+ =?utf-8?B?MW1rb1RZK3A2bzdxUGNrRExidnE4bXk2VkJNT1hPbElHamJJNW9lZzBWQUM2?=
+ =?utf-8?B?T1Rsbld5VDgxSlpJL21aSlJoZTM1cG1BbVJuNXNoQjJFUUY4NEhyaFZsMmVr?=
+ =?utf-8?B?K1BqUitqYjd1T3FjUUx2QzZrSDlRZFJxeTQ0anU1T2NUREppMGp3ZHA4YUZs?=
+ =?utf-8?B?cldUZVFTVE91ZnJ2QVpJN05pci9qTnlBZnkyVzlSeERZWTBtKyt6L3NNeTNZ?=
+ =?utf-8?B?OUJWU0ZjOFJOd2N6WDJ4ajB3dlZiNktQN3lONnB2OWhSeFFMdExhMnZzMS9h?=
+ =?utf-8?B?dEpETXlhcWg1VlIrNk9GNEFsOGNLbjk3V0pDOUMzWnNQSlBwNkNXOVpFdlNa?=
+ =?utf-8?B?ZTRlNXIzSnF2bWhPMzF2eUhkZjFoRGNVeFc1aC9XZnJ3NDVsMm9aMmVLamtw?=
+ =?utf-8?B?V1JLeTdkQ05oR0llK2hiTWhabmVMWFdmamlhV2YzSjYvQStUdXZZS3I4cTZL?=
+ =?utf-8?B?dXJtUVhWZjZadXEydkhnVWEzMjNpbEZZN21wamlXOGNKcXhDb2tCM0lyTHhx?=
+ =?utf-8?B?cXhITnRPSXFnMytwQlV4UGlHRmc2WjdlRlc1UE9tQWgwWTViaXRDWGQzZ3lP?=
+ =?utf-8?B?ckFwWGlNVGZnMEdjVERpQm01aHpxMElkTTVHREwzVkNpUSttRlZrUVJESmJp?=
+ =?utf-8?B?bTZ3WWo2L0xJMU95OXBPSkVVMm85d1F4NXhreWtoU3ZBYTY2eDF3QkxVYWhl?=
+ =?utf-8?B?SFl5Z05sZUpLdUJDRkd3cjJvQ2NEbXNhdVQxNHlvMy9uMVJFbU5ReW9HQlBo?=
+ =?utf-8?B?WUo4Nmx1c2dDRlZJU1dtdEVTVG9vb1RwUkhQbWRXdWYzNXRab3JvZG9PZWhl?=
+ =?utf-8?B?T3RyS3RkWkhoMHdFTGwwaGpGRWlTVVUvSDFocmZpZUV1S2IzcFNWVHZQc1Bj?=
+ =?utf-8?B?MnRyUlpCeWs2WjI1VWhvS2tKVzdnR29ZWDhkSWVGMUMyOUlzNTRtc3hwbVVt?=
+ =?utf-8?B?WjZlckpYNkc1UmZJS3A1V2ppNXlTYmRPV25mM05KSzdjZGJldENoMFVPQ01R?=
+ =?utf-8?B?b3ZRaHM5L1hFdlVYY0lLRXZEMDNCNzA4dzcrVFFrYUxaQTBXME16WWVRblhz?=
+ =?utf-8?B?QjM2SnRwNGczc0JOSW41VXFuL1h1OTVYVnZHSUVQdmppVFhGWFRydnltb3hQ?=
+ =?utf-8?Q?O+BkMtLmZWuLuvBwdYsWVrpzwqfeEFJAsKogR+7g6Wsm+?=
+X-MS-Exchange-AntiSpam-MessageData-1: dNtZy1yC+gcJKA==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2503a38-8f3d-4896-df2c-08debd9748c3
+X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2026 15:30:59.3645
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: N5Rw67PM48JALkPhX3zxBc4av6Tau0AmYUK2XwsdojMM30paerZvvtraXsF1nVWk3VRuwKWeOczyxclrQc2SwA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6197
 
 
---ryfbkxhx436xo7ir
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] memory: tegra: add multi-socket support to the memory
- interconnect
-MIME-Version: 1.0
+On 22/05/2026 17:30, Jon Hunter wrote:
+> On multi-socket platforms each socket has its own BPMP which exposes the
+> same clock names. Fix this by appending the NUMA ID as suffix to the
+> clock names for multi-socket platforms.
+> 
+> Use 'sizeof(info->name)' in the strscpy() and snprintf() functions to
+> future proof against anyone changing the size of the 'name' array.
+> 
+> Co-developed-by: Timo Alho <talho@nvidia.com>
+> Signed-off-by: Timo Alho <talho@nvidia.com>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>   drivers/clk/tegra/clk-bpmp.c | 10 +++++++++-
+>   1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
+> index f6d2b934228b..428e776561c5 100644
+> --- a/drivers/clk/tegra/clk-bpmp.c
+> +++ b/drivers/clk/tegra/clk-bpmp.c
+> @@ -367,7 +367,15 @@ static int tegra_bpmp_clk_get_info(struct tegra_bpmp *bpmp, unsigned int id,
+>   	if (err < 0)
+>   		return err;
+>   
+> -	strscpy(info->name, response.name, MRQ_CLK_NAME_MAXLEN);
+> +	if (dev_to_node(bpmp->dev) == NUMA_NO_NODE) {
+> +		strscpy(info->name, response.name, sizeof(info->name));
+> +	} else {
+> +		err = snprintf(info->name, sizeof(info->name), "%s.%d",
+> +			       response.name, dev_to_node(bpmp->dev));
+> +		if (WARN_ON(err >= sizeof(info->name)))
+> +			return -E2BIG;
+> +	}
+> +
+>   	info->num_parents = response.num_parents;
+>   
+>   	for (i = 0; i < info->num_parents; i++)
 
-On Fri, May 29, 2026 at 02:55:35PM +0530, Sumit Gupta wrote:
->=20
-> On 28/05/26 18:35, Thierry Reding wrote:
-> > On Thu, May 28, 2026 at 02:20:07PM +0200, Krzysztof Kozlowski wrote:
-> > > On 28/05/2026 13:56, Thierry Reding wrote:
-> > > > > > > > -     mc->debugfs.root =3D debugfs_create_dir("mc", NULL);
-> > > > > > > > +     if (!mc_debugfs_root)
-> > > > > > > That's a probe path and you created a singletone. Looks like =
-preventing
-> > > > > > > async probing for no real reason.
-> > > > > > >=20
-> > > > > > > I am very against singletons and debugfs does not look like j=
-ustified
-> > > > > > > exception.
-> > > > > > The singleton was added so multi-socket MC/EMC instances could
-> > > > > > share a "mc"/"emc" parent. I'll drop it in v2.
-> > > > > >=20
-> > > > > > On single-socket SoCs, the "mc"/"emc" names will be unchanged.
-> > > > > > On multi-socket SoCs, each instance will create a top-level deb=
-ugfs
-> > > > > > dir named with dev_name(). Same pattern in tegra186-emc.c.
-> > > > > >=20
-> > > > > >   =C2=A0 if (dev_to_node(mc->dev) =3D=3D NUMA_NO_NODE)
-> > > > > >   =C2=A0 =C2=A0 =C2=A0 mc->debugfs.root =3D debugfs_create_dir(=
-"mc", NULL);
-> > > > > >   =C2=A0 else
-> > > > > >   =C2=A0 =C2=A0 =C2=A0 mc->debugfs.root =3D debugfs_create_dir(=
-dev_name(mc->dev), NULL);
-> > > > > You assume this is fully synced, so you as well could do a look u=
-p and
-> > > > > then use what you found or create new dir. If you think that is r=
-acy, so
-> > > > > is this approach... How are other drivers handling per-device deb=
-ugfs
-> > > > > directories? Do they also create such in the top-level? I think n=
-o.
-> > > > I think we want a top-level directory for a bit more structure in
-> > > > debugfs. But I also think we want to create that top-level director=
-y in
-> > > > the module's init function rather than _probe.
-> > > I was thinking about this as well but that would mean your driver will
-> > > create it on every multi-arch kernel.
-> > >=20
-> > > This should be then moved to some core bus (and there are examples of
-> > > that, e.g. USB), except there is no core-MC bus code to do that.
-> > We have a utility function (soc_is_tegra()) that we've used in similar
-> > situations in the past. We haven't used them in a little while, but it
-> > could be useful here. It's not for free, but should be fairly quick to
-> > error out early on multi-arch kernels.
-> >=20
-> > Thierry
->=20
-> soc_is_tegra()'s match table currently has entries up to Tegra210
-> (seems only used by a legacy 32-bit ARM path), so it would skip
-> the SoCs this patch targets (Tegra186+).
-> Could we follow tegra_init_soc() in fuse-tegra.c. Only create the
-> "mc"/"emc" parent at module init when a matching DT node is present:
->=20
-> =C2=A0 =C2=A0 static int __init tegra_mc_init(void)
-> =C2=A0 =C2=A0 {
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct device_node *np;
->=20
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 np =3D of_find_matching_node(NULL, tegra_mc_o=
-f_match);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (np) {
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 tegra_mc_debugfs_root =3D debug=
-fs_create_dir("mc", NULL);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 of_node_put(np);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 }
->=20
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 return platform_driver_register(&tegra_mc_dri=
-ver);
-> =C2=A0 =C2=A0 }
-> =C2=A0 =C2=A0 arch_initcall(tegra_mc_init);
->=20
-> Each probe just creates its per-device child under that parent
-> without touching any shared state. Same in tegra186-emc.c.
-> Or would you prefer a different approach, e.g. extending the
-> soc_is_tegra() match table for arm64 SoCs, before I respin?
 
-of_find_matching_node() has the big downside that it scans the entire
-device tree to find matching nodes, which can be quite expensive. The
-soc_is_tegra() helper uses of_machine_device_match() which only checks
-the compatible string on the root node and therefore is much faster.
+Thierry commented on a similar patch [0] that his preference is to 
+prefix the NUMA ID rather than append because this is more hierarchical. 
+We agreed that we should be consistent in our approach and do the same 
+here. I will send a V2 with this change.
 
-Jon is working on a different solution for a similar case for BPMP, so
-maybe we can also look at doing something similar for MC. It's a bit
-involved because it adds an extra mutex to make sure we don't end up
-racing the creation of the parent directory, but it has the advantage
-that it's only ever triggered when really needed and doesn't need any
-"tricks" like soc_is_tegra().
+Jon
 
-I wonder if maybe a helper could be extracted from that to make this a
-bit easier to replicate elsewhere.
+[0] https://lore.kernel.org/linux-tegra/ahmsDANt8D7RSYdK@orome/T/#t
 
-Thierry
+-- 
+nvpublic
 
---ryfbkxhx436xo7ir
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoZr34ACgkQ3SOs138+
-s6GkBw//b7KucljgDtehEWP8kwtO+ilxTKxK323qTsWHFKkt0u3kVFrLSjj64yYn
-M+yFjDMe2lY56gJpdaKxfLlFHXK6jXUj9TKIDq6E58jsfTVFnkvsSMsfr5IPnxNW
-6chINNJHYiIRP745G8dbUazYlkyxlIH/1yYq9GavgvEbpMcrMG0PY5nzHqlfYVcj
-GFZY5/B1bEGc34t4uAVka2hLs0q5dKz6ewVIoVxnFNeYzqfJrJwciLeYfxFCb9An
-yRjyFXRvww3oQSpmeCUT9XhScWvHr50W6d/L2+WVPNIrIR81z/Y/8jomQJbKVW1O
-p1gmbdf6t1E8YfVN5UKEBbpoxr6ql68ZtFtCsf/6amAinRL5i0cBFbWtYgWt2OxQ
-GroAhqyzq/eh8GMIvK3d67A7H3v8/Yq1+b8HNKX0cIiK/ww2EhoU8YxfXYGY4AJn
-sh19izPzuv0S3OxzMC3pCEaF6KKA3rgyWwXGMZeenSys+40YcFvm6Bwcmz7ebqbz
-QJ9bGYSS9ZkJ4EdBeHgEaFMTxfufUvTtCFyxgj6/k/8XCBS9Pd8qwNPXNCZPkj7r
-fR9075OhwEbg5eH7LjA746ctI0XeTIyo4apHY1t08hPYVqQtyQPEJTb7kgOeRIGJ
-RZci+tixbTR3JN0Gjk1DqAQYP8jHZRH+OuEuL4Afxa5lgf7AYhQ=
-=FPjQ
------END PGP SIGNATURE-----
-
---ryfbkxhx436xo7ir--
