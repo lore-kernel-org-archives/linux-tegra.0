@@ -1,205 +1,166 @@
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013011.outbound.protection.outlook.com [40.93.201.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D0E3A3E90
-	for <linux-tegra@vger.kernel.org>; Fri, 29 May 2026 05:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780032186; cv=none; b=Ri581eKtgpMvtlQ0A4v0dQOsyf0H2hBSZjB/LpD5nQnMGw6wkZ8wWQxOuK4Ng81CRsXfgREivCOxc/dkJn3EM5zYY8DfxoVMzflAgZLKcjHrhRqoUjaOgmz2gSH+GhhrRceJ1dUYQ3Lk4sDWymLx78/v3Q/VvkeXltoITxRwWTs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780032186; c=relaxed/simple;
-	bh=jTwMOmyz6NqS7PQapPujdg9bPtfrUTYsGa1vQFD7WG8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=je8M2GNHXdeF63vg48jvZsRg+mCRShTb1v1HHpflC5P85CA4172Y6cR4tyz57rsNZandfjhSRDvznbrfEr8AcCB5WzkMM6UygHbss5nNerTx2Qz+h8nvJM6DRpCSSK4fgOEagvvdVtnbm9RCtj5/qPYo7mnb4t/SGfUzn+63QsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZFwqNkki; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2547A1DF72C;
+	Fri, 29 May 2026 06:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780035081; cv=fail; b=bt/ub5nb/tEQe87vVRmr4AmiqxGF9fMjxbHI9XVJ6HsqEshJhzIXEI45Wr8wKFtZFkWLTfis+NEve34DIiAlnZR96roHYKQDuuYZnT5goU8TytxY0KVRA1a8dgezkJ7JAhlpP4zfUQBKCXy7G95ZTPQAZGGTx6IiahnZhfIfKiQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780035081; c=relaxed/simple;
+	bh=mclxCYWBsNP+CeHyjyBcSEw+srYJoeI/J5oSr2XOq3M=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=mIHd4sknGFl/rBazhZVCGOhfEZEDrJts9UvGZ07ToR+fuSJ3GC9cXQLNI+ZJG5KT2hmK2dOv6Oyb3XyAAcekbONDzANwBPLP8TiiHwo8SCggBCw4QG1rOfWYAZSeJjlcYFCo/zlVU4PkzKhpNLoR6PkgJl9monP+X9vXV5ZccMs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=j5DQQ8fg; arc=fail smtp.client-ip=40.93.201.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZFwqNkki"
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7e62b6163c8so1946666a34.2
-        for <linux-tegra@vger.kernel.org>; Thu, 28 May 2026 22:23:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780032184; x=1780636984; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WF4nOUMSYWHAuFSlYY+ocAG8zIXA/0Y12y9w/560UiI=;
-        b=ZFwqNkkiWWjGcUbR0vd/VP49dku/DtwYZiaS/ASEVEeN9nFPhDKsB5Os5PL8ZVVNb1
-         frzMnxHaZjtShLZ55OAf66ZdAX35RKBfaYCti0QNFPxPn8VgLsg7RAmU1/gx5dNNMKWn
-         sSz+1Kff4WK70Zs3edbtQskF+E5LX321nIX8rjvMpPW1siIGPyvfmklqE3V2fDAASbY6
-         VVCK6QDAtEdmM/alVo+vQRreDXIK/AxPIibRkiIN4mxWNWysra/581f4iWmr7q+oJDRL
-         LeWO2I1kW4VkWeDHCB3UXO2EZ2nJ7Ln+YOMfIlagw6L3AWbynR9ir09vRaVGvpLbxQfn
-         cXJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780032184; x=1780636984;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=WF4nOUMSYWHAuFSlYY+ocAG8zIXA/0Y12y9w/560UiI=;
-        b=BNp+e5jYHsHeJd2KzBYFbIWMcIBnriKfx08XOhsq6Tsx6wSqLB0SV6v/k6GFrhsQU4
-         1Hzy8trRfwzblJCptAGGaWjIcWAx0Ni1wyDEg3g/VKjcOFAcF7/N6lEAaJ70ssvWZSa+
-         ykhO9EW+nhCxLcabWQhNjF5ytbGkAOY0k/5Y4HEYjv2RbUJQEDtfAH0rcsAeu0qlh1g+
-         B/SM+BybrAgXVJ+UjzW2jE89mFMTei3kX/Of7Pwqo/oo84N6+67KGu8rIOL+Po0cV5dx
-         TEfFHvqHkUl8hFxd8rV6+F/1topN4BgyOF7bJ3YwR8dBRes0U1UxgqgsX5j6S7WQ48Y/
-         XQbQ==
-X-Forwarded-Encrypted: i=1; AFNElJ+cB2coOBTjoXb4XOWi2FIYQNEOItudUXY0d/o+80uZEMjR5/ay5mCn/l1QG+Uh0jQ8J8m4uskUWSqplg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSGmxYARM4ZctiPKKRz4ZvUyj0DQgHhkyTEQfgopiimTd81TkI
-	Zym+KyuGlr1msg37tzD2jHaNU6OkpX+ShGUnYQzGm8FEQgu4G4PTzvqc
-X-Gm-Gg: Acq92OH5yenBjzYcTQ2uvwa0biQQtg0a5Zl6zV93SuBizWTSQSKif1TJ136PNeBV+0W
-	1b6tpR/NU1rUx43PFMEvwrWFEYFIZZJMP5GX0iBl8jeRWI9tGf3V5vnZBSgN8OGCfM+vD2Cpnoj
-	LIWL3ncnwQ4ZR8N4VVL2A+qunFR7CY+ou8h/bnyTtGU1W3KqF2dT3XKuB77h1M4pWEEmKCyEpfB
-	OzL3OZ08MGzrE8lq18AOinxS5OCoZLFujdyi50cffrJDj4BCEVioZxxOsWmNShN6JgTBd6vGYKc
-	frOo4YXvj7vuC0LzzGw+Ksf2E6IBdVumfi4gsT79XPJ2GYUo/2Vsm0851n8Xx7iVymvQILPcBZt
-	AYlvDwgPSX1cMV4DpW8WpyLubed06UMNE8KWi3/c0yu9IsOczjYZRn+Rc7YSLL7xLowygLxVd5g
-	SOxC9pvKxNSiqSqETBuX1ve+lgUiUr3mEmDNkZIGnagEIRkEQxVE0g
-X-Received: by 2002:a05:6830:67d2:b0:7dc:dd58:50c7 with SMTP id 46e09a7af769-7e694df7f54mr1039318a34.18.1780032184244;
-        Thu, 28 May 2026 22:23:04 -0700 (PDT)
-Received: from fsh.attlocal.net ([2600:1702:56e9:4b40:e3a9:78c5:641e:a58c])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7e695bd790fsm760909a34.10.2026.05.28.22.23.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 May 2026 22:23:03 -0700 (PDT)
-From: Akash Sukhavasi <akash.sukhavasi@gmail.com>
-To: devicetree@vger.kernel.org
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Lee Jones <lee@kernel.org>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH 4/4] dt-bindings: input: remove obsolete matrix-keymap.txt
-Date: Fri, 29 May 2026 00:22:41 -0500
-Message-ID: <20260529052246.4934-5-akash.sukhavasi@gmail.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260529052246.4934-1-akash.sukhavasi@gmail.com>
-References: <20260529052246.4934-1-akash.sukhavasi@gmail.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="j5DQQ8fg"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oLa9g9bpZBLSoBOmQLWE6eTsQNx1u/JolPaZmkHqoyeUkjMBVjkD0o3lmNOIkONqemLy74XtCQOrcCbeRB7y2N5n0Z+ykDR76iihBx3YKybC6MJWXrpXw6+pGCtE7dc5M3g9m7PyJAyIaO381kJKXgDTOGI5Q0HoUFsjqZ56DpG+qtWysdkvvgtzVniBJouyZooLJl1ECkFixi9x6ydX2P9Qg1ATkSRBcPN63wfm+nI+BxJXh2F/ISVBcauvOv3ApEmQPYhDGrX6ujnetO08SmpxYOoGavDRPYUbLyhPSSRN5rSmxiO2E1wksPwkxdWp4lcniFpA8hXzDNhyNien9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mclxCYWBsNP+CeHyjyBcSEw+srYJoeI/J5oSr2XOq3M=;
+ b=g5QgptpHBPo4jQ9asi9KTXoNqE3B+mYOBbrXyjjSOrrlnCLhfSgGvjY+GW1qoFkzT5IxbRI/mXdhrRdd9zHc7EOfscQujDphBZrV+ovFdTB3zgo8+184qLSzS7uDDCk2NDY1++Bf0jJwZMuObOFcA3fX1OxPt5gjVPV8fl5G5jNGiEUD3ZNqJLPXDeCMfueq+tibUhFrMLMvyL5jUYR/sJQ6zBhuDRp5Lvr3ZqO0UxerVTM6jeuQDnzLmsVqQKngKq0WqS4uMzABUX7FkIoHvR5kpckhUnnfhVW2XHq7fkKtkA1BUNuqgpKQAXoI1oFDmEmSAwn19tkyChePgMAGtw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mclxCYWBsNP+CeHyjyBcSEw+srYJoeI/J5oSr2XOq3M=;
+ b=j5DQQ8fgn3Np1n+foCTqtlvMfp1sCmI/ePcHOhYC1xl/Tk7KQgilkeMjCrIaiMlLaYIq1xqY27YHYTELN7Oy7CNEiV8jTXhlUcDVFUO/VW69XIa2adXXFqx65RkCUPkL1Vpz0t37Y6jkgU+LuBkz3mh+gHIMdNfp9Ka9p4TZ2/aLL8q9sbwe6hveICrJJ3TR/ADN0f9bYs8siBle8ODD1qFCPabmb+jVjiNmkBIncNWNxcz6zHKbnY1sytb+eNoxZ8Pde+JJX7pFbmVOe42wLjtY4fOikj27QeX9gdGz8HfGSs7ioDQWVB72fv4KaSGx3iVMYJx01oR3rWPBEPn/+Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BN5PR12MB9511.namprd12.prod.outlook.com (2603:10b6:408:2a9::14)
+ by CH8PR12MB9840.namprd12.prod.outlook.com (2603:10b6:610:271::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.13; Fri, 29 May
+ 2026 06:11:16 +0000
+Received: from BN5PR12MB9511.namprd12.prod.outlook.com
+ ([fe80::4d8d:5f91:6c3c:dc8c]) by BN5PR12MB9511.namprd12.prod.outlook.com
+ ([fe80::4d8d:5f91:6c3c:dc8c%4]) with mapi id 15.21.0071.011; Fri, 29 May 2026
+ 06:11:15 +0000
+Message-ID: <38683872-c41a-4706-954a-5d99e82d0742@nvidia.com>
+Date: Fri, 29 May 2026 11:41:09 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] iommu/arm-smmu-v3: Detect Tegra264 erratum
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, will@kernel.org, joro@8bytes.org,
+ jgg@ziepe.ca, linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20260528101617.4068249-1-amhetre@nvidia.com>
+ <20260528101617.4068249-2-amhetre@nvidia.com>
+ <f25b769a-d89f-46c6-a3d2-9fa35882b848@arm.com>
+ <c9390279-24d9-46d4-a644-797395c2eb2c@nvidia.com>
+ <ahiLoHUzuHHSw51d@Asurada-Nvidia>
+Content-Language: en-US
+From: Ashish Mhetre <amhetre@nvidia.com>
+In-Reply-To: <ahiLoHUzuHHSw51d@Asurada-Nvidia>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY3PR04CA0003.namprd04.prod.outlook.com
+ (2603:10b6:a03:217::8) To BN5PR12MB9511.namprd12.prod.outlook.com
+ (2603:10b6:408:2a9::14)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN5PR12MB9511:EE_|CH8PR12MB9840:EE_
+X-MS-Office365-Filtering-Correlation-Id: c5dc12c4-0cd8-49f9-bd01-08debd491759
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|366016|56012099006|4143699003|11063799006|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	M+HWfVqandgYzQUWyHcZBKCqCcxXfK7hyzklrRbIncfcmOjRStwNi+8jMH7L6XkG+y+xL5bKvsn5L+xU39s/jEdt+jzXJP+XewFT4D1eWh1FQk1Toqsh49ayaJARJF+696MuSvczCBx30cpAlrIWJQ8jr+lSjC/pfMMVrr4jlqr7JanwAE/3MIlXfPDrriLTkO9TtPLKqy3/2jsvQqOa52t0sMD2OeT2HrpvM5gCkFSZQzcXEE2wClQarqes5YakHtNc5OL/uHqaBNnCftFT7UK1pbdmdopCLPKI6qRUEd9WEh02hjhpJh7axOUXmoRYBzh62f8r3s9vbNSUarTldjVKhhzXs9ZBCCjlMMp4oAoo9ISix0aag2hZ1YVzzgAwtVuUUx48/l8xpJXLClad4W0arKfJyhOgu+09XD7yWLcsb7VqwP131KTuuGF97uBC2o6Vqbuzt3Xxz4lLDLukJv1Syiufgb2u9jJKtZNa5mag8hNauK/GiNFRuLtQhlF591zYAvBz1NXCvcyrhr84+iYTdtsYYP/w4sd+jn9xC8ukPDVobjyV31xjmlO23O1/Dk+GLs6K/rb//iFIbSpqz38/avyt7Nd51AcnzGFpLfJaMRXUxzq4jXOmv6y1Wt8BdfWoCXsIqJRECLWBoOY+So6qkYcPznb+TXLFqlzB9xrw1ytGyjsT6mGHJdB4CjufJ4ZUN6Xrd6RCxEvbmZtXDg==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN5PR12MB9511.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(56012099006)(4143699003)(11063799006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z2R4RDRTVit2QU9LRElDYmx1emxXT3lEZDlJOEhxSkxLYTFraXlpa3BVSS90?=
+ =?utf-8?B?VWFiQmRxTkhRejUwNTltTTN4dmlvTFkyem5PdmFvb3RCOExYeWtqcHJkK2hn?=
+ =?utf-8?B?ZVZIYVgzbnRubzhINkhTMVdrbzVlcDZzWnVzaTR1enU0WWFjOWYyeUx3OVZa?=
+ =?utf-8?B?NUp5ejhVSE1nTGwxQTNNYW5HelVrZTVCVFJSMGVic3Y4VVk1dXFDN0RORGNk?=
+ =?utf-8?B?M0d3aVVLM1dRRCtybHNyajNXbzlMMThvUTBMdG1JZEhyc29FTE1nYzl5cWcz?=
+ =?utf-8?B?ckFQVnNZd0ZwYVdpTHJqTVpBT2QyR2JVdHcrNk9KbmpyVVJJT2ZjM3JwaDV5?=
+ =?utf-8?B?SFdVL09nSHVSdEM1Z1IycTJxbzVSMU80d3U5WWs5SlAyVTBlb0lLZWwxT2Nv?=
+ =?utf-8?B?QnJsbkxrc3NsdWFTZ2F3UnV5RkR0Z25ibVEyMGI2SEhaTDhSS01zR3JRUEhs?=
+ =?utf-8?B?TC9qNjRsRGY5eGRMUHpKemZic3ZIcmxMOU43eVdkdUNIbmZpMDB2dW50NHlL?=
+ =?utf-8?B?QWI3cHF0WUlBeXdWeEdLZTM5ck1VaFk3TEJPTm0zUmZLZGFpK3lnQzdLV3lB?=
+ =?utf-8?B?dHZNU0FaZm9FNnNGNTczSXFNdkJOS1dSUWtKVUV2NXQ3MUpiRVBBdHBvOEtF?=
+ =?utf-8?B?Tm56Z256MlA5NXFGcStUczBtRVBjWWJSNXdkdWE1WkhFSVB3T1FISXZUSkJT?=
+ =?utf-8?B?UU5aRmt6aTVNTEU2YkR1OXRNZ09mZlkxNGl6WmRBb3BSZmhha1JCZ0s4MzR1?=
+ =?utf-8?B?U20rMzFTK3NLWGJkZVJwMExZbmFVU3UzSk1vU3ZzeG1NcXRJejdrY1BLcWRp?=
+ =?utf-8?B?R1o1V1dPZ2VEVjZoeHR0UjEzTHZ4SUZQdm1qQlJZeEZaOVNQMktjNnhwYWI4?=
+ =?utf-8?B?R2N2R3F1aDBlSzFpdGNWMEJQcXpiZDRSYXhjenE4UjVwQ3E3ZWlsWWhoaUgw?=
+ =?utf-8?B?NE0rZzdyWU95QWI2Q0phaS9xdGJBVHE3d2FJNWRhNzZyRnVaSGt2RnhKZ2lB?=
+ =?utf-8?B?T2E0bStZWEljaGZkYXQ0ekMxZjROdjVVWmJva1AvUUU3OTBIY2dISE1lLzUy?=
+ =?utf-8?B?aEk3OUNLbnJXTkMzTU5mYXFiVmwvVUxXZnd5RUJEMWdaQnQ5bTJ6S1R5VjMz?=
+ =?utf-8?B?WWVIK0w1c1JOVHNuS3JvSGx6YVJ0ZDVraFlBTks3d0pvR1NhK2NMRzJSNTYv?=
+ =?utf-8?B?SkJpcUIvTGVQQjNtU0c0N0dLbkxKaGFMMDFGVkV6TGtyckFBMHQwYkpTZXE3?=
+ =?utf-8?B?U0sxOWVpTTFqTXR1S0FGS3VWRWg3TG1zQzhmTXRVVEpWS3V5VDVLd0lrQjhh?=
+ =?utf-8?B?Q3FsQmpaNmg1ME1ia1FhMlNOUlRzNFFlRkhERSsrWmdyQytqWW93SkFWZ3VD?=
+ =?utf-8?B?ei9kRVllejVtNmZiM1lRV3piYkJQdE5OVW9wdC9JalpwK2VUUHVnRzVlMVQ0?=
+ =?utf-8?B?NWJJZU9wVExzQ082MWYyM2cxUE50L2ovZ0d3TTVjSFNVVk5QeEl1dTJydUw1?=
+ =?utf-8?B?a0FaOWhBb0NxaVpwcEtxR2JGeHd1WVlkOE5YbDNKdW1GRkpOZVlnb0FjeWEv?=
+ =?utf-8?B?bDNYaEQxc2dDUks2RUZBRjR5SVNDZFhUbDJoZ0Q5ZnFkejhzQ1BYMU5LQzZj?=
+ =?utf-8?B?MzN1TExyek5oS2ZGczNPUTVCWGRLa0xVOW44Y3FDNWFXMTlnYmR5VG9XeWwx?=
+ =?utf-8?B?ckU4WEd4RlNqSW9oY3BQU2xubXBzU2QwQlRyR2tDNUdINGh3bDJ2QmdGQnc2?=
+ =?utf-8?B?WWZXTEVPSUMwSjFMRFJsZS9qc3c3WGk2T1lHblh4TWx2RFlqajdoaHd6UUdj?=
+ =?utf-8?B?cExTQ2pPRVhXc3R6bGNRVGIvS291aDNFbWlvK096OTROUDV2ZXc5MlFlMFhi?=
+ =?utf-8?B?ZlRoSmROck9MTmlob21mNVh2YUt6N0tHelo5T1BlT05jR2k5Q1g0Q3FlUkpp?=
+ =?utf-8?B?YTZjVGJZcUpsUWtMZmlaNkVrZTd6Z3NDQnRrbVBOYlJIUUE4dXVUNE9MelJw?=
+ =?utf-8?B?Qmg2WGg3eUhtcDVyKzlRekc5Mkxza05WS3BsTG9OSFF0QW1HOXFPeFQycVNX?=
+ =?utf-8?B?SU9Bam03WHB4V0RvazF4SGJlaDlWNFgwVkUzMElaQysrT3U0N09rUDIwY0p5?=
+ =?utf-8?B?N0xicEliTjZpbVJIaEFGdkhhWXNFL1NpSmN3VlUxcnlyM045dFErM2drNzlL?=
+ =?utf-8?B?RDg1R1lhRnhOckJsMXFuaUdoWjA4ZlJUc3hKM2E0dmhzU1h1dVBwTHBOelhH?=
+ =?utf-8?B?RmF3UjBJSklQWFpTSjk1c3hHd281Sm9RR1QxenNNR1JYdnJ6MUxEU2M0RWhu?=
+ =?utf-8?B?OXRGczlHcHhIejZucHdBYnVyS3VnMjZWdFN2em9BZTlhZWNJZHhQZz09?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c5dc12c4-0cd8-49f9-bd01-08debd491759
+X-MS-Exchange-CrossTenant-AuthSource: BN5PR12MB9511.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2026 06:11:15.6679
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0IZGpPH4SF4MqG3Kl3k4pFOgb92UTuWLGYcpK/lwW9L2Pw7mSFVFCKV5e8SV7YFqGvBxff4qpH0ap7vdAIQghQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH8PR12MB9840
 
-matrix-keymap.txt has been a single-line redirect to
-matrix-keymap.yaml since commit 639d6eda3b80 ("dt-bindings: input:
-Convert matrix-keymap to json-schema"), which introduced the .yaml
-schema and reduced the .txt to a stub in the same change. The .yaml
-has the same filename in the same directory, making this redirect
-unnecessary for discoverability.
 
-Eight files still reference matrix-keymap.txt, forcing readers
-through an extra hop to reach the .yaml. The stub has not been
-touched since June 2020. Update all references across input and mfd
-binding documentation to point directly to matrix-keymap.yaml and
-remove the stub.
 
-Signed-off-by: Akash Sukhavasi <akash.sukhavasi@gmail.com>
----
- Documentation/devicetree/bindings/input/brcm,bcm-keypad.txt | 2 +-
- Documentation/devicetree/bindings/input/clps711x-keypad.txt | 2 +-
- Documentation/devicetree/bindings/input/matrix-keymap.txt   | 1 -
- .../devicetree/bindings/input/nvidia,tegra20-kbc.txt        | 2 +-
- Documentation/devicetree/bindings/input/pxa27x-keypad.txt   | 2 +-
- Documentation/devicetree/bindings/input/st-keyscan.txt      | 2 +-
- Documentation/devicetree/bindings/mfd/tc3589x.txt           | 6 +++---
- 7 files changed, 8 insertions(+), 9 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/input/matrix-keymap.txt
+On 5/29/2026 12:08 AM, Nicolin Chen wrote:
+> On Thu, May 28, 2026 at 09:36:34PM +0530, Ashish Mhetre wrote:
+>> On 5/28/2026 4:04 PM, Robin Murphy wrote:
+>>> On 2026-05-28 11:16 am, Ashish Mhetre wrote:
+>>>> Tegra264 SMMU is affected by erratum where a TLB entry can survive an
+>>>> invalidation that races with concurrent traffic targeting the same
+>>>> entry. The hardware-recommended software workaround is to issue every
+>>>> CFGI/TLBI command (each followed by CMD_SYNC) twice. The second issue is
+>>>> guaranteed to evict the entry. ATC_INV is not affected and must not be
+>>>> doubled.
+>>>>
+>>>> Add the ARM_SMMU_OPT_TLBI_TWICE option and set it on instances matching
+>>>> the existing "nvidia,tegra264-smmu" compatible. No callers consume the
+>>>> option yet, next patch wires the workaround into the CMDQ issue paths.
+>>> Can you not detect this implementation from IIDR like for our other
+>>> workarounds? Otherwise what about ACPI?
+>> Neither IDR nor IIDR flags this Tegra264-specific bug. We cannot
+>> detect it from any HW register, so we have to rely on the Tegra264
+>> device tree.
+>> Regarding ACPI, the bug is in Tegra264 only, and Tegra264 is
+>> device-tree-only. It doesn't support ACPI/IORT as of now.
+> Let's add a note in the commit message.
+>
+> Nicolin
 
-diff --git a/Documentation/devicetree/bindings/input/brcm,bcm-keypad.txt b/Documentation/devicetree/bindings/input/brcm,bcm-keypad.txt
-index 262deab73588..33514eba0c9c 100644
---- a/Documentation/devicetree/bindings/input/brcm,bcm-keypad.txt
-+++ b/Documentation/devicetree/bindings/input/brcm,bcm-keypad.txt
-@@ -59,7 +59,7 @@ Board Specific Properties:
- 	  subsystem (optional).
- 
- - linux,keymap: The keymap for keys as described in the binding document
--  devicetree/bindings/input/matrix-keymap.txt.
-+  devicetree/bindings/input/matrix-keymap.yaml.
- 
- Example:
- #include "dt-bindings/input/input.h"
-diff --git a/Documentation/devicetree/bindings/input/clps711x-keypad.txt b/Documentation/devicetree/bindings/input/clps711x-keypad.txt
-index 3eed8819d05d..5f4514c0cd5f 100644
---- a/Documentation/devicetree/bindings/input/clps711x-keypad.txt
-+++ b/Documentation/devicetree/bindings/input/clps711x-keypad.txt
-@@ -5,7 +5,7 @@ Required Properties:
- - row-gpios:     List of GPIOs used as row lines.
- - poll-interval: Poll interval time in milliseconds.
- - linux,keymap:  The definition can be found at
--                 bindings/input/matrix-keymap.txt.
-+                 bindings/input/matrix-keymap.yaml.
- 
- Optional Properties:
- - autorepeat:    Enable autorepeat feature.
-diff --git a/Documentation/devicetree/bindings/input/matrix-keymap.txt b/Documentation/devicetree/bindings/input/matrix-keymap.txt
-deleted file mode 100644
-index 79f6d01aecaa..000000000000
---- a/Documentation/devicetree/bindings/input/matrix-keymap.txt
-+++ /dev/null
-@@ -1 +0,0 @@
--This file has been moved to matrix-keymap.yaml
-diff --git a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
-index 1faa7292e21f..460b64d332cd 100644
---- a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
-+++ b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
-@@ -12,7 +12,7 @@ Required properties:
- - nvidia,kbc-col-pins: The KBC pins which are configured as column. This is an
-   array of pin numbers which is used as column.
- - linux,keymap: The keymap for keys as described in the binding document
--  devicetree/bindings/input/matrix-keymap.txt.
-+  devicetree/bindings/input/matrix-keymap.yaml.
- - clocks: Must contain one entry, for the module clock.
-   See ../clocks/clock-bindings.txt for details.
- - resets: Must contain an entry for each entry in reset-names.
-diff --git a/Documentation/devicetree/bindings/input/pxa27x-keypad.txt b/Documentation/devicetree/bindings/input/pxa27x-keypad.txt
-index f8674f7e5ea5..a727d66eece4 100644
---- a/Documentation/devicetree/bindings/input/pxa27x-keypad.txt
-+++ b/Documentation/devicetree/bindings/input/pxa27x-keypad.txt
-@@ -10,7 +10,7 @@ Required Properties
-   interval for matrix key. The value is in binary number of 2ms
- 
- Optional Properties For Matrix Keyes
--Please refer to matrix-keymap.txt
-+Please refer to matrix-keymap.yaml
- 
- Optional Properties for Direct Keyes
- - marvell,direct-key-count : How many direct keyes are used.
-diff --git a/Documentation/devicetree/bindings/input/st-keyscan.txt b/Documentation/devicetree/bindings/input/st-keyscan.txt
-index 51eb428e5c85..fd88f40faebf 100644
---- a/Documentation/devicetree/bindings/input/st-keyscan.txt
-+++ b/Documentation/devicetree/bindings/input/st-keyscan.txt
-@@ -17,7 +17,7 @@ Required properties:
-   See ../pinctrl/pinctrl-bindings.txt for details.
- 
- - linux,keymap: The keymap for keys as described in the binding document
--  devicetree/bindings/input/matrix-keymap.txt.
-+  devicetree/bindings/input/matrix-keymap.yaml.
- 
- - keypad,num-rows: Number of row lines connected to the keypad controller.
- 
-diff --git a/Documentation/devicetree/bindings/mfd/tc3589x.txt b/Documentation/devicetree/bindings/mfd/tc3589x.txt
-index 4f22b2b07dc5..a6d356e90f42 100644
---- a/Documentation/devicetree/bindings/mfd/tc3589x.txt
-+++ b/Documentation/devicetree/bindings/mfd/tc3589x.txt
-@@ -48,11 +48,11 @@ Optional nodes:
-  - compatible : must be "toshiba,tc3589x-keypad"
-  - debounce-delay-ms : debounce interval in milliseconds
-  - keypad,num-rows : number of rows in the matrix, see
--   bindings/input/matrix-keymap.txt
-+   bindings/input/matrix-keymap.yaml
-  - keypad,num-columns : number of columns in the matrix, see
--   bindings/input/matrix-keymap.txt
-+   bindings/input/matrix-keymap.yaml
-  - linux,keymap: the definition can be found in
--   bindings/input/matrix-keymap.txt
-+   bindings/input/matrix-keymap.yaml
-  - linux,no-autorepeat: do no enable autorepeat feature.
-  - wakeup-source: use any event on keypad as wakeup event.
- 		  (Legacy property supported: "linux,wakeup")
--- 
-2.54.0
+Sure, will do and resend.
 
+Thanks,
+Ashish Mhetre
