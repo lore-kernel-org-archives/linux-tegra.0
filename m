@@ -1,135 +1,215 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D214C2E03EA;
-	Fri, 29 May 2026 15:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B713655DA
+	for <linux-tegra@vger.kernel.org>; Fri, 29 May 2026 15:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780067869; cv=none; b=CMES3MSNZ6S6aGpctuuU8OxUOnphy2aB98jZOWqFN2MBpY6pp5XhULgF25AadOMb9KuuApmNu5wuotDEqzdHA8xN4+FlFysZmKYQh9G68cQzikx1ML34yayxcHhI1GAVyJ/8i5rE1my1QS+Aj7dWgIyVJc87Y+jVsQY4ZOkPzmM=
+	t=1780068233; cv=none; b=pz0JbRc6zuqhdNIhpK3MTPTpxYDYD3HOq7mIEQIgxFHB+bcA7Fr4TRdwmFhXrrbMjZ5alEzWpWnq/dV1Ja5CZ1dWdbXdQWkww5Ju5/QL9V4LodRjxgECd21ORAoyHUWYrBZ82ocLW/vRoDZuefWaXQq5FigonZ42PSZSo+Xc3T4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780067869; c=relaxed/simple;
-	bh=i14utAyWVag4qxanxiMOSsLoacp5PlK9awjdPrY0Lt0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j0qPFaQadhbQ52HzB562wD6EykeqIsPmj0O2alnTMUjh+8PeGUoyGM6c63endgTdIOt+49f6kTZjeI0LN48q7OZB3DVhNOSAx/BGHkeZupxquGg0kco2IsQKcVaw4pduNLGxLtHNJb3pqvpu9VtudNmtzSS7A1h1OWujVirC3io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=E/Y8OmFz; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1780068233; c=relaxed/simple;
+	bh=MiBkhI2mDzZSe3LK7scfx+No/5aiHrTQgkdkU68eQZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QUxyKRyt6h6LsNFikZdx8aESuTkHSI95Ig+dsFnY3RKKhx1A+wIejxOVyUBjOKyCmONwq8K5+XGyPQS/PcsN4j2jtS+t5DP4Z9Lj+E2vXDa2r3t01GWBkpvEJbAZwFefwliXIcRVXN1Q+FXSE4r15aUZhemVOOMF2l4gMQbqaX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jcpoJdrL; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="E/Y8OmFz"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 284CF237B;
-	Fri, 29 May 2026 08:17:42 -0700 (PDT)
-Received: from [10.57.26.238] (unknown [10.57.26.238])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8093B3F632;
-	Fri, 29 May 2026 08:17:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1780067866; bh=i14utAyWVag4qxanxiMOSsLoacp5PlK9awjdPrY0Lt0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=E/Y8OmFzjPPiFlVn4wlpigbZpVnBOLe/nvmQB9aWj85QNMT7/qwPvsbPCBXgoTSUY
-	 ILoZRm/Zx+YVmLnnnjl6SbY9FgvOkUu3spSzSN72QzgqEzBR85lxu8q43Fz/aKK1vx
-	 t17fO/GqqvBY0+f/5OA/Bl8CQBWaofzEEz9yntmI=
-Message-ID: <c99085e5-cf1f-479d-bef0-b6a4161482e5@arm.com>
-Date: Fri, 29 May 2026 16:17:33 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jcpoJdrL"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5aa4b131940so3344064e87.0
+        for <linux-tegra@vger.kernel.org>; Fri, 29 May 2026 08:23:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1780068230; x=1780673030; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ThQUZuW5VRWez/JlJU4j6KX1teKKMbK4v4DvPnWcYsM=;
+        b=jcpoJdrLJHRPkSrUn/YUsG9uVhEa5MVO3ee4eR8LUdtDkSUgddXG0KwjSUWXZI65+P
+         Z44JvdrvYT2ZjdCXZw/LmppBUfEC3hwWz5y6BXbzA7JrsAlFFQpl95d7O/sslNJ+RUO2
+         naljQuxc7vLmqqQT37RBNWx+/+GAbNfUR50EprIPPwvZINFGixu1+sSsOu25HdlfDAtN
+         V6YJmK5yg8dEjPVL7BacqOfa/1GO05XWKzKIwJZE+mZ6ImT/ylBXQSXyFU4kE+dy3n9C
+         DrIf3weQPm0maN8579vaSD/I/woEjCj4vT5mMTlX8ypin4uteRpkEPs8vm5GZUsTG+e8
+         NK7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780068230; x=1780673030;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ThQUZuW5VRWez/JlJU4j6KX1teKKMbK4v4DvPnWcYsM=;
+        b=Y1jxEac7S4D4rkjYTM7K3hFDYd16n+Z3LuP1LKUwQdtZBJvJHW0Or/UWH6pXDJZMHP
+         hCCr74fxCnm5tvySGcBCZ1VV+5m5mxqs4DTRnvjPWuAlKCKZToLpTClwkgrX29V1USdu
+         Kv7oCChL8aagm9+kK5SyY2QLWJkAKKe/RiRTeS0EhVzqc+2vos235M2BnKf51Cy8c0v/
+         1ktZ4eutMzLxBhaJENXeLWkYJ10t+69c+mE4zCdwnt+1B5Evt64k1PAoDbpyU2S+f2ZZ
+         MS22OREVSFURR0gL0AO3HsISH0JjRxZAlF82exlQCc5O3gDXEvR5yJ6PPIDAZbN4EfDo
+         Qq7Q==
+X-Forwarded-Encrypted: i=1; AFNElJ+Zp5vOEdCWb8IyPiw+kpkHKR1e1voJsGbldYOQOhxRJz/3jHvhyw4FvxFVG39iwfKcJSJh/nvZNdkoQw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq2wrpmF8q6Um0HXx6H76VxaDIgz6oFEh7p9IW5X+yLZpFbT27
+	yv/pVCUzSvTFeqUie8n3vOHr4GjOdmwj8bQIgbfMsulUF28CoGRc6czo
+X-Gm-Gg: Acq92OG8aBwDC/Nlc1c1nXp9VKTnxuciWFLAGG44GSfFTI1It0HaGjQXai7OsB9a6Lw
+	VDKer/iLf7zHBlZvE7nNYrzy8T/9D8E+SBbIjt5wHq5xtpoGFxPfstKC4276oW6+2y+TPJw/6yx
+	XKrzzDwaxNYWjzbOz+CyRhCEDFvhHr//kpXmBEfLVWGj3Rbl8kEyYDCnTOvcDR1pzbkHSRM6rzW
+	HL4I4Pma/1bG22TEbXYHU9lzyO+vEVgwvDBkFI52Z/R4Y7o420qWwXupBqtSFzZb37XoO4Oyhib
+	5B8lAJFz+AA3A1vXzBRzFnmQCU7dGFusNaVjHO5EPgLoTYIQEA4J/5Qu6+zKyz0U0wAIplpzMkd
+	rJJE9gjSSX8icqiGGXPSmlEvSeg+g+E3HaMCv/cioZZr2JIVrR2lQ300QyqUsmJ2uGS+AO1cRYK
+	XWJR93kkbdvBNiEA/n76fD36LpdR4xO0syULux0tsZ1ZmWVk69+PZ+WrsQ8KBkLNP4CSYArzwgd
+	osXkFw56CbUAeTnqqwC/NPq
+X-Received: by 2002:a05:6512:4055:20b0:5aa:5e91:228f with SMTP id 2adb3069b0e04-5aa609222b2mr64351e87.35.1780068229791;
+        Fri, 29 May 2026 08:23:49 -0700 (PDT)
+Received: from orome (p200300e41f1bda00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:da00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5aa5b0726e8sm338501e87.25.2026.05.29.08.23.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 May 2026 08:23:47 -0700 (PDT)
+Date: Fri, 29 May 2026 17:23:45 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Sumit Gupta <sumitg@nvidia.com>
+Cc: Thierry Reding <thierry.reding@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, treding@nvidia.com, jonathanh@nvidia.com, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, bbasu@nvidia.com
+Subject: Re: [PATCH] memory: tegra: add multi-socket support to the memory
+ interconnect
+Message-ID: <ahmuTcpUdsHYKTPu@orome>
+References: <20260521140546.3023819-1-sumitg@nvidia.com>
+ <2caba07a-511e-453c-8e1e-f2b07b84a096@kernel.org>
+ <58ae92f3-3e6d-4f60-970e-76ee4d7dbd4e@nvidia.com>
+ <2ba14e8a-1664-48fe-ba99-c81100de78f4@kernel.org>
+ <ahgr7EevWJ-unfSV@orome>
+ <ad3c49f1-044f-445c-a586-675252f157ae@kernel.org>
+ <ahg5_Lm51AcfkQm_@orome>
+ <ef3185ce-6a6f-4234-96a3-383480ba8216@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/10] thermal/of: Rename the
- devm_thermal_of_cooling_device_register() function
-To: Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>, rafael@kernel.org,
- daniel.lezcano@kernel.org
-Cc: Zhang Rui <rui.zhang@intel.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lucas Stach <l.stach@pengutronix.de>,
- Russell King <linux+etnaviv@armlinux.org.uk>,
- Christian Gmeiner <christian.gmeiner@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Guenter Roeck <linux@roeck-us.net>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Benson Leung <bleung@chromium.org>, =?UTF-8?Q?Pali_Roh=C3=A1r?=
- <pali@kernel.org>, Avi Fishman <avifishman70@gmail.com>,
- Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>,
- Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
- Benjamin Fair <benjaminfair@google.com>, Heiko Stuebner <heiko@sntech.de>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Amit Daniel Kachhap <amit.kachhap@gmail.com>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, Amit Kucheria
- <amitk@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
- Thierry Reding <thierry.reding@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@kernel.org>,
- "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
- Mikko Perttunen <mperttunen@nvidia.com>,
- Svyatoslav Ryhel <clamor95@gmail.com>,
- "moderated list:ARM/ASPEED MACHINE SUPPORT"
- <linux-arm-kernel@lists.infradead.org>,
- "moderated list:ARM/ASPEED MACHINE SUPPORT" <linux-aspeed@lists.ozlabs.org>,
- "moderated list:ARM/NUVOTON NPCM ARCHITECTURE" <openbmc@lists.ozlabs.org>,
- "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
- "open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
- "open list:KHADAS MCU MFD DRIVER" <linux-amlogic@lists.infradead.org>,
- "open list:CLANG/LLVM BUILD SUPPORT" <llvm@lists.linux.dev>
-References: <20260526140802.1059293-12-daniel.lezcano@oss.qualcomm.com>
- <20260526140802.1059293-18-daniel.lezcano@oss.qualcomm.com>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <20260526140802.1059293-18-daniel.lezcano@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ryfbkxhx436xo7ir"
+Content-Disposition: inline
+In-Reply-To: <ef3185ce-6a6f-4234-96a3-383480ba8216@nvidia.com>
 
 
+--ryfbkxhx436xo7ir
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] memory: tegra: add multi-socket support to the memory
+ interconnect
+MIME-Version: 1.0
 
-On 5/26/26 15:08, Daniel Lezcano wrote:
-> To clarify that the function operates on child nodes, rename:
-> 
->            devm_thermal_of_cooling_device_register()
-> 	                     |
-> 			     v
->         devm_thermal_of_child_cooling_device_register()
-> 
-> Used the command:
-> 
->       	 find . -type f -name '*.[ch]' -exec \
-> 	 sed -i 's/devm_thermal_of_cooling_device_register/\
-> 	 devm_thermal_of_child_cooling_device_register/g' {} \;
-> 
-> Did not used clang-format-diff because it does not indent correctly
-> and checkpatch complained. Manually reindented to make checkpatch
-> happy
-> 
-> This prepares for upcoming support of cooling devices identified by
-> an ID rather than device tree child nodes.
-> 
-> No functional change.
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>
-> ---
->   drivers/hwmon/amc6821.c                  |  2 +-
->   drivers/hwmon/aspeed-pwm-tacho.c         |  5 +++--
->   drivers/hwmon/emc2305.c                  |  6 +++---
->   drivers/hwmon/gpio-fan.c                 |  6 ++++--
->   drivers/hwmon/max6650.c                  |  6 +++---
->   drivers/hwmon/npcm750-pwm-fan.c          |  6 ++++--
->   drivers/hwmon/pwm-fan.c                  |  5 +++--
->   drivers/hwmon/qnap-mcu-hwmon.c           |  6 +++---
->   drivers/hwmon/tc654.c                    |  5 +++--
->   drivers/memory/tegra/tegra210-emc-core.c |  4 ++--
->   drivers/soc/qcom/qcom_aoss.c             |  2 +-
->   drivers/thermal/khadas_mcu_fan.c         |  7 ++++---
->   drivers/thermal/tegra/soctherm.c         |  6 +++---
->   drivers/thermal/thermal_of.c             | 15 +++++++++------
->   include/linux/thermal.h                  | 16 ++++++++--------
->   15 files changed, 54 insertions(+), 43 deletions(-)
-> 
+On Fri, May 29, 2026 at 02:55:35PM +0530, Sumit Gupta wrote:
+>=20
+> On 28/05/26 18:35, Thierry Reding wrote:
+> > On Thu, May 28, 2026 at 02:20:07PM +0200, Krzysztof Kozlowski wrote:
+> > > On 28/05/2026 13:56, Thierry Reding wrote:
+> > > > > > > > -     mc->debugfs.root =3D debugfs_create_dir("mc", NULL);
+> > > > > > > > +     if (!mc_debugfs_root)
+> > > > > > > That's a probe path and you created a singletone. Looks like =
+preventing
+> > > > > > > async probing for no real reason.
+> > > > > > >=20
+> > > > > > > I am very against singletons and debugfs does not look like j=
+ustified
+> > > > > > > exception.
+> > > > > > The singleton was added so multi-socket MC/EMC instances could
+> > > > > > share a "mc"/"emc" parent. I'll drop it in v2.
+> > > > > >=20
+> > > > > > On single-socket SoCs, the "mc"/"emc" names will be unchanged.
+> > > > > > On multi-socket SoCs, each instance will create a top-level deb=
+ugfs
+> > > > > > dir named with dev_name(). Same pattern in tegra186-emc.c.
+> > > > > >=20
+> > > > > >   =C2=A0 if (dev_to_node(mc->dev) =3D=3D NUMA_NO_NODE)
+> > > > > >   =C2=A0 =C2=A0 =C2=A0 mc->debugfs.root =3D debugfs_create_dir(=
+"mc", NULL);
+> > > > > >   =C2=A0 else
+> > > > > >   =C2=A0 =C2=A0 =C2=A0 mc->debugfs.root =3D debugfs_create_dir(=
+dev_name(mc->dev), NULL);
+> > > > > You assume this is fully synced, so you as well could do a look u=
+p and
+> > > > > then use what you found or create new dir. If you think that is r=
+acy, so
+> > > > > is this approach... How are other drivers handling per-device deb=
+ugfs
+> > > > > directories? Do they also create such in the top-level? I think n=
+o.
+> > > > I think we want a top-level directory for a bit more structure in
+> > > > debugfs. But I also think we want to create that top-level director=
+y in
+> > > > the module's init function rather than _probe.
+> > > I was thinking about this as well but that would mean your driver will
+> > > create it on every multi-arch kernel.
+> > >=20
+> > > This should be then moved to some core bus (and there are examples of
+> > > that, e.g. USB), except there is no core-MC bus code to do that.
+> > We have a utility function (soc_is_tegra()) that we've used in similar
+> > situations in the past. We haven't used them in a little while, but it
+> > could be useful here. It's not for free, but should be fairly quick to
+> > error out early on multi-arch kernels.
+> >=20
+> > Thierry
+>=20
+> soc_is_tegra()'s match table currently has entries up to Tegra210
+> (seems only used by a legacy 32-bit ARM path), so it would skip
+> the SoCs this patch targets (Tegra186+).
+> Could we follow tegra_init_soc() in fuse-tegra.c. Only create the
+> "mc"/"emc" parent at module init when a matching DT node is present:
+>=20
+> =C2=A0 =C2=A0 static int __init tegra_mc_init(void)
+> =C2=A0 =C2=A0 {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct device_node *np;
+>=20
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 np =3D of_find_matching_node(NULL, tegra_mc_o=
+f_match);
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (np) {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 tegra_mc_debugfs_root =3D debug=
+fs_create_dir("mc", NULL);
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 of_node_put(np);
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 }
+>=20
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 return platform_driver_register(&tegra_mc_dri=
+ver);
+> =C2=A0 =C2=A0 }
+> =C2=A0 =C2=A0 arch_initcall(tegra_mc_init);
+>=20
+> Each probe just creates its per-device child under that parent
+> without touching any shared state. Same in tegra186-emc.c.
+> Or would you prefer a different approach, e.g. extending the
+> soc_is_tegra() match table for arm64 SoCs, before I respin?
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+of_find_matching_node() has the big downside that it scans the entire
+device tree to find matching nodes, which can be quite expensive. The
+soc_is_tegra() helper uses of_machine_device_match() which only checks
+the compatible string on the root node and therefore is much faster.
 
+Jon is working on a different solution for a similar case for BPMP, so
+maybe we can also look at doing something similar for MC. It's a bit
+involved because it adds an extra mutex to make sure we don't end up
+racing the creation of the parent directory, but it has the advantage
+that it's only ever triggered when really needed and doesn't need any
+"tricks" like soc_is_tegra().
+
+I wonder if maybe a helper could be extracted from that to make this a
+bit easier to replicate elsewhere.
+
+Thierry
+
+--ryfbkxhx436xo7ir
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoZr34ACgkQ3SOs138+
+s6GkBw//b7KucljgDtehEWP8kwtO+ilxTKxK323qTsWHFKkt0u3kVFrLSjj64yYn
+M+yFjDMe2lY56gJpdaKxfLlFHXK6jXUj9TKIDq6E58jsfTVFnkvsSMsfr5IPnxNW
+6chINNJHYiIRP745G8dbUazYlkyxlIH/1yYq9GavgvEbpMcrMG0PY5nzHqlfYVcj
+GFZY5/B1bEGc34t4uAVka2hLs0q5dKz6ewVIoVxnFNeYzqfJrJwciLeYfxFCb9An
+yRjyFXRvww3oQSpmeCUT9XhScWvHr50W6d/L2+WVPNIrIR81z/Y/8jomQJbKVW1O
+p1gmbdf6t1E8YfVN5UKEBbpoxr6ql68ZtFtCsf/6amAinRL5i0cBFbWtYgWt2OxQ
+GroAhqyzq/eh8GMIvK3d67A7H3v8/Yq1+b8HNKX0cIiK/ww2EhoU8YxfXYGY4AJn
+sh19izPzuv0S3OxzMC3pCEaF6KKA3rgyWwXGMZeenSys+40YcFvm6Bwcmz7ebqbz
+QJ9bGYSS9ZkJ4EdBeHgEaFMTxfufUvTtCFyxgj6/k/8XCBS9Pd8qwNPXNCZPkj7r
+fR9075OhwEbg5eH7LjA746ctI0XeTIyo4apHY1t08hPYVqQtyQPEJTb7kgOeRIGJ
+RZci+tixbTR3JN0Gjk1DqAQYP8jHZRH+OuEuL4Afxa5lgf7AYhQ=
+=FPjQ
+-----END PGP SIGNATURE-----
+
+--ryfbkxhx436xo7ir--
