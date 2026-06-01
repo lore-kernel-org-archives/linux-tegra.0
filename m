@@ -1,99 +1,107 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2F83D5C0C;
-	Tue,  2 Jun 2026 12:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514713D301B;
+	Tue,  2 Jun 2026 12:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780401711; cv=none; b=SQEEENuP6ywSmRamts3w603rf273QmsRojQoaDKwoeHiiN83u7pHWPmTp3G2kXZzVLdDN0IwlbnxU+pEy9+SXRarva6xmRlxZ4NGPi5ofBtsc8QaBJ+720xxo8x3h0NbFbd7WkywoN5OuWZDpUXWrbIS/npwqlFGLQZRb1mSqTo=
+	t=1780402053; cv=none; b=E6UWE5Y01QCE+ouje0IGeLRc0eN60kva0tKoYN3vCNBFc+GaPHBfF7RRrl8E/LObKwsioo1X74IX09MPgODllzbTgJqU3foz30lgiQJLAcmV3fj9ucCai06HZtRqH502Zvl8sNdH3vVtodwP8Dp3I2fFr3ZQvzXCBzX4OrBH4jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780401711; c=relaxed/simple;
-	bh=Ztw6bJQRorBQ5C1ddcJR7+S4DjwTN7r34fRjokRX9KI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mfLWmTiRLSivJTfT00cogKqTBGOYzsvkEModnYJc6bdNcVBU/KngqyNVMjLYQ+Js1GWx3tUMB7hRcTFyeiVpi3keOUxOO34cSdf1xaiuM4779u817G6spK8j2lY2+bOjYaYP817lJ1UrgeJpLYQUe4fZrbnLcuahOE8rtQ4Pnxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nq7N7YyV; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780402053; c=relaxed/simple;
+	bh=CXeJ9bvnJoexsr0ZqogM4Dl8ae1EzlAlaa7aCsJn7q8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ThUjn+MYNvAb8xFxb26p60nguLUXk95j5HbUJhzBNhu3CG0JJrmg1cYUDe+bO0gVH53RXzlstPEqBE574gixPFt4uXOGZPt9Wqbl+NNHa8LiY/zdYooQueiaVc81xgqB6ZhZr4PZOAnD+DvKxtLplDmrUCX8myVoZmJPQ7+Y8Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ACGTTxa8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nq7N7YyV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF1741F00893;
-	Tue,  2 Jun 2026 12:01:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ACGTTxa8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C2DF1F00893;
+	Tue,  2 Jun 2026 12:07:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780401709;
-	bh=0WQjvheQqNfkhSEyJ+TWIIsGmJeZJhbd5i3NzXC6q78=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Nq7N7YyVxZ0hDitwnGYzIZRzYj2FqtB6Kh4TpyOEXlyDU8oFQR08EOkNtKf3l3TtE
-	 6YXwxlNqQ1zkHgpbL999bnu/G5RKFLhspWyIaZy2sja8zwpI15veyjb5Zb8X8rcBlv
-	 9jTMaLVBZvf/GaTQvywsiPYv9tx1e3Ip++0KsK/k/SumIeHKrQy+0UMlnhp0AEQYGH
-	 4WaViPmP9DBQVXofp7nfnZoSn4eY5rh2OHhTJlCzURZUBsjXmTIu1mT3/NsT4edC/l
-	 7LVR6+ObtUduADozaXm8ghxe4T6yGoJ/yV/2J8GGVY+mlL7zfEEtcJHjOMmQVE41F1
-	 gMBmHY66Y01Qw==
-Date: Tue, 2 Jun 2026 14:01:46 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	Timo Alho <talho@nvidia.com>
-Subject: Re: [PATCH V2] clk: tegra: Support unique names for multi-socket
- platforms
-Message-ID: <ah7F_QDw5hT2KdWB@orome>
-References: <20260602084334.350895-1-jonathanh@nvidia.com>
+	s=k20260515; t=1780402051;
+	bh=yf9fztpSi4K+ljlndUdAbTgpH8FO9UBENIcySmefiuo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=ACGTTxa8FbXBbbfTxT10geybgu/iGCQ5gAPvgGW65pwToitHKMb7oXIvmJwag/Gl9
+	 7+Tz6MWHzmRjkbVhxq7H7CY1ekgHUKDFDvqts6yhC4KPN9pbt4W0DDnvGn2BeJEgE/
+	 NQ6TYrDN1EndBuecSRzsbbGV8VvQqGaRoDi/PLx1GzGNzPEZq8D7kWHmo5/Lan8Rcy
+	 6mGAQmbNWcZbrkR2CmvqVo2j+F2q79QB1IF38Pf6DeY2xyMYugYYxB7ILjPzTw0dGw
+	 4GY2pVtyDg41+ZprebAb0wvC1wAPMg23p0L3JL3wIZ2hjKhPe5o8c4PF9bQK3ZmZSq
+	 +PRLqakkNBakw==
+From: Mark Brown <broonie@kernel.org>
+To: Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Sowjanya Komatineni <skomatineni@nvidia.com>, 
+ Laxman Dewangan <ldewangan@nvidia.com>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Aaron Kling <webgeek1234@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+ devicetree@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+In-Reply-To: <20260525-tegra194-qspi-iommu-v2-0-a11c53f804b2@gmail.com>
+References: <20260525-tegra194-qspi-iommu-v2-0-a11c53f804b2@gmail.com>
+Subject: Re: (subset) [PATCH v2 0/2] arm64: tegra: Enable DMA Support on
+ Tegra194 QSPI
+Message-Id: <178032313909.44654.17999841515127150550.b4-ty@b4>
+Date: Mon, 01 Jun 2026 15:12:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sdpaxvxqguigazve"
-Content-Disposition: inline
-In-Reply-To: <20260602084334.350895-1-jonathanh@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1428; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=CXeJ9bvnJoexsr0ZqogM4Dl8ae1EzlAlaa7aCsJn7q8=;
+ b=owGbwMvMwMWocq27KDak/QLjabUkhiy54/XyPcEnBT53/v2Y89Ssy7P91+LkqBPJnziq4yQyu
+ iZ4yRp2MhqzMDByMciKKbKsfZaxKj1cYuv8R/NfwQxiZQKZwsDFKQATSWpg/ytzi/0SS/F8eY6S
+ 3m9uifbs2fVZW8VOv5hQMd9/DnuY1L/MNR71RQK+z3+nXEiPKnc+L1pikeIVnFhT4eOz8F/TksV
+ 87Admvej7Y/ch/mZrUChvkZaTUOe9tDs8zlKdhTt19YqZOcrkq9o8/6TL8Avu/HHn6/oTwS3KK6
+ 2+PqhP57GbesA2+bzLmnthiy/liPeqmp3/E3OCh++/85nFD7eeDNo/galh569m8z0LRFPvPXr/Q
+ yOOR8np1tNvWyMtzWbbvlda2BZ12EHlYaVAwKFEvlV3+B89rF9/p9bpbMn1dRcNHD1kMtg0ypYu
+ O71tRtGTxFJX1YiVSfvVH3qteJJuH8D8xUb46NN96v+LAA==
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
+On Mon, 25 May 2026 01:47:43 -0500, Aaron Kling wrote:
+> arm64: tegra: Enable DMA Support on Tegra194 QSPI
+> 
+> The reason for this is to properly support the spi nor chip on the
+> Jetson Xavier NX module. Prior to this, it would time out on all
+> transfers and sometimes even trigger a cbb fault, locking up the entire
+> unit. With this, reading and writing to the flash memory works as
+> expected.
+> 
+> [...]
 
---sdpaxvxqguigazve
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH V2] clk: tegra: Support unique names for multi-socket
- platforms
-MIME-Version: 1.0
+Applied to
 
-On Tue, Jun 02, 2026 at 09:43:34AM +0100, Jon Hunter wrote:
-> On multi-socket platforms each socket has its own BPMP which exposes the
-> same clock names. Fix this by using the NUMA ID as a prefix for the
-> clock names on multi-socket platforms.
->=20
-> Use 'sizeof(info->name)' in the strscpy() and snprintf() functions to
-> future proof against anyone changing the size of the 'name' array.
->=20
-> Co-developed-by: Timo Alho <talho@nvidia.com>
-> Signed-off-by: Timo Alho <talho@nvidia.com>
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
-> Changes since V1:
-> - Use NUMA ID as a prefix and not a suffix for the clock name.
->=20
->  drivers/clk/tegra/clk-bpmp.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.2
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
+Thanks!
 
---sdpaxvxqguigazve
-Content-Type: application/pgp-signature; name="signature.asc"
+[1/2] spi: tegra210-quad: Allocate DMA memory for DMA engine
+      https://git.kernel.org/broonie/spi/c/f469138a77ac
 
------BEGIN PGP SIGNATURE-----
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmoexioACgkQ3SOs138+
-s6FX7Q/7B6njJe++FK2zlBoPX+GsgPxay8esyep+M/M4fVvEi0udlmOTZH59LKZD
-HJPZC8iySP8IZS5pXexdOKT4taDzaMPxS76ps7sNxKIVuO86lwU+cxlmMypl5qG+
-3/6oBAwkQwdYRSSVgc6FJR6d9X/DPqxXNBg6nqdg3dhxrBHH2v5AIDIIRZi3Xz7l
-fzQCQHIXawPWW/W4C2W8/mUnFx+Usjzkq5Vep18qkhvnztE7Q2xyMtV+CZFbkATw
-fNlGYfiD4Uw9ZQBQ0KUwhxsIsm0EfgFS2Iv3v83e20XR5Umq6LATuLxgKwKMMz/q
-WDWL9hiJATeFKLFl6bvPOEJ7SsNc6sXNvWtHgkYBl2MI1bXVK82whrWOFKXBFMdF
-wunlP3g436p4EDEEynhvfIX9bdz5v1O5ypx4UrCPk4cHBAJFOwt8TLaOxvc2ysVJ
-dslf49T5iCl8/JvqBeDTeidj+bcjiCnBmO9Vi17a3s4rwMcLxDRA6eZQHbHLUZQS
-icBAtd8yidgvt4N9GFjV2eAbSugCiTLdc+pSJeRDxCUq2oPi3BvYtBhF9jbFkIDY
-xZQQXrE0Ve61gczmhqVBX63ZWWdnQvafmHB7LtqvQ6DFlnlaT2LacBqw8ZhPPwGz
-PyDzFZXRCNaQpYh9S8g/AKdk7o4ZxKoXJbrthjbN94vT+UzuCwg=
-=tvsi
------END PGP SIGNATURE-----
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
---sdpaxvxqguigazve--
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
