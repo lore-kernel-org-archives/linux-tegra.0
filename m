@@ -1,165 +1,157 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C223246FE;
-	Tue,  2 Jun 2026 20:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62571FC8;
+	Tue,  2 Jun 2026 20:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780431226; cv=none; b=LRrcEuA+kRyzaqx5YtMkOW5eEATKffTXNuWW5VjgSqcHIkdh8LwTmPUMV89E+3j4I4D2U5JzcJR5oOWPq7+RGR07lIqiEUUc/6u32r0XSoHpWT/A4aKMqeWUKVvvrwDDzEqG4BtGzflJMjOVD94VyEHyIJaWWSVkqp1KgYm6YbU=
+	t=1780431491; cv=none; b=D4AxXpYglnXRvbSlDt9pWg5aLFNpj1D4pSl+rOKj0ZI8ZEHW7m69YWRBs7riPAcEmTv5LkmFIfsUvcbiJMxFDiZfynxo9cpG/bGmST7IcmQ6xFgnQeF7MCqsdpJnnnOXq0BTswZrAAxSdM3Sz5/G0nQXm4oBim8XSnYcBEjLs58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780431226; c=relaxed/simple;
-	bh=4gAukCpyrQFo8VTPmnrhVpITJSMNhMls9U2xD/Sj5A8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TvboBBPSGQPsrOsXzicg9TTzFEgA5OBiDqj/GkvoYoQ19mpBY1kMeKFsoYTdlO8W8xZjiYLK8r3G2twu7usW/snFG663ew3Ts638shvaNZPqhYfEsB2o6V9gV6HP2rYq1XmuyhJbTWL8IihWS9m0pCPMI3z6KawkkNvl/PRNOLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XGkUmtl7; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780431491; c=relaxed/simple;
+	bh=cLGDD99pERY+puEjKEGdBo2qaj7LeiqKqZuYQyILfZM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NgNYU2ZQklaofhAZnbhgitjQJsbhqgYTLtHG9Q5/RUu7S8jeCW1hmUjusc0m5bgL/p/IXBW8lPkyoaTdabtDVT+cvgn7qp61k4X/zKS9jpdx/C0SrcBAzMWBbVB2pMVYnL8wnCeXiY9qvCZ8zVNvAFtt8osbXxZv5ARxdcHXOOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TW/V/QLA; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XGkUmtl7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 356C11F00893;
-	Tue,  2 Jun 2026 20:13:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780431225;
-	bh=ib+9T4X2yh5YoVE1sAOpYN8KBkp47dokmYCpMBUL0BA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=XGkUmtl7qa2HKhRZdd7lmc09JTZpZfmN5eioG5YRmvuLfRgu176rkIKto/0YREB50
-	 iKn+E0LoFsPI0T/3fJYjrvsksMlvDhQisMbHtm6oxxc9fdFOcnvlUwXyHotVMXpAhw
-	 +TCz9L4hjcfFx4zfbMM7kOV7s2wEejiS0GPnxbLVQSmPYHfPSC9kj14FgBVJo98/Y7
-	 7G2BzuPHWBu9120hSodYVOBnYzKNB5xpIc9y1ewD4dL4edTrv9DG8AYp7HLwV4LuZn
-	 AYvEIUxfq0oDGGh/BO1jtpHxEApGIpzJPZLLFheXXPpYrIY/48EXOxCZyr8e8VduL1
-	 Qsftpm/ngEbzw==
-Date: Tue, 2 Jun 2026 21:13:39 +0100
-From: Will Deacon <will@kernel.org>
-To: Ashish Mhetre <amhetre@nvidia.com>
-Cc: robin.murphy@arm.com, joro@8bytes.org, jgg@ziepe.ca,
-	nicolinc@nvidia.com, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] iommu/arm-smmu-v3: Detect Tegra264 erratum
-Message-ID: <ah85c4u011WNJQgE@willie-the-truck>
-References: <20260601104845.995005-1-amhetre@nvidia.com>
- <20260601104845.995005-3-amhetre@nvidia.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TW/V/QLA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1780431490; x=1811967490;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=cLGDD99pERY+puEjKEGdBo2qaj7LeiqKqZuYQyILfZM=;
+  b=TW/V/QLAvrjnixOuzYL2q3C3Sla7csh4KLC7dIYppEdAqzvDqoLD+GHC
+   J52bBr6tnL0nUiOS5dotFWdN9z9lY4FJWkfw2Tfb65K4acYBcejzVBBS0
+   al4CkIeewZmRhF4om1U245vyrZtxKiCNSW9sBQFMC4Lvyw+5nmCu7MVum
+   tB07QaDdVyE51KJbUE6hLJX7DrUdowUvZqK3m0jtUQrc0y0kKIX/8ABbd
+   gdfakIfhOb9Le8pVnSeki6J1CegDANUoeciKovQBOCif/FKXGMndpZFnN
+   8wzTqUIp9A/C2fR6FM/raWWqpAXTzvDwimU4kGWSq0BCCCcYlLPyEUfCC
+   A==;
+X-CSE-ConnectionGUID: lits8tSrT3C/etdrhOsEpQ==
+X-CSE-MsgGUID: wobl0GXpQdunBEUdZNK8Mw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11805"; a="91915330"
+X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; 
+   d="scan'208";a="91915330"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2026 13:18:09 -0700
+X-CSE-ConnectionGUID: fKXhjXCjTeib+CPGytZnKw==
+X-CSE-MsgGUID: mXz6W4c5RbmRchmnaOn0Dg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; 
+   d="scan'208";a="241025903"
+Received: from rchatre-mobl4.amr.corp.intel.com (HELO [10.125.108.56]) ([10.125.108.56])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2026 13:18:07 -0700
+Message-ID: <8b9a46c4-7e3a-49a0-b2b0-845218bd43bf@intel.com>
+Date: Tue, 2 Jun 2026 13:18:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260601104845.995005-3-amhetre@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/9] PCI: Export pci_dev_save_and_disable() and
+ pci_dev_restore()
+To: Srirangan Madhavan <smadhavan@nvidia.com>, linux-cxl@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: vsethi@nvidia.com, alwilliamson@nvidia.com,
+ Dan Williams <danwilliams@nvidia.com>,
+ Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>,
+ Vishal Aslot <vaslot@nvidia.com>, Manish Honap <mhonap@nvidia.com>,
+ Jiandi An <jan@nvidia.com>, Richard Cheng <icheng@nvidia.com>,
+ linux-tegra@vger.kernel.org
+References: <20260528083154.137979-1-smadhavan@nvidia.com>
+ <20260528083154.137979-3-smadhavan@nvidia.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20260528083154.137979-3-smadhavan@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 01, 2026 at 10:48:44AM +0000, Ashish Mhetre wrote:
-> Tegra264 SMMU is affected by erratum where a TLB entry can survive an
-> invalidation that races with concurrent traffic targeting the same
-> entry. The hardware-recommended software workaround is to issue every
-> CFGI/TLBI command (each followed by CMD_SYNC) twice. The second issue
-> is guaranteed to evict the entry. ATC_INV is not affected and must not
-> be doubled.
-> 
-> The erratum is not flagged by any SMMUv3 IDR/IIDR register, so it
-> cannot be detected from hardware ID. Tegra264 boots from device tree
-> only and has no ACPI/IORT support, so detection is through device
-> tree only.
 
-That seems odd to me -- whether the hardware has the erratum is
-completely unrelated to whether it probes using DT or ACPI, so I find it
-really weird to have the workaround enabled when booting with DT and not
-when booting with ACPI. We should have consistent behaviour between the
-two.
 
-> Add the ARM_SMMU_OPT_TLBI_TWICE option and set it on instances matching
-> the existing "nvidia,tegra264-smmu" compatible. Also add a
-> static-inline arm_smmu_cmd_needs_tlbi_twice() classifier in
-> arm-smmu-v3.h so that subsequent changes wiring the workaround into the
-> CMDQ submission and iommufd batching paths can share a single
-> predicate.
+On 5/28/26 1:31 AM, Srirangan Madhavan wrote:
+> Export pci_dev_save_and_disable() and pci_dev_restore() so CXL reset
+> orchestration can reuse the PCI core reset lifecycle for non-standard
+> reset flows.
 > 
-> No callers consume the option yet; a subsequent change will wire the
-> workaround into the CMDQ issue paths.
+> These helpers invoke driver reset_prepare/reset_done callbacks, save and
+> restore PCI config state, and disable the device while the caller holds
+> the device lock.
 > 
-> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
-> Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
+> Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
 > ---
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c |  4 ++-
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h | 40 +++++++++++++++++++++
->  2 files changed, 43 insertions(+), 1 deletion(-)
+>  drivers/pci/pci.c   | 22 ++++++++++++++++++++--
+>  include/linux/pci.h |  2 ++
+>  2 files changed, 22 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> index 4d29bd343460..08684bd40a6d 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> @@ -5243,8 +5243,10 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev,
->  	if (of_dma_is_coherent(dev->of_node))
->  		smmu->features |= ARM_SMMU_FEAT_COHERENCY;
->  
-> -	if (of_device_is_compatible(dev->of_node, "nvidia,tegra264-smmu"))
-> +	if (of_device_is_compatible(dev->of_node, "nvidia,tegra264-smmu")) {
->  		tegra_cmdqv_dt_probe(dev->of_node, smmu);
-> +		smmu->options |= ARM_SMMU_OPT_TLBI_TWICE;
-> +	}
->  
->  	return ret;
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index d34266651ad0..75d2f4074750 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -5003,7 +5003,15 @@ void pci_dev_unlock(struct pci_dev *dev)
 >  }
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> index 16353596e08a..106034c348a1 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> @@ -928,6 +928,14 @@ struct arm_smmu_device {
->  #define ARM_SMMU_OPT_MSIPOLL		(1 << 2)
->  #define ARM_SMMU_OPT_CMDQ_FORCE_SYNC	(1 << 3)
->  #define ARM_SMMU_OPT_TEGRA241_CMDQV	(1 << 4)
-> +/*
-> + * Tegra264 erratum: a TLB entry can survive an invalidation that races
-> + * with concurrent traffic targeting the same entry. The software
-> + * workaround is to issue every CFGI/TLBI command twice, each followed
-> + * by CMD_SYNC. The second issue is guaranteed to evict the entry.
-> + * ATC_INV commands are not affected and must not be doubled.
+>  EXPORT_SYMBOL_GPL(pci_dev_unlock);
+>  
+> -static void pci_dev_save_and_disable(struct pci_dev *dev)
+> +/**
+> + * pci_dev_save_and_disable - Save device state and disable it
+> + * @dev: PCI device to save and disable
+> + *
+> + * Save the PCI configuration state, invoke the driver's reset_prepare()
+> + * callback if present, and disable the device by clearing the Command
+> + * register. The device lock must be held by the caller.
 > + */
-> +#define ARM_SMMU_OPT_TLBI_TWICE		(1 << 5)
+> +void pci_dev_save_and_disable(struct pci_dev *dev)
+>  {
+>  	const struct pci_error_handlers *err_handler =
+>  			dev->driver ? dev->driver->err_handler : NULL;
+> @@ -5036,8 +5044,17 @@ static void pci_dev_save_and_disable(struct pci_dev *dev)
+>  	 */
+>  	pci_write_config_word(dev, PCI_COMMAND, PCI_COMMAND_INTX_DISABLE);
+>  }
+> +EXPORT_SYMBOL_GPL(pci_dev_save_and_disable);
 
-nit: I think this should be named slightly differently as it covers CFGI
-as well. Maybe ARM_SMMU_OPT_REPEAT_TLBI_CFGI ?
+Maybe only export it to CXL namespace to reduce the scope?
 
-The comment can be simpler too and avoid being specific to Tegra264. The
-main things to say are that it repeats {CFGI,TLBI}; SYNC sequences and
-does not apply to ATC_INV.
-
-> +/*
-> + * Returns true if @cmd is one of the CFGI_* or TLBI_* commands covered
-> + * by the Tegra264 erratum (see ARM_SMMU_OPT_TLBI_TWICE) on an affected
-> + * SMMU instance.
+>  
+> -static void pci_dev_restore(struct pci_dev *dev)
+> +/**
+> + * pci_dev_restore - Restore device state after reset
+> + * @dev: PCI device to restore
+> + *
+> + * Restore the saved PCI configuration state and invoke the driver's
+> + * reset_done() callback if present. The device lock must be held by the
+> + * caller.
 > + */
+> +void pci_dev_restore(struct pci_dev *dev)
+>  {
+>  	const struct pci_error_handlers *err_handler =
+>  			dev->driver ? dev->driver->err_handler : NULL;
+> @@ -5054,6 +5071,7 @@ static void pci_dev_restore(struct pci_dev *dev)
+>  	else if (dev->driver)
+>  		pci_warn(dev, "reset done");
+>  }
+> +EXPORT_SYMBOL_GPL(pci_dev_restore);
 
-(remove the comment)
+same comment as above
 
-> +static inline bool arm_smmu_cmd_needs_tlbi_twice(struct arm_smmu_device *smmu,
-> +						 struct arm_smmu_cmd *cmd)
+>  
+>  /* dev->reset_methods[] is a 0-terminated list of indices into this array */
+>  const struct pci_reset_fn_method pci_reset_fn_methods[] = {
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 2c4454583c11..d6303e16e11b 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -2012,6 +2012,8 @@ void pci_dev_lock(struct pci_dev *dev);
+>  int pci_dev_trylock(struct pci_dev *dev);
+>  void pci_dev_unlock(struct pci_dev *dev);
+>  DEFINE_GUARD(pci_dev, struct pci_dev *, pci_dev_lock(_T), pci_dev_unlock(_T))
+> +void pci_dev_save_and_disable(struct pci_dev *dev);
+> +void pci_dev_restore(struct pci_dev *dev);
+>  
+>  /*
+>   * PCI domain support.  Sometimes called PCI segment (eg by ACPI),
 
-Rename the function to something like arm_smmu_erratum_cmd_needs_repeating()?
-
-> +{
-> +	if (!(smmu->options & ARM_SMMU_OPT_TLBI_TWICE))
-> +		return false;
-
-Maybe we should make this a static key?
-
-> +	switch (FIELD_GET(CMDQ_0_OP, cmd->data[0])) {
-> +	case CMDQ_OP_CFGI_STE:
-> +	case CMDQ_OP_CFGI_ALL:
-> +	case CMDQ_OP_CFGI_CD:
-> +	case CMDQ_OP_CFGI_CD_ALL:
-> +	case CMDQ_OP_TLBI_NH_ALL:
-> +	case CMDQ_OP_TLBI_NH_ASID:
-> +	case CMDQ_OP_TLBI_NH_VA:
-> +	case CMDQ_OP_TLBI_NH_VAA:
-> +	case CMDQ_OP_TLBI_EL2_ALL:
-> +	case CMDQ_OP_TLBI_EL2_ASID:
-> +	case CMDQ_OP_TLBI_EL2_VA:
-> +	case CMDQ_OP_TLBI_S12_VMALL:
-> +	case CMDQ_OP_TLBI_S2_IPA:
-> +	case CMDQ_OP_TLBI_NSNH_ALL:
-> +		return true;
-
-Isn't this just everything < ATC_INV || >= CFGI_STE? Seems better than
-enumerating everything.
-
-Will
