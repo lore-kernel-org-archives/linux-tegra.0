@@ -1,46 +1,47 @@
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011060.outbound.protection.outlook.com [52.101.52.60])
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010011.outbound.protection.outlook.com [52.101.85.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5CD375AAB;
-	Tue,  2 Jun 2026 08:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.60
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65525387563;
+	Tue,  2 Jun 2026 08:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.11
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780388518; cv=fail; b=W4SS6nbc3vugyoMm4dqHzGnVMmPS8BGUbzdUMiuFxzFQXxNZgcDyTXhPB/+R/qCrYKzJpHueliFCVZJsUM7UeNhAnBQ/aAEC3kbfvPL+MP9raApsUpYP7U8hKPQ38BL5rTNHMzMkj7zBw8b0nBdDsNWf2BnBlpn6hOzIUHDXKus=
+	t=1780388521; cv=fail; b=SC+Upe+mbYosRBBvPFOhl+0MfittF3SA3AUDFZrx/Z2C6k9nDqThUXIC3I3UYoMcaog1QFhpWjeryCacWv0n/d1sNJvG1u/8qQJPgSIYY5q2g8lcqS/Jkz6JnVz4i03ljwPT2uIPDxmkl1EWbquFmyI7EcWmGh9ZeIvkJ9fbK7s=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780388518; c=relaxed/simple;
-	bh=0gdKxh0QTPkXKNSSD3r9Rgd315Ghp9AxSoMSHBnWHI0=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=pG+gZuFU0RwtU9gPhPs92cq03mIO8lDhm5vrkWPfXWyIk3zFiM/WIgzdtPo0FlYZSlA0kSvZglL5M9ttGlBFdDKZ173Xs/ruulm5AaRFH2H0K2LWzCiw5ydNG2BT3QOsrJnvv1vu9ZRZZzelekjn2xsumqsGBHBTFKTGY5VM/PI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bVd3hET4; arc=fail smtp.client-ip=52.101.52.60
+	s=arc-20240116; t=1780388521; c=relaxed/simple;
+	bh=J/yxoD7lYL2j9e1W44RwhoXT/fTCMeLjNUt7yI2sqtw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ia5Iux+u/e4rXo25+hDZO64mBTEGAjrh1Vci/XU58PRchUhIW5a33N86tLmkgCez0v1FSt1NJYq6+UNeBh1nf9dr6dRVxNrHMTriiX8XMIugUF3EEx9vXBMmfx3yBtxgxEJpX4boa7+bJeXCWM8qDrr996Dj2l58nbISmEO5oV4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=I4NJ9em9; arc=fail smtp.client-ip=52.101.85.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bVd3hET4"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="I4NJ9em9"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K/JVMXhtXHgc8ZUGkxQWLRboePZXEfLk3vHMKpQybHUmR3p18Rbnbh6hyjpT7eA8Jg0pTddrBeP2hBa2k8uvPM4Ij2nHoZCkwe04TZLSs6OBom0bn+gcy1m7loxEoWIdVmLpsU5o6HZ5Y/BHKHYuTRGmhwkAaBZZJLykJVCEdm9z5sdAwPpmEwY2F7kuMGf774cQ27Yj1SOmh7o5DAuvmFv9VFWEh8IE6g9HgDFDAWtsTzlCnv2CsmD3z6HQIjEZu8Uo0f8bdMJttFle0Jb4MmxKIOn+O4kb7vLoH2GlvwpFe3+TKFPnOo60r9/1+gOvmvps8VDnelzwoUAWUtt66A==
+ b=kTdFAIAfRoUhTBBZ6cA/KwcqsJisPDrB9YHi68rrP2bVyoTvOJuucJ5O4MxiwKNmNOgwiy+YUTbCxKxSTXR0t4RGQjbwHdkGBJQJGpbSBCF2hluiLgxwQE49WyUusF2XuehTde6J3IbndVvAZncE9rvgnJnlT8YwHUqJ4vTd+AEPMF2FQkLz2rcrqP8W1Ind+dgf7tPLjg0sTu+badh8EWLwaBwpP/7zV62IuUwSIqleb1PZKIy2yySSuG+AmnXnM01CTyqYx9BBCtR+HIjmJrCWTejqcJs9b5WWrUilT2uRYLBhEheB8KtSKXL1u58y7fWml85sIyqfoT3FLAt+6g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=l21LslQPLW8LUGN02Yky03iN83kydeI81aeAri7EnbE=;
- b=op9m26F5b2btggANp5+oGY5H5OcB0cwqO/gBCepD2EK+5ch3sKyNkUTJNacqM3rKWCEQojRgSJ5FR4BvegsrtAsh5jUjfX6H6O7Ub660moctMoiLueITMBj1bhEzMrKvC8PzjqRSja1591EBjWYQXYlfGpNwRun6D7HEtSqtHxq4wKMI++o9OonMbVligdR/hmSrEZMeRC4LYZ54IoaNzSmbD69TQ/gKc7VCdoV66DJU3NTnpqeiCCJBQ8WgtjzYszOOBbPJTrg9Dn7W9H3mfKJhDaB0/Lqgf/t0V+hwyayDyoxcQcqfrV+axb9lNXyhj1CYQ03JbJS/5CSZGl08GQ==
+ bh=qQzcQiwpvPWgV9t9gqOjO8m9rNcaLJiZLNkSeUFTxCU=;
+ b=LBB6v8Tt9o0SGuRTtZmIXxJJO4TyYBEVweHqElAe6WphrkYxO/+emIOO9/iEf/0g9GhJnApQuVTgbsPteJoiKybem/ibCL1UD7h3kX6FWtAGK4qluhlTDm0nMYTUn8cwfi4OxVf81laGeLo17PBrEcSj2lVVlsYxU9jQKe/PYPrauCYAGDuWzpKm/7D+XgSYjzOnL4ZH6szu4wsvtY8Hj1ULTpUDyaNdkL26VxUXCeZPGfjuQis+lgHiSizsfLqRDQT7J9VawoctLQ4L1q8O5SWGpcF4lxosqzB/iIueayAxr8EcsQmVjpiJYyt9l31yxPZb3DcyJXRDZfgn1W1YIA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l21LslQPLW8LUGN02Yky03iN83kydeI81aeAri7EnbE=;
- b=bVd3hET4MK8xqhQJn3h6XHNTt8soAJZb2BDTu/7hxbhryj1yTp7WMC1OSvmuj0vhuw323uthatW2UswAcMuGsvQ+FnMRTlnzk8KeBl+lMKex78ucDCQwQ+oZTdooTrKlwDM5c5ILroAs1S/AV3/4tTlMirv4l+xz4vSEWIXBFeXebdqZfP0wgxCyLHCZSov+7QUK0tTviDV76uFVg6v0ARuyIyGBYe/t+sMfYhHBK/SlK6g+Nrhnga4jejG+cME60zPkVRwvPdzQ40HnaL2G+zoKpyDr/zDsRYql33oyipT+AwddycU49WhKD2EojkY3gyb5WiyCf4q/65g9RQj2yw==
+ bh=qQzcQiwpvPWgV9t9gqOjO8m9rNcaLJiZLNkSeUFTxCU=;
+ b=I4NJ9em9aLoT8PbhrDGMy2DJXC9bB99DFwtG1Zuu6FhmBXXuFMhfx8L8f7yC7ZHO6gq6MoSZqt2F1Qk8lMgrmSTSZzh8gArrN8Qcc+YO7+Zysdwk9IagtPBbTWEx0v+EU8WJRe+8rTXpywkqX2Q2VvOSaUZq+slIJ0N7DBFFe96YuzzK70zqb5JszKqRDx8qfcrToNTe1kgVWn0ujq9kDq1gzYbVPotoVI28N/4VGg/qktI4Ad1HJ4Z5cEaF0zMheTUeaMsxwiW5OLVK3bMLkmvFcJ1bSdMhkB4zta2udTmTtU0Kw0VD2El4UoiARt6T803HAV00NEmjzNNKKuYQUQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from DS7PR12MB9474.namprd12.prod.outlook.com (2603:10b6:8:252::17)
  by DM6PR12MB4170.namprd12.prod.outlook.com (2603:10b6:5:219::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.15; Tue, 2 Jun 2026
- 08:21:52 +0000
+ 08:21:56 +0000
 Received: from DS7PR12MB9474.namprd12.prod.outlook.com
  ([fe80::31ad:931:ef07:8ad7]) by DS7PR12MB9474.namprd12.prod.outlook.com
  ([fe80::31ad:931:ef07:8ad7%6]) with mapi id 15.21.0071.014; Tue, 2 Jun 2026
- 08:21:51 +0000
+ 08:21:56 +0000
 From: Srirangan Madhavan <smadhavan@nvidia.com>
 To: Mark Rutland <mark.rutland@arm.com>,
 	Lorenzo Pieralisi <lpieralisi@kernel.org>,
@@ -56,14 +57,16 @@ Cc: Catalin Marinas <catalin.marinas@arm.com>,
 	linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	Srirangan Madhavan <smadhavan@nvidia.com>
-Subject: [PATCH v1 0/2] Add SMCCC cache clean/invalidate provider
-Date: Tue,  2 Jun 2026 08:21:43 +0000
-Message-ID: <20260602082145.404939-1-smadhavan@nvidia.com>
+Subject: [PATCH v1 1/2] arm64: smccc: add cache clean/invalidate IDs and return codes
+Date: Tue,  2 Jun 2026 08:21:44 +0000
+Message-ID: <20260602082145.404939-2-smadhavan@nvidia.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260602082145.404939-1-smadhavan@nvidia.com>
+References: <20260602082145.404939-1-smadhavan@nvidia.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR03CA0218.namprd03.prod.outlook.com
- (2603:10b6:a03:39f::13) To DS7PR12MB9474.namprd12.prod.outlook.com
+X-ClientProxiedBy: SJ0PR05CA0142.namprd05.prod.outlook.com
+ (2603:10b6:a03:33d::27) To DS7PR12MB9474.namprd12.prod.outlook.com
  (2603:10b6:8:252::17)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -73,118 +76,155 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DS7PR12MB9474:EE_|DM6PR12MB4170:EE_
-X-MS-Office365-Filtering-Correlation-Id: e4e6255b-8900-4423-66ec-08dec07fffc7
+X-MS-Office365-Filtering-Correlation-Id: e997556f-27e0-425b-5576-08dec0800239
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|366016|376014|1800799024|6133799003|11063799006|56012099006|18002099003;
+	BCL:0;ARA:13230040|7416014|366016|376014|1800799024|6133799003|11063799006|56012099006|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	v94TSqXJ8j3My7d1nERvurRo1/9WUyK2tMfP45kmAeIdVHhB8x4aJDiL6n35O09ZlYQ++/iXsO9cclYOyoiSEaKT2mXrDa6Tp6IstIxMfyxV2/hlY2NQpXmKDreaLqLt7+3TN3+5iLwUBc6DOACygaYSaZ1p1EHnSe882p3wgEBPDsJbkvFzJjxdXIzzuligP2eVXSxt3YyaVIdYQQtwZeLg0JQ6PgfzlDAB760XHSfjRZTlxmeZharQh60ui5fKi0KyTgachZ1OQBeS/zd8RJjb+5hKKEvmZVxuNtRMKm+nnA6YgVTsw22YZTb1wb+vRfyomvtifYD2MGjgqVJrzpSNTvhmQuqZh2jkGcL097tLawrUhsOy/2hV7sfBPgwO/lZLVEsCCW9aHlDSnvlABR9YHsYKVpGbWQe1X7gBpbgWPsKiK48jxImuFmlarcZCo8FSzMv/xDbeuLdyKa8eVOQKwTcyZ7rqxxAXUxPSGANU3fORf9oJR+YvmIFwZHIugdfcrai78wDfHDWq8NA/mpcmcjFWHKp+4T+rT8pkYX4MqBsR8Oq/02e/TsggMdSZxYrGHocADfM/e8TZBwepIi8BQr74qIynpR8Gl9JD6oMGoESaSvraiVnk6irc5KiW4I6kdyuuyQ71k5H18b7bP+We4c6B8c6Y6Wk9C4ac9GrTRSk4bkFsaSJ76p8AfCaATFHGY8Uaa1j8awgdYbCZhQ==
+	ewg0T1baSG17nAo9v92S+meckJk4Wzot2oGd5s56uw/Fi9hUgIftOmHTv+RuqsEhJYbX3/dtCjXFzwOu3rRAecND7w6ZB0SX/wNvULN70KNS/LUXrUjx3qfYuK+/EA9JK1Pwi9/2JfHuEo/0ipzH0z9GUKOD0o9z3CFRjBP0PsSs0YXSP8J/zXBKgltPGpDYAnhwAKoX9xepgvMLls+jJS3ojXBA92yODKDq8Ero4uh3a2BOK27Lq6pltvZ/grYr1VsyW84eaz7Xv/nH8phklORtrjngoJj9IdW3qMe1O0YZaWMc88SxGyS62aImgzfQ8s31LaKRDMgWGr9a9Y29sSW8n4wEgg4utSkCRwzJX5hHOF/H+MYI1l1OhY0OQc3/SCTlvv0d+0Pk+//ofrc37TmE66q0ODPQrWzGNbBD4oNVpa4CuFX1LKq0he9I6AHiOZJWm8cRa+FDD/EzcGhi2YPv5NCuI7oLhA0rdPqRup+fJc9RPECd0HUOFjYaVwIkmdZ2IkkPn96yr2t12MjVo8yHkbh8oaM+G52VZxG5kLiBPaPnXzjTZrRJbTdcI/i5J59RAOK0zYs471qgv1VSu28qXU23DxRizcZqoHtTxrhXd/iWl5w5metuKhpPoxBQdUKutng0HQZuIAWvD0e8oDkIaiTX7D2X+kRy6RlK9HX8KTNx6pujgIYkwPMu3tFQ
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9474.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(6133799003)(11063799006)(56012099006)(18002099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9474.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(6133799003)(11063799006)(56012099006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?F3ovDyk6ctBarRb6zxVGK+65f+sCNdvq4hQI4i6rfWAWARzNSH3LmdBJlkV1?=
- =?us-ascii?Q?JOKAsE/sdMVMtZVEjsmD3rl8cd4A3oagDyONB64i24s5yVweBkEjljBR6KEZ?=
- =?us-ascii?Q?PeRk/TURk6fFyO6hiS4KO2OZYOX5kLvR/FOaSudSUWo+sLZ/xULNmGBKD3yj?=
- =?us-ascii?Q?lMpk0ucYcJi5T5882mfEElodc2kssyQAxw4OywKu7ZTB51zENcK/I9/rHHUS?=
- =?us-ascii?Q?HMnqy1Y8EBszaDdJzf0v/jLF6g5lGWAplarW8mHd2B9IskZ+i/Up8s5JJJM9?=
- =?us-ascii?Q?ETQ+Ji3pvIsrDnbZALlqXZ8dr2fb6dhoBWn3IpxwM8Rfy14C94El7W2x1I0W?=
- =?us-ascii?Q?A1e5v6YvMR99poDdCRfQMGguuGnOn0Ao9WcPGxs8bOHm54hkbIleS13YWE6o?=
- =?us-ascii?Q?D0d9ITDc7/yqhFb80FlUeqietemnLXSUAyq6vrq+0K16mTNd/tjQIbMJ+GCE?=
- =?us-ascii?Q?qO5HlTJcfxxuZ7C7/D0FeuXSklUsUy4U16NSLuu+Yqc8nyYkwQ3f+hSuIK2b?=
- =?us-ascii?Q?En+w7n9SVVA7Va1iCZ43YKr9jSW6gMSek4ojb6CHRwvJE53kLjaxGKihhWYS?=
- =?us-ascii?Q?uCmxmqWsrpVfevldgKDjU9v8yzy82iDGcBEl/QAocC5vH7yb50A0Kmp++yUt?=
- =?us-ascii?Q?fG0IvG/zgeCZ/Zt9wwmLt0NBFOh6XmZV5YhUVGvglyUQIKa5lH3ZRu40O+8z?=
- =?us-ascii?Q?+NJQUq6+zEMxWFbcliIWKsK7LrJ29iJnyqDN0sFJaNA0pln0jMl5SL/l7L46?=
- =?us-ascii?Q?+gGggyiqxWfhUD/tKxDYO2yt61ND4Gaa6lhXSiaxcoNzM+Xz7XNu0paEMIdR?=
- =?us-ascii?Q?1u8PwzD5UEho/knEFn9RlZ7Yy+DSSRouZuXobPQwhJvIHEajp6ti+23C5mH1?=
- =?us-ascii?Q?8HVGp5CCCOjfAGcSTzheCH2TSk6ALVq5igabUwGwc92hgWoF4BdWVLwAAN9F?=
- =?us-ascii?Q?uZUz9IfoD7+THp2oEMT7OY5+vIIHmctUvMTipHZakoQprA+sDz9JISZLKszR?=
- =?us-ascii?Q?O/HTNZCMNCkCu98tEs+eoNWwfl9IKF815zql2Jeh4qDJZKu283/u6+GsYd3A?=
- =?us-ascii?Q?N4EcvvmYZuDe+w7/I8/twmChAAURfGH96W/r8oswOwgahoMvCjrt06AMsgCa?=
- =?us-ascii?Q?+wPmfN7hvWpHyKaRK/rJrckHcrYoXBDlPmd1Zt4O2wplOalEZlHJwwTYyt5n?=
- =?us-ascii?Q?80JFfDUciPIDTDExEWeu12doSS0geDudFVECADJ7+NW/q332dyLRX67QJF4+?=
- =?us-ascii?Q?MxkBHRXSOm0oSIMNzeWPr6SHj+JxskDYR3Mqf7WZbkTvOPXBx2pFTXEJqb7N?=
- =?us-ascii?Q?skBddGmEhi3GrIRAcAItDHDlMk+/vfqxvCcF6B0h3/71JY4OewyNTGlWCs2p?=
- =?us-ascii?Q?eOwZ5w8EP/GI2px6mQlMAcq9oT7ns1EiT6inMXjeB/ywSNwVqtZhM1KLjgUb?=
- =?us-ascii?Q?/u+Gh9RgFLgH1ub8INYc/KAqdzd7/G381wG7m5uhVoxfWkX6kqEyDpJF5LLA?=
- =?us-ascii?Q?+HMePjjSvKMC657VNu05gy/HOkYZOTGz1w+u80dlNg7Q7MpcmJ3/AFkWYgAT?=
- =?us-ascii?Q?5VRtkZRYWa0cBa31AHPrt7TopI08ozlZkQEVyxwSgezX1yrOuTOFiriFYk8I?=
- =?us-ascii?Q?3cPf58nui6NN5Ty+F+RZCLiHHBaY8p3Mw2HsK4XHwcSdeiIk2wiAcO6AWSN4?=
- =?us-ascii?Q?IDVQvlVvKomhWAHKTnEZxMvsgs4b5UjCRi9LWwPq3U64idbkp8jsk0cS0CU3?=
- =?us-ascii?Q?FXSVTlrlTw=3D=3D?=
+	=?us-ascii?Q?ohpr6uRydvFvLdqZM/JFh6B5aJtbk7xhfVpHbQ/6ewcYxG8r/LcRIZgpVeTn?=
+ =?us-ascii?Q?nJv2RfbiWkucEZOlUoEI0gqy917chGERi7rFLeSQ9On9QoK1ur/++0smYLRe?=
+ =?us-ascii?Q?qxfBCBLzNywiGHYgMvm5S1ivRJ0c/ESkGjnn5Ib5Cr+qinVst0nGag0cQxfG?=
+ =?us-ascii?Q?6ghlyIoXrPz3S+6BlcdvtaPRh4ZFEWn47ETVtaV65uAsgl12xAlW6On3/UXL?=
+ =?us-ascii?Q?fub6RmNmfKEiKsdKWp4ETrwj/2JRxpvQRY9+3mNt+hLfIKVMLWjN/Xcu2Ele?=
+ =?us-ascii?Q?WWCYlocrr7SEYyjcitqa+5IOuiW9eu0wnY/w/8RrUZHk+4vX7jPvAtTcG1mp?=
+ =?us-ascii?Q?kD6nI4itWPgDeh3Q0Tl8uSOl3IdsoMPC1mB+rCxTm/Huus7fMkPUHINY+d5J?=
+ =?us-ascii?Q?+1McbSlD+EgREsqLkyHuFbuoPWaLsa5yc7r75lJFvltp4HnpJoKuYuqIaVq2?=
+ =?us-ascii?Q?kNwjqJhDLmhIfwvyxQxX/dsENVPnxtcKQ/4C19dQNGR3r3mSHrVRZ8MjXut6?=
+ =?us-ascii?Q?Q0EDx9pMRKjEyPqHyUvRgBiKqvPSKxWS0mBb3AW+p76xq53cnvzfRuQQwG6M?=
+ =?us-ascii?Q?66eXrvx/9GwalUhCetTHlf5w9sFeCDgb7tUOSvBLvY3Vpja/5UVCXEmgAtmz?=
+ =?us-ascii?Q?LhpFkdzaEUxnL+oUypA9MOJyTIeiVu47zS7scFFWxAyNH/k0T8toAhU+R0es?=
+ =?us-ascii?Q?mddeEKjmJclMcEEb7t6XRr51mo/KkFqhF7Oud5mN9PBsBcIKDUkcTf29ohuA?=
+ =?us-ascii?Q?isxcsRfnH/e/KQPbOvFX/xF56akduetzvNXhYXPCfQeL0rDGH+yyA9Avj/Sg?=
+ =?us-ascii?Q?8f5lo/daDTBlob2LQTYd8OrvXiBbLlVlcGhnQB3lW0eTqeILXiMu0C4gHmO4?=
+ =?us-ascii?Q?E3j2Ty2MlryigrHvdxQ30Xvrbgb5zxhHBHUNB58IjMenEwRa7N4HFmytLFf5?=
+ =?us-ascii?Q?49DuAAMdvHd3CwkAF8IteUum2BeJ/s7NDT83UjWdj+5jdo9yXMMNJztsnTpm?=
+ =?us-ascii?Q?8RcvC4jRfV8UhXMOsS5GIBrPd0ZZ1vtz3XfiKBzyg37Tn1QEEtVwiGb/48KZ?=
+ =?us-ascii?Q?WLq8KeQfgBzf+9J55lCtORYFTy5DHwCmDQBRgpAKk1NAX+LSUex00tqe/b3H?=
+ =?us-ascii?Q?QXUmHdtJi7sLiwidlCmOlMYdd1p2y5IP9Bipu48llU3mVHAxUo5VYL/W4WtR?=
+ =?us-ascii?Q?xYTLP5jjMSXe9jagoRukgGPiZ2ujlkKW58OdV6Xls63W5iUxSXi6CjNAE9ZW?=
+ =?us-ascii?Q?IPbBX7fylEtYf8EHmwffh+Jzm39h7Q85JqF2IR+riSqJcisLSGJtAGmqPtwn?=
+ =?us-ascii?Q?luTGBdbP8FDlTU4nNU6Glo5nfRB+U92ueQ51DUmGivqnD6MwFusbdenfzDwk?=
+ =?us-ascii?Q?v9HeDITMCerFgqHwIxuwMnseCpaEHYOSssqN9EHzLn5+PS7bLGOUxWDdE2Dm?=
+ =?us-ascii?Q?nIvojYqf7lzwqtRNgRXOEbgLOXF1M4N3cwAZlouInbYLCUOnO/D/WDhIm1C4?=
+ =?us-ascii?Q?lgnc1meAeXNdsq6Hwe4zPpbScngI7HDTPezPXygY0GHn0KE7u6w2jyuKSD2U?=
+ =?us-ascii?Q?KvaLRtq9xJYEGa/hEDfash8cwj+VjpVIPEQ7dWFERTCuWcn/pkaPDucL19ZF?=
+ =?us-ascii?Q?D7DODtWK+XgxcbeyRxauBam9r299tv7MIKgS5kW4gL4ZsqXIGy2Yq5EVIn+2?=
+ =?us-ascii?Q?7qgZo8EDMHdV/Rwxzc8kh9bkP9za+2X4wWxAAnZMtId01CrIlyrNdk7WHZn/?=
+ =?us-ascii?Q?bBQ1JiT6aw=3D=3D?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4e6255b-8900-4423-66ec-08dec07fffc7
+X-MS-Exchange-CrossTenant-Network-Message-Id: e997556f-27e0-425b-5576-08dec0800239
 X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9474.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2026 08:21:51.8753
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2026 08:21:55.9708
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: m688oU5God5z1bGEOIZRXn+blbnWj49Y45kvKgp5UX+N+sCIZZMsiEiA+qjhOahiybYrFQEa0HD6A2qRQmO0UQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZYFcjO2lDsR4jydk5dlpv4qylgOPrqBYJJ4Hg0ILQBG9Xl81vatcBoI+ZbG0BEg3VEvD2uY/8iuDM0UvmoU4Vw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4170
 
-This series adds an arm64 backend for memregion cache invalidation users
-based on the Arm SMCCC cache clean+invalidate interface.
+Define SMCCC Arch function IDs for CLEAN_INV_MEMREGION and its ATTRIBUTES
+call, and add RATE_LIMITED/BUSY return codes from DEN0028 for callers that
+need transient error handling.
 
-Per DEN0028, this interface targets systems where a Normal Cacheable
-memory region can be modified in ways that are not handled by usual PE
-coherency mechanisms, and where VA-based CMOs may be too slow or
-insufficient for large ranges and/or system-cache implementations.
+Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
+---
+ include/linux/arm-smccc.h       | 21 +++++++++++++++++++--
+ tools/include/linux/arm-smccc.h | 21 +++++++++++++++++++--
+ 2 files changed, 38 insertions(+), 4 deletions(-)
 
-Representative use cases include device-backed memory state transitions
-where stale CPU/system cache lines must be invalidated reliably (for
-example secure erase, reset/offline flows, and dynamic memory
-reconfiguration).
-
-Patch 1 introduces the Arm SMCCC cache clean/invalidate function IDs and
-transient return codes needed by callers [1].
-
-Patch 2 adds a cache maintenance provider that:
-- discovers SMCCC support and attributes at init time
-- registers with the generic cache coherency framework used by
-  cpu_cache_invalidate_memregion()
-- handles transient BUSY/RATE_LIMITED responses with bounded retries
-
-This patch set does not add a software fallback path; when firmware does
-not implement the SMCCC cache maintenance interface, the provider is not
-registered and existing behavior is preserved.
-
-Reference:
-[1] https://developer.arm.com/documentation/den0028/latest
-
-Changes since RFC:
-- Dropped the RFC tag.
-- Moved the provider from arch/arm64/mm to drivers/cache.
-- Added a dedicated CONFIG_ARM_SMCCC_CACHE option under the existing
-  CACHEMAINT_FOR_HOTPLUG menu.
-- Dropped the global-operation coalescing optimization.
-- Dropped provider handling for SMCCC_RET_NOT_REQUIRED.
-- Removed the unnecessary global provider pointer.
-- Removed arm64_ prefixes from static provider-local names.
-- Documented why these SMCCC Arch cache maintenance calls use SMC64.
-- Anchored the SMCCC return-code comment to DEN0028 v1.7.
-- Used fsleep() for retry backoff.
-- Used unsigned long for retry delay values passed to fsleep().
-- Skipped the final backoff sleep when no retry remains.
-- Documented the bounded mutex hold time across the serialized retry
-  sequence.
-- Added mutex_destroy() on the registration failure path.
-
-Srirangan Madhavan (2):
-  arm64: smccc: add cache clean/invalidate IDs and return codes
-  cache: add SMCCC-backed cache invalidate provider
-
- drivers/cache/Kconfig           |  11 +++
- drivers/cache/Makefile          |   1 +
- drivers/cache/arm_smccc_cache.c | 160 ++++++++++++++++++++++++++++++++
- include/linux/arm-smccc.h       |  21 ++++-
- tools/include/linux/arm-smccc.h |  21 ++++-
- 5 files changed, 210 insertions(+), 4 deletions(-)
- create mode 100644 drivers/cache/arm_smccc_cache.c
-
-base-commit: 3b3bea6d4b9c162f9e555905d96b8c1da67ecd5b
+diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
+index 50b47eba7d01..8cba040e0816 100644
+--- a/include/linux/arm-smccc.h
++++ b/include/linux/arm-smccc.h
+@@ -105,6 +105,22 @@
+ 			   ARM_SMCCC_SMC_32,				\
+ 			   0, 0x3fff)
+ 
++/*
++ * DEN0028 v1.7 defines these cache maintenance functions as SMC64
++ * because they carry 64-bit memory range arguments.
++ */
++#define ARM_SMCCC_ARCH_CLEAN_INV_MEMREGION				\
++	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,				\
++			   ARM_SMCCC_SMC_64,				\
++			   ARM_SMCCC_OWNER_ARCH,			\
++			   0x5)
++
++#define ARM_SMCCC_ARCH_CLEAN_INV_MEMREGION_ATTRIBUTES			\
++	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,				\
++			   ARM_SMCCC_SMC_64,				\
++			   ARM_SMCCC_OWNER_ARCH,			\
++			   0x6)
++
+ #define ARM_SMCCC_VENDOR_HYP_CALL_UID_FUNC_ID				\
+ 	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,				\
+ 			   ARM_SMCCC_SMC_32,				\
+@@ -294,13 +310,14 @@
+ 			   0x53)
+ 
+ /*
+- * Return codes defined in ARM DEN 0070A
+- * ARM DEN 0070A is now merged/consolidated into ARM DEN 0028 C
++ * Return codes defined by Arm SMCCC (DEN0028 v1.7).
+  */
+ #define SMCCC_RET_SUCCESS			0
+ #define SMCCC_RET_NOT_SUPPORTED			-1
+ #define SMCCC_RET_NOT_REQUIRED			-2
+ #define SMCCC_RET_INVALID_PARAMETER		-3
++#define SMCCC_RET_RATE_LIMITED			-4
++#define SMCCC_RET_BUSY				-5
+ 
+ #ifndef __ASSEMBLY__
+ 
+diff --git a/tools/include/linux/arm-smccc.h b/tools/include/linux/arm-smccc.h
+index 63ce9bebccd3..ae5637b3240f 100644
+--- a/tools/include/linux/arm-smccc.h
++++ b/tools/include/linux/arm-smccc.h
+@@ -96,6 +96,22 @@
+ 			   ARM_SMCCC_SMC_32,				\
+ 			   0, 0x3fff)
+ 
++/*
++ * DEN0028 v1.7 defines these cache maintenance functions as SMC64
++ * because they carry 64-bit memory range arguments.
++ */
++#define ARM_SMCCC_ARCH_CLEAN_INV_MEMREGION				\
++	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,				\
++			   ARM_SMCCC_SMC_64,				\
++			   ARM_SMCCC_OWNER_ARCH,			\
++			   0x5)
++
++#define ARM_SMCCC_ARCH_CLEAN_INV_MEMREGION_ATTRIBUTES			\
++	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,				\
++			   ARM_SMCCC_SMC_64,				\
++			   ARM_SMCCC_OWNER_ARCH,			\
++			   0x6)
++
+ #define ARM_SMCCC_VENDOR_HYP_CALL_UID_FUNC_ID				\
+ 	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,				\
+ 			   ARM_SMCCC_SMC_32,				\
+@@ -182,12 +198,13 @@
+ 			   0x53)
+ 
+ /*
+- * Return codes defined in ARM DEN 0070A
+- * ARM DEN 0070A is now merged/consolidated into ARM DEN 0028 C
++ * Return codes defined by Arm SMCCC (DEN0028 v1.7).
+  */
+ #define SMCCC_RET_SUCCESS			0
+ #define SMCCC_RET_NOT_SUPPORTED			-1
+ #define SMCCC_RET_NOT_REQUIRED			-2
+ #define SMCCC_RET_INVALID_PARAMETER		-3
++#define SMCCC_RET_RATE_LIMITED			-4
++#define SMCCC_RET_BUSY				-5
+ 
+ #endif /*__LINUX_ARM_SMCCC_H*/
 -- 
 2.43.0
