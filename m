@@ -1,282 +1,135 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012030.outbound.protection.outlook.com [52.101.53.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC493090D5;
-	Tue,  2 Jun 2026 20:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780432585; cv=none; b=uIhUPPjFcssncZO2uITB0cKTR3E6/P4c+16Vk9Aa6QmeBL+XJBW3vjjRdIdOlN7q1xzG1h5/tgHhwjy/Lh5iSV/3Njyy1cZKpV7/AkQqEG23j4I8LCgiiaT1+5NjDbTj1kgE4lAmIIDsaIgexysPX3gP8TR1ccSr3kbcxCGq+qU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780432585; c=relaxed/simple;
-	bh=j3+sVtrdrI/pmP8e4OQXVP+fBjUKXxX3Y/ZD27iQwHA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZdNCfr70SkrJT3TP9JN7GivbNJNsE+HOnp198si/vK/snT8/5rUhdiwdfk4Biw2FLJkbnd5ADXxpeLH1s0BMJ3SAj51uD3zWVAbrGeecjF3xVguh1VA7lkAJwjeav0I83q1Io9DtJ00hRzp4aKVCozCrl6PUXuDsFdrDwcOE6bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JLAN4dc5; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A136B3822B7;
+	Tue,  2 Jun 2026 20:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780432591; cv=fail; b=RjNm4hAv2hd3DF2MkXGgnGuSQGeTX7k4r/jwV+RRkPB4I7hoBTGbwOe2NaTSXOl0HQnjYoxBtFY47p/0bdbYzCmZ7ATNlgs/x5LI7BY0hw0yCG2TQWWId7LnLnTtxmqrP26Z7WkHKlurkMni/qe6gRLkM+Xj/VQ9aco+e+95rbI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780432591; c=relaxed/simple;
+	bh=i5TIcQSB24sO/NvuBJ3t+Cl2bQAWSGrZh6W2Mdq6PUk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E0XYddsz42gyIbjhe7STQ4AVqfijToUV6pM/I4AaqiM7mgNoePy9Gm/gAAkQB9+y3fnu8vDV1RYkCyLZoP4/gpQ/5cTEwfe3/ocVIOwizcTosCc48qn1p/3G+Q94+1X6Plv44SROHu1v2N9X2m/QJcPbrbjQUVTDm3DsJaeCc7A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pidIkF4u; arc=fail smtp.client-ip=52.101.53.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JLAN4dc5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1780432583; x=1811968583;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=j3+sVtrdrI/pmP8e4OQXVP+fBjUKXxX3Y/ZD27iQwHA=;
-  b=JLAN4dc5fg7Cjh/zUKDb9dPaV2gFnYLReVOy/FBwU7nxczy2vPLJWqHg
-   GbJxwEPMYIPOoDV3AbARcun1SOuonkfDNSaHgXqzo2mhWFS290KDXhaPX
-   cCrQgg6Uvl+niKD2GIf04F8KISvCYMKTEsUllvkzI2pB+KaDlVxOEF9u1
-   iNUfPSyG8EtsNHFxp3m7B0WSCvAOI2MLDuoeXTKy9TDOH5rXz2XcjMy1g
-   8SjTr6N7AuXhj5S+ZAWlJRwSGMq3PhYPGEQ5KhVmqrs3lEG1FHHN8Bcrg
-   cTSLSm/MiN0OXBIumsfVOxAAY31wiYR1m7xIHxyrX2noqWpuDx43aVj07
-   A==;
-X-CSE-ConnectionGUID: QyYfZdyGTU+yINkgLfprqg==
-X-CSE-MsgGUID: GE9f+4vcQoqrzS/0IVgRtg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11805"; a="91805679"
-X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; 
-   d="scan'208";a="91805679"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2026 13:36:23 -0700
-X-CSE-ConnectionGUID: gF4z35ffSWqDi7GwSfbr7g==
-X-CSE-MsgGUID: KKIdP70+SsakD2zS1pR/iQ==
-X-ExtLoop1: 1
-Received: from rchatre-mobl4.amr.corp.intel.com (HELO [10.125.108.56]) ([10.125.108.56])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2026 13:36:21 -0700
-Message-ID: <a076968e-7df9-493f-918a-9822e83700ea@intel.com>
-Date: Tue, 2 Jun 2026 13:36:20 -0700
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pidIkF4u"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Bc/+mQyZahlsAY0mVASZjweReoeIWZ/AD7sqC3myRvpZ+k0kejaOJTNH0FuVqPsAzLeDHv3+b0j2XokSPq1RfTop0mL7yb/WEisiBjDg5MP2iBkAiywzsF1v/xVTxdWdujj7QblcVn7bhYOS38ZTDUsJL1BpDs9d1qBcW75fjPDapCsCLzeo3j+Dfl1id3io1n7G8RD4/j9+kYMFBfj+IBq7cqd+/9tW2ABfAaHu07wqBQ/ANJUZXWVY30hGjoSm6nH50HzX6eq2Kumkt23hXZ/dvA/3xVkis+2eq62hVIr7UCXM87kcxkXWogmhlrGlMsJFX2qe4U5g/tQMIxvuMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Gwo2sVCoyVuzGfe4qaOkIZ7uwE18sgXm0cabRw8gQWs=;
+ b=eBBXViWBOqzjP6U8SL3zk9SX7CST3RW0KIamWxQmcf9p4B2/ev6LaSwrencBPVuEWGsXC6XK7oJbVWFHh+jn/lI9Je08lAwYD55tyADFHqxh6dtHk+DkZaFhVfQifU9vviL0QxQZ1LoMdyQF9fXwcMzwKtC+lGPlzffIpcTHIYbflGEHErWFWgdm03tU/qFCBmLvuLl/mCkZcoiyDsD5Zhv0N+Ze88dGsQsWPBoOswD53oi8oKLpqW49QnJyMdEwCmfhPJCRJK//wKW0w4NpckKtma8QaR57JWWWb5DRGVqrnkAF1sIVNlQhzHkicKBfVEKXk8GY2pKZhyQkvuocCg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Gwo2sVCoyVuzGfe4qaOkIZ7uwE18sgXm0cabRw8gQWs=;
+ b=pidIkF4uaptDOgg7qhdbCYcWU8KpYBZRU2oxF+TNgvU3pMCnSSgZnsgLSm/kBRfGs5/aqQWI/UmW4CbElr6CZdLpRg+DKPxTm0whPnxjRjv6WSs5UTygyjpy1QQBSsDe1XdrEUMt/8qVK2NJgdJFN1QZCt0oNgOrXGePI+/qHwR32J6oYdPl2DHvV5QSitFX0jbBsCOGX6KCnJDQJLnX0qNK7q3JwXLcX9b0Ju+Hp3kAc0TctjNOFeOfydLGjYJb/52z74IK+IPQ0UJkTQ5hC3tK6UxS9x1V0jzrWXKs1Y2rev3Gu4GNjEzFqy5G3wVh9mQpkVdA7VK6OSaB5mmWsA==
+Received: from DS2PEPF00004554.namprd21.prod.outlook.com
+ (2603:10b6:f:fc00::516) by PH0PR12MB7959.namprd12.prod.outlook.com
+ (2603:10b6:510:282::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.17; Tue, 2 Jun 2026
+ 20:36:21 +0000
+Received: from CY4PEPF0000E9D1.namprd03.prod.outlook.com
+ (2603:10b6:92f::1002:0:10) by DS2PEPF00004554.outlook.office365.com
+ (2603:10b6:f:fc00::516) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.92.7 via Frontend Transport; Tue, 2
+ Jun 2026 20:36:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CY4PEPF0000E9D1.mail.protection.outlook.com (10.167.241.136) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.92.5 via Frontend Transport; Tue, 2 Jun 2026 20:36:21 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 2 Jun
+ 2026 13:35:53 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 2 Jun
+ 2026 13:35:53 -0700
+Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.129.68.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 2 Jun 2026 13:35:52 -0700
+Date: Tue, 2 Jun 2026 13:35:51 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Will Deacon <will@kernel.org>
+CC: Ashish Mhetre <amhetre@nvidia.com>, <robin.murphy@arm.com>,
+	<joro@8bytes.org>, <jgg@ziepe.ca>, <linux-arm-kernel@lists.infradead.org>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v3 3/3] iommu/arm-smmu-v3: Issue CFGI/TLBI twice on
+ Tegra264
+Message-ID: <ah8+pxWXZgXqt7Fi@Asurada-Nvidia>
+References: <20260601104845.995005-1-amhetre@nvidia.com>
+ <20260601104845.995005-4-amhetre@nvidia.com>
+ <ah87dzHOOTNGBBmt@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/9] cxl: Add reset-idle and cache flush helpers
-To: Srirangan Madhavan <smadhavan@nvidia.com>, linux-cxl@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: vsethi@nvidia.com, alwilliamson@nvidia.com,
- Dan Williams <danwilliams@nvidia.com>,
- Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>,
- Vishal Aslot <vaslot@nvidia.com>, Manish Honap <mhonap@nvidia.com>,
- Jiandi An <jan@nvidia.com>, Richard Cheng <icheng@nvidia.com>,
- linux-tegra@vger.kernel.org
-References: <20260528083154.137979-1-smadhavan@nvidia.com>
- <20260528083154.137979-4-smadhavan@nvidia.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20260528083154.137979-4-smadhavan@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ah87dzHOOTNGBBmt@willie-the-truck>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D1:EE_|PH0PR12MB7959:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7cbbed54-5cfa-4ece-2e98-08dec0e69b61
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700016|13003099007|22082099003|18002099003|56012099006|4143699003|11063799006;
+X-Microsoft-Antispam-Message-Info:
+	LswSJnmbtFk/TKmrjcG6qy5ZO6+u0TbuAMCLq0jnOrh5wDuAsu8MpqQPke7I+l0PDXhHCqBtKmu567bM3b5VypRbPpdcXm5Tmcs9lynyOFXeVbmtOYmy2p3y6gNXkX+nxh0bDpZHh1E1vysD5poBl/EBpXpZhndkNHUXyqSX7Cp6XgInl1FJF/pn4GUJBJpx7qGrksEkWR2KB3MjfpIlkzIlQhRiGGJroGrnIpwgvOWIjEoHPpD9RVRLpLjKSpfMxAuszvHMBGhP5roXr5hO4TdoGsKaKXTdkqSc/b9CWNHKJJXqMBBfE00rur0eKfyVb3ApxY7yIYK2SCDnB0ifgZDcjFe1vvIX0mcYeaxzIerAm1UYOwF0gV3qkrFhQ0C2JTx4obLQhKTJC3+/fMajFxbiB8bDfVSTaGkpdNm+Y3H9AiczSwna97623ESVfuCehRRDca+xU/iUUeY1tEQWvqVq1qJ6QnhGn3dJtPQDQEyWV+2BUYFvDbYvVPLbW5BiaTrAkkDEE2VnVOShA7iN76F4hgIIgeV+gOIgYqnZy72SmvUi1C1B5K4/bnQ2vNfvaG2tH4BWhNhqqziYmmNbcFeV/XMWtKFNqRy6XTE2T5yPLDJZ5UHg39cDKAmO2zv8Idxbgjs5mpv5mBgWh5sTw/1UjHJvujtHb4Vx3LWTZbq67PXNXCfaZ8zyBdCHoJRfq8OwINw4LIYu0x0D+MtaII/Kug3FpXYqYpQC8ZMYzyM=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700016)(13003099007)(22082099003)(18002099003)(56012099006)(4143699003)(11063799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	WNutYPjyVIko+XZ+iVD3LdmTy3ExF3wUFR9CPE906wKXWNpZwspnBzs/pvNIFtAuxSmzWA/lc1iYgPbr2B9vgQcixpz9W6z55IHPwuLjqFItNkEnpjx2jRdhtQUwXGHAkOLGaeMCgLeiiSetQdnkvGDQOwwY0HYs9bW7lMxn+j96ErtIcSvAb0q3q8uJyCsDcdMC3FlB+IPM71uSVCSpSCVZM8QP/DWmehlhSNamAc/HwA1Hu38/9ru7oKfMFTO8L7yYn2FxDOGe7CEDeE53r2N1nHPCmmTU28suOiYeiOOCfQZuXnDNfqrC4Ws+OngXirBPU5/tfWXtuOg29TmyCnIk8dUsvH8GKkawqrxqgXaSAr/4cAsIVwnWItxF/xsQ8JlIi6pNEbyDRX3VgvX1R6/OD0B3eBE/u3UacvFd+tOWNpHyEdUb1gly3JV53Hvu
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2026 20:36:21.3891
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7cbbed54-5cfa-4ece-2e98-08dec0e69b61
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9D1.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7959
 
-
-
-On 5/28/26 1:31 AM, Srirangan Madhavan wrote:
-> Add helpers to collect the CXL regions affected by a memdev reset,
-> verify that those regions are idle, and invalidate CPU caches for the
-> affected address ranges before reset.
+On Tue, Jun 02, 2026 at 09:22:15PM +0100, Will Deacon wrote:
+> On Mon, Jun 01, 2026 at 10:48:45AM +0000, Ashish Mhetre wrote:
+> > @@ -382,7 +402,8 @@ int arm_vsmmu_cache_invalidate(struct iommufd_viommu *viommu,
+> >  
+> >  		/* FIXME work in blocks of CMDQ_BATCH_ENTRIES and copy each block? */
+> >  		cur++;
+> > -		if (cur != end && (cur - last) != CMDQ_BATCH_ENTRIES - 1)
+> > +		if (cur != end && (cur - last) != CMDQ_BATCH_ENTRIES - 1 &&
+> > +		    arm_vsmmu_can_batch_cmd(smmu, last, cur))
+> >  			continue;
 > 
-> A memdev can participate in an interleaved region through multiple
-> endpoint decoders. Track affected regions in a temporary xarray so each
-> region is checked and cache-invalidated once per reset operation.
+> FYI: Sashiko is unhappy with the existing code here, so somebody should
+> check that out:
 > 
-> These helpers prepare the CXL.mem data path for reset. The actual reset
-> orchestration and decoder restore flow are added separately.
-> 
-> Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
-> ---
->  drivers/cxl/core/pci.c | 170 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 170 insertions(+)
-> 
-> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-> index d1f487b3d809..318744695f62 100644
-> --- a/drivers/cxl/core/pci.c
-> +++ b/drivers/cxl/core/pci.c
-> @@ -4,9 +4,11 @@
->  #include <linux/io-64-nonatomic-lo-hi.h>
->  #include <linux/device.h>
->  #include <linux/delay.h>
-> +#include <linux/memregion.h>
->  #include <linux/pci.h>
->  #include <linux/pci-doe.h>
->  #include <linux/aer.h>
-> +#include <linux/xarray.h>
->  #include <cxlpci.h>
->  #include <cxlmem.h>
->  #include <cxl.h>
-> @@ -926,3 +928,171 @@ int cxl_port_get_possible_dports(struct cxl_port *port)
->  
->  	return ctx.count;
->  }
-> +
-> +static int cxl_reset_system_ram_found(struct resource *res, void *data)
-> +{
-> +	return 1;
-> +}
+> https://sashiko.dev/#/patchset/20260601104845.995005-2-amhetre@nvidia.com
 
-Reuse core/region.c:is_system_ram()?
+Ack. I will submit a separate patch to address this.
 
-DJ
-
-> +
-> +struct cxl_reset_region_context {
-> +	struct xarray regions;
-> +};
-> +
-> +static void __maybe_unused
-> +cxl_reset_region_context_init(struct cxl_reset_region_context *ctx)
-> +{
-> +	xa_init(&ctx->regions);
-> +}
-> +
-> +static void __maybe_unused
-> +cxl_reset_region_context_destroy(struct cxl_reset_region_context *ctx)
-> +{
-> +	xa_destroy(&ctx->regions);
-> +}
-> +
-> +static int cxl_reset_add_region(struct cxl_reset_region_context *ctx,
-> +				struct cxl_region *cxlr)
-> +{
-> +	int rc;
-> +
-> +	if (!cxlr || !cxlr->params.res)
-> +		return 0;
-> +
-> +	rc = xa_insert(&ctx->regions, (unsigned long)cxlr, cxlr, GFP_KERNEL);
-> +
-> +	/* A region may be referenced by multiple affected endpoint decoders. */
-> +	return rc == -EBUSY ? 0 : rc;
-> +}
-> +
-> +static int cxl_reset_collect_region(struct device *dev, void *data)
-> +{
-> +	struct cxl_reset_region_context *ctx = data;
-> +	struct cxl_endpoint_decoder *cxled;
-> +
-> +	if (!is_endpoint_decoder(dev))
-> +		return 0;
-> +
-> +	cxled = to_cxl_endpoint_decoder(dev);
-> +	return cxl_reset_add_region(ctx, cxled->cxld.region);
-> +}
-> +
-> +static int __maybe_unused
-> +cxl_reset_collect_memdev_regions(struct cxl_reset_region_context *ctx,
-> +				 struct cxl_memdev *cxlmd)
-> +{
-> +	struct cxl_port *endpoint;
-> +
-> +	if (!cxlmd || !cxlmd->cxlds)
-> +		return -ENODEV;
-> +
-> +	endpoint = cxlmd->endpoint;
-> +	if (!endpoint)
-> +		return 0;
-> +
-> +	return device_for_each_child(&endpoint->dev, ctx,
-> +				     cxl_reset_collect_region);
-> +}
-> +
-> +static bool cxl_reset_region_has_system_ram(struct cxl_region *cxlr)
-> +{
-> +	struct cxl_region_params *p = &cxlr->params;
-> +	int rc;
-> +
-> +	if (!p->res)
-> +		return false;
-> +
-> +	rc = walk_iomem_res_desc(IORES_DESC_NONE,
-> +				 IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY,
-> +				 p->res->start, p->res->end, NULL,
-> +				 cxl_reset_system_ram_found);
-> +
-> +	return rc > 0;
-> +}
-> +
-> +static int cxl_reset_validate_region_idle(struct cxl_region *cxlr)
-> +{
-> +	struct resource *res = cxlr->params.res;
-> +	int rc = 0;
-> +
-> +	lockdep_assert_held_write(&cxl_rwsem.region);
-> +
-> +	if (cxl_reset_region_has_system_ram(cxlr)) {
-> +		dev_err(&cxlr->dev,
-> +			"Cannot reset while CXL memory is online as System RAM [%pr]\n",
-> +			res);
-> +		return -EBUSY;
-> +	}
-> +
-> +	if (!device_trylock(&cxlr->dev))
-> +		return -EAGAIN;
-> +
-> +	if (cxlr->dev.driver) {
-> +		dev_err(&cxlr->dev,
-> +			"Cannot reset while CXL region has an active driver\n");
-> +		rc = -EBUSY;
-> +	}
-> +
-> +	device_unlock(&cxlr->dev);
-> +	return rc;
-> +}
-> +
-> +static int __maybe_unused
-> +cxl_reset_validate_regions_idle(struct cxl_reset_region_context *ctx)
-> +{
-> +	struct cxl_region *cxlr;
-> +	unsigned long index;
-> +	int rc;
-> +
-> +	xa_for_each(&ctx->regions, index, cxlr) {
-> +		rc = cxl_reset_validate_region_idle(cxlr);
-> +		if (rc)
-> +			return rc;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int cxl_reset_flush_region_cache(struct cxl_region *cxlr)
-> +{
-> +	struct resource *res = cxlr->params.res;
-> +	int rc;
-> +
-> +	if (!res)
-> +		return 0;
-> +
-> +	rc = cpu_cache_invalidate_memregion(res->start, resource_size(res));
-> +	if (rc)
-> +		dev_err(&cxlr->dev, "Failed to invalidate CPU cache [%pr]: %d\n",
-> +			res, rc);
-> +
-> +	return rc;
-> +}
-> +
-> +static int __maybe_unused
-> +cxl_reset_flush_cpu_caches(struct cxl_reset_region_context *ctx)
-> +{
-> +	struct cxl_region *cxlr;
-> +	unsigned long index;
-> +	int rc;
-> +
-> +	if (xa_empty(&ctx->regions))
-> +		return 0;
-> +
-> +	if (!cpu_cache_has_invalidate_memregion()) {
-> +		if (IS_ENABLED(CONFIG_CXL_REGION_INVALIDATION_TEST)) {
-> +			pr_info_once(
-> +				"Bypassing cpu_cache_invalidate_memregion() for testing!\n");
-> +			return 0;
-> +		}
-> +		pr_warn("Failed to synchronize CPU cache state\n");
-> +		return -ENXIO;
-> +	}
-> +
-> +	xa_for_each(&ctx->regions, index, cxlr) {
-> +		rc = cxl_reset_flush_region_cache(cxlr);
-> +		if (rc)
-> +			return rc;
-> +	}
-> +
-> +	return 0;
-> +}
-
+Nicolin
