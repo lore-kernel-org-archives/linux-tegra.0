@@ -1,232 +1,264 @@
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013029.outbound.protection.outlook.com [40.93.196.29])
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FDA37F010;
-	Mon,  1 Jun 2026 22:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780352841; cv=fail; b=ZnRgpYFI9/eNtx/CR+t94N/6k1KZbl9W+VoXY4lQG94AF8i9Rj12xoYYHEhtErFRAh/M3Ok4F/WgvqU8rXgyLo9eerk6dPaEv2kUchnac8vThnimwzLN/ttllSK+zmMHoiZkk9WCDC+n8y2QQ6pOM+szAZghYrHXEQhn9ZHI1vM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780352841; c=relaxed/simple;
-	bh=NNKlDOelFnp8H2U3tfPrwFsBTMnQhwdJ7d/pxZTyt3Q=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=tUGXBKH2c+RiNFpBD69Yc+xcBZ1poOqj72UXVJy/Qrxs9avNAbNfcjKFJ/Ip0frc/IRpeg5uwj7ab9i1ml/SfJJpHKkFXx9pKUajyb1gMAM05fT89IMhikc4Ha4/mBey+BdTxK4XunJIYO/wSclM2GfMFpFgr7rmvZWXZVNK1XQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dw0VpObI; arc=fail smtp.client-ip=40.93.196.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB59033A70A;
+	Tue,  2 Jun 2026 02:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780369128; cv=none; b=dKLRqxso4qGwG0A1Sb8albG6LzJdhcwaWc8chHiUBWFibZ6YgCObBUGzaakSVpq0FI41gbFDM4Q3K8Ff4x0KMqSwiyGvBbzDXhWaw8YfdfoM2hJ4vK97I1dtLsxFBf5k8epYHEy+E2F1NqEXQGPhtWY+1E8XdUa7xqIlb3k5ZBU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780369128; c=relaxed/simple;
+	bh=nIWrX8/xjSgQop69xjMm5VGLqbFc7I2snTAO0davVvM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hXKNPT/jmepq1xSxY6t3Q4w9fv2AmbXGLfoJAfFtmLPJMrrnOknFF6IzvCSQ2O6iAAfVf2ROJCzRLWBYwR866XTqVY+80VXuWatVVDwEIg36iITL2jG955+i36X/ofPUQ1y2bn6E4S8g75ttqQS2WWzrp4M/k1JiVeGnmwpsTrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=T2gXAMYt; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dw0VpObI"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ezZyr3ah1eJQWjScdvyau7yiTQ+hCmVVQBuX9eI+AKArVVHM7ZS5mkfkWw9NxjQ0D6zTj49gsAuAulK65vow/LfdDfVRf5nYnqzUk26t4/D5TLrKbih65+fzy5I0iqn8pXZFdt92C8NoAYAeupAHN6QjTEdxLM5HTB0gAhFDBBes/ViRqsZL50PorSL2Ml1f4zC/kO0QfZQqSj0vQsxAHsAe0/Xy4kP9C6jNUAwIbHkdZfZvHF+96EuZp8viMxJ2z0i1HACnFcC9WluHk/ImIIOoNGwMMsoj53ok6hA9S2Fu3zhBfq55FLOYvfl5kkikgaqJ7CwZ9PlwVDwnTvZTsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cEhwZO2wArVAblzDcpSalYjNa31/YvTnVJyw77trvh0=;
- b=BZAtCk3oEnHyFqVLmPpykOMyhyhsNQ5PIvIGn0lliGKelSU5isE+IKEIfmlt/kBJkpy8eDJIDHXvw3hm5mu5UqZQoctQWbO6ivd+w6j40yEWp3icFtbhlkdqNlXojuvlgK5PY2lYHppHIyj161/45+GLL/GqhmdyWYwyVI2258ivwvgk1o8BM3M6p9eJ9aFHSdc6/xAnX1aDrtGk21guac9Z29kM+q6pQhl57RQmrwBPOvt41OQ1CQpMYDhKfz7NpwzThDfw7GBiRYrYgZrYrZE3GCM9/GBTruT7wUHyBffruSZSgij2cUXVqsVi57jX77NNGkrThEj4ZHJTi9mssw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cEhwZO2wArVAblzDcpSalYjNa31/YvTnVJyw77trvh0=;
- b=dw0VpObIEiedHSL3ZbaKjT1WiyZG137CnftDrSZ1BxA7YECGOwFNSjmBH4Jk3Izrkwn24uNImOBX9eHUiKVMXcklzGk6KEf+w1urKGddDASa3H+MXSOlCGSM49yEtuxsUn+/bKV/Hf+ZCp9/Fc1rkEUpX1hRT5AXV4yTLZZVaWlwnNcdhgyKTACg5h1FwGzuzjiqwejliDUPwnCGX7PxB441NH5mft0vMxFGEC2i/TuXYlo/cdoKpXmuiY9MUpYcJYAosHSDws9pT70chYcEwsiG1pZ8M62v7eYF4XlakycN65T7SpeqaazozEsRBd2PPcQDOCWzGvRdpusJ9L6PcA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
- by DS7PR12MB6117.namprd12.prod.outlook.com (2603:10b6:8:9b::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.71.17; Mon, 1 Jun 2026 22:27:14 +0000
-Received: from DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
- ([fe80::56a8:d6bf:e24c:b391%6]) with mapi id 15.21.0071.011; Mon, 1 Jun 2026
- 22:27:14 +0000
-Message-ID: <ff1025e9-e673-4c61-857a-4ddd0f218462@nvidia.com>
-Date: Mon, 1 Jun 2026 23:27:08 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 00/10] Add GPCDMA support in Tegra264
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Akhil R <akhilrajeev@nvidia.com>, vkoul@kernel.org
-Cc: Frank.Li@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- dmaengine@vger.kernel.org, krzk+dt@kernel.org, ldewangan@nvidia.com,
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
- p.zabel@pengutronix.de, robh@kernel.org, thierry.reding@gmail.com
-References: <d548278c-8bbd-4871-8fb6-e22db1688546@nvidia.com>
- <20260506034624.18782-1-akhilrajeev@nvidia.com>
- <b6e85871-8791-468e-8c32-087b8fef8800@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <b6e85871-8791-468e-8c32-087b8fef8800@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: GVX0EPF0005F6C5.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:158:401::651) To DS2PR12MB9750.namprd12.prod.outlook.com
- (2603:10b6:8:2b0::12)
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="T2gXAMYt"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=jW
+	cj5KXzVf50Z0Lmy57Di0WeDde7W1hIGhp4tmxTXms=; b=T2gXAMYt3MS1cbIwSg
+	P5Dop4it863AXVXRfy7ro+JlZW1C7ANyhZ0AemnU5HZVv+3s1Cpu985KuNAwsUns
+	KWhJQu3vNTshFV0AjbJLv6Q4zhBk9VsyrzBtFx4WH4qWKL8m6hfMm/kZFWcokpI5
+	SpS3VZTlOgOV2oBS2ftjqcwIs=
+Received: from pek-lpg-core5.wrs.com (unknown [])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3n8nIRh5q+v6CAw--.56991S2;
+	Tue, 02 Jun 2026 10:58:17 +0800 (CST)
+From: Robert Garcia <rob_garcia@163.com>
+To: stable@vger.kernel.org,
+	Prathamesh Shete <pshete@nvidia.com>
+Cc: Thierry Reding <treding@nvidia.com>,
+	Petlozu Pravareshwar <petlozup@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Meng Li <Meng.Li@windriver.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Robert Garcia <rob_garcia@163.com>,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 6.6.y] soc/tegra: pmc: Fix unsafe generic_handle_irq() call
+Date: Tue,  2 Jun 2026 10:58:12 +0800
+Message-ID: <20260602025812.3535026-1-rob_garcia@163.com>
+X-Mailer: git-send-email 2.44.3
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|DS7PR12MB6117:EE_
-X-MS-Office365-Filtering-Correlation-Id: a25cf750-05f2-4c77-618d-08dec02cee29
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|376014|366016|7416014|1800799024|18002099003|56012099006|11063799006|4143699003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	yzpYbmOu07MIUEGpaKGndXT3x3id3Fo+pAxbCJ9Qr8MrovwKlPpOjs0pTgjqx7WjJX8jSyEOjbZvjgJmPssIJNaTLOSt1v8ipnSFk6QIELyd6TVYXV3hhS8Qq+I2UAHYtojgzvpYUKg9YMEJDrQXY1xrn8vVFjxDeDLsr2UjF0qlzZo3YT9hEkEvVu1FevHsg3X+3LV9KTXqPTcazamqd+VJcOPEE7N1YByyMeiADLGk2cNJqIn7WKCYHvkhzvCwU3ZPtY7+szCUH2lfv6eb72fFydW0HUNOrlbVanyRnsF0VSZBFva4nCVHODykOxmrpEnuNQHZQj5HUjCxnF5UrWPdJO1rT8EOEJngwhDjnKXGXLju1me1FtE5b9VLaATZPRk8V+1foVKcwwJ9f3vJxFm6uEDuDZzlNDOIZcmjW9kQenOT/QYXULLxaXB3hkAefoMmL2qYJvk1Y+4MGIUipfV9PVdl5Qa1V8K32C4wO8YRP/3oqGy/ubxVKF/fDiUK8hOViGpP/e87r4BV/uY47RHAJLwiZwYojgVdb+3ijJaPCADquzvhmFggV7RKsCExrlVVGYCFHAmXKz3121R0efPheu1v1YQyFBNE41QS8cphdNW2D9j+BqjdHO+u9nRSwd1deXLUX+MQPP0Ro78cf2YmnfHKQm9926BuVvvrQoJFtPt1FVjOUrO3NdCB0x6O
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(366016)(7416014)(1800799024)(18002099003)(56012099006)(11063799006)(4143699003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ajd4VEVWcU9ic0pFTHRXQTJrMU91WGZkRG5kTU9YNXp5alpEOUlzbFFqejdI?=
- =?utf-8?B?VzJ4Zmg1dUc1N0FGVnlpYjJsZUZwMldjdThDSjFnYjQ4K0RTaWJPWHBTTFBi?=
- =?utf-8?B?Sll6WEpTQ0Z6em9MYXA1OWF4MFU3aEV0TmUrQ21Qb0VEUS9CVHhoeXlkbkh2?=
- =?utf-8?B?YVQ0bGJaY3BVN1JjTkhhcTVkVTZ4Sml0RnI5SmdWMVZwYitIYS9XaWFmd0xR?=
- =?utf-8?B?M0NOSTJtWkhlVHVCZWtlUzdIWlFFamdPRmF2LzJmNlJtMmJHb3lwRjV0ZUhm?=
- =?utf-8?B?NUNUcTJaN2hJUkhyR0F2dHgwUmJpMDVJWmJPQTZlSGtibVF5WVhSMUp4VWdr?=
- =?utf-8?B?bFBtdGhTdXlZZWlsU2lDQVBlREF3bDJZcTRTRWtQSHdLWnJNd3JYNWxLSDYx?=
- =?utf-8?B?dVVhajJpRmt0cTl3VURxZ2d5UTJzWVlLeG9IM3d0WWM1di9QNmZoMUpLU3Rh?=
- =?utf-8?B?c2VscVR3YXlKeWFPenBrUjJ2V2ZJcHltOExNQzhDOENjRzlWVG93amFqRTZ0?=
- =?utf-8?B?MENRejR2YXdXeXlQaTJ1T3NRYmFpVGhpNTFXUXlTRHFCU3pLZVN2RXIzYnRu?=
- =?utf-8?B?RVY4WXBRaG1HS3d0RXJnc2UzM2dPSjZITjR2VXM4OTkrU09VbEI2WGYyNG53?=
- =?utf-8?B?a01wdEQ3RytWSFpGN3hKUGV6WEN2MHhyWlA5bjA2U2lrdlRSZXFBcWRGb0R0?=
- =?utf-8?B?V3E0SG1pbml6cXU2enFYZGdjdTRhRXNNYjZ1TnJsNHdyTHkrSml2UHZuOWdU?=
- =?utf-8?B?QzNVcE5ZRVVNMDh6NW5TbURGbGhwQng0amRGcmVPZ3dRZDg2UndpOHNwVGFB?=
- =?utf-8?B?NXAyNnN6cFlhOHp1NEVXYmpVckFubWdjbWVJejhDZFpCSm1oUng0UC9NWWJ3?=
- =?utf-8?B?VlJpRU5WdHAyUGhlOEw1c3lCMnZ5VmlJMmIzOHFvUWk5YlRiV1FuL3MxUEhm?=
- =?utf-8?B?MjJaQVpiVUh3c2Q3S2pTakN3cHNKVWFzMUdNbDBDa3FuZXVPOE5JU21Ickh3?=
- =?utf-8?B?dUdnSE8wVGhXUnJraEtad3RUVDlCdGx5WUgyaXZGUUN4RFdqYzR2c1gvb2Fu?=
- =?utf-8?B?a2xrUnRTaFlUU0YzaDhJRUpzaFQ1eHN0dVBrK2ZxeXg0RnRXMTdWUHA2QTJF?=
- =?utf-8?B?UUpwSldOOEtpbCt4bUY2ODRKUk5FZlpSNHNWd1dYRWhmRVQvSHU3S1YxcTFN?=
- =?utf-8?B?VHE5SVovcjdOeWlUU3B0TkxmaUlpU2hldXBtM3l0bStuQVNIU2hOZmdhNFhB?=
- =?utf-8?B?TVgvSExGNFZtS29SRzR1azM4OG9nUk9jWmVEcTRoRkRxTVJMWmUwOE1uSHFz?=
- =?utf-8?B?ZGRpN0x3Wm5iS1lNUW45Y3VBVFBndExVelhNUlFSNXFEZEVrY25tb2VrRHYv?=
- =?utf-8?B?cEw5NzRIbUowNnhXdUwybkZXK2dDQXVrMmtZZXk5ajlBRkdDVnFVUDN4VlZm?=
- =?utf-8?B?VUZ2KzNNbnBkNTdKZFFhYmJ1VW04d2szMWFRczZvVGZGMXNwWDFuTmFyQk5o?=
- =?utf-8?B?UkVlMmNLQTFpZ0NWMWpCVkJKeGI4RytWWGZYT2RUZFoxaXhJNWFKSnpxRVla?=
- =?utf-8?B?NDczZ0lwM1Nsa01DVkVVSnExY2R6SU91NEd6RDM2Q0FSVlo0R2pTVDU0cmhh?=
- =?utf-8?B?bnFUbnlvNm1zSEFYaGRNVE1hU255TVhPcC84Uk1pWmhqN1hINzJJTDV3R1NT?=
- =?utf-8?B?NCtoRWN4ZzFkWFM3a1pjT21ISXM2SGV3LzBrL0dmeFNSbW9wenFYamN6UThx?=
- =?utf-8?B?QzNIVy8zV0dwbmNaWU1sSzNzMXY5dFJ5c3Q1SDUvYUFPM0NJUkJ4cGdwUTRh?=
- =?utf-8?B?RVJnV0tLb1VTSTBXNmdKRzF4U2pxckw4a01mQnNWMEtwMGN5akpmcHNRWmd6?=
- =?utf-8?B?djVXUEFiK2lWVlVZZkdFZTRpSVRNaE03NCtQMGZlMm9LNEd4UXhqMVJpYmpU?=
- =?utf-8?B?ZUpOb0hVK3dHSTUyeTRiUTh4UXRHSEREN1BlMzJCdUR2em1vVitrc0FIanRM?=
- =?utf-8?B?ZDQ0T1dkUC9FUzdjOEc2OU9KQS9CbUZZY09pN0hrdmppQmVpWE9mQmtiKys3?=
- =?utf-8?B?NWg1ckEvU3QvcnNJQzFHSGZrZE55bnhkNFJjWiszTlZxaXVNYVhkQ1BvY0dp?=
- =?utf-8?B?ZkhtR1NzbzNZMWZqK3VxSCttOXR5YnFFNkJ2Q3cyYTM4cE9obnpjNERFeTR1?=
- =?utf-8?B?ZFlUU0tDSjdnQzZJVXhJdVM0ZDZuZXl6M24rK0hnY2daYTlLeHl1enBUMk02?=
- =?utf-8?B?eUpUWGE2QmxNc2JmRmxKUDR3VmR6b08zM2p1SFpBa2VDbGt5M0t2TVlyQmtZ?=
- =?utf-8?B?Q0xIRGMvMDBmVTNhUlo4MXNsSVk1NVZLekhtRVFpZmZ6RUIzeTMydVl4TERF?=
- =?utf-8?Q?R52EVvQfzN8X2mG2WUcD2sNx38xkvRkLT3wZugZgseOs4?=
-X-MS-Exchange-AntiSpam-MessageData-1: aFaxIoGr18dv3A==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a25cf750-05f2-4c77-618d-08dec02cee29
-X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jun 2026 22:27:14.2186
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GsvJqff8r6PmdcuzAJOH4B+ZGMZyE4/j2Zshw6o8M/LOC0OxONAd6m3+diTT0GS6ZC4fgAI+6QP4Qbr59CkMdA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6117
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3n8nIRh5q+v6CAw--.56991S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Wry5KFyruF1fAFWkWr13XFb_yoWxWrWUpa
+	y5KFWF9w4UJFWxua15ua10vF13CF18X3yxGr43Aas3J3yUKrnY9FnxXFyYqF48ArZa9F45
+	Aay0yryUKw4UXFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRdR65UUUUU=
+X-CM-SenderInfo: 5uresw5dufxti6rwjhhfrp/xtbDAgnlUWoeRskKvQAA3z
 
-Hi Vinod,
+From: Prathamesh Shete <pshete@nvidia.com>
 
-On 21/05/2026 11:07, Jon Hunter wrote:
-> Hi Vinod,
-> 
-> On 06/05/2026 04:46, Akhil R wrote:
->> On Fri, 10 Apr 2026 09:09:38 +0100, Jon Hunter wrote:
->>> On 31/03/2026 19:06, Jon Hunter wrote:
->>>>
->>>> On 31/03/2026 11:22, Akhil R wrote:
->>>>> This series adds support for GPCDMA in Tegra264 with additional
->>>>> support for separate stream ID for each channel. Tegra264 GPCDMA
->>>>> controller has changes in the register offsets and uses 41-bit
->>>>> addressing for memory. Add changes in the tegra186-gpc-dma driver
->>>>> to support these.
->>>>>
->>>>> v5->v6:
->>>>> - Replace dev_err() with dev_err_probe() in the probe function for 
->>>>> fixed
->>>>>     return values also.
->>>>> v4->v5:
->>>>> - Use dev_err_probe() when returning error from the probe function.
->>>>> - Remove tegra194 and tegra234 compatible from the reset 'if' 
->>>>> condition
->>>>>     in the bindings as suggested in v2 (which I missed).
->>>>> v3->v4:
->>>>> - Split device tree changes to two patches.
->>>>> - Reordered patches to have fixes first.
->>>>> - Added fixes tag to dt-bindings and device tree changes.
->>>>> v2->v3:
->>>>> - Add description for iommu-map property and update commit 
->>>>> descriptions.
->>>>> - Use enum for compatible string instead of const.
->>>>> - Remove unused registers from struct tegra_dma_channel_regs.
->>>>> - Use devm_of_dma_controller_register() to register the DMA 
->>>>> controller.
->>>>> - Remove return value check for mask setting in the driver as the 
->>>>> bitmask
->>>>>     value is always greater than 32.
->>>>> v1->v2:
->>>>> - Fix dt_bindings_check warnings
->>>>> - Drop fallback compatible "nvidia,tegra186-gpcdma" from Tegra264 DT
->>>>> - Use dma_addr_t for sg_req src/dst fields and drop separate high_add
->>>>>     variable and check for the addr_bits only when programming the
->>>>>     registers.
->>>>> - Update address width to 39 bits for Tegra234 and before since the 
->>>>> SMMU
->>>>>     supports only up to 39 bits till Tegra234.
->>>>> - Add a patch to do managed DMA controller registration.
->>>>> - Describe the second iteration in the probe.
->>>>> - Update commit descriptions.
->>>>>
->>>>> Akhil R (10):
->>>>>     dt-bindings: dma: nvidia,tegra186-gpc-dma: Make reset optional
->>>>>     arm64: tegra: Remove fallback compatible for GPCDMA
->>>>>     dt-bindings: dma: nvidia,tegra186-gpc-dma: Add iommu-map property
->>>>>     dmaengine: tegra: Make reset control optional
->>>>>     dmaengine: tegra: Use struct for register offsets
->>>>>     dmaengine: tegra: Support address width > 39 bits
->>>>>     dmaengine: tegra: Use managed DMA controller registration
->>>>>     dmaengine: tegra: Use iommu-map for stream ID
->>>>>     dmaengine: tegra: Add Tegra264 support
->>>>>     arm64: tegra: Enable GPCDMA in Tegra264 and add iommu-map
->>>>>
->>>>>    .../bindings/dma/nvidia,tegra186-gpc-dma.yaml |  32 +-
->>>>>    .../arm64/boot/dts/nvidia/tegra264-p3834.dtsi |   4 +
->>>>>    arch/arm64/boot/dts/nvidia/tegra264.dtsi      |   3 +-
->>>>>    drivers/dma/tegra186-gpc-dma.c                | 429 ++++++++++ 
->>>>> +-------
->>>>>    4 files changed, 284 insertions(+), 184 deletions(-)
->>>>>
->>>>
->>>> For the series ...
->>>>
->>>> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
->>>
->>> I am not sure if it is too late to pick this up for v7.1, but we would
->>> like to get this into -next if you are happy with it.
->>
->> Hi Vinod,
->>
->> Just a gentle reminder on this series. Could you please take a look?
->> Please let me know if you see any concerns.
-> 
-> 
-> These still apply cleanly on top of -next. Please can you pick these up 
-> now?
+[ Upstream commit e6d96073af681780820c94079b978474a8a44413 ]
 
+Currently, when resuming from system suspend on Tegra platforms,
+the following warning is observed:
 
-Please can you respond to this? This still apply cleanly, so we would 
-like to get these queued for v7.2 unless you have some objections.
+WARNING: CPU: 0 PID: 14459 at kernel/irq/irqdesc.c:666
+Call trace:
+ handle_irq_desc+0x20/0x58 (P)
+ tegra186_pmc_wake_syscore_resume+0xe4/0x15c
+ syscore_resume+0x3c/0xb8
+ suspend_devices_and_enter+0x510/0x540
+ pm_suspend+0x16c/0x1d8
 
-Jon
+The warning occurs because generic_handle_irq() is being called from
+a non-interrupt context which is considered as unsafe.
 
+Fix this warning by deferring generic_handle_irq() call to an IRQ work
+which gets executed in hard IRQ context where generic_handle_irq()
+can be called safely.
+
+When PREEMPT_RT kernels are used, regular IRQ work (initialized with
+init_irq_work) is deferred to run in per-CPU kthreads in preemptible
+context rather than hard IRQ context. Hence, use the IRQ_WORK_INIT_HARD
+variant so that with PREEMPT_RT kernels, the IRQ work is processed in
+hardirq context instead of being deferred to a thread which is required
+for calling generic_handle_irq().
+
+On non-PREEMPT_RT kernels, both init_irq_work() and IRQ_WORK_INIT_HARD()
+execute in IRQ context, so this change has no functional impact for
+standard kernel configurations.
+
+Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+[treding@nvidia.com: miscellaneous cleanups]
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+[ Deleted tegra186_pmc_process_wake_events() 
+which has a bit differences. ]
+Signed-off-by: Robert Garcia <rob_garcia@163.com>
+---
+ drivers/soc/tegra/pmc.c | 109 +++++++++++++++++++++++++++-------------
+ 1 file changed, 74 insertions(+), 35 deletions(-)
+
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index a9dc15ec8a13..968ea40c17b7 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -28,6 +28,7 @@
+ #include <linux/iopoll.h>
+ #include <linux/irqdomain.h>
+ #include <linux/irq.h>
++#include <linux/irq_work.h>
+ #include <linux/kernel.h>
+ #include <linux/of_address.h>
+ #include <linux/of_clk.h>
+@@ -500,6 +501,10 @@ struct tegra_pmc {
+ 	unsigned long *wake_sw_status_map;
+ 	unsigned long *wake_cntrl_level_map;
+ 	struct syscore_ops syscore;
++
++	/* Pending wake IRQ processing */
++	struct irq_work wake_work;
++	u32 *wake_status;
+ };
+ 
+ static struct tegra_pmc *pmc = &(struct tegra_pmc) {
+@@ -1973,6 +1978,50 @@ static int tegra_pmc_parse_dt(struct tegra_pmc *pmc, struct device_node *np)
+ 	return 0;
+ }
+ 
++/* translate sc7 wake sources back into IRQs to catch edge triggered wakeups */
++static void tegra186_pmc_wake_handler(struct irq_work *work)
++{
++	struct tegra_pmc *pmc = container_of(work, struct tegra_pmc, wake_work);
++	unsigned int i, wake;
++
++	for (i = 0; i < pmc->soc->max_wake_vectors; i++) {
++		unsigned long status = pmc->wake_status[i];
++
++		for_each_set_bit(wake, &status, 32) {
++			irq_hw_number_t hwirq = wake + (i * 32);
++			struct irq_desc *desc;
++			unsigned int irq;
++
++			irq = irq_find_mapping(pmc->domain, hwirq);
++			if (!irq) {
++				dev_warn(pmc->dev,
++					"No IRQ found for WAKE#%lu!\n",
++					hwirq);
++				continue;
++			}
++
++			dev_dbg(pmc->dev,
++				"Resume caused by WAKE#%lu mapped to IRQ#%u\n",
++				hwirq, irq);
++
++			desc = irq_to_desc(irq);
++			if (!desc) {
++				dev_warn(pmc->dev,
++					"No descriptor found for IRQ#%u\n",
++					irq);
++				continue;
++			}
++
++			if (!desc->action || !desc->action->name)
++				continue;
++
++			generic_handle_irq(irq);
++		}
++
++		pmc->wake_status[i] = 0;
++	}
++}
++
+ static int tegra_pmc_init(struct tegra_pmc *pmc)
+ {
+ 	if (pmc->soc->max_wake_events > 0) {
+@@ -1991,6 +2040,18 @@ static int tegra_pmc_init(struct tegra_pmc *pmc)
+ 		pmc->wake_cntrl_level_map = bitmap_zalloc(pmc->soc->max_wake_events, GFP_KERNEL);
+ 		if (!pmc->wake_cntrl_level_map)
+ 			return -ENOMEM;
++
++		pmc->wake_status = kcalloc(pmc->soc->max_wake_vectors, sizeof(u32), GFP_KERNEL);
++		if (!pmc->wake_status)
++			return -ENOMEM;
++
++		/*
++		 * Initialize IRQ work for processing wake IRQs. Must use
++		 * HARD_IRQ variant to run in hard IRQ context on PREEMPT_RT
++		 * because we call generic_handle_irq() which requires hard
++		 * IRQ context.
++		 */
++		pmc->wake_work = IRQ_WORK_INIT_HARD(tegra186_pmc_wake_handler);
+ 	}
+ 
+ 	if (pmc->soc->init)
+@@ -3385,52 +3446,30 @@ static void wke_clear_wake_status(struct tegra_pmc *pmc)
+ 	}
+ }
+ 
+-/* translate sc7 wake sources back into IRQs to catch edge triggered wakeups */
+-static void tegra186_pmc_process_wake_events(struct tegra_pmc *pmc, unsigned int index,
+-					     unsigned long status)
+-{
+-	unsigned int wake;
+-	unsigned long flags;
+-
+-	dev_dbg(pmc->dev, "Wake[%d:%d]  status=%#lx\n", (index * 32) + 31, index * 32, status);
+-
+-	for_each_set_bit(wake, &status, 32) {
+-		irq_hw_number_t hwirq = wake + 32 * index;
+-		struct irq_desc *desc;
+-		unsigned int irq;
+-
+-		irq = irq_find_mapping(pmc->domain, hwirq);
+-
+-		desc = irq_to_desc(irq);
+-		if (!desc || !desc->action || !desc->action->name) {
+-			dev_dbg(pmc->dev, "Resume caused by WAKE%ld, IRQ %d\n", hwirq, irq);
+-			continue;
+-		}
+-
+-		dev_dbg(pmc->dev, "Resume caused by WAKE%ld, %s\n", hwirq, desc->action->name);
+-		local_irq_save(flags);
+-		irq_enter();
+-		generic_handle_irq(irq);
+-		irq_exit();
+-		local_irq_restore(flags);
+-	}
+-}
+-
+ static void tegra186_pmc_wake_syscore_resume(void)
+ {
+-	u32 status, mask;
+ 	unsigned int i;
++	u32 mask;
+ 
+ 	for (i = 0; i < pmc->soc->max_wake_vectors; i++) {
+ 		mask = readl(pmc->wake + WAKE_AOWAKE_TIER2_ROUTING(i));
+-		status = readl(pmc->wake + WAKE_AOWAKE_STATUS_R(i)) & mask;
+-
+-		tegra186_pmc_process_wake_events(pmc, i, status);
++		pmc->wake_status[i] = readl(pmc->wake + WAKE_AOWAKE_STATUS_R(i)) & mask;
+ 	}
++
++	/* Schedule IRQ work to process wake IRQs (if any) */
++	irq_work_queue(&pmc->wake_work);
+ }
+ 
+ static int tegra186_pmc_wake_syscore_suspend(void)
+ {
++	unsigned int i;
++
++	/* Check if there are unhandled wake IRQs */
++	for (i = 0; i < pmc->soc->max_wake_vectors; i++)
++		if (pmc->wake_status[i])
++			dev_warn(pmc->dev,
++				 "Unhandled wake IRQs pending vector[%u]: 0x%x\n",
++				 i, pmc->wake_status[i]);
+ 	wke_read_sw_wake_status(pmc);
+ 
+ 	/* flip the wakeup trigger for dual-edge triggered pads
 -- 
-nvpublic
+2.44.3
 
