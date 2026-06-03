@@ -1,111 +1,257 @@
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F045242D65
-	for <linux-tegra@vger.kernel.org>; Wed,  3 Jun 2026 01:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6867E403EA0;
+	Wed,  3 Jun 2026 08:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780448478; cv=none; b=iUwNqnHv2c1uffTCEKdlDXJFvqluZ0p4RcSlqk0nf9LOuW7x5Qcq0ogJ82mSCUHDC89Zo30j78FPpPkEvqhTH2LlyhYodlTUzWNw4U1b9ZLxQ8PNi2PVT+9gS/lnIcrxwzIFZG/2hn0wFmRzh7X+b7WxB62UWoFYWJloZP6Eaok=
+	t=1780474200; cv=none; b=t40eRMO58GrGV4y7zIAExj4wf6p2kUpPhAKixD6UNI1/ErkB6xLeq0RnACYKekO8ACtAosPxQWPL6+XuaQ5EMnwfjk6Ey3UZVLWHxouCuTdYwLuHZPnlI9dlEVLnqBy/XunH/KtGMg4UXkmSJsa3sTT9pq11U6aHJAO4yOgr2ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780448478; c=relaxed/simple;
-	bh=UI/i7a3o2twKZmU9gVBMd/iTOYSldALT0tkSLrczf58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kMTCKKqeHqQ7Cev/8kCNDuKldS/9iMzTVaIcWMcleigoVmwsJyumNhGRXfrQLJqxMVo/YNRWLgo43g73iSVC6LIUE+TN/n04uF0SUz1H1Pb+OgtfATNVhvdexVwUuvmLWor/8UKoqtbTe5UtYnaeTdI+Sr2CfWXKP0JZdyIUAk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=TEE3SSjd; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+	s=arc-20240116; t=1780474200; c=relaxed/simple;
+	bh=trhe3JQRuZD6Z2eqR2dt5x0aSlZ4iceV6hLNqZtc3MA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VikB5+JtpfaIXj27HDPj+JteJq3QBVhbFljVUXt7hTgvAp6GGRpGeqxxo+0N4FJmMpsXBmR4kZJBhW4ErlQ9ti1bU58x0niIlb5yM5HHnMSaH/AJdwuLupAMXl7YkeOZTdrDP7T5R6VS7ejUAJFOhsXonBzMCPwtn7PJc45HnQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=OzPeuMXl; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="TEE3SSjd"
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-91550dda53cso455012285a.1
-        for <linux-tegra@vger.kernel.org>; Tue, 02 Jun 2026 18:01:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1780448476; x=1781053276; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AkdC3dWZFs3uTmguQZS1ztKpgkqPeW1kWupRwLRFJ1I=;
-        b=TEE3SSjdaOKT3qKoSZziF9lfHb7uvUwFRVZJ+tPid0PloYtwPLECjHqyLvaE4pSOhF
-         sBSuMq2nQJnYsxxRJySw7Mt0X0tzKEPpd/u6jBGEdO7XEvIa/FmyhLJCFfilV6M2BPWL
-         DhxfFMGHWxtmzfIc0LOLyfC3oe8TAddwqfUfXJFZnK396ViZHtZlKIRhO6eoMbb3nY//
-         YgK9RoFwmqpYKqd/6GJ/HH1nJKLz6dwHuoaRyqG1f4Tdd45zRFywQT4CGLckmVKiMdg3
-         jOfBq7t1nPYPs9vTB/F4tkDrH3xtVzdZYVqS64BibvtQM7XUGqn+wAnfp3kqLZs1tYxK
-         yyoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780448476; x=1781053276;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AkdC3dWZFs3uTmguQZS1ztKpgkqPeW1kWupRwLRFJ1I=;
-        b=NXNzqNCMgX/kM2U6O95G6scgKrtUiNy31NGDA4vj8PkXOBi4wdzLwLEwxLO/G4vE9E
-         ONC6Av5W/fHxVRoSVo4tw7w2YZ/D3jy91xVEla7D2KqzM1sl7HOVhuze8paal/ZIlM/Z
-         1aer8MFIN+r8V1uu3mxmtyR3gVeqakBdX4mn8VLAitdkjy6RqTHEkOuD3vnWWOmcn+H4
-         t9Z68kmrIGYNtOP4nINOfNSk0iCjgugqnmb/qcH8M7Aq759xjK9LODJagilWAtO2dDtL
-         FrCOyYW2FRuXXOPQddgx66Nro7OUYJuxMOhviyWO2XCnzTfPo8Zf8b9OIKHNN174Y4UR
-         +86g==
-X-Forwarded-Encrypted: i=1; AFNElJ8DQI4RDvJweDtKeB8SFl9Lf0nzHRrsMOw+G5OVQdMJ0brixsi0d7ZJ7FBMS4ISXgcOt6jlKIUOm8c60A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBN2UqFHs+OPBfPbFgUHUPWdpkPcmFlME6wxzGBdD0wD0+xrDU
-	oemha4CBsUdtTXooRwcEwDCzgAGHGLHkqxGcKYmciSmX7QLY1BFeRBV+wsNctDQSp+k=
-X-Gm-Gg: Acq92OGi5XkJ/1Yl6+gxcFRRPpKCIWC0jhDASsab5Hj5Sf+Fqb/d+3jXIYmncbPLZ0Z
-	6XIR3ig8L/Nlm1hspLBEXPaCHQnlfZk3W33hv0I823LdoxwMeSw1mlVPtZbzEgDC7UOVW933nsa
-	iU3mgZGFcjZQuj+cz5ryu7Ey2OfjALQ/7zkDkb1yUqTCuTwL4HHdjTEjNQKJgIaE0hlDwSl2ocE
-	VVEemyV/JLylZGdhfUVpnlWLU3OzJt7NT4c3gBsqZJYVJWv0M9EGmG+slfDiZt4Ntxg0jjQfIXS
-	xJFbERnnhQeqGIyNC4+nBYAYDm40708t9aphjPYELg5hyHrQcG9qjr9q4Sl8de4/joKMaRWHatE
-	Fy5K2aKD8Yb7DRiB1sztyRH8np5pk/sucuUCpFZHtRIzBnDvl+UCKw/cSjzfoGsCOeIZ1InRWqv
-	QRuQjkmkhUbf9rKTC7E26lSkym+RiWcWLu7Zu7z6KQJCBFxUn4O7JwirdUJ65gOMw1eYYDTJIF2
-	zYmHGfiy9o29BM6wOuW4yTpJmE=
-X-Received: by 2002:a05:620a:21c5:b0:915:6c4b:eb60 with SMTP id af79cd13be357-9158a7b6304mr201153885a.29.1780448476209;
-        Tue, 02 Jun 2026 18:01:16 -0700 (PDT)
-Received: from ziepe.ca (crbknf0213w-47-54-130-67.pppoe-dynamic.high-speed.nl.bellaliant.net. [47.54.130.67])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9158a00afbcsm101995885a.9.2026.06.02.18.01.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jun 2026 18:01:15 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1wUZys-00000004xXc-0zdZ;
-	Tue, 02 Jun 2026 22:01:14 -0300
-Date: Tue, 2 Jun 2026 22:01:14 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Will Deacon <will@kernel.org>
-Cc: Ashish Mhetre <amhetre@nvidia.com>, robin.murphy@arm.com,
-	joro@8bytes.org, nicolinc@nvidia.com,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] iommu/arm-smmu-v3: Issue CFGI/TLBI twice on
- Tegra264
-Message-ID: <20260603010114.GO2487554@ziepe.ca>
-References: <20260601104845.995005-1-amhetre@nvidia.com>
- <20260601104845.995005-4-amhetre@nvidia.com>
- <ah87dzHOOTNGBBmt@willie-the-truck>
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="OzPeuMXl"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Cp
+	9RRL9kcLgzNgDIMzSk2IWxzcSq68texAEeDTI94JI=; b=OzPeuMXlE+fbxjOXcC
+	i8EQtfvAb33WiPleJOaerKFhnM4n9245Vp9kFzG1md/d+PTgJ3Wok0CO0Hz6DcaK
+	gvhSaa8qF4zpd99yEGym/8z+C+EHdrN4T/6yOf5PuZqfplNSBEKoK4ISV5W/+Od9
+	0z0ZpLc6gZd2bNwqMa+zjfa0k=
+Received: from pek-lpg-core5.wrs.com (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wDXPyQp4R9qrA3TBA--.7184S2;
+	Wed, 03 Jun 2026 16:09:13 +0800 (CST)
+From: Robert Garcia <rob_garcia@163.com>
+To: stable@vger.kernel.org,
+	Prathamesh Shete <pshete@nvidia.com>
+Cc: Thierry Reding <treding@nvidia.com>,
+	Petlozu Pravareshwar <petlozup@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Meng Li <Meng.Li@windriver.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Robert Garcia <rob_garcia@163.com>,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 6.6.y] soc/tegra: pmc: Fix unsafe generic_handle_irq() call
+Date: Wed,  3 Jun 2026 16:09:12 +0800
+Message-ID: <20260603080912.2022575-1-rob_garcia@163.com>
+X-Mailer: git-send-email 2.44.3
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ah87dzHOOTNGBBmt@willie-the-truck>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXPyQp4R9qrA3TBA--.7184S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Wry5KFyruF1fAFWkWr13XFb_yoWxGFWUpa
+	y5KF4F9w4UJFWfua15ua10vF13CF18X3yxGrW3Aas3G3yUKrn09FnxXFyYqF48ArZakF45
+	A3yvyryUKw4UXFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRT89AUUUUU=
+X-CM-SenderInfo: 5uresw5dufxti6rwjhhfrp/xtbC5grkUGof4Sr8aAAA3y
 
-On Tue, Jun 02, 2026 at 09:22:15PM +0100, Will Deacon wrote:
-> > +	/*
-> > +	 * On Tegra264 (see ARM_SMMU_OPT_TLBI_TWICE) re-issue the same
-> > +	 * cmdlist with another CMD_SYNC to satisfy the erratum.
-> > +	 * Callers must ensure the batch carries a uniform opcode class
-> > +	 * so that checking the first command is enough; the iommufd
-> > +	 * VSMMU path enforces this with arm_vsmmu_can_batch_cmd().
-> > +	 */
-> > +	if (!ret && sync && arm_smmu_cmd_needs_tlbi_twice(smmu, &cmds[0]))
-> 
-> Can you move the arm_smmu_cmd_... part to the start of the conjunction,
-> please? If you make it a static key as I mentioned previously, then
-> hopefully that should mean everything else is moved out of line.
-> 
-> > +		ret = __arm_smmu_cmdq_issue_cmdlist(smmu, cmdq, cmds, n, sync);
-> 
-> Sashiko is also unhappy here if n == 0 because we probably shouldn't
-> be inspecting the command array in that case.
+From: Prathamesh Shete <pshete@nvidia.com>
 
-That seems like an AI mistake though, we shouldn't actually ever pass
-in 0 sized batches? 'zero streams' should fail probe, not get into
-this code, that might be missing but I wouldn't add checks here..
+[ Upstream commit e6d96073af681780820c94079b978474a8a44413 ]
 
-Jason
+Currently, when resuming from system suspend on Tegra platforms,
+the following warning is observed:
+
+WARNING: CPU: 0 PID: 14459 at kernel/irq/irqdesc.c:666
+Call trace:
+ handle_irq_desc+0x20/0x58 (P)
+ tegra186_pmc_wake_syscore_resume+0xe4/0x15c
+ syscore_resume+0x3c/0xb8
+ suspend_devices_and_enter+0x510/0x540
+ pm_suspend+0x16c/0x1d8
+
+The warning occurs because generic_handle_irq() is being called from
+a non-interrupt context which is considered as unsafe.
+
+Fix this warning by deferring generic_handle_irq() call to an IRQ work
+which gets executed in hard IRQ context where generic_handle_irq()
+can be called safely.
+
+When PREEMPT_RT kernels are used, regular IRQ work (initialized with
+init_irq_work) is deferred to run in per-CPU kthreads in preemptible
+context rather than hard IRQ context. Hence, use the IRQ_WORK_INIT_HARD
+variant so that with PREEMPT_RT kernels, the IRQ work is processed in
+hardirq context instead of being deferred to a thread which is required
+for calling generic_handle_irq().
+
+On non-PREEMPT_RT kernels, both init_irq_work() and IRQ_WORK_INIT_HARD()
+execute in IRQ context, so this change has no functional impact for
+standard kernel configurations.
+
+Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+[treding@nvidia.com: miscellaneous cleanups]
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Robert Garcia <rob_garcia@163.com>
+---
+ drivers/soc/tegra/pmc.c | 104 ++++++++++++++++++++++++++++------------
+ 1 file changed, 74 insertions(+), 30 deletions(-)
+
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 1306e3b8b5c0..4cb47c29dc6b 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -28,6 +28,7 @@
+ #include <linux/iopoll.h>
+ #include <linux/irqdomain.h>
+ #include <linux/irq.h>
++#include <linux/irq_work.h>
+ #include <linux/kernel.h>
+ #include <linux/of_address.h>
+ #include <linux/of_clk.h>
+@@ -467,6 +468,10 @@ struct tegra_pmc {
+ 	unsigned long *wake_sw_status_map;
+ 	unsigned long *wake_cntrl_level_map;
+ 	struct syscore_ops syscore;
++
++	/* Pending wake IRQ processing */
++	struct irq_work wake_work;
++	u32 *wake_status;
+ };
+ 
+ static struct tegra_pmc *pmc = &(struct tegra_pmc) {
+@@ -1940,6 +1945,50 @@ static int tegra_pmc_parse_dt(struct tegra_pmc *pmc, struct device_node *np)
+ 	return 0;
+ }
+ 
++/* translate sc7 wake sources back into IRQs to catch edge triggered wakeups */
++static void tegra186_pmc_wake_handler(struct irq_work *work)
++{
++	struct tegra_pmc *pmc = container_of(work, struct tegra_pmc, wake_work);
++	unsigned int i, wake;
++
++	for (i = 0; i < pmc->soc->max_wake_vectors; i++) {
++		unsigned long status = pmc->wake_status[i];
++
++		for_each_set_bit(wake, &status, 32) {
++			irq_hw_number_t hwirq = wake + (i * 32);
++			struct irq_desc *desc;
++			unsigned int irq;
++
++			irq = irq_find_mapping(pmc->domain, hwirq);
++			if (!irq) {
++				dev_warn(pmc->dev,
++					 "No IRQ found for WAKE#%lu!\n",
++					 hwirq);
++				continue;
++			}
++
++			dev_dbg(pmc->dev,
++				"Resume caused by WAKE#%lu mapped to IRQ#%u\n",
++				hwirq, irq);
++
++			desc = irq_to_desc(irq);
++			if (!desc) {
++				dev_warn(pmc->dev,
++					 "No descriptor found for IRQ#%u\n",
++					 irq);
++				continue;
++			}
++
++			if (!desc->action || !desc->action->name)
++				continue;
++
++			generic_handle_irq(irq);
++		}
++
++		pmc->wake_status[i] = 0;
++	}
++}
++
+ static int tegra_pmc_init(struct tegra_pmc *pmc)
+ {
+ 	if (pmc->soc->max_wake_events > 0) {
+@@ -1958,6 +2007,18 @@ static int tegra_pmc_init(struct tegra_pmc *pmc)
+ 		pmc->wake_cntrl_level_map = bitmap_zalloc(pmc->soc->max_wake_events, GFP_KERNEL);
+ 		if (!pmc->wake_cntrl_level_map)
+ 			return -ENOMEM;
++
++		pmc->wake_status = kcalloc(pmc->soc->max_wake_vectors, sizeof(u32), GFP_KERNEL);
++		if (!pmc->wake_status)
++			return -ENOMEM;
++
++		/*
++		 * Initialize IRQ work for processing wake IRQs. Must use
++		 * HARD_IRQ variant to run in hard IRQ context on PREEMPT_RT
++		 * because we call generic_handle_irq() which requires hard
++		 * IRQ context.
++		 */
++		pmc->wake_work = IRQ_WORK_INIT_HARD(tegra186_pmc_wake_handler);
+ 	}
+ 
+ 	if (pmc->soc->init)
+@@ -3156,47 +3217,30 @@ static void wke_clear_wake_status(struct tegra_pmc *pmc)
+ 	}
+ }
+ 
+-/* translate sc7 wake sources back into IRQs to catch edge triggered wakeups */
+-static void tegra186_pmc_process_wake_events(struct tegra_pmc *pmc, unsigned int index,
+-					     unsigned long status)
+-{
+-	unsigned int wake;
+-
+-	dev_dbg(pmc->dev, "Wake[%d:%d]  status=%#lx\n", (index * 32) + 31, index * 32, status);
+-
+-	for_each_set_bit(wake, &status, 32) {
+-		irq_hw_number_t hwirq = wake + 32 * index;
+-		struct irq_desc *desc;
+-		unsigned int irq;
+-
+-		irq = irq_find_mapping(pmc->domain, hwirq);
+-
+-		desc = irq_to_desc(irq);
+-		if (!desc || !desc->action || !desc->action->name) {
+-			dev_dbg(pmc->dev, "Resume caused by WAKE%ld, IRQ %d\n", hwirq, irq);
+-			continue;
+-		}
+-
+-		dev_dbg(pmc->dev, "Resume caused by WAKE%ld, %s\n", hwirq, desc->action->name);
+-		generic_handle_irq(irq);
+-	}
+-}
+-
+ static void tegra186_pmc_wake_syscore_resume(void)
+ {
+-	u32 status, mask;
+ 	unsigned int i;
++	u32 mask;
+ 
+ 	for (i = 0; i < pmc->soc->max_wake_vectors; i++) {
+ 		mask = readl(pmc->wake + WAKE_AOWAKE_TIER2_ROUTING(i));
+-		status = readl(pmc->wake + WAKE_AOWAKE_STATUS_R(i)) & mask;
+-
+-		tegra186_pmc_process_wake_events(pmc, i, status);
++		pmc->wake_status[i] = readl(pmc->wake + WAKE_AOWAKE_STATUS_R(i)) & mask;
+ 	}
++
++	/* Schedule IRQ work to process wake IRQs (if any) */
++	irq_work_queue(&pmc->wake_work);
+ }
+ 
+ static int tegra186_pmc_wake_syscore_suspend(void)
+ {
++	unsigned int i;
++
++	/* Check if there are unhandled wake IRQs */
++	for (i = 0; i < pmc->soc->max_wake_vectors; i++)
++		if (pmc->wake_status[i])
++			dev_warn(pmc->dev,
++				 "Unhandled wake IRQs pending vector[%u]: 0x%x\n",
++				 i, pmc->wake_status[i]);
+ 	wke_read_sw_wake_status(pmc);
+ 
+ 	/* flip the wakeup trigger for dual-edge triggered pads
+-- 
+2.44.3
+
