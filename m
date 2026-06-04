@@ -1,93 +1,117 @@
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6A03A759C;
-	Thu,  4 Jun 2026 10:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9D43FFACA;
+	Thu,  4 Jun 2026 10:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780568852; cv=none; b=rlNOH3Yp3vrIHAmvG1h1+m/wO2zXn8N2HMKTkSf96ftKXt6hsdurswA4ChvGq6P0N3ZP7SYgduqJU/33GR2jS+SPUqBMwPij/vzE/vL3IYk1GLm7vn/bhYIuPhGlvzisz9Ppq8VwG5TqNb4RdaysDSMJfG2Ywco/75yMi0Pynq0=
+	t=1780569394; cv=none; b=Z/16BNd+xZ4x2m/twiAXI1+A6fCyNZIcvDsgIiABPiBitdRL18HWiRViGun1/p5bwMbPcNneFU3qOkhXMrq6FfZiITp6+NAyLbt3QatXJMeDagiybgyJdu/e41ATwLtFpQBClKggNPXsbH3wzQ1Y1K8+Q/8DhtWSe7UWBFcAQEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780568852; c=relaxed/simple;
-	bh=als/dxOGF3vxwARVfzOa2gkKyEh9l70RPOinUzZ6Wr4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BgLl7d+LNyXgh+SiWjqfBDoFK8o0wD7GvUE4ioL3aF1R8rG33AdtGZqFTMMQltyuvAxatuUxROaDO3mgiVUo9v2Q3h18oFcAF9DJklYGVaU1b464IpwXENFmA3ILMHKbqh7maFOl4oSEC8Lgjf165c1fUB8mAvzhSU2xMpbv8AU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from dfae2b116770.home.arpa (unknown [36.110.52.2])
-	by APP-01 (Coremail) with SMTP id qwCowADnh9AEUyFqknqXAA--.107S2;
-	Thu, 04 Jun 2026 18:27:16 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: akhilrajeev@nvidia.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	thierry.reding@kernel.org,
-	jonathanh@nvidia.com
-Cc: linux-crypto@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] crypto: tegra: fix refcount leak in tegra_se_host1x_submit()
-Date: Thu,  4 Jun 2026 10:27:06 +0000
-Message-Id: <20260604102706.3787771-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1780569394; c=relaxed/simple;
+	bh=uqILPwCJAysFwEijBp5Q58ZSmrk9HovXy9x7jorydW0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Vw22GbHZL8bL1GIc780mCeuHhu4Dh0KQmzWWhswA2FWbGmo1SnZSGpxWQVyda5myZ2kD0ziBvj7eNv0+AbuRq6+bieL1TD1WA09A/zZfo6UORbAjaQqPa++BoAPgAHXJlshDXZg5OJfgusxKFAycRobNnxFrU50Kd0aMupML1o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=R2q6+igk; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=debian.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="R2q6+igk"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:Cc:To:Message-Id:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:
+	Reply-To:Content-ID:Content-Description:In-Reply-To:References;
+	bh=YgKJFFxO4e56PgrNO+9WzKGURzJiC4PerYs5ydguxaU=; b=R2q6+igk1+ogcCNoADlmm7daI9
+	R1mTFvlBbcGbpEEZH2svHk2m7VX5PR7t8ZOik3+hQzT/pnNHzlSPKnHB4+oYnNP39MKeh/8VtJi7e
+	wk0f2RBO6VU0MewlsVrM1seSkWH7GQuOXuxCbvFyAFVmxXIEd4s0MDFjX0L+NBB3c41EY2vOouMJA
+	nUYEhqtdnEKni9peoA04Fofl1hmZp3eEntmD7cK7v08FI73owC6JTP6aXHxjT9cJomCxLMNp0aPRh
+	5vOz1aQuVmpHbulEr6PliY0NbBXKCxXc6SIitXmu6qfazOWsUFAaFwB2ygR2Tt58ExXXxnPfuMYuB
+	Zgmtdy6A==;
+Received: from authenticated-user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.96)
+	(envelope-from <leitao@debian.org>)
+	id 1wV5R6-004SLD-2I;
+	Thu, 04 Jun 2026 10:36:29 +0000
+From: Breno Leitao <leitao@debian.org>
+Date: Thu, 04 Jun 2026 03:36:17 -0700
+Subject: [PATCH] soc/tegra: fuse: Fix spurious straps warning on SMCCC
+ platforms
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowADnh9AEUyFqknqXAA--.107S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF4Utw17Ww47Cr4DJr4rAFb_yoW8Jw43pF
-	Z0k3yqyr98Jr4rGFn7JF48CFy093y3ZryDGw4fAa42yrs8JFyUAF43CFWjvay8WrsYgr12
-	qFZrA3y5ur18uaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUrrWFUUUUU
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCREIA2ohQhU22gAAsj
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260604-tegra_warn_fix-v1-1-78522c852340@debian.org>
+X-B4-Tracking: v=1; b=H4sIACFVIWoC/x3MSwqEMBAFwKs0b20git9cRSTEmY72JkpHHEG8+
+ 4B1gLqRWYUzHN1QPiXLluCoLAifNaSFjXzhCJWtWtva2hy8aPC/oMlHuUwcuLd9M9dl16Ag7Mp
+ Rrjccp+f5A4TxziVgAAAA
+X-Change-ID: 20260604-tegra_warn_fix-f9e8085b4175
+To: Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-team@meta.com, 
+ Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1459; i=leitao@debian.org;
+ h=from:subject:message-id; bh=uqILPwCJAysFwEijBp5Q58ZSmrk9HovXy9x7jorydW0=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBqIVUpgyge5jl4xvG9AteA8RzvqxHGCyRUGzFYt
+ dE4GAdf4smJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaiFVKQAKCRA1o5Of/Hh3
+ bbTbEACIGyeuB9CbmlnwzQP0OWGj54W3IQ/sNQFpZGWPB+YZvBWk4zMupQWj/kCM/G9nB2flrjn
+ dnK2XoXmNfWT5MQTh693qzGC1042Jlzd9/04SGa3uvCm30Gs2RXyd97KhtrBhpM91qcWX+Rgvjm
+ 6jyn0ucBuOYfqeYM4iWtlADbLn0xQiJn+hMJR8rHXhumldnCxGrWGJ+cHbHanWz649C/kj6YwWW
+ gac24NqbhD9cdieMuY/uKjg8m/H14EYjGywll4M1swIVMbItF+fnld9pSsr+RkwlcFKi/iuKw0S
+ d/i5X7RTJL8u5JyU1syzYSYQiVpVll3eatmtOzBEpnGsSQ6oqBezzTlEtqc7Tndp/jd/YOxgi0Y
+ sedysvjpqfOHnVPvcydG88DuxbZ6Hq/3SGAGKN8sm7GbMNrA3zSdd7HmyhpIAT7x8tAijckqBMs
+ fHsB19mDqW0g3MQjnflLJxHmGQRlQnpakhmHmsvdgtkfAcwR01wsV2X+cojXYw+JGszf9iSzxqR
+ zUVTv4AuYWO+wKsAgf59kzQ9QmqhcwChNwucstXWg5jhu0kcFCCkddHRNweiOf8q0d1moCpq0SE
+ VB4W/MvG1Lyd9Ya5kziPAOzkSx1HIsp6Dp2uca4Mlxq2AYc09TQcibrkBTf3NmxuHMljOR/7Ha5
+ tc/Y/gYNdNZs6eA==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+X-Debian-User: leitao
 
-The timeout error path in tegra_se_host1x_submit() returns without
-calling host1x_job_put(), while all other paths (success, submit
-error, pin error) properly release the job reference through the
-job_put label.  Since host1x_job_alloc() initializes the reference
-count and host1x_job_put() is required to drop it, omitting it on
-timeout causes a permanent refcount leak.
+My Grace host started to show this warning:
+  WARNING: drivers/soc/tegra/fuse/tegra-apbmisc.c:120 at tegra_read_straps
+   tegra30_fuse_add_randomness
+   tegra30_fuse_init
+   tegra_fuse_probe
 
-Fix this by redirecting the timeout return to the existing job_put
-label, ensuring the job reference and any associated syncpt
-references are consistently released.
+tegra_read_straps() warns when the static "chipid" cache is still zero,
+using it as a proxy for "APBMISC has been initialised". However chipid
+is only ever populated lazily by tegra_read_chipid() when it reads the
+APBMISC register.
 
-Cc: stable@vger.kernel.org
-Fixes: 0880bb3b00c8 ("crypto: tegra - Add Tegra Security Engine driver")
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+Guard on apbmisc_base instead, which is set unconditionally in
+tegra_init_apbmisc_resources() for all platforms and is already the
+sentinel used by tegra_read_chipid().
+
+Fixes: c71f213fa5af ("soc/tegra: fuse: Warn if straps are not ready")
+Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
- drivers/crypto/tegra/tegra-se-main.c | 2 +-
+ drivers/soc/tegra/fuse/tegra-apbmisc.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/tegra/tegra-se-main.c b/drivers/crypto/tegra/tegra-se-main.c
-index eb71113ed146..e8d8c3a23d7a 100644
---- a/drivers/crypto/tegra/tegra-se-main.c
-+++ b/drivers/crypto/tegra/tegra-se-main.c
-@@ -180,7 +180,7 @@ int tegra_se_host1x_submit(struct tegra_se *se, struct tegra_se_cmdbuf *cmdbuf,
- 				 MAX_SCHEDULE_TIMEOUT, NULL);
- 	if (ret) {
- 		dev_err(se->dev, "host1x job timed out\n");
--		return ret;
-+		goto job_put;
- 	}
+diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
+index 87ae63a7e52d..7aba7c58bad0 100644
+--- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
++++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
+@@ -117,7 +117,7 @@ bool tegra_is_silicon(void)
  
- 	host1x_job_put(job);
+ u32 tegra_read_straps(void)
+ {
+-	WARN(!chipid, "Tegra ABP MISC not yet available\n");
++	WARN(!apbmisc_base, "Tegra ABP MISC not yet available\n");
+ 
+ 	return strapping;
+ }
+
+---
+base-commit: 1f5563665c2715e5ab2f64ec3d4b0af60927014f
+change-id: 20260604-tegra_warn_fix-f9e8085b4175
+
+Best regards,
 -- 
-2.34.1
+Breno Leitao <leitao@debian.org>
 
