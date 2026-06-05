@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9AA3E4C95;
-	Fri,  5 Jun 2026 15:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB34F38F950;
+	Fri,  5 Jun 2026 15:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780671859; cv=none; b=mkI8cI16TDnBn69LhZf/F3l/o9KpJ32DuzjxGuC3g/aoV3fRMQGyse/R2iG2uyNsokpI3rJsvQ2L2gHe3ajHD/tc+CJPiy/mxgSHF07Be5PohKIvmyKiOQ+bFp3jxcBxJHzv/7T0o0tPEgxIXnwCIegCUPPwskDUtQETFDCW1Fw=
+	t=1780672133; cv=none; b=YvIHnvhxa6wEm8QF7UTf7v0qVXOuKsVkbCuHMo2gbBIInjWQTZfu8B1MyjdPjezaLpFvyYvDnW3O1mgs2CtlbWerKohgaQncmcSHetCyC0pDky5d6vOILx6ZsrayFeqr8oeKCm6Q/qVAfFCkTX269tuGJMWpfT1sKvjbFZFp1kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780671859; c=relaxed/simple;
-	bh=ovoYKAB4bYO0m3MdYKhDhzH0Kl5OSVG7wH1T3RYngcw=;
+	s=arc-20240116; t=1780672133; c=relaxed/simple;
+	bh=Ka+Eb/FEZvD5N6ORxhXDgUwD0Fv1aSsd50rN1HNpq3c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GvS1leIj2GiVEQBSoTcAu22PV3Pzg54rm+oIH29wsDQgsrCpVd0aSbvg6QQr0FKVGYFjZGt4Wv9+kZzENe4ElbIuzL9pB9IrVlvaik+55xLeTH7O7VsCoh3rRcpx3JW/kIAQyS1+Bjg1iExPQHujvp+LvOg1jEmcRXmM+WMESs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HfT4ihdL; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=EZExpprn4s6QnkkzGwjP2g3iGkrdAeKj09w0ujxKcoHuEQXq1SsXwOn1TA2C41D6+4U7nHSLoOjuxHNztKsXTWkiZt1eCj+BITOGAKCCTrJ90uv4SfvGW4Fg5cYjP3XbqE1cur5DU6hfv/HBhTjS4EbU+EqV7r3VWCYJ0uSMOpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gk698xd8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HfT4ihdL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3BF41F00893;
-	Fri,  5 Jun 2026 15:04:17 +0000 (UTC)
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gk698xd8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 398D61F00893;
+	Fri,  5 Jun 2026 15:08:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
-	s=korg; t=1780671858;
-	bh=ovoYKAB4bYO0m3MdYKhDhzH0Kl5OSVG7wH1T3RYngcw=;
+	s=korg; t=1780672132;
+	bh=xnZ8VJR/NtJ4iVq439h37B8f7/qDJZDqnfWnma9gDqA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=HfT4ihdLgkO9AHGm8VX+cEqicZhNwchUSNhXCuad2gbNbKmjJ2eKkaBN1iC/mO+c4
-	 wvU79aEULSrvCw7te/tllY4qkYq2mLx+YlyuI7W6Q5HZXPsMHZ48Nir8IFe2+9aqdk
-	 2aRc1++c7EG0NgQzxfJDxaUSLGfPsz9JNEkDrjbs=
-Date: Fri, 5 Jun 2026 08:35:17 +0200
+	b=gk698xd8jPUog/7tZiu9YM3LI4fC+ZvUEZ28kWX6wX4GPbL0VOlIUqnN70uH50dpg
+	 /ljRPLPcKbFo5ebX5Jnb2se7tJhCAjdzvx2l4Cl0M8uLRY2yTEbTtSAwOv6U4l0SfD
+	 9pKrVJwzaDN+Wa/06KmEOsUmWfnIpdr9ax17Bj90=
+Date: Fri, 5 Jun 2026 16:59:06 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
-To: vishalmimani008@gmail.com
+To: Vishal Kumar <vishalmimani008@gmail.com>
 Cc: linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
 	stable@vger.kernel.org, thierry.reding@gmail.com,
 	jonathanh@nvidia.com, digetx@gmail.com
 Subject: Re: [PATCH] usb: gadget: tegra-xudc: drain EP pipeline before DMA
  unmap
-Message-ID: <2026060510-parsnip-tray-1381@gregkh>
-References: <6a226993.a5745248.34e478.a9cd@mx.google.com>
+Message-ID: <2026060548-bakery-supply-f9e0@gregkh>
+References: <6a227a57.b453d089.3d0874.3012@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -41,12 +41,19 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6a226993.a5745248.34e478.a9cd@mx.google.com>
+In-Reply-To: <6a227a57.b453d089.3d0874.3012@mx.google.com>
 
-On Thu, Jun 04, 2026 at 11:15:47PM -0700, vishalmimani008@gmail.com wrote:
-> RnJvbTogVmlzaGFsIEt1bWFyIDx2aXNoYWxtaW1hbmkwMDhAZ21haWwuY29tPgpEYXRlOiBGcmks
-> IDUgSnVuIDIwMjYgMTQ6MDg6NTQgKzA5MDAKU3ViamVjdDogW1BBVENIXSB1c2I6IGdhZGdldDog
+On Fri, Jun 05, 2026 at 12:27:19AM -0700, Vishal Kumar wrote:
+> From: Vishal Kumar <vishalmimani008@gmail.com>
+> Date: Fri, 5 Jun 2026 14:08:54 +0900
+> Subject: [PATCH] usb: gadget: tegra-xudc: drain EP pipeline before DMA
+>  unmap
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=UTF-8
+> Content-Transfer-Encoding: 8bit
 
-<snip>
+Something went wrong here :(
 
-Something went wrong :(
+thanks,
+
+greg k-h
