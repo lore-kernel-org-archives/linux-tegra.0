@@ -1,134 +1,114 @@
-Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com [74.125.82.180])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C5731327F
-	for <linux-tegra@vger.kernel.org>; Sat,  6 Jun 2026 21:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AD42771B
+	for <linux-tegra@vger.kernel.org>; Mon,  8 Jun 2026 04:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780779829; cv=none; b=Q+pJ99wl2yYa/WYE50+UTpeMqlTIQn4x9z4PBkqKA1e8XBPw/fTjWEhyMxFciF5XM440/UBxEIYfMxqzxHAQGcffeHEWnwtf8KdqhDqfaMxSHCFRxhAABfXHL272yIljd0UfRCcAjCsBtMUI8HlgoSu4qTdWio0Zf5rtYwpmC8M=
+	t=1780894423; cv=none; b=Lja4Sf4xJKuDLMJMLdqq5LmkzhJzbpLLdDha8jFoRFnTgYhRJNYeqxs1rj/3Ty6EwkT9WYgNMySH8FSR9qhZYMlpgcUnU5KVp/ZdjM2CT6KssEgPT6ISGWS5WgGjVjLq39eLt3hXr4p6tgO1METmOAT+xyK5T/yrsh0+oWwy2h0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780779829; c=relaxed/simple;
-	bh=8aQsvQV92fCNEJtI42BLGSyXug3KVyb8/WsuBLmztq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N8CEtgRipJegB6uYe65Ht2MDUDCVi0qBsFAF1ZQBNEXwusCcOnMWU0WVMPibYAFRje77p6XcQ84BVHuGcR2NHU0Gn2DJ3UyYlWZXX1mfcTdt3BBF7All1W+NaNxL7W06vSeKuPq05HQDeFQN3pLjpMK5WDrOOUcWyu0bgd4kaxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gyC2BOm7; arc=none smtp.client-ip=74.125.82.180
+	s=arc-20240116; t=1780894423; c=relaxed/simple;
+	bh=11RGwLkj26xqPdN0wscC2AFma7LM/lWRQj+dLXsSXQo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Oac7uiM+jda7noMdLsEuMN2nIg+V2e/6SHtwnEwOEvChNTxBSTksvtF/9b1mOjrjR8YUTviuAPS0W1igkEU5DvLbFFIEPmb/qJQZtu+ONd00HYu1/ScMkKr0BLDhW48R3SYX/Q7Jzi7OWO8RqR9EED0EM3KYUP/cc0j6i7pRmwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pLV0JfS0; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gyC2BOm7"
-Received: by mail-dy1-f180.google.com with SMTP id 5a478bee46e88-304d0ac5e3cso5301321eec.0
-        for <linux-tegra@vger.kernel.org>; Sat, 06 Jun 2026 14:03:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pLV0JfS0"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2bf36a6905cso25928575ad.3
+        for <linux-tegra@vger.kernel.org>; Sun, 07 Jun 2026 21:53:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780779828; x=1781384628; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IpsbdQ4HEXAu1DofK9GVpNtvbeL5V7mTYGQq3LB/EZo=;
-        b=gyC2BOm7S5VP72mgnsTuhnN9AFqyGpSdrXsm683Sebk4NIWJ7aOvSj1RrBs8RPIALg
-         ZlNdaZ6jaPPQp6+QNBHKWny3CXkarbqoUaGSz5nZFfgV0ETia4Zz6BiXd1JOg4UmlgeH
-         IuJxGxAfRFywUbRFS1iclf3mrzxm5/YMbwIWZh/Zvc2KUwvcPfGzQ1jPQS3SxbG4rzpd
-         I1JOn7YF+iLVtAt46bifoeGncS+O5KRdu/D51wKDROjvP6s93+ODmZRsr7ztmDXC/aAq
-         6gEML85fg84YhetACuEBdxXki7T3+TQ9/FzXnXlw0NSKYOaRFV/LYo5zSa/cyeDPxFUS
-         HWZg==
+        d=gmail.com; s=20251104; t=1780894422; x=1781499222; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jgvJ9+4PgpXMrVBHtZnQjq8CEK1hGoHMz+18CbE8EQY=;
+        b=pLV0JfS0gYmdUz6DriNrCndd5Xazut3iROHO9IIHj9g6zsSQ5hMX+hEeNF/KcRF7Eb
+         nOqWTfFMG0oeUFDoVbneiGHw9KK85mmcwnMXZokJXb6tC/xEziEafULo/l3eNsb7ozyN
+         iFyhVyKb636aONpE3gJc39FRcRRx9khHwMKLNBs8bZPtLZqImBOTCh+YrS+qTpeGT7jr
+         DNt2N4xi63HNAECrxycuUF2wzl+jq6htQqtL/1V1UcNLX3SUebddnlyaGXPW7vF3HyIT
+         CcoGnVYBAfe61pUJkIMlj3mI9c4oFw6OXkW+8/akNnGdupJ8Xluidn+5qCqXOxHKzL9c
+         L0Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780779828; x=1781384628;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IpsbdQ4HEXAu1DofK9GVpNtvbeL5V7mTYGQq3LB/EZo=;
-        b=HE6pVekDjgHxiBZWSaLBpneFKcUvt2LMA4PQIOex0B9FQuny/xyELU7rWlHu1YEgyj
-         JWnP02DTOwLwavvgxaolw5oomWgAYZA/oZsNp0atlARYzTEgBmpmz8Vh4myfkVIODwnk
-         DfGTah/1DD+1tJvfPPMOvJSU0WwVaQF65YK/+g53QETLMC/WIp6MjGivhzkEsNMHz9IW
-         IQbYRzQUDHA1OjsfZLtC/d+uh/qTP6sfxyWV32YmG2868k72QGBVzP91wU+YGd4u4WWA
-         w1LoMEh68auZkCPodMTXP2530oHCnE7VH9yVpMiLU8WkesyRO0SNzN9MAqaguH08g5vv
-         Kmtg==
-X-Forwarded-Encrypted: i=1; AFNElJ+hbVs0gtSXW1OGo5zPGNWFQfQBpOQ7EVNDp3VUNQCXgrXm25ugRMFQOOdoBDk8xPIDa2UsMLop8mkWvw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5frUzzpkE+F6tWDIbaTQABuOvAkWELOancLfoY75E1F9jIjZH
-	u8CuVaRSndJYq1VCEm3CFPIhaIa5Hz4q5UQyDRNDvtVYwDP6KLSzS6oo
-X-Gm-Gg: Acq92OFsDoESs33iQwHWO27dbHoz5Ldeho2GcdRsIzdUKtZTMJlM0VmRRBtFYHgqwdy
-	RBO2GIVZSi0iVpVOC/WC3PajvJi2awBTbvZw3TPQeYCLsgqFv53uKRdre7h4rX2OdEmCxpC59yT
-	7VnefC1CpMuClB1gVljhaD8EY8MG/IPrmZbKtppemZNUbAEI8iKzUCQGaCC/kOGN0SAaoxaIJnL
-	p9OqyDmvLKLmYiZWDnlxmHr7YNOih4KWYelRnszwymVShXhpQli2HAfllAoWmoshSGrBmEWx2fc
-	EEEV+v7QVgbXgnNs4qODC4Cf/mdt3qRADspKtgTz3fH80M+cw7KQL06E+fVHNdyn3iGypIiahVl
-	ZQxngHGnuc+63dZkoe8gymXPzaLFq40gbGLD/8iFiIpj/9qbbR4pddIbTL2CdO5bDBWPKW4nXjw
-	Q+C+LvixXO/qf8r6Z3MsNp+ecjqOX0Eq+/uaw5DcB+/+Wu9n/pWS1CRXI1RRweGQuTJK2AOB4Og
-	RahFRwOpTbwLQ==
-X-Received: by 2002:a05:7301:5f0f:b0:2e6:e504:5431 with SMTP id 5a478bee46e88-3077b1de34bmr4945899eec.22.1780779827609;
-        Sat, 06 Jun 2026 14:03:47 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2ebe:8:bb2f:1c0b:386d:8909])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3074dea9226sm11772015eec.19.2026.06.06.14.03.45
+        d=1e100.net; s=20251104; t=1780894422; x=1781499222;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jgvJ9+4PgpXMrVBHtZnQjq8CEK1hGoHMz+18CbE8EQY=;
+        b=qAySC3PaQRrFboYzfILzJdyDW5mDqvHbmvl41mjPocj7IHtNeqpcO4kflUNs3lZ4JK
+         XV1wDm+e8xL2XAuJelbSsfeGihtdQPls2XmLuq3f9dEXb2IUYEATA77D2vsafxV5ACPa
+         PsVcE6uFoU22Ot/SKFqPQUEFqBNWWK+ZSTjc0uWJcJlwG3CqT9zfJAuI1glYhTbpJBY9
+         LeW68XTYZRho3MeOQKld+aAz+geXNaIF5XiM27jew3WlDFHaINLvmTyohIAizo4iHo6N
+         /d8+qokbBOvpMynfXQUdE11ph0rzEPx4AvPADktdSJqtceSVwYuXcwU56sUD0GogjqCN
+         07sw==
+X-Forwarded-Encrypted: i=1; AFNElJ/7GXToVyCFx6Zreb5P2SoX0lRlcobDGXh/cd/koUFnu9Ppw4dZ3q801mf/qxG/29TyhSLn/vLXn1wseQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoCR2YCHnVzPgaTq9bBW5crfjLaF6ZJZNnRqlzvpVVIXkbR3qd
+	OB5joClEqCM0DnGMLdMcnF/YMSDmTUza7XLL2PbViErw3yP8f9aagnnL
+X-Gm-Gg: Acq92OE5Gq+15hJMtgMWdz9OR4rleXuE7oHo3OaGvsnQRRuf3ScRxGeKQRoIJRKJUWv
+	AjawEISoneqw2F/vIms3rgsLKpy7evh82/rKrbcS8cQTnb8LEgI2AzVBPBlWRc9I4SkqKQD+iWD
+	TdF4HMBuAxUB0W3x8PQM5SwBlTOvecUPr7xmY5YON8ZiHX152A0U9HiCOuftllkXkNJvCUYy6ZS
+	BaAavxnWWLtD8HhDgzDrtnjFyUnN+qMhYXoXyHxHeoFbQU39KQ6wOOFziv3IapTJy+gMHDeETvO
+	gNSWvIMNfMRoJxri+NPourUWS/uocxPyRSTC36JkPNlsT8wNT97ncLhYLsfCrsDKZAITI+r92Ef
+	m679xttc5+nT5bQ/lCbvyh4IfhHhsiSZnwRRUI9SHww9Rj3qZf5Eal1gbR+DbyMd2/TzYr+ighr
+	0+JRZo/y1mE3ch82NiD1FQmODYT3v5WtqXyfVSaTSdjHCSI0n10IC25ItO/mYgK9dHDOWcAPfsR
+	iZXj9XPhmlEFRv6IS0WUxHCt4pV+DUBLOEXTzGQ2I/IVw==
+X-Received: by 2002:a17:903:3c6f:b0:2c2:7baf:139f with SMTP id d9443c01a7336-2c27baf148emr18097875ad.30.1780894421834;
+        Sun, 07 Jun 2026 21:53:41 -0700 (PDT)
+Received: from ryzen ([2601:644:8000:5b5d:7285:c2ff:fe45:8a32])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c164f6d389sm162552855ad.16.2026.06.07.21.53.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Jun 2026 14:03:46 -0700 (PDT)
-Date: Sat, 6 Jun 2026 14:03:43 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: Akash Sukhavasi <akash.sukhavasi@gmail.com>, 
-	Conor Dooley <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Andrew Lunn <andrew@lunn.ch>, linux-tegra@vger.kernel.org, linux-input@vger.kernel.org, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Thierry Reding <thierry.reding@kernel.org>, linux-media@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
-	Vladimir Oltean <olteanv@gmail.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Eric Dumazet <edumazet@google.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Simon Horman <horms@kernel.org>, devicetree@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>, 
-	netdev@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>, 
-	Russell King <linux@armlinux.org.uk>, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH v2 4/4] dt-bindings: input: remove obsolete
- matrix-keymap.txt
-Message-ID: <aiSK6_n4ZnB_KRd8@google.com>
-References: <20260603-b4-remove-redirect-stubs-v2-0-c8c19876ab64@gmail.com>
- <20260603-b4-remove-redirect-stubs-v2-4-c8c19876ab64@gmail.com>
- <178052559618.2296868.8781332297681333925.robh@kernel.org>
+        Sun, 07 Jun 2026 21:53:41 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: dmaengine@vger.kernel.org
+Cc: Laxman Dewangan <ldewangan@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Frank Li <Frank.Li@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCHv3] dmaengine: tegra210-adma: use
+Date: Sun,  7 Jun 2026 21:53:24 -0700
+Message-ID: <20260608045324.4980-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <178052559618.2296868.8781332297681333925.robh@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 03, 2026 at 05:26:38PM -0500, Rob Herring (Arm) wrote:
-> 
-> On Wed, 03 Jun 2026 15:42:21 -0500, Akash Sukhavasi wrote:
-> > matrix-keymap.txt has been a single-line redirect to
-> > matrix-keymap.yaml since commit 639d6eda3b80 ("dt-bindings: input:
-> > Convert matrix-keymap to json-schema"), which introduced the .yaml
-> > schema and reduced the .txt to a stub in the same change. The .yaml
-> > has the same filename in the same directory, making this redirect
-> > unnecessary for discoverability.
-> > 
-> > Eight instances across six files still reference matrix-keymap.txt,
-> > forcing readers through an extra hop to reach the .yaml. The stub has
-> > not been touched since June 2020. Update all references across input
-> > and mfd binding documentation to point directly to matrix-keymap.yaml
-> > and remove the stub.
-> > 
-> > Signed-off-by: Akash Sukhavasi <akash.sukhavasi@gmail.com>
-> > ---
-> > v2:
-> > - Patch 4/4: corrected commit message (eight references in six files,
-> >   not eight files), Sashiko review.
-> >   https://sashiko.dev/#/patchset/20260529052246.4934-1-akash.sukhavasi@gmail.com?part=4
-> > 
-> > v1: https://lore.kernel.org/all/20260529052246.4934-5-akash.sukhavasi@gmail.com/
-> > ---
-> >  Documentation/devicetree/bindings/input/brcm,bcm-keypad.txt    | 2 +-
-> >  Documentation/devicetree/bindings/input/clps711x-keypad.txt    | 2 +-
-> >  Documentation/devicetree/bindings/input/matrix-keymap.txt      | 1 -
-> >  Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt | 2 +-
-> >  Documentation/devicetree/bindings/input/pxa27x-keypad.txt      | 2 +-
-> >  Documentation/devicetree/bindings/input/st-keyscan.txt         | 2 +-
-> >  Documentation/devicetree/bindings/mfd/tc3589x.txt              | 6 +++---
-> >  7 files changed, 8 insertions(+), 9 deletions(-)
-> > 
-> 
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> 
+Simpler to call the proper function.
 
-Lee, could you please ack for MFD piece and I can take it through input?
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ v3: change subject
+ v2: reword commit message
+ drivers/dma/tegra210-adma.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-Thanks.
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index 14e0c408ed1e..be2ad6e28618 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -1073,14 +1073,9 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 		}
+ 	} else {
+ 		/* If no 'page' property found, then reg DT binding would be legacy */
+-		res_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-		if (res_base) {
+-			tdma->base_addr = devm_ioremap_resource(&pdev->dev, res_base);
+-			if (IS_ERR(tdma->base_addr))
+-				return PTR_ERR(tdma->base_addr);
+-		} else {
+-			return -ENODEV;
+-		}
++		tdma->base_addr = devm_platform_ioremap_resource(pdev, 0);
++		if (IS_ERR(tdma->base_addr))
++			return PTR_ERR(tdma->base_addr);
 
--- 
-Dmitry
+ 		tdma->ch_base_addr = tdma->base_addr + cdata->ch_base_offset;
+ 	}
+--
+2.54.0
+
