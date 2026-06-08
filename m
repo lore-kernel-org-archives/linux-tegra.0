@@ -1,114 +1,117 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AD42771B
-	for <linux-tegra@vger.kernel.org>; Mon,  8 Jun 2026 04:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1367135836A;
+	Mon,  8 Jun 2026 05:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780894423; cv=none; b=Lja4Sf4xJKuDLMJMLdqq5LmkzhJzbpLLdDha8jFoRFnTgYhRJNYeqxs1rj/3Ty6EwkT9WYgNMySH8FSR9qhZYMlpgcUnU5KVp/ZdjM2CT6KssEgPT6ISGWS5WgGjVjLq39eLt3hXr4p6tgO1METmOAT+xyK5T/yrsh0+oWwy2h0=
+	t=1780898162; cv=none; b=EcGtI8QfSaPvNdKzP/LqhKPbL74dNHgyr6ZOLZc2qCpSJzNTtvFoY7HE7KEFpK+Qda7qvdLmgSyQbtIgZVGt/Mi0mNIFqaEpK14jhPMkEiiRUpdfJo3VVgJBa2leeSo3tKMB+oYjlJ64sQ1arfYx8B5exaQ0bOV3ZUoP0Nci6/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780894423; c=relaxed/simple;
-	bh=11RGwLkj26xqPdN0wscC2AFma7LM/lWRQj+dLXsSXQo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Oac7uiM+jda7noMdLsEuMN2nIg+V2e/6SHtwnEwOEvChNTxBSTksvtF/9b1mOjrjR8YUTviuAPS0W1igkEU5DvLbFFIEPmb/qJQZtu+ONd00HYu1/ScMkKr0BLDhW48R3SYX/Q7Jzi7OWO8RqR9EED0EM3KYUP/cc0j6i7pRmwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pLV0JfS0; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1780898162; c=relaxed/simple;
+	bh=1tedobO0Y+zCiMJOKxoZsfxqE8GEtPoz++Zcs6G5RDo=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=OYPnbQieemlzn+RG6OUOM1Zuf3IC5d0reHcI+Lq6Seo5uaAT64F7LwosLjS4UQpXacZFLYmeTL112tZx/ktdg0S6XPtgSA+wSrW4+XTjMZr9DUSLy0fUjForQbSRs6p6wEqEmWZmVpLFXVYYBv2HfG3o+Z5giNFHy0BCs+QvnR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQqLYcOh; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pLV0JfS0"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2bf36a6905cso25928575ad.3
-        for <linux-tegra@vger.kernel.org>; Sun, 07 Jun 2026 21:53:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780894422; x=1781499222; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jgvJ9+4PgpXMrVBHtZnQjq8CEK1hGoHMz+18CbE8EQY=;
-        b=pLV0JfS0gYmdUz6DriNrCndd5Xazut3iROHO9IIHj9g6zsSQ5hMX+hEeNF/KcRF7Eb
-         nOqWTfFMG0oeUFDoVbneiGHw9KK85mmcwnMXZokJXb6tC/xEziEafULo/l3eNsb7ozyN
-         iFyhVyKb636aONpE3gJc39FRcRRx9khHwMKLNBs8bZPtLZqImBOTCh+YrS+qTpeGT7jr
-         DNt2N4xi63HNAECrxycuUF2wzl+jq6htQqtL/1V1UcNLX3SUebddnlyaGXPW7vF3HyIT
-         CcoGnVYBAfe61pUJkIMlj3mI9c4oFw6OXkW+8/akNnGdupJ8Xluidn+5qCqXOxHKzL9c
-         L0Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780894422; x=1781499222;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jgvJ9+4PgpXMrVBHtZnQjq8CEK1hGoHMz+18CbE8EQY=;
-        b=qAySC3PaQRrFboYzfILzJdyDW5mDqvHbmvl41mjPocj7IHtNeqpcO4kflUNs3lZ4JK
-         XV1wDm+e8xL2XAuJelbSsfeGihtdQPls2XmLuq3f9dEXb2IUYEATA77D2vsafxV5ACPa
-         PsVcE6uFoU22Ot/SKFqPQUEFqBNWWK+ZSTjc0uWJcJlwG3CqT9zfJAuI1glYhTbpJBY9
-         LeW68XTYZRho3MeOQKld+aAz+geXNaIF5XiM27jew3WlDFHaINLvmTyohIAizo4iHo6N
-         /d8+qokbBOvpMynfXQUdE11ph0rzEPx4AvPADktdSJqtceSVwYuXcwU56sUD0GogjqCN
-         07sw==
-X-Forwarded-Encrypted: i=1; AFNElJ/7GXToVyCFx6Zreb5P2SoX0lRlcobDGXh/cd/koUFnu9Ppw4dZ3q801mf/qxG/29TyhSLn/vLXn1wseQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoCR2YCHnVzPgaTq9bBW5crfjLaF6ZJZNnRqlzvpVVIXkbR3qd
-	OB5joClEqCM0DnGMLdMcnF/YMSDmTUza7XLL2PbViErw3yP8f9aagnnL
-X-Gm-Gg: Acq92OE5Gq+15hJMtgMWdz9OR4rleXuE7oHo3OaGvsnQRRuf3ScRxGeKQRoIJRKJUWv
-	AjawEISoneqw2F/vIms3rgsLKpy7evh82/rKrbcS8cQTnb8LEgI2AzVBPBlWRc9I4SkqKQD+iWD
-	TdF4HMBuAxUB0W3x8PQM5SwBlTOvecUPr7xmY5YON8ZiHX152A0U9HiCOuftllkXkNJvCUYy6ZS
-	BaAavxnWWLtD8HhDgzDrtnjFyUnN+qMhYXoXyHxHeoFbQU39KQ6wOOFziv3IapTJy+gMHDeETvO
-	gNSWvIMNfMRoJxri+NPourUWS/uocxPyRSTC36JkPNlsT8wNT97ncLhYLsfCrsDKZAITI+r92Ef
-	m679xttc5+nT5bQ/lCbvyh4IfhHhsiSZnwRRUI9SHww9Rj3qZf5Eal1gbR+DbyMd2/TzYr+ighr
-	0+JRZo/y1mE3ch82NiD1FQmODYT3v5WtqXyfVSaTSdjHCSI0n10IC25ItO/mYgK9dHDOWcAPfsR
-	iZXj9XPhmlEFRv6IS0WUxHCt4pV+DUBLOEXTzGQ2I/IVw==
-X-Received: by 2002:a17:903:3c6f:b0:2c2:7baf:139f with SMTP id d9443c01a7336-2c27baf148emr18097875ad.30.1780894421834;
-        Sun, 07 Jun 2026 21:53:41 -0700 (PDT)
-Received: from ryzen ([2601:644:8000:5b5d:7285:c2ff:fe45:8a32])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c164f6d389sm162552855ad.16.2026.06.07.21.53.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Jun 2026 21:53:41 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: dmaengine@vger.kernel.org
-Cc: Laxman Dewangan <ldewangan@nvidia.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Frank Li <Frank.Li@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCHv3] dmaengine: tegra210-adma: use
-Date: Sun,  7 Jun 2026 21:53:24 -0700
-Message-ID: <20260608045324.4980-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.54.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQqLYcOh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A6CD1F00898;
+	Mon,  8 Jun 2026 05:55:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780898160;
+	bh=BHCcwuBurL/77nGhILnx41LfdVHpOdtqW6tXK8NbuQk=;
+	h=From:To:In-Reply-To:References:Subject:Date;
+	b=RQqLYcOhBwJSuYSlrGvUPh6oC21eVBEKMikZuwGjjOo4OuDmGZvMau88T/IBEDCxU
+	 yDV0n5gGyX3SV58Q+Gh1zKA/VxBmapQFf/4plfucaJmJ5bnaaozhoqgGZ/pvr9w2Af
+	 sRERvkwFjF+/X0iXadjlS1GEt+Lub4+RSOSwYyT2/9sadkYzZCWy5eGFriYeXXYKt9
+	 u/TjAE2Fk6+Yjwcy5l7ooFMuspcdJ1U/X3w8K/2me19cCRkB0qSH06QyJCDJLlvVlq
+	 uPWqIGx2lr/1XsZ9kUqLjc8u8/dhSQM6BVGOvU2zeGgABqfW3v4xD4jEssZeo+p76F
+	 sTkzWolPKfp5g==
+From: Vinod Koul <vkoul@kernel.org>
+To: Frank Li <Frank.Li@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Laxman Dewangan <ldewangan@nvidia.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, dmaengine@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Akhil R <akhilrajeev@nvidia.com>
+In-Reply-To: <20260331102303.33181-1-akhilrajeev@nvidia.com>
+References: <20260331102303.33181-1-akhilrajeev@nvidia.com>
+Subject: Re: (subset) [PATCH v6 00/10] Add GPCDMA support in Tegra264
+Message-Id: <178089815693.15844.9585336609711943843.b4-ty@kernel.org>
+Date: Mon, 08 Jun 2026 11:25:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-Simpler to call the proper function.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- v3: change subject
- v2: reword commit message
- drivers/dma/tegra210-adma.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+On Tue, 31 Mar 2026 15:52:53 +0530, Akhil R wrote:
+> This series adds support for GPCDMA in Tegra264 with additional
+> support for separate stream ID for each channel. Tegra264 GPCDMA
+> controller has changes in the register offsets and uses 41-bit
+> addressing for memory. Add changes in the tegra186-gpc-dma driver
+> to support these.
+> 
+> v5->v6:
+> - Replace dev_err() with dev_err_probe() in the probe function for fixed
+>   return values also.
+> v4->v5:
+> - Use dev_err_probe() when returning error from the probe function.
+> - Remove tegra194 and tegra234 compatible from the reset 'if' condition
+>   in the bindings as suggested in v2 (which I missed).
+> v3->v4:
+> - Split device tree changes to two patches.
+> - Reordered patches to have fixes first.
+> - Added fixes tag to dt-bindings and device tree changes.
+> v2->v3:
+> - Add description for iommu-map property and update commit descriptions.
+> - Use enum for compatible string instead of const.
+> - Remove unused registers from struct tegra_dma_channel_regs.
+> - Use devm_of_dma_controller_register() to register the DMA controller.
+> - Remove return value check for mask setting in the driver as the bitmask
+>   value is always greater than 32.
+> v1->v2:
+> - Fix dt_bindings_check warnings
+> - Drop fallback compatible "nvidia,tegra186-gpcdma" from Tegra264 DT
+> - Use dma_addr_t for sg_req src/dst fields and drop separate high_add
+>   variable and check for the addr_bits only when programming the
+>   registers.
+> - Update address width to 39 bits for Tegra234 and before since the SMMU
+>   supports only up to 39 bits till Tegra234.
+> - Add a patch to do managed DMA controller registration.
+> - Describe the second iteration in the probe.
+> - Update commit descriptions.
+> 
+> [...]
 
-diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-index 14e0c408ed1e..be2ad6e28618 100644
---- a/drivers/dma/tegra210-adma.c
-+++ b/drivers/dma/tegra210-adma.c
-@@ -1073,14 +1073,9 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 		}
- 	} else {
- 		/* If no 'page' property found, then reg DT binding would be legacy */
--		res_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--		if (res_base) {
--			tdma->base_addr = devm_ioremap_resource(&pdev->dev, res_base);
--			if (IS_ERR(tdma->base_addr))
--				return PTR_ERR(tdma->base_addr);
--		} else {
--			return -ENODEV;
--		}
-+		tdma->base_addr = devm_platform_ioremap_resource(pdev, 0);
-+		if (IS_ERR(tdma->base_addr))
-+			return PTR_ERR(tdma->base_addr);
+Applied, thanks!
 
- 		tdma->ch_base_addr = tdma->base_addr + cdata->ch_base_offset;
- 	}
---
-2.54.0
+[01/10] dt-bindings: dma: nvidia,tegra186-gpc-dma: Make reset optional
+        commit: cc6049bd3fa8501ee27042df469a19ed69cf406d
+[03/10] dt-bindings: dma: nvidia,tegra186-gpc-dma: Add iommu-map property
+        commit: d6d7ffb994c676e6414a725d7eb8f208d901b63a
+[04/10] dmaengine: tegra: Make reset control optional
+        commit: 680e1b928a6adc1b2d95038ffe9c9887ceafd478
+[05/10] dmaengine: tegra: Use struct for register offsets
+        commit: 5000beabae65310ec81db40dcda181b0a6192ff3
+[06/10] dmaengine: tegra: Support address width > 39 bits
+        commit: 286632b9bf1cf239482d54b592cc1d5bbd5ec783
+[07/10] dmaengine: tegra: Use managed DMA controller registration
+        commit: 45921a3282d642038d92737fab24107522324bd4
+[08/10] dmaengine: tegra: Use iommu-map for stream ID
+        commit: 321c0a15f027b83b20ed37717191a2187c9e2eb7
+[09/10] dmaengine: tegra: Add Tegra264 support
+        commit: b236b7973808195fd9c471492bee0041148b823e
+
+Best regards,
+-- 
+~Vinod
+
 
