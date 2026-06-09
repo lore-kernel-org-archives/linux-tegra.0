@@ -1,80 +1,97 @@
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012051.outbound.protection.outlook.com [40.107.200.51])
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD941330B3F;
-	Tue,  9 Jun 2026 05:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780982352; cv=fail; b=BpOel/5JgXqFE9ZmmstYCKmzOPa25ZJ95Lym9cgyt6SibBA//ZsU3jtBAHaWx6PzNfK/hU4DwiCH1kiqmvEOQPGNp63mij59cKgEMXKWHskRyJSnPWX41OSRQlxbbU7ThMAEuX1r/EInjnGkm+dYe4lvlbuGV1roL5LWEeVfKJA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780982352; c=relaxed/simple;
-	bh=+6LuZahZcVFpp9Vvuf5e6Ac0QE/M1kmMowzg3fMsJVQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nnMSE1v8KYJ5hzjUO0R5AY0fYJm0kMBKccaGWZSXiOrULPWJhLmbdqE6OuWtUrygw5lxH2PdxsKGSGL0/7A33lsHTxnORyJh3CWBa8xS41ZDNrmfM0k+nnd3FeaqXa6Yoq/6xZ2hjM4ZWSpFSgkSYqkDI2H6Aj/HscVX0vBEPs8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=D8fi5pj/; arc=fail smtp.client-ip=40.107.200.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A792FE057
+	for <linux-tegra@vger.kernel.org>; Tue,  9 Jun 2026 06:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780985716; cv=none; b=j25sDVVbK7UG6b6nFFgsqGiXAGuhg6R1ng48ZCA+aYfa75wbGQDxvgsFGvVFloRa4uqDtHi9kERRHS/5IseGFnZL331v/WhHfNXtZOnpxQGTiN+jGNJjJnl8/54m+J3batRRS+/tWcPkKyDIXSajuBIAFjrPGJ+ucG1wIdybqVk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780985716; c=relaxed/simple;
+	bh=BlfHt/EcnceYK964c8b6bJMPVkoV83ARrVpSfVvjqCs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T2HJq7MVUD70jQmijnEbCS/5Hzn8tNLli+7MHmnYBa/ATOvNHHCM6wX2u6Z2Rhf3wxKFIIaIMr5TuS62NPiLRE/5B/w8gD+3pD3zrBo7tx9p0do4+oXxt1XBGPL7WkW+nFIX0uGPPVp9ODnwA+H37IeUKcKPPAkjGnn+3kGDgMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kQ+kUgOr; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="D8fi5pj/"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XV1TnrPdtPdNCJK0Pm9EyCDG0hrjoAoylBU4UYjXuOQqHvJXytHovbuql+HarP19Ncz1fM4AFeq0CWMgr1L/TwuJCrmEmBfN+6dvcJD4GjvJxiJXI3qYyeCHmdcDQQ5fLGQZrvNwZwjGnajI5XYuLJRZMRPeGmCXLbwG+8a9LOKIxbyzdKT6FVq05+ur1mm0JC4tvFL5hgG1yn6u8jKrKGVQqTyJVFdmdzQD4kYYF1qWzwroVTIG4JZpwUty9LFvnB+Q4IBXJCOi1nUVCV5soC7zDGfSthNuzlGNdaWlkTE4ZRLzB31oC3Wvr1diJhJP0B6smB0GhilGWciNRYpLTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CvzAismpprrh/fi1pNGY+qT0A7KRPyy5UbuiDndXWXU=;
- b=jNPTLzYj/shWwmgIRtM2syeZwzIBqdmDaRSk74fSLLbyejPcC8u2Tueg3pPWlOJEwSH/LUV2HuD6PTTxlmmNrUZLSfdWNbNcWg/vN/jXLlDGDgxJRta+GX4RxI2aS9CUME5k5rAwM+rDBnNUWYkUPp6npCFV8nJF8OyLGcs9mUOSHjgYsFee7DkOg1gD1tvXwdw1AvJKUVh2m9rBsDwiyYv8tOa56fnvARmxDNP/tuuLPWJHeK3WJntXggZ+bkEDKPBatW/WEhxyHArRrrqHOvLoE4JaI3vyE/Q7MeTIvVjaMeKRpQ1WK3cFzmmyB/ZtT7eZsLzIFVNViSKozoJauQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CvzAismpprrh/fi1pNGY+qT0A7KRPyy5UbuiDndXWXU=;
- b=D8fi5pj/QWMvPWm/ja5lXl9mT2rbMwRhPEtu6DbIfj0acwkxiqaKwjEBe8SqXGm5bO1clc28cM1TtTZSoSJZ/ubnkfCxU0rMUzJpi5xqvD7Azx4+sEgFmZVz4i5HMJxQJULQk6jlNxS1uUWGwWUHgbY7VLqhNHoKcm5P7i4AzgEovNS13+a2ijcFimoCWepzqYsaNm6NOBs7QPgx2Gy4YOg7ThuafBT94CTk0AHDDNjqZ9xb95RvX4mQe9JkiCsUUfjXC4PNlesgDN/cGlExm91kmCd1Elc0CBxZ4ABiFvR4mqaUFkc0vLPHwBgQJR+tzm69Ao5mTj3Yto5H/W1crQ==
-Received: from CH0PR04CA0102.namprd04.prod.outlook.com (2603:10b6:610:75::17)
- by PH8PR12MB6676.namprd12.prod.outlook.com (2603:10b6:510:1c3::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.11; Tue, 9 Jun 2026
- 05:19:06 +0000
-Received: from DS2PEPF00003442.namprd04.prod.outlook.com
- (2603:10b6:610:75:cafe::13) by CH0PR04CA0102.outlook.office365.com
- (2603:10b6:610:75::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.92.13 via Frontend Transport; Tue, 9
- Jun 2026 05:19:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- DS2PEPF00003442.mail.protection.outlook.com (10.167.17.69) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.113.7 via Frontend Transport; Tue, 9 Jun 2026 05:19:05 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 8 Jun
- 2026 22:18:54 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Mon, 8 Jun 2026 22:18:53 -0700
-Received: from build-akhilrajeev-noble-20260602.internal (10.127.8.11) by
- mail.nvidia.com (10.126.190.181) with Microsoft SMTP Server id 15.2.2562.20
- via Frontend Transport; Mon, 8 Jun 2026 22:18:50 -0700
-From: Akhil R <akhilrajeev@nvidia.com>
-To: <andi.shyti@kernel.org>
-CC: <akhilrajeev@nvidia.com>, <digetx@gmail.com>, <jonathanh@nvidia.com>,
-	<kkartik@nvidia.com>, <ldewangan@nvidia.com>, <linux-i2c@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<thierry.reding@kernel.org>, <wsa@kernel.org>
-Subject: Re: [PATCH v2 0/4] i2c: tegra: Improve DMA mapping, latency, and power management
-Date: Tue, 9 Jun 2026 05:18:49 +0000
-Message-ID: <20260609051849.1734182-1-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <aicYDVct2VElN4IN@zenone.zhora.eu>
-References: <aicYDVct2VElN4IN@zenone.zhora.eu>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kQ+kUgOr"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1780985712;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=i2jpIDCVnNVhXSYDVvdDiQ1s+6wApppzolFVa3ePcBA=;
+	b=kQ+kUgOrV6W6Jc16Kii3uxt27H6tnGH4ZT13H/tGloTnC2pxAr0+1e0lN87mGDlSsCwwUT
+	byRLJdWy+OF38KcDXWI7VaMSELJjoswljJztiskoxvxrLRlYswbpJIeHHZA8qm2XiuHT4d
+	nSyAaMFF4R+0aR7kWu7ve4uMSn0m2lc=
+From: Kaitao Cheng <kaitao.cheng@linux.dev>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Philipp Reisner <philipp.reisner@linbit.com>,
+	Lars Ellenberg <lars.ellenberg@linbit.com>,
+	=?UTF-8?q?Christoph=20B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Christian Koenig <christian.koenig@amd.com>,
+	Huang Rui <ray.huang@amd.com>,
+	Eddie James <eajames@linux.ibm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Matthew Auld <matthew.auld@intel.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Waiman Long <longman@redhat.com>,
+	drbd-dev@lists.linbit.com,
+	linux-block@vger.kernel.org,
+	linux1394-devel@lists.sourceforge.net,
+	dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	linux-spi@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Kaitao Cheng <kaitao.cheng@linux.dev>,
+	Kaito Cheng <chengkaitao@kylinos.cn>
+Subject: [PATCH v2 00/14] list: Prepare entry iterators to cache cursor state
+Date: Tue,  9 Jun 2026 14:13:33 +0800
+Message-ID: <20260609061347.93688-1-kaitao.cheng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -82,57 +99,66 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003442:EE_|PH8PR12MB6676:EE_
-X-MS-Office365-Filtering-Correlation-Id: 25260745-2787-4fbf-ce9e-08dec5e6a049
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700016|18002099003|22082099003|3023799007|11063799006|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	eVXqSGKjU1vXwDg9MU3soG48oSXupG90THbeQ/8N6OgkM2K01nw2DJSwoHM0YdOxjTguRb0AOOmzonTqqJ50S4BuU/m+g/YqD8J+amHxRu1Gh3XKHQxB0eRnhPScmimlW8DRNLJMOh8DPWvgLQsYBO0XXbSF974M9qWgCyALU3WBzsvdmLXZF5/yd6S8mGXvmE1aF/wSdh8JSppx9so6z+UVMniOvLWSsyjgwiITZppkdv5RhcIga8yz1BabqCtE0lgERLsmTabXh4wIIrpArhqJL1YiaUaC7TrJE3EzS23v1rV1Gd0wit7QZY8Z1LzJ9crL0wUYOWylEekdEbTWo/LDtYIGVRlCmEyAAjhvEu0wxLUGkHNvK6HO4UQsvwbTbaoTfliR80FvBNn7cK/Qo396ITCPG5fRv45Ui5ugwfDDSDjm8ePF5nro4FK3AVmYdgJRbk6LueagvHVQq0ciMz4OAyyClfjEFDXp1iLricAuG38gMkGGbB1rJSwZy+KLNcVg7ed2U0eKTFv4N1mkUIabFk8GpKoL7WDiMHNMi6aDWMQ+Brfb9/nZCswWUiVeEobWIYQ0v6tFm8RZdC9U2GRA9aQpZ7RGg00Tdj6wPSx7U1yDjO3ryGT6sJkQINHsYGr6BqF6aVYkwN6V3SDHELIYLFXxdHEhADAa/IXOa7itLKlkp9AoXFX+8aExjWWGUdfxKg7rFR8OcgddUCw9cz3yBxHza91YT+PCV7Nw7to=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700016)(18002099003)(22082099003)(3023799007)(11063799006)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	J/lk3QUhG4W35Eo9NtXcy2UbvAoRcpQYvhQnaiMeRvBHXEyungx7AgeEIL+8+7NdN0OV9Ip7/O258tooZJPIPC++DFkDAp8oBogoki3QxQDU6t3zg2oSX2Zy1Z0VqeYhkBHZ4kYF0ZTb7I6Fn9cpQ0LVfIhqHdCzMf7xSLd9ebu2NfU1qUbGoX16zLf7vUdTMP8c7U042bOMUwg3ESvMau3VzQRaZOJ6Rsv+HbtQwboKyLDhLBwtAVqKuBs8FqsD+jdplkWQtzb5cgJ4x6Of+LAq9eDcXZ5lo/TLeHhCC9QwmC8yG1BrLRRZbNXaN8j8ntOrX9obKJHt7AdrYDPGcdqgzD80wnso8dCzit1yg5+2TjHjIl1pNpeQBsHc32/nJEKRgQaFWvJ8YjprZTOiXCzqcTgb8kWDuA1PBXRdBoYODAQ8DTV/T4dwnWyuIPzj
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2026 05:19:05.4062
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25260745-2787-4fbf-ce9e-08dec5e6a049
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF00003442.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6676
+X-Migadu-Flow: FLOW_OUT
 
-Hi Andi,
+From: Kaito Cheng <chengkaitao@kylinos.cn>
 
-On Mon, 8 Jun 2026 21:30:59 +0200, Andi Shyti wrote:
->> Akhil R (4):
->>   i2c: tegra: use dmaengine_get_dma_device() for DMA buffer allocation
->>   i2c: tegra: Disable fair arbitration for non-MCTP buses
-> 
-> I merged these two patches in i2c/i2c-host.
-> 
->>   i2c: tegra: Update Tegra410 I2C timing parameters
->>   i2c: tegra: Fix NOIRQ suspend/resume
-> 
-> I merged these two patches in i2c/i2c-host-fixes and they will
-> hit mainline first.
-> 
-> I haven't seen any link between the two groups. Let me know if I
-> missed something.
+This series prepares for, and then updates, the list_for_each_entry()
+family so the common entry iterators cache their next or previous cursor
+before the loop body runs.
 
-You are right. They are independent patches and do not have any link.
-I missed to put them first in the series.
+The first 13 patches open-code loops that intentionally depend on the
+old "derive the next entry from the current cursor at the end of the
+iteration" behaviour.  These loops append work to the list being walked,
+restart traversal after dropping a lock, skip an entry consumed by the
+current iteration, or otherwise adjust the cursor in the loop body.
 
-Thanks for merging the changes.
+The final patch changes include/linux/list.h to keep a private cursor in
+the common entry iterators while preserving the public macro interface.
+The safe variants remain available when callers need the temporary
+cursor explicitly or have stronger mutation requirements.
 
-Best Regards,
-Akhil
+Changes in v2 (Muchun Song, Andy Shevchenko):
+ - Drop the list_for_each_entry_mutable*() helpers from v1 and make the
+   cursor change directly in the existing list_for_each_entry*() helpers.
+ - Open-code special list walks that rely on updating the loop cursor in
+   the body, preserving their existing traversal semantics.
+
+Link to v1:
+https://lore.kernel.org/all/20260529082149.76764-1-kaitao.cheng@linux.dev/
+
+Kaitao Cheng (14):
+  drbd: Open-code transfer log list walk
+  firewire: core: Open-code topology list walk
+  drm/bridge: Open-code bridge chain list walks
+  drm/i915/gt: Open-code active timeline walk
+  drm/i915: Open-code DFS dependency list walk
+  drm/ttm: Open-code reservation list walk
+  spi: fsi: Open-code message transfer walk
+  spi: stm32-ospi: Open-code message transfer walk
+  spi: stm32-qspi: Open-code message transfer walk
+  spi: tegra210-quad: Open-code message transfer walk
+  locking/locktorture: Open-code ww mutex list walk
+  locking/ww_mutex: Open-code stress reorder list walk
+  ASoC: dapm: Open-code widget invalidation walk
+  list: Cache cursors in entry iterators
+
+ drivers/block/drbd/drbd_debugfs.c      |  4 ++-
+ drivers/firewire/core-topology.c       |  4 ++-
+ drivers/gpu/drm/drm_bridge.c           |  7 ++--
+ drivers/gpu/drm/i915/gt/intel_reset.c  |  4 ++-
+ drivers/gpu/drm/i915/i915_scheduler.c  |  4 ++-
+ drivers/gpu/drm/ttm/ttm_execbuf_util.c |  4 ++-
+ drivers/spi/spi-fsi.c                  |  5 ++-
+ drivers/spi/spi-stm32-ospi.c           |  4 ++-
+ drivers/spi/spi-stm32-qspi.c           |  5 ++-
+ drivers/spi/spi-tegra210-quad.c        |  4 ++-
+ include/linux/list.h                   | 46 ++++++++++++++++++++------
+ kernel/locking/locktorture.c           |  4 ++-
+ kernel/locking/test-ww_mutex.c         |  4 ++-
+ sound/soc/soc-dapm.c                   |  4 ++-
+ 14 files changed, 78 insertions(+), 25 deletions(-)
+
+-- 
+2.43.0
+
