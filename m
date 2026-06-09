@@ -1,77 +1,77 @@
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012069.outbound.protection.outlook.com [40.107.200.69])
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012048.outbound.protection.outlook.com [52.101.48.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D2A3DD520;
-	Tue,  9 Jun 2026 07:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECFF3DD512;
+	Tue,  9 Jun 2026 07:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.48
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780990352; cv=fail; b=tXD2tFhG5xmeAAvjUm3uORGBQdJryMacQiDbs0KzXXOZqBOdvzHo2zC6tj7XfH+0pbFeo/ssX9xTYHWNeYHGz5X+e/2w9COi4DiTJTShb/rFjuullwLE0RZNiBJlgSj8G5yJIMxqjAHbniNac3mcIVOBqIZ3n0hdVyPm3EHTJpg=
+	t=1780990353; cv=fail; b=PvyQosoezO4PyCqqWE8aXIOr/wpymavMxg2iW1lhCvkeWpdxCj1t2Do4QVnH04XIzt8lCGPa8FMOlRwf5TNbdCiMu5xKMI6XoZbxhSqSVMrQA7S38rFSr1mzBXzGRxihgDxryWl997wIEMiWNHUSBCpR2LDRKtiswH1iE+SeCN0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780990352; c=relaxed/simple;
-	bh=P57JaIwr2rey1zM8IhJtDwke61H0X1LW7taNqpoLcb8=;
+	s=arc-20240116; t=1780990353; c=relaxed/simple;
+	bh=nstEDKDJeZpY50n8TBgy3fAtviCOXofp7+s3EqlLgw4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lqtR2sWyfsLLIPD/2cuDCXOQTy+84cYhm68yMyKloO736xyLo8ZTI9Jybwt0oLo8oG/HHQ3RXm5V/p+HZmYR9ZwrPAcf5ncVd/MriomLSp68mcaewbvziXfsRFwYA0tiN07Y/IoIe36WQXeXjcCtQiVKJaAjhsSSd20qNg9+Lfk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GRAfGLrc; arc=fail smtp.client-ip=40.107.200.69
+	 MIME-Version:Content-Type; b=PJYgnj91aSUjgsYozz0FadKqP7xMwQ3m5PWrtWwFxDiWwWWHT0Wc5oSvFMv9smNIhlVdIKL6wf1CDNO9jaYtb5SvfkjWy+asimYIqeA703mxQNn4VJ9jfjs2dEwi1btJplLqn9f/rOJEUbyIz74AuWU3Tdcer9Ng7bt04a9uYak=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jD/S5Fiu; arc=fail smtp.client-ip=52.101.48.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GRAfGLrc"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jD/S5Fiu"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tKqEVhJeOrQZ+5cr7VB/Qex4NSzF8g6ZHGTGw9sazPcjDwwKjaWvcnlutHxOOOct8pbKuQG+kUiTfrcBWuhL50Lg0hc/mvf3yXRYvxeDHA2KUdPTOULjFfEDQf3oK+vj4SDdm4jRNu6zNi5NJvTB5u7H/c4zxM6t844+zZKWsay1k9gJ0cYvLvqm+ODnBf1CLr1sQ6fTzRKz1ppo3TFRcBXd7KA2huB8RPNM5wNQ0+Xu6k3HjoG8HuJWKmlioCAoGsT4UyTZvnt/NIbd1AYnAvakilLbDNS+tQ9nx0Sg7x6wrwy4h0wlfLhy38oCrZq4y+n4C3Kq38Pu17CcBHkwIA==
+ b=MA69uYuBQJf25VLf22dMMvXgPPrK0DS/QOeGXeuNCv8f5HakjXZhiXzizdwqV5khEeVq8D9cVSzCrBqdLk2sQgAXjvK8/twDbW9XgLgkL1d7U/4v7tID7TSGLp4EzrYF/jsH9a3M1tJ0pN69GBuTGFfnzKplcocTS8kaJUfE91z6BRQmyazKjCEwn/s3JAR0ABFG7EXTCXwBW6w2/98xtyM2eju/pxR4c0xIhw2IyCV82MM1JLa2gWPgC39eYMKuhBw92bG+FagJpu9VTM8r1qYYW+UjDtWBaY/a481zXuperG9T0XKJA+vDEVLwIQZzCSX8zs6o/Wi2t44f7n6TQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1jaMPIM6KX+UST2o1FwG6tW3QIGROy+dkeeNMng5ZTg=;
- b=sAv8qz8vu2hwtq6mc0CqBiYSs4lIHMXkJmj/TevaRGbuUV3dGjDoMFf8a5l7xzFwDvqT7Wd8/VrCLh4G4z53/VM9JK1jIkwZWl0YjMVhQZPDJDbgIXCOeQJT/kb8fjNXQdQ8f3n+9UPVzLY69hu2eYxIy3gLoXhXP8mfGcA0iSuhuz3rv3xYiY/l48UDnuBJgTQX44mQcJHZYaqcSS/NjDVLY1PZ6BVFW5R8I81kVtr5UVxi+yU30xfbl56dxKBqW/kOXpFDHeCMxEhQArbbRqn4BBtRH7lUBUZMAmFYjZq9T6kV0HeJsKdUsceWULyAdzwfZaSOcSAFkG/1ehM+NA==
+ bh=/RMEKfOOXWABl/OB7w9sMWEc09wb3jg+KsxGPyobtO0=;
+ b=fVBuZb75SwW/3sbmwCXqpgSP3x6raac4Vm3Ed7XWcPpzQlQ369DeyBwY/bYWDvxJ3012UDnQ9UYxVJGDouXUMMYJ66nOghArK/lSA92Wneyw515wA7kN+IPREITszikySU1yydk37Bl3e4HJc8XwQz8nz3zFEDoPKf9aDv2Iyi7s09yslQfp8ViGyZc2VYIzu2TVVYMgFXVe21srRsBbozwBWe8FEpaDa34nLf1a5owbC3PHg4Jr6hPiFnO8U1a3KjAUdIZak6q+jqIglf9gdRvLwwK/XaI3fHtRUvEjyUWXLSaEOBry8haJT7w9nffXkifqFRbDU5CG3RA7pKQbWA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1jaMPIM6KX+UST2o1FwG6tW3QIGROy+dkeeNMng5ZTg=;
- b=GRAfGLrcHuYRveSRpsTkoYdtySkdBXhf1Hd0Xm/aMi7JKQkRKuCYv8P301hVeJV+/RajFaWlwR/HRHQH4b76Pw/P8Tk5rMh/hqtFa6qERiX2Awwn09NWo3X7hMEsIRMI2TzLI2Dfp8Dun2q590M/kVYkiEOJSZJpz3lE9Zw3wsP+v9XXNxqcRiAwszOCQ3KR/uG9/crgtE6I6kP6UZpnepJVKCKpSg1EinjbxFMuGvY8b/LL04EIcVQu4WbfY2jSaS+Jp0uXPLchYQVf388OjvrV+ttO5WyEHfpV/CtVFAdlkOw8Ynck1gGmLmFA9ej6YKGLz/V19u1f8PFgJIonHA==
-Received: from SJ0PR03CA0342.namprd03.prod.outlook.com (2603:10b6:a03:39c::17)
- by PH0PR12MB7816.namprd12.prod.outlook.com (2603:10b6:510:28c::16) with
+ bh=/RMEKfOOXWABl/OB7w9sMWEc09wb3jg+KsxGPyobtO0=;
+ b=jD/S5FiuC2s8ys4UeQuc7Zon8DqJQES98i/zWDW9jE8IIKoDdc5t8zd6eXFdGH7+q9h3eHNOI9PsUC6ZFl6u4ztswty2ZPqx+K/IekCJ/LpoHnCC774RGSEyfFYNxubLwQYcDrNt+gST8Hcv2KhxZJJCT7I2EdTrHXnoL9O9CZdB7osVcjRGSRhD986BSWf6Sc4icSg71CFaK98lzVIOuhjbyFqRPWnN8Dm2HShxgcIn0+VgB1NbktEObZ88iUuUAUaWSxq0IQ3jvRt9G7Ukrc6FlATVg2UuQv/TOfOPc3mcQxVtvSrxZfCnfOd+7LUZ+Px9yEfUrXDKl9YRY22qOw==
+Received: from MW4PR03CA0340.namprd03.prod.outlook.com (2603:10b6:303:dc::15)
+ by MN0PR12MB6126.namprd12.prod.outlook.com (2603:10b6:208:3c6::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.12; Tue, 9 Jun 2026
- 07:32:26 +0000
-Received: from CO1PEPF000066ED.namprd05.prod.outlook.com
- (2603:10b6:a03:39c:cafe::64) by SJ0PR03CA0342.outlook.office365.com
- (2603:10b6:a03:39c::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.92.14 via Frontend Transport; Tue, 9
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.14; Tue, 9 Jun 2026
+ 07:32:27 +0000
+Received: from CO1PEPF00012E62.namprd05.prod.outlook.com
+ (2603:10b6:303:dc:cafe::5d) by MW4PR03CA0340.outlook.office365.com
+ (2603:10b6:303:dc::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.113.10 via Frontend Transport; Tue, 9
  Jun 2026 07:32:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CO1PEPF000066ED.mail.protection.outlook.com (10.167.249.10) with Microsoft
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1PEPF00012E62.mail.protection.outlook.com (10.167.249.71) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.113.7 via Frontend Transport; Tue, 9 Jun 2026 07:32:25 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ 15.21.113.7 via Frontend Transport; Tue, 9 Jun 2026 07:32:26 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 9 Jun
- 2026 00:32:08 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ 2026 00:32:11 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 9 Jun
- 2026 00:32:07 -0700
+ 2026 00:32:10 -0700
 Received: from build-amhetre-focal-20250829.internal (10.127.8.12) by
  mail.nvidia.com (10.129.68.8) with Microsoft SMTP Server id 15.2.2562.20 via
- Frontend Transport; Tue, 9 Jun 2026 00:32:07 -0700
+ Frontend Transport; Tue, 9 Jun 2026 00:32:10 -0700
 From: Ashish Mhetre <amhetre@nvidia.com>
 To: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
 	<jgg@ziepe.ca>, <nicolinc@nvidia.com>
 CC: <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
 	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Ashish Mhetre
 	<amhetre@nvidia.com>
-Subject: [PATCH v4 1/3] iommu/arm-smmu-v3: Factor out CMDQ batch force-sync conditions
-Date: Tue, 9 Jun 2026 07:32:02 +0000
-Message-ID: <20260609073204.1760077-2-amhetre@nvidia.com>
+Subject: [PATCH v4 3/3] iommu/arm-smmu-v3: Issue CFGI/TLBI twice on Tegra264
+Date: Tue, 9 Jun 2026 07:32:04 +0000
+Message-ID: <20260609073204.1760077-4-amhetre@nvidia.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260609073204.1760077-1-amhetre@nvidia.com>
 References: <20260609073204.1760077-1-amhetre@nvidia.com>
@@ -87,89 +87,173 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000066ED:EE_|PH0PR12MB7816:EE_
-X-MS-Office365-Filtering-Correlation-Id: 40360114-49cb-4c6e-6334-08dec5f940f9
+X-MS-TrafficTypeDiagnostic: CO1PEPF00012E62:EE_|MN0PR12MB6126:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0d300576-e725-48ef-2c26-08dec5f9412a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|1800799024|82310400026|376014|18002099003|22082099003|56012099006|11063799006;
+	BCL:0;ARA:13230040|82310400026|36860700016|376014|1800799024|56012099006|3023799007|11063799006|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	Dd3g0kLTBXy476Q9C+TnkhYrps6CEAKZkO0taHIcaQBIrGoPcbjV0SYzok7f+UyLGu+fWE4TtWh4Q0RQyviPMuSf4ye6aHxLZzo63CvIUd+A8ft5hd3IjE1pdRf1eMuga7BLmaJqEJ+l8njyRDjhn9yMpamjnuwVHJiH80yOtoaJ1QX/tLflZDt2mo1pb3XmmkNJunyugT+4USd/r4sc+fKD1JHcnJmI795ofSaSzB75mb/AluXB7DNPnW4sMc7rqSDAPDb0pOqcSEpe5yBaZQFlKvo+QUP2uW0luAWrXdvHyVFsMfnoG0Y1qPDdL2gNb7nlfGBgm8blESI4KO2s6tlxQ5YUWPhDYUhszfwkKlpTHcrbGb8LGYM7ouKqYgk8gMrOLqGlYtrQvwsyQ1qJX/Gy6AmKT9cnY602sHr4GqDsCOiK3y/5PSwS3y20D2aFs2wAIEa49vTsIudcZpqrEf1FR5/RD1MRnW7wUOfI0ygePwgxbHNsG9C4CDxuMDB0/PQ09PBJhrDXSlExlDHxJGSlOT5iT7IHefhA3jT33LuVSWVqN7EzhhrGGmhqQuohodBBaeU7IE4/G1Fxi8NCiKyrtqK5nxAgj6hYPDgcjy5wC6YIyAMzph8o54cEWAVMRQalihiOlNLZzjXOEIUQgMNqhPop8THJKyTPHTfABS/vOn2e+oG0q17wXGl2z2TJT/mEiWzZHFT/1ge1YUVo4Prjq8hAp6+cdIuZqQEyjaE=
+	KIfxrWO0oNPthpQ3QmzVVNa1XWfiZsxv9+8LglFPyDRmZY0X3WeAOXe5YjX78U9ZCiyhPemUEuY6XxzZntHT9yi3X2X6vH9PwXImA4ccTS0/jYZgBCkFLWeI2Dza4uJRtM3vPyJu5wnwxKx7JjtYE2+hlCUBkay++3m81dHvVkzITb839NnVDeyPtYXg9ynuNVdnZ0Xd8OLch2iwGRG/3G2APyT6YjUAYxYDuhhzdXs0TpQj9Y1pzj1FSyHigLw3Cw5fwU11DvcljL92dGrPJ1YDHT0qcZykPDMUI68C2SwV7i8HysiEH0HAbhfCBQjLJslRAx0WD7Dxkm9ocDp6J5M5Z3r4U7gYDnTDzNKmg9JpZgNfYqX9aUBt4DmEbm8y/8NUqeMMMfZ7ccl0xeJNoPBtcO3jt+3ZnsGQUe93fRr0bD4eS56ujRFq81p/AHiZFqYKgQw+2ZR2Mptz696A7ROHyy7Zv/h3PnpUzB8jw0iM/z3Yut1eNLPYtWXZ2AdjAl33zMs7vvDAa0CWyGRrR/3hqQA6yucJvRx72IKwZilrX4m5ZlnY4myyEi4dzgSoJ8JlqsauEv88ANoe6GzpbL4fSRBNUAr2ESDR3VVUGQuQVu1ERd56u0zUny+YXEskSl73JYxDgVCKsWskGUB24hCUAmF2ZDn/2FQFhrBdA9YJ5O2xAMGm//I51CPsHa2tely+uaKUoNKQNsYhiQK+n015RDGcgSjWk1gfqP9cFNQ=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(1800799024)(82310400026)(376014)(18002099003)(22082099003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700016)(376014)(1800799024)(56012099006)(3023799007)(11063799006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	8+Eu2dZ//Jz3OHYYzLYbdt0ADHDhoAUqX2LBC/4OLAYE3M7Ly3aNreX/02DHSYiFLXl65CekPj22y4d2yfkoasHPgMZ9a9DTjGXzIl+5Ovm62FxHM5rvSUBUUlvqQBjeUWnFDgh6QNuI8Ia/nTSWuZ9WEwsG5wh8BwRrxGz3PP82sU+V+xOZcjUJwoSm+WH4V90l4nJ+hEeRTeNT0WqOvAu+dHPZ+rtBxvwd5tfhevrRthW6qW5luiQj62XbR78CrdfF4AIsSP8XhlV4maZGkU2159AsfuCl8jWvNZpe/muoqq23W5B97AnnFxC6slLJzlnHFL/jYpZtApNeP7KJUXXBer0HhiFqdWYvWibC+sDM9DMX9VAmEQUNEcM5G5BQJvBTYsNBhdTiuNTu1gf/GmuqW/beLWYJTYwIaIvf9XYaYklAmdH7j9FdWT5V4/qS
+	v83q4IXRw0MRbfqWBGMdPKCHHyE2Dc3KlufYeWeGEBfRkZq5xRGYOmMVUe6Dzz2+MChqI0YvOvCyBghGE5JA/Ymx2FGOW8T2Xte0AOmCh8gpF2kgB3vOx7qFLE12YiA4c54SVJSp9AnFwUhQ/Y8uoma/rpA+s4jlqubFCOveq2dMWzAkry/yBjDmmiZK+ShI2og1Fyp+uno5q5Hs6dFd+NZwBEir6GPyFX5CQRE2DRb6lC2zBqBV6P1XdGvMLVgPMOyLPIluTE382bPFOoCSx7lrV2Vmbt10WdJBeajVNSTOtTv6eGqYOaLFKQQt4rskWM11R7QeIgGwGEu0wmeaqKowOxhRGJq17UWCObt7GLd30j9qa+VcmV43lEdtyYiN3keBRue6I8LFpuXE7E+/spJdLrahxiCv4ytCEJEakhyxuCfcQ/QgC8ovCUZWtaen
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2026 07:32:25.9798
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2026 07:32:26.3084
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 40360114-49cb-4c6e-6334-08dec5f940f9
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d300576-e725-48ef-2c26-08dec5f9412a
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000066ED.namprd05.prod.outlook.com
+	CO1PEPF00012E62.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7816
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6126
 
-From: Nicolin Chen <nicolinc@nvidia.com>
+Apply the workaround for Tegra264 erratum ARM_SMMU_OPT_REPEAT_TLBI_CFGI
+by issuing every CFGI/TLBI cmdlist twice on affected SMMU instances,
+with CMD_SYNC after each. The erratum requires this exact sequencing:
 
-arm_smmu_cmdq_batch_add_cmd_p() carries two distinct reasons for
-flushing the current batch with a CMD_SYNC before appending the
-new command:
+    TLBI/CFGI ... CMD_SYNC TLBI/CFGI ... CMD_SYNC
 
-  - The batch's pre-assigned cmdq does not support the new command.
-  - The Arm erratum 2812531 workaround (ARM_SMMU_OPT_CMDQ_FORCE_SYNC)
-    forces a SYNC at one entry before the batch is full.
+Rename the existing arm_smmu_cmdq_issue_cmdlist() to
+__arm_smmu_cmdq_issue_cmdlist() and add a thin wrapper that, on
+affected SMMUs and when @sync is true with @n > 0, re-issues the
+same cmdlist a second time when arm_smmu_erratum_cmd_needs_repeating()
+is true. The @n > 0 gate is needed because arm_smmu_cmdq_batch_add_cmd_p()
+can call arm_smmu_cmdq_issue_cmdlist() with @n == 0 and @sync == true
+to flush a bare CMD_SYNC when the next command is not supported by
+the batch's pre-selected cmdq; the repeat path must not inspect
+cmds[0] in that case. The static-key gate inside the predicate means
+the wrapper compiles to a single tested branch on unaffected kernels.
 
-Lift those checks into a new arm_smmu_cmdq_batch_force_sync() helper
-so that adding another force-sync condition becomes a one-line
-addition. No functional change.
+For the in-tree batching path, register the new condition with
+arm_smmu_cmdq_batch_force_sync() so that a full batch carrying
+CFGI/TLBI commands flushes with sync=true.
 
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+For the iommufd VSMMU path add an arm_vsmmu_can_batch_cmd() predicate
+that splits the iommufd batch at every "needs repeating" transition,
+so the wrapper's per-batch decision based on the first command stays
+correct even when userspace mixes opcode classes.
+
+Also document the erratum in Documentation/arch/arm64/silicon-errata.rst.
+
+Suggested-by: Nicolin Chen <nicolinc@nvidia.com>
 Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
 ---
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 23 +++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+ Documentation/arch/arm64/silicon-errata.rst   |  2 ++
+ .../arm/arm-smmu-v3/arm-smmu-v3-iommufd.c     | 15 +++++++-
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 35 ++++++++++++++++---
+ 3 files changed, 47 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index a10affb483a4..76efe479e80f 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -847,16 +847,27 @@ static void arm_smmu_cmdq_batch_init_cmd(struct arm_smmu_device *smmu,
- 	cmds->cmdq = arm_smmu_get_cmdq(smmu, cmd);
+diff --git a/Documentation/arch/arm64/silicon-errata.rst b/Documentation/arch/arm64/silicon-errata.rst
+index 046a7fa47063..96050886a7d6 100644
+--- a/Documentation/arch/arm64/silicon-errata.rst
++++ b/Documentation/arch/arm64/silicon-errata.rst
+@@ -268,6 +268,8 @@ stable kernels.
+ |                |                 | T241-MPAM-4,    |                             |
+ |                |                 | T241-MPAM-6     |                             |
+ +----------------+-----------------+-----------------+-----------------------------+
++| NVIDIA         | T264 SMMU       | T264-SMMU-3     | N/A                         |
+++----------------+-----------------+-----------------+-----------------------------+
+ +----------------+-----------------+-----------------+-----------------------------+
+ | Freescale/NXP  | LS2080A/LS1043A | A-008585        | FSL_ERRATUM_A008585         |
+ +----------------+-----------------+-----------------+-----------------------------+
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+index 1e9f7d2de344..11d22acae613 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+@@ -350,6 +350,18 @@ static int arm_vsmmu_convert_user_cmd(struct arm_vsmmu *vsmmu,
+ 	return 0;
  }
  
-+static bool arm_smmu_cmdq_batch_force_sync(struct arm_smmu_device *smmu,
-+					   struct arm_smmu_cmdq_batch *cmds,
-+					   struct arm_smmu_cmd *cmd)
++static bool arm_vsmmu_can_batch_cmd(struct arm_smmu_device *smmu,
++				    struct arm_vsmmu_invalidation_cmd *last,
++				    struct arm_vsmmu_invalidation_cmd *next)
 +{
-+	/* The batch's pre-assigned cmdq doesn't support the new command */
-+	if (!arm_smmu_cmdq_supports_cmd(cmds->cmdq, cmd))
-+		return true;
++	struct arm_smmu_cmd next_cmd = {
++		.data[0] = le64_to_cpu(next->ucmd.cmd[0]),
++	};
 +
-+	/* Arm erratum 2812531 */
-+	if (cmds->num == CMDQ_BATCH_ENTRIES - 1 &&
-+	    (smmu->options & ARM_SMMU_OPT_CMDQ_FORCE_SYNC))
-+		return true;
-+
-+	return false;
++	return arm_smmu_erratum_cmd_needs_repeating(smmu, &last->cmd) ==
++	       arm_smmu_erratum_cmd_needs_repeating(smmu, &next_cmd);
 +}
 +
- static void arm_smmu_cmdq_batch_add_cmd_p(struct arm_smmu_device *smmu,
- 					  struct arm_smmu_cmdq_batch *cmds,
- 					  struct arm_smmu_cmd *cmd)
+ int arm_vsmmu_cache_invalidate(struct iommufd_viommu *viommu,
+ 			       struct iommu_user_data_array *array)
  {
--	bool force_sync = (cmds->num == CMDQ_BATCH_ENTRIES - 1) &&
--			  (smmu->options & ARM_SMMU_OPT_CMDQ_FORCE_SYNC);
--	bool unsupported_cmd;
--
--	unsupported_cmd = !arm_smmu_cmdq_supports_cmd(cmds->cmdq, cmd);
--	if (force_sync || unsupported_cmd) {
-+	if (arm_smmu_cmdq_batch_force_sync(smmu, cmds, cmd)) {
- 		arm_smmu_cmdq_issue_cmdlist(smmu, cmds->cmdq, cmds->cmds,
- 					    cmds->num, true);
- 		arm_smmu_cmdq_batch_init_cmd(smmu, cmds, cmd);
+@@ -382,7 +394,8 @@ int arm_vsmmu_cache_invalidate(struct iommufd_viommu *viommu,
+ 
+ 		/* FIXME work in blocks of CMDQ_BATCH_ENTRIES and copy each block? */
+ 		cur++;
+-		if (cur != end && (cur - last) != CMDQ_BATCH_ENTRIES - 1)
++		if (cur != end && (cur - last) != CMDQ_BATCH_ENTRIES - 1 &&
++		    arm_vsmmu_can_batch_cmd(smmu, last, cur))
+ 			continue;
+ 
+ 		/* FIXME always uses the main cmdq rather than trying to group by type */
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+index 599c835c50d8..041e188b3b30 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+@@ -700,10 +700,10 @@ static void arm_smmu_cmdq_write_entries(struct arm_smmu_cmdq *cmdq,
+  *   insert their own list of commands then all of the commands from one
+  *   CPU will appear before any of the commands from the other CPU.
+  */
+-int arm_smmu_cmdq_issue_cmdlist(struct arm_smmu_device *smmu,
+-				struct arm_smmu_cmdq *cmdq,
+-				struct arm_smmu_cmd *cmds, int n,
+-				bool sync)
++static int __arm_smmu_cmdq_issue_cmdlist(struct arm_smmu_device *smmu,
++					 struct arm_smmu_cmdq *cmdq,
++					 struct arm_smmu_cmd *cmds, int n,
++					 bool sync)
+ {
+ 	struct arm_smmu_cmd cmd_sync;
+ 	u32 prod;
+@@ -822,6 +822,28 @@ int arm_smmu_cmdq_issue_cmdlist(struct arm_smmu_device *smmu,
+ 	return ret;
+ }
+ 
++int arm_smmu_cmdq_issue_cmdlist(struct arm_smmu_device *smmu,
++				struct arm_smmu_cmdq *cmdq,
++				struct arm_smmu_cmd *cmds, int n,
++				bool sync)
++{
++	int ret = __arm_smmu_cmdq_issue_cmdlist(smmu, cmdq, cmds, n, sync);
++
++	/*
++	 * arm_smmu_cmdq_batch_add_cmd_p() can flush its current batch with
++	 * sync=true and n=0 (bare SYNC) when the next command is not
++	 * supported by the batch's pre-selected cmdq, so the repeat path
++	 * must not inspect cmds[0].
++	 */
++	if (!n || ret || !sync)
++		return ret;
++
++	if (arm_smmu_erratum_cmd_needs_repeating(smmu, &cmds[0]))
++		ret = __arm_smmu_cmdq_issue_cmdlist(smmu, cmdq, cmds, n, sync);
++
++	return ret;
++}
++
+ static int arm_smmu_cmdq_issue_cmd_p(struct arm_smmu_device *smmu,
+ 				     struct arm_smmu_cmd *cmd, bool sync)
+ {
+@@ -862,6 +884,11 @@ static bool arm_smmu_cmdq_batch_force_sync(struct arm_smmu_device *smmu,
+ 	    (smmu->options & ARM_SMMU_OPT_CMDQ_FORCE_SYNC))
+ 		return true;
+ 
++	/* See ARM_SMMU_OPT_REPEAT_TLBI_CFGI */
++	if (cmds->num == CMDQ_BATCH_ENTRIES &&
++	    arm_smmu_erratum_cmd_needs_repeating(smmu, &cmds->cmds[0]))
++		return true;
++
+ 	return false;
+ }
+ 
 -- 
 2.50.1
 
