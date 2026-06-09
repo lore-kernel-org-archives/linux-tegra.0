@@ -1,125 +1,114 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E4F4219E9
-	for <linux-tegra@vger.kernel.org>; Tue,  9 Jun 2026 12:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FB3348C4C
+	for <linux-tegra@vger.kernel.org>; Tue,  9 Jun 2026 14:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781009228; cv=none; b=KB0ousVcQ8ic144QscUwlhiaQ5jIM/hzpqb9BjvrolU+ZRplyLYs3DQP3dhuwV7GznceUsR7jXlbOU+6GEi8l9XyHlQ2VQpzJqZ4cmPNFVmSU8QwmRq+h1lcOEfbF5TBfKzRbQqPhjyScFIBb/nPOmYkx2q2Vtf0unlZ6c2kGQQ=
+	t=1781015906; cv=none; b=eothgaaKVR6ZgMtzTLANeB31N+N6ePoXUx8E3gOliHNdE3TJByL8q3Ozn73DKE39ewdyCAtLmIUeWA88u0rWugt+wHuEWFvKbBSryoYbStP8SZTPj/xIYFEBtfoq9TLn+t2Q9C2RGsZokGy3k3bAvwCyPB+xd5X48Oa+PMuh18M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781009228; c=relaxed/simple;
-	bh=vmpPHzWQcVKPEyter5TRYy9rNPMmYOgmdhkqsB+Z4QU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WZvS8Yz1zg5jyDg4f0ljmy47g7ZJZIrWSVsMjf9qHLHY0PBYbaJKZWtViXfXNL13DViGKMVR/DxlsVBz+PP9o6NzbBXvQ5IOyA42CR3JEJm3qr3WvVyH0yp0NU/zhpejh0ippgUbzS/2oeNWpAIEeyi/Ov1iKYTIVXiwSj9w3dA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LbA9x+9s; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1781015906; c=relaxed/simple;
+	bh=+3m6Q0vea17holrdpu1NVV1rh4sQm+pmpyaZmWr4erE=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=tdqrKtgW1+qV8LOW69LG5Fk/BnvD1MGNLjIYJ/B44EKLKXJFZbIoPzg32s5WSjSw1uoBCQ74h5HIpDp/WcdIG8dcw6P33Nq3mWyemp9CvrrAAUZvTN6i6Zyidosnqr34Iwu/3hsILBoEvN3I1dTE8Qo+E280auax198BAf1kKxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=FlfGOwzG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZuSsEXRi; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LbA9x+9s"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2c0a5354da1so44454965ad.0
-        for <linux-tegra@vger.kernel.org>; Tue, 09 Jun 2026 05:47:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781009227; x=1781614027; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TISoh0w7BDB0zbR5ef9JxLmIW0ux+sRqbIVLhaxSqQg=;
-        b=LbA9x+9seDdhI0vz7BEA7oxGbegNymDMWyqfWIaI8Eg4wM43W6g3Ca2AVfA3wR3a+g
-         cJa4T/tS5vRJ8wqL+KRWZjViDXEFDBYGEfeMb7x2GCfponxVs+w2UPpgATRXutns8BRB
-         dkkhcXZnjaPY58Hq+OVO0iHSZn6F/munVS06sUwdcmEcZHapXHgIJvIpmmGJsd1Yx996
-         TMMDgTs1yhNh7RxgvmlcsecGMqVhU10N8/D1NHTvbogdryd273tz+1AZnoDMp4ZXY+hy
-         K9+LFkqpfQPHhANiymtyd68qqHMja0M/4IdPRZEO4cGFMXYD1Rv4Xe8+D7j2NDd1NXBo
-         NR3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781009227; x=1781614027;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=TISoh0w7BDB0zbR5ef9JxLmIW0ux+sRqbIVLhaxSqQg=;
-        b=RtqsJggW7GJbcA5CiAckhV7LDBu/lUgWNsiPb8cDMktSrNX8hVt3eiWxoiUJE41BT+
-         v1yDp7RZM5jLwxoYElYCPhlUWKo26GKdR0fomsSMQYUpybFcHco5eAQp+BnOltrxWgQP
-         ALtYGah4tZzUnPzWXtF5ltWJzQK6sXnY4iPhA0BS8eqtg7dF+Bnq5Tex03jcqV3liTId
-         mz3jEbGb0hkQTZ1jfzauaLQtZ1wI3sKPioFojEOc/udx46+tYRC/LHoxfRfjgdO4bifD
-         eAb1q07Z2QK8Wm0IHC5ZJN4eEO6cCFhDyUnEw3n5yrBC29QoFRPPf+kgjiOtZ6CXa8lY
-         GpHQ==
-X-Forwarded-Encrypted: i=1; AFNElJ+Ms/lcOKVKb1iyipAMpxtx0apiP1sQYFFNDl0PpMb4UN5niCOyNF64XM2OoLwfo0dvBieCZzIjEUh+UQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5OhmpLplWP4vs4Gfv3gRZ5KPqY3bJXN/6WX72RpKoeU3UNhmG
-	ZpNNL10kHuA55xwlqT0pFlikFu1hTINQy5kWKhIB3jOujKOSm5cyRmSY
-X-Gm-Gg: Acq92OGs5RvxloF5Ty7WmANW5oe9+JZpbQ2KO1Crts35xOcOUC4eQgK4dcZMaJqMLLx
-	uCVWPfbQelyb5H3fBwAmuQvgi+snoX5KNZr2K5I7QMMUAWbrvZ2z5xEVjPmJ4uFG7/fqsj/Q0BI
-	0lEshGojTP+SrcMc4yzuSbOsYwwxMSQRvlBtqWg0miySaym6fcz/kttraOlDm47D2shx7IxcyVw
-	EsVZGaYLmHMcDgq1d3QTWD+Z7gwc4AF8lgG3HjpPSFozVnNg3o0vXDRL63XcFsJuwMN1VnnTVse
-	z8LiIrduTQyinJPlftvBIPHPBiGxTH58V1VxCHq8LQRte/w96356SVKenRhbE3XWkXBb0LzC8TK
-	qxpBDsytG6un8HjuWoS3htP9XVk70HzGcEICrDLmEAGIDMZ29MrCG6ZHExVJYnQKiAewvf1xEIg
-	21tqdeisRLY6jPOFeoUP4eEeB6RdrLooDZ2T7tW/UmR76Cv0JLBCvMDWoWikFnhV+GCAcZxYiSr
-	vutVNnW1NqppQkBTOdpynsSWDk=
-X-Received: by 2002:a17:903:94d:b0:2c0:d94f:50c7 with SMTP id d9443c01a7336-2c1ec508177mr181898005ad.7.1781009226863;
-        Tue, 09 Jun 2026 05:47:06 -0700 (PDT)
-Received: from nugod-NUC15CRHU5.tail9f095a.ts.net ([218.237.104.87])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c16629d40asm204686345ad.64.2026.06.09.05.47.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jun 2026 05:47:06 -0700 (PDT)
-From: HyeongJun An <sammiee5311@gmail.com>
-To: Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	HyeongJun An <sammiee5311@gmail.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sameer Pujar <spujar@nvidia.com>,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH 4/4] ASoC: tegra: tegra210_ahub: Validate written enum value
-Date: Tue,  9 Jun 2026 21:43:16 +0900
-Message-ID: <20260609124317.38046-5-sammiee5311@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260609124317.38046-1-sammiee5311@gmail.com>
-References: <20260609124317.38046-1-sammiee5311@gmail.com>
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="FlfGOwzG";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZuSsEXRi"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id A8C7E1D00108;
+	Tue,  9 Jun 2026 10:38:23 -0400 (EDT)
+Received: from phl-imap-05 ([10.202.2.95])
+  by phl-compute-04.internal (MEProxy); Tue, 09 Jun 2026 10:38:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1781015903;
+	 x=1781102303; bh=OQpu1OhWPmLhgQCfoB8dpZ9HJ92662GsLDeWYFfZD/c=; b=
+	FlfGOwzGAo4KLfS3a9UDfQgvgvsMVtAWe0VHKf2094vgfx28DwmI5w/JMa379O/1
+	b5ToDqNjmSSbVTkRsi+gdt3s8X7rDZcO225BW/cJ6ZHQW/PLPdWEmMPWC1D3no15
+	xRhNXiyB1oDimx0vvBibUEO84xd++meXtt1ZdlFVSJ+JhlqOWY5oEyNmBDKMRPzQ
+	ka9YgZHvpibjkA3Ym6I8BtP8/HYdnPfkr4SAzl9c6KI3DHFlv+Y0fT/oTnNcs8FX
+	XJIt7WrbcuMRU0f5MC169vpDFcR5aENaos9ZFw2FOWYC+JmhW9mcOVX4VKMLZ38S
+	gMzdBSxgKvZy1cP30+B6oA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1781015903; x=
+	1781102303; bh=OQpu1OhWPmLhgQCfoB8dpZ9HJ92662GsLDeWYFfZD/c=; b=Z
+	uSsEXRihfmEOUbNXyyzlD9lGf8bwbihB+p+m7QZwQ2pRIZ5wmdChrOzp7MeK1HZm
+	hTDwT4eWV0cIT3Nkgb9iJU8EuMMaHD1ltY9tM+NzEF6cRfF/JpuCiowi9u/UQnLx
+	rEpJa+LhD9nacbkpQYAHeVRiig8Q8eU2lMuQadafP57pGML5R6pOMsMt2PtA17KL
+	Fi9952rSYFVgcB1LpZb9JPUEU5HCooucwTCulTBvKfuXUyqeMf+7W7GSNTC2QLvq
+	9PHLmncpg7rgM/g8XSrh07jxLNA2BFrPi7ThNxIrPXdPoGGQcLJcpzp2J6bcdCvX
+	9rbTzvGq18jPdwrXcKPwA==
+X-ME-Sender: <xms:XyUoak86mUy0BYaOQlug-VUWM2yVQGXhrWFnMQ2UY8SF802vP2G_Ww>
+    <xme:XyUoanihA2ZaAwd_4eRMoS_aHd5iGseMc2rQCcsBhYA6jYD5N0c6kVhUZYogom3mo
+    _LuNr5uwkEWV-mHNRp4uNmaKuKvOY0mqRvYFPsM1gMVJDQ0cFBtE-4>
+X-ME-Proxy-Cause: dmFkZTFYUZGOq/AvS7Q2hJPmVjv314Ck0BIhy23s9lgogZcHS1ANaQJSO05P+xI2m+WrIR
+    lS0w8oye2jIfpymb+Xyu+duM38FHTA0w5MO9K0uFSW6i6r5TZZv2HW1r8H4iPH2gwKajXd
+    ybcger4XpWtJzJzXPOUGlxTOi3xmHRqzWMDhXj7CprbXoftoBaiyX62VReqrV6f/ukiGXl
+    DuYkbc+aL1lS+ysovuDQNGVYjo1eWZTrmxXji5PPnyWIU8Be+oNKrKOyWPmnJ0wBAsSleZ
+    twTroz8W1RaQWvJwrpO+6fAiuH+t6Q8kwt8EeEHS+/1laRcNeAX4QsUMcejITyWOgWXFnS
+    F8X1iBZd8rz58KC8Y6q4D8PCPd+l2LaQaaFitxkUTkzfTRttzlQ+jy0XGpG/4zReZ6hDDk
+    mMccy5K1kaqGdLfKVYcImaF1Wu91WfsjgMjfOO/MmXqW2dzO+PR7K+7tIiRqI+3/FE7ga/
+    8qOSXitySgUQZ2JqsLqOI11K31Jx/PxFuHJ9YBPrxM6YnqQhvKMIrsbvl4cpcADleQ/UHJ
+    9yEPxDezdFtmTHlKmlM+7pEsbGAB80EiZ06iTYzTVYquJ6R3H8GX5HCHMVUwUJdD04c+a2
+    AFZ+P9oZOW8dC0jkOWmWjCU9AxH+CodVXJh5n90lTRlDnjjQPoseKq2auwYg
+X-ME-Proxy: <xmx:XyUoaulhNvs6XOCpyY-0yWjPT6_IGL-Akc6hKsWC54nUxBoPyFw4Qw>
+    <xmx:XyUoav5lOHVcwXLMM32Ol2K4KaZ_X29CE1guqtgQ1QXUDn86bBje0Q>
+    <xmx:XyUoasj8p1IgzrX2TxbttAVsYUtkxyQWG5xe798aoy72z1fAqLTNlw>
+    <xmx:XyUoakFMayXJxA1LLaVEZDFlW5YqAzN2CO54YHxVBeNogLqk7cw7rw>
+    <xmx:XyUoaiiR3g_UTWdn5fFxY7otM63eK8dJgglpMd__i7KDr_Mi4GX2YT4a>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 3BED41820082; Tue,  9 Jun 2026 10:38:23 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: AJX4MtyQJOMN
+Date: Tue, 09 Jun 2026 16:38:02 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Thierry Reding" <thierry.reding@kernel.org>, arm <arm@kernel.org>,
+ soc@kernel.org
+Cc: "Jon Hunter" <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, "Sasha Levin" <sashal@kernel.org>
+Message-Id: <7c575b6d-5543-42e8-9b7c-be1e7148c454@app.fastmail.com>
+In-Reply-To: <20260531060825.1855391-4-thierry.reding@kernel.org>
+References: <20260531060825.1855391-1-thierry.reding@kernel.org>
+ <20260531060825.1855391-4-thierry.reding@kernel.org>
+Subject: Re: [GIT PULL 4/6] firmware: tegra: Changes for v7.2-rc1
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-tegra_ahub_put_value_enum() reads e->values[item[0]] before
-checking whether item[0] is within the enum item range. The existing
-check therefore happens too late to prevent an out-of-range read of the
-values array.
+On Sun, May 31, 2026, at 08:08, Thierry Reding wrote:
+> From: Thierry Reding <thierry.reding@gmail.com>
+> ----------------------------------------------------------------
+> Jon Hunter (2):
+>       firmware: tegra: bpmp: Propagate debugfs errors
+>       firmware: tegra: bpmp: Add support for multi-socket platforms
+>
+> Sasha Levin (1):
+>       firmware: tegra: Make TEGRA_IVC a hidden Kconfig symbol
 
-Move the check before the array access.
+I'm merging this, but I would like to point out that the third
+patch does not actually solve a real problem and the patch
+description is complete nonsense.
 
-Fixes: 16e1bcc2caf4 ("ASoC: tegra: Add Tegra210 based AHUB driver")
-Assisted-by: Claude:claude-opus-4-8
-Signed-off-by: HyeongJun An <sammiee5311@gmail.com>
----
- sound/soc/tegra/tegra210_ahub.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Looking through linux-next, I see two more of Sasha's patches
+addressing kconfiglint 'K002' warnings. I have not used that
+tool and the warning sounds useful in general, but all three
+of these patches look like false positives.
 
-diff --git a/sound/soc/tegra/tegra210_ahub.c b/sound/soc/tegra/tegra210_ahub.c
-index ece33b7ff190..efc8f3388668 100644
---- a/sound/soc/tegra/tegra210_ahub.c
-+++ b/sound/soc/tegra/tegra210_ahub.c
-@@ -62,13 +62,15 @@ static int tegra_ahub_put_value_enum(struct snd_kcontrol *kctl,
- 	struct snd_soc_dapm_update update[TEGRA_XBAR_UPDATE_MAX_REG] = { };
- 	int val_bytes = snd_soc_component_regmap_val_bytes(cmpnt);
- 	unsigned int *item = uctl->value.enumerated.item;
--	unsigned int value = e->values[item[0]];
-+	unsigned int value;
- 	unsigned int i, bit_pos, reg_idx = 0, reg_val = 0;
- 	int change = 0;
- 
- 	if (item[0] >= e->items)
- 		return -EINVAL;
- 
-+	value = e->values[item[0]];
-+
- 	if (value) {
- 		/* Get the register index and value to set */
- 		reg_idx = (value - 1) / (8 * val_bytes);
--- 
-2.43.0
+Sasha, please try to understand better what the tool is
+trying to warn about.
 
+      Arnd
