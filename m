@@ -1,88 +1,88 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77DD3BADB3
-	for <linux-tegra@vger.kernel.org>; Wed, 10 Jun 2026 08:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4523B3BED74
+	for <linux-tegra@vger.kernel.org>; Wed, 10 Jun 2026 08:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781081553; cv=none; b=debhGmt6UGG+E6p+oDz6zTXMvzz3ThjiTfGMg+mCvDB0lCZ7DTyLvjuBileR8zQxRe6HKDWbqYdSgTrfbpIpGsBl65A4l3nrAfz+s1GiJbCjRa9yiVofzrmkCKni86CcOphECvujxDCpdo59M2p3okjRgy/M7kHmPkHCiZmYLqI=
+	t=1781081560; cv=none; b=bTvkAhF70e4ncB9AszRoelxHo4Z41ly90G4Kq25bOKTvZassw9/jeERNsWVWOsEKstTPRRUF5D1992RtuO2lMYCSbqAPhECT5BnRIcXDPKi2xPd/j2lmc4gPVR9LV5ZMcw8Kd5DEYaLlDkihylIv2tZMavPOZSKg79NGmp/x0M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781081553; c=relaxed/simple;
-	bh=Jt8WeTmVt4JUIBhcmu9lO3/qyAspgei2ScQVQmUjjbE=;
+	s=arc-20240116; t=1781081560; c=relaxed/simple;
+	bh=2KPY/tb0j+B5uSdY7N7v5/p0YXBtB2vvdjKahaGisRI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lsDB4h8gtWq6Rr4uyGMKqAcUwq9DhnWEtHHwDLI9KZCbDuox0AzhuE5FsPSK7hd+UW0AS3HIzt6Rv6NqngwujecKeVJY6aLQHsFHA3haXWp8DF4D81zUcL5jV44lnI2sQYwNdHurvBpcS+3hbRRsOanz/Gma5PHGb1kmI/VKy7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HE5y9W2n; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SUo4IpNt; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=dJ9Hh+JzK4JLW9yDQBsKew/XYt2UYRCRt+jMOhFRnLi5sZxd5i1c/EoXxu5OO9pW1dziSMnhj5+QtrbiyVFxUMC8uXo9YWYdrh2LPNz6ryZvlO11y/WMa09FZ9S6XFtYj5wFfj/dYvuvJZx+Aq4V50bWBTNP1NeCxmpYLgf084Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TxrWFFvF; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=KTMzi+tG; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HE5y9W2n";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SUo4IpNt"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65A7hnvu530865
-	for <linux-tegra@vger.kernel.org>; Wed, 10 Jun 2026 08:52:30 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TxrWFFvF";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="KTMzi+tG"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65A7i05f991030
+	for <linux-tegra@vger.kernel.org>; Wed, 10 Jun 2026 08:52:38 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MBVvbqlw+1NOFx2/e/goeBGUj7Yh97eXwaqTR4dNxy8=; b=HE5y9W2nDO3tuHbH
-	jq/cMrHyhdghrYiGW8i9yilPHf/YHs1MjNi3rEqmXjqEn1YzAwazfG8fezKQCEKs
-	OFveIOZeGBG21A+I7NfnrlwJvKUehJTFf/dxFJOT769ym4CoFnJl3Wo8L8eIi8uK
-	jCtrKwLWnePuP3ivIiuxA9JFlMldURb+aoAWehuSy//kD8sIBtjcWoLZPtCJWEPx
-	Ym9G6EnKHGjxZI7jG3LiceDNtrZ4/fL375qCHFIJVIiyxFw44EQPaEPf2MHnoYYe
-	BVWo1yIblsLrrkBgE7hslCe0xxNnutwGXEy2Qpu84xfW0MlhqMwlSYS5rnwVC6xS
-	dTim1A==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4epwnh1mrj-1
+	Y0iynm1FGGwaEZbCphFRzeTZeB6sDyUBvZZjPoxKx0w=; b=TxrWFFvFkcs/YfxV
+	/0pe4JLFXoZxkei0Ua3E1sW25CT+OKE+bbqD3kT8X50EYCSXCx7/ChseUa+BB93T
+	NTk2XWguoKVhQpPLrRFepx2/w64a+WXVHZDppjzpFADT+1J5kuYpeLQMSi/mJAlf
+	LrUDrX+vmdoPRL6y2S0ukEDOYRplJWXoNF+w4SNdQTD0Z5k43tjdr8+JwxWMq6ss
+	kufLPHRWN3IfsAjW+LadA2zveZs/2QGcCCZOOpRJipY4on6Lht+8a7KlFLLP0wFt
+	bXZ0R+1IJxL99Up0ygwb3Zq7pNN1Wz71d9LwZtfp/fZUpPO4t13sVmTZ8h+2M4OR
+	N+pZyQ==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4eq1tg0r92-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-tegra@vger.kernel.org>; Wed, 10 Jun 2026 08:52:30 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2c0532a6588so61059235ad.0
-        for <linux-tegra@vger.kernel.org>; Wed, 10 Jun 2026 01:52:30 -0700 (PDT)
+	for <linux-tegra@vger.kernel.org>; Wed, 10 Jun 2026 08:52:38 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2c0c272e532so66548465ad.1
+        for <linux-tegra@vger.kernel.org>; Wed, 10 Jun 2026 01:52:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1781081549; x=1781686349; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1781081557; x=1781686357; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MBVvbqlw+1NOFx2/e/goeBGUj7Yh97eXwaqTR4dNxy8=;
-        b=SUo4IpNtpX1Ds73EFN7H5kreJsGKrMxc+6ikHxTQyKOeENUyB0f61vwUP7Bt5Xz4Kd
-         hs+iK9C5bS9qAVUaimfrGXEc9elH5YRYgs38vNNv2wLOSpFzBHFje8MUWm9M0iFnskmy
-         0D6tjaYqWGHhFQkNBj4WnGGFmmiPyrvjrLrfPCln9qkTHjJT3JDkfe9WRDLBFd4NWDXQ
-         fmX1o2Z9Vfk1o+uugZnGtZMWR7D1bYwWGOucoCnDXNNSpHKcmbrDdr+fLG8Mb67hCCTp
-         RqqyVVA8JDUTxqQGulQEqsFyoE0odj+cMVI3TEkZud+fwtdEDkOhOeWfAJ4Rg9KW+o+A
-         93GQ==
+        bh=Y0iynm1FGGwaEZbCphFRzeTZeB6sDyUBvZZjPoxKx0w=;
+        b=KTMzi+tGnWoqNGDyXTpqwy6TTC/4WlTnNxXKibPjIGaM2C4c6GnigbMjTQVtjNNnT8
+         WEkzE41cMjLAUCkudQ1QAO/4lVul5Y8Ih0G/vUjGIOljK7EkWtk/xwmANsA1+ObWv1TN
+         ErqkmG/arTGSTvbF7PIFIx0VlF3+xZqPwxJdM1FyZ/FtVkd3PtCGe8b0UioFPBx0xHU4
+         VCh8HRZ721cpzpLcyxGSbb0G0rsNqkgnNt0m4TGFpQ+/Oz0tdHjPRqB+z2xQKZbDZ54z
+         L3Y1R8+toxN80dLAi8ttSNRUNIK+Nvip7dK/7m6qyFbir0NNsKKkdEuF6uUe6X5GNabC
+         Kmxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781081549; x=1781686349;
+        d=1e100.net; s=20251104; t=1781081557; x=1781686357;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=MBVvbqlw+1NOFx2/e/goeBGUj7Yh97eXwaqTR4dNxy8=;
-        b=kOccsARh1fwD2pK0FehZGBH0IhXJ3qu3aGxt8Sg4xRWvdaNEgeBZDEZQmA9ZMZq6Av
-         eRgnnBu8Hbv3u3/YYMqjfzMSYg4QEdWOAfeH6s1dsM/0FUpIBtT1VzNMJ7F5UnPGmcS8
-         U8fEfqGfVnxEK+ZR6/UNZVfs2l3sNO5mqvemWHF49rWY43jp0yj6cldAKj93ux+wm3Lk
-         YtBMQmarF0jjMBZwoEmnsJ5FFxpOegs4wRnlZn3nJ8zEQwPHfWySN9Twv6u00CJDpiIQ
-         7ldGjzbKn9hGpXz6JBzk2MPhDV4F5+dIC6I9pQO/iToYJ/vTWPCFzTh0kprL1IpxB6i4
-         +/xg==
-X-Forwarded-Encrypted: i=1; AFNElJ+E2rcUkR4aq0eKx2N1RxGVV+rX+0UmIoa7nyyK3DD884AJuwXZgbK4Y4fmzVdIGu5Yh+5RQHuDzgX0Tw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyysuNQUyl7pIsgReSi5GPlk3ld2wOHxGo50OfMR/D8soau0Njc
-	eXDq3d72l4jqyHyVnTvOdCU7/JuNiFmxkabFbCjJYR258zgWG8gLgs1eiBvOVDD71idh6ZkIML3
-	5rJHKW1v80iHQZND27nxyGtbd/ZMpPiTYfcEl9aisn7zize4uTTW6jBOwzdqve1HEIQ==
-X-Gm-Gg: Acq92OHXmojzeXS1nqziw5l57BUnT2l+jQ72K1e/9gMZqmQ1KyqNzdYVoHsfREx6EdC
-	29jx/A1q0/PZDCaCSvgL9CA+o0sCyrTX/S5E8XSA67YofVH0yD1Nz9EBCy4JSlBqQRV4wAa3F73
-	qlpvQFKT+WVvh++LUWrFbF6GCLKmXznEEsqUTp2aRoB0eyvYgPFZ/JP6qRMtGPgQswJyRjvkD2r
-	BSQp0zhrhkLQCaaMJXRAxqAyBU8etAuAlAQHomQ3fzBCiIwOBjt5rAfbWp/upVgNIU9XsxmJ2ZC
-	ragTlEpzKJQm5XxL4LEU/jqtrWI0MybA8yaIR9YpyY7VOjKj6KYL2W0AjX772vSIlK/8+7KZUws
-	9r7FDwsaLNVg0Ihg6I3dQ9OFOYb3wMlHjXJjruaQhWxEIH7gUJw6/WHxKxd2lEVNrxPzmrKTbWI
-	PbTBVE6sgrjaUOl5C6QPyDZ/cannaag08DmNVgdUDwHm8/+x0R/piwcEgFCHo=
-X-Received: by 2002:a17:903:fa7:b0:2c0:dd75:e824 with SMTP id d9443c01a7336-2c1e80f98cfmr263574195ad.4.1781081549599;
-        Wed, 10 Jun 2026 01:52:29 -0700 (PDT)
-X-Received: by 2002:a17:903:fa7:b0:2c0:dd75:e824 with SMTP id d9443c01a7336-2c1e80f98cfmr263573845ad.4.1781081549156;
-        Wed, 10 Jun 2026 01:52:29 -0700 (PDT)
+        bh=Y0iynm1FGGwaEZbCphFRzeTZeB6sDyUBvZZjPoxKx0w=;
+        b=CZI9dvTIAXZK0ICQJP4nnDX+azGnBe33e9FhbHBLUEiqOSdOAss5sYMk0z9Hlwp5fP
+         XFPUaKp3izFl5l1jjQat7Gsyr1jsDZB70pbCm7ndmJF08F2qc/+CiKXYhvVSwu33GGs/
+         AtXbEcZNituFl6I2sOLxwLgSOSHQFQnthme0UiDxwPDHBycUe3IiKkbDotNHX69PZpoK
+         qow4FDojBNLlZk+Q5i5KNiPIww7AoXa+9MZEVm6MlimTibUgHsgYk2DovinHlCLSdqwg
+         c1A96Nw6Q55yyqwqnOimmNE4/HhAd4HbKJrSBmqDCqmUbXJdQUYfwbxeSLUMFwFzDwSb
+         49gg==
+X-Forwarded-Encrypted: i=1; AFNElJ873FdMC+wL/Vw+SFPvbDNZr+gmjlOPULTuIsa1p2oqS+TxnWpgGWAbrl2Nl5G/G7OkzuEJh9OriZA90Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR7Y22r3qaikNzCv8N1BtYrSJp1u/c6a1EvSTOpZdL7K1Ud+SK
+	/EXfv58WN8zrVJw8/5xxNhVauCFOGeoDO13rHoJDoVprfAp96w2mPTJJGhY1Z2Oa0rqKJEjjJoB
+	Nx0lV+QVUI9PRkAiXLHFIN94sQ7OFMej1A9CBVm1WIu/5sbV8z75hig78qLDyYOO+Fg==
+X-Gm-Gg: Acq92OGvZDFD4iV+LKL3EqZnUNCnq8VsW5vFRloCLmVQ6RjM1qKKJ5M2dLO7McSUfFG
+	udFNv+EaV0S4DQk3CYfm/aHAatrEarftPGed/whBiUV6fbBbWNQhO4tPrDaoR/rbwJN1g+khlnn
+	eH3yhpO9OcMP6OSo0u/9l5Lza4BO6XqX66iQrpLOLSZnnaAbtseatxgmLZJfetxWpBOLPQsEFvh
+	ulq7fEpmDxAUURARzM+lLTQziuFo0xo/ZBdgEczXnEJFpbiPHi7nxS1LeLS/WVMZgTFeZiMq4ed
+	MYhBrfU9AI8REkPQtvpwhHKRfKKSVzj6582zQAGPRWDzx23rHMWiyfE1K9lQnsfZnVGeUZz/Q4/
+	vW47jB74QwYDEfSfvVbwDTt4HdsFDJO0kKa8L7u5gYZU0fzbioZFOW2XWVQg3QPUdGjpRIfv85Z
+	tSGCr12voeP24uyHLVacQSSvlzCtQNfYzUNtlIhfa3BmlECu63U7vW2mEofZA=
+X-Received: by 2002:a17:902:fc48:b0:2bf:23ad:8595 with SMTP id d9443c01a7336-2c1e78e4f0emr297477675ad.4.1781081556860;
+        Wed, 10 Jun 2026 01:52:36 -0700 (PDT)
+X-Received: by 2002:a17:902:fc48:b0:2bf:23ad:8595 with SMTP id d9443c01a7336-2c1e78e4f0emr297477305ad.4.1781081556405;
+        Wed, 10 Jun 2026 01:52:36 -0700 (PDT)
 Received: from hu-ppapaniy-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c24edc8acasm114618175ad.45.2026.06.10.01.52.22
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c24edc8acasm114618175ad.45.2026.06.10.01.52.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jun 2026 01:52:28 -0700 (PDT)
+        Wed, 10 Jun 2026 01:52:36 -0700 (PDT)
 From: Pragnesh Papaniya <pragnesh.papaniya@oss.qualcomm.com>
-Date: Wed, 10 Jun 2026 14:21:32 +0530
-Subject: [PATCH RFC v7 5/9] PM / devfreq: Add new track_remote flag for
- governors
+Date: Wed, 10 Jun 2026 14:21:33 +0530
+Subject: [PATCH RFC v7 6/9] PM / devfreq: Add a governor for tracking
+ remote device frequencies
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -91,7 +91,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260610-rfc_v7_scmi_memlat-v7-5-f3f68c608f25@oss.qualcomm.com>
+Message-Id: <20260610-rfc_v7_scmi_memlat-v7-6-f3f68c608f25@oss.qualcomm.com>
 References: <20260610-rfc_v7_scmi_memlat-v7-0-f3f68c608f25@oss.qualcomm.com>
 In-Reply-To: <20260610-rfc_v7_scmi_memlat-v7-0-f3f68c608f25@oss.qualcomm.com>
 To: Sudeep Holla <sudeep.holla@kernel.org>,
@@ -116,119 +116,184 @@ Cc: Pragnesh Papaniya <pragnesh.papaniya@oss.qualcomm.com>,
         devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-tegra@vger.kernel.org
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1781081505; l=3562;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1781081505; l=4893;
  i=pragnesh.papaniya@oss.qualcomm.com; s=20260120; h=from:subject:message-id;
- bh=i8JmP8t0IIDx2YuhJ586pU9J0+L8gn09QqoMvPwEzvk=;
- b=SjTlP3ljJexiSuNiz3k1DP81x2Nsjn02FN9iDLP4o7nw/yM9wDBLOmgzsNAF1zQPVffbuYZwV
- fiaFkBpgVjuBwr4NTgxGOi3wvNISInadO5xNeaHkiIXZp5iXDIa9ywS
+ bh=xZowMXSIo/yjYoix7dfxNcBQFvLyEboivbRIq1BkEFU=;
+ b=XGGVsmcuQqsb7xxvF7kkpvKNz7arqGm5Q77SCmhmuZWxjWFRBwfyljemBijVv02n419Asznfo
+ ce5/XapDYe0BqR8iEbYjxr25/B4xeON8mbI0zhXc5GM+c20jwuEccS4
 X-Developer-Key: i=pragnesh.papaniya@oss.qualcomm.com; a=ed25519;
  pk=09P9nFmZLXJ9+4Jx10ZK5rIW0Fmk79A/DLErm6aVA0c=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjEwMDA4MyBTYWx0ZWRfX+gWmmOpgANrp
- 9bC1XFdtVitHcrIexHmYlh3+Mj5zknyR2/RniZL/BlKp8c81PCPlCkwYyHIFoVJ7uEUl6Hpn1WZ
- SFNX3O9AsVxZznk+HJqK+JAtqxXGLgSVI4UP4ANExbF2r21SqfLBXTJB4vzrwsAS548A2Mx8d6E
- t0c4wSPsLWRLsTgxuBDOd97dBrKXQFzgJ2n0rsVzh/ZIH32vJsHrjo+lBtElNfuwJ9plTYr4kjx
- qIm1ALiVfYZUd31UZqZnvgqRGQ29NBkdES1FSc2G8DR03QFwZisW2H2RtX1kzDP5ii2ZRimV3O+
- H29YCzE7EjL1bwSqIsQj5bAsZfxrSVIVP2DjPHOpGnkECaU9hAZ8K99vY8kbHDzeT3faGA7Ng0G
- HKipdMzR3SI/t8x6JZaqrdKHq3Tdr0Xh9k7a4m+23pfrfpMe0R4dxqbssWRvc9FWVeW6JtoAaJE
- L+NBH4Wjk5PgU+ASdBQ==
-X-Authority-Analysis: v=2.4 cv=Xce5Co55 c=1 sm=1 tr=0 ts=6a2925ce cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+X-Proofpoint-GUID: _f6YamggHYT4OgTM-bEjEOLV02VNMQj7
+X-Authority-Analysis: v=2.4 cv=dLmWXuZb c=1 sm=1 tr=0 ts=6a2925d6 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
  a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=EUspDBNiAAAA:8 a=_Sn8c3TY04LLovrI2V0A:9 a=QEXdDO2ut3YA:10
- a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-ORIG-GUID: l4uOQxrSBCc0ShsrBw1URnKAffTGIqf1
-X-Proofpoint-GUID: l4uOQxrSBCc0ShsrBw1URnKAffTGIqf1
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
+ a=EUspDBNiAAAA:8 a=DkxomDJNIKAFLi0tgcIA:9 a=QEXdDO2ut3YA:10
+ a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjEwMDA4MyBTYWx0ZWRfX62lE3ihz1sSa
+ MTDm0Ryuy53xqvaJCShm7uQO6d3VCiiizrugvmVbmItZyy2JEVO7v9dZfEFLxR/NqJwTvqZPret
+ To4T4c8lx/BAl2IOpbQxES8kRGrxjV1FMW5Zz0JYDmgmqeWNxx6Bhc50Xdj2RmcT3l+lSGDrXvL
+ sRFBiWUt8Ar7px+xrOjnlsZLdK1mtpcHuvNJHCm2dLeDaW5xP51rIZy59LeWWI9rQbERMVst5y8
+ bPi4r+rU+tuBCWVdhbjS3llrrjG16+//rg4XuWt0bYg/nmLBamojOagPeIr5oMyRThQ+YiFsMY9
+ DuIJi3d/5peoy58YiVdL3oS1kODcrlgOsiLgp6ejsvla7Xs3ftkntDPRbXtDcLTqRS7IUEfo0nI
+ UE4jAIWgmD+R10V7x8+/T4i7QwQlQI6+H4IicsAsvnfeYVvp/btzgRSPRDMra/2pr4+R91TTVjz
+ lWMgdevDZXjMK+qYrhA==
+X-Proofpoint-ORIG-GUID: _f6YamggHYT4OgTM-bEjEOLV02VNMQj7
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
  definitions=2026-06-10_02,2026-06-09_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 malwarescore=0 impostorscore=0 adultscore=0
- priorityscore=1501 lowpriorityscore=0 suspectscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 impostorscore=0 spamscore=0 clxscore=1015 lowpriorityscore=0
+ phishscore=0 adultscore=0 suspectscore=0 priorityscore=1501 bulkscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2605210000 definitions=main-2606100083
 
 From: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
 
-Some devfreq governors need to track frequency changes performed on remote
-devices rather than driving the frequency updates themselves. In such
-cases, the device's frequency is already updated by an external entity and
-devfreq only needs to keep its transition statistics and notifier
-subscribers in sync.
+On SoCs where the governor and the mechanism to control the frequency
+for devices like caches is hosted on the System Control Processor
+(SCP), there exists a need to track the frequency changes in a
+reliable way and provide ways to tweak parameters on the remote
+governor.
 
-Add a new DEVFREQ_GOV_FLAG_TRACK_REMOTE governor flag. When set,
-devfreq_set_target() skips the profile->target() update sequence but still
-emits the DEVFREQ_PRECHANGE/DEVFREQ_POSTCHANGE notification pair and the
-devfreq_frequency trace event, so transition-notifier subscribers (passive
-governor, devfreq cooling, etc.) and tracing observe the remote frequency
-change exactly as they would on the normal path, and the transition
-statistics are refreshed.
+Add a new "remote" devfreq governor that uses the track_remote
+flag to expose the remote device's frequency to userspace via
+trans_stat. The governor deliberately does not advertise the
+DEVFREQ_GOV_ATTR_TARGET_FREQ attribute since the kernel cannot
+set the frequency on a remote-managed device; reads of the
+target_freq sysfs node therefore return -EINVAL.
 
 Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
 Signed-off-by: Pragnesh Papaniya <pragnesh.papaniya@oss.qualcomm.com>
 ---
- drivers/devfreq/devfreq.c        | 21 +++++++++++++++++++++
- include/linux/devfreq-governor.h |  5 +++++
- 2 files changed, 26 insertions(+)
+ drivers/devfreq/Kconfig           |  8 +++++
+ drivers/devfreq/Makefile          |  1 +
+ drivers/devfreq/governor_remote.c | 73 +++++++++++++++++++++++++++++++++++++++
+ include/linux/devfreq.h           |  1 +
+ 4 files changed, 83 insertions(+)
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 2f27a239e34a..71c6ced9e4e1 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -348,6 +348,26 @@ static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
- 	unsigned long cur_freq;
- 	int err = 0;
+diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+index c999c4a1e567..2caa87554914 100644
+--- a/drivers/devfreq/Kconfig
++++ b/drivers/devfreq/Kconfig
+@@ -56,6 +56,14 @@ config DEVFREQ_GOV_POWERSAVE
+ 	  the DEVFREQ framework returns the lowest frequency available
+ 	  at any time.
  
-+	/*
-+	 * When a remote agent (e.g. firmware) owns the frequency, skip the
-+	 * local profile->target() call. Still emit the PRECHANGE/POSTCHANGE
-+	 * pair and the trace event so that transition-notifier subscribers
-+	 * (passive governor, devfreq cooling, etc.) and tracing observe the
-+	 * frequency change exactly as they would on the normal path.
-+	 */
-+	if (devfreq->governor &&
-+	    IS_SUPPORTED_FLAG(devfreq->governor->flags, TRACK_REMOTE)) {
-+		freqs.old = devfreq->previous_freq;
-+		freqs.new = new_freq;
-+		devfreq_notify_transition(devfreq, &freqs, DEVFREQ_PRECHANGE);
++config DEVFREQ_GOV_REMOTE
++	tristate "Remote"
++	help
++	  A simple governor to track the frequency of devices whose
++	  dvfs control lies outside the kernel. This governor acts
++	  as an observer and provides for ways to track frequency and
++	  set/get information related to the remote dvfs device.
 +
-+		if (trace_devfreq_frequency_enabled() && new_freq != freqs.old)
-+			trace_devfreq_frequency(devfreq, new_freq, freqs.old);
+ config DEVFREQ_GOV_USERSPACE
+ 	tristate "Userspace"
+ 	help
+diff --git a/drivers/devfreq/Makefile b/drivers/devfreq/Makefile
+index 404179d79a9d..cde57c8cda76 100644
+--- a/drivers/devfreq/Makefile
++++ b/drivers/devfreq/Makefile
+@@ -4,6 +4,7 @@ obj-$(CONFIG_PM_DEVFREQ_EVENT)	+= devfreq-event.o
+ obj-$(CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND)	+= governor_simpleondemand.o
+ obj-$(CONFIG_DEVFREQ_GOV_PERFORMANCE)	+= governor_performance.o
+ obj-$(CONFIG_DEVFREQ_GOV_POWERSAVE)	+= governor_powersave.o
++obj-$(CONFIG_DEVFREQ_GOV_REMOTE)	+= governor_remote.o
+ obj-$(CONFIG_DEVFREQ_GOV_USERSPACE)	+= governor_userspace.o
+ obj-$(CONFIG_DEVFREQ_GOV_PASSIVE)	+= governor_passive.o
+ 
+diff --git a/drivers/devfreq/governor_remote.c b/drivers/devfreq/governor_remote.c
+new file mode 100644
+index 000000000000..df3819757e56
+--- /dev/null
++++ b/drivers/devfreq/governor_remote.c
+@@ -0,0 +1,73 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
++ */
 +
-+		devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
-+		goto update_status;
++#include <linux/errno.h>
++#include <linux/module.h>
++#include <linux/devfreq.h>
++#include <linux/devfreq-governor.h>
++
++static int devfreq_remote_track_func(struct devfreq *devfreq, unsigned long *freq)
++{
++	if (!devfreq->profile->get_cur_freq)
++		return -ENXIO;
++
++	return devfreq->profile->get_cur_freq(devfreq->dev.parent, freq);
++}
++
++static int devfreq_remote_track_handler(struct devfreq *devfreq, unsigned int event, void *data)
++{
++	switch (event) {
++	case DEVFREQ_GOV_START:
++		devfreq_monitor_start(devfreq);
++		break;
++
++	case DEVFREQ_GOV_STOP:
++		devfreq_monitor_stop(devfreq);
++		break;
++
++	case DEVFREQ_GOV_UPDATE_INTERVAL:
++		devfreq_update_interval(devfreq, (unsigned int *)data);
++		break;
++
++	case DEVFREQ_GOV_SUSPEND:
++		devfreq_monitor_suspend(devfreq);
++		break;
++
++	case DEVFREQ_GOV_RESUME:
++		devfreq_monitor_resume(devfreq);
++		break;
 +	}
 +
- 	if (devfreq->profile->get_cur_freq)
- 		devfreq->profile->get_cur_freq(devfreq->dev.parent, &cur_freq);
- 	else
-@@ -375,6 +395,7 @@ static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
- 	freqs.new = new_freq;
- 	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
++	return 0;
++}
++
++static struct devfreq_governor devfreq_remote_track = {
++	.name = DEVFREQ_GOV_REMOTE,
++	.attrs = DEVFREQ_GOV_ATTR_POLLING_INTERVAL
++		| DEVFREQ_GOV_ATTR_TIMER,
++	.flags = DEVFREQ_GOV_FLAG_IMMUTABLE
++		| DEVFREQ_GOV_FLAG_TRACK_REMOTE,
++	.get_target_freq = devfreq_remote_track_func,
++	.event_handler = devfreq_remote_track_handler,
++};
++
++static int __init devfreq_remote_track_init(void)
++{
++	return devfreq_add_governor(&devfreq_remote_track);
++}
++subsys_initcall(devfreq_remote_track_init);
++
++static void __exit devfreq_remote_track_exit(void)
++{
++	int ret;
++
++	ret = devfreq_remove_governor(&devfreq_remote_track);
++	if (ret)
++		pr_err("%s: failed to remove governor %d\n", __func__, ret);
++}
++module_exit(devfreq_remote_track_exit);
++
++MODULE_DESCRIPTION("DEVFREQ Remote Tracking governor");
++MODULE_LICENSE("GPL");
+diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
+index dc1075dc3446..4d50cf230950 100644
+--- a/include/linux/devfreq.h
++++ b/include/linux/devfreq.h
+@@ -21,6 +21,7 @@
+ #define DEVFREQ_GOV_POWERSAVE		"powersave"
+ #define DEVFREQ_GOV_USERSPACE		"userspace"
+ #define DEVFREQ_GOV_PASSIVE		"passive"
++#define DEVFREQ_GOV_REMOTE		"remote"
  
-+update_status:
- 	if (devfreq_update_status(devfreq, new_freq))
- 		dev_warn(&devfreq->dev,
- 			 "Couldn't update frequency transition information.\n");
-diff --git a/include/linux/devfreq-governor.h b/include/linux/devfreq-governor.h
-index 2853f571dfdf..e4f7b6cb07bc 100644
---- a/include/linux/devfreq-governor.h
-+++ b/include/linux/devfreq-governor.h
-@@ -33,9 +33,14 @@
-  *   : This governor is never changeable to other governors.
-  * - DEVFREQ_GOV_FLAG_IRQ_DRIVEN
-  *   : The devfreq won't schedule the work for this governor.
-+ * - DEVFREQ_GOV_FLAG_TRACK_REMOTE
-+ *   : The governor only tracks frequency changes performed by a remote
-+ *     agent (e.g. firmware); devfreq skips the local profile->target()
-+ *     call and just keeps its statistics and notifiers in sync.
-  */
- #define DEVFREQ_GOV_FLAG_IMMUTABLE			BIT(0)
- #define DEVFREQ_GOV_FLAG_IRQ_DRIVEN			BIT(1)
-+#define DEVFREQ_GOV_FLAG_TRACK_REMOTE			BIT(2)
- 
- /*
-  * Definition of governor attribute flags except for common sysfs attributes
+ /* DEVFREQ notifier interface */
+ #define DEVFREQ_TRANSITION_NOTIFIER	(0)
 
 -- 
 2.34.1
