@@ -1,268 +1,110 @@
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012065.outbound.protection.outlook.com [40.107.200.65])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA81399358;
-	Wed, 10 Jun 2026 09:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781082718; cv=fail; b=YuEXns1zfyZmJsvHUFYNugNpJi6ToecttsL5AklxQVHz3vskgIKsGd/YfHW0erTbcQ7zJDS/a7nhRr/lDm+xXiuoQ+B1kpmHmG/Ea9t5+NC5FE67tO7hNttLYt/JPr4ouY69msIP6yFuz2O0Dp1wTSP1jrfOrCblDmelQDV0nwY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781082718; c=relaxed/simple;
-	bh=TjeZIGFM+vCDoGGdTdCCExnTd0hEMR5iosc6zTWux2c=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=pnVxdLaDKP9iKptvsgeJo8wt+xzWEmt9pm9a9Axyn7qlsXIr+f7G3Y63pHu20QvGCMfw4v29ZMeUY3Ernoj/LIuWglO5NlPmE3rnbpE4CRpKThPmgUEic0NB5A0vabvO+5t1ReVC4x6+N4S+IFL3PJ+2+CLPFayTcaOLhCZw5YM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LS1aaYZP; arc=fail smtp.client-ip=40.107.200.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911E23F23BE;
+	Wed, 10 Jun 2026 10:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781087705; cv=none; b=EAt6Dkc3wc5P5p+6ZGvQ99F/cgSZzbcvomGjk7arVLRHp4peKEvRhWwh43ULDmEvAfQw3Fc6o+We41Zap4pWLw5CkgrLfr3DNhj1wv3x3R1vjiqo4clxRLlEI/UKrNGMB3gwgoJHA4941wkeM8tceql9lNtOYEi/xurjVhW22aM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781087705; c=relaxed/simple;
+	bh=PLk6E/1F4XKbP8E1C/TyTqMlBWSE19MdrRg66+4D9+o=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J/omqguN6vR3HCN94ukln0vtJvlV2+iC12hrHxBct/aTlIRwVTp8xL+xvQkOwLCgq/obxvFagA13z0+HbXgSPFY2ApSpF1sSZg8302j9BXH8/5r0SN6NIbI0Rr2xQIlghoIhfDRJBM1mWy6rtkiebL5OhBRTTDas3doyZn9FaiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ndepELuE; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LS1aaYZP"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XLsTWKvOrqNoL5y9vG4BglC5zhVKYY5h48A7r8DKwqouom2PAPCsR8dVUwPuWWjTIXQ+rR+Y39eZy0vH/eH4Qv/lcJVIdbg2Ys++yYssZyfzXKbfYsgSgqKuBwoDqLNldlBFeHSitP5j+5z2bFj6iAOgHdz/UhxDR3fAl0Q5o7l8o/kaHG/qu9RoGjMxQPvo3xB6UwQqHeHwS9GIZcehwHclZIpPwCBs8LxYBKCDZYKr5lehF0FXrU/0aRSenZN6Y1zQQoCCS9YcptXBfEisoZm3l4C/bP5p5B0a8kHvFh9fyk8D+Qant1URttIvpwEjVVLNeJAEjaWJ7KTHFqK04g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gQ+OE8QIAEvordwq9Eu9KduXF7SvGCeNdQFbFKcTS00=;
- b=wcRibGEguqE2bE7UWKzySrTCEBso+kwKN1+W1GZq2EQaQHT/j4u1xOExJhikVdZXlvo6HNeGpbuO+VE9XQ56EyTZBwKck5aNKYNFnaiWCsUqmwbFup4rrWMT33fHKmaT97Oi6nPEYWysY27QUJYeXxUyPPvR3bogoJG9jII/Re6DHAYDCbXsQrst5n8rScy3ntXy7cqe+lyuLjvd4H6mOn40l7kvQUPC/FazuymAe6yoT8b2xO78aULg5Iv533njULkobE67TE9dAlYKjCOU1l2EbwEfaG+2F6ZIvOv3gvo7+qBwE7nuR3Pw2XyfoZKfih2R9bWbSO+7yiUiFalCew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gQ+OE8QIAEvordwq9Eu9KduXF7SvGCeNdQFbFKcTS00=;
- b=LS1aaYZPLyJN1jVGavcWqfLUftprSIQw/07AGkLkBUG0UWQBe9QqfwZxWOEYj4VFh64DyrnQJYH0xIALiwgW/puLyrDEoorDHljrSDr0ymc3cYWk4FSAVMCX/9qWXrDdk8iCY/00P49M5AUe2MTWAOyBUY1Iq2GGPEktW5kxtFU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by CY8PR12MB8241.namprd12.prod.outlook.com (2603:10b6:930:76::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.113.11; Wed, 10 Jun
- 2026 09:11:52 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::ce69:cfae:774d:a65c]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::ce69:cfae:774d:a65c%5]) with mapi id 15.21.0092.006; Wed, 10 Jun 2026
- 09:11:51 +0000
-Message-ID: <d974a2ea-6102-45ff-bf36-3b25a2404e40@amd.com>
-Date: Wed, 10 Jun 2026 11:11:34 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/14] list: Prepare entry iterators to cache cursor
- state
-To: Kaitao Cheng <kaitao.cheng@linux.dev>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Davidlohr Bueso <dave@stgolabs.net>, "Paul E . McKenney"
- <paulmck@kernel.org>, Josh Triplett <josh@joshtriplett.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Boqun Feng <boqun@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, Huang Rui <ray.huang@amd.com>,
- Eddie James <eajames@linux.ibm.com>, Mark Brown <broonie@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Laxman Dewangan <ldewangan@nvidia.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Matthew Auld <matthew.auld@intel.com>,
- Matthew Brost <matthew.brost@intel.com>, Waiman Long <longman@redhat.com>,
- drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
- linux1394-devel@lists.sourceforge.net, dri-devel@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, linux-spi@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Randy Dunlap <rdunlap@infradead.org>, Christian Brauner
- <brauner@kernel.org>, David Howells <dhowells@redhat.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Kaito Cheng <chengkaitao@kylinos.cn>, Muchun Song <muchun.song@linux.dev>,
- Philipp Reisner <philipp.reisner@linbit.com>,
- Lars Ellenberg <lars.ellenberg@linbit.com>,
- =?UTF-8?Q?Christoph_B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
- Jens Axboe <axboe@kernel.dk>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>
-References: <20260609061347.93688-1-kaitao.cheng@linux.dev>
- <bd0b7393-8ccb-4d67-8bfc-18c68347122c@amd.com>
- <5152089a-2808-4fe9-b633-b03018105dd2@linux.dev>
- <6b2efdee-95b0-4306-a682-0d0466497ddb@amd.com>
- <2399841f-d834-4652-8285-4a15c7d9a9b9@linux.dev>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <2399841f-d834-4652-8285-4a15c7d9a9b9@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR3P281CA0086.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:1f::13) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ndepELuE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0CB61F00893;
+	Wed, 10 Jun 2026 10:35:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781087703;
+	bh=SeOChWWJdDACbt30MITEXDeeuwEhEpNLmKLuGmA/Y00=;
+	h=From:To:Subject:Date:In-Reply-To:References;
+	b=ndepELuEHqpBhPWtk8+T7QxUJ/uN2VgyVfUAVl2V9Zb/LNq6RP2LD3ONqBPSEjEXI
+	 jnYfrHRi13CVP4wJ6xun3OwQQUWYbycmBQAoxf/smG2TUYJBls8vSjSG3sIhi02W4m
+	 wUO4iGhLgI/bJUnpe4xiXKjzUzbPQHHE2ud14jni5qk5Ijb415qETMK5xA3gqGqEKa
+	 OXtCPQeX0hEod8qm3A+3Uluqxq9qVULJt2Xi8DdJXl7OlYuFIcvFEkCydh203mzHZU
+	 +ysCQ5FPR90Rlj6xyJ0uUuYFXKCrofECdXpn9A45dpdglf0mTxLeWfxlPHulf71UWk
+	 cLEgCQ2w+Mpdg==
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Vinod Koul <vkoul@kernel.org>,
+	Frank Li <Frank.Li@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Akhil R <akhilrajeev@nvidia.com>
+Subject: Re: (subset) [PATCH v6 00/10] Add GPCDMA support in Tegra264
+Date: Wed, 10 Jun 2026 12:34:57 +0200
+Message-ID: <178108768743.3388678.911465959943818936.b4-ty@b4>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260331102303.33181-1-akhilrajeev@nvidia.com>
+References: <20260331102303.33181-1-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|CY8PR12MB8241:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7464e8d5-7c24-4f24-2866-08dec6d04ee4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|366016|1800799024|376014|7416014|56012099006|11063799006|5023799004|4143699003|6133799003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	1htKofcJEs3WQFHVpqi/ZmKoxqDUWoziML8B50OQPmpkEjon74KxOB4u+OnvZqitJp3H3n59XEPQXs2ZM4rK2Cs9/Ou7Ts7zj8RPb+qk9qPCE/NwXunHVvwUQiyqyePQ65c9iaUNAAQo7eHgiLuOTtQw2H5ZJXeZXOxx6nr0fe3xuSuA5WIbHeU2MNT8I/ulSp23QMEgjoaSmAlKN2Ng1IXF04RdL/vJgQll0jWEgJUi/o9Me5pxFZxh32wZpQGuzskmyLR5HkeNbjki0A+VlpiqpS+SWNaQnrPd9nOy0zlCn1sNrbtVKSRps52Z8qwUjW3kX841RiI5iCa4+z2na3c9fsjOo0pEcazTH1A/2NtmDXYn+CCqV+mmlL4hUWfUfchpGcHERGgTqKWjLR0vSUWQhqxTuRKGlNNaL/r3Z/eU/6w7ctm28LMvqNedaFsls0VSmuNBDoBZZfPFXGxvihQkIMzL9LR9HZz+omUTgGaG3RH2QyuBsNEeHgs8ex5VN/lyz6QaxSmhBdgD7FvpJ/Kyygo0tUrSneiSOsh1wNaCMMOgsRrhlngP0fIeEF0fA6Xv3GIX3QMVLRUNFhBk83t8fHi22FaSFf8EQfRiIRdZhYZKDzGYqi8pfhxH19Z6LhOQ5adR6YyVHzYys3HMORl3YOwwW9+M45e9KZqFZkv7twfLSeTk6iq2XaSLgMOMEbslKgBFRuPYKVznmbYbtQ==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(1800799024)(376014)(7416014)(56012099006)(11063799006)(5023799004)(4143699003)(6133799003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eTVwSGRWQ2NlUmhwb3dVN2M3RjV3SVlsSXRoa3Y2VVVyQWwxaWU0MmhsVTFI?=
- =?utf-8?B?czI5UTFiM29IOEhIOTUxVVpoQjRqbGVMSGV4dWRHNFJZOW9EVG5YczdsbkEw?=
- =?utf-8?B?cVExRk9CZG92emlEM0dLaGRLeDNvazZQclVoSVQ1S25XUWJYVExiVnJabHM5?=
- =?utf-8?B?OFFEdkZmaVFTUnE3enh1aWM0czVlRitQZ0U1c3dDQzdkWXdwUmswRGNzV2th?=
- =?utf-8?B?c0h3RXF5VzlISVk0dW84WGY1Q3ZWTUpKaXhRN0JqMDZzSWFNQ0F5cXpjd0Fm?=
- =?utf-8?B?cDJTb0d2cklGUXJ5UjcxMkVHUWlyRGxZTGlvNjJCZ0xxcVpST0h5bGdFRDY3?=
- =?utf-8?B?Q25mQnpZMDZlVi9LZktkWlkxZmNKNHpuK1F5NzExYjIzUEErNFFFYTBDekpS?=
- =?utf-8?B?aVltbGJyemoyTS8wOVB3dElwUVIwamhJWDR5VUtQeFdoMUtNYXFvVU4ra0Nt?=
- =?utf-8?B?cHJieDJUT3F3NUduSnlyb0dpdFFLTHRaYktmTmlZZ0xEZC9jc21ZU2VEaFNM?=
- =?utf-8?B?ZXBPbHd4TVB0TjA4NVVxVU1hN3Bpem1XUWREQXBoL0tQc1hUVmpOTW9oVTgx?=
- =?utf-8?B?RnIycUtLMTVuRExEYTRFYVZsbVRmRXBzYTRDUFJGMTNnblJYNU9xSDJ0TlhL?=
- =?utf-8?B?YndaVStabGwyRGVzeEZsWG4vUTBDekJ3VjMwdkd2ejV3aUladjlFK0srWXNS?=
- =?utf-8?B?YmVNZmxPd01lVGFLNDhpbFdCZ245bVgyUXJVYnIyR1I5a01lN3dPSmhYbjgr?=
- =?utf-8?B?RUFwNW5XQWNuWnJrYUtKMFEzMFdkZWswdXlIanAwZG5YUzRZWUFiVnMwZDJC?=
- =?utf-8?B?K0dJeGtVdjc0TkhGc0NEU0t3OTVqbWI1azB2eUZZT2prMXM1ZzhqUHR5S0tE?=
- =?utf-8?B?QW5IMWcrUG9weGE4SUJwR0UzMWJocHZreEpwaGJjdThLUExWT0pEYmtpRitl?=
- =?utf-8?B?VXNtQUROUWx2YTVlNFVnRStjVEdsbEtlQTB4Z2FyT2NHcUlWUVE0b2hBTU5O?=
- =?utf-8?B?QWFBZ2EwNDMzRzRGZjF6NEltSU5NcTFyRmFieUF5ZW0rZWRmaHF1U3htNGFT?=
- =?utf-8?B?Qm44cDY0cWFLTVhpK3d2MXlQNzNTNW5EK2liUU02cE93YlpzTVFocDJUei85?=
- =?utf-8?B?Qk1YVnpEVkxyalpoNU1mQnZ5aCtrZFFaUHlQZDRQRVNwMXZpRXVYOUhNMzJK?=
- =?utf-8?B?Qno3MnhwWjFWYXRYNTQ0dUwyMmJCQk10dU5yenQrRXJxRHprcWRaMzZtc3Fs?=
- =?utf-8?B?NStjVlRUNndrS1lrZnNzOEUyckxGUEJTcG9jR2FYVy82UThsYW9MU3V1MXIx?=
- =?utf-8?B?RTdlNHRSMUlyZTBzZXVFSlp0SGF3TmFDWDM4L3J3Ukk4OURQZ1pPOWphNngx?=
- =?utf-8?B?LzVjN0FvWXByTU82WlhYN3B1Ynl6S2NmTUovNGhQMlBEbEo3RVJacFVIUXhE?=
- =?utf-8?B?MGYyV0lCQTBZd2J1VHYwYmJ4V2hiVlpkWGZXVlQrUVZlZEtRa1J6U0h0d00y?=
- =?utf-8?B?V0tLbXhOcTRpNVFXdnZ0QlZ0ZFlRdzVodmNERlJ4Sm5mdkdOclNJTXdRVWR6?=
- =?utf-8?B?eStsdStTQTI2dS9nSCthUVNLYXpacjJXdHQ0UnRuZU1ZZzJXeG9hT3NXeDBM?=
- =?utf-8?B?RjI5dTRXUnN5QkdYQTJ1Q1RQNHNvSUFLWWpSaWppOTBrQjQ3WGgxMnBWSC9G?=
- =?utf-8?B?L0NwOURhSDNGbXVzUHhBb0F4dkZ2SjI1VzdLWXM0Rnd0U3lVdFBmWGpIVHYw?=
- =?utf-8?B?YTZNUjJEUE4xUGdhU2hZYTY0NWtrajNmOEdYL2Zya0dmQWVOL0pRanJyVHpO?=
- =?utf-8?B?N1pUWjFaNWRsU3RxOUh5Tis5K0pTa3NUY2g0TEJndmQyNUttTUt1R3ZzTmFK?=
- =?utf-8?B?NlJjaWM4bTNnTGlUc3pLRk41VkJMcEY1UjdtMHdYZmpuQTZlZURxYU82akVQ?=
- =?utf-8?B?ZXFSQ1ozZmd1MGJFQVJxOEJaeXJLSHVNUGV0T2xuaFJZOG4wWXB2bVkzdC94?=
- =?utf-8?B?dFZvbHlTYjhIdXBPc3UxWFVua1BSSzZWTGg0WnIrQUo5U3NCN3hoYkdJSWU1?=
- =?utf-8?B?MUtOVzNraUR4M0dXTTlUeGl5ZXZuRjhLV0IySi9PUldIc29GR1NvMU51N3lW?=
- =?utf-8?B?bkJWUDliK1JQLzZxOUNGb3NOaFdPeGJxL0kzMmFacEpFMkV3SUZ4OHM2cml1?=
- =?utf-8?B?SkpsNXVBSm04NStnNDRCNmdOZ3V0WmVBTlBxTnZ0RnRRRy9RMW96MThiaERL?=
- =?utf-8?B?cytjMnY5ZUZ4QncxMmJiZ2lXaFRUUEd2R2NDaEQvK29tUm00MVIwWTAyTlp6?=
- =?utf-8?Q?r++g69Ih9P6IalPmUj?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7464e8d5-7c24-4f24-2866-08dec6d04ee4
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2026 09:11:51.3845
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: O2pS5uzv20sPGWEIj7DuFxfVi8xT8GgRzfTSwjQsp7tXU+0BXMaezMEMi/BXG3es
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8241
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+From: Thierry Reding <treding@nvidia.com>
 
 
-
-On 6/10/26 10:18, Kaitao Cheng wrote:
+On Tue, 31 Mar 2026 15:52:53 +0530, Akhil R wrote:
+> This series adds support for GPCDMA in Tegra264 with additional
+> support for separate stream ID for each channel. Tegra264 GPCDMA
+> controller has changes in the register offsets and uses 41-bit
+> addressing for memory. Add changes in the tegra186-gpc-dma driver
+> to support these.
 > 
+> v5->v6:
+> - Replace dev_err() with dev_err_probe() in the probe function for fixed
+>   return values also.
+> v4->v5:
+> - Use dev_err_probe() when returning error from the probe function.
+> - Remove tegra194 and tegra234 compatible from the reset 'if' condition
+>   in the bindings as suggested in v2 (which I missed).
+> v3->v4:
+> - Split device tree changes to two patches.
+> - Reordered patches to have fixes first.
+> - Added fixes tag to dt-bindings and device tree changes.
+> v2->v3:
+> - Add description for iommu-map property and update commit descriptions.
+> - Use enum for compatible string instead of const.
+> - Remove unused registers from struct tegra_dma_channel_regs.
+> - Use devm_of_dma_controller_register() to register the DMA controller.
+> - Remove return value check for mask setting in the driver as the bitmask
+>   value is always greater than 32.
+> v1->v2:
+> - Fix dt_bindings_check warnings
+> - Drop fallback compatible "nvidia,tegra186-gpcdma" from Tegra264 DT
+> - Use dma_addr_t for sg_req src/dst fields and drop separate high_add
+>   variable and check for the addr_bits only when programming the
+>   registers.
+> - Update address width to 39 bits for Tegra234 and before since the SMMU
+>   supports only up to 39 bits till Tegra234.
+> - Add a patch to do managed DMA controller registration.
+> - Describe the second iteration in the probe.
+> - Update commit descriptions.
 > 
-> 在 2026/6/10 16:07, Christian König 写道:
->> On 6/10/26 08:14, Kaitao Cheng wrote:
->>> 在 2026/6/9 18:33, Christian König 写道:
->>>> On 6/9/26 08:13, Kaitao Cheng wrote:
->>>>> From: Kaito Cheng <chengkaitao@kylinos.cn>
->>>>>
->>>>> This series prepares for, and then updates, the list_for_each_entry()
->>>>> family so the common entry iterators cache their next or previous cursor
->>>>> before the loop body runs.
->>>>
->>>> Why in the world would we want to do that?
->>>>
->>>> The safe and non-safe variants have very distinct use cases and that is completely intentional.
->>>>
->>>> What we could improve maybe is the documentation, from my experience an astonishing large amount of people have misconceptions about the safe variants.
->>>>
->>>>> The first 13 patches open-code loops that intentionally depend on the
->>>>> old "derive the next entry from the current cursor at the end of the
->>>>> iteration" behaviour.  These loops append work to the list being walked,
->>>>> restart traversal after dropping a lock, skip an entry consumed by the
->>>>> current iteration, or otherwise adjust the cursor in the loop body.
->>>>
->>>> Well I have to clearly reject the changes for subsystems/components I'm maintaining, that just looks horrible to me and I clearly don't see a good reason for that.
->>>
->>> Hi Christian and Andy Shevchenko,
->>>
->>> Thanks for taking a look. I would like to clarify the point you raised.
->>>
->>> The reason I started looking at this is the original motivation behind
->>> the _safe() variants.  They exist because some users need to remove, move
->>> or otherwise consume the current entry while walking the list.  In that
->>> case the next cursor has to be preserved before the loop body can modify
->>> the current entry.
->>>
->>> The unfortunate part is that this could not be expressed with the
->>> existing list_for_each_entry() interface without changing its calling
->>> convention.  The _safe() variants had to grow an extra argument for the
->>> temporary cursor, and that is why we ended up with a separate family of
->>> macros.
->>>
->>> But conceptually, the distinction does not have to be exposed as two
->>> different iterator families forever.  The difference is an implementation
->>> detail: whether the iterator keeps the next/previous cursor before the
->>> body runs.  This series makes the common list_for_each_entry() iterators
->>> do that internally, so the safe and non-safe forms can effectively be
->>> folded together, or at least the need for a separate public _safe()
->>> interface becomes much weaker.
->>>
->>> There is also a usability issue with the current _safe() interface.  The
->>> caller is forced to define a temporary cursor outside the macro and pass
->>> it in, even though almost all users never use that cursor directly.  It is
->>> just boilerplate required by the macro implementation.  I find that
->>> redundant and awkward: the temporary cursor is an internal detail of the
->>> iteration, but every caller has to spell it out.
->>>
->>> With the updated list_for_each_entry() implementation, that extra cursor
->>> can be kept inside the iterator itself.  Callers that only want to walk
->>> the list, including callers that delete or consume the current entry, no
->>> longer need to carry an otherwise-unused temporary variable just to make
->>> the macro work.
->>
->> Well the distinction between list_for_each_entry() and list_for_each_entry_safe() is *not* there because you need an extra variable to hold the next pointer, but because just 'iterating the list' and 'iterating the list while you modify it' are two distinct use cases.
->>
->> Apart from the technical implications this also has some documentation value for the code using it.
->>
->> What we could consider with C99 at hand is to have _safe() variants who uses a local hidden variable to hold the next element.
->>
->> Or maybe come up with a better name instead of _safe() because people seem to misunderstand that quite often.
->>
->> But mangling the two use cases together just because it is now technical possible is among the worst ideas I've ever heard.
->>
-> 
-> Should we revert to v1, or keep list_for_each_entry() and
-> list_for_each_entry_safe() as they are, close this thread, and make no
-> changes?
-> 
-> Link to v1:
-> https://lore.kernel.org/all/20260529082149.76764-1-kaitao.cheng@linux.dev/
-> 
-> Or do you have any better suggestions?
+> [...]
 
-v1 looks perfectly reasonable to me.
+Applied, thanks!
 
-You should just include some patches in the same patch set to actually use the new macros.
+[02/10] arm64: tegra: Remove fallback compatible for GPCDMA
+        commit: ee7863e43228a3143398dc5bbb943c9a735a8fca
+[10/10] arm64: tegra: Enable GPCDMA in Tegra264 and add iommu-map
+        commit: d2bca791d5a6c00ed24e92fa71f829553b1b1674
 
-If you modify the files under drivers/dma-buf or drivers/gpu/drm/amd to use the new macro I'm happy to review that.
-
-Regards,
-Christian.
+Best regards,
+-- 
+Thierry Reding <treding@nvidia.com>
