@@ -1,179 +1,175 @@
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011003.outbound.protection.outlook.com [52.101.62.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4FF3A6B99
-	for <linux-tegra@vger.kernel.org>; Wed, 10 Jun 2026 08:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781079587; cv=none; b=lX8YSIMiZxUddnLSMagJN2+iCJHYurEQjMtnLaOEYdH/0hBr85cA1/dr/qn27BFDueK6rGFmcom20GQ/2+agvsYa3EtjBt365i3Qnit4yc/vfPX3vcIPlAo0iYjtCblUtKcBuv6AsbOCIDmGq4Y7YlYGNg+meaFxl2SqnIeZa8s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781079587; c=relaxed/simple;
-	bh=Jyc91vyJ7ndQgFlz+YZrGZa32ZyUmsV/OWq4Besj+oQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qNJKPLOFqhqNwdbPOqbORzB/EXM1GDM96NJLDaYLsjU6RCj4fxZ2RRYvkGKtFikQpz7pFDHJDqtU7eyz+DwWJOM7rTC5HxDAq/j92KucNLNnDpbx3OY9sRLkVwQpL2lPnh00Dz3mzUxwVyPEC1VatGsm6JEHUpZMEqrJZSjO4I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=b+KKxMDO; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB364282F2A;
+	Wed, 10 Jun 2026 08:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.3
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781080996; cv=fail; b=ACKukcUraWcMx59C4I9yIJ7s8JiNM+gBbCfYF+kHN94H+ldCE3B3haiIV2+rb6pjl5u9d4xt79N4yiAS/HqSW8cSbvJkrij/1DPh7ZLXy2h7LbQfUvoRSgjMzOz4LFgMK93pYPh1D4smdx/N+cGYqwojtP0mIRE3EaGXKGxUjyY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781080996; c=relaxed/simple;
+	bh=yLlK3MRgwavOmpuZDqQmivDRoNXgi6KaAgS/0CeZDVA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=YTeRP7vlv/0SAPjh1+MohVvF89msWcS1qTaWNESgQ95sNxEc8xll2bQinddbOrcHWcsfJ50gZsT+L0W6SLFs1kDaN7wXoqo/lSEAOrGeanTSVUqrgVl7mz+nfQKsz0hBMqgiEOgQxUywDd2/xPmt3VvhxxR9/wA4RpSyBxoWw+M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=omikjEZp; arc=fail smtp.client-ip=52.101.62.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="b+KKxMDO"
-Message-ID: <2399841f-d834-4652-8285-4a15c7d9a9b9@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1781079581;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vgeT73qC1JMBtqJB2TUIr+4bit/wHx6kJFn5Pav/2f4=;
-	b=b+KKxMDOPPD9issjhumw6+KGbYM7wMtezvy5jEnscI0CZYz2NKMOHn33g1ku+yIj4Y2DTn
-	+Yag6Z6BDFL2Y2GchMx0dVC5s3t6GNYZv4TV2TeNkysaubM7HMus5UBFldLUBxBN8KRyYZ
-	t05b5xvQnStTsnzUuvWsLluFbGiay9I=
-Date: Wed, 10 Jun 2026 16:18:28 +0800
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="omikjEZp"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KMWAVuNRfm9ncNQf/blGNrv8mu90pzE84nm0ZEVJxR8kod8f9Gyve6mWUg1TITk39iTeNsr4ycJS2ROPng1L9840FZusiCPBtXcmvWIHyk+mdAuSIcvIaqf0C2cj9eNeg3iVVpyf8x1tzffikdrZKD4twHlyGyEoFaX3mtmecraIiDZrR3nasYBCU7Y2/V5vJYDuHtPIjXFQrPpgJBkEZDscaRZmimd+0nZ7Jc7MvBluvo7go6QoHa4czLjE2LeK3Y3RAZlkblgkkZfG33e7rDxotk1f//kwmqmqD8vgHFbPlRuOhLg8QN5MrPDed3WiEm3WwMhYMhAhUWUAmWdMhQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6l9EB3AQGJVUdxisi0YLxWrHNVdGgAhKeF+tnstrPNg=;
+ b=ov3v7aYa8klgaJHeD6ub5ptPDeJ//fMrEaa4Pb8iZeC/MkPagi9LU/45J88ZnEAYIzqE5topcMV0B8sOKPb7Pb+8mnpv/3MJFA4kAzpKt8k+QWIEBle89j7UmfO8YBuZ7GdI6uMCDb7CbiL0FaXFko3jKXfkCPpK2SUb7OmQOpVmOJk2KFCMF9PqBzU1ZZeKWvqe6QSHMJnc2OstT8OmnDJbUU5OYltvZktef4gga8OUg4nMIzexGf6B1euzKbUEUARXJqgN4B+Jn1lWx0Ts0+/JVqJ90Uya/2kzGiD9oDALPvVofGKTdxkuIXX5p/0VxE0PpUAoY8n958EXt9uV1A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6l9EB3AQGJVUdxisi0YLxWrHNVdGgAhKeF+tnstrPNg=;
+ b=omikjEZp1SSHvZ70aikemtcYOnzr4d8ujkIy5ljxChznDpXI2LtyRRvIkgiIsIPwhehiOl/S6mNGLe6gzS7nlfGncwG6ck6Nlnv3n8+mCxtLUSHrkWnpVnTkj+4oaXy1W7RS7Y6PLsYsbdoQPkYvG8pqZb0DdzIsJdE72I04DIvK05ByCzQ77LQCsPBiLAdtWQsXXEu356Rm2xr0itIdm7JijtmnG2T4I6cRDTvXDBqvXyt39F17VaX4Z2/cexZbhwQP3MFLiaFfu3wlaqTio2UuhlBd8qE8PJi/8FNE+YAfMI6UvdYzW1ZunE9HeW3WZV6VR1MKzXdVk/Y7rAzB/w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12)
+ by DM3PR12MB9285.namprd12.prod.outlook.com (2603:10b6:0:49::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.92.13; Wed, 10 Jun 2026 08:43:12 +0000
+Received: from DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391]) by DS2PR12MB9750.namprd12.prod.outlook.com
+ ([fe80::56a8:d6bf:e24c:b391%6]) with mapi id 15.21.0092.011; Wed, 10 Jun 2026
+ 08:43:12 +0000
+Message-ID: <60410a5b-226b-44ee-93c1-d9cb3eedf01c@nvidia.com>
+Date: Wed, 10 Jun 2026 09:43:08 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv4] dmaengine: tegra210-adma: use platform to ioremap
+To: Rosen Penev <rosenp@gmail.com>, dmaengine@vger.kernel.org
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vkoul@kernel.org>,
+ Frank Li <Frank.Li@kernel.org>, Thierry Reding <thierry.reding@kernel.org>,
+ "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20260609212531.22044-1-rosenp@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20260609212531.22044-1-rosenp@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0214.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:e4::10) To DS2PR12MB9750.namprd12.prod.outlook.com
+ (2603:10b6:8:2b0::12)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 00/14] list: Prepare entry iterators to cache cursor
- state
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Davidlohr Bueso <dave@stgolabs.net>, "Paul E . McKenney"
- <paulmck@kernel.org>, Josh Triplett <josh@joshtriplett.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Boqun Feng <boqun@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, Huang Rui <ray.huang@amd.com>,
- Eddie James <eajames@linux.ibm.com>, Mark Brown <broonie@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Laxman Dewangan <ldewangan@nvidia.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Matthew Auld <matthew.auld@intel.com>,
- Matthew Brost <matthew.brost@intel.com>, Waiman Long <longman@redhat.com>,
- drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
- linux1394-devel@lists.sourceforge.net, dri-devel@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, linux-spi@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Randy Dunlap <rdunlap@infradead.org>, Christian Brauner
- <brauner@kernel.org>, David Howells <dhowells@redhat.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Kaito Cheng <chengkaitao@kylinos.cn>, Muchun Song <muchun.song@linux.dev>,
- Philipp Reisner <philipp.reisner@linbit.com>,
- Lars Ellenberg <lars.ellenberg@linbit.com>,
- =?UTF-8?Q?Christoph_B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
- Jens Axboe <axboe@kernel.dk>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>
-References: <20260609061347.93688-1-kaitao.cheng@linux.dev>
- <bd0b7393-8ccb-4d67-8bfc-18c68347122c@amd.com>
- <5152089a-2808-4fe9-b633-b03018105dd2@linux.dev>
- <6b2efdee-95b0-4306-a682-0d0466497ddb@amd.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kaitao Cheng <kaitao.cheng@linux.dev>
-In-Reply-To: <6b2efdee-95b0-4306-a682-0d0466497ddb@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PR12MB9750:EE_|DM3PR12MB9285:EE_
+X-MS-Office365-Filtering-Correlation-Id: 91bbeecd-2ba6-4656-85a7-08dec6cc4e56
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|366016|10070799003|1800799024|376014|11063799006|56012099006|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	RT/aTWmxqtOCAPc5Aa3LJ0blPcq2aX+kGDWIhcOsesumK9Ztl949FjrlzWnBbI/2hfxEfFOiVdk7Ss7kCVTZxTorLgfilL6hh1Cq8p6IE7sNjw21wvzA6hvxI3UlQqEyhMRpXWJyssokszUxLncWIxRbCHgXpnMZN6cwrtSJ7OBV5CbT0H7IGDZoruUNnEdU/v8PtXpNmS5SwODUYvTUVfihzpKI0lAOpkC+04Yphr59p9eTd9XCGIXNpVvpaXBcF6D1TxNnzt71OsyFhpK1OjVDTFH/KpaY9l9USU8y+/qcm5nCUYiUZ64Z8YN1t0sWJ0y+3KHnBWJdcY1vx2LR5wg/YlZnIBUajIYkqREPv0Lko/Xt+wXMK6ML+eds0JY8v3q3NJLFdPJwHhmiPuq5bv09NKlBGybsqYgf5r+gA9GTbDil56XLQZiEVPfBY4DbvDBcG5fMTdF4px2kK5d3aICLx8EwfvT8hPhpUKiyagiVsImR8Ls1MJC5d5iAUQ3eMfWovNxIs5yudyHFb0vPd+5fCBDXEQo6JKwFWxgpZCYpYc1Atht1Mpf4izBmsWNdqH9Th/qeFtLJrmjc+arrgjgOrDZ/tIbT3AApyHWVObanA5zW1x2DGRISCsm4axaExUHReQ3Mj3qa5Y5wzOTli8VTotuPMjPpDHmkBhcNrBwu3iHmm1JL5GjkhRb0tVBF
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS2PR12MB9750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(10070799003)(1800799024)(376014)(11063799006)(56012099006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?R1NtbFU5Tmt5VzlqOEVqUFovR1YzekswaWhGWnpBTDA5OC9LNUxiazZKcG93?=
+ =?utf-8?B?bkZoSTVZZWRqd09NZEZDVWJ6YWNsZXVmNjMyUWxpZ1JkMGdCc2xUMDRQWDhE?=
+ =?utf-8?B?NG9CUE5OL2xSQVRMcGxIcGNJU1ZJVFg4cjJubFZiY05DUUo3YWFSTjdPUWd2?=
+ =?utf-8?B?RXNpMHpnNlErUVMrY2xZemFVR1FPTmRJUHBGVVZnbnk0c08xWUVtWXVqNmJx?=
+ =?utf-8?B?Sjlqd2dFK3B2a2VZV29uS1NJMVhmZ1B0VU1nNG1weFZhY2NZK0pCQlJGRGZ0?=
+ =?utf-8?B?MzdnOGVLUWZ0SjhmbzU1ZjYrWWF0V0FUY1dnWFdMYjdFcXlmeis1TXdxZ1Bi?=
+ =?utf-8?B?L3hDYkdjVGZ3UWZPSGdHdzFXUWxsZlYyUzNJckNSSFBuN3RiNmRwcGRaaDhJ?=
+ =?utf-8?B?elRSUkRKQnVpOUJJalBCb0F3UWcxQ3c1My9Ucy85R0dCSUNYR1FkcUo5cjcw?=
+ =?utf-8?B?Uzc4N0Q1TkczY2RDczJHR3NhWjF2bjIwMGdScDc0bERacGpNcTErL2REU2pO?=
+ =?utf-8?B?TEtCNEE1UVZJNGg3SGNtYTMreVpTNE5lYVEwOWFEMlNoZUdYVkNCcjUrTEty?=
+ =?utf-8?B?VUdydk5nZjFST2FyU0hkOTk0QUlnNTZFTTk0NEx2U0hoaFVFeTdNOUppS0ZN?=
+ =?utf-8?B?UWh1NXdHTUt1c2RNYTZrRklTck5OVVpqVGhyZWhpaUpZZGNpbDBaNitsMEt1?=
+ =?utf-8?B?TTJ0WVcvMGJMbnduN0hGQW5rTDlmamJxUS9hdVFLSlFPc2ZGTnVsaWwydmdp?=
+ =?utf-8?B?cUtMei8zenRFU1VUMmlXTVpQaEhOeE1mWmRMaEJKbnZQV2RSMTBZYk50WUJh?=
+ =?utf-8?B?T05Hcjd2R09FTHB5ZHRBMnVpNkJuZklMbHpjbWlTZ1c0ak5peUNGNDJOVEx3?=
+ =?utf-8?B?UStDN0Fvb211YzdFWUxHbHZLSHZlOEVUbHc0Y3FrZGNNVEJqQmNkTFhkcFUy?=
+ =?utf-8?B?TlJPcmJhcHJicExoUHNFT3BQTmVDejg0UzR0WWNKcjZSaWYyM3pieVBEQzFO?=
+ =?utf-8?B?bDVMSEZ4SHNGS1kyaFE4dTVyWWx4Z1ZpNm92NThBdHMyYTBBVVlqd2VLTW5h?=
+ =?utf-8?B?dzZ1Ymk4TWg4K2NSMjNyMElqNFhLbFU3UzZ6aDc2cXdmSGxMdk9zbnhXU1Vm?=
+ =?utf-8?B?b1dJK2dvZTJOZ0JqM3o4SG5xckpjNmxLQk02akcvb3BGY0dYTjJuMjBEYTky?=
+ =?utf-8?B?UlBjOVd3VUtGRExQZ2NZYWN1ZnRTLzRPNDBFS1VmWThwUm42R0RoWjVuVGt0?=
+ =?utf-8?B?a2lxL29wNlpYN01EQ0h0QVZhRnFBdUo4ZFdwdjcvbFkwWWt6U0toLzEwKzBn?=
+ =?utf-8?B?WlJlcllNdW1odXcvdXRSVWV0S3BrUmtNcHgvTlpHMkltK0pCMUhXMHZpcW9j?=
+ =?utf-8?B?akQxK2N4UXZSb1NnUlNMNkFUMXJ2N0tRanh1Um5EUmJMUjd2bjErQkdGbmJz?=
+ =?utf-8?B?REdJNCtwd3JhenEyVjJkRVlLVmV6SFlkOGZxaFpqNDVrdVk5NExwaGU2T0F3?=
+ =?utf-8?B?OFJrVmc5NGNvTWcxOE9MdVNObXhXanA1MUhLLzVlK2ordUIrc0ZNRTRhV2xr?=
+ =?utf-8?B?c2VZQzAzNGgzTm9xOHRmY3VmWEhURVJGN2hNNkwxWmEyRGNCc0pUeFpTR0R0?=
+ =?utf-8?B?UTZhYlBFVEZjQlJzQ0kyWmZhSFdQa1Z4WlhXd2hjZmNLMWxYU1VUOWZzQ2pC?=
+ =?utf-8?B?MGUrMUFsVHRGMTZYN3FuTCtxQmJpaW41UWt1RlNRdUhObUt2OTgvbzluQXpM?=
+ =?utf-8?B?V2ljRDVYSTRSZ2Vla1l4bjdIVzZZOERvbHcxUXZFSEszNzJ5NWZzZUVGRzRO?=
+ =?utf-8?B?cm1oY3JQVTdxcjhrVWZtZnM0WjRkeDk0WmRaTW1CanV4bnNSRExnUVJ6Mk9u?=
+ =?utf-8?B?ZStHMVZ2Szg0azI5RmlacUJldEhOWlJneSs1YnJqMWVkcFRLdHV6dTltUThL?=
+ =?utf-8?B?TTJ6NEN5NXAyVkN2TmhKYTB3ZWxlTGJxSTluNHMrdStWQWNBdE05KzQwUGx0?=
+ =?utf-8?B?L2VKazAzVDNhRmlGN05jL3dWbTc3MmpIZEVsZHRobzFGSFJic2RDYmUvUHA1?=
+ =?utf-8?B?ZWtvVDhnaHFYek5JclRqL2dXaDN2WW42NTRhMjY5ZUdnK3FTRks0QnBpdW9S?=
+ =?utf-8?B?ODduYTNvODIvTmlWVm80bGxCakxSMk1KU0w1UStOWDJIYXd2WUE5NUFXZm5X?=
+ =?utf-8?B?QU0rZFQ5UUF1ZXliVFhsa0w4SFM1R0hnNE5oQ3cxNHBGdTJTcWhMcUZBYk5U?=
+ =?utf-8?B?a1ZoZFkrZGFQdDJHM0dXa2s2dEhlTnEzUUVKQm5aaXpBTEFMa25VTnpySXg4?=
+ =?utf-8?B?NXNBNE5zYmdJaVZzSXMzSzFyU3RtVEw1dHRnMVBSOEVqbHJ6NThYMWw1NUhT?=
+ =?utf-8?Q?wVHA8gEPZqOjktENhYo7rFzXlE4Nv9e4IGTqPnxW4TeuT?=
+X-MS-Exchange-AntiSpam-MessageData-1: d6oGb0wBTvnI/Q==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91bbeecd-2ba6-4656-85a7-08dec6cc4e56
+X-MS-Exchange-CrossTenant-AuthSource: DS2PR12MB9750.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2026 08:43:12.4087
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +XhxKjeMXdVL9t9rctukUmCViKQ0oJSYfFmjPH9FYphi1DxvyCRNYuagtVNC5V4ObEDn/IrAMS9aytPdSmcvUA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9285
 
 
+On 09/06/2026 22:25, Rosen Penev wrote:
+> Simpler to call devm_platform_ioremap_resource() as it returns multiple
+> error messages for whichever part fails.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>   v4: rebase and reword commit message
+>   v3: change subject
+>   v2: reword commit message
+>   drivers/dma/tegra210-adma.c | 12 +++---------
+>   1 file changed, 3 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+> index ceaee1e33e68..21a381d022cf 100644
+> --- a/drivers/dma/tegra210-adma.c
+> +++ b/drivers/dma/tegra210-adma.c
+> @@ -1087,15 +1087,9 @@ static int tegra_adma_probe(struct platform_device *pdev)
+>   		}
+>   	} else {
+>   		/* If no 'page' property found, then reg DT binding would be legacy */
+> -		res_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -		if (res_base) {
+> -			tdma->base_addr = devm_ioremap_resource(&pdev->dev, res_base);
+> -			if (IS_ERR(tdma->base_addr))
+> -				return PTR_ERR(tdma->base_addr);
+> -		} else {
+> -			return dev_err_probe(&pdev->dev, -ENODEV,
+> -					     "failed to get memory resource\n");
+> -		}
+> +		tdma->base_addr = devm_platform_ioremap_resource(pdev, 0);
+> +		if (IS_ERR(tdma->base_addr))
+> +			return PTR_ERR(tdma->base_addr);
 
-在 2026/6/10 16:07, Christian König 写道:
-> On 6/10/26 08:14, Kaitao Cheng wrote:
->> 在 2026/6/9 18:33, Christian König 写道:
->>> On 6/9/26 08:13, Kaitao Cheng wrote:
->>>> From: Kaito Cheng <chengkaitao@kylinos.cn>
->>>>
->>>> This series prepares for, and then updates, the list_for_each_entry()
->>>> family so the common entry iterators cache their next or previous cursor
->>>> before the loop body runs.
->>>
->>> Why in the world would we want to do that?
->>>
->>> The safe and non-safe variants have very distinct use cases and that is completely intentional.
->>>
->>> What we could improve maybe is the documentation, from my experience an astonishing large amount of people have misconceptions about the safe variants.
->>>
->>>> The first 13 patches open-code loops that intentionally depend on the
->>>> old "derive the next entry from the current cursor at the end of the
->>>> iteration" behaviour.  These loops append work to the list being walked,
->>>> restart traversal after dropping a lock, skip an entry consumed by the
->>>> current iteration, or otherwise adjust the cursor in the loop body.
->>>
->>> Well I have to clearly reject the changes for subsystems/components I'm maintaining, that just looks horrible to me and I clearly don't see a good reason for that.
->>
->> Hi Christian and Andy Shevchenko,
->>
->> Thanks for taking a look. I would like to clarify the point you raised.
->>
->> The reason I started looking at this is the original motivation behind
->> the _safe() variants.  They exist because some users need to remove, move
->> or otherwise consume the current entry while walking the list.  In that
->> case the next cursor has to be preserved before the loop body can modify
->> the current entry.
->>
->> The unfortunate part is that this could not be expressed with the
->> existing list_for_each_entry() interface without changing its calling
->> convention.  The _safe() variants had to grow an extra argument for the
->> temporary cursor, and that is why we ended up with a separate family of
->> macros.
->>
->> But conceptually, the distinction does not have to be exposed as two
->> different iterator families forever.  The difference is an implementation
->> detail: whether the iterator keeps the next/previous cursor before the
->> body runs.  This series makes the common list_for_each_entry() iterators
->> do that internally, so the safe and non-safe forms can effectively be
->> folded together, or at least the need for a separate public _safe()
->> interface becomes much weaker.
->>
->> There is also a usability issue with the current _safe() interface.  The
->> caller is forced to define a temporary cursor outside the macro and pass
->> it in, even though almost all users never use that cursor directly.  It is
->> just boilerplate required by the macro implementation.  I find that
->> redundant and awkward: the temporary cursor is an internal detail of the
->> iteration, but every caller has to spell it out.
->>
->> With the updated list_for_each_entry() implementation, that extra cursor
->> can be kept inside the iterator itself.  Callers that only want to walk
->> the list, including callers that delete or consume the current entry, no
->> longer need to carry an otherwise-unused temporary variable just to make
->> the macro work.
-> 
-> Well the distinction between list_for_each_entry() and list_for_each_entry_safe() is *not* there because you need an extra variable to hold the next pointer, but because just 'iterating the list' and 'iterating the list while you modify it' are two distinct use cases.
-> 
-> Apart from the technical implications this also has some documentation value for the code using it.
-> 
-> What we could consider with C99 at hand is to have _safe() variants who uses a local hidden variable to hold the next element.
-> 
-> Or maybe come up with a better name instead of _safe() because people seem to misunderstand that quite often.
-> 
-> But mangling the two use cases together just because it is now technical possible is among the worst ideas I've ever heard.
-> 
+The dev_err_probe() was purposely added to assist debug. Please don't 
+drop this.
 
-Should we revert to v1, or keep list_for_each_entry() and
-list_for_each_entry_safe() as they are, close this thread, and make no
-changes?
-
-Link to v1:
-https://lore.kernel.org/all/20260529082149.76764-1-kaitao.cheng@linux.dev/
-
-Or do you have any better suggestions?
+Jon
 
 -- 
-Thanks
-Kaitao Cheng
+nvpublic
 
