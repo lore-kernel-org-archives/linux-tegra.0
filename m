@@ -1,130 +1,205 @@
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C09933C53F
-	for <linux-tegra@vger.kernel.org>; Wed, 10 Jun 2026 03:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19B9349CEF
+	for <linux-tegra@vger.kernel.org>; Wed, 10 Jun 2026 06:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781060899; cv=none; b=eXyw236XWFTk7ltcU5i/iLkht9SDLpI1BmB2tTAZ+3Pb/yEbPEizt6MdmG0CFMb8XHdzu9NFGiIAoumRTlEYzGhXumD/ABABbaHwzSE5eCdQEBZBm4QtwB+Z1tnJsXl5bKJytzkF19iEDygBoFnchuAFRC5wwtGqixSyTnZHe9I=
+	t=1781072109; cv=none; b=XuKFKAGsxmHqVnuX+5j6+aTyLP2K36xiIBdkXN84RBgSJyvkSgiy6Jdp40FuiuiTDHNm64gUzAm7j/HdHenoaLyZYSyM5mWibaslRO3mBTWeU5hSy1Sd4fevx3qyxzprKw71ebaAh/41ECQE8RJtmLHzEdGlbk0JgrjsMIgZZi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781060899; c=relaxed/simple;
-	bh=GyRKllbRwjqHwZUloUjWOpwJTt3ojP0HLtpmRdA/80s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kB0U9tLVnfPr6YorAlMd5oncHT9B7Z2Wewjbn5SKzd6sbprK/Tj8A09eP5tM8+pqB4mYESzfzbDRMKWz2OOs77Atd0zqPll7d0iTzhN6Aa4zhV7mMZ9IE1kfNBnA1C0ccY/dnrH/+8i5sJNiT8f6n20IoEyQgKHFS0R/KtOPLLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qQsRttGG; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1781072109; c=relaxed/simple;
+	bh=Am80scJm7qZln289j193oDacMGxPd50Xb+X58U16Q+c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mGOJCEPZIZKJV+0pMHLMqI0EZCy4JGJSOL+h6si0Lzma+LABSVFAqdShXmf8wBmx2Oe6Ew1N8j3J4bpalHPSHNr6f7cu0m4kzdspXr5Lnn8KsQrH66p15SINvZ5nNQnvlLZDlIwrXKjNbcJ2QA4bj9V833V5qHMqfLHw4sMAXHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=S/EuK96p; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qQsRttGG"
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-c8573e75425so2399768a12.2
-        for <linux-tegra@vger.kernel.org>; Tue, 09 Jun 2026 20:08:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781060898; x=1781665698; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BiWkDM88UkeI5kHrEACZ77BOW2Ed9Qe85NMLR9Ta3Bg=;
-        b=qQsRttGGiA8B8CJiZ7jwb2yrfzw92O0vNal5EfntrHn3akeCc/+9qSG1ikXo9I24iJ
-         znv7mCGCxG6S0FrJueZWfpo5ELaU2Qi8cuT1kodGNDqc1XZS9gt28Z246lq3LRVNqtIk
-         ADWmtHbwjaMF2IKkD9M/jttfmmR0vG+cHPI++Eo5K3L9CsTmHwpOi0c9hdXUO6P8+I5q
-         QKlXZKURSIm8Whb3bHFOlB9tT00QgumSD1NV011Sa4igV22GzZUHrOx/5B+7ejpYGgPn
-         ubVU6Un12te9hM/V++flh56P3CA1SFIJy8IF6V/Y3lIdRCDgQyprEwm8xetoUBGyX8zU
-         px+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781060898; x=1781665698;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BiWkDM88UkeI5kHrEACZ77BOW2Ed9Qe85NMLR9Ta3Bg=;
-        b=dwhqNbOS78BMwcnemE+S7idIP68UwxIiu7viozviPWfz1rNJ0NlDgTRns3H1gfZWZ3
-         siccElVIp/lOSG8quERccF3xg/zasiESwKJry7lQE6cUNxcI+2llWXHIqC3WanJeW42H
-         wX5M7M4WQ+IDhF2O/W8trx2lrICb7wE6INOjGzYOilo5KM3UKWFtLN8IJLkT5ouwJC+1
-         iJgjzLuuJ1Xz+Z2BpBs9r/9I8YtNZn/cN3J8f00Kwmrxjava8R3SBGep1pS/zloodMtO
-         y2F54usadnVSBec8ctPZAEJDKBPWf+LrdczV3KceVDlInOPcyie44RCBPEBM+3v+Uq1y
-         I7Gg==
-X-Forwarded-Encrypted: i=1; AFNElJ8heSVHAdEuNjcvirSqtqeuTGr5bivcMydTGHPoFaVwmNWxEAUmTieK2zOrni+f1Uol9C1NJiAELitqOA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzNtivpnDglZy0f6lnW5egByq3YwAeq6La2iDqkili78Gyy8ni
-	SNu6H8auMDZGOmvEzELYXrmvPsHes5TMnidz4CB4iB3ApsBBsmnLcuSA
-X-Gm-Gg: Acq92OFwWzckeG6i7omfTzMeb2bCvMpXi+1OGpV/LhdrGyMKXWl/6wTtK11zG+Vlz+2
-	5FzYhhaeBBk23Sl3BC+h3IlnE+cZ2wS7IEzYy1nEH/qv4ri1B8bb0MaQS4fBsiGYdYdCiqGuC17
-	SfUCUlWV5e/rrPTWrZZ4lLLVn/xVz9ZF9V2injZu8nGELha12fAuUwjmE1erBckMc/rni0w0c1f
-	Wj7UIULfEZXVCG7tbbdnrgtaSMiDb/fEN2JwZl+sU0u09HGduAS5R4p9KzXB5BMLK5gOakI0E+U
-	8ItFYpePZmqJJQzPOG53bUTJMh80shnNsJ+vVjAfQ2QOlJr2jDEKM07LCJfJ4SLZO0j8cyAPLNv
-	lJPDa3fV4hqs2sWzDp/DxZa+Ao66k/5YvuEOKvEauaCkUWUJRRTHsHb2hRKT1wnegZ7dQda2RF0
-	9cLfSlTLWZeYQZdStkXGtT0Fb2/Rfn3F91XgH6s7o/8xUc8e66FiI6bcyzGE14wZQDdiPRc3RBX
-	CGrG88EdxHED8i5sDZpcvJln36lG+JGl8FWtApillKsrcxKIhQ5Zg==
-X-Received: by 2002:a05:6a20:d0a1:b0:3b4:8818:fd34 with SMTP id adf61e73a8af0-3b4ccf8e5e1mr28706510637.25.1781060897591;
-        Tue, 09 Jun 2026 20:08:17 -0700 (PDT)
-Received: from localhost.localdomain (n49-176-80-106.mas22.nsw.optusnet.com.au. [49.176.80.106])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c85deeb2bdesm19679386a12.0.2026.06.09.20.08.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jun 2026 20:08:17 -0700 (PDT)
-From: geoffrey <geoffreyhe2@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>,
-	Stephen Warren <swarren@nvidia.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Weigang He <geoffreyhe2@gmail.com>
-Subject: [PATCH] firmware: trusted_foundations: fix device_node refcount leak in of_register_trusted_foundations()
-Date: Wed, 10 Jun 2026 13:08:00 +1000
-Message-ID: <20260610030800.2100685-1-geoffreyhe2@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="S/EuK96p"
+Message-ID: <5152089a-2808-4fe9-b633-b03018105dd2@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1781072103;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GCPO9v7e2NaYcPW5zVGvXXPxzu/fCfdM58tRqJXSo9A=;
+	b=S/EuK96pTXAWUBg+8TCiJYM+danZr1codL6zDdrR1CXWZbSAz8OZt88gSb3T73P2+Oj0bR
+	ye5UJbetTGxWmds/F2K/tlbDAkWts/YSgQ0PrY0mv2jpzcQt2r4zQh26U4ohdHNt5eRxKb
+	jqr9Nyh610YgX0sau/FOqrE+b1XuGGI=
+Date: Wed, 10 Jun 2026 14:14:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH v2 00/14] list: Prepare entry iterators to cache cursor
+ state
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Thierry Reding <thierry.reding@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Davidlohr Bueso <dave@stgolabs.net>, "Paul E . McKenney"
+ <paulmck@kernel.org>, Josh Triplett <josh@joshtriplett.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Boqun Feng <boqun@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, Huang Rui <ray.huang@amd.com>,
+ Eddie James <eajames@linux.ibm.com>, Mark Brown <broonie@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Laxman Dewangan <ldewangan@nvidia.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Matthew Auld <matthew.auld@intel.com>,
+ Matthew Brost <matthew.brost@intel.com>, Waiman Long <longman@redhat.com>,
+ drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+ linux1394-devel@lists.sourceforge.net, dri-devel@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, linux-spi@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Randy Dunlap <rdunlap@infradead.org>, Christian Brauner
+ <brauner@kernel.org>, David Howells <dhowells@redhat.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Kaito Cheng <chengkaitao@kylinos.cn>, Muchun Song <muchun.song@linux.dev>,
+ Philipp Reisner <philipp.reisner@linbit.com>,
+ Lars Ellenberg <lars.ellenberg@linbit.com>,
+ =?UTF-8?Q?Christoph_B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
+ Jens Axboe <axboe@kernel.dk>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>
+References: <20260609061347.93688-1-kaitao.cheng@linux.dev>
+ <bd0b7393-8ccb-4d67-8bfc-18c68347122c@amd.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kaitao Cheng <kaitao.cheng@linux.dev>
+In-Reply-To: <bd0b7393-8ccb-4d67-8bfc-18c68347122c@amd.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Weigang He <geoffreyhe2@gmail.com>
+在 2026/6/9 18:33, Christian König 写道:
+> On 6/9/26 08:13, Kaitao Cheng wrote:
+>> From: Kaito Cheng <chengkaitao@kylinos.cn>
+>>
+>> This series prepares for, and then updates, the list_for_each_entry()
+>> family so the common entry iterators cache their next or previous cursor
+>> before the loop body runs.
+> 
+> Why in the world would we want to do that?
+> 
+> The safe and non-safe variants have very distinct use cases and that is completely intentional.
+> 
+> What we could improve maybe is the documentation, from my experience an astonishing large amount of people have misconceptions about the safe variants.
+> 
+>> The first 13 patches open-code loops that intentionally depend on the
+>> old "derive the next entry from the current cursor at the end of the
+>> iteration" behaviour.  These loops append work to the list being walked,
+>> restart traversal after dropping a lock, skip an entry consumed by the
+>> current iteration, or otherwise adjust the cursor in the loop body.
+> 
+> Well I have to clearly reject the changes for subsystems/components I'm maintaining, that just looks horrible to me and I clearly don't see a good reason for that.
 
-of_register_trusted_foundations() obtains a reference to the
-"tlm,trusted-foundations" device node via of_find_compatible_node(),
-which returns the node with its refcount incremented, but the
-reference is never dropped. The function has four exits:
+Hi Christian and Andy Shevchenko,
 
-  - early return when the node is absent          (no reference taken)
-  - panic on a missing "tlm,version-major"        (leaks one reference)
-  - panic on a missing "tlm,version-minor"        (leaks one reference)
-  - normal return after register_trusted_foundations()  (leaks one ref)
+Thanks for taking a look. I would like to clarify the point you raised.
 
-On a normal Tegra boot using Trusted Foundations the node is found and
-the function returns normally, leaking one device_node reference for
-the lifetime of the system.
+The reason I started looking at this is the original motivation behind
+the _safe() variants.  They exist because some users need to remove, move
+or otherwise consume the current entry while walking the list.  In that
+case the next cursor has to be preserved before the loop body can modify
+the current entry.
 
-Annotate the node with the __free(device_node) cleanup attribute so the
-reference is released automatically on every exit path.
+The unfortunate part is that this could not be expressed with the
+existing list_for_each_entry() interface without changing its calling
+convention.  The _safe() variants had to grow an extra argument for the
+temporary cursor, and that is why we ended up with a separate family of
+macros.
 
-Found by static analysis tool CodeQL.
+But conceptually, the distinction does not have to be exposed as two
+different iterator families forever.  The difference is an implementation
+detail: whether the iterator keeps the next/previous cursor before the
+body runs.  This series makes the common list_for_each_entry() iterators
+do that internally, so the safe and non-safe forms can effectively be
+folded together, or at least the need for a separate public _safe()
+interface becomes much weaker.
 
-Fixes: d9a1beaa10e8 ("ARM: add basic support for Trusted Foundations")
-Signed-off-by: Weigang He <geoffreyhe2@gmail.com>
----
- drivers/firmware/trusted_foundations.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+There is also a usability issue with the current _safe() interface.  The
+caller is forced to define a temporary cursor outside the macro and pass
+it in, even though almost all users never use that cursor directly.  It is
+just boilerplate required by the macro implementation.  I find that
+redundant and awkward: the temporary cursor is an internal detail of the
+iteration, but every caller has to spell it out.
 
-diff --git a/drivers/firmware/trusted_foundations.c b/drivers/firmware/trusted_foundations.c
-index 1389fa9418a7b..43a2a417528f4 100644
---- a/drivers/firmware/trusted_foundations.c
-+++ b/drivers/firmware/trusted_foundations.c
-@@ -159,11 +159,11 @@ void register_trusted_foundations(struct trusted_foundations_platform_data *pd)
- 
- void of_register_trusted_foundations(void)
- {
--	struct device_node *node;
-+	struct device_node *node __free(device_node) =
-+		of_find_compatible_node(NULL, NULL, "tlm,trusted-foundations");
- 	struct trusted_foundations_platform_data pdata;
- 	int err;
- 
--	node = of_find_compatible_node(NULL, NULL, "tlm,trusted-foundations");
- 	if (!node)
- 		return;
- 
+With the updated list_for_each_entry() implementation, that extra cursor
+can be kept inside the iterator itself.  Callers that only want to walk
+the list, including callers that delete or consume the current entry, no
+longer need to carry an otherwise-unused temporary variable just to make
+the macro work.
 
-base-commit: 0f61b1860cc3f52aef9036d7235ed1f017632193
+>>
+>> The final patch changes include/linux/list.h to keep a private cursor in
+>> the common entry iterators while preserving the public macro interface.
+>> The safe variants remain available when callers need the temporary
+>> cursor explicitly or have stronger mutation requirements.
+>>
+>> Changes in v2 (Muchun Song, Andy Shevchenko):
+>>  - Drop the list_for_each_entry_mutable*() helpers from v1 and make the
+>>    cursor change directly in the existing list_for_each_entry*() helpers.
+>>  - Open-code special list walks that rely on updating the loop cursor in
+>>    the body, preserving their existing traversal semantics.
+>>
+>> Link to v1:
+>> https://lore.kernel.org/all/20260529082149.76764-1-kaitao.cheng@linux.dev/
+>>
+>> Kaitao Cheng (14):
+>>   drbd: Open-code transfer log list walk
+>>   firewire: core: Open-code topology list walk
+>>   drm/bridge: Open-code bridge chain list walks
+>>   drm/i915/gt: Open-code active timeline walk
+>>   drm/i915: Open-code DFS dependency list walk
+>>   drm/ttm: Open-code reservation list walk
+>>   spi: fsi: Open-code message transfer walk
+>>   spi: stm32-ospi: Open-code message transfer walk
+>>   spi: stm32-qspi: Open-code message transfer walk
+>>   spi: tegra210-quad: Open-code message transfer walk
+>>   locking/locktorture: Open-code ww mutex list walk
+>>   locking/ww_mutex: Open-code stress reorder list walk
+>>   ASoC: dapm: Open-code widget invalidation walk
+>>   list: Cache cursors in entry iterators
+>>
+>>  drivers/block/drbd/drbd_debugfs.c      |  4 ++-
+>>  drivers/firewire/core-topology.c       |  4 ++-
+>>  drivers/gpu/drm/drm_bridge.c           |  7 ++--
+>>  drivers/gpu/drm/i915/gt/intel_reset.c  |  4 ++-
+>>  drivers/gpu/drm/i915/i915_scheduler.c  |  4 ++-
+>>  drivers/gpu/drm/ttm/ttm_execbuf_util.c |  4 ++-
+>>  drivers/spi/spi-fsi.c                  |  5 ++-
+>>  drivers/spi/spi-stm32-ospi.c           |  4 ++-
+>>  drivers/spi/spi-stm32-qspi.c           |  5 ++-
+>>  drivers/spi/spi-tegra210-quad.c        |  4 ++-
+>>  include/linux/list.h                   | 46 ++++++++++++++++++++------
+>>  kernel/locking/locktorture.c           |  4 ++-
+>>  kernel/locking/test-ww_mutex.c         |  4 ++-
+>>  sound/soc/soc-dapm.c                   |  4 ++-
+>>  14 files changed, 78 insertions(+), 25 deletions(-)
+>>
+>> --
+>> 2.43.0
+>>
+> 
+
 -- 
-2.43.0
+Thanks
+Kaitao Cheng
 
