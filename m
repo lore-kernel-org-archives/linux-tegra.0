@@ -1,168 +1,130 @@
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011022.outbound.protection.outlook.com [40.107.130.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FF13264F1;
-	Wed, 10 Jun 2026 01:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781055789; cv=fail; b=ukFr/hTmZhzEqi2U8YZ1n1bSqSXGJEEqHoaxvCKSnIrzoKHvuci5UBWUmLvaD/ndvtiYm/er9Pr6yg0/+tSz3R0d5h6VREZgIFkz48zf9f8aO0vATJnU2ZSVELkY9sjdtkuE+pGni8SOH8pb4VGc2mxkFIjH1gL7Th9fK91ir04=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781055789; c=relaxed/simple;
-	bh=FnkKNgL7v0emSNhTCZzelF0dPNJ5qo9tzyS/LVxheL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=F+ZVclifdHgIJQn6GA9BK5TaT0Rqyh8pjl+mMTmkzSdBUKtsfmHjm8iEP5XMIXX0Cxk/IkQwKJ3NfBE9A3D7R5FJreBJFMCWnCTqcAQ8oegRLuTZk8RzrI//txjJX/KLDea81itxiUqj6HSG00YrHcZSZdFCno+eZJogbVB0bmI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=ay/GNGMT; arc=fail smtp.client-ip=40.107.130.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C09933C53F
+	for <linux-tegra@vger.kernel.org>; Wed, 10 Jun 2026 03:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781060899; cv=none; b=eXyw236XWFTk7ltcU5i/iLkht9SDLpI1BmB2tTAZ+3Pb/yEbPEizt6MdmG0CFMb8XHdzu9NFGiIAoumRTlEYzGhXumD/ABABbaHwzSE5eCdQEBZBm4QtwB+Z1tnJsXl5bKJytzkF19iEDygBoFnchuAFRC5wwtGqixSyTnZHe9I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781060899; c=relaxed/simple;
+	bh=GyRKllbRwjqHwZUloUjWOpwJTt3ojP0HLtpmRdA/80s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kB0U9tLVnfPr6YorAlMd5oncHT9B7Z2Wewjbn5SKzd6sbprK/Tj8A09eP5tM8+pqB4mYESzfzbDRMKWz2OOs77Atd0zqPll7d0iTzhN6Aa4zhV7mMZ9IE1kfNBnA1C0ccY/dnrH/+8i5sJNiT8f6n20IoEyQgKHFS0R/KtOPLLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qQsRttGG; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="ay/GNGMT"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cUvxfy+gkTaKayIy/Lrg4JCVvmvWWIUWN7RtbrgijzfSJwYLARJ7TTv32LHnh0gajxfnMnvdIRt939z4XcdDxmdR4sjX6sLOG2L8ZDN1HEPw+z4vHu5SlWZFVuKt88ySaZTE/KPnyDOqP6zy9Fpu8edyoKE+arDhRUJ2rsaDtoe730SY5rB54RGqfHlE4kJVJTA99dKi0Ld2HUqfOCYFRTIIAS8ysQg6AYQamU1HOyR/SOy/1XQuype6BFUF45287iX8H0XWAM636RqPXKc2lnrvHgUdDHAaBvREImM04avTwktyRgrJRRUnLqmIQm0JvBuy8g/bd5GqIIWihxkAyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2sU8g3HhvbQA90bR9GEkFXM3BeDJo06Dgx7YeR5pOCE=;
- b=SLSuMxqyLVY6AvQ+GYQ9XhARQcuu0nORA3EmAvCkCVwwgN0fPC3ztvkSiLwViwRsSrN/QDZOSDyqym6B4o64zq4Yps1OSrY8NxCMzJF/AwI/X2AQxMXZakNOenWwFyVk84kjVTohAnCpyIcj5E8Aerpm9wTUkLKDu1aU2Gukb7ROC/tABJ02LXP87PFplthmcz637FEIReVxl9PWZKQVuf3aAW1bzX3knKT0qVmKw3b02fNQ1M3ooGlZuNriFdXSXce196oCR42J+qOOFGeWmt1sqUGc0DRZJA7jPHq4pkkZVBCUmfX9EcPZ0qmbLJi3u41efLywAYMbRMBcVrqXXA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2sU8g3HhvbQA90bR9GEkFXM3BeDJo06Dgx7YeR5pOCE=;
- b=ay/GNGMTIZxXOzJX1Rv2sKSwhfOU8Dph8NNWfEKLuJoonuSnJQLoSW3EA29TDeIsVtijrZBAV3xmRBIHHl0J591TRc2S9o2C+Ak1NzyaQVRSCztupqFyWCcWOO3278qe5nQhhoDu70hixh/CQ1S9EOrq4cX0l+RiN6ZdY6eBDHs9Ta5BxyhaMrQ/SXxc/0VnchC7evwtbR2L4nDt+WBtpmZe9/ss60O1Wc1x2jnX3KLwWaS73ZDM0db3+dpYGW3RyseAvZS0U0CdTdWLUHKHSMmZ9v9g0hcUtYaLCEk7M+tngtH/WqCsIVBIvm9K7z1lQgitdvY79GzcUitWzC1rsg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
- by GV2PR04MB11447.eurprd04.prod.outlook.com (2603:10a6:150:29f::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.14; Wed, 10 Jun
- 2026 01:43:01 +0000
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c%6]) with mapi id 15.21.0092.011; Wed, 10 Jun 2026
- 01:43:01 +0000
-Date: Tue, 9 Jun 2026 20:42:52 -0500
-From: Frank Li <Frank.li@oss.nxp.com>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: dmaengine@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>,
-	Jon Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>,
-	Frank Li <Frank.Li@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv4] dmaengine: tegra210-adma: use platform to ioremap
-Message-ID: <aijBHDBy6QnlQVM3@SMW015318>
-References: <20260609212531.22044-1-rosenp@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260609212531.22044-1-rosenp@gmail.com>
-X-ClientProxiedBy: PH8P220CA0036.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:510:348::16) To GV2PR04MB11799.eurprd04.prod.outlook.com
- (2603:10a6:150:2cf::9)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qQsRttGG"
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-c8573e75425so2399768a12.2
+        for <linux-tegra@vger.kernel.org>; Tue, 09 Jun 2026 20:08:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1781060898; x=1781665698; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BiWkDM88UkeI5kHrEACZ77BOW2Ed9Qe85NMLR9Ta3Bg=;
+        b=qQsRttGGiA8B8CJiZ7jwb2yrfzw92O0vNal5EfntrHn3akeCc/+9qSG1ikXo9I24iJ
+         znv7mCGCxG6S0FrJueZWfpo5ELaU2Qi8cuT1kodGNDqc1XZS9gt28Z246lq3LRVNqtIk
+         ADWmtHbwjaMF2IKkD9M/jttfmmR0vG+cHPI++Eo5K3L9CsTmHwpOi0c9hdXUO6P8+I5q
+         QKlXZKURSIm8Whb3bHFOlB9tT00QgumSD1NV011Sa4igV22GzZUHrOx/5B+7ejpYGgPn
+         ubVU6Un12te9hM/V++flh56P3CA1SFIJy8IF6V/Y3lIdRCDgQyprEwm8xetoUBGyX8zU
+         px+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781060898; x=1781665698;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BiWkDM88UkeI5kHrEACZ77BOW2Ed9Qe85NMLR9Ta3Bg=;
+        b=dwhqNbOS78BMwcnemE+S7idIP68UwxIiu7viozviPWfz1rNJ0NlDgTRns3H1gfZWZ3
+         siccElVIp/lOSG8quERccF3xg/zasiESwKJry7lQE6cUNxcI+2llWXHIqC3WanJeW42H
+         wX5M7M4WQ+IDhF2O/W8trx2lrICb7wE6INOjGzYOilo5KM3UKWFtLN8IJLkT5ouwJC+1
+         iJgjzLuuJ1Xz+Z2BpBs9r/9I8YtNZn/cN3J8f00Kwmrxjava8R3SBGep1pS/zloodMtO
+         y2F54usadnVSBec8ctPZAEJDKBPWf+LrdczV3KceVDlInOPcyie44RCBPEBM+3v+Uq1y
+         I7Gg==
+X-Forwarded-Encrypted: i=1; AFNElJ8heSVHAdEuNjcvirSqtqeuTGr5bivcMydTGHPoFaVwmNWxEAUmTieK2zOrni+f1Uol9C1NJiAELitqOA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzNtivpnDglZy0f6lnW5egByq3YwAeq6La2iDqkili78Gyy8ni
+	SNu6H8auMDZGOmvEzELYXrmvPsHes5TMnidz4CB4iB3ApsBBsmnLcuSA
+X-Gm-Gg: Acq92OFwWzckeG6i7omfTzMeb2bCvMpXi+1OGpV/LhdrGyMKXWl/6wTtK11zG+Vlz+2
+	5FzYhhaeBBk23Sl3BC+h3IlnE+cZ2wS7IEzYy1nEH/qv4ri1B8bb0MaQS4fBsiGYdYdCiqGuC17
+	SfUCUlWV5e/rrPTWrZZ4lLLVn/xVz9ZF9V2injZu8nGELha12fAuUwjmE1erBckMc/rni0w0c1f
+	Wj7UIULfEZXVCG7tbbdnrgtaSMiDb/fEN2JwZl+sU0u09HGduAS5R4p9KzXB5BMLK5gOakI0E+U
+	8ItFYpePZmqJJQzPOG53bUTJMh80shnNsJ+vVjAfQ2QOlJr2jDEKM07LCJfJ4SLZO0j8cyAPLNv
+	lJPDa3fV4hqs2sWzDp/DxZa+Ao66k/5YvuEOKvEauaCkUWUJRRTHsHb2hRKT1wnegZ7dQda2RF0
+	9cLfSlTLWZeYQZdStkXGtT0Fb2/Rfn3F91XgH6s7o/8xUc8e66FiI6bcyzGE14wZQDdiPRc3RBX
+	CGrG88EdxHED8i5sDZpcvJln36lG+JGl8FWtApillKsrcxKIhQ5Zg==
+X-Received: by 2002:a05:6a20:d0a1:b0:3b4:8818:fd34 with SMTP id adf61e73a8af0-3b4ccf8e5e1mr28706510637.25.1781060897591;
+        Tue, 09 Jun 2026 20:08:17 -0700 (PDT)
+Received: from localhost.localdomain (n49-176-80-106.mas22.nsw.optusnet.com.au. [49.176.80.106])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c85deeb2bdesm19679386a12.0.2026.06.09.20.08.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jun 2026 20:08:17 -0700 (PDT)
+From: geoffrey <geoffreyhe2@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>,
+	Stephen Warren <swarren@nvidia.com>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Weigang He <geoffreyhe2@gmail.com>
+Subject: [PATCH] firmware: trusted_foundations: fix device_node refcount leak in of_register_trusted_foundations()
+Date: Wed, 10 Jun 2026 13:08:00 +1000
+Message-ID: <20260610030800.2100685-1-geoffreyhe2@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|GV2PR04MB11447:EE_
-X-MS-Office365-Filtering-Correlation-Id: bd62d051-e992-4ffd-34e0-08dec6919b8a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|19092799006|1800799024|376014|366016|22082099003|18002099003|11063799006|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	Ps/vpJVWrur+MmsT5lrEk4pN8OCz6RSFpBt6dd4clxc9xTnbiTys06UFlAHWjk46h8n3bNgPIhaD1vw/IYvJDt93fJ5V1Cr4s1WvbcHUf7tvujku1/i0rJ27R0JQWBLznTY6V8g55gkU7QUzHU7n0BmBY13kvTkCwBPPsvoHw9He4GLdCKgbrEKJKAKGsJ+EEZtinRH7u3jdl+MLfiCHOm+4C172xKR+7Eg9gh100rlMF7MbmzMXtSdOR8Wf68D9eCZGfcf6bKhZ0MPBgVVjmKi6Ns4Cfi5i51VS6pj5iXFzWO4jGK8Zrosv9zutDhSaLW22yru1LdrLfpJip98STBJVupgsIMfhbqVjXY4283Ob9reGzgX7KI/KtbEY/VccugrINNMUMdpLuJziQrHIhOMcZvLmR+a5+23MSFyJHgAzQ4t+YQRAo5O/olK1fHlTsWK+o9RG+0gU9k3o8bk/hjjNXl91a8+tHfJWe9cI7It0wFK30lPKECmkblYEJP454LUYhVj8Ua+gjSA0xVU48Mo3cgRfNFNzS4iKKi4sDDYM3dXjqK/McXq4gyVvcpXCH5aPlKbXEaAEKtkXP1k7H6l8iEd7APX4sTSbFyOlCk9Cf4uq+lAyAyV+bCN+rx8fGjzchaVzOtwdwDjecqEidqZFfXbmXO0z7kIQOYq/prg2aRXgVldm0Wz0c1nvcchq
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(19092799006)(1800799024)(376014)(366016)(22082099003)(18002099003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?JLB0oIwWRGUs7ER+EQeSfgLysW6SqyxB5DsNfBeTpNgMULPqDnA4aAEY2gF5?=
- =?us-ascii?Q?1miW7NF7PYe8+lWKlFamGn2djbu4Fiv11whJMKZMvmxRf6SdY7hkdntoV/2W?=
- =?us-ascii?Q?/biPfUYqUv77Ge66JrrDxmSseXSDXlHs0agI0bsSwf8eMnIU4QzI8Z5/xNT0?=
- =?us-ascii?Q?LxBKBU6Nl3ZqQ7LkieYZ4w/FObXCLFHBu2iXDyzaZlXrM5dsiQanT9oFd2w1?=
- =?us-ascii?Q?TM9uexh4Qt9PTOt80jDUCuM9y0grBX1LjYlVvLhHqcni0s8AU1cycV3s8Tjj?=
- =?us-ascii?Q?qLDNssqAZBUvsVpczMmgfJaEWplCnNBMdUTyd++iaeVVCspyOcI4SaJ1/nCD?=
- =?us-ascii?Q?kcs8ZOvjdrAGXMLrHlkWegd6W3RwefabZljmkPS2I1eXUNYt+GV987R7CVte?=
- =?us-ascii?Q?G1d4THGk8/a2TXM/xHM2m68Z1zuiXM6m/EEuzjdJnDngWG0tYseAdYDFZZkY?=
- =?us-ascii?Q?jwCIC4M0hThQ1RqoInIyT7AgGUkq45TKdAuAPT4hrCL2o8DBurPDKVPxOfV4?=
- =?us-ascii?Q?1y2h2bsTv3/S+w0Fzj9VYmiJn3gAB1wM33Fe/1vLFVFfoavCIErN7KWBKqpe?=
- =?us-ascii?Q?Y8ScNIDb8ltUw90EoJ1aQSzWHpwBEVHg2PyjPhLzKldsjfizEaf19TjkisFw?=
- =?us-ascii?Q?pBe3Q2YhbQmoA8JDavlSoHkPRmqflA6b9+2My2eVestL2pm2okg5gzyONHdy?=
- =?us-ascii?Q?zRV0b10J+D5qOzjt1rlqBuZElkVv8WSwUioXbdPPwm9b/yukQp2Jdkqz86dq?=
- =?us-ascii?Q?Hr1qVVSp/G+9qHpEr4WG5LVfgEbBg+/HYrD3IvbU8sGxbIFw+Mfn21ogJwjB?=
- =?us-ascii?Q?bpVUSFLTSB1IHlPquNhaXvi5Z6yxhghlMOHP3tbQYB/h8hcQdzOL3CXG7str?=
- =?us-ascii?Q?4IBOIbvmL7x+gQszT4OkrFil4e+EecyrQJzRPcu6zM+lXtWvtIdE/ZpK6OFT?=
- =?us-ascii?Q?p0HiZEHw9rqCF4j1hvfMIArzS7+E91Iy+A+STQlG556wp0UEYPpJcA2kKkhZ?=
- =?us-ascii?Q?o51v1W52D4BxwgaJXc3Nq17j6WSbggu5+SiHPQ5z04FPjUiOWzsqvpUpHKjZ?=
- =?us-ascii?Q?KnCqO/9MfcsrHUiovX335ZdbehXRg7eqtpEkv7OZXj5zCNE00UznVWUV6s78?=
- =?us-ascii?Q?5X8O11o0bV2uOxS6cIXg3G6iZN9X4ruuK9c5pZQ/ZfT01aIDg+oXbB4FK01m?=
- =?us-ascii?Q?sFHedLxuRCtmxZ6ZDBbOpm1z8ml59utQjtq44+2WXVBw1aB5J32SA2wJBH/d?=
- =?us-ascii?Q?7MNq0HcBxH99PpYPZOO6jvOiWcMEO8M4mhF+edN563PWghmbHgw4YixDjWYh?=
- =?us-ascii?Q?P4wcMF4gOBOCsu+6BC7NpSPl60ttEdpV2QdiNMMphV3pQcbeSSTx6iUIhput?=
- =?us-ascii?Q?O/RnownpXEn2mbIVv30LMVBI02eCY8zxPlsbOfUfgKfh6N6OSs4IYinwHr1i?=
- =?us-ascii?Q?Vnq8aNv2+5NrLvIxKh+dJA2thC/pPxvWBu8wUIgozXDbxqRORPUDG1EUXMML?=
- =?us-ascii?Q?U7ggTYFBncA8jUyLj1SJHVNIZIOmsyiQj3XmBZsJXB8A7qtAb9poKsP5Sx2A?=
- =?us-ascii?Q?DGXPK+tpjxBn4FjfgJAchIqH8hVRBKp1Wi8v1v8+pZjXLeO303APGLijjCsm?=
- =?us-ascii?Q?OREh06bCfEGFvF2Ov1nowuFI+dUARGXZM9GV6NcaDJWcV6iBQjQgFmsgrJr+?=
- =?us-ascii?Q?LqK+ECl3oUT+heZkYeG7z0Qjff/Llybf8buK8ScR2/UJpNTxjBFM6khewIDM?=
- =?us-ascii?Q?Li2p8xTUtyuB7Pui3aQDZvmyxbRIae2HRjr+kkLbjn+z9QiLHNmH?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd62d051-e992-4ffd-34e0-08dec6919b8a
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2026 01:43:01.8346
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +zswXVZqQM0+9/xjqUEhH9s2q8xvzFz7J/xiIKVzm5dT9qUiWjHUPbGfID4dY//9EoV6kN1G60+ekGjUydhSoZEW2RVO4+gy6u6YvZiMb0FKXdL/URU6SUWEg5KTPVBw
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR04MB11447
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 09, 2026 at 02:25:31PM -0700, Rosen Penev wrote:
+From: Weigang He <geoffreyhe2@gmail.com>
 
-Nit: subject
-dmaengine: tegra210-adma: use devm_platform_ioremap_resource()
+of_register_trusted_foundations() obtains a reference to the
+"tlm,trusted-foundations" device node via of_find_compatible_node(),
+which returns the node with its refcount incremented, but the
+reference is never dropped. The function has four exits:
 
-> Simpler to call devm_platform_ioremap_resource() as it returns multiple
-> error messages for whichever part fails.
->
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
+  - early return when the node is absent          (no reference taken)
+  - panic on a missing "tlm,version-major"        (leaks one reference)
+  - panic on a missing "tlm,version-minor"        (leaks one reference)
+  - normal return after register_trusted_foundations()  (leaks one ref)
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+On a normal Tegra boot using Trusted Foundations the node is found and
+the function returns normally, leaking one device_node reference for
+the lifetime of the system.
 
->  v4: rebase and reword commit message
->  v3: change subject
->  v2: reword commit message
->  drivers/dma/tegra210-adma.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-> index ceaee1e33e68..21a381d022cf 100644
-> --- a/drivers/dma/tegra210-adma.c
-> +++ b/drivers/dma/tegra210-adma.c
-> @@ -1087,15 +1087,9 @@ static int tegra_adma_probe(struct platform_device *pdev)
->  		}
->  	} else {
->  		/* If no 'page' property found, then reg DT binding would be legacy */
-> -		res_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -		if (res_base) {
-> -			tdma->base_addr = devm_ioremap_resource(&pdev->dev, res_base);
-> -			if (IS_ERR(tdma->base_addr))
-> -				return PTR_ERR(tdma->base_addr);
-> -		} else {
-> -			return dev_err_probe(&pdev->dev, -ENODEV,
-> -					     "failed to get memory resource\n");
-> -		}
-> +		tdma->base_addr = devm_platform_ioremap_resource(pdev, 0);
-> +		if (IS_ERR(tdma->base_addr))
-> +			return PTR_ERR(tdma->base_addr);
->
->  		tdma->ch_base_addr = tdma->base_addr + cdata->ch_base_offset;
->  	}
-> --
-> 2.54.0
->
+Annotate the node with the __free(device_node) cleanup attribute so the
+reference is released automatically on every exit path.
+
+Found by static analysis tool CodeQL.
+
+Fixes: d9a1beaa10e8 ("ARM: add basic support for Trusted Foundations")
+Signed-off-by: Weigang He <geoffreyhe2@gmail.com>
+---
+ drivers/firmware/trusted_foundations.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/firmware/trusted_foundations.c b/drivers/firmware/trusted_foundations.c
+index 1389fa9418a7b..43a2a417528f4 100644
+--- a/drivers/firmware/trusted_foundations.c
++++ b/drivers/firmware/trusted_foundations.c
+@@ -159,11 +159,11 @@ void register_trusted_foundations(struct trusted_foundations_platform_data *pd)
+ 
+ void of_register_trusted_foundations(void)
+ {
+-	struct device_node *node;
++	struct device_node *node __free(device_node) =
++		of_find_compatible_node(NULL, NULL, "tlm,trusted-foundations");
+ 	struct trusted_foundations_platform_data pdata;
+ 	int err;
+ 
+-	node = of_find_compatible_node(NULL, NULL, "tlm,trusted-foundations");
+ 	if (!node)
+ 		return;
+ 
+
+base-commit: 0f61b1860cc3f52aef9036d7235ed1f017632193
+-- 
+2.43.0
+
