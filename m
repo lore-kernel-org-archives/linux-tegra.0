@@ -1,40 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3E03D47A7
-	for <linux-tegra@vger.kernel.org>; Thu, 11 Jun 2026 12:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837023A7F45
+	for <linux-tegra@vger.kernel.org>; Thu, 11 Jun 2026 12:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781179519; cv=none; b=EMs9Xm0wZP89hkjx+6uthH/txRuQbJGCu9daJZEW6rRb8usCERBOdQsUsRfn4nuAOSzhul6H0k9B6zVP5IuQ70+afsd86fV/AJQQ6TIsOHaf4raMyGpas9Z8LLjxulrNgLVgM6t0g7Trmb2N4uXpBkQQlxyRh53XykjG4MHsw6I=
+	t=1781179538; cv=none; b=Qe+3eoEmOYPhQzFnd672Ma359D2OyNPlo9QVqP7riZpOj3qu/JoIkwpq3SBgYXWqQBzW7dFW34ZOWr6igOWkred9JoDQRm8qDXUPMI7yZ5+7gjnFWk1NhdFkJZYr2TFbumbCz4LOfdd1f2Ku7gSaXS4yil+RXNWCx6bpA3eeN58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781179519; c=relaxed/simple;
-	bh=0ox/fqkWsVCdzpGqz0ilLvGi8+8qWbIpBbT2MLQ/xzc=;
+	s=arc-20240116; t=1781179538; c=relaxed/simple;
+	bh=wrcsMxZyls2p4tlqpc+Z/HmNrwOrVTky2cP+fRV5G94=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=INRAvTbyjF0HLobf1jh6y29hBvNGbxyhbHEuYG0g9o0aXyTQAkYcvYGqsUcm4oqU0yG8qLzAB78tugR+euOXNNPXVmxK3abZGJV6KHs7UJL6Yh59BiAlMAVTHL1cvNsQOF6wLQJL2Urku+PsKQE34CFrr1MDiWZNlHQatFRDSQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aSBYio2L; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=ubkcatA354Me+X+OjSwEoT7j8UHIcF4fQT2QiZ/iQ5A4dR6Mia4+s50o1OtyVshSJuP1TiF+0k21tzn2W2LCA/zBFwHMVMyzhBO7elmigwmUsm1T+jInf7WfRZ2UMnwR092tUmq8NOjEIgpwILZJxH1omQTnI/do6U8rxH9r32s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j6DFO0Ps; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aSBYio2L"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4BB31F00893
-	for <linux-tegra@vger.kernel.org>; Thu, 11 Jun 2026 12:05:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j6DFO0Ps"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43DE31F0089C
+	for <linux-tegra@vger.kernel.org>; Thu, 11 Jun 2026 12:05:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781179518;
-	bh=tzwPLZ1uKPc2EO+74Kx2DEzweWGuSsCcDEj8J61jBjs=;
+	s=k20260515; t=1781179537;
+	bh=KRRC4RojRLjiKneXTP+E2iF1MikLDxHMKlltZfryQL8=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=aSBYio2LtxGa/VjLJO8JIr/qvAwztQ2XmJUHD7qYW6sdm7ZcF4/KFnMFg4cZG2qwM
-	 ycCauTRw3BvBgUOT5iGedjnuHRGUsJVn5MqxYepvvgZoDUGGPIMFtJ68V/yZsTyTT8
-	 P0plHseWQdkXwOwa13EDFKbR9x2ie1vOvl1RFINQFkjhgOR7GDwB+FwSa3BGaZx3ER
-	 NUWz+ai4bVzPrTTRjz6wNFXsYSHruj5L6uZHDA0XI3YsF25sbK5Q7HQk6Sn6F9VV9F
-	 yM1ZDf9dlzTk+P8NGHXGHgeRJIE8PxrqMPwVC9rtymrbGI8E9IRNBMhLchSXbUbRRC
-	 IglpZCT1halyg==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5aa68cd8dd3so7623098e87.0
-        for <linux-tegra@vger.kernel.org>; Thu, 11 Jun 2026 05:05:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ98H7C+cPY60Qq//lbGErnr9nnNRGSF5E16mz5yOmIifZjXO1nay0rmOi6SSdl09SNB0przMh/JwupOVg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD1ZoYBhGDFMdfF1cACuLx55Q7NG4vxOxuGsT3U5CcTvSVdRfq
-	qxUNTGreftsiRo5Yd5oU4SHilvqDMu7uOy+5ajFi/hgjE6NJwUk4ardz+AWyvSF205JcVzuiS2h
-	svOcoURByHjqgmnU7BVeCf/au9hTcrH0=
-X-Received: by 2002:a05:6512:3e20:b0:5aa:4ca4:d396 with SMTP id
- 2adb3069b0e04-5ad27ab9c66mr776867e87.11.1781179517535; Thu, 11 Jun 2026
- 05:05:17 -0700 (PDT)
+	b=j6DFO0Ps1mv6ikzbpJruypHied6aqLV7ollyxhogeeJqqI6wvTh0BXfdicIj/jnOv
+	 Du4W3bJEOW/hmyT/17x/4yVYxQD+euL4pfN254Lin7SUx9f85ad+pHY/VVe0XPASkF
+	 nOMVY8UJ/DxyRwdTpoRAU20ijtSdn6Kd2o9yl1TzbYn816k/A91aVdGm5yU3t/Uw6p
+	 2Nvi+mMJeIUdLu40iK93jyO51KcNDbBbxGkiBadnBZIzokeu0lhOM2ocLj84y3XXU/
+	 Qh/DRhGZytDYNF8y92QyYk+AMxbqBwQBPj3uXqiZH9paSgwoeGlcfsjfE+JH3IyPCu
+	 XzSidcvIBu/Ug==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3967724bed1so85693771fa.1
+        for <linux-tegra@vger.kernel.org>; Thu, 11 Jun 2026 05:05:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ+oU2QhuyDf/UftDuH19Tt8bGR/SrdEL4imbMWO2cjXC2opwLejUSboyGJzhupbR+ylW97CLEH/n2w7kw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0zLbNxFETVKJcA3xe6gMZNW4No+uAOAGWpcxuPAcDlsvjy2Ee
+	gzAZi51nSDtOE5kOrkfRDgEoo9TU7dEeozFoQOlyMXv2e6cVS6Km50cEKmJRaousOLaGomIl17/
+	gg+7QrsfaL6O17cglaR0UFkkxJWtOgQI=
+X-Received: by 2002:a05:6512:3a84:b0:5aa:6e86:55c8 with SMTP id
+ 2adb3069b0e04-5ad27aba5a0mr838729e87.12.1781179536005; Thu, 11 Jun 2026
+ 05:05:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -42,13 +42,14 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <0643b689f0f4a453d31183d9f598a6f53574ecbc.1781017599.git.geert+renesas@glider.be>
-In-Reply-To: <0643b689f0f4a453d31183d9f598a6f53574ecbc.1781017599.git.geert+renesas@glider.be>
+ <1a90a36a1f939406bdac6ac84c8f0b3ddf313bd5.1781017599.git.geert+renesas@glider.be>
+In-Reply-To: <1a90a36a1f939406bdac6ac84c8f0b3ddf313bd5.1781017599.git.geert+renesas@glider.be>
 From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 11 Jun 2026 14:05:03 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=fP8OTgqhkTOacsCm7yRVSWi1juVrr_X32i+bx9AimBw@mail.gmail.com>
-X-Gm-Features: AVVi8CdgWWkNh8u2LrT_7NUVxyvv9pybax-QmXRHly_PivQ12R3ZEvISgOVx2BM
-Message-ID: <CAD++jL=fP8OTgqhkTOacsCm7yRVSWi1juVrr_X32i+bx9AimBw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] pinctrl: tegra: PINCTRL_TEGRA238 should depend on ARCH_TEGRA
+Date: Thu, 11 Jun 2026 14:05:23 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkoBb7eEbJZ+DdxWpkAVnrLwx21GzekHsGRvyBCdWkAXg@mail.gmail.com>
+X-Gm-Features: AVVi8CcLgX3V7qKUW52gA7DHBmVxuiO3m77TWfE0PQxfnWVp5PktdfNSmd3QdaY
+Message-ID: <CAD++jLkoBb7eEbJZ+DdxWpkAVnrLwx21GzekHsGRvyBCdWkAXg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: tegra: PINCTRL_TEGRA264 should depend on ARCH_TEGRA
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Prathamesh Shete <pshete@nvidia.com>, Thierry Reding <thierry.reding@kernel.org>, 
 	Jonathan Hunter <jonathanh@nvidia.com>, 
@@ -60,12 +61,12 @@ Content-Transfer-Encoding: quoted-printable
 On Tue, Jun 9, 2026 at 5:08=E2=80=AFPM Geert Uytterhoeven
 <geert+renesas@glider.be> wrote:
 
-> The NVIDIA Tegra238 MAIN and AON pin controllers are only present on
-> NVIDIA Tegra238 SoCs.  Hence add a dependency on ARCH_TEGRA, to prevent
-> asking the user about this driver when configuring a kernel without
-> NVIDIA Tegra SoC support.
+> The NVIDIA Tegra264 MAIN, AON, and UPHY pin controllers are only present
+> on NVIDIA Tegra264 SoCs.  Hence add a dependency on ARCH_TEGRA, to
+> prevent asking the user about this driver when configuring a kernel
+> without NVIDIA Tegra SoC support.
 >
-> Fixes: 25cac7292d49f4fc ("pinctrl: tegra: Add Tegra238 pinmux driver")
+> Fixes: c98506206912dd0d ("pinctrl: tegra: Add Tegra264 pinmux driver")
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Patch applied!
