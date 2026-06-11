@@ -1,98 +1,186 @@
-Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3463F44EE;
-	Thu, 11 Jun 2026 12:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C71277CA5;
+	Thu, 11 Jun 2026 18:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781182195; cv=none; b=EFC5km4PQiuiVpTOTsAIf3pf+pQj68TK9poUK1OxKdtLtJbnvDNko2t9a6sCFveJUC/hTggMiSrgjb3muIoinVXA5BTIyFdoKej+7ECoSz7RAEtKgjrpSCiQ0Tc6yK/B8OvQ9pkCjPP4KTOc97zVtUD64VG5Cr3+yMU98ZdDXqc=
+	t=1781202684; cv=none; b=fjlJY6QhfYzWSD5AxroDz6rk5/O0enTuLnGY+U+drOemoSdYpjM5q2hA+AFbNfYTN9L4zkQuLiuJjF0ebwRKFjQ2OCq0Xl0962jIWpe4XTC8fiesNHWI43XOf3zTZq2AFQQK/I2v5GRO0/hChsJyLfT7H9+2dMuVxYSwbtgmoWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781182195; c=relaxed/simple;
-	bh=+CIffkiCpybkFqljx4po8zyKQJgzZwg28AYJiPCM+Uk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b4MgI906Nxb6dZ0Ly6j6yyiVpsgFMWYTjBjAIkAfBTwZKAorVZKo/xQ9+wZRPzIQEZeTtwLNez3xoUB0S+4cScVNSu9rzh2thd5M7K9KSm6WZbzfM64pncxKf9+Q4sRwJ377bOpRb5u8tF8rh3vNS9hAI+qCh8tiMUBFVXCIZ+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [117.182.75.76])
-	by APP-05 (Coremail) with SMTP id zQCowAAngNPmripqi+wVEw--.407S2;
-	Thu, 11 Jun 2026 20:49:44 +0800 (CST)
-From: WenTao Liang <vulab@iscas.ac.cn>
-To: peter.chen@kernel.org,
-	gregkh@linuxfoundation.org,
-	thierry.reding@kernel.org,
-	jonathanh@nvidia.com
-Cc: linux-usb@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	WenTao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] usb: chipidea: tegra: fix refcount leak in tegra_usb_reset_controller()
-Date: Thu, 11 Jun 2026 20:49:40 +0800
-Message-ID: <20260611124940.80010-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1781202684; c=relaxed/simple;
+	bh=7hFbgC9HnPzMr6oxo3wnpqIPpU8GHodGdbMFTy6e1TU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EZ2bPu1UUVxH45Omn7BpNlHM2K7DsONhDMIgv4Dx+r37WgV53V8OR6MXGrOD+1vSPwuiPOyc4ujklv0+O58hFcKKyadnTIkY3iDnR5fMU4CryUuZAGlNuriGu70ARokpArUNqCRLQEDNAD9gJi39rZk0VQoz236MJlS8y/qBxhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n/Jrxrou; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n/Jrxrou"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1781202683; x=1812738683;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=7hFbgC9HnPzMr6oxo3wnpqIPpU8GHodGdbMFTy6e1TU=;
+  b=n/JrxrouDCCmwKE//EE67sldzNYWRJqKgAFI9VAzShLyg9bRm6BdjeU3
+   KXTZUXW+Iu3zwQh5zi2c2BWLzDTcdCh1a4zC0LGZJQkeEH4ObDJ7KrPG2
+   2ebR0ceb1HtTsQa/XvS/bTX59qANMG4cfCWt30aBqrp6JlgzPOBjKr/vG
+   eh5f2Htruma9N6dDfpcGy6wszmAuLxh6I/h9cpFk5M6iCOflUrBq0x69a
+   36+OEbt/7sVpqIRzvIY7FbidUhZCIRB87a5VcBLA/rh4JnbwK3NsEQsiS
+   0TLikE4QADTavHdnRHHtkLGRFKtS7aW179dFCVXmwqgNvOWZYodYO8Fx3
+   Q==;
+X-CSE-ConnectionGUID: Jj81FjmbQMuib/UTgOSwkw==
+X-CSE-MsgGUID: 7iDgGRZaTX+p30aRdF5oYA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11813"; a="93136346"
+X-IronPort-AV: E=Sophos;i="6.24,199,1774335600"; 
+   d="scan'208";a="93136346"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2026 11:31:21 -0700
+X-CSE-ConnectionGUID: 5eTY9mfpReuvZAQcDYRSJg==
+X-CSE-MsgGUID: MEeJ9TMTQhGOHh6SBSHMRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,199,1774335600"; 
+   d="scan'208";a="276756938"
+Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.123])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2026 11:31:08 -0700
+Date: Thu, 11 Jun 2026 21:31:04 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: Kaitao Cheng <kaitao.cheng@linux.dev>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Huang Rui <ray.huang@amd.com>, Eddie James <eajames@linux.ibm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Matthew Auld <matthew.auld@intel.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Waiman Long <longman@redhat.com>, drbd-dev@lists.linbit.com,
+	linux-block@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
+	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+	linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Kaito Cheng <chengkaitao@kylinos.cn>,
+	Muchun Song <muchun.song@linux.dev>,
+	Philipp Reisner <philipp.reisner@linbit.com>,
+	Lars Ellenberg <lars.ellenberg@linbit.com>,
+	Christoph =?iso-8859-1?Q?B=F6hmwalder?= <christoph.boehmwalder@linbit.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Subject: Re: [PATCH v2 00/14] list: Prepare entry iterators to cache cursor
+ state
+Message-ID: <air-6P9ZGBbCWtGs@ashevche-desk.local>
+References: <20260609061347.93688-1-kaitao.cheng@linux.dev>
+ <bd0b7393-8ccb-4d67-8bfc-18c68347122c@amd.com>
+ <5152089a-2808-4fe9-b633-b03018105dd2@linux.dev>
+ <6b2efdee-95b0-4306-a682-0d0466497ddb@amd.com>
+ <2399841f-d834-4652-8285-4a15c7d9a9b9@linux.dev>
+ <d974a2ea-6102-45ff-bf36-3b25a2404e40@amd.com>
+ <ail8iNvPrJnE7p58@ashevche-desk.local>
+ <92683537-8404-47fe-a4ba-160e54870f0b@amd.com>
+ <aipx1goKIsk40vrF@ashevche-desk.local>
+ <96f9390b-a547-442f-b0a9-99a5ba52c0e1@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAAngNPmripqi+wVEw--.407S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WryrAw18Xr17tw18Aw15XFb_yoW8XFy5pF
-	4jk3y7CFWDtw4rAa17Jw15uFyfWanIyrW5Gws3t34rZwsxG3yUJryjkayFgasrAr4qga90
-	qr4UKF95uFyIvF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r1q
-	6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1l
-	IxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUqeHgUUU
-	UU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCQ8PA2oqh4V3ewAAsE
+In-Reply-To: <96f9390b-a547-442f-b0a9-99a5ba52c0e1@amd.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-In tegra_usb_reset_controller(), reset_control_deassert() is called on
-a shared reset control to increment its deassert_count before toggling
-the reset line.  If the subsequent reset_control_assert() call fails
-(e.g. due to a missing reset controller device or an invalid internal
-state), the function returns an error without ever balancing the prior
-deassert.  Since the reset control is shared, the leaked deassert_count
-remains elevated, preventing future reset_control_assert() calls from
-taking effect on the reset line and leaving the USB controller in an
-inconsistent state.
+On Thu, Jun 11, 2026 at 10:39:14AM +0200, Christian König wrote:
+> On 6/11/26 10:29, Andy Shevchenko wrote:
+> > On Thu, Jun 11, 2026 at 10:01:25AM +0200, Christian König wrote:
+> >> On 6/10/26 17:02, Andy Shevchenko wrote:
+> >>> On Wed, Jun 10, 2026 at 11:11:34AM +0200, Christian König wrote:
+> >>>> On 6/10/26 10:18, Kaitao Cheng wrote:
+> >>>>> 在 2026/6/10 16:07, Christian König 写道:
 
-Fix the leak by calling reset_control_deassert() in the error path of
-reset_control_assert(), ensuring the usage counter is properly balanced
-before returning the error.
+...
 
-Cc: stable@vger.kernel.org
-Fixes: fc53d5279094 ("usb: chipidea: tegra: Support host mode")
-Signed-off-by: WenTao Liang <vulab@iscas.ac.cn>
----
- drivers/usb/chipidea/ci_hdrc_tegra.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> >>>>> Should we revert to v1, or keep list_for_each_entry() and
+> >>>>> list_for_each_entry_safe() as they are, close this thread, and make no
+> >>>>> changes?
+> >>>>>
+> >>>>> Link to v1:
+> >>>>> https://lore.kernel.org/all/20260529082149.76764-1-kaitao.cheng@linux.dev/
+> >>>>>
+> >>>>> Or do you have any better suggestions?
+> >>>>
+> >>>> v1 looks perfectly reasonable to me.
+> >>>
+> >>> But why not just hiding that once for all (in case they don't use the temporary
+> >>> iterator)? Easy to automate, robust — everyone is happy?
+> >>
+> >> As far as I can see that is an extremely bad idea.
+> >>
+> >> The distinction between the use cases of 'iterating the list' and 'iterating
+> >> the list while you modify it' is completely intentional.
+> > 
+> > What I meant is to keep the name, just drop the parameter (make it hidden and
+> > being defined inside list_for_each_*_safe() cases).
+> 
+> Ah, sorry I was still thinking the suggestion is to merge
+> list_for_each_entry() and list_for_each_entry_safe().
+> 
+> If the modification is done all at once or in steps doesn't really matter for
+> me as long as the patch can be re-created reproducible.
+> 
+> But I'm wondering if we couldn't improve the name at the same time. The
+> _safe() postfix has caused tons of confusion where especially beginners
+> thought that it is a thread-safe variant, which it clearly isn't.
+> 
+> The _mutable() postfix sounds like a much better description to what happens here.
 
-diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
-index 372788f0f970..8d313345665c 100644
---- a/drivers/usb/chipidea/ci_hdrc_tegra.c
-+++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
-@@ -138,8 +138,10 @@ static int tegra_usb_reset_controller(struct device *dev)
- 		return err;
- 
- 	err = reset_control_assert(rst);
--	if (err)
-+	if (err) {
-+		reset_control_deassert(rst);
- 		return err;
-+	}
- 
- 	udelay(1);
- 
+I see, no objections from my side, but with the new name we don't need to have
+treewide change, the downside that one should undertake this to finish the job,
+otherwise we will have _safe() and _mutable() for a long time.
+
+> >> See the bool type can be implemented by int as well, but it is just a
+> >> different use case.
+> > 
+> >>>> You should just include some patches in the same patch set to actually use
+> >>>> the new macros.
+> >>>>
+> >>>> If you modify the files under drivers/dma-buf or drivers/gpu/drm/amd to use
+> >>>> the new macro I'm happy to review that.
+
 -- 
-2.50.1 (Apple Git-155)
+With Best Regards,
+Andy Shevchenko
+
 
