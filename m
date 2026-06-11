@@ -1,82 +1,74 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B87E3D5226
-	for <linux-tegra@vger.kernel.org>; Thu, 11 Jun 2026 12:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3E03D47A7
+	for <linux-tegra@vger.kernel.org>; Thu, 11 Jun 2026 12:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781179463; cv=none; b=kwonhmmqcJhiD7FKFmuhUQ58YstJVnZhpECTHU9xlWQP1yrzlhZ/m8P9gCHbSJh1KaE3hVjXFRPV55ty2R09yrDAtH9v8fYBbG/zrYUhdH3YQ14clRdPJjomZ0+5SLTW8OtxLeKPfwlzXcqTm8mNecp++8EkqFVmi2bhjw0URdA=
+	t=1781179519; cv=none; b=EMs9Xm0wZP89hkjx+6uthH/txRuQbJGCu9daJZEW6rRb8usCERBOdQsUsRfn4nuAOSzhul6H0k9B6zVP5IuQ70+afsd86fV/AJQQ6TIsOHaf4raMyGpas9Z8LLjxulrNgLVgM6t0g7Trmb2N4uXpBkQQlxyRh53XykjG4MHsw6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781179463; c=relaxed/simple;
-	bh=ROPHg9VN1Qhr0+agsTuMoXUjyKJkHv25AxjLVLVB9ek=;
+	s=arc-20240116; t=1781179519; c=relaxed/simple;
+	bh=0ox/fqkWsVCdzpGqz0ilLvGi8+8qWbIpBbT2MLQ/xzc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MzQulezPsu1+hLcN6jblGb+BDqP8wHhlb4g6QO+73mTEj4m6xxDfTkdbjqXziWh66mGjNaL6ovE766z3CWK2Fn6Ko8K+7+/b6P5zWRbpwf4lRP4a5mq/pJKPiVc7JbqMPuEu8eheIIBA8LibqNZrsTT1e15+7+tu+SgnmBqYqIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dGSj19RP; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=INRAvTbyjF0HLobf1jh6y29hBvNGbxyhbHEuYG0g9o0aXyTQAkYcvYGqsUcm4oqU0yG8qLzAB78tugR+euOXNNPXVmxK3abZGJV6KHs7UJL6Yh59BiAlMAVTHL1cvNsQOF6wLQJL2Urku+PsKQE34CFrr1MDiWZNlHQatFRDSQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aSBYio2L; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dGSj19RP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7ABB1F00899
-	for <linux-tegra@vger.kernel.org>; Thu, 11 Jun 2026 12:04:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aSBYio2L"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4BB31F00893
+	for <linux-tegra@vger.kernel.org>; Thu, 11 Jun 2026 12:05:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781179461;
-	bh=ROPHg9VN1Qhr0+agsTuMoXUjyKJkHv25AxjLVLVB9ek=;
+	s=k20260515; t=1781179518;
+	bh=tzwPLZ1uKPc2EO+74Kx2DEzweWGuSsCcDEj8J61jBjs=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=dGSj19RPNVZr855QJV+mFD/1CvtuBHkoJNWNNuDqWYjUE3uMO40myXboo5LhFLIbb
-	 IlqtE+gjh5jV8Xf9H2ZojTNl0S772m8xR82i7PdDg4UgYhXJr7UBbcLGRwYmgkhdUQ
-	 CwChBOWAHTU4VYZMnNoLSXqAfjcy2q8kNkNjpYn4b8mmI5qHhik55JFy8iwAvpMuVs
-	 ztvkY4wdss2cHw8DcBwtqvB71M28ATZVltiFEJMpHEH0U6n/v6n1MDAuZ+me2oVMAO
-	 vL0HXghSO8jXfP9q58hMJzwdGvECNrCmtfLZYw/TQMX5BdZTI1n1479O+yk8UFC21H
-	 qBHu9ZhSeFbCA==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5aa5ce4904eso8236757e87.3
-        for <linux-tegra@vger.kernel.org>; Thu, 11 Jun 2026 05:04:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ8mI1ppEtmL/hfCK8LZoO+roZ9/2++d4tkATnAib+x8XT2JDnD739Onu9ywdnNUlW1WhLenAU41A6rusQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6QP3cIf3JjNQnL3HrcAWEUub34fykaDRD8YesiY6qY+5I9gyN
-	O6nDCndfesb0GobZZdKaOYIl9VM9OsLO7c8E7Zh2DovcjM/WNdmMoc6TwfSpkP0Z40SrIHNuxm7
-	ECncbHq/d3SZlcx35EyBh3pj6XWCmObE=
-X-Received: by 2002:a05:6512:124c:b0:5ad:bda:4e87 with SMTP id
- 2adb3069b0e04-5ad27fb6a9bmr780946e87.30.1781179460707; Thu, 11 Jun 2026
- 05:04:20 -0700 (PDT)
+	b=aSBYio2LtxGa/VjLJO8JIr/qvAwztQ2XmJUHD7qYW6sdm7ZcF4/KFnMFg4cZG2qwM
+	 ycCauTRw3BvBgUOT5iGedjnuHRGUsJVn5MqxYepvvgZoDUGGPIMFtJ68V/yZsTyTT8
+	 P0plHseWQdkXwOwa13EDFKbR9x2ie1vOvl1RFINQFkjhgOR7GDwB+FwSa3BGaZx3ER
+	 NUWz+ai4bVzPrTTRjz6wNFXsYSHruj5L6uZHDA0XI3YsF25sbK5Q7HQk6Sn6F9VV9F
+	 yM1ZDf9dlzTk+P8NGHXGHgeRJIE8PxrqMPwVC9rtymrbGI8E9IRNBMhLchSXbUbRRC
+	 IglpZCT1halyg==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5aa68cd8dd3so7623098e87.0
+        for <linux-tegra@vger.kernel.org>; Thu, 11 Jun 2026 05:05:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ98H7C+cPY60Qq//lbGErnr9nnNRGSF5E16mz5yOmIifZjXO1nay0rmOi6SSdl09SNB0przMh/JwupOVg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD1ZoYBhGDFMdfF1cACuLx55Q7NG4vxOxuGsT3U5CcTvSVdRfq
+	qxUNTGreftsiRo5Yd5oU4SHilvqDMu7uOy+5ajFi/hgjE6NJwUk4ardz+AWyvSF205JcVzuiS2h
+	svOcoURByHjqgmnU7BVeCf/au9hTcrH0=
+X-Received: by 2002:a05:6512:3e20:b0:5aa:4ca4:d396 with SMTP id
+ 2adb3069b0e04-5ad27ab9c66mr776867e87.11.1781179517535; Thu, 11 Jun 2026
+ 05:05:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260608094122.1245189-1-pshete@nvidia.com> <20260608094122.1245189-2-pshete@nvidia.com>
-In-Reply-To: <20260608094122.1245189-2-pshete@nvidia.com>
+References: <0643b689f0f4a453d31183d9f598a6f53574ecbc.1781017599.git.geert+renesas@glider.be>
+In-Reply-To: <0643b689f0f4a453d31183d9f598a6f53574ecbc.1781017599.git.geert+renesas@glider.be>
 From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 11 Jun 2026 14:04:08 +0200
-X-Gmail-Original-Message-ID: <CAD++jLn0FwBGrzdFp2dqXnUg60jnma6BCKNDyirEO4BFZh6Yzw@mail.gmail.com>
-X-Gm-Features: AVVi8CcCDaOf4-MRCZfqSOQvD3MxIOCKTrbjtHNT3eOWDtAlzq1F4eMyJsM7JZU
-Message-ID: <CAD++jLn0FwBGrzdFp2dqXnUg60jnma6BCKNDyirEO4BFZh6Yzw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pinctrl: tegra238: add missing AON pin groups
-To: Prathamesh Shete <pshete@nvidia.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Thu, 11 Jun 2026 14:05:03 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=fP8OTgqhkTOacsCm7yRVSWi1juVrr_X32i+bx9AimBw@mail.gmail.com>
+X-Gm-Features: AVVi8CdgWWkNh8u2LrT_7NUVxyvv9pybax-QmXRHly_PivQ12R3ZEvISgOVx2BM
+Message-ID: <CAD++jL=fP8OTgqhkTOacsCm7yRVSWi1juVrr_X32i+bx9AimBw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: tegra: PINCTRL_TEGRA238 should depend on ARCH_TEGRA
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Prathamesh Shete <pshete@nvidia.com>, Thierry Reding <thierry.reding@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, linux-gpio@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 8, 2026 at 11:42=E2=80=AFAM Prathamesh Shete <pshete@nvidia.com=
-> wrote:
+On Tue, Jun 9, 2026 at 5:08=E2=80=AFPM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> Add 24 pin groups on ports EE, FF, GG and HH to the AON pin controller
-> group table (tegra238_aon_groups[]). Their pin arrays, drive-group
-> macros and pin descriptors were already defined, but the matching
-> PINGROUP() entries were not present, so these pins could not be muxed
-> or configured through the AON pin controller.
+> The NVIDIA Tegra238 MAIN and AON pin controllers are only present on
+> NVIDIA Tegra238 SoCs.  Hence add a dependency on ARCH_TEGRA, to prevent
+> asking the user about this driver when configuring a kernel without
+> NVIDIA Tegra SoC support.
 >
-> The pin arrays were not referenced, so the build emitted
-> -Wunused-const-variable warnings, and commit 119de2c33d96 ("pinctrl:
-> tegra238: remove unused entries") removed three of them. Restore those
-> arrays and add the full set of PINGROUP() entries to make the pins
-> usable.
->
-> Fixes: 25cac7292d49 ("pinctrl: tegra: Add Tegra238 pinmux driver")
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> Fixes: 25cac7292d49f4fc ("pinctrl: tegra: Add Tegra238 pinmux driver")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Patches applied.
+Patch applied!
 
 Yours,
 Linus Walleij
