@@ -1,355 +1,208 @@
-Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com [74.125.82.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012062.outbound.protection.outlook.com [40.107.200.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0811434B1AD
-	for <linux-tegra@vger.kernel.org>; Fri, 12 Jun 2026 04:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781240035; cv=none; b=mFU45oa4Me0SXtOz01UKRtlLtUCb+AF2tshNtyEHG4J8c0ysALjVuAWQ6WvXD5oeUj/PK1xcoC148K6ylJ0SNJ673qr+LXrZBhETJUmlZI0UIKi+3AVHgg5InhULp4XxNssjl2h4sx3IS7FdQh7gAhm4aw5OrkqHcs49wG0mEFs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781240035; c=relaxed/simple;
-	bh=bC/8un0gjlQzbn6mx8nfwiMtVZXofE+XiUEEsbGFVz8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=f+lpL+oJn0vVQXgaLcHKJ8QJcSd6Q6/LYCPaH6D+k7XXnjUNDLOfW0Gp/m7pMz9WhkscJEN6VXRaJMdy8G5Hr3apVtAuKuNwYMKpsaAd5ZzphzhPXavQqj2RjKYfnnFMaK7D49oyheVTK2n159BrScNamnZNjKU/+6RY8mzByWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aNqksR1F; arc=none smtp.client-ip=74.125.82.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139D83BD63C;
+	Fri, 12 Jun 2026 06:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781246024; cv=fail; b=JlIWKA2SqWby1EDeHVT1QcvH/mpePB2GBdchn6JA9aZTTJPL8DIySGf+T2VGyay1X6kdkGTeQ2vG9o9+c5gHBr+oB0/85dd9Z2ljhZDu8bxyGbHfxQY6AqmivqJRiOwpt/nDovms8h7W1LHtyHZTJ7GCryN2GhHMbxW1eOanhm0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781246024; c=relaxed/simple;
+	bh=ExNj6HiqLTGCYMRxM0c2fovuf0aCOrp2aAcQ8T8pFDQ=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=liZyTunkE/uJzzXwSGQ7dNj3z/qoHrCmeKKayaV5TN3U6a4NUpAWl11Eg+geO1YCJh33CgX4xZIHDbOHq5m8jgp8VrqAcxOi+roPhqCwqBZDjgrimoi2AXLPvFQbZ6DOfVnoUq32kmdohJyX8jZjNTyk79ajLbP3A4dS7DPgUrk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=N06r0mzh; arc=fail smtp.client-ip=40.107.200.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aNqksR1F"
-Received: by mail-dy1-f180.google.com with SMTP id 5a478bee46e88-3042a388168so945005eec.1
-        for <linux-tegra@vger.kernel.org>; Thu, 11 Jun 2026 21:53:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781240033; x=1781844833; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lVcQQd4sC+ylekkm5CE3VRYg0x6kzjaCjRpitPRM408=;
-        b=aNqksR1FFgPmom3xbSB5+HcovsbFKGiHWi4IFUkUV38hT9KSf79E1Wy7qATdvhvFea
-         wFFegE3SpCMRQIzb0nVvd3UPypWfJ9kEk2L53PPOUyWLnTGT7cLWzVMC+fIXnXmtbP2X
-         DHPkX28OTvJMfPocCLu2xAOtC9r1ycZDZqZwztAvmm/K0mK+0Cm1TX2KTqc5PDsJWuBA
-         IY1noSToSkSvp4QDanLC1cJBUhKkwCZNeA267oB9iItBvHaLIEDGgkdRCk9Te5QPg4l7
-         zax/93xWYJImnGs2wEuHmLSc0vff149fSDqwcILU9rehdqQVd52UMMz0NcSnH7bgGnI0
-         N8nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781240033; x=1781844833;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=lVcQQd4sC+ylekkm5CE3VRYg0x6kzjaCjRpitPRM408=;
-        b=HXqQfflIW4IRz0jDokYFMTGZJtw+8I1d3N3+4o1er97Ap8hel5M95fSorNTnxy6nR+
-         O569WwvXe76nBx8AIAO77vZXwzFNTUb+eljjne9gys1hIo/jO0hd9kQyiayykmG98K9K
-         2fsd9erpBuwzU7LyXWOtPcoqFPBaHdcFuiZ1Q29Tf6UWsyNFZOfv7Lk2kJHeApg9SVRc
-         Wrsck5vHK69fNfcTbEggNKkaedBAhMcolXFCg5WgNRtP+Dspy5RhxBEoEOM5gzE4d7FJ
-         GTqzA7r6mnQ2jKXC7Cdw9Mqziq2Vi5uamVyuao+YUT/I8MsydlSbEKMiCCh8NUZbInOE
-         TNjA==
-X-Forwarded-Encrypted: i=1; AFNElJ8FOUl6i/Ddl7moQ3uaNxejtVzIp83V26E9nnU9rlg9iuDP5W8UP1QVsPlepHKmuAsOHOfbhJt4xjVBdQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoL9Xab09moM689WTBsDfqjbqES12xZSpItKcuBkdhrC49XW8r
-	UfN+fHcv9zXUdR77KTWaPTYRUu9DvdXhQAIV+teRxRpjcjBtbRQXEebg
-X-Gm-Gg: Acq92OEH7VHg9VDfH2XR00FRuPupSezDeANJGl2slKscfT6YfJyD567PVsEBhQygeH1
-	fqKQ7qE4GKdyroJAQpYBxzsnrtDcrwDqZx+yalTHagEFfLxY3nsrJ8yi9R1TwiZiLHPsFWeu4fY
-	VZNcCV0a8rc5cyuvDvG4g++ycyOISV/V7TJQofDPffwAnuk+ClTn7ThML/hhJi9e7T1JwDIZxfh
-	uWnYXW3UpMw/QeI0yNVjsYopJehuRxVeDzM7zMtBU9ap4HRS9xxrSEuDQRNOKn59UmhemJeAUAg
-	ydi0ip0gF/UxRTcJPa76TWRifg4nbxHu0bN3qlOMuWdUo8RpcmnHwICMj1MdByb0uRDemS/4A8M
-	wW+A+Vwk0OAu+TWrFkGO3oft9lb0yKUXD6R73+cgnmHaue1UmoHuMQEOffxK/mqDl9oypQArOl3
-	ErH1FdIB/gZp/sZpwWYdtQPoHGiH3XD/84eyci2ze7Nb8aeW9cR2ykKPoUuK8I9mVom5dKrK7BK
-	g==
-X-Received: by 2002:a05:7301:e8b:b0:2c5:c532:1fe1 with SMTP id 5a478bee46e88-3081ddff1d0mr594316eec.3.1781240032969;
-        Thu, 11 Jun 2026 21:53:52 -0700 (PDT)
-Received: from [192.168.1.18] (177-4-161-23.user3p.v-tal.net.br. [177.4.161.23])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3081e5cea89sm1971217eec.8.2026.06.11.21.53.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jun 2026 21:53:52 -0700 (PDT)
-From: =?utf-8?q?C=C3=A1ssio_Gabriel?= <cassiogabrielcontato@gmail.com>
-Date: Fri, 12 Jun 2026 01:53:26 -0300
-Subject: [PATCH RFC 4/4] ALSA: x86: Use common CEA channel allocations
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="N06r0mzh"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rTh02Q0uN4CwqFqxI1OBC2OWtzoIrO2/zE9a8gZOqYbQ1VllRfZU+u7rrwGLjHItuLs+4ZTveuiA23oR9HqavrEtkRBV0spBK74zUUe4sB8cUGEDt5Jm//8IPWto/2ryY/Lp47eiZ5qiW26yI2lkmnVKdov8MNdxLBrxn1XMorzctgWQGEh9IspEBKSuHrRLqiI7BhqlEUIbZ7PGvaUHDR5Tbbe5Ducod4PPtOkX44FIYmIOZwvbL4yncHnjGZQeMGWkq7+eIOCQ6aaA2V6cESs3ge9LItKSOv9vl6NLHxEnU9qn1jnQN731+Ly3C40OP5ROqnN00arB5Kkh2EzXbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ljt7vpZ3Quqe+P1qzg7zRuShK69IwM8JCXrxQvrP1tw=;
+ b=T9Z6sl64Ez7mCu56gxL1T6SGHSWs7Wt/YyyS7qNp9Zb8ZiG0OHHdaofMUyK9omzT+35H7G8z3Nd+wJ7FkOspAsXiDk7UdQjvjMl+g5XiBz67YYElDWhMbOucGtVebqHlOhBdZuWdLcOO1MGfRHMGcj3d3bMZ7LrkNjjs0NQW9FjTI0Za4x6KRdT3cvLIZ6PSb9Hg3qTs9lstcT6b3vB4awMMyJPnx/SpaWGcNHFuIEwpQDdwyLVaH27Sdo1Nz5eGREYUTVilHAgBxEtk/jydEf80eK05zaYKgqcP1JN7lsHmG2lIsXkobOLkBjzQUnqvUXozHY6X27Ed3gdIcGUwiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ljt7vpZ3Quqe+P1qzg7zRuShK69IwM8JCXrxQvrP1tw=;
+ b=N06r0mzhtjGwln2GPaGiAhqAhOquP0GOdvusA9TqYzGlcAqUo+jOHE4RyHsqUd1VnIdWn8FyCwWJ7SHGRweOv5cvP0QwdIkEh9ZEsrfhfd6jqKt3yHdAOp4E2+svVVIXZADqCkXACfeV2hiA1UGtigJtuy5XW9k2NWEQ2TBAK9DlbTnpyuV5k5r+7Pd3pLeWySq/mApPvbK8Do93p6wa/FfFc6UW6KXy8YxME/hSQPsyLOGkAl4M1u35sopgTJYceoRwbEQL+jr5xPzdDI5HRXs9Hn6OfBqrO3ghYP8A93Rjbr4lAYw6sv1JL0MRPCgI6O3Sgl9s+Y2K/GrRfow57A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
+ by MW4PR12MB5628.namprd12.prod.outlook.com (2603:10b6:303:185::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.113.13; Fri, 12 Jun
+ 2026 06:33:38 +0000
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017%6]) with mapi id 15.21.0113.013; Fri, 12 Jun 2026
+ 06:33:38 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH 0/7] Host1x/VIC support on Tegra264
+Date: Fri, 12 Jun 2026 15:32:28 +0900
+Message-Id: <20260612-t264-host1x-v1-0-8d934987de67@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDY0Nj3RIjMxPdjPziEsMK3WRLc0Nzw7SUlFRzcyWgjoKi1LTMCrBp0bG
+ 1tQC15YHiXQAAAA==
+X-Change-ID: 20260313-t264-host1x-c97171fdde77
+To: Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mikko Perttunen <mperttunen@nvidia.com>, Santosh BS <santoshb@nvidia.com>
+X-Mailer: b4 0.16-dev
+X-ClientProxiedBy: TYCP286CA0228.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c7::7) To SJ2PR12MB9161.namprd12.prod.outlook.com
+ (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260612-alsa-cea-channel-allocation-v1-4-b1bcbb6b1051@gmail.com>
-References: <20260612-alsa-cea-channel-allocation-v1-0-b1bcbb6b1051@gmail.com>
-In-Reply-To: <20260612-alsa-cea-channel-allocation-v1-0-b1bcbb6b1051@gmail.com>
-To: Takashi Iwai <tiwai@suse.com>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Jaroslav Kysela <perex@perex.cz>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-tegra@vger.kernel.org, notify@kernel.org, 
- =?utf-8?q?C=C3=A1ssio_Gabriel?= <cassiogabrielcontato@gmail.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9800;
- i=cassiogabrielcontato@gmail.com; h=from:subject:message-id;
- bh=bC/8un0gjlQzbn6mx8nfwiMtVZXofE+XiUEEsbGFVz8=;
- b=owGbwMvMwCV2IdZeKur/u2bG02pJDFnaEy6e7VmZqcibc5pl+r+yyLlvDh6d/yZsu5x7NPOla
- V7NDUaJHaUsDGJcDLJiiiyrkxZZ7ul6cLU+boUHzBxWJpAhDFycAjCR9yIM/yzymDY3JDrMrHw/
- N1CrN9czjqd6SeoPL6PsZ5vCd8q7BTD8d2nl2/Rzq4Scauoxidu96coVMote7fqy4tJhtiIBjY9
- T+QE=
-X-Developer-Key: i=cassiogabrielcontato@gmail.com; a=openpgp;
- fpr=AB62A239BC8AE0D57F5EA848D05D3F1A5AFFEE83
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|MW4PR12MB5628:EE_
+X-MS-Office365-Filtering-Correlation-Id: 776a6f9d-e8c2-4189-fd00-08dec84c8945
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|23010399003|7416014|10070799003|376014|366016|11063799006|56012099006|18002099003|921020;
+X-Microsoft-Antispam-Message-Info:
+	Kc2mP9WoOJOQQHxLant8jHezzW0E0gltZW3tmD9LlAJuUr+L7uHBMAUT7O6/9bqklc66Udhhk/Btu/bHpR7rLbAewlQt9wCa0VklADQaW+IO4u3/1r/p/YJ/DeeMx9V6yZDrrs4g6xPGFiEq9MxR08sIJD7YVnCPmko9at3Tcmyz1LdwlInCfIvQ8PpXl9dmN6AoFEQeEfITE/TWHTNBGnhDU7mz7q1S2HovAb4KCWbZ7wOzUAeXeFcXw3Zjr/zppmXPkwo+vGVDAnMW1H7ys/jdlXRKxTTy0mAqD3zf1t76Mpb5+Syow/5zlStIBffAfAGWgXV1yJE81pvpcY3hTcTvUGmQfL3R6Jfc21nkn6qlh2J/G6omoo5fQ+6Rntqvgj1nQZWbkwcjz1ZzBduvm4xpy/uTYyjbwQ05n6BCaMdT7vx9G0b36DVQkBcZnzaUezWCJlpMl2Hufm6ZfsAQ4EJbKeBHCUAfkCi2wlMQ1t5aL9G+f0GOuoNewjY1fm2g2RCtyQsUG0uF1ga8fG4U//l25AgTRquCYEsH+c+GtiUbfYkWwBI/VpnaxYGC230daARtK/deSS0CnXNukag3ONvD6y+8M1Q01K0WM30LVVnV7e7GOOYXjk5/ht77oO23FLI+aluH5sTcAehFRVKWZpOxxV5RTHkyJCPAOMcRpzkX4vq42em5cBgQtfXIZ7KymDh8+7uyc5uWoK3+t59c4ZGp6vRWiLnx3V41EqBKeSEWKKyaaF+IyHSVmXqq8u43
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(7416014)(10070799003)(376014)(366016)(11063799006)(56012099006)(18002099003)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cEhjS0FiekloYytEaStEa1NGSGhVcHVQZEUrZC9qQVNpZFdqS2lIaTVuUUJN?=
+ =?utf-8?B?bjJZeThnK3JYOEtRUnRqaDc1WE95cXBhU0s3SjlGRFFFaUdwTzNBb01xWEVo?=
+ =?utf-8?B?NW43ZU5icFFQbGRwUWdzZmFmeEo4dWdiMExaNkdtN1dtUVNscnBrU1N3MjJj?=
+ =?utf-8?B?SWdXa2c3WHdLeUQ3c1c2dEFIYjB5amFqRms5U3pXYUtTQW5VMmlMWUo3NDAw?=
+ =?utf-8?B?STFWN0E2clFEc3ZNcWFvYndKaGZ4bTY3NjQvdGlNYVVpbEJ5UzBMN2REMGRC?=
+ =?utf-8?B?bVptY0Q2SVFkcE9HazlHdFFhcUIvM1RkWUJuSk0xbkowa1JwUnpZVzRWajNU?=
+ =?utf-8?B?Tk1IZjFhOFZjOWxLM0tLZ3BPT292dEZJQm1WZEtpRjR6OTc2Qy90Z3ovTTVD?=
+ =?utf-8?B?SGkweXA5aG1NZldHY2ovNm44MGNoWHNCVk1tRFpiK04rUXlEeUxlMmFtK2ZJ?=
+ =?utf-8?B?YW5CYXFWN2lVYzNEMFloM2RWdlM5cDdNQnduNFdmMHByMmI4QzlXSU5FczBk?=
+ =?utf-8?B?dytrWjhXS1J1RzhsbHlTM09qOC91bGlxaUM5ZXRWMXlyd2ZPR0pidzByMyti?=
+ =?utf-8?B?dWxkUW5qbjllRDZoY1ltaGIxcHNWaU1FcUN6SnVjVXRGVVh1TitmL1BhdUtm?=
+ =?utf-8?B?ZWdEa3lGemFuY2lGNkNRZVVqM2J4ZnQvQUh0cUhXWDZBb0wraTJpSEhrZW45?=
+ =?utf-8?B?em9pQ21lMWlkZ1kvaW9vVzRCalkzQmRRQjZEc1dHMnVaWVZKRCtkU2NzazdS?=
+ =?utf-8?B?YXgyV3B3TG5udnowNGluZ1JOUWZmQW9ySjdTc25DNlhEdE15Mk11K3ZJNEc0?=
+ =?utf-8?B?UmdHUytQT0FjR1doZ1N6VThNQ3gzaGc5S1R0SldhTElNOXlGUDZxMmt4Wnla?=
+ =?utf-8?B?ZFVlSlhtTUV0RmlvS09kR2Iva09ITXlHK3dSVzFyb2JTMmdlL0VGMmVXUTZz?=
+ =?utf-8?B?bzNLbld1K2Z2Ym5CMndYaTVnekZIUGE5dHBtd1lDdVVXVzFXRld1MTFwMUxJ?=
+ =?utf-8?B?S3VCOExHUHZSU3ZIdHRuSFAxQ2hienY0cHB4RVBheGNaK1hVZ0w2dUxobUs0?=
+ =?utf-8?B?dnBKVUVlR0M0cWZreW0xUzFZUnNTdG1YOHNpdjZ6VHVpamsrUVR0RkdLL1hR?=
+ =?utf-8?B?K0FLWEtjZWdjY04xSVh6dzlqcDJ2L3UwRDNoV05RTHh1b1lJTkwxVHlTSGg1?=
+ =?utf-8?B?Q1VHa0k5RDhhNEpnK0ZtTmwycHhRcmcvTTUzNHdBN2s3bnVxOS9XSmVqMmk4?=
+ =?utf-8?B?T0hQaWJDRUZpbkthS0NHZW1PeU1rM0RKalFxSWZFMCs4bXJ3amE2MmZ0c1Br?=
+ =?utf-8?B?VUxUeVhGZFIyQzF1MUxlaDN0dGxtL0lTRzUrZVJtUUVyWmtEc0ttT2toTEpL?=
+ =?utf-8?B?dzlVcm84Qm9DYnprYThMTXArb2lYUTFxNUxMVUh0cnEvRXhybFR3R1ZJTndP?=
+ =?utf-8?B?aXlSMFhTVkFQREZwTVpYUDlLVXdGbnN0UGo2WkRSU3BqRTUyWlNTUkVTRElI?=
+ =?utf-8?B?b0hDa0RWeHpTWHZNUVlSNmpoWXFIMUg5RGg2R3R2eFJJdXp4TWJkVVgzN1dS?=
+ =?utf-8?B?dzlxdDhENkFzUDEraVVaelZ4T3VtTEJYYWlnQnMxSnZ1bklOS1grSENaSjly?=
+ =?utf-8?B?Z29JNU9va0pkSGU0MmE2SlI1aXhvU3Q4UEtpWUp2WWpPYUxTdG1DSnhkc25F?=
+ =?utf-8?B?K0V3dGNqUkpMWnRTdkNQZ080b3RrUDNNUENNWWpwSFJZbWdURkE0bWRxQU9G?=
+ =?utf-8?B?blJ4ODNZNEhFSGdvVmVSQXQ4L0ZmejlLUnB5TEVoeEJWZUZpUTE5YThWTlJ6?=
+ =?utf-8?B?ZllQWWw1c0VJekhGa1RxbDlxVlU5MU5tdHZJNk5iZHZBOUkvODVnUFFmRTJH?=
+ =?utf-8?B?QXlPdHpDRUNWVXdSUGJQK3Y2VmcyQ0oxZTRqRUNwYVl0cG5yQlM1aGRXMDl0?=
+ =?utf-8?B?bFBoaUlDQUwwRW1KS1U1K2tieVR0RzYxQkRiR0hENklEd0hOWDlzTG8rR1BK?=
+ =?utf-8?B?OGplMmRuanVIa2xGY0U5SnM1N1paWHZVMnAvNXB2WFZjNkdGSWNMeFVRTzVo?=
+ =?utf-8?B?TEQvK0xxQmREWlJ4aWluQUE4RmhOK2tidldMckFvb2NhcDVZczh6TEk0bkZs?=
+ =?utf-8?B?SnlKRGp0Q2FYVGVFeGE1eWM1c1grS0VQR0xYc1pxc2F5Ri9KK2U5MElObFZS?=
+ =?utf-8?B?UFRWaE9hZldQczlFN1JVU2trWkJqWWtpbjZ6czVDTmRqQTM1Y2dFMXUxd0tG?=
+ =?utf-8?B?V3RJZHVaUVp5RU9uNkMrOUNBSmp2cU92Z1BVMmpBWFJDR0JFOVJFSExPQ2RG?=
+ =?utf-8?B?UVhwblJaT0QxYkJUNFU1MjMyYVhtWE5pclRJeVQ4L3VINllFWXcwczdzQmlE?=
+ =?utf-8?Q?1ExAuQ749GmbpV9oH/oe7xcGWanXKrLOYFtzjPdNe+faO?=
+X-MS-Exchange-AntiSpam-MessageData-1: idIm1QYCkgI7ow==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 776a6f9d-e8c2-4189-fd00-08dec84c8945
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2026 06:33:38.2099
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sCoAMdjCHE5p10vMPeWuh3g9W5zYwr/HBt4ErcGSjWCeW+a0Ldg3i9VH/xPeIvc9Z99fzinNHBaAsAir0e3KVg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB5628
 
-Replace the Intel HDMI LPE copy of the CEA allocation table and selector
-with the common PCM ELD helpers. Preserve the driver's existing limits:
-only ELD speaker bits 0 through 6 participate, only CA values through
-0x1f are considered, and an incompatible ELD does not use HDA's fallback.
+Hello everyone,
 
-Select SND_PCM_ELD for the new helper dependency.
+this series adds support for Host1x and VIC on Tegra264 SoCs.
+The Host1x side is not very interesting, just adding the usual register
+definitions and other information. One thing of note is that multimedia
+engines apart from VIC have moved away from Host1x on this generation.
 
-Signed-off-by: Cássio Gabriel <cassiogabrielcontato@gmail.com>
+On the VIC side, there is a bit more of a change, as the VIC Falcon is
+now RISC-V based. Unlike NVDEC, VIC is still "externally booted", so
+the boot sequence is very similar to before.
+
+host1x uapi-test[1] has been updated for Tegra264. Necessary headers for 
+constructing VIC jobs have been added to open-gpu-doc[2].
+
+Patches 1 and 2 add new compatible strings to Host1x and VIC device tree
+bindings.
+
+Patch 3 fixes the context device device tree parsing code to handle
+iommu-map entries with length more than 1.
+
+Patch 4 adds Tegra264 support to the Host1x driver.
+
+Patches 5 and 6 add Tegra264 support to the VIC driver.
+
+Patch 7 adds Host1x and VIC nodes to the Tegra264 device tree.
+
+Thank you,
+Mikko
+
+[1] https://github.com/cyndis/uapi-test
+[2] https://github.com/NVIDIA/open-gpu-doc/blob/master/classes/video/clceb6.h
+    https://github.com/NVIDIA/open-gpu-doc/blob/master/classes/video/vic_ceb6_types.h
+
 ---
- sound/x86/Kconfig            |   1 +
- sound/x86/intel_hdmi_audio.c | 158 ++++++-------------------------------------
- sound/x86/intel_hdmi_audio.h |   9 ---
- 3 files changed, 20 insertions(+), 148 deletions(-)
+Mikko Perttunen (6):
+      dt-bindings: display: tegra: Changes to support Tegra264
+      dt-bindings: display: tegra: Add Tegra264 compatible for VIC
+      gpu: host1x: Correctly parse linear ranges of context devices
+      drm/tegra: falcon: Add support for RISC-V external boot
+      drm/tegra: vic: Add Tegra264 support
+      arm64: tegra: Add Host1x and VIC on Tegra264
 
-diff --git a/sound/x86/Kconfig b/sound/x86/Kconfig
-index 4ffcc5e623c2..a990989a12b9 100644
---- a/sound/x86/Kconfig
-+++ b/sound/x86/Kconfig
-@@ -12,6 +12,7 @@ config HDMI_LPE_AUDIO
- 	tristate "HDMI audio without HDAudio on Intel Atom platforms"
- 	depends on DRM_I915
- 	select SND_PCM
-+	select SND_PCM_ELD
- 	help
- 	 Choose this option to support HDMI LPE Audio mode
- 
-diff --git a/sound/x86/intel_hdmi_audio.c b/sound/x86/intel_hdmi_audio.c
-index 91dfcf47e979..4ea29c3ea6c5 100644
---- a/sound/x86/intel_hdmi_audio.c
-+++ b/sound/x86/intel_hdmi_audio.c
-@@ -26,6 +26,7 @@
- #include <sound/core.h>
- #include <sound/asoundef.h>
- #include <sound/pcm.h>
-+#include <sound/pcm_drm_eld.h>
- #include <sound/pcm_params.h>
- #include <sound/initval.h>
- #include <sound/control.h>
-@@ -57,72 +58,6 @@ module_param(single_port, bool, 0444);
- MODULE_PARM_DESC(single_port,
- 		"Single-port mode (for compatibility)");
- 
--/*
-- * ELD SA bits in the CEA Speaker Allocation data block
-- */
--static const int eld_speaker_allocation_bits[] = {
--	[0] = FL | FR,
--	[1] = LFE,
--	[2] = FC,
--	[3] = RL | RR,
--	[4] = RC,
--	[5] = FLC | FRC,
--	[6] = RLC | RRC,
--	/* the following are not defined in ELD yet */
--	[7] = 0,
--};
--
--/*
-- * This is an ordered list!
-- *
-- * The preceding ones have better chances to be selected by
-- * hdmi_channel_allocation().
-- */
--static struct cea_channel_speaker_allocation channel_allocations[] = {
--/*                        channel:   7     6    5    4    3     2    1    0  */
--{ .ca_index = 0x00,  .speakers = {   0,    0,   0,   0,   0,    0,  FR,  FL } },
--				/* 2.1 */
--{ .ca_index = 0x01,  .speakers = {   0,    0,   0,   0,   0,  LFE,  FR,  FL } },
--				/* Dolby Surround */
--{ .ca_index = 0x02,  .speakers = {   0,    0,   0,   0,  FC,    0,  FR,  FL } },
--				/* surround40 */
--{ .ca_index = 0x08,  .speakers = {   0,    0,  RR,  RL,   0,    0,  FR,  FL } },
--				/* surround41 */
--{ .ca_index = 0x09,  .speakers = {   0,    0,  RR,  RL,   0,  LFE,  FR,  FL } },
--				/* surround50 */
--{ .ca_index = 0x0a,  .speakers = {   0,    0,  RR,  RL,  FC,    0,  FR,  FL } },
--				/* surround51 */
--{ .ca_index = 0x0b,  .speakers = {   0,    0,  RR,  RL,  FC,  LFE,  FR,  FL } },
--				/* 6.1 */
--{ .ca_index = 0x0f,  .speakers = {   0,   RC,  RR,  RL,  FC,  LFE,  FR,  FL } },
--				/* surround71 */
--{ .ca_index = 0x13,  .speakers = { RRC,  RLC,  RR,  RL,  FC,  LFE,  FR,  FL } },
--
--{ .ca_index = 0x03,  .speakers = {   0,    0,   0,   0,  FC,  LFE,  FR,  FL } },
--{ .ca_index = 0x04,  .speakers = {   0,    0,   0,  RC,   0,    0,  FR,  FL } },
--{ .ca_index = 0x05,  .speakers = {   0,    0,   0,  RC,   0,  LFE,  FR,  FL } },
--{ .ca_index = 0x06,  .speakers = {   0,    0,   0,  RC,  FC,    0,  FR,  FL } },
--{ .ca_index = 0x07,  .speakers = {   0,    0,   0,  RC,  FC,  LFE,  FR,  FL } },
--{ .ca_index = 0x0c,  .speakers = {   0,   RC,  RR,  RL,   0,    0,  FR,  FL } },
--{ .ca_index = 0x0d,  .speakers = {   0,   RC,  RR,  RL,   0,  LFE,  FR,  FL } },
--{ .ca_index = 0x0e,  .speakers = {   0,   RC,  RR,  RL,  FC,    0,  FR,  FL } },
--{ .ca_index = 0x10,  .speakers = { RRC,  RLC,  RR,  RL,   0,    0,  FR,  FL } },
--{ .ca_index = 0x11,  .speakers = { RRC,  RLC,  RR,  RL,   0,  LFE,  FR,  FL } },
--{ .ca_index = 0x12,  .speakers = { RRC,  RLC,  RR,  RL,  FC,    0,  FR,  FL } },
--{ .ca_index = 0x14,  .speakers = { FRC,  FLC,   0,   0,   0,    0,  FR,  FL } },
--{ .ca_index = 0x15,  .speakers = { FRC,  FLC,   0,   0,   0,  LFE,  FR,  FL } },
--{ .ca_index = 0x16,  .speakers = { FRC,  FLC,   0,   0,  FC,    0,  FR,  FL } },
--{ .ca_index = 0x17,  .speakers = { FRC,  FLC,   0,   0,  FC,  LFE,  FR,  FL } },
--{ .ca_index = 0x18,  .speakers = { FRC,  FLC,   0,  RC,   0,    0,  FR,  FL } },
--{ .ca_index = 0x19,  .speakers = { FRC,  FLC,   0,  RC,   0,  LFE,  FR,  FL } },
--{ .ca_index = 0x1a,  .speakers = { FRC,  FLC,   0,  RC,  FC,    0,  FR,  FL } },
--{ .ca_index = 0x1b,  .speakers = { FRC,  FLC,   0,  RC,  FC,  LFE,  FR,  FL } },
--{ .ca_index = 0x1c,  .speakers = { FRC,  FLC,  RR,  RL,   0,    0,  FR,  FL } },
--{ .ca_index = 0x1d,  .speakers = { FRC,  FLC,  RR,  RL,   0,  LFE,  FR,  FL } },
--{ .ca_index = 0x1e,  .speakers = { FRC,  FLC,  RR,  RL,  FC,    0,  FR,  FL } },
--{ .ca_index = 0x1f,  .speakers = { FRC,  FLC,  RR,  RL,  FC,  LFE,  FR,  FL } },
--};
--
- static const struct channel_map_table map_tables[] = {
- 	{ SNDRV_CHMAP_FL,       0x00,   FL },
- 	{ SNDRV_CHMAP_FR,       0x01,   FR },
-@@ -384,68 +319,13 @@ static int had_init_audio_ctrl(struct snd_pcm_substream *substream,
- 	return 0;
- }
- 
--/*
-- * Compute derived values in channel_allocations[].
-- */
--static void init_channel_allocations(void)
--{
--	int i, j;
--	struct cea_channel_speaker_allocation *p;
--
--	for (i = 0; i < ARRAY_SIZE(channel_allocations); i++) {
--		p = channel_allocations + i;
--		p->channels = 0;
--		p->spk_mask = 0;
--		for (j = 0; j < ARRAY_SIZE(p->speakers); j++)
--			if (p->speakers[j]) {
--				p->channels++;
--				p->spk_mask |= p->speakers[j];
--			}
--	}
--}
--
--/*
-- * The transformation takes two steps:
-- *
-- *      eld->spk_alloc => (eld_speaker_allocation_bits[]) => spk_mask
-- *            spk_mask => (channel_allocations[])         => ai->CA
-- *
-- * TODO: it could select the wrong CA from multiple candidates.
-- */
- static int had_channel_allocation(struct snd_intelhad *intelhaddata,
- 				  int channels)
- {
--	int i;
--	int ca = 0;
--	int spk_mask = 0;
--
--	/*
--	 * CA defaults to 0 for basic stereo audio
--	 */
--	if (channels <= 2)
--		return 0;
--
--	/*
--	 * expand ELD's speaker allocation mask
--	 *
--	 * ELD tells the speaker mask in a compact(paired) form,
--	 * expand ELD's notions to match the ones used by Audio InfoFrame.
--	 */
--
--	for (i = 0; i < ARRAY_SIZE(eld_speaker_allocation_bits); i++) {
--		if (intelhaddata->eld[DRM_ELD_SPEAKER] & (1 << i))
--			spk_mask |= eld_speaker_allocation_bits[i];
--	}
-+	int ca;
- 
--	/* search for the first working match in the CA table */
--	for (i = 0; i < ARRAY_SIZE(channel_allocations); i++) {
--		if (channels == channel_allocations[i].channels &&
--		(spk_mask & channel_allocations[i].spk_mask) ==
--				channel_allocations[i].spk_mask) {
--			ca = channel_allocations[i].ca_index;
--			break;
--		}
--	}
-+	ca = snd_cea_channel_allocation(intelhaddata->eld[DRM_ELD_SPEAKER] & 0x7f,
-+					channels, 0x1f, false);
- 
- 	dev_dbg(intelhaddata->dev, "select CA 0x%x for %d\n", ca, channels);
- 
-@@ -487,7 +367,7 @@ static void had_build_channel_allocation_map(struct snd_intelhad *intelhaddata)
- 	/*
- 	 * Sink may support more than 8 channels, if eld_high has more than
- 	 * one bit set. SOC supports max 8 channels.
--	 * Refer eld_speaker_allocation_bits, for sink speaker allocation
-+	 * Refer the CEA ELD speaker allocation mapping for sink allocation.
- 	 */
- 
- 	/* if 0x2F < eld < 0x4F fall back to 0x2f, else fall back to 0x4F */
-@@ -505,24 +385,25 @@ static void had_build_channel_allocation_map(struct snd_intelhad *intelhaddata)
- 		}
- 	}
- 
--	for (i = 0; i < ARRAY_SIZE(eld_speaker_allocation_bits); i++) {
--		if (intelhaddata->eld[DRM_ELD_SPEAKER] & (1 << i))
--			spk_mask |= eld_speaker_allocation_bits[i];
--	}
-+	spk_mask = snd_cea_spk_mask_from_alloc(intelhaddata->eld[DRM_ELD_SPEAKER] &
-+						 0x7f);
- 
--	for (i = 0; i < ARRAY_SIZE(channel_allocations); i++) {
--		if (spk_mask == channel_allocations[i].spk_mask) {
--			for (c = 0; c < channel_allocations[i].channels; c++) {
--				chmap->map[c] = spk_to_chmap(
--					channel_allocations[i].speakers[
--						(MAX_SPEAKERS - 1) - c]);
--			}
--			chmap->channels = channel_allocations[i].channels;
-+	for (i = 0; i < snd_cea_channel_allocations_count; i++) {
-+		const struct snd_cea_channel_speaker_allocation *ca;
-+
-+		ca = &snd_cea_channel_allocations[i];
-+		if (ca->ca_index > 0x1f)
-+			continue;
-+		if (spk_mask == ca->spk_mask) {
-+			for (c = 0; c < ca->channels; c++)
-+				chmap->map[c] =
-+					spk_to_chmap(ca->speakers[MAX_SPEAKERS - 1 - c]);
-+			chmap->channels = ca->channels;
- 			intelhaddata->chmap->chmap = chmap;
- 			break;
- 		}
- 	}
--	if (i >= ARRAY_SIZE(channel_allocations))
-+	if (i >= snd_cea_channel_allocations_count)
- 		kfree(chmap);
- }
- 
-@@ -1723,7 +1604,6 @@ static int __hdmi_lpe_audio_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	init_channel_allocations();
- 
- 	card_ctx->num_pipes = pdata->num_pipes;
- 	card_ctx->num_ports = single_port ? 1 : pdata->num_ports;
-diff --git a/sound/x86/intel_hdmi_audio.h b/sound/x86/intel_hdmi_audio.h
-index 88bf9ef2c491..21cec605a879 100644
---- a/sound/x86/intel_hdmi_audio.h
-+++ b/sound/x86/intel_hdmi_audio.h
-@@ -44,15 +44,6 @@ enum cea_speaker_placement {
- 	LFE = (1 << 10),        /* Low Frequency Effect */
- };
- 
--struct cea_channel_speaker_allocation {
--	int ca_index;
--	int speakers[8];
--
--	/* derived values, just for convenience */
--	int channels;
--	int spk_mask;
--};
--
- struct channel_map_table {
- 	unsigned char map;              /* ALSA API channel map position */
- 	unsigned char cea_slot;         /* CEA slot value */
+Santosh BS (1):
+      gpu: host1x: Add Tegra264 support
 
--- 
-2.54.0
+ .../display/tegra/nvidia,tegra124-vic.yaml         |   1 +
+ .../display/tegra/nvidia,tegra20-host1x.yaml       |   5 +-
+ arch/arm64/boot/dts/nvidia/tegra264.dtsi           |  63 +++++++
+ drivers/gpu/drm/tegra/drm.c                        |   1 +
+ drivers/gpu/drm/tegra/falcon.c                     |  66 ++++++--
+ drivers/gpu/drm/tegra/falcon.h                     |  23 +++
+ drivers/gpu/drm/tegra/vic.c                        |  95 ++++++++---
+ drivers/gpu/drm/tegra/vic.h                        |   9 +-
+ drivers/gpu/host1x/Makefile                        |   3 +-
+ drivers/gpu/host1x/context.c                       |  13 +-
+ drivers/gpu/host1x/dev.c                           |  41 +++++
+ drivers/gpu/host1x/hw/cdma_hw.c                    |  12 +-
+ drivers/gpu/host1x/hw/host1x10.c                   |  33 ++++
+ drivers/gpu/host1x/hw/host1x10.h                   |  15 ++
+ drivers/gpu/host1x/hw/host1x10_hardware.h          |  21 +++
+ drivers/gpu/host1x/hw/hw_host1x10_common.h         |   6 +
+ drivers/gpu/host1x/hw/hw_host1x10_hypervisor.h     |  10 ++
+ drivers/gpu/host1x/hw/hw_host1x10_uclass.h         | 181 +++++++++++++++++++++
+ drivers/gpu/host1x/hw/hw_host1x10_vm.h             |  36 ++++
+ 19 files changed, 586 insertions(+), 48 deletions(-)
+---
+base-commit: 4549871118cf616eecdd2d939f78e3b9e1dddc48
+change-id: 20260313-t264-host1x-c97171fdde77
 
