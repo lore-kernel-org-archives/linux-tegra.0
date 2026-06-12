@@ -1,68 +1,68 @@
-Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com [74.125.82.170])
+Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com [74.125.82.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7928839A045
-	for <linux-tegra@vger.kernel.org>; Fri, 12 Jun 2026 04:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FE7392C32
+	for <linux-tegra@vger.kernel.org>; Fri, 12 Jun 2026 04:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781240026; cv=none; b=hUn3cAqC8isAyXdh9ERlo3w6r4bQWcbqhnKgxlCl/4paqH2hysWVGg2uxfUlJ2sXtRKzFHzYO0+2lZvOgYm4Slwm3sNV4Ks3wqyODrNWa3POFPlzRiTG2NhRl0nOth701+lJPol3fV3hZBBNVZaMV1w2PplPRPbFgCDKFZpahCA=
+	t=1781240028; cv=none; b=cKQhEVP0ic8ewkWrt3V2JSNy2xMCsE5kIjrBTUVF6gwHQjfRBGIZQC2uPzV5i3WsjgdBHBLLrW6zmzzqhslMYDAgkvYjksWMwsaZ8MzXrxGhOKWuJGzRQqc3deBB58dP7nFIQjXuscJXDZr3TkJzyYwvyLjdjnULKl99AsK+wiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781240026; c=relaxed/simple;
-	bh=w3YBz8M9ZOGzP0Nc3LMeQzEwSVmySSMOsxY95RWee7o=;
+	s=arc-20240116; t=1781240028; c=relaxed/simple;
+	bh=bC5nhyEvwg3cj1rmdxsWPtE4RSLFLa3kIumaK+qkIxQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=F45lssl3QquqwVXcGbnBQ+dy5hh49ts1i1FKbjbYTfMPq6Ao6TYGF2i2BG6AjVa08ZllA7kBcZpqwvKvFXxMC7ZEwsKhLCBQqoQbOTDSpz9EneJj/qIF7MNU4dPtEQIVHCdtvteZQnTecDSCY4Hvy03vDbe4/CZijALo6QJE2KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=grS8NDzz; arc=none smtp.client-ip=74.125.82.170
+	 In-Reply-To:To:Cc; b=Z5f9RCqjmjVb/21EIkxByQhMSiOracyL5Jai2kAb0iCoF4SYq7YOTT88O3ioXk6NybryBbO2AKENEZfAdJGKifMzQfhHEMiWjAwMLW9f2gUHdxxLBXfFNLJQcFNSYlwjGJFLG08Vs7yDEN5dKiOh18jqpibLNK001qLh5lLiWmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HhS2NfMq; arc=none smtp.client-ip=74.125.82.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="grS8NDzz"
-Received: by mail-dy1-f170.google.com with SMTP id 5a478bee46e88-30807ba471bso1753216eec.1
-        for <linux-tegra@vger.kernel.org>; Thu, 11 Jun 2026 21:53:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HhS2NfMq"
+Received: by mail-dy1-f182.google.com with SMTP id 5a478bee46e88-304e83724bfso955410eec.0
+        for <linux-tegra@vger.kernel.org>; Thu, 11 Jun 2026 21:53:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781240023; x=1781844823; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1781240027; x=1781844827; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=R+HD8F/AHJd0oNLjuLsJmTXzsCp0fd7yl1LFBZHKrX4=;
-        b=grS8NDzzuPR6P+VaawkcUDox4YcDLK3IQS7nwL76e2BY2jCUlrg8rS33T1w5MWprOl
-         FlGRI30KIe5+PphewldQpU08VhP+QklFVjXINVoij9eNnRvxE2HO7lBMXtp5RdmbtWhY
-         ZZNF2jWsRwMZkJ1RILnQwdsZpIDcaThexLXYu1/ugkAkbYGXba/ymFW6JK2LRo+eXfgg
-         Ywn9xQfLH9Qsj7MLfRFXGk2zNdiU07+yMxBNR0AbkPZ0o3/byVrX+q+DBElIgIL12nea
-         0FEgmNklNLTb66f+iyNKO75PpgSL1Sd2zhvgsyacgZn4pKtET+9mD7hU5x4u9AwPZlyv
-         x+iw==
+        bh=rp7BgDgBWuECqdQGmmB7KB2QqKatc0D86dCpAImgq1s=;
+        b=HhS2NfMqfJICVXMpFeKe4Nw1oy78qc1w13WHTHRxesEv5DtTOOz8gLhnZCUPYNHfI1
+         kjjJkO8jmPit+2T0xyFTouPHNOwVHuLIZZcuOA47LVvzDiZzLgwBqdDFwuCmwhNI+ZFU
+         J2TR6S06CDl93sd08RObj7iB5iLOlgffxopjRcQZPt0quzn/l/kQ+39hJZIK7vzKmp1G
+         s9aAAwKZLvmckDbC6jvECBhdxsgw5JCtnifa311XLqW60+ByXjRazsVkjWcIKv7xLJzb
+         rnUYspqqJi7CfN0y+fxw312Ff2mM4CuklCkQ/psACG5S1kjH7Z3SLMEjjzW2ec4JQ0f2
+         king==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781240023; x=1781844823;
+        d=1e100.net; s=20251104; t=1781240027; x=1781844827;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=R+HD8F/AHJd0oNLjuLsJmTXzsCp0fd7yl1LFBZHKrX4=;
-        b=l4KJ5dPj+XTFiP3I22uckF0u4eECHMu6E614ixIjgvP/9Zz9dF2FpXs1YtnAx8UJMo
-         7MnS/tpilih2OwYRegoQU+9ajGCVeRDaV+/M5MvfjZGZJLLo5kVNWNnw4YF7qJB9T+/+
-         bQe0ITfH008XMVgLAFJP0ccIH67fnBLBlQM7oU/SqKCcy56rE+wp3YyCOusUviJRS+0W
-         ucIq2jZZy0xj+3xsTtoc0FRyXOvqz3T8a/QsNixbse6cRcrzuksNylNtGEk2V5eD2t07
-         OwoXuAMqamDxW6tgE9BD2a1Kiac5JZfssDYSQRHXtHD7u0haErCYRGgnE4G2U9AnuHH3
-         ncwQ==
-X-Forwarded-Encrypted: i=1; AFNElJ9RMbnKv0ln6fu2RkodNI3Fd2xvpzNiNZn6746Alq2qpPRHmcOPpoKALH+j8B2LvWFEcbiGTPWGMpBqOQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxdosOugc9VZr8XtY7zxYwbUnTu0k8w5Kn516JN9AOcUZWe717
-	QnimjGqXC0XEzy3C7HR4P/zOZ8cqb34+Ozi1oS9/rrj6NkCtoFzlqMIetjw42Lk4
-X-Gm-Gg: Acq92OEMllQdJWDxmNX0A2/fN4YtlZhI136O0MXwqCvK1QkRBOLLbOZsZbewKIRHVxl
-	t6hylUt34EeHVfkxZMep87+X4phL5OEZCy96CvqcYrLXrLL+McYqwhhETBFmSZeeNQqcgPF5H3A
-	6/onU55A3x45keTjPB6Kwc2eHDp9JjWnQewfBJVD/xEk6CWYtc0TFylhu7jyNBeYyGsmNS4S575
-	AZL6SaIo49/l1I8AB70Fxo8gJWhq0V4TWJx7/9ZuPPPdFKF7ckOzUNr2o1H+Hl/2ZPbDn92Tjsd
-	1+FjdPeDxBvMj18VvqiwmtyjDZNWg+cD7BNRXptt0F3x7m8eCTCYTOljYqnMb35ujnd62fqYb9u
-	WJQOby0AdgCI/yaqULBhvden8sgteruhaHK2wloCYoNs9VRYxzPxbbCthuGGuAsFRXk2En2yrdf
-	fkqXJ1H565IyauMysCFsvabATvli19FnXUF4wrdmEzl6aKCCT/ByiYxZEMjU+XwwHIhaPIpw0UC
-	Q==
-X-Received: by 2002:a05:693c:2b06:b0:304:1fb6:88fd with SMTP id 5a478bee46e88-308200c6990mr742830eec.29.1781240023420;
-        Thu, 11 Jun 2026 21:53:43 -0700 (PDT)
+        bh=rp7BgDgBWuECqdQGmmB7KB2QqKatc0D86dCpAImgq1s=;
+        b=QGGD+FO7XmMxI/wSiz7p8SqzQDQ+XofU7jpAyuqIglnWtdg7BeqPvVc2sgVpPGAIDp
+         TVlkCArkvsN101modq0KK91dnhkB/rxuPKeoD31sMUw8JyXexr+4dtfdHU5ilwrij8Nz
+         WtO1FdB4cK//h6H8Q54rNiEyeQsav4DcNb6DVlbWrOHEPm6e5tTlrcJWRw/hmJobvIzF
+         Ar8UgsZvizb8jPLAAz0J9NSchH8/SBuj2R837dNtdjEQQsAniwLUqcvUqQfKNQ2p2Evw
+         ri9BCmLJ2N4EuyFvymF5oU0dwvrnZUs2BLaOY4RhQP16rmu84CuvUc6j8sFxTdZm3eFY
+         4UJA==
+X-Forwarded-Encrypted: i=1; AFNElJ+g7hrKDNnggIXk4o9rCuMNDYubAVGXcSpMkOtf6bwyyMavlJLID8JgbFh9ZPuwSpRJ/4r8D2N+rVhLZA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxghaOOTMNzsIHxfQYq4gG5qiOTv8g/MLdlL5iYuP2xqZ7dbtE/
+	Szvigaghd4qei2I+1lv/78d0gtgKbxdL7PPrJHbfi9n7kvq6I5DVOBTe
+X-Gm-Gg: Acq92OFKyhZAJok0w3u4xWUdXqKjLujxwWqg5L4xFPEULcOUNaxo06XJ/JkXnxW8rI7
+	YmKRn+5sA5+pIgQKgpsqgp0IgPCREBpU4/YmX+nYCqTFImZSeLL/eatxzgutb5dz+WYNc6mcUgd
+	7Yr87i6F1ldSJsZI+dL29nckjiNBPEUKc1OZtQTFzYw3wp59F7DlcSAzP+bgLUcYOBHkxLXGB3L
+	U4b1nGSpMpPMPl92Wi2jOsK3seEny8aAiKcLaYfhymOKA9Hy6YHqhxfuQSnc5WMJJfv0BLWDqpd
+	tEKINmuk8cKq3i5/Gp2fuhrK0/JpGSr4MQXH/0jxBtS88LiBlITOXZc0zCtHngrUZuSKpGT6f3h
+	qqeqmsXL576YXm31VGlB1UGAbhGSIIpM6n0cHIBIr8jPVAwiLgBeWfgkBuYKbysu5UskTQfAc+P
+	1acyYJAscbEgtIwwtc8s3NRAcU9yfDu79e9Idev6u1rl2BTi9z31fOAsBh+Vc9W7/ANgdgGr33e
+	A==
+X-Received: by 2002:a05:7301:4b17:b0:2d9:a799:3c4f with SMTP id 5a478bee46e88-30820094860mr707464eec.24.1781240026473;
+        Thu, 11 Jun 2026 21:53:46 -0700 (PDT)
 Received: from [192.168.1.18] (177-4-161-23.user3p.v-tal.net.br. [177.4.161.23])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3081e5cea89sm1971217eec.8.2026.06.11.21.53.40
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3081e5cea89sm1971217eec.8.2026.06.11.21.53.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jun 2026 21:53:43 -0700 (PDT)
+        Thu, 11 Jun 2026 21:53:46 -0700 (PDT)
 From: =?utf-8?q?C=C3=A1ssio_Gabriel?= <cassiogabrielcontato@gmail.com>
-Date: Fri, 12 Jun 2026 01:53:23 -0300
-Subject: [PATCH RFC 1/4] ALSA: pcm: Add common CEA channel allocation
- helpers
+Date: Fri, 12 Jun 2026 01:53:24 -0300
+Subject: [PATCH RFC 2/4] ALSA: hda: Make CEA channel allocation interfaces
+ const
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -71,7 +71,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260612-alsa-cea-channel-allocation-v1-1-b1bcbb6b1051@gmail.com>
+Message-Id: <20260612-alsa-cea-channel-allocation-v1-2-b1bcbb6b1051@gmail.com>
 References: <20260612-alsa-cea-channel-allocation-v1-0-b1bcbb6b1051@gmail.com>
 In-Reply-To: <20260612-alsa-cea-channel-allocation-v1-0-b1bcbb6b1051@gmail.com>
 To: Takashi Iwai <tiwai@suse.com>, 
@@ -81,258 +81,169 @@ Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-tegra@vger.kernel.org, notify@kernel.org, 
  =?utf-8?q?C=C3=A1ssio_Gabriel?= <cassiogabrielcontato@gmail.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10123;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6515;
  i=cassiogabrielcontato@gmail.com; h=from:subject:message-id;
- bh=w3YBz8M9ZOGzP0Nc3LMeQzEwSVmySSMOsxY95RWee7o=;
- b=owGbwMvMwCV2IdZeKur/u2bG02pJDFnaEy7cOf0+YFnjIr9/Qoysj76dD1f7fX3d2fW8rh5B4
- WLyU9c86ChlYRDjYpAVU2RZnbTIck/Xg6v1cSs8YOawMoEMYeDiFICJmNYx/PcrCHs6p1ykwjB0
- Ze+ftPaeexMuPmy73979MeSK1IIPu3oZGVYJ+qi1V76N8WSf9iSLx75ELJo5ukpnDfObu2KHJOa
- 7sgMA
+ bh=bC5nhyEvwg3cj1rmdxsWPtE4RSLFLa3kIumaK+qkIxQ=;
+ b=owGbwMvMwCV2IdZeKur/u2bG02pJDFnaEy6y3JtVVlm9uvc5v/eH6N92++Rl1697X1XrvnJfw
+ vdQ5uTlHaUsDGJcDLJiiiyrkxZZ7ul6cLU+boUHzBxWJpAhDFycAjCRmX6MDE9tW4LdeJkLj0oq
+ crHdNGOryimy9DdfLM8h/cDitoX+O0aGriblja8rDS+t0Z7VaP3ig5eL1SEtfebPL1LPfkn4W8r
+ MCgA=
 X-Developer-Key: i=cassiogabrielcontato@gmail.com; a=openpgp;
  fpr=AB62A239BC8AE0D57F5EA848D05D3F1A5AFFEE83
 
-HDA HDMI and Intel HDMI LPE carry independent copies of the ordered
-CEA-861 channel allocation table, ELD speaker expansion, and allocation
-selection loop. The copies originated from the same implementation but
-already differ in table coverage and fallback policy.
+The CEA channel allocation descriptors are initialized once and only
+read by the HDA channel-map helpers and codec-specific callbacks.
 
-Move the immutable descriptors and common transformations next to the
-other PCM DRM ELD helpers. Build the derived channel count and speaker
-mask at compile time, and make table range and fallback policy explicit
-arguments so consumers can preserve their existing contracts.
+Qualify the pointers passed through these interfaces as const. This
+makes their read-only contract explicit and prepares the interfaces for
+using an immutable common allocation table.
 
 Signed-off-by: Cássio Gabriel <cassiogabrielcontato@gmail.com>
 ---
- include/sound/pcm_drm_eld.h |  16 ++++
- sound/core/pcm_drm_eld.c    | 181 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 197 insertions(+)
+ include/sound/hda_chmap.h         |  8 +++++---
+ sound/hda/codecs/hdmi/atihdmi.c   |  6 +++---
+ sound/hda/codecs/hdmi/nvhdmi.c    |  3 ++-
+ sound/hda/codecs/hdmi/tegrahdmi.c |  3 ++-
+ sound/hda/core/hdmi_chmap.c       | 12 +++++++-----
+ 5 files changed, 19 insertions(+), 13 deletions(-)
 
-diff --git a/include/sound/pcm_drm_eld.h b/include/sound/pcm_drm_eld.h
-index 5a38413ada91..917228e97375 100644
---- a/include/sound/pcm_drm_eld.h
-+++ b/include/sound/pcm_drm_eld.h
-@@ -2,6 +2,8 @@
- #ifndef __SOUND_PCM_DRM_ELD_H
- #define __SOUND_PCM_DRM_ELD_H
+diff --git a/include/sound/hda_chmap.h b/include/sound/hda_chmap.h
+index e508f3192294..b539595fd5cd 100644
+--- a/include/sound/hda_chmap.h
++++ b/include/sound/hda_chmap.h
+@@ -28,9 +28,10 @@ struct hdac_chmap_ops {
+ 	 * for devices that have non-standard mapping requirements.
+ 	 */
+ 	int (*chmap_cea_alloc_validate_get_type)(struct hdac_chmap *chmap,
+-		struct hdac_cea_channel_speaker_allocation *cap, int channels);
++		const struct hdac_cea_channel_speaker_allocation *cap,
++		int channels);
+ 	void (*cea_alloc_to_tlv_chmap)(struct hdac_chmap *hchmap,
+-		struct hdac_cea_channel_speaker_allocation *cap,
++		const struct hdac_cea_channel_speaker_allocation *cap,
+ 		unsigned int *chmap, int channels);
  
-+struct snd_info_buffer;
-+
- enum eld_versions {
- 	ELD_VER_CEA_861D	= 2,
- 	ELD_VER_PARTIAL		= 31,
-@@ -84,6 +86,20 @@ struct snd_parsed_hdmi_eld {
- 	struct snd_cea_sad sad[ELD_MAX_SAD];
- };
+ 	/* check that the user-given chmap is supported */
+@@ -71,7 +72,8 @@ void snd_hdac_setup_channel_mapping(struct hdac_chmap *chmap,
+ 		       int channels, unsigned char *map,
+ 		       bool chmap_set);
+ void snd_hdac_print_channel_allocation(int spk_alloc, char *buf, int buflen);
+-struct hdac_cea_channel_speaker_allocation *snd_hdac_get_ch_alloc_from_ca(int ca);
++const struct hdac_cea_channel_speaker_allocation *
++snd_hdac_get_ch_alloc_from_ca(int ca);
+ int snd_hdac_chmap_to_spk_mask(unsigned char c);
+ int snd_hdac_spk_to_chmap(int spk);
+ int snd_hdac_add_chmap_ctls(struct snd_pcm *pcm, int pcm_idx,
+diff --git a/sound/hda/codecs/hdmi/atihdmi.c b/sound/hda/codecs/hdmi/atihdmi.c
+index 44366f75de33..9afdbf44b6f0 100644
+--- a/sound/hda/codecs/hdmi/atihdmi.c
++++ b/sound/hda/codecs/hdmi/atihdmi.c
+@@ -262,7 +262,7 @@ static int atihdmi_paired_swap_fc_lfe(int pos)
+ static int atihdmi_paired_chmap_validate(struct hdac_chmap *chmap,
+ 			int ca, int chs, unsigned char *map)
+ {
+-	struct hdac_cea_channel_speaker_allocation *cap;
++	const struct hdac_cea_channel_speaker_allocation *cap;
+ 	int i, j;
  
-+struct snd_cea_channel_speaker_allocation {
-+	unsigned int ca_index;
-+	unsigned int speakers[8];
-+	unsigned int channels;
-+	unsigned int spk_mask;
-+};
-+
-+extern const struct snd_cea_channel_speaker_allocation
-+	snd_cea_channel_allocations[];
-+extern const unsigned int snd_cea_channel_allocations_count;
-+unsigned int snd_cea_spk_mask_from_alloc(unsigned int spk_alloc);
-+int snd_cea_channel_allocation(unsigned int spk_alloc, unsigned int channels,
-+			       unsigned int max_ca, bool fallback);
-+
- int snd_pcm_hw_constraint_eld(struct snd_pcm_runtime *runtime, void *eld);
+ 	/* check that only channel pairs need to be remapped on old pre-rev3 ATI/AMD */
+@@ -377,7 +377,7 @@ static int atihdmi_pin_get_slot_channel(struct hdac_device *hdac,
  
- int snd_parse_eld(struct device *dev, struct snd_parsed_hdmi_eld *e,
-diff --git a/sound/core/pcm_drm_eld.c b/sound/core/pcm_drm_eld.c
-index 1941ee520063..20156a9e3ed9 100644
---- a/sound/core/pcm_drm_eld.c
-+++ b/sound/core/pcm_drm_eld.c
-@@ -24,6 +24,187 @@
- #define SAD1_RATE_176400_MASK	BIT(5)
- #define SAD1_RATE_192000_MASK	BIT(6)
+ static int atihdmi_paired_chmap_cea_alloc_validate_get_type(
+ 		struct hdac_chmap *chmap,
+-		struct hdac_cea_channel_speaker_allocation *cap,
++		const struct hdac_cea_channel_speaker_allocation *cap,
+ 		int channels)
+ {
+ 	int c;
+@@ -406,7 +406,7 @@ static int atihdmi_paired_chmap_cea_alloc_validate_get_type(
+ }
  
-+/*
-+ * CEA speaker placement:
-+ *
-+ *        FLH       FCH        FRH
-+ *  FLW    FL  FLC   FC   FRC   FR   FRW
-+ *
-+ *                                  LFE
-+ *                     TC
-+ *
-+ *          RL  RLC   RC   RRC   RR
-+ *
-+ * The Left/Right Surround channel notions LS/RS in SMPTE 320M correspond to
-+ * CEA RL/RR; the SMPTE channel assignment C/LFE is swapped to CEA LFE/FC.
-+ */
-+enum cea_speaker_placement {
-+	FL  = BIT(0),	/* Front Left */
-+	FC  = BIT(1),	/* Front Center */
-+	FR  = BIT(2),	/* Front Right */
-+	FLC = BIT(3),	/* Front Left Center */
-+	FRC = BIT(4),	/* Front Right Center */
-+	RL  = BIT(5),	/* Rear Left */
-+	RC  = BIT(6),	/* Rear Center */
-+	RR  = BIT(7),	/* Rear Right */
-+	RLC = BIT(8),	/* Rear Left Center */
-+	RRC = BIT(9),	/* Rear Right Center */
-+	LFE = BIT(10),	/* Low Frequency Effect */
-+	FLW = BIT(11),	/* Front Left Wide */
-+	FRW = BIT(12),	/* Front Right Wide */
-+	FLH = BIT(13),	/* Front Left High */
-+	FCH = BIT(14),	/* Front Center High */
-+	FRH = BIT(15),	/* Front Right High */
-+	TC  = BIT(16),	/* Top Center */
-+};
-+
-+#define CEA_CHANNEL_ALLOCATION(_ca, _s7, _s6, _s5, _s4, _s3, _s2, _s1, _s0) \
-+	{ .ca_index = (_ca), .speakers = { (_s7), (_s6), (_s5), (_s4), \
-+		(_s3), (_s2), (_s1), (_s0) }, \
-+	  .channels = !!(_s7) + !!(_s6) + !!(_s5) + !!(_s4) + \
-+		!!(_s3) + !!(_s2) + !!(_s1) + !!(_s0), \
-+	  .spk_mask = (_s7) | (_s6) | (_s5) | (_s4) | (_s3) | (_s2) | \
-+		(_s1) | (_s0) }
-+
-+/*
-+ * This is an ordered list. Earlier entries have a better chance of being
-+ * selected by snd_cea_channel_allocation().
-+ */
-+const struct snd_cea_channel_speaker_allocation snd_cea_channel_allocations[] = {
-+	/*                         channel:  7    6    5    4    3    2    1    0 */
-+	CEA_CHANNEL_ALLOCATION(0x00,   0,   0,   0,   0,   0,   0,  FR,  FL),
-+	/* 2.1 */
-+	CEA_CHANNEL_ALLOCATION(0x01,   0,   0,   0,   0,   0, LFE,  FR,  FL),
-+	/* Dolby Surround */
-+	CEA_CHANNEL_ALLOCATION(0x02,   0,   0,   0,   0,  FC,   0,  FR,  FL),
-+	/* surround40 */
-+	CEA_CHANNEL_ALLOCATION(0x08,   0,   0,  RR,  RL,   0,   0,  FR,  FL),
-+	/* surround41 */
-+	CEA_CHANNEL_ALLOCATION(0x09,   0,   0,  RR,  RL,   0, LFE,  FR,  FL),
-+	/* surround50 */
-+	CEA_CHANNEL_ALLOCATION(0x0a,   0,   0,  RR,  RL,  FC,   0,  FR,  FL),
-+	/* surround51 */
-+	CEA_CHANNEL_ALLOCATION(0x0b,   0,   0,  RR,  RL,  FC, LFE,  FR,  FL),
-+	/* 6.1 */
-+	CEA_CHANNEL_ALLOCATION(0x0f,   0,  RC,  RR,  RL,  FC, LFE,  FR,  FL),
-+	/* surround71 */
-+	CEA_CHANNEL_ALLOCATION(0x13, RRC, RLC,  RR,  RL,  FC, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x03,   0,   0,   0,   0,  FC, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x04,   0,   0,   0,  RC,   0,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x05,   0,   0,   0,  RC,   0, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x06,   0,   0,   0,  RC,  FC,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x07,   0,   0,   0,  RC,  FC, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x0c,   0,  RC,  RR,  RL,   0,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x0d,   0,  RC,  RR,  RL,   0, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x0e,   0,  RC,  RR,  RL,  FC,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x10, RRC, RLC,  RR,  RL,   0,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x11, RRC, RLC,  RR,  RL,   0, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x12, RRC, RLC,  RR,  RL,  FC,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x14, FRC, FLC,   0,   0,   0,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x15, FRC, FLC,   0,   0,   0, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x16, FRC, FLC,   0,   0,  FC,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x17, FRC, FLC,   0,   0,  FC, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x18, FRC, FLC,   0,  RC,   0,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x19, FRC, FLC,   0,  RC,   0, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x1a, FRC, FLC,   0,  RC,  FC,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x1b, FRC, FLC,   0,  RC,  FC, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x1c, FRC, FLC,  RR,  RL,   0,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x1d, FRC, FLC,  RR,  RL,   0, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x1e, FRC, FLC,  RR,  RL,  FC,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x1f, FRC, FLC,  RR,  RL,  FC, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x20,   0, FCH,  RR,  RL,  FC,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x21,   0, FCH,  RR,  RL,  FC, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x22,  TC,   0,  RR,  RL,  FC,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x23,  TC,   0,  RR,  RL,  FC, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x24, FRH, FLH,  RR,  RL,   0,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x25, FRH, FLH,  RR,  RL,   0, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x26, FRW, FLW,  RR,  RL,   0,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x27, FRW, FLW,  RR,  RL,   0, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x28,  TC,  RC,  RR,  RL,  FC,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x29,  TC,  RC,  RR,  RL,  FC, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x2a, FCH,  RC,  RR,  RL,  FC,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x2b, FCH,  RC,  RR,  RL,  FC, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x2c,  TC, FCH,  RR,  RL,  FC,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x2d,  TC, FCH,  RR,  RL,  FC, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x2e, FRH, FLH,  RR,  RL,  FC,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x2f, FRH, FLH,  RR,  RL,  FC, LFE,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x30, FRW, FLW,  RR,  RL,  FC,   0,  FR,  FL),
-+	CEA_CHANNEL_ALLOCATION(0x31, FRW, FLW,  RR,  RL,  FC, LFE,  FR,  FL),
-+};
-+EXPORT_SYMBOL_GPL(snd_cea_channel_allocations);
-+
-+const unsigned int snd_cea_channel_allocations_count =
-+	ARRAY_SIZE(snd_cea_channel_allocations);
-+EXPORT_SYMBOL_GPL(snd_cea_channel_allocations_count);
-+
-+/* ELD SA bits in the CEA Speaker Allocation data block. */
-+static const unsigned int eld_speaker_allocation_bits[] = {
-+	[0] = FL | FR,
-+	[1] = LFE,
-+	[2] = FC,
-+	[3] = RL | RR,
-+	[4] = RC,
-+	[5] = FLC | FRC,
-+	[6] = RLC | RRC,
-+	/* Not represented by the baseline ELD speaker allocation byte. */
-+	[7] = FLW | FRW,
-+	[8] = FLH | FRH,
-+	[9] = TC,
-+	[10] = FCH,
-+};
-+
-+unsigned int snd_cea_spk_mask_from_alloc(unsigned int spk_alloc)
-+{
-+	unsigned int spk_mask = 0;
-+	int i;
-+
-+	/* Expand ELD's compact, paired speaker allocation into a full mask. */
-+	for (i = 0; i < ARRAY_SIZE(eld_speaker_allocation_bits); i++)
-+		if (spk_alloc & BIT(i))
-+			spk_mask |= eld_speaker_allocation_bits[i];
-+
-+	return spk_mask;
-+}
-+EXPORT_SYMBOL_GPL(snd_cea_spk_mask_from_alloc);
-+
-+/*
-+ * The transformation takes two steps:
-+ *
-+ *      spk_alloc => eld_speaker_allocation_bits[] => spk_mask
-+ *       spk_mask => snd_cea_channel_allocations[] => CA
-+ *
-+ * TODO: it could select the wrong CA from multiple candidates.
-+ */
-+int snd_cea_channel_allocation(unsigned int spk_alloc, unsigned int channels,
-+			       unsigned int max_ca, bool fallback)
-+{
-+	unsigned int spk_mask, i;
-+
-+	/* CA 0 is the basic stereo allocation. */
-+	if (channels <= 2)
-+		return 0;
-+
-+	spk_mask = snd_cea_spk_mask_from_alloc(spk_alloc);
-+	for (i = 0; i < snd_cea_channel_allocations_count; i++) {
-+		const struct snd_cea_channel_speaker_allocation *ca;
-+
-+		ca = &snd_cea_channel_allocations[i];
-+		if (ca->ca_index <= max_ca && ca->channels == channels &&
-+		    (spk_mask & ca->spk_mask) == ca->spk_mask)
-+			return ca->ca_index;
-+	}
-+
-+	/* Fall back to the preferred allocation with the requested channels. */
-+	if (fallback)
-+		for (i = 0; i < snd_cea_channel_allocations_count; i++)
-+			if (snd_cea_channel_allocations[i].ca_index <= max_ca &&
-+			    snd_cea_channel_allocations[i].channels == channels)
-+				return snd_cea_channel_allocations[i].ca_index;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(snd_cea_channel_allocation);
-+
- static const unsigned int eld_rates[] = {
- 	32000,
- 	44100,
+ static void atihdmi_paired_cea_alloc_to_tlv_chmap(struct hdac_chmap *hchmap,
+-		struct hdac_cea_channel_speaker_allocation *cap,
++		const struct hdac_cea_channel_speaker_allocation *cap,
+ 		unsigned int *chmap, int channels)
+ {
+ 	/* produce paired maps for pre-rev3 ATI/AMD codecs */
+diff --git a/sound/hda/codecs/hdmi/nvhdmi.c b/sound/hda/codecs/hdmi/nvhdmi.c
+index 94671ad24b5e..eaefa016cdec 100644
+--- a/sound/hda/codecs/hdmi/nvhdmi.c
++++ b/sound/hda/codecs/hdmi/nvhdmi.c
+@@ -24,7 +24,8 @@ enum {
+  * - 0x10de0040
+  */
+ static int nvhdmi_chmap_cea_alloc_validate_get_type(struct hdac_chmap *chmap,
+-		struct hdac_cea_channel_speaker_allocation *cap, int channels)
++		const struct hdac_cea_channel_speaker_allocation *cap,
++		int channels)
+ {
+ 	if (cap->ca_index == 0x00 && channels == 2)
+ 		return SNDRV_CTL_TLVT_CHMAP_FIXED;
+diff --git a/sound/hda/codecs/hdmi/tegrahdmi.c b/sound/hda/codecs/hdmi/tegrahdmi.c
+index ebb6410a4831..751a50cd4b7d 100644
+--- a/sound/hda/codecs/hdmi/tegrahdmi.c
++++ b/sound/hda/codecs/hdmi/tegrahdmi.c
+@@ -205,7 +205,8 @@ static int tegra_hdmi_build_pcms(struct hda_codec *codec)
+  * - 0x10de0040
+  */
+ static int nvhdmi_chmap_cea_alloc_validate_get_type(struct hdac_chmap *chmap,
+-		struct hdac_cea_channel_speaker_allocation *cap, int channels)
++		const struct hdac_cea_channel_speaker_allocation *cap,
++		int channels)
+ {
+ 	if (cap->ca_index == 0x00 && channels == 2)
+ 		return SNDRV_CTL_TLVT_CHMAP_FIXED;
+diff --git a/sound/hda/core/hdmi_chmap.c b/sound/hda/core/hdmi_chmap.c
+index c897fc443467..f76b5dcc6433 100644
+--- a/sound/hda/core/hdmi_chmap.c
++++ b/sound/hda/core/hdmi_chmap.c
+@@ -341,7 +341,7 @@ static void hdmi_std_setup_channel_mapping(struct hdac_chmap *chmap,
+ 				       bool non_pcm,
+ 				       int ca)
+ {
+-	struct hdac_cea_channel_speaker_allocation *ch_alloc;
++	const struct hdac_cea_channel_speaker_allocation *ch_alloc;
+ 	int i;
+ 	int err;
+ 	int order;
+@@ -581,7 +581,8 @@ int snd_hdac_get_active_channels(int ca)
+ }
+ EXPORT_SYMBOL_GPL(snd_hdac_get_active_channels);
+ 
+-struct hdac_cea_channel_speaker_allocation *snd_hdac_get_ch_alloc_from_ca(int ca)
++const struct hdac_cea_channel_speaker_allocation *
++snd_hdac_get_ch_alloc_from_ca(int ca)
+ {
+ 	return &channel_allocations[get_channel_allocation_order(ca)];
+ }
+@@ -622,7 +623,8 @@ static int hdmi_chmap_ctl_info(struct snd_kcontrol *kcontrol,
+ }
+ 
+ static int hdmi_chmap_cea_alloc_validate_get_type(struct hdac_chmap *chmap,
+-		struct hdac_cea_channel_speaker_allocation *cap, int channels)
++		const struct hdac_cea_channel_speaker_allocation *cap,
++		int channels)
+ {
+ 	/* If the speaker allocation matches the channel count, it is OK.*/
+ 	if (cap->channels != channels)
+@@ -633,7 +635,7 @@ static int hdmi_chmap_cea_alloc_validate_get_type(struct hdac_chmap *chmap,
+ }
+ 
+ static void hdmi_cea_alloc_to_tlv_chmap(struct hdac_chmap *hchmap,
+-		struct hdac_cea_channel_speaker_allocation *cap,
++		const struct hdac_cea_channel_speaker_allocation *cap,
+ 		unsigned int *chmap, int channels)
+ {
+ 	int count = 0;
+@@ -690,7 +692,7 @@ static int hdmi_chmap_ctl_tlv(struct snd_kcontrol *kcontrol, int op_flag,
+ 
+ 	for (chs = 2; chs <= max_chs; chs++) {
+ 		int i;
+-		struct hdac_cea_channel_speaker_allocation *cap;
++		const struct hdac_cea_channel_speaker_allocation *cap;
+ 
+ 		cap = channel_allocations;
+ 		for (i = 0; i < ARRAY_SIZE(channel_allocations); i++, cap++) {
 
 -- 
 2.54.0
