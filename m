@@ -1,22 +1,22 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B299C39182A;
-	Fri, 12 Jun 2026 15:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783D637DEA1;
+	Fri, 12 Jun 2026 16:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781278188; cv=none; b=C4TcJAGgbuPeChmwxR6qezd6Qp0CAlk1sIXA6uoxq1T2zmUuxGWaaaUayvzV3yk3O1QnNJKDfWMeRu9YP01CMiVi7Niq00/pp/hbjaUpFHGSY1snapOzozvbTmNFuG1G9I0BnYhviMmbMp/otBCVxVfDvftecOMj1Sr9nsdtEcc=
+	t=1781280519; cv=none; b=aBXiVozVwRNu3+FT+LEVI3B526VVyvhtb3OuriqII1ZvW+soDOySHT17htWDZyL8NJCcZ/4Oo3/lF6/ieWyPdreRAzw1M4BuemIi+GQLFzjY/v9rYuw7HmRvv6Y8chvT+5/G+HBFO/Paq4GGzalbh227z7eMb6GrfSKyvBKixAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781278188; c=relaxed/simple;
-	bh=RVo4op1tZeRdt9h1HL3gna0rrZjO4YknO+7wZdF3Rpk=;
+	s=arc-20240116; t=1781280519; c=relaxed/simple;
+	bh=hhUl3XwZZAj6/NFiqIzS9xsUsHsZqDPVOhzmupLJrjI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a/yI6hK9wJj2fkqUNQO0iWuZvb1CN4obQwGWwdV1btQETBvZe7OddhUmjx8upzZP5Y3RTCU59OUf13AbhtFOHNjnd9E2zgMkubScOFJ8iP3yatzm0PEQ7X1d/VPS6+SyM9c/kRyqcyUikpmVsMHCeXobkpztz+I5jrzTiu176II=
+	 Content-Type:Content-Disposition:In-Reply-To; b=ObakqtOszvu0S3PxaB3ISJRxgrLi3uPVx8XMJ+iQI4Y3ZFaowBHc+xaA5ARWmfp/PngqgbeR6FYLNGcA5hU5SaNbagrdY1IAKqZet4fms13GCVz0U92+ImK7RO9bGDDVIV4VneBA6qV/pUWh14IVwYUj5ZZD4aoQc5h7cwCxElo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63A571F00A3A;
-	Fri, 12 Jun 2026 15:29:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE7EA1F000E9;
+	Fri, 12 Jun 2026 16:08:37 +0000 (UTC)
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 936ED1AC5AC2; Fri, 12 Jun 2026 16:29:42 +0100 (BST)
-Date: Fri, 12 Jun 2026 16:29:42 +0100
+	id 60F911AC5AC2; Fri, 12 Jun 2026 17:08:35 +0100 (BST)
+Date: Fri, 12 Jun 2026 17:08:35 +0100
 From: Mark Brown <broonie@debian.org>
 To: Vishwaroop A <va@nvidia.com>
 Cc: Thierry Reding <thierry.reding@kernel.org>,
@@ -28,11 +28,11 @@ Cc: Thierry Reding <thierry.reding@kernel.org>,
 	Krishna Yarlagadda <kyarlagadda@nvidia.com>,
 	linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] spi: tegra210-quad: Convert to hard IRQ with
- high-priority workqueue
-Message-ID: <aiwl5ggiRVGHWSpR@sirena.co.uk>
+Subject: Re: [PATCH v4 2/3] spi: tegra210-quad: Cache TRANS_STATUS in ISR for
+ timeout handler
+Message-ID: <aiwvA4z45FUqzgiB@sirena.co.uk>
 References: <cover.1781037385.git.va@nvidia.com>
- <552afd84ee31c9e475ed1344ea9349af01eacfa1.1781037385.git.va@nvidia.com>
+ <2ed90a7d175f7967e621943b772115da655c477d.1781037385.git.va@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -40,82 +40,52 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZQQIHIagp5Ti8+th"
+	protocol="application/pgp-signature"; boundary="LPxkVfs8jyUyi99U"
 Content-Disposition: inline
-In-Reply-To: <552afd84ee31c9e475ed1344ea9349af01eacfa1.1781037385.git.va@nvidia.com>
+In-Reply-To: <2ed90a7d175f7967e621943b772115da655c477d.1781037385.git.va@nvidia.com>
 X-Cookie: Nice guys get sick.
 
 
---ZQQIHIagp5Ti8+th
+--LPxkVfs8jyUyi99U
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 10, 2026 at 06:24:00AM +0000, Vishwaroop A wrote:
+On Wed, Jun 10, 2026 at 06:24:01AM +0000, Vishwaroop A wrote:
 
-> @@ -1506,6 +1508,19 @@ static irqreturn_t handle_dma_based_xfer(struct te=
-gra_qspi *tqspi)
->  	long wait_status;
->  	int num_errors =3D 0;
-> =20
-> +	/*
-> +	 * Snapshot curr_xfer under the lock before the (potentially long)
-> +	 * DMA waits below. The timeout path can clear tqspi->curr_xfer
-> +	 * concurrently; using the local copy keeps the subsequent dma_unmap
-> +	 * and FIFO-drain steps consistent with the transfer that actually
-> +	 * started, and lets us bail safely if cleanup already happened.
-> +	 */
-> +	spin_lock_irqsave(&tqspi->lock, flags);
-> +	t =3D tqspi->curr_xfer;
-> +	spin_unlock_irqrestore(&tqspi->lock, flags);
-> +	if (!t)
-> +		return IRQ_HANDLED;
-> +
->  	if (tqspi->cur_direction & DATA_DIR_TX) {
->  		if (tqspi->tx_status) {
->  			if (tqspi->tx_dma_chan)
+>   - tegra_qspi_isr() reads QSPI_FIFO_STATUS and QSPI_TRANS_STATUS,
+>     derives tx_status / rx_status, then publishes them via WRITE_ONCE()
+>     and the trans_status cache via smp_store_release() before masking
+>     and acking the controller IRQ.
 
-This can be called from both tegra_qspi_work_handler() and
-tegra_qspi_handle_timeout() - I can't see what stops them both handling
-and completing the same transfer simultaneously?
+>   - tegra_qspi_handle_timeout() consumes trans_status with a paired
+>     smp_load_acquire(). The release/acquire pair guarantees that a
+>     timeout handler which observes a non-zero trans_status also
+>     observes the matching status_reg / tx_status / rx_status updates.
 
-> +static void tegra_qspi_work_handler(struct work_struct *work)
->  {
-> -	struct tegra_qspi *tqspi =3D context_data;
+>   - tegra_qspi_setup_transfer_one() clears the cache with
+>     smp_store_release() under the spinlock before unmasking the IRQ
+>     for the new transfer, so a stale RDY bit from the previous
+>     transfer cannot fool the timeout handler.
 
-> +	 * Check if the timeout handler already processed this transfer.
-> +	 * Can happen if the workqueue was delayed and the timeout fired
-> +	 * first. In that case there is nothing to do: tegra_qspi_start_
-> +	 * {cpu,dma}_based_transfer() at the start of the next transfer
-> +	 * (or the next message) re-enables interrupts.
->  	 */
-> -	spin_lock_irqsave(&tqspi->lock, flags);
->  	if (!tqspi->curr_xfer) {
->  		spin_unlock_irqrestore(&tqspi->lock, flags);
-> -		/* Spurious interrupt - transfer not ready */
-> -		if (!(status & QSPI_RDY))
-> -			return IRQ_NONE;
-> -		/* Real interrupt, already handled by timeout path */
-> -		return IRQ_HANDLED;
-> +		return;
->  	}
+It looks like the CPU based transfer function supports multiple
+interrupts per transfer, though the copybreak for switching to DMA is
+FIFO sized so I'm not clear exactly when that might happen.  Can that
+happen, and if so don't we need to clear trans_status when we handle the
+interrupt as well?  It might be that this can't actually happen.
 
-Can't the timeout handler also be running at the same time as this
-rather than already having handled things?
-
---ZQQIHIagp5Ti8+th
+--LPxkVfs8jyUyi99U
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmosJeUACgkQJNaLcl1U
-h9Ab3wf+IDvsbdEuyWsqrnWX3c9fiyMb/lV/L4MP5nTrjZP9sKhxdC2IGkqgM6sa
-1D7v0vYmIaWwozg2uSqfrap2ks2YZFy+CbnKtzdvcneIpPdIT0sZ5l1kIzfAIKhh
-XlKZz8N0uuMBcObTi82av4UDUN6FElrCdbmQ1HcHiD5oJ3TpgAn9PnfM1MC0W2HA
-L8EFCdru/hPut+BTD5808P7Q15vrqDQk+Yv15JwA1oMembkH7d36b9+68D/YIhmI
-no2Xyh7WPY1MhiiAwFaNI40D1HlqFvmh4PhMBD+DupzC1iRqeoDGCoigmvosKYzM
-2IdB1kQu+sCBsO0+FSsCu4TdANfhow==
-=BY/3
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmosLwIACgkQJNaLcl1U
+h9Ab8wf+Mj/ot/6xv3SxptNFBXnqSih6mugC/UO8B/vfVIvlyGj15t+PVABKcOv6
+fTsk5bbhAku7RZ0tht1fs4KFxrBUXEYA+33KCYY+ouSzmYW5Z/JkEwhCz8jyqU81
+wuGXEdmwgsf9ClqOPbHv3woF3+M9stDdA22A/XP4OASJ+UUFAFxIHEY+S4GkWtSO
+SQ/wOAxskMMx4QcY1a+dhyfK6qyFv8I3Z0ot674gFdEji9SQBj0ghSJHtjAQ/Chq
+yuIb93evfgLaQMEEbNc1D/7HVzpqMBzeve86v0sIQaaLJHEX3L+H4ahNIq6q+njJ
+aQTWBT7H5GRz8k8YyowlGnfBYTh2ng==
+=hOor
 -----END PGP SIGNATURE-----
 
---ZQQIHIagp5Ti8+th--
+--LPxkVfs8jyUyi99U--
