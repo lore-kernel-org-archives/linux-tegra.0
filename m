@@ -1,186 +1,134 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f47.google.com (mail-dl1-f47.google.com [74.125.82.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C71277CA5;
-	Thu, 11 Jun 2026 18:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B58825A2BB
+	for <linux-tegra@vger.kernel.org>; Fri, 12 Jun 2026 04:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781202684; cv=none; b=fjlJY6QhfYzWSD5AxroDz6rk5/O0enTuLnGY+U+drOemoSdYpjM5q2hA+AFbNfYTN9L4zkQuLiuJjF0ebwRKFjQ2OCq0Xl0962jIWpe4XTC8fiesNHWI43XOf3zTZq2AFQQK/I2v5GRO0/hChsJyLfT7H9+2dMuVxYSwbtgmoWU=
+	t=1781240023; cv=none; b=Vf/qSN5lfIO1bRAtTCmOUfmdSq4L00cjtsdVhoKfy5bu47wVA35S36QARKih44qdojnSdz+raNWWr4LNdePYeats0NxznrFn87g/6yo5SKrNbsjxlQ6KtAcxvPr3rvPyapW59hUK2eMyN0aAe53S4khApXPcePHyqygTpADLufA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781202684; c=relaxed/simple;
-	bh=7hFbgC9HnPzMr6oxo3wnpqIPpU8GHodGdbMFTy6e1TU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EZ2bPu1UUVxH45Omn7BpNlHM2K7DsONhDMIgv4Dx+r37WgV53V8OR6MXGrOD+1vSPwuiPOyc4ujklv0+O58hFcKKyadnTIkY3iDnR5fMU4CryUuZAGlNuriGu70ARokpArUNqCRLQEDNAD9gJi39rZk0VQoz236MJlS8y/qBxhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n/Jrxrou; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1781240023; c=relaxed/simple;
+	bh=CGhgTSPUuG3/h/37fnI8HHvwTgVw8YUxMIQHvlZbnZQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=grI2nJ5N1tjfDTSsV3OuaYlaJG5orNuBnTXHtAE7w48hYEC60y1jQ3CgH36knhJX/7FuhjWZQUad9QdZqPUB8V+hySZSC77VUZQg2TAFfbIzfDCujcrzuhd7SuRhE3R+e6amKWx22m2xIey02seAHnDcWEXlRYSJ+uhSyr2ruOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VBE1ozHZ; arc=none smtp.client-ip=74.125.82.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n/Jrxrou"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1781202683; x=1812738683;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=7hFbgC9HnPzMr6oxo3wnpqIPpU8GHodGdbMFTy6e1TU=;
-  b=n/JrxrouDCCmwKE//EE67sldzNYWRJqKgAFI9VAzShLyg9bRm6BdjeU3
-   KXTZUXW+Iu3zwQh5zi2c2BWLzDTcdCh1a4zC0LGZJQkeEH4ObDJ7KrPG2
-   2ebR0ceb1HtTsQa/XvS/bTX59qANMG4cfCWt30aBqrp6JlgzPOBjKr/vG
-   eh5f2Htruma9N6dDfpcGy6wszmAuLxh6I/h9cpFk5M6iCOflUrBq0x69a
-   36+OEbt/7sVpqIRzvIY7FbidUhZCIRB87a5VcBLA/rh4JnbwK3NsEQsiS
-   0TLikE4QADTavHdnRHHtkLGRFKtS7aW179dFCVXmwqgNvOWZYodYO8Fx3
-   Q==;
-X-CSE-ConnectionGUID: Jj81FjmbQMuib/UTgOSwkw==
-X-CSE-MsgGUID: 7iDgGRZaTX+p30aRdF5oYA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11813"; a="93136346"
-X-IronPort-AV: E=Sophos;i="6.24,199,1774335600"; 
-   d="scan'208";a="93136346"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2026 11:31:21 -0700
-X-CSE-ConnectionGUID: 5eTY9mfpReuvZAQcDYRSJg==
-X-CSE-MsgGUID: MEeJ9TMTQhGOHh6SBSHMRQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,199,1774335600"; 
-   d="scan'208";a="276756938"
-Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.123])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2026 11:31:08 -0700
-Date: Thu, 11 Jun 2026 21:31:04 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc: Kaitao Cheng <kaitao.cheng@linux.dev>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Huang Rui <ray.huang@amd.com>, Eddie James <eajames@linux.ibm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Matthew Auld <matthew.auld@intel.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Waiman Long <longman@redhat.com>, drbd-dev@lists.linbit.com,
-	linux-block@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
-	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-	linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Kaito Cheng <chengkaitao@kylinos.cn>,
-	Muchun Song <muchun.song@linux.dev>,
-	Philipp Reisner <philipp.reisner@linbit.com>,
-	Lars Ellenberg <lars.ellenberg@linbit.com>,
-	Christoph =?iso-8859-1?Q?B=F6hmwalder?= <christoph.boehmwalder@linbit.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Subject: Re: [PATCH v2 00/14] list: Prepare entry iterators to cache cursor
- state
-Message-ID: <air-6P9ZGBbCWtGs@ashevche-desk.local>
-References: <20260609061347.93688-1-kaitao.cheng@linux.dev>
- <bd0b7393-8ccb-4d67-8bfc-18c68347122c@amd.com>
- <5152089a-2808-4fe9-b633-b03018105dd2@linux.dev>
- <6b2efdee-95b0-4306-a682-0d0466497ddb@amd.com>
- <2399841f-d834-4652-8285-4a15c7d9a9b9@linux.dev>
- <d974a2ea-6102-45ff-bf36-3b25a2404e40@amd.com>
- <ail8iNvPrJnE7p58@ashevche-desk.local>
- <92683537-8404-47fe-a4ba-160e54870f0b@amd.com>
- <aipx1goKIsk40vrF@ashevche-desk.local>
- <96f9390b-a547-442f-b0a9-99a5ba52c0e1@amd.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VBE1ozHZ"
+Received: by mail-dl1-f47.google.com with SMTP id a92af1059eb24-1382c509485so1184476c88.1
+        for <linux-tegra@vger.kernel.org>; Thu, 11 Jun 2026 21:53:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1781240021; x=1781844821; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HeJ4qrD4m5ueNhte1ZJIj4N9NTPaQRT9I3KozN8emis=;
+        b=VBE1ozHZ2VNAXl7+357zWFu+/LcyTb3B2uiATnokMnO1pKHl3DRZbZMHQZRapo6jGj
+         +sEB69+qw7arSux52VlCGvws6guZLTcWgig7jpY8WPIEsNK005k1VGWl/lilZnxvSQ1Y
+         349CUn16uPiVQb8EGDuhdrRQvfx/9CKy85RYVg+FX0RqPRk+udTPoG/BJ4YsnTp2bdPR
+         wMnovwFrqkSR44RmUNqQBIIHX0yeAzRaO3P04Y1Ag1n6xAjvjJmgYpm1OxNwRitfXsfU
+         FbyA5uw6MiNEyopUxYIIrnC/VGaNbNrh5PIKON3sskbh8HZuOFZt2xa7j2PG7afmKC2s
+         5JGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781240021; x=1781844821;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HeJ4qrD4m5ueNhte1ZJIj4N9NTPaQRT9I3KozN8emis=;
+        b=TZL0KPAiMZoJHH6B3JRU2Nz1chpQmuH4gFkJWMy/Vp4NuI29ebbaVk9Ff4zWTXSZ7b
+         JUU+b5u9bn6HQq/O8F+Lh6DNkP/2A9ro7Tkrx55F0DeGFxuZ15Bd4UUPsY684Ur9hZfW
+         y+lzyKjsQDDxKSP/FLkwkMZNrCdpiOeJuj5mKVcx8FP2mIIEk+MNIcGlvHmzSyCzjZw0
+         KT5aNjwINbzQcer4duyUP8DAcPdaA1aoNf59DDab9ZjfrQQmNtc+Vu1l8TWL7//G3Xk2
+         uioMIAPXnQaX+WvXPmeVyNc6GchoPl8fAsVKocCwlbU5MdzPfvw5lBQJZOtSqUFS5oHQ
+         8YuQ==
+X-Forwarded-Encrypted: i=1; AFNElJ8RgHSmiKo8UJSzAZcvXIddMEOo1hnvdiaiI1iFe+9gIZAoRSUCCRhnJMyNHhNCH4/QB0eT3vGsavuduA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIH4ufrAyJW910D3f9o+3f3tnOH/ectHp36jnP81SvRhKom2+M
+	Pe6h1qHQlCJFFlye1wX2+UbRKzPJU1GewQIbdp4jIY59W7ua9/jPowrX
+X-Gm-Gg: Acq92OGyIJEUL1++byxWk8J7ilBptSqv1dVHUKpoAVmWyELRe1VT2R8XikHDmrLJoIE
+	RY633HKbwu+iN7KsePHG6J/R1fc/imxMwScNNazdxDCMuFgPmCnE2NNX/aoO7vXLidzrbCsiCJa
+	vUewVCPtiYfNN0yLKn/LCLleYbfDyXT8+tQ5ZZulRFaeklH6DbUvbJx8wXIjWSNmFPHPcpG5OPm
+	alCfgVtru6dL0ST5cNSkwQn7TMqPcxLkR9k2gVQ6LzZmQ8zpMfLJga8vBTWD/Y6uRvPdW8jp7Hg
+	9BChgHp41XK0DZfTlLWq8Imx1dn2cg//hVL//DwOdoCLCeGjzrkaXC0W8WUOQgbUaG9ylLNDKRI
+	fklo7wIVjmYssgSOz7fyrpjc9wVaIHy4k0CpQsdY8MWo/MHnTLeoJrMwqnUB+i9VsisWGb2Vnom
+	54LAaV0vZ/UdvRFFNnWzsUyzHq/9/JSqhv56bU39g+RrmygnrmhP6sf7Moc0zVTZup7Bm9ZmLNE
+	w==
+X-Received: by 2002:a05:7301:60d:b0:2be:2cfe:68b7 with SMTP id 5a478bee46e88-3081ff9ae90mr764090eec.11.1781240020384;
+        Thu, 11 Jun 2026 21:53:40 -0700 (PDT)
+Received: from [192.168.1.18] (177-4-161-23.user3p.v-tal.net.br. [177.4.161.23])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3081e5cea89sm1971217eec.8.2026.06.11.21.53.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jun 2026 21:53:40 -0700 (PDT)
+From: =?utf-8?q?C=C3=A1ssio_Gabriel?= <cassiogabrielcontato@gmail.com>
+Subject: [PATCH RFC 0/4] ALSA: Consolidate CEA channel allocation data
+Date: Fri, 12 Jun 2026 01:53:22 -0300
+Message-Id: <20260612-alsa-cea-channel-allocation-v1-0-b1bcbb6b1051@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <96f9390b-a547-442f-b0a9-99a5ba52c0e1@amd.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDINRNzClO1E1OBWKgdF5qDlAgJz85sQSoT9c8LdnUyCzNJMUwxVgJaEJ
+ BUWpaZgXY9GilIDdnpViIYHFpUlZqcgnIXKXaWgCOvnbXhAAAAA==
+X-Change-ID: 20260606-alsa-cea-channel-allocation-7fc526f4d1d3
+To: Takashi Iwai <tiwai@suse.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Jaroslav Kysela <perex@perex.cz>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, notify@kernel.org, 
+ =?utf-8?q?C=C3=A1ssio_Gabriel?= <cassiogabrielcontato@gmail.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1970;
+ i=cassiogabrielcontato@gmail.com; h=from:subject:message-id;
+ bh=CGhgTSPUuG3/h/37fnI8HHvwTgVw8YUxMIQHvlZbnZQ=;
+ b=owGbwMvMwCV2IdZeKur/u2bG02pJDFnaE07dfrF84vWDxreuTPFd6MI2faXT8699bQWeWTenq
+ nulny9V7ShlYRDjYpAVU2RZnbTIck/Xg6v1cSs8YOawMoEMYeDiFICJHBdjZDg6Z9W2GNPlx07P
+ TVU6fN35050D544/atxQYnYoSfDnDLF2hv9ZzToHX7upvJsYKC4vrtF2Llsqplk2zOgnu76Zo5b
+ WSnYA
+X-Developer-Key: i=cassiogabrielcontato@gmail.com; a=openpgp;
+ fpr=AB62A239BC8AE0D57F5EA848D05D3F1A5AFFEE83
 
-On Thu, Jun 11, 2026 at 10:39:14AM +0200, Christian König wrote:
-> On 6/11/26 10:29, Andy Shevchenko wrote:
-> > On Thu, Jun 11, 2026 at 10:01:25AM +0200, Christian König wrote:
-> >> On 6/10/26 17:02, Andy Shevchenko wrote:
-> >>> On Wed, Jun 10, 2026 at 11:11:34AM +0200, Christian König wrote:
-> >>>> On 6/10/26 10:18, Kaitao Cheng wrote:
-> >>>>> 在 2026/6/10 16:07, Christian König 写道:
+HDA HDMI and Intel HDMI LPE maintain separate copies of the ordered
+CEA-861 channel allocation descriptors, ELD speaker expansion, and
+allocation selection logic. The Intel implementation originated from
+the HDA code, but the copies now differ in supported allocation ranges
+and fallback behavior.
 
-...
+Move the common data and transformations alongside the PCM DRM ELD
+helpers, then migrate both users while preserving their established
+behavior. HDA retains the complete CA range and channel-count fallback.
+Intel HDMI LPE retains its CA 0x1f limit, ELD speaker bits 0 through 6,
+and lack of fallback for incompatible ELD data.
 
-> >>>>> Should we revert to v1, or keep list_for_each_entry() and
-> >>>>> list_for_each_entry_safe() as they are, close this thread, and make no
-> >>>>> changes?
-> >>>>>
-> >>>>> Link to v1:
-> >>>>> https://lore.kernel.org/all/20260529082149.76764-1-kaitao.cheng@linux.dev/
-> >>>>>
-> >>>>> Or do you have any better suggestions?
-> >>>>
-> >>>> v1 looks perfectly reasonable to me.
-> >>>
-> >>> But why not just hiding that once for all (in case they don't use the temporary
-> >>> iterator)? Easy to automate, robust — everyone is happy?
-> >>
-> >> As far as I can see that is an extremely bad idea.
-> >>
-> >> The distinction between the use cases of 'iterating the list' and 'iterating
-> >> the list while you modify it' is completely intentional.
-> > 
-> > What I meant is to keep the name, just drop the parameter (make it hidden and
-> > being defined inside list_for_each_*_safe() cases).
-> 
-> Ah, sorry I was still thinking the suggestion is to merge
-> list_for_each_entry() and list_for_each_entry_safe().
-> 
-> If the modification is done all at once or in steps doesn't really matter for
-> me as long as the patch can be re-created reproducible.
-> 
-> But I'm wondering if we couldn't improve the name at the same time. The
-> _safe() postfix has caused tons of confusion where especially beginners
-> thought that it is a thread-safe variant, which it clearly isn't.
-> 
-> The _mutable() postfix sounds like a much better description to what happens here.
+The descriptors and their derived channel counts and speaker masks
+become compile-time constants. This removes duplicated mutable
+initialization and provides one authoritative allocation table without
+changing the existing allocation-selection policy.
 
-I see, no objections from my side, but with the new name we don't need to have
-treewide change, the downside that one should undertake this to finish the job,
-otherwise we will have _safe() and _mutable() for a long time.
+No hardware was available to test this patch series.
 
-> >> See the bool type can be implemented by int as well, but it is just a
-> >> different use case.
-> > 
-> >>>> You should just include some patches in the same patch set to actually use
-> >>>> the new macros.
-> >>>>
-> >>>> If you modify the files under drivers/dma-buf or drivers/gpu/drm/amd to use
-> >>>> the new macro I'm happy to review that.
+Signed-off-by: Cássio Gabriel <cassiogabrielcontato@gmail.com>
+---
+Cássio Gabriel (4):
+      ALSA: pcm: Add common CEA channel allocation helpers
+      ALSA: hda: Make CEA channel allocation interfaces const
+      ALSA: hda: Use common CEA channel allocations
+      ALSA: x86: Use common CEA channel allocations
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+ include/sound/hda_chmap.h         |  15 +--
+ include/sound/pcm_drm_eld.h       |  16 +++
+ sound/core/pcm_drm_eld.c          | 181 +++++++++++++++++++++++++++
+ sound/hda/codecs/hdmi/atihdmi.c   |   6 +-
+ sound/hda/codecs/hdmi/nvhdmi.c    |   2 +-
+ sound/hda/codecs/hdmi/tegrahdmi.c |   2 +-
+ sound/hda/core/Kconfig            |   1 +
+ sound/hda/core/hdmi_chmap.c       | 252 +++++++-------------------------------
+ sound/x86/Kconfig                 |   1 +
+ sound/x86/intel_hdmi_audio.c      | 158 +++---------------------
+ sound/x86/intel_hdmi_audio.h      |   9 --
+ 11 files changed, 271 insertions(+), 372 deletions(-)
+---
+base-commit: 0f6f60115bfc536c1935d3d0da66cf1d5c7d6055
 
