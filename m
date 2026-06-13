@@ -1,225 +1,509 @@
-Received: from flow-b6-smtp.messagingengine.com (flow-b6-smtp.messagingengine.com [202.12.124.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF563A2543;
-	Sat, 13 Jun 2026 02:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D553A544B
+	for <linux-tegra@vger.kernel.org>; Sat, 13 Jun 2026 08:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781316697; cv=none; b=i2EvVH3U7sGXvplX/Ia9m49FvR7P8Ma58G6IOGw2LwFi36AKIxr4WEdYJAM+wxBDGwGZ43KWIseH4HNycdfWLyqHVzlhAqe2My8jDHPDYOJFU63lTVrsw2+zx9M0dmid96dI/vbFDe+ybOv6qeHQeu8o/F5vsPF1aydjWVNQcII=
+	t=1781339180; cv=none; b=qced6NmzgrHRqyV7N5mVzrYVv0yvkWtOrxFtNImNlIzPMhXZGtobOpYrMbEEluOQ4QHRAOBQEhf/M1vQJOjh7TRBHaqw40hCPDUWzzlJCyGjVX0Xb0Q+YCeVd3zNjP6n/ANjAiUR3o0CgM0/tE7mkIFPmcLEYM4to6iAHGn5pxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781316697; c=relaxed/simple;
-	bh=ecnkEaaCS8+DWqCNDsS+RP9RroP8df0sQbWKP5wlgus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IYC7OLwbo0NzfPSxuBeuiDZuJz6Vv3oWx9lCWgiFmp2AxnvBUWHxr/yLMCk6cR4IbatJPkpx6IZe+IZZNEGsF4UFJdvY5qHPAjdoSri7c+L3XuGpPWQ8X43W3wFraFiScuzbSkWT0z4wyuoip9YKJZNkRmSHt+nF4W9Xmy59aTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=m/B1Wk7p; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B/MO738r; arc=none smtp.client-ip=202.12.124.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+	s=arc-20240116; t=1781339180; c=relaxed/simple;
+	bh=QrjCXuihoGr5gjx1nUVOV4kq3EmrqQj6Xyodjt9ISAE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=He6Jgu8FYeaujvHVbgi+DfEhzuHrrVo0h5sdDTlXs3TSAgmONd3DitYn/LJoLKqwb33VHjdJPY41sbLayGhnehFUEIgr15tWGeS5sWVITBhtLvw2InFfMYZ75REEm0xwLCxN1PRwKNjOYiW8rB7kw4zfyu8zHbKj9K639XyC4uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ivSYrcf3; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="m/B1Wk7p";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B/MO738r"
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailflow.stl.internal (Postfix) with ESMTP id F3E41130005A;
-	Fri, 12 Jun 2026 22:11:31 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Fri, 12 Jun 2026 22:11:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1781316691; x=
-	1781323891; bh=fh1bnzRZkfgjl9/+6Z2PA5Kxn4ZV0HU2wTlYFBWNiQ4=; b=m
-	/B1Wk7purilBiKkMRVuC3Flfti1lZpKfwlt77AZHkSZhKAS8ia2z8R1CfOFuJXF6
-	jqWuwBOSRldHgJLpHFlWbohi+/JgUUnflgC3sz67VmbHnHyV/qKZ4L9+/cZXwBar
-	pZn5nQLmSLaeUika7jXQ35MDD5xqJYMJ+XFW0A6h82xxae3b35f+ak0pm9sP0j3o
-	Rn6Oms26Dq5JaxYcd+LhJ5gGkGzHljkvR3PWQpdcFDZcrutUQ5Gw4MM7C09x5GvX
-	Rm44QXSJLT+PBjHrSfnnGBG8BhkzE2o2bhAyK2kr+YrDji7XqZrfOW/mHwWthgS8
-	Q8mLA82aenzF3UH78IFeA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1781316691; x=1781323891; bh=fh1bnzRZkfgjl9/+6Z2PA5Kxn4ZV0HU2wTl
-	YFBWNiQ4=; b=B/MO738r25kBC5W1FZEi/jo6InpT95G+oNzeSTFxbs6dD4/bHOo
-	eohWxUFnm/DfWRpK+E9TtLDOCX/uuLyULx8m11eswEvzdxMrqTKhaL6Z02wKBqNd
-	CwUcrPKAd4Siff0BNUrNKfyxMQnnlhIFTpMxLRKZ8xZjD0t2cTZE+U4PZ4f1VLum
-	eUck3wo68eBHMIfH++HVVwfv7ri3oT2EnqWmMJLbVCz7Bgqys21n/vANfaMKmzA5
-	KTcEAvxk1SZlFD9lLcLv/WXuzYzr6P0pxCDuHnQsrl+DKeZ8fmfPZHEY9ZY0Se5J
-	q0LnaDPLjJpMRMgOPg+6e3HR5iqlooX1wzg==
-X-ME-Sender: <xms:ULwsaqJSU3ZGUfYTfTfHvUkDGrkZoAz6knspkLRN72dkmhaAlWGU0w>
-    <xme:ULwsahfpOAjeeQFoOqDeZonzxOth5iwOqocTQN665ujKaw5W4kvXENFHiPc-NQxhw
-    bYtvUQNmu3jDY73PL51YmoAI2sjikN827tQNcmget20GbLVOMoBysI>
-X-ME-Received: <xmr:ULwsahqjIqnco2Z3DcLoZTyMFsoOrP0wNMni9j0HG90Y9TI7BFN_QaV06BuMmbh11eW2LBxgLuuRksM5bGGMSNYbNYgx36I>
-X-ME-Proxy-Cause: dmFkZTF4d5otJNSy4E5+TBrm5t4/oKNW6ZUmoxVyat81cKms57U/uBMehGj0z5o/f8U0/o
-    PK70IhoMQDHia1i8CUjqCHYptK3rsgOvh6V75aLzG/qgZR8GOCrcy2g63bYzQQOxQqQZj/
-    9oT1UuiKnf5HDSuvjSqxoI4qcJJc8bRoOgMhp5UWdtRrRuetAFIP6Aax0o1UXRC5743AIG
-    ohTJB6VzPihRmorA3Lx8YAKhiMlL0+yMkZd8nQebbDlRgY6+OEVjhF6TdMsRENVLgOl/oT
-    e9kd0DiCM7hKkG8v6/VJyviGyBIdYP/hdF4S7lGeNUOAI6uqYDfailcqU2g8IxWFbY33Iz
-    +ACooa7G5aLCHNydDMqgIw/A9YbG1rRl+rnyg/YIAD4D6JdEdoAgr2XQjPH8mcmJlRbD3J
-    L4/zbRcQgfwyBPi98PR4JOKtv58W0qZNGq2bo6mWTGKoyLqrpZmzB453regdcvZ8yWpZmu
-    5lZqhVxLEQEMILodTD6zK1GHSSrZm7GNYXniwmQFVTJUC06+nPk5jOzXfJFTMkjFQnsTua
-    s5EZutrLFiC0SlXAMx3G8OW0t7HhwPROcWEkdP0Sg/cm0K2m7YFRY8ECn2xh73b8iO9AwB
-    tCQHO9fSd6RcJ4FMQt07rf5E93yDlosmA0AAxIdfE3fyuvVFOzAgwLaVB37Q
-X-ME-Proxy: <xmx:ULwsaquT5SmR-xrOGgQFjoa6EFFSjj_YmJFkzvlVLH6-bw1wIgxJcA>
-    <xmx:ULwsaiczRhSGXgdtKE6k3bFZWKF6E3kwyRiRHotFTZvhVr9iHcwmsg>
-    <xmx:ULwsavqtUT6DHcdKXT_TCM513fG-OiPCsLUvufUASvNxvwu79-mjtQ>
-    <xmx:ULwsagTJKGVgV3JEZ3ffGTuu0di_sdwXaiZGwS3tmV3GAsHXbdzfUw>
-    <xmx:U7wsaqO7MfduZe3aBiVNiGj0DHVe0CuJke1_63F3DF10oo3uJ_cbzvXT>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 12 Jun 2026 22:11:17 -0400 (EDT)
-Date: Sat, 13 Jun 2026 11:11:15 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: Kaitao Cheng <kaitao.cheng@linux.dev>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Philipp Reisner <philipp.reisner@linbit.com>,
-	Lars Ellenberg <lars.ellenberg@linbit.com>,
-	Christoph =?iso-8859-1?Q?B=F6hmwalder?=
- <christoph.boehmwalder@linbit.com>,	Jens Axboe <axboe@kernel.dk>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Christian Koenig <christian.koenig@amd.com>,
-	Huang Rui <ray.huang@amd.com>, Eddie James <eajames@linux.ibm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Peter Zijlstra <peterz@infradead.org>,	Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>,	Boqun Feng <boqun@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>,	Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Matthew Auld <matthew.auld@intel.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Waiman Long <longman@redhat.com>, drbd-dev@lists.linbit.com,
-	linux-block@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
-	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-	linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Kaitao Cheng <chengkaitao@kylinos.cn>
-Subject: Re: [PATCH v2 02/14] firewire: core: Open-code topology list walk
-Message-ID: <20260613021115.GA130812@sakamocchi.jp>
-Mail-Followup-To: Kaitao Cheng <kaitao.cheng@linux.dev>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Philipp Reisner <philipp.reisner@linbit.com>,
-	Lars Ellenberg <lars.ellenberg@linbit.com>,
-	Christoph =?iso-8859-1?Q?B=F6hmwalder?=
- <christoph.boehmwalder@linbit.com>,	Jens Axboe <axboe@kernel.dk>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Christian Koenig <christian.koenig@amd.com>,
-	Huang Rui <ray.huang@amd.com>, Eddie James <eajames@linux.ibm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Peter Zijlstra <peterz@infradead.org>,	Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>,	Boqun Feng <boqun@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>,	Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Matthew Auld <matthew.auld@intel.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Waiman Long <longman@redhat.com>, drbd-dev@lists.linbit.com,
-	linux-block@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
-	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-	linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Kaitao Cheng <chengkaitao@kylinos.cn>
-References: <20260609061347.93688-1-kaitao.cheng@linux.dev>
- <20260609061347.93688-3-kaitao.cheng@linux.dev>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ivSYrcf3"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2c0c2d8b95bso13879525ad.1
+        for <linux-tegra@vger.kernel.org>; Sat, 13 Jun 2026 01:26:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1781339177; x=1781943977; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bFh4QwOfidNfNO0WUENvp1jz8UmiX7XDMFTl/OPrUew=;
+        b=ivSYrcf3qkZj/zRcClDXgYn7zHz0hxYsDjPYIN6jAL/+y0FXB7eNO2Q8ioJp1wT3gp
+         LY6a1yMwZOVt/m60d/4kxGZlJspmM+fT8kDr1TfMQL+30r7nC4zm6RNLRbJVwqHvUdus
+         AUFUpfwiOcElMuRhfO+DTG/cCL4k5kgMHIyIY8S3BwvaKtyrPxpd0GTNbBED6eg/Bojv
+         kQdxhSK09Vh4jVoWkWWWPZ+NXYm02eC62h3Qs1TN0dr47/8k07BMBSaQ87uk2a14Xw/i
+         Cdc1K8lFtNedVx3pqK/tRRwmjR/rXOXh3t7lnWmh1Ald5Xn+lNK6XeF1ooQGVO9zmhqK
+         WmJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781339177; x=1781943977;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bFh4QwOfidNfNO0WUENvp1jz8UmiX7XDMFTl/OPrUew=;
+        b=UVIR9QyWVrjt7ea+QIZuMJlVEU1mAgZnIiEFzIP8bpXyHbDnKlcvOgATMyyHFJdqjR
+         gumoZzs7n3l/akiWVHdy4LtYeuhVEzuq1+Fr0R3YoLf3DQLuoU+q4jakZs7vQTYMaUzr
+         5xq2bCx4rsm/xf/P8rcBfNf77IMgPEExV111VzUps2I/oqCvQ/IPeD0cLfzBzbPdUXJt
+         UtRlTyeJNLmmY1QXwbNuCYZY8SwYfOQvGrsfXPmxpklBnv55Fu3ssaw3TQc4zNT6QqNv
+         6BDzWGjUmCibqWnQ2++384HBYaom6iBVGeXpLKbJ8OHxcnRhNlPeoErUllDocV2Hr8I8
+         nQOQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9W3SVUXUNrWX+tLjP1px/cZarKLTABXIDPWX36GKLC50R3W/HBKdtu0qV4dl8v645w3WSiS/tWNWfTWA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywre3FFapBI5UEqZswsGFvFML4JFClZdhPu/rreKVwq7FyZuWQQ
+	YBShudaYf4bJ4dMrONv9vnmsZ7ORKjlydAD5IM+yLHliX4wyCPCoZAi0
+X-Gm-Gg: Acq92OGRHrYqvSx1s6SvA1VZOh4SfZWXL3JfJVOkuXuawe9LxP2nYtjCNJD65+oOSeY
+	cGiHWA8rhTBZXIOlwjLBAxWIj7t1HSomaqAq86oEnf/kaSriEjTjaDBarHSPGkJuRsyK8eaRmVa
+	h9BNd+oiXIbq0izO6fT5/aF7fikc1w/+iQ1oYoXIzBLdut4rjcclS+8RJhNOJrSGZxdlBINNJYh
+	rl6OalTO1qevFYp8sNd6Z57zBm7w0Bt/7wkHfoDk1PM4g8LMboWFaZ7ERcflM/QTHRYoNPKYVZz
+	z0bukej7PUS/yL6PolzD3/9PLerjZ/CECNh7Un8nFKqNem/k9XqPYuiz6OA3N7w3ouLJqQIjLH8
+	3QKb4XdFEE8PG0cdO7SJ007LidSvz5AOWqd2aILmbnXAqwljYYHYZGy/qiKLO/ufYxregEZPTmW
+	eeVO6RviWPayVqMbNac0jItqnT/CVWurb4wQQaOd9pQ073
+X-Received: by 2002:a17:902:cec7:b0:2c1:f29a:b554 with SMTP id d9443c01a7336-2c664271df6mr32125405ad.21.1781339177324;
+        Sat, 13 Jun 2026 01:26:17 -0700 (PDT)
+Received: from Black-Pearl.localdomain ([49.207.61.84])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2c4330782b2sm45352895ad.67.2026.06.13.01.26.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Jun 2026 01:26:16 -0700 (PDT)
+From: Charan Pedumuru <charan.pedumuru@gmail.com>
+Date: Sat, 13 Jun 2026 08:24:47 +0000
+Subject: [PATCH] dt-bindings: sound: nvidia,tegra30-ahub: Convert to DT
+ schema
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260609061347.93688-3-kaitao.cheng@linux.dev>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260613-nvidia-ahub-v1-1-5b7e85301736@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAM4TLWoC/yXMTQ5AMBBA4avIrDWp0ZC4ilj0ZzAWJS2NRNxds
+ fwW710QKTBF6IoLAiWOvPqMqizAztpPJNhlA0pspEIUPrFjLfR8GOHQkpF1i61SkIst0Mjnd+u
+ H3/EwC9n9XcB9P2WZ1wlvAAAA
+X-Change-ID: 20260422-nvidia-ahub-d2ceb0372744
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Charan Pedumuru <charan.pedumuru@gmail.com>
+X-Mailer: b4 0.15.2
 
-Hi,
+Convert NVIDIA Tegra Audio Hub (AHUB) binding to DT schema.
 
-On Tue, Jun 09, 2026 at 02:13:35PM +0800, Kaitao Cheng wrote:
-> From: Kaitao Cheng <chengkaitao@kylinos.cn>
-> 
-> A later change will make list_for_each_entry() cache the next element
-> before entering the loop body. for_each_fw_node() intentionally appends
-> newly discovered child nodes to the temporary walk list while the list is
-> being traversed.
-> 
-> Keep the loop open-coded so the next node is looked up only after
-> children have been appended. This preserves the current breadth-first
-> traversal semantics and prepares the code for the list iterator update.
-> 
-> Signed-off-by: Kaitao Cheng <chengkaitao@kylinos.cn>
-> ---
->  drivers/firewire/core-topology.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+The per-SoC differences in reset-names, dma-names, and reg entry
+counts described in the text binding are now enforced via allOf
+conditionals, making previously prose-only constraints machine
+validatable.
 
-Thanks for the patch.
+Child node CIF ID properties are formally declared under
+patternProperties to allow dtschema to validate i2s subnodes.
 
-Last September I've realized the issue but not solved yet[1]. A pointer
-array would be another candidate to store the found nodes, since IEEE 1394
-bus a restriction about the maximum number of nodes up to 256. But It is
-too large if put in kernel stack, while it is slightly difficult to keep
-it in heap dynamically since the function is called under holding
-spinning lock.
+Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
+---
+ .../bindings/sound/nvidia,tegra30-ahub.txt         |  88 ------
+ .../bindings/sound/nvidia,tegra30-ahub.yaml        | 299 +++++++++++++++++++++
+ 2 files changed, 299 insertions(+), 88 deletions(-)
 
-Anyway, there is no objection to your change. Let me apply it to
-for-next branch so that your further work goes well with no blocks
-locating in this subsystem.
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.txt
+deleted file mode 100644
+index 0e9a1895d7fb..000000000000
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.txt
++++ /dev/null
+@@ -1,88 +0,0 @@
+-NVIDIA Tegra30 AHUB (Audio Hub)
+-
+-Required properties:
+-- compatible : For Tegra30, must contain "nvidia,tegra30-ahub".  For Tegra114,
+-  must contain "nvidia,tegra114-ahub".  For Tegra124, must contain
+-  "nvidia,tegra124-ahub".  Otherwise, must contain "nvidia,<chip>-ahub",
+-  plus at least one of the above, where <chip> is tegra132.
+-- reg : Should contain the register physical address and length for each of
+-  the AHUB's register blocks.
+-  - Tegra30 requires 2 entries, for the APBIF and AHUB/AUDIO register blocks.
+-  - Tegra114 requires an additional entry, for the APBIF2 register block.
+-- interrupts : Should contain AHUB interrupt
+-- clocks : Must contain an entry for each entry in clock-names.
+-  See ../clocks/clock-bindings.txt for details.
+-- clock-names : Must include the following entries:
+-  - d_audio
+-  - apbif
+-- resets : Must contain an entry for each entry in reset-names.
+-  See ../reset/reset.txt for details.
+-- reset-names : Must include the following entries:
+-  Tegra30 and later:
+-  - d_audio
+-  - apbif
+-  - i2s0
+-  - i2s1
+-  - i2s2
+-  - i2s3
+-  - i2s4
+-  - dam0
+-  - dam1
+-  - dam2
+-  - spdif
+-  Tegra114 and later additionally require:
+-  - amx
+-  - adx
+-  Tegra124 and later additionally require:
+-  - amx1
+-  - adx1
+-  - afc0
+-  - afc1
+-  - afc2
+-  - afc3
+-  - afc4
+-  - afc5
+-- ranges : The bus address mapping for the configlink register bus.
+-  Can be empty since the mapping is 1:1.
+-- dmas : Must contain an entry for each entry in clock-names.
+-  See ../dma/dma.txt for details.
+-- dma-names : Must include the following entries:
+-  - rx0 .. rx<n>
+-  - tx0 .. tx<n>
+-  ... where n is:
+-  Tegra30: 3
+-  Tegra114, Tegra124: 9
+-- #address-cells : For the configlink bus. Should be <1>;
+-- #size-cells : For the configlink bus. Should be <1>.
+-
+-AHUB client modules need to specify the IDs of their CIFs (Client InterFaces).
+-For RX CIFs, the numbers indicate the register number within AHUB routing
+-register space (APBIF 0..3 RX, I2S 0..5 RX, DAM 0..2 RX 0..1, SPDIF RX 0..1).
+-For TX CIFs, the numbers indicate the bit position within the AHUB routing
+-registers (APBIF 0..3 TX, I2S 0..5 TX, DAM 0..2 TX, SPDIF TX 0..1).
+-
+-Example:
+-
+-ahub@70080000 {
+-	compatible = "nvidia,tegra30-ahub";
+-	reg = <0x70080000 0x200 0x70080200 0x100>;
+-	interrupts = < 0 103 0x04 >;
+-	nvidia,dma-request-selector = <&apbdma 1>;
+-	clocks = <&tegra_car 106>, <&tegra_car 107>;
+-	clock-names = "d_audio", "apbif";
+-	resets = <&tegra_car 106>, <&tegra_car 107>, <&tegra_car 30>,
+-		<&tegra_car 11>, <&tegra_car 18>, <&tegra_car 101>,
+-		<&tegra_car 102>, <&tegra_car 108>, <&tegra_car 109>,
+-		<&tegra_car 110>, <&tegra_car 10>;
+-	reset-names = "d_audio", "apbif", "i2s0", "i2s1", "i2s2",
+-		"i2s3", "i2s4", "dam0", "dam1", "dam2",
+-		"spdif";
+-	dmas = <&apbdma 1>, <&apbdma 1>;
+-	       <&apbdma 2>, <&apbdma 2>;
+-	       <&apbdma 3>, <&apbdma 3>;
+-	       <&apbdma 4>, <&apbdma 4>;
+-	dma-names = "rx0", "tx0", "rx1", "tx1", "rx2", "tx2", "rx3", "tx3";
+-	ranges;
+-	#address-cells = <1>;
+-	#size-cells = <1>;
+-};
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.yaml
+new file mode 100644
+index 000000000000..82738058f672
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.yaml
+@@ -0,0 +1,299 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/nvidia,tegra30-ahub.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NVIDIA Tegra Audio Hub (AHUB)
++
++maintainers:
++  - Jonathan Hunter <jonathanh@nvidia.com>
++
++description:
++  The NVIDIA Tegra AHUB (Audio Hub) is an audio interconnect block used to
++  route data between various audio clients such as I2S, DAM, SPDIF, and
++  APBIF. It exposes multiple register regions and supports different
++  configurations depending on the Tegra SoC generation. The AHUB also
++  provides a configlink bus for child audio components, which use CIF
++  (Client Interface) IDs to identify their data paths. The number of DMA
++  channels, reset lines, and additional modules varies across Tegra30,
++  Tegra114, and Tegra124 platforms.
++
++properties:
++  compatible:
++    oneOf:
++      - const: nvidia,tegra30-ahub
++      - const: nvidia,tegra114-ahub
++      - const: nvidia,tegra124-ahub
++      - items:
++          - const: nvidia,tegra132-ahub
++          - const: nvidia,tegra124-ahub
++
++  reg:
++    minItems: 2
++    maxItems: 3
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Clock for the D_AUDIO domain
++      - description: Clock for the APBIF interface
++
++  clock-names:
++    items:
++      - const: d_audio
++      - const: apbif
++
++  resets:
++    minItems: 11
++    maxItems: 21
++
++  reset-names:
++    oneOf:
++      # Tegra30: d_audio apbif i2s0-4 dam0-2 spdif
++      - items:
++          - const: d_audio
++          - const: apbif
++          - const: i2s0
++          - const: i2s1
++          - const: i2s2
++          - const: i2s3
++          - const: i2s4
++          - const: dam0
++          - const: dam1
++          - const: dam2
++          - const: spdif
++
++      # Tegra114: adds amx adx
++      - items:
++          - const: d_audio
++          - const: apbif
++          - const: i2s0
++          - const: i2s1
++          - const: i2s2
++          - const: i2s3
++          - const: i2s4
++          - const: dam0
++          - const: dam1
++          - const: dam2
++          - const: spdif
++          - const: amx
++          - const: adx
++
++      # Tegra124: adds amx1 adx1 afc0-5
++      - items:
++          - const: d_audio
++          - const: apbif
++          - const: i2s0
++          - const: i2s1
++          - const: i2s2
++          - const: i2s3
++          - const: i2s4
++          - const: dam0
++          - const: dam1
++          - const: dam2
++          - const: spdif
++          - const: amx
++          - const: amx1
++          - const: adx
++          - const: adx1
++          - const: afc0
++          - const: afc1
++          - const: afc2
++          - const: afc3
++          - const: afc4
++          - const: afc5
++
++  dmas:
++    minItems: 8
++    maxItems: 20
++
++  dma-names:
++    oneOf:
++      # Tegra30: rx0..rx3 tx0..tx3 (n=3)
++      - items:
++          - const: rx0
++          - const: tx0
++          - const: rx1
++          - const: tx1
++          - const: rx2
++          - const: tx2
++          - const: rx3
++          - const: tx3
++
++      # Tegra114/124: rx0..rx9 tx0..tx9 (n=9)
++      - items:
++          - const: rx0
++          - const: tx0
++          - const: rx1
++          - const: tx1
++          - const: rx2
++          - const: tx2
++          - const: rx3
++          - const: tx3
++          - const: rx4
++          - const: tx4
++          - const: rx5
++          - const: tx5
++          - const: rx6
++          - const: tx6
++          - const: rx7
++          - const: tx7
++          - const: rx8
++          - const: tx8
++          - const: rx9
++          - const: tx9
++
++  "#address-cells":
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++  "#size-cells":
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++  ranges: true
++
++patternProperties:
++  "^i2s@[0-9a-f]+$":
++    type: object
++
++    allOf:
++      - $ref: /schemas/sound/nvidia,tegra30-i2s.yaml#
++
++    properties:
++      nvidia,ahub-cif-ids:
++        description: Pair of AHUB CIF IDs for the RX and TX data paths.
++        $ref: /schemas/types.yaml#/definitions/uint32-array
++        minItems: 2
++        maxItems: 2
++
++    required:
++      - nvidia,ahub-cif-ids
++
++    unevaluatedProperties: false
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: nvidia,tegra124-ahub
++    then:
++      properties:
++        "#address-cells":
++          const: 2
++
++        "#size-cells":
++          const: 2
++
++        resets:
++          minItems: 21
++          maxItems: 21
++
++        dmas:
++          minItems: 20
++          maxItems: 20
++
++    else:
++      properties:
++        "#address-cells":
++          const: 1
++
++        "#size-cells":
++          const: 1
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: nvidia,tegra30-ahub
++    then:
++      properties:
++        reg:
++          maxItems: 2
++
++        resets:
++          minItems: 11
++          maxItems: 11
++
++        dmas:
++          minItems: 8
++          maxItems: 8
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: nvidia,tegra114-ahub
++    then:
++      properties:
++        reg:
++          minItems: 3
++          maxItems: 3
++
++        resets:
++          minItems: 13
++          maxItems: 13
++
++        dmas:
++          minItems: 20
++          maxItems: 20
++
++required:
++  - reg
++  - compatible
++  - interrupts
++  - clocks
++  - clock-names
++  - resets
++  - reset-names
++  - dmas
++  - dma-names
++  - "#address-cells"
++  - "#size-cells"
++  - ranges
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/tegra30-car.h>
++    ahub@70080000 {
++        compatible = "nvidia,tegra30-ahub";
++        reg = <0x70080000 0x200>, <0x70080200 0x100>;
++        interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&tegra_car TEGRA30_CLK_D_AUDIO>,
++                 <&tegra_car TEGRA30_CLK_APBIF>;
++        clock-names = "d_audio", "apbif";
++        resets = <&tegra_car 106>, <&tegra_car 107>,
++                 <&tegra_car 30>, <&tegra_car 11>,
++                 <&tegra_car 18>, <&tegra_car 101>,
++                 <&tegra_car 102>, <&tegra_car 108>,
++                 <&tegra_car 109>, <&tegra_car 110>,
++                 <&tegra_car 10>;
++        reset-names = "d_audio", "apbif",
++                      "i2s0", "i2s1", "i2s2", "i2s3", "i2s4",
++                      "dam0", "dam1", "dam2",
++                      "spdif";
++        dmas = <&apbdma 1>, <&apbdma 1>,
++               <&apbdma 2>, <&apbdma 2>,
++               <&apbdma 3>, <&apbdma 3>,
++               <&apbdma 4>, <&apbdma 4>;
++        dma-names = "rx0", "tx0", "rx1", "tx1",
++                    "rx2", "tx2", "rx3", "tx3";
++        ranges;
++        #address-cells = <1>;
++        #size-cells = <1>;
++
++        i2s@70080300 {
++            compatible = "nvidia,tegra30-i2s";
++            reg = <0x70080300 0x100>;
++            nvidia,ahub-cif-ids = <4 4>;
++            clocks = <&tegra_car TEGRA30_CLK_I2S0>;
++            resets = <&tegra_car 30>;
++            reset-names = "i2s";
++        };
++    };
++...
 
-[1] https://social.kernel.org/notice/AyDqvLkpwUvI5eyokK
+---
+base-commit: db7efce4ae23ad5e42f5f55428f529ff62b86fab
+change-id: 20260422-nvidia-ahub-d2ceb0372744
 
+Best regards,
+--  
+Charan Pedumuru <charan.pedumuru@gmail.com>
 
-Thanks
-
-Takashi Sakamoto
