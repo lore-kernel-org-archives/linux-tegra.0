@@ -1,78 +1,225 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from flow-b6-smtp.messagingengine.com (flow-b6-smtp.messagingengine.com [202.12.124.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866583A963D;
-	Fri, 12 Jun 2026 16:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF563A2543;
+	Sat, 13 Jun 2026 02:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781281048; cv=none; b=HgA8yPR1hN8uiPMDsxpDYQ57/eKpu5EW277pTMD14xHagVKh/Ch0R4eGYCRd2nFOqpduZcYr+htoT6H6VLLYW/fQvA2+K11kssa54wvRKdVze5eEtypfnahpQC/faoWMTz3h6+XSTtulAsT1R8JTB/Wyp+HyNLoyN86CJVIKeDM=
+	t=1781316697; cv=none; b=i2EvVH3U7sGXvplX/Ia9m49FvR7P8Ma58G6IOGw2LwFi36AKIxr4WEdYJAM+wxBDGwGZ43KWIseH4HNycdfWLyqHVzlhAqe2My8jDHPDYOJFU63lTVrsw2+zx9M0dmid96dI/vbFDe+ybOv6qeHQeu8o/F5vsPF1aydjWVNQcII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781281048; c=relaxed/simple;
-	bh=OWWbZyIFi19j+EWcZCzS4VusckZ01Z7f+4v5sT4JcJk=;
+	s=arc-20240116; t=1781316697; c=relaxed/simple;
+	bh=ecnkEaaCS8+DWqCNDsS+RP9RroP8df0sQbWKP5wlgus=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cYGNKUZg5ibVdzp6EVao2PF9Wd+k1Po+lr988qa9oqTZQRmP8+yGepFiRoSX8VsC6HQvMGJOY3EOL6IEVgNMpTIq+YI+ytmr/btkLvTFhhPGHkXGbT2PL+mzmyKkf96YP1sx0UVGK7IcEMT1cC1eQAOnUNaepyODEbM0Xzpi0EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NV7E1ihB; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=IYC7OLwbo0NzfPSxuBeuiDZuJz6Vv3oWx9lCWgiFmp2AxnvBUWHxr/yLMCk6cR4IbatJPkpx6IZe+IZZNEGsF4UFJdvY5qHPAjdoSri7c+L3XuGpPWQ8X43W3wFraFiScuzbSkWT0z4wyuoip9YKJZNkRmSHt+nF4W9Xmy59aTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=m/B1Wk7p; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B/MO738r; arc=none smtp.client-ip=202.12.124.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NV7E1ihB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60D731F000E9;
-	Fri, 12 Jun 2026 16:17:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781281047;
-	bh=OWWbZyIFi19j+EWcZCzS4VusckZ01Z7f+4v5sT4JcJk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=NV7E1ihBEgQoUF0VMyMDi2wAShusL7TC1KCRP0r4jcUX/F5/9WSt/uiaeRDSeVvDB
-	 dvY2nOIbWPeWDgTZ+HWN7uhWEYopFVZzguW3Xr0HXNryg1o/vNl8nxqhajKVLau+B4
-	 UT1WrNW4G7e5XvJYBkBlja85oHNAgeHLaU2JIkVF46RGcd/cdiooi6kHWzgIt9rR99
-	 FsH8dHAfa5oOItPyCNUqroBEla3CtNYmClXujG+vZnwFUkrEp7ZVC6PXVP3eSbcnkv
-	 IFFnapDmXg3gw059fJB0xiM+anU4vfkZJwz02NNlbUBjOCbL1biKelP0vC7gZQHqhl
-	 jJ6nKdvnsikZw==
-Date: Fri, 12 Jun 2026 17:17:22 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="m/B1Wk7p";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B/MO738r"
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailflow.stl.internal (Postfix) with ESMTP id F3E41130005A;
+	Fri, 12 Jun 2026 22:11:31 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Fri, 12 Jun 2026 22:11:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1781316691; x=
+	1781323891; bh=fh1bnzRZkfgjl9/+6Z2PA5Kxn4ZV0HU2wTlYFBWNiQ4=; b=m
+	/B1Wk7purilBiKkMRVuC3Flfti1lZpKfwlt77AZHkSZhKAS8ia2z8R1CfOFuJXF6
+	jqWuwBOSRldHgJLpHFlWbohi+/JgUUnflgC3sz67VmbHnHyV/qKZ4L9+/cZXwBar
+	pZn5nQLmSLaeUika7jXQ35MDD5xqJYMJ+XFW0A6h82xxae3b35f+ak0pm9sP0j3o
+	Rn6Oms26Dq5JaxYcd+LhJ5gGkGzHljkvR3PWQpdcFDZcrutUQ5Gw4MM7C09x5GvX
+	Rm44QXSJLT+PBjHrSfnnGBG8BhkzE2o2bhAyK2kr+YrDji7XqZrfOW/mHwWthgS8
+	Q8mLA82aenzF3UH78IFeA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1781316691; x=1781323891; bh=fh1bnzRZkfgjl9/+6Z2PA5Kxn4ZV0HU2wTl
+	YFBWNiQ4=; b=B/MO738r25kBC5W1FZEi/jo6InpT95G+oNzeSTFxbs6dD4/bHOo
+	eohWxUFnm/DfWRpK+E9TtLDOCX/uuLyULx8m11eswEvzdxMrqTKhaL6Z02wKBqNd
+	CwUcrPKAd4Siff0BNUrNKfyxMQnnlhIFTpMxLRKZ8xZjD0t2cTZE+U4PZ4f1VLum
+	eUck3wo68eBHMIfH++HVVwfv7ri3oT2EnqWmMJLbVCz7Bgqys21n/vANfaMKmzA5
+	KTcEAvxk1SZlFD9lLcLv/WXuzYzr6P0pxCDuHnQsrl+DKeZ8fmfPZHEY9ZY0Se5J
+	q0LnaDPLjJpMRMgOPg+6e3HR5iqlooX1wzg==
+X-ME-Sender: <xms:ULwsaqJSU3ZGUfYTfTfHvUkDGrkZoAz6knspkLRN72dkmhaAlWGU0w>
+    <xme:ULwsahfpOAjeeQFoOqDeZonzxOth5iwOqocTQN665ujKaw5W4kvXENFHiPc-NQxhw
+    bYtvUQNmu3jDY73PL51YmoAI2sjikN827tQNcmget20GbLVOMoBysI>
+X-ME-Received: <xmr:ULwsahqjIqnco2Z3DcLoZTyMFsoOrP0wNMni9j0HG90Y9TI7BFN_QaV06BuMmbh11eW2LBxgLuuRksM5bGGMSNYbNYgx36I>
+X-ME-Proxy-Cause: dmFkZTF4d5otJNSy4E5+TBrm5t4/oKNW6ZUmoxVyat81cKms57U/uBMehGj0z5o/f8U0/o
+    PK70IhoMQDHia1i8CUjqCHYptK3rsgOvh6V75aLzG/qgZR8GOCrcy2g63bYzQQOxQqQZj/
+    9oT1UuiKnf5HDSuvjSqxoI4qcJJc8bRoOgMhp5UWdtRrRuetAFIP6Aax0o1UXRC5743AIG
+    ohTJB6VzPihRmorA3Lx8YAKhiMlL0+yMkZd8nQebbDlRgY6+OEVjhF6TdMsRENVLgOl/oT
+    e9kd0DiCM7hKkG8v6/VJyviGyBIdYP/hdF4S7lGeNUOAI6uqYDfailcqU2g8IxWFbY33Iz
+    +ACooa7G5aLCHNydDMqgIw/A9YbG1rRl+rnyg/YIAD4D6JdEdoAgr2XQjPH8mcmJlRbD3J
+    L4/zbRcQgfwyBPi98PR4JOKtv58W0qZNGq2bo6mWTGKoyLqrpZmzB453regdcvZ8yWpZmu
+    5lZqhVxLEQEMILodTD6zK1GHSSrZm7GNYXniwmQFVTJUC06+nPk5jOzXfJFTMkjFQnsTua
+    s5EZutrLFiC0SlXAMx3G8OW0t7HhwPROcWEkdP0Sg/cm0K2m7YFRY8ECn2xh73b8iO9AwB
+    tCQHO9fSd6RcJ4FMQt07rf5E93yDlosmA0AAxIdfE3fyuvVFOzAgwLaVB37Q
+X-ME-Proxy: <xmx:ULwsaquT5SmR-xrOGgQFjoa6EFFSjj_YmJFkzvlVLH6-bw1wIgxJcA>
+    <xmx:ULwsaiczRhSGXgdtKE6k3bFZWKF6E3kwyRiRHotFTZvhVr9iHcwmsg>
+    <xmx:ULwsavqtUT6DHcdKXT_TCM513fG-OiPCsLUvufUASvNxvwu79-mjtQ>
+    <xmx:ULwsagTJKGVgV3JEZ3ffGTuu0di_sdwXaiZGwS3tmV3GAsHXbdzfUw>
+    <xmx:U7wsaqO7MfduZe3aBiVNiGj0DHVe0CuJke1_63F3DF10oo3uJ_cbzvXT>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 12 Jun 2026 22:11:17 -0400 (EDT)
+Date: Sat, 13 Jun 2026 11:11:15 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: Kaitao Cheng <kaitao.cheng@linux.dev>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Philipp Reisner <philipp.reisner@linbit.com>,
+	Lars Ellenberg <lars.ellenberg@linbit.com>,
+	Christoph =?iso-8859-1?Q?B=F6hmwalder?=
+ <christoph.boehmwalder@linbit.com>,	Jens Axboe <axboe@kernel.dk>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-tegra@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/7] dt-bindings: display: tegra: Add Tegra264 compatible
- for VIC
-Message-ID: <20260612-ascend-bonsai-d330bcda91b7@spud>
-References: <20260612-t264-host1x-v1-0-8d934987de67@nvidia.com>
- <20260612-t264-host1x-v1-2-8d934987de67@nvidia.com>
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Christian Koenig <christian.koenig@amd.com>,
+	Huang Rui <ray.huang@amd.com>, Eddie James <eajames@linux.ibm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Peter Zijlstra <peterz@infradead.org>,	Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>,	Boqun Feng <boqun@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,	Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Matthew Auld <matthew.auld@intel.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Waiman Long <longman@redhat.com>, drbd-dev@lists.linbit.com,
+	linux-block@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
+	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+	linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Kaitao Cheng <chengkaitao@kylinos.cn>
+Subject: Re: [PATCH v2 02/14] firewire: core: Open-code topology list walk
+Message-ID: <20260613021115.GA130812@sakamocchi.jp>
+Mail-Followup-To: Kaitao Cheng <kaitao.cheng@linux.dev>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Philipp Reisner <philipp.reisner@linbit.com>,
+	Lars Ellenberg <lars.ellenberg@linbit.com>,
+	Christoph =?iso-8859-1?Q?B=F6hmwalder?=
+ <christoph.boehmwalder@linbit.com>,	Jens Axboe <axboe@kernel.dk>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Christian Koenig <christian.koenig@amd.com>,
+	Huang Rui <ray.huang@amd.com>, Eddie James <eajames@linux.ibm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Peter Zijlstra <peterz@infradead.org>,	Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>,	Boqun Feng <boqun@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,	Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Matthew Auld <matthew.auld@intel.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Waiman Long <longman@redhat.com>, drbd-dev@lists.linbit.com,
+	linux-block@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
+	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+	linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Kaitao Cheng <chengkaitao@kylinos.cn>
+References: <20260609061347.93688-1-kaitao.cheng@linux.dev>
+ <20260609061347.93688-3-kaitao.cheng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="o0OMdNtSGtGTVJju"
-Content-Disposition: inline
-In-Reply-To: <20260612-t264-host1x-v1-2-8d934987de67@nvidia.com>
-
-
---o0OMdNtSGtGTVJju
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20260609061347.93688-3-kaitao.cheng@linux.dev>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+Hi,
 
---o0OMdNtSGtGTVJju
-Content-Type: application/pgp-signature; name="signature.asc"
+On Tue, Jun 09, 2026 at 02:13:35PM +0800, Kaitao Cheng wrote:
+> From: Kaitao Cheng <chengkaitao@kylinos.cn>
+> 
+> A later change will make list_for_each_entry() cache the next element
+> before entering the loop body. for_each_fw_node() intentionally appends
+> newly discovered child nodes to the temporary walk list while the list is
+> being traversed.
+> 
+> Keep the loop open-coded so the next node is looked up only after
+> children have been appended. This preserves the current breadth-first
+> traversal semantics and prepares the code for the list iterator update.
+> 
+> Signed-off-by: Kaitao Cheng <chengkaitao@kylinos.cn>
+> ---
+>  drivers/firewire/core-topology.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
------BEGIN PGP SIGNATURE-----
+Thanks for the patch.
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaiwxEgAKCRB4tDGHoIJi
-0v83APwMmQtkExjlV1rXRIJAdC8veFtoH4XlazZaj20VnWSx1AEA1HO1dn5W3+Fn
-I6+TW43YwKhtZHoR7HaENzMU53R8OQw=
-=r/jw
------END PGP SIGNATURE-----
+Last September I've realized the issue but not solved yet[1]. A pointer
+array would be another candidate to store the found nodes, since IEEE 1394
+bus a restriction about the maximum number of nodes up to 256. But It is
+too large if put in kernel stack, while it is slightly difficult to keep
+it in heap dynamically since the function is called under holding
+spinning lock.
 
---o0OMdNtSGtGTVJju--
+Anyway, there is no objection to your change. Let me apply it to
+for-next branch so that your further work goes well with no blocks
+locating in this subsystem.
+
+[1] https://social.kernel.org/notice/AyDqvLkpwUvI5eyokK
+
+
+Thanks
+
+Takashi Sakamoto
