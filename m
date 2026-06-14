@@ -1,92 +1,156 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1153F2A1BF;
-	Sun, 14 Jun 2026 00:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6C9329E44;
+	Sun, 14 Jun 2026 20:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781395451; cv=none; b=WvFruYmYogA6WZmjB/E9zQR203Py07vEwKzqmXD5mUOrlWaJ9lEx02ZfG5XEUo/wWwoz4AS6WDe5FAiB941A420bxyzYRchtvhqCRpNTL/H6edfsr4ohfAs/RTRZSr00Hz2+s6s1xKIMctlVGAI9TbV4lEhUZr6CugW5s4WwldQ=
+	t=1781470579; cv=none; b=PA7osv0d/aMEKIn7TKGceDuK2qmygDNjK2GsP53VfgUemfwH5kpyYZPYvs3WL1/RRIo+4UNrp3kRMDa58cTzWfzV+RoX9fRaOc+PPR+R4/g1jAmV4yCgvnBLcmzQvTNmqE5/bDz/O9MByjBl504Qx1NyV1eiSS1VlyO+IcXJgRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781395451; c=relaxed/simple;
-	bh=7e3nVX9ngABwBCdt6PzAXwlFn5kI5ZQrj0wkL59qbv0=;
+	s=arc-20240116; t=1781470579; c=relaxed/simple;
+	bh=k2TwFRVIGo3UAuKkEeMphcyHzyDfz5boVP642BqB7Cw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rblSP62SDIxrfROd1t33vXOBFouJClXZJhJOwBeB1yIznnSUmnXtda8UoJxoVCIlmRK7CXqacQUDcS4Dfo2eJGdvXVxPpa08AS/25JbFmXVSATV+nwzmfie81g98wsGFolC6EDSrqxhua3arSlDD8MCDZf04aNrvQB93of1jbsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F5S8lJLB; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=eMbyAm4mZTzw6huJlVhLenF/9cxV5IrIaHgHeN+bnWltMjfRXOfjELNYA/IeD02R9G89/nYxfLLdV2iWYYulUqkijQZAei0vUXW1gcU8Dis1HzNmRn09z0DNq0N7ibrhhs027RA/ZdMtybguEZ2NZoB9FFgljGn+rZwWcNfXQNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UtciRf7y; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F5S8lJLB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9DB81F000E9;
-	Sun, 14 Jun 2026 00:04:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781395450;
-	bh=7e3nVX9ngABwBCdt6PzAXwlFn5kI5ZQrj0wkL59qbv0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=F5S8lJLBHC4WECWsDA6BBAWk05pfVMpIhYlhGY34nMvWQcfz6eFJyIm1DGrGCZTZ2
-	 aN88Tz0c2fQI5IPUvN6s6vLkv76wISAUKsTRh3C9Ah0etCiFKzIS0ZbX5pv5povtEe
-	 lYuWwvdtrA0Qwxc2DxlcOe/i+RNSIN9ewhHnGSV2yLP8PvKG2ZDENxm1yqBSIObp5F
-	 MADmTlpV7zAPXZu59wB4kojVS7k883sJsYoA9DUVTGVcyGNVF1V3OtafZFK8tgF64O
-	 58AdRFvBxdSaMvYOmxjs7j0GsjxWArsniPaEd7cA4ZHcdL/KuTL/tlGJ80phC/gPgc
-	 NzFbJNLoe4SwQ==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id 7CDD01AC5AC5; Sun, 14 Jun 2026 01:04:08 +0100 (BST)
-Date: Sun, 14 Jun 2026 01:04:08 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Charan Pedumuru <charan.pedumuru@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UtciRf7y"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 62D801A391E;
+	Sun, 14 Jun 2026 20:56:15 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D89E260014;
+	Sun, 14 Jun 2026 20:56:14 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7971E106C8A10;
+	Sun, 14 Jun 2026 22:56:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1781470573; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=1s1sT/c6GY/MY7ZVSH3SGCUIl59lEqQG0Hqj2B2xQT8=;
+	b=UtciRf7y+G/d7pfxrZk1IlUaUbXDpp2k8dQXrpLeAjNf2O8ktUpBHnQAgy52argPBpPzsK
+	ePID2nUloK8aMJsFsRJA50rAKX+xuLB3wBNvdwdZAH29K6w9cZ3ftdI0xF8TKIagm7jMhh
+	a4AaPWhm1RH3e0FyXX4DFz0KMr0AKwxFAbNhoqRqHhdNDjtye7kkmXwj3M2cD0o2CHM/WW
+	hNRn9yS0sYXHEUZepQ9eLYnfZHGllSN/7kRptBXX5ZUkvoG9gr+UJmFFEJvSqBh/9Poopm
+	acBAjonS+9lmPIlUIT4emxxr1P9x6eWxGB3JzZAsnG0UeXXqVBdQDNdh2768dg==
+Date: Sun, 14 Jun 2026 22:56:06 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Akhil R <akhilrajeev@nvidia.com>
+Cc: Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: sound: nvidia,tegra30-ahub: Convert to DT
- schema
-Message-ID: <ai3v-ALvCm7aAHdc@sirena.co.uk>
-References: <20260613-nvidia-ahub-v1-1-5b7e85301736@gmail.com>
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Saket Dumbre <saket.dumbre@intel.com>, Len Brown <lenb@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Eric Biggers <ebiggers@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org,
+	linux-i3c@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	acpica-devel@lists.linux.dev, linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH v3 00/13] Support ACPI and SETAASA device discovery
+Message-ID: <2026061420560674ab6fb9@mail.local>
+References: <20260423085718.70762-1-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="f/CcKpSk8DSkcH0u"
-Content-Disposition: inline
-In-Reply-To: <20260613-nvidia-ahub-v1-1-5b7e85301736@gmail.com>
-X-Cookie: Price does not include taxes.
-
-
---f/CcKpSk8DSkcH0u
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20260423085718.70762-1-akhilrajeev@nvidia.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Sat, Jun 13, 2026 at 08:24:47AM +0000, Charan Pedumuru wrote:
-> Convert NVIDIA Tegra Audio Hub (AHUB) binding to DT schema.
->=20
-> The per-SoC differences in reset-names, dma-names, and reg entry
-> counts described in the text binding are now enforced via allOf
-> conditionals, making previously prose-only constraints machine
-> validatable.
+Hello,
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
+On 23/04/2026 14:26:59+0530, Akhil R wrote:
+> This patch series adds SETAASA device discovery to the I3C subsystem,
+> enabling support for SPD5118 temperature sensors found on DDR5 memory
+> modules. The changes also add ACPI support for all existing DAA
+> methods like SETDASA, SETNEWDA as well as I2C devices on I3C bus.
+> 
+> SPD5118 and similar devices on DDR5 memory modules differ from typical
+> I3C devices in their initialization. They use SETAASA broadcast CCC
+> instead of ENTDAA for address assignment, and per JEDEC specification,
+> are not required to have a Provisioned ID or implement standard device
+> information CCC commands (GETPID, GETDCR, GETBCR).
+> 
+> The series enables to describe all I3C and I2C devices on both Device
+> Tree and the ACPI table, using unified device property APIs throughout
+> the I3C core and the Synopsys DesignWare I3C master driver.
+> 
+> Please note that the series modifies drivers across multiple subsystems,
+> like Device Tree bindings, ACPI, I3C and HWMON.
+> 
+> v2->v3:
+>   * Fix maximum value and indent bit list for mipi-i3c-static-method.
+>   * Move I3C_ADDR_METHOD_* macros to dt-bindings header.
+>   * Drop ACPICA commit IDs, keep only the Link: tags.
+>   * Revert the change which proceeds to register other devices if SETAASA
+>     is not supported so that it aligns with the rest of the driver and to
+>     avoid the issues pointed by Sashiko.
+>   * Rework multiple commit messages.
+> 
+> v1->v2:
+>   * Added patch to remove 16-bit addressing support for SPD5118
+>   * Guard ACPI calls with #ifdef CONFIG_ACPI
+>   * Remove CONFIG_OF guard for of_alias_get_highest_id()
+>   * Mask mipi-i3c-static-method in the driver to select only valid values.
+>   * Proceed to register other devices if SETAASA is not supported.
+>   * Update commit message and links in the description of multiple commits.
+> 
+> 
+> Akhil R (13):
+>   dt-bindings: i3c: Add mipi-i3c-static-method to support SETAASA
+>   ACPICA: Read LVR from the I2C resource descriptor
+>   i3c: master: Use unified device property interface
+>   i3c: master: Support ACPI enumeration of child devices
+>   i3c: master: Add support for devices using SETAASA
+>   i3c: master: Add support for devices without PID
+>   i3c: master: match I3C device through DT and ACPI
+>   i3c: dw-i3c-master: Add SETAASA as supported CCC
+>   i3c: dw-i3c-master: Add a quirk to skip clock and reset
+>   i3c: dw-i3c-master: Add ACPI ID for Tegra410
+>   hwmon: spd5118: Remove 16-bit addressing
+>   hwmon: spd5118: Add I3C support
+>   arm64: defconfig: Enable I3C and SPD5118 hwmon
+> 
 
---f/CcKpSk8DSkcH0u
-Content-Type: application/pgp-signature; name="signature.asc"
+I'd really like to apply this but I would have preferred having an
+actual ack from Rob on patch 1. Also, you are going to have to rebase on
+the current i3c-next. Can you do this?
 
------BEGIN PGP SIGNATURE-----
+Thanks!
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmot7/cACgkQJNaLcl1U
-h9Dodwf7BytyQpAOfq8DOTTSK2vt0+C4xM8obr7AHOzIOSisGtiXqZIN4sgZvMJL
-LfGFO320wCoN5AAB+bPGFXPBRLbAjznp/FOnXoA1QdsyD+dFAKgoTB7vWP6U9mMJ
-Kti08n8+NGKTf7Avm3TJ+OpBmaHmFuLGTOTVIZ3arOGnENABOBhaHeiT4ka+lAMr
-P8gZI1GmdoS3aAuyO6d+E0nn6sJuBlQMMqKb1MC2a6CPYZ1eRIDDQBH/NNNn4Qyr
-Pi9tXAZgyg2GvkO7AHYj/NZSYzZlpyiMWWyH63lGZA87UnUjC/iPtyuPaZdB5SeT
-7mFMr/T7ZDopyYX9lxCa1qkkAqI9hw==
-=/Wdu
------END PGP SIGNATURE-----
+>  .../devicetree/bindings/i3c/i3c.yaml          |  31 +-
+>  arch/arm64/configs/defconfig                  |   3 +
+>  drivers/acpi/acpica/rsserial.c                |   6 +-
+>  drivers/hwmon/Kconfig                         |   9 +-
+>  drivers/hwmon/spd5118.c                       | 119 +++---
+>  drivers/i3c/master.c                          | 354 +++++++++++++++---
+>  drivers/i3c/master/dw-i3c-master.c            |  66 ++--
+>  include/acpi/acrestyp.h                       |   1 +
+>  include/dt-bindings/i3c/i3c.h                 |   3 +
+>  include/linux/i3c/ccc.h                       |   1 +
+>  include/linux/i3c/master.h                    |  20 +-
+>  11 files changed, 463 insertions(+), 150 deletions(-)
+> 
+> -- 
+> 2.50.1
+> 
+> 
+> -- 
+> linux-i3c mailing list
+> linux-i3c@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-i3c
 
---f/CcKpSk8DSkcH0u--
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
