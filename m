@@ -1,72 +1,72 @@
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012035.outbound.protection.outlook.com [40.107.209.35])
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013011.outbound.protection.outlook.com [40.107.201.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB043BFAF7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2AF93C278A;
 	Mon, 15 Jun 2026 08:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.35
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.11
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781512690; cv=fail; b=tYQFH5h/sEAr05Ber0tyKf6N07aOere8aWK6mAU93952LwAnjXO/jdrdO+sBF3eW/pfkkwQbEEurrTThL+kOWg43t83tae8nSkhGmA62c26mpETl/vbP2JNtld7sx3cDThcBrcz18/ux4llOi/vUcOcjkoz9bqbGiCcG0elJbeE=
+	t=1781512691; cv=fail; b=ukxHqbkNBWP2lCVvU39FXCEjV+wT1u4iQs3Qv+7zjbAe3xYtuF0d5XSXM/zNesYjDmxDnsOs6gLoU/MJHRu8fvb4H/BMD+WR1lGiJXP4ZX/3cP3AwjAMRonfrPLQ6b/nPdyYdT30szge1vunBeTGXgwaBO5i7XzCFSXjDXs1CCQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781512690; c=relaxed/simple;
-	bh=55HcSOB1i6hMvp9TL6vqBFwG2NuhR0MV8O1qG1hYwPY=;
+	s=arc-20240116; t=1781512691; c=relaxed/simple;
+	bh=zqrzuOrk90QABd2Hf75iZgVk8pvIM2bmLKSUpnk/EH0=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cxnVRZvMkD0qZ/qbA1dc5uy1N91rc5JhCA1lzG3LoS8QEQANaG+RgsEYGC6hJXkcZD+EPXMyibL1Q24TT0AhdojuRDvN5wdXCaw1/v48tw20SAwvOCKQAc+hJXUn+0Rl7k2T7MsaFEM+Mv5anORKkKdV3vYqk6w0qWc1PL3rGLs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QNUh0Zol; arc=fail smtp.client-ip=40.107.209.35
+	 MIME-Version:Content-Type; b=uGB8x4RW+3pZ5dl5sIeV5yOypjM7aO7NoRFfUp7FZb9MU5cDA270SIZT9mdZWXKsCNOuIkGt/Rxl1FvB3aRfaXCc1077sChx+/PbAEDmb4Tz5cwJbqUqTHIQmIc3Qj8eH/AteANNV26YucYYedZKpLz4eldFQVfeUQ3koTlO6FQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Q10GQQb5; arc=fail smtp.client-ip=40.107.201.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QNUh0Zol"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Q10GQQb5"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qiVLk3h9OLLGl+lyEa3UGY9brmDG/loFHqL2em5DOnx2WeLr3TBmPb2uA25WudgJqWgHyOCxhF7wuWv3FsIfvL01GwBMqtGvMq7EBlPlZKWpFJeXGeYFRDRAn9VFO7aDWdDRY5KS0NBuTHFEV7W9CKDMz/ln9Bz4p0HAa+ffOnN4hXrHsT28/GUh5uOzJxgK90Fx22wBXquHFlsuw6LXP/1fJ5dH3Dbr9DZLGhBFjLcfSxdcWe/PtIOQCgFrkUo9EOoHpTd9GnNMbvdZvfwT6RTRsQ/DoLTMb+Sju9Givy3MIetkojkjMuu3/H3UN+pKdBhCUOCZqS96hg9gYfILmA==
+ b=ZYxHumLv/U1N//DFP/e3jambh7ZEYcfb4vEI/dNlOd31mlO0YoTIdriKG/PLawiUOrtKxi16i8ES8kln8zYkCi4jKBCMfYJoYqkwhHEEN8s7ekY61erS+HsSciO9lN1Ceg88WWzWJ4XRnC8/UjNzryAjuUpOqQRa4Jquyk47AtxLP6LHzTcDQ9acP02WdwveCM1oAAIgNVz8tGOQO3UvZUtjv7zld8+RIxKffVEuJ5Ptf6zjnC6uAujgquyF6TRsYsTNT2Gnl46xkaFwpKKzlDaIM8ZK5u+6M6bcDVdDDkD3cdxPrDJ2hlVDujWPjQRFOCXknWvH5CLVnkxZrgHUlA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dnqOKoXcu4Ayy+gBOG82hl3O00O1BqEJLnuUWqXR/B8=;
- b=ZgMQxkLSsGOsOeEDDcekqN5sXTzyylxaEVxUwhZ6CRSMfkMTyCZaYlhxv+JZxuJmGkljtIjJ8KOMRuDsbMm9UQjD2Feo0mQBcKyLB3/wCNbXIKubfKyoT56fZCyjHfJgX4fcL9SEsIY/wJrI9fbIftq2BKe1P9cUmYaOdZW5mrfDLyos7bzOpIijt2svDk86bXSBXQ0tfsjVtj+RwUNpYScUzkrSmm1w/CAbkZTAnQW73Ieyz9rCLIWjJwvRkb1+aGVUswPZqGPwvww36uHmKEiHiIWwWSQpanu/dpXbjrubIIwTSbBARbvaLmSzfDxmUZ+GExcbYvnM3JZ/Pc2QPw==
+ bh=SdphysfdZT5SuiHpiROwq7QdaPdMr3vSW+xqoyBeTLc=;
+ b=OTgMU8fuV4LVDb7L5Moi7tBZG3cKt8IQypRFGSh5+RwHmiOrpemoLPR0hIwxA9tTTL0HX/PiUnrBdR0A9qGXBmO6S8oKGn/knNLPDmQKNy9Y2SRtuxKY/PpoGiCMOtSyI4Hu2ZZt0klr/+XvavX0Crnnd57RTh1lVJODIvW5URFV2exbIA/8eorAcW0edEJFAOY7rhTYsdA0pJW3773KhpsDx7LK4ADqSht1659JWTcJSrqItrvPruzx2s9y4YWpHjUCp2kGtOzh6E7xUJHTcTk3E87/gdzJyCJ8XJrBO8dXDIoCsuMpJeKw2cQO4q8GD3OiVi83jEYP0oKG4Sl6Ig==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dnqOKoXcu4Ayy+gBOG82hl3O00O1BqEJLnuUWqXR/B8=;
- b=QNUh0Zola1hNZjF+0NDfws0iOTYhRZm6w9RxTg757wXp66J1CZlzRNfRxi8i9uFM850PN/irNYEPO9mbLpgBQMU+19uSKiHNol5N+WjrUqY0+ZdSw3oUEDChPXt2SeBL+1TG9NxGO4LFve1S8RRowFKdDK4EACJUdcu66sHtRKLnqKH0/RLVIE/D72Td7udL5Tm1n9CVlOmdnKn79jJVYAzs50QMewNIAVzuVC8/FxacnLk9euYYdxog8a5Q/npo4urPvi7XMoy4uy0GqEn6v9wzF1wnlvTkwqPQBrwv7+RoSz3ocr+2Y02nopAFe+XDAHip3SsI36wP9/wLBUlNGg==
-Received: from BN0PR04CA0006.namprd04.prod.outlook.com (2603:10b6:408:ee::11)
- by SJ1PR12MB6026.namprd12.prod.outlook.com (2603:10b6:a03:48b::21) with
+ bh=SdphysfdZT5SuiHpiROwq7QdaPdMr3vSW+xqoyBeTLc=;
+ b=Q10GQQb5zanM2JbcH3I4FmeB6RuNaX10taky/pcojyrLQTuX+NxZCS4JAjtXBzi+7jb/N0/sEYI131rv0UFKQHlnTFgOAaFcuyjh8yy0kV/eBLTP3jQIkoUrykJhhf+RY3phpc2GHPkR/3C3ymNdgB3AYPuXcLkmR8W6KHyVk5nSSTtx2m1B/dd0Jo9NeAV1EzS6pFh3cxfNU6wNa5YAIMZ+C1kDyTjXYkOuwtGjFGu0TQaxsjSmk/f1yALVTM8BzCb+gHTsreMXLxaTrrd0dO/WrUaIUoKTo6VjJH0u31wd48phlC89mTAlmciayAS4OGaMMW1AwxcrGuwIl9A9xQ==
+Received: from SN7PR04CA0076.namprd04.prod.outlook.com (2603:10b6:806:121::21)
+ by DS0PR12MB9060.namprd12.prod.outlook.com (2603:10b6:8:c4::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.113.18; Mon, 15 Jun
- 2026 08:38:04 +0000
-Received: from BN3PEPF0000B373.namprd21.prod.outlook.com
- (2603:10b6:408:ee:cafe::6d) by BN0PR04CA0006.outlook.office365.com
- (2603:10b6:408:ee::11) with Microsoft SMTP Server (version=TLS1_3,
+ 2026 08:38:05 +0000
+Received: from SA2PEPF00001508.namprd04.prod.outlook.com
+ (2603:10b6:806:121:cafe::9f) by SN7PR04CA0076.outlook.office365.com
+ (2603:10b6:806:121::21) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.113.18 via Frontend Transport; Mon,
- 15 Jun 2026 08:38:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ 15 Jun 2026 08:38:05 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN3PEPF0000B373.mail.protection.outlook.com (10.167.243.170) with Microsoft
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SA2PEPF00001508.mail.protection.outlook.com (10.167.242.40) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.159.0 via Frontend Transport; Mon, 15 Jun 2026 08:38:03 +0000
+ 15.21.139.8 via Frontend Transport; Mon, 15 Jun 2026 08:38:04 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 15 Jun
- 2026 01:37:51 -0700
+ 2026 01:37:50 -0700
 Received: from build-anrao-noble-20260527.internal (10.126.231.37) by
  rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Mon, 15 Jun 2026 01:37:50 -0700
+ 15.2.2562.20; Mon, 15 Jun 2026 01:37:49 -0700
 From: Aniruddha Rao <anrao@nvidia.com>
 To: <thierry.reding@kernel.org>, <jonathanh@nvidia.com>
 CC: <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Aniruddha
  Rao" <anrao@nvidia.com>
-Subject: [PATCH 3/6] firmware: tegra: bpmp: Add ACPI support
-Date: Mon, 15 Jun 2026 08:37:28 +0000
-Message-ID: <20260615083731.888055-4-anrao@nvidia.com>
+Subject: [PATCH 2/6] firmware: tegra: bpmp: Move channel, resource init to helper
+Date: Mon, 15 Jun 2026 08:37:27 +0000
+Message-ID: <20260615083731.888055-3-anrao@nvidia.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260615083731.888055-1-anrao@nvidia.com>
 References: <20260615083731.888055-1-anrao@nvidia.com>
@@ -83,360 +83,191 @@ X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B373:EE_|SJ1PR12MB6026:EE_
-X-MS-Office365-Filtering-Correlation-Id: e605d6a6-41c9-4b57-8d2b-08decab96a71
+X-MS-TrafficTypeDiagnostic: SA2PEPF00001508:EE_|DS0PR12MB9060:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9b4e9f23-30ec-4add-37ea-08decab96b31
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|36860700016|376014|1800799024|82310400026|56012099006|6133799003|11063799006|3023799007|18002099003|22082099003;
+	BCL:0;ARA:13230040|82310400026|1800799024|23010399003|376014|36860700016|18002099003|22082099003|11063799006|56012099006|6133799003;
 X-Microsoft-Antispam-Message-Info:
-	LVXNJwqsKi6jpUHYchci6w+cvD6LvExChpaloNgXsZFnoKqyLsKpOo/NN4xXb1kgtqNnIj0jqkB0KaLyO+R7z9LsMvcW2PF/iNCB7lGYzJ7Wjijj3dis8ubN/tdyJeQcbFdmMBd2DOp21YUYtMtplHMFPNvg03ECK+FZw+AxaQMGQ6gUzu+Wm3xdXZqAxUkaPoF+8gz7VrLr//9qpTcS5Kl/vKR4UlTt/mAC936tscGp/2bInDuVXJ/F0sClzhcglmSHYlcEnD8sgPhxRQxS5PRwXCOi2UtWI0yGJ+Tn4OqhfUJBeanay0pxyIdkuZljhqJ4BYLhdMsAu5gbXv1BifKaxncheH71owwvU36xV5HuuL/ALleCynr4M/ceq65aRQEyMV+SHLGqB9zO73m+Ij6EoJzVphOuArO5mY3dgEAs137TKsMQg9IHBwemRmcyhmp0HG+EEZvPKNrL8GYu7IOw3HNyzkv9t+O9lbehTtzIKAuPOYL74ECmFq8Q2ljhiyDsdwSCz6/OLPc4lK8yT+feiGNh/2R6M77e0D9GsU7fEJhSpSDZXCb+NwEXTI8Umjy5w5ObpJTLFXWKGkUTs0V6ZD+S0BO4bFxsi+d127ifBfdwO224Wqk+z89K6mBHj1wMOCn7oj78GhqGzrCuEFNmqUhLxvs3JgN1t9I+L6XfSWUkwNasOUzZ5gdDsyfSotWMcQ/1DG3Wto8t59Tn12wnFMqWNDtXLbnxlj20oXg=
+	HZBih+vsRE2h8CrkN0WZN1fIXY2h8CkNId5Ik0Pj5YMI5Ob0TOIKIQFNK9igXUWvYlwfQcWlg5N8vgPGzrZvw473ekZWeWKgRM3q+eigMIrJ3sZVToygY4mlA86LrA9WqSnnKWDgEd2Gx9abkAML/BYU97gbUUAmfcIld/cBKhulPjGiMYZI2MFHCvieT8tOBoXe/kK6eE+UvdSzrhX+sAEG5A4o73jYMeLQPk1Eu74rUGtzAVZwbQbDaTL/TzygqGtus26YL9YGVcl13PjdXVjd14MKKuBJUf6mdLIkmRaLk8BWU0+DCihSdSYn8yad5HYfzSrvQgwX7bDBDVo/KMY7fRKh2AnGC5sSR08R1dLixkG6XdAqLieeZJEdMRQKOSI/rBMiosWb1dxpm0LEUR6/HyWxUt4x0En8D6iWQBWa0Xbynm+R8+KIo5g7+C/ukF3ggT1ARZ/HaDuyK+7ERc1MnuSyjPUy0tNI+BJoA+N3xUEMppVMd+u7G/apua87er28p5UO3I1RpgQzo+qPK+A1xwTAqalxEwo/9e4Ng4t/cZV7B6MQuDNZRYDEnSZOcoG4SYUsUIuAqo5s3VZfh7VZWvYkFbLPLKCCfuRlJPoaL/KjnYKJ5xzYrhF5nX40p6RVOBXsxlWaC/OsStjXmDzFrnbnDTHlaV8yLwgBcsCXoyNK4lsgmH9FcCbWxkoGs1vyj1FkP8V24bAYQDJCL0RmqtyjBE1eYwRKq6odkH0=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(23010399003)(36860700016)(376014)(1800799024)(82310400026)(56012099006)(6133799003)(11063799006)(3023799007)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(23010399003)(376014)(36860700016)(18002099003)(22082099003)(11063799006)(56012099006)(6133799003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	UWh6OxRYGtsFmusT1ho9wVHd3ww4UnDwHT/8STj//a2TQtvyCUY7CXOtZdwkduKFa3UOgYSwhEyEzaWk9uIJZ2kYFyBbTuvXMJ/m3LVbkbjUqZ0JtglR7Meam23/1PWa3T5lzAvt0y5LvzpyjPaOeSIn2yq955GUo5k7zeItSjsx4NnHrMnBH7JGjjkK8MN0A4DpUZYOSHkcTMkzhWOUXDGHtYQeVZdDet/vl4UcxnwdIQPyFwRUVxGWnbSvUrk0CQCYG8xANwfh5ESJBsC9hKQe91VA3sBemfNxPx54OBv0xAgaC2iNoj9jxLPnhLdxEpw1K9CxkCvSWF+5sWw6/8dcQb67+NLub/6iqAocvgw62B8ZwX2oLfLSX5/IOsTIzsMCm3daWurHBcHm8jYwbcEWOgG4x/XuYagAHf4J54gTsQQN71k8ZK6HjtssESYn
+	KTmUo0qwFxFWWbcgf2PFZO57z66kyCnkhi4jpbcGh5fbMnA8HasGHruVvSkQY8UBt+v82avs3ml+rkVi76tRF7RTvcs07wBZAmXgWRhNf78w6CYUf2ML1XDfKKTRYOVMLDjJrAyAKwqSeTjLS7btvoU9KBSyrEGVO37JJjPo3DVSq7ccw8zNZfViEX8e81oXfntRzdg5YLNfFkxn6t59yBRzYMtbHWBX4+dW+1wX8fKJrnrtLFQjW1MyxKDAoay/KW2ZDGskCojfFuaN1lsRSFUJHGHFN4X+x3q3YsjZTar0HZofTtgxv0G5UQ1136wpjRC2Zpz3qj2DxnwmT3GppFh3XEgVKzQ96bC8OENZlsrW9ZVNNbi8sBmBTZsS1ViCBQoRRNpsU5Ed2OlZyT233MxDR4oJgTQdy6HXWnln1YoPapagqcJknDxoeFfiVwvP
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2026 08:38:03.4829
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2026 08:38:04.7811
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e605d6a6-41c9-4b57-8d2b-08decab96a71
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9b4e9f23-30ec-4add-37ea-08decab96b31
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B373.namprd21.prod.outlook.com
+	SA2PEPF00001508.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6026
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9060
 
-Add required changes in the Tegra BPMP driver to make it compatible with
-ACPI based platforms.
+Refactor the BPMP driver by moving channel initialization and Device Tree
+resource parsing into separate helper functions.
 
-On ACPI systems, IPC is handled through the AML method instead of the
-core kernel framework using mailboxes and IVC.
-
-Keep the existing TEGRA_BPMP Kconfig dependency on TEGRA_HSP_MBOX
-and the TEGRA_IVC selection unchanged. The driver remains a single
-implementation shared by Device Tree and ACPI platforms, and the
-Device Tree mailbox/IVC transport is still built unconditionally. ACPI
-systems bypass channel and resource initialization, MRQ registration,
-and mailbox transfers at runtime while the existing Device Tree
-transport and build model remain unchanged.
-
-Bypass clock, reset and powergate init calls as these are not
-controlled by the Linux drivers on ACPI based systems.
+This prepares the driver for ACPI support, where these helpers will be
+skipped because channel initialization is handled by ACPI AML methods on
+ACPI-based systems.
 
 Signed-off-by: Aniruddha Rao <anrao@nvidia.com>
 ---
- drivers/firmware/tegra/bpmp-private.h |   9 ++
- drivers/firmware/tegra/bpmp.c         | 178 ++++++++++++++++++++++++--
- 2 files changed, 173 insertions(+), 14 deletions(-)
+ drivers/firmware/tegra/bpmp.c | 94 +++++++++++++++++++++--------------
+ 1 file changed, 57 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/firmware/tegra/bpmp-private.h b/drivers/firmware/tegra/bpmp-private.h
-index 07c3d46abb87..ebde0e36ae20 100644
---- a/drivers/firmware/tegra/bpmp-private.h
-+++ b/drivers/firmware/tegra/bpmp-private.h
-@@ -26,4 +26,13 @@ struct tegra_bpmp_ops {
- extern const struct tegra_bpmp_ops tegra186_bpmp_ops;
- extern const struct tegra_bpmp_ops tegra210_bpmp_ops;
- 
-+/* Maximum ACPI BPMP mailbox data buffer size. */
-+#define TEGRA_BPMP_ACPI_BMRQ_DATA_SZ   3960U
-+
-+struct tegra_bpmp_acpi_message {
-+	u64 status;
-+	u8 *data_ptr;
-+	u8 data[TEGRA_BPMP_ACPI_BMRQ_DATA_SZ];
-+};
-+
- #endif
 diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-index 16ca0d104c1d..e9c0d6d3e24d 100644
+index 753472b53bd8..16ca0d104c1d 100644
 --- a/drivers/firmware/tegra/bpmp.c
 +++ b/drivers/firmware/tegra/bpmp.c
-@@ -3,6 +3,7 @@
-  * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
-  */
- 
-+#include <linux/acpi.h>
- #include <linux/clk/tegra.h>
- #include <linux/genalloc.h>
- #include <linux/mailbox_client.h>
-@@ -13,6 +14,7 @@
- #include <linux/pm.h>
- #include <linux/semaphore.h>
- #include <linux/sched/clock.h>
-+#include <linux/slab.h>
- 
- #include <soc/tegra/bpmp.h>
- #include <soc/tegra/bpmp-abi.h>
-@@ -343,12 +345,113 @@ static ssize_t tegra_bpmp_channel_write(struct tegra_bpmp_channel *channel,
- 
- static int __maybe_unused tegra_bpmp_resume(struct device *dev);
- 
-+#ifdef CONFIG_ACPI
-+static int tegra_bpmp_transfer_acpi(struct tegra_bpmp *bpmp,
-+				    struct tegra_bpmp_message *msg)
-+{
-+	acpi_status status;
-+	union acpi_object params[2];
-+	struct acpi_object_list param_list;
-+	struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
-+	union acpi_object *obj;
-+	struct tegra_bpmp_acpi_message *pkg;
-+	struct acpi_buffer format = { sizeof("NB"), "NB" };
-+	struct acpi_buffer extract;
-+	size_t rbuf_len, rdata_len, rx_size;
-+
-+	if (!tegra_bpmp_message_valid(msg))
-+		return -EINVAL;
-+
-+	params[0].type = ACPI_TYPE_INTEGER;
-+	params[0].integer.value = msg->mrq;
-+
-+	params[1].type = ACPI_TYPE_BUFFER;
-+	params[1].buffer.length = msg->tx.size;
-+	params[1].buffer.pointer = (u8 *)msg->tx.data;
-+
-+	param_list.count = 2;
-+	param_list.pointer = params;
-+
-+	status = acpi_evaluate_object(ACPI_HANDLE(bpmp->dev), "BMRQ",
-+				      &param_list, &output);
-+	if (ACPI_FAILURE(status)) {
-+		acpi_evaluation_failure_warn(ACPI_HANDLE(bpmp->dev), "BMRQ",
-+					     status);
-+		kfree(output.pointer);
-+		return -ENODEV;
-+	}
-+
-+	obj = (union acpi_object *)output.pointer;
-+	/* Validate returned type */
-+	if (!obj || obj->type != ACPI_TYPE_PACKAGE) {
-+		dev_err(bpmp->dev, "Invalid BMRQ data\n");
-+		kfree(output.pointer);
-+		return -ENODATA;
-+	}
-+
-+	if (obj->package.count < 2 ||
-+	    obj->package.elements[1].type != ACPI_TYPE_BUFFER) {
-+		dev_err(bpmp->dev, "Invalid BMRQ data\n");
-+		kfree(output.pointer);
-+		return -ENODATA;
-+	}
-+
-+	rdata_len = obj->package.elements[1].buffer.length;
-+	rbuf_len = sizeof(u64) + sizeof(u8 *) + rdata_len;
-+	if (rbuf_len > sizeof(*pkg)) {
-+		dev_err(bpmp->dev, "BMRQ: reply buffer too large (%zu)\n", rbuf_len);
-+		kfree(output.pointer);
-+		return -EINVAL;
-+	}
-+
-+	pkg = kzalloc(sizeof(*pkg), GFP_KERNEL);
-+	if (!pkg) {
-+		kfree(output.pointer);
-+		return -ENOMEM;
-+	}
-+
-+	extract.length = rbuf_len;
-+	extract.pointer = pkg;
-+
-+	status = acpi_extract_package(obj, &format, &extract);
-+	if (ACPI_FAILURE(status)) {
-+		dev_err(bpmp->dev, "BMRQ: failed to parse package (%s)\n",
-+			acpi_format_exception(status));
-+		kfree(pkg);
-+		kfree(output.pointer);
-+		return -EINVAL;
-+	}
-+
-+	msg->rx.ret = (int)pkg->status;
-+	if (msg->rx.data && msg->rx.size) {
-+		rx_size = min_t(size_t, msg->rx.size, rdata_len);
-+
-+		memset(msg->rx.data, 0, msg->rx.size);
-+		memcpy(msg->rx.data, pkg->data, rx_size);
-+	}
-+
-+	/* Free memory allocated by ACPI core */
-+	kfree(pkg);
-+	kfree(output.pointer);
-+	return 0;
-+}
-+#else
-+static int tegra_bpmp_transfer_acpi(struct tegra_bpmp *bpmp,
-+				    struct tegra_bpmp_message *msg)
-+{
-+	return -EOPNOTSUPP;
-+}
-+#endif
-+
- int tegra_bpmp_transfer_atomic(struct tegra_bpmp *bpmp,
- 			       struct tegra_bpmp_message *msg)
- {
- 	struct tegra_bpmp_channel *channel;
- 	int err;
- 
-+	if (WARN_ON(ACPI_HANDLE(bpmp->dev)))
-+		return -EOPNOTSUPP;
-+
- 	if (WARN_ON(!irqs_disabled()))
- 		return -EPERM;
- 
-@@ -389,16 +492,13 @@ int tegra_bpmp_transfer_atomic(struct tegra_bpmp *bpmp,
+@@ -733,19 +733,9 @@ void tegra_bpmp_handle_rx(struct tegra_bpmp *bpmp)
+ 	spin_unlock(&bpmp->lock);
  }
- EXPORT_SYMBOL_GPL(tegra_bpmp_transfer_atomic);
  
--int tegra_bpmp_transfer(struct tegra_bpmp *bpmp,
--			struct tegra_bpmp_message *msg)
-+static int tegra_bpmp_transfer_channel(struct tegra_bpmp *bpmp,
-+				       struct tegra_bpmp_message *msg)
+-static int tegra_bpmp_probe(struct platform_device *pdev)
++static int tegra_bpmp_init_channels(struct tegra_bpmp *bpmp)
  {
- 	struct tegra_bpmp_channel *channel;
- 	unsigned long timeout;
- 	int err;
- 
--	if (WARN_ON(irqs_disabled()))
--		return -EPERM;
--
- 	if (!tegra_bpmp_message_valid(msg))
- 		return -EINVAL;
- 
-@@ -428,6 +528,18 @@ int tegra_bpmp_transfer(struct tegra_bpmp *bpmp,
- 	return tegra_bpmp_channel_read(channel, msg->rx.data, msg->rx.size,
- 				       &msg->rx.ret);
- }
-+
-+int tegra_bpmp_transfer(struct tegra_bpmp *bpmp,
-+			struct tegra_bpmp_message *msg)
-+{
-+	if (WARN_ON(irqs_disabled()))
-+		return -EPERM;
-+
-+	if (ACPI_HANDLE(bpmp->dev))
-+		return tegra_bpmp_transfer_acpi(bpmp, msg);
-+	else
-+		return tegra_bpmp_transfer_channel(bpmp, msg);
-+}
- EXPORT_SYMBOL_GPL(tegra_bpmp_transfer);
- 
- static struct tegra_bpmp_mrq *tegra_bpmp_find_mrq(struct tegra_bpmp *bpmp,
-@@ -506,6 +618,9 @@ int tegra_bpmp_request_mrq(struct tegra_bpmp *bpmp, unsigned int mrq,
- 	struct tegra_bpmp_mrq *entry;
- 	unsigned long flags;
- 
-+	if (ACPI_HANDLE(bpmp->dev))
-+		return -EOPNOTSUPP;
-+
- 	if (!handler)
- 		return -EINVAL;
- 
-@@ -531,6 +646,9 @@ void tegra_bpmp_free_mrq(struct tegra_bpmp *bpmp, unsigned int mrq, void *data)
- 	struct tegra_bpmp_mrq *entry;
- 	unsigned long flags;
- 
-+	if (ACPI_HANDLE(bpmp->dev))
-+		return;
-+
- 	spin_lock_irqsave(&bpmp->lock, flags);
- 
- 	entry = tegra_bpmp_find_mrq(bpmp, mrq);
-@@ -606,11 +724,17 @@ static int tegra_bpmp_ping(struct tegra_bpmp *bpmp)
- 	msg.rx.data = &response;
- 	msg.rx.size = sizeof(response);
- 
--	local_irq_save(flags);
--	start = ktime_get();
--	err = tegra_bpmp_transfer_atomic(bpmp, &msg);
--	end = ktime_get();
--	local_irq_restore(flags);
-+	if (ACPI_HANDLE(bpmp->dev)) {
-+		start = ktime_get();
-+		err = tegra_bpmp_transfer_acpi(bpmp, &msg);
-+		end = ktime_get();
-+	} else {
-+		local_irq_save(flags);
-+		start = ktime_get();
-+		err = tegra_bpmp_transfer_atomic(bpmp, &msg);
-+		end = ktime_get();
-+		local_irq_restore(flags);
-+	}
- 
- 	if (!err)
- 		dev_dbg(bpmp->dev,
-@@ -635,6 +759,9 @@ static int tegra_bpmp_get_firmware_tag_old(struct tegra_bpmp *bpmp, char *tag,
- 	if (size != TAG_SZ)
- 		return -EINVAL;
- 
-+	if (ACPI_HANDLE(bpmp->dev))
-+		return -EOPNOTSUPP;
-+
- 	virt = dma_alloc_coherent(bpmp->dev, TAG_SZ, &phys,
- 				  GFP_KERNEL | GFP_DMA32);
- 	if (!virt)
-@@ -737,6 +864,9 @@ static int tegra_bpmp_init_channels(struct tegra_bpmp *bpmp)
- {
+-	struct tegra_bpmp *bpmp;
+-	char tag[TAG_SZ];
  	size_t size;
+-	int err;
+-
+-	bpmp = devm_kzalloc(&pdev->dev, sizeof(*bpmp), GFP_KERNEL);
+-	if (!bpmp)
+-		return -ENOMEM;
+-
+-	bpmp->soc = of_device_get_match_data(&pdev->dev);
+-	bpmp->dev = &pdev->dev;
  
-+	if (ACPI_HANDLE(bpmp->dev))
-+		return 0;
-+
  	INIT_LIST_HEAD(&bpmp->mrqs);
  	spin_lock_init(&bpmp->lock);
+@@ -755,37 +745,85 @@ static int tegra_bpmp_probe(struct platform_device *pdev)
  
-@@ -777,6 +907,9 @@ static int tegra_bpmp_init_resources(struct tegra_bpmp *bpmp)
- {
- 	int err;
+ 	size = BITS_TO_LONGS(bpmp->threaded.count) * sizeof(long);
  
-+	if (!bpmp->dev->of_node)
-+		return 0;
+-	bpmp->threaded.allocated = devm_kzalloc(&pdev->dev, size, GFP_KERNEL);
++	bpmp->threaded.allocated = devm_kzalloc(bpmp->dev, size, GFP_KERNEL);
+ 	if (!bpmp->threaded.allocated)
+ 		return -ENOMEM;
+ 
+-	bpmp->threaded.busy = devm_kzalloc(&pdev->dev, size, GFP_KERNEL);
++	bpmp->threaded.busy = devm_kzalloc(bpmp->dev, size, GFP_KERNEL);
+ 	if (!bpmp->threaded.busy)
+ 		return -ENOMEM;
+ 
+ 	spin_lock_init(&bpmp->atomic_tx_lock);
+-	bpmp->tx_channel = devm_kzalloc(&pdev->dev, sizeof(*bpmp->tx_channel),
++	bpmp->tx_channel = devm_kzalloc(bpmp->dev, sizeof(*bpmp->tx_channel),
+ 					GFP_KERNEL);
+ 	if (!bpmp->tx_channel)
+ 		return -ENOMEM;
+ 
+-	bpmp->rx_channel = devm_kzalloc(&pdev->dev, sizeof(*bpmp->rx_channel),
++	bpmp->rx_channel = devm_kzalloc(bpmp->dev, sizeof(*bpmp->rx_channel),
+ 	                                GFP_KERNEL);
+ 	if (!bpmp->rx_channel)
+ 		return -ENOMEM;
+ 
+-	bpmp->threaded_channels = devm_kcalloc(&pdev->dev, bpmp->threaded.count,
++	bpmp->threaded_channels = devm_kcalloc(bpmp->dev, bpmp->threaded.count,
+ 					       sizeof(*bpmp->threaded_channels),
+ 					       GFP_KERNEL);
+ 	if (!bpmp->threaded_channels)
+ 		return -ENOMEM;
+ 
+-	platform_set_drvdata(pdev, bpmp);
++	return 0;
++}
 +
- 	err = of_platform_default_populate(bpmp->dev->of_node, NULL, bpmp->dev);
++static int tegra_bpmp_init_resources(struct tegra_bpmp *bpmp)
++{
++	int err;
++
++	err = of_platform_default_populate(bpmp->dev->of_node, NULL, bpmp->dev);
++	if (err < 0)
++		return err;
++
++	if (of_property_present(bpmp->dev->of_node, "#clock-cells")) {
++		err = tegra_bpmp_init_clocks(bpmp);
++		if (err < 0)
++			return err;
++	}
++
++	if (of_property_present(bpmp->dev->of_node, "#reset-cells")) {
++		err = tegra_bpmp_init_resets(bpmp);
++		if (err < 0)
++			return err;
++	}
++
++	if (of_property_present(bpmp->dev->of_node, "#power-domain-cells"))
++		err = tegra_bpmp_init_powergates(bpmp);
++
++	return err;
++}
++
++static int tegra_bpmp_probe(struct platform_device *pdev)
++{
++	struct tegra_bpmp *bpmp;
++	char tag[TAG_SZ];
++	int err;
+ 
+-	err = bpmp->soc->ops->init(bpmp);
++	bpmp = devm_kzalloc(&pdev->dev, sizeof(*bpmp), GFP_KERNEL);
++	if (!bpmp)
++		return -ENOMEM;
++
++	bpmp->soc = device_get_match_data(&pdev->dev);
++	bpmp->dev = &pdev->dev;
++
++	err = tegra_bpmp_init_channels(bpmp);
  	if (err < 0)
  		return err;
-@@ -824,10 +957,12 @@ static int tegra_bpmp_probe(struct platform_device *pdev)
- 			return err;
- 	}
  
--	err = tegra_bpmp_request_mrq(bpmp, MRQ_PING,
--				     tegra_bpmp_mrq_handle_ping, bpmp);
--	if (err < 0)
--		goto deinit;
-+	if (!ACPI_HANDLE(bpmp->dev)) {
-+		err = tegra_bpmp_request_mrq(bpmp, MRQ_PING,
-+					     tegra_bpmp_mrq_handle_ping, bpmp);
++	platform_set_drvdata(pdev, bpmp);
++
++	if (bpmp->soc->ops->init) {
++		err = bpmp->soc->ops->init(bpmp);
 +		if (err < 0)
-+			goto deinit;
++			return err;
 +	}
++
+ 	err = tegra_bpmp_request_mrq(bpmp, MRQ_PING,
+ 				     tegra_bpmp_mrq_handle_ping, bpmp);
+ 	if (err < 0)
+@@ -805,28 +843,10 @@ static int tegra_bpmp_probe(struct platform_device *pdev)
  
- 	err = tegra_bpmp_ping(bpmp);
- 	if (err < 0) {
-@@ -949,10 +1084,25 @@ static const struct of_device_id tegra_bpmp_match[] = {
- 	{ }
- };
+ 	dev_info(&pdev->dev, "firmware: %.*s\n", (int)sizeof(tag), tag);
  
-+static const struct tegra_bpmp_ops tegra_bpmp_acpi_ops = { };
-+
-+static const struct tegra_bpmp_soc tegra_bpmp_acpi_soc = {
-+	.ops = &tegra_bpmp_acpi_ops,
-+};
-+
-+static const struct acpi_device_id tegra_bpmp_acpi_match[] = {
-+	{
-+		.id = "NVDA3001",
-+		.driver_data = (kernel_ulong_t)&tegra_bpmp_acpi_soc,
-+	},
-+	{ }
-+};
-+
- static struct platform_driver tegra_bpmp_driver = {
- 	.driver = {
- 		.name = "tegra-bpmp",
- 		.of_match_table = tegra_bpmp_match,
-+		.acpi_match_table = tegra_bpmp_acpi_match,
- 		.pm = &tegra_bpmp_pm_ops,
- 		.suppress_bind_attrs = true,
- 	},
+-	err = of_platform_default_populate(pdev->dev.of_node, NULL, &pdev->dev);
++	err = tegra_bpmp_init_resources(bpmp);
+ 	if (err < 0)
+ 		goto free_mrq;
+ 
+-	if (of_property_present(pdev->dev.of_node, "#clock-cells")) {
+-		err = tegra_bpmp_init_clocks(bpmp);
+-		if (err < 0)
+-			goto free_mrq;
+-	}
+-
+-	if (of_property_present(pdev->dev.of_node, "#reset-cells")) {
+-		err = tegra_bpmp_init_resets(bpmp);
+-		if (err < 0)
+-			goto free_mrq;
+-	}
+-
+-	if (of_property_present(pdev->dev.of_node, "#power-domain-cells")) {
+-		err = tegra_bpmp_init_powergates(bpmp);
+-		if (err < 0)
+-			goto free_mrq;
+-	}
+-
+ 	err = tegra_bpmp_init_debugfs(bpmp);
+ 	if (err < 0)
+ 		dev_err(&pdev->dev, "debugfs initialization failed: %d\n", err);
 -- 
 2.43.0
 
