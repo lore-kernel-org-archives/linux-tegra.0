@@ -1,192 +1,85 @@
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABA4368287;
-	Thu, 18 Jun 2026 13:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.200.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4AE3B27C1
+	for <linux-tegra@vger.kernel.org>; Thu, 18 Jun 2026 13:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781788370; cv=none; b=pnif7n2MR+8TBYZmzi3ecUOPKk5fZ0AsNBMwi7B9RONuEsuQx1vX2zYgCr/W8mPdIgEgd/XDmWscN5l2cvH+/sI/lsCkZnoxPFiFcSUhfZJcnjFTgE323glzfuZkwBPoB6I8usCfKord4+T2mdDtZNw6QgwjdA7FRC0TDOngF20=
+	t=1781789165; cv=none; b=c9TgLI9mNMS5JmVGa/Y1KNcZoHUJe+tnCJdFMzMOIe1cCaPT4XHKWZI7TcQ0LJPZgT2P9ZP8l/QK6r8nnhvB5gnsbxrgh0cEaODVmAwch4f2eKb/p/xcWmRSAql9DhT5EIOCPXSpwG4SzVoV/lcErCCnWAcmoVLoNOpRPYuqY80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781788370; c=relaxed/simple;
-	bh=o+hWvHSHJKjbm+xQUPcCIEkB7/6jEEPh/7kR3Xc2ed4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=c78a5nhV6qJFRjkmj8xHfmHOgDziJ2Tz5Ai94gOrBqAMiqc9SiRfc+vaEwyOe3E8CUQvKvumsQWDtra5mO5KecCO3i1jB1+83P8Dn0uYUla0ZD1hoLwqscHvunxXB3drAmXNtC6VYM5/fZX6bo2pUOJ9GYf58xAoDimxSBjzsgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.200.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
-	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 5440220071A;
-	Thu, 18 Jun 2026 15:12:41 +0200 (CEST)
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1waCXx-003RXD-0m;
-	Thu, 18 Jun 2026 15:12:41 +0200
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1waCXx-00000000B3O-0Xsr;
-	Thu, 18 Jun 2026 15:12:41 +0200
-Message-ID: <b84c8940187da3a493c8334bb50a992be7553092.camel@pengutronix.de>
-Subject: Re: [PATCH v4 08/12] i3c: dw-i3c-master: Add a quirk to skip clock
- and reset
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Akhil R <akhilrajeev@nvidia.com>, Alexandre Belloni
-	 <alexandre.belloni@bootlin.com>
-Cc: Frank Li <Frank.Li@nxp.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,  Guenter Roeck <linux@roeck-us.net>,
- Jon Hunter <jonathanh@nvidia.com>, Thierry Reding	
- <thierry.reding@kernel.org>, linux-i3c@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 18 Jun 2026 15:12:40 +0200
-In-Reply-To: <20260616095429.3947205-9-akhilrajeev@nvidia.com>
-References: <20260616095429.3947205-1-akhilrajeev@nvidia.com>
-	 <20260616095429.3947205-9-akhilrajeev@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	s=arc-20240116; t=1781789165; c=relaxed/simple;
+	bh=yrqB1J+S3NrnFtw9TTeePpZ+5KkkCm5MnR2Ev4wGC+U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cNrpltvQMtEd6isGsaiTqZrD4PCd0dWw0UGp71lE7xEEAyFN5Eit/OIbVKVZPoBbL5ZUkWWAXhqFAgC1pdegA0mAbaxy8/xkK7F0C50vY4pOQjGCsa35E0WTpBD25mtd9RhQyvmWpnATs/uGFxBh3nArdEhsitZVZhgFtIR4GWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Okl9aJ+E; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Okl9aJ+E"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 679C91F00ADE
+	for <linux-tegra@vger.kernel.org>; Thu, 18 Jun 2026 13:26:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781789164;
+	bh=txcC/Wxe/08cKhga6q/UcowCnqHDHbbg3CIOF6J8q/Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=Okl9aJ+EUcAiMUDQ9kgZ5oHl6DFnpK9pktr5zQojFHAg4Sfg7lV2Z1qWv2av8pWWU
+	 yesWjlnsn+CGDdkS7ylcgPndLRodFkcsbguoMyvVA3nyDXesLXGBT9fmG1kGcm2oQK
+	 F+9JPaoihYBYoBTCSiyrfNGBgNfQOxaYUrBbsQaLe63JcbxqBbsoOLABWcfVI5nrY9
+	 55VvpJUulNHMgEy589NZA2SCc2M1pE5dLQsQPcXXlD3Ol3bk75A9yVzg4qnboJICMN
+	 gVT8b4aigeYE5tAitnejMVHN0gw4DCYz+yF1KWcbz5WMBvp/tB3Wuwezq6VVrW230e
+	 ioBjPG+HFmugA==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5aa612bf6efso1107783e87.3
+        for <linux-tegra@vger.kernel.org>; Thu, 18 Jun 2026 06:26:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ901InzzZDHpxNYfly2I1gH6Oqr98qBu7BLkrt7gXnVeSDfvcaixuirOFtHfCQmHLATedvFdINZEgiQ3w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqHQrqTiGFHQKmnlL/XldLF8C/E8w4O21LU7vOet5t8B5V8mBA
+	idvso3SCLpTI8cITcd9iULrR6rVjwAu5YZB7bacJisDfRLvBExs3I1ODzyCy/lIbd8WqzYVF8ek
+	0u86oih+jV6XwQxXEuE+3kgEqvyBy4IE=
+X-Received: by 2002:ac2:51d6:0:b0:5ad:4ced:9c9f with SMTP id
+ 2adb3069b0e04-5ad4dacbb97mr1176548e87.39.1781789163192; Thu, 18 Jun 2026
+ 06:26:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20260618030609.958831-1-runyu.xiao@seu.edu.cn>
+In-Reply-To: <20260618030609.958831-1-runyu.xiao@seu.edu.cn>
+From: Linus Walleij <linusw@kernel.org>
+Date: Thu, 18 Jun 2026 15:25:49 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkL+WV+WYCy7YsQ6n8ZQH27gLHQKf+-CYiV3GU=dbgcUQ@mail.gmail.com>
+X-Gm-Features: AVVi8CfJ7c_CzaE_mn8nOqFsmSYUOP2S0RYUVlMahL0VwQhNRazkvD-npWNlbAU
+Message-ID: <CAD++jLkL+WV+WYCy7YsQ6n8ZQH27gLHQKf+-CYiV3GU=dbgcUQ@mail.gmail.com>
+Subject: Re: Question: GPIO direction callbacks calling pinctrl in atomic paths
+To: Runyu Xiao <runyu.xiao@seu.edu.cn>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Robert Jarzmik <robert.jarzmik@free.fr>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jianhao.xu@seu.edu.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Di, 2026-06-16 at 09:54 +0000, Akhil R wrote:
-> Some ACPI-enumerated devices like Tegra410 do not have clock and reset
-> resources exposed via the clk/reset frameworks. Unlike device tree,
-> ACPI on Arm does not model such provider functions. The hardware is
-> expected to be brought out of reset and have its clocks enabled by the
-> firmware before the OS takes over. Any data to be shared with the OS is
-> passed using the _DSD property.
->=20
-> Add match data for such devices to skip acquiring clock and reset control=
-s
-> during probe and read the clock rate from the "clock-frequency" _DSD
-> property. Note that the "clock-frequency" here is the controller's core
-> clock and not the bus speed. I3C specifies the bus speed separately using
-> "i3c-scl-hz" and "i2c-scl-hz" and hence this should not cause any conflic=
-t.
->=20
-> Also, move match data parsing before clock/reset acquisition so the quirk
-> is available early enough.
->=20
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> ---
->  drivers/i3c/master/dw-i3c-master.c | 66 ++++++++++++++++++++----------
->  1 file changed, 44 insertions(+), 22 deletions(-)
->=20
-> diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i=
-3c-master.c
-> index 3e510fddf06c..a2a4b88c2017 100644
-> --- a/drivers/i3c/master/dw-i3c-master.c
-> +++ b/drivers/i3c/master/dw-i3c-master.c
-> @@ -242,6 +242,7 @@
->  /* List of quirks */
->  #define AMD_I3C_OD_PP_TIMING		BIT(1)
->  #define DW_I3C_DISABLE_RUNTIME_PM_QUIRK	BIT(2)
-> +#define DW_I3C_ACPI_SKIP_CLK_RST		BIT(3)
-> =20
->  struct dw_i3c_cmd {
->  	u32 cmd_lo;
-> @@ -556,13 +557,28 @@ static void dw_i3c_master_set_intr_regs(struct dw_i=
-3c_master *master)
->  	writel(IBI_REQ_REJECT_ALL, master->regs + IBI_MR_REQ_REJECT);
->  }
-> =20
-> +static unsigned long dw_i3c_master_get_core_rate(struct dw_i3c_master *m=
-aster)
-> +{
-> +	unsigned int core_rate_prop;
-> +
-> +	if (!(master->quirks & DW_I3C_ACPI_SKIP_CLK_RST))
-> +		return clk_get_rate(master->core_clk);
-> +
-> +	if (device_property_read_u32(master->dev, "clock-frequency", &core_rate=
-_prop)) {
-> +		dev_err(master->dev, "missing clock-frequency property\n");
-> +		return 0;
-> +	}
-> +
-> +	return core_rate_prop;
-> +}
-> +
->  static int dw_i3c_clk_cfg(struct dw_i3c_master *master)
->  {
->  	unsigned long core_rate, core_period;
->  	u32 scl_timing;
->  	u8 hcnt, lcnt;
-> =20
-> -	core_rate =3D clk_get_rate(master->core_clk);
-> +	core_rate =3D dw_i3c_master_get_core_rate(master);
->  	if (!core_rate)
->  		return -EINVAL;
-> =20
-> @@ -615,7 +631,7 @@ static int dw_i2c_clk_cfg(struct dw_i3c_master *maste=
-r)
->  	u16 hcnt, lcnt;
->  	u32 scl_timing;
-> =20
-> -	core_rate =3D clk_get_rate(master->core_clk);
-> +	core_rate =3D dw_i3c_master_get_core_rate(master);
->  	if (!core_rate)
->  		return -EINVAL;
-> =20
-> @@ -1577,18 +1593,33 @@ int dw_i3c_common_probe(struct dw_i3c_master *mas=
-ter,
->  	if (IS_ERR(master->regs))
->  		return PTR_ERR(master->regs);
-> =20
-> -	master->core_clk =3D devm_clk_get_enabled(&pdev->dev, NULL);
-> -	if (IS_ERR(master->core_clk))
-> -		return PTR_ERR(master->core_clk);
-> -
-> -	master->pclk =3D devm_clk_get_optional_enabled(&pdev->dev, "pclk");
-> -	if (IS_ERR(master->pclk))
-> -		return PTR_ERR(master->pclk);
-> +	if (has_acpi_companion(&pdev->dev)) {
-> +		quirks =3D (unsigned long)device_get_match_data(&pdev->dev);
-> +	} else if (pdev->dev.of_node) {
-> +		drvdata =3D device_get_match_data(&pdev->dev);
-> +		if (drvdata)
-> +			quirks =3D drvdata->flags;
-> +	}
-> +	master->quirks =3D quirks;
-> =20
-> -	master->core_rst =3D devm_reset_control_get_optional_exclusive_deassert=
-ed(&pdev->dev,
-> -										"core_rst");
-> -	if (IS_ERR(master->core_rst))
-> -		return PTR_ERR(master->core_rst);
-> +	if (master->quirks & DW_I3C_ACPI_SKIP_CLK_RST) {
-> +		master->core_clk =3D NULL;
-> +		master->pclk =3D NULL;
-> +		master->core_rst =3D NULL;
-> +	} else {
-> +		master->core_clk =3D devm_clk_get_enabled(&pdev->dev, NULL);
-> +		if (IS_ERR(master->core_clk))
-> +			return PTR_ERR(master->core_clk);
-> +
-> +		master->pclk =3D devm_clk_get_optional_enabled(&pdev->dev, "pclk");
-> +		if (IS_ERR(master->pclk))
-> +			return PTR_ERR(master->pclk);
-> +
-> +		master->core_rst =3D devm_reset_control_get_optional_exclusive_deasser=
-ted(&pdev->dev,
-> +											"core_rst");
-> +		if (IS_ERR(master->core_rst))
-> +			return PTR_ERR(master->core_rst);
+Hi Runyu,
 
-Why does this need to move around at all?
+thanks for your report!
 
-The reset control is already optional, so I would expect this to set
-core_rst to NULL on missing reset, no quirk necessary.
+On Thu, Jun 18, 2026 at 5:11=E2=80=AFAM Runyu Xiao <runyu.xiao@seu.edu.cn> =
+wrote:
 
-Same question for pclk. Wouldn't it be enough to make core_clk optional
-as well?
+> The class of path we looked at is:
+>
+>   gpiod_direction_output_raw_commit()
+>     -> <driver>_gpio_direction_output()
+>        -> pinctrl_gpio_direction_output()
+>        -> pinctrl_get_device_gpio_range()
+>        -> mutex_lock(&pctldev->mutex)
 
-regards
-Philipp
+Again that is mutex_lock(&pinctrldev_list_mutex); is it not?
+
+If we go with my suggestion in the previous report to just
+replace this mutex with a spinlock, I think this issue will
+also be solved.
+
+Am I right?
+
+Yours,
+Linus Walleij
