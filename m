@@ -1,101 +1,144 @@
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CE537F8B6
-	for <linux-tegra@vger.kernel.org>; Thu, 18 Jun 2026 05:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6FF19D065;
+	Thu, 18 Jun 2026 06:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781760523; cv=none; b=JC0lofY9dv3wxGNR0U3xUACaLbxxWqZ5HPZGLl6748zOwMOSXs5MyT5HnzNBA2frK4ZVgYC2I1IL28EJBBJTJeeSL6syj8UZnoIH5HA9hKFgQAZMRlWo9Wa4SLRxya5JliUSK9mqeVxusCFaPhOMOd0PC5m2jws0024KXibIz3c=
+	t=1781765564; cv=none; b=bPBIb7e+/3AwP0J1O7sfex78aSvphhu5E8cQ5pwwla0OLOwoNqxs7lIFB5uFKu4ZamA1dT14jlgg9Aw1FmYwTf+XccUFUPVqkWP6LBgFpeE1eaCcji2ciO82PN/ZrGbx9VBin6IH/xJql5Q/6PhLmcdRL3c+dvM5pnZtfaPwp1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781760523; c=relaxed/simple;
-	bh=TgqiDw5b5VQPj2Gfb7xm2gYBgCDZhtqTtCOxTAHstTE=;
+	s=arc-20240116; t=1781765564; c=relaxed/simple;
+	bh=dulbe39ZlX0nZuPRQuNqykVgjNgct4pUYR6VqyXcnN4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gl7DQQRg+N2VYvk+p70u++L7Kfp39F7DXuZuep0B8gmYW1SENKCrL9JXke/h6LGkJkcT+B+Bw8309UznSIS9jfCsMdRHYToFo/Lpr0agHwZP9aIleRL2AoMSmlrlfldfLFlWPS0KNoT+uMQhXkfJCGdbum0CX5M29EpwAYRmnBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JRUzUAiH; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=pkeYwzXKqRnCr1KPNpluqjWXmLdKzQpCvGIxJpPuajcSGXNOD8AeuVIToqqQKtHve2Iz79LjeCrCaZztOtIOw7xapyp4Br+snm0l5Ikvx0SxFcB5lVPHUgupcp2inon0kYMgGpZ0VRQLC+muKUzfawf8rNZsZpzi5/W9N2SrP4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IjBYHkhX; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JRUzUAiH"
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-8424b00710aso324418b3a.0
-        for <linux-tegra@vger.kernel.org>; Wed, 17 Jun 2026 22:28:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1781760521; x=1782365321; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CQ7ZXggT1jvOznKKnf3hT4I4MdXGJIQvuFkuvRa45Xo=;
-        b=JRUzUAiHNxDBBvyOrXh5a4Xa3O1S32Ie+Tcbymejrg0AHdoyZkTSfaOfQfl0WCmzLz
-         T2z90cjHhE8/HxhS3GhqoBDUz2vPXRyNZMStXWfo0yXRNHc0F6DLVL52PlDpi6X+9DVs
-         /vCUkYHHq7/TqMwxV6kQAPhTLZ5h5j6e/8+eweKYdS2PyKM0KLq0JaTkjL/hzSEmlcDq
-         0kJRw8511dZheFUGsbSzrPr8/D1q6qR/KJu9nPPf77RzLHbeLJUDLBv+jo/R1qp6tnCb
-         YTI+zMHEdgqMIa31nWEjHL7T8Eiqbk3UltBGlkBDKKdUEy4gaR5AwrUqUHFjRzQrzPtX
-         Xhvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781760521; x=1782365321;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CQ7ZXggT1jvOznKKnf3hT4I4MdXGJIQvuFkuvRa45Xo=;
-        b=FYYgCeQAC9yvYqYSDFVrY1i66CWzjvk4FJoo9Jsox1wz48R+AKGnpUdlFnjknO6Ayx
-         3fukd10ZJTVWNkM8vqehiSZWKU8wXnULSLlSDwkD7T5Qi6pE1UITHC7eynxAdGQ+6EtD
-         kFScvamt7OctdN3D0LT1O4yOf6XNwAHIIBlRCOp4SQXECEmyFmjHADQCruMv73VOKcHE
-         Bq3hp+LqTQ2TN96FE/JuTWa7n5CGPXxyfacaSst7fzm+6gg8MviCehVaiWClQ5F5YoGd
-         rW6nB0q7cZjJC35X9eLVXK3AgahnfNnbhMwEQndHU2jJO6j3c+FBr05oh7UEqA442HLB
-         QmIw==
-X-Forwarded-Encrypted: i=1; AFNElJ/guhZbyW7vLdgKn2lZY3P7dy4JUw9U3FESALliuTuBOqXZKO75ZMITeo4FT5hx5UHNJrYSAmF7u3wAzg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt04PZeRoM80cuM69BIAiMkX0phgvRjGWchxD0nW63i39djLim
-	TrEYUig1lxwCmHh+GXLGfgNsI/9TJTdBdTa0DhRCPwQehrJIdV31HGsOv44VUFzUIdA=
-X-Gm-Gg: Acq92OEih9fzaN7/IANBvVwaxce+utCMwkeDTE4HyiGiqP27uypRKcQxfb0AVWzbgP6
-	y5lJihw1UIvIepDZSIjrr7HGPVrWSA5IJ6qunGlNERCywI/9F94QrIR4BWDBFoTwmB/GpBpcM3Y
-	1DbO0eFfT8gGC5joKr02lL1gF93x+ddPl1OxT1wFbOPwb04lqvDltnFWMKg+rfDL7Tgkf6xp8cd
-	q9wwECT/L2O/EztNdzO8bI9F5n0RnozmNBENLqzNdtbTMcsFN1LpxCmGcq7JVeyh8oq2mDr609U
-	nOOAr1l14qOUMV4TeQi7C4UZMZw4CSY4Q4ed+6/xTsfwvNHFe19z/HmG2D377L4o4U8jTmuXuPC
-	x5xWZZ7vTalqFIQ8lvTUXWiAdkY2GJvASNj22GgcGtRka7m1tZaMIJ6Wg61k3xK+Yd0XQFK8gpG
-	MPrmX+zpVdqryM
-X-Received: by 2002:a05:6a00:298d:b0:82f:9407:d167 with SMTP id d2e1a72fcca58-8452457b4acmr7514220b3a.38.1781760521287;
-        Wed, 17 Jun 2026 22:28:41 -0700 (PDT)
-Received: from localhost ([122.172.82.94])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8434b049120sm17827806b3a.55.2026.06.17.22.28.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jun 2026 22:28:40 -0700 (PDT)
-Date: Thu, 18 Jun 2026 10:58:37 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: rafael@kernel.org, pierre.gondois@arm.com, ionela.voinescu@arm.com, 
-	zhenglifeng1@huawei.com, zhanjie9@hisilicon.com, corbet@lwn.net, 
-	skhan@linuxfoundation.org, rdunlap@infradead.org, mario.limonciello@amd.com, 
-	linux-pm@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com, 
-	ksitaraman@nvidia.com, sanjayc@nvidia.com, mochs@nvidia.com, bbasu@nvidia.com
-Subject: Re: [PATCH v4 0/2] cpufreq: CPPC: add autonomous mode boot parameter
- support
-Message-ID: <oxw5k2wad4vorehgmrduoxblequy3ynqufwy4sruclnh5d5wrb@awzmfafoucnn>
-References: <20260527202550.206828-1-sumitg@nvidia.com>
- <eacc76aa-318c-4b41-b507-e91e322561de@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IjBYHkhX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E51341F000E9;
+	Thu, 18 Jun 2026 06:52:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781765563;
+	bh=wPQAZTGMjJDD8OGjHuPC2oUHLj4eq/xesViaAz2X9SQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=IjBYHkhXvRrDUfEFVhzvAXRNYtmDiTaih5W2+l3QC9WixFqKW3S++s762AxxpZqQF
+	 u6z6WHWgNMCRrfNfCTHifbReE94FuilxxhPkL5j6r87T08Vfgq66ebcb4rLA/HBBWK
+	 Z95w08fxc1HFGgQFI7r4wymQS2D7dTkq1t0NImOzhShP5rsMlGROOXiPpPNWEQkKWp
+	 ojLjuawIja6ixVhvZ7B3e4MQNI+yzxI3j9SoFc6uKyqG2APBUjVi/q1ijHEEimIcNw
+	 pxIzy1gNhsiYOheF+/JlcCliMlW1YZYKOanNNeiwjqKI4AwLBS7TbJNtYiDaJq/741
+	 H+8pMDvMdtvZw==
+Date: Thu, 18 Jun 2026 08:52:40 +0200
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Runyu Xiao <runyu.xiao@seu.edu.cn>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jianhao.xu@seu.edu.cn
+Subject: Re: Question: GPIO direction callbacks calling pinctrl in atomic
+ paths
+Message-ID: <ajOUGyBCBwmAHpbE@orome>
+References: <20260618030609.958831-1-runyu.xiao@seu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="76gqvsuxv5xqgfxy"
 Content-Disposition: inline
-In-Reply-To: <eacc76aa-318c-4b41-b507-e91e322561de@nvidia.com>
+In-Reply-To: <20260618030609.958831-1-runyu.xiao@seu.edu.cn>
 
-On 16-06-26, 18:22, Sumit Gupta wrote:
-> The dependency it was waiting on, the "cpufreq: Set policy->min and
-> max as real QoS constraints" series, is now in linux-pm (linux-next).
-> I rebased on top and verified autonomous mode works as expected, and
-> it applies cleanly on the current linux-next.
-> 
-> The [1] reference in patch 2/2 points to v2 of that series; the merged
-> version is v3 [2].
-> 
-> If there are no further comments, please consider acking and queuing
-> this for the next cycle.
 
-I was waiting for CPPC reviewers to provide some feedback.i
+--76gqvsuxv5xqgfxy
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: Question: GPIO direction callbacks calling pinctrl in atomic
+ paths
+MIME-Version: 1.0
 
-Jie / Lifeng / Pierre ?
+On Thu, Jun 18, 2026 at 11:06:09AM +0800, Runyu Xiao wrote:
+> Hi,
+>=20
+> While auditing GPIO direction callbacks, our static analysis tool flagged
+> several drivers whose direction_input/direction_output paths call into
+> the pinctrl core even though the GPIO chip is registered as non-sleeping.
+> We then manually reviewed the findings against the current tree.
+>=20
+> The class of path we looked at is:
+>=20
+>   gpiod_direction_output_raw_commit()
+>     -> <driver>_gpio_direction_output()
+>        -> pinctrl_gpio_direction_output()
+>        -> pinctrl_get_device_gpio_range()
+>        -> mutex_lock(&pctldev->mutex)
+>=20
+> That can be reached from shared GPIO users while a per-line spinlock is
+> still held.  A minimal Lockdep reproducer preserving this direction path
+> reports:
+>=20
+>   BUG: sleeping function called from invalid context
+>   #0: ... (&global_shared_desc.spinlock) ...
+>   pinctrl_get_device_gpio_range
+>   <driver>_gpio_direction_output
+>   [ BUG: Invalid wait context ]
+>=20
+> My first draft for this class was to mark the affected gpio_chip as
+> can_sleep, but that looks like the wrong contract.  gpio_chip::can_sleep
+> describes whether get()/set() may sleep, while the problematic operation
+> here is not MMIO value access but an extra pinctrl direction round-trip.
+> Rockchip history seems to support that concern: after the controller was
+> marked sleeping, a follow-up change stopped calling pinctrl for
+> set_direction because whole-chip can_sleep caused atomic get/set
+> warnings.
+>=20
+> For PXA and Tegra, I am considering a small series that removes the
+> pinctrl_gpio_direction_input/output() calls from the GPIO direction
+> callbacks and leaves direction programming on the drivers' existing MMIO
+> paths.
+>=20
+> For PXA, the driver already updates GPDR directly in
+> pxa_gpio_direction_input/output().  The proposed change would drop the
+> additional pinctrl direction call on variants where pxa_gpio_has_pinctrl()
+> currently returns true.
+>=20
+> For Tegra, the GPIO driver already programs the GPIO controller direction
+> registers directly.  The Tegra pinmux ops appear to provide GPIO
+> request/free handling, but no gpio_set_direction hook, so the
+> pinctrl_gpio_direction_input/output() call seems to enter the pinctrl core
+> without adding a Tegra-specific direction operation.  The proposed change
+> would keep pinctrl involvement in request/free but not in GPIO direction.
 
--- 
-viresh
+I looked into this, and yes, we don't provide gpio_set_direction
+callbacks for the Tegra pinctrl driver, so what you're proposing looks
+fine.
+
+However, I'm on the fence about this because I think conceptually it is
+correct to call into the pinctrl subsystem to set the direction. The
+GPIO driver should be oblivious to the fact that it isn't strictly
+necessary.
+
+Thierry
+
+--76gqvsuxv5xqgfxy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmozlbgACgkQ3SOs138+
+s6EpxxAAgB/s8O5wDTVax61SHGH9+PmtoN9p2Tly3hpJHS7MDjVTE5XCq+LLNbXj
+lTBt/TDj8AVed9u8FMlnMx7YGXk4k1FE+JU4tms5w/JvjnvBXsgwX+PGcZSpuaAl
+p3UzA8B/pltQPyaW4CncZ2BPogj87WPS2i0itgDkGBQMz/y/y8dg1yZh/j/htl9h
+ERfwGteCOIko8QUxfFWS3Xn/NakCH9cQxJHQOdudOY6wn8YW3l+jbVssIFc52H6B
+GX7ED64Ot8VzztfoIsrvzFWCdtbOcW4vdD1xGihQkYOo/YDpTqY5N1L/qSwDQrc6
+XcO/bbMfUVRD7SNNhAmwRpkASywNZKuWzTgdF5iJI6yGoEsovhaGia9e3oqms9rO
+GUQx7tnDnnAM3ap6w51M+WaQO6M5brT7TIewNE1RBzJpmiffgdTPThg2t8ys92SG
+xjKmUI7aptcbn6sybcITHUvQ/DTfd3izkw+xmvmOXCwXfnj1ggJhJ3Y5LlaZ22Yi
+g0VOxQAvXY2DBLUMWl+AqXXSmyDL/P6DpHiCkcq5jkvN1YfiTav+Ho53pMG4kFbY
+DRZG/wLy7ech+UTK8CrA1TaOK1Nn3bAlNauSH54iXGJ28GKI4WMvqLG90za26HI5
+3VGlWFVlj/rpZ6ZIYw3CNft3rIyRcWVgtZNr3JdNE3BTnJQJeiI=
+=+cNP
+-----END PGP SIGNATURE-----
+
+--76gqvsuxv5xqgfxy--
