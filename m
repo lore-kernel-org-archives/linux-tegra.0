@@ -1,105 +1,138 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013007.outbound.protection.outlook.com [40.93.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96253603FB;
-	Mon, 22 Jun 2026 06:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782111205; cv=none; b=WSoEu+k4/k7OZAzEocbdZvf5nFiP6DtrfEnnn2od/OJuwi/vyfngCASPDWHzvX/ULcKSMgpbpDleZletsL8sZQtUkBYVPUr/VQ+0drSzDoQ4FKAfHEmSTRa0Qds/pNp6hauY/GH5lIMl6VPgXEp+klSY69uL6inBNQ+iDuUN/9c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782111205; c=relaxed/simple;
-	bh=xJE59v9U/RGuFKGh04E+DKagISo5eJpEWuOn2F38TMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TyECAsdeKmQwdQmWA8XhjYTYnf0JPtNS3tvd9j39A+1P6OnJdn4+/GmfYiTuULUZKUlHMceHqsyTVjd2iZWSyIJo9Ic72nPZYA/eJXEh3AcYUirGrOBU0utGWDA9Q/IEtXdJ5X/QXVq6dv4fb9iW6ndno8cOEPHpgDpFRZuVZhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PpQ+uHHS; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7DA35F5ED;
+	Mon, 22 Jun 2026 06:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782111265; cv=fail; b=At1iYoovkEdnDRmpY0LUL5vlgAIIe0mo/KJOc23o7LgcRmFtSunM5jRuIDfCzlhGbXXCnKCXPPEb+6RsSlZxJ77npkCfX03aiyCtsI1Kg6EyJ1OZ0uwmlLxR8QmMGQvAQVEAE2il/2IqeP5iUZzMBqfSU9VEVO5fbZ9s+crbO8A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782111265; c=relaxed/simple;
+	bh=gwQKpUBQCgE4NVI3ks15xFKf2U98zzOKj0PWjkOpvj0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YXs9ICNUy9qEDOyTWEtFREtpYo9xGaoTI8cYbAMtiVubgbS/QFv9FFQ5NmKDaQXHpBA1xrDjviprQ9017a666dNaEWcepJaWjY8XJ20xnsN5ahe7OQj0Xo00JjTuI2epAkRg6uJ0+GVX7bs+jl9OKDRZejwTisApqnKgmfCFf3s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ORsDhWhF; arc=fail smtp.client-ip=40.93.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PpQ+uHHS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38E3F1F00A3A;
-	Mon, 22 Jun 2026 06:53:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782111204;
-	bh=A2rMRvVyssE3p6tT7auvTCOrg4YHeKw7lUtG12RdRuE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=PpQ+uHHSqbDE7paCYFoRa8h/TRgKbyhkDdYv1s5MkFKW+jMI58l5NCnusdjhsOHhA
-	 hY1rj2mxfsSHtMV3ERO/X7Jisa5wRiyjPDqrd5jDmh+mF5J5aD4SpsAHAIy+t4qhnU
-	 jUGp5vgWLIdl5/qHnizEKGmV0LBTrTwYRlfir9jm0oj+1DoxE9i8hBnkFiYRtE+jE7
-	 Swdc9BthzGU+E4E844OWAFO8XM/79+z6y8f8BK5JBGea/SpvBHgNKZcfq5fZsCCAML
-	 Xz2KuXyWPiAuFoVR/unC9ln6Ar/FSIgwNsRTspOnA7dvG5UpTfDAwKqVm22erbkdwV
-	 486LWQuBj4dIA==
-Date: Mon, 22 Jun 2026 08:53:22 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] soc/tegra: pmc: fix #ifdef block in header
-Message-ID: <ajjbi8xTqeUFHQRt@orome>
-References: <20260618143654.2102062-1-arnd@kernel.org>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ORsDhWhF"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nc9//igiYYVEMvI4dKyMAuCXaBSyKzhKox+3Hw+lqYVM8OECAsbVaOdJnc2sxpYocv4+8kguYp8pYB7chf8hnkWgVlfJdPx2QoKyOUxl8SbjxBZSryh09yb8sZbbr0ewCeZMgpdI+8lJCK1XJ0sQCmRF26FrO+1i16XjD9paIlA6qz36lQd1h1N9v6mT1LYHt5f5kr6L9v+KddqI2aMa8Etr/IXkwhoSvFcw+shmkesjz/bIxWdUeDLDO59zZHzXMPpA/2Gjt3uF3++7GRL7ZDPJvQkzvDRoye2qW69c37r8lwciXUIIq5/AeJfP3D1iuur+j/VjsA1Kipuc9e8+Mg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ezEvqroFnLyI4FoJVDMQyFl6mKA82BZs5JLN1n2nMtQ=;
+ b=WAuRMgEwV469hUe9Qbti7VrMVR0eEpek0fShT5sSeXzikp1/TcZZyu+D7tPtQjHI1M7zw3FgDr1dwCZoShD/z6jyVSX6E6bW12cW3B6ZWwi4DcqFHE7rZCiljoRtFcA/BFa95UOPqP7WFoCpocsLVCkZSsgd+fOj38enEH5BOHi8N3sKMuxwxohfOjFLzqDt2IXBYAlDSenXy+MnD1KOoyo1p5xWpGIRLTXuhLD1GPeggauhsGwYZZARvEIj1iSOCP7e1j+2RrjmBIlWADA7pRSyhDhJvV1kBynyP6FI5GSfQ2BLhEHmDnOjcwlKhjn7mRwmSCB9aGQlQifP8lY+bQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=8bytes.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ezEvqroFnLyI4FoJVDMQyFl6mKA82BZs5JLN1n2nMtQ=;
+ b=ORsDhWhFkT4mrKhmtvryd4V5rNoq/I8esY1mv8tZcymmiI4xiKt+nyDaz55nCapf/AUKc0P8r1Pho5IdGiNv5jA81WtuMStWnnGZsx8aZ6VLtO6ns4my6419jVjlIsz6Odd27KFvHPJXvun2RrBLABK2i7Ag91CPhavckd+u8To3EbsRqhDn6NXqAG60vpu2f3fRTirpxwZHA8Myx4o6yjqe0PQVFZUg4FgO1ayeTu6KSupOXKJVxIGpXbo2KeN52xltiNHnxv+eglowaN0/0IpFjStBNLybZ4LJI5Yz64V5t28ovJ0c9P0w8K4kpmOWSBSgBF/kJuT+1UxI5Mi7cw==
+Received: from BY3PR10CA0010.namprd10.prod.outlook.com (2603:10b6:a03:255::15)
+ by SAVPR12MB999121.namprd12.prod.outlook.com (2603:10b6:806:4e7::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.19; Mon, 22 Jun
+ 2026 06:54:21 +0000
+Received: from BY1PEPF0001AE1D.namprd04.prod.outlook.com
+ (2603:10b6:a03:255:cafe::88) by BY3PR10CA0010.outlook.office365.com
+ (2603:10b6:a03:255::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.139.19 via Frontend Transport; Mon,
+ 22 Jun 2026 06:54:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BY1PEPF0001AE1D.mail.protection.outlook.com (10.167.242.106) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.159.10 via Frontend Transport; Mon, 22 Jun 2026 06:54:20 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 21 Jun
+ 2026 23:54:13 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Sun, 21 Jun 2026 23:54:12 -0700
+Received: from build-amhetre-focal-20250829.internal (10.127.8.12) by
+ mail.nvidia.com (10.126.190.182) with Microsoft SMTP Server id 15.2.2562.20
+ via Frontend Transport; Sun, 21 Jun 2026 23:54:12 -0700
+From: Ashish Mhetre <amhetre@nvidia.com>
+To: <joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
+	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<jonathanh@nvidia.com>, <thierry.reding@kernel.org>, <nicolinc@nvidia.com>
+CC: <iommu@lists.linux.dev>, <devicetree@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Ashish Mhetre
+	<amhetre@nvidia.com>
+Subject: [PATCH 1/2] dt-bindings: iommu: Fix interrupt type in example
+Date: Mon, 22 Jun 2026 06:54:09 +0000
+Message-ID: <20260622065410.2780215-1-amhetre@nvidia.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xfkmufg626wjqu2u"
-Content-Disposition: inline
-In-Reply-To: <20260618143654.2102062-1-arnd@kernel.org>
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE1D:EE_|SAVPR12MB999121:EE_
+X-MS-Office365-Filtering-Correlation-Id: 447befb5-9e9f-4c1b-2409-08ded02b162e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|82310400026|1800799024|23010399003|376014|7416014|6133799003|18002099003|56012099006|11063799006;
+X-Microsoft-Antispam-Message-Info:
+	ETAFzxkCmQfLwNnULajQ/SNdPWK7205e0D9JYvvu0PjqRnTO0UIuSbOWEQrzu+ciXii+09JcKZjv0Dj0NDMJUOCrapzswipJexnvElEXY/CmDb8IX+PM+6ehqepitVur/fJMqlI8n+9uIo1E6QyNufg0i1m4OvG0WcGdRv6a8285XyTf65hhGZt19jgCFShBsMl7jr4nnLqqaeSdSsv1cqXs3gPqJSryAAGi5dK1e3Z7aB+0f9tW2D7aqM9emCt3IebXs6auliMPVskH2xM2tvjG1/3NkE0Cs4dTpkgFxhLZjvCfYB/jCDSkqXQw5sfd8n7Istp9wPxykSoxUjTDTV74rOutbA8oC2nCxBUwzkY4nxqz7EdItswLwgsrLk35CzoUu3ery099ge2jC/Rg1/VoTHffwb0UQF2/j/CktPZG5rPSzq/N3M5kafQnC4YeIddcSrFzwFskjLbRFUQyNDdX09SVTtJmrpSI42mI5PRh/WMvLfWtvQIuPc4gSxmDO4tBGVSzmxnPH9GfqXFyWAiArvqup9wv6vuB826V7Lu9CV/Fn1X+RP0sW7j1f8/qagaj2qEkwMtamodmbYIFODpbgegR8FkpvK6aXiKDSBzwLm83qQki/z5ZkCumWN4mvSJ4CXXQGhTYJrqdpCc3smvtUJ3tbex0rOAt3EBkCpFsb1aGcP7kYNgEBcp1NfnINeoyjdlSH8V2C8zlDLhWew==
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(82310400026)(1800799024)(23010399003)(376014)(7416014)(6133799003)(18002099003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	YmR13IK9rb5bsal/MQ/z7PtSghRrAJ8j8Gp3SEKCqFSvd67P5k8e4a5DOMjnuMwcRTuUOLOOVhi7zdz9E6CaBWqzGEGei1hpqkb+8c9U81BUrdCwjhHEOGkPg8gqhbbEg2p+8uN2NS4IkISmEClAdeTm3Ah1pI6++Oxvyzb2Sw5DDD/DFHupNeJ1opVc6wV4pDnN6M29DvgkuFnUFfu2y9UMNj9k8oGzYozgVq9rX+T+JQV1mcQEu2i6g+DvFvk6KBNLTRmnB7tOLV7Eg0vBHumYSdN/Gkem8mXN+WAe2CSldMnB8fPf1/OSUk27LjzYklCi3tg4zu9Tiqb9nu1ctDGDgWaUSml2+yGebg6nFHN38x6RNfJneaWqqxJW3/oAqiE22I59JIisHDYh80g82jBrwhrURuY63gg1j8WSitZymBIaV685LZyHh1m14lCA
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jun 2026 06:54:20.7130
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 447befb5-9e9f-4c1b-2409-08ded02b162e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BY1PEPF0001AE1D.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SAVPR12MB999121
 
+The CMDQV interrupt on Tegra264 is edge-triggered per the hardware
+interrupt documentation, but the binding example describes it as
+level-triggered. Correct the example to use IRQ_TYPE_EDGE_RISING so
+that it does not propagate the wrong trigger type.
 
---xfkmufg626wjqu2u
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] soc/tegra: pmc: fix #ifdef block in header
-MIME-Version: 1.0
+Fixes: 8a59954192eb ("dt-bindings: iommu: Add NVIDIA Tegra CMDQV support")
+Reported-by: Nicolin Chen <nicolinc@nvidia.com>
+Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+---
+ .../devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml        | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, Jun 18, 2026 at 04:36:50PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> When build testing on ARM without the PMC driver, the other drivers
-> fail to link:
->=20
-> ld.lld: error: undefined symbol: tegra_pmc_core_domain_state_synced
-> >>> referenced by regulators-tegra30.c
-> >>>               drivers/soc/tegra/regulators-tegra30.o:(tegra30_regulat=
-or_balance_voltage) in archive vmlinux.a
-> >>> referenced by regulators-tegra20.c
-> >>>               drivers/soc/tegra/regulators-tegra20.o:(tegra20_core_rt=
-c_update) in archive vmlinux.a
->=20
-> Adapt the checks in the header to cover both cases on other architectures
-> and without PMC.
->=20
-> Fixes: 8318af5dd29c ("soc/tegra: pmc: Move legacy code behind CONFIG_ARM =
-guard")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  include/soc/tegra/pmc.h | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+diff --git a/Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml b/Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml
+index 3f5006a59805..76ef34fe5c72 100644
+--- a/Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml
++++ b/Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml
+@@ -38,5 +38,5 @@ examples:
+     cmdqv@5200000 {
+             compatible = "nvidia,tegra264-cmdqv";
+             reg = <0x5200000 0x830000>;
+-            interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
++            interrupts = <GIC_SPI 19 IRQ_TYPE_EDGE_RISING>;
+     };
+-- 
+2.50.1
 
-Heh... guess that was just one combination too much for me. Thanks for
-catching this.
-
-Thierry
-
---xfkmufg626wjqu2u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmo42+IACgkQ3SOs138+
-s6EeUxAApmtf8l1/tWZrDXnqsQAzhcsEJpUhNQZI0mE8m1Nn+nCBBUAVFKDcIZkn
-9vzHRRDfr0DMOb53UgjU1BE6f5FqOf6FVfBOTuQ05ScJ/c58vrcv1U7REwEW80hh
-08boUn0KnP0TgrDgS/aTyABn07oBAki2QGTRZmchJawfKhBIjpsXObV/NJVXMGxh
-jp/NdcAOab4f4bjiQU7QchEKhnhW5CDJwz//HIkEWOL2HSk6nDTfhn8g/8B0Wohs
-+2YhL91eYh4p+Dfwt44Eq9exoFPoGBCWFzxVWo/SlQ/p5ffO/fatGv1VjPvBGoDN
-K/MX0+EoH+Zc3FQak1Ju1Gk6AqJEL3+xxPFVMvzLsEAOR1WamKvYA2sK02BvyJvI
-OL0J9v1Y86mKmLuD17PngFPSpI1jw0OOXqPY+sDeifP8XaXdmK52UG9Co8NuECl8
-koWOgardhCcvWc5yIgvZJzQMJwLtWr4UJTlIaXIjqfVoHTa3noej75lqbAllbyFQ
-JggwcFwduOmawkFGgogvB8YWrQPaXEmZMNY6bR7FsJeW8x16GYetFlyFU1X7Ziit
-yIKXiA+895bC6pNeWEdVBwgy3j7Wh6BzfQwYDc9bbfo4vgDAKUjuyofsHwFqnwph
-zeygOkIC0D97sG9i03yeDLOXBXH4uL31LohPUS+XTXA3aaUQTp0=
-=GDrZ
------END PGP SIGNATURE-----
-
---xfkmufg626wjqu2u--
