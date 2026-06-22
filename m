@@ -1,54 +1,53 @@
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012008.outbound.protection.outlook.com [40.107.209.8])
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012043.outbound.protection.outlook.com [52.101.43.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFC3360EFC;
-	Mon, 22 Jun 2026 06:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C263361675;
+	Mon, 22 Jun 2026 06:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.43
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782111498; cv=fail; b=H5rG7RJzOlt8M7MsG6GfeR6AiCdTbuUB9Ay8XCRW2h/31SqbaDgZxFVx9kHgVios3r6Fa4dDjkDdJ07EMHkzmrxlsZYt8TUvRf2LxgH8GvNDAvHp0XTa1nOXXiTAsBxVLqP1+rZm3JoaKcxdle1d2aNhHpfx2In0WqACMfXEAwg=
+	t=1782111502; cv=fail; b=TESeJJF/Qsxcq3QIRHzF/5cs8UzXKyvrJ3rk2KMEY+/Z2zto9Dn3HUvghFJ3fYswQI/k185o0cJx/TQut1Zl/CsXiQ/XqemhaRfuYG12n5+4/FEbNFKH9HGajxSniaWlPJq+JHQWYege5ZGubGaFmZx6JNTE9apwcYI01jlfVpM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782111498; c=relaxed/simple;
-	bh=oVFqaQQWm1IJ5dfZhzarqnhFWY/SxcTiLhnnA2vaA6w=;
+	s=arc-20240116; t=1782111502; c=relaxed/simple;
+	bh=3/lUP5wXjzaMS6b4NPLS33zmWT/j1qasg5tkIS37PSs=;
 	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=hSiKPY8AIY5CDUElRQ54YdT4FU42NRUrEnmIDdpqPCDwAOpXDteIHSf6nLK2sYd6mM15Y3qkVKIF3Tzq1DO+a+TrAugeh2ylOYvXb0uL/MxetwBuzb0+YB6yxpMLT2ECmpV+WG4OMa769fZI2Sqbtvn/ukUKipqsOBCwj6kyquI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jTf6oEh2; arc=fail smtp.client-ip=40.107.209.8
+	 To:Cc:MIME-Version; b=mY0lYjZxhpwF1bFcGT/XywVv1Shs8PfTK4u32k3kVp/5ywlRSDsYLa7JlLTfQfRXAXzg78qmL2h5SrAJaQW0grHoYDNSwD54S4FeKNdd2gpA+9s3k2FpEYqgttGPD4YxyesgFsQiKJNjUVc+Ky5+XSDEBD66Wz3C7zDVOZ+V3XI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cUZar8WK; arc=fail smtp.client-ip=52.101.43.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jTf6oEh2"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cUZar8WK"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dId2OOrUKnvpng0oAgGnGKPzLp5EUAR2ChV06UjTmk1V5ikt+EMwB7OJ8loPgAktX2c0e+CDWO3NJqTLhia4KrmHFOqEygyGrSJkOegk/+1IRPdTiAeQa5DerDK1e5scpMqJrHGUGwoEWzbIwTJCYh6ztnu/YcXFVZbtQzlR2BxN/X4OMFM8ihav9mse1uO6DIZLzrI2vAuZEqAtKUjXk3iEp2FsXMDyx1sFAXNbC3f9+4Uy2yyWOD+Q/X0d5wRKkbS9MEK3aBjHta8sndOqZY1QRhmMt6ZV5q6836CxwiQzUEVc2lww6jb/z77eaqESFY4WgDm212mkF9afAXKbMg==
+ b=ZqHqVTv/HQbZACSXA+DAoyBFunP9KBWKzSIwIYT+zIZ7uritgNdV+0ffYDw4Zz63hUg48uh+geagv4lzPZQC3QOQaFmOg1DQVwI2GZeq+zoLlnF3t+BrakeQgWVOrVjBKjhcU1IPS1UuJtSDF/mBbdC6f9WFUTISPQWykHIovMPL6BRY9BxApY1eitYnp63Ck8MaZ0if9YHeGbaM0i5IiyBWoyQhc4ZTqkmi8zGsNWiuGtzBL34kHES1W9qVfuvK5N5ua9+hwgPJsoovksTKTJmnZZ/DIWl/o05mPjt4NGASkh/diE+A1bBBckGvBV4rjDhnrEUDFduB2VEb/geHCw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XBH5s7kOPBp5SSsWuh35MmvE8zOZcnHrcSUmyQ3qJGU=;
- b=F/xKvjWgqsNtWiwJR1I9ChKV5ROvUCHzHnnFcBuPSwa3st3OSM+rsLAjSrjdVMstqXH6Wmsl+dwBcxPtDoPPK4TbhsNrDthGvs9URGkFVTbscajGdC8oVqwC8IrovzmZWLjKfCsoBMtqZOQ4PMqQtsfawcaiMPWpkI/+AvZ1VQYczWoqNpXzpG4I5EcQfUP4uKCrA6kB4ZRqgBwd4YPB4SqwvSuxdef4xXs+j7pxJgxH3WTUjBS0GuiTghnUqoK+PrBABGxkVvnb/Hz4siThAFe23BkkpzqBazrdubLpHM7ymBYb6EFnBZQuDyqvPPcLK4tFxj/Rv174QawUgS7t4w==
+ bh=2wcnY4fD/gUMqj0z5qyI9mZpwGlsGCLk54/PQyTRoGg=;
+ b=e8XF//KLuYQ5XAoEDgEbYkhQVPs/dhpdXzHtq0vUJaiReOho+bTfbMpbHYAx7S24TjaVMFhVdTES9Kez0UZAfIWoP3RNJRA+YGcYlZsFbUZj51YcZbyCgpeK7Pt2UIJQWOFoCCmV6TewXSQQ+zyy3MieCeiGmjHQTdRM2XOMqNBsgGt2PVEBiFe9jhr0ITGSyPnfYWtkFyhsnCGIHS6PrEuEvDuD7+LL2rXo5qyUkarj7ZMENcE5oatvqGIFSWiqWbRoqiMgN8fKNsBiu4wsHtH1qEYhQqQRBofBreYVVrMh3LvXa6SUXaLDfZWVb5zJlYXR32cPyKLx8kSuBO8zkA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XBH5s7kOPBp5SSsWuh35MmvE8zOZcnHrcSUmyQ3qJGU=;
- b=jTf6oEh2k1HKBV4+UegWR6UM8yEUxKratlL5RbmxbRO5jwO3bHDRCi0XxkgeTKXr2QaHoRQ9GUykmV5gRP4BmwS8SF1JRIi6Av3Lwapn4vKBsZXKnbMwyoPpyzwTf0liU7wRzhsOTjLoOlD/t6uD40ZIUd98wKQQZFzestmza6KD8MD6x/fDbFm1+ko0zY2SEr/vGx50DYjE6fK//+S56+8ixHubX8KHGtIXSXnYwVEXl1snlWGTAoBOUCi9rRUMP2nOhySOljVZtLCDd2/MyzkTVo5iBo06FAed125a1S08gJxZER63bbVxTYVwpaWMojP8WZ3UbcRoGysIOKveXg==
+ bh=2wcnY4fD/gUMqj0z5qyI9mZpwGlsGCLk54/PQyTRoGg=;
+ b=cUZar8WKzCfmI9j6VaTSzOCSEKZfdh8uNhPmwPsHvsvv+6CptqpD040WDuS+njCXDa/waEHXNeJ2911MnJpokZBKm5USjSjLl4sXHNO/w4vUHFOttASGySHkK4rgWh4lgspg5JHRmZpZw0zVYinT57HZqjVIyvnDRJh9Gjr8cbObO/13VNIIY9CGZE54TX/fIxaQVFhl/xbN58BnRiOMoal5VblZPwAOhxMT9CVfYsDYyxZxyXsyecBTR1Ui6lMrdpibgXK5ur854pbNiYUOdr41wBpJ+taXmmgF4R815nhXpUZX/ANcEXhaY2kwDUH8vhNuXG9RwZ1+bcpZWkLFcg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
  by MN2PR12MB4286.namprd12.prod.outlook.com (2603:10b6:208:199::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.18; Mon, 22 Jun
- 2026 06:58:13 +0000
+ 2026 06:58:17 +0000
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017%6]) with mapi id 15.21.0139.018; Mon, 22 Jun 2026
- 06:58:13 +0000
+ 06:58:16 +0000
 From: Mikko Perttunen <mperttunen@nvidia.com>
-Date: Mon, 22 Jun 2026 15:57:42 +0900
-Subject: [PATCH v2 5/7] drm/tegra: falcon: Add support for RISC-V external
- boot
+Date: Mon, 22 Jun 2026 15:57:43 +0900
+Subject: [PATCH v2 6/7] drm/tegra: vic: Add Tegra264 support
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260622-t264-host1x-v2-5-ff7364d9ff7b@nvidia.com>
+Message-Id: <20260622-t264-host1x-v2-6-ff7364d9ff7b@nvidia.com>
 References: <20260622-t264-host1x-v2-0-ff7364d9ff7b@nvidia.com>
 In-Reply-To: <20260622-t264-host1x-v2-0-ff7364d9ff7b@nvidia.com>
 To: Thierry Reding <thierry.reding@kernel.org>, 
@@ -62,8 +61,8 @@ Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Mikko Perttunen <mperttunen@nvidia.com>
 X-Mailer: b4 0.16-dev
-X-ClientProxiedBy: OS3P286CA0082.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:1f6::11) To SJ2PR12MB9161.namprd12.prod.outlook.com
+X-ClientProxiedBy: OSTP286CA0101.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:604:219::17) To SJ2PR12MB9161.namprd12.prod.outlook.com
  (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -73,252 +72,312 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|MN2PR12MB4286:EE_
-X-MS-Office365-Filtering-Correlation-Id: b853e74a-724b-4826-a195-08ded02ba08d
+X-MS-Office365-Filtering-Correlation-Id: c95727b1-0fdb-4d6c-a92e-08ded02ba2d0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|1800799024|366016|7416014|376014|23010399003|56012099006|11063799006|22082099003|18002099003|921020;
+	BCL:0;ARA:13230040|10070799003|1800799024|366016|7416014|376014|23010399003|56012099006|11063799006|6133799003|22082099003|18002099003|3023799007|921020;
 X-Microsoft-Antispam-Message-Info:
-	+csx7E7uLOjCGgb8s9J4HVbPiL5V3ftB740tdcJvxKhyusq6O75yOX7+SCxJbQLagcKOWg7Tcbtf0n55cXIt6CtEY0T4PX7zR+s02rgOayakydRQiWtE74RZu5UdYfN15otteyscvyx+Ha9VKU2V2nGwaxhqKY3pJoc+G4D/317JiPpe1aYI9rNihznRaw08QbHYRal1bea22fnHRdvIL/uVNBkNbRxuQhO9d9sKIlNFjHYRYOVgiF0+rI040mM0y+EBVNhZ4u6tjjYTvtVR6LUkgrFCMTy6mzeoJHUA17YaWVaxRO51MEFJXtZ2J9xCLnl4Fu7jFA71QW6pw4ZuuELuH8U2Y92tPkHpIU6OeLWdiLQqeN99YonT2rPSmG0vWtxJFb3RNEUGrCPM5IUJb0abbk1X2JMGuKvEdOij2NEx1DfrlrweBsZ2ch0k3mzWclKNh9Sg+WG97edxQZxP6e5yMFrWr9mdUqOycEs4+DsgljgynsXfA7EkxghOHLIBbnchsPTXTdYb9O2DzFUFWUg4rx/JXihgb6kdXctpb/D6mVOShV3D7Z6WkdOyd+d8cwRkSW08HVbhU/6pznsBjpf843o/+qygFJ5TXH/C+3t5Mv6K6rhOP6wCP+UoY65s3Us+uOpfaIGvhS8npbn1+V2XdwdOZwV1+I8VZALnea0UutY9vLeJMNnSGVdgyWp1Ia6Gu/iWLvOW84UwgGZIkQ==
+	5U7sRkkWQ8JuavfCX1JqD2nXxMixkeIHF7CfzloyDtfJLoiqrxDhxcRB6yrmqsv21L22ykagbFEL+1tAF7sFS/pr0OgWbAA97wXj3jS5BW/uWoIutCuvFkmtxYvGtRPemZKhphqp7zbpDG1YK9XKadK9OXdB5f3BtVBnpeZH3cNfaD/XFQ1eFqSjh+BX9ADZ+ezwyA3Vko7pmVj337xyNshOH3FNpSW4vG21kux8w/FXwyT/bY78sSJqUMmOlUuvt4X/bdDCqipQtUdwi4qO6+jLkJqT/R4ysTyAb5LRi/qM8HrXKtFDHODLkJ2v83Q+1i9JOt9trNCsEjeMQb00clesgIobqf4umgEYidVJp20YuYRHPWSwjRBtQv6gebFhkKwXV7Zdqvu3Wp/WR6oTrupAQlm9DFj4Ql2Fwk467tiUJLSzhE4irc4otQEtkePCzlHLm2/L1ngISoplrrbyN+c/Odc+T8uja3iOeU/r8eiXnLSG0PAHzkWf/eta4cKWhR+gfvlFrTTeWc9gYw+PzX9R/67kRD9Nx0lq3Q4W77zwtU1GteEwouLD4zOzw6L5wVAl3FIptjbGNHnC5eEs7+69Is0IQOJpIDeHsMIbUKwLgub1FhW3HJkGnbOkre2Nh8k44wblIFP9eMGpqv8VbgDxiKFdj6ePrAh7gU+hZ7jmOtFKW5tU7s76JzRvtNPyN69+wbSQ2WF0ZmvcR+ioBg==
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(7416014)(376014)(23010399003)(56012099006)(11063799006)(22082099003)(18002099003)(921020);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(7416014)(376014)(23010399003)(56012099006)(11063799006)(6133799003)(22082099003)(18002099003)(3023799007)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UFNhZ3MvWkg0Y01NSnBCa0NZc0NNV3V2ZUViU1pQbEJMWnlsVzQ1VDUrQ3ZG?=
- =?utf-8?B?QzFnNUFubWw3V1FSQmdJb2U2WjVGMVdnandCSzVQbXQzd3VBWVF6azNkbDMw?=
- =?utf-8?B?WmlPRVhDSFVQUnZMNFFNRUN3RjdONFR4ekJzVUVFQnZWZXROckM3U2cvRGZk?=
- =?utf-8?B?UWhBbHRMNXhrR3pScHF6WXgrRUFlRXBRTkZNQU5CbUpHSytERXFEQXlMNEpm?=
- =?utf-8?B?bVRpb2E5Zkt4Skt0bEV2cG51NkU0SHhXdThwZnQrd3RwRnc3THBpTzh5YUdV?=
- =?utf-8?B?UnVSeU5OTUdyL1lhbjJkT1IzczRIS1ZoTjlYWDQxMEswTFJDQXBBTlkyd0xn?=
- =?utf-8?B?N0RVOE1wMWk3dVA0UWRjZFVsWGtpNzdMaVVEeWFKUkgzeUkxWm12K1hyTW5t?=
- =?utf-8?B?Vk94UldPY2dLbGtRYk1nN3M0blJPMjY1WHRNUjFwUEI1cmRSRDdUbFpBS3du?=
- =?utf-8?B?d0FXcGFaMURHelFGOUxEdm1sSVR4QVF6M2YwaVVDZFNVbjdvRmcvZ3RPZmJI?=
- =?utf-8?B?MHRBVUloR3FPTGxKMWhLMHBQVjVDeVhibUtBV245eTlpR1pWYU9RSnhqU3FU?=
- =?utf-8?B?Tk5hWi9OZjRGUkxSL1dFeTlPeDBldGx2aXpyd1g0UGRGeDdGdHRZbThXMmV4?=
- =?utf-8?B?Umc0LzlzRXp1RTBvQ0oxeEtyeU12cUY5VVFWUDBXdDE0NURXaWRMNmpxbytm?=
- =?utf-8?B?U1FtTHRVaTZ4TmJ3MTFvQldXL01iRHp0Mnc2bkxrS0FMWlg1eHY5bDdQbSs4?=
- =?utf-8?B?cmtrMWo3Nll4dWd5blZRUGJidkROcWZiRjUrSnp3WVhvR042cndmUkpCVXFE?=
- =?utf-8?B?Wkl2MXcyLzNNUVhiQ0hXR2xTQUlOVTB4Q3c2WjBuWmJxeS9MNGczMmExeG1R?=
- =?utf-8?B?aHg5YWpPQlFyZDcvd3kzVzdhNnNPbjdvTjFkS1F6TzRDd0hHSXRWdmVHY0JH?=
- =?utf-8?B?dzd4ZE9yaEo5a3haR1VlNW11VTFzb1hZTjNMRUFxRmJpWnd4MEZvYi9rVEdK?=
- =?utf-8?B?ME1RMlhKeHVweDBTU1JHRU80NUZJSFQvV290K3hUY1A1OW1yYVR3N2lscmo2?=
- =?utf-8?B?Q2FsQWUzTmJuVjN3ZS9ycU9ubEI3MXhOQTNYTU93VzJhbmhYWU42dDU2cm82?=
- =?utf-8?B?dExjeFB1clAxL0NIOVRNSVZLMnFhR1ZzVHY3ZkVFK1pxKzViSWgrSGpKdGNs?=
- =?utf-8?B?M3NmV0xDOVgvRm1RTGhZamNpaElDQ25vYVB0MmJrS1hmQUlWOGFXTHhtR0ZU?=
- =?utf-8?B?NlBKN2EzcS9mWmJpb0JYekVXMEhVWnZLenJ4UE9icmxINXQ1ZW5paVV4OVd2?=
- =?utf-8?B?eVZGY3J5NnU0QUU2VUI1My9ra1h6YXZzNVltSkg3TmYzRmRlQ3paQncwalpk?=
- =?utf-8?B?Tjh0MytoMzFSYlhxL3pVdmlqekdGc0VHakxnY2RBekh4L28renI1dkY2bllk?=
- =?utf-8?B?OVYzQ20wa1lzZXZJd01RNEMwTnBTdkZidW53STduUXFTQ3NQSkdjUDR2SUJF?=
- =?utf-8?B?VzdEU0w5aThFbktXMnh3c2FZQUR0bnp3UDdaTkh5N1JZN3owdGtkTU5JVXNo?=
- =?utf-8?B?WUxLRDF6TFczV1BlclRRY3FEbzJnRE1JaGZPU1Vob3RwNlFzNWtldzc0NUpH?=
- =?utf-8?B?bkk3UkFVVFhoNHNseVlyM3ZYYlNyQjhJWlVWOU0rRjBDU2hXT3hhVjVoMVlv?=
- =?utf-8?B?NkIyNVFpTGRBK0Q2ZER3UnhzR1lKL3p2Q0xRNGdjWGNUeDhKTG5yd21qT1lT?=
- =?utf-8?B?bXJzL3BOL1pmamJqZ2tVVTlUK0hWYm5RSEFqNmNyTWtFbDlWUnBFQTE0c1JU?=
- =?utf-8?B?QVM1V3hJRWFMSjV6M0xINGlLRGRZaDBtR3RzRTV0RzFXbFNPbXdTdi9zcHNa?=
- =?utf-8?B?MlVhUGpLYXAzQUorNmpzQTZGa3l1YVFVOS9ZNzZma1JCQy9tWk9mRERXVEtv?=
- =?utf-8?B?dkFXZ0hIR1NSbjdDam4yYkhXZEpIdkRERCtwSjgyaUFNUkgrcVg1SjE5WHVa?=
- =?utf-8?B?WXErVmkvQ3BKNEJ2VjNhQXc4K1N6UHpTWGwyVWRjOXpmallJUEhzMTkwYmVn?=
- =?utf-8?B?NGJUaGN5ZGxzcEVsU1RFOUp2Q0NjZU92WkpXWlVNSUhsNklDMkJKM0dKY0hC?=
- =?utf-8?B?dU9JbmpyUDcrcGtjOGE1emUwOFN1TXlwZm11L2NpMzNURjhLYWtNblRrNXNO?=
- =?utf-8?B?bUtROXAvTVFMa1ozSFo1aXJBVXlxUlI1QTZSNzFTTG9QK1JOak1RWFlOOE5D?=
- =?utf-8?B?ZU5DV1o3SGZyY01WdWw2eHU2L3RYQnYxMURVNHJhRGVWT04zL0xrbStKRGQ1?=
- =?utf-8?B?djZpK1Vsb3FkcTdsUXdaUXpqcmF0ZWd3dmE4L3FZSHl5WFY2QjdQL29sdjF0?=
- =?utf-8?Q?uB5tnGG+GATZz1FLqCRr5mwVgViL5Qw1cfQVjwJ+g00xk?=
-X-MS-Exchange-AntiSpam-MessageData-1: rPwjd3bcWpXcDA==
+	=?utf-8?B?U1NpMFRNMVBReC83eDg4OFl3c0tIbkVOQ1lmUDZBQWxETFBhRDN5RG1TZ2pG?=
+ =?utf-8?B?YUlQeFk3REZSTFBzMEJjcUJablFMRGtOMVgvUHRzTnloUHNKRzdVWkRJOFAw?=
+ =?utf-8?B?cmIwd1ZVbzJ0Nm4xV1R3V2JkVDZMTExjOTU1NDZ0ZGd0Y1ZHQnRXbGxnRFV0?=
+ =?utf-8?B?VUdEQW5nTmF2SzkvRStKVzZuV1dIVmZBaDJQZ3h4RjV2MGdORjl3T2R4NjE0?=
+ =?utf-8?B?WDFFcFAxUTVzSWl4N0Ewc0dmTUpOR2RtalBya3I4aGg3dmROOVdaUHNmMlFK?=
+ =?utf-8?B?bE1zcitZZ0lHcU8wTGpYTXNueU84QVMwYnFOanMrRnRjU2ZZTWlVU280cllV?=
+ =?utf-8?B?OUlyYmwxejY3c00zTXNjTmVHVE5xOU4rK0sxM1AzWW1paEJkbHNlRkNFU0Rt?=
+ =?utf-8?B?TS9oN09RTU1JRkNwUU1hbW1TcFBHUnl0K3kzNXI2Z2VIcE1uSzk3R3ZMZFpR?=
+ =?utf-8?B?WUIyNytNcGJNUGpLbzVrT3lRcVNNS3lSd2JyUG5oZk5NUDdSb0kxbDRlN21Y?=
+ =?utf-8?B?dUpDL1MyM1ZycVZoQWVhcXY5V3V4QUYyc0gxRzlMQjRZalBISEVlUUlZTWxB?=
+ =?utf-8?B?T0dyd1dDS0lWaFBZdnFnbFZrMDJSSzhTclVhZDZlWnJIb1Q5akxWUlBWR1N3?=
+ =?utf-8?B?VWsyaktvdlNMS29NaWlBY043eTlmOXZ2b2RMbExxSjg1eHMzK1RpSFFMbFMv?=
+ =?utf-8?B?aUloa3FzdXZMT1kzUjZkRC84dFhIbkFXcWlBMmZjWmhpelZOaC9GS0RCUXFX?=
+ =?utf-8?B?VUFsN3JWNXRycktlekhNUmJ2MWhwTFpGdzFXckJBbTgwK2R3WnpYbi9GRVhj?=
+ =?utf-8?B?eVl0QWFYcUJiTUtZK0wyZ2RXZTFwTjBFZkR3QVVXSnJiV280RmFPWmN4dnlX?=
+ =?utf-8?B?MHB3OTRjUjlYcnpMMVVYbjl3OGIrcFcraXpoOGhFYkFocHRUZEIxR3M5dUtV?=
+ =?utf-8?B?NGdFdkNlTlp2MkdTcnozYkJwTmsvdVprb3ZXbUkvVXZleS9Fb3RHLzFaazlj?=
+ =?utf-8?B?M3RiNjhNUE5PWWNpNUlDQmtVTUVzcEhaVzViZWx3NEEzUTlGV1dJSk9xK3do?=
+ =?utf-8?B?ODVtc1ZoNFN3R2RMNTFGc2x1eGNtOStOcTdoSmlrNWZGOVZhNXRjSjk0cUdN?=
+ =?utf-8?B?bW8ydE1qSWR0UlRYc1pxUUpmRWNSUG9WSTZnNEt0eTVYNWZ6ZTZ3RG4rbVhU?=
+ =?utf-8?B?YldDdHFoUmxsR2Y1Ymx3U0Voc3F2K2tWN1NVenhyQld1SnVuZFNlOC9zM2RH?=
+ =?utf-8?B?N1IwQ1lzcjM0bVg4VmtGa254cWxhbmpzaXIzSTVoc0NSMVpVMUxYdjFPeEM1?=
+ =?utf-8?B?MysvbzBMNVJvUWg2UnVOejZKTlBJb2NyYW1XdWt3TzVscnBUYnZwbUxTenBo?=
+ =?utf-8?B?ZENwaWRjV2xKeHNhcVAyNjNxNll6b1pXY1pieDFydzA0VzBod2IrbDZISGRG?=
+ =?utf-8?B?TE9KVG01L3BOenh1U0dCWUx5R3hZZ1RnS3RVUzRRbTdvOVFKZEZhK0xRVU1I?=
+ =?utf-8?B?U0RPRXhGSmZzQkdkR3JLZGcrMUNQbERiUDB5d1d0UTlrZ0pCZkpqclN6Z0dw?=
+ =?utf-8?B?YWd5NnNISXltRFVHSWZQWklHaytXOGJvSG5TQWdEY2U0dnlNK29sNWpIR0NI?=
+ =?utf-8?B?aVVRMTdzZFZCQUF3cnA1c2d4OXB5QXdiNXVnV2lzMHgvOENmMmR5bHp6RG5w?=
+ =?utf-8?B?cWd5dnI3R215UmlXNVhCeEdPY002cHo0Y1VzYi82UHFTWk8ra3Q2YXMramZW?=
+ =?utf-8?B?bVpwM3BSUFA5Rks0VzR1M2htT2VTWGtuM1JvNkdmclkzWkl2OWF3YW1nNU9s?=
+ =?utf-8?B?ekszZ0RUZ2pWcm12VGlrdWR4WlB6WUVERGZmSHJYNzNlb1R6Q2U5RU8xSUNu?=
+ =?utf-8?B?TnMwdHkvYlhTVkxZSDhIS3BwN2hsZDdoK0ZUaUxoSkRlK1NBdEJneTVNUUMv?=
+ =?utf-8?B?TkM3eitEWkwyRWtBSmljRHZjS25odUNWY2M5V1VleHFLZ0lJSW4rNEcwcGtY?=
+ =?utf-8?B?ZE92UVR3NFZQUWdteTNQQ2s5WUFzbk90WE9RbVhlMERMV2V3RzhBWlM2MFdI?=
+ =?utf-8?B?cmFNQm9qK0ZSVDdrY28zOGhBUTVJQk5jVFlBV3AydzJoZk5iRjZzVDlTWDho?=
+ =?utf-8?B?Z01LQUY1TXVCaFVUaG92VFFvNXJkTk1sMk56OXBrMjhOVWZVeGw5ZUpOQTJh?=
+ =?utf-8?B?cEZFdDhPSnpUOXBXdldXUm9nVG1LUmp0c0VHWWNwcCtxVEJlSVF6a3B0OHl2?=
+ =?utf-8?B?UDRseHMxSlhCVlg0NFNSRnNsVjh3c09HOEZOWEMzM2M5Y0Yvc3gvcnlrUnRJ?=
+ =?utf-8?B?VFdLcWlxVDR5M2N5ZDYvVHhkVGN4S3ZCTmEvQlBHL1c2YmEvTCsvMG1kZjZi?=
+ =?utf-8?Q?8hy24uPL4YuBU5iAVqiIi3jaIlzdvS2XEX+7A97GJCzOO?=
+X-MS-Exchange-AntiSpam-MessageData-1: 4HN86VADIRP98Q==
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b853e74a-724b-4826-a195-08ded02ba08d
+X-MS-Exchange-CrossTenant-Network-Message-Id: c95727b1-0fdb-4d6c-a92e-08ded02ba2d0
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jun 2026 06:58:13.0894
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jun 2026 06:58:16.7898
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bEysht2TSH6e9s1VZn41uE2N12PbkHQHBWh+cEpZzqDDIl8v/Y9qANViaL4dHl/j7X/IHT8pbkqkdahtdPRALg==
+X-MS-Exchange-CrossTenant-UserPrincipalName: PosKL1M57oWfw4CJ05ntjAauvvGk3W9qtZIxYT2e0posjGybJohJKcaot68L8sRZ22SvwbOKHxjyYgGyz1AFWw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4286
 
-Add support for loading and booting RISC-V firmwares on Falcons with
-RISC-V hardware. The flow is mostly the same as for traditional
-Falcons, with a few different registers and different firmware layout.
+Add support for VIC on Tegra264. The Tegra264 VIC uses a RISC-V based
+Falcon microcontroller instead of the traditional Falcon previously,
+and has the TRANSCFG register in a different place.
+
+The .version field is set to 0x264 rather than 0x26 to allow
+distinguishing between different VIC capabilities between minor version
+variations of some chips.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/gpu/drm/tegra/falcon.c | 66 +++++++++++++++++++++++++++++++++++-------
- drivers/gpu/drm/tegra/falcon.h | 23 +++++++++++++++
- 2 files changed, 79 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/tegra/drm.c |  1 +
+ drivers/gpu/drm/tegra/vic.c | 95 +++++++++++++++++++++++++++++++++------------
+ drivers/gpu/drm/tegra/vic.h |  9 ++---
+ 3 files changed, 76 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/falcon.c b/drivers/gpu/drm/tegra/falcon.c
-index 17f616bbcb45..1172356b6af3 100644
---- a/drivers/gpu/drm/tegra/falcon.c
-+++ b/drivers/gpu/drm/tegra/falcon.c
-@@ -26,8 +26,12 @@ int falcon_wait_idle(struct falcon *falcon)
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 1dcef4e7d104..28245bf5ba5f 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1396,6 +1396,7 @@ static const struct of_device_id host1x_drm_subdevs[] = {
+ 	{ .compatible = "nvidia,tegra194-nvdec", },
+ 	{ .compatible = "nvidia,tegra234-vic", },
+ 	{ .compatible = "nvidia,tegra234-nvdec", },
++	{ .compatible = "nvidia,tegra264-vic", },
+ 	{ /* sentinel */ }
+ };
+ 
+diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
+index 332c9b563d3f..46c7e00de347 100644
+--- a/drivers/gpu/drm/tegra/vic.c
++++ b/drivers/gpu/drm/tegra/vic.c
+@@ -8,6 +8,7 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/host1x.h>
+ #include <linux/iommu.h>
++#include <linux/iopoll.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+@@ -20,10 +21,16 @@
+ #include "falcon.h"
+ #include "vic.h"
+ 
++#define VIC_FALCON_DEBUGINFO			0x1094
++#define VIC_DEBUGINFO_DUMMY			0xabcd1234
++#define VIC_DEBUGINFO_CLEAR			0x0
++
+ struct vic_config {
+ 	const char *firmware;
+ 	unsigned int version;
+ 	bool supports_sid;
++	bool has_riscv;
++	unsigned int transcfg_offset;
+ };
+ 
+ struct vic {
+@@ -54,8 +61,8 @@ static void vic_writel(struct vic *vic, u32 value, unsigned int offset)
+ 
+ static int vic_boot(struct vic *vic)
  {
- 	u32 value;
+-	u32 fce_ucode_size, fce_bin_data_offset, stream_id;
+-	void *hdr;
++	u32 stream_id;
++	u32 val;
+ 	int err = 0;
  
--	return readl_poll_timeout(falcon->regs + FALCON_IDLESTATE, value,
--				  (value == 0), 10, 100000);
-+	if (falcon->riscv)
-+		return readl_poll_timeout(falcon->regs + RISCV_CPUCTL, value,
-+					  (value & RISCV_CPUCTL_ACTIVE_STAT_ACTIVE), 10, 100000);
-+	else
-+		return readl_poll_timeout(falcon->regs + FALCON_IDLESTATE, value,
-+					  (value == 0), 10, 100000);
- }
+ 	if (vic->config->supports_sid && tegra_dev_iommu_get_stream_id(vic->dev, &stream_id)) {
+@@ -63,7 +70,7 @@ static int vic_boot(struct vic *vic)
  
- static int falcon_dma_wait_not_full(struct falcon *falcon)
-@@ -122,6 +126,17 @@ static int falcon_parse_firmware_image(struct falcon *falcon)
- 	return 0;
- }
+ 		value = TRANSCFG_ATT(1, TRANSCFG_SID_FALCON) |
+ 			TRANSCFG_ATT(0, TRANSCFG_SID_HW);
+-		vic_writel(vic, value, VIC_TFBIF_TRANSCFG);
++		vic_writel(vic, value, vic->config->transcfg_offset);
  
-+static void falcon_parse_firmware_desc(struct falcon *falcon)
-+{
-+	struct falcon_fw_riscv_desc *desc =
-+		(struct falcon_fw_riscv_desc *)falcon->firmware.desc_firmware->data;
-+
-+	falcon->firmware.code.offset = desc->code_offset;
-+	falcon->firmware.code.size = desc->code_size;
-+	falcon->firmware.data.offset = desc->data_offset;
-+	falcon->firmware.data.size = desc->data_size;
-+}
-+
- int falcon_read_firmware(struct falcon *falcon, const char *name)
- {
- 	int err;
-@@ -133,7 +148,23 @@ int falcon_read_firmware(struct falcon *falcon, const char *name)
+ 		/*
+ 		 * STREAMID0 is used for input/output buffers. Initialize it to SID_VIC in case
+@@ -85,31 +92,50 @@ static int vic_boot(struct vic *vic)
+ 			CG_WAKEUP_DLY_CNT(4),
+ 		   NV_PVIC_MISC_PRI_VIC_CG);
  
- 	falcon->firmware.size = falcon->firmware.firmware->size;
- 
-+	if (falcon->riscv) {
-+		/* Load separate descriptor */
-+		char desc_name[128];
-+
-+		scnprintf(desc_name, sizeof(desc_name), "%s.desc", name);
-+		err = request_firmware(&falcon->firmware.desc_firmware, desc_name, falcon->dev);
-+		if (err < 0)
-+			goto release_firmware;
++	if (vic->config->has_riscv) {
++		/* Write a known pattern into DEBUGINFO register */
++		vic_writel(vic, VIC_DEBUGINFO_DUMMY, VIC_FALCON_DEBUGINFO);
 +	}
 +
- 	return 0;
-+
-+release_firmware:
-+	release_firmware(falcon->firmware.firmware);
-+	falcon->firmware.firmware = NULL;
-+
-+	return err;
- }
+ 	err = falcon_boot(&vic->falcon);
+ 	if (err < 0)
+ 		return err;
  
- int falcon_load_firmware(struct falcon *falcon)
-@@ -144,16 +175,22 @@ int falcon_load_firmware(struct falcon *falcon)
- 	/* copy firmware image into local area. this also ensures endianness */
- 	falcon_copy_firmware_image(falcon, firmware);
- 
--	/* parse the image data */
--	err = falcon_parse_firmware_image(falcon);
--	if (err < 0) {
--		dev_err(falcon->dev, "failed to parse firmware image\n");
--		return err;
-+	if (falcon->riscv) {
-+		falcon_parse_firmware_desc(falcon);
+-	hdr = vic->falcon.firmware.virt;
+-	fce_bin_data_offset = *(u32 *)(hdr + VIC_UCODE_FCE_DATA_OFFSET);
+-
+-	/* Old VIC firmware needs kernel help with setting up FCE microcode. */
+-	if (fce_bin_data_offset != 0x0 && fce_bin_data_offset != 0xa5a5a5a5) {
+-		hdr = vic->falcon.firmware.virt +
+-			*(u32 *)(hdr + VIC_UCODE_FCE_HEADER_OFFSET);
+-		fce_ucode_size = *(u32 *)(hdr + FCE_UCODE_SIZE_OFFSET);
+-
+-		falcon_execute_method(&vic->falcon, VIC_SET_FCE_UCODE_SIZE,
+-				      fce_ucode_size);
+-		falcon_execute_method(
+-			&vic->falcon, VIC_SET_FCE_UCODE_OFFSET,
+-			(vic->falcon.firmware.iova + fce_bin_data_offset) >> 8);
+-	}
++	if (vic->config->has_riscv) {
++		/* Check VIC has reached a proper initialized state */
++		err = readl_poll_timeout(vic->regs + VIC_FALCON_DEBUGINFO, val,
++					 val == VIC_DEBUGINFO_CLEAR,
++					 1000, 2000000);
++		if (err) {
++			dev_err(vic->dev, "VIC not initialized, timeout, val=0x%x\n", val);
++			return err;
++		}
 +	} else {
-+		err = falcon_parse_firmware_image(falcon);
++		u32 fce_ucode_size, fce_bin_data_offset;
++		void *hdr;
++
++		hdr = vic->falcon.firmware.virt;
++		fce_bin_data_offset = *(u32 *)(hdr + VIC_UCODE_FCE_DATA_OFFSET);
++
++		/* Old VIC firmware needs kernel help with setting up FCE microcode. */
++		if (fce_bin_data_offset != 0x0 && fce_bin_data_offset != 0xa5a5a5a5) {
++			hdr = vic->falcon.firmware.virt +
++				*(u32 *)(hdr + VIC_UCODE_FCE_HEADER_OFFSET);
++			fce_ucode_size = *(u32 *)(hdr + FCE_UCODE_SIZE_OFFSET);
++
++			falcon_execute_method(&vic->falcon, VIC_SET_FCE_UCODE_SIZE,
++					      fce_ucode_size);
++			falcon_execute_method(
++				&vic->falcon, VIC_SET_FCE_UCODE_OFFSET,
++				(vic->falcon.firmware.iova + fce_bin_data_offset) >> 8);
++		}
+ 
+-	err = falcon_wait_idle(&vic->falcon);
+-	if (err < 0) {
+-		dev_err(vic->dev,
+-			"failed to set application ID and FCE base\n");
+-		return err;
++		err = falcon_wait_idle(&vic->falcon);
 +		if (err < 0) {
-+			dev_err(falcon->dev, "failed to parse firmware image\n");
++			dev_err(vic->dev,
++				"failed to set application ID and FCE base\n");
 +			return err;
 +		}
  	}
  
- 	release_firmware(firmware);
- 	falcon->firmware.firmware = NULL;
- 
-+	release_firmware(falcon->firmware.desc_firmware);
-+	falcon->firmware.desc_firmware = NULL;
-+
  	return 0;
+@@ -277,6 +303,8 @@ static int vic_load_firmware(struct vic *vic)
+ 
+ 	if (!vic->config->supports_sid) {
+ 		vic->can_use_context = false;
++	} else if (vic->config->has_riscv) {
++		vic->can_use_context = true;
+ 	} else if (fce_bin_data_offset != 0x0 && fce_bin_data_offset != 0xa5a5a5a5) {
+ 		/*
+ 		 * Firmware will access FCE through STREAMID0, so context
+@@ -302,7 +330,6 @@ static int vic_load_firmware(struct vic *vic)
+ 	return err;
  }
  
-@@ -168,6 +205,9 @@ void falcon_exit(struct falcon *falcon)
+-
+ static int __maybe_unused vic_runtime_resume(struct device *dev)
  {
- 	if (falcon->firmware.firmware)
- 		release_firmware(falcon->firmware.firmware);
-+
-+	if (falcon->firmware.desc_firmware)
-+		release_firmware(falcon->firmware.desc_firmware);
- }
- 
- int falcon_boot(struct falcon *falcon)
-@@ -229,9 +269,15 @@ int falcon_boot(struct falcon *falcon)
- 			      FALCON_ITFEN_CTXEN,
- 		      FALCON_ITFEN);
- 
--	/* boot falcon */
--	falcon_writel(falcon, 0x00000000, FALCON_BOOTVEC);
--	falcon_writel(falcon, FALCON_CPUCTL_STARTCPU, FALCON_CPUCTL);
-+	if (falcon->riscv) {
-+		falcon_writel(falcon, RISCV_BCR_CTRL_CORE_SELECT_RISCV, RISCV_BCR_CTRL);
-+		falcon_writel(falcon, 0x0, RISCV_BOOT_VECTOR_HI);
-+		falcon_writel(falcon, 0x100000, RISCV_BOOT_VECTOR_LO);
-+		falcon_writel(falcon, RISCV_CPUCTL_STARTCPU, RISCV_CPUCTL);
-+	} else {
-+		falcon_writel(falcon, 0x00000000, FALCON_BOOTVEC);
-+		falcon_writel(falcon, FALCON_CPUCTL_STARTCPU, FALCON_CPUCTL);
-+	}
- 
- 	err = falcon_wait_idle(falcon);
- 	if (err < 0) {
-diff --git a/drivers/gpu/drm/tegra/falcon.h b/drivers/gpu/drm/tegra/falcon.h
-index 902bb7e4fd0f..37a17c6136b3 100644
---- a/drivers/gpu/drm/tegra/falcon.h
-+++ b/drivers/gpu/drm/tegra/falcon.h
-@@ -55,6 +55,16 @@
- 
- #define FALCON_DMATRFFBOFFS			0x0000111c
- 
-+#define RISCV_BOOT_VECTOR_LO			0x00001780
-+#define RISCV_BOOT_VECTOR_HI			0x00001784
-+
-+#define RISCV_CPUCTL				0x00001788
-+#define RISCV_CPUCTL_STARTCPU			(1 << 0)
-+#define RISCV_CPUCTL_ACTIVE_STAT_ACTIVE		(1 << 7)
-+
-+#define RISCV_BCR_CTRL				0x00001a68
-+#define RISCV_BCR_CTRL_CORE_SELECT_RISCV	(1 << 4)
-+
- struct falcon_fw_bin_header_v1 {
- 	u32 magic;		/* 0x10de */
- 	u32 version;		/* version of bin format (1) */
-@@ -76,6 +86,14 @@ struct falcon_fw_os_header_v1 {
- 	u32 data_size;
+ 	struct vic *vic = dev_get_drvdata(dev);
+@@ -417,6 +444,7 @@ static const struct vic_config vic_t186_config = {
+ 	.firmware = NVIDIA_TEGRA_186_VIC_FIRMWARE,
+ 	.version = 0x18,
+ 	.supports_sid = true,
++	.transcfg_offset = 0x2044,
  };
  
-+struct falcon_fw_riscv_desc {
-+	u32 reserved[74];
-+	u32 data_offset;
-+	u32 data_size;
-+	u32 code_offset;
-+	u32 code_size;
+ #define NVIDIA_TEGRA_194_VIC_FIRMWARE "nvidia/tegra194/vic.bin"
+@@ -425,6 +453,7 @@ static const struct vic_config vic_t194_config = {
+ 	.firmware = NVIDIA_TEGRA_194_VIC_FIRMWARE,
+ 	.version = 0x19,
+ 	.supports_sid = true,
++	.transcfg_offset = 0x2044,
+ };
+ 
+ #define NVIDIA_TEGRA_234_VIC_FIRMWARE "nvidia/tegra234/vic.bin"
+@@ -433,6 +462,18 @@ static const struct vic_config vic_t234_config = {
+ 	.firmware = NVIDIA_TEGRA_234_VIC_FIRMWARE,
+ 	.version = 0x23,
+ 	.supports_sid = true,
++	.transcfg_offset = 0x2044,
 +};
 +
- struct falcon_firmware_section {
- 	unsigned long offset;
- 	size_t size;
-@@ -84,6 +102,8 @@ struct falcon_firmware_section {
- struct falcon_firmware {
- 	/* Firmware after it is read but not loaded */
- 	const struct firmware *firmware;
-+	/* RISC-V firmware descriptor */
-+	const struct firmware *desc_firmware;
- 
- 	/* Raw firmware data */
- 	dma_addr_t iova;
-@@ -102,6 +122,9 @@ struct falcon {
- 	struct device *dev;
- 	void __iomem *regs;
- 
-+	/* Peregrine falcon, external boot */
-+	bool riscv;
++#define NVIDIA_TEGRA_264_VIC_FIRMWARE "nvidia/tegra264/vic.bin"
++#define NVIDIA_TEGRA_264_VIC_DESC "nvidia/tegra264/vic.bin.desc"
 +
- 	struct falcon_firmware firmware;
++static const struct vic_config vic_t264_config = {
++	.firmware = NVIDIA_TEGRA_264_VIC_FIRMWARE,
++	.version = 0x264,
++	.supports_sid = true,
++	.has_riscv = true,
++	.transcfg_offset = 0x2244,
  };
+ 
+ static const struct of_device_id tegra_vic_of_match[] = {
+@@ -441,6 +482,7 @@ static const struct of_device_id tegra_vic_of_match[] = {
+ 	{ .compatible = "nvidia,tegra186-vic", .data = &vic_t186_config },
+ 	{ .compatible = "nvidia,tegra194-vic", .data = &vic_t194_config },
+ 	{ .compatible = "nvidia,tegra234-vic", .data = &vic_t234_config },
++	{ .compatible = "nvidia,tegra264-vic", .data = &vic_t264_config },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, tegra_vic_of_match);
+@@ -495,6 +537,7 @@ static int vic_probe(struct platform_device *pdev)
+ 
+ 	vic->falcon.dev = dev;
+ 	vic->falcon.regs = vic->regs;
++	vic->falcon.riscv = vic->config->has_riscv;
+ 
+ 	err = falcon_init(&vic->falcon);
+ 	if (err < 0)
+@@ -571,3 +614,7 @@ MODULE_FIRMWARE(NVIDIA_TEGRA_194_VIC_FIRMWARE);
+ #if IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC)
+ MODULE_FIRMWARE(NVIDIA_TEGRA_234_VIC_FIRMWARE);
+ #endif
++#if IS_ENABLED(CONFIG_ARCH_TEGRA_264_SOC)
++MODULE_FIRMWARE(NVIDIA_TEGRA_264_VIC_FIRMWARE);
++MODULE_FIRMWARE(NVIDIA_TEGRA_264_VIC_DESC);
++#endif
+diff --git a/drivers/gpu/drm/tegra/vic.h b/drivers/gpu/drm/tegra/vic.h
+index acf35aac948b..e525a06daaba 100644
+--- a/drivers/gpu/drm/tegra/vic.h
++++ b/drivers/gpu/drm/tegra/vic.h
+@@ -21,11 +21,10 @@
+ #define CG_IDLE_CG_EN				(1 << 6)
+ #define CG_WAKEUP_DLY_CNT(val)			((val & 0xf) << 16)
+ 
+-#define VIC_TFBIF_TRANSCFG	0x00002044
+-#define  TRANSCFG_ATT(i, v)	(((v) & 0x3) << (i * 4))
+-#define  TRANSCFG_SID_HW	0
+-#define  TRANSCFG_SID_PHY	1
+-#define  TRANSCFG_SID_FALCON	2
++#define TRANSCFG_ATT(i, v)	(((v) & 0x3) << (i * 4))
++#define TRANSCFG_SID_HW		0
++#define TRANSCFG_SID_PHY	1
++#define TRANSCFG_SID_FALCON	2
+ 
+ /* Firmware offsets */
  
 
 -- 
