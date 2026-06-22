@@ -1,54 +1,53 @@
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013013.outbound.protection.outlook.com [40.93.201.13])
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012045.outbound.protection.outlook.com [52.101.43.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E3E36308F;
-	Mon, 22 Jun 2026 06:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615293630AD;
+	Mon, 22 Jun 2026 06:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.45
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782111489; cv=fail; b=l2WEwh9ZPXo0uSQhK1mp1zRwP2SG5jvaNXqCV4nIWWkfW4BLoqslU2RhGG7mVZpwxWUBqFWzpJ5rFEq0pXn7nrH8FONBcAhLGWOrnXYSRgP+4KFQqilNZHEEyvQW/wgAf0mMVt2pxnBaKm2RIxYSpnmWZtQnJ29mn+C3tozq234=
+	t=1782111495; cv=fail; b=L93Y68D/gtmIUSDKdBJa2HvEfNqzH+b04dFnIm9AW+XgnFXqRkoEBWFtUkHDUV/AZOOV8GMBaovP+HC0Ctn3pA70H62vW1hUvLi8Pv4GDt5IOX6AAbo9sq6XeFWaox/66u0s2naxqQ0VddEsT+28dDQjyUozc3BamRip5vEshVw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782111489; c=relaxed/simple;
-	bh=V/OUjpayCPeWkk00iojT3915mLUMXH4R5uY/NZcUQqk=;
+	s=arc-20240116; t=1782111495; c=relaxed/simple;
+	bh=ZvQd1cfjom+rYML++GFnpApo9r2X1ZhTDQn/nsI2Yec=;
 	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=mel1+ntex+HR0kGrXrtbo/KMqW4T5jY9ss4ItMgaajBWjZFFOQtDv1ZQcnM/67/5s3chC++vVR5mROKgjv/a74W9wyK4Mpi88MXWHT7XWsd/a9Dg+NId2D2v3O/rwbQ/gYQW1+2C3/w3CO3k93KTC1c3I3zluv0qt+IhJ+WJaAk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Guht0r8t; arc=fail smtp.client-ip=40.93.201.13
+	 To:Cc:MIME-Version; b=rM/DMY4UXVZpO10LibOzx5yVu8F1Uiynv1Mhcog4DP+WzeiQJFDqjViTQGdLkvn7be2I7BjtV4mC1BqjAmGQp5hNzG65FM2LqDm/Mn7YweCdoN5zB2RGFtzGApStWkg6qe4ku45Ypeg/d1GP/Tu4S+f05carqay5aIo+/fB44oo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=H7utaY8R; arc=fail smtp.client-ip=52.101.43.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Guht0r8t"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="H7utaY8R"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eeBGOxpKXxh9fW+6AvqWaeEjfB7IZerS87XKOWZXdL+nxkeGQvkLotfeWIgbIeIzDSjPrXZNktOfqFrXGu6V/LhFB4dBuw1rIL9CyCyb8jHpSM8oOaWGqn7CFp0ZWzPj3Ttk3gR2RD40xd1hWZsCZL2tNY8u6XnjZtWx55tLvr6FAAb7agidyrwqARSOdN1QN6u/AbxhBhxZCvX7w+awULpZkNWvvv/0NO3EUyw/gSajvsURk11b2KzgJy9vAPCaWyCYYMQAwHy7jhmNJEh2zcqXudxGUwf6ar/8aPa1gGQSuLHNgLpRZgw4H2s7xN2dD20DvMA3ltHMKXfrd9ziPw==
+ b=rkoMorQFIJZ/UUzqNrGg6usmXAk84AIdtTbieBP6D49Uzk0YuV+eUtKEa8Q57BtIjnzpI7gK3JEXCXGHIbLJLUpKe7IS9ytfH0ASeKvz6OKiZRRxZ66XKh01O61CiAT8NQ2/lbNAuAvsyP33b1mdXlWLR/I3woclrqg0/2KlXwUKU5AT1g8yWA/+rdUOkDnK7pRdJAWxC8DKodi9J5NGf0exEHV6vwTOe2aJYI6HGvv3lNl5twxvU4tW2UAjoKhuYjnBH2OG9gxY4mQ+FTRdtR6vt6KC7oGWelbgoyLRztpRubDtuhdeZrN4+zPPFeglLz9+CrQTAzvol2naYKwAAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KzqTCg0R/p/QmE0fyh51kTb4TZfSQtZuIW3Vl4GkIAs=;
- b=igzTywQeu3+FxmqSw/c8h4tqVPNNZ/EaSXPgrS4Ula/BP5A6yGq12UrSLarvEXmhTfpTjL48FqNeLvbYw+nvmsAnbTOtPbjLOxndqkncKbE/rSGS57ceFzGGwHOta5e9igyo+3NrTO1iVBEmgWuJrj4NwtkQJy+YIrcKGAFZeZD0PmMGZqIDUYssbBVeBZe3xCJkWqJtS0PuQhVJEg1L7gz7An07+U/WwTleJdSxZMWZ3K5upgJWapWk5j2uwZZy6dB1wiDFb/usQxmNR82J1g9/n4gPwOtm1x3D7II3WTX+6Re5ksVIkZcgaHmZjCJtZbB5gnyATpsrPAUdsoTGvA==
+ bh=XazvoovfNWfP5yrB6CKq9CPFtIYAO8XSX8SHYr0ImRM=;
+ b=T0UWEOJW5fY/6VfS1Jg1xf9sFU4d5HlcdF31j1ejk+bQWYqhJpna+USBTnv5IQdlZEzkNzKwS/pD4BYxHG3SGhK/i39hel+sFBbLyt5+TpPXDH2rFaYznyPrRt55uc/nhiO4/HdlOAyXgHzYb5HwVYkKSeY82lXnbU3b5VuklvooZKay+oAnsvVWp87m8Wr/kR04oTghU3zV3t4jkE/cr5FmU5GQ8o6AAmdWcUWtYsEbMMf4t4vTBw5h55eaky/l9I8kq2CKC7J2CGxyXilH5ExNfpDYyTHPS8MGWxDRxKFXi7AaZR/MuUZbiGiXfAmxxcvgR+8/VHZnxeCrT/5TUg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KzqTCg0R/p/QmE0fyh51kTb4TZfSQtZuIW3Vl4GkIAs=;
- b=Guht0r8tW93GFGZq0Lnf4lTrNlm/mHucPqDRGOO82mnISpUuVwkMJY5lA5seuBFnIwPWw6axnNzIrFXBwWBeB9Q4lj2uIaeodJqLc2kz7eyc4CNcHGWryF1+GAGva4me19j27Xf4co6I2mmQDuWp+VrHh2AhWh8/u9NowrnQ8b5ZJhjEWDvYXHNJUC4vKNh3Kg7tSe83Uzdq4IYjmWZ2opUIaNK9uSVow88jQHm3JEtcrxqhM7s0b/nydpEux71TwhjdFKtdaVBlZBKtgR31xoU226o4fqIGq4NKXh8jd/5EbD/ll3wI1FwbQb0hrQ+4XyfdjRHQhVNLXlMmv77deA==
+ bh=XazvoovfNWfP5yrB6CKq9CPFtIYAO8XSX8SHYr0ImRM=;
+ b=H7utaY8Ry4AHZYZhxWu1izJY/+5vHIMgLpNL6RFGk/GsfD6BkMGguCAlshHt4XGC1ajaJVpWE6/+oviVGTLAGIDc66f3MEYv6w6kQ61onvJPTWTJp0Hb0kExfofLkJnphmX6BH8/Rxc6gfKdN9KOKkZikhMDZx+0pBRvcuDNM6hMU65uXoJxvX9EGhHL0gPgqjmsQLkISncfsOUcQ0zyy7pxiRKX8uiFmqdCpZszkA7B9X0gvryC0kDYGJqPUBUnazus20NnRj8s9MokpSH4b7vtXjgZx+P2zpKilqxtxZU4DkGH5f63nP4pPZIMi0w1XXLHiKJxAzSfUJN7gPyqFA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
  by MN2PR12MB4286.namprd12.prod.outlook.com (2603:10b6:208:199::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.18; Mon, 22 Jun
- 2026 06:58:05 +0000
+ 2026 06:58:09 +0000
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017%6]) with mapi id 15.21.0139.018; Mon, 22 Jun 2026
- 06:58:05 +0000
+ 06:58:09 +0000
 From: Mikko Perttunen <mperttunen@nvidia.com>
-Date: Mon, 22 Jun 2026 15:57:40 +0900
-Subject: [PATCH v2 3/7] gpu: host1x: Correctly parse linear ranges of
- context devices
+Date: Mon, 22 Jun 2026 15:57:41 +0900
+Subject: [PATCH v2 4/7] gpu: host1x: Add Tegra264 support
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260622-t264-host1x-v2-3-ff7364d9ff7b@nvidia.com>
+Message-Id: <20260622-t264-host1x-v2-4-ff7364d9ff7b@nvidia.com>
 References: <20260622-t264-host1x-v2-0-ff7364d9ff7b@nvidia.com>
 In-Reply-To: <20260622-t264-host1x-v2-0-ff7364d9ff7b@nvidia.com>
 To: Thierry Reding <thierry.reding@kernel.org>, 
@@ -60,10 +59,10 @@ To: Thierry Reding <thierry.reding@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>
 Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mikko Perttunen <mperttunen@nvidia.com>
+ Santosh BS <santoshb@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>
 X-Mailer: b4 0.16-dev
-X-ClientProxiedBy: OS7PR01CA0110.jpnprd01.prod.outlook.com
- (2603:1096:604:258::16) To SJ2PR12MB9161.namprd12.prod.outlook.com
+X-ClientProxiedBy: OS7PR01CA0111.jpnprd01.prod.outlook.com
+ (2603:1096:604:258::7) To SJ2PR12MB9161.namprd12.prod.outlook.com
  (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -73,111 +72,550 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|MN2PR12MB4286:EE_
-X-MS-Office365-Filtering-Correlation-Id: 32af6ab1-77cc-4601-8e35-08ded02b9c0d
+X-MS-Office365-Filtering-Correlation-Id: 486b0f78-03c4-487a-b354-08ded02b9e4a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|10070799003|1800799024|366016|7416014|376014|23010399003|56012099006|11063799006|22082099003|18002099003|921020;
 X-Microsoft-Antispam-Message-Info:
-	NX0Ux3WSCwvvqlfj7cn9qKo4ViO+tmuPJ1wcEQ9R9sP+2uW0iZM9GjismS1NoMlVVmJPpNGkr7Fl2Gxpr4eLCRNJ44JdNd6Sq75vs/ItdPKUczuX4EDipv3UDT0KfE685LrmVvCYHhHUpD6aejRi4N8G+3D1V2uCJ0jmm08GtHJwidR/QniMoah+6FkvqYBBeAN0HZfKuqsSBwC6pfwSH0nQ1ysOWb0dnwIxglhM6+dD9s06L4lwodTsVH7Z8re+pnwyFex6ysMhkrTw+J2Fh1VuilHmXExf4Lok4tbPV/rUXZy92eJOsYXMOb0gSvjAy9XpvlgWTh4q1rQ7f07RleHdBqbrxHvhzRwyvNH8anxEHzX61JkgB4M9IjOUjVgy/JOpf0pWJSTHxbdpI7pluPom1Tbg2IC98hzXQlwYHRCFxRBca63iFSSv+iALitUkTsN79YrNNIRMob2dXGEB1tCkUSSd9TZB+A4rbyo3ehCpUP2zKvqpUa0IccZlnmedIVxqQWaiAZKx1UNc8pK22JcHn33VeI8eJR02IGr2mvBuTirQIJxxUrJR18oJ/PoU4CsMEc4r3pOZgDTha1+dgIQIlS7sUq+bD9GZCGAK0JupNBSRZ5VkvnqTaa3IZmNc1DFL7LMfTCgIgxDQBvEv1Znmk7S8enlTHCF0iHwjBZfqfIt3WHMIzJ6E61aUDoVinMahNAzlJnZca0tiJAH/NQ==
+	jvjklnHzQuFchywivBfBubfHGiTWCTqghtGMCRiHYLtqFQL4jn7hHMCngeS0nxf0MWPk9LiwaA+rumt8H5FVJ1FzxF/74oWV+WovxDKOars2hGbZpInuR2ePBV3y6n6WNWjuHT9toUQ0iczripK0HqwsvVT3GXfhYxNcwXdhKIntIE6ntwLOJozuHr1hjZAv0nHfCbOz7M+X6h63VMlebfkzyB7u/U06MytDQgmy+y/gfHjKTLh+tWHyapF44nkomE/18VdE9bysrgYmyHVf1eQ9u3UE/93Mmb23ZwGFi2rY1xRybtGGaUMS6Hs85oAuJMrxFcVOSzXPeQk6L7SBf8tpt53ga9f+rKvgjJYuHvX55mHp3ytdWH2KG2Rsh6FCyFe9JHPL6dBmoi3ol1a+Fzz60R//uBjEAzxgnVf1JUWuS8ez0ZSktXCNgKlDX1E5wEExUJlNqR8TR73BxZBoXwX9lLEvkDNVGeW2CShBv6FxRBx4iP0RqVTWIN61v8eq1zx/quMq4qcJOdPT7ywA/aVW0VOZ6vUHOLWIcWfzDzCeHoxAzAn9MsEhqIejFX36lxlYC3u3+0TqTeNSaeG2HUStz4MliDL2Odqk7+LWeGqGoljJJ5wZytCQdqocHXjzIDG9JbtpANjeCu3d8FLMAR50fDuTmCOIaZ5lWjHsw9fVBXFJiEjc9hloOn8/TRu5NfZJWALxOuWR2xDdv+C1mA==
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(7416014)(376014)(23010399003)(56012099006)(11063799006)(22082099003)(18002099003)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?L2dwcUdpVUFVdFoyY3FUcGovR2NUWGw1NWk4emdURUlvY1p5M2MxM00wdWlh?=
- =?utf-8?B?VE42cHREc1Fqc0lmZk93ek1Hd05keFg0UVk0UDZYaEVzNzBCOHM3VjRjeWZz?=
- =?utf-8?B?OU5kMjV1UzgyNFBhWHVOWUlnYW0veURZaVdhYTNxTnpyaWVKZ0V1dTZvUmJY?=
- =?utf-8?B?TlExWXBvL3lXQ0pWK3V1UmpxZ0xQZHlwOVJGS1BvL2FGY0pQN2Q5aVp6dnB1?=
- =?utf-8?B?d0RtMWJlc0wycFJNTnFTWlM3eVhVWFdDR0kxZ0xRRDdCKzhZVWVWOVkzOWJ2?=
- =?utf-8?B?WFREcm9uMnNSYVJOQlVRMVpjK1ZwZXJNQzJDaERKZjFNUTNDdXUwai81Mlp2?=
- =?utf-8?B?Q3gvenlZalpXOXFveHJjcGxYdUZHVWtQMVZqOXNkZWdVNm1YR000TEJOWEs5?=
- =?utf-8?B?cG8zbCtHVTdZOXRuMjZQU1dQVVRkMHBITkd5MXpqSjRQbys4U1NHVE9BQlNp?=
- =?utf-8?B?U0paTFBERHNWc21GdXE4bnlmVEtudmdBc05Fd1VkNDNjdjgwbU9rMjFnZjhP?=
- =?utf-8?B?SE1PQkVmaWJOMkJiQkZFTXAzdG16clp6S2tNdTcwRDRFdlgzMWNTNFhtV1RM?=
- =?utf-8?B?bUQ3Tmd1TXBSc2FUT3JvS0VYOU15cUZIQm5TUjd0L2JGTXQrYkNEUFJGMTlS?=
- =?utf-8?B?dmlWR1RsRzBtZmYyVzB3YlpGdFpKK0tnMy9VTi9yTnRIcllja3drdm04VG1Z?=
- =?utf-8?B?ZThaSEtjRXFyWGZlUnpDTDZ3STdXMEJ5aU9WSmt6czNXSnRCazVReERMLy82?=
- =?utf-8?B?S09OUnZLWUR2Q3cxdy9RRXhkWW9rdTVXYTlvQyswS2JTSmNXYUFhcFhwMTh5?=
- =?utf-8?B?UTBITm9Vd1NwV2YyWEppdjNuOWtwTHkwcHMrejZCbU1TMDJRTjl0RERUZjJa?=
- =?utf-8?B?Z29yQTNoR1hIUDFNYjVTMHkrM0FSMDZTdXhxNTdJQy9CaGFQMU53OTFhYWpm?=
- =?utf-8?B?ZXIxQ1ZJMDlGMU5xYjBpRzdsZkNEY09uWGZtbng3SGVEck5CaEdqQ1p2WlpK?=
- =?utf-8?B?cXVCWkVHQ3ZFT2VCSVpubzdibVpldDJTYnJDTUxtbGVDeGVmbmY4dHNudTNv?=
- =?utf-8?B?cjBEallzbFpTWjJIMWFQK25vaW8xdHNVTGMzZDVta1ZRZzU4RUgwLythdGI4?=
- =?utf-8?B?VzBTQWRTcjhFUFhRNWZtNytCVE1zWSt2c1ZCTzdRZjNvOHpMUUZVUEs5YzBG?=
- =?utf-8?B?c0xTMTMxRFdSbzFJQkhpWWNQYUFuZUtHOEVGenRnMERtWWJjTUJxaGpTSnJX?=
- =?utf-8?B?RTc5VTV5bmtzcTZ0NmZBRm5DVkU5cmkyaEk3RzE2ajkvWFVGbDJRS3kyRlVN?=
- =?utf-8?B?U1B4czRGRzFpU2JqUnBZbkZjQ05WNGlKU3ZBdVcrNDZVcUNxMy9HV1J0TXND?=
- =?utf-8?B?bDFQVjYrOTlCbmlwVUFveWVHaXBlVXdwd3ppNzl4bFIwd1orTlB0U0d2dzI5?=
- =?utf-8?B?QmJveGNSbW5xcGl6Y2lac00vM2JtcUVmRGIzT3RQMnE1Wk1hVkNnVXphalov?=
- =?utf-8?B?K1VnV2VJTVNJMEhESVV4SXFlMGtpSnJMK2FPM2pYa3Rsb0ZVWUZ1MG83VVhk?=
- =?utf-8?B?cmN6c25hK1lVeEo5Q2NNQmtzZjBCbm4wTVUwaC9lRC9nQlRwUEEvcTFaalBC?=
- =?utf-8?B?ZTZUK3pUVmIzOCtnRXdkUVBMRU1lN01RODBrS2h5RTBBSHkzK2RpZEEyQ0NF?=
- =?utf-8?B?d1FYZi9Fc0liU1dIUWRnL2dhUldxKzJsamt6eGpEM29ZSVd1SkFrMlZYa05k?=
- =?utf-8?B?bFVKL09weEQ1Qy9jTW8xUDlGcW5DaThnOUFwWDgwOHBwY2lXSU1kZnZmQWlp?=
- =?utf-8?B?Q2pjdlNJOVRZNC9obmZoZUllUHBqUVJBTE40WWcwNEVZLzBZNU8zeTJFbUta?=
- =?utf-8?B?NmRCZ3RFQW01SzJYVmcwbndoOE8vTGlsa09TRC9QTHJsb2tvWThPcDZSMzVI?=
- =?utf-8?B?cmtsVjlQQTQ3YTN0SDRDNE0yWXlhN0dZOUtJQjNLZnpvR2VIbjFxeHFsUWJP?=
- =?utf-8?B?RlhaNU1JcEZKVEdpVzBOd0JhOWJSd0xURnFCL1lRblQrVFVpcUp3T0ZJZnYw?=
- =?utf-8?B?WGxyM1FFZThwZ3lPZFpEc1VPbFlRZFpNWDRqSHNqVWFrdktWTWdjendlSFQw?=
- =?utf-8?B?OW5IQ2ZoN0s2eTVzSEtQWWZRRnhKbkpvQlgveWRzaHFWKy8zbW5rR3lHeWR6?=
- =?utf-8?B?aGlLZkE0ck96SXg3OHpQZWZyRXFnQUw2c3BTUjFNOVpjSC9idWpGbFFyaXdv?=
- =?utf-8?B?UHhvelg1MU9YZUVrYWVXaG1BZWNuTmkxOGVoU1UyQllHTGczUVJyVVFPVTQ1?=
- =?utf-8?B?UHBGY3JNcXU5UXZpUzh2ZVBtUGM4TnJlemJSdnlGSVd0eExXdUx3cFo0WVdt?=
- =?utf-8?Q?Zz714rwKZTGwcP+ysOde4JkcdBJ0nNdU7cNWr1Betkkyw?=
-X-MS-Exchange-AntiSpam-MessageData-1: tOh51RHiOvV6Pw==
+	=?utf-8?B?QVB3Rzdod2ZiOThGSFc4R1NtT09KS3hRN1FROXlMTU91VXg3WkpYcVVkcEhL?=
+ =?utf-8?B?bUg1aFZLR2tYUkpZWnlGQWhPZ0V1U2VNdHMyd01PNTgrU1hTMm1nUnFoeGUy?=
+ =?utf-8?B?b1Fpa2FhcGdic2tZSnZTdUY5VlVENkFPaFJJb3FMQU5HVDVHaWNPbFMwVFk2?=
+ =?utf-8?B?Y1RoQzFuYUtvWW9IWGIzeHJ5S1JFQUt3bkVXNm9lOWlYT2pRS2lkcXpPQzZE?=
+ =?utf-8?B?em81blFtcE41Q2xUbkMrQVJlZmthakhucjFoTmw4ZVNqYllMeTZKK0ZZMkgy?=
+ =?utf-8?B?TU5DanRhMldybzJuZVF1QWoyUTN3Nm5nTXNWc2dWY1NqYXZiUCtxeU93MGR6?=
+ =?utf-8?B?SnFlazdnNXk3TEpoSGtoUEFJT3lmeHZyb2FnT1kvZ3NXVU5SSzNIaVlPazRu?=
+ =?utf-8?B?YkJUWnYvb0FYWDVpODVBZW9sWDZMUUNpRWdrd09yMjhRMHdYai9TSXZLU0dJ?=
+ =?utf-8?B?c2VRL3FBNWRsY0ZsMHBBUFIzdE5iOU81SUhBS0d6Sk53anNqOUg2bnZCT1lR?=
+ =?utf-8?B?NVg3c3Z1MUVDaDBxS1cxWHFsZjNVaU5GQXV2cFB5U1UrYW5xOGRsb2lUWkVF?=
+ =?utf-8?B?R1pMSUZBVUtUd2R2enBvYThQTUE5Mk5EZnVxY1NZVEtsNkhVU3NRNlNJdEFR?=
+ =?utf-8?B?c2lyeEROMnFGcDlnSFVuZXFhSXVkS0Y5NkNpdnM5M1Q1U1cwNE12ME5meXFi?=
+ =?utf-8?B?Q1BUSXRRMWcxLzVLS2JHYVVHMVdoMGNlaS9OYjRhdDRDQUdyNE53dUV6RUZz?=
+ =?utf-8?B?Y3FtcUFqWURxK3BqNUt3ZTVJQnpXTGtEc0psNk5BanhMeUpWcytscW5tK3FY?=
+ =?utf-8?B?SSt3dStYNWFVQXhLMFVnSHZ0NXB4cGZ5bTZXS1pMQXVRSU5sZW9LRTl3R2tU?=
+ =?utf-8?B?dERJVTNTOGo3ZXdnL0dBejdYbjljN0kxc2R1UURpK1Frck10SHR3a3pjbFUw?=
+ =?utf-8?B?WjRlbVZ0eW41UGE3NHc0dXh1NnRrc2cvVVZ1QUdTbG8zVHBudi9BSitxeEtO?=
+ =?utf-8?B?cTBVWGVlOTNVckdmbzJSb1VxVlBRRjZCeVVrZVBYd0d5c21nZmtKRkM1dU5j?=
+ =?utf-8?B?V2c4cXVsOXY4ZVlkY1lJRG9hUitEYWhPdVpuUlZmRmNaZmd6RkFJMUJKYUln?=
+ =?utf-8?B?OWRxdU9sVExIeVV1aVA4YWl3aVgwL0ZyOWRJREp3OVYxWTA5cWJKSmdsL2pv?=
+ =?utf-8?B?b3VZOXlob1NnSlBIMXExbnZyRXQ2YlZ4ODYzckM1S2VGK2xDanJ0d1hzMHdI?=
+ =?utf-8?B?d05Mb0JFeFZMMHk0RUF3NEZNOW1NNnoyL0dzSlBvYmY3M0hKMkxSeXZaZ05B?=
+ =?utf-8?B?QjI4RUZQcWtvYlJXOWlwK0dvYkhxUVc2NlhWMTZ3b0FOcmZJMFJpYTJwRUw4?=
+ =?utf-8?B?N0s2ZUREbi9HZStJME1OaWpFUlhobWc4dWxlR3Uyd0xyMGxJL29DOGRBT3Vz?=
+ =?utf-8?B?b09idlJiNXhlVWFOTThFVHFuNEM5eXVGUVE5dXBsM0RyUDczVjZBckhPOTNW?=
+ =?utf-8?B?NkdVdVRER216aHRhZ3hlVUI5VXpnbDltdEpONTdxYm13SU52dWp0dGxJNmlK?=
+ =?utf-8?B?YnhYSEFscWE2R3hNUHNmZ0Y4eEJsS29xMVdsb0pUUnZobXlxOTdkQXZQaHF6?=
+ =?utf-8?B?eUdqdzZsK0ErTnFoSlE1RVRYWE92MHpweHkwZXNuRHhRZmpOa2NpckZaN3h0?=
+ =?utf-8?B?Y2VVTm01WVdnV3JrWW5CcGdqcmc0cnI2dWczQitRTURrU2FaWUdNTDdMMTB3?=
+ =?utf-8?B?OWs1d1RGZlBJMWJkanBRWndJMkk0ZUVSWFRNeUp0bURHbHNidk9yelJ4TG15?=
+ =?utf-8?B?akpmYkl6YVpUY1F5b2VDQVF2ZDZkZmhDb051ZDNuNEpjdjQ3M29OdkxoTVNP?=
+ =?utf-8?B?czkrcysrbTNVWHVEamlBT01mRklDRDlna1lrMGhvTkIzdTV5bTVOQjJNeW1P?=
+ =?utf-8?B?cnZvZlhMVEk4Q2ZoOFo1RXZ5TmY5b1ZSV2NmRG4xbmNjRkR0SzE3ZzZ1MFdi?=
+ =?utf-8?B?cS85U2JPRjVzL3ZGVTRmZVNIYTVxcDhlaEFCOGM4VTR6QVBwRzlROWlTLzUx?=
+ =?utf-8?B?UHNLRWhDd2todG5VYnVBNENXTk8wVFNwa25wSGVlM0Nrdm9HQUt1TEdBUVUx?=
+ =?utf-8?B?UzF1SlhlNUlXRmt2RlQxalRsaW5sYkl4M2UzMlZ3L1N1a2hPNkFWWVNQQ0NY?=
+ =?utf-8?B?NThHYzN5R0JWY21od1dPaG1VMzIzZStvTldvdlh3Qll5SkVLT1FKTDdnQ1hJ?=
+ =?utf-8?B?RG9mOVltWFRpakp5elBwWTU4Z0dwNkZnV2sxSmVXQWlxL0lPUFVMM01oS0pL?=
+ =?utf-8?B?MWhPZGtBUDJWOHJjRnV3S0ljK1d2WkZFYVQ5bFhJTm81LzJiN3l3QkpSVnZS?=
+ =?utf-8?Q?hdcA/0vS3vfWIdS7tVfF9/tpSsN3V0334TVqm5vuf0nWi?=
+X-MS-Exchange-AntiSpam-MessageData-1: ldL9iA7wvd3ZoA==
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32af6ab1-77cc-4601-8e35-08ded02b9c0d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 486b0f78-03c4-487a-b354-08ded02b9e4a
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jun 2026 06:58:05.4475
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jun 2026 06:58:09.1955
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /625LHdd/CaV9wze+hRdzjSp4UiOxk8neYVOveE14IWNkHU6yZQoN8DqZ/oHzc6G3jvpLTZq+hkqJqxr476Scw==
+X-MS-Exchange-CrossTenant-UserPrincipalName: ieE16/Y1pIHXvAI8Jq7Q1fHBfxyzO5j17EZYE7/FgIY/nlSaDeL5T3hxq+q3qoWldbNIz+DB+g6W7H+K30zTyw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4286
 
-The previous parsing of the iommu-map property assumed each context
-device has its own one-length entry in the device tree. This has worked
-fine so far, but on Tegra264 larger numbers of context devices are
-usable, so it's better to support linear ranges as well.
+From: Santosh BS <santoshb@nvidia.com>
 
+Add device data and chip headers for Tegra264.
+
+Signed-off-by: Santosh BS <santoshb@nvidia.com>
+Co-developed-by: Mikko Perttunen <mperttunen@nvidia.com>
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/gpu/host1x/context.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/gpu/host1x/Makefile                    |   3 +-
+ drivers/gpu/host1x/dev.c                       |  41 ++++++
+ drivers/gpu/host1x/hw/cdma_hw.c                |  12 +-
+ drivers/gpu/host1x/hw/host1x10.c               |  33 +++++
+ drivers/gpu/host1x/hw/host1x10.h               |  15 ++
+ drivers/gpu/host1x/hw/host1x10_hardware.h      |  21 +++
+ drivers/gpu/host1x/hw/hw_host1x10_common.h     |   6 +
+ drivers/gpu/host1x/hw/hw_host1x10_hypervisor.h |  10 ++
+ drivers/gpu/host1x/hw/hw_host1x10_uclass.h     | 181 +++++++++++++++++++++++++
+ drivers/gpu/host1x/hw/hw_host1x10_vm.h         |  36 +++++
+ 10 files changed, 352 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/host1x/context.c b/drivers/gpu/host1x/context.c
-index d50d41c20561..52ca663902ad 100644
---- a/drivers/gpu/host1x/context.c
-+++ b/drivers/gpu/host1x/context.c
-@@ -23,7 +23,7 @@ int host1x_memory_context_list_init(struct host1x *host1x)
- 	struct host1x_memory_context_list *cdl = &host1x->context_list;
- 	struct device_node *node = host1x->dev->of_node;
- 	struct host1x_memory_context *ctx;
--	unsigned int i;
-+	unsigned int devs, i;
- 	int err;
+diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
+index fead483af0b4..b684fbf73841 100644
+--- a/drivers/gpu/host1x/Makefile
++++ b/drivers/gpu/host1x/Makefile
+@@ -17,7 +17,8 @@ host1x-y = \
+ 	hw/host1x05.o \
+ 	hw/host1x06.o \
+ 	hw/host1x07.o \
+-	hw/host1x08.o
++	hw/host1x08.o \
++	hw/host1x10.o
  
- 	cdl->devs = NULL;
-@@ -34,7 +34,16 @@ int host1x_memory_context_list_init(struct host1x *host1x)
- 	if (err < 0)
- 		return 0;
+ host1x-$(CONFIG_IOMMU_API) += \
+ 	context.o
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 3f475f0e6545..d2c64728f804 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -41,6 +41,7 @@
+ #include "hw/host1x06.h"
+ #include "hw/host1x07.h"
+ #include "hw/host1x08.h"
++#include "hw/host1x10.h"
  
--	cdl->len = err / 4;
-+	devs = 0;
+ void host1x_common_writel(struct host1x *host1x, u32 v, u32 r)
+ {
+@@ -287,7 +288,47 @@ static const struct host1x_info host1x08_info = {
+ 	.reserve_vblank_syncpts = false,
+ };
+ 
++static const struct host1x_sid_entry tegra264_sid_table[] = {
++	{ /* SE1 MMIO     */  .base = 0x1650, .offset = 0x90,  .limit = 0x90  },
++	{ /* SE2 MMIO     */  .base = 0x1658, .offset = 0x90,  .limit = 0x90  },
++	{ /* SE4 MMIO     */  .base = 0x1660, .offset = 0x90,  .limit = 0x90  },
++	{ /* SE1 ch       */  .base = 0x1738, .offset = 0x90,  .limit = 0x90  },
++	{ /* SE2 ch       */  .base = 0x1740, .offset = 0x90,  .limit = 0x90  },
++	{ /* SE4 ch       */  .base = 0x1748, .offset = 0x90,  .limit = 0x90  },
++	{ /* VIC ch       */  .base = 0x1790, .offset = 0x30,  .limit = 0x30  },
++	{ /* VIC MMIO     */  .base = 0x1688, .offset = 0x34,  .limit = 0x34  },
++	{ /* TSEC MMIO    */  .base = 0x1690, .offset = 0x30,  .limit = 0x34  },
++	{ /* VI MMIO      */  .base = 0x1698, .offset = 0x800, .limit = 0x800 },
++	{ /* VI_THI MMIO  */  .base = 0x16a0, .offset = 0x30,  .limit = 0x34  },
++	{ /* ISP MMIO     */  .base = 0x1680, .offset = 0x800, .limit = 0x800 },
++	{ /* ISP_THI MMIO */  .base = 0x16a8, .offset = 0x30,  .limit = 0x34  },
++	{ /* VI2 MMIO     */  .base = 0x16b8, .offset = 0x800, .limit = 0x800 },
++	{ /* VI2_THI MMIO */  .base = 0x16c0, .offset = 0x30,  .limit = 0x34  },
++	{ /* ISP1 MMIO    */  .base = 0x16c8, .offset = 0x800, .limit = 0x800 },
++	{ /* ISP1_THI MMIO */ .base = 0x16d0, .offset = 0x30,  .limit = 0x34  },
++};
 +
-+	for (i = 0; i < err / 4; i++) {
-+		u32 length;
++static const struct host1x_info host1x10_info = {
++	.nb_channels = 63,
++	.nb_pts = 1024,
++	.nb_mlocks = 24,
++	.nb_bases = 0,
++	.init = host1x10_init,
++	.sync_offset = 0x0,
++	.dma_mask = DMA_BIT_MASK(40),
++	.has_wide_gather = true,
++	.has_hypervisor = true,
++	.has_common = true,
++	.num_sid_entries = ARRAY_SIZE(tegra264_sid_table),
++	.sid_table = tegra264_sid_table,
++	.streamid_vm_table = { 0x1004, 128 },
++	.classid_vm_table = { 0x1404, 25 },
++	.mmio_vm_table = { 0x1504, 25 },
++	.reserve_vblank_syncpts = false,
++};
 +
-+		of_property_read_u32_index(node, "iommu-map", i * 4 + 3, &length);
-+		devs += length;
-+	}
+ static const struct of_device_id host1x_of_match[] = {
++	{ .compatible = "nvidia,tegra264-host1x", .data = &host1x10_info, },
+ 	{ .compatible = "nvidia,tegra234-host1x", .data = &host1x08_info, },
+ 	{ .compatible = "nvidia,tegra194-host1x", .data = &host1x07_info, },
+ 	{ .compatible = "nvidia,tegra186-host1x", .data = &host1x06_info, },
+diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cdma_hw.c
+index 3f3f0018eee0..e43a9cf20c27 100644
+--- a/drivers/gpu/host1x/hw/cdma_hw.c
++++ b/drivers/gpu/host1x/hw/cdma_hw.c
+@@ -246,23 +246,24 @@ static void timeout_release_mlock(struct host1x_cdma *cdma)
+ 	 * so it turns out that if we don't /actually/ need MLOCKs, we can just
+ 	 * ignore them.
+ 	 *
+-	 * As such, for now just implement this on Tegra234 where things are
+-	 * stricter but also easy to implement.
++	 * As such, for now just implement this on Tegra234 and above where things
++	 * are stricter but also easy to implement.
+ 	 */
+ 	struct host1x_channel *ch = cdma_to_channel(cdma);
+ 	struct host1x *host1x = cdma_to_host1x(cdma);
+ 	u32 offset;
+ 
+ 	switch (ch->client->class) {
++	case HOST1X_CLASS_VIC:
++		offset = HOST1X_COMMON_VIC_MLOCK;
++		break;
++#if HOST1X_HW == 8
+ 	case HOST1X_CLASS_NVJPG1:
+ 		offset = HOST1X_COMMON_NVJPG1_MLOCK;
+ 		break;
+ 	case HOST1X_CLASS_NVENC:
+ 		offset = HOST1X_COMMON_NVENC_MLOCK;
+ 		break;
+-	case HOST1X_CLASS_VIC:
+-		offset = HOST1X_COMMON_VIC_MLOCK;
+-		break;
+ 	case HOST1X_CLASS_NVJPG:
+ 		offset = HOST1X_COMMON_NVJPG_MLOCK;
+ 		break;
+@@ -272,6 +273,7 @@ static void timeout_release_mlock(struct host1x_cdma *cdma)
+ 	case HOST1X_CLASS_OFA:
+ 		offset = HOST1X_COMMON_OFA_MLOCK;
+ 		break;
++#endif
+ 	default:
+ 		WARN(1, "%s was not updated for class %u", __func__, ch->client->class);
+ 		return;
+diff --git a/drivers/gpu/host1x/hw/host1x10.c b/drivers/gpu/host1x/hw/host1x10.c
+new file mode 100644
+index 000000000000..2800f309bf6f
+--- /dev/null
++++ b/drivers/gpu/host1x/hw/host1x10.c
+@@ -0,0 +1,33 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Host1x init for Tegra264 SoCs
++ *
++ * Copyright (c) 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ */
 +
-+	cdl->len = devs;
- 	cdl->devs = kzalloc_objs(*cdl->devs, cdl->len);
- 	if (!cdl->devs)
- 		return -ENOMEM;
++/* include hw specification */
++#include "host1x10.h"
++#include "host1x10_hardware.h"
++
++/* include code */
++#define HOST1X_HW 10
++
++#include "cdma_hw.c"
++#include "channel_hw.c"
++#include "debug_hw.c"
++#include "intr_hw.c"
++#include "syncpt_hw.c"
++
++#include "../dev.h"
++
++int host1x10_init(struct host1x *host)
++{
++	host->channel_op = &host1x_channel_ops;
++	host->cdma_op = &host1x_cdma_ops;
++	host->cdma_pb_op = &host1x_pushbuffer_ops;
++	host->syncpt_op = &host1x_syncpt_ops;
++	host->intr_op = &host1x_intr_ops;
++	host->debug_op = &host1x_debug_ops;
++
++	return 0;
++}
+diff --git a/drivers/gpu/host1x/hw/host1x10.h b/drivers/gpu/host1x/hw/host1x10.h
+new file mode 100644
+index 000000000000..577f6ff3dff5
+--- /dev/null
++++ b/drivers/gpu/host1x/hw/host1x10.h
+@@ -0,0 +1,15 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Host1x init for Tegra264 SoCs
++ *
++ * Copyright (c) 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ */
++
++#ifndef HOST1X_HOST1X10_H
++#define HOST1X_HOST1X10_H
++
++struct host1x;
++
++int host1x10_init(struct host1x *host);
++
++#endif
+diff --git a/drivers/gpu/host1x/hw/host1x10_hardware.h b/drivers/gpu/host1x/hw/host1x10_hardware.h
+new file mode 100644
+index 000000000000..abbead8190b1
+--- /dev/null
++++ b/drivers/gpu/host1x/hw/host1x10_hardware.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Tegra host1x Register Offsets for Tegra264
++ *
++ * Copyright (c) 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ */
++
++#ifndef __HOST1X_HOST1X10_HARDWARE_H
++#define __HOST1X_HOST1X10_HARDWARE_H
++
++#include <linux/types.h>
++#include <linux/bitops.h>
++
++#include "hw_host1x10_uclass.h"
++#include "hw_host1x10_vm.h"
++#include "hw_host1x10_hypervisor.h"
++#include "hw_host1x10_common.h"
++
++#include "opcodes.h"
++
++#endif
+diff --git a/drivers/gpu/host1x/hw/hw_host1x10_common.h b/drivers/gpu/host1x/hw/hw_host1x10_common.h
+new file mode 100644
+index 000000000000..48a632672a47
+--- /dev/null
++++ b/drivers/gpu/host1x/hw/hw_host1x10_common.h
+@@ -0,0 +1,6 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ */
++
++#define HOST1X_COMMON_VIC_MLOCK			0x4060
+diff --git a/drivers/gpu/host1x/hw/hw_host1x10_hypervisor.h b/drivers/gpu/host1x/hw/hw_host1x10_hypervisor.h
+new file mode 100644
+index 000000000000..8c9069caffa8
+--- /dev/null
++++ b/drivers/gpu/host1x/hw/hw_host1x10_hypervisor.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ */
++
++#define HOST1X_HV_SYNCPT_PROT_EN			0x172c
++#define HOST1X_HV_SYNCPT_PROT_EN_CH_EN			BIT(1)
++#define HOST1X_HV_CH_MLOCK_EN(x)			(0x1708 + (x * 4))
++#define HOST1X_HV_CH_KERNEL_FILTER_GBUFFER(x)		(0x1718 + (x * 4))
++#define HOST1X_HV_SYNCPT_VM(x)				(0x0 + 4 * (x))
+diff --git a/drivers/gpu/host1x/hw/hw_host1x10_uclass.h b/drivers/gpu/host1x/hw/hw_host1x10_uclass.h
+new file mode 100644
+index 000000000000..abe83e67fa83
+--- /dev/null
++++ b/drivers/gpu/host1x/hw/hw_host1x10_uclass.h
+@@ -0,0 +1,181 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ */
++
++ /*
++  * Function naming determines intended use:
++  *
++  *     <x>_r(void) : Returns the offset for register <x>.
++  *
++  *     <x>_w(void) : Returns the word offset for word (4 byte) element <x>.
++  *
++  *     <x>_<y>_s(void) : Returns size of field <y> of register <x> in bits.
++  *
++  *     <x>_<y>_f(u32 v) : Returns a value based on 'v' which has been shifted
++  *         and masked to place it at field <y> of register <x>.  This value
++  *         can be |'d with others to produce a full register value for
++  *         register <x>.
++  *
++  *     <x>_<y>_m(void) : Returns a mask for field <y> of register <x>.  This
++  *         value can be ~'d and then &'d to clear the value of field <y> for
++  *         register <x>.
++  *
++  *     <x>_<y>_<z>_f(void) : Returns the constant value <z> after being shifted
++  *         to place it at field <y> of register <x>.  This value can be |'d
++  *         with others to produce a full register value for <x>.
++  *
++  *     <x>_<y>_v(u32 r) : Returns the value of field <y> from a full register
++  *         <x> value 'r' after being shifted to place its LSB at bit 0.
++  *         This value is suitable for direct comparison with other unshifted
++  *         values appropriate for use in field <y> of register <x>.
++  *
++  *     <x>_<y>_<z>_v(void) : Returns the constant value for <z> defined for
++  *         field <y> of register <x>.  This value is suitable for direct
++  *         comparison with unshifted values appropriate for use in field <y>
++  *         of register <x>.
++  */
++
++#ifndef HOST1X_HW_HOST1X10_UCLASS_H
++#define HOST1X_HW_HOST1X10_UCLASS_H
++
++static inline u32 host1x_uclass_incr_syncpt_r(void)
++{
++	return 0x0;
++}
++#define HOST1X_UCLASS_INCR_SYNCPT \
++	host1x_uclass_incr_syncpt_r()
++static inline u32 host1x_uclass_incr_syncpt_cond_f(u32 v)
++{
++	return (v & 0xff) << 10;
++}
++#define HOST1X_UCLASS_INCR_SYNCPT_COND_F(v) \
++	host1x_uclass_incr_syncpt_cond_f(v)
++static inline u32 host1x_uclass_incr_syncpt_indx_f(u32 v)
++{
++	return (v & 0x3ff) << 0;
++}
++#define HOST1X_UCLASS_INCR_SYNCPT_INDX_F(v) \
++	host1x_uclass_incr_syncpt_indx_f(v)
++static inline u32 host1x_uclass_wait_syncpt_r(void)
++{
++	return 0x8;
++}
++#define HOST1X_UCLASS_WAIT_SYNCPT \
++	host1x_uclass_wait_syncpt_r()
++static inline u32 host1x_uclass_wait_syncpt_indx_f(u32 v)
++{
++	return (v & 0xff) << 24;
++}
++#define HOST1X_UCLASS_WAIT_SYNCPT_INDX_F(v) \
++	host1x_uclass_wait_syncpt_indx_f(v)
++static inline u32 host1x_uclass_wait_syncpt_thresh_f(u32 v)
++{
++	return (v & 0xffffff) << 0;
++}
++#define HOST1X_UCLASS_WAIT_SYNCPT_THRESH_F(v) \
++	host1x_uclass_wait_syncpt_thresh_f(v)
++static inline u32 host1x_uclass_wait_syncpt_base_r(void)
++{
++	return 0x9;
++}
++#define HOST1X_UCLASS_WAIT_SYNCPT_BASE \
++	host1x_uclass_wait_syncpt_base_r()
++static inline u32 host1x_uclass_wait_syncpt_base_indx_f(u32 v)
++{
++	return (v & 0xff) << 24;
++}
++#define HOST1X_UCLASS_WAIT_SYNCPT_BASE_INDX_F(v) \
++	host1x_uclass_wait_syncpt_base_indx_f(v)
++static inline u32 host1x_uclass_wait_syncpt_base_base_indx_f(u32 v)
++{
++	return (v & 0xff) << 16;
++}
++#define HOST1X_UCLASS_WAIT_SYNCPT_BASE_BASE_INDX_F(v) \
++	host1x_uclass_wait_syncpt_base_base_indx_f(v)
++static inline u32 host1x_uclass_wait_syncpt_base_offset_f(u32 v)
++{
++	return (v & 0xffff) << 0;
++}
++#define HOST1X_UCLASS_WAIT_SYNCPT_BASE_OFFSET_F(v) \
++	host1x_uclass_wait_syncpt_base_offset_f(v)
++static inline u32 host1x_uclass_load_syncpt_base_r(void)
++{
++	return 0xb;
++}
++#define HOST1X_UCLASS_LOAD_SYNCPT_BASE \
++	host1x_uclass_load_syncpt_base_r()
++static inline u32 host1x_uclass_load_syncpt_base_base_indx_f(u32 v)
++{
++	return (v & 0xff) << 24;
++}
++#define HOST1X_UCLASS_LOAD_SYNCPT_BASE_BASE_INDX_F(v) \
++	host1x_uclass_load_syncpt_base_base_indx_f(v)
++static inline u32 host1x_uclass_load_syncpt_base_value_f(u32 v)
++{
++	return (v & 0xffffff) << 0;
++}
++#define HOST1X_UCLASS_LOAD_SYNCPT_BASE_VALUE_F(v) \
++	host1x_uclass_load_syncpt_base_value_f(v)
++static inline u32 host1x_uclass_incr_syncpt_base_base_indx_f(u32 v)
++{
++	return (v & 0xff) << 24;
++}
++#define HOST1X_UCLASS_INCR_SYNCPT_BASE_BASE_INDX_F(v) \
++	host1x_uclass_incr_syncpt_base_base_indx_f(v)
++static inline u32 host1x_uclass_incr_syncpt_base_offset_f(u32 v)
++{
++	return (v & 0xffffff) << 0;
++}
++#define HOST1X_UCLASS_INCR_SYNCPT_BASE_OFFSET_F(v) \
++	host1x_uclass_incr_syncpt_base_offset_f(v)
++static inline u32 host1x_uclass_indoff_r(void)
++{
++	return 0x2d;
++}
++#define HOST1X_UCLASS_INDOFF \
++	host1x_uclass_indoff_r()
++static inline u32 host1x_uclass_indoff_indbe_f(u32 v)
++{
++	return (v & 0xf) << 28;
++}
++#define HOST1X_UCLASS_INDOFF_INDBE_F(v) \
++	host1x_uclass_indoff_indbe_f(v)
++static inline u32 host1x_uclass_indoff_autoinc_f(u32 v)
++{
++	return (v & 0x1) << 27;
++}
++#define HOST1X_UCLASS_INDOFF_AUTOINC_F(v) \
++	host1x_uclass_indoff_autoinc_f(v)
++static inline u32 host1x_uclass_indoff_indmodid_f(u32 v)
++{
++	return (v & 0xff) << 18;
++}
++#define HOST1X_UCLASS_INDOFF_INDMODID_F(v) \
++	host1x_uclass_indoff_indmodid_f(v)
++static inline u32 host1x_uclass_indoff_indroffset_f(u32 v)
++{
++	return (v & 0xffff) << 2;
++}
++#define HOST1X_UCLASS_INDOFF_INDROFFSET_F(v) \
++	host1x_uclass_indoff_indroffset_f(v)
++static inline u32 host1x_uclass_indoff_rwn_read_v(void)
++{
++	return 1;
++}
++#define HOST1X_UCLASS_INDOFF_INDROFFSET_F(v) \
++	host1x_uclass_indoff_indroffset_f(v)
++static inline u32 host1x_uclass_load_syncpt_payload_32_r(void)
++{
++	return 0x4e;
++}
++#define HOST1X_UCLASS_LOAD_SYNCPT_PAYLOAD_32 \
++	host1x_uclass_load_syncpt_payload_32_r()
++static inline u32 host1x_uclass_wait_syncpt_32_r(void)
++{
++	return 0x50;
++}
++#define HOST1X_UCLASS_WAIT_SYNCPT_32 \
++	host1x_uclass_wait_syncpt_32_r()
++
++#endif
+diff --git a/drivers/gpu/host1x/hw/hw_host1x10_vm.h b/drivers/gpu/host1x/hw/hw_host1x10_vm.h
+new file mode 100644
+index 000000000000..75f5b881c561
+--- /dev/null
++++ b/drivers/gpu/host1x/hw/hw_host1x10_vm.h
+@@ -0,0 +1,36 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ */
++
++#define HOST1X_CHANNEL_DMASTART				0x0000
++#define HOST1X_CHANNEL_DMASTART_HI			0x0004
++#define HOST1X_CHANNEL_DMAPUT				0x0008
++#define HOST1X_CHANNEL_DMAPUT_HI			0x000c
++#define HOST1X_CHANNEL_DMAGET				0x0010
++#define HOST1X_CHANNEL_DMAGET_HI			0x0014
++#define HOST1X_CHANNEL_DMAEND				0x0018
++#define HOST1X_CHANNEL_DMAEND_HI			0x001c
++#define HOST1X_CHANNEL_DMACTRL				0x0020
++#define HOST1X_CHANNEL_DMACTRL_DMASTOP			BIT(0)
++#define HOST1X_CHANNEL_DMACTRL_DMAGETRST		BIT(1)
++#define HOST1X_CHANNEL_DMACTRL_DMAINITGET		BIT(2)
++#define HOST1X_CHANNEL_CMDFIFO_STAT			0x0024
++#define HOST1X_CHANNEL_CMDFIFO_STAT_EMPTY		BIT(13)
++#define HOST1X_CHANNEL_CMDFIFO_RDATA			0x0028
++#define HOST1X_CHANNEL_CMDP_OFFSET			0x0030
++#define HOST1X_CHANNEL_CMDP_CLASS			0x0034
++#define HOST1X_CHANNEL_CHANNELSTAT			0x0038
++#define HOST1X_CHANNEL_CMDPROC_STOP			0x0048
++#define HOST1X_CHANNEL_TEARDOWN				0x004c
++#define HOST1X_CHANNEL_SMMU_STREAMID			0x0084
++
++#define HOST1X_SYNC_SYNCPT_CPU_INCR(x)			(0x6400 + 4 * (x))
++#define HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS(x)	(0x6600 + 4 * (x))
++#define HOST1X_SYNC_SYNCPT_INTR_DEST(x)			(0x6684 + 4 * (x))
++#define HOST1X_SYNC_SYNCPT_THRESH_INT_ENABLE_CPU0(x)	(0x770c + 4 * (x))
++#define HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE(x)	(0x7790 + 4 * (x))
++#define HOST1X_SYNC_SYNCPT(x)				(0x8080 + 4 * (x))
++#define HOST1X_SYNC_SYNCPT_INT_THRESH(x)		(0xa088 + 4 * (x))
++#define HOST1X_SYNC_SYNCPT_CH_APP(x)			(0xb090 + 4 * (x))
++#define HOST1X_SYNC_SYNCPT_CH_APP_CH(v)			(((v) & 0x3f) << 8)
 
 -- 
 2.53.0
