@@ -1,149 +1,154 @@
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010016.outbound.protection.outlook.com [52.101.85.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E799D233943;
-	Mon, 22 Jun 2026 07:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782112013; cv=fail; b=jKhq6EvTZIVCpvwXvK359lNhldb2Fz5hh3YxyuNxcNYXAD88keGEJ5o4pvjI0DUZhMRRDabsvuEya08ciEr1rKlnF7cgOcTn9LsHQcgHlernwcyQ9ecKxRupd7vyTY9DiywqTM/TpdcahCaupvKEHFoH+m8x9R/+jx1lef1Y/Fs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782112013; c=relaxed/simple;
-	bh=Ny5Y9g1LY0YRJxP4+LxTwPAKg4AIzEv8eAaIt+Wm1io=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gCne2hme3qK/ro/4XXUdKRsSoEBzQZ00vY70lqA/w0+Tz1gX4+n/3jxlJ+7GCumi+2VuJK+f9em7AZ9cbjuEJlP+9wYORIkVmcC8gXtvhmn7UVZQjblTBMJOoSzjqy+LNjrW4EyRIrox7e2c0B4kXhYdxPs3hN3pHunW/rJGux4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PVh6Xlov; arc=fail smtp.client-ip=52.101.85.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7031524BBEB;
+	Mon, 22 Jun 2026 07:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782113047; cv=none; b=hWkmm9U6c6bCzzCgLRF4nTmO0wEUqcVNuFwDFz8X+HT1B7X67bo1ltwEaSxKNOexe9srl6iC5MskeNfPyqWSl83nykgHItjRcl5VRhIGu15a0TPtwylVULNtyk22QyvCxJTBCnwjGXwuf5NJq07lrYPxOSLEJz9V/WdUT+TsPRg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782113047; c=relaxed/simple;
+	bh=o7zcFKJWtJroVuk3/irWEsNy2qOtZC1nUvhYDKFUzYA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EicIfuP7GoeDCFHOOefkY4unz3hPTvAK1IkpZbxrn4euLJRy5y9KKJpO7x4w5TATd62Ijp4iTSCZ8shbCzXW5xyrsxFjv3cQjxAkMUAUc4IA83kI1KevEXeUYplW9py1Xc/Ku7y2elgH4ZPgEgAsO0MR7CVA7kiqn6hcgylWdrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dNtmchRD; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PVh6Xlov"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=px4Hkc1X3RBQUo6oXhvi09Vyax7BaTmFy/0Uh0qnalgiEsESSs+IVpXH4skGXc+rKUH3eCzATuyZZ8ffradc2nJcbY/XDybXIFvdClszsrPClOYZUWn4CjVFaMyM2dI2uZrJJX4SnsHLdyHNwrIpK9pH9EjgaC/m7325tWCi6KB/4CC95VjuhabBxYSVcZTWjyE3WPm6gXQ7zqJpHgM5d2jhQmwCCPAc5VSuRzN4hhqgJGzvurtET6ICUhsX8EmvfyuL3JSukBv9G1Vx2o5kP5t7ASiAMY1tZ5GTf6M92sQ2Iw4As53kdkXNCWusZuaCo2VxRoevUtC0t7At0jm5cg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ny5Y9g1LY0YRJxP4+LxTwPAKg4AIzEv8eAaIt+Wm1io=;
- b=SgnRKq6mFD7lbqjZkw1c2PBxK3PGRofiheACpaYV1TrDqnsXFbzbT6X9Bho8b0evMv3AZ2jeEimK1BfApucrFQ8K55VycjZbjPePNTRRLVEjIv1iiv12CRAdyN+w/khgsfRFCoi+2jfPQgi4nbNuH0xREeNeBfqPmhFLXKiD9t0Ex8ZZyNxgUc2y7HwR7QSegewVZArV5spnq4IvDAoRvByy2r2c7fnBcy/jSKFZ5Ig+jVyzpAVQXpoJKmMRWmYl0k/kp87hKpVtPAy0yQ+lxkuL6/XpPUUwWP8wHjO0QRpTG38C4CsBrPSldI5LUB8EdEWVaZM+B0wSGOO+ber48w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ny5Y9g1LY0YRJxP4+LxTwPAKg4AIzEv8eAaIt+Wm1io=;
- b=PVh6XlovJ3Pci2EHn3rEDskqgY7CWz6eAmOmer6C0HebqEZdQZsFlThIrOSt1HKCtOlA5J9YYM4bYlc3CZegtLtFaZKfSd1zEDvZXxB8NYQZODDdoPbh73h4ZEieTMkd//yZyxAiZ0EIBJ4LH2zFvAmKp1QAeKAt82dYIH/MdWbwXSxPLi5Gw9UZ/sg9Uy91yAX05tGUoWFCEEvJv8MCpHbxbkE1Hz5FYuQldwHrff0F3auV/+k5DmZiAKQjrl+zdfDwv8nwTj2SKSD4foK9OfQIkx/GmQHNs2HFA606ZREPMothmyGuTD9FnOHzzpB9JTliqYUQV5RqashVet5Opg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by MW4PR12MB7239.namprd12.prod.outlook.com (2603:10b6:303:228::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.113.18; Mon, 22 Jun
- 2026 07:06:49 +0000
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017%6]) with mapi id 15.21.0139.018; Mon, 22 Jun 2026
- 07:06:49 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Santosh BS <santoshb@nvidia.com>
-Subject: Re: [PATCH v2 0/7] Host1x/VIC support on Tegra264
-Date: Mon, 22 Jun 2026 16:06:46 +0900
-Message-ID: <zzSRkXOOSyWrC6y9Zygemw@nvidia.com>
-In-Reply-To: <20260622-t264-host1x-v2-0-cdbb730165c4@nvidia.com>
-References: <20260622-t264-host1x-v2-0-cdbb730165c4@nvidia.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP286CA0046.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:2b5::6) To SJ2PR12MB9161.namprd12.prod.outlook.com
- (2603:10b6:a03:566::20)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dNtmchRD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FC4B1F000E9;
+	Mon, 22 Jun 2026 07:24:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782113046;
+	bh=Yin5P1NCTxzImSQPhZOUF3w34OplqtJ7ZRzDT1eUnTI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=dNtmchRDRiWH+5Q91oTikez7+0USZxZOHRO0E9XxQqlZ1pTFn6v7ch7qr6NVEqi8K
+	 Dt8lOWiJZFy9b7Dvv0bgBVARAReuv8zOQSFkEhFcT0w3vBZ5i3JuXc2fYYT16grE9t
+	 ReyvN1D/WJeehtzo73oMjcQOFI9ninjPYYCYoFb7qsfhb/pD10xZjgXZMIG2EOMmHI
+	 IFsOEQfKHcxAqGHbX/lqvoyPuw+qdpoL5qKrNJpUZ/GwLPUNfouN0uBOIIdIkGfewz
+	 0cMHs635tYUHuh/G1XFs1W7xCOMhbPPQCnAbV71odg6dGCHp1F+9ETlKMrGTI85fOj
+	 jdAa4z9QPq5ig==
+Date: Mon, 22 Jun 2026 09:24:03 +0200
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
+	Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] soc/tegra: fuse: Fix spurious straps warning on SMCCC
+ platforms
+Message-ID: <ajjfgOLpDXuVHpI0@orome>
+References: <20260604-tegra_warn_fix-v1-1-78522c852340@debian.org>
+ <ajAa4JAXyssMpr1R@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|MW4PR12MB7239:EE_
-X-MS-Office365-Filtering-Correlation-Id: 42a8c40b-e101-4c7e-9c16-08ded02cd46f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|10070799003|1800799024|366016|7416014|23010399003|22082099003|18002099003|11063799006|56012099006|921020;
-X-Microsoft-Antispam-Message-Info:
-	aIA+XjkBeMGzX1bQpNMUX6Fr+AKOF/3TV9ZtLfn58zVZzIpbwWkShDusvbNKy5kz0yi+1KiZnEKrHScFxTo1WxQwS3uRSziTGoGXYtHiUCVrOC+CF8eTq+FCQ6ammZqPKv2j+N4Zz7IyTThh8JE64drmsMf1NFbzq+fwGoFPBsHSiEU2DLa6zXZFGM/dgdI6gmYCLfGwtD5AEGWNhK13YnzEqwWBwN3uw1dYXModSUGbIED3RQ261yV7is/DRwB4iS6HMh3PM8XKMVLTAHsfGeKyS+7dg39W812dd5FJul+nhYSWFVbW7MC9QcWTkqJjr2yVl9jR0zkk0Th0+ylTfqdGzVAK+LCnchLH4lwdno9kOrLygg2yOoOXaaUwRFWR86/VTUGESYNOTEs8rcS0X9+KHSkdtNcpFXaeUQyJz/wuM6vkcS49WBPUP/4Va6J7MvAFQBZlIhdsS35oBrfZthUKniTiT+jmkkemzpPNsXiNWNtkNW6molxIqj5SfQqU5NPC5XV3DhpF4HZ0qi3u0GUgdR9nDSuZkhK8FS/4cGqQpOfI+4kl92b4Bv18vf0QU176Qxs+ZPyUaRr/7m+/qJ4hDMXtuDRXklzC9OD6k+DWj+NJzWov3RQZG8/fGv6SUpZ6maLLmaBZfvfkvDREXxRAgtkLlOS1hdCGrPkXYLi4PW6TwM3cPcRsmHbdVvg1xMuTPKZvfozjAvAunyLcdg==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(1800799024)(366016)(7416014)(23010399003)(22082099003)(18002099003)(11063799006)(56012099006)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NndDTVdwU2dwV2Z5clBiWSt5OUg4TSt1TzhJbjFBTW4rWjk2b2NIelBmcHE3?=
- =?utf-8?B?b2xUWUVZQmNTZWN0QWFxcExDekF1SkR4SGRsVlJ0M29NdGtUOG5Ua0N6c3R0?=
- =?utf-8?B?ZWo1TEJzK1JVOUVrWGE0NjNubU1KWjc0VzB3bGVzNDk0VyswakpzbzZJODdu?=
- =?utf-8?B?Yit4RzM0KzN5RXlYTzI3ZXo0cUpoVElDOTJ1MTYrMUxiaStIUzVVd2VlTzhF?=
- =?utf-8?B?bFY2amV4dTJFWlNDZ2xKL2RObENVVmlOb3BVaEtLN0NkL1lrUlRQM0txR29H?=
- =?utf-8?B?Wndic2xWdEZXWVJVaGV5SE5uQ3BzTWUrVnJ6OFNJR2ZwRjRUSkdEOVJPQytC?=
- =?utf-8?B?Z2F0T1BsYmx6ZHgzMzFwb0hXZVFYMmdxSWxZK09rLzV1RlJpblhjQVMzNDNk?=
- =?utf-8?B?eUE4aWNDWFBvZHNTbTF0eGlpb2ZIc0gyVXlJMFN1NDJudE1PU0tYOUExc3RE?=
- =?utf-8?B?bEtGUGhJRTZ0ZXhLZW9qVGhUWnpTMVZGaFdJM0ZOek1EaGlMeFlnUG1CdzMx?=
- =?utf-8?B?eHFSdUU5VTE2YlByUGxUcU1peStON20zdjRJUVdRRFQ4cDBnK2kza2ZkTWZY?=
- =?utf-8?B?cmhacTVlRUppelBUazhzdC9jdDdyY0xTcFR1Q0JhWHFsbm8yWTIzT1hrSlB6?=
- =?utf-8?B?TkFhQ1M5dE1ZWVVZQWlXL2NEMDI2NGhaUXB3SWNjb1NCVjNQQlg2RDZGUjUw?=
- =?utf-8?B?M0VKaUU4SmhFVFU3SGRCYWN3N0JnMWpQQisybmo3eFBlT1FqRUdSWm9MRFdQ?=
- =?utf-8?B?Q2MrMFZ5M2x3M1FaWE5SMVVtc215ZG1wYkNFU1E1SWhKcGoyMkhWNUNFcDdU?=
- =?utf-8?B?SUtUN3VTWUpUM21NdnpqQUVrR2RLM2pMazdiRXc5TkVOb0o4dzhpWHRIMmpH?=
- =?utf-8?B?cmx0TGs0SktTempMaFVtUEdhK2I0Tmlscko5M3RxRUY4b3MzZTkxemd0MllL?=
- =?utf-8?B?N0RSMTU3R0wvcURUK0xpRXRBamw1eElWTGFGZlpPTWcxSktXcVhPRVRKamR0?=
- =?utf-8?B?YlluYUt0NUJJV2duRWMxVEdORWwvQjRDUFowMTVTQTB1SEFSYVFLUWR6eFUw?=
- =?utf-8?B?TUZuZUY2YkJtQ3JQSTE2Wis3WGl1Y3NiYUxqU0ROSEhkUVlnbGMyWDJRTFk0?=
- =?utf-8?B?d1JCNFI3ZkEzeW1NOWU3d3lmdk1pdlFMQTFQYnYvRDBBVWFFSzJLVXQ1NGF4?=
- =?utf-8?B?WkVLOEk4ZjFJSEFsQ05scXZFbWdxUWJhRzhTeFhTZW8zc2RaMHA1dm5HRXZL?=
- =?utf-8?B?OHJ4TnR6UUtLZFFxTEwzYndSRjVjbGlvYjdyZDVqbWpSUG5WVys1d0xkdjc5?=
- =?utf-8?B?d1F2eUFYQm94TEU3ZS9yWG5rKzJTeHBlUitES2c1V0IxWnA5MmR6ZHRNSGE4?=
- =?utf-8?B?QWxiTkh4Q1U3Z1hpU21WOEhzV0pDUHdQZFdUdzJwdGZRV0RRT0NBRW5wbklN?=
- =?utf-8?B?NTlUWFU4RDN6bFJDcU55SzlDYkc5Z1pUM1ZHdkxzU1VrYkRTdjZ4YlhWellX?=
- =?utf-8?B?QSsrRWxzWlZJcmZPWGpReFVBK1hKbERtSEhFQWkvZVZxWUtSUUlpeGtuVW1Z?=
- =?utf-8?B?dXpVOWllMHpnZUloazM0aWZHbXRrZC9UZVlLZDJHbkU1cVFiZ1FPVXc1MTZh?=
- =?utf-8?B?T2dpcDdpMVZESnBnSFdaVGttSnZUTUV4NE5qazdKSVFwZ1RZby9XNE8rWC9F?=
- =?utf-8?B?QkxrQ1FZWTNnT1RESnBqWkpNSjI1dWF2WHhlYmF5K3NCV1ZQWE95d2x2OXZk?=
- =?utf-8?B?VTErVFM5RWxTWTNUbk04VUt4NFEvL2RydkI5QnRTWGROQmJLNk83a0RoMVpt?=
- =?utf-8?B?bXZVTGhVVEwya05oUEkxbmpBZndybmZGalZrVW82ZXFudk0vU1JKSlR3OWtD?=
- =?utf-8?B?bFJPNjdIblB2ZnVMNTh4VEdMUDFnVFdSWTF5K1FMU2VrM2Jmc3Fpdjc3ZEpR?=
- =?utf-8?B?UWJMbVhmYWkrS0NaYm9FRkRIL2xoUnF5c1l1M0ZWKzlPTGgzSWZkSmtxNkY1?=
- =?utf-8?B?aHJZcDRSTHc1VjdRWVAxK3JBaUdramZhZUZQdDhtYnNxdkVBcHpRUVdyUlM2?=
- =?utf-8?B?YXo1STBzSzZKbWY1Zlgrb0k1TXRNS3ZzRGR1OURtcTJsZk9zWWZiYkh1S011?=
- =?utf-8?B?THI3NXFyR3dFZ2tQYjNkK294T290UHhUNlJPMUo5UWl1b3ZGdTFaT01Md0Nh?=
- =?utf-8?B?WmRWNHhFSmJ2RGhEYXBkOHdXTkdpK0ZYME9LNGtUMHdpWDVIdGZoVkc3bG1C?=
- =?utf-8?B?THJjR3FNZGRQaWNHUXpRNjVhUXhLL0FIY2x3NnBDQlF0NklXcHdnajUyZURV?=
- =?utf-8?B?azRkcEZyejNUNUNuWlhzTTBDNTM2eloyZDdvSU5sY3dEeHFBRDVCbG5LTmxQ?=
- =?utf-8?Q?c4JZZk3l4GMyvgtemEKteRbjvmuQBJrOhopjyeYsLNOti?=
-X-MS-Exchange-AntiSpam-MessageData-1: OcFpH1Dj4DrLkg==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42a8c40b-e101-4c7e-9c16-08ded02cd46f
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jun 2026 07:06:49.5521
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: G5i0Eo+Re3sLFnWGfVuIptM2M2k01HN9M34W3yr+B50sX0Z8QCdvuKVL20Lh2a6NlWO9HQwhx+AiGAsdtN8thA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7239
-
-On Monday, June 22, 2026 3:52=E2=80=AFPM Mikko Perttunen wrote:
-> Hello everyone,
-> ...
-
-Please disregard this one, email is hard. v2 submitted as another
-thread.
-
-Thanks
-Mikko
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fgqw2ypldyvannkc"
+Content-Disposition: inline
+In-Reply-To: <ajAa4JAXyssMpr1R@gmail.com>
 
 
+--fgqw2ypldyvannkc
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] soc/tegra: fuse: Fix spurious straps warning on SMCCC
+ platforms
+MIME-Version: 1.0
 
+On Mon, Jun 15, 2026 at 08:32:25AM -0700, Breno Leitao wrote:
+>=20
+> On Thu, Jun 04, 2026 at 03:36:17AM -0700, Breno Leitao wrote:
+> > My Grace host started to show this warning:
+> >   WARNING: drivers/soc/tegra/fuse/tegra-apbmisc.c:120 at tegra_read_str=
+aps
+> >    tegra30_fuse_add_randomness
+> >    tegra30_fuse_init
+> >    tegra_fuse_probe
+> >=20
+> > tegra_read_straps() warns when the static "chipid" cache is still zero,
+> > using it as a proxy for "APBMISC has been initialised". However chipid
+> > is only ever populated lazily by tegra_read_chipid() when it reads the
+> > APBMISC register.
+> >=20
+> > Guard on apbmisc_base instead, which is set unconditionally in
+> > tegra_init_apbmisc_resources() for all platforms and is already the
+> > sentinel used by tegra_read_chipid().
+> >=20
+> > Fixes: c71f213fa5af ("soc/tegra: fuse: Warn if straps are not ready")
+> > Signed-off-by: Breno Leitao <leitao@debian.org>
+> > ---
+> >  drivers/soc/tegra/fuse/tegra-apbmisc.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra=
+/fuse/tegra-apbmisc.c
+> > index 87ae63a7e52d..7aba7c58bad0 100644
+> > --- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
+> > +++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
+> > @@ -117,7 +117,7 @@ bool tegra_is_silicon(void)
+> > =20
+> >  u32 tegra_read_straps(void)
+> >  {
+> > -	WARN(!chipid, "Tegra ABP MISC not yet available\n");
+> > +	WARN(!apbmisc_base, "Tegra ABP MISC not yet available\n");
+>=20
+> Hello Thierry,
+>=20
+> Have you had a chance to look at this one? This is showing up in my
+> Grace all the time.
+
+Yeah, sorry for the delay. You're right in that we now get the warning
+until we end up calling tegra_read_chipid(). However, I don't think the
+Fixes: reference is right. I think this started showing up after:
+
+  8b8ee2e56f95 ("soc/tegra: Use ARM SMCCC to get chip ID, revision, and pla=
+tform info")
+
+I don't think we accounted for tegra_read_straps() in that case and I
+suspect that we're not seeing this elsewhere because we do end up
+calling tegra_read_chipid() earlier in DT systems whereas for ACPI it
+might only get called at a later point, if at all.
+
+There's also this patch:
+
+  https://lore.kernel.org/linux-tegra/20260514051252.2401568-1-kkartik@nvid=
+ia.com/
+
+IIUC, that's the only place where tegra_read_straps() gets called on
+ACPI systems. Would you mind testing that patch (without the one that
+we're currently discussing) to confirm that that's the only callsite?
+It doesn't really matter either way, because applying your fix here is
+the right thing to do, but it'd still be useful as a data point.
+
+If you don't have any objections, I'm going to replace the Fixes: line,
+but otherwise this patch looks good.
+
+Also, I'm going to check if we can get some better coverage in our daily
+testing for the ACPI platforms. Do you happen to run any daily tests on
+your systems for linux-next?
+
+Thierry
+
+--fgqw2ypldyvannkc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmo44w8ACgkQ3SOs138+
+s6FQMg/8DMHt9b5zHEMgFUu+Ar0CgYGc6LMdKqUd0hF4Qz9zZLJxdlW4H6cvkcZD
+ccz2rrDzelDMlBLJk+/70R5nYTROQ00L+VOwJj7fwrMORKxAh0mtuLZzQEkCCwF+
+emc/kKjN07JEUO7TtDjXkXUtr7uQB4x4gM8UAQ0zXzbu4D8WrVYbAjWLDRxJlag6
+Zd6+vtVh9fprH0AqN4XV+qFnTSPFRY03wvQe5waZn59twYqCF+6SzUeo33FsZi/f
+mvGe3s88qkpLdMH47jm4q+UU7pTLIXEEOu1aaBpfRlNzlnBCxBTrgJus/JP8CTzE
+xEfXg7qKvbKxLEflp5RZ6Z6mv9/qRywU9AL62M2LGA7wPDOsKYJwfUGbFCl97RDN
+mH2eh+TdHyX0pzg+19cwiRURK6Xq0nWo7EkNITbbnXf7pr3szytYoleRwQZQQyb1
+geruwnWy1Yw+jLM9cE5B4xaLzppHLY4DWMls2WmPFUEh4JvSBtN2JDyEehHdbBP7
+BPKt3q4r5SCwEVaJ309rzjuTYbJ+jEtqRzCzmideokI0h8LwhmK/tcugQF0FlL0D
+kYDm//H5taXpbyK3ShOksp19qAm0EhTiPrj9dy6W9YTaC535DzvFqBha4eUsVQYw
+S3lCl5YTrMxxD6VLIKK0fhMUxg+g+pQSig/32CDqZKNsk0C1Xik=
+=rHb+
+-----END PGP SIGNATURE-----
+
+--fgqw2ypldyvannkc--
