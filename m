@@ -1,176 +1,165 @@
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010029.outbound.protection.outlook.com [52.101.46.29])
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011061.outbound.protection.outlook.com [52.101.52.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBC41FDE31;
-	Tue, 23 Jun 2026 03:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BD43CB90F;
+	Tue, 23 Jun 2026 08:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.61
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782185148; cv=fail; b=N3JL/A5Ctw0oNhf/tGFexYDih3D8pBsFeJfQE4TsCaE97Tleg6VbsW+vEzKp+yp9XxcmoRnha46Yr3gSDNLDQLJcZuQVSQNKatHIndUun6MNU9fKzhIvUi9D8wxY9ZQRv5zutJBvujzsQWRJzX44NNzrrbWdEmkvyJkqbLzCWfk=
+	t=1782202048; cv=fail; b=HR2RrJzpkiTUxBkkEsMRn/SFVlmjeKmIqZJBK807Ugov3ZrQCUUju6G4CN4lMELx/kv3VKXRK5gTCYRqNNIo6cVQDA+rG6v9mA9lTzEiepZPcuKKhM4DG3NCbFc7BfEXJLIF/S1QYzTrJnKpfSKXFJPAOioC6/u1OWQmAzIebCE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782185148; c=relaxed/simple;
-	bh=N/qmPEJmeUuzt4RHWj6Vp0ec1RDPgL91d9Lr7SS2L3c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ijjAkAGWaGcHSmCGJn1MjXHpP5F8AvIA8T5R6NnfVRX6LwambLSlgWvtsURUu9tBXEW86RhV0ZvTjDKv0W5wEerI9s7QY1YtYGY5a4v7x7yDL3Aorb84wduAAHgoT8hkIITwOtslEzM1cF547H32KsiZ1RJW8xbZFSyrOg5b4u8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CX8Wm8TH; arc=fail smtp.client-ip=52.101.46.29
+	s=arc-20240116; t=1782202048; c=relaxed/simple;
+	bh=jHkto399eWgUBuu/GkXJfzwjKO4AXeZoVWjRkGVSLec=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=InK3Y0+nI0nZkjXiNFrX2CH9X8HICjSPW95+fB2ZO6RSfo2ktJsBFB/8dpE6p92KOZs4nizIz4GDzdf2tnUdRITseFwgFICvFe7TmJTXOmby/uU1xR2bvM4eFpEum0Sfb5MrqlvGVOw035BQdKiVgYeZXRgVehHfA/gBMksDKtk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=I5PWkJmU; arc=fail smtp.client-ip=52.101.52.61
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CX8Wm8TH"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="I5PWkJmU"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t7ExMaRcJQN6c7MrQw9BTWEraMCvg7H9WiRSHjuDtC1z1eWBhHwnI2UUNi5T3B9VTDs1CGM61YPWr3vVuZCqlCIBAE4z9R7HKBT/s9dN/OwJ6IKXNHaxXupjqF/+f1MuPECrPrL5Z7WYSxkEneS7TYS+cm559rUZhuwYDS8sgOWxIwY6PBt8ClzTb/ezEpcnDwKnUVM8pBfWiYaeVVlajXBOpvLplriTOSmLDgxsLpEve880hKnaV5f0Xh4Xc42/qaLatJHPF9dEyo2yccJdvmfjVgbbscN5xoTYC041zKbfGF6Bh5+uLI5cH7/mwGWMi4xp0czz63PiF6dRk3Y2rA==
+ b=VOrfVfF7XUolv+EFejafCbC2RV4FfK/4ZeVwjwok+qwUoooSx1cyKx9SSSE7yF+dmcbeNNXBaL0AmqKtqApOfeOQJ9P6wqnXPdUkAmRyeQ0R461R9b5aTsFaMAK+HrwXITPWmcpkuXQ1g+Ki+xfhDXqXhtApizq3PIj0gQuYQJnT7SSoisVm5nJqoyM+VuksO0SnTqVGniAdc/zDolw6jJL2k4dCQHawNVb5Lt/lxaI5TiswW8Uz0sK196BdIxHBzI7zATDPzHj+51+7o5JsZAwk4yNTs8ftYt1iDKuIrRaBQFQP0PnpwQmmBl/pMH5FWOo8AuSMglKWzHNaP7+7zg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lU83DfSy0In3GV02b4W9zvq6OHuIEo9MfD5jINr1kho=;
- b=cXUuNnMPEgaOisCatrzL1pioWKcAJY+g4fkVheoRHLWqkR7jZ2YaQrzd0LSKtxJxHWGl9vdMRkoLWwYrw4lHAjYwnWhlbPXdU9zp3qKaaM4wbpf6F6BkOISAK0w5wkcaMaKaVfUuBrjMIuSjVQE57JmRKq+TtaiY4JxPD70Vng+iyee1tFjRe2T5zlOIxf/3JegO/DsnqCOl8BiaDtv6tl6p6GXpAfT9Sx2FBFadbi9oko5J6wrUDS3f2TrYHpb4cEoATY0Rcz+GvnQNAwtu+99ptNK0ZKMZw1XOZFHKkMvO4CpOcfTso9nyEMiSuZ2tGJB2WlTrBpJda3LRR3qmDA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
+ bh=GfMh+IQr0Rfn/gr6uwvE5IlrVYmz9ScbhiPSSTRskFo=;
+ b=qnga9lDtfeS6dzGUnhjS1u5DKDi7inq1ytO0MP7oZvb4esdt8R84t5N65QuJbqggzl6RrSm5NpH7WEdhZQ4jAhAu/2dOcU0nR6Z3mutBlhxHEiOmcXD1Iq1Sg50Zl2Src3iuDXyE9IU21Nf6DY9zufCiHg0NmuUh9V1nWkZNu2ufdPvyEG7ERPEHAPaG5B6JkAvB0TlzSEF5ROa6ZHKEjHGgz462wmHtvZTUbe6nwg7bvV9IpcWjHR54ucyzaLpYcFUxzpDGRzoau+vKkODy3vJtZnH+pQrhjLi5OkqgWbKLqRrgEGB4L3HAHqr2TseHUPTyDNRjdxCdy545lFmXQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lU83DfSy0In3GV02b4W9zvq6OHuIEo9MfD5jINr1kho=;
- b=CX8Wm8THOdVgnln1uzNPACXdPIWwC02QaI63fPChM7vs/IVKsrADycA0rtlW72dhA1aVANDx1WJPX/Z+VAWdXFZOydDDf0NBcm1cvv7jsIfF5RKgB/ZmJPxGK9gO/1Zlj9q1P38EedeTPu3I6Lokz0uDnba2BIMYrVcMAuNF96gm2VK6h22Iv0m9D53POeZ1KFvyZ+3uBAU0Mh87CmmQK2s0z4+X9MbKyo4XVX2z+1O/pc/onLVeeb0cnuGdbjyf7x9v3AMF/XdLlcHhJma9dksGv+1XGkQ8DsRuELA4obP6QrZ5hYYQjEYa0X0DAJ3jBg+Osok6NxsXgGKut4QH6A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9474.namprd12.prod.outlook.com (2603:10b6:8:252::17)
- by CH0PR12MB8505.namprd12.prod.outlook.com (2603:10b6:610:193::21) with
+ bh=GfMh+IQr0Rfn/gr6uwvE5IlrVYmz9ScbhiPSSTRskFo=;
+ b=I5PWkJmUilXiuxCEbhAQ8Ov4xmrSm0pjKD5P5f/04mZ3fg5Z5Dk+pCPrNNds7RKcGO45hc1+4Gmv+9mp6MnQB5Rf8FAHyG7/ExWNEg4PXWbLBWsKtNPBOAEUHeZbwjKBFiHvBePIJxpN7w24lLrM8qDD8OXTtjoE4f8bt8scBta9RzB3ADlllhjxFpXnKMIS3W0hNRFTGgKb4bEU+AKVC7KUq1A2CLB6grvniLQdq3Mru6Vr+Dh4gjjJk3mpW3PyDvxmVnqKXFAZ2VYnoWhLhMYGhGR2w/T+oK9XOQji8jcSztbAIMsqpTHUuZWyvvcpFqKj3ilMLmTGdveVfPry2g==
+Received: from MN2PR07CA0029.namprd07.prod.outlook.com (2603:10b6:208:1a0::39)
+ by CY8PR12MB8067.namprd12.prod.outlook.com (2603:10b6:930:74::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.20; Tue, 23 Jun
- 2026 03:25:23 +0000
-Received: from DS7PR12MB9474.namprd12.prod.outlook.com
- ([fe80::31ad:931:ef07:8ad7]) by DS7PR12MB9474.namprd12.prod.outlook.com
- ([fe80::31ad:931:ef07:8ad7%6]) with mapi id 15.21.0139.018; Tue, 23 Jun 2026
- 03:25:23 +0000
-From: Srirangan Madhavan <smadhavan@nvidia.com>
-To: Alison Schofield <alison.schofield@intel.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Dan Williams <djbw@kernel.org>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	linux-cxl@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: vsethi@nvidia.com,
-	alwilliamson@nvidia.com,
-	Dan Williams <danwilliams@nvidia.com>,
-	Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>,
-	Vishal Aslot <vaslot@nvidia.com>,
-	Manish Honap <mhonap@nvidia.com>,
-	Jiandi An <jan@nvidia.com>,
-	Richard Cheng <icheng@nvidia.com>,
-	linux-tegra@vger.kernel.org,
-	Srirangan Madhavan <smadhavan@nvidia.com>
-Subject: [PATCH v7 11/11] Documentation/ABI: Document CXL Reset PCI reset method
-Date: Tue, 23 Jun 2026 03:24:53 +0000
-Message-ID: <20260623032453.3404772-12-smadhavan@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260623032453.3404772-1-smadhavan@nvidia.com>
-References: <20260623032453.3404772-1-smadhavan@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR03CA0252.namprd03.prod.outlook.com
- (2603:10b6:a03:3a0::17) To DS7PR12MB9474.namprd12.prod.outlook.com
- (2603:10b6:8:252::17)
+ 2026 08:07:20 +0000
+Received: from BN1PEPF00005FFF.namprd05.prod.outlook.com
+ (2603:10b6:208:1a0:cafe::86) by MN2PR07CA0029.outlook.office365.com
+ (2603:10b6:208:1a0::39) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.139.20 via Frontend Transport; Tue,
+ 23 Jun 2026 08:07:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN1PEPF00005FFF.mail.protection.outlook.com (10.167.243.231) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.159.10 via Frontend Transport; Tue, 23 Jun 2026 08:07:19 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 23 Jun
+ 2026 01:07:01 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 23 Jun
+ 2026 01:07:01 -0700
+Received: from sumitg-l4t.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Tue, 23 Jun 2026 01:06:55 -0700
+From: Sumit Gupta <sumitg@nvidia.com>
+To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <pierre.gondois@arm.com>,
+	<ionela.voinescu@arm.com>, <zhenglifeng1@huawei.com>,
+	<zhanjie9@hisilicon.com>, <corbet@lwn.net>, <skhan@linuxfoundation.org>,
+	<rdunlap@infradead.org>, <mario.limonciello@amd.com>,
+	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+CC: <treding@nvidia.com>, <jonathanh@nvidia.com>, <vsethi@nvidia.com>,
+	<ksitaraman@nvidia.com>, <sanjayc@nvidia.com>, <mochs@nvidia.com>,
+	<bbasu@nvidia.com>, <sumitg@nvidia.com>
+Subject: [PATCH v5 0/2] cpufreq: CPPC: add autonomous mode boot parameter support
+Date: Tue, 23 Jun 2026 13:36:50 +0530
+Message-ID: <20260623080652.3353386-1-sumitg@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9474:EE_|CH0PR12MB8505:EE_
-X-MS-Office365-Filtering-Correlation-Id: eef8bd7a-39cf-4286-12c6-08ded0d70f84
+X-MS-TrafficTypeDiagnostic: BN1PEPF00005FFF:EE_|CY8PR12MB8067:EE_
+X-MS-Office365-Filtering-Correlation-Id: 700d16a6-de29-4534-f425-08ded0fe729c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|23010399003|376014|7416014|921020|6133799003|56012099006|11063799006|18002099003|22082099003;
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700016|376014|23010399003|7416014|13003099007|18002099003|921020|56012099006|11063799006|3023799007;
 X-Microsoft-Antispam-Message-Info:
-	PuxJzMS3AbU0dfmskNR3BF9C3cQWExI3Iq6EymUUKG3UfZnNq4YdytlcST2qRnwaiV8N8hENlkfA2q/cQnXdr809J2mAlF1zD/IQvbTGUTOcvkZUZN7kgduSfVVMr4egt91M9jiyAflAfFA8fhteIQNuggQDtGd+fR3JPPfgyTNcUvtMkfFDnZDo2yZ95lxfcTi5jWMxZ/wrXw1ygzSeijpAgnfxMmjPLEPTnWykcIIbwJnTqHUdSu9xh7l8Qy4TI7C1HrA/jl9d3svdyJzmpp58vTGxTF2jLXmkNOIOBzgZ50OLjng3VHxMEDDFBt4vPzzEmPvGa/6LymIULZni2qXtKw+LrjwTefI3gTRjbFlkog8gLxbcjcWSEQp8miiLO4dvLlj0alOBDoIibs1SDYCSHKimD773M6a8HfaSc2z/l9deCAkHbwdNrfxyHpWb1fVdogevrPbLioABEF0Ya1aBksNGDqAsUiWVGmVfX9scHqqc+IBcZ6mLh6os3pSxncfbVuA2W05X+QSlPrQgFun23cJHlIzUn7G2qcI7GhGS3EUeCHWYT+7KinYlb/GigC9nwmOzIQxIxGLEq8xTisVA3v03z1O6JLD38cTmJecuxW63V5cLkZ3RI0w/xECx65xXFkYkYPieMGyv5Ox4ZZ+LftBOVELLM82/tBRpUedsCzn3V8tpxOY63dLLuqmKf73flZnzO9n/KIuLTvdWyg==
+	mBC1ITqgf2lb5Fx3RCEfvnzg9jsR9a7tRYgM72u1m1lseNvskCqdme9R9jJeA3laHGNHNCJLUmpgCI9VQPFT5CKd6J3ZzgTVipxRumT4bw27kQNwTkxtFvlw6EZ65x5BQQqbdZNes2YWCOJOeI65ZBVwtye1Qtjrnwp8POk/2A3xZFYuq5t8cPFaTIAueFlDaYsrGBrKfh94rR8hTc0x+sb2v7li0L4iE/Vu4DWRV4u49pylA46qehvvj/+Gos5nWvGxdzlxIhXHp+HMK1cnu+rOASxhiG6OTFuCvrq4x2V+HJvtD7CtWondjWPNTpSbQVtCX+AnOfEUMn5Ir246uC961ZoW5X4Tr7jk//vw9dEaJVuvZlCaSu4S7eUdqw6vAtTqr15abo69/53kX7j6HW1RD45FIlyKUSk3DKdJ4xVQtK3CJ0qHAcTXU/0l+Ka1Bjh8y5cXUyXsboSzMsz81Kq8c0zxu2lQxJOFp9DsUqnXUIuHtECp2zBlmzbGsh30Vwn2Irs+8jcqymZu8AcWpi5A/hwCVT62ThlfXGVJjLo3Xe4HtSiIwxk1Y0c0PFEczhNih0EgTHe/gxB86nkX7RTPeVSzuM+DEVUofehhLS4DYKSagaD0FihPM3R/lf9nXGxpBLaQogIXu5An5jhDg3sYAbbQlHIQJTUd7iJ2qtVtqiIvJ6GY9FTyvyJAe2ZByJpnBJU3o9q4dL7o1jOTNvAJQrRuGDjtm5ATkYNd8LKlpJI6IMmfjwB+4OKI5qi9
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9474.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(23010399003)(376014)(7416014)(921020)(6133799003)(56012099006)(11063799006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700016)(376014)(23010399003)(7416014)(13003099007)(18002099003)(921020)(56012099006)(11063799006)(3023799007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?PAeD+Sz3KEPlvnAdJGFXQKRUEiYdl8zRrEimmQk5k/Q6TEcgQuO6KQNy1lVp?=
- =?us-ascii?Q?AAqwE8I+x5SP32Qlu9hVl/rIn+Q+FE9y0pLZoRnDyCGFCsbQVM3wZ4FgaFye?=
- =?us-ascii?Q?rnNnyWj5TM//w/mhA9laAgIMRWM+eigoGr7CZXmRVQG6eAOtuTy7X+kRvg6h?=
- =?us-ascii?Q?VY0Q7cp/ecIZA5FJxPKHzzqjzgV1Hn1OYEksitn5z8L8gOmv2e0lAsMft2XH?=
- =?us-ascii?Q?jhIfS7mjOhdcl7zCi1XAvf/Xge8D37xi5TBDgdKXvowet7LHxMFLre+mk8Fo?=
- =?us-ascii?Q?LG0naU7ktWyyzxa0/dr2m+qzpbv4CAW7kQWju/F6XQz/O9vZ+gt+gFDXvYB1?=
- =?us-ascii?Q?PaJtbmtymzaHuxk4XuSfM1QxGLa5zJ7tjYYizRPfGoDjvNayPfkH4MyEW4CC?=
- =?us-ascii?Q?28egr5GnWNf2eNIkhdj7ykoeNG26s6B1dfSso6sJxJ8Yxs+vqQHDRCE6Y0dB?=
- =?us-ascii?Q?IG/igiYVSuJyUcqjwIrKzvnGT6OfOm2Dn8rGVQjnCfrmVhGKPXpf1944h4t0?=
- =?us-ascii?Q?fGh38tb887B5n71gOsQMxeBQlBANJ8yhR667p7W4AYmQ5tS/hOFJ58IFreL+?=
- =?us-ascii?Q?A5Tl8KejgTu5HHC6+O1GcHx49rwxiV1uPevhqW+nD/NQmH83LTF2aM1j3hAt?=
- =?us-ascii?Q?KYHsPEA8jABwHlhc8nOCqQAcl88eICI8WSQoRT/28iUb9ZTlhVDXDyFK9FPj?=
- =?us-ascii?Q?Qwb5u7UGrjV9DncLlBBK9BRtf+jjFXOykUR7Uz/bUncQaF8NAyXGM0t3iz9O?=
- =?us-ascii?Q?71bUNEDraf9BVeDnS5VGvGJBilktAVRoxAfEpOciW20AnDUEcRGN+CVd/QCl?=
- =?us-ascii?Q?CTHsw+XEn0+xsJ88aF/mZfqLLZRAolPB5kqaL3XxAuBc0k1Bk23/bvvF+HhO?=
- =?us-ascii?Q?+dKzKanZO7+LknZs03xyvyRB+5nv7st7NFhvz82HVrgC4ccNTbVhNlO/hHpf?=
- =?us-ascii?Q?aYsmWNFadCr4BcsphSXh8f/c/uTlHVf6y1x3GUHrwzBzx5crNQKHENTDfpE8?=
- =?us-ascii?Q?WeiBcMdGgYaLZ8pg7MSYMWOP6Ok3rs23I2ZGk85j3c0GOJETUQL3LpJfVa0g?=
- =?us-ascii?Q?ZyA2z8+3Zj+6TzHYd8DaDisZw8N0gLQ11MDtcNbfMWVlZfC3L2pf6tw9g42r?=
- =?us-ascii?Q?EreuCFwcO5d/cSUIa6XWTIDKPp1bW0JBu1c496iiE8pefVKwBs/9QvzPstum?=
- =?us-ascii?Q?33/9BxV6YHYV9ztFRl8VqCuilUMUGA346TPMbcX1ZxIJmikGWYFbbTIEMD6d?=
- =?us-ascii?Q?huQQwoS9yKcfZjpzrZVKQQa5+sMmHwRe2qWKkZ56Q/MnuiUnErKYKTsnTKsf?=
- =?us-ascii?Q?TEFkXkLs/77P3ne/bQj20ssfNgFridfBQsv3Fq2Ep+LsPB2dsj0qk3KjJjZd?=
- =?us-ascii?Q?amYoKJxzHdTEjU/B/0PAKq6VJ5YMOGGiN69hok2vHkPF+f58suFaW8a3Mnge?=
- =?us-ascii?Q?fsv+x4kLQ6VnzWilS10MQa2DB5XWskDkqOPI0ZQIvVqHziJ8oJoezb/P21qN?=
- =?us-ascii?Q?PPDcturpavIHHw3575WHx4nkr+m451SkCRj0yQyz1NrVjfrZLwq2j1Dgbt7f?=
- =?us-ascii?Q?lFWDwu2BUnV4nE2d43HRvVajNyoAd07Qsy17pT/qUHo9JKmhXByNKcymqCRr?=
- =?us-ascii?Q?hZTEuaAy7yj3yOOzaALnJCt0OOR9MBms+OCmnH3/vO3zkfEpae46K6+hom5I?=
- =?us-ascii?Q?bvrBtX5BwsblLk/1Wr0crN/FS/24AxkvOYKpHGGEKiESAf3Pv8ZjMZgAV2uP?=
- =?us-ascii?Q?pGUbGy/+3g=3D=3D?=
+	ikQdEZ9Mo8efdq2Kj3ccKfzl8v59EkDBaf2yUVp/8pmy17RdQ0SK7sMw40dann9YF4Gessx8CiNjWtk3zQHfOZpzCdGQgp9z71IcNzba51cMtwyOM0NcE+Ypr6fs1Em8TZYH7YO/UBCnAwoY7K7jYH1voznfQqjjb49coVgKhBVx9dyYrovu3gDesM7ryY36SZVZ2z7xxJjiFCLjv5LgCjisWCWU1Bl5ldVc+eQz7UQ5ewkRtbL4CjCWeQNmNRfsdjZAR3ZTvSTB1VQgaCOODmFID9jmnSGEnbbjed0Z2GRu9sfRKFjlaaRXM85uHu2oaF9fdye85o0AIg7nFlblvYMAZyhZN78b+LC5LUQuKgJ8oQI08grj0wi+N2ivMlTOYTZh4Ifu01r3sJx5+IRO9iOtpIVUioct+yru1mDqwRvXBA11RMjSqtWOQOCIvoQP
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eef8bd7a-39cf-4286-12c6-08ded0d70f84
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9474.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2026 03:25:23.1121
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2026 08:07:19.4487
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Network-Message-Id: 700d16a6-de29-4534-f425-08ded0fe729c
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: J4B8GS5xPjntwNhzKeMKBRB40WG56oC+uMeRuc1J4gc69akacuRaJ2SBmFDtslWXOy5wlDpIlod0RUSVdUhkeA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8505
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00005FFF.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8067
 
-Document the "cxl_reset" PCI reset_method value for Type 2 CXL devices.
-CXL Reset is device scoped, requires affected memory to be idle,
-invalidates CPU caches, restores cached HDM decoder state, and does not
-request Memory Clear.
+This series adds a kernel boot parameter 'cppc_cpufreq.auto_sel_mode'
+to enable CPPC autonomous performance selection on all CPUs at system
+startup, avoiding per-CPU sysfs scripting at every boot.
 
-Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
----
- Documentation/ABI/testing/sysfs-bus-pci | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+When autonomous mode is enabled, the hardware automatically adjusts
+CPU performance based on workload demands using Energy Performance
+Preference (EPP) hints.
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
-index b767db2c52cb..dd8de5c7eb77 100644
---- a/Documentation/ABI/testing/sysfs-bus-pci
-+++ b/Documentation/ABI/testing/sysfs-bus-pci
-@@ -153,6 +153,20 @@ Description:
- 		"default" enables all supported reset methods in the
- 		default ordering.
- 
-+		If present, "cxl_reset" selects CXL Reset for CXL Type 2
-+		devices that advertise CXL Reset support.  CXL Reset is device
-+		scoped and affects all CXL.cache and CXL.mem functions.
-+
-+		Before issuing CXL Reset, the kernel quiesces affected PCI
-+		functions, rejects the operation if affected CXL memory is busy,
-+		invalidates CPU caches for enabled HDM ranges, disables
-+		CXL.cache, and initiates cache write-back where supported.  After
-+		reset, the kernel restores PCI config state to access HDM MMIO,
-+		restores cached HDM decoder state, and then completes reset
-+		recovery for the affected functions.  If cached HDM decoder
-+		state is unavailable at reset time, the kernel skips this reset
-+		method.  "cxl_reset" does not request CXL Reset Memory Clear.
-+
- What:		/sys/bus/pci/devices/.../reset
- Date:		July 2009
- Contact:	Michael S. Tsirkin <mst@redhat.com>
+Patch 1: Sets CPPC Enable Register for both OS-driven and autonomous
+CPPC control modes. It can be applied independently of patch 2.
+
+Patch 2: Adds the auto_sel_mode boot parameter with three modes:
+  - performance (or 1):         override EPP to performance (0x0)
+  - balance_performance (or 2): override EPP to balance_performance (0x80)
+  - default_epp (or 3):         preserve EPP value programmed by
+                                BIOS/firmware
+
+Patch 2 relies on commit 8c83947c5dbb ("cpufreq: Use policy->min/max
+init as QoS request") so that policy->min/max set during
+cppc_cpufreq_cpu_init() are not overridden by cpufreq_set_policy().
+
+v4[4] -> v5:
+- Accept "disabled/0" and treat unrecognized auto_sel_mode as disabled.
+- Rebased on the merged QoS-constraints and updated commit dependency.
+
+v3[3] -> v4:
+- Add 'balance_performance' mode which sets EPP to 0x80.
+- Add CPPC_EPP_BALANCE_PERFORMANCE_PREF (0x80) constant in cppc_acpi.h.
+- Clean up EPP mode selection with switch + boolean flag in cpu_init.
+- Use local variable for kp->arg in auto_sel_mode_set/get to avoid
+  repeated casts.
+
+
+Sumit Gupta (2):
+  cpufreq: CPPC: Set CPPC Enable register in cpu_init
+  cpufreq: CPPC: add autonomous mode boot parameter support
+
+ .../admin-guide/kernel-parameters.txt         |  22 +++
+ drivers/cpufreq/cppc_cpufreq.c                | 159 +++++++++++++++++-
+ include/acpi/cppc_acpi.h                      |   1 +
+ 3 files changed, 177 insertions(+), 5 deletions(-)
+
+[1] v1: https://lore.kernel.org/lkml/20260317151053.2361475-1-sumitg@nvidia.com/
+[2] v2: https://lore.kernel.org/lkml/20260424201814.230071-1-sumitg@nvidia.com/
+[3] v3: https://lore.kernel.org/lkml/20260515122624.1920637-1-sumitg@nvidia.com/
+[4] v4: https://lore.kernel.org/lkml/20260527202550.206828-1-sumitg@nvidia.com/
+
 -- 
-2.43.0
+2.34.1
 
