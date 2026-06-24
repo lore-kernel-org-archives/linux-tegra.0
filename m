@@ -1,68 +1,68 @@
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010023.outbound.protection.outlook.com [52.101.56.23])
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012042.outbound.protection.outlook.com [40.107.209.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590212417D9;
-	Wed, 24 Jun 2026 10:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E1222157B;
+	Wed, 24 Jun 2026 10:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782296668; cv=fail; b=o4ejjV7FDWRIViFnsu9q1h5G9Hs7ljlGpLZLhRjBKFxXapQBv+r1svI8/rRRrAmrlQR3Nrq73/XhxX4ey+CnciixJtXoLEQH8nWZfC7GWyq/OmfnQlZ6tXiB5/985XomJe6AZMG6JAsn/n5XFyN15AloWPQrQChqPFdCoLAY7eU=
+	t=1782296679; cv=fail; b=H6oJx3nPbKfnsSnWZQg8XpmQLroaqCgkthuA3k8iI0n/POy6JPG+NbrUk8T+zBPyJW2lsXzzIC9XxsBu0uAO6+3L0Ga90HsaHvvoplh+geTganoXplfudu9xdddg2mUJ02Nkn/4t4BtcXcC73/mnHqpXtz/apb40acCsJDPq7mI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782296668; c=relaxed/simple;
-	bh=LxGbeGxd6fNRW5diSjejJAZA5lduVI828SzOT6IIAeo=;
+	s=arc-20240116; t=1782296679; c=relaxed/simple;
+	bh=LfofP3IUjdB6T79sYJGgPf9QhkpkXdpbSH3icYRqKzg=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q3jewcuUF+wKv85mWFyhr0E3ZUUt7zObkcOvadIUgarBXgv6OIij/Fz0Lv6skgyakiMrTRDklSOBScHyS9K0CoQdKVrAha17Xp49cRpEJ0+UzTLEmeAzJm4qWhu+r10xBrVAsXwAQ3ig3Pt2miEhT/raESOb2YTWUk1e+58HEzQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PIu65HMt; arc=fail smtp.client-ip=52.101.56.23
+	 MIME-Version:Content-Type; b=U+XSceVPSFg+1zv0fWDh6AQjnKy+yc14JUuyuEYjOIerAc/nJwWaR9+/ZDb50CLWZWFqjXL/OivDc7mVt+sbCNSQYglaE9pRTU/pDMXOPANj+Q0n5eG9SRgiipSoKcGlVu5b5U1swz98NMyqwPYQ4+iRxOOLkHBh9FWzKIWPYkY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gY/0HBc0; arc=fail smtp.client-ip=40.107.209.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PIu65HMt"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gY/0HBc0"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hxTOf9JTc7SYtiVsMosOM4R+Lq0qlampaVKj5YQ32x7UpK+FUMXjD78ZLhxtcBstEMIEnr/KlY/cIVK254RNWEbC+JmCtInQhjunYi6voV3Wz7CCzVGsCWl3cpWt8dAmriemG4iF32qA6yxGE8WSX58zG2qqDgOQ6EtWhFHml//KGydvnFfO9nGIyaSqcu1v2wlO0amY770R1u8SXCVRQTi3eOnIYwtMTMa+gasqi9cxzfDGpti0K/tIkxdE93JETfrROUxB3tIzfEFr25s4zYUaEmZPTA6Rs+8TaNSqMJ2UHUpMJJl9HlKr0a2I8y8TNCGq3ergpyP3fa+lXwdUvQ==
+ b=Lkt0PhPh9OsLs6jj2PkbLip7s3WWHkGEP4632x6Twr8a2KPtgetmmWPjVLSwplHVG5iQ6yU214HExIYDKh0zgrUzFh/FEXT6DEAb2O7K9+jWhygYZ+IJwxZAN1jRDvy0PDFG8Nshw2R0Jrt7wcEt6iOGlu39g2HXKCcTC9bAAfq/bybCRJ+6xxphc6lyuFpakIRjnz19W1UKubULRimMoHbPIttz7/SNZGdaePWFoq2T5muGLgMY5K6gUvfGTVbbl3XxIHUGzAF6FNRDq7/Q0jNE39e6n4aSPF4SmEqHAEiiH4jdIMmyTG4t0Acd/c+D4EJn/BEEqxEgeyCMFulLkw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=E+ygoEkSKGG2t2VoBa8twGrO1tOheGI4f5VrhT6YPNg=;
- b=m9jGybADWUX+GOM8mYY7x6feg+RJjurNFxDcsBHKqrytbY2R/Sfv3j3GCXrY4Lrpbw43bXvhlzAuPBebuQexOqj6fYLK0DhtZ79/TWnC0z2KiYeeYAwO+aSvopZ20K/EVJxPB8Qx5hR/PGEZ5NwNzMHjwi2eUp15/jU55UySo0w0XICzaAgdwKZd0D4r8ph3jbfcK7qy8hGpN/0BZI6Zs+ujJgdLAG6JI8f3EfHGN8XkjXbUnq1X+qASxQbD40BzzJwhGH88yZf7KOLOMPtnsDRwrG6Zy3k+MrFP4bYpKFRGev+VDMUFNgmIWYft9ajmOag23CgB8xNkn6MpGqtqsg==
+ bh=8E1ielkQSKVt3gv1HWhyw6b5abObJYo0dCOE40hp8JE=;
+ b=JrB1A/Mp1cxDnthaPjforiMIkSqsDhKMBHnaRLXdZqPS3CdLnmZ8+HowexiyO0oioznbVq+r5+6KmkSzq5yH3Ut8frn4zWSWpIkjyeehpfOm3DzPmnTODtOH0sSW8TDeSEi/s91hOtpvBsD6bzIuz0a864nE1OhmmaZuuyKV7qj5Zqm+Qc6MdnRdqRjQL0I6KisJDsNVJ18xLLj68Nx4vAJ4jawueOW9rxGnTxX/WNgZUaK4egHoi1A3+gbnNtLL5GAPp3AAesn6zJ8wHKR/oPFoQ5iDVAm3jViVxuODHh4rw8o9W8ypvX6uJCdmH6d+LPkKsVtcE2O30L6VwqV+UQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=bootlin.com smtp.mailfrom=nvidia.com;
+ 216.228.117.160) smtp.rcpttodomain=bootlin.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E+ygoEkSKGG2t2VoBa8twGrO1tOheGI4f5VrhT6YPNg=;
- b=PIu65HMt4LVZo4S1K5Kri/F27ysifviGUOFYgCk+Vgy+XJ++c2V/5X/gMWWzo2VTUA9rmnNPdyadxAdjRsAfaihNVKFIoxUIdoe39C5h/NlpmCuJjVzQi5xhKUu352sT4sjLEdMcQpePVq6CFUJe7ucM+UMPue0tbZ191mfVag67W1TcV+DZdAGOPC/j7ML1wHH/W9Pa37w19weokG+A1/0XMZU/kljpBLefVdVVoTRB46qY86S/ze5SPuf67JJlxMDn/EkxO6yH9340Gs+/jCcWqBKPH1mw1877EH2jTq+0S4Bp0zoxAdl+mloagvwji6hodafesIOhK4SgJdtP0w==
-Received: from SA1P222CA0186.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:3c4::18)
- by DS7PR12MB8417.namprd12.prod.outlook.com (2603:10b6:8:eb::21) with
+ bh=8E1ielkQSKVt3gv1HWhyw6b5abObJYo0dCOE40hp8JE=;
+ b=gY/0HBc09WUHHGhDNnypGJ9yVJ7PjvCWybkhGqttBoCEJIrC2qc9wdqfNuW8v9JQGsXn2OPW2fgH8jiJdKPju7T6S1CRKQuqHMLHxY5adDzwtMogWg8GE44//DoEQNXosdmnlkgYRJmYkmbeSbDNrrf0/nDdPNTnTqLF//BPHi1/JvDsgEzU9umiRmU8kGd/GQc4MBfU6N6Ea8/R3ULtiXlD+/jfWxPA6D1xZXwBmrtGDf6jWjuLy1eZTgIBj5KmGJy/oEFJJEoLn3zNmj+pxoHKZLmdQX16+11FkSRDxkf2dTnjno4rgFfmts9m0D+0dnt+Jel68zVzkmUcSTwWfA==
+Received: from BL1P221CA0031.NAMP221.PROD.OUTLOOK.COM (2603:10b6:208:5b5::10)
+ by SN7PR12MB7275.namprd12.prod.outlook.com (2603:10b6:806:2ae::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.13; Wed, 24 Jun
- 2026 10:24:20 +0000
-Received: from SN1PEPF000397B3.namprd05.prod.outlook.com
- (2603:10b6:806:3c4:cafe::39) by SA1P222CA0186.outlook.office365.com
- (2603:10b6:806:3c4::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.159.14 via Frontend Transport; Wed,
- 24 Jun 2026 10:24:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.20; Wed, 24 Jun
+ 2026 10:24:31 +0000
+Received: from BN1PEPF00004689.namprd05.prod.outlook.com
+ (2603:10b6:208:5b5:cafe::1b) by BL1P221CA0031.outlook.office365.com
+ (2603:10b6:208:5b5::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.159.15 via Frontend Transport; Wed,
+ 24 Jun 2026 10:24:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SN1PEPF000397B3.mail.protection.outlook.com (10.167.248.57) with Microsoft
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN1PEPF00004689.mail.protection.outlook.com (10.167.243.134) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.159.10 via Frontend Transport; Wed, 24 Jun 2026 10:24:20 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ 15.21.159.10 via Frontend Transport; Wed, 24 Jun 2026 10:24:30 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 24 Jun
- 2026 03:24:02 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ 2026 03:24:14 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 24 Jun
- 2026 03:24:01 -0700
+ 2026 03:24:13 -0700
 Received: from build-akhilrajeev-noble-20260602.internal (10.127.8.11) by
  mail.nvidia.com (10.129.68.8) with Microsoft SMTP Server id 15.2.2562.20 via
- Frontend Transport; Wed, 24 Jun 2026 03:23:56 -0700
+ Frontend Transport; Wed, 24 Jun 2026 03:24:08 -0700
 From: Akhil R <akhilrajeev@nvidia.com>
 To: Alexandre Belloni <alexandre.belloni@bootlin.com>
 CC: Frank Li <Frank.Li@nxp.com>, Miquel Raynal <miquel.raynal@bootlin.com>,
@@ -73,9 +73,9 @@ CC: Frank Li <Frank.Li@nxp.com>, Miquel Raynal <miquel.raynal@bootlin.com>,
 	<devicetree@vger.kernel.org>, <linux-hwmon@vger.kernel.org>,
 	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Akhil R
 	<akhilrajeev@nvidia.com>
-Subject: [PATCH v5 08/12] i3c: dw-i3c-master: Add ACPI core clock frequency quirk
-Date: Wed, 24 Jun 2026 10:21:02 +0000
-Message-ID: <20260624102153.1770072-9-akhilrajeev@nvidia.com>
+Subject: [PATCH v5 09/12] i3c: dw-i3c-master: Add ACPI ID for Tegra410
+Date: Wed, 24 Jun 2026 10:21:03 +0000
+Message-ID: <20260624102153.1770072-10-akhilrajeev@nvidia.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260624102153.1770072-1-akhilrajeev@nvidia.com>
 References: <20260624102153.1770072-1-akhilrajeev@nvidia.com>
@@ -90,110 +90,69 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000397B3:EE_|DS7PR12MB8417:EE_
-X-MS-Office365-Filtering-Correlation-Id: 800cbe4f-7942-465c-73d1-08ded1dac13a
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004689:EE_|SN7PR12MB7275:EE_
+X-MS-Office365-Filtering-Correlation-Id: cbc787b9-4d31-4d2b-f64f-08ded1dac6fc
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|82310400026|376014|36860700016|7416014|1800799024|3023799007|56012099006|11063799006|6133799003|18002099003|22082099003;
+	BCL:0;ARA:13230040|376014|7416014|1800799024|36860700016|23010399003|82310400026|11063799006|18002099003|22082099003|56012099006;
 X-Microsoft-Antispam-Message-Info:
-	HJUrEx87mJmtZB1kxPN61ugFBdtIDPoNEHj7mDIRMRaB1HTe3ojTDxjWxS3x/XAKuJt3eExVLwhC4KqZ1tQASOb7xmK9RiQlg4PIyqmVBa/js/i6nO3L7n4/WWxDJAZNRPNYRHpxGE6IKPns+Wt5gdRu4Bqr1f2Nnxnnus5L1K3aAsDdBFeoMC6K0cejet5u27j1zfvzLjiDh/qhbeAp0GUa59ikg+wpBtx/nLAPwrN97g6krCFKP21tcolTHOhLoRWNS4rMV7Z3+vdWuf1xUE/pgbiR6gcUg5X5MnwSIZ4AjJDSqGFqlNq8mRm7IMIO5+SPjNYod3PL4A1DE8uhge0TNhR5JXarAfYozw8gRQbpqUFurYi/qgKsBb7hU2HNt50geCF1T+gX1Wuo5WssCk8E9Qk25QrSvZj6LPpQmfQVm5+7GkTENmOpAepvxvcWrqqzzWiYNXUFAnmY/mCnHi1Ung0dhMrpURJrRTCGiUGREmUGHDbX1a062oCP2dNilZWLCxsc84rXmMIrclO4+xATkuWbyNZKdlnDdm0lEabUBv+S2zCe5vhoz8A7jhYPFpN+iOrahi2+PfMHw9aAH6hXjCEhQX67V4PV3Pga6AhjSGhwbeDNq6RtYKxmXnOJbe7qn/QjFTn2LJYGe617fqr9xLLuLX7rKjepThuMnl0s8kEoyM5Wj0y2T0EqjzgAoBAViC4tSeBA/WXfVYvcZg==
+	EaWfZr1v+wCMvBVso/UgHaXjJBBZvz3Neuo/dSaD3LqFpNd0MZ1YT18ETscCalk4m1EeZedUtQiDiJBMw2NWSWr1WucrWUXIzA5SdHN520U6Qzp2V0CWF31WUyeVVYsP/9KXjfdOtJuY4i+SqyfiDoVgTRVx8FOAveFpfNxbt0auVEEZFjv+sux3funGl+zAjZAhF8XoKpArMYFL7ocihcCgcXfnSZwlu/2HUPGIsYSbjRzOPsFwd5JnZt7e/IXPbfZX3oev7l3wHX7JBaHfqhron2EVx75UcuAdeLYQUjEAwELKd6sJufySAeHai/l51bcJ43K2KGWlAPGCc6NbDwHYIm2tgK7mwFTgHKm4Jf7jWfnV/axzGvYyvIGwRj68exz4iNbtIulYA4PeT7G+zkU/oCxaxTUhzcIA+LUzjRnCBdxjaq76D8pWW91LohcDqeBbBpm1dpoPdXIE3nODYsPhzkWfI+gulkaTFYwGlEE+WilGGZl9KXoMxaIE7xhDn8oHbQOjhcRG+UP6ZkxiFqoWlB3Tan8m+ISkYB24y6ncmJ+VWeV/AtDM/6SD6HT/nPn4YCdhYI5Z/alvCgBEgc/jT9DA1+VO9Z4rq9rVx1j32WyUMxu9UizRcZqR1szmSTKl/5u6R3YelS7n+nUr1E4hkeofn7rRoWUhduhTea0zdcsV08J5/duWdGhkVTkLyajkAhph3FoeM046Yh10Tg==
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(23010399003)(82310400026)(376014)(36860700016)(7416014)(1800799024)(3023799007)(56012099006)(11063799006)(6133799003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(36860700016)(23010399003)(82310400026)(11063799006)(18002099003)(22082099003)(56012099006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	7KCGYwmiOHyhLewYq7fNCwcn4/nyAp+u6WezNYQWNNa/3uwcoIWc+OMe0+IuRyGKLqC9uXP3itOp/EKgdt8mjAIsZsokGwmj5UF72Pa6vtiTyP9gpqxHStSzRAuzbqMiRYdhgp6TjUtVQ9Y6KAFguJigEGcOsiskkPgyNPw8cKbNarbwqMcSAvdopOmQUuy18OU0bjuaHWLfCP+OCWWwsCOtTLCfS3IzR+PO24ih3jdcCL1Fa2TkzjbOd+NfDiQO71TF6ykN3HykNkLykf5Ur1hsV/r80PAXXTrwZAnT/+1zFzRa4A0M7glIuhuPsPwFFk5AZvMc+SQ2gV753BbCarQbvic05JJJZ6D06prXvS35SatqouFVtrmcd1K6e1SRMXMWpVCSFOarCOOpTeLmgo7Xuua5mZHh0Hg7ScUwtH67xcwI7egqbPYfXkSWr0sp
+	rGwWz5edFeQBUR9umYE0eElvqHDlRd08LBwGL9BRDbnwknPQKBEIVTFh0O6WFS7T8Pd65Pj2QMfM4dTaqgymZip5o6gn96bj8BuE9AhxfdQXjBU9R+qv5hIzsv/Mka8LAFHaoYqobeBTdfvdtuFkFhgQUiBLAUhGs0ulI1X2vf+ezXiEFo51kGxy8aNUAstTZh6YEdkjAunRXO2OsiSNz0MzNQKxK0FKICOl0654s+W7F8vW2DCP2phIjg1s4u34Ca1reVu6KdrZB9ML8Hw99dYyXQPgHnKjdq34d00N+JZd0oWKwVjD2xdlC9S3mYemaGUSLFC3ZlE3z861AUxlUGLbvp82Izk8ikRtU2gsbvDZkQ6t5qZnQEthT7EW6TAczvj/dacGgk7LchZMx/8X2dn4wj5wdCaUnX+78MrnNF4uSnKv0BHV4jlwL8y3UT1+
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2026 10:24:20.6603
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2026 10:24:30.2838
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 800cbe4f-7942-465c-73d1-08ded1dac13a
+X-MS-Exchange-CrossTenant-Network-Message-Id: cbc787b9-4d31-4d2b-f64f-08ded1dac6fc
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF000397B3.namprd05.prod.outlook.com
+	BN1PEPF00004689.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8417
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7275
 
-Some ACPI-enumerated devices like Tegra410 do not expose the controller
-core clock through the clk framework. Unlike device tree, ACPI on Arm does
-not model clock providers. The hardware is expected to have its clocks
-enabled by firmware before the OS takes over.
+Update variable names to generic names and add Tegra410 ACPI ID to
+support the I3C controller in Tegra410, which is a DesignWare I3C host
+controller.
 
-Make the core clock optional and allow selected ACPI devices to provide the
-core clock rate through the "clock-frequency" _DSD property when the core
-clock is absent.
-
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
 ---
- drivers/i3c/master/dw-i3c-master.c | 27 ++++++++++++++++++++++++---
- 1 file changed, 24 insertions(+), 3 deletions(-)
+ drivers/i3c/master/dw-i3c-master.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
-index 29030fd9594a..8e40d178d500 100644
+index 8e40d178d500..0753f6c853b7 100644
 --- a/drivers/i3c/master/dw-i3c-master.c
 +++ b/drivers/i3c/master/dw-i3c-master.c
-@@ -242,6 +242,7 @@
- /* List of quirks */
- #define AMD_I3C_OD_PP_TIMING		BIT(1)
- #define DW_I3C_DISABLE_RUNTIME_PM_QUIRK	BIT(2)
-+#define DW_I3C_ACPI_SKIP_CLK_RST	BIT(3)
+@@ -1855,11 +1855,12 @@ static const struct of_device_id dw_i3c_master_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, dw_i3c_master_of_match);
  
- struct dw_i3c_cmd {
- 	u32 cmd_lo;
-@@ -556,13 +557,33 @@ static void dw_i3c_master_set_intr_regs(struct dw_i3c_master *master)
- 	writel(IBI_REQ_REJECT_ALL, master->regs + IBI_MR_REQ_REJECT);
- }
+-static const struct acpi_device_id amd_i3c_device_match[] = {
++static const struct acpi_device_id dw_i3c_master_acpi_match[] = {
+ 	{ "AMDI0015", AMD_I3C_OD_PP_TIMING },
++	{ "NVDA2018", DW_I3C_ACPI_SKIP_CLK_RST },
+ 	{ }
+ };
+-MODULE_DEVICE_TABLE(acpi, amd_i3c_device_match);
++MODULE_DEVICE_TABLE(acpi, dw_i3c_master_acpi_match);
  
-+static unsigned long dw_i3c_master_get_core_rate(struct dw_i3c_master *master)
-+{
-+	unsigned int core_rate_prop;
-+
-+	if (master->core_clk)
-+		return clk_get_rate(master->core_clk);
-+
-+	if (!(master->quirks & DW_I3C_ACPI_SKIP_CLK_RST)) {
-+		dev_err(master->dev, "missing core clock\n");
-+		return 0;
-+	}
-+
-+	if (device_property_read_u32(master->dev, "clock-frequency", &core_rate_prop)) {
-+		dev_err(master->dev, "missing clock-frequency property\n");
-+		return 0;
-+	}
-+
-+	return core_rate_prop;
-+}
-+
- static int dw_i3c_clk_cfg(struct dw_i3c_master *master)
- {
- 	unsigned long core_rate, core_period;
- 	u32 scl_timing;
- 	u8 hcnt, lcnt;
- 
--	core_rate = clk_get_rate(master->core_clk);
-+	core_rate = dw_i3c_master_get_core_rate(master);
- 	if (!core_rate)
- 		return -EINVAL;
- 
-@@ -615,7 +636,7 @@ static int dw_i2c_clk_cfg(struct dw_i3c_master *master)
- 	u16 hcnt, lcnt;
- 	u32 scl_timing;
- 
--	core_rate = clk_get_rate(master->core_clk);
-+	core_rate = dw_i3c_master_get_core_rate(master);
- 	if (!core_rate)
- 		return -EINVAL;
- 
-@@ -1577,7 +1598,7 @@ int dw_i3c_common_probe(struct dw_i3c_master *master,
- 	if (IS_ERR(master->regs))
- 		return PTR_ERR(master->regs);
- 
--	master->core_clk = devm_clk_get_enabled(&pdev->dev, NULL);
-+	master->core_clk = devm_clk_get_optional_enabled(&pdev->dev, NULL);
- 	if (IS_ERR(master->core_clk))
- 		return PTR_ERR(master->core_clk);
- 
+ static struct platform_driver dw_i3c_driver = {
+ 	.probe = dw_i3c_probe,
+@@ -1868,7 +1869,7 @@ static struct platform_driver dw_i3c_driver = {
+ 	.driver = {
+ 		.name = "dw-i3c-master",
+ 		.of_match_table = dw_i3c_master_of_match,
+-		.acpi_match_table = amd_i3c_device_match,
++		.acpi_match_table = dw_i3c_master_acpi_match,
+ 		.pm = &dw_i3c_pm_ops,
+ 	},
+ };
 -- 
 2.43.0
 
