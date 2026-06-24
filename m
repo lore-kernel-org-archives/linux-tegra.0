@@ -1,157 +1,332 @@
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012033.outbound.protection.outlook.com [40.107.209.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2ADA248F72;
-	Wed, 24 Jun 2026 10:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782296705; cv=fail; b=DH67U5q1yEeKFJEbwuuRbinXKfP4LmQ1cIYtCfqUx5Kb5V13UngjSPJxaxxnd4ve+oZCnW7yI+vNUnt+lrX6Y+TydC/pIr2FXSZtYUvo9b6QM+C3JbmyUxg1NaEVOYAh+OAKr+hFXd01Urzo60lzPo+50KuPOhH4uNwjpBXLn/Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782296705; c=relaxed/simple;
-	bh=H5JkWApYKDnXldT4KwVhsSi5iKUHPCqxJGC8X2ny9S8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qEMNV9znFi7RTb27ye1QswLouvrTt6IZH8xGQpEPfJoXpw7f9myBKPoNLG2k6fkjNqakej5pYiXNagYCs4sIuM4hRjwmo3HLtI2SYr7+KQtnd0rKPgCOiyYyz0zx8p3/wIS9llRYXoUmiQ7G/u4vtmVpMfT2q+hcLAd/omj22/k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=W4a2K8tt; arc=fail smtp.client-ip=40.107.209.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA54C233959;
+	Wed, 24 Jun 2026 12:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782304507; cv=none; b=eAIBQgX+XIhPDgq+91gdmkYsU/RAXD0HHz7yTcOD/gTqvPpHaR8MeAxrqgk5ntsbf5s5fS4qXvq2mvtwWP6QxjpcnuQoFVv7XOI6BxWjyEe6NZfBPi4IMKuiUbq/omQb1JIFwcvh1AOu5KmWj2Q0QCjLSptXNRCa2BsrpfiU4oI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782304507; c=relaxed/simple;
+	bh=bmQHDy0xnKiTPit54joBRHL3VV8pG1ZaF6qNqBiBzwQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IHcPOZL8ZkKt0NIZWrtR12tvLP9zn0+IJOkUMmOG/7XhVwBhH6mkK8YGGANWAhP/BHG53085gtSo+v2hcGW8LKWrvdq6YMZ0emLV0YrMF//xWyNQFdoMq8jzYyYDp+b72zGkct6Zn/i3+uszs2kacljj35wxbhYhQc4c/OV6/yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fGnN75eY; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="W4a2K8tt"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bMfrtcI2z9RGkiMfbj1M5qy2KMKVNvSimZadGWLuWyAudW5vOMD2YdE0pleCMvbYhIICleB591REWxIqxrA51nTxCsMA2VmMaWJko5ltEuhYLUv6eKXq/u+aK47RJZXyVJcZm7RgXSbLALKPTwVZkn6gEhJK1wICBqNhJzR6B5jlYGRz+d4BBAm45L3KsdkZ26p3iJHCMaj28KTxpTsr5ySIvagHr/Ll6eKP5yE+adzfegs7szSZCiBXlWC6iwog5MAJCZ++t1YO+S28rBaljtKVIBtJqEyYbGqBMpUkNlG+d+HbPmIQt/kItQWgdSVoBletWF2243xxs04BUeZVag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jeSRTK/Poczz+CYtJpBOFiHy1EowJp3dR3tgxJDLunM=;
- b=SSqYiccU+Gq7QoG2yXK3Z1JsAKIBtQomsDjTi1cMfAKv1xDPQMZNfCZH3FA4KQCDrha0c9zI3gc7uBHrfdXXlgxkkgp2DFVAOtJUTFZgkZksBicwiBkmlM+ucxcXoAAfJZ9UYQAK5P2s0ms3g6KU/Q3Sct3LNGkz89oAyGlvjXYLVM0EKlg1+VGeUHS8pMHJsdBz87yYPtuuWXagzAR7grsvUy6ChEH1S7IUHdTn7kcnWr32UpEDGRAO10QPGKfSt4HX0Vr43PsOxZChkvQpl+Ms2i7ztWJ3SaoU0bnr4SDt2CGXHzrZIzw3ClK9GnrOh0L4wpBegkUvFBhNHAyzmg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=bootlin.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jeSRTK/Poczz+CYtJpBOFiHy1EowJp3dR3tgxJDLunM=;
- b=W4a2K8tt1+7UoirOyAfAuogqktCnQI+ZL5Jw13D5rdy2FzUiRD99HcyJ4/FmopFIH8p0mOFO7VKOoCyotIXkyTVHcc4tOwHQZaSVMI0IZtWmSAOWkdZY9jI8ouHBU3v7PEcFsw18Jau/jnxVYKZrP+yAxuLxSrKICbqEuoEcszTakLn9wYZ2xYtQZ1gPn+DQdp/cgfnkDZZ/sbeCnNH4/v8TgZ+IAcqpkQzXBpG5OwnVn9Jj9ZWoqz/HFLsSFO+AFvt5wzbTrkbzW8W+gSx8PVx9o8JMDVKjTnPec8IneDLtDB9NjKWUu5QQCUrp2xGRqyNJudzpVKsLApk0WHSY4A==
-Received: from SA0PR11CA0141.namprd11.prod.outlook.com (2603:10b6:806:131::26)
- by DS7PR12MB6007.namprd12.prod.outlook.com (2603:10b6:8:7e::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.15; Wed, 24 Jun
- 2026 10:24:57 +0000
-Received: from SN1PEPF000397B0.namprd05.prod.outlook.com
- (2603:10b6:806:131:cafe::63) by SA0PR11CA0141.outlook.office365.com
- (2603:10b6:806:131::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.159.13 via Frontend Transport; Wed,
- 24 Jun 2026 10:24:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SN1PEPF000397B0.mail.protection.outlook.com (10.167.248.54) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.159.10 via Frontend Transport; Wed, 24 Jun 2026 10:24:56 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 24 Jun
- 2026 03:24:42 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 24 Jun
- 2026 03:24:41 -0700
-Received: from build-akhilrajeev-noble-20260602.internal (10.127.8.11) by
- mail.nvidia.com (10.129.68.8) with Microsoft SMTP Server id 15.2.2562.20 via
- Frontend Transport; Wed, 24 Jun 2026 03:24:36 -0700
-From: Akhil R <akhilrajeev@nvidia.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-CC: Frank Li <Frank.Li@nxp.com>, Miquel Raynal <miquel.raynal@bootlin.com>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Guenter Roeck <linux@roeck-us.net>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Jon Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>, <linux-i3c@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-hwmon@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Akhil R
-	<akhilrajeev@nvidia.com>
-Subject: [PATCH v5 12/12] arm64: defconfig: Enable I3C and SPD5118 hwmon
-Date: Wed, 24 Jun 2026 10:21:06 +0000
-Message-ID: <20260624102153.1770072-13-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260624102153.1770072-1-akhilrajeev@nvidia.com>
-References: <20260624102153.1770072-1-akhilrajeev@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fGnN75eY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01A6D1F000E9;
+	Wed, 24 Jun 2026 12:35:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782304506;
+	bh=nSlHeZgCT1oHjvLSw+acVz7VxQaUvcpCz7IcbZqf/FY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=fGnN75eYr5ZYS8PB60tTDlz6Um7sYGuRKfaMDzNmcXFBGrQB8djWZrFhFCuxXPMRo
+	 X5r/pb/u1XHBjKYr0GSBDvM12jERqrJb1mtHZX2Wz5pY3wSgnl0jfvHPwf/Oz7vlTC
+	 i0ouMkB9eExbHNFziYN4OpcunLEZv9PX8G0d3riVRGTMW5pZ3QXA7zoX6Ocz0lJx7S
+	 26LJ01PmqJG03rD9qaIz5WzqgIinUCbSsJ76kUHwXptE4g4LtN9U0xxXoOzFb4T4oU
+	 0a1eeHS4Zdn5QEITiRCwAMpQHmezlyZAwqebueChlNBATEMaB9c/jwPE4HkNPrU7ot
+	 pX9dCIZawRGMw==
+Date: Wed, 24 Jun 2026 14:35:04 +0200
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>, 
+	Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, Michal Simek <michal.simek@amd.com>, 
+	Kevin Xie <kevin.xie@starfivetech.com>, Aksh Garg <a-garg7@ti.com>, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Thierry Reding <treding@nvidia.com>, 
+	Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Subject: Re: [PATCH v7 3/4] PCI: tegra: Add Tegra264 support
+Message-ID: <aju3jokcWR5DzPrv@orome>
+References: <20260617-tegra264-pcie-v7-0-eae7ae964629@nvidia.com>
+ <20260617-tegra264-pcie-v7-3-eae7ae964629@nvidia.com>
+ <slfaxyt6p5mwsqmxvmriy6npilpjhjxv5ruegj4hnivj6zufkl@o6adjy5jmzfy>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000397B0:EE_|DS7PR12MB6007:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5b41724b-d6a0-4131-79ab-08ded1dad6ba
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|36860700016|1800799024|82310400026|7416014|376014|11063799006|56012099006|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	8HtfSAqyG/xHYICvxl4Ioz62XuILLnu5GAs73cNrmYjKzMqrKd6VzFY9C9JbupmJl/Bosmlm6jJXCpekYt9rdGh08Cp5sn/JESfvlIQAbBD/sy2Qo7YKN/2QOUWClN85QKrbFgFwU2GV55l8PFiFE2qtyWR84dwvkS1fWtAN1ZgnBV0eDJzP8vARvxL7akp6BuxLnrMXXLVTnVWYPBXsN+0V/o7TaXkZICp9P0wy/lYPa+JVzgUDkJTkB+b1ZjIFqzd5H9ed5tHJtQ/K41jeuylzKNlJJET7MVUeLR5KWQICcqr0re9eueVGD+6Iw01xEB8rpuuUoxqNgDgIGgwazMMWfm7kweVFBiNVKbIdQrBa+kOWmaPkTLg8oAzA3FdeixgoewNeqElR++OZMaEE6r39cuhnQOGzWOxr/GyExJPlcKIe0+ua3Pk6Hk/aWszmGMziZz2Ami2m4u8ajinybJfxASYWFUJkpr5iqd7b9RsENZfL1i6OtNTDKpqsuYLHyytMy27N1s7n0ZDe5DJRDwAZZvmJ+ZaTTgYcuFmHBRVBHlFV8SP6GnO3fCCkKGfAkAnPXt/nH4EyszgDGJlXsXsRn/yBVMpSjwqzkC5Ej5ajRE9wEDLY2ZwvCzi9/3Sut4XSFmfSFsMsj4AWpQWQc/0otWlUQpFric+UD4SgFDrH3jpcRmrTEJoakDkfQMcguWkxJcXMLvvEQ9iMHEjGgA==
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(23010399003)(36860700016)(1800799024)(82310400026)(7416014)(376014)(11063799006)(56012099006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	HBf6LLa0I4JzNxbXYeKnTmCUXEYxHIza+b6Zk5La+2bIZtwHbhE/JMGVesD2+3CFNSiVK+S/0nGRgDqj8re2wSTCE2JEITkzLtNyCnV3FWlYxdFZZ+RJK1/YGulmqoHf7r/2M+jbAIwBTIPk7YSOqsi57uLdBSivPHG4OAnnk+K+xL/hvN4fvjNPXSYsGxIsEsOtNtd0GhleLyofSFS8epi2JTwXEzOWMpo28Tj1Z6MNx8evD+8P9ZisZFiwgS+5rcfeCMElxH9vt2C49a+PoZT0xVWQfcE4BncsNoY5kBIh9PV7CAIpBeLJ647U1wY4oYB/yzidbwKdUM0Ol7Kug2+inMheJkJzPBFyMzyIw9PZO2Gl24J1MdPdrHN8ByXJJZ9IlDT94EzImQfrFlhsTSqlDiDyfiu4JhLLjk303MyW1pTOf73Sqf6Q1dIMK+Pr
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2026 10:24:56.7342
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b41724b-d6a0-4131-79ab-08ded1dad6ba
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF000397B0.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6007
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="om3weh3neg6kh743"
+Content-Disposition: inline
+In-Reply-To: <slfaxyt6p5mwsqmxvmriy6npilpjhjxv5ruegj4hnivj6zufkl@o6adjy5jmzfy>
 
-Enable I3C subsystem (I3C), Synopsys DesignWare I3C master controller
-(DW_I3C_MASTER), and SPD5118 hwmon temperature sensor (SENSORS_SPD5118)
-as modules.
 
-The NVIDIA Vera CPU uses SOCAMM LPDDR5X memory module, which contains
-SPD5118 (JEDEC JESD300) compliant temperature sensor. This sensor is
-accessible over the I3C bus through the DesignWare I3C controller present
-on the SoC. Enabling these configs allows monitoring memory module
-temperatures on platforms such as Vera Rubin. Vera is an ACPI-based
-platform and does not use device tree.
+--om3weh3neg6kh743
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v7 3/4] PCI: tegra: Add Tegra264 support
+MIME-Version: 1.0
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
----
- arch/arm64/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+On Thu, Jun 18, 2026 at 09:26:33AM +0200, Manivannan Sadhasivam wrote:
+> On Wed, Jun 17, 2026 at 06:01:30PM +0200, Thierry Reding wrote:
+[...]
+> > +static int tegra264_pcie_parse_dt(struct tegra264_pcie *pcie)
+> > +{
+> > +	struct device *dev =3D pcie->dev;
+> > +	int err;
+> > +
+> > +	pcie->wake_gpio =3D devm_gpiod_get_optional(dev, "wake", GPIOD_IN);
+> > +	if (IS_ERR(pcie->wake_gpio))
+> > +		return PTR_ERR(pcie->wake_gpio);
+> > +
+> > +	if (!pcie->wake_gpio)
+> > +		return 0;
+> > +
+> > +	err =3D gpiod_to_irq(pcie->wake_gpio);
+> > +	if (err < 0)
+> > +		return dev_err_probe(dev, err, "failed to get wake IRQ\n");
+> > +
+> > +	pcie->wake_irq =3D (unsigned int)err;
+> > +
+> > +	err =3D devm_device_init_wakeup(dev);
+> > +	if (err < 0)
+> > +		return dev_err_probe(dev, err, "failed to initialize wakeup\n");
+> > +
+> > +	err =3D devm_pm_set_wake_irq(dev, pcie->wake_irq);
+> > +	if (err < 0)
+> > +		return dev_err_probe(dev, err, "failed to set wakeup IRQ\n");
+> > +
+>=20
+> I'd really like to get rid of custom WAKE# handling in the controller dri=
+vers.
+> Krishna is trying to add generic WAKE# handling in the PCI core and I'd s=
+uggest
+> you to take a look at the patches:
+> https://lore.kernel.org/linux-pci/20260511-wakeirq_support-v10-2-c10af9c9=
+eb8c@oss.qualcomm.com/
+>=20
+> But this also means that you need to use switch to Root Port binding to m=
+ove the
+> Root Port properties out of the controller node. This is something we are
+> mandating for the new controllers. Not a big change though...
+>=20
+> Reference:
+>=20
+> Documentation/devicetree/bindings/pci/spacemit,k1-pcie-host.yaml#n80
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index f2e6ae93e533..65d9eb56e978 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -640,6 +640,8 @@ CONFIG_I2C_UNIPHIER_F=y
- CONFIG_I2C_XILINX=m
- CONFIG_I2C_RCAR=y
- CONFIG_I2C_CROS_EC_TUNNEL=y
-+CONFIG_I3C=m
-+CONFIG_DW_I3C_MASTER=m
- CONFIG_SPI=y
- CONFIG_SPI_APPLE=m
- CONFIG_SPI_ARMADA_3700=y
-@@ -769,6 +771,7 @@ CONFIG_SENSORS_SL28CPLD=m
- CONFIG_SENSORS_AMC6821=m
- CONFIG_SENSORS_INA2XX=m
- CONFIG_SENSORS_INA3221=m
-+CONFIG_SENSORS_SPD5118=m
- CONFIG_SENSORS_TMP102=m
- CONFIG_THERMAL_GOV_POWER_ALLOCATOR=y
- CONFIG_CPU_THERMAL=y
--- 
-2.43.0
+Okay, let me look into it.
 
+[...]
+> > +	err =3D devm_pm_runtime_set_active_enabled(dev);
+>=20
+> I belive this has to come after pm_runtime_get_sync() because at this poi=
+nt, the
+> controller is not enabled.
+
+Okay, I'll change that.
+
+> > +	if (err < 0) {
+> > +		dev_err_probe(dev, err, "failed to enable runtime PM\n");
+> > +		goto put_bpmp;
+> > +	}
+> > +
+> > +	err =3D pm_runtime_get_sync(dev);
+> > +	if (err < 0) {
+> > +		dev_err_probe(dev, err, "failed to power on device\n");
+> > +		goto put_bpmp;
+> > +	}
+> > +
+> > +	/* sanity check that programmed ranges match what's in DT */
+> > +	if (!tegra264_pcie_check_ranges(pdev)) {
+> > +		err =3D -EINVAL;
+> > +		goto put_pm;
+> > +	}
+> > +
+> > +	pcie->cfg =3D pci_ecam_create(dev, res, bus->res, &pci_generic_ecam_o=
+ps);
+> > +	if (IS_ERR(pcie->cfg)) {
+> > +		err =3D dev_err_probe(dev, PTR_ERR(pcie->cfg),
+> > +				    "failed to create ECAM\n");
+> > +		goto put_pm;
+> > +	}
+> > +
+> > +	bridge->ops =3D (struct pci_ops *)&pci_generic_ecam_ops.pci_ops;
+> > +	bridge->sysdata =3D pcie->cfg;
+> > +	pcie->ecam =3D pcie->cfg->win;
+> > +
+> > +	tegra264_pcie_init(pcie);
+> > +
+> > +	if (!pcie->link_up)
+> > +		return 0;
+>=20
+> So not hotplug support? Also, you do not want the driver to error out? I'm
+> wondering what's the use then?
+
+Hotplug is supported via pciehp. We skip probing the host bridge if no
+link was detected because there's simply nothing attached to the port,
+otherwise the link would've come up.
+
+pcie->link_up is slightly misleading because it actually means something
+along the lines of "link could be up at some point", either during probe
+or after some hotplug event later on. It is only ever false if there's
+no link during probe and hotplug isn't supported at all.
+
+> > +
+> > +	err =3D pci_host_probe(bridge);
+> > +	if (err < 0) {
+> > +		dev_err_probe(dev, err, "failed to register host\n");
+> > +		goto free_ecam;
+> > +	}
+> > +
+> > +	return 0;
+> > +
+> > +free_ecam:
+>=20
+> Nit: Prefix 'err' for the labels.
+
+I don't see any benefit of adding a prefix. Seems pretty redundant, but
+I also don't feel too strongly about it, so I can add it.
+
+> > +	pci_ecam_free(pcie->cfg);
+> > +put_pm:
+> > +	pm_runtime_put_sync(dev);
+> > +put_bpmp:
+> > +	tegra_bpmp_put(pcie->bpmp);
+> > +
+> > +	return err;
+> > +}
+> > +
+> > +static void tegra264_pcie_remove(struct platform_device *pdev)
+> > +{
+> > +	struct tegra264_pcie *pcie =3D platform_get_drvdata(pdev);
+> > +
+> > +	/*
+> > +	 * If we undo tegra264_pcie_init() then link goes down and need
+> > +	 * controller reset to bring up the link again. Remove intention is
+> > +	 * to clean up the root bridge and re-enumerate during bind.
+>=20
+> But the controller will be consuming power even if PCIe is not used. Do y=
+ou
+> really want that? Can't tegra264_pcie_init() handle the initialization? I=
+'m
+> wondering how tegra264_pcie_deinit() in tegra264_pcie_suspend() works the=
+n.
+
+I had to clarify this with the PCI team and they indicated that
+tegra264_pcie_deinit() is actually useless and maybe even harmful. The
+reason is that there's a processor on these boards (BPMP) that takes
+care of power sequencing and it will automatically take the PCI links
+to L2 on suspend and assert PERST#.
+
+Another reason why we don't want to reset the entire controller is that
+it is already set up during early boot by UEFI and the kernel driver
+does not redo the entire initialization.
+
+So yes, I think a little bit of power consumption is the compromise that
+we will have to live with. In the bigger picture it's probably not going
+to be noticeable in most cases, and given that these are embedded
+platforms we'll likely see fixed configurations most of the time and the
+case where we remove the PCIe host controller will not be common.
+
+> > +	 */
+> > +	pci_lock_rescan_remove();
+> > +	pci_stop_root_bus(pcie->bridge->bus);
+> > +	pci_remove_root_bus(pcie->bridge->bus);
+> > +	pci_unlock_rescan_remove();
+> > +
+> > +	pm_runtime_put_sync(&pdev->dev);
+> > +	tegra_bpmp_put(pcie->bpmp);
+> > +	pci_ecam_free(pcie->cfg);
+> > +}
+> > +
+> > +static int tegra264_pcie_suspend(struct device *dev)
+> > +{
+> > +	struct tegra264_pcie *pcie =3D dev_get_drvdata(dev);
+> > +	int err;
+> > +
+> > +	tegra264_pcie_deinit(pcie);
+> > +
+> > +	if (pcie->wake_gpio && device_may_wakeup(dev)) {
+> > +		err =3D enable_irq_wake(pcie->wake_irq);
+> > +		if (err < 0)
+> > +			dev_err(dev, "failed to enable wake IRQ: %pe\n",
+> > +				ERR_PTR(err));
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int tegra264_pcie_resume(struct device *dev)
+> > +{
+> > +	struct tegra264_pcie *pcie =3D dev_get_drvdata(dev);
+> > +	int err;
+> > +
+> > +	err =3D pinctrl_pm_select_default_state(dev);
+> > +	if (err < 0)
+> > +		dev_err(dev, "failed to configure sideband pins: %pe\n",
+> > +			ERR_PTR(err));
+>=20
+> Please remind me if you justified this manual pinctrl handling before.
+
+This is just regular pinctrl PM boilerplate. There's plenty of other
+drivers where we do this, too. We want this because some of the pins
+get configured to non-default states on boot/resume, so doing this
+here ensures they are muxed correctly.
+
+> > +
+> > +	if (pcie->wake_gpio && device_may_wakeup(dev)) {
+> > +		err =3D disable_irq_wake(pcie->wake_irq);
+> > +		if (err < 0)
+> > +			dev_err(dev, "failed to disable wake IRQ: %pe\n",
+> > +				ERR_PTR(err));
+> > +	}
+> > +
+> > +	if (pcie->link_up =3D=3D false)
+> > +		return 0;
+>=20
+> How is this possible? If 'pcie->link_up' was 'false' during probe(), then=
+ it is
+> going to stay until tegra264_pcie_init() is called below.
+
+Yes, this keeps confusing me, too. The purpose of this is to skip
+initialization if we've already determined during probe that there is
+never going to be a link. link_up will be false if and only if there was
+no link during probe and we don't expect there ever will be a link
+because there is no hotplug support.
+
+Maybe a different name for link_up could help here? maybe_link_up
+perhaps? I don't know if that's any clearer, but I also couldn't come up
+with a better name.
+
+Or maybe we should split this into two booleans, since we're essentially
+trying to use one boolean to track a tristate. What we want to know is
+if a link is truly up and if the controller should be kept powered for
+the case where hotplug is supported.
+
+I suppose we could do:
+
+	bool link_up; /* track the link state */
+	bool supports_hotplug; /* track whether port is hotpluggable */
+
+That would make the code a bit cleaner and easier to follow.
+
+Thierry
+
+--om3weh3neg6kh743
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmo7zvMACgkQ3SOs138+
+s6Hh3Q//X7dmLR4HOiiaGe4uf5xC4DNoBrDoU5+YI1I+wZ92BINHB0j+I+flET5R
+SYLDoJu23EpeKKgxNHHQezxjrAT5lKme+6boVw0mYMIahEfiJ2I3jeGOgYPBM60s
+eNrvbIo3bsBNZ2LaWyz1FfhGB8b6jPqWXIkRmWro8408qz7niITqHHwNWSdG0H5v
+rj1/kvdqgGlsc73fgowsWTSUyBltpGBDIMFta668yViMsj+UqfuUVR/S+D60b2OK
+KyHk89OfrWqSPkB70TvgiCKkSxYoDFBk9553K3fUSfkGjHcIwFnSgNeQ4Gfjl/m5
+nRFgKQbFXpVVYxYL0/j0hRJsY+kmLW/KF2q/m99Wr2VhMyU7/szFU+4auyux0+K6
+RqyFLBLG2S1BbU30+ksgxBQTUMeLLdya4IH826rzuJmw4vSS2/H75EwfHMdMe1GY
+qxTfbkZnW6Cj8OfAKrKxY+IFGPTzh3wBZaEyZp9GBncJPx7OCcVJxTv5PaQSymJC
+g0ycSrZ7RMGPhAT+1BBCdeP5dOWTfNo34i1v+Xrp/DNlH3TWehEZ5wcwElw4I4N3
+Krc/K750Cs7t0FmfmIgdo7U+so6FcSyy68Vt5ytODLCmkagv2VVK9IpGhaJT9mCx
+B0c+L6Zkwb5FqFj0Ji3wF8SjlaGaXf3A7R8L36JgsthEEr2RzXE=
+=AVvO
+-----END PGP SIGNATURE-----
+
+--om3weh3neg6kh743--
