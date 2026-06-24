@@ -1,267 +1,107 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3137E2DEA93
-	for <linux-tegra@vger.kernel.org>; Wed, 24 Jun 2026 02:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005AF1ABEDE;
+	Wed, 24 Jun 2026 10:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782267601; cv=none; b=Bk8YmT4E5zKdLUaTT8btd6sYtPieTjw9bLyln0CI3+kOMv2HPa2C3qMBjTvXoSEeHCuC6FyHvjzMcA4F2R1wNKyLh5tz5XTjp1KB03oh4Q7iACdEGBirq2Bm3VIp+fZx8VlwApeonq4SZ54mRcrsM10528jYAWZvrGD71Eze/zc=
+	t=1782296563; cv=none; b=IPsOmD/InUVCUN4UhoG34HXKsCH5dfoshKrXHwYY3hCR2yZKPX7kSHtlOGQmFDVN7HiU3zQX8JSfh8BffOU0QFafKRaYMN+Q3ltEi2RzTLwPU+BW8D9EblJLJCsP5yIniGZlP4XtOh3NWpiB+s4YIO4VUqm4d0IIVQ1MTQhpODk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782267601; c=relaxed/simple;
-	bh=DGJVCnFbCJgisJ9N6u0idYTaKLaz0dHWWhJ9ygzwkQ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=pzrXz0fiXUCWsKECcptXwUvRjNiyklCeAzPBN9ylvJ4IT0B82/uIUThOvhTL16o+KqHFJOfA9CaHvs+/XH6vPoMKstd9TsiWLSVHvTW+mue7FEQpAIgfEK5o8QZoQdtc+FaNkbPmXGAQJ0fXltPJNU676yL1YKvJxLUhSjGZFiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pW7LR+mE; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1782296563; c=relaxed/simple;
+	bh=iU0QoUZzQz279p1bMy+jOUPvCQ/TUXfeCsU7R0F5wiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OZ8425dk5X0qnTk7lXaX7IAaCJHww2/Gl7TEg0sfpCSKqdL71NnKYmH2kL6N0oNmIXi/sv4pQ2A2WlIe9BFyAINWGV1YqGsNlZbXkXd2ImOXx9EZB0QcBk4oDc7uFh3ChfXJznzTf4fve7lZP8aJ/j93sCoeB44OuI8ARQ1ZOvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UL1YHhWC; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pW7LR+mE"
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20260624021957epoutp0163a41ca685b2b44cc16b136c66741f46~74u-SZ3JM1621216212epoutp01E
-	for <linux-tegra@vger.kernel.org>; Wed, 24 Jun 2026 02:19:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20260624021957epoutp0163a41ca685b2b44cc16b136c66741f46~74u-SZ3JM1621216212epoutp01E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1782267597;
-	bh=JqPyZ0aaQVBBC6joV6zD0RbPShi6Y/+SNaCXbd0DQHo=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=pW7LR+mEt9uxjtqQhQhCIqCiZDGMgDljh09xK735xGJ/r1/ipAoOYmCgYIWVOO7ar
-	 PEVRtYbCmokc7nncENNeUZSrUDcvSo2+V/8AvTdFO3LHZuOrLjiVWc2xA33Oco9/zS
-	 /YfL32lVoqXy1DtESSA5ll54PFja2PrDKhGrK+mY=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTPS id
-	20260624021956epcas1p1620b680e9321a3aba8069cada28ee742~74u_kGyTe1547115471epcas1p1J;
-	Wed, 24 Jun 2026 02:19:56 +0000 (GMT)
-Received: from epcas1p3.samsung.com (unknown [182.195.38.118]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4glQcr1Sxvz6B9mB; Wed, 24 Jun
-	2026 02:19:56 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20260624021955epcas1p2ba2fa4eb8bd0aafaf7b46bde2cf524be~74u9oMuYh0842908429epcas1p2p;
-	Wed, 24 Jun 2026 02:19:55 +0000 (GMT)
-Received: from cw9316lee.. (unknown [10.253.101.98]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20260624021955epsmtip1ed35129491f5eb1c90636349381c9e79~74u9g6r832095320953epsmtip12;
-	Wed, 24 Jun 2026 02:19:55 +0000 (GMT)
-From: Chanwoo Lee <cw9316.lee@samsung.com>
-To: Adrian Hunter <adrian.hunter@intel.com>, Asutosh Das
-	<quic_asutoshd@quicinc.com>, Ritesh Harjani <ritesh.list@gmail.com>, Ulf
-	Hansson <ulfh@kernel.org>, Chaotian Jing <chaotian.jing@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Kamal Dasu
-	<kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>, Broadcom
-	internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Florian
-	Fainelli <florian.fainelli@broadcom.com>, Haibo Chen <haibo.chen@nxp.com>,
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
-	<festevam@gmail.com>, Michal Simek <michal.simek@amd.com>, Thierry Reding
-	<thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-mmc@vger.kernel.org (open list:EMMC CMDQ HOST CONTROLLER INTERFACE
-	(CQHCI) DRIVER), linux-kernel@vger.kernel.org (open list),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC
-	support), linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek
-	SoC support), linux-arm-msm@vger.kernel.org (open list:ARM/QUALCOMM MAILING
-	LIST), linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
-Cc: Chanwoo Lee <cw9316.lee@samsung.com>
-Subject: [PATCH] mmc: cqhci: Remove unused intmask parameter from
- cqhci_irq()
-Date: Wed, 24 Jun 2026 11:19:03 +0900
-Message-ID: <20260624021912.632627-1-cw9316.lee@samsung.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UL1YHhWC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EA761F000E9;
+	Wed, 24 Jun 2026 10:22:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782296561;
+	bh=eMTi+MXkAIkIL88OYj8srAwPQOlTesBvtuRSKqBPNKA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=UL1YHhWCNrz7duXr5Q9Z7aB4XLHcVGSmyUaEHXmCwQeiRBRiPizTDhiWPP12bJEnm
+	 I7agqRy18Pxxvdsu8uYfT7KqioyCCuCu5Zih4f0hUyG8NFJKyfn4i1/3w30QGgoEYo
+	 GpEfbT0VIp5FXAic7nGKBzcs7JRU0gLKEc+az6757IZ3Zt6OLV3fBwJraL4UthQTsm
+	 IvZzed3mySU/qISlaaAGrwucMmaGbQJrhC5jjfL3SqGS3NCxc5gh0PizRw0iLnH3xf
+	 0FfDiVH2XjBMhUiHoYO7vb117XG9VaBsMbuSh0fO2HZh4jocjl75WkHhtv9PIE24EF
+	 l/4a9kfu3lsGA==
+Date: Wed, 24 Jun 2026 12:22:38 +0200
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Akhil R <akhilrajeev@nvidia.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 02/10] arm64: tegra: Remove fallback compatible for
+ GPCDMA
+Message-ID: <ajuv2CVQ-b978cn6@orome>
+References: <20260331102303.33181-1-akhilrajeev@nvidia.com>
+ <20260331102303.33181-3-akhilrajeev@nvidia.com>
+ <CAL_Jsq+bbYZnE=Asv=2VnvTpSsLfKtdpcLvfPzn85hyiyp85cA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20260624021955epcas1p2ba2fa4eb8bd0aafaf7b46bde2cf524be
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-cpgsPolicy: CPGSC10-711,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20260624021955epcas1p2ba2fa4eb8bd0aafaf7b46bde2cf524be
-References: <CGME20260624021955epcas1p2ba2fa4eb8bd0aafaf7b46bde2cf524be@epcas1p2.samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dwm7nbrcy4sr3nlp"
+Content-Disposition: inline
+In-Reply-To: <CAL_Jsq+bbYZnE=Asv=2VnvTpSsLfKtdpcLvfPzn85hyiyp85cA@mail.gmail.com>
 
-The intmask parameter of cqhci_irq() is never used within the function
-body. The function reads the CQHCI interrupt status directly via
-cqhci_readl() and processes interrupts independently of the SDHCI
-intmask value passed by callers.
 
-Signed-off-by: Chanwoo Lee <cw9316.lee@samsung.com>
----
- drivers/mmc/host/cqhci-core.c       | 3 +--
- drivers/mmc/host/cqhci.h            | 3 +--
- drivers/mmc/host/mtk-sd.c           | 2 +-
- drivers/mmc/host/sdhci-brcmstb.c    | 2 +-
- drivers/mmc/host/sdhci-esdhc-imx.c  | 2 +-
- drivers/mmc/host/sdhci-msm.c        | 2 +-
- drivers/mmc/host/sdhci-of-arasan.c  | 2 +-
- drivers/mmc/host/sdhci-of-dwcmshc.c | 2 +-
- drivers/mmc/host/sdhci-pci-core.c   | 2 +-
- drivers/mmc/host/sdhci-pci-gli.c    | 2 +-
- drivers/mmc/host/sdhci-tegra.c      | 2 +-
- drivers/mmc/host/sdhci_am654.c      | 2 +-
- 12 files changed, 12 insertions(+), 14 deletions(-)
+--dwm7nbrcy4sr3nlp
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 02/10] arm64: tegra: Remove fallback compatible for
+ GPCDMA
+MIME-Version: 1.0
 
-diff --git a/drivers/mmc/host/cqhci-core.c b/drivers/mmc/host/cqhci-core.c
-index 178277d90c31..98ceb0b9a6d1 100644
---- a/drivers/mmc/host/cqhci-core.c
-+++ b/drivers/mmc/host/cqhci-core.c
-@@ -819,8 +819,7 @@ static void cqhci_finish_mrq(struct mmc_host *mmc, unsigned int tag)
- 	mmc_cqe_request_done(mmc, mrq);
- }
- 
--irqreturn_t cqhci_irq(struct mmc_host *mmc, u32 intmask, int cmd_error,
--		      int data_error)
-+irqreturn_t cqhci_irq(struct mmc_host *mmc, int cmd_error, int data_error)
- {
- 	u32 status;
- 	unsigned long tag = 0, comp_status;
-diff --git a/drivers/mmc/host/cqhci.h b/drivers/mmc/host/cqhci.h
-index 3668856531c1..8fbbc48c3f85 100644
---- a/drivers/mmc/host/cqhci.h
-+++ b/drivers/mmc/host/cqhci.h
-@@ -315,8 +315,7 @@ static inline u32 cqhci_readl(struct cqhci_host *host, int reg)
- 
- struct platform_device;
- 
--irqreturn_t cqhci_irq(struct mmc_host *mmc, u32 intmask, int cmd_error,
--		      int data_error);
-+irqreturn_t cqhci_irq(struct mmc_host *mmc, int cmd_error, int data_error);
- int cqhci_init(struct cqhci_host *cq_host, struct mmc_host *mmc, bool dma64);
- struct cqhci_host *cqhci_pltfm_init(struct platform_device *pdev);
- int cqhci_deactivate(struct mmc_host *mmc);
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index b2680cc054bd..01ea3adbdf3b 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -1805,7 +1805,7 @@ static irqreturn_t msdc_cmdq_irq(struct msdc_host *host, u32 intsts)
- 			cmd_err, dat_err, intsts);
- 	}
- 
--	return cqhci_irq(mmc, 0, cmd_err, dat_err);
-+	return cqhci_irq(mmc, cmd_err, dat_err);
- }
- 
- static irqreturn_t msdc_irq(int irq, void *dev_id)
-diff --git a/drivers/mmc/host/sdhci-brcmstb.c b/drivers/mmc/host/sdhci-brcmstb.c
-index 57e45951644e..1de2f05fd958 100644
---- a/drivers/mmc/host/sdhci-brcmstb.c
-+++ b/drivers/mmc/host/sdhci-brcmstb.c
-@@ -430,7 +430,7 @@ static u32 sdhci_brcmstb_cqhci_irq(struct sdhci_host *host, u32 intmask)
- 	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
- 		return intmask;
- 
--	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-+	cqhci_irq(host->mmc, cmd_error, data_error);
- 
- 	return 0;
- }
-diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-index 18ecddd6df6f..d0fa83f67a80 100644
---- a/drivers/mmc/host/sdhci-esdhc-imx.c
-+++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-@@ -1503,7 +1503,7 @@ static u32 esdhc_cqhci_irq(struct sdhci_host *host, u32 intmask)
- 	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
- 		return intmask;
- 
--	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-+	cqhci_irq(host->mmc, cmd_error, data_error);
- 
- 	return 0;
- }
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 0882ce74e0c9..ceed47ccfda8 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -2165,7 +2165,7 @@ static u32 sdhci_msm_cqe_irq(struct sdhci_host *host, u32 intmask)
- 	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
- 		return intmask;
- 
--	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-+	cqhci_irq(host->mmc, cmd_error, data_error);
- 	return 0;
- }
- 
-diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
-index 785d3acb18c5..4ca73e7d799e 100644
---- a/drivers/mmc/host/sdhci-of-arasan.c
-+++ b/drivers/mmc/host/sdhci-of-arasan.c
-@@ -555,7 +555,7 @@ static u32 sdhci_arasan_cqhci_irq(struct sdhci_host *host, u32 intmask)
- 	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
- 		return intmask;
- 
--	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-+	cqhci_irq(host->mmc, cmd_error, data_error);
- 
- 	return 0;
- }
-diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
-index eef53455b8ee..4c5fa6a6931d 100644
---- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-+++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-@@ -624,7 +624,7 @@ static u32 dwcmshc_cqe_irq_handler(struct sdhci_host *host, u32 intmask)
- 	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
- 		return intmask;
- 
--	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-+	cqhci_irq(host->mmc, cmd_error, data_error);
- 
- 	return 0;
- }
-diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
-index c347fac24515..b121d896a804 100644
---- a/drivers/mmc/host/sdhci-pci-core.c
-+++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -215,7 +215,7 @@ static u32 sdhci_cqhci_irq(struct sdhci_host *host, u32 intmask)
- 	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
- 		return intmask;
- 
--	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-+	cqhci_irq(host->mmc, cmd_error, data_error);
- 
- 	return 0;
- }
-diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-pci-gli.c
-index 6e4084407662..b55618566d65 100644
---- a/drivers/mmc/host/sdhci-pci-gli.c
-+++ b/drivers/mmc/host/sdhci-pci-gli.c
-@@ -1760,7 +1760,7 @@ static u32 sdhci_gl9763e_cqhci_irq(struct sdhci_host *host, u32 intmask)
- 	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
- 		return intmask;
- 
--	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-+	cqhci_irq(host->mmc, cmd_error, data_error);
- 
- 	return 0;
- }
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 820ce4dae58b..221e48b59f48 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -1280,7 +1280,7 @@ static u32 sdhci_tegra_cqhci_irq(struct sdhci_host *host, u32 intmask)
- 	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
- 		return intmask;
- 
--	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-+	cqhci_irq(host->mmc, cmd_error, data_error);
- 
- 	return 0;
- }
-diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
-index d235b0aecfdb..2a27db2f558b 100644
---- a/drivers/mmc/host/sdhci_am654.c
-+++ b/drivers/mmc/host/sdhci_am654.c
-@@ -462,7 +462,7 @@ static u32 sdhci_am654_cqhci_irq(struct sdhci_host *host, u32 intmask)
- 	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
- 		return intmask;
- 
--	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-+	cqhci_irq(host->mmc, cmd_error, data_error);
- 
- 	return 0;
- }
--- 
-2.43.0
+On Tue, Jun 23, 2026 at 09:02:39AM -0500, Rob Herring wrote:
+> On Tue, Mar 31, 2026 at 5:24=E2=80=AFAM Akhil R <akhilrajeev@nvidia.com> =
+wrote:
+> >
+> > Remove the fallback compatible string "nvidia,tegra186-gpcdma" for GPCD=
+MA
+> > in Tegra264. Tegra186 compatible cannot work on Tegra264 because of the
+> > register offset changes and absence of the reset property.
+> >
+> > Fixes: 65ef237e4810 ("arm64: tegra: Add Tegra264 support")
+> > Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> > ---
+> >  arch/arm64/boot/dts/nvidia/tegra264.dtsi | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> Thierry, Are you going to apply this? The binding change has been
+> picked up and now there's a warning.
 
+Yes, I have this in my tree of fixes for 7.1 and plan to send it out
+towards the end of this week.
+
+Thierry
+
+--dwm7nbrcy4sr3nlp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmo7r+4ACgkQ3SOs138+
+s6FlDhAAtBK4xCaIt7mWHLLOIXDnZQJCxusEuT4sd3PTQ8JqMUDNAhrsPlVsvHNc
+7ITdlNzW7dSAmavXqY0zZxpGEFvOhbzv12SxGPAeswhxbgP05VoH223fP8YYUoab
+0U3CUPn/NoglW5pW+TPiDK1Wh9sXHwORac7huFS2E7445otOd/s3dKEnl7LoHtUN
+IGx1EwPpVUfvh+TXn4/FBn1bOgOMZDYzCIbd1tMXKFGuGVwlQLe/zZS2xc4SNtgz
+lTcpu1z800GlPKRf9ir6HpKRLtnThlLFSSXRpUWykfuGqdqUU51GnC1N0YiTSRbx
+5cnz2GkXSvY82QCY6yuHB+mdi3JAyMfR4UjSshmSLbPWU6SPVzGVDx+eIMkXxELg
+vrvDYcSU5/Fqb7sdjaxzM0lojPUgoTQI66lrk3dJ4mxPVY+89NVDGM0NVFMavo4r
+d1dmzQHu/3HwP7V+OydeN0xhZ+DQkF/9fpAB6+n0DJgwehwJuvvEpxk8SMMG9ue9
+9TigtA78G/wpRkxySZ1dDnMS8X0X4/dK4XPpZs3V0QYOTIsi+87uQgifN+LORu7g
+oYO83qroG8q1WBDn2uY53b8oVBs6//KqhHjwPOuoSNi7nirAp/F0eDfsvLOhXtlg
+7SXDQAKygt6eG/LpzS2/QrB0f+Vz/fowJ8UlnDbUd+ykoueTlqE=
+=m45t
+-----END PGP SIGNATURE-----
+
+--dwm7nbrcy4sr3nlp--
