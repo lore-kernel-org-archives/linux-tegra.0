@@ -1,70 +1,79 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EFB326927;
-	Thu, 25 Jun 2026 08:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C218235AC00;
+	Thu, 25 Jun 2026 09:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782376574; cv=none; b=kDAnLTnRs/nc+sl9JtCnO71oey24zjX4f5fU6zs+nglkXH+cq46KvFvEFfNdE/gSKHoUeR4t+kDuu9mwSzrUsE/wgyxHHR3ilFs0bQOlYt+f7oDCCt3j17Ne2RKR+uZtQ7PQATbklb9kgD370yL+HqT+IwTG/bozZS49Nmq3AII=
+	t=1782378658; cv=none; b=Crf0NpjXsnIdMGa4GQLeH8J8+cPx+QH78Cos40fHeL9nMoQUcBl/udKdC/jZb1hqNTcxMgaD/zMmfBRKrJddT9JFAUZxbgkK8eIHOBDKrHj3TTMCerj7pfqwFfIKtePyd9Bf0PO3eFeLCDBWotgScUiqgk+GZTu38zG+HBvJOdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782376574; c=relaxed/simple;
-	bh=oD1VxhZq9697KH+qXgV3dLwh8bpLta0Equ9DdguzgIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i92QJWPgvHSMiOjZJvfj8sJx5kuiY1LRSfbwoo2TQ38PV7m3P1x13qBF/pi+gJHMnNWauKa7v1cJKoqIc/chBADV0DH23y8Hcp68+E+shVdHLh9CuRRSlzrIwTMdb2aAFo2MPB4mZW4WC1Bsz93NNAO/g20869MmyOlPtThGspw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iQ1p8ohR; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1782378658; c=relaxed/simple;
+	bh=EEaqe3TRKfme8RzVn8ZkaFwHH+V/chUQWSAhkIpHVjY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BacEqXWkqJPEzEi4ySEUsJyjxk701BY/ovYDthyM76bdaa2x+M0sSz4aSgsZsoXk8Nh9RkykqdEiWlq5rSmQWd3riQeB6p9tW+xEXG2efvufa7vKjFBJeTgtnL6HdPFE2/gKCmzSXlTvn3ebsISBMBl6b8R9q19FqFzD5w/T43U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ktEcS4VW; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iQ1p8ohR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 654C71F00A3A;
-	Thu, 25 Jun 2026 08:36:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ktEcS4VW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEC0B1F000E9;
+	Thu, 25 Jun 2026 09:10:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782376572;
-	bh=oD1VxhZq9697KH+qXgV3dLwh8bpLta0Equ9DdguzgIk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=iQ1p8ohRyKBQ7KY1xLnpE2A7CijIb0wV9ojbLnsIUVienGHT1LGanmRv+2U4ThS2V
-	 mkpwyZ3vOHiyyezR2aygJo67d+CUufQWIbtoo/1nZ1pP/kztbpYtT1s6wU13ibESF1
-	 2zl5YhqGRnoJqaQfkYe4qHegUAa/WONp9y8vLwDEcaX/Ie5YsbL5NDI8lYEbmUx9sZ
-	 ntRJelUX6p77oOSWfPqa8fwvDx2xSkCWGNsqem87UFw7P1PO6sokYqv3GeKc14uVXU
-	 6SU7+5Gvzb2Xa/+HF0uViYKJ9hVOZrR9/iiELgNhi6MUfFTA3sl2NmVCcosv1HsAg5
-	 C+pxOb10VtVtQ==
-Date: Thu, 25 Jun 2026 10:36:08 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] dt-bindings: display: tegra: Add channel/syncpoint
- range properties
-Message-ID: <20260625-poetic-heavy-vulture-7baabb@quoll>
-References: <20260622-host1x-nohv-v1-0-65bc682a617f@nvidia.com>
- <20260622-host1x-nohv-v1-2-65bc682a617f@nvidia.com>
+	s=k20260515; t=1782378657;
+	bh=iLx8ln11wcjxDTT91LufbpmNFIPlBMRXuf4RMTzBOps=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ktEcS4VWzwqsIIe2rbKsWUUpe/NaEKU3/lCiiuzk74P78/O40Ihq/2+HXEqj2k1oF
+	 bMdR0Iak231fVf1Zv4IyoGTcnjGfsqp6Emi+JXcraI8H5PapUPjX0Ep7wD37ffyOmK
+	 Wa98rnlhdiyx2vNXJvjy43l9SekV3iT3AkfO8+8ZTZi9Z91EtD2KWgZiPGLo7lS6on
+	 KB15glZrk0xf/9ZOXiXHuizbwgShDZOgRESD8+ZEjNeY0D+RzDx5I40eyj9w3auFmx
+	 FOZ+cm22xk2sEQI6WTCSgmXxbgpw67vYg9ZGq0EIYR1ObiwRjxfC2uy9j0BnW6tSfE
+	 ykYI23oQ5Famw==
+From: Thierry Reding <thierry.reding@kernel.org>
+To: jonathanh@nvidia.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sumit Gupta <sumitg@nvidia.com>
+Cc: bbasu@nvidia.com
+Subject: Re: [PATCH 0/3] arm64: dts: tegra: CPU and cache node updates
+Date: Thu, 25 Jun 2026 11:10:50 +0200
+Message-ID: <178237831284.1973065.5359477309361980355.b4-ty@b4>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260121104536.3214101-1-sumitg@nvidia.com>
+References: <20260121104536.3214101-1-sumitg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260622-host1x-nohv-v1-2-65bc682a617f@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 22, 2026 at 05:22:51PM +0900, Mikko Perttunen wrote:
-> Channels and syncpoints available may be limited when other system
+From: Thierry Reding <treding@nvidia.com>
 
-What are channels and syncpoints?
 
-> components are using them. Add properties nvidia,channels and
-> nvidia,syncpoints to limit the range of usable channels and/or
-> syncpoints.
+On Wed, 21 Jan 2026 16:15:33 +0530, Sumit Gupta wrote:
+> - Fixes for Tegra234/264 device tree CPU compatible string.
+> - Populate CPU and L2 cache nodes for Tegra264.
+> 
+> Sumit Gupta (3):
+>   arm64: dts: tegra234: Fix CPU compatible string to cortex-a78ae
+>   arm64: dts: tegra264: Fix CPU1 node unit-address
+>   arm64: dts: tegra264: Populate CPU and L2 cache nodes
+> 
+> [...]
 
-Why isn't this deducible from the compatible?
+Applied, thanks!
 
-Also, nvidia,channels is too broad/generic. This is not ADC, right? And
-channels is a common term in IIO. And in few other cases.
+[1/3] arm64: dts: tegra234: Fix CPU compatible string to cortex-a78ae
+      commit: 2e1f4664c1be73065070d8b380a3c7440f98f6a4
+[2/3] arm64: dts: tegra264: Fix CPU1 node unit-address
+      commit: c003ea35f934a9e6672ea02778f07f08cb6f13ad
+[3/3] arm64: dts: tegra264: Populate CPU and L2 cache nodes
+      commit: 1199de78b2ca6439e83a565fe39eb4fed67d70b8
 
 Best regards,
-Krzysztof
-
+-- 
+Thierry Reding <treding@nvidia.com>
