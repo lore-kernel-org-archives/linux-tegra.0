@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BF23F54D9;
-	Fri, 26 Jun 2026 12:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939153F58E1;
+	Fri, 26 Jun 2026 12:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782478405; cv=none; b=FO8z6onzWDMoFdh61+N6pJHKlgZovChXpvtMGyC2cTpGyu7l5PVO4uK2GButeeUnFzkLuUDlDu5wtcEPZ2GlmVl+Z6eq8kZ+5RSj/tg8hpdrOmmnK8Tg6muq7ncTybXdKX8GMHMVCfS4i2LmjYXSYsgJLsDZfg9qyzBR2zhkdmM=
+	t=1782478793; cv=none; b=cAFf7Wj9I4Pg1VUu1WMN7HPLDjvHblLahTU5PMvIBGUzG9axDdDuwkfeY7T7aGkvEanJ77c2sA+0vt7eDWRa34QhO5W52tdrHAUm8L2Lih2innuccSuVVr3W9fOBBjVJ5s/CMCoU8RZkp7UbTlwk0MYyjNyBH2mgxSJeFfCeO8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782478405; c=relaxed/simple;
-	bh=4vW/ykol/caEyEWxjwNOEBg0s6JIz+ZkHwDVW8nFj8o=;
+	s=arc-20240116; t=1782478793; c=relaxed/simple;
+	bh=iuAhpilzZ82xLPk+JSQEUu87jLlBPaxS3Zm76C7j3bE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HxH9Akb66nFWnXQ8cBRRKMo2nxgtq3S4D52gjjdADDPQlj0Q0GK2Wz6I8KfzwWNz0nt8DwV0+2eiLUb3caUqy0uyeAETHBVz/pignQLjft59xhs/Rd74VSuQZAXBkvqDJYiyZjbDxnmakdmtfOEb3Ou77UAe6JTDAksYVViGKkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jA+1blRY; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=k1T+K1zOb8NonQJMtzZfeMAw3KIz0aMGLSIcpf1XHO5dGrfElDSeNraelAnT/jWethVrlmK4n2faANy5J2yXIVPnM+wKz8l1UBPUdsuJP892Vh8ASAzdszSOXl2vQHRkXWQ4FTaEQhIDe6BVzAdd3Ia4OvY7lj2NM7tBDCmQJbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SUXMgmgW; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jA+1blRY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12BC71F000E9;
-	Fri, 26 Jun 2026 12:53:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SUXMgmgW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8032F1F000E9;
+	Fri, 26 Jun 2026 12:59:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782478402;
-	bh=4vW/ykol/caEyEWxjwNOEBg0s6JIz+ZkHwDVW8nFj8o=;
+	s=k20260515; t=1782478791;
+	bh=iuAhpilzZ82xLPk+JSQEUu87jLlBPaxS3Zm76C7j3bE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=jA+1blRY/22zkn1IuV2vFG0t4ZR472agS+Rcx+5z16VdxoF71huJ1Hl8bsMp3pwie
-	 s3HtkJ3Tl3y1I0/1g6RacpyGU35B53xSHrcaW2t/QElscs05clIdKsmtyr19KKKovm
-	 j2vyJcgBgpzWNrcDG19JsgBHlP34lXUQWsnc+h2WSFpQYvkLvk59Qjivmjj2UMHGU9
-	 2DAUYqmMHyTPI+NuAt0myou2eD4nJXGhda3uP6TH4lDTBl4kKy1F3g2geT40+z506u
-	 Vnogil5g4ai7oWWmwQeBbyrByU0zgFU0TRYPzYi5U+cc1hPuhhDyMuLKxFHdF8pOoa
-	 rE4v4BY+yF7Ng==
-Date: Fri, 26 Jun 2026 14:53:20 +0200
+	b=SUXMgmgWimGLbzlNMZ7wcG+1j38gd4fRHDIlDqaegwcqfVuQgLYX8VuUJtvM15vYp
+	 jX12ep+d309u8bLQbPbyAdBvJmd8GAsRPjPQZkY4YwXDX5gr9XzTy4IoAL7jcTI2rV
+	 8MTxA1z++Ku+mxv+86TWL/aJ6xmEhLbsBHRnhMPe0NgKiyIhsLVeyivZGTUIIikGnb
+	 y3xB6TtxeLHebb/RguAspWG9yWJwnaIq7UkWwS/TVbfgzD/kJBZNxTlsLf/tTqaRX3
+	 91ZGmQgom/jibidOew2L8xqAHAtkawCvVu8yAOpBH0ClZXAOWEuwCJJPHM/LEHesNi
+	 Azxjd24IvLvoA==
+Date: Fri, 26 Jun 2026 14:59:48 +0200
 From: Maxime Ripard <mripard@kernel.org>
 To: Albert Esteve <aesteve@redhat.com>
 Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -61,11 +61,11 @@ Cc: Neil Armstrong <neil.armstrong@linaro.org>,
 	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
 	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, linux-samsung-soc@vger.kernel.org, 
 	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 4/5] drm/bridge: release panel reference on all lookup
- exit paths
-Message-ID: <20260626-manipulative-rainbow-rhino-d73b65@houat>
+Subject: Re: [PATCH 5/5] drm: release panel reference after panel bridge
+ creation
+Message-ID: <20260626-ivory-tarantula-of-valor-af0e2a@houat>
 References: <20260626-drm_refcount_wiring-v1-0-cca1a7b3bdef@redhat.com>
- <20260626-drm_refcount_wiring-v1-4-cca1a7b3bdef@redhat.com>
+ <20260626-drm_refcount_wiring-v1-5-cca1a7b3bdef@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -73,61 +73,58 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="dvioag5mayzeljeh"
+	protocol="application/pgp-signature"; boundary="hx5apeednlr6fj2q"
 Content-Disposition: inline
-In-Reply-To: <20260626-drm_refcount_wiring-v1-4-cca1a7b3bdef@redhat.com>
+In-Reply-To: <20260626-drm_refcount_wiring-v1-5-cca1a7b3bdef@redhat.com>
 
 
---dvioag5mayzeljeh
+--hx5apeednlr6fj2q
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 4/5] drm/bridge: release panel reference on all lookup
- exit paths
+Subject: Re: [PATCH 5/5] drm: release panel reference after panel bridge
+ creation
 MIME-Version: 1.0
 
-On Fri, Jun 26, 2026 at 02:03:26PM +0200, Albert Esteve wrote:
+On Fri, Jun 26, 2026 at 02:03:27PM +0200, Albert Esteve wrote:
 > of_drm_find_panel() and drm_of_find_panel_or_bridge() now return a
-> counted reference that the caller must release with drm_panel_put().
+> counted reference. In drivers that immediately wrap the panel in a
+> bridge via devm_drm_panel_bridge_add() or equivalent, the bridge
+> acquires its own reference, so the caller's lookup reference must be
+> released right afterwards.
 >=20
-> For bridge drivers that immediately wrap the panel in a panel_bridge
-> (which acquires its own reference), release the lookup reference right
-> after the bridge creation call.
->=20
-> For analogix-anx6345, which stores the panel for direct use, release
-> the reference in the i2c remove path.
->=20
-> For platform drivers using analogix_dp_core with a component lifecycle
-> (exynos_dp, rockchip analogix_dp), release the lookup reference in the
-> platform remove() function. The panel_bridge created during bind() holds
-> a separate reference that devm cleanup releases after remove() returns.
->=20
-> Also fix devm_drm_of_get_bridge() and drmm_of_get_bridge() in
-> bridge/panel.c itself: both call drm_of_find_panel_or_bridge() and
-> then pass the panel to devm/drmm_panel_bridge_add(), which acquires
-> its own reference via drm_panel_bridge_add_typed(). The lookup
-> reference was never released; add drm_panel_put() after each bridge
-> creation call.
+> Also handle the cases where a panel is found but cannot be used,
+> dropping the reference immediately in those paths.
 >=20
 > Assisted-by: Claude:claude-opus-4-6
 > Signed-off-by: Albert Esteve <aesteve@redhat.com>
 
-I think this one should be either split into one patch per driver, or
-merged with the of_drm_find_panel patch. I'm still not quite sure which
-would be the best, maybe the latter?
+drm_of_find_panel_or_bridge() does indeed return a refcounted pointer
+now, but afaik the doc wasn't updated to reflect that.
+
+More importantly, I feel like with both of_drm_find_panel and
+drm_of_find_panel_or_bridge we update a path that is considered legacy
+anyway now, and we should rather focus on providing a safe alternative.
+
+But none of the functions you updated are unsafe, so it won't be more
+unsafe, or provide any illusion of safety to the caller. Idk.
+
+Either way, this should all be on its way out if Luca creates a bridge
+for every panel, and we'll consolidate on bridges only, so maybe it's
+not such a big deal to merge this patch.
 
 Maxime
 
---dvioag5mayzeljeh
+--hx5apeednlr6fj2q
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaj52PwAKCRAnX84Zoj2+
-dqkkAX416HMzwlmhKIK9kObtiXs7aRAKA/jKzZZr7wPHQO6/uyzY73TP2QyyShFE
-RjZRFDwBgJ2jRvQKam/G1wYDKDB/X9IryTeMbNEHvQrSIgH4XGYNKJ2sIqCmRRJm
-MAR2IQBH8A==
-=+EN8
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaj53xAAKCRAnX84Zoj2+
+dsH4AX98DVuJ2nWYEJlnvBoa7TLPQIxJp+N3SqD7GpI68AgQPx9+XXIRd6eD3iVF
+E+I0SeQBgPnPf10X5ME+9qUOY4BE8jXvhoS7IaHARK1hueut9qHTwNXhFYoQyHlo
+Wk/+lJPV9A==
+=+ukr
 -----END PGP SIGNATURE-----
 
---dvioag5mayzeljeh--
+--hx5apeednlr6fj2q--
