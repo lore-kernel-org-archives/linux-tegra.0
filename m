@@ -1,34 +1,34 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED9F3F4824;
-	Fri, 26 Jun 2026 12:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8643F54B0;
+	Fri, 26 Jun 2026 12:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782475701; cv=none; b=dewA5tinV1vCMoK4P65/f+feAfAStIQYlXmGiIiPwInuf1+enn3vNHKX6jhHPGSNN7TeartMmEXdnXrZvcP1zgpV6TzkP4Yd4ym5iWRpSCvB5qXepE+KWDxEiAXu14t6OL10qkp5kHZWCxyYigCdz7GDXcoLAOXLtNb6/zKRZuc=
+	t=1782475704; cv=none; b=dlrKtFwyYL91fxRD+HWrFiTyAsZ/bqE/IyReM6LBUP8A3rDWJu529p6qBgUdXFNXOLLgoXF7zfkKbEEE+pl1hisIhh/T/IJcHpVHrcJopZzqY0xi4QMyXupHbwZdFLBT1sgRvub5geGNZOAGrzdsdqqyQNjnrHVyNc4/SBaHt+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782475701; c=relaxed/simple;
-	bh=RcX8vwnJzooOlmy2OhVFVi8CeSxoAK4FBT1/5Pz8DIs=;
+	s=arc-20240116; t=1782475704; c=relaxed/simple;
+	bh=T+bk6X7PjXELUpGRmYAEEvu14aEYiMcd7gjkzn+fFzQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lfzos2WCc/Gn+FesH00+1nHTPom9fieJoj0zydKCSVutARx4JiQO2NUhZix+CdDbcpsvFsDLAJYmcX7rECR1zA7jV8OvcFZH7s/3xXHBGswMVkO/8wM5kHt9+aUhSimVJCDzcnTGhDGACZCa3eT95ai+JT6Ha+ZPpi6gecLPEmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=OJS5w84e; arc=none smtp.client-ip=213.167.242.64
+	 In-Reply-To:To:Cc; b=CPMO4CfI+Udfn7cqPtlVlT8Zqdtx2+AmkudLrwrFuIJQ26WTzuXwaAj4pt+ugZd3oy17ergmUF7dIxwFgmbDaUxCmOP9mQbJeVmINRPe4jOKXR54X4kJy9/K67sRzJkBkcnhM7Ejxqns7tC9RP8JY9d1vUeX9/xNgr5TFX7XwKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=LCDzIxew; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OJS5w84e"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LCDzIxew"
 Received: from ping.linuxembedded.co.uk (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DB7371AED;
-	Fri, 26 Jun 2026 14:07:25 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2976D1D00;
+	Fri, 26 Jun 2026 14:07:30 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1782475647;
-	bh=RcX8vwnJzooOlmy2OhVFVi8CeSxoAK4FBT1/5Pz8DIs=;
+	s=mail; t=1782475651;
+	bh=T+bk6X7PjXELUpGRmYAEEvu14aEYiMcd7gjkzn+fFzQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=OJS5w84eOPPiqOiyysiX/Bk/LyCciNLpR2xHBJqDfV5PycDob2nJNeMHN63zLU70S
-	 s6nvOxbYIWxmTk/uVbIM1gjFMHhovzoHkIaMCgKrRosFR/4BKsp5/RHdVXB4OajJ0A
-	 Qi/ycolkWYX9x26dwvExmGsyYlWi6utRhDeudxDo=
+	b=LCDzIxewP6m70wnPz4jkPuvRudnSQgd1RxRWeYS91MZCwvM3c49ssA3DceGGeeS+d
+	 g5rYkIaTljzz4boNXriiMQ1Cf+A9pHv05rAjFtVKbTXb0ftXyVNoff538FH2xENAjK
+	 cBJm+r59NQ+FpJ/tLwg9YDjIBirnjZzfWv99eLKg=
 From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Date: Fri, 26 Jun 2026 13:07:57 +0100
-Subject: [PATCH v2 5/8] arm64: dts: freescale: Convert to new media
+Date: Fri, 26 Jun 2026 13:08:00 +0100
+Subject: [PATCH v2 8/8] arm64: dts: rockchip: Convert to new media
  orientation definitions
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -38,7 +38,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260626-kbingham-orientation-v2-5-47178be927b4@ideasonboard.com>
+Message-Id: <20260626-kbingham-orientation-v2-8-47178be927b4@ideasonboard.com>
 References: <20260626-kbingham-orientation-v2-0-47178be927b4@ideasonboard.com>
 In-Reply-To: <20260626-kbingham-orientation-v2-0-47178be927b4@ideasonboard.com>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
@@ -74,68 +74,143 @@ Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
  linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
  Kieran Bingham <kieran.bingham@ideasonboard.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1782475679; l=2134;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1782475679; l=5672;
  i=kieran.bingham@ideasonboard.com; s=20260207; h=from:subject:message-id;
- bh=RcX8vwnJzooOlmy2OhVFVi8CeSxoAK4FBT1/5Pz8DIs=;
- b=veyj1mNZFp7L8yHeQ7h2FeR/jkWGLEXTaYAYqZn+YtC+z7BBjqnV+bCkA6FxPq7mtY6rrRtFh
- FKNDAI4f8dmCMyozp2urajMZaHKv2oMh+IhBZi8F7KHpJiEuMTxFxjJ
+ bh=T+bk6X7PjXELUpGRmYAEEvu14aEYiMcd7gjkzn+fFzQ=;
+ b=CThnb9TbLp72dj9+5u29C1IeRBmoPbrqc7WJHYknkNZdBokSv0q+4h5AX3hu020QE9wtTd7BT
+ XL7Y8E09zvSBYSxKCdY1+RaID33ky2E4DRmJCSP4aP8Sozq1SANCDmI
 X-Developer-Key: i=kieran.bingham@ideasonboard.com; a=ed25519;
  pk=FVXKN7YuwHc6UtbRUeTMAmranfsQomA+vnilfglWdaY=
 
 The orientation property for video interface devices now has definitions
 to prevent hardcoded integer values for the enum options.
 
-Update the users throughout the freescale/NXP device trees to use the new
+Update the users throughout the rockchip device trees to use the new
 definitions.
 
 Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 ---
- .../boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtso      | 3 ++-
- arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi                      | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi                        | 3 ++-
+ arch/arm64/boot/dts/rockchip/px30-ringneck-haikou-video-demo.dtso    | 3 ++-
+ arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts                | 5 +++--
+ .../boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam0.dtso      | 3 ++-
+ .../boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam1.dtso      | 3 ++-
+ 5 files changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtso b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtso
-index e5a2b3780215..7b44ae0f19b2 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtso
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtso
-@@ -9,6 +9,7 @@
- 
+diff --git a/arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi b/arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi
+index 192791993f05..d58d6ee6241e 100644
+--- a/arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi
++++ b/arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi
+@@ -6,6 +6,7 @@
+ /dts-v1/;
  #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/media/video-interfaces.h>
+ #include <dt-bindings/input/input.h>
 +#include <dt-bindings/media/video-interface-devices.h>
+ #include <dt-bindings/pinctrl/rockchip.h>
+ #include "px30.dtsi"
  
- #include "imx8mp-pinfunc.h"
- 
-@@ -47,7 +48,7 @@ camera@10 {
- 		VANA-supply = <&reg_cam>;
- 		VDIG-supply = <&reg_cam>;
- 		VDDL-supply = <&reg_cam>;
--		orientation = <2>;
-+		orientation = <MEDIA_ORIENTATION_EXTERNAL>;
- 		rotation = <0>;
- 
- 		port {
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi b/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
-index f5d529c5baf3..178cfad93483 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi
-@@ -8,6 +8,7 @@
- #include "dt-bindings/input/input.h"
+@@ -413,7 +414,7 @@ camera@36 {
+ 		dvdd-supply = <&vcc_cam_dvdd>;
+ 		dovdd-supply = <&vcc_cam_dovdd>;
+ 		lens-focus = <&focus>;
+-		orientation = <0>;
++		orientation = <MEDIA_ORIENTATION_FRONT>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&cif_clkout_m0 &cam_pwdn>;
+ 		reset-gpios = <&gpio2 RK_PB0 GPIO_ACTIVE_LOW>;
+diff --git a/arch/arm64/boot/dts/rockchip/px30-ringneck-haikou-video-demo.dtso b/arch/arm64/boot/dts/rockchip/px30-ringneck-haikou-video-demo.dtso
+index 760d5139f95d..2168db9168a5 100644
+--- a/arch/arm64/boot/dts/rockchip/px30-ringneck-haikou-video-demo.dtso
++++ b/arch/arm64/boot/dts/rockchip/px30-ringneck-haikou-video-demo.dtso
+@@ -16,6 +16,7 @@
+ #include <dt-bindings/gpio/gpio.h>
  #include <dt-bindings/interrupt-controller/irq.h>
  #include <dt-bindings/leds/common.h>
 +#include <dt-bindings/media/video-interface-devices.h>
- #include "dt-bindings/pwm/pwm.h"
- #include "dt-bindings/usb/pd.h"
- #include "imx8mq.dtsi"
-@@ -1116,7 +1117,7 @@ camera_front: camera@20 {
- 		vddd-supply = <&reg_vcam_1v2>;
- 		vddio-supply = <&reg_csi_1v8>;
- 		rotation = <90>;
+ #include <dt-bindings/pinctrl/rockchip.h>
+ 
+ &{/} {
+@@ -185,7 +186,7 @@ camera@36 {
+ 		dvdd-supply = <&cam_dvdd_1v2>;
+ 		dovdd-supply = <&cam_dovdd_1v8>;
+ 		lens-focus = <&focus>;
 -		orientation = <0>;
 +		orientation = <MEDIA_ORIENTATION_FRONT>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&cif_clkout_m0>;
+ 		reset-gpios = <&pca9670 6 GPIO_ACTIVE_LOW>;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+index 8d26bd9b7500..6608c777f185 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+@@ -13,6 +13,7 @@
+ #include <dt-bindings/input/gpio-keys.h>
+ #include <dt-bindings/input/linux-event-codes.h>
+ #include <dt-bindings/leds/common.h>
++#include <dt-bindings/media/video-interface-devices.h>
+ #include "rk3399-s.dtsi"
  
- 		port {
- 			camera1_ep: endpoint {
+ / {
+@@ -455,7 +456,7 @@ wcam: camera@1a {
+ 		reg = <0x1a>;
+ 		clocks = <&cru SCLK_CIF_OUT>; /* MIPI_MCLK0, derived from CIF_CLKO */
+ 		lens-focus = <&wcam_lens>;
+-		orientation = <1>; /* V4L2_CAMERA_ORIENTATION_BACK */
++		orientation = <MEDIA_ORIENTATION_BACK>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&camera_rst_l>;
+ 		reset-gpios = <&gpio1 RK_PA0 GPIO_ACTIVE_LOW>;
+@@ -487,7 +488,7 @@ ucam: camera@36 {
+ 		clocks = <&cru SCLK_CIF_OUT>; /* MIPI_MCLK1, derived from CIF_CLK0 */
+ 		clock-names = "xvclk";
+ 		dovdd-supply = <&vcc1v8_dvp>;
+-		orientation = <0>; /* V4L2_CAMERA_ORIENTATION_FRONT */
++		orientation = <MEDIA_ORIENTATION_FRONT>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&camera2_rst_l &dvp_pdn0_h>;
+ 		powerdown-gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_LOW>;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam0.dtso b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam0.dtso
+index ee9ecf68a886..8c9a4a1181e4 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam0.dtso
++++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam0.dtso
+@@ -9,6 +9,7 @@
+ 
+ #include <dt-bindings/clock/rockchip,rk3588-cru.h>
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/media/video-interface-devices.h>
+ #include <dt-bindings/pinctrl/rockchip.h>
+ 
+ &{/} {
+@@ -50,7 +51,7 @@ imx415: camera-sensor@1a {
+ 		avdd-supply = <&savdd_cam0>;
+ 		clocks = <&cru CLK_MIPI_CAMARAOUT_M3>;
+ 		dvdd-supply = <&sdvdd_cam0>;
+-		orientation = <2>; /* External */
++		orientation = <MEDIA_ORIENTATION_EXTERNAL>;
+ 		ovdd-supply = <&siovdd_cam0>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&cam0_rstn &mipim0_camera3_clk>;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam1.dtso b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam1.dtso
+index 8a4cf3fdbf8e..0cc3d6a34cef 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam1.dtso
++++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam1.dtso
+@@ -9,6 +9,7 @@
+ 
+ #include <dt-bindings/clock/rockchip,rk3588-cru.h>
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/media/video-interface-devices.h>
+ #include <dt-bindings/pinctrl/rockchip.h>
+ 
+ &{/} {
+@@ -50,7 +51,7 @@ cam1_imx415: camera-sensor@1a {
+ 		avdd-supply = <&savdd_cam1>;
+ 		clocks = <&cru CLK_MIPI_CAMARAOUT_M4>;
+ 		dvdd-supply = <&sdvdd_cam1>;
+-		orientation = <2>; /* External */
++		orientation = <MEDIA_ORIENTATION_EXTERNAL>;
+ 		ovdd-supply = <&siovdd_cam1>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&cam1_rstn &mipim0_camera4_clk>;
 
 -- 
 2.52.0
