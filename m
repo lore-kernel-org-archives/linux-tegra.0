@@ -1,108 +1,164 @@
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6274A2EAB82;
-	Sun, 28 Jun 2026 03:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2A33446CA;
+	Sun, 28 Jun 2026 10:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782619005; cv=none; b=ti8bF12B9i7RcOLtnxSIRFAqGw5bqAF6zFNPtNx7l6tG2iw+GQJeu3nCmdEEDIm4NDg52wmBXn5FjyZKbRh3UKjZScwXmjCCwM1qKeF2xH3D+6VsyBEg6aIx81TRPDqla42aFtGQPZm4PYOBMnEgJuf+m2pZpfVlSzUtfXx1qHk=
+	t=1782642155; cv=none; b=dwCFvA0N10BLN37XalzKFGLE4p4X9d8SX0kBp0WL+sU7Lb96ZpgB8W6uGcNiqB2GAoGWJYsrAsVZDg6YYUB70ontyvPnYkDWDi9L1q5kQ+soSXAPunXbRlqpgepVK8w0gmSYp4JIHFWu20gq/yV8SbKh5dppEme/Lj+nJjrZXSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782619005; c=relaxed/simple;
-	bh=ySfoBfR3OpmIN9VesZyqZy8p9Fp7Dfb8MMkecoPLnwY=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=JvGkpjrtivt3ffYp+VEWAcS6Eok1x+YaJaxL9Jyki8FVFKOPjtZ2EVvsE++5QsanmUhIJgf2c4fcVnkjH7BP/qgR7DSXc9K7crCi/80O+rUfz0d4PO4US+CQ6aOf3Vjj6XqWvEaviP3QWz0wVnSupqFoqAaLayKLhbuZ28cDs74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from smtpclient.apple (unknown [117.182.74.7])
-	by APP-01 (Coremail) with SMTP id qwCowADXfdYKm0BqqCuqAw--.7249S10;
-	Sun, 28 Jun 2026 11:56:34 +0800 (CST)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1782642155; c=relaxed/simple;
+	bh=pSsloNoctZ8KZdtQMoBMTiphM6yVThkqQuPMFzEH2PI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=icfBhVIYSBzoi8MEyixIOJRDJhOry5Wm2tw0+i45GOl2MtyklmDKUJYGi6irlSjprQdsdnPxFzI32funoe9iedoY7a17IBnXOdCzHW3160WfkooXf6dagZuXy2xcnhz087sJiDjUiIKz1H0VO0MszHBUZBf2XWQZ3yEZUMYn8Cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=p+0kMGCB; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="p+0kMGCB"
+Received: from ping.linuxembedded.co.uk (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 394B134;
+	Sun, 28 Jun 2026 12:21:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1782642098;
+	bh=pSsloNoctZ8KZdtQMoBMTiphM6yVThkqQuPMFzEH2PI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=p+0kMGCBDHSdrMRCTYhGwKrbD/lVOCLOVqbLnE/Z8+r4xy36LIXysHfmItF+k60Nu
+	 grjX8hLayTsJT7xg1Tm+ykqzPWkvNDNSUz6SvkXezHR2t1L1Bl18OxNsCDb0DySnis
+	 0aXBROKTASUubfqalaG1RQhwnEvUtpRe8sgYywvI=
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH v3 0/7] dt-bindings: Orientation defines
+Date: Sun, 28 Jun 2026 11:22:15 +0100
+Message-Id: <20260628-kbingham-orientation-v3-0-4ed92968aff8@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81.1.8\))
-Subject: Re: [PATCH] fix: drm/tegra: tegra_dc_pin: chunks>1 error path leaks
- current mapping   from host1x_bo_pin
-From: WenTao Liang <vulab@iscas.ac.cn>
-In-Reply-To: <20260626144958.49221-1-vulab@iscas.ac.cn>
-Date: Sun, 28 Jun 2026 11:56:23 +0800
-Cc: David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- linux-tegra@vger.kernel.org,
- stable@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <AF581601-39A9-4F19-ADA1-2FEC1EE9C991@iscas.ac.cn>
-References: <20260626144958.49221-1-vulab@iscas.ac.cn>
-To: Thierry Reding <thierry.reding@kernel.org>,
- Mikko Perttunen <mperttunen@nvidia.com>,
- dri-devel@lists.freedesktop.org
-X-Mailer: Apple Mail (2.3826.700.81.1.8)
-X-CM-TRANSID:qwCowADXfdYKm0BqqCuqAw--.7249S10
-X-Coremail-Antispam: 1UD129KBjvJXoW7Xr18trW3ZFyDtFyxJFWUJwb_yoW8Jr1fpF
-	WUtrW5KrZ0yry3Ka1xJF4rZFyav3sxKFWxGr98Gan3ursxtryUJrZ8GFWqqayDJr4xCw47
-	Xr4DKFs3G3sFvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBEb7Iv0xC_KF4lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI
-	8067AKxVWUAVCq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28C
-	jxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI
-	8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2
-	z280aVCY1x0267AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2
-	IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4U
-	McvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUtVW8Zw
-	CF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j
-	6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64
-	vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIx
-	AIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07jjHq7UUUUU
-	=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBgMMA2pAhrYikQAAsj
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANf1QGoC/22NQQ6CMBBFr0JmbU0dsQVX3sOwaMsAE0Nr2oZoC
+ He3Epcu30/e+yskikwJrtUKkRZOHHyB86ECNxk/kuC+MKBEJZVsxMOyHyczi1A8n00ugkBpBic
+ Hq9qLhqI+Iw382rP3rvDEKYf43l8W/K6/IKr/wQWFFLU+6cZSi9rWN+7JpOBtMLE/ujBDt23bB
+ 4DwALO/AAAA
+X-Change-ID: 20260608-kbingham-orientation-20afc0fb6957
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jacopo Mondi <jacopo@jmondi.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Jimmy Su <jimmy.su@intel.com>, 
+ Matthias Fend <matthias.fend@emfend.at>, 
+ Mikhail Rudenko <mike.rudenko@gmail.com>, 
+ Daniel Scally <dan.scally@ideasonboard.com>, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+ Michael Riesch <michael.riesch@collabora.com>, 
+ Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
+ Sylvain Petinot <sylvain.petinot@foss.st.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Paul Elder <paul.elder@ideasonboard.com>, 
+ Martin Kepplinger <martin.kepplinger@puri.sm>, 
+ Quentin Schulz <quentin.schulz@theobroma-systems.com>, 
+ Tommaso Merciai <tomm.merciai@gmail.com>, 
+ Svyatoslav Ryhel <clamor95@gmail.com>, 
+ Richard Acayan <mailingradian@gmail.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Frank Li <Frank.Li@nxp.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux@ew.tq-group.com, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1782642139; l=3899;
+ i=kieran.bingham@ideasonboard.com; s=20260207; h=from:subject:message-id;
+ bh=pSsloNoctZ8KZdtQMoBMTiphM6yVThkqQuPMFzEH2PI=;
+ b=0aU7sZbphb8cHLIWND7oWOf664qmdxaVArY7DgYx+/th2NpgB+11g+VRfyLA43pZiNPFZd0I0
+ xjGy3mD/gx+AtmBrOqJFLbLyrMn835bR+0ScSwTXbvUDKlwj/UYe6H6
+X-Developer-Key: i=kieran.bingham@ideasonboard.com; a=ed25519;
+ pk=FVXKN7YuwHc6UtbRUeTMAmranfsQomA+vnilfglWdaY=
 
+Add a new dt-bindings/media/video-interface-devices.h header that
+initially supports the Orientation types and convert existing users
+throughout the code base.
 
+v3 collects tags, and fixes the typo, but drops all hunks that do not
+apply on the media-next tree so that these changes can be merged. Once
+the core feature is accepted a second sweep will convert remaining (new)
+additions of the orientation field.
 
-> 2026=E5=B9=B46=E6=9C=8826=E6=97=A5 22:49=EF=BC=8CWenTao Liang =
-<vulab@iscas.ac.cn> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> When map->chunks > 1 triggers an error, the function jumps to unpin
->  before storing the current map in state->map[i]. The unpin loop only
->  cleans up previously pinned planes (indices 0 through i-1), so the
->  current mapping returned by host1x_bo_pin is never released via
->  host1x_bo_unpin.
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: c6aeaf56f468 ("drm/tegra: Implement correct DMA-BUF semantics")
-> Signed-off-by: WenTao Liang <vulab@iscas.ac.cn>
-> ---
-> drivers/gpu/drm/tegra/plane.c | 1 +
-> 1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/gpu/drm/tegra/plane.c =
-b/drivers/gpu/drm/tegra/plane.c
-> index 0cb30910773f..e61485ee58f6 100644
-> --- a/drivers/gpu/drm/tegra/plane.c
-> +++ b/drivers/gpu/drm/tegra/plane.c
-> @@ -161,6 +161,7 @@ static int tegra_dc_pin(struct tegra_dc *dc, =
-struct tegra_plane_state *state)
-> 			 */
-> 			if (map->chunks > 1) {
-> 				err =3D -EINVAL;
-> +				host1x_bo_unpin(map);
-> 				goto unpin;
-> 			}
->=20
-> --=20
-> 2.39.5 (Apple Git-154)
+v2:
+ - Now expands from the original v1 "dt-bindings: media: Add macros for
+   video interface devices" to update
+   Documentation/devicetree/bindings/media/video-interface-devices.yaml
+   and extend to actually change all users to the new types.
+ - Link to v2: https://lore.kernel.org/r/20260626-kbingham-orientation-v2-0-47178be927b4@ideasonboard.com
 
-Please ignore this patch. I will resend a proper version after
-learning the kernel submission process.
+v3:
+ - Fix the arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi 
+   MEDIA_ORIENTATION_REAR to MEDIA_ORIENTATION_BACK
+   - Though this patch is dropped from this series to post the main
+     integration through the media tree.
+ - Drop (temporarily) changes to:
+    - arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
+    - arch/arm64/boot/dts/qcom/sdm670-google-common.dtsi
+    - arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam0.dtso
+    - arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam1.dtso
+ - Non applying changes will be re-posted after the core feature
+   lands in linux-next, or after those changes appear in media-next.
 
-Apologies for the noise.
+---
+Kieran Bingham (7):
+      dt-bindings: media: Add macros for video interface devices
+      media: dt-bindings: video-interface-devices: add video-interface-devices.h references
+      dt-bindings: media: i2c: Utilise video-interface-devices enums
+      arm64: dts: freescale: Convert to new media orientation definitions
+      arm64: dts: qcom: Convert to new media orientation definitions
+      arm64: dts: renesas: Convert to new media orientation definitions
+      arm64: dts: rockchip: Convert to new media orientation definitions
+
+ .../devicetree/bindings/media/i2c/hynix,hi846.yaml      |  3 ++-
+ .../devicetree/bindings/media/i2c/ovti,ov08d10.yaml     |  3 ++-
+ .../devicetree/bindings/media/i2c/ovti,ov4689.yaml      |  3 ++-
+ .../devicetree/bindings/media/i2c/ovti,ov5675.yaml      |  3 ++-
+ .../devicetree/bindings/media/i2c/ovti,ov5693.yaml      |  3 ++-
+ .../devicetree/bindings/media/i2c/ovti,ov64a40.yaml     |  3 ++-
+ .../devicetree/bindings/media/i2c/sony,imx111.yaml      |  3 ++-
+ .../devicetree/bindings/media/i2c/sony,imx355.yaml      |  3 ++-
+ .../devicetree/bindings/media/i2c/sony,imx415.yaml      |  3 ++-
+ .../devicetree/bindings/media/i2c/st,vd55g1.yaml        |  3 ++-
+ .../devicetree/bindings/media/i2c/st,vd56g3.yaml        |  3 ++-
+ .../devicetree/bindings/media/i2c/thine,thp7312.yaml    |  3 ++-
+ .../bindings/media/video-interface-devices.yaml         | 17 +++++++++++------
+ .../imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtso          |  3 ++-
+ arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi       |  3 ++-
+ arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts      |  3 ++-
+ .../boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts     |  3 ++-
+ .../renesas/r8a779g3-sparrow-hawk-camera-j1-imx219.dtso |  3 ++-
+ .../renesas/r8a779g3-sparrow-hawk-camera-j1-imx462.dtso |  3 ++-
+ .../renesas/r8a779g3-sparrow-hawk-camera-j2-imx219.dtso |  3 ++-
+ .../renesas/r8a779g3-sparrow-hawk-camera-j2-imx462.dtso |  3 ++-
+ arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi           |  3 ++-
+ .../dts/rockchip/px30-ringneck-haikou-video-demo.dtso   |  3 ++-
+ arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts   |  5 +++--
+ include/dt-bindings/media/video-interface-devices.h     | 13 +++++++++++++
+ 25 files changed, 71 insertions(+), 30 deletions(-)
+---
+base-commit: 06cb687a5132fcffe624c0070576ab852ac6b568
+change-id: 20260608-kbingham-orientation-20afc0fb6957
 
 Best regards,
-WenTao Liang=
+-- 
+--
+Kieran
 
