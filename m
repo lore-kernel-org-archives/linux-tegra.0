@@ -1,134 +1,136 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9623B14D8
-	for <linux-tegra@vger.kernel.org>; Sun, 28 Jun 2026 15:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782659004; cv=pass; b=JA0GTXT+ef5tGh1vBelsZXRet2v0+j+O44OErb4m2nIL0NipyYlANAUJIrYwCW360zAzypYDQoAA2x/UB4o1j1OhYS7Ba6eDmMnLrMriVLF2VM1qPynCieHjqZfNw48lDfYrUL4EhHjRiYZHbmqUI57NOkI5QUziPeDRk0m07js=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782659004; c=relaxed/simple;
-	bh=nfvXGen1pZWN7T0sfCH2Bj3OEW1n3dNckFQBTzY8ffo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ODM8bK9f3GJfu0V2EEhoNFCc5pzyEHoyQaYbtbLHWjwuC8IrzAi4Gai6VQXuRHMkiMp6zu2p78zuz1TE5p3zjyZA+l0rL9WfSrf5uPORISVZT+O56s592zcCUAknL5gveMySwCnPhFDqDtqX0BfOBVyd9fRTolb7gvUIhFCDMbE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nDrH3tyj; arc=pass smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4371A6824;
+	Sun, 28 Jun 2026 15:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782659373; cv=none; b=hnsHWy7HcWeVexFxZTU8zzHZO43lysCgire/mF78fiywHX/hE6YHGpE39ZGum6NfM2f218aXXoyuMaXTfRF15eikSYQLkAA5l2+MgKvdSLjDp65L9nwG1J9G+nv+e1XeDv+moBNqwdughQ7N7K/6RPrNInZt5+7IFmmcP8KZ2js=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782659373; c=relaxed/simple;
+	bh=3zAJRcHs23lKFUq0llrOzQStalR1oMs6ds/qGbWnRRo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NczTLoft1WOKwx4+gcp6XJPPVVsKLNTaFcrJy5P9GVUlJawWKgM8GOwmBQRKlXGvza91F4JVeujN/fazRT9/YUMb4v66GuKynzG+T3+VEZDXf5nxZB4qsyPBWfcPgwZrFX9kWRuUvpbbN4FiaHSy7R05hSr/alN/NwsKn/eOCi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZOIAFp0; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nDrH3tyj"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-c0868ca8738so405220966b.0
-        for <linux-tegra@vger.kernel.org>; Sun, 28 Jun 2026 08:03:20 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1782658999; cv=none;
-        d=google.com; s=arc-20260327;
-        b=MYHAy7MhVj1c4NucXEy9sAEJp2zBCIxB9qASQrEf9yc5BQM2KKbagmWgY4TZ32Fum1
-         EQzyBNWSrW89bpJxrB1l1dmgWwyZhIowQCsQy23dE4xOIs+BbsyiiqcXZf0M+DnA0Zri
-         n4LMgvFwSUpM5/b0mv+cefHKfRN+T9mB60TMLstS1lUDZLIf7CBsRcaS69rIS0f1uSpE
-         q7qh4tSHQcEG055J8ImaBNQQnD4MBjuBsPqKcWGLOIXyfrt1mkwPfBvfqbcTGrCeUAlM
-         UQlhALpaK71EsVvxEFhXtQUHFXelNPTqbV2rRlOPiD5cCFl+9mldJn5JkUNy7nMmlrXg
-         fFeA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=m+0bTimSr7W6l+WGGk2k0BV0oIenIto2vdlN8jTh3+A=;
-        fh=upaNqg4RdcQLLNK547/NnUt/QAgrUXTEQHqb67FVsfw=;
-        b=oHFaxYcIfUzMc0xJsneHw8ToeqWJoN+BwctP4NZnFGIfisbnRxjoKm2CfAmh1vTnmN
-         R1oPDIws2mlTD3PgcuEi/IREKZFMLlXio4PM1cVuPilc1fDi82Mu/SD+BGk0j31a7QMm
-         1dYHORKJAlYWg/g3ZKrv4RZtvfLFDFA20axKZOSn8iPavwrBUi1deU0HKvdSzmIKYvg0
-         C1+DRiNlfx7u6fPBThP9u/KFcDHOsaxCijE5uB2PeR3t3LwfEbBVAuytOG3rPqRGM3Ae
-         Nrg+SpSFMldx1/cm9UEu2yEHRpQdj+dKyBclrXe3s6/ilQzBAlbsO69D4d8Dl4b4jDzt
-         M+ag==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782658999; x=1783263799; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m+0bTimSr7W6l+WGGk2k0BV0oIenIto2vdlN8jTh3+A=;
-        b=nDrH3tyjTUDEbdenmm/lUYAkB6zhmdRWcPWWzU0JfJw+M7XXKAtv9Hpky/ZbNd36Oy
-         DhMaqblewSvaeyKOUfSDb+nxwKxIxsHyfT96yYKgFLP6pwnuvsj0BNCAbkwUa5JVmUfO
-         DoltT0Y6GxW7r4CPOPSoKZDRkFToZTYrfJRR0mJtcDxxw0cPmkjMSAevCOgj9vkd5VeN
-         xgAbSKSo87PDRnaT7njaToxlSjBYLw4xzFbwsNwmqsbshfu+nXSKQbCgh4kXZfkbgGrR
-         gtfMthIDssg+UbN5kxu0z8fmVA7XTUk4PBdahQnbfNrgMRgCja00Ioac9nAfI0LT0FRR
-         LXBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782658999; x=1783263799;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=m+0bTimSr7W6l+WGGk2k0BV0oIenIto2vdlN8jTh3+A=;
-        b=c+Ae64+CJxDA+beeUTTRq98wsPdm1qdewWBowPxr6i89W8wRsiJ3zz1722Vv58nWL1
-         1jmUuY+r5dEF2ng1j0O7NPqlcNu4NNLnRjkayxWDoukY8krh0q6d5C38qs4UirKa3BM9
-         Ikr0F14xIMUHFUQPc5UBrZC+RnaIrev/PpZgN8Ji4AjynJaiwbQ+cr0VM5DNWtPO/cxs
-         +QNJbKRHuHlXIJEElyp1ajoE81GlDu3cqkyjwv+BzyAK2MvCvkSMuSSGBz1P/wE4XjFE
-         A0WB7hIzpHH8CICPjo7EGrRL8+k8PIa5uxyItszTQQu60Jf8YKsVzHhULxopav8I2At4
-         q1FA==
-X-Forwarded-Encrypted: i=1; AHgh+RqJ2mKVohtOmaWlPa8CPabu5Z/OwmH/tQw/qJI9f8u4rPoEJb8qSqWTd/XK3x0mNLnssawHTNt3zyeuZQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YypOGUy26z43umbzCb0W4C1TvKZP8tcSg53ac0NbOLoAuY8xWo0
-	UBGyU5ZTN4Q3lFMPI8LAuLO1KCNvpP8zzJVhYpcKkVsHQss+D99p3ueaPNSltMudIie6pmWuF+E
-	VdA5NEcRW7VZoHw55oJSBe8IpiEz58g==
-X-Gm-Gg: AfdE7cm4yiFdltvAeDiHkv35UhApqK2ZefiB1gd79uocaxsMU3np1Xm1D24UAaw635y
-	uVPGyEdK7mdX7khHmo0t9rbuG9DZx7h0+egAm6sc8NjJJXYuwHeVBd2j/wueixEwx5MWe+ddh/f
-	mTiqQJj57y9Gol+xKk906GwyjahM1m4why5PXwjGv0v/Jc6BkzxrT97j4gd2sm7bx8LQ6QSIi56
-	4m+BpRk6ANmUI5RuHytT50mVZ1b6Va7euw0Kiov3AqN7UH2cKMQfsZ2gGRuzEb+T638TaJXaSo8
-	71Acy7AM25gbY3coNQuhwO6Juys217UanxkRbPcsj4mnV153N9R4fi9oh5UPRTISrsjSnk5bTpb
-	nczCJTafSgxhaowgd
-X-Received: by 2002:a17:907:9407:b0:c12:3e8e:2ac1 with SMTP id
- a640c23a62f3a-c123e8e2e83mr222127866b.51.1782658998764; Sun, 28 Jun 2026
- 08:03:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZOIAFp0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2841E1F000E9;
+	Sun, 28 Jun 2026 15:09:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782659372;
+	bh=3zAJRcHs23lKFUq0llrOzQStalR1oMs6ds/qGbWnRRo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=cZOIAFp0Wf+CH6wuAqPemtoDERwpGKVzYhuVFO/xRbwA/KZAtDBkEP86lbLKb4dFV
+	 XrCD8mzB53U0Q889WpbDG3i+JnPg1TBaXKoKiYUjcISF/xiomslfQpkwxR0enNP3Ze
+	 ordybz+DMwzfDOD5W0YiKjrsUMGudlPSUzEcFaO69vHfU3I8I3SAy/MEZYGMOOVNrb
+	 Dz5wvN81xWl2Stbw7evSGsSi5DqKQDqsWf4ybhSdPF9K3bCSsdlSvEk8Bq2IpeWcId
+	 ylqsblolIjBuwBGzGBdabk+EX+XMPN7OPuhw1oz8k0gDoX4dj9WTktGDhoL0WoPISL
+	 WzlOl15rg28tw==
+Message-ID: <e9f4f244-f073-4a71-b785-9015de929ee4@kernel.org>
+Date: Sun, 28 Jun 2026 17:09:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260626093014.66092-1-mhun512@gmail.com> <aadb5ad9-a2b8-42fb-bd3e-e0f0e641ce3e@nvidia.com>
-In-Reply-To: <aadb5ad9-a2b8-42fb-bd3e-e0f0e641ce3e@nvidia.com>
-From: Myeonghun Pak <mhun512@gmail.com>
-Date: Mon, 29 Jun 2026 00:03:06 +0900
-X-Gm-Features: AVVi8CdOluK8GIc6jFjoiZojQQNPt67eF_wXUtJyFP-gdl5VluS7X3Hp9t5TuQo
-Message-ID: <CAGEsz8ETT9W6Wu-+BLK3GoL+M-2X+iHamhxYB==4j7biNGFC8w@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: tegra124: Disable DFLL clock on removal
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, 
-	Thierry Reding <thierry.reding@kernel.org>, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Ijae Kim <ae878000@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/7] media: dt-bindings: video-interface-devices: add
+ video-interface-devices.h references
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jacopo Mondi <jacopo@jmondi.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Jimmy Su <jimmy.su@intel.com>,
+ Matthias Fend <matthias.fend@emfend.at>,
+ Mikhail Rudenko <mike.rudenko@gmail.com>,
+ Daniel Scally <dan.scally@ideasonboard.com>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Michael Riesch <michael.riesch@collabora.com>,
+ Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+ Sylvain Petinot <sylvain.petinot@foss.st.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Paul Elder <paul.elder@ideasonboard.com>,
+ Martin Kepplinger <martin.kepplinger@puri.sm>,
+ Quentin Schulz <quentin.schulz@theobroma-systems.com>,
+ Tommaso Merciai <tomm.merciai@gmail.com>,
+ Svyatoslav Ryhel <clamor95@gmail.com>,
+ Richard Acayan <mailingradian@gmail.com>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Frank Li <Frank.Li@nxp.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux@ew.tq-group.com, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+References: <20260628-kbingham-orientation-v3-0-4ed92968aff8@ideasonboard.com>
+ <20260628-kbingham-orientation-v3-2-4ed92968aff8@ideasonboard.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20260628-kbingham-orientation-v3-2-4ed92968aff8@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Thanks for reviewing.
+On 28/06/2026 12:22, Kieran Bingham wrote:
+> Expand the documentation of the video-interface-devices orientation to
+> reference the include/dt-bindings/media/video-interface-devices.h header
+> which provides human readable defines for the orientation enum, to help
+> avoid hardcoding values in dts.
 
-Yes, after tegra124_cpu_switch_to_dfll() succeeds, the CPU clock is
-parented to DFLL. The intended cleanup path is not to disable DFLL while
-the CPU is still using it, but to first reparent the CPU clock back to
-PLLP and only then disable DFLL.
 
-That is why the helper does:
+Introducing header and using it in bindings is the same commit, so these
+should be squashed. It would also spare you a mistake in the subject
+prefixes - two commits and two completely different styles.
 
-    clk_set_parent(priv->cpu_clk, priv->pllp_clk);
-    clk_disable_unprepare(priv->dfll_clk);
-
-This follows the same ordering as the suspend path, where the driver also
-switches the CPU clock source to PLLP before disabling DFLL.
-
-2026=EB=85=84 6=EC=9B=94 27=EC=9D=BC (=ED=86=A0) =EC=98=A4=EC=A0=84 2:18, J=
-on Hunter <jonathanh@nvidia.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
->
->
-> On 26/06/2026 10:30, Myeonghun Pak wrote:
-> > tegra124_cpu_switch_to_dfll() enables the DFLL clock before switching
-> > the CPU clock parent to it. If cpufreq_dt_pdev_register() fails after
-> > that point, or when the driver is removed, the driver only drops clock
-> > references and never disables the enabled DFLL clock.
->
-> So after this change, if we successful switch to the DFLL, but we fail
-> to register the device, we disable the DFLL. That does not sound good
-> because the CPU will be using that clock at the time. I am not sure what
-> the value in this change really is.
->
-> Jon
->
-> --
-> nvpublic
->
+Best regards,
+Krzysztof
