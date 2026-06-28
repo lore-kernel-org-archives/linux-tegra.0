@@ -1,92 +1,134 @@
-Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1395823D2A4;
-	Sun, 28 Jun 2026 15:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.25
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782658962; cv=none; b=n6/MM6aHM/qg0/OJ/UaPZQHmfrM0riSZpPB9xf8CnsRFtqAOX2V4lTou8Za1qrc3/Lq6vWTK0+P96EBpRwt+GwwOYt3KHgahQet9IZ2ZnkVpvkNTvKqGUMzNG0obTXr7NNH63O6EfvpLJ1+kjIMpwZX4POmsSJHdfyAPq470H6E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782658962; c=relaxed/simple;
-	bh=hzK4i6G98Ni6u8lkrPFC2md3TaxFQt0rfkLlx0Xq2SQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WhUI+4Vkpgqnln2vafWPMFIyKjeJPjLRrQF+7yxKe20zppWUBR8aN/GG0S+uDLx54e1nmJgzwqmVsVrmoi1F4DpWgXdl1XoKPBf7xmHCBv+ffDZKSrW/9yafqysJ9Uvzb4Mt1jiS8l4khBfNgXqAwQtM5ZhWc2djXv8B7ICrBXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [117.182.74.7])
-	by APP-05 (Coremail) with SMTP id zQCowADHNemFN0FqF5TJFQ--.35071S2;
-	Sun, 28 Jun 2026 23:02:31 +0800 (CST)
-From: WenTao Liang <vulab@iscas.ac.cn>
-To: thierry.reding@kernel.org,
-	mperttunen@nvidia.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	jonathanh@nvidia.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	WenTao Liang <vulab@iscas.ac.cn>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] drm/tegra: fix host1x_bo_pin leak in tegra_dc_pin error path
-Date: Sun, 28 Jun 2026 23:02:28 +0800
-Message-Id: <20260628150228.47948-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9623B14D8
+	for <linux-tegra@vger.kernel.org>; Sun, 28 Jun 2026 15:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782659004; cv=pass; b=JA0GTXT+ef5tGh1vBelsZXRet2v0+j+O44OErb4m2nIL0NipyYlANAUJIrYwCW360zAzypYDQoAA2x/UB4o1j1OhYS7Ba6eDmMnLrMriVLF2VM1qPynCieHjqZfNw48lDfYrUL4EhHjRiYZHbmqUI57NOkI5QUziPeDRk0m07js=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782659004; c=relaxed/simple;
+	bh=nfvXGen1pZWN7T0sfCH2Bj3OEW1n3dNckFQBTzY8ffo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ODM8bK9f3GJfu0V2EEhoNFCc5pzyEHoyQaYbtbLHWjwuC8IrzAi4Gai6VQXuRHMkiMp6zu2p78zuz1TE5p3zjyZA+l0rL9WfSrf5uPORISVZT+O56s592zcCUAknL5gveMySwCnPhFDqDtqX0BfOBVyd9fRTolb7gvUIhFCDMbE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nDrH3tyj; arc=pass smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nDrH3tyj"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-c0868ca8738so405220966b.0
+        for <linux-tegra@vger.kernel.org>; Sun, 28 Jun 2026 08:03:20 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782658999; cv=none;
+        d=google.com; s=arc-20260327;
+        b=MYHAy7MhVj1c4NucXEy9sAEJp2zBCIxB9qASQrEf9yc5BQM2KKbagmWgY4TZ32Fum1
+         EQzyBNWSrW89bpJxrB1l1dmgWwyZhIowQCsQy23dE4xOIs+BbsyiiqcXZf0M+DnA0Zri
+         n4LMgvFwSUpM5/b0mv+cefHKfRN+T9mB60TMLstS1lUDZLIf7CBsRcaS69rIS0f1uSpE
+         q7qh4tSHQcEG055J8ImaBNQQnD4MBjuBsPqKcWGLOIXyfrt1mkwPfBvfqbcTGrCeUAlM
+         UQlhALpaK71EsVvxEFhXtQUHFXelNPTqbV2rRlOPiD5cCFl+9mldJn5JkUNy7nMmlrXg
+         fFeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=m+0bTimSr7W6l+WGGk2k0BV0oIenIto2vdlN8jTh3+A=;
+        fh=upaNqg4RdcQLLNK547/NnUt/QAgrUXTEQHqb67FVsfw=;
+        b=oHFaxYcIfUzMc0xJsneHw8ToeqWJoN+BwctP4NZnFGIfisbnRxjoKm2CfAmh1vTnmN
+         R1oPDIws2mlTD3PgcuEi/IREKZFMLlXio4PM1cVuPilc1fDi82Mu/SD+BGk0j31a7QMm
+         1dYHORKJAlYWg/g3ZKrv4RZtvfLFDFA20axKZOSn8iPavwrBUi1deU0HKvdSzmIKYvg0
+         C1+DRiNlfx7u6fPBThP9u/KFcDHOsaxCijE5uB2PeR3t3LwfEbBVAuytOG3rPqRGM3Ae
+         Nrg+SpSFMldx1/cm9UEu2yEHRpQdj+dKyBclrXe3s6/ilQzBAlbsO69D4d8Dl4b4jDzt
+         M+ag==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1782658999; x=1783263799; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m+0bTimSr7W6l+WGGk2k0BV0oIenIto2vdlN8jTh3+A=;
+        b=nDrH3tyjTUDEbdenmm/lUYAkB6zhmdRWcPWWzU0JfJw+M7XXKAtv9Hpky/ZbNd36Oy
+         DhMaqblewSvaeyKOUfSDb+nxwKxIxsHyfT96yYKgFLP6pwnuvsj0BNCAbkwUa5JVmUfO
+         DoltT0Y6GxW7r4CPOPSoKZDRkFToZTYrfJRR0mJtcDxxw0cPmkjMSAevCOgj9vkd5VeN
+         xgAbSKSo87PDRnaT7njaToxlSjBYLw4xzFbwsNwmqsbshfu+nXSKQbCgh4kXZfkbgGrR
+         gtfMthIDssg+UbN5kxu0z8fmVA7XTUk4PBdahQnbfNrgMRgCja00Ioac9nAfI0LT0FRR
+         LXBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782658999; x=1783263799;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=m+0bTimSr7W6l+WGGk2k0BV0oIenIto2vdlN8jTh3+A=;
+        b=c+Ae64+CJxDA+beeUTTRq98wsPdm1qdewWBowPxr6i89W8wRsiJ3zz1722Vv58nWL1
+         1jmUuY+r5dEF2ng1j0O7NPqlcNu4NNLnRjkayxWDoukY8krh0q6d5C38qs4UirKa3BM9
+         Ikr0F14xIMUHFUQPc5UBrZC+RnaIrev/PpZgN8Ji4AjynJaiwbQ+cr0VM5DNWtPO/cxs
+         +QNJbKRHuHlXIJEElyp1ajoE81GlDu3cqkyjwv+BzyAK2MvCvkSMuSSGBz1P/wE4XjFE
+         A0WB7hIzpHH8CICPjo7EGrRL8+k8PIa5uxyItszTQQu60Jf8YKsVzHhULxopav8I2At4
+         q1FA==
+X-Forwarded-Encrypted: i=1; AHgh+RqJ2mKVohtOmaWlPa8CPabu5Z/OwmH/tQw/qJI9f8u4rPoEJb8qSqWTd/XK3x0mNLnssawHTNt3zyeuZQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YypOGUy26z43umbzCb0W4C1TvKZP8tcSg53ac0NbOLoAuY8xWo0
+	UBGyU5ZTN4Q3lFMPI8LAuLO1KCNvpP8zzJVhYpcKkVsHQss+D99p3ueaPNSltMudIie6pmWuF+E
+	VdA5NEcRW7VZoHw55oJSBe8IpiEz58g==
+X-Gm-Gg: AfdE7cm4yiFdltvAeDiHkv35UhApqK2ZefiB1gd79uocaxsMU3np1Xm1D24UAaw635y
+	uVPGyEdK7mdX7khHmo0t9rbuG9DZx7h0+egAm6sc8NjJJXYuwHeVBd2j/wueixEwx5MWe+ddh/f
+	mTiqQJj57y9Gol+xKk906GwyjahM1m4why5PXwjGv0v/Jc6BkzxrT97j4gd2sm7bx8LQ6QSIi56
+	4m+BpRk6ANmUI5RuHytT50mVZ1b6Va7euw0Kiov3AqN7UH2cKMQfsZ2gGRuzEb+T638TaJXaSo8
+	71Acy7AM25gbY3coNQuhwO6Juys217UanxkRbPcsj4mnV153N9R4fi9oh5UPRTISrsjSnk5bTpb
+	nczCJTafSgxhaowgd
+X-Received: by 2002:a17:907:9407:b0:c12:3e8e:2ac1 with SMTP id
+ a640c23a62f3a-c123e8e2e83mr222127866b.51.1782658998764; Sun, 28 Jun 2026
+ 08:03:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowADHNemFN0FqF5TJFQ--.35071S2
-X-Coremail-Antispam: 1UD129KBjvdXoWruFW8trWxuF1UZF1UJr4xWFg_yoWDtFb_u3
-	4kXrykGwnrWFyq9r17ZrWavFyS9a4kuF48X340ka93G3s8XF1UW3y8urnY9w1UGF4rKFn8
-	Gwn7Ga10v3ZF9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
-	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
-	cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
-	ACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-	42IY6I8E87Iv67AKxVWxJVW8Jr1lIxAIcVC2z280aVCY1x0267AKxVWxJr0_GcJvcSsGvf
-	C2KfnxnUUI43ZEXa7VUb8hL5UUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAMMA2pBLNsO9gABsl
+References: <20260626093014.66092-1-mhun512@gmail.com> <aadb5ad9-a2b8-42fb-bd3e-e0f0e641ce3e@nvidia.com>
+In-Reply-To: <aadb5ad9-a2b8-42fb-bd3e-e0f0e641ce3e@nvidia.com>
+From: Myeonghun Pak <mhun512@gmail.com>
+Date: Mon, 29 Jun 2026 00:03:06 +0900
+X-Gm-Features: AVVi8CdOluK8GIc6jFjoiZojQQNPt67eF_wXUtJyFP-gdl5VluS7X3Hp9t5TuQo
+Message-ID: <CAGEsz8ETT9W6Wu-+BLK3GoL+M-2X+iHamhxYB==4j7biNGFC8w@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: tegra124: Disable DFLL clock on removal
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, 
+	Thierry Reding <thierry.reding@kernel.org>, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Ijae Kim <ae878000@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When map->chunks > 1 triggers an error, the function jumps to unpin
-before storing the current map in state->map[i]. The unpin loop only
-cleans up previously pinned planes (indices 0 through i-1), so the
-current mapping returned by host1x_bo_pin is never released via
-host1x_bo_unpin.
+Thanks for reviewing.
 
-Suggested-by: Greg KH <gregkh@linuxfoundation.org>
-Fixes: c6aeaf56f468 ("drm/tegra: Implement correct DMA-BUF semantics")
-Cc: stable@vger.kernel.org
-Signed-off-by: WenTao Liang <vulab@iscas.ac.cn>
----
-Changes in v2:
-- Fix patch format based on reviewer feedback
----
- drivers/gpu/drm/tegra/plane.c | 1 +
- 1 file changed, 1 insertion(+)
+Yes, after tegra124_cpu_switch_to_dfll() succeeds, the CPU clock is
+parented to DFLL. The intended cleanup path is not to disable DFLL while
+the CPU is still using it, but to first reparent the CPU clock back to
+PLLP and only then disable DFLL.
 
-diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
-index 0cb30910773f..e61485ee58f6 100644
---- a/drivers/gpu/drm/tegra/plane.c
-+++ b/drivers/gpu/drm/tegra/plane.c
-@@ -161,6 +161,7 @@ static int tegra_dc_pin(struct tegra_dc *dc, struct tegra_plane_state *state)
- 			 */
- 			if (map->chunks > 1) {
- 				err = -EINVAL;
-+				host1x_bo_unpin(map);
- 				goto unpin;
- 			}
- 
--- 
-2.39.5 (Apple Git-154)
+That is why the helper does:
 
+    clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+    clk_disable_unprepare(priv->dfll_clk);
+
+This follows the same ordering as the suspend path, where the driver also
+switches the CPU clock source to PLLP before disabling DFLL.
+
+2026=EB=85=84 6=EC=9B=94 27=EC=9D=BC (=ED=86=A0) =EC=98=A4=EC=A0=84 2:18, J=
+on Hunter <jonathanh@nvidia.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+>
+>
+> On 26/06/2026 10:30, Myeonghun Pak wrote:
+> > tegra124_cpu_switch_to_dfll() enables the DFLL clock before switching
+> > the CPU clock parent to it. If cpufreq_dt_pdev_register() fails after
+> > that point, or when the driver is removed, the driver only drops clock
+> > references and never disables the enabled DFLL clock.
+>
+> So after this change, if we successful switch to the DFLL, but we fail
+> to register the device, we disable the DFLL. That does not sound good
+> because the CPU will be using that clock at the time. I am not sure what
+> the value in this change really is.
+>
+> Jon
+>
+> --
+> nvpublic
+>
