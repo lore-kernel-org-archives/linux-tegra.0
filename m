@@ -1,148 +1,195 @@
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013060.outbound.protection.outlook.com [40.93.196.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B842423160
-	for <linux-tegra@vger.kernel.org>; Mon, 29 Jun 2026 15:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782748496; cv=none; b=Y/Ge1sUVazaMzddz7cPyZxJHBcwNQaSi69YzCRCiujU6fjG8uEcsHyWVnYW34K2hpIPdocrK5Iohp5mPEi6sq121IX5Ux7B5boIFMog/wazhQz28uy/P+uBEuJgkvIr2QPb4Za6Nj5SmxfUip1jwqNAtkcndI7zvG/PK8b3gbMo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782748496; c=relaxed/simple;
-	bh=vSc4ORRRpUbp5nwMJk1U6F/78ha49jf3UdrgblxYv9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GmgQyzakzX+xHIqKYoLaO+q6UfrYLiCp9j+9K2DgcFTl5S6nMnRiEJ3hlfjsj2eMl5SHpCxnXBt+LFsX7He5RouNlXxevqe8ePGLZpegXL0AcBoQakXMiIWHu+QArB3EvLZsfk4qhfO3EHGgxZlb/xA7DpToJcxySdyT91RiBLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=JM0fnN0H; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569AC3F1662;
+	Mon, 29 Jun 2026 15:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782748505; cv=fail; b=BFaDrlXqPeltkDLH0GV8oMLHlOxuE8KNFNE1Z0zg04DBHHCjBCSm2F/HomrjjhAL4SUyz+PBYnBVB7AtLwwVctT8pxsNeLJONWNWxpTNlw60VX2cC36S6HI1R3+6fZpxvf3s5g+qQONsMm4btRP817T0EvOLjbSGhFY/pBYCF+E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782748505; c=relaxed/simple;
+	bh=e7Q37j5l3i81ZMsNsjXeC5QNsRBI3omfFpm9NFkKs0o=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Vw3jHTcv3/LWNu/XOfZzn0/YxnrD2EzAKi8QNxnJZ90rNdaYRIYArvZqHdYLOhG4AOsQYYV2wMMc3iGfBowtNEG0lM1c7swf789IJhA2z0XmsedA8ZCQbjmdU7Cxf8WsRFbLyz6z7UupUx1aX0q8nErkLthOwLVN78F6JtIfbs8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hvHnznAp; arc=fail smtp.client-ip=40.93.196.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="JM0fnN0H"
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-8eabb1a9378so20742126d6.1
-        for <linux-tegra@vger.kernel.org>; Mon, 29 Jun 2026 08:54:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1782748493; x=1783353293; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4r3nyg8MsZ+G0ckW9OOGJtlL6QAvCNLsDtm+wiwuKtE=;
-        b=JM0fnN0HJKUi6uSnA3IrfoUPrcjauK6XThjH2DReQOmpX1gM2LZPfoF1ZbHc/BfOsW
-         XI9kmoGCt6lvgHoZXI6Sh1Ty6+UIIveqPkZsQXGuZVY3CysSg9QdBDdUJ6g0L87cTIHt
-         p/0MmTIL7mZvw71fhcyjCRfTkRh/O+Dwx6mRwAg+epfM+SqLwiyuwSs1n0Sz3N8cV2mH
-         AUIUyTmBdyr+54ccj7lbpXdws+p31Q+ZmFOiRb6ngfzp1k0eL6vsPmNcaCqY0tFQzoIQ
-         wj5Gh2CoyjJm0JjYVxbpgfxq/lylqC7ox+tH4VrNSX1XtlLyydAen95MqgFL+zI/X2z6
-         T5nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782748493; x=1783353293;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4r3nyg8MsZ+G0ckW9OOGJtlL6QAvCNLsDtm+wiwuKtE=;
-        b=WKxit5TC47mk+KpWW1fvp/dXmVCU1Xr/GC87p9gPoVjssZUoNDXFspfzGk3FobIXrK
-         r/98jQzEUdnw06e0RJKA0/qNrCN53Fdw6PjaZ9JuWeAI28ESueZtAbNaqpSKXOK051Z7
-         3TLVyh/NTTL3dFy2kkV2cgHlqcGIXX0lxIKVWCRnnmJHi+/Km7g/NnNyo3miVo7+uWTx
-         4b7aktGuzxfZ4qZToEtBPhvq2LUPKPdbToi/F36hqxTG6kwh0R6pAGQzc8c7xq6GFd9f
-         Fh9uAv++S0Pu75Dn8HZRtyEocwnQ+gotB+qvOtg4R3mxMj0rLNA367oJj1O69RGmR1Mv
-         R6LA==
-X-Forwarded-Encrypted: i=1; AHgh+RqxUi7zu43tLeVOrYb7NVWoCdx4LxW0RN4jzv+It2mKj+pzNkhLFdQLHl5Jf2tFoZA8CrFlqxH9qnMb8w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuAFUwFhb5sJQliybWU0rYspD6ydipxfwVBHd7cnD7QJPjShFM
-	CP1wJrtw/CTk925C47szlZD7+TffezpCoqFp1fsNv1eaaX22/xFc/fP5YCSlRUsldZU=
-X-Gm-Gg: AfdE7clUyL/D+l3Uu3ENhtP3wwnFHS23MSXP64URU1NF83dHUB1Yy4/Tz/cKuOxgIsk
-	1JUs5QxnnUeC2pN0zJoGzsl5oMx2jhVWojZ1kyeEFHPu2NCNUr7dERSYiqZJ6efBJ+LdLjUZdvo
-	oYWbFkIY0Gh+9zgHV68RQ2DfpvuRZLTsbaFE7aO71lh6SN7EEnpRwq+tT5oOlWCzQMXr261f5YA
-	TyY5pooUR7sMSLwfYRccHxkaErTc6Bs+O1U25HPyRzQpVRATAiEsInIybxEdFwYuP2Ytro/zsw+
-	og6LDdmXKx4Q0Ecpju3MbkKYfwvB5ps7sy97P9VIK9qtMCkWNcIBKmY7La/TWSLC4+ZDJt4Q8Ra
-	01YwJQegRvw8nZPMO5a5opRlIVXbo9yswAYC4anPaVd5ks1vT+ejnT0sukv9PYsO5KZUAJ5Zslu
-	lThX/PVd8PRDxZqgHWb16Lx//jh043H+UEOVu9WwbVz6x2ZcVKei88Lt7J2zX4s+v0e3uetRg9a
-	XSDsu8=
-X-Received: by 2002:a05:6214:c65:b0:8f0:5b55:1f6c with SMTP id 6a1803df08f44-8f05b552223mr58558406d6.43.1782748492988;
-        Mon, 29 Jun 2026 08:54:52 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-60-52.washdc.fios.verizon.net. [173.79.60.52])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8f1a26f1b34sm1726396d6.3.2026.06.29.08.54.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jun 2026 08:54:52 -0700 (PDT)
-Date: Mon, 29 Jun 2026 11:54:47 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Lorenzo Stoakes <ljs@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Simon Schuster <schuster.simon@siemens-energy.com>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Christian Koenig <christian.koenig@amd.com>,
-	Huang Rui <ray.huang@amd.com>, Ankit Agrawal <ankita@nvidia.com>,
-	Alex Williamson <alex@shazbot.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Dan Williams <djbw@kernel.org>, Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	David Hildenbrand <david@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	"Liam R . Howlett" <liam@infradead.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>, SeongJae Park <sj@kernel.org>,
-	Miaohe Lin <linmiaohe@huawei.com>, Hugh Dickins <hughd@google.com>,
-	Mike Rapoport <rppt@kernel.org>, Kees Cook <kees@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
-	linux-sgx@vger.kernel.org, etnaviv@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-mm@kvack.org, iommu@lists.linux.dev,
-	linux-perf-users@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	damon@lists.linux.dev, Pedro Falcato <pfalcato@suse.de>,
-	Rik van Riel <riel@surriel.com>, Harry Yoo <harry@kernel.org>,
-	Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 04/30] mm: introduce and use vma_end_pgoff()
-Message-ID: <akKVR2wNSjbLDt1-@gourry-fedora-PF4VCD3F>
-References: <cover.1782735110.git.ljs@kernel.org>
- <e379a1cb6a897126ad96e3a263fdb91d6c11f6cb.1782735110.git.ljs@kernel.org>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hvHnznAp"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VHyavWuNnzoQ/Zj70FYjIGhbRvWKnFhsiS56EgdM6mlo2BXn3RLLCYSNHS4+8cOG6wV09le/Wdc01DExMJo9PeqJU4jru5MONngFmPgTVTMeARUa1SfR4BQ363vT8yKjQWbozu446QvwmRmVO16cPP+I6nc8IdIu+Wp8Igix/FNNLPNxv+NPDz2jeTmN2nStFFcMy8GyC3HwHABd5K3HG7D/7HtesOL8E66B5zfL7cz72gLiuAmTlcrs/JDLnfysewzI4N84AFMwjMDTB7NOGBfjabJhrL4BtbUQTy1OjR5vpommOyi6XX7nCIdRL7gFqZ9Zd5Bch8jiS/wVKRk7ZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/NhZ5wJy1LRqxbpyNv5WxkQxP9cGKNEzDf6JbFacEV8=;
+ b=P5J/KCJRBmjSozqxPbgpbxDv1UgV0fN5CQKwhjvHVTpdzKiCAbEG530g+J+H33TwsF9rrdKCVpXEwZ5rkohRFS+y15Dxr1T5sQiZNGOkaN1yig+nKwYrAA+2CkrzrNgypuXBzefWtcRi7RX7s97sUstbr1cGV9Rqv5QfTp5t+KK3g3JCmK4c4j3fMsp8Z2qYpR+76CZkkghgclOl2F5Ydh+gn11o3hP4OeNgTgsU9dU24MVi14cLV++EUz1c+k7EZKwNggy6gCswHXJQfypeLZzk28e417xOQIqMhaOLfutU1J6U7SL8j9dWm8yWE9wOdbLOofA9VOAKHcy6O5jRiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/NhZ5wJy1LRqxbpyNv5WxkQxP9cGKNEzDf6JbFacEV8=;
+ b=hvHnznApLEL7DzeUZrnmOBRrTtAF8kzVTNjN4z9PN4n6GaNqVweaR5ZqPVyvhBuekKRmNJ6zy3fszICNLcmAWCjpl5L1mTxb2Vz6fjwNLNbiAzMzrYhClNpawlHhO/ntEKCNWnGnhWGFwXEzZiS5bS+daPjGQwFLSfMyo5WoGNWgRdyAx2zVa31KO3Hi9zT1EJqxF78o5DQqpugRVOgrbvE4Urai1C93U9qjOYAWc/CnrsyFhQ9ri5LjY9ew/JG6mORe/sUx7LFR2708MytFhtpglYWegsCYvid3Ao+3fAQLFOr9Jh+cqMqK+0kWnSqXXG8LlfNARpczfVL8sUko0g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BN9PR12MB5179.namprd12.prod.outlook.com (2603:10b6:408:11c::18)
+ by DS2PR12MB9749.namprd12.prod.outlook.com (2603:10b6:8:2b9::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.19; Mon, 29 Jun
+ 2026 15:54:58 +0000
+Received: from BN9PR12MB5179.namprd12.prod.outlook.com
+ ([fe80::cf08:f59b:d016:c95f]) by BN9PR12MB5179.namprd12.prod.outlook.com
+ ([fe80::cf08:f59b:d016:c95f%4]) with mapi id 15.21.0159.018; Mon, 29 Jun 2026
+ 15:54:58 +0000
+Message-ID: <16c7c5d4-d596-4a75-ac97-fb9d2c02c80c@nvidia.com>
+Date: Mon, 29 Jun 2026 21:24:47 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] CPPC: reduce FFH feedback-counter sampling skew on
+ arm64
+To: Pengjie Zhang <zhangpengjie2@huawei.com>, catalin.marinas@arm.com,
+ will@kernel.org, rafael@kernel.org, lenb@kernel.org, robert.moore@intel.com,
+ beata.michalska@arm.com, zhenglifeng1@huawei.com, zhanjie9@hisilicon.com,
+ cuiyunhui@bytedance.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev,
+ linuxarm@huawei.com, jonathan.cameron@huawei.com, prime.zeng@hisilicon.com,
+ wanghuiqiang@huawei.com, xuwei5@huawei.com, lihuisong@huawei.com,
+ yubowen8@huawei.com, wangzhi12@huawei.com,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20260410094145.4132082-1-zhangpengjie2@huawei.com>
+Content-Language: en-US
+From: Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <20260410094145.4132082-1-zhangpengjie2@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN4P287CA0101.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:278::8) To BN9PR12MB5179.namprd12.prod.outlook.com
+ (2603:10b6:408:11c::18)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e379a1cb6a897126ad96e3a263fdb91d6c11f6cb.1782735110.git.ljs@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN9PR12MB5179:EE_|DS2PR12MB9749:EE_
+X-MS-Office365-Filtering-Correlation-Id: ec31e494-4d55-4e47-2509-08ded5f6c525
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|7416014|376014|1800799024|366016|921020|18002099003|22082099003|11063799006|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	qw//+YAnyDskIA8HOKHIq9pYZUlPkh/x6ha/oKP2gxWX24ATMFaWXKIRcgcviRZYp6kZJh1DHdXW0ubCXHmS7QqlurhwHiuekeZxyoXW6eLSHDIyYm/yC2RRXdp4NddxwTsrOUfyiCRjvTlGNu6hsUiHE3C04srYdvW0YSVSXdOEOQuIzcCHlaaKTunkhoL14Cxh6D9NHM0zYml10uhFNnFmbTIlOhbN/FDgL5I1Z2D1xdqGSbT2rahrpH48DCrakVulSsw0vWlX+GQ4IeLcuiTOatproxliv4W8lbisy7L3QRSCBFg7efOS+WH/b+ZN1w4larjPnKfOiqP5x+qQYpSunAWycww8a8VLzbN8Y78lh2MSp7UolwyuZw8tazcuaniOhDZFABUw1ImStY1W6patbCSjubw3UHkElcMc79nHw83HUP8zmtF9eyf2WSgjM9IjrQUPfW+8YLGTCQq04JrBsziCkcKg9x0gZ4ByTjoHxSseGiBIKruOSX0QQITESWxp/Xe2VWG18vMPZr+BRR8p3Y26XwJ+XPVtS9jfUVOGZHV+8WjuV1QW8qRC//AebW04OyL5m2jCFAl9/QnV79rXfUtQKpbEAfEmLhk9zmroo42E11XkM6j0B4cGyiKCwXD/hvsHvnZRlgu3BA4DvrXEvpOHAo0L5VY2F0QLq8HEo4+UVeNPaHTIExEDGYiCEcJokhOze57rDlxYAL5ubg==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5179.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(7416014)(376014)(1800799024)(366016)(921020)(18002099003)(22082099003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dW9PTyswb3BIdkhISjRxbzFjNWZmS1VkNGxJZEdDK3pCNmJINi9DNklGQXZB?=
+ =?utf-8?B?RnJUKzlGSTlCQitGZll1bVYwWTBJdDFrQy9ibkJTeThrQnY5bER5UVZGaGxB?=
+ =?utf-8?B?bnpJajhIOXBrTnhDOURLUmd2VUdCbzg2V0ovejJaTWdUT0Z2c0pnV1RMSzlS?=
+ =?utf-8?B?bW02NmluMVlTTzJWZ2xLblpleEJpYXZudzZzbTNxRlEyNVUvVmR6Z1NOK3NR?=
+ =?utf-8?B?RHVhU2RIMnhqYm5ZazZhWVMvT2FNMC9LNTdDRGZDWHluczg1WGY3aVpSU2Ju?=
+ =?utf-8?B?eUdtY2VVZ2hCLy85cnd0eExuVjczNUpwOGZpbGN1RnU3THJhV2Z4UU1BV3Nq?=
+ =?utf-8?B?ZjBlYWQwNDlyYit6SHQyS0hwYmVabHMzN2NZRUR1TXFIdmp3T1VFYjdPL0pH?=
+ =?utf-8?B?ME1Mc1VIRTNNRWk1QUVmTHZzQlNWUlU4cmNML1l3a0JINkNlQ0tFWFl3aFlR?=
+ =?utf-8?B?RDNuSWxvSk04Ymtlak1tWEcrUEJIWmZxNi8rVDR5dXlRb0lhd3EwUDZQeEJM?=
+ =?utf-8?B?b0x5Vlc2R3Q3Vm1XSm45WnNRNHdSOUo3NVFGR2tqNDgyT0hrajNrdXhUSkV5?=
+ =?utf-8?B?Q2kxSzNvSDV4K1U0b0NOWmNLc3U2MkswblNpUzZrcU9zRHRCMHV2RXZMSnRD?=
+ =?utf-8?B?amlmU25xWHE4aFlIbDBGOENDZlUwQ3VoZ2JVVzFTV3BEYlJsUDlFay9naCtO?=
+ =?utf-8?B?N29XTEhrMjRvRUY2YVZTTjl1MU5rcHJnZGpnYi95bm5QSmwrT0ZnVjduTzdj?=
+ =?utf-8?B?RHBlMFgwWElDMFpoaWxUTldoV1VpZXV6MS8zMGRCT0JhMUVpbzFxNVdwbzhI?=
+ =?utf-8?B?WkZnejdNcjdmT09LRlNlU2RIa0UyUENHMUQyNmZEemFUcy9LR0FWQkVyS3Av?=
+ =?utf-8?B?NUZ4QWo4WWtGbFBYRWFmRzcrVmJKWUFzbVFZZTNLTWUydkluNndxbUY5by9v?=
+ =?utf-8?B?eDZZdDgzY2RacHo2RE9rZzdrMDkxa1dTc3dhZE5SZmpSK0x2R2FRVVR1cWo1?=
+ =?utf-8?B?M3FaRUc3NXpTRVlEc2J2YlpIMC9XdnFyaXl1K0xwVzhMYzNYc3BDK1RaN3l4?=
+ =?utf-8?B?a2tpdUpXSnFmeHU1cWN2UDJOUGhkQjJnMjRCdzVvdFRaSG43NWZ5YnAzQnBu?=
+ =?utf-8?B?djl6REZyZ2JtLzM0WDkvR2ptQUVQdUF0ZW9uRDJFeVVsSTBBR2dyU3k3Q3d1?=
+ =?utf-8?B?amNvODc0YUVibVVONTZYdFdaZDg1K1RqM3RjTUFreDZNdUFvaGFOQ3JjVElM?=
+ =?utf-8?B?UUY0TDNLTXNydFZsVE1DblBSRS9jNDNKdmR5WXFxUkxBaG5LaVJ0WmtnNlgx?=
+ =?utf-8?B?T2dlSEh6RWU0ZFBUMXFQRjJuNjhzb3RNRG5zNEdsYldONEZCMlFCd0pFbXNJ?=
+ =?utf-8?B?cXBTT1pneWRwVzludXFZTzhCQWo3TVFyc2dTelFhNlR3MU9IYUVLdkgwK0lU?=
+ =?utf-8?B?OGVBWVUyYm9taGRMa0JvVmZ6UWhBL3hFYlo4N0FFUzNIL1VaZDdDTzNmT2Fv?=
+ =?utf-8?B?Y2lSNCtTYjdGQnV1NzFBQmphK285U3J6NGJVcnJwdUJmdWVZRkZVVHVTZ0F5?=
+ =?utf-8?B?TmxYazFHS3p6Q25Wc0JlblVCcWtpbmJQUGxhOVNlQzNjZ2lTUnN3aVAvMlBX?=
+ =?utf-8?B?SGxUbzNZbWlhTUZTcjF1UGJITzFiWGhVdk0xQWdjakJvTmJHSnVuR2JReUtk?=
+ =?utf-8?B?WnZrS3BvSjhVQ3BhTjVEWjdIZmtCN050L0tQZUxJdi9OTTNLdGhHV0VhK0g2?=
+ =?utf-8?B?c3YxaXk2dlNKeUEwVmhYakxROFZNZnNnaTRRbzhsajJaTkFaVHJXTUVjeWR5?=
+ =?utf-8?B?TjE4TjBpbWpOVjBKK2d1WCtUZURPQ3NsWXMzWUhMdE0zbm1wL2VsVHdWMFh3?=
+ =?utf-8?B?WjFHR1RaWHU5OUs0dzFIUyt0MFNHRUtHUXN6RjNMdmpjN2lsZExOSk9EYVla?=
+ =?utf-8?B?blJzRzBOenlzTE9OL212MmdteWJpYTYyTVlzZTExL0hqL2ZwZVFHWHpRT0VS?=
+ =?utf-8?B?bWlWZVA2UEpUd21Gb1dpQVdMb0VzT2NlN01ITGl2VzY1cTZZRVF3YzZmZWhC?=
+ =?utf-8?B?d2JsOWlnZzN4RUlOa0h0UzkwZ3A4M05idEpLWndiREhKY0Q4Z3dMZmp1ZmZC?=
+ =?utf-8?B?ZzlqTzdlaDF1ZWpENldzSFVLdFpzakRWRGJvZEVDZFhZYjNQV3diL0pjSlQ2?=
+ =?utf-8?B?MG5CaXBMK3ZSdHZ6aE9SM3JYVU1DUzhjcTIveUJ5RHZSTzhrUUx4OVdtL1lE?=
+ =?utf-8?B?UmhNdkxscE1nUEVvYndBb2FWb1RpUEpmQm5EVXgwZUtHa25oVWJKMkVkT3Vl?=
+ =?utf-8?Q?op0nYw2XlxcjL7VKP1?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec31e494-4d55-4e47-2509-08ded5f6c525
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5179.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2026 15:54:58.2422
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: K3wz0GisUb2VqLRRR3Qx2S+G/ASzf9bzGWcTdUry0P0QDlQpP8Mmd1/Qwxeq0X806s429Y2SzXWkXQWoiPnGuA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9749
 
-On Mon, Jun 29, 2026 at 01:23:15PM +0100, Lorenzo Stoakes wrote:
-> We already have vma_last_pgoff() which retrieves the last page offset
-> within a VMA.
-> 
-> However, code often wishes to span a page offset range, which requires the
-> exclusive end of this range.
-> 
-> So provide this in vma_end_pgoff() and update vma_last_pgoff() to use this
-> function.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
 
-Reviewed-by: Gregory Price <gourry@gourry.net>
+On 10/04/26 15:11, Pengjie Zhang wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> The legacy CPPC feedback-counter path reads the delivered and reference
+> performance counters separately.
+>
+> On arm64 systems using AMU-backed CPPC FFH counters, each FFH read is
+> served through a cross-CPU counter read helper. Reading the counters
+> separately therefore widens the sampling window between them and can
+> skew the delivered/reference ratio used by cpuinfo_cur_freq. Under heavy
+> load, the skew is observable as transient values that may exceed the
+> platform maximum, as discussed in [1] and [2].
+>
+> This series adds a small generic hook for architectures that can obtain
+> both FFH feedback counters in one operation, while preserving the
+> existing per-register read path as the fallback.
+>
+> Patch 1 adds the generic CPPC hook and uses it from cppc_get_perf_ctrs().
+> Patch 2 implements the hook on arm64 by sampling both AMU counters in a
+> single operation on the target CPU.
+>
+> [1] https://lore.kernel.org/all/20231025093847.3740104-4-zengheng4@huawei.com/
+> [2] https://lore.kernel.org/all/20231212072617.14756-1-lihuisong@huawei.com/
+>
+> Signed-off-by: Pengjie Zhang <zhangpengjie2@huawei.com>
+>
+> Pengjie Zhang (2):
+>    ACPI: CPPC: add paired FFH feedback-counter read hook
+>    arm64: topology: read CPPC FFH feedback counters in one operation
+>
+>   arch/arm64/kernel/topology.c | 75 ++++++++++++++++++++++++++++++++----
+>   drivers/acpi/cppc_acpi.c     | 58 +++++++++++++++++++++++++---
+>   include/acpi/cppc_acpi.h     |  7 ++++
+>   3 files changed, 127 insertions(+), 13 deletions(-)
+>
+> --
+
+
+Hi Pengjie,
+
+Thanks for the patches.
+The series looks good to me, and it fixes the cpuinfo_cur_freq
+spikes on an NVIDIA Vera (FFH) platform.
+
+Just one nit on patch 2 (counter read order), noted there.
+
+Tested-by: Sumit Gupta <sumitg@nvidia.com>
+Reviewed-by: Sumit Gupta <sumitg@nvidia.com>
+
+Thanks,
+Sumit
+
+
+
 
