@@ -1,267 +1,150 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A5C3EF647;
-	Mon, 29 Jun 2026 15:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B404043635B
+	for <linux-tegra@vger.kernel.org>; Mon, 29 Jun 2026 15:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782746477; cv=none; b=g1wVI1CjjKtL6fTctIi7BiXvw1qIWqOm5rM0/xPvVhOqGkUYA7CDdS4pzSh6+FUzWYUuLAjACKzrrHXdKVilXLPyN0QKKRRBENUCNbmuxryDgoELd5VFrkpUXWtQhATMlF+eccV0a+rJZ24eN/jLDatNRhuqX1IKnlrhhfSNVfM=
+	t=1782746855; cv=none; b=f6faGmxsy2XopxSqMI7oeVAPn32dy0vdtr1D3K/Z597ETb+Ac7cAuDTzU8eZxRPH01iobpMguzABBuw/M+yRs0bRGxh33noq2G1LkepAiiwAvze786uv/LcDz1iuQzwX+2yA4jqzm6Jr5WbAf5H+srTRxr9vOw/ZEqfbiVM5rAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782746477; c=relaxed/simple;
-	bh=wNio1yLMq99NcwrcTVnYEWhf7LC8jplmGfolKk7Hn8E=;
+	s=arc-20240116; t=1782746855; c=relaxed/simple;
+	bh=S0czybLrYjf/ynP1kVMlwjsL14pOds5Rs5BBJNaJCXo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LKbEJSxP2kGeMMqG+hhCSZsvA3gmegx1oCXk2mMJMVDs2JbIJG2cuHXwa7Q1H4UF72ZknJrEBQhBpaqKcYt+QmyHwKG1oHUkNm1RnxDIooO5lzbuA8LILvsS0oPX9jT61w12U3gwlxjeksnZX9f3RMjFhx0XTE8V7R2TNiWEIG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mxDCw+NK; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nw1h7UzMGkTdsYnijPcWudfE4msh2ntpvSlfVk4aTXqJDhuuZ+TYqPK4g8IEAUK3Q17kKWQqYalPRFfoiUgI80Im+2awWAELZer9IMQJrp5QY6Oz5XftlxywoDWvB0bn9kUWuJAtzFhrms6QmInbxodsaISvdyW9OyKGZsAhHco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=YD4ldY6J; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mxDCw+NK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DF041F00A3A;
-	Mon, 29 Jun 2026 15:21:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782746475;
-	bh=8JeIET6BIO7IAQ1VGFsVbdLpIFTiA3/rwieOpXwgEHU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=mxDCw+NKxACQINPLhkoDiHknZMmfP32yHsviw3jgAyjmVXAAG6DLBb+4HJdGvJ2XA
-	 DVnomXBv5PvZn9EMPMbF2i5bom8RC2+9nPW/Rd52QBuElEFAf0rE9/WiHD4uLHA3bM
-	 POMb019YotS0sS/0EOkrK/i4oU62mgKHgchFQR0mJoywpSHhzL5IltXPJU/MeIgCYx
-	 ap0JwBevDgGf4ZkMMfnZfhPZuE5smna7fJU5Lou68n/gfmrNzTEwrD0k8G0Eh7J2pA
-	 /8dbudFQQkg/dfFzw19Oz6oMBIhRdpH1cEVStTHfBdI9nrYiFHWCF11zI8gxqNuFfa
-	 y1SH9IS6U/TaA==
-Date: Mon, 29 Jun 2026 16:21:11 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Wayne Chang <waynec@nvidia.com>
-Cc: mathias.nyman@intel.com, vkoul@kernel.org, neil.armstrong@linaro.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	gregkh@linuxfoundation.org, thierry.reding@gmail.com,
-	jonathanh@nvidia.com, linux-usb@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/8] dt-bindings: usb: Add Tegra264 XUSB host support
-Message-ID: <20260629-primal-refrain-1eb04745384f@spud>
-References: <20260629093406.1118594-1-waynec@nvidia.com>
- <20260629093406.1118594-3-waynec@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="YD4ldY6J"
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-92e512a9a6bso82435185a.2
+        for <linux-tegra@vger.kernel.org>; Mon, 29 Jun 2026 08:27:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1782746853; x=1783351653; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YVSnUoP7z1l2IjNO7QqWpl688BIslf+DGUxd2Ln6LGs=;
+        b=YD4ldY6J9yYSngwoVnhz/rOLEfNM+a/QDH3N+mFU+kbbZbNNGaMSxOOMmCnLOAhX9k
+         UPvcm/NDvNBkiffkqjJXPTNcQjgH8ZjtDe5QarFc2KSRhjvRuex5SwpDS4/S4NDHaUI4
+         TrfYPXVIQKHe00dCaRIy+NqU6orKJiLqGgHxpQlUVqRHHnTmyKo067DpGBzaUU3lVQ9O
+         6XqDD59n4np8Vd/UbftErbKU6Dvq3czt5Wx/pXSB3yKfVfENQ9Y+vXLgyeEcT5qaBphr
+         O52YE4fYwfcWs/zQPj+id41/fNx48SJO9srg4qDeOXfbVNpd81DK03X4NrenRmLZo45O
+         ziPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782746853; x=1783351653;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YVSnUoP7z1l2IjNO7QqWpl688BIslf+DGUxd2Ln6LGs=;
+        b=Q7JxSw63tYu9KTb7h3m3qdRa+VAivykUS5y/4TNBbmJdBJnjWLxoplC6nPNkO03xzH
+         +WQpTsoZHejaOrHopvTSXD3Px2Tf0GPWWkWJQBvWoQ84y3k9ahKgUtpQG79qQaH7Ftky
+         OGQvAjUgVaDUW5dfxPP0tPomGVUxwsShC35ib8DqieuZmxTrPzllo+Cmnwv80HywXdli
+         2g2XeFLqVfAZa8ZPKkDopcFkFNAHcgmcSlYGU/PF9jGb3ctMiYUDhJug56CaRbGhtB4t
+         mJAid8IxWjeUbSYqq82PuAGnrShFcQkEV+IP2csCT/ydWR7uQqyumto2S7FxZew4yk7M
+         vwMQ==
+X-Forwarded-Encrypted: i=1; AFNElJ8/bOWt1gMhGIBxEkbjdXgka3U1VoU9dmXQ/dZNqiumrWP7FuyuzlFOnM6F6rE1+CtihwRiiyZhgkvgVA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yysp0ne6sEneVIk5sc+fb2QDoEB+WwIiePTbUQ7ptZRYOssJX+o
+	aAI1rmo1wBO2NRq0Xt307LrB6DjGnNvcH9XtmMwpzyCGb09jegMtkam8qvUBtud73M8=
+X-Gm-Gg: AfdE7cmyU2lOSJKsgFdaog6ecPGa+XET/SpnqfmiRXnOmNHgfTE38EXnVaTp4wGERi3
+	UE9F/HhnP+P5EaXUfzTrv/D9zCJdR9pc+Zl2+S5o5r/CnIUl2EOc9lbTRGFNrI2NXXHIuWO60T5
+	vwwDKv+8l9jdv1yH8D3O4h0VjDiHr8LV6d0iQZo7zSWDnQeV/Xzv/v/vrk4APsrLYaQghQzBghY
+	dytfBzZ89+0E3U8uBgPwIxtQm2vi6f8H1/qyJtmo4iliJKlz1bLZZeamDCHKPTO7/IDB9hMap8Z
+	shZBM/vc+qw189xhvMl/DnfjyZSY6JY8+e6RaF8oF+fntzh1Gad6LD3yvkEpLSt8ETI5fbWJAjc
+	ZA47O85h2JXByKH29J0LflpKvAs822+wLWVzoIjwdnrni9rpiNySNs/o0Qo8ALWzQn6E/Up84BX
+	wmNajcpzOdI8QpPKg89jvZytzj38M6EBZGsw0UfkG/OTxIs2mEB2cxEC5Wftk7cqP3T9VHV3Ik3
+	+ZlZa4=
+X-Received: by 2002:a05:620a:7002:b0:921:9df8:d38f with SMTP id af79cd13be357-92e62785c63mr1415985a.43.1782746852526;
+        Mon, 29 Jun 2026 08:27:32 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-60-52.washdc.fios.verizon.net. [173.79.60.52])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-92e621943b3sm7429785a.19.2026.06.29.08.27.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jun 2026 08:27:32 -0700 (PDT)
+Date: Mon, 29 Jun 2026 11:27:26 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Lorenzo Stoakes <ljs@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Simon Schuster <schuster.simon@siemens-energy.com>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Ian Abbott <abbotti@mev.co.uk>,
+	H Hartley Sweeten <hsweeten@visionengravers.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Christian Koenig <christian.koenig@amd.com>,
+	Huang Rui <ray.huang@amd.com>, Ankit Agrawal <ankita@nvidia.com>,
+	Alex Williamson <alex@shazbot.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Dan Williams <djbw@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	David Hildenbrand <david@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	"Liam R . Howlett" <liam@infradead.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>, SeongJae Park <sj@kernel.org>,
+	Miaohe Lin <linmiaohe@huawei.com>, Hugh Dickins <hughd@google.com>,
+	Mike Rapoport <rppt@kernel.org>, Kees Cook <kees@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
+	linux-sgx@vger.kernel.org, etnaviv@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-mm@kvack.org, iommu@lists.linux.dev,
+	linux-perf-users@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+	damon@lists.linux.dev, Pedro Falcato <pfalcato@suse.de>,
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry@kernel.org>,
+	Jann Horn <jannh@google.com>
+Subject: Re: [PATCH 01/30] mm: move vma_start_pgoff() into mm.h and clean up
+Message-ID: <akKO3vnNmWIJAZ7z@gourry-fedora-PF4VCD3F>
+References: <cover.1782735110.git.ljs@kernel.org>
+ <b28b698df4c009e85c4728446ca5863d8e633164.1782735110.git.ljs@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eqDp6fcqM2UH+2oI"
-Content-Disposition: inline
-In-Reply-To: <20260629093406.1118594-3-waynec@nvidia.com>
-
---eqDp6fcqM2UH+2oI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <b28b698df4c009e85c4728446ca5863d8e633164.1782735110.git.ljs@kernel.org>
 
-On Mon, Jun 29, 2026 at 05:34:00PM +0800, Wayne Chang wrote:
-> Extend the Tegra234 XUSB host binding to cover Tegra264:
->=20
-> - Add nvidia,tegra264-xusb compatible string
-> - Document optional USB wake interrupts for Tegra264
-> - Document Tegra264 PMC wake event to port mapping
-> - Allow up to five IOMMU specifiers for the additional XUSB host
->   stream IDs
->=20
-> Signed-off-by: Wayne Chang <waynec@nvidia.com>
-> ---
->  .../bindings/usb/nvidia,tegra234-xusb.yaml    | 115 ++++++++++++------
->  1 file changed, 80 insertions(+), 35 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.y=
-aml b/Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
-> index ec0993497fbb..94b1dbe2b02f 100644
-> --- a/Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
-> +++ b/Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
-> @@ -17,7 +17,9 @@ description: |
-> =20
->  properties:
->    compatible:
-> -    const: nvidia,tegra234-xusb
-> +    enum:
-> +      - nvidia,tegra234-xusb
-> +      - nvidia,tegra264-xusb
-> =20
->    reg:
->      items:
-> @@ -31,37 +33,6 @@ properties:
->        - const: fpci
->        - const: bar2
-> =20
-> -  interrupts:
-> -    minItems: 2
-> -    items:
-> -      - description: xHCI host interrupt
-> -      - description: mailbox interrupt
-> -      - description: USB wake event 0
-> -      - description: USB wake event 1
-> -      - description: USB wake event 2
-> -      - description: USB wake event 3
-> -      - description: USB wake event 4
-> -      - description: USB wake event 5
-> -      - description: USB wake event 6
-> -    description: |
-> -      The first two interrupts are required for the USB host controller.=
- The
-> -      remaining USB wake event interrupts are optional. Each USB wake ev=
-ent is
-> -      independent; it is not necessary to use all of these events on a
-> -      platform. The USB host controller can function even if no wake-up =
-events
-> -      are defined. The USB wake event interrupts are handled by the Tegr=
-a PMC;
-> -      hence, the interrupt controller for these is the PMC and the inter=
-rupt
-> -      IDs correspond to the PMC wake event IDs. A complete list of wake =
-event
-> -      IDs is provided below, and this information is also present in the=
- Tegra
-> -      TRM document.
-> -
-> -        PMC wake-up 76 for USB3 port 0 wakeup
-> -        PMC wake-up 77 for USB3 port 1 wakeup
-> -        PMC wake-up 78 for USB3 port 2 and port 3 wakeup
-> -        PMC wake-up 79 for USB2 port 0 wakeup
-> -        PMC wake-up 80 for USB2 port 1 wakeup
-> -        PMC wake-up 81 for USB2 port 2 wakeup
-> -        PMC wake-up 82 for USB2 port 3 wakeup
-> -
+On Mon, Jun 29, 2026 at 01:23:12PM +0100, Lorenzo Stoakes wrote:
+> vma_last_pgoff() already lives there, so it's a bit odd to keep
+> vma_start_pgoff() in mm/interval_tree.c. Move them together.
+> 
+> These each return unsigned long, which pgoff_t is typedef'd to. Make this
+> consistent and have these functions return pgoff_t instead.
+> 
+> Additionally, express vma_last_pgoff() in terms of vma_start_pgoff(), since
+> we wrap the vma->vm_pgoff access, we may as well use it here.
+> 
+> Also while we're here, const-ify the VMA and cleanup a bit.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
 
-Property definitions should remain at the top level, with the widest
-constraints and list of entries.
-Conditional sections should just apply restrictions. In this case, only
-one additional clock seems to be the difference, so conditional
-restrictions should suffice.
+Reviewed-by: Gregory Price <gourry@gourry.net>
 
->    clocks:
->      items:
->        - description: XUSB host clock
-> @@ -96,9 +67,6 @@ properties:
->        - const: dma-mem # read
->        - const: write
-> =20
-> -  iommus:
-> -    maxItems: 1
-
-Same with this, conditionally forbid it on the new platform but leave
-this here.
-
-
-pw-bot: changes-requested
-
-Thanks,
-Conor.
-
-> -
->    nvidia,xusb-padctl:
->      $ref: /schemas/types.yaml#/definitions/phandle
->      description: phandle to the XUSB pad controller that is used to conf=
-igure
-> @@ -137,6 +105,83 @@ properties:
->  allOf:
->    - $ref: usb-xhci.yaml
-> =20
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra234-xusb
-> +    then:
-> +      properties:
-> +        interrupts:
-> +          minItems: 2
-> +          description: |
-> +            The first two interrupts are required for the USB host contr=
-oller.
-> +            The remaining USB wake event interrupts are optional. Each U=
-SB wake
-> +            event is independent; it is not necessary to use all of thes=
-e events
-> +            on a platform. The USB host controller can function even if =
-no
-> +            wake-up events are defined. The USB wake event interrupts are
-> +            handled by the Tegra PMC; hence, the interrupt controller fo=
-r these
-> +            is the PMC and the interrupt IDs correspond to the PMC wake =
-event
-> +            IDs.
-> +
-> +            PMC wake-up 76 for USB3 port 0 wakeup
-> +            PMC wake-up 77 for USB3 port 1 wakeup
-> +            PMC wake-up 78 for USB3 port 2 and port 3 wakeup
-> +            PMC wake-up 79 for USB2 port 0 wakeup
-> +            PMC wake-up 80 for USB2 port 1 wakeup
-> +            PMC wake-up 81 for USB2 port 2 wakeup
-> +            PMC wake-up 82 for USB2 port 3 wakeup
-> +          items:
-> +            - description: xHCI host interrupt
-> +            - description: mailbox interrupt
-> +            - description: USB wake event 0
-> +            - description: USB wake event 1
-> +            - description: USB wake event 2
-> +            - description: USB wake event 3
-> +            - description: USB wake event 4
-> +            - description: USB wake event 5
-> +            - description: USB wake event 6
-> +        iommus:
-> +          maxItems: 1
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra264-xusb
-> +    then:
-> +      properties:
-> +        interrupts:
-> +          minItems: 2
-> +          description: |
-> +            Same as Tegra234, with one additional optional USB wake event
-> +            interrupt. USB3 port 2 and port 3 each have a dedicated wake=
- event
-> +            interrupt on Tegra264.
-> +
-> +            PMC wake-up 79 for USB3 port 0 wakeup
-> +            PMC wake-up 80 for USB3 port 1 wakeup
-> +            PMC wake-up 81 for USB3 port 2 wakeup
-> +            PMC wake-up 82 for USB3 port 3 wakeup
-> +            PMC wake-up 83 for USB2 port 0 wakeup
-> +            PMC wake-up 84 for USB2 port 1 wakeup
-> +            PMC wake-up 85 for USB2 port 2 wakeup
-> +            PMC wake-up 86 for USB2 port 3 wakeup
-> +          items:
-> +            - description: xHCI host interrupt
-> +            - description: mailbox interrupt
-> +            - description: USB wake event 0
-> +            - description: USB wake event 1
-> +            - description: USB wake event 2
-> +            - description: USB wake event 3
-> +            - description: USB wake event 4
-> +            - description: USB wake event 5
-> +            - description: USB wake event 6
-> +            - description: USB wake event 7
-> +        iommus:
-> +          maxItems: 5
-> +
->  unevaluatedProperties: false
-> =20
->  examples:
-> --=20
-> 2.25.1
->=20
-
---eqDp6fcqM2UH+2oI
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCakKNZwAKCRB4tDGHoIJi
-0mfTAP9A9GmGGdOGVMyr6X9sPpaTSh4nzhGwFvLGrU+wledLKwEA1gnN+c4MbrQN
-c9h/2QDvCBQLEbB5tocWAg7MFq+CXAg=
-=N0ZX
------END PGP SIGNATURE-----
-
---eqDp6fcqM2UH+2oI--
