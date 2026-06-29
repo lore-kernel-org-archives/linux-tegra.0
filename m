@@ -1,425 +1,118 @@
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012038.outbound.protection.outlook.com [52.101.66.38])
+Received: from mx0a-00823401.pphosted.com (mx0a-00823401.pphosted.com [148.163.148.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544E536C9DF;
-	Mon, 29 Jun 2026 11:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782731346; cv=fail; b=dPIUfZfCdMVZEobss0Wtg35WPDRA+lXjwmXM9Xj0fmNk7kmgoVBkzE/AKBaxH5bYYV9ys6vgXt0cvZZS6tUHUaWXmIpXL3Aen8Lobu8Pnybe9vEoApctcaKc3E5sLJFnV5KRXs7YinCTmZklg6M44ns4gm4B+rjCJPOgPNQzqmM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782731346; c=relaxed/simple;
-	bh=zoMbyNkH0VN2qIuO/KFHryNDB6/w6KCPivP9PhvRPkM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=F+dtljAHuGB1K9WtjPbvY1LriVbI79CvlqSbWOtCVk2uSDMqIW64+IorigrawFntScCncNNlPMtvPRhf23o0p0B8TTx6cTXLoaw6z5RUHnndEiVEV/zG4yf6IPqSElVxzyO1mRHj8iPxA2ZVk4nts4vXf54Px68+St+nLq7FBs8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=mzFw5iGg; arc=fail smtp.client-ip=52.101.66.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03453B95FA;
+	Mon, 29 Jun 2026 11:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.148.104
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782731475; cv=none; b=rGGuWo/1Wx/svvL8EhP2rn0ohudzNTxyLHmMvD3FdG7o0yOvLdlcuzDzcjJLhOKpc6OJQrcJ9CY1H0rcqu9AitEsELAV47Ml2by3lVwhAFcmbyNAng085G5gjVJs+uM7YGqLgek25j9l1VBS7nbd5/xUBNG9pcIA9rix0VbEjJM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782731475; c=relaxed/simple;
+	bh=UUArWvFfqqxCcEGg/oMKeeDMo306Ov2MEe1bAUsNuJU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cseb+59CJ3T4pKRXX/7vbdSTZpWfjGHQF/GrK5j3jezaKu5oweFswJNDChsAxKMUx+UD1ZwrE6NE2wWRTCP31JtEGV6OKYewqit3ZQS/vkE2cf9Nu63ro5i83NvIE+gOZ4o8tXwd5DF8p1gjFZRsDAKP2S+h8UvRhpUwgf3YlZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lenovo.com; spf=pass smtp.mailfrom=lenovo.com; dkim=pass (2048-bit key) header.d=lenovo.com header.i=@lenovo.com header.b=Fwlto9dH; arc=none smtp.client-ip=148.163.148.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lenovo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lenovo.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="mzFw5iGg"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PiyIghVck3L+99HE2tZ11C9tNHVWlrF2GiwZKdzwZ8lrAhrHtfk9KNrIu7hm/0o9w+9yxmZ1AAjLNLgZE9oMUKjBMpFUk4e6VeRHW4TPJd+ZMdPE1YOgEDrjwx5yhUo6iizKzI0zVstnjkVDA7iFw84tHf0Mh4VM/tMgkxb6YF4PrDwLF8whNOSMIj0AvEWA7wjEj4Sz+jkhPEfwCTm4ggHXvjzanTZ56cSsvKsrAExFOFJ3Wza6wpnoR6lY4q/NjtryN3WcGopx5zAy69H2kIk4IVcdypmaKLBM0MrxG8qQYTbsinZZcfuQamPmBCDTDZAuf5CK6+s4GkylGyvSog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hdYmzlinQrOTdqaXFcBZMTxHGZG54UUEXBcCcFY64eo=;
- b=P62jiVnVnmsyfUQTgJHvw/Bkx8+cjaypQMSa5hgS74gjMlc+m6NiftRAeKM08Ea8dL9pT2UPLxQTIpH/MHDj/CqSiC0+2uXZpsnsawOjHJKQ0W8yMuzx4c0P6PtuhNh9EvCpz8O/7nlGgygWeV3i2bK5ZkUgxGZn5tMclx7phdVIAkmdXxr4Vgp3VLFrvVUJcO0WTPGghhd5Tf9Rk5aW5PTcku2rcKOxl5YtGR0TxWosAyPv1swHYMvbZdDyqBd59Klr8d+Se30oKLsgjQzabrE9caxVKU4gSfiYhNrdGaE+jaE/qa9L4IJfy+qWXr+HMbz6zjPmWwmROa9qINts6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.59) smtp.rcpttodomain=ideasonboard.com smtp.mailfrom=foss.st.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hdYmzlinQrOTdqaXFcBZMTxHGZG54UUEXBcCcFY64eo=;
- b=mzFw5iGg/j4eguGMxPV1HxAChkGLp7COImodjkNjwHEW3fVwn7olohPJ+1JA31SmDTgg2bLnEuBvW6Cxi5NWCvk8p7kHhww0L/of0WvtdRaR/rv3TTaPDtSEzUBsNQ6CcBbims+QLhTt+PlZOcAqIR0zMkl8CKYNDt1jv4Ja6JaQWcUdAb83OIh6MdORsPHdw9QXjenKTfkzsL4jrGSsVCuPyns4TVkLipEnegYlwWPQk7MsEs6AKIJQuZFr9Scmpvb9P/fW29Os7Tawqpo4KO/ZBlGp3Aq/dcwrvGnhQ1bSc7qrEvQFev1Bm8628OvYSqW1jxGUo6kE5rGwtSJNpg==
-Received: from CWLP265CA0462.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:1d4::8)
- by DB9PR10MB8194.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:4ee::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.19; Mon, 29 Jun
- 2026 11:08:57 +0000
-Received: from AMS0EPF0000019F.eurprd05.prod.outlook.com
- (2603:10a6:400:1d4:cafe::27) by CWLP265CA0462.outlook.office365.com
- (2603:10a6:400:1d4::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.159.19 via Frontend Transport; Mon,
- 29 Jun 2026 11:08:57 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.59)
- smtp.mailfrom=foss.st.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=foss.st.com;
-Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.59 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.59; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.59) by
- AMS0EPF0000019F.mail.protection.outlook.com (10.167.16.251) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.181.6 via Frontend Transport; Mon, 29 Jun 2026 11:08:57 +0000
-Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpo365.st.com
- (10.250.44.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.35; Mon, 29 Jun
- 2026 13:13:40 +0200
-Received: from [10.130.78.67] (10.130.78.67) by STKDAG1NODE2.st.com
- (10.75.128.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.35; Mon, 29 Jun
- 2026 13:08:55 +0200
-Message-ID: <591573d0-587a-4a27-9bef-c707de177a15@foss.st.com>
-Date: Mon, 29 Jun 2026 13:09:00 +0200
+	dkim=pass (2048-bit key) header.d=lenovo.com header.i=@lenovo.com header.b="Fwlto9dH"
+Received: from pps.filterd (m0464638.ppops.net [127.0.0.1])
+	by mx0a-00823401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65TASbH51266815;
+	Mon, 29 Jun 2026 11:11:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lenovo.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=DKIM202306; bh=cEJzA86S3/soEhF3WOSMaIyvDrHz9QaBzP
+	CooIbO78c=; b=Fwlto9dHEhGEPmIFlRUNo4a0K3rN0fRXtbkpGU7TD79UA+jyAk
+	BKNPmcJQ8yuGk9Ve58nggt0L5JAv5vV/lVpiA5YWZPpQ+qSf+B4uzzbFJbnrzjZm
+	6uL3JmgRfV5fFyu2KuhEf0X9ErGGKIX1ssW/8JUyIaI0TBgZj57sFN7D+plB3Zyo
+	t0BLiOCj5G8q7Gx1+vhg5lWNaJv1DgvmIXbvPgeJN72/6t1sM+se0xLOGms/3c1L
+	/iJZMYv7yt9PctbmBYXJ7k9SNv1gfJo8uEObN6XooiIBLfP6eRziQK875UfprLT9
+	fDc330l9Y88OfEF8xftr+sLexSiSacA78grA==
+Received: from hkglppfpool2.lenovo.com ([103.30.235.219])
+	by mx0a-00823401.pphosted.com (PPS) with ESMTPS id 4f2syet0bm-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 29 Jun 2026 11:11:07 +0000 (GMT)
+Received: from hetlppfpool1.lenovo.com (unknown [10.196.132.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hkglppfpool2.lenovo.com (Postfix) with ESMTPS id 4gpk8l1FgPz1yfcln;
+	Mon, 29 Jun 2026 11:10:31 +0000 (UTC)
+Received: from lenovo.com (unknown [10.119.171.213])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hetlppfpool1.lenovo.com (Postfix) with ESMTPS id 4gpk9N63cqz1wCKkG;
+	Mon, 29 Jun 2026 11:11:04 +0000 (UTC)
+From: Jiqi Li <lijq9@lenovo.com>
+To: linux-tegra@vger.kernel.org
+Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, jonathanh@nvidia.com, thierry.reding@gmail.com,
+        mpearson-lenovo@squebb.ca, Jiqi Li <lijq9@lenovo.com>
+Subject: [PATCH v1 0/2] Add Lenovo ThinkEdge SE70 carrier board support
+Date: Mon, 29 Jun 2026 19:11:02 +0800
+Message-ID: <20260629111104.645771-1-lijq9@lenovo.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/7] dt-bindings: media: i2c: Utilise
- video-interface-devices enums
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jacopo Mondi
-	<jacopo@jmondi.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Jimmy Su
-	<jimmy.su@intel.com>, Matthias Fend <matthias.fend@emfend.at>, "Mikhail
- Rudenko" <mike.rudenko@gmail.com>, Daniel Scally
-	<dan.scally@ideasonboard.com>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Michael Riesch <michael.riesch@collabora.com>, Sylvain Petinot
-	<sylvain.petinot@foss.st.com>, Laurent Pinchart
-	<laurent.pinchart@ideasonboard.com>, Paul Elder
-	<paul.elder@ideasonboard.com>, Martin Kepplinger <martin.kepplinger@puri.sm>,
-	Quentin Schulz <quentin.schulz@theobroma-systems.com>, Tommaso Merciai
-	<tomm.merciai@gmail.com>, Svyatoslav Ryhel <clamor95@gmail.com>, "Richard
- Acayan" <mailingradian@gmail.com>, Thierry Reding
-	<thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Frank Li
-	<Frank.Li@nxp.com>, "Sascha Hauer" <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio
-	<konradybcio@kernel.org>, "Geert Uytterhoeven" <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-CC: <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux@ew.tq-group.com>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-References: <20260628-kbingham-orientation-v3-0-4ed92968aff8@ideasonboard.com>
- <20260628-kbingham-orientation-v3-3-4ed92968aff8@ideasonboard.com>
-Content-Language: en-GB
-From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-In-Reply-To: <20260628-kbingham-orientation-v3-3-4ed92968aff8@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ENXCAS1NODE2.st.com (10.75.128.138) To STKDAG1NODE2.st.com
- (10.75.128.133)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS0EPF0000019F:EE_|DB9PR10MB8194:EE_
-X-MS-Office365-Filtering-Correlation-Id: 151b6c1d-2265-4ada-cf64-08ded5ced0b0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|7416014|376014|82310400026|36860700016|1800799024|921020|18002099003|22082099003|11063799006|4143699003|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	fzwuTA/hR0qRVwMHz/Mt4DJWaMSwl9xyQyKjQ83QwfOzMJdrmZVO12UZoa3kXtEmsAOwz45PeB0j+rEygWWzlj3/aMbxgwKf4jXa4iptkCksBLHNwCNFtQQTDv9KOp4jhoY7qQBxCtI81TfQejiGkoUjFINoJpGOn2YFOFGparvL9UcOaU195pfszB+C+obt1GgCTrDYtxInhG7xuwpuJfnyhsDWCXaCGQRiN+Fm+8eQ9fF0H4FfX7ZXcEd0N9dZ4EyfQHH5jt9WeyZEVsD3ASJad1SUrmwUesbOqDFbrsLwdaUh9jCMAT1/ZLsBDDrpwjKWIKzUkbKO4Bs+TC+9XLpx+bgKk4XJertj8NMCKhX/UIj0oqcL2HCP7RiPzjpqFXv2xqVJwrtX+f7Ktm66r5WZjTOUlGVqHLujgM2KjYFb5Q6LBYP8Tn8T8xKeEWICtZ8Hx6kxxxsnXE4pXiiVQEWfhre5kiPxrbzS9sXm6+juUx4BZUr85vYvSEtAKcsIN36OpL880pOdnKumFaNTbdKGriPn0w3K1gIHTUqus1c2Ods2dQMK66SHkn/sj19Wm+Higm5GSHUOqynDuFE0KG916t9TM5GD/ziaAX1CJqo2zUZh/hZDhpDBWClxWAdMGrgPrITbHqYE1eJKtXS9CPbyCsGi5Z4F2fgYkvzLEWIE/7KSmDWykChyjyETvol7YcURutr1GEV/1orUrAtUpq+tZwgKjyHieWyQfG3hBZ1kKqO95K4JBnC70RrPoCft
-X-Forefront-Antispam-Report:
-	CIP:164.130.1.59;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(23010399003)(7416014)(376014)(82310400026)(36860700016)(1800799024)(921020)(18002099003)(22082099003)(11063799006)(4143699003)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	mDPCMtK46muHjsK9RAN5F/4rQoBTq0fV/q7IlGIM118FfKAKpHsPmYgz6gyA5IRZCl14glTL1qqIF6T1a0Y0zk+CRedZPNgdPc4uUSJnkJa4Moqt2LYOSr4ocEv5X4U6k3cg8h5F/srN7EcPywlF+i/GVKn77vw66vKVCu/VC16IdCL9d4NdBqcmH4Ghsh/YEE9fhWS3c8EdmvhruiyV6TbXZlF4cWVugTvh65gAECR6gwBgBVUi0fZjkE5tP1nSrCZyRAbFZ56VCodBimMVMOpAu7Q0cOpA4p9Ft8a6mEqLmussni9I4ax7kBr6lQx4xcnLHB0NxYqGvdGsIZgG9UAP+23r8Y99jf6ZpuazfytB3TfPPAtQLwh7kI2b84Lp5v3TmwdLRjNtFpyd/XLpnz8BYnuokyAEfsTUBrmSTxvRtWZEnDiEIzyYR7aZw+kl
-X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2026 11:08:57.3892
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 151b6c1d-2265-4ada-cf64-08ded5ced0b0
-X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.59];Helo=[smtpO365.st.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF0000019F.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB8194
+X-Proofpoint-GUID: 0aTxl5TvnUp8O3s7vCBOH03XQ0-aeA2U
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjI5MDA5MSBTYWx0ZWRfX3A+NmE9JxOtw
+ 23x7uBgfUBevX2A1ahY5Isjxf5+ptdK8RZWzvdYJHa/oOLCdyT3jxgp6TtdFkXz0AVuw7yQsupX
+ kgtQ0AkipLDZ7DQx/IedgHiO7I3CsEgEBcAFO7gxjK6VWpCzjFS3ToQzsUDSdKxMzRixS+SMV6k
+ J+PJB79/OOg/H/D9rZVKNSbnRlenEsKHgccyvS9PCjxqIdIto2Zd1oOpndRgJXQYZY10se1xznF
+ OP56OV8D3YSpUnbenMpVLAYQUpuYzlWcb3FzUZoVj1GcGKwBF3HowDqnKggI+qmCZv0YH3DBY2R
+ JK1/Lsf4CgN45FY7c6mpJPyLxxf0/HA6WVxiA1pnHyb0ThTCkzJ9E203UCIyP1BrNddFAFzAHgp
+ wpM1IhmVDqZhgbBLkaGdkIKeAG98OixpN6Hi2X62iR4zNHAKox6WhZWdb8g7JwA0j1SIZjuEsVM
+ ZYlDu8kWjTYcLB2GtPg==
+X-Proofpoint-ORIG-GUID: 0aTxl5TvnUp8O3s7vCBOH03XQ0-aeA2U
+X-Authority-Analysis: v=2.4 cv=S8TpBosP c=1 sm=1 tr=0 ts=6a4252cb cx=c_pps
+ a=Z3w50ro9cqVPZ6U0/1IFzw==:117 a=Z3w50ro9cqVPZ6U0/1IFzw==:17
+ a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=2RTuljz969oO5usasWGy:22
+ a=QJilI6ASod0cdCKXAsqI:22 a=1HKclyIHpsRocwtzyY4A:9
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjI5MDA5MSBTYWx0ZWRfX0I2CKJB5+qk+
+ wXx4dq0zVayl9Y0AI+W563swvj31P4p5CYBhbTH8Q0kWBAEb9MkReoJ+TYlCdSGyPR8GpOXV6Zo
+ rFn9lCMOBp8xMHA7VC6UOanL+/kP4kU=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-29_03,2026-06-26_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 bulkscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0
+ priorityscore=1501 adultscore=0 impostorscore=0 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=-20
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2606290091
 
-Hi Kieran,
+This patch set introduces device tree binding and standalone DTS file
+for Lenovo ThinkEdge SE70, a fanless industrial edge gateway powered by
+the NVIDIA Jetson Xavier NX module (P3668-0001) on a custom carrier board.
 
-Thank you for this patch.
+Patch 1 updates tegra.yaml bindings to add the three-stage compatible
+string matching board + SOM + SoC, following the existing Tegra
+carrier board convention.
 
-Le 28/06/2026 à 12:22, Kieran Bingham a écrit :
-> The orientation property for video interface devices now has definitions
-> to prevent hardcoded integer values for the enum options.
-> 
-> Update the existing examples throughout the bindings documentation for
-> camera sensors.
-> 
-> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Patch 2 adds the complete carrier board device tree, including:
+- 40-pin expansion header pinmux configuration
+- External Micro SD card slot with dedicated 3.3V regulator
+- I2C bus for 40-pin header
 
-Reviewed-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+All static device tree checks pass: dtbs compile and dt_binding_check
+complete without errors.
 
-> ---
->  Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml   | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/ovti,ov08d10.yaml  | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/ovti,ov4689.yaml   | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/ovti,ov5675.yaml   | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/ovti,ov5693.yaml   | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/ovti,ov64a40.yaml  | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml   | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/sony,imx355.yaml   | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/sony,imx415.yaml   | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/st,vd55g1.yaml     | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/st,vd56g3.yaml     | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml | 3 ++-
->  12 files changed, 24 insertions(+), 12 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml b/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
-> index 1a57f2aa1982..b7bc6ba26e6e 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
-> @@ -86,6 +86,7 @@ unevaluatedProperties: false
->  examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/media/video-interface-devices.h>
->  
->      i2c {
->          #address-cells = <1>;
-> @@ -102,7 +103,7 @@ examples:
->              vddio-supply = <&reg_camera_vddio>;
->              reset-gpios = <&gpio1 25 GPIO_ACTIVE_LOW>;
->              shutdown-gpios = <&gpio5 4 GPIO_ACTIVE_LOW>;
-> -            orientation = <0>;
-> +            orientation = <MEDIA_ORIENTATION_FRONT>;
->              rotation = <0>;
->  
->              port {
-> diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov08d10.yaml b/Documentation/devicetree/bindings/media/i2c/ovti,ov08d10.yaml
-> index 6f2017c75125..b9c61395b24f 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/ovti,ov08d10.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/ovti,ov08d10.yaml
-> @@ -69,6 +69,7 @@ examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
->      #include <dt-bindings/media/video-interfaces.h>
-> +    #include <dt-bindings/media/video-interface-devices.h>
->  
->      i2c {
->          #address-cells = <1>;
-> @@ -84,7 +85,7 @@ examples:
->              avdd-supply = <&ov08d10_vdda_2v8>;
->              dvdd-supply = <&ov08d10_vddd_1v2>;
->  
-> -            orientation = <2>;
-> +            orientation = <MEDIA_ORIENTATION_EXTERNAL>;
->              rotation = <0>;
->  
->              reset-gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
-> diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov4689.yaml b/Documentation/devicetree/bindings/media/i2c/ovti,ov4689.yaml
-> index d96199031b66..fcd617848ce3 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/ovti,ov4689.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/ovti,ov4689.yaml
-> @@ -96,6 +96,7 @@ unevaluatedProperties: false
->  examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/media/video-interface-devices.h>
->  
->      i2c {
->          #address-cells = <1>;
-> @@ -114,7 +115,7 @@ examples:
->              powerdown-gpios = <&pio 107 GPIO_ACTIVE_LOW>;
->              reset-gpios = <&pio 109 GPIO_ACTIVE_LOW>;
->  
-> -            orientation = <2>;
-> +            orientation = <MEDIA_ORIENTATION_EXTERNAL>;
->              rotation = <0>;
->  
->              port {
-> diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov5675.yaml b/Documentation/devicetree/bindings/media/i2c/ovti,ov5675.yaml
-> index ad07204057f9..6df62fd0c0c0 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/ovti,ov5675.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/ovti,ov5675.yaml
-> @@ -85,6 +85,7 @@ examples:
->    - |
->      #include <dt-bindings/clock/px30-cru.h>
->      #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/media/video-interface-devices.h>
->      #include <dt-bindings/pinctrl/rockchip.h>
->  
->      i2c {
-> @@ -108,7 +109,7 @@ examples:
->              dovdd-supply = <&vcc_2v8>;
->  
->              rotation = <90>;
-> -            orientation = <0>;
-> +            orientation = <MEDIA_ORIENTATION_FRONT>;
->  
->              port {
->                  ucam_out: endpoint {
-> diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov5693.yaml b/Documentation/devicetree/bindings/media/i2c/ovti,ov5693.yaml
-> index 3368b3bd8ef2..5732657e1484 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/ovti,ov5693.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/ovti,ov5693.yaml
-> @@ -103,6 +103,7 @@ examples:
->    - |
->      #include <dt-bindings/clock/px30-cru.h>
->      #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/media/video-interface-devices.h>
->      #include <dt-bindings/pinctrl/rockchip.h>
->  
->      i2c {
-> @@ -126,7 +127,7 @@ examples:
->              dovdd-supply = <&vcc_2v8>;
->  
->              rotation = <90>;
-> -            orientation = <0>;
-> +            orientation = <MEDIA_ORIENTATION_FRONT>;
->  
->              port {
->                  ucam_out: endpoint {
-> diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov64a40.yaml b/Documentation/devicetree/bindings/media/i2c/ovti,ov64a40.yaml
-> index 2b6143aff391..24787c9aa155 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/ovti,ov64a40.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/ovti,ov64a40.yaml
-> @@ -72,6 +72,7 @@ unevaluatedProperties: false
->  examples:
->    - |
->        #include <dt-bindings/gpio/gpio.h>
-> +      #include <dt-bindings/media/video-interface-devices.h>
->  
->        i2c {
->            #address-cells = <1>;
-> @@ -87,7 +88,7 @@ examples:
->                powerdown-gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
->                reset-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
->                rotation = <180>;
-> -              orientation = <2>;
-> +              orientation = <MEDIA_ORIENTATION_EXTERNAL>;
->  
->                port {
->                    endpoint {
-> diff --git a/Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml b/Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml
-> index 20f48d5e9b2d..56fb5f18f07b 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml
-> @@ -69,6 +69,7 @@ examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
->      #include <dt-bindings/media/video-interfaces.h>
-> +    #include <dt-bindings/media/video-interface-devices.h>
->  
->      i2c {
->          #address-cells = <1>;
-> @@ -84,7 +85,7 @@ examples:
->              dvdd-supply = <&camera_vddd_1v2>;
->              avdd-supply = <&camera_vdda_2v7>;
->  
-> -            orientation = <1>;
-> +            orientation = <MEDIA_ORIENTATION_BACK>;
->              rotation = <90>;
->  
->              nvmem = <&eeprom>;
-> diff --git a/Documentation/devicetree/bindings/media/i2c/sony,imx355.yaml b/Documentation/devicetree/bindings/media/i2c/sony,imx355.yaml
-> index 6050d7e7dcfe..b4a88eaa7ef2 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/sony,imx355.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/sony,imx355.yaml
-> @@ -74,6 +74,7 @@ examples:
->    - |
->      #include <dt-bindings/clock/qcom,camcc-sdm845.h>
->      #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/media/video-interface-devices.h>
->  
->      i2c {
->          #address-cells = <1>;
-> @@ -98,7 +99,7 @@ examples:
->              pinctrl-0 = <&cam_front_default>;
->  
->              rotation = <270>;
-> -            orientation = <0>;
-> +            orientation = <MEDIA_ORIENTATION_FRONT>;
->  
->              port {
->                  cam_front_endpoint: endpoint {
-> diff --git a/Documentation/devicetree/bindings/media/i2c/sony,imx415.yaml b/Documentation/devicetree/bindings/media/i2c/sony,imx415.yaml
-> index 7c11e871dca6..69a37ff68db3 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/sony,imx415.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/sony,imx415.yaml
-> @@ -86,6 +86,7 @@ unevaluatedProperties: false
->  examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/media/video-interface-devices.h>
->  
->      i2c {
->          #address-cells = <1>;
-> @@ -98,7 +99,7 @@ examples:
->              clocks = <&clock_cam>;
->              dvdd-supply = <&vcc1v1_cam>;
->              lens-focus = <&vcm>;
-> -            orientation = <2>;
-> +            orientation = <MEDIA_ORIENTATION_EXTERNAL>;
->              ovdd-supply = <&vcc1v8_cam>;
->              reset-gpios = <&gpio_expander 14 GPIO_ACTIVE_LOW>;
->              rotation = <180>;
-> diff --git a/Documentation/devicetree/bindings/media/i2c/st,vd55g1.yaml b/Documentation/devicetree/bindings/media/i2c/st,vd55g1.yaml
-> index 060ac6829b66..db9f0c15576c 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/st,vd55g1.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/st,vd55g1.yaml
-> @@ -105,6 +105,7 @@ unevaluatedProperties: false
->  examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/media/video-interface-devices.h>
->  
->      i2c {
->          #address-cells = <1>;
-> @@ -123,7 +124,7 @@ examples:
->              reset-gpios = <&gpio 5 GPIO_ACTIVE_LOW>;
->              st,leds = <2>;
->  
-> -            orientation = <2>;
-> +            orientation = <MEDIA_ORIENTATION_EXTERNAL>;
->              rotation = <0>;
->  
->              port {
-> diff --git a/Documentation/devicetree/bindings/media/i2c/st,vd56g3.yaml b/Documentation/devicetree/bindings/media/i2c/st,vd56g3.yaml
-> index c6673b8539db..48db22ca4a7e 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/st,vd56g3.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/st,vd56g3.yaml
-> @@ -107,6 +107,7 @@ unevaluatedProperties: false
->  examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/media/video-interface-devices.h>
->  
->      i2c {
->          #address-cells = <1>;
-> @@ -125,7 +126,7 @@ examples:
->              reset-gpios = <&gpio 5 GPIO_ACTIVE_LOW>;
->              st,leds = <6>;
->  
-> -            orientation = <2>;
-> +            orientation = <MEDIA_ORIENTATION_EXTERNAL>;
->              rotation = <0>;
->  
->              port {
-> diff --git a/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml b/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
-> index bc339a7374b2..4a66cb711372 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
-> @@ -173,6 +173,7 @@ examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
->      #include <dt-bindings/media/video-interfaces.h>
-> +    #include <dt-bindings/media/video-interface-devices.h>
->  
->      i2c {
->          #address-cells = <1>;
-> @@ -196,7 +197,7 @@ examples:
->              vddgpio-0-supply = <&vsys_v4p2>;
->              vddgpio-1-supply = <&vsys_v4p2>;
->  
-> -            orientation = <0>;
-> +            orientation = <MEDIA_ORIENTATION_FRONT>;
->              rotation = <0>;
->  
->              sensors {
-> 
+Jiqi Li (2):
+  dt-bindings: arm: tegra: Add lenovo,thinkedge-se70 compatible string
+  arm64: tegra: Add Lenovo ThinkEdge SE70 device tree
+
+ .../devicetree/bindings/arm/tegra.yaml        |   5 +
+ arch/arm64/boot/dts/nvidia/Makefile           |   1 +
+ ...ra194-lenovo-thinkedge-se70-baseboard.dtsi | 106 ++++++++++++++++++
+ .../nvidia/tegra194-lenovo-thinkedge-se70.dts |  14 +++
+ 4 files changed, 126 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra194-lenovo-thinkedge-se70-baseboard.dtsi
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra194-lenovo-thinkedge-se70.dts
 
 -- 
-Regards,
-Benjamin
+2.43.0
 
