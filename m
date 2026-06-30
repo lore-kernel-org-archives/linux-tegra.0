@@ -1,186 +1,120 @@
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011026.outbound.protection.outlook.com [40.93.194.26])
+Received: from mx0a-00823401.pphosted.com (mx0a-00823401.pphosted.com [148.163.148.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A07D2BEFF5;
-	Tue, 30 Jun 2026 08:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782807718; cv=fail; b=lq/wTZ2peVEePDqTM/J7zQcHUgIeqt+yU57BTI4etmRxlly3eraBT4lZTvUZZw4Li5p5veYvm3cqfNe0nE4ifPQYyUj2kPtkqw4LQFw4FA4GfWKuEHsbF6vuOTLVQz6CrLQLD1zRtaLCUcrn6gs/jv+KGzM/xYo3CQ4PorQjziQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782807718; c=relaxed/simple;
-	bh=tTID2ewmv3hKXi+V5j0u5jXamdkOIw5wSMotmePmSBY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZjQRErBqCKICJJMkNwntqlNFHMDf6t2iOVqXVGoybr7jp5gBl7qI27jVQH0luAIxGSujDExXnsKt3jvCNxY9nV8e0W4sGHtioqDEEJKtqW3PTiMl77Z8XEDvF8BCwfycIYaHrXAivhDa9hEA2YOUuWEPQ03KvzmIWsBFj4FrSrU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cl4ojxaQ; arc=fail smtp.client-ip=40.93.194.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9788935A3AF;
+	Tue, 30 Jun 2026 09:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.148.104
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782811085; cv=none; b=XHFcXPSXZU1hWHge9ADtsLRgF/k7Zm5fa0rTu24MTk6EEfzSCe+ff+L/wQOYJMU90q1zRjGGNMLa470SIMPDYfxLK0LBdOI/VgcHYQGRQ4PFBa2Haud4H9z8oPKf1OgMmlaReLcK/FuzGJSJ4eYssSJOZKARfOPQvzCtlrBcWO4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782811085; c=relaxed/simple;
+	bh=3s/QOz8k9wxpyJ1u9VK/ZYUNlFaOqOF7AAwXjjZGKcM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oIZDffZWZX2J6efW8hpMwbIYtTxlP2Ke+Djk7vMf5Vz2inK4CHXoTB9vjwL8TWSg5UIiWSlgZJ0SK81fVnAlJSILWN3pIJU+ydT8AAVvlbyNL3z+9wyiX+9FKXFgubPPqXJuJob6wen2WfN9moAYWTIv52qJQrlpb+lUVLrDALA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lenovo.com; spf=pass smtp.mailfrom=lenovo.com; dkim=pass (2048-bit key) header.d=lenovo.com header.i=@lenovo.com header.b=FFLITHl7; arc=none smtp.client-ip=148.163.148.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lenovo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lenovo.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cl4ojxaQ"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KEUB8Dm5tcYWsP4v17If2zOl+JmJkUDEQsYCW5jRwqq0pJAW007XgCG0sIiUsH7O85Da/HKrIYSV/OJuCYYI+ABUL4HpkwLpLCn86EfO7mkL+Stq0mmXhcL5siCE/8QpjKTHxS0IJxbpsnOVjcd0O9oX6c6b5Cx/WqyyUqfamZbMaU60nUuU3kM9GTon+OLZpbH69mfMboFxZFsz4MyWLzzE8iLnr/K0WTd0IOzhJF3x7zLxDDi63m2OMsjkfmG12tnDd00+6ZuBPZl7+mKVg0303ZIi6L9CSm7tGEAcKedwo5GwnDmboKGmusZGonN4yfBKLJAKtt2kK4LHVZ68yA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PQLtbHuIgyrfDSlSS98GeCow+0yBpueEAxPGLSSVVRc=;
- b=beilKECcQIcBoTnakEAdkCEydf2GMTgPQqEcFMP1fTXh4P7c1VklhUKCuQtTgErAkeoCS/PnUMyYVqX7R82f5N/7MVXNX4bRDbKL+C/n2kbm2K2TxJTpUapVoo7KR8A7303YedYabnH+7sM7rz24VUjIc8gIObBqQe+S/t1BZNGsbQoj7Mtwg8X5M2mtPlqNjhOYhrbaoLoKM5XpL/HjthTYjVqEL50P/6LOpeLzqCR4vSpJsVNbKFWTnX3pZ6N/EHuYPH/zsg18NelabqH16pIfATeFRtaFPJYuT/niAK5YuK2kfVcYnjkr6tHSb3qdkfa9d0xR3YdBnXjts6sK6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PQLtbHuIgyrfDSlSS98GeCow+0yBpueEAxPGLSSVVRc=;
- b=cl4ojxaQqanwVathnyssvqzfKgstYEK3UmBivj9HyWsEOxkQOkN71etxbUfgvA46tqNSudBgtFBe03EEf+Cx1R1WmP5SeM1QwTE6SKzpyvi+XUKBX7s6/0NFNEAn9pHdBdKv3hPJfn42jUithXOiekAij0CY/Gi8Gxxz9fRLyXn//0uoOXYukEZ4J9vCjfjW/ogYYar4PRlgX3v5aAMxDT3dX7QUlBCWkFcqnmWdMgfn8OPwuNRxhiH0FuAgz7uLeIpXvenBIH6xIxEMzo6FG7u0CjOcxVeKEwXBgoyGjrwi//3qPeYmyMLrXWtOmsso2Pdabc0GgEEkSWnyEVdVpQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB8245.namprd12.prod.outlook.com (2603:10b6:8:f2::16) by
- SA3PR12MB8000.namprd12.prod.outlook.com (2603:10b6:806:31f::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.19; Tue, 30 Jun
- 2026 08:21:50 +0000
-Received: from DS0PR12MB8245.namprd12.prod.outlook.com
- ([fe80::e7c5:cfca:a597:7fa4]) by DS0PR12MB8245.namprd12.prod.outlook.com
- ([fe80::e7c5:cfca:a597:7fa4%4]) with mapi id 15.21.0159.018; Tue, 30 Jun 2026
- 08:21:50 +0000
-Message-ID: <73afa0d9-5b3d-4f5b-b888-abab9929cad5@nvidia.com>
-Date: Tue, 30 Jun 2026 13:51:39 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/4] PCI: tegra: Add Tegra264 support
-To: Manivannan Sadhasivam <mani@kernel.org>,
- Thierry Reding <thierry.reding@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
- Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, =?UTF-8?Q?Pali_Roh=C3=A1r?=
- <pali@kernel.org>, Michal Simek <michal.simek@amd.com>,
- Kevin Xie <kevin.xie@starfivetech.com>, Aksh Garg <a-garg7@ti.com>,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Thierry Reding <treding@nvidia.com>
-References: <20260617-tegra264-pcie-v7-0-eae7ae964629@nvidia.com>
- <20260617-tegra264-pcie-v7-3-eae7ae964629@nvidia.com>
- <slfaxyt6p5mwsqmxvmriy6npilpjhjxv5ruegj4hnivj6zufkl@o6adjy5jmzfy>
- <aju3jokcWR5DzPrv@orome>
- <23rcfdnhnjhdlhiw6eclxap2tk6j5ni7qkfsd3fkfmucvjemie@fvf4j5earp47>
-Content-Language: en-US
-X-Nvconfidentiality: public
-From: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-In-Reply-To: <23rcfdnhnjhdlhiw6eclxap2tk6j5ni7qkfsd3fkfmucvjemie@fvf4j5earp47>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PNYPR01CA0005.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:23f::12) To DS0PR12MB8245.namprd12.prod.outlook.com
- (2603:10b6:8:f2::16)
+	dkim=pass (2048-bit key) header.d=lenovo.com header.i=@lenovo.com header.b="FFLITHl7"
+Received: from pps.filterd (m0355085.ppops.net [127.0.0.1])
+	by mx0a-00823401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65U5axL33245166;
+	Tue, 30 Jun 2026 09:17:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lenovo.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=DKIM202306; bh=fPK1aMyjeecWtVzAhwi6nBdLvbBO/WB1Xu
+	J3AQfm6yE=; b=FFLITHl7zGdOqvRmceFMYM/DpfMj4qbDwY9TcVTnBIZ588i+fC
+	J+Atut5JenD0QM0jlAZdGZ/BfOqTH1DN6PAyaOiXdxALhIiyAxiM4miciFTSH0Ra
+	v4jMEVwp1eDZOpGMZwUezUQdWzmvNsSZdlHZ+J5Z2WayHELD0etwKKbB491dA5eo
+	9TtB9Xz5xJaUkC14CvdwEfqqTKwDAWk2AQx/TaA9BD2TzWtEootHcEVgJDNnhU+K
+	hoCvFJ95SaLf1uof3Wwv8X0Depr2KndoL++5qBsYsaSSlp/ciFbEdsM0v45FzVyQ
+	lAjDjRwAyTpYDifJTFO4q1a9lnKrkHT2TAUA==
+Received: from hkglppfpool3.lenovo.com ([103.30.235.220])
+	by mx0a-00823401.pphosted.com (PPS) with ESMTPS id 4f2w1dksmc-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 30 Jun 2026 09:17:46 +0000 (GMT)
+Received: from shelppfpol2.lenovo.com (unknown [10.122.146.24])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hkglppfpool3.lenovo.com (Postfix) with ESMTPS id 4gqHXq2hKGzDRDtM;
+	Tue, 30 Jun 2026 09:14:51 +0000 (UTC)
+Received: from lenovo.com (unknown [10.119.171.213])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by shelppfpol2.lenovo.com (Postfix) with ESMTPS id 4gqHc81rzDz1Mmw;
+	Tue, 30 Jun 2026 09:17:44 +0000 (UTC)
+From: Jiqi Li <lijq9@lenovo.com>
+To: linux-tegra@vger.kernel.org
+Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, mperttunen@nvidia.com, jonathanh@nvidia.com,
+        thierry.reding@gmail.com, mpearson-lenovo@squebb.ca,
+        Jiqi Li <lijq9@lenovo.com>
+Subject: [PATCH v2 0/2] Add Lenovo ThinkEdge SE70 carrier board support
+Date: Tue, 30 Jun 2026 17:17:41 +0800
+Message-ID: <20260630091743.657388-1-lijq9@lenovo.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB8245:EE_|SA3PR12MB8000:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3c6c3f54-9bef-45aa-7dd9-08ded680a256
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|23010399003|376014|7416014|22082099003|18002099003|3023799007|6133799003|56012099006|4143699003|11063799006;
-X-Microsoft-Antispam-Message-Info:
-	ZhJGwe9D5PToHVCa9TRMi4jvbtwMrCBPlqqXRYF/KjEdMWzo99+QLdG/JOzBmMf5sgLibbjiYFUh4cTVapR/BwCIee0kd+30Oy8ChDcsGWI7kSPa0Ph+O4vhMHcX9VBh97aEK0y2E5rpNG8fdtQh6orIkY1Ni1ZCn3dlsj/yPen1KAMexDB1suBEfFbug8KUY5J6cLo32wQKErjt1lcL3Wvg4Q1p5aHYaJSX6YZMfd5B6wiXMzd7635dJQRSYSFEF65l22gVECuAVi1hMBDCydDjd8LEk7OUTlMIqUSWOCgX/zpAtnWLMJPZ0YZdvnH1W+mSdiDahsX2lvEJS0l5pefYCoARsDGwFKfvbcD60tUpuWRO4kPE0XdcEECgIyQZTrl25mPJckIROVdeYfidM03o2U8fMPmc1bndIfKXh1oi6BBppX7OcsSp21UX/425lXz5MdvY2dAT2rk+0shCEg21F8+xekU318Q36nIi1pbq+4azWhSZXtXdnZnlkX1dRoDjgn9RT7tW6+Y5r8c95ia2uYMLrHTdutNfer19ONwP+1rVczSfMUCOOXFW1TVywxtwqjx8LAbhF40DOe90WIybHXimJ7bNVuPPisOSpFnABI5+fwGxTwTdLKjb9iD3b1m5b4NHXcvdK+detnTEj54jB5wQuc7UfC36I3GoYtw=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB8245.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(23010399003)(376014)(7416014)(22082099003)(18002099003)(3023799007)(6133799003)(56012099006)(4143699003)(11063799006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MDE0aXdnazZBSUd5Q3d0NTBjZDloZVdGNjdOdWZyd0cySkdVRGt4QlhUcjZK?=
- =?utf-8?B?UWJpcjRIOGFxSDViWTVNc2UzVzArOFFZc3FOWHhMbmVSMEVERW9lbnFiTDJ6?=
- =?utf-8?B?NzM1WkpOQVREL3dsOU5MOFhtVll2NTFmcE9HUmFDU3l3YW5vUGZWWm9WM1Qz?=
- =?utf-8?B?THNzR2pDVmZqODZrZ2FvZ1UrVjZXeVBFTGUwVGVOdnFhR2d3T3QyczFrYmdp?=
- =?utf-8?B?YS9oR1BEOE1zY25Nam1JTWo5RWM0cGh5dE5ycy9vQ2EwY01HdG0wQnBWZWhS?=
- =?utf-8?B?K0VBK2MyUnd4bnZBbGZVcGk4TU1XOXpoMStCNDlPZXY5RzU2WlVSenBxaXZW?=
- =?utf-8?B?b2Q4MnZoelMyNHpxR2tFelhCdXRCMFhkOVRsdi9wZUpzeFZjMFNWcExEeHFR?=
- =?utf-8?B?RWJtZDFvR3FZWnNBV21wTGlOU3BNb05XTW82ajhtcktKYnpBaU5ZWW9JdlZK?=
- =?utf-8?B?WFpEN0tsajBCK3A0bzdCWEtLeFhtN3g2c01RbWlwUEwzSGo0Q0Vsbm54OFVx?=
- =?utf-8?B?NHI2dDRlUllDNFB5N0FSSXNQMEpoQ0c4ek4wdEJibnVUekQzUWptaE8wWUN1?=
- =?utf-8?B?bXFpSGpxLzNGWEY1OENaNTQ3REIzd0M2cCtjb0NkR3Z6Vnl6MjM2NDdNZDZI?=
- =?utf-8?B?cDVkcWV2b3V5SGFaVC83akEvcWJ4YTRDRVlmam9VbmhyY3h6MVlUQktsOUYv?=
- =?utf-8?B?QTA3V2xtWXVjd0lXREFrVGRRVE1KSjRMU2VTZGJTcjJvMWVIS2pwWndSZVNw?=
- =?utf-8?B?Y3FEZktQQVAyaHVJSk9BRWdvTXpFYTRXZzkrOERvU2xRQno3dG5uM0R3bGho?=
- =?utf-8?B?ZWZBdlh5YStoOVlzZEtMSEtkdHlOOXIrU0c0Z3B0T1VGS0hGWGYxR2Znd2pJ?=
- =?utf-8?B?VDU0bDVYc2Yyc3YzeWpQY3RCMTF6T3V5bnZabUZZSkZtb1hGd2ZkelJuR1Q5?=
- =?utf-8?B?SjViWFhsdGtaMWltS3NGajlwd01JMUxOMGRra2xPc1VWTnA2RTY4NnFVMlhk?=
- =?utf-8?B?U005ZG53NW9DeTRQSHdCRlh3VlB5aEd1WlB0RCsxZG0wZmkrWStGcmFYdk93?=
- =?utf-8?B?SWh1Q09BRFhjdm9GYXdiWkhjNGZOdWo0cCtsRW5sYklEQlhnOHRqSExlU1FK?=
- =?utf-8?B?UkJmakdhMWJjOHdROStEUGJFakJUSWRZakxkQnRVMGMrVkZrUlZmUzBqQmh3?=
- =?utf-8?B?ckl5bGovSTNNekhPems5TmZsQXdWWFRzRmo4bEdTL1pVTGpPdXFlOUpFSkFQ?=
- =?utf-8?B?WlV4UVA5QTZ5SnE3UjdHcmtIUG0wRExMNFFqSWtBUWtvQ3RvZXBpVHh5OE02?=
- =?utf-8?B?MWpLeGdDS2tpR2FKTHREaTQwaTBWNWlocDd5ZVZCdktXVWFuRmpTZC9kK1NU?=
- =?utf-8?B?OGRpSFlUeFJTejl5ZVV2LytRZllpMzJqWS8xQ0dEeXV1bXhBQXRJazRhQWlp?=
- =?utf-8?B?NzFLRk5aNlRXSWlmUXoyYkFPaVhsRUJ1cnl5ZCtvdWlLejI4QTI5RmVNSTRF?=
- =?utf-8?B?aXFIYnd4SmErR3p1TDdYM1N1TFprKzEreUNuVUFaMFlWQWZrZlBqaEV2V05L?=
- =?utf-8?B?VVBzS0E2UVRIdTBGYktxcHhoZXVCVU5DbmpuYTYvMS92aFk4L1hFa3J5MmFp?=
- =?utf-8?B?T2ZXTjdvV1U1V1I4LzdCK3Vya0MzYVNuOHNkaloxQytTSVlucDFjN1krVXBm?=
- =?utf-8?B?Q1B6clp3QTVvaEdjWjc1WnhVcmRDS3RVa0Fob0dKYjNqQjRpVGFReGdVUjlV?=
- =?utf-8?B?dVF6MWhvK3hXVFBBSnpGejYrdC9GdWVDNW1WeDQvMHo3MXMrT3lQOTZIRnpR?=
- =?utf-8?B?NWhZTHFPa2EwempLcVJ6elRxR3FFZ3lickNwWWxPWC9XdStHbDNTajVTaGI5?=
- =?utf-8?B?RW9hamlSa28wZWgvR1BhTUZIaStYcjBVa1FSWWVoMlV2UDFCNzh3S0JqWTI2?=
- =?utf-8?B?ZEFrdGQ3cXlCN0FGanRqUmx5bTNQaWl5Q2lwT3FsQWt0RVc2R0IybzZTN0ND?=
- =?utf-8?B?TkZxK2xxRTdVWmdRMjI0eDNCYis5WVF0SW9ySWRWakpYR3ljTGt1cXh0clBU?=
- =?utf-8?B?c1J4SzVJbWp4dXdsejhoRnBpWVYrMWxJc0J5elJrc0dNVUdiUVAyM0hWaVFJ?=
- =?utf-8?B?VkNtbHdiWWJ2QlRjZnlnVWVSMHQzV2orWjkwcFF5S1lWQVdabGNxY2E4RkJR?=
- =?utf-8?B?T2JNbGZOTGdGK29VUmRhRDhic3NGYmhUZFl6aXA4bDBtWXlnNHMwZXJ4eEI1?=
- =?utf-8?B?UG5TNUNhM1EyTExsMDhqYjJmMUxKeVhLcVNKRUR6aGFCY1IzN25uNVlnUnVH?=
- =?utf-8?B?bmVCMjZPci9tRXBST0E0eERHZEl5UW03OGpzSVZtUDB1WithRzVkMFhqTFdt?=
- =?utf-8?Q?wVVOqiElLLlE3fMM=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c6c3f54-9bef-45aa-7dd9-08ded680a256
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB8245.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2026 08:21:50.4701
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9IMpwIB7XLeMpS2FPVchFY3VaBPv0TZdW2eF10zEJspRNcQb58wejqW9KQWSDfniiPrPL3phX+aKQUKebiRNkQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8000
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: HN42lFtMqy1fVR2tj0Sf2XNlc5vUcacD
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjMwMDA4MyBTYWx0ZWRfX5s+QVsd1Cwc+
+ VIqiYv7uwTdEJfcEY94Y+Bhe98blDF1PEeG+GFbpHo8aTarG2dAiDch/4T5KZrDL0SsZK99xl4D
+ HxiwVabtbq0aE1Ri6L0me/Xnxfvq+qM=
+X-Proofpoint-ORIG-GUID: HN42lFtMqy1fVR2tj0Sf2XNlc5vUcacD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjMwMDA4MyBTYWx0ZWRfX5WcjkbuLVQHs
+ yArS9TqMV9Zj9fZGV9Jpmfj+tDL3xrI5ljga1SbGuEsois/RnMUE1ar5wHVtGe2Q/TLimHDCkAL
+ 8zNSrXRo+kbDGGd/zwWT9w8oa3yaV3m/Gue3SF4QNvZt5hCu4ZlRxZ1lerUgdH4jmOUSsDGWPkQ
+ D/RFqZCsv0RGESqqh8kT2TXv/JtaiODNdETrZu+maIxdG7eXSsRh1yEgylFANf6PWX0Uuaag5qq
+ PuWG15QqsHFbz6f29sHE4OkY0UaRHiy/5DcwMSsgq0skKzSfJhyOeMunwTVxqUT/eTygzVIcaKL
+ qk+u3+POlOAgulIO+7F0+5rq7xYqt35PuOv/wqEYwaWOF0ft1eZ90I0Q41Nfh3hUjCmLoUbM+8Z
+ Ncarrcz5C9FPsK1lWQP0pX2XTQnN2jYGjn234t47n09NhqAeAIEnOPFCZvUTEtsTkGrECOhXqJ2
+ VqMAEOq+iUlElsgGcYA==
+X-Authority-Analysis: v=2.4 cv=Qo9uG1yd c=1 sm=1 tr=0 ts=6a4389ba cx=c_pps
+ a=3okn395cuUlJnlrAQteHYA==:117 a=3okn395cuUlJnlrAQteHYA==:17
+ a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=2RTuljz969oO5usasWGy:22
+ a=ohM_6DErYqYCNn4jCPz8:22 a=1HKclyIHpsRocwtzyY4A:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-30_02,2026-06-26_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 malwarescore=0 bulkscore=0 impostorscore=0 phishscore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=-20 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2606300083
 
+This patch set introduces device tree binding and standalone DTS file
+for Lenovo ThinkEdge SE70, a fanless industrial edge gateway powered by
+the NVIDIA Jetson Xavier NX module (P3668-0001) on a custom carrier board.
 
+Patch 1 updates tegra.yaml bindings to add the three-stage compatible
+string matching board + SOM + SoC, following the existing Tegra
+carrier board convention.
 
-On 30/06/26 1:33 pm, Manivannan Sadhasivam wrote:
->>>> +static void tegra264_pcie_remove(struct platform_device *pdev)
->>>> +{
->>>> +	struct tegra264_pcie *pcie = platform_get_drvdata(pdev);
->>>> +
->>>> +	/*
->>>> +	 * If we undo tegra264_pcie_init() then link goes down and need
->>>> +	 * controller reset to bring up the link again. Remove intention is
->>>> +	 * to clean up the root bridge and re-enumerate during bind.
->>> But the controller will be consuming power even if PCIe is not used. Do you
->>> really want that? Can't tegra264_pcie_init() handle the initialization? I'm
->>> wondering how tegra264_pcie_deinit() in tegra264_pcie_suspend() works then.
->> I had to clarify this with the PCI team and they indicated that
->> tegra264_pcie_deinit() is actually useless and maybe even harmful. The
->> reason is that there's a processor on these boards (BPMP) that takes
->> care of power sequencing and it will automatically take the PCI links
->> to L2 on suspend and assert PERST#.
->>
-> Then why are you calling tegra264_pcie_deinit() in tegra264_pcie_suspend()? If
-> tegra264_pcie_deinit() is harmful, then calling it during suspend should also
-> be, right?
-> 
-> Or tegra264_pcie_deinit() has to be paired with BPMP doing its own power
-> sequencing?
-> 
-> Not a big deal, but it just feels weird to see suspend() and remove() doing
-> different things.
+Patch 2 adds the complete carrier board device tree, including:
+- 40-pin expansion header pinmux configuration
+- External Micro SD card slot with dedicated 3.3V regulator
+- I2C bus for 40-pin header
 
-tegra264_pcie_deinit() should be removed in tegra264_pcie_suspend(), 
-BPMP-FW takes care of L2+assert PERST# sequence during suspend.
+All static device tree checks pass: dtbs compile and dt_binding_check
+complete without errors.
 
-- Manikanta
+Jiqi Li (2):
+  dt-bindings: arm: tegra: Add lenovo,thinkedge-se70 compatible string
+  arm64: tegra: Add Lenovo ThinkEdge SE70 device tree
+
+ .../devicetree/bindings/arm/tegra.yaml        |   5 +
+ arch/arm64/boot/dts/nvidia/Makefile           |   1 +
+ ...ra194-lenovo-thinkedge-se70-baseboard.dtsi | 103 ++++++++++++++++++
+ .../nvidia/tegra194-lenovo-thinkedge-se70.dts |  14 +++
+ 4 files changed, 123 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra194-lenovo-thinkedge-se70-baseboard.dtsi
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra194-lenovo-thinkedge-se70.dts
+
 -- 
-nvpublic
+2.43.0
 
