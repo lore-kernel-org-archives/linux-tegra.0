@@ -1,32 +1,32 @@
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD0247D938
-	for <linux-tegra@vger.kernel.org>; Thu,  2 Jul 2026 12:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E47947DF8F;
+	Thu,  2 Jul 2026 12:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782994925; cv=none; b=Rz4BNK7+9bN0Qo9lASW+tXsx1OjHT6XDDIZn8yjt9DaN4VQ4x4jYJ5QWnA2tSDCmXpxBrhgE9KHXzEu1yVL1txMvS/AAby7o8XddCTBMrDCk7SNjUBbeU+DEjPkqZM0Q4oNCAN0utLthO+vRMjrENBPp0p7r8oVVifmKTlOEebo=
+	t=1782995149; cv=none; b=pjqZ0A4NOhfZvNfiGkDqrgycrmzCzu4rMgHwPe8jxc5WhD5ExALj359aRMB96APekr9xqDWTY8J7qAm1kwCCsVazRlcKB7znlGXH6bkW2EC27fY7rYxS5v9Yh+a6wf/j7Q9qv0TE/6TMvzRWZlf4jQuyFrrjjDak9fAu/zY/P/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782994925; c=relaxed/simple;
-	bh=HAAT0DQ/UAvdNOs6dKZMzpAmDc0tMByxgXgKCu3IuzE=;
+	s=arc-20240116; t=1782995149; c=relaxed/simple;
+	bh=7Ko6g/fNv98hSurpFrjSC8unNT/smMh3pnGqTobbcqg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=igy9pwyoZ4A6iTfdqu9zOdBshijf34XyI9jBeFSkQu9VCWe+Sr2UKgYI9kWS5zJvEjoNWPG1OMicqYO8lbzq05pRO0OSDjZP71WWE6kqrYgu0/mYQ/w6L8xd+R5odtpAAzuV48DtnvQ8elQIe0wYgqLMbwyUSr28BjF3fCILbiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lN0+Boa2; arc=none smtp.client-ip=91.218.175.188
+	 MIME-Version:Content-Type; b=BOLaqVoPoWiLkg/2UJ5URgjxP19d8Ij+0Fq+wib8IweadDwGKNZ+KVOtzRXHZIe8CqZ+RZYCzPVVbj1Z0D8bLPhcqcSmp5dHuurLeMCmesr/C1Gpuz0mdoE3A4Gvy3CN6XWK7e4Y5H6Q5Gt4cKcsQKpOwW5NWsyGX42jC2zvcmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=b+ldrvkt; arc=none smtp.client-ip=91.218.175.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lN0+Boa2"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="b+ldrvkt"
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1782994911;
+	t=1782995144;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=flDoJiJgtgGf3x2zlQX9jaS5nhFTdBgmSXvfG9PiFjA=;
-	b=lN0+Boa2ASIcCLc47EPvtXVMZuYaw78VJ/wVLmRpCeGudutYAguuVxwIGwqQDa2oDibvGW
-	bIpbbgc5ew0Ij3QtFyyGuneAdXTOrpkXqfYfNRMzfKjFKxKgZCy8wM/iRDCenl6trdMYJz
-	+LOdf87J+2yAD0n3s3yNqonkzwm6x4w=
+	bh=7Ko6g/fNv98hSurpFrjSC8unNT/smMh3pnGqTobbcqg=;
+	b=b+ldrvkt8ZmJ+OrI3yxcQgFLnRxGCWHjhsFZZL3rVzLaxyNILjolYA01aJGr58GPqotONa
+	C0qfjyiCv0Ek1cqalMJ+/t7YCyD5CeARmY/TMOXt2of2lM3qjKi0LZINpNnLjdz9QLcCqu
+	OOzdaIK15Lm4UMi7JwMdKk4MKXYIZlw=
 From: Lance Yang <lance.yang@linux.dev>
 To: ljs@kernel.org
 Cc: akpm@linux-foundation.org,
@@ -111,11 +111,11 @@ Cc: akpm@linux-foundation.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-sound@vger.kernel.org
-Subject: Re: [PATCH 06/13] mm/vma: convert vm_pgprot_modify() to use vma_flags_t and rename
-Date: Thu,  2 Jul 2026 20:21:16 +0800
-Message-Id: <20260702122116.65642-1-lance.yang@linux.dev>
-In-Reply-To: <548ba81b2971734d4d2143237ad1465bd1b2f525.1782760670.git.ljs@kernel.org>
-References: <548ba81b2971734d4d2143237ad1465bd1b2f525.1782760670.git.ljs@kernel.org>
+Subject: Re: [PATCH 07/13] mm/vma: rename vma_get_page_prot to vma_flags_to_page_prot
+Date: Thu,  2 Jul 2026 20:25:15 +0800
+Message-Id: <20260702122515.74271-1-lance.yang@linux.dev>
+In-Reply-To: <fc8ac30d03d29d236e76542b36432bba315aca60.1782760670.git.ljs@kernel.org>
+References: <fc8ac30d03d29d236e76542b36432bba315aca60.1782760670.git.ljs@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -127,46 +127,18 @@ Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
 
-On Mon, Jun 29, 2026 at 08:25:29PM +0100, Lorenzo Stoakes wrote:
->Update vm_pgprot_modify() to use the new VMA flags type vma_flags_t, and
->rename to vma_pgprot_modify() accordingly.
+On Mon, Jun 29, 2026 at 08:25:30PM +0100, Lorenzo Stoakes wrote:
+>Having vma_get_page_prot() refer to VMA flags and vma_set_page_prot() refer
+>to a VMA is confusing.
 >
->This is part of the ongoing work to convert vm_flags_t to vma_flags_t, in
->order to eliminate the arbitrary limit of the number of bits in a system
->word on available VMA flags.
->
->Update VMA userland tests accordingly, updating vma_set_page_prot() to no
->longer inline vma_pgprot_modify(), rather we can simply define
->vma_pgprot_modify() as a static inline function and the tests will pick it
->up from vma.h.
+>Rename vma_get_page_prot() to vma_flags_to_page_prot() to resolve this
+>confusion.
 >
 >No functional change intended.
 >
 >Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
 >---
-[...]
->diff --git a/mm/vma.h b/mm/vma.h
->index bcf0c2773449..6a8abb8ae937 100644
->--- a/mm/vma.h
->+++ b/mm/vma.h
->@@ -522,9 +522,11 @@ static inline bool vma_wants_manual_pte_write_upgrade(struct vm_area_struct *vma
-> }
-> 
-> #ifdef CONFIG_MMU
->-static inline pgprot_t vm_pgprot_modify(pgprot_t oldprot, vm_flags_t vm_flags)
->+static inline pgprot_t vma_pgprot_modify(pgprot_t oldprot, vma_flags_t vma_flags)
-> {
->-	return pgprot_modify(oldprot, vm_get_page_prot(vm_flags));
->+	const pgprot_t prot = vma_get_page_prot(vma_flags);
->+
->+	return pgprot_modify(oldprot, prot);
 
-Nit: could this just stay as a single return? something like:
-
-return pgprot_modify(oldprot, vma_get_page_prot(vma_flags));
-
-Otherwise, LGTM, feel free to add: 
+straight rename, no stale callers that I can spot ;) Feel free to add:
 
 Reviewed-by: Lance Yang <lance.yang@linux.dev>
-
-[...]
