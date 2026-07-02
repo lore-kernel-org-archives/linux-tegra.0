@@ -1,66 +1,118 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A628A37A84E;
-	Thu,  2 Jul 2026 15:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A19D25C6EE;
+	Thu,  2 Jul 2026 15:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783006336; cv=none; b=tPmM7UyUXLI86UwXlU6QSejvxkktvNWxKA7TULe9CY61I6AxF7uhTp2mprTtQr6F2RG/1uIb49QMXt/XHjN/lbl9XHFTf75X4T1hqQAQtzNA/sG+Fso/TUzpg/SLSPmQ/SaWw1eCqAEHiBuNANgKAUBiZeoIvrLqjgP0nQxeSxg=
+	t=1783006839; cv=none; b=aXuZ1AvGL/SqfScg6yTXojcBsV2s4TYDl+iqGlYwnm/mMT5EUuX8/vb3bTaBtQNWta39LfMTU3SWsn4aHwxOTHY812Wyb6K5fpIAdg8oQHpnUGK9YH6qWH0+oC6moE+sNONS10gwh/Iaj1htd60s7FVz+oWWEf5VkOOjCkrbSTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783006336; c=relaxed/simple;
-	bh=+cGn/g6vlxxoicm4aGN5PKiJ90qLv0h1llZMltqCYuk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=pMTH6d7wOsylRnozQ8j9Sn95IPss4027tzHXDVr2dHd31vpBBi1qW1BqVQmh/kvdoEZh3gpCRr3JHP4HWs2x51u8OYWQlhgkBQnORfcSeoo7qtUwhJYVzU/hqcfojGAJkLDJMtFbWDnd/gjkBziKmaPsnYL+ydVTV3a0ShmEkfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YQPj9UK2; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783006839; c=relaxed/simple;
+	bh=1KusJ3AQEr1aqQ3DLhLNitOF1kBax8nnylo9H5eGrBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hqUuNVcEIEOXVr+yfo7Pr+eyP7gpA2e7R7wCC5tTxOf2C0UxAE66k/whYEbOZcwDavVevV4GhkWmeP5zwcOxXcrGF5JUWvNOXbJjxDbrQlv6TbWv5sGj/90o+rEheWXFPhKi4yyyxMfI9wyQ06KDcPddLiZc1raqHUv7F45PyoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z8vOAtQO; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQPj9UK2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3E981F000E9;
-	Thu,  2 Jul 2026 15:32:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z8vOAtQO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE8E41F00A3E;
+	Thu,  2 Jul 2026 15:40:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783006335;
-	bh=SkFOU4Oyw7LYLPAfVqtgnDjfsTBzuUdC4zo1Q4spOx4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=YQPj9UK2pOkhB8RDcHuXW0QbDJbhBpl/OLo4rsgcb7PkoDO1QJXiMLqtfE0SUVv40
-	 UL6BVRrDxAk0o5MMoG8xnQ/0Qlm7wbShq2PhJ7b1qaw89ETLwZJzqUkywna8Q9EHrD
-	 9S8z7to74FPFl9x5bh6IpH1Cu4JIB7B+3+g4TUbj9CL+75ISLidqWEAYl3t5sR4sLE
-	 3JF1+8M+mojiCWWqRaXyMlAqloQq5Bfou/qbyZ1YDUraPuAG8C1803p49UY9EGZUtN
-	 HZs43qOxi30mrWhxd9XxjK0rx/6KPyQlL8rIUu8f7INKqrwRt6irAhL00rE+HqB6Ql
-	 Bq3vxONR02d6A==
-From: Vinod Koul <vkoul@kernel.org>
-To: dmaengine@vger.kernel.org, Rosen Penev <rosenp@gmail.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, 
- Jon Hunter <jonathanh@nvidia.com>, Frank Li <Frank.Li@kernel.org>, 
- Thierry Reding <thierry.reding@kernel.org>, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20260609212531.22044-1-rosenp@gmail.com>
-References: <20260609212531.22044-1-rosenp@gmail.com>
-Subject: Re: [PATCHv4] dmaengine: tegra210-adma: use platform to ioremap
-Message-Id: <178300633253.735405.8595624907524864073.b4-ty@kernel.org>
-Date: Thu, 02 Jul 2026 21:02:12 +0530
+	s=k20260515; t=1783006838;
+	bh=gNLYS8EYE6bJ5KaXF7DR9fRu4urDF+a7laqqF8q0hcA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Z8vOAtQOT+iGTiy4xQ3GfxWy9CpR6iieY1qxm1fyBJSvxEFV2aEwGeTLwIZE4UbYF
+	 sH6QvDHKQJHBXcc/JYlecYNDNZBJEw63vn2taYjOLxg3iNlePJRLcm76SDX3qcqqpf
+	 OAzUHT+NRGQHyZOOfos5EJuVfaKEWfkdr4crDOBp2KFX/hKeIetGWLc1I64/oz6RHQ
+	 NC8RA6ivq/IEW4DV1d+3Z0k229cWnviqo6Svky+UHUgnyeaFy3m0xyIovRQ1UfVX8n
+	 wqqP9ts5FpBy46j7HS+G+te0/D/3BLeS388iQo+wLiLJCSDRdl7jDwGFy3vdpkllGJ
+	 NUUDfmqseIbQg==
+Date: Thu, 2 Jul 2026 16:40:15 +0100
+From: Lorenzo Stoakes <ljs@kernel.org>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: akpm@linux-foundation.org, tsbogend@alpha.franken.de, 
+	maddy@linux.ibm.com, mpe@ellerman.id.au, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
+	l.stach@pengutronix.de, inki.dae@samsung.com, sw0312.kim@samsung.com, 
+	kyungmin.park@samsung.com, krzk@kernel.org, peter.griffin@linaro.org, 
+	jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com, 
+	tursulin@ursulin.net, robin.clark@oss.qualcomm.com, lumag@kernel.org, lyude@redhat.com, 
+	dakr@kernel.org, tomi.valkeinen@ideasonboard.com, hjc@rock-chips.com, 
+	heiko@sntech.de, andy.yan@rock-chips.com, thierry.reding@kernel.org, 
+	mperttunen@nvidia.com, jonathanh@nvidia.com, kraxel@redhat.com, 
+	dmitry.osipenko@collabora.com, zack.rusin@broadcom.com, matthew.brost@intel.com, 
+	thomas.hellstrom@linux.intel.com, oleksandr_andrushchenko@epam.com, deller@gmx.de, bcrl@kvack.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, muchun.song@linux.dev, osalvador@suse.de, 
+	david@kernel.org, ziy@nvidia.com, baolin.wang@linux.alibaba.com, 
+	liam@infradead.org, npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com, 
+	baohua@kernel.org, hughd@google.com, vbabka@kernel.org, rppt@kernel.org, 
+	surenb@google.com, mhocko@suse.com, jannh@google.com, pfalcato@suse.de, 
+	kees@kernel.org, perex@perex.cz, tiwai@suse.com, linux-mips@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org, 
+	etnaviv@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, virtualization@lists.linux.dev, 
+	intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org, linux-fbdev@vger.kernel.org, 
+	linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-sound@vger.kernel.org
+Subject: Re: [PATCH 08/13] mm: introduce vma_get_page_prot() and use it
+Message-ID: <akaGOiLz-3Zx6kDs@lucifer>
+References: <3bb8bdc4788230c33102166d56cbc5abfad9d4cb.1782760670.git.ljs@kernel.org>
+ <20260702123845.95316-1-lance.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260702123845.95316-1-lance.yang@linux.dev>
 
+On Thu, Jul 02, 2026 at 08:38:45PM +0800, Lance Yang wrote:
+>
+> On Mon, Jun 29, 2026 at 08:25:31PM +0100, Lorenzo Stoakes wrote:
+> >There's a large number of vm_get_page_prot(vma->vm_flags) invocations. Make
+> >life easier by introducing vma_get_page_prot() parameterised by the VMA.
+> >
+> >This also makes converting vm_get_page_prot() to vma_flags_t easier.
+> >
+> >Also update the userland VMA tests to reflect the change.
+> >
+> >No functional change intended.
+> >
+> >Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
+> >---
+> > drivers/gpu/drm/drm_gem.c                   |  2 +-
+> > drivers/gpu/drm/drm_gem_dma_helper.c        |  2 +-
+> > drivers/gpu/drm/drm_gem_shmem_helper.c      |  2 +-
+> > drivers/gpu/drm/etnaviv/etnaviv_gem.c       |  2 +-
+> > drivers/gpu/drm/exynos/exynos_drm_gem.c     |  6 +++---
+> > drivers/gpu/drm/i915/gem/i915_gem_mman.c    | 12 ++++++------
+> > drivers/gpu/drm/msm/msm_gem.c               |  2 +-
+> > drivers/gpu/drm/nouveau/nouveau_gem.c       |  2 +-
+> > drivers/gpu/drm/omapdrm/omap_fbdev.c        |  2 +-
+> > drivers/gpu/drm/omapdrm/omap_gem.c          |  6 +++---
+> > drivers/gpu/drm/rockchip/rockchip_drm_gem.c |  2 +-
+> > drivers/gpu/drm/tegra/gem.c                 |  2 +-
+> > drivers/gpu/drm/virtio/virtgpu_vram.c       |  2 +-
+> > drivers/gpu/drm/vmwgfx/vmwgfx_page_dirty.c  |  2 +-
+> > drivers/gpu/drm/xe/xe_device.c              |  2 +-
+> > drivers/gpu/drm/xe/xe_mmio_gem.c            |  2 +-
+> > drivers/gpu/drm/xen/xen_drm_front_gem.c     |  2 +-
+> > drivers/video/fbdev/core/fb_io_fops.c       |  2 +-
+>
+> One missed?
+>
+> drivers/gpu/drm/panthor/panthor_gem.c still has:
+>
+> 	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
+>
+> Can use vma_get_page_prot(vma) too.
 
-On Tue, 09 Jun 2026 14:25:31 -0700, Rosen Penev wrote:
-> Simpler to call devm_platform_ioremap_resource() as it returns multiple
-> error messages for whichever part fails.
-> 
-> 
+Oops! Will respin and update. Good spot!
 
-Applied, thanks!
+>
+> [...]
 
-[1/1] dmaengine: tegra210-adma: use platform to ioremap
-      commit: 95cf38ae309f21b651fb7b8afe267eb3c84017a3
-
-Best regards,
--- 
-~Vinod
-
-
+Thanks, Lorenzo
