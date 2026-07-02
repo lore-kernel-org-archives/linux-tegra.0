@@ -1,112 +1,150 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85243403EF;
-	Thu,  2 Jul 2026 16:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1ABE397339;
+	Thu,  2 Jul 2026 16:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783009908; cv=none; b=Tw9UHvblnmKDlVkQSgvA1G9Npto2hqIq55J7z5RXqd9lGRYRw7ZfKxkqWteN/l2kYuphsVfz/2J1ke31XtkXmKg8c4fj9iQU8hg91r9iVlqYviuTsPCqsvV2aN7irhhQ2gMVwSnTDIzrlX7C5L96J2HzEbk5ZQX/GbWhVCii7Bc=
+	t=1783010492; cv=none; b=iwVHd7/428O8morhrGOiyKcPacxnsuDag9pUkkgumUoh7tj6RZFf8BW4VnmXDQEqfPrCXovw9krSZEq+fIdZBSjtbTh3YmR4gBs3av/tH1yW+AiphXj7v/OwDjelw8ZS1v5tcMKX5tcWuXQeWNKPseKBHUSKo+XWvPLfrboej08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783009908; c=relaxed/simple;
-	bh=E1qWf++P4fQTxTfdt1w7bxV4tlwl6MwcbrDidejiQ/c=;
+	s=arc-20240116; t=1783010492; c=relaxed/simple;
+	bh=4TcPpM0BZaoJj/LKE0Ry2kWPQZbK+NaW1FTfGXp6Qn4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=srWY49Ny5fAH76APObP7+PdbvAMYyjdhJ0zitLwHa3jVuM+OwMSwk8wwCjftXnnVA/8lL7/aMS5mlfLIwojmXrgBMKqJADZPm9awc3su/KEqVPQhGf6zyeMBfAq9G1Aqo20zhhyozag9zcnk2RMXFzMu/725HIs7/Vksr8nZQ8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTJm75v6; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=a/PpFtrJlDx8CL2DHWhX7TlufHi1XY4BEm2gvt7KmyKwWUmDD9wP23vIAY1rIDRLRCWxbW5zYy1cEK/ugO1Cn6C2iNQU+PI9+ud/60aXExymRq+PHPGe8iRfUYKqEFnOgJTKY9eO4LIGO2ZOonIz36Q4PtB/X1nH7Szgnur8GNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UbIxVhIT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTJm75v6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D5261F00A3A;
-	Thu,  2 Jul 2026 16:31:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UbIxVhIT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3321D1F00ACF;
+	Thu,  2 Jul 2026 16:41:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783009907;
-	bh=E1qWf++P4fQTxTfdt1w7bxV4tlwl6MwcbrDidejiQ/c=;
+	s=k20260515; t=1783010485;
+	bh=4TcPpM0BZaoJj/LKE0Ry2kWPQZbK+NaW1FTfGXp6Qn4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=FTJm75v6g78dw7nc2yIjeNrtd/XXU46WO/2u8nnziEKlJYchAWQ9hGEChgT4F31ah
-	 HiH5xTUbuFOhBbd6C1duQ+RhK7b4oHictxqHPOAi/lrzXWZ0FTN2EDGOuyFEWt0mD1
-	 vjw0IUs1vrHYSMCjr+3zzHxShdi1SoTmUIrBx0H0nw1oUHkfV6THw+nOZBnbM1ksv+
-	 +IgzClZgoCati852KoF+eqgYzFxCjgh+OL3JRZibavJHQwCUYoiGfhSnInQcjeQExX
-	 M1Tr3eyxRp2MXQhzrXdgxW+NoNc9BMVcJx67MLhqeaR6Vs6Z2WBP6mhtT0mJnysYek
-	 vPOd4U2WlHy2g==
-Date: Thu, 2 Jul 2026 17:31:24 +0100
-From: Lorenzo Stoakes <ljs@kernel.org>
-To: Lance Yang <lance.yang@linux.dev>
-Cc: akpm@linux-foundation.org, tsbogend@alpha.franken.de, 
-	maddy@linux.ibm.com, mpe@ellerman.id.au, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	l.stach@pengutronix.de, inki.dae@samsung.com, sw0312.kim@samsung.com, 
-	kyungmin.park@samsung.com, krzk@kernel.org, peter.griffin@linaro.org, 
-	jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com, 
-	tursulin@ursulin.net, robin.clark@oss.qualcomm.com, lumag@kernel.org, lyude@redhat.com, 
-	dakr@kernel.org, tomi.valkeinen@ideasonboard.com, hjc@rock-chips.com, 
-	heiko@sntech.de, andy.yan@rock-chips.com, thierry.reding@kernel.org, 
-	mperttunen@nvidia.com, jonathanh@nvidia.com, kraxel@redhat.com, 
-	dmitry.osipenko@collabora.com, zack.rusin@broadcom.com, matthew.brost@intel.com, 
-	thomas.hellstrom@linux.intel.com, oleksandr_andrushchenko@epam.com, deller@gmx.de, bcrl@kvack.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, muchun.song@linux.dev, osalvador@suse.de, 
-	david@kernel.org, ziy@nvidia.com, baolin.wang@linux.alibaba.com, 
-	liam@infradead.org, npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com, 
-	baohua@kernel.org, hughd@google.com, vbabka@kernel.org, rppt@kernel.org, 
-	surenb@google.com, mhocko@suse.com, jannh@google.com, pfalcato@suse.de, 
-	kees@kernel.org, perex@perex.cz, tiwai@suse.com, linux-mips@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org, 
-	etnaviv@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, virtualization@lists.linux.dev, 
-	intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org, linux-fbdev@vger.kernel.org, 
-	linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-sound@vger.kernel.org
-Subject: Re: [PATCH 13/13] mm/mremap: convert mremap code to use vma_flags_t
-Message-ID: <akaSQypCQLeW9qfK@lucifer>
-References: <380f761d35a3faa4370f8b3f92e3d4af3d4c7110.1782760670.git.ljs@kernel.org>
- <20260702134947.25189-1-lance.yang@linux.dev>
- <akaJx8Zt8kazlrjq@lucifer>
- <2f36a2da-0686-485f-b4b9-ae699bef4fd4@linux.dev>
+	b=UbIxVhIT3k+L2Rvex870aYp4emZYvycrMzgT/l80VxrbTxWvxI9JRKpnaUNMEjG3G
+	 ZoVLWczTG/g9HyZAgZ70twW/ylV0EE7XLdG/sgXmKLnHisy8AsEYlfbd5niKzqz1lY
+	 ws98cZTWJqeFnp3vSJLG17/qF3Ge/moCJxFQuACsKCwbcRvPFAWF7LSujuvl0ZguAd
+	 0Ey5CbVzfmKHTGGtoQsv7zUESob5GM+jQi/nn4i0YwCIBp/b1yxTiqFNMy4jhvtD5D
+	 q7w26HLWMKTd+xN5EbSr27iexWuWelP+dlG+S+pGinCthmp6iUYPrtV/RBEn+6x6na
+	 +pBQI4mIXDTaw==
+Date: Thu, 2 Jul 2026 18:41:23 +0200
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Yury Norov <yury.norov@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Russell King <linux@armlinux.org.uk>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.org>, 
+	Lorenzo Stoakes <ljs@kernel.org>, "Liam R. Howlett" <liam@infradead.org>, 
+	Vlastimil Babka <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, linux-mm@kvack.org, 
+	iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org, 
+	linux-trace-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>, Chun Ng <chunn@nvidia.com>
+Subject: Re: [PATCH v3 04/11] arm64/mm: Add set_memory_device() and
+ set_memory_normal()
+Message-ID: <akaSJ5D98w2cHqb6@orome>
+References: <20260701-tegra-vpr-v3-0-d80f7b871bb4@nvidia.com>
+ <20260701-tegra-vpr-v3-4-d80f7b871bb4@nvidia.com>
+ <akYs91INHMXMTI-t@willie-the-truck>
+ <akZkuwktaXFTrASP@orome>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="a4brqgkdrivfh2ns"
 Content-Disposition: inline
-In-Reply-To: <2f36a2da-0686-485f-b4b9-ae699bef4fd4@linux.dev>
+In-Reply-To: <akZkuwktaXFTrASP@orome>
 
-On Fri, Jul 03, 2026 at 12:17:29AM +0800, Lance Yang wrote:
->
->
-> On 2026/7/3 00:07, Lorenzo Stoakes wrote:
-> > On Thu, Jul 02, 2026 at 09:49:47PM +0800, Lance Yang wrote:
-> > >
-> > > On Mon, Jun 29, 2026 at 08:25:36PM +0100, Lorenzo Stoakes wrote:
-> > > > Replace use of the legacy vm_flags_t flags with vma_flags_t values
-> > > > throughout the mremap logic.
-> > > >
-> > > > Additionally update comments to reflect the changes to be consistent.
-> > > >
-> > > > No functional change intended.
-> > > >
-> > > > Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
-> > > > ---
-> > >
-> > > The vm_flags_set() cases below spell out vma_start_write(), but the
-> > > vm_flags_clear() cases don't?
-> >
-> > Yep as I said elsewhere, implicitly taking the lock is terrible and me doing
-> > this is completely on purpose to get rid of that :)
-> >
-> > But I haven't been clear enough clearly, so I should put the argument as to why
-> > that's ok in the commit message.
-> >
-> > Will do so on respin.
->
-> Makes sense, thanks for spelling it out! A short changelog note
-> should clear it up for me :D
 
-Yeah absolutely, that's necessary and was an oversight on my part, will correct!
+--a4brqgkdrivfh2ns
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 04/11] arm64/mm: Add set_memory_device() and
+ set_memory_normal()
+MIME-Version: 1.0
 
-Thanks for your great review here, much appreciated! :)
+On Thu, Jul 02, 2026 at 03:46:44PM +0200, Thierry Reding wrote:
+> On Thu, Jul 02, 2026 at 10:18:47AM +0100, Will Deacon wrote:
+> > On Wed, Jul 01, 2026 at 06:08:15PM +0200, Thierry Reding wrote:
+> > > From: Chun Ng <chunn@nvidia.com>
+> > >=20
+> > > Add helpers to swap PROT_NORMAL and PROT_DEVICE_nGnRnE protection bits
+> > > on a kernel-linear-map range.
+> >=20
+> > That sounds like a really terrible idea. Why is this necessary and how
+> > does it interact with things like load_unaligned_zeropad()?
+>=20
+> This is necessary because once the memory controller has walled off the
+> new memory region the CPU must not access it under any circumstances or
+> it'll cause the CPU to lock up (I think technically it'll hit an SError
+> but in practice that just means it'll freeze, as far as I can tell).
+>=20
+> Probably doesn't interact well at all with load_unaligned_zeropad().
+>=20
+> > I think you should unmap the memory from the linear map and memremap()
+> > it instead.
+>=20
+> Given that the memory can never be accessed by the CPU after the memory
+> controller locks it down, I don't think we'll even need memremap(). The
+> only thing we really need is the sg_table we hand out via the DMA BUFs
+> so that they can be used by device drivers to program their DMA engines
+> internally.
+>=20
+> Looking through some of the architecture code around this, shouldn't we
+> simply be using set_memory_encrypted() and set_memory_decrypted() for
+> this? While they might've been created for slightly other use-cases,
+> they seem to be doing exactly what we want (i.e. remove the page range
+> from the linear mapping and flushing it, or restoring the valid bit and
+> standard permissions, respectively).
 
->
-> [...]
+Ah... I guess we can't do it because we're not in a realm world and so
+the early checks in __set_memory_enc_dec() would return early and turn
+it into a no-op.
 
-Cheers, Lorenzo
+How about if I extract a common helper and provide set_memory_p() and
+set_memory_np() in terms of those. Those are available on x86 and
+PowerPC as well, so fairly standard. I suppose at that point we're
+closer to set_memory_valid().
+
+Thierry
+
+--a4brqgkdrivfh2ns
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmpGlK8ACgkQ3SOs138+
+s6HETA//VE10mlKmDkMPw7oOS2GPLTn9mVHksFDOn28PMBlC2qgyv4CyznGj3Rfw
+WHIYoNb0rxntAbxQkh6SV5FCCi76fm/uTR3z2an8FI8W7KwiVfDiaIv3cmlG6TVd
+XcCj42QUsUHU7iFHzfSVkW33626MSfyeD+w00yxmT14U2Utl4X/+V+EQF6tRStJZ
+eLJUAyxrArCx98MI79QW13QB5MilfaFjtY6IxwXr+0hW2qnXGbNWJ5x1Z5kbC6wD
+6yOAfi8QY0nqau5GKgo/+dkYUq1zAc65a7QdRu5KW383NDcLhRbtrwBoA6TYFriL
+c2GJiV1ch4N8Dsr694Lmn4jNHUUqPLcPY8it6qMkUNVrc5XjK24C0intns2AFR4i
+7ca82YvaTCuql87GjgBkz9NptVtmqVdZxnrtVYAH9mbvfczVpAEEsacYrMwtqBPM
+crTqcMLjkLxVZdnsvwT3Je73FolwTnxNsBlTaA24I64kQCW9QUIRy6WltcFdimPM
+2K40ULhVg3dNDSaGsQaIvDv8kpgBJiX4sf3kIjK71Dgo9/HKS4IBZx3kfKUxxURj
+RD51dxPOiDXPwIzDZxbERJ2rZx4NxSTj2FjLET7Vs6nbKwvC+K/XiLOtEIXbfwdD
+w9Hih0fRPiPrhG+uab8J6u+Jsaj9KI/DnuqDrIZL+ciFm4MVaNc=
+=9S6h
+-----END PGP SIGNATURE-----
+
+--a4brqgkdrivfh2ns--
