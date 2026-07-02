@@ -1,308 +1,148 @@
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012042.outbound.protection.outlook.com [52.101.48.42])
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F313334F498;
-	Thu,  2 Jul 2026 04:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782965475; cv=fail; b=uhL03sy01r4l4ygngEJt5OsHKGj9AGocKhe27JmK6vUXitAKoRsYAUuEs1ns3phgocEfAohuttlTV0lHhT4iV2FZIMYkYLI/zxrzzZSpNapvekSeM0zCoVAok1SiaK//1MCu05O6LoTZWdBm1DgzBaypKKKKaxh1TKWGPj5aFGU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782965475; c=relaxed/simple;
-	bh=PmRujdYBsu16acDoWx/Y/KACDv6jqFirGSSqDiZme3A=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=jJoE3t3OuP0vA5DaqSTWv98yCLjg6UhgCnGPVR+hTOcVx0jyoEyiW7q+loTKYR4tUyNQSs4TdRFxLEkcLS4yx7r7zqse1f/0+Eg3LJzHbyxrK/gSJsfNoIl6QPIQvvd70XE/MFWrlnW1no7i2HQn0d7kgGuDLhmvRGfRttbMkBY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rSm2Odtn; arc=fail smtp.client-ip=52.101.48.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE9B3911C7
+	for <linux-tegra@vger.kernel.org>; Thu,  2 Jul 2026 07:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782977298; cv=none; b=tVOQ4hihh6rdrJnvGZ/FjQ0251i43yWDaSBurvfvXJf3bWHm/B6bFuxLzTMGQA0JF9G74uin2h5fwzUX2BruKPueYeZEpNZCB+7fdD9/kXMZ1fKcYQf0Ay4bmhw7kpTMH3kPTenFhokXucpFv0am6jJ73TLoPiTh8a6wIOYkVKk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782977298; c=relaxed/simple;
+	bh=cdXAMvaGTLXZ4tRHqX+15mFjqPO5NJv7/lbzInUeZeM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=txEvYEp/MFAPB+orGP4WZyvRhkW4KHI2eLK1ryGm5Y7N7G71o5fFE+AkYWTTZpM8Th6kPmho0EzdHqmOxGns+afb9ITfUSpRpUqv8shRipmtKB80+smfAbF6ds1lhJUayl9SiSvPCNkr2KZ3aIv7NXx4RSTdJqzpIy8b8q87a/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UUw36nfQ; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rSm2Odtn"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=goW+IJLzUc1QbWHyfUsoQCa1+J6HWxomCmsHCciArZIjwywtm264uRypkGtOQGWTUJqAh1fkiKmMT05ownm7p04VUAcO+41+jpjotGBE/8O948+FlPPS/2x7YxSmWWXFRroigoyiQDda3XifnJ5R8OYFnMCo+qGrf9a222BSuSXABWqDdiFJ2UdITZgU/lNZGbP7jOy1twQqLDs6gplM8XvFF3Yzco4UasnKJOX5cX/zPCwYWI+rUvnMQz2d05L795uiNKGgCRYclxM4uNHLlO5xKSOBCos2TcUyiNr5n0MLNwZwkJWCNHwg4N5DE8IOLKue9w7q3RN5kxgJ3qq86Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CaVNVCiVRNi/gzjkgcOpm5KsI4e+f/VBVbspJ5wO8a0=;
- b=exaeU0d0hYI9roEBXip+E38NrCEzWVxEl86osIIWjNRTRfATej4wlKiXDTvyeg3eJc+pS37eX0pBdcP9tYLFM9AdVhcR2x9AB6zk2+HqghTSPmTKpycAQ72sRsFaS4flFEeE/sH6HRpAIaD4AI1yzhlMb7IGWAornH39mF6Lh+onV5sUe3i1PRvl7iID6mS4vAdIVLzCtkaxFfYE9FJjgj5uWF2YLGy5EXQbI0MhU6RlrMgB3JQTyp0fb21acTmbbiUQi38U2nuzX4NOB2IEyzRXeTUNb+DpqgRH60mAh7ro9CmIsGFkEYz75FffPcI4F/LxZoIYSzMtAeyumotuIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CaVNVCiVRNi/gzjkgcOpm5KsI4e+f/VBVbspJ5wO8a0=;
- b=rSm2OdtnsvwM7gdIOBNzurYxDP4zGA5UhRztFYOrn5ntUgeNnm4wjHEPrXKya//nBTMv+vIpuLboYCCFhgmSogfcliTDAerHb2hlestPUbj+wkn6SxVlrdEX8t1Tsdjalx6IBfP6291RpDkbyfnRDwvTF1tteXF3N4Zy6fXHcNee+9yqF4QfR9ENDXR/IYAGmaqcdkUmEDQBpxqHxusHQM264VC3KMBGUzrPPfa9t3WlecjxirynSvUrYONIRomH8MDa4RBRlPGcLYMqY0BummyanF5O9gusfAAiqBVgnNPO8aBFpJvptP9V7YVwYgYrs5AKull3tZKX4CNqnHj+8w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by PH0PR12MB7864.namprd12.prod.outlook.com (2603:10b6:510:26c::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.10; Thu, 2 Jul
- 2026 04:11:10 +0000
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017%6]) with mapi id 15.21.0181.008; Thu, 2 Jul 2026
- 04:11:10 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Date: Thu, 02 Jul 2026 13:10:29 +0900
-Subject: [PATCH v2 4/4] gpu: host1x: Allow limiting usable channel and
- syncpoint ranges
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260702-host1x-nohv-v2-4-e6d88bac0af6@nvidia.com>
-References: <20260702-host1x-nohv-v2-0-e6d88bac0af6@nvidia.com>
-In-Reply-To: <20260702-host1x-nohv-v2-0-e6d88bac0af6@nvidia.com>
-To: Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mikko Perttunen <mperttunen@nvidia.com>
-X-Mailer: b4 0.16-dev
-X-ClientProxiedBy: TY4P301CA0089.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:37a::10) To SJ2PR12MB9161.namprd12.prod.outlook.com
- (2603:10b6:a03:566::20)
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UUw36nfQ"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1782977290;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cdXAMvaGTLXZ4tRHqX+15mFjqPO5NJv7/lbzInUeZeM=;
+	b=UUw36nfQUDO4ek5W5MoGxv/bQdNbTQycY1qQKAEoJymjql+ZXc8a2FUo9eNrafl6xDrEni
+	1302Z8Y+Ma+0qxdUDhBISoxry5nus7uGAN8fTkB0ZcU/zUf+14Ol9iIljWhjg5Yh/mt933
+	8BhSh84bNWygA1To4TaXOltx56F5hgs=
+From: Lance Yang <lance.yang@linux.dev>
+To: ljs@kernel.org
+Cc: akpm@linux-foundation.org,
+	tsbogend@alpha.franken.de,
+	maddy@linux.ibm.com,
+	mpe@ellerman.id.au,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	l.stach@pengutronix.de,
+	inki.dae@samsung.com,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	krzk@kernel.org,
+	peter.griffin@linaro.org,
+	jani.nikula@linux.intel.com,
+	joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	tursulin@ursulin.net,
+	robin.clark@oss.qualcomm.com,
+	lumag@kernel.org,
+	lyude@redhat.com,
+	dakr@kernel.org,
+	tomi.valkeinen@ideasonboard.com,
+	hjc@rock-chips.com,
+	heiko@sntech.de,
+	andy.yan@rock-chips.com,
+	thierry.reding@kernel.org,
+	mperttunen@nvidia.com,
+	jonathanh@nvidia.com,
+	kraxel@redhat.com,
+	dmitry.osipenko@collabora.com,
+	zack.rusin@broadcom.com,
+	matthew.brost@intel.com,
+	thomas.hellstrom@linux.intel.com,
+	oleksandr_andrushchenko@epam.com,
+	deller@gmx.de,
+	bcrl@kvack.org,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	muchun.song@linux.dev,
+	osalvador@suse.de,
+	david@kernel.org,
+	ziy@nvidia.com,
+	baolin.wang@linux.alibaba.com,
+	liam@infradead.org,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	dev.jain@arm.com,
+	baohua@kernel.org,
+	lance.yang@linux.dev,
+	hughd@google.com,
+	vbabka@kernel.org,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	jannh@google.com,
+	pfalcato@suse.de,
+	kees@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	dri-devel@lists.freedesktop.org,
+	etnaviv@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-rockchip@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	intel-xe@lists.freedesktop.org,
+	xen-devel@lists.xenproject.org,
+	linux-fbdev@vger.kernel.org,
+	linux-aio@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-sound@vger.kernel.org
+Subject: Re: [PATCH 01/13] mm: introduce vma_flags_can_grow() and vma_can_grow()
+Date: Thu,  2 Jul 2026 15:27:50 +0800
+Message-Id: <20260702072750.45641-1-lance.yang@linux.dev>
+In-Reply-To: <f2e8c32515d328db62279cc8bab8398ea278d74f.1782760670.git.ljs@kernel.org>
+References: <f2e8c32515d328db62279cc8bab8398ea278d74f.1782760670.git.ljs@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|PH0PR12MB7864:EE_
-X-MS-Office365-Filtering-Correlation-Id: fc7b9343-109d-44b2-6149-08ded7eff295
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|23010399003|7416014|376014|1800799024|366016|921020|56012099006|11063799006|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	llFRVzYdTWBa2sexMvCOBw5e0SZEc936RQzpsOJTg4IHyg0o0GvNmTNY7OStGOSc9bGQ9Roks8KiRNuiL2JL6Ot3TZWwbAzH3ElCJ9q6UMG6lqVBziTPExcAxSCEdKuij78gzl+o2b2bLltgJ2/i/lQILXenagd6xrlBJ72Gb/hBenwmoTD7FAOHzGvXs4KrkLlwHet3RmkkDZjbnd6W/UFaIeLatnkI8msrlOhg2fbRCorHAU8ohqGjdSyfXjL9dUrnpxmywfSum6o6pqXOnUJ+q2NPSRV9Iw79FpNciwfMCefHdIGEwUokpt+VxhOhgAnNi5R5XYxe8VjoM9v4DCkbrD6PDr5dkcTfOrolfJmdG1C5/Vi69Dn5OGx+8/CwX0YCWu0g6kCWbTY4ux20Nf0zTEPkfZxbRvDHwrctlNVH39b39l/Dfj6LwpKfCiWyccrOVTzBCuEDVVMpz7yFLXWZerOLdNxt0IVdrNj3GfahzMi0z/Q2k7UlbDMlcF8CEi+9XZOFwk6FaEWB6iqZPhMrL/9Rsxrruypo2PknBMsaIg2hdPYx8ww4uF+wGpLwLYxy8TWgfy2d38rK0fATkKAfCiR2DkC37dlw8EIQClU/JDGKCmSdRwNdlN9CJSMeB9O+uR/rb7Cihd87a7lOU+IFRgwth3qqlrD7WE5pgXCZ4CsNz0bynvVmGJFvPO57VDRRX0IXeErUwRGkXbWjYA==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(23010399003)(7416014)(376014)(1800799024)(366016)(921020)(56012099006)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?R29wYVM4Qy91cG9XTmZLbC9YWUNpOU04SFNNRWRzV0R6VlV1NnovU3RlUnEz?=
- =?utf-8?B?RnBBZ1RrcXplNnUrUXJNQmVUSHZ1M3VHQXNiTkN2MC9mL0k3a2RRTlo5Vjd1?=
- =?utf-8?B?SDd1TXBvVXkvOE5zRmYvb2kyQ05ySjhPNGh5SWtWMlg4VG1VYnFGQmVWOEVX?=
- =?utf-8?B?NXVCdGlqZnJrRWZoSnR4elY5bWVMOWs3VmlUUWdqMlNjUUFjQWVZUjVMb0Fw?=
- =?utf-8?B?dzRKYWM5Njdhem9TZlpXRFRTRER3M0FsU0NHakxqK3VUVFV4RWpaZ3hOU3I4?=
- =?utf-8?B?ZlRSL21DaWZUTXdhempldEUxa0lTejkzNnB0RjlCV0VwS2xLbEIxaVZ5Nm1i?=
- =?utf-8?B?L2Z4OWVnSkhreit2eDdOTEw2UEJSRlgraU1xUk53SzVUcU0vaVlZa3FYVGtk?=
- =?utf-8?B?Q0h0MnZaQ0NydkNkdk92bUNYeExUSGtsWlJiSHZGbzcrMFRTcTFvT0daQ3BL?=
- =?utf-8?B?MEZMcnRkKzU3MTlFdW1PcDNMTExNakxVTVgvYjkyODU4MzZyc0FCSlZuVjla?=
- =?utf-8?B?MGRNME95bmRKc2syc3FlWjkzYVpJNzJHUkdxRWgwTE9meElUUTJEd1BpRWRw?=
- =?utf-8?B?Wmt2aDgyeFFMTll0ajlRMjBnLzhxcjJzVXZoNzM3TWdaK1l6dFV6VFYrN2FL?=
- =?utf-8?B?MUl1b1V2bFFHRmJPWHd0eGErYkdsY0cwZDcrVkc1S3F6anhWb21vUWROdU4r?=
- =?utf-8?B?NkZveTFMUHlHaHFDNXFrUUFTa1IyVGJzdzhHd1VyOSt4N29aaTZ3S0ljbHp4?=
- =?utf-8?B?UmdtODlEOEV6d1Bmb1EyWEtmS2hORzRyYjUvSTRYeFl0RmdEcmt4TjZtQ2lH?=
- =?utf-8?B?ZTk0dE41aWFoSEh3YmlLVmtUQmdkT3ROY1l2Q0VQdlNBaXFJeWVXbnY0UUFQ?=
- =?utf-8?B?SzQ3K21yVWIyajN1dlNNeHFIelEvQmVTZlVGYm5QZi8yTnpOUHkwSEFzUE9m?=
- =?utf-8?B?blgxU2F6eHJySEEya3JTYmhxb3JIVmlLdUlPVW5Ta2o4S0ZLMHJiSktvQUZ2?=
- =?utf-8?B?OThlY3VObk5uOTJrcVZiaGJhbmVDQnJtaFVvVTUycmNOSm5nL1JXb2RJK2RT?=
- =?utf-8?B?K1k0c2Y4TnBRTmVyR2ZNS09HaGo5dlJqQ01TbWp5QmhWSGRTQkRwS0RHQ0Y5?=
- =?utf-8?B?bkU3VzJEeXpWVXFjR3VDbVdSZ29QWTRaRTRqOVJXZUZqeFZ5cGV5S1dlZWMw?=
- =?utf-8?B?TmFzRHdzU1QxT2VXNSt1aWpuZFFhYTh5WlBoU3NPTlZEU1pmanEraXRBWkYw?=
- =?utf-8?B?T1dEQU9Ib25mQ29sN2JhWSsycGo5N25rNU5NRmxXYmd0SVJvKzVkTis2ZEVM?=
- =?utf-8?B?K2dxd1VJWXdSNlUzVTVBZjQwY2NnM0JuRStrNFhvVmYvcFhSQjhRVytaSDh6?=
- =?utf-8?B?SG9FQmFwUHhWUlo0YnpZb3lhYTlxV2ZHaTd1YTY1eXZCbWpPdUlCb2NRS2Y1?=
- =?utf-8?B?REhrTmI0TEJkenpHYjdHYkJPUjdtRmlDY1M3SFArSWQybXdwck1hVzJhNmIy?=
- =?utf-8?B?b2tDOGxMTUNURW5CRnhlT3N4Q2NwMmJWa05PQ3pzMWRucnVqNmliaEF2L0dP?=
- =?utf-8?B?c1F3bHJyVkpJTmU4dlZMU091ajRKSU5CM0RSclpRd3NjOFhXdUwzd0RhV2lI?=
- =?utf-8?B?aTZRVjEvazh6SDdldzNPM2VXT01MWGRNWHJ4VUdGRWFQbnNxRUNyNCtwM1hz?=
- =?utf-8?B?WnoxaGRIWU5GQ2xkQUFRZExpVzBveUZSNVcrRitGdFF4QmRLY0ZGRU9KNUMy?=
- =?utf-8?B?dFY0aHBpM0lTZXFnK0sxSHcyVWFnaU45YVZ0UUFyekEyWDBLV29TVEhYTGow?=
- =?utf-8?B?NTZxQzl4YjRDOGM1Zktqa0pZVHVOVzh2aUZ5LzlpUU0rRUhTTEk2ODZkQVlI?=
- =?utf-8?B?YWplNFIvd1ZDaXk5VjJvM1BiUFNPQzR5eWFVMXA4OFluL2JDd1ZrTjMwdksy?=
- =?utf-8?B?N09oU3NtN3RMQk1tV2pBV2tNWTJ2ajdVelFjd1ErQTNuck9vemcwVTF6WHN6?=
- =?utf-8?B?SkdXVVFWdWhGU3lvN0R1bW5nejBPVVVHNGFSeUx1OFB2Nm1NaDJYckIzWThX?=
- =?utf-8?B?Y1lkUGhMalVOOVhDcFV4WGtKTGUxNHVYN3Z5S2NJamIya0dXbUIxYUt4K0NS?=
- =?utf-8?B?MjlFSUF0bnl2YUpYNERObHd1OWY5cEVleE1iUWg3Smg3NmtXN01wSWtnZytL?=
- =?utf-8?B?NXFBazViN2p5UVJ0SlNnOEg2SmVJbVNsQWNFQzlxS0d5ckd0c1JNWXZOR05k?=
- =?utf-8?B?Y21OUGpoQzAyaXpVeStRY0dSQmtsVVprM3dTNWRoOVdEejJ5cWF6MkZWM0do?=
- =?utf-8?B?dWFnWkFSWE1nTWYrS3FCbTZwTnoxb081SWF6aDcrUTgrUFZZT05DQnlYL001?=
- =?utf-8?Q?PvZ4TbiJzW/TawxTRWO0Y504CRunKJowsEEtlFFisAJKD?=
-X-MS-Exchange-AntiSpam-MessageData-1: NpnNgYtLvdZ4HQ==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc7b9343-109d-44b2-6149-08ded7eff295
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2026 04:11:10.3528
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JDFMieeAJ0r3d1TcNqS4rWgKjh/n6vhVN0X+aPe3KSeVs7d104XGGUuLDdXPQosbZhsi813lvRTs6I3xJhPQmQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7864
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Allow specifying usable channel, and allocatable syncpoint ranges
-through the device tree. This is necessary when Host1x resources
-are shared between multiple operating systems or independent hardware
-units and Linux has limited access to them.
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/gpu/host1x/channel.c |  6 +++---
- drivers/gpu/host1x/dev.c     | 37 +++++++++++++++++++++++++++++++++++++
- drivers/gpu/host1x/dev.h     |  3 +++
- drivers/gpu/host1x/syncpt.c  | 21 +++++++++++++--------
- 4 files changed, 56 insertions(+), 11 deletions(-)
+On Mon, Jun 29, 2026 at 08:25:24PM +0100, Lorenzo Stoakes wrote:
+>These test whether the VMA has stack sematics, i.e. is able to grow upwards
+>or downwards depending on the architecture.
+>
+>In order to account for arches which do not support upward-growing stacks,
+>introduce VMA_GROWSUP whose definition depends on the architecture
+>supporting it, and use vma_flags_test_single_mask() in vma_flags_can_grow()
+>to account for this.
+>
+>Update the VMA userland tests to reflect the changes
+>
+>No functional change intended.
+>
+>Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
+>---
 
-diff --git a/drivers/gpu/host1x/channel.c b/drivers/gpu/host1x/channel.c
-index ca5d0f51cf7d..38fcdda8388a 100644
---- a/drivers/gpu/host1x/channel.c
-+++ b/drivers/gpu/host1x/channel.c
-@@ -121,13 +121,13 @@ EXPORT_SYMBOL(host1x_channel_put);
- static struct host1x_channel *acquire_unused_channel(struct host1x *host)
- {
- 	struct host1x_channel_list *chlist = &host->channel_list;
--	unsigned int max_channels = host->info->nb_channels;
- 	unsigned int index;
- 
- 	mutex_lock(&chlist->lock);
- 
--	index = find_first_zero_bit(chlist->allocated_channels, max_channels);
--	if (index >= max_channels) {
-+	index = find_next_zero_bit(chlist->allocated_channels,
-+				   host->channel_end, host->channel_base);
-+	if (index >= host->channel_end) {
- 		mutex_unlock(&chlist->lock);
- 		dev_err(host->dev, "failed to find free channel\n");
- 		return NULL;
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 545fa2e3f180..7103f018cb1b 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -331,6 +331,39 @@ static void host1x_setup_virtualization_tables(struct host1x *host)
- 	}
- }
- 
-+static int host1x_get_assigned_resources(struct host1x *host)
-+{
-+	struct device_node *np = host->dev->of_node;
-+	u32 vals[2];
-+	int err;
-+
-+	err = of_property_read_u32_array(np, "nvidia,channels", vals, 2);
-+	if (err == 0) {
-+		host->channel_base = vals[0];
-+		host->channel_end = vals[0] + vals[1];
-+	} else if (err == -EINVAL) {
-+		host->channel_base = 0;
-+		host->channel_end = host->info->nb_channels;
-+	} else {
-+		dev_err(host->dev, "invalid nvidia,channels property: %d\n", err);
-+		return err;
-+	}
-+
-+	err = of_property_read_u32_array(np, "nvidia,syncpoints", vals, 2);
-+	if (err == 0) {
-+		host->syncpt_base = vals[0];
-+		host->syncpt_end = vals[0] + vals[1];
-+	} else if (err == -EINVAL) {
-+		host->syncpt_base = 0;
-+		host->syncpt_end = host->info->nb_pts;
-+	} else {
-+		dev_err(host->dev, "invalid nvidia,syncpoints property: %d\n", err);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
- static bool host1x_wants_iommu(struct host1x *host1x)
- {
- 	/* Our IOMMU usage policy doesn't currently play well with GART */
-@@ -602,6 +635,10 @@ static int host1x_probe(struct platform_device *pdev)
- 	if (IS_ERR(host->clk))
- 		return dev_err_probe(&pdev->dev, PTR_ERR(host->clk), "failed to get clock\n");
- 
-+	err = host1x_get_assigned_resources(host);
-+	if (err)
-+		return err;
-+
- 	err = host1x_get_resets(host);
- 	if (err)
- 		return err;
-diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-index ef44618ed88a..89f1fc838a1c 100644
---- a/drivers/gpu/host1x/dev.h
-+++ b/drivers/gpu/host1x/dev.h
-@@ -141,6 +141,9 @@ struct host1x {
- 	struct reset_control_bulk_data resets[2];
- 	unsigned int nresets;
- 
-+	unsigned int syncpt_base, syncpt_end;
-+	unsigned int channel_base, channel_end;
-+
- 	struct iommu_group *group;
- 	struct iommu_domain *domain;
- 	struct iova_domain iova;
-diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
-index 807c74fc6a0a..7760252b3394 100644
---- a/drivers/gpu/host1x/syncpt.c
-+++ b/drivers/gpu/host1x/syncpt.c
-@@ -59,7 +59,7 @@ struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
- 					  unsigned long flags,
- 					  const char *name)
- {
--	struct host1x_syncpt *sp = host->syncpt;
-+	struct host1x_syncpt *sp = host->syncpt + host->syncpt_base;
- 	char *full_name;
- 	unsigned int i;
- 
-@@ -68,10 +68,10 @@ struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
- 
- 	mutex_lock(&host->syncpt_mutex);
- 
--	for (i = 0; i < host->info->nb_pts && kref_read(&sp->ref); i++, sp++)
-+	for (i = host->syncpt_base; i < host->syncpt_end && kref_read(&sp->ref); i++, sp++)
- 		;
- 
--	if (i >= host->info->nb_pts)
-+	if (i >= host->syncpt_end)
- 		goto unlock;
- 
- 	if (flags & HOST1X_SYNCPT_HAS_BASE) {
-@@ -138,7 +138,7 @@ void host1x_syncpt_restore(struct host1x *host)
- 	struct host1x_syncpt *sp_base = host->syncpt;
- 	unsigned int i;
- 
--	for (i = 0; i < host1x_syncpt_nb_pts(host); i++) {
-+	for (i = host->syncpt_base; i < host->syncpt_end; i++) {
- 		/*
- 		 * Unassign syncpt from channels for purposes of Tegra186
- 		 * syncpoint protection. This prevents any channel from
-@@ -301,6 +301,9 @@ int host1x_syncpt_init(struct host1x *host)
- 	for (i = 0; i < host->info->nb_pts; i++) {
- 		syncpt[i].id = i;
- 		syncpt[i].host = host;
-+
-+		/* Default to client managed for syncpoints not owned by us */
-+		syncpt[i].client_managed = true;
- 	}
- 
- 	for (i = 0; i < host->info->nb_bases; i++)
-@@ -310,10 +313,12 @@ int host1x_syncpt_init(struct host1x *host)
- 	host->syncpt = syncpt;
- 	host->bases = bases;
- 
--	/* Allocate sync point to use for clearing waits for expired fences */
--	host->nop_sp = host1x_syncpt_alloc(host, 0, "reserved-nop");
--	if (!host->nop_sp)
--		return -ENOMEM;
-+	/* Prevent syncpoint 0 from being allocated by users */
-+	if (host->syncpt_base == 0) {
-+		host->nop_sp = host1x_syncpt_alloc(host, 0, "reserved-nop");
-+		if (!host->nop_sp)
-+			return -ENOMEM;
-+	}
- 
- 	if (host->info->reserve_vblank_syncpts) {
- 		kref_init(&host->syncpt[26].ref);
+Nice cleanup! Feel free to add:
 
--- 
-2.53.0
-
+Reviewed-by: Lance Yang <lance.yang@linux.dev>
