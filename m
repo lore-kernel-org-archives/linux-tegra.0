@@ -1,168 +1,298 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4644ADD89;
-	Thu,  2 Jul 2026 13:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06D54ADD8F;
+	Thu,  2 Jul 2026 13:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783000066; cv=none; b=Wgz6tPZ5O1vFuwQudoTJEn96b9dgMO5MSu09jAY/fY0mD7RBcRU9fEMGdkoZ2TiobugYXVC6vY07Byy61lAWrlIhyAR33P3EAeqlxaNSoT6nNPb3an+8wtlZwcVQZOot8X2yzyjY1R3d60BdLZ+wlYfmVxIKALacp3hX7+4+Brs=
+	t=1783000222; cv=none; b=bTOX44fSDXNK/0Ql856EF2jVLno0nqiPkHsIb1iSgvVYMkWxlQYBXZiz/r1HsrVFjTTGh2if2HHPs7juaqBrNk7dxVuEuEp7aOfS1W6o1aPfZkHKpBC2krJdTticBcT30k74vJMi3i8Xp18JTZSxxLXLdC0J6oRh/Ab7W6RxJDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783000066; c=relaxed/simple;
-	bh=7V0NTLHBpsL8AoaSDAOMjcBo+lQIN0J47/cXRYpRPPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SH4w4K16QRvxa0H7RENL7/YQGdkKp5G3l85b0yt0nJEIdjPiKavunL3j/BSamvYWA8tME4i6/OfjdUBCktvBE/4ritX6LKvBqm3PljrNUGatEQBznyT8lY3FaS90ARGKf7Pul4EiFKhWdpPWWa7G8zYvkuqTLapmxqDu4jfxQiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nFPIDQwI; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783000222; c=relaxed/simple;
+	bh=z6IixF9QOh7e7lQ7b1TChJ42lnH9xfDjuFXFsYA5HY8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bm54hwxE56Re1tudHoZwhF3ssYiOlX3Qi1HmmPG3suWJbzYd5l/vW4QbdPywrXEtWKfnBt0HLYNVdpR9wyqKsxNc1ngBlkDEzhhdw6vcFYS+yqXiTyDUJsFKLwtPAFUpA+pDaRS6cocWAaGcn0pi1VC05Hby2A+nTFo0nLnJnsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SBk2LGdo; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nFPIDQwI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7AFA1F00A3A;
-	Thu,  2 Jul 2026 13:47:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783000064;
-	bh=7+4RPXWq0sLT4EC9giNUS42X6L6ymGhyY95vN1pSoHs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=nFPIDQwIPH19qZY0KdZIF0OqTnY30f1TYEmARp3ZaCpQ9jfD6iYoKRcGHpf9dmS3/
-	 edR8ZSu+zdQq6Dvcq1lBcJSgfVriFf5auqL7ebJU8tffvnfbRBm3ZYwUjfjtALVCty
-	 ZLYuAobaRM1h6UGAdDFcGBrwV1nvHMKNR5Esk1crHtrt2z4UITnu0PYV999TKPCSuo
-	 SCtNHCIYFGCzJq2b2NJCfti4LL5z+GI/0+IqYFp4TEynUdL5YfVhonCcxefDmm5klY
-	 h6hiQYiHPqP0wJNLOE6DwgkIExj1ta6AG4wkPKVu3yLjBWlTIPxaQj+ws+QBGcKsbV
-	 nLvgFGreL0ACQ==
-Date: Thu, 2 Jul 2026 15:47:41 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linaro-mm-sig@lists.linaro.org, Lorenzo Stoakes <ljs@kernel.org>, 
-	Sven Schnelle <svens@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Yury Norov <yury.norov@gmail.com>, linux-media@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-s390@vger.kernel.org, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Vlastimil Babka <vbabka@kernel.org>, 
-	Heiko Carstens <hca@linux.ibm.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	David Hildenbrand <david@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Simona Vetter <simona@ffwll.ch>, Mike Rapoport <rppt@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Russell King <linux@armlinux.org.uk>, dri-devel@lists.freedesktop.org, 
-	Maxime Ripard <mripard@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	John Stultz <jstultz@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	linux-arm-kernel@lists.infradead.org, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, linux-mm@kvack.org, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Will Deacon <will@kernel.org>, Thierry Reding <treding@nvidia.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, "Liam R. Howlett" <liam@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Sowjanya Komatineni <skomatineni@nvidia.com>, linux-tegra@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
-	Michal Hocko <mhocko@suse.com>, "T.J. Mercier" <tjmercier@google.com>, 
-	David Airlie <airlied@gmail.com>
-Subject: Re: [PATCH v3 02/11] dt-bindings: display: tegra: Document memory
- regions
-Message-ID: <akZr1mzrkyidju53@orome>
-References: <20260701-tegra-vpr-v3-0-d80f7b871bb4@nvidia.com>
- <20260701-tegra-vpr-v3-2-d80f7b871bb4@nvidia.com>
- <178293559078.1610192.17087150631381044391.robh@kernel.org>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SBk2LGdo"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1783000216;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n7JedrMMFsZ3SA9xp8Er9WQ7Q5NWmS7gMbpQ8O+PQSg=;
+	b=SBk2LGdo8O2Fh816oQbqXrmhKAQAYAxHqV6r2z//9k66SRzp2XfssdY3VkdvqTHoJEhhne
+	KBLV5b7WimMmbUd67b8UpLhwJTAsCl8UHKUpcr3XwD//YOwU43JswyAPjZ9yhLgdwnTOAg
+	TszqN8wOwdlDLsXMvuRT5nF6gC9LQmA=
+From: Lance Yang <lance.yang@linux.dev>
+To: ljs@kernel.org
+Cc: akpm@linux-foundation.org,
+	tsbogend@alpha.franken.de,
+	maddy@linux.ibm.com,
+	mpe@ellerman.id.au,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	l.stach@pengutronix.de,
+	inki.dae@samsung.com,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	krzk@kernel.org,
+	peter.griffin@linaro.org,
+	jani.nikula@linux.intel.com,
+	joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	tursulin@ursulin.net,
+	robin.clark@oss.qualcomm.com,
+	lumag@kernel.org,
+	lyude@redhat.com,
+	dakr@kernel.org,
+	tomi.valkeinen@ideasonboard.com,
+	hjc@rock-chips.com,
+	heiko@sntech.de,
+	andy.yan@rock-chips.com,
+	thierry.reding@kernel.org,
+	mperttunen@nvidia.com,
+	jonathanh@nvidia.com,
+	kraxel@redhat.com,
+	dmitry.osipenko@collabora.com,
+	zack.rusin@broadcom.com,
+	matthew.brost@intel.com,
+	thomas.hellstrom@linux.intel.com,
+	oleksandr_andrushchenko@epam.com,
+	deller@gmx.de,
+	bcrl@kvack.org,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	muchun.song@linux.dev,
+	osalvador@suse.de,
+	david@kernel.org,
+	ziy@nvidia.com,
+	baolin.wang@linux.alibaba.com,
+	liam@infradead.org,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	dev.jain@arm.com,
+	baohua@kernel.org,
+	lance.yang@linux.dev,
+	hughd@google.com,
+	vbabka@kernel.org,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	jannh@google.com,
+	pfalcato@suse.de,
+	kees@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	dri-devel@lists.freedesktop.org,
+	etnaviv@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-rockchip@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	intel-xe@lists.freedesktop.org,
+	xen-devel@lists.xenproject.org,
+	linux-fbdev@vger.kernel.org,
+	linux-aio@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-sound@vger.kernel.org
+Subject: Re: [PATCH 13/13] mm/mremap: convert mremap code to use vma_flags_t
+Date: Thu,  2 Jul 2026 21:49:47 +0800
+Message-Id: <20260702134947.25189-1-lance.yang@linux.dev>
+In-Reply-To: <380f761d35a3faa4370f8b3f92e3d4af3d4c7110.1782760670.git.ljs@kernel.org>
+References: <380f761d35a3faa4370f8b3f92e3d4af3d4c7110.1782760670.git.ljs@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qagealkznxwhby33"
-Content-Disposition: inline
-In-Reply-To: <178293559078.1610192.17087150631381044391.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
---qagealkznxwhby33
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 02/11] dt-bindings: display: tegra: Document memory
- regions
-MIME-Version: 1.0
+On Mon, Jun 29, 2026 at 08:25:36PM +0100, Lorenzo Stoakes wrote:
+>Replace use of the legacy vm_flags_t flags with vma_flags_t values
+>throughout the mremap logic.
+>
+>Additionally update comments to reflect the changes to be consistent.
+>
+>No functional change intended.
+>
+>Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
+>---
 
-On Wed, Jul 01, 2026 at 02:53:11PM -0500, Rob Herring (Arm) wrote:
->=20
-> On Wed, 01 Jul 2026 18:08:13 +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Add the memory-region and memory-region-names properties to the bindings
-> > for the display controllers and the host1x engine found on various Tegra
-> > generations. These memory regions are used to access firmware-provided
-> > framebuffer memory as well as the video protection region.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> > Changes in v3:
-> > - document properties for VIC
-> > ---
-> >  .../devicetree/bindings/display/tegra/nvidia,tegra124-vic.yaml |  8 ++=
-++++++
-> >  .../devicetree/bindings/display/tegra/nvidia,tegra186-dc.yaml  | 10 ++=
-++++++++
-> >  .../devicetree/bindings/display/tegra/nvidia,tegra20-dc.yaml   | 10 ++=
-+++++++-
-> >  .../bindings/display/tegra/nvidia,tegra20-host1x.yaml          |  7 ++=
-+++++
-> >  4 files changed, 34 insertions(+), 1 deletion(-)
-> >=20
->=20
-> My bot found errors running 'make dt_binding_check' on your patch:
->=20
-> yamllint warnings/errors:
->=20
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/d=
-isplay/tegra/nvidia,tegra20-dc.yaml: properties:memory-region-names: 'anyOf=
-' conditional failed, one must be fixed:
-> 	'maxitems' is not one of ['$ref', 'additionalItems', 'additionalProperti=
-es', 'allOf', 'anyOf', 'const', 'contains', 'default', 'dependencies', 'dep=
-endentRequired', 'dependentSchemas', 'deprecated', 'description', 'else', '=
-enum', 'exclusiveMaximum', 'exclusiveMinimum', 'items', 'if', 'minItems', '=
-minimum', 'maxItems', 'maximum', 'multipleOf', 'not', 'oneOf', 'pattern', '=
-patternProperties', 'properties', 'required', 'then', 'typeSize', 'unevalua=
-tedProperties', 'uniqueItems']
-> 	'type' was expected
-> 	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/d=
-isplay/tegra/nvidia,tegra20-dc.yaml: properties:memory-region-names:items: =
-{'enum': ['framebuffer', 'protected']} is not of type 'array'
-> 	from schema $id: http://devicetree.org/meta-schemas/string-array.yaml
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/d=
-isplay/tegra/nvidia,tegra20-dc.yaml: properties:memory-region-names: Additi=
-onal properties are not allowed ('maxitems' was unexpected)
-> 	from schema $id: http://devicetree.org/meta-schemas/string-array.yaml
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/d=
-isplay/tegra/nvidia,tegra20-dc.yaml: properties:memory-region-names:items: =
-{'enum': ['framebuffer', 'protected']} is not of type 'array'
-> 	from schema $id: http://devicetree.org/meta-schemas/string-array.yaml
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/d=
-isplay/tegra/nvidia,tegra20-dc.yaml: properties:memory-region-names: Additi=
-onal properties are not allowed ('maxitems' was unexpected)
-> 	from schema $id: http://devicetree.org/meta-schemas/string-array.yaml
+The vm_flags_set() cases below spell out vma_start_write(), but the
+vm_flags_clear() cases don't?
 
-Ugh... looks like these are all because I mistyped maxItems as maxitems.
-Oh well. Sorry for the noise.
+Thanks, Lance
 
-Thierry
-
---qagealkznxwhby33
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmpGa/wACgkQ3SOs138+
-s6FjYBAAiIaBIWdZjFXo82rzspIHpvGgfQhSt4a55q2oojIy6N1UmTKiAcJDv5oW
-g8aamgHNh028eD+y5O//mo8BgJnGgvSRFyZ5oH94ydn2FQyK09IRUTJVHXmZzij2
-+yZ9kKvyJ8LNB08ozD6+GiG4mxobGEPJile7TvkPBR1IIHTcj72lUtBx1CmXMh2b
-vkf7mcrVS0SdxnSoB3SOQGuGp0DV3apzKI/1ufoc+D0N/OfGuORq+/94WVM6HoP7
-jORXz/xD1A49PqM9SzGgcVzd2Lm1Latg393tFhznCSVdaPw+OJ4ckF75rTIHAh7t
-l95RTj9kj1PhQGZogzjAlCPm9hAWJdHu+GRkO2SY0wGPb4TD2/dLEgUr9Cckce1Y
-V7yOCjHLpTgLS33V5O0Bx0NrtOJSs96jUl3pXjSGH1hvb3oZT1WjIA5PzlW44COY
-uFHhHIvff1c156UMtRj5zlO5CnKXUKEoYhIrLkFyGrJKRiKh9OS33SAkvkoV1y7s
-+BOjmuSA/MHXq6cg6S7Kg6NUGFo/c2KJs9t/5z787NDvmCMYlFgzkjIMFoIh21P9
-gHRn3FS98btWp0qlVqv0R6N3sg/suUVCNco6ZMbhEDGafxejqTNRdwipjnb+hxNp
-/rlf42/+2WRXWgWDUy0h+bRrMtgHxa6OTPo57aAfd7QkWrSM8tk=
-=AE/S
------END PGP SIGNATURE-----
-
---qagealkznxwhby33--
+> mm/mremap.c | 38 ++++++++++++++++++++------------------
+> 1 file changed, 20 insertions(+), 18 deletions(-)
+>
+>diff --git a/mm/mremap.c b/mm/mremap.c
+>index 079a0ba0c4a7..0ea43302b7ed 100644
+>--- a/mm/mremap.c
+>+++ b/mm/mremap.c
+>@@ -68,7 +68,7 @@ struct vma_remap_struct {
+> 	bool populate_expand;		/* mlock()'d expanded, must populate. */
+> 	enum mremap_type remap_type;	/* expand, shrink, etc. */
+> 	bool mmap_locked;		/* Is mm currently write-locked? */
+>-	unsigned long charged;		/* If VM_ACCOUNT, # pages to account. */
+>+	unsigned long charged;		/* If VMA_ACCOUNT_BIT, # pgs to account */
+> 	bool vmi_needs_invalidate;	/* Is the VMA iterator invalidated? */
+> };
+> 
+>@@ -954,7 +954,7 @@ static unsigned long vrm_set_new_addr(struct vma_remap_struct *vrm)
+> 
+> 	if (vrm->flags & MREMAP_FIXED)
+> 		map_flags |= MAP_FIXED;
+>-	if (vma->vm_flags & VM_MAYSHARE)
+>+	if (vma_test(vma, VMA_MAYSHARE_BIT))
+> 		map_flags |= MAP_SHARED;
+> 
+> 	res = get_unmapped_area(vma->vm_file, new_addr, vrm->new_len, pgoff,
+>@@ -976,7 +976,7 @@ static bool vrm_calc_charge(struct vma_remap_struct *vrm)
+> {
+> 	unsigned long charged;
+> 
+>-	if (!(vrm->vma->vm_flags & VM_ACCOUNT))
+>+	if (!vma_test(vrm->vma, VMA_ACCOUNT_BIT))
+> 		return true;
+> 
+> 	/*
+>@@ -1003,7 +1003,7 @@ static bool vrm_calc_charge(struct vma_remap_struct *vrm)
+>  */
+> static void vrm_uncharge(struct vma_remap_struct *vrm)
+> {
+>-	if (!(vrm->vma->vm_flags & VM_ACCOUNT))
+>+	if (!vma_test(vrm->vma, VMA_ACCOUNT_BIT))
+> 		return;
+> 
+> 	vm_unacct_memory(vrm->charged);
+>@@ -1023,7 +1023,7 @@ static void vrm_stat_account(struct vma_remap_struct *vrm,
+> 	struct vm_area_struct *vma = vrm->vma;
+> 
+> 	vm_stat_account(mm, vma->vm_flags, pages);
+>-	if (vma->vm_flags & VM_LOCKED)
+>+	if (vma_test(vma, VMA_LOCKED_BIT))
+> 		mm->locked_vm += pages;
+> }
+> 
+>@@ -1167,7 +1167,7 @@ static void unmap_source_vma(struct vma_remap_struct *vrm)
+> 	 * arose, in which case we _do_ wish to unmap the _new_ VMA, which means
+> 	 * we actually _do_ want it be unaccounted.
+> 	 */
+>-	bool accountable_move = (vma->vm_flags & VM_ACCOUNT) &&
+>+	bool accountable_move = vma_test(vma, VMA_ACCOUNT_BIT) &&
+> 		!(vrm->flags & MREMAP_DONTUNMAP);
+> 
+> 	/*
+>@@ -1186,7 +1186,7 @@ static void unmap_source_vma(struct vma_remap_struct *vrm)
+> 	 * portions of the original VMA that remain.
+> 	 */
+> 	if (accountable_move) {
+>-		vm_flags_clear(vma, VM_ACCOUNT);
+>+		vma_clear_flags(vma, VMA_ACCOUNT_BIT);
+> 		/* We are about to split vma, so store the start/end. */
+> 		vm_start = vma->vm_start;
+> 		vm_end = vma->vm_end;
+>@@ -1211,8 +1211,8 @@ static void unmap_source_vma(struct vma_remap_struct *vrm)
+> 	 * |             |
+> 	 * |-------------|
+> 	 *
+>-	 * Having cleared VM_ACCOUNT from the whole VMA, after we unmap above
+>-	 * we'll end up with:
+>+	 * Having cleared VMA_ACCOUNT_BIT from the whole VMA, after we unmap
+>+	 * above we'll end up with:
+> 	 *
+> 	 *    addr  end
+> 	 *     |     |
+>@@ -1232,13 +1232,15 @@ static void unmap_source_vma(struct vma_remap_struct *vrm)
+> 		if (vm_start < addr) {
+> 			struct vm_area_struct *prev = vma_prev(&vmi);
+> 
+>-			vm_flags_set(prev, VM_ACCOUNT); /* Acquires VMA lock. */
+>+			vma_start_write(prev);
+>+			vma_set_flags(prev, VMA_ACCOUNT_BIT);
+> 		}
+> 
+> 		if (vm_end > end) {
+> 			struct vm_area_struct *next = vma_next(&vmi);
+> 
+>-			vm_flags_set(next, VM_ACCOUNT); /* Acquires VMA lock. */
+>+			vma_start_write(next);
+>+			vma_set_flags(next, VMA_ACCOUNT_BIT);
+> 		}
+> 	}
+> }
+>@@ -1321,8 +1323,8 @@ static void dontunmap_complete(struct vma_remap_struct *vrm,
+> 	unsigned long old_start = vrm->vma->vm_start;
+> 	unsigned long old_end = vrm->vma->vm_end;
+> 
+>-	/* We always clear VM_LOCKED[ONFAULT] on the old VMA. */
+>-	vm_flags_clear(vrm->vma, VM_LOCKED_MASK);
+>+	/* We always clear VMA_LOCKED[ONFAULT]_BIT on the old VMA. */
+>+	vma_clear_flags_mask(vrm->vma, VMA_LOCKED_MASK);
+> 
+> 	/*
+> 	 * anon_vma links of the old vma is no longer needed after its page
+>@@ -1758,14 +1760,14 @@ static int check_prep_vma(struct vma_remap_struct *vrm)
+> 	 * based on the original.  There are no known use cases for this
+> 	 * behavior.  As a result, fail such attempts.
+> 	 */
+>-	if (!old_len && !(vma->vm_flags & (VM_SHARED | VM_MAYSHARE))) {
+>+	if (!old_len && !vma_test_any(vma, VMA_SHARED_BIT, VMA_MAYSHARE_BIT)) {
+> 		pr_warn_once("%s (%d): attempted to duplicate a private mapping with mremap.  This is not supported.\n",
+> 			     current->comm, current->pid);
+> 		return -EINVAL;
+> 	}
+> 
+> 	if ((vrm->flags & MREMAP_DONTUNMAP) &&
+>-			(vma->vm_flags & (VM_DONTEXPAND | VM_PFNMAP)))
+>+	    vma_test_any(vma, VMA_DONTEXPAND_BIT, VMA_PFNMAP_BIT))
+> 		return -EINVAL;
+> 
+> 	/*
+>@@ -1795,7 +1797,7 @@ static int check_prep_vma(struct vma_remap_struct *vrm)
+> 		return 0;
+> 
+> 	/* We are expanding and the VMA is mlock()'d so we need to populate. */
+>-	if (vma->vm_flags & VM_LOCKED)
+>+	if (vma_test(vma, VMA_LOCKED_BIT))
+> 		vrm->populate_expand = true;
+> 
+> 	/* Need to be careful about a growing mapping */
+>@@ -1803,10 +1805,10 @@ static int check_prep_vma(struct vma_remap_struct *vrm)
+> 	if (pgoff + (new_len >> PAGE_SHIFT) < pgoff)
+> 		return -EINVAL;
+> 
+>-	if (vma->vm_flags & (VM_DONTEXPAND | VM_PFNMAP))
+>+	if (vma_test_any(vma, VMA_DONTEXPAND_BIT, VMA_PFNMAP_BIT))
+> 		return -EFAULT;
+> 
+>-	if (!mlock_future_ok(mm, vma->vm_flags & VM_LOCKED, vrm->delta))
+>+	if (!mlock_future_ok(mm, vma_test(vma, VMA_LOCKED_BIT), vrm->delta))
+> 		return -EAGAIN;
+> 
+> 	if (!may_expand_vm(mm, &vma->flags, vrm->delta >> PAGE_SHIFT))
+>-- 
+>2.54.0
+>
+>
