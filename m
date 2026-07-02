@@ -1,106 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFCE13C65F2;
-	Thu,  2 Jul 2026 09:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF6E3932F0;
+	Thu,  2 Jul 2026 10:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782984005; cv=none; b=HQdXlC/XM74p6u1VAG3YRv30o0PvT3w9DIx7kfkHLA/HTsRNdcvhSeg58Tj5xg/sACyiJFzIxd5mcZM2MeeROGFyNVH2sNfeEwL1BZF5f6g7+QfazIw9CHV78qi3dC2C04VchC1vhcFdqzisnzNri2cD3csb5qvc0fvnFg/0EoE=
+	t=1782988577; cv=none; b=Q4wtks+PuXTP2RxLHJsV5975ajPmqET71IkZELFYmuGoyIhysxbB+Zhu+v9a73V3k3lMaeHZbkaff3iFTb02WYdAy/4gMJznK5ikviiBYAu71cJEu1kH+cDhqHyhQYwqurZH27Yz0g1AYWvV0f4nvzXcHatTk0wu7N3+61RD2fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782984005; c=relaxed/simple;
-	bh=S8HugMjxHFbPNvLg+AAYFwaWDIzsdO1q5qMD3yZa1ic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cEAcNiscdh08ooM8IVI1gm3Nnm3z34qmbLmS9Nqk++BoAkfTSSE7QQ5bmopQwsGVJhjvbZO2Fyj9It9Qg3IUkIDrLdJ9P+bf7plUvY30qHceF11itzrQs8CP6Lu0Yg6gwSfrMwUd/Zch+Dzu5hpqVf1xaxPGZytXURxF20OAXus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=csWmZYUC; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1782988577; c=relaxed/simple;
+	bh=KKwMbEsVglT34K4nkdyHyx2nc0kXBL2aJGaLAjuEc5o=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=UWAx6xPRGpZv/bDYKtx5Hd8KSl0w9t+R8YyLTmHakmxXrsjU+OEX7gs8wTJDGPjwcFkvURIFp4pzIvRaMm+XUJt/A9/Sf3z/PYZLFjZYpB+POaaK+wG5r6qrciP3rRhiFm1i+7RJ8UMchmHtdpJWf+Oj2y/61onz7lsyYncsp4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=BbQOnVIq; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="csWmZYUC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3179D1F000E9;
-	Thu,  2 Jul 2026 09:19:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782984004;
-	bh=krb+dDOShP/VdQBJzNgKxbwj/+Edag23SSgoQwI13H8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=csWmZYUC4S9Nl6WrP1bTUNqSv20R6fPVTF+KG1Cmg4Dj4DYI1f3yts+zZ5SFuSxLE
-	 1zPcsdAMtlXsGeuD40TVFAs2oF468naHHJOCp0j/1bFoVDTNF6O7cSdv1QHcUl8cr1
-	 EW6MIUu8XQAwz74SIdBY2YpAOeihb71togX+9u2JNdB6lg2m2cPNh6B+BHirU09w5I
-	 RKwcx2Ycjot9IrFfgVli3rPKjJzw+RV8X3QtfO29MXfAD1a8jPLHvfU0nHbSXEKo7Z
-	 7pwjC3c7iadUtI3cUSa0bj4W+vUlp5rmb1/SIDADt3Q/PVKz8CiTd3VtiiPObNQSHp
-	 ybamgLGQIRuGw==
-Date: Thu, 2 Jul 2026 10:18:47 +0100
-From: Will Deacon <will@kernel.org>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Russell King <linux@armlinux.org.uk>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@kernel.org>,
-	Lorenzo Stoakes <ljs@kernel.org>,
-	"Liam R. Howlett" <liam@infradead.org>,
-	Vlastimil Babka <vbabka@kernel.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-mm@kvack.org,
-	iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org,
-	linux-trace-kernel@vger.kernel.org,
-	Thierry Reding <treding@nvidia.com>, Chun Ng <chunn@nvidia.com>
-Subject: Re: [PATCH v3 04/11] arm64/mm: Add set_memory_device() and
- set_memory_normal()
-Message-ID: <akYs91INHMXMTI-t@willie-the-truck>
-References: <20260701-tegra-vpr-v3-0-d80f7b871bb4@nvidia.com>
- <20260701-tegra-vpr-v3-4-d80f7b871bb4@nvidia.com>
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="BbQOnVIq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1782988573; x=1814524573;
+  h=from:date:subject:mime-version:content-transfer-encoding:
+   message-id:to:cc;
+  bh=KKwMbEsVglT34K4nkdyHyx2nc0kXBL2aJGaLAjuEc5o=;
+  b=BbQOnVIqJGTGtHUThL+YWmkgBl4+4gNHoY49g14y5rOaN6MiQWb6qjem
+   vMccRm1zePmoGGrlaOGLjL3eri6UTdLnJkutTGgAiEim/LERPMYgGv4kH
+   1Y9KFBLEfAiumRDVNduT1W9dwBahbA5aV000Q5EAKOIYjfdAGBcNgye53
+   ASwsmWRg9uZ83Xj4M2aAgl12s1QbwupUhYSoqkoFuzm131N1H+O53uLzD
+   W8Rox31rAks5wRmHeCd+uLWyJjNRUhJm/HPIg73VO2J2t4feFvjOylclg
+   jxUmpF/5j6WCbf+7aA5wdXJKvMJLqCqitIymbrfzM5nHEzg2h8M9yDAs0
+   A==;
+X-CSE-ConnectionGUID: s+8iEvFlQYy3/T62SoT8vw==
+X-CSE-MsgGUID: /uXFG2VoRtW2NbtFuEFi5w==
+X-IronPort-AV: E=Sophos;i="6.25,143,1779174000"; 
+   d="scan'208";a="59155305"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2026 03:36:12 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.87.71) by
+ chn-vm-ex4.mchp-main.com (10.10.87.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.43; Thu, 2 Jul 2026 03:36:12 -0700
+Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Thu, 2 Jul 2026 03:36:08 -0700
+From: Balakrishnan Sambath <balakrishnan.s@microchip.com>
+Date: Thu, 2 Jul 2026 16:06:06 +0530
+Subject: [PATCH] staging: nvec: disable i2c slave on remove
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260701-tegra-vpr-v3-4-d80f7b871bb4@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20260702-contrib-nvec-clk-leak-v1-1-659bcbe74e56@microchip.com>
+X-B4-Tracking: v=1; b=H4sIABU/RmoC/x3MQQqAIBBA0avErBswKwe6SrQwm2ooLDQkiO6et
+ HyL/x+IHIQjdMUDgZNEOXxGVRbgVusXRpmyQSttFCmN7vBXkBF9Yodu33BnuyHR1FJtqTHWQG7
+ PwLPc/7cf3vcDg9FaLmcAAAA=
+X-Change-ID: 20260702-contrib-nvec-clk-leak-77d573a746a6
+To: Marc Dietrich <marvin24@gmx.de>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Stephen Warren <swarren@nvidia.com>, "Prashant
+ Gaikwad" <pgaikwad@nvidia.com>
+CC: <ac100@lists.launchpad.net>, <linux-tegra@vger.kernel.org>,
+	<linux-staging@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	"Balakrishnan Sambath" <balakrishnan.s@microchip.com>
+X-Mailer: b4 0.14.3
 
-On Wed, Jul 01, 2026 at 06:08:15PM +0200, Thierry Reding wrote:
-> From: Chun Ng <chunn@nvidia.com>
-> 
-> Add helpers to swap PROT_NORMAL and PROT_DEVICE_nGnRnE protection bits
-> on a kernel-linear-map range.
+tegra_init_i2c_slave() runs from probe and enables the i2c controller
+clock with clk_prepare_enable(), and enables the interrupt.
+tegra_nvec_remove() removes the mfd devices, notifier and work queues
+but never calls the matching nvec_disable_i2c_slave(), so the clock's
+prepare/enable count is leaked on unbind and the controller clock is
+left running with no user.
 
-That sounds like a really terrible idea. Why is this necessary and how
-does it interact with things like load_unaligned_zeropad()?
+The leak is only reached on driver unbind, which is why it has gone
+unnoticed in normal use.
 
-I think you should unmap the memory from the linear map and memremap()
-it instead.
+Call nvec_disable_i2c_slave() on remove, the same teardown the suspend
+path already does.
 
-Will
+Fixes: 61c3b1971ad4 ("staging: nvec: add clk_prepare/clk_unprepare")
+Signed-off-by: Balakrishnan Sambath <balakrishnan.s@microchip.com>
+---
+ drivers/staging/nvec/nvec.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 88c416ee0381..3869c16ad3c8 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -908,6 +908,7 @@ static void tegra_nvec_remove(struct platform_device *pdev)
+ 	cancel_work_sync(&nvec->tx_work);
+ 	if (pm_power_off == nvec_power_off)
+ 		pm_power_off = NULL;
++	nvec_disable_i2c_slave(nvec);
+ }
+ 
+ #ifdef CONFIG_PM_SLEEP
+
+---
+base-commit: be5c93fa674f0fc3c8f359c2143abce6bbb422e6
+change-id: 20260702-contrib-nvec-clk-leak-77d573a746a6
+
+Best regards,
+-- 
+Balakrishnan Sambath <balakrishnan.s@microchip.com>
+
