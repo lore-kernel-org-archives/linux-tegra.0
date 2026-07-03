@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C518E21CC59
-	for <linux-tegra@vger.kernel.org>; Fri,  3 Jul 2026 14:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1713F20E4
+	for <linux-tegra@vger.kernel.org>; Fri,  3 Jul 2026 14:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783089651; cv=none; b=Yi+0KwkM1E7nDoy1VdZdSKcFz+xy/Lvhwgu/QULyWaoqpOpLXkjYMeFiCI0Ti5K798FK4ydpczSuGlLkBMWdHm8y469ex1ZFfDLHcu9zpyVmSGIcNs17sWLCS7u0das/zCxu7TpuWXeP8DW2BrVSV84pG0yxiBwi+Hy6cQgm2UY=
+	t=1783089655; cv=none; b=oO/QPM4sK48/AFyLzYChAsML7JAXOzVthXSiU3tmCatAAzGnS6vNxtsCBslvbutoqUUwS1MKzGGs51d5MovV5aOZnd7qUq6jSD8q6181AOwviMLwCzBEtk5bRRv/FYiNtbNjIFgAr3i5uaiPARXc/9Epb3V9QMJoT5byHM8WQYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783089651; c=relaxed/simple;
-	bh=U8TDv0Jy1YTKTLmkSymvNzGr2mU/AvxfhRbbarGikvo=;
+	s=arc-20240116; t=1783089655; c=relaxed/simple;
+	bh=69TJ16CzymasswDrlc/ToWezqe5HUuaMu1QaCnJXU+k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TFnILFpecOwW38nJp16aryc091PRskKxobkC/AQzBkCWWaeUiXfuY9BuJT9jwFvH8Ma7zq7EDwsjMRAP0nVZVHP7TUOu+oVLVg5aVGGQECa4ltDVEBK5SV8vZWEP23q3Ket8DJRcmSw1oE1+/EGuM7MWu5FwdQKSnsdaU/tDxIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hFbigXIf; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:MIME-Version; b=BTgydyzHbJbXjYZpjC89/EAFmLOZzZkRRKXqYfeBuIucMcmvng+3Qsaj1ePfEW8J6sgLqMm9vzvLkyTWi69vDbXv49ZFNPzpFXrbC00xW93F8uYUPrhbsPt4P3wK6hfAOmjlXudR0Mzu+7DCsYbtTjvi9hkcMvFWalmQHOcZMKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aA1qpJQk; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hFbigXIf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60F961F00A3D;
-	Fri,  3 Jul 2026 14:40:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aA1qpJQk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F2771F000E9;
+	Fri,  3 Jul 2026 14:40:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783089648;
-	bh=yoyoztEkUCuwtDIJ1oD9VzDkerwNGbAQFP+wps51TRo=;
+	s=k20260515; t=1783089650;
+	bh=wrc7+qLgdBCAc/eLa/IBcxhk+BlROS47gbZmBQJufnY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=hFbigXIfXd6KA44WVhCvXBpb5mwO73t/qRpQmG61ZcrNxAeAPGAWssa3Q4ApVbcL/
-	 vvqLQhnysY1Lc+YsLyNMn5jmjOGD8/UF0rUuOBV+XZN6w91J4/d/5+J0bBfkve0Blu
-	 +W5XW/ztYo5jVweSLzPy3tYNYtshxfUpG426lG/W8ClkTEBxow9nuakRC7ifrzwj0v
-	 CqIfOHeCopZEmm/9DF2ffLYSI7hquSyOHfuAp9L9GfdLTwMbMQJgFf+yFcvih0Ax2P
-	 dolj4B96kcnxH0p03i35ZjCUv/zOZIPBx0rVJThmcLCS672pa/06hAuWkR0EuU7jCV
-	 2zrekS0CBdm+A==
+	b=aA1qpJQk2IiXSlIyaHnaB/JjsDUHEvqU/fhEBcAtm+KpyzplcKGMk83QcYGpW6FcH
+	 7pVo4xL2ZVuRVoscxXmQQ1gU3M6LUv1xwuQst9OTLPeH3CAEkAPQTuOJoD12QP1Z/7
+	 UwjeFdsNVcLp+TOgMK8kQU0PDEzzx9QM7rKZdpQs5m4SFWITulPreZIEGzvb2WUfju
+	 jmfYp7eQOGmU+gYWB2b+nlHiRqgQ7PpOo0d44ULZjZVRoYncZYs/AGHw1Q3jWSJhZm
+	 9Znnq3wUPP1NnzX5bYq60ZBq3Er5ztbnyg+itOphj/IBDxATTmyzTkts5+6BbkZnpb
+	 QTEzVzHMRCT1A==
 From: Thierry Reding <thierry.reding@kernel.org>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -33,9 +33,9 @@ Cc: Thierry Reding <thierry.reding@kernel.org>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 2/3] soc/tegra: Fixes for v7.2
-Date: Fri,  3 Jul 2026 16:40:36 +0200
-Message-ID: <20260703144042.1190046-2-thierry.reding@kernel.org>
+Subject: [GIT PULL 3/3] arm64: tegra: Device tree fixes for v7.2
+Date: Fri,  3 Jul 2026 16:40:37 +0200
+Message-ID: <20260703144042.1190046-3-thierry.reding@kernel.org>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260703144042.1190046-1-thierry.reding@kernel.org>
 References: <20260703144042.1190046-1-thierry.reding@kernel.org>
@@ -52,29 +52,37 @@ From: Thierry Reding <thierry.reding@gmail.com>
 
 Hi ARM SoC maintainers,
 
-The following changes since commit 8b8ee2e56f951ccf41d98eebe73195cea487cd48:
+The following changes since commit e1215cd6d3b9338e72573cc1cc60922b5bd34da4:
 
-  soc/tegra: Use ARM SMCCC to get chip ID, revision, and platform info (2026-05-29 14:42:09 +0200)
+  arm64: tegra: Enable SMMU on Tegra194 display controllers (2026-05-29 14:33:29 +0200)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.2-soc-fixes
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.2-arm64-dt-fixes
 
-for you to fetch changes up to 265d5d4032c5f6eb089a6e6241d37fdbde7da180:
+for you to fetch changes up to 806a66f926c2b6652aeb88983d01f25081b41a73:
 
-  soc/tegra: fuse: Fix spurious straps warning on SMCCC platforms (2026-06-22 09:25:36 +0200)
+  arm64: tegra: Fix CPU1 node unit-address on Tegra264 (2026-06-25 11:13:27 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-soc/tegra: Fixes for v7.2
+arm64: tegra: Device tree fixes for v7.2
 
-Fix a spurious WARN() that was checking for an outdated condition.
+These changes fix an invalid compatible string combination for GPC DMA
+on Tegra264, change the compatible string for the CPU found on Tegra234
+and update the unit-address of CPU#1 on Tegra264 so it matches the value
+in the "reg" property.
 
 ----------------------------------------------------------------
-Breno Leitao (1):
-      soc/tegra: fuse: Fix spurious straps warning on SMCCC platforms
+Akhil R (1):
+      arm64: tegra: Remove fallback compatible for GPCDMA
 
- drivers/soc/tegra/fuse/tegra-apbmisc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sumit Gupta (2):
+      arm64: tegra: Fix CPU compatible string to cortex-a78ae on Tegra234
+      arm64: tegra: Fix CPU1 node unit-address on Tegra264
+
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi | 24 ++++++++++++------------
+ arch/arm64/boot/dts/nvidia/tegra264.dtsi |  4 ++--
+ 2 files changed, 14 insertions(+), 14 deletions(-)
