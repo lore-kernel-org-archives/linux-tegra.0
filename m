@@ -1,142 +1,229 @@
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013016.outbound.protection.outlook.com [40.107.201.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB25A357739
-	for <linux-tegra@vger.kernel.org>; Fri,  3 Jul 2026 05:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783056286; cv=none; b=c2gXUdWTdsr+CD1diGWbpYyuVT62R+Y15euHiKUBc48ABfajHjEuD7yC4JK9uZWhox/HgNhzuVWNJLWe0eENpTPLOMmqstvpk+cLa9uQUn2X8SJ4k2WC8tFhvZkZXCJMMdc4iuVr6q58uk+gSqVQ+QZkZfCBqXjB/LI/V5gLkO8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783056286; c=relaxed/simple;
-	bh=pVm9pS+PVo1sWY7zlCDKGAP+Y0EYCctZHYBMrpl/GZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NVi1eU4IqcGpxRt2EDjuCl5pQRq59qs9KMWq56IL+XNnWoM4t38/V2swbLg4IEQWwNwQ3aGjE1RO/3GpmJTsSzUpOlOyGfSfp+/bsTv4HthD+5tZ/E2aJMFp2CXxjIE3CDy9QvsZFWHa5xfcAKY3wVNNDzjv47K7lsBVZJBrm6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KXJ4pZkR; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8EC8344DA2;
+	Fri,  3 Jul 2026 05:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783056728; cv=fail; b=qe9qMXfoeQrMb20HSGyW6tcwcLP9DOztHqIa2qDTJfxCv/4r9FrJ4q4cp6QWFYcs+wL/hmA0yno/aNeP6TukqkV06HB2gdpu5FP+5blIsH4mhhk1tNPX4SxgZSYWc26S5KO3proLEVSwwb7mg+8pSG++z1w6eE6wmaleZXJOlLc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783056728; c=relaxed/simple;
+	bh=dJkSFZuPyOCn2YqRnFknznUCjwRCLWqsZgJIXAcfyew=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mReM1Zs9lWjI9n19K2xDLDrHzC7PL00P4+eF05B8SmgwUeH4BFTTED9tCygXh7Unr1mOz51Co2RffjtAw3PPqCsipCpNIbF80omz/ftkpCIn/kZbxg3pI35pptEAj5AE3diqHeQ3V72jXuCdhrtjwaZyMCy066c1lPsj08l/5kI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GHqz8Lwu; arc=fail smtp.client-ip=40.107.201.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KXJ4pZkR"
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-497e6956acfso199335b6e.1
-        for <linux-tegra@vger.kernel.org>; Thu, 02 Jul 2026 22:24:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783056273; x=1783661073; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ku3ZZ8L4tk4M+xljq5uIH94V1Fi9oyEnYUJ16WQL16A=;
-        b=KXJ4pZkRaWMoCDVsHoj7F+5BU+SKV1XiAXTHMgr1/EWdolktKmWF1LSM8xlg2nWQKR
-         eVySg5h2jsIpESxZ45VId3YPfPcSYNhF4yzO7BRhpsNromS69c0xiliPF6nWYl+0ryd4
-         OSloI+O+LZOrVxX3Tr40bX56ZbjZRWyu42G9oq6UgUKjvPd6tdG4NcHjKZIWTThiz6kg
-         eohHoZClM+JOTQoYJvAmKdT1s2wR7hk5RgpbPmElLqX/r7efOafuSUakKYsKBWe8m5pi
-         oBvoav1sNKlPcIhLupQAfY71WLp1aWXkFZZosD3V0bqRvYldfrEkxQZaVD9m8DMq7BOK
-         i7Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783056273; x=1783661073;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ku3ZZ8L4tk4M+xljq5uIH94V1Fi9oyEnYUJ16WQL16A=;
-        b=qo5FSZTaDQZ70YtlZPrz9UwA+XaLj9Fk/bynXVi5b5I/AD5sol6jclwCW41Cz9CsC5
-         e1JAV8N2WdvYCkygKuQYPmKs6r/tJUzB/sQqBKWOjXEFAjNh0mdnHAf/mQYt+YDQM2yj
-         3l4kag9AhAcHSrRxPA/jYRR1YlPr4tnASkJmBuw7zn6+PYTgHfCpsXOU+F/5cB5KOrEa
-         Y4kgO/OCndArNZrgj4v3PQHn+GLohkXxY22jVc4/JmtbbRVlYnyrVFSRUHoMCnE9Ruc7
-         JvJJJO4ubtzV4jCNRjWLn5S6Q6sUroEH7zYXtuhy6agnin97SVORgFsfWIxKBgir2wwR
-         sTlQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/QLae5Mb2rvm+sbHFch+GBOJv0nKsOj9XfImzAxpyaISc1uMpX7NeZui2+QNRzLAgvCz1zyRYpmuQFXw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9BLrrxOkQwuh9mQCQ+r4mFDceB5JXSUQBVkZAxrPo9xvsrErF
-	QtZouC9B7jX52nDvQhp7xdRT2xDV3aBhDTnJya0Be06m6SrWNrZjNpmJ
-X-Gm-Gg: AfdE7ckSjbZS/EmAiDG2/1nXImYC9EptHkFbanGKq0ypk20KgftgwkT2iEUJkwboPbQ
-	NGU0xgVRGz2xOB3ZpeaUErC3D/WImnqYJYxyl1S684YHcvncO7aOGHMVBX9y5U4uHLt87yJgz6+
-	6HmDyzcNuf/Yyvr5vUHjCM63qR/9pp+DatpimfSSY0QQr4tm9TCGgEvotlTgaBcB3SC0rnDoo2N
-	CUZ+m8X7vnB46NsWsN5zIzrEhtuGzo6afrVYdpNK5MlA12f7DqdQB2H6zyU35fRWMeOiy7rxvGA
-	1NjU8tkhs4OSUSsT9N+6hJFGOhKtHEeStmKFKQrGGPuSUY/fBDwi1hFa6jRtfwNG4eua+c/NwPQ
-	N+XyNmPrJg2OW4UaEYSTt+RXPLkkPiQ7vqCRYtsq8dqvrAGhLLQaO4htuaidfRqxcJdPRmAW/eO
-	PSKt0E2TPoBQyo4GI6xfdJ
-X-Received: by 2002:a05:6808:17aa:b0:496:6b1:cc7f with SMTP id 5614622812f47-497e1bec6ebmr2160066b6e.3.1783056273105;
-        Thu, 02 Jul 2026 22:24:33 -0700 (PDT)
-Received: from gmail.com ([2600:1702:56e9:4b40:ff21:65e6:6e3:5b43])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-497d1b77a11sm3272472b6e.17.2026.07.02.22.24.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jul 2026 22:24:31 -0700 (PDT)
-Date: Fri, 3 Jul 2026 00:24:28 -0500
-From: Akash Sukhavasi <akash.sukhavasi@gmail.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Andrew Lunn <andrew@lunn.ch>, linux-tegra@vger.kernel.org, linux-input@vger.kernel.org, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Thierry Reding <thierry.reding@kernel.org>, linux-media@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
-	Vladimir Oltean <olteanv@gmail.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Eric Dumazet <edumazet@google.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Simon Horman <horms@kernel.org>, devicetree@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>, 
-	netdev@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>, 
-	Russell King <linux@armlinux.org.uk>, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH v2 4/4] dt-bindings: input: remove obsolete
- matrix-keymap.txt
-Message-ID: <akdFQ3j6fDW4cVIp@gmail.com>
-References: <20260603-b4-remove-redirect-stubs-v2-0-c8c19876ab64@gmail.com>
- <20260603-b4-remove-redirect-stubs-v2-4-c8c19876ab64@gmail.com>
- <178052559618.2296868.8781332297681333925.robh@kernel.org>
- <aiSK6_n4ZnB_KRd8@google.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GHqz8Lwu"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J/1MRzsVZpi/8dv+1rz0EVdrwnULZt5YcbYP8rbGm2ArB44nlnvkQdeXAy52Ovm/yqMnkyztWe2MUwmIKxA5NMRBqAPOVvvT+Klp4d+H7Eary79hK0Q/Dv50x3MAkwGOPFlxmLmvvTlm4D2farZrRLiRYqkx16psyu0MnlKAX9KNHq5hpYF/LWBBQXbIv8CIh4agmy51a77rApTRk3vgBpGQRZWiCQ0LoYuklrH4Ra9h338aibObiRh1OsziUFvXMf4xRb/MiLoaA/GaWTXOxrACFOrjfJp2g/arB7RestNoEZbEiSapvXCXjtQIOHVzv7xvKMA154fR1pg8TLEBMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=T9gAHke43E9NARCgwLis/EWSuaL8oNtcCDvUCs3PF3E=;
+ b=h0jLVtnHZThDXgQLyaLcbXLO7WzJ/AAXHHU6xcghA73kyzm3RgwVcWekrN/4r+nBUSnoDci2rUz4ZIHbhH2s7XDrbEB9l5rwEIdi7aDTyn00lkloXUU7/qBnRZVRGvdNEch/GK/ouJamaUW7PH+dQeHlzHCVOjSTiH5x56JMmRuqvv9MRkcx3BWV7r244KDB/SpxSQorH2jDOdb8QgdYEb8clsyP+9TXofWFqBocgWls7XTsSkrHghh0XovLjSkVvVkX7VIJd13Y7VES2bzReWdhunuFpp/CaeMy0R6BgNz5dQMUQQJK0UXGQSib1GImMkhZTFuBPMBt/WNp7SuPnQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T9gAHke43E9NARCgwLis/EWSuaL8oNtcCDvUCs3PF3E=;
+ b=GHqz8LwusBpXu3QlS4FMytmLEGEL21M+tPv2cMSPipaiwJuPh9LmLpc7t3zDJyx7xjkphGSOO5DNR8StcCHVmrL25BJOBugDLoGrjTkEymGZ11q6i6qQn/mtgzRiCzkjB98gew4avsmdiPmq/35DPg+2T9AGMkpjIqSuXTuJhDXAczkp6EWVP2NRIJgme9mv0oJJNJM69bkmygcdhmkpNc08Vxmez6XxhBAABo4HGPF1iKg+8ORpwme12VEbRxy/RQRbUvZIbZFbKlWUYf9Bci11MguqU4cgyoV3RuF6S+zYtRT5tezqfGio/yIPKrFTF3sEyiFrlFWXWwUfc/Bbvw==
+Received: from SJ0PR13CA0060.namprd13.prod.outlook.com (2603:10b6:a03:2c2::35)
+ by PH0PR12MB7932.namprd12.prod.outlook.com (2603:10b6:510:280::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.10; Fri, 3 Jul
+ 2026 05:31:57 +0000
+Received: from BY1PEPF0001AE1C.namprd04.prod.outlook.com
+ (2603:10b6:a03:2c2:cafe::34) by SJ0PR13CA0060.outlook.office365.com
+ (2603:10b6:a03:2c2::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.202.3 via Frontend Transport; Fri, 3
+ Jul 2026 05:31:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BY1PEPF0001AE1C.mail.protection.outlook.com (10.167.242.105) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.181.6 via Frontend Transport; Fri, 3 Jul 2026 05:31:57 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 2 Jul
+ 2026 22:31:44 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 2 Jul
+ 2026 22:31:44 -0700
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.11) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Thu, 2 Jul 2026 22:31:43 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Will Deacon <will@kernel.org>
+CC: Robin Murphy <robin.murphy@arm.com>, "Joerg Roedel (AMD)"
+	<joro@8bytes.org>, Jason Gunthorpe <jgg@nvidia.com>,
+	<linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 02/11] iommu/tegra241-cmdqv: Synchronize the error ISR against VINTF (de)init
+Date: Thu, 2 Jul 2026 22:31:28 -0700
+Message-ID: <0ed2144a80a3750ee6638336b575b5b968949be6.1783054570.git.nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1783054570.git.nicolinc@nvidia.com>
+References: <cover.1783054570.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aiSK6_n4ZnB_KRd8@google.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE1C:EE_|PH0PR12MB7932:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6b5c4412-d252-466b-d08a-08ded8c4661f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|82310400026|376014|1800799024|23010399003|11063799006|5023799004|56012099006|18002099003|22082099003|6133799003;
+X-Microsoft-Antispam-Message-Info:
+	TZ2NbSXFg0CQ1EopYs6JMO5HBcqtI5I4QiNmb0gqhKQTxwoHiXO1/zw/ltYG1bf6bdiH0cudC8iaiBmOTW6swyT2RjjM/PjoGKu7Q8C/sah6qV0ZR2ZOs75zYRYXrg3gGcpclB1DMQ6YynVgyCPXnIZqkKrRRu7C4FXCPxbOSJSVEcurVYLS4naHIlnmfFteTZNTGSvLK3L/dcavmYl13gTSjuzjwpwCuaVHn01dvP0n3jzhTndObiRafWlbP90JGaGAZKCQMqvvPYHkCSUwmoPvtCJPnE9Wyq0hxfMxy3gKMUuEntkUnghbkatDUU77Nuph7M2XKQFn519IHeQuTlgKMweL2sitwoARl1b5tCEjOXYNTjOSsRPTdr9VgTZmtJBS5MHZIIGIflLIuWRDDFK2c/+Q6fA//tdNHum6/jySrt0j+Fp8PrJhSeFypyeHEQvnRSJMvXtUT9iUO5pnVBqrQCl99wp3JmOlppHKvlT287fgW1nhYSnnS2StDf5ltsmCtQBEZcT4sOZhUr1RyjgKSFdCKqgICkBLLuNFpH721JvmDpB3s5OgSVKpt0M4aXZ7anWO6pwmZeVHMa6lnv3GwDnYRb8y8/y7B8corTPennr52QME1algydaX200WiEuDTabpkmOwWwey7W63650+HZ93KZSZ2bbXhtd+MzMBVjsPqxFFqP+gvNjmh4HW/M/jbldNpN+zEZxFl9XnPg==
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(82310400026)(376014)(1800799024)(23010399003)(11063799006)(5023799004)(56012099006)(18002099003)(22082099003)(6133799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	/i5tA/BZgb39qlqAEHio6PRAMf+aaHPfLtEUrBtZEFKjq8Vfvw/6QNBDjvGqpMPBtHj4h7PbS46b0cQUj8IhyQUeK3SGlV7DzyqsGaEyr6e6Jt5fL3gXVYuyH6V/5RWIZbdZo9fKT09sQveH/cdzu27UVNyrqFMnxDUOE03WL78nALtw+lL9nCbW+KqYPg82u8NePGUabwvY6zCH0dQJzzn7q6pOnVd57ctTLb1MhlJp2IXO/K1kg8TFLPp3IqHUjd5+o50O+nNE4zt6oTIrzHUL1DRSZ+OXGLyaBQOpCKcRMKCGRiWrvTXuJu4BEq4ipcTiTcQ2mp/4z0MlVHGOVCaO9trGdMtDv7p2biKLqFals5antXrI03CX1ICTiwUAbcvE/aQ59JHNh5UCInJ3x5D2W6pKp/ga9tZ9ItFAzgxr7XE4Wotsj7zj4Y70Tdhe
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2026 05:31:57.1348
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6b5c4412-d252-466b-d08a-08ded8c4661f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BY1PEPF0001AE1C.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7932
 
-On Sat, Jun 06, 2026 at 02:03:43PM -0700, Dmitry Torokhov wrote:
-> On Wed, Jun 03, 2026 at 05:26:38PM -0500, Rob Herring (Arm) wrote:
-> > 
-> > On Wed, 03 Jun 2026 15:42:21 -0500, Akash Sukhavasi wrote:
-> > > matrix-keymap.txt has been a single-line redirect to
-> > > matrix-keymap.yaml since commit 639d6eda3b80 ("dt-bindings: input:
-> > > Convert matrix-keymap to json-schema"), which introduced the .yaml
-> > > schema and reduced the .txt to a stub in the same change. The .yaml
-> > > has the same filename in the same directory, making this redirect
-> > > unnecessary for discoverability.
-> > > 
-> > > Eight instances across six files still reference matrix-keymap.txt,
-> > > forcing readers through an extra hop to reach the .yaml. The stub has
-> > > not been touched since June 2020. Update all references across input
-> > > and mfd binding documentation to point directly to matrix-keymap.yaml
-> > > and remove the stub.
-> > > 
-> > > Signed-off-by: Akash Sukhavasi <akash.sukhavasi@gmail.com>
-> > > ---
-> > > v2:
-> > > - Patch 4/4: corrected commit message (eight references in six files,
-> > >   not eight files), Sashiko review.
-> > >   https://sashiko.dev/#/patchset/20260529052246.4934-1-akash.sukhavasi@gmail.com?part=4
-> > > 
-> > > v1: https://lore.kernel.org/all/20260529052246.4934-5-akash.sukhavasi@gmail.com/
-> > > ---
-> > >  Documentation/devicetree/bindings/input/brcm,bcm-keypad.txt    | 2 +-
-> > >  Documentation/devicetree/bindings/input/clps711x-keypad.txt    | 2 +-
-> > >  Documentation/devicetree/bindings/input/matrix-keymap.txt      | 1 -
-> > >  Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt | 2 +-
-> > >  Documentation/devicetree/bindings/input/pxa27x-keypad.txt      | 2 +-
-> > >  Documentation/devicetree/bindings/input/st-keyscan.txt         | 2 +-
-> > >  Documentation/devicetree/bindings/mfd/tc3589x.txt              | 6 +++---
-> > >  7 files changed, 8 insertions(+), 9 deletions(-)
-> > > 
-> > 
-> > Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> > 
-> 
-> Lee, could you please ack for MFD piece and I can take it through input?
-> 
-> Thanks.
-> 
-> -- 
-> Dmitry
+A user VINTF is torn down by tegra241_cmdqv_deinit_vintf(), which runs from
+the destroy callback and from the init-failure unwind in the alloc handler.
+It clears the cmdqv->vintfs[] slot and lets the iommufd core free it, but
+nothing serializes that against the error interrupt: tegra241_cmdqv_isr()
+reads cmdqv->vintfs[idx] and dereferences the vintf. A concurrent error can
+make the ISR read a slot mid-clear (a NULL deref) or use a vintf which is
+about to be freed (a use-after-free).
 
-Friendly ping on this as well. Rob's Acked-by has been on v2 since
-June 3, patch still applies cleanly.
+deinit_vintf() also returns idx to the IDA before clearing the slot, so a
+concurrent create that reuses idx can publish its new vintf into the slot,
+only for this teardown to erase it again with the stale NULL store.
 
+On the other end, tegra241_cmdqv_init_vintf() publishes a new vintf with a
+plain store to the cmdqv->vintfs[] slot, and the ISR dereferences fields of
+a published vintf such as vintf->base. A plain store gives no ordering on a
+weakly-ordered CPU, and a stale VINTF_ERR_MAP bit on a reused idx can make
+the ISR pick a vintf the moment it is published, before its fields are set
+or tegra241_vintf_hw_init() runs.
+
+The cmdqv->vintfs[0] slot stays NULL until tegra241_cmdqv_init_structures()
+first creates VINTF0, so the slot 0 read needs the same NULL check.
+
+Publish every slot with an smp_store_release(), and read each slot in the
+ISR with an smp_load_acquire() under a NULL check, so the ISR always sees
+a fully built vintf or NULL. Also make deinit_vintf() clear the slot, and
+synchronize_irq() prior to returning idx to the IDA, so no vintf is freed
+under a running handler and no reused idx is clobbered.
+
+Fixes: 4dc0d12474f9 ("iommu/tegra241-cmdqv: Add user-space use support")
+Assisted-by: Claude:claude-opus-4-8
+Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+---
+ .../iommu/arm/arm-smmu-v3/tegra241-cmdqv.c    | 37 +++++++++++++++++--
+ 1 file changed, 33 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+index f843d607c8134..5fbc1c85874a5 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
++++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+@@ -335,6 +335,13 @@ static void tegra241_vintf0_handle_error(struct tegra241_vintf *vintf)
+ 	}
+ }
+ 
++/*
++ * The CMDQV error interrupt is edge-triggered, so a pending VINTF error fires
++ * this ISR once and does not re-assert. An unacked guest therefore cannot
++ * storm the host. The HW latches and forwards each new error event on its
++ * own, so an already-set ERR_MAP bit does not suppress the interrupt for a
++ * new error.
++ */
+ static irqreturn_t tegra241_cmdqv_isr(int irq, void *devid)
+ {
+ 	struct tegra241_cmdqv *cmdqv = (struct tegra241_cmdqv *)devid;
+@@ -357,16 +364,27 @@ static irqreturn_t tegra241_cmdqv_isr(int irq, void *devid)
+ 
+ 	/* Handle VINTF0 and its LVCMDQs */
+ 	if (vintf_map & BIT_ULL(0)) {
+-		tegra241_vintf0_handle_error(cmdqv->vintfs[0]);
++		struct tegra241_vintf *vintf0;
++
+ 		vintf_map &= ~BIT_ULL(0);
++
++		/* NULL until tegra241_cmdqv_init_structures() publishes it */
++		vintf0 = smp_load_acquire(&cmdqv->vintfs[0]);
++		if (vintf0)
++			tegra241_vintf0_handle_error(vintf0);
+ 	}
+ 
+ 	/* Handle other user VINTFs and their LVCMDQs */
+ 	while (vintf_map) {
+ 		unsigned long idx = __ffs64(vintf_map);
++		struct tegra241_vintf *vintf;
+ 
+-		tegra241_vintf_user_handle_error(cmdqv->vintfs[idx]);
+ 		vintf_map &= ~BIT_ULL(idx);
++
++		/* The slot may be published or torn down (NULL'd) concurrently */
++		vintf = smp_load_acquire(&cmdqv->vintfs[idx]);
++		if (vintf)
++			tegra241_vintf_user_handle_error(vintf);
+ 	}
+ 
+ 	return IRQ_HANDLED;
+@@ -730,8 +748,18 @@ tegra241_vintf_alloc_lvcmdq(struct tegra241_vintf *vintf, u16 lidx)
+ static void tegra241_cmdqv_deinit_vintf(struct tegra241_cmdqv *cmdqv, u16 idx)
+ {
+ 	kfree(cmdqv->vintfs[idx]->lvcmdqs);
++	/*
++	 * Clear the slot and drain any in-flight ISR before returning idx to
++	 * the IDA, so a concurrent create that reuses idx cannot have its
++	 * freshly published VINTF erased here. A plain WRITE_ONCE() suffices
++	 * since clearing the slot publishes no data. This also covers the
++	 * init-failure unwind, which reaches deinit_vintf() without the
++	 * destroy callback.
++	 */
++	WRITE_ONCE(cmdqv->vintfs[idx], NULL);
++	if (cmdqv->irq > 0)
++		synchronize_irq(cmdqv->irq);
+ 	ida_free(&cmdqv->vintf_ids, idx);
+-	cmdqv->vintfs[idx] = NULL;
+ }
+ 
+ static int tegra241_cmdqv_init_vintf(struct tegra241_cmdqv *cmdqv, u16 max_idx,
+@@ -757,7 +785,8 @@ static int tegra241_cmdqv_init_vintf(struct tegra241_cmdqv *cmdqv, u16 max_idx,
+ 		return -ENOMEM;
+ 	}
+ 
+-	cmdqv->vintfs[idx] = vintf;
++	/* Pairs with the smp_load_acquire() in tegra241_cmdqv_isr() */
++	smp_store_release(&cmdqv->vintfs[idx], vintf);
+ 	return ret;
+ }
+ 
 -- 
-Thanks,
-Akash
+2.43.0
+
