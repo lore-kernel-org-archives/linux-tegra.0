@@ -1,82 +1,82 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010C4331200
-	for <linux-tegra@vger.kernel.org>; Fri,  3 Jul 2026 19:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF45331200
+	for <linux-tegra@vger.kernel.org>; Fri,  3 Jul 2026 19:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783107737; cv=none; b=tZZmVsgE2N+3USXrD42qhMnRIHIL3djQ4yvyL/9AegfYgP+uW51AtnJYFbXfCPs8G6RXT1mucPtr7Meqmz71xsw8KgVV5SFl7pSiPREUyK4z9lVO9HPhlpm2DVadvTKKuZMc9F+7J1LrrurlUZ+CUCJLSUuV0RdFuMp3FWUnoIA=
+	t=1783107761; cv=none; b=szAguJEGEGQpxRSP4iFgp1khbIxP6xyAhsQoEwD+VUJXislsvG8BUNWakwbjSKTQ6YLGzusFCPKS634MyZpPIhKwlp9HFZJLxZ6aKIMYLxG9TiuCKuFbq3pIA6xUgZ+dy+CGws+zelc8ThU+eEQN1le+GU/nCyo2+Sl6/2JFG+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783107737; c=relaxed/simple;
-	bh=tVq3ml5TJnZAT6aj46tV37eRc8vSQAjGRbxPs8s3WzU=;
+	s=arc-20240116; t=1783107761; c=relaxed/simple;
+	bh=HRbjhWrQ/b1BPdLECUGZ1vj1pvlPVpDo/p/rUJhwlC4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VCYYUaOtbUYwQ40k7p1hM0EsJ+xXDTrIYdXP6Qa0+5KgCancZLxfRvASkd2+iQhvj8c4Z1H0PfcN1zpOvU213XvFWbpmSYG0oL1joFAF0+XWUp4t4IGo7iJ0KalZ29xIjPSIAhQzG9UkhZV/JemRj1zFshVljIR+w0Z+QE7t+6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ri6qsvH0; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=IcGKOvoH; arc=none smtp.client-ip=205.220.168.131
+	 MIME-Version; b=e+vzdUg7XUOKTt4tP+La/Ar6LYRNqMBnwYAHE+dM7EJJo3NDwm/1FDHqB7seKu3h5TrjkQk78PHt5LQL74EQBO4+8oHEB7OhAJobvey0gBkDE1ICLoRRrtanb1CxW/fPzEU+phFWS62CKOCxn50l1zQaFRZ8IGRKnwrQKwcN/nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jKWf2GSY; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=FTZ2JJuF; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ri6qsvH0";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="IcGKOvoH"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 663Hj3cl686440
-	for <linux-tegra@vger.kernel.org>; Fri, 3 Jul 2026 19:42:15 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jKWf2GSY";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="FTZ2JJuF"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 663Hid4L494923
+	for <linux-tegra@vger.kernel.org>; Fri, 3 Jul 2026 19:42:39 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=fk9/GLsPy9M
-	HMLueq2DDIsdR8wBa5mOqZj4lU8apFQg=; b=Ri6qsvH0IQB7xkBldT85DbEuPR+
-	V38c/QBjrTx3QAafrYlhGfVLLgywea6jC0l65ZPVm+U3OmpMLlZ2VV+buorCWD04
-	bPspMhxpQP3PxJgSkqo5xItrUqIdk/3FX8SpHBpXs4HooIhx3sX33Vm6KIAIvuuO
-	V+zfVc1wJpwX93k13QZzhz9J8673uBXFJQFPim6Amvhm2v5TN3gUh0UgLqfi+nD3
-	BBivAzeFqowQTT99u2jDYsv71gJbnTCR7VBBQLywg7pl2+GwxpAmKoOyAAxYXYRC
-	H0KctSWMLFGXaAlJi6ZSIXtE97kU1lZAseBWBP7EoFJBmuUPuQyLsm2DrLw==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f64b5bryc-1
+	:mime-version:references:subject:to; s=qcppdkim1; bh=BM7jtgPz5pu
+	XtMgobfAPTx0DKFPGBIZQqDVHqsjFOZI=; b=jKWf2GSYBWt0WCeSTarF/ZyxiwK
+	ySviO6bqYuR7hXocJXWdOzctBTkhr9x7EBJtne4ZOFmY2TQnOa/Gh839O06jG1Z7
+	dooiFHxttTiabG9BCsQjg42O4/YG3Njl/KqjnIDTpKtWlrEa7Oz6uExs+CjZECUi
+	xjJD6IMEajr2OkDLA3WKBxxOfzl0dQqBxjqVSPjOoU9RaH/p2EFT7u56Y4OH0mzN
+	ZRdyYM3r4dJMbR3VmiLwRyPjjK7ZwaTZ5+BWp14AX1vqD6b0N/1+keNALbhSW6GJ
+	73bXzhYTiDhE7iSf9SrCIj4lzRwnt5YUmTfWTl/y5PQ/BXjK1zfMPAEFh9Q==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f68jytksw-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-tegra@vger.kernel.org>; Fri, 03 Jul 2026 19:42:15 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3811279d51aso1611371a91.1
-        for <linux-tegra@vger.kernel.org>; Fri, 03 Jul 2026 12:42:15 -0700 (PDT)
+	for <linux-tegra@vger.kernel.org>; Fri, 03 Jul 2026 19:42:39 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-37fc0aaa94cso1428848a91.1
+        for <linux-tegra@vger.kernel.org>; Fri, 03 Jul 2026 12:42:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1783107735; x=1783712535; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1783107759; x=1783712559; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=fk9/GLsPy9MHMLueq2DDIsdR8wBa5mOqZj4lU8apFQg=;
-        b=IcGKOvoHGNcLLC80S7+++FQf2qzN7+JvLFj/+DYt8+QV/SBu3gx1i5wppLGtTGWcVM
-         9bCaALUpOIYQ9UOuZZ8OSPWpXjF+BlpGZ4OFL7Jm7ZolCpa+GDRvLPlrakIsXppuA5gK
-         w5lZSxky3BQUZAuATFICo03uByK3Vx/aM07KW3HohvlcaaROsRMVMFKZp0XTAHrgo7U+
-         lA5lPecf3scNGy7X/4G0G1SAQoJ0aau2KPyjdzvfIxWwlcsvyQaYbIjJXHKss+97ZsCC
-         8vmrngxQgqweeIL5VWkRn21an7vuI+fvyr2kK7HhVerj68bBl7p5z/7fa4xaBarXg/+4
-         uDow==
+         :message-id:reply-to;
+        bh=BM7jtgPz5puXtMgobfAPTx0DKFPGBIZQqDVHqsjFOZI=;
+        b=FTZ2JJuFX5O8xKaW8uvZoVjc7M+EqxImi+VabpN8xkg4iVTZqZDcjdBK/aqGlkgBVt
+         9lWi1C+59I9cCOwEZD57z3eML9ewA6OH/m8FhRh3CSHGUa8HuOEUOeL0LY/bjzVozu0G
+         C1NylKd+9EcnsvaV9UvIVPgtBomwe8x4IhTcp7QjhOiqqiyiOO2C2M0ZOPF751oBFJIp
+         qYd8oMstV8x/wTvfcmJ7Et7XAQl56t9N27HeNeF0cpOYgRVMKh8wb3dvYv2gvrMBRzpx
+         w7KEer3j7eEdfY4wjOai2Xcrjq+QrtbswY1defaabeE3KWHFuIwgR1OAip6ERTnt/vFQ
+         My8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783107735; x=1783712535;
+        d=1e100.net; s=20251104; t=1783107759; x=1783712559;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=fk9/GLsPy9MHMLueq2DDIsdR8wBa5mOqZj4lU8apFQg=;
-        b=Q7BiiOLUlWkE6FYh2Nj4MFCQlRo3DxiaKzesN8t5RwycJwRXuAgnae/istmXhE1zOJ
-         cbKwaaDu6nbSBbn7tgLLAhet0CJGri1s0raecgULfGwQSAb51jwx4WMJElVNxPp15eLr
-         g/emB9COIbye4zHSyG3CXwi6WgaDXtFCP3B8BpAFSf/TJiJNPz6HYMuPuRpkj+g46BWa
-         +QaQIgMwfgi0Xsovz/tA7KEzWkEyaONHFNIrluXMynHxdAuebClTLrPtIrVYK+kWdvEw
-         WLYmEzaynRn91cdN/ByeoZhTlKZ4IxugIuecOO6lXxDnTxppWqWYPt4/bT5NdJ0TU8wp
-         LXLg==
-X-Forwarded-Encrypted: i=1; AHgh+RrjHii22qJE6jAathI5RGQFGaYhE5kKdnJ7h07PfHQgIxfrZ/zSzw31VMP2rZcOfcsGViNQ/VEubdZ5yQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6dgQXsQcwKSPgx2z08Sqsvgw6iAhoMC17uNbS4JAU71bSP9Qa
-	25VTRfBQyI6MFtRJjjVnugmHUkQyTeZ0OAOu0j66jhpgtJi9x2h2Rf1RGGgqFtmWKfHXwdTe5nw
-	Bl0uYau4k9e8lz15fHelAWMk27rtCcCsn120wU16cFlhD6EwjeySmMFbuVW/QSoAl2Q==
-X-Gm-Gg: AfdE7ckhnvb8s+vkPwaJfKzsPPGzMCFiUHCBFUnQwk40YY6iLmHKx0miwI6qH5tV0MO
-	RltRiyH/vYLS7aUyIeVQGwVBAh38agRKBxZv27a7g+eo4cSuWeOImWn46JI9JOam+o8BXT05DBl
-	rlGPgHHyb2ML++QDt1UgjWTCGczcXxh+VcGMgE2t9qfBzHFwR+KU83+SENH4NGxWXaQ/VbjCuY+
-	u7+g5Eac6X4VvBCAAYsEkmHODngRqYxhkfPai42MVwzbCsGqPXt4fRka4C++xfOCfQjBRKVqQ46
-	A+TC8JlQQ3MnAJ6bxDrVFhF/7d4swYHREtshy7WDYE8xPrLLbjnguFqBQpv7Y9ywKilDC3OCH1U
-	25tBwB9pcxZ0sG+IJp3zIssJcS9Q4z8U1LswnEQ==
-X-Received: by 2002:a17:90a:d408:b0:381:854:dba4 with SMTP id 98e67ed59e1d1-3829e933299mr718670a91.20.1783107734446;
-        Fri, 03 Jul 2026 12:42:14 -0700 (PDT)
-X-Received: by 2002:a17:90a:d408:b0:381:854:dba4 with SMTP id 98e67ed59e1d1-3829e933299mr718564a91.20.1783107733767;
-        Fri, 03 Jul 2026 12:42:13 -0700 (PDT)
+         :to:cc:subject:date:message-id:reply-to;
+        bh=BM7jtgPz5puXtMgobfAPTx0DKFPGBIZQqDVHqsjFOZI=;
+        b=Nwn/NksTKNYHiGs8xQDNPNuSgp0Rb3/LRWgras+ffGC6NWYGFqpYfsSQoXZTv6+PHc
+         4FGukwhHA7ucY0bUPOY2R3kQgxZY7/1SvPnAuNbb1ycyoUzzCx2BF1ajjPg6ldLa6O1U
+         /UXx408SaeCQqk3sG6mPyme61HNSAWeBmrkA/ynd8PCKGkNztZVVrdZ+nmdWVVIpxN51
+         3aX9GNq/HBOnFiJ5EBKSDn3ptuvyFkwC5VCPqforgWC0wvKZhKlDx9ZzUM4rjd0BAuXa
+         gzRjskBanMIj59RoqC49bLVuSKy/cMaOgL7pwKBxD+YTMCDLHE/LASD7jezjhgOVM/Qy
+         CnFw==
+X-Forwarded-Encrypted: i=1; AHgh+RoKtccr1eovjC2HRV1939RKf1NafDfA/hLGTwRSJqCUwP7qyis7u6LN5lm2eLCE4bWmzD2xZnF8rypDoQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1ti2orKxarHi+IkEPQLj881XXdqbbJsrd5zOKS8MTyxOuoJKG
+	fhSVDIcHY3Kex5O9r2ZW/Zafqu2LS5rcAXDvjERIjDt3qSTw5LHkYb+5gDhEhCtsEP77gnqUBMN
+	N39xpYnPaqfvKt9zSRud7MF3mbD8fObjRWFaMB6niGrUhFSwoZyHiQSD8kz1fN1DKfA==
+X-Gm-Gg: AfdE7cnEr6t3Wocn4oME8XRYRD3LLJrt/3FBut7Hawg9xOwtwjq+gnwjp6rCRumkPJe
+	JRy/UPKXWDUqrinVuHl5J1Q2aGV/pOOWaiRQiB3bLrYq1B3crbDY3L1Xpk2GdHw6Y/l0hLrjg77
+	XFKT8RJ59cbsIjcFfsabZi0N1dj6N+Avin3lJz77Gyg8vSuk/dU7vQz8XR5h9Id0vN/fklCdvtg
+	QX+eNdV1bUg2Cm4V2mLr/LmBwyQhOdrlaEjMPPbWb+6S5NLApkC83j6Pt/wo0TiVPbtAz5lZJUs
+	JdF5fIEMtSEXwMgy8p6mUAA40etX8BtfV0YOdQIf8VAstrD1FwNDC8KE0EZBJG5QZm0VZN0PupK
+	qfC2Yh31hoLzmyrvGmL190sjLBSs8RDlLBgPBgA==
+X-Received: by 2002:a17:90a:e708:b0:37e:a09:2640 with SMTP id 98e67ed59e1d1-382807ae330mr703134a91.7.1783107758433;
+        Fri, 03 Jul 2026 12:42:38 -0700 (PDT)
+X-Received: by 2002:a17:90a:e708:b0:37e:a09:2640 with SMTP id 98e67ed59e1d1-382807ae330mr703088a91.7.1783107757826;
+        Fri, 03 Jul 2026 12:42:37 -0700 (PDT)
 Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30f290b6bc2sm10065845eec.27.2026.07.03.12.41.50
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30f290b6bc2sm10065845eec.27.2026.07.03.12.42.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jul 2026 12:42:13 -0700 (PDT)
+        Fri, 03 Jul 2026 12:42:37 -0700 (PDT)
 From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konradybcio@kernel.org>,
@@ -152,9 +152,9 @@ Cc: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
         linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         imx@lists.linux.dev, sound-open-firmware@alsa-project.org,
         Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Subject: [PATCH 07/42] remoteproc: omap: Use devm_of_reserved_mem_device_init()
-Date: Sat,  4 Jul 2026 01:08:20 +0530
-Message-ID: <20260703193855.110619-8-mukesh.ojha@oss.qualcomm.com>
+Subject: [PATCH 08/42] drm: logicvc: Use devm_of_reserved_mem_device_init()
+Date: Sat,  4 Jul 2026 01:08:21 +0530
+Message-ID: <20260703193855.110619-9-mukesh.ojha@oss.qualcomm.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260703193855.110619-1-mukesh.ojha@oss.qualcomm.com>
 References: <20260703193855.110619-1-mukesh.ojha@oss.qualcomm.com>
@@ -165,79 +165,137 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzAzMDE5OCBTYWx0ZWRfX/FH2sMgJO0tQ
- xVjU/JvstFUBmY3wCzxFhkjoo2qMvDx4lWgjhPI/cxTfg0a/K6CmRNSWxO0hnQqXdanu53jyEWP
- +/WvYQNKj/A+jtEhSaBPrA7HTowxfcI=
-X-Authority-Analysis: v=2.4 cv=FOQrAeos c=1 sm=1 tr=0 ts=6a481097 cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzAzMDE5OCBTYWx0ZWRfX7zaMYC+PwE3W
+ C/YG3DshBNqntiLl5ps3xqIwTw882LUwhHAEPXQ9qIje9tehVCq4N+0vPTRLwZElBQC4dTc1fl6
+ o4/LSsgwklpUKy4QSjWhXlP/yOOiW96u4REb0tZcqpSMuByMPdf6ZjFH2RviUdw7rUfFDSMM0wF
+ jVmtB6sGLiF3fbwesdjuiKW8xa5Q4qRLhUs0TKgNFNR0s9tDLWmrtdsMgbdlMiMI6jaxz+EwTvx
+ yjxbvGi2TznIvwkJquyz5/sWPLFBYvVwtEar35kmvO1xCRndxaW1zEJaPR+JxnOUP/yWREpfGvg
+ Npg4CVTbgeAEShWoBfjiWB6iYRQPNDkT7UOSfP9vj8/Z1XPL9f6O0qGqmlcN3yaJIQMf1il9B9d
+ GGnPQowUTfZUfJXH0Ja9UDASL+jbPXmZDK4XlcY45I/8kYXrhSukGUSBGHUMM7PkQH15INA8qYw
+ 8gMR9BJXelro/dqyz3w==
+X-Proofpoint-GUID: rfe9t1GOGCf4uoWk4RZMlC6VDU8CD2eW
+X-Authority-Analysis: v=2.4 cv=QbFWeMbv c=1 sm=1 tr=0 ts=6a4810af cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
  a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22 a=EUspDBNiAAAA:8
- a=NeIE-sOIGFWZl2hhsKQA:9 a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-ORIG-GUID: ldZuQBNzp0ycvW64XZJsCsthBb_4o-vV
-X-Proofpoint-GUID: ldZuQBNzp0ycvW64XZJsCsthBb_4o-vV
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzAzMDE5OCBTYWx0ZWRfX/TyXgngq8Vbf
- RVGqkbRBipcxI7daBRNe/e8KBQ7czervrrXUuEwX19PLhsS0aOwdsPjUNEtAJx95HvOEXzSAO1/
- slyhparFkfhbFGiry/enzXf3uEiHb3W9nahf0R1nIuX34p2L+1e6Pjgz+fohorc5NBTHiGBCeE3
- ND3PPJIBJ0o46hBvMt4iPWKnXoDa9fz7kl2cnBp9mV+mP4r9ukB4BZXBDriBHf3iVYRtqtDOGoa
- 8uV9BzLuY/AL6y1Jlez0sYMteGxmsiLJgL5P0qXc6DTUsoPvUsj5ztFud1jD3pWgMWXD9HJkOqd
- Udlp05at2B6ecX7BdrQPVshAQkemiTB9CGXWBOBK8DBQf7Tc7Zl036K0xMOH2JZFHzWfD6xbkgy
- +KV4o/gaLXAELrkX8VjjuQqZHHBjY2V73tEWcrk3z+yOFGCMpSPGwPfGaZs7L7gvQ4JCP5oAVaC
- bvnYGDNRLfw+nwXIzBw==
+ a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22 a=EUspDBNiAAAA:8
+ a=ReI0EElcLHst8dYcsfAA:9 a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-ORIG-GUID: rfe9t1GOGCf4uoWk4RZMlC6VDU8CD2eW
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzAzMDE5OCBTYWx0ZWRfX65qpIEa1cMQC
+ EMUuyMgKMIcU1hx/PH536RS2MnuMRLO7nUruG6xRzUYEEyq8KNSNSC/UV2oRA9HkwYKVHF/9OJ7
+ 2B/UrkxO3f7J2DxUwBzsAQIeavvzb5E=
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
  definitions=2026-07-03_03,2026-07-03_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 suspectscore=0 priorityscore=1501 lowpriorityscore=0
- bulkscore=0 adultscore=0 clxscore=1015 malwarescore=0 phishscore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2607030198
+ adultscore=0 phishscore=0 malwarescore=0 suspectscore=0 clxscore=1015
+ bulkscore=0 impostorscore=0 lowpriorityscore=0 spamscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607030198
 
-Replace the hand-rolled omap_rproc_mem_release() devres action with
-devm_of_reserved_mem_device_init(), which handles the cleanup
-automatically. This removes both the wrapper function and the
-devm_add_action_or_reset() call.
+Switch to devm_of_reserved_mem_device_init() so the reserved memory
+region is released automatically on probe failure or device unbind.
+Replace all error paths that jumped to error_reserved_mem: with
+error_early: since the manual cleanup label is no longer needed, and
+remove the explicit of_reserved_mem_device_release() call in the remove
+function.
 
 Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 ---
- drivers/remoteproc/omap_remoteproc.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+ drivers/gpu/drm/logicvc/logicvc_drm.c | 21 ++++++++-------------
+ 1 file changed, 8 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index 6ed0f28edac9..74262f873d40 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -1276,13 +1276,6 @@ static int omap_rproc_of_get_timers(struct platform_device *pdev,
- 	return 0;
- }
+diff --git a/drivers/gpu/drm/logicvc/logicvc_drm.c b/drivers/gpu/drm/logicvc/logicvc_drm.c
+index bbebf4fc7f51..d6dbe52ff0a9 100644
+--- a/drivers/gpu/drm/logicvc/logicvc_drm.c
++++ b/drivers/gpu/drm/logicvc/logicvc_drm.c
+@@ -306,7 +306,7 @@ static int logicvc_drm_probe(struct platform_device *pdev)
+ 	int irq;
+ 	int ret;
  
--static void omap_rproc_mem_release(void *data)
--{
--	struct device *dev = data;
+-	ret = of_reserved_mem_device_init(dev);
++	ret = devm_of_reserved_mem_device_init(dev);
+ 	if (ret && ret != -ENODEV) {
+ 		dev_err(dev, "Failed to init memory region\n");
+ 		goto error_early;
+@@ -327,14 +327,14 @@ static int logicvc_drm_probe(struct platform_device *pdev)
+ 		ret = of_address_to_resource(of_node, 0, &res);
+ 		if (ret) {
+ 			dev_err(dev, "Failed to get resource from address\n");
+-			goto error_reserved_mem;
++			goto error_early;
+ 		}
+ 
+ 		base = devm_ioremap_resource(dev, &res);
+ 		if (IS_ERR(base)) {
+ 			dev_err(dev, "Failed to map I/O base\n");
+ 			ret = PTR_ERR(base);
+-			goto error_reserved_mem;
++			goto error_early;
+ 		}
+ 
+ 		logicvc_drm_regmap_config.max_register = resource_size(&res) -
+@@ -345,21 +345,21 @@ static int logicvc_drm_probe(struct platform_device *pdev)
+ 		if (IS_ERR(regmap)) {
+ 			dev_err(dev, "Failed to create regmap for I/O\n");
+ 			ret = PTR_ERR(regmap);
+-			goto error_reserved_mem;
++			goto error_early;
+ 		}
+ 	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+ 		ret = -ENODEV;
+-		goto error_reserved_mem;
++		goto error_early;
+ 	}
+ 
+ 	logicvc = devm_drm_dev_alloc(dev, &logicvc_drm_driver,
+ 				     struct logicvc_drm, drm_dev);
+ 	if (IS_ERR(logicvc)) {
+ 		ret = PTR_ERR(logicvc);
+-		goto error_reserved_mem;
++		goto error_early;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, logicvc);
+@@ -371,7 +371,7 @@ static int logicvc_drm_probe(struct platform_device *pdev)
+ 	caps = logicvc_drm_caps_match(logicvc);
+ 	if (!caps) {
+ 		ret = -EINVAL;
+-		goto error_reserved_mem;
++		goto error_early;
+ 	}
+ 
+ 	logicvc->caps = caps;
+@@ -382,7 +382,7 @@ static int logicvc_drm_probe(struct platform_device *pdev)
+ 	ret = logicvc_clocks_prepare(logicvc);
+ 	if (ret) {
+ 		drm_err(drm_dev, "Failed to prepare clocks\n");
+-		goto error_reserved_mem;
++		goto error_early;
+ 	}
+ 
+ 	ret = devm_request_irq(dev, irq, logicvc_drm_irq_handler, 0,
+@@ -450,9 +450,6 @@ static int logicvc_drm_probe(struct platform_device *pdev)
+ error_clocks:
+ 	logicvc_clocks_unprepare(logicvc);
+ 
+-error_reserved_mem:
+-	of_reserved_mem_device_release(dev);
+-
+ error_early:
+ 	return ret;
+ }
+@@ -469,8 +466,6 @@ static void logicvc_drm_remove(struct platform_device *pdev)
+ 	logicvc_mode_fini(logicvc);
+ 
+ 	logicvc_clocks_unprepare(logicvc);
 -
 -	of_reserved_mem_device_release(dev);
--}
--
- static int omap_rproc_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
-@@ -1359,15 +1352,11 @@ static int omap_rproc_probe(struct platform_device *pdev)
- 	if (IS_ERR(oproc->fck))
- 		return PTR_ERR(oproc->fck);
+ }
  
--	ret = of_reserved_mem_device_init(&pdev->dev);
--	if (ret) {
-+	if (devm_of_reserved_mem_device_init(&pdev->dev)) {
- 		dev_warn(&pdev->dev, "device does not have specific CMA pool.\n");
- 		dev_warn(&pdev->dev, "Typically this should be provided,\n");
- 		dev_warn(&pdev->dev, "only omit if you know what you are doing.\n");
- 	}
--	ret = devm_add_action_or_reset(&pdev->dev, omap_rproc_mem_release, &pdev->dev);
--	if (ret)
--		return ret;
- 
- 	platform_set_drvdata(pdev, rproc);
- 
+ static void logicvc_drm_shutdown(struct platform_device *pdev)
 -- 
 2.53.0
 
