@@ -1,30 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A39A3DF009
-	for <linux-tegra@vger.kernel.org>; Fri,  3 Jul 2026 14:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C518E21CC59
+	for <linux-tegra@vger.kernel.org>; Fri,  3 Jul 2026 14:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783089647; cv=none; b=YqmlJ4ggvC6GVZT32GOfMxt6SkZkr8vRGSN13qpe3sy7qbqmeRF6QHirOZd4nhaoSNDjsTJfY6ZVWpbJ+webGet9QHl2N/jPOSQSwYETYLANxTWtefGM6RoEfg2gKz3vcQJmH2UQVf3wRTQbZtZ+GjmLvFSGSU3L2ZjpzfAaOVQ=
+	t=1783089651; cv=none; b=Yi+0KwkM1E7nDoy1VdZdSKcFz+xy/Lvhwgu/QULyWaoqpOpLXkjYMeFiCI0Ti5K798FK4ydpczSuGlLkBMWdHm8y469ex1ZFfDLHcu9zpyVmSGIcNs17sWLCS7u0das/zCxu7TpuWXeP8DW2BrVSV84pG0yxiBwi+Hy6cQgm2UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783089647; c=relaxed/simple;
-	bh=3+JLXX31hxBviKs2GIime30uUFEJsrl9Gdp+NubrPsM=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=qxpxMmJavpzVKOlZYOBGaiDFfExsSF0af2zsnUOIUTlCFUl8divNnWs99RkkUeTp3R23C7CtEADAI0Tf9Jy7aUdftF37bM+zXejJPVNyC5JMB3U86UgwixA+4pNOJI7POZs+wu+DkmYdpnbt+r/5sIVgBYUvcxqeaMcFG/+4+so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2CiCfqC; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783089651; c=relaxed/simple;
+	bh=U8TDv0Jy1YTKTLmkSymvNzGr2mU/AvxfhRbbarGikvo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TFnILFpecOwW38nJp16aryc091PRskKxobkC/AQzBkCWWaeUiXfuY9BuJT9jwFvH8Ma7zq7EDwsjMRAP0nVZVHP7TUOu+oVLVg5aVGGQECa4ltDVEBK5SV8vZWEP23q3Ket8DJRcmSw1oE1+/EGuM7MWu5FwdQKSnsdaU/tDxIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hFbigXIf; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2CiCfqC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D70B1F000E9;
-	Fri,  3 Jul 2026 14:40:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hFbigXIf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60F961F00A3D;
+	Fri,  3 Jul 2026 14:40:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783089645;
-	bh=Pf36wxJupHA4Xe6B/0FbJUyw03mQL+xsO5YFqwowTBc=;
-	h=From:To:Cc:Subject:Date;
-	b=U2CiCfqCnNyy/YHBAdxdljAnfG3k7NegO4Wn7foBU7NR2aRSeV3pX1zV1NVr27gd0
-	 hpsTxJRicXbv7EH0SpA7q9DxAljSe+tBnLWujFOmDKA7z80mIpBpx3NthgNVJFoiIo
-	 1w2KyP1Txy5TxIU2c1EIy+66F6MpRG76hgAQM6K3mMoek9qROuMT+BATVvbHkOQcNt
-	 g4ucBImatA1y2kGPWq7dHp+Rptk185M0K3kMxL406SKp9EEbD3JuiwmpmcqZCNg86W
-	 gqvRoh/0bnOn7rOlRnOorKgBKjmRkuPcwXNxjJmrOpCW7Z7L+Q7UKaMsFgZqU1ijva
-	 wMXRIwOci8Sqg==
+	s=k20260515; t=1783089648;
+	bh=yoyoztEkUCuwtDIJ1oD9VzDkerwNGbAQFP+wps51TRo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=hFbigXIfXd6KA44WVhCvXBpb5mwO73t/qRpQmG61ZcrNxAeAPGAWssa3Q4ApVbcL/
+	 vvqLQhnysY1Lc+YsLyNMn5jmjOGD8/UF0rUuOBV+XZN6w91J4/d/5+J0bBfkve0Blu
+	 +W5XW/ztYo5jVweSLzPy3tYNYtshxfUpG426lG/W8ClkTEBxow9nuakRC7ifrzwj0v
+	 CqIfOHeCopZEmm/9DF2ffLYSI7hquSyOHfuAp9L9GfdLTwMbMQJgFf+yFcvih0Ax2P
+	 dolj4B96kcnxH0p03i35ZjCUv/zOZIPBx0rVJThmcLCS672pa/06hAuWkR0EuU7jCV
+	 2zrekS0CBdm+A==
 From: Thierry Reding <thierry.reding@kernel.org>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -32,10 +33,12 @@ Cc: Thierry Reding <thierry.reding@kernel.org>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 1/3] soc/tegra: pmc: Fixes for v7.2
-Date: Fri,  3 Jul 2026 16:40:35 +0200
-Message-ID: <20260703144042.1190046-1-thierry.reding@kernel.org>
+Subject: [GIT PULL 2/3] soc/tegra: Fixes for v7.2
+Date: Fri,  3 Jul 2026 16:40:36 +0200
+Message-ID: <20260703144042.1190046-2-thierry.reding@kernel.org>
 X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260703144042.1190046-1-thierry.reding@kernel.org>
+References: <20260703144042.1190046-1-thierry.reding@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -49,38 +52,29 @@ From: Thierry Reding <thierry.reding@gmail.com>
 
 Hi ARM SoC maintainers,
 
-The following changes since commit 2cee7da9743396aff1fd13124109c78975c92ad8:
+The following changes since commit 8b8ee2e56f951ccf41d98eebe73195cea487cd48:
 
-  soc/tegra: pmc: Add Tegra238 support (2026-05-31 07:21:15 +0200)
+  soc/tegra: Use ARM SMCCC to get chip ID, revision, and platform info (2026-05-29 14:42:09 +0200)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.2-pmc-fixes
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.2-soc-fixes
 
-for you to fetch changes up to 813e034925814858cc52e7de321ec4848314e15d:
+for you to fetch changes up to 265d5d4032c5f6eb089a6e6241d37fdbde7da180:
 
-  soc/tegra: pmc: fix #ifdef block in header (2026-06-22 08:52:46 +0200)
-
-Note that this contains a patch for the Tegra DRM driver that I'm taking
-through this tree rather than drm-misc because the commit that it fixes
-came in through the Tegra tree as well.
+  soc/tegra: fuse: Fix spurious straps warning on SMCCC platforms (2026-06-22 09:25:36 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-soc/tegra: pmc: Fixes for v7.2
+soc/tegra: Fixes for v7.2
 
-This contains two fixes, one for a bad error unwinding path and another
-for an #ifdef block that wasn't covering all the combinations correctly.
+Fix a spurious WARN() that was checking for an outdated condition.
 
 ----------------------------------------------------------------
-Arnd Bergmann (1):
-      soc/tegra: pmc: fix #ifdef block in header
+Breno Leitao (1):
+      soc/tegra: fuse: Fix spurious straps warning on SMCCC platforms
 
-Christophe JAILLET (1):
-      drm/tegra: Fix a strange error handling path
-
- drivers/gpu/drm/tegra/sor.c | 6 ++----
- include/soc/tegra/pmc.h     | 5 ++++-
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ drivers/soc/tegra/fuse/tegra-apbmisc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
