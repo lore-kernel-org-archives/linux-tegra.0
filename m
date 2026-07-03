@@ -1,125 +1,367 @@
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78AAE288C0E
-	for <linux-tegra@vger.kernel.org>; Fri,  3 Jul 2026 15:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783093832; cv=none; b=AkuPr5IlcLop+MMiYyfd5H4HjB0z9MZYlRkkr3cj23LOVKppnnCu+9BYTNbC8KXKO3awvzS3GHzNKp7kAGa4IhCK9hlOd9maJm8qmF1UGR6hdn2evWm4FmyWqIlm4FlZl0K6iekjczjG8d2RzYwty7IBKKwM1uz5Gd5YB2ZA3x4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783093832; c=relaxed/simple;
-	bh=QCniDK3MYytm6HoVkF3Jm96RLGunl2RkQqt3P75lZRk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KaTXcN1wmLpt6MhEC8kdfn5ANcmKTX570ZHT1t+kq26nvRYeLxzOStLrSHSaem/ZN20p0BkmM8N6ROhPXKK4APEXqf/qKmqHnkRkqXpBctryCGwTAzddsB6XMN4i+seitTV6cGKfLc6vQOZi/aX53hYmtBtDjkdbswjWLLzcovs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sttu1tSh; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD942DCBFA;
+	Fri,  3 Jul 2026 15:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783094124; cv=fail; b=STHdxr16DHgC82f6q1LK8fWmeUBYsMjd9Qv1OshgL+Pngxe3JajQVnIr5joxwEhq3DicHdDC3MhRcp9PYpm97g1Ob1xLfNrc5I3blxpB6tPFgzDgmG1v1nE3cLVQKnAj0ZQ7JiqSKBu4QVn+PG/bMLGbMoH87ok2aZJsZ2uUEIU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783094124; c=relaxed/simple;
+	bh=cq1Ia3qvLUfw4q5EMv6IoenPZeED0efv9NXSJ21ATOU=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ADwEbzUtShgZnuOWUQNcluuvf01FtWBnYbj1l+V/ENxaUTOUYtKnW5NTtBp6GQTVCCNNwKrHWRThjcRaXQ9Dr/7oj5bkNeoITPs/ukuMcm7jKfDc3NTynaZV+v/L7QoxRPMp1hFwhDV01icwkedK/AARb5ftLUP8hSW8HXO5J9Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g8oMYNUZ; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sttu1tSh"
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-8f0e5e36912so3956986d6.2
-        for <linux-tegra@vger.kernel.org>; Fri, 03 Jul 2026 08:50:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783093829; x=1783698629; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=w5XX7Rz3Qelo/FGzxIpNIi997ellIca9U5MUALRAgbw=;
-        b=Sttu1tSh0n5omgasvtdjYhbZtGnjfL33dOFZJ/btUWv9R3FuxsLT4kjAnTjHcmm8UF
-         itdRprSOBJUf/Xcmqd34v/H8+RFvWEbMwJqB/JAqrlKq8bg+l08D90HNIeOjudivI0Nk
-         +YishegwsPAoPgsuwB4XZMte+mXI9seTv5t6mfOpTKztzAsE2y+vwb0lKIm42vyJrpr3
-         9/PtHwJjDwmV7NcsHyx1LYc8jglTpY9T0s/mISIxbzzvNevhBcXijXFfFOYCq36P7MBB
-         jUPcALD3qW4sdoEbhWQDneEoLa64p1OXqjoQVAfqrk1XFrlLbihaUPP5xFySWyRBHOT8
-         +Atw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783093829; x=1783698629;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w5XX7Rz3Qelo/FGzxIpNIi997ellIca9U5MUALRAgbw=;
-        b=jjmwuCwN4vWhhnM4+qpt0NR4Q9LydZRkaL84BLnWhJpuuiEQpuv5zP0QVKgJlBrTXO
-         vdarYHLjTA5zK7cY77qyXdsvVjixGQtu3+BZ1kgzAgAv/7r5sCYaFQW/wLuHT9sDLgA7
-         BwFfkqL6MUqGxbwf08VzkmvqIxDubGLtwCrrXQJmGBf66pL8XTSVZ/A/dmY3tbcdD1Mw
-         TE0Iiqh5ktbfQaRi30wS6HgI77D2esdD6PcOvRnyVj0DqvE0keAJwyP00tJEnxF+bpu8
-         DQ5A5AqNwTaMgb+qdD0/vs/qh8U4dJgmtg7eeteZj7mH3CT2HPtEPxpS4NscMeDvac6g
-         5RVQ==
-X-Forwarded-Encrypted: i=1; AFNElJ9YQNVcBnHWqKX2HyfAs+v+WG4zq7xzPm51nmRku7D9gH6TG9dapJbSxZTepfhiKeZamvwdDftwkvsnbA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzScpNsQ7UF+3fDQGOAjXtCRX6qY+CAslZxNYHVXWaPO2GYtpIP
-	mu/drYq4L6UuFTO8p6BktIu3gl7jaP8eOK1eE0UeladVBoH5wBoNdA0U
-X-Gm-Gg: AfdE7cmDK2Pjopa36nAOvSzmHYpHmGHxyxNdDNTqQTcxntzmVMeFgRaKUAetYP8P68n
-	A4ryiYO+om3tN/Ppj90Mfo8W0uZxsnqLdgUUeJkxmW7ENMmU425TU1yR7emu6c+IkHuD82tV3yK
-	VvcR0q9fIFrx+ZuYrrukcGGBTb7J/x9kaHsJaybdVJu5bDlfuJqPyihKECcPEMTSmoWm/KG2dzV
-	yZgcRcZDrzkBvP/j8PEi6aBY2i/6hzg/cDqq4G6bXhdd3xRwOOdKKHMu4XsvsrbgD6ekLWx9/uw
-	HZ8+GDo/MKkdpDj2z5RzB4XZJXPqWVsZxtzjofN5W5szgY7TIHl4Zh29DZui8sD3gdPRzDqZKu1
-	MWvM3IJPN71dYqy3iDithWD/eiJhLyr5Oe+Fgz5LFjqY/tFgrIDfFTJn4wCtNRGpdpHVGdmYV8G
-	lo2wwdil/lasJXUGylVwhJo8ZqRTfs3ts4+fP5PDp9p7hy43N/MzKacwHd01T3A4r/4CihqSczA
-	6xaLW6dfpprPTA=
-X-Received: by 2002:a05:620a:890f:b0:92e:535b:e08b with SMTP id af79cd13be357-92e9a3c1a71mr192985a.33.1783093829176;
-        Fri, 03 Jul 2026 08:50:29 -0700 (PDT)
-Received: from i4-gl-tmk5904.ad.psu.edu ([130.203.156.186])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-92e90ccde4fsm187435185a.39.2026.07.03.08.50.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jul 2026 08:50:28 -0700 (PDT)
-From: Yuho Choi <dbgh9129@gmail.com>
-To: Russell King <linux@armlinux.org.uk>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yuho Choi <dbgh9129@gmail.com>
-Subject: [PATCH v1] ARM: tegra: Fix OF node reference leaks in IRQ init
-Date: Fri,  3 Jul 2026 11:50:22 -0400
-Message-ID: <20260703155022.158268-1-dbgh9129@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g8oMYNUZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1783094118; x=1814630118;
+  h=message-id:date:subject:to:references:from:in-reply-to:
+   content-transfer-encoding:mime-version;
+  bh=cq1Ia3qvLUfw4q5EMv6IoenPZeED0efv9NXSJ21ATOU=;
+  b=g8oMYNUZlNMVGK1htVGOHret0yVRitqiq8US/l4+a1urqWiFQ99wItgp
+   wwNWMRzsUEMGgZ6Cf+iNzlx7rPH0MKaV2iQqaNHNzYESjCIa9Mv4V3Y/6
+   ml1MvuG3LcraLJRE/niob8V7wtZVKH1Os/79MOE27365mR0ApWRfSVeRa
+   GwnYvwLDag+kJ21ajza6ayE+QJWiQEZeE1fSrgmtyPrKnH3RrcWLKPtnm
+   5GMCcI+68dyhgE4ENCzh/+iquK0JfGIi3D7wYHcPrgrbPg0B/eCGg165Z
+   5joiVRhJJLb6aXb4ovqrk4jTcO3W7xzoxDsZZZlu4OjPPLdJ3l+K/uSWe
+   g==;
+X-CSE-ConnectionGUID: JPvJ4D6AQsGwu1Z+fo6knA==
+X-CSE-MsgGUID: ZPBMb9j6RwSgr2i1a0oxTA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11836"; a="101268076"
+X-IronPort-AV: E=Sophos;i="6.25,145,1779174000"; 
+   d="scan'208";a="101268076"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2026 08:55:15 -0700
+X-CSE-ConnectionGUID: oLdu9fgCSuiMMnx55b6/og==
+X-CSE-MsgGUID: J19XKXXLShuzLXT3hrug2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,145,1779174000"; 
+   d="scan'208";a="277469485"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2026 08:55:14 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Fri, 3 Jul 2026 08:55:14 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43 via Frontend Transport; Fri, 3 Jul 2026 08:55:14 -0700
+Received: from BYAPR05CU005.outbound.protection.outlook.com (52.101.85.14) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Fri, 3 Jul 2026 08:55:14 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uBc8sJCnML5IDmpY1FhfxSPFexWzwNDaTeb56G+5GKSnpPEeEWCpUkvoyIvdYogq9+vbLLoYQgPIO1gDUZqN2w9R0wBjxSNAXmcdq32zm3AnvKBuz/YHTSLFEQ2OcHx+Nv/3NwO7iIm/xjW94zlNCBs+ajgyn4KqyQbpUPVVj4kPZ+GVyKipEOIU3jq5QiyivKo1919dWko1Ld3wuHNNPd10B+CFNnbfl0cmKmVW5cGA+wD4RqukXYlsszwyrjB11+eXm6MQIbyBVXa/uENGTLNJoqX3U6iTtq6BGQSONtncbHmnZJK2HgQfOmNNW5useH+I5+q7ZPwLhGBAzCbE+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dLnC1fvqtYHhE4OJmX4zSZE49yWBpb7jamm1qhs+wLw=;
+ b=KuEoF8iIayzYVEjdbwywx8QWQTTQpY6tijVD8Swx/X4cuqny2uX6MGVFx7db8pg8M5s1fDYGMz5aKNq8o+oS2spIOMZq0BZ3gnj0DV0Eiv5FpcylTci0qzS0ApW9opnRGgnmqyK7ltUrdRVzo24kFlpVYtWLL1LEW9ssGEjgyZ5zuPabqO88zB9lwYSA/nLDvndkPJ4F0MpZurKCPfllVdMytO/lEKsBmw5ucemlk0HbN8YeIExHdB1Nnd4VlXjPR166pKV8R/oAWXaaP7hIMy5PnaAqkvNKV5dN0WrWwqphBpdvOqL1eIFKecUbquFuNRSyF8YMtaVnoZVj/Z5/Qg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA1PR11MB7198.namprd11.prod.outlook.com (2603:10b6:208:419::15)
+ by PH8PR11MB6681.namprd11.prod.outlook.com (2603:10b6:510:1c4::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.9; Fri, 3 Jul 2026
+ 15:55:10 +0000
+Received: from IA1PR11MB7198.namprd11.prod.outlook.com
+ ([fe80::2c4e:e92a:4fa:a456]) by IA1PR11MB7198.namprd11.prod.outlook.com
+ ([fe80::2c4e:e92a:4fa:a456%3]) with mapi id 15.21.0181.010; Fri, 3 Jul 2026
+ 15:55:09 +0000
+Message-ID: <06f3ba88-f7d3-426d-8c95-612140fdfd52@intel.com>
+Date: Fri, 3 Jul 2026 18:55:02 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mmc: cqhci: Remove unused intmask parameter from
+ cqhci_irq()
+To: Chanwoo Lee <cw9316.lee@samsung.com>, Asutosh Das
+	<quic_asutoshd@quicinc.com>, Ritesh Harjani <ritesh.list@gmail.com>, "Ulf
+ Hansson" <ulfh@kernel.org>, Chaotian Jing <chaotian.jing@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Kamal Dasu
+	<kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>, "Broadcom
+ internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>, Florian
+ Fainelli <florian.fainelli@broadcom.com>, Haibo Chen <haibo.chen@nxp.com>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	"Pengutronix Kernel Team" <kernel@pengutronix.de>, Fabio Estevam
+	<festevam@gmail.com>, "Michal Simek" <michal.simek@amd.com>, Thierry Reding
+	<thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, "open
+ list:EMMC CMDQ HOST CONTROLLER INTERFACE (CQHCI) DRIVER"
+	<linux-mmc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+	"moderated list:ARM/Mediatek SoC support"
+	<linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC
+ support" <linux-mediatek@lists.infradead.org>, "open list:ARM/QUALCOMM
+ MAILING LIST" <linux-arm-msm@vger.kernel.org>, "open list:TEGRA ARCHITECTURE
+ SUPPORT" <linux-tegra@vger.kernel.org>
+References: <CGME20260624021955epcas1p2ba2fa4eb8bd0aafaf7b46bde2cf524be@epcas1p2.samsung.com>
+ <20260624021912.632627-1-cw9316.lee@samsung.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park,
+ 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 -
+ 4, Domiciled in Helsinki
+In-Reply-To: <20260624021912.632627-1-cw9316.lee@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DU2P250CA0007.EURP250.PROD.OUTLOOK.COM
+ (2603:10a6:10:231::12) To IA1PR11MB7198.namprd11.prod.outlook.com
+ (2603:10b6:208:419::15)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR11MB7198:EE_|PH8PR11MB6681:EE_
+X-MS-Office365-Filtering-Correlation-Id: bc67c492-b91c-4b6f-fdab-08ded91b75c7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|23010399003|1800799024|4143699003|11063799006|56012099006|921020|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info: e1+PL2i5Jctr83ODWUfxrlLhq7OVnktl0fhBrP/ZxY+7qY0GHO7ZbhUsjcw1jQkNSfeMvNU1la5Ti3T3cK07jRru5O2s3z6beO7rwO9azif1TsiqDXKoeQS/heh2H2bAWcyAzJSxpr4o5jmP9zHfKDJoOEPDA1wGCx6wr4WGgKtbMm93y5fhobzdPzmqQ8me2Rl9I8v4aSqiQxBAUVzDr7NY++z8WzAt8drcsIwMnX1AJDYQhrX9UxJGZK2URUF3jeDb9dcgtTKeImDre4GWP3eb7j/vZoSqMtVISN95iMjMVapGFmiKeiWKRTdf2AgHxtS98gq0PfEKY9CrPf/+kCxmwaG1GwQqzbp3aeRNye70a/yVqd70IofZO5s+CNkt4DYSmmTH/b/niyQLXy7fe2rmin5AA42lDdh9YM9eGC+lM4VUGY37RL1yQQ4t6WxOdMNujhqEEz80fJQUhRaNubftpPCo7W2f9eUvoWeO3xU367dC4kJVM9DfcdN2w22fk91QHpSdU+rkyyAGugWx9kZe7jbv9LqaP/xcq8LHs35gFjf48byx2DazDxuKUd90rTvxv81PG0zJkgD+ovjAXU74df/HMr6a0KkkFP7OSfyhrYXzyAF+ejIAkINDYzIWxPalN4h65ZUktPoKK6ShsxVb3RP/jpRXDgBx5oU0RVT3dk14+858e6262x5WwaheGeUI3ZIdQ+dCG6K8jZUeeg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB7198.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(23010399003)(1800799024)(4143699003)(11063799006)(56012099006)(921020)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?K1dNOFdZSGt2cWRTcno2M0VjdFN2OXp5ZWpER0VEM01vTW5teXpsYXV3R0Mr?=
+ =?utf-8?B?OER4SHJYeG9Jc3dxZEgrMXhNTjVNM3ZsaUpZaWp1L1AvSjBrUzRDYTlpbXZu?=
+ =?utf-8?B?dUNWMC9ZREk3QmJ3czFHUzdEVDEyUldDclZKODUwcG1UMzhNcEpQa1Azc2dM?=
+ =?utf-8?B?SUZNRGt3RHhDbk13Vk5BdnM3c0tpWEUxekV2QU9OdUcrbGFIQnVPZkhaS000?=
+ =?utf-8?B?Tnkvd2xPYXNwZW0xbGhCYkxHOHFKNE9hL0JUTkYwclBQRWg4cWFobkZ5OXlT?=
+ =?utf-8?B?ZGdib1RZS29KZ3NITzdKQnhuRHhBOWJZVzRqWGpkdmU4VWRSRmhOVEZPeUhl?=
+ =?utf-8?B?Qjc5bVpUMk1jTUhZNmdkR3ppTVZsZ0hsb3FXc004WmQvZ3dqbksxUmNSQi9u?=
+ =?utf-8?B?bUxyajloOE1nUmN4eUZjS3JrNEZTUzJQMHZYWFMyT1lmSHIyNEFDWnhYdXdX?=
+ =?utf-8?B?Z2tqSUpDOGYwcDFScUZJSjNrUldTYktUR3hFdEdaeGFlT3BwYm5lL2FXZWZh?=
+ =?utf-8?B?Mmd5aG5oV3pWMHM0dFV6d3pZajZiZzhNVEZjcFp4c0xKUUVkRkxaRWIxNnAr?=
+ =?utf-8?B?UlE5dUVDc0VCSWFxVXMvYWY2czFlY2VZdTdWM1RpVHJqdC9sSSsvOFJ1UjYr?=
+ =?utf-8?B?bmp0NVJ6NTFaSXVjQ09rN3JOU1MxMC9VYUs4bWNSY05oMUtUaHlhT2M0ZEIy?=
+ =?utf-8?B?UHo5WXNlZCtxdWV4UmJPRi9KdXVVOXBSNVlKenhmczY0RkozSTFSVElSNWZ2?=
+ =?utf-8?B?UW52UHhOSWRhS2Q4L21XYnMzZVZldlZOa0RpNnNDYm5wTXdHOGd5VDFSN1Fj?=
+ =?utf-8?B?M0N2V2VtTkhiZE0wRDliZzRNdTBlSGlxdVNnandFd3B1OVFicGdZak5NSk95?=
+ =?utf-8?B?UmVib1VWa1R0cit5ZG5QZ0dtRGMrUC9RNFFhckhNaUNxWEJJWm0vOVhQb3JX?=
+ =?utf-8?B?NDIzQnI1R0RZR2VTUEI5dFd1RTNjcjlaNGR0ZmVqSGZVWjZIL1Vva3RONG91?=
+ =?utf-8?B?ZDI2Y213SytsbkdhZGpzeTQ1NG1hWkFHVmczMHd5dEordkoyZWFsVC9JSWFw?=
+ =?utf-8?B?d2FFbmlacU4zaCtXRWZsRWJJMHNJVDF6OGtXNkpZMllXWE1GeCtZY2RJYm43?=
+ =?utf-8?B?TFl5ZFhmdzhJcmlpcjEyQXhQbSs3Wkg4bStoRzhQc1FOTUxqTHBJbVFQZHRq?=
+ =?utf-8?B?bHNwbkpKOXYwbFBseXh1V2k2OEYwQ3Q1UkNnRHZUTzZyRWluUGZtOUhPaTI5?=
+ =?utf-8?B?S3J5OVk0aEpxSzZwMzJ0Qm1yVmw5Zk00eXozS29NNExkUGhWWlVVU2N2RXU0?=
+ =?utf-8?B?K05oblYxSjZIK2lBaTR2dE9mK3YyUUlEZk9VYjBHN09paDZIOWJkd0pPb3pF?=
+ =?utf-8?B?NWI3M0FMUzlHbjZBOHFQRXFFazRCUFFqQ1kxbEhMSWtjNkxaV3Y5cXNLK2lP?=
+ =?utf-8?B?SEtiQUNSWWt1elFiQU5nM1d3VWdhZWZXRnZjcTdtcUpKRUF0UDlkbTAySTZw?=
+ =?utf-8?B?T1ZJNW9TMlFlMlI3bkFhM3VGWnVMOXh5Ti81Y0x0MlFmaklwbmRIZUwyOVFa?=
+ =?utf-8?B?Z2hlRkU5Nm9yazRvWmUraVBwM2hEMUt3Vzg5S3htejJCb1pYRi84V203V28z?=
+ =?utf-8?B?THFtdmRhY3EzbWdhRkp2SEZWOFdSQW9JR2FBQVNSeXU3TkhwRHMvTFIzM2VP?=
+ =?utf-8?B?OXRGa2dIRTJ6WE1jQisvZjFwQ0s3OWhvZ1VSM2tmTHFrVXpnOHR6Vkx4SVpD?=
+ =?utf-8?B?aVJBSVF1dzJpTkx4VkdOZlNGTDBXTFU0ZTBUWmcveUhVMHR5SjN5WGFkeDVO?=
+ =?utf-8?B?RUNUdlNYenNEQ0pjZzIxWVRjK0x0NEN0TTZPQ3VZcUErK2NaTW5kbXM4VkpC?=
+ =?utf-8?B?N212UENpaDZsNVJMSnFDZXNFeXhDQnNuWjcvMXBmQkxNb0FobE5BeWhMem85?=
+ =?utf-8?B?UUFoMHRyTEVUeXAzK1RBRjJ0aHBNVFZ1eUZnME51T016WVhraVFxMjgrYzV5?=
+ =?utf-8?B?djdSNlVYNXdUMjdjQ1Y2cWR1QUhtK0FlalExOXJYY2VXMnpFNDY2QVNKVjFG?=
+ =?utf-8?B?ajVSSDlLbFg4N0VxMU91NkJ3aWtyL3lIS3lpMmNuakgwYk14TkhvTUlEU3N0?=
+ =?utf-8?B?Y0dOVFFqaVhweWlQU0EyYUdVM1RYQnVSUEIwK3dEUHc0c1QvVTkyVHJJb1Fr?=
+ =?utf-8?B?alVrWkNwaTArcmdoUzhXOGk5RkhMU2pKNGh3U1BEazlZZlNrTUZwUlZNMmE5?=
+ =?utf-8?B?YWowa2h0UlNJM2FBbC95d3grUEZmb0Y4Z2RaZ0g1R1FLV3VWL3owQTBmSlV3?=
+ =?utf-8?B?WVhNZkdMcUZHVnNZYlgwL0xjUkhSOHhKLzdmV2pTYlg4MzFocnlPaFRxMWNX?=
+ =?utf-8?Q?z9sYXangddC7gYlk=3D?=
+X-Exchange-RoutingPolicyChecked: p2NJIiNu2PI6pHVUeIdvoL1wyD2jjMU/HczxvLzEo6CFFfS03Xxjf44wXt5NlbApP+6hDmIjfiGJuGKdRATqQ8APTxde5ThjsrPRZEjPehLMuvsrGcqbOg1robj28Mi1iE+hmHgrh79lT49gLipkRSsWEqKGfvH8ldH7WAEtAZQynLNtAT0VCsUpTQpgkyhLUzxl1VXkZGyiEpp0yxll+M0IKNkzl1jWz344BTfJLw6++A5t17YIN7mVqBeCNKu9qFQCi0T181QVUqUvSNhRi8/nlZNVxH1mOL9Zq/YAfzTJ2pqF5M4zEF3gpHwfCl2Tx9Qw3v3iv2zCQ3K8FtdyXw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc67c492-b91c-4b6f-fdab-08ded91b75c7
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB7198.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2026 15:55:09.8719
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9awrwnDcrx4203xZWzpIsmE5Bh+GpeYGplyaPa6lWtDCzNkrbHFMQPLnqogbqKVYmiB+rEErgyZ5tr8nj+jRkg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6681
+X-OriginatorOrg: intel.com
 
-tegra114_gic_cpu_pm_registration() and tegra_init_irq() use
-of_find_matching_node() for temporary IRQ init lookups, but the helper
-returns a referenced node even when the result is used only as a boolean
-or as an of_iomap() input.
+On 24/06/2026 05:19, Chanwoo Lee wrote:
+> The intmask parameter of cqhci_irq() is never used within the function
+> body. The function reads the CQHCI interrupt status directly via
+> cqhci_readl() and processes interrupts independently of the SDHCI
+> intmask value passed by callers.
+> 
+> Signed-off-by: Chanwoo Lee <cw9316.lee@samsung.com>
 
-Use scoped device_node cleanup for both lookups so the references are
-dropped when the functions return.
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Fixes: 7e8b15dbc392 ("ARM: tegra114: Reprogram GIC CPU interface to bypass IRQ on CPU PM entry")
-Fixes: e9479e0e832b ("ARM: tegra: skip gic_arch_extn setup if DT has a LIC node")
-Signed-off-by: Yuho Choi <dbgh9129@gmail.com>
----
- arch/arm/mach-tegra/irq.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/irq.c b/arch/arm/mach-tegra/irq.c
-index 4e1ee70b2a3f..e5a611dce7e7 100644
---- a/arch/arm/mach-tegra/irq.c
-+++ b/arch/arm/mach-tegra/irq.c
-@@ -66,9 +66,9 @@ static const struct of_device_id tegra114_dt_gic_match[] __initconst = {
- 
- static void __init tegra114_gic_cpu_pm_registration(void)
- {
--	struct device_node *dn;
-+	struct device_node *dn __free(device_node) =
-+		of_find_matching_node(NULL, tegra114_dt_gic_match);
- 
--	dn = of_find_matching_node(NULL, tegra114_dt_gic_match);
- 	if (!dn)
- 		return;
- 
-@@ -88,7 +88,10 @@ static const struct of_device_id tegra_ictlr_match[] __initconst = {
- 
- void __init tegra_init_irq(void)
- {
--	if (WARN_ON(!of_find_matching_node(NULL, tegra_ictlr_match)))
-+	struct device_node *dn __free(device_node) =
-+		of_find_matching_node(NULL, tegra_ictlr_match);
-+
-+	if (WARN_ON(!dn))
- 		pr_warn("Outdated DT detected, suspend/resume will NOT work\n");
- 
- 	tegra114_gic_cpu_pm_registration();
--- 
-2.43.0
+> ---
+>  drivers/mmc/host/cqhci-core.c       | 3 +--
+>  drivers/mmc/host/cqhci.h            | 3 +--
+>  drivers/mmc/host/mtk-sd.c           | 2 +-
+>  drivers/mmc/host/sdhci-brcmstb.c    | 2 +-
+>  drivers/mmc/host/sdhci-esdhc-imx.c  | 2 +-
+>  drivers/mmc/host/sdhci-msm.c        | 2 +-
+>  drivers/mmc/host/sdhci-of-arasan.c  | 2 +-
+>  drivers/mmc/host/sdhci-of-dwcmshc.c | 2 +-
+>  drivers/mmc/host/sdhci-pci-core.c   | 2 +-
+>  drivers/mmc/host/sdhci-pci-gli.c    | 2 +-
+>  drivers/mmc/host/sdhci-tegra.c      | 2 +-
+>  drivers/mmc/host/sdhci_am654.c      | 2 +-
+>  12 files changed, 12 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/cqhci-core.c b/drivers/mmc/host/cqhci-core.c
+> index 178277d90c31..98ceb0b9a6d1 100644
+> --- a/drivers/mmc/host/cqhci-core.c
+> +++ b/drivers/mmc/host/cqhci-core.c
+> @@ -819,8 +819,7 @@ static void cqhci_finish_mrq(struct mmc_host *mmc, unsigned int tag)
+>  	mmc_cqe_request_done(mmc, mrq);
+>  }
+>  
+> -irqreturn_t cqhci_irq(struct mmc_host *mmc, u32 intmask, int cmd_error,
+> -		      int data_error)
+> +irqreturn_t cqhci_irq(struct mmc_host *mmc, int cmd_error, int data_error)
+>  {
+>  	u32 status;
+>  	unsigned long tag = 0, comp_status;
+> diff --git a/drivers/mmc/host/cqhci.h b/drivers/mmc/host/cqhci.h
+> index 3668856531c1..8fbbc48c3f85 100644
+> --- a/drivers/mmc/host/cqhci.h
+> +++ b/drivers/mmc/host/cqhci.h
+> @@ -315,8 +315,7 @@ static inline u32 cqhci_readl(struct cqhci_host *host, int reg)
+>  
+>  struct platform_device;
+>  
+> -irqreturn_t cqhci_irq(struct mmc_host *mmc, u32 intmask, int cmd_error,
+> -		      int data_error);
+> +irqreturn_t cqhci_irq(struct mmc_host *mmc, int cmd_error, int data_error);
+>  int cqhci_init(struct cqhci_host *cq_host, struct mmc_host *mmc, bool dma64);
+>  struct cqhci_host *cqhci_pltfm_init(struct platform_device *pdev);
+>  int cqhci_deactivate(struct mmc_host *mmc);
+> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+> index b2680cc054bd..01ea3adbdf3b 100644
+> --- a/drivers/mmc/host/mtk-sd.c
+> +++ b/drivers/mmc/host/mtk-sd.c
+> @@ -1805,7 +1805,7 @@ static irqreturn_t msdc_cmdq_irq(struct msdc_host *host, u32 intsts)
+>  			cmd_err, dat_err, intsts);
+>  	}
+>  
+> -	return cqhci_irq(mmc, 0, cmd_err, dat_err);
+> +	return cqhci_irq(mmc, cmd_err, dat_err);
+>  }
+>  
+>  static irqreturn_t msdc_irq(int irq, void *dev_id)
+> diff --git a/drivers/mmc/host/sdhci-brcmstb.c b/drivers/mmc/host/sdhci-brcmstb.c
+> index 57e45951644e..1de2f05fd958 100644
+> --- a/drivers/mmc/host/sdhci-brcmstb.c
+> +++ b/drivers/mmc/host/sdhci-brcmstb.c
+> @@ -430,7 +430,7 @@ static u32 sdhci_brcmstb_cqhci_irq(struct sdhci_host *host, u32 intmask)
+>  	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+>  		return intmask;
+>  
+> -	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +	cqhci_irq(host->mmc, cmd_error, data_error);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
+> index 18ecddd6df6f..d0fa83f67a80 100644
+> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
+> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+> @@ -1503,7 +1503,7 @@ static u32 esdhc_cqhci_irq(struct sdhci_host *host, u32 intmask)
+>  	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+>  		return intmask;
+>  
+> -	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +	cqhci_irq(host->mmc, cmd_error, data_error);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index 0882ce74e0c9..ceed47ccfda8 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -2165,7 +2165,7 @@ static u32 sdhci_msm_cqe_irq(struct sdhci_host *host, u32 intmask)
+>  	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+>  		return intmask;
+>  
+> -	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +	cqhci_irq(host->mmc, cmd_error, data_error);
+>  	return 0;
+>  }
+>  
+> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
+> index 785d3acb18c5..4ca73e7d799e 100644
+> --- a/drivers/mmc/host/sdhci-of-arasan.c
+> +++ b/drivers/mmc/host/sdhci-of-arasan.c
+> @@ -555,7 +555,7 @@ static u32 sdhci_arasan_cqhci_irq(struct sdhci_host *host, u32 intmask)
+>  	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+>  		return intmask;
+>  
+> -	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +	cqhci_irq(host->mmc, cmd_error, data_error);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> index eef53455b8ee..4c5fa6a6931d 100644
+> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
+> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> @@ -624,7 +624,7 @@ static u32 dwcmshc_cqe_irq_handler(struct sdhci_host *host, u32 intmask)
+>  	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+>  		return intmask;
+>  
+> -	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +	cqhci_irq(host->mmc, cmd_error, data_error);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+> index c347fac24515..b121d896a804 100644
+> --- a/drivers/mmc/host/sdhci-pci-core.c
+> +++ b/drivers/mmc/host/sdhci-pci-core.c
+> @@ -215,7 +215,7 @@ static u32 sdhci_cqhci_irq(struct sdhci_host *host, u32 intmask)
+>  	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+>  		return intmask;
+>  
+> -	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +	cqhci_irq(host->mmc, cmd_error, data_error);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-pci-gli.c
+> index 6e4084407662..b55618566d65 100644
+> --- a/drivers/mmc/host/sdhci-pci-gli.c
+> +++ b/drivers/mmc/host/sdhci-pci-gli.c
+> @@ -1760,7 +1760,7 @@ static u32 sdhci_gl9763e_cqhci_irq(struct sdhci_host *host, u32 intmask)
+>  	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+>  		return intmask;
+>  
+> -	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +	cqhci_irq(host->mmc, cmd_error, data_error);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 820ce4dae58b..221e48b59f48 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -1280,7 +1280,7 @@ static u32 sdhci_tegra_cqhci_irq(struct sdhci_host *host, u32 intmask)
+>  	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+>  		return intmask;
+>  
+> -	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +	cqhci_irq(host->mmc, cmd_error, data_error);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
+> index d235b0aecfdb..2a27db2f558b 100644
+> --- a/drivers/mmc/host/sdhci_am654.c
+> +++ b/drivers/mmc/host/sdhci_am654.c
+> @@ -462,7 +462,7 @@ static u32 sdhci_am654_cqhci_irq(struct sdhci_host *host, u32 intmask)
+>  	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+>  		return intmask;
+>  
+> -	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +	cqhci_irq(host->mmc, cmd_error, data_error);
+>  
+>  	return 0;
+>  }
 
