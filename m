@@ -1,136 +1,77 @@
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012026.outbound.protection.outlook.com [52.101.53.26])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2A433F5BC;
-	Fri,  3 Jul 2026 07:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783062716; cv=fail; b=Xc8ny8UXk3+bczOrOsH7/iDKI3UrcIvQeFjFS4EWBkSHdisVPPu4UB7SmA/DqSkainNihpF0wvfx8uQ8SfEmMvuMiMl8Y6LCwSApxXEjsonM3aKcIKvfp+OS8sD05e5f2NiliP4q5T1bpxBhkZ9POEJJmzcar+g15Mn3Zmgx31s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783062716; c=relaxed/simple;
-	bh=gLrSWBOotrrFxL1UdxJJ4BN0PpPesdUDIiB8L8rzCpI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IV3lE+AgGf8MDJ6Zka9g+jheQBfurNmMhW5CO8W9hRNPKe7peYjHPu69xXoZqibnovZrPIfOPn4Sno6JalnSBWS782I9pAsjvAOQ1Jw1u1ihn3agpJHD6KgxpjmGrLJ9wc6CVObbGV5aVUGBHSeBgtioMDVNELmgNQWPVG1x+NU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mPu4msqI; arc=fail smtp.client-ip=52.101.53.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2323B3CFF62;
+	Fri,  3 Jul 2026 12:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783080883; cv=none; b=JVmyH1+y5imhsUg9AGsilKNkpP2B+rK+1oH0NV5iS5oOzpYzT4FLTu2You9/FB9+nfXts1bstXOtLgIiCYaYhAR9XNxxq29vJn15fGhvxStbWy/ayY4x7BzAaWY71Yn239rjQCoAotF1bZOUinr5q3qgBFkUT2rTpDOvxcf0UZc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783080883; c=relaxed/simple;
+	bh=7oSe6vRFZ03ReKBlWsONPnw+sfqHPtTYPgB7ySgxNfo=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=Vo+3Av4A64RKZw3mwdkbVD3CwEew2Bpg5ntzBimR0PX/USdmcf7hOMrzGegY1iJDzsFbjlbROUgsONJLnpDRnoALn4DRJIDxvEPtbJOq8G46/sOseIOWBV7rgA5WH/c2jqm6fgSVpvfGGY8FDqW/HYBEDDa8wcg7YOubhekQ1yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d6VbRKa+; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mPu4msqI"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=imoo0DWEVJaMgnQiKhCeIfvc7s0B54jaKJoXAHChnBFaWNyK9DTwDzgiRN2DpdTy08oGdBRsYUJGuXYCnaRwEKix9Ud5tptxWOJB+eBlTiOHYvut8P6eId9uui5fZ5qdw8weWHYF9OhNXuZKk4b0/MsYYTdadtHVoLbssrot5gzJkqgct/eiSFGwo+T3q7w9387psh5qx/xotwyIInILLtXEFkoaJkjOdMLeW6M/OFjftXMQNJAF3oQcFl+n+aKDkx6ceAI1bO1tkKLYaqKqt4weB4RgC2DBkvc/8voUeJ97PMNji1e4mpNmvKDmsalUqfp9ie+sgMGDyW0zzqxHrA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QWg/04MqwjzCxR/RY+YjgQikjy3lkqbePMHA2J3Jc+M=;
- b=sBaNBCoipOJTxxWQ3qryKIOE33DQR4i5QdaPPoDMgTUpK33Cd0JegfTGhwby50Stb4ByE5l8Tj5sZvRTB7l1YodmIJgm2YMMtjbGN6X/ZlnAdcKhEVmHJbwW3R5zA3xWRrZO8XOZV6t7rd5zZCalaygShxoWE2I6fnSrIOKjdYnQsLIxYg6CVNTTwFPpZs/7X6KQel5SSspPoSdDSsis3AorYj5d9PmlxMHOmwburwnAvEPvvbugJRE84tWf31X9d1dR7N67PS+yJahy8WAAbGnaSEVbOVBqVQHHMpn8jqE4Ej3BMQrfQb6WQfnCKSp6h/gwXKpH5aSVDX/6gvZiXw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QWg/04MqwjzCxR/RY+YjgQikjy3lkqbePMHA2J3Jc+M=;
- b=mPu4msqITOqexgFLLv7CGudmSKG3D3uUi5U9BFUuNr9REHPoyFyrdPkNdWKX/frModlDBPS5Qkeq2BmtZcAgbC1E1AHwBi763wdaFRbEz888+qQTLGGABxysg2LSnbEiptPf0MGOtUi5cXphj9mayKCye+aIXFLuxdLyADJGNQ+mOvm3KZyXvXrMn1UuUdfw3eEUA4N0zhcTItd7MCRo/4I/9fvQ2uRYJqCUYbJm9GrhAfii7ZDcgRT9mafPdvIxrXy494fBg6ws9o/obW7fqlCRzsFO5yvRsT3tfUlcYfl5rwvsrUQnZzutr+pRcCWMTy8QQ+T4iZ0jmzKXK95GpQ==
-Received: from SA1P222CA0089.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:35e::19)
- by PH7PR12MB7235.namprd12.prod.outlook.com (2603:10b6:510:206::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.10; Fri, 3 Jul
- 2026 07:11:50 +0000
-Received: from SN1PEPF00026367.namprd02.prod.outlook.com
- (2603:10b6:806:35e:cafe::4) by SA1P222CA0089.outlook.office365.com
- (2603:10b6:806:35e::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.181.11 via Frontend Transport; Fri, 3
- Jul 2026 07:11:50 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- SN1PEPF00026367.mail.protection.outlook.com (10.167.241.132) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.181.6 via Frontend Transport; Fri, 3 Jul 2026 07:11:50 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 3 Jul
- 2026 00:11:40 -0700
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Fri, 3 Jul 2026 00:11:40 -0700
-Received: from nvidia.com (10.127.8.12) by mail.nvidia.com (10.126.190.180)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Fri, 3 Jul 2026 00:11:39 -0700
-Date: Fri, 3 Jul 2026 00:11:37 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Will Deacon <will@kernel.org>
-CC: Robin Murphy <robin.murphy@arm.com>, "Joerg Roedel (AMD)"
-	<joro@8bytes.org>, Jason Gunthorpe <jgg@nvidia.com>,
-	<linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 08/11] iommu/tegra241-cmdqv: Require exactly one
- Stream ID for a vSID
-Message-ID: <akdgqcheFwS8DnfN@nvidia.com>
-References: <cover.1783054570.git.nicolinc@nvidia.com>
- <3177c49c4d9f24b1dc001d54b5ac30e5061feb7c.1783054570.git.nicolinc@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d6VbRKa+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 126D41F000E9;
+	Fri,  3 Jul 2026 12:14:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783080881;
+	bh=wCSekJzceclmv2Xdvl4vn/0F9vF6oLcNXpc7pUyDj0k=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc;
+	b=d6VbRKa+He2/cAFmwYnkVZjxIlsRAYd3koyUzl174SlRWigVinPrxLNyW1D1D0xO6
+	 vkKKNIjrywD5F/UoMCDkjtUhMxTDLSU421VLUP3NnsA6Yq0l9c8CZZMUbV11zQMLVm
+	 xMzeOzkKcw/86tXQdDzbYMe4rYh4Pzb86R5wZxWB+2w+rY6vfS4Tp4BiDgmMxVtryf
+	 iBGvffCRTHwx+6nF4Codf8+X4UD6mDt+kizURmVt9H/JKijTnykALPxPBgCZUpmupk
+	 VMwlDGrjS5G8BUxlsvjQZ0J03g4d96qrPiIHOY/A1nSnH6jTvs4ieLW2YML2tmOltj
+	 ytQtBS/G8QFIA==
+Message-ID: <e6cccc28049a6231d50842254447c909@kernel.org>
+Date: Fri, 03 Jul 2026 12:14:39 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Thierry Reding" <thierry.reding@kernel.org>
+Subject: Re: [PATCH v3 07/11] dma-buf: heaps: Add debugfs support
+In-Reply-To: <20260701-tegra-vpr-v3-7-d80f7b871bb4@nvidia.com>
+References: <20260701-tegra-vpr-v3-7-d80f7b871bb4@nvidia.com>
+Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-mm@kvack.org, linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org, linux-trace-kernel@vger.kernel.org, "Alexander
+ Gordeev" <agordeev@linux.ibm.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Benjamin
+ Gaignard" <benjamin.gaignard@collabora.com>, "Brian Starkey" <Brian.Starkey@arm.com>, "Catalin
+ Marinas" <catalin.marinas@arm.com>, "Christian Borntraeger" <borntraeger@linux.ibm.com>,
+ =?utf-8?b?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>, "Conor
+ Dooley" <conor+dt@kernel.org>, "David Airlie" <airlied@gmail.com>, "David
+ Hildenbrand" <david@kernel.org>, "Gerald Schaefer" <gerald.schaefer@linux.ibm.com>, "Heiko
+ Carstens" <hca@linux.ibm.com>, "John Stultz" <jstultz@google.com>, "Jonathan
+ Hunter" <jonathanh@nvidia.com>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Liam
+ R. Howlett" <liam@infradead.org>, "Lorenzo Stoakes" <ljs@kernel.org>, "Luca
+ Ceresoli" <luca.ceresoli@bootlin.com>, "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Marek
+ Szyprowski" <m.szyprowski@samsung.com>, "Masami Hiramatsu" <mhiramat@kernel.org>, "Mathieu
+ Desnoyers" <mathieu.desnoyers@efficios.com>, "Maxime Ripard" <mripard@kernel.org>, "Michal
+ Hocko" <mhocko@suse.com>, "Mike Rapoport" <rppt@kernel.org>, "Mikko
+ Perttunen" <mperttunen@nvidia.com>, "Rasmus Villemoes" <linux@rasmusvillemoes.dk>, "Rob
+ Herring" <robh@kernel.org>, "Robin Murphy" <robin.murphy@arm.com>, "Russell
+ King" <linux@armlinux.org.uk>, "Simona Vetter" <simona@ffwll.ch>, "Sowjanya
+ Komatineni" <skomatineni@nvidia.com>, "Steven Rostedt" <rostedt@goodmis.org>, "Sumit
+ Semwal" <sumit.semwal@linaro.org>, "Suren Baghdasaryan" <surenb@google.com>, "Sven
+ Schnelle" <svens@linux.ibm.com>, "T.J. Mercier" <tjmercier@google.com>, "Thierry
+ Reding" <thierry.reding@gmail.com>, "Thierry Reding" <treding@nvidia.com>, "Thomas
+ Zimmermann" <tzimmermann@suse.de>, "Vasily Gorbik" <gor@linux.ibm.com>, "Vlastimil
+ Babka" <vbabka@kernel.org>, "Will Deacon" <will@kernel.org>, "Yury Norov" <yury.norov@gmail.com>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <3177c49c4d9f24b1dc001d54b5ac30e5061feb7c.1783054570.git.nicolinc@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF00026367:EE_|PH7PR12MB7235:EE_
-X-MS-Office365-Filtering-Correlation-Id: d81c282c-5706-495a-b8e4-08ded8d25a38
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|1800799024|82310400026|23010399003|376014|18002099003|22082099003|4143699003|11063799006|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	nZE+V/HHACHT59sGzIY+pwVNVwPqEFjT8xUrFDqiHGkD4+ZV/jFKmrr2ZuIYFSLcyxSAkwX9eIBcmJBiXKdi0gJab+FT3onOFfLSNVeOpMe/sy0VIGxXuA4gk4HE5fquQ1UbbtUGMTnWMPaFh7jj38ICmcvxf6wZ1jO/fpMIEZ0wBEFomoIPX+UBFFdmyz1OLkJjOKry5/t19n3V8DjCyPs1yhaGK6bkapJRFALV7CYaggi15aoNb6M3Kju9PiiEDK5ysskEao9T1g+DlAX9/YBBzb9dCS1Jsli1Qk4CRssGAEc2eqdXwg2ijKEgszE4Jd6/usQaOJ7nubUI9q+eqZqXkseESXKesdr4Q7GHA1xlqBoMWb5t8ud9zu93wDpNNQDUGf4ELgiIIIRlYwH6jDHcIKvlzyzNd6chEOl48+QHN/XhBRLe3Kvb2a1Lywbm6l93ABIBOSoe/nz7L/nLnUJYhcN0ZWxD7MlT1NDlv589NKRLe1m7x+Ae1uTIg5cb5sR5CIKbyx2c9nnZXi+q+TSwCJONbeNmcvkqlZor5zuTV6A+zYqh2gBXALKwYOnIroUAn4TalKczLm56UnZICaHvvqSfsZbbp9++zzdKUy1X7nVm7WiXI5yMErFUGjU9cB+lAbJtDJktnSaLnK0tUtSqoxlowztt2a/4tPxpVnieO6up/C9SAdG1gkijgkRwxl/9gJOGApbGUzNV6EN5pg==
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(1800799024)(82310400026)(23010399003)(376014)(18002099003)(22082099003)(4143699003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	cOD6yAod88JZnYXftyjR+xDl8ymuVgmBXQJflq4mSP0BS+J509szqiPwIE71IHnTtEKhr+z9Lb3AiuKH6l0ZT27bUaoRVAr+Gy3BzKmmOXLh2QBFjz1pmVSCJygXWxfTAcW0Yqx2jHaow6A1lLS1ktltYknBOLFsM+s5vTLX/bIpwrWPPdUO7LYXzrL4oQ1p1Q10eJUEWCYN28c2ebR7SL3wyyuTjjmUtePoBef5jiVxzg3PHEivu09PGUAydErXXwd7mEGQM6wM0ptdM6REZJr1O+PFE66SDJwWqUlzXPR0nNzqesqND7y9JDo8MK8BjxKpBmjKmTqsXSSMdMUJmj5eYf531em1W+ca8Kax2TbeMWmouAjQBdUomU8BBWsPCWLXWAtpfHM5DfNZArWt+YIvpwAf4VxgzhJIdZVFyQZkgUNqMyTKvjETPwUQGLxb
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2026 07:11:50.0173
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d81c282c-5706-495a-b8e4-08ded8d25a38
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF00026367.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7235
 
-On Thu, Jul 02, 2026 at 10:31:34PM -0700, Nicolin Chen wrote:
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-> index 812cc500b4a1e..aa0568e328356 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-> @@ -1249,7 +1249,8 @@ static int tegra241_vintf_init_vsid(struct iommufd_vdevice *vdev)
->  	if (virt_sid > FIELD_MAX(VINTF_SID_MATCH_VIRT_SID))
->  		return -EINVAL;
->  
-> -	WARN_ON_ONCE(master->num_streams != 1);
-> +	if (master->num_streams != 1)
-> +		return -EINVAL;
+On Wed, 1 Jul 2026 18:08:18 +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Add a callback to struct dma_heap_ops that heap providers can implement
+> to show information about the state of the heap in debugfs. A top-level
+> directory named "dma_heap" is created in debugfs and individual files
+> 
+> [ ... ]
 
-Kevin pointed out in the other smmu patch that this should return
--EOPNOTSUPP instead.
-https://lore.kernel.org/linux-iommu/SA2PR11MB4844DD8A0367D8E909123F868CF42@SA2PR11MB4844.namprd11.prod.outlook.com/
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
-So, it'd be better to return -EOPNOTSUPP in both places. I'll fix
-this when doing a v2.
-
-Nicolin
+Thanks!
+Maxime
