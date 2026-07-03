@@ -1,147 +1,303 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94BD123BD1D;
-	Fri,  3 Jul 2026 18:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AFC331207
+	for <linux-tegra@vger.kernel.org>; Fri,  3 Jul 2026 19:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783103364; cv=none; b=PuQqxA5LAJFQq8uDob4THuuTfuyPYDF27laN7Wc/wABw9l6v/HAQ9AqYfVKNVrRP5HVwI8NPP9gKB9ysT+iXQi0BvJtrHbXxxoR7O0N/oZWj95XaZOcA5wL+nzI644mvscTmJphiG9PME8Yv4x93RbUl4LA8VSF/dMFbXwnva4U=
+	t=1783107570; cv=none; b=M7YmWKaMsGuj0XRRg+1lGwy5I/ja9YMQpbUxKUqwCuuhn7OAdnBqsjBGe9ShdX8HnrvV6PBvUJTGEu1F4k2HkTbuAH1ddnEVFiFkM4Xk+hE15rVT5k5dxwT9eSoSJqI5ypsTxa9Ii4phfeYc4q98fNs4A5fXyHrcD07hsuV1EHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783103364; c=relaxed/simple;
-	bh=Xl9CUYMIhXkFBk952nuPiNR2NtJxqNcKi1GiIwILJRc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MH0efoD3ws42RqkVFlmeFIoWOpteaTRe/vTesEhy8gd2h9XbyP4QgI+G8l9jrvq7zty3IHzbLTDHp6qfyyrE/EeLXMAL2XsBiiEa/8p0y+3N67u/vZUMJU/64NxS9Afdi5R0iOcRce/wwa+ecexSA311HBZyCZnShYcNgDlgqRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bj8wiXFD; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783107570; c=relaxed/simple;
+	bh=gf0y849jqsWicWT8x2zXtY5gzlbXBv3ZHwVF2zzNRiU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SHLRmFQSsZKDT5MHN+yJXYZ/MXhxinDCYUamFdm6vbUSyzdxfvnfajrMgsLT0/iPKgHuK83P0pBIFqXeLBfSaZXHEeOwK418U4teFp1FT1xmtPA/HFhaht/GU1wam885phvDgDYaiEl+iyvSkuo6cy1eMoTQ/J0L/vd229LP7f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YEMeysY1; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=L4su3hCC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bj8wiXFD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C0081F000E9;
-	Fri,  3 Jul 2026 18:29:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783103362;
-	bh=cDUa7qAvGQxAqsninsYf1imnrLZa/8omKlfZyOjK/p4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=Bj8wiXFDw1AEwJAJzWMHcoHUzUnO5RSLUrrdbPDDtrmHvICV4zvluTNYGrCKNReo+
-	 V2VHecn6G9LIfWRUYhHviazaY5SPs+PD1M5UTv6w3boNcTB2kk7c8VZ81fqK1AbmAd
-	 57RAJvDkiTHqnE5bsKAh+rQSmEVuCAEs9yrQTdJVFl4TPsOQ6fqSkVKiMM138D6+Rf
-	 Twkdgzz2OvoRegKiZIkL8IHSmlKgnE/rg5/I6C9SHJU0zH1mL5dkYJmbH1CiVSrtWD
-	 pBboBrk2Smc/JfNU6pSXBek5e4iYD0aLFYqs7FYnuViAFirbZ/UiaEVn+QUB9L+tsG
-	 bcf6WGk9oP15Q==
-Message-ID: <58458578-a6fb-40c8-838f-9a06a7371f76@kernel.org>
-Date: Fri, 3 Jul 2026 20:29:06 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YEMeysY1";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="L4su3hCC"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 663Hiq6Y685472
+	for <linux-tegra@vger.kernel.org>; Fri, 3 Jul 2026 19:39:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=yuDgKoAlw/JRHunDNfGXYB
+	YzhSRLVnjx2xmNmMEK1vs=; b=YEMeysY1/myhDao0i74e7TNlV74ktXTCfMwdq9
+	CR3QbS5AITeviE8hf9EJ30WAllVldtcYL4AMMm0/LzjQKzr0t0eqDF0S43incuSV
+	MyApeWy7M1IbpM60LNShiFzTpmwg+/W0PKTj+Lp+cXYVgARiHsuxhXD426SvD7cT
+	GGZrPR1QcL7iICOr24d23aBH8a/MPY5danZVa1/zTiMmF2fSUTDZMyH3oHPCfVAv
+	4nbvlJJiytEOZCVzenusm2J4e5XUbEHMVWQY64oswPjfiGG059bwY0hXxdENEoJ/
+	sJbKqjoPigEwtHk2s+fe6Ba9Tfz1f/tpFlGt1x1q0Mz2ipmQ==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f65qckefv-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-tegra@vger.kernel.org>; Fri, 03 Jul 2026 19:39:27 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-c891ed872ddso1481031a12.2
+        for <linux-tegra@vger.kernel.org>; Fri, 03 Jul 2026 12:39:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1783107566; x=1783712366; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yuDgKoAlw/JRHunDNfGXYBYzhSRLVnjx2xmNmMEK1vs=;
+        b=L4su3hCCMdFYIuBJEM12NFaEaRw+ZWrpRoUoyVEDZh11YUI4DjvK9ddaNZ0BMExuOd
+         2hZlmHNXLfT5J8fol4KPgg59lbmOlBJHJLvtyeCImy1jF/kSMAwbrvs4EsymejeyhoUS
+         /D69VBuMEU9+bQrWlCo9Q4tGeOgT5oF8uflGGrEJlvxUMOhJacFTLRwWMaWR97u17Rpi
+         xXWAwefS+ZCjHSKA5lVMOmvVHyBlDrgnI830dGEmuQEet0ynOmFsg9X8jg2fsX8v2jSh
+         lnK1qZBLx5Yh+mty7iPWOejD9hF4OZEM8wC0ZwWLIYTv36W4CCsUu9hWMxrpqNm130fL
+         nHbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783107566; x=1783712366;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yuDgKoAlw/JRHunDNfGXYBYzhSRLVnjx2xmNmMEK1vs=;
+        b=OijeO7Y/G0Af0bBSGK1kLX95tO3XvTZ5CwfE7XTFotEOZzgrw2Aqq+cxSJ9SPRc6Qh
+         eRGHExqxiyuooWrTA2d1DtPynGHTLGKoMJNhvYOtb/2krdlgaeQgAA5UB1Xo4wvalIQN
+         iCL2tLalg7Ja8CfW5Rw6Yfs4opoIbflynnBMIQwW7PZVlc/wP9BGH8V/PFxXWmHfq5Xi
+         WarF6zQrT6YA7IuZBtNPZlJ3EGka0B2pjSZInvOxOJr0Pwxa3O4vu5WjVqr/w729fQFq
+         IFsrfGiHK8j4RAJaCpj4WrfHNwMvo02hL+vEe93cdGCrm0j+HzTz6sZ3O5CUnJiSo2gH
+         elsA==
+X-Forwarded-Encrypted: i=1; AFNElJ/6D+3GPu6yL15q2aFCJmidfNz6AE1X9TVgtTCeAEzZQO5NnTHP68LjJxXHEo2/4HHolu/RAkpLyaPA+g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBudbfY6Y5nwoj/19xhvgRL+MbJaGYfkH52QQQ4ufTwswi1E0U
+	gZrMoBrhvMmn/WixvJEYqS7QRFpREhMeOSDKakfRC2ggSZENk08a0almoe1L3fRL1xw4iAccMvZ
+	PqyZvfru5Y6W20uolB99V5m2t/CFIas0ojp3z/nKJoAVmjyX4AxmNF7wyOjfyr+nXNg==
+X-Gm-Gg: AfdE7ckhon+6xcvivXye7/0BVk98Xi6c7boMBjh/SAsxu/6sZzZbsNHD3v9TV1Fh4Tt
+	vDaXQLtd8yZPBEJaIBfSjuDCvii0PATXQylR+5ytncDjnSRJGav0GExQeWOKpE+3tzxKMGP7ACY
+	kbjTAlCS1RAQFVlLU5wgGprrLTXXsBS7CCzM5i9qlr6qy8RG0WsNLPBamXAkiOFXSSeM90B5s4I
+	qBUynRJ92FcKE4aztKLScgYzuaq8siZmdQAuAZ+MS7SeL6PIFVDcwHjrlC8ka1049DD3aECqR7d
+	lJbcqb27OI/lkNPHgKhcwZ/ZasO1iVuT0PCQCTrk1aDuSkUh1TgGYPtRxZHNG5/WZ95WwsqpuN0
+	q5fKBcpJhtgSUu+mXGo9bqdsNIKpLRgc7/o9qqA==
+X-Received: by 2002:a05:6a21:4c81:b0:3bf:e291:496c with SMTP id adf61e73a8af0-3c03e298475mr701963637.17.1783107565973;
+        Fri, 03 Jul 2026 12:39:25 -0700 (PDT)
+X-Received: by 2002:a05:6a21:4c81:b0:3bf:e291:496c with SMTP id adf61e73a8af0-3c03e298475mr701865637.17.1783107565344;
+        Fri, 03 Jul 2026 12:39:25 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30f290b6bc2sm10065845eec.27.2026.07.03.12.39.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Jul 2026 12:39:24 -0700 (PDT)
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@codeconstruct.com.au>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+        Paul Kocialkowski <paulk@sys-base.io>,
+        Linus Walleij <linusw@kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Alexey Brodkin <abrodkin@synopsys.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Michal Simek <michal.simek@amd.com>,
+        Daniel Scally <dan.scally@ideasonboard.com>,
+        Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Eddie James <eajames@linux.ibm.com>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Yunfei Dong <yunfei.dong@mediatek.com>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Joseph Liu <kwliu@nuvoton.com>, Marvin Lin <kflin@nuvoton.com>,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Thierry Reding <thierry.reding@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Srinivas Kandagatla <srini@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ge Gordon <gordon.ge@bst.ai>, Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>,
+        Saravana Kannan <saravanak@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+        Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Peter Chen <peter.chen@cixtech.com>,
+        Fugang Duan <fugang.duan@cixtech.com>
+Cc: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
+        BST Linux Kernel Upstream Group <bst-upstream@bstai.top>,
+        Fabio Estevam <festevam@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-aspeed@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-media@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
+        kernel@collabora.com, linux-tegra@vger.kernel.org,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        imx@lists.linux.dev, sound-open-firmware@alsa-project.org,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Subject: [PATCH 00/42] of: reserved_mem: Introduce devres helpers and convert drivers
+Date: Sat,  4 Jul 2026 01:08:13 +0530
+Message-ID: <20260703193855.110619-1-mukesh.ojha@oss.qualcomm.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/11] mm/cma: Allow dynamically creating CMA areas
-To: Thierry Reding <thierry.reding@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Mikko Perttunen <mperttunen@nvidia.com>, Yury Norov <yury.norov@gmail.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Russell King <linux@armlinux.org.uk>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes <ljs@kernel.org>,
- "Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Robin Murphy <robin.murphy@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
- "T.J. Mercier" <tjmercier@google.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-mm@kvack.org, iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org,
- linux-trace-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-References: <20260701-tegra-vpr-v3-0-d80f7b871bb4@nvidia.com>
- <20260701-tegra-vpr-v3-6-d80f7b871bb4@nvidia.com>
-From: "David Hildenbrand (Arm)" <david@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=david@kernel.org; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20260701-tegra-vpr-v3-6-d80f7b871bb4@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: V9EbBcnqSc9jm_4CoWdf-8qk4bT1yKPG
+X-Authority-Analysis: v=2.4 cv=Bb7oFLt2 c=1 sm=1 tr=0 ts=6a480fef cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=c_1ikP4J58vCyc_cPHMA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-ORIG-GUID: V9EbBcnqSc9jm_4CoWdf-8qk4bT1yKPG
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzAzMDE5OCBTYWx0ZWRfX8ZWrpY0dwwaS
+ nkihWrssVZlPwHN23NFG68t2dDdUzFa7NwyYamz6FMj7ZqfAE4qA78ni1JaRcELaSq/oZjf8Bf2
+ Zw08JRx+JHKQcfBI1Wupfb+XhWqRCXbUIx9gzhqSGWdGKFS3lDZUrXDTtIhkSoTEooJqAIdoG1P
+ aRkktjr0hkKLl+pndaqJpxUuFMkBSkN4f6QQij4eH0PVQw+hoB1G3NxjWvftWA+NHobZP8+oN/y
+ Ip+6TpUs1yxr0eEbK6Lg73iPrWafICaNBxZERHdeZpkXWkMZVLrAlRPyt2FSI2yELQhDkiFmrAB
+ THqvY5T9147crsHsF47epmnXHTyPAAHmUdaqClBTWDjC7dxJvnPYYUR31hIX5ot2DaNG58kXEvD
+ 7FyYw6lyXisL9q8MEh2JetgTvY1Zj4ZxpiLDOXSm0dgemajHzFrQeuh9VoLSKH05px7MlN7SsKb
+ 2xbRRw66rA742XCEo0g==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzAzMDE5OCBTYWx0ZWRfXwuCVQktRZTBP
+ mT3+yaM1EPEm59njE4hKEYZRTGfkrwL+XUCoj1/3mMfuj+clUPn9xGnB/ErKa4WXd5zkOjRB2PB
+ mxqSg2+HWwExCt9ntldYN2Y9aI1Fr8U=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-07-03_03,2026-07-03_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 clxscore=1011 impostorscore=0 suspectscore=0
+ phishscore=0 adultscore=0 priorityscore=1501 bulkscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607030198
 
-On 7/1/26 18:08, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> There is no technical reason why there should be a limited number of CMA
-> regions, so extract some code into helpers and use them to create extra
-> functions (cma_create() and cma_free()) that allow creating and freeing,
-> respectively, CMA regions dynamically at runtime.
-> 
-> The static array of CMA areas cannot be replaced by dynamically created
-> areas because for many of them, allocation must not fail and some cases
-> may need to initialize them before the slab allocator is even available.
-> To account for this, keep these "early" areas in a separate list and
-> track the dynamic areas in a separate list.
+Drivers using of_reserved_mem_device_init() and its variants must
+manually call of_reserved_mem_device_release() in their remove and
+error-unwind paths. This is repetitive boilerplate that is easy to
+get wrong, and several drivers have open-coded the teardown
+inconsistently or skipped it entirely, leading to dangling reserved
+memory references.
 
-I want MM maintainers to review/ack this before this gets merged.
+This series introduces devres-managed wrappers —
+devm_of_reserved_mem_device_init(), devm_of_reserved_mem_device_init_by_idx(),
+and devm_of_reserved_mem_device_init_by_name() — that tie the reserved
+memory region lifetime to the device, releasing it automatically on
+unbind. The remaining 40 patches convert drivers across the drm, media,
+ASoC, remoteproc, firmware, mmc, memory and misc subsystems to use these
+helpers, yielding a net reduction of ~90 lines of boilerplate.
 
-I'm putting it on my todo list for next week (please ping me if it falls down
-the cracks and nobody else ends up reviewing it in the meantime).
+This series depends on  https://lore.kernel.org/lkml/20260703164457.4040457-1-mukesh.ojha@oss.qualcomm.com/
+
+Konrad Dybcio (1):
+  of: reserved_mem: Introduce devres-managed initialization functions
+
+Mukesh Ojha (41):
+  of: reserved_mem: Add devm_of_reserved_mem_device_init_by_name()
+  firmware: qcom: scm: Use devm_of_reserved_mem_device_init()
+  remoteproc: da8xx: Use devm_of_reserved_mem_device_init()
+  remoteproc: keystone: Use devm_of_reserved_mem_device_init()
+  media: synopsys: hdmirx: Use devm_of_reserved_mem_device_init()
+  remoteproc: omap: Use devm_of_reserved_mem_device_init()
+  drm: logicvc: Use devm_of_reserved_mem_device_init()
+  drm: hdlcd: Use devm_of_reserved_mem_device_init()
+  drm: pl111: Use devm_of_reserved_mem_device_init()
+  remoteproc: mtk_scp: Use devm_of_reserved_mem_device_init()
+  media: aspeed: Use devm_of_reserved_mem_device_init()
+  media: nuvoton: npcm-video: Use devm_of_reserved_mem_device_init()
+  memory: tegra210-emc: Use devm_of_reserved_mem_device_init_by_name()
+  drm: komeda: Use devm_of_reserved_mem_device_init()
+  drm: malidp: Use devm_of_reserved_mem_device_init()
+  drm: ingenic: Use devm_of_reserved_mem_device_init()
+  drm: kmb: Use devm_of_reserved_mem_device_init()
+  drm: sun4i: Use devm_of_reserved_mem_device_init()
+  drm: xlnx: zynqmp_dpsub: Use devm_of_reserved_mem_device_init()
+  media: arm: mali-c55: Use devm_of_reserved_mem_device_init()
+  media: mediatek: vpu: Use devm_of_reserved_mem_device_init()
+  mmc: sdhci-of-bst: Use devm_of_reserved_mem_device_init_by_idx()
+  remoteproc: ti_k3: Use devm_of_reserved_mem_device_init()
+  ASoC: mediatek: mt8192: Use devm_of_reserved_mem_device_init()
+  ASoC: mediatek: mt8196: Use devm_of_reserved_mem_device_init()
+  ASoC: mediatek: mt8183: Use devm_of_reserved_mem_device_init()
+  ASoC: mediatek: mt8189: Use devm_of_reserved_mem_device_init()
+  ASoC: SOF: imx: Use devm_of_reserved_mem_device_init_by_name()
+  staging: media: cedrus: Use devm_of_reserved_mem_device_init()
+  ASoC: cix-ipbloq: Use devm_of_reserved_mem_device_init()
+  drm: aspeed: Use devm_of_reserved_mem_device_init()
+  drm: arcpgu: Use devm_of_reserved_mem_device_init()
+  ASoC: mediatek: mt8173: Use devm_of_reserved_mem_device_init()
+  ASoC: mediatek: mt8186: Use devm_of_reserved_mem_device_init()
+  ASoC: mediatek: mt8188: Use devm_of_reserved_mem_device_init()
+  ASoC: mediatek: mt8195: Use devm_of_reserved_mem_device_init()
+  ASoC: SOF: mediatek: mt8186: Use devm_of_reserved_mem_device_init()
+  ASoC: SOF: mediatek: mt8195: Use devm_of_reserved_mem_device_init()
+  misc: fastrpc: Use devm_of_reserved_mem_device_init()
+  ASoC: fsl: imx-rpmsg: Use devm_of_reserved_mem_device_init_by_idx()
+  ASoC: sprd: Use devm_of_reserved_mem_device_init()
+
+ drivers/firmware/qcom/qcom_scm.c              | 22 +++------
+ .../gpu/drm/arm/display/komeda/komeda_dev.c   |  4 +-
+ drivers/gpu/drm/arm/hdlcd_drv.c               |  6 +--
+ drivers/gpu/drm/arm/malidp_drv.c              |  4 +-
+ drivers/gpu/drm/aspeed/aspeed_gfx_drv.c       |  2 +-
+ drivers/gpu/drm/ingenic/ingenic-drm-drv.c     | 13 +-----
+ drivers/gpu/drm/kmb/kmb_drv.c                 | 12 +----
+ drivers/gpu/drm/logicvc/logicvc_drm.c         | 21 ++++-----
+ drivers/gpu/drm/pl111/pl111_drv.c             |  4 +-
+ drivers/gpu/drm/sun4i/sun4i_drv.c             |  4 +-
+ drivers/gpu/drm/tiny/arcpgu.c                 |  2 +-
+ drivers/gpu/drm/xlnx/zynqmp_dpsub.c           |  4 +-
+ .../platform/arm/mali-c55/mali-c55-core.c     | 12 ++---
+ drivers/media/platform/aspeed/aspeed-video.c  | 12 ++---
+ drivers/media/platform/mediatek/vpu/mtk_vpu.c |  3 +-
+ drivers/media/platform/nuvoton/npcm-video.c   |  9 +---
+ .../platform/synopsys/hdmirx/snps_hdmirx.c    | 16 +------
+ drivers/memory/tegra/tegra210-emc-core.c      | 21 ++++-----
+ drivers/misc/fastrpc.c                        |  2 +-
+ drivers/mmc/host/sdhci-of-bst.c               |  7 +--
+ drivers/of/of_reserved_mem.c                  | 41 +++++++++++++++++
+ drivers/remoteproc/da8xx_remoteproc.c         | 10 +---
+ drivers/remoteproc/keystone_remoteproc.c      | 16 +------
+ drivers/remoteproc/mtk_scp.c                  |  3 +-
+ drivers/remoteproc/omap_remoteproc.c          | 13 +-----
+ drivers/remoteproc/ti_k3_common.c             | 13 +-----
+ drivers/remoteproc/ti_k3_common.h             |  1 -
+ .../staging/media/sunxi/cedrus/cedrus_hw.c    |  6 +--
+ include/linux/of_reserved_mem.h               | 46 +++++++++++++++++++
+ sound/hda/controllers/cix-ipbloq.c            |  2 +-
+ sound/soc/fsl/imx-rpmsg.c                     |  2 +-
+ sound/soc/mediatek/mt8173/mt8173-afe-pcm.c    |  2 +-
+ sound/soc/mediatek/mt8183/mt8183-afe-pcm.c    | 13 +-----
+ sound/soc/mediatek/mt8186/mt8186-afe-pcm.c    |  2 +-
+ sound/soc/mediatek/mt8188/mt8188-afe-pcm.c    |  2 +-
+ sound/soc/mediatek/mt8189/mt8189-afe-pcm.c    | 16 +------
+ sound/soc/mediatek/mt8192/mt8192-afe-pcm.c    | 11 +----
+ sound/soc/mediatek/mt8195/mt8195-afe-pcm.c    |  2 +-
+ sound/soc/mediatek/mt8196/mt8196-afe-pcm.c    | 14 +-----
+ sound/soc/sof/imx/imx-common.c                |  9 ++--
+ sound/soc/sof/mediatek/mt8186/mt8186.c        |  2 +-
+ sound/soc/sof/mediatek/mt8195/mt8195.c        |  2 +-
+ sound/soc/sprd/sprd-pcm-dma.c                 |  3 +-
+ 43 files changed, 162 insertions(+), 249 deletions(-)
 
 -- 
-Cheers,
+2.53.0
 
-David
