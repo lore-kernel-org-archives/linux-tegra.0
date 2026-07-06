@@ -1,379 +1,165 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B283A9612
-	for <linux-tegra@vger.kernel.org>; Mon,  6 Jul 2026 15:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=205.220.168.131
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783352792; cv=pass; b=DZgNCZlX7q/nwDPCy8xKXToEsjkSIDUbf0J4VfMMaZrPSXy9JCe24enU21AXdgk0slzSSX5os4HelQssFpX0yKlTC33heSzSexGjiCHEsdAZmPZOQRhNyUlba6iJm2Q31U2aEsYYBV2thIq6OuvWOOOXO12szThyNE51UzNFZ4E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783352792; c=relaxed/simple;
-	bh=puuTOTVkj7WGu9o679YWetaI9S6eilJUeJleGSsUDsU=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE3F3BED2D
+	for <linux-tegra@vger.kernel.org>; Mon,  6 Jul 2026 18:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783362910; cv=none; b=pibFcjmHqa0xp5TyVnpRZ9AMpvUP/i6pBGv1r9HGi3+QtqjXedziO1SkIt7m9qbIucwzLz1exrRv4S29BbAhgRz83Ly3Xab6GUb/MApXcYciQjm/3aFHPuDMRpo+hNGJigxigG+dUEGVvC2TKI9PuzGi6zuSpLUkpMqmwAm4SOg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783362910; c=relaxed/simple;
+	bh=2yUvsF4irByxZ9iCrQ5ZXpAQBGcY6LWmlWcUnVOYi7I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qCBg8BQncb3eIGA9DBOLmzyaTd7FJOTvDoDOf0jktB53YWmXCMYdlS9GnDQEccHRkaLbvCMo86CyfDFzFlPjX01z1cO4JCrYusFpJzDYTSDdoT1pP4WM/5YbVzzHxD+kzKxBXuRPGJHoS7lqI8SBZShsWTtsQdEwko9KrrHTqZg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hXZp1fbz; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=b+oO4MIU; arc=pass smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 To:Cc:Content-Type; b=t3LQxSLnr4Qg/K8hzAulneAe9hpdxn/MU3/s5RsFVwAtffNCsG4QUhh1Pqnqq0dnocwLzw7I1VxylI2EjFr5nHqTmRx83Sao3dZOEoEAzolT5IDKdlEuiaoXaLHIG9MQ/4bon2deOtu6pSw7JlZispgryqm0V87ZsX3ehX7OOjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RTPa2+Tz; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hXZp1fbz";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="b+oO4MIU"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 666FFDLo762357
-	for <linux-tegra@vger.kernel.org>; Mon, 6 Jul 2026 15:46:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+OnMOn2/de6czvKsT65QKA7vIysNRqWUd1S/71D1Jas=; b=hXZp1fbz4cz372gL
-	swOx37jRUZyhMOJu11R2PHaveWDbkEDuxJtIIw4ZT8oFYwMMK0fEMQd5MDT2KCnP
-	XASsVc0hrVC9REAWNI++Jh/oryw7S61DX6jKX1daudC2gs038daj+7xFQQgF988+
-	JPH+iDKbsv8dnDthyUtGuJefBq/O8S5tEJ2U4eUOBxCenwg+6OzRVVzZt/AYtFjd
-	mh0HyEE8+WxFz8efJ/yINBZoPcjRTpPy6IBmGwV/H+I5Jcx8dZIxnwVKGM4XVHhu
-	9fArCoYwqx5Bk9VzTbzuv8X/36v6/sds5G9lYjuxWbzWAvoU9PWrdm/SDU7CBcMz
-	tYON5Q==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f87rxt8px-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-tegra@vger.kernel.org>; Mon, 06 Jul 2026 15:46:30 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-8f0f45415cfso39805476d6.2
-        for <linux-tegra@vger.kernel.org>; Mon, 06 Jul 2026 08:46:30 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783352789; cv=none;
-        d=google.com; s=arc-20260327;
-        b=ONFn3Rn7dJJXwbNppGdkcu9C81WYQFf2se/Nsw2Ot3IfOryUhmean2edagjSyNx5wQ
-         CkVg8iI9nX5pZn/FbQflWE0lJpTc7X/qXCqJtfif9lvmKQfJDpFzosMiz15CUdurGgN+
-         hWsmGTvyBRC2JqwYBCXHVUHTbn0P3aSrqOabZj+hwMr/dRh+tc0phQoZh+3vfthvHjrj
-         keLpsjJN0tsoU6r8m1e18H/KPnIgbYus3jDjp0fixN9DEXDTgx0sGR4qjX/zrgM3fZNV
-         hlM583EBLcWgD5ozdqUQXa8MyLbQ3trZiIaoll4LvoUdLwVHeHaUCkk3aTG6pQixns6i
-         ufuw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=+OnMOn2/de6czvKsT65QKA7vIysNRqWUd1S/71D1Jas=;
-        fh=d0mrEgaKKrN4bLJvs+PWpfVh9cz8TPye/rI1OwDmeEM=;
-        b=dgfHHxCpz3zcGFMzfPnjrlM6d8aOlH0IdJpkUxXu/gqXNUXsCT2VO5eTnB35HjjA5y
-         Hk/IWdlGYIBTB943ns5Ed1t/94Rxm7443LnoC/5NEXwtIupDVlFQTCfqAU5pqRmA2t5c
-         hSa28uaQXI/FhauEIpHKWL/KD8W0Pc6cYLYWOVam8arx0VoSOxk+JNu/7Kb5z82ost8i
-         VwGCGFDomlI6V0ut+HyXk6mmsun8PKFovbgZD8ZPzWLHHmpmGQtSy2OQgdU+Pb/gTJLh
-         PaB3ROm6HbUnVqzdm/40TjI2kkZVYsxKm0cRRIzu7ICV7f7+LvuDfh7DcC7RKydYmOOo
-         2m+g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1783352789; x=1783957589; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=+OnMOn2/de6czvKsT65QKA7vIysNRqWUd1S/71D1Jas=;
-        b=b+oO4MIUeghHjvtstR0ZmQtDToct5BCHQze5uaArX64e/zcySL/9PQo3+Z2tYjWSTS
-         tDeKvx6THlXIAjaolkN5x6RwWoCBDYJDjgTw1gxLBKhDHYnLAdmjFEnmaH+jG3OtBNJG
-         ZIVRtvbsh70na8FVKh1xXQs6rA9U+5GMCVP38f7ivJ/KNyAKDUdFCWIaQL1Vq876o7gV
-         Gzso72Cl+MDC8DAw3y0QLXQVA7+TtdTaIKY5ERgA02IPAGtQwAEJwArn/U5AQ0TbrNU1
-         RibF16loOBTNOqq8HmqKc7jtUDnIvM4Sn0N1GetyHoCLtEQ7lbTDh085pkcaSovjOmmX
-         yn4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783352789; x=1783957589;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=+OnMOn2/de6czvKsT65QKA7vIysNRqWUd1S/71D1Jas=;
-        b=oxFqSCEOqMuRVCgEMeZ81GjbTcCfc+urzfqTiCAZMSK0LaFQowo5WFmMZAuinSEHXa
-         CYcKYEp7kd+GPKiGePnHIdoF3ZQPV/zKfKJilziSus1JIO9VdDJQKLZ0IEXcDZz97i6E
-         3kYAyKKBBMfINmoKpWFkyaTmy9hN2fayQlC8VC7ZgskF0dQCVskbMbi1oF9Z0tLNxOaG
-         /EYEZ2Iwyg9lczLlUfPu4n33lko33yR+Yrs+4H/3hBNbAaUDXP3q1VLpAtab+TNPV6b1
-         l6RxW6amLZzbhKfMXbC7/NVBJAQWrMX9Z/Cp71jH0kaqBvA28U/ZYCqVUIerqQjOS6F9
-         UefQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rp0OorbQIjfid16nbW+108/yd/0hpElDngNPS60GZBlNsiwiAgwSCpC/uxCDhTYmrvDXh4aGHBfmbUaYA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YydeqkUR5ol1+IhMRe3E3aaSdKgmm+zHaQsmpuHj5u/slIc/vzj
-	pW25s+Qs0QKDJOzVAcrShz0flsmwAqzTKsr1kJGgX5BWjvlYjVZnec6Qdpo/IrNb5Xj05ymJ1WF
-	ujtHqRVIY4ySbZgInvxz0uk7kHEzDxU3F6Ndekza+wdC4AdlPWY1tpJhwngj0Psc/zQ6Ux8u3kn
-	K2pK/E0ApNL3esGfdvMoFwScaZWG9ZqA0Uj+TC5UiM
-X-Gm-Gg: AfdE7clbQ91hU1XHzVBPlnRi/kWcXNO6puIQxxs2/D/6+gPciLQFom7z40nFNL985KW
-	f1HoWE7LG0RFL5yz8gwDp+QSKzsQwjcADaE8JD2+R5/H0sr+WVeyfKHDpF9xXwQ2i1I0yVNT0w/
-	sKmcfHEz7LtDy4434pmhu7HvePur+9Nyqo9Gmk+eGQyyz5j2H0JsnzTt8sYiXbtg2L+PN2
-X-Received: by 2002:a05:6214:5003:b0:8f3:e97:59b8 with SMTP id 6a1803df08f44-8fcb3d3ee24mr12450746d6.29.1783352788244;
-        Mon, 06 Jul 2026 08:46:28 -0700 (PDT)
-X-Received: by 2002:a05:6214:5003:b0:8f3:e97:59b8 with SMTP id
- 6a1803df08f44-8fcb3d3ee24mr12450156d6.29.1783352787606; Mon, 06 Jul 2026
- 08:46:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RTPa2+Tz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6AEE1F00A3A
+	for <linux-tegra@vger.kernel.org>; Mon,  6 Jul 2026 18:35:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783362908;
+	bh=+7nysLIuHvoIobBHO8Sz9i93yCzFcL14Na0iQTAeT18=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=RTPa2+TzlRYpD3oHY0N03iQjSarqngBQgjiwrk3zXRGxnCvhqe3cOwM5YQhCFwFY+
+	 x5WH0Y1jY29c5raHRuM/eQUzwwMedzrqArck5jbSXBzE91ilXp5Yaf/CT2wCzD3UvE
+	 5KFmc7UgZk8zC6461gkRbZLrf9BzstmX9sOPk+h7XwIOPxMCBMd/QyO0dAhWSrwY5p
+	 8GdZl8f/EshMdEtIOb7cV0YOyY8cwVJXBGklwRY5D3ugg4FtA7Y4M1aHim9whFyHLe
+	 e0t86EWqfjvFO0+/emJvittZ2AhDjm8ZwOz2bFayjCptEi/WL+uz0BSUoh9aReDXNO
+	 vZOK0TNjBd9Kg==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5aeb59d54b1so2735911e87.1
+        for <linux-tegra@vger.kernel.org>; Mon, 06 Jul 2026 11:35:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RotW/QSlFbeD3T1GB5E4ATOkIS80gNga8Wb0bvcwbkGmvBMhE866LTztPCegyDs4jnms2TR8Fg808b9hg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5AM+Ddn77OAGtvtoRVfq3WqCAk/Ur8EmQA2yMZdKOh3IamXSh
+	pfXbSSlOiSAt3CknolqXKl6kaSHcgtSvn6t1VDLgAPBKyDNAowpTMDIZSOb0gs1pfSP57mQsV4W
+	X5ffqiyFmtakiZTFJiJFmvljv+gZWx8A=
+X-Received: by 2002:ac2:5209:0:b0:5ae:b97b:f75a with SMTP id
+ 2adb3069b0e04-5b007be084cmr265254e87.55.1783362907119; Mon, 06 Jul 2026
+ 11:35:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20260624021955epcas1p2ba2fa4eb8bd0aafaf7b46bde2cf524be@epcas1p2.samsung.com>
- <20260624021912.632627-1-cw9316.lee@samsung.com>
-In-Reply-To: <20260624021912.632627-1-cw9316.lee@samsung.com>
-From: Ulf Hansson <ulf.hansson@oss.qualcomm.com>
-Date: Mon, 6 Jul 2026 17:46:16 +0200
-X-Gm-Features: AVVi8CcBYSP5zyLpt00Q11yUujyWdz_mc32EjqBaIjLdlr5HgDzXa1HvKfgTjLk
-Message-ID: <CAPx+jO9=7B4SYyKSwvGqx+zzMsJ+hhFUK_vmU-HNYQZfKv+bdQ@mail.gmail.com>
-Subject: Re: [PATCH] mmc: cqhci: Remove unused intmask parameter from cqhci_irq()
-To: Chanwoo Lee <cw9316.lee@samsung.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-        Asutosh Das <quic_asutoshd@quicinc.com>,
-        Ritesh Harjani <ritesh.list@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
-        Chaotian Jing <chaotian.jing@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
-        Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Haibo Chen <haibo.chen@nxp.com>, Frank Li <Frank.Li@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Michal Simek <michal.simek@amd.com>,
-        Thierry Reding <thierry.reding@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "open list:EMMC CMDQ HOST CONTROLLER INTERFACE (CQHCI) DRIVER" <linux-mmc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>,
-        "open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+References: <20260623095403.3407436-1-sumitg@nvidia.com> <CAJZ5v0jvkNfx-1XChRCsGHJAcY7W4j41P+Xug6+TpPge7tHF7Q@mail.gmail.com>
+ <de03b23f-18a3-4e99-a15a-5044463ac484@nvidia.com> <CAJZ5v0h+Fhj8+xLC=TAqx43+tQCPDUj-eP9YMW=BwKzn8CPUDw@mail.gmail.com>
+ <15def9ce-abbd-4ef5-bb8f-0c55b42a0181@arm.com>
+In-Reply-To: <15def9ce-abbd-4ef5-bb8f-0c55b42a0181@arm.com>
+From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
+Date: Mon, 6 Jul 2026 20:34:54 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jB4kpsZn+JxhwoEviagvM7THFsWb7gQ7HnvYaOwm9-gA@mail.gmail.com>
+X-Gm-Features: AVVi8CfwM4SBqR6JMl6s5K1lXrk-FioMoVxAITpKkXfASLI7v7Cnj98mMjYfusM
+Message-ID: <CAJZ5v0jB4kpsZn+JxhwoEviagvM7THFsWb7gQ7HnvYaOwm9-gA@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: CPPC: Preserve OSPM-set registers across hotplug
+ and unload
+To: Pierre Gondois <pierre.gondois@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, viresh.kumar@linaro.org, 
+	ionela.voinescu@arm.com, zhenglifeng1@huawei.com, zhanjie9@hisilicon.com, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, 
+	vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, 
+	mochs@nvidia.com, bbasu@nvidia.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-ORIG-GUID: xb0S8gDxEB3Ig9360ei88htwESiU3pvi
-X-Authority-Analysis: v=2.4 cv=Hv1G3UTS c=1 sm=1 tr=0 ts=6a4bcdd6 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10
- a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
- a=DJpcGTmdVt4CTyJn9g5Z:22 a=hD80L64hAAAA:8 a=EqBXy2bI2-3AcK8LOXQA:9
- a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA2MDE2MCBTYWx0ZWRfXyLN3vCKkHnKa
- CWxXYQ+ShY7A3LoTkkrJQov8EO5MTS4j0GwDAJOa5KSdYKIdDe9wonmlnhUW7x9o7m+hCGDN6Bu
- RUddnXX3OQjntNN6JE1kWtjRhI/aCF8=
-X-Proofpoint-GUID: xb0S8gDxEB3Ig9360ei88htwESiU3pvi
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA2MDE2MCBTYWx0ZWRfXw7YIHW/Nex7K
- dnI78Zss6M8SjTlISYUSPSRW1macahI/m37zLCOezmeRtLxhfETnaYFzDWGTh2hKiIfvHG0NB9V
- FGIIcpF/GAJUnt044RQSk/Osu0lKOaHYW7oIGBfc0QbiZHH/UagJFtT27dIKvoKxq7CLYpW6B+3
- jW7gTNxEJPK2k6c5ZZRO7D+U82EYUiOlHkafGPX+K9jLNIpVxJkOZ6WRtt93fWtdHJmi6nNV+dv
- 684jcYpd2kpctmRwoA00cWFTKViFDZgV7GVFrFB2sJz7KCSNcdAWo9jkwug+nwa2f4SEtdnToWL
- EY0pQjuTQOanBIENWkG5+WZeo6/jJrSkWomgDr+RxcnAgy1OuaMY2nVBTcAqW/0BPU0Xf/E40XK
- 52qTIVzqHFL0rzp0e6DVIP8S73eDdCWIpFpX7N3eS9Rgq3qMHAcaDUMC+1oB0vkslyBfhNLxEil
- 6Tx+AD8w3qe7T15MAUg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-06_02,2026-07-06_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 suspectscore=0 malwarescore=0 adultscore=0 priorityscore=1501
- spamscore=0 bulkscore=0 clxscore=1011 lowpriorityscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607060160
 
-On Wed, Jun 24, 2026 at 4:20=E2=80=AFAM Chanwoo Lee <cw9316.lee@samsung.com=
-> wrote:
+On Wed, Jul 1, 2026 at 6:25=E2=80=AFPM Pierre Gondois <pierre.gondois@arm.c=
+om> wrote:
 >
-> The intmask parameter of cqhci_irq() is never used within the function
-> body. The function reads the CQHCI interrupt status directly via
-> cqhci_readl() and processes interrupts independently of the SDHCI
-> intmask value passed by callers.
+> Hello Rafael, Sumit,
 >
-> Signed-off-by: Chanwoo Lee <cw9316.lee@samsung.com>
+> On 6/24/26 15:20, Rafael J. Wysocki wrote:
+> > On Wed, Jun 24, 2026 at 2:56=E2=80=AFPM Sumit Gupta<sumitg@nvidia.com> =
+wrote:
+> >> Hi Rafael,
+> >>
+> >>
+> >> On 23/06/26 16:30, Rafael J. Wysocki wrote:
+> >>> External email: Use caution opening links or attachments
+> >>>
+> >>>
+> >>> On Tue, Jun 23, 2026 at 11:54=E2=80=AFAM Sumit Gupta<sumitg@nvidia.co=
+m> wrote:
+> >>>> Values written to OSPM-set CPPC registers (via sysfs or the autonomo=
+us
+> >>>> boot parameter) can be lost in two ways:
+> >>>>
+> >>>>     - Across CPU hotplug: the platform may reset a CPU's registers w=
+hen it
+> >>>>       is offlined.
+> >>>>     - On driver unload: the value the driver wrote is left in the re=
+gister
+> >>>>       instead of returning to its pre-driver state.
+> >>>>
+> >>>> Add a small table-driven mechanism that handles both:
+> >>>>
+> >>>>     - Capture each register's firmware value when a CPU is first see=
+n and
+> >>>>       restore it on driver unload.
+> >>>>     - Record the last value the driver set and reapply it from ->ini=
+t()
+> >>>>       when the policy is reactivated after CPU hotplug.
+> >>> I'm not sure if this is a good idea TBH.
+> >>>
+> >>> The overall system state when the CPU goes online may be completely
+> >>> different from the system state when the CPU was online last time, so
+> >>> there is no reason to restore its settings from before offline, at
+> >>> least in principle.
+> >> These are values userspace deliberately set, more like a frequency QoS
+> >> request that persists until userspace changes it than transient state.
+> >> It's platform dependent though, as the platform I test on preserves th=
+em
+> >> across hotplug, but where the platform resets the register on offline
+> >> the value is silently lost. Should the kernel re-apply it on online,
+> >> or is that better left to userspace? If so, I will drop the hotplug re=
+apply
+> >> and keep only the restore on driver unload.
+> >>
+> >> intel_pstate and amd-pstate already re-sync these on CPU online, as th=
+ey
+> >> keep the policy across hotplug via ->online()/->offline(). So for them
+> >> it's re-syncing the hardware, not restoring state from before offline.
+> >>
+> >> cppc_cpufreq has no ->online()/->offline() today, so it fully tears th=
+e
+> >> policy down and rebuilds it, which is why this reads as "restoring
+> >> settings from before offline".
+> >> Would adding ->online()/->offline() be acceptable, with policy preserv=
+ed
+> >> and ->online() just re-syncing the registers the platform reset?
+> > That would be a better approach IMV.
+> Just an example to be sure I understand correctly.
+>
+> 1. on a platform, auto_sel=3D0 by default
+> 2. cppc_cpufreq driver is loaded + we set auto_sel=3D1
+> 3. all the CPUs of a policy are unplugged
+> 4. cppc_cpufreq driver is unloaded
+>
+> To be sure we let the platform in the default state,
+> we should set auto_sel=3D0 in step A.3, i.e. in the
+> .offline() callback.
+> Doing it at A.4 (i.e. in the .exit()) would not be possible:
+> the CPU's registers might not be available anymore once offline.
+>
+> IoW, we should only need:
+> .init()
+> \-cppc_cpufreq_save_firmware_regs()
+> firmware_captured=3D0, save the firmware regs.
+>
+> .online()
+> \-cppc_cpufreq_save_firmware_regs()
+> firmware_captured=3D1, restore the user (or previous)
+> values that were saved in the previous .offline() call
+> (as .online() is not called for new policies).
+>
+> .offline()
+> \-cppc_cpufreq_restore_firmware_regs()
+> Save the user/current regs values
+> + Restore the firmware registers.
+>
+> And it should be ok to remove:
+> - cppc_cpufreq_reapply_requested_regs()
+> - the firmware_captured field.
+> If during .init(), we init requested_val to the firmware
+> values aswell, firmware_captured should be useless
 
-Applied for next, thanks!
-
-Kind regards
-Uffe
-
-
-> ---
->  drivers/mmc/host/cqhci-core.c       | 3 +--
->  drivers/mmc/host/cqhci.h            | 3 +--
->  drivers/mmc/host/mtk-sd.c           | 2 +-
->  drivers/mmc/host/sdhci-brcmstb.c    | 2 +-
->  drivers/mmc/host/sdhci-esdhc-imx.c  | 2 +-
->  drivers/mmc/host/sdhci-msm.c        | 2 +-
->  drivers/mmc/host/sdhci-of-arasan.c  | 2 +-
->  drivers/mmc/host/sdhci-of-dwcmshc.c | 2 +-
->  drivers/mmc/host/sdhci-pci-core.c   | 2 +-
->  drivers/mmc/host/sdhci-pci-gli.c    | 2 +-
->  drivers/mmc/host/sdhci-tegra.c      | 2 +-
->  drivers/mmc/host/sdhci_am654.c      | 2 +-
->  12 files changed, 12 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/mmc/host/cqhci-core.c b/drivers/mmc/host/cqhci-core.=
-c
-> index 178277d90c31..98ceb0b9a6d1 100644
-> --- a/drivers/mmc/host/cqhci-core.c
-> +++ b/drivers/mmc/host/cqhci-core.c
-> @@ -819,8 +819,7 @@ static void cqhci_finish_mrq(struct mmc_host *mmc, un=
-signed int tag)
->         mmc_cqe_request_done(mmc, mrq);
->  }
->
-> -irqreturn_t cqhci_irq(struct mmc_host *mmc, u32 intmask, int cmd_error,
-> -                     int data_error)
-> +irqreturn_t cqhci_irq(struct mmc_host *mmc, int cmd_error, int data_erro=
-r)
->  {
->         u32 status;
->         unsigned long tag =3D 0, comp_status;
-> diff --git a/drivers/mmc/host/cqhci.h b/drivers/mmc/host/cqhci.h
-> index 3668856531c1..8fbbc48c3f85 100644
-> --- a/drivers/mmc/host/cqhci.h
-> +++ b/drivers/mmc/host/cqhci.h
-> @@ -315,8 +315,7 @@ static inline u32 cqhci_readl(struct cqhci_host *host=
-, int reg)
->
->  struct platform_device;
->
-> -irqreturn_t cqhci_irq(struct mmc_host *mmc, u32 intmask, int cmd_error,
-> -                     int data_error);
-> +irqreturn_t cqhci_irq(struct mmc_host *mmc, int cmd_error, int data_erro=
-r);
->  int cqhci_init(struct cqhci_host *cq_host, struct mmc_host *mmc, bool dm=
-a64);
->  struct cqhci_host *cqhci_pltfm_init(struct platform_device *pdev);
->  int cqhci_deactivate(struct mmc_host *mmc);
-> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-> index b2680cc054bd..01ea3adbdf3b 100644
-> --- a/drivers/mmc/host/mtk-sd.c
-> +++ b/drivers/mmc/host/mtk-sd.c
-> @@ -1805,7 +1805,7 @@ static irqreturn_t msdc_cmdq_irq(struct msdc_host *=
-host, u32 intsts)
->                         cmd_err, dat_err, intsts);
->         }
->
-> -       return cqhci_irq(mmc, 0, cmd_err, dat_err);
-> +       return cqhci_irq(mmc, cmd_err, dat_err);
->  }
->
->  static irqreturn_t msdc_irq(int irq, void *dev_id)
-> diff --git a/drivers/mmc/host/sdhci-brcmstb.c b/drivers/mmc/host/sdhci-br=
-cmstb.c
-> index 57e45951644e..1de2f05fd958 100644
-> --- a/drivers/mmc/host/sdhci-brcmstb.c
-> +++ b/drivers/mmc/host/sdhci-brcmstb.c
-> @@ -430,7 +430,7 @@ static u32 sdhci_brcmstb_cqhci_irq(struct sdhci_host =
-*host, u32 intmask)
->         if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
->                 return intmask;
->
-> -       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-> +       cqhci_irq(host->mmc, cmd_error, data_error);
->
->         return 0;
->  }
-> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-=
-esdhc-imx.c
-> index 18ecddd6df6f..d0fa83f67a80 100644
-> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
-> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-> @@ -1503,7 +1503,7 @@ static u32 esdhc_cqhci_irq(struct sdhci_host *host,=
- u32 intmask)
->         if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
->                 return intmask;
->
-> -       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-> +       cqhci_irq(host->mmc, cmd_error, data_error);
->
->         return 0;
->  }
-> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> index 0882ce74e0c9..ceed47ccfda8 100644
-> --- a/drivers/mmc/host/sdhci-msm.c
-> +++ b/drivers/mmc/host/sdhci-msm.c
-> @@ -2165,7 +2165,7 @@ static u32 sdhci_msm_cqe_irq(struct sdhci_host *hos=
-t, u32 intmask)
->         if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
->                 return intmask;
->
-> -       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-> +       cqhci_irq(host->mmc, cmd_error, data_error);
->         return 0;
->  }
->
-> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-=
-of-arasan.c
-> index 785d3acb18c5..4ca73e7d799e 100644
-> --- a/drivers/mmc/host/sdhci-of-arasan.c
-> +++ b/drivers/mmc/host/sdhci-of-arasan.c
-> @@ -555,7 +555,7 @@ static u32 sdhci_arasan_cqhci_irq(struct sdhci_host *=
-host, u32 intmask)
->         if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
->                 return intmask;
->
-> -       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-> +       cqhci_irq(host->mmc, cmd_error, data_error);
->
->         return 0;
->  }
-> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci=
--of-dwcmshc.c
-> index eef53455b8ee..4c5fa6a6931d 100644
-> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> @@ -624,7 +624,7 @@ static u32 dwcmshc_cqe_irq_handler(struct sdhci_host =
-*host, u32 intmask)
->         if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
->                 return intmask;
->
-> -       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-> +       cqhci_irq(host->mmc, cmd_error, data_error);
->
->         return 0;
->  }
-> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-p=
-ci-core.c
-> index c347fac24515..b121d896a804 100644
-> --- a/drivers/mmc/host/sdhci-pci-core.c
-> +++ b/drivers/mmc/host/sdhci-pci-core.c
-> @@ -215,7 +215,7 @@ static u32 sdhci_cqhci_irq(struct sdhci_host *host, u=
-32 intmask)
->         if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
->                 return intmask;
->
-> -       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-> +       cqhci_irq(host->mmc, cmd_error, data_error);
->
->         return 0;
->  }
-> diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-pc=
-i-gli.c
-> index 6e4084407662..b55618566d65 100644
-> --- a/drivers/mmc/host/sdhci-pci-gli.c
-> +++ b/drivers/mmc/host/sdhci-pci-gli.c
-> @@ -1760,7 +1760,7 @@ static u32 sdhci_gl9763e_cqhci_irq(struct sdhci_hos=
-t *host, u32 intmask)
->         if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
->                 return intmask;
->
-> -       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-> +       cqhci_irq(host->mmc, cmd_error, data_error);
->
->         return 0;
->  }
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegr=
-a.c
-> index 820ce4dae58b..221e48b59f48 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -1280,7 +1280,7 @@ static u32 sdhci_tegra_cqhci_irq(struct sdhci_host =
-*host, u32 intmask)
->         if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
->                 return intmask;
->
-> -       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-> +       cqhci_irq(host->mmc, cmd_error, data_error);
->
->         return 0;
->  }
-> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am65=
-4.c
-> index d235b0aecfdb..2a27db2f558b 100644
-> --- a/drivers/mmc/host/sdhci_am654.c
-> +++ b/drivers/mmc/host/sdhci_am654.c
-> @@ -462,7 +462,7 @@ static u32 sdhci_am654_cqhci_irq(struct sdhci_host *h=
-ost, u32 intmask)
->         if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
->                 return intmask;
->
-> -       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-> +       cqhci_irq(host->mmc, cmd_error, data_error);
->
->         return 0;
->  }
-> --
-> 2.43.0
->
+This sounds about right to me.
