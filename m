@@ -1,228 +1,198 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B3F40A93B
-	for <linux-tegra@vger.kernel.org>; Mon,  6 Jul 2026 13:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6DD42088B;
+	Mon,  6 Jul 2026 13:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783343817; cv=none; b=AaT/RI4WGo+e0Plf1zHSGvbyPnSqIwDs9sclzfVTZF61Dufi504oa2GMaVtBVvk7BhueJbPV6flrS3X3IDKAjvRoQRqFOIIqos7L1iT/QTZNcWTZDZd878STSrO4SAyV6PvJxduCuo+CGH6Tk8VeU5TkWLQPB+1BAsKslsEu7Hg=
+	t=1783345768; cv=none; b=TPA8eF1CbmxULKdX6bSx1Y7fzWrDzYG814pra930jlNHAL4KHMsCKLN41xh19TBDwTuy4m4k0jM8h9AI6WkaqclMBZUVHUTQp2q6MkBgCnX076KKvd5tsgYOFmH3Jr8KZ1Ip8zDeR0pKiJ7qf+ZufPU8kaIlT9yWeIWhVwXB5xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783343817; c=relaxed/simple;
-	bh=osYfKtMdqTMsFlJUTP73i98DkAo9zxWqgwDdKf3SxAo=;
+	s=arc-20240116; t=1783345768; c=relaxed/simple;
+	bh=n2XIM2CQ/NysWLV70KA17o1xrRADPboha/A2J5wScPA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LaC4QAt2flAso7GRDbohV3lwsdlOMadjs3iQl/B+MIdpn+N0YG18qvJFrVvte+jO4ma4ZE7Mpja1BPV9yemak4wpqczt1KSSVLwjt0qvr6+6gT5XPVLu07dEb0LRfkP8lIGAD8ZYW/ls6Lruf0ZSZIVqXahoL5QINTpmSgpKZeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gxURCHyC; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=jWOBzk+W; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=YUC8O5ZCFgerr7PImHsUX18ZKQZrJFyC9YWNecxB4ytK7QEJaQIV9xyGf9lPVnnqSZf9lpovHuGbQaJyA7GTz0zhXnHqQHqBmVyLSLBRjY+OTiYypG/9xLsbRleFWkacOw4Y11/33kzd5ecfbnElop/r84XO3lYLYXo8IABDGV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0h5ujtI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gxURCHyC";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="jWOBzk+W"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 666AxR5J402161
-	for <linux-tegra@vger.kernel.org>; Mon, 6 Jul 2026 13:16:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Vz86zd3go04za6BKCrEOJJ5A
-	QbsnL3kIqNm4xRq1ahk=; b=gxURCHyC5Uby2DEF/Sz+/5yNg3sVS5RYamD/XHiq
-	Oeg+y1LJwkhEFbOaeUT/NQGKPdVK2zZ8VlG3hv6H4S/me/nezIWTxoEm9In3Bs8g
-	ZvdBIq0+/gprmciBEXPztT6Da/pNCqKAPXP77qtywx46VRNq9dIbfHagzvAaAEIl
-	E6hG0pwACBSPp2ODRqZ5jgVnHaYTwWXW8Uuan0qZj5WO8InmLPD6We8EBKixryDx
-	iPil71OMzHER33szNYpl62CNRKnWkJ2P7UpjNxjXjQ3Ou5rCnNsvVYC1bhpBPa1w
-	4pcAqdWpoDmeLyJqbgihNBYMa0DBssjFzMUnNnE2Yj0Udg==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f8a3grrmj-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-tegra@vger.kernel.org>; Mon, 06 Jul 2026 13:16:55 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-380a638fb5bso3061776a91.0
-        for <linux-tegra@vger.kernel.org>; Mon, 06 Jul 2026 06:16:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1783343814; x=1783948614; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Vz86zd3go04za6BKCrEOJJ5AQbsnL3kIqNm4xRq1ahk=;
-        b=jWOBzk+WqRcsW0EcYuD4Ooik8Y6fh2AMJpvGAV1NzKBWZWUZqKLR9Y57UhoozdykhG
-         AOH8XmQdjPyOhZYNgnOqMa9hBRePaSL1xyHCPLBKt0p8vP26AH0dUTHbl5f57clnMjpO
-         AG9ewPIfaOhx0mqzPBPhkyCLWGfsS/clz3aezQmzxqQJABWufQrrU0fyGVfcf6H0xON1
-         TsLxtPdBkQVlCJfocNQet6YBmE7DwCRHjh6hEnCp4oN5urVHR70rtMgo5gkGsb+iF4Br
-         +ARn5X/dH7jqhSjGzUuroIpxp5hdLTt+OoDA4clZ4EFrNxCxsJW2pDbsx31pcNBMfnCz
-         z2lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783343814; x=1783948614;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Vz86zd3go04za6BKCrEOJJ5AQbsnL3kIqNm4xRq1ahk=;
-        b=QjLVjANIBFFzcOYM0yXRVPj59zEOLQNudM2JfOGWrRy7BUGwqXiPZvJsCJ1q87on/c
-         gEUNhMY0wEsASuwqa+QK/5OAS/OLw/acNkWiBWqvtMAOM6PspbmG+RUuizXfDcHUqAWL
-         2pXBWFFAwTIXsVk5vlZ/FsQyVPleUAppWae4NIO9tT9TJB6LZpGcxj3L3aruEro08qJo
-         A0pq+aApxy7LNObfwUpnFMu9RqbFCJ51oY3DtUG/r5JQBiokNNH3epc/38XAlLueamsY
-         aa20QvKtoQ5umod1oxvOrcv138r/Y3GnmJWUTV0T7HBWOWDqpD4yvQWw2ZYMN8rPWQU1
-         pTaw==
-X-Forwarded-Encrypted: i=1; AHgh+Rq1ybYWxNBDzckReiDnvFvK5WxHWEqICVecUv4Vn+8+es1xDKdZlU4VXLVQDboOvMXajbOL9KRu1d82Ew==@vger.kernel.org
-X-Gm-Message-State: AOJu0YztkOSkh8kmft2utb2vFhLsQDrB5rDBTF3iAeIcbuMFLpAFtGd0
-	IDvgNMYWaozY/f76yEAXueQUpMtFimla1OD7IMKBKHxF8QjuaEvWIn/IlhAzA67s3gg+Fdt6gdT
-	TibG23tXWjD72fRub5ewyhbsazrDDHCxVds1jWtYYvgVuiP8KUAof9TDvrWr60FoDlw==
-X-Gm-Gg: AfdE7clcXUh2eVqZv32OeBc9Ao2pcXtBxD5O/ytxkmPhEAw5xF7h3KHrh2qNfkqflY4
-	N/GKJK46Q1yaX37NWIZp3AeK3PLrQhVWSoc5YcHORBkw9Z0Ft5JlXIQhjlju8cTOn4PMjyTXbW7
-	7eqPiH4gMs85NkBECUIK/SABvrdwDk5wxlkxlCYOndjvYOKrFOn/PS5079LlrRk18Cfx7SayatI
-	uZFFIEeW1XlvoA+INoOKvhdFO3RvJ9nx/IyyEZSZUw9fvnDG68OZQfS/QITe6DOCtCRYZipScAJ
-	KYFyF4BrNX25uHdke+/rZUgHvptf5uWojQzBVtADvCCIX3BEfZYHeai2uprDVy7uFa6JKNVP2VL
-	WhsK8i03/lRWD4mu0M2qPrYKy2MEvyLDNSUCH5g==
-X-Received: by 2002:a17:90b:4ccc:b0:380:f389:447b with SMTP id 98e67ed59e1d1-38755769514mr376349a91.11.1783343814411;
-        Mon, 06 Jul 2026 06:16:54 -0700 (PDT)
-X-Received: by 2002:a17:90b:4ccc:b0:380:f389:447b with SMTP id 98e67ed59e1d1-38755769514mr376272a91.11.1783343813871;
-        Mon, 06 Jul 2026 06:16:53 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-311561dd3a1sm16176449eec.22.2026.07.06.06.16.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jul 2026 06:16:53 -0700 (PDT)
-Date: Mon, 6 Jul 2026 18:46:25 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@codeconstruct.com.au>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Paul Kocialkowski <paulk@sys-base.io>,
-        Linus Walleij <linusw@kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Michal Simek <michal.simek@amd.com>,
-        Daniel Scally <dan.scally@ideasonboard.com>,
-        Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Eddie James <eajames@linux.ibm.com>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Yunfei Dong <yunfei.dong@mediatek.com>,
-        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Joseph Liu <kwliu@nuvoton.com>, Marvin Lin <kflin@nuvoton.com>,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Thierry Reding <thierry.reding@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Srinivas Kandagatla <srini@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ge Gordon <gordon.ge@bst.ai>, Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>,
-        Saravana Kannan <saravanak@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Shengjiu Wang <shengjiu.wang@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-        Bard Liao <yung-chuan.liao@linux.intel.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Peter Chen <peter.chen@cixtech.com>,
-        Fugang Duan <fugang.duan@cixtech.com>,
-        Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
-        BST Linux Kernel Upstream Group <bst-upstream@bstai.top>,
-        Fabio Estevam <festevam@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-aspeed@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, linux-media@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
-        kernel@collabora.com, linux-tegra@vger.kernel.org,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        imx@lists.linux.dev, sound-open-firmware@alsa-project.org
-Subject: Re: [PATCH 00/42] of: reserved_mem: Introduce devres helpers and
- convert drivers
-Message-ID: <20260706131625.nygqmu2usgifmias@hu-mojha-hyd.qualcomm.com>
-References: <20260703193855.110619-1-mukesh.ojha@oss.qualcomm.com>
- <ceeca378-3c76-4b2c-81b4-0ff1bb1e99be@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0h5ujtI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D786C1F00A3A;
+	Mon,  6 Jul 2026 13:49:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783345766;
+	bh=n2XIM2CQ/NysWLV70KA17o1xrRADPboha/A2J5wScPA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=i0h5ujtIHJf8JcmNUZYbVaz2XCJNa+558wUqGLmQJ6IUGVggW/DloLPLWuhO1R2J4
+	 CIOvWervclMAC+t4YHzYZNeUGQs8n5RQhD5+pX7FGLeY/rM5aE9jpEapugictLRSjy
+	 U6beDhWeB8OPkhoDVSPRejb9WdNMKzAExXxlUyKhgS+dMwIADqpoFT/nQ2cCpoW9eC
+	 K73pyNMp9AVnJTvgF51xaXwNZ1O5AGEmdncXHGxK1cdbGJD4OTUcEagkrNS0kpfl92
+	 eL06YmfDi9opIB9rvfLfMV/X8yRpROG+gLsnpOyp/R1Z2OC3JwzKq8tEhICv5cqzGn
+	 dck7DrRmZHnng==
+Date: Mon, 6 Jul 2026 15:49:24 +0200
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Yury Norov <yury.norov@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Russell King <linux@armlinux.org.uk>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.org>, 
+	Lorenzo Stoakes <ljs@kernel.org>, "Liam R. Howlett" <liam@infradead.org>, 
+	Vlastimil Babka <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, linux-mm@kvack.org, 
+	iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org, 
+	linux-trace-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>, Chun Ng <chunn@nvidia.com>
+Subject: Re: [PATCH v3 04/11] arm64/mm: Add set_memory_device() and
+ set_memory_normal()
+Message-ID: <akuvyu1Pq0ZVMZV0@orome>
+References: <20260701-tegra-vpr-v3-0-d80f7b871bb4@nvidia.com>
+ <20260701-tegra-vpr-v3-4-d80f7b871bb4@nvidia.com>
+ <akYs91INHMXMTI-t@willie-the-truck>
+ <akZkuwktaXFTrASP@orome>
+ <akaSJ5D98w2cHqb6@orome>
+ <akftuw9NyRy36fXA@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="eye62g5djwewlpln"
 Content-Disposition: inline
-In-Reply-To: <ceeca378-3c76-4b2c-81b4-0ff1bb1e99be@sirena.org.uk>
-X-Proofpoint-GUID: 8k6w1BvPhTeW83yuMMytqi538rlZs-ca
-X-Proofpoint-ORIG-GUID: 8k6w1BvPhTeW83yuMMytqi538rlZs-ca
-X-Authority-Analysis: v=2.4 cv=CPYamxrD c=1 sm=1 tr=0 ts=6a4baac7 cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=1XWaLZrsAAAA:8 a=sOACTKiIrrgCOb8DNPwA:9 a=CjuIK1q_8ugA:10
- a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA2MDEzNSBTYWx0ZWRfX/yHOtqajEgu6
- 1oEks7NrsZJi+Tj2IRznOXpil2CmL2C3Q+hM3XUMGF63EcWKKK0ORiblGS+mllxkSl6q9jFKBsB
- HquOwGTV3kNdd+lT1FkIvWSlzaB+RneibVfWMV1I1Hx31S291lyfhtV9MuLCeumKUkCF0jjTy0S
- Pt8jXoG3aro+vHRyZEJVH5PVcEiW+UvCxh9ExkEjJeJ78X7ggCcOw/DjO06PXnfYHYCWF6zS+jf
- gDdcOyKxQPusdULVKItrHO/AP3jn4YOH7MrIQJ68XkIy7pfw0JA5D5tFS1dw4LAS9ssbvXByge8
- SBDqmeQFFm+zSJRTyejhBYNs9NICkwUX4sVGbh+jSujVrWvVL37l5lSEegBxXmMAQp0e5ifXfxw
- fCf7UzyiJL+GFKiOKE0y3TjUAWpGXMRne+4oeQoPwxKLnf2k5OulGE0c22+em+Z6Y/XsI6+wmrI
- epX7qTGFFUDclKfF1Xg==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA2MDEzNSBTYWx0ZWRfXwe4800ZrUtNH
- yuXqk/yvOabwoCQJjvusTheH5giIhTKbaLfubSMZz+DTl8m73QofZYYn1NSfLDaiPTXhgW8nhzT
- I9ICb+qVutd/0ej6T/qeDmbq8q+jf38=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-06_01,2026-07-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 clxscore=1015 priorityscore=1501 suspectscore=0
- malwarescore=0 phishscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607060135
-
-On Mon, Jul 06, 2026 at 01:14:13PM +0100, Mark Brown wrote:
-> On Sat, Jul 04, 2026 at 01:08:13AM +0530, Mukesh Ojha wrote:
-> > Drivers using of_reserved_mem_device_init() and its variants must
-> > manually call of_reserved_mem_device_release() in their remove and
-> > error-unwind paths. This is repetitive boilerplate that is easy to
-> > get wrong, and several drivers have open-coded the teardown
-> > inconsistently or skipped it entirely, leading to dangling reserved
-> > memory references.
-> 
-> Just as a general thing, rather than sending a huge cross subsystem
-> series for something like this it's probably better to just send a
-> couple of examples, then once the new API is introduced and either has a
-> pullable tag or has made it to mainline go and do the conversion.  This
-> avoids clogging everyone's inbox with very big serieses.
-
-Apologies for this; this is my first series touching these many
-subsystems, and I also learned the hard way when the entire
-series was not sent in one shot due to the daily sending limit
-via git send-email[1], and I had to cut many cc lists for patches
-33/42 to 42/42.
-
-[1]
-4.5.3 Your message has too many recipients. For more information regarding
-  4.5.3 Google's sending limits, go to
-  4.5.3  https://support.google.com/mail/?p=TooManyRecipientsError 5a478bee46e88-30f0bbd2362sm49597158eec.20 - gsmtp
+In-Reply-To: <akftuw9NyRy36fXA@willie-the-truck>
 
 
-Thanks for the suggestion; point noted.
+--eye62g5djwewlpln
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 04/11] arm64/mm: Add set_memory_device() and
+ set_memory_normal()
+MIME-Version: 1.0
 
--- 
--Mukesh Ojha
+On Fri, Jul 03, 2026 at 06:13:31PM +0100, Will Deacon wrote:
+> On Thu, Jul 02, 2026 at 06:41:23PM +0200, Thierry Reding wrote:
+> > On Thu, Jul 02, 2026 at 03:46:44PM +0200, Thierry Reding wrote:
+> > > On Thu, Jul 02, 2026 at 10:18:47AM +0100, Will Deacon wrote:
+> > > > On Wed, Jul 01, 2026 at 06:08:15PM +0200, Thierry Reding wrote:
+> > > > > From: Chun Ng <chunn@nvidia.com>
+> > > > >=20
+> > > > > Add helpers to swap PROT_NORMAL and PROT_DEVICE_nGnRnE protection=
+ bits
+> > > > > on a kernel-linear-map range.
+> > > >=20
+> > > > That sounds like a really terrible idea. Why is this necessary and =
+how
+> > > > does it interact with things like load_unaligned_zeropad()?
+> > >=20
+> > > This is necessary because once the memory controller has walled off t=
+he
+> > > new memory region the CPU must not access it under any circumstances =
+or
+> > > it'll cause the CPU to lock up (I think technically it'll hit an SErr=
+or
+> > > but in practice that just means it'll freeze, as far as I can tell).
+> > >=20
+> > > Probably doesn't interact well at all with load_unaligned_zeropad().
+> > >=20
+> > > > I think you should unmap the memory from the linear map and memrema=
+p()
+> > > > it instead.
+> > >=20
+> > > Given that the memory can never be accessed by the CPU after the memo=
+ry
+> > > controller locks it down, I don't think we'll even need memremap(). T=
+he
+> > > only thing we really need is the sg_table we hand out via the DMA BUFs
+> > > so that they can be used by device drivers to program their DMA engin=
+es
+> > > internally.
+> > >=20
+> > > Looking through some of the architecture code around this, shouldn't =
+we
+> > > simply be using set_memory_encrypted() and set_memory_decrypted() for
+> > > this? While they might've been created for slightly other use-cases,
+> > > they seem to be doing exactly what we want (i.e. remove the page range
+> > > from the linear mapping and flushing it, or restoring the valid bit a=
+nd
+> > > standard permissions, respectively).
+> >=20
+> > Ah... I guess we can't do it because we're not in a realm world and so
+> > the early checks in __set_memory_enc_dec() would return early and turn
+> > it into a no-op.
+> >=20
+> > How about if I extract a common helper and provide set_memory_p() and
+> > set_memory_np() in terms of those. Those are available on x86 and
+> > PowerPC as well, so fairly standard. I suppose at that point we're
+> > closer to set_memory_valid().
+>=20
+> Why not just call set_direct_map_invalid_noflush() +
+> flush_tlb_kernel_range() for each page? We already have APIs for this.
+
+Having a "standard" helper with a fixed and documented purposed seemed
+like a preferable approach for this particular case. We also may want to
+make the driver that uses this buildable as a module, in which case we'd
+need to export these rather low-level APIs. And then there's also the
+fact that we typically call this on a rather large region of memory
+(usually something like 512 MiB), so doing it page-by-page is rather
+suboptimal.
+
+> The big challenge I see with any linear map manipulation, however, is
+> that it will rely on can_set_direct_map() which likely means you need to
+> give up some performance and/or security to make this work. Does memory
+> become inaccesible dynamically at runtime? If not, the best bet would
+> be to describe it as a carveout in the DT and mark it as "no-map" so
+> we avoid mapping it in the first place.
+
+VPR exists in two modes: static and resizable. For static VPR we do
+exactly that: describe it as carveout in DT with no-map and deal with it
+accordingly in the driver. Resizable VPR is for device that have small
+amounts of RAM. Content-protected video playback will in the worst case
+consume around 1.8 GiB of RAM, so we want to be able to reuse for other
+purposes when VPR is unused on those devices. In that case, the memory
+is also described as a reserved-memory region in DT, but it is marked as
+reusable so that it can be managed by CMA.
+
+The resize operation is fairly slow to begin with because we need to
+stall the GPU and put it into reset before the operation, then take it
+out of reset and resume it afterwards.
+
+What kind of performance impact do you expect?
+
+Thierry
+
+--eye62g5djwewlpln
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmpLsl8ACgkQ3SOs138+
+s6HxxA//d5TQAy9G9NF/ZbA14NpOegwi6/NUjnNgWvezWXjMqGI55A0c3bbPyVKd
+tYgSNk/b86yED38u0/P4s6EilDp/WwgoM1xy7ibzv5tNhejc/YT343EeL6HiJWj1
+qcNFmynHfWiDPj5sp0ZomDHIcYv6BB+Xvq2/xZqHiuID7m8rOKp9YSzvi+HJYvIf
+gguy2ZdLlDr9S1NbQ+grzLpoFNE2QIhZn7Hch0JUwecNP7Yta44xzRKNhlFW+2m7
+ZtOzsDQ7QKHbGy3tJ+e63Zn5NjOkbRZW5xYH2rkDFt5+RqxESCS3NMXuiQ3RoCIU
+qRj7uZvZSTblbK4YNNf2ptTeEA8U0FBtJlTVZeaLp0QeIGVdgGbzC/hEySihrUCK
+R7KUsnlh8WXP0vCIj892V+PJnT8EgOq8lzk2nq8Ymp6VxXwehgJeMd6z5pea5zS7
+cZNrRSyCJFzPjmFKM5DOqo9brqwud8tYMRhaTWiNvPfvNqZtzP//TEA9OE+4Yizm
+2Ol5NP4Y7puaiFApHu958LfbnVGus2qdGkbvu/w4f2nQxIbspoGfIOwOh1MQl0Vj
+JOkcl65qwJhLAndx1wepYqOCa8NtBlSaeTagY/xxZ6/OePEgaPCKeMltWVNRFTb9
+tuWdL+sDbBfd9LRNtKNu5v/4KPGqF7swq76dY5tmpLSfQ6qAWKc=
+=gHEV
+-----END PGP SIGNATURE-----
+
+--eye62g5djwewlpln--
