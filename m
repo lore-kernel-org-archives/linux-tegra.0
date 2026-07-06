@@ -1,174 +1,379 @@
-Received: from sender4-op-o11.zoho.com (sender4-op-o11.zoho.com [136.143.188.11])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F9E381EA3;
-	Mon,  6 Jul 2026 15:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B283A9612
+	for <linux-tegra@vger.kernel.org>; Mon,  6 Jul 2026 15:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=205.220.168.131
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783350196; cv=pass; b=b+81d4HB/pVY4aUY2280ncZjGcKjCV9drPv1/L7XMxdmP6moNGqJQgLys24QdZoQmn0ESUClaC+T88/Rwbt4SB72jSaR8V8gu8FjY+PD1sn4xKRsNsCtKrZIccnMP9Y4SrWZ8hGzVc2zNeugMle1EdTii0hKWmlYS3iqi98tieA=
+	t=1783352792; cv=pass; b=DZgNCZlX7q/nwDPCy8xKXToEsjkSIDUbf0J4VfMMaZrPSXy9JCe24enU21AXdgk0slzSSX5os4HelQssFpX0yKlTC33heSzSexGjiCHEsdAZmPZOQRhNyUlba6iJm2Q31U2aEsYYBV2thIq6OuvWOOOXO12szThyNE51UzNFZ4E=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783350196; c=relaxed/simple;
-	bh=Lu9wLxVbs/Lk9+t6I1rSrNmYpbDMa4qMMSV45NFfKlI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I3Co5jkJ62iOIFjdgX5tkRQzXxpjr1fFYvg6phzny1oFZI1PtGHVUMgPI06r5gZDAw3ttjhs36NacXfL9q4ciAOea509wnnZDmaVpeTqAgZ7O8hAhq6ZRT85UggHSIOFD9jJ+CWqXvenUNDWTC4di+9uoeXuWr1h0JsMHnMVI4A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=ImgA1Hj8; arc=pass smtp.client-ip=136.143.188.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1783352792; c=relaxed/simple;
+	bh=puuTOTVkj7WGu9o679YWetaI9S6eilJUeJleGSsUDsU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qCBg8BQncb3eIGA9DBOLmzyaTd7FJOTvDoDOf0jktB53YWmXCMYdlS9GnDQEccHRkaLbvCMo86CyfDFzFlPjX01z1cO4JCrYusFpJzDYTSDdoT1pP4WM/5YbVzzHxD+kzKxBXuRPGJHoS7lqI8SBZShsWTtsQdEwko9KrrHTqZg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hXZp1fbz; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=b+oO4MIU; arc=pass smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="ImgA1Hj8"
-ARC-Seal: i=1; a=rsa-sha256; t=1783350034; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ShBwgIB9Tp0j2ieVFNXD2nNlBvkYSrZX6KL3AeDB+tfLOnE+7CHZu5rN/HP3/wiA65AfS2awNfBnLG6v3KttLERp5k37uX5cTjLkGlHu1epQC0tpKbiWTjw2bmWO4R3cJ9Bceq/UN4MGpiO+12hQk2boeKqRMVN9X9phSckbKF0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1783350034; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=3XwyWTIrA/V6J7edt1EVqOvQjuCfvvAm71aap9OvOCI=; 
-	b=aUIQNdoKYFXhqBqNhsY+F02CkGve6EXcuTScFbe5OHL/WHUKXk+LgtUumBUdfOodPJNOea5bCjHJ9ycCR0cPvohjbCewZV5P129fWS7uy+uA2tTiwdLdX3wI3zpXyvb7h2kq1Re2lQrUV6CFisZwObNuwW+4qzyVdb787O027/g=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1783350034;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=3XwyWTIrA/V6J7edt1EVqOvQjuCfvvAm71aap9OvOCI=;
-	b=ImgA1Hj80B9JHQg2Jp0iR3Hfkzuv+c1ZmjHHLY5vXEEHJlu3rx/mY5cc4HVAWJDf
-	QREjGnw/uNA5JcHG0nEUz0PUvTE/0uKgXtwmj8p0wIRVC2fcF+pZOIvPjdNL8NnCNrh
-	RgJCMxLw7XsRX8tO1eirdxvjf97IRGDZQzh4oCj8=
-Received: by mx.zohomail.com with SMTPS id 1783350031182921.1240379629376;
-	Mon, 6 Jul 2026 08:00:31 -0700 (PDT)
-Message-ID: <3541fb84-81ce-4415-8027-38aa611834ae@collabora.com>
-Date: Mon, 6 Jul 2026 18:00:09 +0300
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hXZp1fbz";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="b+oO4MIU"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 666FFDLo762357
+	for <linux-tegra@vger.kernel.org>; Mon, 6 Jul 2026 15:46:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+OnMOn2/de6czvKsT65QKA7vIysNRqWUd1S/71D1Jas=; b=hXZp1fbz4cz372gL
+	swOx37jRUZyhMOJu11R2PHaveWDbkEDuxJtIIw4ZT8oFYwMMK0fEMQd5MDT2KCnP
+	XASsVc0hrVC9REAWNI++Jh/oryw7S61DX6jKX1daudC2gs038daj+7xFQQgF988+
+	JPH+iDKbsv8dnDthyUtGuJefBq/O8S5tEJ2U4eUOBxCenwg+6OzRVVzZt/AYtFjd
+	mh0HyEE8+WxFz8efJ/yINBZoPcjRTpPy6IBmGwV/H+I5Jcx8dZIxnwVKGM4XVHhu
+	9fArCoYwqx5Bk9VzTbzuv8X/36v6/sds5G9lYjuxWbzWAvoU9PWrdm/SDU7CBcMz
+	tYON5Q==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f87rxt8px-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-tegra@vger.kernel.org>; Mon, 06 Jul 2026 15:46:30 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-8f0f45415cfso39805476d6.2
+        for <linux-tegra@vger.kernel.org>; Mon, 06 Jul 2026 08:46:30 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783352789; cv=none;
+        d=google.com; s=arc-20260327;
+        b=ONFn3Rn7dJJXwbNppGdkcu9C81WYQFf2se/Nsw2Ot3IfOryUhmean2edagjSyNx5wQ
+         CkVg8iI9nX5pZn/FbQflWE0lJpTc7X/qXCqJtfif9lvmKQfJDpFzosMiz15CUdurGgN+
+         hWsmGTvyBRC2JqwYBCXHVUHTbn0P3aSrqOabZj+hwMr/dRh+tc0phQoZh+3vfthvHjrj
+         keLpsjJN0tsoU6r8m1e18H/KPnIgbYus3jDjp0fixN9DEXDTgx0sGR4qjX/zrgM3fZNV
+         hlM583EBLcWgD5ozdqUQXa8MyLbQ3trZiIaoll4LvoUdLwVHeHaUCkk3aTG6pQixns6i
+         ufuw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=+OnMOn2/de6czvKsT65QKA7vIysNRqWUd1S/71D1Jas=;
+        fh=d0mrEgaKKrN4bLJvs+PWpfVh9cz8TPye/rI1OwDmeEM=;
+        b=dgfHHxCpz3zcGFMzfPnjrlM6d8aOlH0IdJpkUxXu/gqXNUXsCT2VO5eTnB35HjjA5y
+         Hk/IWdlGYIBTB943ns5Ed1t/94Rxm7443LnoC/5NEXwtIupDVlFQTCfqAU5pqRmA2t5c
+         hSa28uaQXI/FhauEIpHKWL/KD8W0Pc6cYLYWOVam8arx0VoSOxk+JNu/7Kb5z82ost8i
+         VwGCGFDomlI6V0ut+HyXk6mmsun8PKFovbgZD8ZPzWLHHmpmGQtSy2OQgdU+Pb/gTJLh
+         PaB3ROm6HbUnVqzdm/40TjI2kkZVYsxKm0cRRIzu7ICV7f7+LvuDfh7DcC7RKydYmOOo
+         2m+g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1783352789; x=1783957589; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=+OnMOn2/de6czvKsT65QKA7vIysNRqWUd1S/71D1Jas=;
+        b=b+oO4MIUeghHjvtstR0ZmQtDToct5BCHQze5uaArX64e/zcySL/9PQo3+Z2tYjWSTS
+         tDeKvx6THlXIAjaolkN5x6RwWoCBDYJDjgTw1gxLBKhDHYnLAdmjFEnmaH+jG3OtBNJG
+         ZIVRtvbsh70na8FVKh1xXQs6rA9U+5GMCVP38f7ivJ/KNyAKDUdFCWIaQL1Vq876o7gV
+         Gzso72Cl+MDC8DAw3y0QLXQVA7+TtdTaIKY5ERgA02IPAGtQwAEJwArn/U5AQ0TbrNU1
+         RibF16loOBTNOqq8HmqKc7jtUDnIvM4Sn0N1GetyHoCLtEQ7lbTDh085pkcaSovjOmmX
+         yn4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783352789; x=1783957589;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=+OnMOn2/de6czvKsT65QKA7vIysNRqWUd1S/71D1Jas=;
+        b=oxFqSCEOqMuRVCgEMeZ81GjbTcCfc+urzfqTiCAZMSK0LaFQowo5WFmMZAuinSEHXa
+         CYcKYEp7kd+GPKiGePnHIdoF3ZQPV/zKfKJilziSus1JIO9VdDJQKLZ0IEXcDZz97i6E
+         3kYAyKKBBMfINmoKpWFkyaTmy9hN2fayQlC8VC7ZgskF0dQCVskbMbi1oF9Z0tLNxOaG
+         /EYEZ2Iwyg9lczLlUfPu4n33lko33yR+Yrs+4H/3hBNbAaUDXP3q1VLpAtab+TNPV6b1
+         l6RxW6amLZzbhKfMXbC7/NVBJAQWrMX9Z/Cp71jH0kaqBvA28U/ZYCqVUIerqQjOS6F9
+         UefQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rp0OorbQIjfid16nbW+108/yd/0hpElDngNPS60GZBlNsiwiAgwSCpC/uxCDhTYmrvDXh4aGHBfmbUaYA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YydeqkUR5ol1+IhMRe3E3aaSdKgmm+zHaQsmpuHj5u/slIc/vzj
+	pW25s+Qs0QKDJOzVAcrShz0flsmwAqzTKsr1kJGgX5BWjvlYjVZnec6Qdpo/IrNb5Xj05ymJ1WF
+	ujtHqRVIY4ySbZgInvxz0uk7kHEzDxU3F6Ndekza+wdC4AdlPWY1tpJhwngj0Psc/zQ6Ux8u3kn
+	K2pK/E0ApNL3esGfdvMoFwScaZWG9ZqA0Uj+TC5UiM
+X-Gm-Gg: AfdE7clbQ91hU1XHzVBPlnRi/kWcXNO6puIQxxs2/D/6+gPciLQFom7z40nFNL985KW
+	f1HoWE7LG0RFL5yz8gwDp+QSKzsQwjcADaE8JD2+R5/H0sr+WVeyfKHDpF9xXwQ2i1I0yVNT0w/
+	sKmcfHEz7LtDy4434pmhu7HvePur+9Nyqo9Gmk+eGQyyz5j2H0JsnzTt8sYiXbtg2L+PN2
+X-Received: by 2002:a05:6214:5003:b0:8f3:e97:59b8 with SMTP id 6a1803df08f44-8fcb3d3ee24mr12450746d6.29.1783352788244;
+        Mon, 06 Jul 2026 08:46:28 -0700 (PDT)
+X-Received: by 2002:a05:6214:5003:b0:8f3:e97:59b8 with SMTP id
+ 6a1803df08f44-8fcb3d3ee24mr12450156d6.29.1783352787606; Mon, 06 Jul 2026
+ 08:46:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/42] media: synopsys: hdmirx: Use
- devm_of_reserved_mem_device_init()
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
- Paul Cercueil <paul@crapouillou.net>,
- Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
- Paul Kocialkowski <paulk@sys-base.io>, Linus Walleij <linusw@kernel.org>,
- Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Alexey Brodkin
- <abrodkin@synopsys.com>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Michal Simek <michal.simek@amd.com>,
- Daniel Scally <dan.scally@ideasonboard.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Eddie James <eajames@linux.ibm.com>, Tiffany Lin <tiffany.lin@mediatek.com>,
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>,
- Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
- Houlong Wei <houlong.wei@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Joseph Liu <kwliu@nuvoton.com>, Marvin Lin <kflin@nuvoton.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Srinivas Kandagatla <srini@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ge Gordon
- <gordon.ge@bst.ai>, Adrian Hunter <adrian.hunter@intel.com>,
- Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>,
- Saravana Kannan <saravanak@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Daniel Baluta <daniel.baluta@nxp.com>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Peter Chen <peter.chen@cixtech.com>, Fugang Duan <fugang.duan@cixtech.com>
-Cc: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
- BST Linux Kernel Upstream Group <bst-upstream@bstai.top>,
- Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>,
- CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-aspeed@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
- linux-sunxi@lists.linux.dev, linux-media@vger.kernel.org,
- openbmc@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
- kernel@collabora.com, linux-tegra@vger.kernel.org,
- linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- imx@lists.linux.dev, sound-open-firmware@alsa-project.org
-References: <20260703193855.110619-1-mukesh.ojha@oss.qualcomm.com>
- <20260703193855.110619-7-mukesh.ojha@oss.qualcomm.com>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20260703193855.110619-7-mukesh.ojha@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+References: <CGME20260624021955epcas1p2ba2fa4eb8bd0aafaf7b46bde2cf524be@epcas1p2.samsung.com>
+ <20260624021912.632627-1-cw9316.lee@samsung.com>
+In-Reply-To: <20260624021912.632627-1-cw9316.lee@samsung.com>
+From: Ulf Hansson <ulf.hansson@oss.qualcomm.com>
+Date: Mon, 6 Jul 2026 17:46:16 +0200
+X-Gm-Features: AVVi8CcBYSP5zyLpt00Q11yUujyWdz_mc32EjqBaIjLdlr5HgDzXa1HvKfgTjLk
+Message-ID: <CAPx+jO9=7B4SYyKSwvGqx+zzMsJ+hhFUK_vmU-HNYQZfKv+bdQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: cqhci: Remove unused intmask parameter from cqhci_irq()
+To: Chanwoo Lee <cw9316.lee@samsung.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+        Asutosh Das <quic_asutoshd@quicinc.com>,
+        Ritesh Harjani <ritesh.list@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
+        Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Haibo Chen <haibo.chen@nxp.com>, Frank Li <Frank.Li@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Michal Simek <michal.simek@amd.com>,
+        Thierry Reding <thierry.reding@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "open list:EMMC CMDQ HOST CONTROLLER INTERFACE (CQHCI) DRIVER" <linux-mmc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>,
+        "open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-ORIG-GUID: xb0S8gDxEB3Ig9360ei88htwESiU3pvi
+X-Authority-Analysis: v=2.4 cv=Hv1G3UTS c=1 sm=1 tr=0 ts=6a4bcdd6 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10
+ a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
+ a=DJpcGTmdVt4CTyJn9g5Z:22 a=hD80L64hAAAA:8 a=EqBXy2bI2-3AcK8LOXQA:9
+ a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA2MDE2MCBTYWx0ZWRfXyLN3vCKkHnKa
+ CWxXYQ+ShY7A3LoTkkrJQov8EO5MTS4j0GwDAJOa5KSdYKIdDe9wonmlnhUW7x9o7m+hCGDN6Bu
+ RUddnXX3OQjntNN6JE1kWtjRhI/aCF8=
+X-Proofpoint-GUID: xb0S8gDxEB3Ig9360ei88htwESiU3pvi
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA2MDE2MCBTYWx0ZWRfXw7YIHW/Nex7K
+ dnI78Zss6M8SjTlISYUSPSRW1macahI/m37zLCOezmeRtLxhfETnaYFzDWGTh2hKiIfvHG0NB9V
+ FGIIcpF/GAJUnt044RQSk/Osu0lKOaHYW7oIGBfc0QbiZHH/UagJFtT27dIKvoKxq7CLYpW6B+3
+ jW7gTNxEJPK2k6c5ZZRO7D+U82EYUiOlHkafGPX+K9jLNIpVxJkOZ6WRtt93fWtdHJmi6nNV+dv
+ 684jcYpd2kpctmRwoA00cWFTKViFDZgV7GVFrFB2sJz7KCSNcdAWo9jkwug+nwa2f4SEtdnToWL
+ EY0pQjuTQOanBIENWkG5+WZeo6/jJrSkWomgDr+RxcnAgy1OuaMY2nVBTcAqW/0BPU0Xf/E40XK
+ 52qTIVzqHFL0rzp0e6DVIP8S73eDdCWIpFpX7N3eS9Rgq3qMHAcaDUMC+1oB0vkslyBfhNLxEil
+ 6Tx+AD8w3qe7T15MAUg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-06_02,2026-07-06_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 malwarescore=0 adultscore=0 priorityscore=1501
+ spamscore=0 bulkscore=0 clxscore=1011 lowpriorityscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607060160
 
-On 7/3/26 22:38, Mukesh Ojha wrote:
-> Replace the hand-rolled devm_hdmirx_of_reserved_mem_device_release()
-> devres action with devm_of_reserved_mem_device_init(), which handles the
-> cleanup automatically. This removes both the wrapper function and the
-> devm_add_action_or_reset() call.
-> 
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+On Wed, Jun 24, 2026 at 4:20=E2=80=AFAM Chanwoo Lee <cw9316.lee@samsung.com=
+> wrote:
+>
+> The intmask parameter of cqhci_irq() is never used within the function
+> body. The function reads the CQHCI interrupt status directly via
+> cqhci_readl() and processes interrupts independently of the SDHCI
+> intmask value passed by callers.
+>
+> Signed-off-by: Chanwoo Lee <cw9316.lee@samsung.com>
+
+Applied for next, thanks!
+
+Kind regards
+Uffe
+
+
 > ---
->  .../media/platform/synopsys/hdmirx/snps_hdmirx.c | 16 ++--------------
->  1 file changed, 2 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-> index 25f8ca0d6d94..7c6acc6d7e88 100644
-> --- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-> +++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-> @@ -2265,11 +2265,6 @@ static const struct hdmirx_cec_ops hdmirx_cec_ops = {
->  	.read = hdmirx_readl,
->  };
->  
-> -static void devm_hdmirx_of_reserved_mem_device_release(void *dev)
-> -{
-> -	of_reserved_mem_device_release(dev);
-> -}
-> -
->  static int hdmirx_parse_dt(struct snps_hdmirx_dev *hdmirx_dev)
->  {
->  	struct device *dev = hdmirx_dev->dev;
-> @@ -2316,16 +2311,9 @@ static int hdmirx_parse_dt(struct snps_hdmirx_dev *hdmirx_dev)
->  	if (!device_property_read_bool(dev, "hpd-is-active-low"))
->  		hdmirx_dev->hpd_trigger_level_high = true;
->  
-> -	ret = of_reserved_mem_device_init(dev);
-> -	if (ret) {
-> +	ret = devm_of_reserved_mem_device_init(dev);
-> +	if (ret)
->  		dev_warn(dev, "no reserved memory for HDMIRX, use default CMA\n");
-> -	} else {
-> -		ret = devm_add_action_or_reset(dev,
-> -					       devm_hdmirx_of_reserved_mem_device_release,
-> -					       dev);
-> -		if (ret)
-> -			return ret;
-> -	}
->  
->  	return 0;
+>  drivers/mmc/host/cqhci-core.c       | 3 +--
+>  drivers/mmc/host/cqhci.h            | 3 +--
+>  drivers/mmc/host/mtk-sd.c           | 2 +-
+>  drivers/mmc/host/sdhci-brcmstb.c    | 2 +-
+>  drivers/mmc/host/sdhci-esdhc-imx.c  | 2 +-
+>  drivers/mmc/host/sdhci-msm.c        | 2 +-
+>  drivers/mmc/host/sdhci-of-arasan.c  | 2 +-
+>  drivers/mmc/host/sdhci-of-dwcmshc.c | 2 +-
+>  drivers/mmc/host/sdhci-pci-core.c   | 2 +-
+>  drivers/mmc/host/sdhci-pci-gli.c    | 2 +-
+>  drivers/mmc/host/sdhci-tegra.c      | 2 +-
+>  drivers/mmc/host/sdhci_am654.c      | 2 +-
+>  12 files changed, 12 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/mmc/host/cqhci-core.c b/drivers/mmc/host/cqhci-core.=
+c
+> index 178277d90c31..98ceb0b9a6d1 100644
+> --- a/drivers/mmc/host/cqhci-core.c
+> +++ b/drivers/mmc/host/cqhci-core.c
+> @@ -819,8 +819,7 @@ static void cqhci_finish_mrq(struct mmc_host *mmc, un=
+signed int tag)
+>         mmc_cqe_request_done(mmc, mrq);
 >  }
-
-Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-
--- 
-Best regards,
-Dmitry
+>
+> -irqreturn_t cqhci_irq(struct mmc_host *mmc, u32 intmask, int cmd_error,
+> -                     int data_error)
+> +irqreturn_t cqhci_irq(struct mmc_host *mmc, int cmd_error, int data_erro=
+r)
+>  {
+>         u32 status;
+>         unsigned long tag =3D 0, comp_status;
+> diff --git a/drivers/mmc/host/cqhci.h b/drivers/mmc/host/cqhci.h
+> index 3668856531c1..8fbbc48c3f85 100644
+> --- a/drivers/mmc/host/cqhci.h
+> +++ b/drivers/mmc/host/cqhci.h
+> @@ -315,8 +315,7 @@ static inline u32 cqhci_readl(struct cqhci_host *host=
+, int reg)
+>
+>  struct platform_device;
+>
+> -irqreturn_t cqhci_irq(struct mmc_host *mmc, u32 intmask, int cmd_error,
+> -                     int data_error);
+> +irqreturn_t cqhci_irq(struct mmc_host *mmc, int cmd_error, int data_erro=
+r);
+>  int cqhci_init(struct cqhci_host *cq_host, struct mmc_host *mmc, bool dm=
+a64);
+>  struct cqhci_host *cqhci_pltfm_init(struct platform_device *pdev);
+>  int cqhci_deactivate(struct mmc_host *mmc);
+> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+> index b2680cc054bd..01ea3adbdf3b 100644
+> --- a/drivers/mmc/host/mtk-sd.c
+> +++ b/drivers/mmc/host/mtk-sd.c
+> @@ -1805,7 +1805,7 @@ static irqreturn_t msdc_cmdq_irq(struct msdc_host *=
+host, u32 intsts)
+>                         cmd_err, dat_err, intsts);
+>         }
+>
+> -       return cqhci_irq(mmc, 0, cmd_err, dat_err);
+> +       return cqhci_irq(mmc, cmd_err, dat_err);
+>  }
+>
+>  static irqreturn_t msdc_irq(int irq, void *dev_id)
+> diff --git a/drivers/mmc/host/sdhci-brcmstb.c b/drivers/mmc/host/sdhci-br=
+cmstb.c
+> index 57e45951644e..1de2f05fd958 100644
+> --- a/drivers/mmc/host/sdhci-brcmstb.c
+> +++ b/drivers/mmc/host/sdhci-brcmstb.c
+> @@ -430,7 +430,7 @@ static u32 sdhci_brcmstb_cqhci_irq(struct sdhci_host =
+*host, u32 intmask)
+>         if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+>                 return intmask;
+>
+> -       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +       cqhci_irq(host->mmc, cmd_error, data_error);
+>
+>         return 0;
+>  }
+> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-=
+esdhc-imx.c
+> index 18ecddd6df6f..d0fa83f67a80 100644
+> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
+> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+> @@ -1503,7 +1503,7 @@ static u32 esdhc_cqhci_irq(struct sdhci_host *host,=
+ u32 intmask)
+>         if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+>                 return intmask;
+>
+> -       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +       cqhci_irq(host->mmc, cmd_error, data_error);
+>
+>         return 0;
+>  }
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index 0882ce74e0c9..ceed47ccfda8 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -2165,7 +2165,7 @@ static u32 sdhci_msm_cqe_irq(struct sdhci_host *hos=
+t, u32 intmask)
+>         if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+>                 return intmask;
+>
+> -       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +       cqhci_irq(host->mmc, cmd_error, data_error);
+>         return 0;
+>  }
+>
+> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-=
+of-arasan.c
+> index 785d3acb18c5..4ca73e7d799e 100644
+> --- a/drivers/mmc/host/sdhci-of-arasan.c
+> +++ b/drivers/mmc/host/sdhci-of-arasan.c
+> @@ -555,7 +555,7 @@ static u32 sdhci_arasan_cqhci_irq(struct sdhci_host *=
+host, u32 intmask)
+>         if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+>                 return intmask;
+>
+> -       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +       cqhci_irq(host->mmc, cmd_error, data_error);
+>
+>         return 0;
+>  }
+> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci=
+-of-dwcmshc.c
+> index eef53455b8ee..4c5fa6a6931d 100644
+> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
+> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> @@ -624,7 +624,7 @@ static u32 dwcmshc_cqe_irq_handler(struct sdhci_host =
+*host, u32 intmask)
+>         if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+>                 return intmask;
+>
+> -       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +       cqhci_irq(host->mmc, cmd_error, data_error);
+>
+>         return 0;
+>  }
+> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-p=
+ci-core.c
+> index c347fac24515..b121d896a804 100644
+> --- a/drivers/mmc/host/sdhci-pci-core.c
+> +++ b/drivers/mmc/host/sdhci-pci-core.c
+> @@ -215,7 +215,7 @@ static u32 sdhci_cqhci_irq(struct sdhci_host *host, u=
+32 intmask)
+>         if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+>                 return intmask;
+>
+> -       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +       cqhci_irq(host->mmc, cmd_error, data_error);
+>
+>         return 0;
+>  }
+> diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-pc=
+i-gli.c
+> index 6e4084407662..b55618566d65 100644
+> --- a/drivers/mmc/host/sdhci-pci-gli.c
+> +++ b/drivers/mmc/host/sdhci-pci-gli.c
+> @@ -1760,7 +1760,7 @@ static u32 sdhci_gl9763e_cqhci_irq(struct sdhci_hos=
+t *host, u32 intmask)
+>         if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+>                 return intmask;
+>
+> -       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +       cqhci_irq(host->mmc, cmd_error, data_error);
+>
+>         return 0;
+>  }
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegr=
+a.c
+> index 820ce4dae58b..221e48b59f48 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -1280,7 +1280,7 @@ static u32 sdhci_tegra_cqhci_irq(struct sdhci_host =
+*host, u32 intmask)
+>         if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+>                 return intmask;
+>
+> -       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +       cqhci_irq(host->mmc, cmd_error, data_error);
+>
+>         return 0;
+>  }
+> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am65=
+4.c
+> index d235b0aecfdb..2a27db2f558b 100644
+> --- a/drivers/mmc/host/sdhci_am654.c
+> +++ b/drivers/mmc/host/sdhci_am654.c
+> @@ -462,7 +462,7 @@ static u32 sdhci_am654_cqhci_irq(struct sdhci_host *h=
+ost, u32 intmask)
+>         if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+>                 return intmask;
+>
+> -       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +       cqhci_irq(host->mmc, cmd_error, data_error);
+>
+>         return 0;
+>  }
+> --
+> 2.43.0
+>
