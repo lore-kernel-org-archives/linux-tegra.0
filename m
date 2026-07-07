@@ -1,201 +1,189 @@
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010055.outbound.protection.outlook.com [52.101.61.55])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862BF3F7AAA;
-	Tue,  7 Jul 2026 11:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783422062; cv=fail; b=NgJ7I9ukf1zYxWuA4r5n1rJ5AvGLnFAoY30h53b4o1QeJYtVmQUuZtfH11Y59X3/O0qUd3vidtQR6mld3tTZcs1IuAVGPQwh6A2DKd4ZN2l64oR4WUsjUfr2ADWjNksNtF9pCYJrSbysE3pJhQf5DP1qiUkbRSwW1Jd6+5hMNjs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783422062; c=relaxed/simple;
-	bh=Jfi0qX4H7WtXTaKewZ5GfMy2kwSbjFLwTVrq3pZ2ig0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=LAApYt6Tpj9auBWg+SV5jzstv0y318KHQ5gyj0uyIdfiHXsbxQf1QDhw7fepKJ7u3kj15k+9ZbmXFZJjj+g3gU/P/tOmW/QKDY18dLMCa3irGt3nbNXw49ufS91Z/DYFa0l4p41+djGXZzbUeAcG64ug3skFNuR5f7oCFlTAhOQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ihk/rCYH; arc=fail smtp.client-ip=52.101.61.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F683EB0EE;
+	Tue,  7 Jul 2026 11:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783423649; cv=none; b=edjuz/RnWkK7dYwXl1YHMyXesI+v/YAPmdV1S9PFw6zmNj2FezxrrM1zJiCoxn1p5HPdtu43QOj71Iq7UvBfOaovItgyHN8DvOPPZEEY2PYOMJbi+gsYpH1BUurjwOfLUTyXFsjHz1ha8ABd9Y1N0e4F41apyxvotDfVQzfaerM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783423649; c=relaxed/simple;
+	bh=4l1iXQHyZX4KWBSzqmvIdP4JZC7MUT5WaO5EHB7P7oI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=odCD50QOfJsElVdlyemxUXaXpUUvR3omfhj7BVvQN4LQl49lsJqm6MggjLEDoGjbV4C2YZj4EmDsC2927bXLCVpiEITLJfN+sLI2kzRUlOLFQOQ5IMt2sTnttA4PLT4RSLDyU9J9ajGZ8r4yH4ghEzAK1k5NYuwqXYDDf71/pFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GcnzsePl; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ihk/rCYH"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JMjMo6M5rbgvGm74q3bopdR2cxj6dd4X+sJvOO9386IPpBr2yT+ftpd6OF1tDa21+lJylotFysjotUjGv8k8ES8fUZd+fqNGFxjxkiIt5BonU9eKNtyXlZluETLuv+vskDbeNTAccErX0yDXkf4KIGgnb3KiqAF0iLq1ExEfoDEcXXrapVrGBzoxVclOvrlEg1Xqa8kqTAD26JOKuFUu8ea/2URDsHeszP8SsvoGic2huM6KCYExdI+KFOr97F2cDNJl0kbE6CAK29WESEK+AbBqpfbptDdQxJafRnnj58U2jpjZh9ng00PGVJDn4V2/DVlW4tfG5FkJJoPyV4MuPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ga/oqn4lk/cdZTLzS/osD7IbNyYvXyX0U/r901TPaq4=;
- b=CcknOm+BtFO9uqRo6oDPgy387x4TmVquSF7b1gi+r6lmrkt/mwGdexyJXx0hxKklIyAr/DUkal9TjPRcQlgZSphCTHoVF+mo76xikLgUAAmjKqtMCfxKI03n0H2BVsIPCMGWy4mnWon15pKI/GawDuowyo5sWnuAF01Mcu2gGnvLPrEzr2toE4kfOqnZsQmYx+bY9lYWIgMcV5aXgfNfiqvNOuqLRm6JALzK9pVUGREzCQ/dBbFEhDOk4IKc0TynjxtOegwh/IwxM//AxSUx2HyBi8kQl/FjgUOCPDuKJSv756dd66A0QqRyvpN1gLHD9d5iwxbB08+iWRCKGGKB1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ga/oqn4lk/cdZTLzS/osD7IbNyYvXyX0U/r901TPaq4=;
- b=Ihk/rCYHa2xL1rJGGPL1EXOq3nJ+Ue6J1zpUHksslLtgWdr23nzPveJw/BH9GmkVrVNT4qkBzrE4HdTrGB34em5bjnY9OsT32A78w4LWfrArV0ND0jXIcRIoHhX3hVhNyyGMgyC0MIM1F9mSBXuHV60bVC1v3oJTeaRSkz3HMmZTM0K/U424CNX/P5sGdhKZ/tNOxeB6bGBi7cEq5j6CDfLvY1lzS28Iz/ujlA5y/PMrWMnLPet8cuPDRX0zLZ9F7CAEiFSrWZx1AUrGdfUm1NVH6YgM55Hpo/91jQoOuCqXj/KzTWKFCDo16FnkbTXpuDZGSBrNNCls8B7K+0VMuQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ1PR12MB6051.namprd12.prod.outlook.com (2603:10b6:a03:48a::18)
- by PH7PR12MB5877.namprd12.prod.outlook.com (2603:10b6:510:1d5::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.8; Tue, 7 Jul 2026
- 11:00:54 +0000
-Received: from SJ1PR12MB6051.namprd12.prod.outlook.com
- ([fe80::96e1:b300:7b78:d3a9]) by SJ1PR12MB6051.namprd12.prod.outlook.com
- ([fe80::96e1:b300:7b78:d3a9%4]) with mapi id 15.21.0181.012; Tue, 7 Jul 2026
- 11:00:54 +0000
-Message-ID: <294fb73c-f368-4737-9450-16d6160067cb@nvidia.com>
-Date: Tue, 7 Jul 2026 12:00:49 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] memory: tegra: add multi-socket support to the memory
- interconnect
-To: Sumit Gupta <sumitg@nvidia.com>, krzk@kernel.org, treding@nvidia.com,
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: bbasu@nvidia.com
-References: <20260626131423.3986998-1-sumitg@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20260626131423.3986998-1-sumitg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0047.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:152::16) To SJ1PR12MB6051.namprd12.prod.outlook.com
- (2603:10b6:a03:48a::18)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GcnzsePl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C559E1F00A3A;
+	Tue,  7 Jul 2026 11:27:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783423646;
+	bh=aYNExvVjE68Bssuz6Q0Uk1wNO8ENlyByAV7s1CeJs/c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=GcnzsePlke2sHPVKXFrpmfWgDPaoaXvAGDCsvjpqbfsyvtLlho3fWpXDj/uKbDk36
+	 29MbpRdO6rfO94xIsXtWVBLVNSFu0PRpK+8Q3N5xgWJ0OkZvieybMvgBUqMhb2gQ4l
+	 Ahv8XDpa/3PWbSrFZzHelbxOI04a8OSapHaj/zeLfsMzVDa3n5HsTdyC0YbOpI139d
+	 fBoWckCalPRK9vcu5ifrE9IuraW6MqY6Q5ge3UN3DrPMz67mVJTxLFQXEVChjUNePg
+	 j6GuAFSVjQX9tNj/p8+7XZT6WNDH+X3gTCGkYbSR/BFOoYlGChu7c6d+b+RUXalLPP
+	 aFzzC3Jb5OcTA==
+Date: Tue, 7 Jul 2026 12:27:13 +0100
+From: Will Deacon <will@kernel.org>
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Russell King <linux@armlinux.org.uk>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@kernel.org>,
+	Lorenzo Stoakes <ljs@kernel.org>,
+	"Liam R. Howlett" <liam@infradead.org>,
+	Vlastimil Babka <vbabka@kernel.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-mm@kvack.org,
+	iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org,
+	linux-trace-kernel@vger.kernel.org,
+	Thierry Reding <treding@nvidia.com>, Chun Ng <chunn@nvidia.com>
+Subject: Re: [PATCH v3 04/11] arm64/mm: Add set_memory_device() and
+ set_memory_normal()
+Message-ID: <akzikTrmhMsvkNVY@willie-the-truck>
+References: <20260701-tegra-vpr-v3-0-d80f7b871bb4@nvidia.com>
+ <20260701-tegra-vpr-v3-4-d80f7b871bb4@nvidia.com>
+ <akYs91INHMXMTI-t@willie-the-truck>
+ <akZkuwktaXFTrASP@orome>
+ <akaSJ5D98w2cHqb6@orome>
+ <akftuw9NyRy36fXA@willie-the-truck>
+ <akuvyu1Pq0ZVMZV0@orome>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PR12MB6051:EE_|PH7PR12MB5877:EE_
-X-MS-Office365-Filtering-Correlation-Id: 78d00026-83d3-4012-9277-08dedc17037b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|23010399003|366016|18002099003|22082099003|11063799006|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	egzyDWeti61M4v7Nxro/ApHzCoUChPtpuXMjhn4nY5XxXPt0/vKkF0DNOgUtazSVqC07/6tyhCph+juJSBYQocbsRy5wHoEuosMLpBHw5dTGVxCie2ipa2dzsqB+I7zgltaU50tHsNksD2EPmr8Lkki4DaOxcpD8PJ3RtXx54BVacJyIhcBjFQeonX7lnqMQFYtWbZnh3SiFUgNCXR9oDzyzfYdRCihOHhdU+bCH5nHPyhztcfA10KA/QJLUzfuMFTjHH8XNMzwsIsbUkni0m3IjnArmjUOg8pVRGfHU2pMbf3ml7rDBbbLwxullaGqcl6bRD8upi4ycKcRlLaTYsrp1hrHDj6JliItzOVn4l51tuXVWRfqfKc85bCiQKxaH/Rdwsg4wr6kLuTm4T9eTyLb4ZzHLOdbusb2zTZYL1ocqOZn4zgRBw4qdwPC5jutP4mASZq0MKSloFm/GbJ9B+AKAoSjbKor2FvAPywvmcUIJjvc107arLU1qSz1ktcOcs/BwZK4+3NnqKnYbL6r1yFLAUuEI/3KIHwdVRhjX2XEMSKIP/0Q7MeuHRR7hyILiVK+DiV4ErpOt4KfDBpw2DTOA4tgQComLqnecBRwAO0X9NkJDlxm0lwJsmIZBgfhboqGPWE+SkdkvcF4wDqWiAL4MvgNbh/7xKbgO70Vp8Go=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR12MB6051.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(23010399003)(366016)(18002099003)(22082099003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?T09UclAvOTV2UUZqTDRoOGpVUDhCL3RjNVlqNXg3QlRtVS9UeXVWaU1wbWlP?=
- =?utf-8?B?U21iSWtZcmZ3Und2OTA5enkxZnpJMjAydnVCM1NVakNHb2pjZDdwTnRUR3JI?=
- =?utf-8?B?YVRqRW9UdlRVQnBPY1Z4S2FJd0pSWDBHVS9nTkl3WExwNkZENkx4YWgyN2Fp?=
- =?utf-8?B?SHhIbStSODdkQ2FyckJJeVdPV3Jra1NXUUN6ZFhGOE5YQXhSSCt1N3hQSUVI?=
- =?utf-8?B?WXQ5bXJLdjdWb3NMY2ZLV3BYZGpIb0hsUndqczFtVElhN2JiaTRuYlZPaGVh?=
- =?utf-8?B?dStGejFMaDI0T0JYNzVmWUxMblYzeFhacUx0dldJc3BrOVlBUmZVSk4rVmZq?=
- =?utf-8?B?YzZ0eUx4VGhDbUVSRnRvZnZ4dEV0TEg5d3owTU16QW5XQmF6TTgxalJQeHUz?=
- =?utf-8?B?NnV4NzFpYlNMVlM2eXJJTkZZb2preC9pT0JGcjl1TG52eHg0czdiZXVXdW1V?=
- =?utf-8?B?Z0JKb21RdjdpbDF1L1VsZzhpNjMyZmduVlhQQlQ0WEkvNEx3TXNxMXhRc0Q2?=
- =?utf-8?B?RDcxajZadmRDdHhiZ3pCTTFoMFZmcHhiLzJ5YWFMRDNKUVZZdCtqOXVlY0JC?=
- =?utf-8?B?VlBxYUJ3SDJvYUhYZW85d1dBVytZK0NQdVFRTDdFcTZhdlBxb0p0RVBIVTZr?=
- =?utf-8?B?bEVHL3VLU2gxMk5yZ1RRcmc5ejRGeFU1YnZ6d3dNRjRTendOTmUxVUJxMWxM?=
- =?utf-8?B?YjN2ZWVVcmxpM2V6YnUrY0ZnRGFsaUNFa0tLZml3WFJHS0x5ZWhlcG55a1VI?=
- =?utf-8?B?UW9jRTE3djJPZENaS0xwVnhvbEw4RmQ5c0pJK0dMWmplNFhmT21SWHpyQ3Qz?=
- =?utf-8?B?aXZrNjJnV1cxbEwrNDhTMUwrQmZsQUppTDRtUEl1RU9ubkpQVzNWZDZHdXNT?=
- =?utf-8?B?N3dUY0oyUy8rT2cxbUZZTks0bGgyQnNKNDN3WHBzazlMajdhNlN6RDhyV09i?=
- =?utf-8?B?SVdFcyt3YmNNUWx1cWdkMVFPWURXMGtzSkd5TmY5MWs5MEg1dUxBNmVkaVRN?=
- =?utf-8?B?THpoY3NpUDltN2ZVSy9ETktnZnE2OWJ5NWQzdXM1eDZuNW9wem45dGx2M2FI?=
- =?utf-8?B?RDFwUlJYck1wbkV5aGZ2azdPQjNsZm9zYjU5NUJ5NFJBVlQzS21ZTjBjWDI4?=
- =?utf-8?B?VGZEVzE4NzB2OEZVNFpPYUN6ZEQrdis2VVU0NHBBSTJBK2w2OGY4ZWFreXBH?=
- =?utf-8?B?TTJwNGM4QjFyQ3loTGNETVRobnNDZkwyVUI4aGNTVVRQdU1mQWRwWFpIeU5Q?=
- =?utf-8?B?VWI1eVg4bGN6bjVuNWdnVmp6R2VhWUZYUFFtVmNCUWVsRVozbmlPelNjS25v?=
- =?utf-8?B?N3FhbXhZcTBOQjhTb05sWk4xRXhOV3lhSXM5UnpnRkNJS3hhbWllZnVvdGx0?=
- =?utf-8?B?ZnZySFIreDUrNEtHUmdGTkNVbzNBamRJUXViS2pWRXE1SFRDSmFjWTVYQzl3?=
- =?utf-8?B?QS9xbmh2ZVp4TnZHcnd6cjEwYVdvaGt2eG5HN29EbFRXUzRvRTA0UmJmZmJi?=
- =?utf-8?B?NWNEWjl0TW9UcHNiYjk3cXppVW92YksvRENmRDZlMXRuN3hvOENCUU1JeFBR?=
- =?utf-8?B?QVB6YVRwZ2k3dzIwRzZJVEk0WWFydHN6SkFGWk5mYUIvV0lTNEFhc0R3eFU1?=
- =?utf-8?B?aVlGdnBYQkNYMjdoaVQ0Z2MyakZ5TVRUanN3bnNudnppYThUbjNHYVhTd1px?=
- =?utf-8?B?bDdrTG9lZVBjbGt6MlZwNnU0OFM5emRjS0hVaXNrcHplbEJQR1dzRGVOZUZH?=
- =?utf-8?B?S3FjMkdkSnVNWUtnU2NYNkRqbTI3UzdLWHpSVjNic0Yxd3dFeTdFTVFGckhF?=
- =?utf-8?B?Y25yWmY3bXRtN1hrVlpqcURJTlFKRzY0UDY4OTk4dExlL3Qza0lPRFcvM1hE?=
- =?utf-8?B?dE1sWi9RVDRNU3hUb0dCL2F5L2VUdFlzKzVhZkU3Q2tFN1AwSTI1c1VhY1Nu?=
- =?utf-8?B?dklSUjVMSlNGQVhpWi83Y1BxMmxYMkk2cEdHTTFUZ3VxWEVRbGZ0RGNzcS9B?=
- =?utf-8?B?dVlFNVk4ZG9EVDhYYW9zcDJrOC9pQVhBb1NNSjFRcWloRmlKbnhzRllkeHhI?=
- =?utf-8?B?NHRSQ29xSVliZ1dlRDlTYmF5bzhDb29UcjlUdGVFYmEvT250eUk5N1RvQ1d5?=
- =?utf-8?B?Wkw5dERWcWNZSG5hTnV0MytGZTFUd0QzMnRpRTlrS1I2eXpSa3JRbUhVekhi?=
- =?utf-8?B?ZjBKY3Jnb25RNVdmcFZBN0kvVG1DZm5obkRYODRpeWVtR2RxLzNjNEovNHZr?=
- =?utf-8?B?V0lMcnpFOHNjU2RyN2ZVeFRuU256UFh0bEpjK0RxcjNhSnJPME9hZFJubUNu?=
- =?utf-8?B?TzZrU1dFZ1ZuVGRoMjFNaW95U1hweWhZRkFWcUorQ3p3RnlXYzJjQT09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78d00026-83d3-4012-9277-08dedc17037b
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR12MB6051.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2026 11:00:53.9131
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0OXdN7ZeK2DLgULweSZWhSvaWZ4ZwB1O94+gV1MVR8CMT3DV8E6XCHDOaHVSYSzTLYvr2LCm1iiXTyd0rXqUWQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5877
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <akuvyu1Pq0ZVMZV0@orome>
 
-
-On 26/06/2026 14:14, Sumit Gupta wrote:
-> Add support for representing each memory-controller instance (one
-> per NUMA node / socket) as its own interconnect (ICC) provider,
-> with its own MC client nodes, to match the hardware topology on
-> multi-socket Tegra SoCs.
+On Mon, Jul 06, 2026 at 03:49:24PM +0200, Thierry Reding wrote:
+> On Fri, Jul 03, 2026 at 06:13:31PM +0100, Will Deacon wrote:
+> > On Thu, Jul 02, 2026 at 06:41:23PM +0200, Thierry Reding wrote:
+> > > On Thu, Jul 02, 2026 at 03:46:44PM +0200, Thierry Reding wrote:
+> > > > On Thu, Jul 02, 2026 at 10:18:47AM +0100, Will Deacon wrote:
+> > > > > On Wed, Jul 01, 2026 at 06:08:15PM +0200, Thierry Reding wrote:
+> > > > > > From: Chun Ng <chunn@nvidia.com>
+> > > > > > 
+> > > > > > Add helpers to swap PROT_NORMAL and PROT_DEVICE_nGnRnE protection bits
+> > > > > > on a kernel-linear-map range.
+> > > > > 
+> > > > > That sounds like a really terrible idea. Why is this necessary and how
+> > > > > does it interact with things like load_unaligned_zeropad()?
+> > > > 
+> > > > This is necessary because once the memory controller has walled off the
+> > > > new memory region the CPU must not access it under any circumstances or
+> > > > it'll cause the CPU to lock up (I think technically it'll hit an SError
+> > > > but in practice that just means it'll freeze, as far as I can tell).
+> > > > 
+> > > > Probably doesn't interact well at all with load_unaligned_zeropad().
+> > > > 
+> > > > > I think you should unmap the memory from the linear map and memremap()
+> > > > > it instead.
+> > > > 
+> > > > Given that the memory can never be accessed by the CPU after the memory
+> > > > controller locks it down, I don't think we'll even need memremap(). The
+> > > > only thing we really need is the sg_table we hand out via the DMA BUFs
+> > > > so that they can be used by device drivers to program their DMA engines
+> > > > internally.
+> > > > 
+> > > > Looking through some of the architecture code around this, shouldn't we
+> > > > simply be using set_memory_encrypted() and set_memory_decrypted() for
+> > > > this? While they might've been created for slightly other use-cases,
+> > > > they seem to be doing exactly what we want (i.e. remove the page range
+> > > > from the linear mapping and flushing it, or restoring the valid bit and
+> > > > standard permissions, respectively).
+> > > 
+> > > Ah... I guess we can't do it because we're not in a realm world and so
+> > > the early checks in __set_memory_enc_dec() would return early and turn
+> > > it into a no-op.
+> > > 
+> > > How about if I extract a common helper and provide set_memory_p() and
+> > > set_memory_np() in terms of those. Those are available on x86 and
+> > > PowerPC as well, so fairly standard. I suppose at that point we're
+> > > closer to set_memory_valid().
+> > 
+> > Why not just call set_direct_map_invalid_noflush() +
+> > flush_tlb_kernel_range() for each page? We already have APIs for this.
 > 
-> Use the NUMA node ID to make client IDs globally unique across
-> per-socket providers, since the ICC framework allocates node IDs
-> from a single global IDR. Per-socket MC and EMC node names are
-> also derived from dev_name() so they match the corresponding
-> debugfs subdirectory. On single-socket platforms (NUMA_NO_NODE)
-> the existing client IDs and node-name strings are preserved.
+> Having a "standard" helper with a fixed and documented purposed seemed
+> like a preferable approach for this particular case. We also may want to
+> make the driver that uses this buildable as a module, in which case we'd
+> need to export these rather low-level APIs. And then there's also the
+> fact that we typically call this on a rather large region of memory
+> (usually something like 512 MiB), so doing it page-by-page is rather
+> suboptimal.
 > 
-> Each socket's MC and EMC therefore get their own debugfs
-> subdirectory under /sys/kernel/debug/{mc,emc}/. The parent
-> directories are created on first probe.
+> > The big challenge I see with any linear map manipulation, however, is
+> > that it will rely on can_set_direct_map() which likely means you need to
+> > give up some performance and/or security to make this work. Does memory
+> > become inaccesible dynamically at runtime? If not, the best bet would
+> > be to describe it as a carveout in the DT and mark it as "no-map" so
+> > we avoid mapping it in the first place.
 > 
-> Bandwidth requests from MC clients in a socket are routed to
-> that socket's local BPMP.
+> VPR exists in two modes: static and resizable. For static VPR we do
+> exactly that: describe it as carveout in DT with no-map and deal with it
+> accordingly in the driver. Resizable VPR is for device that have small
+> amounts of RAM. Content-protected video playback will in the worst case
+> consume around 1.8 GiB of RAM, so we want to be able to reuse for other
+> purposes when VPR is unused on those devices. In that case, the memory
+> is also described as a reserved-memory region in DT, but it is marked as
+> reusable so that it can be managed by CMA.
 > 
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> ---
-> v2[2] -> v3:
-> - Reduce per-socket shift to 12 bits to keep composed ICC node
->    IDs below ICC_DYN_ID_START.
+> The resize operation is fairly slow to begin with because we need to
+> stall the GPU and put it into reset before the operation, then take it
+> out of reset and resume it afterwards.
 > 
-> v1[1] -> v2:
-> - Mutex protected lazy creation of the mc/emc debugfs parent.
-> - Rename {mc|emc}_debugfs_root to tegra_{mc|emc}_debugfs_root.
-> 
-> [1] https://lore.kernel.org/lkml/20260521140546.3023819-1-sumitg@nvidia.com/
-> [2] https://lore.kernel.org/lkml/20260602132314.486066-1-sumitg@nvidia.com/
-> ---
->   drivers/memory/tegra/mc.c           | 40 ++++++++++++++++-----
->   drivers/memory/tegra/mc.h           | 37 +++++++++++++++++++
->   drivers/memory/tegra/tegra186-emc.c | 55 ++++++++++++++++++++++++-----
->   3 files changed, 115 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-> index ec80ea9cc173..51ad0d3e48d4 100644
-> --- a/drivers/memory/tegra/mc.c
-> +++ b/drivers/memory/tegra/mc.c
-> @@ -3,6 +3,7 @@
->    * Copyright (C) 2014-2026 NVIDIA CORPORATION.  All rights reserved.
->    */
->   
-> +#include <linux/cleanup.h>
->   #include <linux/clk.h>
->   #include <linux/delay.h>
->   #include <linux/dma-mapping.h>
-> @@ -10,6 +11,7 @@
->   #include <linux/interrupt.h>
->   #include <linux/kernel.h>
->   #include <linux/module.h>
-> +#include <linux/mutex.h>
+> What kind of performance impact do you expect?
 
+You'll need to measure it, but we've seen reports of double-digit
+percentage regressions in performance and power. As I said, the problem
+is that you need to split the linear map to 4k page at runtime to unmap
+the dynamic carveout, but that isn't something that can be done on most
+CPUs. Therefore you end up having to use page-granular mappings for the
+entire thing, similarly to how 'rodata_full' drives can_set_direct_map()
+and the perf/power hit affects everything.
 
-There is a conflict here with the latest -next and so we need to rebase 
-this. Otherwise ...
+It's hard to know what to suggest... I wonder if any of the memory
+hotplug logic could help here?
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-
-Thanks
-Jon
-
--- 
-nvpublic
-
+Will
