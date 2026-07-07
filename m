@@ -1,242 +1,126 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012071.outbound.protection.outlook.com [40.107.209.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8732D5922;
-	Tue,  7 Jul 2026 22:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783464332; cv=none; b=o5lXHATO0mojq3UXYL39215WEJPx9iL3kRB0uDITGYoX2gnwBeSGO+qcqu6W6BCwraqy8kp3MUgm7b/K5Fac2dwlLJp4WUoMZKLBmAw0gefbLzcLTKaovGDnWADEdtEt8YUNBjbR6RXbyu8g3lIuOAi9hl87qr0vfjYSPLkdxeM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783464332; c=relaxed/simple;
-	bh=sZwiz2eVxWztoQMefmjyUqkkIzuJA+iJonL7ZG5O7QQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GDI/OcoYiw9CaZ5qNDZIm60j3TPjQ8rARdEzV/4wrVNi8bi511JTWiysDJtoxtgIOWX7g04QoEcPOAP//TFWyxQNB08jUVMPkglMFuNqp5LNUCNBF0/PaVsHIByIR6UBw8T96JPRfVKOLJcbEOcaISGM5KLi2X2Wtvav8DZ+saM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RdysflH3; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A806B42087C;
+	Tue,  7 Jul 2026 23:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783466741; cv=fail; b=geU4hVL2IdF5Qur4VXArWaHyJuYdmhSijviDGtulV3tbdUCUOjdKkfjhn2mof8lv+VMa7h+1M1Vy3yvF9jyhTRr3EYGQNzhgxUQFB4b40y7qn5er/IIiH4sdUh+rS7CIfgB2Xnmbswz5JL7W+jjEQJFgLdyqLsq5i0g7xaXJU0g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783466741; c=relaxed/simple;
+	bh=ZHolcFwa+EKXz7/dB6bu2kajjxipSwcuxl/vRrF65uM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nL52CSchtsXLE54mN1H5fM7+65PJ3/dvoiynapu+hws7so3sW/nyiWrkBK8RRrRCauhdPU1KAHaBC7rbI3kfRynXbmmO8R/39+dw/+xzMzR2BkzH61KT2XPYuId7bKyJTD1bvm5E/Axmx0scDUL93SgAMK5fNjYPIAtiEwVW5aM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZJ6wa67r; arc=fail smtp.client-ip=40.107.209.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RdysflH3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1783464331; x=1815000331;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=sZwiz2eVxWztoQMefmjyUqkkIzuJA+iJonL7ZG5O7QQ=;
-  b=RdysflH3M61WPZ1KvjkdcNyfCJQEP2IKhQ1u13nTrSBTRWjuvpwXqGmp
-   QYhgMCPz42EounIGUujnCxtTrF1x4BDdqT4ep0oym0hTjyQ/VYlkwqI88
-   RvN4+6STujLZe+4JHI00VfFYpDsu5tdNJlVeFC5iSxOOEJBhoR8lWiLbq
-   bnZ2Y3wsG5kZ5DhGVTlL6Occe0r1gqyy8pt7D275ay1SBDU5lBVGL9Tk/
-   BrquhZssdX2nf+XJ/tmeLkXelDkxqoYxKsT1X8lKiOtK26P+72JnJZ8jI
-   S7VcQ+QmryUnnHiNWQgyy/iuaXZdrXiyOR2d84XsC0zucRtouz2RCEN6u
-   g==;
-X-CSE-ConnectionGUID: UZrhHM/SRd+w7dTvjwMagg==
-X-CSE-MsgGUID: FDcvyyKWTqmysV72LBd0KA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11840"; a="95500896"
-X-IronPort-AV: E=Sophos;i="6.25,153,1779174000"; 
-   d="scan'208";a="95500896"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2026 15:45:30 -0700
-X-CSE-ConnectionGUID: BEWoIcs7TTKJKrlCS7VTSw==
-X-CSE-MsgGUID: MMMoGoZWRoaVtzxxCE0oQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,153,1779174000"; 
-   d="scan'208";a="254767503"
-Received: from bradocaj-mobl.ger.corp.intel.com (HELO [10.125.111.8]) ([10.125.111.8])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2026 15:45:27 -0700
-Message-ID: <103e562b-1685-412f-adaa-679409818d7f@intel.com>
-Date: Tue, 7 Jul 2026 15:45:26 -0700
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZJ6wa67r"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DTYnJtacax3QiKfLg3C1ELGOD5mYILNdc9StjSkJBOU3L+QQ/jZEzyIY3h/irEoBQxY7+GhYrmB55ewMSZyVXp4UZ3FdYz5JdghF90gynOuigXsczMteO7rnBbdRKnLsE5KaiJx73hbMK88NToUFI9ddc/3+m+6yGzlRZEKlIBMXBd0Sw/xYOqRS1j9Sj/7qLYvWjTuxeC3mCom2gh3Jnrrr14zYsUD/MgIcEfw6scp/hbTI18JJbUwnbXnWj0Pknm9MPZklhTdzmWtqX5Q2dUFwZuzKBglcgrpUUCrVZ8id5tUv516vT9BJlhK2rztPg0BHXM1DMIY1zrDfUHagDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FfWNsPy7EpJlUreYI/8DDlbygBjKrfRuhttfKeg2He8=;
+ b=aA/Zm3UypGazcFPw7DZXVpsz89OnygbX5CkouO8X5bQ5ct5shI5aNzb3w7YHkxPf1hmmo0d7DzxbODOihgAU3W5+1h7Ut2IUwrJ6ZhwRNDIwP2gPjyLe4S1rwI74EsbhRCep4jWB8/oB4AWC6nXJDDbaT3Y42sxVJD7C6MZ8mcx63A/Pg845xdrr0Y28wX7Swgw7AJQNyJzKWAjCb6yeY402WQ9ZltwBcKyP6BZwelo91Myuj5c9eRW26waULv4kYaVmBNsQesAfNVMFwMhHaD1dO5rWN2O942yEquETPdmI1R2Yn4GNHS1gWX5BrDZop9eIX7/MqbFe1dmkOVFWQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FfWNsPy7EpJlUreYI/8DDlbygBjKrfRuhttfKeg2He8=;
+ b=ZJ6wa67rmRIAGCOuQe3chFxEyoB2mfdvrjqzJciYsFg3CbVYrAY0Wff6uWIheY4z2OD5mLnpkZN5+KKMJujxq17yF7cwysJQMFaO2kF0+ig265ssrqliyY6jwXDplDzI4sA+OqbkDsTeN4kETRd5Hcmest1llTU6XHtNTeORlDdU1Fa7tCqf9uPx2qVJ7hzjDMdrmjL7JyOZCf50kMTHzlBwN4KKJSM6iOW4diTqdiB3aLUzSaNEw6GVQ91F/2KIgEhuqyrJV6lepzyCwZGt+IkgqO3OsHUlO7usYLh6EuCxc+6tZAeZ6wS8YSLG7PhAVNIW6zrt3Nq6dcYqUXCxQQ==
+Received: from DS7PR03CA0344.namprd03.prod.outlook.com (2603:10b6:8:55::28) by
+ CH8PR12MB9768.namprd12.prod.outlook.com (2603:10b6:610:260::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.181.10; Tue, 7 Jul 2026 23:25:34 +0000
+Received: from DS1PEPF0001709C.namprd05.prod.outlook.com
+ (2603:10b6:8:55:cafe::2e) by DS7PR03CA0344.outlook.office365.com
+ (2603:10b6:8:55::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.181.13 via Frontend Transport; Tue, 7
+ Jul 2026 23:25:34 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DS1PEPF0001709C.mail.protection.outlook.com (10.167.18.106) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.181.6 via Frontend Transport; Tue, 7 Jul 2026 23:25:33 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 7 Jul
+ 2026 16:25:17 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 7 Jul
+ 2026 16:25:16 -0700
+Received: from Asurada-Nvidia (10.127.8.10) by mail.nvidia.com (10.129.68.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 7 Jul 2026 16:25:16 -0700
+Date: Tue, 7 Jul 2026 16:25:14 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Ashish Mhetre <amhetre@nvidia.com>
+CC: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+	<jgg@ziepe.ca>, <linux-arm-kernel@lists.infradead.org>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v4 2/3] iommu/arm-smmu-v3: Detect Tegra264 erratum
+Message-ID: <ak2K2vhIQSTNAPto@Asurada-Nvidia>
+References: <20260609073204.1760077-1-amhetre@nvidia.com>
+ <20260609073204.1760077-3-amhetre@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 00/10] PCI/CXL: Add CXL reset support for Type 2
- devices
-From: Dave Jiang <dave.jiang@intel.com>
-To: Srirangan Madhavan <smadhavan@nvidia.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Dan Williams <djbw@kernel.org>,
- Davidlohr Bueso <dave@stgolabs.net>, Ira Weiny <ira.weiny@intel.com>,
- Jonathan Cameron <jic23@kernel.org>, Vishal Verma
- <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Alex Williamson <alex.williamson@redhat.com>, vsethi@nvidia.com,
- alwilliamson@nvidia.com, Dan Williams <danwilliams@nvidia.com>,
- Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>,
- Vishal Aslot <vaslot@nvidia.com>, Manish Honap <mhonap@nvidia.com>,
- Jiandi An <jan@nvidia.com>, Richard Cheng <icheng@nvidia.com>,
- linux-tegra@vger.kernel.org
-References: <20260703220508.546528-1-smadhavan@nvidia.com>
- <fb9a53ea-2743-4e4c-b3b3-faa81dfac156@intel.com>
-Content-Language: en-US
-In-Reply-To: <fb9a53ea-2743-4e4c-b3b3-faa81dfac156@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260609073204.1760077-3-amhetre@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF0001709C:EE_|CH8PR12MB9768:EE_
+X-MS-Office365-Filtering-Correlation-Id: 022f7aa6-937e-446f-01f1-08dedc7f0b2b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|23010399003|82310400026|376014|36860700016|18002099003|22082099003|4143699003|56012099006|11063799006;
+X-Microsoft-Antispam-Message-Info:
+	6SCz2GcrtDYrFqs1W2WALGAi4sRgd2ZYHuamlsBixOH9atcE//jbtYvmgwJ6qZJkbE3mxUwcFj5KE+6Hq7n6LbgEg2O2+HI07Vf2TzlDAT/uYdZULXfM+k0QnRpN6J+bPirPMEiTxwMOB7zniAHtcF3+z9jZUJN1I6cAVhP20gqj8TuoPDzpQwLZ5eXStenU5LswLlg+XF6BQOOPn5oOP5oWAb+ykxA7PcclB5aC57fkgHsf3DgpdGzrlVza4srsAtitXcU7IwxsgNCoaf/rECHwD0mjArJCy4BrrPBtHNDuki1whQSRvygIwfDcsNuHUvnX2KcnaSf6SmQBtv8/dwYvk8PVv8EixpY+TbAAFflmUXW8vgK8opnB72m+9YfIJgTjxiGfifN0CZMaP2KAozJA515Nff2E/b3ebJdxZbE4Qzeach/bcpjSK6wqVFd77vMSjF3KyoBIqb24Exk6J8Z8nnpO3F/gFMhI158a4DFHkrFQr48qoLYx4rt6EpgsvR0iw1BjCengbKQFZ5RQVdTvVaq8pCOO+YWau8XvTjW47kNqsfLdyCCoCUvYcSXR+pldqFfoUIJZPeFNywIM4CpyqfBwIE0AwQ9kP7WWSozQd1igACUi3ouyQ8reRCsp3A7i1rRyBCU+ICi16hShlZzeekHEeqNcuvicgzNvTKXac9Hf5hMGKdub6p0jvWsWc+kSORPUdt7kbfcYfT30KQ==
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(82310400026)(376014)(36860700016)(18002099003)(22082099003)(4143699003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	rcxWi+TXTG6+gPmOktpoWkkxED+pz1WBQYQq3Fza7Cgu0y3UqCqf0APtpL+Q3gtG8Re+JuloPsui39wMJxl0xsh37rxVMPZsHoeeXhD4C2JELICUtae8NLTDSShdkzzAI24rfV78GDkPcTJL+kxN29L/VmQ8gjdF0LwptORJJLsbtba/TXqHWbXel2qGbu6Kwv8/P+RD4wMegLI4jSlx+C38K4oz3t79s6ZmJ6ogtBA7e8DlcO3uzE/Q569Bo+u3+Fa48HDJtGK8fWQ58K2JVjQIyZyI6Hcfe7f45JA3g2lUiAzuB57NZUa5fWU7SXakmldUkBe7ERQRAT6z2wN3rIKZO+WFJ1KtciU/sY0xfTheWLJ/Wp2WsWOBPsAdep7wiIfxsHU+f33rZAnIbHM/4gzh7Uu5OYw5b3OTQSD6vWx06PaXvX9KMZtnPQuN0c9+
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2026 23:25:33.8099
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 022f7aa6-937e-446f-01f1-08dedc7f0b2b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF0001709C.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH8PR12MB9768
 
+On Tue, Jun 09, 2026 at 07:32:03AM +0000, Ashish Mhetre wrote:
+> +arm_smmu_erratum_cmd_needs_repeating(struct arm_smmu_device *smmu,
+> +				     struct arm_smmu_cmd *cmd)
+> +{
+[...]
+> +	if (!static_branch_unlikely(&arm_smmu_erratum_repeat_tlbi_cfgi_key))
+> +		return false;
+> +	if (!(smmu->options & ARM_SMMU_OPT_REPEAT_TLBI_CFGI))
+> +		return false;
 
+Are they redundant?
 
-On 7/6/26 4:13 PM, Dave Jiang wrote:
-> 
-> 
-> On 7/3/26 3:04 PM, Srirangan Madhavan wrote:
->> Hi folks!
->>
->> This series adds CXL Reset support for CXL Type 2 devices through the
->> existing PCI reset_method ABI. The reset sequence follows the CXL 4.0
->> specification [1], including CXL.cache disable, optional cache
->> writeback, CXL Reset initiation, ResetComplete polling, and ResetError
->> reporting.
->>
->> The userspace ABI is the existing PCI reset interface:
->>
->>     /sys/bus/pci/devices/.../reset_method
->>     /sys/bus/pci/devices/.../reset
->>
->> Userspace can select "cxl_reset" in reset_method and then trigger reset
->> through the existing reset attribute.
->>
->> Following Dan's v6 feedback, this replaces the proposed memdev sysfs ABI
->> with the existing PCI reset_method interface.
->>
->> v8 changes from v7 [2]:
->> - Drop the PCI helper export patch.
->> - Drop the multi-function sibling coordination patch. cxl_reset is only
->>   exposed as a function-scoped reset method when the CXL reset scope is
->>   limited to the target function.
->> - Keep the reset-scope discovery needed to reject non-function-scoped
->>   CXL resets.
->> - Cache HDM location as BAR-relative metadata instead of keeping an
->>   enum-time MMIO mapping.
->> - Restore HDM through a temporary mapping based on the current BAR
->>   assignment after PCI config state is restored.
->> - Cache raw HDM decoder register state so uncommitted decoders can be
->>   restored as uncommitted, while committed decoders are recommitted
->>   through the normal HDM commit flow.
->> - Share HDM decoder decode and validation between normal CXL core
->>   enumeration and early PCI HDM caching.
->> - Put cxl_reset ahead of FLR in reset_method priority because FLR does
->>   not reset CXL.cache or CXL.mem protocol state.
->>
->> Motivation:
->> -----------
->> - Type 2 devices need a CXL-specific reset mechanism beyond existing PCI
->>   reset methods.
->>
->> - FLR does not reset CXL.cache or CXL.mem protocol state. CXL Reset is
->>   the architectural reset mechanism for those protocols.
->>
->> - The PCI reset_method ABI lets userspace select this narrower CXL reset
->>   before falling back to broader bus reset methods.
->>
->> Change Description:
->> -------------------
->>
->> Patch 1: cxl/hdm: Split decoder programming into a reusable helper
->> - Move shared decoder settings to include/cxl/cxl.h.
->> - Factor low-level HDM register programming into cxl_commit().
->>
->> Patch 2: cxl/hdm: Cache decoder settings on PCI devices
->> - Cache CXL core HDM decoder settings in pci_dev->hdm.
->> - Refresh the cache as decoders are enumerated, committed, or reset.
->>
->> Patch 3: cxl/hdm: Share HDM decoder decode logic
->> - Share HDM decoder decode and validation between normal CXL core
->>   enumeration and early PCI HDM cache setup.
->>
->> Patch 4: cxl/hdm: Cache endpoint decoder settings during PCI enumeration
->> - Snapshot endpoint HDM state during PCI capability initialization.
->> - Cache the HDM register locator as BAR-relative metadata.
->> - Cache raw decoder register state in addition to committed decoder
->>   settings.
->>
->> Patch 5: PCI/CXL: Add CXL Device Reset helper
->> - Add the internal DVSEC reset sequence.
->> - Disable CXL.cache, perform cache writeback where supported, initiate
->>   CXL Reset, and wait for completion.
->>
->> Patch 6: PCI/CXL: Validate HDM ranges before CXL reset
->> - Collect enabled cached HDM ranges.
->> - Reject reset if affected ranges are busy.
->> - Invalidate CPU caches when runtime cache-invalidation support is
->>   available, otherwise continue after warning.
->>
->> Patch 7: PCI/CXL: Discover the CXL reset scope
->> - Discover whether CXL Reset is function-scoped using the Non-CXL
->>   Function Map and CXL cache/mem capability bits.
->>
->> Patch 8: cxl/pci: Restore CXL HDM state after PCI reset
->> - Restore cached global and per-decoder HDM state after reset.
->> - Re-map HDM registers from the current BAR assignment during restore.
->> - Replay raw decoder state for uncommitted decoders and recommit
->>   decoders that were committed before reset.
->>
->> Patch 9: PCI/CXL: Expose CXL Reset as a PCI reset method
->> - Add "cxl_reset" to the PCI reset_method table for Type 2 reset-capable
->>   CXL devices.
->> - Prioritize cxl_reset ahead of FLR.
->>
->> Patch 10: Documentation/ABI: Document CXL Reset PCI reset method
->> - Document the new reset_method value and reset behavior.
->>
->> The CPU cache invalidation step depends on
->> cpu_cache_invalidate_memregion() support for the affected address ranges.
->> If no runtime provider is available, the kernel emits a warning and
->> continues after the affected HDM ranges have been reserved.
->>
->> Example:
->>
->>     echo cxl_reset > /sys/bus/pci/devices/0000:bb:dd.f/reset_method
->>     echo 1 > /sys/bus/pci/devices/0000:bb:dd.f/reset
->>
->> Testing:
->> - Ran 100 iterations of cxl_reset through the PCI reset sysfs ABI on a
->>   CXL Type 2 device. All iterations completed successfully and
->>   ResetComplete was observed.
->> - Exercised cxl_bus reset separately with an add-on HDM restore patch.
->>
->> References:
->> [1] https://computeexpresslink.org/wp-content/uploads/2026/02/CXL-Specification_rev4p0_ver1p0_2026February26_clean_evalcopy_v2.pdf
->> [2] https://lore.kernel.org/linux-cxl/20260623032453.3404772-1-smadhavan@nvidia.com/
->> [3] https://lore.kernel.org/linux-cxl/20260306080026.116789-1-smadhavan@nvidia.com/
->>
->> Srirangan Madhavan (10):
->>   cxl/hdm: Split decoder programming into a reusable helper
->>   cxl/hdm: Cache decoder settings on PCI devices
->>   cxl/hdm: Share HDM decoder decode logic
->>   cxl/hdm: Cache endpoint decoder settings during PCI enumeration
->>   PCI/CXL: Add CXL Device Reset helper
->>   PCI/CXL: Validate HDM ranges before CXL reset
->>   PCI/CXL: Discover the CXL reset scope
->>   cxl/pci: Restore CXL HDM state after PCI reset
->>   PCI/CXL: Expose CXL Reset as a PCI reset method
->>   Documentation/ABI: Document CXL Reset PCI reset method
->>
->>  Documentation/ABI/testing/sysfs-bus-pci |   14 +
->>  drivers/cxl/Kconfig                     |    4 +
->>  drivers/cxl/core/Makefile               |    2 +-
->>  drivers/cxl/core/hdm.c                  |  257 ++---
->>  drivers/cxl/core/region.c               |    6 +-
->>  drivers/cxl/core/regs.c                 |    4 +
->>  drivers/cxl/core/reset.c                | 1354 +++++++++++++++++++++++
->>  drivers/cxl/cxl.h                       |   43 -
->>  drivers/pci/pci.c                       |    2 +
->>  drivers/pci/probe.c                     |    3 +
->>  include/cxl/cxl.h                       |  102 +-
->>  include/linux/pci.h                     |    8 +-
->>  include/uapi/linux/pci_regs.h           |   15 +
->>  tools/testing/cxl/test/cxl.c            |   10 +-
->>  14 files changed, 1615 insertions(+), 209 deletions(-)
->>  create mode 100644 drivers/cxl/core/reset.c
->>
->> base-commit: 90cf2e0d702c8a132ccbe72e7687f33c04c14658
-> 
-> 
-> Hi Srirangan,
-> I am not able to apply the patch series using b4 with the above base commit.
-> b4 picks up the last RFC patch as the first patch and fails to apply. However, skipping it b4 is still having trouble. Can you push a public git branch somewhere please? Also in the future the last RFC patch should be labeled 11/11. Thanks!
-> 
-
-BTW, can this be applied cleanly against a Linus rc tag? If so please do that next rev. I understand you need the type2 stuff for testing. But preferably when posting, post it against a Linus tag if there are no symbol dependencies. I'd really like sashiko run a review through it and currently it is not able to. Thank you.
-
+Nicolin
