@@ -1,69 +1,110 @@
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011052.outbound.protection.outlook.com [40.93.194.52])
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012067.outbound.protection.outlook.com [40.93.195.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4A933993;
-	Tue,  7 Jul 2026 01:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E901010F0;
+	Tue,  7 Jul 2026 02:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.67
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783388749; cv=fail; b=SlMQ/MKva6V8t5hIUEtAsq0BHW6n8BJKgJQ+36g35XvlwR+T5X1iJzQZEg/2yfKNaaRnrwlq49dnLy4ENG141oC/Tdku3a5LyEOQ9QQS26QbPB+eF0hzWDTtyZw1i1Mh0+VPQQGxKfxxZuTKqni2nUrj5m92oDg6ITGLiXVOiEs=
+	t=1783390283; cv=fail; b=L0vwq0sl+YlSBz7+slIm7J416WCQfxJpTi/N4ZPVhAAVemWlVB7Pp/ylt8WoLaf5yaU1j/8QeMMKcvltom9rZHAjAx1W7l/0zxQk2+gtY1fjlZzb2l1HlF1RB72s12kPQbAtLLpnn/pTESqzJaT6Yni4IaXLmGviRuhSDxWHKko=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783388749; c=relaxed/simple;
-	bh=z0zv48Z7nnBH7DaaK4XIEWrwHc8TtxnnzJuTHV4oWgI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=G87ZkRiv6KZzUjaMEeabhhwfYOCl21yCP2xNgCkUdkHqvkXhcn0GRSmN2NDj2IyF1lCusYH+CvAUu55ikJrXB11cRO/J7UTjeFn+nQwOfb9+IpZ76j7fSN9SFAUZzWakr40nNw/Hec7aBo+p8wNd1mBvkU/mOUDAEJ3dv30X53o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Kub/AAkO; arc=fail smtp.client-ip=40.93.194.52
+	s=arc-20240116; t=1783390283; c=relaxed/simple;
+	bh=/QWFty5JNvzlXMOGPv5Uj4V86fsJ9zf7i0jCgbKSRtY=;
+	h=Content-Type:Date:Message-Id:Subject:Cc:To:From:References:
+	 In-Reply-To:MIME-Version; b=C3YOylsfBLFJLWnbY9IvNAaxkKb2JYEmNLKxwucNPvG6pUMhhId8q9BF0EHKiokYRqLGtMRpAJv1JdMkHSqJytuMX54lzUSADaRTlQMKPsIcs1FMGUMk0Js4yecP9hBbvt7mZ922gxKEy7O175wABkHNfIAE4wPsYF03v+MlBD0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Rqgyb5dt; arc=fail smtp.client-ip=40.93.195.67
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Kub/AAkO"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Rqgyb5dt"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bHnsKzgfpLTIuoJuBIplckNAiqplwHYGuTYpP801l+EOlsTfId3iJUwofacI260ekbV0WrYSWiKV4sRHHmpbOuz4X8aZ8r/Kq91oDigYbB5uGDLAsz3Hbpw7PP2WKp8wkZqAw9OBqFQshD6jQjxxH/cA/1UEcNibkm3TmG2xvIAuffC9arJONlrwtK9GPRwqff2hs4miUE9C6Q8AKVPhx8jjiM/tcy3jRUtx98rSj/e6kE3FQ7pi/M4eaMdJJhjzelmbqo51bHf3sgYRe+OyGQDKMabKcjtzEHjabEjmGR7unLIuU79eWUsQU0+sZZho6OAD+SUBOhLLY8Rp1efEEA==
+ b=wto1kG7x0lEigIZjZ69KzWs14cA7cKiTp/PLlUYQ1SbEn6vaSZvcPqgLnvs8uwlKZqvcSYGJhRpvFX5UHgIHDnncQCsBSQjYfQjJVguZaHEdE87aDk3nE2nrAKQqqQmFO4KsePviBaZmU6V9PPCdkT40T8XYYrNkLiC98LTc7zphww9NBz4YrLfAYTa7HhQQzL8fBCq8QlxsI9VxcTUvEc/OcTzZEBxSAy0VPiXnG8LzWHLkoXoMMmax6mc88IMZTiEzYoACoz/7vrJL1B0RBw811K1HfmjUGgn5MKC874AbjePd3kq5OoOMXCK6Er0CbfeE2RY8JSZsAPkEWp1dFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=euWLbVzvTiI2sS+FZxypiJphXMBvm37znmFKbSZXWGo=;
- b=ykDuprOWnB7cO1vVDGpU/04ugH9QDgS9MIQB3edjX87Hmmr6kZv8gciF3jol8soOwhK/nb6dB8r7uLjd09yK0m/Ot2wmZk93I3xoRrFSQFhJTkSiyw2GAgzmXoJbtizrx7oh2vTWYrjIl8UG3CO5uqK6+05xbPIvQKueS5nvqD+hxJtbJ93iNUIfSkM9Mot0xnzwyyZIM2mGNUaLEmfxon6n8IJ6aj4Pr8xkEZ/KVLj8wMujqa0MVdrh5XPtY/qLX9W1NodY6CqAe0dHyRnzcKPLObSOjWx8JEJAAbMLtMy2nAtnImTrqiMoAtNOQFG/KGSKP4otTa7DTdKL/fhSBw==
+ bh=OZWTKtclRrOfAi6ihxJKjALnLRbRSlyjEScPsGFqTuY=;
+ b=rOp17A2cjBZEQEXbDH2sBM6PvUTJtENgAj5XN8/fkoSg6bAFrbdy5Y6OHlZiiwBMYh9GdhXLB+FPEevN0ewpRoWB7XBrtocviJ8FKT5r9QUewzAcHYkasjQpkysBZ5slVb9OMqsGbnYMOtDzj2WjxvpMekP/iX+Ci3Ru0k44y9xq3UUJWANTOB7V/4JZT+OmaSI1vlNApSXNSKaIaw3RDSSQSIILaOYmHbjVl9EnuXNmZaKgMZ1sBdIC5g1mp08ZB+Vr53zB44yzjNwAvwxmmmOTXZv0lp2ATm0cl6pWBfLEbCnLBswhE+tzTPxA3Hu2vkhoAvYfEFQTsMn1hHdC5w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=euWLbVzvTiI2sS+FZxypiJphXMBvm37znmFKbSZXWGo=;
- b=Kub/AAkOQzSlFjy6RkJf3aMWtrPx98yYwIZwxeT2HDbFIr4urbkuE7/wvPpwemNzF2crTfmVMyi8ywstOuh3YGcyK9g1+MmtA7NiWgeMARczDYhNSBSCSd6oGFTkKRNytBobS/KtkBCz75Kk1i30xJYhs0IO5t55gydG8cRInI6A3DHNtiWVquPnWnb5R9EhbIsW6waAfAT/zkF/8kuswdZqEI+Ct4qBuVOrmJk/qplNvF56uDSbKv+Du3IODb4hAER8+VSsuMtAsF/Wrqjc1MBddd/rtB2elmXw3IzPnY57O3X0/nW5nd9sJs7rFsMW47mhQDWBykiWM4/67PMoCw==
+ bh=OZWTKtclRrOfAi6ihxJKjALnLRbRSlyjEScPsGFqTuY=;
+ b=Rqgyb5dtBICsv78jQL9CwbjetB2CWZIlnhEcFGW1C9li+Ru/Uy+5fcKr6zrgltXGzrsIT9vMr8bMZssBqUgNwQGhb6qwRGbNRJQQtGQJURWS00Y7bBaPCYRCivowXwIJ0y+POE3CPVtBs6JzNlSzoT+z9aUcEJnL3CaluTQeU3AkbAVrJMv1FqmGq1mHhXPUsHPuzFAEflLIqRz9Z/gSfROp3V6fJm7o7ld/RFlNgV1oj7u610vnR1FRoZkoZryJ2/ABNDr0exj258xjZxGp4OD4zM2TVCaeOwUzd/c+FqTBPTHawE3xLuapQa2olUY7dc6YqlmJLzBQA0MO6p5hbg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BL0PR12MB2370.namprd12.prod.outlook.com (2603:10b6:207:47::27)
- by DS7PR12MB6239.namprd12.prod.outlook.com (2603:10b6:8:95::18) with
+Received: from IA0PR12MB8374.namprd12.prod.outlook.com (2603:10b6:208:40e::7)
+ by CY5PR12MB6177.namprd12.prod.outlook.com (2603:10b6:930:26::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.10; Tue, 7 Jul
- 2026 01:45:41 +0000
-Received: from BL0PR12MB2370.namprd12.prod.outlook.com
- ([fe80::86cf:c3ec:2cf5:74c8]) by BL0PR12MB2370.namprd12.prod.outlook.com
- ([fe80::86cf:c3ec:2cf5:74c8%5]) with mapi id 15.21.0181.012; Tue, 7 Jul 2026
- 01:45:40 +0000
-Date: Tue, 7 Jul 2026 09:45:33 +0800
-From: Richard Cheng <icheng@nvidia.com>
-To: Srirangan Madhavan <smadhavan@nvidia.com>
-Cc: Alison Schofield <alison.schofield@intel.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Dan Williams <djbw@kernel.org>, 
-	Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>, 
-	Ira Weiny <ira.weiny@intel.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Vishal Verma <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alex Williamson <alex.williamson@redhat.com>, vsethi@nvidia.com, 
-	alwilliamson@nvidia.com, Dan Williams <danwilliams@nvidia.com>, 
-	Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>, Vishal Aslot <vaslot@nvidia.com>, 
-	Manish Honap <mhonap@nvidia.com>, Jiandi An <jan@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v8 07/10] PCI/CXL: Discover the CXL reset scope
-Message-ID: <akxYmEuXX7W1v5DS@MWDK4CY14F>
-References: <20260703220508.546528-1-smadhavan@nvidia.com>
- <20260703220508.546528-8-smadhavan@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260703220508.546528-8-smadhavan@nvidia.com>
-X-ClientProxiedBy: JH0PR01CA0162.apcprd01.prod.exchangelabs.com
- (2603:1096:990:7::10) To BL0PR12MB2370.namprd12.prod.outlook.com
- (2603:10b6:207:47::27)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.8; Tue, 7 Jul 2026
+ 02:11:13 +0000
+Received: from IA0PR12MB8374.namprd12.prod.outlook.com
+ ([fe80::d85f:4c87:ae84:3f16]) by IA0PR12MB8374.namprd12.prod.outlook.com
+ ([fe80::d85f:4c87:ae84:3f16%5]) with mapi id 15.21.0181.009; Tue, 7 Jul 2026
+ 02:11:13 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 06 Jul 2026 22:10:32 -0400
+Message-Id: <DJRZ2QCEIVA6.1AZF5S891NKS4@nvidia.com>
+Subject: Re: [PATCH 02/13] mm/vma: update do_mmap() to use vma_flags_t
+Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>, "Madhavan Srinivasan"
+ <maddy@linux.ibm.com>, "Michael Ellerman" <mpe@ellerman.id.au>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Lucas
+ Stach" <l.stach@pengutronix.de>, "Inki Dae" <inki.dae@samsung.com>,
+ "Seung-Woo Kim" <sw0312.kim@samsung.com>, "Kyungmin Park"
+ <kyungmin.park@samsung.com>, "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Peter Griffin" <peter.griffin@linaro.org>, "Jani Nikula"
+ <jani.nikula@linux.intel.com>, "Joonas Lahtinen"
+ <joonas.lahtinen@linux.intel.com>, "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
+ "Tvrtko Ursulin" <tursulin@ursulin.net>, "Rob Clark"
+ <robin.clark@oss.qualcomm.com>, "Dmitry Baryshkov" <lumag@kernel.org>,
+ "Lyude Paul" <lyude@redhat.com>, "Danilo Krummrich" <dakr@kernel.org>,
+ "Tomi Valkeinen" <tomi.valkeinen@ideasonboard.com>, "Sandy Huang"
+ <hjc@rock-chips.com>, =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ "Andy Yan" <andy.yan@rock-chips.com>, "Thierry Reding"
+ <thierry.reding@kernel.org>, "Mikko Perttunen" <mperttunen@nvidia.com>,
+ "Jonathan Hunter" <jonathanh@nvidia.com>, "Gerd Hoffmann"
+ <kraxel@redhat.com>, "Dmitry Osipenko" <dmitry.osipenko@collabora.com>,
+ "Zack Rusin" <zack.rusin@broadcom.com>, "Matthew Brost"
+ <matthew.brost@intel.com>, "Thomas Hellstrom"
+ <thomas.hellstrom@linux.intel.com>, "Oleksandr Andrushchenko"
+ <oleksandr_andrushchenko@epam.com>, "Helge Deller" <deller@gmx.de>,
+ "Benjamin LaHaise" <bcrl@kvack.org>, "Alexander Viro"
+ <viro@zeniv.linux.org.uk>, "Christian Brauner" <brauner@kernel.org>,
+ "Muchun Song" <muchun.song@linux.dev>, "Oscar Salvador"
+ <osalvador@suse.de>, "David Hildenbrand" <david@kernel.org>, "Baolin Wang"
+ <baolin.wang@linux.alibaba.com>, "Liam R . Howlett" <liam@infradead.org>,
+ "Nico Pache" <npache@redhat.com>, "Ryan Roberts" <ryan.roberts@arm.com>,
+ "Dev Jain" <dev.jain@arm.com>, "Barry Song" <baohua@kernel.org>, "Lance
+ Yang" <lance.yang@linux.dev>, "Hugh Dickins" <hughd@google.com>, "Vlastimil
+ Babka" <vbabka@kernel.org>, "Mike Rapoport" <rppt@kernel.org>, "Suren
+ Baghdasaryan" <surenb@google.com>, "Michal Hocko" <mhocko@suse.com>, "Jann
+ Horn" <jannh@google.com>, "Pedro Falcato" <pfalcato@suse.de>, "Kees Cook"
+ <kees@kernel.org>, "Jaroslav Kysela" <perex@perex.cz>, "Takashi Iwai"
+ <tiwai@suse.com>, <linux-mips@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+ <dri-devel@lists.freedesktop.org>, <etnaviv@lists.freedesktop.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-samsung-soc@vger.kernel.org>, <intel-gfx@lists.freedesktop.org>,
+ <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
+ <nouveau@lists.freedesktop.org>, <linux-rockchip@lists.infradead.org>,
+ <linux-tegra@vger.kernel.org>, <virtualization@lists.linux.dev>,
+ <intel-xe@lists.freedesktop.org>, <xen-devel@lists.xenproject.org>,
+ <linux-fbdev@vger.kernel.org>, <linux-aio@kvack.org>,
+ <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+ <linux-sound@vger.kernel.org>
+To: "Lorenzo Stoakes" <ljs@kernel.org>, "Andrew Morton"
+ <akpm@linux-foundation.org>
+From: "Zi Yan" <ziy@nvidia.com>
+X-Mailer: aerc 0.21.0
+References: <cover.1782760670.git.ljs@kernel.org>
+ <e0ac58ad2b88ff7e2f0024e3286b2e786f79ca32.1782760670.git.ljs@kernel.org>
+In-Reply-To: <e0ac58ad2b88ff7e2f0024e3286b2e786f79ca32.1782760670.git.ljs@kernel.org>
+X-ClientProxiedBy: CH2PR15CA0023.namprd15.prod.outlook.com
+ (2603:10b6:610:51::33) To IA0PR12MB8374.namprd12.prod.outlook.com
+ (2603:10b6:208:40e::7)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -71,305 +112,185 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL0PR12MB2370:EE_|DS7PR12MB6239:EE_
-X-MS-Office365-Filtering-Correlation-Id: fd3ceec7-9089-4f4b-9ba4-08dedbc97302
+X-MS-TrafficTypeDiagnostic: IA0PR12MB8374:EE_|CY5PR12MB6177:EE_
+X-MS-Office365-Filtering-Correlation-Id: a46e7ba9-5394-4512-992e-08dedbcd0520
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|23010399003|7416014|376014|22082099003|18002099003|5023799004|6133799003|56012099006|11063799006|4143699003;
+	BCL:0;ARA:13230040|376014|366016|1800799024|23010399003|7416014|18002099003|22082099003|56012099006|4143699003|11063799006|6133799003;
 X-Microsoft-Antispam-Message-Info:
-	mBRzDDOoLbjmh19tEuuYY2e120uEDKVWtmrl73MxvNtgvHEU8sjRJ7waGQhue49OE85Xarc7hUpi51fPA9TDx6Oxo0z1tav7RLRoFFYHaf+PmgUO/A2UqZ0/oq/irBFWcDUwlXoluwSXLsbw/NxewLudMLtq7GUHtaqOwGEt4WoU1naE6s1hoe+FACp2bmW4+9cey/qgi6SyVsw6+6LKmEIFna/6I2BvrQL3+KrSWl1dR58h4BD/QX4sIIGc6Og62LWYbqY9jz904+qxWIzORrk71JqltDX9BjsxDhjp172CuRNbVr9QSFt4QGkmqV/T6MSVBCP9hHsqRzaS77C8ic5WTl/s3R5GPAimJXevaqfYH9lIn9D4HK5qY5bQdNgpaduwnMGIEqgFvGS5xLIryN5evi9wGVyLBnkwAA+ghZTX6Up653GqiW/SJN1c1EC7nt/3gUPqXFXeQD0xKJtWzTQOTRaxjNy29docdcpKTVCWcSg8Rkd3UPa5VABTMxHjf0Tve0TpJPltjc2DFeBfPQJB4JHOGA04DqvJJLPYwhGyW0tCaw6nx26ZhtZA9jwlgnqpXxnAg0KaCEpah39cWkz7KRkEgYRuG0Ju0QQUlNvUpa8xwvq2Gtj9DFfNqNaHvalZtoXX1xObKtgCeECX+Rgqv32qM2lbQfV2VkG6re4=
+	2eWtQE73CZSQ5v6QF5lztmsrSjPVumC5SvOZh5US96jgFfWckz/iaPIzlQl0IN4B9SRX7EbdnQoB2ClMvwl3QnklzfP+cGwQ0U2ns95Je2jZD/TuCMCwu5dHfriEqwM+rRiG4co9f5lLSn4hRTkZntECv2ITNa8uwsi1FGDLfLh1NgZDL34zp92+yucm7lzpv7R4c98FmxtXF4I19kqh/5gkPp0amOxupLrfWChopAaqL0WnwPeDgFuz7rp4vVYJaLVCAG/zzlIxASIecZH/ps72iemw8N49bkbCOZOtH7el24e84fYs++uhUvTUqxevuoamYcqyFaoptWPsZ9eHTMpXIXHfHbrbsTynVAdpH/zn72gFl0wtqm4h6bcRq8wDitcVQXoFoO/5ZnyrpwsLFlcQ2dNt30h0ZR6I3FuD1F7wubUbX0C2AmDmHwe8Y50zhllp/1es1GAb770bORFA+5rggFnE+F5ijvSsNz4S1fZ67ntonEVJ8R6IWT7YOBEVAzmpG0n8HWcncN/W4BU9qZgFzJSpmeUmWLfLt18PuVgrLucwmPQqb1nAf0lS76MIGhy3CYNWcJXXK9sSCzWA8+LZmqPmuiC5l8YNyjOf0m48gbj79Ur5Fsmi+Onn4al4JTWG3RoHqS4h+19gFkHjf0A6Bmz0T+OTx8atHnXM2eo=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR12MB2370.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(23010399003)(7416014)(376014)(22082099003)(18002099003)(5023799004)(6133799003)(56012099006)(11063799006)(4143699003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR12MB8374.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(7416014)(18002099003)(22082099003)(56012099006)(4143699003)(11063799006)(6133799003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?1L2qbQXUX5FDqMRzVtXX/DQYOG0pcVeGtfL2y0wMJHz0oFKWQHPEg2INGPpF?=
- =?us-ascii?Q?MPviEYq066+nJ/dVxzkgQ+hsPLLQM8J1KniALd89WYEyuoHCbpoQ8I18VITS?=
- =?us-ascii?Q?pn0DvwpMs3FOXwLp2Yl0Y6aBCdViKdxLKtTLhOuPSjyQg/TBJfzRI2Dn1xuT?=
- =?us-ascii?Q?Pd9hKXGJYajXXFAp9xdO4rFlIqSSIOV+50EyO1kR4TT7KVYBtk+I5Hqa/oZ3?=
- =?us-ascii?Q?rTbnqyZVtJm3y+f2PY+HXoig585rNRwYYk7lp44t3ERyob+uQcMEH8H+A0NT?=
- =?us-ascii?Q?DJIqDAp1H5cr899IZdoLFtp0JswPo7fZTBVpkCvSV3JTa29hXbOEoTl6Z0xb?=
- =?us-ascii?Q?HrFkAEOnq7nyABs1GOWsFOFUUWsAy56nto06JV6FsySMpY8cPj7cVqQGLRju?=
- =?us-ascii?Q?J8Ii3vYjOu3hMkscblmN69INw9hmEcDXlTc7gv7Jopz5D4xmjgh2t7pu7H+4?=
- =?us-ascii?Q?ChF354OSavZgK2AZ+K9CWu9Xu9esAPRVMQ7Nipy7I62Ej9JfXJkWO2aD3Jfm?=
- =?us-ascii?Q?HAzG98yy0+jixoFTYzGcSwpuVrkzNZryGl1aw0FuOfXXYolEKdjNi7LR5uGC?=
- =?us-ascii?Q?ytQTpdCrdxHMd7CIiz891HkgiqBilMlZjUaluhw5ANfEAC+1YrsbmCmo9cYb?=
- =?us-ascii?Q?TvkwKQL+oe+NYn1EMSFy2kcCh6ZAdFIX9TPSyHY+DMFgQKf8v46add6TGGzO?=
- =?us-ascii?Q?vFDdBtOL7P3zdLYQsmkejCb6TjScoVj4ahKHYKGjEpaY4WDKpAYFuYWiu3yV?=
- =?us-ascii?Q?8s4jPgn72u1Eg3aWBehO6hkebDIU4do5az2Feu6on/O7hpoWvgaFXxEy0riD?=
- =?us-ascii?Q?UqdkwZawb+kfPN9lYpDZgyi1kCu6gWDpnv78EpFfGPdLBtHb+wvKe4Bjx0nV?=
- =?us-ascii?Q?b9qsZASXOxD/Y1W6ezqEsG1DI/OGldIsA/EbH/Cy2mNEx0eLEPe3/lCD7zuR?=
- =?us-ascii?Q?re6hi9wDXkXI95qLZSWgpmIEU+rsc1m6piu79uqzMI+i5ap1YSAfQVTM8aHA?=
- =?us-ascii?Q?K3IGLYR0E28fg9lODxrMCViWSFkoGEfyCer8Hyz/Qp1Q4veFS+scL1WjY5nR?=
- =?us-ascii?Q?7C7FoQnN0IcC6AnfE46GGd4aq2UIqQ/9+D3jwAHYsPF2b7D02C+cwwb8GOff?=
- =?us-ascii?Q?sXQA5o7/FvnlvLoYHYTCZkRxVCUBFJkcJsetDpHAWF+7uY0SCmlm7Fn1KnS3?=
- =?us-ascii?Q?Apmfx93/RuBfkJVi4bdapWIX9fJTc+c7pXETLGFFxNqs1/mw70ue/AL69U8q?=
- =?us-ascii?Q?2P66wMYYcgShc1Jggkfix5SY2GBhEXx726SRCtYiMhKORKkixVhqAPmllJFv?=
- =?us-ascii?Q?OSgI+chqSnIMdVvy0VGdj5l6YTU8vViOsrwPVgYWbJy+zHs10kbQmMbpxggB?=
- =?us-ascii?Q?AYlUvWRrdbfUptRZJ8ZjKjyEcmGz9mGgg9pW3Rfv1f5tIohzqWXiQo4W5rbY?=
- =?us-ascii?Q?1ayNWnqj9rIkmqsifzcHMC8S0g5dLKgcFofHcCln5tDE1MEy381yTU0ENHOL?=
- =?us-ascii?Q?3/UjECWxYn3OJjVI4CC2fF+lE4Pe1r3S2VDDkliY+22P3XOkVlw9uev9As8W?=
- =?us-ascii?Q?/xmlUSzlImf95V++m86mSl3exuRTutGjXnpWSvvVfk3IVniVCycWUMBVWeJd?=
- =?us-ascii?Q?S1fpl8C+HijOlKIqJtIUjGOL189LDsBBXR6RMlw0Hc3mOMojEHEU3+45n0c2?=
- =?us-ascii?Q?cfpaI71Twx1M+WRcESpbCaE1u68i/g8DhibKxr2Jxd6XYMoFlOUEOLsoRXu9?=
- =?us-ascii?Q?3H00S5Igpg=3D=3D?=
+	=?utf-8?B?Q2tKU2lvSDV6bmNzb2V2alBFSURBSVhXcW54RHhWWklmYlFCYTVOZzdHaHpX?=
+ =?utf-8?B?K1NWbjNDN1dQRW82Y0ZYUVlTc1huSTA3RnNQMmk4TTJmT1REVzdmcnBqTHo0?=
+ =?utf-8?B?MTJzZk10LzdsMlNuMm9oWk5FOFBpWm10dGgxS0dMekZZbnlPUDhwWFFrUzdk?=
+ =?utf-8?B?azhPMktCbDhjNDRHWHRxSk1KM003RXFPWlBNbmk5OGljL0dKTjJ3cXp0cmZZ?=
+ =?utf-8?B?WlAzd3l5c2cyMXVOdTRmN0l0UUVUbzdrakxXMTV4QUtrSU5ZemdUSUM4blJ2?=
+ =?utf-8?B?Z3BVTnVYSTZ5TnpBOEpqQlA3LzB6Rm55Q2FDUWFmbnNSSitpekR3MFFIazhX?=
+ =?utf-8?B?NlBSa0hYaUpRWHdrYXg1Sjd2MjcyZlZ6dy9hN0wrejA5dzk5V2hjYXFIMlFz?=
+ =?utf-8?B?bUt1SWYwb2VZY2o2eS9qQ3ZUSXpCWHR6SHBoYkhaOEpYNFp6R2VRdE5URGJs?=
+ =?utf-8?B?dkFtR0dybjdnS0FUWjNpSWVCWmVyQ1RFVGFTRVZlYnd3MDVlZGZ0ZU9sMVNm?=
+ =?utf-8?B?cGJkUmxIQmdGSDZCaTBNUkZoN0JlS3Iwc015TjhBYTlDL1dud3lEdFJsRzZC?=
+ =?utf-8?B?bjRKSkwrWUtlNWdQZmRYbTBxNTlYVmdHQ3hkUWNZSGpqN2duMUVrdFRSSkNM?=
+ =?utf-8?B?M2l2RVpUUlRqUzNYVzU2T1VFaGFJdmVaV1Q3OWpBVDRhSmxpbEVaa1ZrbWNw?=
+ =?utf-8?B?MlhNUDJsQUh4b3BndHNFZGFmYkRUOFYvbFM3NkJJa2JrRUxCZWNjSkgvZkVr?=
+ =?utf-8?B?OUp0Sit6ODlDMmEvZ1UrTm94T0VEaHEvYmRuZGtrREptTXpYbHVZZTNaTUNL?=
+ =?utf-8?B?SS9IY21UWEJ5eW43SnpEamVCeGNybGZKQXcvZHBlSDJiUTZFdlZEaUtUdS9C?=
+ =?utf-8?B?ak54OVRxWlBuWWNFOVpEVnlaN01iZGZ5bmtPOFRwbWtaRTFZc28rUkFQMUhp?=
+ =?utf-8?B?dSthYjgweWZjaWxBSytYQUZFM1AzSnl3bDNPY2hxQXovVGVzV28vRzJ6ODhM?=
+ =?utf-8?B?NmJ0a3dNeXA4UE9uRkVQZjU5Z0JqaURMa0l4OGJHS09oY3dpUm5DRkRJSkcv?=
+ =?utf-8?B?SWpxME9OMUJHVnBkYXZaWVZNOE5oTnNXVlBNSlg3aUltN0FIdFNLeFNaYTd2?=
+ =?utf-8?B?WjlWNGVXQnRuVkRaK3FuTXU5bVc1c2xNMFdncjk4MEdPN0RDSEhZMEErSXVn?=
+ =?utf-8?B?ZktUTnZzYXJQUUZ4SWVseHpaLzhHc3UyRisxTnIrdXI5WHFtOGhwZ0QvQTA1?=
+ =?utf-8?B?SEcvNk5xUjMzVzhBWWVsYjB1RHVPbUZ6R0xackxRNktncWIwY0xqcTE3aWRv?=
+ =?utf-8?B?RkdmR3IwZjF6UFd4VFQ1YWJoWUYyT2FNUU4zZ0tmZWtENlVSOTFRNTZIc3N3?=
+ =?utf-8?B?S0J2TzdvRS9OSWtLeVRKbG5JQ2dqV2tRVGFSYUhXYWc4c1NCVlVjbW9rRlhv?=
+ =?utf-8?B?OG5FREJEZjJHc1ZyK0MzckdoQThnSERaYm0rdGlqRTYvUFo5OVAveFduWkxm?=
+ =?utf-8?B?Y3RoNVl6ZVRHRjBEWG8zdEpXMDB0UmtOa1prUWpKenFMVkk1Y2N0ZXc3c0ls?=
+ =?utf-8?B?VnIzdWhZWG01ZXJCQjFhdUlEMlE0WGxIWVVNREJpcUhLNHhLS2d6clltdXJX?=
+ =?utf-8?B?S3RqMEpyTXFQeUJ5UUU2WEJKQnVqc0pycjdXZVRzOUk4d0pjWEt3L2NaUEpw?=
+ =?utf-8?B?VGRBVjBzZU5OS1RMMG9NckdoekxOc041Y1pJWUo4Mmw2NXRNV0o2SnZXdHNX?=
+ =?utf-8?B?MFNnM0pLbU1tZWZiWUFxS1AwTHNpVE9jQ0tDY0Nqd0xSWVYzQzMyQmpWNVIv?=
+ =?utf-8?B?cFhsYmdZdHBIamVNcUJOVkYvc2JrUHZGZUg2QlR2K2VjMmhObjFUMHkzUkw1?=
+ =?utf-8?B?cUdNYW83N1phOHpDRkhjd204a2V3bFk3cFRud2FVekdKcWFBelBSSi9lYnFR?=
+ =?utf-8?B?OHNBcjVnaUljdzRlYW95a2p0dEp5ajh0d2tLVFExVWtJUDFTZkFGSWxSRWRE?=
+ =?utf-8?B?dXlLWVFWYU1IWi9ucEx4bUVMZVJNdFpwbERmOXROWjZWSXVMQnQyNDV4TWZQ?=
+ =?utf-8?B?ckQ0ZWY3eGlscFZSSm9lREpZTzJJNExuSnJmNHdNUmhYZGVMbS8rU3FROER0?=
+ =?utf-8?B?Rkd3VHhqQW1uWGFtcmZMSjR1M2hyNHl5N0tuWEFyd1Z5NUhZaWpibHhZOXo5?=
+ =?utf-8?B?SVArbHRFcnVBVFByVmEzWUZzZW9qaVE3RTIrTTVUTG9rUExlbE5jcE1GS01O?=
+ =?utf-8?B?bXdvNnZSWEFlbVVET013VHVyWUFiY1NDUGRRdUtQWVR0OHpPM0ZRK2xIb20x?=
+ =?utf-8?Q?JDrw2oFXXOPm0reTxK?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd3ceec7-9089-4f4b-9ba4-08dedbc97302
-X-MS-Exchange-CrossTenant-AuthSource: BL0PR12MB2370.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a46e7ba9-5394-4512-992e-08dedbcd0520
+X-MS-Exchange-CrossTenant-AuthSource: IA0PR12MB8374.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2026 01:45:40.1403
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2026 02:11:13.5375
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dpML9JCTsbkplhIQYCgdAaIacNRpzopOsneVLkKjJRLQpdOBcTXez1te3jhbPOr6Uj9eiPxTGudGxjuoQv1maQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6239
+X-MS-Exchange-CrossTenant-UserPrincipalName: PkW8PLSCAM9OoBbuQEoPHlbtWH7slCizpMnfj3r3at8+bkAV7ft0tvr+nIf15jXf
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6177
 
-On Fri, Jul 03, 2026 at 10:05:05PM +0800, Srirangan Madhavan wrote:
-> Add reset context support to validate that CXL Reset is function-scoped
-> before advertising it as a PCI reset method. Use the Non-CXL Function
-> Map, ARI/devfn rules, and CXL.cache/mem capability bits to reject reset
-> when another same-scope function would also be affected.
-> 
-> If the Function Map cannot be read, warn and conservatively treat all
-> candidate same-scope functions as CXL-capable for scope validation.
-> 
-> Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
+On Mon Jun 29, 2026 at 3:25 PM EDT, Lorenzo Stoakes wrote:
+> The core do_mmap() function accepts a vm_flags_t parameter which it then
+> manipulates before passing to mmap_region() to do the heavy lifting of th=
+e
+> memory mapping.
+>
+> Update do_mmap() to instead accept a vma_flags_t parameter, and adjust al=
+l
+> the logic within do_mmap() to manipulate this instead.
+>
+> This is as part of the ongoing effort to convert VMA flags from a system
+> word size to a bitmap type which allows us to unrestrict the number of VM=
+A
+> flags, as well as gain control over how VMA flag manipulation occurs.
+>
+> We do not cascade these changes to all functions which accept vm_flags_t,
+> but rather use vma_flags_to_legacy() where necessary, specifically
+> deferring converting calc_vm_prot_bits(), calc_vm_flag_bits() and
+> __get_unmapped_area() to vma_flags_t.
+>
+> Also utilise the new vma_flags_can_grow() predicate which correctly handl=
+es
+> the case of architectures without upward growing stacks.
+>
+> As part of this change, introduce VMA_SHADOW_STACK so we can correctly
+> handle the case of the shadow stack not being defined.
+>
+> No functional change intended.
+>
+> Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
 > ---
->  drivers/cxl/core/reset.c      | 153 +++++++++++++++++++++++++++++++++-
->  include/uapi/linux/pci_regs.h |   1 +
->  2 files changed, 152 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/reset.c b/drivers/cxl/core/reset.c
-> index fb741b66e502..8e80e7588046 100644
-> --- a/drivers/cxl/core/reset.c
-> +++ b/drivers/cxl/core/reset.c
-> @@ -1,5 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0-only
->  /* Copyright(c) 2026 NVIDIA Corporation. All rights reserved. */
-> +#include <linux/bitmap.h>
->  #include <linux/delay.h>
->  #include <linux/bug.h>
->  #include <linux/bitfield.h>
-> @@ -469,6 +470,21 @@ static const u32 cxl_reset_timeout_ms[] = {
->  #define CXL_CACHE_WBI_TIMEOUT_US 100000
->  #define CXL_CACHE_WBI_POLL_US 100
->  
-> +/* CXL r4.0 sec 8.1.4 defines 256 bits of Non-CXL Function Map. */
-> +#define CXL_RESET_MAX_FUNCTIONS 256
-> +#define CXL_RESET_FUNCTION_MAP_REGS (CXL_RESET_MAX_FUNCTIONS / 32)
-> +
-> +struct cxl_reset_context {
-> +	struct pci_dev *target;
-> +};
-> +
-> +struct cxl_reset_walk_context {
-> +	struct cxl_reset_context *ctx;
-> +	DECLARE_BITMAP(non_cxl_func_map, CXL_RESET_MAX_FUNCTIONS);
-> +	bool ari;
-> +	int rc;
-> +};
-> +
->  struct cxl_hdm_range {
->  	struct list_head list;
->  	struct pci_dev *pdev;
-> @@ -480,6 +496,137 @@ struct cxl_hdm_range_context {
->  	struct list_head ranges;
->  };
->  
-> +static void cxl_reset_context_init(struct cxl_reset_context *ctx,
-> +				   struct pci_dev *pdev)
-> +{
-> +	*ctx = (struct cxl_reset_context) {
-> +		.target = pdev,
-> +	};
-> +}
-> +
-> +static void cxl_reset_read_non_cxl_func_map(struct pci_dev *pdev,
-> +					    unsigned long *map)
-> +{
-> +	u32 words[CXL_RESET_FUNCTION_MAP_REGS];
-> +	int dvsec, reg;
-> +
-> +	bitmap_zero(map, CXL_RESET_MAX_FUNCTIONS);
-> +
-> +	dvsec = pci_find_dvsec_capability(pdev, PCI_VENDOR_ID_CXL,
-> +					  PCI_DVSEC_CXL_FUNCTION_MAP);
-> +	if (!dvsec)
-> +		return;
-> +
-> +	for (reg = 0; reg < CXL_RESET_FUNCTION_MAP_REGS; reg++) {
-> +		int rc;
-> +
-> +		rc = pci_read_config_dword(pdev,
-> +					   dvsec + PCI_DVSEC_CXL_FUNCTION_MAP_REG +
-> +					   reg * sizeof(u32), &words[reg]);
-> +		if (rc) {
-> +			pci_warn(pdev,
-> +				 "failed to read Non-CXL Function Map; treating same-scope functions as CXL\n");
-> +			bitmap_zero(map, CXL_RESET_MAX_FUNCTIONS);
-> +			return;
-> +		}
-> +	}
-> +
-> +	bitmap_from_arr32(map, words, CXL_RESET_MAX_FUNCTIONS);
-> +}
-> +
-> +static int cxl_reset_func_map_bit(struct pci_dev *sibling, bool ari)
-> +{
-> +	if (ari)
-> +		return sibling->devfn;
-> +
-> +	/*
-> +	 * Without ARI, the Function Map is organized as 32 device slots per
-> +	 * conventional 3-bit function number.
-> +	 */
-> +	return PCI_FUNC(sibling->devfn) * 32 + PCI_SLOT(sibling->devfn);
-> +}
-> +
-> +static int cxl_reset_read_cxl_cap(struct pci_dev *pdev, u16 *cap)
-> +{
-> +	int dvsec, rc;
-> +
-> +	dvsec = pci_find_dvsec_capability(pdev, PCI_VENDOR_ID_CXL,
-> +					  PCI_DVSEC_CXL_DEVICE);
-> +	if (!dvsec)
-> +		return -ENODEV;
-> +
-> +	rc = pci_read_config_word(pdev, dvsec + PCI_DVSEC_CXL_CAP, cap);
-> +	if (rc) {
-> +		rc = pcibios_err_to_errno(rc);
-> +		pci_warn(pdev, "failed to read CXL capability: %d\n", rc);
-> +		return rc;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int cxl_reset_has_cache_or_mem(struct pci_dev *pdev)
-> +{
-> +	u16 cap;
-> +	int rc;
-> +
-> +	rc = cxl_reset_read_cxl_cap(pdev, &cap);
-> +	if (rc == -ENODEV)
-> +		return 0;
-> +	if (rc)
-> +		return rc;
-> +
-> +	return !!(cap & (PCI_DVSEC_CXL_CACHE_CAPABLE |
-> +			 PCI_DVSEC_CXL_MEM_CAPABLE));
-> +}
-> +
-> +static int cxl_reset_validate_function_scope(struct pci_dev *sibling,
-> +					     void *data)
-> +{
-> +	struct cxl_reset_walk_context *wctx = data;
-> +	struct cxl_reset_context *ctx = wctx->ctx;
-> +	struct pci_dev *pdev = ctx->target;
-> +	int fn, rc;
-> +
-> +	if (sibling == pdev)
-> +		return 0;
-> +
-> +	if (sibling->bus != pdev->bus)
-> +		return 0;
-> +
-> +	if (!wctx->ari && PCI_SLOT(sibling->devfn) != PCI_SLOT(pdev->devfn))
-> +		return 0;
-> +
-> +	fn = cxl_reset_func_map_bit(sibling, wctx->ari);
-> +	if (test_bit(fn, wctx->non_cxl_func_map))
-> +		return 0;
-> +
-> +	rc = cxl_reset_has_cache_or_mem(sibling);
-> +	if (rc < 0) {
-> +		wctx->rc = rc;
-> +		return rc;
-> +	}
-> +	if (!rc)
-> +		return 0;
-> +
+>  arch/mips/kernel/vdso.c |  4 +--
+>  fs/aio.c                |  2 +-
+>  include/linux/memfd.h   |  6 ++--
+>  include/linux/mm.h      |  6 ++--
+>  ipc/shm.c               |  3 +-
+>  mm/memfd.c              | 15 ++++-----
+>  mm/mmap.c               | 67 ++++++++++++++++++++++++-----------------
+>  mm/nommu.c              |  3 +-
+>  mm/util.c               | 10 +++---
+>  mm/vma.c                |  7 ++---
+>  mm/vma.h                |  2 +-
+>  11 files changed, 69 insertions(+), 56 deletions(-)
+>
 
-cxl_reset_has_cache_or_mem() treats a sibling with no CXL device DVSEC as non-CXL, but according to
-spec, it places the DVSEC only on Function 0, the sibling function can participate under fn0's DVSEC
-with no DVSEC of their own. The non-CXL Function Map should be authoritative for classifying siblings
-rather than a per-sibling DVSEC read.
+<snip>
 
-What do you think ?
-
---Richard
-
-> +	wctx->rc = -ENOTTY;
-> +	return wctx->rc;
-> +}
-> +
-> +static int cxl_reset_validate_function_scoped(struct cxl_reset_context *ctx)
-> +{
-> +	struct pci_dev *pdev = ctx->target;
-> +	struct cxl_reset_walk_context wctx = {
-> +		.ctx = ctx,
-> +		.ari = pci_ari_enabled(pdev->bus),
-> +	};
-> +
-> +	cxl_reset_read_non_cxl_func_map(pdev, wctx.non_cxl_func_map);
-> +	pci_walk_bus(pdev->bus, cxl_reset_validate_function_scope, &wctx);
-> +
-> +	return wctx.rc;
-> +}
-> +
->  static void cxl_hdm_range_context_init(struct cxl_hdm_range_context *ctx)
+> =20
+> -static int check_write_seal(vm_flags_t *vm_flags_ptr)
+> +static int check_write_seal(vma_flags_t *vma_flags_ptr)
 >  {
->  	INIT_LIST_HEAD(&ctx->ranges);
-> @@ -890,6 +1037,7 @@ static int cxl_reset_execute(struct pci_dev *pdev, int dvsec)
->  int cxl_reset_function(struct pci_dev *pdev, bool probe)
->  {
->  	struct cxl_hdm_range_context range_ctx;
-> +	struct cxl_reset_context ctx;
->  	int dvsec;
->  	int rc;
->  
-> @@ -897,8 +1045,9 @@ int cxl_reset_function(struct pci_dev *pdev, bool probe)
->  	if (dvsec < 0)
->  		return dvsec;
->  
-> +	cxl_reset_context_init(&ctx, pdev);
->  	if (probe)
-> -		return 0;
-> +		return cxl_reset_validate_function_scoped(&ctx);
-> 
-
-This only runs on the PCI_RESET_PROBE path, but pci_init_reset_methods() runs during pci_device_add(),
-before sibling functions of a multi-function device are on pdev->bus.
-Thus pci_walk_bus() at probe time walks on an incomplete sibling set and passes, the DO_RESET path never
-re-validates.
-A multi-function Type-2 device would advertise and perform cxl_reset even with a live CXL sibling.
-Can the scope be recheck at reset time or gate on siblings actually being present ?
-
- 
->  	cxl_hdm_range_context_init(&range_ctx);
->  
-> @@ -907,7 +1056,7 @@ int cxl_reset_function(struct pci_dev *pdev, bool probe)
->  		if (!rc)
->  			rc = cxl_reset_execute(pdev, dvsec);
->  	}
+> -	vm_flags_t vm_flags =3D *vm_flags_ptr;
+> -	vm_flags_t mask =3D vm_flags & (VM_SHARED | VM_WRITE);
 > -
-> +out:
->  	cxl_hdm_range_context_destroy(&range_ctx);
->  	return rc;
+>  	/* If a private mapping then writability is irrelevant. */
+> -	if (!(mask & VM_SHARED))
+> +	if (!vma_flags_test(vma_flags_ptr, VMA_SHARED_BIT))
+>  		return 0;
+> =20
+>  	/*
+>  	 * New PROT_WRITE and MAP_SHARED mmaps are not allowed when
+>  	 * write seals are active.
+>  	 */
+> -	if (mask & VM_WRITE)
+> +	if (vma_flags_test(vma_flags_ptr, VMA_WRITE_BIT))
+>  		return -EPERM;
+> =20
+>  	/*
+>  	 * This is a read-only mapping, disallow mprotect() from making a
+>  	 * write-sealed mapping writable in future.
+>  	 */
+> -	*vm_flags_ptr &=3D ~VM_MAYWRITE;
+> +	vma_flags_clear(vma_flags_ptr, VMA_MAYWRITE_BIT);
+> =20
+>  	return 0;
 >  }
-> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-> index 194ae56b4404..7fc1d34fcce7 100644
-> --- a/include/uapi/linux/pci_regs.h
-> +++ b/include/uapi/linux/pci_regs.h
-> @@ -1380,6 +1380,7 @@
->  
->  /* CXL r4.0, 8.1.4: Non-CXL Function Map DVSEC */
->  #define PCI_DVSEC_CXL_FUNCTION_MAP			2
-> +#define  PCI_DVSEC_CXL_FUNCTION_MAP_REG			0x0C
->  
->  /* CXL r4.0, 8.1.5: Extensions DVSEC for Ports */
->  #define PCI_DVSEC_CXL_PORT				3
-> -- 
-> 2.43.0
-> 
+
+This function alone changed its original behavior, since vm_flags is a
+snapshot of *vm_flags_ptr, but after the change this snapshot is gone.
+But its only caller memfd_check_seals_mmap() gets vm_flags_ptr from the
+input parameter of do_mmap(), so the overall behavior does not change.
+
+<snip>
+
+> +		case MAP_DROPPABLE: {
+> +			vma_flags_t droppable =3D VMA_DROPPABLE;
+> +
+> +			if (vma_flags_empty(&droppable))
+>  				return -EOPNOTSUPP;
+> +			vma_flags_set_mask(&vma_flags, droppable);
+> +
+>  			/*
+>  			 * A locked or stack area makes no sense to be droppable.
+>  			 *
+> @@ -515,23 +527,24 @@ unsigned long do_mmap(struct file *file, unsigned l=
+ong addr,
+>  			 */
+>  			if (flags & (MAP_LOCKED | MAP_HUGETLB))
+>  			        return -EINVAL;
+> -			if (vm_flags & (VM_GROWSDOWN | VM_GROWSUP))
+> +			if (vma_flags_can_grow(&vma_flags))
+>  			        return -EINVAL;
+> =20
+> -			vm_flags |=3D VM_DROPPABLE;
+> -
+
+Lance pointed out the reordering of setting VMA_DROPPABLE and checking
+of can_grow, but these flags are not overlapped and there is no parallel
+writer to vma_flags. So it is still no functional change, just not
+mechanical changes. :)
+
+Otherwise, LGTM.
+
+Reviewed-by: Zi Yan <ziy@nvidia.com>
+
+--=20
+Best Regards,
+Yan, Zi
+
