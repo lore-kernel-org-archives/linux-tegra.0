@@ -1,236 +1,472 @@
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011071.outbound.protection.outlook.com [40.107.208.71])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EF53914EE;
-	Tue,  7 Jul 2026 09:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783415634; cv=fail; b=upcse8WentybbDzbcqeiinRHv5lh3q+dDVJx0fPevclozcUOlF3g4lq7icR32TtiUtaqA6iwPYN+4/Fy9B7ax4mIP/gTh/CGHER3oxzwqhWJvpKCDLNhtfJFmyQJ7DPCzTbrWaWywWlEKN4EA+tbU0oFtZQQGazirSW1GjEtYDA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783415634; c=relaxed/simple;
-	bh=N9jm0wiLOP62WWmaH5+Fa278cXzQ0qHaC4Pg6pJpzOQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=EQaJQELhwq5e2BD6bnpCJMIgSQR/tYJU6g0lwfzqIAUY75qnuw91Tn81S0LEV6bf8sVXusO+TRQ5OSZ68YJG6WtFLHCBMypi/xvqUtcf1kycVqKTQaM/0uZ+fSFuFS3ydvhEoGibef4QwsFk21x0cGK2Ew5fT+q+6R3SeP0ClIo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3kYBlUxc; arc=fail smtp.client-ip=40.107.208.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2305631E856;
+	Tue,  7 Jul 2026 10:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783418574; cv=none; b=bBuW5nWaUeZ6sLCGhP189WV1CU14UepOfS7hdC9utLZzsyhhCbH7q28N2f8drbGUND/XHXgriv+U5D9PAJoWN/1Dec05aohHNOUMAfn/6TV+CfPgIBoxkx4VUAmCZ1hYm50o97Yht0RQnlAIlZRmDXNqQ+bF+bL/dbBJ8qgnjSc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783418574; c=relaxed/simple;
+	bh=h8peh9A8lUn5Dfm+YfX5HjvM5oGHthYqIoEQR7jL4j0=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:In-Reply-To:
+	 Content-Type:References; b=gmhhRawr5tyjzzaH9uVNRmqSTXfRz1kZSyScgwUt/iec2h0QYEBEPjx3SaVP6S6KSS3hwdmRBP5XtkNyOsadI7r4PUckXeRhwdDwxWKGL87R6gqGyv+ygY+Ti0OIU9xAxclu6l82ZG6ZLrcruUaGC73Ly9/WbdJOGnyDlhwJhmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=RHCrShFX; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3kYBlUxc"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XUA1NWsVoCq0XXTEyt04oXRWmmP8UArAkvGLkTutEXTGbyB2FexLZAD8oCI//bzGhz3sDcoc+C2vYeyvdANyBzlbLMvCZjK8iP1K1ltg/A6iKVwZRGqtXqbK8YsaDF/L1qEBJEThiUez4yrVEfervOmSLVxlVd9zo8RYQ0nY2ewXQ3uXZS4YjSxtTNqb1GMQyc7yugAcpQGrw4gEzrAa72U7doHxB3QzEbwjd28H5WMTeswWbOJCvwK95RO5e3U3hpp/fEp4JtX6/u8WuP7MjjlO5vDaz5YdG62ju6IIiLj57ea5PxpLLgsOz1CV8ecrEsgbBvVPjxzfXQsOsrXu/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YQ4e1PcEa1qkg9JeeVTO5zDN+m+oZVMgiWuEff6wB3E=;
- b=AgTJ2rx2wEsYZVHthXiV4XrfdlAXXgqhjd0XluAtaXKeKz+tgHOgRQOCd+grBCbe8g3j93TyXxbY2Bfql/sL5h2bfaLV0G2cZY4QhQPJNus8yIU5O+hrWHf5dym/l17Zj+rs2khnpjN5yN+bC27xnTRnAcIu+Y/cNy60d3O/Qjp/yiOzmhpOX7CgLU/mR/PpcxMsAGQFm9+0eE6V9ySZ0QSe1NlFBLYsFnWzRwzYSgO05EhU3fRFwsBX1l1pl+TfmAYKYcmsMu+QfRvb/lKqdMi4DwVKfvaGQEQDToCmM8Q6XkEs9Nd3M0YF1E2NSzjOkq4tMmAGz6lkGPH0iHrKnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YQ4e1PcEa1qkg9JeeVTO5zDN+m+oZVMgiWuEff6wB3E=;
- b=3kYBlUxc2qslRtMHD3g8uABgEHghk1I2ZE5xF5m6Uva+X5ab/NVRhgmB65dIeuk6K6yHpp9/xbE0JxNfzIxvu1hxHyIw5cSxSyYpEJqMgUoP3GlgMNBnntOEtO6vrbO4G9TZyDR7Lbq7NOv7ZH7FM4yiXu/YNc2kPeCpVd6NnPw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CY1PR12MB9697.namprd12.prod.outlook.com (2603:10b6:930:107::6)
- by MW4PR12MB6949.namprd12.prod.outlook.com (2603:10b6:303:208::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.11; Tue, 7 Jul
- 2026 09:13:47 +0000
-Received: from CY1PR12MB9697.namprd12.prod.outlook.com
- ([fe80::3a41:55a0:8203:596d]) by CY1PR12MB9697.namprd12.prod.outlook.com
- ([fe80::3a41:55a0:8203:596d%5]) with mapi id 15.21.0181.010; Tue, 7 Jul 2026
- 09:13:47 +0000
-Message-ID: <84a98c07-372f-4636-be2e-9ef695d3f8e4@amd.com>
-Date: Tue, 7 Jul 2026 14:43:20 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 20/42] drm: xlnx: zynqmp_dpsub: Use
- devm_of_reserved_mem_device_init()
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
- Paul Cercueil <paul@crapouillou.net>,
- Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
- Paul Kocialkowski <paulk@sys-base.io>, Linus Walleij <linusw@kernel.org>,
- Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Alexey Brodkin
- <abrodkin@synopsys.com>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Michal Simek <michal.simek@amd.com>,
- Daniel Scally <dan.scally@ideasonboard.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Eddie James <eajames@linux.ibm.com>, Tiffany Lin <tiffany.lin@mediatek.com>,
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>,
- Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
- Houlong Wei <houlong.wei@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Joseph Liu <kwliu@nuvoton.com>, Marvin Lin <kflin@nuvoton.com>,
- Dmitry Osipenko <dmitry.osipenko@collabora.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Srinivas Kandagatla <srini@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ge Gordon
- <gordon.ge@bst.ai>, Adrian Hunter <adrian.hunter@intel.com>,
- Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>,
- Saravana Kannan <saravanak@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Daniel Baluta <daniel.baluta@nxp.com>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Peter Chen <peter.chen@cixtech.com>, Fugang Duan <fugang.duan@cixtech.com>
-Cc: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
- BST Linux Kernel Upstream Group <bst-upstream@bstai.top>,
- Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>,
- CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-aspeed@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
- linux-sunxi@lists.linux.dev, linux-media@vger.kernel.org,
- openbmc@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
- kernel@collabora.com, linux-tegra@vger.kernel.org,
- linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- imx@lists.linux.dev, sound-open-firmware@alsa-project.org
-References: <20260703193855.110619-1-mukesh.ojha@oss.qualcomm.com>
- <20260703193855.110619-21-mukesh.ojha@oss.qualcomm.com>
-Content-Language: en-US
-From: "Pandey, Radhey Shyam" <radheys@amd.com>
-In-Reply-To: <20260703193855.110619-21-mukesh.ojha@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA5PR01CA0085.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:1ad::16) To CY1PR12MB9697.namprd12.prod.outlook.com
- (2603:10b6:930:107::6)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RHCrShFX"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260707100248euoutp02c128470cd60985157ba2f1951ac410ba~-_b0ZdUlR0057200572euoutp02G;
+	Tue,  7 Jul 2026 10:02:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260707100248euoutp02c128470cd60985157ba2f1951ac410ba~-_b0ZdUlR0057200572euoutp02G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1783418568;
+	bh=OASSxXJmGaDT/uwBYzqLU/UJt7dS4PW4F+eiwSUGvN0=;
+	h=Date:From:Subject:To:Cc:In-Reply-To:References:From;
+	b=RHCrShFX9Zi8e6102GUrdmlOX/rENJ+/+JuCky5tdn57zI6kqM/nq4spocntdRJKD
+	 cxPgadB2teIqAQFmTL+UKcTizeCAL0ubzPJa+xDu1F3MyMDbRsL1NOEyOPlSjJZo4G
+	 44B/fzM2C25EXEtbRRF8gVk2FDX0DehKHmBzMIF0=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20260707100247eucas1p1439bac88cad923ef2478e1b2f63f9adc~-_b0IsPTq2255222552eucas1p19;
+	Tue,  7 Jul 2026 10:02:47 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20260707100245eusmtip202869722a30826a0db562dfb7a375b13~-_bx0DY2s0196401964eusmtip2h;
+	Tue,  7 Jul 2026 10:02:45 +0000 (GMT)
+Message-ID: <3f47aeab-33b1-4966-a5ce-5d6d5261e0e2@samsung.com>
+Date: Tue, 7 Jul 2026 12:02:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY1PR12MB9697:EE_|MW4PR12MB6949:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9a8e7f10-34d3-4e21-2d57-08dedc080ce2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|23010399003|7416014|376014|22082099003|18002099003|4143699003|56012099006|11063799006|921020;
-X-Microsoft-Antispam-Message-Info:
-	J3hQH2y7prc5ysSNH1F3Rvx1N+gkhmK7etXLLwXKc+DoEpH2vEwa1OuJEHxC3VuIdeFfNoEwRcuzmvIkJcTUHDoJfLNVLAHSft0FP9qIX3cl5UQ8/8IF6wjn+98l8V8/8lFj769qDQj/bigoXuBozfnCI7NYzmbrx2rqDq2YcTYF5cd9GDS2cqf7YKL3tsbenPWBqX4hq15GfF31eUM2SXMpYDi65pkYJIwC14YM+tBcTZHifM/dTQ+7m5B3UI30HuYrAoHB7iQHBVhJ8WMvUdWKiM4RFBWd6JY/4CzJVeHjLJ3J+IKhTcmZA9gAhrxCYK4sRP3Ke3P7J7DKz5aJIU9qnvKhaH99K6Kjv9GaNA1lx4Kpqj8B8PmqtGkGMYZk7aqfkD4VINTYOt1TUedd/M2YpIEXFSjXnjYgOL+20OpyywGGIG66knkHMNHmsok2OvkjfBgRoIun95POvRN03cbTvAi2B4RtPiJjLay8QrchnuvWHzEy+2wUaSGPXTuZ/6qm2QjKEsDVE4N10+igMGhJZF60Iodpf50gjodgOfZu4yAbsV4pM9LsgPn6LqRUytHPLLFNUXBQEeVH7kgg4vY/c6gfT/ty8PNKA5J+GdMCfKhpUn2LyQkp3Iihsgt9yC9qvVlNsibICFVzNy0xe70sL2khwn9Ey26RA+P2X7YpliheICYHMoG+YO3YGme7RXiUq1eWyavwqBrA3kRiyw==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY1PR12MB9697.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(23010399003)(7416014)(376014)(22082099003)(18002099003)(4143699003)(56012099006)(11063799006)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Y3F5TjZuVTMrMHlzZG5iU29TdzViYVA2cDQwdWdkWTVxYkxVVTBzV0tFdkdX?=
- =?utf-8?B?TjFWdWhPMmc2UEVlMlRYZGx4NVdmbG5XdTNpMzcrVEtmV1FYNktzSHo5dEdD?=
- =?utf-8?B?a2FEU3RSWjNrei9vUWp6K1hIcXFNZEdMcEt0dDZSWno3emovRVRqcW9IZHlk?=
- =?utf-8?B?a21KY1YwanFWNXNYWHQya2RORmZ6K0JNVWxpb0VOUWtmTWY1S3hYZ3AvcE5O?=
- =?utf-8?B?aE1jZEE1clB5bU9hVVh6bHhBUklKWVFpM0hJWkJZM2NBb0pwb2hPZFNpdU9K?=
- =?utf-8?B?bzNRaTQySGJkY0hMeUVUeUhuU1lVOStweWVWd2V5T2E2MjZOV2JwYVV4Zmpj?=
- =?utf-8?B?dlRSZ0lPUVFHUFBCdlFFYjk5M0hXM09OUVJUZjcwNkVMeXR0NlAzUW9LWVNw?=
- =?utf-8?B?a2dIaFYxeUZXZFMxajVHQkl3am84Y2dENFlyNXRwOC9tbUl1U1UxYS9NK0RO?=
- =?utf-8?B?VWs0dUVVeU9jMTlrZ21YUlJsUlByU0xiL1JuMzBSQzlrZW1vcG1GaTJqQWV5?=
- =?utf-8?B?dDJWSFlpcjZzUjR4MjdGYmR0eGtHcnNrK3QzalBmbWdCQk91eUxtRE52R3JY?=
- =?utf-8?B?NStBTmZ2YWdJNVU5UjlJUGFBUitxblRwTUYrTVZTS2tmK1JEeWFPQVA2OHJE?=
- =?utf-8?B?cnpZazZ2YW5IYkFrdXZ5THh1STgvamJ2b3RhQXFaNVAzK2hTTm54cjNRUUZk?=
- =?utf-8?B?Ym45V0k2dE40SkFUNUpES3ZvWE41UDYvRHJ6dzVwa1lKRGwxS3pRaHk4d21Y?=
- =?utf-8?B?OVdoMEVhOWVFMERWTkk0bllXeThWN0dDZU9VVW9UaHhmcy8wcksrajlGcHhr?=
- =?utf-8?B?MFZWTlZsZ1FhS0E4OWhLSS9hRWl4ekNpZmFOQWtJM2NDaTFyR1V5aTd3ZW1O?=
- =?utf-8?B?SmtRZUhoZWE2R25LMXRJVGhvL1dyUHZQVDZkZFNLRTBqbzlRUklZUnljR1N3?=
- =?utf-8?B?VERVVVVLWmJJRkdydU82cXZnUEZ3a2wzYUxtRTNHRmFXZGJmVHNwMVgzcEpT?=
- =?utf-8?B?bWUxUmRqNzlzZzF4clVyWVJpYzc5SGplcFFrbUN6c1doT3R4emdGSTY5K1J4?=
- =?utf-8?B?bHdYTGFYcHRXcDhreEhvM3F1SjJyY1p4S09sZGpXU2I0dkVnTDRaRFRxLzhu?=
- =?utf-8?B?VlZVdnhPdXJrUU56bGg1SHpqRlhOSmZ4MU5ZUktYeUViU1cvYzg5Wkg0R20v?=
- =?utf-8?B?UTRxSm91RnRXUmJBNFUvQ05nK0ZzTkF3cEhkWXBOV0F6MnhKRnpaTDJmWDZ6?=
- =?utf-8?B?enlKeENxdUhESzVNQ0xUdXFNa1ArMFI0a015UC9zSGQ3R3RCd2RVNlVjalk0?=
- =?utf-8?B?T210WEFVMkF3NG9KcUQwSFJGUlNwQ2FWb1FkS0V3WDdYTGVxcGIxTmdnWElD?=
- =?utf-8?B?VlVrNWdBalV5Y2hLcFpsR3dPYnlqRmRrVkFzQnRnQXVQV1U5WVc3Q1plTFE5?=
- =?utf-8?B?S2J5WU94Q2pZV3VxcFQwbTMrWktXSjQwTXVVRGNPckJBa0dzSnJNRytwWU8y?=
- =?utf-8?B?MExMczh5TVBxaUNJeVUrVWZnSHJKbklxcTJreFYzT25MR3JNSkxCTzhwM1V2?=
- =?utf-8?B?ZEFxSXpYekQ1OCtUZjZLU1dEbUpqTjlSRnoxckZaeC9WM2t1Zmg3UFdJY2l4?=
- =?utf-8?B?YXRJKy9HSGw3SXk3YzhxWGJOMnV4WWdCREs2c1ZkQldaM2JQNFV5M2V0L0py?=
- =?utf-8?B?ckVQQytrdVJVa25ReGRzU2hlS2dpcHArYWxIRlB6c2hDWW9RdFl6ZVdwTmc0?=
- =?utf-8?B?MVFCOHlZQTY1eVpTcnQwdEFGR3ZST2RlVkFXQmRNTU9BUjE1ZHZlNDhMYWll?=
- =?utf-8?B?NGtTZDNtWGxxUm5hN0lWWnEyR3JDWFY5N0d3UTZaWHVlQm9mOHRWTC80R1pk?=
- =?utf-8?B?UlEwNmhxeGhMZVNpaWorTTJYVDhSekg4MkNZU0U1OW93d0xpdXdzejRYQUE0?=
- =?utf-8?B?YUsrdHdTd2QzRkZKclJnYU41V0dLaHpkV2ttWUFGM2FhY2RncHNzcUFDK20y?=
- =?utf-8?B?NER5bHNDZ0VyTWd3QUNUT3NyS242ZXlUWkphSm90NXg1S3RMdlhwdjdXQkdi?=
- =?utf-8?B?QTg0NEc3cUNiVnlDRUNpem14bWhuTWZqVzArWkJNRzdDRDZaNzhodGFZM1ZI?=
- =?utf-8?B?dklmdGxxM1NvcndRenpVbFh3a0VHM2hMZkU3K2xYeGJWeHZBUklWVisvck9x?=
- =?utf-8?B?Uzh0RkdCVG45ak1sSGtnTVdRTEVGV1VIRCtwd3VudHpkSEFvUUl4cy80RzhH?=
- =?utf-8?B?aXljMnZUdXpmUXpuOWhKTGw1bG1Vekc0Mktub09OVloxb0JlOFJITnR6UXpK?=
- =?utf-8?B?aDRhbThzRzdlc3FGZzNldFA5dlpsYjNTa0I3VGJRT3ljMVE4V3NNZz09?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9a8e7f10-34d3-4e21-2d57-08dedc080ce2
-X-MS-Exchange-CrossTenant-AuthSource: CY1PR12MB9697.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2026 09:13:47.1197
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0Cm7rb2/F/z6n6IKYYudd2pnXg7LkSHWNAU/3bAcSaxW+ihOOYTZC1KLHOGlbnJP
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6949
+User-Agent: Betterbird (Windows)
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v3 06/11] mm/cma: Allow dynamically creating CMA areas
+To: Thierry Reding <thierry.reding@kernel.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Mikko
+	Perttunen <mperttunen@nvidia.com>, Yury Norov <yury.norov@gmail.com>, Rasmus
+	Villemoes <linux@rasmusvillemoes.dk>, Russell King <linux@armlinux.org.uk>,
+	Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer
+	<gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily
+	Gorbik <gor@linux.ibm.com>, Christian Borntraeger
+	<borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Andrew
+	Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.org>,
+	Lorenzo Stoakes <ljs@kernel.org>, "Liam R. Howlett" <liam@infradead.org>,
+	Vlastimil Babka <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>, Suren
+	Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Robin
+	Murphy <robin.murphy@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey
+	<Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, "T.J. Mercier"
+	<tjmercier@google.com>, =?UTF-8?Q?Christian_K=C3=B6nig?=
+	<christian.koenig@amd.com>, Steven Rostedt <rostedt@goodmis.org>, Masami
+	Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+	<mathieu.desnoyers@efficios.com>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-mm@kvack.org, iommu@lists.linux.dev,
+	linaro-mm-sig@lists.linaro.org, linux-trace-kernel@vger.kernel.org
+Content-Language: en-US
+In-Reply-To: <20260701-tegra-vpr-v3-6-d80f7b871bb4@nvidia.com>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20260707100247eucas1p1439bac88cad923ef2478e1b2f63f9adc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20260701160902eucas1p1214af933ba0f54b85630a3a4e5a4689c
+X-EPHeader: CA
+X-CMS-RootMailID: 20260701160902eucas1p1214af933ba0f54b85630a3a4e5a4689c
+References: <20260701-tegra-vpr-v3-0-d80f7b871bb4@nvidia.com>
+	<CGME20260701160902eucas1p1214af933ba0f54b85630a3a4e5a4689c@eucas1p1.samsung.com>
+	<20260701-tegra-vpr-v3-6-d80f7b871bb4@nvidia.com>
 
-> Use the devres-managed devm_of_reserved_mem_device_init() instead of
-> the manual of_reserved_mem_device_init()/of_reserved_mem_device_release()
-> pair, letting the device resource manager handle cleanup automatically.
-> 
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+On 01.07.2026 18:08, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>
+> There is no technical reason why there should be a limited number of CMA
+> regions, so extract some code into helpers and use them to create extra
+> functions (cma_create() and cma_free()) that allow creating and freeing,
+> respectively, CMA regions dynamically at runtime.
 
-Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Thanks!
 
+Well, the technical reason for not creating cma regions dynamically at
+runtime is that on some architectures (like 32bit ARM) the early fixup
+for the region is needed to make it functional for DMA.
+
+
+I would add a comment about that in the cma_create() and ensure that its
+future callers explicitly depend on !ARM_32BIT.
+
+
+> The static array of CMA areas cannot be replaced by dynamically created
+> areas because for many of them, allocation must not fail and some cases
+> may need to initialize them before the slab allocator is even available.
+> To account for this, keep these "early" areas in a separate list and
+> track the dynamic areas in a separate list.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->   drivers/gpu/drm/xlnx/zynqmp_dpsub.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-> index 53ab1a2a5aaf..e93a7a299b52 100644
-> --- a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-> +++ b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
-> @@ -203,7 +203,7 @@ static int zynqmp_dpsub_probe(struct platform_device *pdev)
->   	dma_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
->   
->   	/* Try the reserved memory. Proceed if there's none. */
-> -	of_reserved_mem_device_init(&pdev->dev);
-> +	devm_of_reserved_mem_device_init(&pdev->dev);
->   
->   	ret = zynqmp_dpsub_init_clocks(dpsub);
->   	if (ret < 0)
-> @@ -255,7 +255,6 @@ static int zynqmp_dpsub_probe(struct platform_device *pdev)
->   	pm_runtime_disable(&pdev->dev);
->   	clk_disable_unprepare(dpsub->apb_clk);
->   err_mem:
-> -	of_reserved_mem_device_release(&pdev->dev);
->   	if (!dpsub->drm)
->   		zynqmp_dpsub_release(dpsub);
->   	return ret;
-> @@ -276,7 +275,6 @@ static void zynqmp_dpsub_remove(struct platform_device *pdev)
->   
->   	pm_runtime_disable(&pdev->dev);
->   	clk_disable_unprepare(dpsub->apb_clk);
-> -	of_reserved_mem_device_release(&pdev->dev);
->   
->   	if (!dpsub->drm)
->   		zynqmp_dpsub_release(dpsub);
+> Changes in v3:
+> - rebase on top of recent linux-next, update kernel/dma/contiguous.c
+> - use kzalloc_obj() instead of kzalloc() with sizeof()
+>
+> Changes in v2:
+> - rename fixed number of CMA areas to reflect their main use
+> - account for pages in dynamically allocated regions
+> ---
+> arch/arm/mm/dma-mapping.c | 2 +-
+> arch/s390/mm/init.c | 2 +-
+> include/linux/cma.h | 8 +-
+> kernel/dma/contiguous.c | 2 +-
+> mm/cma.c | 187 +++++++++++++++++++++++++++++++++++++---------
+> mm/cma.h | 5 +-
+> 6 files changed, 165 insertions(+), 41 deletions(-)
+>
+> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+> index f9bc53b60f99..934952ab2102 100644
+> --- a/arch/arm/mm/dma-mapping.c
+> +++ b/arch/arm/mm/dma-mapping.c
+> @@ -254,7 +254,7 @@ struct dma_contig_early_reserve {
+> unsigned long size;
+> };
+> -static struct dma_contig_early_reserve dma_mmu_remap[MAX_CMA_AREAS] __initdata;
+> +static struct dma_contig_early_reserve dma_mmu_remap[MAX_EARLY_CMA_AREAS] __initdata;
+> static int dma_mmu_remap_num __initdata;
+> diff --git a/arch/s390/mm/init.c b/arch/s390/mm/init.c
+> index f07168a0d3dd..f8f78f1434ea 100644
+> --- a/arch/s390/mm/init.c
+> +++ b/arch/s390/mm/init.c
+> @@ -241,7 +241,7 @@ static int s390_cma_mem_notifier(struct notifier_block *nb,
+> mem_data.start = arg->start_pfn << PAGE_SHIFT;
+> mem_data.end = mem_data.start + (arg->nr_pages << PAGE_SHIFT);
+> if (action == MEM_GOING_OFFLINE)
+> - rc = cma_for_each_area(s390_cma_check_range, &mem_data);
+> + rc = cma_for_each_early_area(s390_cma_check_range, &mem_data);
+> return notifier_from_errno(rc);
+> }
+> diff --git a/include/linux/cma.h b/include/linux/cma.h
+> index 8555d38a97b1..fb7a4923c3ba 100644
+> --- a/include/linux/cma.h
+> +++ b/include/linux/cma.h
+> @@ -7,7 +7,7 @@
+> #include <linux/numa.h>
+> #ifdef CONFIG_CMA_AREAS
+> -#define MAX_CMA_AREAS CONFIG_CMA_AREAS
+> +#define MAX_EARLY_CMA_AREAS CONFIG_CMA_AREAS
+> #endif
+> #define CMA_MAX_NAME 64
+> @@ -57,8 +57,14 @@ struct page *cma_alloc_frozen_compound(struct cma *cma, unsigned int order);
+> bool cma_release_frozen(struct cma *cma, const struct page *pages,
+> unsigned long count);
+> +extern int cma_for_each_early_area(int (*it)(struct cma *cma, void *data), void *data);
+> extern int cma_for_each_area(int (*it)(struct cma *cma, void *data), void *data);
+> extern bool cma_intersects(struct cma *cma, unsigned long start, unsigned long end);
+> extern void cma_reserve_pages_on_error(struct cma *cma);
+> +
+> +extern struct cma *cma_create(phys_addr_t base, phys_addr_t size,
+> + unsigned int order_per_bit, const char *name);
+> +extern void cma_free(struct cma *cma);
+> +
+> #endif
+> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+> index f754079a287d..7975551f69b3 100644
+> --- a/kernel/dma/contiguous.c
+> +++ b/kernel/dma/contiguous.c
+> @@ -52,7 +52,7 @@
+> #define CMA_SIZE_MBYTES 0
+> #endif
+> -static struct cma *dma_contiguous_areas[MAX_CMA_AREAS];
+> +static struct cma *dma_contiguous_areas[MAX_EARLY_CMA_AREAS];
+> static unsigned int dma_contiguous_areas_num;
+> static int dma_contiguous_insert_area(struct cma *cma)
+> diff --git a/mm/cma.c b/mm/cma.c
+> index a13ce4999b39..f989e2e98594 100644
+> --- a/mm/cma.c
+> +++ b/mm/cma.c
+> @@ -34,7 +34,12 @@
+> #include "internal.h"
+> #include "cma.h"
+> -struct cma cma_areas[MAX_CMA_AREAS];
+> +static DEFINE_MUTEX(cma_lock);
+> +
+> +struct cma cma_early_areas[MAX_EARLY_CMA_AREAS];
+> +unsigned int cma_early_area_count;
+> +
+> +static LIST_HEAD(cma_areas);
+> unsigned int cma_area_count;
+> phys_addr_t cma_get_base(const struct cma *cma)
+> @@ -198,7 +203,6 @@ static void __init cma_activate_area(struct cma *cma)
+> free_reserved_page(pfn_to_page(pfn));
+> }
+> }
+> - totalcma_pages -= cma->count;
+> cma->available_count = cma->count = 0;
+> pr_err("CMA area %s could not be activated\n", cma->name);
+> }
+> @@ -207,8 +211,8 @@ static int __init cma_init_reserved_areas(void)
+> {
+> int i;
+> - for (i = 0; i < cma_area_count; i++)
+> - cma_activate_area(&cma_areas[i]);
+> + for (i = 0; i < cma_early_area_count; i++)
+> + cma_activate_area(&cma_early_areas[i]);
+> return 0;
+> }
+> @@ -219,41 +223,77 @@ void __init cma_reserve_pages_on_error(struct cma *cma)
+> set_bit(CMA_RESERVE_PAGES_ON_ERROR, &cma->flags);
+> }
+> +static void __init cma_init_area(struct cma *cma, const char *name,
+> + phys_addr_t size, unsigned int order_per_bit)
+> +{
+> + if (name)
+> + strscpy(cma->name, name);
+> + else
+> + snprintf(cma->name, CMA_MAX_NAME, "cma%d\n", cma_area_count);
+> +
+> + cma->available_count = cma->count = size >> PAGE_SHIFT;
+> + cma->order_per_bit = order_per_bit;
+> +
+> + INIT_LIST_HEAD(&cma->node);
+> +}
+> +
+> static int __init cma_new_area(const char *name, phys_addr_t size,
+> unsigned int order_per_bit,
+> struct cma **res_cma)
+> {
+> struct cma *cma;
+> - if (cma_area_count == ARRAY_SIZE(cma_areas)) {
+> + if (cma_early_area_count == ARRAY_SIZE(cma_early_areas)) {
+> pr_err("Not enough slots for CMA reserved regions!\n");
+> return -ENOSPC;
+> }
+> + mutex_lock(&cma_lock);
+> +
+> /*
+> * Each reserved area must be initialised later, when more kernel
+> * subsystems (like slab allocator) are available.
+> */
+> - cma = &cma_areas[cma_area_count];
+> - cma_area_count++;
+> + cma = &cma_early_areas[cma_early_area_count];
+> + cma_early_area_count++;
+> - if (name)
+> - strscpy(cma->name, name);
+> - else
+> - snprintf(cma->name, CMA_MAX_NAME, "cma%d\n", cma_area_count);
+> + cma_init_area(cma, name, size, order_per_bit);
+> - cma->available_count = cma->count = size >> PAGE_SHIFT;
+> - cma->order_per_bit = order_per_bit;
+> - *res_cma = cma;
+> totalcma_pages += cma->count;
+> + *res_cma = cma;
+> +
+> + mutex_unlock(&cma_lock);
+> return 0;
+> }
+> static void __init cma_drop_area(struct cma *cma)
+> {
+> + mutex_lock(&cma_lock);
+> totalcma_pages -= cma->count;
+> - cma_area_count--;
+> + cma_early_area_count--;
+> + mutex_unlock(&cma_lock);
+> +}
+> +
+> +static int __init cma_check_memory(phys_addr_t base, phys_addr_t size)
+> +{
+> + if (!size || !memblock_is_region_reserved(base, size))
+> + return -EINVAL;
+> +
+> + /*
+> + * CMA uses CMA_MIN_ALIGNMENT_BYTES as alignment requirement which
+> + * needs pageblock_order to be initialized. Let's enforce it.
+> + */
+> + if (!pageblock_order) {
+> + pr_err("pageblock_order not yet initialized. Called during early boot?\n");
+> + return -EINVAL;
+> + }
+> +
+> + /* ensure minimal alignment required by mm core */
+> + if (!IS_ALIGNED(base | size, CMA_MIN_ALIGNMENT_BYTES))
+> + return -EINVAL;
+> +
+> + return 0;
+> }
+> /**
+> @@ -276,22 +316,9 @@ int __init cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
+> struct cma *cma;
+> int ret;
+> - /* Sanity checks */
+> - if (!size || !memblock_is_region_reserved(base, size))
+> - return -EINVAL;
+> -
+> - /*
+> - * CMA uses CMA_MIN_ALIGNMENT_BYTES as alignment requirement which
+> - * needs pageblock_order to be initialized. Let's enforce it.
+> - */
+> - if (!pageblock_order) {
+> - pr_err("pageblock_order not yet initialized. Called during early boot?\n");
+> - return -EINVAL;
+> - }
+> -
+> - /* ensure minimal alignment required by mm core */
+> - if (!IS_ALIGNED(base | size, CMA_MIN_ALIGNMENT_BYTES))
+> - return -EINVAL;
+> + ret = cma_check_memory(base, size);
+> + if (ret < 0)
+> + return ret;
+> ret = cma_new_area(name, size, order_per_bit, &cma);
+> if (ret != 0)
+> @@ -444,7 +471,7 @@ static int __init __cma_declare_contiguous_nid(phys_addr_t *basep,
+> pr_debug("%s(size %pa, base %pa, limit %pa alignment %pa)\n",
+> __func__, &size, &base, &limit, &alignment);
+> - if (cma_area_count == ARRAY_SIZE(cma_areas)) {
+> + if (cma_early_area_count == ARRAY_SIZE(cma_early_areas)) {
+> pr_err("Not enough slots for CMA reserved regions!\n");
+> return -ENOSPC;
+> }
+> @@ -1051,12 +1078,12 @@ bool cma_release_frozen(struct cma *cma, const struct page *pages,
+> return true;
+> }
+> -int cma_for_each_area(int (*it)(struct cma *cma, void *data), void *data)
+> +int cma_for_each_early_area(int (*it)(struct cma *cma, void *data), void *data)
+> {
+> int i;
+> - for (i = 0; i < cma_area_count; i++) {
+> - int ret = it(&cma_areas[i], data);
+> + for (i = 0; i < cma_early_area_count; i++) {
+> + int ret = it(&cma_early_areas[i], data);
+> if (ret)
+> return ret;
+> @@ -1065,6 +1092,25 @@ int cma_for_each_area(int (*it)(struct cma *cma, void *data), void *data)
+> return 0;
+> }
+> +int cma_for_each_area(int (*it)(struct cma *cma, void *data), void *data)
+> +{
+> + struct cma *cma;
+> +
+> + mutex_lock(&cma_lock);
+> +
+> + list_for_each_entry(cma, &cma_areas, node) {
+> + int ret = it(cma, data);
+> +
+> + if (ret) {
+> + mutex_unlock(&cma_lock);
+> + return ret;
+> + }
+> + }
+> +
+> + mutex_unlock(&cma_lock);
+> + return 0;
+> +}
+> +
+> bool cma_intersects(struct cma *cma, unsigned long start, unsigned long end)
+> {
+> int r;
+> @@ -1147,3 +1193,74 @@ void __init *cma_reserve_early(struct cma *cma, unsigned long size)
+> return ret;
+> }
+> +
+> +struct cma *__init cma_create(phys_addr_t base, phys_addr_t size,
+> + unsigned int order_per_bit, const char *name)
+> +{
+> + struct cma *cma;
+> + int ret;
+> +
+> + ret = cma_check_memory(base, size);
+> + if (ret < 0)
+> + return ERR_PTR(ret);
+> +
+> + cma = kzalloc_obj(*cma, GFP_KERNEL);
+> + if (!cma)
+> + return ERR_PTR(-ENOMEM);
+> +
+> + cma_init_area(cma, name, size, order_per_bit);
+> + cma->ranges[0].base_pfn = PFN_DOWN(base);
+> + cma->ranges[0].early_pfn = PFN_DOWN(base);
+> + cma->ranges[0].count = cma->count;
+> + cma->nranges = 1;
+> +
+> + cma_activate_area(cma);
+> +
+> + mutex_lock(&cma_lock);
+> + list_add_tail(&cma->node, &cma_areas);
+> + totalcma_pages += cma->count;
+> + cma_area_count++;
+> + mutex_unlock(&cma_lock);
+> +
+> + return cma;
+> +}
+> +
+> +void cma_free(struct cma *cma)
+> +{
+> + unsigned int i;
+> +
+> + /*
+> + * Safety check to prevent a CMA with active allocations from being
+> + * released.
+> + */
+> + for (i = 0; i < cma->nranges; i++) {
+> + unsigned long nbits = cma_bitmap_maxno(cma, &cma->ranges[i]);
+> +
+> + if (!bitmap_empty(cma->ranges[i].bitmap, nbits)) {
+> + WARN(1, "%s: range %u not empty\n", cma->name, i);
+> + return;
+> + }
+> + }
+> +
+> + /* free reserved pages and the bitmap */
+> + for (i = 0; i < cma->nranges; i++) {
+> + struct cma_memrange *cmr = &cma->ranges[i];
+> + unsigned long end_pfn, pfn;
+> +
+> + end_pfn = cmr->base_pfn + cmr->count;
+> + for (pfn = cmr->base_pfn; pfn < end_pfn; pfn++)
+> + free_reserved_page(pfn_to_page(pfn));
+> +
+> + bitmap_free(cmr->bitmap);
+> + }
+> +
+> + mutex_destroy(&cma->alloc_mutex);
+> +
+> + mutex_lock(&cma_lock);
+> + totalcma_pages -= cma->count;
+> + list_del(&cma->node);
+> + cma_area_count--;
+> + mutex_unlock(&cma_lock);
+> +
+> + kfree(cma);
+> +}
+> diff --git a/mm/cma.h b/mm/cma.h
+> index c70180c36559..ae4db9819e38 100644
+> --- a/mm/cma.h
+> +++ b/mm/cma.h
+> @@ -41,6 +41,7 @@ struct cma {
+> unsigned long available_count;
+> unsigned int order_per_bit; /* Order of pages represented by one bit */
+> spinlock_t lock;
+> + struct list_head node;
+> struct mutex alloc_mutex;
+> #ifdef CONFIG_CMA_DEBUGFS
+> struct hlist_head mem_head;
+> @@ -71,8 +72,8 @@ enum cma_flags {
+> CMA_ACTIVATED,
+> };
+> -extern struct cma cma_areas[MAX_CMA_AREAS];
+> -extern unsigned int cma_area_count;
+> +extern struct cma cma_early_areas[MAX_EARLY_CMA_AREAS];
+> +extern unsigned int cma_early_area_count;
+> static inline unsigned long cma_bitmap_maxno(struct cma *cma,
+> struct cma_memrange *cmr)
+>
+Best regards
+
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
