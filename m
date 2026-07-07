@@ -1,123 +1,195 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012003.outbound.protection.outlook.com [52.101.53.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34383F1AC8;
-	Tue,  7 Jul 2026 10:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783421262; cv=none; b=TclHGrPec0fHZ6cX74uAPHfe5JZqnItT9SsbFDNvdnrgM3zPHc/vZOmxjzTXSoURRezGSYwxWAGRZrdJtKqIiYu64joC/dmGHxVMNd04ZtXQx2lO5vmfEjk/Au0drFE+e6OKr+Jp1KqRyP6aff0nc7l/E4ETYdLGcVgRXBp9fds=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783421262; c=relaxed/simple;
-	bh=K6XhXZvdxeZA7r5A4Qd3KUVGcGcAP3v98yAItEXMLbs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f3GkjkvKE2epH65fvIw5FZ+E6RFNPL8iz04hICiL7ObezhLBrCNJ2d311ro1qGxVDyKnZ86MlSPVNZKGrziXH8LBC+osOwoOPoslMPJC/WZBMxowro/la17oXWhN+X21tCSP3wMz+3ji3RaAQC0i0lbj7rRVmWESvfCkm9rfQmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nAwcbqQZ; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBC33B6C0A;
+	Tue,  7 Jul 2026 10:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.3
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783421890; cv=fail; b=JpaqXtsDiMIm/g6uff0j7K6G5u0i6p+cv05RDbQ3yCAa7g5dmEzu9n8KY84tI1P1nwFRkObNjrvKwOIm0D78N705Ymjui2WHX8KoCJcDDNxId6JS4zimeX80F+4ZuMFK6XESIo2aJrbpLqDR0XYpmY9bRWU8ueyYNZ2sjuIWxlA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783421890; c=relaxed/simple;
+	bh=U7knnHOmM1VuD5DBr0rHi9UOrdfvwTJ3Mq3+flcWWgs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=q8P7mN1m9Jz2VGm8aun62SJ1mRxq4ohYkC42CN60Vi+J3Uq+Cmo48b8JzmG5Fxni2BT+gA4TbD5XfwCvGkq/jg+r/+Ndyk1RmLVCnsoQGiWiWhlUfHkAYx3H2clZU6lBFl7XPIv1bpQSRuGJCGgbpY9mOnG09xEs193LcEW2QdE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EXxHVcmF; arc=fail smtp.client-ip=52.101.53.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nAwcbqQZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BA301F000E9;
-	Tue,  7 Jul 2026 10:47:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783421260;
-	bh=LLhzkk/JgHcYgAhLZKjLeN62LByel6fmISiRV1ITuB4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=nAwcbqQZ6EYWFhU6Pa79F4DwZWj+s50w7KhSPUgAeSGSsvopOpj4c3CR6Dc4BvSKY
-	 UI/T4Y1V/RDDoyeFB8sXD2vSc8XMgX7PuHapXBY0cr7IWraSANQSAw1tuqycqvya7H
-	 EOLCy/nYmsu9fsBZZUMJw29VxKcXmmkS6wgUhpYDSoopqSIeazhcGwCvu+qGCZzZfm
-	 i6rrFcDrq00hFMpsTT5W6KK6td/K2YCAI1AB22h3luD//ahG1ub28FDnVRKZXh9KJy
-	 yczJHuo2utfhmEijYANtSxrq9T9w4QGeuL41lVe4jp1n6hobidMgbC6xXylCzlyKTK
-	 rSE3IBUcHgXTg==
-Date: Tue, 7 Jul 2026 11:47:16 +0100
-From: Lorenzo Stoakes <ljs@kernel.org>
-To: Pedro Falcato <pfalcato@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Russell King <linux@armlinux.org.uk>, Dinh Nguyen <dinguyen@kernel.org>, 
-	Simon Schuster <schuster.simon@siemens-energy.com>, 
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, Ian Abbott <abbotti@mev.co.uk>, 
-	H Hartley Sweeten <hsweeten@visionengravers.com>, Lucas Stach <l.stach@pengutronix.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Thierry Reding <thierry.reding@kernel.org>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Christian Koenig <christian.koenig@amd.com>, Huang Rui <ray.huang@amd.com>, Ankit Agrawal <ankita@nvidia.com>, 
-	Alex Williamson <alex@shazbot.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Dan Williams <djbw@kernel.org>, 
-	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
-	David Hildenbrand <david@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	"Liam R . Howlett" <liam@infradead.org>, Matthew Wilcox <willy@infradead.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, SeongJae Park <sj@kernel.org>, Miaohe Lin <linmiaohe@huawei.com>, 
-	Hugh Dickins <hughd@google.com>, Mike Rapoport <rppt@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org, linux-sgx@vger.kernel.org, 
-	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev, linux-mm@kvack.org, 
-	iommu@lists.linux.dev, linux-perf-users@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com, damon@lists.linux.dev, 
-	Rik van Riel <riel@surriel.com>, Harry Yoo <harry@kernel.org>, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 29/30] tools/testing/vma: default VMA flag bits to 64-bit
-Message-ID: <akzZBrZC_ja-R-nJ@lucifer>
-References: <cover.1782735110.git.ljs@kernel.org>
- <27cd07f6dd862d92410cf9db03f7c11e5f66854d.1782735110.git.ljs@kernel.org>
- <akZO3xI4Lt1iSbms@pedro-suse.lan>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EXxHVcmF"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mYhVVxSCFJrWGQXa+xnVr3RdZLKyAzPVY0pMo0OJvWGOLMRjvAyP56zaMNgFLWpgTb1fkgJ6tYJ9sesQcDDgg/vAEQE+9Ngf41fV1XUFZgBbrUOkAfSAXPG1LGyTuMCTQMbAQtIYlRhEsSkUaW4gSiVR2cWLpyOwX/9pXVeGmaJ7lyXnDHv0wYxoNnQtxBB3N2RH+N8YNcpVhblnFhLOFtRYE25z3O7IbO8iJ/OmR45KIt/LdmR1FSmWYLJHxmD7VWBfVwMfDqUqQV7xq1WvZCGvwqrOQRbtKmOZyAccN36i9sXaU2HFZ45GtDwQki2l7vF6AsiOS+U/B9QdwHloMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cCpN0SQNvky23W+ROyRTU+sJSK10gP2aBx4O3YUDR0s=;
+ b=Ojly7F5uH8Vbl8zANwi4EDw7CFDXl+P17O+fdLmQbftJl1BrpwsQWm+p5Ly6ayYB1C/gsjd4MxtuGnBU42NJjovoDPlMxdAulsR9hV0UPG/e2DKN78Qz0RgIBv/gWOw+Szo0E4DGe/JHuY9Y11DVrQ/xcJgUIzr1UhiR9Or877LaVgLv9JWjKxSmTnTsn6VeXbZbi/Ax3jDOKMntF/zZo0K2pWiWNMBWPZsqUxQAGMl7z4qSpDigNmVOJlAvXZDpua2v1oHBwtISi4Q8eb14VxbRuZ8RNGRYQhY7vZvimdwpgkeUxyIRZHcopruuixudJORy/Tr3Zl2a6DSz3kOuVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cCpN0SQNvky23W+ROyRTU+sJSK10gP2aBx4O3YUDR0s=;
+ b=EXxHVcmFmrEEpSx++Lr/swB6l7gTvlhgMZnGDAN2sH2XgKMtXOMf3/YgzifZyGpsUJW2rAsoVQ4DYlG7ma/QWerMaa9t7RWglkAIiwaEqEvkmjG8mz7r/uvmjD7uf6Ty6B8NBmu1uRqhVGqU8m9IRurjlABUlGbSRo9/zHEsr3FLgthX/X+jVRFxVRQ3DSPdGf7Ug7v+5TmCMRidUf3HTCG2XaI11TaXnbZPWTzgh19FPdy0GVtEijGg3iCC9r4/J3fkyTSYM8sWpbeWzP/OOq4qE5SEmlCSPPHtNW8wEt19TzVrOaQHipaWSRVGLvYgMCLrfIOvYA7qk3bBC0U3hA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ1PR12MB6051.namprd12.prod.outlook.com (2603:10b6:a03:48a::18)
+ by PH7PR12MB5877.namprd12.prod.outlook.com (2603:10b6:510:1d5::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.8; Tue, 7 Jul 2026
+ 10:58:05 +0000
+Received: from SJ1PR12MB6051.namprd12.prod.outlook.com
+ ([fe80::96e1:b300:7b78:d3a9]) by SJ1PR12MB6051.namprd12.prod.outlook.com
+ ([fe80::96e1:b300:7b78:d3a9%4]) with mapi id 15.21.0181.012; Tue, 7 Jul 2026
+ 10:58:04 +0000
+Message-ID: <26617490-72a0-4471-9854-3e71014af71f@nvidia.com>
+Date: Tue, 7 Jul 2026 11:57:59 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/7] Tegra264 PWM support
+To: Mikko Perttunen <mperttunen@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Thierry Reding <treding@nvidia.com>, Yi-Wei Wang <yiweiw@nvidia.com>
+References: <20260701-t264-pwm-v6-0-2718f61f411f@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20260701-t264-pwm-v6-0-2718f61f411f@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0219.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a6::8) To SJ1PR12MB6051.namprd12.prod.outlook.com
+ (2603:10b6:a03:48a::18)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <akZO3xI4Lt1iSbms@pedro-suse.lan>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PR12MB6051:EE_|PH7PR12MB5877:EE_
+X-MS-Office365-Filtering-Correlation-Id: 47d0a393-d083-4b31-7a55-08dedc169ee3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|23010399003|366016|18002099003|22082099003|11063799006|3023799007|56012099006|6133799003;
+X-Microsoft-Antispam-Message-Info:
+	QQeDfIJJL9vHyRpSdzw8bDdprORkyCih8YgwE5vnv47dm9l3JHrJVHQ2Y01P6EUIYSl7p3oV9E+GdegU7cGFfHRXpCoSIbhuXeUhFEI5S8yIviUCw+xsDv9aPFDZWJan1QCDH9m+atpYoVeA8nonDNp0mLqJZWWIML1TJXtJHJsjewo1ssgdXEdiBIx0HumENox+J/Xx4fzJY1mn74VhmZ0d3yh8n8GbkEsLu//OJJdZ/fWq0Eno99bP+13lkk6Rf3UBLhlSF6apWUMcXbDkrAwjZN+1pGzTKIV1hkALl+xAKmJAxjP1g0R3S6Ricy8VwMMjYe5hKsUkOCZrnq7yXo5iJYNm/wpXEQM48DL4d5XVMPN6UEutwMwsTCd/N1KmjWPYbrR3zvq/YqzooeHqe1iTjUjjUjfEFPC9DWB9nki6TJ9O4PI2g+8ZWuIuNqIRK/jwUE/xiL01DsIHCeYUCi6lMi2fMogD7pejrOzTHEDWo2cO3tjGeXJrtnosLeEw7JmlHNDyz/s+7PVznNAD54iFHnEUiaQONqgpDdv0p3j3igdhuPFI6erJDORPmFCXa0FkamJHkaZXBsI4MCzOq0kzMWTYNnE2+bnxMDqF6jhEgL2mmlG7ABOw1Qvb7FSXR2YsHCzYktQtXSRGEIQqD9ovLSD89iX+Nqvsvg5qjDQ=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR12MB6051.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(23010399003)(366016)(18002099003)(22082099003)(11063799006)(3023799007)(56012099006)(6133799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?N1BBNWN3RnBOcTE4VWNYTXhVZjIzS0FjbXhLdU5aZ2RKTVk2ZXh6d05URzlW?=
+ =?utf-8?B?dnhLUHlPSzJ2SEdMYzg3ZFB1M2dGcEJQSWJCbThWRmRzdGgwWEo4dnF1VTl0?=
+ =?utf-8?B?eWUxYTZNVHdvb0tPWE5VZU5WS0dheVQ0M1BXUk9aK25Pc2YvT3l2am5FZW5S?=
+ =?utf-8?B?NWQxNWhPSWUvY2xOUGFJWjM5QWJmbnJOTnhENkxJbHprVFltem9XUjlqdkdn?=
+ =?utf-8?B?aDZrcU1CZFpBTDVFazdzWGtVdGdHK1lqcUFabWZVQTRPRUh1RnZKZXUyd01F?=
+ =?utf-8?B?dnN5eGlMRkpxYTlBUEpqSmJIdThOVURMaE1UemU3RGpBaS9WcTRqWHk1WHN0?=
+ =?utf-8?B?bTEydjlBelpraitFSEpvOElNbmtpeVpQOUtOejFuZTU0QmthY2piNWVCcm5w?=
+ =?utf-8?B?UnFwcWZCRjBURzRIdlU1N2xabjNlRTlWZWg3dStLMmNwVVcwNUZlNGJRV3FT?=
+ =?utf-8?B?NjF0SnZYeGp2bG50QnNIdFhYZm9GU1EwbzE3dndWUzJ6R2ZBY3psd0d6OEk1?=
+ =?utf-8?B?Tlc5ZnlxQzcvRW9sQXVlRzlMTlZzcEVlbkVIOEw5eEhPNExKWFZ2bXI1aEZr?=
+ =?utf-8?B?aEQ4T0d3UDdnanpHdUVXUXhKV2hGL2RyOEtORzFTOGJsTllJV3duYUxRaTJa?=
+ =?utf-8?B?b0RBMFgxbFlJVGp2ZnRaQytnOGs3Q1pMNCtOVjMwdzdNQkx3bUp6LzV2SWN5?=
+ =?utf-8?B?Q0UvKzJ5OGpCc0lPNndmVlo0Zit1aUFYRHNUelFnRmM4L05UV05jYmMyZlU2?=
+ =?utf-8?B?RHRzanZ1WE9YdzN0QUVGWjkyeFVWb2tVbWM0R3VnRm93TDNmZ0pXWUczWkli?=
+ =?utf-8?B?MVYveDMrQ2MwNi9YNm4xczQ0QnF2T2hrbnBIcUJKTDZselU0aGg5MjVWdjZW?=
+ =?utf-8?B?Rzk3N1docDZCblFyUm5lNmNNZ2dDVDlTYkJ0c0JzdzVneENrelJ6Q1lzamIz?=
+ =?utf-8?B?UStpdjBpSmRwMnh1a0grd0hHdDROYUFRVG9uTDlKNnlwSzRYQ25wMXBQSHVE?=
+ =?utf-8?B?QXFiaGYyd2JtcnpIRzNpOHJiUGljM0ttSWtkb0NKenhEemRYWGlHWkp1eElL?=
+ =?utf-8?B?UUZ3UXY3VHN0WFVuWVJnQVYxeHlYVTBSSTA0RGtBVk5tZEhQMXNjVitHcFZI?=
+ =?utf-8?B?TzhBcVp0NTVGanZaZWZMekVPamZ3UzNGTmVNQUwzTnU3cWVLK2tVM0k3WFJv?=
+ =?utf-8?B?ZFlhREFyWVh2NlN3KzZUUTZqWmE4YTdXb0s0cFRCeDBBbHQrOE9GUURRejdq?=
+ =?utf-8?B?V3AwL3M4ekFpREtVaHZ3MUJxT3o5Q2ExOFBLOG91ZGdJTjhaQnBtSW5laGVE?=
+ =?utf-8?B?eWJMb3FYeFF5Z1BxT1pHMEpXMUVkOXpJNXVGcGF1amtOMmducXdaeFRKbFA2?=
+ =?utf-8?B?bHFnUEpBWDF2UlcrWU54dFBjbGtYd2hFUGMwbkx0TkpORzd2VGhkeWFXTUlG?=
+ =?utf-8?B?UFZiQ1pEVU42V0dUbnJGY3hJaGNuREhydUhud0Ezb0hhbEhockl1aEhZbjl6?=
+ =?utf-8?B?ZmlpdXo0azhHWm9ZU25JL2pRZ3FPV09SRk91bDl1aE0zaFRGNVBMSTZnamZK?=
+ =?utf-8?B?Qkk2Wkl4SXVSLzM1RmVQZ3o5QmY2NytZVU4xVWQyQ0hNU1BKcXBvS1dPNDR2?=
+ =?utf-8?B?NE9xcXIzVTZWRmNSck1GcmdVN0FveTFuQjJoL1NiejRkSHhKeWVPYnpKYnkv?=
+ =?utf-8?B?Q3ZCcnNJb1prNSs3STkrSERrajc1MklBbUJ0clhaajRNbUxDRmpVV2NkNDJm?=
+ =?utf-8?B?RVlleElxaFJNSmZJRk13eW9mczh1QTZDSzV3TTFsRjFwblI0ZE9IUUMxVWJJ?=
+ =?utf-8?B?MzhNQUIxT29jbEFFV1Y5OHl6ellYaUlWd3lFRkZoUFUxdXdvRVFZZXNzWjdz?=
+ =?utf-8?B?RzhuQS90RjJ5NGQ2cGZTeDdsbHprQUtxVlFnRSsxSjUzSnFHSWhnUyt5aE42?=
+ =?utf-8?B?cXYxQXUzRFM4ZnlTQzQ3cWU5OTQxWm52c2M5dzV5WTR6clpXYmsweExvajVG?=
+ =?utf-8?B?Q0NjWnRFMmlDV3I0UStzcFZRK3pROHZNcjVzZ2luSU1zZEwrLzJUQVVCMmFQ?=
+ =?utf-8?B?cms0d1lxaGRpUHZEbWhSelRIUHRnUTBHTWRnYlFHdW5XMzV2YnVzTHhBdzhW?=
+ =?utf-8?B?bXR3ZUNjY0Z4SklTYlFSYnZEN2hDb0Uwc3JPWXplOE5wT05CT3hCMFF3bDg1?=
+ =?utf-8?B?Y2FuTHlKeGEySUZKVk96RUN4YjFaMXhjbGNNVkdKbXJTOTBHVHhLUVNRc3Qw?=
+ =?utf-8?B?VTh6dVA0Q0htc1V6QTI3aGU2amRuOW9hdnJpWjRXd2RyM29kTTZDa1lBbEtS?=
+ =?utf-8?B?M2k4a1JGQUE5TFdSSlFzczhwZ05CdlFZdlhacHJZbzlBcHRhd09rdz09?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 47d0a393-d083-4b31-7a55-08dedc169ee3
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR12MB6051.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2026 10:58:04.7882
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 52PHE/s0nNoX2m8cXJdrurL8tRrCscKpu8wfbELamBwV8GYKoxfJxm8ZHzu7efPK4lrZExoldhjAuZI6Fsmu3g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5877
 
-On Thu, Jul 02, 2026 at 12:44:21PM +0100, Pedro Falcato wrote:
-> On Mon, Jun 29, 2026 at 01:23:40PM +0100, Lorenzo Stoakes wrote:
-> > With all of the sanitisers turned on, setting the VMA flag bits depth to
-> > 128 by default results in overly long build times.
-> >
-> > Reduce this to 64 - we can always manipulate these later for testing of
-> > larger bitmaps as needed.
-> >
->
-> Hmm, what's the problem with the sanitizers? Shouldn't this just result in
-> slightly different codegen?
 
-I'm not sure but it results in vastly longer build times. It was a fun idea but
-it partly defeats the point of the VMA userland tests.
+On 01/07/2026 04:20, Mikko Perttunen wrote:
+> Hello,
+> 
+> this adds support for the PWM controller on Tegra264. The controller
+> is similar to previous generations, but the register fields are
+> widened, the depth is made configurable, and the enable bit moves
+> to a different spot.
+> 
+> This series adds only basic support with fixed depth -- configurable
+> depth will come later.
+> 
+> Patch 1 adds device tree bindings for Tegra264 PWM (compatible
+>    string).
+> 
+> Patch 2 prefixes driver-local macros and static helpers with
+>    tegra_/TEGRA_ to make their scoping clear.
+> 
+> Patches 3 to 6 contain the PWM driver changes for Tegra264.
+> 
+> Patch 7 adds device tree nodes for the PWM controllers on Tegra264.
+> 
+> Thanks,
+> Mikko
 
-Rather than spend too long investigating I'd rather we move to a sane default.
+...
 
->
-> > Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
-> > ---
-> >  tools/testing/vma/Makefile | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/tools/testing/vma/Makefile b/tools/testing/vma/Makefile
-> > index e72b45dedda5..ef6cc558afe1 100644
-> > --- a/tools/testing/vma/Makefile
-> > +++ b/tools/testing/vma/Makefile
-> > @@ -10,7 +10,7 @@ OFILES = $(SHARED_OFILES) main.o shared.o maple-shim.o
-> >  TARGETS = vma
-> >
-> >  # These can be varied to test different sizes.
-> > -CFLAGS += -DNUM_VMA_FLAG_BITS=128 -DNUM_MM_FLAG_BITS=128
-> > +CFLAGS += -DNUM_VMA_FLAG_BITS=64 -DNUM_MM_FLAG_BITS=64
-> >
-> >  main.o: main.c shared.c shared.h vma_internal.h tests/merge.c tests/mmap.c tests/vma.c ../../../mm/vma.c ../../../mm/vma_init.c ../../../mm/vma_exec.c ../../../mm/vma.h include/custom.h include/dup.h include/stubs.h
-> >
-> > --
-> > 2.54.0
-> >
->
-> --
-> Pedro
+> Mikko Perttunen (4):
+>        pwm: tegra: Prefix driver-local macros and functions
+>        pwm: tegra: Modify read/write accessors for multi-register channel
+>        pwm: tegra: Parametrize duty and scale field widths
+>        pwm: tegra: Add support for Tegra264
+> 
+> Thierry Reding (2):
+>        dt-bindings: pwm: Document Tegra264 controller
+>        arm64: tegra: Add PWM controllers on Tegra264
+> 
+> Yi-Wei Wang (1):
+>        pwm: tegra: Avoid hard-coded max clock frequency
+> 
+>   .../bindings/pwm/nvidia,tegra20-pwm.yaml           |   1 +
+>   arch/arm64/boot/dts/nvidia/tegra264.dtsi           |  72 ++++++++++
+>   drivers/pwm/pwm-tegra.c                            | 160 ++++++++++++++-------
+>   3 files changed, 181 insertions(+), 52 deletions(-)
+> ---
+> base-commit: 8cd9520d35a6c38db6567e97dd93b1f11f185dc6
+> change-id: 20260303-t264-pwm-57e10d039df1
+> 
 
-Thanks, Lorenzo
+For the series ...
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+
+Thanks
+Jon
+
+-- 
+nvpublic
+
