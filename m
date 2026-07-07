@@ -1,281 +1,111 @@
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB5C383994;
-	Tue,  7 Jul 2026 14:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F1D41F7CE;
+	Tue,  7 Jul 2026 14:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783433513; cv=none; b=IYsnpzt0JxQ18fnfIbTsiB1NgtE3wQWL2XBYZL1E90Z7zpjw9MrFzqBrIAcgk4kJsC6vbu7g8G2NnNtMMVDAEEN5XkRLu0eciUzkkeiSPKK1Zzb97MEVAL5FLnWXcawXGalGJEV9qzIdS3t8Nmi35niZlOl30+/KR7dHTJt9NmY=
+	t=1783433737; cv=none; b=u+lIZn2Z6RUXqPYg3CPR8tXhP43YtTTe8TjYesfMxKuB8e6iaavg/k6YwDPBS8A6MkZsJGvJAs91hMVmfwOsURru/xVf9eP3s+4WvHY6vGXIyM/ijQVq6UzkfZ3XwP2FSOO59AauvifxxqlUTLLOl1gGhhEPUTzt7BbQdsxVo5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783433513; c=relaxed/simple;
-	bh=Qw+DDNMPifPgLVRQbdGaymOOKrgVAVwhIDLS55Of8sY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ObJq7zldPWc2lcxRXmmrD093WaVcf/5H61qVCCf9QUIoXCXu7txPTb1ieyRJdibagxAaJjQZyzUQ/04/HQVGZQZad8qV1QseCAfCFEnS/FBrdv2IE+Bskh/vUhyJbURdXmZJI7uCFS8h1ZV7XtziV3uU5lrDOVtCl3+j/wTVOFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id D11A3370033C;
-	Tue,  7 Jul 2026 14:11:12 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id CF2B0AE5EC7; Tue,  7 Jul 2026 14:11:06 +0000 (UTC)
-X-Spam-Level: 
-Received: from shepard (unknown [192.168.1.1])
-	by laika.paulk.fr (Postfix) with ESMTPSA id 6816EAE5EBF;
-	Tue,  7 Jul 2026 14:10:55 +0000 (UTC)
-Date: Tue, 7 Jul 2026 16:10:52 +0200
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-	Linus Walleij <linusw@kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Daniel Scally <dan.scally@ideasonboard.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Eddie James <eajames@linux.ibm.com>,
-	Tiffany Lin <tiffany.lin@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-	Houlong Wei <houlong.wei@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Joseph Liu <kwliu@nuvoton.com>, Marvin Lin <kflin@nuvoton.com>,
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ge Gordon <gordon.ge@bst.ai>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Shengjiu Wang <shengjiu.wang@gmail.com>,
-	Xiubo Li <Xiubo.Lee@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Peter Chen <peter.chen@cixtech.com>,
-	Fugang Duan <fugang.duan@cixtech.com>,
-	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
-	BST Linux Kernel Upstream Group <bst-upstream@bstai.top>,
-	Fabio Estevam <festevam@gmail.com>,
-	Nicolin Chen <nicoleotsuka@gmail.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-aspeed@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-media@vger.kernel.org,
-	openbmc@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
-	kernel@collabora.com, linux-tegra@vger.kernel.org,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	imx@lists.linux.dev, sound-open-firmware@alsa-project.org
-Subject: Re: [PATCH 08/42] drm: logicvc: Use
- devm_of_reserved_mem_device_init()
-Message-ID: <ak0I7AbfFITG1nyi@shepard>
-References: <20260703193855.110619-1-mukesh.ojha@oss.qualcomm.com>
- <20260703193855.110619-9-mukesh.ojha@oss.qualcomm.com>
+	s=arc-20240116; t=1783433737; c=relaxed/simple;
+	bh=IinY0qicpix8YaJZbueQ0ZMS6TH6C9aVow2ztmvUxgU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ioumIPLVU1uo+/oi0Lub/8dIB6GHb1+LKNE7jZgiP7FizxMU53y51zu7vpIzeOfp12CS8/v1uyphhsTlx6STteRSeWBuR5OgJ/yKhdvdrlIwxpgcLbPVAjjEK6R3cq62gabxZdGJDVda6SWpP/pD1Wk0N2z0oJihx8X5yznJjn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=LyOTCEzl; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="LyOTCEzl"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E45351BB0;
+	Tue,  7 Jul 2026 07:15:30 -0700 (PDT)
+Received: from [10.2.212.23] (e121345-lin.cambridge.arm.com [10.2.212.23])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5BEF93F7B4;
+	Tue,  7 Jul 2026 07:15:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1783433735; bh=IinY0qicpix8YaJZbueQ0ZMS6TH6C9aVow2ztmvUxgU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LyOTCEzl2lnONxDyc5YgaBVzkQQTQt8ZMCnf0rfSax4/Wh4a3/jy5UcOfHKZmIpCd
+	 0JK0/K1vtUPTZHNaeJXMR1zwsZF41NYv8fSGFE5DnXecvjNTDzStlfxEvHuMh4fFmB
+	 7HXVfvV6cUYysmr155+Ry6uasnPzrKLfjL2xY65Y=
+Message-ID: <f6e8b4d4-8b50-4cc7-b264-ae39929c619a@arm.com>
+Date: Tue, 7 Jul 2026 15:15:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ThTwSIZV2a2cCNSQ"
-Content-Disposition: inline
-In-Reply-To: <20260703193855.110619-9-mukesh.ojha@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/11] arm64/mm: Add set_memory_device() and
+ set_memory_normal()
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Thierry Reding
+ <thierry.reding@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>, Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Russell King <linux@armlinux.org.uk>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>,
+ "Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
+ "T.J. Mercier" <tjmercier@google.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-mm@kvack.org, iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org,
+ linux-trace-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
+ Chun Ng <chunn@nvidia.com>
+References: <20260701-tegra-vpr-v3-0-d80f7b871bb4@nvidia.com>
+ <20260701-tegra-vpr-v3-4-d80f7b871bb4@nvidia.com>
+ <akYs91INHMXMTI-t@willie-the-truck> <akZkuwktaXFTrASP@orome>
+ <akaSJ5D98w2cHqb6@orome> <akftuw9NyRy36fXA@willie-the-truck>
+ <akuvyu1Pq0ZVMZV0@orome> <akzikTrmhMsvkNVY@willie-the-truck>
+ <b0a1bdd7-46ab-4025-8775-c9273892444e@arm.com> <ak0A6eLp0Pw8iKK0@kernel.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <ak0A6eLp0Pw8iKK0@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---ThTwSIZV2a2cCNSQ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 07/07/2026 2:36 pm, Mike Rapoport wrote:
+> On Tue, Jul 07, 2026 at 02:17:29PM +0100, Robin Murphy wrote:
+>>
+>> Given the precedent of memblock_mark_nomap(), as long as the reusable
+>> reserved-memory regions also get split into distinct memblocks, then it
+>> seems like in principle we ought to be able to give them a new
+>> MEMBLOCK_PTEMAP (or whatever) flag which could then be picked up in
+>> map_mem() without needing to override force_pte_mapping() globally?
+> 
+> Please don't. _nomap() caused enough pain.
 
-Hi Mukesh,
+Indeed I was there for pretty much the whole pfn_valid() saga :)
 
-On Sat 04 Jul 26, 01:08, Mukesh Ojha wrote:
-> Switch to devm_of_reserved_mem_device_init() so the reserved memory
-> region is released automatically on probe failure or device unbind.
-> Replace all error paths that jumped to error_reserved_mem: with
-> error_early: since the manual cleanup label is no longer needed, and
-> remove the explicit of_reserved_mem_device_release() call in the remove
-> function.
->=20
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Bad example maybe - in this case the only actual similarity to nomap 
+would be the fact that it would also be set by the of_reserved_mem code 
+based on what it finds in DT; in all other aspects it should be 
+functionally closer to something like MEMBLOCK_RSRV_NOINIT, i.e. just 
+carrying information through the mm init phase, then ceasing to matter 
+at all once the linear mapping is done.
 
-Looks good to me, thanks!
-
-Reviewed-by: Paul Kocialkowski <paulk@sys-base.io>
-Acked-by: Paul Kocialkowski <paulk@sys-base.io>
-
-All the best,
-
-Paul
-
-> ---
->  drivers/gpu/drm/logicvc/logicvc_drm.c | 21 ++++++++-------------
->  1 file changed, 8 insertions(+), 13 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/logicvc/logicvc_drm.c b/drivers/gpu/drm/logi=
-cvc/logicvc_drm.c
-> index bbebf4fc7f51..d6dbe52ff0a9 100644
-> --- a/drivers/gpu/drm/logicvc/logicvc_drm.c
-> +++ b/drivers/gpu/drm/logicvc/logicvc_drm.c
-> @@ -306,7 +306,7 @@ static int logicvc_drm_probe(struct platform_device *=
-pdev)
->  	int irq;
->  	int ret;
-> =20
-> -	ret =3D of_reserved_mem_device_init(dev);
-> +	ret =3D devm_of_reserved_mem_device_init(dev);
->  	if (ret && ret !=3D -ENODEV) {
->  		dev_err(dev, "Failed to init memory region\n");
->  		goto error_early;
-> @@ -327,14 +327,14 @@ static int logicvc_drm_probe(struct platform_device=
- *pdev)
->  		ret =3D of_address_to_resource(of_node, 0, &res);
->  		if (ret) {
->  			dev_err(dev, "Failed to get resource from address\n");
-> -			goto error_reserved_mem;
-> +			goto error_early;
->  		}
-> =20
->  		base =3D devm_ioremap_resource(dev, &res);
->  		if (IS_ERR(base)) {
->  			dev_err(dev, "Failed to map I/O base\n");
->  			ret =3D PTR_ERR(base);
-> -			goto error_reserved_mem;
-> +			goto error_early;
->  		}
-> =20
->  		logicvc_drm_regmap_config.max_register =3D resource_size(&res) -
-> @@ -345,21 +345,21 @@ static int logicvc_drm_probe(struct platform_device=
- *pdev)
->  		if (IS_ERR(regmap)) {
->  			dev_err(dev, "Failed to create regmap for I/O\n");
->  			ret =3D PTR_ERR(regmap);
-> -			goto error_reserved_mem;
-> +			goto error_early;
->  		}
->  	}
-> =20
->  	irq =3D platform_get_irq(pdev, 0);
->  	if (irq < 0) {
->  		ret =3D -ENODEV;
-> -		goto error_reserved_mem;
-> +		goto error_early;
->  	}
-> =20
->  	logicvc =3D devm_drm_dev_alloc(dev, &logicvc_drm_driver,
->  				     struct logicvc_drm, drm_dev);
->  	if (IS_ERR(logicvc)) {
->  		ret =3D PTR_ERR(logicvc);
-> -		goto error_reserved_mem;
-> +		goto error_early;
->  	}
-> =20
->  	platform_set_drvdata(pdev, logicvc);
-> @@ -371,7 +371,7 @@ static int logicvc_drm_probe(struct platform_device *=
-pdev)
->  	caps =3D logicvc_drm_caps_match(logicvc);
->  	if (!caps) {
->  		ret =3D -EINVAL;
-> -		goto error_reserved_mem;
-> +		goto error_early;
->  	}
-> =20
->  	logicvc->caps =3D caps;
-> @@ -382,7 +382,7 @@ static int logicvc_drm_probe(struct platform_device *=
-pdev)
->  	ret =3D logicvc_clocks_prepare(logicvc);
->  	if (ret) {
->  		drm_err(drm_dev, "Failed to prepare clocks\n");
-> -		goto error_reserved_mem;
-> +		goto error_early;
->  	}
-> =20
->  	ret =3D devm_request_irq(dev, irq, logicvc_drm_irq_handler, 0,
-> @@ -450,9 +450,6 @@ static int logicvc_drm_probe(struct platform_device *=
-pdev)
->  error_clocks:
->  	logicvc_clocks_unprepare(logicvc);
-> =20
-> -error_reserved_mem:
-> -	of_reserved_mem_device_release(dev);
-> -
->  error_early:
->  	return ret;
->  }
-> @@ -469,8 +466,6 @@ static void logicvc_drm_remove(struct platform_device=
- *pdev)
->  	logicvc_mode_fini(logicvc);
-> =20
->  	logicvc_clocks_unprepare(logicvc);
-> -
-> -	of_reserved_mem_device_release(dev);
->  }
-> =20
->  static void logicvc_drm_shutdown(struct platform_device *pdev)
-> --=20
-> 2.53.0
->=20
-
---=20
-Paul Kocialkowski,
-
-Independent contractor - sys-base - https://www.sys-base.io/
-Free software developer - https://www.paulk.fr/
-
-Expert in multimedia, graphics and embedded hardware support with Linux.
-
---ThTwSIZV2a2cCNSQ
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmpNCOwACgkQhP3B6o/u
-lQyaPQ//f4pAYoEPe2VkBx5ziaC0VkGALJ8pMaCBZzEG6pnd2z1UBPK8Y2xJLlQP
-5bkyAxCQjpN0fwzwtB+kdA0jp2iokJqDThaLYoql9R0Qvj2DyOy7x+SwRqbRzdyJ
-npZtxXLCuF9oXL4YlUHBVPkgL9WsGf2cMpqkXAI/iPd0K+9zBfxT48xlRnuslCQF
-gwlVwkghlca2EFVG0f4q4HVkGRcFkAM9pYpKZD4B4iS89SwzHmJo44SZWV0CsWfe
-ysY5SERP+XL8EbiVlQxCWyqo9Yb//Ikc/EuIWFPMzPW7hp4ZTzjzYaRtVdWEM3Or
-GQ8uFNoXZfWHzfBpHk1Ewfdr7JBtXM0vPIh650GS2SCdGaCS0Ud2UUv7QZdSluel
-uGrsM82ZQ6ts4V8ct1O/dWG7TwYnc8BaFADG90JdKck+zb3fRnQ07aTNrF/bRDU1
-gcnN0yfM/zPIZAc7GA+4Stzok5c+bj2Sb849b5S5g6LNETsScU+WPK5pvEjjWq9E
-zsLawR41dclgUWujmQqflY1sbvVA3YsAADIxWAAsT1WDULfQ/c70/2rMIvNATzBN
-VxbCWSZtk77xMlu6aje7HIbEQa9PGm52xeqNOqfwv/t5kGZxU1fqyAULXAfSYQ2R
-jkjMhoWPkeb15z5Be0yQY0auFkEuIORZboIqn49NxQW0LVu7byA=
-=tX4X
------END PGP SIGNATURE-----
-
---ThTwSIZV2a2cCNSQ--
+Cheers,
+Robin.
