@@ -1,169 +1,521 @@
-Received: from aposti.net (aposti.net [185.119.170.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6E143C7B2;
-	Tue,  7 Jul 2026 18:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.119.170.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE1B33F390;
+	Tue,  7 Jul 2026 19:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783448028; cv=none; b=VWJtBq39TMPs1U8FCOoH5RVO3FvzPaSn93P2ya5ej91RqJp5Y1giXsAO84QswwdjhC/R9aYvgjikRbGv+hv0Y7GxVHeIOA7JRRW9sXbpOJHkLBSzhJG7U4JCoI1pLbqKRbwPKg6+My1sNGgYrFhg2WZBo2uOkpLitpy5Yb3121o=
+	t=1783451665; cv=none; b=CWdOTGinnJr8Iv3FWROX/ugBXq5ztAC1xWUqfYFVcDLy/pV+yFPuoHOHPKdNbxb/i4WuwXK7CBXQBGOizYAgwof/jSVo/uCuSXDad53UcCvx8a7Y1b4I19H6c1oVctZpvRJVqkBwVmYr15qrSrxTXnXw+JL42+Uavd5uf4T+sHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783448028; c=relaxed/simple;
-	bh=jSZnB0sLqjEJbBoqe7AZJRMFNCZugWpISC+yCdraaOk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=frXj8u/839yhSKbijrBsY45eh/YecaIYEcb3lt+rF7vjNiWuCgP2FadWmL19LbWh+OlmwcE8eUo4tzOTkynIrRukrigIlN8RVfiJLvAQxEugqzz6u71ei4HjlUyZV9dWvZZBsoXfoogdetJIXKIYDvULo79KwgE+/yZk9WIT714=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net; spf=pass smtp.mailfrom=crapouillou.net; dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b=taLqIYWA; arc=none smtp.client-ip=185.119.170.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
+	s=arc-20240116; t=1783451665; c=relaxed/simple;
+	bh=gj4GC1bG0hoomDIxKiNYXFW84GRBW/PKJj9jFA+a0Rk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XMoED1OA7mgkwEgmCn0OikNzah7e8shUYrZKAvIHi+piB2KinwQQmhinX5nKSX7GFPVBOophprl/W1nvX3ZDylNylbHYHMYtRu0U8UODgr5ee4cwKS55M97mg5dUeuI59OZwvAKNJX2P9ETKjlS4WXYcQCMieiCQBT0o3RT5ONk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DwMFApl/; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="taLqIYWA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=crapouillou.net;
-	s=mail; t=1783447618;
-	bh=jSZnB0sLqjEJbBoqe7AZJRMFNCZugWpISC+yCdraaOk=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=taLqIYWARPanxMePLjn0T7clMcda7af2pvmrr0dQzpeuwc0nctWzpeP7MFrEdwHD3
-	 wFNI1Cev/uBH+lstwttbgnjYpRUlRSvuTptlXHNnBzTOSCT1/sAyy72NlnTqVPq0M/
-	 E7dkR8V01XIjaryuVKTvkbf8yDy1RmuISroVos5g=
-Message-ID: <f46dfcfe04c5f8270b2ea1a947ddc0a0eeda7dbc.camel@crapouillou.net>
-Subject: Re: [PATCH 17/42] drm: ingenic: Use
- devm_of_reserved_mem_device_init()
-From: Paul Cercueil <paul@crapouillou.net>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>, Bjorn Andersson	
- <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Liviu Dudau
-	 <liviu.dudau@arm.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Joel Stanley <joel@jms.id.au>, Andrew
- Jeffery <andrew@codeconstruct.com.au>,  Anitha Chrisanthus
- <anitha.chrisanthus@intel.com>, Paul Kocialkowski <paulk@sys-base.io>,
- Linus Walleij	 <linusw@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, Jernej
- Skrabec	 <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- Alexey Brodkin <abrodkin@synopsys.com>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen
- <tomi.valkeinen@ideasonboard.com>, Michal Simek <michal.simek@amd.com>,
- Daniel Scally	 <dan.scally@ideasonboard.com>, Jacopo Mondi
- <jacopo.mondi@ideasonboard.com>,  Mauro Carvalho Chehab	
- <mchehab@kernel.org>, Eddie James <eajames@linux.ibm.com>, Tiffany Lin	
- <tiffany.lin@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>, 
- Yunfei Dong <yunfei.dong@mediatek.com>, Minghsiu Tsai
- <minghsiu.tsai@mediatek.com>, Houlong Wei	 <houlong.wei@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,  AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, Joseph Liu <kwliu@nuvoton.com>,
- Marvin Lin <kflin@nuvoton.com>,  Dmitry Osipenko
- <dmitry.osipenko@collabora.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Thierry Reding	 <thierry.reding@kernel.org>, Jonathan Hunter
- <jonathanh@nvidia.com>,  Srinivas Kandagatla	 <srini@kernel.org>, Arnd
- Bergmann <arnd@arndb.de>, Greg Kroah-Hartman	 <gregkh@linuxfoundation.org>,
- Ge Gordon <gordon.ge@bst.ai>, Adrian Hunter	 <adrian.hunter@intel.com>, Ulf
- Hansson <ulfh@kernel.org>, Rob Herring	 <robh@kernel.org>, Saravana Kannan
- <saravanak@kernel.org>, Mathieu Poirier	 <mathieu.poirier@linaro.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai	 <tiwai@suse.com>, Shengjiu
- Wang <shengjiu.wang@gmail.com>, Xiubo Li	 <Xiubo.Lee@gmail.com>, Liam
- Girdwood <lgirdwood@gmail.com>, Mark Brown	 <broonie@kernel.org>, Frank Li
- <Frank.Li@nxp.com>, Sascha Hauer	 <s.hauer@pengutronix.de>, Peter Ujfalusi
- <peter.ujfalusi@linux.intel.com>,  Bard Liao
- <yung-chuan.liao@linux.intel.com>, Daniel Baluta <daniel.baluta@nxp.com>,
- Orson Zhai	 <orsonzhai@gmail.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Peter Chen	 <peter.chen@cixtech.com>,
- Fugang Duan <fugang.duan@cixtech.com>
-Cc: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>, BST Linux Kernel Upstream
- Group <bst-upstream@bstai.top>, Fabio Estevam <festevam@gmail.com>, Nicolin
- Chen <nicoleotsuka@gmail.com>,  Pengutronix Kernel Team	
- <kernel@pengutronix.de>, Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Vijendar Mukunda
- <Vijendar.Mukunda@amd.com>, Chunyan Zhang	 <zhang.lyra@gmail.com>, CIX
- Linux Kernel Upstream Group	 <cix-kernel-upstream@cixtech.com>,
- linux-arm-msm@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, 	linux-aspeed@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org, 	linux-mips@vger.kernel.org,
- linux-sunxi@lists.linux.dev, 	linux-media@vger.kernel.org,
- openbmc@lists.ozlabs.org, 	linux-mediatek@lists.infradead.org,
- kernel@collabora.com, 	linux-tegra@vger.kernel.org,
- linux-mmc@vger.kernel.org, 	devicetree@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, 	linux-staging@lists.linux.dev,
- linux-sound@vger.kernel.org, 	linuxppc-dev@lists.ozlabs.org,
- imx@lists.linux.dev, 	sound-open-firmware@alsa-project.org
-Date: Tue, 07 Jul 2026 20:06:50 +0200
-In-Reply-To: <20260703193855.110619-18-mukesh.ojha@oss.qualcomm.com>
-References: <20260703193855.110619-1-mukesh.ojha@oss.qualcomm.com>
-	 <20260703193855.110619-18-mukesh.ojha@oss.qualcomm.com>
-Autocrypt: addr=paul@crapouillou.net; prefer-encrypt=mutual;
- keydata=mQENBF0KhcEBCADkfmrzdTOp/gFOMQX0QwKE2WgeCJiHPWkpEuPH81/HB2dpjPZNW03ZM
- LQfECbbaEkdbN4YnPfXgcc1uBe5mwOAPV1MBlaZcEt4M67iYQwSNrP7maPS3IaQJ18ES8JJ5Uf5Uz
- FZaUawgH+oipYGW+v31cX6L3k+dGsPRM0Pyo0sQt52fsopNPZ9iag0iY7dGNuKenaEqkYNjwEgTtN
- z8dt6s3hMpHIKZFL3OhAGi88wF/21isv0zkF4J0wlf9gYUTEEY3Eulx80PTVqGIcHZzfavlWIdzhe
- +rxHTDGVwseR2Y1WjgFGQ2F+vXetAB8NEeygXee+i9nY5qt9c07m8mzjABEBAAG0JFBhdWwgQ2VyY
- 3VlaWwgPHBhdWxAY3JhcG91aWxsb3UubmV0PokBTgQTAQoAOBYhBNdHYd8OeCBwpMuVxnPua9InSr
- 1BBQJdCoXBAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHPua9InSr1BgvIH/0kLyrI3V0f
- 33a6D3BJwc1grbygPVYGuC5l5eMnAI+rDmLR19E2yvibRpgUc87NmPEQPpbbtAZt8On/2WZoE5OIP
- dlId/AHNpdgAtGXo0ZX4LGeVPjxjdkbrKVHxbcdcnY+zzaFglpbVSvp76pxqgVg8PgxkAAeeJV+ET
- 4t0823Gz2HzCL/6JZhvKAEtHVulOWoBh368SYdolp1TSfORWmHzvQiCCCA+j0cMkYVGzIQzEQhX7U
- rf9N/nhU5/SGLFEi9DcBfXoGzhyQyLXflhJtKm3XGB1K/pPulbKaPcKAl6rIDWPuFpHkSbmZ9r4KF
- lBwgAhlGy6nqP7O3u7q23hRU=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DwMFApl/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1783451664; x=1814987664;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=gj4GC1bG0hoomDIxKiNYXFW84GRBW/PKJj9jFA+a0Rk=;
+  b=DwMFApl/dfwaVjkyuDKiGy0coz+6fopjX1MfQcC3grBCPnb8nT0LxPef
+   xD8JsgSsBcq/b60vmQn2wJoKepQlacb4J5Hq5nLi1R+a4qtIv1LJqx9DS
+   VzvS8t0DD5AAJQ2UUdw+Zwf+J5MQOyQbbvSNwsOjt6V8Ee4VnIuBvD1q6
+   RusaVifghLTxicbmilDBkTMn2VxI3502Y1fxJMjlnHLRr/Q5Qh/mlUHRF
+   Vo5vGCKHn1vnxqN4peozkc823Yqh7nYQl1mf4ecGts8Kd2d9FNPcqe/TS
+   qPyGzI8K+RKnkTESWgIbwL7GFu61YP8WYDOWETQ9ATrjjYkZdjPonrjMx
+   Q==;
+X-CSE-ConnectionGUID: SasrJb/cTZGCPQzw4B0n7w==
+X-CSE-MsgGUID: IriOR4yQS0iGeewukn6xvA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11840"; a="95264755"
+X-IronPort-AV: E=Sophos;i="6.25,153,1779174000"; 
+   d="scan'208";a="95264755"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2026 12:14:23 -0700
+X-CSE-ConnectionGUID: vjyww4j9SuubtnjatvQM3w==
+X-CSE-MsgGUID: +SxwXSMuTDC6Q8yv8vVKxQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,153,1779174000"; 
+   d="scan'208";a="284185198"
+Received: from bradocaj-mobl.ger.corp.intel.com (HELO [10.125.111.8]) ([10.125.111.8])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2026 12:14:21 -0700
+Message-ID: <bedf65ed-1fac-4d2f-b0de-ed3b5dec391e@intel.com>
+Date: Tue, 7 Jul 2026 12:14:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 05/10] cxl: Add CXL Device Reset helper
+To: Srirangan Madhavan <smadhavan@nvidia.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, Dan Williams <djbw@kernel.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, Ira Weiny <ira.weiny@intel.com>,
+ Jonathan Cameron <jic23@kernel.org>, Vishal Verma
+ <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Alex Williamson <alex.williamson@redhat.com>, vsethi@nvidia.com,
+ alwilliamson@nvidia.com, Dan Williams <danwilliams@nvidia.com>,
+ Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>,
+ Vishal Aslot <vaslot@nvidia.com>, Manish Honap <mhonap@nvidia.com>,
+ Jiandi An <jan@nvidia.com>, Richard Cheng <icheng@nvidia.com>,
+ linux-tegra@vger.kernel.org
+References: <20260703220508.546528-1-smadhavan@nvidia.com>
+ <20260703220508.546528-6-smadhavan@nvidia.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20260703220508.546528-6-smadhavan@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
 
-Le samedi 04 juillet 2026 =C3=A0 01:08 +0530, Mukesh Ojha a =C3=A9crit=C2=
-=A0:
-> Replace the hand-rolled devm wrapper (ingenic_drm_release_rmem +
-> devm_add_action_or_reset) with the standard
-> devm_of_reserved_mem_device_init(), letting the device resource
-> manager handle cleanup automatically.
->=20
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 
-Reviewed-by: Paul Cercueil <paul@crapouillou.net>
-
-Cheers,
--Paul
-
+On 7/3/26 3:05 PM, Srirangan Madhavan wrote:
+> Add an internal CXL Device Reset helper for Type 2 functions that advertise
+> CXL Reset in the CXL Device DVSEC. The helper disables CXL.cache, performs
+> cache writeback when supported, initiates reset with Memory Clear disabled,
+> waits for completion, and re-enables CXL.cache on exit.
+> 
+> Leave the helper unregistered until range validation and reset-scope
+> validation are in place.
+> 
+> Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
 > ---
-> =C2=A0drivers/gpu/drm/ingenic/ingenic-drm-drv.c | 13 +------------
-> =C2=A01 file changed, 1 insertion(+), 12 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
-> b/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
-> index 7e569af22391..990c3b4625fa 100644
-> --- a/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
-> +++ b/drivers/gpu/drm/ingenic/ingenic-drm-drv.c
-> @@ -1060,11 +1060,6 @@ static void ingenic_drm_unbind_all(void *d)
-> =C2=A0	component_unbind_all(priv->dev, &priv->drm);
-> =C2=A0}
-> =C2=A0
-> -static void __maybe_unused ingenic_drm_release_rmem(void *d)
-> -{
-> -	of_reserved_mem_device_release(d);
-> -}
-> -
-> =C2=A0static void ingenic_drm_configure_hwdesc(struct ingenic_drm *priv,
-> =C2=A0					 unsigned int hwdesc,
-> =C2=A0					 unsigned int next_hwdesc,
-> u32 id)
-> @@ -1127,16 +1122,10 @@ static int ingenic_drm_bind(struct device
-> *dev, bool has_components)
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	if (IS_ENABLED(CONFIG_OF_RESERVED_MEM)) {
-> -		ret =3D of_reserved_mem_device_init(dev);
-> +		ret =3D devm_of_reserved_mem_device_init(dev);
-> =C2=A0
-> =C2=A0		if (ret && ret !=3D -ENODEV)
-> =C2=A0			dev_warn(dev, "Failed to get reserved
-> memory: %d\n", ret);
-> -
-> -		if (!ret) {
-> -			ret =3D devm_add_action_or_reset(dev,
-> ingenic_drm_release_rmem, dev);
-> -			if (ret)
-> -				return ret;
-> -		}
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	priv =3D devm_drm_dev_alloc(dev, &ingenic_drm_driver_data,
+>  drivers/cxl/core/reset.c      | 224 ++++++++++++++++++++++++++++++++++
+>  include/cxl/cxl.h             |   7 ++
+>  include/uapi/linux/pci_regs.h |  14 +++
+>  3 files changed, 245 insertions(+)
+> 
+> diff --git a/drivers/cxl/core/reset.c b/drivers/cxl/core/reset.c
+> index 97b72cc67b6b..7a9b1ecfadcf 100644
+> --- a/drivers/cxl/core/reset.c
+> +++ b/drivers/cxl/core/reset.c
+> @@ -7,6 +7,8 @@
+>  #include <linux/export.h>
+>  #include <linux/io.h>
+>  #include <linux/ioport.h>
+> +#include <linux/iommu.h>
+> +#include <linux/jiffies.h>
+>  #include <linux/kernel.h>
+>  #include <linux/pci.h>
+>  #include <linux/slab.h>
+> @@ -449,3 +451,225 @@ void pci_cxl_hdm_init(struct pci_dev *pdev)
+>  	if (rc && rc != -ENOTTY && rc != -ENODEV)
+>  		pci_dbg(pdev, "CXL HDM cache init failed: %d\n", rc);
+>  }
+> +
+> +/*
+> + * CXL r4.0 sec 9.7.2 defines the reset completion timeout encodings.
+> + * Sec 9.7.3 leaves config-space access behavior undefined for 100 ms after
+> + * initiating CXL Reset, then limits software to CXL Status2 access until
+> + * reset completion, timeout, or error.
+> + */
+> +#define CXL_RESET_RRS_WAIT_MS 100
+> +#define CXL_RESET_STATUS_POLL_MS 20
+> +static const u32 cxl_reset_timeout_ms[] = {
+> +	10, 100, 1000, 10000, 100000,
+> +};
+> +
+> +#define CXL_CACHE_WBI_TIMEOUT_US 100000
+> +#define CXL_CACHE_WBI_POLL_US 100
+> +
+> +static int cxl_reset_dvsec(struct pci_dev *pdev)
+> +{
+> +	int dvsec, rc;
+> +	u16 cap;
+> +
+> +	dvsec = pci_find_dvsec_capability(pdev, PCI_VENDOR_ID_CXL,
+> +					  PCI_DVSEC_CXL_DEVICE);
+> +	if (!dvsec)
+> +		return -ENOTTY;
+> +
+> +	rc = pci_read_config_word(pdev, dvsec + PCI_DVSEC_CXL_CAP, &cap);
+> +	if (rc)
+> +		return pcibios_err_to_errno(rc);
+> +
+> +	if ((cap & (PCI_DVSEC_CXL_CACHE_CAPABLE |
+> +		    PCI_DVSEC_CXL_MEM_CAPABLE)) !=
+> +	    (PCI_DVSEC_CXL_CACHE_CAPABLE | PCI_DVSEC_CXL_MEM_CAPABLE))
+
+Maybe
+if (!((cap & PCI_DVSEC_CXL_CACHE_CAPABLE) &&
+        (cap & PCI_DVSEC_CXL_MEM_CAPABLE)))
+
+> +		return -ENOTTY;
+> +
+> +	if (!(cap & PCI_DVSEC_CXL_RST_CAPABLE))
+> +		return -ENOTTY;
+> +
+> +	return dvsec;
+> +}
+> +
+> +static int cxl_reset_update_ctrl2(struct pci_dev *pdev, int dvsec, u16 set,
+> +				  u16 clear)
+
+Would prefer to split this into two separate helper functions instead of combining set and clear. Especially given below the calls are either/or in all instances.
+
+
+> +{
+> +	u16 cmd = PCI_DVSEC_CXL_INIT_CACHE_WBI | PCI_DVSEC_CXL_INIT_CXL_RST;
+> +	u16 ctrl2;
+> +	int rc;
+> +
+> +	rc = pci_read_config_word(pdev, dvsec + PCI_DVSEC_CXL_CTRL2, &ctrl2);
+> +	if (rc)
+> +		return pcibios_err_to_errno(rc);
+> +
+> +	ctrl2 &= ~cmd;
+> +	ctrl2 |= set;
+> +	ctrl2 &= ~clear;
+> +
+> +	rc = pci_write_config_word(pdev, dvsec + PCI_DVSEC_CXL_CTRL2, ctrl2);
+> +	if (rc)
+> +		return pcibios_err_to_errno(rc);
+> +
+> +	return 0;
+> +}
+> +
+> +static int cxl_reset_enable_cache(struct pci_dev *pdev, int dvsec)
+> +{
+> +	return cxl_reset_update_ctrl2(pdev, dvsec, 0,
+> +				      PCI_DVSEC_CXL_DISABLE_CACHING);
+> +}
+> +
+> +static int cxl_reset_disable_cache(struct pci_dev *pdev, int dvsec, u16 cap)
+> +{
+> +	int remaining_us = CXL_CACHE_WBI_TIMEOUT_US;
+> +	u16 status2;
+> +	int rc, rc2;
+> +
+> +	rc = cxl_reset_update_ctrl2(pdev, dvsec,
+> +				    PCI_DVSEC_CXL_DISABLE_CACHING, 0);
+> +	if (rc)
+> +		return rc;
+> +
+> +	if (!(cap & PCI_DVSEC_CXL_CACHE_WBI_CAPABLE))
+> +		return 0;
+> +
+> +	rc = cxl_reset_update_ctrl2(pdev, dvsec,
+> +				    PCI_DVSEC_CXL_INIT_CACHE_WBI, 0);
+> +	if (rc)
+> +		goto err_enable_cache;
+> +
+> +	do {
+> +		usleep_range(CXL_CACHE_WBI_POLL_US, CXL_CACHE_WBI_POLL_US + 1);
+> +		remaining_us -= CXL_CACHE_WBI_POLL_US;
+> +
+> +		rc = pci_read_config_word(pdev, dvsec + PCI_DVSEC_CXL_STATUS2,
+> +					  &status2);
+> +		if (rc) {
+> +			rc = pcibios_err_to_errno(rc);
+> +			goto err_enable_cache;
+> +		}
+> +	} while (!(status2 & PCI_DVSEC_CXL_CACHE_INV) && remaining_us > 0);
+> +
+> +	if (!(status2 & PCI_DVSEC_CXL_CACHE_INV)) {
+> +		rc = -ETIMEDOUT;
+> +		goto err_enable_cache;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_enable_cache:
+> +	/*
+> +	 * DISABLE_CACHING can be rolled back here. INIT_CACHE_WBI is
+> +	 * self-clearing on completion, so leave any in-flight writeback alone.
+> +	 */
+> +	rc2 = cxl_reset_enable_cache(pdev, dvsec);
+> +	if (rc2)
+> +		pci_warn(pdev, "failed to re-enable CXL caching: %d\n", rc2);
+> +	return rc;
+> +}
+
+This may be more readable:
+ static int cxl_reset_wait_cache_wbi(struct pci_dev *pdev, int dvsec)
+  {
+        int remaining_us = CXL_CACHE_WBI_TIMEOUT_US;
+        u16 status2;
+        int rc;
+
+        rc = cxl_reset_update_ctrl2(pdev, dvsec,
+                                    PCI_DVSEC_CXL_INIT_CACHE_WBI, 0);
+        if (rc)
+                return rc;
+
+        do {
+                usleep_range(CXL_CACHE_WBI_POLL_US, CXL_CACHE_WBI_POLL_US + 1);
+                remaining_us -= CXL_CACHE_WBI_POLL_US;
+
+                rc = pci_read_config_word(pdev, dvsec + PCI_DVSEC_CXL_STATUS2,
+                                          &status2);
+                if (rc)
+                        return pcibios_err_to_errno(rc);
+        } while (!(status2 & PCI_DVSEC_CXL_CACHE_INV) && remaining_us > 0);
+
+        if (!(status2 & PCI_DVSEC_CXL_CACHE_INV))
+                return -ETIMEDOUT;
+
+        return 0;
+  }
+
+  static int cxl_reset_disable_cache(struct pci_dev *pdev, int dvsec, u16 cap)
+  {
+        int rc, rc2;
+
+        rc = cxl_reset_update_ctrl2(pdev, dvsec,
+                                    PCI_DVSEC_CXL_DISABLE_CACHING, 0);
+        if (rc)
+                return rc;
+
+        if (!(cap & PCI_DVSEC_CXL_CACHE_WBI_CAPABLE))
+                return 0;
+
+        rc = cxl_reset_wait_cache_wbi(pdev, dvsec);
+        if (rc) {
+                rc2 = cxl_reset_enable_cache(pdev, dvsec);
+                if (rc2)
+                        pci_warn(pdev, "failed to re-enable CXL caching: %d\n",
+                                 rc2);
+        }
+        return rc;
+  }
+
+
+> +
+> +static int cxl_reset_wait_done(struct pci_dev *pdev, int dvsec, u16 cap)
+> +{
+> +	unsigned long deadline;
+> +	u32 timeout_ms;
+> +	u16 status2;
+> +	int idx, rc;
+> +
+> +	idx = FIELD_GET(PCI_DVSEC_CXL_RST_TIMEOUT, cap);
+> +	if (idx >= ARRAY_SIZE(cxl_reset_timeout_ms)) {
+> +		int last = ARRAY_SIZE(cxl_reset_timeout_ms) - 1;
+> +
+> +		pci_warn(pdev,
+> +			 "unknown CXL reset timeout encoding %d; using %u ms\n",
+> +			 idx, cxl_reset_timeout_ms[last]);
+> +		idx = last;
+> +	}
+> +
+> +	timeout_ms = max_t(u32, cxl_reset_timeout_ms[idx],
+> +			   CXL_RESET_RRS_WAIT_MS);
+> +	deadline = jiffies + msecs_to_jiffies(timeout_ms);
+> +	msleep(CXL_RESET_RRS_WAIT_MS);
+> +
+> +	do {
+> +		rc = pci_read_config_word(pdev, dvsec + PCI_DVSEC_CXL_STATUS2,
+> +					  &status2);
+> +		if (rc || status2 == U16_MAX)
+> +			goto not_ready;
+> +
+> +		if (status2 & PCI_DVSEC_CXL_RST_ERR)
+> +			return -EIO;
+> +
+> +		if (status2 & PCI_DVSEC_CXL_RST_DONE)
+> +			return 0;
+> +
+> +not_ready:
+> +		if (time_after_eq(jiffies, deadline))
+> +			return -ETIMEDOUT;
+> +
+> +		msleep(CXL_RESET_STATUS_POLL_MS);
+> +	} while (true);
+
+You can skip the goto label:
+
+        do {
+                rc = pci_read_config_word(pdev, dvsec + PCI_DVSEC_CXL_STATUS2,
+                                          &status2);
+                if (!rc && status2 != U16_MAX) {
+                        if (status2 & PCI_DVSEC_CXL_RST_ERR)
+                                return -EIO;
+
+                        if (status2 & PCI_DVSEC_CXL_RST_DONE)
+                                return 0;
+                }
+
+                if (time_after_eq(jiffies, deadline))
+                        return -ETIMEDOUT;
+
+                msleep(CXL_RESET_STATUS_POLL_MS);
+        } while (true);
+
+> +}
+> +
+> +static int cxl_reset_execute(struct pci_dev *pdev, int dvsec)
+> +{
+> +	bool cache_disabled = false;
+> +	u16 cap;
+> +	int rc;
+> +
+> +	rc = pci_read_config_word(pdev, dvsec + PCI_DVSEC_CXL_CAP, &cap);
+> +	if (rc)
+> +		return pcibios_err_to_errno(rc);
+> +
+> +	if (!pci_wait_for_pending_transaction(pdev))
+> +		pci_err(pdev, "timed out waiting for pending transactions\n");
+> +
+> +	rc = pci_dev_reset_iommu_prepare(pdev);
+> +	if (rc) {
+> +		pci_err(pdev, "failed to stop IOMMU for CXL reset: %d\n", rc);
+> +		return rc;
+> +	}
+> +
+> +	rc = cxl_reset_disable_cache(pdev, dvsec, cap);
+> +	if (rc)
+> +		goto out;
+> +	cache_disabled = true;
+> +
+> +	rc = cxl_reset_update_ctrl2(pdev, dvsec, PCI_DVSEC_CXL_INIT_CXL_RST,
+> +				    PCI_DVSEC_CXL_RST_MEM_CLR_EN);
+> +	if (rc)
+> +		goto out;
+> +
+> +	rc = cxl_reset_wait_done(pdev, dvsec, cap);
+> +	if (rc)
+> +		goto out;
+> +
+> +out:
+> +	if (cache_disabled) {
+> +		int rc2;
+> +
+> +		rc2 = cxl_reset_enable_cache(pdev, dvsec);
+> +		if (rc2 && rc)
+> +			pci_warn(pdev, "failed to re-enable CXL caching: %d\n",
+> +				 rc2);
+> +		else if (rc2)
+> +			rc = rc2;
+> +	}
+> +
+> +	pci_dev_reset_iommu_done(pdev);
+> +	return rc;
+> +}
+
+Can skip the cache_disabled and goto:
+
+  static int cxl_reset_execute(struct pci_dev *pdev, int dvsec)
+  {
+        u16 cap;
+        int rc;
+
+        rc = pci_read_config_word(pdev, dvsec + PCI_DVSEC_CXL_CAP, &cap);
+        if (rc)
+                return pcibios_err_to_errno(rc);
+
+        if (!pci_wait_for_pending_transaction(pdev))
+                pci_err(pdev, "timed out waiting for pending transactions\n");
+
+        rc = pci_dev_reset_iommu_prepare(pdev);
+        if (rc) {
+                pci_err(pdev, "failed to stop IOMMU for CXL reset: %d\n", rc);
+                return rc;
+        }
+
+        rc = cxl_reset_disable_cache(pdev, dvsec, cap);
+        if (!rc) {
+                int rc2;
+
+                rc = cxl_reset_update_ctrl2(pdev, dvsec,
+                                            PCI_DVSEC_CXL_INIT_CXL_RST,
+                                            PCI_DVSEC_CXL_RST_MEM_CLR_EN);
+                if (!rc)
+                        rc = cxl_reset_wait_done(pdev, dvsec, cap);
+
+                rc2 = cxl_reset_enable_cache(pdev, dvsec);
+                if (rc2 && rc)
+                        pci_warn(pdev, "failed to re-enable CXL caching: %d\n",
+                                 rc2);
+                else if (rc2)
+                        rc = rc2;
+        }
+
+        pci_dev_reset_iommu_done(pdev);
+        return rc;
+  }
+
+DJ
+
+> +
+> +int cxl_reset_function(struct pci_dev *pdev, bool probe)
+> +{
+> +	int dvsec;
+> +
+> +	dvsec = cxl_reset_dvsec(pdev);
+> +	if (dvsec < 0)
+> +		return dvsec;
+> +
+> +	if (probe)
+> +		return 0;
+> +
+> +	return cxl_reset_execute(pdev, dvsec);
+> +}
+> diff --git a/include/cxl/cxl.h b/include/cxl/cxl.h
+> index 2215fe1c3f78..de58f484b7d9 100644
+> --- a/include/cxl/cxl.h
+> +++ b/include/cxl/cxl.h
+> @@ -9,6 +9,7 @@
+>  #include <linux/node.h>
+>  #include <linux/ioport.h>
+>  #include <linux/range.h>
+> +#include <linux/errno.h>
+>  #include <cxl/mailbox.h>
+>  
+>  /**
+> @@ -153,6 +154,7 @@ int cxl_commit(struct cxl_decoder_settings *settings, void __iomem *hdm);
+>  #ifdef CONFIG_CXL_HDM
+>  void pci_cxl_hdm_init(struct pci_dev *pdev);
+>  void pci_cxl_hdm_release(struct pci_dev *pdev);
+> +int cxl_reset_function(struct pci_dev *pdev, bool probe);
+>  #else
+>  static inline void pci_cxl_hdm_init(struct pci_dev *pdev)
+>  {
+> @@ -161,6 +163,11 @@ static inline void pci_cxl_hdm_init(struct pci_dev *pdev)
+>  static inline void pci_cxl_hdm_release(struct pci_dev *pdev)
+>  {
+>  }
+> +
+> +static inline int cxl_reset_function(struct pci_dev *pdev, bool probe)
+> +{
+> +	return -ENOTTY;
+> +}
+>  #endif
+>  
+>  struct cxl_reg_map {
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> index 14f634ab9350..194ae56b4404 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -1349,10 +1349,24 @@
+>  /* CXL r4.0, 8.1.3: PCIe DVSEC for CXL Device */
+>  #define PCI_DVSEC_CXL_DEVICE				0
+>  #define  PCI_DVSEC_CXL_CAP				0xA
+> +#define   PCI_DVSEC_CXL_CACHE_CAPABLE			_BITUL(0)
+>  #define   PCI_DVSEC_CXL_MEM_CAPABLE			_BITUL(2)
+>  #define   PCI_DVSEC_CXL_HDM_COUNT			__GENMASK(5, 4)
+> +#define   PCI_DVSEC_CXL_CACHE_WBI_CAPABLE		_BITUL(6)
+> +#define   PCI_DVSEC_CXL_RST_CAPABLE			_BITUL(7)
+> +#define   PCI_DVSEC_CXL_RST_TIMEOUT			__GENMASK(10, 8)
+> +#define   PCI_DVSEC_CXL_RST_MEM_CLR_CAPABLE		_BITUL(11)
+>  #define  PCI_DVSEC_CXL_CTRL				0xC
+>  #define   PCI_DVSEC_CXL_MEM_ENABLE			_BITUL(2)
+> +#define  PCI_DVSEC_CXL_CTRL2				0x10
+> +#define   PCI_DVSEC_CXL_DISABLE_CACHING			_BITUL(0)
+> +#define   PCI_DVSEC_CXL_INIT_CACHE_WBI			_BITUL(1)
+> +#define   PCI_DVSEC_CXL_INIT_CXL_RST			_BITUL(2)
+> +#define   PCI_DVSEC_CXL_RST_MEM_CLR_EN			_BITUL(3)
+> +#define  PCI_DVSEC_CXL_STATUS2				0x12
+> +#define   PCI_DVSEC_CXL_CACHE_INV			_BITUL(0)
+> +#define   PCI_DVSEC_CXL_RST_DONE			_BITUL(1)
+> +#define   PCI_DVSEC_CXL_RST_ERR			_BITUL(2)
+>  #define  PCI_DVSEC_CXL_RANGE_SIZE_HIGH(i)		(0x18 + (i * 0x10))
+>  #define  PCI_DVSEC_CXL_RANGE_SIZE_LOW(i)		(0x1C + (i * 0x10))
+>  #define   PCI_DVSEC_CXL_MEM_INFO_VALID			_BITUL(0)
+
