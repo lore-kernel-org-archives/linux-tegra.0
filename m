@@ -1,123 +1,143 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FE243710B
-	for <linux-tegra@vger.kernel.org>; Wed,  8 Jul 2026 16:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7D53A6B65
+	for <linux-tegra@vger.kernel.org>; Wed,  8 Jul 2026 21:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783528917; cv=none; b=BsDfEVMBLAMoZV0Y5v+dJxVbbz867D2GmEMydRHSUzts/FQVm/10mOP5ssk9h4Nd2EWMcdsrog4nMBZ2t5gxStozoJYHq2te+ojhXSPfa6W1GIPLzQLwJ1jDD7SKcsGDFEJHxXX9Yt4XgtDEn7oPbFX8VB7iVwbwPM7h1OV4LEk=
+	t=1783545504; cv=none; b=LvoFpl7Po/SsezBQM4JaZtW+2Nj1PYWmQc/EkY2aMu3u1IHMq5NCZmAshakCzUfDv4hlHRw1u/pWxIKL5z2GXIKnQ99mCKPug/ZW5NQXJciF6toDdC8+n4A0zZOmtjYRZ1WlLMztQLinTFzPbWu1KDaPjb6hLvR5GqLQoqlEMEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783528917; c=relaxed/simple;
-	bh=hxJeTTJpCgngpttgBKLmH7ptP6ELM2r7kNGcEsfXpko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PoI0t2bFdF1Wyg0nL3ur+JUi8zAMdAbbB2qsSTJty8ZNKENqILPvhkcuDzhuiclfHkkg2tqEpxhszWZby0aJDFgGjXJGAqrZt9dNpjJKH6fdSw2djOBNa0QmDzW9n+ymV1I3BWsQRrVZJj0Z4I9AJp7x8W+bbfxXl3Xwe4eTOQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SbCly8Jc; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=klTcNqng; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1783545504; c=relaxed/simple;
+	bh=/yf86s+VjDN6zg68B/grd6BOMs4viFCbAkNex3o3AKU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NGDhd/j+cH8YdYjp5HWi+iPs2efB0aYcOWV1X7u13QbXHauL17dR0N/E/xFJlaMLLb95gi0bgVBOUZpgOaEHIikw5HJjV2xanrO0LbQi9l3UlD5AiJs0MiT6c5509qapiLVrAfVg2qyMmNvk3168NC0CfrlcPv/+CZG3KuitsEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ij1oKLvn; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SbCly8Jc";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="klTcNqng"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1783528912;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KeN+eUGcS7y43ntst2e5pfjhEcVMN4wZLhE8yfU/Pkc=;
-	b=SbCly8Jcz7CsAGIkkhNDDOYapG4eKnngeTw1HENSCWE/nO2SFisGsPeorTWdC9uiV+kIZy
-	RcWVAwp3kxCmgOuohF75S771E/X+RfgSkhzGeybMFm+LRbLjKmHo4R9ZbNl9pG8wYJbMjU
-	qnJg31weL8foaouLJtCza2a13/CU5x0=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-619-xJb2dWKQNamN6PJrE2VmdQ-1; Wed, 08 Jul 2026 12:41:51 -0400
-X-MC-Unique: xJb2dWKQNamN6PJrE2VmdQ-1
-X-Mimecast-MFC-AGG-ID: xJb2dWKQNamN6PJrE2VmdQ_1783528911
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-51c2af04aeeso740561cf.0
-        for <linux-tegra@vger.kernel.org>; Wed, 08 Jul 2026 09:41:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1783528911; x=1784133711; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=KeN+eUGcS7y43ntst2e5pfjhEcVMN4wZLhE8yfU/Pkc=;
-        b=klTcNqng2n3y589/zhRXCK9iucBkPG1i/Gos/foP6On4pSkdRuMZTY2acTb7lFQrKW
-         Xcb+x1zRSKoth2qwBRsQ+xnyEOLqoOd5pIDKPY+cHJoFq35FKCl0/DNFNFXaySWMwnxh
-         1eN8nZD/3UZH4Yyhv+bzvuukTvm0xetO2KpdINBQ5WmfSd+9ymzqHC5cu1y+GF8pXFh1
-         Ua0b7kY47FEzZgV929s1EGqGPMCWLmY8DmYQGW/6Dk2ia2Gn7lEm1BeJY3XrsZeKp9Bi
-         oSplTPy1obMOiZMg80LFMfvPWtdpnuIQQ7M9LsHACM4ibvXYV8m2aplVSRPniT3d+W6T
-         KBtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783528911; x=1784133711;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=KeN+eUGcS7y43ntst2e5pfjhEcVMN4wZLhE8yfU/Pkc=;
-        b=htAMcXR3SgRbQ2Wu2sN4OyR6H2Ky3L2do/wsoV5edvKyu476fhaAsRExzPqA9mIYnY
-         evvN9faety7o2ResRGusa8IqHvqZhymMcI/XnFggRdGln/ZYEnn+IcAzxQghQcNA7uW5
-         DC9d/QW4D8LBgC82KP26SA//Y8sso/V1EXuX+13gP9f1Rcw3BP6htIwujc8ZpNuLjtgP
-         hg5sZUAP+gJH/s4lf4xJhkFI49+mF8aISgcJnPxFFW86W967dR1XquX8fsqG5prflRC+
-         mN71WXuJxS+NpCT3yb/8upV8g1S9cqyp6V+wOur0NCG92ZaTmdFrRXEwOxYAfxKlIqz/
-         O6fw==
-X-Forwarded-Encrypted: i=1; AHgh+RqIjAP1qyFcfTWlFhkJOtM/EyL9TRCzgBuV5eTMFbnSoKmyCvfTrDsEkeKZXL00MFW7B8fOv53VQgOMng==@vger.kernel.org
-X-Gm-Message-State: AOJu0YztehaxV7VqgHo3o+WyZp4VYM1aaFbT+X01PQAfXWBC2cA598Os
-	OP3leLQY+mIhLLmfTBC/RRZL4c8jF1agSAg8abqXvH8wJs8My3zy2TnVZVIrDpW0cJJnOvKasIc
-	d1gPrm7I7wnvblTHbYyp69MD01XazFFOD92wp2G5HvkTUQ9xeBvfTYYdTCv+DLBC2
-X-Gm-Gg: AfdE7clMGRp154hReST2pJZezr3dtndf6YsGeGHWSxh+hEvpX6blVcXbM40dMn74fWG
-	7eg+w1dlZJ3g7vNokIN/eaQynKSHwxlVrxQGd4LTboif4v6xsEEDc9HXRfFVDPp/4r4Q4dG0dHT
-	YYM+vENed4A6ymyrGETEx6reghQwvk32eASktaDNwdV7Cmqzu5J8ywzhbwN7b1mRF2C/aIvYA1B
-	TWVdDnfkeDAQ6qjomoNt0LuWJIjmLe5m4c+vLN8yx+wdAzAvuPWgmjBHi5cqp4dyC5YjbVxUoM7
-	RzgEHX50si0jpasSlSGWg0Qfki4xFXczC3I6vYmtYrU01M4JlsdAHUsFZasuTUowUqtHZ3UsM9h
-	8W9j4RTKfbu8JdTGry03GYBvekcHqiNanqTnb9RNOMkt4LA==
-X-Received: by 2002:a05:622a:4cb:b0:517:f9cc:1fb2 with SMTP id d75a77b69052e-51c8b30e312mr36983831cf.19.1783528910916;
-        Wed, 08 Jul 2026 09:41:50 -0700 (PDT)
-X-Received: by 2002:a05:622a:4cb:b0:517:f9cc:1fb2 with SMTP id d75a77b69052e-51c8b30e312mr36983291cf.19.1783528910398;
-        Wed, 08 Jul 2026 09:41:50 -0700 (PDT)
-Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-51c41b55495sm147695021cf.11.2026.07.08.09.41.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2026 09:41:49 -0700 (PDT)
-Date: Wed, 8 Jul 2026 12:41:47 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Guangshuo Li <lgs201920130244@gmail.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Tomeu Vizoso <tomeu@tomeuvizoso.net>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: tegra124-emc: put EMC node on register
- failure
-Message-ID: <ak59y2H3IsHsZ15L@redhat.com>
-References: <20260708112058.750952-1-lgs201920130244@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ij1oKLvn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D0EC1F00AC4
+	for <linux-tegra@vger.kernel.org>; Wed,  8 Jul 2026 21:18:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783545503;
+	bh=XHlK26iT5OTlGmvdsQr6aTlcJ71q9tfgFUQl/PoXZWA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=ij1oKLvneDuoMo7g4aa7tnzEGSduqP/POFTYHBdxBZ815qZpk9LFbDgsAo0yCt8IU
+	 7IVs6w+zLmWUyetjrgBlg1w5iqaPlbRALMaZO8JW7hqU/1gvwTbxJwp4KOcWeGc63v
+	 75V4WotUCt8Dobg79gGG87lQ7nK03BdYhKAKjhYHR6XGEIrP/JoGdtP22AbbDvdmY9
+	 B/6r+YzOxZx43W7v+wiSMS40iikcKhYr6dIVP5FmzwUS2uq8+P91iQ4y6rs3YT1Lct
+	 RdWSXHuhozPhfIOsKn2saEE2M5xJTpuQM3JnOsppmQRmSqllqe3+hlGwET7HA3MA1T
+	 EVcF2gcOddPww==
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-699fbcd23ccso1741063a12.1
+        for <linux-tegra@vger.kernel.org>; Wed, 08 Jul 2026 14:18:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rp32UMZzy6n/yuVFlLJl+No6OQwQkTwmnLWbW0uOQV/UUZBWQ+imaUqogjitRyexETd0pertt94PbieCg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4wbp44UL+CvAUAIF+f9JGHm4EXp7o8llH6ZYsEw1J6F5Sf/Z6
+	2f1+ASU6ccIlK4pesSgr6K04ALn6Wf5Wu5ekqfIl3ZrfMUQH9W4ioJacr1of9yv1jW/ZKZ204sw
+	kKlrghPmJ1P0tlLZka33zZxEsttyfeA==
+X-Received: by 2002:a17:907:a286:b0:c15:b6bd:cbb8 with SMTP id
+ a640c23a62f3a-c15ce121a12mr190425566b.50.1783545501322; Wed, 08 Jul 2026
+ 14:18:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260708112058.750952-1-lgs201920130244@gmail.com>
-User-Agent: Mutt/2.3.2 (2026-04-26)
+References: <20260701-tegra-vpr-v3-0-d80f7b871bb4@nvidia.com>
+ <20260701-tegra-vpr-v3-1-d80f7b871bb4@nvidia.com> <178293558945.1610040.13281502080616690110.robh@kernel.org>
+ <akZde-8lFvf8rPji@orome>
+In-Reply-To: <akZde-8lFvf8rPji@orome>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 8 Jul 2026 16:18:10 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJCMm-oL35COx=agY+mwRUMMnRvbUgzPr5Hy9uvcPk0Dg@mail.gmail.com>
+X-Gm-Features: AUfX_mz5rhGcrunDpACqiF1Zhx-HBPPyHD0sxMJJ0YCYlPmg5dj7i6HAGao9icM
+Message-ID: <CAL_JsqJCMm-oL35COx=agY+mwRUMMnRvbUgzPr5Hy9uvcPk0Dg@mail.gmail.com>
+Subject: Re: [PATCH v3 01/11] dt-bindings: reserved-memory: Document Tegra VPR
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Christian Borntraeger <borntraeger@linux.ibm.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	dri-devel@lists.freedesktop.org, David Hildenbrand <david@kernel.org>, 
+	Yury Norov <yury.norov@gmail.com>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>, 
+	Simona Vetter <simona@ffwll.ch>, linux-trace-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	linux-mm@kvack.org, Russell King <linux@armlinux.org.uk>, Will Deacon <will@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, David Airlie <airlied@gmail.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	linaro-mm-sig@lists.linaro.org, Heiko Carstens <hca@linux.ibm.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Thierry Reding <treding@nvidia.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	John Stultz <jstultz@google.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Vlastimil Babka <vbabka@kernel.org>, Brian Starkey <Brian.Starkey@arm.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Michal Hocko <mhocko@suse.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, Suren Baghdasaryan <surenb@google.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, 
+	devicetree@vger.kernel.org, "Liam R. Howlett" <liam@infradead.org>, 
+	linux-tegra@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Andrew Morton <akpm@linux-foundation.org>, 
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Lorenzo Stoakes <ljs@kernel.org>, "T.J. Mercier" <tjmercier@google.com>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, iommu@lists.linux.dev, 
+	Mike Rapoport <rppt@kernel.org>, Sven Schnelle <svens@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 08, 2026 at 07:20:58PM +0800, Guangshuo Li wrote:
-> tegra124_clk_register_emc() stores a device node reference returned by
-> of_parse_phandle() in tegra->emc_node.
-> 
-> If clk_register() fails, the function returns an error before that
-> reference can be consumed and released by the normal runtime path. The
-> tegra_clk_emc object is freed on this failure path, but freeing the
-> object does not drop the OF node reference stored in it.
-> 
-> Drop the EMC node reference before freeing the tegra_clk_emc object.
-> of_node_put() is safe for a NULL node, so this also covers the case where
-> the phandle is absent.
-> 
-> Fixes: 2db04f16b589 ("clk: tegra: Add EMC clock driver")
-> Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+On Thu, Jul 2, 2026 at 7:58=E2=80=AFAM Thierry Reding <thierry.reding@kerne=
+l.org> wrote:
+>
+> On Wed, Jul 01, 2026 at 02:53:10PM -0500, Rob Herring (Arm) wrote:
+> >
+> > On Wed, 01 Jul 2026 18:08:12 +0200, Thierry Reding wrote:
+> > > From: Thierry Reding <treding@nvidia.com>
+> > >
+> > > The Video Protection Region (VPR) found on NVIDIA Tegra chips is a
+> > > region of memory that is protected from CPU accesses. It is used to
+> > > decode and play back DRM protected content.
+> > >
+> > > It is a standard reserved memory region that can exist in two forms:
+> > > static VPR where the base address and size are fixed (uses the "reg"
+> > > property to describe the memory) and a resizable VPR where only the
+> > > size is known upfront and the OS can allocate it wherever it can be
+> > > accomodated.
+> > >
+> > > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > ---
+> > > Changes in v2:
+> > > - add examples for fixed and resizable VPR
+> > > ---
+> > >  .../nvidia,tegra-video-protection-region.yaml      | 76 ++++++++++++=
+++++++++++
+> > >  1 file changed, 76 insertions(+)
+> > >
+> >
+> > My bot found errors running 'make dt_binding_check' on your patch:
+> >
+> > yamllint warnings/errors:
+> >
+> > dtschema/dtc warnings/errors:
+> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings=
+/reserved-memory/nvidia,tegra-video-protection-region.example.dtb: protecte=
+d@2a8000000 (nvidia,tegra-video-protection-region): reg: [[2, 2818572288], =
+[0, 1879048192]] is too long
+> >       from schema $id: http://devicetree.org/schemas/reserved-memory/nv=
+idia,tegra-video-protection-region.yaml
+> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings=
+/reserved-memory/nvidia,tegra-video-protection-region.example.dtb: protecte=
+d@2a8000000 (nvidia,tegra-video-protection-region): Unevaluated properties =
+are not allowed ('no-map', 'reg' were unexpected)
+> >       from schema $id: http://devicetree.org/schemas/reserved-memory/nv=
+idia,tegra-video-protection-region.yaml
+>
+> Any ideas why that second error shows up? It turns out that it goes away
+> when the first one is fixed (which admittedly is a stupid mistake), but
+> I spent quite a bit of time looking for a fix before realizing that it's
+> only a side-effect of the first.
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+If a property fails validation in a referenced schema, then everything
+in that referenced schema is considered not evaluated. So then
+unevaluatedProperties is applied to the properties only in the
+referenced schema. That's why 'no-map' is also unevaluated. Just a
+quirk of how json-schema works...
 
+Rob
