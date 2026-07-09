@@ -1,137 +1,301 @@
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012062.outbound.protection.outlook.com [40.107.209.62])
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010043.outbound.protection.outlook.com [52.101.56.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D9529405;
-	Thu,  9 Jul 2026 00:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3175B3612FE;
+	Thu,  9 Jul 2026 01:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.43
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783558374; cv=fail; b=UbEJa4AXswK05dnqowh2nsFAEpgOwZBkP1UFIqivDNixjG3QWl+1liOSvTssby38ehnckzFewyuCdpIDdOliC9pHiJVu8B+Cuex34uXVFb1+ToHw3ZVxVPcsbbpyQrM3c+Km0TTWSFCw7WbJdrZcslheVIr73TS0t+36rzC4iVs=
+	t=1783559015; cv=fail; b=dT5RxPqjI8Ikj7njtPNqJe88XbnHD2LEvFvHb3wez2ew9np5YuP0zdGsLq532bcmrWodFlFp6QBsHJZESTOe0q6vGIZdhBy4jkPZnjE8fLaafKx0nyFc3REB54bxUdjiKn333vQjRFL77wOMbzQte9H3Dqenp2yaoJkytsvXRk0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783558374; c=relaxed/simple;
-	bh=EjOQiwnNGeooxKItfmetG6//C+tIJuO/VVBJMRZJuaQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hOlaF5DaPK3627wM+mHiXLdLEGbyvnF7H1VygGpgwQ+wP5+80fqRB8mfYsCzRN2t+5yYFGJNG1Be+Pt2qFNNu9OeO6HEF25uPE3Qt0WwAKDNgUL7o/24JAOnflflXxaOK+Wk4uSAI615E9QdHVtjLAW6nlUUSEtAJPnV8YJ6Sxo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RlgZcXGH; arc=fail smtp.client-ip=40.107.209.62
+	s=arc-20240116; t=1783559015; c=relaxed/simple;
+	bh=t7Py3lIqI2PgdAuu0V7svEKApgiRm9popUb82sQlddE=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Ntl/KwadZL1wOpia/eoE0yWX/6LeTHaiZ5DiXrramk6VyXlbOAw4iWDA0N3el615td3sN2U34DVramjkb2kAsQ0e9u5pJ2mBaDFMS+JrQktAqYl5vu/h6SUI8aUEUhfrptHTNaEIakJzgwXBd+A06PMcAZzeV2gGIUq5/r5Q1nc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VMAIu8Od; arc=fail smtp.client-ip=52.101.56.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RlgZcXGH"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VMAIu8Od"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XVY8aLMB16/JUcBSQTceHj7xlgrdME7CqOYPZX03YiuC7Ty5skXLfaXCqNWz/QqQvI4Q9IlAStZJXHDv0lDhqSIwWdVcdRpyzmgXhqH+/RVdG3wI0EHU2vzz7T/j1D8KrVWbKUp4vyw/DyKCktYMhrhZDSBy2rmn3wPdMiCDPazALe88Y/FTgl4PRBFNMt7V6bRNC71i87ddsbGFOuW8KbiDF3nhVpzS7Ksu9IkWJTHk/PClrUF2QE/5l2qIFR/FgYr6PUxuPqCChw7tqbMdjXkJxYs/i0BKiplX81d+ZuGG2M4AYwDeT6+k9vsa9VhRRAXRigQsSEtvfnMbgLseXQ==
+ b=GIkV8uJxzIjKPPKadREi18NaDO2huoBqOKmDHy9Y52rEtCcA0y7XNsJKtCrBtJt7Mu5EqPXsYvSH6nRq7Tj1mcfRE44akw+7oF8hTAeEH5DE07axfEnZFtTEi0tutMhPq90oi5F9me96B0fJ23JHuvYZBEJVot8RF0vLRCoIaNCrOxX+LHhgaqtRa5IKzKHZgEwbe25ruXeRTccvILNpWn0Wi9BniPC3Uumv+MDURESfDx4o2pYyhsaVvXeR+rYOGRH2IMH1+OZWeIWC/yoR5PChfUZeAiCslshiryNLg5n0ulWVfHC1LCQSiX4SudYQD9lvGNMa1hDqpCeb/iodlQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NCX2KR6LwUkbMsdcKKT59YYecvKI/mYnFmFGLjtOYVI=;
- b=SvsZi1L8u5VJL3dDOyoi89Mfm6QyevzWZ4W+1YRngHIgQGBSyK96n2P5WQlRCkWURZxv6Wd48SY9Ngf1zsM8T4FWVZbAORqwS6UjWA1NPnoGhbQFg5jWoN+6erDetJkOwxY4/BiXPwsiD1bkTNVNcRJCUHrV4idMbnFaxMZWITwN3D3RDHyVRxmcjBBORg3FlmC6hsFZKpMvAaplQUlep3lJz11DU4qLxJ3EUtg+XUwtEXgLQNWDFGOUe1u74kcASKQtv4+naYAWTILL8MEmoj9ssmnzOJhd5kgDQGrWjXsGZdBDhva0dS2PFl2mKY5uaQpJ6VIsE1J5WZnfTrUFmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
+ bh=F6A+D5kIntHrS4ROIftTTjmil+rdoyK8tygD2s3hgsw=;
+ b=QsW9mNvJm7/ikUKE5XwYYk1t2vzJn3ahHgCe38+ZqZWr+7vrLobYYol9jjsu5sXcDzjkMwMKqmLWK6zWdUMXBaVRNSpAfAg5Z+p7bgMGX1zGKJaRQbrGeSHCHdWg8JTBIKCF+fzouTxao+vdUzHDrruwWwIXY37HMfai/DgESyt6yrMh3m+9IUYq92qTl/vWSEa3WgEaFalVGeM239oJsqKUsPWSiCWZ2swmK+3TiJykKIpUmXltNRdeQ3EkHOgmExcIvxDvwV3h0bn771qAIfN26JrZrPaG6uqfFoB3pXgeHE9FyfvigS2lAvIOq4DR83nd6+78BW127QCnNSZMrQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NCX2KR6LwUkbMsdcKKT59YYecvKI/mYnFmFGLjtOYVI=;
- b=RlgZcXGHwjm/nC5//GF0WzGR2eGXPO801PCfFRLLqgSDRlWipZcST6ItOXCfv3MjeAARWjrCbgflqg2FYtJt8GBe+lg+etDM6J3vWWsDldHo7ez6M48PbYknc7IqB7dzOdUM5Q+duR8R2XDkaJOkq4XDgniCr0Nqye4f92XAlYk2POUxianoFx9tZLnFfBuZ/Y4gRiFhGe4qpHyDYYvRQ3D082uVvNnAfVBDJr60pMdnYlD97+DtlZl1fE18jTrWt/TAh3oRlXWXQADgsFGHo3M+zrRFBBiAlcfSYwLeRtZofvO1kCjn/FqdEGv4RcnPPp1XrR6drFGiOkCU24rNsw==
-Received: from SN7PR04CA0167.namprd04.prod.outlook.com (2603:10b6:806:125::22)
- by IA1PR12MB8520.namprd12.prod.outlook.com (2603:10b6:208:44d::5) with
+ bh=F6A+D5kIntHrS4ROIftTTjmil+rdoyK8tygD2s3hgsw=;
+ b=VMAIu8OdmcY4f/ulENtrBfY/lkxZ393oWOkPq6dYiU9VWaWUecR4Zcbn1j/mwl88zyzwCJXMg45SydXEcZDGJvvcAjpXPD7jg0XuHQZAe0IsGYmJt8Sv3pZU634JwQKg1ltwCNxPYUNmH7dYTCaLaAI2z6fUhjpjpGHLBUTg3G7Qy8kkIndLtIirBU0soTAt0kLe82bZl0DjB/28TF0eAswAP7vn7Hd08fAypPlz9B9lGiVTyJxTrLNVdgTxneYYH3D+d2YcdKJuFM9ib26RSfDfzeOKFEGewpRhwullrdXHbQfzY6dhJP8DGillewRjBDsnM0JZyGTHwNzPtthb4g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9474.namprd12.prod.outlook.com (2603:10b6:8:252::17)
+ by LV2PR12MB999071.namprd12.prod.outlook.com (2603:10b6:408:352::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.10; Thu, 9 Jul
- 2026 00:52:47 +0000
-Received: from SN1PEPF000252A2.namprd05.prod.outlook.com
- (2603:10b6:806:125:cafe::43) by SN7PR04CA0167.outlook.office365.com
- (2603:10b6:806:125::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.202.10 via Frontend Transport; Thu, 9
- Jul 2026 00:52:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SN1PEPF000252A2.mail.protection.outlook.com (10.167.242.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.181.6 via Frontend Transport; Thu, 9 Jul 2026 00:52:47 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.43; Wed, 8 Jul
- 2026 17:52:31 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Wed, 8 Jul 2026 17:52:31 -0700
-Received: from nvidia.com (10.127.8.13) by mail.nvidia.com (10.126.190.181)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 8 Jul 2026 17:52:30 -0700
-Date: Wed, 8 Jul 2026 17:52:31 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Ashish Mhetre <amhetre@nvidia.com>
-CC: Will Deacon <will@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-	<robin.murphy@arm.com>, <joro@8bytes.org>,
-	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v4 2/3] iommu/arm-smmu-v3: Detect Tegra264 erratum
-Message-ID: <ak7wz6Tz0scMmyyM@nvidia.com>
-References: <20260609073204.1760077-1-amhetre@nvidia.com>
- <20260609073204.1760077-3-amhetre@nvidia.com>
- <ak2K2vhIQSTNAPto@Asurada-Nvidia>
- <d4307831-7634-4b43-a909-1f7e8664e852@nvidia.com>
+ 2026 01:03:27 +0000
+Received: from DS7PR12MB9474.namprd12.prod.outlook.com
+ ([fe80::31ad:931:ef07:8ad7]) by DS7PR12MB9474.namprd12.prod.outlook.com
+ ([fe80::31ad:931:ef07:8ad7%6]) with mapi id 15.21.0181.009; Thu, 9 Jul 2026
+ 01:03:26 +0000
+From: Srirangan Madhavan <smadhavan@nvidia.com>
+To: Alison Schofield <alison.schofield@intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Dan Williams <djbw@kernel.org>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	linux-cxl@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+	vsethi@nvidia.com,
+	alwilliamson@nvidia.com,
+	Dan Williams <danwilliams@nvidia.com>,
+	Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>,
+	Vishal Aslot <vaslot@nvidia.com>,
+	Manish Honap <mhonap@nvidia.com>,
+	Jiandi An <jan@nvidia.com>,
+	Richard Cheng <icheng@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	Srirangan Madhavan <smadhavan@nvidia.com>
+Subject: [PATCH v9 00/11] PCI/CXL: Add CXL reset support for Type 2 devices
+Date: Thu,  9 Jul 2026 01:02:53 +0000
+Message-ID: <20260709010304.680422-1-smadhavan@nvidia.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY3PR05CA0029.namprd05.prod.outlook.com
+ (2603:10b6:a03:254::34) To DS7PR12MB9474.namprd12.prod.outlook.com
+ (2603:10b6:8:252::17)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <d4307831-7634-4b43-a909-1f7e8664e852@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000252A2:EE_|IA1PR12MB8520:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1740cdf6-5cc4-472b-fc08-08dedd546501
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9474:EE_|LV2PR12MB999071:EE_
+X-MS-Office365-Filtering-Correlation-Id: ddf266d3-f64a-4777-c1f2-08dedd55e1f8
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|36860700016|82310400026|376014|1800799024|18002099003|4143699003|11063799006|56012099006|22082099003;
+	BCL:0;ARA:13230040|1800799024|366016|7416014|23010399003|376014|11063799006|5023799004|56012099006|6133799003|3023799007|18002099003|921020;
 X-Microsoft-Antispam-Message-Info:
-	yn3w7wJBxuBmMeqNTFdSyeEADWIq/0CaI8AKgqDjAkjq+6BB3BYCtioL08KaLszWuIQzM2WGekZc8U1pbjkvF8lBJNXa2cmAUE7jPRzAMbVhUa1OLbcPF/Cyewa4/1nkwiEzK8Zzekj1wkcVH842UixyV1jJ9w8W/0XudWLqfgGz0SIwHB6fkCgArJgi63aV6qmLJclwi/V7HDwLaoN70Hy+SI+7Pjc8oVE89r/dQUk4DF+4EWfnyfD0V9/HT3quWx128IGYToVKqyHGa4gjnzosfo475abc8F9okAXAJCRavm3b5evq4sObmivMSHv/8UgTkgoMwBIpCB1dRTihLuj76qkeGYqgmML0Cr+aEBoeq5DlKqOWRRnQ5UHancxfHQVEZpd7a3OuVox/P+ZagwgktZmq/FSbPyW7zPx8NY9Ffl1QpxZ8iUDhJ8hSANDk0Z3p4fk7Uz+lUS+JRWaZm5gqtIgGCGSM3JmIHENC5Bb6bZc4Dgjrid4NUD7NftJkYJ/y9tBjS75kLg/Ajf7LJRcoOu+m3JOrisGmVTR9B5MZuj46dO3wRDtWG8SLBLd9rGIjnv8S5/fcPlgv33rpq/zZUMfSOUca3NpFXqWny8oOgjk/fvp3dd9/I2ilnibqM4Jh1w0Xn8PLLH9AhRlC2kQ0MCP0ZK7/IjvPecg7laxbsSYa8OcohwShYGeCUf5W
+	llUMY20/C9mNfuY6X35x00XQFiblpykzY/UnuJYIDa3V6xGhWqN5rLthqgkh/cOcBYvp7ZByT7brcpqcKw6ZruPcOxdGlyLme2IHh8Ph3SNN7HZnlCJBTZmqdMeMxuTgCHl8rNL8ihVbLMvIim1OZT2i9thOPE5EEw2kw+kCubE6FoES/hMQ5ekr16h5+RoqbK9DndYIYTYqimJbFYOKgVrKO1pPKsHPJTQP3V7Pu+swGm3lVeB9FtWXUpkrwQWyYb6cgG/ljqGnVnyok6GU7yBr6TBJ8zYTL/T3qUvozrKfJzKGZjoV/NyJbSYi+wtLp3CZack3RQ71BbTh14AWBSCuZkihrSXjUKvjvvJHNiarYOoVgOZXiLIV2MngxKUcic+t5xJim3dsjmpRjLw2WOPM7i9h5Jcrj83egODxwv6dZNzog1qDWDdKlRX8QchRqXCNJmBeN3SaTH4U/zuhtwNpO1GT4HyVksWsCeuiujf+NHbE1mDUzD9/4AWt6GRMP720MNudiiLCUigZBlHRyH32e+YLGydHZRIt2n3cXh3HgVjN8ytKF7Hg4bLkywe1v1Sykgx0JwJCZseCvZvEmPx2fVTasJ1tBxvodisLnOsxV7mmpHO4xLN119n9glgztJib1Y2jc5LLDTCYgwBsq2oHXuPIFJGCFrdgMeB1wCfKk/6clt19sgSsXl/WFnWxQg15bUZaVWzYfWOHuzLCfQ==
 X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(23010399003)(36860700016)(82310400026)(376014)(1800799024)(18002099003)(4143699003)(11063799006)(56012099006)(22082099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9474.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(23010399003)(376014)(11063799006)(5023799004)(56012099006)(6133799003)(3023799007)(18002099003)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	g/IBHxFFiSqW6enAFJrOKFeXZyOSjGYpxXtg7vdaPZX/4h5U7ZhcmGEGrU3i/4ZosIaSyhrJKmV06YpvJPtY4OwddDZgml0mmJKhN2MebgL/bnobreq+TmAZEdREFX8gflSL5JDu8AAHHlZbHRlQXRZh7ISDCZu0+bsWeqojRFwdxi48m80zn08ku0WMbcXSDcSvJDSh+nffxcykfWTFqdZjnrxzgC5BBcFPHzynng+rC0kY7W1SFT/fZggjPnzN9mdQ8WQsWtItsDOGY7JPc0LVBwfDgP9MX242AOvbxXwqJx8r/cjaCewIhYXWyoHoqCG+ATiFMFBVTzSZxHF4qQ8Y1uNQHpJAu10g6AGDkdzqVCPpN4ekabU4JTeyNvQ6PbYKBhmpwguFRjYVzfnNHH8hrmqBOxLtcyHgxyguSrxP/bj4I0xjcwG5r4OKO4Ar
+	=?us-ascii?Q?ttu7P4OuzJnhCfPtXTe2evUgsTiIg/10TN43hnVuUvLt8nK4FsI2kjSKPkHc?=
+ =?us-ascii?Q?yuDQ5hqXvTJvf1JCi7QkmsmbVv+y1JDiPwYUacgHMx38iNdmzijhkQhxRoqb?=
+ =?us-ascii?Q?evW6OGTYBdUc6CZX0SpBEKCVk1o3nqpZdpvPOiQry41gBlelg2I6oFG4hNfi?=
+ =?us-ascii?Q?CsxQp/bCzwM95cm2CY1orq9vis40rqx2kd4f4U9NqfVspCleHT0wCgVZpOal?=
+ =?us-ascii?Q?dU7g6tWZBObmyXqltcLQJiqxxSQ0PrTygXhfFrAUXer9t4aXxk+46X6NFqEf?=
+ =?us-ascii?Q?a8+zCREcIZTaST6cSfJe1hfC59nsTGDNR5sgpw9h4opvrnpcJa6xReB2NrwC?=
+ =?us-ascii?Q?YNbc/OB5ffS78UsYktTBLthDd2KFPJnYu9NyVW+ZuLjaPURz4oIcHFfpflkr?=
+ =?us-ascii?Q?7XqbaUIl3LmILhiowDgWE6uQRD+FHb23EJPHSnlvLxhXJwVeTG69r1+RBJUe?=
+ =?us-ascii?Q?k12NFa/PH9jd0H1CmKA4ts5nCne9GRdZ7kUzDpv0fDgu9gA2kWt9Dq1fbBWg?=
+ =?us-ascii?Q?eF/kdIqsXQXPPOeNrFupYyKzLuoMH6ATy0U5j2O4fhstlIjVJmi1m2LwGk7w?=
+ =?us-ascii?Q?H/DjTBVw17PmJkKTpWGgvL5SiHpZY+O5s3Eu0GYlhaHaupI7/gKh4x0DpKXj?=
+ =?us-ascii?Q?QUbhkFYQE+5prTVcstNdbTB8RwkbUrtGmL38CO8H9CMGV3RaiT/rKWC564V+?=
+ =?us-ascii?Q?NMKyIvZntV0HMdyk1hJ2aq9SBfapn5D45u8hEoLnXyX+n6n9O2Ro+AYvKjlK?=
+ =?us-ascii?Q?MlKyRkfQVIeLkntDQiRSBsXE/oMwHW08pYMNe34Z9Bei1fsYmHPk6YMk5tGj?=
+ =?us-ascii?Q?9AUuDK2+gAOiiGz4p5E4+Tjv7CPjw2U98CTouDeXXA8RaO7xXsTRUtkkR8Xk?=
+ =?us-ascii?Q?9FQxeQh6hpHemMnWodTxR2SOT0hcN+WWMvfmlF3tiMozGqF+vd2rJyaYwTUt?=
+ =?us-ascii?Q?MZ5n5bZodze5UJGngvIzZ+fT7Ac91WvIMAdGNK6afK8d3QUWIhi1HyRxxiyQ?=
+ =?us-ascii?Q?fv3Cn6/HykbdBrpf37mgbwo7W68vuwGm13zuG6AVtM+hwjhNKZhJT4cUoack?=
+ =?us-ascii?Q?YNDSnwS0K5PBH7qcQAlvqE/hSrc4FHruiUxdctyyvx/nLEjM4ujOS+YBO5PQ?=
+ =?us-ascii?Q?YCAHFihLQwt9tUs0kybTnG5RDEfEcPNan5r4l5XfOcM25Alpxgiydt/zSIjH?=
+ =?us-ascii?Q?lq51busAy1Lnq6emPFs5yWx7FDCgCAOycCFZnEI4srLKZK8q9QtRNxsre2Qy?=
+ =?us-ascii?Q?f1spMlrbaW5YQTgeh/bL2JCeWCvSmSzJXJxLkzlnHsPG5HoiTYFLdQU2X9nd?=
+ =?us-ascii?Q?22Lo7vwqHLW4binlHXF3gBvhOUSYPkQyCEBjBzw2doD28J5oqcNb+LHXjNdx?=
+ =?us-ascii?Q?akl9cVSR1Uc5mxTjbqme0U70y1JmWgHk8Dfx/AoQNhFZ+MaGThFttZeNEx+i?=
+ =?us-ascii?Q?GQ8EdH25tqJGG1CVIJFEJW3HKX6cqT+xt9ZpUhKPEb+D6dPDI8L09fuMZKqY?=
+ =?us-ascii?Q?8f5r5/K7Nr0jm2+mPxSEz7zs0jdndv6w9uGklVtJAOfTHByzfeWfdi4aDQQS?=
+ =?us-ascii?Q?GC2CKNbxaejc+7T0IFBwUthdfbOMJAFoSz0nuMJfKwnmiaEKGAhKaADMPhmE?=
+ =?us-ascii?Q?lx9J1kMb+c7i7WkCixkLir9sIQ0YufBqXPwuEVuwlLleSN8vyjdD8eRhzZnb?=
+ =?us-ascii?Q?vP6HtNWkscEdsVV/F5ZpsomYiOKCxq/a0jbTXnCKLDhKa9EO4LRMPfd37JKU?=
+ =?us-ascii?Q?Bt8/A9R7UA=3D=3D?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2026 00:52:47.3436
+X-MS-Exchange-CrossTenant-Network-Message-Id: ddf266d3-f64a-4777-c1f2-08dedd55e1f8
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9474.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2026 01:03:26.8006
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1740cdf6-5cc4-472b-fc08-08dedd546501
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF000252A2.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8520
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: p5Z1cPkfDHSYwsGbt4N6ySHKltm0jsj8u/DBd4hjuHO19My38UvKY0VOqF3lkCQZxeOEQ1QE7qIKpg5KldqUwQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB999071
 
-On Wed, Jul 08, 2026 at 07:42:21PM +0530, Ashish Mhetre wrote:
-> On 7/8/2026 4:55 AM, Nicolin Chen wrote:
-> > On Tue, Jun 09, 2026 at 07:32:03AM +0000, Ashish Mhetre wrote:
-> > > +arm_smmu_erratum_cmd_needs_repeating(struct arm_smmu_device *smmu,
-> > > +				     struct arm_smmu_cmd *cmd)
-> > > +{
-> > [...]
-> > > +	if (!static_branch_unlikely(&arm_smmu_erratum_repeat_tlbi_cfgi_key))
-> > > +		return false;
-> > > +	if (!(smmu->options & ARM_SMMU_OPT_REPEAT_TLBI_CFGI))
-> > > +		return false;
-> > Are they redundant?
-> 
-> Yes, both are set together in exactly one place, arm_smmu_device_dt_probe(),
-> guarded by the same "nvidia,tegra264-smmu" compatible check.
-> If we want to go with static key, then that makes option bit completely
-> useless.
+Hi folks!
 
-Drop the deadcode then.
+This series adds CXL Reset support for CXL Type 2 devices through the
+existing PCI reset_method ABI. The reset sequence follows the CXL 4.0
+specification [1], including CXL.cache disable, optional cache
+writeback, CXL Reset initiation, ResetComplete polling, and ResetError
+reporting.
 
-Nicolin
+The userspace ABI is the existing PCI reset interface:
+
+    /sys/bus/pci/devices/.../reset_method
+    /sys/bus/pci/devices/.../reset
+
+Userspace can select "cxl_reset" in reset_method and then trigger reset
+through the existing reset attribute.
+
+Following Dan's v6 feedback, this replaces the proposed memdev sysfs ABI
+with the existing PCI reset_method interface.
+
+v9 changes from v8 [2]:
+- Rebase the series onto v7.2-rc2 so it applies cleanly on a Linus rc
+  tag.
+- Include the cxl_bus HDM restore add-on as patch 11/11 so b4 orders it
+  after the main CXL reset series.
+- Address only patch application issues in v9 to gather feedback on the
+  current direction. Other review comments, including Dave's code
+  structure/readability feedback, are deferred to v10.
+
+v8 changes from v7 [3]:
+- Drop the PCI helper export patch.
+- Drop the multi-function sibling coordination patch. cxl_reset is only
+  exposed as a function-scoped reset method when the CXL reset scope is
+  limited to the target function.
+- Keep the reset-scope discovery needed to reject non-function-scoped
+  CXL resets.
+- Cache HDM location as BAR-relative metadata instead of keeping an
+  enum-time MMIO mapping.
+- Restore HDM through a temporary mapping based on the current BAR
+  assignment after PCI config state is restored.
+- Cache raw HDM decoder register state so uncommitted decoders can be
+  restored as uncommitted, while committed decoders are recommitted
+  through the normal HDM commit flow.
+- Share HDM decoder decode and validation between normal CXL core
+  enumeration and early PCI HDM caching.
+- Put cxl_reset ahead of FLR in reset_method priority because FLR does
+  not reset CXL.cache or CXL.mem protocol state.
+
+Motivation:
+-----------
+- Type 2 devices need a CXL-specific reset mechanism beyond existing PCI
+  reset methods.
+
+- FLR does not reset CXL.cache or CXL.mem protocol state. CXL Reset is
+  the architectural reset mechanism for those protocols.
+
+- The PCI reset_method ABI lets userspace select this narrower CXL reset
+  before falling back to broader bus reset methods.
+
+Change Description:
+-------------------
+
+Patch 1: cxl: Split decoder programming into a reusable helper
+- Move shared decoder settings to include/cxl/cxl.h.
+- Factor low-level HDM register programming into cxl_commit().
+
+Patch 2: cxl: Cache decoder settings on PCI devices
+- Cache CXL core HDM decoder settings in pci_dev->hdm.
+- Refresh the cache as decoders are enumerated, committed, or reset.
+
+Patch 3: cxl: Share HDM decoder decode logic
+- Share HDM decoder decode and validation between normal CXL core
+  enumeration and early PCI HDM cache setup.
+
+Patch 4: cxl: Cache endpoint decoder settings during PCI enumeration
+- Snapshot endpoint HDM state during PCI capability initialization.
+- Cache the HDM register locator as BAR-relative metadata.
+- Cache raw decoder register state in addition to committed decoder
+  settings.
+
+Patch 5: cxl: Add CXL Device Reset helper
+- Add the internal DVSEC reset sequence.
+- Disable CXL.cache, perform cache writeback where supported, initiate
+  CXL Reset, and wait for completion.
+
+Patch 6: cxl: Validate HDM ranges before CXL reset
+- Collect enabled cached HDM ranges.
+- Reject reset if affected ranges are busy.
+- Invalidate CPU caches when runtime cache-invalidation support is
+  available, otherwise continue after warning.
+
+Patch 7: PCI/CXL: Discover the CXL reset scope
+- Discover whether CXL Reset is function-scoped using the Non-CXL
+  Function Map and CXL cache/mem capability bits.
+
+Patch 8: cxl: Restore CXL HDM state after PCI reset
+- Restore cached global and per-decoder HDM state after reset.
+- Re-map HDM registers from the current BAR assignment during restore.
+- Replay raw decoder state for uncommitted decoders and recommit
+  decoders that were committed before reset.
+
+Patch 9: PCI/CXL: Expose CXL Reset as a PCI reset method
+- Add "cxl_reset" to the PCI reset-method table for Type 2 reset-capable
+  CXL devices.
+- Prioritize cxl_reset ahead of FLR.
+
+Patch 10: Documentation/ABI: Document CXL Reset PCI reset method
+- Document the new reset_method value and reset behavior.
+
+Patch 11: PCI/CXL: Restore HDM state after CXL bus reset
+- Restore cached CXL HDM decoder state after cxl_bus reset.
+
+The CPU cache invalidation step depends on
+cpu_cache_invalidate_memregion() support for the affected address ranges.
+If no runtime provider is available, the kernel emits a warning and
+continues after the affected HDM ranges have been reserved.
+
+Example:
+
+    echo cxl_reset > /sys/bus/pci/devices/0000:bb:dd.f/reset_method
+    echo 1 > /sys/bus/pci/devices/0000:bb:dd.f/reset
+
+Testing:
+- Ran 100 iterations of cxl_reset through the PCI reset sysfs ABI on a
+  CXL Type 2 device. All iterations completed successfully and
+  ResetComplete was observed.
+- Exercised cxl_bus reset separately with the HDM restore add-on patch.
+
+References:
+[1] https://computeexpresslink.org/wp-content/uploads/2026/02/CXL-Specification_rev4p0_ver1p0_2026February26_clean_evalcopy_v2.pdf
+[2] https://lore.kernel.org/linux-cxl/20260703220508.546528-1-smadhavan@nvidia.com/
+[3] https://lore.kernel.org/linux-cxl/20260623032453.3404772-1-smadhavan@nvidia.com/
+
+Srirangan Madhavan (11):
+  cxl: Split decoder programming into a reusable helper
+  cxl: Cache decoder settings on PCI devices
+  cxl: Share HDM decoder decode logic
+  cxl: Cache endpoint decoder settings during PCI enumeration
+  cxl: Add CXL Device Reset helper
+  cxl: Validate HDM ranges before CXL reset
+  PCI/CXL: Discover the CXL reset scope
+  cxl: Restore CXL HDM state after PCI reset
+  PCI/CXL: Expose CXL Reset as a PCI reset method
+  Documentation/ABI: Document CXL Reset PCI reset method
+  PCI/CXL: Restore HDM state after CXL bus reset
+
+ Documentation/ABI/testing/sysfs-bus-pci |   14 +
+ drivers/cxl/Kconfig                     |    4 +
+ drivers/cxl/core/Makefile               |    2 +-
+ drivers/cxl/core/hdm.c                  |  257 ++---
+ drivers/cxl/core/region.c               |    6 +-
+ drivers/cxl/core/regs.c                 |    4 +
+ drivers/cxl/core/reset.c                | 1359 +++++++++++++++++++++++
+ drivers/cxl/cxl.h                       |   43 -
+ drivers/pci/pci.c                       |    5 +
+ drivers/pci/probe.c                     |    3 +
+ include/cxl/cxl.h                       |  108 +-
+ include/linux/pci.h                     |    8 +-
+ include/uapi/linux/pci_regs.h           |   14 +
+ tools/testing/cxl/test/cxl.c            |   10 +-
+ 14 files changed, 1628 insertions(+), 209 deletions(-)
+ create mode 100644 drivers/cxl/core/reset.c
+
+
+base-commit: 8cdeaa50eae8dad34885515f62559ee83e7e8dda
+-- 
+2.43.0
