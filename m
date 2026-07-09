@@ -1,499 +1,228 @@
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010036.outbound.protection.outlook.com [52.101.201.36])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B0F4DBD73;
-	Thu,  9 Jul 2026 17:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783618733; cv=fail; b=n8wZX5ezSYMsSthGuDwi1IJ77cOCutGMTLVgaOrV06l0J612ttO4wOahEj/0fmBfXdR5vkJyQu9yvkwS9wNATu36jPrt7F2udYPHvMUYZ3gBBnc+KXJfFeYWJhB9XjoTvPk/vjH/VzPYqL7VGuygs99OHaBvG64ieMzU8um4ccM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783618733; c=relaxed/simple;
-	bh=RM63CVNDBN9zt6iUCA4hHSH9rFqKC8rVWQLJyKXSmMQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=kquOqkmm53MUWOP1gmpmGbXsDEgFaTTiGfg1hUxzRhkieG6fyQFZWENHaPluy5HCgeXIHfB/5WXX5A1MF3pfRQL+juec0WQNpgAps0Jkn9tfuleSsiUctSfuvsU58OvlEVpUCzVOWWIFYpcoY2FUyi9Odt7TO7uykle1vLadbvQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fimb05ZH; arc=fail smtp.client-ip=52.101.201.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80B1305E19;
+	Thu,  9 Jul 2026 19:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783627085; cv=none; b=Z97XlwRc9EQl5w2rjd1HtH3EEGuQwT3a+ucYG9ufCFrnYl3UP1AhvhaSWlfZJgLZI6P8UdkWaosvOq6gpH9NQLaCBGe6rxodrzV756J25MJmA6lb+GiuRlTGpA8a/P1e3ka7ShhAP/7GQRTzmVkJWHEEsvI+ctv7Doxafw7zWag=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783627085; c=relaxed/simple;
+	bh=nASUEopdTVpbiOlaqA3bl70JASaPDBXc6RrPfU8TUhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HiYSQsui9CPC71TYWN8jkFyZF28c+w8HWxXvdlFuAv/hLpPsXRiDCxZq5Q1ScW55siSwO0/bsXFMrhqu01gkGy30hap6D9JzRnyJwLrvNEpyfvv18rSwPd8XfR/9E35dtMpTw4N/6KtUGnechyGWxMJ8aborGj4EWhyekL8rVIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HUZ0FPy6; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fimb05ZH"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZVxKsiSWJ9R0cvKPXGxonaP2fC7qHrJ1RVeOTwkeNnU6/UNNgVbJEGCAJsixqvOW/aqQCEW3CrdxqlKFh35d6fkpXQaqUzb2AB3aN3OvFujw93mrItIJl7qX4BZAtKZpnEga0FyRTJFp6d7CmuPA6vO+2jw6PiFMo5/zs8OYFgaQtqFl7XQhJXCoOXP+Gh5CJTtsDEhv4qPo9eK8t4p909ojL11s75KRIMD/JGdmbpDpdzsrexUW3yE+agHvsyDxM8o88r9wrPfmcop4+qQUwWKHHMBadGtpr+roybqBxILBLt8iW+beIceGelVRMOgOIg8qyG82ihw8POWA/y5/hg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=i12Evi8YvGanhZyi8oJAQTxGL36HdaoaPM6aCeBVyu0=;
- b=LmZEKDw3mklVJnaQ2Fs5Ctg5rrsXmvD7zkpH5IyC9i/tr2+uIWZR2nTemC1ik4bJv6bmOyxutC8MByxmi2w1/ydG5AXHHhg1maxl0gxYXzZYEDoJdjz9yGoJSxrTER8S4sQRsrYxkY3xBcy66eCH8zbdSpgOp3PInsWOQzTsfkEnYnxbp3HezSSQTbhQ1buhPDLjQM7Lzw7ChKxc8hx/MCCb8mHvuPNWufH325Md3YizSnPs19cQ1rl2UOSxr8OdppVFJPNggD9UcVCIP6If8Jow9exqLoU4Tck5XAWuLyM1OysDAzDHZjPu2Fy8QxeOLW/MrpRGVxAjosB5srvJlw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=i12Evi8YvGanhZyi8oJAQTxGL36HdaoaPM6aCeBVyu0=;
- b=fimb05ZHYbGzmnC57e1+zK2j4cmTC1uDfSYcSHjbIeV6POaBuL1qyqvqQQ1/69WR2yNEorGNY+ZEQWwcAnHyb+9uz8+xtuzzzF3vZrjqtg+bKuNBHtI4w9OlSzzmUXr3RjaFxQhCnelLv0JLqnM7Mo6Z0XmFjCKR+J8Bh0gmzUpFACU8zOIFPBJmgeaF/oSHj2a9lcictamwQtvvsbEzE2rmSk8kzXbqoAVYzSLeDK9/pUIHH2MrXdKoQjlAefgSNxU2ZFcQ72DtMc5dabs2VSqMQkf3FvWiUd98kJApM0LX7WfWWcomBokdikMaPkQlhjpsMGSZ5TI7ZhXwQ0Rv1g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BN9PR12MB5179.namprd12.prod.outlook.com (2603:10b6:408:11c::18)
- by MW4PR12MB7213.namprd12.prod.outlook.com (2603:10b6:303:22a::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.10; Thu, 9 Jul
- 2026 17:38:37 +0000
-Received: from BN9PR12MB5179.namprd12.prod.outlook.com
- ([fe80::cf08:f59b:d016:c95f]) by BN9PR12MB5179.namprd12.prod.outlook.com
- ([fe80::cf08:f59b:d016:c95f%4]) with mapi id 15.21.0181.014; Thu, 9 Jul 2026
- 17:38:37 +0000
-Message-ID: <f61f592a-bc9c-4a83-bde1-e999c8101c36@nvidia.com>
-Date: Thu, 9 Jul 2026 23:08:27 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] cpufreq: CPPC: add autonomous mode boot parameter
- support
-To: Pierre Gondois <pierre.gondois@arm.com>, rafael@kernel.org,
- viresh.kumar@linaro.org, ionela.voinescu@arm.com, zhenglifeng1@huawei.com,
- zhanjie9@hisilicon.com, corbet@lwn.net, skhan@linuxfoundation.org,
- rdunlap@infradead.org, mario.limonciello@amd.com,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
- ksitaraman@nvidia.com, sanjayc@nvidia.com, mochs@nvidia.com,
- bbasu@nvidia.com, sumitg@nvidia.com
-References: <20260623080652.3353386-1-sumitg@nvidia.com>
- <20260623080652.3353386-3-sumitg@nvidia.com>
- <07721a34-dae0-4575-897b-e4cb7754cf4d@arm.com>
-Content-Language: en-US
-From: Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <07721a34-dae0-4575-897b-e4cb7754cf4d@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PNYP287CA0090.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:2b6::11) To BN9PR12MB5179.namprd12.prod.outlook.com
- (2603:10b6:408:11c::18)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HUZ0FPy6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A69C51F000E9;
+	Thu,  9 Jul 2026 19:58:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783627084;
+	bh=nASUEopdTVpbiOlaqA3bl70JASaPDBXc6RrPfU8TUhM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=HUZ0FPy6tJ5k2FpZZk4TmtW8oNPYG0UCTaswg34FnSsVTMZ+nc6abBzQoGLAe7QpZ
+	 4839oR2E7eU5H+0VQhcuYDxXFXmLbqe785v0OtfK8pZM64xT/vjBbY8gU6OQqxdQko
+	 2bj2K0aisc+j7i5kyFSxJBzHYPyWTVbTuJKmXAkqp+WJvRZsZfqnl91bOFM7185CBN
+	 pNNt3ie4Xo7ripQOTTqoaN5lwefEhmBf7ncJ41sgP4urIb+UmKalmTY+FHBAjFjAbH
+	 sZHtyFtM9TSgQQsGPMBhSwsdDCYRoGd5HD7SutnqDROuHsn6T0qtpDhVLf9Zj3BAl/
+	 ejFRs0GNI3+Yw==
+Date: Thu, 9 Jul 2026 21:58:01 +0200
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Yury Norov <yury.norov@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Russell King <linux@armlinux.org.uk>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.org>, 
+	Lorenzo Stoakes <ljs@kernel.org>, "Liam R. Howlett" <liam@infradead.org>, 
+	Vlastimil Babka <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, linux-mm@kvack.org, 
+	iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org, 
+	linux-trace-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>, Chun Ng <chunn@nvidia.com>
+Subject: Re: [PATCH v3 04/11] arm64/mm: Add set_memory_device() and
+ set_memory_normal()
+Message-ID: <ak_8Po3NxgAU7k0T@orome>
+References: <20260701-tegra-vpr-v3-0-d80f7b871bb4@nvidia.com>
+ <20260701-tegra-vpr-v3-4-d80f7b871bb4@nvidia.com>
+ <akYs91INHMXMTI-t@willie-the-truck>
+ <akZkuwktaXFTrASP@orome>
+ <akaSJ5D98w2cHqb6@orome>
+ <akftuw9NyRy36fXA@willie-the-truck>
+ <akuvyu1Pq0ZVMZV0@orome>
+ <akzikTrmhMsvkNVY@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN9PR12MB5179:EE_|MW4PR12MB7213:EE_
-X-MS-Office365-Filtering-Correlation-Id: 10a0af55-d7f5-447c-ddcd-08dedde0e7ef
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|23010399003|22082099003|6133799003|18002099003|18092099006|11063799006|56012099006|3023799007|4143699003|921020;
-X-Microsoft-Antispam-Message-Info:
-	QTc9MJ3BhOP5RT94V0HJENcLK4QB6bzSru8aWWmJXL84rnj87/oY8JvuiEbSpbbN+F6vvG4kpprc0bRIwF7If10U4Z4qH1jIjn+FiNtLyqf9cHSCnnm+8JhxyL1lcloTvHqex8p91HlSmYEuMmgqoMm4HUuydezhiK3Y0GYoKf5wH/XK6UadimejciJo4a8BuZbeUIHuXS3fLV/EBzBrrs9flcdrFPwPC1UjJ8dJ7rU01xfJx99YiUlQ03d9SV3aqRbWf/WdJPdhwnAHKRZyS1lic7SzJSQx5pOvH5XHKnTq4Wf3dL0s+68juCcRlthNUk2BYJ4wqmj3su70bl7UInKb7grVt51nmEu7d5Y0otJQ9brL7Zbbi9lB79zJYFKnGHyp9FtmLFXseZLCuTuTEv6DvGLZtGAERy0pOFvyKFeQYQQkn6sL6ElRdJz0qCHsYZ4zsApE1tnYyPmjXZi6L/COgQemvzokRKvUP9uWj8RCY2/8xu3K0DtYBBPLCeApGswvP6KZ32ZXTfkkAEAkiq7pETq6CbZpP/tSI/jrC+FNzJt4OBQnQ7r8cIyRSHpz4mTpBF659y17DsZwJcjySKOX+scKI0BMGoD2G1Cuzm99XqYEGPE8LoxLJDUJ7op/2ryGOTmT68+f27gfMSHdqIF4zsEYyM1hbtY7pnBgGRW0/cqzDJNjNr+8OIjPlXmkesv9YO4NoxwbHRkviu2Utw==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5179.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(23010399003)(22082099003)(6133799003)(18002099003)(18092099006)(11063799006)(56012099006)(3023799007)(4143699003)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?amRQaWNVbFZXZ0hWTEdqUWtWZnc3aWhKRVh6TnZEaXlOd09PSU9RcjAwSG1j?=
- =?utf-8?B?Qk5zSy9jNEhpZG1KcjRtazZtaHF6MklRS3h2T1BLMFF2Y2ZuMXNjWWdJNEcx?=
- =?utf-8?B?NlFsSmtZOXFndVY5Y1RsckIzRko5L0hEdUZtQytZT2drZTNYSWpaRWZucVN0?=
- =?utf-8?B?R2pDNnFIelI4Nm1SQVhnOWdjQm9hNHdLRkNKZXM4bUFsL0VXNXFqUTFkeURN?=
- =?utf-8?B?SDFVWU5QbEFPQ0FOTXVsdmlER3dRY25pTnVlZzRhamc3elFOK0RSa2FtOVFV?=
- =?utf-8?B?YVhCSTlzYVpsRkE0Ykd5dng1ZTJiWmVzYnFWM2hRanhmOGtGN0tZYmdEajV4?=
- =?utf-8?B?R3FIZGRYeERFYlBFNnpXWWsrTm9GbGlRdUZ3cjFCSVk1MUFrT291eXJqK0FC?=
- =?utf-8?B?S3paSXYvdE5vbVA5Qm83NkV6WU5MbkNyN3N2SWtwVVJHYVFyazA5UkJPOXFK?=
- =?utf-8?B?S0J2NGNtb2dNaVRPTnd0dzFUcE54YUd1bE8yTElOcUt5WGI0TEd0OWZVenl3?=
- =?utf-8?B?NXpiYmRDSzFQTGNHa2dFbXFpbXZMQTlhZHE0ZmtxUG5mR0UrNGlTL2lLM2h6?=
- =?utf-8?B?V0tqdUxHVGNpYklxWWpiUGZ6bzZrc2VjeTFYK2RxR1I3OFo5MktBeDl0K1NG?=
- =?utf-8?B?VWxPMy9sT3lBMlBrSC80WmxILzFtUXVJU2o1anFSLzRqYi9DUlhUVzlGcnRJ?=
- =?utf-8?B?Ykx5WHh4UEJHQStuYS9GYnNDNmNhQ2RXeEpBY1lFOVpPRnBjL3orVDBxanZs?=
- =?utf-8?B?UDZWVVRVZFdyQVV4eWRZclBkU3NyOGI3T0VEK1QwOUlrN2hvdTlJUmxGajhv?=
- =?utf-8?B?MUIrOFg4WjZ2b2M4anZEZ1NUeXhCVktlMmtKVzZld29vUjc1V21EbEJzRWE0?=
- =?utf-8?B?RnNhYm0wU3doVzBpZjl2N2tvalUxbEVnSHB3MVhISzBCNVZYN1NhZGRGa2xs?=
- =?utf-8?B?MWl4blRURDlCbkF6QUtLY1BDV1QyWEFzUms0MUU0ZnJqTVJucDE4aE9STThR?=
- =?utf-8?B?aWt6RDZwNDdDeVM0T052TE5nQ0lUSWlHM0ZnQzkxWUZIRHNMSnk1c1RKZXdn?=
- =?utf-8?B?dWsyUzRUQWFLK2tmR3JNUC81ZlkyWmc3T1U4T2NWc0o3OVRjNUhoTm02NHdC?=
- =?utf-8?B?anFtQnlYUEIzQzFRYTIxL0FHRE56YXFWT1FhZGJLUG95MFlVc0ZQaTZwM29C?=
- =?utf-8?B?anVzVitBanBEdWhyNFBZVkJrM3BBNzA4R3A3TUpiMlFHSXlLbkFMQnl5RkZi?=
- =?utf-8?B?dGlYajNZVVVVaGpMaERYL0Znc3FCMDRQaDlyemlDQjlldUJHaUlzY0hwdkJv?=
- =?utf-8?B?K3ZCSUNFL3gvQ040WTVqdHpoWTI3Y2syUVlLSGJLK2E5MVJjaVRVOHovc0k2?=
- =?utf-8?B?SGRnNHNQODFTaFVNTHpCVFgxVEJYK1RRcVRYTFgzcHhNY1F5Sml4QWpocVN3?=
- =?utf-8?B?cHhmNzdDTWpjTUhuUGNLbUt5TU16VzRYbWk2elFObnJObktVdVRqcXpmb2dO?=
- =?utf-8?B?bnpwVkxzeGNKR1NhRkNJN2V5TUlZai9sSHdISzNmTW9SSktOQ1ZvUUVLb3F0?=
- =?utf-8?B?b3E4bEJFQTFPTnl5QUxHaURtTU5RQWtwbGZaRTZhT3NYYk1EOU55c0ltbWds?=
- =?utf-8?B?VFFyc0N1cW91OTVkeXQ5OE83UVBIeTgwd3loMWIxVExOeTU1MDlIV1lIbDFZ?=
- =?utf-8?B?M2FJWlZIdzBEdFdESlZ2cmhQODF0ZFYyUHZaV1NaOGRySTQrU3c2bFVDK052?=
- =?utf-8?B?OW5ITThEMTk1dXZnZ3hlb05oa09uZU5DVWY5bk5JL1Y1VVdiNG4zQ2pkL2Fx?=
- =?utf-8?B?dHJ1NzUzR2Iva0hBRElJVjZoUk44d1VEZnU3T3ZWTU11MUNBY2VtZVRtYVNN?=
- =?utf-8?B?UmlYZkNMR0lFUzBNUEcyQmVycnQrR3RKYVJjMjE2b1BCRU5jZmpYMkhjd3dw?=
- =?utf-8?B?bThlSTZ5ckx2bG1OaUlMcmJTQmVBckg0ZkNYOWJ2MVNxdmhqUDQvZVZOQmha?=
- =?utf-8?B?V2RZM2kzOGticHRLWlFWanRYdU52cEhqa1QzOEJhNVdWdTdFR0tYYm53T09U?=
- =?utf-8?B?anFTeWxsb25mNDFWUEtOYkFZTkt2MkJEaXVxSUtmUGRMTTBSMHVyQXlsMXBM?=
- =?utf-8?B?bTFnTk5EMHVzUmtyVSswc0R6ZWN4S1JqUHcyRllZZDl4bC81djBnd3NFTm1i?=
- =?utf-8?B?dFY0ZWh1UzVEMkFGaUs0ejRUUlVqYnU0NXdjT3cvRmNiemhZQ25VbHhRa1dP?=
- =?utf-8?B?T0pzRXRyaXoxVWJDUHZhcXNVS3dhTVBqeTNDNWRmQUtJTWxwMlRDcjRvSTVV?=
- =?utf-8?Q?Uhg5okboIWoVW43JQ6?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 10a0af55-d7f5-447c-ddcd-08dedde0e7ef
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5179.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2026 17:38:37.0324
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xNT0FMTGxBiRG/Q0P5FhkKT6tx+P4n4xa7gF8UeA7GdL/8o1hndOKBbUkEMrRZ+j6SkGyEe14s27hlz5gNcfow==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7213
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rvxsrpqt5djhs2ak"
+Content-Disposition: inline
+In-Reply-To: <akzikTrmhMsvkNVY@willie-the-truck>
 
 
-On 01/07/26 21:54, Pierre Gondois wrote:
-> External email: Use caution opening links or attachments
->
->
-> On 6/23/26 10:06, Sumit Gupta wrote:
->> Add a kernel boot parameter 'cppc_cpufreq.auto_sel_mode' to enable
->> CPPC autonomous performance selection on all CPUs at system startup.
->> When autonomous mode is enabled, the hardware automatically adjusts
->> CPU performance based on workload demands using Energy Performance
->> Preference (EPP) hints.
->>
->> When the parameter is set:
->> - Configure all CPUs for autonomous operation on first init
->> - Use HW min/max_perf when available; otherwise initialize from caps
->> - Initialize desired_perf to max_perf as a starting hint
->> - Hardware controls frequency instead of the OS governor
->> - EPP behavior depends on parameter value:
->>    - performance (or 1):         override EPP to performance (0x0)
->>    - balance_performance (or 2): override EPP to balance_performance
->>                                  (0x80)
->>    - default_epp (or 3):         preserve EPP value programmed by
->>                                  BIOS/firmware
->>
->> Unset, "0"/"disabled", or an unrecognized value leaves autonomous
->> selection disabled.
->>
->> The boot parameter is applied only during first policy initialization.
->> Skip applying it on CPU hotplug to preserve runtime sysfs configuration.
->>
->> This relies on commit 8c83947c5dbb ("cpufreq: Use policy->min/max 
->> init as
->> QoS request") so that the policy->min/max set in cppc_cpufreq_cpu_init()
->> are used as the policy's QoS requests and not overridden by
->> cpufreq_set_policy() during init.
->>
->> Signed-off-by: Sumit Gupta<sumitg@nvidia.com>
->> ---
->>   .../admin-guide/kernel-parameters.txt         |  22 +++
->>   drivers/cpufreq/cppc_cpufreq.c                | 151 +++++++++++++++++-
->>   include/acpi/cppc_acpi.h                      |   1 +
->>   3 files changed, 169 insertions(+), 5 deletions(-)
->>
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt 
->> b/Documentation/admin-guide/kernel-parameters.txt
->> index b5493a7f8f22..88820d34d516 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -1019,6 +1019,28 @@ Kernel parameters
->>                       policy to use. This governor must be registered 
->> in the
->>                       kernel before the cpufreq driver probes.
->>
->> +     cppc_cpufreq.auto_sel_mode=
->> +                     [CPU_FREQ] Enable ACPI CPPC autonomous performance
->> +                     selection. When enabled, hardware automatically 
->> adjusts
->> +                     CPU frequency on all CPUs based on workload 
->> demands.
->> +                     In Autonomous mode, Energy Performance 
->> Preference (EPP)
->> +                     hints guide hardware toward performance (0x0) 
->> or energy
->> +                     efficiency (0xff).
->> +                     Requires ACPI CPPC autonomous selection register
->> +                     support.
->> +                     Accepts:
->> +                       disabled, 0:
->
-> Just a question, but would it be worth only accepting
-> strings ? If we want to have a thinner granularity later,
-> it will be harder to introduce them if there are integer values
-> already present.
+--rvxsrpqt5djhs2ak
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 04/11] arm64/mm: Add set_memory_device() and
+ set_memory_normal()
+MIME-Version: 1.0
 
-Sure, will change to keep strings only for flexibility in future.
+On Tue, Jul 07, 2026 at 12:27:13PM +0100, Will Deacon wrote:
+> On Mon, Jul 06, 2026 at 03:49:24PM +0200, Thierry Reding wrote:
+> > On Fri, Jul 03, 2026 at 06:13:31PM +0100, Will Deacon wrote:
+> > > On Thu, Jul 02, 2026 at 06:41:23PM +0200, Thierry Reding wrote:
+> > > > On Thu, Jul 02, 2026 at 03:46:44PM +0200, Thierry Reding wrote:
+> > > > > On Thu, Jul 02, 2026 at 10:18:47AM +0100, Will Deacon wrote:
+> > > > > > On Wed, Jul 01, 2026 at 06:08:15PM +0200, Thierry Reding wrote:
+> > > > > > > From: Chun Ng <chunn@nvidia.com>
+> > > > > > >=20
+> > > > > > > Add helpers to swap PROT_NORMAL and PROT_DEVICE_nGnRnE protec=
+tion bits
+> > > > > > > on a kernel-linear-map range.
+> > > > > >=20
+> > > > > > That sounds like a really terrible idea. Why is this necessary =
+and how
+> > > > > > does it interact with things like load_unaligned_zeropad()?
+> > > > >=20
+> > > > > This is necessary because once the memory controller has walled o=
+ff the
+> > > > > new memory region the CPU must not access it under any circumstan=
+ces or
+> > > > > it'll cause the CPU to lock up (I think technically it'll hit an =
+SError
+> > > > > but in practice that just means it'll freeze, as far as I can tel=
+l).
+> > > > >=20
+> > > > > Probably doesn't interact well at all with load_unaligned_zeropad=
+().
+> > > > >=20
+> > > > > > I think you should unmap the memory from the linear map and mem=
+remap()
+> > > > > > it instead.
+> > > > >=20
+> > > > > Given that the memory can never be accessed by the CPU after the =
+memory
+> > > > > controller locks it down, I don't think we'll even need memremap(=
+). The
+> > > > > only thing we really need is the sg_table we hand out via the DMA=
+ BUFs
+> > > > > so that they can be used by device drivers to program their DMA e=
+ngines
+> > > > > internally.
+> > > > >=20
+> > > > > Looking through some of the architecture code around this, should=
+n't we
+> > > > > simply be using set_memory_encrypted() and set_memory_decrypted()=
+ for
+> > > > > this? While they might've been created for slightly other use-cas=
+es,
+> > > > > they seem to be doing exactly what we want (i.e. remove the page =
+range
+> > > > > from the linear mapping and flushing it, or restoring the valid b=
+it and
+> > > > > standard permissions, respectively).
+> > > >=20
+> > > > Ah... I guess we can't do it because we're not in a realm world and=
+ so
+> > > > the early checks in __set_memory_enc_dec() would return early and t=
+urn
+> > > > it into a no-op.
+> > > >=20
+> > > > How about if I extract a common helper and provide set_memory_p() a=
+nd
+> > > > set_memory_np() in terms of those. Those are available on x86 and
+> > > > PowerPC as well, so fairly standard. I suppose at that point we're
+> > > > closer to set_memory_valid().
+> > >=20
+> > > Why not just call set_direct_map_invalid_noflush() +
+> > > flush_tlb_kernel_range() for each page? We already have APIs for this.
+> >=20
+> > Having a "standard" helper with a fixed and documented purposed seemed
+> > like a preferable approach for this particular case. We also may want to
+> > make the driver that uses this buildable as a module, in which case we'd
+> > need to export these rather low-level APIs. And then there's also the
+> > fact that we typically call this on a rather large region of memory
+> > (usually something like 512 MiB), so doing it page-by-page is rather
+> > suboptimal.
+> >=20
+> > > The big challenge I see with any linear map manipulation, however, is
+> > > that it will rely on can_set_direct_map() which likely means you need=
+ to
+> > > give up some performance and/or security to make this work. Does memo=
+ry
+> > > become inaccesible dynamically at runtime? If not, the best bet would
+> > > be to describe it as a carveout in the DT and mark it as "no-map" so
+> > > we avoid mapping it in the first place.
+> >=20
+> > VPR exists in two modes: static and resizable. For static VPR we do
+> > exactly that: describe it as carveout in DT with no-map and deal with it
+> > accordingly in the driver. Resizable VPR is for device that have small
+> > amounts of RAM. Content-protected video playback will in the worst case
+> > consume around 1.8 GiB of RAM, so we want to be able to reuse for other
+> > purposes when VPR is unused on those devices. In that case, the memory
+> > is also described as a reserved-memory region in DT, but it is marked as
+> > reusable so that it can be managed by CMA.
+> >=20
+> > The resize operation is fairly slow to begin with because we need to
+> > stall the GPU and put it into reset before the operation, then take it
+> > out of reset and resume it afterwards.
+> >=20
+> > What kind of performance impact do you expect?
+>=20
+> You'll need to measure it, but we've seen reports of double-digit
+> percentage regressions in performance and power. As I said, the problem
+> is that you need to split the linear map to 4k page at runtime to unmap
+> the dynamic carveout, but that isn't something that can be done on most
+> CPUs. Therefore you end up having to use page-granular mappings for the
+> entire thing, similarly to how 'rodata_full' drives can_set_direct_map()
+> and the perf/power hit affects everything.
 
->
->> +                               cpufreq governors are used (auto_sel 
->> disabled)
->> +                       performance, 1:
->> +                               enable auto_sel + set EPP to 
->> performance (0x0)
->> +                       balance_performance, 2:
->> +                               enable auto_sel + set EPP to
->> +                               balance_performance (0x80)
->> +                       default_epp, 3:
->> +                               enable auto_sel, preserve EPP value 
->> programmed
->> +                               by BIOS/firmware
->> +                     Unset or an unrecognized value is treated as 
->> disabled.
->> +
->>       cpu_init_udelay=N
->>                       [X86,EARLY] Delay for N microsec between assert 
->> and de-assert
->>                       of APIC INIT to start processors.  This delay 
->> occurs
->> diff --git a/drivers/cpufreq/cppc_cpufreq.c 
->> b/drivers/cpufreq/cppc_cpufreq.c
->> index f7a47576717a..efa673e3830c 100644
->> --- a/drivers/cpufreq/cppc_cpufreq.c
->> +++ b/drivers/cpufreq/cppc_cpufreq.c
->> @@ -28,6 +28,55 @@
->>
->>   static struct cpufreq_driver cppc_cpufreq_driver;
->>
->> +/* Autonomous Selection boot parameter modes */
->> +enum {
->> +     AUTO_SEL_DISABLED = 0,
->> +     AUTO_SEL_PERFORMANCE = 1,
->> +     AUTO_SEL_BALANCE_PERFORMANCE = 2,
->> +     AUTO_SEL_DEFAULT_EPP = 3,
->> +};
->> +
->> +static int auto_sel_mode;
->> +
->> +static int auto_sel_mode_set(const char *val, const struct 
->> kernel_param *kp)
->> +{
->> +     int *mode = kp->arg;
->> +
->> +     *mode = AUTO_SEL_DISABLED;
->> +
->> +     if (sysfs_streq(val, "performance") || sysfs_streq(val, "1"))
->> +             *mode = AUTO_SEL_PERFORMANCE;
->> +     else if (sysfs_streq(val, "balance_performance") || 
->> sysfs_streq(val, "2"))
->> +             *mode = AUTO_SEL_BALANCE_PERFORMANCE;
->> +     else if (sysfs_streq(val, "default_epp") || sysfs_streq(val, "3"))
->> +             *mode = AUTO_SEL_DEFAULT_EPP;
->> +     else if (!sysfs_streq(val, "disabled") && !sysfs_streq(val, "0"))
->> +             pr_warn("Invalid auto_sel_mode \"%s\", disable auto 
->> select\n", val);
->> +
->> +     return 0;
->> +}
->> +
->> +static int auto_sel_mode_get(char *buffer, const struct kernel_param 
->> *kp)
->> +{
->> +     int *mode = kp->arg;
->> +
->> +     switch (*mode) {
->> +     case AUTO_SEL_PERFORMANCE:
->> +             return sysfs_emit(buffer, "performance\n");
->> +     case AUTO_SEL_BALANCE_PERFORMANCE:
->> +             return sysfs_emit(buffer, "balance_performance\n");
->> +     case AUTO_SEL_DEFAULT_EPP:
->> +             return sysfs_emit(buffer, "default_epp\n");
->> +     default:
->> +             return sysfs_emit(buffer, "disabled\n");
->> +     }
->> +}
->> +
->> +static const struct kernel_param_ops auto_sel_mode_ops = {
->> +     .set = auto_sel_mode_set,
->> +     .get = auto_sel_mode_get,
->> +};
->> +
->>   #ifdef CONFIG_ACPI_CPPC_CPUFREQ_FIE
->>   static enum {
->>       FIE_UNSET = -1,
->> @@ -645,7 +694,9 @@ static int cppc_cpufreq_cpu_init(struct 
->> cpufreq_policy *policy)
->>       unsigned int cpu = policy->cpu;
->>       struct cppc_cpudata *cpu_data;
->>       struct cppc_perf_caps *caps;
->> +     bool set_epp = true;
->>       int ret;
->> +     u32 epp;
->>
->>       cpu_data = cppc_cpufreq_get_cpu_data(cpu);
->>       if (!cpu_data) {
->> @@ -715,11 +766,87 @@ static int cppc_cpufreq_cpu_init(struct 
->> cpufreq_policy *policy)
->>       policy->cur = cppc_perf_to_khz(caps, caps->highest_perf);
->>       cpu_data->perf_ctrls.desired_perf = caps->highest_perf;
->>
->> -     ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
->> -     if (ret) {
->> -             pr_debug("Err setting perf value:%d on CPU:%d. ret:%d\n",
->> -                      caps->highest_perf, cpu, ret);
->> -             goto out;
->> +     /*
->> +      * Enable autonomous mode on first init if boot param is set.
->> +      * Check last_governor to detect first init and skip if auto_sel
->> +      * is already enabled.
->> +      */
->> +     if (auto_sel_mode && policy->last_governor[0] == '\0' &&
->> +         !cpu_data->perf_ctrls.auto_sel) {
->
-> If an .online() callback is introduced, does it mean that we can
-> remove the "policy->last_governor[0] == '\0'" check ?
->
-> Also maybe it would be worth creating a function for this
-> "if" block ?
->
-> Also (bis), maybe we should check that auto_sel is supported before
-> doing anything else.
->
+The VPR has fairly large alignment restrictions (1 MiB) and we do unmap
+in fairly large chunks (512 MiB currently, but we can change that if it
+is helpful) because we really want to avoid resizing operations, so the
+tradeoff is between frequency of resize vs. potential memory wasted.
 
-Agreed. Will change in v6.
+Does that change anything with regards to performance?
 
->
->> +             /* Init min/max_perf from caps if not already set by 
->> HW. */
->> +             if (!cpu_data->perf_ctrls.min_perf)
->> +                     cpu_data->perf_ctrls.min_perf = 
->> caps->lowest_nonlinear_perf;
->> +             if (!cpu_data->perf_ctrls.max_perf)
->> +                     cpu_data->perf_ctrls.max_perf = 
->> policy->boost_enabled ?
->> +                             caps->highest_perf : caps->nominal_perf;
->
-> Is it necessary to do that ?
->
-> - for min_perf, we are setting it to the lowest possible value
->
-> - for max_perf, we are setting it to the highest available value.
-> If boost is disabled and we enabled it later, I don't think max_perf is
-> updated accordingly, so we would limit the freq. to caps->nominal_perf
->
-> (If I m not missing something)
->
+Thierry
 
-The min/max seed is still needed so the HW has valid min/max limits
-when firmware leaves them unset.
-Here, will keep max_perf capped to nominal while boost is off and
-change the second place below to set policy->max = highest_perf so the
-driver does not limit the max below highest, letting the core cap
-to nominal when boost is off.
-Enabling boost then raises the HW max_perf to highest via ->target(),
-fixing this point too.
+--rvxsrpqt5djhs2ak
+Content-Type: application/pgp-signature; name="signature.asc"
 
->> +
->> +             /*
->> +              * In autonomous mode desired_perf is only a hint; EPP and
->> +              * the platform drive actual selection within [min, max].
->> +              * Initialize it to max_perf so HW starts at the upper 
->> bound.
->> +              */
->> +             cpu_data->perf_ctrls.desired_perf = 
->> cpu_data->perf_ctrls.max_perf;
->> +
->> +             policy->cur = cppc_perf_to_khz(caps,
->> + cpu_data->perf_ctrls.desired_perf);
->> +
->> +             /*
->> +              * Set EPP per mode. 'default_epp' preserves the 
->> BIOS/firmware
->> +              * programmed EPP value. EPP is optional - some 
->> platforms may
->> +              * not support it.
->> +              */
->> +             switch (auto_sel_mode) {
->> +             case AUTO_SEL_PERFORMANCE:
->> +                     epp = CPPC_EPP_PERFORMANCE_PREF;
->> +                     break;
->> +             case AUTO_SEL_BALANCE_PERFORMANCE:
->> +                     epp = CPPC_EPP_BALANCE_PERFORMANCE_PREF;
->> +                     break;
->> +             default:
->> +                     set_epp = false;
->> +                     break;
->> +             }
->> +
->> +             if (set_epp) {
->> +                     ret = cppc_set_epp(cpu, epp);
->> +                     if (ret && ret != -EOPNOTSUPP)
->> +                             pr_warn("Failed to set EPP for CPU%d 
->> (%d)\n", cpu, ret);
->> +                     else if (!ret)
->> + cpu_data->perf_ctrls.energy_perf = epp;
->> +             }
->> +
->> +             /* Program min/max/desired into CPPC regs (non-fatal on 
->> failure). */
->> +             ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
->> +             if (ret)
->> +                     pr_warn("set_perf failed CPU%d (%d); using HW 
->> values\n",
->> +                             cpu, ret);
->> +
->> +             ret = cppc_set_auto_sel(cpu, true);
->> +             if (ret && ret != -EOPNOTSUPP)
->> +                     pr_warn("auto_sel CPU%d failed (%d); using OS 
->> mode\n",
->> +                             cpu, ret);
->> +             else if (!ret)
->> +                     cpu_data->perf_ctrls.auto_sel = true;
->> +     }
-> (until here)
->> +
->> +     if (cpu_data->perf_ctrls.auto_sel) {
->> +             /* Sync policy limits from HW when autonomous mode is 
->> active */
->
-> Similar comment as above, doesn't it fall into a similar case as:
-> 521223d8b3ec ("cpufreq: Fix initialization of min and max frequency QoS
-> request")
->
-> ?
->
+-----BEGIN PGP SIGNATURE-----
 
-Answered above.
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmpP/UkACgkQ3SOs138+
+s6GFqBAAsfNpGtxzDc/1UKAc4Vjp9eilQE6L3ZzhQhn1d3Crc+ym9vGZzyfe4lTR
+di2aYaWn+6XslOczfKwW58jo+D8/fP64sFF9UY3mR7U+MzuIGEF61RVgF0fFH4Vb
+wo6H5bLYvA2J1VhXyIv08l/Oxb+GGHMa2gRVdTbFux+csAi4ahPJVT0oS9S0sJht
+cmPEaDkjN8StPrx4IN3oTcj7g3LW3aDuShMtgqRrceSaIw2xvtb+rvWLvGJac/HH
+kNrn5Vc+pAJJigN3NZqMgpjeD3gHZDZYaKUToPXJuIOlZILR0VzdDAHxD9U+lmyD
+YVPGNnPi13QmxTk9KHR+Tm2aL7AxXx8TK0jIOUFuaySrgD16Oo9CTxOvsxewNGpg
+lGDhuvag7BCxZqQzlxbhAuGtHZS+s6OWCXleWAsKpVs4Ga/FDaAvZYCHugxIur84
+mexc1/5CBcjohTAfvTLpAZGUxDXslKopeYaBZGgRJXz+iwulrGeeDpEvDH1VNo1r
+SkCIXoLOlq4bEKwejuGzuVzc47hLYGL+c09cCOwa73rhvVARke2v05fRowwN29Iv
+1OVDKNQTsHbBZ8PNTsoaEApLvif8crc38kborIPtiuaGz4WDg7q90ogJoIhqEK2L
+z8Lt64Ul985C2ht8PNWLbWeUKGNX54YFmnBCCP+lgBzDRu2sc4g=
+=Axxn
+-----END PGP SIGNATURE-----
 
->
->> +             policy->min = cppc_perf_to_khz(caps,
->> + cpu_data->perf_ctrls.min_perf ?:
->> + caps->lowest_nonlinear_perf);
->> +             policy->max = cppc_perf_to_khz(caps,
->> + cpu_data->perf_ctrls.max_perf ?:
->> + (policy->boost_enabled ?
->> + caps->highest_perf :
->> + caps->nominal_perf));
->> +     } else {
->> +             /* Normal mode: governors control frequency */
->> +             ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
->> +             if (ret) {
->> +                     pr_debug("Err setting perf value:%d on CPU:%d. 
->> ret:%d\n",
->> +                              caps->highest_perf, cpu, ret);
->> +                     goto out;
->> +             }
->>       }
->>
->>       cppc_cpufreq_cpu_fie_init(policy);
->> @@ -1066,10 +1193,24 @@ static int __init cppc_cpufreq_init(void)
->>
->>   static void __exit cppc_cpufreq_exit(void)
->>   {
->> +     unsigned int cpu;
->> +
->> +     for_each_present_cpu(cpu)
->> +             cppc_set_auto_sel(cpu, false);
->
-> I saw that this is being changed in:
-> [PATCH] cpufreq: CPPC: Preserve OSPM-set registers across hotplug and 
-> unload
->
-> But I think it would make more sense to have this patch comes before 
-> these
-> patches:
->
->  [1] ACPI: CPPC: Add ospm_nominal_perf support
-> https://lore.kernel.org/lkml/20260615185934.2383514-1-sumitg@nvidia.com/
->  [2] cpufreq: CPPC: add autonomous mode boot parameter support
-> https://lore.kernel.org/lkml/20260623080652.3353386-1-sumitg@nvidia.com/
->
-> to avoid making changes that are corrected in this last patch of the 
-> serie.
->
-
-Sure, will reorder them.
-
-Thanks,
-Sumit
-
-....
-
+--rvxsrpqt5djhs2ak--
