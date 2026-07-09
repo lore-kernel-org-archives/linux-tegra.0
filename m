@@ -1,882 +1,277 @@
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF352E6CA6
-	for <linux-tegra@vger.kernel.org>; Thu,  9 Jul 2026 15:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2514A282F35;
+	Thu,  9 Jul 2026 15:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783611017; cv=none; b=Jkrf2MiogGORxBGIqCWxsQQIOG3Ha8y1FXySQLqasOahLNFY0u4e1gHQKV0bcBKX7qjBKxhLSErVg+sC+UoEuCr0GEEMfWJIqT7XvR+ckXRY/7CBDkj28g/+MUlPNK36WujLdQCU7FJ2FathI9HPz7lvvBxrakVNc//Q2Qq1/ck=
+	t=1783611144; cv=none; b=AkIyzK+8qzEQp3UhNZzdnj9wm7apIfYirwoUrJkUqQq2WQ3EuOXG2FSTdFvOTurNEpvakihn/I3Jm7/f/YCuKhEOk1lvxuVkhsQpfMSdnzMJy1BGCotBUanFEBDQyGQm5wZCpY+/Ep4GSUOKoW7u/RJX9H5HlhNagtlWAxkwdx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783611017; c=relaxed/simple;
-	bh=06eOsOPDeAgPtJnGGd6evehp5rwOyYkyghqkluH5Gc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pGOn83VMSZ32Ts6j9jUZBydkKl3j4TBMB1BmV/SCpBlStzJbrDYaQdpG6ZOqtYmgbQvvpNPdW9G1ONhzjB4Q3guEJL/A2dERZ1OG1B7WrTektJD5Rl632KyjMI+ma8j34uJ4UBqEDtq5SSFzVHNfO1wlZerBMYcmZ3kz2JCr06w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=HOb5SCS/; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+	s=arc-20240116; t=1783611144; c=relaxed/simple;
+	bh=hhQgk6MX+guE1jG0zCvEY1ZEHB5WbGIGGdBZWiGnziI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Oz6Pe0urUg04LpntWBjw0nPlngOHE7BJtFN6Skf8D287Ki3NT8JrEB9Cm1qPXwsvhd3UBo1gpQ5pnE81tAQWHjOa+dgCv0wee3OduYirDx9r8JlLR16pj+payqsqoPMFqcVWSXXduB43DxHqPulkK7JFnYY/ZuVputudRamDH4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kvY9BSPT; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="HOb5SCS/"
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-51c1805b8a7so19770521cf.3
-        for <linux-tegra@vger.kernel.org>; Thu, 09 Jul 2026 08:30:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1783611006; x=1784215806; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=fYSI9yTT5sy6RSjg3MJktJbkZRCOSo/WRgJFUwJppy4=;
-        b=HOb5SCS/gNNLTr4fe9++CE7kBgRA/yxXaru3ymxVczimgogdcUNwZwAxGvaqWFWEGs
-         hs/DbFLiZlC2QpfSpiual+vMC0ssot+o+n/ZSjwBukU/od36XAGaUaR+wItyCypdwS/J
-         3GsFC4PYPtXcWsdtfm2KB6WTKPS024YzqfQrUaYlh1CAMphQWJzafKMx0BY6D/yMWtjt
-         cAOz2KnzLQX1pU2NdRYRC/+9FFcAX901uWKdgEEJYtREu4KKX6fWznRXJxhtGi2nOZQC
-         xQVDnSMC8BEvaiZt6SP5tIL0VluHJ2aX351sp9RVSkOuE85stnQDTzg6QaotPjfCJoPL
-         Tn6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783611006; x=1784215806;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=fYSI9yTT5sy6RSjg3MJktJbkZRCOSo/WRgJFUwJppy4=;
-        b=mmGQhhHetf9ZYuREPpHDooGSqsH5jYoKSnSMHEYyQ7lafF7/78ejhjVU6CC9XrkIi2
-         vfmpMJiVYT95JPLjtcSrrv9pfivP0Nxkfk4z5l1E/vAnf9hAz1Vzol8+sVCDRTizAItH
-         qa0eu2WPGEp2ingT9K2zoZJTl1uKk/EOglXplmWfUF+vf/oHpSkTos1LwLat63KY62rn
-         dpTbZFTe0qqPlgWW4fC080htxXpic6vTht4sAnIniypNpzJKr89XFTqZ9W1zvHiYnzfq
-         RJu5vY0Y7hf14Ddd2qneIByxuOfN4BcoxGHzlfJOf6s2w8axBx8C08zjGdjN4C7Buv/M
-         XSvA==
-X-Forwarded-Encrypted: i=1; AHgh+RpexrUliH6mmaI+SOuZjfUdG0+4/oYnHDOQb81IEiRGaMvaKbQKutdLnSWnGSSNP/rr5OnMQ2xEQ/pDNA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YywUWOE0rSo8rndOX+MyRD2yP5MNJKSdBERWfpVHUmyO2hvVS05
-	X1t2yRp+Bpyv7L3smqoYRkYovtN9Yj5cXfj9Hm6JniQJJWp266wKSRtV5IGWN/Xn3ic=
-X-Gm-Gg: AfdE7clOBflfJfWBdrW6Cbi1Jm8425TiH8KLgT/w+FNyGup9yTmt9XF06zisc7r0ofV
-	+EOluS3TgGC4ae6bGz4GzmvHZuCGconY0eAB7uwUj4PG8Ug1UUn/eDILmCfm6P7ja5Cy31OeAHP
-	fg4k5T8tFu+wP/K6UDYBF/dsyU4Ipn3EdpOUgs+xfCo/da7rCgQr8xA6CHTEEpAIz1/r1pImvU8
-	bDz4c31F6TDmE/imnxKY6aJkDV5hUmQewO3fxu7IAANZa3p5viOkQLWaEhu6tZxy56dnoo8TZwR
-	C2JUy4z8ksPy12NXXY0CK04/BZT3Jwyi1XqI/DjuOz7WvFrqdeCyriz2lWjMb5nFdexkbzpA25I
-	YfEsdVxAxzADyCDWYL+65Qn4LKrT1XiTdAwjATj8/VU0Tyd0iDkodQAAjfib/6RfQGciqh0BkGF
-	/haL1oDGv3xAwPjrzlMI/1dtYDX6k9a2Ox+NbIgpKgw5P9NPj0r4ompcygIQZcT57LtIL3
-X-Received: by 2002:ac8:7e8f:0:b0:51c:7b12:5fda with SMTP id d75a77b69052e-51c8b438e93mr84318041cf.86.1783611005740;
-        Thu, 09 Jul 2026 08:30:05 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-60-52.washdc.fios.verizon.net. [173.79.60.52])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ffd81f4bbdsm19539096d6.36.2026.07.09.08.30.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jul 2026 08:30:04 -0700 (PDT)
-Date: Thu, 9 Jul 2026 11:29:58 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Lorenzo Stoakes <ljs@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Simon Schuster <schuster.simon@siemens-energy.com>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Christian Koenig <christian.koenig@amd.com>,
-	Huang Rui <ray.huang@amd.com>, Ankit Agrawal <ankita@nvidia.com>,
-	Alex Williamson <alex@shazbot.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Dan Williams <djbw@kernel.org>, Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	David Hildenbrand <david@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	"Liam R . Howlett" <liam@infradead.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>, SeongJae Park <sj@kernel.org>,
-	Miaohe Lin <linmiaohe@huawei.com>, Hugh Dickins <hughd@google.com>,
-	Mike Rapoport <rppt@kernel.org>, Kees Cook <kees@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
-	linux-sgx@vger.kernel.org, etnaviv@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-mm@kvack.org, iommu@lists.linux.dev,
-	linux-perf-users@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	damon@lists.linux.dev, Pedro Falcato <pfalcato@suse.de>,
-	Rik van Riel <riel@surriel.com>, Harry Yoo <harry@kernel.org>,
-	Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 16/30] mm/vma: use vma_start_pgoff(), linear_page_index()
- in mm code
-Message-ID: <ak--doS80hnAeQ9s@gourry-fedora-PF4VCD3F>
-References: <cover.1782735110.git.ljs@kernel.org>
- <33d79008948391d30bab38db5ae31072ce12f0a1.1782735110.git.ljs@kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kvY9BSPT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1783611142; x=1815147142;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=hhQgk6MX+guE1jG0zCvEY1ZEHB5WbGIGGdBZWiGnziI=;
+  b=kvY9BSPTkWs/aW2RXw6MwVXRc8lFioaLTIlTRdsp8eMM5a0WS5KFzhlF
+   MYAV2rDLB/9JuQjuz6bggCG2z9tXuDcuLgwRQV+Z0fh2gkLHnDVyV8K8M
+   csPJJyknC52Id/2QBWG5bertpiFSb6qEtmwfUFXd1FZYQridOjmhtiTko
+   2+9xCgyhHnaGhjMfE3OfZhzUNtndDgu316S1GRi1abEccskY7ANCNyphk
+   0ftvS+p/p8O1dhtmKzyEA5R1VxgB0uV5/creazOHg56/RkM16tX9RAe/w
+   0VR9eepEa72BjiY5pwatliHtJ4lV9pC6ugjgvHcX1l7aRENwxELTjP1wP
+   A==;
+X-CSE-ConnectionGUID: oXKJ6aj7QZ6vKZAsydYk/g==
+X-CSE-MsgGUID: OBom76p/Tw2cA2A5gSCw1g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11841"; a="95810448"
+X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; 
+   d="scan'208";a="95810448"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2026 08:32:21 -0700
+X-CSE-ConnectionGUID: c6wWqBt7T6yBBeDqTHqNWw==
+X-CSE-MsgGUID: TXN0B+QzTvScl8zXIoZZpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; 
+   d="scan'208";a="254124728"
+Received: from bradocaj-mobl.ger.corp.intel.com (HELO [10.125.111.142]) ([10.125.111.142])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2026 08:32:20 -0700
+Message-ID: <da098c60-7258-47d1-925e-a8cb48741366@intel.com>
+Date: Thu, 9 Jul 2026 08:32:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <33d79008948391d30bab38db5ae31072ce12f0a1.1782735110.git.ljs@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 00/10] PCI/CXL: Add CXL reset support for Type 2
+ devices
+To: Srirangan Madhavan <smadhavan@nvidia.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, Dan Williams <djbw@kernel.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, Ira Weiny <ira.weiny@intel.com>,
+ Jonathan Cameron <jic23@kernel.org>, Vishal Verma
+ <vishal.l.verma@intel.com>,
+ "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+ Vikram Sethi <vsethi@nvidia.com>, Alex Williamson <alwilliamson@nvidia.com>,
+ Dan Williams <danwilliams@nvidia.com>,
+ Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>,
+ Vishal Aslot <vaslot@nvidia.com>, Manish Honap <mhonap@nvidia.com>,
+ Jiandi An <jan@nvidia.com>, Richard Cheng <icheng@nvidia.com>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20260703220508.546528-1-smadhavan@nvidia.com>
+ <fb9a53ea-2743-4e4c-b3b3-faa81dfac156@intel.com>
+ <103e562b-1685-412f-adaa-679409818d7f@intel.com>
+ <DS7PR12MB9474EE81286538A24E1C095CC3FE2@DS7PR12MB9474.namprd12.prod.outlook.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <DS7PR12MB9474EE81286538A24E1C095CC3FE2@DS7PR12MB9474.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 29, 2026 at 01:23:27PM +0100, Lorenzo Stoakes wrote:
-> There are many instances in which linear_page_index() (as well as
-> linear_page_delta()) is open-coded, which is confusing and inconsistent.
-> 
-> Additionally, vma->vm_pgoff doesn't necessarily make it clear that this is
-> the page offset of the start of the VMA range.
-> 
-> Doing so also aids greppability.
-> 
-> So use vma_start_pgoff() in favour of directly accessing vma->vm_pgoff, and
-> linear_page_index() where we can.
-> 
-> This also lays the ground for future changes which will add an anonymous
-> page offset in order to be able to index MAP_PRIVATE-file backed anon
-> folios in terms of their virtual page offset.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
 
-such a nice readability improvement, thank you.
 
-This made me wonder though whether we can make it painful for people to
-open-code this in the future, otherwise I fear another one of these
-patches creeping in 5-10 years down the line.
-
-Not sure it's feasible though
-
-Reviewed-by: Gregory Price <gourry@gourry.net>
-
-> ---
->  include/linux/huge_mm.h    |  1 +
->  include/linux/hugetlb.h    |  3 +--
->  include/linux/pagemap.h    |  2 +-
->  mm/damon/vaddr.c           |  5 +++--
->  mm/debug.c                 |  2 +-
->  mm/filemap.c               |  7 ++++---
->  mm/huge_memory.c           |  2 +-
->  mm/hugetlb.c               | 11 ++++-------
->  mm/internal.h              | 24 ++++++++++++++----------
->  mm/khugepaged.c            |  3 ++-
->  mm/madvise.c               |  6 +++---
->  mm/mapping_dirty_helpers.c |  2 +-
->  mm/memory.c                | 25 +++++++++++++------------
->  mm/mempolicy.c             | 13 +++++++------
->  mm/mremap.c                | 12 ++++--------
->  mm/msync.c                 |  4 ++--
->  mm/nommu.c                 |  7 ++++---
->  mm/pagewalk.c              |  2 +-
->  mm/shmem.c                 |  9 +++++----
->  mm/userfaultfd.c           |  4 ++--
->  mm/util.c                  |  4 ++--
->  mm/vma.c                   | 15 +++++++--------
->  mm/vma_exec.c              |  4 ++--
->  mm/vma_init.c              |  2 +-
->  24 files changed, 86 insertions(+), 83 deletions(-)
+On 7/8/26 5:34 PM, Srirangan Madhavan wrote:
+>> BTW, can this be applied cleanly against a Linus rc tag? If so please do that next rev. I understand you need the type2 stuff for testing.
+>> But preferably when posting, post it against a Linus tag if there are no symbol dependencies. I'd really like sashiko run a review through
+>> it and currently it is not able to. Thank you.
 > 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index ad20f7f8c179..653b81d08fe7 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -230,6 +230,7 @@ static inline bool thp_vma_suitable_order(struct vm_area_struct *vma,
->  
->  	/* Don't have to check pgoff for anonymous vma */
->  	if (!vma_is_anonymous(vma)) {
-> +		/* vma_start_pgoff() in mm.h so not available. */
->  		if (!IS_ALIGNED((vma->vm_start >> PAGE_SHIFT) - vma->vm_pgoff,
->  				hpage_size >> PAGE_SHIFT))
->  			return false;
-> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> index 2abaf99321e9..8390f50604d6 100644
-> --- a/include/linux/hugetlb.h
-> +++ b/include/linux/hugetlb.h
-> @@ -792,8 +792,7 @@ static inline pgoff_t hugetlb_linear_page_index(struct vm_area_struct *vma,
->  {
->  	struct hstate *h = hstate_vma(vma);
->  
-> -	return ((address - vma->vm_start) >> huge_page_shift(h)) +
-> -		(vma->vm_pgoff >> huge_page_order(h));
-> +	return linear_page_index(vma, address) >> huge_page_order(h);
->  }
->  
->  static inline bool order_is_gigantic(unsigned int order)
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index 644c0f25ae73..68a88d34a468 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -1101,7 +1101,7 @@ static inline pgoff_t linear_page_index(const struct vm_area_struct *vma,
->  	pgoff_t pgoff;
->  
->  	pgoff = linear_page_delta(vma, address);
-> -	pgoff += vma->vm_pgoff;
-> +	pgoff += vma_start_pgoff(vma);
->  	return pgoff;
->  }
->  
-> diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
-> index d27147603564..faa44aa3219b 100644
-> --- a/mm/damon/vaddr.c
-> +++ b/mm/damon/vaddr.c
-> @@ -12,6 +12,7 @@
->  #include <linux/mman.h>
->  #include <linux/mmu_notifier.h>
->  #include <linux/page_idle.h>
-> +#include <linux/pagemap.h>
->  #include <linux/pagewalk.h>
->  #include <linux/sched/mm.h>
->  
-> @@ -627,8 +628,8 @@ static void damos_va_migrate_dests_add(struct folio *folio,
->  	}
->  
->  	order = folio_order(folio);
-> -	ilx = vma->vm_pgoff >> order;
-> -	ilx += (addr - vma->vm_start) >> (PAGE_SHIFT + order);
-> +	ilx = vma_start_pgoff(vma) >> order;
-> +	ilx += linear_page_delta(vma, addr) >> order;
->  
->  	for (i = 0; i < dests->nr_dests; i++)
->  		weight_total += dests->weight_arr[i];
-> diff --git a/mm/debug.c b/mm/debug.c
-> index 77fa8fe1d641..497654b36f1a 100644
-> --- a/mm/debug.c
-> +++ b/mm/debug.c
-> @@ -163,7 +163,7 @@ void dump_vma(const struct vm_area_struct *vma)
->  		"flags: %#lx(%pGv)\n",
->  		vma, (void *)vma->vm_start, (void *)vma->vm_end, vma->vm_mm,
->  		(unsigned long)pgprot_val(vma->vm_page_prot),
-> -		vma->anon_vma, vma->vm_ops, vma->vm_pgoff,
-> +		vma->anon_vma, vma->vm_ops, vma_start_pgoff(vma),
->  		vma->vm_file, vma->vm_private_data,
->  #ifdef CONFIG_PER_VMA_LOCK
->  		refcount_read(&vma->vm_refcnt),
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 5af62e6abca5..bcb07b21a685 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3402,8 +3402,8 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
->  		 * of memory.
->  		 */
->  		struct vm_area_struct *vma = vmf->vma;
-> -		unsigned long start = vma->vm_pgoff;
-> -		unsigned long end = start + vma_pages(vma);
-> +		const unsigned long start = vma_start_pgoff(vma);
-> +		const unsigned long end = vma_end_pgoff(vma);
->  		unsigned long ra_end;
->  
->  		ra->order = exec_folio_order();
-> @@ -3921,7 +3921,8 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
->  		goto out;
->  	}
->  
-> -	addr = vma->vm_start + ((start_pgoff - vma->vm_pgoff) << PAGE_SHIFT);
-> +	addr = vma->vm_start +
-> +		((start_pgoff - vma_start_pgoff(vma)) << PAGE_SHIFT);
->  	vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd, addr, &vmf->ptl);
->  	if (!vmf->pte) {
->  		folio_unlock(folio);
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 2bccb0a53a0a..e94f56487225 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -180,7 +180,7 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
->  	 */
->  	if (!in_pf && shmem_file(vma->vm_file))
->  		return orders & shmem_allowable_huge_orders(file_inode(vma->vm_file),
-> -						   vma, vma->vm_pgoff, 0,
-> +						   vma, vma_start_pgoff(vma), 0,
->  						   forced_collapse);
->  
->  	if (!vma_is_anonymous(vma)) {
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index f45000149a78..d44a3ac5ee0a 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -1011,8 +1011,7 @@ static long region_count(struct resv_map *resv, long f, long t)
->  static pgoff_t vma_hugecache_offset(struct hstate *h,
->  			struct vm_area_struct *vma, unsigned long address)
->  {
-> -	return ((address - vma->vm_start) >> huge_page_shift(h)) +
-> -			(vma->vm_pgoff >> huge_page_order(h));
-> +	return linear_page_index(vma, address) >> huge_page_order(h);
->  }
->  
->  /*
-> @@ -5372,8 +5371,7 @@ static void unmap_ref_private(struct mm_struct *mm, struct vm_area_struct *vma,
->  	 * from page cache lookup which is in HPAGE_SIZE units.
->  	 */
->  	address = address & huge_page_mask(h);
-> -	pgoff = ((address - vma->vm_start) >> PAGE_SHIFT) +
-> -			vma->vm_pgoff;
-> +	pgoff = linear_page_index(vma, address);
->  	mapping = vma->vm_file->f_mapping;
->  
->  	/*
-> @@ -6771,7 +6769,7 @@ static unsigned long page_table_shareable(struct vm_area_struct *svma,
->  				struct vm_area_struct *vma,
->  				unsigned long addr, pgoff_t idx)
->  {
-> -	unsigned long saddr = ((idx - svma->vm_pgoff) << PAGE_SHIFT) +
-> +	unsigned long saddr = ((idx - vma_start_pgoff(svma)) << PAGE_SHIFT) +
->  				svma->vm_start;
->  	unsigned long sbase = saddr & PUD_MASK;
->  	unsigned long s_end = sbase + PUD_SIZE;
-> @@ -6856,8 +6854,7 @@ pte_t *huge_pmd_share(struct mm_struct *mm, struct vm_area_struct *vma,
->  		      unsigned long addr, pud_t *pud)
->  {
->  	struct address_space *mapping = vma->vm_file->f_mapping;
-> -	pgoff_t idx = ((addr - vma->vm_start) >> PAGE_SHIFT) +
-> -			vma->vm_pgoff;
-> +	const pgoff_t idx = linear_page_index(vma, addr);
->  	struct vm_area_struct *svma;
->  	unsigned long saddr;
->  	pte_t *spte = NULL;
-> diff --git a/mm/internal.h b/mm/internal.h
-> index 181e79f1d6a2..89e5b7efe256 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -1143,26 +1143,28 @@ static inline bool
->  folio_within_range(struct folio *folio, struct vm_area_struct *vma,
->  		unsigned long start, unsigned long end)
->  {
-> -	pgoff_t pgoff, addr;
-> -	unsigned long vma_pglen = vma_pages(vma);
-> +	const unsigned long vma_pglen = vma_pages(vma);
-> +	pgoff_t pgoff_folio, pgoff_vma_start;
-> +	unsigned long addr;
->  
->  	VM_WARN_ON_FOLIO(folio_test_ksm(folio), folio);
->  	if (start > end)
->  		return false;
->  
-> +	pgoff_folio = folio_pgoff(folio);
-> +	pgoff_vma_start = vma_start_pgoff(vma);
-> +
->  	if (start < vma->vm_start)
->  		start = vma->vm_start;
->  
->  	if (end > vma->vm_end)
->  		end = vma->vm_end;
->  
-> -	pgoff = folio_pgoff(folio);
-> -
->  	/* if folio start address is not in vma range */
-> -	if (!in_range(pgoff, vma->vm_pgoff, vma_pglen))
-> +	if (!in_range(pgoff_folio, pgoff_vma_start, vma_pglen))
->  		return false;
->  
-> -	addr = vma->vm_start + ((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
-> +	addr = vma->vm_start + ((pgoff_folio - pgoff_vma_start) << PAGE_SHIFT);
->  
->  	return !(addr < start || end - addr < folio_size(folio));
->  }
-> @@ -1234,15 +1236,16 @@ extern pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma);
->  static inline unsigned long vma_address(const struct vm_area_struct *vma,
->  		pgoff_t pgoff, unsigned long nr_pages)
->  {
-> +	const pgoff_t pgoff_start = vma_start_pgoff(vma);
->  	unsigned long address;
->  
-> -	if (pgoff >= vma->vm_pgoff) {
-> +	if (pgoff >= pgoff_start) {
->  		address = vma->vm_start +
-> -			((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
-> +			((pgoff - pgoff_start) << PAGE_SHIFT);
->  		/* Check for address beyond vma (or wrapped through 0?) */
->  		if (address < vma->vm_start || address >= vma->vm_end)
->  			address = -EFAULT;
-> -	} else if (pgoff + nr_pages - 1 >= vma->vm_pgoff) {
-> +	} else if (pgoff + nr_pages - 1 >= pgoff_start) {
->  		/* Test above avoids possibility of wrap to 0 on 32-bit */
->  		address = vma->vm_start;
->  	} else {
-> @@ -1266,7 +1269,8 @@ static inline unsigned long vma_address_end(struct page_vma_mapped_walk *pvmw)
->  		return pvmw->address + PAGE_SIZE;
->  
->  	pgoff = pvmw->pgoff + pvmw->nr_pages;
-> -	address = vma->vm_start + ((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
-> +	address = vma->vm_start +
-> +		((pgoff - vma_start_pgoff(vma)) << PAGE_SHIFT);
->  	/* Check for address beyond vma (or wrapped through 0?) */
->  	if (address < vma->vm_start || address > vma->vm_end)
->  		address = vma->vm_end;
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index bd5f86cf4bd8..ffef738d826c 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -2145,7 +2145,8 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
->  		spinlock_t *ptl;
->  		bool success = false;
->  
-> -		addr = vma->vm_start + ((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
-> +		addr = vma->vm_start +
-> +			((pgoff - vma_start_pgoff(vma)) << PAGE_SHIFT);
->  		if (addr & ~HPAGE_PMD_MASK ||
->  		    vma->vm_end < addr + HPAGE_PMD_SIZE)
->  			continue;
-> diff --git a/mm/madvise.c b/mm/madvise.c
-> index cd9bb077072c..6730c4200a93 100644
-> --- a/mm/madvise.c
-> +++ b/mm/madvise.c
-> @@ -253,7 +253,7 @@ static void shmem_swapin_range(struct vm_area_struct *vma,
->  			continue;
->  
->  		addr = vma->vm_start +
-> -			((xas.xa_index - vma->vm_pgoff) << PAGE_SHIFT);
-> +			((xas.xa_index - vma_start_pgoff(vma)) << PAGE_SHIFT);
->  		xas_pause(&xas);
->  		rcu_read_unlock();
->  
-> @@ -318,7 +318,7 @@ static long madvise_willneed(struct madvise_behavior *madv_behavior)
->  	mark_mmap_lock_dropped(madv_behavior);
->  	get_file(file);
->  	offset = (loff_t)(start - vma->vm_start)
-> -			+ ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
-> +			+ ((loff_t)vma_start_pgoff(vma) << PAGE_SHIFT);
->  	mmap_read_unlock(mm);
->  	vfs_fadvise(file, offset, end - start, POSIX_FADV_WILLNEED);
->  	fput(file);
-> @@ -1023,7 +1023,7 @@ static long madvise_remove(struct madvise_behavior *madv_behavior)
->  		return -EACCES;
->  
->  	offset = (loff_t)(start - vma->vm_start)
-> -			+ ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
-> +			+ ((loff_t)vma_start_pgoff(vma) << PAGE_SHIFT);
->  
->  	/*
->  	 * Filesystem's fallocate may need to take i_rwsem.  We need to
-> diff --git a/mm/mapping_dirty_helpers.c b/mm/mapping_dirty_helpers.c
-> index 737c407f4081..e0efa36e0a07 100644
-> --- a/mm/mapping_dirty_helpers.c
-> +++ b/mm/mapping_dirty_helpers.c
-> @@ -95,7 +95,7 @@ static int clean_record_pte(pte_t *pte, unsigned long addr,
->  
->  	if (pte_dirty(ptent)) {
->  		pgoff_t pgoff = ((addr - walk->vma->vm_start) >> PAGE_SHIFT) +
-> -			walk->vma->vm_pgoff - cwalk->bitmap_pgoff;
-> +			vma_start_pgoff(walk->vma) - cwalk->bitmap_pgoff;
->  		pte_t old_pte = ptep_modify_prot_start(walk->vma, addr, pte);
->  
->  		ptent = pte_mkclean(old_pte);
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 98c1a245f45a..f5eb06544ba4 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -725,10 +725,10 @@ static inline struct page *__vm_normal_page(struct vm_area_struct *vma,
->  				if (!pfn_valid(pfn))
->  					return NULL;
->  			} else {
-> -				unsigned long off = (addr - vma->vm_start) >> PAGE_SHIFT;
-> +				const pgoff_t index = linear_page_index(vma, addr);
->  
->  				/* Only CoW'ed anon folios are "normal". */
-> -				if (pfn == vma->vm_pgoff + off)
-> +				if (pfn == index)
->  					return NULL;
->  				if (!is_cow_mapping(vma->vm_flags))
->  					return NULL;
-> @@ -2643,7 +2643,7 @@ static int __vm_map_pages(struct vm_area_struct *vma, struct page **pages,
->  int vm_map_pages(struct vm_area_struct *vma, struct page **pages,
->  				unsigned long num)
->  {
-> -	return __vm_map_pages(vma, pages, num, vma->vm_pgoff);
-> +	return __vm_map_pages(vma, pages, num, vma_start_pgoff(vma));
->  }
->  EXPORT_SYMBOL(vm_map_pages);
->  
-> @@ -3298,7 +3298,8 @@ int vm_iomap_memory(struct vm_area_struct *vma, phys_addr_t start, unsigned long
->  	unsigned long pfn;
->  	int err;
->  
-> -	err = __simple_ioremap_prep(vm_len, vma->vm_pgoff, start, len, &pfn);
-> +	err = __simple_ioremap_prep(vm_len, vma_start_pgoff(vma), start, len,
-> +				    &pfn);
->  	if (err)
->  		return err;
->  
-> @@ -4342,15 +4343,15 @@ static inline void unmap_mapping_range_tree(struct address_space *mapping,
->  					    struct zap_details *details)
->  {
->  	struct vm_area_struct *vma;
-> -	unsigned long start, size;
->  	struct mmu_gather tlb;
->  
->  	mapping_interval_tree_foreach(vma, mapping, first_index, last_index) {
-> -		const pgoff_t start_idx = max(first_index, vma->vm_pgoff);
-> +		const pgoff_t start_idx = max(first_index, vma_start_pgoff(vma));
->  		const pgoff_t end_idx = min(last_index, vma_last_pgoff(vma)) + 1;
-> -
-> -		start = vma->vm_start + ((start_idx - vma->vm_pgoff) << PAGE_SHIFT);
-> -		size = (end_idx - start_idx) << PAGE_SHIFT;
-> +		const pgoff_t offset = start_idx - vma_start_pgoff(vma);
-> +		const unsigned long offset_bytes = offset << PAGE_SHIFT;
-> +		const unsigned long start = vma->vm_start + offset_bytes;
-> +		const unsigned long size = (end_idx - start_idx) << PAGE_SHIFT;
->  
->  		tlb_gather_mmu(&tlb, vma->vm_mm);
->  		zap_vma_range_batched(&tlb, vma, start, size, details);
-> @@ -5684,7 +5685,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
->  	} else if (nr_pages > 1) {
->  		pgoff_t idx = folio_page_idx(folio, page);
->  		/* The page offset of vmf->address within the VMA. */
-> -		pgoff_t vma_off = vmf->pgoff - vmf->vma->vm_pgoff;
-> +		pgoff_t vma_off = vmf->pgoff - vma_start_pgoff(vmf->vma);
->  		/* The index of the entry in the pagetable for fault page. */
->  		pgoff_t pte_off = pte_index(vmf->address);
->  
-> @@ -5796,7 +5797,7 @@ static vm_fault_t do_fault_around(struct vm_fault *vmf)
->  	pgoff_t nr_pages = READ_ONCE(fault_around_pages);
->  	pgoff_t pte_off = pte_index(vmf->address);
->  	/* The page offset of vmf->address within the VMA. */
-> -	pgoff_t vma_off = vmf->pgoff - vmf->vma->vm_pgoff;
-> +	pgoff_t vma_off = vmf->pgoff - vma_start_pgoff(vmf->vma);
->  	pgoff_t from_pte, to_pte;
->  	vm_fault_t ret;
->  
-> @@ -7274,7 +7275,7 @@ void print_vma_addr(char *prefix, unsigned long ip)
->  	if (vma && vma->vm_file) {
->  		struct file *f = vma->vm_file;
->  		ip -= vma->vm_start;
-> -		ip += vma->vm_pgoff << PAGE_SHIFT;
-> +		ip += vma_start_pgoff(vma) << PAGE_SHIFT;
->  		printk("%s%pD[%lx,%lx+%lx]", prefix, f, ip,
->  				vma->vm_start,
->  				vma->vm_end - vma->vm_start);
-> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> index 36699fabd3c2..650cdb23354a 100644
-> --- a/mm/mempolicy.c
-> +++ b/mm/mempolicy.c
-> @@ -2048,8 +2048,8 @@ struct mempolicy *get_vma_policy(struct vm_area_struct *vma,
->  		pol = get_task_policy(current);
->  	if (pol->mode == MPOL_INTERLEAVE ||
->  	    pol->mode == MPOL_WEIGHTED_INTERLEAVE) {
-> -		*ilx += vma->vm_pgoff >> order;
-> -		*ilx += (addr - vma->vm_start) >> (PAGE_SHIFT + order);
-> +		*ilx += vma_start_pgoff(vma) >> order;
-> +		*ilx += linear_page_delta(vma, addr) >> order;
->  	}
->  	return pol;
->  }
-> @@ -3250,16 +3250,17 @@ EXPORT_SYMBOL_FOR_MODULES(mpol_shared_policy_init, "kvm");
->  int mpol_set_shared_policy(struct shared_policy *sp,
->  			struct vm_area_struct *vma, struct mempolicy *pol)
->  {
-> -	int err;
-> +	const pgoff_t pgoff = vma_start_pgoff(vma);
-> +	const pgoff_t pgoff_end = vma_end_pgoff(vma);
->  	struct sp_node *new = NULL;
-> -	unsigned long sz = vma_pages(vma);
-> +	int err;
->  
->  	if (pol) {
-> -		new = sp_alloc(vma->vm_pgoff, vma->vm_pgoff + sz, pol);
-> +		new = sp_alloc(pgoff, pgoff_end, pol);
->  		if (!new)
->  			return -ENOMEM;
->  	}
-> -	err = shared_policy_replace(sp, vma->vm_pgoff, vma->vm_pgoff + sz, new);
-> +	err = shared_policy_replace(sp, pgoff, pgoff_end, new);
->  	if (err && new)
->  		sp_free(new);
->  	return err;
-> diff --git a/mm/mremap.c b/mm/mremap.c
-> index e9c8b1d05832..079a0ba0c4a7 100644
-> --- a/mm/mremap.c
-> +++ b/mm/mremap.c
-> @@ -948,8 +948,7 @@ static unsigned long vrm_set_new_addr(struct vma_remap_struct *vrm)
->  	struct vm_area_struct *vma = vrm->vma;
->  	unsigned long map_flags = 0;
->  	/* Page Offset _into_ the VMA. */
-> -	pgoff_t internal_pgoff = (vrm->addr - vma->vm_start) >> PAGE_SHIFT;
-> -	pgoff_t pgoff = vma->vm_pgoff + internal_pgoff;
-> +	const pgoff_t pgoff = linear_page_index(vma, vrm->addr);
->  	unsigned long new_addr = vrm_implies_new_addr(vrm) ? vrm->new_addr : 0;
->  	unsigned long res;
->  
-> @@ -1255,12 +1254,10 @@ static void unmap_source_vma(struct vma_remap_struct *vrm)
->  static int copy_vma_and_data(struct vma_remap_struct *vrm,
->  			     struct vm_area_struct **new_vma_ptr)
->  {
-> -	unsigned long internal_offset = vrm->addr - vrm->vma->vm_start;
-> -	unsigned long internal_pgoff = internal_offset >> PAGE_SHIFT;
-> -	unsigned long new_pgoff = vrm->vma->vm_pgoff + internal_pgoff;
-> -	unsigned long moved_len;
-> +	const unsigned long new_pgoff = linear_page_index(vrm->vma, vrm->addr);
->  	struct vm_area_struct *vma = vrm->vma;
->  	struct vm_area_struct *new_vma;
-> +	unsigned long moved_len;
->  	int err = 0;
->  	PAGETABLE_MOVE(pmc, NULL, NULL, vrm->addr, vrm->new_addr, vrm->old_len);
->  
-> @@ -1802,8 +1799,7 @@ static int check_prep_vma(struct vma_remap_struct *vrm)
->  		vrm->populate_expand = true;
->  
->  	/* Need to be careful about a growing mapping */
-> -	pgoff = (addr - vma->vm_start) >> PAGE_SHIFT;
-> -	pgoff += vma->vm_pgoff;
-> +	pgoff = linear_page_index(vma, addr);
->  	if (pgoff + (new_len >> PAGE_SHIFT) < pgoff)
->  		return -EINVAL;
->  
-> diff --git a/mm/msync.c b/mm/msync.c
-> index ac4c9bfea2e7..90b491a27a14 100644
-> --- a/mm/msync.c
-> +++ b/mm/msync.c
-> @@ -12,6 +12,7 @@
->  #include <linux/mm.h>
->  #include <linux/mman.h>
->  #include <linux/file.h>
-> +#include <linux/pagemap.h>
->  #include <linux/syscalls.h>
->  #include <linux/sched.h>
->  
-> @@ -85,8 +86,7 @@ SYSCALL_DEFINE3(msync, unsigned long, start, size_t, len, int, flags)
->  			goto out_unlock;
->  		}
->  		file = vma->vm_file;
-> -		fstart = (start - vma->vm_start) +
-> -			 ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
-> +		fstart = (loff_t)linear_page_index(vma, start) << PAGE_SHIFT;
->  		fend = fstart + (min(end, vma->vm_end) - start) - 1;
->  		start = vma->vm_end;
->  		if ((flags & MS_SYNC) && file &&
-> diff --git a/mm/nommu.c b/mm/nommu.c
-> index 6d168f69763f..60560b2c457e 100644
-> --- a/mm/nommu.c
-> +++ b/mm/nommu.c
-> @@ -975,7 +975,7 @@ static int do_mmap_private(struct vm_area_struct *vma,
->  		/* read the contents of a file into the copy */
->  		loff_t fpos;
->  
-> -		fpos = vma->vm_pgoff;
-> +		fpos = vma_start_pgoff(vma);
->  		fpos <<= PAGE_SHIFT;
->  
->  		ret = kernel_read(vma->vm_file, base, len, &fpos);
-> @@ -1355,7 +1355,8 @@ static int split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
->  	delete_nommu_region(vma->vm_region);
->  	if (new_below) {
->  		vma->vm_region->vm_start = vma->vm_start = addr;
-> -		vma->vm_region->vm_pgoff = vma->vm_pgoff += npages;
-> +		vma->vm_pgoff += npages;
-> +		vma->vm_region->vm_pgoff = vma_start_pgoff(vma);
->  	} else {
->  		vma->vm_region->vm_end = vma->vm_end = addr;
->  		vma->vm_region->vm_top = addr;
-> @@ -1603,7 +1604,7 @@ int vm_iomap_memory(struct vm_area_struct *vma, phys_addr_t start, unsigned long
->  	unsigned long pfn = start >> PAGE_SHIFT;
->  	unsigned long vm_len = vma->vm_end - vma->vm_start;
->  
-> -	pfn += vma->vm_pgoff;
-> +	pfn += vma_start_pgoff(vma);
->  	return io_remap_pfn_range(vma, vma->vm_start, pfn, vm_len, vma->vm_page_prot);
->  }
->  EXPORT_SYMBOL(vm_iomap_memory);
-> diff --git a/mm/pagewalk.c b/mm/pagewalk.c
-> index 98d090ede077..0a3bbff57d46 100644
-> --- a/mm/pagewalk.c
-> +++ b/mm/pagewalk.c
-> @@ -813,7 +813,7 @@ int walk_page_mapping(struct address_space *mapping, pgoff_t first_index,
->  	mapping_interval_tree_foreach(vma, mapping, first_index,
->  				      first_index + nr - 1) {
->  		/* Clip to the vma */
-> -		vba = vma->vm_pgoff;
-> +		vba = vma_start_pgoff(vma);
->  		vea = vba + vma_pages(vma);
->  		cba = first_index;
->  		cba = max(cba, vba);
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index b51f83c970bb..4e7f6bc7a389 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -1032,6 +1032,8 @@ unsigned long shmem_swap_usage(struct vm_area_struct *vma)
->  	struct inode *inode = file_inode(vma->vm_file);
->  	struct shmem_inode_info *info = SHMEM_I(inode);
->  	struct address_space *mapping = inode->i_mapping;
-> +	const pgoff_t pgoff = vma_start_pgoff(vma);
-> +	const pgoff_t pgoff_end = vma_end_pgoff(vma);
->  	unsigned long swapped;
->  
->  	/* Be careful as we don't hold info->lock */
-> @@ -1045,12 +1047,11 @@ unsigned long shmem_swap_usage(struct vm_area_struct *vma)
->  	if (!swapped)
->  		return 0;
->  
-> -	if (!vma->vm_pgoff && vma->vm_end - vma->vm_start >= inode->i_size)
-> +	if (!pgoff && vma->vm_end - vma->vm_start >= inode->i_size)
->  		return swapped << PAGE_SHIFT;
->  
->  	/* Here comes the more involved part */
-> -	return shmem_partial_swap_usage(mapping, vma->vm_pgoff,
-> -					vma->vm_pgoff + vma_pages(vma));
-> +	return shmem_partial_swap_usage(mapping, pgoff, pgoff_end);
->  }
->  
->  /*
-> @@ -2839,7 +2840,7 @@ static struct mempolicy *shmem_get_policy(struct vm_area_struct *vma,
->  	 * by page order, as in shmem_get_pgoff_policy() and get_vma_policy()).
->  	 */
->  	*ilx = inode->i_ino;
-> -	index = ((addr - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff;
-> +	index = linear_page_index(vma, addr);
->  	return mpol_shared_policy_lookup(&SHMEM_I(inode)->policy, index);
->  }
->  
-> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> index 246af12bf801..bf4518f4449d 100644
-> --- a/mm/userfaultfd.c
-> +++ b/mm/userfaultfd.c
-> @@ -481,7 +481,7 @@ static void mfill_retry_state_save(struct mfill_retry_state *s,
->  {
->  	s->flags = vma_flags_and_mask(&vma->flags, MFILL_RETRY_STATE_VMA_FLAGS);
->  	s->ops = vma_uffd_ops(vma);
-> -	s->pgoff = vma->vm_pgoff;
-> +	s->pgoff = vma_start_pgoff(vma);
->  
->  	if (vma->vm_file)
->  		s->file = get_file(vma->vm_file);
-> @@ -507,7 +507,7 @@ static bool mfill_retry_state_changed(struct mfill_retry_state *state,
->  
->  	/* VMA was file backed, but file, inode or offset has changed */
->  	if (!vma->vm_file || vma->vm_file->f_inode != state->file->f_inode ||
-> -	    state->file != vma->vm_file || vma->vm_pgoff != state->pgoff)
-> +	    state->file != vma->vm_file || vma_start_pgoff(vma) != state->pgoff)
->  		return true;
->  
->  	return false;
-> diff --git a/mm/util.c b/mm/util.c
-> index af2c2103f0d9..61e6d32b2c16 100644
-> --- a/mm/util.c
-> +++ b/mm/util.c
-> @@ -1188,7 +1188,7 @@ void compat_set_desc_from_vma(struct vm_area_desc *desc,
->  	desc->start = vma->vm_start;
->  	desc->end = vma->vm_end;
->  
-> -	desc->pgoff = vma->vm_pgoff;
-> +	desc->pgoff = vma_start_pgoff(vma);
->  	desc->vm_file = vma->vm_file;
->  	desc->vma_flags = vma->flags;
->  	desc->page_prot = vma->vm_page_prot;
-> @@ -1379,7 +1379,7 @@ static int call_vma_mapped(struct vm_area_struct *vma)
->  	if (!vm_ops || !vm_ops->mapped)
->  		return 0;
->  
-> -	err = vm_ops->mapped(vma->vm_start, vma->vm_end, vma->vm_pgoff,
-> +	err = vm_ops->mapped(vma->vm_start, vma->vm_end, vma_start_pgoff(vma),
->  			     vma->vm_file, &vm_private_data);
->  	if (err)
->  		return err;
-> diff --git a/mm/vma.c b/mm/vma.c
-> index dc4c2c1077f4..ee3a8ca13d07 100644
-> --- a/mm/vma.c
-> +++ b/mm/vma.c
-> @@ -967,10 +967,9 @@ static __must_check struct vm_area_struct *vma_merge_existing_range(
->  		 *   prev   middle   next
->  		 *  extend  delete  delete
->  		 */
-> -
->  		vmg->start = prev->vm_start;
->  		vmg->end = next->vm_end;
-> -		vmg->pgoff = prev->vm_pgoff;
-> +		vmg->pgoff = vma_start_pgoff(prev);
->  
->  		/*
->  		 * We already ensured anon_vma compatibility above, so now it's
-> @@ -987,9 +986,8 @@ static __must_check struct vm_area_struct *vma_merge_existing_range(
->  		 *   prev     middle
->  		 *  extend shrink/delete
->  		 */
-> -
->  		vmg->start = prev->vm_start;
-> -		vmg->pgoff = prev->vm_pgoff;
-> +		vmg->pgoff = vma_start_pgoff(prev);
->  
->  		if (!vmg->__remove_middle)
->  			vmg->__adjust_middle_start = true;
-> @@ -1011,13 +1009,13 @@ static __must_check struct vm_area_struct *vma_merge_existing_range(
->  
->  		if (vmg->__remove_middle) {
->  			vmg->end = next->vm_end;
-> -			vmg->pgoff = next->vm_pgoff - pglen;
-> +			vmg->pgoff = vma_start_pgoff(next) - pglen;
->  		} else {
->  			/* We shrink middle and expand next. */
->  			vmg->__adjust_next_start = true;
->  			vmg->start = middle->vm_start;
->  			vmg->end = start;
-> -			vmg->pgoff = middle->vm_pgoff;
-> +			vmg->pgoff = vma_start_pgoff(middle);
->  		}
->  
->  		err = dup_anon_vma(next, middle, &anon_dup);
-> @@ -1126,7 +1124,7 @@ struct vm_area_struct *vma_merge_new_range(struct vma_merge_struct *vmg)
->  	if (can_merge_left) {
->  		vmg->start = prev->vm_start;
->  		vmg->target = prev;
-> -		vmg->pgoff = prev->vm_pgoff;
-> +		vmg->pgoff = vma_start_pgoff(prev);
->  
->  		/*
->  		 * If this merge would result in removal of the next VMA but we
-> @@ -1957,7 +1955,8 @@ struct vm_area_struct *copy_vma(struct vm_area_struct **vmap,
->  			VM_BUG_ON_VMA(faulted_in_anon_vma, new_vma);
->  			*vmap = vma = new_vma;
->  		}
-> -		*need_rmap_locks = (new_vma->vm_pgoff <= vma->vm_pgoff);
-> +		*need_rmap_locks =
-> +			(vma_start_pgoff(new_vma) <= vma_start_pgoff(vma));
->  	} else {
->  		new_vma = vm_area_dup(vma);
->  		if (!new_vma)
-> diff --git a/mm/vma_exec.c b/mm/vma_exec.c
-> index 5cee8b7efa0f..e3644a3042e2 100644
-> --- a/mm/vma_exec.c
-> +++ b/mm/vma_exec.c
-> @@ -37,7 +37,7 @@ int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift)
->  	unsigned long new_end = old_end - shift;
->  	VMA_ITERATOR(vmi, mm, new_start);
->  	VMG_STATE(vmg, mm, &vmi, new_start, old_end, EMPTY_VMA_FLAGS,
-> -		  vma->vm_pgoff);
-> +		  vma_start_pgoff(vma));
->  	struct vm_area_struct *next;
->  	struct mmu_gather tlb;
->  	PAGETABLE_MOVE(pmc, vma, vma, old_start, new_start, length);
-> @@ -89,7 +89,7 @@ int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift)
->  
->  	vma_prev(&vmi);
->  	/* Shrink the vma to just the new range */
-> -	return vma_shrink(&vmi, vma, new_start, new_end, vma->vm_pgoff);
-> +	return vma_shrink(&vmi, vma, new_start, new_end, vma_start_pgoff(vma));
->  }
->  
->  /*
-> diff --git a/mm/vma_init.c b/mm/vma_init.c
-> index 3c0b65950510..a459669a1654 100644
-> --- a/mm/vma_init.c
-> +++ b/mm/vma_init.c
-> @@ -46,7 +46,7 @@ static void vm_area_init_from(const struct vm_area_struct *src,
->  	dest->vm_start = src->vm_start;
->  	dest->vm_end = src->vm_end;
->  	dest->anon_vma = src->anon_vma;
-> -	dest->vm_pgoff = src->vm_pgoff;
-> +	dest->vm_pgoff = vma_start_pgoff(src);
->  	dest->vm_file = src->vm_file;
->  	dest->vm_private_data = src->vm_private_data;
->  	vm_flags_init(dest, src->vm_flags);
-> -- 
-> 2.54.0
+> Thanks Dave.  And sorry for that mixup of the RFC patch & the applicability issue.
 > 
+>   I rebased the series onto v7.2-rc2, folded the cxl_bus HDM restore
+>   follow-up into the same series as patch 11/11, and verified that b4 applies
+>   the full series cleanly against that base. I'll send this as v9 (deferring other comments)
+> 
+>   I do not have a public branch ready yet, but I can publish one if it would
+>   still help review or testing.
+
+Thanks! That's typically helpful if the series has a lot of dependencies. If it applies cleanly to Linus RC then it's not as necessary.
+
+DJ
+
+> 
+> ________________________________________
+> From: Dave Jiang <dave.jiang@intel.com>
+> Sent: Tuesday, July 7, 2026 3:45 PM
+> To: Srirangan Madhavan; Alison Schofield; Bjorn Helgaas; Dan Williams; Davidlohr Bueso; Ira Weiny; Jonathan Cameron; Vishal Verma; linux-cxl@vger.kernel.org; linux-pci@vger.kernel.org; linux-kernel@vger.kernel.org
+> Cc: Alex Williamson; Vikram Sethi; Alex Williamson; Dan Williams; Sai Yashwanth Reddy Kancherla; Vishal Aslot; Manish Honap; Jiandi An; Richard Cheng; linux-tegra@vger.kernel.org
+> Subject: Re: [PATCH v8 00/10] PCI/CXL: Add CXL reset support for Type 2 devices
+> 
+> External email: Use caution opening links or attachments
+> 
+> 
+> On 7/6/26 4:13 PM, Dave Jiang wrote:
+>>
+>>
+>> On 7/3/26 3:04 PM, Srirangan Madhavan wrote:
+>>> Hi folks!
+>>>
+>>> This series adds CXL Reset support for CXL Type 2 devices through the
+>>> existing PCI reset_method ABI. The reset sequence follows the CXL 4.0
+>>> specification [1], including CXL.cache disable, optional cache
+>>> writeback, CXL Reset initiation, ResetComplete polling, and ResetError
+>>> reporting.
+>>>
+>>> The userspace ABI is the existing PCI reset interface:
+>>>
+>>>     /sys/bus/pci/devices/.../reset_method
+>>>     /sys/bus/pci/devices/.../reset
+>>>
+>>> Userspace can select "cxl_reset" in reset_method and then trigger reset
+>>> through the existing reset attribute.
+>>>
+>>> Following Dan's v6 feedback, this replaces the proposed memdev sysfs ABI
+>>> with the existing PCI reset_method interface.
+>>>
+>>> v8 changes from v7 [2]:
+>>> - Drop the PCI helper export patch.
+>>> - Drop the multi-function sibling coordination patch. cxl_reset is only
+>>>   exposed as a function-scoped reset method when the CXL reset scope is
+>>>   limited to the target function.
+>>> - Keep the reset-scope discovery needed to reject non-function-scoped
+>>>   CXL resets.
+>>> - Cache HDM location as BAR-relative metadata instead of keeping an
+>>>   enum-time MMIO mapping.
+>>> - Restore HDM through a temporary mapping based on the current BAR
+>>>   assignment after PCI config state is restored.
+>>> - Cache raw HDM decoder register state so uncommitted decoders can be
+>>>   restored as uncommitted, while committed decoders are recommitted
+>>>   through the normal HDM commit flow.
+>>> - Share HDM decoder decode and validation between normal CXL core
+>>>   enumeration and early PCI HDM caching.
+>>> - Put cxl_reset ahead of FLR in reset_method priority because FLR does
+>>>   not reset CXL.cache or CXL.mem protocol state.
+>>>
+>>> Motivation:
+>>> -----------
+>>> - Type 2 devices need a CXL-specific reset mechanism beyond existing PCI
+>>>   reset methods.
+>>>
+>>> - FLR does not reset CXL.cache or CXL.mem protocol state. CXL Reset is
+>>>   the architectural reset mechanism for those protocols.
+>>>
+>>> - The PCI reset_method ABI lets userspace select this narrower CXL reset
+>>>   before falling back to broader bus reset methods.
+>>>
+>>> Change Description:
+>>> -------------------
+>>>
+>>> Patch 1: cxl/hdm: Split decoder programming into a reusable helper
+>>> - Move shared decoder settings to include/cxl/cxl.h.
+>>> - Factor low-level HDM register programming into cxl_commit().
+>>>
+>>> Patch 2: cxl/hdm: Cache decoder settings on PCI devices
+>>> - Cache CXL core HDM decoder settings in pci_dev->hdm.
+>>> - Refresh the cache as decoders are enumerated, committed, or reset.
+>>>
+>>> Patch 3: cxl/hdm: Share HDM decoder decode logic
+>>> - Share HDM decoder decode and validation between normal CXL core
+>>>   enumeration and early PCI HDM cache setup.
+>>>
+>>> Patch 4: cxl/hdm: Cache endpoint decoder settings during PCI enumeration
+>>> - Snapshot endpoint HDM state during PCI capability initialization.
+>>> - Cache the HDM register locator as BAR-relative metadata.
+>>> - Cache raw decoder register state in addition to committed decoder
+>>>   settings.
+>>>
+>>> Patch 5: PCI/CXL: Add CXL Device Reset helper
+>>> - Add the internal DVSEC reset sequence.
+>>> - Disable CXL.cache, perform cache writeback where supported, initiate
+>>>   CXL Reset, and wait for completion.
+>>>
+>>> Patch 6: PCI/CXL: Validate HDM ranges before CXL reset
+>>> - Collect enabled cached HDM ranges.
+>>> - Reject reset if affected ranges are busy.
+>>> - Invalidate CPU caches when runtime cache-invalidation support is
+>>>   available, otherwise continue after warning.
+>>>
+>>> Patch 7: PCI/CXL: Discover the CXL reset scope
+>>> - Discover whether CXL Reset is function-scoped using the Non-CXL
+>>>   Function Map and CXL cache/mem capability bits.
+>>>
+>>> Patch 8: cxl/pci: Restore CXL HDM state after PCI reset
+>>> - Restore cached global and per-decoder HDM state after reset.
+>>> - Re-map HDM registers from the current BAR assignment during restore.
+>>> - Replay raw decoder state for uncommitted decoders and recommit
+>>>   decoders that were committed before reset.
+>>>
+>>> Patch 9: PCI/CXL: Expose CXL Reset as a PCI reset method
+>>> - Add "cxl_reset" to the PCI reset_method table for Type 2 reset-capable
+>>>   CXL devices.
+>>> - Prioritize cxl_reset ahead of FLR.
+>>>
+>>> Patch 10: Documentation/ABI: Document CXL Reset PCI reset method
+>>> - Document the new reset_method value and reset behavior.
+>>>
+>>> The CPU cache invalidation step depends on
+>>> cpu_cache_invalidate_memregion() support for the affected address ranges.
+>>> If no runtime provider is available, the kernel emits a warning and
+>>> continues after the affected HDM ranges have been reserved.
+>>>
+>>> Example:
+>>>
+>>>     echo cxl_reset > /sys/bus/pci/devices/0000:bb:dd.f/reset_method
+>>>     echo 1 > /sys/bus/pci/devices/0000:bb:dd.f/reset
+>>>
+>>> Testing:
+>>> - Ran 100 iterations of cxl_reset through the PCI reset sysfs ABI on a
+>>>   CXL Type 2 device. All iterations completed successfully and
+>>>   ResetComplete was observed.
+>>> - Exercised cxl_bus reset separately with an add-on HDM restore patch.
+>>>
+>>> References:
+>>> [1] https://computeexpresslink.org/wp-content/uploads/2026/02/CXL-Specification_rev4p0_ver1p0_2026February26_clean_evalcopy_v2.pdf
+>>> [2] https://lore.kernel.org/linux-cxl/20260623032453.3404772-1-smadhavan@nvidia.com/
+>>> [3] https://lore.kernel.org/linux-cxl/20260306080026.116789-1-smadhavan@nvidia.com/
+>>>
+>>> Srirangan Madhavan (10):
+>>>   cxl/hdm: Split decoder programming into a reusable helper
+>>>   cxl/hdm: Cache decoder settings on PCI devices
+>>>   cxl/hdm: Share HDM decoder decode logic
+>>>   cxl/hdm: Cache endpoint decoder settings during PCI enumeration
+>>>   PCI/CXL: Add CXL Device Reset helper
+>>>   PCI/CXL: Validate HDM ranges before CXL reset
+>>>   PCI/CXL: Discover the CXL reset scope
+>>>   cxl/pci: Restore CXL HDM state after PCI reset
+>>>   PCI/CXL: Expose CXL Reset as a PCI reset method
+>>>   Documentation/ABI: Document CXL Reset PCI reset method
+>>>
+>>>  Documentation/ABI/testing/sysfs-bus-pci |   14 +
+>>>  drivers/cxl/Kconfig                     |    4 +
+>>>  drivers/cxl/core/Makefile               |    2 +-
+>>>  drivers/cxl/core/hdm.c                  |  257 ++---
+>>>  drivers/cxl/core/region.c               |    6 +-
+>>>  drivers/cxl/core/regs.c                 |    4 +
+>>>  drivers/cxl/core/reset.c                | 1354 +++++++++++++++++++++++
+>>>  drivers/cxl/cxl.h                       |   43 -
+>>>  drivers/pci/pci.c                       |    2 +
+>>>  drivers/pci/probe.c                     |    3 +
+>>>  include/cxl/cxl.h                       |  102 +-
+>>>  include/linux/pci.h                     |    8 +-
+>>>  include/uapi/linux/pci_regs.h           |   15 +
+>>>  tools/testing/cxl/test/cxl.c            |   10 +-
+>>>  14 files changed, 1615 insertions(+), 209 deletions(-)
+>>>  create mode 100644 drivers/cxl/core/reset.c
+>>>
+>>> base-commit: 90cf2e0d702c8a132ccbe72e7687f33c04c14658
+>>
+>>
+>> Hi Srirangan,
+>> I am not able to apply the patch series using b4 with the above base commit.
+>> b4 picks up the last RFC patch as the first patch and fails to apply. However, skipping it b4 is still having trouble. Can you push a public git branch somewhere please? Also in the future the last RFC patch should be labeled 11/11. Thanks!
+>>
+> 
+> BTW, can this be applied cleanly against a Linus rc tag? If so please do that next rev. I understand you need the type2 stuff for testing. But preferably when posting, post it against a Linus tag if there are no symbol dependencies. I'd really like sashiko run a review through it and currently it is not able to. Thank you.
+> 
+
