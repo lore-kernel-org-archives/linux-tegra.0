@@ -1,102 +1,65 @@
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012052.outbound.protection.outlook.com [52.101.126.52])
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012042.outbound.protection.outlook.com [52.101.126.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2469A14A60F;
-	Thu,  9 Jul 2026 02:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281A9346FB3;
+	Thu,  9 Jul 2026 02:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783564301; cv=fail; b=rIxBJgKQB/IxUd9Yu9kRAWzYBWnKueGOrb1Rq9IrkNwcRrXOlJlp3kjtUk1rOxt9AftNKuQbJXwxfbTEeNmihhnF/wUjZ6tTETQ7XKYv+wdFF2uebGYRnUGQXufAG7lJMzTS69bjvdBgYudyKyAC1f4WfftEvDWfZqqjUSMnDW0=
+	t=1783564357; cv=fail; b=jZeslvVkVsX/RYvgA/4q+QGhKlAmgvvGEK6uRflV/dj31zsODgK5C5nHaN1dZSkB8n2ObCN1gXuILEGclFljeifLxeZJm25Vjdqly1hBGAPhK1uuc/pNVznhb3KgkfmfN+4qZpkotEUxsWIMbqWTdDvgqAEgL0Zvm2XqP5tfhXs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783564301; c=relaxed/simple;
-	bh=znMPjn/4IGaBlCiq5LG9W+TSBq1Cl6QNqKV8sEHd2mM=;
-	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=b5ezmZxLsOEqBdVDqXEVta5o6/3+sElK/cwiBJRGQQHa19RoQjr2gJpraVWq9wJhD15fqXJB3W8L6TNS96HcuZRaWpdPw0veAHy/5S6Ffh7q7TpD4HtvpPNo+CBKDt83ocCt2EJWwODHvjuVR1BPiY3LC0U9RiwVWIySxM9BGF8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=KwFXQ/xV; arc=fail smtp.client-ip=52.101.126.52
+	s=arc-20240116; t=1783564357; c=relaxed/simple;
+	bh=PSkJQG5yA5mB/RPHaAcdhldS2wCDXXMV/DdSQLHIe1Y=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Btp8YnnSyKek4xORj+gV7IeK437dasTYykA+f2V/2Cpjo3Xj0yX0Mw5MvrGnsgFL5gMp9cp4wu9HKbG+G9GeMR4CYtvVSIk6zBorlBXFXvhKrtiUhi/TvW76FmldaCzXKrs6WFXctNHROJJ/M987NQCLTczCBLFv0qqllvBpU6I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=mLhkxMRT; arc=fail smtp.client-ip=52.101.126.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="KwFXQ/xV"
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="mLhkxMRT"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qHu5emWwIc+uGdLMCWmtc+HuliYBqFQFj69Eb/6qip/xiZIhjPJcoivwGM6/E45cIQQMhcypwwvdUMIcLZKdGKaoB6jMwtCAHYw/fs4+53IM+cLDOEWjkfYUvs/iVPA0HGtGhmVIgUwXj8AnL+2udtEhSPH8wniQr0mGPNI+Jast+ovKwI8XQG5o40SB4wRIW2SSLGgGUYqFxXsphSIDuhjQSOHAI2v7EDhpIQk3/46YPVGX+3dfmNIAxT6Se/SWUd4s6CgROFNAKzbo6Av4Pd0kdJsn9/hiTSFVsfbRSw0pbFU5c4FKcauzZz/nalWucMGD2oEZpTvix58+iFEmvw==
+ b=deIcj45YzQw7UGx8lls/35xOssPFWgvfebslz//EVkZ3XQQeGaB2v9uUe34ILE4+m9+cS/iZOBemPqTZYhfKKEkrsIyoUQoMbmc3rE0Mo9QHBwjHINpqxjGkFEfXYfdg71Bl26DuI/G7bg+30VCR+GbxS40YM/VZq5dtLWv/w1aS/SkI6Dh8owRL/dL5/KrYpPt664J+bFlLMb4Dkm8xfI2AyQ2PdQSer7kONd8eBVqOnwFOttHwlp1o3c/oK9h95cGOzv2E8xBlGtbHiPeYsDbg+lKHUvWHp1T7MGgEOtUjDVgLzjAiahXNrIaOQQlY63Xz7zQunghTd1hMI8Ng9w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Zb15SH/XYFa+RyS0cTGgR/gZagBNPGGjTMJKmIURz8M=;
- b=xtSAF7ki0R7RdTyVNixnHBgVXyiFOtg4Wk+qbVQjzlIc6yqTM0JLgBye52Q+YLPH2pe6DekT8hj0FiXF27nDZvO6mcZlqkep3v5KI4xX1YeMAP+Z+U2vQOPc7+lOUkIdXaWAVU5EOIstFWYJA3YYcvG0DGFWukPVZsOejZw3fvce7kGM4s9SlI8j7j2LckqFFhfzwpqtQ7aemEVCGtcMvPDkDZf9hHjzzxe0CSRuOKZ3XpAIzrE7L00btSa9d9yYSN88142UiFAiPV5TdSbinP0KuX6Zrkdzh+3oAIMRsx2dv0jXBSxKENYnBQlJmB2Zbauhoy6Ax9bP5dGb6lalQQ==
+ bh=WNI4Aa2dEkdfLZTYxjsix6n1T+pweP7JwapvcKHaYNI=;
+ b=tTgxKjiz0BLLcKd2YnQSG1gGPa4w21aTOWNQBjkpMEFURJv1GF1p+qenT+noDMXJQX49oxbETcldy8KePp2Fy2mjzeO0rd38kFAyoFwYYyGizaTyaWGVTJnt6TvPCDg40HldIxZcEXV9wrPuByukCDXqSVG6NR61Auyl5Lay8bgXBLHFSqRGv2hU1UxF/KyXhzltc4ME3hFcyvFr522nTYqhkSoNrPCxstQLkaXmNNhv+WnYs0aFvqTtkgw/IftwjzkB40xfozK+lsLxnTr4yonx5fDloctWqVhkPc0RkSEsia+Q64fspgSgoPoJcZelzTtcu1gTEO/uhLC5bkseKw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
  dkim=pass header.d=vivo.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Zb15SH/XYFa+RyS0cTGgR/gZagBNPGGjTMJKmIURz8M=;
- b=KwFXQ/xVozptnhlCLkFe+wIw8eifW3MDFgXMgUgzoA1tU1ReYPmC6D/8adYynMvVeDEwa7iRT8ZPAxTLv5L/H3lkXtLz1of3gA+zOZuESdkLh2HPTggQpmF4IpOS3uClYI/iVBxSdTsdQvB1zp0TK9ZcVjFrCrS/qZi18LzVubRZFk1KY0imE8N0XRDTfX7w2hr0mRL4cuGZ0A8JHgaVvbzjmhLtX+7gk5zhAFDYdLnL0G8CsfguMVZxBqi5zYaEnA7DOoh883TL4yftoM7zxreInxXSu/bi8mTo2lQEw6fHhBlZ2sZnsq7h7yWk4byuEf+tqAd7HiJZs8bU7fq7Wg==
+ bh=WNI4Aa2dEkdfLZTYxjsix6n1T+pweP7JwapvcKHaYNI=;
+ b=mLhkxMRT/9k1huhO+uQ/j50usfb2UJwhuL+Ks1vEjh4oDdRzFwTvztoVRCUcO6fUs98hO0edENLs1BRebg0kATvYv2JPW4XkfGkAcsVv4SF6p1nfscEjcwKiPmoXZ8Kuqc9zTYkLN81tYiZ+Ykfe3rEN+IFW6RF5JcdfKEGsBiTkRMS7WdSgwK0om2ubL2PqgdOLe+JRkLCBsCBBZxCvoIZW5m9Wj+1mEv8KFngltg1vPDNxJQULNEhxVSCVQ3BPEiyuC3wUUikR4Mg8LKvDNzq1Xddhcqs8yBkg09LgTmqMmj+J/Bapo4/pzaoesCVGj0CANcNlB0O7kJQ5AKl2Zw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=vivo.com;
 Received: from SEZPR06MB5832.apcprd06.prod.outlook.com (2603:1096:101:c8::12)
- by KUZPR06MB8800.apcprd06.prod.outlook.com (2603:1096:d10:c7::11) with
+ by SEYPR06MB6278.apcprd06.prod.outlook.com (2603:1096:101:143::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.11; Thu, 9 Jul
- 2026 02:31:35 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.15; Thu, 9 Jul
+ 2026 02:32:32 +0000
 Received: from SEZPR06MB5832.apcprd06.prod.outlook.com
  ([fe80::f98:5e32:4ccb:d07b]) by SEZPR06MB5832.apcprd06.prod.outlook.com
  ([fe80::f98:5e32:4ccb:d07b%6]) with mapi id 15.21.0181.014; Thu, 9 Jul 2026
- 02:31:34 +0000
+ 02:32:32 +0000
 From: Pan Chuang <panchuang@vivo.com>
 To: "Rafael J. Wysocki" <rafael@kernel.org>,
 	Daniel Lezcano <daniel.lezcano@kernel.org>,
 	Zhang Rui <rui.zhang@intel.com>,
 	Lukasz Luba <lukasz.luba@arm.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Markus Mayer <mmayer@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	zhanghongchen <zhanghongchen@loongson.cn>,
-	Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Amit Kucheria <amitk@kernel.org>,
-	Thara Gopinath <thara.gopinath@gmail.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	John Madieu <john.madieu.xa@bp.renesas.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
 	Thierry Reding <thierry.reding@kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
 	Pan Chuang <panchuang@vivo.com>,
-	Laura Nao <laura.nao@collabora.com>,
-	Mason Chang <mason-cw.chang@mediatek.com>,
-	Fei Shao <fshao@chromium.org>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
 	Svyatoslav Ryhel <clamor95@gmail.com>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
 	linux-pm@vger.kernel.org (open list:THERMAL),
-	linux-kernel@vger.kernel.org (open list),
-	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE),
-	imx@lists.linux.dev (open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
-	linux-arm-msm@vger.kernel.org (open list:QUALCOMM TSENS THERMAL DRIVER),
-	linux-renesas-soc@vger.kernel.org (open list:RENESAS R-CAR THERMAL DRIVERS),
-	linux-rockchip@lists.infradead.org (open list:ARM/Rockchip SoC support),
-	linux-samsung-soc@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
-	linux-stm32@st-md-mailman.stormreply.com (moderated list:ARM/STM32 ARCHITECTURE),
 	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
-	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC support:Keyword:mediatek)
-Subject: [PATCH 00/18] thermal/drivers: Remove redundant error messages on IRQ request failure
-Date: Thu,  9 Jul 2026 10:30:03 +0800
-Message-Id: <20260709023048.599150-1-panchuang@vivo.com>
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 17/18] thermal/drivers/tegra: Remove redundant dev_err() and dev_err_probe()
+Date: Thu,  9 Jul 2026 10:30:20 +0800
+Message-Id: <20260709023048.599150-18-panchuang@vivo.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260709023048.599150-1-panchuang@vivo.com>
+References: <20260709023048.599150-1-panchuang@vivo.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-ClientProxiedBy: TPYP295CA0019.TWNP295.PROD.OUTLOOK.COM
@@ -109,119 +72,113 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5832:EE_|KUZPR06MB8800:EE_
-X-MS-Office365-Filtering-Correlation-Id: 70fb9282-7ee3-421d-4ce6-08dedd6231bb
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5832:EE_|SEYPR06MB6278:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9e9098db-618d-4f52-77ab-08dedd625455
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|23010399003|366016|1800799024|7416014|376014|38350700014|921020|18002099003|11063799006|56012099006|6133799003;
+	BCL:0;ARA:13230040|52116014|376014|23010399003|7416014|1800799024|366016|18002099003|22082099003|11063799006|56012099006|921020|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	6etLwCHUEWhmfC31D/Bu8QoyAGLR6iL1slE3kRDmYMOlGHhf3zB8PKFtf5+LC/RoQo3o2vspywARwBPknKqsAMv5/toUka3eJGCIh+EoZSQEGmN1Jug5EbVlfaPGRie+cSwuzh9vGI/booIw1LKcFquoTPIn+rku0G0GqXU6PJLlNN3Px1i08P5jKmrETRvISRmi7+H5J7pvW1PxofYRjKFun/T3AgvADk2fJyxeVJtPdu3XD+gbliUBrRHccg7cfSiPn7EcPrz2LZUyduRdgbWCdqiWzb1s0twg3dxkDyTJCF1faJeR6RjaojvT0BlQJyCxqKG3O1kRGWdlWWZnINVF9NJFrx0ndfYhliVDN9FZu87UFx2W9foaxtEP0jzXZDQqotOswge7x0vObC1YHAhlW5NJZSEpIIIL83JjcO1evYaURywCme18NxU0XJzYRxZisncnZkjj31+AJtk/sILkARtCrRRbHm9It2urggNYpsUD3hsWBbt8mIMvYovJ5xl/rsxSu8EWl5YoNATxqG5mtXKBsfmQ6I9YH9CPWliIHqnYgvLfBUj5ZnLDZsiD/2MA8FuZgZ0fcY+FDGjpbj8KYOMtbO7QErFvbewLPmM1WipG2TdaMTzUFKMdnu2Gv45v1VNjLPKab4IvfMPXX6fexzLk6SYWdKO22zypoG9imL5zDwFtWMVZ7uMCleKp+KHmQw6PMjyBs825ARhFHgQBoaNM8s0/fXkI8y4ryXU=
+	ng5DR7Lfg4jp5dJ3NuBWZ4mD9iJ6RGU4xdwPqdGkQbG5OZKJY5jIrdyq8nbIu9STtE0miCP27JJmTbToKG5bDwDcZ8qS5O7bYsStE8y1ZHqmVdidEaB8NjOfEUwkIfSdIEQBW0gNstx9iC6TkDtKVrdKeKAjY3lwkzvfMzzfA7J1RKsBf3ag2aNXYDrA7pvQgCICP4R4OrdMU/v0Wpvj26cQod9T1pE2rz8phL5R6sPTARczIzr4c95Gm6zFcC19ks8/AlcIew1g/UUac2NTWitSJZYFZR/TVZlpoa9WcannG05ThOmT0UbGe3A731hWEleUFk6aW97ae05/c6KkwM5STcxL3NN8GX9jvLgImFfSEIZh70xHR4J3WxciqADOzjfY18NqX63GRgeRHTbn+03yE2DdqQStk2pXXBbOlm98p5yED5xLl831/wwvuZO87ypw0Sv223qQVLwtxwLr7Iab9w+SYZ4wa9dMixBfdb84tJ4aQT5i/uhtD8XIL5SIHUsmUqNuwg7yoZB/QPjxBIJGIio/juajABlPa3AdYZeUE6odIBbH2tmbUv18jpuxhVg6fQf+T2zdVHwd5+SYhzGns8QR4Gx/vK8sEnd0lfBkWF48dP471Ln611RI0lwilIVc16PD7pw4Bu5tUsKnvThoCfpbrSvDvHNaoUnkPM4c0D0r8P27Zf4zvj1di/O3iocGqW1CoD66eX++JKrfU63zq4KBnTfRd7lAWm3vVCM=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5832.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(23010399003)(366016)(1800799024)(7416014)(376014)(38350700014)(921020)(18002099003)(11063799006)(56012099006)(6133799003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5832.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(23010399003)(7416014)(1800799024)(366016)(18002099003)(22082099003)(11063799006)(56012099006)(921020)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?nLU2s9FefGR5lZlr/WpM/N1cHMI4MOnLXQSGkAnzYUixx89gYPn4qpM4aTkz?=
- =?us-ascii?Q?YWud6ZFpIeBNAO4uKP5nJ+8sEeGtrDFxv+XkRWQa/pG9R4E6O9xFTkwLApD5?=
- =?us-ascii?Q?nWhIBhHnwLZY0pIvqsqPE6EjwJtIWoDeIN7c+1lat0DY+EREf5mdWKFS8xbC?=
- =?us-ascii?Q?MvMfQloj4iCuLe1DYG7hq5kwptcyq9CDnm+QD7R80p10lQdRY0LHRBxx1meD?=
- =?us-ascii?Q?EzHjknX5y2H2EwANrebn7/zPHimqcbUyqRo7wZTELexW6uf3pYvnnw+Vbptj?=
- =?us-ascii?Q?7IedyeKme5xf/2Vk66qT0UEcpayTl+PdCw6MAq6Sm+FAoFa7WZyMnQL5FbKe?=
- =?us-ascii?Q?+GyB+yNWE9RrO8wEtNYAbmhT32ceZ7ilM2+wUsfwbC9bw4rYLqOejejhL9BK?=
- =?us-ascii?Q?nc1Li1351CaDu3wfaYJWiR6dqpPHokheeaToDQHwXuLB0+gRFQnGjH/LUEFw?=
- =?us-ascii?Q?jY5D5NMva6b0sf9Z0fhsMYpMr/NYuAs3YJTSwtaxrrHPZvWlz8jcSgigo67i?=
- =?us-ascii?Q?GxNshuHtP4DHfnx8ujL6OcwJ19pxIokKpTny1U8g3DH0xMvGPCcVup6se7r3?=
- =?us-ascii?Q?7uGvExkIu+MpZR9jIarqXxBl0+LZHmLqdU9lrAuh8yNshcqF/wBNX3hyFZH3?=
- =?us-ascii?Q?dz4s9Z04uL3G2aWZCXiHtym2Tqa+Mnshi68C74cfPG+g0QqBJbXqOcMfHWs0?=
- =?us-ascii?Q?3cyzfO3cMIXkH5gJeactkMGn/CYydqo5qVzghAjMH9oJyaiK4NpPwnN5tqpc?=
- =?us-ascii?Q?fmFiyeZxDygFK3f20iyOI2tJt+cCd0jbvFq/zU0J0B9r3JIolZBAVTljgRlB?=
- =?us-ascii?Q?5EtMW09spAvevNikDidRCsLw8OtwpSnud4HYqiE/Sn1ObWZQ+AMS0cU1W4w6?=
- =?us-ascii?Q?JWj/cgKrLxjwt366NAufQCU5Z6inru56dIBsBWJN6FdLYZAlcrhfH+Y0//47?=
- =?us-ascii?Q?qqrcLfLTLtqPAK8oa/mdW8i8SpE8SEnk3fYw1EQR6NjAoO2PXJcPYGjIQXbP?=
- =?us-ascii?Q?7oPp2SGrS0/0Bf7CUKqdeo/Ek0YJwBKWJ2Z776YQa+E9I5DZRSgVmE9DrVzE?=
- =?us-ascii?Q?se2wjdwsmg+Y2di04qbXxAbGdO3QF7s4m1FTyNPWm1NmfDnZannl8NMy93fx?=
- =?us-ascii?Q?LUeBCQFljrsYi5PXvjkJXU73JUKjwIywIVcVY31fc3+l/RQp4FsmdOD6hDWq?=
- =?us-ascii?Q?x5G30OzAOvqlfw5UO1n8hA9awSITgr6Nl3Rf9sgp6bWBf2qLyyO3S6giNhw1?=
- =?us-ascii?Q?w6zaDTDam6EWHErEfs3YAUotZKmcQ+QK0jm/Xss2eSJI76l2t/cd3PI/nIt3?=
- =?us-ascii?Q?lViEBnAyKpJdhDu31p9XAAxa7omXozms8li6znxWahXqYmJW3xDdF0DnAvOk?=
- =?us-ascii?Q?xsJoUS0/JPFJXbAQJj2ukD2SAXHpOrWe+a+SJ1pKcpwDV5kvInjJtG+VWdrv?=
- =?us-ascii?Q?yS5Q++dY/GzXWbfTqpIRwgTyHMpkPbexaIdCkI1aGDhZsA2AaPctjeXwzUSG?=
- =?us-ascii?Q?z6LCkK9qLJ1hVl+1ywT1c2S2WMf1I6kvd25y3BUE0xkyu0jmJbzDbQm1YD3s?=
- =?us-ascii?Q?L65e3Z0XBZkq0CVtl7NWzL5Oehmn+Zw6rsNH4avYsMCeigDfcB4d6ifHuYOV?=
- =?us-ascii?Q?GwR7eL+uXpRcr37V10erNYnBfiJUDB70MJpZTAkJVBaiPUd9dWRaIo4MpMRq?=
- =?us-ascii?Q?BhNzTP+UNxzxExIjrFfB8Ika+iXJwR/cl3VKgFGn89eiI+VLgaAllYMr4+vx?=
- =?us-ascii?Q?i/+or4t1nA=3D=3D?=
+	=?us-ascii?Q?cVkzjktzxAOcDUVekkSGJP/YrhoMMTjOYrINFmjHFiRT+mQhA+HNNrKOKB2x?=
+ =?us-ascii?Q?teWAjqQ+UDxMJENjy0VITjMqnnCtVCoa6IrUU+10PCGIim3c+vAzNkRBEQ3p?=
+ =?us-ascii?Q?3nudSSV/r7YAsLQoB3Ft00mvC31ZTdfQK0E0Jus9z8cwJk8S5V291X6Yxmrt?=
+ =?us-ascii?Q?vbYiX241HiSzFCRFVZLjD++ctrfhwAE9OMWfaDWdJ3Ie/cJgzhR66QILi+SP?=
+ =?us-ascii?Q?zqU/EPpapoXuS6AhzZN25Ie+YKIvAMKHt0ECL1SR7g4RUnS3aIXKeXugWV+3?=
+ =?us-ascii?Q?MYCCkc8Cfitk3gm01Zb5SKx8lpO+CO8Hd1FLyQpTr4H9X5FY2YAVYybfeZPW?=
+ =?us-ascii?Q?WlBlxmaokuDb5z33pL19eEl7KPPhisgXwll6A1Y0qEX1aZjAcVuAy3zSV0hi?=
+ =?us-ascii?Q?gqQpfd/HRNDKUtvnay33jIjc9eqsVNFOxYtqNm2lZ+RJHDaD4hyYtrb/CohZ?=
+ =?us-ascii?Q?/rVmx6+8+FwJqZFg2SeGLt/vkQZ7DW5laQwZUJHvN0r5fjAZ67ACn8ceEJMj?=
+ =?us-ascii?Q?/OJko/ApejfTyTJc/uYHj4r2rTJxSepj0XUAWMVjOr4vKH9WOZaSSyWivEMd?=
+ =?us-ascii?Q?RBR+DGwEVDic/+5wg1Sod6qdNj8LXzEwqxodeMEjuxRY+Pq8a7XDIyhOn22x?=
+ =?us-ascii?Q?kQ1OrOpcT3k6vdiigwG8xWI3fqNUHFvEzMqfLVvu9skacWv8VmO/OhqUhLyh?=
+ =?us-ascii?Q?kTRhxsEH/O4D1f2l47LZaUFTrQmP130NLfshLup4Z5XWKCeuVYK/1XnPrItt?=
+ =?us-ascii?Q?tjMD4hp0vgZ720k/L+BR6kDeTPaHy9mE5ZPWu7AwSh8xOilonuOa+V+YiA62?=
+ =?us-ascii?Q?6RjOBbSorf1xQOpXlvOo6OmFQt8c2L1he1LdvdvntVdpAFh0DMh/fRheATuV?=
+ =?us-ascii?Q?HX4lGwtnNDzCklQjbUptD0ggbzum+xxs7i/5TsdwCuyhW9tG71SoURtmrawR?=
+ =?us-ascii?Q?bO1pi+F3+Tz5rbCQJF4dnH6uxbZA6YKA3gW2pXqV0embhIC+Ex8n5g59yMZz?=
+ =?us-ascii?Q?C0V+B0pnytGM36kM+LIzBHl2lDxyKzYmIaCRKvuIcpdPbuHBRHRe02/bh9mH?=
+ =?us-ascii?Q?S07K7bqMPOXIeT/B3RH+sSAsKBk7KV25jhqUg+e2EDcYs7pFEDmtC5lPSHAs?=
+ =?us-ascii?Q?FNib1RIxg4A+yyyhuoyjNu17tSuJc9mhxtqI5ZNFPj7AhKT1inJ/YSd+Sa1J?=
+ =?us-ascii?Q?Kk749jEE/KPVor8UKHgXedcOduj2U2YOuNyAYQer9Yr9lmqjWStM5eSPRjc7?=
+ =?us-ascii?Q?gOVLf3qaG8BevF0LZUWq1mQDhS/9xMFtK2WUhvrBLdmUgw2at8Qhf2RzHa0b?=
+ =?us-ascii?Q?ubcJjd3YaUJCfsACHwdD0lntak/Ph7L6rRBKPlzJ5KDvkGCRhel4mRNn7XcI?=
+ =?us-ascii?Q?znGj3m+a1cFfpMmpQ2IQFlz1YjEzAddYYFu/jGW0nPzztiWR1YpTm9Qri4y3?=
+ =?us-ascii?Q?JJZHds+ikCEKfN1/tOuAc/UwJERUYILXVsC9k1qVC+et4+OYVPO5fUeKNJxq?=
+ =?us-ascii?Q?ypd8WmGBdocybTuowi1V1p/ThsbOMa+TQ2ajJ6hkon/olnlx5W/N4Tn+UGnM?=
+ =?us-ascii?Q?aRpBPolrvuTrGabJ5yAQkgDrUqyOznoMMn3RtSHFQqc9438YIvFKvYBP2tTk?=
+ =?us-ascii?Q?YwkgeE7aef6OH4EdH9cR2UhF25p7PumiQJkS4dXnmDmUabC+nLUkZIRjX/ar?=
+ =?us-ascii?Q?N6grHeVXwHczWtnsot+FAleT/PxA32NWtGhy+x1g7rVW8+b59meOHiY+a21u?=
+ =?us-ascii?Q?2Mit0XLdFQ=3D=3D?=
 X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70fb9282-7ee3-421d-4ce6-08dedd6231bb
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e9098db-618d-4f52-77ab-08dedd625455
 X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5832.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2026 02:31:34.7865
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2026 02:32:32.6626
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DVhgkewTd2EN/hIfgnq+yD75CFZFnXJmCw8ddwRZLcc/GekWLNki6edKlLUpUmotdedMVsXx6nTaxfXo8bZQmQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KUZPR06MB8800
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5zfmrgS/hRkCwdaTnktMpioLP/hXXQJD52NXMtys/bY7sq2B5BgGlILy/Yp4HAbG5fOG5N3MKXMsHMEVG7J9sg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6278
 
-Commit 55b48e23f5c4b6f5ca9b7ab09599b17dcf501c10 ("genirq/devres: Add
-error handling in devm_request_*_irq()") added automatic error
-logging to devm_request_threaded_irq() and
-devm_request_any_context_irq() via the new devm_request_result() 
-helper, which prints device name, IRQ number, handler functions, and
-error code on failure.
+The devm_request_threaded_irq() now automatically logs detailed error
+messages on failure. This eliminates the need for driver-specific
+dev_err() and dev_err_probe() calls that previously printed generic
+messages.
 
-Since devm_request_irq() is a static inline wrapper around
-devm_request_threaded_irq(), it also benefits from this automatic
-logging.
+Signed-off-by: Pan Chuang <panchuang@vivo.com>
+---
+ drivers/thermal/tegra/soctherm.c        | 8 ++------
+ drivers/thermal/tegra/tegra30-tsensor.c | 3 +--
+ 2 files changed, 3 insertions(+), 8 deletions(-)
 
-Remove the now-redundant dev_err() and dev_err_probe() calls in
-thermal drivers that follow these devm_request_*_irq() functions, as
-the core now provides more detailed diagnostic information on failure.
-
-Pan Chuang (18):
-  thermal/drivers/airoha: Remove redundant dev_err()
-  thermal/drivers/armada: Remove redundant dev_err()
-  thermal/drivers/db8500: Remove redundant dev_err()
-  thermal/drivers/hisi: Remove redundant dev_err()
-  thermal/drivers/imx: Remove redundant dev_err()
-  thermal/drivers/loongson2: Remove redundant dev_err_probe()
-  thermal/drivers/max77620: Remove redundant dev_err()
-  thermal/drivers/rockchip: Remove redundant dev_err_probe()
-  thermal/drivers/brcmstb_thermal: Remove redundant dev_err_probe()
-  thermal: intel: int340x: Remove redundant dev_err()
-  thermal/drivers/intel/bxt_pmic: Remove redundant dev_err()
-  thermal/drivers/mediatek/lvts_thermal: Remove redundant dev_err()
-  thermal/drivers/qcom: Remove redundant dev_err()
-  thermal/drivers/renesas: Remove redundant dev_err()
-  thermal/drivers/exynos: Remove redundant dev_err()
-  thermal/drivers/st: Remove redundant dev_err()
-  thermal/drivers/tegra: Remove redundant dev_err() and dev_err_probe()
-  thermal/drivers/imx91: Remove redundant dev_err_probe()
-
- drivers/thermal/airoha_thermal.c                          | 4 +---
- drivers/thermal/armada_thermal.c                          | 5 +----
- drivers/thermal/broadcom/brcmstb_thermal.c                | 3 +--
- drivers/thermal/db8500_thermal.c                          | 8 ++------
- drivers/thermal/hisi_thermal.c                            | 4 +---
- drivers/thermal/imx91_thermal.c                           | 2 +-
- drivers/thermal/imx_thermal.c                             | 4 +---
- .../intel/int340x_thermal/processor_thermal_device_pci.c  | 8 ++------
- drivers/thermal/intel/intel_bxt_pmic_thermal.c            | 4 +---
- drivers/thermal/loongson2_thermal.c                       | 2 +-
- drivers/thermal/max77620_thermal.c                        | 8 ++------
- drivers/thermal/mediatek/lvts_thermal.c                   | 2 +-
- drivers/thermal/qcom/lmh.c                                | 1 -
- drivers/thermal/qcom/tsens.c                              | 5 +----
- drivers/thermal/renesas/rcar_thermal.c                    | 4 +---
- drivers/thermal/renesas/rzg3e_thermal.c                   | 4 +---
- drivers/thermal/rockchip_thermal.c                        | 3 +--
- drivers/thermal/samsung/exynos_tmu.c                      | 4 +---
- drivers/thermal/st/st_thermal_memmap.c                    | 4 +---
- drivers/thermal/st/stm_thermal.c                          | 5 +----
- drivers/thermal/tegra/soctherm.c                          | 8 ++------
- drivers/thermal/tegra/tegra30-tsensor.c                   | 3 +--
- 22 files changed, 25 insertions(+), 70 deletions(-)
-
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index d8e988a0d43e..f74acf13b24d 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -2007,10 +2007,8 @@ static int soctherm_interrupts_init(struct platform_device *pdev,
+ 					IRQF_ONESHOT,
+ 					dev_name(&pdev->dev),
+ 					tegra);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "request_irq 'thermal_irq' failed.\n");
++	if (ret < 0)
+ 		return ret;
+-	}
+ 
+ 	ret = devm_request_threaded_irq(&pdev->dev,
+ 					tegra->edp_irq,
+@@ -2019,10 +2017,8 @@ static int soctherm_interrupts_init(struct platform_device *pdev,
+ 					IRQF_ONESHOT,
+ 					"soctherm_edp",
+ 					tegra);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "request_irq 'edp_irq' failed.\n");
++	if (ret < 0)
+ 		return ret;
+-	}
+ 
+ 	return 0;
+ }
+diff --git a/drivers/thermal/tegra/tegra30-tsensor.c b/drivers/thermal/tegra/tegra30-tsensor.c
+index 6245f6b97f43..10a5ab1fe1b9 100644
+--- a/drivers/thermal/tegra/tegra30-tsensor.c
++++ b/drivers/thermal/tegra/tegra30-tsensor.c
+@@ -602,8 +602,7 @@ static int tegra_tsensor_probe(struct platform_device *pdev)
+ 					tegra_tsensor_isr, IRQF_ONESHOT,
+ 					"tegra_tsensor", ts);
+ 	if (err)
+-		return dev_err_probe(&pdev->dev, err,
+-				     "failed to request interrupt\n");
++		return err;
+ 
+ 	return 0;
+ }
 -- 
 2.34.1
 
