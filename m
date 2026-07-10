@@ -1,152 +1,217 @@
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3FF381B04
-	for <linux-tegra@vger.kernel.org>; Fri, 10 Jul 2026 19:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5703822A6
+	for <linux-tegra@vger.kernel.org>; Fri, 10 Jul 2026 19:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783710521; cv=none; b=crouZ95FVxmOzdccGaF4RWGGfksny/J13MYD0ouAElgTr7CqbSW7MFupx68gGPNZhT7vE+53jZVsaxnxDtc242GcZfJ2plVFQQ+e/LjjJsrsk/STk+ucYA3FNixhYYgSLzqvYLPP66VpKDRI+qSSTSCcepxMizV822KRlswT4b8=
+	t=1783710749; cv=none; b=RMgG22u9DSXDq2TBzWqwEp9CATO9nNTxxjSx1A4IfWm+Iyts8mlcnpjL+x1PotvgIJV3/T4Ii1R4JdvQoflPlIZDi07PBiQLdk9UHNTfPLTri7yBY2z+lvkfE3uU7lMiFnsaH928oe9yANyT1sHXs6LREVJkCVCDyyCr6uVk9xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783710521; c=relaxed/simple;
-	bh=HnhvpODSykZGd0gC/qYJbWWYfTQ/iP5eixsH8/fLwto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LjiEZOmcinjItykH7YN3ZnngF4bf8IC0dUkK8fXQwPlv7ojTn82v3chUZfZaeL3lf49DahVke1xl/kE50J1iK0dg5DFW5Q5O+L2LolNQOk9IigULZnDNO6Ar0kgsURfwJx5a0/nRvXduoOpI8xZ/bcLJekXijJYSbn5CXS6EFM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=VDEsCTjK; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+	s=arc-20240116; t=1783710749; c=relaxed/simple;
+	bh=hN1BELHe0HzMVXZth/JdE+10ehzOn9zzJk1tjshEl80=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pj49zN6kmudrkfyZ6GnYlGGXML+dbdjDUP7kEcLDAeyav6EYelMXrAzLaWpIa/kw/m1HD1CQ1LQ5Ni9AeKfULmZcSSbK32KRTs60Rs+cJCQ3ky2eEp2cj1ndP8001cgQHNMjwv9yPYoAbK4sYx3rxNEp3p4jCCfOVZoe0/yJRqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J1LtNuqk; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="VDEsCTjK"
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-51c2a449c57so7492111cf.1
-        for <linux-tegra@vger.kernel.org>; Fri, 10 Jul 2026 12:08:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J1LtNuqk"
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-39c86945164so11161281fa.1
+        for <linux-tegra@vger.kernel.org>; Fri, 10 Jul 2026 12:12:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1783710517; x=1784315317; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=iFtVuusRSG4YUFzvnh+nyLwKm1T7E76ZywXpwPdPfD8=;
-        b=VDEsCTjKsnadZV20yXTb3QGwgp50ACDuZI7J4yZKKnWBo4OT84PTfoMP3kJg+oiBdH
-         1Gqgrx4jhlPhVKge9W66xtJ9wDRTc4izjFCCt+rN7ATcsy3EiHWmIIUOHQpkcQ4H0GhZ
-         5URDPxsY2v+WopdI1n/n1b+Owcaxi9ivJmVR/hXxWrQgqOmaEpJvYRwnsKEJuNbIQ0ZD
-         Ya4AYykxXANS0WeLWcV4bDUTBCcLPPI6gJWBW3WrN+Pvpd641O4GCIqULVwXv1BP7SOl
-         9Sa7C+VJCErM682fW2glWudhoGDS2rJYRwzNYg/PxJ+zhe4VZ5Gw1/VP+IiGeOB0MHea
-         NHcA==
+        d=gmail.com; s=20251104; t=1783710746; x=1784315546; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=UJQcbXWAh+kWYkQGfCOXff9Cmt1+z/g0OGZkizOIHnU=;
+        b=J1LtNuqk6n8d5azrYoyjWTuWkZre6pMJYRBtmR8XgKtXx3qxqHLsbjCTPpM2zWt7pL
+         Uow2mHww4Qvv9s+aABPfkgkgq8oMDlMWspNBrt0XLLUIF2X4Z79YKird1vGjqGcDTAc+
+         ufC/AY+HB98Ut5Z9ROm5U/7+XAeBaFjb1CeSz6we/bwS80MWfySJhB+KPVSmcS8Lh/lR
+         4x9Ap4+Lwndl+hPU0He0VxLzIPu744GwqaSAhd1tXY5xIFrb2rRwI2MANaspwam27ZMG
+         Yv5bS0p2NfoX59qBsEwYQbmFlFfnQSljjzNwE/q+5wYTAi3HkmbWCQ0tvanCZTmmsyvz
+         WRFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783710517; x=1784315317;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=iFtVuusRSG4YUFzvnh+nyLwKm1T7E76ZywXpwPdPfD8=;
-        b=Dwf14FYSaEzCzfD0lFPBLcdbvInmzmuAZ36sSrkUeoaWTN5gFRJAM+CsdpJcIxrtD8
-         SfHzgWCFIV69rvSXfz/8UemGY2mrNwKiVi7CRgSEYBTqT216XXjAnpkXrh98gmbsiYxV
-         2Czq2NYjTE9/OSU3ORa2NY9s4A3EwXqWwAHKR/0gvag3FHOTdqCKZGJi9YlU7gefFcTR
-         4Yyb38Me8NMiPOjx8LGXLJzvYds4q0O8UW5ITs4KPtchYH82s9oYHNOqgp/27m7opMhC
-         rr8kS7UxGoE0OMAon0zu8/jPBTpRfVAhPcDk66EL16epcT0W1sRHC32IFTwnnvnkvioR
-         TvRg==
-X-Forwarded-Encrypted: i=1; AHgh+Ro/H1+uDoKFRJwTUUSLpA9AhICeIgP+B54k2tPQYBlrR7OLCkOCWt4cou0tPufABGlh0eBvMJxQJriuUA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7k49sCCa+/mhsH+KnR00KEa6eVae4NhLbg2oyuPxrBeyZRdrs
-	oIlNLV1/Yeks/LrV0fnFTmKoT3n5hzjI9K55UOx7Zun4/Yer0Wx+p6hl+AedssFA7VA=
-X-Gm-Gg: AfdE7ck5vFuYWIIjcy3NdCrZsTfgkSPCPBJY4XajgK8kNSXZdB7XJTCJf+wFgVdvvx/
-	QXknDRAYlp+7VIiEA0cRlOIOqeXn3UwQIHJoCKfhbEc/KOcZsAZ5zDtOA/l3/wExQI4/w9usQyt
-	+yVtygNOlugC3amA0VYX0Vsq4t87fca0bFeXAJWE5Jnd1sIYIBla9H3AqIxKyXhyevnOHCnNqrC
-	7mfJSwPpAlEGd4RHm8KmXz6tqG9R6bvhS1M2QLQqfutFOsb1pKWqSSMyrhol/RIm9n8sN1o6cL0
-	7Nkj2u4AB6y0qquFRTAkVwTXQosHaSc7a95I1r78j9zhNWbd/X4L45YqfWZeyBBmkRhXHBFXi5L
-	GE0uAQ//fALmrGtmEMAZvRs+Spve/ctahsHd5YTMAFiBGvEbGbA1zLxMUFqsQUV7xYe4N9yhbZ7
-	V9CVOKDAcwj4Xa8wBww26E+GXRjvgtHF0IPZeimpskwnVS4V5LxfNugjTiO8739MLM1+8Z
-X-Received: by 2002:a05:622a:1818:b0:51c:b900:513d with SMTP id d75a77b69052e-51cbf280a8amr2226311cf.53.1783710517321;
-        Fri, 10 Jul 2026 12:08:37 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-60-52.washdc.fios.verizon.net. [173.79.60.52])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ffd7c1da1bsm47847566d6.30.2026.07.10.12.08.35
+        d=1e100.net; s=20251104; t=1783710746; x=1784315546;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=UJQcbXWAh+kWYkQGfCOXff9Cmt1+z/g0OGZkizOIHnU=;
+        b=dnXv7TGWPa7Du2b1jHWO3MdBxlbnxH5Ri5kuTLAWYSBym14obs8jSS2IusgaaW4KOB
+         qjWQlwzw2mVgZjTX4r1bpS8gAk3aRRR5B86QEw7hki7APN7bGjLQY9PU2RJHTBQvw50E
+         0yLg7xTMTyAjjVibPpLa8XZHcz8FL+8fmcIUOnrGysuVsGnrTG7b4CBOKqe29Uc9ZEQo
+         jt7cxzv10wPoxJpHHk8a6+jcATnL4h6johkcIQCcrmnFQ8yz1Obq/xg1iOHdHr2nLWwd
+         gc2CGoob9i/K8FNgNEIdMTK9IMHef53cFAJItpApIprxZiROafyd34Z0g8/ivOAvCS2n
+         Udrw==
+X-Forwarded-Encrypted: i=1; AHgh+RpbdB9WvSwPxsO8Tp0jVatMWA7r8PWBtg52+Ns3ZLUHTHelMmmA0RfoOEUOL5LehcMyBjv4ypZrzXfRYg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv6M+odSh9BWLt8Cy3vUKxAyCpTG4oxdBU9hL/qFBKwcE+/NgE
+	UDg+H7AGFN8L8UYmOH7xXDQu1ukvf3frwSYaTtiuqXUlXASut4uI5x6I
+X-Gm-Gg: AfdE7ckXc1S889SBu5t1RcfsPs+OyisX+grusLMUWUVJDfumP7b9AlghSUu5uhmXLf+
+	8qBeZ/6529QI+h4nXL0EGKY/l4SoDJD7MksbvmTxLT1xT4j5tMbV7AAUyej6OCixWwQEfQ/mvj3
+	wKYzUy/Bmqw0pFgrVkB8ZPmBLMKzjEZbU5fXZfnJiOSXr88IsCGfGcNikT4rJ6MrighKcG4F9rB
+	tI7c1XFPT1wXvaTKCgECEuApqVaHkoR3WurYUkzobOACXbWdkH3k76qcwhxAhIlzdRCnh4qaQKO
+	CBTyv4KWRt1dRyl6MSlQYycJgDQwi5V/K8ZIYsrVdfFv8hC1njU65BcStyutVlsP3t+hsYQug7/
+	T9Icvdh/LuhG0OguVxP1PiKHApwxxxKvOQc0FG+zxGsCPIEpEGf+6KHV0s6H0ycGA1C+zMZFNqW
+	jDAxNFU42RmD2uVfX/aOX7RFfLIaBSc4+mXRlUTyDGdTZ1BYizKtckILakwfeELk0N5nL89aYxS
+	zpQzWQ=
+X-Received: by 2002:ac2:51d1:0:b0:5b0:bc3:dc05 with SMTP id 2adb3069b0e04-5b02369c7cdmr76618e87.40.1783710745968;
+        Fri, 10 Jul 2026 12:12:25 -0700 (PDT)
+Received: from debian.localdomain (95-25-158-125.broadband.corbina.ru. [95.25.158.125])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b01ca9dd41sm807683e87.48.2026.07.10.12.12.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jul 2026 12:08:36 -0700 (PDT)
-Date: Fri, 10 Jul 2026 15:08:31 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Lorenzo Stoakes <ljs@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Simon Schuster <schuster.simon@siemens-energy.com>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Christian Koenig <christian.koenig@amd.com>,
-	Huang Rui <ray.huang@amd.com>, Ankit Agrawal <ankita@nvidia.com>,
-	Alex Williamson <alex@shazbot.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Dan Williams <djbw@kernel.org>, Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	David Hildenbrand <david@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	"Liam R . Howlett" <liam@infradead.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>, SeongJae Park <sj@kernel.org>,
-	Miaohe Lin <linmiaohe@huawei.com>, Hugh Dickins <hughd@google.com>,
-	Mike Rapoport <rppt@kernel.org>, Kees Cook <kees@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
-	linux-sgx@vger.kernel.org, etnaviv@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-mm@kvack.org, iommu@lists.linux.dev,
-	linux-perf-users@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	damon@lists.linux.dev, Pedro Falcato <pfalcato@suse.de>,
-	Rik van Riel <riel@surriel.com>, Harry Yoo <harry@kernel.org>,
-	Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 22/30] mm/vma: move __install_special_mapping() to vma.c
-Message-ID: <alFDLz9_oSSvHTuJ@gourry-fedora-PF4VCD3F>
-References: <cover.1782735110.git.ljs@kernel.org>
- <b3254231831037ca3e9757e3e05c90072e04a6aa.1782735110.git.ljs@kernel.org>
+        Fri, 10 Jul 2026 12:12:25 -0700 (PDT)
+From: Igor Putko <igorpetindev@gmail.com>
+To: gregkh@linuxfoundation.org,
+	marvin24@gmx.de
+Cc: linux-staging@lists.linux.dev,
+	linux-tegra@vger.kernel.org,
+	ac100@lists.launchpad.net,
+	linux-kernel@vger.kernel.org,
+	Igor Putko <igorpetindev@gmail.com>
+Subject: [PATCH] staging: nvec: kbd: replace global state with dynamic allocation
+Date: Fri, 10 Jul 2026 22:12:21 +0300
+Message-ID: <20260710191221.2820-1-igorpetindev@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b3254231831037ca3e9757e3e05c90072e04a6aa.1782735110.git.ljs@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 29, 2026 at 01:23:33PM +0100, Lorenzo Stoakes wrote:
-> This function is operating on VMAs and rightly belongs in vma.c, where it
-> can be subject to VMA userland testing and allows us to isolate it from the
-> rest of mm.
-> 
-> The _install_special_mapping() function will remain in mmap.c as a wrapper,
-> since this is used by architecture-specific code.
-> 
-> Doing so allows us to isolate more functions in vma.c for the same reasons.
-> 
-> This forms part of work to allow for tracking MAP_PRIVATE file-backed
-> mappings by their anonymous virtual page offset, as doing so allows us to
-> isolate and keep code that interacts with this together.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
+Remove the global static 'keys_dev' struct to allow multiple device
+instances. Allocate 'nvec_keys' dynamically per-device using
+devm_kzalloc() during probe, and fetch the context using
+input_get_drvdata() and container_of().
 
-Reviewed-by: Gregory Price <gourry@gourry.net>
+Signed-off-by: Igor Putko <igorpetindev@gmail.com>
+---
+ drivers/staging/nvec/nvec_kbd.c | 40 ++++++++++++++++++++-------------
+ 1 file changed, 24 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/staging/nvec/nvec_kbd.c b/drivers/staging/nvec/nvec_kbd.c
+index d2b91318f..4b61aebca 100644
+--- a/drivers/staging/nvec/nvec_kbd.c
++++ b/drivers/staging/nvec/nvec_kbd.c
+@@ -35,19 +35,17 @@ struct nvec_keys {
+ 	bool caps_lock;
+ };
+ 
+-static struct nvec_keys keys_dev;
+-
+-static void nvec_kbd_toggle_led(void)
++static void nvec_kbd_toggle_led(struct nvec_keys *keys)
+ {
+ 	char buf[] = { NVEC_KBD, SET_LEDS, 0 };
+ 
+-	keys_dev.caps_lock = !keys_dev.caps_lock;
++	keys->caps_lock = !keys->caps_lock;
+ 
+-	if (keys_dev.caps_lock)
++	if (keys->caps_lock)
+ 		/* should be BIT(0) only, firmware bug? */
+ 		buf[2] = BIT(0) | BIT(1) | BIT(2);
+ 
+-	nvec_write_async(keys_dev.nvec, buf, sizeof(buf));
++	nvec_write_async(keys->nvec, buf, sizeof(buf));
+ }
+ 
+ static int nvec_keys_notifier(struct notifier_block *nb,
+@@ -55,6 +53,7 @@ static int nvec_keys_notifier(struct notifier_block *nb,
+ {
+ 	int code, state;
+ 	unsigned char *msg = data;
++	struct nvec_keys *keys = container_of(nb, struct nvec_keys, notifier);
+ 
+ 	if (event_type == NVEC_KB_EVT) {
+ 		int _size = (msg[0] & (3 << 5)) >> 5;
+@@ -70,11 +69,11 @@ static int nvec_keys_notifier(struct notifier_block *nb,
+ 		state = msg[1] & 0x80;
+ 
+ 		if (code_tabs[_size][code] == KEY_CAPSLOCK && state)
+-			nvec_kbd_toggle_led();
++			nvec_kbd_toggle_led(keys);
+ 
+-		input_report_key(keys_dev.input, code_tabs[_size][code],
++		input_report_key(keys->input, code_tabs[_size][code],
+ 				 !state);
+-		input_sync(keys_dev.input);
++		input_sync(keys->input);
+ 
+ 		return NOTIFY_STOP;
+ 	}
+@@ -85,7 +84,7 @@ static int nvec_keys_notifier(struct notifier_block *nb,
+ static int nvec_kbd_event(struct input_dev *dev, unsigned int type,
+ 			  unsigned int code, int value)
+ {
+-	struct nvec_chip *nvec = keys_dev.nvec;
++	struct nvec_keys *keys = input_get_drvdata(dev);
+ 	char buf[] = { NVEC_KBD, SET_LEDS, 0 };
+ 
+ 	if (type == EV_REP)
+@@ -98,7 +97,7 @@ static int nvec_kbd_event(struct input_dev *dev, unsigned int type,
+ 		return -1;
+ 
+ 	buf[2] = !!value;
+-	nvec_write_async(nvec, buf, sizeof(buf));
++	nvec_write_async(keys->nvec, buf, sizeof(buf));
+ 
+ 	return 0;
+ }
+@@ -107,6 +106,7 @@ static int nvec_kbd_probe(struct platform_device *pdev)
+ {
+ 	struct nvec_chip *nvec = dev_get_drvdata(pdev->dev.parent);
+ 	int i, j, err;
++	struct nvec_keys *keys;
+ 	struct input_dev *idev;
+ 	char	clear_leds[] = { NVEC_KBD, SET_LEDS, 0 },
+ 		enable_kbd[] = { NVEC_KBD, ENABLE_KBD },
+@@ -115,6 +115,9 @@ static int nvec_kbd_probe(struct platform_device *pdev)
+ 						true };
+ 
+ 	j = 0;
++	keys = devm_kzalloc(&pdev->dev, sizeof(struct nvec_keys), GFP_KERNEL);
++	if (!keys)
++		return -ENOMEM;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(code_tab_102us); ++i)
+ 		keycodes[j++] = code_tab_102us[i];
+@@ -138,14 +141,18 @@ static int nvec_kbd_probe(struct platform_device *pdev)
+ 		set_bit(keycodes[i], idev->keybit);
+ 
+ 	clear_bit(0, idev->keybit);
++
++	input_set_drvdata(idev, keys);
++	platform_set_drvdata(pdev, keys);
++
+ 	err = input_register_device(idev);
+ 	if (err)
+ 		return err;
+ 
+-	keys_dev.input = idev;
+-	keys_dev.notifier.notifier_call = nvec_keys_notifier;
+-	keys_dev.nvec = nvec;
+-	nvec_register_notifier(nvec, &keys_dev.notifier, 0);
++	keys->input = idev;
++	keys->notifier.notifier_call = nvec_keys_notifier;
++	keys->nvec = nvec;
++	nvec_register_notifier(nvec, &keys->notifier, 0);
+ 
+ 	/* Enable keyboard */
+ 	nvec_write_sync(nvec, enable_kbd, 2, NULL);
+@@ -165,12 +172,13 @@ static int nvec_kbd_probe(struct platform_device *pdev)
+ static void nvec_kbd_remove(struct platform_device *pdev)
+ {
+ 	struct nvec_chip *nvec = dev_get_drvdata(pdev->dev.parent);
++	struct nvec_keys *keys = platform_get_drvdata(pdev);
+ 	char disable_kbd[] = { NVEC_KBD, DISABLE_KBD },
+ 	     uncnfg_wake_key_reporting[] = { NVEC_KBD, CNFG_WAKE_KEY_REPORTING,
+ 						false };
+ 	nvec_write_async(nvec, uncnfg_wake_key_reporting, 3);
+ 	nvec_write_async(nvec, disable_kbd, 2);
+-	nvec_unregister_notifier(nvec, &keys_dev.notifier);
++	nvec_unregister_notifier(nvec, &keys->notifier);
+ }
+ 
+ static struct platform_driver nvec_kbd_driver = {
+-- 
+2.47.3
+
