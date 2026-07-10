@@ -1,128 +1,125 @@
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2997A38E8CC
-	for <linux-tegra@vger.kernel.org>; Fri, 10 Jul 2026 21:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7FD3B14C2
+	for <linux-tegra@vger.kernel.org>; Fri, 10 Jul 2026 21:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783717447; cv=none; b=kRBZlqU3hsUwKPAzJMjiImL1u06QKM/J7ORHFIghfB3LXgqo2c12Mvydy+NFrfPXf3zglaNeF0wazHYZblIKPesP8veg8bGSgsabVbtwUUu6wPtlBSkAQXnTqAGen+4XX2TVhnuKojrDsg+/p3TRZvxJGhJVx3jGEDgaC78ulOA=
+	t=1783717719; cv=none; b=nI8VR1roCo5CIhxjCKQ567kCEZWcY0x1jxjkzejwcPfb7xi/pP1cRHiTG9U1BjK43BSobILS7Vy5tlE4EAPda9fKZKpLA5xavnl3S7xwGQ46HYMOPd1ALzluGqagdwZSm3ab4N9g81QcV5wppAaWhM/iGkWw3oheTn5kN+R4SPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783717447; c=relaxed/simple;
-	bh=2Gu7794NM37tAeRC1T+cOMES75vIKzE7urqHPy3L3qo=;
+	s=arc-20240116; t=1783717719; c=relaxed/simple;
+	bh=vkLP3Hlflzof9uJwr1SCvst2pkWw9S7cxcrI8/IWQ40=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oQbqiU1ntMCBPl1RWx49c3LEGryhSmdC/7w6cD2/XR5AEh9PwRvYORk4nXtDEKAu/QdWuSnrFQXoBDUR16BPoVawH9AkVXToQshhvoR9E+0iuJJEoyjTOeALni0WzSB4NiXxQgMVmIgX6PASdRJP0G0Asq9FVfUFfuRDDAmvk28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=GAAEi2MX; arc=none smtp.client-ip=209.85.219.42
+	 Content-Type:Content-Disposition:In-Reply-To; b=qHG1Ygk9oyvfRr8eBFdJyq1DVi4rW99jw/s8tC7dcXfbWpaXAyGzOQKvISCbDm+NCqYnrtWj6/BnYmakIyeCcmo2evM0mXmaEUXVWHlNN+G8fwMdllyinrMqzuyc9s7l3jZkDCodCFCkbC5zc9luxZ27C3jGSmWQPakt1HEAC4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=LuBg1+hT; arc=none smtp.client-ip=209.85.160.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="GAAEi2MX"
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-8f0d6853360so11230256d6.0
-        for <linux-tegra@vger.kernel.org>; Fri, 10 Jul 2026 14:04:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="LuBg1+hT"
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-51c2a76536bso12577391cf.1
+        for <linux-tegra@vger.kernel.org>; Fri, 10 Jul 2026 14:08:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1783717444; x=1784322244; darn=vger.kernel.org;
+        d=gourry.net; s=google; t=1783717717; x=1784322517; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=OhI7UcJVN9EaMSo9cM31eWAmb7Tf3pcvHFHtAkV4RLE=;
-        b=GAAEi2MXoK+d/7/XAlFH+uiwIvxElpqz2dxEJAvsZNqfRI6/N79PCLifDgfeMUcqvt
-         HexRjEpY/PfBP4oFj8HmYN45Gt2i2+DXm3nPp9nhWA5E/HyTGZygY/6km0Vrug3RPrVo
-         l/ANztGVwLHIbt9x0+eBiitMuUIVcvOIREK4ruHnXQbfVPld5OVItIr+rsiHS4Q6k7Q0
-         mMf8R06eb0qTuCS8QMBVMDNLbhvgdv/XTS4GWFw+yFPBpS8QOI93/aLd8xoOpa4pcffX
-         ELNnFOC13AucrZb4Lz+pnfgIdgXUxAiq7NvnP/Sg97BHoymUuKpsob1sY+lQEbqbOFUF
-         hVDQ==
+        bh=TOF1lWlhGf+OJbHw+J+MIMmbUwopKgG0YAX8LO7BKt0=;
+        b=LuBg1+hT3KZySs0j19KMH+9YSFtiR8wm8MFL3r8yMPZfJezn+Zz79Mj2ybkojknC0P
+         whdpsvTPeRAgvKoxkQ4MNYLHHN/iCV1YKxUQuhChfXiL/Dc6kdhw68i2QloKct3/ed8x
+         ItWABOMcfNHUXsUoS0wnuCddQaO+yqLo83XAknilIVUNdhzeLVfcecQmj3WJVWcABfGh
+         yJwGkE/g2JfxnVl1HTYSKIa/usXW+W1WOv1/tcuBstJq/bW6Zw+LWQnSPTPUbvvG5gfy
+         PfgU6rMkhR2H+F56cWxO6+ewlYDSBAgvnbhSKyYSydqDvOb3soCFxGodH+cnhRP4it+d
+         +YCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783717444; x=1784322244;
+        d=1e100.net; s=20251104; t=1783717717; x=1784322517;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=OhI7UcJVN9EaMSo9cM31eWAmb7Tf3pcvHFHtAkV4RLE=;
-        b=fa1XZ03qSLlGTLOf0q2wKNRmoNHkK4g3Xq+fPiwU8aOi1ghppIxbTTCtey3my8UyaO
-         2wG4mgAGFm+FstMOQOPlHIU0rZ/mewRZRkKDi6zdANiPyM+FRCnJ4IRWcKktcQL5zwOX
-         TZCsYKexW5wfRRndVvk8zRv4czYmknV4UjispNG3pg5gmrMp/yBiFxPKbTeaM1ZKMOrI
-         tK3sleKMULm8TtEZlRfEwHZxvD21iplKsRKcVuO6NfvFlmAM2hnrJsJOutWhwXuCAkWW
-         de6FqxlxWFUYSvtVgCi67Nq2e8zIYJITxYoXRXwS3fJSwAOTSKdUwMCS23jcS6mJWXmH
-         fsAQ==
-X-Forwarded-Encrypted: i=1; AHgh+RpT+p5kULf1EeQHYZD8ln9K6gSD/u6HVNCeYOba/MMNt/QDCOBtfwCe5RfeioQID3nlbRlvoxf4vg/6aA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd1NNv63+FzyuFqwiL0OLOuhARJZ83yMxbE3c1L1uPlfqdqdnl
-	YqYrY+4CgfF589lWVYxXFCYMo3tN/WDBYx2aFBDvk7J9iytqx/vAfWEgBwbAo8CgpHw=
-X-Gm-Gg: AfdE7cn65LD1/ZqeSrViQI2gCN/9v5C2Lg0EOsWeTsNB57xXPB2oT0/SZRat4cv6tvt
-	skxuXSx5rfP2KJa+FK0U9c224TGI6VYIsBK84xlMQ61xy8l6/sZTgtQRDYhn3fawI8J/YeuO0bJ
-	cIkmK7I38MfRI9KHf6A8VCPsiwYtwvlzfxgUFssNLhUZFgBlxRGaUVraALdU/QpVkpsmLaou64a
-	3uUVtjoK+GMiikXBWh6zkBquo5zuYAtHNIyxYwZ/o71nLv9bFWODxBa7uOxJTcRLhmLrCkaMshu
-	Amtnt7iU0nHsovIFHc6vqhfCCumuxs5v2M3w1AcbsRiaZZnE+Nt3dDzrqy8Jm5vj6XNHklPRdIZ
-	pMvANoteAVukfz4fANzKl6r52iMdpKnVMAk0z/TjqAg5mDQHRAZHC/NbX2MwvYQwhLeay7C5+vZ
-	Wgbg0EamWbFI5K+ZLvKYKoFylt12/66J3JZrYBpsdBcuVTRopOv9cncOY0rSBICrB30Zka
-X-Received: by 2002:a05:6214:3bc7:b0:8ea:10f8:ae87 with SMTP id 6a1803df08f44-903fe450f77mr10485176d6.11.1783717444207;
-        Fri, 10 Jul 2026 14:04:04 -0700 (PDT)
+        bh=TOF1lWlhGf+OJbHw+J+MIMmbUwopKgG0YAX8LO7BKt0=;
+        b=OuKu4q/ycT71KwHE4R3pV8S6t7JyWslGmmDBCdcuMn8YJOpxBnLkbMXJkBpD+C2sHg
+         iEd5hurHjepyW5vcWXN2mMwr//VY9eKsF6eyqSvQFwwT1NNPNBuk9I8pTE8C0EZ+p1xe
+         VknOMFjzfFRqgDGtPx2ySL79acipjh2194vs1l4qFqPy/ZFCB20RweoJYRBKwazAh3VJ
+         GY/J8ES+ScRUYLG43/Y0ygis0dop+FBZKRwBWzPem3G5tayuakw4xFr+DiyLif4Ji1Ui
+         lUY4EpWEt2uieR0whBjT5zhG2qnt1KKr4MSXFK6fX6v7MgMSPRGLauWV8c+Jn50odh00
+         HlsA==
+X-Forwarded-Encrypted: i=1; AHgh+RrKBAPbrYI9egTSMyZT2SMQ43RnHvfC35YGek2eCq1/XeVTiyoOG6tytiZn2aVk1EHLa97tr1r9yyjEeQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfZtcEzI/NvG7Cvis7t4/yKTZOxZIIZ8BRiW03AgujcHNyAZXu
+	oU/WUagmuEVQachgn6DYtrXyuKxt/YKszoo6SShLjOAWztsxr/TutJs6CR/4OiNL3r4=
+X-Gm-Gg: AfdE7clx+vGdjuV/M1Y4MwjDU6bQma0mrfdNvalGJrvIaj4CUxbyfldzbZzGj+MFw36
+	EcyADV1o16lmsljYMbQse6NgC6WJiBelEDs1YnVlyA9IDqN2s/b2jUJMJ2Gf0pIqswNidUhcTRi
+	KlCljg2bE7S0IZOzdDe5MYBft3z9rQc0zNtjgOjXNezsfAISXDSYxptavOMyK6e5lUTsa6BTO9I
+	xt/x6jsEnxKI3wizejOvRVJyArEZRfw0wtvkNOYYw0GIwj5C7cLpwY9zJMt1EypuNg/tiRdEIA/
+	KaTG7P/m9MdyCfkwU8orXbLP4zjqXFbfaB4WdIIdltvJsE//V4GG26SFh0EPlbxsw+77E+SMEDx
+	SakcxomNAWdiUDWriLK3QyveKynKg+dWaqGm9JyAGXFj6i2ySdJBHnUBGbk9cAE/F3e8wX6AXCh
+	EgPW4mPL5aUvIufijpBnnPD2q49SkDABwQJH4Y9bxRlCt1wbi/jrRZrJX70HmWA6xhElhT
+X-Received: by 2002:a05:622a:2c2:b0:51b:feae:3576 with SMTP id d75a77b69052e-51cbf14a68fmr7022661cf.26.1783717716605;
+        Fri, 10 Jul 2026 14:08:36 -0700 (PDT)
 Received: from gourry-fedora-PF4VCD3F (pool-173-79-60-52.washdc.fios.verizon.net. [173.79.60.52])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ffd50df5e2sm50655596d6.4.2026.07.10.14.04.02
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-51caacad30asm23910591cf.9.2026.07.10.14.08.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jul 2026 14:04:03 -0700 (PDT)
-Date: Fri, 10 Jul 2026 17:03:58 -0400
+        Fri, 10 Jul 2026 14:08:35 -0700 (PDT)
+Date: Fri, 10 Jul 2026 17:08:30 -0400
 From: Gregory Price <gourry@gourry.net>
 To: Lorenzo Stoakes <ljs@kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@kernel.org>,
+	"Liam R. Howlett" <liam@infradead.org>,
+	Vlastimil Babka <vbabka@kernel.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
+	Harry Yoo <harry@kernel.org>, Jann Horn <jannh@google.com>,
+	Lance Yang <lance.yang@linux.dev>, Pedro Falcato <pfalcato@suse.de>,
 	Russell King <linux@armlinux.org.uk>,
 	Dinh Nguyen <dinguyen@kernel.org>,
 	Simon Schuster <schuster.simon@siemens-energy.com>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Christian Koenig <christian.koenig@amd.com>,
-	Huang Rui <ray.huang@amd.com>, Ankit Agrawal <ankita@nvidia.com>,
-	Alex Williamson <alex@shazbot.org>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Dan Williams <djbw@kernel.org>, Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	David Hildenbrand <david@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	"Liam R . Howlett" <liam@infradead.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Dan Williams <djbw@kernel.org>,
 	Matthew Wilcox <willy@infradead.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
 	Masami Hiramatsu <mhiramat@kernel.org>,
 	Oleg Nesterov <oleg@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>, SeongJae Park <sj@kernel.org>,
-	Miaohe Lin <linmiaohe@huawei.com>, Hugh Dickins <hughd@google.com>,
-	Mike Rapoport <rppt@kernel.org>, Kees Cook <kees@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	James Clark <james.clark@linaro.org>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Naoya Horiguchi <nao.horiguchi@gmail.com>,
+	Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>, SJ Park <sj@kernel.org>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>, Huang Rui <ray.huang@amd.com>,
+	Matthew Auld <matthew.auld@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <skolothumtho@nvidia.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Alex Williamson <alex@shazbot.org>,
 	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
+	iommu@lists.linux.dev, kasan-dev@googlegroups.com,
 	linux-sgx@vger.kernel.org, etnaviv@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
 	freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-mm@kvack.org, iommu@lists.linux.dev,
-	linux-perf-users@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	damon@lists.linux.dev, Pedro Falcato <pfalcato@suse.de>,
-	Rik van Riel <riel@surriel.com>, Harry Yoo <harry@kernel.org>,
-	Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 27/30] mm/vma: correct incorrect vma.h inclusion
-Message-ID: <alFePgFUR52GgBS7@gourry-fedora-PF4VCD3F>
-References: <cover.1782735110.git.ljs@kernel.org>
- <22d0f4e3fe11f6fd1312734e242d008267ad142c.1782735110.git.ljs@kernel.org>
- <alFHR3fg8K1-SITK@gourry-fedora-PF4VCD3F>
- <alFJUfaGHVnKd-Nb@lucifer>
+	kvm@vger.kernel.org, Russell King <linux+etnaviv@armlinux.org.uk>
+Subject: Re: [PATCH v2 32/33] tools/testing/vma: default VMA, mm flag bits to
+ 64-bit
+Message-ID: <alFewd7j_uiNP1Vw@gourry-fedora-PF4VCD3F>
+References: <20260710-b4-pre-scalable-cow-v2-0-2a5aa403d977@kernel.org>
+ <20260710-b4-pre-scalable-cow-v2-32-2a5aa403d977@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -131,16 +128,40 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alFJUfaGHVnKd-Nb@lucifer>
+In-Reply-To: <20260710-b4-pre-scalable-cow-v2-32-2a5aa403d977@kernel.org>
 
-On Fri, Jul 10, 2026 at 08:35:43PM +0100, Lorenzo Stoakes wrote:
-> >
-> > Do you actually need 3 copies of this comment or just one copy in
-> > vma_internal.h?
+On Fri, Jul 10, 2026 at 09:17:13PM +0100, Lorenzo Stoakes wrote:
+> With all of the sanitisers turned on, setting the VMA and mm flag bits
+> depth to 128 by default results in overly long build times.
 > 
-> I'd rather have it at a glance, it's a bit silly but C headers are silly :P
+> Reduce this to 64 - we can always manipulate these later for testing of
+> larger bitmaps as needed.
 > 
-> BTW you're kinda racing against time here as I'm on the verge of sending v2
-> :P
+> Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
 
-:[ i don't refresh my inbox when i get hyperfocused and now i am sad
+I've never had a "too main recipients" error with my email client
+before.  Bravo.
+
+Reviewed-by: Gregory Price <gourry@gourry.net>
+
+> ---
+>  tools/testing/vma/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/vma/Makefile b/tools/testing/vma/Makefile
+> index e72b45dedda5..ef6cc558afe1 100644
+> --- a/tools/testing/vma/Makefile
+> +++ b/tools/testing/vma/Makefile
+> @@ -10,7 +10,7 @@ OFILES = $(SHARED_OFILES) main.o shared.o maple-shim.o
+>  TARGETS = vma
+>  
+>  # These can be varied to test different sizes.
+> -CFLAGS += -DNUM_VMA_FLAG_BITS=128 -DNUM_MM_FLAG_BITS=128
+> +CFLAGS += -DNUM_VMA_FLAG_BITS=64 -DNUM_MM_FLAG_BITS=64
+>  
+>  main.o: main.c shared.c shared.h vma_internal.h tests/merge.c tests/mmap.c tests/vma.c ../../../mm/vma.c ../../../mm/vma_init.c ../../../mm/vma_exec.c ../../../mm/vma.h include/custom.h include/dup.h include/stubs.h
+>  
+> 
+> -- 
+> 2.55.0
+> 
