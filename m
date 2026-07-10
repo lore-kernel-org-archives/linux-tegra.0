@@ -1,77 +1,49 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E88175A7C;
-	Fri, 10 Jul 2026 15:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853DB4418F2;
+	Fri, 10 Jul 2026 16:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783696573; cv=none; b=L/KpRLMB5pHoIYmAmJbS1der7CCB84HtD90PQjamatR9KE1LypltaZcLlEfM5ZLg112SGyetW5Zu0sooKlSvjBJ6/WHMJh1I6AT+XNZ42NOgGl9E4BDSOFqtfaZuvpuWxfA0dBmAuwfO8m4jaHCmSvXYDuHQGqlPCcqBnD+vHCk=
+	t=1783702172; cv=none; b=EDd6VO57MFOS+wFg0IsWdPXRvTtX2ezN+/m1kle0/mnWGapz8WKUQDm/7vbE+nem+vyPfqte3RHW6f2v8F4HzRxz4cysV7vBU7GnUDpwQJIvCyb0V37VbMXHD2q3u2cltSD399EoPeP44pwbLFun7TXVjpAXgMv0TLmE9qk36E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783696573; c=relaxed/simple;
-	bh=UikHL7SaRQhcW9jgP94Aas0kJna+z1e/sa7fJz0VgVk=;
+	s=arc-20240116; t=1783702172; c=relaxed/simple;
+	bh=LIWX7JGoFjuB4lkn5HoQseNyWV/4TB8Hwgp7oMlg2a8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SrxYFwK1wtCaWBjMGxzygordwysV8cGmLIYRZKDkZt/7TSGNKaqtW0xZHoPKK7uAbfQ0NibUAt0tanjVONK6fsAqViyyYCneqhCRuer/XsfyBKyg4dDTx7xtIGVRTNLS622F1pdD+xT0AuIm7MgRf6RisHKK6kO0ahFGz/Ld/QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DHGTVQQh; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=u1IWjHI8jp6ne0hHl4jGurCUuYHQUvVL1mdpSvPo1of6vLFiGdztte2lky0y5FNyc2wcGgZuJDeow81vrwVJgnQ25F/cF6jXfuhXwMYQszPrBV4Ck7yCMQ8iyMWjVPklajv+oRCBPpeCxaqRZnT4n9xNbFLZXvm/Ueuzka3x8BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=yqGM8TC8; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DHGTVQQh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C39A61F000E9;
-	Fri, 10 Jul 2026 15:15:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783696570;
-	bh=4r0Cc9l2aAmZyRZIk2/aSrghpeZfvwxavhupSZVEeMs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=DHGTVQQhWaTrPzJXRhL+eOlPh3mjgM3TYm3BACmuvjIRndZXufi/DOhVvVPUUmShz
-	 pMaTajqPd2DgQBSgWuLiUyl1vIFajO3tcup29tN2rA+oZElUGBQ1IGgnnzXislM27I
-	 7CvnkGOpI5896VQOz3W8Gmxeu3uzmNGoxn7r0l7pBdQ0sONYuYGXeAzxoC3tQ9/wUH
-	 UEFxz/qEn3hiXt8kPfwHLqlEerVkyRZiznIxE9j6rS+w6Jb2/IyIAdhgUn87BZzWbP
-	 pGVPtXCokUhc0BUp8Nl0bg7ctkDVndBAE1whxwQffv6MbiL/O4PIdb6JwCyyrjCy4K
-	 eJhH8u+Rek3lQ==
-Date: Fri, 10 Jul 2026 16:15:46 +0100
-From: Lorenzo Stoakes <ljs@kernel.org>
-To: Gregory Price <gourry@gourry.net>
-Cc: Pedro Falcato <pfalcato@suse.de>, 
-	Andrew Morton <akpm@linux-foundation.org>, Russell King <linux@armlinux.org.uk>, 
-	Dinh Nguyen <dinguyen@kernel.org>, Simon Schuster <schuster.simon@siemens-energy.com>, 
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, Ian Abbott <abbotti@mev.co.uk>, 
-	H Hartley Sweeten <hsweeten@visionengravers.com>, Lucas Stach <l.stach@pengutronix.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Thierry Reding <thierry.reding@kernel.org>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Christian Koenig <christian.koenig@amd.com>, Huang Rui <ray.huang@amd.com>, Ankit Agrawal <ankita@nvidia.com>, 
-	Alex Williamson <alex@shazbot.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Dan Williams <djbw@kernel.org>, 
-	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
-	David Hildenbrand <david@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	"Liam R . Howlett" <liam@infradead.org>, Matthew Wilcox <willy@infradead.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, SeongJae Park <sj@kernel.org>, Miaohe Lin <linmiaohe@huawei.com>, 
-	Hugh Dickins <hughd@google.com>, Mike Rapoport <rppt@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org, linux-sgx@vger.kernel.org, 
-	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev, linux-mm@kvack.org, 
-	iommu@lists.linux.dev, linux-perf-users@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com, damon@lists.linux.dev, 
-	Rik van Riel <riel@surriel.com>, Harry Yoo <harry@kernel.org>, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 17/30] mm: prefer vma_[start,end]_pgoff() to
- vma->vm_pgoff in kernel/
-Message-ID: <alEMciQmyQA7wdua@lucifer>
-References: <cover.1782735110.git.ljs@kernel.org>
- <ea87349d63205bf4c26ea79854f179a9bf8cfb0b.1782735110.git.ljs@kernel.org>
- <akZCg73F-oGzDp1a@pedro-suse.lan>
- <akZGqclqQ6gS12Vv@lucifer>
- <ak_C_o2ehS17Q5HV@gourry-fedora-PF4VCD3F>
- <alEHy1raICek7imv@lucifer>
- <alELDgm258nhjk3b@gourry-fedora-PF4VCD3F>
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="yqGM8TC8"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=ctpw6H5oitgKah3XmofQDzLZrombiT2hiX7qbOqdOHA=; b=yqGM8TC8D5G63SEgrNyIFMo1ni
+	YHDUODa82SvLG5OFbeYUUtoHPcmMBgGi901C2tNI6+g6WketgPWn3kh6zM/OHkG3cDbrXl3rwJGlX
+	Rco81EFU5kClMmBr05IrxW44tUdOQZKovbC+8sf8SYbOqt6hr9HLueV3hFlX22J5Pthg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1wiEPe-00Bfjf-3w; Fri, 10 Jul 2026 18:49:18 +0200
+Date: Fri, 10 Jul 2026 18:49:18 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: vadik likholetov <vadikas@gmail.com>, netdev@vger.kernel.org,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Bhadram Varka <vbhadram@nvidia.com>, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: stmmac: enable the MAC on link up at 10G on
+ 10GBASE-R
+Message-ID: <fa9ea443-a8b5-433f-a4b4-e5c73afc4b25@lunn.ch>
+References: <20260710120908.3731591-1-vadikas@gmail.com>
+ <f23adbcc-6f9f-4828-8de9-b85c4450b4b7@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -80,44 +52,50 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alELDgm258nhjk3b@gourry-fedora-PF4VCD3F>
+In-Reply-To: <f23adbcc-6f9f-4828-8de9-b85c4450b4b7@bootlin.com>
 
-On Fri, Jul 10, 2026 at 11:09:02AM -0400, Gregory Price wrote:
-> On Fri, Jul 10, 2026 at 03:56:33PM +0100, Lorenzo Stoakes wrote:
-> > On Thu, Jul 09, 2026 at 11:49:18AM -0400, Gregory Price wrote:
-> > >
-> > > Silly question:
-> >
-> > There's no such thing :)
-> >
->
-> All my questions are silly.  That's my secret :]
+> I suggest that instead of this fix (that is ommiting the 5G case btw), we rewrite
+> the whole ctrl assignment as :
+> 
+> 	switch (speed) {
+> 	case SPEED_100000:
+> 		ctrl |= priv->hw->link.xlgmii.speed100000;
+> 		break;
+> 	case SPEED_50000:
+> 		ctrl |= priv->hw->link.xlgmii.speed50000;
+> 		break;
+> 	case SPEED_40000:
+> 		ctrl |= priv->hw->link.xlgmii.speed40000;
+> 		break;
+> 	case SPEED_25000:
+> 		ctrl |= priv->hw->link.xlgmii.speed25000;
+> 		break;
+> 	case SPEED_10000:
+> 		ctrl |= priv->hw->link.xgmii.speed10000;
+> 		break;
+> 	case SPEED_5000:
+> 		ctrl |= priv->hw->link.xgmii.speed5000;
+> 		break;
+> 	case SPEED_2500:
+> 		if (interface == PHY_INTERFACE_MODE_USXGMII)
+> 			ctrl |= priv->hw->link.xgmii.speed2500;
+> 		else
+> 			ctrl |= priv->hw->link.speed2500;
+> 		break;
+> 	case SPEED_1000:
+> 		ctrl |= priv->hw->link.speed1000;
+> 	case SPEED_100:
+> 		ctrl |= priv->hw->link.speed100;
+> 		break;
+> 	case SPEED_10:
+> 		ctrl |= priv->hw->link.speed10;
+> 		break;
+> 	default:
+> 		return;
+> 	}
 
-Mine too ;)
+The bug description makes it sound like it was not obvious to
+debug. So maybe put an error message in the default: to aid the next
+developer who hits it with SPEED_14000, or whatever comes next.
 
->
-> > >
-> > >    What's the purpose of retaining tags in a non-address value?
-> >
-> > Well if you want to reconstitute an address from it later then that'd be the
-> > intent, but I'm being hand wavey here for sure.
-> >
-> > Main thing is to retain stuff under the page mask
-> >
->
-> Right, which ...
->
-> vvvvvv
-> > > That sounds like there's fragility just waiting to be broken.
->
-> If that's an actual issue, then our relationship with tags is painful :[
-
-Yeah, I'm just not sure tbh.
-
-But all that is stuf for future masochism^Wfun anyway ;) focusing on the 'respin
-the monster series' fun^Wmasochism atm...
-
->
-> ~Gregory
-
-Cheers, Lorenzo
+	  Andrew
