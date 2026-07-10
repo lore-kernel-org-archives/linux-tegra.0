@@ -1,228 +1,468 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80B1305E19;
-	Thu,  9 Jul 2026 19:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A44F13B58C;
+	Fri, 10 Jul 2026 00:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783627085; cv=none; b=Z97XlwRc9EQl5w2rjd1HtH3EEGuQwT3a+ucYG9ufCFrnYl3UP1AhvhaSWlfZJgLZI6P8UdkWaosvOq6gpH9NQLaCBGe6rxodrzV756J25MJmA6lb+GiuRlTGpA8a/P1e3ka7ShhAP/7GQRTzmVkJWHEEsvI+ctv7Doxafw7zWag=
+	t=1783644487; cv=none; b=lG88XMWoNAKvBmLYDVTAwEtz5vRwxLaP3PFvwxExNf+C6EbbzsLsJnJqQXGFyqN7pSo7fUbzTXW9LzWH/SymN9JB1m+4cxuMQYvqSKGd2noklAuj4wbia+b8wl5Bx3wpeRdU9ms5M9BAIdq6D0FFzYZAldsViEqqeIDsLiKbb3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783627085; c=relaxed/simple;
-	bh=nASUEopdTVpbiOlaqA3bl70JASaPDBXc6RrPfU8TUhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HiYSQsui9CPC71TYWN8jkFyZF28c+w8HWxXvdlFuAv/hLpPsXRiDCxZq5Q1ScW55siSwO0/bsXFMrhqu01gkGy30hap6D9JzRnyJwLrvNEpyfvv18rSwPd8XfR/9E35dtMpTw4N/6KtUGnechyGWxMJ8aborGj4EWhyekL8rVIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HUZ0FPy6; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783644487; c=relaxed/simple;
+	bh=1rTLZOGkuFC5pAZ6g6/rNfMiuQJvPvcNzswdteI63ME=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=FezMQPue10bNnHFJ9HjYW7X0h8n1WGrykjyPXC7ktQOTEFdZSTVZhG+HSHP/c4rkm+jvAXeNmgs6QThJIzERn+B/aN/EjwH4XSkLv+E3gt9wOY/zk+UWlB1eJEjZK+znKy1CmDbgUjwKPgt6FDrDbrgDGtAD+cpUbsfAa/YJhsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YqhLesfm; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HUZ0FPy6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A69C51F000E9;
-	Thu,  9 Jul 2026 19:58:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YqhLesfm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D4321F000E9;
+	Fri, 10 Jul 2026 00:48:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783627084;
-	bh=nASUEopdTVpbiOlaqA3bl70JASaPDBXc6RrPfU8TUhM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=HUZ0FPy6tJ5k2FpZZk4TmtW8oNPYG0UCTaswg34FnSsVTMZ+nc6abBzQoGLAe7QpZ
-	 4839oR2E7eU5H+0VQhcuYDxXFXmLbqe785v0OtfK8pZM64xT/vjBbY8gU6OQqxdQko
-	 2bj2K0aisc+j7i5kyFSxJBzHYPyWTVbTuJKmXAkqp+WJvRZsZfqnl91bOFM7185CBN
-	 pNNt3ie4Xo7ripQOTTqoaN5lwefEhmBf7ncJ41sgP4urIb+UmKalmTY+FHBAjFjAbH
-	 sZHtyFtM9TSgQQsGPMBhSwsdDCYRoGd5HD7SutnqDROuHsn6T0qtpDhVLf9Zj3BAl/
-	 ejFRs0GNI3+Yw==
-Date: Thu, 9 Jul 2026 21:58:01 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Will Deacon <will@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Russell King <linux@armlinux.org.uk>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@kernel.org>, 
-	Lorenzo Stoakes <ljs@kernel.org>, "Liam R. Howlett" <liam@infradead.org>, 
-	Vlastimil Babka <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
-	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, linux-mm@kvack.org, 
-	iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org, 
-	linux-trace-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>, Chun Ng <chunn@nvidia.com>
-Subject: Re: [PATCH v3 04/11] arm64/mm: Add set_memory_device() and
- set_memory_normal()
-Message-ID: <ak_8Po3NxgAU7k0T@orome>
-References: <20260701-tegra-vpr-v3-0-d80f7b871bb4@nvidia.com>
- <20260701-tegra-vpr-v3-4-d80f7b871bb4@nvidia.com>
- <akYs91INHMXMTI-t@willie-the-truck>
- <akZkuwktaXFTrASP@orome>
- <akaSJ5D98w2cHqb6@orome>
- <akftuw9NyRy36fXA@willie-the-truck>
- <akuvyu1Pq0ZVMZV0@orome>
- <akzikTrmhMsvkNVY@willie-the-truck>
+	s=k20260515; t=1783644486;
+	bh=uDX+UXw+iRrcq6w7q663nafyg7itD38w/KC0N+AvHyE=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject;
+	b=YqhLesfmVZOpXFLHAyk3hwppemwKNbH0cu9YQZrEtYSmLaZOW4E7RbmQFii0ZYTYA
+	 EX1/BIY662sWVmX8+lViNTHdWkVjmGlfYLA8JCYWln6Kg00/C2573tItnpLAiDLXg7
+	 4n3HRkr3ipNR8GhTIIINuUL9t2IUoVk6C9OVchHYzqI5u9oQLiIlg12l4CAj+/uWbo
+	 spOwGC+mg+ZHkVaPeJYJ0NLyM5eHRb9lrTYYDcezJssB/lgUwRyrRXJsljV1FxuYUY
+	 8um+Tbdjl67F2cjiGfHmqC1mvgBmV7BConSN2XWyXL4XuM+bmHuJbiBOLPX+vzTFmR
+	 Kg3fmu2RnpT7w==
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfauth.phl.internal (Postfix) with ESMTP id C2CE3F40068;
+	Thu,  9 Jul 2026 20:48:04 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Thu, 09 Jul 2026 20:48:04 -0400
+X-ME-Sender: <xms:REFQarYTpRKGOHxlgUETPUN5x3v__-l7V8n6ugBPgj8EVu04baS5yw>
+    <xme:REFQaq2vM1vZtAFnDqdNyumJaqGLyc3pPMuRr1nztryIWusSmy6T20XH-jshmWzuq
+    JQFeXXPk0OjA4SuqPB6-sK0n9zdMQcwwhsFI2YWD5OWEUL76lYi9QU>
+X-ME-Received: <xmr:REFQajZ-ERP8QKwQctT6L_T8q48rnYEDWUjX7FoyXeYzEOO-vFYbj3RF2beFKvxtPkQg0zh3vroFRWGrakyH9Oc_qlamM-O5yZA>
+X-ME-Proxy-Cause: dmFkZTF3gdlp/Vpg3xaP425RWWk50euOBYGo+xKlz++Pc7lxWNW56Kax9ay5zz8ZwcTXol
+    nsAYwBVzSJJWc0JED9nwjEG9VFRkrYuE/Y28vPrnPbB8uMvMwG6Nb1dh2SVP/XYot6Yajf
+    oISVrFrnUkzx7AonAqC1bxTQ6mHeGQaxSns/zJ/LLpNrsePTn0Q9lDlfFgcwiROXoT3JT0
+    UIa5il8xf4nM3PHv1LEu6yF6a8F3FfUuCGKfIkFupTczfjMGuhu5W0ZrDYzj84Ju23hFQf
+    MhRjjHpvWiZ+A1k37f/c1iYzhQq+vCXjc5piht4oMn8vScQWQZVzhBeFqCCPqT37B1yMnx
+    +VN5yGnfPboWduSSns60xKxNHiz3++nywnT2Bj/iHMLAEYFc0b7KMgARX+ywWhcexA4tqL
+    pCa7LnxvIXPKZrSUGH4lys+G9ekatNjR5ymsauZyiBjbfWudF7yUh4zBb/KUaqc9s+xOpP
+    8HDPYDK2kOW4nS59/ukaHpd6zsjeWLlVb5yiw8oCmkG+OWO/bVQSjcmTXJMn4iDqF5fEcW
+    FlYVXOnyhkGaCh3slAGL0wfjGntf1QILdGifOLpwLIDr+xVZU384wmd5/le/RjsworDDci
+    9q48M38q81jGIbg4Ie3qiMzEYgS1hXqaJ8MJzEZzKDVc0ssFtEsGGLGYiZVw
+X-ME-Proxy: <xmx:REFQavmX1xn1ebstspWbd5bemHPK87YPyGx6raSDCkiLlMYY2R7dgg>
+    <xmx:REFQaqfjmLJS3L3JX_uf1HvEXZOugZoT89UjHKCXkrUTu7YcTwpXEA>
+    <xmx:REFQal3_XS10DfWILtO2qXueuCPn6s4s3ocyEWpFlMCLgxj3HV1oMw>
+    <xmx:REFQavkt8Troj89ihqm1nj7dUSloVr_9JpJ3JlYFzBftQxl-RY52Hw>
+    <xmx:REFQaubvm91_i4YtapURy3y47BjNxT6eK3TeAwgEjhTaOx54b-NkCjor>
+Feedback-ID: i67ae4b3e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 9 Jul 2026 20:48:03 -0400 (EDT)
+Date: Thu, 09 Jul 2026 17:48:03 -0700
+From: "Dan Williams (nvidia)" <djbw@kernel.org>
+To: Srirangan Madhavan <smadhavan@nvidia.com>, 
+ Alison Schofield <alison.schofield@intel.com>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ Dan Williams <djbw@kernel.org>, 
+ Dave Jiang <dave.jiang@intel.com>, 
+ Davidlohr Bueso <dave@stgolabs.net>, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ Vishal Verma <vishal.l.verma@intel.com>, 
+ linux-cxl@vger.kernel.org, 
+ linux-pci@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Cc: Alex Williamson <alex.williamson@redhat.com>, 
+ vsethi@nvidia.com, 
+ alwilliamson@nvidia.com, 
+ Dan Williams <danwilliams@nvidia.com>, 
+ Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>, 
+ Vishal Aslot <vaslot@nvidia.com>, 
+ Manish Honap <mhonap@nvidia.com>, 
+ Jiandi An <jan@nvidia.com>, 
+ Richard Cheng <icheng@nvidia.com>, 
+ linux-tegra@vger.kernel.org, 
+ Srirangan Madhavan <smadhavan@nvidia.com>
+Message-ID: <6a50414371e3_3cabcb1007e@djbw-dev.notmuch>
+In-Reply-To: <20260709010304.680422-5-smadhavan@nvidia.com>
+References: <20260709010304.680422-1-smadhavan@nvidia.com>
+ <20260709010304.680422-5-smadhavan@nvidia.com>
+Subject: Re: [PATCH v9 04/11] cxl: Cache endpoint decoder settings during PCI
+ enumeration
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rvxsrpqt5djhs2ak"
-Content-Disposition: inline
-In-Reply-To: <akzikTrmhMsvkNVY@willie-the-truck>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
+Srirangan Madhavan wrote:
+> Populate pci_dev->hdm from PCI capability initialization for CXL.mem
+> functions. If Memory Space Enable is clear, temporarily set it while
+> reading HDM MMIO and restore the original PCI_COMMAND value before
+> returning. This gives driver-free reset paths an early HDM snapshot.
+> 
+> CXL core later reuses and refreshes the same cache. Move the register
+> helpers into the built-in CONFIG_CXL_HDM set so the early cache path is
+> available without cxl_core.
+> 
+> Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
+[..]
+> diff --git a/drivers/cxl/core/reset.c b/drivers/cxl/core/reset.c
+> index 4c977fc47f8d..97b72cc67b6b 100644
+> --- a/drivers/cxl/core/reset.c
+> +++ b/drivers/cxl/core/reset.c
 
---rvxsrpqt5djhs2ak
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 04/11] arm64/mm: Add set_memory_device() and
- set_memory_normal()
-MIME-Version: 1.0
+To Dave's point, and now the fact that Manish needs this information too
+for VFIO, it probably best to call this file
+drivers/cxl/core/resource.c. The scheme being PCI Core caches PCI MMIO
+resource in the pdev, and CXL Core caches CXL HPA resources in the pdev.
 
-On Tue, Jul 07, 2026 at 12:27:13PM +0100, Will Deacon wrote:
-> On Mon, Jul 06, 2026 at 03:49:24PM +0200, Thierry Reding wrote:
-> > On Fri, Jul 03, 2026 at 06:13:31PM +0100, Will Deacon wrote:
-> > > On Thu, Jul 02, 2026 at 06:41:23PM +0200, Thierry Reding wrote:
-> > > > On Thu, Jul 02, 2026 at 03:46:44PM +0200, Thierry Reding wrote:
-> > > > > On Thu, Jul 02, 2026 at 10:18:47AM +0100, Will Deacon wrote:
-> > > > > > On Wed, Jul 01, 2026 at 06:08:15PM +0200, Thierry Reding wrote:
-> > > > > > > From: Chun Ng <chunn@nvidia.com>
-> > > > > > >=20
-> > > > > > > Add helpers to swap PROT_NORMAL and PROT_DEVICE_nGnRnE protec=
-tion bits
-> > > > > > > on a kernel-linear-map range.
-> > > > > >=20
-> > > > > > That sounds like a really terrible idea. Why is this necessary =
-and how
-> > > > > > does it interact with things like load_unaligned_zeropad()?
-> > > > >=20
-> > > > > This is necessary because once the memory controller has walled o=
-ff the
-> > > > > new memory region the CPU must not access it under any circumstan=
-ces or
-> > > > > it'll cause the CPU to lock up (I think technically it'll hit an =
-SError
-> > > > > but in practice that just means it'll freeze, as far as I can tel=
-l).
-> > > > >=20
-> > > > > Probably doesn't interact well at all with load_unaligned_zeropad=
-().
-> > > > >=20
-> > > > > > I think you should unmap the memory from the linear map and mem=
-remap()
-> > > > > > it instead.
-> > > > >=20
-> > > > > Given that the memory can never be accessed by the CPU after the =
-memory
-> > > > > controller locks it down, I don't think we'll even need memremap(=
-). The
-> > > > > only thing we really need is the sg_table we hand out via the DMA=
- BUFs
-> > > > > so that they can be used by device drivers to program their DMA e=
-ngines
-> > > > > internally.
-> > > > >=20
-> > > > > Looking through some of the architecture code around this, should=
-n't we
-> > > > > simply be using set_memory_encrypted() and set_memory_decrypted()=
- for
-> > > > > this? While they might've been created for slightly other use-cas=
-es,
-> > > > > they seem to be doing exactly what we want (i.e. remove the page =
-range
-> > > > > from the linear mapping and flushing it, or restoring the valid b=
-it and
-> > > > > standard permissions, respectively).
-> > > >=20
-> > > > Ah... I guess we can't do it because we're not in a realm world and=
- so
-> > > > the early checks in __set_memory_enc_dec() would return early and t=
-urn
-> > > > it into a no-op.
-> > > >=20
-> > > > How about if I extract a common helper and provide set_memory_p() a=
-nd
-> > > > set_memory_np() in terms of those. Those are available on x86 and
-> > > > PowerPC as well, so fairly standard. I suppose at that point we're
-> > > > closer to set_memory_valid().
-> > >=20
-> > > Why not just call set_direct_map_invalid_noflush() +
-> > > flush_tlb_kernel_range() for each page? We already have APIs for this.
-> >=20
-> > Having a "standard" helper with a fixed and documented purposed seemed
-> > like a preferable approach for this particular case. We also may want to
-> > make the driver that uses this buildable as a module, in which case we'd
-> > need to export these rather low-level APIs. And then there's also the
-> > fact that we typically call this on a rather large region of memory
-> > (usually something like 512 MiB), so doing it page-by-page is rather
-> > suboptimal.
-> >=20
-> > > The big challenge I see with any linear map manipulation, however, is
-> > > that it will rely on can_set_direct_map() which likely means you need=
- to
-> > > give up some performance and/or security to make this work. Does memo=
-ry
-> > > become inaccesible dynamically at runtime? If not, the best bet would
-> > > be to describe it as a carveout in the DT and mark it as "no-map" so
-> > > we avoid mapping it in the first place.
-> >=20
-> > VPR exists in two modes: static and resizable. For static VPR we do
-> > exactly that: describe it as carveout in DT with no-map and deal with it
-> > accordingly in the driver. Resizable VPR is for device that have small
-> > amounts of RAM. Content-protected video playback will in the worst case
-> > consume around 1.8 GiB of RAM, so we want to be able to reuse for other
-> > purposes when VPR is unused on those devices. In that case, the memory
-> > is also described as a reserved-memory region in DT, but it is marked as
-> > reusable so that it can be managed by CMA.
-> >=20
-> > The resize operation is fairly slow to begin with because we need to
-> > stall the GPU and put it into reset before the operation, then take it
-> > out of reset and resume it afterwards.
-> >=20
-> > What kind of performance impact do you expect?
->=20
-> You'll need to measure it, but we've seen reports of double-digit
-> percentage regressions in performance and power. As I said, the problem
-> is that you need to split the linear map to 4k page at runtime to unmap
-> the dynamic carveout, but that isn't something that can be done on most
-> CPUs. Therefore you end up having to use page-granular mappings for the
-> entire thing, similarly to how 'rodata_full' drives can_set_direct_map()
-> and the perf/power hit affects everything.
+> @@ -2,9 +2,16 @@
+>  /* Copyright(c) 2026 NVIDIA Corporation. All rights reserved. */
 
-The VPR has fairly large alignment restrictions (1 MiB) and we do unmap
-in fairly large chunks (512 MiB currently, but we can change that if it
-is helpful) because we really want to avoid resizing operations, so the
-tradeoff is between frequency of resize vs. potential memory wasted.
+Should be "Copyright (c) 2026 NVIDIA Corporation & Affiliates"
 
-Does that change anything with regards to performance?
+...no requirement for All rights reserved.
 
-Thierry
+>  #include <linux/delay.h>
+>  #include <linux/bug.h>
+> +#include <linux/bitfield.h>
+>  #include <linux/errno.h>
+>  #include <linux/export.h>
+> +#include <linux/io.h>
+> +#include <linux/ioport.h>
+>  #include <linux/kernel.h>
+> +#include <linux/pci.h>
+> +#include <linux/slab.h>
+> +
+> +#include <cxlpci.h>
+>  
+>  #include "cxl.h"
+>  #include "core.h"
+> @@ -161,3 +168,284 @@ int cxl_hdm_decode_decoder(struct cxl_decoder_settings *settings, int id,
+>  				  &settings->interleave_granularity);
+>  }
+>  EXPORT_SYMBOL_FOR_MODULES(cxl_hdm_decode_decoder, "cxl_core");
+> +
+> +struct cxl_hdm_decoder_state {
+> +	u32 ctrl;
+> +	u32 base_low;
+> +	u32 base_high;
+> +	u32 size_low;
+> +	u32 size_high;
+> +	u32 target_low;
+> +	u32 target_high;
+> +};
+> +
+> +void pci_cxl_hdm_release(struct pci_dev *pdev)
+> +{
+> +	struct cxl_hdm_info *info;
+> +
+> +	scoped_guard(rwsem_write, &cxl_rwsem.dpa) {
+> +		info = pdev->hdm;
+> +		pdev->hdm = NULL;
+> +	}
+> +	if (!info)
+> +		return;
+> +
+> +	kfree(info->decoder_state);
+> +	kfree(info);
+> +}
+> +
+> +static int cxl_pci_hdm_find_bar(struct pci_dev *pdev, resource_size_t hdm_start,
+> +				resource_size_t hdm_size, int *bar,
+> +				resource_size_t *offset)
+> +{
+> +	resource_size_t hdm_end = hdm_start + hdm_size - 1;
+> +
+> +	for (int i = 0; i < PCI_STD_NUM_BARS; i++) {
+> +		struct resource *res = &pdev->resource[i];
+> +
+> +		if (!pci_resource_len(pdev, i))
+> +			continue;
+> +		if (resource_type(res) != IORESOURCE_MEM)
+> +			continue;
+> +		if (hdm_start < res->start || hdm_end > res->end)
+> +			continue;
+> +
+> +		*bar = i;
+> +		*offset = hdm_start - res->start;
+> +		return 0;
+> +	}
+> +
+> +	return -ENODEV;
+> +}
+> +
+> +static void __iomem *cxl_pci_hdm_map(struct pci_dev *pdev,
+> +				     struct cxl_register_map *map,
+> +				     struct cxl_hdm_info *info)
+> +{
+> +	struct cxl_reg_map *hdm_map = &map->component_map.hdm_decoder;
+> +	resource_size_t hdm_start;
+> +	void __iomem *hdm;
+> +	int rc;
+> +
+> +	hdm_start = map->resource + hdm_map->offset;
+> +	info->hdm_size = hdm_map->size;
+> +
+> +	rc = cxl_pci_hdm_find_bar(pdev, hdm_start, info->hdm_size,
+> +				  &info->hdm_bar, &info->hdm_offset);
+> +	if (rc)
+> +		return ERR_PTR(rc);
+> +
+> +	hdm = ioremap(hdm_start, info->hdm_size);
+> +	if (!hdm) {
+> +		pci_err(pdev, "failed to map CXL HDM decoder registers\n");
+> +		return ERR_PTR(-ENOMEM);
+> +	}
+> +
+> +	return hdm;
+> +}
+> +
+> +static void cxl_pci_hdm_read_decoder_state(struct cxl_hdm_decoder_state *state,
+> +					   void __iomem *hdm, int id)
+> +{
+> +	state->ctrl = readl(hdm + CXL_HDM_DECODER0_CTRL_OFFSET(id));
+> +	state->base_low = readl(hdm + CXL_HDM_DECODER0_BASE_LOW_OFFSET(id));
+> +	state->base_high = readl(hdm + CXL_HDM_DECODER0_BASE_HIGH_OFFSET(id));
+> +	state->size_low = readl(hdm + CXL_HDM_DECODER0_SIZE_LOW_OFFSET(id));
+> +	state->size_high = readl(hdm + CXL_HDM_DECODER0_SIZE_HIGH_OFFSET(id));
+> +	state->target_low = readl(hdm + CXL_HDM_DECODER0_TL_LOW(id));
+> +	state->target_high = readl(hdm + CXL_HDM_DECODER0_TL_HIGH(id));
+> +}
+> +
+> +static int cxl_pci_hdm_read_decoder(struct pci_dev *pdev,
+> +				    struct cxl_hdm_decoder_state *state,
+> +				    struct cxl_decoder_settings *settings,
+> +				    void __iomem *hdm, int id)
+> +{
+> +	u64 target_or_skip, base, size;
+> +	bool committed;
+> +	int rc;
+> +
+> +	cxl_pci_hdm_read_decoder_state(state, hdm, id);
+> +
+> +	base = ((u64)state->base_high << 32) | state->base_low;
+> +	size = ((u64)state->size_high << 32) | state->size_low;
+> +	target_or_skip = ((u64)state->target_high << 32) | state->target_low;
+> +
+> +	rc = cxl_hdm_decode_decoder(settings, id, state->ctrl, base, size,
+> +				    target_or_skip, &committed);
+> +	if (rc) {
+> +		pci_err(pdev, "CXL HDM decoder %d has invalid configuration: %d\n",
+> +			id, rc);
+> +		return rc;
+> +	}
+> +	if (!committed)
+> +		return 0;
+> +
+> +	return 0;
+> +}
+> +
+> +static int cxl_pci_hdm_capable(struct pci_dev *pdev)
+> +{
+> +	u16 cap;
+> +	int dvsec;
+> +	int rc;
+> +
+> +	dvsec = pci_find_dvsec_capability(pdev, PCI_VENDOR_ID_CXL,
+> +					  PCI_DVSEC_CXL_DEVICE);
+> +	if (!dvsec)
+> +		return -ENOTTY;
+> +
+> +	rc = pci_read_config_word(pdev, dvsec + PCI_DVSEC_CXL_CAP, &cap);
+> +	if (rc)
+> +		return pcibios_err_to_errno(rc);
+> +
+> +	if (!(cap & PCI_DVSEC_CXL_MEM_CAPABLE))
+> +		return -ENOTTY;
+> +
+> +	return 0;
+> +}
+> +
+> +static int __pci_cxl_hdm_init(struct pci_dev *pdev)
+> +{
+> +	struct cxl_decoder_settings *settings;
+> +	struct cxl_register_map map = { 0 };
+> +	struct cxl_hdm_info *info;
+> +	void __iomem *hdm = NULL;
+> +	bool restore_command = false;
+> +	bool allocated_info = false;
+> +	int decoder_count;
+> +	u16 command;
+> +	int rc;
+> +
+> +	scoped_guard(rwsem_read, &cxl_rwsem.dpa) {
+> +		info = pdev->hdm;
+> +		if (info)
+> +			return 0;
+> +	}
 
---rvxsrpqt5djhs2ak
-Content-Type: application/pgp-signature; name="signature.asc"
+Is this function going to be reused for refreshing the state of the
+decoder cache? Does not look like it in this set, so it should be
+impossible for pdev->hdm to already be enabled, right?
 
------BEGIN PGP SIGNATURE-----
+> +
+> +	rc = cxl_pci_hdm_capable(pdev);
+> +	if (rc)
+> +		return rc;
+> +
+> +	rc = pci_read_config_word(pdev, PCI_COMMAND, &command);
+> +	if (rc)
+> +		return pcibios_err_to_errno(rc);
+> +
+> +	if (!(command & PCI_COMMAND_MEMORY))
+> +		restore_command = true;
+> +
+> +	if (restore_command) {
+> +		rc = pci_write_config_word(pdev, PCI_COMMAND,
+> +					   command | PCI_COMMAND_MEMORY);
+> +		if (rc)
+> +			return pcibios_err_to_errno(rc);
+> +	}
+> +
+> +	if (!info) {
+> +		info = kzalloc_obj(*info, GFP_KERNEL);
+> +		if (!info)
+> +			goto err_nomem;
+> +		allocated_info = true;
+> +	}
+> +
+> +	rc = cxl_find_regblock(pdev, CXL_REGLOC_RBI_COMPONENT, &map);
+> +	if (rc)
+> +		goto out_restore_command;
+> +
+> +	rc = cxl_setup_regs(&map);
+> +	if (rc)
+> +		goto out_restore_command;
+> +
+> +	if (!map.component_map.hdm_decoder.valid) {
+> +		rc = -ENODEV;
+> +		goto out_restore_command;
+> +	}
+> +
+> +	hdm = cxl_pci_hdm_map(pdev, &map, info);
+> +	if (IS_ERR(hdm)) {
+> +		rc = PTR_ERR(hdm);
+> +		hdm = NULL;
+> +		goto out_restore_command;
+> +	}
+> +
+> +	decoder_count = cxl_hdm_decoder_count(readl(hdm +
+> +						    CXL_HDM_DECODER_CAP_OFFSET));
+> +	if (decoder_count < 0) {
+> +		rc = decoder_count;
+> +		goto out_unmap;
+> +	}
+> +
+> +	if (decoder_count > CXL_HDM_DECODER_MAX_COUNT) {
+> +		rc = -ENXIO;
+> +		goto out_unmap;
+> +	}
+> +
+> +	if (info->decoder_count && info->decoder_count != decoder_count) {
+> +		rc = -ENXIO;
+> +		goto out_unmap;
+> +	}
+> +
+> +	info->decoder_count = decoder_count;
+> +	info->global_ctrl = readl(hdm + CXL_HDM_DECODER_CTRL_OFFSET);
+> +	info->decoder_state = kcalloc(decoder_count,
+> +				      sizeof(*info->decoder_state),
+> +				      GFP_KERNEL);
+> +	if (!info->decoder_state) {
+> +		rc = -ENOMEM;
+> +		goto out_unmap;
+> +	}
+> +
+> +	settings = info->settings;
+> +	for (int i = 0; i < info->decoder_count; i++) {
+> +		rc = cxl_pci_hdm_read_decoder(pdev, &info->decoder_state[i],
+> +					      &settings[i], hdm, i);
+> +		if (rc)
+> +			goto out_unmap;
+> +	}
+> +
+> +	if (restore_command) {
+> +		rc = pci_write_config_word(pdev, PCI_COMMAND, command);
+> +		if (rc)
+> +			goto out_restore_failed;
+> +	}
+> +
+> +	scoped_guard(rwsem_write, &cxl_rwsem.dpa) {
+> +		if (pdev->hdm)
+> +			goto out_unmap;
+> +		pdev->hdm = info;
+> +	}
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmpP/UkACgkQ3SOs138+
-s6GFqBAAsfNpGtxzDc/1UKAc4Vjp9eilQE6L3ZzhQhn1d3Crc+ym9vGZzyfe4lTR
-di2aYaWn+6XslOczfKwW58jo+D8/fP64sFF9UY3mR7U+MzuIGEF61RVgF0fFH4Vb
-wo6H5bLYvA2J1VhXyIv08l/Oxb+GGHMa2gRVdTbFux+csAi4ahPJVT0oS9S0sJht
-cmPEaDkjN8StPrx4IN3oTcj7g3LW3aDuShMtgqRrceSaIw2xvtb+rvWLvGJac/HH
-kNrn5Vc+pAJJigN3NZqMgpjeD3gHZDZYaKUToPXJuIOlZILR0VzdDAHxD9U+lmyD
-YVPGNnPi13QmxTk9KHR+Tm2aL7AxXx8TK0jIOUFuaySrgD16Oo9CTxOvsxewNGpg
-lGDhuvag7BCxZqQzlxbhAuGtHZS+s6OWCXleWAsKpVs4Ga/FDaAvZYCHugxIur84
-mexc1/5CBcjohTAfvTLpAZGUxDXslKopeYaBZGgRJXz+iwulrGeeDpEvDH1VNo1r
-SkCIXoLOlq4bEKwejuGzuVzc47hLYGL+c09cCOwa73rhvVARke2v05fRowwN29Iv
-1OVDKNQTsHbBZ8PNTsoaEApLvif8crc38kborIPtiuaGz4WDg7q90ogJoIhqEK2L
-z8Lt64Ul985C2ht8PNWLbWeUKGNX54YFmnBCCP+lgBzDRu2sc4g=
-=Axxn
------END PGP SIGNATURE-----
+If the plan is to later use this routine to refresh the cached
+information then how does it know that pdev->hdm is more fresh then the
+recent @info snapshot? Otherwise this looks out of place because there
+is no driver to race in this early context.
 
---rvxsrpqt5djhs2ak--
+> +	iounmap(hdm);
+> +	return 0;
+> +
+> +out_restore_failed:
+> +	rc = pcibios_err_to_errno(rc);
+> +	goto out_unmap;
+> +err_nomem:
+> +	rc = -ENOMEM;
+> +	goto out_restore_command;
+> +out_unmap:
+> +	if (hdm)
+> +		iounmap(hdm);
+> +out_restore_command:
+> +	if (allocated_info) {
+> +		kfree(info->decoder_state);
+> +		kfree(info);
+> +	}
+> +	if (restore_command) {
+> +		int rc2;
+> +
+> +		rc2 = pci_write_config_word(pdev, PCI_COMMAND, command);
+> +		if (rc2 && !rc)
+> +			rc = pcibios_err_to_errno(rc2);
+> +	}
+> +	return rc;
+> +}
+> +
+> +void pci_cxl_hdm_init(struct pci_dev *pdev)
+> +{
+> +	int rc;
+> +
+> +	rc = __pci_cxl_hdm_init(pdev);
+> +	if (rc && rc != -ENOTTY && rc != -ENODEV)
+> +		pci_dbg(pdev, "CXL HDM cache init failed: %d\n", rc);
+> +}
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index dd0abbc63e18..8080389d1fc3 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/bitfield.h>
+>  #include <trace/events/pci.h>
+> +#include <cxl/cxl.h>
+>  #include "pci.h"
+>  
+>  static struct resource busn_resource = {
+> @@ -2484,6 +2485,7 @@ static void pci_release_dev(struct device *dev)
+>  	struct pci_dev *pci_dev;
+>  
+>  	pci_dev = to_pci_dev(dev);
+> +	pci_cxl_hdm_release(pci_dev);
+>  	pci_release_capabilities(pci_dev);
+>  	pci_release_of_node(pci_dev);
+>  	pcibios_release_device(pci_dev);
+> @@ -2674,6 +2676,7 @@ static void pci_init_capabilities(struct pci_dev *dev)
+>  	pci_rebar_init(dev);		/* Resizable BAR */
+>  	pci_dev3_init(dev);		/* Device 3 capabilities */
+>  	pci_ide_init(dev);		/* Link Integrity and Data Encryption */
+> +	pci_cxl_hdm_init(dev);		/* CXL HDM Decoder Capability */
+
+I think Richard has a point that this is too early to be using device
+MMIO resources. I took a look and the proper place appears to be
+pci_bus_add_device(). Note how some of the quirks invoked by:
+
+	pci_fixup_device(pci_fixup_final, dev);
+
+...do their own command register fixups and ioremap().
