@@ -1,71 +1,64 @@
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013027.outbound.protection.outlook.com [52.101.127.27])
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012006.outbound.protection.outlook.com [40.107.75.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A369D417360;
-	Mon, 13 Jul 2026 13:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281374189D9;
+	Mon, 13 Jul 2026 13:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.6
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783948112; cv=fail; b=IWiXjng2GquG/YMbPPHLNGcBAVPEFFPrV91MANSyliglmx10YxOvqaVLKAY2TcIzj7TCVEmlDM5tqfwNz9T7pogwdU8w4ItKfvk8TpD4VMSJJ616Sv0WodYnAY5o8MXISHEgXNFPODbH5nCjZ/jkkni71Kg3D91IqLtFs1bTn90=
+	t=1783948417; cv=fail; b=D/2fIJ6+XayHoRDuwCeGDVniEtapkOVpQmI7+tBqVtVB3rDyA4NERADAHZHQIamlxqu/G7b7L35tLJ90UnEJxBTdw3FwOCsV+MoMppWavjAlb6vkLJ1BOu2u3mujORqn0rhQIefJO268OcDbVzLCEWGNM/tJcCAaH+UTXOmpiD8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783948112; c=relaxed/simple;
-	bh=PxkGdSaSk0eF7eVV6gIiMxfbtWt0riBLpIS3iWCNXC0=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=A63L7ZcPR191QiH9RDf3I4G76zt/fF3+lnChC6dICoeHE4PCgtdpfLlsaJjSRWo83g8Z8WVycVPXBDYfJvcprrhMC0RUEng8ZwU0Bp5dciXswk2Q/dWE0i3UZ/QEGgZ8RJK/E30jccsuXB6chIiiU6RCZa0FiJWV9IRexWhdapY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=ZxdDPtYI; arc=fail smtp.client-ip=52.101.127.27
+	s=arc-20240116; t=1783948417; c=relaxed/simple;
+	bh=dy/v+Tos8femEWb6D54oqovTBHfqQjPdcYCm6zLE4X8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=FX3K/n0W1RT2mOoFkaS/WuWtbQ1+8ewPNv7lqtIisAoPwA9Vx7CQJoKvwXQ6Cl9JiGujty53l1TOWw6zDkuq4AHHXX5FRfOtidFhsQpasVfVwGoL7/ZYOpbgvs6jlUWKKzQi+lu2qcFrESMzWwCPJnTa6rX215hXmzJ+mliAVHY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Rh0rsAqz; arc=fail smtp.client-ip=40.107.75.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="ZxdDPtYI"
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Rh0rsAqz"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uxyH++akPmFLmz1mS1BNgLQtcy7d+BgXYSHM3VNjJxrk7zQBWgSU99Psb+cth7UIvNaHtC8I9MTW49UvCG4Uv1Dvz1iTtg/L8i3+pLBB/LRR/PxU2YhzAG+oNeTpZgSy3aPZaP06FzyF9gOVzo4+Nlili5khqnZjHBLfehZev/SbiZQBFbDG4suiE7HTmxajUY1j+AzFkQ/gZDoZGuIGsllMMIWfsxInNW481mZaXQGq8He/fNZO992YpglvwilercuPfv0llp1noG4Y70O/NP0vRcEkzJ1xxV7caqxHZfNtfcatakdUTiZ3LYk3+bEz7xPZoLUdgLbdjh84GECMyg==
+ b=PC/8425XzDV0q+rsV5hfVeAqBbUmtgXctS9cdjvzlEXgtX7Tn1wQswPNBkoy9K4pEvOeaQ9QEgB9lSIC2AkSA/RzA3tIZffnHmeCMayZEH0WQbWCx56bMAlHQW4jZ4l6MBauEzct7ZGVCkSkoNeLItTdC5kYCuAiZtmDpyaGv1sh5QHBOm1hpS6E3xews+IsyIksKdJa5IMNoLpybUHUVSm0ggyRXUqRPVVABWLFvxJkFZQtzx0o5798a4+04HFcoiaabwDmnErt8Z5VfoK7la2xozYVwpFe5lQ73E3jBDqC0/vxuesDJuHicpaWJ9H5YN6xIL7OAyYLL8SDoxXBYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cIJfD2AbPVHYUPeyZkYQ2XpDRNSrxa9S4jmZWvLB9rQ=;
- b=lH/FpUl0o5SkGk64MuIABAnmI1VlJ5ppeT+U/T2oXeeNEkia1u5cqiKpwMsmYKp2Y0PaDHM/ftQDZIFprfzTvucgFU6AyY0sqR3G4sR2Y6e9KfaY4ttY5CwMV6ChZokwk+hf/Zzgu63KOEIgXzvlgqqXjf/SKYn8kjoXSIsjG9wl3nyPPlYHNPmZuoU7fM8ROu1g850pfGXFsrHkssWGIWE77XUIJw45mn0xxefBIzXMyWW9JgTNEJ+i/H4U/TzO+jys/AK/YT5g0Jf2u3mTIgKg0kmk5IG7dHkuCEo8usFKo9nTfyRnfUhPtt82xYXXNu4+Hs01tNa96MEppbCOPQ==
+ bh=WjhRH0jzNlIyJ9q57m2nyjvxW3yoRAz8kdMs/KGsoNw=;
+ b=pNaKL0CVvlS/ZDKy3BU7cSb8XWspdOFVvedcdY3VRhaHgNnu0PJrPNYhzulL6PSNXJwyASrihuDL/UI2DP184lhGSFcvXBAxrU4JNYe0HbJ/85+9bOY1one/RX8j6kijqa8P0FCTagJCSpiuA5wla/9Xu1n9VGtLN2Mm9GfO6RiFe0MvS5v9XvWEFAw/yFEohENsjf0dRiOZ4x5tf2CWqjSuwHTz5DW8QfQ/hUNEya7Mz1wkoZgyqyu6yJIHGu4aK85aj1ln6OB4KijKXCTZeGJr6zdxTty8CR8VAcsp4ymsGi3w39KgnqCZpmdrP+056k7NF/SDvfB7O52uIVEqbA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
  dkim=pass header.d=vivo.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cIJfD2AbPVHYUPeyZkYQ2XpDRNSrxa9S4jmZWvLB9rQ=;
- b=ZxdDPtYI4mP8EnqVUUy8Rdw2zZgG/hOd4tNsL+OnZvDtueJYFFiIC8brm/xp+h0f1WHj5PsCorpd/XK3vlHnx/ljL6kfE7gi4jsUZRxrrGMnZRFIfmvDmtNmAdBkKcfCIOmMnvF1qNXtx/O2OJOKgXiyaBeY88BTe7MRj6FlfsQkx3f8sPI/IH+aN7KnPc6wfccNj5nbJW4TWeTJUcC2GV6xdH0dYCh4CCExtFGXXYIKNub+LFv0RFspJDhDdX7rScgn1ShvqjdepHEKaivXTcJYvLAfElGCgensVrbswmwWyj7w5wVYSbOSbeYvICGv6BGJTgTfW7TtJCjFs4ZC5A==
+ bh=WjhRH0jzNlIyJ9q57m2nyjvxW3yoRAz8kdMs/KGsoNw=;
+ b=Rh0rsAqzfVwsTrnXIwhS3VKpf+FIlGEk5XW9ATg5TGuLDWl6DWDm7vOEXCwTFywR4Ad/7A8PRB+EsbKWr1AAraeQEf1skyIUlPs1Tu4BvHGyc4SD0Q3hCzu+R0fQfqPsOLjuVoGXazNstMND1oGcE3YA8wnFt52c8pkcc/1UIr3NnHLlLvdX3fbmhJl1C819SyrUvuclPBuKUKr3k3EkZG6Y+OWrGBH2p56UUXR+VhoPgfaJYugxSMZwKlL868mu/OPVI8GST1Idy7younhN/aLkNSSz6HHO7YsZfyU4Q8+soHtGtReltR/C42hqLda6HvmxuTinDjBigU+ilptbxw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=vivo.com;
 Received: from SEZPR06MB5832.apcprd06.prod.outlook.com (2603:1096:101:c8::12)
- by SE1PPF50B2D80A0.apcprd06.prod.outlook.com (2603:1096:108:1::415) with
+ by SI2PR06MB5316.apcprd06.prod.outlook.com (2603:1096:4:1eb::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.14; Mon, 13 Jul
- 2026 13:08:24 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.202.19; Mon, 13 Jul
+ 2026 13:13:32 +0000
 Received: from SEZPR06MB5832.apcprd06.prod.outlook.com
  ([fe80::f98:5e32:4ccb:d07b]) by SEZPR06MB5832.apcprd06.prod.outlook.com
  ([fe80::f98:5e32:4ccb:d07b%6]) with mapi id 15.21.0202.014; Mon, 13 Jul 2026
- 13:08:24 +0000
+ 13:13:32 +0000
 From: Pan Chuang <panchuang@vivo.com>
-To: Mark Rutland <mark.rutland@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
+To: Dmitry Osipenko <digetx@gmail.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
 	Thierry Reding <thierry.reding@kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM ARCHITECTED TIMER DRIVER),
-	linux-kernel@vger.kernel.org (open list:CLOCKSOURCE, CLOCKEVENT DRIVERS),
-	linux-stm32@st-md-mailman.stormreply.com (moderated list:ARM/STM32 ARCHITECTURE),
-	linux-sunxi@lists.linux.dev (open list:ARM/Allwinner sunXi SoC support),
-	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
+	linux-pm@vger.kernel.org (open list:MEMORY FREQUENCY SCALING DRIVERS FOR NVIDIA TEGRA),
+	linux-tegra@vger.kernel.org (open list:MEMORY FREQUENCY SCALING DRIVERS FOR NVIDIA TEGRA),
+	linux-kernel@vger.kernel.org (open list)
 Cc: Pan Chuang <panchuang@vivo.com>
-Subject: [PATCH] clocksource: Remove redundant dev_err()/dev_err_probe()
-Date: Mon, 13 Jul 2026 21:07:39 +0800
-Message-Id: <20260713130740.293502-1-panchuang@vivo.com>
+Subject: [PATCH] PM / devfreq: tegra30: Remove redundant dev_err()
+Date: Mon, 13 Jul 2026 21:13:15 +0800
+Message-Id: <20260713131316.322358-1-panchuang@vivo.com>
 X-Mailer: git-send-email 2.34.1
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0058.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::9) To SEZPR06MB5832.apcprd06.prod.outlook.com
+X-ClientProxiedBy: SI2PR02CA0035.apcprd02.prod.outlook.com
+ (2603:1096:4:195::22) To SEZPR06MB5832.apcprd06.prod.outlook.com
  (2603:1096:101:c8::12)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -74,168 +67,86 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5832:EE_|SE1PPF50B2D80A0:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3abc10ae-ae71-442f-e004-08dee0dfd20d
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5832:EE_|SI2PR06MB5316:EE_
+X-MS-Office365-Filtering-Correlation-Id: 49e32042-4d58-41c1-3b85-08dee0e089c6
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|366016|1800799024|52116014|7416014|376014|18002099003|56012099006|11063799006|6133799003|921020|38350700014;
+	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|23010399003|38350700014|18002099003|6133799003|56012099006|11063799006;
 X-Microsoft-Antispam-Message-Info:
-	js8svtIINX1ETYEpeKJCBgN5MJfgWGuP3Z6nnMRsudxw/V3QXUwJ0UwNv2o17OZv4m//MjsE0ZS7UAFAcQuCmCPEfxlhUf0NX5sJJulAcfAZHq/N6Jf1MgjIPal0IexutmruemKr1ejCkYdzAW8HpqcKiz+xVlORV8wrtLm6Q6ZQoG0iwewdQKzWvbBykIXcGRYNOrx0aBIbMEqe22uHgDk6U+HVunkHr357vejvcLSYnqXxH1n+ti+FpimbGDfP3cVSKt4Eti3w3GbJ8C3KQpoojvB9svur/SfcidFSeWbuGTZPpIjBOO1qi7ZZTvorRUf+TeQUXzPGT9XagVH2z4W0UMQEqjC6W/at+9ChVbnI+t01s0gjM6r1jEUZ/ypYpGmNhQwObxpSFSiato9FC1VrZ48bb+5UcSzlVWMgdPU+Vmzrqeri9GpXu4VcWHwZU6wzI1volIYnKqN17isZDlDUUOZKGFz9rA9B3TIOpgXudPvyREoWBiYQtk3sqU7Cf+yozEQ0VNd+P7lEDNuoaHs80Gu+yynchczX2dgWccL0EvpOLtvca6/kmw4Maq3cICicZ0r5FYRkQZC2R/6JKALYWhBk6Ke7S6MnV6VRcCwNGSrUCeryAB1QEsHhUdSqlhbVWyzlcurLB30tZItFKuLPzmLyzlCs96r1AsXF65kiaUozA7JpfplVAcSveIol0rtuHsaqNjaxrux1+mL7e3yPrpesRSe2lE7xj1M+g516YW0pci1BPrT7rvlPEfjg
+	Xs3x4RdanDb+posggR81dlyUFEDp+WCuBySMGHW49arhvn2eyTnfIIe7GsCx4QJooFO7s9X+l7hprr4pGIokbOH5Wq944WTO5y6T/KLdOgss7sG5FPU1er17mHNlEOvHq9PkY2mBmDlnfhZhzrRVdlAImwE99d2Ql6LSdzIVjZUkFtJPDGjuhoN/DZlGV0XBwSKbmn96Qodsz7LIyMQ/wFk87tcV90jc37ZWBt+CnkKiRY72D7j9QwIs65BykPdI1E6IubI2qnJ/xRw4HI+PDIJpT+pl4xfdt1wygL2hdPMR8kgtmbQmyY1AgbDm2x2VCqgF+R1amZiRIc4HFmu07Qh7dyjlDEaXhrJ9FMpQFKfmHR9jXp5PlEKYEfOXYdYRoTPzLVf2E4IY69tSzzAMZgD2PAWDnoSeUEF7sPMYelN7a+Wahmz8w3Y4OgDOKdXHknNnkyXrp7zdUmYHqTnhXsnvW1VS8faLX/l0dLiJ4fpcNv5++Zvl9MDkkYDNihsxvoDJn9tQJHwXXzdxEeFTIANn9aDL3m2at1aIj1n9Xg5sLkhZ/Ufnn70OhAhY0uYhdt363lKfIvM/KnbXgv+VdsRPe9N0eKL+TKCaP75npmnvYxFE2xvqGSyq0GxOP47jaipi+QryUXqYQqQr++lnTXK7M+9eLiSY8KPg3YLMIJkTL+r2/XVSKL81NIueJnIn1z1yj9YtrFJNKxcopV0KhOaPUFDRf5/kJP8SRTgT8tA=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5832.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(1800799024)(52116014)(7416014)(376014)(18002099003)(56012099006)(11063799006)(6133799003)(921020)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5832.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(23010399003)(38350700014)(18002099003)(6133799003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Gm1qA+hNhGduEAZL/di9FbpsxGIQxRRbdkiTQFI5Yt+nCy3yYoWu+lHGvPrF?=
- =?us-ascii?Q?0EpcdJWqtGcmQ9ZwltJgNv0I0U/D9xnvUagH2PUE60VUQ3TRSDsp7jyFMq22?=
- =?us-ascii?Q?fQay+CYFXqzuEcqCdwPDvvFJlVsu0WDwwTEWfRnxH5lHV6ruiw8OP9FeaRH/?=
- =?us-ascii?Q?NNyd0pxtDJytWjVYPsYfHAgFKIBLbGCHMtE47T3UAUljSW0V3XahrcI25Cw3?=
- =?us-ascii?Q?mj5cSE+bxkiRVDXBNNPU0vFaCvwe1F17B2oR+Ka6cgYZSte7pNWC+dMyepqg?=
- =?us-ascii?Q?+hwPjD8ZO5YrT1G0JUb/95o8nuuuXJNoNpO1G5QqQKISUtJkDok7Tfnmu/P5?=
- =?us-ascii?Q?Y9p6ApL1yPBwJIDGLJj3eSJqH3yiAXpUiHdkTocy5+Xp9mz9sPkpBcbORbvp?=
- =?us-ascii?Q?LVWQK6Li1LK0omR4Owm1omt0A2dC2wCa3P/y8Vxjq7qWW2aeQ3ayrdmjBihu?=
- =?us-ascii?Q?de7oIb35jpKLEy/0ZKn+Pet5/gqDsH61PHoQSgQ0ta1pq3CJ67iTFQE4pAFX?=
- =?us-ascii?Q?0wGTcCzlD/kGdYVsf3ufLYQ7wUEwKVQwmzcWr90b8+oVMbjqN9xoLNS3SmIJ?=
- =?us-ascii?Q?ZC6bb5sm/6cFKEQIzD9kyOBmGRqqGi8tg44mUXyZhCbhQVUaVKH8ezGwxaHq?=
- =?us-ascii?Q?m+ynCvVLeMXVfuiaSmby+CQ/Zwz8dNFkeEJbauhqW4iVLUt3V+SWzU4RNUhj?=
- =?us-ascii?Q?aZPaJUJjy2qVveN6HiZutMiX9WDCaZk/+fd2AQvpwSBoxGFLD3Ju3fSCuK7W?=
- =?us-ascii?Q?JNFz9wKDK7ATnHrEgZwRgACja1dEknFvym3YsDUwKHU8Fw4jIv01Nb/QJdM3?=
- =?us-ascii?Q?D+ImQ0E7P8h46Bmwx3AZERZJ/nBjH+WbzNvvb6ywcbxjAFHWHyXq0VHcfkpe?=
- =?us-ascii?Q?5W6W3gyyfGPPl/kMQKhC4tAgPd59EHkZzmqOMZv1NWrIltxG3aOesqsdlMdJ?=
- =?us-ascii?Q?4foqHKv05GXpkXolTf2AR1IQ9Lxgyu78cwIzkLUX3mguhztmX2TCkjrKXeGp?=
- =?us-ascii?Q?Q05HDwT3dUJG/7m+4uIRGf42ssdpemxw/e+AXH+LdGDnbu9Ld9puZLENygku?=
- =?us-ascii?Q?dxyoKuNDxQJ7fx666JCvr5zD4Yk31QZhXM+JM4ufQS162E+lxRgE5fbJ7P4l?=
- =?us-ascii?Q?SDJ+y3kczMsD7hXxEOPHXq5OYGDxPwnA2ne9Gj0/OVQ1iFLaL/uXAcAIWTwe?=
- =?us-ascii?Q?2bjgQtHoipOJeewSDm7t0WYc7VUAsM3EPGGtXSUrKRwDibwTTa/lvcCs27NX?=
- =?us-ascii?Q?RZnWZYF5M7h/L1XV1SeHghScxQn1zu3P5s5td60uafgzJdR9fLrXtjql9rGV?=
- =?us-ascii?Q?LgGBFEZLHK0yLC8DLuD3+O6UnfPaw2kP/l2U+KQHYrKL8l0n0T4fhrRdnga4?=
- =?us-ascii?Q?Cir/4FonX50zMkG7rnM9IlRimh9uwygE1VUsmujpUsN0Z3B6+lvUzWRbk/Qu?=
- =?us-ascii?Q?Z9Cbpds3XuWRbCS0W6fcZwFLaQ6dBXFOAkHqw2cEWndmd35RKFwyaL9xPor5?=
- =?us-ascii?Q?6ZwHzc2U447tMrGXD1pCoW+76auWiEjtm4Llm19GfTEeK/Z3kW2Iaakg2wvI?=
- =?us-ascii?Q?pLRcP/XPtraus+rIks8HTzyvSAbqzWxBeA+yWqOqMnUp3F4D+io2iWQLW0Qm?=
- =?us-ascii?Q?wfWaFPefeYpcXLkM1MnqQ/XwQ8Wa4kV1z9Me5gftuqxZzMBqIYRh1lDQWLQc?=
- =?us-ascii?Q?OwwPqpxRjUMvukYqYfRcPHGyn8QyM5DUba9XzLvM32q1wWZmAuyYVblI3wCI?=
- =?us-ascii?Q?wuh4cdDCcQ=3D=3D?=
+	=?us-ascii?Q?U4lhOUSZ0oDyZNAt4jO8gcXiNpJcQWZGsSiPh98Y4r6BjiP+W3fJtmWuExnb?=
+ =?us-ascii?Q?3+GKI9t72S54s7VYVPKgD6O9RhSDZNng+PKHBarzbT3P/IjQcelW0cx4cekY?=
+ =?us-ascii?Q?rztNlsOLGiJ6XZo1eVEv3Q4c7NqZbXmnUyS89a+Ta2cU9bbKBTUH6vsscF3e?=
+ =?us-ascii?Q?rnVQznf7p8O4GAcpl03wu2Ga4o1/vC16wKe9t3Koli+HDSZ1aUEse7pVc8JS?=
+ =?us-ascii?Q?buiQ7eeUiFc4hrIqaNLu8NOjLymdDZSADjArWkTSBLEQJ6rZgAeTigQZAmaC?=
+ =?us-ascii?Q?gfFjUoIAuj2Lr/B+IjfI+FQ9Ja7hkBlUVSNCWsH3kYH7zc/fYeHeE1Rn1EUs?=
+ =?us-ascii?Q?TxZAQ14uJCYRonbSpVDJcSHF8PwAvy+LsuRi7qvr8ftr7r33LaK3aFe3kdh2?=
+ =?us-ascii?Q?X2kq6wRJN8jM61jlcJ9LPVIM9UQjs/uG3SewII4jnXzoXxJGrGXcd6bWALOf?=
+ =?us-ascii?Q?a45/ySAfA9KOAwgQA9kQs1wjT8JhFswXYKgX+7w7apdHVHlL7ltC7EAZFK2H?=
+ =?us-ascii?Q?Xcv0TYwyxvmoSWUNjr1YQt9QCTdxOEsh0sj2b7hChF3n6cUOO2jMwFoDY++a?=
+ =?us-ascii?Q?yuXwoyX7apNZjxXXOrL5qUxV9wTdzEuiH2QZ8a9X2LTRPU/kk/tVvAg+muWB?=
+ =?us-ascii?Q?fUYIvHRjB57FaAWltm50ssED3rv8HXhkaIckrjrKnU+F1aUCeIRLyajBdNZx?=
+ =?us-ascii?Q?8SbKEmBAcsjkh2U10LZY6DUQGyJnGdIyaQ67Uni022ZKPTLaBps/Vt+oJ4be?=
+ =?us-ascii?Q?KzYMA0+YgTTKKOYpFgsKbt7hF4JU7p0X0XnAzzvznGgOTcQvWfMBi3I3MtgO?=
+ =?us-ascii?Q?QNeU7VqZ+XZMPkmPGZySaRgRIZwEZ7Ns4BXqWAeqBvq17Qij69VGSU7BwnbD?=
+ =?us-ascii?Q?JzBCdt7CVf0yMeD3Fqh64uY9nBfok8xdh4D2wwRJ1VyMy4s/x7DmSKmgXpkW?=
+ =?us-ascii?Q?2fSTJ2HbxarNxJDH5/KqL2+EeUbyxNUYR0HSwie4WNVeHeE9p+Kiwer4RA6w?=
+ =?us-ascii?Q?ZBsc1WCLa3WO35CjutiG5FTU81VV36puvvybGTwwgjjP7DWZ6VWoQ0GryxHx?=
+ =?us-ascii?Q?TEgy43uE1LL0RJUFWPgHHgRKmir+bugO+XXCWU3SD8VoiGjfYnOFAPU7tQ9i?=
+ =?us-ascii?Q?NhoUpMg/6wXIYBpbRecHr9i5crUezZbfpjpkn0thtzb6vRpPlEK1w0z35RL4?=
+ =?us-ascii?Q?zO3AzoWUKPOZeXwkR7f3vNRmeaueAzY1Le5/ma/D+DqrSh1JlqqRBFprX373?=
+ =?us-ascii?Q?m9KhxTsAbWqXhbzaDGLqHeQDPLl7aHkSwNuauziBXoKC9dpZR3y+QSpzH5CP?=
+ =?us-ascii?Q?PNpVaP+43NWHiAEH/jnS13rEfmkjww37hwCnfcmoYshiG4CWOkwkVPe8wOAl?=
+ =?us-ascii?Q?JLBWMOlSZkyJ7U0KXYuKTyRkdv6jugSQ/Q9K4LtDrXriC4af7XuDVms5UZrb?=
+ =?us-ascii?Q?9L36jhmVSaAIpYztkY3zl026reDwxsHteE4+zpkUmQI10evFzUDPhUIglMhI?=
+ =?us-ascii?Q?8x28vM8+OCkOa+pwOAe3BwUCITVoWTV0sJRwLwR7wdwBwoLqzmZILkM7bmjz?=
+ =?us-ascii?Q?x57Cg+ID0RlkjnYYCeVvI8nE/3ML/24rRc4Oa/FcY04RExLaf+fghLL+egyZ?=
+ =?us-ascii?Q?Le1gVp6nJjaAIXmSBGQdJinCNUZkQGM013rnNffPHjkN4Ld/lAx6fFxvTr+a?=
+ =?us-ascii?Q?0j3ncFt1+HREEghxgaREuKNRaVBqFK7e0/zNgwAh73FHTkRkDO/8huN/U31p?=
+ =?us-ascii?Q?uGiubueSug=3D=3D?=
 X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3abc10ae-ae71-442f-e004-08dee0dfd20d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 49e32042-4d58-41c1-3b85-08dee0e089c6
 X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5832.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2026 13:08:24.3204
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2026 13:13:32.5515
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: X4MvBVw+BY8pjuAhWJriisPdUvsevuSVvJagKIyU6cKOK502kgk+BkPCUrsy3TrdDi6IONBnNgDdV8qOpnb44g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE1PPF50B2D80A0
+X-MS-Exchange-CrossTenant-UserPrincipalName: tkGkt7vtzgt3hVVbfUrp6YLMUjo0zZe4nM7Hl6fMSw9E+D5ujd/vQU/eiZ+Opzp3FtxHPDD8gb0sL0cw+vzHKg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR06MB5316
 
 Since commit 55b48e23f5c4 ("genirq/devres: Add error handling in
-devm_request_*_irq()"), devm_request_irq() automatically logs
+devm_request_*_irq()"), devm_request_threaded_irq() automatically logs
 detailed error messages on failure. Remove the now-redundant
-driver-specific dev_err() and dev_err_probe() calls.
+driver-specific dev_err() calls.
 
 Signed-off-by: Pan Chuang <panchuang@vivo.com>
 ---
- drivers/clocksource/arm_arch_timer_mmio.c | 4 +---
- drivers/clocksource/em_sti.c              | 4 +---
- drivers/clocksource/timer-nxp-stm.c       | 2 +-
- drivers/clocksource/timer-sun5i.c         | 4 +---
- drivers/clocksource/timer-tegra186.c      | 4 +---
- drivers/clocksource/timer-ti-dm.c         | 4 +---
- 6 files changed, 6 insertions(+), 16 deletions(-)
+ drivers/devfreq/tegra30-devfreq.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/clocksource/arm_arch_timer_mmio.c b/drivers/clocksource/arm_arch_timer_mmio.c
-index d10362692fdd..d678f764d3bb 100644
---- a/drivers/clocksource/arm_arch_timer_mmio.c
-+++ b/drivers/clocksource/arm_arch_timer_mmio.c
-@@ -313,10 +313,8 @@ static int arch_timer_mmio_frame_register(struct platform_device *pdev,
- 	ret = devm_request_irq(&pdev->dev, irq, arch_timer_mmio_handler,
- 			       IRQF_TIMER | IRQF_NO_AUTOEN, "arch_mem_timer",
- 			       &at->evt);
--	if (ret) {
--		dev_err(&pdev->dev, "Failed to request mem timer irq\n");
-+	if (ret)
- 		return ret;
+diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+index 401aac6a9f07..d149694becd9 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -880,10 +880,8 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 	err = devm_request_threaded_irq(&pdev->dev, tegra->irq, NULL,
+ 					actmon_thread_isr, IRQF_ONESHOT,
+ 					"tegra-devfreq", tegra);
+-	if (err) {
+-		dev_err(&pdev->dev, "Interrupt request failed: %d\n", err);
++	if (err)
+ 		return err;
 -	}
  
- 	/* Afer this point, we're not allowed to fail anymore */
- 	arch_timer_mmio_setup(at, irq);
-diff --git a/drivers/clocksource/em_sti.c b/drivers/clocksource/em_sti.c
-index ca8d29ab70da..73a3357d173d 100644
---- a/drivers/clocksource/em_sti.c
-+++ b/drivers/clocksource/em_sti.c
-@@ -300,10 +300,8 @@ static int em_sti_probe(struct platform_device *pdev)
- 	ret = devm_request_irq(&pdev->dev, irq, em_sti_interrupt,
- 			       IRQF_TIMER | IRQF_IRQPOLL | IRQF_NOBALANCING,
- 			       dev_name(&pdev->dev), p);
--	if (ret) {
--		dev_err(&pdev->dev, "failed to request low IRQ\n");
-+	if (ret)
- 		return ret;
--	}
- 
- 	/* get hold of clock */
- 	p->clk = devm_clk_get(&pdev->dev, "sclk");
-diff --git a/drivers/clocksource/timer-nxp-stm.c b/drivers/clocksource/timer-nxp-stm.c
-index 1ab907233f48..6fe098a4a33f 100644
---- a/drivers/clocksource/timer-nxp-stm.c
-+++ b/drivers/clocksource/timer-nxp-stm.c
-@@ -441,7 +441,7 @@ static int nxp_stm_timer_probe(struct platform_device *pdev)
- 	ret = devm_request_irq(dev, irq, nxp_stm_module_interrupt,
- 			       IRQF_TIMER | IRQF_NOBALANCING, name, stm_timer);
- 	if (ret)
--		return dev_err_probe(dev, ret, "Unable to allocate interrupt line\n");
-+		return ret;
- 
- 	ret = nxp_stm_clocksource_init(dev, stm_timer, name, base, clk);
- 	if (ret)
-diff --git a/drivers/clocksource/timer-sun5i.c b/drivers/clocksource/timer-sun5i.c
-index 6ab300d22621..bcf155fb9cac 100644
---- a/drivers/clocksource/timer-sun5i.c
-+++ b/drivers/clocksource/timer-sun5i.c
-@@ -247,10 +247,8 @@ static int sun5i_setup_clockevent(struct platform_device *pdev,
- 	ret = devm_request_irq(dev, irq, sun5i_timer_interrupt,
- 			       IRQF_TIMER | IRQF_IRQPOLL,
- 			       "sun5i_timer0", ce);
--	if (ret) {
--		dev_err(dev, "Unable to register interrupt\n");
-+	if (ret)
- 		return ret;
--	}
- 
- 	return 0;
- }
-diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/timer-tegra186.c
-index 78600ddeb1c6..0f626ecf61b0 100644
---- a/drivers/clocksource/timer-tegra186.c
-+++ b/drivers/clocksource/timer-tegra186.c
-@@ -532,10 +532,8 @@ static int tegra186_timer_probe(struct platform_device *pdev)
- 	if (kernel_wdt) {
- 		err = devm_request_irq(dev, irq, tegra186_wdt_irq, 0,
- 				       dev_name(dev), kernel_wdt);
--		if (err < 0) {
--			dev_err(dev, "failed to request kernel WDT IRQ: %d\n", err);
-+		if (err < 0)
- 			goto unregister_usec;
--		}
- 
- 		tegra186_wdt_set_timeout(&kernel_wdt->base, TEGRA186_KERNEL_WDT_TIMEOUT);
- 		tegra186_wdt_enable(kernel_wdt);
-diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
-index bd06afb7d522..6787acac9a43 100644
---- a/drivers/clocksource/timer-ti-dm.c
-+++ b/drivers/clocksource/timer-ti-dm.c
-@@ -1375,10 +1375,8 @@ static int omap_dm_timer_setup_clockevent(struct dmtimer *timer)
- 
- 	ret = devm_request_irq(dev, timer->irq, omap_dm_timer_evt_interrupt,
- 			       IRQF_TIMER, "omap_dm_timer_clockevent", clkevt);
--	if (ret) {
--		dev_err(dev, "Failed to request interrupt: %d\n", ret);
-+	if (ret)
- 		return ret;
--	}
- 
- 	__omap_dm_timer_int_enable(timer, OMAP_TIMER_INT_OVERFLOW);
- 
+ 	err = devm_pm_opp_set_config(&pdev->dev, &config);
+ 	if (err) {
 -- 
 2.34.1
 
