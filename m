@@ -1,186 +1,291 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B50815687D;
-	Sun, 12 Jul 2026 15:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E14392C5A
+	for <linux-tegra@vger.kernel.org>; Mon, 13 Jul 2026 07:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783870910; cv=none; b=to2UV/MNQdlTMjH9VZp2i6TqYVl8F0+BWK832Jni2k7vK8GAyOozkDmMlDzYoeZgbsM0sNes+fclIlod9wNuLsZLuHtoxlpnG5fJvAcLuJ6Ec0//fMMFOiHvKwJ8wc4Tg0BE7Zfn5JDUqaTCSuiP5Q4YQ1Ae53zrqCgsp8uJUWc=
+	t=1783928959; cv=none; b=g2MnLMc3Pu31bsP+B3EzbwjQTE/iPdKxUW3l9P22JkP1XjsY94ZxMPSReOfY6mFvLaqBPL/Ou8bhvZQ27pVeFNSAbYXWto8czVNMstzCtv1K9dJcMnvk5Fz8ULj3YUW66S80pBUoUrVzpCt/DajPmd5Dl9Plg+3Ca172Mzyn7j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783870910; c=relaxed/simple;
-	bh=schomdNhbeiKbo4HPXAv1Qi4ca+tJ81pgBJvh9gUUDg=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=a6rTCUDBaFTiRbv2mD5P1kz2Opt8our55h4QDo/r3KwrXe/CF8411ACarS4EbB5BJCiR+iw0uXWqcJc0CtY9YazYvdkxc3qeEKZSo77rRX8xu4vUx0elJhCeTfFCHC6NiGnjpYe++8Pjjo8H0uz7Bdjk8lRkOOSUU27orqySOQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b=ly8QDOmo; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+	s=arc-20240116; t=1783928959; c=relaxed/simple;
+	bh=ezsg2AOmrKM5FPpRSvwQBgIf+v7yaFU9LPan/rSwf2Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lDArwO1LSY+FybSu4LZXujfxmdPtR4p59ufC9f5XYThuEAagH5Err8Wcogf/IyuqM4KjN269x9uWjnq4rGZ4dByr3OZQYshU5OdXjiB17vuj5GFhh9jg20wuVEqCylpTt2+1J/JHR//cAcGx3SzzHV8dc1ONvL8F2Eig87Zw9Zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xnw9RqL7; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b="ly8QDOmo"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1783870906; x=1784475706; i=marvin24@gmx.de;
-	bh=jv8euJsiVACSZBQLqfjIQNjggpUm158t4ddg/+4PIWg=;
-	h=X-UI-Sender-Class:Date:From:To:cc:Subject:In-Reply-To:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ly8QDOmo8c4OhKttdoE4oi50C3m1H3q54TJ3Eh/SjIUstbkWHDt8LBgdAa9W1WKo
-	 s3x2eTfExcXqZd+95d1GQ3OUiKfjrpdwCzM6ah1NS+NWQTqwMvi2dkXzGNJrA3GLO
-	 oDUSW9jPToi9ElPhwHn+kuunB9EmqtAONVgYAf+YsfGl3ZkywPeYlF0QzRtXzZw8M
-	 7HRTUPa2+LzeSQRQh+aG4avLhZ+drepOsna5Omo+AC2Fc2OqLhxw/YiHj5Zj6LKj0
-	 Y1kAbYWp8AW0E2wnvzYZxRhHbq4CmQ9DaQ85P4jBswgdyvt6nCLaw45f9Kr2NagpY
-	 sa9VqsqbYlN0wx02Cw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from client.hidden.invalid by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MOiHf-1wPTNd2D9D-00KZHu; Sun, 12
- Jul 2026 17:41:46 +0200
-Date: Sun, 12 Jul 2026 17:41:45 +0200 (CEST)
-From: Marc Dietrich <marvin24@gmx.de>
-To: Igor Putko <igorpetindev@gmail.com>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ac100@lists.launchpad.net, 
-    linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: nvec: nvec_power: use GFP_KERNEL in probe()
-In-Reply-To: <20260710150113.3041-1-igorpetindev@gmail.com>
-Message-ID: <1aad35a4-e5b9-c352-50ca-6dfa29ba3707@gmx.de>
-References: <20260710150113.3041-1-igorpetindev@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xnw9RqL7"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5aeb77b3afbso2780280e87.1
+        for <linux-tegra@vger.kernel.org>; Mon, 13 Jul 2026 00:49:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1783928956; x=1784533756; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=IhBptR0856mA7x4upmTCTlL4N4Ll18gQEKUqog0l9So=;
+        b=Xnw9RqL7fI3e1jk6r1SIh8rS1+GAq4BlluarmYFCW/WhyDSwNj8clJYt85vqKlpUc7
+         1por4W71IxYTMG5e5rZMD45hzgBWszv3HtxtaWl99eIShL5FjgKo4NObkz88LyCTbNOD
+         +4+1sNg93OazuN336Y+Rvlqa0ybfuJmhafMwCMzM+G7LyKBZTbXIeIWNjtK62fMjR4MY
+         H1LopoMvhPaTOaAtwT3wwlDlHBgMvWJLfu2Sqxex/1gB2VtUCksT8B3E2lupB7dD8fm1
+         qlOawaYRMDlV1rgcW/Xy9Tu0iqmf6kO33NDb3b2B6gwckp45eaAeBUuwxIASrgPfGb5x
+         DBEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783928956; x=1784533756;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=IhBptR0856mA7x4upmTCTlL4N4Ll18gQEKUqog0l9So=;
+        b=mib9dZ77Y/U70gz3g5z4vPyFkcQnFI0vevIK0nylGzxsbjoThDn93M0Z/cMVWF0+QQ
+         uCNVYuFPdRrbZY3CO9qmMR35l785kxsuD54+UslUfHkB2rONeLgPc6UUX+ol88LKpzcU
+         IbHmMkoYNEt0noUdkamQAR82E4vtE0HKUWTWHVTKRmxOQTPZ67iM/DnuUbiVZ4VMMSh3
+         DwkGA6pl6i0uiZbutvbot5cGYyPQJ7adpRVkW02/u6nBFzr5ofzR8OCwJl9azhLZu3Jt
+         Nq4cUcsJlzFVg6VdBYufc5vYIfjA8//A0ydyNe76y7NsRfs2E2Q2dlvvkwriilrXxdj5
+         E1jA==
+X-Forwarded-Encrypted: i=1; AHgh+Rq/HhVhd4GppvWOWCg1dX0JIJhC4+FhDW+zM+LwUFBdfHDUG1oSlB8CGiHj1F2jqH0OzCsaE1KL5SabrA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4gnPgXNZW3HGuuIVG5Nxu3YIs0KY2Pktc1ntYKKfxRpZ40S+K
+	2pfKio0LDeB/j7Ox+0KszuTw63n+5uyWFnWmg3Z8FGf6Sg5ZqVGo5XOj0x8thBPsKB2qlw==
+X-Gm-Gg: AfdE7cn+2aLwjUY9iPWkA85jSY3jxMTSEszIifl8b22LzrRlgl+cmnfDyZwGb9Rw1bz
+	BdpNx2SEEbbD8/l5Be+CUlnGUAphn12I2PqhMm2UYygyU4MoQCuDoyndZVI/A1PLQdD2qRm4zBQ
+	5aZBgwE1kdAFAQdKkTbz5YL+TbrYDr1/jPmfJBS8aDbsW+jX5fYTTaWgOvZ9QklA2ByZ4HvWzzB
+	JcN/vjn6BOfLNZ3X97EpbcY3FJtvx6aTt+P75tC0oCSGG2SgsxHJYPBoHtgIWZFsKmqOdaZJyrI
+	2E6vZRhAVHKL+KzSjtzeJJH2yMKdbcv9E0VyxoPhH/FIIFMUII0v6C9rZfCTskBFeyCE77BWgAx
+	enuyxR+VHo31jrQlEGjFXNWrxeGZkhFH9ooh4UTPNbfoSKN+AMG+evUqrjnyhPU2iDYSLLJgwjT
+	/tNwyIvdfjoQ+wNuO15gnWNaXlD7YnLf/pwzrkKSVIPeSzKYdTWQW8lg2V8jAb6xBlQLxn95iJG
+	UACJQ==
+X-Received: by 2002:ac2:50a2:0:b0:5ae:d7dd:5815 with SMTP id 2adb3069b0e04-5b02369c7b7mr1069316e87.41.1783928955715;
+        Mon, 13 Jul 2026 00:49:15 -0700 (PDT)
+Received: from jeeves.tailc718e.ts.net (91-157-100-11.elisa-laajakaista.fi. [91.157.100.11])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b01caab9e5sm2645037e87.67.2026.07.13.00.49.12
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 13 Jul 2026 00:49:13 -0700 (PDT)
+From: vadik likholetov <vadikas@gmail.com>
+To: netdev@vger.kernel.org
+Cc: maxime.chevallier@bootlin.com,
+	andrew@lunn.ch,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	thierry.reding@kernel.org,
+	jonathanh@nvidia.com,
+	vbhadram@nvidia.com,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net v3] net: stmmac: enable the MAC on link up for all supported speeds
+Date: Mon, 13 Jul 2026 10:49:11 +0300
+Message-ID: <20260713074911.30090-1-vadikas@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-X-Provags-ID: V03:K1:GE+jIyrTtjvtmEU1RQwX/NElWPvxhGFUuf0VyV5mdjnDF7wsfUc
- NIr3qsYbVioh0irV3H7ADz7KWDVHzCGRABtY+5QA2raBdQUsJyHlHap0kI9Cfk1wcxsCzh6
- s+sfRJcFoDceS0X/F6bLnPiRhpgOgwCvsLMRkm3aSEGwGwEuuhdYc7qmTs2TFd9TkGpnsQP
- ZPW1gPkF9Ql2CJKw7mH0w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:EvohJFvZjNo=;XKhCYZaTBH6Pq3lVU5R/6pxHqyM
- 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
- HdQJZy78ScLyrxwztpesQDfWLed5kx5kTPJbPgp
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hello Igore,
+stmmac_mac_link_down() clears the MAC's transmit and receive enable bits.
+stmmac_mac_link_up() is expected to set them again through
+stmmac_mac_set(..., true), but it first switches on the negotiated speed
+and returns early for a speed the switch does not list. The MAC is then
+left gated off.
 
-On Fri, 10 Jul 2026, Igor Putko wrote:
+The speed selection is split into three switches, keyed on the interface.
+The generic branch -- taken for everything that is neither USXGMII nor
+XLGMII, so including PHY_INTERFACE_MODE_10GBASER -- lists only SPEED_2500,
+SPEED_1000, SPEED_100 and SPEED_10.
 
-> nvec_power_probe() calls devm_kzalloc() with GFP_NOWAIT, which
-> disables direct reclaim and is meant for atomic context. probe()
-> runs in normal process context and may sleep, so this needlessly
-> risks a spurious -ENOMEM under memory pressure instead of just
-> waiting for reclaim like every other probe() allocation does.
->
-> nvec.c's own tegra_nvec_probe() already uses GFP_KERNEL for the
-> identical pattern, confirming this is an oversight, not intentional.
+MGBE on Tegra234 runs 10GBASE-R into an Aquantia AQR113C. That PHY does
+rate matching, so phylink_link_up() replaces the media speed with the
+MAC-side interface speed before calling into the MAC:
 
-I also see not reason to use GFP_NOWAIT here, even if it is unlikely to=20
-cause problems in this code path, as it is used during bootup where there=
-=20
-should be "plenty" of RAM available. But I think it is a cleaner solution=
-=20
-to do memory allocations. So
-Acked-by: Marc Dietrich <marvin24@gmx.de>
+	case RATE_MATCH_PAUSE:
+		speed = phylink_interface_max_speed(link_state.interface);
+		duplex = DUPLEX_FULL;
 
-> Signed-off-by: Igor Putko <igorpetindev@gmail.com>
-> ---
-> drivers/staging/nvec/nvec_power.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/staging/nvec/nvec_power.c b/drivers/staging/nvec/nv=
-ec_power.c
-> index 2faab9fde..c514d51a9 100644
-> --- a/drivers/staging/nvec/nvec_power.c
-> +++ b/drivers/staging/nvec/nvec_power.c
-> @@ -377,7 +377,7 @@ static int nvec_power_probe(struct platform_device *=
-pdev)
-> 	struct nvec_chip *nvec =3D dev_get_drvdata(pdev->dev.parent);
-> 	struct power_supply_config psy_cfg =3D {};
->
-> -	power =3D devm_kzalloc(&pdev->dev, sizeof(struct nvec_power), GFP_NOWA=
-IT);
-> +	power =3D devm_kzalloc(&pdev->dev, sizeof(struct nvec_power), GFP_KERN=
-EL);
-> 	if (!power)
-> 		return -ENOMEM;
->
-> --=20
-> 2.47.3
->
->
+The driver is therefore called as
+
+	stmmac_mac_link_up(interface=10GBASER, speed=10000, duplex=1)
+
+which falls through to "default: return;". The interface stops passing
+traffic after the first link flap.
+
+The failure is easy to misread. The link still comes up, because the PHY
+is polled over MDIO and needs no MAC, so the interface reports carrier 1
+at the media speed. The DMA is untouched, so its start bits stay set and
+descriptors are still consumed. Only the MAC itself is gated off: the
+receiver counts nothing (mmc_rx_framecount_gb stops advancing, RE is 0)
+and nothing reaches the wire (TE is 0). The interface survives boot only
+because stmmac_hw_setup(), called from ndo_open, enables the MAC
+unconditionally -- so the problem appears only once the cable has been
+unplugged and plugged back in, and "ip link set dev <ethX> down && ip
+link set dev <ethX> up" appears to fix it.
+
+The interface is not what the speed bits depend on: with the single
+exception of 2.5G, which is selected through the XGMII block on USXGMII
+and through the regular speed bits otherwise, each speed maps to one
+field of struct mac_link. The per-interface switches are speed
+validation, and phylink already validates the speed against
+priv->hw->link.caps. So collapse the three switches into one keyed on the
+speed alone, keeping the interface test only for the 2.5G case. This
+covers 10G on 10GBASE-R, and equally 5G, and 1G/100/10 on USXGMII, all of
+which hit "default: return;" today.
+
+A core that does not support a speed leaves the corresponding mac_link
+field at 0, and phylink will not offer it that speed in the first place.
+For dwxgmac2 at 10G, link.xgmii.speed10000 is XGMAC_CONFIG_SS_10000,
+which is 0 and is the correct speed selection for a 10GBASE-R MAC: ctrl
+then equals old_ctrl, the register write is skipped, and execution
+reaches stmmac_mac_set(..., true).
+
+Log an error in the default case, since a speed with no entry here leaves
+the MAC disabled and the symptom does not point at the cause.
+
+Fixes: d8ca113724e7 ("net: stmmac: tegra: Add MGBE support")
+Suggested-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Signed-off-by: vadik likholetov <vadikas@gmail.com>
+---
+v3:
+ - Use phy_speed_to_str() rather than %d for the speed in the error
+   message (Maxime).
+ - Resend as a standalone thread rather than a reply to v1 (Maxime).
+
+v2:
+ - Collapse the three per-interface switches into a single switch on the
+   speed, rather than adding SPEED_10000 to the generic branch, which
+   left SPEED_5000 and the USXGMII sub-1G speeds broken (Maxime).
+ - netdev_err() in the default case (Andrew).
+
+Fixes tag: the missing speeds predate the commit cited above. I picked
+d8ca113724e7 because MGBE is the first in-tree user to reach it -- it
+needs a 10GBASE-R interface driven by a rate-matching PHY, so that
+phylink hands the MAC a 10G speed. Happy to re-target it.
+
+Verified on an AGX Orin devkit (Tegra234 MGBE0 + AQR113C), before and
+after, on the same board and cable. MAC registers read with `ethtool -d`,
+after a physical unplug and replug:
+
+  stock		MAC_TX_CONFIG 0x00010000 (TE=0)
+		MAC_RX_CONFIG 0x3ff022c0 (RE=0)
+		rx_packets frozen, DHCP lease lost
+
+  patched	MAC_TX_CONFIG 0x00010001 (TE=1)
+		MAC_RX_CONFIG 0x3ff022c1 (RE=1)
+		rx_packets keeps climbing, DHCP lease retained
+
+Only the 10GBASE-R path is covered by hardware here; the other speeds are
+by inspection. Testing was done with MGBE0 handed to a VM via
+vfio-platform, so the driver ran in a guest; the MAC register evidence
+above is read from the device itself and the code path is not
+virtualisation-specific.
+
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 92 ++++++++-----------
+ 1 file changed, 37 insertions(+), 55 deletions(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 2a0d7eff8..8d3d87549 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -1083,63 +1083,45 @@ static void stmmac_mac_link_up(struct phylink_config *config,
+ 	old_ctrl = readl(priv->ioaddr + MAC_CTRL_REG);
+ 	ctrl = old_ctrl & ~priv->hw->link.speed_mask;
+ 
+-	if (interface == PHY_INTERFACE_MODE_USXGMII) {
+-		switch (speed) {
+-		case SPEED_10000:
+-			ctrl |= priv->hw->link.xgmii.speed10000;
+-			break;
+-		case SPEED_5000:
+-			ctrl |= priv->hw->link.xgmii.speed5000;
+-			break;
+-		case SPEED_2500:
++	switch (speed) {
++	case SPEED_100000:
++		ctrl |= priv->hw->link.xlgmii.speed100000;
++		break;
++	case SPEED_50000:
++		ctrl |= priv->hw->link.xlgmii.speed50000;
++		break;
++	case SPEED_40000:
++		ctrl |= priv->hw->link.xlgmii.speed40000;
++		break;
++	case SPEED_25000:
++		ctrl |= priv->hw->link.xlgmii.speed25000;
++		break;
++	case SPEED_10000:
++		ctrl |= priv->hw->link.xgmii.speed10000;
++		break;
++	case SPEED_5000:
++		ctrl |= priv->hw->link.xgmii.speed5000;
++		break;
++	case SPEED_2500:
++		if (interface == PHY_INTERFACE_MODE_USXGMII)
+ 			ctrl |= priv->hw->link.xgmii.speed2500;
+-			break;
+-		default:
+-			return;
+-		}
+-	} else if (interface == PHY_INTERFACE_MODE_XLGMII) {
+-		switch (speed) {
+-		case SPEED_100000:
+-			ctrl |= priv->hw->link.xlgmii.speed100000;
+-			break;
+-		case SPEED_50000:
+-			ctrl |= priv->hw->link.xlgmii.speed50000;
+-			break;
+-		case SPEED_40000:
+-			ctrl |= priv->hw->link.xlgmii.speed40000;
+-			break;
+-		case SPEED_25000:
+-			ctrl |= priv->hw->link.xlgmii.speed25000;
+-			break;
+-		case SPEED_10000:
+-			ctrl |= priv->hw->link.xgmii.speed10000;
+-			break;
+-		case SPEED_2500:
+-			ctrl |= priv->hw->link.speed2500;
+-			break;
+-		case SPEED_1000:
+-			ctrl |= priv->hw->link.speed1000;
+-			break;
+-		default:
+-			return;
+-		}
+-	} else {
+-		switch (speed) {
+-		case SPEED_2500:
++		else
+ 			ctrl |= priv->hw->link.speed2500;
+-			break;
+-		case SPEED_1000:
+-			ctrl |= priv->hw->link.speed1000;
+-			break;
+-		case SPEED_100:
+-			ctrl |= priv->hw->link.speed100;
+-			break;
+-		case SPEED_10:
+-			ctrl |= priv->hw->link.speed10;
+-			break;
+-		default:
+-			return;
+-		}
++		break;
++	case SPEED_1000:
++		ctrl |= priv->hw->link.speed1000;
++		break;
++	case SPEED_100:
++		ctrl |= priv->hw->link.speed100;
++		break;
++	case SPEED_10:
++		ctrl |= priv->hw->link.speed10;
++		break;
++	default:
++		netdev_err(priv->dev,
++			   "unsupported speed %s on %s, leaving the MAC disabled\n",
++			   phy_speed_to_str(speed), phy_modes(interface));
++		return;
+ 	}
+ 
+ 	if (priv->plat->fix_mac_speed)
+-- 
+2.53.0
+
