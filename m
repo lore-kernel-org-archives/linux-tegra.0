@@ -1,118 +1,117 @@
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DFC3B38A1;
-	Tue, 14 Jul 2026 12:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.200.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B393D3112C1
+	for <linux-tegra@vger.kernel.org>; Tue, 14 Jul 2026 13:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784031168; cv=none; b=VfIkq86jKDj8RJiu4PnnBZjyvtI77pz+XUiFtYGYuDAFVpqSoMOp08YBE6CjEbKl/e+PUgCwdACFo4JZKwRixmy4Y1nQREN06PcMuBVDLAs8AMI4/mh0q5LKr/CF9odMbIiWoD+EUlqse3KWVshfLwIWJFSKRjZq+iyNO86+hXQ=
+	t=1784035298; cv=none; b=GSwIK+38eF/ApqjQFTDM5M22tRswm85nNh0shIrBke6mCj/RGibu/F/ipUsblvTD2bzvLpFkJC83ftTFPy060hcQR9iDspctKSlIeeSnlpeOuK9Aiw+U9Nj31u7FgzF/ifJxwcXgJSsDq8uHJ4gPyCnoOgw7VNrGVvWbBF33Nvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784031168; c=relaxed/simple;
-	bh=n3bcQL69HI0lQ9uE3jKhUFx/rTxQ1Sd23ZpM2ZlhR10=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=d3gbyfA2fUufOPs4i8HD+dysc8EeiZZF7t0Q2w9s4CB3g+mGyB0X3yYG3GG1jPpYrIZEg1VrSxcu1eN0a/XMAsLMfTz0cdLSIa/FxM2i/6HY5xlIVJI3H6bZB3YRh58VlLhKwXOcYKdemOJVpCkoM6j8seTauRDVEGdKVk9q0GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.200.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
-	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id EFC502021FA;
-	Tue, 14 Jul 2026 14:12:39 +0200 (CEST)
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1wjc07-001ljJ-2u;
-	Tue, 14 Jul 2026 14:12:39 +0200
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1wjc06-00000000C8G-2azB;
-	Tue, 14 Jul 2026 14:12:38 +0200
-Message-ID: <cf1bd92a11661c99802867581b599617ef69f503.camel@pengutronix.de>
-Subject: Re: [PATCH v1 4/6] pwm: tegra: Simplify using
- devm_reset_control_get_exclusive_deasserted()
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>, Thierry
- Reding	 <thierry.reding@kernel.org>, Jonathan Hunter
- <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>
-Cc: linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
-Date: Tue, 14 Jul 2026 14:12:38 +0200
-In-Reply-To: <1f12ae7f9479aa910fcaf066fae82c7b7cb89073.1784030076.git.ukleinek@kernel.org>
-References: <cover.1784030076.git.ukleinek@kernel.org>
-	 <1f12ae7f9479aa910fcaf066fae82c7b7cb89073.1784030076.git.ukleinek@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	s=arc-20240116; t=1784035298; c=relaxed/simple;
+	bh=N3Wt39r+betV+ag1LhGjcHS/hzSO1IAUGjKuO+ynb34=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FkN0BwP+23TxwtgEaHPpuPbcnioAFMR4H6mAfpYZ9t6T9r/Tm90jmXYXk+W+krHUZO48A2PTp8+YO+YhGyO2IFHu5vFKhR5/032ESa4tibHAyfbTpqOU6UK+xv4uqrl7WtlUq+0RYdiJIZlzOTJFBQGpPu1xsQt+ePv4BY9Khw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bm6nld/2; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bm6nld/2"
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-8efec2c28f8so6743406d6.2
+        for <linux-tegra@vger.kernel.org>; Tue, 14 Jul 2026 06:21:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784035295; x=1784640095; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=Ljyj9DkB5xbAZqgYsTFaAqTNeOS834qmzh1t0MU7eq0=;
+        b=bm6nld/26gyRfH7vYrhfZr4gOS4/rRdkFVdISMk0wQ9VjgkjTjDGOCoQ/IstKcraLe
+         9DsgvpSbaHRxS5uYR1zgyXTcUrVcXdp9U86i/nVHy4U0sGH0xqQr7cynCaxumpbElF5v
+         iQIQzDHlLvh1+R5cIatpXsll+yFbA83GZBdov+nqOx4xe8vMIzAXFA1bYTeYblTKGYl6
+         YqJyEDheXsf0FzE8luwyR/DWOoxo/K3vhTqZaIhtgNXSOBrKPoMAKqgC8YB8/Q622bEW
+         nIEmXnR725VtJUQWzER+c8vtuKjJMfcIrdDO8J9ZI7I+xJNowCKx3R//n+eQDMW25qFv
+         mgFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784035295; x=1784640095;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Ljyj9DkB5xbAZqgYsTFaAqTNeOS834qmzh1t0MU7eq0=;
+        b=avxZEoBfs1BXBGYGKqLinGfeHVANO8FjrQHpnwufBaYRMSH7D0CVOQoHwDuUnd4MKI
+         6TYV6F8jo3x2oiyEsg5MfidMOlMksZ/bTruOaYRsbmmH8cQ5S6IPnS8rfPbXTeUP/Nqw
+         7mR9cu6AbRo7jy94JurE5EI26JtOiXl16rA5OtT8W2xWuTozMbi9yhNYvQ42s628SUgK
+         zJzGrs+bo89vqhSx0mevoHqkFy1ujF2dTsn2fZhRga4Iptiu9N4EbxRJiq4zH3YKz3n1
+         GxSJqmYVGHUOg0urJT5Xt1P4J1e2/ajq9nNCg1n35YrhSSun7MwoPHF1PuF75L+6KwZU
+         8Kdw==
+X-Forwarded-Encrypted: i=1; AHgh+RqbN5ZehidfVTF3nZF46z20ahvqNFVumakwmz5Nj6HDnXC3E2jfOvJwFaVExRMQfAg+f3IUEf53yXTSwA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfooJvUXzDblyamKS1KDRLtTm7mkC/vkE8ZgkaSs9jd0tgdH/L
+	fDkZUE8ZB9NpLzVLTItPD4oM5x98Fmcd7+vR+ar2kTczasbn8Iimz3OI
+X-Gm-Gg: AfdE7cmUmrJAZLMJBQ0mZUGce/8AVV8N6BaV+SXLs26ewUaVS2bSm913Aiupslq7tlc
+	ZyQqSo2XLpeL++kwdztx40TgMgGpRPpvDsqHMHnvzOF24hbFti2/eb84jjscgmU3NJ330icoMlg
+	TqSKB5pITFMwu8TIwtjgouqW2zAZcPZjJ5Ssp4Qd2DU+92lZaeYxoGvxWY6u6RHlSBXgCusUTtv
+	AxeV4ItLRCYIG+lE5YtqQD2Ma3KT/2n8uJHT0/6LEFDDzs8hXz7v9crC/QJEBLQvLSnAjrp5NXi
+	q4hyi4t02BEx5+lOgM54Nac/v6I6cJF7tH96QyGOvzYlkgGGhLU7lxdi2RrWg5cSdw3/Pn3WYfg
+	p0OahPN64J+oj75YtF9U7IwqtrffANrjyMwGyKcpShvWJz9Ub+32um3AiLdj+EtnglK7sNGM=
+X-Received: by 2002:a05:6214:27c3:b0:8fd:6de3:dd8b with SMTP id 6a1803df08f44-90402b67f93mr150157116d6.65.1784035295372;
+        Tue, 14 Jul 2026 06:21:35 -0700 (PDT)
+Received: from lgs.. ([2001:250:5800:1000::f280])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-9063df4319asm66297986d6.38.2026.07.14.06.21.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jul 2026 06:21:34 -0700 (PDT)
+From: Guangshuo Li <lgs201920130244@gmail.com>
+To: Thierry Reding <thierry.reding@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Guangshuo Li <lgs201920130244@gmail.com>
+Subject: [PATCH] drm/tegra: Finalize GEM object on initialization failure
+Date: Tue, 14 Jul 2026 21:19:22 +0800
+Message-ID: <20260714131923.1575860-1-lgs201920130244@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Di, 2026-07-14 at 14:02 +0200, Uwe Kleine-K=C3=B6nig wrote:
-> This function ensures the reset is already deasserted at probe time and
-> asserted at unbind. So the remove function and the error paths in the
-> probe function can be simplified accordingly.
->=20
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <ukleinek@kernel.org>
-> ---
->  drivers/pwm/pwm-tegra.c | 14 ++++----------
->  1 file changed, 4 insertions(+), 10 deletions(-)
->=20
-> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-> index e99e1c5b18c3..d7f4baa4cd9b 100644
-> --- a/drivers/pwm/pwm-tegra.c
-> +++ b/drivers/pwm/pwm-tegra.c
-> @@ -108,7 +108,6 @@ struct tegra_pwm_soc {
-> =20
->  struct tegra_pwm_chip {
->  	struct clk *clk;
-> -	struct reset_control*rst;
-> =20
->  	unsigned long clk_rate;
->  	unsigned long min_period_ns;
-> @@ -319,6 +318,7 @@ static int tegra_pwm_probe(struct platform_device *pd=
-ev)
->  	struct device *dev =3D &pdev->dev;
->  	struct pwm_chip *chip;
->  	struct tegra_pwm_chip *pc;
-> +	struct reset_control*rst;
+tegra_bo_alloc_object() allocates bo and passes its embedded GEM object
+to drm_gem_object_init().
 
-You could use this opportunity to add a space between reset_control and
-*rst.
+drm_gem_object_init() initializes the GEM private state before creating
+the shmem backing file. If the file creation fails, it returns an error
+with the reservation object and GPUVA mutex still initialized.
 
->  	const struct tegra_pwm_soc *soc;
->  	int ret;
-> =20
-> @@ -391,20 +391,17 @@ static int tegra_pwm_probe(struct platform_device *=
-pdev)
->  	pc->min_period_ns =3D
->  	    (NSEC_PER_SEC / (pc->clk_rate / TEGRA_PWM_DEPTH)) + 1;
-> =20
-> -	pc->rst =3D devm_reset_control_get_exclusive(dev, "pwm");
-> -	if (IS_ERR(pc->rst)) {
-> -		ret =3D dev_err_probe(dev, PTR_ERR(pc->rst), "Failed to get reset cont=
-rol\n");
-> +	rst =3D devm_reset_control_get_exclusive_deasserted(dev, "pwm");
-> +	if (IS_ERR(rst)) {
-> +		ret =3D dev_err_probe(dev, PTR_ERR(rst), "Failed to get reset control\=
-n");
->  		goto put_pm;
->  	}
-> =20
-> -	reset_control_deassert(pc->rst);
-> -
->  	chip->ops =3D &tegra_pwm_ops;
-> =20
->  	ret =3D pwmchip_add(chip);
->  	if (ret < 0) {
->  		dev_err_probe(dev, ret, "Adding pwmchip failed\n");
-> -		reset_control_assert(pc->rst);
+The current error path directly frees bo, bypassing the matching GEM
+private-object cleanup. Finalize the partially initialized GEM object
+with drm_gem_private_object_fini() before freeing bo.
 
-With this change, pm_runtime_put_sync_suspend() and
-pm_runtime_force_suspend() are called before the reset control is
-asserted again in the error case. Is this safe?
+This issue was found by a static analysis tool I am developing.
 
-regards
-Philipp
+Fixes: c28d4a317fef ("drm/tegra: gem: Extract tegra_bo_alloc_object()")
+Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+---
+ drivers/gpu/drm/tegra/gem.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index 436394e04812..eb513cb7521c 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -314,8 +314,10 @@ static struct tegra_bo *tegra_bo_alloc_object(struct drm_device *drm,
+ 	size = round_up(size, PAGE_SIZE);
+ 
+ 	err = drm_gem_object_init(drm, &bo->gem, size);
+-	if (err < 0)
++	if (err < 0) {
++		drm_gem_private_object_fini(&bo->gem);
+ 		goto free;
++	}
+ 
+ 	err = drm_gem_create_mmap_offset(&bo->gem);
+ 	if (err < 0)
+-- 
+2.43.0
+
