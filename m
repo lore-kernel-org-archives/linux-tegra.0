@@ -1,154 +1,190 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011056.outbound.protection.outlook.com [40.93.194.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B5E480967;
-	Tue, 14 Jul 2026 14:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784038052; cv=none; b=V28RVHYvsMgJDUUcAbrjPstqm1BYVNlD1FcnF6sWnhqkxlPnul8fSYP6VaisR4dxQED4dBVH+bm3ReJnoiF4hzDFSz31fOtbyRvfJlwURrgUWJIy2GBppbEJjFUOIqzUqJ6jNblO5UiIrovof7e+hvS1Ms520MCOEjrh9gxvtAE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784038052; c=relaxed/simple;
-	bh=E3G5xNEKDTz0OrN3bzAq6Wy0YXH79M66kWpp4gvTbpA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oy0Se2QektuvXpShLoNH1LJ9eKsW0/hUeAVeIkuD5cm1Fyoc24i1TS/F9PjI86RqnAwT1KfFnPQwVGYH6MCEQssRavyiQ2M02Tzfe0PKzybxz0aSb9/KtwN8JHNmtkWW/ITUIMrUhONb+qNEF8JlbTW4dN7QsWQ3bhHys/KtMTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTIYMNa7; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D35B423E9F;
+	Tue, 14 Jul 2026 20:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784062539; cv=fail; b=lMQSi6q1/FvhVyNlaCD/fhaadPM4dbNIp8dj3Wb9Cj+pozbs3GC7aREDAUh4FVLC+HU1wgO60WGz0NyHJI0pbX7ZUGCwgjcfhKf5ivIZH9VgaGtAf1XbsIHFREesujvcnb2vlagveFo1z1zwtt+3P9b5R8X3g5BETRiK6nB4PAs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784062539; c=relaxed/simple;
+	bh=hF9xfq0+xl+JGP+/zr8yaGJRhG6x1lW9LN48P/e8x04=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IvrNTFhKPUV+JmA3tnJJChBUzZKaFzQFOq3rWDO+ySEctyGkHz79KX75oREjD/vxjySryS0yprOInH+N5QcNN92UPqsDJ1rbYSHWof9549Oln/P8eIG9f3Oyfr7KezWzDQNnqM8l9oPZx/ikQPiQG+Yd2pWxwF1i1kWXGybiGqg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FzYA80Yb; arc=fail smtp.client-ip=40.93.194.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTIYMNa7"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 894061F000E9;
-	Tue, 14 Jul 2026 14:07:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784038046;
-	bh=nxc7WBXciEQorazQv2JDOTT5n2+bXoePoUOXsR4EZI8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=FTIYMNa7zy+yRYvkzvz39xtBUahWMijuS0IbfQLIIfwlXmRkHZz879R1CY6S9VZLl
-	 QTBpEgXTNtfjNRTmi5RCZtF/P6eo/lpZ+4xICh1mM/pwVuHo3B053T9ishAwbrzhu5
-	 Ts/p91T2OPkKMSjE6Y0oEo9sfSfKG6n7hJXjqDKKzlgq7frwe+ql7g6M7Ny+1ix9WM
-	 Jahu4rcc+ljl1MLy4VhhIhjt3CSQ33sVYanTdBJKTIuEZCyD2AFRQaUU1FuwrR3A7Z
-	 OIl2OiShyllFQeycpCxDwWKjNVKObTNDXN8+TA7Ox9x7G2wSx6bZMpAJvGtShTeyHT
-	 7s4SA/BTLmnXw==
-Date: Tue, 14 Jul 2026 16:07:23 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v1 4/6] pwm: tegra: Simplify using
- devm_reset_control_get_exclusive_deasserted()
-Message-ID: <alZAzcG-2uuTsxxk@monoceros>
-References: <cover.1784030076.git.ukleinek@kernel.org>
- <1f12ae7f9479aa910fcaf066fae82c7b7cb89073.1784030076.git.ukleinek@kernel.org>
- <cf1bd92a11661c99802867581b599617ef69f503.camel@pengutronix.de>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FzYA80Yb"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cBIu3hcEBRlXUFN7xarBajy7V0NS84pi29wadhL2Qb65Z0p7tdwU93I/Bn9V6uM/RgQFYNqZc81nK41b2qP72J4Dl85frx1kx4z9gim27OVPRLyfEraDHT0ECVTfOmlSNCDPM2iLHcmz2knfa705UzZZrdjXy80J7+VaVOp9S0FjLluKEQZPHPLDzlWXbUXKktYfPch6+vXqUmbx/BgmOSi1JdBWVZRmARFs1Cs1jjc9Wujh74YWAU60LzBHRKHI8/4dU0TYOSdHrxNLZFuuHH/Z1MztMjMA56AqyinKxVmrq7zHVxyFbybH2f3CqaCai5U2OJqtBwb/+VvnfM2DJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5+qyzeH3wgqhS4tfQFs30KyMUJfu37dqvW6aa7eWpvU=;
+ b=h8bT3gxxd50yhPdFNA86sKxyZ3ITKdbXA/UAampUkwyn5l3nGLg9Zh7Fb34pfuYDgwP45ICjaRcy+sLSIRimZMWqmQWGFVBZLL7lD7saS2WJ+1cVCQub+t34TGyRdV+oti5+NQ9VFnZGtF7V2I/gPbqKDYyQbLCEEopbAB1vydpXQOiN8nRYA+8WYk96Wg9NRj4P75c+EHmK+rodSckckPOzrjIDOycF+bN7Rw8pDxaTMadQRGHx5H838DXE8WbG6bjSh1GcteVoC3RWVinJ9Y6O9UZSY4n6k9cv7w7dVd91qicpGFj7wB5sWxRIIjC56gtEvbEnEnd6IGN62KIAJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5+qyzeH3wgqhS4tfQFs30KyMUJfu37dqvW6aa7eWpvU=;
+ b=FzYA80Yb/WDGOyyzM9AOeZXg/5F2kHdN4XABx/dwU594CzvOv6+kXiiiC1q5/xTupq6JYXrg4DwfWVuAsssBVDc3guCvnW+F0wrHZ/STPRV+iPrWTCFT8AXrioY5GTKi/0NIadaTaq35QESVyz2ZrKYOw0TV7137FRL16wyZjdznaTqB5SJCnXP9yutXCMCM5IhcwWan2LN4RAO0JHOhjUdZsBjfTJKct2GkKxColxVaDeo+qJHFoIdrwkUvaJLHvqb7n1JHfuPexEURtwXzg0wqh1Xa6UHlE5PwrCk7ebatC04o+TZ1nXaf/o2VGnY0IyOqXiSLEph8FNaiXjfzEA==
+Received: from BN0PR04CA0102.namprd04.prod.outlook.com (2603:10b6:408:ec::17)
+ by SA1PR12MB999253.namprd12.prod.outlook.com (2603:10b6:806:4dd::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.202.18; Tue, 14 Jul
+ 2026 20:55:34 +0000
+Received: from BL02EPF0001A0FA.namprd03.prod.outlook.com
+ (2603:10b6:408:ec:cafe::38) by BN0PR04CA0102.outlook.office365.com
+ (2603:10b6:408:ec::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.223.10 via Frontend Transport; Tue,
+ 14 Jul 2026 20:55:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BL02EPF0001A0FA.mail.protection.outlook.com (10.167.242.101) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.223.9 via Frontend Transport; Tue, 14 Jul 2026 20:55:33 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 14 Jul
+ 2026 13:55:13 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Tue, 14 Jul 2026 13:55:13 -0700
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.11) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Tue, 14 Jul 2026 13:55:13 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Will Deacon <will@kernel.org>
+CC: Robin Murphy <robin.murphy@arm.com>, "Joerg Roedel (AMD)"
+	<joro@8bytes.org>, Jason Gunthorpe <jgg@nvidia.com>,
+	<linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 03/11] iommu/tegra241-cmdqv: Harden error-map index handling in the error ISR
+Date: Tue, 14 Jul 2026 13:55:00 -0700
+Message-ID: <25ec919bb10325cac02124babdf4034f2b9dbc23.1784059577.git.nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1784059577.git.nicolinc@nvidia.com>
+References: <cover.1784059577.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="l42umjqts7ahp2rv"
-Content-Disposition: inline
-In-Reply-To: <cf1bd92a11661c99802867581b599617ef69f503.camel@pengutronix.de>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FA:EE_|SA1PR12MB999253:EE_
+X-MS-Office365-Filtering-Correlation-Id: 12c0f702-8787-466c-b2b1-08dee1ea3f82
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|23010399003|36860700016|376014|18002099003|22082099003|11063799006|56012099006|6133799003;
+X-Microsoft-Antispam-Message-Info:
+	DmZ47Ku86Q8GHLSPxxZGvo85dP9q6U+Bnm6pSbT6ADU0c3uZ9ObDlt0lC/ia+0Z1CxdAsreRNZLron1knbZdTeU5LU/pX9dZ8hGolHCdwWt248IgUYzABobwUZHiongBeOMa5n3tk9kozvZ8wjPA2uBDL7QfWFguwjH3XiKlJQ7ixfQrZFxU3ME4lnIFAMWeSEUcpL1hqVbNQ6BBbkbPprV73BIKs57vhywIAWGwK84TTghXM9qxqjfruUcZqrSN3Akonm8+5OL1NlCPOeRdAP6APoufNIEcf9l1h9pEIZjx/cueJPIRDwUKxMtzARmuruw6Fm7KJq3n0KsP3DhKAXJQ/GV+y5oskAXURX1CzHskwggpZCLgOtuwbJ1T/NTW3ia2j91HzSDCLUcL1widxn1ztE6c8xuXyCaV7CnW2CHwv2L10lXiriCET+NztBjQPhT1dAFldranN8aGgbrebSAWC/CkL78JZjN5gIPjrV3nKJrO8KMJ4HltDaH2Ph338MjHnGJ84mESOdQcqMt/JEZXg41fwvMRLPg3ZxE6tKK8hdx9Smhi28K6pwCOHLvNTWGM/8F1rk6EySDij/71LLwWTLH1ItLswueLWzEw9ifdqvGhVTN/uXd9iRSpbbnKVdqc2arYqQLhKQ9CNvYirsF0QnJqsFfpDpMbN53Dy66Z2Dp/ZpHwjo+HXd/8dt8XsFJtiu/glQ1NEkqyqbF1/Q==
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(23010399003)(36860700016)(376014)(18002099003)(22082099003)(11063799006)(56012099006)(6133799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	OkuN87A/p8bbxpELZ2xUPrWqJBiqr2xkmCiLpPlySIj8KBClJv04aVVVZ/9dIKYzj6g536oKC1MVn/snR7HfEBdxXN0rt0u7fBjLJvoSt2Y0RuVTTbH6kj2v6oarphWCWqT/ntRBwytnVAR+WCJVs5CxFLH6OZblSeEM0jTw9EeRSIRwJzBSAhQzn4NgCC1RJXtQcxjAVFsekY8JqlVsekmYytjH1H9Nxhgofpq8a7M3cJHAGhFOsi53Rufes3p4S5ljW7vRha42me63k+6NcY8EO/3RoAM6M+ZA50I2zn486kgeAYJ0HJeq/FhkD0yqGlQydgh4BgyRqUruMnlHvWryN61X47T/zXd0A8/vQe4eK+fWEYTC0L5HDjMEuAmabDLtZ7svXkBsp8PvIl2gLgzs0Su/jx1oeGhmEaMpT5tIBASo3y175/nFT7lTokRJ
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2026 20:55:33.5384
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 12c0f702-8787-466c-b2b1-08dee1ea3f82
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF0001A0FA.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB999253
 
+tegra241_vintf0_handle_error() reads both 64-bit LVCMDQ error-map registers
+but used the register-local __ffs64() bit directly as the vintf->lvcmdqs[]
+index. For the second register that selects the wrong queue instead of 64 *
+i + bit, clearing the wrong queue's error status.
 
---l42umjqts7ahp2rv
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 4/6] pwm: tegra: Simplify using
- devm_reset_control_get_exclusive_deasserted()
-MIME-Version: 1.0
+The index is unbounded too: a bit at or beyond num_lvcmdqs_per_vintf would
+walk the read off vintf->lvcmdqs[].
 
-On Tue, Jul 14, 2026 at 02:12:38PM +0200, Philipp Zabel wrote:
-> On Di, 2026-07-14 at 14:02 +0200, Uwe Kleine-K=F6nig wrote:
-> > This function ensures the reset is already deasserted at probe time and
-> > asserted at unbind. So the remove function and the error paths in the
-> > probe function can be simplified accordingly.
-> >=20
-> > Signed-off-by: Uwe Kleine-K=F6nig <ukleinek@kernel.org>
-> > ---
-> >  drivers/pwm/pwm-tegra.c | 14 ++++----------
-> >  1 file changed, 4 insertions(+), 10 deletions(-)
-> >=20
-> > diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-> > index e99e1c5b18c3..d7f4baa4cd9b 100644
-> > --- a/drivers/pwm/pwm-tegra.c
-> > +++ b/drivers/pwm/pwm-tegra.c
-> > @@ -108,7 +108,6 @@ struct tegra_pwm_soc {
-> > =20
-> >  struct tegra_pwm_chip {
-> >  	struct clk *clk;
-> > -	struct reset_control*rst;
-> > =20
-> >  	unsigned long clk_rate;
-> >  	unsigned long min_period_ns;
-> > @@ -319,6 +318,7 @@ static int tegra_pwm_probe(struct platform_device *=
-pdev)
-> >  	struct device *dev =3D &pdev->dev;
-> >  	struct pwm_chip *chip;
-> >  	struct tegra_pwm_chip *pc;
-> > +	struct reset_control*rst;
->=20
-> You could use this opportunity to add a space between reset_control and
-> *rst.
+tegra241_cmdqv_isr() has the same flaw one level up: a VINTF_ERR_MAP bit
+at or beyond num_vintfs would walk the read off cmdqv->vintfs[].
 
-Oh indeed. I thought I called checkpatch, but there are two more
-warnings in this series that I'm not aware of, so it seems I didn't
-check before sending :-o
+Use 64 * i + bit for the index and clear the snapshot with the local bit.
+In both handlers, WARN_ON_ONCE() and skip an out-of-bounds index. Only a
+malfunctioning device sets such a bit, so the _ONCE form keeps a wedged map
+from flooding the log.
 
-> >  	const struct tegra_pwm_soc *soc;
-> >  	int ret;
-> > =20
-> > @@ -391,20 +391,17 @@ static int tegra_pwm_probe(struct platform_device=
- *pdev)
-> >  	pc->min_period_ns =3D
-> >  	    (NSEC_PER_SEC / (pc->clk_rate / TEGRA_PWM_DEPTH)) + 1;
-> > =20
-> > -	pc->rst =3D devm_reset_control_get_exclusive(dev, "pwm");
-> > -	if (IS_ERR(pc->rst)) {
-> > -		ret =3D dev_err_probe(dev, PTR_ERR(pc->rst), "Failed to get reset co=
-ntrol\n");
-> > +	rst =3D devm_reset_control_get_exclusive_deasserted(dev, "pwm");
-> > +	if (IS_ERR(rst)) {
-> > +		ret =3D dev_err_probe(dev, PTR_ERR(rst), "Failed to get reset contro=
-l\n");
-> >  		goto put_pm;
-> >  	}
-> > =20
-> > -	reset_control_deassert(pc->rst);
-> > -
-> >  	chip->ops =3D &tegra_pwm_ops;
-> > =20
-> >  	ret =3D pwmchip_add(chip);
-> >  	if (ret < 0) {
-> >  		dev_err_probe(dev, ret, "Adding pwmchip failed\n");
-> > -		reset_control_assert(pc->rst);
->=20
-> With this change, pm_runtime_put_sync_suspend() and
-> pm_runtime_force_suspend() are called before the reset control is
-> asserted again in the error case. Is this safe?
+Note that 64 * i + bit is not reachable with the current configuration as a
+VINTF is pre-assigned with 2 lvcmdqs, this is not treated as bug fix but an
+defensive hardening.
 
-Ah, this is true for pm_runtime_put_sync_suspend(). Too bad this isn't
-easily fixable :-\ I would expect this not to be a problem, but given
-that I don't have the hardware, I guess being conservative here is
-needed.
+Assisted-by: Claude:claude-opus-4-8
+Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+---
+ drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-Thanks for catching this.
+diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+index 5fbc1c85874a5..b89f021ba0b86 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
++++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+@@ -311,25 +311,30 @@ static void tegra241_vintf_user_handle_error(struct tegra241_vintf *vintf)
+ 
+ static void tegra241_vintf0_handle_error(struct tegra241_vintf *vintf)
+ {
++	struct tegra241_cmdqv *cmdqv = vintf->cmdqv;
+ 	int i;
+ 
+ 	for (i = 0; i < LVCMDQ_ERR_MAP_NUM_64; i++) {
+ 		u64 map = readq_relaxed(REG_VINTF(vintf, LVCMDQ_ERR_MAP_64(i)));
+ 
+ 		while (map) {
+-			unsigned long lidx = __ffs64(map);
++			unsigned long map_bit = __ffs64(map);
++			unsigned long lidx = 64 * i + map_bit;
+ 			struct tegra241_vcmdq *vcmdq;
+ 			u32 gerror;
+ 
+-			map &= ~BIT_ULL(lidx);
++			map &= ~BIT_ULL(map_bit);
+ 
++			/* A bit beyond the count means a HW error; skip it */
++			if (WARN_ON_ONCE(lidx >= cmdqv->num_lvcmdqs_per_vintf))
++				continue;
+ 			/* Pairs with smp_store_release() publishing it */
+ 			vcmdq = smp_load_acquire(&vintf->lvcmdqs[lidx]);
+ 			if (!vcmdq)
+ 				continue;
+ 
+ 			gerror = readl_relaxed(REG_VCMDQ_PAGE0(vcmdq, GERROR));
+-			__arm_smmu_cmdq_skip_err(&vintf->cmdqv->smmu, &vcmdq->cmdq);
++			__arm_smmu_cmdq_skip_err(&cmdqv->smmu, &vcmdq->cmdq);
+ 			writel(gerror, REG_VCMDQ_PAGE0(vcmdq, GERRORN));
+ 		}
+ 	}
+@@ -381,6 +386,9 @@ static irqreturn_t tegra241_cmdqv_isr(int irq, void *devid)
+ 
+ 		vintf_map &= ~BIT_ULL(idx);
+ 
++		/* A bit beyond the count means a HW error; skip it */
++		if (WARN_ON_ONCE(idx >= cmdqv->num_vintfs))
++			continue;
+ 		/* The slot may be published or torn down (NULL'd) concurrently */
+ 		vintf = smp_load_acquire(&cmdqv->vintfs[idx]);
+ 		if (vintf)
+-- 
+2.43.0
 
-Uwe
-
---l42umjqts7ahp2rv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmpWQpkACgkQj4D7WH0S
-/k4IaggApNtCtObSgmCp33qZAYG4ljuOGbY+ElTdtZYDd4LA2P8X7M3CodebGbND
-BrFlastkoqvc/1dTPy8DmKFZvlxAwtNNqz/HInW+HaaDYUhGoG6Ks5FnuIDcIcR4
-jybTXmW2JikqiVOsyg4dgOyBwSaouFqEE3gXTG2wTQppNMY6E2fdael65DtGvnjs
-jNig9auoiPZm2JzUkWnPVwi7JEMki+kslNYwEJt1Z8QuETv9EsNPvFI//XgNSXjz
-ZSH5UeCmBnsOZ1RP4MGpY2lKactyuVrN8VgbCd+HvCfjK+WOid/UKWcVYMwG7HXw
-WzTKEGk4ArHMgYTIPY9WzbZ405Ns8g==
-=8zwh
------END PGP SIGNATURE-----
-
---l42umjqts7ahp2rv--
