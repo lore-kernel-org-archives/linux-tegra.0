@@ -1,278 +1,208 @@
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010070.outbound.protection.outlook.com [40.93.198.70])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9501E364038;
-	Tue, 14 Jul 2026 10:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784023848; cv=fail; b=hFHbRf0DFVmqi/UZm+dFOoqZfA84Wr2o7I0Cq72OVDYeubRJRlmVlQ9sL9yQ4apAeeRLxUCksgOTeyUucM/ZTdrYufXLXWuQpdfobRhicq/z6hqciH4z1Mbb/XS3AuyWVv5Bv3duVP/FqEtsYTPwi+LHGNJReZ6/PxnYr0TmrkU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784023848; c=relaxed/simple;
-	bh=Ou83dAw2WBD3/Hzx1mZsd7+BkNqm3pBdFfvn15o/wqs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q5MhiKkStMytANrLj51+kqasGQJfzjvU1zcgeP52B7AIDtose2BPNviup2P4M/tWC065fO+kW10QlUD2lDZlcS0DRswP5B10QDWVvA+ZUcC1FNE7wsn/eJoLpsqulQPVjL5z9TdydW+H4znuSe6UxHl7/Xyk1yfjwKxU2AsZmcc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BCCvcyVd; arc=fail smtp.client-ip=40.93.198.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3EA3644CF;
+	Tue, 14 Jul 2026 10:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784024268; cv=none; b=KoARJtzUTnXChmf2Ufmh6BWVO6FMgt/WqrkkainQ9/6YkXo72jB14UASOGPznSGKiNKf08VcP09hEZCQXvPVuTF5gZQKaIYMWMn0Fd2fmP63+SPTkE+54Rg5bmIWrpKrjKMLQTR5FfOtdrPgVhhJkLvWSOpUIxWQMiM/y2seVFc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784024268; c=relaxed/simple;
+	bh=4DH5a6ve/auP/7V1bjyB0V4QG2dck0UzPWpYqC6/K2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gLcLeuk+BDUCgI/Utnn9318eE4ks4juatKBtAsY3GwsxdDJJIB9hXvBcw29WAMPdf0cMeZ/V9I45Joos8rwZ9/pQiT2fRKXgox9poFtuzrL+1YB0g85Pt/QWBmivN9agjPbS8XPa+vaIaW6HuPUPUfJgVdQaKE/EsD0EEfaOEmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fy6x3ScG; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BCCvcyVd"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=neGm9KfbvxwoR0mj5lymr4OnyTG3Rb/XgZsWpeCvcaUJxVHYZ2ZL8KJYaTDUAL/ZJbkCPQkGCgBWeg92kUqM/jFVrZCmCC+eJU3pkrvtNH/N/eGL02O2n9LlCeLkhPtKEkvo98JtyybrGN8pKKZ6YMEtWNlz1oQLmGqOSk7eUK0AyT89K3PXOIegvZN9P8hjSlvZIUc0cWtdT6wk5yvjrwk5N+SurifrrtJf97G0ELOYT7NVU2ACb/UXeEtDVGZTlLpsAU47y+KtmMTbBWr+O6OOep9KGUZHwijIHniU6glK7Nn8uSYDqEWGTPb/E1KNaPXbiqN2CI0WFMd1ZuqVRg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sHzC2Nb1OFnYoQpsB5d+r63ZC5H9ijhPswIpPK5NHoI=;
- b=h3UgWdZ2gWznr3s5OrRi/MC7rVK1StuY8KVSp9jJ0SlNoX2JaXYpNczvqAFJ8UNiAO2GtO9xyvBxAyntaQwECscttGzw7KYEnPXvWiGdsW4BYS/PA5e6Bb+V+aowhAas2zWY5ZDbxRL4nu+h0njUWbAXcMShYAuUhPfOTJyIvXQYjsKwcaTzAJ94VWivPULpNg/Emz1oKmhwOGS+itkUZICczYIo3t1LMjIw2J2xoaCP9G1QHDKbiawB9ODOeSfBIQEwu3S1ffgewVuuHdGgmobXeVMnfTFM5RZsdQ29WCOZ1XyJHvYJh/Mz3gYcTQY4IrqZejZDqm8CKfZ1Jp5lbg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sHzC2Nb1OFnYoQpsB5d+r63ZC5H9ijhPswIpPK5NHoI=;
- b=BCCvcyVdWXXjdeIGsyro/VBA/gl0KFbWgSBYAwD0iLz2r5YpLSAbDAheswxQzQZzzAoAMmjshWNsEuj9quIEEkX8QEMyk+SsGu9VcXIQrMDQ9tUQrq60YjF8peQ7sVMmD+LjFiCs+BgAwQ77Qgcyf29uwr/UaTSWXLVYECmBOF0SPnyu/lFo2Zt28GRAOpyPB9gPaFspZ9fPGn52MTenw0qrxuq5wvs6mQXx8PztMHNh4IfJfZawzxzpPYPMJrb6met1/uzyb2GK9/42TkxGuFXXl7CHuZ2sNclnXnCUEOy83M0y93LSrujqfl621cgJF4gM9c2zAdXr7/fBxQjnfg==
-Received: from BN9PR03CA0651.namprd03.prod.outlook.com (2603:10b6:408:13b::26)
- by LV8PR12MB9619.namprd12.prod.outlook.com (2603:10b6:408:2a1::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.202.18; Tue, 14 Jul
- 2026 10:10:39 +0000
-Received: from BN2PEPF000044A8.namprd04.prod.outlook.com
- (2603:10b6:408:13b:cafe::ac) by BN9PR03CA0651.outlook.office365.com
- (2603:10b6:408:13b::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.202.19 via Frontend Transport; Tue,
- 14 Jul 2026 10:10:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN2PEPF000044A8.mail.protection.outlook.com (10.167.243.102) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.223.9 via Frontend Transport; Tue, 14 Jul 2026 10:10:39 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 14 Jul
- 2026 03:09:51 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 14 Jul
- 2026 03:09:50 -0700
-Received: from build-va-bionic-20260204.nvidia.com (10.127.8.12) by
- mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.2562.20 via
- Frontend Transport; Tue, 14 Jul 2026 03:09:50 -0700
-From: Vishwaroop A <va@nvidia.com>
-To: <broonie@kernel.org>
-CC: <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<jonathanh@nvidia.com>, <thierry.reding@gmail.com>,
-	<linux-tegra@vger.kernel.org>, Vishwaroop A <va@nvidia.com>
-Subject: [PATCH v6 2/2] docs: spi: add documentation for userspace device instantiation
-Date: Tue, 14 Jul 2026 10:09:44 +0000
-Message-ID: <20260714100947.1871359-2-va@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1784000000.git.va@nvidia.com>
-References: <cover.1784000000.git.va@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fy6x3ScG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C4FE1F00A3A;
+	Tue, 14 Jul 2026 10:17:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784024267;
+	bh=m1KwIxFOjH59vMqkPqvNJy2V0MLfN207LfncRH5TxDo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Fy6x3ScGp4SvjcLCb2EYasEF7Bg+N3JfXA1S2rYhDdGa8fr4+6eT9Z5sUIb80sT2r
+	 12V6KN+91XeSPeyZyRfBCNnMtsE0Z3zX1AfM0d9+BaPvnE/m8+pkUwQTaWwez7DEAX
+	 40QuoDzKqfzY1GCwuoG58CjBJE29XwBLRxM4TLNdmwQj8Blhck0AkxR92okiojzvMx
+	 WvMiVcF3zrA3KFpoksv9rfWx4gssKNluZWhtd5duC3QeTgeKUloBSHGktJzF0RJITM
+	 VrXH2ihLGQi0Xivwew6+5RuBX85r1ZYghiUkt5mTAu6e5JRNfb657XTWVfzpRGcHfX
+	 762G6nWtq/nvw==
+Date: Tue, 14 Jul 2026 11:17:11 +0100
+From: "Lorenzo Stoakes (ARM)" <ljs@kernel.org>
+To: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@kernel.org>, "Liam R. Howlett" <liam@infradead.org>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, Harry Yoo <harry@kernel.org>, 
+	Jann Horn <jannh@google.com>, Lance Yang <lance.yang@linux.dev>, 
+	Pedro Falcato <pfalcato@suse.de>, Russell King <linux@armlinux.org.uk>, 
+	Dinh Nguyen <dinguyen@kernel.org>, Simon Schuster <schuster.simon@siemens-energy.com>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Dan Williams <djbw@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Nico Pache <npache@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+	Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi <nao.horiguchi@gmail.com>, 
+	Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	SJ Park <sj@kernel.org>, Matthew Brost <matthew.brost@intel.com>, 
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, 
+	Gregory Price <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, 
+	Alistair Popple <apopple@nvidia.com>, Hugh Dickins <hughd@google.com>, Peter Xu <peterx@redhat.com>, 
+	Kees Cook <kees@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Thomas Gleixner <tglx@kernel.org>, Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Ian Abbott <abbotti@mev.co.uk>, 
+	H Hartley Sweeten <hsweeten@visionengravers.com>, Lucas Stach <l.stach@pengutronix.de>, 
+	Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Thierry Reding <thierry.reding@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Christian Koenig <christian.koenig@amd.com>, 
+	Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, 
+	Shameer Kolothum <skolothumtho@nvidia.com>, Kevin Tian <kevin.tian@intel.com>, 
+	Ankit Agrawal <ankita@nvidia.com>, Alex Williamson <alex@shazbot.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Usama Arif <usama.arif@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, linux-perf-users@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, damon@lists.linux.dev, iommu@lists.linux.dev, 
+	kasan-dev@googlegroups.com, linux-sgx@vger.kernel.org, etnaviv@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
+	linux-tegra@vger.kernel.org, kvm@vger.kernel.org, 
+	Russell King <linux+etnaviv@armlinux.org.uk>
+Subject: Re: [PATCH v2 13/33] mm/vma: introduce and use vmg_pages(),
+ vmg_[start, end]_pgoff()
+Message-ID: <alYMZkJKJABhPsa6@lucifer>
+References: <20260710-b4-pre-scalable-cow-v2-0-2a5aa403d977@kernel.org>
+ <20260710-b4-pre-scalable-cow-v2-13-2a5aa403d977@kernel.org>
+ <508301c5-5460-40e8-bc34-6410be5be40a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000044A8:EE_|LV8PR12MB9619:EE_
-X-MS-Office365-Filtering-Correlation-Id: b7b19b53-8bff-41a6-80ac-08dee1902837
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|1800799024|23010399003|82310400026|376014|30052699003|3023799007|6133799003|22082099003|18002099003|56012099006|11063799006;
-X-Microsoft-Antispam-Message-Info:
-	xkhaNFewszZwhY99BqRtk04xpR3+3A0JLTNXdBwZntIDXaQNM7yGFlIKldPuwsI2DqZwTBLTZjoB/+LqFmxpwEHdzPsQIWlgtCMlJiG4i7iuQpOusw4sryBGOK6NxMNWROKr3CqZETSiY9jk2nKEWLKi0a4BD6YVrttBXZN3+Kl8o3LLV0GcARYJoH4TTljFWo56tbEEuJy0uWbzpEOtJclIC6/qGpNFaSetBtLR+6jrfXjikWwZpri43gjQXknr9pCdUV6pqwjeVDbmGKCAf+Q5ODrzuv+63A4CAJNYw0NtqGc38Upl+Tkv13BpXXgzuQbXxAvJyju2aeioPLAl7qX0uWj/P2P8VZGQLxnHMOg+txIqdzb9GYystVy31vksMDX3vxJq6dL/YUz8Bk8HX5gr8zrDUcZCXKsmHq2hFEPgl9Stl56pZjI44N3v0LyJ7AO54/vyHxoVLsVCYAHhPNmzoGWHiu+ursEANQ54QmI0pccqniK3RlR0K5mSCulVEgD5t7909NMZm213GsUzzbbUf4N8MEMX67mjXuLlnHmZzqT7EJP0q5NNSAMcvVYwuRz9msOWGPf3CLNvrYu7i9g4oyv3fVjoBwEfYLs60gDmB+0z6kQBUbfb7Mn+v4HTttTmt8zLoCcHyq0YauXOSHx4jjNQDYMHEQ5EB9Hxv1ZA3CYoOYixqcHkaz2xsUHO2+Jp38hI/don/tN/SSJ/Cg==
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(1800799024)(23010399003)(82310400026)(376014)(30052699003)(3023799007)(6133799003)(22082099003)(18002099003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	RzQNPJ9tFGnleanu3HkX/YAIynzMPvAU0cStrWnpGZjxBhWrT8F/tXEWuJlRGgxTpdmHwBBsvRItmEgPUAQeE/j9ctBPAU6aLtaOM1X90ruFRhr6f65EacnxTDcKwWo5phpMwyalMXs+tjvusVCeMMeM5XNCj8K9CVX1+NhTF0m7j+ePQP+eNHslVuNRie1WyoqvMZhAL1Pet+gn97DLMfL5nomqRe4c5R87K8iLJjfW+Etw9fOpQ2u6lWnwIIDH0YvOZlCdXirR0Z9jwzMPmOiyiol3AfTzQqPsHA75MHq5kQN/nJYofG59In4qbb6y5hErCFkdQUBfGV29MPvgfalfem3xSbjoXiNUZ3z3mfiraFsvrZoTzK808j141T0QlaQYhSs3XAb1Ah9UAWTKTvl7euByoDC8CiWQylQ1rO6DKwnTaJr0s6zpCNffJJNL
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2026 10:10:39.7473
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7b19b53-8bff-41a6-80ac-08dee1902837
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000044A8.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9619
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <508301c5-5460-40e8-bc34-6410be5be40a@kernel.org>
 
-Document the new_device and delete_device sysfs attributes on SPI
-controllers:
+On Mon, Jul 13, 2026 at 08:12:24PM +0200, Vlastimil Babka (SUSE) wrote:
+> On 7/10/26 22:16, Lorenzo Stoakes wrote:
+> > In the VMA logic we often need to determine the number of pages in the
+> > specified merge range, as well as the start and end page offsets of that
+> > range.
+> >
+> > Introduce and use helpers for these purposes.
+> >
+> > No functional change intended.
+> >
+> > Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+> > Reviewed-by: Gregory Price <gourry@gourry.net>
+> > Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
+>
+> Uh, the PHYS_PFN() usage here was quite an abuse. Good riddance.
 
-  - Documentation/spi/instantiating-devices.rst: describes when and
-    why this interface is needed, accepted parameters, usage examples,
-    and limitations.
-  - Documentation/ABI/testing/sysfs-class-spi-master: formal ABI
-    entry for both attributes.
+Yeah and mine :)) but absolutely agree it was wrong and glad to fix my own
+mistake in using that ;)
 
-Signed-off-by: Vishwaroop A <va@nvidia.com>
----
- .../ABI/testing/sysfs-class-spi-master        | 34 +++++++
- Documentation/spi/index.rst                   |  1 +
- Documentation/spi/instantiating-devices.rst   | 88 +++++++++++++++++++
- 3 files changed, 123 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-spi-master
- create mode 100644 Documentation/spi/instantiating-devices.rst
+> Reviewed-by: Vlastimil Babka (SUSE) <vbabka@kernel.org>
 
-diff --git a/Documentation/ABI/testing/sysfs-class-spi-master b/Documentation/ABI/testing/sysfs-class-spi-master
-new file mode 100644
-index 000000000000..b498be128bad
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-spi-master
-@@ -0,0 +1,34 @@
-+What:		/sys/class/spi_master/spiB/new_device
-+Date:		April 2026
-+KernelVersion:	7.2
-+Contact:	linux-spi@vger.kernel.org
-+Description:	(WO) Instantiate a new SPI device on bus B, where B
-+		is the bus number (0, 1, 2, ...). Takes parameters
-+		in the format:
-+
-+		<modalias> <chip_select> [<max_speed_hz> [<mode>]]
-+
-+		where modalias is the driver name, chip_select is the
-+		CS line number, and max_speed_hz and mode are optional.
-+
-+		The device can later be removed with delete_device.
-+
-+		Only devices created via this interface can be removed
-+		with delete_device; platform and DT devices are not
-+		affected.
-+
-+		Example:
-+		# echo spidev 0 > /sys/class/spi_master/spi0/new_device
-+		# echo spidev 0 10000000 > /sys/class/spi_master/spi0/new_device
-+		# echo spidev 0 10000000 3 > /sys/class/spi_master/spi0/new_device
-+
-+What:		/sys/class/spi_master/spiB/delete_device
-+Date:		April 2026
-+KernelVersion:	7.2
-+Contact:	linux-spi@vger.kernel.org
-+Description:	(WO) Remove a SPI device previously created via
-+		new_device. Takes a single parameter: the chip select
-+		number of the device to remove.
-+
-+		Example:
-+		# echo 0 > /sys/class/spi_master/spi0/delete_device
-diff --git a/Documentation/spi/index.rst b/Documentation/spi/index.rst
-index ac0c2233ce48..3f723e2c07da 100644
---- a/Documentation/spi/index.rst
-+++ b/Documentation/spi/index.rst
-@@ -8,6 +8,7 @@ Serial Peripheral Interface (SPI)
-    :maxdepth: 1
- 
-    spi-summary
-+   instantiating-devices
-    spidev
-    multiple-data-lanes
-    butterfly
-diff --git a/Documentation/spi/instantiating-devices.rst b/Documentation/spi/instantiating-devices.rst
-new file mode 100644
-index 000000000000..9ed08d94ae01
---- /dev/null
-+++ b/Documentation/spi/instantiating-devices.rst
-@@ -0,0 +1,88 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+==============================
-+How to instantiate SPI devices
-+==============================
-+
-+SPI devices are normally declared statically via device-tree, ACPI, or
-+board files. When the SPI controller is registered, these devices are
-+instantiated automatically by the SPI core. This is the preferred method
-+for any device with a proper kernel driver.
-+
-+Instantiate from user-space
-+---------------------------
-+
-+In certain cases a SPI device cannot be declared statically:
-+
-+* The ``spidev`` driver, which provides raw userspace access to SPI
-+  buses, explicitly rejects the bare ``"spidev"`` compatible string in
-+  device-tree because spidev is a Linux implementation detail, not a
-+  hardware description. Vendor-specific compatible strings for spidev
-+  (e.g. ``"vendor,board-spidev"``) are also generally not accepted
-+  upstream. Device-tree overlays do not help here either, since the
-+  spidev driver performs the same compatible check regardless of how
-+  the DT node was loaded.
-+
-+* You are developing or testing a SPI device on a development board
-+  where the SPI bus is exposed on expansion headers, and the connected
-+  device may change frequently.
-+
-+For these cases, a sysfs interface is provided on each SPI controller
-+(similar to the I2C ``new_device``/``delete_device`` interface described
-+in Documentation/i2c/instantiating-devices.rst). Two write-only
-+attribute files are created in every SPI controller directory:
-+``new_device`` and ``delete_device``.
-+
-+File ``new_device`` takes 2 to 4 parameters: the name of the SPI
-+device (a string), the chip select number, and optionally
-+``max_speed_hz`` and ``mode``::
-+
-+  <modalias> <chip_select> [<max_speed_hz> [<mode>]]
-+
-+The modalias is set both as the device's ``modalias`` field and as its
-+``driver_override``. This ensures that the device binds to the named
-+driver directly, bypassing the normal bus matching logic (OF, ACPI,
-+and ``id_table``). This is necessary because drivers like ``spidev``
-+deliberately exclude generic names from their ``id_table``.
-+
-+If ``max_speed_hz`` is omitted or 0, ``spi_setup()`` clamps it to
-+the controller's maximum speed. If ``mode`` is omitted, SPI mode 0
-+(CPOL=0, CPHA=0) is used.
-+
-+File ``delete_device`` takes a single parameter: the chip select
-+number. As no two devices can share a chip select on a given SPI bus,
-+the chip select is sufficient to uniquely identify the device.
-+
-+Examples::
-+
-+  # Create a spidev device on SPI bus 0, chip select 0
-+  echo spidev 0 > /sys/class/spi_master/spi0/new_device
-+
-+  # Create with explicit clock rate and SPI mode
-+  echo spidev 0 10000000 3 > /sys/class/spi_master/spi0/new_device
-+
-+  # Remove the device
-+  echo 0 > /sys/class/spi_master/spi0/delete_device
-+
-+On systems that need spidev access at boot, a systemd service or
-+udev rule can write to ``new_device`` after the SPI controller is
-+available.
-+
-+Limitations
-+^^^^^^^^^^^
-+
-+Devices created through this interface have the following limitations
-+compared to devices declared via device-tree:
-+
-+* No interrupt (IRQ) support.
-+* No additional properties such as ``spi-max-frequency`` DT bindings
-+  or controller-specific configuration.
-+* No platform data or software nodes.
-+
-+For ``spidev`` usage these limitations are not relevant, since spidev
-+provides a raw byte-level interface that does not require any of these
-+features.
-+
-+Only devices created via ``new_device`` can be removed through
-+``delete_device``. Devices declared via device-tree, ACPI, or board
-+files are not affected by this interface.
--- 
-2.17.1
+Thanks!
 
+>
+> > ---
+> >  mm/vma.c | 11 ++++-------
+> >  mm/vma.h | 17 +++++++++++++++++
+> >  2 files changed, 21 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/mm/vma.c b/mm/vma.c
+> > index 35ba3475128f..995de8198fbb 100644
+> > --- a/mm/vma.c
+> > +++ b/mm/vma.c
+> > @@ -197,11 +197,9 @@ static void init_multi_vma_prep(struct vma_prepare *vp,
+> >   */
+> >  static bool can_vma_merge_before(struct vma_merge_struct *vmg)
+> >  {
+> > -	pgoff_t pglen = PHYS_PFN(vmg->end - vmg->start);
+> > -
+> >  	if (is_mergeable_vma(vmg, /* merge_next = */ true) &&
+> >  	    is_mergeable_anon_vma(vmg, /* merge_next = */ true)) {
+> > -		if (vmg->next->vm_pgoff == vmg->pgoff + pglen)
+> > +		if (vmg_end_pgoff(vmg) == vma_start_pgoff(vmg->next))
+> >  			return true;
+> >  	}
+> >
+> > @@ -221,7 +219,7 @@ static bool can_vma_merge_after(struct vma_merge_struct *vmg)
+> >  {
+> >  	if (is_mergeable_vma(vmg, /* merge_next = */ false) &&
+> >  	    is_mergeable_anon_vma(vmg, /* merge_next = */ false)) {
+> > -		if (vmg->prev->vm_pgoff + vma_pages(vmg->prev) == vmg->pgoff)
+> > +		if (vma_end_pgoff(vmg->prev) == vmg_start_pgoff(vmg))
+> >  			return true;
+> >  	}
+> >  	return false;
+> > @@ -759,7 +757,7 @@ static int commit_merge(struct vma_merge_struct *vmg)
+> >  	 */
+> >  	vma_adjust_trans_huge(vma, vmg->start, vmg->end,
+> >  			      vmg->__adjust_middle_start ? vmg->middle : NULL);
+> > -	vma_set_range(vma, vmg->start, vmg->end, vmg->pgoff);
+> > +	vma_set_range(vma, vmg->start, vmg->end, vmg_start_pgoff(vmg));
+> >  	vmg_adjust_set_range(vmg);
+> >  	vma_iter_store_overwrite(vmg->vmi, vmg->target);
+> >
+> > @@ -962,8 +960,7 @@ static __must_check struct vm_area_struct *vma_merge_existing_range(
+> >  		 *    middle     next
+> >  		 * shrink/delete extend
+> >  		 */
+> > -
+> > -		pgoff_t pglen = PHYS_PFN(vmg->end - vmg->start);
+> > +		const pgoff_t pglen = vmg_pages(vmg);
+> >
+> >  		VM_WARN_ON_VMG(!merge_right, vmg);
+> >  		/* If we are offset into a VMA, then prev must be middle. */
+> > diff --git a/mm/vma.h b/mm/vma.h
+> > index 8e4b61a7304c..527716c8739d 100644
+> > --- a/mm/vma.h
+> > +++ b/mm/vma.h
+> > @@ -230,6 +230,23 @@ static inline bool vmg_nomem(struct vma_merge_struct *vmg)
+> >  	return vmg->state == VMA_MERGE_ERROR_NOMEM;
+> >  }
+> >
+> > +static inline pgoff_t vmg_start_pgoff(const struct vma_merge_struct *vmg)
+> > +{
+> > +	return vmg->pgoff;
+> > +}
+> > +
+> > +static inline pgoff_t vmg_pages(const struct vma_merge_struct *vmg)
+> > +{
+> > +	const unsigned long size = vmg->end - vmg->start;
+> > +
+> > +	return size >> PAGE_SHIFT;
+> > +}
+> > +
+> > +static inline pgoff_t vmg_end_pgoff(const struct vma_merge_struct *vmg)
+> > +{
+> > +	return vmg_start_pgoff(vmg) + vmg_pages(vmg);
+> > +}
+> > +
+> >  /* Assumes addr >= vma->vm_start. */
+> >  static inline pgoff_t vma_pgoff_offset(struct vm_area_struct *vma,
+> >  				       unsigned long addr)
+> >
+>
+
+Cheers, Lorenzo
