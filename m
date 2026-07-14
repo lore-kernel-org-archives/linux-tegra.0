@@ -1,123 +1,153 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB0238B7DB;
-	Tue, 14 Jul 2026 12:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD33C2737E3;
+	Tue, 14 Jul 2026 12:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784030600; cv=none; b=RgVTCgPXAI58eS6yNCYGumciB5g7AkmSxnRG5/bn4ed6k1Vpc8UG7fBoUbOinGkbFh5Fj/uRSsh5xJxrKpeNmX38ei8cO8KJdqT8fDZNQVw0rrAPg0C4N2V9KdhbEb29DIMIWxz86ZhuFE8nrETqh9Kzh3o7EnWSZO8lWOkFGoU=
+	t=1784030779; cv=none; b=sdwE+TdHv6PZ7awKPja9Q85MMPdeXIBU4Vc0+hBVPNbjoxF4OVUUfG4jBO/dOKGn4qCp2HbxPxk+5fHp85XzT4vST/vuw4wtYAKfx22WzcFF/KqXgCs6edXsq9bqgwNrCMAb1OBg9rZ6I7T1sZkFgrTf4sdHvPbEd9gN7PUhF2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784030600; c=relaxed/simple;
-	bh=x4plyMAzWJTKe+BF08ui5PhIVzw+4SZR6NAusQWQWHA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L2wneWDUChtK1ku3cyduvR95zTRkWKODp+vsHEUVuhsrWEFvAUK6svlK8W96cBCVbwbRv7Oi7IUd1cfsjRJEkouUsEPv0ndv2nDsiZq/5NCpKZFUzMT9mUq6yN+Ul1yddnpfW4mWOdMG6vsTrilxDpi36MbsRb1Nk5nCBjdIiBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEI9Ga/U; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784030779; c=relaxed/simple;
+	bh=E+0jPhHMLYioaY9UG1rBQAy+IKtgN/+gffJXLYn4+4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I5FAT5ecyBZbaNdZ7p73h8Vftq+64oFuwVuhphToM1AZbSIXy2/jg41o2Ca9kx23uqKwEIiMeyLzE90D051K/m0P0vCqYvl3kdBImrSmwLyKuXi0UNXoyI6Zyw1xl3gSEg5JXMNNrQ0a43prYC3/XMFmG/FyNjTVwwqwl0FKCcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JALI0fxf; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEI9Ga/U"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id D95811F00A3E;
-	Tue, 14 Jul 2026 12:03:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JALI0fxf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 985521F000E9;
+	Tue, 14 Jul 2026 12:06:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784030595;
-	bh=eLUbjGqmlmNUS7QSp3JdvECjdMhcY9OtVw/PD8mXPCw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=FEI9Ga/UZSrDrrx2I+N63E0YOUxyoOsd59HRz/JCIOTehSoPjzA5pJgpCInHuJMY0
-	 bFwyfClG2Bgv4JPAoeUnaPnWkMnGusyFTNv+xUOs6TdhEc7ISUdJfeRYGD+IBmxgwt
-	 bo3gR6S8XQzXfNtujiwEae+6fZDqpzYWNr4TzFJ5zZKtN15BEMjmcbOCp7tZXvi3Vm
-	 HfPjrrnjLmCRjSLtq8riSx8UJuAfSWJ0zBQ9VbxKA6GvjLN+WQ7jypymVNRVCvLnfK
-	 h2uOeUlSCZeXIYJy3dQuazl3lzGeKpi3m3mtLkPJYLVnZobvgjBKOpauCHClf9xk7x
-	 qPOES++Vnq+Fg==
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>
-Cc: linux-pwm@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v1 6/6] pwm: tegra: Implement .get_state()
-Date: Tue, 14 Jul 2026 14:02:40 +0200
-Message-ID:  <33b13f17d7135923d08e2ff40c867803e19609b9.1784030076.git.ukleinek@kernel.org>
-X-Mailer: git-send-email 2.55.0.11.g153666a7d9bb
-In-Reply-To: <cover.1784030076.git.ukleinek@kernel.org>
-References: <cover.1784030076.git.ukleinek@kernel.org>
+	s=k20260515; t=1784030778;
+	bh=zXjAh2537yo9G5vWAgQyYke6ki6Lnw1UTZmZWsxbjhc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=JALI0fxfqvUbwOcumUkWMdf9+m8l9v/z9X4lZj/ehsLJwp7ooqiwniR8gwMwjlGX4
+	 KQm5hPhANenPfd2Bwl7Lw10CTxhcLtoJlVyhmsg2A4CH0cM2OlgloQDORZXOtineLC
+	 LSXy7jBY23Sl0ZuCS3XZeGNWqADdOIypDvJINA7+5rlsAPvHLK4n6INGqXPYHq43z0
+	 TChJyIoFjVyZF6bcTAaSLXrQYMnVCU5gag1jLCsHntMDSLG6NIQt9Oy31Q263sVXSw
+	 1vNiRk46Ol5RAtKDAakIkefOUYXtHCPa0UXek/BlAs8NXTFuLNcB3vZN6MkZkKKMuD
+	 FpfTkmjJaiaEg==
+Date: Tue, 14 Jul 2026 17:36:14 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Pan Chuang <panchuang@vivo.com>, Frank Li <Frank.Li@nxp.com>,
+	Keguang Zhang <keguang.zhang@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Paul Walmsley <pjw@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	=?iso-8859-1?Q?Am=E9lie?= Delaunay <amelie.delaunay@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
+	Kees Cook <kees@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+	Miaoqian Lin <linmq006@gmail.com>,
+	Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
+	John Madieu <john.madieu.xa@bp.renesas.com>,
+	Thomas Andreatta <thomasandreatta2000@gmail.com>,
+	"open list:FREESCALE eDMA DRIVER" <imx@lists.linux.dev>,
+	"open list:FREESCALE eDMA DRIVER" <dmaengine@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:MIPS/LOONGSON1 ARCHITECTURE" <linux-mips@vger.kernel.org>,
+	"moderated list:MEDIATEK DMA DRIVER" <linux-arm-kernel@lists.infradead.org>,
+	"moderated list:MEDIATEK DMA DRIVER" <linux-mediatek@lists.infradead.org>,
+	"moderated list:ARM/ACTIONS SEMI ARCHITECTURE" <linux-actions@lists.infradead.org>,
+	"open list:ARM/QUALCOMM MAILING LIST" <linux-arm-msm@vger.kernel.org>,
+	"open list:SIFIVE DRIVERS" <linux-riscv@lists.infradead.org>,
+	"open list:ARM/RISC-V/RENESAS ARCHITECTURE" <linux-renesas-soc@vger.kernel.org>,
+	"moderated list:STM32 DMA DRIVERS" <linux-stm32@st-md-mailman.stormreply.com>,
+	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 00/26] dmaengine: Remove redundant error messages on IRQ
+ request failure
+Message-ID: <alYmNl--mxMK1-86@vaman>
+References: <20260709135846.97972-1-panchuang@vivo.com>
+ <ak-vkQ8g_ePdY15f@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2128; i=ukleinek@kernel.org; h=from:subject:message-id; bh=x4plyMAzWJTKe+BF08ui5PhIVzw+4SZR6NAusQWQWHA=; b=owGbwMvMwMXY3/A7olbonx/jabUkhqww1WwvO7HCzIeTbEKfPlMNv+jKxq+QcI7p3x4D5oNev hs3HpLrZDRmYWDkYpAVU2Sxb1yTaVUlF9m59t9lmEGsTCBTGLg4BWAiTdns/0Mmbz+t9OLnqVxr trifFtxRFj76P7smcKRzi4bqKi08kb4076Mm78bjpf5GD5u251y4es2Fn6tnUrnkgknT6meff/L +hZKyiHeyc+XP+PMf1ZXl2LVXqt5/JK+d1uvnXSKc6HVh59opjp7p/Itf1GnnLQ38tCqndL1z4/ PkZBOR1M+s7Ge+nnd/Gv3uVnVfv8fyb3asHF92lqtMu7n38rEVItlhasUFHzbv65rc0HtImWPBj ZJJm3ZbP6lR17v0yuyc6IIaX4NIp70/9HTD94Z9KuD9Jtxa0HTyJKcze+PhTIfvTE2yx9J4PbM3 q21f6vR0L9O+T75Cm1R+qmr2hj59fmVJHE/GHLb81ZpPAQ==
-X-Developer-Key: i=ukleinek@kernel.org; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ak-vkQ8g_ePdY15f@shikoro>
 
-The registers of the PWM IP are readable. Use that to implement the
-.get_state() callback.
+On 09-07-26, 16:26, Wolfram Sang wrote:
+> On Thu, Jul 09, 2026 at 09:58:04PM +0800, Pan Chuang wrote:
+> > Commit 55b48e23f5c4b6f5ca9b7ab09599b17dcf501c10 ("genirq/devres: Add
+> > error handling in devm_request_*_irq()") added automatic error logging
+> > to devm_request_threaded_irq() and devm_request_any_context_irq() via
+> > the new devm_request_result() helper. The helper prints device name,
+> > IRQ number, handler functions, and error code on failure.
+> > 
+> > Since devm_request_irq() is a static inline wrapper around
+> > devm_request_threaded_irq(), it also benefits from this automatic
+> > logging.
+> > 
+> > This series removes the now-redundant dev_err() and dev_err_probe() calls
+> > in dmaengine drivers that follow these devm_request_*_irq() functions,
+> > as the core now provides more detailed diagnostic information on failure.
+> > 
+> > Pan Chuang (26):
+> >   dmaengine: fsl-edma-main: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: fsl-qdma: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: loongson-loongson1-apb-dma: Remove redundant
+> >     dev_err()/dev_err_probe()
+> >   dmaengine: mediatek-mtk-cqdma: Remove redundant
+> >     dev_err()/dev_err_probe()
+> >   dmaengine: mediatek-mtk-hsdma: Remove redundant
+> >     dev_err()/dev_err_probe()
+> >   dmaengine: mmp_pdma: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: moxart-dma: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: owl-dma: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: pxa_dma: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: qcom-gpi: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: sf-pdma-sf-pdma: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: sh-rcar-dmac: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: sh-rz-dmac: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: sh-shdmac: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: sh-usb-dmac: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: sprd-dma: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: st_fdma: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: stm32-stm32-dma: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: stm32-stm32-dma3: Remove redundant
+> >     dev_err()/dev_err_probe()
+> >   dmaengine: stm32-stm32-mdma: Remove redundant
+> >     dev_err()/dev_err_probe()
+> >   dmaengine: sun4i-dma: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: sun6i-dma: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: tegra20-apb-dma: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: ti-edma: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: uniphier-xdmac: Remove redundant dev_err()/dev_err_probe()
+> >   dmaengine: xgene-dma: Remove redundant dev_err()/dev_err_probe()
+> 
+> One patch per subsystem for such trivial changes, please.
 
-Signed-off-by: Uwe Kleine-König <ukleinek@kernel.org>
----
- drivers/pwm/pwm-tegra.c | 48 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+Yes pretty please
 
-diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-index 8e5e7e37f4ff..79bfc7589db8 100644
---- a/drivers/pwm/pwm-tegra.c
-+++ b/drivers/pwm/pwm-tegra.c
-@@ -309,8 +309,56 @@ static int tegra_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	return err;
- }
- 
-+static int tegra_pwm_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
-+			       struct pwm_state *state)
-+{
-+	struct tegra_pwm_chip *pc = to_tegra_pwm_chip(chip);
-+	int rc;
-+	u32 val;
-+
-+	rc = pm_runtime_resume_and_get(pwmchip_parent(chip));
-+	if (rc)
-+		return rc;
-+
-+	val = tegra_pwm_readl(pwm, pc->soc->enable_reg);
-+	if (val & TEGRA_PWM_ENABLE) {
-+		u32 scale, pwm0;
-+
-+		if (pc->soc->enable_reg != TEGRA_PWM_CSR_0)
-+			val = tegra_pwm_readl(pwm, TEGRA_PWM_CSR_0);
-+
-+		scale = (val >> TEGRA_PWM_SCALE_SHIFT) & (((1 << pc->soc->scale_width) - 1));
-+		pwm0 = (val >> TEGRA_PWM_DUTY_SHIFT) & (2 * TEGRA_PWM_DEPTH - 1);
-+
-+		if (pwm0 > TEGRA_PWM_DEPTH)
-+			pwm0 = TEGRA_PWM_DEPTH;
-+
-+		/*
-+		 * scale + 1 is at most 1 << 17, TEGRA_PWM_DEPTH is 256, so the
-+		 * multiplication for .period doesn't overflow a u64. With
-+		 * pwm0 ≤ TEGRA_PWM_DEPTH, .duty_cycle is also fine.
-+		 */
-+		*state = (struct pwm_state){
-+			.period = DIV64_U64_ROUND_UP((u64)(scale + 1) * TEGRA_PWM_DEPTH * NSEC_PER_SEC, pc->clk_rate),
-+			.duty_cycle = DIV64_U64_ROUND_UP((u64)(scale + 1) * pwm0 * NSEC_PER_SEC, pc->clk_rate),
-+			.polarity = PWM_POLARITY_NORMAL,
-+			.enabled = true,
-+		};
-+
-+	} else {
-+		*state = (struct pwm_state){
-+			.enabled = false,
-+		};
-+	}
-+
-+	pm_runtime_put(pwmchip_parent(chip));
-+
-+	return 0;
-+}
-+
- static const struct pwm_ops tegra_pwm_ops = {
- 	.apply = tegra_pwm_apply,
-+	.get_state = tegra_pwm_get_state,
- };
- 
- static int tegra_pwm_probe(struct platform_device *pdev)
 -- 
-2.55.0.11.g153666a7d9bb
-
+~Vinod
