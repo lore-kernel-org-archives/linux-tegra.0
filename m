@@ -1,224 +1,122 @@
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010000.outbound.protection.outlook.com [52.101.61.0])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B98931A570
-	for <linux-tegra@vger.kernel.org>; Wed, 15 Jul 2026 07:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784100358; cv=fail; b=k1cWWuA5TzhRY3XIERvNfuMiVaIBX7wdhRZ8p5vxrO3y+yfN6Bdq4fVKVnaH1BXB5K/do+gCCLrL+8nvqxDOWE9XcVRsN7zXEbxATk/VPynfTEi9K2hfh4d66GTxcZfVd289wcDd27mmWzzBrzBl5GIdqWi/30mySEIBdG+g4bU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784100358; c=relaxed/simple;
-	bh=DOLtuos6lOZF2zesP9QOf6H+YE2MXOoWrHdF6/NN6hs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GfAbsVNAb1NLchHjaxEvUpWZLRvkV9cPl+zFWwlwdrXzVz0RsIe3xHklpd6YbawxXwzGlCgmX8K6k2hUfbTNA7PNv0K0G+MATAZneo0QFOMSD/f98izAss+rO6PO6qoihkTTmLMAuMXR9EP5H6KvEF67OJoAAd/npZMUjiggquc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tWjF7Gml; arc=fail smtp.client-ip=52.101.61.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tWjF7Gml"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qZsvCNhnsBL2GZtyGxs0REWDZkWlnJsw83vpq+Sg+QRHO058ll1Gs1HsJaWyXEfjRCV/mIYLbpupFh/A3eQflDhwfMavKJJByK/KiMdx85bq0vR0q0stkyCxSc4KzuhY3C4HECIm8Ebg3yGIR7Kske+xIhow6vqu8nyG6ShqaRmFjz+lyIbiyDY9Cw37qDS1LBlj8xnKUf9S5gxiNUwLdj6KEXXSsVYV5/d1XqcgQ7oM7KcFyo845Fn2dkuabXO+KHq4YOsNklhmUnHUkPXwwOxDuBT1YHLMF87tDMMsAPsf2Ki/bIVlWhHPBOun5KkJmxmh//Mid9UAdfKN7kFdfQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pM2ucVcZ9kL6Iu4licbeT4SbZWd5HlQZ3suQAhXHjHU=;
- b=faVLR5IjB97juoJZ58+6ta/tsF0f7A4HvW+3gYnrXA/n0f/e1VNaX2+uUsOcz701ai+OfH+8czo4C/VEy+sGgMQziuofsNiddtXuCwn24q+KHGoH5DfaGAJxUtZOgXRyV7ChEaiNgSz1Txi+CIqsK3vBdBd4KH92VjCYQSmFb3mpjphGOQpUTizjZCrXiFv0jc3YII/1ewkcWWeiSNxDjrX+3CVrA54oJAwAQzSevqkb5WOBxp4dwJOU1MsiMm0ZazZ3ce/7zKkNirZey5groKB07+51ow0GTkEuIpsZ/3g1OLlYdc7NuK6owFjqzemihI8AknIRprlzlKqYzsL7MA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pM2ucVcZ9kL6Iu4licbeT4SbZWd5HlQZ3suQAhXHjHU=;
- b=tWjF7GmlKUdap1Y0uszQRkT+zyz8IM07GYDDfxnUJBgLRKeyvgnOZnKepTMdbMXKsPbFzX6narTC4VrVRcsyme4eh2r2TP6aynpCv0HDOMwR9+oUz87oeAR9R79rsQFmvATl6YXw+2jPyttyTPW/JbwMcidlAQDmVOz3IhQQT3t6Stpe6jrP5/M0B8URJO4LahdkT89cUI9mkbx6AGRNfH3xRN9OZMPDLKkx86nmFWWpKakCZ9ENdMd7eUYf5U+RhmE/TnlukbtHgKngd/HKvL/1fph7bRcg1JywogPEIhnWoOQU0BXBjb8AJ//FsOfgvS7kwZyabFzWkgrXIuiiOA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by DS3PR12MB999216.namprd12.prod.outlook.com (2603:10b6:8:38d::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.10; Wed, 15 Jul
- 2026 07:25:51 +0000
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017%6]) with mapi id 15.21.0181.019; Wed, 15 Jul 2026
- 07:25:51 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Maxime Ripard <mripard@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>,
- jonathanh@nvidia.com, linux-tegra@vger.kernel.org, thierry.reding@kernel.org
-Subject: Re: [PATCH 59/60] drm/tegra: Convert to atomic_create_state
-Date: Wed, 15 Jul 2026 16:25:48 +0900
-Message-ID: <Y7bDDzPZSAm-SByysuBRXw@nvidia.com>
-In-Reply-To: <20260709-drm-no-more-plane-reset-v1-59-302d986fe5f0@kernel.org>
-References:
- <20260709-drm-no-more-plane-reset-v1-0-302d986fe5f0@kernel.org>
- <20260709-drm-no-more-plane-reset-v1-59-302d986fe5f0@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TY6P301CA0037.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:3ba::13) To SJ2PR12MB9161.namprd12.prod.outlook.com
- (2603:10b6:a03:566::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055FF3CD8B8;
+	Wed, 15 Jul 2026 08:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.25
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784104661; cv=none; b=UnRWYSZf8ZdTQREXE57pQEJ0eVEkWDNgMZX8pAZXu53YpR06bSqsD5Ju4mAP09kg8PYzCwmDHrhxicphrJ/qvMOOBz5DeP+pXuWhmSzxt/5tnvfnUJgrkMr3BM+IKzc9vFDN7losq2t0+1hqlbKvqCw1sCwb4e1pozrdMub62Hc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784104661; c=relaxed/simple;
+	bh=tPIaco2ktDQGox4jXobxycopW5coQPCxuZ7Oil61iS0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cj6nr/+0Nuol4BfTvQfC5Bbpj1UIyvJBqp/SmubFqP01PPwOUCIsKM1Q9rSO0rvbTabQ7kmcxk8Rd/Iq28fLg43E+WIDae8WWjByy1GDCDjEv6hOzSTlQ8J3n0jXQY43YrSXtSXCyUZ1oRb+wfTz3zi3CucFoNT1NgalQygL9zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [111.196.245.140])
+	by APP-05 (Coremail) with SMTP id zQCowAAHfO_HRldqNFRHGA--.9246S2;
+	Wed, 15 Jul 2026 16:37:27 +0800 (CST)
+From: Pengpeng Hou <pengpeng@iscas.ac.cn>
+To: Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Timo Alho <talho@nvidia.com>
+Subject: [PATCH] firmware: tegra: bpmp: reject truncated debugfs entries
+Date: Wed, 15 Jul 2026 16:37:26 +0800
+Message-ID: <20260715083726.30740-1-pengpeng@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|DS3PR12MB999216:EE_
-X-MS-Office365-Filtering-Correlation-Id: e2cfdd22-4a97-4630-19e0-08dee2424ca5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|10070799003|23010399003|4143699003|11063799006|56012099006|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	29vx4iZu6XQpF3+gAYeGt6n6d2uLWFYR7dWjh/bYHKSDrxcO+vVNTP7ow+0V2nsL6mW0giMAvbRBvgCG+YHM7MIJs4zBeuk1bHh+BzNyN9LcqkG52BlzmQsFMxMtuiaub5yYgus77jDk3uSmhYaCHiOPmyVQKTlBv+0xA7AYVpjgBi3PMlPjqeI17FT5SnqRyBX2lI6JW41+xzWE+gGyrrwh/HRT2jeOXHKgQhiq6KXKa53ltkinz/P0mOoMZuzy016TmS2KcaHDQkggeD4T24UBCXAMDjdZbhQEKRdOuJcB42Dpr00mgZAD6L30y8LfLHkDRLGJLJ/jRx127RoASvA5oED+ARgKTo9DzvttM/j6Evkqa3bqdHQw6UbvKjUic4zk3Hqit8P/tg80XnQa6YhY/+kLmmr8+TiNqx6HjGvZ7UdfbJEI8lyNiYIriE/AZuXwAu+3Qeb/UzXwrfHDqARqT05hn70DSJOCaoW8EilK4dEAC5Z/lckTCpBWO/KN0FddWYSFdP0TvmBAVL6DH8rz96enuzjvovdAhC7Rs6e7qzApMzQts9QwgyWmOgAFwuEosbUJuTD7uOO+SHuriDCAgG0mTsLZ0bFvUKRbWepoJqXyMMFCyFgn5Tu9wFK0rZoFHZ89Nz+OLPE96eiPA/qCMzYGwCEVBeEqDyP+2yc=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(10070799003)(23010399003)(4143699003)(11063799006)(56012099006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eWxvcFNsd1RZQjJxSEI1KzJySkRNcHpBRUtPV1IrcGt0Wk5RWG9jd1IyWkJP?=
- =?utf-8?B?Ujhnd0FacWRrWVE1UXBUaFZ6bVE4bVVaZUpNYnZBZUxZOS9tUnYrZ2NZT0gv?=
- =?utf-8?B?RVcrRE4vWHRPdU9WQ3ZFbFM2WjUvcnB4dWJqR2l6L2RaYU1WalA5TVFWckhB?=
- =?utf-8?B?ejJDZFBBZVg1R2JJaVVLUGdiWGc5SGxZYjVHdjVDcFZOT3ljT3BzNGxUendV?=
- =?utf-8?B?cVo3dWU3SU1NOG15ZktxY29XVllBTHphQzVnU0VWN0RobG5GZE5PLzZGdmFv?=
- =?utf-8?B?bDlxOERhS0t1VlN1OENERGliM1hJbERhNXZyc243WDZWekhTdUR3alNmTjVu?=
- =?utf-8?B?cysrbHRkSVY0SGtFNFJxY040UmpuWDFRSTBlSFFwcFZyNkdBaHVVaFdHZUg0?=
- =?utf-8?B?WU1SS1A1dDBSTnBZUmx1aE8yQ0VXazFUeVRJc2JHWXlmOEdJWWxmaXNPM3p4?=
- =?utf-8?B?dnhlRjNSSE96ZmU4TFRreTJYc3Q4ZXAycVNzR0RlMkVBa3Z1ZVd0TXJmZU82?=
- =?utf-8?B?Rm5UNHdHRU5aL2pTTXczb1RJTGFpYXNlOHc1cXVMdEcrVzYvNGkvTDZTaDdD?=
- =?utf-8?B?Z1BBaVhRcHVDQWNGZHk3SFowTS8rVFZ2Ujh3d29PaFJBdDdJdkt2QzI0OHFN?=
- =?utf-8?B?TmprY0FMb0pCdVBuVjlISXEvaXUza3hvbGNkcldML0NOQys2dkVaSWJGekc4?=
- =?utf-8?B?SmJNdmZnRUpmbC82dzhXeS9kV2w2V1ZUNWROZmhkeVNNZEZKZk9pT3BZLzR5?=
- =?utf-8?B?TUh5OTF2VjFjOFUrWTNyQWc5RVpXQ2JmbWlWeGxwTUhTOWdaVUUveUpVcEpm?=
- =?utf-8?B?MTVOZkcvQUYrazJHY3l3dkVISEo5RTIzb1daUXhkb3lqVEZNZFhjL0VvWkJm?=
- =?utf-8?B?Y045QU03aXpuSmh3R3RDMG9FYUxQRXp4LzBaZUpTeXRxa1VxNTdiNzZCcVhL?=
- =?utf-8?B?L1FmNHorcnUvaFBlUDE5cERqUlhSZ3dqY1NZNFZtNy95WHFWOEVHTDYwa2Rm?=
- =?utf-8?B?bjJ6ZkpzK2l2ZkJJeFpkNkxWNXB2QTdFNnROdEhEa2lYOXg2eVo0TkFSUncz?=
- =?utf-8?B?MzBrSXNuTEk5ckdUYkNMTTQwRlIya2JLR3ZjeWhFNXBGQkhXQ211THYvd0k4?=
- =?utf-8?B?NTNSZTlZaXZoWlFsdnJUNExFVTNOWmVtWFlGM2l5bEVOUkFudDJGZzZBL0dC?=
- =?utf-8?B?WExreEgwanBUbVVFZ1hsYjFPbzhKUkpTUlQvRGcvTWlpZ0NVYVVJYURhZ2Fw?=
- =?utf-8?B?Ny82dlBxVUVkdHk5dWJOdGliMnFXQms1czRWa1JCTUd5cVZxY3dEOGhVM3dy?=
- =?utf-8?B?TFpaSS9IOHU2YVMra2dIRUtuMVFCZjE5Mld0NjF5T3V6ZllwZ3krdk5rUDhF?=
- =?utf-8?B?NTdWL29IUVJJNFJCamE4STR1NXI5QlRYOGhTY1YxKzhQUnFWR0lKSlNiTFRF?=
- =?utf-8?B?ZkVUZmROME1ENnZGa0pkbVVGRm85aUx6cDUxUVFTWUIweFU0dUVyZ2lBUFJq?=
- =?utf-8?B?aDEwdE5WNy9QaU9rMnRoRlFmK1VOSldIc2VkWFd1bGZWNzJCZkRmcHBJY3lC?=
- =?utf-8?B?bVg5QkNhaDZSSk1CSnkraWMwSm5WRTk2MmZDTkxHdmkweC9tY2loRFdWbXhT?=
- =?utf-8?B?TkhOWUkwTlRiWlV4bTcrMW1mbkVPcTI3SElzWVQ3YlhJaExtR3dwdTVPQXND?=
- =?utf-8?B?eG1LTEFPeFNsUDFFVWt1YjJERFJjNzVEWXNUMFB0aHFTeFFBUVltZFQyN2s2?=
- =?utf-8?B?WTVEUmpGSHE1VFB0cWh6N2NhRTByamNod0x6SFpYRjh1dit5M1JxUnUyTHBY?=
- =?utf-8?B?WGVrWFFwMGpXR1p4UnhLeFJRdHprbzhUNGFXejdrU2ZEWndPUUtteDcyMFM5?=
- =?utf-8?B?b21ZNWs5Yy9OMlZuV3NUaytOd1pQODdiVFNXbjQwU0Fsd2NsN1hjZHVtSVFI?=
- =?utf-8?B?S0pwMVZtMGxnQlFaVGVzY1dvWHZldDhOdm8xSHBpZ3pWYjc0R08yWUtMK09I?=
- =?utf-8?B?T1ZRS2VCV2Y3L0diNG5oYXFidkFRdlhkaGEwWno1N3p2Z1JmS2JjaUlRTDFN?=
- =?utf-8?B?eUdHcEQ5b1ErZzRnMXUxZkY3bkdoWHd0WHRsby8yMVI4UDRKQ0tGMXBuN0hD?=
- =?utf-8?B?WGFpbm9CRXNXWUphMjM3cGhCQUgwOWd3UGJVc290VUYvNVFxZ3JRdVc1TXBB?=
- =?utf-8?B?OUF4V0F2anA3V0pTODJrYkd2THVlMTNXUm5TNjBla3lWYkVtMllyd1R3ZDZ5?=
- =?utf-8?B?eVl4WithSDFxMWZndmVUeFdxVEErSjM3K3BpUysveTRVdmdpY1RxZkl0VVc4?=
- =?utf-8?B?UWp1eDc0WEJJeUdIYnF6RXQzTThQOXNyRFpuRVVTZzE0UzNHV1cwNmdsOTRu?=
- =?utf-8?Q?81Fe60tlugGP/W1mzvABhp679DQHOjlD/A5jiQJzI6tfB?=
-X-MS-Exchange-AntiSpam-MessageData-1: fpbUvOOcEwTU3Q==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2cfdd22-4a97-4630-19e0-08dee2424ca5
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2026 07:25:51.7016
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ykAdcGC6a6M1bH4owx5whPyPt6+mHR38BJV4VeQmdF94kLbvcdOAyYdp2ZSWLMkeAecDxwbaDub3F/lTAYFRiw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS3PR12MB999216
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAAHfO_HRldqNFRHGA--.9246S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CFWDKr1xZFy8tr15urWkXrb_yoW8KFW3pF
+	WDt3y3AryDJrs7WFWktF1UJF1rCa4rWFyxKrZ8Aws0vr1rGrn3GFy5XrWqv3W8Jrs3Arnx
+	trWqyrZ5CF47Jw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUeKsjUU
+	UUU
+X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
 
-On Thursday, July 9, 2026 8:51=E2=80=AFPM Maxime Ripard wrote:
-> The plane reset implementation creates a custom state subclass, but
-> only initializes a pristine state without resetting any hardware. This
-> is equivalent to what atomic_create_state expects. Convert to it.
->=20
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
-> Cc: jonathanh@nvidia.com
-> Cc: linux-tegra@vger.kernel.org
-> Cc: mperttunen@nvidia.com
-> Cc: thierry.reding@kernel.org
-> ---
->  drivers/gpu/drm/tegra/plane.c | 28 ++++++++++++----------------
->  1 file changed, 12 insertions(+), 16 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.=
-c
-> index 0cb30910773f..2148b0c59815 100644
-> --- a/drivers/gpu/drm/tegra/plane.c
-> +++ b/drivers/gpu/drm/tegra/plane.c
-> @@ -22,32 +22,28 @@ static void tegra_plane_destroy(struct drm_plane *pla=
-ne)
-> =20
->  	drm_plane_cleanup(plane);
->  	kfree(p);
->  }
-> =20
-> -static void tegra_plane_reset(struct drm_plane *plane)
-> +static struct drm_plane_state *tegra_plane_atomic_create_state(struct dr=
-m_plane *plane)
->  {
->  	struct tegra_plane *p =3D to_tegra_plane(plane);
->  	struct tegra_plane_state *state;
->  	unsigned int i;
-> =20
-> -	if (plane->state)
-> -		__drm_atomic_helper_plane_destroy_state(plane->state);
-> -
-> -	kfree(plane->state);
-> -	plane->state =3D NULL;
-> -
->  	state =3D kzalloc_obj(*state);
-> -	if (state) {
-> -		plane->state =3D &state->base;
-> -		plane->state->plane =3D plane;
-> -		plane->state->zpos =3D p->index;
-> -		plane->state->normalized_zpos =3D p->index;
-> +	if (!state)
-> +		return ERR_PTR(-ENOMEM);
-> =20
-> -		for (i =3D 0; i < 3; i++)
-> -			state->iova[i] =3D DMA_MAPPING_ERROR;
-> -	}
-> +	state->base.plane =3D plane;
-> +	state->base.zpos =3D p->index;
-> +	state->base.normalized_zpos =3D p->index;
-> +
-> +	for (i =3D 0; i < 3; i++)
-> +		state->iova[i] =3D DMA_MAPPING_ERROR;
-> +
-> +	return &state->base;
->  }
-> =20
->  static struct drm_plane_state *
->  tegra_plane_atomic_duplicate_state(struct drm_plane *plane)
->  {
-> @@ -129,11 +125,11 @@ static bool tegra_plane_format_mod_supported(struct=
- drm_plane *plane,
-> =20
->  const struct drm_plane_funcs tegra_plane_funcs =3D {
->  	.update_plane =3D drm_atomic_helper_update_plane,
->  	.disable_plane =3D drm_atomic_helper_disable_plane,
->  	.destroy =3D tegra_plane_destroy,
-> -	.reset =3D tegra_plane_reset,
-> +	.atomic_create_state =3D tegra_plane_atomic_create_state,
->  	.atomic_duplicate_state =3D tegra_plane_atomic_duplicate_state,
->  	.atomic_destroy_state =3D tegra_plane_atomic_destroy_state,
->  	.format_mod_supported =3D tegra_plane_format_mod_supported,
->  };
-> =20
->=20
-> --=20
-> 2.54.0
->=20
->=20
+The BPMP debugfs response parser reads u32 fields and NUL-terminated
+names from a size-delimited reply. seqbuf_read() currently clamps a
+request to the remaining input bytes and can return success after a
+short read. Consequently, a truncated u32 can be partially copied and
+the directory parser can continue with an incomplete field.
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+seqbuf_read_str() also moves the cursor one byte beyond the current
+range when no NUL terminator exists, and reports the failure only after
+changing the parser state.
 
+Make fixed-width reads fail when the full request is unavailable and
+require a terminator within the current range before advancing the
+cursor. Use a signed return type for the status helper so its error
+contract matches its callers.
 
+Fixes: f2381f652266 ("firmware: tegra: Add BPMP debugfs support")
+Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
+---
+ drivers/firmware/tegra/bpmp-debugfs.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/firmware/tegra/bpmp-debugfs.c b/drivers/firmware/tegra/bpmp-debugfs.c
+index 33c6300af964..bb2ce5be2e78 100644
+--- a/drivers/firmware/tegra/bpmp-debugfs.c
++++ b/drivers/firmware/tegra/bpmp-debugfs.c
+@@ -32,7 +32,7 @@ static size_t seqbuf_avail(struct seqbuf *seqbuf)
+ 	return seqbuf->pos < seqbuf->size ? seqbuf->size - seqbuf->pos : 0;
+ }
+ 
+-static size_t seqbuf_status(struct seqbuf *seqbuf)
++static int seqbuf_status(struct seqbuf *seqbuf)
+ {
+ 	return seqbuf->pos <= seqbuf->size ? 0 : -EOVERFLOW;
+ }
+@@ -44,7 +44,9 @@ static int seqbuf_eof(struct seqbuf *seqbuf)
+ 
+ static int seqbuf_read(struct seqbuf *seqbuf, void *buf, size_t nbyte)
+ {
+-	nbyte = min(nbyte, seqbuf_avail(seqbuf));
++	if (nbyte > seqbuf_avail(seqbuf))
++		return -EOVERFLOW;
++
+ 	memcpy(buf, seqbuf->buf + seqbuf->pos, nbyte);
+ 	seqbuf->pos += nbyte;
+ 	return seqbuf_status(seqbuf);
+@@ -57,9 +59,16 @@ static int seqbuf_read_u32(struct seqbuf *seqbuf, u32 *v)
+ 
+ static int seqbuf_read_str(struct seqbuf *seqbuf, const char **str)
+ {
++	size_t avail;
++	size_t len;
++
++	avail = seqbuf_avail(seqbuf);
+ 	*str = seqbuf->buf + seqbuf->pos;
+-	seqbuf->pos += strnlen(*str, seqbuf_avail(seqbuf));
+-	seqbuf->pos++;
++	len = strnlen(*str, avail);
++	if (len == avail)
++		return -EOVERFLOW;
++
++	seqbuf->pos += len + 1;
+ 	return seqbuf_status(seqbuf);
+ }
+ 
+-- 
+2.43.0
 
