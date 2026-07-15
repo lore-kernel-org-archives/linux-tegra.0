@@ -1,194 +1,140 @@
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012014.outbound.protection.outlook.com [40.107.209.14])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919D53126DF;
-	Wed, 15 Jul 2026 13:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784123456; cv=fail; b=kD/eZp2nPx/RaVyRdmzG1UqpR3cQNxYwFBKg+fvg11y7SXaR7KqU837ylciUWc19ru2zs+AWvNoPEz5O3H2InN1nRxCRLYppmLkFr9ws5sKt2y2fRN7E/19e+21hYgJHcLgxORml/bmEym7yAuNvrpyyHASWay3GVyv94JbbNJc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784123456; c=relaxed/simple;
-	bh=OQTaTJo9OIv60euH0Yg4xevVqOK1Y/pv59l4NAXm40c=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=tsCAp8sBxwsN/8jbBIEfFKgn1vTbDMA41ftX06ogBmHeywvtKjiE+hgFz94jNiKh0uRGXS5PkoMedzy3mYUF/31l9P4wqbmek4P72DKpXN5wtNa0twlg7I5kZ00n3oxXHgr/jQpafFXSmXw3LPPRCuQ1XgdVuQRikpDcJg0yXL0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xSAPPvjr; arc=fail smtp.client-ip=40.107.209.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8171F2BD022;
+	Wed, 15 Jul 2026 14:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784125241; cv=none; b=JrERAU/THVAQOe87WIlgpDznqyJiPqQnrzb4aWSnQCQfzuao6wlZjdnAQkxvEvsABvbaUzqiIyC3ee9T+44LHvBPCbkzRbSj/vjxPbfY6x05lCuQhaMltebDcmInyv1C1jlA9BX5pfcwF1FA9yZQADNXYZL8KcCiD+3APiV86Kk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784125241; c=relaxed/simple;
+	bh=ro6VRXspuxMXfvly+fYFaPaYy/M2NHDAOqdhR+YRyik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XghnSMhKajexEvChG5oEYnE87CcxFSY88s3M6koOI009gXDNzSiQwikD0j0xkpGeZ5H6LgiZE4PRwDZ/cLQL26SqR3Wq49QfqeLZ9rgpawq01YbW/T5Wi79DaMh7dk5pY7Ex76TGzS+mkJBfm8N8NQ7gjqFr1sxt6+cc86wBDXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNTxi35b; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xSAPPvjr"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rcpT6uctQXcUKttYTQGtkwn8fCbP34zd30sGjXxjYpEB/zRMHgwKKvG64dNOxJyluri8va58PZvGW0IbbR8u/Jf2xRWFDEwzorWLeDz9dT6NLUK789xydJzGUkcAN0gW4W5ik1MWXskZWT5zGRmqGZJJYNQecyTaG10SeD/dMSpeuxW6L1dFrARnVidT1c/MDtPXzbWkdnW8is2m8z5FLjWmpAIsqBWaqH0jvKt98m4VZnBf9ORrXZRgkeKusG9dmnBXK6GIm1FPEPj3kj7LoG0umCglNdYndwW6Cvo8Z13bRy3woxU2hKEPmPy6hAYVcggh6xbFNSCo9OyCGXBSRQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VFl2uFdy8iRMDgQ7ieQtE5MVQILQRNeAmiEMXnVLW64=;
- b=INWvZIBZuvmIv87Dlx3gJV+oTDEi5mr1AeXmvOakBrZNfCeDHMGnJPzt0yuHNDrku9j4Q9Zsqqpk/DH72PThiCkdChPiw/x1QTzbj/GfTC2BNFq+QYPb7vzFi7Nf4m3XBebrFvntx5FJojQ7wKO7oNbncffUuel+kfkGZQ0t1OBl60USIt2REaXO7lo6QGJxoYCypOLWRU6QsNG0rB/c6syE+A6OkJr3C4TH/zT/a9RCAnqaK4NU2+Q8ZYzA1VpaxHL9SbGWlT2zdfN4Ft+uD1c2LLaVceggEUN0m/mmDYUR9mOr2b/69TDEqIxKVStotHyKWajTdeX88ElkCa5rvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VFl2uFdy8iRMDgQ7ieQtE5MVQILQRNeAmiEMXnVLW64=;
- b=xSAPPvjrxJdqsg3btFumXRgVBq8HsgiNEbQeeDXqxke/E0sQOAl5lBH2gAJyBItaQmB92hf/5ag9BnVSjjVNHlkmfv7kKvs/qVIdKman6ZSV7XkpNLYJHLY0TG2E/ge5EWYprQJVvJzKTYLaJ9RMx+DA+rUVe/IsErcKAXMu8CY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6254.namprd12.prod.outlook.com (2603:10b6:8:a5::17) by
- LV9PR12MB9831.namprd12.prod.outlook.com (2603:10b6:408:2e7::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.223.11; Wed, 15 Jul 2026 13:49:52 +0000
-Received: from DM4PR12MB6254.namprd12.prod.outlook.com
- ([fe80::8211:9b5a:99d2:ffa1]) by DM4PR12MB6254.namprd12.prod.outlook.com
- ([fe80::8211:9b5a:99d2:ffa1%6]) with mapi id 15.21.0223.008; Wed, 15 Jul 2026
- 13:49:52 +0000
-Message-ID: <f2f1dcaa-5656-4fd8-ba92-8a0e94659f5d@amd.com>
-Date: Wed, 15 Jul 2026 14:49:45 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 01/11] cxl: Split decoder programming into a reusable
- helper
-Content-Language: en-US
-To: Srirangan Madhavan <smadhavan@nvidia.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Dan Williams <djbw@kernel.org>,
- Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jic23@kernel.org>, Vishal Verma
- <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Alex Williamson <alex.williamson@redhat.com>, vsethi@nvidia.com,
- alwilliamson@nvidia.com, Dan Williams <danwilliams@nvidia.com>,
- Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>,
- Vishal Aslot <vaslot@nvidia.com>, Manish Honap <mhonap@nvidia.com>,
- Jiandi An <jan@nvidia.com>, Richard Cheng <icheng@nvidia.com>,
- linux-tegra@vger.kernel.org
-References: <20260709010304.680422-1-smadhavan@nvidia.com>
- <20260709010304.680422-2-smadhavan@nvidia.com>
-From: Alejandro Lucero Palau <alucerop@amd.com>
-In-Reply-To: <20260709010304.680422-2-smadhavan@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0275.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:37a::11) To DM4PR12MB6254.namprd12.prod.outlook.com
- (2603:10b6:8:a5::17)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNTxi35b"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 8B6F01F000E9;
+	Wed, 15 Jul 2026 14:20:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784125240;
+	bh=g6AJyQM50c0yTW+18pkw5ecn5PlX/W2Oc8QKRSrrxlg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ZNTxi35byK8tuaGnOvKX438ww+ILUo3EZF2PpjoopMYWEKRGC6A31AoqeQQcr5fKT
+	 cPCjd3cNXFtT+00JQDmzGoTZH/6YFSaHjAh6BsSzxuq2ii3I3iSh1tzDLylDSEGyNl
+	 Eoz1PYTK7olPM+KIymleyeTrtX0VBPUruk4HUwTFlUv5ZoB3BXVOO2qSsApfMz/uGL
+	 swssnPWbpLEBuey/v+7YB9C5of3tj7E3fuAsvey9x/ilcTYAB78XYXzgDrqfsHZ7nP
+	 Fxq4AmQNqQsYZ0g2somnlx5U7VgpOJ2+WWkXd8pmeZMqQBN1QnhcyURz85q7plxDaz
+	 +Maq5mgkLJpBA==
+Date: Wed, 15 Jul 2026 16:20:37 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Thierry Reding <thierry.reding@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 1/6] pwm: tegra: Check for match_data being NULL
+Message-ID: <aleHtUjVKlhP7loE@monoceros>
+References: <cover.1784030076.git.ukleinek@kernel.org>
+ <c7d4a3ee8c615f5f6f468c0040fdb0e8864152ba.1784030076.git.ukleinek@kernel.org>
+ <Mlcy4yaiRVq9tB-a8gkHvA@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6254:EE_|LV9PR12MB9831:EE_
-X-MS-Office365-Filtering-Correlation-Id: 156cbc46-0373-4c3a-b4e7-08dee277f1af
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|23010399003|7416014|376014|921020|6133799003|56012099006|4143699003|11063799006|10067099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	ouTK8CILIQJVXTEbR5A9apJSQKuqw9CXCZNRuxfj9f+UxD1SGh8rn6wi62wYRvegOLpN+vmYNJTeWpxVsc+RAZWm7Zf0SwJVNGuNgBCamEFY64cNIyoyxyc7km1jJH6Js1Lcjt1JCekh7akYYR/YjWZTpSNfE1vTtIV+ynNL752wkxSFz8Im4ECd9bwTxLaTkFx/GmFMbWGBwj3lFwgsaWdY0deda+3fMucxGYADQKHe7tq7ZS67Xxovjm37VezK7dJsciC3Hqv9qe2SPYnqEZ+MsKYswqpx9rZuxB7GbpYBR1UIZcOho560wSQMLIuiqGFCPVoRi101oLowh4pDTCbpmCd5TWHfxpIBVLiuZl3c5AWWje4u8/4oAJeSSU4Flwa80CEPK9FR774utK+l4K/jlcOXJq0YD+6+PTwn9r/bZ1UreIzC15OFLGZEpscR5467gZ0/xpzQhyOyH+3/Tbsj6zeKGsMITCKnfIbgGeGTi5EBrQhCUvkwXSrT8f20vPuwf+Ox+4oRWC2bTue013PBsIX5XftjqfN8JpGSYRsVLAUzaWoMZtRTFnd9nOguVBcrxxIHMsLM1sjz1ZABI0Zf9eug6qCCZamMlwcydMj5n2sMN4mo85WCak3Qge7A7jg0lWDVyuBZrtICrXbQ0y47qFZDO9/5Fzbh2Y6gN6PxlP2pPwOmrkRsavmGO8mCAHWajQvV8uCxT4ETTW4uKA==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6254.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(7416014)(376014)(921020)(6133799003)(56012099006)(4143699003)(11063799006)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bE9nTkxXRjgrMlR3T05pWDU1MlVzb200a2VWNGw3dDFMeGZlUU5KeTFHQzV5?=
- =?utf-8?B?Y0xDbDVyREp1YTQwdEtCQmR6OUdkVVdXYmRtUWNtcGxUWGZkYzFxQjRUMnpm?=
- =?utf-8?B?MnJhWVFsRmFRZFk1dEIvK25SWStFM0MxUXpoSFBxV2J2LzczSXV5cjRJWTdu?=
- =?utf-8?B?NGVMY3ByNzhKVVVyZ3VvYnBocG1Jek1aK1FWQVRpcXlFdlJGclNUV1R5SWdC?=
- =?utf-8?B?TW5xekFKY3NGekdoZHpHS3FVVDZDcmZ5R1hlbFJoWm92L1V1eXpaWi9lKzls?=
- =?utf-8?B?dGdlRFE3dERJbDVBS3Z0a3hpY211QUY1MjZXQ1NvS2pvU0I5bnprRzFFdUhq?=
- =?utf-8?B?T1NoUnVvQ1c0UnZrVnVBUG4wUHJ3V29tVUo3bVlTTDlSTUlmN3FtamxEeGRy?=
- =?utf-8?B?L1BJc1ArOVBMWXpPOHlCTlZzNTJNOC9UVjBBcFIvSUVDR3NzTGliR2I5dzJP?=
- =?utf-8?B?WEczSTNsSlRFd3kydlZ0MWh4NXdoZ1hIT1I1VmdWVld6bzFnSlRoMXpTWmlk?=
- =?utf-8?B?Vnp2V0s4Ui9ub1J0SXNIRVZkMlJMdFVjTWtyNVhzS3VtYXR6SERWdlZjSEVv?=
- =?utf-8?B?TGhiT2ZuOE5yd2crVUxDZkhrY1lwVWhBR0lPRDRzbTlKYUhrTWlSY2M3eUl5?=
- =?utf-8?B?VFQ2RFZRNG9IMmNpejFDMVh6ZzFzcVM4QUdzVTdKUWFRQ0JCVXVyVUdXekh4?=
- =?utf-8?B?S05BM3RYYmYyWDY0VUlHMWVDRzJYVmZCWmg5M3hCdkJkNXM0VXJwbkNabUh5?=
- =?utf-8?B?U0RFSk9KMVlIazliL0Z6ZEVSVTdqNHViUlR5S3lNeGpVZ1ZmemJ2NzJjM2lH?=
- =?utf-8?B?LzFSTkxkL1AxZW1ScEgyRW1hdUlwUGRWcEwzWUhNY3VNSVYvcEpNU0VVUEZs?=
- =?utf-8?B?VGdBWG0vaGFtVFhtZTZJT1VIVkkzeCt0MXl3ZGlkNFJDOElLOFhTWDNKTGNn?=
- =?utf-8?B?MnM0cm02YStFU3FOc0NDTEpVVys0MW9uSG85R3F2enlPQ0loWDk1YlBUUDJ2?=
- =?utf-8?B?RUxqZUltU3BKajBETzBkY1BTMTF4Z0lzU0t4aFMvUjVjNncySEFYYTQzM2Mz?=
- =?utf-8?B?K09wenlieExpWkNqWm5ST0RHdEhVaTczaHNMQWlaVWd5NWo3a3dGaDVuUzFa?=
- =?utf-8?B?MENnaW5qT0VpUW1OMVhJMnZTMmJlSm12V3kxL25TNy8wL05IaGpRdTBZd3lm?=
- =?utf-8?B?cVkvN3ZZSFh6SWgwQUlOdkphQ1puekk3WnZBYW41QUdJajZ4Ui83S2wwd09j?=
- =?utf-8?B?ei9jZlRwZTE0cmZXNTZXNTNZRnlCQUpGQjN5UWd2cld6K040OFFpUlkzNGFo?=
- =?utf-8?B?emp0VklnSjJhQWtrYm15bWNSa24rZXgxeHNiSDJWc1VHTGRLZ1NlRnQvcGts?=
- =?utf-8?B?a3hRVGMrNnBWTGNOZjBUUEhvbEcreThqTVJPTGF2MGVwcFd3VytqSXRsQmtJ?=
- =?utf-8?B?UlUxNVVVbDBoSHlRNEluL2psMkJvWXJlSWxCN0xsR2lxTWk5U0Y3RUhCU00x?=
- =?utf-8?B?TkZNbWE4M2Nka09hb3JqcnlLbDBhT3lMb0FMTjQvc3ExSXBQQVFYUE5CZmxn?=
- =?utf-8?B?SWYwbUd2RFhaOHh6YXUzZis1THNUeTN4UWpOeWRBbVRhYnYrVldyVXBNZ00z?=
- =?utf-8?B?b2V4MS9FWjJ5aENHTmN2SWRLdWhOV1ZYSGRLeGFnN0RNNUUrTWFtZXpibEF6?=
- =?utf-8?B?Nmp4aG1ONFcvMC9nZUt6L09NNTdEWm9SVVo3cC9rR3hVSm1jc3gyRTJPNGVr?=
- =?utf-8?B?WnZQZVlpYS9XM3JKT0dGanZlUHFoNjhHQXFYS0hSdkVGU2srczlYOG9qbnMy?=
- =?utf-8?B?VXBrZkttVW03T0pyT09nOVNYKzFkeGgvZXlYVE1PMHJQWnJyL0dLK3VuKzZX?=
- =?utf-8?B?cmQweEo3WEhqNndVQmZIUlh3Z3lxUjVjVFFsLzNLVVgzUGZuZTBTMXRrUTVm?=
- =?utf-8?B?aFlSVVdrNFUzUGFadkdTWHJtbGQwUjlPNFJod2JOL3Q4M0FhV3pxYldBQ0FT?=
- =?utf-8?B?L2crSFBwa1g4eEtsMFg4WVlXQ3Qzb1VCWGZZZXUyTE50VDVvdUZORTZGK0pH?=
- =?utf-8?B?eSt4OTlBRmlKbklwSWN4ODJ2WThjZVlGcVpGYkdXQ1MrN0tuQWpYUzBuVTRD?=
- =?utf-8?B?b1pkMC9Hc0FRcnlyMnZaN3AyOW5VK0pCRk13NEdFSGl6SGhNditYcE5ySWow?=
- =?utf-8?B?YXhNREpPaDk4WUtMSEI1Ti9yOUE2OEJwUkFDR2duZjQwa1RmcmlNNGhiODNz?=
- =?utf-8?B?TXdaY0p4VFE2TkV2OHFlWGlhaDdkeG5GSUhsMDIvcU5ZdkFjUTNUeVhVbG9K?=
- =?utf-8?B?NDVHTmt1Wm43SXkrRWlSMFlrTzJjK1ByUTV6aFUxUVJMNkZ5a3lDUT09?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 156cbc46-0373-4c3a-b4e7-08dee277f1af
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6254.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2026 13:49:52.1103
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7gSroe1eljTBqIFHN/TzVIJK7aIqn4NcEaJP/28kOPfgF7ifvO9pciZKK43FZ9RZkVKRtrmsHlNoRHIvBAkMlg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV9PR12MB9831
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cjwt26vckx67l6lr"
+Content-Disposition: inline
+In-Reply-To: <Mlcy4yaiRVq9tB-a8gkHvA@nvidia.com>
 
 
-On 7/9/26 02:02, Srirangan Madhavan wrote:
-> Move common HDM decoder settings to include/cxl/cxl.h and route the
-> register programming sequence through cxl_commit(). This lets reset code
-> restore cached HDM state without depending on private cxl_core types while
-> keeping hdm.c in charge of the existing commit policy checks.
->
-> Build the low-level HDM helper under CONFIG_CXL_HDM so it is available even
-> when cxl_core is modular.
->
-> Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
-> ---
->   drivers/cxl/Kconfig          |   4 ++
->   drivers/cxl/core/Makefile    |   1 +
->   drivers/cxl/core/hdm.c       | 122 ++++-------------------------------
->   drivers/cxl/core/region.c    |   6 +-
->   drivers/cxl/core/reset.c     | 118 +++++++++++++++++++++++++++++++++
->   drivers/cxl/cxl.h            |  43 ------------
->   include/cxl/cxl.h            |  55 +++++++++++++++-
->   tools/testing/cxl/test/cxl.c |  10 +--
->   8 files changed, 197 insertions(+), 162 deletions(-)
->   create mode 100644 drivers/cxl/core/reset.c
+--cjwt26vckx67l6lr
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 1/6] pwm: tegra: Check for match_data being NULL
+MIME-Version: 1.0
 
+Hello,
 
-<snip>
+On Wed, Jul 15, 2026 at 01:11:00PM +0900, Mikko Perttunen wrote:
+> On Tuesday, July 14, 2026 9:02=E2=80=AFPM Uwe Kleine-K=C3=B6nig wrote:
+> > It's unlikely but not impossible that of_device_get_match_data() returns
+> > NULL. Handle this case instead of triggering a NULL pointer exception.
+> >=20
+> > Signed-off-by: Uwe Kleine-K=C3=B6nig <ukleinek@kernel.org>
+> > ---
+> >  drivers/pwm/pwm-tegra.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >=20
+> > diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+> > index 5cdbe120ba2d..53743f83869a 100644
+> > --- a/drivers/pwm/pwm-tegra.c
+> > +++ b/drivers/pwm/pwm-tegra.c
+> > @@ -322,6 +322,13 @@ static int tegra_pwm_probe(struct platform_device =
+*pdev)
+> >  	int ret;
+> > =20
+> >  	soc =3D of_device_get_match_data(&pdev->dev);
+> > +	if (!soc)
+>=20
+> Very subjective, but my preference is to have curly braces whenever the
+> if block is more than one line, for clarity.
 
+If you read Documentation/process/coding-style.rst by the letter, this
+case shouldn't have braces, but I agree that adding braces here is
+clearer (and that coding-style.rst shouldn't be read by the letter).
 
->   /*
->    * Track whether this decoder is free for userspace provisioning, reserved for
->    * region autodiscovery, whether it is started connecting (awaiting other
-> @@ -322,7 +281,6 @@ enum cxl_decoder_state {
->    * struct cxl_endpoint_decoder - Endpoint  / SPA to DPA decoder
->    * @cxld: base cxl_decoder_object
->    * @dpa_res: actively claimed DPA span of this decoder
-> - * @skip: offset into @dpa_res where @cxld.hpa_range maps
->    * @state: autodiscovery state
->    * @part: partition index this decoder maps
->    * @pos: interleave position in @cxld.region
-> @@ -330,7 +288,6 @@ enum cxl_decoder_state {
->   struct cxl_endpoint_decoder {
->   	struct cxl_decoder cxld;
->   	struct resource *dpa_res;
-> -	resource_size_t skip;
+> > +		/*
+> > +		 * This can only happen if pdev was matched via pdev->name
+> > +		 * (which should not happen today) or in combination with a
+> > +		 * driver override.
+> > +		 */
+>=20
+> I feel like driver_override falls in the realm of 'root can mess with
+> the system as they feel like but if they don't know what they're doing
+> they get to keep the pieces'.
 
+IMHO even root should not be able to trigger a NULL pointer exception.
+Not sure there is a general agreed on policy about that though.
 
-I understand this change moving skip to the cxl_decoder struct, but I do 
-not undertand why dpa_res is not moved as well since skip refers to an 
-offset inside dpa_res. Doesn't it?
+> So adding a check in every driver, or
+> in practice having a random mix of drivers with and without the check,
+> doesn't seem necessary to me.
+>=20
+> If we actually want to check for this condition, could it be done
+> centrally instead? I.e. don't call probe if there's no match data and
+> the driver's match table implies it requires it.
 
+So you'd want to check the device-id table before calling .probe() and
+if all entries have a non-zero .driver_data don't honor the override?
+Hmm, maybe something to discuss at the "Driver Core" microconference (at
+LPC 2026 in Prague), but my spontanous reaction is that this is a
+heuristic only and might prevent valid use-cases.
 
-If I am right this assumes only one decoder and mapping all the DPA. Is 
-this the intention?
+> > +		return dev_err_probe(dev, -ENODEV, "Unsupported device\n");
+>=20
+> 'dev' is not defined (yet).
 
+Ooops, that leaked in as I reordered the patches to have the fixes
+first. Thanks for noticing.
 
+Best regards
+Uwe
+
+--cjwt26vckx67l6lr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmpXlzMACgkQj4D7WH0S
+/k6xdwgAlUyVMhOibDDgWf89SZtGeppTIAX3ZvxHfHzFVvBfkjxvoTWp/KxTwO2U
+58usyw6AA3wzwRjznMn2KQzdoMMXs2Aq57CFSUlWoOKB3pZaHHaQmJHMc/f9qb60
+Dw8YPruHy3Lx6+95Btz3362Ulaf45buhZhiPJjOO55lxSTo1hYzAAyux1l3z8Cpd
+SFI0M84/5R4bDNDLKnoD7JvQ1jTwbdR+GZGaXw+vwheSq4P2H7xSXtq8TYo8vPQj
+ASb4VTWYn+i2wWGXT7Ijk3QHmpBUB5Jknn96tPy1rE8S0hT0Ro9RCG61MmjZ9tD5
+M6ia/ANjOtLvzv4ISsNiIvh23O7vPQ==
+=uji5
+-----END PGP SIGNATURE-----
+
+--cjwt26vckx67l6lr--
