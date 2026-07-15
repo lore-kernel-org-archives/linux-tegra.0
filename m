@@ -1,122 +1,143 @@
-Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010070.outbound.protection.outlook.com [40.93.198.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055FF3CD8B8;
-	Wed, 15 Jul 2026 08:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.25
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784104661; cv=none; b=UnRWYSZf8ZdTQREXE57pQEJ0eVEkWDNgMZX8pAZXu53YpR06bSqsD5Ju4mAP09kg8PYzCwmDHrhxicphrJ/qvMOOBz5DeP+pXuWhmSzxt/5tnvfnUJgrkMr3BM+IKzc9vFDN7losq2t0+1hqlbKvqCw1sCwb4e1pozrdMub62Hc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784104661; c=relaxed/simple;
-	bh=tPIaco2ktDQGox4jXobxycopW5coQPCxuZ7Oil61iS0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cj6nr/+0Nuol4BfTvQfC5Bbpj1UIyvJBqp/SmubFqP01PPwOUCIsKM1Q9rSO0rvbTabQ7kmcxk8Rd/Iq28fLg43E+WIDae8WWjByy1GDCDjEv6hOzSTlQ8J3n0jXQY43YrSXtSXCyUZ1oRb+wfTz3zi3CucFoNT1NgalQygL9zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [111.196.245.140])
-	by APP-05 (Coremail) with SMTP id zQCowAAHfO_HRldqNFRHGA--.9246S2;
-	Wed, 15 Jul 2026 16:37:27 +0800 (CST)
-From: Pengpeng Hou <pengpeng@iscas.ac.cn>
-To: Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Timo Alho <talho@nvidia.com>
-Subject: [PATCH] firmware: tegra: bpmp: reject truncated debugfs entries
-Date: Wed, 15 Jul 2026 16:37:26 +0800
-Message-ID: <20260715083726.30740-1-pengpeng@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBCD431483;
+	Wed, 15 Jul 2026 10:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784110623; cv=fail; b=DlQhYHVZi6gb5DIRMRJ9ATF3JC0KPRIrTv15oyKDM9wdlm5hBXPbOmqsmk8xBdCjEBj+8I8CiA5yzKFddkW9umkLg7K5LpHnaP5m6QsqkgOvHaJs2HZeEBffxvZfYCJ10FXvaFDFpaTPjXbbv+qfJ5sPf/xp3QzzwOVSDo7vs24=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784110623; c=relaxed/simple;
+	bh=jnsF/dyUd/nM6WNouhznq5ar8vG9Gw0hgFPHgB7p65M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=alXrUwElsT8YYqPWBo6MVt8btJJelpAoSqf8krlBU/aUl7pPrSReTKDfXOolMZJGIxrnc/mLx/vLJwUjKOU87yddW1lZj+ZaWlhZLsbdkX3ete34Or0np6219HN6JonqEHFhOt+WWo0OW/YGvMkoWN9kMQBlh/qnRdMlghJ1LvU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KOMh8ppS; arc=fail smtp.client-ip=40.93.198.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KOMh8ppS"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=O3A25JHoYejAhjXBcHWKqZ8zXWZUZNOuAbqO1jloMDvi0EyWsgWEsTVj6G2QT3r+YWQPz8o51PjV0s5gcY5i7MkKuWRxBC4ylDlztlv0RJLyZLetisjlZe+EcqyNPnaX3inQ9jO9ATbuPQ8cStxu36PCgG9KK+JwBumwuU/vjufHR4eDLa8+BOTxBMm6/uPDL0VO3mYuEMb7vNgOMQ/ugNPXvNMBnFiAEw+SfhEuN05yGxl/7q90Bal/oai0NhoC0WrmIQfcm408uBUlCq1Z/PPZQ1kzQQS3MISgW7qNcWqFp8dRwohM4hHvUhcZdTUSsJOoqT52XzZYX56AII0J+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=w6nieyPU5MxVYJD+TUTaS/W4cXz7XGRdLtfYLixPllA=;
+ b=txn5FSo14dTRCJywuMvsXvuQQr4qmPYrAyX60incml5tkCsvTGE65rTonPp1b4kgstxRJDAE7abHqz2z03ndA0CBWCH3kMDOhSCpP8J4LXT/trMJ9lD5Ql3qJYo1y6mPaCPVovwgt9GGgf8EDUsaRw+lnc4tstn/lVvmZI28bTMDDfC5WOB2v0yHIGCm0ZKbt1jASiMepwPfUlsf5LQ2FhkDl01dpZRWdSVfuCOVE0zqpr5UVCkRoIZZHb+7Mej/E0eJ955e9KkLb+iB1hjb9yQAOLvr6enUQvoJhejyOKM6++XK5SitMXTgQZE+c16R777yPF6KKjzq9xmKVNKi+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=w6nieyPU5MxVYJD+TUTaS/W4cXz7XGRdLtfYLixPllA=;
+ b=KOMh8ppSvr8LEf5FljrdqiK86QRn39sb9O6SKPCwjwESpTbn7lTLxJtq9mT1iFxO4sjthL7MM09Re7sbgqFAB6I9Kxs5R9n3o2E6K38cKEP/zdP0BvYS13Eqcq/MzYSTpt76BcdWalASXs8v3YzuJPUykTOoXvMnwLuUd9fs98lIbA4V+U6S1q53Uq36wuv1J+eHt/XivDj6Jax8tloWXPAqBNiR/nz0OK6aYOEXyuaawyCOoKlcThLmmuFs+aYxoGxRla30i0yfkiToFwIHj7CPy8rBfNhKWSBGjVu8uEMYmUOgpWriceusu1VYVHOCfQaR3L5bJYbCbXQ420Cs9A==
+Received: from SJ0PR05CA0167.namprd05.prod.outlook.com (2603:10b6:a03:339::22)
+ by PH0PR12MB7861.namprd12.prod.outlook.com (2603:10b6:510:26e::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.10; Wed, 15 Jul
+ 2026 10:16:56 +0000
+Received: from SJ5PEPF000001CA.namprd05.prod.outlook.com
+ (2603:10b6:a03:339:cafe::59) by SJ0PR05CA0167.outlook.office365.com
+ (2603:10b6:a03:339::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.223.9 via Frontend Transport; Wed, 15
+ Jul 2026 10:16:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ5PEPF000001CA.mail.protection.outlook.com (10.167.242.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.223.9 via Frontend Transport; Wed, 15 Jul 2026 10:16:56 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 15 Jul
+ 2026 03:16:39 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 15 Jul
+ 2026 03:16:39 -0700
+Received: from build-pshete-bionic-20260122.nvidia.com (10.127.8.11) by
+ mail.nvidia.com (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 15 Jul 2026 03:16:39 -0700
+From: Prathamesh Shete <pshete@nvidia.com>
+To: <linusw@kernel.org>, <thierry.reding@kernel.org>, <jonathanh@nvidia.com>
+CC: <linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <u.kleine-koenig@baylibre.com>,
+	<dakr@kernel.org>, <bhelgaas@google.com>, <pshete@nvidia.com>
+Subject: [PATCH] pinctrl: tegra264: fix DAP2 DIN/DOUT mux functions
+Date: Wed, 15 Jul 2026 10:16:36 +0000
+Message-ID: <20260715101636.547305-1-pshete@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAAHfO_HRldqNFRHGA--.9246S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7CFWDKr1xZFy8tr15urWkXrb_yoW8KFW3pF
-	WDt3y3AryDJrs7WFWktF1UJF1rCa4rWFyxKrZ8Aws0vr1rGrn3GFy5XrWqv3W8Jrs3Arnx
-	trWqyrZ5CF47Jw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUeKsjUU
-	UUU
-X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CA:EE_|PH0PR12MB7861:EE_
+X-MS-Office365-Filtering-Correlation-Id: b2099286-d8e6-41fd-9317-08dee25a331f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700016|376014|23010399003|1800799024|6133799003|3023799007|10067099003|56012099006|11063799006|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	Bu7TDaNe+sbD+L3w5qsTuPtg+QwgHflGnwCQzHUftYzNSAhz4bSkfvwLAT7IlBedeGDSigpZUTsuTe6PVQsD1cATBAGu3ZUhM93iD19oR1ceDPyiBVyak0+I8w7+QUmoKpLOglCtQ3YfJ9h11U/b4xch3VEyYMVYP6gVcwi5087LSkfJWSCZgNwY1GqpPQlGkJ9YfXMtPnwKYRi71hIh+R3TxXMUwaNY2zhgEtWEETI7FybKYEG7CBe4VsgsrR/m4uUK8ZXO/7hyeYdI4tecdIvgf9YyqHB78uQjgE4Bfdnie72PaJFoiByJYdKCbGTJyBq8Cu8NpuNPxUfbzxV2oWpqBB8pA66zSesqT7aF5Fenm7JY1YzCMHGENu0P8SGBVjGalk2kjRj51rzxmykPK7Z4AdvbtBlSehVPkK4lrYpAg3EXwh/ikzA2AIC835/g/dhTqZ4MH0nc/V0MB3ZY4Eri0syBtgoDBjC5XuUBEz7eN3y5n6aHOfb+8i8U8wb8qvPzFP7M63u/lGP2Dfv2Pac/g4PdIv+B2TRhG70hoPaHYH0xhBFUQRzYuTznqQjBqmMumn0oVRzD89fjSs0jvC+k3aIakkGRq2wE35NsR5hgCl1y16wkDi/2UxEiugbZlJd2UYMHmuRkwRO2MJljFjyIlJtvxbSv2+qQWEdAIaWQlEBZxZUFqLQU6LYS2K42srsRUZhe5JtViGRp9C6HoA==
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700016)(376014)(23010399003)(1800799024)(6133799003)(3023799007)(10067099003)(56012099006)(11063799006)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	JGKBguixSGErptw5PQqRiDdaPg87hCEwaVdf/l4uXTrJWyVwsXnqD10uzvsrUgAYAy/iMD1Beu11XV1ZThIDeVtdSq138i9517vJ9FWlozR2rr5kV6D0r1VmYWFgDOu6wd3S1wtKAUjz5gTJ1OKZZG/8JcGXCu9vG3LT2jep7t7NBsoEEaYjUPdt1lBWoUd5S4+Du6bPDMJ2rkotVDWhkcVvR58ScpieYb0Qafqxl54LiEF6xvtceiZM4HnqQlTt4QMR7LQP132Ykqjy+7V0WLPUaqm/F7WwCbtkcqFagfbo1g4XtIEKYGElp+dOJJ12B0w0PK2h7TDd3lOXYmIaRbE2/a38Ez8k+ZMAkfuZpXHgoRU05yJt3zdYexxRw7zcB5VXu4jxDMG+S+AV9orl1+cP1gEJlfUvzHZm1tAylwz7w2zhZl4UyF9GnYUeliw5
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jul 2026 10:16:56.4511
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b2099286-d8e6-41fd-9317-08dee25a331f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001CA.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7861
 
-The BPMP debugfs response parser reads u32 fields and NUL-terminated
-names from a size-delimited reply. seqbuf_read() currently clamps a
-request to the remaining input bytes and can return success after a
-short read. Consequently, a truncated u32 can be partially copied and
-the directory parser can continue with an incomplete field.
+The dap2_din_pv7 and dap2_dout_pw0 pin groups were assigned swapped
+primary mux functions: dap2_din_pv7 (data input) was muxed to
+I2S2_SDATA_OUT and dap2_dout_pw0 (data output) to I2S2_SDATA_IN. As a
+result the I2S2 data-in and data-out signals were routed to the wrong
+pins, breaking DAP2 audio.
 
-seqbuf_read_str() also moves the cursor one byte beyond the current
-range when no NUL terminator exists, and reports the failure only after
-changing the parser state.
+Correct the functions so dap2_din_pv7 uses I2S2_SDATA_IN and dap2_dout_pw0
+uses I2S2_SDATA_OUT. The register offsets and drive-group macros are
+already correct and are left unchanged.
 
-Make fixed-width reads fail when the full request is unavailable and
-require a terminator within the current range before advancing the
-cursor. Use a signed return type for the status helper so its error
-contract matches its callers.
-
-Fixes: f2381f652266 ("firmware: tegra: Add BPMP debugfs support")
-Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
+Fixes: c98506206912 ("pinctrl: tegra: Add Tegra264 pinmux driver")
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
 ---
- drivers/firmware/tegra/bpmp-debugfs.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ drivers/pinctrl/tegra/pinctrl-tegra264.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/firmware/tegra/bpmp-debugfs.c b/drivers/firmware/tegra/bpmp-debugfs.c
-index 33c6300af964..bb2ce5be2e78 100644
---- a/drivers/firmware/tegra/bpmp-debugfs.c
-+++ b/drivers/firmware/tegra/bpmp-debugfs.c
-@@ -32,7 +32,7 @@ static size_t seqbuf_avail(struct seqbuf *seqbuf)
- 	return seqbuf->pos < seqbuf->size ? seqbuf->size - seqbuf->pos : 0;
- }
- 
--static size_t seqbuf_status(struct seqbuf *seqbuf)
-+static int seqbuf_status(struct seqbuf *seqbuf)
- {
- 	return seqbuf->pos <= seqbuf->size ? 0 : -EOVERFLOW;
- }
-@@ -44,7 +44,9 @@ static int seqbuf_eof(struct seqbuf *seqbuf)
- 
- static int seqbuf_read(struct seqbuf *seqbuf, void *buf, size_t nbyte)
- {
--	nbyte = min(nbyte, seqbuf_avail(seqbuf));
-+	if (nbyte > seqbuf_avail(seqbuf))
-+		return -EOVERFLOW;
-+
- 	memcpy(buf, seqbuf->buf + seqbuf->pos, nbyte);
- 	seqbuf->pos += nbyte;
- 	return seqbuf_status(seqbuf);
-@@ -57,9 +59,16 @@ static int seqbuf_read_u32(struct seqbuf *seqbuf, u32 *v)
- 
- static int seqbuf_read_str(struct seqbuf *seqbuf, const char **str)
- {
-+	size_t avail;
-+	size_t len;
-+
-+	avail = seqbuf_avail(seqbuf);
- 	*str = seqbuf->buf + seqbuf->pos;
--	seqbuf->pos += strnlen(*str, seqbuf_avail(seqbuf));
--	seqbuf->pos++;
-+	len = strnlen(*str, avail);
-+	if (len == avail)
-+		return -EOVERFLOW;
-+
-+	seqbuf->pos += len + 1;
- 	return seqbuf_status(seqbuf);
- }
- 
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra264.c b/drivers/pinctrl/tegra/pinctrl-tegra264.c
+index be64fba34dce..3802e480d39e 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra264.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra264.c
+@@ -2051,8 +2051,8 @@ static const struct tegra_pingroup tegra264_main_groups[] = {
+ 	PINGROUP(gen1_i2c_sda_pw3, I2C1_DAT, RSVD1, RSVD2, RSVD3, 0x6018, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+ 	PINGROUP(dap2_fs_pw1, I2S2_LRCK, RSVD1, RSVD2, RSVD3, 0x6040, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+ 	PINGROUP(dap2_clk_pv6, I2S2_SCLK, RSVD1, RSVD2, RSVD3, 0x6048, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+-	PINGROUP(dap2_din_pv7, I2S2_SDATA_OUT, RSVD1, RSVD2, RSVD3, 0x6050, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+-	PINGROUP(dap2_dout_pw0, I2S2_SDATA_IN, RSVD1, RSVD2, RSVD3, 0x6058, 0, Y, 5, 7, 6, 8, -1, 10, 11),
++	PINGROUP(dap2_din_pv7, I2S2_SDATA_IN, RSVD1, RSVD2, RSVD3, 0x6050, 0, Y, 5, 7, 6, 8, -1, 10, 11),
++	PINGROUP(dap2_dout_pw0, I2S2_SDATA_OUT, RSVD1, RSVD2, RSVD3, 0x6058, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+ 	PINGROUP(pwm10_pv1, GP_PWM10, SDMMC1_CD, I2S7_LRCK, RSVD3, 0x6060, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+ 	PINGROUP(soc_gpio170_pu0, RSVD0, I2S7_SDATA_IN, CCLA_LA_TRIGGER_MUX, RSVD3, 0x6068, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+ 	PINGROUP(soc_gpio171_pu1, RSVD0, SPI4_SCK, RSVD2, RSVD3, 0x6070, 0, Y, 5, 7, 6, 8, -1, 10, 11),
 -- 
-2.43.0
+2.17.1
 
