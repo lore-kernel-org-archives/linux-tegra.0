@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC07440D587;
-	Wed, 15 Jul 2026 11:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDCC43B3898;
+	Wed, 15 Jul 2026 11:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784116054; cv=none; b=S9rBkfj0sfC9xOhWn4sCvjpd398RZY+IAC33/xCln2mb/DPTZmweDfEoudYW4K71JdAna2ZCJvxPG9zJpmvp1e/iF81+6RRn2JL8waxwiioVA/Z4lZ/+brwQUmb/BSk8YpQZG5qOkiBVnW/oFPFUdWVOFKHqaOZ8WlCWUJSYHh8=
+	t=1784116077; cv=none; b=Keo7ynjXHEQVCHCmangbS+6C84mEak1HnnbQAHKKQUYJevcGufKNiJaEN9o3e6XTljTKUSUscXJH6FTrIQEoiCdlhD9L1wVLupunQRJTFybVXE1bTOEF4BpB2Kqe6VPMm2lTvGynuOg7iPURQnUBWankRc4CBsWc1sQBKC8YKi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784116054; c=relaxed/simple;
-	bh=eZlpWSHld5Rvrdk3/Ajw5tvn4ZhNaKEVyKVOhbAxjAk=;
+	s=arc-20240116; t=1784116077; c=relaxed/simple;
+	bh=TWeFy4un8Mxj1noHCfav9+BbNLlaBPXTVePyJWAmSvQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hDAQ/Uj3dX3DBHRa3Y4Xkkgk9gPIMKRLuQa49rIE9cHqo6bB9etuqu+Qou8OqTFmGUYeFYsED2Zm5DLRRVoWWT9avTsd4CVmndnIe2wmBD2B3DI2qUQM4wa7YOln55/NXGVGDM/LzUVD9PW/MTXjoxcx3FTQKEXh4rk3ACFoTHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=myuYFNRH; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=O00AAqkR/A/mR/8qi8KW+qba3wuNRuZa2JJVzr4Xn+dxtxPwqCnTvfJOU8nVs1+lKaYhh6W1QT4eW7qAMIPKFFAzFiDUXfqBGiP7PsG8I1DvUjuwkRM6PYOLYxtjQZ4ZMeMAfi9D3uUWdK5YRfaqbG8F5hqeVBxiavmvRPXosJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o3WRCChi; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="myuYFNRH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCE8B1F000E9;
-	Wed, 15 Jul 2026 11:47:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o3WRCChi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F28BD1F000E9;
+	Wed, 15 Jul 2026 11:47:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784116053;
-	bh=gkin2yO+Dn6R1V4J+p7vT0Ru0bdex/UbOwzxkVt0Npc=;
+	s=k20260515; t=1784116075;
+	bh=Aq6x5/8BQiCJG5bBqzH8hQLVDVMGomrou9m682o6enU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=myuYFNRHQdwAwtI9s4sX1xUswDaDgQcjIQay9CfWS4Dr8tPpI6Q75SguhHo47mS4F
-	 9mPEYyPFXRQHiaquzZkLNhwwg21ttUZ0b2iduUwI4B+V55rQYJySZY6JGym0P0w5Zt
-	 PVBpyokBLkK//uWLKS+uH1Mf9F7QrDUioRlEWPHQyfVCe3CEG3pzcNdcejwBYGa5pc
-	 YuJ6JOFU/v6eLYHpBLVXeJhupOQ+t+S3mleVHtUDrukAwmzhivJsM/8m25UhrIhMv5
-	 IPpk8VSAfmcowWuaa3CJK0e7IKjbTVtuXtgZKz3etvUD2IoyMC3RhrEwtKAhACEogL
-	 XfhqeDwdwpVuw==
-Date: Wed, 15 Jul 2026 13:47:30 +0200
+	b=o3WRCChi3jNRibfcyYCPBFQezshetJL+Cl/V1cXNiBETZ095/ZHFfe4z1nwSEHy0X
+	 dt/6DwTvIAUx8CAOtDMDBtUIbj8kydzHJHnkqHViEqA32ThP627M+utfj53jSgiuOv
+	 QJQi1sWY/0pZNFyZv0Uhbrd1C7SQ9iNxKtrhbJpt/hcgzl0jwa2WMfat3iOyrOM918
+	 V2F3WPvjEeteceCGuSJ9U06SwldqkdNt/1YBzFAGp+eLx7OIeXX5rt01WC5Dz8ri1J
+	 vcIbdMbE+ZaMRfXX784PTKl4IWexM3U4fnvRp5Qwu8NyE6qru/3UXXoQS6xlgFxI+V
+	 uKk9F3ohA2Rlg==
+Date: Wed, 15 Jul 2026 13:47:53 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
 To: phucduc.bui@gmail.com
 Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
@@ -37,11 +37,11 @@ Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
 	Piyush Patle <piyushpatle228@gmail.com>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, 
 	Bjorn Helgaas <bhelgaas@google.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-sound@vger.kernel.org
-Subject: Re: [PATCH 1/4] ASoC: tegra: tegra20_das: Use dev_err_probe() for
- error handling
-Message-ID: <aldzS_CKbV6quenh@orome>
+Subject: Re: [PATCH 2/4] ASoC: tegra: tegra210_adx: Return the original error
+ directly
+Message-ID: <aldzYg3fCJvf9rp1@orome>
 References: <20260715051115.17385-1-phucduc.bui@gmail.com>
- <20260715051115.17385-2-phucduc.bui@gmail.com>
+ <20260715051115.17385-3-phucduc.bui@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -49,51 +49,52 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sph3sm7swibgi7gb"
+	protocol="application/pgp-signature"; boundary="7gdaio6u3znxcfeh"
 Content-Disposition: inline
-In-Reply-To: <20260715051115.17385-2-phucduc.bui@gmail.com>
+In-Reply-To: <20260715051115.17385-3-phucduc.bui@gmail.com>
 
 
---sph3sm7swibgi7gb
+--7gdaio6u3znxcfeh
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/4] ASoC: tegra: tegra20_das: Use dev_err_probe() for
- error handling
+Subject: Re: [PATCH 2/4] ASoC: tegra: tegra210_adx: Return the original error
+ directly
 MIME-Version: 1.0
 
-On Wed, Jul 15, 2026 at 12:11:12PM +0700, phucduc.bui@gmail.com wrote:
+On Wed, Jul 15, 2026 at 12:11:13PM +0700, phucduc.bui@gmail.com wrote:
 > From: bui duc phuc <phucduc.bui@gmail.com>
 >=20
-> Replace the existing dev_err() and PTR_ERR() sequence with
-> dev_err_probe(), preserving the original error code while simplifying
-> the error handling.
+> snd_soc_add_component_controls() already reports failures internally.
+> Return its error code directly instead of logging the error again in the
+> component probe callback. Also remove the now unnecessary local error
+> variable.
 >=20
 > Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
 > ---
->  sound/soc/tegra/tegra20_das.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+>  sound/soc/tegra/tegra210_adx.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
 
 Reviewed-by: Thierry Reding <treding@nvidia.com>
 
---sph3sm7swibgi7gb
+--7gdaio6u3znxcfeh
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmpXc1IACgkQ3SOs138+
-s6G63w/+MtBc401WwKC9jD5yARIb+re9zlca4e498bPBomqC0MxRNkcIeJpeG4Iz
-nxx/Y7qT+1RQZ5Cwxlk74+2SFD62xMR1+vbjSFRBSer/zp/QL4Y2MGN/804G5giZ
-VYVBBo7oExXTiaqzZymrPY83zQQez4ojV7BMXmjAXcbcaEtst2hlIJSFtPeF7Udl
-ApxtErZkzHdoV/ADLYywyV8xfZIa7RD12VgCTViuckaS4dXQzzQXGl5bSE7xtI12
-h3Ej57zJcV4O+Q/COhVAYlfrzW76yXIJkTJmo5j0QdHOxiN2e7qvkXnESXRHsdJd
-R2kpTKcOg0MSEjctgGuR9HpsEuwC2CIvEscClDW0NGrNTzl0gJS8uT+iyn5odY32
-KYXcjXI9sNX12ADzcz6uGkim9eT3+dS1beIdPCSGzIIewJW37vhaeVemZQJlXJM9
-CYVpEGB1xok+VEXN5MM6SQo9E96KkMiTncQmq8PSfR4dS+cGni/xsenU9MrapF0E
-yJwgf6v7OIs8SHxI1OtRVqv6u7eHrgFXVNIr9a6o1tlBlUwebsDGUdhiSMEFTuTW
-VM4qN30X4hNc3ncxmyZEudrzzMRe/win+D2F0/SFSE26ZE8dY/eYlB/SNHlhdYha
-gy8aQc+x4QTq2b4FME6oYvkAbfIVZFfuIWROVGVIHn5q3q9MMiA=
-=lA2l
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmpXc2gACgkQ3SOs138+
+s6Fdpg//XXhGzOY4o6FVeji6Ayfs3TArOLP5iStEplMf7gkXyHQe8plLRRttyrLI
+R0jM2h/Cc3342c0e5qLgzUbb9sN/29PtoiCQvbc382Ey6jiBIBxO464EepJRReuZ
+fgclGD/WXVCP8DJWFVrgP0yQjYscuXDHH8O+AJ30RN/6rIXfo+W/GPhTmZH1381v
+UVDNZR40tsVWbcTJKr7vhMEYFHyud2cttfob+IuEky/3ri2QazfmepEgKzs+pDDU
+BeTDAgtHH5hlvbRXH36rmDMKH651lj/afjmHtn2nH/qjzSy6km4NvcV9+FCtHzTk
+FLIATMm4v0hoY4TefZ87TAQPY6+2he2/0wVm5DFSdJmHmX0gpTS+UKIBF79dgO4p
+Gzyj00rLHOMQ12Y2qTALYKCbN96pzu1EHMVv+1/E38CDt7HMpbuhe71Gho4IKd/7
+0IfLFuIQYY0eWRWRETc+MDEhOO9fCxYx4vduVY5ubCUMRNafMHIY3np0oFx+Gtae
+VFP+Yw+k4fUZpdEBfefNiHknInM/WHSKNnbtgqIATfiHnmUVo0E4eEgjc1WTCd0q
+vHh97v7a1oIiY1ifw403MuMEcwu8oary7SmdIK9bcnUeh3Ri3IDKPiir6qd1biFH
+BvAJI18PrdAEnchCdiXl7T+2KfF6rOXqIQBPEPUEr25PdjuPE+8=
+=QnsR
 -----END PGP SIGNATURE-----
 
---sph3sm7swibgi7gb--
+--7gdaio6u3znxcfeh--
