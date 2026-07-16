@@ -1,167 +1,170 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9916943B6DB;
-	Thu, 16 Jul 2026 18:54:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A951A29E117;
+	Thu, 16 Jul 2026 20:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784228047; cv=none; b=bm5Ex1MjfwOiQn39hBqEe8ITuU2eHSQxQnCOiCASGoAM5V2qYsDSCOb3CwzKvKfkq+G3tIBhl/VGA9N9H5/4h8DbNa6uTcgMUmAQGHB06OXEZDJOeWEtpNEN1WKpWuxdK1OKtS28EXGJ/r17mi/kcrw9mS9N8DLg5yWAd823jRg=
+	t=1784232050; cv=none; b=aT/WXnQ166OIvQJ5rfJoN5RoJfOazThOutuoovOZ5G+hCANkel4fM4Oh3rW8mdHSEwxqZNo1HQBaXEziy6wzwSFOtFa3zk8wePm9w8uykAyGQMBfpSMAWkjIS+JGiD5sTLZN3Dnk3heoXLgViW6WO/xdRlSMh+rnWXSUdnHpcfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784228047; c=relaxed/simple;
-	bh=c9gKLuuZiOnvW9bRO5bGQxumevOGv4uduDPOyUcN++s=;
+	s=arc-20240116; t=1784232050; c=relaxed/simple;
+	bh=B4VshDhGQfD/1AyTCWO9i4wlJk3e/ooqPZauVlVVDnQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rI2m5UeD5QkCQIF+SOeeuNDvk6uTa/Yw4SKUgEZ1LhsAL9OemSKdSonulfXzbqwwn+rSr915+g9x7OJU9a3Ecb8fZUDPR+JWStvwtpgcBQHXNwg1jW6vQ8ADw0AWz0nkD+ZCdL1Qc9e1Wyheqo3XilzqqE78HqktaRPxo7rwer8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mPUqM0XL; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=bW2rTdxnEkC/qAYXeHZdmvsyeEBDxkhePjj4SPvTZWAi6sEdXpjFIAHbqkj7ML4/AkVWigtnIPaEabzrPkve3rILdb1PYM5U5zb54mu0qiw1nr63Ot0HS1PwsCF9VtmF4ItmHSCqrTvaSD+zWcvuMAoLyKUgfzyax1dQZ9XHEgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a5qGtpAk; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPUqM0XL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 881011F000E9;
-	Thu, 16 Jul 2026 18:54:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a5qGtpAk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B5241F000E9;
+	Thu, 16 Jul 2026 20:00:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784228045;
-	bh=CpjCml4qMFL3yTbWaJPv1RUPrR/EKtPy2332MSze4KA=;
+	s=k20260515; t=1784232049;
+	bh=SkbdCLvPFiAZcCyqV3OjTuTi5o9qsDoHdIygT4AGL4s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=mPUqM0XLRSnNsEPX3W3UuSs2ww0bygwsRDRQVojfchHUX2ebJL0Xuykczn+8tzajU
-	 FQTBtAFgZUXWHnYK0GpWBhCPPQ36yj9UCEsQw1XhAabAKyD9qkbUKoqoZqWUmZQgWf
-	 Yc4cMcLHmYfD1wmqSywCpywCmg2hbZ6SCu5NrROQDxsu1oo7ESyJyMwTvGunKlA3d7
-	 l8sYz5np3KaoJhGu0RO3T4HfwmcYZMCvvMSrGHwu4ywwZgxa0TnAwzm5gi9dydFVRc
-	 lGuzVVl8Kl0VUqrfipbc0xj36x7FhOjtlfic5qRY3DVfHLwZi3KCfhaNKM1ZxWWsOx
-	 QShMn0WzgSkhA==
-Date: Thu, 16 Jul 2026 20:54:02 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-tegra@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>, Santosh BS <santoshb@nvidia.com>
-Subject: Re: [PATCH v2 0/7] Host1x/VIC support on Tegra264
-Message-ID: <alkooiOtlIF-OZy4@orome>
-References: <20260622-t264-host1x-v2-0-ff7364d9ff7b@nvidia.com>
+	b=a5qGtpAkwNEV9jsxYeN/Q7n89zdNsN11G1zMfSI/etA7Yi8LAH8wgTwX8UoL8G6L3
+	 QtafStp+dmSt5fFR0M7Ai+HhZRfgGrSBdmRSVU1fjHDIuAp1dKdasuz9jt0aJrxD3/
+	 m0tYK1IMkzPighZh3SmtIb3LTdl0mWbQQGJdURYx9sNiNa31kAqFcPx603ZWrA8Z5J
+	 JfUlu+YJIGtuoeaFb2374D//LRjheitSmsxEZ9JXEZaPg3WYZES56yqM6EQ9jdxYlv
+	 mgAQgo5RIr1XNkCB+v1k0eQV6pruyKIOj7Rs+S8wE73+oNZNKsm6QaBr6/beqAO5pH
+	 tJpkEALlcnrlg==
+Date: Thu, 16 Jul 2026 15:00:48 -0500
+From: Rob Herring <robh@kernel.org>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Linus Walleij <linusw@kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Daniel Scally <dan.scally@ideasonboard.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Eddie James <eajames@linux.ibm.com>,
+	Tiffany Lin <tiffany.lin@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+	Houlong Wei <houlong.wei@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Joseph Liu <kwliu@nuvoton.com>, Marvin Lin <kflin@nuvoton.com>,
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ge Gordon <gordon.ge@bst.ai>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ulf Hansson <ulfh@kernel.org>,
+	Saravana Kannan <saravanak@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Xiubo Li <Xiubo.Lee@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Peter Chen <peter.chen@cixtech.com>,
+	Fugang Duan <fugang.duan@cixtech.com>,
+	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
+	BST Linux Kernel Upstream Group <bst-upstream@bstai.top>,
+	Fabio Estevam <festevam@gmail.com>,
+	Nicolin Chen <nicoleotsuka@gmail.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-aspeed@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+	linux-sunxi@lists.linux.dev, linux-media@vger.kernel.org,
+	openbmc@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
+	kernel@collabora.com, linux-tegra@vger.kernel.org,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	imx@lists.linux.dev, sound-open-firmware@alsa-project.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH 01/42] of: reserved_mem: Introduce devres-managed
+ initialization functions
+Message-ID: <20260716200048.GA1183026-robh@kernel.org>
+References: <20260703193855.110619-1-mukesh.ojha@oss.qualcomm.com>
+ <20260703193855.110619-2-mukesh.ojha@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="o5jrspissrvotivf"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260622-t264-host1x-v2-0-ff7364d9ff7b@nvidia.com>
+In-Reply-To: <20260703193855.110619-2-mukesh.ojha@oss.qualcomm.com>
 
-
---o5jrspissrvotivf
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 0/7] Host1x/VIC support on Tegra264
-MIME-Version: 1.0
-
-On Mon, Jun 22, 2026 at 03:57:37PM +0900, Mikko Perttunen wrote:
-> Hello everyone,
->=20
-> this series adds support for Host1x and VIC on Tegra264 SoCs.
-> The Host1x side is not very interesting, just adding the usual register
-> definitions and other information. One thing of note is that multimedia
-> engines apart from VIC have moved away from Host1x on this generation.
->=20
-> On the VIC side, there is a bit more of a change, as the VIC Falcon is
-> now RISC-V based. Unlike NVDEC, VIC is still "externally booted", so
-> the boot sequence is very similar to before.
->=20
-> host1x uapi-test[1] has been updated for Tegra264. Necessary headers for=
-=20
-> constructing VIC jobs have been added to open-gpu-doc[2].
->=20
-> Patches 1 and 2 add new compatible strings to Host1x and VIC device tree
-> bindings.
->=20
-> Patch 3 fixes the context device device tree parsing code to handle
-> iommu-map entries with length more than 1.
->=20
-> Patch 4 adds Tegra264 support to the Host1x driver.
->=20
-> Patches 5 and 6 add Tegra264 support to the VIC driver.
->=20
-> Patch 7 adds Host1x and VIC nodes to the Tegra264 device tree.
->=20
-> Thank you,
-> Mikko
->=20
-> [1] https://github.com/cyndis/uapi-test
-> [2] https://github.com/NVIDIA/open-gpu-doc/blob/master/classes/video/clce=
-b6.h
->     https://github.com/NVIDIA/open-gpu-doc/blob/master/classes/video/vic_=
-ceb6_types.h
->=20
+On Sat, Jul 04, 2026 at 01:08:14AM +0530, Mukesh Ojha wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> Introduce devres-based helpers for of_reserved_mem_device_init(_by_idx)
+> to help fight dangling references and ever so slightly reduce the
+> number of boilerplate deinitialization calls.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 > ---
-> Changes in v2:
-> - Updated dt-bindings changes to be chip-specific
-> - Link to v1: https://patch.msgid.link/20260612-t264-host1x-v1-0-8d934987=
-de67@nvidia.com
->=20
-> ---
-> Mikko Perttunen (6):
->       dt-bindings: display: tegra: Changes to support Tegra264
->       dt-bindings: display: tegra: Add Tegra264 compatible for VIC
->       gpu: host1x: Correctly parse linear ranges of context devices
->       drm/tegra: falcon: Add support for RISC-V external boot
->       drm/tegra: vic: Add Tegra264 support
->       arm64: tegra: Add Host1x and VIC on Tegra264
->=20
-> Santosh BS (1):
->       gpu: host1x: Add Tegra264 support
->=20
->  .../display/tegra/nvidia,tegra124-vic.yaml         |   1 +
->  .../display/tegra/nvidia,tegra20-host1x.yaml       |  20 ++-
->  arch/arm64/boot/dts/nvidia/tegra264.dtsi           |  63 +++++++
->  drivers/gpu/drm/tegra/drm.c                        |   1 +
->  drivers/gpu/drm/tegra/falcon.c                     |  66 ++++++--
->  drivers/gpu/drm/tegra/falcon.h                     |  23 +++
->  drivers/gpu/drm/tegra/vic.c                        |  95 ++++++++---
->  drivers/gpu/drm/tegra/vic.h                        |   9 +-
->  drivers/gpu/host1x/Makefile                        |   3 +-
->  drivers/gpu/host1x/context.c                       |  13 +-
->  drivers/gpu/host1x/dev.c                           |  41 +++++
->  drivers/gpu/host1x/hw/cdma_hw.c                    |  12 +-
->  drivers/gpu/host1x/hw/host1x10.c                   |  33 ++++
->  drivers/gpu/host1x/hw/host1x10.h                   |  15 ++
->  drivers/gpu/host1x/hw/host1x10_hardware.h          |  21 +++
->  drivers/gpu/host1x/hw/hw_host1x10_common.h         |   6 +
->  drivers/gpu/host1x/hw/hw_host1x10_hypervisor.h     |  10 ++
->  drivers/gpu/host1x/hw/hw_host1x10_uclass.h         | 181 +++++++++++++++=
-++++++
->  drivers/gpu/host1x/hw/hw_host1x10_vm.h             |  36 ++++
->  19 files changed, 601 insertions(+), 48 deletions(-)
-> ---
-> base-commit: 4549871118cf616eecdd2d939f78e3b9e1dddc48
-> change-id: 20260313-t264-host1x-c97171fdde77
+>  drivers/of/of_reserved_mem.c    | 41 +++++++++++++++++++++++++++++++++
+>  include/linux/of_reserved_mem.h | 25 ++++++++++++++++++++
+>  2 files changed, 66 insertions(+)
+> 
+> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
+> index 82222bd45ac6..b35541e9fbe8 100644
+> --- a/drivers/of/of_reserved_mem.c
+> +++ b/drivers/of/of_reserved_mem.c
+> @@ -787,6 +787,47 @@ void of_reserved_mem_device_release(struct device *dev)
+>  }
+>  EXPORT_SYMBOL_GPL(of_reserved_mem_device_release);
+>  
+> +static void devm_of_reserved_mem_device_release(struct device *dev, void *res)
+> +{
+> +	of_reserved_mem_device_release(*(struct device **)res);
+> +}
+> +
+> +/**
+> + * devm_of_reserved_mem_device_init_by_idx() - Resource managed of_reserved_mem_device_init_by_idx()
+> + * @dev: Pointer to the device to configure
+> + * @np: Pointer to the device node with 'memory-region' property
+> + * @idx: Index of selected region
+> + *
+> + * This is a resource managed version of of_reserved_mem_device_init_by_idx().
+> + * The reserved memory region will be released automatically when the device
+> + * is unbound.
+> + *
+> + * Returns: Negative errno on failure or zero on success.
+> + */
+> +int devm_of_reserved_mem_device_init_by_idx(struct device *dev,
+> +					    struct device_node *np, int idx)
 
-Patches 1-6 applied to drm-misc-next. I'll pick up patch 7 into the
-Tegra tree because it looks like there will be a conflict.
+It looks to me like the only 2? users of this could be converted to 
+devm_of_reserved_mem_device_init() instead. The mmc one obviously can. 
+The imx one depends if np is dev->of_node. I'm not a fan of APIs with 
+only a few users.
 
-Thanks,
-Thierry
-
---o5jrspissrvotivf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmpZKMoACgkQ3SOs138+
-s6G4KQ//ebtuNr5aOo89zzDeWrMvvJTVayssLnFhT9bMtVMUD0ZPgVMU8xjo+8ty
-j5U696bYojLN85rUr21HAtVyvOM+TvwZmPBULZKn0dGxr3r6JsVmt2oC86CUumCl
-xD25XFItD4ZDNVW+MT9koP+9qfDTjZAH4moKWzkZ6+RH4Dw9VZUl41BqKGxZqwQV
-o/a29mu+F8U5yxe9hNuLy15mtuWNhGSV7PxWAk3qXI8y0mEp+sAcB2ZexnKo99dd
-Arxi9pTN/t9wSPvA9aMwR0jAaXIW7s1LTHPo/k+zgLRfLSx9ZvgEweTzfEKkTD+I
-1DnL5oIg7xrwPXSfjZvC2Hlh60G9YMAuHwT/raMDVZWLfRXs1rdBCYESip4FAaGk
-tKzW/10IC6xlHyTv/KP9C0wnNHWY9NxajQJ3rptnHXFZeOITgDwMls5SKUg+VIR8
-iqssz9qeFOyQapal65F/K/Q2COlRDvunfg7MiTjmoDw2VOf3wnWdUf21UAx7+khr
-CbxM+x52BT3l+vcByu7TLxyJfBQXrTX58FqxBY900Om8AqRwe0bJkFUGqlwGmWOU
-qu4ZwHgHbKVJXXf4+jqE7lC8zwK0BinkfpziTPTSGXY+eZxMDjZVnexFbbho7MiA
-g3y+aYTGWKsOGfP9zBqSK2OqiVCh1s1bgguKyJybaAnvUCEPTNg=
-=o0iL
------END PGP SIGNATURE-----
-
---o5jrspissrvotivf--
+Rob
