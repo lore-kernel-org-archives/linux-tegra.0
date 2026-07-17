@@ -1,128 +1,176 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6003ECBFD;
-	Fri, 17 Jul 2026 10:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784284038; cv=none; b=hj577NR6+ztPNYtWb7WvqOGhqhISP6Lot/TaMrCAaDYe6XVu+/2//rj1VygrLLrejsiTXSE4mI7ZLZ6E+JpKcxeGqptB73jn89uFSQi0ZmpUf1rIgA6hAOAjbh1ShQxhMzbPsaTu3ZWBUlrVkxPcJ8403hMrMrekBDNT/YDSQ00=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784284038; c=relaxed/simple;
-	bh=e98jGVcKfe4SBMdmyfk5VxFxdqm+I7YE8oAlNYCBeV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rklMujtNqAimKAufrjwG1Mp3wGapm/THV88iBS+qwMQ5RBEVOWZ4TVrfEY0ujxVFjHVlHb+tmmnTlbmIPhnv8oK1s7HRDLL/4J2AXKovB4vPVXR9csvpGYC8o4swHXTa9AGiLm5kkN9OCNj+naxOF1BM8eL6cHytwFPN0WYniL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gLivIlI7; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25EF3911B2
+	for <linux-tegra@vger.kernel.org>; Fri, 17 Jul 2026 11:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.129.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784287588; cv=pass; b=PRj2sdon63CO/wtjFo5nTlULfDZvDG/zvuDr9zhJpi3MfzgtD1brDd8i+tVR7pXQ7ObcvQ8JpQcN4NXF9QAEh8fZKFB640RpjZsiVh/RTOIyFX6I4CBXVZHrPluBvzg9yvXFbPokF4IMej2o1DcwfPJ8bnZHT3UqRpBT2/2PmK0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784287588; c=relaxed/simple;
+	bh=vXe76W/8pIhJ+QV+npP2Pr4GqXg7ylW2+hZyFUAZkxo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tleBYcCf1K5vAcKClhlkcnoJqfBUYSFuuBG18dMd4M252FD1cmbWf0U+pH8gxRrRWzLBSHhvkvt7km3gEY5i6M7AF82j5ZIYN4ydBXHNIkKbDkVppBIJDMK7+RBGAItfr33yEsxnaJrsyaV/1W6MXIcjAkSVWWMYlGA9nLsS6Yc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tz9KiGH4; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=dkPuMfAv; arc=pass smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gLivIlI7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1784284034; x=1815820034;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=e98jGVcKfe4SBMdmyfk5VxFxdqm+I7YE8oAlNYCBeV4=;
-  b=gLivIlI7qAwWHH43dzYIouBjUD4kkquuuR6UQZGe/wj5FAosWsOwGIBI
-   287QXCjojNicPzD+OQ/A7KoQjQ6g3TKQx/r//oaVRIT/BGrZE/jPt1AgI
-   OsY6LI3De5razvV1yu3+XyGxQ+u+pSvneKyJEp8OU3eQq3o3d+/ggr3M6
-   vXmEXax2bZ7wLCjq2BSjp+KDYfoXwfOMMWdOgqaAXEOKUu0z3I66C649U
-   sIonDr/ybw4+heIpxOd7Put8iqaK+zaWWeHHX2CPSnXC6twV4dXwozFDu
-   dMQ1wOppemW67bNFHwtYlldoOAWdVOIxsHCXyb6n4srfz6seXV0tJmF+f
-   Q==;
-X-CSE-ConnectionGUID: ry3Kf8hlQOmOYkLyPDe4BQ==
-X-CSE-MsgGUID: ONrSD/BRQPySH1B0xd4Wcw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11848"; a="84981448"
-X-IronPort-AV: E=Sophos;i="6.25,169,1779174000"; 
-   d="scan'208";a="84981448"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2026 03:27:10 -0700
-X-CSE-ConnectionGUID: 4WNYOIPfQAiUTnjs0x9Nwg==
-X-CSE-MsgGUID: x2Dh9FeiSx2LN12oFHpQaw==
-X-ExtLoop1: 1
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.143])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2026 03:27:07 -0700
-Date: Fri, 17 Jul 2026 13:27:05 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Andy Shevchenko <andy@kernel.org>, Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 16/21] gpio: Unify style of acpi_device_id arrays
-Message-ID: <aloDeQoP5pg-xmNy@ashevche-desk.local>
-References: <cover.1784133987.git.u.kleine-koenig@baylibre.com>
- <bf617dc2c662e80833406bd3a3f23cecdde071e4.1784133987.git.u.kleine-koenig@baylibre.com>
- <alkXuxYdLKn14rKZ@ashevche-desk.local>
- <alnjVo8v-3qHKfg8@monoceros>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tz9KiGH4";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="dkPuMfAv"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1784287580;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vXe76W/8pIhJ+QV+npP2Pr4GqXg7ylW2+hZyFUAZkxo=;
+	b=Tz9KiGH4CJ5ECbcCYm4nFLCj8efZERxj7BXNRFSfpbno92VhNRMXPMEQg7BwGL36dL9YYy
+	3AthkD1ewJ9M7cqus5Rx5tf5ElYXcXnBJvFz5TgL1nEfbZEWuBIQZKbI/eJogiWxz5d89M
+	SO0RiJe7uTolVO30jPs+uZEd6SDEfYM=
+Received: from mail-yx1-f72.google.com (mail-yx1-f72.google.com
+ [74.125.224.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-323-Pg5QSqVzOtaUxnTubzYhGg-1; Fri, 17 Jul 2026 07:26:18 -0400
+X-MC-Unique: Pg5QSqVzOtaUxnTubzYhGg-1
+X-Mimecast-MFC-AGG-ID: Pg5QSqVzOtaUxnTubzYhGg_1784287578
+Received: by mail-yx1-f72.google.com with SMTP id 956f58d0204a3-66807ba1ce8so4228150d50.2
+        for <linux-tegra@vger.kernel.org>; Fri, 17 Jul 2026 04:26:18 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1784287578; cv=none;
+        d=google.com; s=arc-20260327;
+        b=lP30BN5zh4qXZcR1d7Z42XC0UG9BrZzb7cL6Z4k4enPNN5yI8bxqJbm7njg3qYGMXM
+         kynCClbSbyuCocXovo5tvrxKrDUU0HrCHuxQQfmQQXl3zG1yPpCcH+QW1jhU2BjuYwbj
+         HV0uQZPkz5vqQ6hZsOjYkncIuzN7LFOgEtPplDZqbA4qHVe54SXcjG6KIOSKu/PRZS44
+         e0LluhtIfQ5Y2P88kXAUMYpR33VOCbJK8mjoif8PPE3oIkJ63E+cxF6OLb3qVNNeuy2p
+         o9ticGiCNtG/OGlfUCLtSu4OfKDCYvQUik7Z5RRJTVm0wq5kiL7ArUO7j0VE9i1BW7Ia
+         yJTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=vXe76W/8pIhJ+QV+npP2Pr4GqXg7ylW2+hZyFUAZkxo=;
+        fh=ux7VOozbGrJfOQSO9hrmThZuubWBBYxLrgk8LMHVYdE=;
+        b=SfChY8avScAMlFSdcneIZUvbz7ZEsscCfQ8/mlCXr9zX84JAFtJ75W08hebG6tgVM/
+         K95H3Z7pMGc4LkqgDoIL+BPaIN4Vxf2gNGpX54rdktFwY2GHs9R4zYbAjGSsnl41BaJK
+         o3xqadGu/kWAiZkmMWbTHDxkM9LxnDySqS78Y10kFZYwBMkuPDnGTqhQXAZ5SBVlTfy4
+         k+8fDEpzIg+8wYvNOJJpohaEN55SMMkv3WTK6YI1fLWKn+N+GNK3JWUl68G0S+G7Pi7U
+         bOhp8msuG3CsCjG/4NuPKjN09TPQfu6/kbQ2OwxypnCHBguhlmtVqZmVKFzo5P3ZScYj
+         f2oQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1784287578; x=1784892378; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=vXe76W/8pIhJ+QV+npP2Pr4GqXg7ylW2+hZyFUAZkxo=;
+        b=dkPuMfAv+k2E9nBvXL+bKAaBa+jYrnhdMsC2bR2eUwKZ4mnbrq3tiJekZW2hxFd4xa
+         6eicuVh0uCaFzJ3BDWToJPYoCo2rsWg/YOK30OwvtB/KNUuGQIpqRUIpratcRfUUb8z4
+         Dzsp9jw2Y1wfsThjrVG6Vy9kRlMayacB6owIbhaAY7yV9ph2adsHO5Ostz8FNn8l6qNJ
+         h91KbJB4Fx2ocuedxZ5IsMwuKs/dPvJqaX3JrTLTOwo2mEKMxytUmS/QoGngM61YghBA
+         piTMMKauhYhsHa56zWIi8jBr3KuuaFcQzlP4h+UHhMWbrfGgPrgdSY8VU91HtCvduo10
+         VPQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784287578; x=1784892378;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=vXe76W/8pIhJ+QV+npP2Pr4GqXg7ylW2+hZyFUAZkxo=;
+        b=JdsS3OVPxRfZHOlMh1ifzOzMzfq1SgwNyioBSnAKk7Diz13ot0ONolcaHL0LOf2qwW
+         7B988BU4O2TOWoJA8O8FmpgQHdV0wiP5e1zcO3a9eQypFTAT48XDiCeX5Drx4bwS+tjb
+         gcFVa9op2MTf6FXof25fHG0QvNGeQrfRJVuspHUD8l3OkItab/mncR6GYLKUdmOYYXJG
+         7Gex2CufvmB6sGz6Qbu733IlMb02+e9P0Hll8atMggd4wloWbhkxjnsVHKjDrh3N0/xb
+         TkIsltkVHxsBpfPwP3CEdnMZk4lF5wAODJ1K3TjOHodMlwG/GTy7oMnJFFiB0HU0JL+F
+         ZUjA==
+X-Forwarded-Encrypted: i=1; AHgh+RqpbvIdEfH1H1wuXHuuRK7QnRHXSYvp/DXnuD9njjGPw38NtEV0X8KrwrEGUFUph+h6TQn1mdPkpHWE3g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzodqbwZ4+O/IhG6dFL7zax0jMCmh3EAH97EbStRofDMJlfBcDi
+	Yun2WPNbU7luAk5787U6GngAseZrESqYVWVlN4z+UoZz1ixhJDG6kZ/t/9hLpKMIELYBc8F7meY
+	zrEyfW8Iy1NuGaliQdZiWO0T+HFwRc4i7/olptg8r5QmOCxptbMcxRuK9JNNBD/pEFdLgiwvZ3d
+	nH1MJ2KBzFQIHa8e2SAQXQTtqoYE16vLywTYk6AlI=
+X-Gm-Gg: AfdE7cno+gOT7mRWCkoFrjRLnB+jACLOxR1qPcRijUZb+BCvfM9n8dN8JdfRMyAOn2m
+	oiYsQAmFpbqSZQJkSQqORJsS2WicLdh6jMMFOZ3Nm8j6/D+2GUhPN9px3VKycfXkRE+cunGISDT
+	i8jDJ4ooaXNzdLn+9NxRebMgXrqcHRU/Q6t374tjyFpeTmg0+5jQzy0NZb
+X-Received: by 2002:a05:690e:43cb:b0:668:43ce:50e4 with SMTP id 956f58d0204a3-66843ce511emr36173d50.53.1784287577983;
+        Fri, 17 Jul 2026 04:26:17 -0700 (PDT)
+X-Received: by 2002:a05:690e:43cb:b0:668:43ce:50e4 with SMTP id
+ 956f58d0204a3-66843ce511emr36162d50.53.1784287577611; Fri, 17 Jul 2026
+ 04:26:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <alnjVo8v-3qHKfg8@monoceros>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20260713-drm_refcount_wiring-v2-0-d3bb61f4bd4d@redhat.com>
+ <20260713-drm_refcount_wiring-v2-5-d3bb61f4bd4d@redhat.com> <20260717-heavenly-peach-guan-82f0f1@houat>
+In-Reply-To: <20260717-heavenly-peach-guan-82f0f1@houat>
+From: Albert Esteve <aesteve@redhat.com>
+Date: Fri, 17 Jul 2026 13:26:06 +0200
+X-Gm-Features: AUfX_my0X2LQ6M_jKeRcxy0r6pG-sYFIFgqEmiZmXcdV57T8jjudIQuMMnSFyJg
+Message-ID: <CADSE00+7=2ph4kRQLc7_MFbp_SSt3eYz-bBxWcfCj6_oFPjwFA@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] drm: release panel reference after panel bridge creation
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Inki Dae <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
+	Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>, 
+	Linus Walleij <linusw@kernel.org>, Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Sandy Huang <hjc@rock-chips.com>, 
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	Andy Yan <andy.yan@rock-chips.com>, Yannick Fertre <yannick.fertre@foss.st.com>, 
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@kernel.org>, 
+	Samuel Holland <samuel@sholland.org>, Jyri Sarha <jyri.sarha@iki.fi>, 
+	Jingoo Han <jingoohan1@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Alison Wang <alison.wang@nxp.com>, Paul Kocialkowski <paulk@sys-base.io>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Thierry Reding <thierry.reding@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
+	linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 17, 2026 at 10:31:36AM +0200, Uwe Kleine-König (The Capable Hub) wrote:
-> On Thu, Jul 16, 2026 at 08:41:15PM +0300, Andy Shevchenko wrote:
-> > On Wed, Jul 15, 2026 at 06:55:21PM +0200, Uwe Kleine-König (The Capable Hub) wrote:
+On Fri, Jul 17, 2026 at 10:56=E2=80=AFAM Maxime Ripard <mripard@kernel.org>=
+ wrote:
+>
+> On Mon, Jul 13, 2026 at 01:53:08PM +0200, Albert Esteve wrote:
+> > Update a second batch of drivers calling of_drm_find_panel() or
+> > drm_of_find_panel_or_bridge() to release the lookup reference after
+> > wrapping the panel in a bridge.
+>
+> I would have expected this to be squashed of patch 3, any reason it's in
+> a separate patch?
 
-...
+My intention was to make the series easier to review. Patch 3
+contained the initial set of callers mostly found via the Coccinelle
+script (simpler to address generally), and patch 5 includes the rest.
+Including all the changes plus the core API update in a single commit
+felt like too much.
 
-> > >  static const struct acpi_device_id dwapb_acpi_match[] = {
-> > > -	{ .id = "HISI0181", .driver_data = GPIO_REG_OFFSET_V1 },
-> > >  	{ .id = "APMC0D07", .driver_data = GPIO_REG_OFFSET_V1 },
-> > >  	{ .id = "APMC0D81", .driver_data = GPIO_REG_OFFSET_V2 },
-> > >  	{ .id = "FUJI200A", .driver_data = GPIO_REG_OFFSET_V1 },
-> > > +	{ .id = "HISI0181", .driver_data = GPIO_REG_OFFSET_V1 },
-> > >  	{ .id = "LECA0001", .driver_data = GPIO_REG_OFFSET_V1 },
-> > >  	{ }
-> > 
-> > Why this churn? It simply should be folded to the previous patch.
-> 
-> I guess with "previous patch" you mean "[PATCH v2 12/21] gpio: Use named
-> initializers for acpi_device_id array"?
+That said, I am happy to squash this for the next version (fewer
+patches to track).
 
-> I didn't fold the reordering
-> into that, because reordering isn't about using named initializers and
-> mixing in other changes makes reviewing harder.
 
-I have, obviously, the opposite opinion. This makes an additional unneeded
-churn while reordering does naturally fit the other patch.
 
-> And given that there is
-> a "churn" patch anyhow (which is "needed" because not all arrays that
-> use unusual styling have an earlier change) fixing the ordering in the
-> "unify style" patch IMHO fits better.
-> 
-> But note that for removing trailing , and spacing in the lines that I
-> touch in patch #12, I agree to do that there. So we're talking about
-> grey and subjective areas. But note that reordering breaks the promise
-> of patch #12 "This patch doesn't modify the compiled arrays", which was
-> the relevant reason for my choice when considering where to implement
-> your sort request.
-> 
-> Also note that folding cleanups into patches that touch the same code
-> area also makes it harder to keep commit logs up-to-date, which you
-> already noticed I didn't master even with only doing one thing per
-> patch.
 
-Sometimes being too pedantic is not a good thing. You can tell it towards my
-review as well, but my point here is to bend a rule very slightly to avoid
-unneeded churn. Having stuck with "one patch — one logical change" makes a lot
-of noise in such a conversion.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+>
+> > Also handle the cases where a panel is found but cannot be used,
+> > dropping the reference immediately in those paths.
 
