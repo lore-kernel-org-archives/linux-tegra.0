@@ -1,155 +1,84 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB41A2FB97B
-	for <linux-tegra@vger.kernel.org>; Fri, 17 Jul 2026 08:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519872BE053;
+	Fri, 17 Jul 2026 08:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784277102; cv=none; b=LTesxNx5xv54ZOZbACGIo9nUGqqMGFGnb4Hg+m5Q8QYFEBFA1ZnOqP77Rj1u4EoSR+xjN/SWxsoT96EgixZERgk1SxYV8y0cqOAjCiI3yIFF6tlNdHJuDUzJ/SGa4/1yNu+yaSh8g1gNBcpqPF3+hOUwrjKD5oPq0fefO4uh0kU=
+	t=1784278191; cv=none; b=qCH4B4w6EdQb+KxfD7/CjV+UYKMs0usAnFTSxaxS3WIHu6thrarjVzGW/HgEzZazk8PO6xJhwV/+bxSNrbOm2Xd8XZkGHumt2NxT2hBHEtgSv29BEknlVpV55GttszYXWs1l+NlLHkolN8PqI+nZlNsebIxrx2BJgrrF+6rmfNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784277102; c=relaxed/simple;
-	bh=xyp0T3rwdCJqiuAX0mvjuhhHaej8oPMAi/Y3gOHrHmg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RZSs5F239ZEEyc28+zum3eGKKhI43GRqv5G/KI6xA6KuIIJ3szEG0q9j/reMMShFv1grFIIvj0GvIRhscewYB1JK3z/PLgEff6XHHYqk8GJKBE78frv49gPqYpWAZVXvtLYPhDsUGJOL5rCrbzDt2GGeJSYXPzZ/fM+p2OGMt7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=X6XaRz8r; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1784278191; c=relaxed/simple;
+	bh=M1qHWhMJ2vTUy5BaEKWWqgRYUs/aNH/eQfrqWMcPPLY=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=eH/L8fBv2DLKWO80w/y2Y006PiOyCg/qeObixFOGqUYS8OPH2xmX1RX4DSZMlCKSpVnea53tf7iRL72w77ZVKxXie/G8UfGzswgehnDr87VKJRw71LQKtAr13Ljo0nxI+Ul49YxSTWjukzp4ynZY+wsyjZ+b2QyRlrSomVXoNaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DgFeC5GL; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="X6XaRz8r"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-49544a80b9dso8377615e9.1
-        for <linux-tegra@vger.kernel.org>; Fri, 17 Jul 2026 01:31:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1784277098; x=1784881898; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=XH0I9nwpA0cGR0wCpMfCu0ayEp5O7V+QmAi1eEPB3xg=;
-        b=X6XaRz8rE5osAX/kHUkZi1An2uFoIMVqW+ZpVVe1cYwolSYmYjVRRI5wzGQdpZnx7N
-         j280sIUYrwWakU0Hr0qcLgGundHh8Kn8nkDKiq5ttVaykNqDzOSKnFiDViPn0r/3o8Qu
-         Ho8iF8hamslRtnM7VLmbfTv7pbk219Hk9lKEeg5MkgkL49HPvoJirlfyvgblKeAYkPjM
-         NBM6HdJFGhherrK7pgCtEWRTV/WEI62/MYmVezjmBvIoUZ3Xpwm5citZ5C4weQE/YTnj
-         uvBRU72vujO6ST7PjF5/XaaRJNPj0fejRXWNm6g5fHOOlTK5C7pBF3AGdQp3OG+PekaS
-         ijTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784277098; x=1784881898;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=XH0I9nwpA0cGR0wCpMfCu0ayEp5O7V+QmAi1eEPB3xg=;
-        b=TVee8MqU/5i71aMDMXieqRmdXnoQJI5WFxUiwTiMnXgcbFN4JLqwdN4UNBmxzWx8jS
-         hdvbb1geWynCIUYgZpqbhcxopuOed4Fd0E3eAIEtmaHlt4lS/9a4j1ALql/EbPDOteEH
-         szVBWtsohEyOzSo/AEIvjRZdD+S14LjblDO1hmIG7W4I5i+8aO2kG3v0azrXvq65BoL5
-         bhrI+8hsMUvIJgKzTnexNM19Pb2P7gPNvNSAHOnD+QhdRqGmq5UcHx0kR4a6w9f1pqDI
-         ohATXQpc0mN6k5ZDQpRTaVSNUaUIfAKDcrB/26N3LzzGj/JANEcVvK56sa1K+mxuH+XE
-         KrPQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rr5WrieLU3E6Wj7htEtLOqpVYdAsE2McCrQgeJ0UoUEAf5dMw5MWrUvS6rWKu6X2yrfRp4+VjA93zZqog==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH3dqd9y5HSxJqetiwp/GvXFCi95nUpnF3kQZtfdWIuH7J1zgf
-	ZczDSYksudKqGrbI7iOCh39v0gk5f8YLn2ANu0gnIfuzopL2g1waP+SDiQ8//12Zlks=
-X-Gm-Gg: AfdE7cnXelUxnjnJHy+XXk9EpZuCXr0ue1p/zk5D4k0nC/ysAYVzKNpTJ0WyR4q+xi5
-	h7nXxVtDOWPkq+j3pftq04Gvsd6i8HDFbyiGLE+W3WmLIvQGwLVuqcGGcYrawvrum9OVJv+dvZk
-	CzBEyDHcUs8M+/44uu4aukhJImkRWbD5hkMcYWNpIya+l22DWUM+H0r+CBPLyQN7WY7+nrVOXfA
-	4vzigPLhZCdWrFAHDd8IfBAlxh1b7iQurUwyDmvkVeoTF11O/yOd01hJLPDr5fOa9QuWlEFDvHp
-	OxsKoP9AItTmNbjTl+wUpMrLR4ZJLNyGjRtLDVZ/VXlRpp9pyD0gWbBImDXAMHGFF86K1orfFD+
-	gzZITsJ7pFYWn1iFGqTtmiLdDgbZxMvXAyHM59xzNOy/BwMFdxPsx/vFM3ssRh1bEOO/GhoRaqH
-	Lsm98AZSieUHPbEvb8FQxxw10pJqiJZhgneEJXQrkK7qRWVngsDgOv/vG6x4h1yalPmhACccOkU
-	1Cc
-X-Received: by 2002:a05:600c:4ecb:b0:495:4c73:3d59 with SMTP id 5b1f17b1804b1-4954c733e07mr3843215e9.23.1784277098094;
-        Fri, 17 Jul 2026 01:31:38 -0700 (PDT)
-Received: from localhost (p200300f65f47db047d2d8b161e35ab77.dip0.t-ipconnect.de. [2003:f6:5f47:db04:7d2d:8b16:1e35:ab77])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4954a2eddb8sm60904455e9.14.2026.07.17.01.31.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jul 2026 01:31:37 -0700 (PDT)
-Date: Fri, 17 Jul 2026 10:31:36 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Hoan Tran <hoan@os.amperecomputing.com>, 
-	Andy Shevchenko <andy@kernel.org>, Yinbo Zhu <zhuyinbo@loongson.cn>, 
-	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>, Mika Westerberg <westeri@kernel.org>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 16/21] gpio: Unify style of acpi_device_id arrays
-Message-ID: <alnjVo8v-3qHKfg8@monoceros>
-References: <cover.1784133987.git.u.kleine-koenig@baylibre.com>
- <bf617dc2c662e80833406bd3a3f23cecdde071e4.1784133987.git.u.kleine-koenig@baylibre.com>
- <alkXuxYdLKn14rKZ@ashevche-desk.local>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DgFeC5GL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 114FB1F000E9;
+	Fri, 17 Jul 2026 08:49:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784278189;
+	bh=cYuZ+CRFk03hiWJ0HC3KigHuxua0YjUKs+2Dja/OrBg=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc;
+	b=DgFeC5GLqSzOP+GCjhyeXf5hR/vY/98UPz4EyHLu+56RxHNeDjfoHFTij4I7lYsu+
+	 a6JlhCp2Q5K0vqIDiJ87VcMZqSobvY1akK3ZofSCKuk8Pi680uGfRIO9r2GtHepbn4
+	 KlTySY//ivAWf8NMV0pVuEWNG4M1GOTk3L+WEo9JaJ3k26eDKyUY3vl2uTk0L0PnIR
+	 CZvJjJXDCJjqHRtvo5pJPug5oG+hgcNp2R7Oww0gcS5n0etHt2gvNuAxHvrbBw1GOv
+	 p7FjL7idnh/4PoMwLgvJ+TOJ/+5fblnzGrSw2UXOgaM1hS2L5Rs5x2aaU8ODu5yMbU
+	 cKwvVjEbSxgpA==
+Message-ID: <505844fbd2c5c8ab07153348d20b708c@kernel.org>
+Date: Fri, 17 Jul 2026 08:49:45 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Albert Esteve" <aesteve@redhat.com>
+Subject: Re: [PATCH v2 3/5] drm/panel: of_drm_find_panel() return a counted
+ reference
+In-Reply-To: <20260713-drm_refcount_wiring-v2-3-d3bb61f4bd4d@redhat.com>
+References: <20260713-drm_refcount_wiring-v2-3-d3bb61f4bd4d@redhat.com>
+Cc: dri-devel@lists.freedesktop.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, "Alain
+ Volmat" <alain.volmat@foss.st.com>, "Alexandre Torgue" <alexandre.torgue@foss.st.com>, "Alim
+ Akhtar" <alim.akhtar@samsung.com>, "Alison Wang" <alison.wang@nxp.com>, "Andrzej
+ Hajda" <andrzej.hajda@intel.com>, "Andy Yan" <andy.yan@rock-chips.com>, "Biju
+ Das" <biju.das.jz@bp.renesas.com>, "Chen-Yu Tsai" <wens@kernel.org>, "David
+ Airlie" <airlied@gmail.com>, "Fabio Estevam" <festevam@gmail.com>, "Frank
+ Li" <Frank.Li@nxp.com>, "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ =?utf-8?b?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>, "Inki Dae" <inki.dae@samsung.com>, "Jagan
+ Teki" <jagan@amarulasolutions.com>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Jessica
+ Zhang" <jesszhan0024@gmail.com>, "Jingoo Han" <jingoohan1@gmail.com>, "Jonas
+ Karlman" <jonas@kwiboo.se>, "Jonathan Hunter" <jonathanh@nvidia.com>, "Jyri
+ Sarha" <jyri.sarha@iki.fi>, "Kieran Bingham" <kieran.bingham+renesas@ideasonboard.com>, "Krzysztof
+ Kozlowski" <krzk@kernel.org>, "Kyungmin Park" <kyungmin.park@samsung.com>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Laurent Pinchart" <laurent.pinchart+renesas@ideasonboard.com>, "Laurentiu
+ Palcu" <laurentiu.palcu@oss.nxp.com>, "Linus Walleij" <linusw@kernel.org>, "Luca
+ Ceresoli" <luca.ceresoli@bootlin.com>, "Lucas Stach" <l.stach@pengutronix.de>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Magnus Damm" <magnus.damm@gmail.com>, "Marek
+ Szyprowski" <m.szyprowski@samsung.com>, "Marek Vasut" <marex@denx.de>, "Maxime
+ Coquelin" <mcoquelin.stm32@gmail.com>, "Maxime Ripard" <mripard@kernel.org>, "Mikko
+ Perttunen" <mperttunen@nvidia.com>, "Neil Armstrong" <neil.armstrong@linaro.org>, "Paul
+ Cercueil" <paul@crapouillou.net>, "Paul Kocialkowski" <paulk@sys-base.io>, "Pengutronix
+ Kernel Team" <kernel@pengutronix.de>, "Peter Griffin" <peter.griffin@linaro.org>, "Philippe
+ Cornu" <philippe.cornu@foss.st.com>, "Raphael Gallais-Pou" <raphael.gallais-pou@foss.st.com>, "Raphael
+ Gallais-Pou" <rgallaispou@gmail.com>, "Robert Foss" <rfoss@kernel.org>, "Samuel
+ Holland" <samuel@sholland.org>, "Sandy Huang" <hjc@rock-chips.com>, "Sascha
+ Hauer" <s.hauer@pengutronix.de>, "Seung-Woo Kim" <sw0312.kim@samsung.com>, "Simona
+ Vetter" <simona@ffwll.ch>, "Stefan Agner" <stefan@agner.ch>, "Thierry
+ Reding" <thierry.reding@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Tomi
+ Valkeinen" <tomi.valkeinen@ideasonboard.com>, "Yannick Fertre" <yannick.fertre@foss.st.com>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wxcdj5w2heixxzid"
-Content-Disposition: inline
-In-Reply-To: <alkXuxYdLKn14rKZ@ashevche-desk.local>
 
+On Mon, 13 Jul 2026 13:53:06 +0200, Albert Esteve wrote:
+> Callers of of_drm_find_panel() receive a pointer with no reference
+> held, creating a window where the panel device can be unregistered
+> and freed between the lookup and first use (e.g., drm_panel_prepare()).
+> 
+> Fix the lookup function by acquiring a reference with drm_panel_get()
+> 
+> [ ... ]
 
---wxcdj5w2heixxzid
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 16/21] gpio: Unify style of acpi_device_id arrays
-MIME-Version: 1.0
+Acked-by: Maxime Ripard <mripard@kernel.org>
 
-Hello Andy,
-
-On Thu, Jul 16, 2026 at 08:41:15PM +0300, Andy Shevchenko wrote:
-> On Wed, Jul 15, 2026 at 06:55:21PM +0200, Uwe Kleine-K=F6nig (The Capable=
- Hub) wrote:
-> > Update the various acpi_device_id arrays to conform to the most used and
-> > generally recommended coding style. That is:
->=20
-> ...
->=20
-> >  static const struct acpi_device_id dwapb_acpi_match[] =3D {
-> > -	{ .id =3D "HISI0181", .driver_data =3D GPIO_REG_OFFSET_V1 },
-> >  	{ .id =3D "APMC0D07", .driver_data =3D GPIO_REG_OFFSET_V1 },
-> >  	{ .id =3D "APMC0D81", .driver_data =3D GPIO_REG_OFFSET_V2 },
-> >  	{ .id =3D "FUJI200A", .driver_data =3D GPIO_REG_OFFSET_V1 },
-> > +	{ .id =3D "HISI0181", .driver_data =3D GPIO_REG_OFFSET_V1 },
-> >  	{ .id =3D "LECA0001", .driver_data =3D GPIO_REG_OFFSET_V1 },
-> >  	{ }
->=20
-> Why this churn? It simply should be folded to the previous patch.
-
-I guess with "previous patch" you mean "[PATCH v2 12/21] gpio: Use named
-initializers for acpi_device_id array"? I didn't fold the reordering
-into that, because reordering isn't about using named initializers and
-mixing in other changes makes reviewing harder. And given that there is
-a "churn" patch anyhow (which is "needed" because not all arrays that
-use unusual styling have an earlier change) fixing the ordering in the
-"unify style" patch IMHO fits better.
-
-But note that for removing trailing , and spacing in the lines that I
-touch in patch #12, I agree to do that there. So we're talking about
-grey and subjective areas. But note that reordering breaks the promise
-of patch #12 "This patch doesn't modify the compiled arrays", which was
-the relevant reason for my choice when considering where to implement
-your sort request.
-
-Also note that folding cleanups into patches that touch the same code
-area also makes it harder to keep commit logs up-to-date, which you
-already noticed I didn't master even with only doing one thing per
-patch.
-
-Best regards
-Uwe
-
---wxcdj5w2heixxzid
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmpZ6GYACgkQj4D7WH0S
-/k62HAf+PYtdAseJZMD0aazehn/agW5wHVzfFHUdFO80Oytm2cH7ac1DtHBviDDv
-C2Cs41Rjw7P8WB+uiuKDVdyAHtJKMORkpUQ+mTPyXOdX6Fwovbqu5SKMAoSyX8a8
-rr98N4fuYpWE3/UvvWTpOjaG5EupzCSBeYLeo6+pAoTHfaD747B1zyfRty/Oc8AB
-yqyF1E4h5HpNchnyKHvG2e20xidI2jxwqfjQ1++j6r5DQ9d3wyqFHHdsI0SUKNyx
-v1A+i0NlAEQKtdNvgItJxQMnFsvlCZF1kvTyWB9xvrIlGjqM4FICZTF1dIa4cErw
-44KNp8+uYGzylfbQlaj6iydcrcnBbw==
-=WR0a
------END PGP SIGNATURE-----
-
---wxcdj5w2heixxzid--
+Thanks!
+Maxime
