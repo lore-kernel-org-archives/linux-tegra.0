@@ -1,239 +1,233 @@
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010048.outbound.protection.outlook.com [52.101.46.48])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB143EFFA5;
-	Fri, 17 Jul 2026 13:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784294709; cv=fail; b=m0aJgVSUG2I9g2mwNvdyHA4QPqPbWGJMJefYrC8ZpI/UKeW8KCvCq2YpM8A2PGvYKQEz5PNjOV3wbS8Da/vdidc/IHdSUT5jpZLz6ZXCzHX4fQZxt2RexvLKWRB1BmKbnrfFHzhpQKLlNqdTodanoJgNjUEClPFmeuJEhTpY4Ic=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784294709; c=relaxed/simple;
-	bh=rQta/WuNr2HsecwxVB8t8419AptNqs+oVL5ORlgIPuw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UwobY1V7oxB6tOKcBJaJqtT8kMIX8n4rmO2mmpjvP8Z2L0fEwsP8UlctXk2Ktev4jXsWxcTlbiGOUihoZq/gHS1avy2oKk2Pw55zven7Zlu8KWWeGyDcg7CwRE5k6KTPY3toxYfisYFCNjMpYGisOhxjChT5pVGuUrOu1mwUXmM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JxyoZ7Bm; arc=fail smtp.client-ip=52.101.46.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4DD26B764
+	for <linux-tegra@vger.kernel.org>; Fri, 17 Jul 2026 14:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784296971; cv=none; b=ATb/QOxJpxGMIcZs9WnE65SplPUJ2ivqLJDdZ9KI/GZY/Rnuh1DWP60HQJ5Zrb+4FvSMqGLJeU8nPYGTl+F06nxJ4QBOG8grtUeMzr25LionUgcocUyvzc9szO6LuHJ5pPeMCDBKddpYSfIkxhEnZyfwOro4kOw2GCHjMm//Mm8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784296971; c=relaxed/simple;
+	bh=CBR1Ph2kUJjjkYaGrdkvqaa4iWlYMfiXDLEZXyTQZ1o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IBcSC+aOFlLaRR0YpeFVHZWV2SL2Gre+Ga98TbnFidxgt5AxeN0AdTmISp/DmcZerMbcvtZtbFbepoWAYZEqyZFuihMV6nWqC16u3ScOhWDszyl2eB+cVnNxGRdDtWVad2ovKG2EcbWf7boTHM0RksGNLYI4SBOUI0lSUTG7wgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bGM79G5L; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JxyoZ7Bm"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GDyLawgErIj2blDZvZeJT1CvLZfu2frIN0lwnmsFs/RzcOp9DMkJXLykZClgRy9UNntShioiaP+siQmQOz19OKJRL8o4vWfRif1EluhtIlpHwpWzOHO8n5cVRsTqBJ3mZgzX2p47Rqh1oDAsn1aGhBMtwAierhfXS2WpQRhbOQxRDCbvKr4RAxDDBooA3fyfpXGgZvuc2GAxXr7a7dT0+FnCYWWib9jZ8BM0js4J14mLhbx/4ToECIdTk52WuyAk2vXLvkAG8aHBzx+R5/l+WGEmo7R5f6qgrBZXO8tQyVUf/rBkGcTmnkBoJhoGmVN1Sbgen8UexWtaPTCjalpjLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4Xhyd05HvwW3cJy8i+UEtaiievCWIAy2T6ayU661Q6o=;
- b=bc4nP/fW5pg7GA5+46qBfktpstKZevf9+3Lxq/jMGmfUvIy8u9+lfy54b+wPcWx4SBuxVWoY+OS/kNmFXlaMnrIefxzkLb0il87TS5sfh5txUboMqMR4toMGT7dIXqv6i+63L3yM12ZPXJJb4wCC8KTPWGqPP/u+dZE0NI8No4xWJ4J44qrmSg9XbF/6X/9A0EWxL7JlvgPLsB5HkPY3Zq/yLrbeQLnFWhp+mTTiTJm7lbsnldLm4kBPJTh6gTmeTFlTklD1q/cksHp5fhfeN0MXpJQkpH8vXL07wGy351mAGkEgktT2ZV4Vnl11OmVUbNcW7TcBT6/FYVQJANfXJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4Xhyd05HvwW3cJy8i+UEtaiievCWIAy2T6ayU661Q6o=;
- b=JxyoZ7Bmyi8j/UzP9aMsJUQ1iIXFBvxUs6kpPkWzs/P5a0uS0AVwSCwotYUrhKHmxxbWC25eSMpRvxdAhUINECshjL1OsCevYTArLQNJJYm1ZY5j3CYYyYZ0qDOi/VaoAu/0XDLtepVigHsfVMlmF/Z0uSoQcdfmGQ2aJCf+bgaReHxFxz/8LCeiBr3U3qSKqFai8Q5RKSNrT69VfCFPRZ9SQOg4SmB+lYM4jyK8sUHaOc7RDTdDW95gE/JtqWgzs/S86SvjgwBA/ypLnPtwKSZIwhjb6gV0DEFjjq2/k3Ebbc8RGRbPx6r0KrLCnPoSSZ6bA8bfxzBCznEVbKx+Mg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ1PR12MB6051.namprd12.prod.outlook.com (2603:10b6:a03:48a::18)
- by CH3PR12MB8509.namprd12.prod.outlook.com (2603:10b6:610:157::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.13; Fri, 17 Jul
- 2026 13:25:01 +0000
-Received: from SJ1PR12MB6051.namprd12.prod.outlook.com
- ([fe80::96e1:b300:7b78:d3a9]) by SJ1PR12MB6051.namprd12.prod.outlook.com
- ([fe80::96e1:b300:7b78:d3a9%4]) with mapi id 15.21.0223.012; Fri, 17 Jul 2026
- 13:25:01 +0000
-Message-ID: <fdcb59e2-fbd0-4dfa-8a8c-12268e8646b9@nvidia.com>
-Date: Fri, 17 Jul 2026 14:24:56 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] pinctrl: tegra264: fix DAP2 DIN/DOUT pin
- assignment
-To: Prathamesh Shete <pshete@nvidia.com>, linusw@kernel.org,
- thierry.reding@kernel.org
-Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, u.kleine-koenig@baylibre.com, dakr@kernel.org,
- bhelgaas@google.com
-References: <20260717113210.599463-1-pshete@nvidia.com>
- <20260717113210.599463-2-pshete@nvidia.com>
-Content-Language: en-US
-From: Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20260717113210.599463-2-pshete@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0130.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:b9::18) To SJ1PR12MB6051.namprd12.prod.outlook.com
- (2603:10b6:a03:48a::18)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bGM79G5L"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1784296967;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KXAKRwDTnzEg9ZBBk/oAwaIuZZpboPYGh9kDsncZq0U=;
+	b=bGM79G5LBKwXsDbBsaXtYvIJgmzFfl2w2Ge3kVs+zjJRIFH+WON61qoPE5lokq9ucBro89
+	ZCJ93In6dgzY34eIGYyXrZl44KZkqMq2/GF0QvsKraEI1ewpqjNc8xBOu6dheTTSJhajxZ
+	tZBIbJvr4NouzPpMka2zGlRkKikybAQ=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-439-Yb86uWQwMq65dWAFJOh-cw-1; Fri,
+ 17 Jul 2026 10:02:43 -0400
+X-MC-Unique: Yb86uWQwMq65dWAFJOh-cw-1
+X-Mimecast-MFC-AGG-ID: Yb86uWQwMq65dWAFJOh-cw_1784296960
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B2D201955EA8;
+	Fri, 17 Jul 2026 14:02:38 +0000 (UTC)
+Received: from [192.168.1.153] (headnet05.pony-001.prod.iad2.dc.redhat.com [10.2.32.117])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 342F318005B3;
+	Fri, 17 Jul 2026 14:02:18 +0000 (UTC)
+From: Albert Esteve <aesteve@redhat.com>
+Subject: [PATCH v3 0/4] drm/panel: refcounting panel lookups and references
+Date: Fri, 17 Jul 2026 16:02:03 +0200
+Message-Id: <20260717-drm_refcount_wiring-v3-0-023900c32e01@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PR12MB6051:EE_|CH3PR12MB8509:EE_
-X-MS-Office365-Filtering-Correlation-Id: 30113a7f-846a-45c1-7e52-08dee406ce15
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|23010399003|366016|1800799024|10070799003|18002099003|22082099003|10067099003|56012099006|11063799006|4143699003|6133799003;
-X-Microsoft-Antispam-Message-Info:
-	518K2u94o3T6Kxka4pNIxSDgaTm5ecpA7lclw0plegeU9W8ZuPpUk2i1vx4XKeWerg4L8PozSt31aJY3TbREldYRFiUWBaJCanRvHJw8qB2hWyb/d5HZMuG5KexEmB0Ss1BVUNFU4BjCsgD+JdvdfEZvIy0xZR/W1hmWm/97GHS3YMRWKJsUQdUjaM8vm5XaXaVnG3CT44lOeiWYuBY2Ie2Nn+purBU14FNJxm3J3FwnDg9a87n7jFwPqRObnm4yo0vNjmBmNichiIl+W9qdg/f/+LHrCDAH7uKX7O8kn5KGxjMDFgeo6PJMhiYmMxkH9TRv49saFxpuvRMfldcdt9EhbjCbp5R9lFFQS5AXf9OAYVBTB9FheIYF/hq2zjx/vAuM41VaKhv19z+kehyHwBpNBtubDJSiVT0VQ0fCTZVuTL4P3+fyXLMX9NEyNnOo4HFK0fkDmogt/ebvpdgxCdtPfsxgtIb5DqrIVxdhphH4LXyvrSO44ScbMfInKCAC92y+TvGASrEh10+MeN8gEk/hoyKoF/OALtD7cWhfqa2QEQbmsSpWsJu/uBnuN+MBHsc00DI2OPIbuvuJDh25GCnELerMFZoXgHs5jqNVzCctb3/lJ97C9zN94JB1aOQdMFW3Mg8322hPjNmCx+XfzA16oFEcfUH1pqu7J2oHO2I=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR12MB6051.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(23010399003)(366016)(1800799024)(10070799003)(18002099003)(22082099003)(10067099003)(56012099006)(11063799006)(4143699003)(6133799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NTJEVk02QXRpQXhKdEVyVlZNeEhtUXRKelQ3MTB5OWRkVjNQZzQ3OEcrNmdZ?=
- =?utf-8?B?Uk1ma0pRQVEwTnNsYzVKRE5MRGNYVjJzeXRtUWZsa3p2MjVwdHMwWHJSZDVC?=
- =?utf-8?B?ZlNqWXJJY2h6ZEhyU2NLWVlzQi8yQWQ5YndPZ1E3UXJ2dWxwR1BuaWlsZXRM?=
- =?utf-8?B?cHY4RHkreUhXVURDYUhoTC9YcmpYeWdFa2dFMklTSHZRejNNcUV3TmZ0bHNW?=
- =?utf-8?B?TUZkc0orSmdMU1FmOU13RGpBdmxraEVtb3JUK0ZCb2ZNU001RG9SYmdpOVBu?=
- =?utf-8?B?c2lhVmlHSyswcUZISTJlS2g1QXF4WXhNRm9RY3pISzFubWlmMG1GZjlIbHd4?=
- =?utf-8?B?ZjJYOEFMVndhY3NaZzVYMGdJV0hQNG1kTU1KVjFRMy83eGtEZkZIWmdnWWlo?=
- =?utf-8?B?UlZkeUs2Sk5Qc2lvZmdXOXlodUdBSGlvZDByQ0hyTFVFTy9EaEtDRmJvZ0or?=
- =?utf-8?B?Mzl1TDRPQ2o0UkQvSHd3T0U1YTFtZnNtd3VRZVRKOWNSc2NTVEhYcEo2ME4x?=
- =?utf-8?B?MzNaY2JaZkgyK3ZYVER2Q3VoaGNnQlo3YTluK2lIQStGeHJBS0tjaVJQa1RN?=
- =?utf-8?B?RlJhcmR2YmZUS2NRMFVCQ2JJZEFuVk5jUmNrdGwxZ1NsYjk1azlOR3VLSEtv?=
- =?utf-8?B?NXB4eXIydkpCR2hHOG1YMjBrYjFVVzRUeGE0UWZITjNaYTJpRjlEMVFwT2Rm?=
- =?utf-8?B?YVZSMzdheFFwampRTkR0clhBMjhTTFRVYlZPZ0d6a1p6WGZnY0NvSk5HSzlQ?=
- =?utf-8?B?aGRYcHpXN2hRd2YrZ05DalVaT1ZLT1VMYzZpQ3dMY1BYZjd2cDJJcDdJY3F3?=
- =?utf-8?B?UTY1cHVXbTd5SUVMYWIwVExXdlZCaXVlNXp0OTRTN3E4RGluK2dOc0NRUkRq?=
- =?utf-8?B?SG1YbzhxVmh3WlI0enMzSWhLU0ZRNmV0V0ZKRlhBNTFsWlRITms1ZGNPTndv?=
- =?utf-8?B?WkoySjBxMCtKS0hVYUF0TDdUS1BMSnFsTml0ZTY3M0F6NnJIWjJuWjEwRHhq?=
- =?utf-8?B?Mms0VWNlVmtYVm42aUhacHI4QWtpbjVCWUlmU2pSVkRNZmtZdzBKNkw3akxX?=
- =?utf-8?B?NUJYSlFaVkJhMHRYT3owd2RleGZHSEk4VUZ2SDM4WGZybitkUGFEMnc4Sk1t?=
- =?utf-8?B?TitYaTZvWjZJbHU3bGdheWR2T3hFQjk0TmwrQ1ZYcm9MdHNqdUVkdnpJVEJv?=
- =?utf-8?B?d1ZPSTMwdDlQd2RMTFZCbzI2KzBGWnI1azdIVW43L2k5YlhtL2RxblVoQ2N6?=
- =?utf-8?B?WTNiaGpSdDRlcitIRWRJME5STXBtUTdveFU4MTcyNnBiMzB2M3NQTkZLLzFI?=
- =?utf-8?B?cTA0TjdkVFVwQUk5U0h0RlQzZHVjek82ODl2NUlJay9ia005aEZ3bmpHY1lh?=
- =?utf-8?B?MzExK1JiRk9yQnRrRjVDaCtrdHlqL2k4QWZ3Wk1Oc1VMMEV1MUhGRWF1MHlr?=
- =?utf-8?B?OVZHRjQxcGZVbXNqb2FlKzFEQ01DbC8rZnU4a1VNNHNrc0JESHlMUFgxek5m?=
- =?utf-8?B?SjAzWmtDUllkWkhuZFpRTGNPblVLNmJ3NUxHd1ZzdXBGU3NtQTc3Wm4zcy9m?=
- =?utf-8?B?YVF6eHVULzNGVjZ0bk4zNmtZL2h3a09rS2V5TWdNMmdkY2NhMGU1aCtQOXA2?=
- =?utf-8?B?R0dCS0wwanEwSEZnQjlWdDNYN3lnQmpUUDFOejR5b3BzOVZLNGFTQ0RtbTZq?=
- =?utf-8?B?Qk9yQVVWV0FHNDFPODVzVERIWHY2VFVNQ3Jkc2hnVEpIOXJMazdZZlBQQ0Rt?=
- =?utf-8?B?dTJrT0VMZXdybWxLNTJKZ0U1YUlzbWdCekVRU1p5TzBDZHoxUm5TV1FxT2lk?=
- =?utf-8?B?Rmw2bTF6VnUzOXc0dmpsd2d6aHF4Wk9XN2VuOTg1amk3L0JFOGFDbytvYkM2?=
- =?utf-8?B?U2haZ0p0ckhoSDZtaWh3cU84Uk95NEVRRGYzdldaL01JSVBOYUd2YTJRTktV?=
- =?utf-8?B?eWV2cldRVnlrcFlQc2F0OEM1eWNkZGFEZ3ZqeCtycm1NVW05M3lFTnlMVVBZ?=
- =?utf-8?B?UDJWeFhpZmNRZGQyT1BDZmFWcjBHdnRhdytFU1pxMzQ5Wk4xUW5vRWc4OE8w?=
- =?utf-8?B?cENQbGNPSnhpL3Y1OFNNOGwzL1RyWHNsRWJaVW5tTHMrS0ZURk4ya081SnRR?=
- =?utf-8?B?OCsvU2RWaWVlZlV2MHJjazU2MHN4STZZb2tsQmNNQ1BjMHpxbnRjOXVlbUlh?=
- =?utf-8?B?eHpnaDR4RDMxMDdDaXFncy80NE5pY0RZbGhtVXpiYVg5QXVhRXRySy9BYWti?=
- =?utf-8?B?bHo1UUZOTGZtS0JJVzEzeEI5ZURyRjVrRTF4aGpaVEpWRmhONlFXQmV6UU4v?=
- =?utf-8?B?cnkvUmdkU2RnRUYwd2lpV3k5Q0lXZ09RYURGU1NBalk4VS81dGk3Ym83bkcx?=
- =?utf-8?Q?MfHrtNSkdR+CrwunX1KDGosavx2Pd+wPqzfMWpgAZIeMD?=
-X-MS-Exchange-AntiSpam-MessageData-1: LIhWT/8g6ILcPQ==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 30113a7f-846a-45c1-7e52-08dee406ce15
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR12MB6051.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2026 13:25:01.4309
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BcKd2q8a2I/Dd+sE4MhgHtCzgBHgKI99yTDktXWZG0Jymo1HH8w9n6b3QWF5V04L1sjwhIDqxhCLuuSHDGhH9Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8509
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3XOyw6CMBAF0F8hXVvTF2105X8YQ/oYoAuKabFqC
+ P9uwYUx0eWdzD0zM0oQPSR0rGYUIfvkx1AC31XI9jp0gL0rGTHCJKkpxy4OTYTWjrcwNXcffei
+ wgBpUreBAhEKleS0L/rGp50vJvU/TGJ/bkUzX6duTTP70MsUEW6upVoYbB+0pguv1tLfjgFYws
+ w+i/jyVWUEcN0bSVhgn3BeyLMsLlq5UcPwAAAA=
+X-Change-ID: 20260513-drm_refcount_wiring-4e5e757e9047
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <jesszhan0024@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, Inki Dae <inki.dae@samsung.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
+ Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>, 
+ Linus Walleij <linusw@kernel.org>, Marek Vasut <marex@denx.de>, 
+ Stefan Agner <stefan@agner.ch>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+ Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, 
+ Yannick Fertre <yannick.fertre@foss.st.com>, 
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+ Philippe Cornu <philippe.cornu@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Chen-Yu Tsai <wens@kernel.org>, Samuel Holland <samuel@sholland.org>, 
+ Jyri Sarha <jyri.sarha@iki.fi>, Jingoo Han <jingoohan1@gmail.com>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Alison Wang <alison.wang@nxp.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, 
+ Alain Volmat <alain.volmat@foss.st.com>, 
+ Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-rockchip@lists.infradead.org, 
+ linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
+ linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ Albert Esteve <aesteve@redhat.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1784296938; l=6089;
+ i=aesteve@redhat.com; s=20260303; h=from:subject:message-id;
+ bh=CBR1Ph2kUJjjkYaGrdkvqaa4iWlYMfiXDLEZXyTQZ1o=;
+ b=wkA63uP1ZKoAa4h64tde85ydj2YqROznD17VIE6GUQVqeRP94Romw2NP7XiRctsK48Czd8IKA
+ egJVcLgipY8AlirQeQbG5HkLYCJmhqolZb8CsYQG+KwOXgQPNcCRePK
+X-Developer-Key: i=aesteve@redhat.com; a=ed25519;
+ pk=YSFz6sOHd2L45+Fr8DIvHTi6lSIjhLZ5T+rkxspJt1s=
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
+The drm_panel subsystem provides kref-based reference counting [1]
+(drm_panel_get/put) but almost nothing in the tree actually uses it.
+This results in a systemic use-after-free pattern throughout the codebase.
 
-On 17/07/2026 12:32, Prathamesh Shete wrote:
-> The dap2_din and dap2_dout pin groups were given swapped ball suffixes:
-> DAP2_DIN was described as ball PV7 and DAP2_DOUT as ball PW0. On silicon
-> DAP2_DIN is on ball PW0 (mux register 0x6050, drive register 0x6054) and
-> DAP2_DOUT is on ball PV7 (mux register 0x6058, drive register 0x605c),
-> as reflected by the board pinmux.
-> 
-> Because the ball suffixes were swapped, the groups were also assigned the
-> wrong primary mux functions (dap2_din -> I2S2_SDATA_OUT and dap2_dout ->
-> I2S2_SDATA_IN), routing the I2S2 data-in and data-out signals to the wrong
-> pins and breaking DAP2 audio.
-> 
-> Rename the groups to dap2_din_pw0 and dap2_dout_pv7 and give each pad its
-> correct function (dap2_din_pw0 -> I2S2_SDATA_IN, dap2_dout_pv7 ->
-> I2S2_SDATA_OUT). The register offsets are already correct and are left
-> unchanged. This matches the board pinmux.
-> 
-> Fixes: c98506206912 ("pinctrl: tegra: Add Tegra264 pinmux driver")
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> ---
-> Changes in v2:
-> - Rename the pin groups to dap2_din_pw0 and dap2_dout_pv7 and assign the
->    correct mux function to each pad in a single driver patch.
-> ---
->   drivers/pinctrl/tegra/pinctrl-tegra264.c | 24 ++++++++++++------------
->   1 file changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra264.c b/drivers/pinctrl/tegra/pinctrl-tegra264.c
-> index be64fba34dce..f8afb0bdb68a 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra264.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra264.c
-> @@ -96,8 +96,8 @@ enum {
->   	TEGRA_PIN_UART4_RTS_N_PV4,
->   	TEGRA_PIN_UART4_CTS_N_PV5,
->   	TEGRA_PIN_DAP2_CLK_PV6,
-> -	TEGRA_PIN_DAP2_DIN_PV7,
-> -	TEGRA_PIN_DAP2_DOUT_PW0,
-> +	TEGRA_PIN_DAP2_DIN_PW0,
-> +	TEGRA_PIN_DAP2_DOUT_PV7,
->   	TEGRA_PIN_DAP2_FS_PW1,
->   	TEGRA_PIN_GEN1_I2C_SCL_PW2,
->   	TEGRA_PIN_GEN1_I2C_SDA_PW3,
-> @@ -329,8 +329,8 @@ static const struct pinctrl_pin_desc tegra264_main_pins[] = {
->   	PINCTRL_PIN(TEGRA_PIN_UART4_RTS_N_PV4, "UART4_RTS_N_PV4"),
->   	PINCTRL_PIN(TEGRA_PIN_UART4_CTS_N_PV5, "UART4_CTS_N_PV5"),
->   	PINCTRL_PIN(TEGRA_PIN_DAP2_CLK_PV6, "DAP2_CLK_PV6"),
-> -	PINCTRL_PIN(TEGRA_PIN_DAP2_DIN_PV7, "DAP2_DIN_PV7"),
-> -	PINCTRL_PIN(TEGRA_PIN_DAP2_DOUT_PW0, "DAP2_DOUT_PW0"),
-> +	PINCTRL_PIN(TEGRA_PIN_DAP2_DIN_PW0, "DAP2_DIN_PW0"),
-> +	PINCTRL_PIN(TEGRA_PIN_DAP2_DOUT_PV7, "DAP2_DOUT_PV7"),
->   	PINCTRL_PIN(TEGRA_PIN_DAP2_FS_PW1, "DAP2_FS_PW1"),
->   	PINCTRL_PIN(TEGRA_PIN_GEN1_I2C_SCL_PW2, "GEN1_I2C_SCL_PW2"),
->   	PINCTRL_PIN(TEGRA_PIN_GEN1_I2C_SDA_PW3, "GEN1_I2C_SDA_PW3"),
-> @@ -827,12 +827,12 @@ static const unsigned int dap2_clk_pv6_pins[] = {
->   	TEGRA_PIN_DAP2_CLK_PV6,
->   };
->   
-> -static const unsigned int dap2_din_pv7_pins[] = {
-> -	TEGRA_PIN_DAP2_DIN_PV7,
-> +static const unsigned int dap2_din_pw0_pins[] = {
-> +	TEGRA_PIN_DAP2_DIN_PW0,
->   };
->   
-> -static const unsigned int dap2_dout_pw0_pins[] = {
-> -	TEGRA_PIN_DAP2_DOUT_PW0,
-> +static const unsigned int dap2_dout_pv7_pins[] = {
-> +	TEGRA_PIN_DAP2_DOUT_PV7,
->   };
->   
->   static const unsigned int dap2_fs_pw1_pins[] = {
-> @@ -1834,8 +1834,8 @@ static const char * const tegra264_functions[] = {
->   #define drive_gen1_i2c_sda_pw3 DRV_PINGROUP_ENTRY_Y(0x601c, 12, 4, 20, 4, -1, -1, -1, -1, 0)
->   #define drive_dap2_fs_pw1 DRV_PINGROUP_ENTRY_Y(0x6044, 12, 4, 20, 4, -1, -1, -1, -1, 0)
->   #define drive_dap2_clk_pv6 DRV_PINGROUP_ENTRY_Y(0x604c, 12, 4, 20, 4, -1, -1, -1, -1, 0)
-> -#define drive_dap2_din_pv7 DRV_PINGROUP_ENTRY_Y(0x6054, 12, 4, 20, 4, -1, -1, -1, -1, 0)
-> -#define drive_dap2_dout_pw0 DRV_PINGROUP_ENTRY_Y(0x605c, 12, 4, 20, 4, -1, -1, -1, -1, 0)
-> +#define drive_dap2_din_pw0 DRV_PINGROUP_ENTRY_Y(0x6054, 12, 4, 20, 4, -1, -1, -1, -1, 0)
-> +#define drive_dap2_dout_pv7 DRV_PINGROUP_ENTRY_Y(0x605c, 12, 4, 20, 4, -1, -1, -1, -1, 0)
->   #define drive_pwm10_pv1 DRV_PINGROUP_ENTRY_Y(0x6064, 12, 4, 20, 4, -1, -1, -1, -1, 0)
->   #define drive_soc_gpio170_pu0 DRV_PINGROUP_ENTRY_Y(0x606c, 12, 4, 20, 4, -1, -1, -1, -1, 0)
->   #define drive_soc_gpio171_pu1 DRV_PINGROUP_ENTRY_Y(0x6074, 12, 4, 20, 4, -1, -1, -1, -1, 0)
-> @@ -2051,8 +2051,8 @@ static const struct tegra_pingroup tegra264_main_groups[] = {
->   	PINGROUP(gen1_i2c_sda_pw3, I2C1_DAT, RSVD1, RSVD2, RSVD3, 0x6018, 0, Y, 5, 7, 6, 8, -1, 10, 11),
->   	PINGROUP(dap2_fs_pw1, I2S2_LRCK, RSVD1, RSVD2, RSVD3, 0x6040, 0, Y, 5, 7, 6, 8, -1, 10, 11),
->   	PINGROUP(dap2_clk_pv6, I2S2_SCLK, RSVD1, RSVD2, RSVD3, 0x6048, 0, Y, 5, 7, 6, 8, -1, 10, 11),
-> -	PINGROUP(dap2_din_pv7, I2S2_SDATA_OUT, RSVD1, RSVD2, RSVD3, 0x6050, 0, Y, 5, 7, 6, 8, -1, 10, 11),
-> -	PINGROUP(dap2_dout_pw0, I2S2_SDATA_IN, RSVD1, RSVD2, RSVD3, 0x6058, 0, Y, 5, 7, 6, 8, -1, 10, 11),
-> +	PINGROUP(dap2_din_pw0, I2S2_SDATA_IN, RSVD1, RSVD2, RSVD3, 0x6050, 0, Y, 5, 7, 6, 8, -1, 10, 11),
-> +	PINGROUP(dap2_dout_pv7, I2S2_SDATA_OUT, RSVD1, RSVD2, RSVD3, 0x6058, 0, Y, 5, 7, 6, 8, -1, 10, 11),
->   	PINGROUP(pwm10_pv1, GP_PWM10, SDMMC1_CD, I2S7_LRCK, RSVD3, 0x6060, 0, Y, 5, 7, 6, 8, -1, 10, 11),
->   	PINGROUP(soc_gpio170_pu0, RSVD0, I2S7_SDATA_IN, CCLA_LA_TRIGGER_MUX, RSVD3, 0x6068, 0, Y, 5, 7, 6, 8, -1, 10, 11),
->   	PINGROUP(soc_gpio171_pu1, RSVD0, SPI4_SCK, RSVD2, RSVD3, 0x6070, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+This series aims to close all those issues.
 
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Patches 1-2: fix the infrastructure. drm_panel_add/remove now keep
+a counted reference for the list entry. drm_panel_bridge_add_typed()
+now holds a counted reference for the lifetime of the panel_bridge.
 
-Thanks!
-Jon
+Patch 3: change the semantics of of_drm_find_panel(). It now acquires
+a reference before returning, under panel_lock. All in-tree callers
+of of_drm_find_panel() and drm_of_find_panel_or_bridge() are updated.
+Two patterns are common in these fixes:
 
+- Bridge-wrapping: the panel is passed to devm_drm_panel_bridge_add()
+  or equivalent, which acquires its own reference. The caller (including
+  devm_drm_of_get_bridge() and drmm_of_get_bridge()) releases its lookup
+  reference immediately after.
+- Store-and-use: the panel pointer is kept in a driver struct and
+  used directly for the device lifetime. The reference is released in the
+  remove/unbind path, or via devm_add_action_or_reset() where no explicit
+  teardown function exists.
+
+Patch 4: extend the same fix to find_panel_by_fwnode(), a static helper
+used internally by drm_panel_add_follower(). Since it has no external
+callers, the fix is self-contained: drm_panel_remove_follower() is
+updated to call drm_panel_put() to balance the reference.
+
+In order to catch all places in the tree that required releasing the
+reference, the search was assisted by an AI model. Specifically, a
+Coccinelle script was designed by the agent to address the trivial changes
+(not included in the series). Although a few required manual fixes, with goto
+labels or bracket additions. Additionally, the model helped to discern implicit
+teardown paths that were addressed with devm_add_action_or_reset() calls.
+Thus, these commits have the Assisted-by label following the project guidelines.
+
+No functional change is intended for any driver. The reference
+counting only affects object lifetime; panel operations are unaffected.
+
+[1] https://lore.kernel.org/all/20250331-b4-panel-refcounting-v4-0-dad50c60c6c9@redhat.com/
+
+Signed-off-by: Albert Esteve <aesteve@redhat.com>
+---
+Changes in v3:
+- Squashed patches 3 and 5
+- Fix probe failure paths that leaked reference
+- Fix UAF and other smaller issues found by Sashiko
+- Add comment in tegra-dsi explaining why panel is always
+  NULL in that path and so no early drm_panel_put() is required
+- Link to v2: https://lore.kernel.org/r/20260713-drm_refcount_wiring-v2-0-d3bb61f4bd4d@redhat.com
+
+Changes in v2:
+- Squash of_drm_find_panel() API change with its caller fixes
+- Split find_panel_by_fwnode() into its own commit
+- Update kernel-doc for drm_of_find_panel_or_bridge()
+- Link to v1: https://lore.kernel.org/r/20260626-drm_refcount_wiring-v1-0-cca1a7b3bdef@redhat.com
+
+---
+Albert Esteve (4):
+      drm/panel: have drm_panel_add/remove manage a list reference
+      drm/bridge/panel: hold a reference to the wrapped panel
+      drm/panel: of_drm_find_panel() return a counted reference
+      drm/panel: find_panel_by_fwnode() return a counted reference
+
+ drivers/gpu/drm/bridge/analogix/analogix-anx6345.c | 12 +++++++++++
+ drivers/gpu/drm/bridge/fsl-ldb.c                   |  1 +
+ drivers/gpu/drm/bridge/lontium-lt9211.c            |  1 +
+ drivers/gpu/drm/bridge/lvds-codec.c                |  1 +
+ drivers/gpu/drm/bridge/panel.c                     | 20 ++++++++++++++----
+ drivers/gpu/drm/bridge/samsung-dsim.c              |  1 +
+ drivers/gpu/drm/bridge/ssd2825.c                   |  1 +
+ drivers/gpu/drm/bridge/tc358767.c                  |  2 ++
+ drivers/gpu/drm/bridge/tc358768.c                  |  1 +
+ drivers/gpu/drm/bridge/waveshare-dsi.c             |  1 +
+ drivers/gpu/drm/drm_of.c                           |  3 ++-
+ drivers/gpu/drm/drm_panel.c                        | 24 +++++++++++++++++-----
+ drivers/gpu/drm/exynos/exynos_dp.c                 | 19 ++++++++++++++++-
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c            |  3 +++
+ drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c          | 18 ++++++++++++++++
+ drivers/gpu/drm/imx/dcss/dcss-kms.c                |  3 +++
+ drivers/gpu/drm/ingenic/ingenic-drm-drv.c          |  4 +++-
+ drivers/gpu/drm/logicvc/logicvc_interface.c        | 12 +++++++++++
+ drivers/gpu/drm/mcde/mcde_drv.c                    |  1 +
+ drivers/gpu/drm/mcde/mcde_dsi.c                    |  1 +
+ drivers/gpu/drm/mxsfb/mxsfb_drv.c                  |  1 +
+ drivers/gpu/drm/omapdrm/dss/output.c               |  1 +
+ drivers/gpu/drm/pl111/pl111_drv.c                  |  1 +
+ drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c  |  1 +
+ drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c        |  1 +
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_encoder.c   |  1 +
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 11 ++++++++++
+ drivers/gpu/drm/rockchip/rockchip_lvds.c           |  4 ++++
+ drivers/gpu/drm/rockchip/rockchip_rgb.c            |  3 +++
+ drivers/gpu/drm/sti/sti_dvo.c                      |  3 +++
+ drivers/gpu/drm/stm/ltdc.c                         |  1 +
+ drivers/gpu/drm/stm/lvds.c                         | 12 ++++++++---
+ drivers/gpu/drm/sun4i/sun4i_lvds.c                 | 13 ++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_rgb.c                  | 13 ++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  2 ++
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c             |  6 +++++-
+ drivers/gpu/drm/tegra/dsi.c                        |  5 +++++
+ drivers/gpu/drm/tegra/output.c                     | 24 +++++++++++++++++++---
+ drivers/gpu/drm/tidss/tidss_kms.c                  | 16 ++++++++++-----
+ drivers/gpu/drm/tve200/tve200_drv.c                |  1 +
+ 40 files changed, 225 insertions(+), 24 deletions(-)
+---
+base-commit: 8cdeaa50eae8dad34885515f62559ee83e7e8dda
+change-id: 20260513-drm_refcount_wiring-4e5e757e9047
+
+Best regards,
 -- 
-nvpublic
+Albert Esteve <aesteve@redhat.com>
 
