@@ -1,68 +1,68 @@
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1842F3911D3
-	for <linux-tegra@vger.kernel.org>; Fri, 17 Jul 2026 19:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28723330305
+	for <linux-tegra@vger.kernel.org>; Fri, 17 Jul 2026 20:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784318363; cv=none; b=QoQpHkRw0lolhTiohJWCHrxdJWeEBjhGeU8oiKRftFItT/JmLKH2zruvkbLNh2ecn/2CUdd3L4tfccBZyAEyANRRti3XhjKNI3uO4pDmFkPO4GG71JrnwBwa/BFuFiQQZLBp6L5lf5JhteUcGZxeCT7F7dWEssAYVqJTQdBU5aw=
+	t=1784319526; cv=none; b=p/hjGOLr7+sYtMYltSyA25eJzdBXrWs57vWhSTobg1QQu9pJkwgnHszlHi3TwRaY5T1n8r8oucwU/QMPVFqFOwNG4yL5W44NWWt+vzEWofFcTZ7+1CT9XJUFVmGHZPUulkY1h+pNCuI6XcaEe4D8nYS61OJU7gR3yOWCk+a39D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784318363; c=relaxed/simple;
-	bh=LMQ7fUo3sorzck80ZDANF3wgbQwKbSE7cQhncLMM+/0=;
+	s=arc-20240116; t=1784319526; c=relaxed/simple;
+	bh=1KkC74yltJoF9gY0gEzVV2Thr+ROcbYh/YgRoBkt59w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FkZuDWXZN+B9eSLnS7KkHuwEyCeskIKmOH6FHOfBBrBZDtGN2F7mf+UCU+pAnOY5yuXRwkUpPmvUjPJNtHBohHbpOQMfApAI/c3Jewch6iTpckzF8tBGIADcn0AnOwd4S2mLeeQRn5qgoEqJzQcoHrc/2Wl9WbCLKrl6wAyrV0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=a3W7GYED; arc=none smtp.client-ip=209.85.160.177
+	 Content-Type:Content-Disposition:In-Reply-To; b=fam+OHa5my4MfAHKwFhMs9YserunBBSvGQ9R/i0sDEhT/7NA/VyYQSobOz1XLdBL3HAaecaRLvtGD/Zsliy5ayPqH4URCnRNH7AGepfretwEc3z93AIUEMhGc7OZHUfHZhzAlIoe5N7Fybu1L9BpB/FbqG7dhwNylzi6usJGjEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Tu1E0Yjj; arc=none smtp.client-ip=209.85.160.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="a3W7GYED"
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-51bfe810293so36963661cf.1
-        for <linux-tegra@vger.kernel.org>; Fri, 17 Jul 2026 12:59:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Tu1E0Yjj"
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-51c1372f84dso47164831cf.2
+        for <linux-tegra@vger.kernel.org>; Fri, 17 Jul 2026 13:18:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1784318361; x=1784923161; darn=vger.kernel.org;
+        d=ziepe.ca; s=google; t=1784319523; x=1784924323; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=Qm69cNliseHLFEUcKlQjXlWgyg1L1lRsxj6GO+Nid2k=;
-        b=a3W7GYEDEbV2fvImRDO1KYv+kg1MGa2nWGHCxwBO/w09J79inNMC3B3Yy3W0mZ4zsE
-         26Egd6NORzeFDSPogz4DDN02zb90CELgJERppeHgzmPCZ8qMMdHYslk8Z2HzpfqCox+s
-         ludYiZLfVsKxjDYAKjVgwxGjFpdghilv7hgKtnKJyMXW/vXGMoHWg9J1hex8US3Kpswd
-         IZrsmbkfCWYtc5d8tAozo1P30kLhrrgbA2aw6Ahmu6aqyn29+lQjNKQEtgscPpP9H3VA
-         JXOhzb5gVFuOttuFakbPz+N9fnJA/P7hlWfKNIyQx+JykbvlQCBO6HjywCFwEtE46UbL
-         k6dA==
+        bh=OyZcoDYsLDOa3jljtF+USnQN0n2vX9UR7xfVNnqT1/U=;
+        b=Tu1E0Yjj0KQUO0FfWB82ctbvjJV3baxBltt1sjy94zuJj5+0lZZP7kbefhF8vzUMR4
+         jo0Qim1fK5mGiapHuV/Br4PsG0DPbEY3hNWmzruoJvX8/waAMiYRcShx9LvLhBkCmDQn
+         365vxyJl4zk+lcjdu0XA3isqo6gFCIE23Cv/ZqRxXswqkCkrK/AgWKqtLa2jniiMTKYp
+         kCQ8lBDs3bfj18LozWL+AYqOlx/UooPNNmuA3EaEdMo+NYmaCMTERqojzEU9LMvI3dsu
+         pbbgPh+xRxinP/AlL4BnnSA5yxJyGkJpkIai7tH4vlA+F6wE7b4ZRuhfo3L3ArtDHVHJ
+         cDDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784318361; x=1784923161;
+        d=1e100.net; s=20251104; t=1784319523; x=1784924323;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Qm69cNliseHLFEUcKlQjXlWgyg1L1lRsxj6GO+Nid2k=;
-        b=BxN+d6fVAZ38+OysIWqPRn+mczWoiFAfOiokq4X2y5lGCle38ihScefjHOtp6E8vQd
-         m+RfFXbWxliXP6SSS9Y8lUgeRw/qbCJRd3yySayopIasZTveobwr3cJMHek1dEq00uYA
-         XdOOAcTVkUWCeQ6xJ9D4MPmi8AMJzRAjQcLvMC5xoHHK5OzxyOplJi4sUGQhYmU7FxbG
-         w5qbUW5lO7DVX9pwQzSQGz5qCb6TOXdx+V4PnsJmEnMmkm7+jZ+Xhk/M5L0+hOczY8OG
-         kOpi9tJ/eDp7OOu/BvQjSjeDMrSlIVzzDuZa1/YXd4qVmjSmxtmb2o1guYwt04Q5U06p
-         BOTQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rq/k5YgQc44CqkJoWXVR1qaesTZYITlEVm8pnut/mWbKhsSFPRSbT07GaywfGmXLYv5swCDbQOwrYfu6w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFbpWKQ+lUpXDo8K5Kdk517A4MM4BE6R7ewxIwOiaCB8stWFa7
-	wqmPcUvb+hM2MsGay0zT6mwqxJ6o3sEihL0xvVzRMQvJ29WBVTnW0UWxLSgrPLWlX4o=
-X-Gm-Gg: AfdE7clzbgP+7wh0sdfCc31B1EFVSYkYoVGlTG1GIKhynTBsJ8zQ/FdtSBS+Hbs9Kzy
-	wXdV2WxyaO/527WihNHhSH0lcj1dbhVWA89fo6P08tL+szY3YmwMSC8ZZnm8fR9hMZe63BbFNTf
-	uP995+mCLE00lzgH7yehcdwbDIA2HFzN8E+qCgW8oOwYo5sCp4FQpvHZ7uG7rpJqhkiISoyAQaB
-	LFPyjxyTLAS2tSyqGyfafUoUwMepkghg9r4pZeK2Y9ST89pTbkKjHylyzAUr/+mGC1pfnM+32PN
-	kzoTHb5fUB0tPhL06PZ0EN9V0uS+cMTkT6kMKkoVrzQyI5SriW6nlLX3hWU0eb5EihX6l7+4atV
-	V+ip+3TSJeNb202NnhQeiWcZxS5t1hl/9ox0cRTyRtYZdubuZNK2xn6xWcSx9
-X-Received: by 2002:ac8:5f87:0:b0:51c:1291:e68c with SMTP id d75a77b69052e-5213b148393mr36523971cf.30.1784318360897;
-        Fri, 17 Jul 2026 12:59:20 -0700 (PDT)
+        bh=OyZcoDYsLDOa3jljtF+USnQN0n2vX9UR7xfVNnqT1/U=;
+        b=Fg3C4FFZVmR0+rt4uBu/Jj3Cd7Tj8yjOQDVT1HvPujIhX7k+WRdEwqyjEKyZ6xbFb1
+         sIRVW+iosuk7Q8GiMouaLhAPhjAPwrItuF9Y4td/CFcY4SJRBuBvPtH7U2Qqx9rZp3nG
+         VMSM7G5s2d55mqakneq9jIM1nUubU52ZdV7x1bg9GS2Q/IR+/gDGeR0U3xxN0j5YjM1I
+         MedQvOG3/MEGxOPCORRr7yx9qFA7cV1UttM4aefrYQyOS4oJW/I8rpxKwkuGMvdFJdEL
+         W1QJUtx2uwN5OkLjrz9vLrnN7a0w9XEiz9bt8fsvOwHlevYpCsWYX+TLHHMGZDfXp5dL
+         iLRQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rr8AOoLnukvKuZJlL8t4ASFN6ERNxhxtgn3zjmOV1HC5RS6H7rko1cnIO0Q4VhBd1ocjVmc5BY4pqtHYw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YztjU9oi82RSUwFSwRWxsDHZPMG8q5abxARUvc2b9C/zGNqajfR
+	gmYg0yyM1/cyfG6/Z12AnN0qwdD3t3AW5D7NNfAhnpbwe70Mcf4XeQ0v3/Cj6Uc37/s=
+X-Gm-Gg: AfdE7cmzjtWw9Zd72QBFOsEfhw6RhLLYM5WIUYzpyhtbWdPiU2DiF+3Qin1rVHNs4n5
+	taNI8IVo3U69hofbUxj1Tq/+i0KQgREaS5pxeQ3WG9iTPEpSn88/e+FtWLFrhaYiG0Pqk6q8Rny
+	kPe3a2a1kh5PIhz3vTXAsIpKrcY9cU0HOSxyzILCVWFAW6tiwAnerJWSZMs5GQjZeQv9wiJfMUs
+	R7Q1tlNWmhMMpFUiDEL/enL9UQLIHNPqRoi55Tg0/ADzPLuf4k7XbW+9pCX+GLOmHEceYEPdN5o
+	iMDRV/d1Kf1F91qFKyPuBmifOynJmSM9EMGvKjWL5PiX+2PDdEK0TTZ+884bt1oVHoLOYFmWiYa
+	swpUKJiJmCIhe4B8sr9YmT1gsV8uqFgnxqivqalNhdhBkSoZ4sw==
+X-Received: by 2002:a05:622a:249:b0:51a:8a47:b578 with SMTP id d75a77b69052e-5213b72b769mr40771701cf.38.1784319523028;
+        Fri, 17 Jul 2026 13:18:43 -0700 (PDT)
 Received: from ziepe.ca ([159.2.72.92])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5214ffcb2c6sm19444171cf.27.2026.07.17.12.59.19
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-521502b9d5bsm19993871cf.31.2026.07.17.13.18.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jul 2026 12:59:20 -0700 (PDT)
+        Fri, 17 Jul 2026 13:18:42 -0700 (PDT)
 Received: from jgg by wakko with local (Exim 4.97)
 	(envelope-from <jgg@ziepe.ca>)
-	id 1wkoiN-000000051Gu-1TIS;
-	Fri, 17 Jul 2026 16:59:19 -0300
-Date: Fri, 17 Jul 2026 16:59:19 -0300
+	id 1wkp17-000000052o2-3RvD;
+	Fri, 17 Jul 2026 17:18:41 -0300
+Date: Fri, 17 Jul 2026 17:18:41 -0300
 From: Jason Gunthorpe <jgg@ziepe.ca>
 To: Ashish Mhetre <amhetre@nvidia.com>
 Cc: catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net,
@@ -70,11 +70,11 @@ Cc: catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net,
 	nicolinc@nvidia.com, linux-arm-kernel@lists.infradead.org,
 	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
 	iommu@lists.linux.dev, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v7 1/3] iommu/arm-smmu-v3: Factor out CMDQ batch
- force-sync conditions
-Message-ID: <20260717195919.GB701389@ziepe.ca>
+Subject: Re: [PATCH v7 2/3] iommu/arm-smmu-v3: Introduce CFGI/TLBI-repeat
+ workaround infrastructure
+Message-ID: <20260717201841.GC701389@ziepe.ca>
 References: <20260714104202.1664187-1-amhetre@nvidia.com>
- <20260714104202.1664187-2-amhetre@nvidia.com>
+ <20260714104202.1664187-3-amhetre@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -83,28 +83,72 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260714104202.1664187-2-amhetre@nvidia.com>
+In-Reply-To: <20260714104202.1664187-3-amhetre@nvidia.com>
 
-On Tue, Jul 14, 2026 at 10:42:00AM +0000, Ashish Mhetre wrote:
-> From: Nicolin Chen <nicolinc@nvidia.com>
+On Tue, Jul 14, 2026 at 10:42:01AM +0000, Ashish Mhetre wrote:
+> Tegra264 SMMU instances need every CFGI/TLBI command sequence issued
+> twice, with the second issue executing only after the first issue's
+> CMD_SYNC has completed:
 > 
-> arm_smmu_cmdq_batch_add_cmd_p() carries two distinct reasons for
-> flushing the current batch with a CMD_SYNC before appending the
-> new command:
+>     TLBI/CFGI ... CMD_SYNC TLBI/CFGI ... CMD_SYNC
 > 
->   - The batch's pre-assigned cmdq does not support the new command.
->   - The Arm erratum 2812531 workaround (ARM_SMMU_OPT_CMDQ_FORCE_SYNC)
->     forces a SYNC at one entry before the batch is full.
+> ATC_INV is not affected and must never be doubled.
 > 
-> Lift those checks into a new arm_smmu_cmdq_batch_force_sync() helper
-> so that adding another force-sync condition becomes a one-line
-> addition. No functional change.
+> Add arm_smmu_erratum_repeat_tlbi_cfgi_key and an
+> arm_smmu_erratum_cmd_needs_repeating() helper that gates on the static
+> key first and then range-checks the opcode (CFGI_STE .. ATC_INV), so
+> subsequent changes wiring the workaround into the CMDQ submission and
+> iommufd batching paths can share a single predicate.
 > 
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> Rename the existing arm_smmu_cmdq_issue_cmdlist() to
+> __arm_smmu_cmdq_issue_cmdlist() and add a thin wrapper that re-issues
+> the same cmdlist a second time when the predicate fires. Register the
+> new condition with arm_smmu_cmdq_batch_force_sync() and add
+> arm_vsmmu_can_batch_cmd() so iommufd batches split at every "needs
+> repeating" transition.
+> 
+> No callers enable the static key yet, so there is no functional change.
+> A subsequent change will enable the key on affected instances.
+> 
+> Suggested-by: Nicolin Chen <nicolinc@nvidia.com>
+> Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
 > Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
 > ---
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 23 +++++++++++++++------
->  1 file changed, 17 insertions(+), 6 deletions(-)
+>  .../arm/arm-smmu-v3/arm-smmu-v3-iommufd.c     | 14 ++++-
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 57 +++++++++++++++++--
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  1 +
+>  3 files changed, 67 insertions(+), 5 deletions(-)
+
+Because the VM has access to VCMDQ/etc it can issue commands directly
+(maybe not on this chip, but as a general comment), thus invalidation
+errata need to be made visible to the VM and we need to expect the VM
+will generate invalidations to properly deal with any errata.
+
+Ie I'd expect the VM to see a "nvidia,tegra264-smmu" compatible string
+to activate the errata fix.
+
+If so then we will already get duplicated invalidations here and then
+we will duplicate them again. That's not great.
+
+On the other hand if you want to emulate a generic and actually
+functional SMMU device that has nothing like VCMDQ/etc then you must
+do something like this in this patch.
+
+I was imagining a general direction that we would expose the errata
+information to the guest and the guest would have to deal with it.
+
+Given this is the opposite I wonder if we want to do it. It does make
+sense for a chip that probably doesn't have vCMDQ and I don't think
+qemu can even create a DT description to trigger the errata anyhow.
+
+But it starts to become confusing down the road if we decide other
+invalidation errata (like the CONT must be RIL thing) must be delt
+with by the guest.
+
+So.. Maybe add a comment why this one is different, or maybe just
+disable FEAT_NESTING if there isn't a use case?
+
+Otherwise the rest is fine
 
 Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
