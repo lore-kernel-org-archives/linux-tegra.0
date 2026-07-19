@@ -1,79 +1,92 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB66D15C14F;
-	Sun, 19 Jul 2026 14:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8642535975
+	for <linux-tegra@vger.kernel.org>; Sun, 19 Jul 2026 17:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784472625; cv=none; b=oICsWFguW+Cn27ISrP1wAzLd5ns9R0r4C8SDBJgjvk1iPj6OdaRPEwysFBs6m4t6k3IXStvleZbfI+BcXbfW8+CC07QfUKh23l+9YYd9aSYDRYatVrGs7SkLvCj780u5azIas5QFyb1G5PKJszENYr4bLGLwktK1VEOX6L2BnHo=
+	t=1784481231; cv=none; b=Q5+kpaLIrbnYjk8N0/gy1RpbGyQHT85SkU7qvESXbG2Z32yHO6O4kYTLMryf+1GGQEP2YUjckyeG39tCHN2klUQVWOtv295hddRZu/HugNoBPxWDltHnMt8CQgJ8zFiaTzqyFAgDYcrhZATSpg7FEIUusAbq/EopQl2nEar3cxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784472625; c=relaxed/simple;
-	bh=vhBrze3NWSYtz/miPrWh1wuNwJ+jo9iJwd1O5X2fH/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GRBiWRzyl08UsTOREBlMlX9ePgtSC0SnUrXVeejQmQmWs+a5iMgB6Svu+RAzyX/yBG4TajuzCKR4QJGBN0c3Clos9UjGZC4r8Fexvp+PGMBSnNgbxFNVIv6gIqGeHBMzZgrxKTvVJtSySZrhekjTFz0618HDEAHtRbpLDrlbVQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2086A1F000E9;
-	Sun, 19 Jul 2026 14:50:21 +0000 (UTC)
-Date: Sun, 19 Jul 2026 15:50:19 +0100
-From: Mark Brown <broonie@debian.org>
-To: Vishwaroop A <va@nvidia.com>
-Cc: Thierry Reding <thierry.reding@kernel.org>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Breno Leitao <leitao@debian.org>,
-	Suresh Mangipudi <smangipudi@nvidia.com>,
-	Krishna Yarlagadda <kyarlagadda@nvidia.com>,
-	linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/3] spi: tegra210-quad: Improve interrupt handling
- for loaded systems
-Message-ID: <c1100cde-ffe9-42b7-9f21-827cae7248e7@sirena.org.uk>
-References: <20260708011257.1712961-1-va@nvidia.com>
+	s=arc-20240116; t=1784481231; c=relaxed/simple;
+	bh=M7JEcQc0lGY4ddQ+dXg23PH5fLWai6Fcr0TXCqS40jg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-type; b=kyrht1yLO8dJZ1kGbQ5mqUXUInQgRp48+eREiUOCQ5Gb5GZa4mOIsqfdu6IsVQv50latjjfPM6ljdR87GZpMKXvXg1o86Q+SZkQjgfwWiADW4dKovy/ET4K2TJDe74YMgn7DrQDr/DTm9rJWny8IwQP1sAHJDo1DAaqFWPG0bm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WYOWLB6c; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WYOWLB6c"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1784481224;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=yu0dQOLvZl9IuAMVGAh5tBcgwfM8NHvFBjW1GLNlV7o=;
+	b=WYOWLB6cxRRQU0Kmpdd3O1G/TTmC/MwHileT3fJlI+VyfAYZc8OzPky9iRa0tMO/siGH6a
+	pOrcOTe1urATWIKqmLPYLcdjkkEPpQTeAdTYVQoB5ui2tAXrXzsg+UY2LGX1HJJ7r2gbVy
+	kDuY+05QeFBqAmtTH10UJDd9fFwuwJ4=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-547-UveSTTLAPnWtl7DmNh2v3Q-1; Sun,
+ 19 Jul 2026 13:13:40 -0400
+X-MC-Unique: UveSTTLAPnWtl7DmNh2v3Q-1
+X-Mimecast-MFC-AGG-ID: UveSTTLAPnWtl7DmNh2v3Q_1784481219
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BA8D4180123E;
+	Sun, 19 Jul 2026 17:13:38 +0000 (UTC)
+Received: from rules.brq.redhat.com (unknown [10.44.24.2])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 24159195608C;
+	Sun, 19 Jul 2026 17:13:34 +0000 (UTC)
+From: Vladislav Dronov <vdronov@redhat.com>
+To: Akhil R <akhilrajeev@nvidia.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-crypto@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	vdronov@redhat.com
+Subject: [PATCH] crypto: tegra - fix rctx->cryptlen in tegra_gcm_do_one_req()
+Date: Sun, 19 Jul 2026 19:13:02 +0200
+Message-ID: <20260719171302.15078-1-vdronov@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kvxvVOWO2BSOvtse"
-Content-Disposition: inline
-In-Reply-To: <20260708011257.1712961-1-va@nvidia.com>
-X-Cookie: Courage is grace under pressure.
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
+Perform rctx->cryptlen calculation in tegra_gcm_do_one_req() the same way
+it is done in tegra_ccm_crypt_init(). The current formulae may lead to a
+crash if a caller does not call tegra_gcm_setauthsize() and so ctx->authsize
+remains zero. Then a decrypt operation with incorrect rctx->cryptlen will
+lead to a write beyound rctx->dst_sg buffer.
 
---kvxvVOWO2BSOvtse
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Vladislav Dronov <vdronov@redhat.com>
+---
+ drivers/crypto/tegra/tegra-se-aes.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Wed, Jul 08, 2026 at 01:12:54AM +0000, Vishwaroop A wrote:
-> The current threaded IRQ implementation in spi-tegra210-quad suffers from
-> scheduler-induced latency on heavily loaded systems. Because threaded IRQ
-> handlers are subject to CFS scheduling, they can be delayed long enough to
-> trigger transfer timeouts even though hardware completes in microseconds.
-> This results in false timeout errors and WARN_ON splats during normal
-> operation.
+diff --git a/drivers/crypto/tegra/tegra-se-aes.c b/drivers/crypto/tegra/tegra-se-aes.c
+index 9094c03e991f..920864751ac7 100644
+--- a/drivers/crypto/tegra/tegra-se-aes.c
++++ b/drivers/crypto/tegra/tegra-se-aes.c
+@@ -1290,7 +1290,7 @@ static int tegra_gcm_do_one_req(struct crypto_engine *engine, void *areq)
+ 	if (rctx->encrypt)
+ 		rctx->cryptlen = req->cryptlen;
+ 	else
+-		rctx->cryptlen = req->cryptlen - ctx->authsize;
++		rctx->cryptlen = req->cryptlen - rctx->authsize;
+ 
+ 	memcpy(rctx->iv, req->iv, GCM_AES_IV_SIZE);
+ 	rctx->iv[3] = (1 << 24);
+-- 
+2.55.0
 
-Is the handling for timeouts with DMA transfers that get split or
-chained together safe?  handle_dma_based_xfer() starts a new DMA after
-the current one completes if there's more work to do but it looks like
-_combined_seq_xfer() will clear curr_xfer if we didn't get an error from
-handling the timeout.
-
---kvxvVOWO2BSOvtse
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpc5CoACgkQJNaLcl1U
-h9BbTgf8CYbgoUMsXHKhpfVE2XUJ0Y0pBQhodvk/MlN9N3S0plYLN/2AA7oJZ/O1
-Z+LvCVnReggifw4TD52M9H9T7yUqz0Iy/QtvXQB5rBHEbmB77G7E6l5JEHctglUN
-axtLTRfFrZ0ziCU2ZEoRttYt5HDqksedLEmy4q71zy3ufKcTafosZCVmnj3BhXx4
-dn4A2JRCBwrHDepkT2cd6pl7NpYtGfCNcW6OcRfUoAuFjXeMnIBxbuj4pbY4zJIa
-jEn7iMhv3mG7U8o25+qLO9iSDF62gaIk3CTFi+jkBzq5K+SCj9ghBeceIEbZ46h7
-QC/zhYweCoL9xmlmma88SAu2PblolA==
-=xEde
------END PGP SIGNATURE-----
-
---kvxvVOWO2BSOvtse--
