@@ -1,30 +1,30 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66816435EDA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814A03B960F;
 	Mon, 20 Jul 2026 15:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784560120; cv=none; b=e6l7XVZcfr2du/BjjDnYeCSXuud6JRwg+JeI3NU/cPoCkNYTuub2/cIMNH3qHtFWiSUPBqrRq8zGLiNLSWj4avk2BrBqBlZtokBqmERsvrqdr4NkQXBp4ZxDTxoRQc5yxDtmPcFGe9U+pi7xU0WulhkqKPbjAjfLm89Iq7WVkGg=
+	t=1784560120; cv=none; b=ctumqXcRUol9osdZDsVdCFVQ4hUJH6TrUb7B105DNuvnd2ZA10WCnOHXUGt7vkmP0Paa+ivdH0mIH44b47Itx2YT5vizLbLhe8bMkG7g/GZ5GzcSXdeBCZ2y6szoe8303kcpV0uAhOdI4BeSKC4KfqDr2lJhBP1up0F1e0k52lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1784560120; c=relaxed/simple;
-	bh=BePf2KXw3Xz0TGMtMlkVqDuyGHpfO2RjsdeP0lX1uXk=;
+	bh=bMErmdnUMpkcm6PndS0VqL63j5qilTdWF/Efbl+gFsA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UHkoGFKclZaCf9MWqWCXrYBBzSQ2LfsWuTg85EIfao/p65v3z8sTD8A+tjl9qRPmhBa93WQELj+AHwXCVe0HGwK3ouwyZy3aJGGNO9r7EnE8JPk0g6zpvSgBa0ueim3yPqUsaosItgRamglklFIM0vrVD7xlAgURoHLo+PUFH8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=mjcdWVKA; arc=none smtp.client-ip=220.197.31.4
+	 MIME-Version; b=oXSnMa56z2QsPN0rwCu0G1WxykG5o1E+lXt4lqAx0kj6ov+PymElrpBYI4Pe7L1AU51ZKCLjDgkGJYezwAVFw1yTvjgTUMBT1VATXpFzio6cx5Buo+hhXRvzHNFsCsjo2CiOrhJtGtZ1Cx6NSiY/KPpFZUcrMEq+m3gYQ5TRCbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=X+REq//w; arc=none smtp.client-ip=117.135.210.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="mjcdWVKA"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="X+REq//w"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=VU
-	TpNwnx9GB412jRFvqDOQChNSZ1zG4+eKVBbgWXW+o=; b=mjcdWVKAVye0opVEIp
-	B7cvAgIgtvrGvWmFeBHOAgQT2pfdzVZgQej9yN+2nEzaPS9/hfGcCmjy81iVQECm
-	DhY9+X7ka1kcVkXXeWa+7upsUKJbcV64VG37ZB8MCW4Lb7Ptx2of6aUryfNniK21
-	dwjxOH5X7HLBV+J+Z3gz4wujA=
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Om
+	uI2Spp3n9kV5Al6PVnZ7ZuVvU00LmjtW0tSnMTkU8=; b=X+REq//wOe+JPBVZRf
+	iKQ/Wg1l8eNIl04rCuJGnuOUVa50cGEdGMeJCu2Yh+d9tcScIZQEApLrC9W3a70f
+	gFUMjuZVKj/ff/b7qjLQIxhMNH/WvppMBSfysyFsyVfa/P89hnK1ajV01wTpR5+r
+	8+94fpUyPI8nU9fmA6j71Lkxw=
 Received: from zhb.. (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDX+mO9OV5q8LEOKg--.8910S5;
-	Mon, 20 Jul 2026 23:07:46 +0800 (CST)
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wD3b1rIOV5qyHOjKQ--.35310S9;
+	Mon, 20 Jul 2026 23:08:01 +0800 (CST)
 From: Hans Zhang <18255117159@163.com>
 To: bhelgaas@google.com,
 	lpieralisi@kernel.org,
@@ -43,9 +43,9 @@ Cc: imx@lists.linux.dev,
 	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Hans Zhang <18255117159@163.com>
-Subject: [PATCH v3 03/16] PCI: dwc: imx6: Use cached PCIe capability offset
-Date: Mon, 20 Jul 2026 23:06:06 +0800
-Message-Id: <20260720150619.24733-4-18255117159@163.com>
+Subject: [PATCH v3 15/16] PCI: dwc: tegra194: Use cached PCIe capability offset
+Date: Mon, 20 Jul 2026 23:06:18 +0800
+Message-Id: <20260720150619.24733-16-18255117159@163.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260720150619.24733-1-18255117159@163.com>
 References: <20260720150619.24733-1-18255117159@163.com>
@@ -56,69 +56,70 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDX+mO9OV5q8LEOKg--.8910S5
-X-Coremail-Antispam: 1Uf129KBjvJXoW7CF18ZFW7uF45Zr4ktry7ZFb_yoW8uF43pa
-	y3u3yFyr4rJF42qFsFy3Z8Zr13tas0kw47Jw47Kw1Sqry7JryDWFy0yryfta1akr4kKFy7
-	AF1xtFyfJ34FyF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zipBTrUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbCxAKwVGpeOcIFMgAA3a
+X-CM-TRANSID:_____wD3b1rIOV5qyHOjKQ--.35310S9
+X-Coremail-Antispam: 1Uf129KBjvJXoW7trWfJrW7KFWkXFWkKFy3urg_yoW8KF18pa
+	yfXrWFkr1UJr4SqFsrAan8ZF1F93sIyrW7GanagwsIvr17C347WwsYk3y5tF17CFZFyryU
+	Cr18tFy7Gr15J37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pi9a9hUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbCwxG0WGpeOdEBugAA3Z
 
-Thus, the cached offset is available when these functions are called, and
-DBI access occurs only after hardware is enabled.
+In host mode: tegra_pcie_dw_host_init() runs inside .start_link, which is
+called after dw_pcie_host_init() has cached the offset. However, the
+driver's own initialization already enables hardware, so calling
+dw_pcie_get_pcie_cap() is safe and will return the cached value.
+
+In endpoint mode: pex_ep_event_pex_rst_deassert() runs after hardware is
+enabled (PERST# deassert). Because the core no longer caches automatically,
+we call dw_pcie_get_pcie_cap() here to cache the offset for subsequent
+accesses. The helper performs the DBI read only when hardware is ready.
+
+Thus, the private pcie_cap_base is always valid and can still be used for
+register accesses.
 
 Signed-off-by: Hans Zhang <18255117159@163.com>
 ---
-In pci-imx6, dw_pcie_find_capability() is called in the following
-call chain:
+In pcie-tegra194, dw_pcie_find_capability() appears in:
 
-  static const struct dw_pcie_ops dw_pcie_ops = {
-    .start_link = imx_pcie_start_link,
+  static const struct dw_pcie_ops tegra_dw_pcie_ops = {
+    .start_link = tegra_pcie_dw_start_link,
   };
-  imx_pcie_start_link()
-    -> dw_pcie_find_capability()
-    -> imx_pcie_ltssm_enable()
+  tegra_pcie_dw_start_link()
+    -> tegra_pcie_dw_host_init()
       -> dw_pcie_find_capability()
 
-Replace these calls with the cached pci->pcie_cap. The call chain after
-modification becomes:
-
-  dw_pcie_host_init()
-    -> pp->ops->init() [imx6_pcie_host_init]
-    -> dw_pcie_get_pcie_cap()  (caches offset)
-    -> pci->ops->start_link = imx_pcie_start_link
-      -> uses pci->pcie_cap
-      -> imx_pcie_ltssm_enable()
-        -> uses pci->pcie_cap
+  tegra_pcie_dw_probe()
+    case DW_PCIE_EP_TYPE:
+      tegra_pcie_config_ep()
+        -> pex_ep_event_pex_rst_deassert()
+	  -> dw_pcie_find_capability()
 ---
- drivers/pci/controller/dwc/pci-imx6.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pci/controller/dwc/pcie-tegra194.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index 98e1db751132..74b28b4df484 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -966,10 +966,10 @@ static void imx_pcie_ltssm_enable(struct device *dev)
- {
- 	struct imx_pcie *imx_pcie = dev_get_drvdata(dev);
- 	const struct imx_pcie_drvdata *drvdata = imx_pcie->drvdata;
--	u8 offset = dw_pcie_find_capability(imx_pcie->pci, PCI_CAP_ID_EXP);
-+	struct dw_pcie *pci = imx_pcie->pci;
- 	u32 tmp;
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 795cef5a915d..bf482bc66a92 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -905,8 +905,7 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
+ 	pp->bridge->ops = &tegra_pci_ops;
  
--	tmp = dw_pcie_readl_dbi(imx_pcie->pci, offset + PCI_EXP_LNKCAP);
-+	tmp = dw_pcie_readl_dbi(pci, pci->pcie_cap + PCI_EXP_LNKCAP);
- 	phy_set_speed(imx_pcie->phy, FIELD_GET(PCI_EXP_LNKCAP_SLS, tmp));
- 	if (drvdata->ltssm_mask)
- 		regmap_update_bits(imx_pcie->iomuxc_gpr, drvdata->ltssm_off, drvdata->ltssm_mask,
-@@ -995,7 +995,7 @@ static int imx_pcie_start_link(struct dw_pcie *pci)
- {
- 	struct imx_pcie *imx_pcie = to_imx_pcie(pci);
- 	struct device *dev = pci->dev;
--	u8 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-+	u8 offset = pci->pcie_cap;
- 	u32 tmp;
- 	int ret;
+ 	if (!pcie->pcie_cap_base)
+-		pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
+-							      PCI_CAP_ID_EXP);
++		pcie->pcie_cap_base = dw_pcie_get_pcie_cap(pci);
  
+ 	val = dw_pcie_readl_dbi(pci, PCI_IO_BASE);
+ 	val &= ~(IO_BASE_IO_DECODE | IO_BASE_IO_DECODE_BIT8);
+@@ -1889,8 +1888,7 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
+ 		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
+ 	}
+ 
+-	pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
+-						      PCI_CAP_ID_EXP);
++	pcie->pcie_cap_base = dw_pcie_get_pcie_cap(pci);
+ 
+ 	/* Clear Slot Clock Configuration bit if SRNS configuration */
+ 	if (pcie->enable_srns) {
 -- 
 2.34.1
 
