@@ -1,165 +1,447 @@
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013000.outbound.protection.outlook.com [52.101.127.0])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7004E3DB33F;
-	Mon, 20 Jul 2026 09:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784541592; cv=fail; b=G8dwX9XWtAzXIxqqkDXwaLyfM1jBFglIwbnMf8q9ey3q4zb9XtTN4dAkhb7jQI9QIQwlR7xo1D8fPao2vkU+yoo+3fjJjjblYmWAOvlhGS8NFKuTzUGh8PiARWM8GXt3e8MgktNw6Nn8mCCJBKHNOukjJHzOFdVUcLwg/xshm/E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784541592; c=relaxed/simple;
-	bh=f2y5IoyRsVo625tw/4ONsmLR2r3QdccnVgPmleoY8CI=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WdiL6bT6NPjgjJGKaBNlGF7oWLZdJJqKolLWCIsjlR1H0VJpkAfLAYq4q5ehxRUHSKL9UTKPB79hJRMu+JdQxJBNLSybdrZcKtTgJsgiKwXrMPwQ+y1quyflZbvwLfio7eE/5PbErTRDLDeceIVGcDa/vWHgPJ3cIv7n3w1KGDU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=OcnLdXgN; arc=fail smtp.client-ip=52.101.127.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C463F12E3
+	for <linux-tegra@vger.kernel.org>; Mon, 20 Jul 2026 11:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784545513; cv=none; b=GeLoNCH/9MCCo23dN7fpdaYlb3aQxJlmjFCIQ8hJs34In/lv2kFLgPtNJk2RwmOSrcGW1IAKWNfalUKX1m+AZwN6Ip3YIPCkmySnCJF5NadYr7/uPjcDh+2/sFhAlv3UjdYtfDo4K6F5aOguCrbVayVzRtKsY94CL8zNQ3opDF4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784545513; c=relaxed/simple;
+	bh=Cr0D8IrXdc7M3cfjxvsuMeRGNkhVfxYYqCumwIz6RgQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eDirOVI2VFNtBZrOD1G0N9M00x4WFFUN96g+pEeuV9HSvZk/PB0DrgbgrKmDrJ5uaUwNP1SR62uHTh2zL6vaG761uHe2P1D+Al4V8yOlkcgIFVJCZjCiNqTxrwqdG5Mri5ehIezwDtDURFTRA/f2nP/XQKcu52/b0yQLs2Um9GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y2FwkocI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SF9cBLWT; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y2FwkocI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SF9cBLWT; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="OcnLdXgN"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=s5eOGliAa/tl/qoP98rZ2yQU8xHeY9wGik0BN3KlFmaYxNOpTCDeyr3fpV/tc7TBUEZKJmtMxwNPGysQBIk1kcRFv1FkEIySVylTJxNDvNUYZWhCsz4tef6MckBPCBLFPacUiLZ2eK9rbnP2ZBiqGmKBmxSimnJwSTADtZlsj3Zo6vK/6AovncfrUZzpGNZJtxiTJqwbHMG5MUlL8+PJRnWJ5TenaSw8c7OZn3MgLNdyB6F33DEGDhh8REKP9XXEH6GfgEYnYpIo+yd/VVNz+QiPGd0CRzsMEzWooAdzOf2jh7saug9M+DJyRhsYaavYPnvUxlaTgF+g+TM7xvpltQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Coof0Ig6LFxjL2XopV7Z88B1ZXyxYx/OOQmbszRM7Cs=;
- b=FRzdCvSUhAWpghsy7N/Jy6DOsvCzYOZQ+JJyVNkaslo9qUGBCjWCnOR93gUfqtD2EIGyiJOcdoNP9/u5+6Y+Iloj/DQY6ItLt1efAaHz1/Hxf30k3AQRnwY6OscWX6YPwHiwkWxFY/Q2w3hILg9T4lrx2VcEFAaKCau5o2cbOP/9/eH7nn7NUgoAivp9Zo/d3msVufmEFzRjEclbcswZZjxtMwLr6JrTjwu1FyPCj5bKi4tV4AXNnKCJXDwc9BaIv9mhR6muZG/dsVQGdA0qFQJqc2FIdu8jsBW8RN6SrRQlI/RZRJa2+u23LTU6Q0HCfIhxAbKjeVegNfn//XLxQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Coof0Ig6LFxjL2XopV7Z88B1ZXyxYx/OOQmbszRM7Cs=;
- b=OcnLdXgN5d3FEHS6dQXuAOVl3u5TKKnO3nxfHQ2r25oVrf4MUnG8aEssIuF3fKUTbtY/V2NDpagsEBB7HDVLo1Esuodp9zPMJKWvqY0Km0KrgkYtQg3aLuthivg4hZ7yjMaI9c/qJI5cE3pzty1zzjOU4sd6SJGtCKvc9b5Ernq1iBrThdGj03AJLsPGq+BwyxbblUmfHQfOWmE7Nk9AbPHoZxkry0Rks3ePPu7BS9A9l5TuA46C+DsYiGnyv9Xgvx5KoqEXNqfrFBzTPhKLNuThkZ9etT+nptrn21CObYeC8RH/0z+NsPvNUrwQCD4flKJKSQJDTu0sOagIsihg/Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PUZPR06MB5828.apcprd06.prod.outlook.com (2603:1096:301:e8::11)
- by KU4PR06MB8458.apcprd06.prod.outlook.com (2603:1096:d10:7a::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.18; Mon, 20 Jul
- 2026 09:59:47 +0000
-Received: from PUZPR06MB5828.apcprd06.prod.outlook.com
- ([fe80::1d47:987a:ed97:769a]) by PUZPR06MB5828.apcprd06.prod.outlook.com
- ([fe80::1d47:987a:ed97:769a%4]) with mapi id 15.21.0223.015; Mon, 20 Jul 2026
- 09:59:47 +0000
-From: Pan Chuang <panchuang@vivo.com>
-To: Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Sumit Gupta <sumitg@nvidia.com>,
-	=?UTF-8?q?Bruno=20Sobreira=20Fran=C3=A7a?= <brunofrancadevsec@gmail.com>,
-	Shashank Balaji <shashank.mahadasyam@sony.com>,
-	Pan Chuang <panchuang@vivo.com>,
-	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 5/7] soc/tegra: cbb: Remove redundant dev_err()
-Date: Mon, 20 Jul 2026 17:59:11 +0800
-Message-Id: <20260720095920.542801-6-panchuang@vivo.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260720095920.542801-1-panchuang@vivo.com>
-References: <20260720095920.542801-1-panchuang@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TY4P286CA0011.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:26d::11) To PUZPR06MB5828.apcprd06.prod.outlook.com
- (2603:1096:301:e8::11)
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y2FwkocI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SF9cBLWT";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y2FwkocI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SF9cBLWT"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 314C579EF8;
+	Mon, 20 Jul 2026 11:05:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1784545507; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jy7YQBE9HAIVBFE0VOkSBBzLYevZIQzBSEslKdqseyw=;
+	b=y2FwkocI3YQIQJFXqrW9ZKICtrgU7bGVS3vz/2uDjZt14w7zVOXlNMnQ4XTNJUK34rzpem
+	JLpUktCdpsjMGideeJkQRJwuSLFJDvapFsfvDgZzS0FCBSnObDwNE5QRv++UUjkN1mcj24
+	5ZICafeK/+n3gCHZyy4tZSyWy5JZ2yo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1784545507;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jy7YQBE9HAIVBFE0VOkSBBzLYevZIQzBSEslKdqseyw=;
+	b=SF9cBLWTd+GoNKIEYOgPttCZT+F5hmFW/zHjyXOkatbqIxXJH/pnUErjpIGt+RTdjV8E6n
+	kYPGn/y9Fv7Ta9Bg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=y2FwkocI;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=SF9cBLWT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1784545507; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jy7YQBE9HAIVBFE0VOkSBBzLYevZIQzBSEslKdqseyw=;
+	b=y2FwkocI3YQIQJFXqrW9ZKICtrgU7bGVS3vz/2uDjZt14w7zVOXlNMnQ4XTNJUK34rzpem
+	JLpUktCdpsjMGideeJkQRJwuSLFJDvapFsfvDgZzS0FCBSnObDwNE5QRv++UUjkN1mcj24
+	5ZICafeK/+n3gCHZyy4tZSyWy5JZ2yo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1784545507;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jy7YQBE9HAIVBFE0VOkSBBzLYevZIQzBSEslKdqseyw=;
+	b=SF9cBLWTd+GoNKIEYOgPttCZT+F5hmFW/zHjyXOkatbqIxXJH/pnUErjpIGt+RTdjV8E6n
+	kYPGn/y9Fv7Ta9Bg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BEE11779AA;
+	Mon, 20 Jul 2026 11:05:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cqwbLeEAXmpUBAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 20 Jul 2026 11:05:05 +0000
+Message-ID: <4af254a4-beb7-4f77-830f-42d5bacb10a4@suse.de>
+Date: Mon, 20 Jul 2026 13:05:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR06MB5828:EE_|KU4PR06MB8458:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6adcd7f6-4424-439f-bd4d-08dee645a15c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|366016|52116014|376014|1800799024|56012099006|11063799006|10067099003|6133799003|38350700014|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	a2WKH+umtv9zwGGVAoKv9Bkf2IHmhXXtagw31YXqBwU0VjNp0i08WaTD+UmPH9+bE6PYtE/BVot+om1dUFbCDuwlIgKqLOUQDY05U1FZzdRpQLrjozhQZR8QPuoEesd6UCG34+TiA+RDbsnCBNSgC730+zwEauZLZ8JOFVrrIXUukPXmzGSvxdTzEouwXLcyilAq7249+WVmhXhLm16nZ3kOQjOhnT1JI80al8h/2PlXrCyCJmdT4uNyIq0sstIIazBZMfmi6sijYFGewjHQ0NDqluwRiZsdMr/gbifHBcbWsVIezUp5zM5hYuiigHx0EQKGX+SBGlok/BwTdZF3oj+k+0tnjVXMIieIBN48ukJQvHbB2E8hvaA875RqOhoJMtQr/gosC8UDwZTxETAVH3IijOuFhrc5208161m66DaZH8P5b8wTVJXJ0PTTXCLKAzaNvVxPXw2cdL9jLAzoiByEXUzEK9ndf5JjNtw0nesKK21OU6Gc50AyOr7S1GPPwUqcgMBwmr6ziYjpyzR+PMEsVpH/OZLwMtBuATX4Zs4fvQeD9Z7zFAwZQe0KE5ewS2x3CuKHwJaGC11BTKg/aKZ1LLtfIsjgD8dXw8I7qiwKFMGyeR/sC9tWNvPiMRQ+I0YRTCtAojr+rj9dlXKe/45BiKIn0FfAT81Bh3H/p/nMqQ/OGqya74xdr/HXhc5lm38mN21cGRktcLDwoAEst0haA3rH6ctSoejE5UX99Co=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5828.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(52116014)(376014)(1800799024)(56012099006)(11063799006)(10067099003)(6133799003)(38350700014)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?qgsIYcaLs0kCEsBPoN8T/36iWrdu0Nuxtxbw2lASIm94R+XI4garlfqjYQJc?=
- =?us-ascii?Q?juW9BrR963bdUCWi24IV7JHnylq6ArIqO8lbKq0xUoIRBMsHYHe66tUQGFqG?=
- =?us-ascii?Q?0YyFQCTIt6oWb2/KwWrhgmKHUKjKWbfnQmJhzBPd/X+LcIpKBJ5QMMQIQ/9/?=
- =?us-ascii?Q?CtlQpzLwrDTycyNSI4goTkJuPo89JwS8oOE3VdCDqA6JUdXcZcSMK7yaMkZW?=
- =?us-ascii?Q?iLZUz2AOYeTsyoVSZrF+8oas0Pzch91w7u9NLoCjGh89EhIXJ94FJ5e3jgkn?=
- =?us-ascii?Q?A2InQfIRiLEiPrcrgsjVKPXjWL0Xc+OxHdFwGGfW9mzyA1vomb682Biy2y6K?=
- =?us-ascii?Q?+T0XcV8piR5ctejTZyVlw2k6rQz1vEepWixr28BOqMXOYYsF1E9ayQZzWtKH?=
- =?us-ascii?Q?P98t/hEhmfBXwL32qUXN0Xywt9137YSx8aJnvD3yuvnLjr10oE+27ggp/Kk9?=
- =?us-ascii?Q?5l3k79UWE0N9VtLJXVa4sOOy0tU+tdNGFPakQ5pvxKETbZQDj6rd00lKz3lb?=
- =?us-ascii?Q?B8k4PnetRzHri2SlVW1OzCfb5sNBuWBNkJUBR6igNkT2FB+95deO0x1lXMy3?=
- =?us-ascii?Q?gqjNm2qCQ1B51NXTwwuYT8NjDqQr2VPAWxZTEvNSL5+t9AyJ6UpqXkCstktU?=
- =?us-ascii?Q?cnSBeSzqmvSPeWHy2lWBI/nfAjDgkbXq5o/GiSZ5QyX5APYF0gp38NJpJ6yp?=
- =?us-ascii?Q?xAqs4JM8SmViU1hoG+HA91ZxrYK7HfTUZpUa+ZBR4wrmXbc4olgo9lTKoHqd?=
- =?us-ascii?Q?ymXjNYcVe7FTGhL5Qd/arp6B0ZHRWMNIh6Y4NqqFnPvzrqv3PVEBoEOdpWGU?=
- =?us-ascii?Q?zKTX0pFyzcimJRAx3WnS+BueNC8W+d2djTd6KWGqoCTgzjmF/h0ZYGlljiB6?=
- =?us-ascii?Q?EReb9IS9+8fVGrayuVrsE4+GPl5gqWlsQ4gabmR828A3DQHDIknYvoh+CZkk?=
- =?us-ascii?Q?p9dyBcZpUOZHPrRi4OBIYD0HZmqUgnDPEFsle9EKXyi/vfuNrz4ihf1n5OoW?=
- =?us-ascii?Q?r5asQm8auqGMdPREju+iptOP+lv28S/qeQIkszmGcHvUIKPvUtSexAaWNqmp?=
- =?us-ascii?Q?6tggaLjrfdmLvqE4cFeMoUzHrJB9o3jWuAtLZM7wvk+VkjvNobQ0NVNf4+PH?=
- =?us-ascii?Q?TygQUJwn3P5olkvkhWa8VJRzbllQes1jJ07XBjUiAxX13YRaWJkj4MCs8WKV?=
- =?us-ascii?Q?4MpmXI3Fb9kftqDaV9xf/Wd7jSmlfsk7gKm52U1IYtNEXYLT2YBBsT+YvXps?=
- =?us-ascii?Q?1iaq+kNv7JlMXXaBURO+opr70oJH6aSO5gydGAu7Ni4OiocaR5Ynfhr0ogxM?=
- =?us-ascii?Q?rYq3PAWDueWtBxwMbCdV2Xq/DxqhFO1JMJ6UJZEVVVRmvJl800yIm20mB6aa?=
- =?us-ascii?Q?TWMDDVh6mlylGHB9ytO+WSs5YV96049aoWtkF3w1/785JNx1hsDDtYaniz2y?=
- =?us-ascii?Q?SJZs+Ih0bsYw8sFurfmmJm+VhCkGx8WmAf3cksn7PzZPJiDJvcj4HlUkR7kP?=
- =?us-ascii?Q?ir1t5LvYuigmfTC3HxvqeqWRST9xiXL+mpByg6SzMcx5riVwxsanUnNRfweB?=
- =?us-ascii?Q?XHE9M2fONXuBStFrLJZ5wWd2sCXbzwy4Z6eHK4W+SslqBb8jzA3EIxJUYcwQ?=
- =?us-ascii?Q?ZC+qBEBJYgRp1HGsP93Ek2dM67wT+pushYpWhdjOe4oey4T0BbtQ3MDgU5I/?=
- =?us-ascii?Q?isrIL+Dw0+1zkN+1FJxTMK6hGVUqyeg/RIhOPbXQXqh1id1ab4Uu1+FIw4R8?=
- =?us-ascii?Q?r6qIBKr9Tw=3D=3D?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6adcd7f6-4424-439f-bd4d-08dee645a15c
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5828.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jul 2026 09:59:46.9408
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YiKHrMoWCNYmfDpcUID8lnQw4gbWc+YBSuJyOVJGnHeYxtcGfAfcbbx5egSB82Sub+0J4ZOeUjdPrQHOw6y30A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KU4PR06MB8458
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/15] drm/exynos: remove dependency on DRM simple helpers
+To: Diogo Silva <diogompaissilva@gmail.com>, Jingoo Han
+ <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>,
+ Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Michal Simek <michal.simek@amd.com>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Stefan Agner <stefan@agner.ch>,
+ Alison Wang <alison.wang@nxp.com>,
+ Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+ David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+ Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
+ <olvaffe@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>,
+ Liu Ying <victor.liu@nxp.com>, Frank Li <Frank.Li@nxp.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Xinliang Liu <xinliang.liu@linaro.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>, Yongqin Liu
+ <yongqin.liu@linaro.org>, John Stultz <jstultz@google.com>,
+ Liviu Dudau <liviu.dudau@arm.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org, virtualization@lists.linux.dev,
+ imx@lists.linux.dev, linux-mediatek@lists.infradead.org,
+ linux-renesas-soc@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-doc@vger.kernel.org
+References: <20260719-drm_simple_encoder_init-v1-0-a78c509e3062@gmail.com>
+ <20260719-drm_simple_encoder_init-v1-1-a78c509e3062@gmail.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20260719-drm_simple_encoder_init-v1-1-a78c509e3062@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Rspamd-Action: no action
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com,samsung.com,ffwll.ch,kernel.org,linaro.org,ideasonboard.com,linux.intel.com,amd.com,nvidia.com,agner.ch,nxp.com,intel.com,redhat.com,collabora.com,chromium.org,iki.fi,pengutronix.de,glider.be,google.com,arm.com,baylibre.com,googlemail.com,lwn.net,linuxfoundation.org];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[59];
+	TAGGED_RCPT(0.00)[renesas];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim,suse.com:url]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 314C579EF8
+X-Spam-Score: -3.01
 
-Since commit 55b48e23f5c4 ("genirq/devres: Add error handling in
-devm_request_*_irq()"), devm_request_irq() automatically logs
-detailed error messages on failure. Remove the now-redundant
-driver-specific dev_err() calls.
+Hi
 
-Signed-off-by: Pan Chuang <panchuang@vivo.com>
----
- drivers/soc/tegra/cbb/tegra194-cbb.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+Am 19.07.26 um 01:35 schrieb Diogo Silva:
+> The simple KMS helpers are deprecated because they only add an
+> intermediate layer between drivers and atomic modesetting.
+>
+> Open-code drm_simple_encoder_init() by calling drm_encoder_init()
+> directly and providing driver-local drm_encoder_funcs.
+> Also check the return value from drm_encoder_init() to avoid silent
+> failures.
+>
+> Signed-off-by: Diogo Silva <diogompaissilva@gmail.com>
+> ---
+>   drivers/gpu/drm/exynos/exynos_dp.c       | 13 +++++++++++--
+>   drivers/gpu/drm/exynos/exynos_drm_dpi.c  | 14 ++++++++++++--
+>   drivers/gpu/drm/exynos/exynos_drm_dsi.c  | 11 +++++++++--
+>   drivers/gpu/drm/exynos/exynos_drm_vidi.c | 14 ++++++++++++--
+>   drivers/gpu/drm/exynos/exynos_hdmi.c     | 15 +++++++++++++--
+>   5 files changed, 57 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
+> index b80540328150..1598892c602b 100644
+> --- a/drivers/gpu/drm/exynos/exynos_dp.c
+> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
+> @@ -24,11 +24,11 @@
+>   #include <drm/drm_bridge.h>
+>   #include <drm/drm_bridge_connector.h>
+>   #include <drm/drm_crtc.h>
+> +#include <drm/drm_encoder.h>
+>   #include <drm/drm_of.h>
+>   #include <drm/drm_panel.h>
+>   #include <drm/drm_print.h>
+>   #include <drm/drm_probe_helper.h>
+> -#include <drm/drm_simple_kms_helper.h>
+>   #include <drm/exynos_drm.h>
+>   
+>   #include "exynos_drm_crtc.h"
+> @@ -79,6 +79,10 @@ static void exynos_dp_nop(struct drm_encoder *encoder)
+>   	/* do nothing */
+>   }
+>   
+> +static const struct drm_encoder_funcs exynos_dp_encoder_funcs = {
+> +	.destroy = drm_encoder_cleanup,
+> +};
+> +
+>   static const struct drm_encoder_helper_funcs exynos_dp_encoder_helper_funcs = {
+>   	.mode_set = exynos_dp_mode_set,
+>   	.enable = exynos_dp_nop,
+> @@ -95,7 +99,12 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+>   
+>   	dp->drm_dev = drm_dev;
+>   
+> -	drm_simple_encoder_init(drm_dev, encoder, DRM_MODE_ENCODER_TMDS);
+> +	ret = drm_encoder_init(drm_dev, encoder, &exynos_dp_encoder_funcs,
+> +			       DRM_MODE_ENCODER_TMDS, NULL);
+> +	if (ret) {
+> +		dev_err(dp->dev, "Failed to initialize encoder\n");
 
-diff --git a/drivers/soc/tegra/cbb/tegra194-cbb.c b/drivers/soc/tegra/cbb/tegra194-cbb.c
-index 2f69e104c838..69ef929e04f8 100644
---- a/drivers/soc/tegra/cbb/tegra194-cbb.c
-+++ b/drivers/soc/tegra/cbb/tegra194-cbb.c
-@@ -2072,20 +2072,15 @@ static int tegra194_cbb_interrupt_enable(struct tegra_cbb *cbb)
- 	if (priv->sec_irq) {
- 		err = devm_request_irq(dev, priv->sec_irq, tegra194_cbb_err_isr, 0, dev_name(dev),
- 				       priv);
--		if (err) {
--			dev_err(dev, "failed to register interrupt %u: %d\n", priv->sec_irq, err);
-+		if (err)
- 			return err;
--		}
- 	}
- 
- 	if (priv->nonsec_irq) {
- 		err = devm_request_irq(dev, priv->nonsec_irq, tegra194_cbb_err_isr, 0,
- 				       dev_name(dev), priv);
--		if (err) {
--			dev_err(dev, "failed to register interrupt %u: %d\n", priv->nonsec_irq,
--				err);
-+		if (err)
- 			return err;
--		}
- 	}
- 
- 	return 0;
+Preferably use drm_err and drm_dev.
+
+> +		return ret;
+> +	}
+>   
+>   	drm_encoder_helper_add(encoder, &exynos_dp_encoder_helper_funcs);
+>   
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+> index 0dc36df6ada3..4e42a1da81d1 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+> @@ -12,10 +12,10 @@
+>   #include <linux/regulator/consumer.h>
+>   
+>   #include <drm/drm_atomic_helper.h>
+> +#include <drm/drm_encoder.h>
+>   #include <drm/drm_panel.h>
+>   #include <drm/drm_print.h>
+>   #include <drm/drm_probe_helper.h>
+> -#include <drm/drm_simple_kms_helper.h>
+>   
+>   #include <video/of_videomode.h>
+>   #include <video/videomode.h>
+> @@ -140,6 +140,10 @@ static void exynos_dpi_disable(struct drm_encoder *encoder)
+>   	}
+>   }
+>   
+> +static const struct drm_encoder_funcs exynos_dpi_encoder_funcs = {
+> +	.destroy = drm_encoder_cleanup,
+> +};
+> +
+>   static const struct drm_encoder_helper_funcs exynos_dpi_encoder_helper_funcs = {
+>   	.mode_set = exynos_dpi_mode_set,
+>   	.enable = exynos_dpi_enable,
+> @@ -194,7 +198,13 @@ int exynos_dpi_bind(struct drm_device *dev, struct drm_encoder *encoder)
+>   {
+>   	int ret;
+>   
+> -	drm_simple_encoder_init(dev, encoder, DRM_MODE_ENCODER_TMDS);
+> +	ret = drm_encoder_init(dev, encoder, &exynos_dpi_encoder_funcs,
+> +			       DRM_MODE_ENCODER_TMDS, NULL);
+> +	if (ret) {
+> +		DRM_DEV_ERROR(encoder_to_dpi(encoder)->dev,
+
+It just failed to init the encoder, so better not use it here. The 
+device should be the same as passed to the function via 'dev'.
+
+> +			      "failed to create encoder ret = %d\n", ret);
+> +		return ret;
+> +	}
+>   
+>   	drm_encoder_helper_add(encoder, &exynos_dpi_encoder_helper_funcs);
+>   
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> index c4d098ab7863..6b7561ac9bb0 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> @@ -13,7 +13,7 @@
+>   
+>   #include <drm/bridge/samsung-dsim.h>
+>   #include <drm/drm_probe_helper.h>
+> -#include <drm/drm_simple_kms_helper.h>
+> +#include <drm/drm_encoder.h>
+>   
+>   #include "exynos_drm_crtc.h"
+>   #include "exynos_drm_drv.h"
+> @@ -22,6 +22,10 @@ struct exynos_dsi {
+>   	struct drm_encoder encoder;
+>   };
+>   
+> +static const struct drm_encoder_funcs exynos_drm_dsi_encoder_funcs = {
+> +	.destroy = drm_encoder_cleanup,
+> +};
+> +
+>   static irqreturn_t exynos_dsi_te_irq_handler(struct samsung_dsim *dsim)
+>   {
+>   	struct exynos_dsi *dsi = dsim->priv;
+> @@ -79,7 +83,10 @@ static int exynos_dsi_bind(struct device *dev, struct device *master, void *data
+>   	struct drm_device *drm_dev = data;
+>   	int ret;
+>   
+> -	drm_simple_encoder_init(drm_dev, encoder, DRM_MODE_ENCODER_TMDS);
+> +	ret = drm_encoder_init(drm_dev, encoder, &exynos_drm_dsi_encoder_funcs,
+> +			       DRM_MODE_ENCODER_TMDS, NULL);
+> +	if (ret)
+> +		return ret;
+>   
+>   	ret = exynos_drm_set_possible_crtcs(encoder, EXYNOS_DISPLAY_TYPE_LCD);
+>   	if (ret < 0)
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> index 67bbf9b8bc0e..59dea853d364 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> @@ -13,10 +13,10 @@
+>   
+>   #include <drm/drm_atomic_helper.h>
+>   #include <drm/drm_edid.h>
+> +#include <drm/drm_encoder.h>
+>   #include <drm/drm_framebuffer.h>
+>   #include <drm/drm_print.h>
+>   #include <drm/drm_probe_helper.h>
+> -#include <drm/drm_simple_kms_helper.h>
+>   #include <drm/drm_vblank.h>
+>   #include <drm/exynos_drm.h>
+>   
+> @@ -403,6 +403,10 @@ static void exynos_vidi_disable(struct drm_encoder *encoder)
+>   {
+>   }
+>   
+> +static const struct drm_encoder_funcs exynos_vidi_encoder_funcs = {
+> +	.destroy = drm_encoder_cleanup,
+> +};
+> +
+>   static const struct drm_encoder_helper_funcs exynos_vidi_encoder_helper_funcs = {
+>   	.mode_set = exynos_vidi_mode_set,
+>   	.enable = exynos_vidi_enable,
+> @@ -445,7 +449,13 @@ static int vidi_bind(struct device *dev, struct device *master, void *data)
+>   		return PTR_ERR(ctx->crtc);
+>   	}
+>   
+> -	drm_simple_encoder_init(drm_dev, encoder, DRM_MODE_ENCODER_TMDS);
+> +	ret = drm_encoder_init(drm_dev, encoder, &exynos_vidi_encoder_funcs,
+> +			       DRM_MODE_ENCODER_TMDS, NULL);
+> +	if (ret) {
+> +		DRM_DEV_ERROR(dev, "failed to initialize encoder ret = %d\n",
+> +			      ret);
+
+Again, you rather want drm_err() with drm_dev here.
+
+I've briefly looked over the series and many patches seem affected. 
+Please prefer drm_ logging functions and DRM devices over the plain 
+device equivalents.
+
+Best regards
+Thomas
+
+
+> +		return ret;
+> +	}
+>   
+>   	drm_encoder_helper_add(encoder, &exynos_vidi_encoder_helper_funcs);
+>   
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index 09b2cabb236f..f44586ce0fdf 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -36,9 +36,9 @@
+>   #include <drm/drm_atomic_helper.h>
+>   #include <drm/drm_bridge.h>
+>   #include <drm/drm_edid.h>
+> +#include <drm/drm_encoder.h>
+>   #include <drm/drm_print.h>
+>   #include <drm/drm_probe_helper.h>
+> -#include <drm/drm_simple_kms_helper.h>
+>   
+>   #include "exynos_drm_crtc.h"
+>   #include "regs-hdmi.h"
+> @@ -1575,6 +1575,11 @@ static void hdmi_disable(struct drm_encoder *encoder)
+>   	mutex_unlock(&hdata->mutex);
+>   }
+>   
+> +static const struct drm_encoder_funcs exynos_hdmi_encoder_funcs = {
+> +	.destroy = drm_encoder_cleanup,
+> +};
+> +
+> +
+>   static const struct drm_encoder_helper_funcs exynos_hdmi_encoder_helper_funcs = {
+>   	.mode_fixup	= hdmi_mode_fixup,
+>   	.enable		= hdmi_enable,
+> @@ -1862,7 +1867,13 @@ static int hdmi_bind(struct device *dev, struct device *master, void *data)
+>   
+>   	hdata->phy_clk.enable = hdmiphy_clk_enable;
+>   
+> -	drm_simple_encoder_init(drm_dev, encoder, DRM_MODE_ENCODER_TMDS);
+> +	ret = drm_encoder_init(drm_dev, encoder, &exynos_hdmi_encoder_funcs,
+> +			       DRM_MODE_ENCODER_TMDS, NULL);
+> +	if (ret) {
+> +		DRM_DEV_ERROR(dev, "failed to initialize encoder ret = %d\n",
+> +			      ret);
+> +		return ret;
+> +	}
+>   
+>   	drm_encoder_helper_add(encoder, &exynos_hdmi_encoder_helper_funcs);
+>   
+>
+
 -- 
-2.34.1
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstr. 146, 90461 Nürnberg, Germany, www.suse.com
+GF: Jochen Jaser, Andrew McDonald, (HRB 36809, AG Nürnberg)
+
 
