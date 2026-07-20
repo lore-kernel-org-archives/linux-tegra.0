@@ -1,30 +1,30 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCCA42A7AA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7565C436356;
 	Mon, 20 Jul 2026 15:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784560117; cv=none; b=LEJsyWap736T1MZrnXSnjLT6snf1wh5ae1rSbkendI9fJ3c1aoll1x2EWjKhfuGK10/4Z0dakvB4W/m6eWYicMCFF+7FiIVQES1J+ap4FeatlXTigJVbHSuSIxhaEpG2vQqAeHv8gA4vjTthUyU84BLFO9K/4DrHPiZJ3Ao/s/Q=
+	t=1784560117; cv=none; b=M1Ot/p+50bxQzKdp7RXx+9spx8cICVkm34hz8z5/JzZA1CfIwGBRDCFN2wWqM41KgKqKMFPhwIeVXnSugRgF0QlMf0dtji0O9hHcz/6IBb/oZJG+G1YFgSMKBV0xx7Kkt9QvnKP644Y1I/xfi6pdMId688G0+JbwMH2LsieudbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1784560117; c=relaxed/simple;
-	bh=zSySQHbhIR5jy2BFEbRzYy23VNeqQZTs/FWYx57PtM8=;
+	bh=WYuhx25G9sjPOhTLSdw4bLr2ImKawi5tUo5DLE+nRxs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NWB4ZyDA/QxEjoBkAeiw5z9XPhM0QvZYr5dXPy7pXomhoIQsO+AkQsXY+2Wlx0JajPG56Xo8tkODDBt6PKmJfSYaHa8nf5ulrAtjvwA6otU5ti2z9eu/HBlrXYxQnlQ175LRaz4+Q/osutjW3t/FAPqFf0Xlih07g4REWaDPfJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WHD25rbD; arc=none smtp.client-ip=220.197.31.2
+	 MIME-Version; b=UOthfud6Abs6qqSxUNzFB4vuq+Chc82FlwH3h64v3lJ7JxOg4vHArqT5dYulwsue2oqUPejJcUXZ/x37hzW4FuUDrfH8PIIV+4gz/+MzeTsorhox9dldtmu5XNdl71eQuQpQ0oO9wrd/UEAO2Mi5bOaw1DxuWOszjTk6jY+pEUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=glyoB2ln; arc=none smtp.client-ip=117.135.210.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WHD25rbD"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="glyoB2ln"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=P5
-	dtUmSCJE7DzqsEwcI8FKsNsEzR7pCOmSoVvece9QE=; b=WHD25rbD+O3j/PT/bT
-	hZqCaT6y3aNagSE1KNUgmZzKqZzOjklu7qJiEGkfnex+zdNyzT4/sZb7/ExrlHfy
-	I4u2eHHcW3SLMybgrWivdvpxISrVGWvUVfkR7jTgf03CFB4Dr4OPWN8z/k2quiWE
-	mw5891+p7BDY6f5GDoCuVDVew=
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=/S
+	B7jvifzYR7GkBWCB3qlrfMX4gh0Gr4R+CcLe5/I0k=; b=glyoB2lnLVd7f+Nq+d
+	vlaSVI90dgg0bU5S3wjAW14RUXKb5ea59uEsW5HnTbRHRxrROTXY9B7Iaria71Fs
+	GuEJQXXsGS1jzxxr2n6Hhf+w7ptJ1tR/Y+an0rm1j2HlGhoF2ZECc4i6mdm4FVSn
+	o+Hd0tMxyv64sOsyyHunjBcAQ=
 Received: from zhb.. (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wD3b1rIOV5qyHOjKQ--.35310S4;
-	Mon, 20 Jul 2026 23:07:57 +0800 (CST)
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDX+mO9OV5q8LEOKg--.8910S4;
+	Mon, 20 Jul 2026 23:07:45 +0800 (CST)
 From: Hans Zhang <18255117159@163.com>
 To: bhelgaas@google.com,
 	lpieralisi@kernel.org,
@@ -43,9 +43,9 @@ Cc: imx@lists.linux.dev,
 	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Hans Zhang <18255117159@163.com>
-Subject: [PATCH v3 10/16] PCI: dwc: qcom-ep: Use cached PCIe capability offset
-Date: Mon, 20 Jul 2026 23:06:13 +0800
-Message-Id: <20260720150619.24733-11-18255117159@163.com>
+Subject: [PATCH v3 02/16] PCI: dwc: Use cached PCIe capability offset in core
+Date: Mon, 20 Jul 2026 23:06:05 +0800
+Message-Id: <20260720150619.24733-3-18255117159@163.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260720150619.24733-1-18255117159@163.com>
 References: <20260720150619.24733-1-18255117159@163.com>
@@ -56,77 +56,131 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3b1rIOV5qyHOjKQ--.35310S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAw4kWFW3Cw4fAFy7JFy3CFg_yoW5GFy8pa
-	s0qrsIyr18Jr48XrsFka98XFnxWrn8Ary7Aa97Kw1fZa42v347Ja1jyryftFn7GFW7KryU
-	Cr4rt3yxu3WYyFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEzB-NUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbCww2zV2peOc0BRQAA3u
+X-CM-TRANSID:_____wDX+mO9OV5q8LEOKg--.8910S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxtr1xCFWfZw4UCFW3tr4kXrb_yoW7WFy5pa
+	y3XFyFyF18Ar45ZFsI9as5XF13tFnxArWUCa9agr1SvFy7AFW2qa10yry3trn7KFsFvryY
+	9w18trW3Cwn8JFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zidHUfUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbCwwGwVGpeOcEAMgAA3Y
 
-dw_pcie_ep_init() no longer caches the offset automatically. For qcom-ep,
-hardware (clocks, PHY) is enabled only after PERST# deassert. Therefore,
-we must call dw_pcie_get_pcie_cap() in qcom_pcie_perst_deassert() after
-the resources are enabled, before any DBI access. This ensures the cached
-offset is valid for subsequent uses in interrupt handlers and ICC updates.
+Modify the DWC core functions to use the cached pcie_cap offset instead
+of calling dw_pcie_find_capability() each time.
+
+In the DWC core, dw_pcie_find_capability() is called at several locations:
+- dw_pcie_ep_init_non_sticky_registers()
+- dw_pcie_wait_for_link()
+- dw_pcie_link_set_max_speed()
+- dw_pcie_link_get_max_link_width()
+- dw_pcie_link_set_max_link_width()
+
+The cached offset is initialized after hardware is ready:
+- In host mode: dw_pcie_host_init() calls pp->ops->host_init() (enables
+  clocks/resets), then dw_pcie_get_pcie_cap() caches the offset.
+- In endpoint mode: the core no longer caches automatically. Instead,
+  drivers must call dw_pcie_get_pcie_cap() after hardware is enabled
+  (e.g., after PERST# deassert). dw_pcie_ep_init_non_sticky_registers()
+  is called after that point, so it can safely use pci->pcie_cap.
+
+dw_pcie_ep_init_non_sticky_registers() now assumes pci->pcie_cap is
+valid. if not, it prints a warning and skips the operation. The other
+functions run after probe, so pci->pcie_cap is already valid and can
+be used directly.
 
 Signed-off-by: Hans Zhang <18255117159@163.com>
 ---
-In pcie-qcom-ep, dw_pcie_find_capability() appears in:
+ drivers/pci/controller/dwc/pcie-designware-ep.c   |  2 +-
+ drivers/pci/controller/dwc/pcie-designware-host.c |  2 ++
+ drivers/pci/controller/dwc/pcie-designware.c      | 15 ++++++---------
+ 3 files changed, 9 insertions(+), 10 deletions(-)
 
-  qcom_pcie_ep_probe()
-    -> dw_pcie_ep_init()
-    -> qcom_pcie_ep_enable_irq_resources()
-      -> qcom_pcie_ep_global_irq_thread()
-	-> qcom_pcie_ep_icc_update()
-	  -> dw_pcie_find_capability()
-	-> qcom_pcie_ep_perst_irq_thread()
-	  -> qcom_pcie_perst_deassert()
-	    -> offset = dw_pcie_find_capability()  (called twice)
----
- drivers/pci/controller/dwc/pcie-qcom-ep.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-index 56184e6ca6e6..16b0891f9571 100644
---- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-@@ -307,15 +307,13 @@ static void qcom_pcie_dw_write_dbi2(struct dw_pcie *pci, void __iomem *base,
- static void qcom_pcie_ep_icc_update(struct qcom_pcie_ep *pcie_ep)
- {
- 	struct dw_pcie *pci = &pcie_ep->pci;
--	u32 offset, status;
--	int speed, width;
--	int ret;
-+	int speed, width, ret;
-+	u32 status;
- 
- 	if (!pcie_ep->icc_mem)
- 		return;
- 
--	offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
--	status = readw(pci->dbi_base + offset + PCI_EXP_LNKSTA);
-+	status = readw(pci->dbi_base + pci->pcie_cap + PCI_EXP_LNKSTA);
- 
- 	speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, status);
- 	width = FIELD_GET(PCI_EXP_LNKSTA_NLW, status);
-@@ -491,14 +489,15 @@ static int qcom_pcie_perst_deassert(struct dw_pcie *pci)
- 
- 	dw_pcie_dbi_ro_wr_en(pci);
+diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+index 7d2794945704..14228be8bbce 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-ep.c
++++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+@@ -1246,7 +1246,7 @@ static void dw_pcie_ep_init_non_sticky_registers(struct dw_pcie *pci)
+ 	 * to all other functions as well.
+ 	 */
+ 	if (funcs > 1) {
+-		offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
++		offset = pci->pcie_cap;
+ 		func0_lnkcap = dw_pcie_readl_dbi(pci, offset + PCI_EXP_LNKCAP);
+ 		func0_lnkcap = FIELD_GET(PCI_EXP_LNKCAP_MLW |
+ 					 PCI_EXP_LNKCAP_SLS, func0_lnkcap);
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index 06722259d2e3..fee800ac56d4 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -593,6 +593,8 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+ 			goto err_free_ecam;
+ 	}
  
 +	dw_pcie_get_pcie_cap(pci);
 +
- 	/* Set the L0s Exit Latency to 2us-4us = 0x6 */
--	offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-+	offset = pci->pcie_cap;
- 	val = dw_pcie_readl_dbi(pci, offset + PCI_EXP_LNKCAP);
- 	FIELD_MODIFY(PCI_EXP_LNKCAP_L0SEL, &val, 0x6);
- 	dw_pcie_writel_dbi(pci, offset + PCI_EXP_LNKCAP, val);
+ 	if (pci_msi_enabled()) {
+ 		pp->use_imsi_rx = !(pp->ops->msi_init ||
+ 				     of_property_present(np, "msi-parent") ||
+diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+index ec4722ed9303..810729b91892 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.c
++++ b/drivers/pci/controller/dwc/pcie-designware.c
+@@ -766,7 +766,7 @@ const char *dw_pcie_ltssm_status_string(enum dw_pcie_ltssm ltssm)
+  */
+ int dw_pcie_wait_for_link(struct dw_pcie *pci)
+ {
+-	u32 offset, val, ltssm;
++	u32 val, ltssm;
+ 	int retries;
  
- 	/* Set the L1 Exit Latency to be 32us-64 us = 0x6 */
+ 	/* Check if the link is up or not */
+@@ -806,8 +806,7 @@ int dw_pcie_wait_for_link(struct dw_pcie *pci)
+ 
+ 	pci_host_common_link_train_delay(pci->max_link_speed);
+ 
 -	offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
- 	val = dw_pcie_readl_dbi(pci, offset + PCI_EXP_LNKCAP);
- 	FIELD_MODIFY(PCI_EXP_LNKCAP_L1EL, &val, 0x6);
- 	dw_pcie_writel_dbi(pci, offset + PCI_EXP_LNKCAP, val);
+-	val = dw_pcie_readw_dbi(pci, offset + PCI_EXP_LNKSTA);
++	val = dw_pcie_readw_dbi(pci, pci->pcie_cap + PCI_EXP_LNKSTA);
+ 
+ 	dev_info(pci->dev, "PCIe Gen.%u x%u link up\n",
+ 		 FIELD_GET(PCI_EXP_LNKSTA_CLS, val),
+@@ -843,7 +842,7 @@ EXPORT_SYMBOL_GPL(dw_pcie_upconfig_setup);
+ static void dw_pcie_link_set_max_speed(struct dw_pcie *pci)
+ {
+ 	u32 cap, ctrl2, link_speed;
+-	u8 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
++	u8 offset = pci->pcie_cap;
+ 
+ 	cap = dw_pcie_readl_dbi(pci, offset + PCI_EXP_LNKCAP);
+ 
+@@ -890,7 +889,7 @@ static void dw_pcie_link_set_max_speed(struct dw_pcie *pci)
+ int dw_pcie_link_get_max_link_width(struct dw_pcie *pci)
+ {
+ 	u8 cap = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+-	u32 lnkcap = dw_pcie_readl_dbi(pci, cap + PCI_EXP_LNKCAP);
++	u32 lnkcap = dw_pcie_readl_dbi(pci, pci->pcie_cap + PCI_EXP_LNKCAP);
+ 
+ 	return FIELD_GET(PCI_EXP_LNKCAP_MLW, lnkcap);
+ }
+@@ -898,7 +897,6 @@ int dw_pcie_link_get_max_link_width(struct dw_pcie *pci)
+ static void dw_pcie_link_set_max_link_width(struct dw_pcie *pci, u32 num_lanes)
+ {
+ 	u32 lnkcap, lwsc, plc;
+-	u8 cap;
+ 
+ 	if (!num_lanes)
+ 		return;
+@@ -935,10 +933,9 @@ static void dw_pcie_link_set_max_link_width(struct dw_pcie *pci, u32 num_lanes)
+ 	dw_pcie_writel_dbi(pci, PCIE_PORT_LINK_CONTROL, plc);
+ 	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, lwsc);
+ 
+-	cap = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+-	lnkcap = dw_pcie_readl_dbi(pci, cap + PCI_EXP_LNKCAP);
++	lnkcap = dw_pcie_readl_dbi(pci, pci->pcie_cap + PCI_EXP_LNKCAP);
+ 	FIELD_MODIFY(PCI_EXP_LNKCAP_MLW, &lnkcap, num_lanes);
+-	dw_pcie_writel_dbi(pci, cap + PCI_EXP_LNKCAP, lnkcap);
++	dw_pcie_writel_dbi(pci, pci->pcie_cap + PCI_EXP_LNKCAP, lnkcap);
+ }
+ 
+ void dw_pcie_iatu_detect(struct dw_pcie *pci)
 -- 
 2.34.1
 
