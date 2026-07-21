@@ -1,68 +1,68 @@
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011041.outbound.protection.outlook.com [40.107.208.41])
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010067.outbound.protection.outlook.com [40.93.198.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AB73815D5;
-	Tue, 21 Jul 2026 04:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D893038239C;
+	Tue, 21 Jul 2026 04:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.67
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784606998; cv=fail; b=meKlkRHAns1Ftt8r3uaidZroYGrdZzwijmlc95j8xC9KSlPFVjnpacyL6ZZaFv+x0jMQy93X7Ru2lP6Xp1BPckVBH6CYUpJLoLrq2Dje8F9DgHX7Cp3FGXLBcLMV2cnXHbb4u7EUQZMZEN8TKlXtE8bDW3aEBjsZm+xtD4Cq6JA=
+	t=1784607010; cv=fail; b=g5Chn66nDT81VTcf/ulw3UQLC8buHqlXhzsi/Al8dxdmshVqDOLzq9oVF0wuUYfV5fu63sln4DXsTwme2oW4qhxLVQmx/sAdBXs8Gptt+hemP72GOdQHbz+YH6LOLdTC+OGGCZfSUhr4iinOK1ZaNVfosAUUphdPFm9czJ+1Qng=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784606998; c=relaxed/simple;
-	bh=8vwx60oPtu54qGE2WiOjCk9EDV3oLvXNz+QUZxdrnk4=;
+	s=arc-20240116; t=1784607010; c=relaxed/simple;
+	bh=rZ+qdnjj/8lNOG7tPLQ2HW9zyhHyFHyl+//wFSSGE/Y=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D3MfqrX5GlEmXbO1xu6FvZ6lkXM8OkR9K/fRUoRBjR/KxWv1Oiyf+BX/Y2BTJHT9opxZl7ecFXhUsWrp+7JsnT7Ls/vSXCdj7gmSXgqJBlwelh2zfZZeRExO9M6eWpw23jvsXyQ2VD3Q6PyJFsA96OXwIzfiNwUMRW3XUKxgz0w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=op4goMzx; arc=fail smtp.client-ip=40.107.208.41
+	 MIME-Version:Content-Type; b=nw7UVJbdn9csBHwVG4c3L7sGW4iRKJmW4WTa4I3cdjvySj6XS0bP4DXIvCaFM2SwStwGf+5A2P5sDO+xzptZqfp3J8mc95/xdnaro5uj40uhqbuK29Bq344Kn2aOVnIdUpVivWmtqD+QXle60e6U+ibtoUODMZT+DyEtbwe2c70=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DX0XYqBx; arc=fail smtp.client-ip=40.93.198.67
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="op4goMzx"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DX0XYqBx"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jmi4WNmd7S4bvsaiyrOImiM39bL9D6dbLNDPaQPwq6gFTEzvNNZ6S2oM+PdE2dPc24orGcZnGXKuaDj+rt4JYf6N666xQbjHpn5SdQqWxMkoUNTJQ3wRk0n3P83lht9xRKaYHQU8JWq5g6xVcSj/+3pC4UmTJ8ilsx8ufVS2ll5HjH8BtheHGsuexWLyh7d52miJE6EkMgSSIFAlJT+LD1rlscH7TLecWtUH46kjzs6svZKb0B2BJ7vtRXc8d2tpmrS6jnXbT5Bq9Um0anQVV2K1HfuAsc7AQQHjZH4vNoV0UnJdpfTBeri2jShwLji6AwX/obCDQcnBgrJvV77cEg==
+ b=NcFar59jo+9AZZ8esbVEhbP+xxiuO502bzl3xZiOaCml9VZuUJggiak6vvwEOMGoFvX5+56OOlKQhIRxig4IwVBjF8ozj+t8O/IcDsT51dbWsbX1LUU0I3FE/8N+q/J7IF0Z8etTutdnh+XcjsV4hgeINzWmk55rJJ0E9O2eOoaMi66wi50sd1PpV0tQh1Aq5Gmu0JJXNvBh4Sr7DrCL81j/EZczHE0942Ke9JUJRZhnMFfjsROx4AcF3vYCSpp6a/FKncdqZEhw5mXiHuKSRU4Tw0yX5z9KsTMGRWhmI2qwSwxuL2V/K54tsi9/5g8WgK/Ot7/RfNlSkWe1Nz/LlQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=d0KvMEGdivcyfi4VJcwy8JfhNT/9IT9/puyMMiZKxYg=;
- b=iAjNV1/aBmS38iQC57dpkcht94HFm/tDr6DHd9xBbHhxo7gieJVWDUdJRa0NY5Rdwyext/rQp+xsL2QvLCQhIl6nGUYPZDhpDbKLeo766LLlhBXuqsGgSsejara3PjVJLWBzWj4G2Z1e35Il5D+bL3bsMTdq6pFcs+WTBHzaanFm6CzVNZbkCH8sc+4a0jlJl8QpMNrYkMt1hvdGDMkZn2zZCr8GCYpQ02hHhUp52yZAHX5WfUuXSHneHLiEsdd3L7rmB8wp2dg3JhPsw1xGE1beTruOPV6clt2VpTMmqWLQqYRO1JzHMIvIBP4F0HZv0Strd/W51x5KO6ACnc5vDg==
+ bh=RzU4edY5L5tlUhQvonXWMX8fnWw95mmqaeYsObMnS10=;
+ b=TMI9Tbq+nsreUw94XVgiVJuTJqj8+fMka8Q75DU8h9XN7ciJ/JYSBtEfMvSUS/Vt82nYDPs3EGEcv0wk6plp138NtYy1zjrSMXltc4gvfTIdguHdS4ixNHs3PfcUCdux+fDWjZP5n4jKxC3OtIVZKuHYGekKPLoFsWk8xdBddEPeNOOEH91NVCvO/fSFYX86OKGH8Ex02h9zEm6aNO0T2Ne7ayfR/VcvHJx/dTsgnoVpZxu+aze7dhrQuOSVmHqyYbJlZvKyQzo+N1tWCyvcdGHB5oSwXyzjhSBtgB961UeFOBQH77gUJ1A8kHQoCfVDEmXsqAv2oln/F9RorRLLrg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=bootlin.com smtp.mailfrom=nvidia.com;
+ 216.228.117.160) smtp.rcpttodomain=bootlin.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d0KvMEGdivcyfi4VJcwy8JfhNT/9IT9/puyMMiZKxYg=;
- b=op4goMzx7A9NaICn8wGBPrxA4LUEbYwl0k8HVQlL0dxDHfDm/DM01VaAAD0ACp+fjypIf2Qb15wAWJ48JYC56dwtF64pKRt2KkdJhuTi41OZq9CFwR5Z0AXWyAEh83oQtq29s+5arkZ/m+RhXZivszObqg9nnMGuut9b2XXRpYU7f/bF0/vgtqdJKrWtFgtwtNpXXam2xXeShMabF1YoGl2WQzabWGm89iqYpFfItjjGHgHpFBkLCntGOtKbJMMlqWHOA02frfk0hq35I9f7kD3Bc0joT8R0iVggeOzWFSfx1/9owdqY3mst4AdqDgCjQftovsaxf2DcCVbhiumMRQ==
-Received: from IA4P220CA0001.NAMP220.PROD.OUTLOOK.COM (2603:10b6:208:558::14)
- by SA3PR12MB9091.namprd12.prod.outlook.com (2603:10b6:806:395::10) with
+ bh=RzU4edY5L5tlUhQvonXWMX8fnWw95mmqaeYsObMnS10=;
+ b=DX0XYqBxoWDsREBIMm03X+PWfYFNVoUmmzBnWKs7CrTcRIC2a/kT4jSO8yFmK42podbyQEz24WVPrf9eEbhesOxzQJ1bTj5NEyy0q3c9SOV0idgUmvY3KC08x4rMkUT6OxIbrpt98kEEMdHuRJOiZmsKUoTxqoBFbS6UUQuFjxQh3HcWgsbX6vENepz4niP66d/2T6F4r8qQgWpebYVNEc63rEZii1r03EK16LiPJyZp/6AT2dKzbhnS5J/kANbs+Kv7M7GEKKV7qbYbOyDzgk1CojPN7OM2ankpDGDoU7PPSQMyBx20jzX3uQMkcBhIbgDr3R06FPBnWNwNNhsxCg==
+Received: from CH0PR03CA0104.namprd03.prod.outlook.com (2603:10b6:610:cd::19)
+ by DS2PR12MB9797.namprd12.prod.outlook.com (2603:10b6:8:2ba::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.18; Tue, 21 Jul
- 2026 04:09:49 +0000
-Received: from BL02EPF0001A103.namprd05.prod.outlook.com
- (2603:10b6:208:558:cafe::7) by IA4P220CA0001.outlook.office365.com
- (2603:10b6:208:558::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.245.10 via Frontend Transport; Tue,
- 21 Jul 2026 04:09:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ 2026 04:10:00 +0000
+Received: from CH3PEPF0000000A.namprd04.prod.outlook.com
+ (2603:10b6:610:cd:cafe::ad) by CH0PR03CA0104.outlook.office365.com
+ (2603:10b6:610:cd::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.223.18 via Frontend Transport; Tue,
+ 21 Jul 2026 04:10:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL02EPF0001A103.mail.protection.outlook.com (10.167.241.133) with Microsoft
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH3PEPF0000000A.mail.protection.outlook.com (10.167.244.37) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.245.5 via Frontend Transport; Tue, 21 Jul 2026 04:09:47 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ 15.21.245.5 via Frontend Transport; Tue, 21 Jul 2026 04:09:58 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Mon, 20 Jul
+ 2026 21:09:40 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 20 Jul
- 2026 21:09:31 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 20 Jul
- 2026 21:09:29 -0700
+ 2026 21:09:39 -0700
 Received: from build-akhilrajeev-noble-20260602.internal (10.127.8.11) by
  mail.nvidia.com (10.129.68.6) with Microsoft SMTP Server id 15.2.2562.20 via
- Frontend Transport; Mon, 20 Jul 2026 21:09:24 -0700
+ Frontend Transport; Mon, 20 Jul 2026 21:09:35 -0700
 From: Akhil R <akhilrajeev@nvidia.com>
 To: Alexandre Belloni <alexandre.belloni@bootlin.com>
 CC: Frank Li <Frank.Li@nxp.com>, Miquel Raynal <miquel.raynal@bootlin.com>,
@@ -73,9 +73,9 @@ CC: Frank Li <Frank.Li@nxp.com>, Miquel Raynal <miquel.raynal@bootlin.com>,
 	<devicetree@vger.kernel.org>, <linux-hwmon@vger.kernel.org>,
 	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Akhil R
 	<akhilrajeev@nvidia.com>
-Subject: [PATCH v6 05/12] i3c: master: Add support for devices without PID
-Date: Tue, 21 Jul 2026 04:07:53 +0000
-Message-ID: <20260721040805.1696503-6-akhilrajeev@nvidia.com>
+Subject: [PATCH v6 06/12] i3c: master: match I3C device through DT and ACPI
+Date: Tue, 21 Jul 2026 04:07:54 +0000
+Message-ID: <20260721040805.1696503-7-akhilrajeev@nvidia.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260721040805.1696503-1-akhilrajeev@nvidia.com>
 References: <20260721040805.1696503-1-akhilrajeev@nvidia.com>
@@ -90,134 +90,87 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A103:EE_|SA3PR12MB9091:EE_
-X-MS-Office365-Filtering-Correlation-Id: 87b6c412-75f7-4948-f300-08dee6dde79f
+X-MS-TrafficTypeDiagnostic: CH3PEPF0000000A:EE_|DS2PR12MB9797:EE_
+X-MS-Office365-Filtering-Correlation-Id: e5cc349d-cbd0-4b5b-36be-08dee6ddee15
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|23010399003|7416014|376014|82310400026|1800799024|56012099006|11063799006|10067099003|22082099003|18002099003;
+	BCL:0;ARA:13230040|23010399003|82310400026|36860700016|7416014|376014|1800799024|3023799007|10067099003|56012099006|11063799006|22082099003|18002099003;
 X-Microsoft-Antispam-Message-Info:
-	kN3xtrWy8QAiJPPjNN8HBCAxenyj4OWZzZjEpUiRRZaIXSbv6b47ROXgY/eJC6+rVN68JysWENos5h8WH+cO4VVYkc2a6SmpnJexN7zPERf6Fd0rJ8cOgXzFzvKq15tedjzfcUWf9FjcoRA1u1Xn5MeWe3lXk8YkbPZAE856WGkEXZxTlAaDh+Ftcfcv93+sGmYF9oygVqA5iBD2IipLvLvxzmq121LsFQbsZ1UPhefjM+U/Eu6eTZQ7+nvSyoLflZBz61JvM4fcjjI0IPiElCD0JHmWZrSdO0spv5Pb/HEfNCc0ugu1zuVDk49iSexrg9gIXYzxTPsbqejbPRVLxvblDAnWoq8aGGiuK92O6iLJO1XTnlZ270ZS8rrp8+sp6OGli1RYmRhRqB9wC9AargCx+KJ+pfryWq2PBRhtcKYB8jZlMAIKxfWAzo8M75Hxy8eB7ZL6O+WxWvmp5RpDX80RD2JDz87006ETcgqvQvIlbjIpIhF1s69XL5wfiFTmTF4j2v97jFSTWVbVWpEFWs198EV8Iy+sMvwDYhs0GKYW0qDASwt6cl7wUNf96bTozriYCUtRk1nqE4S44BqZTfP/1yaJ0xCWkWXHzWE97EFCfk/GXMdaoITbYwm49kV5m6U1SFjVlYZOcXLQh5usPAG0Mn0gQtHVJzkwmvcYKX8IcNpRM3AYhxJhjuZjgSIkcq7krtT4Wj7J0UaFtiGiRA==
+	+64zfNDV9uHwL/f09V8zNIzwE6bxGCu+6YTQmOB4Emy64mkhfqsa+7hjuGqRR2FomKC33t8fUokcQq45P6YosF3ALBq9n4+rTHzvGRMjDeebF8vEVzUbmqkY68BiJcSwoC5GrP/7zvLxO9O0GgO8GnAoe6FK4bQ2fJWx4fRhJ84yLfzKIglFian0PtwuqTpb7OWr/GqoJ3QW0Mr3DI9GXFAl2w3EQ6Q1FSrH1No4wFQ1rp0F8u5D4YXVbrzzFACoMZSiLl8QaxCuOEND2yV23AvIsPERf+iQpe600q+4F0Zn3LGRMQ3NCcn/FJLix80nAvVzoIdOWC0FUP2c2cyhfgPfZvwtVu7Wm/84guPGDMbRLVNf0DeUO+i9F/di1qJfDcOZfGDWC2H1p9PDQfQ58YmrAn5Je9ywdBBLnp/sPiBuoA5lICfdnowX1rDCpaLaZe4c7w++BPTCoFetdVByfZ8EosokKm64Xjer8hzEaUiliKd2nJdZQe8MzJhigOGJCYhGWi6fcFI/1MfSqvlnkjDCPExKtAy8rc+aLb5DHnMlu1NgitigBoQCB6/LGnu4yamO4PRUyvq8vD/9Y4IIaa16MqpVyRWwA8QMHP+B5VX42flHDL5c8Lfd6DroUypW9LKcAS3lRgdaHNeYj7DnRT4deClG9e4INQprHxtSuT957D3BzpfP9U4B4mpi7S8R+j772KizlTBYy7hZ2YCJ/A==
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(23010399003)(7416014)(376014)(82310400026)(1800799024)(56012099006)(11063799006)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(23010399003)(82310400026)(36860700016)(7416014)(376014)(1800799024)(3023799007)(10067099003)(56012099006)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	xqjZcEpOhZ9dZpnx2IwMzKyb/t/pbWC4Mv4+zx7hOcupweHQbw0Cc/7FLFwueHk8SK3poYNZuXo7HEvYp2/0ObqLxcUjY6e5pCCIf+ct0UBuT80xU5uWOC6rYlFagTIDsbbh2feIwjfae/tnfzs5HK+BXb0GL+jEU1ionHNXHvcabo7FZV3z0WuszCHRGUowB3+DdQmWdegZ/J4RSFO4Uod2eQtsE51w1Lu73xaGV2fXj8GA+FaQc0t2b9zmBsu94nveYCb0ervc7j3LOTnTKlcAN5uKOb7DgecN6iEJUa/lV2cxcGPlqpCYgHtkXIaERo00CDXEI01kw3PwjWi1aHYkHcfYN/hSiJzLWFJNPfYwW8JrPcEVzo2f19VtEYywaYE1bqV5k3PZP8RLJ5flwY1nFaewmN+bx/sDP6XPHZtzhqZ8S5U3DKMmZKYhN8hQ
+	EG8peYeysYAlV3xomhuYDBg8TtUJzuAEwOxuiIV6Jq6A4jTaYFI9Legb8APTGzDfqJLvmhzkoA4XKqgH583IooXrITY4MVa5ok2BlaV2HlgkpH9FQWE4wLRVNn9WOjU1efwpV5bDl5DG+v7ruiVpPx4G1dU1kmbCp7wzYUl2wgHOfkDjAyzWmaZoqw+rfp3skHztuU8XdfWZ9gseW6X4E5erL+tsPxIdBeumhoQsicKShgJmSFFTdg3nKh/oIM781mJRdbKOCs5jgWRZX/0dAFIREPUF66lukfYFOAOri3sfUMhOB2wCcuDHRr4ppGcEOgHmjxavVY6lv2VK1S0XJGqiXIYeIsY3G4QcWqQHyF2oMb7yr2rhjARPmy/WKfEF/n3R7GcbkgbUwNjk9DAPSBiI0WKxobcZnXVuMPBU4RIwavEQDTDp9HZpUCa2/YeQ
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2026 04:09:47.9586
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2026 04:09:58.8102
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 87b6c412-75f7-4948-f300-08dee6dde79f
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5cc349d-cbd0-4b5b-36be-08dee6ddee15
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A103.namprd05.prod.outlook.com
+	CH3PEPF0000000A.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9091
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9797
 
-Devices using SETAASA for address assignment are not required to have
-a 48-bit PID according to the I3C specification. Allow such devices to
-register and use the static address where PID was required.
+SETAASA-based devices cannot always be identified by PID or DCR; the
+standard I3C id_table matching may not be applicable. Allow such devices to
+match through Device Tree or ACPI.
 
 Reviewed-by: Frank Li <Frank.Li@nxp.com>
 Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
 ---
- drivers/i3c/master.c | 52 ++++++++++++++++++++++++++++++++++----------
- 1 file changed, 41 insertions(+), 11 deletions(-)
+ drivers/i3c/master.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-index b18dda89c473..7b2f819bf443 100644
+index 7b2f819bf443..43bf530bc661 100644
 --- a/drivers/i3c/master.c
 +++ b/drivers/i3c/master.c
-@@ -1989,8 +1989,17 @@ i3c_master_register_new_i3c_devs(struct i3c_master_controller *master)
- 		desc->dev->dev.type = &i3c_device_type;
- 		desc->dev->dev.bus = &i3c_bus_type;
- 		desc->dev->dev.release = i3c_device_release;
--		dev_set_name(&desc->dev->dev, "%d-%llx", master->bus.id,
--			     desc->info.pid);
+@@ -19,6 +19,7 @@
+ #include <linux/kernel.h>
+ #include <linux/list.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/property.h>
+ #include <linux/slab.h>
+@@ -345,15 +346,32 @@ static int i3c_device_match(struct device *dev, const struct device_driver *drv)
+ {
+ 	struct i3c_device *i3cdev;
+ 	const struct i3c_driver *i3cdrv;
++	u8 static_addr_method = 0;
+ 
+ 	if (dev->type != &i3c_device_type)
+ 		return 0;
+ 
+ 	i3cdev = dev_to_i3cdev(dev);
+ 	i3cdrv = drv_to_i3cdrv(drv);
+-	if (i3c_device_match_id(i3cdev, i3cdrv->id_table))
 +
-+		/*
-+		 * For devices without PID (e.g., SETAASA devices), use
-+		 * static address for naming instead.
-+		 */
-+		if (desc->info.pid)
-+			dev_set_name(&desc->dev->dev, "%d-%llx", master->bus.id,
-+				     desc->info.pid);
-+		else
-+			dev_set_name(&desc->dev->dev, "%d-%02x", master->bus.id,
-+				     desc->info.static_addr);
- 
- 		if (desc->boardinfo)
- 			device_set_node(&desc->dev->dev, desc->boardinfo->fwnode);
-@@ -2389,8 +2398,18 @@ static void i3c_master_attach_boardinfo(struct i3c_dev_desc *i3cdev)
- 	struct i3c_dev_boardinfo *i3cboardinfo;
- 
- 	list_for_each_entry(i3cboardinfo, &master->boardinfo.i3c, node) {
--		if (i3cdev->info.pid != i3cboardinfo->pid)
--			continue;
-+		/*
-+		 * For devices without PID (e.g., SETAASA devices), match by
-+		 * static address. For devices with PID, match by PID.
-+		 */
-+		if (i3cboardinfo->pid) {
-+			if (i3cdev->info.pid != i3cboardinfo->pid)
-+				continue;
-+		} else {
-+			if (!i3cboardinfo->static_addr ||
-+			    i3cdev->info.static_addr != i3cboardinfo->static_addr)
-+				continue;
-+		}
- 
- 		i3cdev->boardinfo = i3cboardinfo;
- 		i3cdev->info.static_addr = i3cboardinfo->static_addr;
-@@ -2404,8 +2423,12 @@ i3c_master_search_i3c_dev_duplicate(struct i3c_dev_desc *refdev)
- 	struct i3c_master_controller *master = i3c_dev_get_master(refdev);
- 	struct i3c_dev_desc *i3cdev;
- 
-+	if (!refdev->info.pid)
-+		return NULL;
++	if (i3cdev->desc && i3cdev->desc->boardinfo)
++		static_addr_method = i3cdev->desc->boardinfo->static_addr_method;
 +
- 	i3c_bus_for_each_i3cdev(&master->bus, i3cdev) {
--		if (i3cdev != refdev && i3cdev->info.pid == refdev->info.pid)
-+		if (i3cdev != refdev && i3cdev->info.pid &&
-+		    i3cdev->info.pid == refdev->info.pid)
- 			return i3cdev;
- 	}
++	/*
++	 * SETAASA-based devices need not always have a matching ID since
++	 * it is not mandatory for such devices to implement deviceinfo
++	 * CCC commands. Allow them to register through DT or ACPI.
++	 */
++	if (i3cdrv->id_table && i3c_device_match_id(i3cdev, i3cdrv->id_table))
+ 		return 1;
  
-@@ -2848,9 +2871,16 @@ i3c_master_add_i3c_boardinfo(struct i3c_master_controller *master,
- 
- 	boardinfo->pid = ((u64)reg[1] << 32) | reg[2];
- 
--	if ((boardinfo->pid & GENMASK_ULL(63, 48)) ||
--	    I3C_PID_RND_LOWER_32BITS(boardinfo->pid))
--		return -EINVAL;
-+	/* For SETAASA devices, validate the static address instead of PID */
-+	if (boardinfo->static_addr_method & I3C_ADDR_METHOD_SETAASA) {
-+		if (!boardinfo->static_addr)
-+			return -EINVAL;
-+	} else {
-+		if (!boardinfo->pid ||
-+		    (boardinfo->pid & GENMASK_ULL(63, 48)) ||
-+		    I3C_PID_RND_LOWER_32BITS(boardinfo->pid))
-+			return -EINVAL;
++	if (static_addr_method & I3C_ADDR_METHOD_SETAASA) {
++		if (of_driver_match_device(dev, drv))
++			return 1;
++		if (acpi_driver_match_device(dev, drv))
++			return 1;
 +	}
++
+ 	return 0;
+ }
  
- 	boardinfo->init_dyn_addr = init_dyn_addr;
- 	boardinfo->fwnode = fwnode_handle_get(fwnode);
-@@ -2873,10 +2903,10 @@ static int i3c_master_add_of_dev(struct i3c_master_controller *master,
- 		return ret;
- 
- 	/*
--	 * The manufacturer ID can't be 0. If reg[1] == 0 that means we're
--	 * dealing with an I2C device.
-+	 * I3C device should have either the manufacturer ID specified or the
-+	 * address discovery method specified. Else treat it as an I2C device.
- 	 */
--	if (!reg[1])
-+	if (!reg[1] && !fwnode_property_present(fwnode, "mipi-i3c-static-method"))
- 		ret = i3c_master_add_i2c_boardinfo(master, fwnode, reg);
- 	else
- 		ret = i3c_master_add_i3c_boardinfo(master, fwnode, reg);
 -- 
 2.43.0
 
