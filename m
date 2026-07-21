@@ -1,63 +1,63 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD3247CC79
-	for <linux-tegra@vger.kernel.org>; Tue, 21 Jul 2026 10:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3312847CC71
+	for <linux-tegra@vger.kernel.org>; Tue, 21 Jul 2026 10:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784628673; cv=none; b=vCeM/3sFRjV05Z4ggpjwa4NehfzehU10pBUjJ8XzNFG2STp8QD6SLeoa9u7MkzYywgOBehynJhiLbI8hm/m/1nEqp0JYoF25cmwHH5zm6oD25sMMBXARXhJYxnTmgPQ3qCFrOlneJJpJolTxAcuazZ3i8GSlbZkPLvSZ6Zd6w04=
+	t=1784628673; cv=none; b=GiW7Bv3L/ZW7nxlDb2i8mjA/E3KYdZT5YjSb5hpOMY8WKB47r0QSIfBeEHf/X7R8EtUQvKXIdvM+JCRSvKHots+xPKaIcFcYWLuiG5anf9XaU9ndhoBffH+T9Ytjc40N5S50W6M3Ztih030FuS2OOZS3OoTFBG5LDOLiN9D442o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1784628673; c=relaxed/simple;
-	bh=usrp+FjtSQZcl8J2j5C1lL1KI7lHh7LNpR3MIeGSSIE=;
+	bh=TUmjXw2M4oeu88E4T00FZuITV/yEcOpyuEC0IVB64Cw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S8EapcS6wziVj8ypMrEhKgfwSzsoPRu3xW4tYS50qi8ytcTsNzs9I0VEDHccY+AyCWR5uSJ6M+sDPx7YuntCUuEczlHLUp3mqWV8UcOveMp0jco1e8pclehZ5ssF52VKGmSdeamAlPEMNeB2c5hsao7Aufk5Xyn0oOd7feaOC00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jQT8v1vn; arc=none smtp.client-ip=209.85.128.45
+	 MIME-Version; b=HM6/mGytvQL7qVHhdB421VnzZSgIIlxO6XSU2VONUqHMeCME8DaHTltWKmd1fC8iHWHnm3n1P7XSLkscGiKiBNHnRaYSGNCFRLuJa2/Nh+mX4Y/5MTTqak4UEumqPcwMWbCoB7j5+2DsWHouvsim8HOxUmzxYDG/j4M82EV3HAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FHbD6DTb; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQT8v1vn"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4954a2e73a9so25009965e9.3
-        for <linux-tegra@vger.kernel.org>; Tue, 21 Jul 2026 03:11:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FHbD6DTb"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4953e04ef16so52396595e9.2
+        for <linux-tegra@vger.kernel.org>; Tue, 21 Jul 2026 03:11:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784628669; x=1785233469; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1784628670; x=1785233470; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=/m4WPR04y0hiYiGJWdv07CkxY0CSTEb3AZvblsAiZL4=;
-        b=jQT8v1vnV1Vels5NltXo3vWI6eNumVnWFY0VfT2BAx3u+Pn36C0fE5HKwsSgtkiVA5
-         UKhNUFjFn3WCBUZmpV4i+kkYxoFs2VmLkbtimY9juIX06BSIBYhpKY4P6fKAEyIARdMb
-         tCEhuXyl453eqW9I/VZPhK2JxcLbm2jeW/gtU0gcwZkUn4sje01ltd+MuC5OihhVFzs8
-         Xxo0B5zdsoDkBEvzCjd+DM5sBL74cFuGSdw5isXRzcXbsbUcaJN/pWW09riwDH3gcu1W
-         u04i+4cHWjHmNuNMUA+BHOIhoerjLIZio5xT0lbp+DKzvHzcGCkTYK4qE81O311GY72R
-         d4zA==
+        bh=103K+HDBGo173ka6xLJ87zAEncnD5tT5dDYUjcQ8I/s=;
+        b=FHbD6DTbyIBQiFS8HUcvNehDITQCI3mFTow3teJjPZ+ch3VibWGWrbw728CSrgUz9G
+         bfUuAJpatFW7j5n6ceZBL6w1y4nOGiY2bFpjqHDpjL+lLN/njmkwIo2nfAOpOwQT8jmA
+         iyUtw/lEJ+nwnBL0+PE7mPXqfYFX+uYqCw5oyP4zpLqQSUc9NxUveY6MQzOoyQ7LT7/f
+         Lpr7J0cmWj800ERFUVrCVR7Nvm821jREqK9qwh7UFPH4x/21NFtJvS6gUX0uDxdPd9yO
+         1Hz/+V5yLBAiRynz8HgeVaU7D5UXGfhWcpO+t5RrlUSkrytlOYG+id3Eg14wzXegMEt7
+         1aEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784628669; x=1785233469;
+        d=1e100.net; s=20251104; t=1784628670; x=1785233470;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=/m4WPR04y0hiYiGJWdv07CkxY0CSTEb3AZvblsAiZL4=;
-        b=MXdmf7e4TqbJw56ikWVXkxAFE7nw6DTXZp+H1Ou4Y000zJQpp+jCukemJJJlfLN3Zb
-         V5xH1x9VYxpOvZC8UYKGOb+62W1TwdVWNi2yL/pJwXRyO/M9v7yugnyRqdCp7HwF9ImO
-         cxFI4k/duZRgbq6e/dA05kbAwqjrl6gF4bbxfBN0/6bLzGNalMPGerJF7o6eKHM3zALv
-         byZISNLNvzDat7o6mnaQqr8C9uAsL+RZ16v7H+vlDVlvHjyqXYQECVe22AZqRsU7TyFa
-         QgJicrw/T8HXbrCCdTp6GZ7eckaAgPvH8QFT7RlsmFzldjjOfbwxCQaiWdQFYx1BeqhI
-         jutQ==
-X-Forwarded-Encrypted: i=1; AHgh+RqLlK8LcaYvUoZE5OicKVE+xWhoG4Gxu47wZRQTRQf5qm+jlB9AJaOvcFi4kSACNmCzJ8MxRzH3ah0Rqg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUWJm6gU0V0CMatfcVankgMbXVI9fGFtyWWjXBCZIWo82sUqmT
-	r3r+7KTnrt6/9mWq3FsU/QQYXF1Veh8VhLGePbGr3pCEYpJQZdb8kYWq
-X-Gm-Gg: AfdE7ckXnJxkzAnTeazkGOCTL7oMUdnRbszyOIsNllrWR33YMn9/dATpHwE3XGn8UOT
-	ho1phe+HJTUd8gG2pGm1m33lkfkWSrqfEd3yK8+k26xHll2N1WZREbCJKOBFmPpIX7S1Dts4XU2
-	847lpZHrut5xZ8f8ZhGD2CtZ7yhN4GKMGjo1lmCxEm7ip4KXuXyVC8hhp3ymCDKtctpTEJ7p9jo
-	9yIiZb7xqV5eavJJC2w56wjHJGQ2vCcwa2zdK7/Shb1NCUS9hI/rsTVZDIIBX6CiWQXJ0gTl04Q
-	CrAE0D65cW4fcLhhh7zuTB0o3CKX3G911ZOqnLiMF5OwNif94ucmEyudC9p3ncRV/bfWVemFd0G
-	m3JSJFdAcH4ym59Dm0L6z0VYtkIYM9KRJ2mKyrXhPrNqcwUReKwoDsKT+u+3YWBiO6GOZCn/dMA
-	aEJ1kQf3B3Op8z+92b+OarOOA=
-X-Received: by 2002:a05:600c:6d82:b0:490:b8c0:d470 with SMTP id 5b1f17b1804b1-4954a405ea3mr143177785e9.19.1784628668927;
-        Tue, 21 Jul 2026 03:11:08 -0700 (PDT)
+        bh=103K+HDBGo173ka6xLJ87zAEncnD5tT5dDYUjcQ8I/s=;
+        b=NQ5rQwDj9TjfWX/f1VKx3nxhI0WiF4KdfSPqK7Xv1eNHqB+SjBZt9qPdDejjGHvU/H
+         eJNKhp5LDQH01ToO+uu58fj5V8jT5jez3B7DK2TG4k+YGoypknH7amOi63cWSyO46UOj
+         gxHIChML9WH9zuRsel0gX35bSEFplP1sEgJFyvorZVumL3x+fDJOTSrtPXeAwBCyArZU
+         Y7CrtbLdbElBf/R1x6m7QhLqF+NUTDvv6h6r+3qj3Kt4JEcdJLZaHXFkFGtb4Qm/S5s6
+         7V/wYanTvf3taWD6O84OtdZ/Kn0bXAMXuWZraT3IleQ1VHqrYgjuegIv2Iq1m6W8GweA
+         AaXQ==
+X-Forwarded-Encrypted: i=1; AHgh+RosJoiq5L0MHewRjATaBQdb+c1NPhpajmwxEUu8l0zWua1SMGSqjm1hmJdqRHlUZgVM+G+HbByQo7P/Zg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI8B1td+I7mQMrWjwM+j6QbiwfjH/qLG/6FoHfSugagXF29oBn
+	xLhNYWxxo5WGtgvNNoxkbXjMiQd/YUi5Ynem6u/wRzt1MxGNDoKSFyKZ
+X-Gm-Gg: AfdE7clYz8KLPEKsj6Mrg/rbkarmUIIKOXVWYsuKz5cn3XMOzRvpzdu0U2qBOuMWfOP
+	d95uMciDmgz0gN3QAXIqKrBAXLybth570+wRvbairYdorYN1XDgbu6qzj1HdxUrGbJm16NF7hgD
+	hXVtyiHybqxvxWli8yY3Un44O5hzW4tsuQSX1bU/+b5ZOJaznOVY8wx6uufvUiah/htXHPz5jnv
+	PHTVN0KKiQGNkDC8C/QYzDeQHmvxy1A2f+lw1qBTUiHo0umJSwwYfV1sFlF6IbKbHt+42x2Hzo8
+	P6c6oo/xHwtGDduxRiP34H10SzZaSicI6AL3pDnZAHuiO325KzdD56ucruvPHtPNKP8PT0+mZN5
+	HUPkFVFGCxMpxNDMGnaAQ27MBSl9MuXkWoKhTcxj3MFiPveGmpDnaPzsuYfxeGxpmWG6vWozyRp
+	XZVxQeVFsrgqTDogEyJjFlaUo=
+X-Received: by 2002:a05:600c:4e94:b0:495:522f:d994 with SMTP id 5b1f17b1804b1-495522fda7amr148264315e9.0.1784628670304;
+        Tue, 21 Jul 2026 03:11:10 -0700 (PDT)
 Received: from xeon ([188.163.112.51])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4956547319dsm57127085e9.5.2026.07.21.03.11.07
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4956547319dsm57127085e9.5.2026.07.21.03.11.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jul 2026 03:11:08 -0700 (PDT)
+        Tue, 21 Jul 2026 03:11:09 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -68,9 +68,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 01/10] ARM: tegra: tf701t: Configure CPU DFLL clock node
-Date: Tue, 21 Jul 2026 13:10:50 +0300
-Message-ID: <20260721101059.451699-2-clamor95@gmail.com>
+Subject: [PATCH v2 02/10] ARM: tegra: tf701t: Add core-supply to PMC node
+Date: Tue, 21 Jul 2026 13:10:51 +0300
+Message-ID: <20260721101059.451699-3-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260721101059.451699-1-clamor95@gmail.com>
 References: <20260721101059.451699-1-clamor95@gmail.com>
@@ -82,32 +82,25 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enable DFLL for ASUS TF701T since it is now supported by Tegra114.
+Add required core supply to Tegra PMC node.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-index f02e2cf65fe82..5358cdb6efc10 100644
+index 5358cdb6efc10..55e9256e80f33 100644
 --- a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
 +++ b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-@@ -1621,6 +1621,14 @@ i2s@70080600 {
- 		};
- 	};
+@@ -1599,6 +1599,7 @@ pmc@7000e400 {
+ 		nvidia,core-pwr-off-time = <2000>;
+ 		nvidia,core-power-req-active-high;
+ 		nvidia,sys-clock-req-active-high;
++		core-supply = <&vdd_core>;
  
-+	/* CPU DFLL clock */
-+	clock@70110000 {
-+		status = "okay";
-+		nvidia,sample-rate = <11500>;
-+		nvidia,i2c-fs-rate = <400000>;
-+		vdd-cpu-supply = <&vdd_cpu>;
-+	};
-+
- 	brcm_wifi_pwrseq: pwrseq-wifi {
- 		compatible = "mmc-pwrseq-simple";
- 
+ 		/* Clear DEV_ON bit in DEV_CTRL register of TPS65913 PMIC  */
+ 		i2c-thermtrip {
 -- 
 2.53.0
 
