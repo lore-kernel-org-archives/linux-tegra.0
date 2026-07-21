@@ -1,90 +1,63 @@
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013006.outbound.protection.outlook.com [40.93.201.6])
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012018.outbound.protection.outlook.com [52.101.43.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FCE11CBA;
-	Tue, 21 Jul 2026 07:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FC63FDBF7;
+	Tue, 21 Jul 2026 07:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.18
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784618912; cv=fail; b=SVbgOgr/23DKzyiH5ZfmIpL5/iSFm+/vdQ8zKogJ8k4anVsglJZwq3g+mF8ac6xym9tuf8NbIClXOE5Trgy63airaF13G1Ok7EyLGIbs+cVj3xOJNujfoWBpN7Z9gXuVMjsBryWTdx80Ejfd0CJbRZTqmF94HTqshSeHOL+Raio=
+	t=1784619462; cv=fail; b=rfDtd+gtXl1IEf4PDjgQ8gvN/MNMdmMFyakPUX7TO60jFVQ/uISZwLOptN7sD70ai7T81WVsd6ikYPirwJuFpKa84IJYCyjWHIcS2BCZUrF/NkHqk4q6ZzSki/NQfe7nYLyCTfNpe4rBUW6Y13AXwioniF+RfGAX1ud49EL31/0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784618912; c=relaxed/simple;
-	bh=+ayNr7yzjXLHvJk3rKbxy6tj6YlzdyXVWISxB65gpb4=;
+	s=arc-20240116; t=1784619462; c=relaxed/simple;
+	bh=z2/mc+vONapvfZ31JewbsHO+0UjlTb6O96CdyRmX+to=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Tl0hNfed96NfL4vwVCDMG/bahT97vBckTWh56kHTOs4y8dYkOdirmcfy0GWbwEGzylanjTie8B4SSiDOl8CQgveUn6S0gCpGkhlLQ1/+xrR460dJqUhVm1b0lQN0BwTjENPPjujyWyWBy8ZMJM9VcM0qt2S9u7LPLc5cgP3nxt8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=efnd5PSX; arc=fail smtp.client-ip=40.93.201.6
+	 Content-Type:MIME-Version; b=C/Z+nhDSS5YmTaPDPqOQ3dblJGrkDwRZ86v0YwVsjTft+yQO60F1vK9QJ2VkoJqaSR9BExCrSrnp4/O0r5GBufkncUf7XMGbsE90FeOWvqlxTQjtgyWqd6ByGO2Vzd9IIJK9+ISW83groSCUWUd8Z88gP30VlodYyJutU24oJVM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sP1j7O1O; arc=fail smtp.client-ip=52.101.43.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="efnd5PSX"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sP1j7O1O"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EMuyf5vrwq2xJ0dwJFstM2xQ8CPWdHTBmUcTNp3bt38+0DOwx/Tj0NoR2E72BB9ypwFhlqT98/+xqTp7nRYXV1hMYJKZWZ4ZtrP12dgcvWjcjwZK5i/mfhP5Xwe75JTJzLSVbai0FS590RPmO5VcpuWOrKdLpzhevK+7sKfwVRMtkIUE0mk/LyXa1mimtlBmg7tYeQafGikbi+8jQpQOMo87m0ZTUTbPpMdeAogkGSmqFjxd+riv9Aq2n4VxB2tjR6FKhrSWq+RkleRYGTF4BMOhIpoW9XwFqW19qV6cFcKZSdRKOfg+lcLKKy5k9dx6sBxoVxq6vsIgJgnbaSkQAA==
+ b=mzXct4sLE6+7iS/9RdqOUPfqRbJ7C5H5q4sCGX3KGK+yL13U5/NCFitck1R8VN507gC7NCXq2lvrjBi8tWbCU0bf3fyf2Y94AZppvPtxb24HPJISmKW+SnxM/LHcQd0Rcfv/BVQCGyA3UsUaWRs9F47yT3zyNDufJS8o/ZgAmXmQT8myCWLeykaF/m7zf0o6xe7zKUEErhmRjzqwor4chqm0Wi2rilqgmFHMLWIxtTstIQ/VolvabWxnbeIHBVD2CIfdGa3Ton9l+eNOfnTpi9styaGLVZcqQL8TeuWbl6gLLzdFT4FEKxVcimG4YBFKiEy82PfT7nzqDRT39yZeIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aJ5ukUSmpVtJ1+aNizJtres9r7hajyKrZeo8gaoJ/M0=;
- b=vwsEJCidVl9ay1U4mdScr4YfZ6r3SxbYnepAd4Um27BXEVwPn94sLT6O0NUSUzQeiuSHbIqsh0GbU36wJcBwq1HF3g1/aVCcksZKHlmeIrRvU4020MXY/+Evr3bZ6+bvpIgQ0914yjlOIT+ioEaKWHjOj1V2A0nC0D48s9Px4WGyRPximCjXV/TSgqI5ylpFi9/ZxjH+U7BfkUrCDxrNkUU8zG+K4M4kqN+S00T1ncdWDNj9p//kRZqIz+scQB4ic+GEpNbiXwE/jbxrvuYPwn++WJq67T0xZ0qM6YDO1l42y0C/0GHf7m0+YqmVKfEZmojuJtk+9/7krTBGB4LpvA==
+ bh=G5YMIOAWZueIDwkYuMEq9V759NXLbpDeII/zi2d3Ef8=;
+ b=fCoVCVye89bn2tlKg7ASPKarP57W9gZLb6nk/iSieUn/CSA6A3aPprvjahdvNc3Ncxb3HIiDdGERN/DS6y8pJga8MV3EztMsNMW1cxD4w0Xus6/Ej6L7BuJ19Q+hxCglWsOCPsAJ71qdTw0st5vpXqfP1Pq0KHgDqQGuvRTXBLdFApwKHk0D5FLrfLjPVBdkZ7lpcXz3FUKtVhRxQoGy/Q37aN7F1GzNKqAOqTbwCZRHAL5S7S/+30wnDmYhgHEO/pnLdbOhJad7ohD4cjGNKbKdFx+4SgDiKLRHQkh6GlzUF4YmIvqKQbW3r7+z/K4qM337ZCKwDrSVPmjIegOaAA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aJ5ukUSmpVtJ1+aNizJtres9r7hajyKrZeo8gaoJ/M0=;
- b=efnd5PSXr+GTH/DROjDDd5FPVevNEU6nt/R4otN9rEPg+Od41ng3zSI4yK6AUaYy8B3xHaHJGs8HZgcFClSYtY3SQ3g+myu/gkI6E9clLI2nLuFQ4ZFS/QCxU0+2J+5ZbnQNtgCmFQWKuFxzAETQyNCSxImAmCHJBj9ePf2LrIYMQux0IHW8oixGaXeCOv/jfU3Z2ivF7l9M8TQDtQBztS0cTNcs7B7o/SzwewXHsrnKDa6vQAlRQrvwC1s9isc6706p8U7tdBEfEMic6wjz4Hs2rAugi44Jhlp8NUdPhmLCw0pjO+/PqeQaJdEkUlKuEgFdPN41zS5wRJy12LNTvw==
+ bh=G5YMIOAWZueIDwkYuMEq9V759NXLbpDeII/zi2d3Ef8=;
+ b=sP1j7O1OT6XHZZeN3LeYW9q8vBcixdbOHcDOmvgXVM7wK+WJlBv1hSxgZSBBuIqfrUqvFcI5NqaBCDzVoS7k2B1AuDx2OeOw6BLLhOAGxx1Hmi8DSAiUnBHgExByJM4Sg3jXdk3gejFTGCjzQfbFFfHKMsbahSJSxulBTR8sLE3m9fPu22/djX5XK+KNE1kAizaMHREmFUODWroFcHP4RUn8SOG0uwCQy0L4DufH8ASXi19H0rXQNkRQDlk1BQ2jhFhHPZweQNumF2GdTPkcE4IxtfJIlj2gr/SAv3BZuY7Ip7V4Ktvp1TMjdcfLwIOaQ1sNJ0cXns1YFPPS6AkFmw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by PH0PR12MB999114.namprd12.prod.outlook.com (2603:10b6:510:390::9) with
+ by MN6PR12MB8472.namprd12.prod.outlook.com (2603:10b6:208:46c::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.18; Tue, 21 Jul
- 2026 07:28:27 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.12; Tue, 21 Jul
+ 2026 07:37:37 +0000
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017%6]) with mapi id 15.21.0223.017; Tue, 21 Jul 2026
- 07:28:27 +0000
+ 07:37:37 +0000
 From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Tushar Khandelwal <Tushar.Khandelwal@arm.com>,
- Sudeep Holla <sudeep.holla@kernel.org>,
- Cristian Marussi <cristian.marussi@arm.com>,
- Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Conor Dooley <conor.dooley@microchip.com>,
- Daire McNamara <daire.mcnamara@microchip.com>,
- Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
- Manivannan Sadhasivam <mani@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- "open list:MAILBOX API" <linux-kernel@vger.kernel.org>,
- "moderated list:MAILBOX ARM MHUv3" <linux-arm-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "open list:RISC-V MICROCHIP SUPPORT" <linux-riscv@lists.infradead.org>,
- "open list:QUALCOMM CPUCP MAILBOX DRIVER" <linux-arm-msm@vger.kernel.org>,
- "moderated list:ARM/STM32 ARCHITECTURE"
- <linux-stm32@st-md-mailman.stormreply.com>,
- "open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
- "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
- Pan Chuang <panchuang@vivo.com>
-Cc: Pan Chuang <panchuang@vivo.com>
-Subject: Re: [PATCH] mailbox: Remove redundant dev_err()/dev_err_probe()
-Date: Tue, 21 Jul 2026 16:28:23 +0900
-Message-ID: <tdOrdi__TZC4GQEnmWeUIw@nvidia.com>
-In-Reply-To: <20260716025215.33592-1-panchuang@vivo.com>
-References: <20260716025215.33592-1-panchuang@vivo.com>
+To: Thierry Reding <thierry.reding@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>, webgeek1234@gmail.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Aaron Kling <webgeek1234@gmail.com>
+Subject: Re: [PATCH 1/2] soc/tegra: fuse: Support revision B01
+Date: Tue, 21 Jul 2026 16:37:34 +0900
+Message-ID: <NvaHgTOhRNaBSnS5yK1uig@nvidia.com>
+In-Reply-To: <20260717-t210b01-speedo-v1-1-f04a8bd4d997@gmail.com>
+References:
+ <20260717-t210b01-speedo-v1-0-f04a8bd4d997@gmail.com>
+ <20260717-t210b01-speedo-v1-1-f04a8bd4d997@gmail.com>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TY6P286CA0003.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:3b8::17) To SJ2PR12MB9161.namprd12.prod.outlook.com
+X-ClientProxiedBy: TY4PR01CA0069.jpnprd01.prod.outlook.com
+ (2603:1096:405:370::12) To SJ2PR12MB9161.namprd12.prod.outlook.com
  (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -93,455 +66,189 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|PH0PR12MB999114:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4b62cf3c-21f8-450b-21e5-08dee6f9a7b5
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|MN6PR12MB8472:EE_
+X-MS-Office365-Filtering-Correlation-Id: bfd99c7d-2e13-42c1-9f47-08dee6faf000
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|23010399003|10070799003|18002099003|22082099003|10067099003|56012099006|11063799006|921020|6133799003;
+	BCL:0;ARA:13230040|376014|10070799003|23010399003|366016|1800799024|11063799006|6133799003|5023799004|56012099006|4143699003|10067099003|22082099003|18002099003;
 X-Microsoft-Antispam-Message-Info:
-	d769c8MmEltc7pUI5FyAWrMYObKTZPPVDmK2TTc5NjnK22V91+OijMzxfHeNfa8JQOIx4NYqkrnpKXfIm2wsCZDQu9794s3mrifzmHVnNBaIwiN8A6Jnme8OH3a+Cq3fJrgMdK3qUUrzYhuAbBFaJJH6AhjC556WXc11vOFHWFcq8sbc7BXOYX36bQqf0pC+SGN2mtDF0Si0Fb67Qedj01B3+1Rvyg7+JE+q7B01eGmePtGnWa9hkNS2RFfY5bYkUQvahIYSACc4O9AMqUgIffKE5x5l41qSbFlVzW5kwkLpw0Y5GGLpkuEH/YtOexicS614ALZZQ025W/+tz43xI8edikyk3e0KMZcXiVgTOMZx3+bFsn+OdGetoe7YEzJ1x+fnZWHm7Dgn6Ksam3f/uQGtG5Jr26dJjblvNwruD9aigZcNdgnFoz91cqxDf9bnz5VQY6HOF3Lbf2zQw+Sv2DsGpjl57ixRliNgTYUekYHqY2XWvA5RKoDDvAsrjAIbnLhN36neK/8J8NK00pvmF0sLg1Jr4nIhe957Ulm9azWzzpBbpegoJOxu9bYTS1gpogZAbLgOnWevQ/qwvPl7J90hXNa5B0YJnhivLGtt4d11tsyQM++Kt6181MtD2G4QtJ1zQhwEWP6r3mMsB5kUyq32kKaSc8+UIu/xU2v5eJFgRfmN3dhR2yu4q2Ji1980AzAENslG/oktKu4cU2lrTA==
+	VqErJzOkOU1Fvwp8uQmB+BsV/G/Um7vJUk0SLktPiupx15fG5v4AoABk72LqF9pFCmqE2cM5EmrBI3YNAV7BE4fe3rk1TQYZiRFfs+9D8Luo2UMcrXfCvyFQDqzpNBgYiWSuBtBbgOUjZniveYf+NNWre/hucl3fWLCy6BrgGAMVesWTQs32Bxyj1L+8/Ugzs11yA5dVgPVMBYfKVgkz2mqIFNQ2xmqR7N7PIgm7Q/ZN4gz3YkVSsRRL7aYb2M3l3cfd8QIlAP5Gs0GW3tl5HIwsdSCDH3AClLT6N1qsaq8/CklZkdb+zSsU8Tny7Hd/1aB+vlC9zSvJQsiwbhc0ekNFu9swWgL+1mcumIWGLOY6kX+/mzG79IYrachL1n0ulQK2GY1ZSDhLFzEL2NcWKKEDpMgNK9rJKbzuMoPAlhj8eqjbSXJTWAePdpvRDJI0qUHadWPl7hagTQ1uPODUG2LayJVX5wzZHxfoxwUfjE0A3N8Bh2h9GreRBQ2nLswdUk5iIsl+d79hTXPDiwrmJVBUdwzfFoCJtoRRJmo0MaXB5deKHSqfIxI7+GUK4C4dJiP7IBx8ZD3OWJbpicWcgRGPOGCboAfhB0R8iIkd6nJ3OsXQR5BMvaF4QT4FsH01plpmdn9fBjPPTAtlrJ9sOvQQItks4pCHPgWHe6/rEe4=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(23010399003)(10070799003)(18002099003)(22082099003)(10067099003)(56012099006)(11063799006)(921020)(6133799003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(23010399003)(366016)(1800799024)(11063799006)(6133799003)(5023799004)(56012099006)(4143699003)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cGlwZklmSCszK29TOUtlTEdMQlBxN2ROWVNlOXU1a3RnbWVZU2xTcVNIczhy?=
- =?utf-8?B?dW1ia2xBNHduZFl5SWZubmx3YzZNV1ZlMWh1ZkRra0JlSlRLK0xWa2lEdjZy?=
- =?utf-8?B?aVlWdkVCekFFb2lwOEZxQjgvNDVaTGswV1F0STRMWER0YVNFaXF0cG9HR3h1?=
- =?utf-8?B?SXVYQXVqMmlnMENKMURzNFdQSnU3dkVlaDVtbmgwb2N0SlhzVXN0TjU2WjN6?=
- =?utf-8?B?ODRUbXpRV0FIbWFoUURlUUIrVTk0a1RaRERXQU8vblBrY0RvWnpic00ybHlM?=
- =?utf-8?B?Wk1oamc1K3BjRDd1dWJYNHFONlVDbDFyL3VQQVc5T25KREVuVHlHam5MRlNE?=
- =?utf-8?B?MXNHVXRpKytvTTdWZEZiME9jZGpoeEdPby9vR1Z5UEhGejB6czZjenNxbFlF?=
- =?utf-8?B?V25OcU5Nc25XQXZlY1FFUTByeTE3UHFtUmg0c0I0YTlSVkl6djlWRmltNTZi?=
- =?utf-8?B?OVZIcUVERVN2eEc3dVdxd05nWmYrNTliRnp2VkFCR1l2WWZmRnNwMmh4WnE0?=
- =?utf-8?B?aUpxWTZhSHRjTEM4aWlxbk13WGVlWlR6dDl1NUtDYmhCcTBDOVp2Rnk5T3Zm?=
- =?utf-8?B?U0tESjY5Yi9lMFNHTEQ2NzhVaTlJVktGM1JRWXl3VXhRcjJxTmpQaTZQQk1O?=
- =?utf-8?B?c00vVXZKVUFLRS90ek5oZ21mSGlnSEZsZHRQNTRIdEtqNnJpQ1pUQjZGNDVw?=
- =?utf-8?B?M2ozWnk0OHFzcFVLRC9oc2xZSy9heExFcGJwbExSQ0ZWL1JIbEs5YytGVm9O?=
- =?utf-8?B?TG1NWHcraE80MWpqWHNxdUk0NHM5OUN2L1FNbmN1NzZ3RitvNU51VjhaeXUx?=
- =?utf-8?B?MWI5UGRqNU5xaG9WeG5JRXZIaCtyRzJhTTRKcXZRNXhhYk1hUGhYbitaOC9r?=
- =?utf-8?B?Y2I0WHdiaFk1YmNJYlpkd2ZrWXRyeVNqYkh2MUQvTkt6cFpLZ2FpSTNNRTM4?=
- =?utf-8?B?RlN5NkQ3TldBdXByY2hGNitaMHlVUTVaNWlMSm5PVW1lR3E4TVRyOXFydFpG?=
- =?utf-8?B?a3AyU3Vhd3JZTnlzMHhEMWxVM3hqRG9wSFZUZ1VSdEtSTFBxZFVyeVpKcWhU?=
- =?utf-8?B?S29Kdk5lQUJScHV1MDdzcUhhUHFETGZyOHdoNzQxUkM4NVhGYndwOWV4dlVC?=
- =?utf-8?B?cnBTcEp1UTdKRE9iQUJ2b0JoV2tWN0xiTWtrQ014VXo1bUwrWFlYaUdGaGtC?=
- =?utf-8?B?R0t4VlB0WkFzTC9qeU5KVS9sVnV2Y1dYR2ZzNXQ5R05YeWNXcS92eklKU3NG?=
- =?utf-8?B?Mkk5eE1EUUFVNDRjdUxMWDROcHdrUGY2MG1KaE13enBNYy9aa3RjNGVadHNN?=
- =?utf-8?B?TlhkTHBZYzdDQjg0R0RLVmFOZ3Iyb0UrL1R0VjZvczJZY2JnTE1LY3VxTStY?=
- =?utf-8?B?a1Fpb3NMN1BJU3FTditpNUNBL3E2TUdqVTVZYWhYaVZKcFAwOXo2UHRZbDVC?=
- =?utf-8?B?MnVzaCt4UXQxeXI3Z0c3SUlteHhGaFEvRGVQKzlZcTdnN1hEM0Juby9pVFhY?=
- =?utf-8?B?RmRMZmdEc1ZlQTMrbjRDbFV0bzhRdnkxK1pRTHZ4cklpclpaazhOVXhBNzd1?=
- =?utf-8?B?SVNSUFhtWmpZV2dDZmVBbVM1NDJXOUlsUnExdmdNUzMxbnNSUW1RZ3ZXNEpN?=
- =?utf-8?B?U2w1Vks5ZTBWQTRVSXMxd3lXK1NIVnRXK0todVRXWWhsR0lRYWZuRWJ6VDNM?=
- =?utf-8?B?UGlkaVI0YmlJZDNQWFJZNHNxUG5HUWRaWjVrWmR3ZVEvNkc4Q2tqa1c1TTVI?=
- =?utf-8?B?Ny9HSjFUNW5KeUh6R1NxR3p3dkhFR3cvbkt0VUZ1dWk4NU1GK1Bndi9lK01l?=
- =?utf-8?B?MnF6b2FCR2l6aGZmMzJISURIbDRWUVlWd3pvZ2llaUhGaG0vTE1VbmV5Q1VC?=
- =?utf-8?B?cGlvOVR4Y2VFN2xxTE5VR25Ybmd0RllJUUZlVklkRUZlNTlXM1BqK2xzdHNq?=
- =?utf-8?B?bFVqeWRHT3BpWmtHdjk0R1FFRWFCNFE5ODJlZEI2anVOYXJSNjNPODJHQkJY?=
- =?utf-8?B?eXIyLzZLUGx6MFhHNVNsVHZab1hocWFsUDdPN2hIYjlFc091SSt1M0FYTmNO?=
- =?utf-8?B?aHpvY215Z2w0dURlYkYzdU5BL2R2WEYvekVqYk5EMjJDOFdVVUlSR05CZ2RR?=
- =?utf-8?B?MmdnTFdLYlhEZ2t1VmlPcms3Wnc2YXN6eHo4L1E2bzBONElQWjRmMEs0Mjkv?=
- =?utf-8?B?VWNqTmRBYXdpSGtBMVJTUzk2SGlNdVpsMjgzVGRYZTNlTzFzNTVJK2JUcEl6?=
- =?utf-8?B?QmNDOFVxL1RxOHZOZGVtUVVyNy9tTEx1d0dMNUVlRnNPMXlObnJheTc1V00y?=
- =?utf-8?B?K3V0dHVXanNsOFlCVVdSc1lvV2lHb29GbkxibThqRHZvWmZuQnFONHhxZDN4?=
- =?utf-8?Q?+ArSHwje2/vaBgWbKAqvGNGEAxSh5EeDMwvMc720RF/g1?=
-X-MS-Exchange-AntiSpam-MessageData-1: APyQcgwpllVkZg==
+	=?utf-8?B?QjhWQU1LTU5zWHdBR1NnZTQ3Z1R0VjAraTZMTHlza0tFL3F3bUR3b01lYlYw?=
+ =?utf-8?B?bDF4QlB1dmhZWjl5R24zYnBMakRQRjAzNEpUYlVnMllCMWwrbnJFZnpSSEYr?=
+ =?utf-8?B?NHIyRFJiWTh5TzhSeFgrTFJZb3JXYlFHd1BzL2ZiTmptWFFPQ0U2ZGNkVEM3?=
+ =?utf-8?B?Y2w4eXYrWE51R3dJT1h5WjViYXFEOENIUyttVUQwdDhNVCtFNDdwK2YzeWhq?=
+ =?utf-8?B?VXQ0L2RUYU03UkVtYnFqMkNnOVBUYU5taytPNDcydnVMNTdEc1BMSVdIaitZ?=
+ =?utf-8?B?M0tGRnZBQ0JVUDJlSFlEVVNLRitJTnZHZzd2dHhKZVVWNU5rcGlzUjUwL3VU?=
+ =?utf-8?B?TWZ6RDlTbWhtcERJRmplVFc2bWtJQXl5b28rVzdpSXNZZys3SEsrbk5lOTdt?=
+ =?utf-8?B?TXZrV0FKZFMxZlRuRzBnMTIrZTR6TmNMNVRJb3lHNXhueXhOdFV2Y1pad1pk?=
+ =?utf-8?B?Z0JqdEM1NTlpMGlPRDl5VzIwdnQ3anB3cnVCc0VhcjZjUW5KQWVYSm9TVDdz?=
+ =?utf-8?B?QnJnSTJqMjNrcWhKb2trRHR3VGhob09kbHIrUytTOCtmN2pRZkQ0Zithbk5O?=
+ =?utf-8?B?a1dLVmlZd0E5L1pNYTdpMjMvRzl3OHZUbUNQK0ZHclVRMXY0VitqV2ZvLytu?=
+ =?utf-8?B?NnE1REJLbjZIYUg5TnRpRVNiTnp5TTBwQmJHWENualI5TkwzTld1Vjg4V1V5?=
+ =?utf-8?B?Z3hGQVVlVDlhZjJNVCtRNDZFYitaQnZkTGNjNk1tSnNtT0tyQzExZkFQQWQz?=
+ =?utf-8?B?eXpIRlhqbFdtaFdzZGs1c1NzV08ybk5xNXFQdXVZZGcvZDNpMlVTRjd1M3JV?=
+ =?utf-8?B?UnVkMlU4bXBEUFhGU3oyNWZHSExkT3VqQU0zSkU5eWZyWGh1SDNXeVlRaXVp?=
+ =?utf-8?B?TTdOZFpXaU91d3M5VE5wWEFqUzM2eE1MOW13YjhSSWcxU3c2QnNzVWZwRnA1?=
+ =?utf-8?B?eFh0NkRyRW52cXZqYmpvZ2pWRFVxMXJXR3d5U3BEMHAxUXdCakZYRFdmS0hU?=
+ =?utf-8?B?RUFsQmVYL0h2bEZGUERycTZid08xYjNhdjVkaFNOeTA4b2V3M2JOS29TbitD?=
+ =?utf-8?B?NVdWUTdEWVkvVVp1S0ljekVQakw5K3d2RHJDR3pELzZha0FHVW0zdWprRmNq?=
+ =?utf-8?B?RzA0MkFvcWRRN0RBTkpONjIvNGxHNzVBT0kxUkEyRWM3Z3lFbG9TZlFBNUxa?=
+ =?utf-8?B?NkVTZHJsR29hbENvTDhzQWpDWlRLeFJoem9ZOGxxUjVBd0pDUTZGRHYzNnhV?=
+ =?utf-8?B?WjNHZlBGeitZbGlucnBTeTZtKzVnRHA0OU5jRWh3ZTljeFNFdDYzdDdHeDUz?=
+ =?utf-8?B?VHo2bVhMNmUxdHlWRU9TbWFZSy9uSy94WUM5am9BTjFyd2RnQmsxa0FsUDRE?=
+ =?utf-8?B?bXlJOWJwNVFrZWhYblh3am0wYStaUVRyaVN6WG42TlgzeDViUSt5TTE1bTAy?=
+ =?utf-8?B?cnVDNCsyRWZjMnZLYUNCTXdySkc1aGo4ZFBsVTgyR0FMTEFFcXJpSGlGOW1h?=
+ =?utf-8?B?eTlHb0s5N0JUSFJGUGltSnYyekhxbjFzRHJhdHBreEhaQmVDMlZSUFB6MUtK?=
+ =?utf-8?B?UDNVOVk3VkxXajdGRlNXS016UTUvQmV5Rlo1TEtMa3dtdjVlVlJCUlZXNVpG?=
+ =?utf-8?B?YkNkZ0xXNlMyL010RHdRUUVBMkpCd2RuWFVzVkJrK0o2MjMvTFJ0UlVGZ29M?=
+ =?utf-8?B?OUVuamdiSnB0RHBxdFYwRWQ2UU5GQUxjcU9hQU1XSmM0dy9id0cvWUw0NTZi?=
+ =?utf-8?B?MEVrWFQ0Vjl5bjVaQzI1NUhjMEtwZFhVcnFhZmRkZWVxb2hzclRQV3BxN1VT?=
+ =?utf-8?B?SFhsbmswcEE3Y3B6dTlINlNUUCtoQktvbzdkd2UvS3IrVTNXa3dGbno5WlVZ?=
+ =?utf-8?B?bU9IODZpdGJBaW5naUt6ODh6cUNFOVN3SjFBNTF3VWZlQ3o2eWVjL041Vkds?=
+ =?utf-8?B?SU43eVhudG82b2grczd0dmpvZitLejI0dzlHbTdvVE9ud2tERTBIL29ndkZP?=
+ =?utf-8?B?d0N6OE5UVzFvNHAxbjgyb25lTFJIUUhiU2xBU0lzOHFOd2ordXpOdE1SeDEx?=
+ =?utf-8?B?UjY1Vm8xMXltOEdEMGJVWi9NdUd5RWp4UEhVZ2ZVWngxKzh4MVV1QjlBZzJl?=
+ =?utf-8?B?OVhZUWZlS2hFNk14SWtkUlN4NlFWYTFMSGRoUTd6cG5KMlNOckRXc1pvZnBp?=
+ =?utf-8?B?MUZGVERTVnFkQzBsdVVBOTMzdFBqS1FlRjNkcUxtZ1JTM3g2MDlBMzFmMjZL?=
+ =?utf-8?B?M1k1ZVk5M201VGptYzVuOTFvc1IvTTJGU0FYZ0oyYzNodU9zK2tLSXpEVDZv?=
+ =?utf-8?B?SWhzblZ3dDcvdTQyeU0rNjhGTFhUQUd4SVl3Z1NPajI5LzlzQmpjaUJoM0Rp?=
+ =?utf-8?Q?G1MtWznFTSM9RU61u8zLfX94es+rw6CVfX5xSl4+y7fZq?=
+X-MS-Exchange-AntiSpam-MessageData-1: D8ME/Kc/PKUpug==
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b62cf3c-21f8-450b-21e5-08dee6f9a7b5
+X-MS-Exchange-CrossTenant-Network-Message-Id: bfd99c7d-2e13-42c1-9f47-08dee6faf000
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2026 07:28:26.9288
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2026 07:37:37.8059
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZUviEGit3S2SPzuWhljUwpbP7D9m7ZNVio3bk0p7CgUFnX255SqbA0nHA+OLF1G90sbgpb+mRpNfhmAXPyeJTg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB999114
+X-MS-Exchange-CrossTenant-UserPrincipalName: V7JBKZoHYRkPlejdqLh5/s67BqkFfxRbyZz8y8P2MZ0HEZlYFk/dhF0IGHArR8fgmpPLjkGmoMFVpHgasl+UhQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8472
 
-On Thursday, July 16, 2026 11:52=E2=80=AFAM Pan Chuang wrote:
-> Since commit 55b48e23f5c4 ("genirq/devres: Add error handling in
-> devm_request_*_irq()"), devm_request_irq() and devm_request_threaded_irq(=
-)
-> automatically log detailed error messages on failure. Remove the
-> now-redundant driver-specific dev_err() and dev_err_probe() calls.
+On Saturday, July 18, 2026 8:19=E2=80=AFAM Aaron Kling via B4 Relay wrote:
+> From: Aaron Kling <webgeek1234@gmail.com>
 >=20
-> Signed-off-by: Pan Chuang <panchuang@vivo.com>
+> This is used by Tegra210B01
+
+Please describe the change in full in the commit message, don't continue=20
+the paragraph from the subject.
+
+>=20
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 > ---
->  drivers/mailbox/arm_mhu_db.c               |  1 -
->  drivers/mailbox/arm_mhuv2.c                |  9 ++-------
->  drivers/mailbox/arm_mhuv3.c                |  5 ++---
->  drivers/mailbox/armada-37xx-rwtm-mailbox.c |  4 +---
->  drivers/mailbox/bcm-pdc-mailbox.c          |  5 +----
->  drivers/mailbox/bcm2835-mailbox.c          |  5 +----
->  drivers/mailbox/bcm74110-mailbox.c         |  2 +-
->  drivers/mailbox/cv1800-mailbox.c           |  2 +-
->  drivers/mailbox/hi6220-mailbox.c           |  5 +----
->  drivers/mailbox/mailbox-mpfs.c             |  2 --
->  drivers/mailbox/mailbox-sti.c              |  4 +---
->  drivers/mailbox/qcom-cpucp-mbox.c          |  2 +-
->  drivers/mailbox/qcom-ipcc.c                |  4 +---
->  drivers/mailbox/sprd-mailbox.c             | 12 +++---------
->  drivers/mailbox/stm32-ipcc.c               |  4 +---
->  drivers/mailbox/sun6i-msgbox.c             |  4 +---
->  drivers/mailbox/tegra-hsp.c                | 11 ++---------
->  17 files changed, 20 insertions(+), 61 deletions(-)
+>  drivers/soc/tegra/fuse/fuse-tegra.c    |  1 +
+>  drivers/soc/tegra/fuse/tegra-apbmisc.c | 45 +++++++++++++++++++---------=
+------
+>  include/soc/tegra/fuse.h               |  1 +
+>  3 files changed, 27 insertions(+), 20 deletions(-)
 >=20
-> diff --git a/drivers/mailbox/arm_mhu_db.c b/drivers/mailbox/arm_mhu_db.c
-> index 9e937b09c5fb..a39239e38a47 100644
-> --- a/drivers/mailbox/arm_mhu_db.c
-> +++ b/drivers/mailbox/arm_mhu_db.c
-> @@ -318,7 +318,6 @@ static int mhu_db_probe(struct amba_device *adev, con=
-st struct amba_id *id)
->  						mhu_db_mbox_rx_handler,
->  						IRQF_ONESHOT, "mhu_db_link", mhu);
->  		if (err) {
-> -			dev_err(dev, "Can't claim IRQ %d\n", irq);
->  			mbox_controller_unregister(&mhu->mbox);
->  			return err;
->  		}
-> diff --git a/drivers/mailbox/arm_mhuv2.c b/drivers/mailbox/arm_mhuv2.c
-> index f035284944c0..213fd4a39993 100644
-> --- a/drivers/mailbox/arm_mhuv2.c
-> +++ b/drivers/mailbox/arm_mhuv2.c
-> @@ -986,10 +986,7 @@ static int mhuv2_tx_init(struct amba_device *adev, s=
-truct mhuv2 *mhu,
->  		ret =3D devm_request_threaded_irq(dev, adev->irq[0], NULL,
->  						mhuv2_sender_interrupt,
->  						IRQF_ONESHOT, "mhuv2-tx", mhu);
-> -		if (ret) {
-> -			dev_err(dev, "Failed to request tx IRQ, fallback to polling mode: %d\=
-n",
-> -				ret);
-> -		} else {
-> +		if (!ret) {
->  			mhu->mbox.txdone_irq =3D true;
->  			mhu->mbox.txdone_poll =3D false;
->  			mhu->irq =3D adev->irq[0];
-> @@ -1039,10 +1036,8 @@ static int mhuv2_rx_init(struct amba_device *adev,=
- struct mhuv2 *mhu,
->  	ret =3D devm_request_threaded_irq(dev, mhu->irq, NULL,
->  					mhuv2_receiver_interrupt, IRQF_ONESHOT,
->  					"mhuv2-rx", mhu);
-> -	if (ret) {
-> -		dev_err(dev, "Failed to request rx IRQ\n");
-> +	if (ret)
->  		return ret;
-> -	}
+> diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse=
+/fuse-tegra.c
+> index 78b054d43a422..a37642dc92c61 100644
+> --- a/drivers/soc/tegra/fuse/fuse-tegra.c
+> +++ b/drivers/soc/tegra/fuse/fuse-tegra.c
+> @@ -34,6 +34,7 @@ static const char *tegra_revision_name[TEGRA_REVISION_M=
+AX] =3D {
+>  	[TEGRA_REVISION_A03]     =3D "A03",
+>  	[TEGRA_REVISION_A03p]    =3D "A03 prime",
+>  	[TEGRA_REVISION_A04]     =3D "A04",
+> +	[TEGRA_REVISION_B01]     =3D "B01",
+>  };
 > =20
->  	/* Mask all the channel windows */
->  	for (i =3D 0; i < mhu->windows; i++)
-> diff --git a/drivers/mailbox/arm_mhuv3.c b/drivers/mailbox/arm_mhuv3.c
-> index a1c528be47f3..6569c3dda377 100644
-> --- a/drivers/mailbox/arm_mhuv3.c
-> +++ b/drivers/mailbox/arm_mhuv3.c
-> @@ -982,8 +982,7 @@ static int mhuv3_setup_pbx(struct mhuv3 *mhu)
->  						mhuv3_pbx_comb_interrupt,
->  						IRQF_ONESHOT, "mhuv3-pbx", mhu);
->  		if (ret)
-> -			return dev_err_probe(dev, ret,
-> -					     "Failed to request PBX IRQ\n");
-> +			return ret;
+>  static const char *tegra_platform_name[TEGRA_PLATFORM_MAX] =3D {
+> diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/f=
+use/tegra-apbmisc.c
+> index 6af69ccaa295c..8df3bcd148ba7 100644
+> --- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
+> +++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
+> @@ -167,30 +167,35 @@ static const struct of_device_id apbmisc_match[] __=
+initconst =3D {
 > =20
->  		mhu->mbox.txdone_irq =3D true;
->  		mhu->mbox.txdone_poll =3D false;
-> @@ -1020,7 +1019,7 @@ static int mhuv3_setup_mbx(struct mhuv3 *mhu)
->  					mhuv3_mbx_comb_interrupt, IRQF_ONESHOT,
->  					"mhuv3-mbx", mhu);
->  	if (ret)
-> -		return dev_err_probe(dev, ret, "Failed to request MBX IRQ\n");
-> +		return ret;
+>  void __init tegra_init_revision(void)
+>  {
+> -	u8 chip_id, minor_rev;
+> +	u8 chip_id, major_rev, minor_rev;
 > =20
->  	for (i =3D 0; i < NUM_EXT; i++)
->  		if (mhu->ext[i])
-> diff --git a/drivers/mailbox/armada-37xx-rwtm-mailbox.c b/drivers/mailbox=
-/armada-37xx-rwtm-mailbox.c
-> index 456a117a65fd..047926711e96 100644
-> --- a/drivers/mailbox/armada-37xx-rwtm-mailbox.c
-> +++ b/drivers/mailbox/armada-37xx-rwtm-mailbox.c
-> @@ -108,10 +108,8 @@ static int a37xx_mbox_startup(struct mbox_chan *chan=
-)
+>  	chip_id =3D tegra_get_chip_id();
+> +	major_rev =3D tegra_get_major_rev();
+>  	minor_rev =3D tegra_get_minor_rev();
 > =20
->  	ret =3D devm_request_irq(mbox->dev, mbox->irq, a37xx_mbox_irq_handler, =
-0,
->  			       DRIVER_NAME, chan);
-> -	if (ret < 0) {
-> -		dev_err(mbox->dev, "Cannot request irq\n");
-> +	if (ret < 0)
->  		return ret;
-> -	}
-> =20
->  	/* enable IRQ generation */
->  	reg =3D readl(mbox->base + RWTM_HOST_INT_MASK);
-> diff --git a/drivers/mailbox/bcm-pdc-mailbox.c b/drivers/mailbox/bcm-pdc-=
-mailbox.c
-> index 406bc41cba60..6fcc4002ad4f 100644
-> --- a/drivers/mailbox/bcm-pdc-mailbox.c
-> +++ b/drivers/mailbox/bcm-pdc-mailbox.c
-> @@ -1403,11 +1403,8 @@ static int pdc_interrupts_init(struct pdc_state *p=
-dcs)
-> =20
->  	err =3D devm_request_irq(dev, pdcs->pdc_irq, pdc_irq_handler, 0,
->  			       dev_name(dev), dev);
-> -	if (err) {
-> -		dev_err(dev, "IRQ %u request failed with err %d\n",
-> -			pdcs->pdc_irq, err);
-> +	if (err)
->  		return err;
-> -	}
->  	return PDC_SUCCESS;
->  }
-> =20
-> diff --git a/drivers/mailbox/bcm2835-mailbox.c b/drivers/mailbox/bcm2835-=
-mailbox.c
-> index ea12fb8d2401..5af1e434c71c 100644
-> --- a/drivers/mailbox/bcm2835-mailbox.c
-> +++ b/drivers/mailbox/bcm2835-mailbox.c
-> @@ -147,11 +147,8 @@ static int bcm2835_mbox_probe(struct platform_device=
- *pdev)
->  	ret =3D devm_request_irq(dev, irq_of_parse_and_map(dev->of_node, 0),
->  			       bcm2835_mbox_irq, IRQF_NO_SUSPEND, dev_name(dev),
->  			       mbox);
-> -	if (ret) {
-> -		dev_err(dev, "Failed to register a mailbox IRQ handler: %d\n",
-> -			ret);
-> +	if (ret)
->  		return -ENODEV;
-> -	}
-> =20
->  	mbox->regs =3D devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(mbox->regs)) {
-> diff --git a/drivers/mailbox/bcm74110-mailbox.c b/drivers/mailbox/bcm7411=
-0-mailbox.c
-> index 344cfc35984b..c8709d509912 100644
-> --- a/drivers/mailbox/bcm74110-mailbox.c
-> +++ b/drivers/mailbox/bcm74110-mailbox.c
-> @@ -601,7 +601,7 @@ static int bcm74110_mbox_probe(struct platform_device=
- *pdev)
->  	ret =3D devm_request_irq(dev, mbox->rx_irq, bcm74110_mbox_isr,
->  			       IRQF_NO_SUSPEND, pdev->name, mbox);
->  	if (ret)
-> -		return dev_err_probe(dev, ret, "Failed to request irq\n");
-> +		return ret;
-> =20
->  	mbox->controller.ops =3D &bcm74110_mbox_chan_ops;
->  	mbox->controller.dev =3D dev;
-> diff --git a/drivers/mailbox/cv1800-mailbox.c b/drivers/mailbox/cv1800-ma=
-ilbox.c
-> index 4bca9d8be4ba..b062c2c4fc61 100644
-> --- a/drivers/mailbox/cv1800-mailbox.c
-> +++ b/drivers/mailbox/cv1800-mailbox.c
-> @@ -189,7 +189,7 @@ static int cv1800_mbox_probe(struct platform_device *=
-pdev)
->  					cv1800_mbox_isr, IRQF_ONESHOT,
->  					dev_name(&pdev->dev), mb);
->  	if (err < 0)
-> -		return dev_err_probe(dev, err, "Failed to register irq\n");
-> +		return err;
-> =20
->  	for (idx =3D 0; idx < MAILBOX_MAX_CHAN; idx++) {
->  		mb->priv[idx].idx =3D idx;
-> diff --git a/drivers/mailbox/hi6220-mailbox.c b/drivers/mailbox/hi6220-ma=
-ilbox.c
-> index 69d15b6283e9..8eb8242209be 100644
-> --- a/drivers/mailbox/hi6220-mailbox.c
-> +++ b/drivers/mailbox/hi6220-mailbox.c
-> @@ -297,11 +297,8 @@ static int hi6220_mbox_probe(struct platform_device =
-*pdev)
-> =20
->  	err =3D devm_request_irq(dev, mbox->irq, hi6220_mbox_interrupt, 0,
->  			dev_name(dev), mbox);
-> -	if (err) {
-> -		dev_err(dev, "Failed to register a mailbox IRQ handler: %d\n",
-> -			err);
-> +	if (err)
->  		return -ENODEV;
-> -	}
-> =20
->  	mbox->controller.dev =3D dev;
->  	mbox->controller.chans =3D &mbox->chan[0];
-> diff --git a/drivers/mailbox/mailbox-mpfs.c b/drivers/mailbox/mailbox-mpf=
-s.c
-> index 6c40d865b3f1..704a259bbca8 100644
-> --- a/drivers/mailbox/mailbox-mpfs.c
-> +++ b/drivers/mailbox/mailbox-mpfs.c
-> @@ -219,8 +219,6 @@ static int mpfs_mbox_startup(struct mbox_chan *chan)
->  		return -EINVAL;
-> =20
->  	ret =3D devm_request_irq(mbox->dev, mbox->irq, mpfs_mbox_inbox_isr, 0, =
-"mpfs-mailbox", chan);
-> -	if (ret)
-> -		dev_err(mbox->dev, "failed to register mailbox interrupt:%d\n", ret);
-> =20
->  	return ret;
->  }
-> diff --git a/drivers/mailbox/mailbox-sti.c b/drivers/mailbox/mailbox-sti.=
-c
-> index b6c9ecbbc8ec..4fb5d1b5504a 100644
-> --- a/drivers/mailbox/mailbox-sti.c
-> +++ b/drivers/mailbox/mailbox-sti.c
-> @@ -468,10 +468,8 @@ static int sti_mbox_probe(struct platform_device *pd=
-ev)
->  					sti_mbox_irq_handler,
->  					sti_mbox_thread_handler,
->  					IRQF_ONESHOT, mdev->name, mdev);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "Can't claim IRQ %d\n", irq);
-> +	if (ret)
->  		return -EINVAL;
-> -	}
-> =20
->  	dev_info(&pdev->dev, "%s: Registered Tx/Rx Mailbox\n", mdev->name);
-> =20
-> diff --git a/drivers/mailbox/qcom-cpucp-mbox.c b/drivers/mailbox/qcom-cpu=
-cp-mbox.c
-> index 862e45e8fbd5..8d0000e2b2f9 100644
-> --- a/drivers/mailbox/qcom-cpucp-mbox.c
-> +++ b/drivers/mailbox/qcom-cpucp-mbox.c
-> @@ -156,7 +156,7 @@ static int qcom_cpucp_mbox_probe(struct platform_devi=
-ce *pdev)
->  	ret =3D devm_request_irq(dev, irq, qcom_cpucp_mbox_irq_fn,
->  			       IRQF_TRIGGER_HIGH | IRQF_NO_SUSPEND, "apss_cpucp_mbox", cpucp)=
-;
->  	if (ret < 0)
-> -		return dev_err_probe(dev, ret, "Failed to register irq: %d\n", irq);
-> +		return ret;
-> =20
->  	writeq(APSS_CPUCP_RX_MBOX_CMD_MASK, cpucp->rx_base + APSS_CPUCP_RX_MBOX=
-_MAP);
-> =20
-> diff --git a/drivers/mailbox/qcom-ipcc.c b/drivers/mailbox/qcom-ipcc.c
-> index d957d989c0ce..e5ebb4a237ff 100644
-> --- a/drivers/mailbox/qcom-ipcc.c
-> +++ b/drivers/mailbox/qcom-ipcc.c
-> @@ -323,10 +323,8 @@ static int qcom_ipcc_probe(struct platform_device *p=
-dev)
->  	ret =3D devm_request_irq(&pdev->dev, ipcc->irq, qcom_ipcc_irq_fn,
->  			       IRQF_TRIGGER_HIGH | IRQF_NO_SUSPEND |
->  			       IRQF_NO_THREAD, name, ipcc);
-> -	if (ret < 0) {
-> -		dev_err(&pdev->dev, "Failed to register the irq: %d\n", ret);
-> +	if (ret < 0)
->  		goto err_req_irq;
-> -	}
-> =20
->  	platform_set_drvdata(pdev, ipcc);
-> =20
-> diff --git a/drivers/mailbox/sprd-mailbox.c b/drivers/mailbox/sprd-mailbo=
-x.c
-> index 565502904e1f..9013d2ece55f 100644
-> --- a/drivers/mailbox/sprd-mailbox.c
-> +++ b/drivers/mailbox/sprd-mailbox.c
-> @@ -377,10 +377,8 @@ static int sprd_mbox_probe(struct platform_device *p=
-dev)
-> =20
->  	ret =3D devm_request_irq(dev, inbox_irq, sprd_mbox_inbox_isr,
->  			       IRQF_NO_SUSPEND, dev_name(dev), priv);
-> -	if (ret) {
-> -		dev_err(dev, "failed to request inbox IRQ: %d\n", ret);
-> +	if (ret)
->  		return ret;
-> -	}
-> =20
->  	outbox_irq =3D platform_get_irq_byname(pdev, "outbox");
->  	if (outbox_irq < 0)
-> @@ -388,20 +386,16 @@ static int sprd_mbox_probe(struct platform_device *=
-pdev)
-> =20
->  	ret =3D devm_request_irq(dev, outbox_irq, sprd_mbox_outbox_isr,
->  			       IRQF_NO_SUSPEND, dev_name(dev), priv);
-> -	if (ret) {
-> -		dev_err(dev, "failed to request outbox IRQ: %d\n", ret);
-> +	if (ret)
->  		return ret;
-> -	}
-> =20
->  	/* Supplementary outbox IRQ is optional */
->  	supp_irq =3D platform_get_irq_byname(pdev, "supp-outbox");
->  	if (supp_irq > 0) {
->  		ret =3D devm_request_irq(dev, supp_irq, sprd_mbox_supp_isr,
->  				       IRQF_NO_SUSPEND, dev_name(dev), priv);
-> -		if (ret) {
-> -			dev_err(dev, "failed to request outbox IRQ: %d\n", ret);
-> +		if (ret)
->  			return ret;
-> -		}
-> =20
->  		if (!priv->info->supp_id) {
->  			dev_err(dev, "no supplementary outbox specified\n");
-> diff --git a/drivers/mailbox/stm32-ipcc.c b/drivers/mailbox/stm32-ipcc.c
-> index 4f63f1a14ca6..c6134de1a93b 100644
-> --- a/drivers/mailbox/stm32-ipcc.c
-> +++ b/drivers/mailbox/stm32-ipcc.c
-> @@ -263,10 +263,8 @@ static int stm32_ipcc_probe(struct platform_device *=
-pdev)
->  		ret =3D devm_request_threaded_irq(dev, ipcc->irqs[i], NULL,
->  						irq_thread[i], IRQF_ONESHOT,
->  						dev_name(dev), ipcc);
-> -		if (ret) {
-> -			dev_err(dev, "failed to request irq %lu (%d)\n", i, ret);
-> +		if (ret)
->  			goto err_clk;
-> -		}
->  	}
-> =20
->  	/* mask and enable rx/tx irq */
-> diff --git a/drivers/mailbox/sun6i-msgbox.c b/drivers/mailbox/sun6i-msgbo=
-x.c
-> index 6ba6920f4645..1cbc4d478beb 100644
-> --- a/drivers/mailbox/sun6i-msgbox.c
-> +++ b/drivers/mailbox/sun6i-msgbox.c
-> @@ -257,10 +257,8 @@ static int sun6i_msgbox_probe(struct platform_device=
- *pdev)
-> =20
->  	ret =3D devm_request_irq(dev, irq_of_parse_and_map(dev->of_node, 0),
->  			       sun6i_msgbox_irq, 0, dev_name(dev), mbox);
-> -	if (ret) {
-> -		dev_err(dev, "Failed to register IRQ handler: %d\n", ret);
-> +	if (ret)
->  		goto err_disable_unprepare;
-> -	}
-> =20
->  	mbox->controller.dev           =3D dev;
->  	mbox->controller.ops           =3D &sun6i_msgbox_chan_ops;
-> diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-> index 500fa77c7d53..03ee73aad488 100644
-> --- a/drivers/mailbox/tegra-hsp.c
-> +++ b/drivers/mailbox/tegra-hsp.c
-> @@ -708,11 +708,8 @@ static int tegra_hsp_request_shared_irq(struct tegra=
-_hsp *hsp)
-> =20
->  		err =3D devm_request_irq(hsp->dev, irq, tegra_hsp_shared_irq, 0,
->  				       dev_name(hsp->dev), hsp);
-> -		if (err < 0) {
-> -			dev_err(hsp->dev, "failed to request interrupt: %d\n",
-> -				err);
-> +		if (err < 0)
->  			continue;
-> -		}
-> =20
->  		hsp->shared_irq =3D i;
-> =20
-> @@ -856,12 +853,8 @@ static int tegra_hsp_probe(struct platform_device *p=
-dev)
->  		err =3D devm_request_irq(&pdev->dev, hsp->doorbell_irq,
->  				       tegra_hsp_doorbell_irq, IRQF_NO_SUSPEND,
->  				       dev_name(&pdev->dev), hsp);
-> -		if (err < 0) {
-> -			dev_err(&pdev->dev,
-> -			        "failed to request doorbell IRQ#%u: %d\n",
-> -				hsp->doorbell_irq, err);
-> +		if (err < 0)
->  			return err;
-> -		}
->  	}
-> =20
->  	if (hsp->shared_irqs) {
-> --=20
-> 2.34.1
->=20
->=20
+> -	switch (minor_rev) {
+> -	case 1:
+> -		tegra_sku_info.revision =3D TEGRA_REVISION_A01;
+> -		break;
+> -	case 2:
+> -		tegra_sku_info.revision =3D TEGRA_REVISION_A02;
+> -		break;
+> -	case 3:
+> -		if (chip_id =3D=3D TEGRA20 && (tegra_fuse_read_spare(18) ||
+> -					   tegra_fuse_read_spare(19)))
+> -			tegra_sku_info.revision =3D TEGRA_REVISION_A03p;
+> -		else
+> -			tegra_sku_info.revision =3D TEGRA_REVISION_A03;
+> -		break;
+> -	case 4:
+> -		tegra_sku_info.revision =3D TEGRA_REVISION_A04;
+> -		break;
+> -	default:
+> -		tegra_sku_info.revision =3D TEGRA_REVISION_UNKNOWN;
+> +	if (major_rev > 1) {
+> +		tegra_sku_info.revision =3D TEGRA_REVISION_B01;
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+To match the A revisions, I think better to check minor_rev as well and=20
+set to UNKNOWN if it's not as expected.
+
+Thank you!
+Mikko
+
+> +	} else {
+> +		switch (minor_rev) {
+> +		case 1:
+> +			tegra_sku_info.revision =3D TEGRA_REVISION_A01;
+> +			break;
+> +		case 2:
+> +			tegra_sku_info.revision =3D TEGRA_REVISION_A02;
+> +			break;
+> +		case 3:
+> +			if (chip_id =3D=3D TEGRA20 && (tegra_fuse_read_spare(18) ||
+> +						   tegra_fuse_read_spare(19)))
+> +				tegra_sku_info.revision =3D TEGRA_REVISION_A03p;
+> +			else
+> +				tegra_sku_info.revision =3D TEGRA_REVISION_A03;
+> +			break;
+> +		case 4:
+> +			tegra_sku_info.revision =3D TEGRA_REVISION_A04;
+> +			break;
+> +		default:
+> +			tegra_sku_info.revision =3D TEGRA_REVISION_UNKNOWN;
+> +		}
+>  	}
+> =20
+>  	tegra_sku_info.sku_id =3D tegra_fuse_read_early(FUSE_SKU_INFO);
+> diff --git a/include/soc/tegra/fuse.h b/include/soc/tegra/fuse.h
+> index 8f421b9f7585c..30db79f7f17fd 100644
+> --- a/include/soc/tegra/fuse.h
+> +++ b/include/soc/tegra/fuse.h
+> @@ -33,6 +33,7 @@ enum tegra_revision {
+>  	TEGRA_REVISION_A03,
+>  	TEGRA_REVISION_A03p,
+>  	TEGRA_REVISION_A04,
+> +	TEGRA_REVISION_B01,
+>  	TEGRA_REVISION_MAX,
+>  };
+> =20
+>=20
+> --=20
+> 2.54.0
+>=20
+>=20
+>=20
 
 
 
