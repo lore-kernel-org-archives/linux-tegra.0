@@ -1,171 +1,241 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0EB3FE67B
-	for <linux-tegra@vger.kernel.org>; Tue, 21 Jul 2026 17:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E59386571
+	for <linux-tegra@vger.kernel.org>; Tue, 21 Jul 2026 17:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.51
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784655108; cv=pass; b=gjsei+SxCTBTp2EIufwsEncybHpDbCtPQBzHC10i1r03ariTb5YxzrHYya/aFeGGjTKqNmxVXMmMCZ45jRkFCYpjTh2es8v2nCIGplz6dKJGJgJuZ4ny99i1RSmLiStCoYDk6e+YD5d48RbFOtWHE8ZB92LJViO6Br5PZE/D6E8=
+	t=1784655743; cv=pass; b=bFCT4A7e+5LiBhLk36+3Mn3wUvZ4cWAwzTI6+Iwdv3QOnotWJ0KW7mierFITwrJVTtP+rpJk5pG28Tzl8i9bn3H0/l9SAat5G1aLZKct5DTwArDda/y7jjk7IWT8ntN1+hbPh1Qs16tLHBs9FVIFdex9uxL4AXVv+OpWARYG9Gg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784655108; c=relaxed/simple;
-	bh=Lfe0TtBKJj2xEVv4HyVQ1Hizpw0ZAh9TG3EESp3mGS8=;
+	s=arc-20240116; t=1784655743; c=relaxed/simple;
+	bh=tK+bZLcsdQ8qnewhBYqhGihItfIiZUpVHQ0hH8OrxvE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YnigoR51dsc2ZkNWIHjiGjA34SKPkJBu++d1RDZMclSTIQqfKVaZdYEsd0ezo9HbWXWh1MyobT/q3jiQQY4WvdliKi87F19JIlFJPYqdPrpfA+qUdpOl3buHQsz8OrDD7aKbGpPBQ0puQntW5aZau6gcniLi0V5VlHo0vuu5HMw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JxRKyoay; arc=pass smtp.client-ip=209.85.167.49
+	 To:Cc:Content-Type; b=GGPiYYO31XkVZXQAKvAX9fQaUdLRrxn5pe4D+nMxnYi/VAcHZNqjzCT8Iex7Biyq/ToBJPnLE6Cslro5qL8fekE744ueogDDAQ29kR0NMFoh4QyHCqR9DT4Yn9/fOt/tCxOiCMZk6B6wq5DbgIz3+CR99bATAKyka4ljD+qZwS8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9YAV96j; arc=pass smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JxRKyoay"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5b2a22c52c1so1941573e87.3
-        for <linux-tegra@vger.kernel.org>; Tue, 21 Jul 2026 10:31:47 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1784655105; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9YAV96j"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5b14d1f9315so10364503e87.2
+        for <linux-tegra@vger.kernel.org>; Tue, 21 Jul 2026 10:42:21 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1784655740; cv=none;
         d=google.com; s=arc-20260327;
-        b=EghK1zlR8LWVNjxxqY8Ofbf+zAy922KlpjmN3XA+J9W9iXQZw/lAVvjsCnGJ5KnJzz
-         ZDvOPrSkM14c7rDE/BPKo2162G1wbL0RKIQK69MjYT+5DHDm2ApgKHnzYwI6VoRIHoPO
-         p+SIffXftIm9dJwCPIirgHFR7FlMVECwkyAnQnJBgxPa1zgAsjmKTzcUC/haTQTyO841
-         nDoUDZg/EQVWfCstikiOm7+rxX8sTKE5knb7hCv+j2QqvcgUYasmqNBq7YNCaLwdiR0T
-         J5+pcsS7Vgv2KsqQ2Pw+KLcEQRtzA3K+HQj9PoU5Lg2bCyHsJMTOa/4XouCK1XNxC8fr
-         fRLg==
+        b=LXioWHqXk3Ouq16aoa3NJaZ72+qSuktFaHv3Ky/O4dy2wCjiOmYT807xX+mHCfbmjy
+         3COlafwiw2NATcHKJrkv2Ku4EqB7Z/Jy3hRbVryoVFoFLJK6pD9lGIMGAs9vD76VKAYU
+         H15vvy4d+yz652Xk3jVOoHRxxvuh2ZXN4BJ3njiXENowqEfrLgyWMdUzvaSvcnsWQjTX
+         4gkIZz6mtV+xiFUuIQaDsqImJmUQT5aLijAOqfUd++QjykmmyFh2V831esaqmZNWmEpF
+         2MaJo90Rw7XXUsVnXjYpdlN2YYrQlyLA+ZLSnNXHg21n9zT8qfAkyZVrwPBLKCO+HHlZ
+         6FKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=zVJLJp9f4PophmcfsPqOlG9CBV28d+Gkwvhnwb7Vf1E=;
-        fh=C4l1sWZofQvLyhitxg5Aqz3BJWttrSVf79gRxMRyZOo=;
-        b=OmfgcrlJVPNNe5jktY773qth5Px2jkGYCoZCQ+cx0uRjcmgviPNYMQtBpt/F39a+sO
-         s+zuGp5PYdeTWnj+APG6Dsh2Vivurz5cJVyxXJHEEJbSrbbAebiLHaMFFcJzmP00YxJt
-         dqVGf3bqAeYPw9wVH0D1rxfYwH0OXhLAI8zsOTSbZZVIuHvTwCINwARBikg58aEDwbZw
-         +dcYOtHMszGzhqxdGWZyJLMcqifozAOSUfFsqyj7Vo3pFzQqhz8mhIZwU5i7JS68EPAA
-         SQzqJ9f3oaJp3k/i2HWTL8LSi7NCh98QSCpx+6Gkbvyrb7Qg7+HFWCyEORixyqV1KbGn
-         kDng==;
+        bh=wcHwhdeQPiyGFea8RRLYBEqK38jdeuTu3+dvRJn5SpA=;
+        fh=0Aa31It1m7HFyvVR2Vcw7EpSxLN6RSHpV5eezFZaEac=;
+        b=gytRyHEwYuJs/ueNuUQ7R43P1+FHaRHA0iMSKgKM9Wnn0GF/Ef/iD5/WatKf17GCAx
+         eJ5SDWopv+zdEB2LWY1ywVsYg35qL8DLvTflxDh55meZLKISpFCGLNwYsbruBsNtyisH
+         mvaa/ybQNY+LLmawcvIFnQmtW0Gp4LhSoyzmB/W0Y8uSA0LxHMDSfkehjm6KNCjkMdIa
+         VEYnP9g94A/E8paRQPsCREX8rBlXNC1snUA/dkLk2AQ7WKL/Bxa2jibLzT4pXOa2900z
+         Co33kFxJ3EVUA99eEqvHq18otEiw30zC86nvGoMjJH9xeRftP4ntC28lFKXSoFYO+3kr
+         /8fg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784655105; x=1785259905; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1784655740; x=1785260540; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=zVJLJp9f4PophmcfsPqOlG9CBV28d+Gkwvhnwb7Vf1E=;
-        b=JxRKyoay9zcCxZld/VJDrXk3DtpfFjg8yTKIKtiRaWj8kHxCVRk8GzJnAPw/cT0pYa
-         Gd928eZXIFxGs6Vcl9WQOcyADeOxjCIg0eudYgY0SggUrCnI7/LNFKML2pWUW0ZZuAfX
-         cA6daFEGDHyzX/U8XordnI+v+YGAlnsX59HWiKZWO5DE6ySt54t87Yy1IueUkDwIXfVO
-         UnYgCtC0o3vN4IfctNWSmvJGH3AWNIetbLLUwiKvs8F4T+f85BVczbaXSX/3+SVADeOx
-         jKmMphzQVHei1+O7KejUzm2GcPdOnVvB0eB9vnFDhdMkU8/dhQ1ZwW2Fj2dx+gLPemOZ
-         Hm4Q==
+        bh=wcHwhdeQPiyGFea8RRLYBEqK38jdeuTu3+dvRJn5SpA=;
+        b=X9YAV96jxo7lOWIxIPkChB0PAWO0eFKMwom+yz2BNuLbDNh1dcyqRfJ4BGljECqO5A
+         hbdEIBMdeFFJ9u88gvQMPSBTuLsQZJnoFDD1NqVuA/siVMfBeOVnBApbMt9bqLihjYQC
+         le5W6kHh18XGl4iXljz2pu0jC52tQbxLyHsz8HFPpE1u15QH4TAOscBWFdsBgnVj6K5y
+         hKCzkrYsTxd6a2REtjaJYRS50ciSMdj34QuXfbnW0tCYEx+LgxBmgW67OxhppOma4ga4
+         8GaDRSv3AtwYdDIBWbzP4BR/XsxH2onlGmLrr/Ql7A0F67GkYVTJOm9wfuoBeXsvu6uz
+         SyJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784655105; x=1785259905;
+        d=1e100.net; s=20251104; t=1784655740; x=1785260540;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=zVJLJp9f4PophmcfsPqOlG9CBV28d+Gkwvhnwb7Vf1E=;
-        b=gXwxWJ3rMIfgsyOCbtLOnwjN3eHWenNNVtdzrwKG1kRu/3I2bQxGaeoKnYZcgRf1Ah
-         To8+MjG2N2+p4Te7LA3Om/BTG9qDmrbAqGEfZsP2Ugx9dw+4uMpa1uBoDX+5UZQWZG38
-         12VJeFBi/JnTJ1E7gqMqgYC9Bu733b4edBN+8pE4L1mHBZKFj/WvFVtOUiUSrIDKDlYE
-         wknIdiyDjfNxnkHzR2PoeLtODrYnbgvtdfTPUcOdfiRqEG62OqVrvRH9Pcvdz+PjmJQA
-         G7Co4yGyNrpaIZ4ci5J39CrXUFQOaAxdOc7iqGslmZT7+FkRQwOA8ArGcyxz6fafWRQs
-         FaFA==
-X-Forwarded-Encrypted: i=1; AHgh+Rp/LVrF++12ogL/XSxo3oaOqOHN+5D9O+tX6DzxEGDlrNKYVuA2JbkMoGtRf+qixMUL0jYgBj4L2I/G8Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxjtj0JGiM03XBlD22InsahydqFiCE00sMiSy58HqXau1HK5YeJ
-	zRvoJa5cnOlEaFfK/3tigKke1nBQYy2jRG7wzo3dBSgBXASlkzAWoU4JdjjH9BZSbHXLB500j13
-	XZmgolKb1CPQzT7MNEzaebFqiKwjnh0I=
-X-Gm-Gg: AR+sD13Cq9JV57zMqDDzPN6GaT2DH8Emt70QDxtbsmsfez9Zfj0kEjKQFfIe3jimE56
-	WcFqbAqjd/NJDO+6uToQc3M5QIpsAExmW2VUnjeMWLkrpjUveUbcB2mPVQc7Nd6AEqbBL/DGBZD
-	2mGTAFlFG7SSCAu2D8H269N6piYMDX4jDTWvhflAsqYYzTBC6XM9C8puiNZ6cBoqZzV9ZJO6c8Z
-	1zp1PPI+QGxLgGsVaZ75+e1z9tJ8paOi7rQrHA/+wCyBcDrOV9h888b5N9kyZHaBKk9Qsw8dYJI
-	rx6e9XSgZp04Xh/Yct/qIHfrDDn3xQvFcUqwxrKoze3KuRg=
-X-Received: by 2002:a05:6512:3b13:b0:5b2:a4bf:a6d2 with SMTP id
- 2adb3069b0e04-5b2a4bfb325mr984015e87.39.1784655105089; Tue, 21 Jul 2026
- 10:31:45 -0700 (PDT)
+        bh=wcHwhdeQPiyGFea8RRLYBEqK38jdeuTu3+dvRJn5SpA=;
+        b=SGrTR2//VQu1zCZ7kc5LizqryWCNGDmxZYKeYOoLesoPfJYHv+sN/1R4909W75ziYs
+         ymBih1jNKquLrzhbvaXJA2LmNiyjLPq7NVvTZoyWUbcgrKSOleKDN4AoEUXRM6RCREz3
+         xZUdwb56085D8BGJXp1tXbYAHjdLoKmq2UUU7+4l6qC06QKW5TIhqfFUtmlYo0b0mmGi
+         IwJFulPwF/H8LNaxroOgSYe5fqF35M2tX5E1FBlwPWPG8IdF5x3ufLNZ7Izv30I4Q4xr
+         yDUhHZoEyH5EnN9RRZlbU8M6jFKlTpO+3JYfKEw/KFzwQMzGLyn8wOdGOT+s8J+itJQF
+         Un3Q==
+X-Forwarded-Encrypted: i=1; AHgh+RpdmFdqfrcwe8qBodccvRJH45fdi5a0/Fa1VoJ2Wef9Kuh0JETNvTDy+qs3Vr2/52CVXSDlTteWdlvqKw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuE421nIAHGlUAwZJ6vb1I85Jsg+G8k/KAdH3/WmhSwrOqrPAr
+	RWZ8mzwAJKHHCCi9LAOw0I6HF8G4LCKKjAP/ozfqWW/KtA7Z0V+TtNe6e/STGnUBIvgZXwBY9kg
+	cfAT3E4zepSk0VAfZ5MIbq7Pvfp0bYeM=
+X-Gm-Gg: AR+sD11Fng3ACxpr+OVNc59nD61bzIURXEtv0L6zapymZRC++Mu2ErBHr6GYpd3l3Hj
+	heRr6R0IjMubgUbdUNTE/Uvrb6c69h0dRfeU/XsIN3K+igHxH+SQZI42FTU92VgEgwsvtx/Vlzp
+	LGGn2adSH6gpgvb8OczDoRguZUUBT+sqYaQO/8PUy3bQw7eUMW6BsbvSSHcmObOv+Sp1naIEomA
+	QX/7cwapSOySjwWFgvtkX3SV5lL4L5uz0VBMG2DVtHyH6dHwHGvmGJ4cRDVR+i/Y2sYq8xddGVq
+	tsX3bgI0OrHoJkVDilkKA1CDN3yOCz00VELG61h8ZA7MpcygZHfpsCXjXQ==
+X-Received: by 2002:a05:6512:b83:b0:5ae:b5bd:5e72 with SMTP id
+ 2adb3069b0e04-5b28fabb816mr4439164e87.59.1784655739596; Tue, 21 Jul 2026
+ 10:42:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260717-t210b01-speedo-v1-0-f04a8bd4d997@gmail.com>
- <20260717-t210b01-speedo-v1-2-f04a8bd4d997@gmail.com> <00e569b5-df74-4310-a33c-446005bbf11c@nvidia.com>
-In-Reply-To: <00e569b5-df74-4310-a33c-446005bbf11c@nvidia.com>
+References: <20260720-t210b01-pmc-v2-0-ca5317f8507b@gmail.com>
+ <20260720-t210b01-pmc-v2-2-ca5317f8507b@gmail.com> <rrmQkm06RD2JduKX6eSoDg@nvidia.com>
+In-Reply-To: <rrmQkm06RD2JduKX6eSoDg@nvidia.com>
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Tue, 21 Jul 2026 12:31:33 -0500
-X-Gm-Features: AUfX_mxDSZpN1kXD6VzEvzKdEpxZEwRYkIOo26zcNA6hqg0upzJL6q7g-N-D4IU
-Message-ID: <CALHNRZ_0++igjSQBRo-LVW_bvyu98x_4DXjxRSq0kCNxMaqYKw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] soc/tegra: fuse: speedo-tegra210: Support revision B01
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <thierry.reding@kernel.org>, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Tue, 21 Jul 2026 12:42:08 -0500
+X-Gm-Features: AUfX_myE-1nDG631FIG3IHwi8gO93TqS2Jbav418JH0CG_P0J3Xxa7JV1kei1m4
+Message-ID: <CALHNRZ9F5RkcdegeeOncTD-6eg6+25cGn0p+Rabboj5oTZ_=Yw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] soc/tegra: pmc: Add Tegra210B01 support
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Azkali Manad <a.ffcc7@gmail.com>, 
+	Thomas Makin <halorocker89@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 21, 2026 at 4:46=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
+On Tue, Jul 21, 2026 at 2:22=E2=80=AFAM Mikko Perttunen <mperttunen@nvidia.=
+com> wrote:
 >
+> On Monday, July 20, 2026 3:31=E2=80=AFPM Aaron Kling via B4 Relay wrote:
+> > From: Azkali Manad <a.ffcc7@gmail.com>
+> >
+> > The PMC in Tegra210B01 is very similar to the one in the original
+> > Tegra210, but has a few powergate differences. Add support for this soc=
+.
 >
-> On 18/07/2026 00:19, Aaron Kling via B4 Relay wrote:
-> > From: Aaron Kling <webgeek1234@gmail.com>
+> The tables are a bit difficult to compare directly, so maybe list the
+> differences between 210 and 210B01 in the commit message.
+>
 > >
-> > Tegra210B01 has a separate set of skus and speedo tables
-> >
+> > Signed-off-by: Azkali Manad <a.ffcc7@gmail.com>
+> > Co-developed-by: Thomas Makin <halorocker89@gmail.com>
+> > Signed-off-by: Thomas Makin <halorocker89@gmail.com>
+> > Co-developed-by: Aaron Kling <webgeek1234@gmail.com>
 > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 > > ---
-> >   drivers/soc/tegra/fuse/speedo-tegra210.c | 22 ++++++++++++++++++++--
-> >   1 file changed, 20 insertions(+), 2 deletions(-)
+> >  drivers/soc/tegra/pmc.c | 62 +++++++++++++++++++++++++++++++++++++++++=
+++++++++
+> >  1 file changed, 62 insertions(+)
 > >
-> > diff --git a/drivers/soc/tegra/fuse/speedo-tegra210.c b/drivers/soc/teg=
-ra/fuse/speedo-tegra210.c
-> > index 06c2bcbee5734..699751f4bd0c0 100644
-> > --- a/drivers/soc/tegra/fuse/speedo-tegra210.c
-> > +++ b/drivers/soc/tegra/fuse/speedo-tegra210.c
-> > @@ -65,7 +65,25 @@ static void __init rev_sku_to_speedo_ids(struct tegr=
-a_sku_info *sku_info,
-> >       sku_info->gpu_speedo_id =3D 0;
-> >       *threshold =3D THRESHOLD_INDEX_0;
+> > diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> > index f419a5395545f..48ae4ff3f00db 100644
+> > --- a/drivers/soc/tegra/pmc.c
+> > +++ b/drivers/soc/tegra/pmc.c
+> > @@ -3897,6 +3897,67 @@ static const struct tegra_pmc_soc tegra210_pmc_s=
+oc =3D {
+> >       .has_single_mmio_aperture =3D true,
+> >  };
 > >
-> > -     if (sku_info->revision >=3D TEGRA_REVISION_A02) {
-> > +     if (sku_info->revision >=3D TEGRA_REVISION_B01) {
-> > +             sku_info->gpu_speedo_id =3D 1;
-> > +
-> > +             switch (sku) {
-> > +             case 0x00: /* Engineering SKU */
-> > +             case 0x01: /* Engineering SKU */
-> > +             case 0x83:
-> > +                     break;
-> > +
-> > +             case 0x87:
-> > +                     sku_info->cpu_speedo_id =3D 3;
-> > +                     break;
-> > +
-> > +             default:
-> > +                     pr_err("Tegra210B01: unknown SKU %#04x\n", sku);
-> > +                     /* Using the default for the error case */
-> > +                     break;
-> > +             }
-> > +     } else if (sku_info->revision >=3D TEGRA_REVISION_A02) {
-> >               switch (sku) {
-> >               case 0x00: /* Engineering SKU */
-> >               case 0x01: /* Engineering SKU */
-> > @@ -154,7 +172,7 @@ void __init tegra210_init_speedo_data(struct tegra_=
-sku_info *sku_info)
-> >       speedo_revision =3D get_speedo_revision();
-> >       pr_info("Speedo Revision %u\n", speedo_revision);
-> >
-> > -     if (speedo_revision >=3D 3) {
-> > +     if (sku_info->revision =3D=3D TEGRA_REVISION_B01 || speedo_revisi=
-on >=3D 3) {
-> >               sku_info->cpu_speedo_value =3D cpu_speedo[0];
-> >               sku_info->gpu_speedo_value =3D cpu_speedo[2];
-> >               sku_info->soc_speedo_value =3D soc_speedo[0];
-> >
+> > +static const char * const tegra210b01_powergates[] =3D {
+> > +     [TEGRA_POWERGATE_CPU] =3D "crail",
+> > +     [TEGRA_POWERGATE_3D] =3D "3d",
+> > +     [TEGRA_POWERGATE_PCIE] =3D "pcie",
+> > +     [TEGRA_POWERGATE_MPE] =3D "mpe",
+> > +     [TEGRA_POWERGATE_SATA] =3D "sata",
 >
-> I am guessing that this is derived/ported from some kernel that NVIDIA
-> has released in the past. It would be nice to include a reference to
-> whatever change was used to create this.
+> T210B01 doesn't have SATA, so this can be removed.
 
-It is loosely based on [0], but restructured to not change nearly as
-many lines. How would you want this referenced? Something like a
-'based on downstream 5.10' blurb in the commit message or a direct
-reference to the commit somehow?
+Ack
+
+> > +     [TEGRA_POWERGATE_CPU1] =3D "cpu1",
+> > +     [TEGRA_POWERGATE_CPU2] =3D "cpu2",
+> > +     [TEGRA_POWERGATE_CPU3] =3D "cpu3",
+> > +     [TEGRA_POWERGATE_CPU0] =3D "cpu0",
+> > +     [TEGRA_POWERGATE_C0NC] =3D "c0nc",
+> > +     [TEGRA_POWERGATE_SOR] =3D "sor",
+> > +     [TEGRA_POWERGATE_DIS] =3D "dis",
+> > +     [TEGRA_POWERGATE_DISB] =3D "disb",
+> > +     [TEGRA_POWERGATE_XUSBA] =3D "xusba",
+> > +     [TEGRA_POWERGATE_XUSBB] =3D "xusbb",
+> > +     [TEGRA_POWERGATE_XUSBC] =3D "xusbc",
+> > +     [TEGRA_POWERGATE_VIC] =3D "vic",
+> > +     [TEGRA_POWERGATE_IRAM] =3D "iram",
+> > +     [TEGRA_POWERGATE_NVDEC] =3D "nvdec",
+> > +     [TEGRA_POWERGATE_NVJPG] =3D "nvjpg",
+> > +     [TEGRA_POWERGATE_AUD] =3D "aud",
+> > +     [TEGRA_POWERGATE_DFD] =3D "dfd",
+> > +};
+> > +
+> > +static const struct tegra_pmc_soc tegra210b01_pmc_soc =3D {
+> > +     .supports_core_domain =3D false,
+> > +     .num_powergates =3D ARRAY_SIZE(tegra210b01_powergates),
+> > +     .powergates =3D tegra210b01_powergates,
+> > +     .num_cpu_powergates =3D ARRAY_SIZE(tegra210_cpu_powergates),
+> > +     .cpu_powergates =3D tegra210_cpu_powergates,
+> > +     .has_tsense_reset =3D true,
+> > +     .has_gpu_clamps =3D true,
+> > +     .needs_mbist_war =3D false,
+> > +     .has_io_pad_wren =3D false,
+>
+> Any particular reason to flip this to false? AFAICT it is still needed
+> to make PWR_DET_VAL writable as on T210.
+>
+> (The reset value is already (mostly) fine but seems prudent to write it
+> anyway)
+
+Ah, it looks like I missed that d4f0c189945c74 inverted the value
+along with the rename. Will fix.
+
+> Thank you!
+> Mikko
+>
+> > +     .maybe_tz_only =3D true,
+> > +     .num_io_pads =3D ARRAY_SIZE(tegra210_io_pads),
+> > +     .io_pads =3D tegra210_io_pads,
+> > +     .num_io_pad_vctrls =3D ARRAY_SIZE(tegra210_io_pad_vctrls),
+> > +     .io_pad_vctrls =3D tegra210_io_pad_vctrls,
+> > +     .num_pin_descs =3D ARRAY_SIZE(tegra210_pin_descs),
+> > +     .pin_descs =3D tegra210_pin_descs,
+> > +     .regs =3D &tegra20_pmc_regs,
+> > +     .init =3D tegra20_pmc_init,
+> > +     .setup_irq_polarity =3D tegra20_pmc_setup_irq_polarity,
+> > +     .powergate_set =3D tegra114_powergate_set,
+> > +     .irq_set_wake =3D tegra210_pmc_irq_set_wake,
+> > +     .irq_set_type =3D tegra210_pmc_irq_set_type,
+> > +     .reset_sources =3D tegra210_reset_sources,
+> > +     .num_reset_sources =3D ARRAY_SIZE(tegra210_reset_sources),
+> > +     .reset_levels =3D NULL,
+> > +     .num_reset_levels =3D 0,
+> > +     .num_wake_events =3D ARRAY_SIZE(tegra210_wake_events),
+> > +     .wake_events =3D tegra210_wake_events,
+> > +     .pmc_clks_data =3D tegra_pmc_clks_data,
+> > +     .num_pmc_clks =3D ARRAY_SIZE(tegra_pmc_clks_data),
+> > +     .has_blink_output =3D true,
+> > +     .has_usb_sleepwalk =3D true,
+> > +     .has_single_mmio_aperture =3D true,
+> > +};
+> > +
+> >  static const struct tegra_io_pad_soc tegra186_io_pads[] =3D {
+> >       TEGRA_IO_PAD(TEGRA_IO_PAD_CSIA, 0, 0x74, 0x78, "csia"),
+> >       TEGRA_IO_PAD(TEGRA_IO_PAD_CSIB, 1, 0x74, 0x78, "csib"),
+> > @@ -4824,6 +4885,7 @@ static const struct of_device_id tegra_pmc_match[=
+] =3D {
+> >       { .compatible =3D "nvidia,tegra194-pmc", .data =3D &tegra194_pmc_=
+soc },
+> >       { .compatible =3D "nvidia,tegra186-pmc", .data =3D &tegra186_pmc_=
+soc },
+> >       { .compatible =3D "nvidia,tegra210-pmc", .data =3D &tegra210_pmc_=
+soc },
+> > +     { .compatible =3D "nvidia,tegra210b01-pmc", .data =3D &tegra210b0=
+1_pmc_soc },
+> >       { .compatible =3D "nvidia,tegra132-pmc", .data =3D &tegra124_pmc_=
+soc },
+> >       { .compatible =3D "nvidia,tegra124-pmc", .data =3D &tegra124_pmc_=
+soc },
+> >       { .compatible =3D "nvidia,tegra114-pmc", .data =3D &tegra114_pmc_=
+soc },
+> >
+> > --
+> > 2.54.0
+> >
+> >
+> >
 
 Aaron
-
-[0] https://gitlab.com/nvidia/nv-tegra/linux-5.10/-/commit/8555ef4988d3b39d=
-91791794825c354b3c9377ba
