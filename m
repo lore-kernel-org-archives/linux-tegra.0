@@ -1,63 +1,63 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3312847CC71
-	for <linux-tegra@vger.kernel.org>; Tue, 21 Jul 2026 10:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E09547DFB9
+	for <linux-tegra@vger.kernel.org>; Tue, 21 Jul 2026 10:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784628673; cv=none; b=GiW7Bv3L/ZW7nxlDb2i8mjA/E3KYdZT5YjSb5hpOMY8WKB47r0QSIfBeEHf/X7R8EtUQvKXIdvM+JCRSvKHots+xPKaIcFcYWLuiG5anf9XaU9ndhoBffH+T9Ytjc40N5S50W6M3Ztih030FuS2OOZS3OoTFBG5LDOLiN9D442o=
+	t=1784628677; cv=none; b=oBj2nLTYCEWd1qymO7IuvPYZrOijFsDrDryTpt0Wzc9kviPBlX1Bwn1tF+3Omzz/oZXZMwWi2h+UfGUUiYiMOBrjVBleHUuTWOr2ViMNNmFCqtoadJztn8fmXZTkRNXZC8ljSl+zGk+cp2lFFh5xFL1igkdv4LE6sQBM3+FkhBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784628673; c=relaxed/simple;
-	bh=TUmjXw2M4oeu88E4T00FZuITV/yEcOpyuEC0IVB64Cw=;
+	s=arc-20240116; t=1784628677; c=relaxed/simple;
+	bh=YR8yZO2uKjwN0dfJLiLfLLNLdB1TBEL7rV/MLtZyw6w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HM6/mGytvQL7qVHhdB421VnzZSgIIlxO6XSU2VONUqHMeCME8DaHTltWKmd1fC8iHWHnm3n1P7XSLkscGiKiBNHnRaYSGNCFRLuJa2/Nh+mX4Y/5MTTqak4UEumqPcwMWbCoB7j5+2DsWHouvsim8HOxUmzxYDG/j4M82EV3HAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FHbD6DTb; arc=none smtp.client-ip=209.85.128.54
+	 MIME-Version; b=hNmXAsO/oyeldFiC3iogOJeeZEn8o5vnOAsKYbP9YvI4vZCrK+LdRDxhOQa+4KGcijQIiEqlUdZes4IKoycPeZW+LdGXCEe5MJ3z39pQdXtY6uZsjKn163wVD/6Tzay944xx6KQElpNG+uGWH5jX087QGdOmebXo2YFVg+e675I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TAZWXi1p; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FHbD6DTb"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4953e04ef16so52396595e9.2
-        for <linux-tegra@vger.kernel.org>; Tue, 21 Jul 2026 03:11:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TAZWXi1p"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4954c0833b4so24609645e9.1
+        for <linux-tegra@vger.kernel.org>; Tue, 21 Jul 2026 03:11:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784628670; x=1785233470; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1784628673; x=1785233473; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=103K+HDBGo173ka6xLJ87zAEncnD5tT5dDYUjcQ8I/s=;
-        b=FHbD6DTbyIBQiFS8HUcvNehDITQCI3mFTow3teJjPZ+ch3VibWGWrbw728CSrgUz9G
-         bfUuAJpatFW7j5n6ceZBL6w1y4nOGiY2bFpjqHDpjL+lLN/njmkwIo2nfAOpOwQT8jmA
-         iyUtw/lEJ+nwnBL0+PE7mPXqfYFX+uYqCw5oyP4zpLqQSUc9NxUveY6MQzOoyQ7LT7/f
-         Lpr7J0cmWj800ERFUVrCVR7Nvm821jREqK9qwh7UFPH4x/21NFtJvS6gUX0uDxdPd9yO
-         1Hz/+V5yLBAiRynz8HgeVaU7D5UXGfhWcpO+t5RrlUSkrytlOYG+id3Eg14wzXegMEt7
-         1aEw==
+        bh=acge6orfwT1o0ryUQhfNkS8hbYdA0DXxX0OZ/V75lAI=;
+        b=TAZWXi1pUiHtqsAxO0wY5Otsxqo5S5cAdCZ/WYHorzciYW23xHR7/hM2n+JZoOcC5F
+         1SIxFcAk2HobAlARyNFg1ERYyGLBDyIUTSTMiKun8YRJmsey9LZ7PSiXnlk1Q3J9y6JA
+         QKZuyhKU5w0D9eGrLRkoCyE3BkUoRd3Z/oHkazGsWvcFkjk8PQGoLsTrL+iNkNnGGMcm
+         08pfIaexZx65deLEvVuK5nUdKzOo42Aebq9Ql71sfHPl0HTXDTGC+QkN8RutxOZ4XXoR
+         s+bagWd2BBwql4FWRX6OCfPACRCuKQC/OBCoOco2YFDhiPE/d0DR9XduhBxRfkekU6r4
+         OBLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784628670; x=1785233470;
+        d=1e100.net; s=20251104; t=1784628673; x=1785233473;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=103K+HDBGo173ka6xLJ87zAEncnD5tT5dDYUjcQ8I/s=;
-        b=NQ5rQwDj9TjfWX/f1VKx3nxhI0WiF4KdfSPqK7Xv1eNHqB+SjBZt9qPdDejjGHvU/H
-         eJNKhp5LDQH01ToO+uu58fj5V8jT5jez3B7DK2TG4k+YGoypknH7amOi63cWSyO46UOj
-         gxHIChML9WH9zuRsel0gX35bSEFplP1sEgJFyvorZVumL3x+fDJOTSrtPXeAwBCyArZU
-         Y7CrtbLdbElBf/R1x6m7QhLqF+NUTDvv6h6r+3qj3Kt4JEcdJLZaHXFkFGtb4Qm/S5s6
-         7V/wYanTvf3taWD6O84OtdZ/Kn0bXAMXuWZraT3IleQ1VHqrYgjuegIv2Iq1m6W8GweA
-         AaXQ==
-X-Forwarded-Encrypted: i=1; AHgh+RosJoiq5L0MHewRjATaBQdb+c1NPhpajmwxEUu8l0zWua1SMGSqjm1hmJdqRHlUZgVM+G+HbByQo7P/Zg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI8B1td+I7mQMrWjwM+j6QbiwfjH/qLG/6FoHfSugagXF29oBn
-	xLhNYWxxo5WGtgvNNoxkbXjMiQd/YUi5Ynem6u/wRzt1MxGNDoKSFyKZ
-X-Gm-Gg: AfdE7clYz8KLPEKsj6Mrg/rbkarmUIIKOXVWYsuKz5cn3XMOzRvpzdu0U2qBOuMWfOP
-	d95uMciDmgz0gN3QAXIqKrBAXLybth570+wRvbairYdorYN1XDgbu6qzj1HdxUrGbJm16NF7hgD
-	hXVtyiHybqxvxWli8yY3Un44O5hzW4tsuQSX1bU/+b5ZOJaznOVY8wx6uufvUiah/htXHPz5jnv
-	PHTVN0KKiQGNkDC8C/QYzDeQHmvxy1A2f+lw1qBTUiHo0umJSwwYfV1sFlF6IbKbHt+42x2Hzo8
-	P6c6oo/xHwtGDduxRiP34H10SzZaSicI6AL3pDnZAHuiO325KzdD56ucruvPHtPNKP8PT0+mZN5
-	HUPkFVFGCxMpxNDMGnaAQ27MBSl9MuXkWoKhTcxj3MFiPveGmpDnaPzsuYfxeGxpmWG6vWozyRp
-	XZVxQeVFsrgqTDogEyJjFlaUo=
-X-Received: by 2002:a05:600c:4e94:b0:495:522f:d994 with SMTP id 5b1f17b1804b1-495522fda7amr148264315e9.0.1784628670304;
-        Tue, 21 Jul 2026 03:11:10 -0700 (PDT)
+        bh=acge6orfwT1o0ryUQhfNkS8hbYdA0DXxX0OZ/V75lAI=;
+        b=GYCJ8myR/Ymj0ATcriCi1NVNY8Mvc9Cl+9nskxZY2giNv8bgY2F4ZLbY9ZdpGfTkcW
+         //I8UlzpNB2xCAw9MtG9ZZzxjrUXE8JKaLeSP+T8+44dJjOITjxC/UqRnudtWOB0A4uC
+         0SO05EicwccraUYDryqPNfRjNbM/cieAy/IYRIwxAmPOaFk1qFDfkAUo3VMZ8JnkkThW
+         wjY+iXjvM+esV4Y3ddjI+r2KfpfWWiBaHxq6mA6DMF2mcQ0/Fq+g9o9ftIKNZwvrykcm
+         3V7dEGC+qiXR+wMVw6FXZ7Ss5jwB16NarBNXIxxv5jA2OBQJpGsrar1tRgviMfBPA8ej
+         FXDg==
+X-Forwarded-Encrypted: i=1; AHgh+RoQobmw3450fjMFNvm/9a90UWzfmF4WRhGskUShY6QYQC2dhdZhjEZrHU9TA71mbhe3NfAac+5ZSw9HuQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvDDkjci9wY8Pvenj0QfCM0RpqZuSAq5MoMSu/hu0SoC+ooERN
+	jp/i62jSQWbJJB1xRGvwZm01KNlSxvFYW9xEj2dT4D1uG+F2SNi10GJ/
+X-Gm-Gg: AfdE7clh6O1YbbPM7cQJdRhA1z5LOi6mQW5XyyjOREOyWzBSy0TAnqTMEtZAPH97wXP
+	UYaYKVfmbrIvtpK+9Ny/n9JqoDvVUUnshSIqZ4nahNOf4ydSSIEh57deDPVJoHhuDwF3ZPqZmfg
+	enI+87jMVXN08t9aaWY1khQzexh7OXdKK65Ya56955RWDJ47OKS6j2X+SiPe7Wd0YojvsEYEm7g
+	+kBmN76+Pac9buxEJKWZdsZC2xwHjfOK6mwuW4a+qS5TbmUP4F0PwDlHNZr7+vl0NSkS7DR++7d
+	jP5mutzBWEXJL+m0n2yZZRSIqqJa0gKmDlMMPggSWOvaIdET3IqPCxddyervzqzL+6HXTjUrHr3
+	TcIfYQZho+794LOxfVwc/nDQtjNU92J5ES1v20K3d3KWIftNeiT06YDvOj0QQAUsnGeryluZD+x
+	4fW407Je+LMSzzyPCzCCtYBXw=
+X-Received: by 2002:a05:600c:4ed4:b0:493:aa0a:45ad with SMTP id 5b1f17b1804b1-4954a3ec5f7mr197781115e9.2.1784628673188;
+        Tue, 21 Jul 2026 03:11:13 -0700 (PDT)
 Received: from xeon ([188.163.112.51])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4956547319dsm57127085e9.5.2026.07.21.03.11.09
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4956547319dsm57127085e9.5.2026.07.21.03.11.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jul 2026 03:11:09 -0700 (PDT)
+        Tue, 21 Jul 2026 03:11:12 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -68,9 +68,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 02/10] ARM: tegra: tf701t: Add core-supply to PMC node
-Date: Tue, 21 Jul 2026 13:10:51 +0300
-Message-ID: <20260721101059.451699-3-clamor95@gmail.com>
+Subject: [PATCH v2 04/10] ARM: tegra: tf701t: Remove pin_ prefix from PMIC pinmux
+Date: Tue, 21 Jul 2026 13:10:53 +0300
+Message-ID: <20260721101059.451699-5-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260721101059.451699-1-clamor95@gmail.com>
 References: <20260721101059.451699-1-clamor95@gmail.com>
@@ -82,25 +82,81 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add required core supply to Tegra PMC node.
+Schema discourages using "_" in node names. Since pin names in palmas
+pinmux is not an ABI, remove all "pin_" prefixes from names.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts | 1 +
- 1 file changed, 1 insertion(+)
+ .../boot/dts/nvidia/tegra114-asus-tf701t.dts  | 20 +++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-index 5358cdb6efc10..55e9256e80f33 100644
+index 00eeedf3ef7a5..a27d3c4f2c63c 100644
 --- a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
 +++ b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-@@ -1599,6 +1599,7 @@ pmc@7000e400 {
- 		nvidia,core-pwr-off-time = <2000>;
- 		nvidia,core-power-req-active-high;
- 		nvidia,sys-clock-req-active-high;
-+		core-supply = <&vdd_core>;
+@@ -1462,52 +1462,52 @@ pinmux {
+ 				pinctrl-0 = <&palmas_default>;
  
- 		/* Clear DEV_ON bit in DEV_CTRL register of TPS65913 PMIC  */
- 		i2c-thermtrip {
+ 				palmas_default: pinmux {
+-					pin_gpio0 {
++					gpio0 {
+ 						pins = "gpio0";
+ 						function = "gpio";
+ 					};
+ 
+-					pin_gpio1 {
++					gpio1 {
+ 						pins = "gpio1";
+ 						function = "gpio";
+ 					};
+ 
+-					pin_gpio2 {
++					gpio2 {
+ 						pins = "gpio2";
+ 						function = "gpio";
+ 					};
+ 
+-					pin_gpio3 {
++					gpio3 {
+ 						pins = "gpio3";
+ 						function = "gpio";
+ 					};
+ 
+-					pin_gpio4 {
++					gpio4 {
+ 						pins = "gpio4";
+ 						function = "gpio";
+ 					};
+ 
+-					pin_gpio5 {
++					gpio5 {
+ 						pins = "gpio5";
+ 						function = "gpio";
+ 					};
+ 
+-					pin_gpio6 {
++					gpio6 {
+ 						pins = "gpio6";
+ 						function = "gpio";
+ 					};
+ 
+-					pin_gpio7 {
++					gpio7 {
+ 						pins = "gpio7";
+ 						function = "gpio";
+ 					};
+ 
+-					pin_powergood {
++					powergood {
+ 						pins = "powergood";
+ 						function = "powergood";
+ 					};
+ 
+-					pin_vac {
++					vac {
+ 						pins = "vac";
+ 						function = "vac";
+ 					};
 -- 
 2.53.0
 
