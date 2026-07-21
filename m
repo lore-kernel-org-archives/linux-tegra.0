@@ -1,110 +1,91 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FAE0480960
-	for <linux-tegra@vger.kernel.org>; Tue, 21 Jul 2026 10:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5A346AA6B
+	for <linux-tegra@vger.kernel.org>; Tue, 21 Jul 2026 15:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784628686; cv=none; b=Ft9nO5IjhhhgLBVoECP7rD7fgCaqGtCSIEWc8nVNf8ALbcp9VxoxTSOvxn1yXgMjZPsJsLj7ZuPZpezlfjYC/b2jIZgniV+gTSGKut5SnPID6xI+9k+U41qrZsa4hA7leWsL2vAmMrN3aIXuZQZtFxClQ34Is8C8kObdePDyfCc=
+	t=1784648067; cv=none; b=X1YRMbVgpCzh1mzVE/ahwR6Q5FL59Ia9ombKRmWRpqzV1GnTvAqkqfywFeyYtV6TnPwEHu5FYsLZNivHp+8B+P6K1wKCCJHgBgQdYXKhewRs1o7eNXs7pyDm466fyPlRx1yi8CuCePdR/M1g7HkVlTTl55ZeJXCZe/QDj2Ya+ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784628686; c=relaxed/simple;
-	bh=gXNJqaf+zTctXL5WLgdpGYeFG2qxNG2Vh2hV85r/k1Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IB6837v/4b92uWQlH2AfNmikFbAQUtCnjjHWLf+5wtYbVFn2tApxNsBMTcivIsL4DTXQgD7AVFAGAZY0anu+VxzF5HEAnlTTbJwJTwzRnfbFgG99JPdevWqi5Qay4HWs1tvLjqZVHlGccvKPPesInZADLeHzCcoz/RcZgXiovnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=svj53zPm; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784648067; c=relaxed/simple;
+	bh=rdRrZWMw6XQ0DnO09ka2+OtkvEEzz3gTsu4XlbQjHj8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hbkKniIpmST/Az/lwTmmee6Nn8B5VIYCD8raIpmUDOD1FZOj6nHdA/OCCna8493mNBdQ+9ZhBoVhB0d4mGcbX3FDwQj75YIgINDkx0dARRVenQbQeews26Z5YlR59d3+s2bkiiOuSwf4RtHvwX5jLKUFz39//jzlaYBWp0Lf4uY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YwYU7c20; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="svj53zPm"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4954a9e8490so19734065e9.1
-        for <linux-tegra@vger.kernel.org>; Tue, 21 Jul 2026 03:11:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784628681; x=1785233481; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=GL48HhqEqA89OWX1SNNRwvNWdwLXSktQBg9CSPlO8sc=;
-        b=svj53zPmGgsQQomAM3SKz6UktBhgsIGXco8OB9gm3mNaz6nHxY40tQ4guxNVLTpfQe
-         H0lTG50dg3E32tm8/migoqNTnthSUTkzMfyFMBPvKL1xd8ox3XaXEiIIBhsL2lOzEGGX
-         ty1dmNwyXK8Pt7v7pgIv08r2ReTQcWJFs6IlfjQqukmMG+eEyb1R6SYVnk8eW/H1mfJH
-         9VzXYOYQAGOj8lIX2MdOyWzpdGQRsDRjEwAxnDRLSUt6mvfHgoe8RLi3EYO5hvvKlDBP
-         w2UtU/DWmqJJ+7dJDXkdlvzbedwhAkh25lx1PyHT9edwH8el8J+wA5llqtcIUUdDuKpd
-         TqTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784628681; x=1785233481;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=GL48HhqEqA89OWX1SNNRwvNWdwLXSktQBg9CSPlO8sc=;
-        b=g/yTNHQzE50D1u3iDuuGHWQLvaKQVuXb8rIg6vNt+1pZ9vKNmSGU84+1bYLrb96xu0
-         fzZAe9K/0vtA5SXTYWOHK19gIkEAAj9PX6gIebMHEdBGXGyFWQkEXTjyLtruvHGNFG3X
-         tgEkQ6I3xMpmVRCVpDmg4kQNpo6n1XxhONxXb305RB4XQTidUYKLO4hd9M76wp8l4Rpj
-         bcvkiAU2x4H/gUwLgXqD1DdOufMm24KzxV4TbDc5hiUPDKGTPZEN4qn0h3r6fUNvBmaC
-         ImnYqogZ/XAsUiuJRF7oXKWCgf0Eru6QHdpVivWL4xCNmZv6HyBLAAP7/c2CttOxteNb
-         hOpw==
-X-Forwarded-Encrypted: i=1; AHgh+Rpopq/DdaGIopmMU9NPtdVMUZtfPbItOz78qxJfclfw6IjHbfP0NbZpXsHEp74kqsYxLVBwnQwg2jD+4A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuUuVRIBcBDmi6LQ206Kk4HsgsiveWW0SoJlbFkTX37WSBaGdM
-	NaRoigyn1Q8bDSxWz0j9yARnIHu4X3NoNXmbmI5Ev+jQl4oFHpkqePTn
-X-Gm-Gg: AfdE7cmGTogoz0drzjKi19HFgaHXp0gWHZcwRY4s1eUtvSLKFE0wjjw0CTFQO61qrFr
-	+xJ+PHNoEkbw7m8KgbOo3Nsl/YGcruK1rhWYmOT0Ac03k0M9ZBgSnFG83bV1mQlwPiBTo0hhBVM
-	uflG7EqGCaHNmqw0rAZXXy1k6Sj5bszix/EdWmkHi3CNLt3DjvlvrtOnPMIz8cOugFAiWp0aflM
-	AZ99N7YAQkAKpMuxxX1cbDzbXrzkrR2ro9G0G/k9549yC+ESraOybHP8HjlhboMkjgARTsrLsEK
-	eke5W9owIbizBv4LM0/yL6yeBS+U1+g/YwYfCs4Cak+Ioi9UiI+3vRPRLUMFIiWEJlF4obJj/Lv
-	hf8NPrloAWPMGutouiQtzlSdZ/gps1Nf3idQryOMexmWCXsq76rL4yqo0wtre1UbS/r2hq1OYP2
-	bJmjYuwUKn+cyXekMbJGxufyY=
-X-Received: by 2002:a05:600c:3b0a:b0:495:6022:5a23 with SMTP id 5b1f17b1804b1-49560319f6dmr71655465e9.19.1784628681221;
-        Tue, 21 Jul 2026 03:11:21 -0700 (PDT)
-Received: from xeon ([188.163.112.51])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4956547319dsm57127085e9.5.2026.07.21.03.11.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jul 2026 03:11:20 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 10/10] ARM: tegra: tf701t: Add chosen node
-Date: Tue, 21 Jul 2026 13:10:59 +0300
-Message-ID: <20260721101059.451699-11-clamor95@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260721101059.451699-1-clamor95@gmail.com>
-References: <20260721101059.451699-1-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YwYU7c20"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD9B01F01559
+	for <linux-tegra@vger.kernel.org>; Tue, 21 Jul 2026 15:34:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784648065;
+	bh=rdRrZWMw6XQ0DnO09ka2+OtkvEEzz3gTsu4XlbQjHj8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=YwYU7c20iyRHlUEvv19GLx0Cd2Xowt+g80i2Ddj624/G/Q8YONChEezzO2OMY6TER
+	 gSOngS5Q5fzBB66dF2iSa7zoCB/cQj1Vd6g/AfLf0s72OeXuOBCjbI+BBybXwb8Fj3
+	 AZtkPRM/XOMJUz9/PuwU7mXYb0F6aLMMQM5wi6oypQDySgNo/5uAtmXi9+FS8QIj7j
+	 FmSSG3gpRZEM/xhI/NFd647deEHwTMHBuavLrZbW38Ib6Ipr614pyoQtVEPWHtmKfd
+	 7c6BM3AZ1nKEGEu7wo+LO3VppINx/ta0qRdIWU6keCO8YnnKgwGpcxceUjdOlJdPEs
+	 zRzMeBY6IM4Ng==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5aeb8c19017so14116876e87.0
+        for <linux-tegra@vger.kernel.org>; Tue, 21 Jul 2026 08:34:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rpj3OF5Pgnugsj3d1L1Duupl4eoJImq6fL3/hma5pQD0aUjf3LCUDgDpbD2UsOBvRQFIFt8NxJYTRDXsA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx13myV9VmU5wx+iTF1079dsBLc7++HrGrOqq08BzX38/xMFg3I
+	1Jeho1ezYKh5Ocm/3Ulp6RQJvcZlFTKddWmiBlzwJkf8pAlsExl+6CWmQfbVkY6YefQvG1y/PyA
+	RrHed2wihhS6nOGnqduUHyuEepuYdoJc=
+X-Received: by 2002:a05:6512:61d8:20b0:5b0:190a:5b6b with SMTP id
+ 2adb3069b0e04-5b28f9ac2a0mr2732898e87.32.1784648064148; Tue, 21 Jul 2026
+ 08:34:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260716153820.2007095-1-sumitg@nvidia.com> <20260716153820.2007095-3-sumitg@nvidia.com>
+ <31525db3-a7a6-48fa-bea9-5de28a4332c4@huawei.com>
+In-Reply-To: <31525db3-a7a6-48fa-bea9-5de28a4332c4@huawei.com>
+From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
+Date: Tue, 21 Jul 2026 17:34:10 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jGJ8HDjmnKP8HvPRqm6NKL1mzxd6=z-xDyxe6=SoNCCA@mail.gmail.com>
+X-Gm-Features: AUfX_mwG9ZdYy0LRhhbEyhBL30Qkgwd4M-EOK3higeVMTPvWhi7syJpKzMc0LkY
+Message-ID: <CAJZ5v0jGJ8HDjmnKP8HvPRqm6NKL1mzxd6=z-xDyxe6=SoNCCA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] ACPI: CPPC: Add u64 wrappers for the autonomous
+ selection register
+To: "zhenglifeng (A)" <zhenglifeng1@huawei.com>, Sumit Gupta <sumitg@nvidia.com>
+Cc: viresh.kumar@linaro.org, pierre.gondois@arm.com, ionela.voinescu@arm.com, 
+	zhanjie9@hisilicon.com, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	acpica-devel@lists.linux.dev, linux-tegra@vger.kernel.org, treding@nvidia.com, 
+	jonathanh@nvidia.com, vsethi@nvidia.com, ksitaraman@nvidia.com, 
+	sanjayc@nvidia.com, mochs@nvidia.com, bbasu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add chosen node since some bootloaders may require it and add stdout link
-to UART-D to simplify getting kernel log via console.
+On Fri, Jul 17, 2026 at 5:47=E2=80=AFAM zhenglifeng (A) <zhenglifeng1@huawe=
+i.com> wrote:
+>
+> On 7/16/2026 11:38 PM, Sumit Gupta wrote:
+> > cppc_get_auto_sel()/cppc_set_auto_sel() use a bool, unlike the other
+> > CPPC register get/set helpers which use a u64.
+> >
+> > The next patch in this series saves and restores the OSPM-set registers
+> > across CPU hotplug using a common table of get/set helpers typed as
+> > int (*)(int, u64 *) and int (*)(int, u64), which the bool autonomous
+> > selection helpers do not fit.
+> >
+> > Add cppc_get_auto_sel_u64()/cppc_set_auto_sel_u64() wrappers with the u=
+64
+> > signature so the autonomous selection register fits alongside the other=
+s.
+> >
+> > Suggested-by: Pierre Gondois <pierre.gondois@arm.com>
+> > Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>
+> If this is necessary, I think it is better to just change the input param=
+eter
+> of the original cppc_get/set_auto_sel() to u64.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+Agreed.
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-index 0d182fa5c1af2..1b9839a855610 100644
---- a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-@@ -26,6 +26,10 @@ aliases {
- 		serial2 = &uartb; /* GPS */
- 	};
- 
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
- 	firmware {
- 		trusted-foundations {
- 			compatible = "tlm,trusted-foundations";
--- 
-2.53.0
-
+Sumit, why don't you just make cppc_get_auto_sel()/cppc_set_auto_sel()
+take a u64 argument?
