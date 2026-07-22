@@ -1,146 +1,167 @@
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011027.outbound.protection.outlook.com [40.107.208.27])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E5A470E81;
-	Wed, 22 Jul 2026 19:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.27
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784747815; cv=fail; b=NxBD4UDh2Q9SS6t7PETgpxZhrXo4r8i8hHk0ywi+OuTqVfXZFEB1GvZu97Wo5muSriFpGVy4bGb8UEJKihjTvpjWoV6sf5T2Firr3mtMbkWciYYfKdVM6LCBjshLpzobw2qdL1zpGDb4JP7+lIukyDWhTNbSDN0t9b0tThXFX0Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784747815; c=relaxed/simple;
-	bh=UT+7at3reLk72OAxo0YRcs/TNbiazHh3z97IJfMnv30=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b4bgiErE6quPusosu3aGhcxF7g+U5pkeTzUdIZE7Mx/IVdcszl+11+spd4xk3f+QrzxgX6EjY5LbI2h7MaVZI8v34s/JMa5LNdIyLPXgY/awuekuwK5xNVzn7ZOuo9Lf8QwstZtsGzku13SZ0exLuz+JFaHsU//OdXrRHGF4f0g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=o0Oozm5Z; arc=fail smtp.client-ip=40.107.208.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1F3439014;
+	Wed, 22 Jul 2026 20:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784751678; cv=none; b=doWeSTNt3TtmsMFOfZkW/gIvZZXFVoXsnWeVldowmvTDJsNeQhxJrfbeU/Pb+VIO4rvqS0xWUNModnTvputAJa9L5m/aU/G465BwIVhsaGy1wB+RROZhdTo48Rcx/CObiNK2Yv+inZ9ebP+oJGQcRSWdq+K9XsYu81y7rmyeZrM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784751678; c=relaxed/simple;
+	bh=WvXOvqO7T+Ekz5G0pPuNJiPTVs/qqCAgpPU+TqXCUZU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pfU+vGtiB+9FLcWgFsgzeoOMjgIdFvsFDfQ+xpEPVAv7tde9TS5fA61iC91Iqh71QA0rKQECnPKozw5mUC8TVntLElu4fcmTh3muMyE7BWy1jKcBKEdypeEKzIH7+/dd8srOzDEKsiFYs6Jwy6SFmaS8iB9d/xWLELCpwgXeMA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CzHaLII+; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="o0Oozm5Z"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QhdjYldQ0vJ4gNpZHLCCryF/VmD5TrSqOEBYQO0nkWULB+DMusUwQU7zKFkglFAOO0Rlknjc4wLcOblnG4PjcBiM/p3KlfwaRSWzfGSLVge1Py9tJw7btVdvGOWJHV9JeipiD2xKgv3rkPj8DLj+Mpr/UwgEOTG/yg4C72oxGPqwk112fzAe5H7y+rtshVlmiPxOvvZqxKIXprYf0a0nlATEIZPhD+qyb+5aM0roCtVDze3pqFD7ObP48jVic8TkXFTU0CFqFGllXyuggEw7LKShii7JRNVDFv9J3mTohwiCpakuwRWiESkaNaM4xmtIz4+huqmfOz9Ta+eKgMbdbQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3TUIOwAx9iMCcpjZK9Bk6/1kViy52184lx+2A5+gyJw=;
- b=lmz6FAbjuz/oNlC0MNdOvkM9WYBxHx6Q5sAiFOiuaDW1Dwf7y9eiPW/SDs1j6SEmW1mj9GC33bGQi/LDgyD/3H1g5v7iwiMoD2AYfKuq4ToMMXf56tRDyLSG27/ce8aDkpWqXlkj/7ufWc7CJGx7EHIF7xQ2W/q3svAPNhmSXPKFTswqF9OJunNH40VL83IMphvhK/cnheXhQgOjuag/+Th1yKjZ2nRbQc7AzHxvKxuIMHbCgXGPnPFcit1Kq9mkcJ+8c7dXHlTgC1sKHh96lCL1It4CV6oQ92IL8RSuRZWKpbu7VvSSyq7rJWomdLSb1rqZIRr3iI4xrY6QhZAPvA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3TUIOwAx9iMCcpjZK9Bk6/1kViy52184lx+2A5+gyJw=;
- b=o0Oozm5Zb/KqBvhOpqxqbU41CCHD2t+G9HjGPliQcxWPx6dc7PKtj/w0Sa24G6OTNSE2QW4i68jh/Yx1SprnzcC7LWBTFOEheRHj3689141L6VfjCl/PjGzL8UtopOwa4S5IUYyI82/zxhNbY8DI60f95JwFHH7HEWEU73sTkJyfuZDbi0Zg3CT1ogSjLfIUD6AIVPwcxdz20dZMjKK23YPoaY2lAkvvB/SV3szJFoQwNeQnC++ENsiq1/bbeNnlRHXbyL17Iw/Wl17Jsu0RFuCgJ2/JVtU7YLhnDVwzxlsvKUOWvRoeNlBFadtoHDoj2ZkdvXLXfPEHWrunrS+xuA==
-Received: from MW4PR03CA0306.namprd03.prod.outlook.com (2603:10b6:303:dd::11)
- by DS7PR12MB6189.namprd12.prod.outlook.com (2603:10b6:8:9a::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.18; Wed, 22 Jul
- 2026 19:16:43 +0000
-Received: from CO1PEPF00012E84.namprd03.prod.outlook.com
- (2603:10b6:303:dd:cafe::35) by MW4PR03CA0306.outlook.office365.com
- (2603:10b6:303:dd::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.245.10 via Frontend Transport; Wed,
- 22 Jul 2026 19:16:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CO1PEPF00012E84.mail.protection.outlook.com (10.167.249.59) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.245.5 via Frontend Transport; Wed, 22 Jul 2026 19:16:43 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 22 Jul
- 2026 12:16:24 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 22 Jul
- 2026 12:16:23 -0700
-Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 22 Jul 2026 12:16:22 -0700
-Date: Wed, 22 Jul 2026 12:16:22 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Ashish Mhetre <amhetre@nvidia.com>
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <corbet@lwn.net>,
-	<skhan@linuxfoundation.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-	<jgg@ziepe.ca>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<iommu@lists.linux.dev>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v8 3/3] iommu/arm-smmu-v3: Enable CFGI/TLBI-repeat
- workaround on Tegra264
-Message-ID: <amEXBlsOiDyAvZ0w@nvidia.com>
-References: <20260722102033.1122277-1-amhetre@nvidia.com>
- <20260722102033.1122277-4-amhetre@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CzHaLII+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6EEA1F000E9;
+	Wed, 22 Jul 2026 20:21:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784751676;
+	bh=n2UyvVxwi6nb8Gck/NJhelSg7PUIFLLdwXt/Q4oFRJI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=CzHaLII+nRvAcI3VKD4XImX+tvfNT8mknfqiKBz2jpl6YMPlm+kEyENt/j/1Ncquj
+	 a+cvz27AKn7A1jgBx1oEOJCSZnX5cSO8ZOplLXiK5duv8CDROrm26V197bo3GHJdp2
+	 jZ02vogO40wz4YryYDi2WVlmMvT1gb8jpURWjRfmhHINQTF/hXTCFMa7E3wYrUQ8WK
+	 LeaCz53SdAvMPdfP+/QRflLiyZClHDPjhFfyzi+6e9sSpR8TbSMzMpZ9hArObrq0LO
+	 JgPdlPsSkZEELKvHklr1O7SHTidCUSQd+QvxdmtbhiyiRvHvZiifHVXg2JHnB8dJax
+	 lgJsgo8dvAVlg==
+Received: from 91-161-240-24.subs.proxad.net ([91.161.240.24] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1wmdRK-00000007lEN-2ptI;
+	Wed, 22 Jul 2026 20:21:14 +0000
+Date: Wed, 22 Jul 2026 21:22:37 +0100
+Message-ID: <878q72rcz6.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	John <therealgraysky@proton.me>,
+	Daniel Drake <dan@reactivated.net>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH] clocksource/drivers/arm_arch_timer: Workaround bcm2712 broken EL2 virtual timer
+In-Reply-To: <325e86ea-d4d3-4c84-ae9b-f4a08c9b071b@nvidia.com>
+References: <20260710080958.491620-1-maz@kernel.org>
+	<325e86ea-d4d3-4c84-ae9b-f4a08c9b071b@nvidia.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260722102033.1122277-4-amhetre@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF00012E84:EE_|DS7PR12MB6189:EE_
-X-MS-Office365-Filtering-Correlation-Id: f66b8ea2-0c1e-40e4-a41a-08dee825c412
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|7416014|376014|1800799024|82310400026|23010399003|10067099003|11063799006|4143699003|56012099006|3023799007|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	2/0h8MJeqBNLDBn5nEXb8JXQSqHb2nTcDvXdd4KBqdpf6wOKztnWqbsVzT8mUnl2OBO8/8JaxSQ7anPVaO6o+rVpMeBxWbI10bilIsemzEPdsLXJApZ0yH6W5kpIw7bikvbn9eDzycc9hns5Ccu2tJxW3aWELcVvbcIaF/ii3EfmFbYikHPxtfi/iZuIE4xZpVY/wTzEs/9wdn8o+Ccld0bUdBe5V64oD3RHanx929C9Qd57bOHjcP7J2PxDiexo7vphdgFR0JTW4r/oC4Q6xPnQVOefIHhu6uVLYo3QV7/zGYq3ifbAuAIu5n416TTRVujeUkCOSqMATxXNA+pM4T2EfPx/nNIjCSdqptPsXM3pN6fF4xu0AbWdG1U1+kti56+EaB5H1S1P6ubn9e/XKHzds+Ul3YkdiF1g8EGHePtHH2SyXJrxtpgCgeXGGxIWLzzf7aeGtfttwOxw/07gVgnWeQM5k2ty5BGMb64dv+LzAlxpQSgeyik7ia9geHvh5h2t+fn0ohV0228PF4ieeGMFRuNrce5Ml2fdoZdnjMf7RD7lv2D2amKbT/NTCK9gD96IB44aV6BuhiQne+tKNQkl1ff21EHHNWlcsTGPPP1DB9uKp/0s1k5naEFsGYONWHcqBejhDu7ZrrnhKpUpNjhCfHio7xPx9tfg8P8r0S7KM34N/S5RxsGIbXOkfz6u+iggbBiVye+5AS/cPLJ+6w==
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(7416014)(376014)(1800799024)(82310400026)(23010399003)(10067099003)(11063799006)(4143699003)(56012099006)(3023799007)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	SU3xIr6b45lw1W3J+DaXPt4BZM5ssTwduXVef6kIqfEKZWT8p9MFZuzeP16x/upeIn0fDLrhaGmRRmoPOxwMFwbLeTFg2KliT9vMO9RCbeWO9mUam9n3Z+iLtY+7ZIWB+ReulcZuvD5rPTamcM+qptUH5Qr/noBJ0kYoUUzJbOlHaSlwR/Re4/Z9F4eOBLBNABogPwb+T2+bGhFwcPSe6NsoVw/MpV3KhNhpKLF3VyzlheAborRsbJ6NrAuDZy+ZrRf6qSmZQR+u6RgKaGPbONrWHnggRCtfYnsLnXxKvabeVUYLenCyBtQIvIIHmGeQluUbZHWdRgU8YkKF3qtlw0pENghQaPf1Ok089Y3pEsfuhbyebaFvBn1CS81YqDD7IPqTEfAD7UsPC9uW3HUGg9k+5oU0MmYl3PoCBjnIOCpChHUJp9jINO6yWcCGriPh
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2026 19:16:43.3267
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f66b8ea2-0c1e-40e4-a41a-08dee825c412
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF00012E84.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6189
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 91.161.240.24
+X-SA-Exim-Rcpt-To: jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, therealgraysky@proton.me, dan@reactivated.net, m.szyprowski@samsung.com, florian.fainelli@broadcom.com, daniel.lezcano@linaro.org, tglx@linutronix.de, mark.rutland@arm.com, linux-tegra@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, Jul 22, 2026 at 10:20:33AM +0000, Ashish Mhetre wrote:
-> The host repeats only the invalidations it issues itself. On a nesting
-> setup the guest submits its own invalidations, either directly through
-> VCMDQ or via the iommufd user-invalidation path, so the guest is the one
-> that has to apply the workaround there. Report the erratum to user space
-> through the new IOMMU_HW_INFO_ARM_SMMUV3_ERRATA_REPEAT_TLBI_CFGI hw_info
-> flag so a VMM can confirm the guest runs a matching "nvidia,tegra264-smmu"
-> (or otherwise double the commands itself). The host therefore does not
-> repeat the guest's user-issued invalidations, which would otherwise be
-> doubled a second time.
+On Wed, 22 Jul 2026 15:14:39 +0100,
+Jon Hunter <jonathanh@nvidia.com> wrote:
+> 
+> 
+> On 10/07/2026 09:09, Marc Zyngier wrote:
+> > It appears that the bcm2712 SoC found in the relatively popular
+> > RPi5 has a broken EL2 virtual timer.
+> > 
+> > We do not know the reason why the timer isn't working (the timer
+> > is ticking, but the interrupt never fires), and the SoC vendor
+> > doesn't communicate on the reason why this isn't working, leaving
+> > users and maintainers in the dark.
+> > 
+> > Paper over the issue by detecting the broken HW, falling back to
+> > the physical timer instead, and let the user know about it.
+> > Also taint the kernel as the machine is definitely not compliant
+> > with the spec, and we don't know what else is wrong with it.
+> > 
+> > Reported-by: John <therealgraysky@proton.me>
+> > Reported-by: Daniel Drake <dan@reactivated.net>
+> > Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Signed-off-by: Marc Zyngier <maz@kernel.org>
+> > Cc: Florian Fainelli <florian.fainelli@broadcom.com>
+> > Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > ---
+> >   drivers/clocksource/arm_arch_timer.c | 24 +++++++++++++++++++++++-
+> >   1 file changed, 23 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
+> > index 4adf756423de9..7b4a98df6962b 100644
+> > --- a/drivers/clocksource/arm_arch_timer.c
+> > +++ b/drivers/clocksource/arm_arch_timer.c
+> > @@ -1090,6 +1090,27 @@ static int __init arch_timer_common_init(void)
+> >   	return arch_timer_arch_init();
+> >   }
+> >   +static bool __init has_broken_el2_vtimer(void)
+> > +{
+> > +	/*
+> > +	 * SoCs described here have been found to be broken, though no
+> > +	 * explanation has been volunteered by the vendor. Let the user know
+> > +	 * we're papering over the vendor's lack of communication.
+> > +	 */
+> > +	static const char * const broken_el2_vtimer[] __initconst = {
+> > +		"brcm,bcm2712",
+> > +		NULL
+> > +	};
+> > +
+> > +	if (of_machine_compatible_match(broken_el2_vtimer)) {
+> > +		add_taint(TAINT_CPU_OUT_OF_SPEC, LOCKDEP_STILL_OK);
+> > +		pr_warn_once(HW_ERR "Known broken EL2 virtual timer, ignoring it\n");
+> 
+> After this change you will now get two warnings; the above and the
+> below. Is this what you want?
 
-I think this "enable" patch is doing a bit too much.
+Absolutely.
 
-All the iommufd-related changes can be added separately
+> 
+> > +		return true;
+> > +	}
+> > +
+> > +	return false;
+> > +}
+> > +
+> >   /**
+> >    * arch_timer_select_ppi() - Select suitable PPI for the current system.
+> >    *
+> > @@ -1115,7 +1136,8 @@ static int __init arch_timer_common_init(void)
+> >   static enum arch_timer_ppi_nr __init arch_timer_select_ppi(void)
+> >   {
+> >   	if (is_kernel_in_hyp_mode()) {
+> > -		if (arch_timer_ppi[ARCH_TIMER_HYP_VIRT_PPI])
+> > +		if (arch_timer_ppi[ARCH_TIMER_HYP_VIRT_PPI] &&
+> > +		    !has_broken_el2_vtimer())
+> >   			return ARCH_TIMER_HYP_VIRT_PPI;
+> >     		pr_warn_once(FW_BUG "VHE-capable CPU without EL2
+> > virtual timer interrupt\n");
+> 
+> 
+> I have posted something similar for Tegra [0], but because this is not
+> expected to work, I wanted to avoid the warnings here. We test for
 
-I would do a cleanup:
- - arm-smmu-v3: Factor force_sync
- - arm-smmu-v3: Add arm_smmu_erratum_repeat_tlbi_cfgi_key and WAR
- - arm-smmu-v3-iommufd: Add IOMMU_HW_INFO_ARM_SMMUV3_ERRATA_REPEAT_TLBI_CFGI
- - arm-smmu-v3: Set arm_smmu_erratum_repeat_tlbi_cfgi_key
-  
-> +/**
-> + * enum iommu_hw_info_arm_smmuv3_flags - Flags for ARM SMMUv3 hw_info
-> + * @IOMMU_HW_INFO_ARM_SMMUV3_ERRATA_REPEAT_TLBI_CFGI: If set, user space must
-> + *	issue TLBI/CFGI+SYNC commands twice due to a hardware erratum T264-SMMU-3.
-> + *	See the description at arm_smmu_erratum_repeat_tlbi_cfgi_key.
+"not expected to work"? In which parallel universe is that a thing?
 
-You can follow the kdoc style as enum iommufd_option.
+> kernel warnings and ideally we would not warn if is known not to
+> work. We could always display an info level print if it is needed.
 
-Nicolin
+No. These warnings are required because the HW is broken, and violates
+the basics of the architecture, which the kernel relies on. That's
+important information that needs to be captured, and that's why the
+kernel also gets tainted.
+
+This applies to any implementation that hasn't been bothered to follow
+the spec. Don't worry, you're in good company.
+
+	M.
+
+-- 
+Jazz isn't dead. It just smells funny.
