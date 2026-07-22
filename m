@@ -1,118 +1,81 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBFD403EA1
-	for <linux-tegra@vger.kernel.org>; Wed, 22 Jul 2026 17:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F56C442B0D
+	for <linux-tegra@vger.kernel.org>; Wed, 22 Jul 2026 17:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784742511; cv=none; b=emfSgMQ/SKpET9RmXDM8C8wsGRaShc2P8fVaAlYloSe8FZuAl+P7jPTRaudtCmwNRtwwZJ5iLPyDMbYbLxtH4t19LdM8r01yPWL6RujR7WeflSBworGlq9jkGPIEOok7VNU9TC85gEbvT31b1qh66I38GK1Bk+dgA2IQrnNs6K8=
+	t=1784742855; cv=none; b=G9jV9624j7gmi+REeGLalDcyc4FXKM80nskZGBKhjmtDP2N0GH/1ggPILaYbgMGtYJ6hZTmCQ+YifuHu0X4pDGX2jJkvt4+pVorB8yGoruYnfI43iDhLEWImMuFO6TyQi7r6n9t9gnCljBgj2g+FRw4H8IQAOSvp14Mx587CmL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784742511; c=relaxed/simple;
-	bh=uNGdvVlUjbyCtzw+OUV8NYc8KcS9DKRjygI7lgJTIX4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DamdJemA3whYnvzgjTQbKURGzCvPIO/RbdiunuFhLzFsgjmnrEJBC+2PBidP1rG/AMN2mE+yy8balqLSYM923Uz8LA6q26NqZ+cjjnDnnXbTcyNK42j8HkLWrgjAFW5KqeaPer04f18jnfaWy/vuViD2207hs6QqFtpSVeRmTEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=s68STE1d; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784742855; c=relaxed/simple;
+	bh=usaMV1dIxfXj6MymHa2B9RrjjTnyKrAw0LZdEuuIEBo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JvACNqAQF4dfP8sRg2CnREaPgRjQaemd9a9pDkXgLEisINTK+9BqrwoRIAIUztRgcpY58H8noeIDOrpm/JBJcjf6nwaOrBtxPgTtHtQ+xhmPeyV1xAWlVnZ54BsKHK21UnbnbBnmfoXriie1AUfzOHvaH798ckTMRmeCEYH40iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lmzq/d/Y; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s68STE1d"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-4798bea72f9so6874648f8f.1
-        for <linux-tegra@vger.kernel.org>; Wed, 22 Jul 2026 10:48:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784742501; x=1785347301; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=KR6U6loUN0XySvO98LQDKeYmAr3LHM2/q9hDv0i3JqQ=;
-        b=s68STE1dLUSRIWV2WOI/pOzCh4ktKDXNBtcfcjX3ByEbL1ONjdfoSsEa+mPJOOKYjf
-         nNGdliJyej8LI0dkMeVqZBNx4uZd3YvFT0Lv056Mrd4jVkyG5N5MXsSDbBeb/t0bDTDH
-         w4J085bUE0MG1nsAiqpsabnBvTCb1HcD5fNkpt7XrBCzcaH9x0/5apvE3EAbCFb6P7x0
-         Ku6XVTbWp8lT4qBEFMnbX9bTJmMXXfuWjc6C831fxsCnMKmlMXjVUmxAgKw01zlejfaB
-         g+mtnQsrc69cimOwE0bjGQRiR9nDzFy+huAjYs1UPlmmogI74o1oDoIZx0vY1uR8y6AP
-         ipVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784742501; x=1785347301;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=KR6U6loUN0XySvO98LQDKeYmAr3LHM2/q9hDv0i3JqQ=;
-        b=sq/y7ichYFyKGW9aP0Z1neLt6qw980xMwFc3Y3lTb6bmZ8xsJXewN5XO7vzGVrdFQ1
-         OqQ0L27rGaHe+cohUSup0wEteB3z9gq5lF/sWthPCTe3A0ItW7wRVGPZKm1C0pXYEzbP
-         K4IiieeAvIw80z7G7hZr6Ws2xtR4epf9Aw/mWn+EPIktg9JtixwefF5GCzWD2qCmCSMb
-         uXOZxr/yVNJKJxoGb+CL0Dxfz5mhLfv0DsopRtaV8ONK5nJyev3Tb6sNZC23pJBgccHy
-         QO013NHQNTjoVtUmSjeJXtoMVZYALeapOoIm+RuTfNOKNWEYrokVVW9n8y/vvJE8ibhB
-         dEJg==
-X-Forwarded-Encrypted: i=1; AHgh+RqtsqcrNixU2JwdZeBZDV3/wNG78pt04MV0aWAMPKEoEYo5j71AlItmpxEI3gQ47PedmyTo6M1XcNa2nw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz83QnX2GH3ia2KtrRuJc+qlnKsJD0k3yX9hxrRK/t/N3LnrYee
-	woFf99XvUwMttd+yHEJsfRcMAdg0fkVT8C/FQEV/zJaTJyba46tThjrG
-X-Gm-Gg: AR+sD1291VhW099ZWK0ZTH31oTcL3iWkq6i5DdrijetqVUfElKh8kBUJBf71q+1A7pq
-	nvxuXJqOUgkQbHs01sX9tnGK8o2m4lHIQHAeF9vOUX3uKRquRer0/ybcWIfFEfk+GF9qFeuduIz
-	Q6PbKRl1yFsiA2lLcOQjd8stWDVtHA4d2ahN5edWtnUesa31xQXeS//rmtYyx1H5eHXw+v2yyPR
-	GOVtQQgh7FPDsV2L8ly0SupBgudk6YAXBGJ+vKexopTRf+tT0ZDaP2iL/E1JwVfI3WSjvB4k4fa
-	xmZEliBF4VDV9ipjLesdeiV3eJGm5e0dfC7mMQ7LnA9f/C0qJ0Phgp4lpAJ87IwI8VAY87Z8Jt5
-	62uD09w73MjEBVe18uAlzbJaWcgIGYZl0/SfPh8V3aTX9KGp7nZvrDbhdndkHDvdNwzjPQ7mwTM
-	L3qKqV76w+9W2mEw==
-X-Received: by 2002:a05:6000:2910:b0:47f:697b:de65 with SMTP id ffacd0b85a97d-47f88656f9bmr3595507f8f.60.1784742501403;
-        Wed, 22 Jul 2026 10:48:21 -0700 (PDT)
-Received: from ubuntu ([103.196.162.15])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85bd77a9sm7455278f8f.14.2026.07.22.10.48.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jul 2026 10:48:21 -0700 (PDT)
-From: Faisal Mukhtar <mukhtarfaisal03@gmail.com>
-To: thierry.reding@kernel.org,
-	jonathanh@nvidia.com,
-	skomatineni@nvidia.com,
-	luca.ceresoli@bootlin.com,
-	mchehab@kernel.org,
-	gregkh@linuxfoundation.org
-Cc: linux-media@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Faisal Mukhtar <mukhtarfaisal03@gmail.com>
-Subject: [PATCH] media: tegra-video: Fix length warnings in tegra20.c
-Date: Wed, 22 Jul 2026 22:47:22 +0500
-Message-ID: <20260722174722.413123-1-mukhtarfaisal03@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lmzq/d/Y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 949701F00ADF
+	for <linux-tegra@vger.kernel.org>; Wed, 22 Jul 2026 17:54:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784742852;
+	bh=wpXWpJ/XepBYidQLS4RBKK5VuWb9g6pAC0cnJOX/glE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=lmzq/d/YsVm++VKdefaHPw6n8u3G+Cz3jYzE4EbEkFxM1U05Gh4ajAdRQmCCKalIF
+	 LgxaehzcXUmk30Qd3yXJYvwSn3WvN+WY3FOmGhKbeBzNx6RDGcWWtbyg0qA/k+4rMB
+	 hjnjGiF53DnJ0W5XS1+tANf99npYBaCX4WSqRI/noHkO6exDliymqZcGRYcOqm+gK3
+	 03maHksi5kRJwOhviXwnsiyFSDHn5qBqCezyJ0mexhNDvawjJ/GAnvv7aebfBZJuqY
+	 atWo2Ad3w5mCAKFOulb8yT0vRlDOLBhoO2/EnRUG2fJIqcXgNL18DOutOzZH23dVbG
+	 8InXvUW+xTlVw==
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-c197f968b3cso35070566b.2
+        for <linux-tegra@vger.kernel.org>; Wed, 22 Jul 2026 10:54:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrUTdN4OWSll4oA3ww6r6gghHsqpq8K3TTW7I/wsv6edaFhml+k++FQvnzkFyTQYRi8sJDptFsacHGCRA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/yV118Gpv4lirnLqeqVPORdgCWyYyf6pdTvWpJsT4hgmTDxi8
+	2eYXlV1/cljnSR4x1QwDOUyEOUQUAHEYagax8OzNLf657vm1r+8eZkTgrw7e5DKjCH1pYvKpP3V
+	6/dR0yNNlHDdQgctMUyFich87Eo1kjA==
+X-Received: by 2002:a17:906:478b:b0:c1c:4e00:3fe6 with SMTP id
+ a640c23a62f3a-c1c4e004923mr15833966b.4.1784742851162; Wed, 22 Jul 2026
+ 10:54:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260716-tegra264-pcie-v8-0-23e51589229b@nvidia.com> <20260716-tegra264-pcie-v8-2-23e51589229b@nvidia.com>
+In-Reply-To: <20260716-tegra264-pcie-v8-2-23e51589229b@nvidia.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 22 Jul 2026 12:53:58 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJpSTbJoxu6CCe_1LpG3gR=Yx5VydTKufTp13LRp5za3A@mail.gmail.com>
+X-Gm-Features: AUfX_myKJ3ItLjHpG8Uc2Sapy4DnBxW0AxTenwVXA8NEdz1LrUYTCptHK5c-Gr8
+Message-ID: <CAL_JsqJpSTbJoxu6CCe_1LpG3gR=Yx5VydTKufTp13LRp5za3A@mail.gmail.com>
+Subject: Re: [PATCH v8 2/6] dt-bindings: pci: tegra264: Switch to PCIe root
+ port bindings
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+	Michal Simek <michal.simek@amd.com>, Kevin Xie <kevin.xie@starfivetech.com>, 
+	Aksh Garg <a-garg7@ti.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Thierry Reding <treding@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Wrap long function arguments under the starting
-parentheses because of line length style warning
-reported by checkpatch.pl
+On Thu, Jul 16, 2026 at 12:07=E2=80=AFPM Thierry Reding
+<thierry.reding@kernel.org> wrote:
+>
+> From: Thierry Reding <treding@nvidia.com>
+>
+> Switch to using the PCIe root port bindings in preparation for using the
+> standard WAKE# handling.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  .../bindings/pci/nvidia,tegra264-pcie.yaml         | 40 ++++++++++++++++=
++-----
+>  1 file changed, 32 insertions(+), 8 deletions(-)
 
-Signed-off-by: Faisal Mukhtar <mukhtarfaisal03@gmail.com>
----
- drivers/staging/media/tegra-video/tegra20.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/media/tegra-video/tegra20.c b/drivers/staging/media/tegra-video/tegra20.c
-index e513e6ccb776..eb1fc5b7e2cd 100644
---- a/drivers/staging/media/tegra-video/tegra20.c
-+++ b/drivers/staging/media/tegra-video/tegra20.c
-@@ -552,7 +552,8 @@ static void tegra20_channel_vi_buffer_setup(struct tegra_vi_channel *chan,
- 	case V4L2_PIX_FMT_YUYV:
- 	case V4L2_PIX_FMT_YVYU:
- 		tegra20_vi_write(chan, TEGRA_VI_VB0_BASE_ADDRESS(TEGRA_VI_OUT_1),  base);
--		tegra20_vi_write(chan, TEGRA_VI_VB0_START_ADDRESS(TEGRA_VI_OUT_1), base + chan->start_offset);
-+		tegra20_vi_write(chan, TEGRA_VI_VB0_START_ADDRESS(TEGRA_VI_OUT_1),
-+				 base + chan->start_offset);
- 		break;
- 	/* RAW8 */
- 	case V4L2_PIX_FMT_SRGGB8:
-@@ -565,7 +566,8 @@ static void tegra20_channel_vi_buffer_setup(struct tegra_vi_channel *chan,
- 	case V4L2_PIX_FMT_SGBRG10:
- 	case V4L2_PIX_FMT_SBGGR10:
- 		tegra20_vi_write(chan, TEGRA_VI_VB0_BASE_ADDRESS(TEGRA_VI_OUT_2),  base);
--		tegra20_vi_write(chan, TEGRA_VI_VB0_START_ADDRESS(TEGRA_VI_OUT_2), base + chan->start_offset);
-+		tegra20_vi_write(chan, TEGRA_VI_VB0_START_ADDRESS(TEGRA_VI_OUT_2),
-+				 base + chan->start_offset);
- 		break;
- 	}
- }
--- 
-2.53.0
-
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
