@@ -1,181 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF5534CFDE;
-	Wed, 22 Jul 2026 13:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67EC7352016;
+	Wed, 22 Jul 2026 13:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784727260; cv=none; b=THmg18ZynrrY/DdOWzCct4vkfrSZFUhOvU0TpbL0nNn27QIuDG/tc+44pHLo3AhTI5LvVHb1xI27oWIMe2MV+fH8X1PQuIwpVSb6SjkEfvWfnew73ST8XJivtPTBG+yX2DOwo3ZWbWtkaI34l6qKZd5Nb8Q0jXMuCikSr4gbcNk=
+	t=1784727740; cv=none; b=Mogm84xQm0dTR47pEETz0emg/eme8EYe2PqGShfctgAdkvjR4p3VDw4hvHmmM0PzLGWyN2ij8Onf9wCrGLWW8iXzY9oivPXgC1GnJFidaguu3VQ2k3P41aa+Nb2W38+AC6nAFe5YNDvPaUyzF9N6IlAbe4v8t4CtpkFVDmA5tS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784727260; c=relaxed/simple;
-	bh=uYctUh44CY7wmwKelNOi55sZT7wKaC8vAy7dQEi4MM0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ElrvLnTcINLHWjA2YYJZZQg2H3+WA7i4iTerwfkiVQpbOPAZrQUGbPIkGSwJ6mx8OZYnbMtNNOq7I7v1vuvUhPEAmxi1ooX+ip6QHH39FOjY3QsuFxwgLrw5HOUT+lmMKwkjh99e1eVP1OjEPJxaQNIWsUBEK41bD4wVWpUdRMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xf2Qo7nf; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784727740; c=relaxed/simple;
+	bh=lCQOVDn4ziOgSmTI0ZeZyzXwwtGxsYfk6AnYQNwP/jk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bLI/XArSnWhuDbLHjJazHJJd9G95atYQJG+KP8vkkx72PPQP+BGrl5wmSFVEVxBbQGxR++c/x71AEb4rBQ8H6ff2/zVmP9r/nGICDQbUZ4kB2PT2lRtCaz6fswKT7Gd5WHhZu8zk2pGDSG1dLzySTm7JALhQxukkXPc2A34zoJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oeA79y9c; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xf2Qo7nf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D05801F000E9;
-	Wed, 22 Jul 2026 13:33:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oeA79y9c"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 503D91F000E9;
+	Wed, 22 Jul 2026 13:42:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784727253;
-	bh=DjW3IoJngeCa8GtjqJn2j2qE4s7NfPfHtuHffq4DmkI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=Xf2Qo7nfk8o5oFsdnRyvwfFlDT+UNHYxpWkdWS9jpYlddyaBbeTmAt4TSKYjBQ6nC
-	 VQT5FSiqo8vVJq/R82X3RyjGnMFjVe2qzMcG3VgXV669ofkFC8DZnKS+UkWwrpzb6q
-	 Fi0Sx6sVMnRuvnBvyBvom3YRXCjGdDRHypbqW5x1R/Uji66gdMwF7l9mOVCq62z3nl
-	 gJr90z+D+N2GhFNNOkLY7sMLu7nS8Z2MkG2ZCFRrrGTu/B/Ym82LsdWUrflTm6uGaV
-	 oU9g4AgXa58RSoCWW8YaDO+USyZcemM+PmqZeWYEvuz91dURSvCpGTEaOa63HF+ZkH
-	 oAveIZpLt2mkA==
-Message-ID: <5d133def-b9ab-4c4a-8c37-3acd05841756@kernel.org>
-Date: Wed, 22 Jul 2026 15:33:53 +0200
+	s=k20260515; t=1784727738;
+	bh=JMHKsyTTV54YaggDLKYansrAm9fblh+BWvUqqs6uFJI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=oeA79y9c5nblQlZb86Eqzdj2h8QEgU0FqieDsL25cHiPuc3M1zNrnIAkvdEeRmLoF
+	 W50bilalJu8M4qI6S+Lpw3azQnBiKA9SsU8zwQ1uPxyLiEOBZkKHxfS8Ll2PuxJCDB
+	 T9EqlILZDHfsGIfVTpA3kA7FKgNW8Zwx6Mo0y70kromJW8AzahwijN8vDKVIhGk1MZ
+	 ok2TK9Ar96tFNNroi0MCS1riV+HKPV72PMbCT9xZSffPtGAwcC14ishCXfVXYfe8CP
+	 Qpy0MMFjM7cKSFBYFFkh8amOopxw+jYC2ZAytvcnjWv/ahtpvLiAHnyROSZu/PJCKB
+	 dwq6Xp1F7rqSQ==
+Date: Wed, 22 Jul 2026 14:42:15 +0100
+From: Sudeep Holla <sudeep.holla@kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Thomas Gleixner <tglx@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] clocksource/drivers/arm_arch_timer: Mark EL2 virtual
+ timer broken for Tegra194/234
+Message-ID: <20260722-cordial-zippy-oxpecker-dcdabb@sudeepholla>
+References: <20260722125651.148595-1-jonathanh@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/13] mm/vma: update do_mmap() to use vma_flags_t
-Content-Language: en-US
-To: Lorenzo Stoakes <ljs@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@kernel.org>, "Liam R. Howlett"
- <liam@infradead.org>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Benjamin LaHaise <bcrl@kvack.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Hugh Dickins <hughd@google.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, Muchun Song <muchun.song@linux.dev>,
- Oscar Salvador <osalvador@suse.de>, Zi Yan <ziy@nvidia.com>,
- Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- Lance Yang <lance.yang@linux.dev>, Usama Arif <usama.arif@linux.dev>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Lucas Stach <l.stach@pengutronix.de>,
- Russell King <linux+etnaviv@armlinux.org.uk>,
- Christian Gmeiner <christian.gmeiner@gmail.com>,
- Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, Rob Clark <robin.clark@oss.qualcomm.com>,
- Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
- <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
- Thierry Reding <thierry.reding@kernel.org>,
- Mikko Perttunen <mperttunen@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Dmitry Osipenko <dmitry.osipenko@collabora.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Matthew Brost <matthew.brost@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
- Helge Deller <deller@gmx.de>, Kees Cook <kees@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-aio@kvack.org,
- linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- nouveau@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
- linux-tegra@vger.kernel.org, virtualization@lists.linux.dev,
- intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
- linux-fbdev@vger.kernel.org, linux-sound@vger.kernel.org
-References: <20260711-b4-vma-flags-mm-v2-0-0fa2357d5431@kernel.org>
- <20260711-b4-vma-flags-mm-v2-2-0fa2357d5431@kernel.org>
-From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-Autocrypt: addr=vbabka@kernel.org; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSNWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBrZXJuZWwub3JnPsLBsAQTAQoAWhYhBKlA1DSZLC6OmRA9UCJPp+fM
- gqZkBQJqFFy6GxSAAAAAAAQADm1hbnUyLDIuNSsxLjEyLDIsMgIbAwUJGtCBUAULCQgHAwUV
- CgkICwUWAgMBAAIeBQIXgAAKCRAiT6fnzIKmZJIUEADFx/tREzUImHrEwVHeSvDFmA7tJysI
- UVrlvrM09E7GIuzphzv7jYmo8n3ANpCczLEVr4G0syYQdTigaZgv3+FQDIIzhKih1IHhu1Ei
- XHlywNWKnQxxQEUNi5Mwx43wQz5XVw9F1A7gtKBKNtfogO511hAbrzagrYajyQacEJ/+sfhZ
- 9Da8ltHIXD8pcYaHUfQgEusCgmEd9+KrUwrTbckFKmYq5chuE6yJ4J0EmWknL096jIE6CnzF
- FRslQ3B1UKDjxVsm1ZHfir5NeWszLkTvGFsddFaWTgh8UycESG6VQzKXjjewXu2pG7YQYRpj
- QKm1W5X2TkwWkXRBZTmfmbhxIUMh3+zf5wQ463rSmDN/8v81tdqBtAW6rH/kzg1GvkaTHXn0
- 507yEHFzBksk2viAuIxxr7km8+/KARYLIdGtx30EG8cKzAUZOK6WqxtNCsXUJNrVE8CWrCaD
- icoNu7Fs1c5hmPHdSTnU48ce67449DdnO4neLSNhRiGlMHJgfJUmgrxu/hcYeOZ3haWmEQ2w
- uW1Mh01OHi8QZHCEyAbABrPs9GUgccc/4eYXX9hIgxfSkYzn8f+8NuIFPWl/0uTvjgqU29FQ
- SbzOLxHq9439Ox40G5mS5eZXRGxITYR+6TXvRGI6P/264jvflnr/pDGUttaikU+0W+1uxgKH
- cmYbEc7ATQRbGTU1AQgAn0H6UrFiWcovkh6EXVcl+SeqyO6JHOPm+e9Wu0Vw+VIUvXZVUVVQ
- La1PQDUi6j00ChlcR66g9/V0sPIcSutacPKfdKYOBvzd4rlhL8rfrdEsQw5ApZxrA8kYZVMh
- FmBRKAa6wos25moTlMKpCWzTH84+WO5+ziCTsTUZASAToz3RdunTD+vQcHj0GqNTPAHK63sf
- bAB2I0BslZkXkY1RLb/YhuA6E7JyEd2pilZOrIuBGl/5q2qSakgnAVFWFBR/DO27JuAksYnq
- +aH8vI0xGvwn75KqSk4UzAkDzWSmO4ZHuahKtQgZNsMYV+PGayRBX9b9zbldzopoLBdqHc4n
- jQARAQABwsF8BBgBCgAmAhsMFiEEqUDUNJksLo6ZED1QIk+n58yCpmQFAmfIHFQFCRYU6J8A
- CgkQIk+n58yCpmS2PA//bqN1LfcotmArgElsa+0EGZSQlYgK48pm8WAeTXTngudP9IJ4SuKY
- HR5RNjHcBeqN+Me0zxRqYzRb8nGanHEkDyf4Im8DQM8d6vbyU+FcPmG4skud4kgS1zMHnlVd
- SXfSIwKC/hKgdHG8aBV7545Lz9X6Iohea+94wneD0aw/hqF+QWewGZhWJriWAZtvEkzNjQOi
- 4U9F/trLten/x7bpphDSnDMKJtITbtzATT1Dq7o7VpIUK1nCTQALMuMjKCdi8OdU/+V+R3O4
- 0PXWvX8qrvqYapVbZ+9KqT74FsuB0Ya9uXwgBF2Q6cRuETZk5vqaqKxzqoQZCO8AOz/58j6O
- 2RHNy/mZEN+7tJ5Tsq42zVJ4jxsT8b9YplavCMsnBgDeRWhcbYhCyttoL7nYISyWg4kQYZ/P
- wIV3OuNv2f8iKYsxNsRuClOAF82+gvqOy1/1pprFjy8uo2pkoOrb63aOP3vO5VHnRKgra6dq
- NcaZ+c6J4H+nEJGi2SkHAUJz5oBzuThvPudLvPA/SK8sKoM01IRxSihev/S/5WLazXB1PGem
- OCbvzC1IjWJJraxiDJ5IygokapUa2RP7+WBR22skQ3SSl6G107QgWKSyTOGWEaRmV53vxQLV
- jXuCmzSSasTL60zq5yGrT4/DYQVSNEUiUbG4pYekxJujNeEDkUlky0Y=
-In-Reply-To: <20260711-b4-vma-flags-mm-v2-2-0fa2357d5431@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260722125651.148595-1-jonathanh@nvidia.com>
 
-On 7/11/26 20:44, Lorenzo Stoakes wrote:
-> The core do_mmap() function accepts a vm_flags_t parameter which it then
-> manipulates before passing to mmap_region() to do the heavy lifting of the
-> memory mapping.
+On Wed, Jul 22, 2026 at 01:56:51PM +0100, Jon Hunter wrote:
+> The following warning is being observed on Tegra194 and Tegra234
+> platforms ...
 > 
-> Update do_mmap() to instead accept a vma_flags_t parameter, and adjust all
-> the logic within do_mmap() to manipulate this instead.
+>  arch_timer: [Firmware Bug]: VHE-capable CPU without EL2 virtual timer
+>   interrupt
 > 
-> This is as part of the ongoing effort to convert VMA flags from a system
-> word size to a bitmap type which allows us to unrestrict the number of VMA
-> flags, as well as gain control over how VMA flag manipulation occurs.
+> Adding the missing EL2 virtual timer in device-tree for Tegra194 and
+> Tegra234 is causing boot issues for both devices.
 > 
-> We do not cascade these changes to all functions which accept vm_flags_t,
-> but rather use vma_flags_to_legacy() where necessary, specifically
-> deferring converting calc_vm_prot_bits(), calc_vm_flag_bits() and
-> __get_unmapped_area() to vma_flags_t.
+> The Tegra194 device includes a GIC-400 which defines PPIs for sec-phys,
+> phys, virt and hyp-phys timer interrupts (per the dt-binding
+> arm,arch_timer.yaml) but there is no PPI hyp-virt (EL2 virtual) timer
+> and hence this is not supported for this device.
 > 
-> Also utilise the new vma_flags_can_grow() predicate which correctly handles
-> the case of architectures without upward growing stacks.
+> The Tegra234 device does have a PPI for the EL2 virtual timer, but
+> during CPU idle transitions into low-power states this timer is not
+> preserved currently by firmware and hence causes boot issues when CPU
+> idle is enabled.
 > 
-> As part of this change, introduce VMA_SHADOW_STACK so we can correctly
-> handle the case of the shadow stack not being defined.
+> Avoid the warning for Tegra194 and Tegra234 devices by marking the EL2
+> virtual timer as broken.
 > 
-> No functional change intended.
-> 
-> Reviewed-by: Lance Yang <lance.yang@linux.dev>
-> Reviewed-by: Zi Yan <ziy@nvidia.com>
-> Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
 
-Reviewed-by: Vlastimil Babka (SUSE) <vbabka@kernel.org>
+You may need to build on top of [1]
 
+-- 
+Regards,
+Sudeep
+
+[1] https://lore.kernel.org/all/20260710080958.491620-1-maz@kernel.org/
