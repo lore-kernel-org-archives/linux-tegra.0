@@ -1,117 +1,167 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DDC3D9DC1
-	for <linux-tegra@vger.kernel.org>; Wed, 22 Jul 2026 15:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4358343BDD4;
+	Wed, 22 Jul 2026 15:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784734978; cv=none; b=Hq+Erj3MYC1nGjuXOcE9f898Cz59vfptl4q2HJb6Az3CmtG43JGKmBg1NEg3bdXOEk9KAFsLafM1NXc4pVbnHLeBk7ZBxLhkes4BXkV1O17Lk1MD1Uoa1wG/j63NEgp/n7HB6dP1N5zLer7q8xMmxZiAT9NcJrxUlUGl2zarQ+4=
+	t=1784734994; cv=none; b=QU0KVXHKBUo8o9Olx8WgiHXzyXMcpAcqx+XHfsABmG0gP2O/ClFs/NIAHJcWBk7yQUfTMrww3Cal/k+zTkTQn+jjLCJUX4uTxCn/ezxFTjVRYn4hm+7cRCWZut6JAkTUpShQ0npeLTBDUQFoM1Ul5nD5eh8i128CfCY8KEE2zY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784734978; c=relaxed/simple;
-	bh=6U37pSBUsFqGwWSczzhAZcH+3PB93yJspCigulFbK00=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EVw8QGLFiiJG06n5DoruksuRpXECZATXQN1XJn2SwHhVv1jxRX56WeNLKzWeyiktR9p5EnJw5XFQxdJa6jOvJHJnIPxtkg1ix/LjlrdaA+cEFxa0NSTGVoRyBhI3yEMIt3sfFGuhfhVEHMyOP8SMQsLD2HZ/j0K6y4s2pgQLCTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H3tJv3H3; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784734994; c=relaxed/simple;
+	bh=mBFLFVFffpX3sBe5RLViCnoS1wBcAEUdd0R2wLYoPDI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Sz+68OJbPlhebZglF/y0swNsmOoFCX7aC/SlYKFYsxbU6UTZWeVxtjsE2Qio9YnKvu0vEsKgOnsXdWHiWVcIWveLJjCdNkmg5wdFLSQS3kT7TO08EImrXldeqnFQnduCL0/plEouKJD05m0enJGM44wzXQ46ktEQC6RQ7euvoKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CLM0aR9e; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3tJv3H3"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-471eeac43bfso11935440f8f.3
-        for <linux-tegra@vger.kernel.org>; Wed, 22 Jul 2026 08:42:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784734974; x=1785339774; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=xtaD+wctm/flHKZdG+eEG/nGmQRGwK75GvDz6KLeZjc=;
-        b=H3tJv3H3ptii/nnWwqTf7XoBCV6LvEJDaHwS5us7wjVT3xHdYaDXrRyL7iKL8oaSMX
-         Ere4hvxiARb7cVSV6PAwPkBZJTu3LEDVs205kmBLPdwz/aeRTrGGKZjZ/vjZFnxFX6i8
-         mFlVyMHG++2xOSgBvjT6WEir0X3FYFS9D9a9CBKApQ2CpTWBh0oPeIflp9JxV/Bill2t
-         GGtIL9YTsJC0e9HOwqmxRYrn18YT/WK33C94ogr8AudomINKYlT3LLQmbpFs3Xytr7qK
-         iQGB03n/OIX6xkPvm98utV4EYLnFNyKD7tSbvPn4g+05jcZWL2KPwF0LhDsl1Z+XwQuC
-         95oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784734974; x=1785339774;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=xtaD+wctm/flHKZdG+eEG/nGmQRGwK75GvDz6KLeZjc=;
-        b=mkslADozL7GeDrthzh0dgErQYBVklF6DHmHICQycZyb5/5FRcubKcAG8Hdz+DSsSV1
-         gHh0nvvjxMNHhaxXAakbbUDQAI8m625qEt+iuqXOrDRFHMcDLsCGhX8PdP2Qfeyfr52A
-         rt5D9U4CG4AxIzeWq/SBhIY/SmtoIOrwAhsFPkJ7zkAV5esW6ZagjI91sFhmCvtpRkVn
-         0kArqh+Djgibp27RUCb2e8GObS6POVOCwojWKhktmmNFxR5TiMB6Jz8Q5eO8uPz7poWk
-         zZmlIIAmZ2gWSMS/mtQX38VXs26Lyp8pbJfqa/5qaaPeNXvmk/QXFTo6zi+WPAujS49Z
-         bbog==
-X-Forwarded-Encrypted: i=1; AHgh+Rpb1ZWrosuhsV4c9l/qU499Dvaac9G1/lj9OlQepwQVJttUpBeSNfL2UimEoVjnzzmJIpQ3iIjMrsrvcg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0V7I4Nz8rDfnE8qXbZlgEv0e1rvsI9bWQEYTifaU7AzRwjp/e
-	ob3CuhEIeSvslUP2ZSnccgkW+HGfCh9PK/0GqV9+HSIT5MbmR7KIokDB
-X-Gm-Gg: AR+sD10TL0PeslsSuIADZCpCqgtA4HQ/eZZ4PRXgc955qi7YK70khbmIbh4jHl7ye7h
-	eRFYu6/edgKZ5rzzxGBMppTGFjXvdnhXfLV2nWNGModPCy2tcSpOA7PE6flm2WfrSBI5fD1x/DV
-	aRjY2Xck2+jPAygxCYA39VhzCHDm4ZqyuzP4uBcM9fZGoP3VFyZBZhS9R3fL2EVIImll4HKx5Go
-	T90C2znoUKcWPzsn9D5PozPTNG01j0yt4vijUNPJGVBF+MdukUcpG2Leimw26x6CUSif1uAiduT
-	lvyPl++QbxmDhRidUKkRtlLsxAS0Hh6GFnBbJEckyWRCKQBBDARry6mMcawAcFuVcUExTVbYM+E
-	8FRIru2olyfKVgqnCpeHvF0hL/7gxbvDfNmCa1fz605NHgYmrdUr6jzF4MjgB1JyAkHLJBL/oFy
-	cOQ0o=
-X-Received: by 2002:a05:6000:41eb:b0:475:c946:36c5 with SMTP id ffacd0b85a97d-47f622fce56mr30653466f8f.9.1784734973852;
-        Wed, 22 Jul 2026 08:42:53 -0700 (PDT)
-Received: from ubuntu ([103.196.162.15])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85c53052sm6889489f8f.18.2026.07.22.08.42.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jul 2026 08:42:53 -0700 (PDT)
-From: Faisal Mukhtar <mukhtarfaisal03@gmail.com>
-To: thierry.reding@kernel.org,
-	jonathanh@nvidia.com,
-	skomatineni@nvidia.com,
-	luca.ceresoli@bootlin.com,
-	mchehab@kernel.org,
-	gregkh@linuxfoundation.org
-Cc: linux-media@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Faisal Mukhtar <mukhtarfaisal03@gmail.com>
-Subject: [PATCH] media: tegra-video: Use BIT macro in tegra20.c
-Date: Wed, 22 Jul 2026 20:40:55 +0500
-Message-ID: <20260722154055.385164-1-mukhtarfaisal03@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CLM0aR9e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 604121F000E9;
+	Wed, 22 Jul 2026 15:42:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784734992;
+	bh=z8WqCRRmqZNU6m++x/hJd+wI7SHuI+FdIhlbamrdG1A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=CLM0aR9eFhPZ9spOJaHdGqkYPBvjwdadVJYlKZTl2YKiFfjcVhRSxPh1PIcdSZLqF
+	 2uDQVrjKOL7KmFktl7pClbl7cKII+MRZc9/6UaOyQfALqfqRWzhAtz2P2hISt6DjII
+	 CWqB/cDSvIql3IGoYwtilPu5JaZMRbvxlUgx/GqldGAVbyRwWh0ci6cxI6Nrz0fqLU
+	 /E1KAynocQ7mEgmRpP4IShX5p2k0UIxlo2mteluahBk9DcIHRIpb9ZDQ/ba/6DRjn5
+	 oYakHop6ZZ+DFl5M5Rcin/qKgqClJMkqtRONWZt8Qxm6ThTbv5R0wMwmL93ssw6GKd
+	 eiwmeo4mk1lEw==
+Message-ID: <2eb7b45e-0bf6-4b09-9b8a-ecc0f57f2c39@kernel.org>
+Date: Wed, 22 Jul 2026 17:42:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 08/13] mm: introduce vma_get_page_prot() and use it
+Content-Language: en-US
+To: Lorenzo Stoakes <ljs@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@kernel.org>, "Liam R. Howlett"
+ <liam@infradead.org>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Benjamin LaHaise <bcrl@kvack.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>, Zi Yan <ziy@nvidia.com>,
+ Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <lance.yang@linux.dev>, Usama Arif <usama.arif@linux.dev>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Lucas Stach <l.stach@pengutronix.de>,
+ Russell King <linux+etnaviv@armlinux.org.uk>,
+ Christian Gmeiner <christian.gmeiner@gmail.com>,
+ Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, Rob Clark <robin.clark@oss.qualcomm.com>,
+ Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
+ <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Gerd Hoffmann <kraxel@redhat.com>,
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+ Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
+ <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+ Helge Deller <deller@gmx.de>, Kees Cook <kees@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-aio@kvack.org,
+ linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+ nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+ virtualization@lists.linux.dev, intel-xe@lists.freedesktop.org,
+ xen-devel@lists.xenproject.org, linux-fbdev@vger.kernel.org,
+ linux-sound@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>
+References: <20260711-b4-vma-flags-mm-v2-0-0fa2357d5431@kernel.org>
+ <20260711-b4-vma-flags-mm-v2-8-0fa2357d5431@kernel.org>
+From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+Autocrypt: addr=vbabka@kernel.org; keydata=
+ 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
+In-Reply-To: <20260711-b4-vma-flags-mm-v2-8-0fa2357d5431@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Fix checkpatch.pl warnings by replacing explicit
-bit shift (1 << n) with the BIT macro, to better
-adhere to the kernel coding style.
+On 7/11/26 20:45, Lorenzo Stoakes wrote:
+> There's a large number of vm_get_page_prot(vma->vm_flags) invocations. Make
+> life easier by introducing vma_get_page_prot() parameterised by the VMA.
+> 
+> This also makes converting vm_get_page_prot() to vma_flags_t easier.
+> 
+> Also update the userland VMA tests to reflect the change.
+> 
+> No functional change intended.
+> 
+> Acked-by: Zi Yan <ziy@nvidia.com>
+> Acked-by: Jani Nikula <jani.nikula@intel.com> # for i915
+> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de> # for DRM
+> Signed-off-by: Lorenzo Stoakes <ljs@kernel.org>
 
-Signed-off-by: Faisal Mukhtar <mukhtarfaisal03@gmail.com>
----
- drivers/staging/media/tegra-video/tegra20.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/media/tegra-video/tegra20.c b/drivers/staging/media/tegra-video/tegra20.c
-index e513e6ccb776..cdfd9f276d11 100644
---- a/drivers/staging/media/tegra-video/tegra20.c
-+++ b/drivers/staging/media/tegra-video/tegra20.c
-@@ -177,15 +177,15 @@ enum tegra_vi_out {
- #define       CSI_SKIP_PACKET_THRESHOLD(n)		(((n) & 0xff) << 16)
- #define TEGRA_CSI_PIXEL_STREAM_CONTROL0(n)		(0x0018 + (n) * 0x2c)
- #define       CSI_PP_PAD_FRAME_PAD0S			(0 << 28)
--#define       CSI_PP_PAD_FRAME_PAD1S			(1 << 28)
-+#define       CSI_PP_PAD_FRAME_PAD1S			BIT(28)
- #define       CSI_PP_PAD_FRAME_NOPAD			(2 << 28)
- #define       CSI_PP_HEADER_EC_ENABLE			BIT(27)
- #define       CSI_PP_PAD_SHORT_LINE_PAD0S		(0 << 24)
--#define       CSI_PP_PAD_SHORT_LINE_PAD1S		(1 << 24)
-+#define       CSI_PP_PAD_SHORT_LINE_PAD1S		BIT(24)
- #define       CSI_PP_PAD_SHORT_LINE_NOPAD		(2 << 24)
- #define       CSI_PP_EMBEDDED_DATA_EMBEDDED		BIT(20)
- #define       CSI_PP_OUTPUT_FORMAT_ARBITRARY		(0 << 16)
--#define       CSI_PP_OUTPUT_FORMAT_PIXEL		(1 << 16)
-+#define       CSI_PP_OUTPUT_FORMAT_PIXEL		BIT(16)
- #define       CSI_PP_OUTPUT_FORMAT_PIXEL_REP		(2 << 16)
- #define       CSI_PP_OUTPUT_FORMAT_STORE		(3 << 16)
- #define       CSI_PP_VIRTUAL_CHANNEL_ID(n)		(((n) - 1) << 14)
--- 
-2.53.0
+Reviewed-by: Vlastimil Babka (SUSE) <vbabka@kernel.org>
 
