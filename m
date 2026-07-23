@@ -1,102 +1,133 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A4B456DE2
-	for <linux-tegra@vger.kernel.org>; Thu, 23 Jul 2026 16:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429AA45D1AF
+	for <linux-tegra@vger.kernel.org>; Thu, 23 Jul 2026 17:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784823543; cv=none; b=c5wUErTK/lY2Du/KsgBwZupWmdVxmP4IfsnE+taxCQnTzVne3B0F+OPYnsO0RpNF3X/UQlEE/jSOqFUHOLGdITh5V6Ia6fM23bqFixrOVnC8EtVcFAumPJRbmh9cXMjwXMGck9gsm2/ynQAfsUJpuaooE5OaVKy8HYTASW+EccA=
+	t=1784826273; cv=none; b=ZDAPLUm6VKxaNsIP/yu6+f1xrZ4tnofHK8mBwvM4zxs3/ZbLMSj8npQwUVoONR2XWxLSQ0ObMZZz4dQyzMAoIKf6UGKF8BwIUUzpsTCyGEUGCTAvWGmI/V0PVpTloKeYt2fFmF6wAhU7j3dYiF9437+M0iv1L/UQ9AurZQjOy/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784823543; c=relaxed/simple;
-	bh=NpnKO/51+etpeqJ25cg/EF74MiQwdswhazoXGAAjbFE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X6yqiIkXaB+wudPWa7HA6/kVa63FF4Cw88yQmuLTjEIECk+6YnhSQ2W3n0EPerH3sb/IJZ91xnGdxE/MhtkhToI1ZuME06dcFkdMn5E2mBb9wFCMjXLLgHxHpoMcXQwsxa/SD5Gm2/mF7wNU3M8YAz+u/fiUhlucqU00oUY5Pns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aSrNP6Cn; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784826273; c=relaxed/simple;
+	bh=o9VVTo6S42mbOL5YNHeNddQl83IMRvNt9iVw7Ax1zcs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=i1tiV3C8w90LUN1/1W4MapNdP9FnZuGW9QOF+CZD4HQgRC0n7+c5/m/2s0j8Ob+R6PxX/l1Iv/+T8AtMyb1V7VhIkQGsv4ZeNAb8IiQj7m6uDazaMzPjbYUScozPxc4IeGoP5hEi7s8fs43JpWfotYF6SRJ6aBy6HVmpdn5gXqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=BGcn2pm9; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aSrNP6Cn"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5b021916bd3so842310e87.3
-        for <linux-tegra@vger.kernel.org>; Thu, 23 Jul 2026 09:18:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="BGcn2pm9"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-47de0093c42so767077f8f.3
+        for <linux-tegra@vger.kernel.org>; Thu, 23 Jul 2026 10:04:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784823527; x=1785428327; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=LqbiPvOO3ZvJwq5MwuKHTtbfwKr6s4CP7Qh/+Zyyw4w=;
-        b=aSrNP6CnMAFqcbiFuUQLoEKKSFo8Z1kaegfeLEQwVCnj87stsRXJkkztSakRuL8Ftz
-         0bsXDeWLIc0WqxKp+DEqo0OTHralFwudwv1OmrTXPuqVeF7k0bN/R5NqHCcFTeZtIC7Y
-         6sO57bTtvhqzNiQ8j1IcbJwqud+9CQFNGYSqtWMipdxE15XPY+dmh+4y3RX68uT1sMlh
-         cg/z/YsE4m2pHxQcGpZNMzXrXofylXzCTIrIkJSmV8ebXCsZYVsfeZPuI/CgYLs7XLoM
-         8b3aNCL0yca+nteoaeRPleha8fdwVYW9dLOCnMMtOGSqceTflz+1hj34/xi6e8ZDp3go
-         3afg==
+        d=baylibre.com; s=google; t=1784826265; x=1785431065; darn=vger.kernel.org;
+        h=content-type:mime-version:message-id:date:user-agent:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=jhojDdHC94+BdjAE5gd50YRzJP7qSAXpLrLf8nMSLLo=;
+        b=BGcn2pm9WvAug4PR8l3FANDWOZnBQ4XdbW21YipeI3nJ4ukRiQBaauWySLaXoEROPo
+         KYl4XqRUVJoStP/ov8Y2R4cynD3Uei8U7U/JNr1wxh6PHKu9iPfp+JkqsyRtiimnKIID
+         u94WFQQfdiv8izgm05vPzHzcdo4Vk9kdWiKwzBpidPHKXf02aR/YRfXhapIB5D6i9zKP
+         WecHCnnam4b7nQqsbx9VwAiQrqFyK840l+UkKI084tMkH5P2Ps9pXnEzoplZF157Wy1F
+         bGraUumSEdCftfBBfBiVnH6T0G4KawEtzV9NMJ1YpeeG0ryczMqalGAvviv62T3ZbI9e
+         2ixA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784823527; x=1785428327;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=LqbiPvOO3ZvJwq5MwuKHTtbfwKr6s4CP7Qh/+Zyyw4w=;
-        b=pyWQCDbuuov1A4Ti8Yz90ydl/+2E6/yV1PnVGDY2P9R1UTQBUNUWdcLCyeD/19+X5G
-         MZBm2Lt4uK/pHD+E6aES2RHkwryx1athGqaoIuE26LyTNYzYLWf0erDLOOq6ZN7L/HfN
-         VefVPb4Qf1kjFwC9Zj9qGf7e6vgIqCY0SPrU7Sx/1/6BVZspETmsVqQGFiIx0WxO+/w/
-         L3wwP0D974GLrW7Fc23kjDPOKpQICr6DhnLe4vsihUtlc4YgaSAywvOoyY22i2BiRqW0
-         y6OQN0CpoEdB6Jp2N0XvX7jP9h1nEbbtC6hzq/gSIKVT9cMC5GMjaKwB1igh0P2GBFII
-         udxQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rr1pjOcsLV6p+H0uEoSKJiPfWOVJILWLXKTi0KMKjiVcIzP1pvD8AHALOK5AcWlBEok1FKwJTfzdWizHQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQdgePKIx104KIoy16G3zwbm4kUPeuYJvJ5E+ybRS4SHieIJYH
-	pZAIwKed2f871lC6hFOgpweJ+yVJnG++ulLvw2GeR20Vpn2Nr67E4id/
-X-Gm-Gg: AR+sD1154vS8jlnOTWTixL7aWp2XQ7cFSSXfLHIZylsenxSgkQH09BgDKiwoX+zEst/
-	5kvNq14V692bzgM6axlZyMr4d+1UsvesEJ4PeFaRSnnySEJdpf3+EXRrs8DU+Q3fwAnAaGpQhDH
-	m8MjucyrK9SJeeVe7ah5fuhgyuyIGaMMvHk23f+P3OjlYZ9PfrUt/ruBZy+HM9oVCzLZG18NUB7
-	fLWoQjNEEyq8mmB7D9GvUJTcAtdRhELaaqV5YPAcRJ9vb7CAmTjLuqBAV1tIEPARKKEyVDNcxvY
-	vRQhwFEWAlEOWxt9mUqcBz3brnWe0XwLwkAUHsH1PE6ToBrgwkwlsoWBeubbOaMmR8z5MPH7Nd6
-	1TfdTTc/6IDotA/xDG+POSAYJPASf4RRRXPrNaq2/BqJzCPfcPQu1FmfnKtKW61R/7nxAuhlwZq
-	L+7vetcNp/4OcOrUWW54P3xWZO8agjFiiDDKSabPGPDq0xzCuewSsVxv4+JLLmDV2kvgJIIaWSE
-	Kamt+0lPKwzKw4=
-X-Received: by 2002:a05:6512:acc:b0:5ae:b250:5fa9 with SMTP id 2adb3069b0e04-5b2b2f6a795mr904040e87.31.1784823527194;
-        Thu, 23 Jul 2026 09:18:47 -0700 (PDT)
-Received: from localhost.localdomain (46-138-176-102.dynamic.spd-mgts.ru. [46.138.176.102])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b2a9b8c0a9sm1125783e87.17.2026.07.23.09.18.46
+        d=1e100.net; s=20251104; t=1784826265; x=1785431065;
+        h=content-type:mime-version:message-id:date:user-agent:references
+         :in-reply-to:subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=jhojDdHC94+BdjAE5gd50YRzJP7qSAXpLrLf8nMSLLo=;
+        b=VjRn9ysKylRJ/rCHfVkJtp02543qa+MDW3oK/9crBu3rBnD3+IRYn7DzF6lfv9z0UV
+         wuTQUrLSsRFVqYTSNdypeh7s52VMKJhh7K10h8fYBScztcZu5tbJ/5i02IcIZp5NYJXU
+         YQbYor81MU1bYXp8jZXQOLToCmaSeZLT03GFmNARFgnNTb+p85Pkzv5xgo01aP8MnzVo
+         dtThJO0AY4SozYKXhICxUoNN4Bhm/q7o2lT+In1kPHMbYmPZrwu65m5BVZA04ik55KpZ
+         U9hcYiXTpzNAXtJOd1sG8rkQ6d/ldpT1K72kBlPUWo8o75Tq3teRaBZ/0SfsIY3XMXOl
+         sKaw==
+X-Forwarded-Encrypted: i=1; AHgh+RraOLb/S2VN2fU9Y4BTZEqjBSwFLGej1ZT3nLkVfF9MF40zWVSkqJIwEHNKHmU9rGL+/8RRVTJzfekT9Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcBhSiB7R3R4wVoFfAHsSmBD0O2D3NyciXgPcKiisFHLp7Y3kC
+	uLGLnyTTHxzeceJlPUVvklm7TlS9U656N4yrfnMIMGN/gHERBmtIOQj0hg0KTM8AIkY=
+X-Gm-Gg: AR+sD11MnH8oNzJ+1xOR+hMSisWyzqJ56TbF9UobGo05vz/FGBmgY+aIG/aQ949Nzhf
+	YC6xyFaMDRDZV3yQuobbd+PH9XCvExGRzC1yP6+Mz995B5sc0YMRWoCxp4f1mnIeP2lWRZrZunj
+	r+wmc5uvgAem1AR9cMVZwJv7SbpofGbCX+O06CPDEAAR9qToe2+M1e2TSDeGxDzkIRNXJ7D3PQp
+	dupMEFE+HHW7mbKQaeRwvWTfmmMO4zaGU9L004SDBIEUJ9888CcmePS4p6N1RGnIywiBI7d8G4m
+	zeBdCKhi3sM4oekFkeeHYCrg2DnHOOtrwaYJL1yfVrqwuiy9YGnzDNMfRgk5fu8RVt64k4z03Hr
+	wMTGkvHpLs3d96BgXjiClussnW0SjfcmWSMclFVW7cT0JM5LQ0ERECeALzp51X0yyWcslALa1iD
+	Rh
+X-Received: by 2002:a05:6000:230a:b0:47f:8aba:8a9a with SMTP id ffacd0b85a97d-47f8d71c7eamr5497660f8f.18.1784826265170;
+        Thu, 23 Jul 2026 10:04:25 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:5f98:8c28:3e2c:1c72])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-47f85c67339sm17937986f8f.31.2026.07.23.10.04.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jul 2026 09:18:46 -0700 (PDT)
-From: Artem Lytkin <iprintercanon@gmail.com>
-To: linux-staging@lists.linux.dev
-Cc: gregkh@linuxfoundation.org,
-	marvin24@gmx.de,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH RESEND] staging: nvec: use strcmp() instead of strncmp() with magic length
-Date: Thu, 23 Jul 2026 19:18:23 +0300
-Message-ID: <20260723161823.23921-1-iprintercanon@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Thu, 23 Jul 2026 10:04:22 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Andrew Lunn <andrew@lunn.ch>,  Gregory Clement
+ <gregory.clement@bootlin.com>,  Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Bjorn
+ Andersson <andersson@kernel.org>,  Geert Uytterhoeven
+ <geert+renesas@glider.be>,  Heiko Stuebner <heiko@sntech.de>,  Prashant
+ Gaikwad <pgaikwad@nvidia.com>,  Thierry Reding
+ <thierry.reding@kernel.org>,  Jonathan Hunter <jonathanh@nvidia.com>,
+  Tero Kristo <kristo@kernel.org>,  linux-arm-kernel@lists.infradead.org,
+  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-arm-msm@vger.kernel.org,  linux-renesas-soc@vger.kernel.org,
+  linux-rockchip@lists.infradead.org,  linux-tegra@vger.kernel.org,
+  linux-omap@vger.kernel.org
+Subject: Re: [PATCH] clk: clean-up simple provider misuse of the consumer API
+In-Reply-To: <amImP6sFlv-sNhMh@redhat.com> (Brian Masney's message of "Thu, 23
+	Jul 2026 10:33:35 -0400")
+References: <20260723-clk-provider-simple-clean-v1-1-0c9668240467@baylibre.com>
+	<amImP6sFlv-sNhMh@redhat.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Thu, 23 Jul 2026 19:04:08 +0200
+Message-ID: <1j5x25d4dz.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Replace strncmp() with a hardcoded length of 30 with strcmp().
-The bat_type string is already null-terminated (set two lines above),
-so strncmp() with an arbitrary length is misleading and functionally
-equivalent to strcmp().
+On jeu. 23 juil. 2026 at 10:33, Brian Masney <bmasney@redhat.com> wrote:
 
-Signed-off-by: Artem Lytkin <iprintercanon@gmail.com>
----
- drivers/staging/nvec/nvec_power.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Thu, Jul 23, 2026 at 03:20:59PM +0200, Jerome Brunet wrote:
+>> Clock provider should not be using the consumer interface.
+>> In other words, a provider should not be dealing with struct clk.
+>> 
+>> This change targets occurrences for which the provider uses the
+>> consumer interface and corresponding clk_hw interface exist:
+>> * __clk_get_name() -> clk_hw_get_name()
+>> * __clk_is_enabled() -> clk_hw_is_enabled()
+>> * clk_get_rate() -> clk_hw_get_rate()
+>> 
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>> ---
+>> The change being very simple, I did not think it was necessary
+>> to split it into multiple changes. If you prefer it to be split,
+>> just let me know how.
+>> ---
+>>  drivers/clk/mvebu/clk-cpu.c            |  2 +-
+>>  drivers/clk/qcom/clk-hfpll.c           |  4 ++--
+>>  drivers/clk/qcom/clk-krait.c           |  2 +-
+>>  drivers/clk/qcom/clk-rcg.c             |  4 ++--
+>>  drivers/clk/qcom/clk-rcg2.c            |  2 +-
+>>  drivers/clk/renesas/r9a06g032-clocks.c |  2 +-
+>>  drivers/clk/rockchip/clk-pll.c         | 24 ++++++++++++------------
+>>  drivers/clk/st/clkgen-pll.c            | 20 ++++++++++----------
+>>  drivers/clk/tegra/clk-tegra210.c       |  2 +-
+>>  drivers/clk/ti/clockdomain.c           |  2 +-
+>>  10 files changed, 32 insertions(+), 32 deletions(-)
+>
+> This looks good to me however can you split this up by clk subsystem at
+> the very least so that the various submaintainers can pick up these up?
 
-diff --git a/drivers/staging/nvec/nvec_power.c b/drivers/staging/nvec/nvec_power.c
-index 2faab9fdedef7..89dd997aaf36b 100644
---- a/drivers/staging/nvec/nvec_power.c
-+++ b/drivers/staging/nvec/nvec_power.c
-@@ -207,7 +207,7 @@ static int nvec_power_bat_notifier(struct notifier_block *nb,
- 		 * This differs a little from the spec fill in more if you find
- 		 * some.
- 		 */
--		if (!strncmp(power->bat_type, "Li", 30))
-+		if (!strcmp(power->bat_type, "Li"))
- 			power->bat_type_enum = POWER_SUPPLY_TECHNOLOGY_LION;
- 		else
- 			power->bat_type_enum = POWER_SUPPLY_TECHNOLOGY_UNKNOWN;
+Will do
+
+>
+> With that:
+>
+> Reviewed-by: Brian Masney <bmasney@redhat.com>
+
 -- 
-2.43.0
-
+Jerome
