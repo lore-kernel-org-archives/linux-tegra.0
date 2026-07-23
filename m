@@ -1,131 +1,83 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6AB3F44C1;
-	Thu, 23 Jul 2026 10:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D64B44B674;
+	Thu, 23 Jul 2026 11:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784803609; cv=none; b=PVme+q6I9T60JCsPm4ICNv/u9Qyb4qf+BcORlLtfWFZfdGml/Ipsumu1Vgm4njfEdZ6KGogCzy/Zy6feWlz36TCr/8VIoVt8hiNbSSO7fgxCymsGP24m2gj0uetQm4Ir5RLRwb6w5yP1Dr5O9WQhEFWkc+4XBaRRa90mBYKrC/U=
+	t=1784804449; cv=none; b=kGPBtdkrNXDIN7mZjdBe+XB6IOg73FCPJ4OClwKdXC9NVWM/+Ss5M9N/TlTICnJhwacTpD4S6bMB8KFIN/0Y/g8+bIUx3A/A86TYoSSLKPLTo81m5zBTQee1dGJekJ01MhBIdHQyWZBoDIEkW77+fqnLEI87XTZb1VCS7DQsFb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784803609; c=relaxed/simple;
-	bh=+QGRNHomCCe/zT90lhcox5pIFyJQRjX/GB008jONMcY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rAi+oQYrHTVtpQuzJ3EXyITSS/gjgIcYAd7DDOSUB04oRDo6XIigqyEmBUXcX5TQYLXoknM4UGYz3sfKXqKRQveGhYXVTmrP0yLCWbVa9z3SsL3MO9PyDLnB+BuDQtXO3u/XYKW310sbr0jtJFjiltSMM45AFHdPBmbYf5OWN0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aFPkJBQD; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784804449; c=relaxed/simple;
+	bh=5tHpdguQ+LQex2K/Jxi+lCWRf0hP9MNozg/QyPC+nIY=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=unpzIHf1T7yGBFDtGw1Taaw2WdLLvTMqHauhwwOfEop4M//Zes+WpnbDtlBMmwGp95Ng5u17YC9qO2lD4nfsMq1KScH61A+71WWWAX5yBIRLcAG1PyhZe4Ccr9NGyvGFKxgEhoPm7brYvC9lSUWCeI8q4e7oh5IBVOcRjJBCHmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ldQpQ+QT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aFPkJBQD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 028DA1F000E9;
-	Thu, 23 Jul 2026 10:46:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldQpQ+QT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB4FF1F000E9;
+	Thu, 23 Jul 2026 11:00:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784803608;
-	bh=KyeSUqWtXmsZhkcIZfwQ+RcEz6iQQJw+gHcfulf9QVI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=aFPkJBQDYavdLZhQEvRpFjUTe8DJYjoDj8/i7duy81xS44BBWPgeh0LassAVl8k1H
-	 N5Ld38kqv/zOFLuXWe8Y7MIy0frsoPL4spF82yd4ID7kiUde/HXcld4Hnb3y503RiW
-	 NoNPwAqV839C7O2i12LPmTR62TjtsWO4SyTHYujLF+Ua+Tq+3s8B4TugAvc8ZM6/pF
-	 xi//MGLhtDbB4B/38khlOlQffrBOjt75vtqCX4w/FmEPUap+MAgbU0MfoSm7jAfuKA
-	 pbjEaFTqOzejhjyZ+15Rdysm1NBKzeAKjatCYht5p/3s71fQf3YXYH+5oICkmh9Pzj
-	 +6kXI3YZtSOdg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1wmqwv-0000000809m-3Oc7;
-	Thu, 23 Jul 2026 10:46:45 +0000
-Date: Thu, 23 Jul 2026 11:46:40 +0100
-Message-ID: <8633xadlv3.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	John <therealgraysky@proton.me>,
-	Daniel Drake <dan@reactivated.net>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] clocksource/drivers/arm_arch_timer: Workaround bcm2712 broken EL2 virtual timer
-In-Reply-To: <e5a32fcc-ca3c-4b54-a790-d2eef2c636e5@nvidia.com>
-References: <20260710080958.491620-1-maz@kernel.org>
-	<325e86ea-d4d3-4c84-ae9b-f4a08c9b071b@nvidia.com>
-	<878q72rcz6.wl-maz@kernel.org>
-	<325be874-bab9-464f-84ee-99e160259923@nvidia.com>
-	<865x26do37.wl-maz@kernel.org>
-	<e5a32fcc-ca3c-4b54-a790-d2eef2c636e5@nvidia.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20260515; t=1784804447;
+	bh=j1y5g0G1gSEZNiQSYFBy4h5r2IOXr/edRpz0vilAmR8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc;
+	b=ldQpQ+QTFOx/TiyeCMIilQN7qyGT8o3oDTRjvgFErq1Vnhev6vnCLhz3KUizOLtH5
+	 HNpSk218a5EK77ytWal4B0A+gWwNPs8Uz4LMP+St0I/yZzA5m7Zz0y5+ytOCHazcz2
+	 T9u+01VPUbfYps0U7+j6KoAhFFHD2YdQgegO/TnWqhtK8G2fANwrXU3AYWt5SGlrIV
+	 UG1GjSuL21Osa7dtnP+XfXge3DagAyCSygofRuHyNZZ/1DswURY63pHffyZKv5dENc
+	 C0Ui2x+aLHHaYMu8b1Erv/sDvLH6VjwMJ43wHO9XK9+HYUtadLayweXPIbETiXyN0/
+	 tB+/Fyqwnv/Eg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 56904380DBFA;
+	Thu, 23 Jul 2026 11:00:17 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, therealgraysky@proton.me, dan@reactivated.net, m.szyprowski@samsung.com, florian.fainelli@broadcom.com, daniel.lezcano@linaro.org, tglx@linutronix.de, mark.rutland@arm.com, linux-tegra@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v3] net: stmmac: enable the MAC on link up for all
+ supported speeds
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <178480441614.2227840.11864736200731366487.git-patchwork-notify@kernel.org>
+Date: Thu, 23 Jul 2026 11:00:16 +0000
+References: <20260713074911.30090-1-vadikas@gmail.com>
+In-Reply-To: <20260713074911.30090-1-vadikas@gmail.com>
+To: vadik likholetov <vadikas@gmail.com>
+Cc: netdev@vger.kernel.org, maxime.chevallier@bootlin.com, andrew@lunn.ch,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, thierry.reding@kernel.org,
+ jonathanh@nvidia.com, vbhadram@nvidia.com, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Thu, 23 Jul 2026 11:22:54 +0100,
-Jon Hunter <jonathanh@nvidia.com> wrote:
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Mon, 13 Jul 2026 10:49:11 +0300 you wrote:
+> stmmac_mac_link_down() clears the MAC's transmit and receive enable bits.
+> stmmac_mac_link_up() is expected to set them again through
+> stmmac_mac_set(..., true), but it first switches on the negotiated speed
+> and returns early for a speed the switch does not list. The MAC is then
+> left gated off.
 > 
+> The speed selection is split into three switches, keyed on the interface.
+> The generic branch -- taken for everything that is neither USXGMII nor
+> XLGMII, so including PHY_INTERFACE_MODE_10GBASER -- lists only SPEED_2500,
+> SPEED_1000, SPEED_100 and SPEED_10.
 > 
-> On 23/07/2026 10:58, Marc Zyngier wrote:
-> 
-> ...
-> 
-> >>>> I have posted something similar for Tegra [0], but because this is not
-> >>>> expected to work, I wanted to avoid the warnings here. We test for
-> >>> 
-> >>> "not expected to work"? In which parallel universe is that a thing?
-> >> 
-> >> FWIU, at least for Tegra194, we have a CPU and GIC pairing where the
-> >> CPU supports this but the GIC does not.
-> > 
-> > Oh please, you know better than this.
-> >
-> > It isn't the GIC that defines the number of supported PPIs, it is the
-> > *integrator*. I.e. you. The GIC (GIC400 in this example) has full
-> > support for 16 PPIs per CPU.
-> 
-> Hmmm, I am looking at this spec [0] and it says ...
-> 
-> "The GIC-400 implements the interrupt types:
->   16 Software Generated Interrupts (SGIs).
->   6 external Private Peripheral Interrupts (PPIs) for each processor.
->   1 internal PPI for each processor."
-> 
-> The table in [1] shows interrupts for non-sec, sec, virt and
-> hypervisor timers, but I don't see a hyp-virt.
+> [...]
 
-This documentation was never updated past 2012, which predates ARMv8.1
-(go complain to ARM). But the IP does support it:
+Here is the summary with links:
+  - [net,v3] net: stmmac: enable the MAC on link up for all supported speeds
+    https://git.kernel.org/netdev/net/c/9c99db3a2080
 
-[    0.000000] Machine model: Khadas VIM3L
-[...]
-[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
-[    0.000000] Root IRQ handler: gic_handle_irq
-[    0.000000] GIC: Using split EOI/Deactivate mode
-[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
-[    0.000000] arch_timer: cp15 timer running at 24.00MHz (hyp-virt).
-[    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff max_cycles: 0x588fe9dc0, max_idle_ns: 440795202592 ns
-[    0.000000] sched_clock: 56 bits at 24MHz, resolution 41ns, wraps every 4398046511097ns
-
-GIC400, A55 cores. Produced by one of the worse SoC vendor on this
-side of the galaxy.
-
-And the signal you are looking for is the one labelled as "Legacy FIQ
-signal" (PPI12, aka INTID 28). The labels are purely indicative of
-what you *could* connect to it, not a requirement.
-
-Anyway, this is beside the point. Even if the IP didn't support it,
-you shouldn't end-up with a design that explicitly contradict the
-architecture, because that's the contract SW relies on.
-
-	M.
-
+You are awesome, thank you!
 -- 
-Without deviation from the norm, progress is not possible.
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
