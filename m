@@ -1,249 +1,109 @@
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011005.outbound.protection.outlook.com [52.101.62.5])
+Received: from mx0a-00823401.pphosted.com (mx0a-00823401.pphosted.com [148.163.148.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFF834107F;
-	Thu, 23 Jul 2026 09:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784798651; cv=fail; b=F462ww4o6QN75IGdR3Q3YSFdlOzk3u2D1g3tXclIAC1onZsFv7ubaCvSxbRc6OozdWEX8fF7Z/gkk7SRgiGHsaiYtmj5HMF2H5tawJ+SCJTgtgzdHChL7b1tAsj6t5gJtYHmVGhcKiLH/eEEFK7izPevT2YUze1Qp80o9rKql5U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784798651; c=relaxed/simple;
-	bh=o/2CoYAS3pIHDD4UuBGdKqoJwtrwq7Ef2Ct0ItMJi8Q=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=rkiY4WQX93snxo2GPVsuZyDhOzNrfHpk1/Pxuvfy9fbyQzK2/m/Y/JJuUw5EWQ5kIuSu3MRTzX4qrh+oq6cxuGLlp2WSO5Dghhm2ZKJcYs8OMGjk+/PmwgIP3pRpqH2WONavmj2uzzLa0MywMeIgxIbb8CcshIRoRNlQod2Uues=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TYxK0ewA; arc=fail smtp.client-ip=52.101.62.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA744334D1;
+	Thu, 23 Jul 2026 09:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.148.104
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784799572; cv=none; b=SlfXl7r7BL09X5Blg1+jc3Qzep/zK7AJrJrN+6D3+Ri9IGkcElNxZ6Ti3JwfbphiKglU30t3CSv7oUSvWy9QKGb8mtuXJYdhrUGX3MtUn5l0RM5xZVB5SW997gpIxkkquDEDUAi2ZapK+sUgGSwxtXM9vIkY/pbs1FsCy7x4WEM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784799572; c=relaxed/simple;
+	bh=rTh6wtCLa7IrdLZ28Kq68nU4MTx4V6bR4yG3TrjBSS8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KtiFy7IdLFvg6ym+Z3bE7TF/h1POB7cC/IE1qa9uZMjbyhjcAyPFLGVIfq7dq+Mn7zLk6AGaUPkPZlttihl5Bsla4M+bEnIDlERhV1f483rb3OI8lkXr/7wC9t+Wc6fixKJtbluEjltCoSeX/OoR2WI3OJDTPKP8B21vNAdeuTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lenovo.com; spf=pass smtp.mailfrom=lenovo.com; dkim=pass (2048-bit key) header.d=lenovo.com header.i=@lenovo.com header.b=4GJ/UGXK; arc=none smtp.client-ip=148.163.148.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lenovo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lenovo.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TYxK0ewA"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WfjqFiibcIYIft0bVF1J4AvbKqudIjlF6eqYV37rt61Cw0Wnz4W3skVcRhSHyPjziHEMbRC60tvdm9bVvnp1PYRdERH2+M/mYdAVd21n6/ZZ1MTVA/JUq9Y5uQxY0rH9eCJ67IZOiQSTNfm5PfVhoMJnsVgH5LtGH+tE5XhwtYeEJSKngu3fd6fTuhSzCd8sJ1EQbYfG/0Hfitk8muP526ay17doLgamtgjy6DCxvuSm/rg1h6f2k8iO5b7RkrbC49+DJQhAITNu30vCEvARgPH4Ez7yIm1lpK61D1X2nIenfNYbr2ehU+zpuZaxkviDyFeFu8oejBPPe+KSJoIMwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VON2fRioEr+TslOcAVnLaO0rV/n3EKwnwZPm48p6l/E=;
- b=ZnsHJsg+blPOzvThL58QZrX25j9UXFShqFQdYFiKnFOP60tDbkO/Mz4Grs0/FeLAjUTIZRINLCZ5uKidY6daf8FunWnBkWE9CcWfKsJ2xQ+z4M1CwVRMzRQXVAortfSjbA+WzZzefKQu/hCd/QNahRDXl+IMca/TZHktXPdyey0zjSrIhIJEs+QILcNvxvIuTgLaiv/TbcL4NDS5BN8DsBjX6paLJjCJz4j7Z9Ls2wsRML+OVMBAClHz/Dg4TMcTqJcPbaHnJYTtaQJoT2CXwS4qze3EF9CuyogBDC/laIIjKsib9AZd8FhOfITPFUJTvBaGVGK8MxkiwAnV2MDBCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VON2fRioEr+TslOcAVnLaO0rV/n3EKwnwZPm48p6l/E=;
- b=TYxK0ewAK0ylx7ye4otP7YifyCRIgA17skOvA8mVfTo2QHjH4NXIaxBs/8V1yJCKdDiKtlgCTitbmIIdqac/KjTjOMRBgn4WHk/AvndRTyKXCO0dbZQdX8Mv/Bqu3qG6+nuYqDjlpvkOJGpr6FEJ9mJaXFFAA7ofAFljpAX797Ku6b2Eo282YwATpWTeqx3dI9qLhcJvnpxMNTciHirEh4io+Zr4+Z8QYoM4oYuV84euyQJI6PWtDEb7Y2JqDF4t+PmKEPsLnfhrU0X1krjb4uP+KHJ7YwDZSWtVdoJGST8ojmB/8TS2jNALh9Sy5GQmJF8Fa9cyUHzRTzsFrptNFg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ1PR12MB6051.namprd12.prod.outlook.com (2603:10b6:a03:48a::18)
- by DS5PPFC9877909A.namprd12.prod.outlook.com (2603:10b6:f:fc00::661) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.10; Thu, 23 Jul
- 2026 09:24:06 +0000
-Received: from SJ1PR12MB6051.namprd12.prod.outlook.com
- ([fe80::96e1:b300:7b78:d3a9]) by SJ1PR12MB6051.namprd12.prod.outlook.com
- ([fe80::96e1:b300:7b78:d3a9%4]) with mapi id 15.21.0245.010; Thu, 23 Jul 2026
- 09:24:06 +0000
-Message-ID: <325be874-bab9-464f-84ee-99e160259923@nvidia.com>
-Date: Thu, 23 Jul 2026 10:24:00 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clocksource/drivers/arm_arch_timer: Workaround bcm2712
- broken EL2 virtual timer
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- John <therealgraysky@proton.me>, Daniel Drake <dan@reactivated.net>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Mark Rutland <mark.rutland@arm.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20260710080958.491620-1-maz@kernel.org>
- <325e86ea-d4d3-4c84-ae9b-f4a08c9b071b@nvidia.com>
- <878q72rcz6.wl-maz@kernel.org>
-Content-Language: en-US
-From: Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <878q72rcz6.wl-maz@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0101.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a9::19) To SJ1PR12MB6051.namprd12.prod.outlook.com
- (2603:10b6:a03:48a::18)
+	dkim=pass (2048-bit key) header.d=lenovo.com header.i=@lenovo.com header.b="4GJ/UGXK"
+Received: from pps.filterd (m0355086.ppops.net [127.0.0.1])
+	by mx0a-00823401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66N8sIHX2325546;
+	Thu, 23 Jul 2026 09:39:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lenovo.com; h=cc
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=DKIM202306; bh=UZtN4+71vj
+	4objsOy7KMn6loza8lnIOPo4NWAQPgrK4=; b=4GJ/UGXK7w3PmhEGdGpG77J81Y
+	exvXpFbn/BNQyqxMVLsl9FAyVj7MWtj5AH8WfMvAGmlDAI47SQIQzM6C489yJ4Kr
+	+muR9LFSa1/QVuuS2RwcHX1fMA4N1Ji0W3Ch97+hfNaXFT1iJ5hOeIaNlNB+hSMk
+	pZEH/uhFjOL6KC6OL/CVhqTLypjMxb29SKFKXMvH4Erv9iNzXJ4pv9vzH0or+23b
+	6m511KhtM5APUO15NjKrbnkDJ3V9kWCP4/8/W4Gb6siVKQRJNnaL7Jnh9/8ePOa3
+	A6AaaVcvadxKJtzmev/I57vmX6+LsEKZIb7n3fWOYq2AUZNYS33iJOyfbeSQ==
+Received: from hkglppfpool1.lenovo.com ([103.30.235.218])
+	by mx0a-00823401.pphosted.com (PPS) with ESMTPS id 4fgq8g16bw-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 23 Jul 2026 09:39:19 +0000 (GMT)
+Received: from hetlppfpool2.lenovo.com (unknown [10.196.132.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hkglppfpool1.lenovo.com (Postfix) with ESMTPS id 4h5R0P2q6Rz9vVtk;
+	Thu, 23 Jul 2026 09:39:17 +0000 (UTC)
+Received: from lenovo.com (unknown [10.119.171.213])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hetlppfpool2.lenovo.com (Postfix) with ESMTPS id 4h5R0P2L5tz18W8pb;
+	Thu, 23 Jul 2026 09:39:17 +0000 (UTC)
+From: Jiqi Li <lijq9@lenovo.com>
+To: mperttunen@nvidia.com
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, jonathanh@nvidia.com,
+        krzk+dt@kernel.org, krzk@kernel.org, lijq9@lenovo.com,
+        linux-tegra@vger.kernel.org, mpearson-lenovo@squebb.ca,
+        robh+dt@kernel.org, thierry.reding@gmail.com
+Subject: Re: [External] Re: [PATCH 2/2] arm64: tegra: Add Lenovo ThinkEdge SE70 device tree
+Date: Thu, 23 Jul 2026 17:39:16 +0800
+Message-ID: <20260723093917.895242-1-lijq9@lenovo.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <qH2CwJ61SfKj2xT1jc5N9Q@nvidia.com>
+References: <qH2CwJ61SfKj2xT1jc5N9Q@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PR12MB6051:EE_|DS5PPFC9877909A:EE_
-X-MS-Office365-Filtering-Correlation-Id: b96dd018-5c9d-4ad7-7292-08dee89c2484
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|366016|23010399003|7416014|10067099003|5023799004|56012099006|11063799006|4143699003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	/8JZsrD8lSHWXfeaI5kcIMqqwuYwo53UUaR/eFkG5NZnsLkR6GXs9MPP2CgbtYyo0XiuwAX+qLhfYhi9FF2AuDK4jJrdsituiyabhByvtjok8ZNSIKWjRZPnxrE61HH13pQ7a7TYAMHOHM+3dp+crzqCAw3rfaA3w3Y+exSrC0xIxQ5LIYIroc2/RpEyUqHJ/ddySfEJ1EiccCfF5Tt4DF4+5KjEWgrD/D2D9FYhaLvvWNiYpSLJKra1O/3xLtgzpRP3fUY0rWX8XDngHF/IlwLaoLWsOljidD8oeb1t8tWT/EVfHNBgxpMnpeg5SJqhCNUHsIuCRAOCe4FdHHv5u57sXQz/18movK7PGW6CsZ57+YxeDbotgoncVgwYAVSDyLd+Yc9j3ClctIW50K1o4ZY+TkxNoGCREv+syyf0Dk5fF5Idg9SLTKRLRfdo93pwdRVHYdY25ANqUyOXYE1lwxJvjeAtuCI5p1+cXCkGF+4UgcKyb5n2qi6FO9ZRf4/t6Ifino4jQHKI0LjZoW5EUEGzMV4V2/96tlOI0SbmLOyURZ6XNcAfvpG9S2EpFAEOek6bBQQYPikXHBfSxDq2bzOc2ZYwyRabNLo5NOOm5Xp1sBE23CjnjzNPXewnqfjjZgzmU6S4181QtcsSUO0lb3mdH7Y+aIRNojzLpHUBPLQ=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR12MB6051.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(23010399003)(7416014)(10067099003)(5023799004)(56012099006)(11063799006)(4143699003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?citZaW5PWFAxVm9SbjZkeS9EWnlFTTNxTHg5Yk8rTml0QmdRVjc2bDZEU3BL?=
- =?utf-8?B?amxudk1yeWQ3SDZrK3FTajJBbGhLMWVwL05UQ1JIWmpRZDg5S1VKemVMSUl6?=
- =?utf-8?B?NkJtSGd4V2RQRkZxc25RVFdmQmNyaFYyQjdFa1ROdVVTTG9QQVpqamdLNUZH?=
- =?utf-8?B?aHlzQjR1TWVmMWdrbzhRV1Urdlh3bWF4OXlHRDVyZGdKcHJvQk40T3ZDOXVw?=
- =?utf-8?B?Rmg5ZVcwVHdOZkhiM0J4eHdYbmRielc4OXRGUTltM2JYc3dST0NTS3EvTFNQ?=
- =?utf-8?B?QVpBcGJYT3R3WmErS0dwSEZwRWJPVkFhTDZDYTl0OHJVaTJVR0k3QmpxSkpp?=
- =?utf-8?B?bVBLNCs4VCs4enJxNFMvaDVzKzRwbjl1eUxTcmNyVFprMVR6NEFwaWVtalg3?=
- =?utf-8?B?R0tLSG9RUXQyaDkyRnVoQi9LckVDTUZjeUNUaWNtUWd6VzdQSmdLVm9xYWdZ?=
- =?utf-8?B?Q1B2U1NkMGMvUjV6RFdvZVRybnlkUXZUeUZhYVYraWRXcTRta2Iwc0FjUHQz?=
- =?utf-8?B?SkNoc1BBTVNWWUhwZ1pnUjBvZkZHRkdBOW9qZ3RKVnVWcGR3K21TU3ZFM0tB?=
- =?utf-8?B?bWxVRGVnODhjMGNnKzJWN0tmRmtMUDUxTzFib24xaEhLVjRSVXljUkVFdWlr?=
- =?utf-8?B?d0svVm5tS1lJa28wS0s0bEp3SVFDaUNrZVZra3NxMnlxS08yN2lPL2tmQTVq?=
- =?utf-8?B?R1EwMlZXcGl3RXE5aGFGV3NTL01kTThpL2NhT1V2cEZLV3NRd2ZPeURiOG9V?=
- =?utf-8?B?VzY2RXVoTEF1T1piRjlmcXNQVFVvdUNMcVNYblVvcEo5ZHcySlpUODJFRjdu?=
- =?utf-8?B?S2xLUjYzM0cwd1FkemxIVmNsMFNvcy9adnJ6aTNPZTBIVmVEbzRCcW9hMUtQ?=
- =?utf-8?B?UHNCN2g4Nmh5K3JrVFg3Q1JUUitWUndyTjloampXbE9VWENuR3hUckdGdlVp?=
- =?utf-8?B?dUpYT09GbURKMGtVbmlOaU9sSmZLMDc2L0dneGs0Y3QrT3FPSC9JL1JGdWpC?=
- =?utf-8?B?MGNNTEM0MkRyOGtRNElYdFR2Y2NDanJia0pDa1dOUC9wOTJnNjhuakFWeGdv?=
- =?utf-8?B?VGZEaW5oWCtuWGdkaFA3S0dRV3c0Qk11QktYcmp0cHlSZllFZThqVEQ4QitT?=
- =?utf-8?B?TVl6V2M1YzEzZHk3SkNOV2l5M1NsY2VJUjBnQ1Y0TFkvT3dINEdRaEk3QjNF?=
- =?utf-8?B?SzNwcU9Wa0VTMHh4a2k3MHM0RWhkWm9waWNsS3J6NVB4cEEreEl2OFNPY0ds?=
- =?utf-8?B?dHlIU09meW1IMjYvVE5QR0RDVDVqVzU2NHBDa2RSaEcvazRQQ2svOVNSRS9U?=
- =?utf-8?B?WjE0amN3RVd4eDYwM2xyemVDN1pCaTV1alFDLzlPSkpENTYxSEl5MW9JWS9D?=
- =?utf-8?B?QzF5dXRrTUxGeC9NV3R4OFNqWWVYZWV2c1R0ZWFoMFFZUFhWV1BIZlp1SmRX?=
- =?utf-8?B?L0pKMDFBZlcyTVpiMkwxZEFYRWd3VkF4Vzk3Um44Wld4cWpVdEJRK3lYUjFX?=
- =?utf-8?B?Yy9md3F0RzNtWHJneW5SRUNsZHJHdUd4ZWRmY3Z5YXEydDlYQzFSTklqZlVU?=
- =?utf-8?B?MEFYR3dDL1VUMUk1Vm5GOFZRVVFuMmxoVmJyZ1BuUG1CcEpqMzA4U2ZNWGlm?=
- =?utf-8?B?SEVRUSs1TzRvWjFLcjhmN0xZdHoxeFMxRDlPRDdubG1iWUYvRlQyNHdtWXNH?=
- =?utf-8?B?b2pwL05OV2U4Q0ZGWU1aRTRhSUExTVJKU1RtNHNiREVNd3IxZWhkVGpqNXJP?=
- =?utf-8?B?dFdMalVqVWNmR0hjLyt2Q3Z6QVdvQ25PNlFzd2RUODIzMUNPZldVcEJWRUhq?=
- =?utf-8?B?Q2ZKTFZPeHQ2TlVhejhMek5RU2lWd0kzSVpJZXI5SHd4K3I1TGdCbGhMaU9N?=
- =?utf-8?B?MDNka1B6MndBelhXejExaUNKSlRIQ3lEZTJUWlJlYk9LSXRDNHNzN3FtOGRB?=
- =?utf-8?B?VFFBaER6QjQ5QWdwUGFwNjNFdnFVZm91em1GVnBHOStyTHZnQVB6cGNKc0lY?=
- =?utf-8?B?OVF2djBvbmgxNEYwL3VXSEJNZVV0aXh4elVOcEt6V2hoQ2FjK0thY25aTzAy?=
- =?utf-8?B?d3dtTlhKYmRkREJJQVc3ejZVZW4wa2p2R2wySGdMM2FSMG0zVWFLYjNqQThG?=
- =?utf-8?B?dEhiMlUwa1VSSTZvQmUwYkZlV2YxOHN1c0l6eWFVV0ZNNE5JVDJCYXUvSkc4?=
- =?utf-8?B?c1EyRGJoOHdMcGY3TlYrTjdUUmttakdrRUExdlY2QVBOS2JZWkJqM05SUTln?=
- =?utf-8?B?N0k2TDB1a1FUUERjalhGc0tjREhSaEp4K1NHOXZnQkxJMzFzbTRpUzdZVXEw?=
- =?utf-8?B?OHdzZzdabjRYN2tXM29zM3kvYzlRVzk2SDNyaHpxdHpxa1Q2T3NIdz09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b96dd018-5c9d-4ad7-7292-08dee89c2484
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR12MB6051.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2026 09:24:06.0288
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0KXWjP41J/fc8BcNm2rCw2HrmCqfVVzE2zp2Nqxjk/SNfBSKRQO3cJwpHNRmTFu7Ln1gf8ki6jRkHj5xCRFKkw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPFC9877909A
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=HYAkiCE8 c=1 sm=1 tr=0 ts=6a61e147 cx=c_pps
+ a=yIlUyoB/d3ZP/uZUHEUQoQ==:117 a=yIlUyoB/d3ZP/uZUHEUQoQ==:17
+ a=RAioF0-LDSMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=2RTuljz969oO5usasWGy:22
+ a=hJVLCblJc-VYA0_z04R5:22 a=voM4FWlXAAAA:8 a=suagau-rg9_qL2Wug8AA:9
+ a=IC2XNlieTeVoXbcui8wp:22
+X-Proofpoint-ORIG-GUID: rbkCuITroNMgnWHw0OpU9dhkLQFcHzJ4
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzIzMDA5NSBTYWx0ZWRfXxfnSSgs/Y37+
+ r5s81K1y1+kYNC+9BRmK0fD+SH8cgBHjg0pxNTE50EUPu8mS/S1boObNCqkpOMjyonJz/ABLLS3
+ LIEJKcXa/UXlysGEmdQ/PFdOzNHs8G5RKii6i8u9/6BayPiNUBurcCuPFWrw8eUwafE+zTTCek4
+ vuMYnX11nP79oQSbcrLYEP4+FTNk0S1HSviKRehS2OK8DhOKDP0NcQXkAaEh2qKh/+gCAwVD5Qw
+ osYUbUxvODJNj4DIwcUSmed3PbcAvPlGnqLvl3L9j06WrUDpH4+sJtCUY4oZajGlfhE8gVhFQ2Z
+ MYepGjkWq4+yNrEe5yUxLAb/waf7gNIVDPl7hTIWO3zU1J6Jk6XOtnQv/qQloa+Zr1yy+Y0FLYL
+ TmCVoqQqKeMFhoymEs9V0k9lNcMtPYNHh2Tk661IG7B0ZAYAiHruYxDdAxxKRgfEAo0XNEvFD7g
+ UljBgAyiOgmry0aksNw==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzIzMDA5NSBTYWx0ZWRfX/kGb+5CM+VqJ
+ wBwHcnm1Vx787vNcuVqtpPXb3TJ1skLLUXv+HnsC8yBDJmHAUzD8HFmXXxM5Pw+ARoWB6oMrkBg
+ ChYjcM/kzCEKAC7W7/frpzy/u5JoeX0=
+X-Proofpoint-GUID: rbkCuITroNMgnWHw0OpU9dhkLQFcHzJ4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-23_03,2026-07-22_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 clxscore=1015 adultscore=0 bulkscore=0
+ malwarescore=0 spamscore=0 suspectscore=0 priorityscore=1501
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=-20 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2607230095
 
+Hi Mikko,
 
-On 22/07/2026 21:22, Marc Zyngier wrote:
-> On Wed, 22 Jul 2026 15:14:39 +0100,
-> Jon Hunter <jonathanh@nvidia.com> wrote:
->>
->>
->> On 10/07/2026 09:09, Marc Zyngier wrote:
->>> It appears that the bcm2712 SoC found in the relatively popular
->>> RPi5 has a broken EL2 virtual timer.
->>>
->>> We do not know the reason why the timer isn't working (the timer
->>> is ticking, but the interrupt never fires), and the SoC vendor
->>> doesn't communicate on the reason why this isn't working, leaving
->>> users and maintainers in the dark.
->>>
->>> Paper over the issue by detecting the broken HW, falling back to
->>> the physical timer instead, and let the user know about it.
->>> Also taint the kernel as the machine is definitely not compliant
->>> with the spec, and we don't know what else is wrong with it.
->>>
->>> Reported-by: John <therealgraysky@proton.me>
->>> Reported-by: Daniel Drake <dan@reactivated.net>
->>> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> Signed-off-by: Marc Zyngier <maz@kernel.org>
->>> Cc: Florian Fainelli <florian.fainelli@broadcom.com>
->>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>> Cc: Mark Rutland <mark.rutland@arm.com>
->>> ---
->>>    drivers/clocksource/arm_arch_timer.c | 24 +++++++++++++++++++++++-
->>>    1 file changed, 23 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
->>> index 4adf756423de9..7b4a98df6962b 100644
->>> --- a/drivers/clocksource/arm_arch_timer.c
->>> +++ b/drivers/clocksource/arm_arch_timer.c
->>> @@ -1090,6 +1090,27 @@ static int __init arch_timer_common_init(void)
->>>    	return arch_timer_arch_init();
->>>    }
->>>    +static bool __init has_broken_el2_vtimer(void)
->>> +{
->>> +	/*
->>> +	 * SoCs described here have been found to be broken, though no
->>> +	 * explanation has been volunteered by the vendor. Let the user know
->>> +	 * we're papering over the vendor's lack of communication.
->>> +	 */
->>> +	static const char * const broken_el2_vtimer[] __initconst = {
->>> +		"brcm,bcm2712",
->>> +		NULL
->>> +	};
->>> +
->>> +	if (of_machine_compatible_match(broken_el2_vtimer)) {
->>> +		add_taint(TAINT_CPU_OUT_OF_SPEC, LOCKDEP_STILL_OK);
->>> +		pr_warn_once(HW_ERR "Known broken EL2 virtual timer, ignoring it\n");
->>
->> After this change you will now get two warnings; the above and the
->> below. Is this what you want?
-> 
-> Absolutely.
-> 
->>
->>> +		return true;
->>> +	}
->>> +
->>> +	return false;
->>> +}
->>> +
->>>    /**
->>>     * arch_timer_select_ppi() - Select suitable PPI for the current system.
->>>     *
->>> @@ -1115,7 +1136,8 @@ static int __init arch_timer_common_init(void)
->>>    static enum arch_timer_ppi_nr __init arch_timer_select_ppi(void)
->>>    {
->>>    	if (is_kernel_in_hyp_mode()) {
->>> -		if (arch_timer_ppi[ARCH_TIMER_HYP_VIRT_PPI])
->>> +		if (arch_timer_ppi[ARCH_TIMER_HYP_VIRT_PPI] &&
->>> +		    !has_broken_el2_vtimer())
->>>    			return ARCH_TIMER_HYP_VIRT_PPI;
->>>      		pr_warn_once(FW_BUG "VHE-capable CPU without EL2
->>> virtual timer interrupt\n");
->>
->>
->> I have posted something similar for Tegra [0], but because this is not
->> expected to work, I wanted to avoid the warnings here. We test for
-> 
-> "not expected to work"? In which parallel universe is that a thing?
+Just a gentle ping on this series. Based on your previous feedback, the
+v4 patches were sent on July 8 and addressed all your comments:
+- Renamed regulator-sd-3v3 to regulator-vdd-3v3-sd
+- Moved regulator nodes to the bottom and sorted them alphabetically
+- Added a comment to vdd_5v0_sys clarifying it is required by the SoM
+  and SoC layers (as it is referenced by USB and PMIC nodes)
 
-FWIU, at least for Tegra194, we have a CPU and GIC pairing where the CPU 
-supports this but the GIC does not.
+Could you please take another look when you have a moment?
 
->> kernel warnings and ideally we would not warn if is known not to
->> work. We could always display an info level print if it is needed.
-> 
-> No. These warnings are required because the HW is broken, and violates
-> the basics of the architecture, which the kernel relies on. That's
-> important information that needs to be captured, and that's why the
-> kernel also gets tainted.
-> 
-> This applies to any implementation that hasn't been bothered to follow
-> the spec. Don't worry, you're in good company.
+Patchwork link for reference:
+https://patchwork.ozlabs.org/project/linux-tegra/list/?series=512658
 
-Well Tegra194 does not appear to have, but Tegra234 does (but we have a 
-firmware issue which should be easy to fix but the current released 
-firmware as this issue). I have also checked Tegra264 and that should be 
-following the spec too.
-
-Jon
-
--- 
-nvpublic
-
+Best regards,
+Jiqi Li
