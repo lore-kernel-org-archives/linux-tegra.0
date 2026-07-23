@@ -1,63 +1,63 @@
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010065.outbound.protection.outlook.com [52.101.193.65])
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012011.outbound.protection.outlook.com [40.107.209.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545F8313E0D;
-	Thu, 23 Jul 2026 05:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45B1377EC2;
+	Thu, 23 Jul 2026 05:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.11
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784783433; cv=fail; b=tiqtXhKXohT5e+r8dB40TO8Pn+z9tI/aWmzYeRlrvTRmgn3Vanmbgp5W4kvvR0u3mMHkzAbBEUM3Si9PYW+tPdp6tItoCvsF6FXgCc6/HjdWBvl33A74VMSsHMRu8Z3DYKQIBH48HXJ5ETHGEZAiOJP1TNCcjLrSxlBrA0jKxQc=
+	t=1784783758; cv=fail; b=iiaR/8A38nlzNVDgy3PkEYpZY4160el1UUAZYqGeW8LDtTqM/qMNuLxRI+cNWAL7vr0sVSJHIT4x1+Yl+/m+XI8mTHB4TtXoyCXyi2wkfCOEG3aDC2iowFS5L+pwHPwcMup1A8H/DnPs3qRmWPO8CnjpvV2Jtb9ri4GdbhAt7IA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784783433; c=relaxed/simple;
-	bh=ScPyT+aH3DobvJXVlpjDT4HeFXqFmTo2Y0bPzRZLysk=;
+	s=arc-20240116; t=1784783758; c=relaxed/simple;
+	bh=KLy/xsoMP/6bOvr9WrdQjRyCDrVqBZJyMToaUOXX4jQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mrsdCN3avWdBsuJyfNM4t2HSU002+C2aSTRAYitPWVe7s8FWAdQlwxhRwzbW+8pHIF2R/m34rbEtPw6djKmD8gUl8uTqXdGHY3gwbI1VxdD57oQvzec82QIYjTwIiZbxZgYd+odgu8wNFIV/C71Oo7ObAbi0zTyUH1qO54fZlHo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RucKV9Po; arc=fail smtp.client-ip=52.101.193.65
+	 Content-Type:MIME-Version; b=nHzIUOWtepelGSIBUmzwBYJpKs2mUzmsDoOP5Vk5rG1VihobUpzfyCtx9INCePM10zY8vwOOTOhArAme+APf8ISkbtolgx077lZI8d4fqC9mSpeSnTSfheyLMaTs9iW34P1UVaeCShV4qBmzz+edCHD7u038OrqW2h0IBprZQWY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LoNSMvHH; arc=fail smtp.client-ip=40.107.209.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RucKV9Po"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LoNSMvHH"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GW9D2sNTvem6x0Ic773x7CatLEkE2/oAKjfk5oVe3dra67NENXK0u0gN3G0eKD2hJE5ToKor2I6TgPoq+3/7vZCtZMlpk4jHkRQ1JLyCFwRQUNzqQ5pSsA0gtBC2mzk1t6ZX+YabBiPwwdkCRqkziIBlAl8vxQ2iZGQ8G0rixMmjb3ujlDrvn+2dobPWve8oHdFRX0hi0MussnPj6S4NVPzIGuy6oP0/MlniUYY9OeXOi82nmE4PvYNLK8h//9PoksmWaQlpTKV64TF+buw5DnqmFH3TQ6cmKJVe9UxkL3e0DUWDUVxy+I/gVghvhjAkmMotvVknTNv+JoneVEt7OQ==
+ b=NYcSJWM/VUYwCdMaSU8GsYfalez//nPeCdFF34RdJVXMTDZWRufkiY4IYeQMdzfor1AjS3gikpKptFi/BKE2e5xkRIZdMAR0L7YxGjBAj2td51d1WTrSBVCdTLTz9QjE+HyOAEX8WWIR0mw9Mq0KmjZaANEkENERFvfwM0+mN7+yuCmCJi/dYEYWF7DiasXgRlQkut47z/lhWxdj/kfpv2PKHW+hHxulITpKsjgB1d2GK3vsxtWCoNi+4RlIgFtydCAhQJ0PImQn00Iyc658ptBAIsyYbwpK9b7sUjaFQzd07hPcURUcgFqoo6cGMPHOeHXRGKbnoPg1vBgeac5IOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=s2Qn96ofJ5HYaNZYsnH4mx29DUWcUuLUZZ0yJhEqR6U=;
- b=ElzNw7rS+Ny6ZGijgKuk3MvQqr2uBZ+VhqHmDXVIysuB6GMwilnWeZfZlQH82H55VptPDGCo9cdI6zL/uh1sOAXgqJLBZvOVM3kOi1+HiVeTifEXXckb7ed9sOKoGNC9uxsNhZRAuVbcW/VAYdjb6Coxq955z7IRRvzF4/tzsBIwTEyq80oiYTw6QMMqDk5iWycSfvB7xmYuf7cq0SDe/fGTZ4GrFl9u6rIAYiPr4P7NS/DD7naO/PwgGyN/0nw6Oc9FcbHKAALaJzSFjS46xPs66Z+UV8zSgR6JkHg/yFP1pH8fJetelT+E+6dOjJ7G0t/42AAaeyoqrGUDQBMQLw==
+ bh=u7buWsDW6nyN7z0D2b9CK+myWyqsxPciGUePHAv0fWQ=;
+ b=xfMwvyiGQyoeQ5TjiRWy6MFoI14gPEb2I1OFcX38frFDG4wkcDOikrUOcpUZnbkIuX29z3QVBEo8y6nGzfxSuNFfoCq/oi9P0FagUNqVsayVDp5798OrgsfOGRSi4ufOPlSZ1HRrVqkgpgoiALHNwnyqTVERP7UBMJS0qH7hR7bx+PMFI+1C3NiuNv7uTCjhmwoYjZoobCzsVIaCb1+CLJHfYJN8s6gmlBrblpngQ1ofUxjs6R+kGEAsR5Id4acDsRWWpUhpG1ckxuTciAxoSu+8YAyGRNQR7las/1T2dTWt9J7DhScYPFTWwY3e9PhMw1F3pYfu+nvyD7qZhIzNGA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s2Qn96ofJ5HYaNZYsnH4mx29DUWcUuLUZZ0yJhEqR6U=;
- b=RucKV9PonKpyyQ0Zq+TrBOcyAHxRYCkT2tbxdtLr3N/W49vIvta7Wllwig6+d6CaAHrdzs47vD/GGM6buH+Y5d9DLrc+UvMwDX6xBPJlh4hEi6ctKASKd67OGlR10CudKAJNZ8R4pFzNcOpdVNipmlYKalbgVhscf80GnuOtaAKF7+rsCpVMLuES7COqCuzIc/k5vDa/g5Cf+QXhxF2nSziKGagv1GkX+XbCgKZLRQSWkaHooYbslWrOjybtWkPcPcrqXgjBvqLLxAf8g7icF0k1qQJ7YyAN6BIvNAIPkt8ivG1Lh+wHcuCigzlt0I6EUkH5XlMXaf6QhypbOHLV9Q==
+ bh=u7buWsDW6nyN7z0D2b9CK+myWyqsxPciGUePHAv0fWQ=;
+ b=LoNSMvHHR5F00t7VloFI0qakbsR50DWUm0b1Jg3703cC0tQuPyG4fq3kwJKVmxPl8Kr8yr6Su/xjqQ0JMpWhIgWxllRXz9nHjAG4+sqkO61hJENtiehUHT7bXSVy1na+Jo/bOtxKksD4kTzeMwHgT8I2eDE2y9A3rj2x4OrNyLe9cElpYbL+jBaynGRjSVuG8E0sBzGOoJEGDKZkfmAoi9jm9MPwq8XFa4X7eMRAWXToxR8YLuJHS2jhr/HaO93vau4VEa37dsBzZwV2VB3hSIraArG3gL9j5tm5f1sQKCN+OYQ7g2xS6T95YaGfEVVAbhJbXFVjtOf7SOvWJV8Zxw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
  by PH7PR12MB8827.namprd12.prod.outlook.com (2603:10b6:510:26b::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.10; Thu, 23 Jul
- 2026 05:10:27 +0000
+ 2026 05:15:53 +0000
 Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
  ([fe80::d9d1:8c49:a703:b017%6]) with mapi id 15.21.0223.017; Thu, 23 Jul 2026
- 05:10:27 +0000
+ 05:15:53 +0000
 From: Mikko Perttunen <mperttunen@nvidia.com>
 To: thierry.reding@kernel.org, jonathanh@nvidia.com,
  Aniruddha Rao <anrao@nvidia.com>
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
  Aniruddha Rao <anrao@nvidia.com>
-Subject: Re: [PATCH v2 2/5] firmware: tegra: bpmp: Add ACPI support
-Date: Thu, 23 Jul 2026 14:10:23 +0900
-Message-ID: <yp4_Hg6NTM6XvmUccLSv1w@nvidia.com>
-In-Reply-To: <20260722110544.193551-3-anrao@nvidia.com>
+Subject: Re: [PATCH v2 4/5] firmware: tegra: bpmp: Add MBWT BPMP helpers
+Date: Thu, 23 Jul 2026 14:15:50 +0900
+Message-ID: <aso9tq6bS9iLGL62qG0U8A@nvidia.com>
+In-Reply-To: <20260722110544.193551-5-anrao@nvidia.com>
 References:
  <20260722110544.193551-1-anrao@nvidia.com>
- <20260722110544.193551-3-anrao@nvidia.com>
+ <20260722110544.193551-5-anrao@nvidia.com>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: OS7PR01CA0233.jpnprd01.prod.outlook.com
- (2603:1096:604:25d::11) To SJ2PR12MB9161.namprd12.prod.outlook.com
+X-ClientProxiedBy: OS7PR01CA0299.jpnprd01.prod.outlook.com
+ (2603:1096:604:25a::13) To SJ2PR12MB9161.namprd12.prod.outlook.com
  (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -67,456 +67,229 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|PH7PR12MB8827:EE_
-X-MS-Office365-Filtering-Correlation-Id: 11bb2a98-43d7-4380-0cf9-08dee878b53f
+X-MS-Office365-Filtering-Correlation-Id: 53d3de7e-e381-45ce-96b9-08dee87977e2
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|376014|1800799024|366016|10070799003|3023799007|56012099006|11063799006|10067099003|4143699003|18002099003|22082099003;
+	BCL:0;ARA:13230040|23010399003|376014|1800799024|366016|10070799003|6133799003|56012099006|11063799006|10067099003|4143699003|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	khhXB6vm/TCUTh1XuaGRaBe2DlcwuQCJ2a96UJUUunOMf6QIOXAccjdS/C44c9f11816o6LZFwvZzjk4DDSe5Mmaewmt2r2ceJ5Mn5f3QWCSqM1nODNpsx50hHBIwHZ097bLBDvyCSxTkiA0OJ35dzAwKSjepeZGcI0okRACcI1qc0A8VSD2GUxLsjMancgyZlQ74ObEX54PuFFmGUqqmtWvLSELhbqqN/4sDjAxzVGfNM0TGcfnkdEtH3i0CmeNFAUNyFuXD/gaj9KLQBcuIUnuuHjER4QwZgL/gz1SbspC9H0qhi9lkFHMU2O5t8Kmfm0uriC8vHP+n/t3DdQ9dYgNR0CUPzP+bNyFpCu5vObpA4Zqwm/45/REuK0uHz+SBNZs5O72wQtRZppJR40pHzqVcbKwELJddqseAocxWsrnFlaCSKvyg3CJX3LrMayPXjN1pPYWCvTVXo/VXB2T89oWE7n6dik1wGkvsfO5ff2PIR0HJM9CY7QohBonQknIZMWMwljjorrxHlCbbpUJyAuYPfodlJqW5AayjrIAzRQIYd0VfFHrEhKl+ZMu3pTP0dQsEz3qyWklflolY4vcJmdPCGNLFIG7pt92omneiyukDC6V2NUMlsK7JMLRfIC1RrMY7PPeyRcA93oUdC++IAw7Svul/jQcwHYRWi49nIM=
+	bprSs6YadkXijgtgfTWNRYFL+lHNUdajKyC+QzCLp9Ky053DTbaJoh05vqSjfaOY2pmbykbbNOl1sicNPpV+Znr/iwi/7YTo8zDiYpCcngcxUKN+kMf6xycqctYED4nSGbmqaZNjCi4Juva/P2LWTWn9DVRdPXCvdN5FjGI2eDZHFCe+4gio8zKhYjZOzhzhwzoKU0Ejl8suUYaLURcCEbb4cAhHdsumhOBcawMpheNGF0VZeaHX/D5JpJ10pAtYOVjVC5St8Lqry6r1DR6gFtq1UEohqankKLQIZLquE4xloM0WtiCdRBOf90av00StFDaGNUuu7oLDMSkhTUHm8Zl96+yWAX21P2PznuvLA5elFkfjTvh7aCNOZQ6NQKblwmkccMJHXn1aywVhNLjNNpPAma47m+NKwn2NM1bOD8IkOV4+nlW/zjSrM3DwQNWwr0J86SZQh9EerlMWObaxQ+rAbkaKO93CuEKzNiAS0eiNTNC+yPMYzJrj04NZgbA1dtYM+IN/Mwcq0YCy7KZNPGjqb7wVsGORL6EJ37FXabxC2IU2AFvaMUbh/Kz3XgJK3vPcFT8eroAMTJXQoU9ZGIY1Yux3qXDSr8M7NZoAhYA5HJaX/tb5pzy/tRO7GPTykhJ4+ZbUWKEKOiDmrMzBfF4fIYsCd5aMs0W2PHFvNu4=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(1800799024)(366016)(10070799003)(3023799007)(56012099006)(11063799006)(10067099003)(4143699003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(1800799024)(366016)(10070799003)(6133799003)(56012099006)(11063799006)(10067099003)(4143699003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QWRZeEIvYjZpL2VhZ3NVbTk4WTlLY1NYUjljRHdLT3lLVklDNVZFUTVVSGVn?=
- =?utf-8?B?aGhqeWt6TnM2OUlBMGJNVnZWNGFKTHl2aVBVTGFCdGRCY3RPSlM1Y0U3Tm03?=
- =?utf-8?B?UUtxcGJoZk5qWE5hKzFXVDUyU2xKNml6QjM3Nmd1Vm85Q3BDSDVOeGRLVWVP?=
- =?utf-8?B?a2dtL1FwQVBuTFBSUm5ZSlBHcXFMYW1wMnB2MEtCS2l2eTJoalExaFhGeCtO?=
- =?utf-8?B?dkJ1cXhjRXJSSkNjdUtua2pPK3djNFE1M3d0WXJuekE3eExQYnM2YXE3NWFw?=
- =?utf-8?B?blU5UjZCSkovZEFvNDZwYWsvMjhhQVNYaGdLSmhkbjlhU2JGbzBGaFpRcTcr?=
- =?utf-8?B?cnR1MCtVcXhUcFVhSTcxTklOK2tIQzRsVnFzS3cvL3VEUUU4MTFoa2hhckNV?=
- =?utf-8?B?b1lwNDVTM053bzlCSk5Gd1ljdCt0Z1VXMkttVFR0NTJnOUJ4bzhBZnlhcDlM?=
- =?utf-8?B?RGpXdzVWajFFc2EzYTRuMCtNM2ZwQ05kZ2JNVFgrd25wRERhdjlwbS9DQ1h5?=
- =?utf-8?B?V2tRV1pud21qK0JsbjlwVWJVbnZ2REI1T0p5cUFuWHNHRUpHZ1JySml1VnFk?=
- =?utf-8?B?SUxWZk9JTFdNL3RibDNGVFFBTkdiRjR0MlczbVdYMm1GUkhGR1BnQ0w4NjJT?=
- =?utf-8?B?ZkZJa3VKeGlkdE9WajJscFF2UWNCbzJsYy95UmJCZzFZT00vdThZTzV2NXYr?=
- =?utf-8?B?a3VSRXpqNFUwN1pPUHE1czFIQ3l0eVNzRVhlUmdXRWpOQ3ZCV3ZXaVpiSUVE?=
- =?utf-8?B?RG5UZjlkV3NZU0ZvcERsd2NKWHRKcmxTUDY3RjFZalJLL0VyeGtnSndPUllh?=
- =?utf-8?B?QlJST2hLSm14TklZZmVKTGVqTVJQVEZpVnhQbzdCSmpkcGpMaDJkUSsyamxn?=
- =?utf-8?B?dXc2Z1J3Uk1TSTVRTjFsVWJCWCtOVjN5OWtiK0djaTE0MTZQd2lSTW5wUHQw?=
- =?utf-8?B?bGJmKzlGTXUxLzZNbHpGMVAyYTVaL1NCakNsY0oxazlySEdpWDZOMHdTQTgv?=
- =?utf-8?B?ZjhHRHU1NzRkakx3SXRmcHdWSkNDaHBqUFJoWS9VVjMzZ2gxMk1ETmNWdGN5?=
- =?utf-8?B?dzBjSmpuaHB6QVRId0V0eTZ1Z1lyVkYweVdTSWtvTHBUOWh4bGlYeVgxN0Fy?=
- =?utf-8?B?NmdGNXU5RTUxSy9DVExrSmgyMnUxRDFGZ1pseU5qZ0h6d1V3STd2bGdEbS96?=
- =?utf-8?B?RFFvQzRlVEx4L2h0bW9ReHoyRVAwQXN6amdXYUw5MmtiaVBSblI1Mll4OWpu?=
- =?utf-8?B?ekpFRmRpVjVNeGJiNlk2UFM5WWZValNBelk0a0twS3liYXk0VXRONG80KzJL?=
- =?utf-8?B?K29za3hDd0hZNFpHTlJaMVBQZ0F0WkFzNVR3cjRteXdqbytDWFMwb09rVm03?=
- =?utf-8?B?ekFBa3NoQjQ1TkJrQnJGRUNiSHV2SWZyUHZzVmlJY3Y2TUtjeU5nV1dOZStv?=
- =?utf-8?B?UTdmZi8vdEJRSU5zWU5lQTlJbThSQ0R6enBhMWFEZUU0SnQ3ajV2cVB2WTlK?=
- =?utf-8?B?aFIxamVFL1pPMTUvSmZ4MGFaWm1rMjNVcFY1NCtnVUtEWmlScXJneDFBb2Rt?=
- =?utf-8?B?Z20zbXlkUnU5dGpwUWdFSWpiNEdSVThHTlhSYzNuVXRnTXBnblpMTmg5eVVE?=
- =?utf-8?B?Ulc4OENVQzJ1VjRMR01mVFN2UDVIY2JEUUFJZmxpaVppNTNBeldTNnhkZzBR?=
- =?utf-8?B?a2hpT0tXVWFzUUE5MCtmUkRPRG5VYXVSQ3VON1hvRkVQOTVSUG5rRTJOWFIr?=
- =?utf-8?B?ZHI1ckZBTDRzQm13K3J5UmNOdGViOWZUM2ZFK2ZnNnVMYlBnRjU2eGJreXNV?=
- =?utf-8?B?cHRlaEJJeUYvVUNsRHpUQkkzUHlHdGFqdkVhTzB1UktZUWxXUDhSdU9GeCtB?=
- =?utf-8?B?QUZCOTJIUE5TN2VCekV2TE5YTmhlOHN4ZCtrb205cW9STmhXZjBtVUovSmhq?=
- =?utf-8?B?YjdWdkp6MmFOdzJVQUxnYm4vNi90MUE3bGtjVFcwbGpIVThoOHBmd1Fsb2M5?=
- =?utf-8?B?WlNOOHp5d0R3WlI5NzZaTUdtb2h3TzQ4SVhlTEU5ekxycXRmVGdXTExjMmRJ?=
- =?utf-8?B?YjZESitlTEh3VmtidXN1dzhVNndrOEZHbXVSNkhlVXBaRDRYemZlUmovRG41?=
- =?utf-8?B?Y2pYeVdldGxRL3JwN1lJcjlzZ0VKcHc3MURWOVBzaVVFc0dieHpueHJlbDlC?=
- =?utf-8?B?NFFCWjAwZzR1ck40eUFOWUwvYnpkczVNRlphVG9vMTRlTlRQNDAyRVA5eGRs?=
- =?utf-8?B?MWFtd0xNVmNUKzBrUkhoemxZT20rMEtxYzBLTE1UTVBQeWxQL2Y5S1gxalRD?=
- =?utf-8?B?d3EyaThESHdsaFBEa29kK3lqR0Z5K3NTRnVPOC9XTmF1TTFhZmROSHZvUzBR?=
- =?utf-8?Q?tgosuZISVPjxiAhxvsx4nDIsb0oMV69rEGiqY2lbFH0Yh?=
-X-MS-Exchange-AntiSpam-MessageData-1: 7kVJkZpMs5qxjQ==
+	=?utf-8?B?ZGs3c2h4amE0RU5QcHhSbWp1WEVxSUJWYnRncUplRlZFT3k0YUhxOWRvcnBR?=
+ =?utf-8?B?T0YyRTRyUkxqRDR0cnRrVXk5Z05ueGVZeDVLZlF3cmVWeDdwSnJPUTZIN21o?=
+ =?utf-8?B?a3dEalVzUXZnOEhQcjI5ME0vNHd4QmZ1NUV2aFVxZHNQTXNsWkcwNmhtRitr?=
+ =?utf-8?B?aTNhdUxzVmYwKzV4NithRDM5emEyeXJXWFRISmc3dDdpRXRFSXBnTU94UGlL?=
+ =?utf-8?B?NStzZ3FuNWxFL2lnMG0xaUxic3h6czhvOGk4SmxWQjk1UmUxRmtYRWE2YmJB?=
+ =?utf-8?B?b2lYY096Mzgzd1VqQzd3ZTFJUjNkQ0ROYmlORG0xdDJGTjMrNGdRS2IzQm5X?=
+ =?utf-8?B?Z24wYmV6MHNHcVAyMGRrTktiL1hhSTMvenVzU3dRcUc2QkpYT2sxcU8rc2dS?=
+ =?utf-8?B?aVlDMHNjZnYxTkhPM0QxSEIxT0Vieit0L3Z0ZTJDTU1WQzVkM3FzNVRObG5R?=
+ =?utf-8?B?eS81NWQyWVZSOEVRaloxYmQ2cjNCZmkrNytUd3JKSUVZNGZGWHFqQmdyMlh5?=
+ =?utf-8?B?UEpmcGpBVSs3UWo0VkZoeENpZlpyNllyTXZPd0VoZ1NUZkp5L2FITWIxT2d0?=
+ =?utf-8?B?QmxMRmFqd0Vqb2xsV2RaYkp6dG5OOENLclMxZU1PVGtsWkpjaTBBRUFELzE2?=
+ =?utf-8?B?SVRTNVMyM2dUR2V3NmhDVitZQm5oVEtUMWdmYi9yK0xXY2REb29NOS94WWR0?=
+ =?utf-8?B?bWRuc1pMbnpVbURxT00ybFNBUGVLeXdzbUVYWC9vQTVhdWl1aXlhbmZhVUpk?=
+ =?utf-8?B?S2poR2dkLy9lN3lMSzBqVGx1YXp2WWdBQTN0aXVBNUNMU241cWZ1NUo3TTRI?=
+ =?utf-8?B?cUV0WmVreThxMDFrQ1U1cGZxck1qeEgxT2k2RVBSeDN6ZVRpaXpYam9RWW5H?=
+ =?utf-8?B?cThVNHl3UGkxWjE0QlRGaDRvVFRSYU1nVkozMnc3V1JvL0hiUkN0aitUQTdO?=
+ =?utf-8?B?cVB6ODZsZDZrK2kvbnFsdzQyZ0JPb2UrK3RLMjJzYzZTd1FWcGt3N1ZRYVNJ?=
+ =?utf-8?B?L0UwZWgrVXY5QXlEdzVKbXdNMW1Zd0RGUlpKWDRYdGtuR3F1UzdVS2RLUTI0?=
+ =?utf-8?B?RThhT3l6UmRYOWQxQTdKdUErbmZscVRCcWVucW9JRFpNQmpRaURmWHZvVU5R?=
+ =?utf-8?B?Vyt1TUl0dHFiL3lOUC9XMjh6UGg1Q1ZyOGkycHFGOFNKWHFzT0ZFRHNqdDkr?=
+ =?utf-8?B?OVZuWHJSRTYrSXgxYzVZY2UzRHM5WXMxWXBIdHdJaWZ5MjJBZTY2am1CL3hn?=
+ =?utf-8?B?NDgxaXU1c01ZRFQxZFI1Q2YxS2JhWVRrUzJOMTNHYnRMZndkRURNSCtCeElT?=
+ =?utf-8?B?QlVCMUQzZGxick90R1I4d2RYdEU0Q3pDdDFVRGRCeDNram1SanZWUzlweWc4?=
+ =?utf-8?B?RTh1bVFiT2lVbW9MVStoZlV3YzA3NU12YjQ4TXBEaXZxQ2FyZ2RUWXMwSUZU?=
+ =?utf-8?B?dGlvdVdreGFSck1YT0ZMZ0xmTU5xL1NHRjlTNnpBcUtZRjNOUG8wMnZydGJr?=
+ =?utf-8?B?VStQUm9TVCs5bVJaUEp0cEhSOEw1OHhpN3djM2ovd1ZIaWN5aElsWHdoNTZP?=
+ =?utf-8?B?SDkyQmtkTXRhSHJjN3JxaFVEU291VEx6N2hKSGg2Vi84K05Ub1VoNVdGSmV3?=
+ =?utf-8?B?bStHNzVZb0hVR3QyK0docGFkMGsvcVpQZGJRVVlYcXdmZ2pKY1dDRDBvL0J0?=
+ =?utf-8?B?N1lDOURqSFhsTmlOZklicEw5eS9mYUYyWktyVjU0NHppREdBN3hkblBMMXpD?=
+ =?utf-8?B?NVZEZktUYm9jRkllTVl5OTFtT2NncGRLYmFvWUgyOURiRkVXL2FiYjJ4d0tE?=
+ =?utf-8?B?aktzUGJ0V2taYmI4LzRCaU9rY0dQemE2Q2pxamc0MFR2MiszOEpDQThLdVRI?=
+ =?utf-8?B?ZmxOczFLeW9ud3JBZmI4S3Z5SGV5czBtcjZwanZIejVVOHpHR05yRk16dmZq?=
+ =?utf-8?B?RTRPOGhFazNHTExnNnZWdXJSQVZ2eGRUUXNzNDJmWnpsOCtkTTVmcTJoYllq?=
+ =?utf-8?B?NzJuMyt0UUhjK1FpNGlZbkMvV212czBMSHU5L0JmeVNWS2xZT2xWdHRVbVVT?=
+ =?utf-8?B?WHBUQitES2JuNThhZ1dUL0RBalh0S0xKSk0xTmtpeGtvMTB6bjBOekJTUFVY?=
+ =?utf-8?B?SDhIMHliQU93cVV4RWlTbnNFSkhzbWtuKzZPdk1WOVZJcUhPMVE3djVhV0ho?=
+ =?utf-8?B?ZFNuaGRDS2RSaGkvRU56KzZta0tOVzlBemo5UGVQYnp5Z2YyRzFGakJOYlE4?=
+ =?utf-8?B?VWFNZXFYcHdadDMydEJOMjdQU3cyeitpZTJkd0hSengxdjk3ZHF6Yzd1aFds?=
+ =?utf-8?B?QnY2eHNQemxpNjV4aE9uV2tBd1l2QlF5bFowNjVDcXNveWRwQ1pBTk5ZdW5y?=
+ =?utf-8?Q?DaXJ8KDl0MOTS4pvGaubl0OliH/23cjUBCu6WNvuSTllc?=
+X-MS-Exchange-AntiSpam-MessageData-1: QMsBXDG5gMJuZQ==
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11bb2a98-43d7-4380-0cf9-08dee878b53f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53d3de7e-e381-45ce-96b9-08dee87977e2
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2026 05:10:26.9158
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2026 05:15:53.5526
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CM3HxMBP9E3L7h5icygefEsX8naBnBW1c4Oceb/vNCH2I4l5yOvEqg6weL+l9fF3lPL048hur3K1kCuDsSdifQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: OOt8IHvH05VvXcswKYzd3PeU79uqOaFhyh3rJ68RABKG9uzjS4/b5jP82ytECN2aILetWR58fLBGHhYgKh9kmg==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8827
 
 On Wednesday, July 22, 2026 8:05=E2=80=AFPM Aniruddha Rao wrote:
-> Add required changes in the Tegra BPMP driver to make it compatible with
-> ACPI based platforms.
+> Add helper functions that send MBWT requests to BPMP firmware.
 >=20
-> On ACPI systems, IPC is handled through the AML method instead of
-> the core kernel framework using mailboxes and IVC.
+> The helpers implement the GET_BW and SET_BW operations.
 >=20
-> Bypass clock, reset and powergate init calls as these are not
-> controlled by the Linux drivers on ACPI based systems.
+> They also provide a QUERY_ABI-based probe for command availability.
 >=20
 > Signed-off-by: Aniruddha Rao <anrao@nvidia.com>
 > ---
 > Changes since v1:
-> - Use acpi_extract_package() and a common cleanup path for BMRQ replies.
-> - Treat short BMRQ responses as errors.
-> - Rename the mailbox transport helper to __tegra_bpmp_transfer().
-> - Avoid a dummy ACPI ops table and call SoC ops only when present.
-> - Keep OF resource setup guarded by the OF node in probe.
+> - Use generic tegra_bpmp_mbwt_*() helper names.
+> - Fold the helpers into bpmp.c instead of adding a separate source file.
+> - Drop SoC-specific Kconfig dependencies from the helper patch.
+> - Return BPMP firmware errors directly.
 >=20
->  drivers/firmware/tegra/bpmp.c | 221 ++++++++++++++++++++++++++++------
->  1 file changed, 182 insertions(+), 39 deletions(-)
+>  drivers/firmware/tegra/bpmp-private.h |  7 ++
+>  drivers/firmware/tegra/bpmp.c         | 98 +++++++++++++++++++++++++++
+>  2 files changed, 105 insertions(+)
 >=20
+> diff --git a/drivers/firmware/tegra/bpmp-private.h b/drivers/firmware/teg=
+ra/bpmp-private.h
+> index 07c3d46abb87..b3770e71020e 100644
+> --- a/drivers/firmware/tegra/bpmp-private.h
+> +++ b/drivers/firmware/tegra/bpmp-private.h
+> @@ -26,4 +26,11 @@ struct tegra_bpmp_ops {
+>  extern const struct tegra_bpmp_ops tegra186_bpmp_ops;
+>  extern const struct tegra_bpmp_ops tegra210_bpmp_ops;
+> =20
+> +bool tegra_bpmp_mbwt_cmd_is_supported(struct tegra_bpmp *bpmp,
+> +				      unsigned int cmd_code);
+> +int tegra_bpmp_mbwt_get(struct tegra_bpmp *bpmp, unsigned int instance,
+> +			unsigned int vc_type, unsigned int *bandwidth);
+> +int tegra_bpmp_mbwt_set(struct tegra_bpmp *bpmp, unsigned int instance,
+> +			unsigned int vc_type, unsigned int bandwidth);
+> +
+>  #endif
 > diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.=
 c
-> index 0eb99b1c5068..2dcb74a45b59 100644
+> index 2dcb74a45b59..2cf8490b8b2e 100644
 > --- a/drivers/firmware/tegra/bpmp.c
 > +++ b/drivers/firmware/tegra/bpmp.c
-> @@ -3,6 +3,7 @@
->   * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
->   */
+> @@ -675,6 +675,104 @@ bool tegra_bpmp_mrq_is_supported(struct tegra_bpmp =
+*bpmp, unsigned int mrq)
+>  }
+>  EXPORT_SYMBOL_GPL(tegra_bpmp_mrq_is_supported);
 > =20
-> +#include <linux/acpi.h>
->  #include <linux/clk/tegra.h>
->  #include <linux/genalloc.h>
->  #include <linux/mailbox_client.h>
-> @@ -11,8 +12,10 @@
->  #include <linux/of_platform.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm.h>
-> +#include <linux/property.h>
->  #include <linux/semaphore.h>
->  #include <linux/sched/clock.h>
-> +#include <linux/slab.h>
-> =20
->  #include <soc/tegra/bpmp.h>
->  #include <soc/tegra/bpmp-abi.h>
-> @@ -23,6 +26,12 @@
->  #define MSG_ACK		BIT(0)
->  #define MSG_RING	BIT(1)
->  #define TAG_SZ		32
-> +#define TEGRA_BPMP_ACPI_BMRQ_DATA_SZ	3960U
-> +
-> +struct tegra_bpmp_acpi_message {
-> +	u64 status;
-> +	u8 *data;
-> +};
-> =20
->  static inline const struct tegra_bpmp_ops *
->  channel_to_ops(struct tegra_bpmp_channel *channel)
-> @@ -343,12 +352,99 @@ static ssize_t tegra_bpmp_channel_write(struct tegr=
-a_bpmp_channel *channel,
-> =20
->  static int __maybe_unused tegra_bpmp_resume(struct device *dev);
-> =20
-> +#ifdef CONFIG_ACPI
-> +static int tegra_bpmp_transfer_acpi(struct tegra_bpmp *bpmp,
-> +				    struct tegra_bpmp_message *msg)
+> +bool tegra_bpmp_mbwt_cmd_is_supported(struct tegra_bpmp *bpmp,
+> +				      unsigned int cmd_code)
 > +{
-> +	struct acpi_buffer output =3D { ACPI_ALLOCATE_BUFFER, NULL };
-> +	struct acpi_buffer response =3D { ACPI_ALLOCATE_BUFFER, NULL };
-> +	struct acpi_buffer format =3D { sizeof("NB"), "NB" };
-> +	struct acpi_object_list param_list;
-> +	union acpi_object params[2];
-> +	struct tegra_bpmp_acpi_message *reply;
-> +	acpi_status status;
-> +	size_t data_len;
-> +	int err =3D 0;
+> +	struct mrq_sochub_mbwt_request request =3D {
+> +		.cmd =3D CMD_SOCHUB_MBWT_QUERY_ABI,
+> +		.query_abi.cmd_code =3D cmd_code,
+> +	};
+> +	struct tegra_bpmp_message msg =3D {
+> +		.mrq =3D MRQ_SOCHUB_MBWT,
+> +		.tx =3D {
+> +			.data =3D &request,
+> +			.size =3D sizeof(request),
+> +		},
+> +	};
+> +	int err;
 > +
-> +	if (!tegra_bpmp_message_valid(msg))
+> +	err =3D tegra_bpmp_transfer(bpmp, &msg);
+> +	if (err || msg.rx.ret)
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+> +int tegra_bpmp_mbwt_get(struct tegra_bpmp *bpmp, unsigned int instance,
+> +			unsigned int vc_type, unsigned int *bandwidth)
+> +{
+> +	struct mrq_sochub_mbwt_request request =3D {
+> +		.cmd =3D CMD_SOCHUB_MBWT_GET_BW,
+> +		.get_bw =3D {
+> +			.instance =3D instance,
+> +			.vc_type =3D vc_type,
+> +		},
+> +	};
+> +	struct mrq_sochub_mbwt_response response =3D {};
+> +	struct tegra_bpmp_message msg =3D {
+> +		.mrq =3D MRQ_SOCHUB_MBWT,
+> +		.tx =3D {
+> +			.data =3D &request,
+> +			.size =3D sizeof(request),
+> +		},
+> +		.rx =3D {
+> +			.data =3D &response,
+> +			.size =3D sizeof(response),
+> +		},
+> +	};
+> +	int err;
+> +
+> +	if (!bandwidth)
 > +		return -EINVAL;
 > +
-> +	params[0].type =3D ACPI_TYPE_INTEGER;
-> +	params[0].integer.value =3D msg->mrq;
-> +
-> +	params[1].type =3D ACPI_TYPE_BUFFER;
-> +	params[1].buffer.length =3D msg->tx.size;
-> +	params[1].buffer.pointer =3D (u8 *)msg->tx.data;
-> +
-> +	param_list.count =3D 2;
-> +	param_list.pointer =3D params;
-> +
-> +	status =3D acpi_evaluate_object(ACPI_HANDLE(bpmp->dev), "BMRQ",
-> +				      &param_list, &output);
-> +	if (ACPI_FAILURE(status)) {
-> +		acpi_evaluation_failure_warn(ACPI_HANDLE(bpmp->dev), "BMRQ",
-> +					     status);
-> +		return -ENODEV;
+> +	err =3D tegra_bpmp_transfer(bpmp, &msg);
+> +	if (err) {
+> +		dev_err(bpmp->dev, "MBWT get bandwidth transfer failed: %d\n",
+> +			err);
+> +		return err;
 > +	}
 > +
-> +	status =3D acpi_extract_package(output.pointer, &format, &response);
-> +	if (ACPI_FAILURE(status)) {
-> +		dev_err(bpmp->dev, "BMRQ: invalid response package: %s\n",
-> +			acpi_format_exception(status));
-> +		err =3D -ENODATA;
-> +		goto out;
-> +	}
-> +
-> +	if (response.length < sizeof(*reply)) {
-> +		dev_err(bpmp->dev, "BMRQ: response too short\n");
-> +		err =3D -ENODATA;
-> +		goto out;
-> +	}
-> +
-> +	reply =3D response.pointer;
-> +	data_len =3D response.length - sizeof(*reply);
-> +	if (data_len > TEGRA_BPMP_ACPI_BMRQ_DATA_SZ) {
-> +		dev_err(bpmp->dev, "BMRQ: reply buffer too large (%zu)\n",
-> +			data_len);
-> +		err =3D -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	msg->rx.ret =3D (int)reply->status;
-> +
-> +	if (msg->rx.data && msg->rx.size) {
-> +		if (data_len < msg->rx.size) {
-> +			dev_err(bpmp->dev, "BMRQ: response data too short\n");
-> +			err =3D -ENODATA;
-> +			goto out;
-> +		}
-> +
-> +		memcpy(msg->rx.data, reply->data, msg->rx.size);
-> +	}
-> +
-> +out:
-> +	kfree(response.pointer);
-> +	kfree(output.pointer);
-> +
-> +	return err;
-> +}
-> +#else
-> +static int tegra_bpmp_transfer_acpi(struct tegra_bpmp *bpmp,
-> +				    struct tegra_bpmp_message *msg)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +#endif
-> +
->  int tegra_bpmp_transfer_atomic(struct tegra_bpmp *bpmp,
->  			       struct tegra_bpmp_message *msg)
->  {
->  	struct tegra_bpmp_channel *channel;
->  	int err;
-> =20
-> +	if (WARN_ON(ACPI_HANDLE(bpmp->dev)))
-> +		return -EOPNOTSUPP;
-> +
->  	if (WARN_ON(!irqs_disabled()))
->  		return -EPERM;
-> =20
-> @@ -389,16 +485,13 @@ int tegra_bpmp_transfer_atomic(struct tegra_bpmp *b=
-pmp,
->  }
->  EXPORT_SYMBOL_GPL(tegra_bpmp_transfer_atomic);
-> =20
-> -int tegra_bpmp_transfer(struct tegra_bpmp *bpmp,
-> -			struct tegra_bpmp_message *msg)
-> +static int __tegra_bpmp_transfer(struct tegra_bpmp *bpmp,
-> +				 struct tegra_bpmp_message *msg)
->  {
->  	struct tegra_bpmp_channel *channel;
->  	unsigned long timeout;
->  	int err;
-> =20
-> -	if (WARN_ON(irqs_disabled()))
-> -		return -EPERM;
-> -
->  	if (!tegra_bpmp_message_valid(msg))
->  		return -EINVAL;
-> =20
-> @@ -428,6 +521,18 @@ int tegra_bpmp_transfer(struct tegra_bpmp *bpmp,
->  	return tegra_bpmp_channel_read(channel, msg->rx.data, msg->rx.size,
->  				       &msg->rx.ret);
->  }
-> +
-> +int tegra_bpmp_transfer(struct tegra_bpmp *bpmp,
-> +			struct tegra_bpmp_message *msg)
-> +{
-> +	if (WARN_ON(irqs_disabled()))
-> +		return -EPERM;
-> +
-> +	if (ACPI_HANDLE(bpmp->dev))
-> +		return tegra_bpmp_transfer_acpi(bpmp, msg);
-> +
-> +	return __tegra_bpmp_transfer(bpmp, msg);
-> +}
+> +	if (msg.rx.ret)
+> +		return msg.rx.ret;
 
-Having separate __tegra_bpmp_transfer and tegra_bpmp_transfer seems=20
-unnecessary to me. I think we can just have tegra_bpmp_transfer call=20
-tegra_bpmp_transfer_acpi after the tegra_bpmp_message_valid check?
+BPMP errnos are not identical to Linux errnos. We should not mix the=20
+two. Same for below. Return a static error code here -- if handling=20
+specific BPMP error codes is really necessary, they should be returned=20
+in a separate out-pointer.
 
->  EXPORT_SYMBOL_GPL(tegra_bpmp_transfer);
-> =20
->  static struct tegra_bpmp_mrq *tegra_bpmp_find_mrq(struct tegra_bpmp *bpm=
-p,
-> @@ -606,11 +711,17 @@ static int tegra_bpmp_ping(struct tegra_bpmp *bpmp)
->  	msg.rx.data =3D &response;
->  	msg.rx.size =3D sizeof(response);
-> =20
-> -	local_irq_save(flags);
->  	start =3D ktime_get();
-> -	err =3D tegra_bpmp_transfer_atomic(bpmp, &msg);
 > +
-> +	if (ACPI_HANDLE(bpmp->dev)) {
-> +		err =3D tegra_bpmp_transfer(bpmp, &msg);
-> +	} else {
-> +		local_irq_save(flags);
-> +		err =3D tegra_bpmp_transfer_atomic(bpmp, &msg);
-> +		local_irq_restore(flags);
+> +	*bandwidth =3D response.get_bw.bw;
+> +
+> +	return 0;
+> +}
+> +
+> +int tegra_bpmp_mbwt_set(struct tegra_bpmp *bpmp, unsigned int instance,
+> +			unsigned int vc_type, unsigned int bandwidth)
+> +{
+> +	struct mrq_sochub_mbwt_request request =3D {
+> +		.cmd =3D CMD_SOCHUB_MBWT_SET_BW,
+> +		.set_bw =3D {
+> +			.instance =3D instance,
+> +			.vc_type =3D vc_type,
+> +			.bw =3D bandwidth,
+> +		},
+> +	};
+> +	struct tegra_bpmp_message msg =3D {
+> +		.mrq =3D MRQ_SOCHUB_MBWT,
+> +		.tx =3D {
+> +			.data =3D &request,
+> +			.size =3D sizeof(request),
+> +		},
+> +	};
+> +	int err;
+> +
+> +	err =3D tegra_bpmp_transfer(bpmp, &msg);
+> +	if (err) {
+> +		dev_err(bpmp->dev, "MBWT set bandwidth transfer failed: %d\n",
+> +			err);
+> +		return err;
 > +	}
 > +
->  	end =3D ktime_get();
-> -	local_irq_restore(flags);
-> =20
->  	if (!err)
->  		dev_dbg(bpmp->dev,
-> @@ -632,6 +743,9 @@ static int tegra_bpmp_get_firmware_tag_old(struct teg=
-ra_bpmp *bpmp, char *tag,
->  	void *virt;
->  	int err;
-> =20
-> +	if (ACPI_HANDLE(bpmp->dev))
-> +		return -EOPNOTSUPP;
+> +	if (msg.rx.ret)
+> +		return msg.rx.ret;
 > +
->  	if (size !=3D TAG_SZ)
->  		return -EINVAL;
-> =20
-> @@ -783,23 +897,32 @@ static int tegra_bpmp_probe(struct platform_device =
-*pdev)
->  	if (!bpmp)
->  		return -ENOMEM;
-> =20
-> -	bpmp->soc =3D of_device_get_match_data(&pdev->dev);
-> -	bpmp->dev =3D &pdev->dev;
-> +	bpmp->soc =3D device_get_match_data(&pdev->dev);
-> +	if (!bpmp->soc)
-> +		return -EINVAL;
-> =20
-> -	err =3D tegra_bpmp_init_channels(bpmp);
-> -	if (err < 0)
-> -		return err;
-> +	bpmp->dev =3D &pdev->dev;
-> =20
->  	platform_set_drvdata(pdev, bpmp);
-> =20
-> -	err =3D bpmp->soc->ops->init(bpmp);
-> -	if (err < 0)
-> -		return err;
-> +	if (!ACPI_HANDLE(bpmp->dev)) {
-> +		err =3D tegra_bpmp_init_channels(bpmp);
-> +		if (err < 0)
-> +			return err;
-> +	}
-> =20
-> -	err =3D tegra_bpmp_request_mrq(bpmp, MRQ_PING,
-> -				     tegra_bpmp_mrq_handle_ping, bpmp);
-> -	if (err < 0)
-> -		goto deinit;
-> +	if (bpmp->soc->ops && bpmp->soc->ops->init) {
-> +		err =3D bpmp->soc->ops->init(bpmp);
-> +		if (err < 0)
-> +			return err;
-> +	}
+> +	return 0;
+> +}
 > +
-> +	if (!ACPI_HANDLE(bpmp->dev)) {
-> +		err =3D tegra_bpmp_request_mrq(bpmp, MRQ_PING,
-> +					     tegra_bpmp_mrq_handle_ping, bpmp);
-> +		if (err < 0)
-> +			goto deinit;
-> +	}
-> =20
->  	err =3D tegra_bpmp_ping(bpmp);
->  	if (err < 0) {
-> @@ -815,26 +938,30 @@ static int tegra_bpmp_probe(struct platform_device =
-*pdev)
-> =20
->  	dev_info(&pdev->dev, "firmware: %.*s\n", (int)sizeof(tag), tag);
-> =20
-> -	err =3D of_platform_default_populate(pdev->dev.of_node, NULL, &pdev->de=
-v);
-> -	if (err < 0)
-> -		goto free_mrq;
-> -
-> -	if (of_property_present(pdev->dev.of_node, "#clock-cells")) {
-> -		err =3D tegra_bpmp_init_clocks(bpmp);
-> +	if (pdev->dev.of_node) {
-> +		err =3D of_platform_default_populate(pdev->dev.of_node, NULL,
-> +						   &pdev->dev);
->  		if (err < 0)
->  			goto free_mrq;
-> -	}
-> =20
-> -	if (of_property_present(pdev->dev.of_node, "#reset-cells")) {
-> -		err =3D tegra_bpmp_init_resets(bpmp);
-> -		if (err < 0)
-> -			goto free_mrq;
-> -	}
-> +		if (of_property_present(pdev->dev.of_node, "#clock-cells")) {
-> +			err =3D tegra_bpmp_init_clocks(bpmp);
-> +			if (err < 0)
-> +				goto free_mrq;
-> +		}
-> =20
-> -	if (of_property_present(pdev->dev.of_node, "#power-domain-cells")) {
-> -		err =3D tegra_bpmp_init_powergates(bpmp);
-> -		if (err < 0)
-> -			goto free_mrq;
-> +		if (of_property_present(pdev->dev.of_node, "#reset-cells")) {
-> +			err =3D tegra_bpmp_init_resets(bpmp);
-> +			if (err < 0)
-> +				goto free_mrq;
-> +		}
-> +
-> +		if (of_property_present(pdev->dev.of_node,
-> +					"#power-domain-cells")) {
-> +			err =3D tegra_bpmp_init_powergates(bpmp);
-> +			if (err < 0)
-> +				goto free_mrq;
-> +		}
->  	}
-> =20
->  	err =3D tegra_bpmp_init_debugfs(bpmp);
-> @@ -844,9 +971,10 @@ static int tegra_bpmp_probe(struct platform_device *=
-pdev)
->  	return 0;
-> =20
->  free_mrq:
-> -	tegra_bpmp_free_mrq(bpmp, MRQ_PING, bpmp);
-> +	if (!ACPI_HANDLE(bpmp->dev))
-> +		tegra_bpmp_free_mrq(bpmp, MRQ_PING, bpmp);
->  deinit:
-> -	if (bpmp->soc->ops->deinit)
-> +	if (bpmp->soc->ops && bpmp->soc->ops->deinit)
->  		bpmp->soc->ops->deinit(bpmp);
-> =20
->  	return err;
-> @@ -867,7 +995,7 @@ static int __maybe_unused tegra_bpmp_resume(struct de=
-vice *dev)
-> =20
->  	bpmp->suspended =3D false;
-> =20
-> -	if (bpmp->soc->ops->resume)
-> +	if (bpmp->soc->ops && bpmp->soc->ops->resume)
->  		return bpmp->soc->ops->resume(bpmp);
->  	else
->  		return 0;
-> @@ -939,10 +1067,25 @@ static const struct of_device_id tegra_bpmp_match[=
-] =3D {
->  	{ }
->  };
-> =20
-> +#ifdef CONFIG_ACPI
-> +static const struct tegra_bpmp_soc tegra_bpmp_acpi_soc =3D { };
-> +
-> +static const struct acpi_device_id tegra_bpmp_acpi_match[] =3D {
-> +	{
-> +		.id =3D "NVDA3001",
-> +		.driver_data =3D (kernel_ulong_t)&tegra_bpmp_acpi_soc,
-> +	},
-> +	{ }
-> +};
-> +#endif
-> +
->  static struct platform_driver tegra_bpmp_driver =3D {
->  	.driver =3D {
->  		.name =3D "tegra-bpmp",
->  		.of_match_table =3D tegra_bpmp_match,
-> +#ifdef CONFIG_ACPI
-> +		.acpi_match_table =3D tegra_bpmp_acpi_match,
-> +#endif
->  		.pm =3D &tegra_bpmp_pm_ops,
->  		.suppress_bind_attrs =3D true,
->  	},
+>  static void tegra_bpmp_mrq_handle_ping(unsigned int mrq,
+>  				       struct tegra_bpmp_channel *channel,
+>  				       void *data)
 > --=20
 > 2.43.0
 >=20
+
+Since these are only used by the sysfs code, I would squash this patch=20
+into the sysfs patch and move these functions into the sysfs file.
 
 
 
