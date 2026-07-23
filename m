@@ -1,201 +1,254 @@
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011011.outbound.protection.outlook.com [52.101.62.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646DF31283E
-	for <linux-tegra@vger.kernel.org>; Thu, 23 Jul 2026 03:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A06D37107E;
+	Thu, 23 Jul 2026 04:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.11
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784776315; cv=pass; b=t+EXOqiFml5u6WRizy7IilBfwcSiKKXhMoEhGp3MBAkPE7xbmuJiOHWQfAGBTHD3KyMOK8+Gq1uNgdBiPktSk5deFjUBMcRxGSNIvhCDuAbztGTm3penRo6EmNWlMay/shw0tjkuKPktNQun++7stH8GoMI8mGeI0GO8JcnCAxA=
+	t=1784779750; cv=fail; b=UrGc1PhxaukELO8tir1ENijrWxIG4fHRzQI878dwaYjMzYjkEkaarPxtElbX2XP2rdJ8Te1WnMnY7KHU0hY8CkF80KJT1marD2DoryEDhRti5dYROXnVXX7qwll3h3ifv9DlmkaGBrYeKlz7yr2ElvQtkb8NuaMGUcYxeyID8vk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784776315; c=relaxed/simple;
-	bh=+Fc3jFgKF+SzhwLi7e8pH6azf21/DfWf9SFXzI60wYM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sBeYjYn8mjkmieXPHe/JzTQt3nMAiMddDJmsZKR4Dm11N2FsVVocRrZcrU4RzEohKwjgZ36/NblblK2RD0cNKU5smoFZ4SsOSg2QPlIg8yNOXWmTjGUABL4IspYqw161oSWocY8et2f7ueoOJ69VehC7gnWZ3tVLZ94bmSEBbdM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VOmpKd89; arc=pass smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784779750; c=relaxed/simple;
+	bh=j2gBmIQYPHwAQzvH5j48PdzCEmbqF2zHdAcwokoiq4U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=auLtX2z78y256Gmyy7/DGR5ImF4L7pbk94L6EeYz83adipKnSEcGcPdA8VXNmaE/E9dc4sCYo3UzqksL6sqs/+DqANe88U4O8llE+LCJ55FJElUllTg0uhNDtUNp5FHFcPjl8rw8NavJMMRsS7HRz+BxcA912rhBC51mtniFxFI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FbP5127V; arc=fail smtp.client-ip=52.101.62.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VOmpKd89"
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5b01910b499so119842e87.0
-        for <linux-tegra@vger.kernel.org>; Wed, 22 Jul 2026 20:11:54 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1784776312; cv=none;
-        d=google.com; s=arc-20260327;
-        b=oPMxdvETvqp73AnRkbzstwJ49h85YG1drEWA4IhAZwTvfygVHEimq1SOZb8X/9ehi0
-         wGoizLVkwrVnVBAIB6LVn5K5zCqxb17xzf+wsl5QNd15MvssvmWH5ImaA+Cd3gKnn2wD
-         RrCkaBQXczZrywuOtRbVMwmJjl7JeQVDZ//yMFoGSFDVZl6Xq5tuvzSlRhNuwN7C4TDQ
-         vysqn1C6o8vMQ7A/n+nVmH9ZRP5qoN3fheIqbeqYwVm9cYlPZUJNE4pMV3POPlonRiSu
-         kCyaFJbD63tZjW3bygEmTl9XBaHqd3sPHy0n8pfQMO4qxxcuiVoAJxPjGtbvmMan6/jn
-         e0Gg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Xybq9N8iwYV/neNgugcsk6GEhAIai6SfewcFzO6pFeM=;
-        fh=q+wZ2YROSsj3R7QYUFbFNt8P20L3yzmzVP/79vqRp4g=;
-        b=VuibQa/9BXEY9yqAzgVPqmeNMQCRwTAqMu65Uc0ZFxHiGDVcx/crC86TdK7gfDCz0K
-         D3eJIxMKqRcfZUZa2Mzv3guoDWU1rDnwoKoR8NYIkmfD0zTNY+0yyXyJXgFLZ7Bmdb7s
-         cX0aI7ad4aq0/hL4XNlrwWli/0wjL9PvauS+sB9NxZRP6fMlf6cjK79msHr8mJIu2zQw
-         HR5nkCK5rFY8YTG4Y5Ka7JkEDZYe/9K9vZW6cMZwpFcSdSC7TxgqxlRafrIuxmu5CyrB
-         aTsxkMxQ+yht41XlSEW1o+byrF9dW+zr4flHc0g/raIJjHUxhVhpe5BosGiyPlAx5mrX
-         k2qw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784776312; x=1785381112; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Xybq9N8iwYV/neNgugcsk6GEhAIai6SfewcFzO6pFeM=;
-        b=VOmpKd89oTawX1i8/Sp7PzAWuZY5qdo01yFkM+8PhPFI9Y9eWyTBPRrALVvgT27frI
-         yTgk0FZQtkSxGz/mKjoYzQdRj8AiS+7H4t8daBRlINgdgcV0xMDDs01ZOsUqaR4k9iif
-         Eh9OXhmvEBBbgKAEV+tv4lt2XX0lw4lXzE/u79YGi+gXE1I4sv5lPtp4Gwpt86JE/5ex
-         Llw1Dmo1LidMM/snokxj53j6i5kKQiJEafAdUuVyNqZ7rscazcRK/tl775h1RcwdYfAk
-         A0aMo6FhfZ/LRq63JEe5PqgD3Jkv0OjDdnf6v4OTcZ2vaw4I1A8mSJhvHLnRbQBmDnNI
-         bKtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784776312; x=1785381112;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Xybq9N8iwYV/neNgugcsk6GEhAIai6SfewcFzO6pFeM=;
-        b=iM2xtvxQzetHRbSMQpXBt1JTEgTewN8riW3lZ38K8De7IyI7BGKC60f5nTCr1TeW3L
-         vAn0Cj55vvc3JSTZZ8YJpFnP0baLtIw1bL4on7DXweQGnC29+K/08s5AcBPSy9PpER4x
-         dHeqAZG6ohEEhcDreJT+x1GFsYMU8p1Sqb2pKN8Bb7Zs+aLTJharLAMpu3apL3vxoptS
-         8n4cb5gUiE41oAyGTVNkxNTkB6QY8Q4WPtVb6ACclZKZDBbjSi3lqYFYooOHayfIZ7pK
-         0IuNx6UeLxAch6oab2PHw6YM5ehEte285xTG8KuxfT5Swt4bBjWHAn+JFIwuh7eA7bNI
-         Gl8w==
-X-Forwarded-Encrypted: i=1; AHgh+RpK+NM8yVYQqlRHFGI5qaOz4OWfXFPD8nB6nzqutNp9d8tcH6Eq0gywG4VKWoM3d0Lfxp/ONRahDatMGg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFyIHLylTgJ+BVieaaGHUjuLlFNrG5B7p+JDFGYzzPqMc7TU/7
-	PoAFrpvZUmn5rRdekn39vvfFL2fsM+Nwq9gNxbEsC0nFlWQuKkdiV2VE4avWhtyslZLfFB2uDP+
-	dyFHFdj62hXPKV7p13mm4NAUzqOXoikc=
-X-Gm-Gg: AR+sD11Y8wwQIXEvCWzllgGjvsK6kerTB3OMg3LJ03owz/7ZrMOSAgP04To9A83XvR8
-	uMaGYzc6XRZE7HZnK+4m+zB0yKo10dyiQo7xPgO8y0he8rvr6gMEA9tJqh0TytE3qifaFVPZcFS
-	TApQXi7KlemHNIqGDjjeT6hzY/mfpu8EYIMflttwEX4/oev0suDiWoEQOjR/8j3KBTNyJBpDaaJ
-	3vxJpDSJzF71FeC1hIbUH7bVzwUXjnQX81R+n/PdshkdRfV9upzxo/hc9CwiFQG94sC1uU1LDmU
-	3Vf7Nw9abpEls8zhSv+9UZOoDH3VsQusm4Ioo6zRcibdZug=
-X-Received: by 2002:a05:6512:2c8c:b0:5ae:a9ed:35a7 with SMTP id
- 2adb3069b0e04-5b2b33d3018mr108577e87.32.1784776312228; Wed, 22 Jul 2026
- 20:11:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FbP5127V"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=F5CDBvcf6R8UArFytNMB1XUs8AGRhnwEEy2yNBNQrjZyc9lYta9uMFD61rHDSPnyrQ7J6nkPZVklEWEemHf43yBgmwig8NYaV2y+500vjRU6HdWUnN44u6hDDIWlViJsZ50zProU4xlhiT9NRnBjiOuErz93yDmlvuB99h96MmwUIlE5j1XL2+XfrLGegu5MpoI0ZD6IDIfiDdo624OQLVpRgPjF3s7U87/h3lZOj1RiYvTRMJQq5JrUQktUufaWQptMO9yoRiqTptIpQN7UWqfDUdHZHKVbxUuU4LDuQ3i92QLRulvbG4dRV/P3tOcNDClw0yulmd5ilIWQ0dTPCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LiT3qkMTBE7x1w8nSFHx6MNR/W7ypFEzQcJf1DcxHK0=;
+ b=WWbOSoNBxCCPGGwJD8sfHu0Lts3l8qfh9pr6co75Jd8h/78XfC/yD5rBxgw28WseBfsG5GSh3Mjfi8n+Nu4vtViqIwVmkws4zvu6JPDeS+p4f9Hz5gzNNbFdm9u3MYeadazr/YuHuWA+zwORLmap/3VwOhC+/P71yLvl4xjRRNv2TQAGGuZfGTvSJfh2/9/FDvMC3JTftz3rmyWtlgoo1HAMvtCh2mrvlk8gRhdd8iOdrS2/Z3jHpNf/HmD/2JLbx9BYFkjo4uBNA9j0YEU6bFbPeaZ36sR+JbaXVd6dF3k19aWF4+q4gUUKg2fbrC2h9X9ja8B4CxNzLi671bV4Dg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LiT3qkMTBE7x1w8nSFHx6MNR/W7ypFEzQcJf1DcxHK0=;
+ b=FbP5127VyyOI5s7EDQzVoeK628E3+U+9ok1WFXUh7oVuTc1z0ZCdbHZdFGBUh0ne6PbK1xD1WWwEXZ9vxW8ImfOWRapEqFGF+UI2d/pF9jUE/MLI6J3D04vRzC4k7Emqime7COoQwgJVxW3xjQRcGovDsY7jTigKOHV5foasvtO3gGLi+lLqTPjmHiw69dhBJS7xfR5Nho3AE8rdMAoBWXOIrHy1tgeI+dMXjyU2IvNieDb/0wMcZWO4mIDerLt9pOdYfKubxz78KIF3BAacFX2HJpE6rae9Tc6RVjVYhtKNf9Pe5UoxBsmQx8itV6r/oXjG0aD0qIjxw/0M+83Yww==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
+ by SJ2PR12MB7961.namprd12.prod.outlook.com (2603:10b6:a03:4c0::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.10; Thu, 23 Jul
+ 2026 04:08:43 +0000
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017%6]) with mapi id 15.21.0223.017; Thu, 23 Jul 2026
+ 04:08:43 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>, webgeek1234@gmail.com
+Cc: Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Aaron Kling <webgeek1234@gmail.com>,
+ Alexandre Hamamdjian <azkali.limited@gmail.com>,
+ Thomas Makin <halorocker89@gmail.com>
+Subject: Re: [PATCH v3 2/2] soc/tegra: pmc: Add Tegra210B01 support
+Date: Thu, 23 Jul 2026 13:08:34 +0900
+Message-ID: <DuGKqNifQkiWC5s_qt8g7Q@nvidia.com>
+In-Reply-To: <20260722-t210b01-pmc-v3-2-1c5b970788f2@gmail.com>
+References:
+ <20260722-t210b01-pmc-v3-0-1c5b970788f2@gmail.com>
+ <20260722-t210b01-pmc-v3-2-1c5b970788f2@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: OS7PR01CA0055.jpnprd01.prod.outlook.com
+ (2603:1096:604:254::12) To SJ2PR12MB9161.namprd12.prod.outlook.com
+ (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260717-t210b01-speedo-v1-0-f04a8bd4d997@gmail.com>
- <20260717-t210b01-speedo-v1-2-f04a8bd4d997@gmail.com> <00e569b5-df74-4310-a33c-446005bbf11c@nvidia.com>
- <CALHNRZ_0++igjSQBRo-LVW_bvyu98x_4DXjxRSq0kCNxMaqYKw@mail.gmail.com> <1a09d973-df0f-4e49-81dc-2c12c795d2c6@nvidia.com>
-In-Reply-To: <1a09d973-df0f-4e49-81dc-2c12c795d2c6@nvidia.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Wed, 22 Jul 2026 22:11:39 -0500
-X-Gm-Features: AUfX_mytkpmOg3RFc5mpHc5f-0WeDuodEz48J3-EGsLNgVJvFSPBj_Pz48YPh2k
-Message-ID: <CALHNRZ-P+oGEXuhmKp4V3iX86NVSgvMLsp1dJm2YfEnffNrahQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] soc/tegra: fuse: speedo-tegra210: Support revision B01
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <thierry.reding@kernel.org>, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|SJ2PR12MB7961:EE_
+X-MS-Office365-Filtering-Correlation-Id: 067aa3a7-ac2a-407e-fe33-08dee8701583
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|23010399003|10070799003|22082099003|18002099003|3023799007|10067099003|56012099006|11063799006|4143699003|6133799003;
+X-Microsoft-Antispam-Message-Info:
+	WnxPCFkNi1JG+YMPG2ZdnV8bBAAZl4x1+oVrmPlfDGYPepdy4QzWZ6oniJhkaNP+rG/BEHFM/78XnEoR5YR4/etUslCBV6rEgBIahT3MvXdDXqM1ZfWFjvdmaVSR/QLfYP9X08pSUaGI66I+v0VLmZiL3VRNtoFrpf9KZ2NFUeU7BRFVGmUq4r0WbiGshsM1lAgYMF93l1w2uo+Pv9OmfYgT/IMgzTUR7W41HvVHY4GnR0uyf5DcKZSuuKmhDAlOjHysa/QSVG1vUeQUntxbrpQmEtbupM8nsUf02q/VWggbVcsoZ+pRxpJ/8FWZk7BXQT4CUouEH9u0x5hu9Tv0FeksSXIp67sRPGLpQA/6A8ugEh8WSz6cfhIPmIFwfEINf4en2n41TUSoCaIoqN20eKLWwYthrh9W3Hy3S+Y35G09uzlr3eAEqOjawjH9Tqd1HQTmEsFbUDGzuWfEGD96A9HIKtNRn6CxUZ+i0G51y3wxBx0Uq8irGlJCTdkaS+IM8fuxAHrgdlwb5umuN0Cf+UgCTx4iM1XJVt3Q+VW0qlXrYcm96n8hU3nc7B8+gxSJj3B1G4qDhH1LYT2dP74rpt3IJqb85n3MkCR8unRtoUAKcxtXY+nhycjs9tB4v6qYyedLfTPJKc2RHvvHj2wTauQ9A7D0yywOwu/cBXVirYk=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(23010399003)(10070799003)(22082099003)(18002099003)(3023799007)(10067099003)(56012099006)(11063799006)(4143699003)(6133799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z3FQNis2LytXSDkyOGVLTUZTN1l3b1VvZlFYWk5GTHR2d1Y5cWlocHN6LzhF?=
+ =?utf-8?B?MEZuRytTd3g3ZnpSVjhBTEJsWUZXWTc1M1FNcWxLZEtja2k0b1FPQWRzTzJG?=
+ =?utf-8?B?dHRVUHJFNGp0R1pHWW0zLy8zMDk2aEYwMUN1VlZoWnAxSURoZlI4RmoweUpK?=
+ =?utf-8?B?clJWdmpNcC9BZVZlU2tZUHdZNFVkT0MxbVlYczNaR1hKV3VCT3lYTWJZZ0Yr?=
+ =?utf-8?B?WG5ESC91dnVJWS9JSFpFZkFvS1k5eHNSVXZORjNGMmRLR3JkeFFJT2ZRVGl4?=
+ =?utf-8?B?ZDR0cXZKYWxVRVZTbDVaeHpJYnA1Kzc2bnpPaXZDRlUydVd1WGFGNWdGVWJo?=
+ =?utf-8?B?R01OQVlnUG1VUitFWjhGdlR3RU43SFBUeUV6WXV2R2dOSjAwUFdldGt5S3F0?=
+ =?utf-8?B?OXgzeXE2bVM1WDJtOWNVZlI2dEFxY0FqU01KY0xTWGNVdWhMRUFvUmo5V2ow?=
+ =?utf-8?B?djJJcm41enNIWk5xYlBjTzJPbmpSWkVBTHE1TllhL01SWlRzQ1F4OTZRd3RB?=
+ =?utf-8?B?aU1SNWt2d1ZXbkRheDVtY3d6WnpYemJmYk1tMjJCc2c3eXZoazJuZkEzSWg1?=
+ =?utf-8?B?c3k0OVNrSWpOU1dPK2hSS3c3WlBZR3huQ0dtemFZUDBKemZYMjB3elY5ajJM?=
+ =?utf-8?B?Mlp0VkIyUHV2V0VOSURjMUFQZlc1NldlTFhuWEl4clN4eWdocWZhcHZtNHBw?=
+ =?utf-8?B?c2trcERjamxQUXlPbUJNSDJ6REFucm9TZkxCcU9iZkcybGlqMDNacmlRWTJK?=
+ =?utf-8?B?aHpWOHdjSDR2ZUdzcy90eGtmRG13Z1hsNnhudHRhRmNHMmxBRGdEZXNEaVk5?=
+ =?utf-8?B?ck14WENldEd3TVJWV3FENXNVTkEvRUYxZXIrSEhsaXE0bkxuNDhlKysvZDc2?=
+ =?utf-8?B?UVV0dTFXSTdYOTVuT044TmJNeWlvVTVBMWpIY05idW5oL0srM2paVENvQkIr?=
+ =?utf-8?B?SG1qNTZIeXN3aElSM2pwZ1Y1eWJpTnlXaW90clRPaTlLMXlYMk5zS05wN3ky?=
+ =?utf-8?B?WmtZKy8yR2FFVEpEdWh6R3RRWHZCZUNFSytSRi9TQjNSamVBYVF3SWZSVEdR?=
+ =?utf-8?B?UitMMkRxMlJxdzFrT1A0VVZ6NlZGdE8rQ1BQanhTSkQ1UWcwN3FPUGFqRGs3?=
+ =?utf-8?B?RXBQZkpMNDJMTm9zWXV1YW0veS9tVGlOeWNJblU5Y3p4WFYrM1c5K3UvejVQ?=
+ =?utf-8?B?QmpRaTliazVjdFZwbzFxcFhUR1ZwL0ptTlZobXdYTHArMlAzR2w0SjBnUStF?=
+ =?utf-8?B?OEJPcjFWeWNNY2p4YkJzSmR0WUZIWU1Tbi90TmRoa1R4S1RtZmVpQVhyNDk4?=
+ =?utf-8?B?a3VXTThTUDlKUkw1MjFvUFE2Mm55UGVMQm9rSEI4aWlUbFlSTytkQnNPWldp?=
+ =?utf-8?B?WjhlUHJQWjE1a0tHa0lPdzUzWWZvaW5iREVuM05aWCtVeml5SUprQlJVbHdz?=
+ =?utf-8?B?U3RURFJ4ckZ3YVdDOXpReTVId0JVQXVsSUlyeVdmRU54S0ZHY25hL01GdzFQ?=
+ =?utf-8?B?U1FPbGFJWnNCVENyM0pMNTRhZllXWUdJSEUvemIveitMQ1Nyd0pQOTI3SE9z?=
+ =?utf-8?B?UDNsVVhoUkVDa0ViWE9nMjdRMFFFeFN1ZWlMTmNxdTdhMUlHWHNzTzhUMlZo?=
+ =?utf-8?B?M0lxK3k2TFFwU1gvVWJkOWFDLzhiMjEzUjlSbm5nYlhQUUhIbmsxMDRCZ3Bw?=
+ =?utf-8?B?cEFRVk9GQk1CZGp1QnBzdGJ3eVJRYVBaaWZrdlJHVUlYMCtZbXdTWDJadnBz?=
+ =?utf-8?B?d2VPSWw0NDBCb2NPMnVONDhITTVmaHVxUWhUMVRvMk9JOHdkSUdEalVRcCtk?=
+ =?utf-8?B?bDZMQjROaElVU2pHTmwyVmUvOFB4MWZ6NEl2dkFRQ1BHS21xblgvMHRtd1Zu?=
+ =?utf-8?B?TFlHaDhWQ21JZVdEL1hSUk9ONjQ0bmVlWUdqYzE3OWx4b2Rqd1NJREZ6WGtl?=
+ =?utf-8?B?bjlzYjBmNkRZeEEvQXRldGhPNC9PckhGSW55UisyQlBXUFc4bWtjVGM1ZktF?=
+ =?utf-8?B?Y2tRZVRPeWtWbHhTY3l3SFVIZVdNNHljZEY3VDBmVXRLZ3loUnlUSC81NzJN?=
+ =?utf-8?B?RlVzblVoMjZRNjZhVlBNbDJ0U3gyckRzUmQvcUlWWHRqWU10K2RtRVExRTl5?=
+ =?utf-8?B?R2VHcGk3SXFEcjlJazdreUJxM1ppeVZqSUZjT2xZbEVSLzZuQmcrSCtJbjk4?=
+ =?utf-8?B?VzQranFkS3BLWHlmR0ljczVMME4wdndXVVMxVUJDd0thaUx1azRJUndPNGpQ?=
+ =?utf-8?B?amUvSHdkc3VOditSb29weDVHZGxmK3VsYUJhNDZtNmM3VEZiVTdrQ3hPR0dP?=
+ =?utf-8?B?MmJnU2tiMW1Yak1ENndVOGhRM1laV202Z1Q0dHovcklualBaMnFxTlJDVWg2?=
+ =?utf-8?Q?Se+isV2X50E0gO2Q1+a1PIQc3Ua/norkeCg7S29Kqs5PE?=
+X-MS-Exchange-AntiSpam-MessageData-1: cg4fGQHdTM3zbQ==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 067aa3a7-ac2a-407e-fe33-08dee8701583
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2026 04:08:43.0742
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qIi8d3D9hgEHK7JDkCwrHncHDGND9ip18mSB+tax650gGtaLqQIxMcK+7uZrs9coqq3wRAvav6Tu9MNzKsSGKA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7961
 
-On Wed, Jul 22, 2026 at 7:44=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
->
->
-> On 21/07/2026 18:31, Aaron Kling wrote:
-> > On Tue, Jul 21, 2026 at 4:46=E2=80=AFAM Jon Hunter <jonathanh@nvidia.co=
-m> wrote:
-> >>
-> >>
-> >> On 18/07/2026 00:19, Aaron Kling via B4 Relay wrote:
-> >>> From: Aaron Kling <webgeek1234@gmail.com>
-> >>>
-> >>> Tegra210B01 has a separate set of skus and speedo tables
-> >>>
-> >>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> >>> ---
-> >>>    drivers/soc/tegra/fuse/speedo-tegra210.c | 22 ++++++++++++++++++++=
---
-> >>>    1 file changed, 20 insertions(+), 2 deletions(-)
-> >>>
-> >>> diff --git a/drivers/soc/tegra/fuse/speedo-tegra210.c b/drivers/soc/t=
-egra/fuse/speedo-tegra210.c
-> >>> index 06c2bcbee5734..699751f4bd0c0 100644
-> >>> --- a/drivers/soc/tegra/fuse/speedo-tegra210.c
-> >>> +++ b/drivers/soc/tegra/fuse/speedo-tegra210.c
-> >>> @@ -65,7 +65,25 @@ static void __init rev_sku_to_speedo_ids(struct te=
-gra_sku_info *sku_info,
-> >>>        sku_info->gpu_speedo_id =3D 0;
-> >>>        *threshold =3D THRESHOLD_INDEX_0;
-> >>>
-> >>> -     if (sku_info->revision >=3D TEGRA_REVISION_A02) {
-> >>> +     if (sku_info->revision >=3D TEGRA_REVISION_B01) {
-> >>> +             sku_info->gpu_speedo_id =3D 1;
-> >>> +
-> >>> +             switch (sku) {
-> >>> +             case 0x00: /* Engineering SKU */
-> >>> +             case 0x01: /* Engineering SKU */
-> >>> +             case 0x83:
-> >>> +                     break;
-> >>> +
-> >>> +             case 0x87:
-> >>> +                     sku_info->cpu_speedo_id =3D 3;
-> >>> +                     break;
-> >>> +
-> >>> +             default:
-> >>> +                     pr_err("Tegra210B01: unknown SKU %#04x\n", sku)=
-;
-> >>> +                     /* Using the default for the error case */
-> >>> +                     break;
-> >>> +             }
-> >>> +     } else if (sku_info->revision >=3D TEGRA_REVISION_A02) {
-> >>>                switch (sku) {
-> >>>                case 0x00: /* Engineering SKU */
-> >>>                case 0x01: /* Engineering SKU */
-> >>> @@ -154,7 +172,7 @@ void __init tegra210_init_speedo_data(struct tegr=
-a_sku_info *sku_info)
-> >>>        speedo_revision =3D get_speedo_revision();
-> >>>        pr_info("Speedo Revision %u\n", speedo_revision);
-> >>>
-> >>> -     if (speedo_revision >=3D 3) {
-> >>> +     if (sku_info->revision =3D=3D TEGRA_REVISION_B01 || speedo_revi=
-sion >=3D 3) {
-> >>>                sku_info->cpu_speedo_value =3D cpu_speedo[0];
-> >>>                sku_info->gpu_speedo_value =3D cpu_speedo[2];
-> >>>                sku_info->soc_speedo_value =3D soc_speedo[0];
-> >>>
-> >>
-> >> I am guessing that this is derived/ported from some kernel that NVIDIA
-> >> has released in the past. It would be nice to include a reference to
-> >> whatever change was used to create this.
-> >
-> > It is loosely based on [0], but restructured to not change nearly as
-> > many lines. How would you want this referenced? Something like a
-> > 'based on downstream 5.10' blurb in the commit message or a direct
-> > reference to the commit somehow?
->
-> Commit d93f8399053dcf117ff56a3029ff08c0e36f4b75 uses ...
->
-> Based-on:
-> https://lore.kernel.org/r/7703024f-8882-9eec-a122-599871728a89@gmail.com
-> Based-on-patch-by: Heiner Kallweit <hkallweit1@gmail.com>
->
-> So this would be fine.
+On Thursday, July 23, 2026 11:46=E2=80=AFAM Aaron Kling via B4 Relay wrote:
+> From: Alexandre Hamamdjian <azkali.limited@gmail.com>
+>=20
+> The PMC in Tegra210B01 is very similar to the one in the original
+> Tegra210, but has a few powergate differences. Specifically sata, venc,
 
-Adding the following to the commit message:
+I believe VENC does exist on T210B01.
 
-Based-on: https://gitlab.com/nvidia/nv-tegra/linux-5.10/-/commit/8555ef4988=
-d3b39d91791794825c354b3c9377ba
-Based-on-patch-by: Alex Frid <afrid@nvidia.com>
+Aside that,
 
-results in the following checkpatch warnings:
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 
- =E2=97=8F checkpatch.pl: :174: WARNING: Prefer a maximum 75 chars per line
-(possible unwrapped commit description?)
- =E2=97=8F checkpatch.pl: :174: WARNING: Non-standard signature: Based-on-p=
-atch-by:
+> and ve2 are removed.
+>=20
+> Signed-off-by: Alexandre Hamamdjian <azkali.limited@gmail.com>
+> Co-developed-by: Thomas Makin <halorocker89@gmail.com>
+> Signed-off-by: Thomas Makin <halorocker89@gmail.com>
+> Co-developed-by: Aaron Kling <webgeek1234@gmail.com>
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 61 +++++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 61 insertions(+)
+>=20
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index f419a5395545f..d133f445e4ec4 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -3897,6 +3897,66 @@ static const struct tegra_pmc_soc tegra210_pmc_soc=
+ =3D {
+>  	.has_single_mmio_aperture =3D true,
+>  };
+> =20
+> +static const char * const tegra210b01_powergates[] =3D {
+> +	[TEGRA_POWERGATE_CPU] =3D "crail",
+> +	[TEGRA_POWERGATE_3D] =3D "3d",
+> +	[TEGRA_POWERGATE_PCIE] =3D "pcie",
+> +	[TEGRA_POWERGATE_MPE] =3D "mpe",
+> +	[TEGRA_POWERGATE_CPU1] =3D "cpu1",
+> +	[TEGRA_POWERGATE_CPU2] =3D "cpu2",
+> +	[TEGRA_POWERGATE_CPU3] =3D "cpu3",
+> +	[TEGRA_POWERGATE_CPU0] =3D "cpu0",
+> +	[TEGRA_POWERGATE_C0NC] =3D "c0nc",
+> +	[TEGRA_POWERGATE_SOR] =3D "sor",
+> +	[TEGRA_POWERGATE_DIS] =3D "dis",
+> +	[TEGRA_POWERGATE_DISB] =3D "disb",
+> +	[TEGRA_POWERGATE_XUSBA] =3D "xusba",
+> +	[TEGRA_POWERGATE_XUSBB] =3D "xusbb",
+> +	[TEGRA_POWERGATE_XUSBC] =3D "xusbc",
+> +	[TEGRA_POWERGATE_VIC] =3D "vic",
+> +	[TEGRA_POWERGATE_IRAM] =3D "iram",
+> +	[TEGRA_POWERGATE_NVDEC] =3D "nvdec",
+> +	[TEGRA_POWERGATE_NVJPG] =3D "nvjpg",
+> +	[TEGRA_POWERGATE_AUD] =3D "aud",
+> +	[TEGRA_POWERGATE_DFD] =3D "dfd",
+> +};
+> +
+> +static const struct tegra_pmc_soc tegra210b01_pmc_soc =3D {
+> +	.supports_core_domain =3D false,
+> +	.num_powergates =3D ARRAY_SIZE(tegra210b01_powergates),
+> +	.powergates =3D tegra210b01_powergates,
+> +	.num_cpu_powergates =3D ARRAY_SIZE(tegra210_cpu_powergates),
+> +	.cpu_powergates =3D tegra210_cpu_powergates,
+> +	.has_tsense_reset =3D true,
+> +	.has_gpu_clamps =3D true,
+> +	.needs_mbist_war =3D false,
+> +	.has_io_pad_wren =3D true,
+> +	.maybe_tz_only =3D true,
+> +	.num_io_pads =3D ARRAY_SIZE(tegra210_io_pads),
+> +	.io_pads =3D tegra210_io_pads,
+> +	.num_io_pad_vctrls =3D ARRAY_SIZE(tegra210_io_pad_vctrls),
+> +	.io_pad_vctrls =3D tegra210_io_pad_vctrls,
+> +	.num_pin_descs =3D ARRAY_SIZE(tegra210_pin_descs),
+> +	.pin_descs =3D tegra210_pin_descs,
+> +	.regs =3D &tegra20_pmc_regs,
+> +	.init =3D tegra20_pmc_init,
+> +	.setup_irq_polarity =3D tegra20_pmc_setup_irq_polarity,
+> +	.powergate_set =3D tegra114_powergate_set,
+> +	.irq_set_wake =3D tegra210_pmc_irq_set_wake,
+> +	.irq_set_type =3D tegra210_pmc_irq_set_type,
+> +	.reset_sources =3D tegra210_reset_sources,
+> +	.num_reset_sources =3D ARRAY_SIZE(tegra210_reset_sources),
+> +	.reset_levels =3D NULL,
+> +	.num_reset_levels =3D 0,
+> +	.num_wake_events =3D ARRAY_SIZE(tegra210_wake_events),
+> +	.wake_events =3D tegra210_wake_events,
+> +	.pmc_clks_data =3D tegra_pmc_clks_data,
+> +	.num_pmc_clks =3D ARRAY_SIZE(tegra_pmc_clks_data),
+> +	.has_blink_output =3D true,
+> +	.has_usb_sleepwalk =3D true,
+> +	.has_single_mmio_aperture =3D true,
+> +};
+> +
+>  static const struct tegra_io_pad_soc tegra186_io_pads[] =3D {
+>  	TEGRA_IO_PAD(TEGRA_IO_PAD_CSIA, 0, 0x74, 0x78, "csia"),
+>  	TEGRA_IO_PAD(TEGRA_IO_PAD_CSIB, 1, 0x74, 0x78, "csib"),
+> @@ -4824,6 +4884,7 @@ static const struct of_device_id tegra_pmc_match[] =
+=3D {
+>  	{ .compatible =3D "nvidia,tegra194-pmc", .data =3D &tegra194_pmc_soc },
+>  	{ .compatible =3D "nvidia,tegra186-pmc", .data =3D &tegra186_pmc_soc },
+>  	{ .compatible =3D "nvidia,tegra210-pmc", .data =3D &tegra210_pmc_soc },
+> +	{ .compatible =3D "nvidia,tegra210b01-pmc", .data =3D &tegra210b01_pmc_=
+soc },
+>  	{ .compatible =3D "nvidia,tegra132-pmc", .data =3D &tegra124_pmc_soc },
+>  	{ .compatible =3D "nvidia,tegra124-pmc", .data =3D &tegra124_pmc_soc },
+>  	{ .compatible =3D "nvidia,tegra114-pmc", .data =3D &tegra114_pmc_soc },
+>=20
+> --=20
+> 2.54.0
+>=20
+>=20
+>=20
 
-Should I ignored those and submit anyways? I ask because I've been
-NAKed in the past for submitting things with many cases of existing
-precedence in the kernel that resulted in similar warnings.
 
-Aaron
+
+
