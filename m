@@ -1,67 +1,67 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F763EE1DC
-	for <linux-tegra@vger.kernel.org>; Fri, 24 Jul 2026 09:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569AE3F20FC
+	for <linux-tegra@vger.kernel.org>; Fri, 24 Jul 2026 09:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784883867; cv=none; b=i8FGupCe+mfPbeganK27iyxe3/JrbO3vhgj/OyPc3SfG7wVxmhTAdxQw00V3Gchi3ryyhre0iaT8PXnoxY7laJouwKwssImaDE2wJny56QBntKn59a1mHtjyrkgI0FcHwrMJjOeAVsrHijRtZZJIpwi8dzeNzFYFS9v+jYFdivQ=
+	t=1784883869; cv=none; b=sVAgoIN+3HSkS6c2RUG4/IOVSzqq8diYFwTbn7E71JViUo47y3ln+U/+W3fY4vCA5N1da312gzNgELRQoVhjboiDTRYJQ8sbCPhymMgQ2khK0284lVEQAMgDd0YrhP1yfctB6dGkgc+l2LGc8pYNc6n+0/pegYTZIUpl+ZtA8AQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784883867; c=relaxed/simple;
-	bh=avXrZ+5B5tjwtUKvf/CVoHvEaPEqaWPpS7ZwUFxswLY=;
+	s=arc-20240116; t=1784883869; c=relaxed/simple;
+	bh=qi2V6YqGjc3ox5XSg9D+PgsVQmlPliMSkFPKWxRHUHE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ilcOxs7ibQZDcuyqaOikUqMgPMcYtk/jXGGBL2GsIQdNQGmf54jCQE54A+jqFyF+sAT7y3kbSvy42YoLZ264g50o+/EXf+LKmVKJz4IvOfZ3HT/nksdo46vXzqyctY3LmWeSIEtEpVDte3BRX/sUHsxYivXagoNNCptHryoyOPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=PdbonZ0+; arc=none smtp.client-ip=209.85.128.42
+	 In-Reply-To:To:Cc; b=MJQ2fKD5+fghbozUB+g0j2BS6TrTb/3dsoXaVIiiWcG3MXu+1cAgupvRvd5WIaI6C66pkFwC6fvwp/XvoSOxA4wb0bUssACJSFB1pMFcd/tk0VraUV/eTt+YrKbcJwYYF01CV/TmoO79k+XW3IW24Yj0tiGu6evKhBlrMf5eML4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=TgZisXPe; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="PdbonZ0+"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4954a32cf1eso1238215e9.3
-        for <linux-tegra@vger.kernel.org>; Fri, 24 Jul 2026 02:04:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="TgZisXPe"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-47f707e5d75so165219f8f.1
+        for <linux-tegra@vger.kernel.org>; Fri, 24 Jul 2026 02:04:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1784883864; x=1785488664; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1784883866; x=1785488666; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=HQnvaHgupyGQPniAuZ9m3sJLh0U25N0HAPnxpHfI//A=;
-        b=PdbonZ0+K8CvkHkhmfNPZRo2SIl1mZ2JZqCEwKmWZEW1/AXWUDKVls26FrII52X6D5
-         Ye3CgwEzYbI4RlWOxvtjcZupLhHMz7mLbLAcXPx6bC9BcRRovILbcVRMxc9Z9IyzwTc1
-         ymrwyR52g/fL5XL9Z7lg5C0wql1nlpdbubbUXmmHkmracWnCIvI7SwhBu9dKtnyBnu5q
-         hipsLOiNpW1VVivIG0wg9Pidqvf6IHfADcVLu0J+4EMcoSQSBp+yC3rrJ4ool9yeJPDl
-         VGAUZBYslSd5mRwZe9DSj82zHpltY8tKnvudE844gcdU3OOjwvsqJ1p64eTBayuJhHcl
-         9mPw==
+        bh=anoKW8qvKaE42kWsvt3mIJI+NxZdvkAtfEA51BXm644=;
+        b=TgZisXPed4rf4NaTDmrIv0D/YcRccuclKTPYKRiObeZZDz/DnWPz8+AWW4gKZR+Y+j
+         niS3eBKV8x8Xz8JXpQQqlmmo4+NnE168XLCGRcrTMqcocxg8fXR6W5C1YUp7anWjVZg5
+         vstue14Th6IquO5d0gdntuwrJyvW/QHfYoKgE/y8GY7nQeVapOJZ6FNVOyEBHRa9c96z
+         QLP81qhGtx1EUcLODxVkj20vYF1eBnfzOy/lkhcOTG7Fpey3SYFn2iTI1yJuWMGhOpLu
+         NXaSiUqFPTPktBMDU2HSJe6/RxEpRc1/vNLhvtkrs/4rbtxMw8oc9DqzybPsGfOaV390
+         hkNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784883864; x=1785488664;
+        d=1e100.net; s=20251104; t=1784883866; x=1785488666;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=HQnvaHgupyGQPniAuZ9m3sJLh0U25N0HAPnxpHfI//A=;
-        b=Ts0BZ6mnibit8Q/RTPhyjf4RNcOUHdNFlrwFa7HEoxtRFY4/VFMgww21RkVYTpiXsN
-         SD1KnWD1yNi4akn2uLL2YxFpDLoeYLIMzpo979Q7angTjbTcdjamiN8uX6TjPFZJBXnr
-         DN+sOPqiqA6d+GlV+P9634fn1Vu+SjdBPzgq8hvJma5+19Boz510yq7KjWqoUGR/RWi7
-         U4MGdBO0v6UR/lzMWapKayuXfw0ZuEK8GlbVicjt1ETNKBv5UpNf5Mx8bsMU84glHN4C
-         lf82SLtsArOgFwJV53yRnhKYk9R1IjcEOVTprvv2pBr1sVn2ISVyL4QmIzZT3gsU1VhQ
-         h1Yw==
-X-Forwarded-Encrypted: i=1; AHgh+Ro1fqRqoBb++1xNOlblEymhwtoTM2Qct+GZ6ozyA09OzsblKo0iTPzHMThNe65hiCXPi6rMyvS2ByoE5A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG2nq8/SPDlsqWCvKeDFTXjxUNPcx90DLlvvHxG8PFg9FiSO/u
-	FvYC1dbktvASG6ldE1Ed5CA3Kjsjde6oHGJSnYYnNTRmSU+j85c8Har0rM3JJ5XM4n8=
-X-Gm-Gg: AR+sD12wiPQ9dnHGs9jZAkrv5czLJhZwD7c7xl+CkVBG+FQqy/2vR+Ql08iFWSj10Nv
-	SCfSMXidgdwVad0jVV9gLOp/2lgJ6LgXUvitws5q+0YE+ItDWsmn0vIPhIGxLygVFR8IWCJ3aCz
-	JDxw+BSjaMIHm7ndKqP40p+8Gm3qHT4mJtRQTlc9YE7XiHN02urWnfFztQ2Cc3KNxu0LHLfWVY+
-	r6tWn8obHbESbhweuQyH3R6xWOx2lz4YT8b43KwA0HV+dgteIcdL7C7Vqeiy+uge3MDrfmx9jcn
-	ptJz/F5rom9TnoB7gHaeXemLnrcRaVbJsFoH/xlFEsA8n5nbuEGF7E+Pl2qxf+HrN/KICsidQHq
-	fhzeIZKxhBItJ/lUnG5ZjO4Fxw9DgvSoDI+NDm01tTbAranGxsEIgiyskyvToN0w0fHINnXknGP
-	iQbs4Jvk6titA=
-X-Received: by 2002:a05:600c:1f92:b0:495:4c62:9d43 with SMTP id 5b1f17b1804b1-49573d1ff7bmr72020495e9.34.1784883863694;
-        Fri, 24 Jul 2026 02:04:23 -0700 (PDT)
+        bh=anoKW8qvKaE42kWsvt3mIJI+NxZdvkAtfEA51BXm644=;
+        b=Qj/z8HUPY5bLGvqD92E4A+bzmEfe85SkrtxUk8LxH8A1XI/gylcXdeAbM5TT8YmejH
+         NEZqFbvoC/gzGI5MVot151dcZc1HFFzNFbHVywdQ2FksxJqzWsjFhLF3HWFphn9GhdAx
+         o4NSPrStArrE/OP71osjqn0riG+8YgaLjefkih58rs5wW4HVhlpVy5uXdH0HCaBr4dbV
+         e0kVOgYobbv5HuoRN1qM9/v42Nji/Pi7eHPR1wE9mShW5v1sFgGL8R/oI2LGuFSSYPTq
+         bbtxalaabQk151yoWrjs2K+FB1LWJcscZi1t1WszCeYClD4DCrbVapqE+AMgyL9S18Zs
+         QUjQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rohrj+iCp0XRcJ6G4LwbEEJwF87Vqjzix3cvzTKPcETG2U7mnOm+KH8N1C8l/5AvcgnllP6YLJpY7pmrg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0S092CqxuhlhCXP/nMzfXEboP3h9xr0rk1/Cewn3chb0Ttgy7
+	14eW4S2JLRX68ajHFvLaCC87iKJgWyKmOJrScmwpXGA2u/TQIWAfmYw1s7aHxTRuW5U=
+X-Gm-Gg: AR+sD138y3oVNjG9y7S2Q2tUdGBrrF1Ij8zS7CG2FhwDFGEHLc25VE1VTB8mLmmSDXX
+	FYzSjurMcMOnLDrSDS1lJjD2/71n1a2LeJ4WPfklIdMziHqrgnTgRb+fLEOc8WhyJe3EFGVs4kQ
+	+LA/lfMFa4FiooozdNTxLqJUww42wOvLnloRb2PYODoi5xRgxsXVocFBluiHoDvpcCc4Yi5VASd
+	w3MULRSuKA2qVjU32/iMjxpYCAqrU0/APtNxK0YLmGaqfedeI5aznw/Q50mZkQ/qjU84GLBI1A5
+	AuOZtnUtVtxW/QNV+1Tsc6qmYNGLOa8bPD+DGraRw07Dh7Uc1cz8V6a4d36nSg4lJ0Is41excQ7
+	53vaEYAzuCFn2E3nAj9r0AnHe0E4qvW7lybZLluCsVwVvOtzY8hiPuS27db4ajZxmpIYjMpihxE
+	dB
+X-Received: by 2002:a05:600c:1990:b0:48f:d5b8:5b07 with SMTP id 5b1f17b1804b1-49573cd8927mr70665895e9.20.1784883865686;
+        Fri, 24 Jul 2026 02:04:25 -0700 (PDT)
 Received: from localhost ([2a01:e0a:3c5:5fb1:e584:93af:f3aa:2c19])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4957af6b049sm62081735e9.6.2026.07.24.02.04.23
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4957afb4da8sm50979535e9.12.2026.07.24.02.04.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jul 2026 02:04:23 -0700 (PDT)
+        Fri, 24 Jul 2026 02:04:25 -0700 (PDT)
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Fri, 24 Jul 2026 11:03:57 +0200
-Subject: [PATCH v2 6/7] clk: tegra: clean-up simple provider misuse of the
+Date: Fri, 24 Jul 2026 11:03:58 +0200
+Subject: [PATCH v2 7/7] clk: ti: clean-up simple provider misuse of the
  consumer API
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -71,7 +71,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260724-clk-provider-simple-clean-v2-6-56f306156d25@baylibre.com>
+Message-Id: <20260724-clk-provider-simple-clean-v2-7-56f306156d25@baylibre.com>
 References: <20260724-clk-provider-simple-clean-v2-0-56f306156d25@baylibre.com>
 In-Reply-To: <20260724-clk-provider-simple-clean-v2-0-56f306156d25@baylibre.com>
 To: Andrew Lunn <andrew@lunn.ch>, 
@@ -90,20 +90,20 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
  linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, 
  Jerome Brunet <jbrunet@baylibre.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1061; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=avXrZ+5B5tjwtUKvf/CVoHvEaPEqaWPpS7ZwUFxswLY=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBqYyqC3CQlE9ZZIVg5FO31DSHE8VYccHPXetZHC
- CBbG7T1HaCJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCamMqggAKCRDm/A8cN/La
- hdLjEACXqz7q4lL8DurbW6pS/HNGz1tLg+/2ZSOd2a7o3s1z2YOBOJHX5vpJFLW/nIYJQw5So1e
- bjWoWmm6BY5JCwtK8uqJ2bemWRXcpKLvIlUZY0FVmgQESFPtFI6OdwKwVPkWbdp0eS6LCSh/q6G
- JuMStoA3PBKgBu53Ve6ciKUHdiiBoMmgvHq0BSCaqIGndaJkgfdg4XuoiI/jJm6AzgtMB/1nUqs
- jbtnez8Ei4l7beEGIPt0nkoY3Nkfb+0yB+/jwtJ6N0qPr6whsRWIHOAdwMqA8Iq1+REmschxKZG
- rXPy0b12PE93ipjZMtunqFaT6XGz/iBiZRfZ1C5sGRIKSwh58YEZyIJDtz4lXRKejKn9ziciY/R
- JzXZTezQ7P2U3Wzw8rE957D+tus8PvY0lrAY8jzO6MQ6Xm9T7WbR6OP7GtkdQMOKn0NLEShvhbe
- oVzeAVhbWJXuikQDeKeq6wN+DATSFxT/BCw9z1g0PPQ4DuJoYiOXw0DbuoIL/1ar9IvnWpzAWzv
- +YYi227ullORrzbQ225A5CHiau0GS0MokdcCulaJSeznIQwGVMkbJy6v0tlxRii8q2Qtb9CCoQI
- rqGyS2+E25eCLne9dNnKOrjnKPB1NUFEawcRFsnJ1o1K+N0G+eiJ5YPh5DcnSVvF1h1Kl0VzA/E
- k1+4dgdZ/1iNGHQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=911; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=qi2V6YqGjc3ox5XSg9D+PgsVQmlPliMSkFPKWxRHUHE=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBqYyqD8X6HJICJaogPLmVW5ml1R75cJutw+gfiJ
+ tB0/SaVRoeJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCamMqgwAKCRDm/A8cN/La
+ hZKDD/48CqDz/QRWxvqQiZfXQXrQZ+Wgc2Ef1vVKm04mZiagVtEgtLY8z82Jakzu+XTZ/upstvz
+ xSnqrHDzMM2PT/UOqYhUTHR276luuahMFc+5GHs8qgLWSI4K6l1qQpFASzrkFMJ99geCBuSUUkw
+ BcC1TcEoLVUZQxMiXPcKB9ZpJkpXEl6c0Iwpdblk7tIihwTXYWc4GLLUzWezJRfgtOuVwc9rVFJ
+ 8DomqHnipH4Gy56+1W+dWpiNzNXBjL73LXBFhsmlE8aNInLh7EjAGT9bAl8WES5M2ygH2BVuTyH
+ BTfCvbPSIB+Janl3MVM/dTv6F/omRpFnOLIBrQtCTdHYGjTkRMJipWghoIvNYAY1fHORlsuyltp
+ Ag04g+L7BFDYrlqh90BKDEWELW/DVl1FlzaMR6MAzFyiJ7Ubm2vaUgk4mYL+JnLMB93sH0TVJ7G
+ ircePpHwwcUwnjE3cefSvi4pCtmxVrbb3cqGlmjG7fmg5Up2aRTnHHdbzXvpwYFSlYnhHNXfweJ
+ 0+ya2NqXjGjy8tEODN4dubBw7zAnxm0i+5ovlTpEJaiHLqYet0Inqc63sWoAstKpXL2pHo/9ZUS
+ h9pjOdE/2Paxlah/zqAGJZBfh0+/EtVSCbHz/ikGAMSEEjMMkd7RbIiWpBjguLYslB7AnsJ5WiB
+ BEqFaw6yMp0mO9Q==
 X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
  fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
@@ -116,22 +116,22 @@ consumer interface and corresponding clk_hw interface exist.
 Reviewed-by: Brian Masney <bmasney@redhat.com>
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/tegra/clk-tegra210.c | 2 +-
+ drivers/clk/ti/clockdomain.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 0c86cff719e3..df1d7b471745 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -1460,7 +1460,7 @@ static int tegra210_pllx_dyn_ramp(struct tegra_clk_pll *pllx,
- 	udelay(1);
+diff --git a/drivers/clk/ti/clockdomain.c b/drivers/clk/ti/clockdomain.c
+index c897ad7e681e..aedbe78bf1e4 100644
+--- a/drivers/clk/ti/clockdomain.c
++++ b/drivers/clk/ti/clockdomain.c
+@@ -104,7 +104,7 @@ int omap2_init_clk_clkdm(struct clk_hw *hw)
+ 	if (!clk->clkdm_name)
+ 		return 0;
  
- 	pr_debug("%s: dynamic ramp to m = %u n = %u p = %u, Fout = %lu kHz\n",
--		 __clk_get_name(pllx->hw.clk), cfg->m, cfg->n, cfg->p,
-+		 clk_hw_get_name(&pllx->hw), cfg->m, cfg->n, cfg->p,
- 		 cfg->input_rate / cfg->m * cfg->n /
- 		 pllx->params->pdiv_tohw[cfg->p].pdiv / 1000);
+-	clk_name = __clk_get_name(hw->clk);
++	clk_name = clk_hw_get_name(hw);
  
+ 	clkdm = ti_clk_ll_ops->clkdm_lookup(clk->clkdm_name);
+ 	if (clkdm) {
 
 -- 
 2.47.3
