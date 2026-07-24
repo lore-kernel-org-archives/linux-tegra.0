@@ -1,461 +1,563 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from sender4-op-o11.zoho.com (sender4-op-o11.zoho.com [136.143.188.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D7435DA78;
-	Fri, 24 Jul 2026 09:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784884405; cv=none; b=u+bQHGldSzbTeNV+9voHn7zS4PfpCbXWO21OChwOeWhUdUGf/LDjeMhgRVDo7Xso++llVYTkI3qZnzdhavtguWZlqE0MFOVVAbdbUeBS2l/saCeBgasMSy9YZSSi1wJjuX4mUSvn0iq2qQu7nakPg1j4nA2ci/O65rCPurO0m70=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784884405; c=relaxed/simple;
-	bh=mJcDNw77NdyWtM53SGB/8AR4Gpz9ghClvL+bhScb5ks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BlwJY4GW4llPlNuG51UDo0Yd6RDkyG1k0ODVdarOtWYHHmB2Pz8sXPJSM/s0E+Wu+cju29hMzOfSH6qL+q6HjPq9y0Esj9UZVTExJ3Q5KHngj2kV1QDGhIoqDSNY4l0SWuE2/buMU3jvRmTjYasjrFL915ZJnD4N04Zg9B15Hqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cYSga7au; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3014156C5;
+	Fri, 24 Jul 2026 12:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784895045; cv=pass; b=RkOnOAJbCvrYe6nFIu+WwB9zC+ndwrsE+EXDC+GUgzV5XNFzIjC+W82l5mt2btUOyY2jUNh/73FI9w0P5cKo2nAELD6qXZtCNulFLzuB2bu1nXISagLRM6nBMq/q+0VTxHzBNWtRwunQWUE8rIcP6GldGmI93Mxy0NfRh8uoI+c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784895045; c=relaxed/simple;
+	bh=3PVL60uLcRI4yvDQx1IrwymmB1TFYT1vk37fGhTxmlE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iug1u3ZYfgGb7v8t0GfuTxFmAzvZhesRAarLJ5C6AilpyWrzLX9dbjokQPvpba4A8eIou+hxiDPnSY82HTqqMTSepuyyWEbTRLzjVUpyM2AmILIvqk2Eu0U6phPI9M3vyFnNHOnI4GWcRiIlThuNJzedAAZa6azLcb7IadN0G6k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=DM9IjqJU; arc=pass smtp.client-ip=136.143.188.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cYSga7au"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCEB31F000E9;
-	Fri, 24 Jul 2026 09:13:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784884403;
-	bh=3QK6gyQhkWOBgkpuC3mjUiU480nGefF4k15Ca4dUWf4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=cYSga7aular65dSj2MUbwJJ4DycAlyRInzXxeQ/YqUwi6f9mVMI4jJEoyKpKAG8g4
-	 0cZRohe/QzecD4xIOQ1R1DiKtX340RgsKewYLH7FwuLKrq3boKRtx9chO2jsVYuU6E
-	 f97HftXxecuOmj2bAR76lSrNcwd2b+utD+jEGySfx2skBX25S0P3aDXYf1gCLbOySt
-	 bGEtHrhGhx9w39HvACO0OQi0UtrtiYC/jFgubYcydD19VSW2bU6Eqe/mVT6e13U2M3
-	 NZY90qtmu4+lqI8epsob3yD66vUt7ofGh3Vyr2Nj7idC7lKWglcln+yxP4gteNTY6c
-	 inSWay+JbEGNw==
-Date: Fri, 24 Jul 2026 10:13:17 +0100
-From: Sudeep Holla <sudeep.holla@kernel.org>
-To: Pragnesh Papaniya <pragnesh.papaniya@oss.qualcomm.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rajendra Nayak <rajendra.nayak@oss.qualcomm.com>,
-	Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH RFC 01/10] firmware: arm_scmi: Add SCMI QCOM Generic
- Extension Protocol documentation
-Message-ID: <20260724-crouching-starfish-of-apotheosis-d1cdf8@sudeepholla>
-References: <20260724-rfc_v8_scmi_memlat-v1-0-cb732bcff1f4@oss.qualcomm.com>
- <20260724-rfc_v8_scmi_memlat-v1-1-cb732bcff1f4@oss.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="DM9IjqJU"
+ARC-Seal: i=1; a=rsa-sha256; t=1784894957; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=XytxdjCGX9EVUPtKHF9e+bqP8A0cCXkZpjpzzRG0dGjvUYRYcAh6Y28Aq0zdwe+8AdS0x2LLhgchFvco13lZXmzHRS1P311dnA5e7UXs7dXA0MgXm1/tA6glovCBav/JXtd1SH6LVt1sIIOsu4z+/L++ZRAMXpwvZ6Y9a5hq7Og=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1784894957; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=DeEZcBVEsWInovxiw4dTOa5TRdK+0FTpKBalsMipvug=; 
+	b=JnD439G1G5v2NpSXVTamKPt4m956jX/SiSkVFQJyR8L+/Tzfcz085c8FPQDIm1O9UU0rkWqmeYYp/9INnwOJJg9koEjGsYp+o3hKrvNRRHQQP9jIuiTFBONMiQ50KaKCTWw3+QtroSfWuKweTO9haNeRIBLOFveMfJT9agHj8Xs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1784894957;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
+	bh=DeEZcBVEsWInovxiw4dTOa5TRdK+0FTpKBalsMipvug=;
+	b=DM9IjqJUPkdiUu8sGP59ecg8r/tMoNO5Ucrjlfp4CnQV0i6E7tPp3MHZHIK06Xf+
+	EyXUTV8YPyUEvAZ8TTPMKZdAi/yeV5ewIIepEP577y2UoMRbsytnA4WAQYtOppnR8oO
+	8MACe4aWiJ5XesjgWMqpy/fAHasX7/jXdqs3/ukY=
+Received: by mx.zohomail.com with SMTPS id 1784894955910533.5313550215117;
+	Fri, 24 Jul 2026 05:09:15 -0700 (PDT)
+From: =?utf-8?q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
+Date: Fri, 24 Jul 2026 13:08:58 +0100
+Subject: [PATCH] drm/gem: Move pages_to_sg helper into drm_gem.c
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260724-rfc_v8_scmi_memlat-v1-1-cb732bcff1f4@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20260724-get_pages-v1-1-b10e5d65628e@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDcyMT3fTUkviCxPTUYt1Uo1RLw2RT49TERGMloPqCotS0zAqwWdGxEH5
+ xaVJWanIJyACl2loAZ6PVx20AAAA=
+X-Change-ID: 20260724-get_pages-e2e91c53eaa3
+To: Alex Deucher <alexander.deucher@amd.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Lucas Stach <l.stach@pengutronix.de>, 
+ Russell King <linux+etnaviv@armlinux.org.uk>, 
+ Christian Gmeiner <christian.gmeiner@gmail.com>, 
+ Jianmin Lv <lvjianmin@loongson.cn>, Qianhai Wu <wuqianhai@loongson.cn>, 
+ Huacai Chen <chenhuacai@kernel.org>, Mingcong Bai <jeffbai@aosc.io>, 
+ Xi Ruoyao <xry111@xry111.site>, Icenowy Zheng <zhengxingda@iscas.ac.cn>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, 
+ Boris Brezillon <boris.brezillon@collabora.com>, 
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+ Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Zack Rusin <zack.rusin@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Matthew Brost <matthew.brost@intel.com>, 
+ =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+ Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>, 
+ Sumit Semwal <sumit.semwal@linaro.org>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, etnaviv@lists.freedesktop.org, 
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
+ nouveau@lists.freedesktop.org, linux-rockchip@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, 
+ intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org, 
+ linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, 
+ =?utf-8?q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=17563;
+ i=adrian.larumbe@collabora.com; h=from:subject:message-id;
+ bh=3PVL60uLcRI4yvDQx1IrwymmB1TFYT1vk37fGhTxmlE=;
+ b=owEB7QES/pANAwAKAQ4mfkzuU0M9AcsmYgBqY1XgrrsDazA78XCqv4Hkn/ujXzt2KDrdKQQnM
+ HDXI/outcGJAbMEAAEKAB0WIQQyQDDowAUXXfk3B6QOJn5M7lNDPQUCamNV4AAKCRAOJn5M7lND
+ PRlEC/4otGAiqlGdJW1PM79TRx/wgUCZsSgcgrihNvGOYUqY7R9iKNivSpxEvj7LI/vuWtkk1Sc
+ zz5Fl15Hx81JDA5QrDvVIaw6+h2UxR/395AaKIu6dxEVD/nUAljE+CGzvKXvbg1ef5mcl5xwkEU
+ NG8Zife//57e2Cxx3jlm8K05OHWpAxmvpgK/+TnbbjGN0S2sU0mKLKkOI/IjpKDtXbRawqmkP8f
+ ig5FFku9ryqj7iISJIc0IHOFkwlK6amszLd0X/XZqc5HCl3rWVGWNYBC0brOGcyxZ6Cz+vBACkw
+ Fxxqt5KEzITsrBK+ame24r5yCJ36qiVAuHoy1Yrw9GO3H4xt/8zM7lCwOdCUkFmyErXSPHmjSQr
+ 4uEDJziN3dnZkl+tTIHkGxbVzjQZgTaLF8XDZFaFpMCUz+aIyb3LpPY7hirfcwSnFl7UoaiynXg
+ nXS0x8DIJ3+QDNXhi7eYtwSDPtiuv6RTaJlr8oBkoACoTgxRbv8Q+ZCgyvm91ZdVCDtDk=
+X-Developer-Key: i=adrian.larumbe@collabora.com; a=openpgp;
+ fpr=324030E8C005175DF93707A40E267E4CEE53433D
 
-On Fri, Jul 24, 2026 at 12:48:06PM +0530, Pragnesh Papaniya wrote:
-> Add System Control Management Interface (SCMI) Qualcomm Generic Extension
-> Protocol documentation. It consists of a small set of generic SET/GET/
-> START/STOP commands, which is used to turn on/off and configure Qualcomm
-> SoC specific algorithms that run on the SCP.
-> 
-> It currently only supports MEMLAT (memory latency governor) algorithm.
-> The immutable pairing of the MEMLAT algorithm string with the supported
-> param_ids associated with it are documented here.
-> 
-> Co-developed-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-> Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-> Signed-off-by: Pragnesh Papaniya <pragnesh.papaniya@oss.qualcomm.com>
-> ---
->  .../arm_scmi/vendors/qcom/qcom_generic.rst         | 954 +++++++++++++++++++++
->  1 file changed, 954 insertions(+)
-> 
-> diff --git a/drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst b/drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst
-> new file mode 100644
-> index 000000000000..42e327d53841
-> --- /dev/null
-> +++ b/drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst
-> @@ -0,0 +1,954 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +.. include:: <isonum.txt>
-> +
-> +==================================================================================
-> +System Control and Management Interface (SCMI) Qualcomm Generic Extension Protocol
-> +==================================================================================
-> +
-> +:Copyright: |copy| Qualcomm Technologies, Inc. and/or its subsidiaries.
-> +
-> +:Authors:
-> +   - Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-> +   - Pragnesh Papaniya <pragnesh.papaniya@oss.qualcomm.com>
-> +
-> +System Control and Management Interface Qualcomm Generic Extension Vendor Protocol
-> +==================================================================================
-> +
-> +System Control Management Interface (SCMI) Qualcomm Generic Extension Protocol
-> +consists of a small set of generic SET/GET/START/STOP commands, which is used to
-> +turn on/off and configure Qualcomm SoC specific algorithms that run on the SCP.
-> +Each algorithm is identified through an algorithm string and has an immutable list
-> +of param_ids. All supported algorithms (currently just MEMLAT) have their own
-> +dedicated section and are listed after the generic commands.
-> +
+None of the semantics of the function tell of it being a PRIME-exclusive
+entry point. In fact, most drivers seem to be using it to translate a list
+of pages into an sg table that can be used for GPU mapping later on, rather
+than just for sharing an object's pages with another driver.
 
-This multiplexer 'N' random algorithn into one single custom SCMI protocol ID
-(0x80) seems to go against the general SCMI design principle and this seems
-like a deliberated attempt to circumvent the standard SCMI protocol template.
-Standard SCMI expects distinct features to occupy their own vendor protocol
-IDs and utilize standard protocol discovery.
+Move it across files and rename accordingly.
 
-I have asked details of algorithm to be listed here atleast few times now
-and has been constantly ignored. So don't complain if I start ignoring these
-patches.
+Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+---
+drm_prime_pages_to_sg() has no real dependency on PRIME/dma-buf interfaces.
+It is a generic helper that converts a page array into a scatter/gather
+table via dma_map_sg_attrs. Nothing in its implementation touches struct
+dma_buf or import/export logic.
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c |  6 ++---
+ drivers/gpu/drm/drm_gem.c                   | 35 ++++++++++++++++++++++++++
+ drivers/gpu/drm/drm_gem_shmem_helper.c      |  2 +-
+ drivers/gpu/drm/drm_prime.c                 | 38 -----------------------------
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c       |  3 +--
+ drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c |  3 ++-
+ drivers/gpu/drm/loongson/lsdc_gem.c         |  3 +--
+ drivers/gpu/drm/msm/msm_gem.c               |  2 +-
+ drivers/gpu/drm/msm/msm_gem_prime.c         |  2 +-
+ drivers/gpu/drm/nouveau/nouveau_prime.c     |  4 +--
+ drivers/gpu/drm/panthor/panthor_gem.c       |  6 ++---
+ drivers/gpu/drm/radeon/radeon_prime.c       |  5 ++--
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.c |  6 ++---
+ drivers/gpu/drm/tegra/gem.c                 |  4 +--
+ drivers/gpu/drm/vmwgfx/vmwgfx_gem.c         |  4 +--
+ drivers/gpu/drm/xe/xe_dma_buf.c             |  6 ++---
+ drivers/gpu/drm/xen/xen_drm_front_gem.c     |  2 +-
+ include/drm/drm_gem.h                       |  5 +++-
+ include/drm/drm_prime.h                     |  2 --
+ 19 files changed, 68 insertions(+), 70 deletions(-)
 
-> +message_id: 0x1
-> +protocol_id: 0x80
-> +
-> ++------------------+-----------------------------------------------------------+
-> +|Return values                                                                 |
-> ++------------------+-----------------------------------------------------------+
-> +|Name              |Description                                                |
-> ++------------------+-----------------------------------------------------------+
-> +|int32 status      |See ARM SCMI Specification for status code definitions.    |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 attributes |Bits[31:16] Reserved, must be set to 0.                    |
-> +|                  |Bits[15:8] Number of agents in the system. Must match the  |
-> +|                  |value reported by the standard BASE protocol's             |
-> +|                  |PROTOCOL_ATTRIBUTES response.                              |
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
+index b33c300e26e2..c9a98aec7eb6 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
+@@ -203,9 +203,9 @@ static struct sg_table *amdgpu_dma_buf_map(struct dma_buf_attachment *attach,
+ 
+ 	switch (bo->tbo.resource->mem_type) {
+ 	case TTM_PL_TT:
+-		sgt = drm_prime_pages_to_sg(obj->dev,
+-					    bo->tbo.ttm->pages,
+-					    bo->tbo.ttm->num_pages);
++		sgt = drm_pages_to_sg(obj->dev,
++				      bo->tbo.ttm->pages,
++				      bo->tbo.ttm->num_pages);
+ 		if (IS_ERR(sgt))
+ 			return sgt;
+ 
+diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+index 018df97d590d..22c8a3b5f667 100644
+--- a/drivers/gpu/drm/drm_gem.c
++++ b/drivers/gpu/drm/drm_gem.c
+@@ -780,6 +780,41 @@ void drm_gem_put_pages(struct drm_gem_object *obj, struct page **pages,
+ }
+ EXPORT_SYMBOL(drm_gem_put_pages);
+ 
++/**
++ * drm_pages_to_sg - converts a page array into an sg list
++ * @dev: DRM device
++ * @pages: pointer to the array of page pointers to convert
++ * @nr_pages: length of the page vector
++ *
++ * This helper creates an sg table object from a set of pages.
++ * This is useful for implementing &drm_gem_object_funcs.get_sg_table.
++ */
++struct sg_table *drm_pages_to_sg(struct drm_device *dev,
++				 struct page **pages, unsigned int nr_pages)
++{
++	struct sg_table *sg;
++	size_t max_segment = 0;
++	int err;
++
++	sg = kmalloc_obj(struct sg_table);
++	if (!sg)
++		return ERR_PTR(-ENOMEM);
++
++	if (dev)
++		max_segment = dma_max_mapping_size(drm_dev_dma_dev(dev));
++	if (max_segment == 0)
++		max_segment = UINT_MAX;
++	err = sg_alloc_table_from_pages_segment(sg, pages, nr_pages, 0,
++						(unsigned long)nr_pages << PAGE_SHIFT,
++						max_segment, GFP_KERNEL);
++	if (err) {
++		kfree(sg);
++		sg = ERR_PTR(err);
++	}
++	return sg;
++}
++EXPORT_SYMBOL(drm_pages_to_sg);
++
+ static int objects_lookup(struct drm_file *filp, u32 *handle, int count,
+ 			  struct drm_gem_object **objs)
+ {
+diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
+index 22ec52e2ffb8..144d088a477f 100644
+--- a/drivers/gpu/drm/drm_gem_shmem_helper.c
++++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+@@ -825,7 +825,7 @@ struct sg_table *drm_gem_shmem_get_sg_table(struct drm_gem_shmem_object *shmem)
+ 
+ 	drm_WARN_ON(obj->dev, drm_gem_is_imported(obj));
+ 
+-	return drm_prime_pages_to_sg(obj->dev, shmem->pages, obj->size >> PAGE_SHIFT);
++	return drm_pages_to_sg(obj->dev, shmem->pages, obj->size >> PAGE_SHIFT);
+ }
+ EXPORT_SYMBOL_GPL(drm_gem_shmem_get_sg_table);
+ 
+diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+index 9b44c78cd77f..54539a8929c1 100644
+--- a/drivers/gpu/drm/drm_prime.c
++++ b/drivers/gpu/drm/drm_prime.c
+@@ -835,44 +835,6 @@ static const struct dma_buf_ops drm_gem_prime_dmabuf_ops =  {
+ 	.vunmap = drm_gem_dmabuf_vunmap,
+ };
+ 
+-/**
+- * drm_prime_pages_to_sg - converts a page array into an sg list
+- * @dev: DRM device
+- * @pages: pointer to the array of page pointers to convert
+- * @nr_pages: length of the page vector
+- *
+- * This helper creates an sg table object from a set of pages
+- * the driver is responsible for mapping the pages into the
+- * importers address space for use with dma_buf itself.
+- *
+- * This is useful for implementing &drm_gem_object_funcs.get_sg_table.
+- */
+-struct sg_table *drm_prime_pages_to_sg(struct drm_device *dev,
+-				       struct page **pages, unsigned int nr_pages)
+-{
+-	struct sg_table *sg;
+-	size_t max_segment = 0;
+-	int err;
+-
+-	sg = kmalloc_obj(struct sg_table);
+-	if (!sg)
+-		return ERR_PTR(-ENOMEM);
+-
+-	if (dev)
+-		max_segment = dma_max_mapping_size(drm_dev_dma_dev(dev));
+-	if (max_segment == 0)
+-		max_segment = UINT_MAX;
+-	err = sg_alloc_table_from_pages_segment(sg, pages, nr_pages, 0,
+-						(unsigned long)nr_pages << PAGE_SHIFT,
+-						max_segment, GFP_KERNEL);
+-	if (err) {
+-		kfree(sg);
+-		sg = ERR_PTR(err);
+-	}
+-	return sg;
+-}
+-EXPORT_SYMBOL(drm_prime_pages_to_sg);
+-
+ /**
+  * drm_prime_get_contiguous_size - returns the contiguous size of the buffer
+  * @sgt: sg_table describing the buffer to check
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+index b0436a1e103f..a8e8614f8210 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+@@ -3,7 +3,6 @@
+  * Copyright (C) 2015-2018 Etnaviv Project
+  */
+ 
+-#include <drm/drm_prime.h>
+ #include <drm/drm_print.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/shmem_fs.h>
+@@ -104,7 +103,7 @@ struct page **etnaviv_gem_get_pages(struct etnaviv_gem_object *etnaviv_obj)
+ 		unsigned int npages = etnaviv_obj->base.size >> PAGE_SHIFT;
+ 		struct sg_table *sgt;
+ 
+-		sgt = drm_prime_pages_to_sg(dev, etnaviv_obj->pages, npages);
++		sgt = drm_pages_to_sg(dev, etnaviv_obj->pages, npages);
+ 		if (IS_ERR(sgt)) {
+ 			dev_err(dev->dev, "failed to allocate sgt: %ld\n",
+ 				PTR_ERR(sgt));
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
+index 6757ae6ec304..f44484325ddb 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
+@@ -3,6 +3,7 @@
+  * Copyright (C) 2014-2018 Etnaviv Project
+  */
+ 
++#include <drm/drm_gem.h>
+ #include <drm/drm_prime.h>
+ #include <linux/dma-buf.h>
+ #include <linux/module.h>
+@@ -22,7 +23,7 @@ struct sg_table *etnaviv_gem_prime_get_sg_table(struct drm_gem_object *obj)
+ 	if (WARN_ON(!etnaviv_obj->pages))  /* should have already pinned! */
+ 		return ERR_PTR(-EINVAL);
+ 
+-	return drm_prime_pages_to_sg(obj->dev, etnaviv_obj->pages, npages);
++	return drm_pages_to_sg(obj->dev, etnaviv_obj->pages, npages);
+ }
+ 
+ int etnaviv_gem_prime_vmap(struct drm_gem_object *obj, struct iosys_map *map)
+diff --git a/drivers/gpu/drm/loongson/lsdc_gem.c b/drivers/gpu/drm/loongson/lsdc_gem.c
+index 2fb03487c983..37160228244c 100644
+--- a/drivers/gpu/drm/loongson/lsdc_gem.c
++++ b/drivers/gpu/drm/loongson/lsdc_gem.c
+@@ -9,7 +9,6 @@
+ #include <drm/drm_dumb_buffers.h>
+ #include <drm/drm_file.h>
+ #include <drm/drm_gem.h>
+-#include <drm/drm_prime.h>
+ #include <drm/drm_print.h>
+ 
+ #include "lsdc_drv.h"
+@@ -51,7 +50,7 @@ static struct sg_table *lsdc_gem_prime_get_sg_table(struct drm_gem_object *obj)
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+-	return drm_prime_pages_to_sg(obj->dev, tt->pages, tt->num_pages);
++	return drm_pages_to_sg(obj->dev, tt->pages, tt->num_pages);
+ }
+ 
+ static void lsdc_gem_object_free(struct drm_gem_object *obj)
+diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
+index efd3d3c9a449..7e3418290c22 100644
+--- a/drivers/gpu/drm/msm/msm_gem.c
++++ b/drivers/gpu/drm/msm/msm_gem.c
+@@ -207,7 +207,7 @@ static struct page **get_pages(struct drm_gem_object *obj)
+ 
+ 		msm_obj->pages = p;
+ 
+-		msm_obj->sgt = drm_prime_pages_to_sg(obj->dev, p, npages);
++		msm_obj->sgt = drm_pages_to_sg(obj->dev, p, npages);
+ 		if (IS_ERR(msm_obj->sgt)) {
+ 			void *ptr = ERR_CAST(msm_obj->sgt);
+ 
+diff --git a/drivers/gpu/drm/msm/msm_gem_prime.c b/drivers/gpu/drm/msm/msm_gem_prime.c
+index 036d34c674d9..d25393a9e549 100644
+--- a/drivers/gpu/drm/msm/msm_gem_prime.c
++++ b/drivers/gpu/drm/msm/msm_gem_prime.c
+@@ -23,7 +23,7 @@ struct sg_table *msm_gem_prime_get_sg_table(struct drm_gem_object *obj)
+ 	if (WARN_ON(!msm_obj->pages))  /* should have already pinned! */
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	return drm_prime_pages_to_sg(obj->dev, msm_obj->pages, npages);
++	return drm_pages_to_sg(obj->dev, msm_obj->pages, npages);
+ }
+ 
+ int msm_gem_prime_vmap(struct drm_gem_object *obj, struct iosys_map *map)
+diff --git a/drivers/gpu/drm/nouveau/nouveau_prime.c b/drivers/gpu/drm/nouveau/nouveau_prime.c
+index caab60fc62f6..b95f2f07df74 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_prime.c
++++ b/drivers/gpu/drm/nouveau/nouveau_prime.c
+@@ -32,8 +32,8 @@ struct sg_table *nouveau_gem_prime_get_sg_table(struct drm_gem_object *obj)
+ {
+ 	struct nouveau_bo *nvbo = nouveau_gem_object(obj);
+ 
+-	return drm_prime_pages_to_sg(obj->dev, nvbo->bo.ttm->pages,
+-				     nvbo->bo.ttm->num_pages);
++	return drm_pages_to_sg(obj->dev, nvbo->bo.ttm->pages,
++			       nvbo->bo.ttm->num_pages);
+ }
+ 
+ struct drm_gem_object *nouveau_gem_prime_import_sg_table(struct drm_device *dev,
+diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/drm/panthor/panthor_gem.c
+index 9855df738194..ec530d254fa4 100644
+--- a/drivers/gpu/drm/panthor/panthor_gem.c
++++ b/drivers/gpu/drm/panthor/panthor_gem.c
+@@ -321,8 +321,8 @@ panthor_gem_dev_map_get_sgt_locked(struct panthor_gem_object *bo)
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
+-	sgt = drm_prime_pages_to_sg(bo->base.dev, bo->backing.pages,
+-				    bo->base.size >> PAGE_SHIFT);
++	sgt = drm_pages_to_sg(bo->base.dev, bo->backing.pages,
++			      bo->base.size >> PAGE_SHIFT);
+ 	if (IS_ERR(sgt))
+ 		return sgt;
+ 
+@@ -702,7 +702,7 @@ static struct sg_table *panthor_gem_get_sg_table(struct drm_gem_object *obj)
+ 	drm_WARN_ON_ONCE(obj->dev, !bo->backing.pages);
+ 	drm_WARN_ON_ONCE(obj->dev, !refcount_read(&bo->backing.pin_count));
+ 
+-	return drm_prime_pages_to_sg(obj->dev, bo->backing.pages, obj->size >> PAGE_SHIFT);
++	return drm_pages_to_sg(obj->dev, bo->backing.pages, obj->size >> PAGE_SHIFT);
+ }
+ 
+ static int panthor_gem_vmap_locked(struct drm_gem_object *obj,
+diff --git a/drivers/gpu/drm/radeon/radeon_prime.c b/drivers/gpu/drm/radeon/radeon_prime.c
+index a77881f035e7..4cfc4282a59c 100644
+--- a/drivers/gpu/drm/radeon/radeon_prime.c
++++ b/drivers/gpu/drm/radeon/radeon_prime.c
+@@ -26,6 +26,7 @@
+ 
+ #include <linux/dma-buf.h>
+ 
++#include <drm/drm_gem.h>
+ #include <drm/drm_prime.h>
+ #include <drm/radeon_drm.h>
+ 
+@@ -38,8 +39,8 @@ struct sg_table *radeon_gem_prime_get_sg_table(struct drm_gem_object *obj)
+ {
+ 	struct radeon_bo *bo = gem_to_radeon_bo(obj);
+ 
+-	return drm_prime_pages_to_sg(obj->dev, bo->tbo.ttm->pages,
+-				     bo->tbo.ttm->num_pages);
++	return drm_pages_to_sg(obj->dev, bo->tbo.ttm->pages,
++			       bo->tbo.ttm->num_pages);
+ }
+ 
+ struct drm_gem_object *radeon_gem_prime_import_sg_table(struct drm_device *dev,
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+index b188539dca0b..7897da0becf4 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+@@ -89,8 +89,8 @@ static int rockchip_gem_get_pages(struct rockchip_gem_object *rk_obj)
+ 
+ 	rk_obj->num_pages = rk_obj->base.size >> PAGE_SHIFT;
+ 
+-	rk_obj->sgt = drm_prime_pages_to_sg(rk_obj->base.dev,
+-					    rk_obj->pages, rk_obj->num_pages);
++	rk_obj->sgt = drm_pages_to_sg(rk_obj->base.dev,
++				      rk_obj->pages, rk_obj->num_pages);
+ 	if (IS_ERR(rk_obj->sgt)) {
+ 		ret = PTR_ERR(rk_obj->sgt);
+ 		goto err_put_pages;
+@@ -432,7 +432,7 @@ struct sg_table *rockchip_gem_prime_get_sg_table(struct drm_gem_object *obj)
+ 	int ret;
+ 
+ 	if (rk_obj->pages)
+-		return drm_prime_pages_to_sg(obj->dev, rk_obj->pages, rk_obj->num_pages);
++		return drm_pages_to_sg(obj->dev, rk_obj->pages, rk_obj->num_pages);
+ 
+ 	sgt = kzalloc_obj(*sgt);
+ 	if (!sgt)
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index 436394e04812..701af672b4e5 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -17,7 +17,7 @@
+ 
+ #include <drm/drm_drv.h>
+ #include <drm/drm_dumb_buffers.h>
+-#include <drm/drm_prime.h>
++#include <drm/drm_gem.h>
+ 
+ #include "drm.h"
+ #include "gem.h"
+@@ -352,7 +352,7 @@ static int tegra_bo_get_pages(struct drm_device *drm, struct tegra_bo *bo)
+ 
+ 	bo->num_pages = bo->gem.size >> PAGE_SHIFT;
+ 
+-	bo->sgt = drm_prime_pages_to_sg(bo->gem.dev, bo->pages, bo->num_pages);
++	bo->sgt = drm_pages_to_sg(bo->gem.dev, bo->pages, bo->num_pages);
+ 	if (IS_ERR(bo->sgt)) {
+ 		err = PTR_ERR(bo->sgt);
+ 		goto put_pages;
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_gem.c b/drivers/gpu/drm/vmwgfx/vmwgfx_gem.c
+index 39f8c46550c2..c9e7f2e3668c 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_gem.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_gem.c
+@@ -28,7 +28,7 @@
+ #include "vmwgfx_bo.h"
+ #include "vmwgfx_drv.h"
+ 
+-#include "drm/drm_prime.h"
++#include "drm/drm_gem.h"
+ #include "drm/drm_gem_ttm_helper.h"
+ 
+ #include <linux/debugfs.h>
+@@ -76,7 +76,7 @@ static struct sg_table *vmw_gem_object_get_sg_table(struct drm_gem_object *obj)
+ 	if (vmw_tt->vsgt.sgt)
+ 		return vmw_tt->vsgt.sgt;
+ 
+-	return drm_prime_pages_to_sg(obj->dev, vmw_tt->dma_ttm.pages, vmw_tt->dma_ttm.num_pages);
++	return drm_pages_to_sg(obj->dev, vmw_tt->dma_ttm.pages, vmw_tt->dma_ttm.num_pages);
+ }
+ 
+ static int vmw_gem_vmap(struct drm_gem_object *obj, struct iosys_map *map)
+diff --git a/drivers/gpu/drm/xe/xe_dma_buf.c b/drivers/gpu/drm/xe/xe_dma_buf.c
+index 8a920e58245c..f0fe80706b79 100644
+--- a/drivers/gpu/drm/xe/xe_dma_buf.c
++++ b/drivers/gpu/drm/xe/xe_dma_buf.c
+@@ -118,9 +118,9 @@ static struct sg_table *xe_dma_buf_map(struct dma_buf_attachment *attach,
+ 
+ 	switch (bo->ttm.resource->mem_type) {
+ 	case XE_PL_TT:
+-		sgt = drm_prime_pages_to_sg(obj->dev,
+-					    bo->ttm.ttm->pages,
+-					    obj->size >> PAGE_SHIFT);
++		sgt = drm_pages_to_sg(obj->dev,
++				      bo->ttm.ttm->pages,
++				      obj->size >> PAGE_SHIFT);
+ 		if (IS_ERR(sgt))
+ 			return sgt;
+ 
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+index eec4c1da3f9e..a4a7c7f2c91c 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front_gem.c
++++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+@@ -236,7 +236,7 @@ struct sg_table *xen_drm_front_gem_get_sg_table(struct drm_gem_object *gem_obj)
+ 	if (!xen_obj->pages)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	return drm_prime_pages_to_sg(gem_obj->dev,
++	return drm_pages_to_sg(gem_obj->dev,
+ 				     xen_obj->pages, xen_obj->num_pages);
+ }
+ 
+diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
+index 885244e375d3..7b9cc6335689 100644
+--- a/include/drm/drm_gem.h
++++ b/include/drm/drm_gem.h
+@@ -155,7 +155,7 @@ struct drm_gem_object_funcs {
+ 	 * here cannot be used for sg tables pointing at driver private memory
+ 	 * ranges.
+ 	 *
+-	 * See also drm_prime_pages_to_sg().
++	 * See also drm_pages_to_sg().
+ 	 */
+ 	struct sg_table *(*get_sg_table)(struct drm_gem_object *obj);
+ 
+@@ -589,6 +589,9 @@ struct page **drm_gem_get_pages(struct drm_gem_object *obj);
+ void drm_gem_put_pages(struct drm_gem_object *obj, struct page **pages,
+ 		bool dirty, bool accessed);
+ 
++struct sg_table *drm_pages_to_sg(struct drm_device *dev,
++				 struct page **pages, unsigned int nr_pages);
++
+ void drm_gem_lock(struct drm_gem_object *obj);
+ void drm_gem_unlock(struct drm_gem_object *obj);
+ 
+diff --git a/include/drm/drm_prime.h b/include/drm/drm_prime.h
+index f50f862f0d8b..603e16a40ae7 100644
+--- a/include/drm/drm_prime.h
++++ b/include/drm/drm_prime.h
+@@ -92,8 +92,6 @@ void drm_gem_dmabuf_vunmap(struct dma_buf *dma_buf, struct iosys_map *map);
+ int drm_gem_prime_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma);
+ int drm_gem_dmabuf_mmap(struct dma_buf *dma_buf, struct vm_area_struct *vma);
+ 
+-struct sg_table *drm_prime_pages_to_sg(struct drm_device *dev,
+-				       struct page **pages, unsigned int nr_pages);
+ struct dma_buf *drm_gem_prime_export(struct drm_gem_object *obj,
+ 				     int flags);
+ 
 
+---
+base-commit: 48dd37d1fef33fbf42f1d6887c61e242fd21d00d
+change-id: 20260724-get_pages-e2e91c53eaa3
 
-Please drop the above, duplication is always recipe for problems.
+Best regards,
+--  
+Adrián Larumbe <adrian.larumbe@collabora.com>
 
-> +|                  |Bits[7:0] Number of algorithmic strings supported by the   |
-> +|                  |system. Only "MEMLAT" is currently supported hence it      |
-> +|                  |returns 1.                                                 |
-> ++------------------+-----------------------------------------------------------+
-
-OK, so this is the only algorithm.
-
-> +
-> +PROTOCOL_MESSAGE_ATTRIBUTES
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +message_id: 0x2
-> +protocol_id: 0x80
-> +
-> ++------------------+-----------------------------------------------------------+
-> +|Return values                                                                 |
-> ++------------------+-----------------------------------------------------------+
-> +|Name              |Description                                                |
-> ++------------------+-----------------------------------------------------------+
-> +|int32 status      |See ARM SCMI Specification for status code definitions.    |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 attributes |For all message IDs the parameter has a value of 0.        |
-> ++------------------+-----------------------------------------------------------+
-> +
-> +QCOM_SCMI_SET_PARAM
-> +~~~~~~~~~~~~~~~~~~~
-> +
-> +message_id: 0x10
-> +protocol_id: 0x80
-> +
-> ++------------------+-----------------------------------------------------------+
-> +|Parameters                                                                    |
-> ++------------------+-----------------------------------------------------------+
-> +|Name              |Description                                                |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 ext_id     |Reserved, must be zero.                                    |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 algo_low   |Lower 32-bit value of the algorithm string.                |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 algo_high  |Upper 32-bit value of the algorithm string.                |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 param_id   |Serves as the token message id for the algorithm string    |
-> +|                  |and is used to set various parameters supported by it.     |
-
-
-This is too open and can soon become ambiguous. More description on what
-exactly this token message id is a must. This is not like normal kernel
-function to keep it this ambiguous, it is a firmware interface which is
-comparable to the user ABI.
-
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 buf[]      |Serves as the payload for the specified param_id and       |
-> +|                  |algorithm string pair. The payload size depends on the     |
-> +|                  |(algorithm string, param_id) pair; see the per-algorithm   |
-> +|                  |sections below.                                            |
-
-
-Ditto.
-
-> ++------------------+-----------------------------------------------------------+
-> +|Return values                                                                 |
-> ++------------------+-----------------------------------------------------------+
-> +|Name              |Description                                                |
-> ++------------------+-----------------------------------------------------------+
-> +|int32 status      |SUCCESS: if the param_id and buf[] is parsed successfully  |
-> +|                  |by the chosen algorithm string.                            |
-> +|                  |NOT_SUPPORTED: if the algorithm string does not have any   |
-> +|                  |matches.                                                   |
-> +|                  |INVALID_PARAMETERS: if the param_id and the buf[] passed   |
-> +|                  |is rejected by the algorithm string.                       |
-> ++------------------+-----------------------------------------------------------+
-> +
-> +QCOM_SCMI_GET_PARAM
-> +~~~~~~~~~~~~~~~~~~~
-> +
-> +message_id: 0x11
-> +protocol_id: 0x80
-> +
-> ++------------------+-----------------------------------------------------------+
-> +|Parameters                                                                    |
-> ++------------------+-----------------------------------------------------------+
-> +|Name              |Description                                                |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 ext_id     |Reserved, must be zero.                                    |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 algo_low   |Lower 32-bit value of the algorithm string.                |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 algo_high  |Upper 32-bit value of the algorithm string.                |
-
-
-At this point I start to think what is the point of exchanging the whole 8
-byte string back and forth instead of simple ID.
-
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 param_id   |Serves as the token message id for the algorithm string.   |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 buf[]      |Serves as the payload and store of value for the specified |
-> +|                  |param_id and algorithm string pair. The payload size       |
-> +|                  |depends on the (algorithm string, param_id) pair; see the  |
-> +|                  |per-algorithm sections below. The response payload is      |
-> +|                  |returned in the same buffer, overwriting the request       |
-> +|                  |contents on success.                                       |
-
-
-Ditto as above(too ambiguous, gives no clue on what that is)
-
-> ++------------------+-----------------------------------------------------------+
-> +|Return values                                                                 |
-> ++------------------+-----------------------------------------------------------+
-> +|Name              |Description                                                |
-> ++------------------+-----------------------------------------------------------+
-> +|int32 status      |SUCCESS: if the param_id and buf[] is parsed successfully  |
-> +|                  |by the chosen algorithm string and the result is copied    |
-> +|                  |into buf[].                                                |
-> +|                  |NOT_SUPPORTED: if the algorithm string does not have any   |
-> +|                  |matches.                                                   |
-> +|                  |INVALID_PARAMETERS: if the param_id and the buf[] passed   |
-> +|                  |is rejected by the algorithm string.                       |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 buf[]      |Holds the payload of the result of the query, returned in  |
-> +|                  |the same buffer used to send the request. Size depends on  |
-> +|                  |the (algorithm string, param_id) pair.                     |
-> ++------------------+-----------------------------------------------------------+
-> +
-> +QCOM_SCMI_START_ACTIVITY
-> +~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +message_id: 0x12
-> +protocol_id: 0x80
-> +
-> +The activity to be started is defined by the algorithm string; see the
-> +per-algorithm sections (e.g. MEMLAT_START_TIMER) for valid param_ids.
-> +
-> ++------------------+-----------------------------------------------------------+
-> +|Parameters                                                                    |
-> ++------------------+-----------------------------------------------------------+
-> +|Name              |Description                                                |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 ext_id     |Reserved, must be zero.                                    |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 algo_low   |Lower 32-bit value of the algorithm string.                |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 algo_high  |Upper 32-bit value of the algorithm string.                |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 param_id   |Serves as the token message id for the algorithm string    |
-> +|                  |and is generally used to start the activity performed by   |
-> +|                  |the algorithm string.                                      |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 buf[]      |Serves as the payload for the specified param_id and       |
-> +|                  |algorithm string pair. The payload size depends on the     |
-> +|                  |(algorithm string, param_id) pair; see the per-algorithm   |
-> +|                  |sections below.                                            |
-
-
-Ditto
-
-> ++------------------+-----------------------------------------------------------+
-> +|Return values                                                                 |
-> ++------------------+-----------------------------------------------------------+
-> +|Name              |Description                                                |
-> ++------------------+-----------------------------------------------------------+
-> +|int32 status      |SUCCESS: if the activity performed by the algorithm string |
-> +|                  |starts successfully, or if it was already running.         |
-> +|                  |NOT_SUPPORTED: if the algorithm string does not have any   |
-> +|                  |matches.                                                   |
-> ++------------------+-----------------------------------------------------------+
-> +
-> +QCOM_SCMI_STOP_ACTIVITY
-> +~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +message_id: 0x13
-> +protocol_id: 0x80
-> +
-> +The activity to be stopped is defined by the algorithm string; see the
-> +per-algorithm sections (e.g. MEMLAT_STOP_TIMER) for valid param_ids.
-> +
-> ++------------------+-----------------------------------------------------------+
-> +|Parameters                                                                    |
-> ++------------------+-----------------------------------------------------------+
-> +|Name              |Description                                                |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 ext_id     |Reserved, must be zero.                                    |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 algo_low   |Lower 32-bit value of the algorithm string.                |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 algo_high  |Upper 32-bit value of the algorithm string.                |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 param_id   |Serves as the token message id for the algorithm string    |
-> +|                  |and is generally used to stop the activity performed by    |
-> +|                  |the algorithm string.                                      |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 buf[]      |Serves as the payload for the specified param_id and       |
-> +|                  |algorithm string pair. The payload size depends on the     |
-> +|                  |(algorithm string, param_id) pair; see the per-algorithm   |
-> +|                  |sections below.                                            |
-
-
-Ditto
-
-> ++------------------+-----------------------------------------------------------+
-> +|Return values                                                                 |
-> ++------------------+-----------------------------------------------------------+
-> +|Name              |Description                                                |
-> ++------------------+-----------------------------------------------------------+
-> +|int32 status      |SUCCESS: if the activity performed by the algorithm string |
-> +|                  |stops successfully, or if it was not running.              |
-> +|                  |NOT_SUPPORTED: if the algorithm string does not have any   |
-> +|                  |matches.                                                   |
-> ++------------------+-----------------------------------------------------------+
-> +
-> +MEMLAT: Memory Latency algorithm
-> +________________________________
-> +
-> +The MEMLAT algorithm (0x4d454d4c4154, ASCII "MEMLAT") scales the DDR, LLCC and
-> +DDR_QOS buses in response to memory-latency-bound workloads. It runs on the CPUCP:
-> +every sampling window it reads the per-CPU AMU counters, derives its statistics
-> +(instructions-per-miss, back-end stall, write-back ratio), maps that to a target
-> +level and votes for it directly on the DDR/LLCC/DDR_QOS interconnect. The kernel
-> +never issues a frequency request in that loop. The 6-byte value is treated as a
-> +64-bit algorithm string and split into two uint32 fields on the wire: algo_low
-> +carries its lower 32 bits and algo_high its upper 32 bits.
-> +
-> +With a distinct need to have the memory buses scaling done in SCP in response to
-> +memory-latency-bound workloads, none of the existing SCMI solutions could be used
-> +as-is. MPAM does not apply either: it is not enabled on all of the affected parts
-> +(e.g. Hamoa). The role split between SCP and client driver is described next.
-> +
-> +MEMLAT client driver pseudo-code:
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +.. code-block:: text
-> +
-> +  probe():
-> +    SET_COMMON_EV_MAP                          # AMU events (all groups)
-> +    for each memory group (DDR / LLCC / DDR_QOS):
-> +      SET_MEM_GROUP                            # bind group to interconnect
-> +      SET_GRP_EV_MAP                           # per-group AMU events
-> +      for each monitor in the group:
-> +        SET_MONITOR                            # topology, cpumask, name
-> +        IPM_CEIL / BE_STALL_FLOOR              # per-monitor tuneables
-> +        MON_FREQ_MAP                           # cpufreq -> memfreq map
-> +        SET_MIN_FREQ / SET_MAX_FREQ            # clamps
-> +    SAMPLE_MS                                  # sampling period
-> +    SET_EFFECTIVE_FREQ_METHOD                  # cpu-freq derivation method
-> +    START_TIMER                                # CPUCP now scales autonomously
-> +
-> +  devfreq poll (twice per CPUCP sample period):
-> +    GET_CUR_FREQ                               # read voted freq, per monitor
-> +
-> +  remove():
-> +    STOP_TIMER
-> +
-> +SCP pseudo-code:
-> +~~~~~~~~~~~~~~~~
-> +
-> +.. code-block:: text
-> +
-> +  every sample_ms:
-> +    for each CPU:
-> +      sample AMU counters (instructions, cycles, cache-misses, stalls)
-> +      derive per-CPU IPM, back-end-stall % and write-back ratio
-> +
-> +    for each configured memory group (DDR / LLCC / DDR_QOS):
-> +      for each monitor in the group:
-> +        best_freq = 0
-> +        for each CPU in the monitor's cpumask:
-> +          if CPU is memory-bound (IPM/stall/write-back vs. the
-> +             monitor's configured thresholds):
-> +            freq = CPU's cpufreq, optionally scaled toward the ceiling
-> +            best_freq = max(best_freq, freq)
-> +        monitor.target_freq = monitor's cpufreq->memfreq map(best_freq)
-> +
-> +      group_vote = max(target_freq of every monitor in the group)
-> +      if group_vote changed since the last sample:
-> +        vote group_vote onto the group's interconnect path
-> +
-> +  GET_CUR_FREQ returns a monitor's last target_freq
-> +  START_TIMER / STOP_TIMER: resume / suspend the loop above
-> +
-> +MEMLAT: Supported memory buses
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +The hw_type field carried in most payloads identifies the memory group:
-> +
-> ++----------+--------------------------------------------------------------+
-> +|hw_type   |Group                                                         |
-> ++----------+--------------------------------------------------------------+
-> +|0         |DDR                                                           |
-> ++----------+--------------------------------------------------------------+
-> +|1         |LLCC                                                          |
-> ++----------+--------------------------------------------------------------+
-> +|2         |DDR_QOS_COMPUTE                                               |
-> ++----------+--------------------------------------------------------------+
-> +|3         |DDR_QOS_MOBILE                                                |
-> ++----------+--------------------------------------------------------------+
-> +
-> +All multi-byte fields below are little-endian. mon_idx selects a monitor
-> +within the group (0-based, less than the firmware-supported maximum). All
-> +SET commands return the SCMI status word; on success it carries SUCCESS, on
-> +lookup failure INVALID_PARAMETERS, and on an unknown param_id NOT_SUPPORTED.
-> +
-> +Frequency units are not uniform across commands (kHz, MHz or a raw 0/1
-> +DDR_QOS level, depending on the param_id); each command documents its own
-> +units below.
-> +
-> +MEMLAT_SET_MEM_GROUP
-> +~~~~~~~~~~~~~~~~~~~~
-> +
-> +param_id: 0x10 (16)
-
-
-Ah so, these are param id for the above commands I mentioned as too
-ambiguous ? If so, at this point I think it is better to make custom
-vendor protocol ID 0x80 for MEMLAT and make all these part of it.
-I think my comment of multiplexing is a bad idea seem to be confirmed here.
-I will skip the rest as it makes no sense to review it any further.
-
--- 
-Regards,
-Sudeep
