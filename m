@@ -1,77 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA9034107D
-	for <linux-tegra@vger.kernel.org>; Fri, 24 Jul 2026 22:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548482F7EFC
+	for <linux-tegra@vger.kernel.org>; Sat, 25 Jul 2026 04:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784931528; cv=none; b=jdoJ35T3tPcRNLhQFwgAYU79+bYLPtO6ebMnoLy30OqZw+VBN3jIAPRP5JxfB7ey6O8Ox8OK4KLgFUGwyxSGM9p7eL5UCbRwirdJRW3ZqYLhRrLiept9mL6Za0H/smEGrDEbDrSkp/SOsC5RYOwwU9YImscH9xetLwEzhLWbDO8=
+	t=1784953813; cv=none; b=dsxNpoe20JVGPpIbnyBeMwBUFU2Ri0V4nyH0LGMADtbEw4WTJDTCvvk2kGJACmoDZyxiRmrmgV8sgr2waDBOSn8pOI3O9+RUoaxDwtzfP533hVE6HPSLmQDrJdjcBbpVmF29WxMms7m9fDSrKDufkM+KQZTmNqxsrTYZjFlOHDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784931528; c=relaxed/simple;
-	bh=Y5AUihlHPx8033n1yOFmjVml/WtHSR3f0szw+EBr36U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TwY+kh+hhOT5G7O5rsTjk8vfbTCMUvi4fIZ3ZQAKiKperhUohiBGsF+F/DpOOJZNV7qOll+IE2jCM1QPK112iezgeRctopP6RZjHC2s1gNLT213eqm8c2VDRw+9zoCceOjBX13JRo9N9xGdFuma+J48B3rS6QKifjTbPudLTLLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lXICIGf1; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784953813; c=relaxed/simple;
+	bh=musYvu4kG+XXqxnTHrbOaZuAwdan+yHB+92wfOCg1PM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sIB/eU7QK+LyfYmoMA4zI5/XwJuHmt2M5Vz6OrJya2rREVW9GqmTBWiEdASEJ3xptmWJ9cyS5APiXsblUyFevNMwQ2U681U2ljYIBdt1q67ec3eRxeUHwGyMfpDnAvFPVKk5DWj4QyJcXOvp1L5OV2DYhRu2hJY3DsTaTa5JmRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maticrobots.com; spf=pass smtp.mailfrom=matician.com; dkim=pass (2048-bit key) header.d=maticrobots.com header.i=@maticrobots.com header.b=T01Dbcwk; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maticrobots.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matician.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXICIGf1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 927161F00ADB
-	for <linux-tegra@vger.kernel.org>; Fri, 24 Jul 2026 22:18:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784931527;
-	bh=Y5AUihlHPx8033n1yOFmjVml/WtHSR3f0szw+EBr36U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=lXICIGf1UNWbXRobIKI9vq8gfVQOaBiRfA6RrCvGwb+7k1eIQt1onaKPXJE9EwBMd
-	 DSDP3JGtdHAPsI9P7VG+5OkWFt8NGM6qSft7tJ7qHymSY1573sWp7WdkZrqi2Bo/DW
-	 zg4ccVEXCrrLmxOeSQ/OZiYWf/jI8sH8X0cr5ngy+kZUKmUVgJsQAhts3RQdTNFZtf
-	 9JBWn6EJfIUGIBbHJK/jSxpCcPqKmDG4iXe+p5e7f60H2sdauWGHh98TSiinB2RPoS
-	 8fGlEVNFh+1VjncXkKjb81l28LQ9tVkyUAqo4vW70Gd+4Z8tkx9j/PQ/VE+kosqvCB
-	 w1v1C7tIEKTEg==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5b021916bd3so1005512e87.3
-        for <linux-tegra@vger.kernel.org>; Fri, 24 Jul 2026 15:18:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpfUtcN26WLNER8TdQvHfjFADvASL0gWQGCjdXQybE4e/dxnJqyhobcUFIL/CxgVs2D5c1Yf79STT+Jeg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBBl7DhtHtane0OO+D1IMxaztK6Z3z8td2k+ouTHrHO7X6SMwi
-	9cpCNht7h1p3Sx3S4YV25d6hV3i2anV0rdVZi4nQ1pb2lpz6kc0vyHLjhj+XHQ+m5Ck7oDGo4sr
-	jd62rEoisyqyfYjap1rXc4LvS5y23P3s=
-X-Received: by 2002:ac2:5469:0:b0:5b2:a75f:8a6 with SMTP id
- 2adb3069b0e04-5b2b2f55d02mr1518354e87.29.1784931526354; Fri, 24 Jul 2026
- 15:18:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=maticrobots.com header.i=@maticrobots.com header.b="T01Dbcwk"
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2caea3f742bso14501865ad.0
+        for <linux-tegra@vger.kernel.org>; Fri, 24 Jul 2026 21:30:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=maticrobots.com; s=google; t=1784953812; x=1785558612; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=EjohzwxsJRfPbC2U2sWKg8g16sF/knZCZszVfz0+Kq4=;
+        b=T01DbcwkuNOiALqPv+mOpI21gYOVK1xpEz1S+bRM6rv0uEvmgoYx4yKyuQxJNL8zCB
+         Az+Fhd85wyBHkrgzCTw7eR+hKKtycilsh9nJAr+yTodGY9O/+MDnKSczCaqLPa61bCTk
+         /n59kYtHnBcfUidvDj3qFQ2iAcZ+w0hWl2iVLd+NxJM5al9kgqyf5+5HO/Do2ZzDUzbf
+         NVqi86z+jUKacxv+PWs+uWWSOBS3xsxdd9J0MLu0yaHGixOfminPKQ1oIbIdImcVgobo
+         BtzEIhUfb2yFT698Dd4wobsOtsAKvMofkMj8UJZF4pf87R8nHffrOzWYV9Yfm97cF+wq
+         CrTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784953812; x=1785558612;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=EjohzwxsJRfPbC2U2sWKg8g16sF/knZCZszVfz0+Kq4=;
+        b=gHwRdS9RU5iPHZ5E01NfRPbR0d1DfheIdS/2YtuAS+pQm9F2MRgRbqIj2X4wj1Ckbr
+         XlBfaq85CAxmJ9P/uDPPfExxByoHq3VDGN6F1Bm4boI9/DS8ZQnqcIu1AnHPyfE4ZBuV
+         qGbAU6dTEm5uSETqGR7qxVMLDcSlm0v8A75woSYlbYRTn1OLsFr+YahXvY0V/0AUeAzv
+         CJDwC/PYiPgloMGN3NnsHO2bzk7Yh/xTH/UJnGUSQlgTNq/DQ9jrW+1SWN/6yNczz2r2
+         Ly8H+r8zdtmSdK49zls9D8uDxByD47ErVI70djgW8sg6IcY91Zf7F4KqSraCaN8rQjJM
+         873Q==
+X-Forwarded-Encrypted: i=1; AHgh+RoHmB4q/otdxE3/5rZtxHg7eMVyJ7eq6uz7EdmEMGM8U8hrXrvXkNvv99Femal+92tr2GtIkaRoGcbo8w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGmTxLsoYyIrH4UiWyKOTE/nxeOwOBa8AKJ0USWdzWba1UIZrq
+	FBZcYoxKg9E91yCsGU0TwSa7hXq+rtmAkVnwk1cedTQ5W62/rzQrnIg5J7f9ycuxLrM=
+X-Gm-Gg: AR+sD12G5VC4crgj0c86dBpZjTee+uXwLJsrWa62GBPrC3BnrIjqeCb4MdTXkfPMNTs
+	L3wT913G9fUXTzWmJjwFOnRsJwWZe6AIe3VVmaUbFygNTPRCmLIVJTo+RHU8cUv7/Glyc4A4SWe
+	5CgIKw9yzx+X7kvj9O1QpU646k2Zx+kGC68mtRPSYWKmt6tpCycaYydZuShIVSxs67EAJtAVf1Z
+	fkS3gcxQf6WM+FluvPquOPy3zQFk9SStGzu/CzNrHUQJDuDv+pRlwLsZ1ZXPXfAfcm5O+7QZqFP
+	/cd23LRnjPsYrMI5qnvLRmpSItDBPP8VtnZuoVvWSnpFg6irkCRUfZNEBYsZNjhtR2G7w6Yaqjk
+	wU5dHOVjE8rv7RbOllibposezGwZlYyI7GHdl8rdJJZsGsSkmCXqCCka95Gs+cdPq4ledqNZU90
+	UVbMdvAB6XZbFMQUfKjifu9/sidnjHsTk1m91qJu6Jz434hnNr460=
+X-Received: by 2002:a05:6a20:9f46:b0:3c4:46ca:3350 with SMTP id adf61e73a8af0-3c67dae9748mr1209444637.6.1784953811727;
+        Fri, 24 Jul 2026 21:30:11 -0700 (PDT)
+Received: from abeMaticDesktop.1020marsh.offices.matician.com ([2600:1700:471:807f:da8a:3174:41e9:b949])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-314bc5a04b2sm5158361eec.28.2026.07.24.21.30.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jul 2026 21:30:11 -0700 (PDT)
+From: Abraham Zukor <abe@maticrobots.com>
+To: Mark Brown <broonie@kernel.org>,
+	Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-spi@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abraham Zukor <abe@maticrobots.com>
+Subject: [PATCH] spi: tegra114: initialize native chip selects inactive
+Date: Fri, 24 Jul 2026 21:29:44 -0700
+Message-ID: <20260725042944.1204409-1-abe@maticrobots.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260717113210.599463-1-pshete@nvidia.com>
-In-Reply-To: <20260717113210.599463-1-pshete@nvidia.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Sat, 25 Jul 2026 00:18:34 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnY85znRbLgVdRdi+KrkbRpY76EpmXJ8G8K=ee5_HMYpA@mail.gmail.com>
-X-Gm-Features: AUfX_mwqFAMi9qWV0Q1OSmDfHdOr5bMPAC98hlFCKCt_w73sAvw_TCl3Lck961g
-Message-ID: <CAD++jLnY85znRbLgVdRdi+KrkbRpY76EpmXJ8G8K=ee5_HMYpA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: tegra264: fix DAP2 DIN/DOUT
- pin names
-To: Prathamesh Shete <pshete@nvidia.com>
-Cc: thierry.reding@kernel.org, jonathanh@nvidia.com, 
-	linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, u.kleine-koenig@baylibre.com, dakr@kernel.org, 
-	bhelgaas@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 17, 2026 at 1:32=E2=80=AFPM Prathamesh Shete <pshete@nvidia.com=
-> wrote:
+tegra_spi_probe() initializes SPI_COMMAND1 with only SPI_M_S, leaving
+CS_POL_INACTIVE clear for every chip select. This drives every native
+active-low chip select low until tegra_spi_setup() runs for that device.
 
-> The DAP2_DIN and DAP2_DOUT pins were listed with swapped ball suffixes:
-> DAP2_DIN as PV7 and DAP2_DOUT as PW0. On silicon DAP2_DIN is on ball PW0
-> and DAP2_DOUT is on ball PV7. Correct the pin and drive group names to
-> dap2_din_pw0 and dap2_dout_pv7.
->
-> Fixes: 30a9d5162f25 ("dt-bindings: pinctrl: Document Tegra264 pin control=
-lers")
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+SPI children are registered and probed one at a time. A synchronous
+probe of an earlier child can therefore transfer while a later child's
+chip select is still asserted. On a Tegra234 system with active-low devices
+on CS0 and CS1, this caused both devices to be selected when the CS1
+device probed first. Its initialization then intermittently failed. A
+logic analyzer showed CS0 remained low throughout the CS1 transfer and
+went high only after the CS1 probe failed.
 
-This DT patch was not CC to the devicetree list, resend so the DT binding
-people can ACK it!
+The Tegra234 TRM also documents all CS_POL_INACTIVE bits as one after
+reset, so the existing probe code replaces the hardware's safe reset
+polarity with zeros on that SoC.
 
-Yours,
-Linus Walleij
+Set CS_POL_INACTIVE for all native chip selects during controller probe.
+This matches SPI's default active-low polarity and the documented
+Tegra234 reset polarity. tegra_spi_setup() continues to configure the
+inactive polarity of SPI_CS_HIGH devices before their drivers probe.
+
+Fixes: f333a331adfa ("spi/tegra114: add spi driver")
+Assisted-by: Codex:GPT-5
+Signed-off-by: Abraham Zukor <abe@maticrobots.com>
+---
+ drivers/spi/spi-tegra114.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+index aa44ffd09e61..c28aae093d57 100644
+--- a/drivers/spi/spi-tegra114.c
++++ b/drivers/spi/spi-tegra114.c
+@@ -1394,7 +1394,7 @@ static int tegra_spi_probe(struct platform_device *pdev)
+ 	reset_control_assert(tspi->rst);
+ 	udelay(2);
+ 	reset_control_deassert(tspi->rst);
+-	tspi->def_command1_reg  = SPI_M_S;
++	tspi->def_command1_reg  = SPI_M_S | SPI_CS_POL_INACTIVE_MASK;
+ 	tegra_spi_writel(tspi, tspi->def_command1_reg, SPI_COMMAND1);
+ 	tspi->spi_cs_timing1 = tegra_spi_readl(tspi, SPI_CS_TIMING1);
+ 	tspi->spi_cs_timing2 = tegra_spi_readl(tspi, SPI_CS_TIMING2);
+-- 
+2.54.0
+
