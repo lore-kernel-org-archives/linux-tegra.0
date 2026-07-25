@@ -1,123 +1,64 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548482F7EFC
-	for <linux-tegra@vger.kernel.org>; Sat, 25 Jul 2026 04:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CC03F4DF3;
+	Sat, 25 Jul 2026 16:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784953813; cv=none; b=dsxNpoe20JVGPpIbnyBeMwBUFU2Ri0V4nyH0LGMADtbEw4WTJDTCvvk2kGJACmoDZyxiRmrmgV8sgr2waDBOSn8pOI3O9+RUoaxDwtzfP533hVE6HPSLmQDrJdjcBbpVmF29WxMms7m9fDSrKDufkM+KQZTmNqxsrTYZjFlOHDU=
+	t=1784997177; cv=none; b=TQ0GD8GZaWIXOSdh/Q3qqK1GnKsz/g0KDLZAebHawwE0Mu+/i17vwxeO/TaBqcub87Sx39L9PA1dFzfMaUSYXka04Jm0T2OJMLB0nh0hcsNq8x3uVH7Sr0iLWQv1KB2VsE8k8UUtXNpwTVB6coDttXOmh1E5DicwW9diCxHYgpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784953813; c=relaxed/simple;
-	bh=musYvu4kG+XXqxnTHrbOaZuAwdan+yHB+92wfOCg1PM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sIB/eU7QK+LyfYmoMA4zI5/XwJuHmt2M5Vz6OrJya2rREVW9GqmTBWiEdASEJ3xptmWJ9cyS5APiXsblUyFevNMwQ2U681U2ljYIBdt1q67ec3eRxeUHwGyMfpDnAvFPVKk5DWj4QyJcXOvp1L5OV2DYhRu2hJY3DsTaTa5JmRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maticrobots.com; spf=pass smtp.mailfrom=matician.com; dkim=pass (2048-bit key) header.d=maticrobots.com header.i=@maticrobots.com header.b=T01Dbcwk; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maticrobots.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matician.com
+	s=arc-20240116; t=1784997177; c=relaxed/simple;
+	bh=+PY3sdTH3L9CEkYJHZ407s39euofR/H2HhdAFTLKjaM=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=pwiZi2qttsKrwdVearSVDBuk9PDhV0xghX3aFQjUu9JzFJbri8Cu6tYZFeqvVMQv5CpctnEfJmagP0IPJFWGyStNdP99uOIXwBiwPyWmnmhh7WuaaFj0ova1vXDEj9mZ2d4/h95RMx4BVohHfEZ8Ip55W7Hmi01npVq2ioT+zDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nOQzaVNZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maticrobots.com header.i=@maticrobots.com header.b="T01Dbcwk"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2caea3f742bso14501865ad.0
-        for <linux-tegra@vger.kernel.org>; Fri, 24 Jul 2026 21:30:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=maticrobots.com; s=google; t=1784953812; x=1785558612; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=EjohzwxsJRfPbC2U2sWKg8g16sF/knZCZszVfz0+Kq4=;
-        b=T01DbcwkuNOiALqPv+mOpI21gYOVK1xpEz1S+bRM6rv0uEvmgoYx4yKyuQxJNL8zCB
-         Az+Fhd85wyBHkrgzCTw7eR+hKKtycilsh9nJAr+yTodGY9O/+MDnKSczCaqLPa61bCTk
-         /n59kYtHnBcfUidvDj3qFQ2iAcZ+w0hWl2iVLd+NxJM5al9kgqyf5+5HO/Do2ZzDUzbf
-         NVqi86z+jUKacxv+PWs+uWWSOBS3xsxdd9J0MLu0yaHGixOfminPKQ1oIbIdImcVgobo
-         BtzEIhUfb2yFT698Dd4wobsOtsAKvMofkMj8UJZF4pf87R8nHffrOzWYV9Yfm97cF+wq
-         CrTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784953812; x=1785558612;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=EjohzwxsJRfPbC2U2sWKg8g16sF/knZCZszVfz0+Kq4=;
-        b=gHwRdS9RU5iPHZ5E01NfRPbR0d1DfheIdS/2YtuAS+pQm9F2MRgRbqIj2X4wj1Ckbr
-         XlBfaq85CAxmJ9P/uDPPfExxByoHq3VDGN6F1Bm4boI9/DS8ZQnqcIu1AnHPyfE4ZBuV
-         qGbAU6dTEm5uSETqGR7qxVMLDcSlm0v8A75woSYlbYRTn1OLsFr+YahXvY0V/0AUeAzv
-         CJDwC/PYiPgloMGN3NnsHO2bzk7Yh/xTH/UJnGUSQlgTNq/DQ9jrW+1SWN/6yNczz2r2
-         Ly8H+r8zdtmSdK49zls9D8uDxByD47ErVI70djgW8sg6IcY91Zf7F4KqSraCaN8rQjJM
-         873Q==
-X-Forwarded-Encrypted: i=1; AHgh+RoHmB4q/otdxE3/5rZtxHg7eMVyJ7eq6uz7EdmEMGM8U8hrXrvXkNvv99Femal+92tr2GtIkaRoGcbo8w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGmTxLsoYyIrH4UiWyKOTE/nxeOwOBa8AKJ0USWdzWba1UIZrq
-	FBZcYoxKg9E91yCsGU0TwSa7hXq+rtmAkVnwk1cedTQ5W62/rzQrnIg5J7f9ycuxLrM=
-X-Gm-Gg: AR+sD12G5VC4crgj0c86dBpZjTee+uXwLJsrWa62GBPrC3BnrIjqeCb4MdTXkfPMNTs
-	L3wT913G9fUXTzWmJjwFOnRsJwWZe6AIe3VVmaUbFygNTPRCmLIVJTo+RHU8cUv7/Glyc4A4SWe
-	5CgIKw9yzx+X7kvj9O1QpU646k2Zx+kGC68mtRPSYWKmt6tpCycaYydZuShIVSxs67EAJtAVf1Z
-	fkS3gcxQf6WM+FluvPquOPy3zQFk9SStGzu/CzNrHUQJDuDv+pRlwLsZ1ZXPXfAfcm5O+7QZqFP
-	/cd23LRnjPsYrMI5qnvLRmpSItDBPP8VtnZuoVvWSnpFg6irkCRUfZNEBYsZNjhtR2G7w6Yaqjk
-	wU5dHOVjE8rv7RbOllibposezGwZlYyI7GHdl8rdJJZsGsSkmCXqCCka95Gs+cdPq4ledqNZU90
-	UVbMdvAB6XZbFMQUfKjifu9/sidnjHsTk1m91qJu6Jz434hnNr460=
-X-Received: by 2002:a05:6a20:9f46:b0:3c4:46ca:3350 with SMTP id adf61e73a8af0-3c67dae9748mr1209444637.6.1784953811727;
-        Fri, 24 Jul 2026 21:30:11 -0700 (PDT)
-Received: from abeMaticDesktop.1020marsh.offices.matician.com ([2600:1700:471:807f:da8a:3174:41e9:b949])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-314bc5a04b2sm5158361eec.28.2026.07.24.21.30.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jul 2026 21:30:11 -0700 (PDT)
-From: Abraham Zukor <abe@maticrobots.com>
-To: Mark Brown <broonie@kernel.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-spi@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abraham Zukor <abe@maticrobots.com>
-Subject: [PATCH] spi: tegra114: initialize native chip selects inactive
-Date: Fri, 24 Jul 2026 21:29:44 -0700
-Message-ID: <20260725042944.1204409-1-abe@maticrobots.com>
-X-Mailer: git-send-email 2.54.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nOQzaVNZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9FC71F00A3A;
+	Sat, 25 Jul 2026 16:32:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784997174;
+	bh=Pr0x0vJNcLlgRmL28gz7fWohf9n6u8dicVfCTydmfxU=;
+	h=From:To:In-Reply-To:References:Subject:Date;
+	b=nOQzaVNZ1Vc99yNB+lwrxfSI5yNH6fJ2kPq+BN8hUQg05gDcmo40JAQDGbRKdU8q8
+	 +nzzAA9kUIiTlHgUECL+JteRDo6h9u4UQFKvJe5vrajf63xaIB3ZIbDL8MLPIDC+7l
+	 zQv2KNAns5ufdhbR50zkGKY1cC2wwS+hNBZT5QfbT47WARKM5zwBd+jW0W2RrpycfT
+	 Y1rEf8kIaJmHGhnz8fUzUrZEFZg7fh2tuS/GoU+UMlndzG435gehISSBSHMen4dZV1
+	 E1NOwRw1jAYUQrho2QEEZpZrN6mBXuD9WJ6QVTowdrbvtWRWMQEMTwzaC2rXf4lKqr
+	 vJEmMqGhdcBfg==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+In-Reply-To: <20260706101757.340149-2-krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260706101757.340149-2-krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH] ARM: dts: nvidia: tegra114-asus-tf701t: Correct
+ trailing whitespace
+Message-Id: <178499717160.107055.17561995104215971979.b4-ty@b4>
+Date: Sat, 25 Jul 2026 18:32:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15.2
 
-tegra_spi_probe() initializes SPI_COMMAND1 with only SPI_M_S, leaving
-CS_POL_INACTIVE clear for every chip select. This drives every native
-active-low chip select low until tegra_spi_setup() runs for that device.
 
-SPI children are registered and probed one at a time. A synchronous
-probe of an earlier child can therefore transfer while a later child's
-chip select is still asserted. On a Tegra234 system with active-low devices
-on CS0 and CS1, this caused both devices to be selected when the CS1
-device probed first. Its initialization then intermittently failed. A
-logic analyzer showed CS0 remained low throughout the CS1 transfer and
-went high only after the CS1 probe failed.
+On Mon, 06 Jul 2026 12:17:58 +0200, Krzysztof Kozlowski wrote:
+> Drop trailing whitespace.  No functional impact (same DTB).
 
-The Tegra234 TRM also documents all CS_POL_INACTIVE bits as one after
-reset, so the existing probe code replaces the hardware's safe reset
-polarity with zeros on that SoC.
+Applied, thanks!
 
-Set CS_POL_INACTIVE for all native chip selects during controller probe.
-This matches SPI's default active-low polarity and the documented
-Tegra234 reset polarity. tegra_spi_setup() continues to configure the
-inactive polarity of SPI_CS_HIGH devices before their drivers probe.
+[1/1] ARM: dts: nvidia: tegra114-asus-tf701t: Correct trailing whitespace
+      https://git.kernel.org/krzk/linux-dt/c/6a5a6cc5e9ad5655186ff289f21db532b44e14b2
 
-Fixes: f333a331adfa ("spi/tegra114: add spi driver")
-Assisted-by: Codex:GPT-5
-Signed-off-by: Abraham Zukor <abe@maticrobots.com>
----
- drivers/spi/spi-tegra114.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index aa44ffd09e61..c28aae093d57 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -1394,7 +1394,7 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 	reset_control_assert(tspi->rst);
- 	udelay(2);
- 	reset_control_deassert(tspi->rst);
--	tspi->def_command1_reg  = SPI_M_S;
-+	tspi->def_command1_reg  = SPI_M_S | SPI_CS_POL_INACTIVE_MASK;
- 	tegra_spi_writel(tspi, tspi->def_command1_reg, SPI_COMMAND1);
- 	tspi->spi_cs_timing1 = tegra_spi_readl(tspi, SPI_CS_TIMING1);
- 	tspi->spi_cs_timing2 = tegra_spi_readl(tspi, SPI_CS_TIMING2);
+Best regards,
 -- 
-2.54.0
+Krzysztof Kozlowski <krzk@kernel.org>
 
