@@ -1,68 +1,68 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E9C3CA499
-	for <linux-tegra@vger.kernel.org>; Sun, 26 Jul 2026 16:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966AA3CA486
+	for <linux-tegra@vger.kernel.org>; Sun, 26 Jul 2026 16:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785082990; cv=none; b=upetrD9mIwfP/ayIidfOfxBKb5CE34DzuxUqJxIvEM+KyZ+qwA56wBqjKeyitAumusmzPRtL3JIfqNNsHykwpIkPnuCvGIvqxLJo9M5qH9sOEGks1+qbzhzJSK+VkrcAhWkf9svvn3Rqv8rwqXJN3ie6T1GXYRuHOB/rwWQIzDU=
+	t=1785083004; cv=none; b=Z4CS6xlT71/Wlm0RBX3GB6ylTW8nTH/mep89WSq3hzbbNVIpKeRrzW2E++QEilImzX4IPGzDUeiyKm1jjrdzyllzqGGWuSwK4KhRXgQdPdJKYLzKG/kMRQE2kna9Rj4Fhfoo8eeIFs2UMLRH0eyqX905q2/bsJ3YInCdCOMoH90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785082990; c=relaxed/simple;
-	bh=dqXFXbXUVXKpMi3EZoVlEyKmreyknyy7Kt+mgq6gTXM=;
+	s=arc-20240116; t=1785083004; c=relaxed/simple;
+	bh=eh2uHeTUG5CmXS9cNmYuwq/yTrAZwmMBCh6xBgYyXpo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ma4vDTiayMQfqx7aL59i8VpkhgMKdpF/ipP9fpa5jXivFUTg90l2FSDKIQvfWxXN4dgvnN/Aozecsd4+CD4ZnSVVSes61kGxQ70ZPQv/PemcVQWzk1AQvDcA5P+5cv5VTDUn/MozSRz9jt7aVejKKbNgmZwUK7/DnT3FO60iFo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Bak1hG+F; arc=none smtp.client-ip=209.85.214.172
+	 Content-Type:Content-Disposition:In-Reply-To; b=FHJYhvMaEjmSAro1PKH7fvcA66PagFK0X8qTGAvNzd+Z6q4AdJ7Up3qsxeA/W1rNZfqxzF7ooraj99Kqop4j5/4o1vlfOP/pfdbXDnbJ/4iGGVUtiQ/JZu96wYQxbGmRNUnJt0a3O0milNNs7M/VrAsAMtLAP+w2inTYq932kJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=lqUZ28II; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Bak1hG+F"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2cf50c6f235so23482725ad.0
-        for <linux-tegra@vger.kernel.org>; Sun, 26 Jul 2026 09:23:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="lqUZ28II"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2cc7ef7ec27so24421065ad.1
+        for <linux-tegra@vger.kernel.org>; Sun, 26 Jul 2026 09:23:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1785082988; x=1785687788; darn=vger.kernel.org;
+        d=ziepe.ca; s=google; t=1785083001; x=1785687801; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=FuXTk3sNqgjvfJDVodnQ6dQBc+GEb7krH4jOLDWR1sw=;
-        b=Bak1hG+FBrVx+Ne3PG5zQVLBoJwXtyk41mVwmpP4efjiO0ntUbke7Zup6sfGPSnt2v
-         +UqEROtTQVxefwtDQmSoo3Ul8S8tEH7yiP9BRb8oy1pWPgUqnVVHrunTu/kQtymfgnoh
-         hDZj9ttmWXNcXPgawPxKLhtRmZ2baiI8R+/JjZ5M4mEaJS3GNQc3D1IgzYto+3I0KS7S
-         Pt5/mCqS7PiLXGKmmFxNfn59ZtiZkLflsLvn3nXxhQGz2ln+1lrBhPSrh2F1fYx0/IgO
-         pF3vRCcmbuzMXGN9wUeEQFUVE7BvI6Z+ZTUNZFRRu8oe6PA4evqLWd1JjeWTpLXMUGfz
-         YuLg==
+        bh=aHRV8RVQazd81DBcHd8LNzyzM/eTYjhER1/AreGPfK4=;
+        b=lqUZ28II4mN+pz3ssfvM094CWZ4FCq/m18+CxzOWrVHqCPE9iUBpk+qG/vG+pjcVDf
+         7iib6tASisd4sDH7uyNuyQBpUhL5c/yUbUPzIdhIebaTW1GuvlTmMrTuh/OP5JV6CnzB
+         8GSxSRZwwHYtLYflc6/TktpgQG+UyEoISpYg5CDm8cJQFDWTgOonBG/mGbPQKlYN6yTY
+         dtMgD7UxxRze5fLGSJ9SYEBBy5y6vpWrX5TUj6G3ygRhzif59JdvuxrhSkkBQjq8CqeU
+         oy2dOhBd+lFt20IUkwpfE1NgfMljswoc0l6qZB4L2sxdTF/yypVVvZJRIByhWHWnuXxt
+         9Q4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785082988; x=1785687788;
+        d=1e100.net; s=20251104; t=1785083001; x=1785687801;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=FuXTk3sNqgjvfJDVodnQ6dQBc+GEb7krH4jOLDWR1sw=;
-        b=Eql3vglFM80cJx9vON0v8woGnF0+oY0a+r6w5I+7I6peBRLle/s/6tHyKiOIGEODHh
-         B1F6b7qnXtU+0BNdadgHUvfn8J+OaJoJadVFt/1uL5fYjKadi8sm0Zx4cIpvPjN1vTsw
-         KZm1d10p7WnRObBxqY80zAuh0DGW2BCw0duf/8udUkDeESP1w5kODrpD7APQt/eN3evV
-         CKnusBzgx7PAdQgg53OdEZbLBmb+8mIl5JkTPCes5EeskFvOwEGt18nsws/HKYw7Yvt7
-         LY+Kree0yDZ09tvSMe0uUbqtrvLbSdWy2rnSBEWdfQb8Gr05q+WLyw4yHqd5d1Uvwk3m
-         Hpog==
-X-Forwarded-Encrypted: i=1; AHgh+RpQRJGnmWHSkYxmRP3qt8oWrhUk+ycXF55ie2TB81i3OuA1mSZQdZICCF9X3w+hcT3r8L5Am1PHo/XpQw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP8OL6DzFK9fOH9Y0aO44TQr+77zDereyEaWsLZnkhTwUjB/DN
-	FFxCMA2qSQtnQTZvMt7JNnt4bq7SLzHEGBS9LrwHAy/uv3NA1KOd0SIlDFhYcQlBguM=
-X-Gm-Gg: AR+sD10W4UjAZwSbXjmM10OZTnJlssuADMIjuS6LrP6UJglSQkdmDJl5LrUVQ7BYSug
-	fHXK1M7oF1ewPkngXqIrO0wSpwMeoJnIOoYLbYfcl8mKkvLv4qtom0XyOq/Rt8IkQ+HexGVvKNQ
-	jaBrqKjRpVYrJaGclmA041BCqEw5c1/5itY1uJQF3OIWT4xuBYozPoE93rhtoQu8CHDvYu3jXJL
-	M7lOP0zWMEPl6DWKhq84jgDSBgcri+43c3Sw0k3kNHYB2wlAfXn06TgL79G7pAMqfKN6HAi8ajj
-	1IjAKbKQPXZ8o4Ic93Pfy3saA+ingecxIpwOY0KOOpOFPrmiRcxMhTHsPgBPjVfB8UyXvqH62qd
-	ZEfpNPmPd3WMOBduJtlsbNUoY/1RDGRixhVV1EHnPX64NTYWaNt0=
-X-Received: by 2002:a17:903:4687:b0:2b7:975c:dacc with SMTP id d9443c01a7336-2cfde79058fmr52053305ad.1.1785082988138;
-        Sun, 26 Jul 2026 09:23:08 -0700 (PDT)
+        bh=aHRV8RVQazd81DBcHd8LNzyzM/eTYjhER1/AreGPfK4=;
+        b=r3JFBBmcADIXhqLh5VAQzuqsv2hbkKXPBAOzVSTCGtjDE87W8zYJZkjALoxvEXyPP4
+         tw2jJ+GFfZm9xlK+ktNeJvrezKf+nVAGoOvd30Cvg2uTMah24/t51uzuDHLhqR0KPfoM
+         DkUfeKjmk8YXzZtogAgDEqhnkVyNsi+jj/fUvpA+x5qaduo+/Tg/NK68RWIi9BPo1pLX
+         8SQWWo0To2VnSu5TVVchXRT0R5zj9mTsTvmvtwZtOvBuhJFspscl+h4wh+5D7lUag2bE
+         yVlXo4CJL149ApdSRcfpBgtvZnZ8NGj1rwMZ7HsXbxNu1RK0w/HijCTiJvxHgZhlL6w0
+         MWvg==
+X-Forwarded-Encrypted: i=1; AHgh+Rry6dsjVaWGFaz94yGwmydgsfIhvcsrOwZi6oFwVAhStDvNrDyLdQXQyczAoYgM1v1dEagWyoaDWTgXnQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy72+UL324KZTDc24WijNS+M85tBi1eDNtLZQtJT+5jYfRnQH6V
+	OmUebFaQTKXCtw0spg7YlHmpwhhYQxKjPWWREgYbzfHOWpDpr8A7YDGKvNZiKxcpUu8=
+X-Gm-Gg: AR+sD13QYDt+qy6FblvuV80Af8iae35d9OXXeaILWsAJk4eymJvOrMAC0SfeUTKv2EH
+	eRXGHGpN71qlr67HaN7z4nGky4cti476pKn+GdcS+Q2o5OSJLcZgJawUcOy+AMDeiCZ8qcN/sAg
+	4WbRyY3abN9AslEMfm8VM9cSMj8hh1aBFDXthCQfFIXtSt+H/a546qI/fe/Lr655cAddxiYFT+X
+	x6yzryxuGTwQSw9Ub5ZXHoV9w7pwi6YJBxTstPu5VtI1PAiXCTijGxv2V/BmsBdZoU0ouS0KgoP
+	M26b1ry+4/QpSWCw/q8kcb4BOwoz5WWiab57kJi0/fvgSGu17VPDhwlzgfTC4KHc5e1ZGJkcpxG
+	ehBuLKaGEBqr6ZILKsSiNIDf3sBynkzM2rbSszV62Tnk6wCS1Rns=
+X-Received: by 2002:a17:903:124f:b0:2cf:7882:a444 with SMTP id d9443c01a7336-2cfde7bd3d6mr49402625ad.16.1785083001604;
+        Sun, 26 Jul 2026 09:23:21 -0700 (PDT)
 Received: from ziepe.ca ([64.114.68.211])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cfde80f50asm21426485ad.77.2026.07.26.09.23.07
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cfde5c8337sm22177955ad.20.2026.07.26.09.23.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Jul 2026 09:23:07 -0700 (PDT)
+        Sun, 26 Jul 2026 09:23:21 -0700 (PDT)
 Received: from jgg by jggl with local (Exim 4.95)
 	(envelope-from <jgg@ziepe.ca>)
-	id 1wo1d5-0001Tl-8m;
-	Sun, 26 Jul 2026 13:23:07 -0300
-Date: Sun, 26 Jul 2026 13:23:07 -0300
+	id 1wo1dJ-0001U5-2C;
+	Sun, 26 Jul 2026 13:23:21 -0300
+Date: Sun, 26 Jul 2026 13:23:21 -0300
 From: Jason Gunthorpe <jgg@ziepe.ca>
 To: Ashish Mhetre <amhetre@nvidia.com>
 Cc: catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net,
@@ -70,11 +70,11 @@ Cc: catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net,
 	nicolinc@nvidia.com, linux-arm-kernel@lists.infradead.org,
 	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
 	iommu@lists.linux.dev, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v9 3/4] iommu/arm-smmu-v3-iommufd: Report
- CFGI/TLBI-repeat erratum
-Message-ID: <amY0azMCny2sHfX2@ziepe.ca>
+Subject: Re: [PATCH v9 4/4] iommu/arm-smmu-v3: Enable CFGI/TLBI-repeat
+ workaround on Tegra264
+Message-ID: <amY0edpcgNbqFQ7s@ziepe.ca>
 References: <20260726081904.1408859-1-amhetre@nvidia.com>
- <20260726081904.1408859-4-amhetre@nvidia.com>
+ <20260726081904.1408859-5-amhetre@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -83,30 +83,31 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260726081904.1408859-4-amhetre@nvidia.com>
+In-Reply-To: <20260726081904.1408859-5-amhetre@nvidia.com>
 
-On Sun, Jul 26, 2026 at 08:19:03AM +0000, Ashish Mhetre wrote:
-> A guest with access to VCMDQ generates its own invalidation commands
-> and must apply any invalidation errata before submitting them. If the
-> host also repeats those commands, each affected invalidation is issued
-> four times instead of twice.
+On Sun, Jul 26, 2026 at 08:19:04AM +0000, Ashish Mhetre wrote:
+> Nvidia Tegra264 SMMU is affected by an erratum where a TLB entry can
+> survive an invalidation that races with concurrent traffic targeting
+> the same entry. The hardware-recommended software workaround is to
+> issue every CFGI/TLBI command (each followed by CMD_SYNC) twice, and
+> that infrastructure is already in place behind
+> arm_smmu_erratum_repeat_tlbi_cfgi_key.
 > 
-> Add IOMMU_HW_INFO_ARM_SMMUV3_ERRATA_REPEAT_TLBI_CFGI to report the
-> CFGI/TLBI-repeat erratum to user space. This allows the VMM to expose
-> the erratum to the guest or apply the workaround itself.
+> Neither IDR nor IIDR flags this Tegra264-specific bug, so hardware
+> detection is not possible. Tegra264 is device-tree-only (no ACPI/IORT
+> support) and already has a dedicated "nvidia,tegra264-smmu" compatible,
+> so DT-probe is the only viable detection path.
 > 
-> Use the raw __arm_smmu_cmdq_issue_cmdlist() helper for user-provided
-> invalidations so the host does not apply the workaround a second time.
-> Add arm_smmu_erratum_repeat_tlbi_cfgi() to query the static key when
-> populating the SMMUv3 hardware information.
+> Enable the workaround on instances matching the existing
+> "nvidia,tegra264-smmu" compatible by calling static_branch_enable() on
+> arm_smmu_erratum_repeat_tlbi_cfgi_key. Document the erratum in
+> Documentation/arch/arm64/silicon-errata.rst.
 > 
 > Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
 > ---
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c |  7 +++++--
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c         |  7 ++++++-
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h         |  1 +
->  include/uapi/linux/iommufd.h                        | 13 ++++++++++++-
->  4 files changed, 24 insertions(+), 4 deletions(-)
+>  Documentation/arch/arm64/silicon-errata.rst | 2 ++
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 4 +++-
+>  2 files changed, 5 insertions(+), 1 deletion(-)
 
 Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
