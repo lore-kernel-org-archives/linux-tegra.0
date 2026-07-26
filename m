@@ -1,128 +1,98 @@
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3545B2F7EF9
-	for <linux-tegra@vger.kernel.org>; Sun, 26 Jul 2026 10:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9331ACED5;
+	Sun, 26 Jul 2026 12:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785060271; cv=none; b=uN3r9pyESlewTjqSrEcGCFrLvVZ7GfA4F+/TZXaNwZX54ZJ1GaucW+sds0cq3bgfB9aGD1zzhqSyLFQNuhMm0D0oYsBlCuVuQFnAqaZ1qEDB/iqFaOCpbo2d/pPIr7Wg9a/WN4sR5SVq0+aJ8eSM7Iam6by7IO4ecy/IyI+fQvo=
+	t=1785070665; cv=none; b=sS32WTISnTPZThxiBJl64mGIyEig9BLpzO067bTkpscPbAYZTXZ0J6V/0fxCumbRF516L7FNtuiLLlqXi2S6A1HZv2JZ65urpOnF0XVQO2+ox+Hb14YIjNkr0p6DDLmlqXh5jWWaQ7devGQSKPPeaS3rbhKMmWxsvGL9osGVaTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785060271; c=relaxed/simple;
-	bh=7B35YZE6oc15BiSnsGvUCtFqLPIM1pzfUZ2v9rqMQOU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gVuYJZIkT8dkVQdolJSHpQvkU837BtbdT+1Gr4fiiIshP9t2CYRLP1QMc/Z8CGIbXXH7kN/8VgXeVUJ2Ay2hJAh1W4+3mdN9Ys5KtPQA5JPVNMtVPLW+8UWtoZKk7TGOn42FZqooy8Eyu5CeHkAUMYUoX57xKS5ddQDBfBE1vFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WlFNZsnf; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1785070665; c=relaxed/simple;
+	bh=C7aGpTOyHimPD+gv3/hs6eZmeTVZVj5nGCfe3SrfbSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q2YYTxAjESm7wYo8VUS913/Re1prkZl6Y7uLi682Eg4GOx4Cfs/Sr6ePJ38OFV+O8PUxoeRu006XHiM5k1wOULNIgJR9RbosO2RFe8wNu3T6rBGneiRXZvxHI8ofISGqDWdzhUnAX/6I0LunPZS/KRxhA+pCpKCzC+SThCaf5lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bkOvWz1d; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WlFNZsnf"
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-c9b373d5af0so1319553a12.2
-        for <linux-tegra@vger.kernel.org>; Sun, 26 Jul 2026 03:04:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785060269; x=1785665069; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=8ylvgAcOl9oKpTpFug9fyDy646d3xIKNYqdv16u3reo=;
-        b=WlFNZsnflWfShpHEh3bvTFxbKZlpcot6jk4zqG0cwR0DQ9pbR6xcTOOdPw8wsZG9HO
-         M6FS/xj7sBMIiSbZp9E9nqVL463MXwVO62AR3QdhvU9HGU6YDluogcIAcN7Yp91CI+Qj
-         pb7AgN2AKrRkPkIKRfiQkESyjG4+EijudsFUP0ZLP0F9dkR6a64bTHw5hz1WebLDK6tM
-         exHFVomTZadEocaQEuMZGzzhFqECJ+dZQhepBpEDrtJW0NlD8fb36PU+3j9xGwGSsPSU
-         8SebSgGTSx0ASsYjCyziex9rYopFHULbel0Nh9AgeflofvSfd9OK+Hl4Ci9TIWy7TzhN
-         F0ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785060269; x=1785665069;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=8ylvgAcOl9oKpTpFug9fyDy646d3xIKNYqdv16u3reo=;
-        b=ge9x2ovHFc/2MNF1qVARXannRlM6wt3C01aQz8TmqGguuvCDho96h2ffCng7g3O4hF
-         K3nxLP5lfx8A9eEq8fXfMUwIsT1/Yzqh2YhGIUIwqJHMsdBMQzQBP+eyZid7vup8Qr18
-         rTkL9UyfHvVKz7ivSNrWoLVNhQ6njzG3P5xPKc+3gvKN3B8t+dGIoRD6vY90iby70Ssc
-         ABUyuFv9QE2Qp3hk+rLSqtmXutp60MQtzhaXEjAieEWD00KK4geGz/UKewRGuwipI/a7
-         RhkEZMBSWFY/rgzaxmZvR8RFD33ueFD62ghuBi22GHGDfP62zaNHPQDFqEUQIUlDIDpG
-         xO2A==
-X-Forwarded-Encrypted: i=1; AHgh+Ro3+Pbv6EaZEhZuw9ue9zmr7Gz0KgbV06Xk3r8P01vMm/L2c3iZyZwmTgNRMLeCBLCdXII7qHxL5p18sg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZuN74xYzKlpC1tEVkO0i6AsL1mxZebDKX2inC3CA5KHXU17c1
-	/VN5SRa0ikwdVc9MDG7Fm4o8xBO7tuaXDQBaB6oR26r9cHofjtcxE4T5
-X-Gm-Gg: AR+sD11ujyiS2MFDFZjun6dB5uQU4kvOx1H2CgBHgNvfYr85kyoHFURssdPl2Hy+kVc
-	N7H7ekCRlUDr9Y3dGIrdfKmgZVOr9ELnH2GvUSUwPcK/2AQsmDxBEFoMLTJ1JNG2+/iIvV3H8+n
-	GsK+uq6/24Ct/VaqBSFL4L0jEerhilVTMdvh/mYs3lRmDccOxj2YqGVNW8vyp0b7Aqr+JtSa1QJ
-	2MybLXtx70m2po7Ut9MlI14unsVeYjeRQ20tzOK6HnbSlFLxYtOW0vP6NKzNSkKLLaOT+IXRrsk
-	IA66HJJQ2h24+xy3sdS7+Fpb8qNQqiZV/XjMafnQnXNyGpkZqCDRw3NcDNrYmiqFd0jZr0wL2Rd
-	GRvI7XEBJDG4Qx7l4qNzjbQMWU9/k3vcMmKdxzPaWZglSIBis6dIiwa2ZpM7ws9hprYHE1LvzEt
-	qraAblv00GjCcFLFL+ivI=
-X-Received: by 2002:a05:6a20:d12f:b0:3c3:83e6:c705 with SMTP id adf61e73a8af0-3c67df08725mr4678734637.35.1785060269292;
-        Sun, 26 Jul 2026 03:04:29 -0700 (PDT)
-Received: from SGN-LDSENG.tasernet.com ([2405:4800:5cc3:11a:1ac0:4dff:fe8b:4a69])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-314bc57ae17sm16923506eec.22.2026.07.26.03.04.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Jul 2026 03:04:28 -0700 (PDT)
-From: Cong Nguyen <congnt264@gmail.com>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	linux-media@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Cong Nguyen <congnt264@gmail.com>
-Subject: [PATCH] staging: media: tegra-video: fix syncpoint leak in tegra20 channel init
-Date: Sun, 26 Jul 2026 17:04:08 +0700
-Message-Id: <20260726100408.3262831-1-congnt264@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bkOvWz1d"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3F111F000E9;
+	Sun, 26 Jul 2026 12:57:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785070664;
+	bh=TaLiMtvY0m9e9or7P0HE6bTdSoChv2t1ZP3SmHJfHYo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=bkOvWz1dNFkbQBJJDi5AgASXRmeBvtAHtBSNTQanG/hsstvCS7p4NTpeWSKq3O2SK
+	 /107V2BRROkrNMu58bBG6f+tHcQNlyGSYxOOk0i+gG2MlAtdewK8lTDU+ETDh/zhuv
+	 p4BUtIJHryrQwAOjZiogmP3tRrGJOO8PCOgCiySJU14b+kh7xXTV/na0ZBEji46myf
+	 zaNCo5crj6/nQracdJbws4jSFbhHBemZeTzrl9h7RlJNwhqIWsTiHvHpNsgY2KyPGI
+	 dDAH96UMleqWWKKzVA0Qq5iRKvRv2v+k3E13K0+Wk+cgSOxFxBRGY40Z93dQyAZshP
+	 JtKSOgE4MBVKg==
+Date: Sun, 26 Jul 2026 13:57:38 +0100
+From: Will Deacon <will@kernel.org>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: Robin Murphy <robin.murphy@arm.com>,
+	"Joerg Roedel (AMD)" <joro@8bytes.org>,
+	Jason Gunthorpe <jgg@nvidia.com>, linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 10/11] iommu/tegra241-cmdqv: Warn on a VCMDQ base
+ above the 48-bit hardware limit
+Message-ID: <amYEQt7Y5MC48kRD@willie-the-truck>
+References: <cover.1784059577.git.nicolinc@nvidia.com>
+ <4e638ec1bbff46a358b4129e264fef66b4f37703.1784059577.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4e638ec1bbff46a358b4129e264fef66b4f37703.1784059577.git.nicolinc@nvidia.com>
 
-tegra20_channel_host1x_syncpt_init() requests two host1x syncpoints. It
-stored the first one (mw ack) into chan->mw_ack_sp[0] and only then
-requested the second one (frame start). If the second request failed the
-function returned without releasing the first syncpoint, leaking it: the
-caller tegra_channel_init() bails out with a bare "return ret" on a
-syncpt init failure and does not run its free_syncpts error path (that
-path only covers failures after syncpoint init has fully succeeded), and
-the channel is subsequently torn down via the kfree()-only path, so
-nothing ever releases the orphaned syncpoint.
+On Tue, Jul 14, 2026 at 01:55:07PM -0700, Nicolin Chen wrote:
+> tegra241_vcmdq_alloc_smmu_cmdq() allocates the VCMDQ buffer via the common
+> arm_smmu_init_one_queue(), which uses smmu->dev and its coherent DMA mask
+> of DMA_BIT_MASK(smmu->oas). The architectural Q_BASE_ADDR_MASK is 52 bits,
+> but the Tegra241 VCMDQ_BASE holds only 48 (VCMDQ_ADDR), so the masked write
+> "q_base = base_dma & VCMDQ_ADDR" silently drops bits 48 and up.
+> 
+> A real Tegra241 never reports a 52-bit OAS alongside the 48-bit VCMDQ, so
+> this cannot happen on correct hardware, but a buggy or hostile hypervisor
+> could still advertise such an OAS to a guest. The user-VCMDQ path already
+> rejects a base_addr_pa with bits set outside VCMDQ_ADDR; add the same guard
+> to the kernel-allocated path, failing the queue init rather than silently
+> truncating the base. Use dev_warn_once() rather than WARN_ON(): the OAS is
+> hypervisor-controlled, and a WARN_ON() would let it panic a guest that is
+> booted with panic_on_warn.
 
-Release the already-acquired syncpoint on the error path, and only
-publish the syncpoints into the channel once both have been successfully
-requested, so chan->mw_ack_sp[0] never holds a released handle. This
-matches the handling in tegra210_channel_host1x_syncpt_init().
+So here you talk about "a buggy or hostile hypervisor". Is that really
+part of the threat model? Presumably such a thing could cause havoc in
+a million other ways?
 
-Fixes: 0e2c4117c351 ("staging: media: tegra-video: add CSI support for Tegra20 and Tegra30")
-Signed-off-by: Cong Nguyen <congnt264@gmail.com>
----
- drivers/staging/media/tegra-video/tegra20.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+> Assisted-by: Claude:claude-opus-4-8
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> index f93e59b7bd2db..d27ee215032f7 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> +++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> @@ -674,6 +674,19 @@ static int tegra241_vcmdq_alloc_smmu_cmdq(struct tegra241_vcmdq *vcmdq)
+>  	if (ret)
+>  		return ret;
+>  
+> +	/*
+> +	 * The q->base_dma is bounded by DMA_BIT_MASK of SMMU's IDR5.OAS. On a
+> +	 * real hardware, VCMDQ_ADDR mask and IDR5.OAS are always aligned. But
+> +	 * a buggy VM might set a mismatched IDR5.OAS for SMMU. Spit a warning
+> +	 * instead of a silent truncation.
+> +	 */
 
-diff --git a/drivers/staging/media/tegra-video/tegra20.c b/drivers/staging/media/tegra-video/tegra20.c
-index e513e6ccb776..f8acb6834a0b 100644
---- a/drivers/staging/media/tegra-video/tegra20.c
-+++ b/drivers/staging/media/tegra-video/tegra20.c
-@@ -429,12 +429,13 @@ static int tegra20_channel_host1x_syncpt_init(struct tegra_vi_channel *chan)
- 	if (!out_sp)
- 		return dev_err_probe(vi->dev, -EBUSY, "failed to request mw ack syncpoint\n");
- 
--	chan->mw_ack_sp[0] = out_sp;
--
- 	fs_sp = host1x_syncpt_request(&vi->client, HOST1X_SYNCPT_CLIENT_MANAGED);
--	if (!fs_sp)
-+	if (!fs_sp) {
-+		host1x_syncpt_put(out_sp);
- 		return dev_err_probe(vi->dev, -EBUSY, "failed to request frame start syncpoint\n");
-+	}
- 
-+	chan->mw_ack_sp[0] = out_sp;
- 	chan->frame_start_sp[0] = fs_sp;
- 
- 	return 0;
--- 
-2.25.1
+But then here you talk about "a buggy VM might set a mismatched IDR5.OAS".
+How can a VM write to that?
 
+/confused
+
+Will
