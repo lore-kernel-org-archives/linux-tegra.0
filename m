@@ -1,144 +1,151 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF2D3271EA
-	for <linux-tegra@vger.kernel.org>; Mon, 27 Jul 2026 14:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785163904; cv=none; b=fkvQBo7q6mmaPU2q816K+aWmDeAdBUbIvdZimA0lMimI1A7SmT0WVKRCyqEG5dhG1hNErnzwiivjOggW24J+s4LfqQKczjlz6DTlKZZEyPuXy6HxpgxEbEZFR314h6romDZ6B2CI6yOHNSxGdAya/lNTMtyQjaQz5M7wk+0ERXc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785163904; c=relaxed/simple;
-	bh=Fv4Qq52Od0IG4/8dw1STkdtFPA5yd3S8c31Fe9oTN7E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lFlqYZC1MwdMuJ92fDiy7M7dzvPtd+zshZq/+UJGmBu0ZWyeBbW45raOoEDN4MNgO50AIDB4hLtICJXA64eXDsCdqstxPbNqKmZO+TwoaNUBQM1ygb7eNBHD2mbyMZbgrwHmg3HlSohT5wa7JOEm89cF1QXnoND96c29r7aKJdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=WBKT8Pqx; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010053.outbound.protection.outlook.com [52.101.56.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8273DA7D9;
+	Mon, 27 Jul 2026 14:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785163981; cv=fail; b=Xio2yn/pc1huCM/eraocbmejl5WU+jdkcr1ijLHyr0Y2Anpw2FmjXeKI6TyjzS576Ri/QcyD4KW30Xr4+EqhH6+cQycZl6Nhtb1SClFlz8uQXvKFK5xYgfnuB9x6I/cnS0YlMt0nSzyKxeYtlIphSmgY/xoQersnPn0yQGjX3+k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785163981; c=relaxed/simple;
+	bh=4EcDvdn2bRsWrWEOAYzSljMeSVIDARM3FOLe8Z5ZOzE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BuVzxPR5jepuah5y7UoQ9L6paNg02RdAIAycWh/0CII0RmYqp4m5jpoa+ocPxu9BRmjrPpCCdKP+tIg6JLux+KiNUshLSCtRfiZL/UkMwkZGy0y2CqcZOxfOFB8XxQCWa3oROGnnDMl/KuLhrtc2jW2k1NXo5NM94F6ozs1t+1U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hBOZ0/JV; arc=fail smtp.client-ip=52.101.56.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="WBKT8Pqx"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C5BA91682;
-	Mon, 27 Jul 2026 07:51:37 -0700 (PDT)
-Received: from [10.2.212.23] (e121345-lin.cambridge.arm.com [10.2.212.23])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 275623F86F;
-	Mon, 27 Jul 2026 07:51:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1785163901; bh=Fv4Qq52Od0IG4/8dw1STkdtFPA5yd3S8c31Fe9oTN7E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WBKT8PqxYEsdfiqhz5lApHSw8bmvY8ZftVOYhzc7A9GWLBkAZK5ixHk/m/HgE/0sz
-	 puonVk8rEZ95mq0umcLqb56wYu1fhTwkD83/uFOgJ/KDI3IQWhtESjZWXBPTy3d5Ur
-	 Wt9HYMnpUnRlpINkpZ0BGKfYmdewHxd8E/RHLtJg=
-Message-ID: <910d1492-ad3b-4201-93c6-208be1dcde7d@arm.com>
-Date: Mon, 27 Jul 2026 15:51:32 +0100
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hBOZ0/JV"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kw2jAepBDixVMCjYlyjCpp04I3EWCPEbJlalmOY8G33BFQ9oZAZ/25vLdMWbn59XamIjtGxwnsd5XNDjzqvOow24BzuFZQ7m/+7daK9jWiJSOzQlDWRcmH88VE10iSfvXHgUDMKfeO25vBoiXlCm2HT7qHzhtM3OUzmw5HwB0jQsD4/5IvtxfUlFNLIKR/4t6zI3ao+nMgBtj6TF1v4JLMXcCnvy+U/aWKrQO0SGFTmtrtSpePz3zUMHE5Lv59A1aWa75yrexFipVz1Zb+eKpZ18yimmZ6KYcOpX+36lxSMWoLa+O22j1h92ODlg7LObA5ZI9rzzRLiOYFZUVRQZ3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4EcDvdn2bRsWrWEOAYzSljMeSVIDARM3FOLe8Z5ZOzE=;
+ b=mz5/4xi8N1EH6C2rOM7oGaxOFYcLFGu5OpZci644U/lUElMGZvyK5QKhzmRm6jnne27UVFNrglN6iJu3ZyUg00uhxxqfWK7pqWpDUnkXCLxtaJcF0PC+x11kNlvKYmYjOibuWBz93K+f4NsA8x7cQNKUbQ5FGT/VODWc0rc+TMzQXi4oHuO+qG1Kj1CHDH+u5qKpAVq5ycn0iN6qdMCt8/vKmLXttaKSoJFdQq2YuUu/INKxLPqSUrAtVOTUswl1HnaCPy7FqrmdchFccDnGgvbsJODKJ89pBgvWMbE0YDvmiGQ8Il6m7l2jDOHMQ4IPHbVhWOVOXWlBfngmsZJWrg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=oss.nxp.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4EcDvdn2bRsWrWEOAYzSljMeSVIDARM3FOLe8Z5ZOzE=;
+ b=hBOZ0/JVlBbHic0AyhTLdBjHmemgA5FEuTtStTJ0PMKvomDWWiAaFyFy01zq1ROxvYeIyUerza9a8HVv79FTB3WSVfhYfcRdoJfok0iXMCl/TXISMmZDWxTZ7gZ4HBLC/SOyew5W18xEqWHgHZuBV42rCb+cbImWcWppmbVuuA5zYoHvFbkk5jZYIUT4ebVWVTWNXNWIsNbBxIF11UZfuw5g4+ge5fJhspqQM4LHmo/rXd4nQWDhfEfXzDMpiVuTrSNYa48L10tJgSqVVsSnmaoFIFVVEKbcVN0JyGp+sxiRJvzweXSipt1eV07B/0fhC7c7a5jV/ppMllAq3NmA8A==
+Received: from BN9PR03CA0450.namprd03.prod.outlook.com (2603:10b6:408:113::35)
+ by LV2PR12MB5846.namprd12.prod.outlook.com (2603:10b6:408:175::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.13; Mon, 27 Jul
+ 2026 14:52:54 +0000
+Received: from MN1PEPF0000ECDA.namprd02.prod.outlook.com
+ (2603:10b6:408:113:cafe::a0) by BN9PR03CA0450.outlook.office365.com
+ (2603:10b6:408:113::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.245.13 via Frontend Transport; Mon,
+ 27 Jul 2026 14:52:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ MN1PEPF0000ECDA.mail.protection.outlook.com (10.167.242.134) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.270.5 via Frontend Transport; Mon, 27 Jul 2026 14:52:53 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Mon, 27 Jul
+ 2026 07:52:32 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 27 Jul
+ 2026 07:52:31 -0700
+Received: from build-akhilrajeev-noble-20260602.internal (10.127.8.11) by
+ mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.2562.20 via
+ Frontend Transport; Mon, 27 Jul 2026 07:52:27 -0700
+From: Akhil R <akhilrajeev@nvidia.com>
+To: <frank.li@oss.nxp.com>
+CC: <Frank.Li@nxp.com>, <akhilrajeev@nvidia.com>,
+	<alexandre.belloni@bootlin.com>, <conor+dt@kernel.org>,
+	<devicetree@vger.kernel.org>, <jonathanh@nvidia.com>, <krzk+dt@kernel.org>,
+	<linux-hwmon@vger.kernel.org>, <linux-i3c@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux@roeck-us.net>, <miquel.raynal@bootlin.com>, <p.zabel@pengutronix.de>,
+	<robh@kernel.org>, <thierry.reding@kernel.org>
+Subject: Re: [PATCH v6 00/12] Support ACPI and SETAASA device discovery
+Date: Mon, 27 Jul 2026 14:52:26 +0000
+Message-ID: <20260727145226.179827-1-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <al-jx5AvUrxq8I75@lizhi-Precision-Tower-5810>
+References: <al-jx5AvUrxq8I75@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Fixing TegraDRM on multi_v7_defconfig / Enabling DMA API with
- tegra-smmu
-To: Mikko Perttunen <mperttunen@nvidia.com>, Jason Gunthorpe <jgg@nvidia.com>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
- linux-tegra@vger.kernel.org, "iommu@lists.linux.dev" <iommu@lists.linux.dev>
-References: <erKxvAxkSpOaODz6rOpDbQ@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <erKxvAxkSpOaODz6rOpDbQ@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECDA:EE_|LV2PR12MB5846:EE_
+X-MS-Office365-Filtering-Correlation-Id: b1bb0902-93b3-485e-4d13-08deebeebce5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|36860700016|23010399003|82310400026|7416014|6133799003|11063799006|10067099003|56012099006|22082099003|18002099003|3023799007;
+X-Microsoft-Antispam-Message-Info:
+	jxEoTPIg1nLb8zPF9/OWEc/gK0p7o4eBFRMXxXqBF4vzokvBuBbmIePp3ipvRK0z2Hz9GBXhSPpvz+YUnqiXI/+rtjp782G9BiwbMthmxauX5NpWRcuSzdVr87Rq2PVujTZEV1JxQ585H+d/wILEzX0nN5gZD0SrACvj08LpH0gr/gCbNbIRB0yCCIbYP8wBMwkcwks+PN/UsBcJQ/jtPAfzwMLeXqOwD+7+4aDFuejCwyQJ91OhNfULl56BImmlMLoL8lh641n+EGOLLHe5Rl42kIxgx8Nx0TTloT7g2/mA47B8zk9FE1AZ01sLiEPFRvax5MU4EWE7pvwyCgBz+gdzc1uKiHYGDZ3uNeQgEN+FuJ4OkjjkSV4dJix0CCgqaXJnzAMaio0zg1iR/6u474CSOgn39yeByBohBc3KYIpdyr5TsSP593yenZBCZT1sYDzgTy/jm0IK27Z3UxQZHrws2pBjlM3Jlwx+s0j1h+nc3CybUAsqPqZOmvB0VX/aF3GznWfZM0ClU5aojy+ePzkEPyCDqxhe8L0TlDa3jfQ0C/qSgwGpELyUsdZCJac6B79iQ68HghInIpP69UAgBVZ+QGr2+s37Oh6LReeg/b0ERpSl4xpSwRFpXGavWkKO00tXvrwj5xVGY4cAfO8h+vRKSQw43KDknyKZjk8DIpAlPDZ6/mt+hbjaJyOP+STrz+HrDkQzyixpZKWyjyKtfA==
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700016)(23010399003)(82310400026)(7416014)(6133799003)(11063799006)(10067099003)(56012099006)(22082099003)(18002099003)(3023799007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	AvfncoMq2dCh1DqJZjU63RbQaE4plEBHB1pxNWzfx+6xBtoQU8XjpZURZNwK/Sb0r38CsgqIb9TgzpUc/nLSzfKatWD8Qj2GpgJU6s4jGWQfRIUz8ZXzItZs6bIaMNC2vmi+ZVgOkIWbnR2NdnxkjISawOtq13oYeIGsxBm0IG0YT1Fpizh7GKX+1tyaumQAjFT79byLi5Q4g/UeTdEcpGELHZ7R/ykw3GhqGMRUSuIrRHOhJzVbWJLOBsUW6rTLf92sAnZnsKsFLxReBpC74n2Q+JT7lNqSChmDTGTEKxBSjQmDALLWeUI4qpk+4937EVymSro5g/zVWkXJcI6MfcZ2c1oL0WftoP9P7+lXzt3XVTyJhS4KOc8TIwCtobI7bshK/ve2SvwjzNZEhWHF4335cPX6nUpmHcwoF8RCRA9Ed1V60tXHIfnsdZAnut2q
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2026 14:52:53.5286
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b1bb0902-93b3-485e-4d13-08deebeebce5
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000ECDA.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5846
 
-On 24/07/2026 8:35 am, Mikko Perttunen wrote:
-> Greetings everyone.
-> 
-> I've been looking at enabling more CI for 32-bit Tegra platforms
-> recently, and I ran into a problem with TegraDRM not probing on
-> tegra30-cardhu, but only on multi_v7_defconfig.
-> 
-> I traced the issue to the following sequence of events:
-> 
-> 1. On multi_v7_defconfig, CONFIG_ARM_DMA_USE_IOMMU is enabled, while on
->     tegra_defconfig it is not. This causes arm_setup_iommu_dma_ops to run
->     on TegraDRM devices.
-> 
-> 2. Some of these devices will be placed in a single IOMMU group by the
->     tegra-smmu driver. When arm_setup_iommu_dma_ops is called, depending
->     on probe deferrals, the group may have only the currently probing
->     device, or a previously deferred device and the new device.
-> 
->     arm_setup_iommu_dma_ops calls iommu_attach_device. If the device is
->     alone in its group, this succeeds. If not, this fails. If
->     iommu_attach_device fails for every device in the group, everything
->     is "fine" and TegraDRM goes to probe and work fine. Hence let's
->     assume we have one device that succeeded the attach.
-> 
-> 3. iommu_device_use_default_domain gets called and succeeds on the first
->     device in the group. On the second device in the group, it fails
->     since group->owner_cnt was already 1. The custom ARM DMA IOMMU
->     implementation uses a custom UNMANAGED domain so the domain !=
->     default_domain check evaluates to true.
-> 
-> 4. Devices fail to probe which leads TegraDRM overall not to probe.
-> 
-> I've thought of the following options to fix this:
-> 
-> 1. Match behavior with tegra_defconfig: Figure out a way to not run
->     arm_setup_iommu_dma_ops for this situation (ideally any multi-device
->     group situation). However, I'd also like to enable DMA API with
->     tegra-smmu to get rid of the manual IOMMU API code paths in TegraDRM,
->     so this is not a particularly satisfying route.
-> 
-> 2. Improve the legacy path: Fix the ARM IOMMU DMA code to support
->     groups, and add an exception in iommu_device_use_default_domain. But
->     I presume we don't want such non-trivial modifications to that code
->     at this point.
-> 
-> 3. Modernize: Support CONFIG_IOMMU_DMA on ARM -- since there is an issue
->     with per-SoC quirks, I think this should be done one SoC at a time.
->     So come up with a way to dynamically pick between the legacy and
->     IOMMU_DMA paths. Perhaps if the SMMU driver explicitly requests the
->     DMA domain type, use the modern path. Currently, CONFIG_IOMMU_DMA and
->     CONFIG_ARM_DMA_USE_IOMMU are mutually exclusive so that has to be
->     changed.
-> 
-> FWIW, if we are to move to using DMA API with TegraDRM, one blocker
-> would have to be resolved: boot splashes scanning out while the DMA
-> domain is being set up. Since we cannot really use the iommu-addresses
-> reserved-region device tree bindings with these old devices, my thought
-> is to leave the display memory clients in bypass in tegra-smmu until the
-> display driver has quiesced the hardware and can then call into
-> tegra-smmu to enable translation.
-> 
-> Please let me know what you think and whom I missed in the To/Cc fields.
+Hi Frank Li,
 
-TBH I rather feel like the time for converting ARM to iommu-dma has 
-passed - there are drivers which rely on specific behaviours of the ARM 
-IOVA allocator which iommu-dma does not match, and meanwhile iommu-dma 
-continues to grow more server-specific features which would be nothing 
-but bloat on ARMv7 systems with <=2GB of RAM and no virtualisation. At 
-this point I'm inclined to treat the existing DMA ops as legacy code 
-like with alpha/sparc/etc.
+On Tue, 21 Jul 2026 12:52:23 -0400, Frank Li wrote:
+> On Tue, Jul 21, 2026 at 04:07:48AM +0000, Akhil R wrote:
+>> This patch series adds SETAASA device discovery to the I3C subsystem,
+>> enabling support for SPD5118 temperature sensors found on DDR5 memory
+>> modules. The changes also add ACPI support for all existing DAA
+>> methods like SETDASA, SETNEWDA as well as I2C devices on I3C bus.
+>>
+>> SPD5118 and similar devices on DDR5 memory modules differ from typical
+>> I3C devices in their initialization. They use SETAASA broadcast CCC
+>> instead of ENTDAA for address assignment, and per JEDEC specification,
+>> are not required to have a Provisioned ID or implement standard device
+>> information CCC commands (GETPID, GETDCR, GETBCR).
+>>
+>> The series enables describing all I3C and I2C devices on both Device
+>> Tree and the ACPI table, using unified device property APIs throughout
+>> the I3C core and the Synopsys DesignWare I3C master driver.
+>>
+>> Please note that the series modifies drivers across multiple subsystems,
+>> like Device Tree bindings, ACPI, I3C and HWMON.
+>>
+>> v5->v6:
+>
+> Thank you for hard work. I glance at there are some important sashiko AI
+> review need be figured out. let me know if you think it is ready for me
+> to do manual check.
+>
+> You can simple reply sashiko review result by providing your justify.
 
-While there is technically an option 4, to have tegra-smmu do what 
-ipmmu-vmsa and mtk_iommu_v1 do and go coercing the ARM dma_iommu_mapping 
-into groups behind the arch code's back, I am also still hoping to get 
-rid of that and the messy probe_finalize step altogether. FWIW my 
-preference would be some form of option 2 - off-hand I imagine you could 
-probably get most of the way there by propagating the ARM mapping 
-through group->iommudata (ironically tegra-smmu being the only driver in 
-the way of that - looks like it could probably do its internal group 
-accounting explicitly in release_device instead), plus one or two 
-special cases to recognise ARM DMA domains in the core code as you say. 
-The more involved, but ultimately neater, option would be to turn the 
-ARM mapping inside-out and make it a proper domain cookie type with the 
-ARM code providing its own definitions of iommu_{get,put}_dma_cookie() 
-and iommu_setup_dma_ops(), so it could then work as a proper 
-IOMMU_DOMAIN_DMA default domain, and we can lose the current 
-ARM-specific identity domain bodges as well. I reckon the impact of that 
-to core code shouldn't be much worse than the existing special-cases it 
-would replace, while on the arch side it should effectively only really 
-redistribute the current arm_setup_iommu_dma_ops() path, so functionally 
-pretty low risk as well. It's just liable to be fiddly to do in 
-manageable steps rather than one giant patch changing everything at once...
+I have responded to Sashiko's comments. Please review and let me know
+your thoughts.
 
-Cheers,
-Robin.
+Regards,
+Akhil
