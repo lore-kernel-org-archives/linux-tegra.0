@@ -1,78 +1,81 @@
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010015.outbound.protection.outlook.com [52.101.61.15])
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011001.outbound.protection.outlook.com [52.101.62.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4FA2D249B;
-	Mon, 27 Jul 2026 14:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8125D30E831;
+	Mon, 27 Jul 2026 14:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.1
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785161516; cv=fail; b=Dhjl7DnpkrjbBm2jUr2XG8lKwP4gVvK+407XO0Kz1l0yTU2DzzLhb0gr9u4azo7yzO29Jws0imLC2cURbhScPVPB1/4u6QoDkDnrHXRVKFgQdR0hMa5/6OL271ggEyMIRpRbeo6mBXVdmrTUrZPeJgdqnTB3h0eHIG4Jf5tuJ/c=
+	t=1785161517; cv=fail; b=jOwD+xcyVJP1deyBMsT5QpqlY7WTaBPEDk/a5vl6blHX1eg+djhRPwzM+YwIXkkEO+LYqAxT+xAMNvdcjVTR9QmfOU1QUStjUQzwDSQVL++66+recHjN5D+DN489WRziB86vdzFoJk4MMMXkuW9qkS3F1akyGRESe4X2PaS9Fmw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785161516; c=relaxed/simple;
-	bh=U3Vc7M4EMHbD7g5+tFRRONmJ3t5RRYCAfTkLNlz5DGM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rGKS0D7x0e/ynM12PkCQdxrjhMLWEovMdxV1Ul+lMCSg28WvtMWeOyuDdN9loVKu5e2/yGen3nuMSVjyFNgwjKeQzq74kudqSfhWWbuCHrXRItF1+2BiA74ZWvbYqlmvMu0bHE5Rxt9G2Seef71ExOD0sKSU6ftcgAZpXDoTcWg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=OH24cNCP; arc=fail smtp.client-ip=52.101.61.15
+	s=arc-20240116; t=1785161517; c=relaxed/simple;
+	bh=A7A6wTzAJBCIX+4aDFPU9E5DEIL8wyw3D25m43wxPQc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RV3qvw3zVK6+DyhLKAGYbxsrUCyKwldt/ZwAXCShxh+mUXUdcZBV2rHfBjHmZToos4zVPdTGVYlVTZPpoKMhSOUJpvkBuDTiIRK0oh42GCDmJq3dHIwaPWEZooTCVSn+gbRO7WANb2Kw4j5ANcP8ZAYo7ZHrbfGBVW/N9oTTCBo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HXIlUi7G; arc=fail smtp.client-ip=52.101.62.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="OH24cNCP"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HXIlUi7G"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gKJZC6HxaZrxPvnQ13byQyE5rlRl9aVr2q93fGdU6xVN8JFKEnIw3MvcsKO82P/9P4qRL6VMkuFc8gSVGK/ohj1nkBOTGzt9DMNhFjzoRKNJ81qKmPmNtwm5rzvsn18C7S3ia1f7KrXv4/oEHqJz3yJ6AN0P3EcIEbVZMV2y2oQ4W2+NVipWE2s17J47bEKfpbZrH7kAIJxgfZhzM5EuiyWG3uJe/LnF8G+5psP8siFdRyWNc+NZxCsylv9/n2ucDA8nI5NBGP0XinSbKWYi/CD2rmbnhAMgA8CFuy61fAQVzvJdAW0gyrYPaTRnbkDvNCIGKWUBJiHfpdj9LB2guw==
+ b=bD2/e9QSYjRVdol6RwRyXWpW5bkXYJEz0dtbBc6TW5bIRjAiK76R90ZN/oFzUg3uXVsZi/jsSblJql1BHg5SosrC31jPw/afFiywqg+G3URdl0Z8abtP4kXg68QRgz6WpiCRkjZrgIF4zjb0oC+dj2Jm/XTD4HE2nH4N9xY7eac21tQnjv27TkoRGJ8a8ZowV1poJgsUEdHboNu0mhpm3xQX92TLM3E0R6pfUt5ikJcPn3PVWwQ8wO+3U0LIrR/t/3FtKsEVGauU0IVe6sGyNmwtv7BusfpCH2LjFTqEfhpAjMDTIr+pYvAcMfkRmN12kR392/sZwUIZulpGJ/pdwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3wqJip5X8I8oV5A769+DsLNRt1vcPF/lIsWAfULpFu0=;
- b=AyO0NpUbwCjYS28URnbw2dL1rJlH0G5G18M4mtSiz4k/DfvDb+1mkMjfVAGX03rfvnfAL/eQbJN8YWMbPPeQZNc1fW9/kcbrRgJCRVmEpci22+z6TQs2dBaL5SyflnLw4lSgd9IHkuEWTWFHKWhAu5WsuVTrx2vm2NArJLd7QP0EYEZZqSY7r+B3ulM5Y2MRMC2+S2DZ2kX1uVMPBivnPVV0Gn2eFLAtUrLVIKOSMnQZXA/ID/z0BMxkQQACyOLwvl1UOEV4NBO+qdO++kMVoju7T9fDEMZsdwryssXY/XZTkQOmwnLZgD3d/G5OvJe4fRTxlkU5t5j3hC9AuJ+buQ==
+ bh=mPNSZtmqaSHehC7SAbaJk4749GETuQov9lRi45mKr+k=;
+ b=dZXzXuGteRP3ZKXe93c0BLj+aeYFjxof2j2QphIdIpIrnGYtnVVtnZsObXsdz1mDaIy9jbAr4Oo6sNQnQpVxnYLJ5alZ4XDW7s+kJbY0XiW91R8FD8uJ5x+Tux/6hKM4ZfhMXLcz3cyXpbL3yhTOx8B7V+nwNTWTJAuyH97u5UBXbRBne2SfLzsQxhc4s3S1Co+uBFTtgK3baxhWfY9SIrwznJZNnNSXrrJ7mFVxo5XFvARqmVfwtD+oS1p2o3QJeRuruknjhVx5S7RR4v7eDntyB4d1LjUqODLeACz4Hhl9iqx08ecKGzDRCwp1Gr6S/2PcDlcbugunGJFpsE2nTQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3wqJip5X8I8oV5A769+DsLNRt1vcPF/lIsWAfULpFu0=;
- b=OH24cNCPlEkXcqD0EJC77y21i4UoAkyNDwC7hClFKlRfWKX+CNpPH2/8FhBo2jmEq3YRqOiQVtoqma0Sv+LSJFVS2Fc1p/QZAJwHIR0j1I02rFrIQOeQoDaQgMtv2kkybqKLX0/RuyZ7FZfDsU91xPImVbxoZb3l9OqqQ1KvexAT+YJCYEBB4Yg0O6xRIvjlmXjeqXyt1XEg1xFN7cqzjDm8hSfA3QBThYmkoMHoDcFqAjxpLM7tOONngCDgesxmSQqeix3AC47p86f53XeEDu3nmftURT6kyEb72NIA/n8aJBmgM2OTbu5M5wxJrZoC+M5OGtoMQL8LQv9vz6LlZw==
-Received: from BN9PR03CA0848.namprd03.prod.outlook.com (2603:10b6:408:13d::13)
- by BY5PR12MB4306.namprd12.prod.outlook.com (2603:10b6:a03:206::17) with
+ bh=mPNSZtmqaSHehC7SAbaJk4749GETuQov9lRi45mKr+k=;
+ b=HXIlUi7GYIbJwiD/PriMjSSyMmmJ+eEly3T9d34NC4x4FyihJl8MQNxC6FhEa/gj7/VbUr/XJx7Dxlqhv1cja+Me5uMSBTM29lF4uj7VtTgrhE1ahqsY4aRENO1/GFwXgyzYlDrOOc+yqPBrMU6kir7CPqeYqCdyQcGPsCsAAUqKM2wbrP6j+18+fzN896uMJb1/pmdG8V7kJg2c9dbKd4GnkORDqVf9AZ899ztiQ7HTedYkzbvC3ZiYTFsXbaiTUhr71dS0TzkeeBSAxRi5eky9zIQForegClVqUrdH8H79iY2qUsPvuKnPMKDwi84PQtMsDs5cSd30bpbpzaGo3A==
+Received: from BLAPR03CA0025.namprd03.prod.outlook.com (2603:10b6:208:32b::30)
+ by IA1PR12MB8520.namprd12.prod.outlook.com (2603:10b6:208:44d::5) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.13; Mon, 27 Jul
  2026 14:11:47 +0000
-Received: from BL6PEPF0001AB56.namprd02.prod.outlook.com
- (2603:10b6:408:13d:cafe::83) by BN9PR03CA0848.outlook.office365.com
- (2603:10b6:408:13d::13) with Microsoft SMTP Server (version=TLS1_3,
+Received: from BN1PEPF00006003.namprd05.prod.outlook.com
+ (2603:10b6:208:32b:cafe::22) by BLAPR03CA0025.outlook.office365.com
+ (2603:10b6:208:32b::30) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.245.13 via Frontend Transport; Mon,
- 27 Jul 2026 14:11:46 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ 27 Jul 2026 14:11:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL6PEPF0001AB56.mail.protection.outlook.com (10.167.241.8) with Microsoft
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN1PEPF00006003.mail.protection.outlook.com (10.167.243.235) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.270.5 via Frontend Transport; Mon, 27 Jul 2026 14:11:45 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ 15.21.270.5 via Frontend Transport; Mon, 27 Jul 2026 14:11:47 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Mon, 27 Jul
+ 2026 07:11:27 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 27 Jul
- 2026 07:11:25 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 27 Jul
- 2026 07:11:24 -0700
+ 2026 07:11:27 -0700
 Received: from build-pshete-bionic-20260122.nvidia.com (10.127.8.11) by
  mail.nvidia.com (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 27 Jul 2026 07:11:24 -0700
+ Transport; Mon, 27 Jul 2026 07:11:26 -0700
 From: Prathamesh Shete <pshete@nvidia.com>
 To: <linusw@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
 	<conor+dt@kernel.org>, <thierry.reding@kernel.org>, <jonathanh@nvidia.com>
 CC: <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<pshete@nvidia.com>
-Subject: [RESEND V2 1/2] dt-bindings: pinctrl: tegra264: fix DAP2 DIN/DOUT pin names
-Date: Mon, 27 Jul 2026 14:11:20 +0000
-Message-ID: <20260727141121.772110-1-pshete@nvidia.com>
+Subject: [RESEND V2 2/2] pinctrl: tegra264: fix DAP2 DIN/DOUT pin assignment
+Date: Mon, 27 Jul 2026 14:11:21 +0000
+Message-ID: <20260727141121.772110-2-pshete@nvidia.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20260727141121.772110-1-pshete@nvidia.com>
+References: <20260727141121.772110-1-pshete@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -83,66 +86,122 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB56:EE_|BY5PR12MB4306:EE_
-X-MS-Office365-Filtering-Correlation-Id: 60d99af1-c30d-4333-6a0c-08deebe8fe05
+X-MS-TrafficTypeDiagnostic: BN1PEPF00006003:EE_|IA1PR12MB8520:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9d0662b8-3649-4ba3-8d60-08deebe8fee9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|23010399003|82310400026|1800799024|36860700016|56012099006|10067099003|11063799006|18002099003;
+	BCL:0;ARA:13230040|23010399003|376014|1800799024|82310400026|36860700016|56012099006|11063799006|10067099003|6133799003|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	sIvaFKtFxJbvcJ9MqER5swNMWgk5YW1nrPmTqfNcGtfSjHBwIU6c21NV9RA7TCw124VojuSpz+joXa2jxqbpp5USiyidMANe7p9XBTBrLWEKpY0YfyiiFON7yNbooIBmWSKlvLLEYjPkML2GaGBqCP31jeUn/yBDwvbKlcpR5Zy4eNkglc3ls5sy7IK/GEnMaVDG+yB3D4RC1TL/20eATZaDX6RTCmzYQHaaM1LXyA0UCTRDxAR9LFBt3MAOqSvy2H0XDgKXKJ/zR7tsixKuejKwc6+j1v9SUNynu9qklSRBKZnvraTZz6VytxMPs1L8HraAlDkUp14lG5MajzfbD1gTAd0yV3+c4Lsof4ATSAMBAGdJEtb36dejn9S7UvvRewr2KraI/dV8XFN+hb450Mi69b/KsGeBvjh7GipoyqVfTkBl3B6CKbcVMq2XoTH68tGDpB5PdtYYzSvdZwsw1OgyDx4A9bh7A6ZWnlnsdWw8T8Br/IvgLiW4i0UtTuCRwgNFdxXojCgIQQ4mHlWfwLzaCCc0i+iZHzfRgZqYqiaIw5/I6liz1iCVP/l9vmMAcyHBwd20Sgc1wQakMUDhPBlURScafk3NnsQu8nIg1rvipjNwuJ/kXNBO+gOQXxPwjb+s1QlcE40deqXxMGnCN926mhf9xGkjhlubmcu7V7vvCLj9QP/imykiGDUhvCjINlEvlePzP7JRLvancxSV/g==
+	ApmrHL4pVnFkg6ftg+vdud05euhNPLuLJijTpienyXghzi/nLqdiR+6h1l7kLO0B84RCP8r5bMzwzyhzZuFDiMhOIMPEiOht/XGjcTS06wxlgQvhvADXFKGCCyUuKsbirsJZJX49CUQAE1pNfddoT9oz6ZfQe7XQiphVFo+x/JarlqCFZ/QpV+EcvkVHeMlURg01ZMUyvmO7FiU2VxNLqzu1NVBAVLf1wSmhn3dmwV8+qajSenq5RqNHq5IKkJbzSQs0lvwUkBrO4UOcPfbeSO2nl+Fr5g10WhjnX+S1YlKJ0dqwzIcD/+ln1OvTJ3EbxtB6yq7JGISEdAcQB2HnpkuNsT3RTMfbILvppDeT/nYYWA/GgI6XD3LV4I5Sb7TOrE2f2kaVw7W/9dWdkx7nbvJxq5gIP9L4x7DYQ0LeLZng6U5mhB6m3ZVQFXKOr75M48glnrjlpf1JMEOhcaEiH9jAsupK4QMFmuyHiZzGkWpkIFY5lzmRekvcr90c3T+6AMFRIFqk9YgTZNTfDScrcINPhIG5JlEq4DfoEuUeSA+3tG0TOlE6raXzrZdU5QsREV2Obpdx1ZIP2oIr9/CaA+BMgDhqFO4/WsPVjt0/wtK3/Q5soNK/9hMvLCS4TvBMLJoTqWvR9hXG08LIvjMhGWonwbHL3vl9SNi9sOn5kdUmupuc92q1YzKyIOj1FTgBLLhHXjMayZrSKdaGetxp7A==
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(23010399003)(82310400026)(1800799024)(36860700016)(56012099006)(10067099003)(11063799006)(18002099003);DIR:OUT;SFP:1101;
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(23010399003)(376014)(1800799024)(82310400026)(36860700016)(56012099006)(11063799006)(10067099003)(6133799003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	uX7RgPmMnu/MRq6I3EZt3L0sdeg4xm+MqKc3uVGoIkVS1gqSniKQ9FcvdZ5rPbB804E0F54YaEPLdyRjHHmuUBwFrRkenF3eWYUxwowdYWprLwQmU6P0QfoG02jAAl/xL7sZGj/643Pz0nJb2j6tYwBxiyyjV3Pw2NuWJhSlLzUDWHIoq5/6h066YeTZFrmkW7OusJ9qDfdZrWzVvN3akScF1DEOTnMHZDyp8xUAr8jyuD/ShmGlkQGxP/Pdi2K/NVwtyCYZ6Wzrfg3nxuIO1lg/sHNDwwQ3EINLl6mk/6AOwFmyf1g4n2/a58vGdv2jRFzxYE1fI3D7A4Tu5mi7cpABobtw6+79h437h0b0SLFNt07i693EYuUA+/z5TG9QvKeI0wWllfLSvBlZTq80cj09Pa3IBg5pB1dMuwxZMFQNvIdf5XD6nqFrd2aC+oSU
+	jPiWAil3eKqJfMnSl4pC9Nh8Q0ya8w4h1l2vs2LEisiWT/BpNVaWQxyyonzAKjE9IprCe6u93mk2QiCwTJV9jFgIPE6P7TyHCwNL4qsdFl83pQEjZxlabAB6Aa909vfXsDyn0nuyQGbOhb7CtxIwFBcdCgUHwSXeSXip1OXwvKP0egLi/9ab4fkCDg+k22V4oJOc/IWMw+zcYrtL66QYygChkRpZcoblyRtP33NzOVmZvfCkzkaaDqQTI2ZUqX3O5sgDP4yQF5ORw0daJ+Kd3U9PazwlKqOSENYZ+lpShAgcPPwHp00AVHLy1Ml/dhsL8I2CtYSRS1XBd8Xu7T52un+EZzLO0gigxeA1g1KtA88EMAjFuXwk2w9fB5ebD+BZE/p3fNqpUiTGDOcBqzzswjnDeHRFwl8o2uw9TxV/a9CyU8x97UdqZf2IgBBzfOLy
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2026 14:11:45.7947
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2026 14:11:47.3003
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 60d99af1-c30d-4333-6a0c-08deebe8fe05
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d0662b8-3649-4ba3-8d60-08deebe8fee9
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB56.namprd02.prod.outlook.com
+	BN1PEPF00006003.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4306
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8520
 
-The DAP2_DIN and DAP2_DOUT pins were listed with swapped ball suffixes:
-DAP2_DIN as PV7 and DAP2_DOUT as PW0. On silicon DAP2_DIN is on ball PW0
-and DAP2_DOUT is on ball PV7. Correct the pin and drive group names to
-dap2_din_pw0 and dap2_dout_pv7.
+The dap2_din and dap2_dout pin groups were given swapped ball suffixes:
+DAP2_DIN was described as ball PV7 and DAP2_DOUT as ball PW0. On silicon
+DAP2_DIN is on ball PW0 (mux register 0x6050, drive register 0x6054) and
+DAP2_DOUT is on ball PV7 (mux register 0x6058, drive register 0x605c),
+as reflected by the board pinmux.
 
-Fixes: 30a9d5162f25 ("dt-bindings: pinctrl: Document Tegra264 pin controllers")
+Because the ball suffixes were swapped, the groups were also assigned the
+wrong primary mux functions (dap2_din -> I2S2_SDATA_OUT and dap2_dout ->
+I2S2_SDATA_IN), routing the I2S2 data-in and data-out signals to the wrong
+pins and breaking DAP2 audio. 
+
+Rename the groups to dap2_din_pw0 and dap2_dout_pv7 and give each pad its
+correct function (dap2_din_pw0 -> I2S2_SDATA_IN, dap2_dout_pv7 ->
+I2S2_SDATA_OUT). The register offsets are already correct and are left
+unchanged. This matches the board pinmux.
+
+Fixes: c98506206912 ("pinctrl: tegra: Add Tegra264 pinmux driver")
 Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
 ---
- .../bindings/pinctrl/nvidia,tegra264-pinmux-main.yaml       | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Changes in v2:
+- Rename the pin groups to dap2_din_pw0 and dap2_dout_pv7 and assign the
+  correct mux function to each pad in a single driver patch.
+---
+ drivers/pinctrl/tegra/pinctrl-tegra264.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra264-pinmux-main.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra264-pinmux-main.yaml
-index c40409d3263c..01db762e82bc 100644
---- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra264-pinmux-main.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra264-pinmux-main.yaml
-@@ -44,7 +44,7 @@ patternProperties:
-                     soc_gpio173_pu3, soc_gpio174_pu4, soc_gpio175_pu5,
-                     soc_gpio176_pu6, soc_gpio177_pu7, soc_gpio178_pv0,
-                     pwm10_pv1, uart4_tx_pv2, uart4_rx_pv3, uart4_rts_n_pv4,
--                    uart4_cts_n_pv5, dap2_clk_pv6, dap2_din_pv7, dap2_dout_pw0,
-+                    uart4_cts_n_pv5, dap2_clk_pv6, dap2_din_pw0, dap2_dout_pv7,
-                     dap2_fs_pw1, gen1_i2c_scl_pw2, gen1_i2c_sda_pw3,
-                     gen0_i2c_scl_pw4, gen0_i2c_sda_pw5, pwr_i2c_scl_pw6,
-                     pwr_i2c_sda_pw7, soc_gpio138_pp0, soc_gpio139_pp1,
-@@ -111,8 +111,8 @@ patternProperties:
-                     drive_soc_gpio351_ps1, drive_gen0_i2c_scl_pw4,
-                     drive_gen0_i2c_sda_pw5, drive_gen1_i2c_scl_pw2,
-                     drive_gen1_i2c_sda_pw3, drive_dap2_fs_pw1,
--                    drive_dap2_clk_pv6, drive_dap2_din_pv7,
--                    drive_dap2_dout_pw0, drive_pwm10_pv1,
-+                    drive_dap2_clk_pv6, drive_dap2_din_pw0,
-+                    drive_dap2_dout_pv7, drive_pwm10_pv1,
-                     drive_soc_gpio170_pu0, drive_soc_gpio171_pu1,
-                     drive_soc_gpio172_pu2, drive_soc_gpio173_pu3,
-                     drive_soc_gpio174_pu4, drive_soc_gpio175_pu5,
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra264.c b/drivers/pinctrl/tegra/pinctrl-tegra264.c
+index be64fba34dce..f8afb0bdb68a 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra264.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra264.c
+@@ -96,8 +96,8 @@ enum {
+ 	TEGRA_PIN_UART4_RTS_N_PV4,
+ 	TEGRA_PIN_UART4_CTS_N_PV5,
+ 	TEGRA_PIN_DAP2_CLK_PV6,
+-	TEGRA_PIN_DAP2_DIN_PV7,
+-	TEGRA_PIN_DAP2_DOUT_PW0,
++	TEGRA_PIN_DAP2_DIN_PW0,
++	TEGRA_PIN_DAP2_DOUT_PV7,
+ 	TEGRA_PIN_DAP2_FS_PW1,
+ 	TEGRA_PIN_GEN1_I2C_SCL_PW2,
+ 	TEGRA_PIN_GEN1_I2C_SDA_PW3,
+@@ -329,8 +329,8 @@ static const struct pinctrl_pin_desc tegra264_main_pins[] = {
+ 	PINCTRL_PIN(TEGRA_PIN_UART4_RTS_N_PV4, "UART4_RTS_N_PV4"),
+ 	PINCTRL_PIN(TEGRA_PIN_UART4_CTS_N_PV5, "UART4_CTS_N_PV5"),
+ 	PINCTRL_PIN(TEGRA_PIN_DAP2_CLK_PV6, "DAP2_CLK_PV6"),
+-	PINCTRL_PIN(TEGRA_PIN_DAP2_DIN_PV7, "DAP2_DIN_PV7"),
+-	PINCTRL_PIN(TEGRA_PIN_DAP2_DOUT_PW0, "DAP2_DOUT_PW0"),
++	PINCTRL_PIN(TEGRA_PIN_DAP2_DIN_PW0, "DAP2_DIN_PW0"),
++	PINCTRL_PIN(TEGRA_PIN_DAP2_DOUT_PV7, "DAP2_DOUT_PV7"),
+ 	PINCTRL_PIN(TEGRA_PIN_DAP2_FS_PW1, "DAP2_FS_PW1"),
+ 	PINCTRL_PIN(TEGRA_PIN_GEN1_I2C_SCL_PW2, "GEN1_I2C_SCL_PW2"),
+ 	PINCTRL_PIN(TEGRA_PIN_GEN1_I2C_SDA_PW3, "GEN1_I2C_SDA_PW3"),
+@@ -827,12 +827,12 @@ static const unsigned int dap2_clk_pv6_pins[] = {
+ 	TEGRA_PIN_DAP2_CLK_PV6,
+ };
+ 
+-static const unsigned int dap2_din_pv7_pins[] = {
+-	TEGRA_PIN_DAP2_DIN_PV7,
++static const unsigned int dap2_din_pw0_pins[] = {
++	TEGRA_PIN_DAP2_DIN_PW0,
+ };
+ 
+-static const unsigned int dap2_dout_pw0_pins[] = {
+-	TEGRA_PIN_DAP2_DOUT_PW0,
++static const unsigned int dap2_dout_pv7_pins[] = {
++	TEGRA_PIN_DAP2_DOUT_PV7,
+ };
+ 
+ static const unsigned int dap2_fs_pw1_pins[] = {
+@@ -1834,8 +1834,8 @@ static const char * const tegra264_functions[] = {
+ #define drive_gen1_i2c_sda_pw3 DRV_PINGROUP_ENTRY_Y(0x601c, 12, 4, 20, 4, -1, -1, -1, -1, 0)
+ #define drive_dap2_fs_pw1 DRV_PINGROUP_ENTRY_Y(0x6044, 12, 4, 20, 4, -1, -1, -1, -1, 0)
+ #define drive_dap2_clk_pv6 DRV_PINGROUP_ENTRY_Y(0x604c, 12, 4, 20, 4, -1, -1, -1, -1, 0)
+-#define drive_dap2_din_pv7 DRV_PINGROUP_ENTRY_Y(0x6054, 12, 4, 20, 4, -1, -1, -1, -1, 0)
+-#define drive_dap2_dout_pw0 DRV_PINGROUP_ENTRY_Y(0x605c, 12, 4, 20, 4, -1, -1, -1, -1, 0)
++#define drive_dap2_din_pw0 DRV_PINGROUP_ENTRY_Y(0x6054, 12, 4, 20, 4, -1, -1, -1, -1, 0)
++#define drive_dap2_dout_pv7 DRV_PINGROUP_ENTRY_Y(0x605c, 12, 4, 20, 4, -1, -1, -1, -1, 0)
+ #define drive_pwm10_pv1 DRV_PINGROUP_ENTRY_Y(0x6064, 12, 4, 20, 4, -1, -1, -1, -1, 0)
+ #define drive_soc_gpio170_pu0 DRV_PINGROUP_ENTRY_Y(0x606c, 12, 4, 20, 4, -1, -1, -1, -1, 0)
+ #define drive_soc_gpio171_pu1 DRV_PINGROUP_ENTRY_Y(0x6074, 12, 4, 20, 4, -1, -1, -1, -1, 0)
+@@ -2051,8 +2051,8 @@ static const struct tegra_pingroup tegra264_main_groups[] = {
+ 	PINGROUP(gen1_i2c_sda_pw3, I2C1_DAT, RSVD1, RSVD2, RSVD3, 0x6018, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+ 	PINGROUP(dap2_fs_pw1, I2S2_LRCK, RSVD1, RSVD2, RSVD3, 0x6040, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+ 	PINGROUP(dap2_clk_pv6, I2S2_SCLK, RSVD1, RSVD2, RSVD3, 0x6048, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+-	PINGROUP(dap2_din_pv7, I2S2_SDATA_OUT, RSVD1, RSVD2, RSVD3, 0x6050, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+-	PINGROUP(dap2_dout_pw0, I2S2_SDATA_IN, RSVD1, RSVD2, RSVD3, 0x6058, 0, Y, 5, 7, 6, 8, -1, 10, 11),
++	PINGROUP(dap2_din_pw0, I2S2_SDATA_IN, RSVD1, RSVD2, RSVD3, 0x6050, 0, Y, 5, 7, 6, 8, -1, 10, 11),
++	PINGROUP(dap2_dout_pv7, I2S2_SDATA_OUT, RSVD1, RSVD2, RSVD3, 0x6058, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+ 	PINGROUP(pwm10_pv1, GP_PWM10, SDMMC1_CD, I2S7_LRCK, RSVD3, 0x6060, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+ 	PINGROUP(soc_gpio170_pu0, RSVD0, I2S7_SDATA_IN, CCLA_LA_TRIGGER_MUX, RSVD3, 0x6068, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+ 	PINGROUP(soc_gpio171_pu1, RSVD0, SPI4_SCK, RSVD2, RSVD3, 0x6070, 0, Y, 5, 7, 6, 8, -1, 10, 11),
 -- 
 2.17.1
 
