@@ -1,108 +1,121 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F73418A58
-	for <linux-tegra@vger.kernel.org>; Mon, 27 Jul 2026 13:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1EEB33E347;
+	Mon, 27 Jul 2026 13:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785159270; cv=none; b=bkWYmRLYItzuPzxhrC7b/tX5yS20jvk1IgnNJ0dF7HJxX7kXVFGU2mzDki8jzsFhZb5Ql7YWtgyiuuQ7vrEKbv6vP6CiwcKtqdZ9jC9Lk2f8q0LebAM8kjacyhYJ6Sw/Cu1KV0FtrPnqwozXHHpX7t5ogHq+cQtHv1PMEELIInY=
+	t=1785159951; cv=none; b=gN6HMMs4AevbNLp1az2Rl0tkSt8cuUGm2gcB2q/zAy2P2Aj4JgJrp+TxgSR0lt1Bl2SbPuEU0uppbaw+xKwnZKQk06O4uFSxGt4WmvYrETgHjygU/LBnZ3roned3k7rnJguLN0Oha6Ryvh0UvPjzpKtDnHLiKvvfMqxP2kYo7PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785159270; c=relaxed/simple;
-	bh=8nCC74OizPibC/VmYtaMPSzN+yTYakaPlTbJM80iJz8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=o0uJhphY7FOaxmiXvkWCCB7or1wqz0JFKGrX2ihJt2+nPDNDcX0kHmlbK3dSpUMpBe2TorYOfV6Uf5omvA6/JcJ4XyM9oI5PcnZG3prFmekXHs6S4N9xQKGRRyarydrCc5yyaeXdsjE1xRWrkhsAn19kpASsZtqS5tqXE7Aq8ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=qJTkWcYM; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1785159951; c=relaxed/simple;
+	bh=V85cSh5AtWAKe8T7pNKXhHm4+YU52Evm52b5hv8auq0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HMFIp4fOFuw8ZjPt/2EH6PhylhNXz79FGNSsGXP34xBsdnIxtQWwWqgsE/euD2T5ZoIgCT/viD5+qvaemmIgRey+1uuE2w5eEg6wBaNGJv7F0Pl6+5h0r04xsMBvK/wkVRSS/kGfmgOOKhtSHdYSy3L5Kv4/jEt53Ism0uQ2I00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=YzWaEYDp; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="qJTkWcYM"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id C536D4E40ECA;
-	Mon, 27 Jul 2026 13:34:25 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 8A468601BE;
-	Mon, 27 Jul 2026 13:34:25 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CB39311C13417;
-	Mon, 27 Jul 2026 15:34:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1785159260; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=I6ymMscZuXDmnMu0xXwCDGg0OdCFa5YfwRRztwaKfKQ=;
-	b=qJTkWcYMohV8KiTV9f6VrOhta4xlpQginYR+u15Db47qm6wM7feR12P8aPBrpe+rDDZkLT
-	96pNjf5FwFMFnsNEL1JYbsBAWoHTZCOADvymFWqPqUc2FscE3+5r7MCx6CgfEImWJDM/qO
-	VfkPpot0zXzvPI6TtD/zCCvHx/Nh+PrneN5pnyJWFh+4HKIYVQoXMpmOwkR1dAq8mbuDbb
-	UWUzLb5UK2gBqj/9Ap82+/KeyDEQ1NSMMSzsJYxdGpB7vR0cxaSOcgHSpJmM/4qcI3t6wj
-	ROdb+FvXUFMrrzRfqtm06mDR+xWOd61SuOeNuBBjW12zcALasLu2FFRyjJsAtQ==
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="YzWaEYDp"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C79AC1596;
+	Mon, 27 Jul 2026 06:45:44 -0700 (PDT)
+Received: from [10.57.1.72] (unknown [10.57.1.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 959243F763;
+	Mon, 27 Jul 2026 06:45:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1785159948; bh=V85cSh5AtWAKe8T7pNKXhHm4+YU52Evm52b5hv8auq0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YzWaEYDpwiJ5lMniXb11mVfPzSytHZF1tkdhmyXFfDaxuMv4IWrS5DZBqfVISJyFm
+	 Aaary8+0a0CKYAB3EyXGFCppNqECu1nEAEccGE/baaCqq9j7A5MqSrQx9Wu1Q7538R
+	 ojrPgM2lMIbSh7kkWSfymJnX/s8dzrvkfxSDpOLE=
+Message-ID: <443cae7f-bd01-4022-9703-7a1e6ae883bb@arm.com>
+Date: Mon, 27 Jul 2026 14:45:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/4] cpufreq: CPPC: Preserve OSPM-set registers across
+ suspend/resume
+To: Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org,
+ viresh.kumar@linaro.org, pierre.gondois@arm.com, ionela.voinescu@arm.com,
+ zhenglifeng1@huawei.com, zhanjie9@hisilicon.com, lenb@kernel.org,
+ saket.dumbre@intel.co, ray.huang@amd.com, mario.limonciello@amd.com,
+ perry.yuan@amd.com, kprateek.nayak@amd.com, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+ acpica-devel@lists.linux.dev, linux-tegra@vger.kernel.org
+Cc: treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
+ ksitaraman@nvidia.com, sanjayc@nvidia.com, mochs@nvidia.com, bbasu@nvidia.com
+References: <20260724215937.3368276-1-sumitg@nvidia.com>
+ <20260724215937.3368276-5-sumitg@nvidia.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20260724215937.3368276-5-sumitg@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 27 Jul 2026 15:34:18 +0200
-Message-Id: <DK9E55N7Q4TH.13J7O5HNRYRZR@bootlin.com>
-Subject: Re: [PATCH] staging: media: tegra-video: vi: fix probe failure on
- skipped last port
-Cc: "Sowjanya Komatineni" <skomatineni@nvidia.com>, "Thierry Reding"
- <thierry.reding@kernel.org>, "Jonathan Hunter" <jonathanh@nvidia.com>,
- "Mauro Carvalho Chehab" <mchehab@kernel.org>, "Hans Verkuil"
- <hverkuil@kernel.org>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- <linux-media@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
- <linux-staging@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-To: "Hao-Qun Huang" <alvinhuang0603@gmail.com>, "Luca Ceresoli"
- <luca.ceresoli@bootlin.com>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-X-Mailer: aerc 0.21.0
-References: <20260707152425.571254-1-alvinhuang0603@gmail.com>
- <20260727204307.24353.alvinhuang0603@gmail.com>
-In-Reply-To: <20260727204307.24353.alvinhuang0603@gmail.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 7bit
 
-Hello Hao-Qun,
+On 7/24/26 22:59, Sumit Gupta wrote:
+> The previous patch preserves the OSPM-set registers across CPU hotplug,
+> but system suspend/resume is a separate path. On platforms that reset
+> those registers or the performance controls across suspend, the values
+> are lost.
+> 
+> Reuse the same save/restore mechanism for suspend/resume:
+> 
+>   - suspend() only saves the current OSPM-set values. It does not revert
+>     them to firmware, since a later offline() already does that when
+>     system suspend offlines the secondary CPUs.
+>   - resume() needs the same steps as online(), so .resume points at
+>     online() directly.
+> 
+> Suggested-by: Christian Loehle <christian.loehle@arm.com>
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>  drivers/cpufreq/cppc_cpufreq.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+> index 8a13ec49eb9d..be2d873ccd84 100644
+> --- a/drivers/cpufreq/cppc_cpufreq.c
+> +++ b/drivers/cpufreq/cppc_cpufreq.c
+> @@ -921,6 +921,22 @@ static int cppc_cpufreq_cpu_online(struct cpufreq_policy *policy)
+>  	return 0;
+>  }
+>  
+> +/*
+> + * suspend() only saves the OSPM-set values. It does not revert them to the
+> + * firmware values.
+> + *
+> + * This is because system suspend may later offline the secondary CPUs.
+> + * That runs offline(), which saves the values and then reverts to firmware.
+> + * If suspend() had already reverted, offline() would save the firmware value
+> + * instead of the user's request, and the request would be lost.
+> + */
+> +static int cppc_cpufreq_cpu_suspend(struct cpufreq_policy *policy)
+> +{
+> +	cppc_cpufreq_save_requested_regs(policy);
+> +
+> +	return 0;
+> +}
+> +
 
-On Mon Jul 27, 2026 at 2:43 PM CEST, Hao-Qun Huang wrote:
-> On Mon Jul 27, 2026 at 1:10 PM CEST, Luca Ceresoli wrote:
->> Do you have a real use case where ths failure happens?
->
-> No, I found it by reading the code.  I went back and checked the in-tree
-> tegra DTs that have vi ports: lg-x3 (p880), nexus7-grouper and
-> asus-transformer all link the port through to a CSI channel endpoint with
-> data-lanes, which parses fine, and asus-tf600t has no remote-endpoint so
-> it skips on the !parent path, which leaves ret alone.  So no in-tree boar=
-d
-> hits this.
->
->> Also, mixing two different return values may solve a bug but makes for m=
-ore
->> intricated. I'd rather second a fix based on moving the whole foreach lo=
-op
->> body into a subfunction, and make the foreach loop body as simple as
->> calling the subfunction and handling returned errors. This would fix the
->> code making it more readbale.
->
-> Agreed.  This one was already committed to media.git/next on Jul 18
-> though,
+Wouldn't it be safer to commit everything here and not rely on the later
+offline() to still need a fully usable CPPC platform (in particular for
+PCC), as at this stage all but 2 CPUs might already be offline()d?
+Also either the later offline() saves registers successfully, and overwrites
+this snapshot, or it fails and overwrites them with U64, right?
 
-Ah, I missed that, I got no e-mail notification about the patch being
-applied.
 
-> so I would rather send the subfunction split as a cleanup on top
-> than respin it, which also keeps the stable backport small.  I have that
-> version building here and can post it.
+>  static void cppc_cpufreq_cpu_exit(struct cpufreq_policy *policy)
+>  {
+>  	struct cppc_cpudata *cpu_data = policy->driver_data;
+> @@ -1235,6 +1251,8 @@ static struct cpufreq_driver cppc_cpufreq_driver = {
+>  	.exit = cppc_cpufreq_cpu_exit,
+>  	.online = cppc_cpufreq_cpu_online,
+>  	.offline = cppc_cpufreq_cpu_offline,
+> +	.suspend = cppc_cpufreq_cpu_suspend,
+> +	.resume = cppc_cpufreq_cpu_online,
+>  	.set_boost = cppc_cpufreq_set_boost,
+>  	.attr = cppc_cpufreq_attr,
+>  	.name = "cppc_cpufreq",
 
-Yes, I'd appreciate that.
-
-> If you would rather have the committed patch dropped and replaced by a v2
-> with the refactor, say so and I will send that instead.
-
-No need, thanks.
-
-Best regards,
-Luca
-
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
