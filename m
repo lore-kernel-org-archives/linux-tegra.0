@@ -1,33 +1,33 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC6340EB82;
-	Mon, 27 Jul 2026 13:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD2741A4F1;
+	Mon, 27 Jul 2026 13:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785158122; cv=none; b=f2g8MDxqa7uigvOjSkG3Mr0fqy1G4i4WfJ+L+jhMdzNE/tO31WPr1BOGYALru9OdkTIjz5uv0nzDRYzXE+CqWOLqZ+ueY3SkOr6yoN945LzSQS9m0bD3TVOov/ZJec7AoKC3tBrUKIdSbRcbdeYbbfONFkByeijEcSJCeV2S+GA=
+	t=1785158859; cv=none; b=ixx+3MTcIpObDtb++GKNhwATyWdqHQASpt8Ja8OeoR1t51fvUGrLngKPvzBtPUM5NYJh2OQDHPobd5IvFQ3EIsES66CqH7Ez2Y18CU7wfj7aqWJyFieavNCPa7NgUsqvYPzIm8cueko/IVnXAhVLUhvsx8zWGrqLMas3KwGznGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785158122; c=relaxed/simple;
-	bh=rJWbiUDF0aztC9MsTrWCyMFzdxKTMeetPyv9Jiug1vE=;
+	s=arc-20240116; t=1785158859; c=relaxed/simple;
+	bh=tuOO9BJ4e09hCOeSOpQbs/7qt+nSUQ8BheAUn/4agCQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Se6gWmp2yM1ATQl4IfCljDHOHXVD8exfjyCsKvFQA6X2kY1VwYV2qJ35lIANkPGxSLpJ1nyq1S/ZSzhTUe69dDjlH2toSa7rr2r3OWWudF8vJB5QdhOpGsZs5f1FFgOZ+JSipfXPCL7lzVoaZs9RCI5kV9wGQaAonRAgQBPIjC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=sNJCLHZl; arc=none smtp.client-ip=217.140.110.172
+	 In-Reply-To:Content-Type; b=JvGPE7/enq0/Ttd8EuXdx3sDT/zAKT1V31c6Hp8JpXgwxurtYFZoLg9x33rnZvdLq0ZpQ4AfzIQPs0kwRZcvVvHP/z+7+cA0tfYEgS7KV4E+sSG+gOUfHaVpd7viJ9ouYSUQBkXAwjiFRF1kqAi3Yzr7viE8RxslB1+DJ+6Y4nQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=MnJHjHFO; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="sNJCLHZl"
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="MnJHjHFO"
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD7E8143D;
-	Mon, 27 Jul 2026 06:15:15 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B97E21476;
+	Mon, 27 Jul 2026 06:27:22 -0700 (PDT)
 Received: from [192.168.0.248] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7A1083F66F;
-	Mon, 27 Jul 2026 06:15:14 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B73D23F763;
+	Mon, 27 Jul 2026 06:27:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1785158119; bh=rJWbiUDF0aztC9MsTrWCyMFzdxKTMeetPyv9Jiug1vE=;
+	t=1785158846; bh=tuOO9BJ4e09hCOeSOpQbs/7qt+nSUQ8BheAUn/4agCQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sNJCLHZl3ezzii8fE0VbcnIc3jKhAEHaCReMaVpdIO8HWwFU2T2bytKObfYZV+K4A
-	 wK6tnmdpIcgrmDYSRfEY7hNK8A8QvRVhmeO7MXlY6lhZDHKX6Msnwp9or3WFDwNTyq
-	 aP1KqOd95oYPUAUfEnij5FStgfOVYVMCF/vO4UjA=
-Message-ID: <c8f62b1d-4ab5-4d85-ae15-b5fc9ec2e3bc@arm.com>
-Date: Mon, 27 Jul 2026 14:15:12 +0100
+	b=MnJHjHFOU90Xjrw9Fs7gEnHBf6JEsQGEhZdRkM/mVfr8QcmAQ0IBQTm98WJ3kbqX4
+	 rpwdSlfvy5KUrgbHl1wbRiUkr1q9JRExW1XiEsLjwwkZSuqDg01ojmfHPaMCqMknkg
+	 aVNU90AEr4QoeJe09WTUugXjpzyg8j29bLzNiGWQ=
+Message-ID: <40d72385-0b3f-46e5-9f32-a27be3842d7c@arm.com>
+Date: Mon, 27 Jul 2026 14:27:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,8 +35,7 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] cpufreq: CPPC: Preserve OSPM-set registers across
- hotplug and unload
+Subject: Re: [PATCH v3 1/4] cpufreq: CPPC: Keep the policy across CPU hotplug
 To: Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org,
  viresh.kumar@linaro.org, pierre.gondois@arm.com, ionela.voinescu@arm.com,
  zhenglifeng1@huawei.com, zhanjie9@hisilicon.com, lenb@kernel.org,
@@ -47,77 +46,102 @@ To: Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org,
 Cc: treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
  ksitaraman@nvidia.com, sanjayc@nvidia.com, mochs@nvidia.com, bbasu@nvidia.com
 References: <20260724215937.3368276-1-sumitg@nvidia.com>
- <20260724215937.3368276-4-sumitg@nvidia.com>
+ <20260724215937.3368276-2-sumitg@nvidia.com>
 Content-Language: en-US
 From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20260724215937.3368276-4-sumitg@nvidia.com>
+In-Reply-To: <20260724215937.3368276-2-sumitg@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 7/24/26 22:59, Sumit Gupta wrote:
-> Values written to OSPM-set CPPC registers (via sysfs or the autonomous
-> boot parameter) can be lost in two ways:
+> Without online()/offline() callbacks, the cpufreq core fully tears
+> down a policy during exit() when its last online CPU is offlined, and
+> rebuilds it during init() when it comes back.
 > 
->   - Across CPU hotplug: the platform may reset a CPU's registers while it
->     is offline.
->   - On driver unload: the value the driver wrote is left in the register
->     instead of returning to its pre-driver state.
+> Add lightweight online()/offline() callbacks so the core instead keeps
+> the policy live and reuses the driver's cpu_data across CPU hotplug.
+> This avoids re-reading the CPPC capabilities on every offline/online,
+> making CPU hotplug faster.
 > 
-> Add a small table-driven mechanism that handles both:
+> From online(), re-enable CPPC, as the platform may have disabled it
+> while the CPU was offline. Since the policy is no longer rebuilt via
+> init(), online() also reprograms the CPPC performance controls
+> (desired/min/max).
 > 
->   - On init(), capture each register's firmware value before the
->     driver programs anything.
->   - On offline(), read back each register's current value (whatever was
->     last set via sysfs or the boot parameter) so it can be reapplied, then
->     restore the firmware value.
->   - On online(), reapply the value captured at offline() after the
->     performance request is re-established.
-> 
-> Keep Autonomous Selection (auto_sel) last in the table so that, on
-> online(), its saved value is reapplied after the other registers that
-> shape its behaviour.
-> 
-> Cover the Autonomous Selection (auto_sel), Energy Performance Preference
-> (EPP) and Autonomous Activity Window (auto_act_window) registers.
-> 
-> Suggested-by: Pierre Gondois <pierre.gondois@arm.com>
-> Link: https://lore.kernel.org/all/86780f97-29ee-4a72-b311-38c89434b707@arm.com/
 > Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 > ---
->  drivers/cpufreq/cppc_cpufreq.c | 157 +++++++++++++++++++++++++++++++++
->  1 file changed, 157 insertions(+)
+>  drivers/cpufreq/cppc_cpufreq.c | 44 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
 > 
 > diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-> index 34cdba00e61a..8a13ec49eb9d 100644
+> index f6cea0c54dd9..6dc59f99d880 100644
 > --- a/drivers/cpufreq/cppc_cpufreq.c
 > +++ b/drivers/cpufreq/cppc_cpufreq.c
-> @@ -28,6 +28,150 @@
->  
->  static struct cpufreq_driver cppc_cpufreq_driver;
+> @@ -722,6 +722,48 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  	return ret;
+>  }
 >  
 > +/*
-> + * OSPM-set CPPC registers tracked for save/restore. A value set via sysfs or
-> + * the autonomous boot parameter is reapplied from online() across CPU
-> + * hotplug, and the firmware value is restored from offline().
-> + *
-> + * Autonomous Selection (auto_sel) is kept last so its saved value is
-> + * reapplied after the other registers that shape its behaviour.
-
-While that would make sense, unfortunately:
-"8.4.6.1.6 Autonomous Activity Window Register
-Writes to this register only have meaning when Autonomous Selection is enabled."
-I think restoring an inappropriate EPP/AUTO_ACT_WINDOW temporarily is okay though.
-AFAICS it has to be:
-1. enable CPPC
-2. restore a valid DESIRED/MIN/MAX
-3. restore AUTO_SEL_ENABLE
-4. if autonomous mode is enabled, restore EPP and AUTO_ACT_WINDOW
-
+> + * With offline() defined, the cpufreq core keeps the policy alive when
+> + * a CPU is hotplugged out.
 > + */
-> +enum cppc_saved_reg_id {
-> +	CPPC_SAVED_EPP,
-> +	CPPC_SAVED_AUTO_ACT_WINDOW,
-> +	CPPC_SAVED_AUTO_SEL,
-> +	CPPC_NR_SAVED_REGS,
-> +};
-> [snip]
+> +static int cppc_cpufreq_cpu_offline(struct cpufreq_policy *policy)
+> +{
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Re-enable CPPC when the policy's CPU comes back online, since the platform
+> + * may have disabled it while the CPU was offline.
+> + */
+> +static int cppc_cpufreq_cpu_online(struct cpufreq_policy *policy)
+> +{
+> +	struct cppc_cpudata *cpu_data = policy->driver_data;
+> +	unsigned int cpu = policy->cpu;
+> +	int ret;
+> +
+> +	ret = cppc_set_enable(cpu, true);
+> +	if (ret && ret != -EOPNOTSUPP)
+> +		pr_warn("Failed to re-enable CPPC for CPU%d (%d)\n", cpu, ret);
+
+What's the intention of continuing restoring CPPC register values here?
+
+> +
+> +	/*
+> +	 * The platform may reset the controls while the CPU is offline, so
+> +	 * recompute min/max, clamp desired_perf into range, and reprogram them.
+> +	 */
+> +	cppc_cpufreq_update_perf_limits(cpu_data, policy);
+> +
+> +	cpu_data->perf_ctrls.desired_perf =
+> +		clamp_t(u32, cpu_data->perf_ctrls.desired_perf,
+> +			cpu_data->perf_ctrls.min_perf,
+> +			cpu_data->perf_ctrls.max_perf);
+> +
+> +	ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
+> +	if (ret)
+> +		pr_debug("Failed to reapply perf request on CPU%d (%d)\n",
+> +			 cpu, ret);
+
+I think cppc_set_perf() needs some prep first before using it on reset values.
+We assume that reset value may be Autonomous Mode on, right? So we must never
+write MIN>MAX and vice versa. I think we may just have to read and write
+the 'otherwise-offending' value first on reset.
+
+> +
+> +	return 0;
+> +}
+> +
+>  static void cppc_cpufreq_cpu_exit(struct cpufreq_policy *policy)
+>  {
+>  	struct cppc_cpudata *cpu_data = policy->driver_data;
+> @@ -1034,6 +1076,8 @@ static struct cpufreq_driver cppc_cpufreq_driver = {
+>  	.fast_switch = cppc_cpufreq_fast_switch,
+>  	.init = cppc_cpufreq_cpu_init,
+>  	.exit = cppc_cpufreq_cpu_exit,
+> +	.online = cppc_cpufreq_cpu_online,
+> +	.offline = cppc_cpufreq_cpu_offline,
+>  	.set_boost = cppc_cpufreq_set_boost,
+>  	.attr = cppc_cpufreq_attr,
+>  	.name = "cppc_cpufreq",
+
