@@ -1,45 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B3A420E89;
-	Mon, 27 Jul 2026 16:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B26F419FA2;
+	Mon, 27 Jul 2026 16:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785169449; cv=none; b=XdilAFB+XsToltd9+J0YEbN7qaxgro+gViI+xxN6e49Ce33m7zpCgRKUtV2fk8TwE3nasUDmYXd8wKY42KgCg5z5mm73QMnqtV/ikriwSFvO33tdxsvhpFT3WU0VPYhDqnfROqKwhmer2L94SYQETwdtjKGabvpQbLVsb88LzxY=
+	t=1785170018; cv=none; b=gTQLzkum4RaVs8S+kELqTEdQDthZxsi7o56CcA/3/sR6enU6/e3pTZzhMfIUJjML+qn/vBspKp2rtB0lSdWw0dJZJyYKoXOel5QNkmDbqR/7QiMU7eMTO4YOQKW/wNchXRU3YUuqREI9beUUX+iQWoznzPizeVN6UvuGmONeuoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785169449; c=relaxed/simple;
-	bh=hnlLaHHGgdJk9dJXwr/8Bp+o2gpo+EYxsAgavievH4c=;
+	s=arc-20240116; t=1785170018; c=relaxed/simple;
+	bh=lDRPaSO4rlyqFhVEx+9fpNe5Rxhf+BS6baLLxIOmR+I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QtAnJtvKynWd3ebzjPND5cs1aFD/hAmee7oQ1iG4BYIWHzg3Sy2DNm1hogVuzkE/dDrERoEqyt6XgQD6I7s3zIsMgxVNxGbrxTp0eUrUzIGOu3dz9IpN9/BqQsNdN2NIcd5r94LO/UJv1/gifLUcHXUCuMSDWwqrfJOD+iUDhCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EB2oJyT3; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=gOjaWR5ncp7Bw2+02DL/uOHBjZ0i5J10ttwNEpubd9J1+FWDzxLaP9/zrmcc0H90P5V/Ik38nTBwuExEMxSq8jTC8snanLOvqZzxSYR8zo2gbeH131uZSWa1NFzCbB7GHaP/DVw+N64z2jOiMMjIH1F67YVS3v4Ox4kXA+FMzdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QXP/ZRE3; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EB2oJyT3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3E6D1F000E9;
-	Mon, 27 Jul 2026 16:24:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QXP/ZRE3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4732B1F000E9;
+	Mon, 27 Jul 2026 16:33:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785169447;
-	bh=RBXpZSTaERLmZOoaiMiejoT9Ba+oDRYLMpaF9aCISp0=;
+	s=k20260515; t=1785170016;
+	bh=Wr0iEMpY6mnymor8cobq8NKXGrDlWqO414r/J4YVasM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=EB2oJyT3LVT0a8ODTVmDTPnMgaNxyeAPbteSR00cUoroP9S9lnpuqGO5aj9m8WaA4
-	 9Bzjy6kuandWtV+tQDQBiy2NpUKkk+hHS5uv7HjhrXc0+hBXGfjQ9puvlY/6icN885
-	 xOlGBkoiOpwj73y11STRzyng+kXVFL8R4Xu7Yn0YBlb+QdaLocXyQbAEF8c2ypNDBc
-	 In6oxsckV7osHBnhuV6EMpmLoQjdSf3QgVE401Cv/3QdXNggF04s/vhlyE/8TFP1Pm
-	 PraX/zqhBWeqhKt38Re0oVJL7izWdMDyE/uiVUlxXIubUyk2P3eAxPwsLopAjRzi9d
-	 9ShDf5BWG0dXg==
-Date: Mon, 27 Jul 2026 18:24:04 +0200
+	b=QXP/ZRE3MMjYF+xivnPzI9S4ofX9Rg6wzaxqfdm4oSJUslpS45A6EaXYCfB059041
+	 hgqaljNDgil4e1B5GkbC74dZHmelG2ixK1GSVEQxDh7XKzoNTEfvTkRhtr7qHAI5nM
+	 4Zy0leon1eX+jYUDCkWdo/gYNbUVqn9Qs9zZ2zu5C/ZvFDvY6JETeJzzWsjp2MxnDO
+	 nFWjA4rBm/ZV9SecTPWu4vXcJA3Joldy/kx0bo3KWdBpziB7H50wsUtA+aHV87aFrQ
+	 lIyuCpzV3gQD71hSlQZWbdyzeNpnWHFy4FqKYMgKvBK6kJrHiES04ScWWDvimiF4B9
+	 luLgIym1E9Icg==
+Date: Mon, 27 Jul 2026 18:33:34 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Hao-Qun Huang <alvinhuang0603@gmail.com>, 
-	Rob Herring <robh@kernel.org>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko <digetx@gmail.com>, linux-media@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH] staging: media: tegra-video: fix of_node_put() on VIP
- parse errors
-Message-ID: <ameBr5oM8pp4PpiQ@orome>
-References: <20260707150326.554689-1-alvinhuang0603@gmail.com>
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: jonathanh@nvidia.com, skomatineni@nvidia.com, 
+	luca.ceresoli@bootlin.com, mchehab@kernel.org, gregkh@linuxfoundation.org, 
+	Faisal Mukhtar <mukhtarfaisal03@gmail.com>, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: tegra-video: Use BIT macro in tegra20.c
+Message-ID: <ameHNGAsPEN5UecN@orome>
+References: <20260722154055.385164-1-mukhtarfaisal03@gmail.com>
+ <A0-05eQLQFWwHGewIFE3Kg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -47,80 +44,85 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="b7pg45i72k7ky7mj"
+	protocol="application/pgp-signature"; boundary="ofdew7mm3y3wxfle"
 Content-Disposition: inline
-In-Reply-To: <20260707150326.554689-1-alvinhuang0603@gmail.com>
+In-Reply-To: <A0-05eQLQFWwHGewIFE3Kg@nvidia.com>
 
 
---b7pg45i72k7ky7mj
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+--ofdew7mm3y3wxfle
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] staging: media: tegra-video: fix of_node_put() on VIP
- parse errors
+Subject: Re: [PATCH] media: tegra-video: Use BIT macro in tegra20.c
 MIME-Version: 1.0
 
-On Tue, Jul 07, 2026 at 11:03:26PM +0800, Hao-Qun Huang wrote:
-> tegra_vip_channel_of_parse() initializes np from dev->of_node without
-> taking a reference, but its error paths drop one through the
-> err_node_put label. This underflows the refcount of the VIP device's
-> OF node when endpoint parsing fails on a malformed device tree.
+On Thu, Jul 23, 2026 at 01:18:11PM +0900, Mikko Perttunen wrote:
+> On Thursday, July 23, 2026 12:40=E2=80=AFAM Faisal Mukhtar wrote:
+> > Fix checkpatch.pl warnings by replacing explicit
+> > bit shift (1 << n) with the BIT macro, to better
+> > adhere to the kernel coding style.
+> >=20
+> > Signed-off-by: Faisal Mukhtar <mukhtarfaisal03@gmail.com>
+> > ---
+> >  drivers/staging/media/tegra-video/tegra20.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/drivers/staging/media/tegra-video/tegra20.c b/drivers/stag=
+ing/media/tegra-video/tegra20.c
+> > index e513e6ccb776..cdfd9f276d11 100644
+> > --- a/drivers/staging/media/tegra-video/tegra20.c
+> > +++ b/drivers/staging/media/tegra-video/tegra20.c
+> > @@ -177,15 +177,15 @@ enum tegra_vi_out {
+> >  #define       CSI_SKIP_PACKET_THRESHOLD(n)		(((n) & 0xff) << 16)
+> >  #define TEGRA_CSI_PIXEL_STREAM_CONTROL0(n)		(0x0018 + (n) * 0x2c)
+> >  #define       CSI_PP_PAD_FRAME_PAD0S			(0 << 28)
+> > -#define       CSI_PP_PAD_FRAME_PAD1S			(1 << 28)
+> > +#define       CSI_PP_PAD_FRAME_PAD1S			BIT(28)
+> >  #define       CSI_PP_PAD_FRAME_NOPAD			(2 << 28)
+> >  #define       CSI_PP_HEADER_EC_ENABLE			BIT(27)
+> >  #define       CSI_PP_PAD_SHORT_LINE_PAD0S		(0 << 24)
+> > -#define       CSI_PP_PAD_SHORT_LINE_PAD1S		(1 << 24)
+> > +#define       CSI_PP_PAD_SHORT_LINE_PAD1S		BIT(24)
+> >  #define       CSI_PP_PAD_SHORT_LINE_NOPAD		(2 << 24)
+> >  #define       CSI_PP_EMBEDDED_DATA_EMBEDDED		BIT(20)
+> >  #define       CSI_PP_OUTPUT_FORMAT_ARBITRARY		(0 << 16)
+> > -#define       CSI_PP_OUTPUT_FORMAT_PIXEL		(1 << 16)
+> > +#define       CSI_PP_OUTPUT_FORMAT_PIXEL		BIT(16)
+> >  #define       CSI_PP_OUTPUT_FORMAT_PIXEL_REP		(2 << 16)
+> >  #define       CSI_PP_OUTPUT_FORMAT_STORE		(3 << 16)
+> >  #define       CSI_PP_VIRTUAL_CHANNEL_ID(n)		(((n) - 1) << 14)
+> > --=20
+> > 2.53.0
+> >=20
+> >=20
 >=20
-> The only reference the function takes on np is the success-path
-> of_node_get() stored in vip->chan.of_node, and that one is already
-> released by the tegra_vip_init() error path and by tegra_vip_exit().
->=20
-> Return errors directly instead of jumping to the bogus cleanup label.
->=20
-> Fixes: e740d199cf0f ("staging: media: tegra-video: add support for Tegra2=
-0 parallel input")
-> Assisted-by: Claude:claude-fable-5
-> Signed-off-by: Hao-Qun Huang <alvinhuang0603@gmail.com>
+> BIT is only used for true/false fields. These are not that.
 
-I suppose this is a common pattern, but isn't this technically broken?
-If we were really pedantic I think we'd need to grab a reference to the
-node very early in the function, like so:
-
-	struct device_node *np =3D of_node_get(dev->of_node);
-
-And then make sure to release it on error (and hold on to it on success
-and release it on remove). For kobject/kref, unless you hold a reference
-to them they can disappear at any time.
-
-That said, of_node_get() doesn't fully support this, it seems. It would
-need to do kobject_get_unless_zero() to be fully sure we get a valid OF
-node.
-
-Rob, I have seen these kinds of reference leak fixes a number of times
-now but they just don't seem to be fully correct. I know that OF_DYNAMIC
-probably isn't a very common configuration and so we might not run into
-most of these issues. However, I wonder if there generally is a problem,
-or if I just don't understand this correctly and there's some other
-mechanism that makes sure these references stay around while the code
-uses them without their own reference. I guess maybe as long as we run
-code as part of probe we can rely on the struct device hanging on to its
-reference?
+The best way for silencing checkpatch would probably be to define fields
+for each of these using GENMASK(), listing the values as defines without
+any bitshift and then change the code to use FIELD_PREP(). Or define the
+field values using FIELD_PREP() or FIELD_PREP_CONST().
 
 Thierry
 
---b7pg45i72k7ky7mj
+--ofdew7mm3y3wxfle
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmpnhiEACgkQ3SOs138+
-s6ED7A//ay6tQPT9ljBJEqYAPmHVdyXLy3wsaIcFw5eev0a8Iz/xC4hJrWNZp0ix
-2mmjA5Hek4YrPXUrNLDoH6lgkCj4SWISC+FZbh5vHaVIiv4tgGIaFiMuFCyPtkNR
-urrYV74O1Sckk8+AXFVdlZIiIX60qpKtibX/n8ufny71vqsd+0n+85/LPeGuEJsJ
-bNgBW8mYAziiKAPOm3/mJV9MRGX0E6qbf5oW+AGdDFkdI6yi+DEjbaQH9KZRDGr3
-+d8vtA+jn9wt21lo2j5NwrLaclCiOyeZQe5QzoeCgIB2d2AlMykt1qbhtw7VXhRH
-3KXzioJtA6S+Nywz7PLiIB7OjGgo8/3vwJuRV9mrLOW+LfWb2t7N7yTM6G9fTf2Q
-4RKi8VTGZsg4IOsjJazOa2h0/Woqt/5XyovarYMwPK5Tgna0bQLoCuLraKjEpxOv
-B6hOyFN++pS176nwTFtAwT3Srq78e3Hw46gvDIUnTgQOwpg0MFWPrFSCaULTC6cM
-yyZTnQ4fd4L95jem2h2A2PGxjlkJVL2UnIN4JpZnYNGy7OzWsDVcE+eQNEN/uXBG
-fvZxd3+SN+JUZktmZRyGg5GVQCxqcohHZ2iA3to4sCeTNWrsmzxqWLIh/sR/E87R
-CZCCFRYo0rpS6WJqq8BcLLaUINXz3qEb76B5xlwoCt6ze/KrXhs=
-=Z5zv
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmpniF4ACgkQ3SOs138+
+s6Fu5w/+KKED9VpoHoHLZhpUloYOpqhB9p07QLKn0rbpUQB9BR8fTHzbrpf6uM4s
+HJR7WVfARyhc6XFwMBJbFySfmxAWG8EXACjEWNWOr0+cm5pfk4kG3MilodjoWy9D
+9WsdAzas9NR2BNyO5dUwXSIr2Pnd4Ea+Yled+A4d6xtFT5DcvKd+loHi7VhnaV+L
+7dwSaQHo2/IMkW8Hflgwk66Gz1lvaUTeHeXCdFwfpsp7Et6/LonkBiaKM5fxgniO
+zfY9Kw/7BrJT5cBWQFz/ApYB6dj68OE/ZOLvWYULLaK2T/3lUzZ14x0EKKT4dv9r
+sVjUDS6slAs99wxBb49vC1oJ4PDk7iEReSHs0J/Xj0zE4ofPMGbH7IrABpS1cquM
+3MTu++3jJooYipdyVgqFL2EqPENdZ6CV+YE7GaJ6rzNWlMq2DRetS4TSU9njW6v1
+boVP6krVKGkU8fSRnfMrCeMMPSWD7Kg1SQLL4sJ6YckMV/L9CEWmdUjCObTk/t2z
+ndS+V2UOKA5TJpBJbK2sBXSJSxonEOXn3vwLy+2g2VApn9G82dAhWg/yBZ6Axm89
+0h8V14l/oD4oNT/IkkXfri5WSvNSzd4hjfnuPYD6J8aAOe1ZBrGA7plI8yTsDrAc
+zzKWYw6NrQ3QNwkiA+DOSejU7ChuVgQJIriE3vf+MmO91mqDkNY=
+=TIZw
 -----END PGP SIGNATURE-----
 
---b7pg45i72k7ky7mj--
+--ofdew7mm3y3wxfle--
