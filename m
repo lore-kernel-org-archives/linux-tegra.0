@@ -1,115 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C0541A77D
-	for <linux-tegra@vger.kernel.org>; Mon, 27 Jul 2026 13:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F73418A58
+	for <linux-tegra@vger.kernel.org>; Mon, 27 Jul 2026 13:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785158887; cv=none; b=fdS5TEyz3Qb/6E40WGzc/FeTFsDAbrIDs+vOloPBJm9CYanrEfjtMImObz7U+5nofcfTMs5jjGfzMezuXepZDsj1uVaSl/2D9vxuJTzJM0dVgU7HHheD8xA4+No/gHkOtpmvPAkm5UgAC3kt0VNs8ko9tIvhrFGOexMc29D2pfc=
+	t=1785159270; cv=none; b=bkWYmRLYItzuPzxhrC7b/tX5yS20jvk1IgnNJ0dF7HJxX7kXVFGU2mzDki8jzsFhZb5Ql7YWtgyiuuQ7vrEKbv6vP6CiwcKtqdZ9jC9Lk2f8q0LebAM8kjacyhYJ6Sw/Cu1KV0FtrPnqwozXHHpX7t5ogHq+cQtHv1PMEELIInY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785158887; c=relaxed/simple;
-	bh=MjOLtdbnHINQiZsUbyUdq0JT2ExAvNVto4UrqMDkKXI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WHmEyl6CujvSzjA1TR4quvoEJy9cnA9Q04hW56GdasJayqFvwKg3Si80hpWX1mw8PIrktbgjttBtW9EKm7EhIDo8CUutbnnoHpZ02TvVYUWbW9RGQv0buB8vZL9D4EmrJcEHF8aDaDiqwd/LVvKAQJvDX+H54J1nfHH2QpCMTis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0wXjZON; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785159270; c=relaxed/simple;
+	bh=8nCC74OizPibC/VmYtaMPSzN+yTYakaPlTbJM80iJz8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=o0uJhphY7FOaxmiXvkWCCB7or1wqz0JFKGrX2ihJt2+nPDNDcX0kHmlbK3dSpUMpBe2TorYOfV6Uf5omvA6/JcJ4XyM9oI5PcnZG3prFmekXHs6S4N9xQKGRRyarydrCc5yyaeXdsjE1xRWrkhsAn19kpASsZtqS5tqXE7Aq8ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=qJTkWcYM; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0wXjZON"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30D4A1F00A3D
-	for <linux-tegra@vger.kernel.org>; Mon, 27 Jul 2026 13:27:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785158877;
-	bh=jo1uDciI4hvqGlusKkjXRbJpZ2yEY32stvntK0agl24=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=a0wXjZONqRUfwF8IFBW1Ed9ylkWDBJ9tPy5PYtFwEfD3Uv6ER6mE+dBgq7qI/q7PM
-	 pulbUIOQeQdzm7Vi1em59Iuq+Py1wCXD1h2iFuw5B3yPorb6Osv3Q3qgiXkXq0rb/j
-	 UVih/N/2Cj706niYtyRU9eq/ozayy5lTjiPcq78EzMtxyKxztX0xlaAw6PwGMbQXa+
-	 X/BYZJE0DEiQHKoEsVz4ZFW4NOQLsQealE/fxQboeY8dy+GCCKFoW/np3IeLK22Bda
-	 L1BkrOpTgw8/Z1eaG9Dspl6L3QIZTw2yjNOv9OZpKEFOPMyPPjxXvn5/y7K1jLGi+X
-	 8VGFQ0HTx1kFw==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5b28c91fba5so3171341e87.1
-        for <linux-tegra@vger.kernel.org>; Mon, 27 Jul 2026 06:27:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RofsOzAeXUljLGv0bd/6FEgCh0hi3vRDM/nfxlCju9hge8Ox5tMblZkSNJ7GVgMaXEhdqH/w8EoE8unTQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYk+LUM9F1c2uR0H8hclc/598OI7ZkQN9dFdp38XpfcLC4t8dP
-	/hwKmMqaIIPqDT/OhFjeOIpPKI6rt8M/iMJBNAjdiKZdolw6B7UqY9FRdvq5P5Axg0B4jcj/SdV
-	heWtGLuKmLjRP+5j9UGKaUF2xtRre7cQ=
-X-Received: by 2002:a05:6512:3d21:b0:5b2:b08a:ef9 with SMTP id
- 2adb3069b0e04-5b2c19a2600mr1455909e87.0.1785158875656; Mon, 27 Jul 2026
- 06:27:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="qJTkWcYM"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id C536D4E40ECA;
+	Mon, 27 Jul 2026 13:34:25 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 8A468601BE;
+	Mon, 27 Jul 2026 13:34:25 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CB39311C13417;
+	Mon, 27 Jul 2026 15:34:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1785159260; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=I6ymMscZuXDmnMu0xXwCDGg0OdCFa5YfwRRztwaKfKQ=;
+	b=qJTkWcYMohV8KiTV9f6VrOhta4xlpQginYR+u15Db47qm6wM7feR12P8aPBrpe+rDDZkLT
+	96pNjf5FwFMFnsNEL1JYbsBAWoHTZCOADvymFWqPqUc2FscE3+5r7MCx6CgfEImWJDM/qO
+	VfkPpot0zXzvPI6TtD/zCCvHx/Nh+PrneN5pnyJWFh+4HKIYVQoXMpmOwkR1dAq8mbuDbb
+	UWUzLb5UK2gBqj/9Ap82+/KeyDEQ1NSMMSzsJYxdGpB7vR0cxaSOcgHSpJmM/4qcI3t6wj
+	ROdb+FvXUFMrrzRfqtm06mDR+xWOd61SuOeNuBBjW12zcALasLu2FFRyjJsAtQ==
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260717215330.2215058-1-sumitg@nvidia.com>
-In-Reply-To: <20260717215330.2215058-1-sumitg@nvidia.com>
-From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
-Date: Mon, 27 Jul 2026 15:27:42 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jdF+PYjxTqUSp_oJiCcPR4UUrQdBPt0K3f08BLRB4L4g@mail.gmail.com>
-X-Gm-Features: AUfX_mziGygpLsC-M2M15skm83Ku8CRgNdaAig39SbPrrccs_TRF337AG_LqlDs
-Message-ID: <CAJZ5v0jdF+PYjxTqUSp_oJiCcPR4UUrQdBPt0K3f08BLRB4L4g@mail.gmail.com>
-Subject: Re: [PATCH v6 0/2] ACPI / cpufreq: CPPC: Add ospm_nominal_perf support
-To: Sumit Gupta <sumitg@nvidia.com>, christian.loehle@arm.com, pierre.gondois@arm.com
-Cc: viresh.kumar@linaro.org, ionela.voinescu@arm.com, zhenglifeng1@huawei.com, 
-	zhanjie9@hisilicon.com, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, 
-	vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, 
-	mochs@nvidia.com, bbasu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 27 Jul 2026 15:34:18 +0200
+Message-Id: <DK9E55N7Q4TH.13J7O5HNRYRZR@bootlin.com>
+Subject: Re: [PATCH] staging: media: tegra-video: vi: fix probe failure on
+ skipped last port
+Cc: "Sowjanya Komatineni" <skomatineni@nvidia.com>, "Thierry Reding"
+ <thierry.reding@kernel.org>, "Jonathan Hunter" <jonathanh@nvidia.com>,
+ "Mauro Carvalho Chehab" <mchehab@kernel.org>, "Hans Verkuil"
+ <hverkuil@kernel.org>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ <linux-media@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+ <linux-staging@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+To: "Hao-Qun Huang" <alvinhuang0603@gmail.com>, "Luca Ceresoli"
+ <luca.ceresoli@bootlin.com>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+X-Mailer: aerc 0.21.0
+References: <20260707152425.571254-1-alvinhuang0603@gmail.com>
+ <20260727204307.24353.alvinhuang0603@gmail.com>
+In-Reply-To: <20260727204307.24353.alvinhuang0603@gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Jul 17, 2026 at 11:54=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com> wr=
-ote:
->
-> This series adds support for the OSPM Nominal Performance register
-> (ACPI 6.6, Section 8.4.6.1.2.6) to the CPPC ACPI and cpufreq drivers.
->
-> Unlike the read-only Nominal Performance register, OSPM Nominal
-> Performance is writable and lets OSPM request a nominal level below
-> the platform-reported nominal. The platform treats performance above
-> this level as boost and below as throttle for its power and thermal
-> decisions.
->
-> Patch 1: adds the cppc_{get,set}_ospm_nominal_perf() helpers, a
-> per-policy cpufreq sysfs attribute (ospm_nominal_freq, in kHz), and
-> hooks the register into the OSPM-set save/restore table.
->
-> Patch 2: reflects the OSPM nominal in the cpufreq policy so that boost
-> and the frequency limits stay consistent with the register.
->
-> This series applies on top of the series
-> "cpufreq: CPPC: Preserve OSPM-set registers across hotplug and unload",
-> which provides the save/restore table that patch 1 hooks into:
-> https://lore.kernel.org/lkml/20260716153820.2007095-1-sumitg@nvidia.com/
->
-> v5[5] -> v6:
-> - New patch 2: reflect the OSPM nominal in the policy's boost state
->   and frequency limits.
-> - Patch 1:
->   - write only policy->cpu instead of looping over policy->cpus with
->     rollback. the register is treated as shared across a policy's CPUs.
->   - add the register to the OSPM-set save/restore table.
+Hello Hao-Qun,
 
-Christian, Pierre, any chance to have a look at this, please?
+On Mon Jul 27, 2026 at 2:43 PM CEST, Hao-Qun Huang wrote:
+> On Mon Jul 27, 2026 at 1:10 PM CEST, Luca Ceresoli wrote:
+>> Do you have a real use case where ths failure happens?
+>
+> No, I found it by reading the code.  I went back and checked the in-tree
+> tegra DTs that have vi ports: lg-x3 (p880), nexus7-grouper and
+> asus-transformer all link the port through to a CSI channel endpoint with
+> data-lanes, which parses fine, and asus-tf600t has no remote-endpoint so
+> it skips on the !parent path, which leaves ret alone.  So no in-tree boar=
+d
+> hits this.
+>
+>> Also, mixing two different return values may solve a bug but makes for m=
+ore
+>> intricated. I'd rather second a fix based on moving the whole foreach lo=
+op
+>> body into a subfunction, and make the foreach loop body as simple as
+>> calling the subfunction and handling returned errors. This would fix the
+>> code making it more readbale.
+>
+> Agreed.  This one was already committed to media.git/next on Jul 18
+> though,
 
-> Sumit Gupta (2):
->   ACPI: CPPC: Add ospm_nominal_perf support
->   cpufreq: CPPC: Reflect ospm_nominal_perf in boost and limits
->
->  .../ABI/testing/sysfs-devices-system-cpu      |  26 +++
->  drivers/acpi/cppc_acpi.c                      |  32 ++++
->  drivers/cpufreq/cppc_cpufreq.c                | 166 +++++++++++++++++-
->  include/acpi/cppc_acpi.h                      |  10 ++
->  4 files changed, 226 insertions(+), 8 deletions(-)
->
-> v5: https://lore.kernel.org/lkml/20260615185934.2383514-1-sumitg@nvidia.c=
-om/
-> v4: https://lore.kernel.org/lkml/20260527194626.185286-1-sumitg@nvidia.co=
-m/
-> v3: https://lore.kernel.org/lkml/20260514194822.1841748-1-sumitg@nvidia.c=
-om/
-> v2: https://lore.kernel.org/lkml/20260430142430.755437-1-sumitg@nvidia.co=
-m/
-> v1: https://lore.kernel.org/lkml/20260427051823.280419-1-sumitg@nvidia.co=
-m/
+Ah, I missed that, I got no e-mail notification about the patch being
+applied.
+
+> so I would rather send the subfunction split as a cleanup on top
+> than respin it, which also keeps the stable backport small.  I have that
+> version building here and can post it.
+
+Yes, I'd appreciate that.
+
+> If you would rather have the committed patch dropped and replaced by a v2
+> with the refactor, say so and I will send that instead.
+
+No need, thanks.
+
+Best regards,
+Luca
+
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
