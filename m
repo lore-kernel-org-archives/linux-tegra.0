@@ -1,67 +1,68 @@
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012040.outbound.protection.outlook.com [40.93.195.40])
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011056.outbound.protection.outlook.com [52.101.62.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D8172630;
-	Tue, 28 Jul 2026 07:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF2723BD06;
+	Tue, 28 Jul 2026 07:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.56
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785222057; cv=fail; b=JhtbnG2vgWvGigFiusjJtpQy0fJyDOuX0cwv7UFmZYOGvH/0IgTRg8axhAOTuCXxVxA7l2GxTdGBkw6WOC2KC/9Tq9aiBPCYr7y5Sv9du5BeXEl8DvsmWXHB4C3rLw1tCItHg3PFfy0QsH37d7a/90HgG8o4WFXHorj8PTbyL/k=
+	t=1785222070; cv=fail; b=K6vgqXrZWCNxOqYIXvSxw91COHej67iAy3su2LzXINE17iTdWfDKps+n35+cY9AFLpn3DwO/fnENWnGB7y++KvwlsuyxLJjJOecsBpNUgeYsTA9Tg81Cha+Pdr2sTPLJezHDnvYIPj/EtzIIqd/a/8Whc8oXrPpV2Ohq6G/798A=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785222057; c=relaxed/simple;
-	bh=Mz9w9yAxjL4GBBLC5lYsbvDdxU1oG3KSdo5CrWyPTSg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GnByzMrepyGHN7I1KajIIrIHuBn9M52oqxoFlwh1tXY2HGVsHiLQa6OXbAtL4Og/RLw5mzbsxiThiljefsQ3I/lyMarPfevPb7V7jG8mx3tLUjskwn9Iso0nDpf/Lpkey4tuYCt2oDVQObhWcfnDU8FR0ZY1dFLGFQevMzjDpoc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gopbT/i8; arc=fail smtp.client-ip=40.93.195.40
+	s=arc-20240116; t=1785222070; c=relaxed/simple;
+	bh=JqcDKy2xbgxavswn4nfFXMG01yGkosVARFYJykh05mU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MRlH2KpA+ZyOrFraQtboOt1kVTpgqCenX9qXnkHyFsI7qBiToD+8lDZV/zFfCJ51P2B/FV/vW9gH7Ws6zgt0gEPMOEnBRJsy2G0+wGqUH9hG48ZpOrKKiMMKljt3HQVkuqxQvz0vwv/tVWUZnB2+9FmLDaujRzanJA2IDr/NbOw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NGtNErMs; arc=fail smtp.client-ip=52.101.62.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gopbT/i8"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NGtNErMs"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fIqPFgz8c4BWeT13eW1yFKOmjjGCoV2irAWDgOpDre+xkRf5MJcjfRhu7TSqriSuC1BjZhrPJ/RIPn8JL80cy/8o6FVTh0tEhMOSN9Qzr6vEKjtd7Fh4y32o2xFzArzzdaGg7LEKH5CqXaS2NsoT44Mm6DrpOkNNlAw70li710A6sFzv9TNy/7ouMFr8a/ZEP8F+iMDyEFRiSZD9ggetSDdufJEYqojt/aRy+nY8/LKvPusmGLF4t4ZelPrMGgUZ7fikKCIRYICeDcb+XRmsU5KfmdCNWgwEs6vC6W7f/F+OqhuG0FBekORbCcOZFT+DP4ZYj5vVA3+DoLC6bntnTQ==
+ b=fxlB5TnOPJ6BzmIa/ryR7Y+yWeH6BX8N7J6QuT4Svqg1xojNWWQVM6wJwEwqYoWxbP9cQJiLo0MEfXg4nkuQ6PH7OEnZMKg47m9xUL38ZjJy5J6gpzbdykuUvXCk6ZdG9MML8w7ZLmkhOpYP1S2y3XQKP8x8dtWNqib2QYCBjgutIjMTNaZDZ6xZ4HgnEih7mASIWqzQ2sgbfN40m5623HNez8GqxhYOnKF8tu9hDLASYSgEPzxw0O82ArSuvkWxrOtSsW5Xd78lCKp8DCbgPbqX+diwoimSQyM05tckNozj1xkukGd3O8ZfSrrd0ZblclovIWKDZbG2FW60mZVYrA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oPNxNvfMTPXTK5k/5S5ZPJfs8O9OdT++0WQFpxymsGs=;
- b=scawLBlWGKUgNV3K/fNulDLNSHozImVyQCl+1/1yUpp6oXZdup9rHzn5wF2ofiy69JlD7/6F19GhoqbcfL4OdrrqKP+D3V5iPRsm1BoOYLcZVCbbx8EAzD+lQm0cXeH5zof+uGpBpwP4inw+KF2T1iSdJIWmi0EEiH3uomjvsA9xBAoko/34rry1qhNSySQ+mhFpG9DhzCjEvbHfrZPCs0qBGj95n38RE3bYYaJbjDadWkDylwkyYoJFGoVWzXRxBA4W0STgSmKp5tTif7NWTZ/2PYmBW7mc/TlCQzNKB1O7wdZ5tG54wYA8TaVMt1NSnWcnfLjex6tNcXvqRjw97g==
+ bh=E3HhTQ3KDMGn8KeLJKTWHxM3Z/uH2oQelCJEK3n4yMM=;
+ b=YkIjZCNTny9OTqa4oBx7EU8A2yiBjB+PmKBads+/1lsBCMTLAhRpH9kU2ZmEyFqIw9VYYYKsQsXQ/vRqWC4JL/LnWNtbmLPT0b9AOW9bC0oVv5Xbmt6R1uu21Z72vx71kDHMI1iP4bZZ56hXCC/Pi4wd2iMjeG2TeJNaT5hddVJI5ngRjVcnmCpKjWAY4BBZdIdbmuiNw3GXKpjtY/vBqaKhs9IZtGIkIk0poAqON9QOItnHTySuQOl7PUKUsCB1oXJj7iKiCMKo4XQjKplAcLr8WUOmviv/9puI3UKLuEPJ3LlU/rWa4MBMwMbIRjPiJvmjDBINo455S6kdBHQ+1A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=bootlin.com smtp.mailfrom=nvidia.com;
+ 216.228.117.161) smtp.rcpttodomain=bootlin.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oPNxNvfMTPXTK5k/5S5ZPJfs8O9OdT++0WQFpxymsGs=;
- b=gopbT/i8oh7OHCj6eA4EV/FWvpFI/tbXY4pbQcK+02rDTCP+8zqZW08PlkVmY+xnDgTlulq116y2lHW8yo3wpM0MasgK8H/CsxhXJG35eNu0lWEdZYqpuguq6VBzaMnh47zPZNBRiWW02XbC9T1J5CIXPPMWUoIQB6Od+xM+nhVB/SulcBo/b2nzMerMBggCFbNI6zIk1ulX4EctPPMCHPPyW5nKsZMR//idl8d8iwUUJN5LEW0YPHquVnRmpZq78HKagdCIP0b4LpjiG90VNK4Rd9GNseYzlspYbg/ivVZKNoAbFHEc3LuYe2QbIzyBWZ/uDJxaNmTKXbmIZ3bwVA==
-Received: from BL1P222CA0009.NAMP222.PROD.OUTLOOK.COM (2603:10b6:208:2c7::14)
- by SA5PPFE3F7EF2AE.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8e6) with
+ bh=E3HhTQ3KDMGn8KeLJKTWHxM3Z/uH2oQelCJEK3n4yMM=;
+ b=NGtNErMsog9+dIfwHsvMDzNXjpnyYCBw+ku/z82ceoA9y3Ldpk+J6LRcZIK6uxX1G56zz2o86r++qcwQzQZPSrp2S+k/s5AikGEKbEKQ3HSjISDshBDBjlpYSmmC4c2xk+DAeEPeeKQIHHI54ntFa6mYjFAm3fbDL1CrvI/oZ0e3AwblGHLk2n4F5YWFZ5WVK6RZxxljQvClc/VGEFKnTKvCpG06QEe6nRjWsGoDhim+Sy+So8PktarRIGuDwYebt4sivNV3dKoCEegDqgCTV2rja7QwgVRSncFfTjheZyE+w9kz3KCEHZ+hC/hW6leXx66BZXu2rOhbF+yp6a/FwA==
+Received: from MN0PR05CA0014.namprd05.prod.outlook.com (2603:10b6:208:52c::25)
+ by DS0PR12MB7680.namprd12.prod.outlook.com (2603:10b6:8:11c::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.12; Tue, 28 Jul
- 2026 07:00:49 +0000
-Received: from BN2PEPF00004FBD.namprd04.prod.outlook.com
- (2603:10b6:208:2c7:cafe::9b) by BL1P222CA0009.outlook.office365.com
- (2603:10b6:208:2c7::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.245.13 via Frontend Transport; Tue,
- 28 Jul 2026 07:00:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.13; Tue, 28 Jul
+ 2026 07:01:02 +0000
+Received: from BL6PEPF0001AB74.namprd02.prod.outlook.com
+ (2603:10b6:208:52c:cafe::30) by MN0PR05CA0014.outlook.office365.com
+ (2603:10b6:208:52c::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.270.12 via Frontend Transport; Tue,
+ 28 Jul 2026 07:01:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN2PEPF00004FBD.mail.protection.outlook.com (10.167.243.183) with Microsoft
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL6PEPF0001AB74.mail.protection.outlook.com (10.167.242.167) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.270.5 via Frontend Transport; Tue, 28 Jul 2026 07:00:48 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Tue, 28 Jul
- 2026 00:00:28 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ 15.21.270.5 via Frontend Transport; Tue, 28 Jul 2026 07:01:01 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 28 Jul
- 2026 00:00:28 -0700
+ 2026 00:00:43 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 28 Jul
+ 2026 00:00:43 -0700
 Received: from build-akhilrajeev-noble-20260602.internal (10.127.8.11) by
  mail.nvidia.com (10.129.68.8) with Microsoft SMTP Server id 15.2.2562.20 via
- Frontend Transport; Tue, 28 Jul 2026 00:00:22 -0700
+ Frontend Transport; Tue, 28 Jul 2026 00:00:37 -0700
 From: Akhil R <akhilrajeev@nvidia.com>
 To: Alexandre Belloni <alexandre.belloni@bootlin.com>
 CC: Frank Li <Frank.Li@nxp.com>, Frank Li <frank.li@oss.nxp.com>, "Miquel
@@ -73,10 +74,12 @@ CC: Frank Li <Frank.Li@nxp.com>, Frank Li <frank.li@oss.nxp.com>, "Miquel
 	<devicetree@vger.kernel.org>, <linux-hwmon@vger.kernel.org>,
 	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Akhil R
 	<akhilrajeev@nvidia.com>
-Subject: [PATCH v7 00/12] Support ACPI and SETAASA device discovery
-Date: Tue, 28 Jul 2026 06:59:42 +0000
-Message-ID: <20260728065955.809445-1-akhilrajeev@nvidia.com>
+Subject: [PATCH v7 01/12] dt-bindings: i3c: Add mipi-i3c-static-method to support SETAASA
+Date: Tue, 28 Jul 2026 06:59:43 +0000
+Message-ID: <20260728065955.809445-2-akhilrajeev@nvidia.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260728065955.809445-1-akhilrajeev@nvidia.com>
+References: <20260728065955.809445-1-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -88,144 +91,125 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBD:EE_|SA5PPFE3F7EF2AE:EE_
-X-MS-Office365-Filtering-Correlation-Id: 24006d56-bacd-4060-b642-08deec75f45a
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB74:EE_|DS0PR12MB7680:EE_
+X-MS-Office365-Filtering-Correlation-Id: 599f8d37-4f01-4b07-2bad-08deec75fbdb
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|376014|7416014|1800799024|82310400026|23010399003|6133799003|56012099006|10067099003|18002099003|11063799006|3023799007;
+	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700016|23010399003|11063799006|56012099006|10067099003|6133799003|18002099003|22082099003|3023799007;
 X-Microsoft-Antispam-Message-Info:
-	gSkzFN4h30skroM5/+17bULLC703zHQ3MzbM/aQWDMxvEq/cp0bY1DBphnFYwNiLgJ8/zX/z6KNOme+wVorwlWn8G7EUgtbTJuduxnJ5treaegt5jYL1sz30M5D8JglRPVI3KpkNRK/JGfcfgP5LoZf2iKZxk9G54PuQ/JHqitOTnRyIgT1U1AniH1sAaCEEZbPT5jEMX6YPHh+EFE5V8A44QEXbSkXs1WP5uo2jdwSrJld9tQ+YrMHYQwn1w8aT+7qjNrQNgtbVxs8ktxg7vTMysGSMzdWI8g9jlFU2zvbGamNKzN0fyVL6+qpLnzZ7xa4Q8/CNEBrpKzEUeqr0FXhlCc4WCrD+wQH/Y2slxcF4bEprvZYUi3u5m+ZH63pZmQd02PSwh3pbJhis23Yb/ngMscbCQUAuQReaSHFsMcvJJF520GCrksPNV21YOquF9aAqLZ/cd5waMpoH/Ap/7Ds/U8kAYUn20y8XWoif68JRLgGJkkKmx1hPJwlyHJzwnEytppWjvXuGVRCvDWIdwuphAIVancMG2QhgR+fhv1PmNhEEETKzlrJlTaNmg5eu9Ecoit7wHEYB2nlHGsn7iC/OOwupSVjBsHbjvA+e2g00of6Rklk3/BWavn+GYdWxWjjtuE3lvMY1oVYlHKpH+dEul2ATsQ4+ne7zfzg2OoD6FA/ro7ynys3CfzIInbKLvLoL816reR4mP9xFSllfrg==
+	/+WHnoAkvMJeQkIdiymCC0zzxL+pg+g0xAtyiU+DrI36nsRZJcGuKrcHK3sbBXWRiReIVWxxzJGm3zAOVoAPgGzQHWydNeZHACRod8oaQjdLdR/4OyrkMMRvHMrE7oa54LMkQH45whzoKivC07J2YCFdIBqjyG8L3dvIf48McCiwPz1RE0Zss7lTB5jygLLQvdsE866cMkU6OMoU9pF/a8IHjannp2JhOuACGaWWjc5BTGfXRyOYK5o35mytHZc22WxhTA62Pnf9H3FgW8EZM+GCELJDoUEiKHaWyOcdmyCs8vzFubMaJ386G0o34EMrbqL+u0txZUL/c9XEdbnMwHu8FOyB0l9Id0w5EsI/vwipyXYBFaBks8jNHesOfh9cqC4fXJafe/KdQzWXmbubuckiUpAnCQyCuNGl33AeMSP1Y34pN5ove6XC15dBwAppsVshYqsFJZzW9fNAGwbG2E6HgSoBpTjTV3oRYpyZ5C88b+e9ixm7ATCcOjPI85CA2uSoN3EOGdOutX3SmXb+cdSqWwYJtDMzU7g0NtY9zApKPRopIhuV00hvKILWsn+rWt2ZPGuGrCesUNZIRjtCuT1z610gOJ6or4WQ/LdM1B1e7eJvU79CdPDsEK1wmbaz6r/y3t45nttasGRcb2CktI7OjNl279erHu9TEQ6G9QqpyYI6Szwwwyhm5CSYKh45nALo52ZqsSm/MtmsTY5adA==
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(376014)(7416014)(1800799024)(82310400026)(23010399003)(6133799003)(56012099006)(10067099003)(18002099003)(11063799006)(3023799007);DIR:OUT;SFP:1101;
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700016)(23010399003)(11063799006)(56012099006)(10067099003)(6133799003)(18002099003)(22082099003)(3023799007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	abhkupf9ct1ASviZkpwgxspYU1kjgIBIRP0rOZ3J22S7qZPivs8LU0dQ2mZa+bxEE/wOnkKx81Hq9uMl+/e9aCItye9A3L9oaF+r455TsaWmRdOBXM1zVq5fNqDDE1oYnpsu6PXizhmP8VmkA88fgbwURUidDN5jy+6zRYt3bTX2khrZxFhAQlcegPY8vHWVdnaw1121J5qBS8Bc7dIEVH8UPCjZDlh2+IL9mimd5BUOhl3qPL0oOJCtiaoKn44YgoLQ0eLxWmoQmyEbx/9PMOLkDqvRu2LxRLhNUswhE74q7e7Y23+PqqaMZBpNc1SBZs05yjE5ev6O4hR6tzbxTnpPLtJQ3omejBeGNFl+KHOrwIiGtqAZguHsu1RrIuL/4F2kmeuDGhqDruxpYIKSNvfLGMkOrPqu9Q6nyck2xGIs5CzCQqPid4MYkhFlpDAm
+	ll+hTuEp7NYU5RIdIdAsCu/gmizKARx4pofsPpljKSJ7b7TkRhLe1xtUuaZGNN12i1Q0Yp8w9elYu7QjLwDBsaJbXDmXEiJrSewpyPnjSkJ1nsb4XJ0WOfq66nYv+YfT3fpZnffE4oh95ngyKECNdWJUEF9phzogVF29KVvYZMOpFoRzoUT/tbgX7W1uJZCi22BmuVv2RGi1oO1CHNQbfgvS0MdjMs1JOuySRUq5ydteVceAit9hgo6ZIaeAbdZFp7NGJrJh8gaUn3wNDq/A3jQ5mt+rpFPK5P1AzEZnkaZ+ehk6p0I1bWRZtLfl0yzKRtiWyLFg0xIxTsdh8/jCQJUG4n5NdlEQRYZHF+mwI+vI84wzMuGPFaYZYA/X4ZnZVnweMO3JRnmXAfRrDztz9SBPGPNUTKCLC7AHgEHv67FVPPepdjTQHQ3XIKZBIzqH
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2026 07:00:48.6232
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2026 07:01:01.2158
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 24006d56-bacd-4060-b642-08deec75f45a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 599f8d37-4f01-4b07-2bad-08deec75fbdb
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF00004FBD.namprd04.prod.outlook.com
+	BL6PEPF0001AB74.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPFE3F7EF2AE
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7680
 
-This patch series adds SETAASA device discovery to the I3C subsystem,
-enabling support for SPD5118 temperature sensors found on DDR5 memory
-modules. The changes also add ACPI support for all existing DAA
-methods like SETDASA, SETNEWDA as well as I2C devices on I3C bus.
+Add the 'mipi-i3c-static-method' property mentioned in the MIPI I3C
+Discovery and Configuration Specification [1] to specify which discovery
+method an I3C device supports during bus initialization. The property is
+a bitmap, where a bit value of 1 indicates support for that method, and 0
+indicates lack of support.
 
-SPD5118 and similar devices on DDR5 memory modules differ from typical
-I3C devices in their initialization. They use SETAASA broadcast CCC
-instead of ENTDAA for address assignment, and per JEDEC specification,
-are not required to have a Provisioned ID or implement standard device
-information CCC commands (GETPID, GETDCR, GETBCR).
+Bit 0: SETDASA CCC (Direct)
+Bit 1: SETAASA CCC (Broadcast)
+Bit 2: Other CCC (vendor / standards extension)
+All other bits are reserved.
 
-The series enables describing all I3C and I2C devices on both Device
-Tree and the ACPI table, using unified device property APIs throughout
-the I3C core and the Synopsys DesignWare I3C master driver.
+It is specifically needed when an I3C device requires SETAASA for the
+address assignment. SETDASA will be supported by default if this property
+is absent, which means for now the property just serves as a flag to
+enable SETAASA, but keep the property as a bitmap to align with the
+specifications.
 
-Please note that the series modifies drivers across multiple subsystems,
-like Device Tree bindings, ACPI, I3C and HWMON.
+[1] https://www.mipi.org/mipi-disco-for-i3c-download
 
-v6->v7:
-  * Reject I3C devices with a zero manufacturer ID by validating with
-    I3C_PID_MANUF_ID() instead of the whole PID.
-  * Keep the static address reserved when a SETAASA device cannot be
-    added, so that it is not assigned to another device during DAA.
-  * Do not issue RSTDAA when a SETAASA device fails to attach, as no
-    address assignment CCC was sent to it.
-  * Drop the redundant core clock check in dw_i3c_master_get_core_rate()
-    as probe already fails when the clock is missing without the ACPI
-    skip quirk.
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+---
+ .../devicetree/bindings/i3c/i3c.yaml          | 36 ++++++++++++++++---
+ include/dt-bindings/i3c/i3c.h                 |  4 +++
+ 2 files changed, 35 insertions(+), 5 deletions(-)
 
-v5->v6:
-  * Do not take an extra fwnode reference when assigning the boardinfo
-    fwnode to a newly registered I3C device.
-  * Issue SETAASA after SETDASA pre-assignment and before ENTDAA.
-  * Prefer SETDASA over SETAASA when a device advertises both methods
-    and an explicit dynamic address (assigned-address) is provided.
-  * Reject PID 0 for non-SETAASA I3C boardinfo entries.
-  * Drop OF/ACPI uevent modalias emission; keep OF/ACPI matching for
-    SETAASA devices only.
-  * Resolve DesignWare quirks before core clock acquisition and fail
-    probe early when the clock is missing without the ACPI skip quirk.
-
-v4->v5:
-  * Free ACPI I2C boardinfo when an ACPI child without an I2C resource is
-    ignored.
-  * Issue RSTDAA if SETAASA device attach fails after the static address is
-    used as the dynamic address.
-  * Emit OF and ACPI modaliases for firmware-matched I3C devices.
-  * Make the DesignWare core clock optional and use "clock-frequency" as
-    the fallback when core_clk is absent.
-  * Keep DesignWare pclk, reset, and match-data handling on their existing
-    optional paths.
-
-v3->v4:
-  * Clarify mipi-i3c-static-method bit semantics and assigned-address
-  * Add I3C_ADDR_METHOD_VENDOR
-  * Fix fwnode reference handling while converting child property parsing
-    to use unified firmware-node APIs.
-  * Align ACPI child enumeration with the I2C core for multiple
-    I2cSerialBus resources, ignore ACPI child entries without an I2C
-    resource, and populate I2C modalias information from ACPI.
-  * Update SETAASA handling to use the static address as the dynamic
-    address, skip device-info retrieval for SETAASA devices, and tolerate
-    M2 for SETHID/SETAASA similarly to ENTDAA.
-  * Reorder DesignWare I3C clock/reset to include optional clock in the
-    ACPI skip clock/reset quirk.
-  * Add prints for missing ACPI clock-frequency and SPD5118 I3C
-    device type read failures.
-  * Fix grammar in comments and commit messages.
-
-v2->v3:
-  * Fix maximum value and indent bit list for mipi-i3c-static-method.
-  * Move I3C_ADDR_METHOD_* macros to dt-bindings header.
-  * Drop ACPICA commit IDs, keep only the Link: tags.
-  * Revert the change which proceeds to register other devices if SETAASA
-    is not supported so that it aligns with the rest of the driver and to
-    avoid the issues pointed by Sashiko.
-  * Rework multiple commit messages.
-
-v1->v2:
-  * Added patch to remove 16-bit addressing support for SPD5118
-  * Guard ACPI calls with #ifdef CONFIG_ACPI
-  * Remove CONFIG_OF guard for of_alias_get_highest_id()
-  * Mask mipi-i3c-static-method in the driver to select only valid values.
-  * Proceed to register other devices if SETAASA is not supported.
-  * Update commit message and links in the description of multiple commits.
-
-Akhil R (12):
-  dt-bindings: i3c: Add mipi-i3c-static-method to support SETAASA
-  i3c: master: Use unified device property interface
-  i3c: master: Support ACPI enumeration of child devices
-  i3c: master: Add support for devices using SETAASA
-  i3c: master: Add support for devices without PID
-  i3c: master: match I3C device through DT and ACPI
-  i3c: dw-i3c-master: Add SETAASA as supported CCC
-  i3c: dw-i3c-master: Add ACPI core clock frequency quirk
-  i3c: dw-i3c-master: Add ACPI ID for Tegra410
-  hwmon: spd5118: Remove 16-bit addressing
-  hwmon: spd5118: Add I3C support
-  arm64: defconfig: Enable I3C and SPD5118 hwmon
-
- .../devicetree/bindings/i3c/i3c.yaml          |  36 +-
- arch/arm64/configs/defconfig                  |   3 +
- drivers/hwmon/Kconfig                         |   9 +-
- drivers/hwmon/spd5118.c                       | 119 +++--
- drivers/i3c/master.c                          | 406 +++++++++++++++---
- drivers/i3c/master/dw-i3c-master.c            |  54 ++-
- include/dt-bindings/i3c/i3c.h                 |   4 +
- include/linux/i3c/ccc.h                       |   1 +
- include/linux/i3c/master.h                    |  20 +-
- 9 files changed, 507 insertions(+), 145 deletions(-)
-
-
-base-commit: 6eb8711ece2ce27e52e327a5b7a628ed39b97f45
+diff --git a/Documentation/devicetree/bindings/i3c/i3c.yaml b/Documentation/devicetree/bindings/i3c/i3c.yaml
+index e25fa72fd785..5603f2e7807d 100644
+--- a/Documentation/devicetree/bindings/i3c/i3c.yaml
++++ b/Documentation/devicetree/bindings/i3c/i3c.yaml
+@@ -31,10 +31,12 @@ properties:
+       described in the device tree, which in turn means we have to describe
+       I3C devices.
+ 
+-      Another use case for describing an I3C device in the device tree is when
+-      this I3C device has a static I2C address and we want to assign it a
+-      specific I3C dynamic address before the DAA takes place (so that other
+-      devices on the bus can't take this dynamic address).
++      Other use-cases for describing an I3C device in the device tree are:
++      - When the I3C device has a static I2C address and we want to assign
++        it a specific I3C dynamic address before the DAA takes place (so
++        that other devices on the bus can't take this dynamic address).
++      - When the I3C device requires SETAASA for its discovery and uses a
++        pre-defined static address.
+ 
+   "#size-cells":
+     const: 0
+@@ -145,7 +147,31 @@ patternProperties:
+           Dynamic address to be assigned to this device. In case static address is
+           present (first cell of the reg property != 0), this address is assigned
+           through SETDASA. If static address is not present, this address is assigned
+-          through SETNEWDA after assigning a temporary address via ENTDAA.
++          through SETNEWDA after assigning a temporary address via ENTDAA. If
++          SETAASA is used, this property is not used, and the static address itself
++          becomes the dynamic address.
++
++      mipi-i3c-static-method:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        minimum: 0x1
++        maximum: 0x7
++        default: 1
++        description: |
++          Bitmap describing which methods of Dynamic Address Assignment from a
++          static address are supported by this I3C Target. For each defined bit
++          position, a set bit indicates support for that method and a cleared
++          bit indicates lack of support.
++
++            Bit 0: SETDASA CCC (Direct)
++            Bit 1: SETAASA CCC (Broadcast)
++            Bit 2: Other CCC (vendor / standards extension)
++            All other bits are reserved.
++
++          This property follows the MIPI I3C specification. The primary use
++          of this property is to indicate support for SETAASA, i.e Bit 1, but
++          will allow other values mentioned in the specification so that it
++          mirrors the specification. SETDASA will remain as the default method
++          even if this property is not present.
+ 
+     required:
+       - reg
+diff --git a/include/dt-bindings/i3c/i3c.h b/include/dt-bindings/i3c/i3c.h
+index 373439218bba..78b8c634aad8 100644
+--- a/include/dt-bindings/i3c/i3c.h
++++ b/include/dt-bindings/i3c/i3c.h
+@@ -13,4 +13,8 @@
+ #define I2C_NO_FILTER_HIGH_FREQUENCY    (1 << 5)
+ #define I2C_NO_FILTER_LOW_FREQUENCY     (2 << 5)
+ 
++#define I3C_ADDR_METHOD_SETDASA     (1 << 0)
++#define I3C_ADDR_METHOD_SETAASA     (1 << 1)
++#define I3C_ADDR_METHOD_VENDOR      (1 << 2)
++
+ #endif
 -- 
 2.43.0
 
