@@ -1,104 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D692EBBAF;
-	Tue, 28 Jul 2026 02:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098F12F8EAA
+	for <linux-tegra@vger.kernel.org>; Tue, 28 Jul 2026 02:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785204013; cv=none; b=PevzBArsNeM04Gt0BuhbkA1uwxtGvOlcVSMa2IGiJWt/gIcWS9Q9pErqMwLZgHy30fFpBeD/jAD0/OD4j2D7AOchG38JICtd2l3AiXxcmqDOuWABB1D/RPS0BwLlwSG2eaSAdMpQXZW8brxlI/2HOrIxzbhAq5kr06bCqjNSIf0=
+	t=1785207307; cv=none; b=lsJ5kaFT6e4TSuRPCJ+wo/sn/5wU+jZ7ZUxoEgO1+5KETmvPgslNxxJ2r0TjjCFztec5M16wkuWB/J2HGDThOb/aTE6mctXZVetmOqLtqYzDw0/EyP6iQgVuO5gRA+Pby5t0ludBqzOGS2lQ77IDzpzF8hJpjvriaFROPBcTSl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785204013; c=relaxed/simple;
-	bh=z7y0OqKWQHRkAmpiXbkzZisXX3IcOL0u+hBa3ZmEwDE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MvCjOd3sBznYZejH6V/xSqUQBpwt6QfCDNlc2rUNhtDZX0efYb7u7ibBfiqKY5GIrCg2rmiwD3cM/2QZKF5pp+32Xjm/pJXXABp3RxGX3GdP6yMtxdekQZkvYe5E5gDppfJI24cqSIIIJkFuNSpUjA4gLs2lFovwQ3ipIMRkmM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6s8wL2j; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1785207307; c=relaxed/simple;
+	bh=C+g+lR7bpcxvSDJYIe+z6TtaFMoj5qY2QlBV1qd+Ja8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ApVb6N51MkNmC5W7h4QnxYLhN6ZW8IgcMlkzSG3wI71Rr5/iIHmwyBJM+ulEFMGyU3aqsleSWysYbcIB6y2alItuORAS3z0rN9GO2oR4YAgDlOuw45xk1oQYO4fxc9Sb0Qdc9ZGTa4JV1NISTc58wD/VVOtWfDQyvniII1qdxMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maticrobots.com; spf=pass smtp.mailfrom=matician.com; dkim=pass (2048-bit key) header.d=maticrobots.com header.i=@maticrobots.com header.b=iuKmbCru; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maticrobots.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matician.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6s8wL2j"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E20F1C2BCF7;
-	Tue, 28 Jul 2026 02:00:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1785204013;
-	bh=z7y0OqKWQHRkAmpiXbkzZisXX3IcOL0u+hBa3ZmEwDE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=U6s8wL2j5CHtR2NMuNF3QQsQA1a01z0bOk/OJapx6vMSrEMC2y4vagET0w3Jx/IsY
-	 U4IeeYG0M+YN6lPgM1VcJaXP887CdS/SH6mbJ5gmR+6jGmmicFLTxkNdXogbhODpd5
-	 ZAw+KXFDoXFbs82iB/NyWftteTGlKXm6eXwu04RHIygAxDV1klhWCCzOSPFxbJ3LZe
-	 1NQhq3Ixt2Bbu6eJf1MwU1+Vvp0Lgm0kZphTRAfUPGkrXjZxP7fLmF3g6I+ZbhibAB
-	 0Ilf8cyHTJiAaIfzND1F38bIbxsIelElGuaY8GD0dvTz0MnyFyKm2vFePybZchqQl1
-	 NBDEhgCuII6Kw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C19BAC53219;
-	Tue, 28 Jul 2026 02:00:12 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Mon, 27 Jul 2026 21:00:10 -0500
-Subject: [PATCH v4 1/2] dt-bindings: soc: tegra: pmc: Document Tegra210B01
+	dkim=pass (2048-bit key) header.d=maticrobots.com header.i=@maticrobots.com header.b="iuKmbCru"
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-8485b358552so3546009b3a.2
+        for <linux-tegra@vger.kernel.org>; Mon, 27 Jul 2026 19:55:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=maticrobots.com; s=google; t=1785207305; x=1785812105; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=niFsg6H2YP1ZTl1KmNDyWGnsSe0oicHRx+diETwQw5o=;
+        b=iuKmbCruJu8iSldc1aqo3Pd5xqYyu5mW9FljKhaSnRjDATaL1C79J/WRLTpJs5bZ92
+         BsazXNxYBch2HP5k4B2yYqCxL44eoivA7mc6rOAz/kkKYoyQE6E34ZTUfERVP4ahX/f5
+         wSa8CneIIvGp1klss99dD1niHxzwhhU9nIlSqZQap8zUkRICX3Kdkfbi3aRPJORwZBkU
+         uiSBeT6QaLV2Rn1zs8e7EaQdYc6V9+vDHM7/NRhTrA4FltcS4WU/CwZ3+eD2zFuhW0Nq
+         Fv4Xqg40vxNZxht6ntG2LGkXrFiJflS5oSjzKZa0S1QOwH6CxYujnvVKO/b499cktNzu
+         m3+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785207305; x=1785812105;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=niFsg6H2YP1ZTl1KmNDyWGnsSe0oicHRx+diETwQw5o=;
+        b=KH17U6lhHDYA9BBp63sNHqHZJOhOejShPwDBz5+VvsOe3KzQvPnSBv714kQU5Vefd5
+         WqMLvueA7Sxr9sPA4Bv5rHahjH9v1N5EK+ObVZJmJvmrOEu04qVYx0wQ/5EafbynpuEv
+         7jJyMERXjk3zzV6BwU8/jsmufoD1GRqN2dXm88IkUfGW6ZaV/SErt0CMH/IX6/4fFGlo
+         ISBSfe8SzHTpIeHGubkVb5DeVlQkY8HL/T0ZSQ7bb1FwnLhF6T60bdoNDohtGsnTq4vT
+         Fm/jUxepQhwbJmg3iXTIYtqgtQHCW3hysr4MK9cXiMyyolS2/wJvhKmkQw4MufWv92dc
+         FKxw==
+X-Forwarded-Encrypted: i=1; AHgh+Ro0tC4ogQZbfn5TOADrqj5vlnm2VnNTRDB2VGagsX3PXi3lY5d6/bziVUUgTSZXxtwUWdnDawWK8ZUymg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8hJ/w+x3Tx+OoZMlHAtmjj9vapqGdKZ7UJtuZ4gof8aTBls5m
+	0BJunDw4J9hf9mZkE+X4OWHsYv88f3jt+NTnuFoFOYs1D1qiHHjzfJXcIrFKd07VxGI=
+X-Gm-Gg: AR+sD11QR6l4uDtTJYKO4rYlEW+g3T2aVZkdyj7PNkAf5ClJYTeui+Alq4NMF9LkDuh
+	AOHeJurZYXo0h93JMqLITrQJmsOOkabDHqkNyO8qZWYcc416AuaYpiDrRrExYHv+XZKU8/UmDok
+	PLMWFUGagp1FfElqxFy/CN3nllgvuDVXzKD5CsIqHktblNcQZIyXl8bd9asBlrOMqsnTuFl48cg
+	aNXcvirE765h33IjOd/cLq+ivS6xP7Ccs86cQN/5v1YXt5sWA2oRhAcedFZyXLxzhaRe1kN10eV
+	8kIV0KdGCiJcc7B2x1Cdi0uq/wLTu7My5WDSN5heEnWf/ob7yw8f2Mp12pXum0U6z6bJylmKdVq
+	HAve/VDBb7UFXx1M174+sINbYHS665cVL2Q/yLNmyEJM+UWWLsFYjvGFksAY20b3wTO+qxeUIru
+	exLP3s7MkXCKf4LQgAuYvh3UF3eC1CJvVqkxdV5Xad9QR+1syO6p8=
+X-Received: by 2002:a05:6a20:c90a:b0:3bf:6f30:1ccd with SMTP id adf61e73a8af0-3c8ba546272mr690898637.42.1785207305412;
+        Mon, 27 Jul 2026 19:55:05 -0700 (PDT)
+Received: from abeMaticDesktop.1020marsh.offices.matician.com ([2600:1700:471:807f:68c8:458c:c1f7:4115])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-314bc419c52sm37156981eec.10.2026.07.27.19.55.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jul 2026 19:55:05 -0700 (PDT)
+From: Abraham Zukor <abe@maticrobots.com>
+To: Jon Hunter <jonathanh@nvidia.com>,
+	Mark Brown <broonie@kernel.org>,
+	Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Thierry Reding <thierry.reding@kernel.org>,
+	linux-spi@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] spi: tegra114: initialize native chip selects inactive
+Date: Mon, 27 Jul 2026 19:53:08 -0700
+Message-ID: <20260728025503.162543-1-abe@maticrobots.com>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <b2a3d65c-d3ef-499d-b56a-82018804f4d3@nvidia.com>
+References: <20260725042944.1204409-1-abe@maticrobots.com> <b2a3d65c-d3ef-499d-b56a-82018804f4d3@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260727-t210b01-pmc-v4-1-af68a21cd746@gmail.com>
-References: <20260727-t210b01-pmc-v4-0-af68a21cd746@gmail.com>
-In-Reply-To: <20260727-t210b01-pmc-v4-0-af68a21cd746@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1785204012; l=1197;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=yRm/f+3SzoxTxtTfaa81bdhigcB8fmUxP2kKtIxqiLM=;
- b=V74wc8C5cA0q8JaHULgbddhEEJ0ybLI6TlykCAEMX8WZr+zab7zphBi23Z3LSr+8VkMQRUT5V
- J8vqpL7UQbWDEtmEkHrciN4PRAcVxoKxBHVGWxOjXcAWvt43j8Iaokg
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+Content-Transfer-Encoding: 8bit
 
-From: Aaron Kling <webgeek1234@gmail.com>
+On 27/07/2026 13:07, Jon Hunter wrote:
+> What about the case where the SPI devices CS is active high or a
+> mixture of the two?
 
-The PMC in Tegra210B01 is very similar to the one in the original
-Tegra210, but has a few powergate differences. Document this soc.
+An all-active-high bus is the case the window gets right today: probe
+writes zero to the field, so an active-high CS idles deasserted and an
+active-low one sits asserted. This patch inverts that. No single
+constant covers a mixed board - one polarity or the other is asserted
+until tegra_spi_setup() runs for that device - so the question is
+which default is the right one, and active low is what the SPI core
+assumes when a device says nothing.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
- Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Setting that default in probe and correcting it per device later is an
+established model for controllers with a programmable CS idle level.
+f9c6ef6cfe9c ("spi/xilinx: Support for spi mode CS_HIGH") added both
+halves at once, to a driver that does advertise SPI_CS_HIGH:
+xilinx_spi_probe() sets cs_inactive to all ones, and
+xilinx_spi_setup_transfer() clears the bit for an SPI_CS_HIGH device.
+The changelog gives the rationale:
 
-diff --git a/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
-index f516960dbbefb..8ec36c49f9594 100644
---- a/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
-+++ b/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
-@@ -18,6 +18,7 @@ properties:
-       - nvidia,tegra114-pmc
-       - nvidia,tegra124-pmc
-       - nvidia,tegra210-pmc
-+      - nvidia,tegra210b01-pmc
- 
-   reg:
-     maxItems: 1
-@@ -346,7 +347,9 @@ allOf:
-       properties:
-         compatible:
-           contains:
--            const: nvidia,tegra210-pmc
-+            enum:
-+              - nvidia,tegra210-pmc
-+              - nvidia,tegra210b01-pmc
-     then:
-       properties:
-         pinmux:
+  The core controls the chip select lines individually.
 
--- 
-2.54.0
+  By default, all the lines are consider active_low. After
+  spi_setup_transfer, it has its real value.
 
+tegra_qspi_probe() ends up in the same state by another route:
+def_command1_reg = QSPI_M_S | QSPI_CS_SW_HW | QSPI_CS_SW_VAL drives
+the line high in software CS mode, so its native chip select idles
+deasserted before setup runs, even though its CS_POL_INACTIVE bits are
+zero like ours. That is a single line on Tegra234, where cs_count is
+1, so it never meets the multi-CS case, but the idle level it picks is
+the active-low one.
 
+Others leave the reset polarity alone rather than overwrite it -
+sifive_spi_probe() saves and restores CSDEF, bcm63xx_hsspi_probe()
+reads GLOBAL_CTRL_CS_POLARITY back into bs->cs_polarity.
+tegra_spi_probe() does neither: it writes the field, and writes zeros.
+The Tegra234 TRM documents all CS_POL_INACTIVE bits as one after
+reset, which is the inactive level for an active-low device, so probe
+is discarding a value that suits the common case for one that does
+not.
+
+Thanks,
+Abe
