@@ -1,128 +1,153 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47BC2949E0;
-	Tue, 28 Jul 2026 07:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3753127AC31;
+	Tue, 28 Jul 2026 08:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785222602; cv=none; b=shXLVexrWT8hc0wxns+x6MKuYN+4vGfn/aab1bwHNvxaMpfeN4lRZKc8fh1vb+JHL9Wxt3rKUbg6Snekm4NYtGKjGOsJBEqL9ayqTlmJlOG6kPp6JxWZTf/Cvk7bMaQDDL1IfqTp5/tVUGNWb4Y/RI2aZoSzqZWmW1dZxtqNt7s=
+	t=1785228126; cv=none; b=P1NTOOdVihDBwPOh8Dpw/ezp99vqgedJF0t1DUlxHSeYl2P6Z/1jAWHplUOFBLa4KtHa4inUayXidrlLROHWTUnZA5PvhhnG1+LzM8V0KdU5YyL8elLPyjf0tex1fgYGx85LdbVgMqf96CcsHvNUrpK/X4mMskCfn/cT9zGfh/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785222602; c=relaxed/simple;
-	bh=vSCUb1r/Ckx4KsjNTxIbOkTqBD+6saJBdJZiGySr8q0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OumQX8fNQena53kN2eMfwAdH+rnFEYeHuFwbngQu2OckXTkjVIuQXxY7dlFnHhVx/2JezX8ZkAZ0QKd7uTAR94KseTPPz1YZUz+1YY9hK/mL8gRUTmT74arEMZV7BLy4Huaf/0ajpytfMVFHnJ7dhRpYdhWakcW03CU1sDSNEFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nYgxC1VQ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785228126; c=relaxed/simple;
+	bh=vTtpfS8DsqV0yX6Abtwlukd5XiEPzcmJl2/q1btkP5Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=f5ryqTEbbDbRhlvEdd+k1nX8o9Ta3yisaUxvALz4j8AJr00TqaHC0CkfjAcOT4IA+puN7gi6Xvplu+LXpWgjGB5iemXzu79Erca6Ef9jNekrtgjKjavfvQFqvigonuS2GSWrXCGoud6EOzyNSdd1hKvab52KSu4TJQXvxhXckQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=YPiMycY9; arc=none smtp.client-ip=113.46.200.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nYgxC1VQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08CD91F000E9;
-	Tue, 28 Jul 2026 07:10:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
-	s=korg; t=1785222601;
-	bh=vNiX/EZ7lt9UbNHfBvZWAh4cfxlwEUAKfBkZsw/ijl8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=nYgxC1VQXysGzl9+C9MT+vD3nEnnsnzJjwmykVljP6QMRsd98eQlR8zdMsCZv7/28
-	 ykyXAMnK7QOUlzcrGzrRSeyqA7o83ktO5E9Qh8FUiwVUVqRwM54dpQ/cjqrzhKqdoU
-	 6Ij85gG5gQ8NtOVjgvcrF6MGOvVKiYoFajs5Mgao=
-Date: Tue, 28 Jul 2026 09:09:48 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Aayush7352 <aayushdixit924@gmail.com>
-Cc: linux-staging@lists.linux.dev, Marc Dietrich <marvin24@gmx.de>,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dan Carpenter <error27@gmail.com>
-Subject: Re: [PATCH] staging: nvec: fix power-off path to not depend on
- workqueue
-Message-ID: <2026072834-childlike-folic-52ca@gregkh>
-References: <20260721095646.80663-1-aayushdixit924@gmail.com>
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="YPiMycY9"
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=b14c05HzraPU+WgxiYx6tlHbhfsQqX/AwR0LJeM5LeM=;
+	b=YPiMycY90bZd5L+hFm9wCMxlXc98Qhc6LVe1CFm2FtQqt8rvT34YvM+dfXv03J+9MIlAPyTQG
+	ZhTVAA5QtAE97tsdAHQ9gTK0oHUTLHQXqczWGaZwPYF9UyxiepW5DJETk3DddYOu8h1DeLib/fD
+	+SzOzJ72qYmwPmQzyZ2A8Eg=
+Received: from mail.maildlp.com (unknown [172.19.163.104])
+	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4h8TGv6dKDz1prKd;
+	Tue, 28 Jul 2026 16:32:23 +0800 (CST)
+Received: from kwepemf100001.china.huawei.com (unknown [7.202.181.215])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5C1044057F;
+	Tue, 28 Jul 2026 16:41:52 +0800 (CST)
+Received: from [10.67.121.90] (10.67.121.90) by kwepemf100001.china.huawei.com
+ (7.202.181.215) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Tue, 28 Jul
+ 2026 16:41:51 +0800
+Message-ID: <a4891cdc-9635-4ad7-96b6-f62c39aa254a@huawei.com>
+Date: Tue, 28 Jul 2026 16:41:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260721095646.80663-1-aayushdixit924@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] cpufreq: CPPC: Keep the policy across CPU hotplug
+To: Sumit Gupta <sumitg@nvidia.com>, <rafael@kernel.org>,
+	<viresh.kumar@linaro.org>, <pierre.gondois@arm.com>,
+	<christian.loehle@arm.com>, <ionela.voinescu@arm.com>,
+	<zhanjie9@hisilicon.com>, <lenb@kernel.org>, <saket.dumbre@intel.co>,
+	<ray.huang@amd.com>, <mario.limonciello@amd.com>, <perry.yuan@amd.com>,
+	<kprateek.nayak@amd.com>, <linux-kernel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<acpica-devel@lists.linux.dev>, <linux-tegra@vger.kernel.org>
+CC: <treding@nvidia.com>, <jonathanh@nvidia.com>, <vsethi@nvidia.com>,
+	<ksitaraman@nvidia.com>, <sanjayc@nvidia.com>, <mochs@nvidia.com>,
+	<bbasu@nvidia.com>
+References: <20260724215937.3368276-1-sumitg@nvidia.com>
+ <20260724215937.3368276-2-sumitg@nvidia.com>
+From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
+In-Reply-To: <20260724215937.3368276-2-sumitg@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemf100001.china.huawei.com (7.202.181.215)
 
-On Tue, Jul 21, 2026 at 03:26:46PM +0530, Aayush7352 wrote:
-> From: Aayush Dixit <aayushdixit924@gmail.com>
+On 7/25/2026 5:59 AM, Sumit Gupta wrote:
+> Without online()/offline() callbacks, the cpufreq core fully tears
+> down a policy during exit() when its last online CPU is offlined, and
+> rebuilds it during init() when it comes back.
 > 
-> nvec_power_off() uses nvec_write_async() which queues work via
-> schedule_work().  During system shutdown or reboot, workqueues may be
-> frozen, so the AP_PWR_DOWN message never reaches the embedded
-> controller and the system hangs instead of powering off.
+> Add lightweight online()/offline() callbacks so the core instead keeps
+> the policy live and reuses the driver's cpu_data across CPU hotplug.
+> This avoids re-reading the CPPC capabilities on every offline/online,
+> making CPU hotplug faster.
 > 
-> Fix by calling nvec_request_master() directly after queuing the
-> power-off messages, processing the TX queue synchronously in the
-> power-off context.  Also add a NULL guard for nvec_power_handle.
+> From online(), re-enable CPPC, as the platform may have disabled it
+> while the CPU was offline. Since the policy is no longer rebuilt via
+> init(), online() also reprograms the CPPC performance controls
+> (desired/min/max).
 > 
-> This addresses the TODO item "add atomic ops in order to fix
-> shutoff/reboot problems" in drivers/staging/nvec/TODO.
-> 
-> Signed-off-by: Aayush Dixit <aayushdixit924@gmail.com>
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 > ---
-> This patch has not been tested.  Compile-tested and checkpatch-clean only.
+>  drivers/cpufreq/cppc_cpufreq.c | 44 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
 > 
->  drivers/staging/nvec/nvec.c | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-> index 88c416ee0..938ea8f34 100644
-> --- a/drivers/staging/nvec/nvec.c
-> +++ b/drivers/staging/nvec/nvec.c
-> @@ -774,10 +774,23 @@ static void nvec_disable_i2c_slave(struct nvec_chip *nvec)
->  
->  static void nvec_power_off(void)
->  {
-> +	struct nvec_chip *nvec = nvec_power_handle;
->  	char ap_pwr_down[] = { NVEC_SLEEP, AP_PWR_DOWN };
->  
-> -	nvec_toggle_global_events(nvec_power_handle, false);
-> -	nvec_write_async(nvec_power_handle, ap_pwr_down, 2);
-> +	if (!nvec)
-> +		return;
-> +
-> +	nvec_toggle_global_events(nvec, false);
-> +	nvec_write_async(nvec, ap_pwr_down, 2);
-> +
-> +	/*
-> +	 * Process the TX queue directly instead of relying on the
-> +	 * workqueue.  Workqueues may be frozen during the power-off
-> +	 * sequence, so schedule_work() from nvec_write_async() may
-> +	 * not execute, leaving the AP_PWR_DOWN message unsent and
-> +	 * the system unable to power off.
-> +	 */
-> +	nvec_request_master(&nvec->tx_work);
+> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+> index f6cea0c54dd9..6dc59f99d880 100644
+> --- a/drivers/cpufreq/cppc_cpufreq.c
+> +++ b/drivers/cpufreq/cppc_cpufreq.c
+> @@ -722,6 +722,48 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  	return ret;
 >  }
 >  
->  static int tegra_nvec_probe(struct platform_device *pdev)
-> -- 
-> 2.55.0
-> 
+> +/*
+> + * With offline() defined, the cpufreq core keeps the policy alive when
+> + * a CPU is hotplugged out.
+> + */
+> +static int cppc_cpufreq_cpu_offline(struct cpufreq_policy *policy)
+> +{
+> +	return 0;
+> +}
 
-Hi,
+I am not sure if doing nothing here will cause issues. In my view, to be safe,
+we should perform the actions found in cppc_cpufreq_cpu_exit() here, except
+cppc_cpufreq_put_cpu_data().
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+> +
+> +/*
+> + * Re-enable CPPC when the policy's CPU comes back online, since the platform
+> + * may have disabled it while the CPU was offline.
+> + */
+> +static int cppc_cpufreq_cpu_online(struct cpufreq_policy *policy)
+> +{
+> +	struct cppc_cpudata *cpu_data = policy->driver_data;
+> +	unsigned int cpu = policy->cpu;
+> +	int ret;
+> +
+> +	ret = cppc_set_enable(cpu, true);
+> +	if (ret && ret != -EOPNOTSUPP)
+> +		pr_warn("Failed to re-enable CPPC for CPU%d (%d)\n", cpu, ret);
+> +
+> +	/*
+> +	 * The platform may reset the controls while the CPU is offline, so
+> +	 * recompute min/max, clamp desired_perf into range, and reprogram them.
+> +	 */
+> +	cppc_cpufreq_update_perf_limits(cpu_data, policy);
+> +
+> +	cpu_data->perf_ctrls.desired_perf =
+> +		clamp_t(u32, cpu_data->perf_ctrls.desired_perf,
+> +			cpu_data->perf_ctrls.min_perf,
+> +			cpu_data->perf_ctrls.max_perf);
+> +
+> +	ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
+> +	if (ret)
+> +		pr_debug("Failed to reapply perf request on CPU%d (%d)\n",
+> +			 cpu, ret);
+> +
+> +	return 0;
+> +}
+> +
+>  static void cppc_cpufreq_cpu_exit(struct cpufreq_policy *policy)
+>  {
+>  	struct cppc_cpudata *cpu_data = policy->driver_data;
+> @@ -1034,6 +1076,8 @@ static struct cpufreq_driver cppc_cpufreq_driver = {
+>  	.fast_switch = cppc_cpufreq_fast_switch,
+>  	.init = cppc_cpufreq_cpu_init,
+>  	.exit = cppc_cpufreq_cpu_exit,
+> +	.online = cppc_cpufreq_cpu_online,
+> +	.offline = cppc_cpufreq_cpu_offline,
+>  	.set_boost = cppc_cpufreq_set_boost,
+>  	.attr = cppc_cpufreq_attr,
+>  	.name = "cppc_cpufreq",
 
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
