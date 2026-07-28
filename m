@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532722F7EF1;
-	Tue, 28 Jul 2026 01:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C742D7DC8;
+	Tue, 28 Jul 2026 02:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785203867; cv=none; b=lktFO6tuewxhnJ9Qya8UYS0z8qk72DP9pifRoDlL/67a7v/W6PA+oZU/CQ137lo7OsKOfP6NOi7EES6LMXMQ4mxb9UY7dDiijtFPWiz3od9vVt47u512FinKXGr2UGedkjTGaTgtxEyOMnTnAmAckoKrPkSGzgxwoIhOGuk1ybE=
+	t=1785204013; cv=none; b=tEgriQy0SkgH7UB6GAmTJ78hlwUSBXrJFJXXrFKSM56GzxYGiZcK4jmqJBLX6J0zsipBthPpJnk7+m0GrQQrv/jK0u8a2JHUNw97KJOBVFkitVDcqLwFfC9xl8TfBGkWAJIBIK/4zcvlj/hTeUdlgaxAdC8/LOs8B/h/AGCu614=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785203867; c=relaxed/simple;
-	bh=bY6aYB+9DvPLeNpruhyCIrNEWP+sGWQISisPmPk5JCA=;
+	s=arc-20240116; t=1785204013; c=relaxed/simple;
+	bh=R4indlB7iS+YMngriTrabqvZqjfbJKoCpH7sjCLxc8c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lD3C6c2MwoL4dFaG68CfRBDwGZ6WxkcHHi07pwZSEhxQyI5Qj2eCBoA15Kef6edg+RK7D5HFS+eBt0aVg6IsgRuGyxiSZiwCXzUwh7OpJAaULDDs0ueN6u/DEZDlL0Wr9UUQCmZex1BgUagT7iXNj5541msPXljYYWMRVpVjb0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VkTkFhpG; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=e50cJicxyaCz5BXgcEsM6XTVC12H/ui0ob7T6IETbPkDkzeuroyeW6rXJWrtg5gCC6wz2Rl6hp4OB8yAkh06/xz3UevTPavgtQ/GuAEjTQYc4mX6/FvH8h6Lt5UTZGSJHGk9gAfJrJid8hr3FjYC1xgLVBSwvwkULQ7O3wPO2AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NA6vHWvn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VkTkFhpG"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 19A0EC19425;
-	Tue, 28 Jul 2026 01:57:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NA6vHWvn"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F2BC5C2BCFB;
+	Tue, 28 Jul 2026 02:00:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1785203867;
-	bh=bY6aYB+9DvPLeNpruhyCIrNEWP+sGWQISisPmPk5JCA=;
+	s=k20201202; t=1785204013;
+	bh=R4indlB7iS+YMngriTrabqvZqjfbJKoCpH7sjCLxc8c=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=VkTkFhpGJi/nYN6Cc6+sEgv1vnqIQyFrwuvDpx8otcJQpB/TrUGyMLQAeNpHurJZw
-	 F7ut0OSntWNkYdIliuEGrFJpIWv4+IP6EMIUd8GOZldbfVh1wyjPhViFcssV+EIp+O
-	 Q7s6EshFP6HSwvQ32+CKC6u2nqsuz8bFdxlu42SdCLRg16r93wqv+3ehT9ETJtx80r
-	 fGWvguKGIG1m+uuv9sZuxE1Oj1n2uvUkoCmg1qBRqbniJ9I32EbibHdbGBV5NlhfNg
-	 iIOejsYBgjZY7BudU91drimQ1r93D3IlMEthvurLAHGPwil/sQp+W0+R8YVUTy5b7m
-	 c6QbkyYNQEl6w==
+	b=NA6vHWvnmDcoDClSS1UZrLGs+TEIwT+Rab0ka4hQC2Icfg3CwW8xRTUs9LdzjcaOC
+	 MSQ+5sASgvUOugWoePRtjZ1QG33sEM01XVQDqq9gYOj4ndw6ctwAbFVssF6f/qgvfQ
+	 I5aGgkq81x9E7L12JEXws3XHIWi55JgMluZFfxP7HXVtkEYtFHSv9gX/m+KVUWsaTd
+	 JsOoAKdGY92OoE0kSz//X0YzFUgi1Eng48g12Ctx2HTK+ghJ0xmELSy+F4wnGnJIQN
+	 pmAHOmXawgGxRrHkue8lLe85MRnG/rSPWcethxHYhjVO4gu+J5fVPaLnZo74ITUGPB
+	 a+UQU4WfgD/ag==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E754BC53219;
-	Tue, 28 Jul 2026 01:57:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3212C531D0;
+	Tue, 28 Jul 2026 02:00:12 +0000 (UTC)
 From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Mon, 27 Jul 2026 20:57:35 -0500
-Subject: [PATCH v2 1/2] soc/tegra: fuse: Support revision B01
+Date: Mon, 27 Jul 2026 21:00:11 -0500
+Subject: [PATCH v4 2/2] soc/tegra: pmc: Add Tegra210B01 support
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -40,19 +40,25 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260727-t210b01-speedo-v2-1-4f287a3dab72@gmail.com>
-References: <20260727-t210b01-speedo-v2-0-4f287a3dab72@gmail.com>
-In-Reply-To: <20260727-t210b01-speedo-v2-0-4f287a3dab72@gmail.com>
-To: Thierry Reding <thierry.reding@kernel.org>, 
+Message-Id: <20260727-t210b01-pmc-v4-2-af68a21cd746@gmail.com>
+References: <20260727-t210b01-pmc-v4-0-af68a21cd746@gmail.com>
+In-Reply-To: <20260727-t210b01-pmc-v4-0-af68a21cd746@gmail.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
  Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Aaron Kling <webgeek1234@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>, 
+ Alexandre Hamamdjian <azkali.limited@gmail.com>, 
+ Thomas Makin <halorocker89@gmail.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1785203864; l=3236;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1785204012; l=3945;
  i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=9p+4K4Xb7RRednfp4tslCrog2SNThKpscmVNathI/aU=;
- b=kKPuxugq/cLSex9aANZ38LwMzdHdZDEZpMwzeVgNl5sIbNmtFBqwspULJ1F7HF4gDX9rNmjpn
- 7S2f4wp0QxbDLmPEn5T0gF0CvQuT5VWdcRIb7ykXFh2IPee22wFBMIH
+ bh=bsnOU9eOlGEYQsHqqQLOARpEzZc5A/KDTSpsB/hrZkA=;
+ b=dI1nPtPaJhPhuMxes2IsDbE1sVSm6S+ilqBd7f0eukkS7EHbrh57/WdiHO9BWbdRg91kLpM8P
+ 1J5dxeAUOQ/BjsOC8U1Q9+N+qku5Iehl1SAM6/GMdF9rR3Lr3oJSoW1
 X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
  pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
 X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
@@ -60,108 +66,102 @@ X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
 X-Original-From: Aaron Kling <webgeek1234@gmail.com>
 Reply-To: webgeek1234@gmail.com
 
-From: Aaron Kling <webgeek1234@gmail.com>
+From: Alexandre Hamamdjian <azkali.limited@gmail.com>
 
-Previously, all supported SoCs only used the A major revision. The
-Tegra210B01 SoC incremented the major revision. Add support for this.
+The PMC in Tegra210B01 is very similar to the one in the original
+Tegra210, but has a few powergate differences. Specifically sata and ve2
+are removed.
 
+Signed-off-by: Alexandre Hamamdjian <azkali.limited@gmail.com>
+Co-developed-by: Thomas Makin <halorocker89@gmail.com>
+Signed-off-by: Thomas Makin <halorocker89@gmail.com>
+Co-developed-by: Aaron Kling <webgeek1234@gmail.com>
 Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/soc/tegra/fuse/fuse-tegra.c    |  1 +
- drivers/soc/tegra/fuse/tegra-apbmisc.c | 51 +++++++++++++++++++++-------------
- include/soc/tegra/fuse.h               |  1 +
- 3 files changed, 33 insertions(+), 20 deletions(-)
+ drivers/soc/tegra/pmc.c | 62 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index 78b054d43a422..a37642dc92c61 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -34,6 +34,7 @@ static const char *tegra_revision_name[TEGRA_REVISION_MAX] = {
- 	[TEGRA_REVISION_A03]     = "A03",
- 	[TEGRA_REVISION_A03p]    = "A03 prime",
- 	[TEGRA_REVISION_A04]     = "A04",
-+	[TEGRA_REVISION_B01]     = "B01",
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index f419a5395545f..685b2b0f975c3 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -3897,6 +3897,67 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
+ 	.has_single_mmio_aperture = true,
  };
  
- static const char *tegra_platform_name[TEGRA_PLATFORM_MAX] = {
-diff --git a/drivers/soc/tegra/fuse/tegra-apbmisc.c b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-index 6af69ccaa295c..a4fb0ecd15cf3 100644
---- a/drivers/soc/tegra/fuse/tegra-apbmisc.c
-+++ b/drivers/soc/tegra/fuse/tegra-apbmisc.c
-@@ -167,30 +167,41 @@ static const struct of_device_id apbmisc_match[] __initconst = {
- 
- void __init tegra_init_revision(void)
- {
--	u8 chip_id, minor_rev;
-+	u8 chip_id, major_rev, minor_rev;
- 
- 	chip_id = tegra_get_chip_id();
-+	major_rev = tegra_get_major_rev();
- 	minor_rev = tegra_get_minor_rev();
- 
--	switch (minor_rev) {
--	case 1:
--		tegra_sku_info.revision = TEGRA_REVISION_A01;
--		break;
--	case 2:
--		tegra_sku_info.revision = TEGRA_REVISION_A02;
--		break;
--	case 3:
--		if (chip_id == TEGRA20 && (tegra_fuse_read_spare(18) ||
--					   tegra_fuse_read_spare(19)))
--			tegra_sku_info.revision = TEGRA_REVISION_A03p;
--		else
--			tegra_sku_info.revision = TEGRA_REVISION_A03;
--		break;
--	case 4:
--		tegra_sku_info.revision = TEGRA_REVISION_A04;
--		break;
--	default:
--		tegra_sku_info.revision = TEGRA_REVISION_UNKNOWN;
-+	if (major_rev > 1) {
-+		switch (minor_rev) {
-+		case 1:
-+			tegra_sku_info.revision = TEGRA_REVISION_B01;
-+			break;
-+		default:
-+			tegra_sku_info.revision = TEGRA_REVISION_UNKNOWN;
-+		}
-+	} else {
-+		switch (minor_rev) {
-+		case 1:
-+			tegra_sku_info.revision = TEGRA_REVISION_A01;
-+			break;
-+		case 2:
-+			tegra_sku_info.revision = TEGRA_REVISION_A02;
-+			break;
-+		case 3:
-+			if (chip_id == TEGRA20 && (tegra_fuse_read_spare(18) ||
-+						   tegra_fuse_read_spare(19)))
-+				tegra_sku_info.revision = TEGRA_REVISION_A03p;
-+			else
-+				tegra_sku_info.revision = TEGRA_REVISION_A03;
-+			break;
-+		case 4:
-+			tegra_sku_info.revision = TEGRA_REVISION_A04;
-+			break;
-+		default:
-+			tegra_sku_info.revision = TEGRA_REVISION_UNKNOWN;
-+		}
- 	}
- 
- 	tegra_sku_info.sku_id = tegra_fuse_read_early(FUSE_SKU_INFO);
-diff --git a/include/soc/tegra/fuse.h b/include/soc/tegra/fuse.h
-index 8f421b9f7585c..30db79f7f17fd 100644
---- a/include/soc/tegra/fuse.h
-+++ b/include/soc/tegra/fuse.h
-@@ -33,6 +33,7 @@ enum tegra_revision {
- 	TEGRA_REVISION_A03,
- 	TEGRA_REVISION_A03p,
- 	TEGRA_REVISION_A04,
-+	TEGRA_REVISION_B01,
- 	TEGRA_REVISION_MAX,
- };
- 
++static const char * const tegra210b01_powergates[] = {
++	[TEGRA_POWERGATE_CPU] = "crail",
++	[TEGRA_POWERGATE_3D] = "3d",
++	[TEGRA_POWERGATE_VENC] = "venc",
++	[TEGRA_POWERGATE_PCIE] = "pcie",
++	[TEGRA_POWERGATE_MPE] = "mpe",
++	[TEGRA_POWERGATE_CPU1] = "cpu1",
++	[TEGRA_POWERGATE_CPU2] = "cpu2",
++	[TEGRA_POWERGATE_CPU3] = "cpu3",
++	[TEGRA_POWERGATE_CPU0] = "cpu0",
++	[TEGRA_POWERGATE_C0NC] = "c0nc",
++	[TEGRA_POWERGATE_SOR] = "sor",
++	[TEGRA_POWERGATE_DIS] = "dis",
++	[TEGRA_POWERGATE_DISB] = "disb",
++	[TEGRA_POWERGATE_XUSBA] = "xusba",
++	[TEGRA_POWERGATE_XUSBB] = "xusbb",
++	[TEGRA_POWERGATE_XUSBC] = "xusbc",
++	[TEGRA_POWERGATE_VIC] = "vic",
++	[TEGRA_POWERGATE_IRAM] = "iram",
++	[TEGRA_POWERGATE_NVDEC] = "nvdec",
++	[TEGRA_POWERGATE_NVJPG] = "nvjpg",
++	[TEGRA_POWERGATE_AUD] = "aud",
++	[TEGRA_POWERGATE_DFD] = "dfd",
++};
++
++static const struct tegra_pmc_soc tegra210b01_pmc_soc = {
++	.supports_core_domain = false,
++	.num_powergates = ARRAY_SIZE(tegra210b01_powergates),
++	.powergates = tegra210b01_powergates,
++	.num_cpu_powergates = ARRAY_SIZE(tegra210_cpu_powergates),
++	.cpu_powergates = tegra210_cpu_powergates,
++	.has_tsense_reset = true,
++	.has_gpu_clamps = true,
++	.needs_mbist_war = false,
++	.has_io_pad_wren = true,
++	.maybe_tz_only = true,
++	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
++	.io_pads = tegra210_io_pads,
++	.num_io_pad_vctrls = ARRAY_SIZE(tegra210_io_pad_vctrls),
++	.io_pad_vctrls = tegra210_io_pad_vctrls,
++	.num_pin_descs = ARRAY_SIZE(tegra210_pin_descs),
++	.pin_descs = tegra210_pin_descs,
++	.regs = &tegra20_pmc_regs,
++	.init = tegra20_pmc_init,
++	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
++	.powergate_set = tegra114_powergate_set,
++	.irq_set_wake = tegra210_pmc_irq_set_wake,
++	.irq_set_type = tegra210_pmc_irq_set_type,
++	.reset_sources = tegra210_reset_sources,
++	.num_reset_sources = ARRAY_SIZE(tegra210_reset_sources),
++	.reset_levels = NULL,
++	.num_reset_levels = 0,
++	.num_wake_events = ARRAY_SIZE(tegra210_wake_events),
++	.wake_events = tegra210_wake_events,
++	.pmc_clks_data = tegra_pmc_clks_data,
++	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
++	.has_blink_output = true,
++	.has_usb_sleepwalk = true,
++	.has_single_mmio_aperture = true,
++};
++
+ static const struct tegra_io_pad_soc tegra186_io_pads[] = {
+ 	TEGRA_IO_PAD(TEGRA_IO_PAD_CSIA, 0, 0x74, 0x78, "csia"),
+ 	TEGRA_IO_PAD(TEGRA_IO_PAD_CSIB, 1, 0x74, 0x78, "csib"),
+@@ -4824,6 +4885,7 @@ static const struct of_device_id tegra_pmc_match[] = {
+ 	{ .compatible = "nvidia,tegra194-pmc", .data = &tegra194_pmc_soc },
+ 	{ .compatible = "nvidia,tegra186-pmc", .data = &tegra186_pmc_soc },
+ 	{ .compatible = "nvidia,tegra210-pmc", .data = &tegra210_pmc_soc },
++	{ .compatible = "nvidia,tegra210b01-pmc", .data = &tegra210b01_pmc_soc },
+ 	{ .compatible = "nvidia,tegra132-pmc", .data = &tegra124_pmc_soc },
+ 	{ .compatible = "nvidia,tegra124-pmc", .data = &tegra124_pmc_soc },
+ 	{ .compatible = "nvidia,tegra114-pmc", .data = &tegra114_pmc_soc },
 
 -- 
 2.54.0
