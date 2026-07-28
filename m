@@ -1,146 +1,164 @@
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010045.outbound.protection.outlook.com [52.101.56.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A237531F98F;
-	Tue, 28 Jul 2026 15:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785253903; cv=fail; b=A0K1vAV6RkJFfrftgaLKDrLzxgZp+MBUDkyJrhnBVfInMbGxYzWjRJYQogbiSLB/1aFbRGSKbrpdmeaj7clREPsdz80EQciHRQbNANGXT3yYerJHMaaKB505sfUnHA7Nfkg9uHVlTUeKZ4rbuKBZZF6cmFecBpxhyZVZCVzQyZM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785253903; c=relaxed/simple;
-	bh=hGbaa2ccsLQqjG4blcacSiqHjPcCQnkXorTC7GquVGU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ou1sSsxO5O3u31B22PRfxOm6cOtT6KcxwG0VmfhBUHOs7BpxJ2AbzQpZHPR8MG+C3XVxcsiLKwHVW3hqvXI6OIEEz0n2U9qjzseKcBFq+4w47ZqoQuK5jJWgcmS5MouvXXFW6F7eNPDE0Ws8yHbnNQc4QglJXKlubrJybhxYXcU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FFcYTYbR; arc=fail smtp.client-ip=52.101.56.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EB2378D70
+	for <linux-tegra@vger.kernel.org>; Tue, 28 Jul 2026 16:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785255788; cv=none; b=Nh5NMwEGnCV2J/5u54/s4WDimBAsuCxVtXDQdZf9nbv2r1XrG1sYI5zrn+C0T5A/ELWt3tdHf+7BHjjJnaGDC3BNPqfvZIxsecPDO99tDyM8ZyYck5BtGSvZn6vSaG3eiGELgJf74y2ixsrlrH0f4UnWlzffOSYCWI8exDW15kE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785255788; c=relaxed/simple;
+	bh=MuoYv/trvB+apkFilFU7ge8EmIYL0Cz7Mp4H5bYBY04=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JZdwR376yNLsrZMHdFEMJ5HDf8yIGPBxvy3HYnnBH0JJpUTt4ngf4tGS9BzRBoKXQ8c/8Bbk2EFnl5ZKCTJ3CxoYAg7A7hk9catIUE/Dqrkvpg7GvJ8L+fQMj1dG16DJleM5uXEm58gV1DSFneHRTC50NCe7Af5djp/wBXgM2io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=FyotCuho; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FFcYTYbR"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QdLgn/ZoPReVWJ37rhLrhx5p1wBiqUiJnEyA2o//IpoPkzDy0i25TxKRW6mnfh4iOvddxjMc77cjNx+ClqEg8TzLLg3awWSDiley+l33pKn1vd4UkYmVbY18ugqvmVmcxmopQYqz8beJcP2vt9swlsJNM5wnntAwtbldO466L9Ts7XRNZtGhdVPxsq7dDaP8H8EvchIE5eWEuIJ8lhI6qSIA0otAk4FLIJTOgg2HiH83FTCuOA3lhY6URJHRItmKN7Pkl9yWnLJFg24EkWH3VYsz8XdcwaRY1yFTRuaAcuFBGCw5FiHqMpVqgkZYurRGYd/CKZtwFJupMHoegk36vQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Mbtu7Ha5J3DsecctfPX2ZLdTmm8FjOJtylozY8yla4w=;
- b=kLQAgcSGTM/DMqPlDLFQ7/VOCRRLCd8bAMHlUNOTtkgWxhwnnV33HnMY4tBNLzBWLZqMXSp3IKP/GqrDth6TEK9G+XMorHpdNWBDUh011VdNlrgODm0rD88gQv3qPGe0D5ThJfQPOb/EVN4XIunT0RD7aGAcPrgjdx6In8i3UJ9YfdlAKCwEFbTLFU6jVvK2WJXusljClzcuwTPOyc4Ilts5iyWBf1tj/L9YA8TLvYTZZcK7WVUZ6WlrE6fjZTAvQ8ZKOILqDBFGpX19fZ85SVG0tU88D5ITt7IbIHpGLHJkSCHDtndSWnpgDxCKw2xdVIZ7rFat1NigkEwH7rC63g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Mbtu7Ha5J3DsecctfPX2ZLdTmm8FjOJtylozY8yla4w=;
- b=FFcYTYbR3MyQKJ+EcxIyKPT9BhFfq8k60DU9MDaEzYPFG3HVPKTRRchbNZ7mJP7ej1Ly0+xWulcamgzZ3uOgmvAWPAO3mrmdkFfG/J7T8lNidsTOcObAlTAIjQmaKMaSzDkX5s0l8g66wAQQubasTusAw5EQsnrCeVGeeZSbXdhnsfb3Zbib0nH5gkBepmNGf+fG+RUPQJO4bIqxeM/Cbi1zoDOjWKfjoF7Dn6NpyRK+Q2YfyWxxp/0G3QT6evLeDQYS1dHF2VOXtKJPBsD6F22a/s2prUwCHpfj71oA4CqaSBDLrwyEefmIbdHwsRTCg+XjbZ790jWJWJHSf+UYMQ==
-Received: from MW4PR04CA0361.namprd04.prod.outlook.com (2603:10b6:303:81::6)
- by SJ2PR12MB7942.namprd12.prod.outlook.com (2603:10b6:a03:4c3::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.13; Tue, 28 Jul
- 2026 15:51:33 +0000
-Received: from CO1PEPF000066EC.namprd05.prod.outlook.com
- (2603:10b6:303:81:cafe::89) by MW4PR04CA0361.outlook.office365.com
- (2603:10b6:303:81::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.270.12 via Frontend Transport; Tue,
- 28 Jul 2026 15:51:33 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CO1PEPF000066EC.mail.protection.outlook.com (10.167.249.8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.270.5 via Frontend Transport; Tue, 28 Jul 2026 15:51:32 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Tue, 28 Jul
- 2026 08:51:15 -0700
-Received: from moonraker.nvidia.com (10.126.231.37) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 28 Jul
- 2026 08:51:13 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding
-	<thierry.reding@kernel.org>, Marc Zyngier <maz@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Jon Hunter
-	<jonathanh@nvidia.com>
-Subject: [PATCH] arm64: tegra: Add EL2 virtual timer interrupt for Tegra194
-Date: Tue, 28 Jul 2026 16:50:59 +0100
-Message-ID: <20260728155059.200363-1-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="FyotCuho"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6C2E175D
+	for <linux-tegra@vger.kernel.org>; Tue, 28 Jul 2026 09:23:01 -0700 (PDT)
+Received: from [10.2.11.34] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 935173F763
+	for <linux-tegra@vger.kernel.org>; Tue, 28 Jul 2026 09:23:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1785255785; bh=MuoYv/trvB+apkFilFU7ge8EmIYL0Cz7Mp4H5bYBY04=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FyotCuho7y1B6qzJnEUJQHY3YRITDDRMbRoz9+xyQ45lX9LWI8vLXEOrhrNQ0oEsR
+	 qAbx8cBqaGFbRTXA8m4XzKoNl9sUTN+IWt5VhC85oHmOgrgNpUsxKv5xXY15/1Ru+m
+	 0QQQCnQwd6sMxUbx8PuJDz5Uvi4EScHbJ2iQ/hN4=
+Date: Tue, 28 Jul 2026 17:21:58 +0100
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Diogo Silva <diogompaissilva@gmail.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Michal Simek <michal.simek@amd.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>,
+	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+	David Airlie <airlied@redhat.com>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+	Gurchetan Singh <gurchetansingh@chromium.org>,
+	Chia-I Wu <olvaffe@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>,
+	Liu Ying <victor.liu@nxp.com>, Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Xinliang Liu <xinliang.liu@linaro.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Yongqin Liu <yongqin.liu@linaro.org>,
+	John Stultz <jstultz@google.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, virtualization@lists.linux.dev,
+	imx@lists.linux.dev, linux-mediatek@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-amlogic@lists.infradead.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 12/15] drm/arm/komeda: remove dependency on DRM simple
+ helpers
+Message-ID: <amjXJrbgka00CQX2@e142607>
+References: <20260719-drm_simple_encoder_init-v1-0-a78c509e3062@gmail.com>
+ <20260719-drm_simple_encoder_init-v1-12-a78c509e3062@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000066EC:EE_|SJ2PR12MB7942:EE_
-X-MS-Office365-Filtering-Correlation-Id: aa28e99d-15f2-4cbf-a122-08deecc018df
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|23010399003|36860700016|56012099006|5023799004|11063799006|10067099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	K0Xq5AKJ03hGT7TTJfHaDAXwG151NNW+Hu7Snv7byIDW3PjsH/OKVQOwGrngc/IWbCUvqVWDxW7gr5RPO6URTo2axCR7HInXK04DNC+shnTRoWw1DXcrF3D3weIj/LbBtGvqvy9vtM8gTG2f+Pv8/PFJ9XroWF18aGw/pziDD7K44CNQwCSRe1vIoS8kcX6XqbFeKypzWR5813Ufsgvi8eDz3aR/LRMTQydPhTjeD9l8LPAMATRg4YgWneLbNjfljKeO+UK57iVkREucgEwlub1d45c/OMgi/Q7aLE0x3KE1DiJvCsqVsijlZw/RuvF/vx7uVVizP5+8GgM+xJc4NyTVmCu0Lqn+JQDJktb/ouczY3W+DdmIcRljhw9K4EKeZ59RwT6P9Gfb2gYpCh95+SsfHrxlEY/l/lXJ7LW1bcDwXbeDqfl7g2cgIF3xrF78976Itz3Wr+XWmLh3vLDBzuN6w0PoR/WEWKaFkQKpByGoZHgSgXKDWw0pMa6IXfWYgWnCRYkcUHr/AkJNzQGjVWtM2bktBkaA6YBmpMuVMHhYUejmFTbZ/TT+XxBRc2hedBbHXtDyGYj53vIPyLFiftHDVtvJ330hXEiIN5Zs2bvVKR/NoL57sECpk7Rm2ZYZdLvM/h/bZPp6WGUlOYLN+52la56+9zeD1xlfX+8vYwvrMNAiR37YbAyItNW6gtfL434hF7fOhRZ+80R0KXd2Xg==
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(23010399003)(36860700016)(56012099006)(5023799004)(11063799006)(10067099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	0AsuHOU2KVplg/OGkTsE3xV6s4kkca0byxitKSkhGmSCLCU/bbAKwQwtDFzHZik/dSXr/5qlLKH7r2GPfp0aflcXiULNU0i7v/A3yRuC6vkmaw9ITCz6dMW0yVJgPQlfosbwGMocdXK2K6Z8CSvmI4ceZT/UYN9jW171asUWtx8QgTCgpcKEHuraxVuleF9yx89Ycus70kpFcNpb93tLNx+mDfiE7wNbfTEz2w9pc1eZz5sPpEA9TBMB+heLpR9OV/HutGU1+fE5Olm0zvCyJuIb/IIfXE90laNv7kNa/kisEopXlsxHbhdD3etEXbiMhel8pW+7qfYpNNq+N9ZUF4VkNGNU60OSh3fN1cUU1xqVgJOoy1qweMTF3WpQvEG4fr4KAVWFJczzMAE7uLmeCKsMauNp8PtIx4zIdQfeaFKDDNMG6pYKBCX3rckT2Lit
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2026 15:51:32.6874
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa28e99d-15f2-4cbf-a122-08deecc018df
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000066EC.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7942
+In-Reply-To: <20260719-drm_simple_encoder_init-v1-12-a78c509e3062@gmail.com>
 
-Commit d87773de9efe ("clocksource/drivers/arm_arch_timer: Default to EL2
-virtual timer when running VHE") updated the ARM arch timer driver to
-use the virtual timer by default if the CPU is running at EL2 with VHE
-enabled. If the CPU is running at EL2 with VHE enabled but there is no
-interrupt provided for the virtual timer, then the following warning is
-displayed:
+On Sun, Jul 19, 2026 at 01:35:43AM +0200, Diogo Silva wrote:
+> The simple KMS helpers are deprecated because they only add an
+> intermediate layer between drivers and atomic modesetting.
+> 
+> Open-code drm_simple_encoder_init() by calling drm_encoder_init()
+> directly and providing driver-local drm_encoder_funcs.
+> 
+> Signed-off-by: Diogo Silva <diogompaissilva@gmail.com>
 
- arch_timer: [Firmware Bug]: VHE-capable CPU without EL2 virtual timer
-  interrupt
+Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
 
-This warning is observed on Tegra194 platforms. Tegra194 SoC includes
-NVIDIA Carmel ARM v8.2 CPUs and support an EL2 virtual timer. Fix the
-above warning by adding the PPI for the EL2 virtual timer interrupt for
-Tegra194.
+Best regards,
+Liviu
 
-Fixes: 5425fb15d8ee ("arm64: tegra: Add Tegra194 chip device tree")
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+> ---
+>  drivers/gpu/drm/arm/display/komeda/komeda_crtc.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
+> index e8cb782a6f8e..719568d9f7c2 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
+> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
+> @@ -11,9 +11,9 @@
+>  
+>  #include <drm/drm_atomic.h>
+>  #include <drm/drm_atomic_helper.h>
+> +#include <drm/drm_encoder.h>
+>  #include <drm/drm_print.h>
+>  #include <drm/drm_vblank.h>
+> -#include <drm/drm_simple_kms_helper.h>
+>  #include <drm/drm_bridge.h>
+>  
+>  #include "komeda_dev.h"
+> @@ -635,6 +635,10 @@ static int komeda_attach_bridge(struct device *dev,
+>  	return err;
+>  }
+>  
+> +static const struct drm_encoder_funcs komeda_encoder_funcs = {
+> +	.destroy = drm_encoder_cleanup,
+> +};
+> +
+>  static int komeda_crtc_add(struct komeda_kms_dev *kms,
+>  			   struct komeda_crtc *kcrtc)
+>  {
+> @@ -658,7 +662,8 @@ static int komeda_crtc_add(struct komeda_kms_dev *kms,
+>  	 * bridge
+>  	 */
+>  	kcrtc->encoder.possible_crtcs = drm_crtc_mask(crtc);
+> -	err = drm_simple_encoder_init(base, encoder, DRM_MODE_ENCODER_TMDS);
+> +	err = drm_encoder_init(base, encoder, &komeda_encoder_funcs,
+> +			       DRM_MODE_ENCODER_TMDS, NULL);
+>  	if (err)
+>  		return err;
+>  
+> 
+> -- 
+> 2.54.0
+> 
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index eb7e3c666df6..5e510f77b538 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -3176,6 +3176,8 @@ timer {
- 			     <GIC_PPI 11
- 				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 10
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 15
- 				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
- 		interrupt-parent = <&gic>;
- 		always-on;
 -- 
-2.43.0
-
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
