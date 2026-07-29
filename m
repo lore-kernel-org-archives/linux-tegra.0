@@ -1,176 +1,228 @@
-Received: from ixit.cz (ixit.cz [185.100.197.86])
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010006.outbound.protection.outlook.com [40.93.198.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBC1469823;
-	Wed, 29 Jul 2026 17:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.100.197.86
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785344902; cv=none; b=O9jZmCCRHgizMoZG9dMrEtIRzBSpIJqLL4N0yu5Z9i9BJPcJ4OeSCEU1RFUhbASepugurpWlRrP9epXcSY5h86wifJgIUKZhkest36/Qz5XwsVr0fgHAjQ1tuUmntbxWL//Sy3BvAFAWvrqkmakt/llFrQkdx5H6R7+4RO2i+ws=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785344902; c=relaxed/simple;
-	bh=XUgSEOECOk87snbrtqy2YpMZLdGVK8ibAtYx5elhhy4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZFmiCaEtkw/woIbzB7y+5SyCVorWv3Aw+oVMruJqKVWSiVyvFfwQE6tcdtXWJ0/bGuzlb7u/cQldpCGm1j+vLsj/OEndSsmTxi7LRaNlhqyzdG+L3iIWsK1o6PsP/q/Mji4I1pIBb25d3XnrHZfq0/GRddNdRK/0ZUujH4JM4cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=ZRvZzKTP; arc=none smtp.client-ip=185.100.197.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17964519BD;
+	Wed, 29 Jul 2026 19:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.6
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785352257; cv=fail; b=kvvhKsokERyTfFZ+8QwarQlnp8ZetrUeS2pGlsnTDxU32QZ8wHQAFQEO3BhBqbYHVNGVoDnc0ABoC/xPAyr7v8pN7mZcW6/FQFuiM648uvTS5176VwaXTmzs2ECmqmfNWAKGF/XVbac181mXWM3XHW3cHvscJHyBxNPWCTyiEXc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785352257; c=relaxed/simple;
+	bh=6JAW9YpF8imCMfkvSC0pU0iZRAcxEj8IuUo6B3nPqc4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=G4GzCduyojRsK+DyPyIduFLtLTpMOfZMYfy6M9h8DJTdrG4Y4uJ5bAbTpXiJ2drGf5gvRWb/OR+s3Z7uGM+LhHGu7t19cB9q7xG5vHajNddOvMKHruktLwA26sx45jMW/wFtjN9sk1nmZSr/q0SdhNMxl27Fvf6HIBavKQssp3g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lX6hCp49; arc=fail smtp.client-ip=40.93.198.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="ZRvZzKTP"
-Received: from [192.168.1.182] (ip-62-24-73-79.bb.vodafone.cz [62.24.73.79])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id C583D53402BF;
-	Wed, 29 Jul 2026 19:07:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1785344878;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QeAwVZh/2cBTMk1KlZMpikSQXyD36r/uXve28Tg4hyQ=;
-	b=ZRvZzKTPylb9mf639FGieM5CPFwSVqqKARfIGGJwtImAnsQMUb6x8BJ1DJn18H88UTuJCL
-	7FzTUEZ/ATeDzReWBVum+G1JixDQc+WmktLaunJzrrnYADlxZzh4nZ80GzrRD4kxK3e72o
-	f6VhVV2QVgMzjk16tAf58afE+FM4yU8=
-Message-ID: <cadefce1-076b-4349-9d96-80d524652017@ixit.cz>
-Date: Wed, 29 Jul 2026 19:07:53 +0200
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lX6hCp49"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=g2Vpknmsgu68UcJU9eDEFq/QJTfxB+OASdb2P9tAkJN4K4G0LjqDmjMLujTtsh3KG0F9TAf1SqX81/uZ9uy7JbIMCEoI0PxUlIHxWFxB4tv5sdF39kj9TWnDo6XRlXBA8n2J1qojEon09rgFw8C4po4Z1p3QfTgjV9sT01e/WJafq67S6aZs4ewISNs5o5z2YCibOPoFKMQNAZudt+4eupSbXV49gnH5yKCcCpOZhc497YRpSSj+6xessQUcK3Gu6wQUYaDN4U/zkF1BbsnKGnjW5QVpxFw3+2crk2IySY5znPBslIKw1PLFm5wXf+5bD1BPEmGbD/CYU7z/sd0yTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BotRfndZVPXIZQUb9cLgKWNijf/xDu8Hb3Mog8/yWao=;
+ b=TgbWAKmS5v3tkcT5Coi6oLwrX9ttN+LmsaMwC2tFY/h+1O+SL56m3IYtcsmtk9Uf+ENorXqDJgiNoC6ZJhv4uCjrLQu588dgVfulSzJK3GDFAbiPFoWwCVVgU8+CNMQUueEd9GC6wPUlKMpBERIYAD/eUX5+sGD/rEW1u551eRukHB91MCR6i2i2kLf+V1nRbp1UBydX8sp9Usv/oRVsyy8G4zRSDrwR/8fIf2Vq9oRdB/7monKEw6mt/xIL4RszSNevzLV7mj/+xPiRfKfQ9weTerQaoT5ExduoGwOGZac8NwqV6xyC0TfN37kXYx1gQERLY4Ug6V99hJngPbEOQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BotRfndZVPXIZQUb9cLgKWNijf/xDu8Hb3Mog8/yWao=;
+ b=lX6hCp493bT0mQjhy9l8SSZEmEVk2SY55Z26siI0fYE27ZldN4qX3v0ItVQTJF1OrQutvJ0B1/WjfbSL11NZXB5KsF+g6cASleyYJdT4YspApX0ZdeR2PRmq8/L+zEDT7buKtbd2ToSlU38FyqldKxBpzJGn5nAU9lagozJ0Oxy20aEXslW62AqsTGI2v968XwqL/XpD1Eiuuu2+n1HW13GhgrCxogy4N3yQ+qWlZ4jhrXZM1Yf7YdQproBwFRyICRfmV9Op1m5MDtqy1p9oQJT0pE0kautqCVx3eJxCdrhgKRIblPNEn5LiZ70B4iP+Hpoa6qF7B8QscKkmRBhRFg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BN9PR12MB5179.namprd12.prod.outlook.com (2603:10b6:408:11c::18)
+ by IA1PR12MB7615.namprd12.prod.outlook.com (2603:10b6:208:428::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.270.12; Wed, 29 Jul
+ 2026 19:10:51 +0000
+Received: from BN9PR12MB5179.namprd12.prod.outlook.com
+ ([fe80::cf08:f59b:d016:c95f]) by BN9PR12MB5179.namprd12.prod.outlook.com
+ ([fe80::cf08:f59b:d016:c95f%4]) with mapi id 15.21.0270.012; Wed, 29 Jul 2026
+ 19:10:51 +0000
+Message-ID: <ae4e72b2-36a6-4d2e-a176-83384c0292d7@nvidia.com>
+Date: Thu, 30 Jul 2026 00:40:39 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] cpufreq: CPPC: Preserve OSPM-set registers across
+ hotplug and unload
+To: Christian Loehle <christian.loehle@arm.com>, rafael@kernel.org,
+ viresh.kumar@linaro.org, pierre.gondois@arm.com, ionela.voinescu@arm.com,
+ zhenglifeng1@huawei.com, zhanjie9@hisilicon.com, lenb@kernel.org,
+ saket.dumbre@intel.co, ray.huang@amd.com, mario.limonciello@amd.com,
+ perry.yuan@amd.com, kprateek.nayak@amd.com, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+ acpica-devel@lists.linux.dev, linux-tegra@vger.kernel.org
+Cc: treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
+ ksitaraman@nvidia.com, sanjayc@nvidia.com, mochs@nvidia.com,
+ bbasu@nvidia.com, sumitg@nvidia.com
+References: <20260724215937.3368276-1-sumitg@nvidia.com>
+ <20260724215937.3368276-4-sumitg@nvidia.com>
+ <c8f62b1d-4ab5-4d85-ae15-b5fc9ec2e3bc@arm.com>
+Content-Language: en-US
+From: Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <c8f62b1d-4ab5-4d85-ae15-b5fc9ec2e3bc@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN5PR01CA0036.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:260::14) To BN9PR12MB5179.namprd12.prod.outlook.com
+ (2603:10b6:408:11c::18)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/7] dt-bindings: Orientation defines
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jacopo Mondi <jacopo@jmondi.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, Jimmy Su <jimmy.su@intel.com>,
- Matthias Fend <matthias.fend@emfend.at>,
- Mikhail Rudenko <mike.rudenko@gmail.com>,
- Daniel Scally <dan.scally@ideasonboard.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Michael Riesch <michael.riesch@collabora.com>,
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
- Sylvain Petinot <sylvain.petinot@foss.st.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Paul Elder <paul.elder@ideasonboard.com>,
- Martin Kepplinger <martin.kepplinger@puri.sm>,
- Quentin Schulz <quentin.schulz@theobroma-systems.com>,
- Tommaso Merciai <tomm.merciai@gmail.com>,
- Svyatoslav Ryhel <clamor95@gmail.com>,
- Richard Acayan <mailingradian@gmail.com>,
- Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux@ew.tq-group.com, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- Conor Dooley <conor.dooley@microchip.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-References: <20260628-kbingham-orientation-v3-0-4ed92968aff8@ideasonboard.com>
-Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <20260628-kbingham-orientation-v3-0-4ed92968aff8@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN9PR12MB5179:EE_|IA1PR12MB7615:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8ebe1194-03c3-419a-8545-08deeda51aa9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|23010399003|921020|6133799003|11063799006|4143699003|56012099006|10067099003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	dLIA3jRiTIEVxlmX4ckpxlPCJjOlKfzkOwpdPMXjAPndUxOx+ycObjWk8pTE+eHPXsChNXYJK5cA2a2gwBG4eVdYc/w9/x0sqtX1ceBzVHP/Ee9pK+z8z1nEvZRGaF5Ir9WKeH5HsfpDdN2sRYX5V3gFoomlaENOhPmS6WBLenlLt8ojIy9uz//daB/UIZ0TmddkONudM4iZvREgWzirpawkIhPSm7Lx1xtIRmLbtdd5369pGXO1eemcMFK2ruFQQGDfOef1kgxYOhDcS+MiwW4tGmLl4kxjRm8BtRLbkiZsA0K9N0/S2h3QoAn4IPBRWAZpy4cAoAsIiOAWGMcvOKKoqY5u6H78AvfRTcfHT4uouBCNATkDeLSED4KwRlPBnuJf1hqUFVteOOyGX/isE4uY9FOrkHLIfIM6bTwm2Kf8iQhvwcxCtXk1zp+SwxiKdeBpCebMJTi3qg+bFGcFynTP4K0eCaMW73jREDXYtcizBJDSqgXL5H+Oo8DDiKXGmxi+VZIa1J6Uimtc8gY63il/D0dYVMSzQa3tAN280Y8kvyVoY+OCxr2TEeH/Rzd0JrEvZL3dN4Aamcy6nyhOaMRSvzSj9R1bOWslMaBvLM3SGzh99k2hRxEIEH9h7WAM/13Q6jXzGIenVdyViMzhkj8Gge2lWMf0xFrgOya5tttQcuBcreAKxc0Drwq78mtLWxFdMfCDEBm54B/jrk+jWg==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5179.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(23010399003)(921020)(6133799003)(11063799006)(4143699003)(56012099006)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Zm1Yd01lSkVHWGlkK0xVV2IxSTlQNmFzekdkY3R4QTBQU01vUVhsYjAvL1RM?=
+ =?utf-8?B?N2pYNWpXeEFLSEY5M3ZTSzJnZU5IbzhaM1U3cXA4Z1ZWQ1BBdkI3NThsUUNu?=
+ =?utf-8?B?dzhSeHloMldCVWk0UG11RTEzbTZJZUoyTzFMU09LWUR2U0tyV08vUlBHNnZy?=
+ =?utf-8?B?SHc5bVZadzBzN1E4Nlh1cWNwVlRkOXluNDFKcXIxZi9MN0ZuNXFlRDdlVTgw?=
+ =?utf-8?B?OGl3THpDbVhtNGM0MEhtYk9QVzJxWGY4OCtlOXN6OWdNbFBuR2dwZE9wTEJp?=
+ =?utf-8?B?cmowZGZ2Tmk1QU5GQW5KRG95VU40SUw1Z2RDbGFIVFhhNmgzd2tuSDltaWpz?=
+ =?utf-8?B?SmxmNCtpaFFrelc4dCtVZDRVZWF6cVk5SEo3OGp3MXRLUTBjdVNDdit0ZE9i?=
+ =?utf-8?B?UmgzYllLUmQ4NzhFVlJ4ZkhVeGFNdWx0T3ZEdHN2SGEySnhrRVUraGV5MjAr?=
+ =?utf-8?B?d3lXNkhlK1BKbGxHSkgxV0hoVWdVeWJDTUo3ai9Ia042dnJpUEZrU1d1R0ky?=
+ =?utf-8?B?L1NMUGhpYW5hSE1LNTRDK3BXSURvdmUwZkpZMURsSTY5S0d2dVJjaUpaNzFv?=
+ =?utf-8?B?YkZPZVdQVHJlTVg0QnQxdldHd1dVSnJSNUIwK3lYdFFsVTZVaTk5WHlCem83?=
+ =?utf-8?B?QjljNVRoRVc2aWFtd3lwWVhSUmRsM1J5TVllZmZXd1ZUaHpRM0tiQytacVF0?=
+ =?utf-8?B?UnNPekpnbDBRSWo2eENGSEM5dEJ4Vjk2amVqOEMyYUVKN1pXa3lTZHZyWk1t?=
+ =?utf-8?B?Z2svNnM1SktQajFWNVdlWjBzYlZ5Q0xNVEpSc1c5aGZYNEdidmtLbTBRWG9S?=
+ =?utf-8?B?aGNGYUtsbXFyUk10WmdrUUl3eDRvY24ybHdLbnd1dDkzYy9aMDRvTm9mdTlF?=
+ =?utf-8?B?NEFZUFZIb2ZhTkQ0VGVJeW41N3R4SzNKY0ZZQzJ2RDZ0aWNKTWJjclFWaVow?=
+ =?utf-8?B?ejBmR05mN2ZEdktzUzgvQzNZWFkrVUFTMndIb1lnNlFJUE9wYWNyYnpvdWxa?=
+ =?utf-8?B?UkY4L2tMam5SdGlSaTN6NDNmYWJhK0orNTc1NUtxY3dwTkFpNGlub2EwbjQ5?=
+ =?utf-8?B?ZmVqd3czc1gxdkZhWjdJZ3dtbVZnV296TDJMK2l6c1VUZWMvc2dsRk13RmpR?=
+ =?utf-8?B?TTJ3M3BoZHhBR0hzREgxNXlRZnlLdlJWUG1HTENaWVJFdUhZd1AvVTdrOVlF?=
+ =?utf-8?B?b3JpVEFjQkZFbS9ISFpDVU90SW40eFZRU20zcE4yeVBsZ2N2UFBRSnY1OUNS?=
+ =?utf-8?B?V0hWNG0zcGpIeVRRdUFkNkxUb3BVWUZTUWJWZDZDenMzNE00VUlqTWxrNlNB?=
+ =?utf-8?B?MzF1cTlENE5JSFJOUTZDOG55bEJyZkJOeFgxdll6SUZZVDdaUUQ1OUU5cisr?=
+ =?utf-8?B?U2lja1FEUVV0U2x5b2srRnA0SC9OZDFIeG82SlVvalUxbVlWaWtTcjcwYlBY?=
+ =?utf-8?B?K3Q0bmdXMElmS3pCMGsxYjJsOFF1M3lYQ3lwRSt5QzA1aTNZaTlMQytDNmwv?=
+ =?utf-8?B?S1QwY2h3RGVSUHUzcUdEazhmcmg3ay84czN0dmd6SHBrRDFQMXNxMXNDamgr?=
+ =?utf-8?B?RzQ5akJoU2s0NG01eThpVVB4VDJSQXFpTHBXMkRtNnltbXZZUjAxWTZUYlE0?=
+ =?utf-8?B?TGtzSXFlS2V1Y0JBNW1SNzBpbGhGWkptWTkwZlhPYkZXRE10MWF3Y2ZOVkFt?=
+ =?utf-8?B?MjlNUWRmdk9MVmFkSnh1d2g3M3dJZm1HRUVhV0J5K2haSFRxbWNvWkhncDhn?=
+ =?utf-8?B?MmZ5UXRBRm9yV3dwUmZkSGVPV0dzL0hDcCtCOEZVblpqeXFFdmZJUFpTTHZW?=
+ =?utf-8?B?MmsyQVZqQXJORTdrNnhoTE4wZFpWMVhzNEY5ZER0UytwUWVlS09MQ2x5YVlr?=
+ =?utf-8?B?Y1A1QlRjS0NHY2FrUGFHb3RUMmlUZDhjbFZOSFJhb3BTQTNDQW5aWmx4UTFo?=
+ =?utf-8?B?OVRyWW9wdEJEYUVwZ081c245Ri9ib1FSeENzbEY2YzB3Ry81ditYWnVBMld6?=
+ =?utf-8?B?WmdaYU1seHlzZW9iL0dCMkVYVVJoaWppTmF1YmJBYUVsMWFFek14ZUd5RHN0?=
+ =?utf-8?B?dVVSUTJRWVYvWHk1MDloUlpsZ2x5bVpnc0pYcyt2aVVGdTIxZ2E5OTNBZFdk?=
+ =?utf-8?B?YTNmem1KcTBqTXF6b1c0QnVPbnRSQlNOc1FTOHhteFROL2o3UmMwN01OTjhF?=
+ =?utf-8?B?SGxsa2FjSUdDdWwwMXZlYzlNSHk3VHlkNHpCVEF6WVdvL29ZVzgzWklxKzRL?=
+ =?utf-8?B?N1RiUnpkbU1ESkt0dlFpQ0lsUXQ5ZGlXSFpxcTZrcm0vcjJPL3g3enIxMXRF?=
+ =?utf-8?B?b0FncFl0VlVxeXJxOUg2SUxUL1p6Z1ozRjBqQzFWZERIQkFNYlJZUT09?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ebe1194-03c3-419a-8545-08deeda51aa9
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5179.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2026 19:10:50.9138
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sTSmqV5uyNtId1P/oYvWwajs5OzCmHoBUdClndqcS7M2oDMTjBujq0aWcrSD/RlOpcGwmqJH5yF0XtsAjHV4RA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7615
 
-On 28/06/2026 12:22, Kieran Bingham wrote:
-> Add a new dt-bindings/media/video-interface-devices.h header that
-> initially supports the Orientation types and convert existing users
-> throughout the code base.
-> 
-> v3 collects tags, and fixes the typo, but drops all hunks that do not
-> apply on the media-next tree so that these changes can be merged. Once
-> the core feature is accepted a second sweep will convert remaining (new)
-> additions of the orientation field.
-> 
-> v2:
->   - Now expands from the original v1 "dt-bindings: media: Add macros for
->     video interface devices" to update
->     Documentation/devicetree/bindings/media/video-interface-devices.yaml
->     and extend to actually change all users to the new types.
->   - Link to v2: https://lore.kernel.org/r/20260626-kbingham-orientation-v2-0-47178be927b4@ideasonboard.com
-> 
-> v3:
->   - Fix the arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
->     MEDIA_ORIENTATION_REAR to MEDIA_ORIENTATION_BACK
->     - Though this patch is dropped from this series to post the main
->       integration through the media tree.
->   - Drop (temporarily) changes to:
->      - arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
->      - arch/arm64/boot/dts/qcom/sdm670-google-common.dtsi
->      - arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam0.dtso
->      - arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam1.dtso
->   - Non applying changes will be re-posted after the core feature
->     lands in linux-next, or after those changes appear in media-next.
-> 
-> ---
-> Kieran Bingham (7):
->        dt-bindings: media: Add macros for video interface devices
->        media: dt-bindings: video-interface-devices: add video-interface-devices.h references
->        dt-bindings: media: i2c: Utilise video-interface-devices enums
->        arm64: dts: freescale: Convert to new media orientation definitions
->        arm64: dts: qcom: Convert to new media orientation definitions
->        arm64: dts: renesas: Convert to new media orientation definitions
->        arm64: dts: rockchip: Convert to new media orientation definitions
-> 
-series,
-Reviewed-by: David Heidelberg <david@ixit.cz>
 
-Thank you!
-David
+On 27/07/26 18:45, Christian Loehle wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> On 7/24/26 22:59, Sumit Gupta wrote:
+>> Values written to OSPM-set CPPC registers (via sysfs or the autonomous
+>> boot parameter) can be lost in two ways:
+>>
+>>    - Across CPU hotplug: the platform may reset a CPU's registers while it
+>>      is offline.
+>>    - On driver unload: the value the driver wrote is left in the register
+>>      instead of returning to its pre-driver state.
+>>
+>> Add a small table-driven mechanism that handles both:
+>>
+>>    - On init(), capture each register's firmware value before the
+>>      driver programs anything.
+>>    - On offline(), read back each register's current value (whatever was
+>>      last set via sysfs or the boot parameter) so it can be reapplied, then
+>>      restore the firmware value.
+>>    - On online(), reapply the value captured at offline() after the
+>>      performance request is re-established.
+>>
+>> Keep Autonomous Selection (auto_sel) last in the table so that, on
+>> online(), its saved value is reapplied after the other registers that
+>> shape its behaviour.
+>>
+>> Cover the Autonomous Selection (auto_sel), Energy Performance Preference
+>> (EPP) and Autonomous Activity Window (auto_act_window) registers.
+>>
+>> Suggested-by: Pierre Gondois <pierre.gondois@arm.com>
+>> Link: https://lore.kernel.org/all/86780f97-29ee-4a72-b311-38c89434b707@arm.com/
+>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>> ---
+>>   drivers/cpufreq/cppc_cpufreq.c | 157 +++++++++++++++++++++++++++++++++
+>>   1 file changed, 157 insertions(+)
+>>
+>> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+>> index 34cdba00e61a..8a13ec49eb9d 100644
+>> --- a/drivers/cpufreq/cppc_cpufreq.c
+>> +++ b/drivers/cpufreq/cppc_cpufreq.c
+>> @@ -28,6 +28,150 @@
+>>
+>>   static struct cpufreq_driver cppc_cpufreq_driver;
+>>
+>> +/*
+>> + * OSPM-set CPPC registers tracked for save/restore. A value set via sysfs or
+>> + * the autonomous boot parameter is reapplied from online() across CPU
+>> + * hotplug, and the firmware value is restored from offline().
+>> + *
+>> + * Autonomous Selection (auto_sel) is kept last so its saved value is
+>> + * reapplied after the other registers that shape its behaviour.
+> While that would make sense, unfortunately:
+> "8.4.6.1.6 Autonomous Activity Window Register
+> Writes to this register only have meaning when Autonomous Selection is enabled."
+> I think restoring an inappropriate EPP/AUTO_ACT_WINDOW temporarily is okay though.
+> AFAICS it has to be:
+> 1. enable CPPC
+> 2. restore a valid DESIRED/MIN/MAX
+> 3. restore AUTO_SEL_ENABLE
+> 4. if autonomous mode is enabled, restore EPP and AUTO_ACT_WINDOW
+
+Right, the ordering depends on the auto_sel value being restored, so a
+single fixed table order is insufficient.
+When restoring 1, auto_sel is written before EPP/window.
+When restoring 0, EPP/window are written before disabling auto_sel,
+allowing them to take effect if autonomous selection is still enabled.
+online() already enables CPPC and restores valid desired/min/max values
+before this sequence.
+
+If autonomous selection is already disabled, the EPP/window writes may
+have no effect. Temporarily enabling it to force them through would
+introduce an observable mode change and would not work where auto_sel
+is not writable.
+
+Thanks,
+Sumit
+
+
+>> + */
+>> +enum cppc_saved_reg_id {
+>> +     CPPC_SAVED_EPP,
+>> +     CPPC_SAVED_AUTO_ACT_WINDOW,
+>> +     CPPC_SAVED_AUTO_SEL,
+>> +     CPPC_NR_SAVED_REGS,
+>> +};
+>> [snip]
