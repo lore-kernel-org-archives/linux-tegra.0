@@ -1,38 +1,49 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA5C38DC76;
-	Thu, 30 Jul 2026 07:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDCE341057;
+	Thu, 30 Jul 2026 07:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785397049; cv=none; b=V5M7klNhijTsuHcBdWE62QMnwJj1R2KGO/sU3ukA7eJCw0Uyx+aICIi/VJF1S6OZD1mFQ366hdtf71BYW9daJaIkSdPBQGQQYAeozW5HhxrQ2UZg/eUcGmhmloVjEA5nqy4AqVbwpxB5eylc2u+5nIx4SEOUDVMevLlAFokcgcU=
+	t=1785397240; cv=none; b=ZiCGFvB1smXhzvI4HdEvOHs/bTi6yUgFgQ9nqJ5Np7n2y993AElfGkz1sslAxrrOD4oBpXVbb4tizOvbpenXMtrRer5OgOjuw7lLuE5GGfqE/KK49Q6cZ3a//CEe87Ml93qYcV+cLSCqM4uQ0r+B2Eudbd0bT3L2vfYrIOQ0ZKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785397049; c=relaxed/simple;
-	bh=sTXWlrJxI8pfdS+DYW5UrjBR3sUgKDeMCcZURiaRlUo=;
+	s=arc-20240116; t=1785397240; c=relaxed/simple;
+	bh=6dcmCeg+8o75c+QVmjpTq49I6K+tUG7tXPcuUgWWKVQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n9N/lmS524Q3RR1gQQmtBZZQ/jjmEw40LFYSErDiLgkAfsYqgNx7FhBt5C48/Wmr2h2wX2sf8YFelT3mP4o/hbSiCQrrXygOTThwyi9Tacma8xQsNfc2OGQidmLqaAxPLuZhZI+EcC6rPAmw0gQNcntPO0pYc0/pq6DwVobwnCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MyaWkSq7; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=mzhyLMGAII3Clm4yAEMwM9eIhbWLjOO/YLB0tI5WR3vfmPSP6BkLPMYyxRny3ys/nkGzEJ708pzwv6CD0TS57+ivrSupUw6p9l5cJVat8iwro+ZRRAgBhCtl6p6Se8F/CJW/kW6DWSlM+zcq6OhHliyNRipTY4c2Uto6lnYU57c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=aUqKQLzo; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MyaWkSq7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69E711F00A3A;
-	Thu, 30 Jul 2026 07:37:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
-	s=korg; t=1785397039;
-	bh=pbhVyS0R521RsMNlGq20zsNsf28v0GVIwovNqermFz0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=MyaWkSq7Eeq0B1F6hliIkTd2cPAkKt4NSYeHmKQF7eo4k8KfkEgyOUX52ndfKoIfL
-	 7yRhptNeDLdhr8ZHnANzh3hLjjp94pC581pb8OqTIuaN4gZezqWzHZuBiOt4pGBFnG
-	 QIyd1WOFvXcli746ooHj+smCJCD/qQNDY6hJs/To=
-Date: Thu, 30 Jul 2026 09:35:51 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Dang Vu Duc Hien <dvdh12707@gmail.com>
-Cc: marvin24@gmx.de, ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	luquijeffrey@gmail.com
-Subject: Re: [PATCH] staging: nvec: fix out-of-bounds string copies
-Message-ID: <2026073012-unshipped-sketch-1de4@gregkh>
-References: <CAObkL7P+PnkEBpav6AVEPTyjiWsoOEBobUT2hrR=fay23FyO6w@mail.gmail.com>
- <20260730041220.1064608-1-dvdh12707@gmail.com>
+	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="aUqKQLzo"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=gondor.apana.org.au; s=h01; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:
+	from:content-type:reply-to; bh=IHTgTVpfVKCDLh2C4fnu2GWlFtfYm3e5nD/x0N7+ohQ=; 
+	b=aUqKQLzomMQxV12pvoRgDuNU6GVLPc9bta40vksgYwRjyWxPAVmjaPAaTHcKRGK4HhdH4MUbBaD
+	kFb8grqmn4ewEbCE45MZGjBISorUepu+lST34lUn5JpaEzmusOvBUJPRfQeUpiyTllem2B0aPgK1u
+	6czKHvnUlt5aG4zKRH5722eF4g/BslpId7Zo2oJtUbfIme6p1rGRtZrQsbazidDIeAsRcGQDFvz1+
+	ci8ygjDnb+iwY/VjrLN8FUPJ0IJoRtv6y0HDyTO6Q5DAqP9u6u2uy3l+e9bo2vYTeVvkswH8UmYCN
+	xUFnmUM/83Q+SDiJjcUYgL9ULy0KR3xFlvJQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.98.2 #2 (Debian))
+	id 1wpLNX-00000000RxG-341D;
+	Thu, 30 Jul 2026 15:40:32 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 30 Jul 2026 17:40:31 +1000
+Date: Thu, 30 Jul 2026 17:40:31 +1000
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Vladislav Dronov <vdronov@redhat.com>
+Cc: Akhil R <akhilrajeev@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-crypto@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] crypto: tegra - fix rctx->cryptlen calculation in
+ tegra_gcm_do_one_req()
+Message-ID: <amr_77QV3eM2nY-q@gondor.apana.org.au>
+References: <al135EQMcdtTnHxZ@gondor.apana.org.au>
+ <20260720223331.404050-1-vdronov@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -41,63 +52,27 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260730041220.1064608-1-dvdh12707@gmail.com>
+In-Reply-To: <20260720223331.404050-1-vdronov@redhat.com>
 
-On Thu, Jul 30, 2026 at 11:12:20AM +0700, Dang Vu Duc Hien wrote:
-> The function `nvec_power_bat_notifier()` assumes that `res->length` is
-> both >= 2 and within the battery info buffers.
-> Technically, `res->length` is provided by the embedded controller (EC)
-> and is unverified (ie. a malformed response). If `res->length` < 2, the
-> expression `res->length - 2` evaluates to a massive size_t value which
-> is passed to `memcpy()`, causing severe memory corruption. Conversely,
-> `res->length - 2` being larger than the buffer also causes an
-> out-of-bounds write.
+On Tue, Jul 21, 2026 at 12:33:31AM +0200, Vladislav Dronov wrote:
+> Perform rctx->cryptlen calculation in tegra_gcm_do_one_req() the same way
+> it is done in tegra_ccm_crypt_init(). The current formulae may lead to a
+> crash if a caller does not call tegra_gcm_setauthsize() and so ctx->authsize
+> remains zero. Then a decrypt operation with incorrect rctx->cryptlen will
+> lead to a write beyound rctx->dst_sg buffer.
 > 
-> Introduce helper function `nvec_bat_str_copy()` to safely handle these
-> string copies by:
-> 1. Ensuring that it returns an error to the upper layer along with a
->    `dev_warn()` message when `res->length` < 2.
-> 2. Ensuring that it provides toleration by copying as much as it can
->    along with a `dev_warn()` when `res->length - 2` is too big.
-> 3. Guaranteeing a properly sized, null-terminated destination string if
->    the copy succeeds.
+> As a follow-up cleanup delete struct tegra_aead_ctx->authsize field since
+> it appears to be completely unused. Also simplify tegra_ccm_setauthsize()
+> and tegra_gcm_setauthsize() functions respectively.
 > 
-> Signed-off-by: Dang Vu Duc Hien <dvdh12707@gmail.com>
+> Fixes: 0880bb3b00c8 ("crypto: tegra - Add Tegra Security Engine driver")
+> Signed-off-by: Vladislav Dronov <vdronov@redhat.com>
 > ---
-> Note: Coincidentally, I have been working on this exact issue earlier
-> and had this patch prepared just before Lucas Jeffrey submitted his RFC.
-> I am sending it here to answer his protocol validation question with code.
-> ---
->  drivers/staging/nvec/nvec_power.c | 41 ++++++++++++++++++++++++++-----
->  1 file changed, 35 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/staging/nvec/nvec_power.c b/drivers/staging/nvec/nvec_power.c
-> index c514d51a9e57..12699515356d 100644
-> --- a/drivers/staging/nvec/nvec_power.c
-> +++ b/drivers/staging/nvec/nvec_power.c
-> @@ -117,6 +117,32 @@ static void get_bat_mfg_data(struct nvec_power *power)
->  	}
->  }
->  
-> +static int nvec_bat_str_copy(struct nvec_power *power,
-> +			     struct bat_response *res, char *dst,
-> +			     unsigned int dst_size, const char *prop_name)
-> +{
-> +	unsigned int len;
-> +
-> +	if (res->length < 2) {
-> +		dev_warn(power->nvec->dev,
-> +			 "battery %s response length too short (%u)\n",
-> +			 prop_name, res->length);
+>  drivers/crypto/tegra/tegra-se-aes.c | 22 +++-------------------
+>  1 file changed, 3 insertions(+), 19 deletions(-)
 
-So you are allowing a malicious device to spam the kernel log?  If you
-really worry about malicious devices, this isn't a good idea :)
-
-But this is a platform device, built into the hardware, so you have to
-assume that it is NOT malicious and we can trust it, as we trust all
-platform devices these days.  If we wish to change that model, then we
-need to do more work on Linux than just stuff like this.
-
-thanks,
-
-greg k-h
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
