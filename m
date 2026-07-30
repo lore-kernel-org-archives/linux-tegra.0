@@ -1,109 +1,158 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611B943DA3C;
-	Thu, 30 Jul 2026 14:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB6743FD01;
+	Thu, 30 Jul 2026 15:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785422572; cv=none; b=FqTqhY4b+LuXbfKC7sRH494msvoAs9HZI865OLQadqc2cdRX13330WioKqSUzQey3lYs6GGkHTywmSelHJ1dXBxSHK/IIu9asHZeNMml4d8ejjyjmfyaGAj/3UOnDRN28vFy1v11Afod+FQjbFB0ofqHhhoGg8XJLTW1NZAYBYg=
+	t=1785426906; cv=none; b=C4gAP1QjQ0516wJYHE7ygbu1j1VgGB88GfdHOI9Sjbo7gLvaK3VyHJvdElE2TvVJOTGh3R6uUEAgHxQHNptbxz8Dm6k5F5qhc/A/ntAOheXpt1wuB90U4NqadQSVQveMl+isrwGEvXyX9hWkkO04N0rr29UZt+adZZY5s2fHCp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785422572; c=relaxed/simple;
-	bh=raGtQMl5Kzbv/Jv0rXE9k1IVL6lHEKTH0edEoshkc08=;
+	s=arc-20240116; t=1785426906; c=relaxed/simple;
+	bh=YwjnJRX+gCM2jMV9AoRzadVCMCdrX73u14jvNcV6Kbg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W+hEvNxbvznr/5M/G0rMn0q016a/yESk7ffm+gSu6plgy3HflGHZQOIh4WyKcgtZo6VrRFR2hmPOv+jzTQ/Irk0CYxk2EHk2aVcoZ0TDiJd9JQSBajW2+IfC+Fqpj1q/06uEEiIp/9RsK2eAbnmdMKFPeBvB50G/EnE0G0iJ3ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dzchbbPx; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=hyT9zLQkIHqhXiQyP4ixXoU31wjILYsUDeucG0PdlrpyzB4phTqh5vAI+tKMXU9t0B8ddcym2sxxN54648h9W0Z6l+I4AjbwOUnFbxBGuNj2WNOIeX++5phXNXd4rwTG1X6Mgnsx+cZ+fVhO/s43rsz/PLO4w/xrcKuShFtOaLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g81dMpo8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dzchbbPx"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 716431A1323;
-	Thu, 30 Jul 2026 14:42:48 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 448EE602B8;
-	Thu, 30 Jul 2026 14:42:48 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 63BF011C15D15;
-	Thu, 30 Jul 2026 16:42:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1785422567; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=B3Xem/yd6HxdRrGpt5FQHo1+1rP6Hx2c/XYOfq5hXmI=;
-	b=dzchbbPxKMn58sxhDW2/1rbG7yRh2+LuNtjeSqJYJArQfhmH04HU4fRUGFjq2cFrxlxF/q
-	NThYMHk5+E5+QGQv6VZ9o6y/iWCQ8rlWOiFJmgNzL8aNbmLg8YokqKqTOqhv1JcXhXnuoK
-	ILxT9+Q3E7jLtlv7Lc7eXYcjf5d/ITQPyx1NFLvYxoSQx4Tan/jSg0sEUYQ8xaMJIdu4FH
-	/P5woihU9F55wwh4pyOKiZLQP/qa6AT3s+qERz6Hmt8WOtgUnFHYprAFdANNrAjbuYd5L3
-	kPyiA6MoPqISedoQYQljEBmZJvk8P+qMeCHNLrez4coPDcPp6X8yWo6++Ilk/A==
-Date: Thu, 30 Jul 2026 16:42:44 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Akhil R <akhilrajeev@nvidia.com>
-Cc: Frank Li <Frank.Li@nxp.com>, Frank Li <frank.li@oss.nxp.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	linux-i3c@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH v7 00/12] Support ACPI and SETAASA device
- discovery
-Message-ID: <178542243604.1793527.10239518847754179179.b4-ty@b4>
-References: <20260728065955.809445-1-akhilrajeev@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g81dMpo8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7B3E1F000E9;
+	Thu, 30 Jul 2026 15:55:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785426904;
+	bh=Y7bC1vGxeospaVOAwz5CSSVij1EZoHihYUbflyG26B0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=g81dMpo8Aq86WvkDpIVK+5WbgrIKWaEdt7FuOQ3aldYRxf1R+uwbeQS/PDMsFnny+
+	 0OgHPQoaUf0k7wsreu4AZkeKPEwPAcNU83lrYcVENqOvFKQ5sqguEx1VepDUHJK0d1
+	 H3SGkjDHuNoZuFcJL/dYCoI7z9/jmubpLiTn+Dm0cRTKgvnBF7kaNNzIOBq6JOXFk0
+	 YJr6KEyrpuyZ3Mgd8wuLv1c04vQ4/CPJIY56qQ295g1kanrgMweanqAu+xrtbVhdQa
+	 rYAZKrQmrqC3HOEC6e9dj9knhXtK/K58uilRS3Y194mushg1Xtn/BHsRvKNc/4v5Xw
+	 pReAYAWuFDx1w==
+Date: Thu, 30 Jul 2026 17:55:01 +0200
+From: Thierry Reding <thierry.reding@kernel.org>
+To: "Alexander A. Klimov" <grandmaster@al2klimov.de>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Dmitry Osipenko <digetx@gmail.com>, 
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b" <llvm@lists.linux.dev>
+Subject: Re: [PATCH v2] clk: tegra: tegra124-emc: fix krealloc() memory leak
+Message-ID: <amtyoOXfiPic0f5H@orome>
+References: <ahilgKKwkttOd9H6@orome>
+ <20260531195313.99447-1-grandmaster@al2klimov.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ktsbmyqbhvpuozjb"
 Content-Disposition: inline
-In-Reply-To: <20260728065955.809445-1-akhilrajeev@nvidia.com>
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <20260531195313.99447-1-grandmaster@al2klimov.de>
 
-On Tue, 28 Jul 2026 06:59:42 +0000, Akhil R wrote:
-> This patch series adds SETAASA device discovery to the I3C subsystem,
-> enabling support for SPD5118 temperature sensors found on DDR5 memory
-> modules. The changes also add ACPI support for all existing DAA
-> methods like SETDASA, SETNEWDA as well as I2C devices on I3C bus.
-> 
-> SPD5118 and similar devices on DDR5 memory modules differ from typical
-> I3C devices in their initialization. They use SETAASA broadcast CCC
-> instead of ENTDAA for address assignment, and per JEDEC specification,
-> are not required to have a Provisioned ID or implement standard device
-> information CCC commands (GETPID, GETDCR, GETBCR).
-> 
-> [...]
 
-Applied, thanks!
+--ktsbmyqbhvpuozjb
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] clk: tegra: tegra124-emc: fix krealloc() memory leak
+MIME-Version: 1.0
 
-[01/12] dt-bindings: i3c: Add mipi-i3c-static-method to support SETAASA
-        https://git.kernel.org/i3c/c/29593f94a91c
-[02/12] i3c: master: Use unified device property interface
-        https://git.kernel.org/i3c/c/f1e00dcda80f
-[03/12] i3c: master: Support ACPI enumeration of child devices
-        https://git.kernel.org/i3c/c/c5cc24aebe83
-[04/12] i3c: master: Add support for devices using SETAASA
-        https://git.kernel.org/i3c/c/46276c855815
-[05/12] i3c: master: Add support for devices without PID
-        https://git.kernel.org/i3c/c/9885e8c54210
-[06/12] i3c: master: match I3C device through DT and ACPI
-        https://git.kernel.org/i3c/c/95bc66704fd5
-[07/12] i3c: dw-i3c-master: Add SETAASA as supported CCC
-        https://git.kernel.org/i3c/c/d3aa6f594db2
-[08/12] i3c: dw-i3c-master: Add ACPI core clock frequency quirk
-        https://git.kernel.org/i3c/c/581cca59b5fa
-[09/12] i3c: dw-i3c-master: Add ACPI ID for Tegra410
-        https://git.kernel.org/i3c/c/77de3d43f74d
-[10/12] hwmon: spd5118: Remove 16-bit addressing
-        https://git.kernel.org/i3c/c/89eee0b30226
-[11/12] hwmon: spd5118: Add I3C support
-        https://git.kernel.org/i3c/c/f76be53203bb
+On Sun, May 31, 2026 at 09:52:52PM +0200, Alexander A. Klimov wrote:
+> Don't just overwrite the original pointer passed to krealloc()
+> with its return value without checking latter:
+>=20
+>     MEM =3D krealloc(MEM, SZ, GFP);
+>=20
+> If krealloc() returns NULL, that erases the pointer
+> to the still allocated memory, hence leaks this memory.
+> Instead, use a temporary variable, check it's not NULL
+> and only then assign it to the original pointer:
+>=20
+>     TMP =3D krealloc(MEM, SZ, GFP);
+>     if (!TMP) return;
+>     MEM =3D TMP;
+>=20
+> Fixes: 888ca40e2843 ("clk: tegra: emc: Support multiple RAM codes")
+> Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
+> ---
+>  v2: Separate variable declaration/init
+>  v2: While on it, enhance variable name
+>  v2: While on it, explicit variable type
+>  v2: While on it, re-order variables (reverse Xmas tree)
+>=20
+>  [=E2=9C=93] scripts/checkpatch.pl --strict
+>  [=E2=9C=93] allmodconfig compiled (i686, LLVM)
+>  [=E2=9C=93] localyesconfig booted (IBM T43)
 
-Best regards,
+The latter two are a bit pointless because they are not going to hit
+this because the driver depends on ARCH_TEGRA which doesn't exist on
+i686 allmodconfig and booting this on a T43 isn't going to hit this
+either.
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>  Note to myself: use --in-reply-to=3DahilgKKwkttOd9H6@orome
+
+It's not generally useful to send as replies to earlier versions. Just
+regular sending is good enough. We have tools to track versions and
+such.
+
+>=20
+>  drivers/clk/tegra/clk-tegra124-emc.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk=
+-tegra124-emc.c
+> index f3b2c96fdcfc..81e4c02a807c 100644
+> --- a/drivers/clk/tegra/clk-tegra124-emc.c
+> +++ b/drivers/clk/tegra/clk-tegra124-emc.c
+> @@ -445,15 +445,17 @@ static int load_timings_from_dt(struct tegra_clk_em=
+c *tegra,
+>  {
+>  	struct emc_timing *timings_ptr;
+>  	int child_count =3D of_get_child_count(node);
+> +	struct emc_timing *timings;
+
+I guess we could've reused timings_ptr. Or remove timings_ptr and use
+the new one, but I guess this is fine, too:
+
+Reviewed-by: Thierry Reding <treding@nvidia.com>
+
+>  	int i =3D 0, err;
+>  	size_t size;
+> =20
+>  	size =3D (tegra->num_timings + child_count) * sizeof(struct emc_timing);
+> =20
+> -	tegra->timings =3D krealloc(tegra->timings, size, GFP_KERNEL);
+> -	if (!tegra->timings)
+> +	timings =3D krealloc(tegra->timings, size, GFP_KERNEL);
+> +	if (!timings)
+>  		return -ENOMEM;
+> =20
+> +	tegra->timings =3D timings;
+>  	timings_ptr =3D tegra->timings + tegra->num_timings;
+>  	tegra->num_timings +=3D child_count;
+
+--ktsbmyqbhvpuozjb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmprc9MACgkQ3SOs138+
+s6EAjg/+NggFhcQJXqx0VYk7iklKkEhSAXctBdS27tzGF9iOPvrlVFB0VID0HbBc
+aS/b31peBKERQiO/5+gV5/VSxdmYfR8OvD3J/n8LTHCPUJYE/N/Pg3cvlEsAQxTj
+sx6X5BO26AXXKzPYQdstF9aqoG1mZIncW16Mw88dRZjDRvyEidz0VRRhKOqSVQam
+bPh7hj93Xx8Nys/09XtvvHV0nFaKkxW1b2ONCkZn2Fq2VJQIu8T0gKZ73I4MrE+Z
+7fMFa6vt6pc2Pg8cXuFu95Uk1No6yR/qUJChbdWWwjxU5g4kEDrnCc6RMNSM7u8C
+Zz9SUi1Qm9llLSVfmKUv8zTutt80txbTSIZ1cDXRDqF1z7rbRSLcB/XVzTqSVNJc
+h113U3UfusavpN9Ro2QPhK1Lls4v9MU96N0AP14jT7gH2cqSui/d+8y7FosVMgX6
+0KEF7u/aVQSYf/+W3KZSlevQxYQwIX3sgrJWkRSBvT9EtpxqAUItzUESil7kQhY2
+MQGsPwGEUzi8s7Vhc/xBOv1wQ84zG0r0Q2ZtT1kcXV+NuiN9sIYINwvsBObE5JUK
+pExg11rE3xlIliidR2RugA8P22pqTdBaG321Tl3fl7yl7y83mfSkYbZW0VjP2WiU
+ILp7W2SVEoG3yCFKnSD7dj4xTZ/quzUV1na9Ej6F43NUWJZJKNM=
+=OIU3
+-----END PGP SIGNATURE-----
+
+--ktsbmyqbhvpuozjb--
