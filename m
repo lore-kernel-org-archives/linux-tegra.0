@@ -1,81 +1,45 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EB140242B
-	for <linux-tegra@vger.kernel.org>; Fri, 31 Jul 2026 11:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C9E445ACF;
+	Fri, 31 Jul 2026 15:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785498105; cv=none; b=oU0wHKUk63SceEnV8sWF7UcfOKe8HqaWN+EZ0A6ulPEIP+VVCcszQuPYTw8HvJqyW+/AZyjgtDw3jnfy6gnZrK1AuR0gtdr2NIV9zLc/WYjaRdUTitH6alE4cXiG8yI0ps9P46+hMiSNdX4nmg2I8FD2XE4EbUUwp+m1wvptWGE=
+	t=1785513025; cv=none; b=DM6siXg+UeEXOdkaBoGdxLeF040OCXGuq/8q4O5BUcg7d5SXL7XeOHxstiqlTWqd4sjYqjE57AXm/U3in252oxdl5vx2hdQ7B5/6vinTfAyjh+x/GkGt8uWjIHH1LK+y0+zSC9ElW17j6orZ6TiHc/GYa7khvrxjjNzoZKq2gCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785498105; c=relaxed/simple;
-	bh=gXNJqaf+zTctXL5WLgdpGYeFG2qxNG2Vh2hV85r/k1Q=;
+	s=arc-20240116; t=1785513025; c=relaxed/simple;
+	bh=cGe7uAzZ2izPy4VkXsy9WhDtx96gxPjrNMWHdHZQK1E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ibqnOAq3A8OMVb86EOCvQ1qQ1FBnS1BN4xn59Zf0AJB6NyoG1QGMc7mxTr0u3PoGf9b/SBMFKCkI/Tkbq+QaRc1Bdu3RDnlBM/A/QCUyHSY66s65feyyGXqZgF9LT+6PH5swvexlpcfAJIM7E2vv55PAu5kdcWC2ktTOcfoidZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dmx4XRlS; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 MIME-Version; b=DA2bVQujoGb0UIlTCjbSBPjoNySHTL9oy60FiRTOvgfrgG+d6VwYqHZ17xvaYNR4t/7XuRsuHi2/8EU+74oc3aZM2m8BlpmoxRa2a8D1HnAkMecR+xPbb22mNfubjmD9WZApgxPtvk/eAPtxOkwkO6wwkiyTeWn7JGbP/l7rmpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RfyAEl6x; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dmx4XRlS"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-47fd4ee0b01so228931f8f.2
-        for <linux-tegra@vger.kernel.org>; Fri, 31 Jul 2026 04:41:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785498101; x=1786102901; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=GL48HhqEqA89OWX1SNNRwvNWdwLXSktQBg9CSPlO8sc=;
-        b=dmx4XRlSwrwYQ9JJGfXoK6iFhWb0NhH7vW3efgdwihdmTj4tyy5HhJch3eHZgiCIOy
-         S5cuGAzo15pFtGWfxQU4v7NLsEPRechFMjj4gp5kF8pfgYFjuBWz45y2j/ldfj5kskbW
-         XtRSgeZflQv0x6sDdOWowvagnmlbDgEaKZUtzpqdxfzST4QNSwxZzifAtYOrczF6djI8
-         szCXDm8DeMmIL8/iN0jA1YAGc04fIe/BKqLNxnDQyBY/Wez2dPfp4YNhQvVcmbzTlBHQ
-         SGm5UOzQWxcTNXMcuhdqr5BB3hZ3AolOkA/wKUpyyU78rquoBAfQ8U0NzbzNAGj8/7Vs
-         D8Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785498101; x=1786102901;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=GL48HhqEqA89OWX1SNNRwvNWdwLXSktQBg9CSPlO8sc=;
-        b=OnQX44542eaoZXRc1WmUYxSkJejGk49z8tSifWV1B1yFcve71W10qNnlJJGjQT4EvC
-         e22Ugdyr85JOOnq2EnO17dfgTruJX8zk5hzMuPVsesA5cYWbnVZAmzNmbf0jlgR6k7sf
-         xDOoyGz0aDxQAEbqODtksZ48JT1twXlSjNe7H+PQzd7AShITT03nSkDwHnFBIMB1BC8S
-         aDooX+igmAwnbEs+kgFwcqnMKJB2VksDTmr2drokojbhJMZo/eiPvh0/wa9PlQ/5kPiS
-         Ze5FQAQWHP7mkeMrHo+U3/ITeeynjLI4P94ZJrN7RUPuSP+utM11Kt4mc+LNmLoYwUCS
-         zAdg==
-X-Forwarded-Encrypted: i=1; AHgh+RpNiIGQSxtbgbo0Zl8HCBR2Co6GW5H+cdlLAwGVOSNIJO046zKq4mrNuuff41MyAgTK8Dwxx5mT3239Vg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7mydJrrq2IJdMWA2AbGROMtfDl/0dit2115xUdpYzZ9hglktk
-	i73jaITFO7cOSLI1w4LhulhFmljigfonH0QOyWwoojxCYZqEJMtMvbSw
-X-Gm-Gg: AR+sD13oVcWiEtuoynMKQbcRqarJoX6habb1Uggt1RsrkLT9Fn1gVBBMfQPpdg243te
-	BzgkUe2g4aQo3nnPz53OkJOQkHtdRDly9RBukyxmvqjX3R7hqbrlmkkY0pRmEqDYa4YJgVxDF/J
-	cdbDUErh8HJHvFiL3xKnTu+5XwiuWe7+s2v9QgYB7ZeQLOYLhjGDNs4XYmULL1eG6l2RRZBsE50
-	L0qyr4dS4N+NY47Ma16Z/vesjdvaSHZ+Na3YtvOWkgLmG473l46Hs8dUpnrZMy09oMjH85+Z+iJ
-	ZOBYbDnk5hHVhASWKBCPe7dnuThLcTGk0j7eOWm48X1s8BNHrxoONuMrG24DekdSRKLgR25+kg7
-	ulmy8K/mUP9Oe8ViEzwCqOgDD323HGMpcHIEG0dgIJByRg2i1jb+/TPlzTlnajNj2+mxGNkGk4b
-	JAnfpfAOQyVssdHySjLJx81OQ93rkSD1wGQQRz9sN6Dw+mFgM63CSi3+2ykZCnzddIiZaus3iwA
-	hVTPROM5g==
-X-Received: by 2002:a05:6000:18a4:b0:47f:778a:6587 with SMTP id ffacd0b85a97d-47fd2b53c48mr3813169f8f.40.1785498100849;
-        Fri, 31 Jul 2026 04:41:40 -0700 (PDT)
-Received: from xeon ([188.163.112.51])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fd41d0064sm3769336f8f.5.2026.07.31.04.41.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jul 2026 04:41:40 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: devicetree@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RfyAEl6x"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C97F21F00A3E;
+	Fri, 31 Jul 2026 15:50:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785513023;
+	bh=ytqivL4jFHX4nTrfGKiLg4ZD46ph+c7BxWubgoutGSs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=RfyAEl6xBMue87EWNoqA42HvD/KBw9IAjWt24bO6iBonzpJWJt3S6ANWjio5Cfg1t
+	 +2z0Cn5OMtUbrLkwZh0g281ogq/St0nmeSsX07o+NNOjXw+k/Jr9ZDGegXz0vU2/d3
+	 nGUOOtZYRq8Sxo4M0a2xNJVfcSadnqGuSyKnnAtxk2l0hdqvy0wtuobRAn613N8pHD
+	 cdvTRM8K7Xbz7scHWolh2dyLis86U1ef7svIh+PISKFogMxHCFs7EpFcFi+HrjAQux
+	 8apPX7ZcUN6onEAK5JgjAn4tx3CMiaomXUEBAG51uTh2hPfOo2alm5oPzipEKbyZy3
+	 3A+TlXGt2XOMg==
+From: Sasha Levin <sashal@kernel.org>
+To: stable@vger.kernel.org
+Cc: Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org,
 	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 10/10] ARM: tegra: tf701t: Add chosen node
-Date: Fri, 31 Jul 2026 14:41:06 +0300
-Message-ID: <20260731114106.169398-11-clamor95@gmail.com>
+	Thierry Reding <treding@nvidia.com>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.6.y 2/2] drm/tegra: fbdev: Remove offset into framebuffer memory
+Date: Fri, 31 Jul 2026 11:50:20 -0400
+Message-ID: <20260731155020.604703-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260731114106.169398-1-clamor95@gmail.com>
-References: <20260731114106.169398-1-clamor95@gmail.com>
+In-Reply-To: <20260731155020.604703-1-sashal@kernel.org>
+References: <2026072952-backward-riveting-1863@gregkh>
+ <20260731155020.604703-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -84,29 +48,60 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add chosen node since some bootloaders may require it and add stdout link
-to UART-D to simplify getting kernel log via console.
+From: Thomas Zimmermann <tzimmermann@suse.de>
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+[ Upstream commit a18b6e30ecd69096beda4a0c96d2570900c3879a ]
+
+The screen_buffer field in struct fb_info contains the kernel address
+of the first byte of framebuffer memory. Do not add the display offset.
+This offset only describes scrolling during scanout.
+
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Fixes: de2ba664c30f ("gpu: host1x: drm: Add memory manager and fb")
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-tegra@vger.kernel.org
+Cc: <stable@vger.kernel.org> # v3.10+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Link: https://patch.msgid.link/20260421073646.144712-3-tzimmermann@suse.de
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/tegra/fbdev.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-index 0d182fa5c1af2..1b9839a855610 100644
---- a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-@@ -26,6 +26,10 @@ aliases {
- 		serial2 = &uartb; /* GPS */
- 	};
+diff --git a/drivers/gpu/drm/tegra/fbdev.c b/drivers/gpu/drm/tegra/fbdev.c
+index 43a504ad4f38..b7de5819029d 100644
+--- a/drivers/gpu/drm/tegra/fbdev.c
++++ b/drivers/gpu/drm/tegra/fbdev.c
+@@ -75,7 +75,6 @@ static int tegra_fbdev_probe(struct drm_fb_helper *helper,
+ 	struct fb_info *info = helper->info;
+ 	unsigned int bytes_per_pixel;
+ 	struct drm_framebuffer *fb;
+-	unsigned long offset;
+ 	struct tegra_bo *bo;
+ 	size_t size;
+ 	int err;
+@@ -112,9 +111,6 @@ static int tegra_fbdev_probe(struct drm_fb_helper *helper,
  
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
- 	firmware {
- 		trusted-foundations {
- 			compatible = "tlm,trusted-foundations";
+ 	drm_fb_helper_fill_info(info, helper, sizes);
+ 
+-	offset = info->var.xoffset * bytes_per_pixel +
+-		 info->var.yoffset * fb->pitches[0];
+-
+ 	if (bo->pages) {
+ 		bo->vaddr = vmap(bo->pages, bo->num_pages, VM_MAP,
+ 				 pgprot_writecombine(PAGE_KERNEL));
+@@ -126,9 +122,9 @@ static int tegra_fbdev_probe(struct drm_fb_helper *helper,
+ 	}
+ 
+ 	info->flags |= FBINFO_VIRTFB;
+-	info->screen_buffer = bo->vaddr + offset;
++	info->screen_buffer = bo->vaddr;
+ 	info->screen_size = size;
+-	info->fix.smem_start = (unsigned long)(bo->iova + offset);
++	info->fix.smem_start = (unsigned long)(bo->iova);
+ 	info->fix.smem_len = size;
+ 
+ 	return 0;
 -- 
 2.53.0
 
