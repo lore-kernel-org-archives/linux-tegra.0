@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C9E445ACF;
-	Fri, 31 Jul 2026 15:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C8C44E66F;
+	Fri, 31 Jul 2026 16:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785513025; cv=none; b=DM6siXg+UeEXOdkaBoGdxLeF040OCXGuq/8q4O5BUcg7d5SXL7XeOHxstiqlTWqd4sjYqjE57AXm/U3in252oxdl5vx2hdQ7B5/6vinTfAyjh+x/GkGt8uWjIHH1LK+y0+zSC9ElW17j6orZ6TiHc/GYa7khvrxjjNzoZKq2gCc=
+	t=1785515126; cv=none; b=DXll+2wSq4/+McTm3pJAxX3O5G3z3wO1Bm75o3KAJLbpuwANHbqmJbU0Hox5QFgrq2/07nomJfuTlYvzefGlDkCHuCoL14fVxKdkMt96EBkXde4tjizKg6fKDEvo8C+6mKbrb7oId5t6A5k+20mYR8ku9LHkg1AXVMr66xUUhTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785513025; c=relaxed/simple;
-	bh=cGe7uAzZ2izPy4VkXsy9WhDtx96gxPjrNMWHdHZQK1E=;
+	s=arc-20240116; t=1785515126; c=relaxed/simple;
+	bh=g6xtt/5sLStLwyFKitjzivjsR2X+J8xLLp1+0dqxJzY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DA2bVQujoGb0UIlTCjbSBPjoNySHTL9oy60FiRTOvgfrgG+d6VwYqHZ17xvaYNR4t/7XuRsuHi2/8EU+74oc3aZM2m8BlpmoxRa2a8D1HnAkMecR+xPbb22mNfubjmD9WZApgxPtvk/eAPtxOkwkO6wwkiyTeWn7JGbP/l7rmpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RfyAEl6x; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version; b=PhAT1C+IL81hcDqzWF2QUa7pm4j/9IugMBXfB01fIh7uFGwBgJh/tIVuDRgvxfhpIDNtXXgtKc/Z9qjh2s7awTGv8AXkga+lxAHL8XvWSU7CF76kxY36/DSp3NBMbCTBuCdem9kbXr6dA2yGEj8cG11zeARc3C6jM9EeTKrfYa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S8WZ2Mdl; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RfyAEl6x"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C97F21F00A3E;
-	Fri, 31 Jul 2026 15:50:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S8WZ2Mdl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3C231F00AC4;
+	Fri, 31 Jul 2026 16:25:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785513023;
-	bh=ytqivL4jFHX4nTrfGKiLg4ZD46ph+c7BxWubgoutGSs=;
+	s=k20260515; t=1785515124;
+	bh=qRhySz1J3Xbd5u37NW2FVEjEd3J3Cx5EVCKmCyPeBzw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=RfyAEl6xBMue87EWNoqA42HvD/KBw9IAjWt24bO6iBonzpJWJt3S6ANWjio5Cfg1t
-	 +2z0Cn5OMtUbrLkwZh0g281ogq/St0nmeSsX07o+NNOjXw+k/Jr9ZDGegXz0vU2/d3
-	 nGUOOtZYRq8Sxo4M0a2xNJVfcSadnqGuSyKnnAtxk2l0hdqvy0wtuobRAn613N8pHD
-	 cdvTRM8K7Xbz7scHWolh2dyLis86U1ef7svIh+PISKFogMxHCFs7EpFcFi+HrjAQux
-	 8apPX7ZcUN6onEAK5JgjAn4tx3CMiaomXUEBAG51uTh2hPfOo2alm5oPzipEKbyZy3
-	 3A+TlXGt2XOMg==
+	b=S8WZ2MdlDsoxXCCMArFYBJqUKgtIg7/qT4vBPRWRv8o8610ApBOJP+o7i6aUGXBs9
+	 apI8fgymoGof+lF59FtAyzdQY8hMaq+OUq/YwxgiS206mMpLiDQdSNBaxbVp/8anVn
+	 6yAIWnA+ZkLhBs1DbyqpxBKj7W2VgWSrU0ASz1WJPqvn2HWj3pVo+4Bb7FeKtRFux1
+	 sCP3cTg+Hzs6jo2zN/Cc1Byr2eK+2O4i0DbYs0UFJW0VbJYFHD3DimxWyLkKD6DE9b
+	 326qkCs6CBWdRj/bqCN2qahqS+7ysswDkKAuBhmQDsi3+cz3ILsC1of70ydU8BVK1Z
+	 Ct1Ryv54Q5W7Q==
 From: Sasha Levin <sashal@kernel.org>
 To: stable@vger.kernel.org
 Cc: Thomas Zimmermann <tzimmermann@suse.de>,
@@ -33,13 +33,12 @@ Cc: Thomas Zimmermann <tzimmermann@suse.de>,
 	linux-tegra@vger.kernel.org,
 	Thierry Reding <treding@nvidia.com>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.6.y 2/2] drm/tegra: fbdev: Remove offset into framebuffer memory
-Date: Fri, 31 Jul 2026 11:50:20 -0400
-Message-ID: <20260731155020.604703-2-sashal@kernel.org>
+Subject: [PATCH 6.1.y] drm/tegra: fbdev: Remove offset into framebuffer memory
+Date: Fri, 31 Jul 2026 12:25:21 -0400
+Message-ID: <20260731162521.789037-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260731155020.604703-1-sashal@kernel.org>
-References: <2026072952-backward-riveting-1863@gregkh>
- <20260731155020.604703-1-sashal@kernel.org>
+In-Reply-To: <2026072952-subtext-celtic-af7b@gregkh>
+References: <2026072952-subtext-celtic-af7b@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -65,22 +64,22 @@ Signed-off-by: Thierry Reding <treding@nvidia.com>
 Link: https://patch.msgid.link/20260421073646.144712-3-tzimmermann@suse.de
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/tegra/fbdev.c | 8 ++------
+ drivers/gpu/drm/tegra/fb.c | 8 ++------
  1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/fbdev.c b/drivers/gpu/drm/tegra/fbdev.c
-index 43a504ad4f38..b7de5819029d 100644
---- a/drivers/gpu/drm/tegra/fbdev.c
-+++ b/drivers/gpu/drm/tegra/fbdev.c
-@@ -75,7 +75,6 @@ static int tegra_fbdev_probe(struct drm_fb_helper *helper,
- 	struct fb_info *info = helper->info;
+diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+index a688ecf08451..b054311f6869 100644
+--- a/drivers/gpu/drm/tegra/fb.c
++++ b/drivers/gpu/drm/tegra/fb.c
+@@ -222,7 +222,6 @@ static int tegra_fbdev_probe(struct drm_fb_helper *helper,
+ 	struct drm_mode_fb_cmd2 cmd = { 0 };
  	unsigned int bytes_per_pixel;
  	struct drm_framebuffer *fb;
 -	unsigned long offset;
+ 	struct fb_info *info;
  	struct tegra_bo *bo;
  	size_t size;
- 	int err;
-@@ -112,9 +111,6 @@ static int tegra_fbdev_probe(struct drm_fb_helper *helper,
+@@ -268,9 +267,6 @@ static int tegra_fbdev_probe(struct drm_fb_helper *helper,
  
  	drm_fb_helper_fill_info(info, helper, sizes);
  
@@ -90,12 +89,12 @@ index 43a504ad4f38..b7de5819029d 100644
  	if (bo->pages) {
  		bo->vaddr = vmap(bo->pages, bo->num_pages, VM_MAP,
  				 pgprot_writecombine(PAGE_KERNEL));
-@@ -126,9 +122,9 @@ static int tegra_fbdev_probe(struct drm_fb_helper *helper,
+@@ -282,9 +278,9 @@ static int tegra_fbdev_probe(struct drm_fb_helper *helper,
  	}
  
- 	info->flags |= FBINFO_VIRTFB;
--	info->screen_buffer = bo->vaddr + offset;
-+	info->screen_buffer = bo->vaddr;
+ 	drm->mode_config.fb_base = (resource_size_t)bo->iova;
+-	info->screen_base = (void __iomem *)bo->vaddr + offset;
++	info->screen_base = (void __iomem *)bo->vaddr;
  	info->screen_size = size;
 -	info->fix.smem_start = (unsigned long)(bo->iova + offset);
 +	info->fix.smem_start = (unsigned long)(bo->iova);
