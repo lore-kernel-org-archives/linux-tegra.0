@@ -1,80 +1,82 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A1048988E
-	for <linux-tegra@vger.kernel.org>; Sat,  1 Aug 2026 21:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F122580F2
+	for <linux-tegra@vger.kernel.org>; Sat,  1 Aug 2026 21:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785618143; cv=none; b=LmPKvqS6+FkMTj0f3w5CnTdIxCbJVkrDvYRUaheN+ZBy/ANTNlDKb+c9g15ENzz/BmsqsUYuDa0t0uBNTvpLjgDIFWOza0iJ7A3KFbYUoMkLj7jXdAPLnufUiXhaifmVyYxVE1l5L7eQOzIROk+qQsDRVS8LdPeMAERpZuHbQEY=
+	t=1785618149; cv=none; b=hdWXlJWRF4tHYOXGAYY5fT3uDrHC6RvsdPs4vFda0Tsr4ltCbWvrcVWTVPVB+zeEYO/XeJRXSlGh9VlbnznO6GN+OUxX0zqXVLEo1gv9LGsEGtV2nid/b8R9UUjiy0bKLigZTVHUdiKiOjrg4hNWCOJjbaQEGfpmn4bgTUOMRkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785618143; c=relaxed/simple;
-	bh=dv0IIlCsP38vrPIecmLJafEpOPtBJNmDRJ5sixEKHZg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZaYYC6hgzQlwZF+hSKDMqjUFmoM0hH6bpDXO61oMLaivxdMDEZO9uv3y7tqbMSv1TNqQGLBoGCpM+3mpmmHSqyLjcx/PUBJID3h6Z5aXzdlbD+rlkSHPqThkYtHlyZx0qovsDcwEAUbCJKugZTx7L0yMLtptMdWAPDEx08Sjjns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FNv61k5D; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=IhqigBX+; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1785618149; c=relaxed/simple;
+	bh=TLPCMq9dJNI0+U6Kp58B21ZcDovBwWfAn0P7dz3zarE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FiCJOyMbWT+eq0w4Y/Mb/2QhW+M2nzHSTO34H/JZQLYL9QuO34I04HNZ7WeZvpImJuZirQYG+2Tr56CEVL7AXnLHZdIiBKbgnZdWmjib+/Wi7NsDN2EKd7H6/xWtaCL+mV9QU77ZtT0i/HzaiSzZxkLtoE52HKfbg04EspSNYWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ot9IDzLj; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Eu30V0Ch; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FNv61k5D";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="IhqigBX+"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ot9IDzLj";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Eu30V0Ch"
 Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 671J01MU3180833
-	for <linux-tegra@vger.kernel.org>; Sat, 1 Aug 2026 21:02:21 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 671J01MV3180833
+	for <linux-tegra@vger.kernel.org>; Sat, 1 Aug 2026 21:02:27 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=uME0EjnuiD1KZlegyiL2xSJMHwGRLyLgdjy
-	pPXTk6so=; b=FNv61k5Dt0fi7BrLLopELhBNls8n8ibtZ7FknEnoxSorXNSxWR4
-	6bqEyghP6cCpbXjRFZRHn5LtCSXFQwp1waAS3d/ypO2rIZXDNCkNd+XQM9x/R9Ia
-	nXNv3zeNkSeYWGZRDheI3zcR2gZM+FL7gVcS3y9APZ5STfDyqeq/GoQhhfCUncgX
-	2tyFIiDb0BWWBq9m0TB1fHU2a6e3qz7G+ZAerQ87iNfnAFKpJqdMSUdA9Le3ULVL
-	t6boK5pAVWU1hRWvONJB9DDLMw+gMy4uPXPdySLvUvwMUqfcuAGAY+MKvfqdmyOW
-	11D9B08xaEWjs1CH92j0nOIgOxAi2YCdlUQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fs9yghg1p-1
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=su8TE8rR1Eq
+	zUsl1eMZWcW5BezyRgWIbH64DyFNzHps=; b=ot9IDzLj/rKKWmQg3CxAzCshf3x
+	OwZBY9vpuNm1rU8CW5Fy+uLSpCVzu/YeaDr1tmVeI+ea1zjgRPG8U8gdCg5RoQd6
+	jCE2NeAbvLvoocpj7OImn1uPAUloIySkhX3j8ZpC567lfYl4zthuMK31Sw4Uddc6
+	nAOL1iB3Kb/PmNLcHhfDdgByDsCXakTFRn9FL/r3CF/YD1TTvy6lYXYbUWDTcrkN
+	1xKcsis1/eThARvq1O3fbKRsHAfIEoejPCrtQfEJOvV4mYEbLwXGlXBBUvdlkTbA
+	pOwTkqMs/+B1oyrbOINE2Bb0s9KAMw7T3VWAvzSbVQb5wcgagCAlolKcScQ==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fs9yghg1w-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-tegra@vger.kernel.org>; Sat, 01 Aug 2026 21:02:20 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-51c0e702df8so21977431cf.2
-        for <linux-tegra@vger.kernel.org>; Sat, 01 Aug 2026 14:02:20 -0700 (PDT)
+	for <linux-tegra@vger.kernel.org>; Sat, 01 Aug 2026 21:02:26 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-52b4f6ac06aso29913481cf.1
+        for <linux-tegra@vger.kernel.org>; Sat, 01 Aug 2026 14:02:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1785618140; x=1786222940; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=uME0EjnuiD1KZlegyiL2xSJMHwGRLyLgdjypPXTk6so=;
-        b=IhqigBX+ver5Omq4GeJVd+gqBH/yyUbOr3IIP8/r1r1iOcOFP+E3kKCiQiDfJ4I6r3
-         luJMFDvZRgNSC8iNU5HTlY5qDx9fwSwL18laYtb7epEkrnyCZMYuhmkWNFKdqT/CGdDi
-         cBUUOWhLmoJPerzC9cDGReeK52wxmW6IoTb/bciXMO7Nk1n1SoMgqaxTGl/mugAP6rDv
-         TKDXWYladBhFQa//isU+RX6tQgryrVa6kS1xP9Dqmz7unsFmg0VfE5uRNv/4dtBN/2Ie
-         SP1EQw43HDBIJNPVvO86pY8or/+L0bkwUnGZ/8acIzi0jVziCf3BsY76YmwjeHPqgpnP
-         dr+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785618140; x=1786222940;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=oss.qualcomm.com; s=google; t=1785618146; x=1786222946; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=uME0EjnuiD1KZlegyiL2xSJMHwGRLyLgdjypPXTk6so=;
-        b=kkhTewNdeiLdGQzKwLON2qC/+hORgQ/nzSDFc+HrKsu8UNapGdZ9T7ORoE9/Es75zf
-         Za/810X8yl+O/G6gEogShOsNpKrvitI4mv+uC5ELeyyx9cOIIZpQCj3H7S04rNJG/p59
-         zNe/N5SFPGA+u0s9bMS/T/PXIhnUnI/iaZve0XiMzpU0Qs5gykYH3YYsTwzSKIXZsW68
-         YFvOMYtz6RqW3MumX7RiVAXphKgWuDnmybRfCofi9s/lsqNcbOGq26TJ5hiVgXp1Ssj4
-         1y8tnQIjm6I0McTsioyg8wmk2/IQIVy/HiA/uaiyI4FCXiFM9ClBc/3MhvipMflVJnYT
-         kSMg==
-X-Forwarded-Encrypted: i=1; AHgh+RrP4td7eWUq8uhjmEzxQDWz/MHZTdOeIrKlinvmmArWDL7IULcl7136fkyxe90DxfWppAc2XDIM6L9ubQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrK/vXHOii7m6cHM1WZIWjM3epbiLXv4wbHb7tChjmhtpn2E3J
-	JQVbCcSig+63s1hyQG9vaDQF7kxupYPAtFrDvl0TObw/FwxnAcFzEyf9RHeaymKlok9Kb4g5V1U
-	3xluYujYPR0X5RIcqqbeMuJEB1NIlSvHCsohCH6n7seLnmpTj3GaF/K07iO7eIdiKfg==
-X-Gm-Gg: AR+sD12NeMJORptJdMHgpqGPV3+GN3lnHtD4pMy+NuCzid9VmspiUx795RVTanI31tx
-	2Lp82mdUwDqUJDfBiG02ekdGbvmHPdFPtxWnbhTSgPFaZXs7XHfw6JOaYBucMxH3O8fj5MsZYxb
-	LAfH92ZQ6LvWu0AGDXk+71nk3uMLyCgabvY22vR6HauHGz3neExJmkCzFhE4b+IC1tYgA14df4M
-	pbPYunOv5sJg7FoIDyReOsxAFIKxUMSTNLiumr71F1foiCfz67RIbiW9kX+pDRYwoh4hMDfM184
-	PrtPf6PaRaBERqcJICN9aTnjAMWjXwaMPUxnEf3MuagDnyToX3k1F2QzdsdXnJ9PreWOg7M9XmD
-	iBVdEw2Lf/Ohft89e
-X-Received: by 2002:ac8:7e82:0:b0:51c:19af:6341 with SMTP id d75a77b69052e-52b56796771mr91233161cf.36.1785618139821;
-        Sat, 01 Aug 2026 14:02:19 -0700 (PDT)
-X-Received: by 2002:ac8:7e82:0:b0:51c:19af:6341 with SMTP id d75a77b69052e-52b56796771mr91232291cf.36.1785618139228;
-        Sat, 01 Aug 2026 14:02:19 -0700 (PDT)
+        bh=su8TE8rR1EqzUsl1eMZWcW5BezyRgWIbH64DyFNzHps=;
+        b=Eu30V0ChgrTytiz8RTRJQ7MDjM3PwVpDZ+EKHlSFhohfIlQWFhEkM8+PGDm7atU0Al
+         tLXGG0fuijG968OwGGRVvsMPIS/CovkRiJuIZGbc4QECRkLY0LRKEqqXRSK4D0zYpXuU
+         zULS9H2EH8zEmLIfKkjpiosAQ7BNhSkYb7zCPCrc0y3XW3vtnE9xIsgwGgzexqnyqXI+
+         F3gJiSy7gQ1+AZwAsaoFgA8amtxf9hpA/pDYEpuzKb6eXcnu+VygCyZAc6Q+pU7jrLkx
+         IMAufXBeuYMzQOsbAes4DMX5a9ZZnNdqFRaarGCPeXXLsHmjC/w6xj2bM/cfofiKs+I8
+         uADQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785618146; x=1786222946;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=su8TE8rR1EqzUsl1eMZWcW5BezyRgWIbH64DyFNzHps=;
+        b=iRhYiV4DzRDlI0w5YFdXlG0jbXJoOoLhrl5gbCF2DtseP7iDun7MOCx24+TTRktnYO
+         46PXWcTV60M2B+shv61KAhOfPS8zpxvA3hkpN3HIm9/bY3sRGI+zkPyyub1XLq2QB8zZ
+         FJZCWkOWSfWy50JoMpq4nT1DU2EJkznrsGP0XVTFkWRTRnaXjy7BCpgavAyN0w2r2LKs
+         HSTBzCByxGB3S4JDqtQgB9bN3EUzkMqo3Moh0CbZv5O1AMXpoBH8vuYA8JVbW6Bhd56P
+         mtRzMp9HbJF4drgUxWDllV3ijLNr7+o940nuBY3qwhpt7PLUltBppFvz8ybdW5iKPJ5p
+         1dMQ==
+X-Forwarded-Encrypted: i=1; AHgh+RpgG5B/KbNDZCH3pAFWzSxAc+lpB6GzjZrhaGnMZtfxYKOb6JzqGWRmuPoNNb9/RdQ/S4wxZQUl10gKSg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk91femkZVLuD5EFwvrR81w786byvEBEYwK7R5Bkc8ckiX2qYx
+	DfSd7+I5WLTYsV45XqxGEzyMMHJ7QTtYxx8lo1aObEygSZ6D+J1mdvBcXH4/AI/85cTWikENimP
+	q33QDaHrdVMMs884RgBzh5lEYRy9csLviq5ezxS3Y4Ir++wcWTexD3nQI4NUgBvIJ/A==
+X-Gm-Gg: AR+sD137JPUOPrm1FWX93iexG/UrbT6riNhNDNT4o10yMvED5e+bPVmW+S+wbTGnFnD
+	bPcGqo3wrAf2c6q47vpiAn+yS/hr+dV6QF0zd8FAnVwmhvzaHOmGqHtVQrFuO5uDM1OkHFCpV9W
+	VTEsEio5UGCDQ0ntUw9y2DkLr+cX2pVD8SAARxHB+JrPfzSswBSfz39RvSyxW+Pk2VPx6z4N/ZG
+	pV+AY7qPcJc2cWWOMqSYE7fXza+98h5dhEsATFWWnx/6r9hSEmiD6M/aD5xsDmeKoTEB7c0t0bA
+	mdCVA5g4LfMPn8WISL4tmr0+1nSoPczSVTF49nFBQgtudg+nOkFDqwIbRZDN9w4mm1dRNxx0fHg
+	D7U7H0WJjuLj5S59J
+X-Received: by 2002:ac8:574a:0:b0:51c:2068:a9f8 with SMTP id d75a77b69052e-52b5666c76amr93604261cf.5.1785618145672;
+        Sat, 01 Aug 2026 14:02:25 -0700 (PDT)
+X-Received: by 2002:ac8:574a:0:b0:51c:2068:a9f8 with SMTP id d75a77b69052e-52b5666c76amr93603791cf.5.1785618145260;
+        Sat, 01 Aug 2026 14:02:25 -0700 (PDT)
 Received: from quoll ([178.197.223.174])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fd45a0c8bsm17775127f8f.34.2026.08.01.14.02.14
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fd45a0c8bsm17775127f8f.34.2026.08.01.14.02.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Aug 2026 14:02:16 -0700 (PDT)
+        Sat, 01 Aug 2026 14:02:23 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
         Conor Dooley <conor+dt@kernel.org>,
@@ -106,49 +108,51 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
         linux-amlogic@lists.infradead.org, asahi@lists.linux.dev,
         linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: [PATCH 1/2] ARM: dts: Correct white-space style
-Date: Sat,  1 Aug 2026 23:02:11 +0200
-Message-ID: <20260801210210.383417-3-krzysztof.kozlowski@oss.qualcomm.com>
+Subject: [PATCH 2/2] arm64: dts: Correct white-space style
+Date: Sat,  1 Aug 2026 23:02:12 +0200
+Message-ID: <20260801210210.383417-4-krzysztof.kozlowski@oss.qualcomm.com>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260801210210.383417-3-krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260801210210.383417-3-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6498; i=krzysztof.kozlowski@oss.qualcomm.com;
- h=from:subject; bh=dv0IIlCsP38vrPIecmLJafEpOPtBJNmDRJ5sixEKHZg=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqbl7SsRxgMMk94Xc+rsy7znxzWW5ysdX87dpQb
- nFQFBr+RKKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCam5e0gAKCRDBN2bmhouD
- 18kqEACF+c3RDPAnQEScb34eL8+0jQrH6tktw9P6Y8y+kcrVv8yqLoucGYos86e8vBzU5eSRai0
- Y587bJwjIRV4BWweCeATMc+i3muqTiLYWMGB4uSdfSSdYGRrnMZqK3TLtqsgqq+Vcuc8odVSx52
- mJJ4IqY5CnVkLr5Huvvm6g6/7OP/VaxBjHCVpjfK858kf5WKIRx89KbafiTl/LCqt7S1fGPmCOH
- ujW8j9GZzrm0ndk28zNRBmNjF6/aQDBMGWbArv6rGybceysUKatJ1w3vPguVzkRlDja7dRP6ImU
- wRkvws73lWIe53aHya8BQH9NZ0GAWd9hFjIlCCxiOjHQYAYwpIBbFHgOIB+4XNS3eC6Gi/Q6+PL
- I5hvZixbTC1ozQBlPK+PqmIoT9VVs8B8kZg0W4BmKoUbTxD6xY6YpM0Jk6q6MnvVOuHJPoIHd5F
- jb9tIYWBLHBWGNDcApVpMfqWh4W7dnKyXoUObmZrayyRmMR2reJ85HGzcGLa5z+WP1zKgZtlFmy
- +cziKE7NT4FYzUHhpeuqddFPzR8Fk0yaaodB8RE6C4DaLoFA2pjCFWv/rM1YW1GeHqWlL0+hEo0
- Yf0Xs1ZYIR2j0eWLVslPrArnMjNg0XCdYMGYi5BCIAQ1nAhnV06kVqIG2YFmyD22PuIKuOr4zv1 mVSVdXzbmhPbIkQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8207; i=krzysztof.kozlowski@oss.qualcomm.com;
+ h=from:subject; bh=TLPCMq9dJNI0+U6Kp58B21ZcDovBwWfAn0P7dz3zarE=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqbl7TJVVii45zt1o7+UEuPFT7vw5plGR4g1qsg
+ mNVMPmhXsKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCam5e0wAKCRDBN2bmhouD
+ 1x/3D/9P+gGwrzJZcCZZ8dzqE+qXAUOgFQde1f7R/rjhrhTURq+nnKbc7/K5LkTMM8f4xCplwwj
+ 1DUuSad21WgOqbqUAReAOIgo+BpzVIT6NQG/7SAAw/oD5BPQrd0MlRoRWIkeUrPHnVgRVRelWAa
+ k2U/bpEnIbfQmAoKk2ijnQta7j20LMIQ6uaTg6/jvmWcOWi6NS7yUBDEDPzzHX8WZ0CR8nzdF+w
+ vP8hjgkivp5Q70XDe8dd9k3TA+EZbiWZpK//yjrJyho8jFNyxUW/MpuX0oIBmgKvbij5IsR/vU2
+ fRk/Dvx5uKti/8BRyzpASfodeJ0Ap+UJ4Ie6Quv9h7y+m8dn/mlTginamjFnOJwIrHSb5Hu1uGU
+ DeYa0n2F04YDKWD5En6GFJnmQPwMRTOHYNAvFmhICv4hziVIAQnGyv89rekdqhORowGgFRnps2J
+ lvazkBvEXELaO9EgZKa0F9g6tQraVklbDWvhMOeaOVG/zrhSUxqZl//01VwTr68zs0UP5iKrW9w
+ eFn4vsyLsBTQ6iS8SQUGVjYZiGWGpFh8ee5Mk4lYFFz2yw1QwEUoLw9/O+/gzc5c5WStkVs86g5
+ lSfobZYNcgWB5+KYkN4Mtz9io59FTLzflsPYtfWar6qXzQwXch4sZg6E3PQ9iKVj8TNQxpclYBJ eMfc2a9el6+vyFQ==
 X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODAxMDE2OSBTYWx0ZWRfXyNWTkoIc93vd
- p75m/mbD62g6YD2zQ2AnuQvCIaEM+GtTJScZHM5Wr2Dd93IDoOwnNWby1CzxJx2IC27JaFArpVU
- 0jOkzk64G5HFtFUD88j3hHXVM89yTYM=
-X-Proofpoint-GUID: _xdxPpCw5VRkorb43WVtJq9zn5oJAej2
-X-Authority-Analysis: v=2.4 cv=Gu5yPE1C c=1 sm=1 tr=0 ts=6a6e5edd cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=N6niishs+lR9UBL1FN3Qrw==:17
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODAxMDE2OSBTYWx0ZWRfX68Dnu7EOP+Vc
+ h3NFPBk4o4XPEWi51L4UEilb0WsO+HcGp2VZ/LEf9CuIGm7AtZoy+DmGXRxs5DxnarzqoIYeNIO
+ HO9S5Wbe3wm9BiY4bDECHTmt7nqDswQ=
+X-Proofpoint-GUID: qRwNkWfJR9iMBywDIzqdEpvZGp6k1JdO
+X-Authority-Analysis: v=2.4 cv=Gu5yPE1C c=1 sm=1 tr=0 ts=6a6e5ee2 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=N6niishs+lR9UBL1FN3Qrw==:17
  a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
  a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22 a=EUspDBNiAAAA:8
- a=ED_MHW6qaQPFTTync5wA:9 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-ORIG-GUID: _xdxPpCw5VRkorb43WVtJq9zn5oJAej2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODAxMDE2OSBTYWx0ZWRfX8Im+uhT7ZIVQ
- vZdjI661+iBSimWWHqUf1WIlTnNUOMgvpbUi060dl6q5RqxU4nV4ACo7hn+9aX+4ekjCE1+AUCz
- t13ZSL648axNAhemQYYV3MTZ2XZDj8eL/Te5YUVqIomnou35HpGVhX8bf1iqLkI3ig3GTldYNdu
- ujAF/DkX9tvVmpl8Xhhn3Ep8V26gS4sUaW31nf6hcRvLKTE6wfMGdbHIvParYYHZbeR8fSwNWz8
- pEWPPKgyHQ9sWvlksOANuFpH4huleMWSD4mqyz4fzeLpJcwzI66PrAew1C9S5fRJK08pdHTS8yv
- x3hU7yanP/dlOqFty9WfcSB1LaK7eENQV47vdtJJSgw401aEcNquJO2p3IqBVjjRnG8RuyKD5QK
- 83orybe8nU0xfHlv6d5bvjZZiHcI81pXmutv5bwNC9e3J+9nb0+GixudiuH7VbvAPaTyhBRsgBT
- HL6nIFjVYvjzRwzR56w==
+ a=AwhILCEgSuoyubdv8HcA:9 a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-ORIG-GUID: qRwNkWfJR9iMBywDIzqdEpvZGp6k1JdO
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODAxMDE2OSBTYWx0ZWRfX88q1cnxdDU7P
+ PG7A+RR9AOKsXejK4Ofq3klp61z8MrMkS9jb+40ZvfYlDEq0Zkys0/3ct+f+3PraKcMKmMo2iaw
+ mcCJezbMC9NTPtIyZbvorwGvUPd8rJ82bc4s0YCTjjhaIKE5it0e41V2CVf0zyLM2xupanPUX9q
+ zarybOnAsbJ6MUZx1b3HR3P+3AE04ELEFnLzNhyyOtyLJou0ErCdkAG5+j7trIyZOSHwG20+oSf
+ /sUzeL2OKcbZ8FniUCI15rSGkQv7u0J0UCy03VEJyr9n2+YnJgdreC+7lV5VkLW+47UF/zqYHCO
+ V53RmPvYDpqlvUkZZ4MD5JBjWm+Epe6otz08KVQt91vs9agRgKp4RUkkWTAproQtiU275oCTTo/
+ aDMJSnTCCLoS2PcSEjOWNbO23YIwRUS4a0yx57d8zuQm2VuQKrnPXGhq95nQcSY8FwPtPWZvpEt
+ 96LrXuOL7iYPSE0hzhA==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-08-01_03,2026-07-30_01,2025-10-01_01
@@ -168,182 +172,212 @@ Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 I'll take this directly via soc@.
 ---
- arch/arm/boot/dts/armv7-m.dtsi                           | 2 +-
- arch/arm/boot/dts/broadcom/bcm47094-linksys-panamera.dts | 2 +-
- arch/arm/boot/dts/marvell/kirkwood-nsa320.dts            | 4 ++--
- arch/arm/boot/dts/microchip/at91-kizbox3-hs.dts          | 8 ++++----
- arch/arm/boot/dts/microchip/at91-kizbox3_common.dtsi     | 2 +-
- arch/arm/boot/dts/microchip/at91rm9200ek.dts             | 2 +-
- arch/arm/boot/dts/microchip/lan966x-pcb8291.dts          | 2 +-
- arch/arm/boot/dts/st/stih407-family.dtsi                 | 2 +-
- arch/arm/boot/dts/st/stm32mp135f-dk.dts                  | 2 +-
- arch/arm/boot/dts/xilinx/zynq-cc108.dts                  | 4 ++--
- 10 files changed, 15 insertions(+), 15 deletions(-)
+ arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts          | 2 +-
+ arch/arm64/boot/dts/apm/apm-shadowcat.dtsi               | 2 +-
+ arch/arm64/boot/dts/apm/apm-storm.dtsi                   | 2 +-
+ arch/arm64/boot/dts/apple/t602x-j474-j475.dtsi           | 2 +-
+ arch/arm64/boot/dts/broadcom/bcm2712.dtsi                | 2 +-
+ arch/arm64/boot/dts/intel/socfpga_agilex5_socdk_013b.dts | 2 +-
+ arch/arm64/boot/dts/marvell/armada-3720-db.dts           | 2 +-
+ arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi          | 4 ++--
+ arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi      | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi                 | 2 +-
+ arch/arm64/boot/dts/nvidia/tegra264.dtsi                 | 2 +-
+ arch/arm64/boot/dts/st/stm32mp257f-ev1.dts               | 4 ++--
+ arch/arm64/boot/dts/xilinx/versal-net.dtsi               | 4 ++--
+ 13 files changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/arch/arm/boot/dts/armv7-m.dtsi b/arch/arm/boot/dts/armv7-m.dtsi
-index 26f5443d85e1..6ee18d6a93ef 100644
---- a/arch/arm/boot/dts/armv7-m.dtsi
-+++ b/arch/arm/boot/dts/armv7-m.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- / {
--	nvic: interrupt-controller@e000e100  {
-+	nvic: interrupt-controller@e000e100 {
- 		compatible = "arm,armv7m-nvic";
- 		interrupt-controller;
- 		#interrupt-cells = <1>;
-diff --git a/arch/arm/boot/dts/broadcom/bcm47094-linksys-panamera.dts b/arch/arm/boot/dts/broadcom/bcm47094-linksys-panamera.dts
-index 74161b76008a..6c4131b846c1 100644
---- a/arch/arm/boot/dts/broadcom/bcm47094-linksys-panamera.dts
-+++ b/arch/arm/boot/dts/broadcom/bcm47094-linksys-panamera.dts
-@@ -141,7 +141,7 @@ mdio@200 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 
--			switch@0  {
-+			switch@0 {
- 				compatible = "brcm,bcm53125";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-diff --git a/arch/arm/boot/dts/marvell/kirkwood-nsa320.dts b/arch/arm/boot/dts/marvell/kirkwood-nsa320.dts
-index dd5c8ffc8781..56334b71152d 100644
---- a/arch/arm/boot/dts/marvell/kirkwood-nsa320.dts
-+++ b/arch/arm/boot/dts/marvell/kirkwood-nsa320.dts
-@@ -30,12 +30,12 @@ pinctrl: pin-controller@10000 {
- 
- 			/* SATA Activity and Present pins are not connected */
- 			pmx_sata0: pmx-sata0 {
--				marvell,pins ;
-+				marvell,pins;
- 				marvell,function = "sata0";
- 			};
- 
- 			pmx_sata1: pmx-sata1 {
--				marvell,pins ;
-+				marvell,pins;
- 				marvell,function = "sata1";
- 			};
- 
-diff --git a/arch/arm/boot/dts/microchip/at91-kizbox3-hs.dts b/arch/arm/boot/dts/microchip/at91-kizbox3-hs.dts
-index fec7269088d1..19a286dcc8a5 100644
---- a/arch/arm/boot/dts/microchip/at91-kizbox3-hs.dts
-+++ b/arch/arm/boot/dts/microchip/at91-kizbox3-hs.dts
-@@ -35,7 +35,7 @@ led-4 {
- 		};
- 	};
- 
--	led-controller-2  {
-+	led-controller-2 {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&pinctrl_led_red
-@@ -58,7 +58,7 @@ led-6 {
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 		pinctrl-names = "default" , "default", "default",
--				"default", "default" ;
-+				"default", "default";
- 		pinctrl-0 = <&pinctrl_key_gpio_default>;
- 		pinctrl-1 = <&pinctrl_pio_rf &pinctrl_pio_wifi>;
- 		pinctrl-2 = <&pinctrl_pio_io_boot
-@@ -170,7 +170,7 @@ verbose_bootloader {
- 			input;
- 		};
- 
--		 nail_bed_detection  {
-+		 nail_bed_detection {
- 			label = "nail bed detection";
- 			gpio = <&pioA PIN_PB12 GPIO_ACTIVE_HIGH>;
- 			input;
-@@ -276,7 +276,7 @@ &uart4 {
- &flx0 {
- 	status = "okay";
- 
--	uart5: serial@200  {
-+	uart5: serial@200 {
- 			status = "okay";
- 	};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
+index a1c5d10f2f54..91df4793dd6e 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
+@@ -546,7 +546,7 @@ &spdifout_b {
  };
-diff --git a/arch/arm/boot/dts/microchip/at91-kizbox3_common.dtsi b/arch/arm/boot/dts/microchip/at91-kizbox3_common.dtsi
-index 465664628419..75d2e748a3db 100644
---- a/arch/arm/boot/dts/microchip/at91-kizbox3_common.dtsi
-+++ b/arch/arm/boot/dts/microchip/at91-kizbox3_common.dtsi
-@@ -298,7 +298,7 @@ &flx0 {
- 	atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_USART>;
- 	status = "disabled";
  
--	uart5: serial@200  {
-+	uart5: serial@200 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&pinctrl_flx0_default>;
- 		atmel,use-dma-rx;
-diff --git a/arch/arm/boot/dts/microchip/at91rm9200ek.dts b/arch/arm/boot/dts/microchip/at91rm9200ek.dts
-index ce691c4692b9..b849bc7049d6 100644
---- a/arch/arm/boot/dts/microchip/at91rm9200ek.dts
-+++ b/arch/arm/boot/dts/microchip/at91rm9200ek.dts
-@@ -117,7 +117,7 @@ kernel@50000 {
- 				reg = <0x50000 0x300000>;
+ &tdmif_a {
+-	pinctrl-0 = <&tdm_a_fs_pins>, <&tdm_a_sclk_pins>, <&tdm_a_dout0_pins> ;
++	pinctrl-0 = <&tdm_a_fs_pins>, <&tdm_a_sclk_pins>, <&tdm_a_dout0_pins>;
+ 	pinctrl-names = "default";
+ 	status = "okay";
+ };
+diff --git a/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi b/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
+index e930f2f26f4b..e110792cdc76 100644
+--- a/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
++++ b/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
+@@ -293,7 +293,7 @@ socpll: socpll@17000120 {
+ 				clock-output-names = "socpll";
  			};
  
--			root@350000  {
-+			root@350000 {
+-			socplldiv2: socplldiv2  {
++			socplldiv2: socplldiv2 {
+ 				compatible = "fixed-factor-clock";
+ 				#clock-cells = <0>;
+ 				clocks = <&socpll 0>;
+diff --git a/arch/arm64/boot/dts/apm/apm-storm.dtsi b/arch/arm64/boot/dts/apm/apm-storm.dtsi
+index 4c4938faffb1..d67f5ed985a2 100644
+--- a/arch/arm64/boot/dts/apm/apm-storm.dtsi
++++ b/arch/arm64/boot/dts/apm/apm-storm.dtsi
+@@ -174,7 +174,7 @@ socpll: socpll@17000120 {
+ 				clock-output-names = "socpll";
+ 			};
+ 
+-			socplldiv2: socplldiv2  {
++			socplldiv2: socplldiv2 {
+ 				compatible = "fixed-factor-clock";
+ 				#clock-cells = <0>;
+ 				clocks = <&socpll 0>;
+diff --git a/arch/arm64/boot/dts/apple/t602x-j474-j475.dtsi b/arch/arm64/boot/dts/apple/t602x-j474-j475.dtsi
+index ee12fea5b12c..926bb4ab77af 100644
+--- a/arch/arm64/boot/dts/apple/t602x-j474-j475.dtsi
++++ b/arch/arm64/boot/dts/apple/t602x-j474-j475.dtsi
+@@ -33,6 +33,6 @@ &hpm2 {
+ 	interrupts = <44 IRQ_TYPE_LEVEL_LOW>;
+ };
+ 
+-&hpm3  {
++&hpm3 {
+ 	interrupts = <44 IRQ_TYPE_LEVEL_LOW>;
+ };
+diff --git a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+index 761c59d90ffc..6a066c43d24a 100644
+--- a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
++++ b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+@@ -644,7 +644,7 @@ mip1: msi-controller@1000131000 {
+ 			brcm,msi-offset = <8>;
+ 		};
+ 
+-		isp: isp@1000880000  {
++		isp: isp@1000880000 {
+ 		     compatible = "brcm,bcm2712-pispbe", "raspberrypi,pispbe";
+ 		     reg = <0x10 0x00880000 0x0 0x4000>;
+ 		     interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
+diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5_socdk_013b.dts b/arch/arm64/boot/dts/intel/socfpga_agilex5_socdk_013b.dts
+index 82cd4115746e..afe4ef182ee7 100644
+--- a/arch/arm64/boot/dts/intel/socfpga_agilex5_socdk_013b.dts
++++ b/arch/arm64/boot/dts/intel/socfpga_agilex5_socdk_013b.dts
+@@ -107,7 +107,7 @@ qspi_boot: partition@0 {
+ 				reg = <0x0 0x00c00000>;
+ 			};
+ 
+-			root: partition@c00000  {
++			root: partition@c00000 {
  				label = "root";
- 				reg = <0x350000 0x4B0000>;
+ 				reg = <0x00c00000 0x03400000>;
  			};
-diff --git a/arch/arm/boot/dts/microchip/lan966x-pcb8291.dts b/arch/arm/boot/dts/microchip/lan966x-pcb8291.dts
-index 3a3d76af8612..1f0b0b647aa9 100644
---- a/arch/arm/boot/dts/microchip/lan966x-pcb8291.dts
-+++ b/arch/arm/boot/dts/microchip/lan966x-pcb8291.dts
-@@ -64,7 +64,7 @@ fc3_b_pins: fc3-b-pins {
- 		function = "fc3_b";
+diff --git a/arch/arm64/boot/dts/marvell/armada-3720-db.dts b/arch/arm64/boot/dts/marvell/armada-3720-db.dts
+index 06d4a3a93f84..efc32074bb11 100644
+--- a/arch/arm64/boot/dts/marvell/armada-3720-db.dts
++++ b/arch/arm64/boot/dts/marvell/armada-3720-db.dts
+@@ -109,7 +109,7 @@ gpio_exp: pca9555@22 {
+ 		 */
  	};
  
--	can0_b_pins:  can0-b-pins {
-+	can0_b_pins: can0-b-pins {
- 		/* RX, TX */
- 		pins = "GPIO_35", "GPIO_36";
- 		function = "can0_b";
-diff --git a/arch/arm/boot/dts/st/stih407-family.dtsi b/arch/arm/boot/dts/st/stih407-family.dtsi
-index 08acba209c56..436fafd30317 100644
---- a/arch/arm/boot/dts/st/stih407-family.dtsi
-+++ b/arch/arm/boot/dts/st/stih407-family.dtsi
-@@ -812,7 +812,7 @@ ethernet0: dwmac@9630000 {
- 				 <&clk_s_c0_flexgen CLK_ETH_PHY>;
+-	rtc@68  {
++	rtc@68 {
+ 		/* PT7C4337A from pericom fully compatible with the ds1337 */
+ 		compatible = "dallas,ds1337";
+ 		reg = <0x68>;
+diff --git a/arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi b/arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi
+index 91ba5f7dc9b4..feffb9c299fd 100644
+--- a/arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi
++++ b/arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi
+@@ -353,7 +353,7 @@ cp0_mmc0_cd_pins: cp0-mmc0-cd-pins {
+ 			marvell,function = "sdio_cd";
  		};
  
--		mailbox0: mailbox@8f00000  {
-+		mailbox0: mailbox@8f00000 {
- 			compatible = "st,stih407-mailbox";
- 			reg = <0x8f00000 0x1000>;
- 			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/st/stm32mp135f-dk.dts b/arch/arm/boot/dts/st/stm32mp135f-dk.dts
-index 6022e73f58af..1d6435c59096 100644
---- a/arch/arm/boot/dts/st/stm32mp135f-dk.dts
-+++ b/arch/arm/boot/dts/st/stm32mp135f-dk.dts
-@@ -382,7 +382,7 @@ goodix: goodix-ts@5d {
- 		VDDIO-supply = <&scmi_v3v3_sw>;
- 		touchscreen-size-x = <480>;
- 		touchscreen-size-y = <272>;
--		status = "okay" ;
-+		status = "okay";
+-		cp0_pwrbtn_pins:  cp0-pwrbtn-pins {
++		cp0_pwrbtn_pins: cp0-pwrbtn-pins {
+ 			marvell,pins = "mpp31";
+ 			marvell,function = "gpio";
+ 		};
+@@ -378,7 +378,7 @@ cp0_spi1_cs1_pins: cp0-spi1-cs1-pins {
+ 			marvell,function = "spi1";
+ 		};
+ 
+-		cp0_uart2_pins: cp0-uart2-pins  {
++		cp0_uart2_pins: cp0-uart2-pins {
+ 			marvell,pins = "mpp50", "mpp51";
+ 			marvell,function = "uart2";
+ 		};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi
+index 16cf4414de59..6f4879c49da2 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi
+@@ -1159,7 +1159,7 @@ asrc_out5_ep: endpoint {
+ 							};
+ 						};
+ 
+-						asrc_out6_port:	port@c {
++						asrc_out6_port: port@c {
+ 							reg = <0xc>;
+ 
+ 							asrc_out6_ep: endpoint {
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+index 820670dd6042..b80f64bb81ea 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+@@ -1765,7 +1765,7 @@ asrc_out5_ep: endpoint {
+ 							};
+ 						};
+ 
+-						asrc_out6_port:	port@c {
++						asrc_out6_port: port@c {
+ 							reg = <0xc>;
+ 
+ 							asrc_out6_ep: endpoint {
+diff --git a/arch/arm64/boot/dts/nvidia/tegra264.dtsi b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
+index b141e8f884fe..013228a81723 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra264.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
+@@ -2015,7 +2015,7 @@ asrc_out5_ep: endpoint {
+ 							};
+ 						};
+ 
+-						asrc_out6_port:	port@c {
++						asrc_out6_port: port@c {
+ 							reg = <0xc>;
+ 
+ 							asrc_out6_ep: endpoint {
+diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
+index 14e033f365e3..b5db62a0a550 100644
+--- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
++++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
+@@ -404,11 +404,11 @@ scmi_vddio1: regulator@0 {
+ 		regulator-min-microvolt = <1800000>;
+ 		regulator-max-microvolt = <3300000>;
  	};
- };
+-	scmi_vddcore: regulator@11  {
++	scmi_vddcore: regulator@11 {
+ 		reg = <VOLTD_SCMI_STPMIC2_BUCK2>;
+ 		regulator-name = "vddcore";
+ 	};
+-	scmi_v1v8: regulator@14  {
++	scmi_v1v8: regulator@14 {
+ 		reg = <VOLTD_SCMI_STPMIC2_BUCK5>;
+ 		regulator-name = "v1v8";
+ 	};
+diff --git a/arch/arm64/boot/dts/xilinx/versal-net.dtsi b/arch/arm64/boot/dts/xilinx/versal-net.dtsi
+index 15f767608e67..21bb917bcba1 100644
+--- a/arch/arm64/boot/dts/xilinx/versal-net.dtsi
++++ b/arch/arm64/boot/dts/xilinx/versal-net.dtsi
+@@ -1074,7 +1074,7 @@ usb0: usb@f1e00000 {
+ 			#address-cells = <2>;
+ 			#size-cells = <2>;
  
-diff --git a/arch/arm/boot/dts/xilinx/zynq-cc108.dts b/arch/arm/boot/dts/xilinx/zynq-cc108.dts
-index f5525c048426..e7cb82c7b8e6 100644
---- a/arch/arm/boot/dts/xilinx/zynq-cc108.dts
-+++ b/arch/arm/boot/dts/xilinx/zynq-cc108.dts
-@@ -92,8 +92,8 @@ partition@f00000 {
+-			dwc3_0: usb@f1b00000  {
++			dwc3_0: usb@f1b00000 {
+ 				compatible = "snps,dwc3";
+ 				status = "disabled";
+ 				reg = <0 0xf1b00000 0 0x10000>;
+@@ -1099,7 +1099,7 @@ usb1: usb@f1e10000 {
+ 			#address-cells = <2>;
+ 			#size-cells = <2>;
  
- &sdhci1 {
- 	status = "okay";
--	broken-cd ;
--	wp-inverted ;
-+	broken-cd;
-+	wp-inverted;
- };
- 
- &uart0 {
+-			dwc3_1: usb@f1c00000  {
++			dwc3_1: usb@f1c00000 {
+ 				compatible = "snps,dwc3";
+ 				status = "disabled";
+ 				reg = <0x0 0xf1c00000 0x0 0x10000>;
 -- 
 2.53.0
 
