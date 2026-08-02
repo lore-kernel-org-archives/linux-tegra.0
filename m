@@ -1,30 +1,30 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9973C1097
-	for <linux-tegra@vger.kernel.org>; Sun,  2 Aug 2026 16:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386AD262808
+	for <linux-tegra@vger.kernel.org>; Sun,  2 Aug 2026 16:51:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785688780; cv=none; b=UwVFS5H8WJ+1IQ+AkOlqKcSPoR0F2v4YDPCGbSIqd/tVBm8nAIsoTTJ/FlzJbe3NDYp9IKFu73MfY2Zr+qVTzwvesTlXuU2SkzIFWsDw+j2LH/Xd0RYmfwv/Hvlcg5f/IhtmrSwW/GnyZ5C8A8yH3E5wqfiJAGZucthMXZxiFdw=
+	t=1785689516; cv=none; b=SAIKvnBwVB0aLaxLCMkWKwF6cPzlIZnZ/RUlD1SnLUv9+FM/fFRo/LnbTESDi5ck7caPskPWMrS0EU/5EuMZfwNoneDfSx37XkwnIayINbcvNjCKbHlTjkXXfm01aHKU4xxDthfFFm8ppo5dGl8Rb2F7STYsFrARhUUa0Sr00Uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785688780; c=relaxed/simple;
-	bh=w9AKpo1ItJL1eWSN973YUQVelPwaD0oZ+s+4nSiIz1E=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Yc20IQ2iAAc6eQC44xfv4et2B6o4YvgXQVoABa3qU15JaIATIXbXVV5y5th1tCku/kHdg2nzTrt0PlPgE24b3bjrfSFtAw9ZRNehVPJtBxAqA0th/s32tWO+Jn70COsASGKiGZ0Px0GZBRWmHSJxGV87Yfj3uyK/ZDNY+JSiCFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GTzDUMcO; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785689516; c=relaxed/simple;
+	bh=uGp9miZgZQmhFf4dsjBixuIUQWTyrQKCwEs71y4jEe0=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=MxziiuzLqHjcD71Qr31oAp4RAmUDW5hnkDCB7JwNlmfdEQcz2Elr0GeRO2v8fmBmfxAYG/a3o0pHQY9PiKp7UYOGEM4JenPs2wKvbRuHZE4fh4NlUBukySWpm43GjvbV1k+M62jrKptBRzqb24ubd2ldo46/dIj8trST/2h9kMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X6tax8HF; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GTzDUMcO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A546D1F000E9;
-	Sun,  2 Aug 2026 16:39:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X6tax8HF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66FC91F000E9;
+	Sun,  2 Aug 2026 16:51:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785688779;
-	bh=VjSayV/sJlc3KNTb3fMX3RwzhLQRHzSBn4xsieBjaMg=;
+	s=k20260515; t=1785689515;
+	bh=psWYm2H9AyU6tcCSv/QCflLAmPilw42Vzi6vK5pI7hs=;
 	h=From:To:Cc:Subject:Date;
-	b=GTzDUMcOi0HIaAgBOvcoh1pnhBh51/HQ812MNtZ6w31c/CoctTee1fxFdK4DYfAfX
-	 YBPnww/cEUl85c/4RacqmPnYfixjYnmn0W2/SBksUnT163OiFR/5R3Rj4jdHa6BNxO
-	 E1eDj54fYFKB2iyEybMKFxnSmJPJnXT6lgW4CVAbaqZXDOxt56HfJTSB6ly1G1eQRt
-	 9Rn+0qwoQEW6gQqldDzc5zy5GLmEKznrgVbSwXAX6ucJphU4aEp+qdfP+Z825FePGE
-	 plev8wAwJiSDJILQMPCG8ztLUFvCbKUcjVGAPmTuzgFk7NH1+UpqT+fcVm4NSQsPTX
-	 WHlci5SrGvAxw==
+	b=X6tax8HFSXE68l189gziI6nb/mV0+pDQZ5wSazKrSYAvJGmdzUYkfZNC9dQshO5TF
+	 MH/wChIu7UgSuzxFxIWvXFopUhJOmcYbXjnZP8i9tqEDvaFTpNnrvObmD3YxykfKhC
+	 6srcXd0kQMnH86AekL+P/7l3b6mvzXu70fFaAQeLBUJo5rDJPMHc1WNpBQEOyahAyv
+	 3ZRVh84l+ZoiL8/yo3ecNoYZSy5AuzWwmqthgKi3l2TEWagEI8FwvqwT4JGfQvc2MM
+	 gMeLvw5egNdqwgQgLGCGnldMbrO5Z1kTB+fSe/tS04wq8LqDqqV32U+lTxPDjcCsA8
+	 nv3QdtiVwcKqg==
 From: Thierry Reding <thierry.reding@kernel.org>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -32,9 +32,9 @@ Cc: Thierry Reding <thierry.reding@kernel.org>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL v2] arm64: tegra: Device tree fixes for v7.2
-Date: Sun,  2 Aug 2026 18:39:34 +0200
-Message-ID: <20260802163936.1257450-1-thierry.reding@kernel.org>
+Subject: [GIT PULL 1/4] dt-bindings: Changes for v7.3-rc1
+Date: Sun,  2 Aug 2026 18:51:44 +0200
+Message-ID: <20260802165148.1259649-1-thierry.reding@kernel.org>
 X-Mailer: git-send-email 2.54.0
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -49,31 +49,42 @@ From: Thierry Reding <thierry.reding@gmail.com>
 
 Hi ARM SoC maintainers,
 
-The following changes since commit f5098b6bae761e346ebcd9da7f95622c04733cff:
+The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e52491777482:
 
-  Linux 7.2-rc5 (2026-07-26 14:45:48 -0700)
+  Linux 7.2-rc1 (2026-06-28 12:01:31 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.2-arm64-dt-fixes-v2
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.3-dt-bindings
 
-for you to fetch changes up to a7c28483fd57dd0e1487024af70622315320774b:
+for you to fetch changes up to f63ecc70c341682f2f78403be84069876d3eac0c:
 
-  arm64: tegra: Add EL2 virtual timer interrupt for Tegra194 (2026-07-29 18:05:46 +0200)
+  dt-bindings: arm: tegra: Add lenovo,thinkedge-se70 compatible string (2026-07-31 17:35:47 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-arm64: tegra: Device tree fixes for v7.2
+dt-bindings: Changes for v7.3-rc1
 
-This contains a single fix adding an interrupt to the architected
-timer's device tree node for the EL2 virtual timer. This prevents
-a warning from the driver at boot time.
+This contains a few fixes for interrupt types and email addresses as
+well as the addition of a compatible string for the Lenovo ThinkEdge
+SE70 Edge Client.
 
 ----------------------------------------------------------------
-Jon Hunter (1):
-      arm64: tegra: Add EL2 virtual timer interrupt for Tegra194
+Ashish Mhetre (1):
+      dt-bindings: iommu: Fix interrupt type in example
 
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+Jiqi Li (1):
+      dt-bindings: arm: tegra: Add lenovo,thinkedge-se70 compatible string
+
+Thierry Reding (1):
+      dt-bindings: gpu: host1x: Fix email address
+
+ Documentation/devicetree/bindings/arm/tegra.yaml                     | 5 +++++
+ .../devicetree/bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml        | 2 +-
+ .../devicetree/bindings/gpu/host1x/nvidia,tegra210-nvenc.yaml        | 2 +-
+ .../devicetree/bindings/gpu/host1x/nvidia,tegra210-nvjpg.yaml        | 2 +-
+ .../devicetree/bindings/gpu/host1x/nvidia,tegra234-nvdec.yaml        | 2 +-
+ Documentation/devicetree/bindings/iommu/nvidia,tegra264-cmdqv.yaml   | 2 +-
+ 6 files changed, 10 insertions(+), 5 deletions(-)
