@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA17E262808
-	for <linux-tegra@vger.kernel.org>; Sun,  2 Aug 2026 16:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5A0184
+	for <linux-tegra@vger.kernel.org>; Sun,  2 Aug 2026 16:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785689521; cv=none; b=EFYH1oZFceYRotRvKrSVe0y+YwA6pInSQlAt+rdS7zBVog4yv+BEjS+cxyftQs2BTGVU9qZrDgdDZajk5pLSw6Ie90xC5fH8tdlQAMwyWM6lzvgB6081OE2qQMzQjKWAOwzbqEdLip8e4ut1v5xeecy5FmPzdgnmXGilSOzOau4=
+	t=1785689524; cv=none; b=NvZqWrH7P1m0FjM8dr7c0dI3G48WAQmCNF8P5VaB8YmwVChM7kliTzQPgrsagjemDaAv8sH/VZGyKupgWc7auO7WWllt7VpxzAzGSzqqyFFs2+5pGjB6/9QotBR++ikg53GvhMXfpcc2trYiFmiuC9gAGSn9r1vtjevHQ3fnguM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785689521; c=relaxed/simple;
-	bh=xQiaZNvQD4Q5k3X9baAKnvezLdrI+gQLEIgoNpJue2k=;
+	s=arc-20240116; t=1785689524; c=relaxed/simple;
+	bh=f6Q7RAXD9fCLJ3Oz64TJ+Uq3RPu8BOXcfO7sJe5eKB8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JQiFUNNgGdaGsXcHWfTEhAxGWG3Cv1Ff4lYywZuW3KhK3NKeqSwcfkFGQkmPrCtuTgSqMEe375TziEn7HOVf/e5PVKAAFYcU1Xx1BDpaL+Ay1mbdOXxNfLcoORSRJkFSy3t0xGGu4T7OdrUlIkGjwjS5nytMY6xlW1IHByMPPLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X7y2csQ3; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:MIME-Version; b=qoixBDqgxnGyvAh6Hx99zYBO2lyJGB//19TmjMOhN6ZieA/QERC+xVxLjWwZhcjre5oXd68QO5xCHhG12uU/nc/r2BKwtBGf68rE9n1HijLD2/XGTvCZW8jdo+ALR/+vuiOvvrrS4BoaNB/p8Tu1qPQMp/UA4g3Uwt83TrkoPXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JxTYIh/D; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X7y2csQ3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EED7A1F000E9;
-	Sun,  2 Aug 2026 16:51:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JxTYIh/D"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD25D1F00A3D;
+	Sun,  2 Aug 2026 16:52:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785689520;
-	bh=sG0etjW1TTaFfFJDT4vpUGJ1qYTZAKtWRAXfYXcyMdk=;
+	s=k20260515; t=1785689523;
+	bh=xg5YiNvc+9iDAWqaWtg2ClRCsBlk2Sx5Fu/cDc87liA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=X7y2csQ3YSGCcBQ9e5a0ZN++E+n71Ek5SLuqhnvAAJw0YLwqf/GXjpw+QcRaWhhAM
-	 JDsjsFXY/Hmtl5Uh+GVv0unNjBGEsCxmUZUjDxddQiP1JerWO6Dap6PWgvN3nrhqqi
-	 bk9ZxAPVB632ukQq8FbdK3hWHFD5pKLkULc+Pmxm/GX1UW1YO+8KCyVu+cSsy3BNE2
-	 tGB6W4LA4d/0FcBfBcxf+6OYFdfKPXjX8RCdgi4iBv57olKuMROivze9nwplKLgoCX
-	 +LaOcH0gVUvl1W/Y3PqFiQeVM2QUuqKS1n14EYkd1bY54Z2MAObdQbpiXE8WHSRFiN
-	 eT4rabI9YzHJg==
+	b=JxTYIh/D+Wt/Iil606xlmNdKS3bPm+U1rutxpG5M2KYdsVrFV2lwihRzeB9cF1sFq
+	 ur1ye8IQFlKDw3VwawI/TB41IXbzPmpT2OR2BfDvDYknRLMXJTcf3SzkWsFtErCUvo
+	 f6iXiEFUuexY1SAVDViDJNEBUQpIjXpvEgw2EE2y4dDxkQyhqzVPdZYlNiiUaFCt8L
+	 tQPgtTsVFJxooYGQC3/AQ1IW3gbTJvRnvJeHU8oADV03fVm/tTWg635CDEe9dVYExp
+	 c3rEREWv1pYeJsleavNkMpjYYXj60NO2HjwqmrKjv4V+nWiOwhcx9gWvqcX3gQoG8+
+	 Jdvpi0wvWwtvw==
 From: Thierry Reding <thierry.reding@kernel.org>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -33,9 +33,9 @@ Cc: Thierry Reding <thierry.reding@kernel.org>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 3/4] soc/tegra: Changes for v7.3-rc1
-Date: Sun,  2 Aug 2026 18:51:46 +0200
-Message-ID: <20260802165148.1259649-3-thierry.reding@kernel.org>
+Subject: [GIT PULL 4/4] arm64: tegra: Device tree changes for v7.3-rc1
+Date: Sun,  2 Aug 2026 18:51:47 +0200
+Message-ID: <20260802165148.1259649-4-thierry.reding@kernel.org>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260802165148.1259649-1-thierry.reding@kernel.org>
 References: <20260802165148.1259649-1-thierry.reding@kernel.org>
@@ -52,45 +52,81 @@ From: Thierry Reding <thierry.reding@gmail.com>
 
 Hi ARM SoC maintainers,
 
-The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e52491777482:
+The following changes since commit f5098b6bae761e346ebcd9da7f95622c04733cff:
 
-  Linux 7.2-rc1 (2026-06-28 12:01:31 -0700)
+  Linux 7.2-rc5 (2026-07-26 14:45:48 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.3-soc
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.3-arm64-dt
 
-for you to fetch changes up to 97ffe9cb67ccafb4644f820ef68662217b76c224:
+for you to fetch changes up to 2aedc7afffc61449ddd44bf2a4b3195729cb46ac:
 
-  soc/tegra: Add PM dependency to SOC_TEGRA_PMC Kconfig (2026-07-31 17:56:37 +0200)
+  arm64: tegra: Correct Tegra234 p3740 interrupt flags (2026-07-31 17:55:32 +0200)
+
+Note that this is based on v7.2-rc5 to resolve a conflict in the base
+Tegra264 device tree include.
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-soc/tegra: Changes for v7.3-rc1
+arm64: tegra: Device tree changes for v7.3-rc1
 
-Various small fixes for multi-socket devices, redundant error prints, a
-Kconfig dependency as well as a patch to remove FUSE data as an entropy
-source.
+This contains a new device tree for the Lenove ThinkEdge SE70 Edge
+Client device as well as a number of fixes and cleanups for Tegra234 and
+Tegra194. Tegra264 sees a number of additions to enable more features.
 
 ----------------------------------------------------------------
-Jon Hunter (1):
-      soc/tegra: pmc: Don't register sys-off handler for multi-socket devices
+Akhil R (1):
+      arm64: tegra: Enable GPCDMA in Tegra264 and add iommu-map
 
-Kartik Rajput (2):
-      soc/tegra: fuse: Do not use fuse data as entropy source
-      soc/tegra: fuse: Use device-specific instance in suspend/resume
+Ashish Mhetre (2):
+      dt-bindings: iommu: Fix interrupt type in example
+      arm64: tegra: Fix CMDQV interrupt type on Tegra264
 
-Pan Chuang (1):
-      soc/tegra: cbb: Remove redundant dev_err()
+Geert Uytterhoeven (1):
+      arm64: tegra: Drop CPU masks from GICv3 PPI interrupts
 
-Sasha Levin (1):
-      soc/tegra: Add PM dependency to SOC_TEGRA_PMC Kconfig
+Jiqi Li (2):
+      dt-bindings: arm: tegra: Add lenovo,thinkedge-se70 compatible string
+      arm64: tegra: Add Lenovo ThinkEdge SE70 device tree
 
- drivers/soc/tegra/Kconfig             |  1 +
- drivers/soc/tegra/cbb/tegra194-cbb.c  |  9 ++-------
- drivers/soc/tegra/fuse/fuse-tegra.c   |  5 +++++
- drivers/soc/tegra/fuse/fuse-tegra30.c | 24 ------------------------
- drivers/soc/tegra/pmc.c               | 21 ++++++++++++---------
- 5 files changed, 20 insertions(+), 40 deletions(-)
+Krzysztof Kozlowski (3):
+      arm64: tegra: Correct Tegra194 p2972 interrupt flags
+      arm64: tegra: Correct Tegra234 p3737 interrupt flags
+      arm64: tegra: Correct Tegra234 p3740 interrupt flags
+
+Mikko Perttunen (1):
+      arm64: tegra: Add Host1x and VIC on Tegra264
+
+Prathamesh Shete (1):
+      arm64: tegra: Add pinctrl nodes for Tegra264
+
+Sumit Gupta (1):
+      arm64: tegra: Populate CPU and L2 cache nodes on Tegra264
+
+Suneel Garapati (1):
+      arm64: tegra: Add GTE nodes for Tegra264
+
+Thierry Reding (3):
+      dt-bindings: gpu: host1x: Fix email address
+      Merge branch 'for-7.3/dt-bindings' into for-7.3/arm64/dt
+      arm64: tegra: Properly sort devices on Tegra264
+
+ Documentation/devicetree/bindings/arm/tegra.yaml   |   5 +
+ .../bindings/gpu/host1x/nvidia,tegra210-nvdec.yaml |   2 +-
+ .../bindings/gpu/host1x/nvidia,tegra210-nvenc.yaml |   2 +-
+ .../bindings/gpu/host1x/nvidia,tegra210-nvjpg.yaml |   2 +-
+ .../bindings/gpu/host1x/nvidia,tegra234-nvdec.yaml |   2 +-
+ .../bindings/iommu/nvidia,tegra264-cmdqv.yaml      |   2 +-
+ arch/arm64/boot/dts/nvidia/Makefile                |   1 +
+ .../dts/nvidia/tegra194-lenovo-thinkedge-se70.dts  | 111 ++++
+ arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts |   2 +-
+ .../boot/dts/nvidia/tegra234-p3737-0000+p3701.dtsi |   2 +-
+ .../dts/nvidia/tegra234-p3740-0002+p3701-0008.dts  |   2 +-
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi           |  10 +-
+ arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi     |   4 +
+ arch/arm64/boot/dts/nvidia/tegra264.dtsi           | 577 ++++++++++++++++++---
+ 14 files changed, 632 insertions(+), 92 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra194-lenovo-thinkedge-se70.dts
