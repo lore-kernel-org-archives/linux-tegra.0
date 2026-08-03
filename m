@@ -1,50 +1,50 @@
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012035.outbound.protection.outlook.com [40.107.200.35])
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010010.outbound.protection.outlook.com [52.101.56.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915A31FF7C7;
-	Mon,  3 Aug 2026 06:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4A838A70A;
+	Mon,  3 Aug 2026 06:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.10
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785737144; cv=fail; b=hVACRszf4wfjUukQ7RvdB5stbIG21z2iQiXQrjEOcXT5fAXbcGtEaWQwyIhtCdlVia6VowYJg0rTpj+BbCs8CJXJnpTvhviyRE9mcYIySO0EwkK1KuoGpP2Lve8hjptYbIzK+jhYM+IHTsLvFv5gJVYVVcW345vsJLGuhbCMEow=
+	t=1785737159; cv=fail; b=swYGo7OX/e6BUkSi6gpzLUKY/yrLI0FiTOo6j+KB6rMbEZeJYARkXPusslBdm1lR6zXbXVtqFUqZmCZl87zt50qEIGI6jk4j5Nde1xZQH8MgAWXBrWPe3ElTAIMP1ER1j6CcXQ7P/iqcZSTYs+Tm6gIf7N5xtL8B7YQ+NhF5VOU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785737144; c=relaxed/simple;
-	bh=4+BRX7NUwWWSUUeKrG8SRK4BcL+Vam+sIu+W3YgRfhw=;
+	s=arc-20240116; t=1785737159; c=relaxed/simple;
+	bh=zl4hKajqpn1gBPWpPybANXArm3xrsDcok9wANyt4EZM=;
 	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=GJuiaILWu+VwKwUrd2wXfl3IIP9HiBZBK+j/DEhbQqKHDvk8OK6IvyC9mT8i7Dmw47EKASUKIQeA1ZPieYmTnytyEoqJDf1Xe/NgxC8Ue406/f+YnS3Kj5d9ZpDkqn+c2f8bC9uXICFSnayvWD/Nwjo2EihHOia2tdfrZ9tZLik=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1L0NkgU8; arc=fail smtp.client-ip=40.107.200.35
+	 Content-Type:MIME-Version; b=mrtpGf59xIJqvxvJDSVtgbhoqPM9vQpE/CjKU/kltIOJqyd/83qOED3JVfNA0nUV0W7PAzmuOTwUyN3CuL53IBCTqs7YO9OOSaL4igAwLtUO4LJk9WOFLyyp5Z6lexIM7yVEQ6/TvFM9lhotTnagQCnoGRCAavh8NwjmD4S9X5g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=igqzoJzi; arc=fail smtp.client-ip=52.101.56.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1L0NkgU8"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="igqzoJzi"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MuRwV9orrniJBGcWQTyH56glwExBIQqH3+BaGOhYTZzZ8MrUfMlWrHZbioqjsFYqhGYPh/6a/8rRfVh8AFIEF6KpUJjfX8MVYGbh/wxMl8y07/eoN8aVBpH6OV5Dfnt2pirWqL+1B+RYoN0CPcvWKxGRGZWKTSlxZm1byvLR522wL4E120nlYsHVdwsfO2xo9UwhejzQFori3b/8pxIjsSiPxW2cYup1fzMFBsYPV1aamb5L7yi1kFhspD6TyS3PlQ2ACIsNEplKur+YGs02Q4CyLG/ADnhH4o+vrPq1xY6zCRmLD7uN4NbZX0FCeW1SveYPV2CZa7Sp0HEyCnCA+g==
+ b=vKp+Api11t/npDHk3G4QqO04Ss30GDdONCVRlQ8Z84Jp33qmnqWGWtJiO3Re9GoLZqmeQQDEiN76156w+PEn86s+ZOmmQPbZZH5jwKbtqx3GvFxOipbv6AqIv8IxtZId0HImPv6MBifGyWTkzn7dohBhCgOyoQi5GPjXvMG8nmqoiDE+iYfmt2svPb/ASWgMedYo4d/15oBBegpM/ocTHin6u069TJCuWw1pakyRm1zORNm4RvoH8MpzEWV30H9hKQmwe98NpBuY3LAfIZPstH87gaLEWntQrf01XJH3tcKzcqMqH1kPAfacvgToxOB4BAQGpcMTcILuke4tbstDeQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Fic+o5xOPl0LUBDeQ4o5ksmZcI4SzJ9nrj+6tkfgd7g=;
- b=b/Q0pze6XAgzsOS9zj3zzgxyJpBTbOOo8KaF0iuKF2MEbbeGpMD7+aZpPu2xpAF132YTs1M32VeKoSINqCBdpaUGqT2FhqhwMBd/iSD9rg5VrL+PU42zKj/ODoe7gAKwjNdvBX5tI+hJ47wXtgOJSO4/xsYSp4VmMdyptqLQk23QbtN2pKAnuiQJv4jjTkVZu9+khLa5PIkHYmIIBpT7HV9jNP5zstXuw+BCtUHnfGR8F1tkcfl7yBsFcob6JDaqSB0LW5D03b8Lyu+gX0oj/UX0JEghQazKEc8YfTnLj32WBqZ9XxH5dT8m2J+YavZi4CVZCA/f2KqBwD+t38sAoQ==
+ bh=b5cR97ISV9zwjJi6xH3sRwRGS0ICZzlTVpYi2nZsMiE=;
+ b=SNYPgRp0ZdzCsjarIUx4go2KyH18/8ZhIlsId6vlNtzF04TuNxXj+bgLvGwhzfdpdFzG+80mumR2jsyjxow9VuDCpB9R1YRZXqJNhW/JKRhTwPUWGVvT2Zk0bPvJeulYzOodQFgsCEE9xUH7h7TgErKuca8xycyVfrf6CLclNledeHjOhd2IPU2u5kFSYVhvJsGkS29yw8x2XNZefrqT9hcs72KUuwLrCEF3dzpfLPlmBdCvPSoRW3+U8nGnrOcG8ysRhOd4vm84RZ6Asd7gJfB7yfgSctOnKNGNhFbGVKtgLBTDBPLeV1WPRyZKwjM+R8OEW66Q+0zt8p7hG/SJfA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fic+o5xOPl0LUBDeQ4o5ksmZcI4SzJ9nrj+6tkfgd7g=;
- b=1L0NkgU8Qh39JGFZrK7NQCdMaMLoQB826HCokZjuQaMwGM6Lfg/0PHXZjiK2dVqjWy3YFPmvuuiqBTXEq6NBSTKTE6FEBcEk5Vs01hQqMg6FNnfslJzc97pvkd1NkmJCBvKEcFpcyVaJi5aGP6eiAjQEJddNwdH98UYKRvC6QYQ=
+ bh=b5cR97ISV9zwjJi6xH3sRwRGS0ICZzlTVpYi2nZsMiE=;
+ b=igqzoJziR6n7EaX7uRPs1OLDsa4ic94PIvMaXWICQt+3ZYRdDfYyY3/mqkbFr9mTI4CGMrgm3FjuiIXO9M5nO1MW7XE9uvZ0CgV5UqpKWxGmmX8+rMlu2Dm6IMHsXtE1eD8aRnCqE948NWMNXKOeO1IPB5rvheipf0O5fytlfVI=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=amd.com;
 Received: from LV5PR12MB9779.namprd12.prod.outlook.com (2603:10b6:408:301::14)
  by CH3PR12MB9454.namprd12.prod.outlook.com (2603:10b6:610:1c7::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.270.18; Mon, 3 Aug
- 2026 06:05:37 +0000
+ 2026 06:05:53 +0000
 Received: from LV5PR12MB9779.namprd12.prod.outlook.com
  ([fe80::8ac8:e862:8ae9:9287]) by LV5PR12MB9779.namprd12.prod.outlook.com
  ([fe80::8ac8:e862:8ae9:9287%3]) with mapi id 15.21.0270.016; Mon, 3 Aug 2026
- 06:05:37 +0000
-Message-ID: <dc6ae753-d50c-48d8-8b37-4a525fa81f47@amd.com>
-Date: Mon, 3 Aug 2026 08:05:24 +0200
+ 06:05:53 +0000
+Message-ID: <1be5c002-7c50-478f-82af-fadceeb86a1b@amd.com>
+Date: Mon, 3 Aug 2026 08:05:42 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ARM: dts: Correct white-space style
+Subject: Re: [PATCH 2/2] arm64: dts: Correct white-space style
 To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>,
@@ -74,6 +74,7 @@ To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
  asahi@lists.linux.dev, linux-rpi-kernel@lists.infradead.org,
  linux-tegra@vger.kernel.org
 References: <20260801210210.383417-3-krzysztof.kozlowski@oss.qualcomm.com>
+ <20260801210210.383417-4-krzysztof.kozlowski@oss.qualcomm.com>
 Content-Language: en-US
 From: Michal Simek <michal.simek@amd.com>
 Autocrypt: addr=michal.simek@amd.com; keydata=
@@ -120,7 +121,7 @@ Autocrypt: addr=michal.simek@amd.com; keydata=
  otYa9+7v0j0WOBTJaj16LFxdSRq/jZ1y/EIHs3Ysd85mUWXOB8xZ6h+WEMzqAvOt02oWJVbr
  ZLqxG/3ScDXZEUJ6EDJVoLAK50zMk87ece2+4GWGOKfFsiDfh7fnEMXQcykxuowBYUD0tMd2
  mpwx1d8=
-In-Reply-To: <20260801210210.383417-3-krzysztof.kozlowski@oss.qualcomm.com>
+In-Reply-To: <20260801210210.383417-4-krzysztof.kozlowski@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: BY1P220CA0045.NAMP220.PROD.OUTLOOK.COM
@@ -134,66 +135,66 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: LV5PR12MB9779:EE_|CH3PR12MB9454:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4c4e2413-0b28-436f-6370-08def1253d2e
+X-MS-Office365-Filtering-Correlation-Id: b5bdf1b4-c1fa-444b-7994-08def1254690
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|376014|7416014|366016|1800799024|921020|56012099006|11063799006|10067099003|18002099003|22082099003;
+	BCL:0;ARA:13230040|23010399003|376014|7416014|366016|1800799024|921020|56012099006|4143699003|11063799006|10067099003|18002099003|22082099003|3023799007;
 X-Microsoft-Antispam-Message-Info:
-	5LKMOuMYJgyHQ+utgYRMcklgTwUpBhIEC1tkXepHB4CUE32F9v+IM5tttIjoTjeFf0KoQPeJMHuY/4/ER5VQKfkPTpRF6DW3HUCthVlP/Vz0N0XzEP48YFBzIsMnMfIj4Y0492HktkkhWlObV1gYtRXXxh//ls43A2j4LNm2i0jhRnyjOTg+1WfRpagX/Yl6CrJ/TGdyecPr/EuV6wD/a0k58eQM0MR5zHyxj0EA/3pOF8yyN6XQxOLDJ+l+iDW50jDptD8HsXlwGr7T+EekE66LXIzWWryrrJfVjLDIVT51or+tZZRPHsWaCWrERSjdp6IuVXLIkmWIhebPT2vBGDkTur0q5guvxDNo4gE6oQY7GNtwiPOz8WhxBtM1cbSFdpnE3RdEfNJC94G8JdNn8L1IA4+4Vz2XkwQXAvf5tvYTYHp+BVF5nQFjiDsXDPpTqA0OcC/cr7jI+LpH4GLMixDB+Tn1KGgFQSobmKn0kdvaLMHN9MkY6gUC6y4K4C8AXH5u8N81U45uvSl76Y1q6UOgZJY40ceqtfJsfTAkuZr57dgPXTNFwDILBoZGeTegs4crLvPncx5NzRhouXkoOWBlSCq+DuCBmtWKdVYR6QN6COTHd36F6mo4U4hCKhAB2whJFa7dLnuLurgbxb0LbR96MBCWzcGc6WuvKxBnyxPutzYsjy65B+rxv4h6/F+C3JTg+zzfeGnh1Nv0e+SWcg==
+	xRc/AIEiNwFL1Mc4fcooCyOcZ7Frg1BokCeWQXzpQ+oOwrpfTiB0cOFDj1IVnWxDCCRwbScqW/7WOjw/7PV/8gtcGzvpYyt0V36MKInvMFAtj0kWwzPxjHNRMyY3dS4Z8uYU5EfGHiLrimGDokYCY5sLN8KpD1puC1ObVFVkDsM24ViZORgUcCJquohCyjLGlROXwgisHqE3lsbsa/Z9qDg+6DtmYA6aX5N7c4YYZ9FK3dOliqhET669pM/EEbumZdVNeTi+k5r+PNc4ugncv7Z/hCURL4Ak5QODAJBG/0Rrml4sA1kk2AyAi4mQDK5cMBZ9YZIOW7lBm33aajok8I/6R2pt3MK49cPwYisiwznnm+ZHfSGDws/XXmoOMJtr80/G9veY8BE6JAQeOi30R1+7UqcY6Ns2C2KOiFGKCKF1ij0DCY6q34uVOSFrvxx0axYN5+be6Cvb3MbkMXcLuPlJppONHhorwXYf9AKnRE0u6d6KRXe0tAwkXGpVjafIy+piydhiNR36EJ1SxU627GQ9iO3GtuGpQEuPd3VMEbBACBYIlF7C5XHS6BvsHjlHpruGYk5ZuX8yYA/NqePsWJ/Zi9whQlly3wIdVLVdbFpK9G+vC5QfCZObcS0hRH9HVMkEt5qymQ/AFotO3AeENKO3gNhYT9HwYmk8jDw3Aucq8N6lrFwlEiQlsY43qZQLMmmjGzkS6DagY5gJTkeHZA==
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV5PR12MB9779.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(7416014)(366016)(1800799024)(921020)(56012099006)(11063799006)(10067099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV5PR12MB9779.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(7416014)(366016)(1800799024)(921020)(56012099006)(4143699003)(11063799006)(10067099003)(18002099003)(22082099003)(3023799007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?U0JDbzc3QzhoR05qajRPc1FSekorOXB0cWRabkc4OFJyZ2Z1RVJtNEpTUWJO?=
- =?utf-8?B?d29wdUEzdE5XUUJ2Ylg0M0hxOUtQOG9OMTI2ZGhZM1dXRUtNU3lGNVg4Wm9J?=
- =?utf-8?B?MEJOVGVoUnhrUGZTcDlwSzhrK2dYNlV4bE9RYWJZMzFybjlaVnFtNVk4bzRO?=
- =?utf-8?B?U0ZSOWVoL1Vla1FqQkx1aStEeko5MDhjRWM0Sm5KNFBmQ0t1UjJKQTBNUDht?=
- =?utf-8?B?SkZ4RXp2NFAwQ0dIbTZBRDIyeW1ta0lCN1hWQXp2c2J1d2hCbVFyOGtkV092?=
- =?utf-8?B?L2trU3hCa21RcFFWQ1BlRlFaMFBlay9LVW5hSk1NbzJrNVR3bWtLV0xtUzlv?=
- =?utf-8?B?dXhGTWJvMkpRa1B2WXp5Wm9Mcmh2R0ZYWG4xK20xb255QlR0STEzMzcxTEov?=
- =?utf-8?B?QUs3S2FkZXJIYm1DYkRJNERQSmNlcXdMVXhJQXp3V2tQbkFkRFh1QUJqdi81?=
- =?utf-8?B?eDM3cTArTzR4UnlHZGZwaXEyWllKOHczaTlDeDU5RFdGdDloaldKZXdBdHVD?=
- =?utf-8?B?SDNOd05xeVhDM3U3TWp2S3Fid2JYTUtKWGxaYjdqZG5mTXlwNTg1THd2bzFq?=
- =?utf-8?B?aFRmVEZVaUxWZkRjSlZQODltdGlYMUYyWnNQb21DOXJ6SmZ0TGtXcVVzL2kr?=
- =?utf-8?B?cUFsVVlBWXowbWRNditnanRwa0VVRlZEdHRDamgrKzBkblAwbWphdkxhSlZE?=
- =?utf-8?B?MmgwV2ZONUQ5T3ZxY0pSdlM0d2hXNWdGZUprTlVMb0ZTOEhYSS9PaFhrT0l3?=
- =?utf-8?B?WFF5anBLTDMxeFpzZkMxZlZXdUlJUTJzeFBTMTNNNE16SGlpRWVDSXpMejZz?=
- =?utf-8?B?dWYwV1B0cXRCOTVxYXVmZ1czbmozV3EzOHRVb04vRHByNHNIdFo4cjRZeVRp?=
- =?utf-8?B?WkRXaExVR0RKbVNFdENoVEpCK2xMM1NiblNxZnBBdXZNSURxZGlnNW92Q0VR?=
- =?utf-8?B?dDJybnh5U0ZXSDNaWGxLYThHUVIzVTBkeUl3SkI5Nld0UWxiWTdKZjkxdVd5?=
- =?utf-8?B?S3pJaU1HOHYwaGZxcDlScnluSjdLQ0gwWTFpWlJ2V1JWMzJTaHN6OUVGRFRX?=
- =?utf-8?B?cXJSZG5GWnFwRDVkbUs4OHlnTlRyZDZrbWFsU1lDTDI3RWJNc2lvOE4yQjlQ?=
- =?utf-8?B?end1Uk9DdXkzdEZSTkZDTWl6OXMvMEJRM0pLbFJQYnY4UHFyRjZ3NjI5SE9r?=
- =?utf-8?B?UEtqSTJFQzNHSXk1WEpXbTQrVXkrKzBzQ3dyK2JKVU5WNTExSVMyQmRIeVUv?=
- =?utf-8?B?aFZFaVZYb2VON3djWTJWZGxzOVRrTTRCeFBWcTFjVURvcG82TTA5UHhDa21O?=
- =?utf-8?B?ZDU4YzRON2xOamR3MWJHcUxEZno4K0hTYXlsS3hXS0Uvd0VhaVErbkZrODNB?=
- =?utf-8?B?T1ByWWNmbUdpZXNOZkdtcmlXMmsrdlJCNGpTQ1hoSlJycjRkMndQRmNLTVBZ?=
- =?utf-8?B?THdubXNOc3pTZFhvbjh6eHM4MTZKUHNSNFFZdnU3a09BSHVUaTNkaWx4L2Rv?=
- =?utf-8?B?WXFUVUNxT21sMXN3NmJtTm05c0x3RnJIak9xY2xlTms1UGNXbThiL2Exd1Fa?=
- =?utf-8?B?eG5IMklYa0FReEpFeWNXbWtEb1lIVUU2NFBMb2NndjE4SEVPcVFoV0VqVUkr?=
- =?utf-8?B?K1lON2dQQTdFUm5OSHBkZXpjZTVHWlpnQXpKMWt0QTlyZkgyZ3BoQmJnZHRy?=
- =?utf-8?B?TURwWkRaTlYyeHdEV0xiVzd6OUQ1RFdMRE80aXRCOWlzK1FvY2dpSk5vM1Rp?=
- =?utf-8?B?TVhTZDZhbVBjVVY2ZWgvMkdCK3RmMnBiTG1wdnZUU1UwcVRSME5CSWV2SGc3?=
- =?utf-8?B?eHBIWUMxNFhFL05iSWxLODZQZklNbTJMTHRwb25Sem9zclFyd0crR1E1bnMz?=
- =?utf-8?B?bm9Pa3VjOTR4cDBYUG5mVHdvUzF3T0dNTEJ2TFRjQWlaQ3N6Vk5JcmFvV1Vy?=
- =?utf-8?B?S21qTGx5R2dvWUlIZTkrYWtxTWhZSkpuc2k2VnozVmo5Y0JYODg3czZKS0dw?=
- =?utf-8?B?K1BHdnVDLzNlMVlIMVlwTjhlZHdGRlF1T2RKemljcDZJVmxLMVkyTXQxQ3o4?=
- =?utf-8?B?clNPWW5qUmRBTlJEL29Jd2pXVXhGNkV1bnNwYzNqa0F6WEtSRGI5L1l0blVV?=
- =?utf-8?B?NmlVNWlSdjJKQlErQ0lkM0Jva0NiZGVJeThoQkh4R0FRQjRGR290ZDJ0cEdS?=
- =?utf-8?B?V1VBdlFXNWxpeEpxS2FMYWdycTNBeFdzNnpPMmxCVTJHOXJKSnVmbWxxR2gr?=
- =?utf-8?B?RzJYK3V1eHNOMHpFQ1dPU1NpY1JpTEIrL2NoMVVSS3ZIek0rY2ViMEM5MmFu?=
- =?utf-8?B?OU9ndlBaQXpjRys2OGZnUHFjY0dGOHdhVFVRdE0xalF1aHQrLzZyUT09?=
+	=?utf-8?B?YXIyTGMzZEF6cFF0dTFzWGwrUElGNklyeFVveUFmVjBLY1BzQkp2M2RWNEVR?=
+ =?utf-8?B?WitYREJlTWF5bFpaK21IOGlodG5qdkhYYzIzT3kxa3hvZlM1MFJDRFYwKzdC?=
+ =?utf-8?B?RUNPZXQzQ01EcmdZYmFrdXpQNC90OXhVSEFJTEpNV0JQbjc3RTMwZlVkcEc0?=
+ =?utf-8?B?QUF4czJjcFgzd2JTL2hqdU9DWklud1pjbWJsYXA4ODBvRjcrNmxIcHJyMm43?=
+ =?utf-8?B?ZHBzTVdvNjh2aGplYzFrNGdrKzU5TnphelF4QSsvaWsxRjNFNncwa1pHV1l3?=
+ =?utf-8?B?ajRtR29yT3VrczVLZDJveVVESmxNckpGbXBrRWVHYU45ZWcrdUlBRnJaMHlQ?=
+ =?utf-8?B?dk04VzkyNzZMbXJNVWY5VlBFaisvVkdDVDczTUtqT1hMSUVHWFpyV1F3dE9B?=
+ =?utf-8?B?TWYzSTZqZ2cyNEJnTGh5cWsyKzJ3RU1hVFVZSjI0MmpibnNsQUNJM2RDcXdK?=
+ =?utf-8?B?K1hhQVlCTy9YZFVDSFBKSU5PZy8zUlRHd3hSWFVUY200L0VKWXhLS201UmZD?=
+ =?utf-8?B?SDcxTTJTcXhqcTFlMnMxSHkwS0t4TXAvbFdYNEtiaWxlTFBYWE1tZEh4YVRu?=
+ =?utf-8?B?LzNNRXIzMURJd1V3dHk2b0RRYklES1VwcURTWkdPU2hrSjBFVk9CdERoV3pt?=
+ =?utf-8?B?bDJKaWJmVGxGRUl1MXVwM3hVbm1SKzNwaStNRmpIc2NyUkhKTDlNTHdIRXpD?=
+ =?utf-8?B?WSswOGx3cXA3eWRnbC9Uc3l1a21aaGhvelhaMERGc1M3QWUzMm1pakN1Zk83?=
+ =?utf-8?B?TXQwdmtiajJVWGJXTzhCSytCVGo4Sk9ZNzAxYmdXYnRCbVV1WmQ1TDhFaGlH?=
+ =?utf-8?B?R3pla3VGemt4L241WWJYMFRPZko4OG9INmhFU2tCSGludDFUdXJFM2l6UjlL?=
+ =?utf-8?B?aVNIT2ZmU3lrUEJZN0diakVwNzZjekdrZHFKcVV2aGU3U1Zobm9EbzkwUm5Z?=
+ =?utf-8?B?ZFBYMi95S2JzTHorUjBNbmJCM01IcW1FRnhRSnpjVmxvVkFISWs2KzNETmFV?=
+ =?utf-8?B?QmYydVFnWmorTDRkbWVRdnFXbWtwWGdjNUVoOUs5ZnNkQVRiV011TURMMDdJ?=
+ =?utf-8?B?RFZPcGovRXduVGRETXlNY3dMV0JYekJBVGVLNzJEWmFvSkVKalZBK3Vwamt1?=
+ =?utf-8?B?Z2JhNFVWRGZjdFc4cnRhNXAxMFVMVjAwSDgyWERzb1B0SmVVc2ZyTWkrZkw2?=
+ =?utf-8?B?ZjdmSWw0YUUzZlVFcFJud1NlN0Q0V0MxNTVIUWc0UjhBV3ZYNWEvZEJGbVNw?=
+ =?utf-8?B?MElhcTQvQ3NTOWJOSk5JdEhoRlpHcnRPSXB6Vk1BRjlQT0d1MjJMcFdwSlc4?=
+ =?utf-8?B?djdBTFZpN2ZQS0xraS85OWFDTmZPR2xRTnc1K1g2YWNMSERJKy81MHduVmNl?=
+ =?utf-8?B?QkU3NTJYaGV0SjBIU0lzUlZ1cUhEY2p4TC9sWlBhREJwZDcwanl0WmZ5U0M4?=
+ =?utf-8?B?RHhRNEMzVzRXMlA3U3dYbHJ6MWRQTm9WYnBUMXdIbVN6T29CNHRTajlaVDd5?=
+ =?utf-8?B?ZjVlTFNVU200eEwvVjF3Wmkyc3RUOTFPNDN3T0QzVktWVTRZeWVza0NzS29T?=
+ =?utf-8?B?UVExQ1pTQ0tnYzJkL05yeFdmTW9uY29qeEZtTjlTdjh4MlAvZWQ5OXk0bGd1?=
+ =?utf-8?B?clFVNlVETXFUaHI1ejhxTHpHV1RDYXJZbGpJZUpyencyL1pxZXlQbW5sK0dO?=
+ =?utf-8?B?amplRy9HT0VKQTRlcEpKK3A2bEs5VUVpUS9UM0dKSE9KUzhFL2RSTFpCK0pi?=
+ =?utf-8?B?Um9wNUpHd3ZaQ3RoQWtmZlB6NzVmKzNVTkZRVEpXSDZxS2lZTzNoVGRJZ1k2?=
+ =?utf-8?B?c3Iwbk9CSndsQndpVU1CeWUyMVFXZC9LcDNMdUFLUkcwQm51bFZCdEZ3RDBO?=
+ =?utf-8?B?T0VLU0dCTjRFeU9nMmRHTkdidHZCa0J0R0djbGxPMDk3VjQxS1d5NXdWY21l?=
+ =?utf-8?B?bW0zNWVnZ3Y1TUFEQ1NtWlFoditIMVhGbE9ZbHhpWko3eVpnM1RhMklrdjhK?=
+ =?utf-8?B?eC9tVGVaWWIwajljeGpXRC82V25DVXdpUmtjVHZMT2dxakkrZHVwOHYxMzFC?=
+ =?utf-8?B?VjhKTUk5a2NwOXFxNWtlcGxIZGxoOTNOWFNCY0NhQnBjRFRNUTUreTE1VGRq?=
+ =?utf-8?B?Z1JPQ1h6cmNTWlNQenhUK3dSaFF6TGpsSU5xZVBna1p4NzdlVUowcExGc0hE?=
+ =?utf-8?B?VWtVcG50WXpDMFNXQXFSaVJRaFNYNGJPcmhmZzNHQ3dDeUd5aDBZUWc5UHNN?=
+ =?utf-8?B?MFhiNlArR3Z2c0puZ2tTVS9MbERzdS9jM1ZuZGs4VWo0TzlhTVluRVhRWW5k?=
+ =?utf-8?Q?g0gr3i46R1QFRvpwQI?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c4e2413-0b28-436f-6370-08def1253d2e
+X-MS-Exchange-CrossTenant-Network-Message-Id: b5bdf1b4-c1fa-444b-7994-08def1254690
 X-MS-Exchange-CrossTenant-AuthSource: LV5PR12MB9779.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2026 06:05:37.6287
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2026 06:05:53.3668
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nzzeBDnKo5Z/wzunBxtsrN7me42WNOkgZQo1/KlymQY9E1u/ZSqIUIIZsfzc/Ujn
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7ArEFYMxchNlakO/pGQY4SI+3KAhU6bMJSRblBM2EUs17D9QQbgufePMNNvFWu7e
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9454
 
 
@@ -209,184 +210,215 @@ On 8/1/26 23:02, Krzysztof Kozlowski wrote:
 > 
 > I'll take this directly via soc@.
 > ---
->   arch/arm/boot/dts/armv7-m.dtsi                           | 2 +-
->   arch/arm/boot/dts/broadcom/bcm47094-linksys-panamera.dts | 2 +-
->   arch/arm/boot/dts/marvell/kirkwood-nsa320.dts            | 4 ++--
->   arch/arm/boot/dts/microchip/at91-kizbox3-hs.dts          | 8 ++++----
->   arch/arm/boot/dts/microchip/at91-kizbox3_common.dtsi     | 2 +-
->   arch/arm/boot/dts/microchip/at91rm9200ek.dts             | 2 +-
->   arch/arm/boot/dts/microchip/lan966x-pcb8291.dts          | 2 +-
->   arch/arm/boot/dts/st/stih407-family.dtsi                 | 2 +-
->   arch/arm/boot/dts/st/stm32mp135f-dk.dts                  | 2 +-
->   arch/arm/boot/dts/xilinx/zynq-cc108.dts                  | 4 ++--
->   10 files changed, 15 insertions(+), 15 deletions(-)
+>   arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts          | 2 +-
+>   arch/arm64/boot/dts/apm/apm-shadowcat.dtsi               | 2 +-
+>   arch/arm64/boot/dts/apm/apm-storm.dtsi                   | 2 +-
+>   arch/arm64/boot/dts/apple/t602x-j474-j475.dtsi           | 2 +-
+>   arch/arm64/boot/dts/broadcom/bcm2712.dtsi                | 2 +-
+>   arch/arm64/boot/dts/intel/socfpga_agilex5_socdk_013b.dts | 2 +-
+>   arch/arm64/boot/dts/marvell/armada-3720-db.dts           | 2 +-
+>   arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi          | 4 ++--
+>   arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi      | 2 +-
+>   arch/arm64/boot/dts/nvidia/tegra234.dtsi                 | 2 +-
+>   arch/arm64/boot/dts/nvidia/tegra264.dtsi                 | 2 +-
+>   arch/arm64/boot/dts/st/stm32mp257f-ev1.dts               | 4 ++--
+>   arch/arm64/boot/dts/xilinx/versal-net.dtsi               | 4 ++--
+>   13 files changed, 16 insertions(+), 16 deletions(-)
 > 
-> diff --git a/arch/arm/boot/dts/armv7-m.dtsi b/arch/arm/boot/dts/armv7-m.dtsi
-> index 26f5443d85e1..6ee18d6a93ef 100644
-> --- a/arch/arm/boot/dts/armv7-m.dtsi
-> +++ b/arch/arm/boot/dts/armv7-m.dtsi
-> @@ -1,6 +1,6 @@
->   // SPDX-License-Identifier: GPL-2.0
->   / {
-> -	nvic: interrupt-controller@e000e100  {
-> +	nvic: interrupt-controller@e000e100 {
->   		compatible = "arm,armv7m-nvic";
->   		interrupt-controller;
->   		#interrupt-cells = <1>;
-> diff --git a/arch/arm/boot/dts/broadcom/bcm47094-linksys-panamera.dts b/arch/arm/boot/dts/broadcom/bcm47094-linksys-panamera.dts
-> index 74161b76008a..6c4131b846c1 100644
-> --- a/arch/arm/boot/dts/broadcom/bcm47094-linksys-panamera.dts
-> +++ b/arch/arm/boot/dts/broadcom/bcm47094-linksys-panamera.dts
-> @@ -141,7 +141,7 @@ mdio@200 {
->   			#address-cells = <1>;
->   			#size-cells = <0>;
->   
-> -			switch@0  {
-> +			switch@0 {
->   				compatible = "brcm,bcm53125";
->   				#address-cells = <1>;
->   				#size-cells = <0>;
-> diff --git a/arch/arm/boot/dts/marvell/kirkwood-nsa320.dts b/arch/arm/boot/dts/marvell/kirkwood-nsa320.dts
-> index dd5c8ffc8781..56334b71152d 100644
-> --- a/arch/arm/boot/dts/marvell/kirkwood-nsa320.dts
-> +++ b/arch/arm/boot/dts/marvell/kirkwood-nsa320.dts
-> @@ -30,12 +30,12 @@ pinctrl: pin-controller@10000 {
->   
->   			/* SATA Activity and Present pins are not connected */
->   			pmx_sata0: pmx-sata0 {
-> -				marvell,pins ;
-> +				marvell,pins;
->   				marvell,function = "sata0";
->   			};
->   
->   			pmx_sata1: pmx-sata1 {
-> -				marvell,pins ;
-> +				marvell,pins;
->   				marvell,function = "sata1";
->   			};
->   
-> diff --git a/arch/arm/boot/dts/microchip/at91-kizbox3-hs.dts b/arch/arm/boot/dts/microchip/at91-kizbox3-hs.dts
-> index fec7269088d1..19a286dcc8a5 100644
-> --- a/arch/arm/boot/dts/microchip/at91-kizbox3-hs.dts
-> +++ b/arch/arm/boot/dts/microchip/at91-kizbox3-hs.dts
-> @@ -35,7 +35,7 @@ led-4 {
->   		};
->   	};
->   
-> -	led-controller-2  {
-> +	led-controller-2 {
->   		compatible = "gpio-leds";
->   		pinctrl-names = "default";
->   		pinctrl-0 = <&pinctrl_led_red
-> @@ -58,7 +58,7 @@ led-6 {
->   	gpio-keys {
->   		compatible = "gpio-keys";
->   		pinctrl-names = "default" , "default", "default",
-> -				"default", "default" ;
-> +				"default", "default";
->   		pinctrl-0 = <&pinctrl_key_gpio_default>;
->   		pinctrl-1 = <&pinctrl_pio_rf &pinctrl_pio_wifi>;
->   		pinctrl-2 = <&pinctrl_pio_io_boot
-> @@ -170,7 +170,7 @@ verbose_bootloader {
->   			input;
->   		};
->   
-> -		 nail_bed_detection  {
-> +		 nail_bed_detection {
->   			label = "nail bed detection";
->   			gpio = <&pioA PIN_PB12 GPIO_ACTIVE_HIGH>;
->   			input;
-> @@ -276,7 +276,7 @@ &uart4 {
->   &flx0 {
->   	status = "okay";
->   
-> -	uart5: serial@200  {
-> +	uart5: serial@200 {
->   			status = "okay";
->   	};
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
+> index a1c5d10f2f54..91df4793dd6e 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
+> @@ -546,7 +546,7 @@ &spdifout_b {
 >   };
-> diff --git a/arch/arm/boot/dts/microchip/at91-kizbox3_common.dtsi b/arch/arm/boot/dts/microchip/at91-kizbox3_common.dtsi
-> index 465664628419..75d2e748a3db 100644
-> --- a/arch/arm/boot/dts/microchip/at91-kizbox3_common.dtsi
-> +++ b/arch/arm/boot/dts/microchip/at91-kizbox3_common.dtsi
-> @@ -298,7 +298,7 @@ &flx0 {
->   	atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_USART>;
->   	status = "disabled";
 >   
-> -	uart5: serial@200  {
-> +	uart5: serial@200 {
->   		pinctrl-names = "default";
->   		pinctrl-0 = <&pinctrl_flx0_default>;
->   		atmel,use-dma-rx;
-> diff --git a/arch/arm/boot/dts/microchip/at91rm9200ek.dts b/arch/arm/boot/dts/microchip/at91rm9200ek.dts
-> index ce691c4692b9..b849bc7049d6 100644
-> --- a/arch/arm/boot/dts/microchip/at91rm9200ek.dts
-> +++ b/arch/arm/boot/dts/microchip/at91rm9200ek.dts
-> @@ -117,7 +117,7 @@ kernel@50000 {
->   				reg = <0x50000 0x300000>;
+>   &tdmif_a {
+> -	pinctrl-0 = <&tdm_a_fs_pins>, <&tdm_a_sclk_pins>, <&tdm_a_dout0_pins> ;
+> +	pinctrl-0 = <&tdm_a_fs_pins>, <&tdm_a_sclk_pins>, <&tdm_a_dout0_pins>;
+>   	pinctrl-names = "default";
+>   	status = "okay";
+>   };
+> diff --git a/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi b/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
+> index e930f2f26f4b..e110792cdc76 100644
+> --- a/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
+> +++ b/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
+> @@ -293,7 +293,7 @@ socpll: socpll@17000120 {
+>   				clock-output-names = "socpll";
 >   			};
 >   
-> -			root@350000  {
-> +			root@350000 {
+> -			socplldiv2: socplldiv2  {
+> +			socplldiv2: socplldiv2 {
+>   				compatible = "fixed-factor-clock";
+>   				#clock-cells = <0>;
+>   				clocks = <&socpll 0>;
+> diff --git a/arch/arm64/boot/dts/apm/apm-storm.dtsi b/arch/arm64/boot/dts/apm/apm-storm.dtsi
+> index 4c4938faffb1..d67f5ed985a2 100644
+> --- a/arch/arm64/boot/dts/apm/apm-storm.dtsi
+> +++ b/arch/arm64/boot/dts/apm/apm-storm.dtsi
+> @@ -174,7 +174,7 @@ socpll: socpll@17000120 {
+>   				clock-output-names = "socpll";
+>   			};
+>   
+> -			socplldiv2: socplldiv2  {
+> +			socplldiv2: socplldiv2 {
+>   				compatible = "fixed-factor-clock";
+>   				#clock-cells = <0>;
+>   				clocks = <&socpll 0>;
+> diff --git a/arch/arm64/boot/dts/apple/t602x-j474-j475.dtsi b/arch/arm64/boot/dts/apple/t602x-j474-j475.dtsi
+> index ee12fea5b12c..926bb4ab77af 100644
+> --- a/arch/arm64/boot/dts/apple/t602x-j474-j475.dtsi
+> +++ b/arch/arm64/boot/dts/apple/t602x-j474-j475.dtsi
+> @@ -33,6 +33,6 @@ &hpm2 {
+>   	interrupts = <44 IRQ_TYPE_LEVEL_LOW>;
+>   };
+>   
+> -&hpm3  {
+> +&hpm3 {
+>   	interrupts = <44 IRQ_TYPE_LEVEL_LOW>;
+>   };
+> diff --git a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+> index 761c59d90ffc..6a066c43d24a 100644
+> --- a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+> +++ b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+> @@ -644,7 +644,7 @@ mip1: msi-controller@1000131000 {
+>   			brcm,msi-offset = <8>;
+>   		};
+>   
+> -		isp: isp@1000880000  {
+> +		isp: isp@1000880000 {
+>   		     compatible = "brcm,bcm2712-pispbe", "raspberrypi,pispbe";
+>   		     reg = <0x10 0x00880000 0x0 0x4000>;
+>   		     interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
+> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5_socdk_013b.dts b/arch/arm64/boot/dts/intel/socfpga_agilex5_socdk_013b.dts
+> index 82cd4115746e..afe4ef182ee7 100644
+> --- a/arch/arm64/boot/dts/intel/socfpga_agilex5_socdk_013b.dts
+> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex5_socdk_013b.dts
+> @@ -107,7 +107,7 @@ qspi_boot: partition@0 {
+>   				reg = <0x0 0x00c00000>;
+>   			};
+>   
+> -			root: partition@c00000  {
+> +			root: partition@c00000 {
 >   				label = "root";
->   				reg = <0x350000 0x4B0000>;
+>   				reg = <0x00c00000 0x03400000>;
 >   			};
-> diff --git a/arch/arm/boot/dts/microchip/lan966x-pcb8291.dts b/arch/arm/boot/dts/microchip/lan966x-pcb8291.dts
-> index 3a3d76af8612..1f0b0b647aa9 100644
-> --- a/arch/arm/boot/dts/microchip/lan966x-pcb8291.dts
-> +++ b/arch/arm/boot/dts/microchip/lan966x-pcb8291.dts
-> @@ -64,7 +64,7 @@ fc3_b_pins: fc3-b-pins {
->   		function = "fc3_b";
+> diff --git a/arch/arm64/boot/dts/marvell/armada-3720-db.dts b/arch/arm64/boot/dts/marvell/armada-3720-db.dts
+> index 06d4a3a93f84..efc32074bb11 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-3720-db.dts
+> +++ b/arch/arm64/boot/dts/marvell/armada-3720-db.dts
+> @@ -109,7 +109,7 @@ gpio_exp: pca9555@22 {
+>   		 */
 >   	};
 >   
-> -	can0_b_pins:  can0-b-pins {
-> +	can0_b_pins: can0-b-pins {
->   		/* RX, TX */
->   		pins = "GPIO_35", "GPIO_36";
->   		function = "can0_b";
-> diff --git a/arch/arm/boot/dts/st/stih407-family.dtsi b/arch/arm/boot/dts/st/stih407-family.dtsi
-> index 08acba209c56..436fafd30317 100644
-> --- a/arch/arm/boot/dts/st/stih407-family.dtsi
-> +++ b/arch/arm/boot/dts/st/stih407-family.dtsi
-> @@ -812,7 +812,7 @@ ethernet0: dwmac@9630000 {
->   				 <&clk_s_c0_flexgen CLK_ETH_PHY>;
+> -	rtc@68  {
+> +	rtc@68 {
+>   		/* PT7C4337A from pericom fully compatible with the ds1337 */
+>   		compatible = "dallas,ds1337";
+>   		reg = <0x68>;
+> diff --git a/arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi b/arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi
+> index 91ba5f7dc9b4..feffb9c299fd 100644
+> --- a/arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi
+> @@ -353,7 +353,7 @@ cp0_mmc0_cd_pins: cp0-mmc0-cd-pins {
+>   			marvell,function = "sdio_cd";
 >   		};
 >   
-> -		mailbox0: mailbox@8f00000  {
-> +		mailbox0: mailbox@8f00000 {
->   			compatible = "st,stih407-mailbox";
->   			reg = <0x8f00000 0x1000>;
->   			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
-> diff --git a/arch/arm/boot/dts/st/stm32mp135f-dk.dts b/arch/arm/boot/dts/st/stm32mp135f-dk.dts
-> index 6022e73f58af..1d6435c59096 100644
-> --- a/arch/arm/boot/dts/st/stm32mp135f-dk.dts
-> +++ b/arch/arm/boot/dts/st/stm32mp135f-dk.dts
-> @@ -382,7 +382,7 @@ goodix: goodix-ts@5d {
->   		VDDIO-supply = <&scmi_v3v3_sw>;
->   		touchscreen-size-x = <480>;
->   		touchscreen-size-y = <272>;
-> -		status = "okay" ;
-> +		status = "okay";
+> -		cp0_pwrbtn_pins:  cp0-pwrbtn-pins {
+> +		cp0_pwrbtn_pins: cp0-pwrbtn-pins {
+>   			marvell,pins = "mpp31";
+>   			marvell,function = "gpio";
+>   		};
+> @@ -378,7 +378,7 @@ cp0_spi1_cs1_pins: cp0-spi1-cs1-pins {
+>   			marvell,function = "spi1";
+>   		};
+>   
+> -		cp0_uart2_pins: cp0-uart2-pins  {
+> +		cp0_uart2_pins: cp0-uart2-pins {
+>   			marvell,pins = "mpp50", "mpp51";
+>   			marvell,function = "uart2";
+>   		};
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi
+> index 16cf4414de59..6f4879c49da2 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi
+> @@ -1159,7 +1159,7 @@ asrc_out5_ep: endpoint {
+>   							};
+>   						};
+>   
+> -						asrc_out6_port:	port@c {
+> +						asrc_out6_port: port@c {
+>   							reg = <0xc>;
+>   
+>   							asrc_out6_ep: endpoint {
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> index 820670dd6042..b80f64bb81ea 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+> @@ -1765,7 +1765,7 @@ asrc_out5_ep: endpoint {
+>   							};
+>   						};
+>   
+> -						asrc_out6_port:	port@c {
+> +						asrc_out6_port: port@c {
+>   							reg = <0xc>;
+>   
+>   							asrc_out6_ep: endpoint {
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra264.dtsi b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
+> index b141e8f884fe..013228a81723 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra264.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
+> @@ -2015,7 +2015,7 @@ asrc_out5_ep: endpoint {
+>   							};
+>   						};
+>   
+> -						asrc_out6_port:	port@c {
+> +						asrc_out6_port: port@c {
+>   							reg = <0xc>;
+>   
+>   							asrc_out6_ep: endpoint {
+> diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
+> index 14e033f365e3..b5db62a0a550 100644
+> --- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
+> +++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
+> @@ -404,11 +404,11 @@ scmi_vddio1: regulator@0 {
+>   		regulator-min-microvolt = <1800000>;
+>   		regulator-max-microvolt = <3300000>;
 >   	};
->   };
+> -	scmi_vddcore: regulator@11  {
+> +	scmi_vddcore: regulator@11 {
+>   		reg = <VOLTD_SCMI_STPMIC2_BUCK2>;
+>   		regulator-name = "vddcore";
+>   	};
+> -	scmi_v1v8: regulator@14  {
+> +	scmi_v1v8: regulator@14 {
+>   		reg = <VOLTD_SCMI_STPMIC2_BUCK5>;
+>   		regulator-name = "v1v8";
+>   	};
+> diff --git a/arch/arm64/boot/dts/xilinx/versal-net.dtsi b/arch/arm64/boot/dts/xilinx/versal-net.dtsi
+> index 15f767608e67..21bb917bcba1 100644
+> --- a/arch/arm64/boot/dts/xilinx/versal-net.dtsi
+> +++ b/arch/arm64/boot/dts/xilinx/versal-net.dtsi
+> @@ -1074,7 +1074,7 @@ usb0: usb@f1e00000 {
+>   			#address-cells = <2>;
+>   			#size-cells = <2>;
 >   
-> diff --git a/arch/arm/boot/dts/xilinx/zynq-cc108.dts b/arch/arm/boot/dts/xilinx/zynq-cc108.dts
-> index f5525c048426..e7cb82c7b8e6 100644
-> --- a/arch/arm/boot/dts/xilinx/zynq-cc108.dts
-> +++ b/arch/arm/boot/dts/xilinx/zynq-cc108.dts
-> @@ -92,8 +92,8 @@ partition@f00000 {
+> -			dwc3_0: usb@f1b00000  {
+> +			dwc3_0: usb@f1b00000 {
+>   				compatible = "snps,dwc3";
+>   				status = "disabled";
+>   				reg = <0 0xf1b00000 0 0x10000>;
+> @@ -1099,7 +1099,7 @@ usb1: usb@f1e10000 {
+>   			#address-cells = <2>;
+>   			#size-cells = <2>;
 >   
->   &sdhci1 {
->   	status = "okay";
-> -	broken-cd ;
-> -	wp-inverted ;
-> +	broken-cd;
-> +	wp-inverted;
->   };
->   
->   &uart0 {
+> -			dwc3_1: usb@f1c00000  {
+> +			dwc3_1: usb@f1c00000 {
+>   				compatible = "snps,dwc3";
+>   				status = "disabled";
+>   				reg = <0x0 0xf1c00000 0x0 0x10000>;
 
-Reviewed-by: Michal Simek <michal.simek@amd.com> # Zynq
+Reviewed-by: Michal Simek <michal.simek@amd.com> # Versal NET
 
-M
+Thanks,
+Michal
 
