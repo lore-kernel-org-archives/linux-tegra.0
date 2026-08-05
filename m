@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716B83E022D;
-	Wed,  5 Aug 2026 07:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D38E3E0749;
+	Wed,  5 Aug 2026 07:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785913577; cv=none; b=t/AoQ6VvWwWux2d2Ko12SQP2EpAkpumnzSuk8wqEmaUZyA+qoJMOJmhKLta6KG3PvVy2BV2R5I5McS4DkP1ArH56bMdaOhc3DhBouKjjmRdDU3YEmm0EfQphzuiQkNvmBwmerSM6TiFNq/CexBoe/w0dP8REMchkNwzEy6v+DCA=
+	t=1785913600; cv=none; b=YtFsAzoNqJlcbyuEpRZ1W3r4novGBG+pzAw/W1poJwAvh2DYvvvpTo+s5Mb56XK3AWb8nPZNyAnSmjN9h+TcKhPnD9ynYlGF2XsqGSJwp5w3XPK9GPSN7CrVB7IUCHcKEWY9u07Mz/4l5/Fma6bmJQ9CH7bFta1wpTzMJEQmrF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785913577; c=relaxed/simple;
-	bh=zLtXiMjM1UPLA73K6TcdakjHrR0f4ny6XyGo/SnVoJ8=;
+	s=arc-20240116; t=1785913600; c=relaxed/simple;
+	bh=HBCy1XcRwQB4ocjkcj/RsfoGFcZ9fMsGCJf+KO1FQVY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T2NyvPnZcB3g/TAQAIS39Zg7BNIB3rI2xEhjOUmQnP7OtAduSCktooZOAdjhYXUdAs26O/+K9QwYNShhacecIHc8+Wlps+8RgW2sERwc1yyT13GdptVSe4iHrJsBC5obsKtMzAuCblE97T6uzCeYCeVvVG87p5tGGCez4MVzkxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZCJQ00ZM; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=IF3b2fJ1Aa9rpapjQpduhY4vPhAm/m5ItKHA0U/OE8N8VNS3fWPD5VFvOV/Sjn2CQV54joqfmZUyXTpHn4+hXUunDlFlTD7Oaxa+XpCkWbkpEC/6E8zQyuWh4D3QDfBKYbXFWmajm20BWlcw+Ob4Ton7Hs3G1orzkGqegRgEnSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g1Ov3nPN; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZCJQ00ZM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E95E71F000E9;
-	Wed,  5 Aug 2026 07:06:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g1Ov3nPN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FBD41F000E9;
+	Wed,  5 Aug 2026 07:06:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785913574;
-	bh=eknVX0861nDOKN5z4L+9yWvQ2f3wGrn2cEr5rttrL2M=;
+	s=k20260515; t=1785913598;
+	bh=hiOuQZ+qbKPtsU6vpJkFL0vOoLX/w3NXaU22HaBxqH0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZCJQ00ZM/6jRCBJ7sim1OY48D9QamjxYzsjWXpuG3i6QUhpGZWvuU3Z3H3mJnbrJg
-	 GzAMmQq9xsXz+9u/nLJkdckcie/yalUEXIcQS9BlUREx3Vxf3AuFnGO+eFIXHf5Bi6
-	 TS9KFf9KelVJ/gsbyPlg/LKsrqNnhT8GfPMzP1q3VWX1yyTxI0RDE+S7wTxkm1UtLt
-	 LTT44MKtBImOfrDwImCD6LniAloMPBHDHBY34xBw7TEzZmJwM8CuOnRhaO0zCV8QOz
-	 DayMa4k8cqAqlvJJET3MOaG5p+GxUqtnijJOV7m0Vrthp59Rf6XAtNbXshOBrmWlVx
-	 ktcXVZ5EdjuBA==
-Date: Wed, 5 Aug 2026 09:06:12 +0200
+	b=g1Ov3nPN/H02R9GEFGczrKNWADKqiMios7nEgu5q0aTkR5yNoAq/YPFCc4FcpCi31
+	 NB30DsAGv8mcU1kTHYpNZaIACfvqi6WC7OSHEXsIVNANC+65vIPPtkMuT0meoAIagS
+	 TVnDXIygJGYHsUaMutVh3qVorPKIPe/SEvBaHXcmgz68O0l8LbMQ5nAKlNqbTL5mAr
+	 jkrFdodytU3oBscZjUbYoeJg1nBVCWq1oYESR+zFJzjKkUzpuqI+7kTJFN7QgEPZNG
+	 T4rUNsoC9EMgJgyYMVEDwOe4mMDF08ZFi6PuU8+9FMkgr4fjexF7goUeXOv0lEbTpU
+	 czEkoo3pgrTug==
+Date: Wed, 5 Aug 2026 09:06:35 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
 To: Kieran Bingham <kieran.bingham@ideasonboard.com>
 Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
@@ -49,12 +49,12 @@ Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
 	linux@ew.tq-group.com, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
 	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
 	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, David Heidelberg <david@ixit.cz>
-Subject: Re: [PATCH v4 2/7] dt-bindings: media: i2c: Utilise
- video-interface-devices enums
-Message-ID: <anLg1lmGUlsfqCKL@orome>
+	Alexander Stein <alexander.stein@ew.tq-group.com>, David Heidelberg <david@ixit.cz>
+Subject: Re: [PATCH v4 3/7] arm64: dts: freescale: Convert to new media
+ orientation definitions
+Message-ID: <anLg9GdLKD4eMguI@orome>
 References: <20260804-kbingham-orientation-v4-0-336998dd63b4@ideasonboard.com>
- <20260804-kbingham-orientation-v4-2-336998dd63b4@ideasonboard.com>
+ <20260804-kbingham-orientation-v4-3-336998dd63b4@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -62,66 +62,57 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="crtkhkxtfcvyoatl"
+	protocol="application/pgp-signature"; boundary="nmyfnhbtb3klucjj"
 Content-Disposition: inline
-In-Reply-To: <20260804-kbingham-orientation-v4-2-336998dd63b4@ideasonboard.com>
+In-Reply-To: <20260804-kbingham-orientation-v4-3-336998dd63b4@ideasonboard.com>
 
 
---crtkhkxtfcvyoatl
+--nmyfnhbtb3klucjj
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 2/7] dt-bindings: media: i2c: Utilise
- video-interface-devices enums
+Subject: Re: [PATCH v4 3/7] arm64: dts: freescale: Convert to new media
+ orientation definitions
 MIME-Version: 1.0
 
-On Tue, Aug 04, 2026 at 08:43:29PM +0100, Kieran Bingham wrote:
+On Tue, Aug 04, 2026 at 08:43:30PM +0100, Kieran Bingham wrote:
 > The orientation property for video interface devices now has definitions
 > to prevent hardcoded integer values for the enum options.
 >=20
-> Update the existing examples throughout the bindings documentation for
-> camera sensors.
+> Update the users throughout the freescale/NXP device trees to use the new
+> definitions.
 >=20
-> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Reviewed-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+> Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 > Reviewed-by: David Heidelberg <david@ixit.cz>
 > Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 > ---
->  Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml   | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/ovti,ov08d10.yaml  | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/ovti,ov4689.yaml   | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/ovti,ov5675.yaml   | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/ovti,ov5693.yaml   | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/ovti,ov64a40.yaml  | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml   | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/sony,imx355.yaml   | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/sony,imx415.yaml   | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/st,vd55g1.yaml     | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/st,vd56g3.yaml     | 3 ++-
->  Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml | 3 ++-
->  12 files changed, 24 insertions(+), 12 deletions(-)
+>  .../boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtso      |=
+ 3 ++-
+>  arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi                      |=
+ 3 ++-
+>  2 files changed, 4 insertions(+), 2 deletions(-)
 
 Reviewed-by: Thierry Reding <treding@nvidia.com>
 
---crtkhkxtfcvyoatl
+--nmyfnhbtb3klucjj
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmpy4OQACgkQ3SOs138+
-s6HEXQ/+NE4OTznpxu0nClmHdRJqIZarnzOuvAgqFtMSmVGZokmcz08vGbCmoDKX
-ZeVVALZyvhdwepTYHsn7uO99xCUbNgUV3mpz6tBHua1wihU0lpLfp6PWnzqN+fBK
-4mWr3pMX+Y8Lq9bMt+P8LqOPXr7qJByVZIDb0ncBcJAfzkElFapHqDHdDI92INNy
-RCMsbBwiESoxfmwWTZhB/wbsRprAy0eflhLVFyi+HDph9ZeT02RzqsdLVUhQspLX
-naqbOD5HgwoINV3NECp/Zj4nnjGb7LN4cXncy0f2IvLNAyzbIsT6bY9buFKB4o1K
-1Q4jNyvamZ4bpuvtRVibvAT2ATwxVRtBRZWzFJ6pBiS00kldJI8ez+U2gsFD8g1/
-z4zd1vntTYhNrxiPEtEUa0knho4h7pCWUjS+huxQgtZsv8lBRT8H7aNVIakM2PoN
-n/M0MPzc0YjxDfw/7HiaSugeCPorswVf387VvNGhkyRkUvuKFd8+8vC5HN0QK8Ad
-E+M3NlUAzNOW/yKxXZTCILAzH5/1wzeI47uBsbU8rduHaGyViNvO1YQyfiV2J7X+
-Ka6+YLPRwTB8QXP3m/I2Mg3uoUWkIwRf2dAmtC87Iv4dYnbHWovomWO4C5g//a1g
-GCRxpADDOg2f+/pfAYk2FmYeG1/j+AHgAuRj3bJJTXcAlOdc6Yk=
-=IBGL
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmpy4PsACgkQ3SOs138+
+s6HAfA//YOk7q5LpyLNfCLWpw4PJyqRmkuOdrCDSDENusiMG1+cYxA1f/qFGUB08
+eQ4+3p3EN8/l6JslxUy98QIy00jJeyyHxrHTQdhTn3wwoxbdfvw1fCKJ5LWKXfXZ
+QwuzppC3RuWUpddqA1YgkuF92GFSObqvfhIAGGXjRAdoBkrEuibwoEKRBH/NRNw9
+Cc05gKN6CB4FgHxJdZhYX9q+iW5HdWIqOJdUgyfbYw8DojIpYdhYeHUR/Sl54Vky
+p9KBloxGTvhBA1oVe0a6bryeBjhE0La5w3SKigRhV85T0A/Mq9W1CJTxtEswNJEa
+YcQx+Cj+IVwXnk3HvS5fgVtHTwv2nM8Pgnp21szd9SspfYreM7hBbKJ+AKivd4P5
+mKbuay45A9f1iku6VgvQGPUdOjA1m6KiN6NH5MPB73r8R52FveLin+5keZgQH/Dq
+K+nVXsNnoAfJznYBHWC2jisv0hTr/ERkSfFbyjeUTfDb6RteETuYqZI13Ub6neSM
+ml2sJa2+aZ4n/8j7mvjcx81yVNr5MawTnCHK+dDMvHhPQpaMU5cm8YT2j8KAvAnd
+I3PHZhqHoMNhGjifsQDIXARw/gzA27BeL9GcEF3vpUAJA6hec70EJELEbBbZFoC/
+rF3yo2GCWGIJWMaIw1tvCwQTm/acz9Qdy2c3QpbDOajzilxwQ4Q=
+=QISY
 -----END PGP SIGNATURE-----
 
---crtkhkxtfcvyoatl--
+--nmyfnhbtb3klucjj--
