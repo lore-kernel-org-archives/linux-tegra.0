@@ -1,43 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9763E3DBE;
-	Wed,  5 Aug 2026 07:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B953DBD51;
+	Wed,  5 Aug 2026 07:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785914839; cv=none; b=Xfc1pGiGzCGD/FpEurjdSFKc58fsgqITm7XbcOUhK2k5WctzHIR9FXhWS+dYrF+muAdKfX9lsgGhf8yvq8QxTYGmIr/Bc4Zxb+QlxHlpenj3g4/XEznlKffIIu2/+OdkuDPsbi1OZTNRkGcBTyqcTOvZ6enzSzeB5ZVR83t3KKk=
+	t=1785915608; cv=none; b=RkMXUm0x6lpdh7mEkMBAOV2ZPlOF42XkcT/qo/GGl7Oo8K3+M+c8qzsETUPowcSDzYsQ8kBHTDQX1BfvHnR7Ae0rMX3/DwidvS6jPIZ7/wttmuhG6MBQDa2P6g8TH7FJqomN5hsiazgqE0NYM1hiSr+D5jkKRzcG5DGbSsJ65Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785914839; c=relaxed/simple;
-	bh=L5NW7w8CIat8o+dyFFDpruDvc+4azVJURsGvOWaQ3SE=;
+	s=arc-20240116; t=1785915608; c=relaxed/simple;
+	bh=LLOMEYospUj8og+7in+AdW+YQltpZVn5CXPOBd5McYc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k6YjEgxRchKfMRNohKFBsxB2UjgtYm4Cb2bBjC180h7IdDEyewmm4EXHyuqTRblK4OmwvM+ns/t7iMma7MMK3bHIjaMzKKVlg4DrK7mLbkuJOBv+pv0ok/xu5WB1nEGvwBoL+Y8RmSr3KhSP29foPJZ7mUlxREY1pXtl2FyIjPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=obIP7ahI; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sqf2MSeD3hpvGqo82pHx1JdIL9etoCWAnflVxgHFsXAzJC/KPHe0I352FKZjt7Fu/47D2LldzAKs2oVlTnjnsu+qE/v9d/6cIONePgHp0OLcnnve8teF0bIfvuZr27vbLaKpTEJYpJFw5w5yrzRDMg7A5WkBDBUH06MmF4RFLAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l5iQ19hM; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="obIP7ahI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47ADB1F000E9;
-	Wed,  5 Aug 2026 07:27:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l5iQ19hM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E381F1F000E9;
+	Wed,  5 Aug 2026 07:40:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785914837;
-	bh=L5NW7w8CIat8o+dyFFDpruDvc+4azVJURsGvOWaQ3SE=;
+	s=k20260515; t=1785915606;
+	bh=6EVAAQQ00JF1xOm7PUVTyUvqKjAm1WAWarJjcWRlgHc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=obIP7ahIvPl7hRIv5YMSrhmKdcwNAYt2y+BNbjBQs+LO+QDPE28CO8Yf0s5loJxTQ
-	 UmUHxDj6bpur03qx5RR9TwuFRRMneOWqWf8ZgvomsBe5v4A+oJbL3knq2fTOD6B8Hw
-	 Db4wIVX03qf8bs19EwBvJk9kvJPLpnociLWqd41GCbDF+5SKuof7SucUppyPwwiWDe
-	 bE31VcvgrozkgdlFoiyor8PfEDVKGLzkNvJHrUL8AYEmlCww3NwLqZBtXl6lVU0Wdk
-	 D0bAltymRCkS2CjSa05wjxDOmmSE9CSJSP2NlKcYAhe2gS2qHo+PoIxDXGD0Ammt2/
-	 hbaUi7aOEWdQA==
-Date: Wed, 5 Aug 2026 09:27:15 +0200
+	b=l5iQ19hMMY0php0gdRwFgomaBPxewxGHlNlx/At0QXZMibwCfXhWyg0KTCecnnrIy
+	 nQxFrHEQXGoPrnxfSW1c+g5cxBKgl2lwUYLo3OmMIbkwfK6vCAhwBpze/ohOkHL+aW
+	 KXHeMB7GgOwnyOVlhmdl/w7UhSDtdmSXUfOMgaFq1ALd/MetzLzm6ZpJ/n1RJnBR5H
+	 mUB5ZIxeF32ft97wsmAc0/xoq6vUiOdApXNWN6t4FrxK5p51IX3eIutcp0eH69fJNb
+	 dvuczSowlLncg9MS5lOzq1yKNe9XFK/miXIRiOJsFdDLg9YJALtuDZ/5tMZR0ol4jf
+	 hvRIQhk3M1bjw==
+Date: Wed, 5 Aug 2026 09:40:03 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Prathamesh Shete <pshete@nvidia.com>, linusw@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, jonathanh@nvidia.com, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND V2 1/2] dt-bindings: pinctrl: tegra264: fix DAP2
- DIN/DOUT pin names
-Message-ID: <anLiwXh0JGH_bvKv@orome>
-References: <20260727141121.772110-1-pshete@nvidia.com>
- <20260804-energetic-gracious-python-a6fe54@quoll>
+To: Jinhui Guo <guojinhui.liam@bytedance.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Kartik Rajput <kkartik@nvidia.com>
+Subject: Re: [PATCH 1/2] soc/tegra: fuse: Return -ENODEV for unsupported
+ legacy SoCs
+Message-ID: <anLnFvF8slRICc6R@orome>
+References: <20260804121910.4961-1-guojinhui.liam@bytedance.com>
+ <20260804121910.4961-2-guojinhui.liam@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -45,63 +43,76 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7dmww3t3gldfvauc"
+	protocol="application/pgp-signature"; boundary="vh6hi6mdbexesfye"
 Content-Disposition: inline
-In-Reply-To: <20260804-energetic-gracious-python-a6fe54@quoll>
+In-Reply-To: <20260804121910.4961-2-guojinhui.liam@bytedance.com>
 
 
---7dmww3t3gldfvauc
+--vh6hi6mdbexesfye
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RESEND V2 1/2] dt-bindings: pinctrl: tegra264: fix DAP2
- DIN/DOUT pin names
+Subject: Re: [PATCH 1/2] soc/tegra: fuse: Return -ENODEV for unsupported
+ legacy SoCs
 MIME-Version: 1.0
 
-On Tue, Aug 04, 2026 at 09:37:14AM +0200, Krzysztof Kozlowski wrote:
-> On Mon, Jul 27, 2026 at 02:11:20PM +0000, Prathamesh Shete wrote:
-> > The DAP2_DIN and DAP2_DOUT pins were listed with swapped ball suffixes:
-> > DAP2_DIN as PV7 and DAP2_DOUT as PW0. On silicon DAP2_DIN is on ball PW0
-> > and DAP2_DOUT is on ball PV7. Correct the pin and drive group names to
-> > dap2_din_pw0 and dap2_dout_pv7.
-> >=20
-> > Fixes: 30a9d5162f25 ("dt-bindings: pinctrl: Document Tegra264 pin contr=
-ollers")
-> > Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+On Tue, Aug 04, 2026 at 08:19:09PM +0800, Jinhui Guo wrote:
+> When booting without a FUSE device tree node, tegra_init_fuse() falls
+> back to legacy SoC detection on 32-bit ARM systems. If the detected chip
+> ID does not match any supported SoC, the default case only prints a
+> warning and breaks out of the switch statement.
 >=20
-> This will break the users and only for fixing naming style? Are you sure
-> it is worth beraking ABI?
+> In that case fuse->soc remains NULL, but initialization continues and
+> later calls fuse->soc->init(fuse), which results in a NULL pointer
+> dereference.
+>=20
+> Return -ENODEV from the default case to stop initialization immediately
+> when the legacy fallback detects an unsupported SoC.
+>=20
+> Fixes: 7e939de1b2bb ("soc/tegra: fuse: Unify Tegra20 and Tegra30 drivers")
+> Signed-off-by: Jinhui Guo <guojinhui.liam@bytedance.com>
+> ---
+>  drivers/soc/tegra/fuse/fuse-tegra.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-This isn't just fixing the naming style, it's fixing the name of the
-pins as they are referred to in a number of different places. With the
-wrong ball suffix people might easily be confused as to what pin they
-should be using.
+The likelihood of this happening is pretty much zero. The only way that
+you could potentially trigger it is by intentionally booting the system
+with an entirely wrong DTB. Like if you booted a Tegra DTB on an Exynos
+system or something. In that case it's likely that things will go side-
+ways much earlier than this and you kind of deserve the crash from the
+fuse->soc being NULL.
 
-So yes, I'd consider this a bug fix and worth an ABI break. The ABI
-break is theoretical, too. This pin is currently not listed in any
-upstream DTS files and all of the downstream ones I've seen use the
-corrected suffix already.
+As such this is kind of a feature that prevents the boot from continuing
+even though it doesn't stand a chance.
+
+Then again, I suspect some AI or static analyzer flagged that we might
+run into a NULL dereference, so if I don't take this, someone else is
+just going to send a similar patch at some point.
+
+Maybe a good compromise would be to turn the pr_warn() into a BUG() to
+keep the system from booting and make it obvious to analyzers that we're
+not intending to proceed in this case.
 
 Thierry
 
---7dmww3t3gldfvauc
+--vh6hi6mdbexesfye
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmpy5c8ACgkQ3SOs138+
-s6F5DA/+IrFkU31Db/Yvs5683Vc1LuVALU/xZKRm37wV4wmbHIZFgh3JYuUyyHuw
-r1MOWNtGDZamdBb75IEmHmGYl9ts0vvBK12A5jTH4hrz2a0KTu/63Ic1jWZmx/tE
-Es8DLhlUNUZVWS3mYv6+YDb0yB9CXa/2klCusLcovv9HjkaZAEZoJ02MHzuy6QVc
-DLWvAzzOVtJV0bDHJfZ8hsWFcwPgmQw12nH6MO7kteb9pcvLi5yHb0CqsW8ku3sM
-iMgap+H3x9ZMrbmBxNL2JGjsQ/dKiVqhFy34j+QLjCvx5GTmLNOShCxh2LGCUfUk
-6b+8dfdLhnrLllInS21g57RR2h1pPuNPu2ppUkXSonZfVDhBSlndcv4/rnNMtl05
-ccPgs7sWSnzyP7E58Mnd1bMHblePWlgUEbLmCjkI/Amzp3AWI+I0t3WVajMvWVIP
-EI9OFnuVys3PEd0I1CH6fJRPk1h6mxqdKdbyjTIUlaaR/5xGH3NK5ga3jY5HmFHg
-wH4Ly95OrehRk/nNwwftG9OnBpSfiBwkPp+4aJsHxw3dT96lWOOMYKhmjA0FnmzI
-EP7Mgwr6Pe3k5lhLIu7VWdrOWCHtxpOcFpUESUdBDiRSlbbRUbozXLrk+LuAllDt
-wf/X0ew6p6LoonVJ56tri3TKcTiGHEl+yeXIZuvkKdQf2+8Y3Hk=
-=58Ro
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmpy6NAACgkQ3SOs138+
+s6EY0hAAsk8MjtBlce3zfcsweOa5LAYZsMHbIKzJZ1BXFjirCsVQLst8PLGaKw+o
+jus0+T2+ZZcij6bAijoc7BvAarXG3GnFkH8c/zbi4xQnS145Xg5RAilj6NzFmNq8
+Zvf4WMRT19uV49s6Jp7OwfcnMogr43JVNELlv8o8Fo22dbajEmin1Yyk9dVgB6B9
+rhx+rM54IJLlAtPfr5wOUfV9kaiB6ZEVhlxvewtAx/Wb0ohZ+dno1liSRmJokdqL
++volFXqNPpobuYqnadkqcX+T0bqHnPGQKes6LkU55yoxEiPzIP7V6S1P6b77ymbF
+YQSN5huflhiREThjaGwOihIFUl/gAtgGlZClzk9u0cCKc9brZ/noCgl8BVozJllk
+pvVBAMK8d7k1RwRH3qTq6dYuT7czVK3OGPBudSI9BkYAVWaiO7bnpaXYIszYqe9d
+DTPZeIUae5g8rxR/yfivmmvzjk+PaLojFRYKyptHEDvhsBepD9lOyfR/a9fWm0tD
+DieioLyuojFhHlBHILWpXAJdyAV6bvCgMa4HqCo8cBrKtO36H0d2QHIeIbTYU7mu
+Z3wJ4lJomxhSqFzMdG/2nG8r5PMQ62Q/2f87iikdYbRwSNSJhmII2WGUVcIYbAuY
+fyH4cFai24in/x2DLvgPyQ179eHE0PAwg97R1lupFDwjIM9fKiA=
+=10WP
 -----END PGP SIGNATURE-----
 
---7dmww3t3gldfvauc--
+--vh6hi6mdbexesfye--
