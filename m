@@ -1,85 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87EB547D476;
-	Wed,  5 Aug 2026 15:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26213DD87F
+	for <linux-tegra@vger.kernel.org>; Thu,  6 Aug 2026 06:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785945335; cv=none; b=Iow43gGyQwgkODhiPHcsO+wPdArf6/Pb8cejV1SYnQIlvS4Et857kypShm/Cyk6dxd2tegPg20+gw+nff219ZpJRBeNahgvfOziNrT+wyEDbT4uIUsKfUXJVEncUHG6uV50GQm/q86vua4YQtvHReZr3POWaZQBOQOmCyY0BN3w=
+	t=1785998392; cv=none; b=UayNMIDg+fx1mz4u9En/1bqpoyciBsTStgnXYvig+/SGXWg7CRbOtaN/XH0NWh42o1PbHYrzz3PuWBeEBpQnSLd7KPWehh8mgO/3BUcZoumKZMI6fttfzS+6ZQBwjhk2htJ/y6JwqeWRLULQLdejgsrXs02zf+yoAXCKvKex4+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785945335; c=relaxed/simple;
-	bh=rUGboeri6ktZTRV2oeqR5l37M6QCHKbQNKBeC4pEino=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UcRl4AQbHd2lNUo3tNL4xOZs2rVp8MLxLfbOKXOnkYWtsAmXnknkMmmCg7XHirQygr7VurvlXqnTg8qN+QxJS5uz7UbdiMV2Ca1tHvXnX9ieWcNehZ8U6DvpjA4TmWGxaU/9j5h8Rzt5GQXHEcYga/vJ3xXG8xjWXqYrnLz+meM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfQdXRbV; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785998392; c=relaxed/simple;
+	bh=QTj5s8syfOr8zEiUjYG+W9zKmue9E5IoJGDTfWHVDSs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Za54Q+TeiH/o/yV+8IzUZWO2ZYxTrPntjZq9YEP+4yK3bZKjsKlsjwnAxU/4xA1sqL/T+M5kHz4aAOzj5+yPTepvxiLlFzcUfejW6UuQqaFZSZkufvMptBzKQC4i34ZBHlqBS3J++fE2tKPteiOu1466UvpmrLhBnIfUytAgsD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G/HsTnAE; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfQdXRbV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DB5E1F000E9;
-	Wed,  5 Aug 2026 15:55:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785945334;
-	bh=LFQGI06kexFLiZXhN70EcO5t/AU5IXTV7xLphoVtzPM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=cfQdXRbVh2zU0daL1aTm2PkOw3nd2jbX4SNmALPqeFqA9rbj49tHS0IgFRRBUa4K/
-	 qDSyTt+0yRHzkEBqc+nC2lhJgL0ZsmbyC3M/SvuvPVhhwH6Q3OSjAwytBxRzxp2+3P
-	 8iI+M+Z5GoGb4ch4C8JwGc+OM0aL1gmP4/8InTCLgEkDC7ZIvsKNe5JQtvrzWfvSlN
-	 t8lgJTmom++iihD2H1K3JajA7h/ZSzE5Xkq1GMKT7jl3p8MmV1j1YAxyccQyI/MFSP
-	 AUh+KkpiyL7psqQSkEjRVQL9HAYrNe8LcGlNBTAwxQHWQg/rZV/CuOGGlXhsJ/EQks
-	 T/W2sx51PldwQ==
-Date: Wed, 5 Aug 2026 17:55:11 +0200
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>, 
-	Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, Michal Simek <michal.simek@amd.com>, 
-	Kevin Xie <kevin.xie@starfivetech.com>, Aksh Garg <a-garg7@ti.com>, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v9 5/5] arm64: tegra: Add PCIe root ports on Tegra264
-Message-ID: <y7bq45p7dmy7zoz3kpwqzr77kmjr6ce52vukjeec2yvpni4twc@ale6wgwp7eos>
-References: <20260805-tegra264-pcie-v9-0-fa2ed7350ae1@nvidia.com>
- <20260805-tegra264-pcie-v9-5-fa2ed7350ae1@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G/HsTnAE"
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-38101f85591so529680a91.1
+        for <linux-tegra@vger.kernel.org>; Wed, 05 Aug 2026 23:39:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785998390; x=1786603190; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=4JgssGURzd2pW4+70djq6KMjSjssKWvjAqwyJJjHL/Y=;
+        b=G/HsTnAEYNarg5T1KM04scV3AlZ5fdTn8t/UlyHMMi5QI5rch+E6NwuAAK/JgfgMdi
+         c9b/oa/+rqGGh5PUGlbpJUA5klvXlbuiHAsgkhDS9FE/erWH0yWAqMBCo1JrPA63Bdzs
+         sPHrJkCGKA1WpKk4oBD+lNZtP0lA6846zcI298dfJPrzSxBx93zebp3OL0YvYYMdmWGv
+         14oB/5EcRmDubteJPdd7w6aHpu4kVbnduIEQ7qMtT9Dsz5YngEstji46aiWxX28Ea4X8
+         IizZFzWQ7BcHpT44pnvBGOOONKGLArBuwqNu9M/mNXbzaqW1BLpycfF8dXUy96ZcGMoC
+         PZKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785998390; x=1786603190;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=4JgssGURzd2pW4+70djq6KMjSjssKWvjAqwyJJjHL/Y=;
+        b=Pz0yRAnPOQ9Oaqi6tn0eEebpIU5/uPRGQ0/CG/G0xYKptCWyN4UU+nNhQK0xTDivMx
+         41rYeNcE3Rdb3eMNPkWSasIszDILZpcLrsznKoQXAT3DGxySVdAaE3NRz69aj9CRVKB5
+         G+ibdKC6LyIcnClmzwlPWxKtK1+IL+BBmOyRGVMAsdfYq9saZ8kduxKnB2be+vGBIpnz
+         G7N8gmljA+C6TIcASagM0vb+32cacW3IpJWGx1an9b6AT9rNxG4SCkGTgbsQpUTxBGb6
+         pyMTwgKbTsMQ64h/wnjICzjMoxZMW9ZHPA8fS0LQNfpMuHTP8IP5EPei42YTmr4QZXTE
+         j0dg==
+X-Forwarded-Encrypted: i=1; AHgh+RpJqe+EWwCUgPWNgvbqVvjXUiUmtbMHY/GNhzzyhoS1ZQ9GeFZg/xrHZnQleBipj1VCfuZ04Fbe19coOw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YykguCx7O8nsX12D0bgG+Q6jsI0aKgemeR8ZWcM1Db3ygy91Ahb
+	jcVbuB/Ga4+PCCRo7lmwQeOp/1+B1joLHSN+WP5ghWVGmH4g76tCm5y4
+X-Gm-Gg: AR+sD120vZDv34XrZ2KcEKYSCquGJguLFt8Vx8J9Gq//K2/POxqttwERknPw7xjoZWd
+	QWhw0kp+ePvNM/DXMUJDnLeygR/y3xvwPzhIunVCeb9usUDa7vXfW+sRwwk71Etnbt+X5koqv7A
+	acfmPiwWHtLXNgSs1kQUBzDWUomQaFr+6qXmpd49uyUGsNg+FALcMKRbihf56J/tap1+PXi5/Gj
+	kmkcM9tJ6Yynbm2+wrxEpLm7VMhMjnoZ9W9n6tIV7cVwIte2Da5hum8oAzBXbIxFD+1myOOxd18
+	LpnsaBKrSL/ZDitw3KO6lnAqmc30ZugY0EOParm/eaZARCd/iHTTncKyOhSk8+jC8dlP745ANSX
+	sz4Zbc8aKafDk7LdonLY6fgRoF18wm8WyU08DqK2ruQWc+H6xJcEZP6HxcKjpLZ/L4NQ0uvpQVl
+	g4UrhRBaswUqWLqTDNkjGyWCOEndNcdtIFulQL9jTGhaCt15Zr0lp/388EqBx81SYC/UrDSv9PB
+	YYGXNatiY+htPvd+VG2DbT1Q+HzkA0veWMqv9IMYp5OICjpIPWJVYRSGMu/xjhZyuhln8LCVvf+
+	nP83
+X-Received: by 2002:a17:90b:4ccc:b0:38e:5828:a446 with SMTP id 98e67ed59e1d1-3908982a10emr1041143a91.19.1785998390140;
+        Wed, 05 Aug 2026 23:39:50 -0700 (PDT)
+Received: from phuc-desktop.. ([183.91.15.56])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39085ddd4b8sm875983a91.6.2026.08.05.23.39.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Aug 2026 23:39:48 -0700 (PDT)
+From: phucduc.bui@gmail.com
+To: Mathias Nyman <mathias.nyman@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-usb@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	bui duc phuc <phucduc.bui@gmail.com>
+Subject: [PATCH] usb: xhci: tegra: Propagate -EPROBE_DEFER from IRQ lookup
+Date: Thu,  6 Aug 2026 13:39:33 +0700
+Message-ID: <20260806063933.27331-1-phucduc.bui@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260805-tegra264-pcie-v9-5-fa2ed7350ae1@nvidia.com>
 
-On Wed, Aug 05, 2026 at 01:57:24PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> The bindings have been updated to use the PCIe root port bindings, so
-> the nodes for the root ports must be added.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra264.dtsi | 66 +++++++++++++++++++++++++++++---
->  1 file changed, 60 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra264.dtsi b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
-> index cf9760c681b1..31bd29df8e46 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra264.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
-> @@ -3562,10 +3562,19 @@ pci@c000000 {
->  			ranges = <0x81000000 0x00 0x84000000 0xd0 0x84000000 0x00 0x00200000>, /* I/O */
->  				 <0x82000000 0x00 0x20000000 0x00 0x20000000 0x00 0x08000000>, /* non-prefetchable memory (128 MiB) */
->  				 <0xc3000000 0xd0 0xc0000000 0xd0 0xc0000000 0x07 0xc0000000>; /* prefetchable memory */
-> -			bus-range = <0x0 0xff>;
+From: bui duc phuc <phucduc.bui@gmail.com>
 
-bus-range for Host Bridge is still a valid property and the drivers are already
-parsing it. Even though it usually pass the default values, I don't see a need
-to remove it.
+Return -EPROBE_DEFER from platform_get_irq_optional() so the driver is
+re-probed when the interrupt resource becomes available instead of
+continuing probe without an IRQ.
 
-- Mani
+Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
+---
+ drivers/usb/host/xhci-tegra.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index e7e6d569f1db..cb946eb7a65d 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -1571,6 +1571,8 @@ static int tegra_xusb_setup_wakeup(struct platform_device *pdev, struct tegra_xu
+ 		struct irq_data *data;
+ 
+ 		tegra->wake_irqs[i] = platform_get_irq_optional(pdev, i + WAKE_IRQ_START_INDEX);
++		if (tegra->wake_irqs[i] == -EPROBE_DEFER)
++			return -EPROBE_DEFER;
+ 		if (tegra->wake_irqs[i] < 0)
+ 			break;
+ 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.43.0
+
