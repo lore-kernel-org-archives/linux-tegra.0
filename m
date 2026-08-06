@@ -1,153 +1,138 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010001.outbound.protection.outlook.com [52.101.56.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F9F72630;
-	Thu,  6 Aug 2026 16:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786033866; cv=none; b=AjCKAlq4aZJntvS1sNbCRbcGCQPF1PJnb/Y6RepXUUHTa+tzQ0/EH6TU/rjIteHrFBFSzkqFRheRYs9WSjRTnueCAbMaeNlL0MfmxcuKpf5ajUrWyvHFmjyv149ltKn+awOu72N4YPCyT2tqx3xFFdHaxreGRL1dbM7YE+5B+wU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786033866; c=relaxed/simple;
-	bh=mVTwW0b2WURKlJNz5W6ur6Q9trw1irf346v/mtsQRWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sfzxo/5nLvf58zdgIvA+0hAUTSMhw1iXt+BcOvx12R8YHKsatvXo6xPn6DgD4bvXtxVai+4QJPHz7LL8s3/b4U0mo72MDnl4Vm3uLCimUR1nAqPygSOXum9a0NA1/jgAE9EPo5PHSHJ0sbdkLl5sv6ytgBlLTGv8g2wtbkaPK3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P1kXRt+y; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C2B385D8F;
+	Thu,  6 Aug 2026 17:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.1
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786036985; cv=fail; b=S9G49+C6NzNGmVdPtrkaoLEKLg7j6gv/l3yivmmiFTqbiTpV21PYVSmmDqTl03YHiT0xEu0groDQpB/1FbN6bGeUkKsGVfZVQgDqoM64Z8okYB2V/Zx8FIYy8+RbhUUOmVGcwNqvbAiiIwY9GDgizNvxfv7gk4tcFWrBD7J6J3k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786036985; c=relaxed/simple;
+	bh=oUvKkvoXRPjfyLePifsAZx0Myi3LDmo8ipi/duMl/5A=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L9upIyoxSqFrYIm3yDG1Kz/zWIXDT1NBfdcEcPik9dOrjp6c9u/rxqm9UZIbtx/GjuoCEViFqTgAQI/0zfeD7fG0Im8M99Jn4cTPiczihU/l66+JTMmIN9CKMHXUOONe1S2u472YDXXiKSz65B6AURmSqXJHF5fcNFOgrDmF4pw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uZ8VO3yS; arc=fail smtp.client-ip=52.101.56.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P1kXRt+y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 135FF1F000E9;
-	Thu,  6 Aug 2026 16:31:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786033864;
-	bh=mVTwW0b2WURKlJNz5W6ur6Q9trw1irf346v/mtsQRWs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=P1kXRt+yoIsWD7ulhfbS3urOuVuE0SbPvMDxieMb81wACWsaIkq5JOoANzW7S8NWx
-	 J4fqscMVF4IvMA4A+ZyRcGi0cMYWRm03UyH3hRQu7dJiZRCTeFLT3MM1bCRaAr1/dQ
-	 Wzyv+1ZLBNqWJj5KtPgT6L6qt2ViX4mrbhABS0c2K59hQ/rk5vF3QtJfGoYwVTs7Pm
-	 8qo2h9eKBwfZAv5ivqMMODftIZf+/eIV2YydgQxJmFW66KSbq2aFP8It6DXFMsSP7E
-	 SJIUOL5KNIfVP1j2jZc4I9RAWvtZYm1iUOuYSejOF40J37fdh5bmrCbSSKxhHw9NgD
-	 YOSMfYvvnXfgg==
-Date: Thu, 6 Aug 2026 18:31:02 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: "David Hildenbrand (Arm)" <david@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Russell King <linux@armlinux.org.uk>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes <ljs@kernel.org>, 
-	"Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, linux-mm@kvack.org, 
-	iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org, 
-	linux-trace-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v3 06/11] mm/cma: Allow dynamically creating CMA areas
-Message-ID: <anS0nxAwCXGWZRl9@orome>
-References: <20260701-tegra-vpr-v3-0-d80f7b871bb4@nvidia.com>
- <20260701-tegra-vpr-v3-6-d80f7b871bb4@nvidia.com>
- <b1c1693d-02b4-4c5c-bb0a-1c2d87258d30@kernel.org>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uZ8VO3yS"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JlHGazu7V3cPgsKaAx3rhWU1LTgjdNRWwQhijc4KfRMLhPOqS12HrqXQ8NlCk6gDXecm0//3qVTfjRjlqq34jp3ryBv2B0b/maVS6OJDwHcbQq+jrcsGtiSM3964iNB+LTBcy7lUJz42zMkO6jUDMt/DZjZ+p+eIUd3HRf2AbmNXhxA6gcZbBQFNgZ3nVDqFXUni2ZMAEhc1PHn7A/hYM38jSKIjMObN5awSv00GqN4k4xTRDSxx+HRmHoMPLGT91ISqSVUbQ9DqnXUX9Y9RLLaq+/cbeHCWVuNBjw+RXTqNIXETYQwQJQ7jxWgNXBlOURvzgtNWyqUjxeMAM6xFDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tmcaDwpK93S3fAsc4ociQaqlFYC8VzbLTh28xMRc87Y=;
+ b=Zz+gP0S1qU+dJNfYbb8gFZwVpdOdnZ5nvNa3SCpfVGzMmjevuQtXuCSIWD939EYJUdd4Lvfa+6NNgCd69uah11nPxTwaada6+aC6ouvXjtdCCXDfYGU6oSEnwuglAsDdxPpvR50WNG6UIFtH+8fTjwBlTCPK9b/iJSYVyxkFRCVGksJl2tlTPUxCaftou7Vwwh0S6UjvsLNRD3Zdzh0H+mAM0SXaFVHsGd6PPuO8AryjY6MjXltqdilJIXoJ7/0jF5qdbvXQixt8gLsDORnt2F0YZb3oDa1ibrxUKw8c5nLY11BUJLe65msT7Ii4kYJfxngkpgd/mZpyH7ZZpftUjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tmcaDwpK93S3fAsc4ociQaqlFYC8VzbLTh28xMRc87Y=;
+ b=uZ8VO3ySvt+SKLogsUdYOjhKlZd/t5NiUR4YTd3lCvN/eWYt1BJoUpZZAFoG6R1YPNb+oRg1jX0B0N6upXf1sUamEBfHybqqr8G0bTHKZ2yWbRP5uxQKH9JaM4mAYut2+/9beE7Vppq2ZLS5lOJCLwcbKoiU46JeiFq4bm+e5+pEmM6pJdGaTrEpq+a2p96ZV2lbCsgFTk7ugEkZ/bMp0OpCLTq8z/BGmAXLaOrB6GnaFE2BNR5G450Moxz//wVh76Y6XgTxOiogeiIAK3U/I8LPXdMKWZsYy19cOR4cKsM0Q6Jda6iYsyibb7c5Z1SAaX48eIKxgzoGhei4w/KUqA==
+Received: from CH2PR20CA0004.namprd20.prod.outlook.com (2603:10b6:610:58::14)
+ by DM6PR12MB4401.namprd12.prod.outlook.com (2603:10b6:5:2a9::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.19; Thu, 6 Aug
+ 2026 17:22:54 +0000
+Received: from CH2PEPF0000013E.namprd02.prod.outlook.com
+ (2603:10b6:610:58:cafe::8f) by CH2PR20CA0004.outlook.office365.com
+ (2603:10b6:610:58::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.292.21 via Frontend Transport; Thu, 6
+ Aug 2026 17:22:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH2PEPF0000013E.mail.protection.outlook.com (10.167.244.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.315.6 via Frontend Transport; Thu, 6 Aug 2026 17:22:54 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Thu, 6 Aug
+ 2026 10:22:30 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 6 Aug
+ 2026 10:22:29 -0700
+Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 6 Aug 2026 10:22:28 -0700
+Date: Thu, 6 Aug 2026 10:22:26 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: Robin Murphy <robin.murphy@arm.com>, Will Deacon <will@kernel.org>, "Joerg
+ Roedel (AMD)" <joro@8bytes.org>, <linux-tegra@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] iommu/tegra241-cmdqv: Reject a VCMDQ base above the
+ 48-bit hardware limit
+Message-ID: <anTC0q50E9Kp2zFC@nvidia.com>
+References: <20260729220329.805417-1-nicolinc@nvidia.com>
+ <anSCXUjivdb_aOv_@willie-the-truck>
+ <7e66d67a-f63f-465c-acb0-c1238f534c07@arm.com>
+ <20260806140951.GA71449@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rscp6jw7dv2pn33g"
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <b1c1693d-02b4-4c5c-bb0a-1c2d87258d30@kernel.org>
+In-Reply-To: <20260806140951.GA71449@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF0000013E:EE_|DM6PR12MB4401:EE_
+X-MS-Office365-Filtering-Correlation-Id: da28f438-9f02-4eaf-20f3-08def3df59bd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|23010399003|1800799024|82310400026|376014|11063799006|4143699003|56012099006|10067099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	2L8Dyx4kdzQuG7U+4p4infpKguGeJ829MG+bRQQftwrVt888FUV04ftWAhzWdrCry+3a6VEjyEofqD5tLt9p6Yz2QzNxu34eUyhQQxMh239Tn7t/ugqSzNYSLscxwW+G7R11uqohvfgmHXt0zIehA/K//CPoXDZox/raajnHmLWVRIRMGeQVcll+xr2JZ0OlQ2kPAabOLZjwMQ/5e+OZZzYMZjwpKbjewoDIebBnii7CN6HLrL9+j+uzWLIBTwuateQH9CCBtoX1E5eNWRkf0CD6cV9/ryL+xfFy/+0Evh44iNPYI4VPL090F5FjesB88E699yENKLSm74MERyP4d6iIcPSA5Z35IRfnqfdl0c5ovcjUVaKpazRUYt1XE2hXjWWw/J8NSibJ4uON1pqwYGLjzxRh5QU/06JoN9jz+BSyZTxC3aKXXfr6y/G0zlDVr+wyHxjSmPibjs/pGq91YCG2UGxdq1dJBDoY8nmOYCKsr6tVzBsUr1d4ptHbLOCky96GHdHBFM78clUCOJXYBSWbmkukpWVHuyShkLfoWqa83r+JvfldQ66kjXBh5b3BCUejlTHKk4bYlxQjjQw/lmp5LCfObtiBrGNWRzRZeOYiWAwluNH20oYuHOTEkP2wi1TceDs8zWaPWBPJYeuqO1L1EydEPsJTual5U7dtYA+/k04GgOkST6vsDcWO/9wzYe0z9oLQe9ewcfvyWbMjwg==
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(23010399003)(1800799024)(82310400026)(376014)(11063799006)(4143699003)(56012099006)(10067099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	dLgZWk2+fknKTMV0iJYzqhdSKkUL3/wD13c3RThLCVQHU0iVdpgqKPXCeiaNOVRfC9hqYhotmXFwnEBpxbHPUUIJf1hB7Nm/y3FJLdxdJlcgIkWca23/Hct2NMCptinkXog9MRJWbJy5TPVs5KlWpBm7jLGrcebTH7yiHGmedojSOyw8CMYUfvkYJbIWWuTQgwEUegT1RSLX4+bqiFX6S6WJGnaGtSmFTi2T4wBfiTezzwZchFv/37Waq261P+YHIFL6e6mjDIOVC3jz1I+4LzjaPOyk4JtS1KZO+tN3dSq+0iyoSHm+ief905QmvWT9OvOu2sDOI7ht/yNlMxuCc48vvNqw7de/YNZBsoaMoCdUYhe4E2yb5CxmXLe0nx3lfueDfU6x2uAYLzWTU1HakjKt1MESj4XKBIx1ObRNXWnWMoxwv6Y60xcpdaXqBjMM
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2026 17:22:54.0021
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: da28f438-9f02-4eaf-20f3-08def3df59bd
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF0000013E.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4401
 
+On Thu, Aug 06, 2026 at 11:09:51AM -0300, Jason Gunthorpe wrote:
+> On Thu, Aug 06, 2026 at 02:17:31PM +0100, Robin Murphy wrote:
+> 
+> > But if we really do want to bother sanity-checking emulations, then why
+> > allow them to still get away with being broken in the case that we do happen
+> > to allocate queue memory at a sufficiently low PA anyway? Why not actually
+> > validate smmu->oas itself (plus anything else relevant) in
+> > __tegra241_cmdqv_probe()?
+> 
+> Yeah, if the VMM has setup the SMMU so it cannot access all of DRAM
+> then it is going to be really broken across the entire driver. This
+> just doesn't work at all. No reason to add any special cases to look
+> for it only in vcmdq.
 
---rscp6jw7dv2pn33g
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 06/11] mm/cma: Allow dynamically creating CMA areas
-MIME-Version: 1.0
+It sounds that a rejection in __tegra241_cmdqv_probe() wouldn't be
+necessary either.
 
-On Wed, Jul 08, 2026 at 10:59:46AM +0200, David Hildenbrand (Arm) wrote:
-> On 7/1/26 18:08, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > There is no technical reason why there should be a limited number of CMA
-> > regions, so extract some code into helpers and use them to create extra
-> > functions (cma_create() and cma_free()) that allow creating and freeing,
-> > respectively, CMA regions dynamically at runtime.
->=20
-> I'm confused. We still allow cma_create() only during __init, right?
->=20
-> Would we expect callers of cma_free() after __init? Or at which point?
+Let's drop the patch then.
 
-The idea is to allow cma_create() at any point. I forgot to properly
-remove the various __init annotations to make that clear. I've done that
-for the next revision.
-
-Technically cma_free() could happen any time a user no longer needs it.
-While we currently only do this on error-unwind, the Tegra VPR driver
-could technically be turned into a module and the entire region be torn
-down at that point, including calling cma_free() on all the chunks. I
-don't think we ever want to do that and it'd require a bit of tweaking
-to the OF reserved-memory code, but generally speaking I don't see why
-we wouldn't want to allow cma_create() and cma_free() at any time after
-__init.
-
-> > The static array of CMA areas cannot be replaced by dynamically created
-> > areas because for many of them, allocation must not fail and some cases
-> > may need to initialize them before the slab allocator is even available.
->=20
-> We can start with a memblock array of an initial size (like we do today).
->=20
-> Then, when you need more space, we can double the size (copying content a=
-nd
-> exchanging the pointer). Either allocate from memblock or from slab, if
-> available (slab_is_available).
->=20
-> memblock does something similar, see memblock_double_array().
-
-After replying to T.J. I think this static array is actually a nice
-feature in a way. It allows us to more easily make a distinction between
-the regular CMA regions created from reserved-memory regions that
-represent classic carveouts, and the more versatile CMA areas that could
-be used for any purpose.
-
-Telling the two types apart could obviously also be solved using some
-kind of flag stored with the CMA area, but at this point I don't really
-see a reason why the two lists would need to be unified.
-
-Thierry
-
---rscp6jw7dv2pn33g
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmp0tsYACgkQ3SOs138+
-s6EDqQ//VPlX14ZCCWQFTzMM+CH1U7z90n2OI2r6sVAf3mIXAqF56hCOe1TSTHch
-SLJpzBAU/F15bA6jirr2jOS8SHr7N0C+ox5M2yoEGywgGsbTEOjWSvejWrHWkJ9m
-7fdcdEl/hB7yzbpBvDMxGiATg+0SwQrhy4Sp7105QzaPpE3/9dS5UXbQuhsbCcAy
-4fU7Xd3wOOLcxg5u7Fl0ggfWHiAX68o32alTzPijPaVubxFJ1RnLQLeNhTdwJv03
-nvh3RVR8dpDTY7hZbsTr/4r5+4L3ktGvufT5m3K0lImfKVb5hklsKVbNTnQMtJ+i
-nAC+BTofn33vMautsZwPhhAQeesfMSJkuNASPD9kqZ0U+b+W7XtmmkmwbigS2r9u
-1lajCmiV77/KeZazBydPFJzqt+0lEkLAwWtBAk+M/Fw0Lsx3/ycfApXqEtCv/Jfw
-G1oTIraXEv0tXgSbl0Q0zAY/TKTgTmtNqVNbLJh2VxhQiicJGiEYZ9w7i971TlUs
-obsrwFtpOrWdkBI8VFGUm59sNK7yjrl2XWpejZ+xmhY4GanpuNYf/Ki6nBhTn39r
-qUNyB63c492tlL7PYUHVx1tMFCMwDBPw9wg5Dn57++j5s3gmoAmgqaAykpl/tuhB
-lRoRWYWo4mgQ/C62svXRtyqVx5TMhQpRLrpQOAGdx4y6SF4GmGk=
-=TjKb
------END PGP SIGNATURE-----
-
---rscp6jw7dv2pn33g--
+Thanks
+Nicolin
