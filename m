@@ -1,120 +1,78 @@
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744F93A6B8F
-	for <linux-tegra@vger.kernel.org>; Thu,  6 Aug 2026 07:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.174
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786001473; cv=pass; b=hkfC0rkW8uCTV6gWFEe6HJoqA8rUMOV299fz/sY27Fdle5+G+yvxX5fnozOg11fDVJ/9nbZ4YgHuP0/CRBF3GeZppjHxp1fKYR0PR+MNmgFLfU0JnMSr0kx+BBXRtYRk9YSSzhA3710Q6sUfccEyUiKNxG6i4s2WCfKhmL4LLDM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786001473; c=relaxed/simple;
-	bh=cCy8hNBytO7JCihs71pSJO8ASKujFEFLUhGTIu5VSac=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xxwa21YspIXFVGBWe1Nv00RxJREb7yhBLD+PBhxLvTTlgvVlgDFqTPHSmLbO/TdYcKUyn9S1GYIVagPWLoqZmS3pTeA130U101drkPu/ALjuEuYNCwNgVfSkOl1H8HfIUN3de5r/KJEMOpgMVKm83qVmcZCWK3Fzokdb1vqkWdM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SoMB823g; arc=pass smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D33284B4F;
+	Thu,  6 Aug 2026 12:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786020452; cv=none; b=lATfHQ6GTGaU/RjUbKPW401W090Tgw2Byo5JX1RMyZB8C8ptrUB+RUhE1JQR3qGMS9Erpd9IeKfHzUsDhJK57HkKU/nvxibHrX339oho3tDr6AcqzTWSTG7VxMN3S1i+/BOwI5X7yn4RsACmEjbkXR3qHI/iqVnLZ5m0Co6Rebk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786020452; c=relaxed/simple;
+	bh=I+fdENFWe3sXZFsezoAv+93k3fULySOQz/762exVSBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mEnepz9ZH96uAnb2OTok7KjDTFlMQ0CTNEi7tPm+OCdYT1gtC+9CySPpJ6vsIRIuUMrQ2RmJVfGdSnm9aRKo0NoEIogzT8drTW0z3brTj8kWrqINsws28ouKvdcXI0ZenPwEv56NlO5Q4W4g5HCDGU/QmgazB1XsLZyPmd+YkxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GgkoqYVo; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SoMB823g"
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-84a4d8fd6ecso2306552b3a.1
-        for <linux-tegra@vger.kernel.org>; Thu, 06 Aug 2026 00:31:05 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786001461; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Rl7WrlSEFTfgWM2tVTDut9X4fgl1Mc+FtKfw8R+cA2f52YsCD5bg4tDcC19IEYJ3qp
-         D+6taEbkeXaL8ExyM8VFD8I1Ofi4rLVu3rpmUzpgMEyeop5sKr7l0fXx0u6hQAGYg5KH
-         0uyaeHpEleit5oCte6e+MWSDYnHWOTmqqy0F+XnhU/0oQuJ34SIWLc1O1u1HEgZ9zDR8
-         Qs8V10Cu8IipnTWo9WTYiRsRBS9jMJZ4MDGMxQltPB8LPTFRLucAToJFsu5eMDTJULw+
-         vLvu6Bgqtf7c05ANN0vtZXmd1J7HNl2FlOwU4W+PKbnXx52P115KnUFHyY+uqGlaT8Xv
-         0BXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=cCy8hNBytO7JCihs71pSJO8ASKujFEFLUhGTIu5VSac=;
-        fh=XAahXVvSqhZ3Y7nQQKdexAoBqy083IKPM3ULF68TVJE=;
-        b=N+L3eXRUGo3cvEvYPNuMgnOa4lBl5Zb/DJcLDgCCwPwb1qWcvuzAKr5D2UF7hDeD+u
-         w0YTPYr2RSRza8sPZkdTYZnzkGu9aMwrngxISLwrkcI5Ntsr+SVf+JKZKTgJKPRIczKp
-         kCdSqj5gAcCZm9FAf1oQv6zemZ2yeROqGK8Wgj1EYpFKELY9VukdII1mUCryqN4bnF8b
-         Rnk0PpC8ssljpEiRQKdT5n9uOG5uh38f0/uKtg0iX+zkH/l2OduD6lui98TA/PVhGdbG
-         4+lDbNa3zosTFSFRG9wUHezQ6nbxFhz3/9pm3ZB3n2oJcfHg3QYNcWOeUyHT4tp62ORm
-         EdrQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786001461; x=1786606261; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=cCy8hNBytO7JCihs71pSJO8ASKujFEFLUhGTIu5VSac=;
-        b=SoMB823gkJhh+OfcBaYymZmx6Dbb6UwyzCs2TfcHoQYe1SXaO3XvR8MrkQx4qWGLI9
-         AL5tDcRGFFgVkIVBSYinB/WRKVOJtXYE+inAFxDHwOyEC+mKRR+CLl8RxmNPCts9C6kQ
-         V91MwnvXe3i4OG5ha8yVHvj6oIwjCfOKFrxJZ5xI9VIOSdkvrtbpuFyDYJODZYgmJQPI
-         NF3qk4w8RHwgvMpRF2cT/t9Ojj6DKWy8rHOOc1tB2EdaEb0MSnR+AFxVktGEVgeKUtZP
-         OjMgfX3zy4CLDJFwrdHFK2HqIc/B5FauRzz2gc4iZKcX4nYFYvboDfyv40PTxJWiZr3/
-         TnFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786001461; x=1786606261;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=cCy8hNBytO7JCihs71pSJO8ASKujFEFLUhGTIu5VSac=;
-        b=P+vQJDuanZaHWj3Maqd0/gaQ16a6mRdC1vhc2OufFuhK6/qrELw0WmutUWV6ImGaSz
-         NYJroR2yiQ3crdC6YCl7RstrUnHPURY2uBVo5AEzpKngsOgBS7gPGJI7XaerDm8dvq3+
-         XP6UQtKOSPY3Kd0p1OE7MziprHRZvdBCkRfxjozFoPARz/snelaPmp/a+xmUd464fVrW
-         kjW7Q5EZIiE5yr+EUFMrSq0zdS9nWG6+tpYTiA7p879kGRncPpIW+p5WrgSL4+zXSOmG
-         zLi7IHYJ+Nm5WbxNKiuBluRoVJCOkDGT4icDbpzAiW/kAF3Ufm2naP4RkqHpbg9mjUlu
-         9u/Q==
-X-Forwarded-Encrypted: i=1; AHgh+Rr3pdo/KuNACyA0a7DSF3ote/LpkPv7VqRJzXKlPRQ8/pCiNhhBLfkfE6hzXrb2ByoyGDdB05RIfQVMMA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkTRwOu9Q+O1lvFg9LHviB8VsruvUmDjKj5mOJ6Y7pZePui06w
-	My9FFHAeSJdyhy1vWjKA42xNKgHGoE2U5jItg/TFhZj8023b2Wf40L1/jZdW6UVSMHBhTTWyw0J
-	9SCRj6RNWK5YBLrcZZ0SWl3BHnDqKE+I=
-X-Gm-Gg: AR+sD12iuQyWYGxFhRI1Qmlk342s6caiD46z2JPvC4kOc8Ki0Yx0NvEO5q8sO6wHDoJ
-	sccu5awkfKX1q8P6+6h03iZVqGeKUt3kormq74oNpJ/84e3HwQVXT9MPrdPv7756AuRBfzXRUTh
-	5OSnCeSgOZUnTBZtA5Eq17o8aogEr20F6By9d6CgRGZRF8xD2e0bG7i0wR20RghWeJ0YdETZXWl
-	AAt3h2ur6QAiA2mdO8PgSLqGnFy1VPwJd6E/rAuYDTsznJI7pcUXvPA9evxr4nuhFK6NSOt0dS8
-	Xlg/GNixcQmK/cd3f7RqEHnH9QneHk0ines1e5CmhCMR5LM968Rawgg9yYvyqHAj9Tuy1bJYH0C
-	aljvStzhtgfCyt70mR17drQmWuC0ygLW8iMbWvmD8ZUPvpBCw3GcOtvgA
-X-Received: by 2002:a05:6a00:10d3:b0:845:36a0:9eb2 with SMTP id
- d2e1a72fcca58-84f2e13a5ecmr13832406b3a.34.1786001461253; Thu, 06 Aug 2026
- 00:31:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GgkoqYVo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66E021F000E9;
+	Thu,  6 Aug 2026 12:47:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786020451;
+	bh=gaxlKJGTsZngzdaWcyP0O7FUrV3KkW/yE5t2F7iml8s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=GgkoqYVo2ffsadHBiZ95EO4eOAW64JMlxzI9/C1I8pgBeuGIOuq6b5+hO3ZtpiK3V
+	 Rg9VWVNiu8I5TVq7dlTV/kUE8cwy/C6+b/ohOoQuEDYlc+oHg7Y/WBcSK+vsC+klfp
+	 P7WlegvBHxB8v6mgFm5wDVO7O+qFp/ktqh6jblHhuaDkxlUHV2ITJfGuBYNcMLFbxx
+	 aeG+Irh0fNIqZvIFDMs30W/FqrK+hz2iD4FMtvcgeiPGlc9hAaOHACjffhyTbyvay1
+	 FZNGZOAiIecdnbOBSA5Dhw1t0oW7i07iyYJ8hzahAcNcYD5PLokpHErIfTafXS6C+I
+	 aAZKhvGgAQ9MQ==
+Date: Thu, 6 Aug 2026 13:47:25 +0100
+From: Will Deacon <will@kernel.org>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: Robin Murphy <robin.murphy@arm.com>,
+	"Joerg Roedel (AMD)" <joro@8bytes.org>,
+	Jason Gunthorpe <jgg@nvidia.com>, linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] iommu/tegra241-cmdqv: Reject a VCMDQ base above the
+ 48-bit hardware limit
+Message-ID: <anSCXUjivdb_aOv_@willie-the-truck>
+References: <20260729220329.805417-1-nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260806063933.27331-1-phucduc.bui@gmail.com> <2026080654-glass-swiftness-7068@gregkh>
-In-Reply-To: <2026080654-glass-swiftness-7068@gregkh>
-From: Bui Duc Phuc <phucduc.bui@gmail.com>
-Date: Thu, 6 Aug 2026 14:30:48 +0700
-X-Gm-Features: AUfX_mxyG0a57Dzpk39ihaHkRqHzR600KbxPXBwJyNP8FCTm6REQEj8d067Yt1o
-Message-ID: <CAABR9nGBLoRdHUp_a35E-ASa6RzMu=z8GXDjPYw-ptAPfZ94kg@mail.gmail.com>
-Subject: Re: [PATCH] usb: xhci: tegra: Propagate -EPROBE_DEFER from IRQ lookup
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Mathias Nyman <mathias.nyman@intel.com>, Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260729220329.805417-1-nicolinc@nvidia.com>
 
-Hi Greg,
+On Wed, Jul 29, 2026 at 03:03:29PM -0700, Nicolin Chen wrote:
+> tegra241_vcmdq_alloc_smmu_cmdq() allocates the VCMDQ buffer via the common
+> arm_smmu_init_one_queue(), which uses smmu->dev and its coherent DMA mask
+> of DMA_BIT_MASK(smmu->oas). An SMMUv3 queue base holds a 52-bit address in
+> Q_BASE_ADDR_MASK, but the VCMDQ_BASE register holds only 48 (VCMDQ_ADDR),
+> so the masked write "q_base = base_dma & VCMDQ_ADDR" silently drops bits 48
+> and up. The HW would then fetch its commands from a wrong memory location,
+> which likely raises VCMDQ errors.
+> 
+> Real hardware always pairs an SMMU OAS with a matching VCMDQ address field,
+> so this cannot happen; it takes a VMM that gives a guest a mismatched OAS.
+> Nor can the guest rely on the VMM to catch it: an SMMU CMDQ base keeps bits
+> 48 and up in Q_BASE_ADDR_MASK, so a trapped CMDQ_BASE write still carries
+> them, while a VCMDQ base goes straight to the hardware and loses them.
+> 
+> Reject a base_dma with bits set outside VCMDQ_ADDR, the way the user-VCMDQ
+> path already does for its base_addr_pa, failing the queue init rather than
+> silently truncating the base. Use dev_warn_once() rather than WARN_ON(), as
+> the OAS is VMM-controlled and a WARN_ON() would let it panic a guest booted
+> with panic_on_warn.
+> 
+> Assisted-by: Claude:claude-opus-5
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
 
-Thank you for your feedback.
+This still just sounds like something that a VMM shouldn't do?
 
->
-> As before, how was this found and tested?
->
-
-I found this during code inspection while cleaning up probe functions in
-the Rockchip ASoC drivers.
-
-https://lore.kernel.org/all/20260806052136.21034-1-phucduc.bui@gmail.com/
-
-platform_get_irq_optional() returns a positive IRQ number on success or
-a negative error code on failure, including -EPROBE_DEFER. The driver
-handled positive IRQ numbers but ignored -EPROBE_DEFER, continuing
-probe without an IRQ instead of deferring.
-
-I only compile-tested the change. I don't have the hardware to test this
-path at runtime.
-
-Best regards,
-Phuc
+Will
