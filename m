@@ -1,40 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1467468C20;
-	Fri,  7 Aug 2026 15:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946073F888A;
+	Fri,  7 Aug 2026 15:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786115719; cv=none; b=hLhyx8OxWi6zfkN1Ofw+o9y7ZoqpPFzB4RVJyr4JCX7owwyR97QaJH0SgCSIeDoKB+uZllbUo1E1Ndp2X6FCwoSGHUl1JlaRqIKBFR2g2C63pM3FWPD3Z/vMVvJFa1rKjIH5xBamcQm5U7U3x/iwvDuIsBR6yVgiFrSNaapbo38=
+	t=1786115776; cv=none; b=mNFN75lyOIrBtoP6unMcSAIWOcyxm+mozRlw0WsTxefPO0tEIHCYN5WbyNAghqzGBtwLzUWO9wR3BARCe2YRy3PpSIyKFhszw8mEl8SElOdW4lA1EyTLAw2nbn5OZ+y/UXhPwsDiKGPQ2iqdMkaaVw8hqC3zzMH/IM/30mJKhYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786115719; c=relaxed/simple;
-	bh=f/caM0N3RnSVZDerdHsjA/MX0+DIIg6Twwn12zJpdJQ=;
+	s=arc-20240116; t=1786115776; c=relaxed/simple;
+	bh=H8yrn3zU88+YGZpMsb1tWv156XW4OskATJzzKfHsKY4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rSzNXDwYVkYkaBBEd0r4PsXyQH88cjyUZgCqjSV9a0A5Z6PKxOO4+p3VyoTYiiQJ+9ObHjb+cbWwjw9bx0SR9dcJ6iMIzSCkfbBk9XhbHwP1lNkDZZGVhyTkQntqzBYMrg1DIV4S8TXNJA/wqevfFD9hYAkirrSefd8kfu5Kpfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1ctHpOp6; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version; b=jl7dYwAlinrkyqo9p+qb5n2Y53IJ3M0j5bLJcBIb3/yU3Mc4TeJkMeFPwdwMTGcm4j25YIL5ZlbcaUjEirQ2mwNbxQ5WtMr2gz7x/i4bOrrjQV3CQp2BJ4DB5A9Hg0TJ4gEIDnkV9hD8Gv9W5kX7YU6ikSlM1cZAXfAFdU7Dxc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RXWnnIa2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1ctHpOp6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 093CA1F000E9;
-	Fri,  7 Aug 2026 15:15:17 +0000 (UTC)
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RXWnnIa2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFA0A1F000E9;
+	Fri,  7 Aug 2026 15:16:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
-	s=korg; t=1786115718;
-	bh=7g8Y+FgcmohVTs7tyS+7VOkxjtVPgvUC4Na94V0Aexk=;
+	s=korg; t=1786115775;
+	bh=0I6fBDlFuWE44Yo92mGchDuIndWnToG3oAGouaYZ5G8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=1ctHpOp6FWrezPa8ErNITypHnWjC+E1y4JQa7IHpJKov5qAZfEoDvpFCmd2VG+tML
-	 Z37hjsdApXugyDC2n1eaeYnwf16i3y+onmcEEKpIio6R3SQVqmqm4jcczppsOTm1mw
-	 o2nGmv8r9kgWcSDzmMNahgFpCQZRQeU6vOAn722A=
+	b=RXWnnIa2KYCe42/H3AnRQtkuwVnnopmG7kV2VsTVztGmOW5k9vrQChP6rpuWJDyja
+	 lRuEbxSLSRs9S8XYB1f4NpCe5C/JTOi7llwwOThEIbxD6vRQfsdZGG9W5dxSuNUXJu
+	 lSYv5HJyUK9HnEn065YsWphb6HsB1siRm6RBdjsQ=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	patches@lists.linux.dev,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org,
 	linux-tegra@vger.kernel.org,
-	Thierry Reding <treding@nvidia.com>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.18 373/396] drm/tegra: fbdev: Remove offset into framebuffer memory
-Date: Fri,  7 Aug 2026 16:38:53 +0200
-Message-ID: <20260807143432.328519401@linuxfoundation.org>
+	Thierry Reding <treding@nvidia.com>
+Subject: [PATCH 6.18 396/396] drm/tegra: fbdev: Do not assign to struct drm_fb_helper.info
+Date: Fri,  7 Aug 2026 16:39:16 +0200
+Message-ID: <20260807143432.815447802@linuxfoundation.org>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260807143424.272339768@linuxfoundation.org>
 References: <20260807143424.272339768@linuxfoundation.org>
@@ -55,56 +53,30 @@ Content-Transfer-Encoding: 8bit
 
 From: Thomas Zimmermann <tzimmermann@suse.de>
 
-[ Upstream commit a18b6e30ecd69096beda4a0c96d2570900c3879a ]
+commit d23bd83f3e47a928e783c0d6a004737519dc77dc upstream.
 
-The screen_buffer field in struct fb_info contains the kernel address
-of the first byte of framebuffer memory. Do not add the display offset.
-This offset only describes scrolling during scanout.
+That field already contains the value being assigned. No need to do
+this twice.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-Fixes: de2ba664c30f ("gpu: host1x: drm: Add memory manager and fb")
-Cc: dri-devel@lists.freedesktop.org
+Fixes: 63c971af4036 ("drm/fb-helper: Allocate and release fb_info in single place")
 Cc: linux-tegra@vger.kernel.org
-Cc: <stable@vger.kernel.org> # v3.10+
 Signed-off-by: Thierry Reding <treding@nvidia.com>
-Link: https://patch.msgid.link/20260421073646.144712-3-tzimmermann@suse.de
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Link: https://patch.msgid.link/20260421073646.144712-2-tzimmermann@suse.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/tegra/fbdev.c |    8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/tegra/fbdev.c |    1 -
+ 1 file changed, 1 deletion(-)
 
 --- a/drivers/gpu/drm/tegra/fbdev.c
 +++ b/drivers/gpu/drm/tegra/fbdev.c
-@@ -78,7 +78,6 @@ int tegra_fbdev_driver_fbdev_probe(struc
- 	struct fb_info *info = helper->info;
- 	unsigned int bytes_per_pixel;
- 	struct drm_framebuffer *fb;
--	unsigned long offset;
- 	struct tegra_bo *bo;
- 	size_t size;
- 	int err;
-@@ -118,9 +117,6 @@ int tegra_fbdev_driver_fbdev_probe(struc
+@@ -111,7 +111,6 @@ int tegra_fbdev_driver_fbdev_probe(struc
  
- 	drm_fb_helper_fill_info(info, helper, sizes);
+ 	helper->funcs = &tegra_fbdev_helper_funcs;
+ 	helper->fb = fb;
+-	helper->info = info;
  
--	offset = info->var.xoffset * bytes_per_pixel +
--		 info->var.yoffset * fb->pitches[0];
--
- 	if (bo->pages) {
- 		bo->vaddr = vmap(bo->pages, bo->num_pages, VM_MAP,
- 				 pgprot_writecombine(PAGE_KERNEL));
-@@ -132,9 +128,9 @@ int tegra_fbdev_driver_fbdev_probe(struc
- 	}
+ 	info->fbops = &tegra_fb_ops;
  
- 	info->flags |= FBINFO_VIRTFB;
--	info->screen_buffer = bo->vaddr + offset;
-+	info->screen_buffer = bo->vaddr;
- 	info->screen_size = size;
--	info->fix.smem_start = (unsigned long)(bo->iova + offset);
-+	info->fix.smem_start = (unsigned long)(bo->iova);
- 	info->fix.smem_len = size;
- 
- 	return 0;
 
 
