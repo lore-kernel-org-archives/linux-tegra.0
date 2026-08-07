@@ -1,28 +1,28 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F3B3806B0;
-	Fri,  7 Aug 2026 14:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1467468C20;
+	Fri,  7 Aug 2026 15:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786114655; cv=none; b=M0IvkiOoHWVt9LCXtA5Qs3fR1knq435FpcUQ/f01XA3h1w78KU/4uEcGdBfOG/R54ujZtF1GxPilSNxpiVdKYrMBpsXnkI9QZ14ZaOjEksh24seGkKXc1haTPuycjVpDiWQjCCHkkNrpDxTPM7J4KvnQYyRBzqAT/4piLhhdsoY=
+	t=1786115719; cv=none; b=hLhyx8OxWi6zfkN1Ofw+o9y7ZoqpPFzB4RVJyr4JCX7owwyR97QaJH0SgCSIeDoKB+uZllbUo1E1Ndp2X6FCwoSGHUl1JlaRqIKBFR2g2C63pM3FWPD3Z/vMVvJFa1rKjIH5xBamcQm5U7U3x/iwvDuIsBR6yVgiFrSNaapbo38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786114655; c=relaxed/simple;
-	bh=aNgMHEfDOGGzw8tlco2WHQ9jFA9iz3aKFKegSbUkGbk=;
+	s=arc-20240116; t=1786115719; c=relaxed/simple;
+	bh=f/caM0N3RnSVZDerdHsjA/MX0+DIIg6Twwn12zJpdJQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jXhxz959bFEGrEPv6mU5goABurOuLh/lFCg3AGgAZjeXnNeN+hRYQZ2C9vspBE+ULl/7851hTcn+HkVgRmIca+Iso2Zc7mhpGhwU3Ovbq2UDi1EtHoA29K+fHpSNjnu3RYBFoTuRje/3K+Rp9ZBPNwMek5+dnN3BtQ82vk2UMEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0OiSKdHm; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version; b=rSzNXDwYVkYkaBBEd0r4PsXyQH88cjyUZgCqjSV9a0A5Z6PKxOO4+p3VyoTYiiQJ+9ObHjb+cbWwjw9bx0SR9dcJ6iMIzSCkfbBk9XhbHwP1lNkDZZGVhyTkQntqzBYMrg1DIV4S8TXNJA/wqevfFD9hYAkirrSefd8kfu5Kpfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1ctHpOp6; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0OiSKdHm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18FFF1F000E9;
-	Fri,  7 Aug 2026 14:57:32 +0000 (UTC)
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1ctHpOp6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 093CA1F000E9;
+	Fri,  7 Aug 2026 15:15:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
-	s=korg; t=1786114653;
-	bh=i7qAU9PC85pfCMpTQw3RP3v9Z9elbZRQagbuUnQXWrc=;
+	s=korg; t=1786115718;
+	bh=7g8Y+FgcmohVTs7tyS+7VOkxjtVPgvUC4Na94V0Aexk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=0OiSKdHmExVI5i1sO+qICb7IuNeeWXFdiYR9Wi78F7D7XvzQzEEVBxxUMEcAw87Vc
-	 QTgXpk/vxf/0qveEBQL0IeC04hEk44J72t3nmR5khc/9uMipB4CzbXFvsaPJRNz8uT
-	 RhdA9ePb3WjFAZCOweLmSDuwoOLNh+wki8NOXQc0=
+	b=1ctHpOp6FWrezPa8ErNITypHnWjC+E1y4JQa7IHpJKov5qAZfEoDvpFCmd2VG+tML
+	 Z37hjsdApXugyDC2n1eaeYnwf16i3y+onmcEEKpIio6R3SQVqmqm4jcczppsOTm1mw
+	 o2nGmv8r9kgWcSDzmMNahgFpCQZRQeU6vOAn722A=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -32,12 +32,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-tegra@vger.kernel.org,
 	Thierry Reding <treding@nvidia.com>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.12 315/337] drm/tegra: fbdev: Remove offset into framebuffer memory
-Date: Fri,  7 Aug 2026 16:38:38 +0200
-Message-ID: <20260807143425.357899490@linuxfoundation.org>
+Subject: [PATCH 6.18 373/396] drm/tegra: fbdev: Remove offset into framebuffer memory
+Date: Fri,  7 Aug 2026 16:38:53 +0200
+Message-ID: <20260807143432.328519401@linuxfoundation.org>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260807143418.516897842@linuxfoundation.org>
-References: <20260807143418.516897842@linuxfoundation.org>
+In-Reply-To: <20260807143424.272339768@linuxfoundation.org>
+References: <20260807143424.272339768@linuxfoundation.org>
 User-Agent: quilt/0.69
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -49,7 +49,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.12-stable review patch.  If anyone has any objections, please let me know.
+6.18-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -76,7 +76,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/gpu/drm/tegra/fbdev.c
 +++ b/drivers/gpu/drm/tegra/fbdev.c
-@@ -75,7 +75,6 @@ static int tegra_fbdev_probe(struct drm_
+@@ -78,7 +78,6 @@ int tegra_fbdev_driver_fbdev_probe(struc
  	struct fb_info *info = helper->info;
  	unsigned int bytes_per_pixel;
  	struct drm_framebuffer *fb;
@@ -84,7 +84,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	struct tegra_bo *bo;
  	size_t size;
  	int err;
-@@ -112,9 +111,6 @@ static int tegra_fbdev_probe(struct drm_
+@@ -118,9 +117,6 @@ int tegra_fbdev_driver_fbdev_probe(struc
  
  	drm_fb_helper_fill_info(info, helper, sizes);
  
@@ -94,7 +94,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	if (bo->pages) {
  		bo->vaddr = vmap(bo->pages, bo->num_pages, VM_MAP,
  				 pgprot_writecombine(PAGE_KERNEL));
-@@ -126,9 +122,9 @@ static int tegra_fbdev_probe(struct drm_
+@@ -132,9 +128,9 @@ int tegra_fbdev_driver_fbdev_probe(struc
  	}
  
  	info->flags |= FBINFO_VIRTFB;
