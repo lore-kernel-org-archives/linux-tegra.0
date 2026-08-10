@@ -1,95 +1,64 @@
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012051.outbound.protection.outlook.com [52.101.48.51])
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010015.outbound.protection.outlook.com [52.101.69.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF54C3DD50D;
-	Mon, 10 Aug 2026 12:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F8F3B9D98;
+	Mon, 10 Aug 2026 12:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786364754; cv=fail; b=EaXOgCX6QtnFoCbC59yUpBWsc6kjHGjlDPct9uoyU40QiWxyhXO97vY5FTdrH+NBMYw0GXCtrkwyVfR46TRGTaJj/CSStbyX7b4jpkdOBOQ4SiF6VuZNQrU5yA83l0X4rY5FgLORrgwkOwkLDYCk+lskg1oOCtC2Z1RA5WutfBc=
+	t=1786365809; cv=fail; b=okw+87wSRXdUcjP2pKNDjOemfk4ilohj2a4jFiz6DPRwhlO+lslH4d0+w5nBuNwRNX2k+uBWr4FJrczvXnFdzdrujm+iwqF9E/TkmPd8VQRh/EsxKxKEiwZabPO7TZr+7I93MeIio1dwZzP5+kmy15KgoWAZKwVW3flYTBN9qyw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786364754; c=relaxed/simple;
-	bh=aK29VlhHM+oLCqUtbKTXAuivwl3purBvTZUcg7IJExQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=HPZEo5HTB5prSxzGAGOHluWXEDbS4c7IvuK6AnfiwgR8Y06Xe5sKPkdt7fATzmbkrnkX7F8GSIfV4MFRu52XUb8ud/n5N5MWhvbyRuXFRmPsboQtpSiSH7FlyUhddvAHqlC9g4SrUMZDUq/KFlW1fKhkB5G/3aH35u0+RCCmyvw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ej0jUfMT; arc=fail smtp.client-ip=52.101.48.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1786365809; c=relaxed/simple;
+	bh=hGIrqxzLto9BvfOiPB78fEtx+MIaG6N7CgOZJ3p8feY=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=qVdTZBe3Nl0Sx/Dj//gylOWaVuJbsYneF5WHw6E4LCz+Mv1S6/3khNBJ0vwxL7WPpOcyA2kSd1pPvK/8SDN1hTWpxRH4ulspaiaTVzZ8ANgzMN5YBS4fD05cPKjJ+hCNl5xiw7gnW2EyX9zQEq5A+I/y0/SlwID1GrJFcq9aN1w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=JR1pk7vy; arc=fail smtp.client-ip=52.101.69.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ej0jUfMT"
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="JR1pk7vy"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hX6LJJZvuzmas9yuEFSzCNKOvrfQxgCI+v46kQmrBcAHdE4raUlfobAVC0Np/1qZKIko1zlS94W+9rmFEVuTgYM7OFNxSMJvomYtjw76w36LAgwQjHgGRHtiZhbEjjzgRA4Mj2sqQo7Q1VbVAIhumpKO0Onl4LYVcw2AJJotTlerk9Q1MPZdVpCGS5gA3u+zSnpndSX4lG7KkZnNugex+WdXr5h1woVkq228hmvaYsgqNWAeH7f9i7SGJ4FLnq4MZTSSvrctpQsbu4HDrTMWS6FACfVPLWSztLIFCRJMTl0P3WkzfiRZ/8RwXICorTRQMm5sPlpDh5gTurkAW9p9Lw==
+ b=yf0Kv0BjkIL7cIkEXx8gEUlJRbYwDBwaN+VenvGSi2RIVk5J6l82ATINxX3mdtCU2oHkXapf9XhiQmbYV0X6skGJB8n9RhkwUNNJWeQMX5hjEx3ScV7s3RmjzEduvxZqPzTPJvl20Luxkxo29DYxrrmHaKxNKISfD8sZkEjflI1GkpsCL8U/rsj+M+C4LCcPv6LfinBJ5WQ3BmBuxECR6UZtMpfs+7YyeYtDDJSEt2z19nqgLF9scOwfrSUBHeL/Kc/7Ksc60HAGO6zMMcqEldX/sBx9FtarszmB3QPv5pbbNvc/aqs+aZ9RaKRwQQHrJDErzdGA2jxuT/v6epwaJg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XgPKZhkjoZuhTLTuO+WqzRIbzYH5KCcDPOZXqaOTOMg=;
- b=krb4NyG3ratYdT+XimY4POFDGt7k9+EZyCpKEW7+sQKQ1Q3d6qD0A6qldE8xEfwlj9kF8s9+kk1A8y5m0qiM0Ipnl58gw5EPBrCgI7RSV2Eo5vSub+83xTi/JW/+MbBu3hkGTIybxL7FDiOOBFMyjV2FhuIRuURJV0IcogrzVGRgZbuTrvZoBxz4QaY92/MVRYkYfte6JTptYZoGHN7zGDy1m5lVZ6JuRdhgcUJY9a+pZ6yDBcfZj6PiAbyqrKugGHzZZX30jwLekt534vfWPI+AjZyVZHWNzfiuRgz7BaWatlGJfBrXBgzdTNFPMwqvhZyJ5MwkRlVmYFTTYdudvg==
+ bh=NwRLMYT7rDUlyQ7u/Q9XF8UzXMRdbbqCYUGUbXGyhhE=;
+ b=ROv5FgkEjQHqWaRDFPY25c7infaHpHVE4Oud3pI/p3xOawsnyW3zaGmUCMq3j2xlfksFKmR+uQd9uPMPNdNI198eZ5pdaz97E16OI4/aA2dYU1ruMSpZmgl2c9SbZkctuanWVkPewlsscInPGvRdzqR32MVBEp8Gds/WJ2x07hFtjNuSvSiEOvexOyxcwSXn0oZwrBaYzKfq9bhm2BK/5auZGJoyRR2LpCiPyJ1EfrxIKRx5WWliZNTFMlLM6scbfkFxjUcOsKx4hj7VidEI89DaF394Pk08co3QtEp0UvmdJpUJT3AIVPome+NrohguVk+LJJLFnMEczDUDzRcUdQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XgPKZhkjoZuhTLTuO+WqzRIbzYH5KCcDPOZXqaOTOMg=;
- b=ej0jUfMTyqG3IYgqFdxxfPjzQS2ytD5zmzBqji4pWWzhNMXwGRzvEoMZMp+lA5M22JSoxH3IXZfqYSa/DrZqHRZepnMQl8YoYY6kDSrcHvhi+EmKF71zZK3a9ua6g15qLg/MPhOzqfsJMwC3woyAOjyju2MNMKjKgPI3M9xBrL4=
+ bh=NwRLMYT7rDUlyQ7u/Q9XF8UzXMRdbbqCYUGUbXGyhhE=;
+ b=JR1pk7vy1DMYOfbYGWlmO2r19rJLpov1YSHGyWNMEW9P0WGH1AGHzdAJzETLglp8Aur6MqfOpcom1ljVajGmxP80DqBf9AoPVREwW1/0zwg8EYAQmZvZzGxS149esyirzxsAPhMAL7D4rg3hihHWBpmaZUlQxEZxuwG627pzffdM8fD5VXWmF4DHCkcM4KDhj0YBCEbxklxNtj831/5KumIfByRhWZEge1Q7e2geKwUlNJitUQ7w1Dek86KW8htuk49dHUPT6woAu/onMNHONQS5DvN2KL0khFtTzPygd9P2VT9Kc1ifljnScD0bebpywN9BK5e6qwYABzPs1gRfFQ==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by PH7PR12MB6788.namprd12.prod.outlook.com (2603:10b6:510:1ae::13) with
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM0PR04MB6900.eurprd04.prod.outlook.com (2603:10a6:208:17d::10)
+ by VI1PR04MB6861.eurprd04.prod.outlook.com (2603:10a6:803:13c::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.25; Mon, 10 Aug
- 2026 12:25:45 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::ce69:cfae:774d:a65c]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::ce69:cfae:774d:a65c%5]) with mapi id 15.21.0292.024; Mon, 10 Aug 2026
- 12:25:45 +0000
-Message-ID: <94a06ddf-a969-4499-93cb-1c8808fc7609@amd.com>
-Date: Mon, 10 Aug 2026 14:25:21 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/10] dma-buf: heaps: Add debugfs support
-To: Thierry Reding <thierry.reding@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Mikko Perttunen <mperttunen@nvidia.com>, Yury Norov <yury.norov@gmail.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Russell King <linux@armlinux.org.uk>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>,
- "Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Robin Murphy <robin.murphy@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
- "T.J. Mercier" <tjmercier@google.com>, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Chun Ng <chunn@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-mm@kvack.org, iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org,
- linux-trace-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-References: <20260807-tegra-vpr-v4-0-5510d16af89e@nvidia.com>
- <20260807-tegra-vpr-v4-6-5510d16af89e@nvidia.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20260807-tegra-vpr-v4-6-5510d16af89e@nvidia.com>
+ 2026 12:43:25 +0000
+Received: from AM0PR04MB6900.eurprd04.prod.outlook.com
+ ([fe80::7fda:8431:ca1b:b023]) by AM0PR04MB6900.eurprd04.prod.outlook.com
+ ([fe80::7fda:8431:ca1b:b023%4]) with mapi id 15.21.0292.024; Mon, 10 Aug 2026
+ 12:43:25 +0000
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: linux-pci@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH v9 0/3] PCI prerequisites for PHY consumer/provider split
+Date: Mon, 10 Aug 2026 15:43:12 +0300
+Message-Id: <20260810124315.433448-1-vladimir.oltean@nxp.com>
+X-Mailer: git-send-email 2.34.1
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MN2PR06CA0015.namprd06.prod.outlook.com
- (2603:10b6:208:23d::20) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+X-ClientProxiedBy: AS4P191CA0029.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d9::12) To AM0PR04MB6900.eurprd04.prod.outlook.com
+ (2603:10a6:208:17d::10)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -97,194 +66,99 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|PH7PR12MB6788:EE_
-X-MS-Office365-Filtering-Correlation-Id: d05167ea-cd58-4c2e-5268-08def6da803d
+X-MS-TrafficTypeDiagnostic: AM0PR04MB6900:EE_|VI1PR04MB6861:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5c6f2fdc-5270-4c0d-101f-08def6dcf83f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|23010399003|366016|921020|4143699003|11063799006|56012099006|10067099003|18002099003|22082099003;
+	BCL:0;ARA:13230040|376014|1800799024|23010399003|366016|19092799006|6133799003|56012099006|10067099003|11063799006|18002099003;
 X-Microsoft-Antispam-Message-Info:
-	uJ0YlBUrLHAd5fjCJPvn9wMDKYHfbYNA1n5wTwS+x26DBHLsgXqHW6dUseMz8Gn8UeKR8TPFuP9ChwSnCgiz0LSp/9mHbbbXIxc0SCA+A1blWVYQPHGCYgr0NIh77FRWFw/e5Jn82+c0eabCbhJ3JUqDabEzm2YS6nYs7QpArMhd+LoWeoNeRUjLIDagxIGDh5dbc6D7Ua1wrqEV0WUx/pSpRHhyPtPR9cXBHGBbQlzF9xNn9Te0Eq5I2cQatLAjKLuvFGXQtUl1935Fz0W7aRDNmwQYAlgoF9vI0eGAON1l9ZFdaHw36nKv+ZWFGSx8OgjwyFeATRoxxVs8fkUx/pWr8GmvyyEGym8+kP/JPtyolp53FvK2RMjDbKJb8Sv7ir61Rz8ugsI2w9C76ynOTKoLoS+bztaaHav8E4Ne4+O2JWBe2Td60Y1HFqtcZT49/2+w596/h4/OtYLJtv8sfoG+Z0SIIpu7jiqhwOEXQIU4bechhj2ob/hLR2m+6aJN2kVhxXUTNi1bXA+HkciVV464ec21RXvmx5xDy7Vw/2xlDoP7wstUi2w0Ax4JFVIzQ3EeW8AMPu11xixZIt7eXAyHRhYND8FCDRAwhjMzStbx1ycuQpmH9iqtEBCoQ0h/mu1vT3iPt1tHmMySeWTxuKkdWb4nDfJyXb8n8ynXLbABQUb9sWkktNgv/1CcrpD4jGSbiGmShpfVp2K69R+pfw==
+	i7rfEV4AFaYKci9Hi0m9z4d+8TIurCKXerD12KbO4z28NQZv5Z9VgZAudmhWEVmtcPZtJYsv5M+ufhGoWH0MiVePZC08ASKYLW7pOZR9bNeVJiCmW5+VZUuvkbbX1wSvtDYFhozD8v4jVZLYVnyHybajBF6DFKeVSkRGA9jeqbesvF9XkbVvcaJeLLzR/OCjwoAIERzKnQPz6RCtiCSfjLiZa/qMSTxF6EyguoVNP+h40rt+OTAzNqF5ykCoABx2bxUIU5ODy/rz3E7Uu+bm9bdxIx3YrZQ/tJ7krlyIX/AmUosVGSL2qndbMvh0dqambaq85TLNMayuMfigxQJZ2WM4d/RAdfdNf/EUcngtyvfl45+H3Incbui/Zbaq0wIGYSYrBQmLQo3OwwlwYo/HTBeyTJGTQIbmByZUHZPuwGYHculd4a5jPPB041VfWWATFqslC7ZtJ10T5wBxnSek357bXXUsNmmnxyHDA6TAxroPeHxUp9liNO3q1cTB7tyqsTDvZ24t18ho+e40iSTZwtRo81g3XCMgqE5VRjnvLgNOiRf3qqdeHQHedyvMJUch8jR5HuVpDFWHN9KRzDJAAb86Ab7B6E3G/pilJvpynjJfG53Q/YiV32KHPI04K+v44VHe3YRaAaD6O5ogKxH7rYjR3B978iv23dJYxwTmZQU=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(23010399003)(366016)(921020)(4143699003)(11063799006)(56012099006)(10067099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB6900.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(23010399003)(366016)(19092799006)(6133799003)(56012099006)(10067099003)(11063799006)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NzJmRUhLM3l2NElWQS9IVnA0VHFFUTV1MS9jN0ZSSTZNTzgzRTE0QTM4Sm56?=
- =?utf-8?B?TDRBQmFqaGtrWE5ScmdkN2tRbi9PMnNnL042TWM0THdzRXVNa0ZabkMzUUd1?=
- =?utf-8?B?ZzBUNU84UDl4QkJpcUVGVjh4QU5FY0VMVm9QUVV5V3VUR0VjM2RYOHpseE5Y?=
- =?utf-8?B?UWZMYkROTE9LeW1WZ09wZ3laSmVuck1NejZZRXZzbVJVUXV0T0kra2FTbGNI?=
- =?utf-8?B?UlArdjhXanFpM1FubVBQMXBVUkh1THRUYndxT1phYWRMQzZQcVNQaWNmUC8y?=
- =?utf-8?B?TUNXVlFCQ1VnSTQ5WWdyYS8weGZ4VWhIa0svNGZzdTRQS3hUbFlSZ3FpSEUx?=
- =?utf-8?B?MjdRNGc3TXFzNTdzd2YwSnRKcVJRd29FVnljZkJqNWpHOURyU0w1bmpNanFv?=
- =?utf-8?B?ZDJzVDV1elRjWDhuS3ZtZmtrYytDME1aS3RSc0F0RXRGdUdnSitQQXJCdjk3?=
- =?utf-8?B?REV5N1MxL1krTTNiYUNzcW5PbFg0cThvaXZacU9qWXFBV1JweWVhWWRieWlX?=
- =?utf-8?B?UkxjTEI2SEk5RG5rZmxVd1NPZXZrOXplOWVvOE5QendGTmhaeHkvcitLbnRo?=
- =?utf-8?B?UE1ucUpFRTRiZGR0UWRlR1Z6N2ZLQmpEWTVHbUpMSmxTQUViMmN6STdqZWlQ?=
- =?utf-8?B?c1U5endjZVBDREV5WWYwbHAxcmY0d3hXbE9xTXlWV0RHQlpJQ3lQVUJEU1pS?=
- =?utf-8?B?WHhSZzdVWG41b2ljeENyRVNYRzZma0REWFRNRVRoVTRhdFdMRVZmcnpYSWZJ?=
- =?utf-8?B?OTZHMkJ1dFV0N1paWHVqOFU1aDBUN2dhcitKcjU3YlpOZkRsVnVQcnFVTi9l?=
- =?utf-8?B?dXhyUzdsdDlXL2I0MnFQWGtDMVk3RmlsOVVqb3UyZ3JNbTNlcTFMTU95QkZG?=
- =?utf-8?B?aGd6czc4dnJBSkR2K3hVRC9hWnJXOFdJR01mUHh5VmRINWEzdHVoaHYzL1Yz?=
- =?utf-8?B?SHMySHlFYjV5czBIa0pkVmY5WmhyVUFSQkxmQjNLK3NHZjBsNWprdnBtUkVy?=
- =?utf-8?B?R0tyOHZHTVFKV2sxY001K3JOTDF3Nks1RDdQemoraGtlV0FxY2FBUDFQaFVH?=
- =?utf-8?B?eERJelhIRWlpN2IxckYzZXVoMndlSVpYc3k3WG1Rajd1bWwzSjdWZ2tVQTAr?=
- =?utf-8?B?Q09pdVRkU2U2dEFFS2U5ZEszL0pqNjhIZlRzOG11dXkzWjJrc3BuM0hFRTV2?=
- =?utf-8?B?QVVxN2pZNFdxMDZra0hDUWlnTHhJQ0xaNFBIanBDVzYrT2pSQ1crUitQallG?=
- =?utf-8?B?OTZmckdZcThMMGYrcHBFODZtYVAvMWNMV0pnd0lURWlUM0doTmJGMFNEdGIr?=
- =?utf-8?B?UnVFQS9rY3VwODE2WVBSY0NYSXBmemh3QzBQUUVPWE9OMDJERXU5ck1RSVNJ?=
- =?utf-8?B?akx3M1FJUnhCN2wyc3R6bXdkcUlnMjFxSVBmaDJNdXhkVzZJcm5kNGR6V0Vw?=
- =?utf-8?B?NkNnVGNuQktkb1BJRGZPa05KNlhhZFFLZFNaUncwU3JrOUhPblgxb0ZBQlJM?=
- =?utf-8?B?aEJONDBLb2FDT2VSbGNsSlNELysrYzJLQ2JldklBNldsMVNhd2NXV3ZERTk1?=
- =?utf-8?B?cnVFd2d2THdqSlJSMkpCaFdETDIyYVpBZ2Z0NlVKbkRPUmVRRDZYVTNoM0F0?=
- =?utf-8?B?YmVxRDl4bGdzOXU2TlE0WGVLMEk1V3NSQzFvSUFEMGdHd25jTEZVOVlwR29j?=
- =?utf-8?B?aHk1L1Q0bDVWc1F5ZnhlTnJPb051RUZUeko5RUI3TURzcE1BbjJGMzRidXRY?=
- =?utf-8?B?K3FZdXZqMVlJeE1xMlovelJhQ0dmZmM1NXRYNUZudjI1Ly9ubitSNkUrM1RQ?=
- =?utf-8?B?RmJGMDBzckU3ZTMxSkdaYWJBTGZkc1hEdU42ZUxoUkwxeDZHY2d2dkNxa2wx?=
- =?utf-8?B?TEozenhOREJmL0xzWWlheko1VG9VY0lhZmkrTnZIVy9PQnE3MDU3NU54b0JG?=
- =?utf-8?B?ZkhxVm1iM3doUUxRWUNpbEpCT29Mc0lXUTVUZERUcEpJQzM3NzRsNzB2YUdZ?=
- =?utf-8?B?YXVqaWYrdkR2TEtKdXJlcDJGbElxaUpiclY3ekpCVWNnQTBjdm1ENWFBNXJi?=
- =?utf-8?B?NXpLUHMwanFMblE0dTZsNGZxR24wWloyRUdEWHZsdEhhQy8rU2dOTGdxQ1gy?=
- =?utf-8?B?QmlGbFhZVkF1SVlIaTBSV1lTQlBSdmRzTWNyTGh6SW1BQzVzSVVLc1RRNHFa?=
- =?utf-8?B?ZFRSdWlOQUtmdmFkT0dzbUlKRE1Pa09LLzFYV1hSVHk4V3J3UitETFIxallz?=
- =?utf-8?B?SmQ4ajV0VzZhVmVPTGVQbFFDYVBqUVVnM2c1aFo3bklwR0czR05UK25zbFBi?=
- =?utf-8?Q?sV17zeAytFg+QLG5+M?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d05167ea-cd58-4c2e-5268-08def6da803d
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+	=?utf-8?B?T3Z3L3BmenY1VHhrZVhyV1o3SjYzMUNoSG5pNXlFWlM3RkdzL1pWdXRmdUVP?=
+ =?utf-8?B?ZjBQNG9USm4xRUR5ckJUUzNDWGt0MkxPcWdFVWo5SDk2WDVDUWhhT21uREtG?=
+ =?utf-8?B?Y0lCOGs1anh3MUZ4VkdpMWozL21mYlIzTXRseW1KSjQ4akJMNWRlNGNKaXBD?=
+ =?utf-8?B?T0JRdVIwWFBGbk1oaHU3bzA5ZVE4c3RkRXpjUTl5dS9IbTczYnZrUXZYM1ZF?=
+ =?utf-8?B?VGxzQm1qZXJnTml1ZHFxcFFVeEJtUUQ0OVN4MVFHSXc5cC9yeFNaQVpHNHND?=
+ =?utf-8?B?Zk1PTUhaYm5JSVgvNnlhVVVtZ0ViQmtnbndtU2tsZE9RSHBWZGNhQThBUkxj?=
+ =?utf-8?B?MlpCdWNCRndUcXBjaUo2OWFLZ2V6cGczUVcyYS9aUTJWNHJEejN2YmtldVdl?=
+ =?utf-8?B?c1lTZ3NUT0F0QXplOU9Dc2Z0cGZ0cHZZcXlraHJqeTA0eVJneDZVTUM2YlZF?=
+ =?utf-8?B?M2V5TFZ0REd5clU1VVc3TDFFZGMvWGR2RDhJVyt5WEdlUkJad3dWWTZmSGhw?=
+ =?utf-8?B?QkxKUWdNcVRld0NvSWxsTGhRUGNCQ2J6S2F4dGRWTk1EQmszbHh5dE5tRnc5?=
+ =?utf-8?B?dXk3ZmVMSGROSTQ0UFpkUk1zaHE1ZERqL1dISDlRdlJkZm5JWDhlZ3ZxSUdL?=
+ =?utf-8?B?Y2YvcHVZL3JTVXNaM21XSVAvZ2NOSG5jT2J3T2ZTeDlUM29ESithTkVIN0Fa?=
+ =?utf-8?B?Mk1JNWorRzFDdU8wMGYwSFNvV3FSdU1IRTNXSzBMY0tjZktPRFdtblRkdllp?=
+ =?utf-8?B?RTI5ZlhsY0JRM1h1U0U1Tzc0YUlCeXlEcVIvUDFiZ0ZKL1lyaWlQRzVaalMw?=
+ =?utf-8?B?ZFZEbjkzUVJ2Mmo4TGFZcWtMWUJaTlRRMGN5UWxMdDRnNStyV29TR1ZxWlpV?=
+ =?utf-8?B?MVU0VmlkdG81dC9Zd0pxaDRRQ3loeEdnVzU1TFVHeXZ5WWFKbk1lTUlySjFt?=
+ =?utf-8?B?bGVCOHdBTkYrWUdXNjlLT2d2WGhrMU9VSmdsclR4QnIrUGdyV1ZkWGcvVThq?=
+ =?utf-8?B?ZEJGNlc0VHBUUk5PREVHYmkzZkNZZi8xZHZPUXVnNi9ydkhJVjFmS2J6SHJJ?=
+ =?utf-8?B?RUZMOGVJUnRBcWxKdmFqSCtFbHRCaWhNS1p5TC9oQStjMUtjSHNjNGI5SzUv?=
+ =?utf-8?B?cUZXTVA1MG8zUGFQVEN3NGk3RWtsbk9VOE9CcmpYRXV5bTRmZnRQNUh0d3U4?=
+ =?utf-8?B?VEVUa09KYU1xcDU3VUJ2MnA3OTR2OXVIRFlldjl6YkpmbjlxekpFa1M0N2hu?=
+ =?utf-8?B?ZFRQelJvMFFra3VmOHdDbGpUTlJtSWt1aFlUMi92RnBxVjhmK2hBeW5OZTVT?=
+ =?utf-8?B?OUxDdzYyc09keXErZGplTC9IRThOa0l0RkY1QTZsNEg0MXI3TWxBUEthSExm?=
+ =?utf-8?B?czVZdDR1RkQzczgvQ29UUFc0SStiM1p0dHdxc29Ud0JDd0tnQzlWSmhmSlh6?=
+ =?utf-8?B?SXRPMnRibTZIY3pKZEpYSEdkb0lMc0tSeVc0SlpCeDMrTXJPMlQzY3R1a25V?=
+ =?utf-8?B?NjVMNTZVeTBURytTdmdXU3NZb2xSbWIxNFVoS3puc1V3eUE5K3BseXRzajk3?=
+ =?utf-8?B?cmp4ZVZYbHdITXBGdUhNYlBBTHFXS1VyN1owWU1MMDdPUFl3ZmRIRE5zRTlW?=
+ =?utf-8?B?V0M3bGFwTkpsMVJGbkU3TFBYdmpjNzd0NWVRQnN0dzdxRWIyb0hGcjRqcHUv?=
+ =?utf-8?B?L3lnM3FjZFlqNWFQM2hRRlovY1pCNTV4dU9oMklqNUU2U0FHR2paWGZEWkFB?=
+ =?utf-8?B?ajdaQm9hdXpQSm1YOWZKSk0yc0hZVnVpYjM0Zm1uY1VTYVcrRGt1UmFvR3pO?=
+ =?utf-8?B?aFJKUW0waHdub1Vka2VKdm5yOTdJT0ZiWHFJYmpldnBYVUFTOVpmRS9nRHFP?=
+ =?utf-8?B?ZlgvckhTaHA2UzJNTzlZY3ZFbnhsY0lwbTZwb3E1bXlqZUkzN3MwdHgvdURL?=
+ =?utf-8?B?T1F0SWlHRnVMbldJT2V0SWt2aVpYNVZYem5NWlRWMEdrM0N2K1NoN0RwbldF?=
+ =?utf-8?B?SFc5S3RZZlFra3pyMElYdVhrWkYwaWVmSXRrZzBMRGNSbU9GWHBSWlJsZ2ZO?=
+ =?utf-8?B?SXVLcHNMcE05WFJOSktzdVB3QWR4ODhXT1QwSWpEWGhMcEM4V2tLd1YvaGFu?=
+ =?utf-8?B?TUxNNTc0NngwWU53WGJBdHV2QS9jOFhLYTVCeWdnb2xZMlpQQUV4cEZWWGgv?=
+ =?utf-8?B?WmUzNmJBdlFFVDZIVVJqdHJnandIL1gxZ3QzZEpqdU82a0lsdlRGVHR2OXc4?=
+ =?utf-8?B?MnBkVUxsQThZQlZNNSs4WWwwQXBZVXhLenBaaHF5WXh0UEMzbTRXdnZ0aEo0?=
+ =?utf-8?B?NVBMSVZncGJZbWtHUm05bURZMmZkUjhuSGgybnlTcldOMXh5WUxOQT09?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c6f2fdc-5270-4c0d-101f-08def6dcf83f
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB6900.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2026 12:25:45.1565
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2026 12:43:25.3390
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ov0Erh0lz3QOIBKiWHRzi3ak8zMidztRl9illREB0K0RFBjsVhc6kcOlkCvYoWzf
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6788
+X-MS-Exchange-CrossTenant-UserPrincipalName: qnkvNs/KNsWoKPRga0C09HJJ9asp0uKPisxW7x6fvnAjNLFVLkgxOzgSUl2yt+M/k+oAi3EtoHsr7eeQZSmmPw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6861
 
-On 8/7/26 17:54, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Add a callback to struct dma_heap_ops that heap providers can implement
-> to show information about the state of the heap in debugfs. A top-level
-> directory named "dma_heap" is created in debugfs and individual files
-> will be named after the heaps.
-> 
-> Reviewed-by: Maxime Ripard <mripard@kernel.org>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+"[PATCH v8 phy-next 00/31] Split Generic PHY consumer and provider API"
+https://lore.kernel.org/linux-phy/20260505100523.1922388-1-vladimir.oltean@nxp.com/
+became unmanageably large for a single patch series and needs to be
+split per subsystem.
 
-Reviewed-by: Christian König <christian.koenig@amd.com>
+Here are the patches pertaining to PCI extracted out of the larger
+series.
 
-> ---
->  drivers/dma-buf/dma-heap.c | 56 ++++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/dma-heap.h   |  2 ++
->  2 files changed, 58 insertions(+)
-> 
-> diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.c
-> index 3937dd41bb0f..389cddd07c8d 100644
-> --- a/drivers/dma-buf/dma-heap.c
-> +++ b/drivers/dma-buf/dma-heap.c
-> @@ -7,6 +7,7 @@
->   */
->  
->  #include <linux/cdev.h>
-> +#include <linux/debugfs.h>
->  #include <linux/device.h>
->  #include <linux/dma-buf.h>
->  #include <linux/dma-heap.h>
-> @@ -225,6 +226,46 @@ const char *dma_heap_get_name(struct dma_heap *heap)
->  }
->  EXPORT_SYMBOL_NS_GPL(dma_heap_get_name, "DMA_BUF_HEAP");
->  
-> +#ifdef CONFIG_DEBUG_FS
-> +static int dma_heap_debug_show(struct seq_file *s, void *unused)
-> +{
-> +	struct dma_heap *heap = s->private;
-> +	int err = 0;
-> +
-> +	if (heap->ops && heap->ops->show)
-> +		err = heap->ops->show(s, heap);
-> +
-> +	return err;
-> +}
-> +DEFINE_SHOW_ATTRIBUTE(dma_heap_debug);
-> +
-> +static struct dentry *dma_heap_debugfs_dir;
-> +
-> +static void dma_heap_init_debugfs(void)
-> +{
-> +	struct dentry *dir;
-> +
-> +	dir = debugfs_create_dir("dma_heap", NULL);
-> +	if (IS_ERR(dir))
-> +		return;
-> +
-> +	dma_heap_debugfs_dir = dir;
-> +}
-> +
-> +static void dma_heap_exit_debugfs(void)
-> +{
-> +	debugfs_remove_recursive(dma_heap_debugfs_dir);
-> +}
-> +#else
-> +static void dma_heap_init_debugfs(void)
-> +{
-> +}
-> +
-> +static void dma_heap_exit_debugfs(void)
-> +{
-> +}
-> +#endif
-> +
->  /**
->   * dma_heap_add - adds a heap to dmabuf heaps
->   * @exp_info: information needed to register this heap
-> @@ -299,6 +340,13 @@ struct dma_heap *dma_heap_add(const struct dma_heap_export_info *exp_info)
->  
->  	/* Add heap to the list */
->  	list_add(&heap->list, &heap_list);
-> +
-> +#ifdef CONFIG_DEBUG_FS
-> +	if (heap->ops && heap->ops->show)
-> +		debugfs_create_file(heap->name, 0444, dma_heap_debugfs_dir,
-> +				    heap, &dma_heap_debug_fops);
-> +#endif
-> +
->  	mutex_unlock(&heap_list_lock);
->  
->  	return heap;
-> @@ -335,6 +383,14 @@ static int dma_heap_init(void)
->  	}
->  	dma_heap_class->devnode = dma_heap_devnode;
->  
-> +	dma_heap_init_debugfs();
-> +
->  	return 0;
->  }
->  subsys_initcall(dma_heap_init);
-> +
-> +static void __exit dma_heap_exit(void)
-> +{
-> +	dma_heap_exit_debugfs();
-> +}
-> +__exitcall(dma_heap_exit);
-> diff --git a/include/linux/dma-heap.h b/include/linux/dma-heap.h
-> index 648328a64b27..1c9bed1f4dde 100644
-> --- a/include/linux/dma-heap.h
-> +++ b/include/linux/dma-heap.h
-> @@ -12,6 +12,7 @@
->  #include <linux/types.h>
->  
->  struct dma_heap;
-> +struct seq_file;
->  
->  /**
->   * struct dma_heap_ops - ops to operate on a given heap
-> @@ -24,6 +25,7 @@ struct dma_heap_ops {
->  				    unsigned long len,
->  				    u32 fd_flags,
->  				    u64 heap_flags);
-> +	int (*show)(struct seq_file *s, struct dma_heap *heap);
->  };
->  
->  /**
-> 
+Change log in individual patches.
+
+Vladimir Oltean (3):
+  PCI: cadence: Preserve all error codes in cdns_plat_pcie_probe()
+  PCI: Add missing headers transitively included by <linux/phy/phy.h>
+  PCI: Remove device links to PHY
+
+ .../controller/cadence/pcie-cadence-plat.c    |  6 +---
+ drivers/pci/controller/cadence/pcie-cadence.c | 16 +---------
+ drivers/pci/controller/cadence/pcie-cadence.h |  2 --
+ drivers/pci/controller/dwc/pci-dra7xx.c       | 16 ----------
+ drivers/pci/controller/dwc/pci-keystone.c     | 32 +++----------------
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c |  1 +
+ drivers/pci/controller/dwc/pcie-histb.c       |  1 +
+ drivers/pci/controller/dwc/pcie-qcom-ep.c     |  1 +
+ drivers/pci/controller/dwc/pcie-spacemit-k1.c |  3 ++
+ drivers/pci/controller/dwc/pcie-tegra194.c    |  1 +
+ drivers/pci/controller/pci-tegra.c            |  1 +
+ drivers/pci/controller/pcie-rockchip-host.c   |  1 +
+ drivers/pci/controller/plda/pcie-starfive.c   |  1 +
+ 13 files changed, 17 insertions(+), 65 deletions(-)
+
+-- 
+2.34.1
 
