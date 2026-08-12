@@ -1,76 +1,80 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0309A470E8A
-	for <linux-tegra@vger.kernel.org>; Wed, 12 Aug 2026 15:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAAE471423
+	for <linux-tegra@vger.kernel.org>; Wed, 12 Aug 2026 15:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786548383; cv=none; b=WDgrSS3EHaeg6VVNF659x0elhFBxtJKz9JMUwHcvWSptjEVcqT+PlWzfKxuVs67V12F3EiMc8h8yHkEP52+kEXvuUGIoS/0lFZyP8TvF/Fn12BzsMMYmGoeHEwRgHiaorp8Hav8Gn5ilKNycW7lWJpnOb9DN1p3kA9aZIN836ZQ=
+	t=1786548383; cv=none; b=ee2OEr/Lkcu22IOD5LRNvMj88DaiSwtkAj/K2x0BGQTRreinaL6m1X7Yf8/OCcs+mU+eoeXpdKFdIq6ereQ/7P5lfMJZPj3ZP2obr5m81nDSrnbOsYqE3ZbtlMqzM2v2cglzLzkac2PYPalreFlWriAmxLEuw3wKvQUDyw6rFJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1786548383; c=relaxed/simple;
-	bh=Wtk0NDE/nQLO0Kq/zxEWskh8edpJnJdJeeeQfs8GFgQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NcPSFcr9orpWf5LzqKm2lcMj76TXI3mLuXREOG5enRF3k6EaaQ/jhonmiQug0gMz+ojPH558e5cZ1Jqa7vXCr91wYHPM/D38crDBedygrwDoT5pvowjjBQq3GsZULvvu6xb3M/pKTMRC4RgGtxYjpSQs0bYtik7EY3+n678M3k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=BO4rX17i; arc=none smtp.client-ip=209.85.128.53
+	bh=XSnigZ+8lXrN+h1DK2jDpYLe1HS1P10Q0jBZkBu9EDM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZC81iDS1O2yL98laRWM7/jIxHN/63b6DIOX2DF6P4FRVerqiO9vJhOksDTNZAnqul5HYAwvn3Ix3ID2905+mBJDoCbX5JUDukTb5Hz5Hc3tw0YLAk7epc52LNv5rUWAiABpI4QtUseLsB09TrpFu/VCQ1S+UyIHZMZ5TQPjDn1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=Uq31LRWE; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="BO4rX17i"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-49553515a8bso15986775e9.1
-        for <linux-tegra@vger.kernel.org>; Wed, 12 Aug 2026 08:26:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="Uq31LRWE"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4799b3f7c83so713962f8f.2
+        for <linux-tegra@vger.kernel.org>; Wed, 12 Aug 2026 08:26:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1786548366; x=1787153166; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=UaP8njrWqNK9u1k6UNh7CmbA/RsS8a+eLHotr32/f0c=;
-        b=BO4rX17i41nOdw8CbZHhpSpqE1CZy10/olhBrew2hVw6fnqThOmZQtPsRVGRdag0EL
-         tnMJStBIOWInsHKNxRq+OJs5EM5BX9FcDxuJoFF4KZmWsHspgmxIT7k/a+PAUcAwqFhq
-         LiRJri0yRVndwb+kYfV+YlfDCdvPt/LlnVMYG+m62gS6++YCkltfbY9mjwEId4itOnJf
-         3Ax9U7Q+Q4Xr/+p4r9Ciu/8DbG6bHKySX53QAyQwcC2hEG3dHZvSSSmNpcO16U/ABceT
-         y9u5/RvZSA17bHFWNDDLXGWEc0mAKirHEpjWkxa/+kCmesIk23Uur2Rkv632uavVmAcm
-         csQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786548366; x=1787153166;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+        d=baylibre.com; s=google; t=1786548374; x=1787153174; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=UaP8njrWqNK9u1k6UNh7CmbA/RsS8a+eLHotr32/f0c=;
-        b=UDcgLS2zjcDSeoX9JQWl3ep5MOa7VOQtUERpNG+cin4ghtLubwpzs+T9TpSavLRUyh
-         XsJ5KKlMDJHQ6X+UyVJC+pe83UB+/pw1ZFW35PTXlUouyXt36cR8VFVA6KVwZ+AUlk44
-         Cw3TDnHSLMw0VS2wzy+85F+2IufkavncRv7LM0w5TgmtIrqppUCtkLQkTDS114PLs+Xy
-         hnFzB0Huaiw92DMezrxcB1re0TUCKdWj7NHHk6Xd+H7V24S3WYtE1RoIE0lPetLd9Pg7
-         EydsTjCv5VA/e3/l1J7+Avp8hPvFGLS5TUVRaC45dI++ISm08/1vyKQKkEQknTrHslGb
-         lMZA==
-X-Forwarded-Encrypted: i=1; AHgh+RrWrCghTcCCQodNgqukeABHRVYOGZBOcI65FJ8lWehT2KWRGaGxpQa1ksFLwhQJrg8Ve0TmlLl0xxekSA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7wMETYPSKEx1ITvsmV/4FI3O2Gp94MrXehwYE8xBDSew0+HuH
-	JxuQArIlWFD03xUqfg4B3Wmbc9l/VJyhuSeAdshVOTFtdpOxlvel8FI9H0R1Ie/5IF8=
-X-Gm-Gg: AR+sD108ZPrRUWMXfYbYZuAQaIOzneQObf7O8aP9MoIisa+Zu+56TVUXsBEfBqADGf5
-	Eih39OQcSRo4HkaREDcSKLtv+LtvwaLxrdzNfGO3qzQPf9Lnr2QUYDjHTq4S+7LFf7vl5CdcF2J
-	F1uG6vCnweJDrdcBU1WCnPj52GmI4gLmDBsAlDKJNvswo5RR71AyFvjwCq2X4MFKP1nxt77ZNJj
-	8YnXbOsEiKLOU/0vGBQiPyJ5/4CWhhcMb0g11z5UklBvKOfCu25CiYUmxlC+Y9vP29bo3OJL1aw
-	cJIfBKAsNPS7KSxBHIB5r7ub+PynU1W0fS41o+av8gpZfFgzrpS5azZBMDZj+072aMRKfGi0dPS
-	y8kx1S9brvs4Xv7xiAOkHrhP8khCsbRIZGRdeFN3pTe3LtG81DBeOkaJvzm1x0G2PaxzfbE2mGk
-	UzOIOzUHlozqN/7rw1XMVvlt66+kygjvF1ELhreBYrDqZUoLz0hHeueKzI1Mz7BFCcxsvlW83AL
-	89XLlUOoyj0/9CvOZQd17/qbI0G9ueNq5QqhUz7ad2fhCudyyc=
-X-Received: by 2002:a7b:ce0e:0:b0:499:726b:7375 with SMTP id 5b1f17b1804b1-4997c149ba3mr57045705e9.14.1786548366309;
-        Wed, 12 Aug 2026 08:26:06 -0700 (PDT)
+        bh=cxaMCj/rMllaU9X27TX8pfm9p2Xu7HVXmrHtmXljmm0=;
+        b=Uq31LRWE8sGvyZ3MDKVIankghp5dwvHfXpEZX1D8ZOvwxsNZWhBY8/nllRv07ISPSY
+         pPBXYuvyVDBmpJDQ6flkfCxHo9UGkSX/RFiMaXAMSitETgtEFIGR24qvo6jLEUoduJ2E
+         tBFlOob3xyoVY3TwhHOoUHjLzgD4cvONdx/if9Ryhz8an5mVbOS86mdBDTjDSXuvzbTR
+         M2EcTlwmrdJTrWyBVBThob+M1IENg8I4LF/3loHXF9xvsl+nq+PxsPOz20tSWRxF4NzU
+         AQtJF/VQRli+Ec4GxU63ofRpeOlcnxOt8mMpqYYxWC9IfyKNQ/m4Chwnhl6mic3ZWo7e
+         2RRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786548374; x=1787153174;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=cxaMCj/rMllaU9X27TX8pfm9p2Xu7HVXmrHtmXljmm0=;
+        b=Kl854r8n75tIgUtpdk+bnEFKRL7bNz3AaBXYQvQONTWg6IsnhtzB+IFrxYJtsQcVfv
+         hKNJZ1HREQRrpQKk+SPGuDHd8VzfG7BLh0rOGPuq/f736owA5grGvCTNldCDFImV+867
+         zbsQ32GJMA3UfSLpOe08f/eFg3y1VQ2lQ6YWDAcg81TSxIrUlLUsVTlWWFfUh9ZhQoEa
+         LyZbxZ2a9HLIjwkN555Movw3Gg9xvlBMJeSSm3xImW8XvotfjmvMlxbTDkcy91P0UiXl
+         1Jg00nP4cwuHIzvtEi0JM8lIyDM/in1XjGwtuzKTIbKXPePkIgYIs01zG6SemrCgntqJ
+         ceBw==
+X-Forwarded-Encrypted: i=1; AHgh+Rpk2ERFjM7mUGXpTeOMXpgm3y6FwFesTjyA7V4wAqU9MdzyGEhLf4H/3HSSpAeBCy1FRDPNCqwrh/nC3w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwewGdq51DLYBfLO4mpeElTKY2L/sAinH9adQR5HamMi1QEChlr
+	Bl7GjdBwrUJyfS2/XUiKPPQWYcfYlE6WO0quMf7hQJwxQU7CzMjkAflOIURg1gh3sXc=
+X-Gm-Gg: AR+sD11ClaugcN6VJIuSUuyiCqXZTlLptXmwUkbGIjDp/E2G8Pg9SEsuLu7eUJWpC3r
+	lf1M0qegzi2hstz1KY5s1420pC4k3EXhNSBVSMJWepZzK+AdTCnWCfi9Hsm/ffxzrci09DwsS+a
+	UBk0EWpfeG/W0fYAkUh3qiqjTTLOwV3lZ8Z5hxerS1KW63A37Z7Xl8H7V9UYW1ban7Ukrp/HHfG
+	eru7oyeDU6FUlK5HC6tFgg1dyGDx+0w3VyPtdbIZ987AEr+RIG1aPottfYvuLn5lkLkoLQ5sud6
+	20/+mtCAP4StVtv6DhghV5Ww572bEgNER/xAQ6hQEbT8O02xJiN3dPAvKJPb2gS5XqZXOPNJ542
+	GhYuDo8ZI9yO8vCBDIIbZImg5v9SoT+Pt2fGaYmH6h9Iy6r1JjjuyvXj+v2E75T5ejMRyR+HkQh
+	ittM1Uqr/L6/1yqsjxOGc45EEMLZLRQDT0wQshcA2UudvLgcSxTXGFBVAab8Eri5xzLRGLlNqiG
+	0K79Chg+fYRKgjFIQhCO7AL6u2QO3G68oXxLrE9UhpV1YiT8d0=
+X-Received: by 2002:a05:6000:4607:b0:47f:9283:1fb3 with SMTP id ffacd0b85a97d-48152775015mr8986415f8f.0.1786548373922;
+        Wed, 12 Aug 2026 08:26:13 -0700 (PDT)
 Received: from localhost (p200300f65f017104d1b8d865063c5703.dip0.t-ipconnect.de. [2003:f6:5f01:7104:d1b8:d865:63c:5703])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4997c9944ecsm57398145e9.14.2026.08.12.08.26.05
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-48150d5eb2csm7883241f8f.30.2026.08.12.08.26.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Aug 2026 08:26:05 -0700 (PDT)
+        Wed, 12 Aug 2026 08:26:13 -0700 (PDT)
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
 To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Jiri Slaby <jirislaby@kernel.org>,
 	Thierry Reding <thierry.reding@kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-kernel@vger.kernel.org,
 	linux-serial@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH v1 0/3] mailbox: Provide devm variants for mbox_request_channel{,_byname}()
-Date: Wed, 12 Aug 2026 17:25:51 +0200
-Message-ID: <cover.1786547950.git.u.kleine-koenig@baylibre.com>
+Subject: [PATCH v1 3/3] serial: tegra-tcu: Make use of devm_mbox_request_channel_byname()
+Date: Wed, 12 Aug 2026 17:25:54 +0200
+Message-ID:  <f641b6d092d1ed92e27f521e9028b5d1da3f63b4.1786547950.git.u.kleine-koenig@baylibre.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <cover.1786547950.git.u.kleine-koenig@baylibre.com>
+References: <cover.1786547950.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -78,38 +82,63 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1087; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=Wtk0NDE/nQLO0Kq/zxEWskh8edpJnJdJeeeQfs8GFgQ=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBqfJB/7yySQbqx1G83rWBLo8uBfFZuEr2QxFCo6 dYxinU28aeJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCanyQfwAKCRCPgPtYfRL+ Tm4tB/sGKfeGvf851ZrjzdYH/y7CQMrZDskN2gFqCxqs3CbEMJPwFlqOF0Lrkz3bWQVbkwxpeyp bUKA4WZpW2Vs+ZtwzAiWnOuLdIbJIV1wkR67tXEeztaGD/84goXxqUF2luTVqGoGNRBY8RVoIwL QPHFE5xHMqSF0ugLnqyu//aOHfIg/vHFqNZ0g32Y9wWpne3GkJD+krr+1OJ0IdATnbF68Ni9PHU RWeSGrU9nmdhMvSo9FZrfpmFZF3TFdo1fIOgcU7SPGeZ0zv3FrhkFMtR35eE7wRjt6NWyhGgx4I TdNrpe8YutRjkO+FnYIpq9mZyOzwqje9sDRR78nYRq5z5qeg
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1952; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=XSnigZ+8lXrN+h1DK2jDpYLe1HS1P10Q0jBZkBu9EDM=; b=owGbwMvMwMXY3/A7olbonx/jabUkhqyaCW05MloPOQubfn23d2jb+0LTJa867t2Mp9Led1mdP Rc5n5HvZDRmYWDkYpAVU2Sxb1yTaVUlF9m59t9lmEGsTCBTGLg4BWAiJjHs/6xUnUyKfsdoqjGE pKae2nmkPWz9qqO2lV89+ruLW7ua8yY4GoTn/bCS3zg7+bfCjflnM8+aBqYvvnlcLP64eQhDeqp K9p0lPltkcng9TjzllxVeXbPhY+n8zZsXF9/TlJt69vnat3MyQ7tjg+5k8J5aVqwR+8yxMX/HzK zNKa/arHMEXKseNHL3nC7ZUjvhSubyz/zTH821c7J9byJuKGb4sbhX2UrykqA7m4ZVq9wdC9WzZ hmOBRv+JsbP4Q5onHjjL0PR6r+anq4XdF0zGuXc9fwnK8lXsk54MaEgYJ9r97/MdUVpkTVdNQUX H0ziXh7AeOuDpt6Pv3L9vgUTBSJd7tZteiNWonAr5SMA
 X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-Hello,
+Simplify tegra_tcu_probe() a bit by using the devm managed variant of
+mbox_request_channel_byname(). For the rx channel the function cannot be
+used without confusing the order of resource freeing.
 
-the first patch introduces devm variants of mbox request functions.
-The second patch is just a minor cleanup preparing the third patch.
-The third patch demos how the simplification looks like for a driver
-using mbox channels.
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+---
+ drivers/tty/serial/tegra-tcu.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-This series is mostly about the first patch, I'll resend the serial
-patches separately once the first patch is in. (If the serial
-maintainers are enthusiastic about the 2nd patch: There is no dependency
-on the first and it can go in already now; the third patch has to wait
-however.)
-
-Best regards
-Uwe
-
-Uwe Kleine-König (3):
-  mailbox: Provide devm variants for mbox_request_channel{,_byname}()
-  serial: tegra-tcu: Make use of dev_err_probe() in .probe()
-  serial: tegra-tcu: Make use of devm_mbox_request_channel_byname()
-
- drivers/mailbox/mailbox.c      | 44 ++++++++++++++++++++++++++++++++++
- drivers/tty/serial/tegra-tcu.c | 32 ++++++++++---------------
- include/linux/mailbox_client.h |  5 ++++
- 3 files changed, 62 insertions(+), 19 deletions(-)
-
-
-base-commit: dc59e4fea9d83f03bad6bddf3fa2e52491777482
+diff --git a/drivers/tty/serial/tegra-tcu.c b/drivers/tty/serial/tegra-tcu.c
+index 077023ce1842..a3596ec24d34 100644
+--- a/drivers/tty/serial/tegra-tcu.c
++++ b/drivers/tty/serial/tegra-tcu.c
+@@ -190,7 +190,7 @@ static int tegra_tcu_probe(struct platform_device *pdev)
+ 	tcu->rx_client.dev = &pdev->dev;
+ 	tcu->rx_client.rx_callback = tegra_tcu_receive;
+ 
+-	tcu->tx = mbox_request_channel_byname(&tcu->tx_client, "tx");
++	tcu->tx = devm_mbox_request_channel_byname(dev, &tcu->tx_client, "tx");
+ 	if (IS_ERR(tcu->tx))
+ 		return dev_err_probe(dev, PTR_ERR(tcu->tx),
+ 				     "failed to get tx mailbox\n");
+@@ -216,10 +216,9 @@ static int tegra_tcu_probe(struct platform_device *pdev)
+ 	tcu->driver.nr = 1;
+ 
+ 	err = uart_register_driver(&tcu->driver);
+-	if (err) {
+-		dev_err_probe(dev, err, "failed to register UART driver\n");
+-		goto free_tx;
+-	}
++	if (err)
++		return dev_err_probe(dev, err,
++				     "failed to register UART driver\n");
+ 
+ 	/* setup the port */
+ 	port = &tcu->port;
+@@ -260,8 +259,6 @@ static int tegra_tcu_probe(struct platform_device *pdev)
+ 	uart_remove_one_port(&tcu->driver, &tcu->port);
+ unregister_uart:
+ 	uart_unregister_driver(&tcu->driver);
+-free_tx:
+-	mbox_free_channel(tcu->tx);
+ 
+ 	return err;
+ }
+@@ -276,7 +273,6 @@ static void tegra_tcu_remove(struct platform_device *pdev)
+ 	mbox_free_channel(tcu->rx);
+ 	uart_remove_one_port(&tcu->driver, &tcu->port);
+ 	uart_unregister_driver(&tcu->driver);
+-	mbox_free_channel(tcu->tx);
+ }
+ 
+ static const struct of_device_id tegra_tcu_match[] = {
 -- 
 2.47.3
 
