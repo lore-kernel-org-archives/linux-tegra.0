@@ -1,41 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC92D4119FD;
-	Wed, 12 Aug 2026 09:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3D641A510;
+	Wed, 12 Aug 2026 09:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786527032; cv=none; b=uJm2cQzk3sHiB+n2XJclZL2yEOIlgAR77IDbE7t/PQLlzxAC2fn9ObQswQjKgUr3LCSDlRQbrg8Je/HD6pp6sIvIhcur5cts/nr1Tf6e6tjvjRk6Qw2yaDQ5OdOzVFl6xG1dqeCNobzLZLryucMPrvIptaY1aP01dL8uVb7+7sc=
+	t=1786527797; cv=none; b=BiV9GjOW11+cx7BzOjC+qr20qfzrTmWmGw2i2yU6qP3zerLF7VP3VWPvxQ4Nr8+V/TVoeJAfTKa27cmSZ1zFI7Od4XlBqEBNBQMS4oSFcoeRyEIvvuYFA2hs0WUz1ARPeWEuqecCTqVWXmFH37VPoh6OiatQbbqwqdopHeahFgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786527032; c=relaxed/simple;
-	bh=K9JMIPR9aJdFpfyoFLIu4SALHqOGNjdbaa3qgrUNtQo=;
+	s=arc-20240116; t=1786527797; c=relaxed/simple;
+	bh=9DMTCoAma+afKL+j00tVYVgwIK4dlvbapx+9k9hXzbc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QtzwNJR36DnUtF8u+PbMVCdHmMSAjBLBXbud1vgsY9av8/YGSeA9HZn1OHbUVk5c5v1SyLwKssF4VQy7FHTDHY99HCASgBZFBjylJDPM6n3SEV8p100SJVKOFf39mnRjrL9hWF1LHgGkePUqiE4+ivwWAUOXOUC4OMwqxwk+2JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fmcJybml; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=B8VcEbrGzpO9Y5Byx4/Z+TpB6q3rZZUZ3eDdLEyOc2YeRkDRXSs1hC2gxhrOX6kd5Z2OmMwcKlHTPTnudXRB3pAYbi/TAzCVtx3J5oDZ8FwmHRk4e6fweo9S2dcb8UEwzxZPXRO0T2y4XSLisrRuzhVZ/Y05NG7v3mc/qYSbzo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODDx41xT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fmcJybml"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD9471F00A3E;
-	Wed, 12 Aug 2026 09:30:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODDx41xT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7B131F00A3E;
+	Wed, 12 Aug 2026 09:43:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786527031;
-	bh=71ksmePZH3v7p0cYufmoYHyDtG33QmHyGWGOtYqztcY=;
+	s=k20260515; t=1786527795;
+	bh=L0nq/F0dJfkPaSrMhwVD1azKuXgbVkfbkOM0NurH9Rk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=fmcJybmlh+zd5aDfJu+Cbo9ixoolh0ousolElslLjb2GbU9T1oLbUTObK7uss3mur
-	 KduYY3zKs0F4Xc2/R5EtbIEsyoEhRVzsxTC2uyikZg/TPgwAVY9tYkpGA99SPQsG+m
-	 6ZcHoXQdQyHoedsr7uUUM4gjEGJqlTeOMwdkEFwulpn2F8aURgzX/uDgtRZdxz0Svk
-	 LzQfm9nXmU1s6knkT4DOyENBk8NJvPn+I86h4yv3c96telXJKb8TlXCywc7lRlNfoe
-	 J9n+FlsZH9ymtjkdrUuRJD+oXYa6238tSl1+N52ckpy1AKEw1Ty75Y5VlyibcgGJDH
-	 rf2WsIP7ec1Dg==
-Date: Wed, 12 Aug 2026 11:30:28 +0200
+	b=ODDx41xTEpkc73+ujxKzPdxv4sAEBRvaqczP//anq1OOv3igX4iNSOeUs/RfcgTli
+	 NFauzL7QH0+ePHx7zJvnnbmmT7uYlBRJGQFSM42Nbe05rtOEP5QRid5twQeyJzeC+S
+	 6aXKI8ZhysEWHorP/chimQ+5q2WofiG9l3AEZUNmPe7a0pm7skzWZKiquo1lFkGOTt
+	 uqoCVjeVPgimOKJbmHsO3/AfikTWLa8xSMQ0opLLCXaSopsTswpTld6YebNZhX08kR
+	 Lpgh1Jh3aabd+bZTIIjF6C32rJj7Gt2+Ky6LZF9VJC9cDN6jttnnxFZjKVKTZtNzJ8
+	 Ca3SteQ6G78MA==
+Date: Wed, 12 Aug 2026 11:43:12 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
 To: Mikko Perttunen <mperttunen@nvidia.com>
 Cc: jonathanh@nvidia.com, Aniruddha Rao <anrao@nvidia.com>, 
 	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] firmware: tegra: bpmp: Add ACPI support
-Message-ID: <anw8GfvJTgYOV7xn@orome>
+Subject: Re: [PATCH v2 4/5] firmware: tegra: bpmp: Add MBWT BPMP helpers
+Message-ID: <anw-YlHY09qFlzKB@orome>
 References: <20260722110544.193551-1-anrao@nvidia.com>
- <20260722110544.193551-3-anrao@nvidia.com>
- <yp4_Hg6NTM6XvmUccLSv1w@nvidia.com>
+ <20260722110544.193551-5-anrao@nvidia.com>
+ <aso9tq6bS9iLGL62qG0U8A@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -43,76 +43,101 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pj4wjzf7h252f5az"
+	protocol="application/pgp-signature"; boundary="phqbetzroxjbxito"
 Content-Disposition: inline
-In-Reply-To: <yp4_Hg6NTM6XvmUccLSv1w@nvidia.com>
+In-Reply-To: <aso9tq6bS9iLGL62qG0U8A@nvidia.com>
 
 
---pj4wjzf7h252f5az
+--phqbetzroxjbxito
 Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/5] firmware: tegra: bpmp: Add ACPI support
+Subject: Re: [PATCH v2 4/5] firmware: tegra: bpmp: Add MBWT BPMP helpers
 MIME-Version: 1.0
 
-On Thu, Jul 23, 2026 at 02:10:23PM +0900, Mikko Perttunen wrote:
+On Thu, Jul 23, 2026 at 02:15:50PM +0900, Mikko Perttunen wrote:
 > On Wednesday, July 22, 2026 8:05=E2=80=AFPM Aniruddha Rao wrote:
 [...]
 > > diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpm=
 p.c
 [...]
-> > @@ -428,6 +521,18 @@ int tegra_bpmp_transfer(struct tegra_bpmp *bpmp,
-> >  	return tegra_bpmp_channel_read(channel, msg->rx.data, msg->rx.size,
-> >  				       &msg->rx.ret);
-> >  }
-> > +
-> > +int tegra_bpmp_transfer(struct tegra_bpmp *bpmp,
-> > +			struct tegra_bpmp_message *msg)
+> > +int tegra_bpmp_mbwt_set(struct tegra_bpmp *bpmp, unsigned int instance,
+> > +			unsigned int vc_type, unsigned int bandwidth)
 > > +{
-> > +	if (WARN_ON(irqs_disabled()))
-> > +		return -EPERM;
+> > +	struct mrq_sochub_mbwt_request request =3D {
+> > +		.cmd =3D CMD_SOCHUB_MBWT_SET_BW,
+> > +		.set_bw =3D {
+> > +			.instance =3D instance,
+> > +			.vc_type =3D vc_type,
+> > +			.bw =3D bandwidth,
+> > +		},
+> > +	};
+> > +	struct tegra_bpmp_message msg =3D {
+> > +		.mrq =3D MRQ_SOCHUB_MBWT,
+> > +		.tx =3D {
+> > +			.data =3D &request,
+> > +			.size =3D sizeof(request),
+> > +		},
+> > +	};
+> > +	int err;
 > > +
-> > +	if (ACPI_HANDLE(bpmp->dev))
-> > +		return tegra_bpmp_transfer_acpi(bpmp, msg);
+> > +	err =3D tegra_bpmp_transfer(bpmp, &msg);
+> > +	if (err) {
+> > +		dev_err(bpmp->dev, "MBWT set bandwidth transfer failed: %d\n",
+> > +			err);
+> > +		return err;
+> > +	}
 > > +
-> > +	return __tegra_bpmp_transfer(bpmp, msg);
+> > +	if (msg.rx.ret)
+> > +		return msg.rx.ret;
+> > +
+> > +	return 0;
 > > +}
+> > +
+> >  static void tegra_bpmp_mrq_handle_ping(unsigned int mrq,
+> >  				       struct tegra_bpmp_channel *channel,
+> >  				       void *data)
+> > --=20
+> > 2.43.0
+> >=20
 >=20
-> Having separate __tegra_bpmp_transfer and tegra_bpmp_transfer seems=20
-> unnecessary to me. I think we can just have tegra_bpmp_transfer call=20
-> tegra_bpmp_transfer_acpi after the tegra_bpmp_message_valid check?
+> Since these are only used by the sysfs code, I would squash this patch=20
+> into the sysfs patch and move these functions into the sysfs file.
 
-We've had some internal discussions about this and I think we can pull
-in the message validity check into this function since it's common
-between the ACPI and the non-ACPI implementation. Similarly, that __
-prefix may be confusing. It's often used to refer to some internal
-helper, mostly for unlocked operations, so it does make some sense here,
-but using something like tegra_bpmp_transfer_channel() (I have a slight
-preference for this, because technically you could use this on non-DT
-systems as well, provided you get channel setup from some other firmware
-interface) or tegra_bpmp_transfer_dt() would make it clearer that this
-is the alternative to ACPI.
+I don't mind having this in bpmp.c. It's a fairly small file and this
+isn't a lot of code, so it doesn't have much of an impact either way.
+Adding an extra file is a bit of extra overhead and it would make more
+sense if we had a separate symbol to configure this out.
+
+Putting it alongside the sysfs code is bad if there's only even an
+inkling of a chance that we might want to call this from somewhere else,
+like maybe setting some default policy during boot or something.
+
+That said, I would place this somewhere different within bpmp.c. Maybe
+atop the probe function would be more appropriate instead of in the
+middle of these other utility functions, maybe slap a multi-line comment
+on top and describe what these new functions do.
 
 Thierry
 
---pj4wjzf7h252f5az
+--phqbetzroxjbxito
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmp8PTEACgkQ3SOs138+
-s6G9IA//R4ApZ3WmhNdErjQhX1OTqeYMC7TriRE2pnij++vE6c6hLRLMtWP/Bon1
-zcMXu6a37ZmjIlVRIZU7IOgUW9ttLMb1qmXsqAV5OHh7JX8fjMfkDG5bdVemzVuk
-Yio84pj1e1nZq55ailTX/yQmNBhOZLLpnFLGhdRVuiOWBXXEb3d9SWUtFmQvPSTg
-FmSP9xLKHmYQuofNa9bzxPCpV2zrH6RNGJ7w+HSiXtGrzUp7UNAv82MB5I3F3DU/
-1CwHbU6DVu9sW+PBVm57ALWhGJfppcBPDnHaq3uFIP0X67lc2UrR507oTJfcLooj
-yci2yo+WP/e7wkM2rIkM2amVZPPuiTO6Efnjfas6FxI5HSX2fDPGxtYtQondC4sC
-zAvt6xOsRTYUVhpNE5vqTPlXopDzcxb5SyNUxoedm2n5hMSvNCg1EjxiJJurnV17
-wrR46qEZ0MLjMbGD8jjIBTALk5PYl/v5cc0NXb6LjKkLQ53TVmYAN4VBxWnSpS0P
-iBOMqxAdpy1yp60Fz6eyaLtjBOX45voiLe+AARMCasLdkNqQTL+0tFrK5zPytIKk
-CF/n7iEKyujqkw3CFXpFN1I2a1iel27SEiyw3waE725NXOFnymcJ//I5kgqy+uao
-A4BeOCmyGuPr3X5i4JVMudxxvElnhm5XFJibYSr/yosTHtdSQMo=
-=eqnS
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmp8QC0ACgkQ3SOs138+
+s6HoDg/+IuvVasEg4N8ioZQD+9Lh1PoY2se6shatgIU2A4DzotmyKlOT5GmLDvsP
+uQ5uAYLZ24Y7uxXcxCAUBhS0A53KJc7r7pINAOTeKVYR7OTJ/jv4jqXXIN6HxCzu
+a8QV0N6RSw/lFLkOdHT8WQ4J0f6Z3at3PVgUJRIaclk22QgjaW3Cgb3g4Hznp2A0
+dAc7rWKJrEup//t8ChAksHLipJnEVb1l9KMjKitFBvjhksbJGJoIHG+uvwh6nqSf
+19iFA1WMxuQx+o4JVSy1LRaPG4cl9lojTY8A7YrxtGoGZj79BNWBSKWeVBUT3OBX
+xisMXX42cszJN5gNrOp7DYASS+LqWMvwwF9K3DUvJraV8hzNSIjWWFHjk31vORCV
+8AVeqArOe+pNZbb0mk+nhN5bHEOBPl2mNtKzyVEhKf5zUi9TW3esl6dxYBgB63bK
+PIRkG1PUnngbir6uogIUieiztFerO0mhQq9R8mykJr7FMejjX8q5lbUNcmmcax+R
+7p1yW++gUp7p1gAaRpxz6UUbw0xQGiYnWZnGHriQx8S8knGjP1bzhggkB3bt6HIN
+b1Z6xzjWGXGtyCpMbALFqkwUbgcyAlS11DHaRU2j417rGgpgAPbJJvPCNv7O1LVF
+2D7wEKz+pvP6aOyhow/O27XK/Qw0WazEBbguXX933oGmWmk+KBE=
+=fUIb
 -----END PGP SIGNATURE-----
 
---pj4wjzf7h252f5az--
+--phqbetzroxjbxito--
