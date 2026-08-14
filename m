@@ -1,187 +1,328 @@
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013036.outbound.protection.outlook.com [52.101.83.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257F335C684;
-	Fri, 14 Aug 2026 16:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786724150; cv=fail; b=EUk3aWb90BOBb577sdqQEjF9rflUbVVH/8Aq3yfOcAHX4WwBt48YS3qQQEBQMrNKM4njBtovR8nukAAO+A4aKCeMhM+DgxIDCgsEgIGbmj4BkvG21o4qOjbch6Y6ne7VOe2aY44RdtpKJW11XSwtxrDOW//OPSJCEIXVuw5L78s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786724150; c=relaxed/simple;
-	bh=mE8XgGqssSBC1pmb5jnWtmQeT6S+6DSReM6YsQTnDZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=cEQ3/TVeMFxaYmcR6l2CYTbt2i1s4DGWNSwV6f6cwoXs/Z6cklYp0KDh2MZWJkvyPEPj8W6SwR5w1tGCa67zGMvi+Ht6RdGmn/2BkR7CYdXC9drW7UYos/Q7AzlXcoozqVDJsYOS0nXqLfUEOb3gNj+RAV3pyNIA3iilI0wM24o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=Tpv6KW56; arc=fail smtp.client-ip=52.101.83.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C403B2D00
+	for <linux-tegra@vger.kernel.org>; Fri, 14 Aug 2026 19:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786736832; cv=none; b=k+Uzl3ip5goagWDxuXVsHCClqCSFgl0G9ga5ZPI+VH8BBqs4j5Mpym3Hjt5tGivhmc3D2x7tlcboSKe4URDfzqL/FDdvOlrYqY7S85ebu/jPPhzLaoKVYkccMYcqBRaRiSRrQO/FyjyYLACV1iJC+59I7BgfHRbGeJoK5e0TVGY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786736832; c=relaxed/simple;
+	bh=U1JoGZnvbz1lmyls1/v3gPQsEpMLAWDBdYn4o9KJ+Yc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j1ybkEk/idTVbQBw4qfkZ5dB+iQ+Ey33+/48fw9u0VZUSvIWU5D/OKgBcz56SiOnDVFVKqFAdhb9Rg7XRERJqCvur8qEx+pvKAobHfbvulqxuTuaYmhufQZnZopwXT+zWwSlke+KbycVlExYimGjqJXd82YNBbsp4aKOcO3ATbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kazr7Rlq; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="Tpv6KW56"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dMwf73WRT2o6vvMyS57Cn5DD1RsV7G97PIMWi6ofHv5nazAr59Vcqzxr7r0tFky38v+14gdk6qbSE0RxNSQu24VFq30EYE7CT+eEj+x/qacKf8mDpu2PmEwhg7BQHgKfKYPl8K6Sjnb/V+bXTJ1q/ulPSF8u51meIa91dVZgLqfvyMFxdAW2JTeD/tIXxnxGfzlPt83qytoT8h61hSTBifkmbMUtYRpWXsnvAAZsmRMy17i3UwqL9s3N1DNnsBJgXamQl+K9unj9eBL4AQj4GPOBJd4YbD4rdhpgi7Vx3/N0pxfE8t7JnYF+0VdhB7gV/4erD8kbjdP4/4XckfCLWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XI9+EGkuGODUHnoPhTZyUJtRwVkpUWiqN+luTTD5pBY=;
- b=Kmznjg5WciNQfJ6gg4Ef5iEc3Lq2wt3M4JkqMedEHaXAa+VNUYkg0+S8aJNqSCxG24UROBZpLZJU/e4nchpFQc4F8iN+FCleWjL1Gcdi5ls+QGgPzS4tIa3+jh92JDACd+yB8qE8oYxYJRFHbjLhrZSw3eNGWnBy4DgL5wLNKqbWeLmk+C7fO9E/8Y6GuMbWuVuAr/7sJzXKmnbWNk451q27IVeUbXn7Phr84IDAPgUQawwdftZp+tXcP3cIqk8lP0yYGrcafCzYbUqwasabnULd7ez5cFfDZkVcn1DOm7Mm4E/qp3eksNxz28hAjo9TgZM7UQFOt39s2VWBlg3MZw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XI9+EGkuGODUHnoPhTZyUJtRwVkpUWiqN+luTTD5pBY=;
- b=Tpv6KW56mf8SQazu3qrswyx8wJ5teGEyR+GvbmKcC8WidgGa9A6/VRccIGbmEQatLfzJRwTkB4B6VVFduuWXWallE23Ds4wAxnGmRYFgri9c6aE7xwxAvHQrhsHX8JJQfKA0MNfpyvI81L2EXgl2NUNtQGvesSQyBELl/+8D1FXc2dwOcRQ1AOHkbK3bfuRj/92gNbZNEDIcy1DMsxHXJyCQ9ErPb1JZt0f+tFH+ZjnlaafND79Cf/EuRexZ0uWp2X6+0glbT70qW5rnXt9n3GE35wyYeYZt2TwAXjkS0O+bznQMukCi215w+C3WK2s3wwD2Y0HzAz/mTJmKizXojw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU4PR04MB11791.eurprd04.prod.outlook.com (2603:10a6:10:623::11)
- by DU2PR04MB8808.eurprd04.prod.outlook.com (2603:10a6:10:2e3::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.315.15; Fri, 14 Aug
- 2026 16:15:38 +0000
-Received: from DU4PR04MB11791.eurprd04.prod.outlook.com
- ([fe80::11ca:6b74:3234:d7de]) by DU4PR04MB11791.eurprd04.prod.outlook.com
- ([fe80::11ca:6b74:3234:d7de%5]) with mapi id 15.21.0315.014; Fri, 14 Aug 2026
- 16:15:38 +0000
-Date: Fri, 14 Aug 2026 11:15:24 -0500
-From: Frank Li <Frank.li@oss.nxp.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>,
-	Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-	Binbin Zhou <zhoubinbin@loongson.cn>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	=?iso-8859-1?Q?Am=E9lie?= Delaunay <amelie.delaunay@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Keguang Zhang <keguang.zhang@gmail.com>,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kazr7Rlq"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2cab973140bso23241115ad.3
+        for <linux-tegra@vger.kernel.org>; Fri, 14 Aug 2026 12:47:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1786736830; x=1787341630; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=4pFsg5DaBut5RJmYZBe5aOtRtX/aP+9Aa+0P+1l5WK4=;
+        b=kazr7RlqEPdiOEv0GOqS+3z03jFbFKJRHiDQjalQhLdJ5H0QKkmqOpBCRB5JEquP+w
+         pAWkGoaWN4FEPftHcyUnA6kZbLM70rtO9YyXhpQ9G+7NxVc2kj7dvtI0i1FRCfgBEq9E
+         uY4aX/cPooXbamX5vx2OmciH0L46mGCUllsHY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786736830; x=1787341630;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=4pFsg5DaBut5RJmYZBe5aOtRtX/aP+9Aa+0P+1l5WK4=;
+        b=jWHU6bJ2sWjir7y5ocjK52D313N1I6HmXYyDbTInSN7TaZmy/k2hu0772pTN9L+Zss
+         uWzYJKgzklFTu57QBeHfFLm6ZKbSgWkrCAiC8cjwhIAWVNklp+nyhofaRp7hF7PWL5a2
+         pEWgVMBQYO9yDZtEGJQsIQOm5C7cASdTX8Ej4hMpsxlx63+F/867sju4N3zs0yTk8/Lu
+         VAxKYeqFA69DdUlnSLKI3nLbMvp4xDzUF8EdHYZd2edB+M83lwXiTFULJErYgJiobPnK
+         GHcs4Zej5k5z5tvbV+5lkxzxg1TBoD1HABoSymnPhi5pZ2Ls8zH1oqTwxArpE36Ksw1P
+         1vFA==
+X-Forwarded-Encrypted: i=1; AHgh+RrZMR9jGVtZB8T3qfZy9ZI4cMrUVDKTT24x/BX2P7mH5lXCtGfu2LFrdImA4L8mW/4Ym2ylMd6g/aFsPA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY5JYrnLkbohaYBmrxKYCTK3Nw8e7sd0tA8u/0UY1A2T+efnaG
+	Q9kbzdReDeE6dIy7lEnusgwAx2Fw5o11rggfDw98iJq2BEqK1jpFkelGQbTBx9ttFw==
+X-Gm-Gg: AR+sD13JIGZlsykUCJXX1rSVyUS1EEh0jMStoPE7NGaNXmTYxNRupOBFTmFASjI8Q2B
+	ck2Td5GcSTcn2yO1HAbXOKpjaUneDuexfUT+XCuZsf7r9rCXmS6Q+/4YUAJHI+lf8WVqn29KL0u
+	7C+vehMcXSCQnxHcadv6QgFcpO//eUuKmxyClDTP8u9u5QgAHhtcYbJO6dMdtCiWaa0duU0wWMS
+	HI1BMRiFZRsOdO+uDpTvBVmOQSXjRJ582+KUC+TZubcDtH2J4LHbA5pujOAAMpU6fH3j8hnAybN
+	N1E093BDNzdWExQQsu5K5uYcs+xHLB3k96rlVwnzz14E/hweX+6Vb1qpaiG2eGCmEv+koZbMKE7
+	ORsPUHZzz+SJoBVz1kpNxmqRlmNNhdqocSAaJjtpj5jrSXBy+27GCknuNkQJpqSyqS1zfbSdd/x
+	X8TUm3rlcIlkpvqkI0QLFwo05bbCClPqT0wG4PiNA1r9K5bylBknr6b2kJpWfE+mklqpkjIZg/7
+	q0CsR7zJYuAgtwM2HKJ0z+0OQb5OmLmoIYX3jin/hFcp4Y=
+X-Received: by 2002:a05:6a21:a4a:b0:3c3:9070:96b3 with SMTP id adf61e73a8af0-3cc71af165bmr10151406637.3.1786736829719;
+        Fri, 14 Aug 2026 12:47:09 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2a00:79e0:2e7c:8:dcf8:d626:8503:b94])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-141386a039asm11446346c88.0.2026.08.14.12.47.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Aug 2026 12:47:06 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: Jassi Brar <jassisinghbrar@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Douglas Anderson <dianders@chromium.org>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
 	Chen-Yu Tsai <wens@kernel.org>,
 	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
 	Samuel Holland <samuel@sholland.org>,
-	Kelvin Cao <kelvin.cao@microchip.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-trace-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-actions@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	imx@lists.linux.dev, Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH 1/2] dmaengine: use dma_chan_name() helper to get
- per-channel device name
-Message-ID: <an8_HLw4qZX-tjlj@SMW015318>
-References: <20260812-dma-chan_dev-rename-v1-0-a67131f7d5c2@nxp.com>
- <20260812-dma-chan_dev-rename-v1-1-a67131f7d5c2@nxp.com>
- <an7L5D_9aGMkLiEw@ashevche-desk.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <an7L5D_9aGMkLiEw@ashevche-desk.local>
-X-ClientProxiedBy: SA1PR02CA0021.namprd02.prod.outlook.com
- (2603:10b6:806:2cf::20) To GV2PR04MB11799.eurprd04.prod.outlook.com
- (2603:10a6:150:2cf::9)
+	Sebastian Reichel <sre@kernel.org>,
+	Suman Anna <s-anna@ti.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: mailbox: Delete old 'mailbox.txt' bindings file
+Date: Fri, 14 Aug 2026 12:46:12 -0700
+Message-ID: <20260814124603.v2.1.I8b3ff71c528133e7d6f81fe926fa39e6451d63fd@changeid>
+X-Mailer: git-send-email 2.55.0.691.gc56d675ccc-goog
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU4PR04MB11791:EE_|DU2PR04MB8808:EE_
-X-MS-Office365-Filtering-Correlation-Id: ebf17e81-b88a-477f-fec7-08defa1f46cc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|23010399003|19092799006|56012099006|10067099003|4143699003|11063799006|18002099003|22082099003|41080700001;
-X-Microsoft-Antispam-Message-Info:
-	zURzL9v6A9f6KIUoq5g1a4q1ZmEzyQFtRyCsz8JE7hKxZ5Xr/aibw2+cnq6MautbTEXCWkfrW0yfLIo7QaM+HB4IeQeosaCm1JIaS5FmH6vZr+5cdWm/Tf7em5IyvTF7t6NTpvrwr0Oyq0LcLBuP3D1gWoW3kMgYBL5S/KPegtSyoUFnWMpK96/wULINSOxhOJ/vaEv55LoNqQ+/UwEijhTem6ReqXF7bT/2+70lt3FzFFVsKVNgFCrJKXOrqmFASy90Hkk9r9HRIWgg7fkMqsXWxAnOKmkoe6l2QGjmJd9K4+35Nol+XzA8egbb6E6gthO8vTTE9zlP1NCzlsGJD5nTEXOVLakMlir3vnGB+IcMws37XeXH8mXyG4KYOJ8LFfJlwhmAN6LWhlbab08sVkaGgwtQMu9Wt92dYGKYdHo/F3THhruWYYI8Ou/ZobxhVeZpl8qJWJwzy8OeMJKZM3zFOKws7ciwOX3LkVGB1xEZ+5kCvBDaGG1luReyBJS1MloyaZ5itbyzlYI0++qUtw8ZrwBtnshD50k/EoKMdYgeQeBUTW0PoGEC+i8lKzw/8wns8DW7fnPiOZe4U046fd1gChRXfRP22fZHUUSvEZxBw0bugHvswRneBJOjYrUwq/6D4jfm00D6wgAbjQ93Mtd44yTc/K73JcPfSUOwDmDLE42a2nQEB6NebSvQRO87+HI8jSKTq95jdNfi0QL0/A==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU4PR04MB11791.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(23010399003)(19092799006)(56012099006)(10067099003)(4143699003)(11063799006)(18002099003)(22082099003)(41080700001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?8JV9LihFf7dDvzzMRhpOTraxqIZd6jsFiEncjaJPBN+PqTho9Ovdnw3RjtJk?=
- =?us-ascii?Q?5w8HLZZeOLGEQZn+2p/cgF6osl36VLtq0SOXcS4Lv6RJ6zZ/Qs/oGkZcdK+H?=
- =?us-ascii?Q?PkrxOzpehWrWex2K2Ib2YcPVDo58rGaGCMuvy/GCjU160Fi7oTjRzbrfxHpR?=
- =?us-ascii?Q?TZ+f9kUgqgm2Bztw98HJeWjEiFtT3YlGQUJ1Bapk7/V7yYbIqFqL3ef76/kV?=
- =?us-ascii?Q?XBOCKsD4+X9+zXuLcAafxfMhvQWyLv7Qvxfyl8JLNjIjQmUszYef21kYb5wp?=
- =?us-ascii?Q?IKmPxxWek+fQyvYuap7NjWLCutxvKLY+ipSCV96oM5aHMdIIh7cDmS6xktMU?=
- =?us-ascii?Q?3y55sSko6Ex+1stCoB2QcBUQFXkVUjjkwn4jXVZ49jqsRq1IA/ECyzr5ej+I?=
- =?us-ascii?Q?CYHbn4EMGGf891MiFRnSkcp4A2GPUk2AjeAVOTwb06R8ida9fEcG19UaeXDl?=
- =?us-ascii?Q?adrFbQwA3BUSLHb/c7gqPlOGOrugpUBXc2+bwjn1AtyIqJN8Ne4kAgMNy1c5?=
- =?us-ascii?Q?WSu8EnjfPNOI/CmeGFub7CQ46FzrFdhRWl72Gv5abn0DttSAdeg98bMHgT2I?=
- =?us-ascii?Q?RLXROh/O0b8w6h0ALyeGc2s/imAGjhhK2IN9/kQabmgOtxk7UvXJOhio+pwc?=
- =?us-ascii?Q?wg2JATpT3jRuiXYYW894GRxNy1QeJtM0CG9do1ut4fAj4YEApqtHiB5SfptO?=
- =?us-ascii?Q?wD7rwOUBIv7OyabyTChrljrEw+Vrc4oMnvaujPNXzMeP8/VizUvrh7ekyLfc?=
- =?us-ascii?Q?+nbsPd7oKqV3hsgjjA/BEU8wwA0ezTA85IkQB4PS4T8pqkxhu3h3knKknnak?=
- =?us-ascii?Q?xw3Kj/YrXTfnasAEdWQbHeVgYN88My4H489pRLQoFovhp2J1vQ6aRRLcrmfW?=
- =?us-ascii?Q?ZVAuzhe5VUG0V5YTGfWKRD5r+xowhr0Akzc88XNHII4w9B7MKFdteZBxSqPb?=
- =?us-ascii?Q?w8+5cy5v7q9tCtT+rblgVCEUOaO0Qsw7BWxVMmpNK9awadrXR4J1tf7RxTB2?=
- =?us-ascii?Q?brrNHeSzTbsLx0VJgypzj+IIahXhNGoxgs6JOjt86nViPfqHG9GyEIUDMTc5?=
- =?us-ascii?Q?YWpjdMrZdG0fh2ZRiKBgwKmpLBIOzoWXjED4V/c1Bo6bZBFsYZfwuH88QZWz?=
- =?us-ascii?Q?XD+rEo3TkaXvIzGQeBOMrk2+M9hYrVVj89hPBPFf787j8e7oR2Q2zxChQVEC?=
- =?us-ascii?Q?SmHUdEQLCfY43idHMd6lctTUZMMslVKQogNvVJG6gf4MnF0TdGmi6UCMna4K?=
- =?us-ascii?Q?fiRkietoL9E0wrRed+H6rlhKEM6qy8dGgODdzUzXgtE9ht3qpsUXarB37fFL?=
- =?us-ascii?Q?6ALIBddzW6IG8iA/aG7F6yR6ZPp0eXco21zmIwHi8LcbeMdCNsz2JxhJRHhX?=
- =?us-ascii?Q?AqQbyt+Ek7pJbqXeq10Bd0cxaTQ2v272F0b3tSaHHoJI3zSJE3R0anqc/ME4?=
- =?us-ascii?Q?ZKMK0WRJR3kb4Fd+U9bI396aj350Rk0HDt9/1/UZcMLN/alIfibFrW3gaYkL?=
- =?us-ascii?Q?bHctrfmumvlz9vGCyE5mjMbjq+IU+OvNrPFXDv9updsliQUahAelv6qsdyK7?=
- =?us-ascii?Q?P32nwkGvJN3Wj2bOp7Tt4MvvtUl+++B9pQjJz3u1wFDIazNJ0NM0ENJMqzeX?=
- =?us-ascii?Q?yS0cLy+IbxLVY6rS592Nz4WptD8PSNjHkrWfBgwgth2fYuVxgzXg/6DdlfIi?=
- =?us-ascii?Q?fbXrGeIKsVwilPKm7n4gpRnM8f6hOH2tU2TnMQrJewBFpQQJhUgKwm8fczZZ?=
- =?us-ascii?Q?YgvlTzdjhTu+/YLO5F1OQVFbClw6S831T9Xk6dGaP35Vuc0O2q2j?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ebf17e81-b88a-477f-fec7-08defa1f46cc
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2026 16:15:38.0159
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CVtX7IctrHaTzlLiVYjqvwy5KRqaGlLp5Fi0qzjYbXlttoLmIvkYYWcaAOezIA+VrwK1dBkGqnamzWqj9p9+2FYvdWA7LrsJ7gstbGrcLXcMtPwXOJU+UpSAz2VVoq5a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8808
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 14, 2026 at 11:03:48AM +0300, Andy Shevchenko wrote:
-> On Wed, Aug 12, 2026 at 05:24:08PM -0400, Frank.Li@oss.nxp.com wrote:
->
-> > Use the existing dma_chan_name() helper to obtain the per-channel device
-> > name instead of open-coding: dev_name(chan->dev->device) /
-> > dev_name(chan2dev())
-> >
-> > Simplify the code and improve consistency.
-> >
-> > No functional change intended.
->
-> ...
->
-> >  		ret = devm_request_irq(dev, lchan->irq, loongson2_cmc_dma_chan_irq, IRQF_SHARED,
-> > -				       dev_name(chan2dev(lchan)), lchan);
-> > +				       dma_chan_name(&lchan->vchan.chan), lchan);
->
-> Depending on the amount of users (and I expect there is a number), I would
-> expect specific API for virt-dma case.
+As per mailing-list discussions [1] [2] [3], we want to delete the
+following old file from the device-tree bindings that live in the
+Linux kernel git tree:
+* Documentation/devicetree/bindings/mailbox/mailbox.txt
 
-Make sense, I consider it before. Let's wait for while for patch2's comments
+The old .txt file did have some descriptive text about what some of
+the properties meant. Those have been added to the dt-schema
+repository in a pull request [4].
 
-Frank
->
-> >  		if (ret)
-> >  			return ret;
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+Also remove dangling references to `mailbox.txt` across all remaining
+device-tree binding documentation files.
+
+Link: https://lore.kernel.org/r/20260722140214.GA548057-robh@kernel.org [1]
+Link: https://lore.kernel.org/r/dc7a2041-50a4-482e-9930-566bb3fd1e72@kernel.org [2]
+Link: https://lore.kernel.org/r/CAL_JsqKVjQ2m-dzMUENQry-f_YE9QrYSOKoH9CPj1gjj8XkPRA@mail.gmail.com [3]
+Link: https://github.com/devicetree-org/dt-schema/pull/202 [4]
+Cc: Sudeep Holla <sudeep.holla@kernel.org>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Lee Jones <lee@kernel.org>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+- v1: https://lore.kernel.org/r/20260804133801.1.I8b3ff71c528133e7d6f81fe926fa39e6451d63fd@changeid
+
+Changes in v2:
+- Remove dangling mailbox.txt references as per Sashiko.
+
+ .../firmware/nvidia,tegra186-bpmp.yaml        |  6 +-
+ .../mailbox/allwinner,sun6i-a31-msgbox.yaml   |  3 -
+ .../bindings/mailbox/altera-mailbox.txt       | 12 ++--
+ .../mailbox/hisilicon,hi3660-mailbox.txt      |  2 +-
+ .../mailbox/hisilicon,hi6220-mailbox.txt      |  2 +-
+ .../devicetree/bindings/mailbox/mailbox.txt   | 60 -------------------
+ .../bindings/mailbox/ti,omap-mailbox.yaml     |  3 +-
+ .../power/reset/xlnx,zynqmp-power.yaml        |  9 +--
+ .../bindings/soc/qcom/qcom,aoss-qmp.yaml      |  2 +-
+ 9 files changed, 15 insertions(+), 84 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/mailbox/mailbox.txt
+
+diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
+index 3c44fe607e12..acdc5c1d3d8b 100644
+--- a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
++++ b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.yaml
+@@ -18,11 +18,9 @@ description: |
+   which can create the interprocessor communication (IPC) between the
+   CPU and BPMP.
+ 
+-  This node is a mailbox consumer. See the following files for details
+-  of the mailbox subsystem, and the specifiers implemented by the
+-  relevant provider(s):
++  This node is a mailbox consumer. See the following file for details
++  of the mailbox specifiers implemented by the relevant provider(s):
+ 
+-    - .../mailbox/mailbox.txt
+     - .../mailbox/nvidia,tegra186-hsp.yaml
+ 
+   This node is a clock, power domain, and reset provider. See the
+diff --git a/Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml b/Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml
+index 87d31963c1b7..f58b0d412186 100644
+--- a/Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml
++++ b/Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml
+@@ -17,9 +17,6 @@ description: |
+   hold four 32-bit messages; when a FIFO is full, clients must wait before
+   attempting more transmissions.
+ 
+-  Refer to ./mailbox.txt for generic information about mailbox device-tree
+-  bindings.
+-
+ properties:
+   compatible:
+     oneOf:
+diff --git a/Documentation/devicetree/bindings/mailbox/altera-mailbox.txt b/Documentation/devicetree/bindings/mailbox/altera-mailbox.txt
+index c4dd93f1fed2..87749d251f09 100644
+--- a/Documentation/devicetree/bindings/mailbox/altera-mailbox.txt
++++ b/Documentation/devicetree/bindings/mailbox/altera-mailbox.txt
+@@ -31,12 +31,12 @@ Example:
+ 
+ Mailbox client
+ ===============
+-"mboxes" and the optional "mbox-names" (please see
+-Documentation/devicetree/bindings/mailbox/mailbox.txt for details). Each value
+-of the mboxes property should contain a phandle to the mailbox controller
+-device node and second argument is the channel index. It must be 0 (hardware
+-support only one channel).The equivalent "mbox-names" property value can be
+-used to give a name to the communication channel to be used by the client user.
++The common mailbox binding properties "mboxes" and the optional "mbox-names"
++can be used. Each value of the mboxes property should contain a phandle to
++the mailbox controller device node and second argument is the channel index.
++It must be 0 (hardware support only one channel). The equivalent "mbox-names"
++property value can be used to give a name to the communication channel to be
++used by the client user.
+ 
+ Example:
+ 	mclient0: mclient0@400 {
+diff --git a/Documentation/devicetree/bindings/mailbox/hisilicon,hi3660-mailbox.txt b/Documentation/devicetree/bindings/mailbox/hisilicon,hi3660-mailbox.txt
+index 3e5b4537407d..ec2da5c9e647 100644
+--- a/Documentation/devicetree/bindings/mailbox/hisilicon,hi3660-mailbox.txt
++++ b/Documentation/devicetree/bindings/mailbox/hisilicon,hi3660-mailbox.txt
+@@ -35,7 +35,7 @@ Client
+ 
+ Required properties:
+ - compatible		: See the client docs
+-- mboxes		: Standard property to specify a Mailbox (See ./mailbox.txt)
++- mboxes		: Standard property to specify a Mailbox
+ 			  Cells must match 'mbox-cells' (See Controller docs above)
+ 
+ Optional properties
+diff --git a/Documentation/devicetree/bindings/mailbox/hisilicon,hi6220-mailbox.txt b/Documentation/devicetree/bindings/mailbox/hisilicon,hi6220-mailbox.txt
+index 044b17f3a77a..de9fbf722bee 100644
+--- a/Documentation/devicetree/bindings/mailbox/hisilicon,hi6220-mailbox.txt
++++ b/Documentation/devicetree/bindings/mailbox/hisilicon,hi6220-mailbox.txt
+@@ -55,7 +55,7 @@ Mailbox client
+ Required properties:
+ --------------------
+ - compatible:		Many (See the client docs).
+-- mboxes:		Standard property to specify a Mailbox (See ./mailbox.txt)
++- mboxes:		Standard property to specify a Mailbox
+ 			Cells must match 'mbox-cells' (See Mailbox Device Node above).
+ 
+ Optional Properties:
+diff --git a/Documentation/devicetree/bindings/mailbox/mailbox.txt b/Documentation/devicetree/bindings/mailbox/mailbox.txt
+deleted file mode 100644
+index af8ecee2ac68..000000000000
+--- a/Documentation/devicetree/bindings/mailbox/mailbox.txt
++++ /dev/null
+@@ -1,60 +0,0 @@
+-* Generic Mailbox Controller and client driver bindings
+-
+-Generic binding to provide a way for Mailbox controller drivers to
+-assign appropriate mailbox channel to client drivers.
+-
+-* Mailbox Controller
+-
+-Required property:
+-- #mbox-cells: Must be at least 1. Number of cells in a mailbox
+-		specifier.
+-
+-Example:
+-	mailbox: mailbox {
+-		...
+-		#mbox-cells = <1>;
+-	};
+-
+-
+-* Mailbox Client
+-
+-Required property:
+-- mboxes: List of phandle and mailbox channel specifiers.
+-
+-Optional property:
+-- mbox-names: List of identifier strings for each mailbox channel.
+-- shmem : List of phandle pointing to the shared memory(SHM) area between the
+-	  users of these mailboxes for IPC, one for each mailbox. This shared
+-	  memory can be part of any memory reserved for the purpose of this
+-	  communication between the mailbox client and the remote.
+-
+-
+-Example:
+-	pwr_cntrl: power {
+-		...
+-		mbox-names = "pwr-ctrl", "rpc";
+-		mboxes = <&mailbox 0 &mailbox 1>;
+-	};
+-
+-Example with shared memory(shmem):
+-
+-	sram: sram@50000000 {
+-		compatible = "mmio-sram";
+-		reg = <0x50000000 0x10000>;
+-
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-		ranges = <0 0x50000000 0x10000>;
+-
+-		cl_shmem: shmem@0 {
+-			compatible = "client-shmem";
+-			reg = <0x0 0x200>;
+-		};
+-	};
+-
+-	client@2e000000 {
+-		...
+-		mboxes = <&mailbox 0>;
+-		shmem = <&cl_shmem>;
+-		..
+-	};
+diff --git a/Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml b/Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml
+index 8504ceb64806..7e3b7b68841c 100644
+--- a/Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml
++++ b/Documentation/devicetree/bindings/mailbox/ti,omap-mailbox.yaml
+@@ -53,8 +53,7 @@ description: |
+   ==============
+   A device needing to communicate with a target processor device should specify
+   them using the common mailbox binding properties, "mboxes" and the optional
+-  "mbox-names" (please see Documentation/devicetree/bindings/mailbox/mailbox.txt
+-  for details). Each value of the mboxes property should contain a phandle to
++  "mbox-names". Each value of the mboxes property should contain a phandle to
+   the mailbox controller device node and an args specifier that will be the
+   phandle to the intended sub-mailbox child node to be used for communication.
+   The equivalent "mbox-names" property value can be used to give a name to the
+diff --git a/Documentation/devicetree/bindings/power/reset/xlnx,zynqmp-power.yaml b/Documentation/devicetree/bindings/power/reset/xlnx,zynqmp-power.yaml
+index 079ad977b907..60f0882f5381 100644
+--- a/Documentation/devicetree/bindings/power/reset/xlnx,zynqmp-power.yaml
++++ b/Documentation/devicetree/bindings/power/reset/xlnx,zynqmp-power.yaml
+@@ -27,12 +27,9 @@ properties:
+       mailbox controller device node and an args specifier
+       that will be the phandle to the intended sub-mailbox
+       child node to be used for communication. See
+-      Documentation/devicetree/bindings/mailbox/mailbox.txt
+-      for more details about the generic mailbox controller
+-      and client driver bindings. Also see
+-      Documentation/devicetree/bindings/mailbox/ \
+-      xlnx,zynqmp-ipi-mailbox.txt for typical controller that
+-      is used to communicate with this System controllers.
++      Documentation/devicetree/bindings/mailbox/xlnx,zynqmp-ipi-mailbox.yaml
++      for typical controller that is used to communicate with
++      this System controllers.
+     items:
+       - description: tx channel
+       - description: rx channel
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
+index 8eaa04431d74..e238f100f8ff 100644
+--- a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
+@@ -69,7 +69,7 @@ properties:
+     maxItems: 1
+     description:
+       Reference to the mailbox representing the outgoing doorbell in APCS for
+-      this client, as described in mailbox/mailbox.txt
++      this client.
+ 
+   "#clock-cells":
+     const: 0
+-- 
+2.55.0.691.gc56d675ccc-goog
+
