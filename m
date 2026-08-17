@@ -1,203 +1,192 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52E721D3F5;
-	Mon, 17 Aug 2026 12:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE8D41D116;
+	Mon, 17 Aug 2026 12:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786969091; cv=none; b=BrwHR0G+5EqdtoDCsnmMx5yveXHkqASdvr5x5fa5p0Xf2ZU6bAToI+cOpi4eiPvhHk+AB28i7ABVZLb0OsFoQ8+tGwXmXhtfcuQOZHvACbSvxsoyE6S6tQnQrHQMLHWvQmBzkXIEG4XotT7YUYGGb8U4GlIxEDifMmg0PeVc1VE=
+	t=1786970474; cv=none; b=WZ2Jpvwfk2vVyqnMwGwiLUrRXHVTA+t5rGUbzOrHQMtJx+WTRR+8npkfFS7eCK8Jw0T27wbg3S6RGy1EWgtTqWgCLuW0fVQJsX6lquikrO3cK7Md6jXZZ+pU7ASH4/Od0C480RxDggAVvvFlL8dAJGljrBF4Wadr7JbCFaxlQhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786969091; c=relaxed/simple;
-	bh=D3tfC2NKRHiIgBG/HX7FJVaIyWVPaT6OBvQOXMos+YE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dq//ul3eiBaPMrHW/BOsp1hyHKHjoVFWwe51/CoTpmKODEp3dwCoPt5w/jqnPAt5x96X6RPP6YOQc46uGC8/DWANXwuGQ5nuQ4Q72NMLhlapRKLu5NwqGO96+gW37zlr+pHdGScgRcD+WfljDdMlxHUBUiLMEUweaipxykf+mmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HKYTyFry; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786970474; c=relaxed/simple;
+	bh=7X4st2dfy1l8lT+fjQAQC0tAfIF/QQdIXAwtTks4e/k=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CPMPSitB42OLM42uVW9v+5+VmQ5NPqZq1EEsNyStM6KWBwkAQYdDbQZsTitUEIY1v/GA2MCB6slUzAyZrEJqkm3D+R5w0Ix9Fpg7mA4+Qel3w8dDRzzg5AVS9QSZvsOeX5O9f1rZoAa48mijIR9W7xQcx5D+08rrgIJN2gzL74A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aoCANBg2; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKYTyFry"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC0BA1F000E9;
-	Mon, 17 Aug 2026 12:18:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786969089;
-	bh=CGu7gcIHYDCNawoXc5YnpH1ljwtZKsdafzC8hmQTB50=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=HKYTyFryVLX+r6abyLXYSOyysN+tzWR80p3OhPbC0T8eHfK6MBWBfc7Or2Azfzur8
-	 ACAHo8FSpGOhuOALKfvWUC+KxcPCUj/dlpmrCAFZUJa48Be3UOILBW1IGMVC58VWg8
-	 htH3igvcI/oWcvRupKmGFp5m/ZyucbaoPWzNWRU0FAKd9FRppMvlDazdQf7mwLnd4p
-	 ETCmAYHxwi+5o6ENMarWG92RBalFho18lxQmkPVlYmbYZC0Fc3sP+LIGF20zVp5yut
-	 lklMJ14h6kxpfCGJbLG0X2/Svkk/T3Qu0sW62opUtZ5mO3nQcTv5JFILce3yukK7rF
-	 AiwBtMtMjWs3Q==
-Date: Mon, 17 Aug 2026 14:18:06 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: net: nvidia,tegra234-mgbe: Add missing
- properties
-Message-ID: <aoL36TMH4HBZhLwh@orome>
-References: <20260716212001.989872-1-thierry.reding@kernel.org>
- <20260717212719.GA2687584-robh@kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aoCANBg2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1786970471; x=1818506471;
+  h=from:to:subject:in-reply-to:references:date:message-id:
+   mime-version;
+  bh=7X4st2dfy1l8lT+fjQAQC0tAfIF/QQdIXAwtTks4e/k=;
+  b=aoCANBg23f6hM++EUWX5525byy5v5c6zWGrwg/KiAVFSp/WghxX3Ar3m
+   /6zwcHjA/VxbxfPx6xfEoGl3eis8ImmuA7sz7utu+t6IpCOXy8InG0CSM
+   T0yqDPiqXnCnC9nLrr0cBEA/RTaiVY3IaPbr+FUpghBU+ZYyUvP+RgkQV
+   4f/ei+2e4YH7ftlpbzZyPf5UyU7PYOiwv8OmQB8sWtKxDOw8auU2eWZi5
+   6k9ow65XPdSkFxNrWZWEGerJkJjZC1VxXb2x3V2wRpN9VzK6hqYS+uzoz
+   UpG0wwIKwRWP9tDRzfv1i+flskA5/w0Pm/gjeLH8rxGStuKtc/dZnLe9f
+   Q==;
+X-CSE-ConnectionGUID: nqskxE+2STilEaTWKs8ZOw==
+X-CSE-MsgGUID: v6Fq7FuYQFqJWjjSJzZMMg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11877"; a="98598084"
+X-IronPort-AV: E=Sophos;i="6.25,228,1779174000"; 
+   d="scan'208";a="98598084"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2026 05:41:10 -0700
+X-CSE-ConnectionGUID: kO9/n7EERguTo2l7wfOCtw==
+X-CSE-MsgGUID: 7ox5dl61Tw6To4e/rrOiGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,228,1779174000"; 
+   d="scan'208";a="266887598"
+Received: from abityuts-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.110])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2026 05:41:05 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, freedreno@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, nouveau@lists.freedesktop.org,
+ linux-arm-msm@vger.kernel.org, linux-hyperv@vger.kernel.org,
+ linux-sunxi@lists.linux.dev, asahi@lists.linux.dev,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-samsung-soc@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, intel-gfx@lists.freedesktop.org,
+ linux-aspeed@lists.ozlabs.org, linux-rockchip@lists.infradead.org,
+ linux-tegra@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-mips@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+ spice-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ imx@lists.linux.dev
+Subject: Re: [PATCH 0/5] drm/vblank: Enforce all-or-nothing vblank support
+In-Reply-To: <20260814203542.1405135-1-lyude@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park,
+ 6 krs Bertel Jungin Aukio 5, 02600 Espoo, Finland
+References: <20260814203542.1405135-1-lyude@redhat.com>
+Date: Mon, 17 Aug 2026 15:41:02 +0300
+Message-ID: <5f06e91a5ff0e5bb887b72e4ff9077c45cd9216e@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="genl67fh5yhofsyl"
-Content-Disposition: inline
-In-Reply-To: <20260717212719.GA2687584-robh@kernel.org>
+Content-Type: text/plain
+
+On Fri, 14 Aug 2026, Lyude Paul <lyude@redhat.com> wrote:
+> One of the oddities with DRM that is leftover from the old days is how
+> vblank support is implemented by drivers. This has caused some minor
+> issues for the rust bindings for KMS which could be worked around.
+> However, it seems like a much better idea to fix this on the C side.
+> Those oddities are mainly:
+>
+> * There's nothing in the vblank core that actually ensures that all
+>   CRTCs implement vblank support if one of them do. On Rust's side, we
+>   can't have this and have to ensure either the whole device has vblank
+>   support or not - otherwise it would be quite painful ensuring we don't
+>   expose vblank methods to drivers that can't use them.
+>   This additionally means such a situation would lead to UB.
+> * There is a second variable for keeping track of the number of CRTCs
+>   and it's kind of broken and confusing. Even worse, we currently allow
+>   the vblank API to allow a driver to specify a different number of
+>   CRTCs then it actually has.
+>
+> So, let's just go ahead and fix this across the whole tree, and enforce
+> that a driver must either implement hardware vblank support for all
+> CRTCs or no CRTCs.
+
+For i915, the relevant init order is currently:
+
+- drm_vblank_init()
+- drm_mode_config_init()
+- drm_crtc_init_with_planes() for each CRTC
+
+For the patch series to work, drm_vblank_init() would have to happen
+after mode config and CRTC init. Off-hand, I couldn't say if there are
+dependencies that make this change difficult.
+
+I'd be surprised if i915 were the only driver like this.
 
 
---genl67fh5yhofsyl
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] dt-bindings: net: nvidia,tegra234-mgbe: Add missing
- properties
-MIME-Version: 1.0
+BR,
+Jani.
 
-On Fri, Jul 17, 2026 at 04:27:19PM -0500, Rob Herring wrote:
-> On Thu, Jul 16, 2026 at 11:20:01PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Being a DWMAC derivative, the Tegra234 MGBE supports AXI configuration
-> > nodes named stmmac-axi-config and phandle references to them using the
-> > snps,axi-config property.
-> >=20
-> > While at it, add the 10gbase-r PHY mode.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> > This gets rid of the remaining warnings on half of the Tegra234 boards.
-> >=20
-> >  .../devicetree/bindings/net/nvidia,tegra234-mgbe.yaml    | 9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe=
-=2Eyaml b/Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.yaml
-> > index 215f14d1897d..dc897e312c55 100644
-> > --- a/Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.yaml
-> > +++ b/Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.yaml
-> > @@ -81,8 +81,9 @@ properties:
-> >    phy-mode:
-> >      contains:
-> >        enum:
-> > -        - usxgmii
-> >          - 10gbase-kr
-> > +        - 10gbase-r
-> > +        - usxgmii
-> > =20
-> >    mdio:
-> >      $ref: mdio.yaml#
-> > @@ -90,6 +91,12 @@ properties:
-> >      description:
-> >        Optional node for embedded MDIO controller.
-> > =20
-> > +  snps,axi-config:
-> > +    $ref: snps,dwmac.yaml#/properties/snps,axi-config
-> > +
-> > +  stmmac-axi-config:
-> > +    $ref: snps,dwmac.yaml#/properties/stmmac-axi-config
->=20
-> You should be referencing the whole snps,dwmac.yaml.
+>
+> Lyude Paul (5):
+>   drm/vblank: Add drm_device.has_hw_vblank
+>   drm/vblank: Remove drm->num_crtcs
+>   drm/vblank: Remove num_crtcs argument from drm_vblank_init()
+>   drm/vblank: Use drm_for_each_crtc() in drm_vblank_init()
+>   drm/vblank: Require all CRTCs implement vblank support in
+>     drm_vblank_init()
+>
+>  drivers/gpu/drm/adp/adp_drv.c                 |  2 +-
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c      |  2 +-
+>  drivers/gpu/drm/amd/amdgpu/dce_v10_0.c        |  2 +-
+>  drivers/gpu/drm/amd/amdgpu/dce_v6_0.c         |  2 +-
+>  drivers/gpu/drm/amd/amdgpu/dce_v8_0.c         |  2 +-
+>  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  2 +-
+>  .../gpu/drm/arm/display/komeda/komeda_kms.c   |  2 +-
+>  drivers/gpu/drm/arm/hdlcd_drv.c               |  2 +-
+>  drivers/gpu/drm/arm/malidp_drv.c              |  2 +-
+>  drivers/gpu/drm/armada/armada_drv.c           |  2 +-
+>  drivers/gpu/drm/aspeed/aspeed_gfx_drv.c       |  2 +-
+>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c  |  2 +-
+>  drivers/gpu/drm/drm_vblank.c                  | 60 ++++++++++++-------
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c       |  2 +-
+>  drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c     |  2 +-
+>  drivers/gpu/drm/gma500/psb_drv.c              |  2 +-
+>  drivers/gpu/drm/gma500/psb_irq.c              |  4 +-
+>  .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  2 +-
+>  .../gpu/drm/hisilicon/kirin/kirin_drm_drv.c   |  2 +-
+>  drivers/gpu/drm/hyperv/hyperv_drm_modeset.c   |  2 +-
+>  .../drm/i915/display/intel_display_driver.c   |  3 +-
+>  drivers/gpu/drm/imx/dc/dc-kms.c               |  2 +-
+>  drivers/gpu/drm/imx/dcss/dcss-kms.c           |  2 +-
+>  drivers/gpu/drm/imx/ipuv3/imx-drm-core.c      |  2 +-
+>  drivers/gpu/drm/imx/lcdc/imx-lcdc.c           |  2 +-
+>  drivers/gpu/drm/ingenic/ingenic-drm-drv.c     |  2 +-
+>  drivers/gpu/drm/kmb/kmb_drv.c                 |  2 +-
+>  drivers/gpu/drm/logicvc/logicvc_mode.c        |  2 +-
+>  drivers/gpu/drm/loongson/lsdc_drv.c           |  2 +-
+>  drivers/gpu/drm/mcde/mcde_drv.c               |  2 +-
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.c        |  2 +-
+>  drivers/gpu/drm/meson/meson_drv.c             |  2 +-
+>  drivers/gpu/drm/msm/msm_kms.c                 |  2 +-
+>  drivers/gpu/drm/mxsfb/lcdif_drv.c             |  2 +-
+>  drivers/gpu/drm/mxsfb/mxsfb_drv.c             |  2 +-
+>  drivers/gpu/drm/nouveau/nouveau_display.c     |  2 +-
+>  drivers/gpu/drm/omapdrm/omap_drv.c            |  2 +-
+>  drivers/gpu/drm/pl111/pl111_drv.c             |  2 +-
+>  drivers/gpu/drm/qxl/qxl_display.c             |  2 +-
+>  drivers/gpu/drm/radeon/atombios_crtc.c        |  4 +-
+>  drivers/gpu/drm/radeon/radeon_irq_kms.c       |  2 +-
+>  drivers/gpu/drm/radeon/radeon_legacy_crtc.c   |  4 +-
+>  drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c |  2 +-
+>  drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c  |  2 +-
+>  .../gpu/drm/renesas/shmobile/shmob_drm_drv.c  |  2 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_drv.c   |  2 +-
+>  drivers/gpu/drm/sprd/sprd_drm.c               |  2 +-
+>  drivers/gpu/drm/sti/sti_compositor.c          |  2 +-
+>  drivers/gpu/drm/stm/ltdc.c                    |  2 +-
+>  drivers/gpu/drm/sun4i/sun4i_drv.c             |  2 +-
+>  drivers/gpu/drm/tegra/drm.c                   |  2 +-
+>  drivers/gpu/drm/tidss/tidss_kms.c             |  2 +-
+>  drivers/gpu/drm/tilcdc/tilcdc_drv.c           |  2 +-
+>  drivers/gpu/drm/tiny/bochs.c                  |  2 +-
+>  drivers/gpu/drm/tiny/cirrus-qemu.c            |  2 +-
+>  drivers/gpu/drm/tve200/tve200_drv.c           |  2 +-
+>  drivers/gpu/drm/vc4/vc4_kms.c                 |  6 +-
+>  drivers/gpu/drm/verisilicon/vs_drm.c          |  2 +-
+>  drivers/gpu/drm/virtio/virtgpu_display.c      |  2 +-
+>  drivers/gpu/drm/vkms/vkms_drv.c               |  3 +-
+>  drivers/gpu/drm/vmwgfx/vmwgfx_vkms.c          |  2 +-
+>  drivers/gpu/drm/xlnx/zynqmp_kms.c             |  2 +-
+>  include/drm/drm_device.h                      | 10 +++-
+>  include/drm/drm_vblank.h                      |  2 +-
+>  64 files changed, 114 insertions(+), 92 deletions(-)
+>
+>
+> base-commit: 568d4cb5dcc5ec4e22975699b6ea67a30806884c
 
-I initially tried that, but it makes things a lot worse:
-
-    Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.example.dtb:=
- ethernet@6800000 (nvidia,tegra234-mgbe): clock-names: ['mgbe', 'mac', 'mac=
--divider', 'ptp_ref', 'rx-input-m', 'rx-input', 'tx', 'eee-pcs', 'rx-pcs-in=
-put', 'rx-pcs-m', 'rx-pcs', 'tx-pcs'] is too long
-    from schema $id: http://devicetree.org/schemas/net/nvidia,tegra234-mgbe=
-=2Eyaml
-    Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.example.dtb:=
- ethernet@6800000 (nvidia,tegra234-mgbe): clocks: [[4294967295, 380], [4294=
-967295, 377], [4294967295, 376], [4294967295, 381], [4294967295, 357], [429=
-4967295, 248], [4294967295, 374], [4294967295, 379], [4294967295, 369], [42=
-94967295, 361], [4294967295, 373], [4294967295, 375]] is too long
-    from schema $id: http://devicetree.org/schemas/net/nvidia,tegra234-mgbe=
-=2Eyaml
-    Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.example.dtb:=
- ethernet@6800000 (nvidia,tegra234-mgbe): compatible: ['nvidia,tegra234-mgb=
-e'] does not contain items matching the given schema
-    from schema $id: http://devicetree.org/schemas/net/nvidia,tegra234-mgbe=
-=2Eyaml
-    Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.example.dtb:=
- ethernet@6800000 (nvidia,tegra234-mgbe): interrupt-names:0: 'oneOf' condit=
-ional failed, one must be fixed:
-    'macirq' was expected
-    'eth_wake_irq' was expected
-    'eth_lpi' was expected
-    'sfty' was expected
-    'common' does not match '^rx-queue-[0-7]$'
-    'common' does not match '^tx-queue-[0-7]$'
-    'common' does not match '^ptp-pps-[0-3]$'
-    from schema $id: http://devicetree.org/schemas/net/nvidia,tegra234-mgbe=
-=2Eyaml
-    Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.example.dtb:=
- ethernet@6800000 (nvidia,tegra234-mgbe): mdio: 'compatible' is a required =
-property
-    from schema $id: http://devicetree.org/schemas/net/nvidia,tegra234-mgbe=
-=2Eyaml
-    Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.example.dtb:=
- ethernet@6800000 (nvidia,tegra234-mgbe): reg: [[109051904, 65536], [109117=
-440, 65536], [109707264, 65536]] is too long
-    from schema $id: http://devicetree.org/schemas/net/nvidia,tegra234-mgbe=
-=2Eyaml
-    Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.example.dtb:=
- ethernet@6800000 (nvidia,tegra234-mgbe): reset-names: 'oneOf' conditional =
-failed, one must be fixed:
-    ['mac', 'pcs'] is too long
-    'mac' is not one of ['stmmaceth', 'ahb']
-    'stmmaceth' was expected
-    'ahb' was expected
-    from schema $id: http://devicetree.org/schemas/net/nvidia,tegra234-mgbe=
-=2Eyaml
-
-This is because while the underlying IP is derived from the Synopsis
-one, the Tegra MGBE is slightly modified and has different clock inputs,
-interrupts, etc.
-
-Or, well, I guess I don't actually know (does anyoen?) if the licensed
-IP is properly represented by snps,dwmac.yaml, or if it's just a set of
-values that happen to apply to some set of derived IPs.
-
-Anyway, the easiest would probably be to just duplicate the
-snps,axi-config property because it's only a phandle. stmmac-axi-config
-not having a vendor prefix doesn't throw an error, so we could probably
-keep it as-is.
-
-I suppose another alternative would be to add special cases into
-snps,dwmac.yaml, but I don't know if that's a great idea, it's just
-going to make that very messy if everyone starts doing that.
-
-Which do you prefer? Or is there another option that you think would be
-better here?
-
-Thanks,
-Thierry
-
---genl67fh5yhofsyl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqC+/YACgkQ3SOs138+
-s6HC8Q/+NT1bOKELxtFaaA1pi2GJEibe/v9S0HEtanKn6/i4voLp5M3xTx25/OaM
-+dsUt6UcUnwNt5Su7uBPh3wXKQ9Bi6yRTE4k3ywkQUpBDBXTkeaBVoSIlrfJ1TVv
-0G/YKAT74a03XQTQ9waoWaVX+R4XPuXQYXPF50eAKAZh4jLNzsO5BrfWeitvXilb
-bNnRUSXepuRt4w0JUyv80JgOiYP4LGBLyn8UAWznatvMFtI5CfjhWIEouk9BmTGC
-eu28WcC89UO8glLy5BqgB6pev/1Q3wfTcK/HHFrB2LN1E9YtQX4FBHwjncWoLxOB
-VhSmydS87z1fXpqkX6sKMGf2rvcFRx5kygwYi40Yn7FD6b+H97uKAAFlVpNM0bdr
-HPBk4JLWlXS29/tTgYEL2dT8T4suXq6rQBqnkDS8ivWVd/ZWk+sOr9Itcq6/6aSZ
-zajppvG9/lX66XuY47Xqqeiyj578PNgtFe7ie2YryN/JJl1FiUMFalB+JgNLbC7b
-kQ4I11G0O6TLtGypq7OUj7OBVb8+4+s3x3l6Ax1mJL8Us8o9eXAHWQjWnTzFO9lO
-tudJSNZUaLvx62Hj7XlwZ2reZmNaKRwDg/1M198yt86vTBrbwJWb03EGCl55g+Fs
-LwyGyowtlfVvznQyrErUtmhmjTsxnTqy1SzKDl2HsxpXl5JpxxA=
-=oc48
------END PGP SIGNATURE-----
-
---genl67fh5yhofsyl--
+-- 
+Jani Nikula, Intel
