@@ -1,39 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BC83C109A
-	for <linux-tegra@vger.kernel.org>; Tue, 18 Aug 2026 10:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0D9451071;
+	Tue, 18 Aug 2026 11:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787050454; cv=none; b=mkvpZgymdMgxd9eXvy9mKSWwIftYZ09InKLXVI2Pgf0Uvp/ZsCa7WdEFjFLZPypi1ibOuOugmlHNF3hBnNYACvUTgw1cvrxqagCZdxEZaKdYiCfzGhet60N69Y96bZrhyECvRGzyoIBr1ZE887fm05V2nPdYEDbTNmiqeW5tl2k=
+	t=1787051103; cv=none; b=OYG4BL/ckgGE59nNRlEmWWEzXdg5xdQefTtOritRGirlcaJyGexq1Y6FstYM2iOszojKwWfyyXxbrpc/0TLTNyI6mCZWBUkBw1dm2JfTxnWt9/FLstoRLTDjQipFj7ZVe1wYrJjTfE+6zRX0E7P7luu3ERk9X4782Oh+ivmF6yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787050454; c=relaxed/simple;
-	bh=uZZdQPF65dJE4d6+RcsD3HIDfUoagh7kQF/9/kSII7k=;
+	s=arc-20240116; t=1787051103; c=relaxed/simple;
+	bh=pARVkTyh7ve822c2/feb5MO/RMBFhnJekTNWRZDuM6A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ekVg/y9s86K8agrVvmTxc5lOZraBc1EEXaEKLTvJzL4/OSfs4euuMdDJV9t6j0m6ZAsob7KTWh4eTlTgY0nEgACvgmsNdB1dDswyu2zw6651BYk534zDOVVzQ9879ip06gcxjAiaxNPlX2KgvGR7hs/rD24TwnFjH+eyrm0S5M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OR138jyW; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=JeJ7At1KBSGUTRc2w04e/R3SMGXOU1RfJYc0C9VELnGgblt+hcwPJiMESO+XHbVZLgm4dUSp54NEkdBqX6dk8j7MNp9OGZqe8OlFL37/uxtYM5/jOZsBVEH5kUsU4l9f3MJ+O5ROWxQFOINBngIji/KjvnmBD+QGjIcZjFI/3vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XCpFhUGY; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OR138jyW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 874CD1F000E9;
-	Tue, 18 Aug 2026 10:54:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XCpFhUGY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 227431F000E9;
+	Tue, 18 Aug 2026 11:05:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787050453;
-	bh=LfboI7ceOH14DAYV7+5wnc5ESkoQQzmvQfMyzbHNXRM=;
+	s=k20260515; t=1787051101;
+	bh=3rblyBJ5A6FAan1g3OTvn6LNl4ZMyzCjnjvlZSePT4o=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=OR138jyWL5OWUWhTn2XYfQJaVINDjmBy2kmnT11UHIqGz9p9ZBVIg6JqZSDT5Urv6
-	 XRPf6Mstu/rXEtqBdW40Rg9neI1854ufN9NOZQN2usX6REm7leg4PRhZm/1FUEWpyl
-	 2kE807nCTQKg6wn+etg25cIOcMcwWUMJc4jTcFHQdFyDVxEebq7Zhc+dGudjLQMfan
-	 kM5OCgqlQTuWrd0ch8T/fhN/Uaewg6hv1WR+toOgIR0hSPnLz5nTOR+XtZgWqJxn3o
-	 zV4YvANbAeVCHQumS83gleQEr6xAiUBAzsYrdjHLxQuJ5tWsCThaqcuJ7usg+1g1Um
-	 50y/tCAcjcQYw==
-Date: Tue, 18 Aug 2026 12:54:10 +0200
+	b=XCpFhUGYoAXdRorTh9f0LgqwzRtIBwTbhQ4seEldY4FfQDCGOuBPJj4Iu8O02G4Er
+	 hfBdu+ZzUO2PuTxEuPTWFIvlPjCwQsFD1FNJWzN2OZAoHmFKs/I5ZYywhrGt/wHXbD
+	 lXfWHMCHL9nHkgZbz7f3BdYLb+qyBtQmyVf1KgUbFrQOdGQu02E/Kr9uAfQ2BT/Scd
+	 gJY/At/HxZbbN9ubDFpnr5nFe/MHzy5B1xJxvGq8pDhCjgsXa4bCPRY+brKfeNUFMt
+	 XTse6Bb4EjqTK59SsgFz8DXLVk8xjy7TcQPM1XHnElQ1OtVJSc7p7ypVwCVCndfJ5T
+	 a3zr+9Ypu0mTQ==
+Date: Tue, 18 Aug 2026 13:04:59 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] arm64: tegra: Enable built-in RTC on Jetson AGX Thor
-Message-ID: <aoQ4vGb2-FwwXss9@orome>
-References: <20260817143205.287870-1-thierry.reding@kernel.org>
- <75f49105-f36a-48cb-877b-5ab96c8fcd90@nvidia.com>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-sound@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: tegra: ADX: convert map to flexible array
+Message-ID: <aoQ7SynywUKcIAaS@orome>
+References: <20260814205018.39015-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -41,82 +43,72 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5xlgqk4oeaznhwzk"
+	protocol="application/pgp-signature"; boundary="dknf7gob7xggqd3f"
 Content-Disposition: inline
-In-Reply-To: <75f49105-f36a-48cb-877b-5ab96c8fcd90@nvidia.com>
+In-Reply-To: <20260814205018.39015-1-rosenp@gmail.com>
 
 
---5xlgqk4oeaznhwzk
+--dknf7gob7xggqd3f
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] arm64: tegra: Enable built-in RTC on Jetson AGX Thor
+Subject: Re: [PATCH] ASoC: tegra: ADX: convert map to flexible array
 MIME-Version: 1.0
 
-On Mon, Aug 17, 2026 at 03:41:31PM +0100, Jon Hunter wrote:
+On Fri, Aug 14, 2026 at 01:50:18PM -0700, Rosen Penev wrote:
+> Replace the pointer-based map allocation with a flexible array
+> member and use struct_size() for allocation. This simplifies
+> the code and avoid an extra allocation.
 >=20
-> On 17/08/2026 15:32, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > The built-in RTC is mostly useful for testing suspend/resume cycles.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >   arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi | 6 ++++++
-> >   1 file changed, 6 insertions(+)
-> >=20
-> > diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi =
-b/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
-> > index c4ba3322ed9a..113ecf297378 100644
-> > --- a/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
-> > +++ b/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
-> > @@ -13,6 +13,12 @@ chosen {
-> >   		stdout-path =3D "serial0:115200n8";
-> >   	};
-> > +	bus@0 {
-> > +		rtc@c2c0000 {
-> > +			status =3D "okay";
-> > +		};
-> > +	};
-> > +
+> Assisted-by: opencode:big-pickle
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  sound/soc/tegra/tegra210_adx.c | 12 ++++--------
+>  sound/soc/tegra/tegra210_adx.h |  2 +-
+>  2 files changed, 5 insertions(+), 9 deletions(-)
 >=20
->=20
-> Any reason we should not just enable in tegra264.dtsi by default? I see t=
-hat
-> we do that for tegra234.
+> diff --git a/sound/soc/tegra/tegra210_adx.c b/sound/soc/tegra/tegra210_ad=
+x.c
+> index 9175598b52a7..d607ba4233b6 100644
+> --- a/sound/soc/tegra/tegra210_adx.c
+> +++ b/sound/soc/tegra/tegra210_adx.c
+> @@ -677,11 +677,13 @@ static int tegra210_adx_platform_probe(struct platf=
+orm_device *pdev)
+>  	void __iomem *regs;
+>  	int err, i;
+> =20
+> -	adx =3D devm_kzalloc(dev, sizeof(*adx), GFP_KERNEL);
+> +	soc_data =3D of_device_get_match_data(dev);
+> +	adx =3D devm_kzalloc(dev,
+> +			   struct_size(adx, map, soc_data->ram_depth * TEGRA_ADX_SLOTS_PER_WO=
+RD),
+> +			   GFP_KERNEL);
 
-This is more of a development type of option and not everybody may want
-to have it enabled, especially since it's not always hooked up to do
-anything useful. We commonly use it on the devkit for suspend/resume
-testing, so it's useful there, but even then there's usually another RTC
-on a PMIC or something that's considered the primary one.
+This is slightly hideous. Maybe add a temporary "count" variable for
+readability?
 
-So in production I suspect people may not want to enable the built-in
-RTC. If we enabled it by default, then people would have to explicitly
-disable it again.
+Either way, though, this looks correct:
 
-I don't feel very strongly either way, and I could easily be swayed.
+Reviewed-by: Thierry Reding <treding@nvidia.com>
 
-Thierry
-
---5xlgqk4oeaznhwzk
+--dknf7gob7xggqd3f
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqEOdIACgkQ3SOs138+
-s6Fr4w/+PLD0POiyV3a0Z2AcwWegT/paZCc1bnS2IH+KlxcOWJ2M8/R/unzMuELG
-o/9XB4cOeesLcoiBDwCugit0qurUZOXu9Q9JiPexu3MMwsx4KuESwngoLM9rB1Yb
-rHVDchoOLlVYltjEq1AN3i5LsqIKQm8s1BRZDHaLw6G3M36hl4URJisNTY5uXMri
-QCh2t6jTpGDWryA8Gd9ELAomoJqCk39S+SSzwTGDohE7+35ddR4Un4cN/Qw5NcsC
-jX8v2KFbQNHtmvq8Ah5tiehbCNkNgjiv6/aQRCIsuauz+F3w7P4fYg4mzBqbnQJP
-0f5q63tqrgFmpup2H84xcT7XIUiS9C9T39Vz0yUnaIfte8VBeTeaF3Eg7RtthF1U
-NOKETBnho6wMAemfr6jo+YUE238X5rZn34JGSpXZkGREoag2BauZcbfZr8oSiY/2
-N/9HxMJC5xV+MpqHI+1xW2LMHLrmeBdX6J2NKTzpG61pmYiB2YDGoc1DFeXjWerg
-A3FM0tJpS/OmLdc67Gja3HZ9igGrd8TfzO6J/iWg0zml4Ld5Cxjx/EaeoUo85CFe
-r4MsEShSgpOtJh7A3UPJIokyQqiUOy8AAFbx1qgwwkixWrjMDWFOJ17W/acvCA9I
-ja39FSiQdU5KVNFIrL2VucDuoWOFurGoqNK18Wd1bOodoN0/8hg=
-=+2Vq
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqEPFcACgkQ3SOs138+
+s6GwRw//bNdJ87iaPR43h9MA+iQvmN7luZ83EGxmzJSJkQMEn7RexGv3L4pkTTPQ
+jTsYbbaVoL+1x1o2O7iYFEjrxEyiVIHqKNMvdhFjfegZx79d4vzOJKsDPHZ/7on1
+5lDJHZaxjHcVAtSZmOSm4sdcuucdR4DKTq3R5Evm49YvOS87U1F0Q2PeSVDqje4R
+h4qHeZKRuVUiZhJq5z9KrsxYVgCAiFkz+N3OpS9HSdeH4LIGjElRC0WonqQJaiQ1
+gpGbYjFqSrWTSh4rlm7S9U124DvgIlD6nVZcOcpghCQ6ROtgXVn7KhhJaGJmbc6b
+O3uEQEbCC6w0KV+579blonaHEwUcV+69JyCWu2QpLBGH0771MFljfm4UKKYoqmfA
+MoUBGSbloVmIjAsJEZwbJ+QQ7D4X8mOEXqkXIe1g9NLqEy+1FO9fDF3z0DxyyilT
+WC/7Iv6X0a5MRMhfeDWOMebNFUU7tYXKXlObAzu7Fdu56X7hfXGvqeAO8IjyPAfw
+WLSYQv2wR74KDZVrbWwDGZWZ+wPMUMTzcCw/A7hqEF7OdUOCsacYgdDEtZUAFX2q
+bbykFyi5sb1WyUAElnqPip0cijOnGPYKKwFCFuzNnerlNaQ3Y5paRlpp+7qCcZ46
+hJ/W+vJCN09IJzL8XBfzRSqceo/RkkJvlVjLXIZJhs49qMXhc9A=
+=AlDQ
 -----END PGP SIGNATURE-----
 
---5xlgqk4oeaznhwzk--
+--dknf7gob7xggqd3f--
