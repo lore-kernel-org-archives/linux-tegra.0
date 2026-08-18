@@ -1,154 +1,189 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011039.outbound.protection.outlook.com [40.93.194.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C9D23D7DF
-	for <linux-tegra@vger.kernel.org>; Mon, 17 Aug 2026 19:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7944B30FF1D;
+	Tue, 18 Aug 2026 05:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.39
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786993886; cv=pass; b=o91E/FsBnPwM44JV2B4Q0h1cUbZyqJ95UrMr3vKEK1RCkhOw0DMETDTTAMjsx+Y0F9iggIn2kWu7v3Qv+Q4P9wMSMXMK71aQdpRxQSIGnBOXXVSKg08YvON5dDvoDSfSCaTb9L7w+FbzC9NuVBNgyUuF2bs/Cw98YE+B3AiI+/A=
+	t=1787031145; cv=fail; b=Li6F2MLzq+x/AKntfUdqLkx7NEZaJMmm28lXivt9DXdil87ek6/bOw6Frd9oI+GjrwnQ3aqmZaCxlT5SfUCP0BMaPWc9mELW0z8lp7t2fQdgbDqPFuZOevk2pj+d9Vsh/xiKdfNZlmjVNdjuMK5LHvFqaiL4Vko6Ww3y//2mmgA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786993886; c=relaxed/simple;
-	bh=uTnougUIG5rsOStz0iODpKJHP4inO0xB8c6yl6xAlyY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HibsnwrX9jiu/9oX04f259aTkGXMlSsCBSkSibVSOaDQ8xaXYYuSd59HriS2H5Y7odQOAxO+yU3ynQcaCPFvbwUDZu5vALNX4YccER6H3NXGg+jgGFRoSW1G9S8SOrqht0Vv1QKzla1JanMzIxPKnHsjWXBYY1zwPg8DzZsXQw8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jHxne63W; arc=pass smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1787031145; c=relaxed/simple;
+	bh=rnI7v/JkFvMQq8TK9Ttry+2cs/6KfAaiS79sWbzFQU4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=tlMHXd7ImOb2Skt0BKWWyfUrOWFEenz4osD3rXTHIK5vWlgheVT5gf6zwa/oyNqGfMPThN0QaGhjly1voL4I+lwoyqqwOlouc6Levfd69LviRmOQ44+IvjkzLNu/0ZEDDR97CcQg7W+yhO22gUNXHtDdgSRyAvmFOqM9npsBKDA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=J8ejSHLD; arc=fail smtp.client-ip=40.93.194.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jHxne63W"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5b14d1f9315so3158816e87.2
-        for <linux-tegra@vger.kernel.org>; Mon, 17 Aug 2026 12:11:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786993883; cv=none;
-        d=google.com; s=arc-20260327;
-        b=pbypF5wVDSm1so9htgqjfnSMDHXm3t+PWxxmZSH0kCdyGt049K+gIYut571pxbXXwa
-         hOTXIId+4FIIovtffEDb01a/NhN99v/+gJLDQKMJrpTpI0tImeDXaUzM7lkGpeR/T8e6
-         Hu6CaWOilKba1C4cJjHpYXSWvA3wJSjSQgn259heZZQ5eHcwMfXPl62knQ3c5xkoZpwf
-         o0cXdyiZTMbETxy9d8abY/bSGcil5F6VY2ZqjukMRlzZpBrEg+uxQp2G/hWiPUa1lAhb
-         Uxk6xUQSCOVsrptA0VRh8r6ROpW9Trq9nzvNBBHRGogafdz5St5VyWMZgOBZ1mMVxkLf
-         hWWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=o9Xq57ZK871Bs82fmpBhlH3gJ0wVVRq6jr0byiqzgis=;
-        fh=7NKefeC0M/ON1BbGmx+xq9HliJonDcEihLPb2Gh8yHo=;
-        b=KHVqIsK2faSyKiXeDia12Bx4IrO6hfm86t2eB+p2myZU9ZS29MB80w3KiP2CVSHEQR
-         F0ujAZSQBuEUpj0bCYH5kPM5CjsVXVWjp/3TR4tIeaSsLNEdchhZvNB9G0DL+w5hCpl9
-         z91o8A7V9mF53NMLksODsq9zMcTxGl6zCS1C5dcit2DioYim8245ycWK8OVIK2PSfRdp
-         ORYNoV2hT7Q9UdpGtSKX+frRZquSERXi8z87NdibSjPgaf2+s4L9TxKFU2EyoLXmgDo2
-         E2J4IyeEmJtyAHQs/NJ4DbRnGiyGblVGNYj6BxWlLIhElaTr0ExWuzO6JTw3cOYd3XZm
-         fQsw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786993883; x=1787598683; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=o9Xq57ZK871Bs82fmpBhlH3gJ0wVVRq6jr0byiqzgis=;
-        b=jHxne63W0n5Vz5scXxk67+eE/3f3mxoUPN/Kndvck5aKDlgma6uUbWOuMkyH7zdzUL
-         GvNL6E7kVhx2gi1RnwbPevdGEvNwrxLwJz+XzBf/swzlCGy0yvpsKUgGiMj0FpM2qPPl
-         C0grekBaUPzI0ESDFIm9ZGk4Yo3j3sy/7DHrtL0kr0kgdp4QU1+nmQ+rOkyYmDA+hxXB
-         rQHGKbn02EggaRDrTsXr9RRI1rL7lhKvXVf4F2yscXU8HkTVrw2tiTVY4nBdUOycz08Q
-         NOzaN+w3flboeNbTvBZfltZi53jdTFWSFI4T41I/TlXAcjAjJlUl+vNiosBdntoBIXow
-         Wp8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786993883; x=1787598683;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=o9Xq57ZK871Bs82fmpBhlH3gJ0wVVRq6jr0byiqzgis=;
-        b=raPqJEjQkEKsFVyf/LZjpAJPVbeTwyWBcOGiigo6/yKJfUFSfOx8PoBAEazGev/S9z
-         Bj03VwVKg8uLJdBQddpouDbJM9W5Nj57cAaR0nK20qqgQDn0EOuj8RhwgF6k6iHkDCew
-         fW3mREjD/0SSLcUILIo7AXQHjPJv8GIhhlQAnjcTRPXX5FrBCPyzoFQW3T5gMt5BbRzI
-         CrCL0tZB6bO1SbolfDNW//7qH5YI3ME7D68vWkTjf37s/LB1CfrLLjWLrlFZ4h1sjIwT
-         Vosvz2FF7ZXDqvtOugt0uHZlL2QHvFhlN6hk6zXr8Mo5+c37w6UWXUFwlcuHDIYSfEZw
-         G+mw==
-X-Forwarded-Encrypted: i=1; AHgh+RqDAfIdia0UCD0VAnqGJIEX59nahEM0raGQCVdqdkhqOv5VZuhSpMyO3VDwTtAqAoc2pKf/HsAVvFJ0sQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeOLBB8/ekJhoPbf/Gt0YESbbobMaZIGZnCCKLtDXAm5ekvCMK
-	aZvGMbe2NRwQaiNMAAT+tiRMoz2KT3Ob/Z12fT7iaGgfYrnVuz4D1qlWiFYxUu+ztwAs4nkherh
-	Rd2kJT3QKfTZ9FstlOieJssZ6q3EFPFY=
-X-Gm-Gg: AR+sD12eLJaBShsyvIPsCXTPPyRNltPrvOWpzbBbfvT3EV3/ZaEQfJ4a4TsNrxbDe/6
-	JhpTUd4kzFMjO6CB4WQg8KlZkvlw4OTpo8UT+8EDVQg/HS/wo7pRJQIe4aSvQ3Y1jD5JRtbvI+A
-	ujMfZLHiitUERLbbNvze3AYYl1s9JL9jCbLKKOEdPeglEhZo/dnIjGVUFo2hpLTrIDfbmMb0aHY
-	uLnczbU+HugfyoCwrKEdzy1/yyrlqFWw9awLq7Uye2bV5NZpTGeudIMH4W9MNPjfsUQ/yKckC3g
-	e5isDQhcaAm37fp5UsygG7Ide8GNvs0iNwZtYcQwd7S7ISno4S5y4P77abw8paAI0FpiE043Ukp
-	/gg2FTE80Oafz1DjR2UJwEOWYr+G0Jw==
-X-Received: by 2002:a05:6512:2382:b0:5b1:4e5e:559c with SMTP id
- 2adb3069b0e04-5b47069e8a9mr442389e87.30.1786993882910; Mon, 17 Aug 2026
- 12:11:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="J8ejSHLD"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aG8yQrInGZPRzX3/Q4dLWsxz/mj4Edirs4B2cyTE7wu2jtZzKPoZtVBdKgSASQHfjJIzKWTXnpaTzSenq+/lk1rEG+iw4SWu296eDf4x/da5/T7QYevW3FtsXMMaM5R10eXdoX+SvNIgl/F0O0V3Qeh2y5S4FIUP6ctG9XoFemunRRFKlXAs1Lku+5d2Iq7W5mbV31QTw06aTHCoba1oFdE5fhAwe0rqYgmZlQ200JG+1UuS3mVwqcui+ra/x72EQZQ1NEg2pPpGrwIGtOMwDEYWPhvw787RAJzSii48yYM0yelU01mMu0EZmMhj3cNBpmsmNhUMPdSR9LW9mgmRQw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RiUUxI/SyFBdRaTZiUcYuxtnyojmQgxyLZmQdQgjxto=;
+ b=xYEpc25+2/YxZZ1W652TgD8mKBRmcIuILgDqXGmkmaWgvGDpFvUE4x6e40EHazcbRFMWVlPDtfFf4X/e6gU02orYxtoB8J09pgqftCBMbYo4CyPm7qr1hWTSWffTpOQG1VGPi6Q0mmpIHagr3Iv61Oi61lIG+uaDlaChDXZdqyBywREDEpZfht9YKJ4ewQXSJ0RcqhcALAHXFZG+f5Y9vqsj5rrL3C4a1pIPXSt3mUJa4QnKLwgAiTFjpo4zrO71vm8Nw8oPhR8mRvNMn5Z8jC3BdooaKBT0JgdAEkWr/k+odDquzNxB8xsVgxqTc61OaZXTFeOTu+hljTqyEZHzKQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RiUUxI/SyFBdRaTZiUcYuxtnyojmQgxyLZmQdQgjxto=;
+ b=J8ejSHLDzu+WPwqDGcB9r9cASKxcwtnkZ1drkh5NFcKxKLXImaOC+GrPpljEyKlMxcA6LcAxHtwkRyf6iOkD/JSpUm9DwM6HCI/DIjJ7yoJnfVcE6awuUOyaEksfQ9HFIi4jNGR+L1HWPs5UpI7Otw5E3BHQL+eY2I65y+yic7O98JCk5blEHHKBRQajK7pQYesEUeLh3KmYABoQF9SB+jpXTm6f7xaDT6/TN3n6PPkOmSChFZu3GCyZrBDEC53urzOy4eFByOdxJ/mVMSVqAcK5m1fYabsOzqZCie+bfS0ARn8jBo15FL52+IF7gZG3mujc7OGDwbxPj+A0yQCGsw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ1PR12MB6051.namprd12.prod.outlook.com (2603:10b6:a03:48a::18)
+ by BY5PR12MB4100.namprd12.prod.outlook.com (2603:10b6:a03:200::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.315.17; Tue, 18 Aug
+ 2026 05:32:19 +0000
+Received: from SJ1PR12MB6051.namprd12.prod.outlook.com
+ ([fe80::96e1:b300:7b78:d3a9]) by SJ1PR12MB6051.namprd12.prod.outlook.com
+ ([fe80::96e1:b300:7b78:d3a9%6]) with mapi id 15.21.0339.007; Tue, 18 Aug 2026
+ 05:32:19 +0000
+Message-ID: <3023d7d7-c8ab-48e7-a0e4-e18cc4ea0b9a@nvidia.com>
+Date: Tue, 18 Aug 2026 06:32:12 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH tty v9 1/2] serial: 8250: Switch to nbcon console, take 2
+To: John Ogness <john.ogness@linutronix.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Petr Mladek <pmladek@suse.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ linux-kernel@vger.kernel.org, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+ Fushuai Wang <wangfushuai@baidu.com>, Kees Cook <kees@kernel.org>,
+ Stepan Ionichev <sozdayvek@gmail.com>, linux-serial@vger.kernel.org,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20260724103654.133654-1-john.ogness@linutronix.de>
+ <20260724103654.133654-2-john.ogness@linutronix.de>
+Content-Language: en-US
+From: Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20260724103654.133654-2-john.ogness@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0125.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:94::7) To SJ1PR12MB6051.namprd12.prod.outlook.com
+ (2603:10b6:a03:48a::18)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260525-tegra194-qspi-iommu-v2-0-a11c53f804b2@gmail.com> <20260525-tegra194-qspi-iommu-v2-2-a11c53f804b2@gmail.com>
-In-Reply-To: <20260525-tegra194-qspi-iommu-v2-2-a11c53f804b2@gmail.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 17 Aug 2026 14:11:11 -0500
-X-Gm-Features: AcwNN1VtAz3TzQxDcDRv29ZIlK7LcvZGlrKziZlK_QH60cI6-b_6Gt0v_fcOAnw
-Message-ID: <CALHNRZ8F85rJZ4+v+B_jsETeG9cUJWeWSe9vw77AVHcRMasw=Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] arm64: tegra: Enable DMA Support on Tegra194 QSPI
-To: webgeek1234@gmail.com
-Cc: Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Sowjanya Komatineni <skomatineni@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, 
-	Mark Brown <broonie@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PR12MB6051:EE_|BY5PR12MB4100:EE_
+X-MS-Office365-Filtering-Correlation-Id: 25b65575-00e1-4263-55cf-08defcea123f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|376014|7416014|366016|1800799024|10070799003|18002099003|22082099003|56012099006|4143699003|11063799006|10067099003;
+X-Microsoft-Antispam-Message-Info:
+	H2NXT5jwUuDfKGmDjXoAD6TGJG/tNlknLvyuS0ceFyJaUSg8XhgBNA7pb3CnzusP20hQm0okorPcsnM0Jz0YLB4Ibg6XBzimnlEKLn7rubed+OloGzSlzlT6JuQfQbcZ8JDKIZD9xEk8zdiOqzrTj91Sl2VSQxf1YTHyifPweQk091qXdZFHqNCJtFdHaZJIlc1PnJTKBXlc4ka9TbXCcd8FARwnIOQXtz8/X/ohObpXzl0qJGbe+Kjc4WQ9FGtK8wmxlONeTVWSRrytRkWR9oMiT7neXiGEEjch39b+BEcIV+rKLxoEJcivOjpEz+gSUlKfwQchBeOu+sNhmfYcm1xN+dSqO8cwIZWxBhUTCmYb4Y/OPBd2q6AiOt+XKXNZXPmU3H0nO05O3DLZVk2Xp9YQvwkXR0bAH//YDLpfyACOP0nyv+K/pAP3hsQZmjuuMkdpEswnc+vjUYg+RyXiv/FoCeleOmLMXN+R2SHZ1glay99Ae6J7Jpt7g3rEMytGmHR6K/AGx1vr4WgQ28bRVl3FUyl5z/f8eRDKRF4mQBmXmOmntjkNoWKMNGXyQlqdQdYKVDvj/o6+MicWajs38uej+eHvyLy739TGJoWa6o1daCGUIp09A5Oi9Y04u+ssYPwgllg49Syf1Ykh86Wt28keLCcPIxGqNtLUjdNQsqA=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR12MB6051.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(7416014)(366016)(1800799024)(10070799003)(18002099003)(22082099003)(56012099006)(4143699003)(11063799006)(10067099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?clpiQmg5bFVLS0owR0VRM3UvL1A3WUNlNUxUckJDRWw3SWlVd1JtQ1doU1Zr?=
+ =?utf-8?B?TUVMd0lpdFlDeFpxby9nK3RnbVBpNXc1c2tJcGh0c2w1WkxCS0RhNHVCYWlx?=
+ =?utf-8?B?Qys1dWhscGJqRGVvSkwwZ1hZOFp1cC9MNzlpR0tHU1JuZU45VGpOMmZpdmt3?=
+ =?utf-8?B?R2tJODRMenh3S0gxendHU09qMnFXVzYyQ1VWZXpGakRUUzR6djJ5MFJwTzNR?=
+ =?utf-8?B?QXozV09kMG41Q2RvTFlrTGNxVWJlWjZXWmhjM3NhQVFrUmNlRFFqdk9XQ0ly?=
+ =?utf-8?B?dXo3aE13TUR6MEZmc2FxZkRuckordlI3dW0rYnlhN3pPc21GZHphSkJPb3pO?=
+ =?utf-8?B?di92M2h0NFhUOVd1ODRoZVZiV0VEMm03OENrTzFiaW93QUIycW1nRGdZRndZ?=
+ =?utf-8?B?Ukk5UnAwWmJhNHpIUGxKaVVxZzArYkFvcnM3bTRGbWxwa2ZCWHVYUEFubjhs?=
+ =?utf-8?B?b3IvVWVOME4xZ1hqdk9yU3NaUDQ1K2t3d1F4ME45MjlMWjg2L2h1REFibllv?=
+ =?utf-8?B?TmpOeDQycFRQZGdhZFY2eWFyYTRkVlU3M0NrOGN1NEttNkt2dW5lSDAzTStu?=
+ =?utf-8?B?NVFzRWFHbG9vSUhLVno0clcwUkxsSnZwZG1MUW9sRzhkSFBLcFVlR3R3bWMy?=
+ =?utf-8?B?bTNqQVdSeWtBZUZkc1pHWHRqZTBuZkYxUndHdG5MU3B6VkkrWGpMOTl1aGsx?=
+ =?utf-8?B?dkltWkdJc3JDaFQzY2dqT1Z2S1Fpc1o2ZWFsbWhHM3NjVEl5Q0dhb09aSzFQ?=
+ =?utf-8?B?R3VIbHVlVUw5YzY4NzFWcmlyRWFla2I0Q0JTbzBlWlRvQzhZb24yWUlpdkl6?=
+ =?utf-8?B?aTBFWUoya080SkpjVG4vK3I0RmtJaE8yTzlsZ2RQS2dqblNsc0JBd0t4QlN6?=
+ =?utf-8?B?c1RWdzk2cXpINC9ValI3b0NIZUFkLzF6TWRBUGQzUXhkME1IYjJKQ2dMUFZz?=
+ =?utf-8?B?U3EyRnZMN0hYaTRLRDYzTnBHUFBsS3pmYnhCZ1hBQWhHVFU1OWVoTXJiN2lx?=
+ =?utf-8?B?MU9nSXBDUnd6b1M5VmEyOVdXL1YvU2xRcEJkcGRwcGhDWlJXK280am5qQUFw?=
+ =?utf-8?B?NENuM1p6L1lvQ1FYdC9iUm54amJoTGhadHRMRUJwZTEwdUIraW0zM2VkUUxh?=
+ =?utf-8?B?ODdrbmF6QXBTQnpmS0xKZDdPaFRYaDZ4U1I0akV3NEl5MkcvbE4zZTlnTG8r?=
+ =?utf-8?B?cmlXVHg1cFB3eHlRblBqVzNmUjB2Qnp0S216ZWpZZDJRSDk2M1pDeTZ1dlhh?=
+ =?utf-8?B?M2ZQSUF5bTJzcjAzcGNWUXZuTUx2MVZuZ2E2eFhiM3dHdXF5MlpCWXYyWEVH?=
+ =?utf-8?B?cktwc0w0ZXpEU1Z0aDE4bEVUMzVNNDEraDJWNXpNbjZaS3M0dEJwZW4vaDd3?=
+ =?utf-8?B?T2NQNHBieG1XRlFSOFF2MTRZeG83a2dzR1BJTGVMMjdzRlQ2aXZXRXRoUFJa?=
+ =?utf-8?B?ZlVMNmNLUjFtcWJiRFRNaDZBbmczTmgzc2x6bVNleUZxRzdVNldwcGh2Q3da?=
+ =?utf-8?B?TVljdXhtYWg0QWVxQmt4bFNkSE9BYy9ZSTFuTEZXT2xhS1pIU01YZ2NUa0VO?=
+ =?utf-8?B?QkRSUW9ybkE4dHRQbDF5WXZ5OEtsSEd4aEY5QmFGWEJMekZ1ZmRuYVBpZTJr?=
+ =?utf-8?B?VlF1TlZyYy9iQ252QkVhbzBmaG54SHZ0SmsyQzViMGxneitNb1FoWDNidUFP?=
+ =?utf-8?B?MGM2RTFlbm1EN0R0SGNoT0lWeG1QRW8weGNwZXJaQ2hoTGxyMmtHQlRtcW5z?=
+ =?utf-8?B?YTZlcHY0THR6U2plczVSQ0Q0ekRQbUpOSit5ZzA4L0pPbEhwY1U5VEx2QkVv?=
+ =?utf-8?B?K1hmblhiMmVVNDZtOEFsL0NZSWcvZWpPVC9rUUJoTzlGa2VCVi9GUXpsU2xr?=
+ =?utf-8?B?OTZ5YlB2MFZscXNqbG50MGtaU2x2YTQ5RkVQS2pqdTBMVzExNWE2UkZlQ2Ez?=
+ =?utf-8?B?clpTck5zSXdLck1qc2g5R3lwUTQrNFN4dDRMdlVsKzhwSGF0RHNUelBlYWlT?=
+ =?utf-8?B?YU5aTzREV3FtWlpIVmdIU0dXNXVMSHdhK2t3WkR6c2RkSVcwaURWWWM3RWk0?=
+ =?utf-8?B?WHFZMDgrdTluNHBzTGc4L2JUaXhEbjRxUVl1Nmw2a2Q4Yk9pVGZOTWoxWTN4?=
+ =?utf-8?B?QzlISE16bkpZS0JOcUZ3MlQ3TGhwenB3RkZEZGxENDZSZzJQTThkekk5dW9h?=
+ =?utf-8?B?MXE1d2FDRjBqdTFub1ZqN2RVbUVNSkc3WmdWUHQrOE5EL21FY3FDUXFBeThN?=
+ =?utf-8?B?ejZuTEtFbTJwVUdaYmo1OVZBcytBdTczdjF1d29UZEVmdUhERCtGcHR5bVJM?=
+ =?utf-8?B?VDJnbzgxelE1emZoRDArc0NCdXE2VHViemErSHpCUXdScHBzN3RNS3E1d2Ex?=
+ =?utf-8?Q?dDKMVxyV96i+HrIOQCOSQiKNpl346Yfus3XjUZti9z9Zu?=
+X-MS-Exchange-AntiSpam-MessageData-1: 5NvLtxgh+4NuSA==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 25b65575-00e1-4263-55cf-08defcea123f
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR12MB6051.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2026 05:32:19.3286
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CVnlTyOmjEfJHGOUR9nTILf/AiMxcagAxUwpCyiFWiPXuJUaWCgjGsQuwQqk/X/RIkMTNRe60dj0LtumUPY/oA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4100
 
-On Mon, May 25, 2026 at 1:47=E2=80=AFAM Aaron Kling via B4 Relay
-<devnull+webgeek1234.gmail.com@kernel.org> wrote:
->
-> From: Aaron Kling <webgeek1234@gmail.com>
->
-> Without dma enabled pio mode is used and flash storage such as the one
-> on the p3668 module times out and cannot complete any transfers. In some
-> cases, these timeouts cause hangs and cbb faults.
->
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/d=
-ts/nvidia/tegra194.dtsi
-> index 1d659454a6f9fe..e2ddbc6715d5e8 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> @@ -923,6 +923,8 @@ spi@3270000 {
->                                  <&bpmp TEGRA194_CLK_QSPI0_PM>;
->                         clock-names =3D "qspi", "qspi_out";
->                         resets =3D <&bpmp TEGRA194_RESET_QSPI0>;
-> +                       dmas =3D <&gpcdma 5>, <&gpcdma 5>;
-> +                       dma-names =3D "rx", "tx";
->                         status =3D "disabled";
->                 };
->
-> @@ -1013,6 +1015,8 @@ spi@3300000 {
->                                  <&bpmp TEGRA194_CLK_QSPI1_PM>;
->                         clock-names =3D "qspi", "qspi_out";
->                         resets =3D <&bpmp TEGRA194_RESET_QSPI1>;
-> +                       dmas =3D <&gpcdma 6>, <&gpcdma 6>;
-> +                       dma-names =3D "rx", "tx";
->                         status =3D "disabled";
->                 };
->
->
-> --
-> 2.53.0
->
->
+Hi John,
 
-Thierry,
+On 24/07/2026 11:36, John Ogness wrote:
+> Implement the necessary callbacks to switch the 8250 console driver
+> to perform as an nbcon console.
+> 
+> Add implementations for the nbcon console callbacks:
+> 
+>    ->write_atomic()
+>    ->write_thread()
+>    ->device_lock()
+>    ->device_unlock()
+> 
+> and add CON_NBCON to the initial @flags.
+> 
+> All hardware access in the callbacks is within unsafe sections.
+> The ->write_atomic() and ->write_thread() callbacks allow safe
+> handover/takeover per byte and add a preceding newline if they
+> take over from another context mid-line.
+> 
+> For the ->write_atomic() callback, a new irq_work is used to defer
+> modem control since it may be called from a context that does not
+> allow waking up tasks. During suspend/resume the irq_work is not
+> used as this has been shown to cause suspend problems for some
+> hardware. Upon resume, any pending modem control is performed.
+> 
+> Note: A new __serial8250_clear_IER() is introduced for direct
+> clearing of UART_IER during console writing (which will not be
+> holding the port lock for atomic printing or KDB/KGDB). This
+> allows restoring a lockdep check to serial8250_clear_IER() in
+> a follow-up commit.
+> 
+> Signed-off-by: John Ogness <john.ogness@linutronix.de>
 
-The driver change was picked up some time ago and is part of 7.2. Can
-this be picked up for 7.3?
 
-Aaron
+This change is causing a boot regression for our Tegra20 and Tegra30 
+platforms. Reverting this on top of -next fixes the issue. Previously 
+with V5 I did not see a boot issue only an issue in suspend. So far the 
+only interesting thing I have observed is that if I add 'keep_bootcon' 
+to the command line the board does boot.
+
+Jon
+
+-- 
+nvpublic
+
