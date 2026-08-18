@@ -1,280 +1,126 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EF73BAD89
-	for <linux-tegra@vger.kernel.org>; Tue, 18 Aug 2026 15:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB2E37AA98
+	for <linux-tegra@vger.kernel.org>; Tue, 18 Aug 2026 20:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787068412; cv=none; b=pylKg6UJtO1gpPjBTEJ5G+Ly2kKDg9ch4Jw6VFt0Fp1urvk01yZOs4aK6cV0GZp2k/4vR3vJrZ0sSCSFj7JOh4JnCy1uVGpCcmv7qWv7qHTUcDWC9xU75Y8l2cxkGi/1mhfYKxq2mubpYmCgHZ94lJIAOwrt7LjyKwAD03SInV0=
+	t=1787085229; cv=none; b=ESE0y2f+/AnTdjhw+QshQJf7QItQsEoTWGhc6YL8YB7ifJtW2B+iBwvzkIRv7NCVkeWnG4p6oJy0Y60FiraZJ1uFtW5BBTtn+JDKTEvjKNpi676SY6R2Xrk0BIODSRdvowYX8/5Kk0sU6vSSVBo7+53ckIYOKt2cibD9xBwnxRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787068412; c=relaxed/simple;
-	bh=tS0sEv+m5DRCz3lExErTZgJcWpr+2cKH0uieATYUxIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r072cuBe62z0Lni70XmcRR3MQtgDBIEMJB2rvu2Aclp9sXQfiXWMZGXDmGmAZ+bXaeveJ0bnQ+5xUCnQ3zGDMl0TKxgfZ8CbgsfpBHrJ45pYXfIdvzi+PexZPKutGJCEd1Dg76qM9IUZUEc3BRY/mgFruuDVMUCl2vA8QJCBFb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JSfxNfNB; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1787085229; c=relaxed/simple;
+	bh=+EEy4qpk2eBdZs1VXT497/DwvRtxn6z7miUTuIy3oig=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=ZCsdI+7hLAvH/pkKyY9D0tYx63EF+izwNE2vun545JcnZ8Ty4KLoPcaXTk6D0tQVqyl5+HCz2DB+xQwSBSv04y5tS/+9O1fko1QtYdgAf9bVFIKvZzxfXyE/MMSCM1mjiegngf3ouZUUUS1EQVlmVym+hFfBN81Qnjvhzpb0dho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AyE4vOMu; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JSfxNfNB"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4998590d392so71385e9.0
-        for <linux-tegra@vger.kernel.org>; Tue, 18 Aug 2026 08:53:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AyE4vOMu"
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2d049069377so2813285ad.0
+        for <linux-tegra@vger.kernel.org>; Tue, 18 Aug 2026 13:33:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1787068409; x=1787673209; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=1Alr9XBhyLRgMVmzv9/uueizUdhpYjxx8XekBqdVYwg=;
-        b=JSfxNfNBRQ4XGWi5IN6pmYNllIVTyPEH4vJ3HwlvGAmAlo3d9syE8BWM/L7XydgzMi
-         UnWItE3ctyO0vaaVisMJH3ZeyWHjRb106vskqYapWehQ7QxCQsi9X0EG6sfxGuWlxCIh
-         GoCETG1jjTM8zc9ASTsyUerY8QDUjUzvGstAZPuviBk6Xb2NJmM5cMln5EgKm/+K0qDk
-         JWaZaeRIXMAq0W8t8ByEkFkY1VpwPiT3AK+3S7MkbdKvHhmO1o6JjEh6j5tiur1YDAj7
-         o42ZVuh9UcbKXmBqPGqXJmA8BQ+jRcRitfr1d5+oD+itPGCUXf8U2vs7CtolioMIkJkf
-         CpMA==
+        d=gmail.com; s=20251104; t=1787085227; x=1787690027; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-type:content-transfer-encoding:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=GSv3ii9HXTdYv9LSM05qRUQPTHrz9VAi0bKPqbWiLxI=;
+        b=AyE4vOMuvWdBoYK9hkIqPle9ZCCiQt78fXo9IhRYvoKcexRHlFu/l/T3AdNhcu4R7Q
+         BXCPa/1ni4E5gr6bdoN3fXe6cDjSPzD+z5sroicC2LgLLYtlzdiq4gZX29AI6xB3fSmP
+         9Fe9czsooP5aOHQdsTaiHplYscBh1EhdlMVYynkHxY2JRpeOvwLGABMoXfY3HgNUmyHE
+         U3LY+MS2yy5vQia6Ni7cFkb+iRlDB4ZZOnty4QhDLZVxaGqBeW1L46vaaz77SX3gtO9s
+         pHo644gw0W7ZnBE0Gh5yG+OHp7s052cK5OhFJr6EJqZGEO5+BLU4dAqJpPh/CikWxcjk
+         SwuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787068409; x=1787673209;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20251104; t=1787085227; x=1787690027;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-type:content-transfer-encoding:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=1Alr9XBhyLRgMVmzv9/uueizUdhpYjxx8XekBqdVYwg=;
-        b=AGN6u2fpqCtlSDe4Ll8lmJLSmnAVp7wg3EiqU2SAgHL97TFb4gCQT4a1zJzI3PXGDh
-         Jx66Oo51eDG3QBIlKU75zSXnWB20i0BWv8W7qJYAe4xooHpCJBxA3Q1WKjjJWM236/T+
-         zDFbgs7hggrHOvQC/+m3v9HZd0gDTCNEHe6k1lco+I2xSiz9fX9U4P1XgFsLYqG7LaBY
-         DpXMoACgBWxepbhu1tw9PkPnmzQ1DhV1Jx4MpYwsMEQcTto6PF/ZW33P9z69aVhrQ0wt
-         pqAkwEqZ/WquZLGtP4sx/cKivxmovlic0ZXwSGcaR/jYNmRdH5TaJpqP0lfeaaycYWyg
-         PEcw==
-X-Forwarded-Encrypted: i=1; AHgh+RrgyalUOVDaY7Kqin638Uw68QehraCidOEJ6InwhLbKN8jw5mX4DBqF2H7IvtYUw/wXLlxuZumOtNAYTw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOPMTRO/wmnRc+jeGpCbPSc/ArKQoS5gHRGJO4zwKMJIVSw31n
-	n7X8PstajdwipPfjzjwx6xgc6Anz8BT0vDRmcRJH6PNDJqS2ufcUsVYYIIOBFMa9rp0=
-X-Gm-Gg: AR+sD11Htit+hZ4M4yj8ZmoQtJmgLHQnwJK2E4pQ/ZPK6v/cUhBPy+aBZtFfAyrBGHV
-	wBL+BsZskLPo+9E0ioe5TD+SP0H/My79l4wYKZs3QpWFlziY9wBTceTYKzSz0vGHvjkPOd6MDs8
-	bCcKN+tgN7KAPuyVZqJKxFO+udOGkFS5GfychfM3AbmF6OtQqBdTWCnVSAOyEd3c9H91O011oHe
-	rZW/Q7s/B5csJCn9DCJlwDUU2wnttPkKhzZKc8acqLC565BFNei6sQfJPhJRjd27aNpF9iCPzC7
-	5cS7hIWSt8VjVe/dLfhn5Quf6hOYn4OefCujcwz1CBMqjFfUjzszsOzy5P0T/GnJdd42aFKv31R
-	p/Zvd7nkH2gdobroHydw6cONKbNFgWETa8+l0MzLp8zhVzw61I7bhR2J3JeOcm7vYsYw4hiIPKF
-	eEDjiD7U2CBo9L2cARBFY2HFMVSOVvOr1v6fJBQOWx1coIQuzplEbd8ucMlH9m20ivEf4=
-X-Received: by 2002:a05:600c:c3cd:20b0:499:a277:e8b5 with SMTP id 5b1f17b1804b1-499a277e9bbmr101545005e9.3.1787068408984;
-        Tue, 18 Aug 2026 08:53:28 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-482a5a3b43dsm12524486f8f.12.2026.08.18.08.53.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Aug 2026 08:53:28 -0700 (PDT)
-Date: Tue, 18 Aug 2026 17:53:26 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: John Ogness <john.ogness@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-kernel@vger.kernel.org,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Kees Cook <kees@kernel.org>, Stepan Ionichev <sozdayvek@gmail.com>,
-	Xin Zhao <jackzxcui1989@163.com>,
-	Osama Abdelkader <osama.abdelkader@gmail.com>,
-	Fushuai Wang <wangfushuai@baidu.com>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	linux-serial@vger.kernel.org,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH tty v11 1/2] serial: 8250: Switch to nbcon console, take 2
-Message-ID: <aoR_9g7W0qyqWbOj@pathway.suse.cz>
-References: <20260729120439.281252-1-john.ogness@linutronix.de>
- <20260729120439.281252-2-john.ogness@linutronix.de>
- <f3757a75-0ba1-4558-bf57-f19ab7e59a4c@nvidia.com>
- <aoQPFC7d8mSuNZMh@pathway.suse.cz>
- <861247ca-dfd4-40c6-a094-0fbe389f3b67@nvidia.com>
+        bh=GSv3ii9HXTdYv9LSM05qRUQPTHrz9VAi0bKPqbWiLxI=;
+        b=V4j4gm7H3umXZp2uNJ1BvXj00Kcsj9EhJvTyHhnRqMQa7aT9K8+Zn/tC67sp9Fxn/v
+         lWCYRuwhkLXk1eIw87fG5ZGp9Nlz4DVeFjub1XvJIOtxky9CpkC/CsioogXOmoCtz5CL
+         8GbWkXsoS8vijlEqADKTtfECLv7ioJkkMdjaZp90zUlJ1NI9LAP2o54KTcC8fDxd5z9R
+         yJH+Sgg5IqRq2a1EnZLStwhuULwsM/b36tBkDVueBf/Ya5fqoEDtQJnrVq4YPVCXIqQe
+         tZh3TKIYWjgcPzl+nW3Jqyu0JfVVur0sVRd25q+xZhW9qqyR9bd5LgKr87kDU1mlxows
+         gEdw==
+X-Forwarded-Encrypted: i=1; AHgh+Rp7Fo0RlXU6XHBAf9e63ggBsqJkIX8tugHOIcR+mASViAmPPW00+5HVU+SphKqCNKrEf1xSovEclXHgNQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPTP31EDeXmR25EHjiYknpLH20p3rZyaK7BLcX2aBHJMR13tgM
+	Fb7D0BPRVbO/HR5nB4IXbakJ0evMnJ/N/TJqVvs6hTMCojIkT9wJD8ck
+X-Gm-Gg: AR+sD12InqmOGr+GfY6NBCqrCsj3MimBBbkpk/v28QqDpn4/xGEAS4kqzBQeYdiiO3O
+	BKiQDmEsJDpxjsYfw53HmisEsmd3gYxxfSiyG9ewSdp6fdXgpS0ggeBVw7Hvqvn9T9vO8SEnZHd
+	LZgmnB2MBLvkELXwhL51wbRYenbZsyRwkdJknfR4aLJ37bwqOI2YW5RRp2tzq0gQ+0lXQRFrt0s
+	U+jHcGNozE2oQFEUgIemG/2XhV8o3mRvjqVS1IGU0vQKxfX+Rw7DU4IjKT76ezim5M4q9TR9avD
+	bBSdQT8VytgYb2+YE8sR589Nu8AMde0Adv0rnhaC9qTlMjiHw6pguwb4Zls/1cIrm6+tJppfkVL
+	PBZBmjvUG7aDS2adFqoG9sEfrD08k3siECPFweuza/FO5DMdML0XXRHJKB4p8rAxOY6DurY2E1E
+	CL5eNWE51C0o/aZOHW+0mc1uIbW7JfyXZWSH+HE15bfq0xYioEwArnACRSjTnIQZW9v5a3wFyPT
+	seU5hO2bv2DhK7ID+XyQE2lGzoLCZIciyitBRb0JuvgLg9j5fV+o6Qdat9H8ZzRKe/61JRqzrwP
+	41LuyLrFsWRG+F4oH/jXCqd4Aouoi0EPCuj3IA==
+X-Received: by 2002:a17:903:1acc:b0:2d2:da8e:9017 with SMTP id d9443c01a7336-2d5f6b11405mr8473765ad.8.1787085227100;
+        Tue, 18 Aug 2026 13:33:47 -0700 (PDT)
+Received: from localhost ([2601:644:8000:7a86::e35])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2d5c1f00840sm18306575ad.80.2026.08.18.13.33.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Aug 2026 13:33:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <861247ca-dfd4-40c6-a094-0fbe389f3b67@nvidia.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 18 Aug 2026 13:33:45 -0700
+Message-Id: <DKSCUAP946RH.AXJJ9UJMW9CU@gmail.com>
+Cc: <linux-sound@vger.kernel.org>, "Liam Girdwood" <lgirdwood@gmail.com>,
+ "Mark Brown" <broonie@kernel.org>, "Jaroslav Kysela" <perex@perex.cz>,
+ "Takashi Iwai" <tiwai@suse.com>, "Jonathan Hunter" <jonathanh@nvidia.com>,
+ "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, "open
+ list" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: tegra: ADX: convert map to flexible array
+From: "Rosen Penev" <rosenp@gmail.com>
+To: "Thierry Reding" <thierry.reding@kernel.org>, "Rosen Penev"
+ <rosenp@gmail.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20260814205018.39015-1-rosenp@gmail.com>
+ <aoQ7SynywUKcIAaS@orome>
+In-Reply-To: <aoQ7SynywUKcIAaS@orome>
 
-On Tue 2026-08-18 13:19:12, Jon Hunter wrote:
-> Hi Petr,
-> 
-> On 18/08/2026 08:51, Petr Mladek wrote:
-> 
-> ...
-> 
-> > > This change is causing a boot regression for our Tegra20 and Tegra30
-> > > platforms. Reverting this on top of -next fixes the issue. Previously with
-> > > V5 I did not see a boot issue only an issue in suspend. So far I have not
-> > > had chance to dig any further.
-> > 
-> > Interesting.
-> > 
-> > Another clue, mentioned in the v9 thread [1], is that the boot
-> > regression does not happen with v11 when "keep_bootcon" option
-> > is used.
-> > 
-> > The "keep_bootcon" option causes that the boot console driver stays
-> > registered even when the full featured driver gets registered
-> > later.
-> > 
-> > The most important effect is that the printk kthreads can't
-> > be used as long as any boot console driver is registered.
-> > All drivers need to be called in the legacy loop in this case.
-> > There are two reasons for this:
-> > 
-> >    1. Boot console drivers are synchronized only by
-> >       the legacy console_lock (console_sem). port->lock
-> >       is available only for the full featured driver.
-> > 
-> >    2. There is no easy way to match boot console and
-> >       full featured console drivers working on the same
-> >       HW.
-> > 
-> > So, the regression seems to happen when the printk kthreads
-> > start being used.
-> > 
-> > Jon, could you please share the full log when "keep_bootcon"
-> > is used?
-> 
-> 
-> Yes absolutely. You can find the boot log here [0]. So far nothing really
-> stands out to me but let me know if you see anything.
-> 
-> [0] https://pastebin.com/FhQVSqfy
+On Tue Aug 18, 2026 at 4:04 AM PDT, Thierry Reding wrote:
+> On Fri, Aug 14, 2026 at 01:50:18PM -0700, Rosen Penev wrote:
+>> Replace the pointer-based map allocation with a flexible array
+>> member and use struct_size() for allocation. This simplifies
+>> the code and avoid an extra allocation.
+>>
+>> Assisted-by: opencode:big-pickle
+>> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+>> ---
+>>  sound/soc/tegra/tegra210_adx.c | 12 ++++--------
+>>  sound/soc/tegra/tegra210_adx.h |  2 +-
+>>  2 files changed, 5 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/sound/soc/tegra/tegra210_adx.c b/sound/soc/tegra/tegra210_a=
+dx.c
+>> index 9175598b52a7..d607ba4233b6 100644
+>> --- a/sound/soc/tegra/tegra210_adx.c
+>> +++ b/sound/soc/tegra/tegra210_adx.c
+>> @@ -677,11 +677,13 @@ static int tegra210_adx_platform_probe(struct plat=
+form_device *pdev)
+>>  	void __iomem *regs;
+>>  	int err, i;
+>>
+>> -	adx =3D devm_kzalloc(dev, sizeof(*adx), GFP_KERNEL);
+>> +	soc_data =3D of_device_get_match_data(dev);
+>> +	adx =3D devm_kzalloc(dev,
+>> +			   struct_size(adx, map, soc_data->ram_depth * TEGRA_ADX_SLOTS_PER_W=
+ORD),
+>> +			   GFP_KERNEL);
+>
+> This is slightly hideous. Maybe add a temporary "count" variable for
+> readability?
+The reason for this is to allow a treewide conversion of this when
+devm_kzalloc_flex() gets introduced.
+>
+> Either way, though, this looks correct:
+>
+> Reviewed-by: Thierry Reding <treding@nvidia.com>
 
-Thanks for the log.
-
-One or two things look strange/important to me.
-But let me show all important parts:
-
-[    0.000000] Kernel command line: console=ttyS0,115200n8 console=tty1 earlycon ignore_loglevel root=/dev/nfs rw ip=192.168.99.2:192.168.99.1:192.168.99.1:255.255.255.0::eth0:off nfsroot=192.168.99.1:/home/ausvrl81292/nfsroot,tcp rootwait keep_bootcon
-
-The last "console=" parameter is "console=tty1". It is a so called
-preferred console. It has several effects:
-
-   + it should get associated with /dev/console
-
-   + it does not replay the log from the beginning when
-     registered. Only newer messages are shown.
-
-   + Boot consoles should get unregistered when this console
-     gets registered (unless keep_bootcon is defined).
-
-Note that "ttyS0" is _not_ the _preferred_console. As a result:
-
-   + it will replay all messages when registered
-
-   + boot console won't get unregistered when this one
-     is registered
-
-
-Now, the ordering is:
-
-[    0.000000] earlycon: uart0 MMIO:0x70006300 (options '115200n8')
-[    0.000000] printk: legacy bootconsole [uart0] enabled
-
-   First, earlycon is registered thanks because of the "earlycon"
-   parameter.
-
-[    0.036461] Console: colour dummy device 80x30
-[    0.041020] printk: legacy console [tty1] enabled
-
-   Second, the graphical "tty1" gets registered because
-   of the "console=tty1" parameter.
-
-   Normally, the boot console should get unregistered at
-   this point. But it stays because of the "keep_bootcon"
-   parameter.
-
-[    0.645646] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
-[    0.655230] printk: console [ttyS0] disabled
-
-   IMPORTANT: This is the weird thing! I do not understand why "ttySO"
-	gets disabled when it has not been registered yet.
-
-[    0.659964] 70006300.serial: ttyS0 MMIO32:0x70006300 (irq = 51, base_baud = 13500000) is a Tegra
-[    0.000000] Booting Linux on physical CPU 0x0
-[    0.669026] printk: console [ttyS0] enabled
-
-   The real "ttyS0" driver has been registered (added to
-   console_list) and the legacy loop started flushing
-   the messages in console_unlock().
-
-   The real "ttyS0" console driver started emitting messages
-   from the beginning.
-
-   The boot console driver emits only the newly added messages
-   "printk: console [ttyS0] enabled".
-
-[    0.000000] Linux version 7.2.0-next-20260817 (jonathanh@build-jonathanh-noble-20260527) (arm-buildroot-linux-gnueabihf-gcc.br_real (Buildroot 2021.11-11272-ge2962af) 13.2.0, GNU ld (GNU Binutils) 2.42) #15 SMP PREEMPT Tue Aug 18 04:56:56 UTC 2026
-[    0.000000] CPU: ARMv7 Processor [411fc090] revision 0 (ARMv7), cr=10c5387d
-
-   The real "ttyS0" console driver replays the entire log.
-
-[    0.659964] 70006300.serial: ttyS0 MMIO32:0x70006300 (irq = 51, base_baud = 13500000) is a Tegra
-[    0.669026] printk: console [ttyS0] enabled
-
-
-   And then all messages are emitted twice (by the boot console
-   driver and by the real console driver:
-
-[    1.574761] loop: module loaded
-[    1.574761] loop: module loaded
-[    1.584820] CAN device driver interface
-[    1.584820] CAN device driver interface
-
-   The real console driver would normally emit these messages
-   from the printk kthread. But it does it in the legacy loop
-   because the boot console driver is still registered.
-
-[    2.904178] ------------[ cut here ]------------
-[    2.904178] ------------[ cut here ]------------
-[    2.913507] WARNING: drivers/soc/tegra/pmc.c:4999 at tegra_pmc_enter_suspend_mode+0x168/0x178, CPU#0: swapper/0/0
-[    2.913507] WARNING: drivers/soc/tegra/pmc.c:4999 at tegra_pmc_enter_suspend_mode+0x168/0x178, CPU#0: swapper/0/0
-
-  IMPORTANT: This is a warning. It is printed with
-	NBCON_PRIO_EMERGENCY. These messages would normally
-	get flushed by nbcon_atomic_flush_pending() directly
-	from printk() using con->write_atomic(). It would
-	take over the console ownership from the kthread
-	when needed.
-
-	In this particular log, it is emitted from the legacy
-	loop in console_unlock() because the boot console
-	is still registered.
-
-
-Summary:
-
-Almost everything works as expected except for:
-
-  1. I am not sure why "printk: console [ttyS0] disabled" is printed.
-     It does not make any sense to me.
-
-  2. The WARNING would be handled with NBCON_PRIO_EMERGENCY.
-     I wonder if this warning happened also with "v5" of this
-     patchset.
-
-Why is the WARNING important?
-
-   If the WARNING happened also with v5 of this patchset
-   then it tested emergency mode as well. But the system
-   booted with v5. So that a difference between v5 and v11
-   patchset might be important.
-
-   If The WARNING did _not_ happen with v5 then we probably did
-   not test the emergency mode in this version. So that
-   the problem might be in the emergency mode handling.
-
-
-
-Ideas for testing:
-
-1. I wonder if adding a WARN() with v5 of this patchset
-   would make v5 fail as well.
-
-2. If wonder if boot_delay=10 makes any difference. It might
-   prevent some races.
-
-Best Regards,
-Petr
