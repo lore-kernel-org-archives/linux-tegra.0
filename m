@@ -1,41 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0D9451071;
-	Tue, 18 Aug 2026 11:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583713559CA;
+	Tue, 18 Aug 2026 11:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787051103; cv=none; b=OYG4BL/ckgGE59nNRlEmWWEzXdg5xdQefTtOritRGirlcaJyGexq1Y6FstYM2iOszojKwWfyyXxbrpc/0TLTNyI6mCZWBUkBw1dm2JfTxnWt9/FLstoRLTDjQipFj7ZVe1wYrJjTfE+6zRX0E7P7luu3ERk9X4782Oh+ivmF6yc=
+	t=1787052621; cv=none; b=X7Rv4oJk/GHJiWe1mYbz9mjZd8GWqp8RcDRag1WL/6x/z/3rBLxP00fvoe9LoahysZv1pcdgUJAUnXnZGkE1EAN7lSpngBmnzVS0zyjmPiMOI6FZqzRGl/zqKAE6OP6uP7LSfE5k/1GxlVoR1yWfWtapGh0NTV/e5abSnhg1msg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787051103; c=relaxed/simple;
-	bh=pARVkTyh7ve822c2/feb5MO/RMBFhnJekTNWRZDuM6A=;
+	s=arc-20240116; t=1787052621; c=relaxed/simple;
+	bh=DvOl4SmIrNXyBesDRJim4Pakwy9PJ+ZCze/fbT3UOLg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JeJ7At1KBSGUTRc2w04e/R3SMGXOU1RfJYc0C9VELnGgblt+hcwPJiMESO+XHbVZLgm4dUSp54NEkdBqX6dk8j7MNp9OGZqe8OlFL37/uxtYM5/jOZsBVEH5kUsU4l9f3MJ+O5ROWxQFOINBngIji/KjvnmBD+QGjIcZjFI/3vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XCpFhUGY; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=rPwbBlwGdrNAIO09oDfHQ5Y1k5gQTwfSwWyFjflm32WWrwm/2sZiLvaw1ySqqBAoPYNiojc6QaCPhkFsMDBdjpikBS5XmRZYWz8AlI+VOTjE6vuJqkOEy6OcLhdIoBUCQ07JAi/1VWKyA3s3VHCk0csA9K1sJKMO2heInwj57OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQDm6Qq4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XCpFhUGY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 227431F000E9;
-	Tue, 18 Aug 2026 11:05:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQDm6Qq4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 509341F000E9;
+	Tue, 18 Aug 2026 11:30:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787051101;
-	bh=3rblyBJ5A6FAan1g3OTvn6LNl4ZMyzCjnjvlZSePT4o=;
+	s=k20260515; t=1787052619;
+	bh=bNsJXcKrOe0WH5qxBsUVCSZqy+dHuSR7UenlMjhG3/Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=XCpFhUGYoAXdRorTh9f0LgqwzRtIBwTbhQ4seEldY4FfQDCGOuBPJj4Iu8O02G4Er
-	 hfBdu+ZzUO2PuTxEuPTWFIvlPjCwQsFD1FNJWzN2OZAoHmFKs/I5ZYywhrGt/wHXbD
-	 lXfWHMCHL9nHkgZbz7f3BdYLb+qyBtQmyVf1KgUbFrQOdGQu02E/Kr9uAfQ2BT/Scd
-	 gJY/At/HxZbbN9ubDFpnr5nFe/MHzy5B1xJxvGq8pDhCjgsXa4bCPRY+brKfeNUFMt
-	 XTse6Bb4EjqTK59SsgFz8DXLVk8xjy7TcQPM1XHnElQ1OtVJSc7p7ypVwCVCndfJ5T
-	 a3zr+9Ypu0mTQ==
-Date: Tue, 18 Aug 2026 13:04:59 +0200
+	b=ZQDm6Qq4gr2ynb/PXGjY3F3JiIrnmfpj/kAabzThHjRiulSSTbhvRpBeuAEQmpOSx
+	 7dTfkD3ILk1djtejv0OLffKhF5dEePNqvfC1fX/GqkrgsfsvFujiuLpqUfugO1t6YJ
+	 e7CA6p8BYZ3Jc70O/3EtRc90tJ6u2JYTEJ/aFjFX0GMAsj3oslaRlBwnlSPY/YXqLu
+	 E0HiU1DnFGDQejFe+6v9vq1MDJS5wrZBkRZM+vu9y0FagjQ/8orVPyVc9a1wu3dPM1
+	 d0g1wUtAui1JfiFmQEv26tvFztzWEFEpKC/ApE4k/UuQK50FOgOmEQ9h9A+fx78VeA
+	 TI0eGHnC8WsIg==
+Date: Tue, 18 Aug 2026 13:30:17 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-sound@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, 
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: tegra: ADX: convert map to flexible array
-Message-ID: <aoQ7SynywUKcIAaS@orome>
-References: <20260814205018.39015-1-rosenp@gmail.com>
+To: Pengpeng Hou <pengpeng@iscas.ac.cn>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] firmware: tegra: bpmp: reject truncated debugfs
+ entries
+Message-ID: <aoQ-lEhC6ReM1eMS@orome>
+References: <20260814080548.22922-1-pengpeng@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -43,72 +42,75 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dknf7gob7xggqd3f"
+	protocol="application/pgp-signature"; boundary="uc34rosdthk64rgr"
 Content-Disposition: inline
-In-Reply-To: <20260814205018.39015-1-rosenp@gmail.com>
+In-Reply-To: <20260814080548.22922-1-pengpeng@iscas.ac.cn>
 
 
---dknf7gob7xggqd3f
+--uc34rosdthk64rgr
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] ASoC: tegra: ADX: convert map to flexible array
+Subject: Re: [PATCH v2] firmware: tegra: bpmp: reject truncated debugfs
+ entries
 MIME-Version: 1.0
 
-On Fri, Aug 14, 2026 at 01:50:18PM -0700, Rosen Penev wrote:
-> Replace the pointer-based map allocation with a flexible array
-> member and use struct_size() for allocation. This simplifies
-> the code and avoid an extra allocation.
+On Fri, Aug 14, 2026 at 04:05:48PM +0800, Pengpeng Hou wrote:
+> The BPMP debugfs parser reads fixed-width values and bounded strings
+> from a size-delimited reply. Its fixed-width helper currently treats a
+> short copy as success, while the string helper advances past the range
+> when no NUL terminator is present. The status helper also uses an
+> unsigned return type for negative errors.
 >=20
-> Assisted-by: opencode:big-pickle
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> Require complete fixed-width reads and a terminator within the remaining
+> range before moving the cursor. Use a signed status result so errors
+> reach callers unchanged.
+>=20
+> Fixes: f2381f652266 ("firmware: tegra: Add BPMP debugfs support")
+>=20
+> Assisted-by: Codex:gpt-5
+> Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
 > ---
->  sound/soc/tegra/tegra210_adx.c | 12 ++++--------
->  sound/soc/tegra/tegra210_adx.h |  2 +-
->  2 files changed, 5 insertions(+), 9 deletions(-)
+> Changes since v1: https://lore.kernel.org/all/20260715083726.30740-1-peng=
+peng@iscas.ac.cn/
+> - no source-code changes
+> - rebase on the current Tegra firmware sources and tighten the commit mes=
+sage
+> - add the coding-assistant disclosure
 >=20
-> diff --git a/sound/soc/tegra/tegra210_adx.c b/sound/soc/tegra/tegra210_ad=
-x.c
-> index 9175598b52a7..d607ba4233b6 100644
-> --- a/sound/soc/tegra/tegra210_adx.c
-> +++ b/sound/soc/tegra/tegra210_adx.c
-> @@ -677,11 +677,13 @@ static int tegra210_adx_platform_probe(struct platf=
-orm_device *pdev)
->  	void __iomem *regs;
->  	int err, i;
-> =20
-> -	adx =3D devm_kzalloc(dev, sizeof(*adx), GFP_KERNEL);
-> +	soc_data =3D of_device_get_match_data(dev);
-> +	adx =3D devm_kzalloc(dev,
-> +			   struct_size(adx, map, soc_data->ram_depth * TEGRA_ADX_SLOTS_PER_WO=
-RD),
-> +			   GFP_KERNEL);
+> The bounded parser helpers and callers were reviewed statically; no
+> malformed BPMP response was injected.
+>=20
+>  drivers/firmware/tegra/bpmp-debugfs.c | 17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
 
-This is slightly hideous. Maybe add a temporary "count" variable for
-readability?
+This doesn't make sense to me. The seqbuf_read*() helpers already use
+seqbuf_avail() to make sure they never read past the end of the buffer.
+We also leave scope immediately anytime we see an overflow.
 
-Either way, though, this looks correct:
+Worst case we'll see memcpy() copy 0 bytes, as far as I can tell, and
+that's harmless (even though not entirely free).
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
+Thierry
 
---dknf7gob7xggqd3f
+--uc34rosdthk64rgr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqEPFcACgkQ3SOs138+
-s6GwRw//bNdJ87iaPR43h9MA+iQvmN7luZ83EGxmzJSJkQMEn7RexGv3L4pkTTPQ
-jTsYbbaVoL+1x1o2O7iYFEjrxEyiVIHqKNMvdhFjfegZx79d4vzOJKsDPHZ/7on1
-5lDJHZaxjHcVAtSZmOSm4sdcuucdR4DKTq3R5Evm49YvOS87U1F0Q2PeSVDqje4R
-h4qHeZKRuVUiZhJq5z9KrsxYVgCAiFkz+N3OpS9HSdeH4LIGjElRC0WonqQJaiQ1
-gpGbYjFqSrWTSh4rlm7S9U124DvgIlD6nVZcOcpghCQ6ROtgXVn7KhhJaGJmbc6b
-O3uEQEbCC6w0KV+579blonaHEwUcV+69JyCWu2QpLBGH0771MFljfm4UKKYoqmfA
-MoUBGSbloVmIjAsJEZwbJ+QQ7D4X8mOEXqkXIe1g9NLqEy+1FO9fDF3z0DxyyilT
-WC/7Iv6X0a5MRMhfeDWOMebNFUU7tYXKXlObAzu7Fdu56X7hfXGvqeAO8IjyPAfw
-WLSYQv2wR74KDZVrbWwDGZWZ+wPMUMTzcCw/A7hqEF7OdUOCsacYgdDEtZUAFX2q
-bbykFyi5sb1WyUAElnqPip0cijOnGPYKKwFCFuzNnerlNaQ3Y5paRlpp+7qCcZ46
-hJ/W+vJCN09IJzL8XBfzRSqceo/RkkJvlVjLXIZJhs49qMXhc9A=
-=AlDQ
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqEQkYACgkQ3SOs138+
+s6H62w/+IjauN+ojTmNxphSm9842XN0w8yIvS4QB+29wH+S6H8x3g9fcGRbx1oIq
+RNMDjnW8QFUPK1c9YtAuB9BLrdcgFMDBYk50F64xQH0VLkj9/siEcMMjGLIZJxVj
+iKTq+OSxtvM6EWr7pIXAuTFuyaOl7UmAydTB4UR6mQtzRE30a1R8jUjABBkccP5M
+OZjbqmkw6zLoYn1syTPpYpxWe1IKABSrZvKR4dQLf0LCk9gmIohjpWWtXa4Ca1U+
+Fm3ste3ZK5E4Cd8k8Yurtr51k8v0DSDbLyv7QNXh1IbkxFcu6tlpKTLoIInn6KHC
+GgDnFiETEPl4IIVaeo0bbDWP0hYRaDZvf6sOHvtnPJFeoG0Oj08PWm1GFNjnDQd8
+l715ADwmXBaIWsuaCVrYx5KjsQwPFHkgLReKqZ6JZRZmOOcJ3YxxWQolRRHBbZsP
+WDaCoz66BN/qOWc1+2UpxwQaMSAVTeLQNCNNypQsSniKBp8gu8nBjJranUJO5yPP
+iQzDcf3cvaVoVtOFIjABEXc1bjrqcX9iQe/rJyVBEuHBAhamqY5Q3biUE8harYGG
+/W1Q6ApuO1n0VY0TfukGykFUjZrGKGKL1dyy78Mv9O2bxfcdNKlhk9B8cGMyD2lf
+N+yC1oM6cOcTvK7Ulj09NIUkP4+vf5kY9rD7Nu+vsjgulcTcu5c=
+=qqHM
 -----END PGP SIGNATURE-----
 
---dknf7gob7xggqd3f--
+--uc34rosdthk64rgr--
