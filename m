@@ -1,47 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67CE3DCDA3;
-	Wed, 19 Aug 2026 07:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCFB831716B
+	for <linux-tegra@vger.kernel.org>; Wed, 19 Aug 2026 09:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787124699; cv=none; b=BNIuLysf3SkZekPIx4uu8oPVn9MS7wWIQW/djF+6utom0Q/dlXO7JrwYjFHrR47O3Oyih/701yiOQ4VCONvjkBfMzPk1+8Dy3d3+iZAGJqrf8WEAoGIy/Cr2J8EpmCNaG3mkexJaEFFpliM1bZLqNw3ZBcgxsdVNwsDq/Q1CbJc=
+	t=1787130619; cv=none; b=B7BzHu8R31ahuSiwa494P3D+KQjCKG7LKQ/VKiYKXBFbRNLN8V1QXDwcTh7NwiXpOqe4sZmcezczMGKAigMiIwvmC0437VifVC71SFiPjz6ELzxrDLaT1rqJXyl8hFypoy0ICu6vu5RuGJTIvFTiNl3Z9iJ1F+MBULBS/xGrgRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787124699; c=relaxed/simple;
-	bh=/AV77nngDAMTr2yMd1BMXJXCCtriPp4MXTLmWc3GeHk=;
+	s=arc-20240116; t=1787130619; c=relaxed/simple;
+	bh=Ru7B0mPr2JsnfJ+ro+GK4Tqh+Gd4Cb7qZT9U2T70g3s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LkNOQRYhFLaw+q8FeTtV3pDpKF2WzCehw5CIkTKpPakPZUOgtwAPR8M7z5mDGgjCwsmDJxyWjSlXkbMFq1+A6zomsNfoV0tGD8pXbFfscflk227Z5uMsv836pnl6Z1CcOmMiomrRQbCx0i8hUU/qjuCgBHa5hoWtEDy3FtqfveI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hr0oUucK; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=OYy0RPdT3OJye0sUO8yePzT3Br+2FESvDHc9bovp3cbSLplQn6vj2ovOc1uq8WDBgwHaZ5J7jq10P58S08wPg+dp+FTS0Hmv5TZws7N/yg+qXn+ZzoN3mh34Txd1KBRYO/u3LqnAGQIeCc+m4mlWJIo1u0dmgWnqCMvG49MaTQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XNTXdjuQ; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hr0oUucK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE76C1F000E9;
-	Wed, 19 Aug 2026 07:31:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787124696;
-	bh=3HC9hzqp25hJ9dnFkyg3+4PSSoZICNQ+8dExx/7chds=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Hr0oUucKoheS3zqBS3EqHM07soF7W/biU/1NSGlWU/Xxf+DOFemVcmIm5YosXdpMt
-	 PudcHgdJL6I3FxB67iBX3QCDqxCPrP7W0qBY9bLAcjGdg9rkT2o+yv0GHBoKWidKud
-	 g+42uBSMsj8mhX3xRGReSaqDSiCRKrVYtICbOzPbcjE8jfggnrp6RfOlkKZCr9mUR0
-	 3rAoXZNK53Idf331vcMLgnDdVf79nUKnPG0Dm5jUWeJN0W5uoHUBa9meWaqTZ4YaUO
-	 es6N/H67wYyf0LIJhnrEB/KA5OUrrx/oldcOnjadA7Cu9i1y1AZbOKPZ6frBmdjZsw
-	 iSFuK7EG3VRcw==
-Date: Wed, 19 Aug 2026 00:31:34 -0700
-From: Peter Chen <peter.chen@kernel.org>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: linux-usb@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Xu Yang <xu.yang_2@nxp.com>
-Subject: Re: [PATCH v9 1/3] usb: add missing headers transitively included by
- <linux/phy/phy.h>
-Message-ID: <aoVb1kxR11yP0Uvv@hu-petche-lv.qualcomm.com>
-References: <20260810125614.441667-1-vladimir.oltean@nxp.com>
- <20260810125614.441667-2-vladimir.oltean@nxp.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XNTXdjuQ"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4953de5be0aso6111115e9.0
+        for <linux-tegra@vger.kernel.org>; Wed, 19 Aug 2026 02:10:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1787130616; x=1787735416; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=CRcM97D6GL/t9v6yCpx9B64ow1SHjswDGV+6IEYsHvE=;
+        b=XNTXdjuQJ6YMtQQ/qzIp4HJkK7O5yNPGviPdNf8wLnGIx46KaBb47As/RvtZizx0Ts
+         porMUO5g/m3MgXdxYHvZBRkjO/FBJ+AFy8nVAyl1FNce/scOty5vzpap3qUsk39WtoKm
+         J3/RgGzMBYzGSdAXJEYH8dyqYtrLJ5sgI+H3F1TvqQpn48lxflMdL9NrfVpZjcqLPRpX
+         dF3D5fVw9pydF0xfV0x6T7ePe6zsvtxTPm3LaHFLqzDhn4K/kyuQV6aPWeCokpf42too
+         3DzFYDZp/XAiQXZbgFMDpyqyoTu2Sq14GBMm6tWvWCFLFy01771uYiXwAw21QndjBOm8
+         WGqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787130616; x=1787735416;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=CRcM97D6GL/t9v6yCpx9B64ow1SHjswDGV+6IEYsHvE=;
+        b=GoqVeJ79pV0w1qLKk5+O60QI2++SYIfP8vsFOOGrNIVqtQlkFT3suBttdPFI9jHMqx
+         HBo6/rsj1ZG8CsTudggx1wRx8P4g5bOm4lhfZMaWUhMOATocCkrNtwJYc4KeT8302PoW
+         9usn36kIK9bWQ1x5MOOsQfsZpX6Gt70AGlenSDS9kJoy4x5fD0kLhr2Pl076Rym3BYbm
+         uGQj08MnUixs+RWBP5Y0aBi0tLMOjI36T1iyVcBvuG7LF1QCn4Tj3a+jKmkcn7jFgZdH
+         D7daQkyRUlwSGisj7vnf47rTeFEFr2lQ7pSIdxvVbSlhrh6TKoSeN1sMpIJXcuQG+fu5
+         5XmQ==
+X-Forwarded-Encrypted: i=1; AHgh+RqALAlx3JkrOwzESiABND3KK4CHzPV6+HGIgBfg+38X4fGubWn9ZTwagQEVlHL9y9kj+0xOY3Jn1Phaew==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI8BDzhhnCy0tR/2Em5nEgUnbziA/jgz+9fOI8i7hRnjzPmV+i
+	6atbY0ZifSfsjz4ekB+8AlTjJZDz2qaZAMwLpO8+VckdkiOU5emy6eDpiIZ9DGBw1A==
+X-Gm-Gg: AR+sD13lg5Hro5Jpyas4Qxmbcd8lhkFGvIaeZ0w/2g9oSCmqqJ8+jZbN7MOASuvqNXr
+	0tAh5Ap8piLkbhDQqrTP2SJ+B9Mmz8jXzmaqZHrw9Y3RnRFxC3xPl2aoWsgcdJT4YFTivVMAGfE
+	F/zeXKFIiVgP0gdNqqd1cA0G5toGeFj/WWabsrYtjE9a/UprtAhtx75q+DHgKisWgd+9qSvmdox
+	Fd2iFS1Kg351xg8hTFYWjdXoqrFWOUm/C195S3lzl2TyFwoc0ZJWZcHDwlwTbsdmEQaML74jc/x
+	cebj25Ja3un4kb9zhbtOT6ETDVkLwbdskDKKiSj8l1iZrO11JL9BXHYuX+ysRvTHGaxvZHultTs
+	3ORKm/7NAEENkZZKDB+6LLl/riC9FvDEl7GfcygFCOawY9k6UKfnEURTiwPw3TH0sDnsjDn9lO9
+	bYE+WJ3JFLNQi5xYkSsKVdD1adi4vnuEdib3rg9gjQMqQMFNFRFKd1zUayEC1CvPsm740gSnwkx
+	SvPxvP7+CwveXqFvKEOucXbjOLXdMLUmxGe/ErnSWc=
+X-Received: by 2002:a05:600c:528d:b0:493:bd2a:93be with SMTP id 5b1f17b1804b1-499aa17d6a0mr59734605e9.6.1787130615318;
+        Wed, 19 Aug 2026 02:10:15 -0700 (PDT)
+Received: from google.com (135.91.155.104.bc.googleusercontent.com. [104.155.91.135])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-482b1441c78sm4582317f8f.2.2026.08.19.02.10.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Aug 2026 02:10:13 -0700 (PDT)
+Date: Wed, 19 Aug 2026 10:10:09 +0100
+From: Vincent Donnefort <vdonnefort@google.com>
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Russell King <linux@armlinux.org.uk>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@kernel.org>,
+	Lorenzo Stoakes <ljs@kernel.org>,
+	"Liam R. Howlett" <liam@infradead.org>,
+	Vlastimil Babka <vbabka@kernel.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Chun Ng <chunn@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-mm@kvack.org,
+	iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org,
+	linux-trace-kernel@vger.kernel.org,
+	Thierry Reding <treding@nvidia.com>, pavan.kondeti@oss.qualcomm.com
+Subject: Re: [PATCH v4 07/10] dma-buf: heaps: Add support for Tegra VPR
+Message-ID: <aoVy8dj8f3ll5-M4@google.com>
+References: <20260807-tegra-vpr-v4-0-5510d16af89e@nvidia.com>
+ <20260807-tegra-vpr-v4-7-5510d16af89e@nvidia.com>
+ <an4MEI7lkc2p3nKI@google.com>
+ <an8K2gb1pIqbDj6-@orome>
+ <aoNDRTKCUkzd2n5G@google.com>
+ <aoQ1lhZojzsSkWHQ@orome>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -50,134 +127,268 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260810125614.441667-2-vladimir.oltean@nxp.com>
+In-Reply-To: <aoQ1lhZojzsSkWHQ@orome>
 
-On 26-08-10 15:56:12, Vladimir Oltean wrote:
-> The chipidea ci_hdrc_imx driver uses regulator consumer API like
-> regulator_enable() but does not include <linux/regulator/consumer.h>.
+On Tue, Aug 18, 2026 at 12:48:09PM +0200, Thierry Reding wrote:
+> On Mon, Aug 17, 2026 at 06:22:13PM +0100, Vincent Donnefort wrote:
+> > On Fri, Aug 14, 2026 at 02:56:05PM +0200, Thierry Reding wrote:
+> > > On Thu, Aug 13, 2026 at 07:25:20PM +0100, Vincent Donnefort wrote:
+> > > > On Fri, Aug 07, 2026 at 05:54:27PM +0200, Thierry Reding wrote:
+> > > > > From: Thierry Reding <treding@nvidia.com>
+> > > > > 
+> > > > > NVIDIA Tegra SoCs commonly define a Video-Protection-Region, which is a
+> > > > > region of memory dedicated to content-protected video decode and
+> > > > > playback. This memory cannot be accessed by the CPU and only certain
+> > > > > hardware devices have access to it.
+> > > > > 
+> > > > > Expose the VPR as a DMA heap so that applications and drivers can
+> > > > > allocate buffers from this region for use-cases that require this kind
+> > > > > of protected memory.
+> > > > > 
+> > > > > VPR has a few very critical peculiarities. First, it must be a single
+> > > > > contiguous region of memory (there is a single pair of registers that
+> > > > > set the base address and size of the region), which is configured by
+> > > > > calling back into the secure monitor. The memory region also needs to
+> > > > > quite large for some use-cases because it needs to fit multiple video
+> > > > > frames (8K video should be supported), so VPR sizes of ~2 GiB are
+> > > > > expected. However, some devices cannot afford to reserve this amount
+> > > > > of memory for a particular use-case, and therefore the VPR must be
+> > > > > resizable.
+> > > > > 
+> > > > > Unfortunately, resizing the VPR is slightly tricky because the GPU found
+> > > > > on Tegra SoCs must be in reset during the VPR resize operation. This is
+> > > > > currently implemented by freezing all userspace processes and calling
+> > > > > invoking the GPU's freeze() implementation, resizing and the thawing the
+> > > > > GPU and userspace processes. This is quite heavy-handed, so eventually
+> > > > > it might be better to implement thawing/freezing in the GPU driver in
+> > > > > such a way that they block accesses to the GPU so that the VPR resize
+> > > > > operation can happen without suspending all userspace.
+> > > > > 
+> > > > > In order to balance the memory usage versus the amount of resizing that
+> > > > > needs to happen, the VPR is divided into multiple chunks. Each chunk is
+> > > > > implemented as a CMA area that is completely allocated on first use to
+> > > > > guarantee the contiguity of the VPR. Once all buffers from a chunk have
+> > > > > been freed, the CMA area is deallocated and the memory returned to the
+> > > > > system.
+> > > > 
+> > > > Hi,
+> > > > 
+> > > > I believe we (the Android team) are trying to solve similar issue to yours: Arm
+> > > > CPUs can still speculatively read memory after it has been transitioned to the
+> > > > Secure state, as long as they retain a cacheable mapping to it.
+> > > > 
+> > > > As modifying the direct mapping is difficult, the workaround ended up in the
+> > > > hypervisor which unmaps the pages from the host stage-2 on intercepted FF-A Lend
+> > > > invocations.
+> > > > 
+> > > > If convenient, this is nonetheless the wrong place to do it. Scattering the host
+> > > > stage-2 is really terrible for performance and we would like to move it where it
+> > > > should be, directly into the kernel...
+> > > > 
+> > > > This is what I thought was the attempt in v3, but I am now a bit confused
+> > > > because I see you are using set_direct_map_invalid_noflush()
+> > > > set_direct_map_default_noflush(), but I am not sure that works if rodata=full is
+> > > > not set? So does the memory for the NVIDIA IP still need to be unmapped?
+> > > 
+> > > Yeah, this currently relies on the circumstances being such that
+> > > can_set_direct_map() returns true, and in the case where we want to use
+> > > the resizable VPR functionality, we're going to have page-granular
+> > > mappings anyway.
+> > > 
+> > > > If so, how about having an option where the CMA allocation is backed by a direct
+> > > > map with the same page granularity, or at least a smaller and aligned granule?
+> > > > 
+> > > > With that, we know that for whatever CMA allocation we do, we can safely unmap
+> > > > from the direct map without risking splitting blocks. On CMA free, we can safely
+> > > > remap into the direct map as I do not believe we coalesce yet.
+> > > 
+> > > This sounds intriguing. For VPR we could possibly make the size a
+> > > multiple of the memblock size (or whatever might be appropriate). If we
+> > > can create a page-granular linear mapping specifically for that region,
+> > > that'd be ideal. I don't know if the linear mapping can be subdivided in
+> > > this fashion, though.
+> > 
+> > Actually I don't think modifying the memblock is necessary at all!
+> > 
+> > Here's what I have so far:
+> > 
+> > diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> > index d4de88770ecf..a9f81413b70d 100644
+> > --- a/arch/arm64/mm/mmu.c
+> > +++ b/arch/arm64/mm/mmu.c
+> > @@ -22,6 +22,7 @@
+> >  #include <linux/fs.h>
+> >  #include <linux/io.h>
+> >  #include <linux/mm.h>
+> > +#include <linux/of_fdt.h>
+> >  #include <linux/vmalloc.h>
+> >  #include <linux/set_memory.h>
+> >  #include <linux/kfence.h>
+> > @@ -1138,6 +1139,27 @@ static inline void arm64_kfence_map_pool(void) { }
+> >  
+> >  #endif /* CONFIG_KFENCE */
+> >  
+> > +#define MAX_FORCE_PTE_REGIONS 64 /* Greater or equal to MAX_RESERVED_REGIONS */
+> > +
+> > +static struct {
+> > +       phys_addr_t start;
+> > +       phys_addr_t end;
+> > +} force_pte_regions[MAX_FORCE_PTE_REGIONS] __initdata;
+> > +
+> > +void __init early_init_dt_force_pte_arch(phys_addr_t start, phys_addr_t end)
+> > +{
+> > +       static int count;
+> > +
+> > +       if (force_pte_mapping())
+> > +               return;
+> > +
+> > +       if (count >= MAX_FORCE_PTE_REGIONS)
+> > +               return;
+> > +
+> > +       force_pte_regions[count].start = start;
+> > +       force_pte_regions[count++].end = end;
+> > +}
+> > +
+> >  static void __init map_mem(void)
+> >  {
+> >         static const u64 direct_map_end = _PAGE_END(VA_BITS_MIN);
+> > @@ -1186,6 +1208,15 @@ static void __init map_mem(void)
+> >         __map_memblock(init_end, kernel_end, pgprot_tagged(PAGE_KERNEL),
+> >                        flags);
+> >  
+> > +       for (i = 0; i < ARRAY_SIZE(force_pte_regions); i++) {
+> > +               if (!force_pte_regions[i].end)
+> > +                       break;
+> > +
+> > +               __map_memblock(force_pte_regions[i].start, force_pte_regions[i].end,
+> > +                              pgprot_tagged(PAGE_KERNEL),
+> > +                              flags | NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS);
+> > +       }
 > 
-> The core USB HCD driver calls invalidate_kernel_vmap_range() and
-> flush_kernel_vmap_range(), but does not include <linux/highmem.h>.
-> 
-> The DWC3 gadget driver calls:
-> - device_property_present()
-> - device_property_count_u8()
-> - device_property_read_u8_array()
-> but does not include <linux/property.h>
-> 
-> Similarly, dwc3-imx uses device_property_read_bool() without including
-> <linux/property.h>.
-> 
-> The dwc3-generic-plat driver uses of_device_get_match_data() but does
-> not include <linux/of.h>.
-> 
-> In all these cases, the necessary includes were still provided somehow,
-> directly or indirectly, through <linux/phy/phy.h>. I found the following
-> command to be quite helpful in figuring out the include chain:
-> 
-> $ make KCFLAGS="-H" drivers/usb/dwc3/dwc3-imx.o
-> 
-> Since <linux/phy/phy.h> wants to drop the unnecessary includes, fill in
-> the required headers to avoid any breakage.
-> 
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com> # dwc3
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
-> Cc: Peter Chen <peter.chen@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Frank Li <Frank.Li@nxp.com>
-> Cc: Sascha Hauer <s.hauer@pengutronix.de>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-> Cc: Xu Yang <xu.yang_2@nxp.com>
+> Interesting. I had been thinking more along the lines of adding this
+> directly into memblock using a new entry in enum memblock_flags. None of
+> the existing ones seem to do what we need here, though some are closely
+> related. MEMBLOCK_SECURE or MEMBLOCK_PROTECTED are quite specific and
+> don't necessarily mean that we need the mapping to be page-granular, so
+> MEMBLOCK_PAGE_GRANULAR is perhaps clearer.
 
-Acked-by: Peter Chen <peter.chen@kernel.org> #chipidea part
+I thought it would be interesting to not have to modify memblock since it is
+used for all architectures, while the DT is at least slightly less widespread.
 
-Peter
+Also, cma_init_reserved_mem() could use an order 9. In that case PTE-level isn't
+necessary and we could just use PMD-level. Extending that support would be more
+cumbersome with a memblock flag than with a callback.
+
+rmem_cma_setup() hardcoding an order 0, perhaps this isn't really a problem at
+the moment?
+
+But yeah, the alternative is to create a "memblock_mark_forcepte" (it seems
+memblock_setclr_flag does split memblocks) and let of_reserved_mem call that
+function. Finally the arm64 mmu code can simply check for the flag before
+calling __map_memblock. Perhaps it isn't that bad in the end?
+
+>
+> Adding this to memblock has the advantage of not needing that fixed-size
+> force_pte_regions side-channel, but obviously it means that we can only
+> operate at memblock size granularity. With the above proposal, what
+> happens if the for_each_mem_range() below covers a region that you've
+> already __map_memblock()'ed above?
+
+On the following map, the walker would just see the existing mapping (at
+PTE-level) and will not try to install a block. This is similar to what is done
+for the [_text, __init_begin) region.
+
+I have verified it with ptdump.
+
 > 
-> v7->v9: none
-> v6->v7:
-> - add drivers/usb/dwc3/dwc3-imx.c to the list of patched files
-> - collect tag from Greg, keeping it despite the new addition because the
->   change is minor and in the same spirit as the rest
-> (https://lore.kernel.org/linux-phy/2026033028-squint-yield-4c23@gregkh/)
-> v2->v6: none
-> v1->v2: collect tag
-> ---
->  drivers/usb/chipidea/ci_hdrc_imx.c   | 1 +
->  drivers/usb/core/hcd.c               | 1 +
->  drivers/usb/dwc3/dwc3-generic-plat.c | 1 +
->  drivers/usb/dwc3/dwc3-imx.c          | 1 +
->  drivers/usb/dwc3/gadget.c            | 1 +
->  5 files changed, 5 insertions(+)
+> > +
+> >         /* map all the memory banks */
+> >         for_each_mem_range(i, &start, &end) {
+> >                 /*
+> > diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
+> > index 42e3e2d8a2b8..445f204f01e4 100644
+> > --- a/drivers/of/of_reserved_mem.c
+> > +++ b/drivers/of/of_reserved_mem.c
+> > @@ -136,6 +136,8 @@ static int __init early_init_dt_reserve_memory(phys_addr_t base,
+> >         return memblock_reserve(base, size);
+> >  }
+> >  
+> > +void __weak early_init_dt_force_pte_arch(phys_addr_t start, phys_addr_t end) { }
+> > +
+> >  /*
+> >   * __reserved_mem_reserve_reg() - reserve memory described in the
+> >   * first entry in 'reg' property
+> > @@ -168,6 +170,9 @@ static int __init __reserved_mem_reserve_reg(unsigned long node,
+> >         size = s;
+> >  
+> >         if (size && early_init_dt_reserve_memory(base, size, nomap) == 0) {
+> > +               if (of_get_flat_dt_prop(node, "force-pte", NULL))
+> > +                       early_init_dt_force_pte_arch(base, base + size);
+> > +
+> >                 fdt_fixup_reserved_mem_node(node, base, size);
+> >                 pr_debug("Reserved memory: reserved region for node '%s': base %pa, size %lu MiB\n",
+> >                          uname, &base, (unsigned long)(size / SZ_1M));
+> > @@ -517,6 +522,9 @@ static int __init __reserved_mem_alloc_size(unsigned long node, const char *unam
+> >                 return -ENOMEM;
+> >         }
+> >  
+> > +       if (of_get_flat_dt_prop(node, "force-pte", NULL))
+> > +               early_init_dt_force_pte_arch(base, base + size);
+> > +
+> >         fdt_fixup_reserved_mem_node(node, base, size);
+> >         fdt_init_reserved_mem_node(node, uname, base, size);
+> > diff --git a/include/linux/of_fdt.h b/include/linux/of_fdt.h
+> > index 51dadbaa3d63..6c73c76dee1b 100644
+> > --- a/include/linux/of_fdt.h
+> > +++ b/include/linux/of_fdt.h
+> > @@ -74,6 +74,7 @@ extern void early_init_dt_check_for_usable_mem_range(void);
+> >  extern int early_init_dt_scan_chosen_stdout(void);
+> >  extern void early_init_fdt_scan_reserved_mem(void);
+> >  extern void early_init_fdt_reserve_self(void);
+> > +extern void early_init_dt_force_pte_arch(phys_addr_t start, phys_addr_t end);
+> >  extern void early_init_dt_add_memory_arch(u64 base, u64 size);
+> >  extern u64 dt_mem_next_cell(int s, const __be32 **cellp);
+> >  
+> > > 
+> > > > (This alignment is not necessary for upcoming systems with BBML3)
+> > > > 
+> > > > However, to implement this, we'd need to split memblocks and I believe the only
+> > > > way at the moment is temporarily mark it as "nomap" which didn't seem very
+> > > > popular in the comments on v3.
+> > > 
+> > > Could this be simplified if this type of allocation is always memblock
+> > > aligned?
+> > > 
+> > > Looking at map_mem(), it seems like we could add some sort of special-
+> > > casing in the for_each_mem_range() block to check if the memory is VPR
+> > > (or generic, page-granular carveout, or whatever we want to call it) and
+> > > set NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS in that case.
+> > > 
+> > > If that works, set_direct_map_*() could be enhanced to detect such cases
+> > > and always work. Or perhaps a more specific API could be introduced.
+> > > 
+> > > Thierry
+> > 
+> > for set_direct_map() I think we could extend it to check if it is mapped at the
+> > PTE-level and if it is we can proceed?
+> > 
+> > I am currently looking at extending CMA with an option "unmap-on-alloc;" that
+> > would only be available if CONFIG_ARCH_HAS_SET_DIRECT_MAP, or
+> > cma_set_unmap_on_alloc, or if "force-pte;" is set. 
 > 
-> diff --git a/drivers/usb/chipidea/ci_hdrc_imx.c b/drivers/usb/chipidea/ci_hdrc_imx.c
-> index 282314eea7fc..1509b8ec630c 100644
-> --- a/drivers/usb/chipidea/ci_hdrc_imx.c
-> +++ b/drivers/usb/chipidea/ci_hdrc_imx.c
-> @@ -17,6 +17,7 @@
->  #include <linux/clk.h>
->  #include <linux/pinctrl/consumer.h>
->  #include <linux/pm_qos.h>
-> +#include <linux/regulator/consumer.h>
->  
->  #include "ci.h"
->  #include "ci_hdrc_imx.h"
-> diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-> index 8e8a5f59b319..f7def9b116e0 100644
-> --- a/drivers/usb/core/hcd.c
-> +++ b/drivers/usb/core/hcd.c
-> @@ -10,6 +10,7 @@
->   */
->  
->  #include <linux/bcd.h>
-> +#include <linux/highmem.h>
->  #include <linux/module.h>
->  #include <linux/version.h>
->  #include <linux/kernel.h>
-> diff --git a/drivers/usb/dwc3/dwc3-generic-plat.c b/drivers/usb/dwc3/dwc3-generic-plat.c
-> index ca69ac0eb07c..2f2ae6f4704f 100644
-> --- a/drivers/usb/dwc3/dwc3-generic-plat.c
-> +++ b/drivers/usb/dwc3/dwc3-generic-plat.c
-> @@ -8,6 +8,7 @@
->   */
->  
->  #include <linux/clk.h>
-> +#include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/reset.h>
->  #include <linux/regmap.h>
-> diff --git a/drivers/usb/dwc3/dwc3-imx.c b/drivers/usb/dwc3/dwc3-imx.c
-> index 973a486b544d..6e122674edaf 100644
-> --- a/drivers/usb/dwc3/dwc3-imx.c
-> +++ b/drivers/usb/dwc3/dwc3-imx.c
-> @@ -13,6 +13,7 @@
->  #include <linux/of_platform.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/property.h>
->  
->  #include "core.h"
->  #include "glue.h"
-> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-> index fa0f16ffafef..e70c17d50db8 100644
-> --- a/drivers/usb/dwc3/gadget.c
-> +++ b/drivers/usb/dwc3/gadget.c
-> @@ -10,6 +10,7 @@
->  
->  #include <linux/kernel.h>
->  #include <linux/delay.h>
-> +#include <linux/property.h>
->  #include <linux/slab.h>
->  #include <linux/spinlock.h>
->  #include <linux/platform_device.h>
-> -- 
-> 2.34.1
+> I suppose we could add something like this into the new cma_alloc_at()
+> function that I proposed in v5. The use-case for that is already quite
+> specific (i.e. it essentially means the CMA is externally managed) and
+> that might be what similar drivers may want to do. I don't know if it
+> would be more generally applicable to regular cma_alloc() users, too.
 > 
+> Thierry
+
+I had in mind to extend "shared-dma-pool" to handle
+set_direct_map_invalid_noflush()/set_direct_map_default_noflush() based on an
+option. But perhaps it is better to create another separate driver. And VPR
+needing a specific dma-heap driver anyway, it could call the direct-map
+functions there too without relying on CMA to do anything?
 
 -- 
-
-Thanks,
-Peter Chen
+Vincent
