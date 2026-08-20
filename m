@@ -1,33 +1,32 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FBD37AA6D;
-	Thu, 20 Aug 2026 14:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72BC37E5E5;
+	Thu, 20 Aug 2026 15:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787237428; cv=none; b=bK/XIyDTvb0uQstpZWks9cAvHCAIltxRtSRKZfTFctDQoQahojeR1YP/o4vUZTVpXtiMwLA6Ii/5lIEDfOfk8CCU0/AKufObGlrIYcbTThLwDbq1+6cgqloaMdGjjDJYvUvZOd3ItcYAh2mNu2J1Zk595J1uxtjvFD6cjETAzvk=
+	t=1787239090; cv=none; b=kZkMxsM8oTACSQ0e9qyvXiSIozQx+spI/0rye/eZ1bf1Jw5a3vh3eSjuczDJcYPwn3SFFxQ0wvaF0Dj7sd/LODsjXsA8XAeBI0gVVWWr5GX41v+a+7mDbDuSeAFU7GKlV+dTv9gdE5vAYNeJyPwP0VylwCc6+rSN7gnbl5ij39M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787237428; c=relaxed/simple;
-	bh=Rx40lFGgnSAPwcS4SnQ4IRexueivRGxfHUbfZiRWUSE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=aog5334PQ6zPRK+xHrArfdOlIUaEIUl/nrq4f6W76oC6IvoZ+lIFqHdqMeDkCAp2yUjHP4jXi68k2XFPPlbFaKvUI/hkaMujcQX/jqUyshtHWRZqYU1CroTwCrRtUZvJzxIDAfjgN/GbMoGr36io62dc6quyAsR0FDSeLBymBTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aAiwKZLJ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787239090; c=relaxed/simple;
+	bh=cWpIAtyTCdPlakiXlW38UncZwFCKnczScJWBpx1E6I4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZKpJyYY9rSha8en/GhZvFPlkjOF4sVZUNNRC8tqY+y0OTYJdk1p2E8Czxmp4zm0WKRAkM2n4mqFVqczdsaZKYjV+SJrDl6t+FgZu4RZnxbxo19hs9srgvlKSdRW6Hqp7edWLScn1y/UmQ8A2qq8ZC5TS76lMbVzWBranZw+/LQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=jz7Yb4NV; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAiwKZLJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 404E41F00A3A;
-	Thu, 20 Aug 2026 14:50:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787237427;
-	bh=DNOIl3+u2z53rU54/TYMH+dTGhcjs3yyBgOByIotuaw=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To;
-	b=aAiwKZLJqadwMghUM2PI9Y0FdHoCrJEVs8/lywMgzve9sPsshA1zWKllHf1TbOyUn
-	 8b4dQAzabgL247WMsX6cXEP6a+P/nshHyjcmX4g1wsDxDl1R1XR/w5IFVbA8aTIjuX
-	 //nUnRuRIA7o7oRZF0QehK7rpdsSvZVwZS1dUyXY+nVNKy5hB6/GqupXCm2c1/vAeq
-	 a+Y+Z5MzOYQXL4/oMJPiVszOLctLWzNak6hMHVMHRBatCafjnjhsrF3Z+4Hbv8DEjN
-	 C1q+Il5UUtTP2GDU91Bt/YGPZGlhDvcnX5xc9kTEL69bKjCZ/gMVCVBa+OIwcXKs7z
-	 QKPF9VidMvrkQ==
-Message-ID: <400c3d0a-97ca-4c76-909c-0c09d534cd41@kernel.org>
-Date: Thu, 20 Aug 2026 16:50:17 +0200
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="jz7Yb4NV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=hCBCfkhuylDswajnEAey0yhp/w2gaAIUfLfZkrqLJZI=;
+	b=jz7Yb4NV2f4ape26Kp1GE/Cg4BTdXVJCyxo9NcOQCjfIZGGbmJazQ27Qg+bQ8E
+	K9iqAp0NKgajM4aFMscqoafCMxBrzSFXaGCX0qxzW+EEXJDVnZ6q9s4aaPkyr85P
+	DVveMqpuEMuJ7rSa8XEECERFA43Wfvq3V2lj4f80cLFVM=
+Received: from [IPV6:240e:b8f:91b3:d000:fc9b:5f4:477a:dca5] (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wCHTa9jGodqjxLpQQ--.14990S2;
+	Thu, 20 Aug 2026 23:16:52 +0800 (CST)
+Message-ID: <a2f0c2d6-750e-4076-aae2-6efaba1009a1@163.com>
+Date: Thu, 20 Aug 2026 23:16:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,95 +34,83 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] drm/tegra: gr3d: fix autosuspend cleanup during teardown
-To: Guangshuo Li <lgs201920130244@gmail.com>,
- Thierry Reding <thierry.reding@kernel.org>,
- Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>,
- dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+Subject: Re: [PATCH v3 02/16] PCI: dwc: Use cached PCIe capability offset in
+ core
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+ jingoohan1@gmail.com, imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+ linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, sophgo@lists.linux.dev,
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+ linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
  linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20260808142217.2893936-1-lgs201920130244@gmail.com>
+References: <20260720150619.24733-1-18255117159@163.com>
+ <20260720150619.24733-3-18255117159@163.com>
+ <ps2qzgcb5lixkoqz2xbofdurkgmsiojg7e5ueqfdhyissqvzf2@tuderrjgzg6b>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20260808142217.2893936-1-lgs201920130244@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <ps2qzgcb5lixkoqz2xbofdurkgmsiojg7e5ueqfdhyissqvzf2@tuderrjgzg6b>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wCHTa9jGodqjxLpQQ--.14990S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7KF15GFy5tryfZw17uFy8Zrb_yoW8ur18p3
+	yaqr4ayr4kZrW2vFWxJa1YqF10gF98trW3J3s3Kr15ZwsxCFWxJrW2yryYvF9rGrWqyr1F
+	kF4UXryDur98AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRi2-OUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbC7AQcv2qHGmR67gAA3M
 
-On 08/08/2026 16:22, Guangshuo Li wrote:
-> gr3d_probe() calls pm_runtime_use_autosuspend(), but gr3d_remove()
-> does not call the matching pm_runtime_dont_use_autosuspend() during
-> teardown.
-> 
-> If the autosuspend delay is set to a negative value while autosuspend
-> is enabled, the runtime PM core increments usage_count to prevent
-> runtime suspend. Without calling pm_runtime_dont_use_autosuspend()
-> during teardown, this reference is not dropped.
-> 
-> The documentation for pm_runtime_use_autosuspend() also notes that it
-> is important to undo it with pm_runtime_dont_use_autosuspend() at
-> driver exit time, unless runtime PM was initially enabled with
-> devm_pm_runtime_enable().
-> 
-> Add the missing pm_runtime_dont_use_autosuspend() call to the driver
-> remove path.
-> 
-> This issue was found by manual code inspection.
-> 
-> Fixes: 62fa0a985e2c ("drm/tegra: Enable runtime PM during probe")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
 
-You sent vast amount of patches, all separate, making it very difficult
-to track and respond in efficient way. Do not do that.
 
-Group your work per subsystem.
+On 8/13/26 14:06, Manivannan Sadhasivam wrote:
+> On Mon, Jul 20, 2026 at 11:06:05PM +0800, Hans Zhang wrote:
+>> Modify the DWC core functions to use the cached pcie_cap offset instead
+>> of calling dw_pcie_find_capability() each time.
+>>
+>> In the DWC core, dw_pcie_find_capability() is called at several locations:
+>> - dw_pcie_ep_init_non_sticky_registers()
+>> - dw_pcie_wait_for_link()
+>> - dw_pcie_link_set_max_speed()
+>> - dw_pcie_link_get_max_link_width()
+>> - dw_pcie_link_set_max_link_width()
+>>
+>> The cached offset is initialized after hardware is ready:
+>> - In host mode: dw_pcie_host_init() calls pp->ops->host_init() (enables
+>>    clocks/resets), then dw_pcie_get_pcie_cap() caches the offset.
+>> - In endpoint mode: the core no longer caches automatically. Instead,
+>>    drivers must call dw_pcie_get_pcie_cap() after hardware is enabled
+>>    (e.g., after PERST# deassert).
+> 
+> But you didn't modify all DWC EP drivers to call dw_pcie_get_pcie_cap(). This
+> can lead to pcie_cap being 0.
+> 
+>> dw_pcie_ep_init_non_sticky_registers()
+>>    is called after that point, so it can safely use pci->pcie_cap.
+>>
+>> dw_pcie_ep_init_non_sticky_registers() now assumes pci->pcie_cap is
+>> valid. if not, it prints a warning and skips the operation.
+> 
+> Where is this warning printed?
+> 
+> These are already pointed out by Sashiko. You should go really go through all of
+> them (not the pre-existing issues) and comment whether the issues are valid or
+> false positive. For a series touching many controller drivers, this is necessary
+> to avoid introducing regressions.
+> 
+> I'm not going to merge this series until you fix the real issues Sashiko
+> reported or mark them as false positive if not valid.
 
-You were asked to clarify and respond to incorrect fixes statement. I do
-not see how you clarified and responded at all.
+Hello Mani,
+
+I'm truly sorry. Recently, due to work commitments, I haven't had any 
+spare time. I plan to handle this series after v7.3-rc1 is released. 
+Thank you very much for your reply. I will carefully consider the 
+subsequent review comments regarding Sashiko. Thank you again.
+
 
 Best regards,
-Krzysztof
+Hans
+
+> 
+> - Mani
+> 
+
