@@ -1,88 +1,129 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE46443E3C;
-	Thu, 20 Aug 2026 12:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FBD37AA6D;
+	Thu, 20 Aug 2026 14:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787229697; cv=none; b=cmhR7VI+4Gw7YhidPGxSc3liR9JSp/+Rm7oKG1aLqArxyZATnvqlfs/ylxk5rVxhXag4oTQPElXu6tZJsf6X/BZihKcu5/bwmzURTUyAP06tGrEolWEga6F0qHiinqL4uqW6H5NPL/wKisxpe56XdJXwQoJPmM17lKP6o0ghJ7M=
+	t=1787237428; cv=none; b=bK/XIyDTvb0uQstpZWks9cAvHCAIltxRtSRKZfTFctDQoQahojeR1YP/o4vUZTVpXtiMwLA6Ii/5lIEDfOfk8CCU0/AKufObGlrIYcbTThLwDbq1+6cgqloaMdGjjDJYvUvZOd3ItcYAh2mNu2J1Zk595J1uxtjvFD6cjETAzvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787229697; c=relaxed/simple;
-	bh=3gg6xn8jGnVE+a/AKrm++XqeT9tdpJ8JbloPuVo1YF8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cqSkF7PV2l+umlI4V6j9yCIsUvWOTdonUMvNWu4NDrwcQjdfZuGnEa+y+eSDev14NYbE2c1QkB64gWDJKyFGe/agLCrnfgzHFNBUGb6YPwyXYXJzkbBYtsaBFpfF2xehW12QLFwFnVW1Jaeif7fs/jh27XWYQbpx5QsrIGAIu38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=B85dw8kJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TlkUPbAk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1787237428; c=relaxed/simple;
+	bh=Rx40lFGgnSAPwcS4SnQ4IRexueivRGxfHUbfZiRWUSE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=aog5334PQ6zPRK+xHrArfdOlIUaEIUl/nrq4f6W76oC6IvoZ+lIFqHdqMeDkCAp2yUjHP4jXi68k2XFPPlbFaKvUI/hkaMujcQX/jqUyshtHWRZqYU1CroTwCrRtUZvJzxIDAfjgN/GbMoGr36io62dc6quyAsR0FDSeLBymBTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aAiwKZLJ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="B85dw8kJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TlkUPbAk"
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1787229690;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T4DuqMt5ojYFavapKyuixKGQoi+hlFR1IYklBAnUxhY=;
-	b=B85dw8kJktsrFlmfwap27OjyMnpfdsMAfoO4FUFNWz+tfxP2GDBgr417yZWp/AraXsxQjr
-	LmcuPpF7uCBP7hjE1jn2hNwwaLFryNk+v5PC/jNrwJ1CgWcA5eVDobStmfRZlLZ0n/1rWz
-	8Zqyo7aauafE9oyl+wbuUGEHtbA26N7RlnV/tqpzZd4wnMLEDL8T17z94kbEE9PEb7amaq
-	ToW0ZHyW7hBMt6wXJd6KWqh5yW3mXWtBQnB+Tj1/HuLmaSUbXkJ+M/meuvcWpVbRehiQH6
-	Bnf6LnTbyic5G4Vmrq9ml9UfXoEMFpj4Yy+ZVmn0O1mqnVIigRNcVJ2iE+KXzQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1787229690;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T4DuqMt5ojYFavapKyuixKGQoi+hlFR1IYklBAnUxhY=;
-	b=TlkUPbAkaehQx+oghViuZ+J7+gy79qS4DxQyqsLnWu5Bn9MJMafnDP4596egc4HKzmzobq
-	re98mJskvfnsYADA==
-To: Jon Hunter <jonathanh@nvidia.com>, Petr Mladek <pmladek@suse.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
- <jirislaby@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-kernel@vger.kernel.org, Ilpo =?utf-8?Q?J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Hugo Villeneuve
- <hvilleneuve@dimonoff.com>, Kees Cook <kees@kernel.org>, Stepan Ionichev
- <sozdayvek@gmail.com>, Xin Zhao <jackzxcui1989@163.com>, Osama Abdelkader
- <osama.abdelkader@gmail.com>, Fushuai Wang <wangfushuai@baidu.com>, Marco
- Felsch <m.felsch@pengutronix.de>, linux-serial@vger.kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH tty v11 1/2] serial: 8250: Switch to nbcon console, take 2
-In-Reply-To: <fd1802c3-4b38-4127-b988-a9ff059bcebf@nvidia.com>
-References: <20260729120439.281252-1-john.ogness@linutronix.de>
- <20260729120439.281252-2-john.ogness@linutronix.de>
- <f3757a75-0ba1-4558-bf57-f19ab7e59a4c@nvidia.com>
- <aoQPFC7d8mSuNZMh@pathway.suse.cz>
- <861247ca-dfd4-40c6-a094-0fbe389f3b67@nvidia.com>
- <aoR_9g7W0qyqWbOj@pathway.suse.cz>
- <fd1802c3-4b38-4127-b988-a9ff059bcebf@nvidia.com>
-Date: Thu, 20 Aug 2026 14:46:10 +0206
-Message-ID: <877bll9d91.fsf@jogness.linutronix.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAiwKZLJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 404E41F00A3A;
+	Thu, 20 Aug 2026 14:50:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787237427;
+	bh=DNOIl3+u2z53rU54/TYMH+dTGhcjs3yyBgOByIotuaw=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To;
+	b=aAiwKZLJqadwMghUM2PI9Y0FdHoCrJEVs8/lywMgzve9sPsshA1zWKllHf1TbOyUn
+	 8b4dQAzabgL247WMsX6cXEP6a+P/nshHyjcmX4g1wsDxDl1R1XR/w5IFVbA8aTIjuX
+	 //nUnRuRIA7o7oRZF0QehK7rpdsSvZVwZS1dUyXY+nVNKy5hB6/GqupXCm2c1/vAeq
+	 a+Y+Z5MzOYQXL4/oMJPiVszOLctLWzNak6hMHVMHRBatCafjnjhsrF3Z+4Hbv8DEjN
+	 C1q+Il5UUtTP2GDU91Bt/YGPZGlhDvcnX5xc9kTEL69bKjCZ/gMVCVBa+OIwcXKs7z
+	 QKPF9VidMvrkQ==
+Message-ID: <400c3d0a-97ca-4c76-909c-0c09d534cd41@kernel.org>
+Date: Thu, 20 Aug 2026 16:50:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] drm/tegra: gr3d: fix autosuspend cleanup during teardown
+To: Guangshuo Li <lgs201920130244@gmail.com>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>,
+ dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20260808142217.2893936-1-lgs201920130244@gmail.com>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20260808142217.2893936-1-lgs201920130244@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Jon,
+On 08/08/2026 16:22, Guangshuo Li wrote:
+> gr3d_probe() calls pm_runtime_use_autosuspend(), but gr3d_remove()
+> does not call the matching pm_runtime_dont_use_autosuspend() during
+> teardown.
+> 
+> If the autosuspend delay is set to a negative value while autosuspend
+> is enabled, the runtime PM core increments usage_count to prevent
+> runtime suspend. Without calling pm_runtime_dont_use_autosuspend()
+> during teardown, this reference is not dropped.
+> 
+> The documentation for pm_runtime_use_autosuspend() also notes that it
+> is important to undo it with pm_runtime_dont_use_autosuspend() at
+> driver exit time, unless runtime PM was initially enabled with
+> devm_pm_runtime_enable().
+> 
+> Add the missing pm_runtime_dont_use_autosuspend() call to the driver
+> remove path.
+> 
+> This issue was found by manual code inspection.
+> 
+> Fixes: 62fa0a985e2c ("drm/tegra: Enable runtime PM during probe")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
 
-On 2026-08-20, Jon Hunter <jonathanh@nvidia.com> wrote:
->> 1. I wonder if adding a WARN() with v5 of this patchset
->>     would make v5 fail as well.
->
-> Thanks for the analysis. I don't think that WARN occurred back in V5 
-> because this is something I believe is fairly recent and we need to fix. 
-> Anyway, for testing, I simply removed the warning to see if this has an 
-> impact and it does. So you are right, this appears to be the cause of 
-> the issue.
+You sent vast amount of patches, all separate, making it very difficult
+to track and respond in efficient way. Do not do that.
 
-Instead of the WARN, could you insert a pr_err() call? I would like to
-remove the EMERGENCY printing from the picture if we can. If it hangs
-due to NORMAL console printing from that suspend function, I expect it
-is irqwork related.
+Group your work per subsystem.
 
-John
+You were asked to clarify and respond to incorrect fixes statement. I do
+not see how you clarified and responded at all.
+
+Best regards,
+Krzysztof
