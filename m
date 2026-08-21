@@ -1,140 +1,81 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640AF332EC5;
-	Fri, 21 Aug 2026 13:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A39339372
+	for <linux-tegra@vger.kernel.org>; Fri, 21 Aug 2026 13:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787319617; cv=none; b=HIKM2rtOdFEaEr5CAqQMA1G4an5FvwXx7ursiEAwJCj0ilSKiHtZ1/KC368orddegGpWs5zYnXzhqNeAyWnH3LtbDHnzF+LqSmgzIG9eQnNCwC2zwB00LjJE55EqxCl9St1S1mu3JM41cgrO5jLIswgjVO+WHhWFpK+J09CO5Aw=
+	t=1787319700; cv=none; b=pIfhKZKLRymHEFu8AodBp/qvYBfqE6fX8M2RpZEDB5waWI+Le/+tUPJIyhW7xlBJrlKL4U2Iqfmz+/KRTEcOLx6YlgZZElWWxxFNYUAXaKki4N74ynAiCVba05z8W1tUjXhnY59JWFhAr7yr9md5L/jZ5yKRU7DRho+6Hn9g5Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787319617; c=relaxed/simple;
-	bh=nZtcGenSSy82MXscgS3TQDHNGhXxDRFUvHEV/XVmaDg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jsY5Q4VDjzvu2nPpSIZYtAD0IrB/KDS2wvQLiCOJ3620FAcMmC+Q6XGxa4jRrxGPxrRTr6rfk9jfCyKGqdsRD8TyRxcv5Q4JW8RGlyjkvJyHXl0vaHM7mBqYmv615kFpW0HGwNpCaRsFdBAuHu2oA15ZSQemWzFDJsG9RacKRQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Rfi2n38z; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1787319700; c=relaxed/simple;
+	bh=DO25XK4TR1dwxV01IOu3D0FuR8NayJdrvfq6S4O6NX8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kCHf7XFyw0YOBVAcoujwvF97TqwfhPWPt0mIJycYnsk453bybJJVtEFyMLSqXaZfBR4uFaPS+8XyAlGNvxc1B5HN4wAsP82JtiY/boY0XjJMHcfEcJvOTWYjCCsZHrT86fNfdfOzc93MN6KRKV+6dV22xxItbyqop9lmH2JZ8ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fpY13xRB; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Rfi2n38z"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1787319616; x=1818855616;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=nZtcGenSSy82MXscgS3TQDHNGhXxDRFUvHEV/XVmaDg=;
-  b=Rfi2n38zgpTE1VFGsF9QCK895ygLSq1X0DVvfkBE6228pEBxnBrB0LRK
-   GAQ8mgOXJ0iare+IbS+ITLr7TVpOpXUNViIa1QCfrFb2Bpct4chchf6VA
-   83vtkkqG+bAemoL5KN9CukktlNKo5IojT6MrYt2ylvMyiXWix1I1vtbwm
-   oDduDszocMhh+6zT6uSg7u6Y6eaCDREmnzoQB1QOELwhtM5hN472/FoOn
-   lQ0cr5ioBCqVW5UyqyIxQoyjeiJr8nXroTdl113AmGqBpUe0/F24MCW8u
-   ui9D7kx8Wcw3bX+tumyVkpln5qBT0x2b4vqZ30ZVdERFYXvQNJBD1P7RW
-   w==;
-X-CSE-ConnectionGUID: HyXRN8+nRO6IAOBi+2U6dQ==
-X-CSE-MsgGUID: F1ngVutmTiOQH0sP1B/9VA==
-X-IronPort-AV: E=Sophos;i="6.25,235,1779174000"; 
-   d="scan'208";a="62471628"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Aug 2026 06:40:05 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Fri, 21 Aug 2026 06:40:04 -0700
-Received: from [10.171.248.60] (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Fri, 21 Aug 2026 06:39:47 -0700
-Message-ID: <0903bc22-e913-4e14-99f6-db6b97aa3a27@microchip.com>
-Date: Fri, 21 Aug 2026 15:39:46 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fpY13xRB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3025B1F00A3D
+	for <linux-tegra@vger.kernel.org>; Fri, 21 Aug 2026 13:41:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787319697;
+	bh=savjDRzypaWpuMo2A7Z9mQU2Ay+uV7mKsZsDzwVuIC0=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
+	b=fpY13xRBJmfBoDF0Fi16I++w19fcPtMULYKneBUd0KSJbWscayXh7wqOrDgsaHm8A
+	 rYs0RZEtuNJhV6ieZrtXcsGmNiIxJeCA1Ze5BtW3sxt7MWxAJceR96nKAfoDyvPTM3
+	 hKtYTFI4zUytKB/tdMi46Y+xL3CDqEvevF7eOVHLmVqtp7drDbnzDb7JJrdcAlHQud
+	 PScVVEgzOk78JUCsthSjeVMaZbnybWIuA0c8FxJQ4JaxP9vL7OyaSTIcUiDkpC4amX
+	 31Gj6tzRjS4/x+rnIns9c/H3lMfFms2dSUzuIzSMfXr2MWdCH0RuS0qPBPW8hUWuk0
+	 IxpZ3/UhF8+yg==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-39c94fccf3eso9505731fa.0
+        for <linux-tegra@vger.kernel.org>; Fri, 21 Aug 2026 06:41:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RoXnmCmd8O4LuS9REnQBTj9GRE2Sd2p7dYE2LUO+dHWMwh4LZMLOFNAk4Pdse3g3K0FZ68TmlPK/bI8/g==@vger.kernel.org
+X-Gm-Message-State: AFuF++mt2U642mAE6VMEBcjFyXQQkcrDkIf9OJnUvr/PCUvKo5GeveZ1
+	Urb9nkduH+NL9HBJAd8IQBDJ0JhOEwTRX8oZeApdpYy8mtZy+GSXDBtvmiOlr4E6JNIxFqmDyvb
+	ipRYjr9hS8dBcJlowJRciow27Z8V4eQk=
+X-Received: by 2002:a2e:a554:0:b0:39b:a75:e8da with SMTP id
+ 38308e7fff4ca-3a1aeb53dfdmr17313911fa.3.1787319695666; Fri, 21 Aug 2026
+ 06:41:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/45] clk: at91: Make sure clk_init_data is fully
- initialized
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Ryan Chen
-	<ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>, Stephen Boyd
-	<sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet
-	<jbrunet+clk@baylibre.com>, Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Billy Tsai <billy_tsai@aspeedtech.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Broadcom
- internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Taichi
- Sugaya <sugaya.taichi@socionext.com>, Takao Orito
-	<orito.takao@socionext.com>, Linus Walleij <linusw@kernel.org>, Avi Fishman
-	<avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, Tali Perry
-	<tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, Nancy Yuen
-	<yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, Sudeep Holla
-	<sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, David
- Lechner <david@lechnology.com>, Abel Vesa <abelvesa@kernel.org>, Peng Fan
-	<peng.fan@nxp.com>, Frank Li <Frank.Li@nxp.com>, Sascha Hauer
-	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>,
-	Santosh Shilimkar <ssantosh@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, Heiko
- Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester
- Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>, Dinh Nguyen <dinguyen@kernel.org>, Viresh Kumar
-	<vireshk@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre
- Torgue <alexandre.torgue@foss.st.com>, =?UTF-8?Q?Emilio_L=C3=B3pez?=
-	<emilio@elopez.com.ar>, Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec
-	<jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Prashant
- Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>, Kunihiko Hayashi
-	<hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, Ulf
- Hansson <ulfh@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, Lorenzo
- Pieralisi <lpieralisi@kernel.org>, Michal Simek <michal.simek@amd.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>
-CC: <linux-clk@vger.kernel.org>, <linux-aspeed@lists.ozlabs.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<openbmc@lists.ozlabs.org>, <arm-scmi@vger.kernel.org>,
-	<imx@lists.linux.dev>, <linux-mips@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <soc@lists.linux.dev>,
-	<linux-stm32@st-md-mailman.stormreply.com>, <linux-sunxi@lists.linux.dev>,
-	<linux-tegra@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
-References: <cover.1787239813.git.geert+renesas@glider.be>
- <f402b659481b7e5abe90340bb43adc427cdfe70f.1787239813.git.geert+renesas@glider.be>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <f402b659481b7e5abe90340bb43adc427cdfe70f.1787239813.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1787239944.git.geert+renesas@glider.be> <0f37278d04c02461e17f42032a379dccfb773171.1787239944.git.geert+renesas@glider.be>
+In-Reply-To: <0f37278d04c02461e17f42032a379dccfb773171.1787239944.git.geert+renesas@glider.be>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Fri, 21 Aug 2026 21:41:21 +0800
+X-Gmail-Original-Message-ID: <CAGb2v6468b2sH8uiKtdaLM+T4vw2i69SiH4uf6H3iOhvF4aCJw@mail.gmail.com>
+X-Gm-Features: AcwNN1UwlPg8igVRqeTcbGzuXti5pk8Q0JsLEMMpjQ-PubogbpTOAywOmnQUcf0
+Message-ID: <CAGb2v6468b2sH8uiKtdaLM+T4vw2i69SiH4uf6H3iOhvF4aCJw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] drm/sun4i: Make sure clk_init_data is fully initialized
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Thierry Reding <thierry.reding@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21/08/2026 at 10:53, Geert Uytterhoeven wrote:
+On Fri, Aug 21, 2026 at 6:03=E2=80=AFPM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
 > The clk_init_data structure contains several mutually-exclusive members
 > for different methods to specify the possible parents of a clock,
 > prompting drivers to initialize only the members they need.  However,
 > not initializing all members may cause subtle issues, which are only
 > exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
 > enabled.
-> 
+>
 > Make sure all members are fully initialized, to avoid such bugs, and to
 > prevent future breakage when converting drivers to a different method
 > for specifying the parents.
-> 
+>
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
-> Compile-tested only.
-> ---
->   drivers/clk/at91/clk-audio-pll.c | 4 ++--
->   drivers/clk/at91/clk-h32mx.c     | 2 +-
->   drivers/clk/at91/clk-main.c      | 2 +-
->   drivers/clk/at91/clk-pll.c       | 2 +-
->   drivers/clk/at91/clk-plldiv.c    | 2 +-
->   drivers/clk/at91/clk-slow.c      | 2 +-
->   drivers/clk/at91/clk-smd.c       | 2 +-
->   drivers/clk/at91/clk-usb.c       | 6 +++---
->   drivers/clk/at91/sckc.c          | 2 +-
->   9 files changed, 12 insertions(+), 12 deletions(-)
 
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-
-Thanks Geert,
-   Nicolas
-
+Acked-by: Chen-Yu Tsai <wens@kernel.org>
