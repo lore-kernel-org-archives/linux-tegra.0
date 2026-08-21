@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D8643C7D3;
-	Fri, 21 Aug 2026 08:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2321B448D00;
+	Fri, 21 Aug 2026 08:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302699; cv=none; b=mppMlSUqF/5tF2Sgja7qO/AECbOJ854w+VvDuDUJLSNgHeur0G6Rni7e8zvIjWGH5loT5EYQHMIuy9HgAmveuZ9U8F5BkkDffFLiACuzJcXTP9osP2674cK+pU+qX2Rn4+g5Bu6c2CzKCe/608tbae/YOaDhqzjJE5dU6iLI9Mw=
+	t=1787302715; cv=none; b=irl4T7d8ENdkES3cLdkowlntd15rPJuNcw8VfrH2ou9V12h7fUcMunccU9ELQ/0Y39qSQ3n1XUVH/eA7ATplPepPtCumuKLxuZd2Rbmr2KUX3nOMNU5jAKrHZ3+FKDfftkWy7Z6V8QxcdWNVgMOTvaNhDQs/Xo/O6t9oxC38lFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302699; c=relaxed/simple;
-	bh=aWEh31SLWrIEuHcVCocObIopxOzYGGqV/D7/zbTnjr4=;
+	s=arc-20240116; t=1787302715; c=relaxed/simple;
+	bh=Wg/CHREA1GoDTeodC0exBIwpcwkiLMmiNiCb3pG+G/M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XcQwf1rEuDtE4JyajbqlDUuYzuo2DoN9iu+1nwebFgzgyjhw79N80HrGXV7zRdvLqHdylTbfGQKPybslu9CUr2nSUWbk4xJT8ovw4e+BV/ixbo6CDk6ywACCVrb8xYvqapka3Xe+VI0EyLG1WMGvHsuYIXnx/JmZy8de4IRuCHE=
+	 MIME-Version; b=rH6biz9uxi9xmTWqFnbtmp3VJMdzJq/SFN05wTTr3462Uut99aqwQYPQOy21UY141u6KQkChapbkOMiU+G/rxnc6JdKbDcyedvREoJGcxYpSnQ+IsZLN3DW6jQALa3Sn7GtTUrLzWvAJiLOVFt0KXFDvpucXA5GshspehYr3tow=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32CD21F00A3A;
-	Fri, 21 Aug 2026 08:57:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67D001F000E9;
+	Fri, 21 Aug 2026 08:58:09 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 15/45] clk: keystone: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:25 +0200
-Message-ID: <a431874631da9e5843af0a00dcca70002ffa2c0f.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 16/45] clk: lmk04832: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:26 +0200
+Message-ID: <357cf49d53cc8abc27f3ec3372b8de587e2278c9.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,48 +122,41 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/keystone/gate.c       | 2 +-
- drivers/clk/keystone/pll.c        | 2 +-
- drivers/clk/keystone/syscon-clk.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/clk-lmk04832.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/keystone/gate.c b/drivers/clk/keystone/gate.c
-index 03e854f10fd98afc..e83e3d4c7d67a1ac 100644
---- a/drivers/clk/keystone/gate.c
-+++ b/drivers/clk/keystone/gate.c
-@@ -164,7 +164,7 @@ static struct clk *clk_register_psc(struct device *dev,
- 			struct clk_psc_data *psc_data,
- 			spinlock_t *lock)
+diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
+index f9a0684d2628eb7a..10e5cfa96e6be195 100644
+--- a/drivers/clk/clk-lmk04832.c
++++ b/drivers/clk/clk-lmk04832.c
+@@ -587,8 +587,8 @@ static const struct clk_ops lmk04832_vco_ops = {
+  */
+ static int lmk04832_register_vco(struct lmk04832 *lmk)
  {
--	struct clk_init_data init;
 +	struct clk_init_data init = {};
- 	struct clk_psc *psc;
- 	struct clk *clk;
+ 	const char *parent_names[1];
+-	struct clk_init_data init;
+ 	int ret;
  
-diff --git a/drivers/clk/keystone/pll.c b/drivers/clk/keystone/pll.c
-index ed197ee0cc88f8e5..020d5f4e9ed64119 100644
---- a/drivers/clk/keystone/pll.c
-+++ b/drivers/clk/keystone/pll.c
-@@ -122,7 +122,7 @@ static struct clk *clk_register_pll(struct device *dev,
- 			const char *parent_name,
- 			struct clk_pll_data *pll_data)
- {
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	struct clk_pll *pll;
- 	struct clk *clk;
+ 	init.name = "lmk-vco";
+@@ -947,8 +947,8 @@ static const struct clk_ops lmk04832_sclk_ops = {
  
-diff --git a/drivers/clk/keystone/syscon-clk.c b/drivers/clk/keystone/syscon-clk.c
-index ecf180a7949c9345..338174be41215fe9 100644
---- a/drivers/clk/keystone/syscon-clk.c
-+++ b/drivers/clk/keystone/syscon-clk.c
-@@ -67,7 +67,7 @@ static struct clk_hw
- 			     const struct ti_syscon_gate_clk_data *data)
+ static int lmk04832_register_sclk(struct lmk04832 *lmk)
  {
- 	struct ti_syscon_gate_clk_priv *priv;
--	struct clk_init_data init;
 +	struct clk_init_data init = {};
- 	char *name = NULL;
+ 	const char *parent_names[1];
+-	struct clk_init_data init;
+ 	int ret;
+ 
+ 	init.name = "lmk-sclk";
+@@ -1292,8 +1292,8 @@ static int lmk04832_register_clkout(struct lmk04832 *lmk, const int num)
+ {
+ 	char name[] = "lmk-clkoutXX";
+ 	char dclk_name[] = "lmk-dclkXX_YY";
++	struct clk_init_data init = {};
+ 	const char *parent_names[2];
+-	struct clk_init_data init;
+ 	int dclk_num = num / 2;
  	int ret;
  
 -- 
