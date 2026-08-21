@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0164499B6;
-	Fri, 21 Aug 2026 08:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9D845198B;
+	Fri, 21 Aug 2026 09:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302795; cv=none; b=B8FD3a5SmeM/miG0k98hlbw5z6FUF6pzpUI3aQvjjguaMPPnIOCyMPeRa7h1DeZyGU4w2sFWOD3n1lL6hh150l8XtSuyBzW3EP36rZvK53qZTX9njDwip6g1WJP1K7IUflXn1QORTWuP7iWZR8+R5Yk3MbsB6gpAxmNxW40F8+g=
+	t=1787302808; cv=none; b=cksT5vmQXeu26H50tQBduMjcIOYzSGJmjVg3inUAaTgKcUgDWbXOdm8MfveIHJF5D6dlklbQsoNNtN15T5Yjx/sPA4/gvmZSnfW6QbhEIRVuQrtGOEvIpCUlCnPKwPinq6vdzqQgRr80NQGNzy3dkoemXmHOjTDFct3nwfxlokA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302795; c=relaxed/simple;
-	bh=A7m7H1x/Xe6taMVB1SI8InH3sCQzArNKhp5r/8NFhuE=;
+	s=arc-20240116; t=1787302808; c=relaxed/simple;
+	bh=pRVXb1B4mkcDAlVvE3F6/Q0p+cXchJkAbPiUwoVqaOA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Bzkm+DrPJeVynjDCthxeH5YiFom1k4xCZxF/I6kiIx19mKL7b5+tG6/tzcW9m0umL+/AFK6pWX+F8wE6s4tpmG7EEyHMeYZmJvtQiehYpAb3rx9QCY2O2WA0WRSD+YFbGj5RWTnBIW22xpexK+JRew1IZ+ze4xNoPiuNd+REBug=
+	 MIME-Version; b=bODl50BsDd9fNrvZD1c/ZV0dp0l/vF/Pi22SkN2CMiHmrPjXOiCPBVdNbJV2+YWFVz4ZsDZKAdBQ24zlktQiMoukImgOiBwKOrBMUEkdX1ps+OlwQheoVBljDJvSNs1O1F3I+nEr+mPRm5FpdTtoQUcrrtkyIYFGm66lWrJ2vAA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 679A61F00A3A;
-	Fri, 21 Aug 2026 08:59:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8491B1F000E9;
+	Fri, 21 Aug 2026 08:59:43 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 21/45] clk: mxs: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:31 +0200
-Message-ID: <b6aed754c64c4709646cac9cafaf57825af67c6a.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 22/45] clk: nomadik: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:32 +0200
+Message-ID: <631df13629bf77d55bda770f94c7b1863690f2e2.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,72 +122,31 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/mxs/clk-div.c  | 2 +-
- drivers/clk/mxs/clk-frac.c | 2 +-
- drivers/clk/mxs/clk-pll.c  | 2 +-
- drivers/clk/mxs/clk-ref.c  | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/clk-nomadik.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mxs/clk-div.c b/drivers/clk/mxs/clk-div.c
-index fe7224162b3cc0fa..d4ee785c651190f0 100644
---- a/drivers/clk/mxs/clk-div.c
-+++ b/drivers/clk/mxs/clk-div.c
-@@ -70,9 +70,9 @@ static const struct clk_ops clk_div_ops = {
- struct clk *mxs_clk_div(const char *name, const char *parent_name,
- 			void __iomem *reg, u8 shift, u8 width, u8 busy)
+diff --git a/drivers/clk/clk-nomadik.c b/drivers/clk/clk-nomadik.c
+index da6b89759a14ecb0..890084b3912b4cb5 100644
+--- a/drivers/clk/clk-nomadik.c
++++ b/drivers/clk/clk-nomadik.c
+@@ -263,7 +263,7 @@ pll_clk_register(struct device *dev, const char *name,
  {
-+	struct clk_init_data init = {};
- 	struct clk_div *div;
- 	struct clk *clk;
--	struct clk_init_data init;
- 
- 	div = kzalloc_obj(*div);
- 	if (!div)
-diff --git a/drivers/clk/mxs/clk-frac.c b/drivers/clk/mxs/clk-frac.c
-index 52eb82fde322dcc4..e317710ab503a84a 100644
---- a/drivers/clk/mxs/clk-frac.c
-+++ b/drivers/clk/mxs/clk-frac.c
-@@ -112,9 +112,9 @@ static const struct clk_ops clk_frac_ops = {
- struct clk *mxs_clk_frac(const char *name, const char *parent_name,
- 			 void __iomem *reg, u8 shift, u8 width, u8 busy)
- {
-+	struct clk_init_data init = {};
- 	struct clk_frac *frac;
- 	struct clk *clk;
--	struct clk_init_data init;
- 
- 	frac = kzalloc_obj(*frac);
- 	if (!frac)
-diff --git a/drivers/clk/mxs/clk-pll.c b/drivers/clk/mxs/clk-pll.c
-index 581868e0693c6e5e..5acf48cddbb2859f 100644
---- a/drivers/clk/mxs/clk-pll.c
-+++ b/drivers/clk/mxs/clk-pll.c
-@@ -82,9 +82,9 @@ static const struct clk_ops clk_pll_ops = {
- struct clk *mxs_clk_pll(const char *name, const char *parent_name,
- 			void __iomem *base, u8 power, unsigned long rate)
- {
-+	struct clk_init_data init = {};
+ 	int ret;
  	struct clk_pll *pll;
- 	struct clk *clk;
 -	struct clk_init_data init;
- 
- 	pll = kzalloc_obj(*pll);
- 	if (!pll)
-diff --git a/drivers/clk/mxs/clk-ref.c b/drivers/clk/mxs/clk-ref.c
-index 9667d4d3c2a885eb..66ea1c229014ed60 100644
---- a/drivers/clk/mxs/clk-ref.c
-+++ b/drivers/clk/mxs/clk-ref.c
-@@ -113,9 +113,9 @@ static const struct clk_ops clk_ref_ops = {
- struct clk *mxs_clk_ref(const char *name, const char *parent_name,
- 			void __iomem *reg, u8 idx)
- {
 +	struct clk_init_data init = {};
- 	struct clk_ref *ref;
- 	struct clk *clk;
--	struct clk_init_data init;
  
- 	ref = kzalloc_obj(*ref);
- 	if (!ref)
+ 	if (id != 1 && id != 2) {
+ 		pr_err("%s: the Nomadik has only PLL 1 & 2\n", __func__);
+@@ -355,7 +355,7 @@ src_clk_register(struct device *dev, const char *name,
+ {
+ 	int ret;
+ 	struct clk_src *sclk;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 
+ 	sclk = kzalloc_obj(*sclk);
+ 	if (!sclk)
 -- 
 2.43.0
 
