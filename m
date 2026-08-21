@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF4739890A;
-	Fri, 21 Aug 2026 08:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6A33921C0;
+	Fri, 21 Aug 2026 08:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302614; cv=none; b=Wa0LXu+M13ZJCDOEM84uc5qeyItwUr4N713tLIGXQiJQ45YRhpeS2jxR7Xb7IH2mYcIT6GefCibqLZRRoecuph4W02OV0Md2CpE28aiVkKaXplWtK1w6eMQTE1iSvR6z4wKx9x2DWXmdVJl50oipg+hZiDBE8yqd4fbQ+sfeLhs=
+	t=1787302631; cv=none; b=YFko1VcjfhrdSGcnsLbfzhOyIyXmLX8XzPawMsD8zYgU6T6kaZxiyXxe7MEvCz+mvTNgcOYZuXoLzLC10QAVPUgw3f7uX85nFZVKXwolCnS9/a0BvzW60N6naBK2OMHhXOQAKLz5fw+ZiWEBxnoXmkrXvWYLpDap3hlcZt1xzLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302614; c=relaxed/simple;
-	bh=W1aUgOy2ijtVKWH2JYcirEC/1LUykLGh8rjF7Q3s/fQ=;
+	s=arc-20240116; t=1787302631; c=relaxed/simple;
+	bh=4kCl2QXuVCHznxzU+MNIFwLc0WT09uejnkreOAEfhig=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n4rWVYuBGCCtdtlZ3PdtcXllymejarZXoX3OxL/6hC3f2C6aqZqTNVs3cdDWG0S1bvDizoWltV8OHimIBVAhbjqc33AMtEz3ImclSndGY8022AXOHyp7oo7KGXeQeiMClwI4Oo4NxFPxdQY9oHp5Hq2TDLmNNwRl35bG7jxBv4U=
+	 MIME-Version; b=TvewPEJojsX7IrW47tMkuwjQm4q1IwDlLXiskWADDWR6gJuSx0VsEFE7tzGOpWEcWD5hRrqqarkwZ/p444ezJZZm6XFgqAnvmxftaZEmI6zMNLM3xRL4F04tkunV8Z4sFrf7FtLfrGyjuH6Ft0QnBJWUIuBtBA/6ykdIGh1Th8U=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47C2C1F000E9;
-	Fri, 21 Aug 2026 08:56:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 706AD1F00A3A;
+	Fri, 21 Aug 2026 08:56:53 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 10/45] clk: gemini: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:20 +0200
-Message-ID: <33f8a87834a75b6677894f1993c90f00eb6a2547.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 11/45] clk: highbank: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:21 +0200
+Message-ID: <21a8ecd80d87eb4fbea3a098957ccf8450299efd.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,23 +122,22 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/clk-gemini.c | 2 +-
+ drivers/clk/clk-highbank.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-gemini.c b/drivers/clk/clk-gemini.c
-index 9c0e6e7a7cacdf59..4e874392e3b0b57e 100644
---- a/drivers/clk/clk-gemini.c
-+++ b/drivers/clk/clk-gemini.c
-@@ -193,8 +193,8 @@ static struct clk_hw *gemini_pci_clk_setup(const char *name,
- 					   const char *parent_name,
- 					   struct regmap *map)
- {
-+	struct clk_init_data init = {};
- 	struct clk_gemini_pci *pciclk;
+diff --git a/drivers/clk/clk-highbank.c b/drivers/clk/clk-highbank.c
+index e9b177811dfc2ced..61c23199763508ea 100644
+--- a/drivers/clk/clk-highbank.c
++++ b/drivers/clk/clk-highbank.c
+@@ -269,7 +269,7 @@ static void __init hb_clk_init(struct device_node *node, const struct clk_ops *o
+ 	struct hb_clk *hb_clk;
+ 	const char *clk_name = node->name;
+ 	const char *parent_name;
 -	struct clk_init_data init;
- 	int ret;
++	struct clk_init_data init = {};
+ 	struct device_node *srnp;
+ 	int rc;
  
- 	pciclk = kzalloc_obj(*pciclk);
 -- 
 2.43.0
 
