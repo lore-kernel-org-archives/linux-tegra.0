@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2632441A79C;
-	Fri, 21 Aug 2026 08:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF4739890A;
+	Fri, 21 Aug 2026 08:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302599; cv=none; b=hntl2d7D4Neuj3cj8dbsOt1SU98TUkJOM6uVp6MrVrrbiRTZXlI/Ar4QUW4uNjgvHoIdEzdC8o9XFb8oL9Iiujf8VDHYTXiR0dC0A8Y46qp31PukQbXLu3zeqqS1sCOZOeOKEnsXJuMyTURyPCPOdTev5wRGDnQRaM/UvcrtGqU=
+	t=1787302614; cv=none; b=Wa0LXu+M13ZJCDOEM84uc5qeyItwUr4N713tLIGXQiJQ45YRhpeS2jxR7Xb7IH2mYcIT6GefCibqLZRRoecuph4W02OV0Md2CpE28aiVkKaXplWtK1w6eMQTE1iSvR6z4wKx9x2DWXmdVJl50oipg+hZiDBE8yqd4fbQ+sfeLhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302599; c=relaxed/simple;
-	bh=2csDdVgbkcL7guxCVq9zbWFLDrCoHYwPmFFdCCL2bmo=;
+	s=arc-20240116; t=1787302614; c=relaxed/simple;
+	bh=W1aUgOy2ijtVKWH2JYcirEC/1LUykLGh8rjF7Q3s/fQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mnILo73aHxsNFPzNCN5g3wRwjyyAxHo7AO2bO5GEiukTR629F4subHoLEmgia7YsMG1FQw6v7zIR7cB/D935W5yuMoShYSJqzO2rEOH3S6AknSGk5MALdcGZ6gTXI8rDy//132bwE6u0EQahAPHIEmYSuKDBECpYXD6egTSHHhM=
+	 MIME-Version; b=n4rWVYuBGCCtdtlZ3PdtcXllymejarZXoX3OxL/6hC3f2C6aqZqTNVs3cdDWG0S1bvDizoWltV8OHimIBVAhbjqc33AMtEz3ImclSndGY8022AXOHyp7oo7KGXeQeiMClwI4Oo4NxFPxdQY9oHp5Hq2TDLmNNwRl35bG7jxBv4U=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C82CD1F00A3A;
-	Fri, 21 Aug 2026 08:56:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47C2C1F000E9;
+	Fri, 21 Aug 2026 08:56:38 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 09/45] clk: fractional-divider: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:19 +0200
-Message-ID: <fe73cc048970c7a4f2cdf199e17915b8d359f703.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 10/45] clk: gemini: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:20 +0200
+Message-ID: <33f8a87834a75b6677894f1993c90f00eb6a2547.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,22 +122,23 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/clk-fractional-divider.c | 2 +-
+ drivers/clk/clk-gemini.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-index 1c5fdcb68a5048e3..c8e00d75cd14d8f1 100644
---- a/drivers/clk/clk-fractional-divider.c
-+++ b/drivers/clk/clk-fractional-divider.c
-@@ -271,7 +271,7 @@ struct clk_hw *clk_hw_register_fractional_divider(struct device *dev,
- 		u8 clk_divider_flags, spinlock_t *lock)
+diff --git a/drivers/clk/clk-gemini.c b/drivers/clk/clk-gemini.c
+index 9c0e6e7a7cacdf59..4e874392e3b0b57e 100644
+--- a/drivers/clk/clk-gemini.c
++++ b/drivers/clk/clk-gemini.c
+@@ -193,8 +193,8 @@ static struct clk_hw *gemini_pci_clk_setup(const char *name,
+ 					   const char *parent_name,
+ 					   struct regmap *map)
  {
- 	struct clk_fractional_divider *fd;
--	struct clk_init_data init;
 +	struct clk_init_data init = {};
- 	struct clk_hw *hw;
+ 	struct clk_gemini_pci *pciclk;
+-	struct clk_init_data init;
  	int ret;
  
+ 	pciclk = kzalloc_obj(*pciclk);
 -- 
 2.43.0
 
