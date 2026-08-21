@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA1A45517C;
-	Fri, 21 Aug 2026 09:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A90945D19D;
+	Fri, 21 Aug 2026 09:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302901; cv=none; b=U11kh8Yo5R3BrR6PyJHKCdhVCJ9uUr/J0nfhFA2i8g+VkvnaoKlhiC63TLLUbxRK6T5oJeAUwNtxlke24aTmCVsrjF9qYILTkko8YQz7DRLKTjFb+SKC/XN+wGVJL0qF9IGxnP8Lc8RxgDIQmmuCnr935WgTTEEI6Aez8rwTx6Y=
+	t=1787302914; cv=none; b=aMr9kspVC8ebURKSKAjn4AguslwLi5o75FwWH1Xlhq9/rTtBw3dKNXxSXsAE7ugDVSS00TkxhnLsmfi5xTIuI2I1C60eMiigbCGre8M5yL9Nit6gEeIP5DQ+/CvuW3eZg03QP7CYeTGpZE43ro2KXdevb87W41S4XCG/2dT1EWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302901; c=relaxed/simple;
-	bh=iBxIQ5Ab2HK9dLketFbHuOSSTcyofNo7wxNQDxqpijk=;
+	s=arc-20240116; t=1787302914; c=relaxed/simple;
+	bh=wOO8va7UDd8Sja72zgmF27IXkaqc3L5HH9oNCibnsA4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=etO4A4+1mQMQIzLM+RLwuhD2dLukDtYV3IlL7/UQwDshD4KhAndOBMAPs8UTzJ4c2slVaTHJhEt5j+XS3L4yfBV7FMs0pw4XsJsex/e3rrTVfWPOHpE7hV48aPDlxdyaNSh5uNeQrCQF63/rW31RxU+jZzhhJodbzhGxMtzGT5Q=
+	 MIME-Version; b=YgAZIl9FBuIxQkLFwCiugpbOGT/b30IPKqd7hJ1QRk4OaPMte4t0rzweLY+aWrvvDWvutiL8KnIDvPdkQoTIS7sUUQgXx6dNpsGUUGOkoscYzrcHOGzDSS0s1cIt3bnaD2NmQyDs7Zbk5fJK1rHllBWrKKwWSlBXgwk8BgSyDGc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EB911F000E9;
-	Fri, 21 Aug 2026 09:01:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 244E31F00A3D;
+	Fri, 21 Aug 2026 09:01:28 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 28/45] clk: rockchip: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:38 +0200
-Message-ID: <49127c1f7529acccb17e1408db9f21f6d15aee2b.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 29/45] clk: samsung: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:39 +0200
+Message-ID: <87b3e83137e1a987f3c69d214706e93ef3898cab.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,121 +122,36 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/rockchip/clk-cpu.c       | 2 +-
- drivers/clk/rockchip/clk-ddr.c       | 2 +-
- drivers/clk/rockchip/clk-gate-grf.c  | 2 +-
- drivers/clk/rockchip/clk-inverter.c  | 2 +-
- drivers/clk/rockchip/clk-mmc-phase.c | 2 +-
- drivers/clk/rockchip/clk-muxgrf.c    | 2 +-
- drivers/clk/rockchip/clk-pll.c       | 2 +-
- drivers/clk/rockchip/clk.c           | 2 +-
- 8 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/clk/samsung/clk-cpu.c | 2 +-
+ drivers/clk/samsung/clk-pll.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
-index 6205af9ba88a8def..eb6b8b878e4dbeea 100644
---- a/drivers/clk/rockchip/clk-cpu.c
-+++ b/drivers/clk/rockchip/clk-cpu.c
-@@ -304,7 +304,7 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
- 			int nrates, void __iomem *reg_base, spinlock_t *lock)
- {
- 	struct rockchip_cpuclk *cpuclk;
+diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+index 37cf47533dc610e1..a17ce26494f3ebd5 100644
+--- a/drivers/clk/samsung/clk-cpu.c
++++ b/drivers/clk/samsung/clk-cpu.c
+@@ -647,7 +647,7 @@ static int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+ 	const struct clk_hw *parent, *alt_parent;
+ 	struct clk_hw **hws;
+ 	struct exynos_cpuclk *cpuclk;
 -	struct clk_init_data init;
 +	struct clk_init_data init = {};
- 	struct clk *clk, *cclk;
+ 	const char *parent_name;
+ 	unsigned int num_cfgs;
+ 	int ret = 0;
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index e74552846ba34105..813b8834ef16cc9b 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -1591,8 +1591,8 @@ static const struct clk_ops samsung_a9fraco_clk_min_ops = {
+ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 				const struct samsung_pll_clock *pll_clk)
+ {
++	struct clk_init_data init = {};
+ 	struct samsung_clk_pll *pll;
+-	struct clk_init_data init;
+ 	unsigned int len = 0;
  	int ret;
- 
-diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
-index 81ae8a4ee30ed95c..fbb702d0b9d996d5 100644
---- a/drivers/clk/rockchip/clk-ddr.c
-+++ b/drivers/clk/rockchip/clk-ddr.c
-@@ -97,7 +97,7 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
- 					 spinlock_t *lock)
- {
- 	struct rockchip_ddrclk *ddrclk;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	struct clk *clk;
- 
- 	ddrclk = kzalloc_obj(*ddrclk);
-diff --git a/drivers/clk/rockchip/clk-gate-grf.c b/drivers/clk/rockchip/clk-gate-grf.c
-index 88e409e91a636aa1..458314a2569181d1 100644
---- a/drivers/clk/rockchip/clk-gate-grf.c
-+++ b/drivers/clk/rockchip/clk-gate-grf.c
-@@ -73,7 +73,7 @@ struct clk *rockchip_clk_register_gate_grf(const char *name,
- 		u8 gate_flags)
- {
- 	struct rockchip_gate_grf *gate;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	struct clk *clk;
- 
- 	if (IS_ERR(regmap)) {
-diff --git a/drivers/clk/rockchip/clk-inverter.c b/drivers/clk/rockchip/clk-inverter.c
-index bf9072ed9fd4daed..e6c7dad60e966288 100644
---- a/drivers/clk/rockchip/clk-inverter.c
-+++ b/drivers/clk/rockchip/clk-inverter.c
-@@ -75,8 +75,8 @@ struct clk *rockchip_clk_register_inverter(const char *name,
- 				void __iomem *reg, int shift, int flags,
- 				spinlock_t *lock)
- {
--	struct clk_init_data init;
- 	struct rockchip_inv_clock *inv_clock;
-+	struct clk_init_data init = {};
- 	struct clk *clk;
- 
- 	inv_clock = kmalloc_obj(*inv_clock);
-diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
-index 4efd22953f3e0533..d92bea75faf73767 100644
---- a/drivers/clk/rockchip/clk-mmc-phase.c
-+++ b/drivers/clk/rockchip/clk-mmc-phase.c
-@@ -205,8 +205,8 @@ struct clk *rockchip_clk_register_mmc(const char *name,
- 				struct regmap *grf, int grf_reg,
- 				int shift)
- {
--	struct clk_init_data init;
- 	struct rockchip_mmc_clock *mmc_clock;
-+	struct clk_init_data init = {};
- 	struct clk *clk;
- 	int ret;
- 
-diff --git a/drivers/clk/rockchip/clk-muxgrf.c b/drivers/clk/rockchip/clk-muxgrf.c
-index ccbb1379501ab474..ecdc77654813a3c3 100644
---- a/drivers/clk/rockchip/clk-muxgrf.c
-+++ b/drivers/clk/rockchip/clk-muxgrf.c
-@@ -59,7 +59,7 @@ struct clk *rockchip_clk_register_muxgrf(const char *name,
- 				int shift, int width, int mux_flags)
- {
- 	struct rockchip_muxgrf_clock *muxgrf_clock;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	struct clk *clk;
- 
- 	if (IS_ERR(regmap)) {
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index 706ca4b344d399a3..7204b09243d483ae 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -1069,7 +1069,7 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
- 		unsigned long flags, u8 clk_pll_flags)
- {
- 	const char *pll_parents[3];
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	struct rockchip_clk_pll *pll;
- 	struct clk_mux *pll_mux;
- 	struct clk *pll_clk, *mux_clk;
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index ee8c79b938d3c15b..10df21178ba483e2 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -257,7 +257,7 @@ static struct clk *rockchip_clk_register_frac_branch(
- 
- 	if (child) {
- 		struct clk_mux *frac_mux = &frac->mux;
--		struct clk_init_data init;
-+		struct clk_init_data init = {};
- 		struct clk *mux_clk;
- 		int ret;
  
 -- 
 2.43.0
