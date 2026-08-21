@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7378444683D;
-	Fri, 21 Aug 2026 08:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7472448BB3;
+	Fri, 21 Aug 2026 08:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302727; cv=none; b=GlJSathMusnSiIf52KscrMQSAlBNKASyE0Awf6FlQid4cH6ClJ1Bf5XH+DR0ZpOKbmPMA9S46wHF0eqj0u7eUCGkRiPBK0F5sTGWmm6qqK+iayc4XNYYbCgXw4Bws681dAglJ7xvyNJ/1O9OjgpSZaByG70jqWVM9EfYDgOHNMY=
+	t=1787302739; cv=none; b=X2/Wo4dH8uEN8L51yopQjxLyOUyGWd0IY6KRSnTJp7lIcPXekIB2NDIf13PLhKXnGMKjOLn35j0JTN32z4Kc9ylKqibaO553FFTmTVPj0oA17NVhuHME17Qa9nIt/GdTpGfTjyG+aUNmQONSu1v+caTi4Cmcbors4kodxFVFOA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302727; c=relaxed/simple;
-	bh=QwjIFoCTxQrjLNTFhV2s5k7QirFp5Y5O3T+Pr6uKlzM=;
+	s=arc-20240116; t=1787302739; c=relaxed/simple;
+	bh=RvSdU/Eehlz/87OaTGX/UDHW73T1fnjVt82N2C2JYZM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sKwX+HWkPFY/gOF0owYsjoHqLv7ADLFF3HF1PXjvMBdPPRcvrD8PbovSscsbzcLiDvYslM6T0j1DXZEwV7/4TFqFERB/y95xVGOq4OVzgcouMsDp3U5+Y7UDBQjnYBWF+QSO8FF2kdHhyYjSV1T+ABcLvEgV/Rwi2Tc3uYCJBdE=
+	 MIME-Version; b=eS1RVP/gIgHPQJhXkbwz8yx1HnZHkwt424GczCjIeqclCvxoFh16yUdxtW37Q621EUKfGjawzGaAlVKYcHGzKVAuuKnilVnJ3r6Zn+jtsdH830QPA+YBT7qfdD1PoppD3hT9Y+YfKcTqrgfI0i5Tu5BzEo43l3jAJjpzq8evuLo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB7A01F00A3A;
-	Fri, 21 Aug 2026 08:58:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25B3D1F00A3D;
+	Fri, 21 Aug 2026 08:58:40 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 17/45] clk: mediatek: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:27 +0200
-Message-ID: <6cf9d1621379b34175743e764aaea3ed514db01b.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 18/45] clk: milbeaut: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:28 +0200
+Message-ID: <79693c173c0b74a8d176e51409b89cd14156179b.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,24 +122,35 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/mediatek/clk-cpumux.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/clk-milbeaut.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
-index 412558b9512772cd..9799bc156dccd650 100644
---- a/drivers/clk/mediatek/clk-cpumux.c
-+++ b/drivers/clk/mediatek/clk-cpumux.c
-@@ -62,9 +62,9 @@ static struct clk_hw *
- mtk_clk_register_cpumux(struct device *dev, const struct mtk_composite *mux,
- 			struct regmap *regmap)
+diff --git a/drivers/clk/clk-milbeaut.c b/drivers/clk/clk-milbeaut.c
+index 4265bc442dfd2988..485540b9552820b1 100644
+--- a/drivers/clk/clk-milbeaut.c
++++ b/drivers/clk/clk-milbeaut.c
+@@ -328,9 +328,9 @@ static struct clk_hw *m10v_clk_hw_register_mux(struct device *dev,
+ 			u8 shift, u32 mask, u8 clk_mux_flags, u32 *table,
+ 			spinlock_t *lock)
  {
 +	struct clk_init_data init = {};
- 	struct mtk_clk_cpumux *cpumux;
- 	int ret;
+ 	struct clk_mux *mux;
+ 	struct clk_hw *hw;
 -	struct clk_init_data init;
+ 	int ret;
  
- 	cpumux = kzalloc_obj(*cpumux);
- 	if (!cpumux)
+ 	mux = kzalloc_obj(*mux);
+@@ -459,9 +459,9 @@ static struct clk_hw *m10v_clk_hw_register_divider(struct device *dev,
+ 		u8 clk_divider_flags, const struct clk_div_table *table,
+ 		spinlock_t *lock, void __iomem *write_valid_reg)
+ {
++	struct clk_init_data init = {};
+ 	struct m10v_clk_divider *div;
+ 	struct clk_hw *hw;
+-	struct clk_init_data init;
+ 	int ret;
+ 
+ 	div = kzalloc_obj(*div);
 -- 
 2.43.0
 
