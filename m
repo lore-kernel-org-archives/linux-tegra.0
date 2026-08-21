@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64F93CC7DC;
-	Fri, 21 Aug 2026 08:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C994425CC6;
+	Fri, 21 Aug 2026 08:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302538; cv=none; b=mtW8tzRTedDyYBgog2QR9K2PWaHWryCtan1d7f4H2ObP9vHhhORj/veFjew5md5I+eRLAqJ7zNHyQe9772xnvuYROO3U/1USqSdplNdrmZ3N0aa/a41gM8cvSt8/o0CEVQ2vckmbpaR1rj4QAnj1te2Y56u5IG8jGXoRLvl8hfo=
+	t=1787302553; cv=none; b=fJZ/Z00ST+cKiDWQgQlznAd/+cj5af5HPU1pcljajkThmCIV8EGCUX0co00g2C3zH7oVZ5Rg6YpsWc0sZ1aLSBW9GvavAmGCOxfHNLMta3aot/m4gV05AUvmPGPIN7Q13wthZ8J5S7XSL99wqfaiMro7ByJaG4VEPPjFADjVQrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302538; c=relaxed/simple;
-	bh=wfACtApy8SnRG+HDs/DBA6DzFytGoZ6j8iXvHrz5gQI=;
+	s=arc-20240116; t=1787302553; c=relaxed/simple;
+	bh=XzmIDgOn2YE5OwhiRZTWxqQvN61zX1F1fAS8zHOFyiI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SfbUzLaXDDvGznfbNLIbV86r0LI+shwafrs8IakOJ4yaseaZYnEDa4G+4/3D6B8zjmjNb0R8B+O/szbbY7MkWdXPHA4DFu0TZGuut8nN88ybPcS3gH/54xRg7ETvravuyn1ygYmBb4Up9ifoXGNjTnJTaUUGlntpQAx0br4Gfbg=
+	 MIME-Version; b=kgWlqFOkzM1dGW716OlXKB5T6NZgGchXnsQ4B2pSL1U7fbTflQafIznMtc2yHBZfbrJ8XlTwq+A5AXF5Kj9slvfoc9BFDlhWF8vhvTxrOKAUreMFdP44kikBGLcx+0N0pGK07Mwwgzm1yPSGk2gyBDDYAyaHS4zXsCgHX/xWT80=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E23181F00A3D;
-	Fri, 21 Aug 2026 08:55:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AC911F000E9;
+	Fri, 21 Aug 2026 08:55:37 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 05/45] clk: cdce925: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:15 +0200
-Message-ID: <308a33a0e63241d94ee08a08a6de6cffa739556e.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 06/45] clk: clk-axi-clkgen: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:16 +0200
+Message-ID: <2c6fe5e2efb86c8fec0b19cb14cfa1e3be5b6b99.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,22 +122,22 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/clk-cdce925.c | 2 +-
+ drivers/clk/clk-axi-clkgen.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
-index 30d0493c771818ff..4d49cc1659c07be2 100644
---- a/drivers/clk/clk-cdce925.c
-+++ b/drivers/clk/clk-cdce925.c
-@@ -620,7 +620,7 @@ static int cdce925_probe(struct i2c_client *client)
- 	struct device_node *node = client->dev.of_node;
- 	const char *parent_name;
- 	const char *pll_clk_name[MAX_NUMBER_OF_PLLS] = {NULL,};
+diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
+index 6fcee41447e45581..e53256c56dfabc4e 100644
+--- a/drivers/clk/clk-axi-clkgen.c
++++ b/drivers/clk/clk-axi-clkgen.c
+@@ -568,7 +568,7 @@ static int axi_clkgen_probe(struct platform_device *pdev)
+ 	const struct axi_clkgen_limits *dflt_limits;
+ 	struct axi_clkgen *axi_clkgen;
+ 	unsigned int pcore_version;
 -	struct clk_init_data init;
 +	struct clk_init_data init = {};
- 	u32 value;
- 	int i;
- 	int err;
+ 	const char *parent_names[2];
+ 	const char *clk_name;
+ 	struct clk *axi_clk;
 -- 
 2.43.0
 
