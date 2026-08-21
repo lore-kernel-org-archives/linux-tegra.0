@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4BB4582D9;
-	Fri, 21 Aug 2026 09:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA1A45517C;
+	Fri, 21 Aug 2026 09:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302885; cv=none; b=BA8tKq/b4t3M+6KJx1ywR4rqXYaV1OoSmWTMRuBNNQao8HJbcQNGTYVRylFYYq3uJrXfkeBa3ycGE/sXRwRFZB/n35fQjaf0g4C66lOURbBwYIJrK9WOV3ThTZBKnNkm91SyLd6RP/7i0QYAq9f/R94ar957i2Xa+fzavMJmHLI=
+	t=1787302901; cv=none; b=U11kh8Yo5R3BrR6PyJHKCdhVCJ9uUr/J0nfhFA2i8g+VkvnaoKlhiC63TLLUbxRK6T5oJeAUwNtxlke24aTmCVsrjF9qYILTkko8YQz7DRLKTjFb+SKC/XN+wGVJL0qF9IGxnP8Lc8RxgDIQmmuCnr935WgTTEEI6Aez8rwTx6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302885; c=relaxed/simple;
-	bh=B6p+OcFdP515S8LjF8ohzfroFcUB/LLJnrQ8WbhYQ7s=;
+	s=arc-20240116; t=1787302901; c=relaxed/simple;
+	bh=iBxIQ5Ab2HK9dLketFbHuOSSTcyofNo7wxNQDxqpijk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o+XrWFlgCVMcUvMzRTMPNtfnpx7V+CATQSlTAeYxPcEw8BrQhfTfpDcMiuCw+oLyX0m2YBakAmcYfdLtdpIIgwvFzDvbS06qPyNQ53NzOkEf5jvmSF3LgNN+pKwURrQkVLQd/htRvfAu0VLTWM0ImfYMkUd8lxLnZT2kPWLGWTo=
+	 MIME-Version; b=etO4A4+1mQMQIzLM+RLwuhD2dLukDtYV3IlL7/UQwDshD4KhAndOBMAPs8UTzJ4c2slVaTHJhEt5j+XS3L4yfBV7FMs0pw4XsJsex/e3rrTVfWPOHpE7hV48aPDlxdyaNSh5uNeQrCQF63/rW31RxU+jZzhhJodbzhGxMtzGT5Q=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D868B1F00A3A;
-	Fri, 21 Aug 2026 09:00:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EB911F000E9;
+	Fri, 21 Aug 2026 09:01:13 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 27/45] clk: renesas: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:37 +0200
-Message-ID: <b3473adc50c71aec5bc5f7ce6f5cda1727e26635.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 28/45] clk: rockchip: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:38 +0200
+Message-ID: <49127c1f7529acccb17e1408db9f21f6d15aee2b.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -120,149 +120,124 @@ for specifying the parents.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Boot-tested on RZ/Five.
+Compile-tested only.
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 18 +++++++++---------
- drivers/clk/renesas/rzv2h-cpg.c |  8 ++++----
- 2 files changed, 13 insertions(+), 13 deletions(-)
+ drivers/clk/rockchip/clk-cpu.c       | 2 +-
+ drivers/clk/rockchip/clk-ddr.c       | 2 +-
+ drivers/clk/rockchip/clk-gate-grf.c  | 2 +-
+ drivers/clk/rockchip/clk-inverter.c  | 2 +-
+ drivers/clk/rockchip/clk-mmc-phase.c | 2 +-
+ drivers/clk/rockchip/clk-muxgrf.c    | 2 +-
+ drivers/clk/rockchip/clk-pll.c       | 2 +-
+ drivers/clk/rockchip/clk.c           | 2 +-
+ 8 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 88d74858687d4866..50b64eb3eafebe71 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -580,7 +580,7 @@ rzg2l_cpg_sd_mux_clk_register(const struct cpg_core_clk *core,
- 			      struct rzg2l_cpg_priv *priv)
+diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+index 6205af9ba88a8def..eb6b8b878e4dbeea 100644
+--- a/drivers/clk/rockchip/clk-cpu.c
++++ b/drivers/clk/rockchip/clk-cpu.c
+@@ -304,7 +304,7 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
+ 			int nrates, void __iomem *reg_base, spinlock_t *lock)
  {
- 	struct sd_mux_hw_data *sd_mux_hw_data;
+ 	struct rockchip_cpuclk *cpuclk;
 -	struct clk_init_data init;
 +	struct clk_init_data init = {};
- 	struct clk_hw *clk_hw;
+ 	struct clk *clk, *cclk;
  	int ret;
  
-@@ -831,9 +831,9 @@ rzg2l_cpg_dsi_div_clk_register(const struct cpg_core_clk *core,
- 			       struct rzg2l_cpg_priv *priv)
+diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
+index 81ae8a4ee30ed95c..fbb702d0b9d996d5 100644
+--- a/drivers/clk/rockchip/clk-ddr.c
++++ b/drivers/clk/rockchip/clk-ddr.c
+@@ -97,7 +97,7 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
+ 					 spinlock_t *lock)
  {
- 	struct dsi_div_hw_data *clk_hw_data;
-+	struct clk_init_data init = {};
- 	const struct clk *parent;
- 	const char *parent_name;
+ 	struct rockchip_ddrclk *ddrclk;
 -	struct clk_init_data init;
- 	struct clk_hw *clk_hw;
++	struct clk_init_data init = {};
+ 	struct clk *clk;
+ 
+ 	ddrclk = kzalloc_obj(*ddrclk);
+diff --git a/drivers/clk/rockchip/clk-gate-grf.c b/drivers/clk/rockchip/clk-gate-grf.c
+index 88e409e91a636aa1..458314a2569181d1 100644
+--- a/drivers/clk/rockchip/clk-gate-grf.c
++++ b/drivers/clk/rockchip/clk-gate-grf.c
+@@ -73,7 +73,7 @@ struct clk *rockchip_clk_register_gate_grf(const char *name,
+ 		u8 gate_flags)
+ {
+ 	struct rockchip_gate_grf *gate;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	struct clk *clk;
+ 
+ 	if (IS_ERR(regmap)) {
+diff --git a/drivers/clk/rockchip/clk-inverter.c b/drivers/clk/rockchip/clk-inverter.c
+index bf9072ed9fd4daed..e6c7dad60e966288 100644
+--- a/drivers/clk/rockchip/clk-inverter.c
++++ b/drivers/clk/rockchip/clk-inverter.c
+@@ -75,8 +75,8 @@ struct clk *rockchip_clk_register_inverter(const char *name,
+ 				void __iomem *reg, int shift, int flags,
+ 				spinlock_t *lock)
+ {
+-	struct clk_init_data init;
+ 	struct rockchip_inv_clock *inv_clock;
++	struct clk_init_data init = {};
+ 	struct clk *clk;
+ 
+ 	inv_clock = kmalloc_obj(*inv_clock);
+diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
+index 4efd22953f3e0533..d92bea75faf73767 100644
+--- a/drivers/clk/rockchip/clk-mmc-phase.c
++++ b/drivers/clk/rockchip/clk-mmc-phase.c
+@@ -205,8 +205,8 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+ 				struct regmap *grf, int grf_reg,
+ 				int shift)
+ {
+-	struct clk_init_data init;
+ 	struct rockchip_mmc_clock *mmc_clock;
++	struct clk_init_data init = {};
+ 	struct clk *clk;
  	int ret;
  
-@@ -916,8 +916,8 @@ static struct clk * __init
- rzg3l_cpg_lvds_div_clk_register(const struct cpg_core_clk *core,
- 				struct rzg2l_cpg_priv *priv)
+diff --git a/drivers/clk/rockchip/clk-muxgrf.c b/drivers/clk/rockchip/clk-muxgrf.c
+index ccbb1379501ab474..ecdc77654813a3c3 100644
+--- a/drivers/clk/rockchip/clk-muxgrf.c
++++ b/drivers/clk/rockchip/clk-muxgrf.c
+@@ -59,7 +59,7 @@ struct clk *rockchip_clk_register_muxgrf(const char *name,
+ 				int shift, int width, int mux_flags)
  {
-+	struct clk_init_data init = {};
- 	struct clk_fixed_factor *ff;
+ 	struct rockchip_muxgrf_clock *muxgrf_clock;
 -	struct clk_init_data init;
- 	const struct clk *parent;
- 	const char *parent_name;
- 	int ret;
-@@ -1031,9 +1031,9 @@ rzg3l_cpg_dsi_div_clk_register(const struct cpg_core_clk *core,
- 			       struct rzg2l_cpg_priv *priv)
- {
- 	struct g3l_dsi_div_hw_data *clk_hw_data;
 +	struct clk_init_data init = {};
- 	const struct clk *parent;
- 	const char *parent_name;
--	struct clk_init_data init;
- 	struct clk_hw *clk_hw;
- 	int ret;
+ 	struct clk *clk;
  
-@@ -1128,7 +1128,7 @@ rzg2l_cpg_pll5_4_mux_clk_register(const struct cpg_core_clk *core,
- 				  struct rzg2l_cpg_priv *priv)
+ 	if (IS_ERR(regmap)) {
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 706ca4b344d399a3..7204b09243d483ae 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -1069,7 +1069,7 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 		unsigned long flags, u8 clk_pll_flags)
  {
- 	struct pll5_mux_hw_data *clk_hw_data;
+ 	const char *pll_parents[3];
 -	struct clk_init_data init;
 +	struct clk_init_data init = {};
- 	struct clk_hw *clk_hw;
- 	int ret;
+ 	struct rockchip_clk_pll *pll;
+ 	struct clk_mux *pll_mux;
+ 	struct clk *pll_clk, *mux_clk;
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index ee8c79b938d3c15b..10df21178ba483e2 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -257,7 +257,7 @@ static struct clk *rockchip_clk_register_frac_branch(
  
-@@ -1255,8 +1255,8 @@ static struct clk * __init
- rzg2l_cpg_sipll5_register(const struct cpg_core_clk *core,
- 			  struct rzg2l_cpg_priv *priv)
- {
-+	struct clk_init_data init = {};
- 	const struct clk *parent;
--	struct clk_init_data init;
- 	const char *parent_name;
- 	struct sipll5 *sipll5;
- 	struct clk_hw *clk_hw;
-@@ -1381,9 +1381,9 @@ rzg2l_cpg_pll_clk_register(const struct cpg_core_clk *core,
- 			   struct rzg2l_cpg_priv *priv,
- 			   const struct clk_ops *ops)
- {
-+	struct clk_init_data init = {};
- 	struct device *dev = priv->dev;
- 	const struct clk *parent;
--	struct clk_init_data init;
- 	const char *parent_name;
- 	struct pll_clk *pll_clk;
- 	int ret;
-@@ -1525,8 +1525,8 @@ static struct clk * __init
- rzg3l_cpg_dsi_mux_clk_register(const struct cpg_core_clk *core,
- 			       struct rzg2l_cpg_priv *priv)
- {
-+	struct clk_init_data init = {};
- 	struct clk_mux *mux_data;
--	struct clk_init_data init;
- 	int ret;
+ 	if (child) {
+ 		struct clk_mux *frac_mux = &frac->mux;
+-		struct clk_init_data init;
++		struct clk_init_data init = {};
+ 		struct clk *mux_clk;
+ 		int ret;
  
- 	mux_data = devm_kzalloc(priv->dev, sizeof(*mux_data), GFP_KERNEL);
-@@ -2265,10 +2265,10 @@ rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_clk *mod,
- 			   const struct rzg2l_cpg_info *info,
- 			   struct rzg2l_cpg_priv *priv)
- {
-+	struct clk_init_data init = {};
- 	struct mod_clock *clock = NULL;
- 	struct device *dev = priv->dev;
- 	unsigned int id = mod->id;
--	struct clk_init_data init;
- 	struct clk *parent, *clk;
- 	const char *parent_name;
- 	unsigned int i;
-diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
-index 917fc737f254b916..7003d59ac34b1179 100644
---- a/drivers/clk/renesas/rzv2h-cpg.c
-+++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -338,7 +338,7 @@ rzv2h_cpg_plldsi_div_clk_register(const struct cpg_core_clk *core,
- {
- 	struct rzv2h_plldsi_div_clk *clk_hw_data;
- 	struct clk **clks = priv->clks;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	const struct clk *parent;
- 	const char *parent_name;
- 	struct clk_hw *clk_hw;
-@@ -582,7 +582,7 @@ rzv2h_cpg_plldsi_smux_clk_register(const struct cpg_core_clk *core,
- 				   struct rzv2h_cpg_priv *priv)
- {
- 	struct rzv2h_plldsi_mux_clk *clk_hw_data;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	struct clk_hw *clk_hw;
- 	struct smuxed smux;
- 	int ret;
-@@ -711,7 +711,7 @@ rzv2h_cpg_pll_clk_register(const struct cpg_core_clk *core,
- 			   const struct clk_ops *ops)
- {
- 	struct device *dev = priv->dev;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	const struct clk *parent;
- 	const char *parent_name;
- 	struct pll_clk *pll_clk;
-@@ -1229,7 +1229,7 @@ rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_clk *mod,
- {
- 	struct mod_clock *clock = NULL;
- 	struct device *dev = priv->dev;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	struct clk *parent, *clk;
- 	const char *parent_name;
- 	unsigned int id;
 -- 
 2.43.0
 
