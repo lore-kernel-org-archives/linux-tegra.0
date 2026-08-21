@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C994425CC6;
-	Fri, 21 Aug 2026 08:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9ED3AEF57;
+	Fri, 21 Aug 2026 08:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302553; cv=none; b=fJZ/Z00ST+cKiDWQgQlznAd/+cj5af5HPU1pcljajkThmCIV8EGCUX0co00g2C3zH7oVZ5Rg6YpsWc0sZ1aLSBW9GvavAmGCOxfHNLMta3aot/m4gV05AUvmPGPIN7Q13wthZ8J5S7XSL99wqfaiMro7ByJaG4VEPPjFADjVQrE=
+	t=1787302568; cv=none; b=aodZJ+TmtH41z19TQdlX+ezg7af8VLka/HHp7A4/IICRS+UyudD20PklsMmAGRxTLybOfpcydoeauDqiCOM55W/hkcJ5cfCbXMtPvPZ1TYYJF7CGfnSlrg2zvoJiT0y26FGLFLHoZCUr3HkINUO4eohnFPDTJFxai6AoGlwP2Jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302553; c=relaxed/simple;
-	bh=XzmIDgOn2YE5OwhiRZTWxqQvN61zX1F1fAS8zHOFyiI=;
+	s=arc-20240116; t=1787302568; c=relaxed/simple;
+	bh=a5sY6jutGFnQCsgYxiykCyRLQP7z6dasP+kwxF4c/I4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kgWlqFOkzM1dGW716OlXKB5T6NZgGchXnsQ4B2pSL1U7fbTflQafIznMtc2yHBZfbrJ8XlTwq+A5AXF5Kj9slvfoc9BFDlhWF8vhvTxrOKAUreMFdP44kikBGLcx+0N0pGK07Mwwgzm1yPSGk2gyBDDYAyaHS4zXsCgHX/xWT80=
+	 MIME-Version; b=LlQT0uFjTEqkybE4JufNPc4dgFORvjubmOoQ9WDIlqQsTRibGbu9iuf/D1ziKJ4XGZ/XoLPVswXCDGZuL5B7c6nLwZ4TQVBPxPnsZEto2JNo9p4uYc8PKF00mNAvSHXtdLBRWrKAOw7vbsZUgcrkBxmyQ+2QXcUXBwQPr2D+44A=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AC911F000E9;
-	Fri, 21 Aug 2026 08:55:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F09E1F00A3D;
+	Fri, 21 Aug 2026 08:55:52 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 06/45] clk: clk-axi-clkgen: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:16 +0200
-Message-ID: <2c6fe5e2efb86c8fec0b19cb14cfa1e3be5b6b99.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 07/45] clk: cs2000-cp: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:17 +0200
+Message-ID: <e8d75ce94cde05d165c8a25c93cebd3fd7cf05d5.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -120,24 +120,24 @@ for specifying the parents.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Compile-tested only.
+Boot-tested on Salvator-X(S) and Ebisu-4D.
 ---
- drivers/clk/clk-axi-clkgen.c | 2 +-
+ drivers/clk/clk-cs2000-cp.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
-index 6fcee41447e45581..e53256c56dfabc4e 100644
---- a/drivers/clk/clk-axi-clkgen.c
-+++ b/drivers/clk/clk-axi-clkgen.c
-@@ -568,7 +568,7 @@ static int axi_clkgen_probe(struct platform_device *pdev)
- 	const struct axi_clkgen_limits *dflt_limits;
- 	struct axi_clkgen *axi_clkgen;
- 	unsigned int pcore_version;
+diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
+index 5a7758f5a1e4a0f1..b28fd4e5615ff7a7 100644
+--- a/drivers/clk/clk-cs2000-cp.c
++++ b/drivers/clk/clk-cs2000-cp.c
+@@ -461,7 +461,7 @@ static int cs2000_clk_register(struct cs2000_priv *priv)
+ {
+ 	struct device *dev = priv_to_dev(priv);
+ 	struct device_node *np = dev->of_node;
 -	struct clk_init_data init;
 +	struct clk_init_data init = {};
- 	const char *parent_names[2];
- 	const char *clk_name;
- 	struct clk *axi_clk;
+ 	const char *name = np->name;
+ 	static const char *parent_names[CLK_MAX];
+ 	u32 aux_out = 0;
 -- 
 2.43.0
 
