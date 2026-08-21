@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460BD44213B;
-	Fri, 21 Aug 2026 09:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE733D9DA8;
+	Fri, 21 Aug 2026 09:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787303099; cv=none; b=EnvW6KLSnU+4528HCPOb+ye77yr9bNw6leAnCmF+8udiyegEOImE0jEG8zl1OfvM0nC/9PHkcwPYPeNAWQK1Zu5mTjNxMLv1C53Cqd+Riv71bWY/5Dfn7fz8j2c8OZhgOtJxJmuLmePt3ekLxcDaPepUXqNGekEQMok6NpjMN2k=
+	t=1787303109; cv=none; b=diR2urgcItQGU8AscaZ1K3AOKBvtAfHE+cBpC0B8OT83pwqoTOTqeZQTeWYEswr0pBqrWWQxn1UCaejlKG3sOhNfak9zdY3yna/52ZrQpa1yuCPP/LxbDzJaU4saUs9vZarR4cB61pcNQque5IM3Qi7vrnPDfN17sBSBKVZyfyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787303099; c=relaxed/simple;
-	bh=vbctB0qK/J+nvcjUV8nkKn1D3Pdx7Wv87SuwWXVFo3A=;
+	s=arc-20240116; t=1787303109; c=relaxed/simple;
+	bh=Wc0izlKtUAJ+rw36rxVafdeVDmdPA62+dk92XNLZ9mg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fHwGyue4ucyOqoCCRK7A4v+9E02I1yIGyWv3QbM8geg29YVfhooC2KE4wf1eU20toUdQyqXajenUm3Hh/WC83rX/6OAroWGcnb0n0LniXPZoATWy9uXksmVSC6IPNwg7B2H93hfAiibpkG4fLWrvJmlVWC41TGtlvho+kmLU3QM=
+	 MIME-Version; b=X7FBz8rOtJhnO2aQ5oU/qZBFpFhqgsTyyNreywmj4Vqg3FbKGxZ+qa58bsG3+0CdXyWMSijRPDv4j/bza2nx6TkoE2Ps47Cq1rH0VQPMxF9z6oLdy/G1Qcld7K82QNCDTgCMLpM6i7KKTIesKTtWrrt7MC2Y791zbRNrhuwQsts=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 098391F00A3D;
-	Fri, 21 Aug 2026 09:04:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CAB41F00A3E;
+	Fri, 21 Aug 2026 09:04:44 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 41/45] clk: vt8500: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:51 +0200
-Message-ID: <df1b75b7ad9c4181d440422b2e62d66de4e412a7.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 42/45] clk: x86: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:52 +0200
+Message-ID: <2d1690a6966152450bda8e8b1e6f5fe2c1df1610.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,33 +122,23 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/clk-vt8500.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/x86/clk-pmc-atom.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
-index 3e62cb853d5e90e7..581ac00c31bc0448 100644
---- a/drivers/clk/clk-vt8500.c
-+++ b/drivers/clk/clk-vt8500.c
-@@ -227,8 +227,8 @@ static __init void vtwm_device_clk_init(struct device_node *node)
- 	struct clk_hw *hw;
- 	struct clk_device *dev_clk;
- 	const char *clk_name = node->name;
+diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
+index 08c83e0abc41d942..43dda274e329d19e 100644
+--- a/drivers/clk/x86/clk-pmc-atom.c
++++ b/drivers/clk/x86/clk-pmc-atom.c
+@@ -151,8 +151,8 @@ static struct clk_plt *plt_clk_register(struct platform_device *pdev, int id,
+ 					const char **parent_names,
+ 					int num_parents)
+ {
 +	struct clk_init_data init = {};
- 	const char *parent_name;
+ 	struct clk_plt *pclk;
 -	struct clk_init_data init;
- 	int rc;
- 	int clk_init_flags = 0;
+ 	int ret;
  
-@@ -687,8 +687,8 @@ static __init void vtwm_pll_clk_init(struct device_node *node, int pll_type)
- 	struct clk_hw *hw;
- 	struct clk_pll *pll_clk;
- 	const char *clk_name = node->name;
-+	struct clk_init_data init = {};
- 	const char *parent_name;
--	struct clk_init_data init;
- 	int rc;
- 
- 	if (!pmc_base)
+ 	pclk = devm_kzalloc(&pdev->dev, sizeof(*pclk), GFP_KERNEL);
 -- 
 2.43.0
 
