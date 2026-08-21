@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A6E3CF680;
-	Fri, 21 Aug 2026 09:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19D345DF63;
+	Fri, 21 Aug 2026 09:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302963; cv=none; b=ik5XYX0jnDe0QQZ9VWjiUToxJWTw+O3e7O3hfZiCNVkqJ+AMfESmeeqiN4MoD3qU0B4AL7r+fguJTGAuYhbQ++sY2e8wBgp56KG0GZmLkaOpXsURJuJxshS+gosh4EFqlRjb4jVfVe15ZquTopujp9rZnlLnchppPU8sonqi1ag=
+	t=1787302976; cv=none; b=EERUYRsROK2Te0l+jeFhSMTFUJAMJayJaaq+BJl4RhjWUItBxTy3+hyBS/RO580bzYChFV60QHWn5m+U9o1aj5I0iTVNOSzrN6ZVqSMSu7szNXKmz4j9bmT8YFkgWPBbvT6k7TD5LYl0XLHiRS5DI5NWw6XqRIyGOejRUqnzA+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302963; c=relaxed/simple;
-	bh=hkuwbAfuTx68NodqaDMZbswYScgLXtNCq4mND9danAs=;
+	s=arc-20240116; t=1787302976; c=relaxed/simple;
+	bh=e8nmsrssTmgcynkXGCECoG7QDiVQtQXefCNp17PUXqk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mwVxF/omxCiumIOSxk8ZjxsOgNC+GIXSUi3mdoPrkr+HdeWUAKua4UYvNL3HWlLuSrC1qoT9YsxLC+9pYcTg7z/cmlRWUHDsZQCjn3QFFXTFLOwsoQY+Jt8yjOgyy+xMMb62xxVaP2EW+kYepsTDhvLReu+RyX3mWw3bfSamDxs=
+	 MIME-Version; b=mnyRM0/abUwy7mF80dhQj/HxjR6HknSjbEl3ub3NN+PI/NDoQY/UQh/cAaiyGNU7IST4cPV0WXv14FSeH8LrFK5LeahhoWlo/kvaDB+K60FzJdS5B0cOxhqNlLKdtzGpntbN+O4sj1W/G34af5jBBRvZYpNZEpd4jA1R/G+xMHc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7315D1F000E9;
-	Fri, 21 Aug 2026 09:02:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BCB11F00A3D;
+	Fri, 21 Aug 2026 09:02:29 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 32/45] clk: socfpga: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:42 +0200
-Message-ID: <2d38d78f8d59583e29778bebc65eaab911d8a120.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 33/45] clk: spear: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:43 +0200
+Message-ID: <d4500d249021013d52aa87407f875dc203a251df.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,206 +122,65 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/socfpga/clk-gate-a10.c   | 2 +-
- drivers/clk/socfpga/clk-gate-s10.c   | 6 +++---
- drivers/clk/socfpga/clk-gate.c       | 2 +-
- drivers/clk/socfpga/clk-periph-a10.c | 2 +-
- drivers/clk/socfpga/clk-periph-s10.c | 8 ++++----
- drivers/clk/socfpga/clk-periph.c     | 2 +-
- drivers/clk/socfpga/clk-pll-a10.c    | 2 +-
- drivers/clk/socfpga/clk-pll-s10.c    | 8 ++++----
- drivers/clk/socfpga/clk-pll.c        | 2 +-
- 9 files changed, 17 insertions(+), 17 deletions(-)
+ drivers/clk/spear/clk-aux-synth.c  | 2 +-
+ drivers/clk/spear/clk-frac-synth.c | 2 +-
+ drivers/clk/spear/clk-gpt-synth.c  | 2 +-
+ drivers/clk/spear/clk-vco-pll.c    | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/socfpga/clk-gate-a10.c b/drivers/clk/socfpga/clk-gate-a10.c
-index dd8d1713aaff7639..ba12179061b3fe9d 100644
---- a/drivers/clk/socfpga/clk-gate-a10.c
-+++ b/drivers/clk/socfpga/clk-gate-a10.c
-@@ -49,7 +49,7 @@ static void __init __socfpga_gate_init(struct device_node *node,
- 	struct socfpga_gate_clk *socfpga_clk;
- 	const char *clk_name = node->name;
- 	const char *parent_name[SOCFPGA_MAX_PARENTS];
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	int rc;
- 
- 	socfpga_clk = kzalloc_obj(*socfpga_clk);
-diff --git a/drivers/clk/socfpga/clk-gate-s10.c b/drivers/clk/socfpga/clk-gate-s10.c
-index 24f56a9edc44e528..4b23909c58106599 100644
---- a/drivers/clk/socfpga/clk-gate-s10.c
-+++ b/drivers/clk/socfpga/clk-gate-s10.c
-@@ -128,7 +128,7 @@ struct clk_hw *s10_register_gate(const struct stratix10_gate_clock *clks, void _
+diff --git a/drivers/clk/spear/clk-aux-synth.c b/drivers/clk/spear/clk-aux-synth.c
+index 61a8c3d4c1e40d0c..85cfb9b5ec35346c 100644
+--- a/drivers/clk/spear/clk-aux-synth.c
++++ b/drivers/clk/spear/clk-aux-synth.c
+@@ -138,8 +138,8 @@ struct clk *clk_register_aux(const char *aux_name, const char *gate_name,
+ 	        const struct aux_clk_masks *masks, struct aux_rate_tbl *rtbl,
+ 		u8 rtbl_cnt, spinlock_t *lock, struct clk **gate_clk)
  {
- 	struct clk_hw *hw_clk;
- 	struct socfpga_gate_clk *socfpga_clk;
--	struct clk_init_data init;
 +	struct clk_init_data init = {};
- 	const char *parent_name = clks->parent_name;
- 	int ret;
+ 	struct clk_aux *aux;
+-	struct clk_init_data init;
+ 	struct clk *clk;
  
-@@ -186,7 +186,7 @@ struct clk_hw *agilex_register_gate(const struct stratix10_gate_clock *clks, voi
+ 	if (!aux_name || !parent_name || !reg || !rtbl || !rtbl_cnt) {
+diff --git a/drivers/clk/spear/clk-frac-synth.c b/drivers/clk/spear/clk-frac-synth.c
+index 3549f1cfdae1160f..1b5e184d9668fd51 100644
+--- a/drivers/clk/spear/clk-frac-synth.c
++++ b/drivers/clk/spear/clk-frac-synth.c
+@@ -125,7 +125,7 @@ struct clk *clk_register_frac(const char *name, const char *parent_name,
+ 		unsigned long flags, void __iomem *reg,
+ 		struct frac_rate_tbl *rtbl, u8 rtbl_cnt, spinlock_t *lock)
  {
- 	struct clk_hw *hw_clk;
- 	struct socfpga_gate_clk *socfpga_clk;
 -	struct clk_init_data init;
 +	struct clk_init_data init = {};
- 	const char *parent_name = clks->parent_name;
- 	int ret;
+ 	struct clk_frac *frac;
+ 	struct clk *clk;
  
-@@ -244,7 +244,7 @@ struct clk_hw *agilex5_register_gate(const struct agilex5_gate_clock *clks, void
+diff --git a/drivers/clk/spear/clk-gpt-synth.c b/drivers/clk/spear/clk-gpt-synth.c
+index 1a431d7ec20c0ff3..411cacdfc11f51b1 100644
+--- a/drivers/clk/spear/clk-gpt-synth.c
++++ b/drivers/clk/spear/clk-gpt-synth.c
+@@ -114,7 +114,7 @@ struct clk *clk_register_gpt(const char *name, const char *parent_name, unsigned
+ 		long flags, void __iomem *reg, struct gpt_rate_tbl *rtbl, u8
+ 		rtbl_cnt, spinlock_t *lock)
  {
- 	struct clk_hw *hw_clk;
- 	struct socfpga_gate_clk *socfpga_clk;
 -	struct clk_init_data init;
 +	struct clk_init_data init = {};
- 	int ret;
+ 	struct clk_gpt *gpt;
+ 	struct clk *clk;
  
- 	socfpga_clk = kzalloc_obj(*socfpga_clk);
-diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
-index ced8e09884068a26..d0f9fa44ad182520 100644
---- a/drivers/clk/socfpga/clk-gate.c
-+++ b/drivers/clk/socfpga/clk-gate.c
-@@ -143,7 +143,7 @@ void __init socfpga_gate_init(struct device_node *node)
- 	struct socfpga_gate_clk *socfpga_clk;
- 	const char *clk_name = node->name;
- 	const char *parent_name[SOCFPGA_MAX_PARENTS];
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	struct clk_ops *ops;
- 	int rc;
+diff --git a/drivers/clk/spear/clk-vco-pll.c b/drivers/clk/spear/clk-vco-pll.c
+index faba727e2f84365e..21fcc522c738e6b2 100644
+--- a/drivers/clk/spear/clk-vco-pll.c
++++ b/drivers/clk/spear/clk-vco-pll.c
+@@ -284,7 +284,7 @@ struct clk *clk_register_vco_pll(const char *vco_name, const char *pll_name,
+ 	struct clk_vco *vco;
+ 	struct clk_pll *pll;
+ 	struct clk *vco_clk, *tpll_clk, *tvco_gate_clk;
+-	struct clk_init_data vco_init, pll_init;
++	struct clk_init_data vco_init = {}, pll_init = {};
+ 	const char **vco_parent_name;
  
-diff --git a/drivers/clk/socfpga/clk-periph-a10.c b/drivers/clk/socfpga/clk-periph-a10.c
-index 4eb5787f0dea3f8e..8aefc58ba4ec3944 100644
---- a/drivers/clk/socfpga/clk-periph-a10.c
-+++ b/drivers/clk/socfpga/clk-periph-a10.c
-@@ -65,7 +65,7 @@ static void __init __socfpga_periph_init(struct device_node *node,
- 	struct socfpga_periph_clk *periph_clk;
- 	const char *clk_name = node->name;
- 	const char *parent_name[SOCFPGA_MAX_PARENTS];
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	int rc;
- 	u32 fixed_div;
- 	u32 div_reg[3];
-diff --git a/drivers/clk/socfpga/clk-periph-s10.c b/drivers/clk/socfpga/clk-periph-s10.c
-index 5195b9476da16977..dc923d0d87869743 100644
---- a/drivers/clk/socfpga/clk-periph-s10.c
-+++ b/drivers/clk/socfpga/clk-periph-s10.c
-@@ -103,7 +103,7 @@ struct clk_hw *s10_register_periph(const struct stratix10_perip_c_clock *clks,
- {
- 	struct clk_hw *hw_clk;
- 	struct socfpga_periph_clk *periph_clk;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	const char *name = clks->name;
- 	const char *parent_name = clks->parent_name;
- 	int ret;
-@@ -139,7 +139,7 @@ struct clk_hw *n5x_register_periph(const struct n5x_perip_c_clock *clks,
- {
- 	struct clk_hw *hw_clk;
- 	struct socfpga_periph_clk *periph_clk;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	const char *name = clks->name;
- 	const char *parent_name = clks->parent_name;
- 	int ret;
-@@ -174,7 +174,7 @@ struct clk_hw *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *c
- {
- 	struct clk_hw *hw_clk;
- 	struct socfpga_periph_clk *periph_clk;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	const char *name = clks->name;
- 	const char *parent_name = clks->parent_name;
- 	int ret;
-@@ -220,7 +220,7 @@ struct clk_hw *agilex5_register_cnt_periph(const struct agilex5_perip_cnt_clock
- {
- 	struct clk_hw *hw_clk;
- 	struct socfpga_periph_clk *periph_clk;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	const char *name = clks->name;
- 	int ret;
- 
-diff --git a/drivers/clk/socfpga/clk-periph.c b/drivers/clk/socfpga/clk-periph.c
-index 3821db6777e75413..8fa3d8e20042d731 100644
---- a/drivers/clk/socfpga/clk-periph.c
-+++ b/drivers/clk/socfpga/clk-periph.c
-@@ -55,7 +55,7 @@ static void __init __socfpga_periph_init(struct device_node *node,
- 	struct socfpga_periph_clk *periph_clk;
- 	const char *clk_name = node->name;
- 	const char *parent_name[SOCFPGA_MAX_PARENTS];
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	int rc;
- 	u32 fixed_div;
- 	u32 div_reg[3];
-diff --git a/drivers/clk/socfpga/clk-pll-a10.c b/drivers/clk/socfpga/clk-pll-a10.c
-index c56f276e8d51e00f..63b8b75045aead8d 100644
---- a/drivers/clk/socfpga/clk-pll-a10.c
-+++ b/drivers/clk/socfpga/clk-pll-a10.c
-@@ -71,7 +71,7 @@ static void __init __socfpga_pll_init(struct device_node *node,
- 	struct socfpga_pll *pll_clk;
- 	const char *clk_name = node->name;
- 	const char *parent_name[SOCFGPA_MAX_PARENTS];
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	struct device_node *clkmgr_np;
- 	int rc;
- 	int i = 0;
-diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
-index ee236e87da33c020..1dca54b48375b168 100644
---- a/drivers/clk/socfpga/clk-pll-s10.c
-+++ b/drivers/clk/socfpga/clk-pll-s10.c
-@@ -192,7 +192,7 @@ struct clk_hw *s10_register_pll(const struct stratix10_pll_clock *clks,
- {
- 	struct clk_hw *hw_clk;
- 	struct socfpga_pll *pll_clk;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	const char *name = clks->name;
- 	int ret;
- 
-@@ -232,7 +232,7 @@ struct clk_hw *agilex_register_pll(const struct stratix10_pll_clock *clks,
- {
- 	struct clk_hw *hw_clk;
- 	struct socfpga_pll *pll_clk;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	const char *name = clks->name;
- 	int ret;
- 
-@@ -271,7 +271,7 @@ struct clk_hw *n5x_register_pll(const struct stratix10_pll_clock *clks,
- {
- 	struct clk_hw *hw_clk;
- 	struct socfpga_pll *pll_clk;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	const char *name = clks->name;
- 	int ret;
- 
-@@ -310,7 +310,7 @@ struct clk_hw *agilex5_register_pll(const struct agilex5_pll_clock *clks,
- {
- 	struct clk_hw *hw_clk;
- 	struct socfpga_pll *pll_clk;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	const char *name = clks->name;
- 	int ret;
- 
-diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
-index f85adb16d414040f..aa13cc9d6db115fe 100644
---- a/drivers/clk/socfpga/clk-pll.c
-+++ b/drivers/clk/socfpga/clk-pll.c
-@@ -78,7 +78,7 @@ static void __init __socfpga_pll_init(struct device_node *node,
- 	struct socfpga_pll *pll_clk;
- 	const char *clk_name = node->name;
- 	const char *parent_name[SOCFPGA_MAX_PARENTS];
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	struct device_node *clkmgr_np;
- 	int rc;
- 
+ 	if (!vco_name || !pll_name || !parent_name || !mode_reg || !cfg_reg ||
 -- 
 2.43.0
 
