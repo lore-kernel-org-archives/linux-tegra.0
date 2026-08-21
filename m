@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9ED3AEF57;
-	Fri, 21 Aug 2026 08:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD42C381B04;
+	Fri, 21 Aug 2026 08:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302568; cv=none; b=aodZJ+TmtH41z19TQdlX+ezg7af8VLka/HHp7A4/IICRS+UyudD20PklsMmAGRxTLybOfpcydoeauDqiCOM55W/hkcJ5cfCbXMtPvPZ1TYYJF7CGfnSlrg2zvoJiT0y26FGLFLHoZCUr3HkINUO4eohnFPDTJFxai6AoGlwP2Jw=
+	t=1787302583; cv=none; b=rXAtZkEyUSswa8QJZvByeCe1ezhNjZ3TBIth9yiq22TfrQGmyLB/AgZJMQCF/pOeXFLJTIdLk3LpjmhHaTd4bsVraCB1FvGlEbNIYdWH9V6DwAJe5iR7H58kEaiUCvIB1CTfagblGUGVsbTsc/HjAdafMvOxJekLcaLG3PxzM40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302568; c=relaxed/simple;
-	bh=a5sY6jutGFnQCsgYxiykCyRLQP7z6dasP+kwxF4c/I4=;
+	s=arc-20240116; t=1787302583; c=relaxed/simple;
+	bh=VJmVCbLrCbLGtojVZx4RHnDDAe7NuIL6xDGc/j5UHmQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LlQT0uFjTEqkybE4JufNPc4dgFORvjubmOoQ9WDIlqQsTRibGbu9iuf/D1ziKJ4XGZ/XoLPVswXCDGZuL5B7c6nLwZ4TQVBPxPnsZEto2JNo9p4uYc8PKF00mNAvSHXtdLBRWrKAOw7vbsZUgcrkBxmyQ+2QXcUXBwQPr2D+44A=
+	 MIME-Version; b=LPtTmN8VVCrHAf9iek4IYAz/jV0xrroiNsC6em8XbkpK/i/2NBdqBuQ7nzj24zQLlk/kke5AWSLQOVYYgMdSRz1UOtIPBNRhrG2p3t35PMhA45sGTCxp4JjNgqUCew0jf5Pa/OmXXblAxAn2n5W6UIUJUTOeJB60n8/Gwlqz9ZM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F09E1F00A3D;
-	Fri, 21 Aug 2026 08:55:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A27A51F000E9;
+	Fri, 21 Aug 2026 08:56:07 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 07/45] clk: cs2000-cp: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:17 +0200
-Message-ID: <e8d75ce94cde05d165c8a25c93cebd3fd7cf05d5.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 08/45] clk: davinci: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:18 +0200
+Message-ID: <f3b503ff3fda049988c3e16071bbbfabf1b04629.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -120,24 +120,61 @@ for specifying the parents.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Boot-tested on Salvator-X(S) and Ebisu-4D.
+Compile-tested only.
 ---
- drivers/clk/clk-cs2000-cp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/davinci/da8xx-cfgchip.c | 4 ++--
+ drivers/clk/davinci/pll.c           | 2 +-
+ drivers/clk/davinci/psc.c           | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
-index 5a7758f5a1e4a0f1..b28fd4e5615ff7a7 100644
---- a/drivers/clk/clk-cs2000-cp.c
-+++ b/drivers/clk/clk-cs2000-cp.c
-@@ -461,7 +461,7 @@ static int cs2000_clk_register(struct cs2000_priv *priv)
- {
- 	struct device *dev = priv_to_dev(priv);
- 	struct device_node *np = dev->of_node;
+diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
+index a5109fe8b16e9b40..9d7fced898ae07fc 100644
+--- a/drivers/clk/davinci/da8xx-cfgchip.c
++++ b/drivers/clk/davinci/da8xx-cfgchip.c
+@@ -91,7 +91,7 @@ da8xx_cfgchip_gate_clk_register(struct device *dev,
+ 	struct clk *parent;
+ 	const char *parent_name;
+ 	struct da8xx_cfgchip_gate_clk *gate;
 -	struct clk_init_data init;
 +	struct clk_init_data init = {};
- 	const char *name = np->name;
- 	static const char *parent_names[CLK_MAX];
- 	u32 aux_out = 0;
+ 	int ret;
+ 
+ 	parent = devm_clk_get(dev, NULL);
+@@ -241,7 +241,7 @@ da8xx_cfgchip_mux_clk_register(struct device *dev,
+ {
+ 	const char * const parent_names[] = { info->parent0, info->parent1 };
+ 	struct da8xx_cfgchip_mux_clk *mux;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	int ret;
+ 
+ 	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index f73b0ac5d8a08bf1..0e58b02d7acaf175 100644
+--- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -371,7 +371,7 @@ struct clk *davinci_pll_clk_register(struct device *dev,
+ 	char pllout_name[MAX_NAME_SIZE];
+ 	char postdiv_name[MAX_NAME_SIZE];
+ 	char pllen_name[MAX_NAME_SIZE];
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	struct davinci_pll_clk *pllout;
+ 	struct davinci_pllen_clk *pllen;
+ 	struct clk *oscin_clk = NULL;
+diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+index ff603520d56f94d6..73dce7ce2be6cc88 100644
+--- a/drivers/clk/davinci/psc.c
++++ b/drivers/clk/davinci/psc.c
+@@ -234,7 +234,7 @@ davinci_lpsc_clk_register(struct device *dev, const char *name,
+ 			  const char *parent_name, struct regmap *regmap,
+ 			  u32 md, u32 pd, u32 flags)
+ {
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	struct davinci_lpsc_clk *lpsc;
+ 	int ret;
+ 	bool is_on;
 -- 
 2.43.0
 
