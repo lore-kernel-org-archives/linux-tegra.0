@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C353745A294;
-	Fri, 21 Aug 2026 09:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4BB4582D9;
+	Fri, 21 Aug 2026 09:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302872; cv=none; b=dZMGl1GU7JMitQcRatmfndW53GZQ2LoblOuKv0cjzfsznMDzf0RflfaR66KKmzko10A83DLwpjczznugQxTz96+9IfxIVsAuM6nciSjRx1utNTwzZfQrpPlV+atkuDEXlYPNrtv73yZRwoqtJzXKoFGTpWNcDlnLCofbwfNca2o=
+	t=1787302885; cv=none; b=BA8tKq/b4t3M+6KJx1ywR4rqXYaV1OoSmWTMRuBNNQao8HJbcQNGTYVRylFYYq3uJrXfkeBa3ycGE/sXRwRFZB/n35fQjaf0g4C66lOURbBwYIJrK9WOV3ThTZBKnNkm91SyLd6RP/7i0QYAq9f/R94ar957i2Xa+fzavMJmHLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302872; c=relaxed/simple;
-	bh=+dG2KqfuOBsTH7pEbJy7MC5JsnO1rvlo9mGMb+Z33MU=;
+	s=arc-20240116; t=1787302885; c=relaxed/simple;
+	bh=B6p+OcFdP515S8LjF8ohzfroFcUB/LLJnrQ8WbhYQ7s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eK3AX5N2iZy1pe/DD4XnRySEXd6vu0KZZ7AZmtxaS73eNGjXmAFottq335p4DNkdqgFGcZEEa6dY/KQaf2iCpQi/vPnat74+3Gu0X11pGsVXDO1Zm3iw3tUXxSUGsrTmn3o+KevQxuSxU0Q6m9Z2DBOa9W17Lhya1IJos1Pn8Y0=
+	 MIME-Version; b=o+XrWFlgCVMcUvMzRTMPNtfnpx7V+CATQSlTAeYxPcEw8BrQhfTfpDcMiuCw+oLyX0m2YBakAmcYfdLtdpIIgwvFzDvbS06qPyNQ53NzOkEf5jvmSF3LgNN+pKwURrQkVLQd/htRvfAu0VLTWM0ImfYMkUd8lxLnZT2kPWLGWTo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C99D41F000E9;
-	Fri, 21 Aug 2026 09:00:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D868B1F00A3A;
+	Fri, 21 Aug 2026 09:00:58 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 26/45] clk: pwm: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:36 +0200
-Message-ID: <f809871afb8fdee621087dc23e18539ed2839cde.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 27/45] clk: renesas: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:37 +0200
+Message-ID: <b3473adc50c71aec5bc5f7ce6f5cda1727e26635.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -120,24 +120,149 @@ for specifying the parents.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Compile-tested only.
+Boot-tested on RZ/Five.
 ---
- drivers/clk/clk-pwm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/renesas/rzg2l-cpg.c | 18 +++++++++---------
+ drivers/clk/renesas/rzv2h-cpg.c |  8 ++++----
+ 2 files changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/clk/clk-pwm.c b/drivers/clk/clk-pwm.c
-index 4709f0338e373b57..2001c7c9367c00ec 100644
---- a/drivers/clk/clk-pwm.c
-+++ b/drivers/clk/clk-pwm.c
-@@ -95,7 +95,7 @@ static const struct clk_ops clk_pwm_ops = {
- static int clk_pwm_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 88d74858687d4866..50b64eb3eafebe71 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -580,7 +580,7 @@ rzg2l_cpg_sd_mux_clk_register(const struct cpg_core_clk *core,
+ 			      struct rzg2l_cpg_priv *priv)
  {
- 	struct device_node *node = pdev->dev.of_node;
+ 	struct sd_mux_hw_data *sd_mux_hw_data;
 -	struct clk_init_data init;
 +	struct clk_init_data init = {};
- 	struct clk_pwm *clk_pwm;
- 	struct pwm_device *pwm;
- 	struct pwm_args pargs;
+ 	struct clk_hw *clk_hw;
+ 	int ret;
+ 
+@@ -831,9 +831,9 @@ rzg2l_cpg_dsi_div_clk_register(const struct cpg_core_clk *core,
+ 			       struct rzg2l_cpg_priv *priv)
+ {
+ 	struct dsi_div_hw_data *clk_hw_data;
++	struct clk_init_data init = {};
+ 	const struct clk *parent;
+ 	const char *parent_name;
+-	struct clk_init_data init;
+ 	struct clk_hw *clk_hw;
+ 	int ret;
+ 
+@@ -916,8 +916,8 @@ static struct clk * __init
+ rzg3l_cpg_lvds_div_clk_register(const struct cpg_core_clk *core,
+ 				struct rzg2l_cpg_priv *priv)
+ {
++	struct clk_init_data init = {};
+ 	struct clk_fixed_factor *ff;
+-	struct clk_init_data init;
+ 	const struct clk *parent;
+ 	const char *parent_name;
+ 	int ret;
+@@ -1031,9 +1031,9 @@ rzg3l_cpg_dsi_div_clk_register(const struct cpg_core_clk *core,
+ 			       struct rzg2l_cpg_priv *priv)
+ {
+ 	struct g3l_dsi_div_hw_data *clk_hw_data;
++	struct clk_init_data init = {};
+ 	const struct clk *parent;
+ 	const char *parent_name;
+-	struct clk_init_data init;
+ 	struct clk_hw *clk_hw;
+ 	int ret;
+ 
+@@ -1128,7 +1128,7 @@ rzg2l_cpg_pll5_4_mux_clk_register(const struct cpg_core_clk *core,
+ 				  struct rzg2l_cpg_priv *priv)
+ {
+ 	struct pll5_mux_hw_data *clk_hw_data;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	struct clk_hw *clk_hw;
+ 	int ret;
+ 
+@@ -1255,8 +1255,8 @@ static struct clk * __init
+ rzg2l_cpg_sipll5_register(const struct cpg_core_clk *core,
+ 			  struct rzg2l_cpg_priv *priv)
+ {
++	struct clk_init_data init = {};
+ 	const struct clk *parent;
+-	struct clk_init_data init;
+ 	const char *parent_name;
+ 	struct sipll5 *sipll5;
+ 	struct clk_hw *clk_hw;
+@@ -1381,9 +1381,9 @@ rzg2l_cpg_pll_clk_register(const struct cpg_core_clk *core,
+ 			   struct rzg2l_cpg_priv *priv,
+ 			   const struct clk_ops *ops)
+ {
++	struct clk_init_data init = {};
+ 	struct device *dev = priv->dev;
+ 	const struct clk *parent;
+-	struct clk_init_data init;
+ 	const char *parent_name;
+ 	struct pll_clk *pll_clk;
+ 	int ret;
+@@ -1525,8 +1525,8 @@ static struct clk * __init
+ rzg3l_cpg_dsi_mux_clk_register(const struct cpg_core_clk *core,
+ 			       struct rzg2l_cpg_priv *priv)
+ {
++	struct clk_init_data init = {};
+ 	struct clk_mux *mux_data;
+-	struct clk_init_data init;
+ 	int ret;
+ 
+ 	mux_data = devm_kzalloc(priv->dev, sizeof(*mux_data), GFP_KERNEL);
+@@ -2265,10 +2265,10 @@ rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_clk *mod,
+ 			   const struct rzg2l_cpg_info *info,
+ 			   struct rzg2l_cpg_priv *priv)
+ {
++	struct clk_init_data init = {};
+ 	struct mod_clock *clock = NULL;
+ 	struct device *dev = priv->dev;
+ 	unsigned int id = mod->id;
+-	struct clk_init_data init;
+ 	struct clk *parent, *clk;
+ 	const char *parent_name;
+ 	unsigned int i;
+diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
+index 917fc737f254b916..7003d59ac34b1179 100644
+--- a/drivers/clk/renesas/rzv2h-cpg.c
++++ b/drivers/clk/renesas/rzv2h-cpg.c
+@@ -338,7 +338,7 @@ rzv2h_cpg_plldsi_div_clk_register(const struct cpg_core_clk *core,
+ {
+ 	struct rzv2h_plldsi_div_clk *clk_hw_data;
+ 	struct clk **clks = priv->clks;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	const struct clk *parent;
+ 	const char *parent_name;
+ 	struct clk_hw *clk_hw;
+@@ -582,7 +582,7 @@ rzv2h_cpg_plldsi_smux_clk_register(const struct cpg_core_clk *core,
+ 				   struct rzv2h_cpg_priv *priv)
+ {
+ 	struct rzv2h_plldsi_mux_clk *clk_hw_data;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	struct clk_hw *clk_hw;
+ 	struct smuxed smux;
+ 	int ret;
+@@ -711,7 +711,7 @@ rzv2h_cpg_pll_clk_register(const struct cpg_core_clk *core,
+ 			   const struct clk_ops *ops)
+ {
+ 	struct device *dev = priv->dev;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	const struct clk *parent;
+ 	const char *parent_name;
+ 	struct pll_clk *pll_clk;
+@@ -1229,7 +1229,7 @@ rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_clk *mod,
+ {
+ 	struct mod_clock *clock = NULL;
+ 	struct device *dev = priv->dev;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	struct clk *parent, *clk;
+ 	const char *parent_name;
+ 	unsigned int id;
 -- 
 2.43.0
 
