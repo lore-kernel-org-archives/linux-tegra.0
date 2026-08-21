@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42B0459AD2;
-	Fri, 21 Aug 2026 09:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC55845A2AD;
+	Fri, 21 Aug 2026 09:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787303141; cv=none; b=mfq0Va92wdnKCM3hdNpwRJLGQ6SPi7ZgoS0DOJihv6RPNkA4Up3lPaEGNwBIuKoGTSva5jLjQV87ckBuI6+HSb0+7bbqpZNvytwJ1TtRlcbvP31KRPNbk7r9FHRQkkS2RZ+zqRwvXcigGF3zybb4mcdhBaXnowdq7yRuSKAKLU0=
+	t=1787303154; cv=none; b=oV+v08feGlhzxBevHr108s1OgTEz+iLP3/iWFRb5ZL1+K3K5ZgrKcVUGB/MXIehHAM7hzTatP1fOMMfNve7gKrB6BY4PaqVfjORXBsGZjVbRLgzO0jBPPimA9D0bacJZdNWQcPSopcBACE367D5ROrj93u2GRn/RowYcu5GHkhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787303141; c=relaxed/simple;
-	bh=+BVlAa7MYb3cmX6bSuuUtFgSVUtNtjAdNHxnMN1FfW8=;
+	s=arc-20240116; t=1787303154; c=relaxed/simple;
+	bh=BoVDFLjm3qmryxpWKKtPiB9xGLwmcZ8bdHtjqA34dYQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YqDV7k/H75Blhmg4jG0ma+4DVM+YpuxronVsUOqJ0Gb3UJOEGjGIUpT4uoYmhTvvSTDcDozqZiCMpraTIBVcd+OHBBgQymmPeY66OyvtKgYzcm1fxAeRk5SsTWogSOtpjwvjamPVXtlRAPrtIYx0c3sl+UaXxSu9sDUvrApEynU=
+	 MIME-Version; b=rRL7+mmiS5ceIHiEQj9rH6TOU9bd11/V60QxzEudxf56JRbvrevGpPPTGv04UTpfQp6Ys7FXrP/6cJObGZef9SI/MxYQmhdGoW30/R6cMMuChh0cMyE4nfwROb3do3mtvksGHAC4or+4Zmu8vheT2QqyUiRtWn3Xi+3txLCZwgw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 437761F00A3E;
-	Fri, 21 Aug 2026 09:05:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5598F1F000E9;
+	Fri, 21 Aug 2026 09:05:30 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 44/45] clk: xilinx: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:54 +0200
-Message-ID: <cf858f84a9d517745fb53981f02f9c3dcd65a14f.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 45/45] clk: zynqmp: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:55 +0200
+Message-ID: <ca5b863571e9e21d123ab95cd5667b19f0d14d96.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,57 +122,68 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 6 +++---
- drivers/clk/xilinx/xlnx_vcu.c              | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/zynqmp/clk-gate-zynqmp.c | 2 +-
+ drivers/clk/zynqmp/clk-mux-zynqmp.c  | 2 +-
+ drivers/clk/zynqmp/divider.c         | 2 +-
+ drivers/clk/zynqmp/pll.c             | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-index edf8c0eaca27cab4..4e5b9cb3754b9a18 100644
---- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-+++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-@@ -936,9 +936,9 @@ static struct clk_hw *clk_wzrd_register_divf(struct device *dev,
- 					  u32 div_type,
- 					  spinlock_t *lock)
+diff --git a/drivers/clk/zynqmp/clk-gate-zynqmp.c b/drivers/clk/zynqmp/clk-gate-zynqmp.c
+index db10eb69f3fe01a5..1a462af7b8ea3efa 100644
+--- a/drivers/clk/zynqmp/clk-gate-zynqmp.c
++++ b/drivers/clk/zynqmp/clk-gate-zynqmp.c
+@@ -109,10 +109,10 @@ struct clk_hw *zynqmp_clk_register_gate(const char *name, u32 clk_id,
+ 					u8 num_parents,
+ 					const struct clock_topology *nodes)
  {
 +	struct clk_init_data init = {};
- 	struct clk_wzrd_divider *div;
+ 	struct zynqmp_clk_gate *gate;
+ 	struct clk_hw *hw;
+ 	int ret;
+-	struct clk_init_data init;
+ 
+ 	/* allocate the gate */
+ 	gate = kzalloc_obj(*gate);
+diff --git a/drivers/clk/zynqmp/clk-mux-zynqmp.c b/drivers/clk/zynqmp/clk-mux-zynqmp.c
+index e37bd3516974c1ee..79509e387b51fe40 100644
+--- a/drivers/clk/zynqmp/clk-mux-zynqmp.c
++++ b/drivers/clk/zynqmp/clk-mux-zynqmp.c
+@@ -133,9 +133,9 @@ struct clk_hw *zynqmp_clk_register_mux(const char *name, u32 clk_id,
+ 				       u8 num_parents,
+ 				       const struct clock_topology *nodes)
+ {
++	struct clk_init_data init = {};
+ 	struct zynqmp_clk_mux *mux;
  	struct clk_hw *hw;
 -	struct clk_init_data init;
  	int ret;
  
- 	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
-@@ -980,9 +980,9 @@ static struct clk_hw *clk_wzrd_ver_register_divider(struct device *dev,
- 						 u32 div_type,
- 						 spinlock_t *lock)
+ 	mux = kzalloc_obj(*mux);
+diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
+index 4075f6ecf076a8e6..3eabd1cf211ddba3 100644
+--- a/drivers/clk/zynqmp/divider.c
++++ b/drivers/clk/zynqmp/divider.c
+@@ -278,9 +278,9 @@ struct clk_hw *zynqmp_clk_register_divider(const char *name,
+ 					   u8 num_parents,
+ 					   const struct clock_topology *nodes)
  {
 +	struct clk_init_data init = {};
- 	struct clk_wzrd_divider *div;
+ 	struct zynqmp_clk_divider *div;
  	struct clk_hw *hw;
 -	struct clk_init_data init;
  	int ret;
  
- 	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
-@@ -1026,9 +1026,9 @@ static struct clk_hw *clk_wzrd_register_divider(struct device *dev,
- 					     u32 div_type,
- 					     spinlock_t *lock)
+ 	/* allocate the divider */
+diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
+index 6463787cf57b6018..6158386ca743d1f8 100644
+--- a/drivers/clk/zynqmp/pll.c
++++ b/drivers/clk/zynqmp/pll.c
+@@ -313,9 +313,9 @@ struct clk_hw *zynqmp_clk_register_pll(const char *name, u32 clk_id,
+ 				       u8 num_parents,
+ 				       const struct clock_topology *nodes)
  {
 +	struct clk_init_data init = {};
- 	struct clk_wzrd_divider *div;
- 	struct clk_hw *hw;
--	struct clk_init_data init;
- 	int ret;
- 
- 	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
-diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.c
-index f14bda375e353e6a..ccd9d7c0b18098a5 100644
---- a/drivers/clk/xilinx/xlnx_vcu.c
-+++ b/drivers/clk/xilinx/xlnx_vcu.c
-@@ -406,9 +406,9 @@ static struct clk_hw *xvcu_register_pll(struct device *dev,
- 					const char *name, const char *parent,
- 					unsigned long flags)
- {
-+	struct clk_init_data init = {};
- 	struct vcu_pll *pll;
+ 	struct zynqmp_pll *pll;
  	struct clk_hw *hw;
 -	struct clk_init_data init;
  	int ret;
