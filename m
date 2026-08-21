@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD42C381B04;
-	Fri, 21 Aug 2026 08:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2632441A79C;
+	Fri, 21 Aug 2026 08:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302583; cv=none; b=rXAtZkEyUSswa8QJZvByeCe1ezhNjZ3TBIth9yiq22TfrQGmyLB/AgZJMQCF/pOeXFLJTIdLk3LpjmhHaTd4bsVraCB1FvGlEbNIYdWH9V6DwAJe5iR7H58kEaiUCvIB1CTfagblGUGVsbTsc/HjAdafMvOxJekLcaLG3PxzM40=
+	t=1787302599; cv=none; b=hntl2d7D4Neuj3cj8dbsOt1SU98TUkJOM6uVp6MrVrrbiRTZXlI/Ar4QUW4uNjgvHoIdEzdC8o9XFb8oL9Iiujf8VDHYTXiR0dC0A8Y46qp31PukQbXLu3zeqqS1sCOZOeOKEnsXJuMyTURyPCPOdTev5wRGDnQRaM/UvcrtGqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302583; c=relaxed/simple;
-	bh=VJmVCbLrCbLGtojVZx4RHnDDAe7NuIL6xDGc/j5UHmQ=;
+	s=arc-20240116; t=1787302599; c=relaxed/simple;
+	bh=2csDdVgbkcL7guxCVq9zbWFLDrCoHYwPmFFdCCL2bmo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LPtTmN8VVCrHAf9iek4IYAz/jV0xrroiNsC6em8XbkpK/i/2NBdqBuQ7nzj24zQLlk/kke5AWSLQOVYYgMdSRz1UOtIPBNRhrG2p3t35PMhA45sGTCxp4JjNgqUCew0jf5Pa/OmXXblAxAn2n5W6UIUJUTOeJB60n8/Gwlqz9ZM=
+	 MIME-Version; b=mnILo73aHxsNFPzNCN5g3wRwjyyAxHo7AO2bO5GEiukTR629F4subHoLEmgia7YsMG1FQw6v7zIR7cB/D935W5yuMoShYSJqzO2rEOH3S6AknSGk5MALdcGZ6gTXI8rDy//132bwE6u0EQahAPHIEmYSuKDBECpYXD6egTSHHhM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A27A51F000E9;
-	Fri, 21 Aug 2026 08:56:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C82CD1F00A3A;
+	Fri, 21 Aug 2026 08:56:22 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 08/45] clk: davinci: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:18 +0200
-Message-ID: <f3b503ff3fda049988c3e16071bbbfabf1b04629.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 09/45] clk: fractional-divider: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:19 +0200
+Message-ID: <fe73cc048970c7a4f2cdf199e17915b8d359f703.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,59 +122,22 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/davinci/da8xx-cfgchip.c | 4 ++--
- drivers/clk/davinci/pll.c           | 2 +-
- drivers/clk/davinci/psc.c           | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/clk-fractional-divider.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
-index a5109fe8b16e9b40..9d7fced898ae07fc 100644
---- a/drivers/clk/davinci/da8xx-cfgchip.c
-+++ b/drivers/clk/davinci/da8xx-cfgchip.c
-@@ -91,7 +91,7 @@ da8xx_cfgchip_gate_clk_register(struct device *dev,
- 	struct clk *parent;
- 	const char *parent_name;
- 	struct da8xx_cfgchip_gate_clk *gate;
+diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+index 1c5fdcb68a5048e3..c8e00d75cd14d8f1 100644
+--- a/drivers/clk/clk-fractional-divider.c
++++ b/drivers/clk/clk-fractional-divider.c
+@@ -271,7 +271,7 @@ struct clk_hw *clk_hw_register_fractional_divider(struct device *dev,
+ 		u8 clk_divider_flags, spinlock_t *lock)
+ {
+ 	struct clk_fractional_divider *fd;
 -	struct clk_init_data init;
 +	struct clk_init_data init = {};
+ 	struct clk_hw *hw;
  	int ret;
  
- 	parent = devm_clk_get(dev, NULL);
-@@ -241,7 +241,7 @@ da8xx_cfgchip_mux_clk_register(struct device *dev,
- {
- 	const char * const parent_names[] = { info->parent0, info->parent1 };
- 	struct da8xx_cfgchip_mux_clk *mux;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	int ret;
- 
- 	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
-diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-index f73b0ac5d8a08bf1..0e58b02d7acaf175 100644
---- a/drivers/clk/davinci/pll.c
-+++ b/drivers/clk/davinci/pll.c
-@@ -371,7 +371,7 @@ struct clk *davinci_pll_clk_register(struct device *dev,
- 	char pllout_name[MAX_NAME_SIZE];
- 	char postdiv_name[MAX_NAME_SIZE];
- 	char pllen_name[MAX_NAME_SIZE];
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	struct davinci_pll_clk *pllout;
- 	struct davinci_pllen_clk *pllen;
- 	struct clk *oscin_clk = NULL;
-diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
-index ff603520d56f94d6..73dce7ce2be6cc88 100644
---- a/drivers/clk/davinci/psc.c
-+++ b/drivers/clk/davinci/psc.c
-@@ -234,7 +234,7 @@ davinci_lpsc_clk_register(struct device *dev, const char *name,
- 			  const char *parent_name, struct regmap *regmap,
- 			  u32 md, u32 pd, u32 flags)
- {
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	struct davinci_lpsc_clk *lpsc;
- 	int ret;
- 	bool is_on;
 -- 
 2.43.0
 
