@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BC84657FD;
-	Fri, 21 Aug 2026 09:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42B0459AD2;
+	Fri, 21 Aug 2026 09:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787303132; cv=none; b=AA6l7yTcMYJJehiELHcGnKC/kmR8UI5/uF4s3kThPIxgCrrTvyrgP0fMZINDbTzoecPi45o4aSIMm8i0SjVXdGKa5tMKM1HEwPpHc+bIzqIP07iS+L3zIdSrprUY0M+EtzkEM8699on8wbo3k77cqzawfkmmP3dCjQTA9G94pG4=
+	t=1787303141; cv=none; b=mfq0Va92wdnKCM3hdNpwRJLGQ6SPi7ZgoS0DOJihv6RPNkA4Up3lPaEGNwBIuKoGTSva5jLjQV87ckBuI6+HSb0+7bbqpZNvytwJ1TtRlcbvP31KRPNbk7r9FHRQkkS2RZ+zqRwvXcigGF3zybb4mcdhBaXnowdq7yRuSKAKLU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787303132; c=relaxed/simple;
-	bh=ZP4TCSgQ928K3ru+J0R6/VrN2bom1Qw+9UEerC2IGzM=;
+	s=arc-20240116; t=1787303141; c=relaxed/simple;
+	bh=+BVlAa7MYb3cmX6bSuuUtFgSVUtNtjAdNHxnMN1FfW8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R6u1j/An5g679AE+NdvL1lpE30idyLLq210GKeFEU0g0omMJ49gVQL3BVrGwK42nT0qQUGTmAC+nQbsUx+jNS+4WpjOIzztN5849GvPmT1XW/PLG+LsSCXcbqZz7QdiaWGiqAB1wumISvdc/iC5V9AWdrmzoCq9MshPrNSl1m40=
+	 MIME-Version; b=YqDV7k/H75Blhmg4jG0ma+4DVM+YpuxronVsUOqJ0Gb3UJOEGjGIUpT4uoYmhTvvSTDcDozqZiCMpraTIBVcd+OHBBgQymmPeY66OyvtKgYzcm1fxAeRk5SsTWogSOtpjwvjamPVXtlRAPrtIYx0c3sl+UaXxSu9sDUvrApEynU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 329421F00A3A;
-	Fri, 21 Aug 2026 09:05:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 437761F00A3E;
+	Fri, 21 Aug 2026 09:05:15 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 43/45] clk: xgene: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:53 +0200
-Message-ID: <21374aa8a23b8a72746030eda9e67f6ca3dc37e3.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 44/45] clk: xilinx: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:54 +0200
+Message-ID: <cf858f84a9d517745fb53981f02f9c3dcd65a14f.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,45 +122,62 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/clk-xgene.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 6 +++---
+ drivers/clk/xilinx/xlnx_vcu.c              | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
-index c9e371fce0939771..5cf015da49ad336e 100644
---- a/drivers/clk/clk-xgene.c
-+++ b/drivers/clk/clk-xgene.c
-@@ -126,9 +126,9 @@ static struct clk *xgene_register_clk_pll(struct device *dev,
- 	unsigned long flags, void __iomem *reg, u32 pll_offset,
- 	u32 type, spinlock_t *lock, int version)
+diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+index edf8c0eaca27cab4..4e5b9cb3754b9a18 100644
+--- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
++++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+@@ -936,9 +936,9 @@ static struct clk_hw *clk_wzrd_register_divf(struct device *dev,
+ 					  u32 div_type,
+ 					  spinlock_t *lock)
  {
 +	struct clk_init_data init = {};
- 	struct xgene_clk_pll *apmclk;
- 	struct clk *clk;
+ 	struct clk_wzrd_divider *div;
+ 	struct clk_hw *hw;
 -	struct clk_init_data init;
+ 	int ret;
  
- 	/* allocate the APM clock structure */
- 	apmclk = kzalloc_obj(*apmclk);
-@@ -351,8 +351,8 @@ xgene_register_clk_pmd(struct device *dev,
- 		       unsigned long flags, void __iomem *reg, u8 shift,
- 		       u8 width, u64 denom, u32 clk_flags, spinlock_t *lock)
+ 	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
+@@ -980,9 +980,9 @@ static struct clk_hw *clk_wzrd_ver_register_divider(struct device *dev,
+ 						 u32 div_type,
+ 						 spinlock_t *lock)
  {
 +	struct clk_init_data init = {};
- 	struct xgene_clk_pmd *fd;
+ 	struct clk_wzrd_divider *div;
+ 	struct clk_hw *hw;
 -	struct clk_init_data init;
- 	struct clk *clk;
+ 	int ret;
  
- 	fd = kzalloc_obj(*fd);
-@@ -635,9 +635,9 @@ static struct clk *xgene_register_clk(struct device *dev,
- 		const char *name, const char *parent_name,
- 		struct xgene_dev_parameters *parameters, spinlock_t *lock)
+ 	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
+@@ -1026,9 +1026,9 @@ static struct clk_hw *clk_wzrd_register_divider(struct device *dev,
+ 					     u32 div_type,
+ 					     spinlock_t *lock)
  {
 +	struct clk_init_data init = {};
- 	struct xgene_clk *apmclk;
- 	struct clk *clk;
+ 	struct clk_wzrd_divider *div;
+ 	struct clk_hw *hw;
 -	struct clk_init_data init;
- 	int rc;
+ 	int ret;
  
- 	/* allocate the APM clock structure */
+ 	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
+diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.c
+index f14bda375e353e6a..ccd9d7c0b18098a5 100644
+--- a/drivers/clk/xilinx/xlnx_vcu.c
++++ b/drivers/clk/xilinx/xlnx_vcu.c
+@@ -406,9 +406,9 @@ static struct clk_hw *xvcu_register_pll(struct device *dev,
+ 					const char *name, const char *parent,
+ 					unsigned long flags)
+ {
++	struct clk_init_data init = {};
+ 	struct vcu_pll *pll;
+ 	struct clk_hw *hw;
+-	struct clk_init_data init;
+ 	int ret;
+ 
+ 	init.name = name;
 -- 
 2.43.0
 
