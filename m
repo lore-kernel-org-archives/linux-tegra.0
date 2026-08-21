@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19D345DF63;
-	Fri, 21 Aug 2026 09:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CA4463B9B;
+	Fri, 21 Aug 2026 09:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302976; cv=none; b=EERUYRsROK2Te0l+jeFhSMTFUJAMJayJaaq+BJl4RhjWUItBxTy3+hyBS/RO580bzYChFV60QHWn5m+U9o1aj5I0iTVNOSzrN6ZVqSMSu7szNXKmz4j9bmT8YFkgWPBbvT6k7TD5LYl0XLHiRS5DI5NWw6XqRIyGOejRUqnzA+Y=
+	t=1787302993; cv=none; b=tyAP5zC+eHvxg5PtzU097dGGJVu+1HV8uZlfQHRsj5/VCa1Yk4M3XRIat/6mUR9Q92Bvu1C+qJ9Rz5XaiFC7d0u+Yjnzfu69XMgNPI+dv47KlzUoeRgk+ylWTucxvimlV2xcJ8moMbi/0ap8hKuRUmmBXNX2y+Or75ASEbjXFwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302976; c=relaxed/simple;
-	bh=e8nmsrssTmgcynkXGCECoG7QDiVQtQXefCNp17PUXqk=;
+	s=arc-20240116; t=1787302993; c=relaxed/simple;
+	bh=mLbk04OOUSdhbn3cldyFZMOjrCYpSUaMt+74F7OTuxE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mnyRM0/abUwy7mF80dhQj/HxjR6HknSjbEl3ub3NN+PI/NDoQY/UQh/cAaiyGNU7IST4cPV0WXv14FSeH8LrFK5LeahhoWlo/kvaDB+K60FzJdS5B0cOxhqNlLKdtzGpntbN+O4sj1W/G34af5jBBRvZYpNZEpd4jA1R/G+xMHc=
+	 MIME-Version; b=lanKQzT+IkLjIeXE4tGxQ/WaWDE38TS7RgCHw0hSTyDdAobOkR7UHQrbyyAeJP+NHn+lQUw12nIbEzLHRrnDoVuxNG0MV/mSomJl+A+xdzwgcTTme3z+VHhtgrSJaQ2eWOPhVRZBeAvZaAoikic8ERJmP3rTR9nxhbOr3S/8jWk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BCB11F00A3D;
-	Fri, 21 Aug 2026 09:02:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 856551F000E9;
+	Fri, 21 Aug 2026 09:02:44 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 33/45] clk: spear: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:43 +0200
-Message-ID: <d4500d249021013d52aa87407f875dc203a251df.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 34/45] clk: stm32: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:44 +0200
+Message-ID: <0b80535e9cfdc96d43169e5023e3a92a8f2252d6.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,65 +122,73 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/spear/clk-aux-synth.c  | 2 +-
- drivers/clk/spear/clk-frac-synth.c | 2 +-
- drivers/clk/spear/clk-gpt-synth.c  | 2 +-
- drivers/clk/spear/clk-vco-pll.c    | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/clk-stm32f4.c        | 4 ++--
+ drivers/clk/clk-stm32h7.c        | 2 +-
+ drivers/clk/stm32/clk-stm32mp1.c | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/spear/clk-aux-synth.c b/drivers/clk/spear/clk-aux-synth.c
-index 61a8c3d4c1e40d0c..85cfb9b5ec35346c 100644
---- a/drivers/clk/spear/clk-aux-synth.c
-+++ b/drivers/clk/spear/clk-aux-synth.c
-@@ -138,8 +138,8 @@ struct clk *clk_register_aux(const char *aux_name, const char *gate_name,
- 	        const struct aux_clk_masks *masks, struct aux_rate_tbl *rtbl,
- 		u8 rtbl_cnt, spinlock_t *lock, struct clk **gate_clk)
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 565b4d99bebb06e8..6603d4815514151a 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -485,8 +485,8 @@ static struct clk *clk_register_apb_mul(struct device *dev, const char *name,
+ 					const char *parent_name,
+ 					unsigned long flags, u8 bit_idx)
  {
 +	struct clk_init_data init = {};
- 	struct clk_aux *aux;
+ 	struct clk_apb_mul *am;
 -	struct clk_init_data init;
  	struct clk *clk;
  
- 	if (!aux_name || !parent_name || !reg || !rtbl || !rtbl_cnt) {
-diff --git a/drivers/clk/spear/clk-frac-synth.c b/drivers/clk/spear/clk-frac-synth.c
-index 3549f1cfdae1160f..1b5e184d9668fd51 100644
---- a/drivers/clk/spear/clk-frac-synth.c
-+++ b/drivers/clk/spear/clk-frac-synth.c
-@@ -125,7 +125,7 @@ struct clk *clk_register_frac(const char *name, const char *parent_name,
- 		unsigned long flags, void __iomem *reg,
- 		struct frac_rate_tbl *rtbl, u8 rtbl_cnt, spinlock_t *lock)
+ 	am = kzalloc_obj(*am);
+@@ -810,8 +810,8 @@ static struct clk_hw *clk_register_pll_div(const char *name,
+ 		struct clk_hw *pll_hw, spinlock_t *lock)
  {
--	struct clk_init_data init;
+ 	struct stm32f4_pll_div *pll_div;
 +	struct clk_init_data init = {};
- 	struct clk_frac *frac;
- 	struct clk *clk;
+ 	struct clk_hw *hw;
+-	struct clk_init_data init;
+ 	int ret;
  
-diff --git a/drivers/clk/spear/clk-gpt-synth.c b/drivers/clk/spear/clk-gpt-synth.c
-index 1a431d7ec20c0ff3..411cacdfc11f51b1 100644
---- a/drivers/clk/spear/clk-gpt-synth.c
-+++ b/drivers/clk/spear/clk-gpt-synth.c
-@@ -114,7 +114,7 @@ struct clk *clk_register_gpt(const char *name, const char *parent_name, unsigned
- 		long flags, void __iomem *reg, struct gpt_rate_tbl *rtbl, u8
- 		rtbl_cnt, spinlock_t *lock)
+ 	/* allocate the divider */
+diff --git a/drivers/clk/clk-stm32h7.c b/drivers/clk/clk-stm32h7.c
+index 82e0789cf189c7cb..c6afa9b202351c04 100644
+--- a/drivers/clk/clk-stm32h7.c
++++ b/drivers/clk/clk-stm32h7.c
+@@ -462,8 +462,8 @@ static struct clk_hw *clk_register_stm32_timer_ker(struct device *dev,
+ 		u8 dppre_shift,
+ 		spinlock_t *lock)
  {
--	struct clk_init_data init;
 +	struct clk_init_data init = {};
- 	struct clk_gpt *gpt;
- 	struct clk *clk;
+ 	struct timer_ker *element;
+-	struct clk_init_data init;
+ 	struct clk_hw *hw;
+ 	int err;
  
-diff --git a/drivers/clk/spear/clk-vco-pll.c b/drivers/clk/spear/clk-vco-pll.c
-index faba727e2f84365e..21fcc522c738e6b2 100644
---- a/drivers/clk/spear/clk-vco-pll.c
-+++ b/drivers/clk/spear/clk-vco-pll.c
-@@ -284,7 +284,7 @@ struct clk *clk_register_vco_pll(const char *vco_name, const char *pll_name,
- 	struct clk_vco *vco;
- 	struct clk_pll *pll;
- 	struct clk *vco_clk, *tpll_clk, *tvco_gate_clk;
--	struct clk_init_data vco_init, pll_init;
-+	struct clk_init_data vco_init = {}, pll_init = {};
- 	const char **vco_parent_name;
+diff --git a/drivers/clk/stm32/clk-stm32mp1.c b/drivers/clk/stm32/clk-stm32mp1.c
+index 2d9ccd96ec98c05e..b265e3f3e94c2805 100644
+--- a/drivers/clk/stm32/clk-stm32mp1.c
++++ b/drivers/clk/stm32/clk-stm32mp1.c
+@@ -902,8 +902,8 @@ static struct clk_hw *clk_register_pll(struct device *dev, const char *name,
+ 				       unsigned long flags,
+ 				       spinlock_t *lock)
+ {
++	struct clk_init_data init = {};
+ 	struct stm32_pll_obj *element;
+-	struct clk_init_data init;
+ 	struct clk_hw *hw;
+ 	int err;
  
- 	if (!vco_name || !pll_name || !parent_name || !mode_reg || !cfg_reg ||
+@@ -1041,8 +1041,8 @@ static struct clk_hw *clk_register_cktim(struct device *dev, const char *name,
+ 					 void __iomem *timpre,
+ 					 spinlock_t *lock)
+ {
++	struct clk_init_data init = {};
+ 	struct timer_cker *tim_ker;
+-	struct clk_init_data init;
+ 	struct clk_hw *hw;
+ 	int err;
+ 
 -- 
 2.43.0
 
