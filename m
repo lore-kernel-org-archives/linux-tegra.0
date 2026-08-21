@@ -1,18 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8736E3E0724;
-	Fri, 21 Aug 2026 08:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033533AE6F5;
+	Fri, 21 Aug 2026 08:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302462; cv=none; b=E089V1MO9gZvWmGt9YGySfKLB4HsoA10lM48EgNbyqCzxQgvvIno1RQ0Spkoc5opJiLKbQQppj6aB39rt97AkjxxYyh/5+g2qzWSX/6ISC3KEKGso+g4uyb9V+Z1/J7L2ZMVFnJgz7kpKXNRae6PvKNj+zAgaXZCajURPfMoDsc=
+	t=1787302477; cv=none; b=GbeKFWvtTSO29VpACxGiHQO7oqO7SbXfYDIUaUnjiPT3jW6Vu95Hsi/LK4em/bRwMRGeAfyONojEgv+bNzOejEaSC1cJYQyvu+xkfQ6KSGIUJ/DPJWYWL/Dv8xGEneyhOk6RzeiyPIOHrAwFq9BEk6PPwZAjkMNHbLaoHzxN48E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302462; c=relaxed/simple;
-	bh=2pefhuoIqJxXaZ7fTyEPbvlwMrq359+zXI0HqxWbo/c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j6t82dcPSPWGQ3LTA+9SbjZBYYd+ARHi59Ih4+XllgBIzUy53gxwudwvxIqg8S/7FJ1de8luiUk75N+8vwKWh8DRF4GBVBXmXPV8CMuUOwjUOyhkgUajAsc2Jqy5AIjAXPudOtYeP4Nt8ywmyXHMu9Oc6D+CO8oLHwdO+X7TsWo=
+	s=arc-20240116; t=1787302477; c=relaxed/simple;
+	bh=uv9NAhUELaCrHm4TyUUfw9jLoYul/ZrMHyB98EttRFs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QskDLW6hED7VK4zEpZyNiz2jHpQRAizkAK93FhrNu66htfVJ33ly4sgJzLcr75TLX9ynm0ypPgQFex5h8LA30qga8fML4r6wdXrjIdexnDcDzHLZ2sbdOQvt1h5EXCwi+P8gdAgCUTSTqHCHbfkiuU8W6xS03X0JKEicwfLEnEU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1626D1F000E9;
-	Fri, 21 Aug 2026 08:54:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A57EA1F00A3A;
+	Fri, 21 Aug 2026 08:54:20 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -92,10 +93,12 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 00/45] clk: Make sure clk_init_data is fully initialized (part two)
-Date: Fri, 21 Aug 2026 10:53:10 +0200
-Message-ID: <cover.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 01/45] clk: aspeed: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:11 +0200
+Message-ID: <029b50dbb60753ef1e27045fc379802930c4085e.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
+References: <cover.1787239813.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -104,8 +107,6 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi all,
-
 The clk_init_data structure contains several mutually-exclusive members
 for different methods to specify the possible parents of a clock,
 prompting drivers to initialize only the members they need.  However,
@@ -113,231 +114,60 @@ not initializing all members may cause subtle issues, which are only
 exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
 enabled.
 
-Hence this series aims to make sure all members are fully initialized,
-to avoid such bugs, and to prevent future breakage when converting
-drivers to a different method for specifying the parents.
+Make sure all members are fully initialized, to avoid such bugs, and to
+prevent future breakage when converting drivers to a different method
+for specifying the parents.
 
-Part One[1] fixed all cases that I identified to be real bugs, in
-response to a crash I saw on BeagleBone Black.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Compile-tested only.
+---
+ drivers/clk/aspeed/clk-aspeed.c  | 2 +-
+ drivers/clk/aspeed/clk-ast2600.c | 2 +-
+ drivers/clk/aspeed/clk-ast2700.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-This series is the clock subpart of Part Two, which fixes remaining
-cases that are currently harmless.  These are still fragile, and may
-cause future breakage when converting drivers to a different method for
-specifying the parents.
-
-Thanks for your comments!
-
-[1] "[PATCH treewide 0/5] clk: Make sure clk_init_data is fully
-     initialized (part 1)"
-    https://lore.kernel.org/cover.1787165329.git.geert+renesas@glider.be
-
-Geert Uytterhoeven (45):
-  clk: aspeed: Make sure clk_init_data is fully initialized
-  clk: at91: Make sure clk_init_data is fully initialized
-  clk: bcm: iproc: Make sure clk_init_data is fully initialized
-  clk: berlin: Make sure clk_init_data is fully initialized
-  clk: cdce925: Make sure clk_init_data is fully initialized
-  clk: clk-axi-clkgen: Make sure clk_init_data is fully initialized
-  clk: cs2000-cp: Make sure clk_init_data is fully initialized
-  clk: davinci: Make sure clk_init_data is fully initialized
-  clk: fractional-divider: Make sure clk_init_data is fully initialized
-  clk: gemini: Make sure clk_init_data is fully initialized
-  clk: highbank: Make sure clk_init_data is fully initialized
-  clk: hisilicon: Make sure clk_init_data is fully initialized
-  clk: imx: Make sure clk_init_data is fully initialized
-  clk: ingenic: Make sure clk_init_data is fully initialized
-  clk: keystone: Make sure clk_init_data is fully initialized
-  clk: lmk04832: Make sure clk_init_data is fully initialized
-  clk: mediatek: Make sure clk_init_data is fully initialized
-  clk: milbeaut: Make sure clk_init_data is fully initialized
-  clk: mmp: Make sure clk_init_data is fully initialized
-  clk: mvebu: Make sure clk_init_data is fully initialized
-  clk: mxs: Make sure clk_init_data is fully initialized
-  clk: nomadik: Make sure clk_init_data is fully initialized
-  clk: npcm7xx: Make sure clk_init_data is fully initialized
-  clk: nxp: Make sure clk_init_data is fully initialized
-  clk: pistachio: Make sure clk_init_data is fully initialized
-  clk: pwm: Make sure clk_init_data is fully initialized
-  clk: renesas: Make sure clk_init_data is fully initialized
-  clk: rockchip: Make sure clk_init_data is fully initialized
-  clk: samsung: Make sure clk_init_data is fully initialized
-  clk: scpi: Make sure clk_init_data is fully initialized
-  clk: silabs: Make sure clk_init_data is fully initialized
-  clk: socfpga: Make sure clk_init_data is fully initialized
-  clk: spear: Make sure clk_init_data is fully initialized
-  clk: stm32: Make sure clk_init_data is fully initialized
-  clk: st: Make sure clk_init_data is fully initialized
-  clk: sunxi: Make sure clk_init_data is fully initialized
-  clk: tegra: Make sure clk_init_data is fully initialized
-  clk: uniphier: Make sure clk_init_data is fully initialized
-  clk: ux500: Make sure clk_init_data is fully initialized
-  clk: versatile: Make sure clk_init_data is fully initialized
-  clk: vt8500: Make sure clk_init_data is fully initialized
-  clk: x86: Make sure clk_init_data is fully initialized
-  clk: xgene: Make sure clk_init_data is fully initialized
-  clk: xilinx: Make sure clk_init_data is fully initialized
-  clk: zynqmp: Make sure clk_init_data is fully initialized
-
- drivers/clk/aspeed/clk-aspeed.c                |  2 +-
- drivers/clk/aspeed/clk-ast2600.c               |  2 +-
- drivers/clk/aspeed/clk-ast2700.c               |  2 +-
- drivers/clk/at91/clk-audio-pll.c               |  4 ++--
- drivers/clk/at91/clk-h32mx.c                   |  2 +-
- drivers/clk/at91/clk-main.c                    |  2 +-
- drivers/clk/at91/clk-pll.c                     |  2 +-
- drivers/clk/at91/clk-plldiv.c                  |  2 +-
- drivers/clk/at91/clk-slow.c                    |  2 +-
- drivers/clk/at91/clk-smd.c                     |  2 +-
- drivers/clk/at91/clk-usb.c                     |  6 +++---
- drivers/clk/at91/sckc.c                        |  2 +-
- drivers/clk/bcm/clk-iproc-armpll.c             |  2 +-
- drivers/clk/bcm/clk-iproc-asiu.c               |  2 +-
- drivers/clk/bcm/clk-iproc-pll.c                |  2 +-
- drivers/clk/berlin/berlin2-avpll.c             |  4 ++--
- drivers/clk/berlin/berlin2-pll.c               |  2 +-
- drivers/clk/clk-axi-clkgen.c                   |  2 +-
- drivers/clk/clk-cdce925.c                      |  2 +-
- drivers/clk/clk-cs2000-cp.c                    |  2 +-
- drivers/clk/clk-fractional-divider.c           |  2 +-
- drivers/clk/clk-gemini.c                       |  2 +-
- drivers/clk/clk-highbank.c                     |  2 +-
- drivers/clk/clk-lmk04832.c                     |  6 +++---
- drivers/clk/clk-milbeaut.c                     |  4 ++--
- drivers/clk/clk-nomadik.c                      |  4 ++--
- drivers/clk/clk-npcm7xx.c                      |  2 +-
- drivers/clk/clk-pwm.c                          |  2 +-
- drivers/clk/clk-scpi.c                         |  2 +-
- drivers/clk/clk-si514.c                        |  2 +-
- drivers/clk/clk-si5341.c                       |  2 +-
- drivers/clk/clk-si544.c                        |  2 +-
- drivers/clk/clk-si570.c                        |  2 +-
- drivers/clk/clk-stm32f4.c                      |  4 ++--
- drivers/clk/clk-stm32h7.c                      |  2 +-
- drivers/clk/clk-vt8500.c                       |  4 ++--
- drivers/clk/clk-xgene.c                        |  6 +++---
- drivers/clk/davinci/da8xx-cfgchip.c            |  4 ++--
- drivers/clk/davinci/pll.c                      |  2 +-
- drivers/clk/davinci/psc.c                      |  2 +-
- drivers/clk/hisilicon/clk-hi3559a.c            |  2 +-
- drivers/clk/hisilicon/clk-hi3620.c             |  2 +-
- drivers/clk/hisilicon/clk-hi6220-stub.c        |  2 +-
- drivers/clk/hisilicon/clk-hisi-phase.c         |  2 +-
- drivers/clk/hisilicon/clk-hix5hd2.c            |  2 +-
- drivers/clk/hisilicon/clkdivider-hi6220.c      |  2 +-
- drivers/clk/hisilicon/clkgate-separated.c      |  2 +-
- drivers/clk/imx/clk-busy.c                     |  4 ++--
- drivers/clk/imx/clk-cpu.c                      |  2 +-
- drivers/clk/imx/clk-divider-gate.c             |  2 +-
- drivers/clk/imx/clk-fixup-div.c                |  2 +-
- drivers/clk/imx/clk-fixup-mux.c                |  2 +-
- drivers/clk/imx/clk-frac-pll.c                 |  2 +-
- drivers/clk/imx/clk-fracn-gppll.c              |  2 +-
- drivers/clk/imx/clk-gate-93.c                  |  2 +-
- drivers/clk/imx/clk-gate-exclusive.c           |  2 +-
- drivers/clk/imx/clk-gate2.c                    |  2 +-
- drivers/clk/imx/clk-lpcg-scu.c                 |  2 +-
- drivers/clk/imx/clk-pfd.c                      |  2 +-
- drivers/clk/imx/clk-pfdv2.c                    |  2 +-
- drivers/clk/imx/clk-pll14xx.c                  |  2 +-
- drivers/clk/imx/clk-pllv1.c                    |  2 +-
- drivers/clk/imx/clk-pllv2.c                    |  2 +-
- drivers/clk/imx/clk-pllv3.c                    |  2 +-
- drivers/clk/imx/clk-pllv4.c                    |  2 +-
- drivers/clk/imx/clk-scu.c                      |  4 ++--
- drivers/clk/imx/clk-sscg-pll.c                 |  2 +-
- drivers/clk/ingenic/cgu.c                      |  2 +-
- drivers/clk/keystone/gate.c                    |  2 +-
- drivers/clk/keystone/pll.c                     |  2 +-
- drivers/clk/keystone/syscon-clk.c              |  2 +-
- drivers/clk/mediatek/clk-cpumux.c              |  2 +-
- drivers/clk/mmp/clk-apbc.c                     |  2 +-
- drivers/clk/mmp/clk-apmu.c                     |  2 +-
- drivers/clk/mmp/clk-frac.c                     |  2 +-
- drivers/clk/mmp/clk-gate.c                     |  2 +-
- drivers/clk/mmp/clk-mix.c                      |  2 +-
- drivers/clk/mmp/clk-pll.c                      |  2 +-
- drivers/clk/mvebu/ap-cpu-clk.c                 |  2 +-
- drivers/clk/mvebu/clk-corediv.c                |  2 +-
- drivers/clk/mvebu/clk-cpu.c                    |  2 +-
- drivers/clk/mxs/clk-div.c                      |  2 +-
- drivers/clk/mxs/clk-frac.c                     |  2 +-
- drivers/clk/mxs/clk-pll.c                      |  2 +-
- drivers/clk/mxs/clk-ref.c                      |  2 +-
- drivers/clk/nxp/clk-lpc18xx-creg.c             |  2 +-
- drivers/clk/pistachio/clk-pll.c                |  2 +-
- drivers/clk/renesas/rzg2l-cpg.c                | 18 +++++++++---------
- drivers/clk/renesas/rzv2h-cpg.c                |  8 ++++----
- drivers/clk/rockchip/clk-cpu.c                 |  2 +-
- drivers/clk/rockchip/clk-ddr.c                 |  2 +-
- drivers/clk/rockchip/clk-gate-grf.c            |  2 +-
- drivers/clk/rockchip/clk-inverter.c            |  2 +-
- drivers/clk/rockchip/clk-mmc-phase.c           |  2 +-
- drivers/clk/rockchip/clk-muxgrf.c              |  2 +-
- drivers/clk/rockchip/clk-pll.c                 |  2 +-
- drivers/clk/rockchip/clk.c                     |  2 +-
- drivers/clk/samsung/clk-cpu.c                  |  2 +-
- drivers/clk/samsung/clk-pll.c                  |  2 +-
- drivers/clk/socfpga/clk-gate-a10.c             |  2 +-
- drivers/clk/socfpga/clk-gate-s10.c             |  6 +++---
- drivers/clk/socfpga/clk-gate.c                 |  2 +-
- drivers/clk/socfpga/clk-periph-a10.c           |  2 +-
- drivers/clk/socfpga/clk-periph-s10.c           |  8 ++++----
- drivers/clk/socfpga/clk-periph.c               |  2 +-
- drivers/clk/socfpga/clk-pll-a10.c              |  2 +-
- drivers/clk/socfpga/clk-pll-s10.c              |  8 ++++----
- drivers/clk/socfpga/clk-pll.c                  |  2 +-
- drivers/clk/spear/clk-aux-synth.c              |  2 +-
- drivers/clk/spear/clk-frac-synth.c             |  2 +-
- drivers/clk/spear/clk-gpt-synth.c              |  2 +-
- drivers/clk/spear/clk-vco-pll.c                |  2 +-
- drivers/clk/st/clk-flexgen.c                   |  2 +-
- drivers/clk/st/clkgen-fsyn.c                   |  4 ++--
- drivers/clk/st/clkgen-pll.c                    |  2 +-
- drivers/clk/stm32/clk-stm32mp1.c               |  4 ++--
- drivers/clk/sunxi/clk-sun4i-tcon-ch1.c         |  2 +-
- drivers/clk/tegra/clk-audio-sync.c             |  2 +-
- drivers/clk/tegra/clk-divider.c                |  2 +-
- drivers/clk/tegra/clk-periph-fixed.c           |  2 +-
- drivers/clk/tegra/clk-periph-gate.c            |  2 +-
- drivers/clk/tegra/clk-periph.c                 |  2 +-
- drivers/clk/tegra/clk-pll-out.c                |  2 +-
- drivers/clk/tegra/clk-pll.c                    |  2 +-
- drivers/clk/tegra/clk-sdmmc-mux.c              |  2 +-
- drivers/clk/tegra/clk-super.c                  |  4 ++--
- drivers/clk/tegra/clk-tegra-super-cclk.c       |  2 +-
- drivers/clk/tegra/clk-tegra124-emc.c           |  2 +-
- drivers/clk/tegra/clk-tegra20-emc.c            |  2 +-
- drivers/clk/tegra/clk-tegra210-emc.c           |  2 +-
- drivers/clk/uniphier/clk-uniphier-cpugear.c    |  2 +-
- .../clk/uniphier/clk-uniphier-fixed-factor.c   |  2 +-
- drivers/clk/uniphier/clk-uniphier-fixed-rate.c |  2 +-
- drivers/clk/uniphier/clk-uniphier-gate.c       |  2 +-
- drivers/clk/uniphier/clk-uniphier-mux.c        |  2 +-
- drivers/clk/ux500/clk-prcc.c                   |  2 +-
- drivers/clk/ux500/clk-prcmu.c                  |  4 ++--
- drivers/clk/ux500/clk-sysctrl.c                |  2 +-
- drivers/clk/versatile/clk-icst.c               |  2 +-
- drivers/clk/versatile/clk-sp810.c              |  2 +-
- drivers/clk/versatile/clk-vexpress-osc.c       |  2 +-
- drivers/clk/x86/clk-pmc-atom.c                 |  2 +-
- drivers/clk/xilinx/clk-xlnx-clock-wizard.c     |  6 +++---
- drivers/clk/xilinx/xlnx_vcu.c                  |  2 +-
- drivers/clk/zynqmp/clk-gate-zynqmp.c           |  2 +-
- drivers/clk/zynqmp/clk-mux-zynqmp.c            |  2 +-
- drivers/clk/zynqmp/divider.c                   |  2 +-
- drivers/clk/zynqmp/pll.c                       |  2 +-
- 148 files changed, 188 insertions(+), 188 deletions(-)
-
+diff --git a/drivers/clk/aspeed/clk-aspeed.c b/drivers/clk/aspeed/clk-aspeed.c
+index 38a5766a435ca27f..d32a3e9f300a2d74 100644
+--- a/drivers/clk/aspeed/clk-aspeed.c
++++ b/drivers/clk/aspeed/clk-aspeed.c
+@@ -349,8 +349,8 @@ static struct clk_hw *aspeed_clk_hw_register_gate(struct device *dev,
+ 		struct regmap *map, u8 clock_idx, u8 reset_idx,
+ 		u8 clk_gate_flags, spinlock_t *lock)
+ {
++	struct clk_init_data init = {};
+ 	struct aspeed_clk_gate *gate;
+-	struct clk_init_data init;
+ 	struct clk_hw *hw;
+ 	int ret;
+ 
+diff --git a/drivers/clk/aspeed/clk-ast2600.c b/drivers/clk/aspeed/clk-ast2600.c
+index 70061c961b69eccc..cc3d26602b16eba7 100644
+--- a/drivers/clk/aspeed/clk-ast2600.c
++++ b/drivers/clk/aspeed/clk-ast2600.c
+@@ -425,8 +425,8 @@ static struct clk_hw *aspeed_g6_clk_hw_register_gate(struct device *dev,
+ 		struct regmap *map, u8 clock_idx, u8 reset_idx,
+ 		u8 clk_gate_flags, spinlock_t *lock)
+ {
++	struct clk_init_data init = {};
+ 	struct aspeed_clk_gate *gate;
+-	struct clk_init_data init;
+ 	struct clk_hw *hw;
+ 	int ret;
+ 
+diff --git a/drivers/clk/aspeed/clk-ast2700.c b/drivers/clk/aspeed/clk-ast2700.c
+index 536600fcd0244e59..495b7fa3395b2106 100644
+--- a/drivers/clk/aspeed/clk-ast2700.c
++++ b/drivers/clk/aspeed/clk-ast2700.c
+@@ -824,7 +824,7 @@ static struct clk_hw *ast2700_clk_hw_register_gate(struct device *dev, const cha
+ 						   void __iomem *reg, u8 clock_idx,
+ 						   unsigned long flags, spinlock_t *lock)
+ {
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	struct clk_gate *gate;
+ 	struct clk_hw *hw;
+ 	int ret = -EINVAL;
 -- 
 2.43.0
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
