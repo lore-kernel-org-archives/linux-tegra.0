@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F4F449B01;
-	Fri, 21 Aug 2026 09:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B9746C842;
+	Fri, 21 Aug 2026 09:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302928; cv=none; b=EtfRoU5lzv/5MHBqcAmo9cElAj7XTtHvWIbrC6D5E2D833S0aYwsIa8Np4uHy3NiOHdll8qZWG+X9/8LdErdN1gFTrQR5/XJYP1tQIyk1/IUaDl8+48PrWzhr5QJCJrOMkYGTTiE9TRALX3ZpFQIIPxhIEZ8PnB/9FZKxfsAnIM=
+	t=1787302940; cv=none; b=YUwjy9oiFaIMGP15+Wo9jwBzxrs6n4evP6YIkz6YOPlfWLGcTvtdbElCwvQCbcQRGdEZjRW1fSQtcllMI5MPtpk2mAnmcmqbmSCxCrkEDq2vNIzJweJD3Mt8k41RpNCMozR3BcvfRADR57hpb22wUz6PDV4dF5bHr2pFC4okvGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302928; c=relaxed/simple;
-	bh=dxuFDqo8LWyovjMBahrAMwJROhX7NiMDa77VQUxr3+E=;
+	s=arc-20240116; t=1787302940; c=relaxed/simple;
+	bh=g4kEyAwyOc+ejoGnKieXyeSPKVMOiVbjT2Thb8eG9ms=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Tii/8Hz+yAUkmL3sY4RbP+KGDviXJBCssBlPMaV8rvFBIdYuNApVtXfIjB7R2WvzLM3/1P5Si76b+kPELg/qWkjFtVWgQEmHZtJZMb4SEDQ3RMGdVyqvPXtWuxqZSLJODCeWUE1raYTte94bqF+5kCLhE1pEhYknfCwfgeJM0R8=
+	 MIME-Version; b=FTjUYGu5YTcH+Ui/aeBbmToTZTc1vT0gjqSFrF0x/mxOT/aQ/JchY2qNE0vIwvVN/MC0uj0NUa3AMM9/Szfrv+DhcYzqiJiJWpd1LIkJh74UoUjkEulCNIBtOs57VKMqs4Dwr12A4Neuqj/t5ubgudfAiW/O5mOLH+xRbzfxCeY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55F1C1F000E9;
-	Fri, 21 Aug 2026 09:01:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FD9D1F00A3D;
+	Fri, 21 Aug 2026 09:01:59 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 30/45] clk: scpi: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:40 +0200
-Message-ID: <939f1be93abebc7967a889e9c24c34942df8229a.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 31/45] clk: silabs: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:41 +0200
+Message-ID: <acab802303e3d1516e4d5eef3a48e4fc5f134049.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,22 +122,67 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/clk-scpi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/clk-si514.c  | 2 +-
+ drivers/clk/clk-si5341.c | 2 +-
+ drivers/clk/clk-si544.c  | 2 +-
+ drivers/clk/clk-si570.c  | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk-scpi.c b/drivers/clk/clk-scpi.c
-index 2328d2abf6d88012..16796cf3c89271a9 100644
---- a/drivers/clk/clk-scpi.c
-+++ b/drivers/clk/clk-scpi.c
-@@ -128,7 +128,7 @@ static int
- scpi_clk_ops_init(struct device *dev, const struct of_device_id *match,
- 		  struct scpi_clk *sclk, const char *name)
+diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
+index c0b433ad93728343..07091b91420d16f8 100644
+--- a/drivers/clk/clk-si514.c
++++ b/drivers/clk/clk-si514.c
+@@ -337,8 +337,8 @@ static const struct regmap_config si514_regmap_config = {
+ 
+ static int si514_probe(struct i2c_client *client)
  {
++	struct clk_init_data init = {};
+ 	struct clk_si514 *data;
+-	struct clk_init_data init;
+ 	int err;
+ 
+ 	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
+diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
+index 5311c23532b44b52..88522333525b6828 100644
+--- a/drivers/clk/clk-si5341.c
++++ b/drivers/clk/clk-si5341.c
+@@ -1556,8 +1556,8 @@ static const struct attribute *si5341_attributes[] = {
+ 
+ static int si5341_probe(struct i2c_client *client)
+ {
++	struct clk_init_data init = {};
+ 	struct clk_si5341 *data;
+-	struct clk_init_data init;
+ 	struct clk *input;
+ 	const char *root_clock_name;
+ 	const char *synth_clock_names[SI5341_NUM_SYNTH] = { NULL };
+diff --git a/drivers/clk/clk-si544.c b/drivers/clk/clk-si544.c
+index 9c520128e0a2c403..3924ec3e216369ce 100644
+--- a/drivers/clk/clk-si544.c
++++ b/drivers/clk/clk-si544.c
+@@ -445,8 +445,8 @@ static const struct regmap_config si544_regmap_config = {
+ 
+ static int si544_probe(struct i2c_client *client)
+ {
++	struct clk_init_data init = {};
+ 	struct clk_si544 *data;
+-	struct clk_init_data init;
+ 	int err;
+ 
+ 	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
+diff --git a/drivers/clk/clk-si570.c b/drivers/clk/clk-si570.c
+index 3063e38c66da0e77..ac9013e7379c80ab 100644
+--- a/drivers/clk/clk-si570.c
++++ b/drivers/clk/clk-si570.c
+@@ -412,7 +412,7 @@ static const struct regmap_config si570_regmap_config = {
+ static int si570_probe(struct i2c_client *client)
+ {
+ 	struct clk_si570 *data;
 -	struct clk_init_data init;
 +	struct clk_init_data init = {};
- 	unsigned long min = 0, max = 0;
- 	int ret;
- 
+ 	u32 initial_fout, factory_fout, stability;
+ 	bool skip_recall;
+ 	int err;
 -- 
 2.43.0
 
