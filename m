@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438344519A5;
-	Fri, 21 Aug 2026 09:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C353745A294;
+	Fri, 21 Aug 2026 09:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302854; cv=none; b=TWXvcIGFJ9fEbL/zAMT4rqMOCJw2M4YcUcZQ221nTS4zSHZrVYJk3SMo9IlY5blPcrJwIxU/ydCOhioAovGnNqtDXVs8WygygcURyuTL5qJkQ1PIZ02zOUtL4y4Y1wOyB5dy1uKK0d3fTffNfk8uvawqX62lcfDPkhelfNfSLec=
+	t=1787302872; cv=none; b=dZMGl1GU7JMitQcRatmfndW53GZQ2LoblOuKv0cjzfsznMDzf0RflfaR66KKmzko10A83DLwpjczznugQxTz96+9IfxIVsAuM6nciSjRx1utNTwzZfQrpPlV+atkuDEXlYPNrtv73yZRwoqtJzXKoFGTpWNcDlnLCofbwfNca2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302854; c=relaxed/simple;
-	bh=zhRpGfP8MAXXN9DL+cpA5ZgcfIJKCeMEKWZ1ftAS8+8=;
+	s=arc-20240116; t=1787302872; c=relaxed/simple;
+	bh=+dG2KqfuOBsTH7pEbJy7MC5JsnO1rvlo9mGMb+Z33MU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YcZ0R3uPFaJZmSnNTL9pET+IwCV5xAi38M8m4BUg4PNVr/pP0dKloYwiicRv3nzGAA3NP/alWyobj4AyM6SC8fCT4nM0IGIPjIlgHVcSqis8MMyk1HyCWvfhBjNzC3rp8N05Y3fTwrhfpphx2BxR09dF1WGnMl5bmpX3l7dS8c8=
+	 MIME-Version; b=eK3AX5N2iZy1pe/DD4XnRySEXd6vu0KZZ7AZmtxaS73eNGjXmAFottq335p4DNkdqgFGcZEEa6dY/KQaf2iCpQi/vPnat74+3Gu0X11pGsVXDO1Zm3iw3tUXxSUGsrTmn3o+KevQxuSxU0Q6m9Z2DBOa9W17Lhya1IJos1Pn8Y0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBDED1F00A3E;
-	Fri, 21 Aug 2026 09:00:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C99D41F000E9;
+	Fri, 21 Aug 2026 09:00:43 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 25/45] clk: pistachio: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:35 +0200
-Message-ID: <34b65a00a6a40ddcb7a9f4d3d724e80a00ac9bd2.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 26/45] clk: pwm: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:36 +0200
+Message-ID: <f809871afb8fdee621087dc23e18539ed2839cde.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,23 +122,22 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/pistachio/clk-pll.c | 2 +-
+ drivers/clk/clk-pwm.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
-index 5b268a985a9c7d0e..ad997a777632a842 100644
---- a/drivers/clk/pistachio/clk-pll.c
-+++ b/drivers/clk/pistachio/clk-pll.c
-@@ -453,8 +453,8 @@ static struct clk *pll_register(const char *name, const char *parent_name,
- 				struct pistachio_pll_rate_table *rates,
- 				unsigned int nr_rates)
+diff --git a/drivers/clk/clk-pwm.c b/drivers/clk/clk-pwm.c
+index 4709f0338e373b57..2001c7c9367c00ec 100644
+--- a/drivers/clk/clk-pwm.c
++++ b/drivers/clk/clk-pwm.c
+@@ -95,7 +95,7 @@ static const struct clk_ops clk_pwm_ops = {
+ static int clk_pwm_probe(struct platform_device *pdev)
  {
-+	struct clk_init_data init = {};
- 	struct pistachio_clk_pll *pll;
+ 	struct device_node *node = pdev->dev.of_node;
 -	struct clk_init_data init;
- 	struct clk *clk;
- 
- 	pll = kzalloc_obj(*pll);
++	struct clk_init_data init = {};
+ 	struct clk_pwm *clk_pwm;
+ 	struct pwm_device *pwm;
+ 	struct pwm_args pargs;
 -- 
 2.43.0
 
