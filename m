@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A90945D19D;
-	Fri, 21 Aug 2026 09:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F4F449B01;
+	Fri, 21 Aug 2026 09:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302914; cv=none; b=aMr9kspVC8ebURKSKAjn4AguslwLi5o75FwWH1Xlhq9/rTtBw3dKNXxSXsAE7ugDVSS00TkxhnLsmfi5xTIuI2I1C60eMiigbCGre8M5yL9Nit6gEeIP5DQ+/CvuW3eZg03QP7CYeTGpZE43ro2KXdevb87W41S4XCG/2dT1EWk=
+	t=1787302928; cv=none; b=EtfRoU5lzv/5MHBqcAmo9cElAj7XTtHvWIbrC6D5E2D833S0aYwsIa8Np4uHy3NiOHdll8qZWG+X9/8LdErdN1gFTrQR5/XJYP1tQIyk1/IUaDl8+48PrWzhr5QJCJrOMkYGTTiE9TRALX3ZpFQIIPxhIEZ8PnB/9FZKxfsAnIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302914; c=relaxed/simple;
-	bh=wOO8va7UDd8Sja72zgmF27IXkaqc3L5HH9oNCibnsA4=;
+	s=arc-20240116; t=1787302928; c=relaxed/simple;
+	bh=dxuFDqo8LWyovjMBahrAMwJROhX7NiMDa77VQUxr3+E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YgAZIl9FBuIxQkLFwCiugpbOGT/b30IPKqd7hJ1QRk4OaPMte4t0rzweLY+aWrvvDWvutiL8KnIDvPdkQoTIS7sUUQgXx6dNpsGUUGOkoscYzrcHOGzDSS0s1cIt3bnaD2NmQyDs7Zbk5fJK1rHllBWrKKwWSlBXgwk8BgSyDGc=
+	 MIME-Version; b=Tii/8Hz+yAUkmL3sY4RbP+KGDviXJBCssBlPMaV8rvFBIdYuNApVtXfIjB7R2WvzLM3/1P5Si76b+kPELg/qWkjFtVWgQEmHZtJZMb4SEDQ3RMGdVyqvPXtWuxqZSLJODCeWUE1raYTte94bqF+5kCLhE1pEhYknfCwfgeJM0R8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 244E31F00A3D;
-	Fri, 21 Aug 2026 09:01:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55F1C1F000E9;
+	Fri, 21 Aug 2026 09:01:44 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 29/45] clk: samsung: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:39 +0200
-Message-ID: <87b3e83137e1a987f3c69d214706e93ef3898cab.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 30/45] clk: scpi: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:40 +0200
+Message-ID: <939f1be93abebc7967a889e9c24c34942df8229a.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,35 +122,20 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/samsung/clk-cpu.c | 2 +-
- drivers/clk/samsung/clk-pll.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/clk-scpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
-index 37cf47533dc610e1..a17ce26494f3ebd5 100644
---- a/drivers/clk/samsung/clk-cpu.c
-+++ b/drivers/clk/samsung/clk-cpu.c
-@@ -647,7 +647,7 @@ static int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
- 	const struct clk_hw *parent, *alt_parent;
- 	struct clk_hw **hws;
- 	struct exynos_cpuclk *cpuclk;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	const char *parent_name;
- 	unsigned int num_cfgs;
- 	int ret = 0;
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index e74552846ba34105..813b8834ef16cc9b 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -1591,8 +1591,8 @@ static const struct clk_ops samsung_a9fraco_clk_min_ops = {
- static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
- 				const struct samsung_pll_clock *pll_clk)
+diff --git a/drivers/clk/clk-scpi.c b/drivers/clk/clk-scpi.c
+index 2328d2abf6d88012..16796cf3c89271a9 100644
+--- a/drivers/clk/clk-scpi.c
++++ b/drivers/clk/clk-scpi.c
+@@ -128,7 +128,7 @@ static int
+ scpi_clk_ops_init(struct device *dev, const struct of_device_id *match,
+ 		  struct scpi_clk *sclk, const char *name)
  {
-+	struct clk_init_data init = {};
- 	struct samsung_clk_pll *pll;
 -	struct clk_init_data init;
- 	unsigned int len = 0;
++	struct clk_init_data init = {};
+ 	unsigned long min = 0, max = 0;
  	int ret;
  
 -- 
