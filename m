@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CA4463B9B;
-	Fri, 21 Aug 2026 09:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9B44519AF;
+	Fri, 21 Aug 2026 09:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302993; cv=none; b=tyAP5zC+eHvxg5PtzU097dGGJVu+1HV8uZlfQHRsj5/VCa1Yk4M3XRIat/6mUR9Q92Bvu1C+qJ9Rz5XaiFC7d0u+Yjnzfu69XMgNPI+dv47KlzUoeRgk+ylWTucxvimlV2xcJ8moMbi/0ap8hKuRUmmBXNX2y+Or75ASEbjXFwA=
+	t=1787303015; cv=none; b=ULL/iQZ3yMqh+55G8/pHeTPzkaCIph4Es+iEsXn9cOVmhKGVlANvw2+WnFfD7bv/MWDRWsYK0uUAIbcnCIvSbatC9zAT+b2RxZuqnins2/y6kQeuEJ+g3rWmPHvOFGGEGd5SAggBDmhZAy+M7NtlvWLZgssA1b3Ej1+yIP+53fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302993; c=relaxed/simple;
-	bh=mLbk04OOUSdhbn3cldyFZMOjrCYpSUaMt+74F7OTuxE=;
+	s=arc-20240116; t=1787303015; c=relaxed/simple;
+	bh=PlSMAk+BjRQZsip8iFo42YV8KeBooQ7pJukz7NWn+QM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lanKQzT+IkLjIeXE4tGxQ/WaWDE38TS7RgCHw0hSTyDdAobOkR7UHQrbyyAeJP+NHn+lQUw12nIbEzLHRrnDoVuxNG0MV/mSomJl+A+xdzwgcTTme3z+VHhtgrSJaQ2eWOPhVRZBeAvZaAoikic8ERJmP3rTR9nxhbOr3S/8jWk=
+	 MIME-Version; b=Gl8jJFvSmfVfB317+z6CUPfFyK0DR4fpI/QpCmxhnUam/KVvEAQsReMbvWNJWWyvfZOrdtNHN9CnDworo2L6y5ORyVyh1ONs6dk05iS6lp6aB4Dm9uspq/IfGxid4fzrM6Ur3fACfzVMU0vRgZMtdV1BiwQ2Z8K4W1kGian4Ztk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 856551F000E9;
-	Fri, 21 Aug 2026 09:02:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93F071F00A3A;
+	Fri, 21 Aug 2026 09:02:59 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 34/45] clk: stm32: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:44 +0200
-Message-ID: <0b80535e9cfdc96d43169e5023e3a92a8f2252d6.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 35/45] clk: st: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:45 +0200
+Message-ID: <e43a03b5f0b1a8151835d9823cbbcc03178b5e46.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,73 +122,64 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/clk-stm32f4.c        | 4 ++--
- drivers/clk/clk-stm32h7.c        | 2 +-
- drivers/clk/stm32/clk-stm32mp1.c | 4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/clk/st/clk-flexgen.c | 2 +-
+ drivers/clk/st/clkgen-fsyn.c | 4 ++--
+ drivers/clk/st/clkgen-pll.c  | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index 565b4d99bebb06e8..6603d4815514151a 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -485,8 +485,8 @@ static struct clk *clk_register_apb_mul(struct device *dev, const char *name,
- 					const char *parent_name,
- 					unsigned long flags, u8 bit_idx)
- {
-+	struct clk_init_data init = {};
- 	struct clk_apb_mul *am;
--	struct clk_init_data init;
+diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
+index 211535fd8ac9bf3c..46e5c7be43e8277e 100644
+--- a/drivers/clk/st/clk-flexgen.c
++++ b/drivers/clk/st/clk-flexgen.c
+@@ -209,7 +209,7 @@ static struct clk *clk_register_flexgen(const char *name,
+ 				unsigned long flexgen_flags, bool mode) {
+ 	struct flexgen *fgxbar;
  	struct clk *clk;
- 
- 	am = kzalloc_obj(*am);
-@@ -810,8 +810,8 @@ static struct clk_hw *clk_register_pll_div(const char *name,
- 		struct clk_hw *pll_hw, spinlock_t *lock)
- {
- 	struct stm32f4_pll_div *pll_div;
-+	struct clk_init_data init = {};
- 	struct clk_hw *hw;
 -	struct clk_init_data init;
- 	int ret;
++	struct clk_init_data init = {};
+ 	u32  xbar_shift;
+ 	void __iomem *xbar_reg, *fdiv_reg;
  
- 	/* allocate the divider */
-diff --git a/drivers/clk/clk-stm32h7.c b/drivers/clk/clk-stm32h7.c
-index 82e0789cf189c7cb..c6afa9b202351c04 100644
---- a/drivers/clk/clk-stm32h7.c
-+++ b/drivers/clk/clk-stm32h7.c
-@@ -462,8 +462,8 @@ static struct clk_hw *clk_register_stm32_timer_ker(struct device *dev,
- 		u8 dppre_shift,
+diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
+index 3fcc1da20c04ed8b..705133b959d74ed3 100644
+--- a/drivers/clk/st/clkgen-fsyn.c
++++ b/drivers/clk/st/clkgen-fsyn.c
+@@ -444,9 +444,9 @@ static struct clk * __init st_clk_register_quadfs_pll(
+ 		struct clkgen_quadfs_data *quadfs, void __iomem *reg,
  		spinlock_t *lock)
  {
 +	struct clk_init_data init = {};
- 	struct timer_ker *element;
+ 	struct st_clk_quadfs_pll *pll;
+ 	struct clk *clk;
 -	struct clk_init_data init;
- 	struct clk_hw *hw;
- 	int err;
  
-diff --git a/drivers/clk/stm32/clk-stm32mp1.c b/drivers/clk/stm32/clk-stm32mp1.c
-index 2d9ccd96ec98c05e..b265e3f3e94c2805 100644
---- a/drivers/clk/stm32/clk-stm32mp1.c
-+++ b/drivers/clk/stm32/clk-stm32mp1.c
-@@ -902,8 +902,8 @@ static struct clk_hw *clk_register_pll(struct device *dev, const char *name,
- 				       unsigned long flags,
- 				       spinlock_t *lock)
+ 	/*
+ 	 * Sanity check required pointers.
+@@ -885,8 +885,8 @@ static struct clk * __init st_clk_register_quadfs_fsynth(
+ 		unsigned long flags, spinlock_t *lock)
+ {
+ 	struct st_clk_quadfs_fsynth *fs;
++	struct clk_init_data init = {};
+ 	struct clk *clk;
+-	struct clk_init_data init;
+ 
+ 	/*
+ 	 * Sanity check required pointers, note that nsdiv3 is optional.
+diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
+index 17551c6a879ac480..aaa28aaff6272592 100644
+--- a/drivers/clk/st/clkgen-pll.c
++++ b/drivers/clk/st/clkgen-pll.c
+@@ -652,9 +652,9 @@ static struct clk * __init clkgen_pll_register(const char *parent_name,
+ 				void __iomem *reg, unsigned long pll_flags,
+ 				const char *clk_name, spinlock_t *lock)
  {
 +	struct clk_init_data init = {};
- 	struct stm32_pll_obj *element;
+ 	struct clkgen_pll *pll;
+ 	struct clk *clk;
 -	struct clk_init_data init;
- 	struct clk_hw *hw;
- 	int err;
  
-@@ -1041,8 +1041,8 @@ static struct clk_hw *clk_register_cktim(struct device *dev, const char *name,
- 					 void __iomem *timpre,
- 					 spinlock_t *lock)
- {
-+	struct clk_init_data init = {};
- 	struct timer_cker *tim_ker;
--	struct clk_init_data init;
- 	struct clk_hw *hw;
- 	int err;
- 
+ 	pll = kzalloc_obj(*pll);
+ 	if (!pll)
 -- 
 2.43.0
 
