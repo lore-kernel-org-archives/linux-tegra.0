@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9D845198B;
-	Fri, 21 Aug 2026 09:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657C343F0AC;
+	Fri, 21 Aug 2026 09:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302808; cv=none; b=cksT5vmQXeu26H50tQBduMjcIOYzSGJmjVg3inUAaTgKcUgDWbXOdm8MfveIHJF5D6dlklbQsoNNtN15T5Yjx/sPA4/gvmZSnfW6QbhEIRVuQrtGOEvIpCUlCnPKwPinq6vdzqQgRr80NQGNzy3dkoemXmHOjTDFct3nwfxlokA=
+	t=1787302826; cv=none; b=GcLJvCz3Y7NwTglHC7OWyqCwqSTAaHI0525aa0Is+HNXU2e3KhwYemT6wx20F6xlF531qMaexhb2+XfIJwYP28ih92tlyGqh8kGgsb47n3u8WmEudvHX5kN3pvacpEvVLKiwyrl2vxFu+hSGrBENCd8JRyi9jhA6ucSplxI/KCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302808; c=relaxed/simple;
-	bh=pRVXb1B4mkcDAlVvE3F6/Q0p+cXchJkAbPiUwoVqaOA=;
+	s=arc-20240116; t=1787302826; c=relaxed/simple;
+	bh=7DWWSfFs6h+JWjalEPcaBQW2w7pfSgf6gDhMlNL2VzE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bODl50BsDd9fNrvZD1c/ZV0dp0l/vF/Pi22SkN2CMiHmrPjXOiCPBVdNbJV2+YWFVz4ZsDZKAdBQ24zlktQiMoukImgOiBwKOrBMUEkdX1ps+OlwQheoVBljDJvSNs1O1F3I+nEr+mPRm5FpdTtoQUcrrtkyIYFGm66lWrJ2vAA=
+	 MIME-Version; b=qj8xd66YoHiPgOSIFBrsY0od+4Qm9lZh+6vUTwQwLSlhuUjKVuKizefryugLgCLG8EUHnVA3HwXpk8fEvFxNiyogAcWb1o/j8/WA9Rw4MYlNsJnvFHUtHZbY6J38JsEL99qIp48jGdtgnfiHLTVfK05ocGkBzOWSB9iNVkqTbdA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8491B1F000E9;
-	Fri, 21 Aug 2026 08:59:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B1641F00A3D;
+	Fri, 21 Aug 2026 08:59:58 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 22/45] clk: nomadik: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:32 +0200
-Message-ID: <631df13629bf77d55bda770f94c7b1863690f2e2.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 23/45] clk: npcm7xx: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:33 +0200
+Message-ID: <f357a73e6eecfc3fde7aae81f03e1e5b6b2e0e9a.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,31 +122,23 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/clk-nomadik.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/clk-npcm7xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-nomadik.c b/drivers/clk/clk-nomadik.c
-index da6b89759a14ecb0..890084b3912b4cb5 100644
---- a/drivers/clk/clk-nomadik.c
-+++ b/drivers/clk/clk-nomadik.c
-@@ -263,7 +263,7 @@ pll_clk_register(struct device *dev, const char *name,
+diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
+index 79eca6ee3120c646..562d2d406d7a00fc 100644
+--- a/drivers/clk/clk-npcm7xx.c
++++ b/drivers/clk/clk-npcm7xx.c
+@@ -69,8 +69,8 @@ static struct clk_hw *
+ npcm7xx_clk_register_pll(void __iomem *pllcon, const char *name,
+ 			 const char *parent_name, unsigned long flags)
  {
- 	int ret;
- 	struct clk_pll *pll;
--	struct clk_init_data init;
 +	struct clk_init_data init = {};
- 
- 	if (id != 1 && id != 2) {
- 		pr_err("%s: the Nomadik has only PLL 1 & 2\n", __func__);
-@@ -355,7 +355,7 @@ src_clk_register(struct device *dev, const char *name,
- {
- 	int ret;
- 	struct clk_src *sclk;
+ 	struct npcm7xx_clk_pll *pll;
 -	struct clk_init_data init;
-+	struct clk_init_data init = {};
+ 	struct clk_hw *hw;
+ 	int ret;
  
- 	sclk = kzalloc_obj(*sclk);
- 	if (!sclk)
 -- 
 2.43.0
 
