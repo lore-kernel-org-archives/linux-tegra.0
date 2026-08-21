@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C242844C518;
-	Fri, 21 Aug 2026 09:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438344519A5;
+	Fri, 21 Aug 2026 09:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302841; cv=none; b=bxdzd3GoWDwkhHsRVKI9zt9fGjFc2dAyo7M32MtUnYMfbhFsbJ42FCldNcfr+/7sKkOFWi6iQZSW4mzLdMIEnwtwLMfZIP5C8HDip1mvHuz46cvwwNRsurzkeXmpIPi9hfdl/dVqxA4r9/XdVYKqnA4eOjD5cZBfxnCipLr1W58=
+	t=1787302854; cv=none; b=TWXvcIGFJ9fEbL/zAMT4rqMOCJw2M4YcUcZQ221nTS4zSHZrVYJk3SMo9IlY5blPcrJwIxU/ydCOhioAovGnNqtDXVs8WygygcURyuTL5qJkQ1PIZ02zOUtL4y4Y1wOyB5dy1uKK0d3fTffNfk8uvawqX62lcfDPkhelfNfSLec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302841; c=relaxed/simple;
-	bh=IPMFzvlww6IKnUKktwc5I/39vR5xJBACILZn1USABMY=;
+	s=arc-20240116; t=1787302854; c=relaxed/simple;
+	bh=zhRpGfP8MAXXN9DL+cpA5ZgcfIJKCeMEKWZ1ftAS8+8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Tl/08/V5BCXMqL8rXX1XSeiCOfRYT13mrJkn/a0JBv9doSLg0ZTkKPKa6BLDRdnAAHx5f3++xxd6f4jU6m/Jzr5M8P85WWZ8sq7rR7Y0T8quJYLIQVJqVyNNiM9AXuq8CSwMvZOSrKB71HUXwSGRbNUBnCyY4kzljt5eANuEqZE=
+	 MIME-Version; b=YcZ0R3uPFaJZmSnNTL9pET+IwCV5xAi38M8m4BUg4PNVr/pP0dKloYwiicRv3nzGAA3NP/alWyobj4AyM6SC8fCT4nM0IGIPjIlgHVcSqis8MMyk1HyCWvfhBjNzC3rp8N05Y3fTwrhfpphx2BxR09dF1WGnMl5bmpX3l7dS8c8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1F691F000E9;
-	Fri, 21 Aug 2026 09:00:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBDED1F00A3E;
+	Fri, 21 Aug 2026 09:00:28 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 24/45] clk: nxp: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:34 +0200
-Message-ID: <fa00846b4f9e3b91d3cbcb21cd27be7697b3994e.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 25/45] clk: pistachio: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:35 +0200
+Message-ID: <34b65a00a6a40ddcb7a9f4d3d724e80a00ac9bd2.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,22 +122,23 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/nxp/clk-lpc18xx-creg.c | 2 +-
+ drivers/clk/pistachio/clk-pll.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/nxp/clk-lpc18xx-creg.c b/drivers/clk/nxp/clk-lpc18xx-creg.c
-index 3d3982e9c661a5c2..de3c214a80fcf903 100644
---- a/drivers/clk/nxp/clk-lpc18xx-creg.c
-+++ b/drivers/clk/nxp/clk-lpc18xx-creg.c
-@@ -138,7 +138,7 @@ static struct clk *clk_register_creg_clk(struct device *dev,
- 					 const char **parent_name,
- 					 struct regmap *syscon)
+diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
+index 5b268a985a9c7d0e..ad997a777632a842 100644
+--- a/drivers/clk/pistachio/clk-pll.c
++++ b/drivers/clk/pistachio/clk-pll.c
+@@ -453,8 +453,8 @@ static struct clk *pll_register(const char *name, const char *parent_name,
+ 				struct pistachio_pll_rate_table *rates,
+ 				unsigned int nr_rates)
  {
--	struct clk_init_data init;
 +	struct clk_init_data init = {};
+ 	struct pistachio_clk_pll *pll;
+-	struct clk_init_data init;
+ 	struct clk *clk;
  
- 	init.ops = creg_clk->ops;
- 	init.name = creg_clk->name;
+ 	pll = kzalloc_obj(*pll);
 -- 
 2.43.0
 
