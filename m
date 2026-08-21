@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D890F381B04;
-	Fri, 21 Aug 2026 08:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64F93CC7DC;
+	Fri, 21 Aug 2026 08:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787302523; cv=none; b=M0c6QWrzbqUc+axwXlFfXWieL37MX6bGlH9a0Ab698P8qQ5QsxzVOPUB/ybPLEIo1mKHqhkQvGFqw8LlK6qNo0f3rNLXbvOCGwmBdKuE59zlE2LSrPd62o5Me48IjtJdHbJFY+eSi6einQMt4zUOfJmLKJO4xPhd5x14VX6Q/Cg=
+	t=1787302538; cv=none; b=mtW8tzRTedDyYBgog2QR9K2PWaHWryCtan1d7f4H2ObP9vHhhORj/veFjew5md5I+eRLAqJ7zNHyQe9772xnvuYROO3U/1USqSdplNdrmZ3N0aa/a41gM8cvSt8/o0CEVQ2vckmbpaR1rj4QAnj1te2Y56u5IG8jGXoRLvl8hfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787302523; c=relaxed/simple;
-	bh=arpWXg/Hfm5mytg++7VEom9twtaQYTFYbcFpfRZXGDo=;
+	s=arc-20240116; t=1787302538; c=relaxed/simple;
+	bh=wfACtApy8SnRG+HDs/DBA6DzFytGoZ6j8iXvHrz5gQI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=du+20WfahXwNTyt+uDOGAIime9RkgW4uwViWcKX2J2hoggpU6kn+yaydLhoOMSAb030UcqkRTFzk1jcTVjoqPR/DwSz1z8GO6ILPA+AZtOGkaxXKC8FMxorhaUh8IlM+IWLIzF1r2w4Pea5XEl5T+NlZgY2TMOgqOuQuurPhtPE=
+	 MIME-Version; b=SfbUzLaXDDvGznfbNLIbV86r0LI+shwafrs8IakOJ4yaseaZYnEDa4G+4/3D6B8zjmjNb0R8B+O/szbbY7MkWdXPHA4DFu0TZGuut8nN88ybPcS3gH/54xRg7ETvravuyn1ygYmBb4Up9ifoXGNjTnJTaUUGlntpQAx0br4Gfbg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A05811F000E9;
-	Fri, 21 Aug 2026 08:55:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E23181F00A3D;
+	Fri, 21 Aug 2026 08:55:21 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
 	Joel Stanley <joel@jms.id.au>,
@@ -93,9 +93,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-mediatek@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 04/45] clk: berlin: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:14 +0200
-Message-ID: <cb9b1a8fe20577c2519f40f41dbb3ded2aa67fba.1787239813.git.geert+renesas@glider.be>
+Subject: [PATCH 05/45] clk: cdce925: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:15 +0200
+Message-ID: <308a33a0e63241d94ee08a08a6de6cffa739556e.1787239813.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
 References: <cover.1787239813.git.geert+renesas@glider.be>
@@ -122,46 +122,22 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
 ---
- drivers/clk/berlin/berlin2-avpll.c | 4 ++--
- drivers/clk/berlin/berlin2-pll.c   | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/clk-cdce925.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/berlin/berlin2-avpll.c b/drivers/clk/berlin/berlin2-avpll.c
-index c801d42397bf06b2..33a3cc16b0cc5f4b 100644
---- a/drivers/clk/berlin/berlin2-avpll.c
-+++ b/drivers/clk/berlin/berlin2-avpll.c
-@@ -181,8 +181,8 @@ int __init berlin2_avpll_vco_register(void __iomem *base,
- 			       const char *name, const char *parent_name,
- 			       u8 vco_flags, unsigned long flags)
- {
-+	struct clk_init_data init = {};
- 	struct berlin2_avpll_vco *vco;
--	struct clk_init_data init;
- 
- 	vco = kzalloc_obj(*vco);
- 	if (!vco)
-@@ -358,7 +358,7 @@ int __init berlin2_avpll_channel_register(void __iomem *base,
- 			   u8 ch_flags, unsigned long flags)
- {
- 	struct berlin2_avpll_channel *ch;
+diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
+index 30d0493c771818ff..4d49cc1659c07be2 100644
+--- a/drivers/clk/clk-cdce925.c
++++ b/drivers/clk/clk-cdce925.c
+@@ -620,7 +620,7 @@ static int cdce925_probe(struct i2c_client *client)
+ 	struct device_node *node = client->dev.of_node;
+ 	const char *parent_name;
+ 	const char *pll_clk_name[MAX_NUMBER_OF_PLLS] = {NULL,};
 -	struct clk_init_data init;
 +	struct clk_init_data init = {};
- 
- 	ch = kzalloc_obj(*ch);
- 	if (!ch)
-diff --git a/drivers/clk/berlin/berlin2-pll.c b/drivers/clk/berlin/berlin2-pll.c
-index d0ec3d0bcf3e57ea..1c4203736ecf4ff7 100644
---- a/drivers/clk/berlin/berlin2-pll.c
-+++ b/drivers/clk/berlin/berlin2-pll.c
-@@ -78,7 +78,7 @@ berlin2_pll_register(const struct berlin2_pll_map *map,
- 		     void __iomem *base, const char *name,
- 		     const char *parent_name, unsigned long flags)
- {
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	struct berlin2_pll *pll;
- 
- 	pll = kzalloc_obj(*pll);
+ 	u32 value;
+ 	int i;
+ 	int err;
 -- 
 2.43.0
 
