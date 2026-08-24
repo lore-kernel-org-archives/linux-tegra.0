@@ -1,127 +1,155 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D17341E6C5
-	for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2026 13:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E62A3F58E0
+	for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2026 13:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787576853; cv=none; b=ts62IinBPQhFvlIhpRNYWns4XxWghfZuElAmTDUjrlAqE9Czk4fvedy6hzI6/qLYNLVTjnYKcJ5v2Sd4EcE6/6MGRdh+UF49ap2ihYFZNcWl0B6sMOBJTcjOCSL0eqJzzd2KMEVWX6qFxeRInlNsTxszST0uvTkFlQuqkukSYvg=
+	t=1787577408; cv=none; b=HeavGdMA/hKXBo2aO4NgGGpyJOlB76+gL378clyKyF+VM34UX+8F0cuQCzLtydq067bFytQG9x9KfOcm14zB2/bamrtGzAld7NL3cXtMh92lwyk2Xi92E1ayHjhuGK1SDT+5fjAXlN8QgE7G1271SGSXqVWPTvcCdP4qJJmv1Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787576853; c=relaxed/simple;
-	bh=u5ihNkizXxWzyF5GSE/VjUlcZrXmF+6zr4JEzwJ38CA=;
+	s=arc-20240116; t=1787577408; c=relaxed/simple;
+	bh=u69iDQDh65gTSQHaopk712AakCgClJSI2Zoo/JrTLeU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tr09R+3Yp4+U2TcCtAKSaH/MWkskNN2pthPwDtZwHFitrUUggAtYxdg7aXPT/ukrxOckyJ4ZwuH4NO8xe2jshWE0Bjm3Q/PHl0LDEph3RoQK1BokpGJM/Gc/ueSWEFnPwJRkFTKqZuSDGv771IoVzwdTfhvd5NlpyKa5/woFtP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VasDoPJ+; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=h6BT7ELoCHAqNlaX1ZcRmnw//HuVqE6shCiE1sMDOMu43/ODLz60Sy+KXELjxDt+oxdZM0mtpOkN46XQKgo8oGMmX+kSlEBCfAeEXxKa/MDOt11iQIC1ohkUBmwc7vjYtRxB4oBMNVPUFY92gYFSdsSeCZ0qptyw9MEYwRSKGzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yt2qQfWI; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=nDRNjzCs; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VasDoPJ+"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4953de5be0aso21663875e9.0
-        for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2026 06:07:30 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yt2qQfWI";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="nDRNjzCs"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1787577405;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a5uoZNVB2XRKnrTBdvCmJrG8M4XSoSEJo8KaXU4b4e8=;
+	b=Yt2qQfWIpvra9OdM7gDDW3etGkeqEgtGb6YiRhLqOsf27nRSbUrfF6mJUa9/Jm+7hF0CA/
+	Mx8vJ2x8NHR5UEZyHU7Vb93UVBj1V7Vc044wIY3ZzE4iU3tOMCgUkrmIkMJmcq9QXh6KEn
+	2GLT1s9ZGLJB0PuCtZAiwbj0g++2RoA=
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
+ [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-620-0vDitpPSNjm-jqgQri2ruQ-1; Mon, 24 Aug 2026 09:16:44 -0400
+X-MC-Unique: 0vDitpPSNjm-jqgQri2ruQ-1
+X-Mimecast-MFC-AGG-ID: 0vDitpPSNjm-jqgQri2ruQ_1787577403
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-7fe835353acso61958917b3.2
+        for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2026 06:16:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1787576849; x=1788181649; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=II0EHdpiWVifHn+uIz31c6Jp5mdC3hunRFCnEAwNy/g=;
-        b=VasDoPJ+9W3n6kop+crjHXP7TptzbDGsgfbm9Uk4NKXGd6OGSugla7VlitMZw98TK9
-         NVgdy1g8rya6Yqv+lAwmQAA7dqQjHTRt75BtuIha0W9mgx+ggKWWMmmUisJSlAMrinEf
-         e3/R/ELvI9YYRlq7rCg1cATN/Ub4gE0rcWwcfO9hgfAQupcKHPbzKdmaIZZ0D9++h+oY
-         dgvGtWeYGOvPvZVQeL6A7w6M0zsypu09XmYrqR3Iwv/cCfnEnCvT+xc+/+KUwzYHtU8o
-         EpfP/3KzoKSiw0GhTSCSkj4lZZjidkJLF+3SH2bAzDuzawyPRDr7Y4fQ0iJXmjmixqg9
-         8Dog==
+        d=redhat.com; s=google; t=1787577403; x=1788182203; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=a5uoZNVB2XRKnrTBdvCmJrG8M4XSoSEJo8KaXU4b4e8=;
+        b=nDRNjzCsNeafHgg4aSqZ9DFAxbEbEAmNgVuoOKhKxlM0EV4gIIhIBciaWWiUM5a58i
+         hWBhLd8Fr/DCaXnbI3GgkY67wxWVfHyI8wz8rUB9WYMcMqHfZT2PLK3Az4YxWunC1p+K
+         jzVurhIatDSxYDhRp8ExsURushVWlP2RfJb+TPP/w3DpH8BYw+4bGJ5ulIbQi+1cuMjP
+         /HYXPo/QkSou00keMR1jOhHTQYisB142KFZ1yKhjuGZYcjHBzMRLyHaGlBz8hpK9nWL6
+         qGj/dLHYL6+xPF55vde8lOj53kBgKgAbWzbSKjIazgpWLlQPjmQy4zL6OmThnCj7xnKo
+         na6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787576849; x=1788181649;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20251104; t=1787577403; x=1788182203;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=II0EHdpiWVifHn+uIz31c6Jp5mdC3hunRFCnEAwNy/g=;
-        b=WkX6nd3tvSxuFlKNQMP8cDODDRDJTai8otqtztFTdlLsjc/fvZsy1nc60a2ACUiwPN
-         L1Dzq0+GukC/uVNOwi50uCAI0z9UbayZNhQBcxwCVoSxBCcz8E3+hjQc5kAmYgZ7pCwp
-         /vhS+pLGryRZzXyuabkm5Vk1jGzgA49pNmKG11kxaU9lHuMrgIxp56ynjqW16+NFqEF+
-         hoUnaT3xXmuk/HoUqU2F8xMv+n/7zBfbm4jQNhYmGHr5IfhUGUX32MkXvN2UffzlTFUV
-         MYEuFjm/BGe2X7+S03J6gU9iRrii7z/sDYBJ+vz6urTmXwmGaP2G+90myk8VVvpmxWdl
-         QZAw==
-X-Forwarded-Encrypted: i=1; AHgh+RpLWqfyC17IBIw5/o3N7QzCNNMCA187nRh08zNnjVgPA1vMYFw5VJzgbqB+Wg+JXnosjCqzSRmx6T4Iqw==@vger.kernel.org
-X-Gm-Message-State: AFuF++kFZix5rdwbvjuXcdVj5z6iVsMP5LzPfww2XUqrAtW+olwgxjvN
-	wg1fs40rOAW12ZJXzxyOHnddWqvNLb9DEmmAXE1NFS4FSGwNmBOKcnXCff3JEEqAHg==
-X-Gm-Gg: AR+sD13z5e8grO9dpj+jRhzJ3WyLIg/y/IArPT6pEWa3gW6T+RzrtyGvTd9zWORhwMC
-	IiYGWEdbk6i+en52bok+lTMBNKcg/koMRi0ucsqAdyP/bPvqdY7aImrXvLTNrtPkVVd/zqCJin6
-	USUdnoxYhZmN5ZvxjWUNwzzR1fuCG7PR2utbPO+E/V2it//H0HuJHaQ7k1IKAiFRyk4JrCeyQkl
-	nRFF12Y/Xl7mTezzSpfB6cw1h8kH9QiEZ/NjNASa2JgVbQC6lm284jOPdQEhEYCaXuqqw/R8OLm
-	gR/PIGIiw/FacWoN8WSdlF6hKj0/+tjGLZvkuNFAZiWnSN50+HOOpqjP5sIH4wptpaOOQTINKXv
-	k8JvL9eLLtq7E7/QQSU1KBhQ8q1W76AfjWza8EiGLHUVVpUSELJQdjsLPLaSXwArOPA0gW+UGZu
-	qW1l/EKABplB18u9iMIuoLlswDQeLAdS+EaVJ5aKrDsknvz7hCokZ4MZgC8naM1elU1QMQLL6hG
-	M6RJwyLvNoOFLV+F0vQ6S+Wp6+N81Rr
-X-Received: by 2002:a05:600c:8b76:b0:499:8c68:a3aa with SMTP id 5b1f17b1804b1-499b8475133mr350361245e9.13.1787576848494;
-        Mon, 24 Aug 2026 06:07:28 -0700 (PDT)
-Received: from google.com (135.91.155.104.bc.googleusercontent.com. [104.155.91.135])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499c355e1ddsm85389525e9.5.2026.08.24.06.07.26
+        bh=a5uoZNVB2XRKnrTBdvCmJrG8M4XSoSEJo8KaXU4b4e8=;
+        b=pl1jKGnEhyU6b2AsaBoSPuy6ox9MWOCls+VdFOjzwEd98ZnmuwQKQD44B5uOASvS9M
+         s5U53sODAdRoG+kSlwB48SpXZHL/FqxZ7eR+txdifuMMVVVjnRTa1qvYblo5kcxhTdN7
+         DdBogr4YzDETmiF1vzVuybYHnJRlDJaBMEbPyHrTHPL9wUk4TGj1YJ/+I1dZPGVRXsUR
+         9RrQFez1FBUwnISR40e/UduLSo25I1vGEPKIenqzvyMO6Hdo6OSOgg367FA4yTY8lLP1
+         JXdNqsX7Izm3ZEybvO/3iZq25TaE2NkZYQAfJvI2oo/2SkL6hs3lpNT2LkgITkyfa42+
+         6kPw==
+X-Forwarded-Encrypted: i=1; AHgh+Ro2eNS2qH1Tm7FUo58ESMYGoNlY8qz4ZReXdQ79mhqmFPu4+ivV+WxjDy9vUkSEg7U4QiaDS0wVweYhkA==@vger.kernel.org
+X-Gm-Message-State: AFuF++lu+5jrXKFpt8MlcPQpG0b8KfMEvwIfG22u/GH0i7wD/iIafWbJ
+	FWvr+RzT9YxxiIxnvFeVIVEEOHVRBj3ytFuC+vUIheYT05WE0w9sYMebqYvDZCA1Svzw3udoZ5H
+	bDNYnbXGJ02Vb9UFn33QSGyM/1KRRjBCvHIahqPn5ONUB2ivtGEqPh4JfKT9SZEL7
+X-Gm-Gg: AR+sD10ZVQ5ZbOaY9pSQUFFyLE9S1RvKyN6TzPVv85fSREzOTA5Vc4e/4mdH/FtMEWg
+	kccqSZlh8c/l0qXPF9/IsW2V+G1gcZBkO079faZBofJzF2SwDi6WzUFligR2D5pFH93q8RbcpUv
+	x45TzCRw4jhJpYhyiwpB0+3dheBk8cAKbLcOZBPQW1cv8MCOF2sR54MY4NMry8rCzwM7w6CKXzm
+	9Q5bxArq2jHiowT0nx7UOekhPTbVWhGYoD38BehtT/Hw300n4Y79aBaA5N1J4RWFqJeP983uttv
+	lr1oFHfCIcMmtJyAikytt1lthLIk+jsbuJrtFpdoWNw+nuonJpd5bOq53Ou7rQ9oQZI2dSZw+wG
+	lph+C709dPuy/05UQEZ4+RZB2wkU74bWsTUk=
+X-Received: by 2002:a05:690c:e0c1:10b0:81e:a4cf:131b with SMTP id 00721157ae682-849f4a7cc91mr76173047b3.22.1787577403119;
+        Mon, 24 Aug 2026 06:16:43 -0700 (PDT)
+X-Received: by 2002:a05:690c:e0c1:10b0:81e:a4cf:131b with SMTP id 00721157ae682-849f4a7cc91mr76172227b3.22.1787577402495;
+        Mon, 24 Aug 2026 06:16:42 -0700 (PDT)
+Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-84ca5d254adsm33243617b3.16.2026.08.24.06.16.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Aug 2026 06:07:27 -0700 (PDT)
-Date: Mon, 24 Aug 2026 14:07:23 +0100
-From: Vincent Donnefort <vdonnefort@google.com>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+        Mon, 24 Aug 2026 06:16:41 -0700 (PDT)
+Date: Mon, 24 Aug 2026 09:16:34 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Billy Tsai <billy_tsai@aspeedtech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Taichi Sugaya <sugaya.taichi@socionext.com>,
+	Takao Orito <orito.takao@socionext.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	David Lechner <david@lechnology.com>,
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>, Heiko Stuebner <heiko@sntech.de>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Russell King <linux@armlinux.org.uk>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@kernel.org>,
-	Lorenzo Stoakes <ljs@kernel.org>,
-	"Liam R. Howlett" <liam@infradead.org>,
-	Vlastimil Babka <vbabka@kernel.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
 	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Chun Ng <chunn@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-mm@kvack.org,
-	iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org,
-	linux-trace-kernel@vger.kernel.org,
-	Thierry Reding <treding@nvidia.com>, pavan.kondeti@oss.qualcomm.com
-Subject: Re: [PATCH v4 07/10] dma-buf: heaps: Add support for Tegra VPR
-Message-ID: <aoxCC1yPFdutU5vB@google.com>
-References: <20260807-tegra-vpr-v4-0-5510d16af89e@nvidia.com>
- <20260807-tegra-vpr-v4-7-5510d16af89e@nvidia.com>
- <an4MEI7lkc2p3nKI@google.com>
- <an8K2gb1pIqbDj6-@orome>
- <aoNDRTKCUkzd2n5G@google.com>
- <aoQ1lhZojzsSkWHQ@orome>
- <aoVy8dj8f3ll5-M4@google.com>
- <aobOs0ZidWzgoHut@orome>
- <aoi4wZJIutMWu9Ux@google.com>
+	Ulf Hansson <ulfh@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	openbmc@lists.ozlabs.org, arm-scmi@vger.kernel.org,
+	imx@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 29/45] clk: samsung: Make sure clk_init_data is fully
+ initialized
+Message-ID: <aoxEMm6FGf_onEBf@redhat.com>
+References: <cover.1787239813.git.geert+renesas@glider.be>
+ <87b3e83137e1a987f3c69d214706e93ef3898cab.1787239813.git.geert+renesas@glider.be>
+ <60a8d05a-76fa-43c3-a0f7-fb26a3b659b8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -130,111 +158,40 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aoi4wZJIutMWu9Ux@google.com>
+In-Reply-To: <60a8d05a-76fa-43c3-a0f7-fb26a3b659b8@kernel.org>
+User-Agent: Mutt/2.4.0 (2026-06-19)
 
-On Fri, Aug 21, 2026 at 09:44:49PM +0100, Vincent Donnefort wrote:
-> [...]
-> 
-> > > > Interesting. I had been thinking more along the lines of adding this
-> > > > directly into memblock using a new entry in enum memblock_flags. None of
-> > > > the existing ones seem to do what we need here, though some are closely
-> > > > related. MEMBLOCK_SECURE or MEMBLOCK_PROTECTED are quite specific and
-> > > > don't necessarily mean that we need the mapping to be page-granular, so
-> > > > MEMBLOCK_PAGE_GRANULAR is perhaps clearer.
-> > > 
-> > > I thought it would be interesting to not have to modify memblock since it is
-> > > used for all architectures, while the DT is at least slightly less widespread.
-> > 
-> > This isn't something that is DT specific. On the Tegra side, I suspect
-> > we might need this on ACPI platforms eventually, too. And it's not an
-> > ARM specific feature either. Other platforms could use shared carveouts,
-> > too.
-> 
-> Agreed, and actually I have tried the memblock version and it looks quite neat!
-> 
-> I will share what I have after the merge-window.
-> 
-> > 
-> > > Also, cma_init_reserved_mem() could use an order 9. In that case PTE-level isn't
-> > > necessary and we could just use PMD-level. Extending that support would be more
-> > > cumbersome with a memblock flag than with a callback.
-> > > 
-> > > rmem_cma_setup() hardcoding an order 0, perhaps this isn't really a problem at
-> > > the moment?
-> > 
-> > How so? memblock is really just used as a way of backing the CMA. How
-> > CMA subdivides it doesn't really matter, right?
-> > 
-> > Or are you suggesting that if we use an entire PMD as granularity, we
-> > could equally well remove the entire PMD from the linear mapping instead
-> > of doing it page-by-page? I think that'd work really well for at least
-> > VPR, since it is 1 MiB aligned anyway. Using a granularity of 2 MiB is
-> > easily doable.
-> 
-> Yes, that is what I meant. We could easily force a PMD-level mapping instead of
-> PTE-level one. But then that means declaring another memblock flag. 
-> 
-> > 
-> > For anything that doesn't require a single contiguous area to be
-> > protected this might be a bit more challenging since it potentially
-> > wastes a lot of memory. On the other hand, a lot of this is heavily
-> > custom code anyway, so the entire stack could be modified to make
-> > efficient use of this (i.e. userspace could allocate a larger chunk
-> > for a pool of buffers, etc.).
-> > 
-> > > But yeah, the alternative is to create a "memblock_mark_forcepte" (it seems
-> > > memblock_setclr_flag does split memblocks) and let of_reserved_mem call that
-> > > function. Finally the arm64 mmu code can simply check for the flag before
-> > > calling __map_memblock. Perhaps it isn't that bad in the end?
-> > 
-> > It sounds like the right level of abstraction to me. But I'm not too
-> > familiar with this code, so it'd be good to hear from the MM and/or ARM
-> > maintainers what they think about this.
-> > 
-> > [...]
-> > > I had in mind to extend "shared-dma-pool" to handle
-> > > set_direct_map_invalid_noflush()/set_direct_map_default_noflush() based on an
-> > > option. But perhaps it is better to create another separate driver. And VPR
-> > > needing a specific dma-heap driver anyway, it could call the direct-map
-> > > functions there too without relying on CMA to do anything?
-> > 
-> > I think it'd be nice to have separate APIs for this case where we know
-> > the memory region is already page-granular (or, I suppose, PMD granular)
-> > and removing from (or adding back to) the linear mapping is safe. That
-> > way we could avoid the checks for can_set_direct_map() for each page.
-> > 
-> > It'd also be nice to have a version that can update the protection bits
-> > for a range of pages (would map directly to update_range_prot()) instead
-> > of having to manually iterate over each page in a range.
-> >
-> 
-> How about?
-> 
->   /* True if can_set_direct_map() or [start, end) is mapped at PTE-level */
->   can_set_direct_map_range(phys_addr_t start, phys_addr_t end); 
-> 
->   /* Must check can_set_direct_map() or can_set_direct_map_range() first */
->   __set_direct_map_invalid_noflush(phys_addr_t start, phys_addr_t end)
->   __set_direct_map_default_noflush(phys_addr_t start, phys_addr_t end)
-> 
-> > A good middle-ground might be to have helpers that do the grunt work and
-> > they can then be called from VPR and the shared-dma-pool drivers to have
-> > pages removed from the linear mapping. VPR and similar can then perform
-> > the hardware protection bits on top of that.
-> 
-> I believe between the reserved-memory attribute to force the last-level mappings
-> and the direct map functions above, there's enough for the VPR driver?
-> 
-> -- 
-> Vincent
-> 
-> > 
-> > Thierry
+Hi Krzysztof,
 
-I have pushed a first version here [1]. I am waiting for the merge window to end
-before posting anything on the list, but let me know if you have any comment.
+On Fri, Aug 21, 2026 at 01:04:01PM +0200, Krzysztof Kozlowski wrote:
+> On 21/08/2026 10:53, Geert Uytterhoeven wrote:
+> > The clk_init_data structure contains several mutually-exclusive members
+> > for different methods to specify the possible parents of a clock,
+> > prompting drivers to initialize only the members they need.  However,
+> > not initializing all members may cause subtle issues, which are only
+> > exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
+> > enabled.
+> > 
+> > Make sure all members are fully initialized, to avoid such bugs, and to
+> > prevent future breakage when converting drivers to a different method
+> > for specifying the parents.
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > Compile-tested only.
+> > ---
+> >  drivers/clk/samsung/clk-cpu.c | 2 +-
+> >  drivers/clk/samsung/clk-pll.c | 2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> 
+> Let me know if I should take it via Samsung SoC clock tree. I assume by
+> default this will go directly via clock tree.
 
-[1] https://android-kvm.googlesource.com/linux/+/refs/heads/vdonnefort/ffa-lend-pool
+Please take it through your Samsung tree to avoid merge conflicts if
+there are other changes to these files during this development cycle.
 
--- 
-Vincent
+Brian
+
