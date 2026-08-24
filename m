@@ -1,124 +1,113 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46B4369D56
-	for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2026 15:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6653138E8C7
+	for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2026 20:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787584767; cv=none; b=vCKmy6ofWuknQZZbPbVHA2H0j+sD8wBx/175WhbA8HF4NRDaH59RoFHiqYVUcYZmlW0ZuPZZErGzgwsjNH389N1mim/FFhPSJf4EHDchok4JRhx6XaWDkC/y8VBfhN3ltULzYJWSKfUYnBJaEc0bnxFMA4jrYLaZBvB8lhb0Lrc=
+	t=1787603979; cv=none; b=HFXJNZhB2X3gZIJ229+fjQKgV64sJqVvUZBSGfrBuPWRq0KK6i9wIRZPvrE08ZROzEMil6stJUpJFZkn+B6i/BC2LHdyB3O09KnVrH6On7YWxWWFNsCaTlyQxxab6+2A3KUWmQRqMTT81p9gHmWjOGGUVh6q+UgMwJ2ilLwZ4OQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787584767; c=relaxed/simple;
-	bh=QJkM/H1sYCdgW5GrrWH6X/wpv879FHZLFzcik5vvcEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l4pVyX67okqnyS/oTJO9RVh2nMMTJ5V378r613nw+syp+yglpdxJ9ALIng9YqN54HZQQNQyLVGzVnG6jlL9bqqMMZOIGBGa/UHVeuQy5sIl8g91I4opXK9po2UD9NCOLuclm6wKHoxwzVya7BF7QNcM8aRR0OMIJt4zDr2n81L8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EIVx3+/r; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=M8s65TFq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1787603979; c=relaxed/simple;
+	bh=EVUwDkr+aRcYVofgEibvAtJX7CxRusSErPl1ti71pZs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fN0rgUPp1QZcfA0mfzuH2zI9CymmducZfI/hjGR/6tzP/ARbrxDVca8vHrLtUAkk5LI0SCoAfm/uHwdOsdr2wT3J2eTrG4Lu3KQHzgmq3sel/rO2iWtBURt00dT3XGqUE5d1lTVT0Fx2FFo6tiTW4Q0oHDXATf2TjsYNgXOHBmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=op1PqS0Z; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EIVx3+/r";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="M8s65TFq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1787584764;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W56P5fyFkxTQYTvITDSYgEvGIOW/RQqOkycdQuJNc4A=;
-	b=EIVx3+/rlDVQHNI4OBcslJp9asyIc5IE5JPv2efzq9cGLOu+aIORrMA/Zbfp64F1ZBxNp+
-	iOOJu6WoX2FN97ahEI2fZsRVXAQ38C0ZZbg8qIuM1z5LCOLm+oucBWZwrUBBeM/4BiS7Ah
-	cpqzYr9mS9kaafspH7QeEGenBAH9dys=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-138-ogTUypEMN6O5raSzRRFILA-1; Mon, 24 Aug 2026 11:19:23 -0400
-X-MC-Unique: ogTUypEMN6O5raSzRRFILA-1
-X-Mimecast-MFC-AGG-ID: ogTUypEMN6O5raSzRRFILA_1787584762
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-52d7b3adda4so37864741cf.3
-        for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2026 08:19:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1787584762; x=1788189562; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=W56P5fyFkxTQYTvITDSYgEvGIOW/RQqOkycdQuJNc4A=;
-        b=M8s65TFqflCSVtP+Vp92flMHsrLi77F8vEHeut0US7yXFqtbk44yA8h4c+ox2GAayn
-         tqYy1wTMkwzrFXLOyHqlXNLL0+0FJWTH5t6fd4K8cJCMXotTesKWeCWnFFB0OhYuC2zf
-         txe+5K+NOnvK45vta+e5gTVWY+8Nf7QiDBp7dkHLahPQW6gp6aBkGhxoeogz2etrVdqo
-         cga1RlXCFV5+yxm4nMLWEplU2HBvLLVyQDDH308GNXj2LLuln8mJ7BQRaljzbClO35DO
-         29ToLtfXqHYzjf/xzKXjPug+B+AWiaJQv0/KYXtfV26RBaw09PCCZafWkSd2/1PdpwHd
-         /1NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787584762; x=1788189562;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=W56P5fyFkxTQYTvITDSYgEvGIOW/RQqOkycdQuJNc4A=;
-        b=d6xVlw2Fq3qQq8SrZiUt7LMr2JloZJ3Us5dqucQ+d0O0dXLICpnqlGYJ6yq+FNphdF
-         VRKE/d5WAi04CVdzzu+KPI3ak0p5ZQSqQw3LZhRW3caY0/nYDCE0XuukiPKxYQlKdb77
-         G07zZXl389OxRdVRqdeCI27/OnEQ5+tgxZnTD+NofWJyT++6A226aF8WAVauKGEuaJk3
-         rdr7lbAqwUGo037SNlYKZynAdYq/8MAmdN51zlt9mXx5zt0ZTa0XcCnhEIaHl6BUFqal
-         OgYVL3TED+Cb2XSB2cEANbZFnN+FMbQkr/DZupfx3fwqp6nCj14MrpWR+W1VErNQB7wt
-         ymqA==
-X-Forwarded-Encrypted: i=1; AHgh+Ro3Xzl3yCG+iB2Zh2aHoL95/Jcr9MjRvkCmGdxNep9rRTJ6D7H1hQXjHY2Mj2mB7SIMm7/4hkJqhxHDjg==@vger.kernel.org
-X-Gm-Message-State: AFuF++nEBBj6T8eN4nPcT4qc+3OtzsK8g7jdmUUmYBoYW2n40NgghEUq
-	cCB6rnb3MP8X/Dr0+gBTKb0Oiwl9WU2AX3gU7VNjMiVQLRbZWo+A143Fed8U2rtRAHyz9Zem/pH
-	fFIy1BGiOBWPaxsbwEtl2c2ckNsTJjqB8lQQRA4oht1k1s99YLpmekDKJ6+SQtPS97tzLuzSoQH
-	s=
-X-Gm-Gg: AR+sD10QHbCbOWGBhyJR/wIviKVksD8HFeuw7bQQ1wsIfMwUzUMhlP8V/3zdEh9FPFP
-	XHSMuxL2d1eVRuWNual0A6zm2hcDl2nSsk98gcMykM0bKFW3XxHUyUaZ3KEqIeI+nZ752LR0nkz
-	mMW5gyJLVMz1crWSY7ZtMQt1QLPUKtq2apx95mL9M9r9lQEsTkEmi63OhkM5NI+e7vZRXsNKFix
-	saVN6g2UVMlXLUpc9S9bKZ3Rb7WEsC9EIvJ0W5oneraQ4k/SiGocKJpgwrSzDZ4O91BxpKf0NHU
-	8HRV4zkTnCw6LIiflF4Rb8jD319ush0VrKhEMh63z1Lhtm7SqXRc8/CzpQT/BfKLxenqPbSlQw6
-	fGt2XhGL5mdOceFgIwZRrMm8xzbLkBMFI0D8=
-X-Received: by 2002:ac8:7f8d:0:b0:51c:257c:8164 with SMTP id d75a77b69052e-52df59fb802mr250057511cf.25.1787584762583;
-        Mon, 24 Aug 2026 08:19:22 -0700 (PDT)
-X-Received: by 2002:ac8:7f8d:0:b0:51c:257c:8164 with SMTP id d75a77b69052e-52df59fb802mr250056601cf.25.1787584762022;
-        Mon, 24 Aug 2026 08:19:22 -0700 (PDT)
-Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-52e09aca33esm48989201cf.21.2026.08.24.08.19.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Aug 2026 08:19:21 -0700 (PDT)
-Date: Mon, 24 Aug 2026 11:19:20 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Liviu Dudau <liviu.dudau@arm.com>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/2] soc/tegra: pmc: Make sure clk_init_data is fully
- initialized
-Message-ID: <aoxg-FCFslaM9Ep_@redhat.com>
-References: <cover.1787239869.git.geert+renesas@glider.be>
- <70aca0e57b9900db051aade5a1af2e42c4d30ea5.1787239869.git.geert+renesas@glider.be>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="op1PqS0Z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09E581F01558
+	for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2026 20:39:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787603977;
+	bh=LEMIXlW7UB4hHdDf5XWpYKY9mKhf7DDvl0I5DYYVcWI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=op1PqS0ZcwJX9065pz+7n7Mhcirj6eX3k7xLqlZ+ppKs9SUQjaRYatOf7zFET/tfn
+	 ul80C8GWnGTALvbcy587qsJUwsDqASYiSFMYfHcPITUgCg3TZF48GkIuTKGWZKFR9M
+	 4KN8Sznl1jMlE46rBL1TjVyK3aAD3CngSTThQG0+P9d0RdhdZTKci8rg+oXU2+Knhy
+	 NbhSdxhVqpnJaSio1FP0K7pN0IwaOCStdR+sCf1wtsi2SseznQCBLMUxP19S9nO/9Q
+	 MUef/TEDW6ujepu5thZa0JHNFheaGU558HmIHS4lCPCIS/Hkxb7SN9fJwNlrWxn60U
+	 rLdy0en7BtOBg==
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-448b69cfc6dso3840379fac.3
+        for <linux-tegra@vger.kernel.org>; Mon, 24 Aug 2026 13:39:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rob9cWXL+zlEDsBpTlXVvUF9LwpJn1xTJoMoEHNPfQ+mz+wJpQTfYkhmFHv2FaOWpbZZ932aXAbCvSCSA==@vger.kernel.org
+X-Gm-Message-State: AFuF++l0WrsJZBGyNf/8PysX883layT7bphPYMnmgw4VEbRbZKq7BFN+
+	Gk00Jf3aYUvz1VuQaDNY5vJAhZ2QupWYXY74J5tG1bGO/snVYGDnH975U4sDjWv/FQM5zVx0O+T
+	fiQ27vujcwMh7AhsSX/QaQJ4qUfExGk8=
+X-Received: by 2002:a05:6871:331c:b0:457:ed1a:9da3 with SMTP id
+ 586e51a60fabf-4644af0a69cmr1563335fac.17.1787603975698; Mon, 24 Aug 2026
+ 13:39:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <70aca0e57b9900db051aade5a1af2e42c4d30ea5.1787239869.git.geert+renesas@glider.be>
-User-Agent: Mutt/2.4.0 (2026-06-19)
+References: <cover.1787239813.git.geert+renesas@glider.be> <33f8a87834a75b6677894f1993c90f00eb6a2547.1787239813.git.geert+renesas@glider.be>
+In-Reply-To: <33f8a87834a75b6677894f1993c90f00eb6a2547.1787239813.git.geert+renesas@glider.be>
+From: Linus Walleij <linusw@kernel.org>
+Date: Mon, 24 Aug 2026 22:39:20 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnWF5Y+=Dz4XxFyHqrxuOtGucvYLaqMGDNH4XoR1S+rrQ@mail.gmail.com>
+X-Gm-Features: AcwNN1XmhR7K3AKRJKXT4Sd3qYlnwrUuNbhbfYVIv-485OoNG4okiQZloSgYvOE
+Message-ID: <CAD++jLnWF5Y+=Dz4XxFyHqrxuOtGucvYLaqMGDNH4XoR1S+rrQ@mail.gmail.com>
+Subject: Re: [PATCH 10/45] clk: gemini: Make sure clk_init_data is fully initialized
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Billy Tsai <billy_tsai@aspeedtech.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>, 
+	Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
+	Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
+	Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, 
+	Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
+	David Lechner <david@lechnology.com>, Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Santosh Shilimkar <ssantosh@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
+	Gregory Clement <gregory.clement@bootlin.com>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Dinh Nguyen <dinguyen@kernel.org>, Viresh Kumar <vireshk@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	=?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>, 
+	Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Ulf Hansson <ulfh@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Michal Simek <michal.simek@amd.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, linux-clk@vger.kernel.org, 
+	linux-aspeed@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org, 
+	arm-scmi@vger.kernel.org, imx@lists.linux.dev, linux-mips@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 21, 2026 at 10:52:25AM +0200, Geert Uytterhoeven wrote:
+On Fri, Aug 21, 2026 at 10:53=E2=80=AFAM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+
 > The clk_init_data structure contains several mutually-exclusive members
 > for different methods to specify the possible parents of a clock,
 > prompting drivers to initialize only the members they need.  However,
 > not initializing all members may cause subtle issues, which are only
 > exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
 > enabled.
-> 
+>
 > Make sure all members are fully initialized, to avoid such bugs, and to
 > prevent future breakage when converting drivers to a different method
 > for specifying the parents.
-> 
+>
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+Acked-by: Linus Walleij <linusw@kernel.org>
 
+Yours,
+Linus Walleij
