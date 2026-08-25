@@ -1,652 +1,285 @@
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062C7361668;
-	Tue, 25 Aug 2026 06:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18563C3F5D
+	for <linux-tegra@vger.kernel.org>; Tue, 25 Aug 2026 08:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=205.220.180.131
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787641152; cv=pass; b=YZy9KrHO16d7metL8hQ1qjDJFtuoapQ77ZweODSe1DuFOWuK0C6WN3NiWgOjYwjdz1W+o//zUiyr58nZeBqk0SI8T8YpamdFob/OlzvnIjMlu7AcDpvHPZNdEFvt+oLNBv38LqYotP+/57BXhSwepJ4XmtZH9qkRsOMsgeegqaw=
+	t=1787644852; cv=pass; b=d24t/0WJ4DQChIhxbEYj2i1S70Jt1pR8MOjfvujQ2nWh1oRJ1+oAZOn5omA5k87oRLAqAGGEP6SpSOJB/z017p7ds3Fln5U48gnOupTGfKsrWYCRV3OgOfv628k2id5yNXBGtQxlbQoVFyPE6vE520XbQNKJzgJAYNW1fHwlhys=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787641152; c=relaxed/simple;
-	bh=ZQ72fbmRFFodf95rm+P2GRV5tpLVB1h15coaRnmiIQQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bejm4ZmprH4YNB2PN5NoB7+DXLwdSt74OrOEa5R3Vo0QwiZ49JcbeehmE7uP1VVDDSbvbzJuC4AIvD67ye0NZP2mw6IpUwrC6w16uVHkQG0paAuA150oXOlOyjlWQar7EtDLSbfGyI11qVol8iPbhYblZE/LcR2L/lwF7ytsSxs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=N1W4nm36; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+	s=arc-20240116; t=1787644852; c=relaxed/simple;
+	bh=JhXUbAmc4eEDPKk8ugB/b+4DY0/aYbzevBnTQP/qoLk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ccr5NAmGmAHQD2f+2Y0ZGkW8EitWCo06OybPA2mhdRRuMg+aX3Tw0h1O3TZhE6k+KkSkRy/7jTDLinwdh+cVtY6oaTv13kiXgttbisRZeTmSQo31pSAkQU//XL65U8E5lVPwgGxpPwjYoRsIcspTqND5OFyKBv6MbFohxOHAl9A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hW245yiu; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=GewTwvPF; arc=pass smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="N1W4nm36"
-ARC-Seal: i=1; a=rsa-sha256; t=1787641137; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=BWaE2/RXarkbcZc1r+pnvYHDIAPN8oGf5IWgBihFdFxMX5RSqxqsF1Yzvt/yjCeVFOVo2HEHrBRcDPYNUmWCDpZrRMCSxfqmOSvGFmkvaNoOh/9WB5Dtg7fI6FYH7uOEi4FThL8wj2XWyu/uNG0onuDNV3oT6WoM4IWKGgiPn4A=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1787641137; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Yaziqxb7+WKSWjLyMNfveH40kZz2XNovdSDMc21+f6U=; 
-	b=ItXsrSy6yos2lay/tpq+jYM7PBPyehp6UOw6s6pMqfFY/N3Z+DzKU01yf4HjjeGC5IAjnhDGdahcFw5mDg4jZXbRugqV4Z77nIlDCvj6mckXEXgUSlg/e5CFsAoiz0BJbiBEWI/jcjWwcfonB6SdPBGd4TQgax746F2ltQ/xsJo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
-	dmarc=pass header.from=<ming.li@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1787641137;
-	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=Yaziqxb7+WKSWjLyMNfveH40kZz2XNovdSDMc21+f6U=;
-	b=N1W4nm36ndTpVPodoal1Q+e6ZBWqSypDOBBjC8boYgOoBiKMfxI/U5w/mdxqRotm
-	yPxJj2nh5geQqLBIDBRpnSF4iLjyJkANBAg75jvE3OjPzW+8EzBM0UOuvEb8pt8SqVZ
-	4vhSMBATibV+FmhRfPbhB57exwFXT35kzZpbQkvE=
-Received: by mx.zohomail.com with SMTPS id 178764113546214.37737266110662;
-	Mon, 24 Aug 2026 23:58:55 -0700 (PDT)
-Message-ID: <e7c9cfe2-674f-4ba5-ba21-dc22b9e635f3@zohomail.com>
-Date: Tue, 25 Aug 2026 14:58:47 +0800
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hW245yiu";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="GewTwvPF"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67P2R4pN120424
+	for <linux-tegra@vger.kernel.org>; Tue, 25 Aug 2026 08:00:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5i22KieYsA+kqY5NiRh4D02J0ZkjG6AI3NKqJFhFDss=; b=hW245yiuzPpw7Zc7
+	TgI5VNmqUcEW+F7q3OTTfJAr9m+I8U+Mi99eCl1qdFtPN2dzojQ3waErOzZM/SV4
+	raw/gVvUm3SlExnqFleFA4w3we4B3eHvab/tWFLtTjSZXJfySDZ1DKqwOkHzrh9y
+	+zGcn1Vz17mWFL/hvjpDHkwGf9jZMNi6GCRKAaTJ6aUKu4tlA37r3CBEXy+uI1BU
+	nO9dfrLc6QhISS+yH/aHgJt0l/HNqwUSn0YC5a4QhIYZwS6zr9RomQjt9CEwUj1f
+	SE7xuEoZrCDNPmc33MonGrwEmaAcBQyGQD4H94PSwHSRoxoysR8Tr3DQYjQOiUNi
+	/Hr+0A==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g8t3dttx9-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-tegra@vger.kernel.org>; Tue, 25 Aug 2026 08:00:46 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-38dde0df80bso7953751a91.3
+        for <linux-tegra@vger.kernel.org>; Tue, 25 Aug 2026 01:00:46 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787644845; cv=none;
+        d=google.com; s=arc-20260327;
+        b=lwB+TRtxrCt9g8cpSSUd9JNgC07ulOPTSYJItW5mWX8yheqdktODJTBOQ+l6qrRUZV
+         iJZyysSAu61g/tyfbcaCYfUmBwYzL7VCkdf5agH2QBJKE6ki22v6mOBNTeYAnQZWFpM+
+         /x/OpLQ5AAtso7MbzHOMvfGPRtPwtX1T5piJj4UIiiQHiAWjX0lXBnWbhY5taLY5QqCH
+         7hQ8H/kJe1LOx34AMo5Yu0/xA9mil4gaNvERkEohKQeMI5KtxmTG5acKMvrblq0MAL9t
+         Kf0x1Ft0sJ5oeDdYjg3l2srs1FfezpgNV/GZpJn1nQo0/XnPWmqBsoRZnghn76bl1p7D
+         Wr4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=5i22KieYsA+kqY5NiRh4D02J0ZkjG6AI3NKqJFhFDss=;
+        fh=upsJPisPx1jgm0TDFnqS8aQuZQHilmkPibVxkjmHOpM=;
+        b=mOBN2HVCHbF5C9kNsNvF4vS9rjfkDs+SJrr6NrZnFzsfO8iOz9deQYiTitVDwqWBnW
+         If+WU512kFUcRqMHztxdZxjiVObdNtYhU7iKfvEzD2+Rfhr9Roele2DjRH4seZA8k8XZ
+         SqPFv3C7K23adn+HZQhHmsUY+xU3SSJhpSXw+NwFJTSnuGaGyAh4X09s/J9DKcEx+VNr
+         dqyF2NmUZNPIOkLKlOx7qU/KZMPC6WyWD04EpyacI17+skEOLZIOXC0xOOTthZ/SMQjo
+         KXwHaouhRw3PbXCctvpURNIVgTLn5G5CLLPLslVMUa8NsP/7qsZ/z3B95fe7iwEgbSJf
+         qekg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1787644845; x=1788249645; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=5i22KieYsA+kqY5NiRh4D02J0ZkjG6AI3NKqJFhFDss=;
+        b=GewTwvPFlKrf0UqljTYPAhJVWzr6rL+EIGiL/M8X14z8dWB6YWOrf3nJxqMHWt1HrQ
+         NQsSeQj920y8jhB0C50MQr+1YtPZshwVCyEQGMkvTEBrIwQfpb1UDKBmBlAlSTGbP44M
+         AgF8hfuauTGUQIT3+U3QIkHDJf+dYO0Qny4ET/yQw/7Jm5FPQexBjGqDDEfhZvfk1Eka
+         +vPa+a0QdhBl4zE2QHq2nNjvYOM0KBdhPMQOp8KZNTTKzCwtUnhS9hNUfPmoz2Z1bjw0
+         /T9sKl2CXtD3REpXmYpmtg2N0IiYkDnrZ8wpKnunZRyORYBGTreF0VaU8SLnDuYNcwZO
+         Q6iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787644845; x=1788249645;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=5i22KieYsA+kqY5NiRh4D02J0ZkjG6AI3NKqJFhFDss=;
+        b=dzt/Zilb+b3CdQ+WehLMLdjFhGvB86HpNbd0KUUdNEGP4WYh+8nxoDBD2lg/x9r0M7
+         ghI0sNVET85xx78B7eQz34dyWpDQDe7GVxoG7n7dTAWGrD9J4iTCaw395i4ZdO0RuY0G
+         RI61+U7bNASFgZC9/8nS49Lji39hIBj/kOlUMMj/M/pdgi7IIe8dYCqxIFV7VrYtfQCN
+         tH3KLurgONPxIkPkEyxI+lvKwgMkbA/PtCP/mP+HJXHT97R/hhLfwte3uVH51pf2KYPV
+         YVaS6LsYBv8r9uVi7ltJA0txa7B/qk6k7pNLrmmnIbLrw190CKPZrc63c9/zG3m/iRLV
+         GdfQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rrtv6WawH+8Z6Cvacl6JY+jTt0xOOZ/MXin33txRDEmuCuubrkipBTcX2BF64G+LjaqdHIKhTWnFB6VOg==@vger.kernel.org
+X-Gm-Message-State: AFuF++l/Jp1uUKlh9Gy1x3eEfHZT2cNZAyN21oIbJ2trEddEGYG94Apn
+	ohYpqQPNMh3YWg7UxrCZsUQlojPUggzw1TbjGu5I92REQZWeVFTG4oZw4AAUHsET3QWWpbcHOW+
+	FBjOWAVrt0NoKrpEhY9UW9CCnpmOGfWLRZndxbH7pHLmzZTureb7FMQTcxRS+VPXbggZu1PrGkP
+	irFYlQVNhlgsq6MbEBMI6lSl+rop+ZrpEUqsk0Da0B
+X-Gm-Gg: AR+sD105E2w5KeF54VJaHu+cczN/VbokK+9eNii31qQNa8oTMgLS5SW0/72BOupn481
+	8HVyylD3AiyxxfeesE59E0DnsCjTLyL+CXZIXNeXcGmVpjGsptXopIb+RAAoqDkQoaREUzGDQIa
+	9qppWB4A4FnXkWkqX0M2z0/YpUYfno/6GeFabdXlj77HkVE3TvlFYhCqmQfw==
+X-Received: by 2002:a17:90b:1d83:b0:380:9f17:6df3 with SMTP id 98e67ed59e1d1-395c3367376mr54366350a91.4.1787644844907;
+        Tue, 25 Aug 2026 01:00:44 -0700 (PDT)
+X-Received: by 2002:a17:90b:1d83:b0:380:9f17:6df3 with SMTP id
+ 98e67ed59e1d1-395c3367376mr54366138a91.4.1787644844301; Tue, 25 Aug 2026
+ 01:00:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 05/12] cxl: Cache endpoint decoder settings during PCI
- enumeration
-To: Srirangan Madhavan <smadhavan@nvidia.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Dave Jiang <dave.jiang@intel.com>,
- Davidlohr Bueso <dave@stgolabs.net>, Ira Weiny <ira.weiny@intel.com>,
- Jonathan Cameron <jic23@kernel.org>, Vishal Verma
- <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Alex Williamson <alex.williamson@redhat.com>, vsethi@nvidia.com,
- alwilliamson@nvidia.com,
- Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>,
- Vishal Aslot <vaslot@nvidia.com>, Manish Honap <mhonap@nvidia.com>,
- Jiandi An <jan@nvidia.com>, Richard Cheng <icheng@nvidia.com>,
- linux-tegra@vger.kernel.org
-References: <20260804192958.1823952-1-smadhavan@nvidia.com>
- <20260804192958.1823952-6-smadhavan@nvidia.com>
-From: Li Ming <ming.li@zohomail.com>
-In-Reply-To: <20260804192958.1823952-6-smadhavan@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Feedback-ID: zu08011227093b6b5dbd6840018db5883a00003a322e5747628aff6a543de8aef03d6ed5c0b8c251b73981ea:ZohoMail
-X-Zoho-CM-AccountID: abd763e7b9fa23acf4f42a44f9876d2d993e05abdb9290f9ccb1008c977bf7f0
-X-ZohoMailClient: External
+References: <cover.1787239813.git.geert+renesas@glider.be> <bd84df92640a05a1a73a8bc775b2d50568a9d0ec.1787239813.git.geert+renesas@glider.be>
+In-Reply-To: <bd84df92640a05a1a73a8bc775b2d50568a9d0ec.1787239813.git.geert+renesas@glider.be>
+From: Ulf Hansson <ulf.hansson@oss.qualcomm.com>
+Date: Tue, 25 Aug 2026 10:00:32 +0200
+X-Gm-Features: AcwNN1WaGLEXokEDN-w-P7YAI63J28S_AjYowYxFfZoRRRkDa1AUJBYrsKRUG74
+Message-ID: <CAPx+jO9LSfy6-3Gb1+0RvHeVeU9dAN+-1jcGaCESpTZXEAE_YQ@mail.gmail.com>
+Subject: Re: [PATCH 39/45] clk: ux500: Make sure clk_init_data is fully initialized
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Andrew Jeffery <andrew@codeconstruct.com.au>,
+        Billy Tsai <billy_tsai@aspeedtech.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@tuxon.dev>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+        Taichi Sugaya <sugaya.taichi@socionext.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Linus Walleij <linusw@kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Sudeep Holla <sudeep.holla@kernel.org>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        David Lechner <david@lechnology.com>, Abel Vesa <abelvesa@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>, Frank Li <Frank.Li@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Santosh Shilimkar <ssantosh@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Vladimir Zapolskiy <vz@mleia.com>, Heiko Stuebner <heiko@sntech.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Peter Griffin <peter.griffin@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Dinh Nguyen <dinguyen@kernel.org>, Viresh Kumar <vireshk@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        =?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
+        Chen-Yu Tsai <wens@kernel.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Michal Simek <michal.simek@amd.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>, linux-clk@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+        arm-scmi@vger.kernel.org, imx@lists.linux.dev,
+        linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+        soc@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-ORIG-GUID: 5DS2rbl1998uJ6ffqF35zEoC_qvIt9yU
+X-Authority-Analysis: v=2.4 cv=OLAXGyaB c=1 sm=1 tr=0 ts=6a8d4bae cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10
+ a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
+ a=yx91gb_oNiZeI1HMLzn7:22 a=VwQbUJbxAAAA:8 a=xsHTnWN7LAWtonkW0D4A:9
+ a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-GUID: 5DS2rbl1998uJ6ffqF35zEoC_qvIt9yU
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODI1MDA2NyBTYWx0ZWRfX9AfiMHrFXFmz
+ R4xJUXX87a6sUJd9NfQmJnoqNhbbOYCxCRnuTMhLQEMqMN3a5BKxFUVlpRqYRlJHyKyAGNSORcQ
+ 5IgDSAe2Syn/jytV2GmqcH7mPzP0E/4=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI1MDA2NyBTYWx0ZWRfX1L35okH9q4yE
+ f6hohXSE14deRNuGZ+O8eh87L7iXxonQlnz7QzFIiqQWTGfSPqkW847CCf8JyGq89FkIV70IBg/
+ y2ScqI6gNA7R1HUWfDAYnoIGBH5knn3bxvelKapFavAAOdcG6bdiH5B3s17V4gokFOxRGl2sCgA
+ FvnYX1jpquWNaafwAfes0Kv7FGV3Nz2bcHmN8TUHWUNrVN7Ijn5Yp7D5/wW2hS9gcHHRTo8XIAN
+ hASptq99aRWHDqJcCQ6bS7UmZ245LWWa0LR89QUOY4o8X5Ju88yxeYsbo3taCTMSMnhPTOZUGIr
+ KXXkSra65w+1H9KT0rziv2iSgluYbKdagB/a7o6M62wH6+ggYxPSf60s+5nFy+XjKPj6ytvAp11
+ 3Y/cHkeho+EzLk2a7Xj/dJuXg2g9vkNaCzamNEmS/yXT4oPqRwCyg3vFsXsIU3qLItXoQnVkDio
+ gkQ//AykLQXl9ddis1Q==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-25_01,2026-08-24_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 impostorscore=0 adultscore=0 malwarescore=0 suspectscore=0
+ priorityscore=1501 spamscore=0 phishscore=0 lowpriorityscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608250067
 
-On 8/5/2026 3:29 AM, Srirangan Madhavan wrote:
-> Populate pci_dev->hdm for CXL.mem functions from pci_bus_add_device(),
-> after final PCI fixups and state save but before driver binding. This
-> gives driver-free reset paths an early HDM snapshot while avoiding the
-> pre-resource-assignment window in PCI capability initialization.
+On Fri, Aug 21, 2026 at 11:04=E2=80=AFAM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 >
-> Use the CXL Register Locator BAR Indicator to find the component register
-> BAR, reject unassigned, disabled, or zero memory BAR resources before
-> temporarily enabling Memory Space, and restore the original PCI_COMMAND
-> value before returning.
+> The clk_init_data structure contains several mutually-exclusive members
+> for different methods to specify the possible parents of a clock,
+> prompting drivers to initialize only the members they need.  However,
+> not initializing all members may cause subtle issues, which are only
+> exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
+> enabled.
 >
-> CXL core reuses and refreshes the same cache as decoders are committed or
-> reset, and retries cache setup during CXL HDM enumeration if the PCI
-> bus-add attempt did not publish a cache. Move the register helpers into
-> the built-in CONFIG_CXL_HDM set so the early cache path is available
-> without cxl_core, and keep the cxl-test mock core from building a
-> duplicate regs.o.
+> Make sure all members are fully initialized, to avoid such bugs, and to
+> prevent future breakage when converting drivers to a different method
+> for specifying the parents.
 >
-> Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Acked-by: Ulf Hansson <ulfh@kernel.org>
+
+Kind regards
+Uffe
+
 > ---
->  drivers/cxl/core/Makefile   |   3 +-
->  drivers/cxl/core/hdm.c      |  13 +-
->  drivers/cxl/core/regs.c     |   4 +
->  drivers/cxl/core/resource.c | 313 ++++++++++++++++++++++++++++++++++++
->  drivers/pci/bus.c           |   2 +
->  drivers/pci/probe.c         |   2 +
->  include/cxl/cxl.h           |  26 +++
->  tools/testing/cxl/Kbuild    |   1 -
->  8 files changed, 360 insertions(+), 4 deletions(-)
+> Compile-tested only.
+> ---
+>  drivers/clk/ux500/clk-prcc.c    | 2 +-
+>  drivers/clk/ux500/clk-prcmu.c   | 4 ++--
+>  drivers/clk/ux500/clk-sysctrl.c | 2 +-
+>  3 files changed, 4 insertions(+), 4 deletions(-)
 >
-> diff --git a/drivers/cxl/core/Makefile b/drivers/cxl/core/Makefile
-> index 0df4178bbbaa..e22f05d83c39 100644
-> --- a/drivers/cxl/core/Makefile
-> +++ b/drivers/cxl/core/Makefile
-> @@ -1,6 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  obj-$(CONFIG_CXL_BUS) += cxl_core.o
-> -obj-$(CONFIG_CXL_HDM) += resource.o
-> +obj-$(CONFIG_CXL_HDM) += regs.o resource.o
->  obj-$(CONFIG_CXL_SUSPEND) += suspend.o
->  
->  ccflags-y += -I$(srctree)/drivers/cxl
-> @@ -8,7 +8,6 @@ CFLAGS_trace.o = -DTRACE_INCLUDE_PATH=. -I$(src)
->  
->  cxl_core-y := port.o
->  cxl_core-y += pmem.o
-> -cxl_core-y += regs.o
->  cxl_core-y += memdev.o
->  cxl_core-y += mbox.o
->  cxl_core-y += pci.o
-> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
-> index ec988e7b7c0c..b47701fc5315 100644
-> --- a/drivers/cxl/core/hdm.c
-> +++ b/drivers/cxl/core/hdm.c
-> @@ -112,10 +112,17 @@ static int cxl_pci_setup_hdm_info(struct cxl_hdm *cxlhdm)
->  	struct pci_dev *pdev __free(pci_dev_put) =
->  		cxl_port_get_uport_pci_dev(cxlhdm->port);
->  	bool present;
-> +	int rc;
->  
->  	if (!pdev)
->  		return 0;
->  
-> +	rc = cxl_pci_hdm_info_match(pdev, cxlhdm->decoder_count, &present);
-> +	if (rc || present)
-> +		return rc;
-> + 
-> +	pci_cxl_hdm_init(pdev);
-> +
->  	return cxl_pci_hdm_info_match(pdev, cxlhdm->decoder_count, &present);
->  }
->  
-> @@ -180,6 +187,10 @@ static void cxl_hdm_info_set_decoder(struct cxl_hdm *cxlhdm,
->  	if (!info || cxld->id >= info->decoder_count)
->  		return;
->  
-> +	if (cxlhdm->regs.hdm_decoder)
-> +		info->global_ctrl = readl(cxlhdm->regs.hdm_decoder +
-> +					  CXL_HDM_DECODER_CTRL_OFFSET);
-> +
->  	if (cxld->flags & CXL_DECODER_F_ENABLE)
->  		cxl_decoder_snapshot(cxld, &info->settings[cxld->id]);
->  	else
-> @@ -1002,11 +1013,11 @@ static int init_hdm_decoder(struct cxl_port *port, struct cxl_decoder *cxld,
+> diff --git a/drivers/clk/ux500/clk-prcc.c b/drivers/clk/ux500/clk-prcc.c
+> index dce235df2576dfb2..dde72d2fd0ac67ae 100644
+> --- a/drivers/clk/ux500/clk-prcc.c
+> +++ b/drivers/clk/ux500/clk-prcc.c
+> @@ -97,8 +97,8 @@ static struct clk *clk_reg_prcc(const char *name,
+>                                 unsigned long flags,
+>                                 const struct clk_ops *clk_prcc_ops)
 >  {
->  	struct cxl_endpoint_decoder *cxled = NULL;
->  	u64 size, base, skip, dpa_size, lo, hi;
-> +	struct cxl_decoder_settings settings;
->  	bool committed;
->  	u32 remainder;
->  	int i, rc;
->  	u32 ctrl, tl_low, tl_high;
-> -	struct cxl_decoder_settings settings;
->  
->  	if (should_emulate_decoders(info))
->  		return cxl_setup_hdm_decoder_from_dvsec(port, cxld, dpa_base,
-> diff --git a/drivers/cxl/core/regs.c b/drivers/cxl/core/regs.c
-> index 93710cf4f0a6..040b0304f63c 100644
-> --- a/drivers/cxl/core/regs.c
-> +++ b/drivers/cxl/core/regs.c
-> @@ -199,6 +199,7 @@ void __iomem *devm_cxl_iomap_block(struct device *dev, resource_size_t addr,
->  
->  	return ret_val;
->  }
-> +EXPORT_SYMBOL_NS_GPL(devm_cxl_iomap_block, "CXL");
->  
->  int cxl_map_component_regs(const struct cxl_register_map *map,
->  			   struct cxl_component_regs *regs,
-> @@ -517,6 +518,7 @@ u16 cxl_rcrb_to_aer(struct device *dev, resource_size_t rcrb)
->  
->  	return offset;
->  }
-> +EXPORT_SYMBOL_NS_GPL(cxl_rcrb_to_aer, "CXL");
->  
->  static resource_size_t cxl_rcrb_to_linkcap(struct device *dev, struct cxl_dport *dport)
+> +       struct clk_init_data clk_prcc_init =3D {};
+>         struct clk_prcc *clk;
+> -       struct clk_init_data clk_prcc_init;
+>         struct clk *clk_reg;
+>
+>         if (!name) {
+> diff --git a/drivers/clk/ux500/clk-prcmu.c b/drivers/clk/ux500/clk-prcmu.=
+c
+> index ac96c46bd1bbf76b..d89f3b634f8bbd26 100644
+> --- a/drivers/clk/ux500/clk-prcmu.c
+> +++ b/drivers/clk/ux500/clk-prcmu.c
+> @@ -200,8 +200,8 @@ static struct clk_hw *clk_reg_prcmu(const char *name,
+>                                     unsigned long flags,
+>                                     const struct clk_ops *clk_prcmu_ops)
 >  {
-> @@ -633,6 +635,7 @@ resource_size_t __rcrb_to_component(struct device *dev, struct cxl_rcrb_info *ri
->  
->  	return component_reg_phys;
->  }
-> +EXPORT_SYMBOL_NS_GPL(__rcrb_to_component, "CXL");
->  
->  resource_size_t cxl_rcd_component_reg_phys(struct device *dev,
->  					   struct cxl_dport *dport)
-> @@ -641,3 +644,4 @@ resource_size_t cxl_rcd_component_reg_phys(struct device *dev,
->  		return CXL_RESOURCE_NONE;
->  	return __rcrb_to_component(dev, &dport->rcrb, CXL_RCRB_UPSTREAM);
->  }
-> +EXPORT_SYMBOL_NS_GPL(cxl_rcd_component_reg_phys, "CXL");
-> diff --git a/drivers/cxl/core/resource.c b/drivers/cxl/core/resource.c
-> index 97cb136cb2ae..7f5946d3f2c4 100644
-> --- a/drivers/cxl/core/resource.c
-> +++ b/drivers/cxl/core/resource.c
-> @@ -2,9 +2,16 @@
->  /* Copyright (c) 2026 NVIDIA Corporation & Affiliates */
->  #include <linux/delay.h>
->  #include <linux/bug.h>
-> +#include <linux/bitfield.h>
->  #include <linux/errno.h>
->  #include <linux/export.h>
-> +#include <linux/io.h>
-> +#include <linux/ioport.h>
->  #include <linux/kernel.h>
-> +#include <linux/pci.h>
-> +#include <linux/slab.h>
-> +
-> +#include <cxlpci.h>
->  
->  #include "cxl.h"
->  #include "core.h"
-> @@ -170,3 +177,309 @@ int cxl_hdm_decode_decoder(struct cxl_decoder_settings *settings, int id,
->  				  &settings->interleave_granularity);
->  }
->  EXPORT_SYMBOL_FOR_MODULES(cxl_hdm_decode_decoder, "cxl_core");
-> +
-> +struct cxl_hdm_decoder_state {
-> +	u32 ctrl;
-> +	u32 base_low;
-> +	u32 base_high;
-> +	u32 size_low;
-> +	u32 size_high;
-> +	u32 target_low;
-> +	u32 target_high;
-> +};
-> +
-> +static void cxl_pci_hdm_info_free(struct cxl_hdm_info *info)
-> +{
-> +	if (!info)
-> +		return;
-> +
-> +	kfree(info->decoder_state);
-> +	kfree(info);
-> +}
-> +
-> +void pci_cxl_hdm_release(struct pci_dev *pdev)
-> +{
-> +	struct cxl_hdm_info *info;
-> +
-> +	scoped_guard(rwsem_write, &cxl_rwsem.dpa) {
-> +		info = pdev->hdm;
-> +		pdev->hdm = NULL;
-> +	}
-> +
-> +	cxl_pci_hdm_info_free(info);
-> +}
-> +
-> +static bool cxl_pci_bar_usable(struct pci_dev *pdev, int bar)
-> +{
-> +	struct resource *res = &pdev->resource[bar];
-> +
-> +	if (!pci_resource_len(pdev, bar))
-> +		return false;
-> +	if (res->flags & (IORESOURCE_UNSET | IORESOURCE_DISABLED))
-> +		return false;
-> +	if (resource_type(res) != IORESOURCE_MEM)
-> +		return false;
-> +	if (!res->start || !res->end)
-> +		return false;
-> +
-> +	return true;
-> +}
-> +
-> +static int cxl_pci_hdm_find_bar(struct pci_dev *pdev, resource_size_t hdm_start,
-> +				resource_size_t hdm_size, int *bar,
-> +				resource_size_t *offset)
-> +{
-> +	resource_size_t hdm_end;
-> +
-> +	if (!hdm_size)
-> +		return -EINVAL;
-> +
-> +	hdm_end = hdm_start + hdm_size - 1;
-> +	if (hdm_end < hdm_start)
-> +		return -EINVAL;
-> +
-> +	for (int i = 0; i < PCI_STD_NUM_BARS; i++) {
-> +		struct resource *res = &pdev->resource[i];
-> +
-> +		if (!cxl_pci_bar_usable(pdev, i))
-> +			continue;
-> +		if (hdm_start < res->start || hdm_end > res->end)
-> +			continue;
-> +
-> +		if (bar)
-> +			*bar = i;
-> +		if (offset)
-> +			*offset = hdm_start - res->start;
-> +		return 0;
-> +	}
-> +
-> +	return -ENODEV;
-> +}
-> +
-> +static void __iomem *cxl_pci_hdm_map(struct pci_dev *pdev,
-> +				     struct cxl_register_map *map,
-> +				     struct cxl_hdm_info *info)
-> +{
-> +	struct cxl_reg_map *hdm_map = &map->component_map.hdm_decoder;
-> +	resource_size_t hdm_start;
-> +	void __iomem *hdm;
-> +	int rc;
-> +
-> +	hdm_start = map->resource + hdm_map->offset;
-> +	info->hdm_size = hdm_map->size;
-> +
-> +	rc = cxl_pci_hdm_find_bar(pdev, hdm_start, info->hdm_size,
-> +				  &info->hdm_bar, &info->hdm_offset);
-> +	if (rc)
-> +		return ERR_PTR(rc);
-> +
-> +	hdm = ioremap(hdm_start, info->hdm_size);
-> +	if (!hdm) {
-> +		pci_err(pdev, "failed to map CXL HDM decoder registers\n");
-> +		return ERR_PTR(-ENOMEM);
-> +	}
-> +
-> +	return hdm;
-> +}
-> +
-> +static void cxl_pci_hdm_read_decoder_state(struct cxl_hdm_decoder_state *state,
-> +					   void __iomem *hdm, int id)
-> +{
-> +	state->ctrl = readl(hdm + CXL_HDM_DECODER0_CTRL_OFFSET(id));
-> +	state->base_low = readl(hdm + CXL_HDM_DECODER0_BASE_LOW_OFFSET(id));
-> +	state->base_high = readl(hdm + CXL_HDM_DECODER0_BASE_HIGH_OFFSET(id));
-> +	state->size_low = readl(hdm + CXL_HDM_DECODER0_SIZE_LOW_OFFSET(id));
-> +	state->size_high = readl(hdm + CXL_HDM_DECODER0_SIZE_HIGH_OFFSET(id));
-> +	state->target_low = readl(hdm + CXL_HDM_DECODER0_TL_LOW(id));
-> +	state->target_high = readl(hdm + CXL_HDM_DECODER0_TL_HIGH(id));
-> +}
-> +
-> +static int cxl_pci_hdm_read_decoder(struct pci_dev *pdev,
-> +				    struct cxl_hdm_decoder_state *state,
-> +				    struct cxl_decoder_settings *settings,
-> +				    void __iomem *hdm, int id)
-> +{
-> +	u64 target_or_skip, base, size;
-> +	int rc;
-> +
-> +	cxl_pci_hdm_read_decoder_state(state, hdm, id);
-> +
-> +	base = ((u64)state->base_high << 32) | state->base_low;
-> +	size = ((u64)state->size_high << 32) | state->size_low;
-> +	target_or_skip = ((u64)state->target_high << 32) | state->target_low;
-> +
-> +	rc = cxl_hdm_decode_decoder(settings, id, state->ctrl, base, size,
-> +				    target_or_skip, NULL);
-> +	if (rc) {
-> +		pci_err(pdev, "CXL HDM decoder %d has invalid configuration: %d\n",
-> +			id, rc);
-> +		return rc;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int cxl_pci_hdm_capable(struct pci_dev *pdev)
-> +{
-> +	u16 cap;
-> +	int dvsec;
-> +	int rc;
-> +
-> +	dvsec = pci_find_dvsec_capability(pdev, PCI_VENDOR_ID_CXL,
-> +					  PCI_DVSEC_CXL_DEVICE);
-> +	if (!dvsec)
-> +		return -ENOTTY;
-> +
-> +	rc = pci_read_config_word(pdev, dvsec + PCI_DVSEC_CXL_CAP, &cap);
-> +	if (rc)
-> +		return pcibios_err_to_errno(rc);
-> +
-> +	if (!(cap & PCI_DVSEC_CXL_MEM_CAPABLE))
-> +		return -ENOTTY;
-> +
-> +	return 0;
-> +}
-> +
-> +static int cxl_pci_hdm_read_info(struct pci_dev *pdev,
-> +				 struct cxl_register_map *map,
-> +				 struct cxl_hdm_info *info)
-> +{
-> +	struct cxl_decoder_settings *settings;
-> +	void __iomem *hdm;
-> +	int decoder_count;
-> +	int rc;
-> +
-> +	rc = cxl_setup_regs(map);
-> +	if (rc)
-> +		return rc;
-> +
-> +	if (!map->component_map.hdm_decoder.valid)
-> +		return -ENODEV;
-> +
-> +	hdm = cxl_pci_hdm_map(pdev, map, info);
-> +	if (IS_ERR(hdm))
-> +		return PTR_ERR(hdm);
-> +
-> +	decoder_count = cxl_hdm_decoder_count(readl(hdm +
-> +						    CXL_HDM_DECODER_CAP_OFFSET));
-> +	if (decoder_count < 0) {
-> +		rc = decoder_count;
-> +		goto out_unmap;
-> +	}
-> +
-> +	if (decoder_count > CXL_HDM_DECODER_MAX_COUNT) {
-> +		rc = -ENXIO;
-> +		goto out_unmap;
-> +	}
-> +
-> +	info->decoder_count = decoder_count;
-> +	info->global_ctrl = readl(hdm + CXL_HDM_DECODER_CTRL_OFFSET);
-> +	info->decoder_state = kcalloc(decoder_count,
-> +				      sizeof(*info->decoder_state),
-> +				      GFP_KERNEL);
-> +	if (!info->decoder_state) {
-> +		rc = -ENOMEM;
-> +		goto out_unmap;
-> +	}
-> +
-> +	settings = info->settings;
-> +	for (int i = 0; i < info->decoder_count; i++) {
-> +		rc = cxl_pci_hdm_read_decoder(pdev, &info->decoder_state[i],
-> +					      &settings[i], hdm, i);
-> +		if (rc)
-> +			goto out_unmap;
-> +	}
-> +
-> +	rc = 0;
-> +out_unmap:
-> +	iounmap(hdm);
-> +	return rc;
-> +}
-> +
-> +static int __pci_cxl_hdm_init(struct pci_dev *pdev)
-> +{
-> +	struct cxl_register_map map = { 0 };
-> +	struct cxl_hdm_info *info;
-> +	bool restore_command;
-> +	u16 command;
-> +	int rc;
-> +
-> +	down_read(&cxl_rwsem.dpa);
-> +	if (pdev->hdm) {
-> +		up_read(&cxl_rwsem.dpa);
-> +		return 0;
-> +	}
-> +	up_read(&cxl_rwsem.dpa);
-
-Could use a scoped_guard() here.
-
-
-> +
-> +	rc = cxl_pci_hdm_capable(pdev);
-> +	if (rc)
-> +		return rc;
-> +
-> +	rc = cxl_find_regblock(pdev, CXL_REGLOC_RBI_COMPONENT, &map);
-> +	if (rc)
-> +		return rc;
-> +
-> +	rc = cxl_pci_hdm_find_bar(pdev, map.resource, map.max_size, NULL, NULL);
-> +	if (rc)
-> +		return rc;
-> +
-> +	info = kzalloc_obj(*info, GFP_KERNEL);
-> +	if (!info)
-> +		return -ENOMEM;
-> +
-> +	rc = pci_read_config_word(pdev, PCI_COMMAND, &command);
-> +	if (rc) {
-> +		rc = pcibios_err_to_errno(rc);
-> +		goto out_free_info;
-> +	}
-> +
-> +	restore_command = !(command & PCI_COMMAND_MEMORY);
-> +	if (restore_command) {
-> +		rc = pci_write_config_word(pdev, PCI_COMMAND,
-> +					   command | PCI_COMMAND_MEMORY);
-> +		if (rc) {
-> +			rc = pcibios_err_to_errno(rc);
-> +			goto out_free_info;
-> +		}
-> +	}
-> +
-> +	rc = cxl_pci_hdm_read_info(pdev, &map, info);
-> +
-> +	if (restore_command) {
-> +		int rc2 = pci_write_config_word(pdev, PCI_COMMAND, command);
-> +
-> +		if (rc2) {
-> +			rc2 = pcibios_err_to_errno(rc2);
-> +			pci_err(pdev,
-> +				"failed to restore PCI_COMMAND after CXL HDM cache init: %d\n",
-> +				rc2);
-> +			if (!rc)
-> +				rc = rc2;
-> +		}
-> +	}
-
-How about moving PCI_COMMAND programming and restoring into cxl_pci_hdm_read_info(), and rename current cxl_pci_hdm_read_info() to __cxl_pci_hdm_read_info()?
-
-
-> +
-> +	if (rc)
-> +		goto out_free_info;
-> +
-> +	down_write(&cxl_rwsem.dpa);
-> +	if (!pdev->hdm) {
-> +		pdev->hdm = info;
-> +		info = NULL;
-> +	}
-> +	up_write(&cxl_rwsem.dpa);
-
-Same as above, can be replaced by a scoped_guard().
-
-
-> +
-> +	cxl_pci_hdm_info_free(info);
-> +	return 0;
-> +
-> +out_free_info:
-> +	cxl_pci_hdm_info_free(info);
-> +	return rc;
-> +}
-> +
-> +void pci_cxl_hdm_init(struct pci_dev *pdev)
-> +{
-> +	int rc;
-> +
-> +	rc = __pci_cxl_hdm_init(pdev);
-> +	if (rc && rc != -ENOTTY && rc != -ENODEV)
-> +		pci_dbg(pdev, "CXL HDM cache init failed: %d\n", rc);
-> +}
-> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-> index 655ed53436d3..5fd7bae8e786 100644
-> --- a/drivers/pci/bus.c
-> +++ b/drivers/pci/bus.c
-> @@ -18,6 +18,7 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/proc_fs.h>
->  #include <linux/slab.h>
-> +#include <cxl/cxl.h>
->  
->  #include "pci.h"
->  
-> @@ -359,6 +360,7 @@ void pci_bus_add_device(struct pci_dev *dev)
->  
->  	/* Save config space for error recoverability */
->  	pci_save_state(dev);
-> +	pci_cxl_hdm_init(dev);
->  
->  	/*
->  	 * Enable runtime PM, which potentially allows the device to
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index dd0abbc63e18..0bed5638d6da 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -24,6 +24,7 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/bitfield.h>
->  #include <trace/events/pci.h>
-> +#include <cxl/cxl.h>
->  #include "pci.h"
->  
->  static struct resource busn_resource = {
-> @@ -2484,6 +2485,7 @@ static void pci_release_dev(struct device *dev)
->  	struct pci_dev *pci_dev;
->  
->  	pci_dev = to_pci_dev(dev);
-> +	pci_cxl_hdm_release(pci_dev);
->  	pci_release_capabilities(pci_dev);
->  	pci_release_of_node(pci_dev);
->  	pcibios_release_device(pci_dev);
-> diff --git a/include/cxl/cxl.h b/include/cxl/cxl.h
-> index 703285966946..a1fe8949f3f7 100644
-> --- a/include/cxl/cxl.h
-> +++ b/include/cxl/cxl.h
-> @@ -26,6 +26,7 @@ enum cxl_devtype {
->  };
->  
->  struct cxl_region;
-> +struct pci_dev;
->  
->  enum cxl_decoder_type {
->  	CXL_DECODER_DEVMEM = 2,
-> @@ -135,16 +136,41 @@ struct cxl_regs {
->  
->  #define CXL_HDM_DECODER_MAX_COUNT 32
->  
-> +struct cxl_hdm_decoder_state;
-> +
->  /**
->   * struct cxl_hdm_info - PCI device HDM decoder programming cache
->   * @decoder_count: number of decoder settings entries
-> + * @hdm_bar: BAR containing the HDM decoder registers
-> + * @hdm_offset: HDM decoder register offset relative to @hdm_bar
-> + * @hdm_size: HDM decoder register resource size
-> + * @global_ctrl: cached HDM decoder global control register
-> + * @decoder_state: cached raw per-decoder register state
->   * @settings: cached per-decoder programming state
->   */
->  struct cxl_hdm_info {
->  	int decoder_count;
-> +	int hdm_bar;
-> +	resource_size_t hdm_offset;
-> +	resource_size_t hdm_size;
-> +	u32 global_ctrl;
-> +	struct cxl_hdm_decoder_state *decoder_state;
->  	struct cxl_decoder_settings settings[CXL_HDM_DECODER_MAX_COUNT];
->  };
->  
-> +#ifdef CONFIG_CXL_HDM
-> +void pci_cxl_hdm_init(struct pci_dev *pdev);
-> +void pci_cxl_hdm_release(struct pci_dev *pdev);
-> +#else
-> +static inline void pci_cxl_hdm_init(struct pci_dev *pdev)
-> +{
-> +}
-> +
-> +static inline void pci_cxl_hdm_release(struct pci_dev *pdev)
-> +{
-> +}
-> +#endif
-> +
->  struct cxl_reg_map {
->  	bool valid;
->  	int id;
-> diff --git a/tools/testing/cxl/Kbuild b/tools/testing/cxl/Kbuild
-> index 6c09932587ce..2eb61812a8e7 100644
-> --- a/tools/testing/cxl/Kbuild
-> +++ b/tools/testing/cxl/Kbuild
-> @@ -55,7 +55,6 @@ obj-m += cxl_core.o
->  
->  cxl_core-y := $(CXL_CORE_SRC)/port.o
->  cxl_core-y += $(CXL_CORE_SRC)/pmem.o
-> -cxl_core-y += $(CXL_CORE_SRC)/regs.o
->  cxl_core-y += $(CXL_CORE_SRC)/memdev.o
->  cxl_core-y += $(CXL_CORE_SRC)/mbox.o
->  cxl_core-y += $(CXL_CORE_SRC)/pci.o
-
-
+> +       struct clk_init_data clk_prcmu_init =3D {};
+>         struct clk_prcmu *clk;
+> -       struct clk_init_data clk_prcmu_init;
+>         int ret;
+>
+>         if (!name) {
+> @@ -357,8 +357,8 @@ struct clk_hw *clk_reg_prcmu_clkout(const char *name,
+>                                     u8 source, u8 divider)
+>
+>  {
+> +       struct clk_init_data clk_prcmu_clkout_init =3D {};
+>         struct clk_prcmu_clkout *clk;
+> -       struct clk_init_data clk_prcmu_clkout_init;
+>         u8 clkout_id;
+>         int ret;
+>
+> diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysc=
+trl.c
+> index ba3258c88d28e101..2127a949e56ccf27 100644
+> --- a/drivers/clk/ux500/clk-sysctrl.c
+> +++ b/drivers/clk/ux500/clk-sysctrl.c
+> @@ -127,8 +127,8 @@ static struct clk *clk_reg_sysctrl(struct device *dev=
+,
+>                                 unsigned long flags,
+>                                 const struct clk_ops *clk_sysctrl_ops)
+>  {
+> +       struct clk_init_data clk_sysctrl_init =3D {};
+>         struct clk_sysctrl *clk;
+> -       struct clk_init_data clk_sysctrl_init;
+>         struct clk *clk_reg;
+>         int i;
+>
+> --
+> 2.43.0
+>
