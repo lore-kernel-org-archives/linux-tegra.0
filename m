@@ -1,332 +1,157 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4335038A722
-	for <linux-tegra@vger.kernel.org>; Tue, 25 Aug 2026 08:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21F742FCCC
+	for <linux-tegra@vger.kernel.org>; Tue, 25 Aug 2026 12:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787645320; cv=none; b=TFBAxbAqLluEKSqRA4i01YxqUYhV0GVItHrdmhuz9AiN14gtzk9f17l1phUnz3LjCHvnR45e4uE1Dd7+vCxfbzNivJod2VsmBV2tzk5aWzYjWKDOHr34pty91O1Rv6dFKOQ9i1H2534wnf9RwTjEBYjQAAIcGfVOABjdj2gqRx4=
+	t=1787661012; cv=none; b=qmXCJNE/KCN7gvnKpTX9XkbVNXoI6Cg9TCbpoiF1H/buJ6y23Ei+UXuwIqEfq7YDZLAgEkbbELkEpLkQkPpDIicBj+xiAIWVy66w2e0Aj0Hcgc8zcf4wNON6HH15xwx0+TGVreGH3JylPaGeC30/liI3ZG+yiVtWYIvI9sw4C60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787645320; c=relaxed/simple;
-	bh=Ul3FGDKjBRPHwVKW8bK4lJDUlQtQMKy+8szv5WSLCY8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hEcxYL3rbYsOoMVEbawCrEa62Bt0ZQdhpIyrkPSKDUKGoccd1vvfzPR2/SNkVi9Q3p4iKlOL1y00BWRHknoAUjX//69909UntCixcYwztcoyM1jgYYEsBQUnaOAjd0dSFCKhXNA610gBTrUx1vitMZW/XzW9pOnGtHS4Ds8146M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IQAgRM8B; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lz48kjJy; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NaOJKmg8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qF8jGasF; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1787661012; c=relaxed/simple;
+	bh=DBxi0BOOwrT4xCseyDgm+w1BLMxRq77pCreq5EfGDkY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:In-Reply-To:
+	 Content-Type:References; b=ZYcxMKhJtRhQIbP2NEJHmzHMFhu54IvZ5Z/lyf92Pq5+3SNkJyDELKarJXkw/G0/TgPzPNLOv47QbaXsIpCMQHjmAKwyabk1YRxLVzUoM+ZSIW174FbyyW84GTZqLk/vzHtDg6ChvBVx8RtMQXiO0WtGckku5UD+IKpND4afyXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=M/plwnle; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IQAgRM8B";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lz48kjJy";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NaOJKmg8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qF8jGasF"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9D49F1F7A4;
-	Tue, 25 Aug 2026 08:07:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1787645278; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MDJ3jw29gkr7CXJOmn+O4FQkSRmuVB8deXVafri3TZo=;
-	b=IQAgRM8BPMUn5sHFI1grgs4nJQTd6F3Rx2whrXFyjtSvTBSo4RNud4zSbNMWjrjUCtHbTH
-	HzbGP8BFF3Hqzpp/O5ayOaQU8p14eAK94kvzygmYEhRWEFfrN38BsloEdCH5oNnY2mW0Kf
-	mEJMeCcfT8xtnvPLDLUC0H9f3NFXdcM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1787645278;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MDJ3jw29gkr7CXJOmn+O4FQkSRmuVB8deXVafri3TZo=;
-	b=lz48kjJy+seOuVlUp+acwQRZVTZ2iA60K+m54O/ej3Ln/0b2/ql0P1JR5aCCbGu5HPLw3p
-	FDCglF2avAag9RCw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1787645274; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MDJ3jw29gkr7CXJOmn+O4FQkSRmuVB8deXVafri3TZo=;
-	b=NaOJKmg8/6Jtc9UrizZTFae3bZZvxq7jJdGL+hrZgri9FuewUeGvVBWhJNPGTdIHplWTbv
-	MiHphBABFps99GP3HDGC6Q1QiutfEqTD16qr4ngJ5g4s9kbMd8a7ChwUHkUddYWVnSOXbW
-	z2buJYwztzuZszI10ZCXL/AHk3WOQ4s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1787645274;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MDJ3jw29gkr7CXJOmn+O4FQkSRmuVB8deXVafri3TZo=;
-	b=qF8jGasF5tDU5HpAPDHta87N+gATgr1VtRSt4MiBP2zDZ3Oc5cPfp6DxD6W70pdnom0/6e
-	RBON95eh7BsISVCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4FBF713332;
-	Tue, 25 Aug 2026 08:07:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id svAVEllNjWrMeAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 25 Aug 2026 08:07:53 +0000
-Message-ID: <e393996a-3ef1-4c43-b762-af8cd0f2a4b6@suse.de>
-Date: Tue, 25 Aug 2026 10:07:52 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="M/plwnle"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260825123000euoutp02dafb070123a1860b7f0d2a6f8bab28ae~PDDVe2CAs1767217672euoutp02J
+	for <linux-tegra@vger.kernel.org>; Tue, 25 Aug 2026 12:30:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260825123000euoutp02dafb070123a1860b7f0d2a6f8bab28ae~PDDVe2CAs1767217672euoutp02J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1787661000;
+	bh=/CFXDg3L0aD6SB3xy+cQUqcdazmfSamoOM2pD2VK9/8=;
+	h=Date:From:Subject:To:Cc:In-Reply-To:References:From;
+	b=M/plwnleb557HnWW2Dgy9vnFWSWbm89jMkXmfdBPQP4QBiSMtpwH1WVf0GPG0YzkB
+	 gifzRvzJLk6W7MqMdMgDOgPSNREwbE762LekRDsHSM41/dqjMNjK0W8f2FmZQdds1C
+	 PimsNKW8gsS17sEJpl3sKl4RVUT9KVaiQ48N53po=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20260825123000eucas1p248f943e21b217192142c843eb427dd76~PDDVEpmia1504115041eucas1p2S;
+	Tue, 25 Aug 2026 12:30:00 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20260825122959eusmtip1bd8675e1e80e324fa87b118bf74d4d66~PDDULpsjo1767517675eusmtip1d;
+	Tue, 25 Aug 2026 12:29:59 +0000 (GMT)
+Message-ID: <e7605d7a-85f1-4339-99d2-85c0df884ec2@samsung.com>
+Date: Tue, 25 Aug 2026 14:29:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/15] drm/drm_simple: remove drm_simple_encoder_init
-To: Diogo Silva <diogompaissilva@gmail.com>, Jingoo Han
- <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>,
- Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Michal Simek <michal.simek@amd.com>,
- Thierry Reding <thierry.reding@kernel.org>,
- Mikko Perttunen <mperttunen@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Stefan Agner <stefan@agner.ch>,
- Alison Wang <alison.wang@nxp.com>,
- Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
- David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Dmitry Osipenko <dmitry.osipenko@collabora.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>,
- Liu Ying <victor.liu@nxp.com>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Xinliang Liu <xinliang.liu@linaro.org>,
- Sumit Semwal <sumit.semwal@linaro.org>, Yongqin Liu
- <yongqin.liu@linaro.org>, John Stultz <jstultz@google.com>,
- Liviu Dudau <liviu.dudau@arm.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org, virtualization@lists.linux.dev,
- imx@lists.linux.dev, linux-mediatek@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-doc@vger.kernel.org
-References: <20260720-drm_simple_encoder_init-v2-0-5020b630668a@gmail.com>
+User-Agent: Betterbird (Windows)
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v5 05/10] mm/cma: Introduce cma_alloc_at() API
+To: "David Hildenbrand (Arm)" <david@kernel.org>, Thierry Reding
+	<thierry.reding@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+	Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jonathan
+	Hunter <jonathanh@nvidia.com>, Robin Murphy <robin.murphy@arm.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-mm@kvack.org, iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org,
+	linux-trace-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20260720-drm_simple_encoder_init-v2-0-5020b630668a@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com,samsung.com,ffwll.ch,kernel.org,linaro.org,ideasonboard.com,linux.intel.com,amd.com,nvidia.com,agner.ch,nxp.com,intel.com,redhat.com,collabora.com,chromium.org,iki.fi,pengutronix.de,glider.be,google.com,arm.com,baylibre.com,googlemail.com,lwn.net,linuxfoundation.org];
-	TAGGED_RCPT(0.00)[renesas];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[59];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[collabora.com:email,chromium.org:email,glider.be:email,amd.com:email,suse.com:url,msgid.link:url,suse.de:email,suse.de:mid,lists.freedesktop.org:email,nvidia.com:email,intel.com:email,arm.com:email,nxp.com:email,imap1.dmz-prg2.suse.org:helo,linux.dev:email]
+In-Reply-To: <ae6c93e6-10f2-4bac-be61-118bbfc3c05d@kernel.org>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20260825123000eucas1p248f943e21b217192142c843eb427dd76
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20260820180431eucas1p21be3f213606c4dbef2e4a73a2c1623f0
+X-EPHeader: CA
+X-CMS-RootMailID: 20260820180431eucas1p21be3f213606c4dbef2e4a73a2c1623f0
+References: <20260814-tegra-vpr-v5-0-71832b5d0246@nvidia.com>
+	<20260814-tegra-vpr-v5-5-71832b5d0246@nvidia.com>
+	<CGME20260820180431eucas1p21be3f213606c4dbef2e4a73a2c1623f0@eucas1p2.samsung.com>
+	<ae6c93e6-10f2-4bac-be61-118bbfc3c05d@kernel.org>
 
-Hi
-
-Am 20.07.26 um 17:40 schrieb Diogo Silva:
-> The simple KMS helpers are deprecated because they only add an
-> intermediate layer between drivers and atomic modesetting.
+On 20.08.2026 20:04, David Hildenbrand (Arm) wrote:
+>> /* This part must be outside protection */> diff --git a/mm/cma.c b/mm/cma.c
+>> index a10ea37a261d..1e1ebae79090 100644
+>> --- a/mm/cma.c
+>> +++ b/mm/cma.c
+>> @@ -936,6 +936,141 @@ struct page *cma_alloc_frozen_compound(struct cma *cma, unsigned int order)
+>> return __cma_alloc_frozen(cma, 1 << order, order, gfp);
+>> }
+>> +static int cma_range_alloc_at(struct cma *cma, struct cma_memrange *cmr,
+>> + unsigned long offset, unsigned long count,
+>> + struct page **pagep, gfp_t gfp)
+>> +{
+>> + struct page *page = NULL;
+>> + unsigned long pfn;
+>> + int ret = -EBUSY;
+>> +
+>> + spin_lock_irq(&cma->lock);
+>> +
+>> + /*
+>> + * If the request is larger than the available number of pages, stop
+>> + * right away.
+>> + */
+>> + if (count > cma->available_count)
+>> + goto unlock;
+>> +
+>> + ret = bitmap_allocate(cmr->bitmap, offset, count);
+>> + if (ret < 0)
+>> + goto unlock;
+>> +
+>> + pfn = cmr->base_pfn + offset;
+>> + page = pfn_to_page(pfn);
+>> +
+>> + /*
+>> + * Do not hand out page ranges that are not contiguous, so
+>> + * callers can just iterate the pages without having to worry
+>> + * about these corner cases.
+>> + */
+>> + if (!page_range_contiguous(page, count)) {
+>> + pr_warn_ratelimited("%s: %s: skipping non-contiguous area [0x%lx-0x%lx]",
+>> + __func__, cma->name, pfn, pfn + count - 1);
+>> + ret = -EBUSY;
+>> + goto clear;
+>> + }
+>> +
+>> + cma->available_count -= count;
+>> +
+>> + /*
+>> + * It's safe to drop the lock here. We've marked this region for
+>> + * our exclusive use. If the migration fails we will take the
+>> + * lock again and unmark it.
+>> + */
+>> + spin_unlock_irq(&cma->lock);
+>> +
+>> + mutex_lock(&cma->alloc_mutex);
+>> + ret = alloc_contig_frozen_range(pfn, pfn + count, ACR_FLAGS_CMA, gfp);
+>> + mutex_unlock(&cma->alloc_mutex);
+>> +
+> There is quite some code duplication with cma_range_alloc(). Please try harder
+> to factor common code out and reuse it.
 >
-> This series open-codes all remaining drm_simple_encoder_init() users by
-> calling drm_encoder_init() directly and providing driver-local
-> drm_encoder_funcs where needed. After the driver conversions, the helper
-> is removed and the completed DRM todo item is dropped.
 >
-> Signed-off-by: Diogo Silva <diogompaissilva@gmail.com>
+> > ...
+> Also here, way too much code duplication with __cma_alloc_frozen().
+>
+> There must be a better way :)
 
-For the whole series:
+Maybe the existing 'alloc' functions could call 'alloc_at' variant internally
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+(with locks adjusted and moved out).
 
-Diogo, do you want to send out another revision? Otherwise it's time to 
-get these patches merged.
+
+> (I really prefer this direction of the patch set)
+
+Definitely, I also like this approach much more than previous attempt with
+
+'dynamically' instantiated cma regions.
+
+
 
 Best regards
-Thomas
-
-
-
-> ---
-> Changes in v2:
-> - Change logging to consistently use drm_err()
-> - Link to v1: https://patch.msgid.link/20260719-drm_simple_encoder_init-v1-0-a78c509e3062@gmail.com
->
-> To: Jingoo Han <jingoohan1@gmail.com>
-> To: Inki Dae <inki.dae@samsung.com>
-> To: Seung-Woo Kim <sw0312.kim@samsung.com>
-> To: Kyungmin Park <kyungmin.park@samsung.com>
-> To: David Airlie <airlied@gmail.com>
-> To: Simona Vetter <simona@ffwll.ch>
-> To: Krzysztof Kozlowski <krzk@kernel.org>
-> To: Peter Griffin <peter.griffin@linaro.org>
-> To: Alim Akhtar <alim.akhtar@samsung.com>
-> To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> To: Maxime Ripard <mripard@kernel.org>
-> To: Thomas Zimmermann <tzimmermann@suse.de>
-> To: Michal Simek <michal.simek@amd.com>
-> To: Thierry Reding <thierry.reding@kernel.org>
-> To: Mikko Perttunen <mperttunen@nvidia.com>
-> To: Jonathan Hunter <jonathanh@nvidia.com>
-> To: Stefan Agner <stefan@agner.ch>
-> To: Alison Wang <alison.wang@nxp.com>
-> To: Anitha Chrisanthus <anitha.chrisanthus@intel.com>
-> To: David Airlie <airlied@redhat.com>
-> To: Gerd Hoffmann <kraxel@redhat.com>
-> To: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> To: Gurchetan Singh <gurchetansingh@chromium.org>
-> To: Chia-I Wu <olvaffe@gmail.com>
-> To: Jyri Sarha <jyri.sarha@iki.fi>
-> To: Liu Ying <victor.liu@nxp.com>
-> To: Frank Li <Frank.Li@nxp.com>
-> To: Sascha Hauer <s.hauer@pengutronix.de>
-> To: Pengutronix Kernel Team <kernel@pengutronix.de>
-> To: Fabio Estevam <festevam@gmail.com>
-> To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-> To: Philipp Zabel <p.zabel@pengutronix.de>
-> To: Matthias Brugger <matthias.bgg@gmail.com>
-> To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> To: Geert Uytterhoeven <geert+renesas@glider.be>
-> To: Xinliang Liu <xinliang.liu@linaro.org>
-> To: Sumit Semwal <sumit.semwal@linaro.org>
-> To: Yongqin Liu <yongqin.liu@linaro.org>
-> To: John Stultz <jstultz@google.com>
-> To: Liviu Dudau <liviu.dudau@arm.com>
-> To: Neil Armstrong <neil.armstrong@linaro.org>
-> To: Kevin Hilman <khilman@baylibre.com>
-> To: Jerome Brunet <jbrunet@baylibre.com>
-> To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> To: Jonathan Corbet <corbet@lwn.net>
-> To: Shuah Khan <skhan@linuxfoundation.org>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-tegra@vger.kernel.org
-> Cc: virtualization@lists.linux.dev
-> Cc: imx@lists.linux.dev
-> Cc: linux-mediatek@lists.infradead.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> Cc: linux-amlogic@lists.infradead.org
-> Cc: linux-doc@vger.kernel.org
->
-> ---
-> Diogo Silva (15):
->        drm/exynos: remove dependency on DRM simple helpers
->        drm/xlnx/zynqmp_dpsub: remove dependency on DRM simple helpers
->        drm/tegra: remove dependency on DRM simple helpers
->        drm/fsl-dcu: remove dependency on DRM simple helpers
->        drm/kmb: remove dependency on DRM simple helpers
->        drm/virtio: remove dependency on DRM simple helpers
->        drm/tidss: remove dependency on DRM simple helpers
->        drm/imx: remove dependency on DRM simple helpers
->        drm/mediatek: remove dependency on DRM simple helpers
->        drm/renesas/shmobile: remove dependency on DRM simple helpers
->        drm/hisilicon/kirin: remove dependency on DRM simple helpers
->        drm/arm/komeda: remove dependency on DRM simple helpers
->        drm/meson: remove dependency on DRM simple helpers
->        drm/drm_simple: remove deprecated drm_simple_encoder_init function
->        Documentation/gpu: remove completed drm_simple_encoder_init() todo
->
->   Documentation/gpu/todo.rst                        | 15 ---------------
->   drivers/gpu/drm/arm/display/komeda/komeda_crtc.c  |  9 +++++++--
->   drivers/gpu/drm/drm_simple_kms_helper.c           | 13 ++-----------
->   drivers/gpu/drm/exynos/exynos_dp.c                | 13 +++++++++++--
->   drivers/gpu/drm/exynos/exynos_drm_dpi.c           | 13 +++++++++++--
->   drivers/gpu/drm/exynos/exynos_drm_dsi.c           | 11 +++++++++--
->   drivers/gpu/drm/exynos/exynos_drm_vidi.c          | 13 +++++++++++--
->   drivers/gpu/drm/exynos/exynos_hdmi.c              | 14 ++++++++++++--
->   drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c         | 10 +++++++---
->   drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c      |  9 +++++++--
->   drivers/gpu/drm/imx/dc/dc-kms.c                   |  8 ++++++--
->   drivers/gpu/drm/kmb/kmb_dsi.c                     |  9 +++++++--
->   drivers/gpu/drm/mediatek/mtk_dsi.c                | 10 +++++++---
->   drivers/gpu/drm/meson/meson_encoder_cvbs.c        | 11 ++++++++---
->   drivers/gpu/drm/meson/meson_encoder_dsi.c         | 11 ++++++++---
->   drivers/gpu/drm/meson/meson_encoder_hdmi.c        | 11 ++++++++---
->   drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c | 10 +++++++---
->   drivers/gpu/drm/tegra/dsi.c                       | 16 +++++++++++++---
->   drivers/gpu/drm/tegra/rgb.c                       | 15 +++++++++++++--
->   drivers/gpu/drm/tidss/tidss_encoder.c             | 10 +++++++---
->   drivers/gpu/drm/virtio/virtgpu_display.c          | 12 ++++++++++--
->   drivers/gpu/drm/xlnx/zynqmp_kms.c                 | 14 ++++++++++++--
->   include/drm/drm_simple_kms_helper.h               |  4 ----
->   23 files changed, 183 insertions(+), 78 deletions(-)
-> ---
-> base-commit: e1113c37ba4f166e37dec74a729e6dfd8cba1687
-> change-id: 20260718-drm_simple_encoder_init-d069a4cc7f8b
->
-> Best regards,
-> --
-> Diogo Silva <diogompaissilva@gmail.com>
->
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstr. 146, 90461 Nürnberg, Germany, www.suse.com
-GF: Jochen Jaser, Andrew McDonald, (HRB 36809, AG Nürnberg)
-
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
