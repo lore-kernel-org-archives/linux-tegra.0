@@ -1,278 +1,201 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010009.outbound.protection.outlook.com [52.101.61.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1489F3DAACF;
-	Tue, 25 Aug 2026 21:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787692394; cv=none; b=foGInqFFin97173r57YJhhpqYFCCVASoEg9tbwd33UX/KILp7WM0P9NpXgijbhThvV8xet44lq9vFAmYLgIBZ+eytpGzrTUCo1+s+BUHZh1hZ7iSCOKi5bLctiEH6y+5T+odJWtTqV8r7dSJU9L10Ko8SzUU44sdG4PR5IREFoE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787692394; c=relaxed/simple;
-	bh=RUqv5+/gNyhj1F3HpadSYlyWATNCVZ9G+Xxxzxerkn8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qs5rBnCxmtH5Bqer//Jv1EUQdNoxbvnox+Dd7+OST7PzbrRZjKBcQc5mXzLqnPim75hwxOhU6590Nsm6nJ0wY/YHIj8+QRPvZi9uXjojr/HBX3nVRUNLC+gKNznbU+oEfxwKn5E+tvLHmWf1XmtTiJQ9jyA1xzNOKNLzGuCRy/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yvquz5ZL; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378B63E49CD;
+	Tue, 25 Aug 2026 21:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787692836; cv=fail; b=iYS6n75++VYhMeQLsPvnBhv5ig/N1/x+/5DX7qLCprLDd1yycQpue6iYIExaLDSsUQ+3UOmpq2qHVccoqhpjS8O/vZoAZyXa7PczAiVMGW6POX0+I2ui9rAXH7qSoFKGjHPz3BKpUgJwx3T0QFj0qfG3ImJB0IYzvMaFAjSFp+4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787692836; c=relaxed/simple;
+	bh=85K0ZbzkrcN33hQ9ivp4xHYtuVl3iQWoNSi30CK2cfA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=JE+3tMvN7YFU6El2cIBQgY+CRNuhJOlQby8g9EfZSflLWFq+PrDl9IsIDzEvGXtSBgRFYM/Jn9Ai8Hk/y8TavKE5Wph9E2+P1qEqiLdLTxq38QK6Y/RkIplJZglOaBCPolm8ku7sPadBT191yvUoc5s/ughnjd32jByfN7YGoYA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FC7je+ok; arc=fail smtp.client-ip=52.101.61.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yvquz5ZL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1787692391; x=1819228391;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=RUqv5+/gNyhj1F3HpadSYlyWATNCVZ9G+Xxxzxerkn8=;
-  b=Yvquz5ZLBtbkB5S7LYU7gqKcyBGMEQ2tDmVhNEIclNU9YR+sUd6JayfR
-   /M/sUTfqJyQvOf1WB+TAxQQ1QBu+G6FDIJeZqCvgHKGu/HX7LewnS1+sF
-   VOEgMxTs9+y0zFzexvk0qwSb6NyW4UFkaOhh/BXLpHh6m2HRRjo81Ru1o
-   s8B2TManJmqEgyV5aDZ94YTkihVNI5tEiHPfOuLJxregJIOmeFhk6pblm
-   WRcF/BjfBoWyDcU5nXPbzkHwcyGDNBYZcYbEd4NoXXQSQeIGabtZwgRc/
-   vjask6pMmOwACWLaKi0cUfdTvyeMy8U9ygBJ1YHqO8YUjtK+diVsF16L4
-   A==;
-X-CSE-ConnectionGUID: //k/9p4eQ6SwbL07o4/frA==
-X-CSE-MsgGUID: 3vY0gzO4SiCV6dVhcGJfxA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11886"; a="88187125"
-X-IronPort-AV: E=Sophos;i="6.25,243,1779174000"; 
-   d="scan'208";a="88187125"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2026 14:13:10 -0700
-X-CSE-ConnectionGUID: +QMMoHsCQlmWeVQ8tAplag==
-X-CSE-MsgGUID: 71+Ulur7T1mAMrsL6WompQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,243,1779174000"; 
-   d="scan'208";a="267422966"
-Received: from rchatre-mobl4.amr.corp.intel.com (HELO [10.125.109.2]) ([10.125.109.2])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2026 14:13:09 -0700
-Message-ID: <8eedb254-c942-4ee8-ab96-eb7c1ae577ad@intel.com>
-Date: Tue, 25 Aug 2026 14:13:07 -0700
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FC7je+ok"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H25Xj3qCQJCWUX/eg3hnLc9QI4sF9qHEUd1jLOon8/NaWjuCGLM4iEo9BUujE+zdkPBH9QzkQ4mksu9tubSor0M+AxzDgBfVSfftsWl1qh43OouL6+S22LWMxgSek5qQP1WfNid3CtL47/TcXT80GAHV+5bKSTSuj/n8SgiJrCiOfC9qyPKUX0x17JOIMKekW7cv3A3jd0eEUnvtSM17rtmWYzCD/MfsVRqgTisflKkLY3HvIt0+I3njAXb4S1zb13PDv6bPxbhmG96cBHioE9NFJp/Af516+GxVckuanrn1B6jUzgzBCHCqolGTLyEsqK8RdRtnsgxfohYRl+I/FQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hg/YK0i9DDalpgmMhPEaF7gLvEIvyzANRvquthFDkvA=;
+ b=EE2SniUDquxPKHid3pOWsZGaEIGHE6qKmqsLigx0fsh7SZ4m7zXvjtCJbWPYJO+wX63mZo8wsfcoW4oA00zS1HLvtuJo5x0d6cZ6wB8/Tc4X8cyI4gjfPlm6z+HZX6dwLC5zW2OZ4hqnrOCdo9kqSqk3GP/vRtlZYaNjhiN3Ct8VBDnrxwNLopo0F/SYyr68heyCj3d754SOWpAoZvbfU0OdiUrtz+4HGiSB5GpZtmwYv4OwM6ePkFy0+1l9en8db7LLbpiPf1l6dpdIqjPaCwK/vvkkFnLGdEpspz6NkNPne3ZjdmnlAqFTTl/zBaoLqiQ4+dUS45f5v6c7/FfW2A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hg/YK0i9DDalpgmMhPEaF7gLvEIvyzANRvquthFDkvA=;
+ b=FC7je+ok7y7LAj7deX4JRz/N96JWgs1cNsRP0K4a6YR8K7pGe3Y2nZj2WuWUzb9xoLYplInRz5KXRtczpWod6zhiYMxHV5vsmUbRyr7lS4BwQBsonytiyowQT4n5ofbvR5wEZo4syPkoVB++tzuJLnDuLqsh1p5mWZc+yr5c7ccQCF1IcocPnmMGanWYVkeEeKOghUQ7DyyDlfv5+kkvORwcMm1Qmoe34CfhaRMwTIK/RY8L2XFeI0A3nq92TfEEbBRGixA137y5HsFdDeUGyWEtiVxvc55SpM/C0/Fp+jKXZEzpThjPOKAHZG0wFMXpjE8eAPnkE9zDoFpXoQtDPg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB5246.namprd12.prod.outlook.com (2603:10b6:5:399::17)
+ by SJ1PR12MB6121.namprd12.prod.outlook.com (2603:10b6:a03:45c::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.6; Tue, 25 Aug
+ 2026 21:20:26 +0000
+Received: from DM4PR12MB5246.namprd12.prod.outlook.com
+ ([fe80::9c9e:30a1:5456:c485]) by DM4PR12MB5246.namprd12.prod.outlook.com
+ ([fe80::9c9e:30a1:5456:c485%6]) with mapi id 15.21.0360.005; Tue, 25 Aug 2026
+ 21:20:26 +0000
+Message-ID: <46d81167-1548-4b6a-b6cc-38542b2d093e@nvidia.com>
+Date: Wed, 26 Aug 2026 02:50:16 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/4] cpufreq: CPPC: Preserve OSPM-set registers across
+ hotplug and unload
+To: rafael@kernel.org, viresh.kumar@linaro.org, pierre.gondois@arm.com,
+ christian.loehle@arm.com, ionela.voinescu@arm.com, zhenglifeng1@huawei.com,
+ zhanjie9@hisilicon.com, lenb@kernel.org, saket.dumbre@intel.com,
+ ray.huang@amd.com, mario.limonciello@amd.com, perry.yuan@amd.com,
+ kprateek.nayak@amd.com, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+ acpica-devel@lists.linux.dev, linux-tegra@vger.kernel.org
+Cc: treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
+ ksitaraman@nvidia.com, sanjayc@nvidia.com, mochs@nvidia.com, bbasu@nvidia.com
+References: <20260806200857.601152-1-sumitg@nvidia.com>
+Content-Language: en-US
+From: Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <20260806200857.601152-1-sumitg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0124.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:96::12) To DM4PR12MB5246.namprd12.prod.outlook.com
+ (2603:10b6:5:399::17)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 00/12] PCI/CXL: Add CXL reset support for Type 2
- devices
-To: Srirangan Madhavan <smadhavan@nvidia.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Ira Weiny <ira.weiny@intel.com>, Jonathan Cameron <jic23@kernel.org>,
- Vishal Verma <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Alex Williamson <alex.williamson@redhat.com>, vsethi@nvidia.com,
- alwilliamson@nvidia.com,
- Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>,
- Vishal Aslot <vaslot@nvidia.com>, Manish Honap <mhonap@nvidia.com>,
- Jiandi An <jan@nvidia.com>, Richard Cheng <icheng@nvidia.com>,
- linux-tegra@vger.kernel.org
-References: <20260804192958.1823952-1-smadhavan@nvidia.com>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <20260804192958.1823952-1-smadhavan@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5246:EE_|SJ1PR12MB6121:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9f697843-5d91-472c-6c4a-08df02eeae48
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|23010399003|921020|6133799003|10067099003|11063799006|5023799004|56012099006|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	5w9CwAVF47MSXKRQ9l1P7AnqZuZquAgDMAgnYGEo40gC7yl1rzOypfY02k4jkwBY4WO5VfcNQY7jIyNkg76/52jyRpBTMhB98uUzqv8xSEJWm8cYLb8RdXwUl1mz5yAtVVGP9Gau90zbB9mzm6Jz7CEpXmrxzG0RBaXPsJ5X8Ew1tWpt/lwieBvVpGr/OZuJS0qqRjRNOyysEG8rfcCjIF/CBhGx0XqFv2rC8TWRyoFaysoVmx3N93BadbIqFhgLT8rLePhZqPy+Cu++EXI+ZDOIaensRXGmfy37Rtg5kw8bOYMgX9V7G8uMZ1cm3MY1fzIkLE/mhPeDQg8CcGBJsQZA5aezVtCaqyR+bBCNnnIDlxwCOByX5uRAZN1D+fPysZEEG+waQWQolInBHUJppNb4jOdUyKGLEG3C8WKndh10isDNiJFO4zFNPXi5MFHAFwcH3E8FAqsxZxZmQzRcyn4q/G7FZw6AHtGV/7voqS/+RumLs1jXo8EKA0ZiBVjO0vUGOHYywV7tPy5TZ2IKTgSPcPaQfpuOQmJrzifgUL4gYfL9wrdjqZL/pfhc9zS0tiAQC6ib/Or+eDV2l+a7PY1cHvWqvhBvyTotoiDiHm2nkWjwPnKpFLmFRbvIrnNuIPqJel0fN3LgpQwgLTiwUPeu4w1OVblXzNAqpu1qwOwxXxsDNepzaOIvIR838h7yY2QbVtP1pAMXxCjg8lq6KQ==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5246.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(23010399003)(921020)(6133799003)(10067099003)(11063799006)(5023799004)(56012099006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RFNlWHpwc3BQMXJyYmk0SlhKaGw4aGdVOFFwc0gwWTd4KzkxOGtwcUh6Z1ZB?=
+ =?utf-8?B?a1pGOVh0aWhLdTZFUzFsWXlCd1hhbGlUczBuMmdJeHRTRGp2dHlHTXFDRmJL?=
+ =?utf-8?B?RFpsd1VwNit6WW9jeUROMkdBdmNhaGR0NWtkVG5YcGhpV05CaXprNTI4RDNM?=
+ =?utf-8?B?MEhmWHRQS3Z2Z3I2bllEbUhrNUdudHVLc3pBWnZ0eG5mdHZKVFNCZXp4VWM1?=
+ =?utf-8?B?STBteTB2eG9qQUY5MDJIenVXMlZnaVlOaElGNUxVSVh0YmdORTNKWlViYWs4?=
+ =?utf-8?B?Y1FXYyszMlBrSHVScFJVMmhpQk8zdUF0ZWhYbUVpZGNkTkdnWWpBSjNlZU1Z?=
+ =?utf-8?B?R0xVYXQ2MFM0WXBzMW5ReS9CTHhyRXZQZTJ4aXhRWis4a090WG92byt4V1cx?=
+ =?utf-8?B?SUtxL3FlZ2lRVFBzR0RvY1JtQ1J0aGN0QUV1YUNkd0ZIcGN6eFk5WkNDdU5s?=
+ =?utf-8?B?VG40VS8wWDUzbG5uOU5iajErRmM0eWpnRDR1MUZ1M2R5c3FvNEp1R0c3c0dX?=
+ =?utf-8?B?N2I2aWM4VS9DU0lIT043WWV4K1dvVGpiSXhwMlZrTXhwWUs1UFlyclQwVXBF?=
+ =?utf-8?B?elNJUkRIcXJ1RHRyYTh1bTBITU5lVldiNmhxeEE2Y2pVUUNJZXlrT1ltS2JT?=
+ =?utf-8?B?bFRVMXFmamhFUlc3RzNiWjhiVW8yc2Jnajl6bjJ1eklJZ1V1N0FVSXo2VS9M?=
+ =?utf-8?B?byt4WWYwOFFOUHhEMWxveVduVXcwMkJ2RG1GWmdZVkFYYUYrSmgxSndJWFVB?=
+ =?utf-8?B?K1VOT21CblJEcE9sSG1Vd0tjRGdOcklwd3BQWU5Za3ZvUmVlREU1T3VLaU44?=
+ =?utf-8?B?SzdaVzRaTjdPUk9sUWI0MUc4V2h0QzN2T2FGMHcxVWNQaXVtSVliKzhmRDlm?=
+ =?utf-8?B?cU1kWUhJQmpVQTJwWTEzek5kaVN0Q0Qxa3RTYXlZczJ4OGxzSldkNVB3SmlY?=
+ =?utf-8?B?VlExaVd1REI4c0hnTXYzb043OFgrVkZud0lEMTJUY2ZtbGRHMjNhczFSMEdw?=
+ =?utf-8?B?dDVWVDhFRXhQOHp0YmQwajREODNLZ21rdGpBenhpMU5qYzRrNGxvQ0JaY0dD?=
+ =?utf-8?B?QjhEK1hSVi9ZUnF2QkVkeStIREF0MHh1QnM5cFN3YVg4dGVWcGMzdWc5ZjlG?=
+ =?utf-8?B?NVZnUHNHYWt4c0VEcUE2eHNSMlpmY25LL08xWEdDQjVLdGVnbWJQUWhoRmcz?=
+ =?utf-8?B?bmtlUUJuMHJVRTI5bXEwaDlIc2RoY1lYVEVLSzBTbEF5TEFKeUo3WTBPRDk4?=
+ =?utf-8?B?NHdEQmUvN2VMd3pVT3Rab1ZGUUkrY0JWRlJ2VllxL3FtcXY3VlR5eFRyc2FR?=
+ =?utf-8?B?TklNWFk3bzR6OHlpOU11MmkzY0NpSjlaQWRpb2dka2JuTzJFejN2cjRkR1FW?=
+ =?utf-8?B?QTF4Vk9PRzhiNGc2dHlIaC9kWU53ZlE4amVuakVCMTMyRjA1bGN4STc5T0di?=
+ =?utf-8?B?dUtsMlJrWWdGYTQ2ZkFndVpVVUU0RXZjMzVSa3E2K2FESUFoWGpOaDY1MkNs?=
+ =?utf-8?B?TTBXQUF0Qk1vV2pDVVc2OFFpekhZWFVxamdWWFBGR1hWYVAraEtvVWxzeHhL?=
+ =?utf-8?B?eG5WeEJjYzJEalJWQ0VqVjlBQytqN2NLVDZKNVZTQzdCVGlSbE83NXRISDA1?=
+ =?utf-8?B?ak1lZ1NSMjlJbG95dDZ4OUpTWGxDUkV4Z05qeW1yMGV1TTVNQnJqalU4OXZw?=
+ =?utf-8?B?cWdENk1vU1htSjhCKzNqalYwM1NzaDF0MXZVUkZtd0pGSldTa3BxTW1QZ0hS?=
+ =?utf-8?B?dVNkSytoTW5CYm55SER5Z0YwSXRNQk5HRVVpeG45QzVpcjZWaGdGaHh6Lysv?=
+ =?utf-8?B?OWdSZ0V5N1ZtUXFnTUUveVhFYU16SngwdWhYT1JsMXZ0KzJTREVoVXp4QWNP?=
+ =?utf-8?B?YmJqaStoRjNodVZsYnJPalpZYmxvL29oR3RkTzRocmtHWFVvS09ONGJrZnJG?=
+ =?utf-8?B?WWk1MzZSS1VjNVM1VDRSaFYrcmtFbWhGYklBa2lNc1hzS0tZaCtyTStXY3g5?=
+ =?utf-8?B?a0MyQzUzc3E5Wi9abm41WHVmcjcxTFVKRmx5MjJkdzVoWjFKV0w0YzBRNmdw?=
+ =?utf-8?B?REluUnBncFdXemhYaVBNYkNoeFFoVTJHK1VGUlBDakxRdldlNXgwZVdhSnpw?=
+ =?utf-8?B?SVlCcktxODJGeTNKZDE0cHlVY0p4QS82b2lnR0dLbkJPSlowclhUSUhRSmhE?=
+ =?utf-8?B?enEvQm9DTDRDZGVXeE9HQzJiUXpKOVFEaE0yaHBnV2xpdzBIWHlhcXFMRXpS?=
+ =?utf-8?B?RFdHcklTNW81am1ndWxpdTFjcnQzK3lZWFUxWjAvT3V6RHNPWFA0YVhERHZw?=
+ =?utf-8?Q?+jCqlr05focooq/seL?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9f697843-5d91-472c-6c4a-08df02eeae48
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5246.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2026 21:20:26.2497
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Htt+9SON9ZPSW2wIZMXNqnWeJSZwSYWcH1bAfti3cMrRSpN0mVIIOOHtoQhEwupUmvImLOl2VrkZBQ1PvFoRSg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6121
 
 
+On 07/08/26 01:38, Sumit Gupta wrote:
+> This series keeps the CPPC cpufreq policy alive across CPU hotplug and
+> preserves the OSPM-set CPPC registers (Energy Performance Preference,
+> Autonomous Activity Window, Autonomous Selection - set via sysfs).
+>
+> Without online()/offline() callbacks, the core tears a policy down when
+> its last CPU goes offline and rebuilds it on the way back, re-reading the
+> CPPC capabilities each time. The values written to these registers can
+> be lost:
+>
+>   - Across CPU hotplug or suspend/resume: the platform may reset them
+>     while the CPU is offline.
+>   - On driver unload: the driver-written value is left in the register
+>     instead of returning to its pre-driver state.
+>
+> Handle these with:
+>
+>   - Patch 1: adds online()/offline() callbacks so the core keeps policy
+>     alive across CPU hotplug instead of tearing it down and rebuilding it.
+>   - Patch 2: makes the autonomous selection register helpers take a u64.
+>   - Patch 3: adds a table-driven mechanism that captures each register's
+>     firmware value at init(), restores it from offline(), and reapplies
+>     the OSPM-set value from online().
+>   - Patch 4: extends the same save/restore to system suspend/resume.
 
-On 8/4/26 12:29 PM, Srirangan Madhavan wrote:
-> Hi folks!
-> 
-> This series adds CXL Reset support for CXL Type 2 devices through the
-> existing PCI reset_method ABI. The reset sequence follows the CXL 4.0
-> specification [1], including CXL.cache disable, optional cache
-> writeback, CXL Reset initiation, ResetComplete polling, and ResetError
-> reporting.
-> 
-> The userspace ABI is the existing PCI reset interface:
-> 
->     /sys/bus/pci/devices/.../reset_method
->     /sys/bus/pci/devices/.../reset
-> 
-> Userspace can select "cxl_reset" in reset_method and then trigger reset
-> through the existing reset attribute.
+Gentle reminder.
+Could this be considered for queuing if nothing further needs addressing.
 
-Srirangan,
-Do we need to consider concurrent mailbox commands while reset is ongoing? Although rather than blocking them, maybe we just need to harden the mailbox path in CXL core so that when ~0s are read we return error and give up? and maybe a reset_prepare() to quiesce things. Just some random thoughts.
+Thanks,
+Sumit
 
-DJ
 
-> 
-> Following Dan's v6 feedback, this replaces the proposed memdev sysfs ABI
-> with the existing PCI reset_method interface.
-> 
-> v10 changes from v9 [2]:
-> - Address review comments deferred from v9.
-> - Split HDM decoder helper refactoring into smaller reviewable patches.
-> - Rename the built-in CXL helper file to resource.c and keep reset-specific
->   logic separate from the decoder programming refactor.
-> - Add a helper to resolve a CXL port's upstream PCI device.
-> - Fix tools/testing/cxl Kbuild coverage for resource.o.
-> - Keep early HDM decoder parsing shared with normal CXL HDM enumeration.
-> - Gate CXL Reset execution on cached HDM state and current CXL.cache/CXL.mem
->   enablement.
-> - Reject CXL Reset on multifunction devices to avoid reset scope ambiguity.
-> - Order CXL cache disable/writeback before PCI reset quiesce and IOMMU reset
->   preparation.
-> - Restore cached HDM state without replaying transient commit/error/lock
->   control bits.
-> - Update ABI documentation to match the implemented reset ordering and CPU
->   cache invalidation behavior.
-> 
-> v9 changes from v8 [3]:
-> - Rebase the series onto v7.2-rc2 so it applies cleanly on a Linus rc
->   tag.
-> - Include the cxl_bus HDM restore add-on as patch 11/11 so b4 orders it
->   after the main CXL reset series.
-> - Address only patch application issues in v9 to gather feedback on the
->   current direction. Other review comments, including Dave's code
->   structure/readability feedback, are deferred to v10.
-> 
-> v8 changes from v7 [4]:
-> - Drop the PCI helper export patch.
-> - Drop the multi-function sibling coordination patch. cxl_reset is only
->   exposed as a function-scoped reset method when the CXL reset scope is
->   limited to the target function.
-> - Keep the reset-scope discovery needed to reject non-function-scoped
->   CXL resets.
-> - Cache HDM location as BAR-relative metadata instead of keeping an
->   enum-time MMIO mapping.
-> - Restore HDM through a temporary mapping based on the current BAR
->   assignment after PCI config state is restored.
-> - Cache raw HDM decoder register state so uncommitted decoders can be
->   restored as uncommitted, while committed decoders are recommitted
->   through the normal HDM commit flow.
-> - Share HDM decoder decode and validation between normal CXL core
->   enumeration and early PCI HDM caching.
-> - Put cxl_reset ahead of FLR in reset_method priority because FLR does
->   not reset CXL.cache or CXL.mem protocol state.
-> 
-> Motivation:
-> -----------
-> - Type 2 devices need a CXL-specific reset mechanism beyond existing PCI
->   reset methods.
-> 
-> - FLR does not reset CXL.cache or CXL.mem protocol state. CXL Reset is
->   the architectural reset mechanism for those protocols.
-> 
-> - The PCI reset_method ABI lets userspace select this narrower CXL reset
->   before falling back to broader bus reset methods.
-> 
-> Change Description:
-> -------------------
-> 
-> Patch 1: cxl: Move HDM decoder programming helpers
-> - Move low-level HDM decoder programming helpers into resource.c.
-> - Keep the movement mechanical so later patches can change the interface
->   separately.
-> 
-> Patch 2: cxl: Pass decoder settings to HDM commit helpers
-> - Introduce a decoder settings snapshot for HDM commit programming.
-> - Route decoder commit through helpers that can be reused by reset restore.
-> 
-> Patch 3: cxl: Share HDM decoder decode logic
-> - Add a small helper to resolve a CXL port's upstream PCI device.
-> - Share HDM decoder decode and validation between normal CXL core
->   enumeration and early PCI HDM cache setup.
-> 
-> Patch 4: cxl: Cache decoder settings on PCI devices
-> - Cache CXL core HDM decoder settings in pci_dev->hdm.
-> - Refresh the cache as decoders are enumerated, committed, or reset.
-> 
-> Patch 5: cxl: Cache endpoint decoder settings during PCI enumeration
-> - Snapshot endpoint HDM state during PCI enumeration.
-> - Cache the HDM register locator as BAR-relative metadata.
-> - Cache raw decoder register state in addition to committed decoder
->   settings.
-> 
-> Patch 6: cxl: Add CXL Device Reset helper
-> - Add the internal DVSEC reset sequence.
-> - Disable CXL.cache, perform cache writeback where supported, initiate
->   CXL Reset, and wait for completion.
-> 
-> Patch 7: cxl: Validate HDM ranges before CXL reset
-> - Collect enabled cached HDM ranges.
-> - Reject reset if affected ranges are busy.
-> - Invalidate CPU caches when runtime cache-invalidation support is
->   available, otherwise continue after warning.
-> 
-> Patch 8: PCI/CXL: Reject CXL Reset on multifunction devices
-> - Reject CXL Reset for multifunction devices to avoid reset scope ambiguity.
-> 
-> Patch 9: cxl: Restore CXL HDM state after PCI reset
-> - Restore cached global and per-decoder HDM state after reset.
-> - Re-map HDM registers from the current BAR assignment during restore.
-> - Replay raw decoder state for uncommitted decoders and recommit
->   decoders that were committed before reset.
-> 
-> Patch 10: PCI/CXL: Expose CXL Reset as a PCI reset method
-> - Add "cxl_reset" to the PCI reset-method table for Type 2 reset-capable
->   CXL devices.
-> - Prioritize cxl_reset ahead of FLR.
-> 
-> Patch 11: Documentation/ABI: Document CXL Reset PCI reset method
-> - Document the new reset_method value and reset behavior.
-> 
-> Patch 12: PCI/CXL: Restore HDM state after CXL bus reset
-> - Restore cached CXL HDM decoder state after cxl_bus reset.
-> 
-> The CPU cache invalidation step depends on
-> cpu_cache_invalidate_memregion() support for the affected address ranges.
-> If no runtime provider is available, the kernel emits a warning and
-> continues after the affected HDM ranges have been reserved.
-> 
-> Example:
-> 
->     echo cxl_reset > /sys/bus/pci/devices/0000:bb:dd.f/reset_method
->     echo 1 > /sys/bus/pci/devices/0000:bb:dd.f/reset
-> 
-> Testing:
-> - Ran 100 iterations of cxl_reset through the PCI reset sysfs ABI on a
->   CXL Type 2 device. All iterations completed successfully and
->   ResetComplete was observed.
-> - Exercised cxl_bus reset separately with the HDM restore add-on patch.
-> - Built drivers/cxl/core/resource.o and drivers/pci/pci.o during v10
->   preparation.
-> 
-> References:
-> [1] https://computeexpresslink.org/wp-content/uploads/2026/02/CXL-Specification_rev4p0_ver1p0_2026February26_clean_evalcopy_v2.pdf
-> [2] https://lore.kernel.org/linux-cxl/20260709010304.680422-1-smadhavan@nvidia.com/
-> [3] https://lore.kernel.org/linux-cxl/20260703220508.546528-1-smadhavan@nvidia.com/
-> [4] https://lore.kernel.org/linux-cxl/20260623032453.3404772-1-smadhavan@nvidia.com/
-> 
-> Srirangan Madhavan (12):
->   cxl: Move HDM decoder programming helpers
->   cxl: Pass decoder settings to HDM commit helpers
->   cxl: Share HDM decoder decode logic
->   cxl: Cache decoder settings on PCI devices
->   cxl: Cache endpoint decoder settings during PCI enumeration
->   cxl: Add CXL Device Reset helper
->   cxl: Validate HDM ranges before CXL reset
->   PCI/CXL: Reject CXL Reset on multifunction devices
->   cxl: Restore CXL HDM state after PCI reset
->   PCI/CXL: Expose CXL Reset as a PCI reset method
->   Documentation/ABI: Document CXL Reset PCI reset method
->   PCI/CXL: Restore HDM state after CXL bus reset
-> 
->  Documentation/ABI/testing/sysfs-bus-pci |   16 +
->  drivers/cxl/Kconfig                     |    4 +
->  drivers/cxl/core/Makefile               |    2 +-
->  drivers/cxl/core/core.h                 |    7 +
->  drivers/cxl/core/hdm.c                  |  351 +++---
->  drivers/cxl/core/port.c                 |   19 +
->  drivers/cxl/core/regs.c                 |    4 +
->  drivers/cxl/core/resource.c             | 1341 +++++++++++++++++++++++
->  drivers/cxl/cxl.h                       |   41 -
->  drivers/pci/bus.c                       |    2 +
->  drivers/pci/pci.c                       |    8 +
->  drivers/pci/probe.c                     |    2 +
->  include/cxl/cxl.h                       |  116 +-
->  include/linux/pci.h                     |    8 +-
->  include/uapi/linux/pci_regs.h           |   14 +
->  tools/testing/cxl/Kbuild                |    2 +-
->  16 files changed, 1727 insertions(+), 210 deletions(-)
->  create mode 100644 drivers/cxl/core/resource.c
-> 
-> 
-> base-commit: 8cdeaa50eae8dad34885515f62559ee83e7e8dda
-
+> v3[3] -> v4:
+>   - Patch 1:
+>     - offline() parks the perf request at lowest_perf, as exit() did.
+>     - online() resyncs the frequency invariance counters.
+>     - raise MAX before the perf restore when the saved MIN is above it.
+>   - Patch 3:
+>     - write auto_sel first when enabling it and last when disabling it.
+>     - replace the four save/restore helpers into save_regs() and
+>       apply_saved_regs(), each taking the firmware or requested type.
+>     - keep the per-policy saved values in one struct, and name each
+>       register for the pr_debug diagnostics.
+>   - Patch 4:
+>     - suspend() also restores the firmware values and flags it, so
+>       offline() skips them and resume() only handles still-online policies.
+>
+> Sumit Gupta (4):
+>    cpufreq: CPPC: Keep the policy across CPU hotplug
+>    ACPI: CPPC: Make autonomous selection helpers take a u64
+>    cpufreq: CPPC: Preserve OSPM-set registers across hotplug and unload
+>    cpufreq: CPPC: Preserve OSPM-set registers across suspend/resume
+>
+>   drivers/acpi/cppc_acpi.c       |  20 +-
+>   drivers/cpufreq/amd-pstate.c   |   2 +-
+>   drivers/cpufreq/cppc_cpufreq.c | 369 ++++++++++++++++++++++++++++++++-
+>   include/acpi/cppc_acpi.h       |   8 +-
+>   4 files changed, 376 insertions(+), 23 deletions(-)
+>
+> [1] v1: https://lore.kernel.org/lkml/20260623095403.3407436-1-sumitg@nvidia.com/
+> [2] v2: https://lore.kernel.org/lkml/20260716153820.2007095-1-sumitg@nvidia.com/
+> [3] v3: https://lore.kernel.org/lkml/20260724215937.3368276-1-sumitg@nvidia.com/
+>
