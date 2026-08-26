@@ -1,147 +1,91 @@
-Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0E5296BD3
-	for <linux-tegra@vger.kernel.org>; Wed, 26 Aug 2026 08:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787731989; cv=pass; b=ey72GzmMXev+hUqCM3g44F1qKbdd8GueE1NFafTluhXYsFpmF5zqakQFKFhMDfWfgIX8kcIgpR87JwV14nWiagkaQ1InidhyglrRIgnAlR2A01w76+6f9RsJQWTbLCljEkl/fMzK0ctgyiy3JpbUXgJxfW2kfTD0rVSUq+kIYNw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787731989; c=relaxed/simple;
-	bh=DP/2gqU3fyId2g2cAS1ww7m2xwj996soZxme+tkBNoQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TykgfbHicpA2CF9XHu3FtNy1S/rE6uOfo4TbTVXLdR9bBK5SVcNQ2HggKGQOv9VewanTKSbN8Fs5WnFx/6kXbzUZsL5nd9XqQY2F4pJjqt6nR/QyLTpDS4/P/0YPscb1tsNrOpDOw7UMe/VfiOeCrOxxJOpOCdsYElKt6UY9Ipg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HHOFZ7If; arc=pass smtp.client-ip=74.125.224.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA28B3B7770;
+	Wed, 26 Aug 2026 09:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787735240; cv=none; b=E4QOZRq4TtZjfhBiPRR0PhCIz0pJxYj5ntfcMtnAB48wyhoj6bKejKC2tZMMCAQ9ORx4O44+Rekx99sa2BVN43bvJe5iZS8I6M7B+sCs7HR565/sQgCLuqiFoZTVL+IN6nlZLMILrPw5zc1RODyFMfndqoEz3CKLOoxcx6mElRY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787735240; c=relaxed/simple;
+	bh=iVxv0aeOkJqXzhbIw6liWm3Nz8+6mlu/NTd5a4uNkSM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jd20EEClugNWfxPtgkrjxrGBUznWPf+4ePjvksHvm7LS26k+FLTKtG9uUmlDn9m6/FcSpMBchXuCO5aRqV9IPyYC/iiJs3LNEM4Zw19yWOu2+zJBaFFYrsZVWH3p6pRGDNQCYcLLBhuQv6mGB0iO3Uqebvb1kjh7pd2g32DEtmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Ig0v1IvS; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HHOFZ7If"
-Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-66c70d73210so989958d50.0
-        for <linux-tegra@vger.kernel.org>; Wed, 26 Aug 2026 01:13:08 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787731987; cv=none;
-        d=google.com; s=arc-20260327;
-        b=D64BUCXktNnChxGdTjfH/B6TKuQVk/BsHDezFG9UrI3IhhJzBo/syu8mLxd2Lwaedp
-         rS6ehVDSy6M0knxh7WRLj+SSzI8doERf12YMppNexm0/HTjVO4xc0Ppc4ohDIE6/5mfX
-         iD1zcm3mI1yQMQ+B/aXht1ZgXuIov+/Fi+4u5zved7jPAnnVCyZXz5UvzEA/ddoefcm9
-         ILAEOki8V0eNFPmLgEfMaf1j7TpPUNc3vqT7dwyyRftO5SHbOcTz68bxDqNRYTbw6Jq7
-         WAe8QID/ZpbOI5AvjclPBxQ7MY7KmX/RqmCyFbEnkBm5tyCyaqI2CS+W96GB5Qge8m/p
-         zkNA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=DP/2gqU3fyId2g2cAS1ww7m2xwj996soZxme+tkBNoQ=;
-        fh=FkrKUR/vxFj8z20U0+AxC0gqYeMW1oqgUfpZAfFa+t0=;
-        b=qwtxWr1Q0pXC4P5inU+yMd00Z7/XBEgy0qAeo+hXCe3517pMyxZheGZHItU4uZf4Mi
-         29GiB99RsqdKkfyIaV7KDvZY3yQJbdvs0P/NmAhhMNr6BMFghvHdJB+i40ol1thbmTE2
-         92XGZCtcB3Yw3RUNlGew6YA6Zs9TcgDRjyT0xt1fPexT0+Q6o15PJUnF6pQERoe/2mLS
-         CEri70tkLroe/OJ86WZ0jRcqyT02ey3gVdEXx6eVWyXsIfqhACVxKxqFx6jR7URwiSic
-         PU90InG58F1QYBZ8hRwqd/Qsxd/OCCHAg5/sACJm14gpxdGDQzvCM28upyqbfjjyGiVM
-         wCTw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787731987; x=1788336787; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=DP/2gqU3fyId2g2cAS1ww7m2xwj996soZxme+tkBNoQ=;
-        b=HHOFZ7IfS6zQdN2e2BwiGcV5yfkupKzSerCPU4d8fmgVrK0ivCb8lwEGYzuT1kZEUT
-         meAkg3WnPpsUKbfsU1oygT3g4PgzawlJhIV9YhWcqx9XTj4YciucBZ9YKdp/vX65l/Go
-         pJ//sHzh21MJ9j5SDB58drAT87j16rnDw3Rvm0Koe8YAYAlsrkbzG+xZLTnbj4MpSj9r
-         wq7ZVf9ygEjtW/jtgvhjXqnEGwtiJqN/5JIdwM8XJ1Z5vtNDwxXDFle78efOPr31sONd
-         1LtUBdN415tYqxpH/CrMtpyMzE6OCxcmhupPsNDSHHzRiK2onoyihYUfRJyBKI/MnzHu
-         7ojQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787731987; x=1788336787;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=DP/2gqU3fyId2g2cAS1ww7m2xwj996soZxme+tkBNoQ=;
-        b=hLI4m871WmZqWkRprqcg9chjar53DhFVy0IDgNY1vXv9u9TfFz/xF52U2ldwtgZRWq
-         yCFq0WrlGvPiF3rZXY3ylYTf34mhwnCzRxf8E9pAYk+Vnx1ijoBS1rH1OqKWRwgZYcb9
-         pfqD1VPbE7B18Bwn7IFO6pb9THyHwqCi3Zy7BJmuV64p7y5cfop8XBXmk4ahRwGWz1kC
-         9zFCd7KDyX0P6krXlDfrKTAUIxNREzsd/IBwQrMlufxJQjTrbr1vnAxAd2vfD81dj7A4
-         9L6DCd9cYAuCTKHo2yM18z0Ugfi+db2QDPH8K3G4DpfOW9U1xHZUn0SqPMZO5MJRjyyV
-         F+4Q==
-X-Forwarded-Encrypted: i=1; AHgh+RqWgvekFAP5BYkvStGrGVyxzxF7qndWyp8Ee32M9EUfxrnZOhPYcM8aF/8HapjL9b3cnHW4aaBc+5L+1Q==@vger.kernel.org
-X-Gm-Message-State: AFuF++lhaX6+2Bt0OtM/FF3wtjyeVguhLVDQZdSUfg1H9x36HuoIR0g1
-	4cfWQY5dfD7VBehAgkCDGxXDhWEUtAzapn+SIWYPYKvuaX5wIzLPPFHHlRHkRYccL1c8nmYYJ74
-	GK6uG89cW+po+M0sO6Rt4gPi0LhgTUHg=
-X-Gm-Gg: AR+sD11rU/89YdBn2aIwcYa490aGiGM7h5wk1APuq5a3qTIXPVitB9mvW7I0Wzcwq6f
-	hYqUWFE3TsUCG32sdimg2aIwuM/BSs04ImNB+Ruzh6NxwwVrsCPDDP0K1miQezG2f3WDxCfjCmX
-	33QFqlwcpWnY8zze5Ha9gsk9Tt4kMAdDJP+BYpdEH91FV4HdT8KxWDcTnv3ydPMtpHztCuP7JAl
-	XVFazlDH8eTS1vn3xONCW47WG8RS2vpxVsYqZxf6D5JdfmTIV2nBnYnMOxujkNRKu+cCLISSzDY
-	y7KxdBgBTO+vk6oP8+6wqZzOIP05TKE7OeTvds+lIV45T/58
-X-Received: by 2002:a53:c643:0:b0:66c:486c:aa07 with SMTP id
- 956f58d0204a3-66d257632b5mr1226829d50.35.1787731987131; Wed, 26 Aug 2026
- 01:13:07 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Ig0v1IvS"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 294C21684;
+	Wed, 26 Aug 2026 02:07:14 -0700 (PDT)
+Received: from [10.57.6.192] (unknown [10.57.6.192])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8C0BA3F66F;
+	Wed, 26 Aug 2026 02:07:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1787735238; bh=iVxv0aeOkJqXzhbIw6liWm3Nz8+6mlu/NTd5a4uNkSM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ig0v1IvS3kNb4YYEuyNqGnsrGuFpayp+JUIhH+nx6UTtlHE+Q/RFpIW57I9eDawme
+	 W56zjLUuDf8mXW1k7jw8pgJpl+GMkKxyXxrjfuZ9ZBodNlvsPzrDhhLdLmLIiDAicw
+	 SjTRWksmS42V2i39lBuSOrSxH0Pw/ZHEmxzZQG3s=
+Message-ID: <146a49c4-5b2a-41db-90fd-6dd2028d2d53@arm.com>
+Date: Wed, 26 Aug 2026 10:07:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260808142217.2893936-1-lgs201920130244@gmail.com> <400c3d0a-97ca-4c76-909c-0c09d534cd41@kernel.org>
-In-Reply-To: <400c3d0a-97ca-4c76-909c-0c09d534cd41@kernel.org>
-From: Guangshuo Li <lgs201920130244@gmail.com>
-Date: Wed, 26 Aug 2026 16:12:55 +0800
-X-Gm-Features: AcwNN1WiakOYjCu3-MZaTlXfcEIIF1SEVa43x_3CROHSyWNzCBcShiqF2n9BY7s
-Message-ID: <CANUHTR_Sr49S5JwGE_wzTFed6weW_8MMo8o+20vf=bZE3Xhc-w@mail.gmail.com>
-Subject: Re: [PATCH] drm/tegra: gr3d: fix autosuspend cleanup during teardown
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Thierry Reding <thierry.reding@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/4] cpufreq: CPPC: Preserve OSPM-set registers across
+ hotplug and unload
+To: Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org,
+ viresh.kumar@linaro.org, pierre.gondois@arm.com, ionela.voinescu@arm.com,
+ zhenglifeng1@huawei.com, zhanjie9@hisilicon.com, lenb@kernel.org,
+ saket.dumbre@intel.com, ray.huang@amd.com, mario.limonciello@amd.com,
+ perry.yuan@amd.com, kprateek.nayak@amd.com, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+ acpica-devel@lists.linux.dev, linux-tegra@vger.kernel.org
+Cc: treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
+ ksitaraman@nvidia.com, sanjayc@nvidia.com, mochs@nvidia.com, bbasu@nvidia.com
+References: <20260806200857.601152-1-sumitg@nvidia.com>
+ <46d81167-1548-4b6a-b6cc-38542b2d093e@nvidia.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <46d81167-1548-4b6a-b6cc-38542b2d093e@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof,
+On 8/25/26 22:20, Sumit Gupta wrote:
+> 
+> On 07/08/26 01:38, Sumit Gupta wrote:
+>> This series keeps the CPPC cpufreq policy alive across CPU hotplug and
+>> preserves the OSPM-set CPPC registers (Energy Performance Preference,
+>> Autonomous Activity Window, Autonomous Selection - set via sysfs).
+>>
+>> Without online()/offline() callbacks, the core tears a policy down when
+>> its last CPU goes offline and rebuilds it on the way back, re-reading the
+>> CPPC capabilities each time. The values written to these registers can
+>> be lost:
+>>
+>>   - Across CPU hotplug or suspend/resume: the platform may reset them
+>>     while the CPU is offline.
+>>   - On driver unload: the driver-written value is left in the register
+>>     instead of returning to its pre-driver state.
+>>
+>> Handle these with:
+>>
+>>   - Patch 1: adds online()/offline() callbacks so the core keeps policy
+>>     alive across CPU hotplug instead of tearing it down and rebuilding it.
+>>   - Patch 2: makes the autonomous selection register helpers take a u64.
+>>   - Patch 3: adds a table-driven mechanism that captures each register's
+>>     firmware value at init(), restores it from offline(), and reapplies
+>>     the OSPM-set value from online().
+>>   - Patch 4: extends the same save/restore to system suspend/resume.
+> 
+> Gentle reminder.
+> Could this be considered for queuing if nothing further needs addressing.
 
-On Thu, 20 Aug 2026 at 22:50, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 08/08/2026 16:22, Guangshuo Li wrote:
-> > gr3d_probe() calls pm_runtime_use_autosuspend(), but gr3d_remove()
-> > does not call the matching pm_runtime_dont_use_autosuspend() during
-> > teardown.
-> >
-> > If the autosuspend delay is set to a negative value while autosuspend
-> > is enabled, the runtime PM core increments usage_count to prevent
-> > runtime suspend. Without calling pm_runtime_dont_use_autosuspend()
-> > during teardown, this reference is not dropped.
-> >
-> > The documentation for pm_runtime_use_autosuspend() also notes that it
-> > is important to undo it with pm_runtime_dont_use_autosuspend() at
-> > driver exit time, unless runtime PM was initially enabled with
-> > devm_pm_runtime_enable().
-> >
-> > Add the missing pm_runtime_dont_use_autosuspend() call to the driver
-> > remove path.
-> >
-> > This issue was found by manual code inspection.
-> >
-> > Fixes: 62fa0a985e2c ("drm/tegra: Enable runtime PM during probe")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
->
-> You sent vast amount of patches, all separate, making it very difficult
-> to track and respond in efficient way. Do not do that.
->
-> Group your work per subsystem.
->
-> You were asked to clarify and respond to incorrect fixes statement. I do
-> not see how you clarified and responded at all.
->
-> Best regards,
-> Krzysztof
+FWIW both sashiko findings look legit to me, the feedback counters one I
+wouldn't consider that drastic, given that these counters are expected to
+have 'fuzzy' readings anyhow, the second one is worse (losing sysfs settings
+on cpu_online())
 
-Sorry about that. I should have replied to the earlier review comments
-explicitly, and I also should not have sent so many separate patches.
-
-I will group future patches by subsystem and make sure to respond
-clearly to review feedback before resending.
-
-Thanks for pointing this out.
-
-Best regards,
-Guangshuo
