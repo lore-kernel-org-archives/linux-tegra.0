@@ -1,161 +1,178 @@
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FE1125A0
-	for <linux-tegra@vger.kernel.org>; Wed, 26 Aug 2026 00:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F5B3126A0
+	for <linux-tegra@vger.kernel.org>; Wed, 26 Aug 2026 07:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787702742; cv=none; b=CS7RrytFQ/8aKykcmXRMayGlri5Vo06lidiNlz0JJLUWA2tLYJbCrruUf6yuTKgIOzvbKBqVJPe4pNYYthgVTgeG2O/zCVcsMtILwTMJGm7rKxjsWEUjAc9EDg90TemQ7faVAQ1p718x/52TPH+fqduPGpBECw0bV9rxl0EQs9U=
+	t=1787729755; cv=none; b=ueGwdWV0c/0HtoAgvwbGRbZvTQhyG7VOiekJrn7RjiArZLleHY+ZZ4JyQterVxbH3oQay8UDtQrV7S6JMfA3Gqrtqc8sCzvCtaPZM008hQPXzcSx7mQe3lfIlXe9f1En49FJtEsMKowoKdN2CtVEh2SzCMby24XvJM6trictjY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787702742; c=relaxed/simple;
-	bh=rt83UHicrKw7lr4xO0XXvIXqk2CwSJUfqCAq2gx1VxE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XI8O9ftvoXk6cniPbzhQQgeuxtxqVzJLCykHUE5p6inp1eplV8jIWe9SQB18I1C5XDoqfOAohzCR7iFzACOU3BJp6ddLS/uEqSeEeS+CcKh5P2AD/52xFaeu34k5zlKzHr37OW0rdyKICH/r4wAZur0T7uci+U3nnWRtuiMS434=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maticrobots.com; spf=pass smtp.mailfrom=matician.com; dkim=pass (2048-bit key) header.d=maticrobots.com header.i=@maticrobots.com header.b=GkPyJ2jk; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maticrobots.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matician.com
+	s=arc-20240116; t=1787729755; c=relaxed/simple;
+	bh=lAlKIiHaY2We1Eg1pAGcjv+qVL9z4hMibmiKpOQKs2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VlbeZk4XBSmJOgNmcUqVWhB+iXLXToiUdqsAygzR1ex/tVVnwvjeQnKGSyKuhwuaYtK1Szjn62J23t5R9u0O8HlcJjyR8RK51aD0zyKSe5YwxGK4QSCTHM/QHo0kjiybMHqVApEo0QTLvE6Bj3mDn671iFMfrKeTBuBDe6jO5cY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DBaRqaQt; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maticrobots.com header.i=@maticrobots.com header.b="GkPyJ2jk"
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-cbedf433a99so301019a12.2
-        for <linux-tegra@vger.kernel.org>; Tue, 25 Aug 2026 17:05:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DBaRqaQt"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-69c600f76ccso971592a12.0
+        for <linux-tegra@vger.kernel.org>; Wed, 26 Aug 2026 00:35:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=maticrobots.com; s=google; t=1787702740; x=1788307540; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=cSqeNF7Pcjc0PjDHs0LlnCxF9PEmfZ8hQZhY1ZU8wAk=;
-        b=GkPyJ2jkM+NyMk0YTpEEChnPQN7HPFGpJZTYX8UooPIBfwqvFCjkzWdk5sJTsvi142
-         UirVtjC2/4851tynopetgcLjV576f2aarbADsL9obWtvBIj0utRz0XBVDdMCMKMos8uE
-         EvZLIgVjGXiIrLDcIRRjBfpCj51KyPXqvCVebnHhu89Ckwg+dviYTfWDljYxsGGlG10e
-         MPICXc1of9Hs9Fpc3P03pzDCnN+K3bEhkt8h5XuNPiAaUWy4sjsMPeQO0ChHPqkBYx2/
-         wCwDJznxkWLsNHgzrXU9w6cNuYxD9O2gi6Vnc1niZ6RPMMP761T6EU9QQV1LAU/FJqcN
-         WYJQ==
+        d=suse.com; s=google; t=1787729752; x=1788334552; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=+o2OHs7EVw7RDxE23MpGrAyGtipLg/M6rWi6a9Pf3sE=;
+        b=DBaRqaQtSIu/2KHO73pd6EH0+cfbfU32mvCqwa+FwnvGwv2IZD0Sezre8NNj6dtevK
+         yBUkOmulGmkpNHWo+OOI/UjijZ5+fO2y42IEOVrH72HKmzuO8Pb3xcUWrKzf5hIe0GqC
+         SEP5IS9Ep7rRvPsfzCXAfiOhao4V/KmG8KCWH2Cqq3kzTtZ3ArcZttxwcBqW/Yu012TP
+         Ga48vaKh7SzLDcKmNg48QaTBEqa705ETizfe3+IO0y0aJUsQQv11Fn8KWEAOho96JphZ
+         Rj+bNXOpVNERL031QTDij+cmcqzs3AKsmdy3S/BNUsbcfNxu0ZjSRdzjt5Y18ij6tt34
+         EwkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787702740; x=1788307540;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=cSqeNF7Pcjc0PjDHs0LlnCxF9PEmfZ8hQZhY1ZU8wAk=;
-        b=NowG/XHls8UGK0+lwiWspIVkg0Th6XTVoGx8y6sci7UW6i85pzKh7xGroKxf7ncQO7
-         eRGv4LzmxawVNtj70b1/v/ml5AcPM4cF4CUwtduMStFIzXp90cxrZwQMDls4Cznh8nBZ
-         s6NMvpub1rIPwrZATd/cvg/MLmabytHGu7PGlqQC7LVYkNP0IIIw+wO4WHsLXIage1OO
-         Xl3+r4HO088MWICuTlOJb1mrCD32PQ8Zbyk+2U6SCGJjnYOeavCT9IxOlXp2i4ILO4UI
-         xmcujeaPNwk077hdpPR2VRbSSahf5SXFfaL51YPuRrrNKjunLxCAJXOPJF81xW7ZOvpe
-         m6Yw==
-X-Forwarded-Encrypted: i=1; AHgh+Rqj87AhSue/rDIdr+pfxfovehtelTaCmLgeJz/aDUF4dU0jrDu+JPW5yVIEt2vBvZFzjzAmbb7yCUPbkg==@vger.kernel.org
-X-Gm-Message-State: AFuF++ly6jWNvEwc5ho0ahmlzhVkz9nN+dvaKZ7XOcuG0I2cCOObwd1M
-	4jtEey48ELOxpe5bdfHECk414vmtKWA8sTDy15jdC3KQ1vYJu6FvKgOgbBlsqRdrhzU=
-X-Gm-Gg: AR+sD12ekibXzGKEqLAS/F9mqCNACrDO4RxP4dv4STEj6ezz2fwe55rrmchxMGAZVaO
-	MCxsRFbpfhkVfbMlDxmZXY3GXQoD0vOnGtTapNEjWxMUsjoAWuy5tDZdynr7J9SLHZgb1jzwgsW
-	Mf51rxDY4AURQJN2oY6whO1c44RJfII9INfqfFiT4X4wiaDGrw1adZp61e20ijlCnfKCkgBf2Ut
-	Pm2GQexbh7iwWDILVugenDFi/CBOGdLu+EuUZ6BMbzy7am3OojntYGLOD7SzP4su1C7Wy8lTMgS
-	pBfzM0MbF/zTcLVXM312sIMBWRoNJhY8ucgDNHr+MypuGSa+dpVBV3qGP1xj9ERCcVv3EEPABm5
-	ghQNjcfWslzYu9XNf4FrEzktQtShS0wVw5O3wLYBtJLk6I4l+OGcr2vtDscw/eUI6ui1BrMT5G3
-	7fcrP+7ed/AgIq8ymNQ2RR8NQe/JCUqhA+J1Ycq0y5IkWztoHN+VqyuYgeaLSZo8zcT5Z6n68PE
-	IdsIJaVjrkWaQaFLHRQz9dtIlaS8woGUgwKkorg5Q1prDnO
-X-Received: by 2002:a05:6a21:9202:b0:3c3:64cb:9b99 with SMTP id adf61e73a8af0-3cf76283ed6mr4541841637.6.1787702739862;
-        Tue, 25 Aug 2026 17:05:39 -0700 (PDT)
-Received: from abeMaticDesktop.1020marsh.offices.matician.com ([2600:1700:471:807f:6b81:bc26:604c:6f42])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3283d9e4ba6sm2442772eec.26.2026.08.25.17.05.38
+        d=1e100.net; s=20251104; t=1787729752; x=1788334552;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=+o2OHs7EVw7RDxE23MpGrAyGtipLg/M6rWi6a9Pf3sE=;
+        b=dP/Kl5FbuifN0gciwAJfkdE9aj7SY4IncMrCXM4D1a/WBkBtlGEVR/tuOetq/noR/N
+         BmZR6FKKY6s+hie6GgGXItXnkmM9TCihZQG7fkuyO5+zjwgY0jcCXUN4oUz5gqeG+e3o
+         EyldaNwIpijc/HKWkjCbAnyKdsK61EV/OWlEd0cRfzKh7jaBUal4STNTpqyvznrEJq86
+         ZgBR6IRowXMKcVgo3Kj/dclQTFjDZSP1H8VmZcHVVKsavsc8UyYcLSRvI9nVnssb6YbG
+         zZkeHQQ5BZ55e+BWL+KAEEovlTUJmULvq//0Qenst2cnMPoPHftaai6G31FpCMDQdmc+
+         F9Lw==
+X-Forwarded-Encrypted: i=1; AHgh+RrYjg/K5PA+f7YpB7b8oWXxxImWv5afrfoFk0nwqx2lqSTaFidr9+VqcvIHBiCY2o42fomREQEKSX0PRA==@vger.kernel.org
+X-Gm-Message-State: AFuF++lPjN1Ox+s7FfmcIHD9EKvL1oro9790tqMyQ6sdkWbgv9FhLiBj
+	jBTpjydX/7GqBD0Y+jsySveWRbWPGT53RvVq1PaAHwzhqskJ1lbOTPVNt48kum/lfOU=
+X-Gm-Gg: AR+sD12fzwKCEecWYDITYkN9ypRaJLys7eg8XKoPX2MpdaDzI6/LtAKyKxNhrDn3Ncj
+	D2Ckz8GW/BWcmf9vW1KMrzVi3+9EJ15hOjioZJ9IqRu64cdZp4aYx9UyzKkTgVh0x9LO3YVfse+
+	43mjxdeyjw9JWqszs3RfnU+C7ZEtN6BxXFs/0Cyua+sFINHnNXH3BMbuGszY4+GD9F0/G6Lp9xQ
+	YhZbeOsaRA5FbYz+cZ64V0KoBTbbx/Fe2EW8KERK0gyfI4euiwyAvgdoR9XK0hwgOuD+E9BA7CB
+	XQZxEAftFL2G8qMRxW5qEEDbyya/mPa8fOCSnJx0l+WLZzzOv8LtbuUjTJ4Pc73DL+Kn/zYLSfi
+	Er/P1bfHJ9xgZIn1NudSaR2M8hZnZNDZvinSUjCMjis4bPW8WMLtWhsg0LnZughQ6No4NbFy8RF
+	vT8yD1CEBofcXCcgrC3GKTPScRHeO5YZhHscLvNmiN4GHk5312YodZT3vUzv8NpA==
+X-Received: by 2002:a17:906:fe4a:b0:c25:5d2:acf0 with SMTP id a640c23a62f3a-c250bb53e86mr564960866b.8.1787729752072;
+        Wed, 26 Aug 2026 00:35:52 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c250a88aa0asm399790766b.35.2026.08.26.00.35.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Aug 2026 17:05:39 -0700 (PDT)
-From: Abraham Zukor <abe@maticrobots.com>
-To: Mark Brown <broonie@kernel.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-spi@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
+        Wed, 26 Aug 2026 00:35:51 -0700 (PDT)
+Date: Wed, 26 Aug 2026 09:35:49 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	Abraham Zukor <abe@maticrobots.com>
-Subject: [PATCH v3] spi: tegra114: initialize native chip selects inactive
-Date: Tue, 25 Aug 2026 17:05:17 -0700
-Message-ID: <20260826000517.631736-1-abe@maticrobots.com>
-X-Mailer: git-send-email 2.54.0
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Kees Cook <kees@kernel.org>, Stepan Ionichev <sozdayvek@gmail.com>,
+	Xin Zhao <jackzxcui1989@163.com>,
+	Osama Abdelkader <osama.abdelkader@gmail.com>,
+	Fushuai Wang <wangfushuai@baidu.com>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	linux-serial@vger.kernel.org,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH tty v11 1/2] serial: 8250: Switch to nbcon console, take 2
+Message-ID: <ao6XVfmvV6HjBiEv@pathway.suse.cz>
+References: <861247ca-dfd4-40c6-a094-0fbe389f3b67@nvidia.com>
+ <aoR_9g7W0qyqWbOj@pathway.suse.cz>
+ <fd1802c3-4b38-4127-b988-a9ff059bcebf@nvidia.com>
+ <877bll9d91.fsf@jogness.linutronix.de>
+ <eb0f2c8b-2c7b-4bfd-9144-6786999c4c31@nvidia.com>
+ <875x139eqr.fsf@jogness.linutronix.de>
+ <6b46866f-548f-4963-bc41-48ce15ae9012@nvidia.com>
+ <877ble714e.fsf@jogness.linutronix.de>
+ <d058012e-2be7-4e70-9c10-5e4c00a23b05@nvidia.com>
+ <87pkz56epl.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87pkz56epl.fsf@jogness.linutronix.de>
 
-tegra_spi_probe() initializes SPI_COMMAND1 with only SPI_M_S, leaving
-CS_POL_INACTIVE clear for every chip select. This drives every native
-active-low chip select low until tegra_spi_setup() runs for that device.
+On Wed 2026-08-26 00:08:46, John Ogness wrote:
+> On 2026-08-25, Jon Hunter <jonathanh@nvidia.com> wrote:
+> >>> With this I see a little more output on the console, but it still
+> >>> appears to hang later and never fully boots.
+> >>>
+> >>> Boot log here: https://pastebin.com/Xe1vmeUj
+> >> 
+> >> Thanks, this information is helpful. Below is another hack, to be used
+> >> on the unmodified linux-next. For whatever reason, I think the queuing
+> >> of irqwork is causing problems. Perhaps the irqwork is actually firing
+> >> even though interrupts are supposed to be disabled here.
+> >> 
+> >> The following hack will disable the queuing during the cpuidle. Please
+> >> give this a try:
+> >> 
+> >> ===== BEGIN CPUIDLE HACK =====
+> >> diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
+> >> index aca907a62bb5d..1dca9d6defbff 100644
+> >> --- a/drivers/cpuidle/cpuidle-tegra.c
+> >> +++ b/drivers/cpuidle/cpuidle-tegra.c
+> >> @@ -226,6 +226,7 @@ static int tegra_cpuidle_adjust_state_index(int index, unsigned int cpu)
+> >>   	return index;
+> >>   }
+> >>   
+> >> +extern bool console_irqwork_blocked;
+> >>   static __cpuidle int tegra_cpuidle_enter(struct cpuidle_device *dev,
+> >>   					 struct cpuidle_driver *drv,
+> >>   					 int index)
+> >> @@ -238,6 +239,8 @@ static __cpuidle int tegra_cpuidle_enter(struct cpuidle_device *dev,
+> >>   	if (dev->states_usage[index].disable)
+> >>   		return -1;
+> >>   
+> >> +	console_irqwork_blocked = true;
+> >> +
+> >>   	if (index == TEGRA_C1) {
+> >>   		if (do_rcu)
+> >>   			ct_cpuidle_enter();
+> >> @@ -256,6 +259,8 @@ static __cpuidle int tegra_cpuidle_enter(struct cpuidle_device *dev,
+> >>   		index = ret;
+> >>   	}
+> >>   
+> >> +	console_irqwork_blocked = false;
+> >> +
+> >>   	return index;
+> >>   }
+> >> ===== END CPUIDLE HACK =====
+> >
+> > Yes that does boot.
+> 
+> Your results surprise me a bit because in previous attempts it seemed
+> you were also getting hangs related to printk's not produced within
+> cpuidle. This would lead me to believe that cpuidle is entered while
+> irq_work from a directly preceeding printk (from outside cpuidle) was
+> pending and caused a problem.
+> 
+> Does this hack really work reliably, without using keep_bootcon or any
+> other patches?
+> 
+> Also, although this hack will avoid queuing irq_work from within
+> cpuidle, it does not prevent the 8250 console driver from queuing
+> irq_work for MSR handling during atomic printing. There is no generic
+> console callback to deal with that (other than suspending the console).
+> 
+> I suspect it is a general irq_work problem on tegra regarding
+> suspend/cpuidle. Really the problem should be fixed there. But I would
+> need hardware to investigate the issue.
+> 
+> As for this 8250 "switch to nbcon" series, I am uncertain how to
+> proceed. Is it really printk's job (and, by extension, the console
+> driver's job) to decipher when it is allowed to queue irq_work?
 
-SPI children are registered and probed one at a time. A synchronous
-probe of an earlier child can therefore transfer while a later child's
-chip select is still asserted. On a Tegra234 system with active-low
-devices on CS0 and CS1, this caused both devices to be selected when the
-CS1 device probed first. Its initialization then intermittently failed.
-A logic analyzer showed CS0 remained low throughout the CS1 transfer and
-went high only after the CS1 probe failed.
+I wonder how other architectures hanle this situation. I wonder
+if they just ignore the pending IRQs.
 
-Walk the controller's device tree children before SPI_COMMAND1 is
-written and set CS_POL_INACTIVE for each valid chip select without
-spi-cs-high. That way the line is already deasserted when the first
-child transfers and does not change level when setup runs.
-
-Disabled children are walked too. The core only registers available
-children, so tegra_spi_setup() never runs for a disabled one and probe
-is the only chance to park its chip select at the level its hardware
-needs.
-
-Fixes: f333a331adfa ("spi/tegra114: add spi driver")
-Assisted-by: Claude:Opus-5
-Signed-off-by: Abraham Zukor <abe@maticrobots.com>
----
-v3:
-- Drop the cs-gpios check; programming an unused native chip select does
-  not affect a device using a GPIO chip select.
-- Split the compound condition into separate checks for readability.
-- Retest on a Jetson Orin Nano with CS1 disabled. The old module left CS1
-  asserted, while the patched module parked both chip selects inactive.
-
-v2:
-- Derive the inactive level per chip select from the device tree instead
-  of setting the whole CS_POL_INACTIVE field, which is incorrect for an
-  active-high or mixed-polarity bus.
-
-drivers/spi/spi-tegra114.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index aa44ffd09e61..463bb7e61b6e 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -1395,6 +1395,32 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 	udelay(2);
- 	reset_control_deassert(tspi->rst);
- 	tspi->def_command1_reg  = SPI_M_S;
-+
-+	/*
-+	 * SPI_COMMAND1 is written before any child is registered, so a chip
-+	 * select with CS_POL_INACTIVE clear stays asserted until
-+	 * tegra_spi_setup() runs for that device. Program the level the
-+	 * device tree asks for up front instead.
-+	 *
-+	 * Disabled children are included deliberately. The core never
-+	 * registers them, so this is the only chance to park their chip
-+	 * select at the level their hardware needs.
-+	 */
-+	for_each_child_of_node_scoped(pdev->dev.of_node, np) {
-+		u32 cs;
-+
-+		if (of_property_read_bool(np, "spi-cs-high"))
-+			continue;
-+
-+		if (of_property_read_u32(np, "reg", &cs))
-+			continue;
-+
-+		if (cs >= MAX_CHIP_SELECT)
-+			continue;
-+
-+		tspi->def_command1_reg |= SPI_CS_POL_INACTIVE(cs);
-+	}
-+
- 	tegra_spi_writel(tspi, tspi->def_command1_reg, SPI_COMMAND1);
- 	tspi->spi_cs_timing1 = tegra_spi_readl(tspi, SPI_CS_TIMING1);
- 	tspi->spi_cs_timing2 = tegra_spi_readl(tspi, SPI_CS_TIMING2);
--- 
-2.54.0
+Best Regards,
+Petr
