@@ -1,132 +1,72 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653E13101A0
-	for <linux-tegra@vger.kernel.org>; Wed, 26 Aug 2026 10:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526883CEBA7;
+	Wed, 26 Aug 2026 10:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787741684; cv=none; b=PZhbU/y4xALMLsKk8rtqnfaZGrntq6A4Qea8TxKEVwQ65QTSk7KiPtpi0PcZkx38uW97jq/wqrKXQKyt/88q4gLcJqOowESw2p25im1ffcojIJlBjjEZ9t8fz+ZpoVGomQ7Ko7+wQKOq5csxVwDuNhozCTQ2l56+UYwrUd7L62Y=
+	t=1787741787; cv=none; b=Gpy/o+kESHpOWWKBIIEYt0Kycya4PMem0oY3/ZibXOzMLD5SY/pzZAT/onRSOrdO9J3yUmVoHyJzXn5z6vA19mxwv5/s80A/ZXqJnW2PbbGpAL/QwoNW2VVU8E9y63rPgvHM39k+g4Qlf6GRSbssukyAOLqDaVY9R/9gPyIQng0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787741684; c=relaxed/simple;
-	bh=hii+QqfsZRz7TD2Md3QiHEINUckRhxup9/Rc56VL7+I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DyMiK6TrpaTMvACXd2LDCwYNicuXqb9/h326gzBWQUY5ojtkZt4yp/yZFXyb/QnOkhH219dAYh2coGu5OhrK2X7ktdN+NA/6XDfK8XdTniIdl4sdvgOJ4lE5B4XueST7E3jgy9UPjXuP7ZVUksijf/VMKeWmmiFnrt7IUPVa/uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wik+GUOL; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787741787; c=relaxed/simple;
+	bh=OlqXrs3FP5/K3FvoQEQfcAAWpkp9P+efwSEp0Z8GkSs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OcEe70F7mhM+R76aFMOKkQbo8konqNFYwYGZabzst+RdyKhpO8WQzSvQZO0WFmDtwp0NlH+pZCT69o5Z6ndbBby+miQ5moqfRIyqCAp8S8aDyyvfiqEvHyqBolUmIRmaWy3qPyqTMF311R/kBtzAPmdWS3mJAI+Ti69a1ANOWtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Stre8xoC; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wik+GUOL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5DD91F000E9;
-	Wed, 26 Aug 2026 10:54:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787741667;
-	bh=zBtPu+db9RSzD3FBUi4xb2NNk9iniOP6mDk0cqAmda4=;
-	h=From:To:Cc:Subject:Date;
-	b=Wik+GUOLq906uOZTbmIGKVULn7zt46W/+9bvBjXazjucCVYx7DQkKdU2u5V8o2bgg
-	 uPSkdET2q6rzHS3Sp6DkCZt12eh2hvpbuosscpHcpZtOCM3i7zJ6J/GqPq8Htgy8c3
-	 lFj0BF3L2Y1KDmwTSKwmdXMSbH2JgcqqKMWkm2XOuagdjT9jQDDI2JTo94u+/Z6B5G
-	 t/ih6v9QhDO0oOO+Vvu0Yuhz3rn54CL2tUZqL1oXzJVYaLI9Bp+bMNpMsgmB1/6cms
-	 4rhfAATGnbLY8lZ5nhW7pTDuRSbyRQQJsrHlB17RTGO5Lf2oEvZ6OWKVVdBaUJvGnK
-	 tqNRXIJEXKYnA==
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH] drm/tegra: Add blend mode properties
-Date: Wed, 26 Aug 2026 12:54:21 +0200
-Message-ID: <20260826105421.1825331-1-thierry.reding@kernel.org>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Stre8xoC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C80FB1F000E9;
+	Wed, 26 Aug 2026 10:56:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
+	s=korg; t=1787741775;
+	bh=4ng1xyPLNkCEx8Fpph2DV5F5md26pFFAG/0TMVj0uvU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Stre8xoCySIiCj7EEWrTedPBiqrwGLlPSF6csHS+Iq0SlX+7eERY7ti5v2UXhfB0i
+	 5zOlrL5IJAu6mTYht9D/TeLnfO7/lZHiAWsVVGApAKix+54zwTgaqwmV+/yTXMjK4S
+	 JglGTy9bk+8KCRPebTrqn0UMTI0Iilt4UI4Kr46I=
+Date: Wed, 26 Aug 2026 12:56:13 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Pavel Machek <pavel@nabladev.com>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
+	sr@sladewatkins.com,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.15 00/76] 5.15.218-rc1 review
+Message-ID: <2026082658-partake-unlocked-d0c7@gregkh>
+References: <20260825132541.568214149@linuxfoundation.org>
+ <ao3uOPXs9_3tSs8E@duo.ucw.cz>
+ <775e72f4-6c67-4765-bd63-bef5d520a156@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <775e72f4-6c67-4765-bd63-bef5d520a156@nvidia.com>
 
-From: Thierry Reding <treding@nvidia.com>
+On Wed, Aug 26, 2026 at 11:28:07AM +0100, Jon Hunter wrote:
+> 
+> On 25/08/2026 20:34, Pavel Machek wrote:
+> > Hi!
+> > 
+> > > This is the start of the stable review cycle for the 5.15.218 release.
+> > > There are 76 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > 
+> > Build problems here, I assume it is same one as elsewhere:
+> > 
+> > https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/pipelines/2789505612
+> FWIW I am seeing the same build issue for ARM with multi_v7_defconfig.
+> Seems to be present for v6.1 and v6.6 too.
 
-The default programming in the driver matches the "coverage" blend mode,
-so add the corresponding pixel blend mode property to let userspace know
-about it.
+Offending commit now removed.  For the second time, it keeps coming back
+:(
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/gpu/drm/tegra/dc.c  | 6 ++++++
- drivers/gpu/drm/tegra/hub.c | 2 ++
- 2 files changed, 8 insertions(+)
-
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 0b3fcc7011b35..fefc3761a4bc7 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -904,6 +904,7 @@ static struct drm_plane *tegra_primary_plane_create(struct drm_device *drm,
- 						    struct tegra_dc *dc)
- {
- 	unsigned long possible_crtcs = tegra_plane_get_possible_crtcs(drm);
-+	unsigned int blend_caps = BIT(DRM_MODE_BLEND_COVERAGE);
- 	enum drm_plane_type type = DRM_PLANE_TYPE_PRIMARY;
- 	struct tegra_plane *plane;
- 	unsigned int num_formats;
-@@ -939,6 +940,7 @@ static struct drm_plane *tegra_primary_plane_create(struct drm_device *drm,
- 	}
- 
- 	drm_plane_helper_add(&plane->base, &tegra_plane_helper_funcs);
-+	drm_plane_create_blend_mode_property(&plane->base, blend_caps);
- 	drm_plane_create_zpos_property(&plane->base, plane->index, 0, 255);
- 
- 	err = drm_plane_create_rotation_property(&plane->base,
-@@ -1209,6 +1211,7 @@ static struct drm_plane *tegra_dc_cursor_plane_create(struct drm_device *drm,
- 						      struct tegra_dc *dc)
- {
- 	unsigned long possible_crtcs = tegra_plane_get_possible_crtcs(drm);
-+	unsigned int blend_caps = BIT(DRM_MODE_BLEND_COVERAGE);
- 	struct tegra_plane *plane;
- 	unsigned int num_formats;
- 	const u32 *formats;
-@@ -1252,6 +1255,7 @@ static struct drm_plane *tegra_dc_cursor_plane_create(struct drm_device *drm,
- 	}
- 
- 	drm_plane_helper_add(&plane->base, &tegra_cursor_plane_helper_funcs);
-+	drm_plane_create_blend_mode_property(&plane->base, blend_caps);
- 	drm_plane_create_zpos_immutable_property(&plane->base, 255);
- 
- 	return &plane->base;
-@@ -1356,6 +1360,7 @@ static struct drm_plane *tegra_dc_overlay_plane_create(struct drm_device *drm,
- 						       bool cursor)
- {
- 	unsigned long possible_crtcs = tegra_plane_get_possible_crtcs(drm);
-+	unsigned int blend_caps = BIT(DRM_MODE_BLEND_COVERAGE);
- 	struct tegra_plane *plane;
- 	unsigned int num_formats;
- 	enum drm_plane_type type;
-@@ -1394,6 +1399,7 @@ static struct drm_plane *tegra_dc_overlay_plane_create(struct drm_device *drm,
- 	}
- 
- 	drm_plane_helper_add(&plane->base, &tegra_plane_helper_funcs);
-+	drm_plane_create_blend_mode_property(&plane->base, blend_caps);
- 	drm_plane_create_zpos_property(&plane->base, plane->index, 0, 255);
- 
- 	err = drm_plane_create_rotation_property(&plane->base,
-diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
-index bd442bfd45407..448f49f3a7d7e 100644
---- a/drivers/gpu/drm/tegra/hub.c
-+++ b/drivers/gpu/drm/tegra/hub.c
-@@ -759,6 +759,7 @@ struct drm_plane *tegra_shared_plane_create(struct drm_device *drm,
- 					    unsigned int index,
- 					    enum drm_plane_type type)
- {
-+	unsigned int blend_caps = BIT(DRM_MODE_BLEND_COVERAGE);
- 	struct tegra_drm *tegra = drm->dev_private;
- 	struct tegra_display_hub *hub = tegra->hub;
- 	struct tegra_shared_plane *plane;
-@@ -797,6 +798,7 @@ struct drm_plane *tegra_shared_plane_create(struct drm_device *drm,
- 	}
- 
- 	drm_plane_helper_add(p, &tegra_shared_plane_helper_funcs);
-+	drm_plane_create_blend_mode_property(p, blend_caps);
- 	drm_plane_create_zpos_property(p, 0, 0, 255);
- 
- 	return p;
--- 
-2.55.0
 
