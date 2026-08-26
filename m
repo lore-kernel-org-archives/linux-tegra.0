@@ -1,107 +1,147 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAED64A8D;
-	Wed, 26 Aug 2026 07:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787731170; cv=none; b=rdVd9Aww+d/iLR2SWJcSwEiQdxVKN7BrFLvkMHLvWn6iXdZLmoaDvUasp34G8YzP0/UzFVCcjGc1oaxv7Syag1GrMoRUD2TTlosi8sWdP6l6iRbIEnL5avPBV3d33WPXuUV+9VNaCigbe7uQYe06eBOFUi+cTMt/Ak9fm476pZE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787731170; c=relaxed/simple;
-	bh=r/0+M4wdvjLRgs1k3O+I6W8cWObIePkDJOUd+tJSOJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GUyjWbngCCu0hCvLAK8e+6a0J7ABWVZ0W95jMsGJthuTjyYMiZdSv3NwXTa5kKnE+EKQn8sMx3rr6w8+d5TOPHEaMOWvQe0+gdrhe3LsZQlpfd2nB+QLPABBYgBSILEURqCkXFOVH6N8X9G24nhO50IUpQTgHzZPTTgebOgszLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cBI3xtKk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Dni4fe3n; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0E5296BD3
+	for <linux-tegra@vger.kernel.org>; Wed, 26 Aug 2026 08:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787731989; cv=pass; b=ey72GzmMXev+hUqCM3g44F1qKbdd8GueE1NFafTluhXYsFpmF5zqakQFKFhMDfWfgIX8kcIgpR87JwV14nWiagkaQ1InidhyglrRIgnAlR2A01w76+6f9RsJQWTbLCljEkl/fMzK0ctgyiy3JpbUXgJxfW2kfTD0rVSUq+kIYNw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787731989; c=relaxed/simple;
+	bh=DP/2gqU3fyId2g2cAS1ww7m2xwj996soZxme+tkBNoQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TykgfbHicpA2CF9XHu3FtNy1S/rE6uOfo4TbTVXLdR9bBK5SVcNQ2HggKGQOv9VewanTKSbN8Fs5WnFx/6kXbzUZsL5nd9XqQY2F4pJjqt6nR/QyLTpDS4/P/0YPscb1tsNrOpDOw7UMe/VfiOeCrOxxJOpOCdsYElKt6UY9Ipg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HHOFZ7If; arc=pass smtp.client-ip=74.125.224.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cBI3xtKk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Dni4fe3n"
-Date: Wed, 26 Aug 2026 09:59:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1787731166;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vp8n5tXAE/0DxEjcH9DrU0RGbMnRQpKfp5sszJqLRLw=;
-	b=cBI3xtKkRriqqSNOzSTcGsy1SxsD6TlAvNm7sQFQryV/k+6U/H1Igg6M7hQUcP/4YqZqy9
-	sWJQtucnK10cfpcsrud54vF+A6O56Ehf49gVJug4AogMQYuz/kWelqmZ6zN9cFfeVQWOpL
-	89NtwKnJiAUt9AHN9lh8VFGHmUwq4JDHdKg8kGbvxpQR2G11Y0kOnqvKMAQWOb/1ZaetcP
-	aPm9KUMhdczDcehDroaCBUTjXi/uBELyq/iEUW4kQyI8WYIgGvs27WG60QZXCTRKj4bpwN
-	6ifnRwd9LB3rkTpuuJZc24kqhGAUaZQ8C7NjTveWHBYqOGkump4pP2b/IqTjUQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1787731166;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vp8n5tXAE/0DxEjcH9DrU0RGbMnRQpKfp5sszJqLRLw=;
-	b=Dni4fe3nwRpDEJExlFlzK6UDjFQBL5SNh4WtCCif1/d9H/s0sywaOC/S5o9bBAWR3PCZGj
-	Dzd6IQ8mB4RrIUBQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Petr Mladek <pmladek@suse.com>
-Cc: John Ogness <john.ogness@linutronix.de>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Kees Cook <kees@kernel.org>, Stepan Ionichev <sozdayvek@gmail.com>,
-	Xin Zhao <jackzxcui1989@163.com>,
-	Osama Abdelkader <osama.abdelkader@gmail.com>,
-	Fushuai Wang <wangfushuai@baidu.com>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	linux-serial@vger.kernel.org,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH tty v11 1/2] serial: 8250: Switch to nbcon console, take 2
-Message-ID: <20260826075925.WTEVoXWi@linutronix.de>
-References: <aoR_9g7W0qyqWbOj@pathway.suse.cz>
- <fd1802c3-4b38-4127-b988-a9ff059bcebf@nvidia.com>
- <877bll9d91.fsf@jogness.linutronix.de>
- <eb0f2c8b-2c7b-4bfd-9144-6786999c4c31@nvidia.com>
- <875x139eqr.fsf@jogness.linutronix.de>
- <6b46866f-548f-4963-bc41-48ce15ae9012@nvidia.com>
- <877ble714e.fsf@jogness.linutronix.de>
- <d058012e-2be7-4e70-9c10-5e4c00a23b05@nvidia.com>
- <87pkz56epl.fsf@jogness.linutronix.de>
- <ao6XVfmvV6HjBiEv@pathway.suse.cz>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HHOFZ7If"
+Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-66c70d73210so989958d50.0
+        for <linux-tegra@vger.kernel.org>; Wed, 26 Aug 2026 01:13:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787731987; cv=none;
+        d=google.com; s=arc-20260327;
+        b=D64BUCXktNnChxGdTjfH/B6TKuQVk/BsHDezFG9UrI3IhhJzBo/syu8mLxd2Lwaedp
+         rS6ehVDSy6M0knxh7WRLj+SSzI8doERf12YMppNexm0/HTjVO4xc0Ppc4ohDIE6/5mfX
+         iD1zcm3mI1yQMQ+B/aXht1ZgXuIov+/Fi+4u5zved7jPAnnVCyZXz5UvzEA/ddoefcm9
+         ILAEOki8V0eNFPmLgEfMaf1j7TpPUNc3vqT7dwyyRftO5SHbOcTz68bxDqNRYTbw6Jq7
+         WAe8QID/ZpbOI5AvjclPBxQ7MY7KmX/RqmCyFbEnkBm5tyCyaqI2CS+W96GB5Qge8m/p
+         zkNA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=DP/2gqU3fyId2g2cAS1ww7m2xwj996soZxme+tkBNoQ=;
+        fh=FkrKUR/vxFj8z20U0+AxC0gqYeMW1oqgUfpZAfFa+t0=;
+        b=qwtxWr1Q0pXC4P5inU+yMd00Z7/XBEgy0qAeo+hXCe3517pMyxZheGZHItU4uZf4Mi
+         29GiB99RsqdKkfyIaV7KDvZY3yQJbdvs0P/NmAhhMNr6BMFghvHdJB+i40ol1thbmTE2
+         92XGZCtcB3Yw3RUNlGew6YA6Zs9TcgDRjyT0xt1fPexT0+Q6o15PJUnF6pQERoe/2mLS
+         CEri70tkLroe/OJ86WZ0jRcqyT02ey3gVdEXx6eVWyXsIfqhACVxKxqFx6jR7URwiSic
+         PU90InG58F1QYBZ8hRwqd/Qsxd/OCCHAg5/sACJm14gpxdGDQzvCM28upyqbfjjyGiVM
+         wCTw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787731987; x=1788336787; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=DP/2gqU3fyId2g2cAS1ww7m2xwj996soZxme+tkBNoQ=;
+        b=HHOFZ7IfS6zQdN2e2BwiGcV5yfkupKzSerCPU4d8fmgVrK0ivCb8lwEGYzuT1kZEUT
+         meAkg3WnPpsUKbfsU1oygT3g4PgzawlJhIV9YhWcqx9XTj4YciucBZ9YKdp/vX65l/Go
+         pJ//sHzh21MJ9j5SDB58drAT87j16rnDw3Rvm0Koe8YAYAlsrkbzG+xZLTnbj4MpSj9r
+         wq7ZVf9ygEjtW/jtgvhjXqnEGwtiJqN/5JIdwM8XJ1Z5vtNDwxXDFle78efOPr31sONd
+         1LtUBdN415tYqxpH/CrMtpyMzE6OCxcmhupPsNDSHHzRiK2onoyihYUfRJyBKI/MnzHu
+         7ojQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787731987; x=1788336787;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=DP/2gqU3fyId2g2cAS1ww7m2xwj996soZxme+tkBNoQ=;
+        b=hLI4m871WmZqWkRprqcg9chjar53DhFVy0IDgNY1vXv9u9TfFz/xF52U2ldwtgZRWq
+         yCFq0WrlGvPiF3rZXY3ylYTf34mhwnCzRxf8E9pAYk+Vnx1ijoBS1rH1OqKWRwgZYcb9
+         pfqD1VPbE7B18Bwn7IFO6pb9THyHwqCi3Zy7BJmuV64p7y5cfop8XBXmk4ahRwGWz1kC
+         9zFCd7KDyX0P6krXlDfrKTAUIxNREzsd/IBwQrMlufxJQjTrbr1vnAxAd2vfD81dj7A4
+         9L6DCd9cYAuCTKHo2yM18z0Ugfi+db2QDPH8K3G4DpfOW9U1xHZUn0SqPMZO5MJRjyyV
+         F+4Q==
+X-Forwarded-Encrypted: i=1; AHgh+RqWgvekFAP5BYkvStGrGVyxzxF7qndWyp8Ee32M9EUfxrnZOhPYcM8aF/8HapjL9b3cnHW4aaBc+5L+1Q==@vger.kernel.org
+X-Gm-Message-State: AFuF++lhaX6+2Bt0OtM/FF3wtjyeVguhLVDQZdSUfg1H9x36HuoIR0g1
+	4cfWQY5dfD7VBehAgkCDGxXDhWEUtAzapn+SIWYPYKvuaX5wIzLPPFHHlRHkRYccL1c8nmYYJ74
+	GK6uG89cW+po+M0sO6Rt4gPi0LhgTUHg=
+X-Gm-Gg: AR+sD11rU/89YdBn2aIwcYa490aGiGM7h5wk1APuq5a3qTIXPVitB9mvW7I0Wzcwq6f
+	hYqUWFE3TsUCG32sdimg2aIwuM/BSs04ImNB+Ruzh6NxwwVrsCPDDP0K1miQezG2f3WDxCfjCmX
+	33QFqlwcpWnY8zze5Ha9gsk9Tt4kMAdDJP+BYpdEH91FV4HdT8KxWDcTnv3ydPMtpHztCuP7JAl
+	XVFazlDH8eTS1vn3xONCW47WG8RS2vpxVsYqZxf6D5JdfmTIV2nBnYnMOxujkNRKu+cCLISSzDY
+	y7KxdBgBTO+vk6oP8+6wqZzOIP05TKE7OeTvds+lIV45T/58
+X-Received: by 2002:a53:c643:0:b0:66c:486c:aa07 with SMTP id
+ 956f58d0204a3-66d257632b5mr1226829d50.35.1787731987131; Wed, 26 Aug 2026
+ 01:13:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ao6XVfmvV6HjBiEv@pathway.suse.cz>
+References: <20260808142217.2893936-1-lgs201920130244@gmail.com> <400c3d0a-97ca-4c76-909c-0c09d534cd41@kernel.org>
+In-Reply-To: <400c3d0a-97ca-4c76-909c-0c09d534cd41@kernel.org>
+From: Guangshuo Li <lgs201920130244@gmail.com>
+Date: Wed, 26 Aug 2026 16:12:55 +0800
+X-Gm-Features: AcwNN1WiakOYjCu3-MZaTlXfcEIIF1SEVa43x_3CROHSyWNzCBcShiqF2n9BY7s
+Message-ID: <CANUHTR_Sr49S5JwGE_wzTFed6weW_8MMo8o+20vf=bZE3Xhc-w@mail.gmail.com>
+Subject: Re: [PATCH] drm/tegra: gr3d: fix autosuspend cleanup during teardown
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Thierry Reding <thierry.reding@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2026-08-26 09:35:49 [+0200], Petr Mladek wrote:
-> > As for this 8250 "switch to nbcon" series, I am uncertain how to
-> > proceed. Is it really printk's job (and, by extension, the console
-> > driver's job) to decipher when it is allowed to queue irq_work?
-> 
-> I wonder how other architectures hanle this situation. I wonder
-> if they just ignore the pending IRQs.
+Hi Krzysztof,
 
-The interrupts should be disabled and the enqueued irq_work should be
-delayed until after the interrupts are enabled again while entering
-idle. An interrupt is probably what pulls the CPU out of idle.
-Is it possible to get some kind of crash dump or anything else to figure
-out the state of CPU while it hangs?
-If that irq_work is the problem that making nbcon_irq_work LAZY should
-delay it, masking the problem.
+On Thu, 20 Aug 2026 at 22:50, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On 08/08/2026 16:22, Guangshuo Li wrote:
+> > gr3d_probe() calls pm_runtime_use_autosuspend(), but gr3d_remove()
+> > does not call the matching pm_runtime_dont_use_autosuspend() during
+> > teardown.
+> >
+> > If the autosuspend delay is set to a negative value while autosuspend
+> > is enabled, the runtime PM core increments usage_count to prevent
+> > runtime suspend. Without calling pm_runtime_dont_use_autosuspend()
+> > during teardown, this reference is not dropped.
+> >
+> > The documentation for pm_runtime_use_autosuspend() also notes that it
+> > is important to undo it with pm_runtime_dont_use_autosuspend() at
+> > driver exit time, unless runtime PM was initially enabled with
+> > devm_pm_runtime_enable().
+> >
+> > Add the missing pm_runtime_dont_use_autosuspend() call to the driver
+> > remove path.
+> >
+> > This issue was found by manual code inspection.
+> >
+> > Fixes: 62fa0a985e2c ("drm/tegra: Enable runtime PM during probe")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+>
+> You sent vast amount of patches, all separate, making it very difficult
+> to track and respond in efficient way. Do not do that.
+>
+> Group your work per subsystem.
+>
+> You were asked to clarify and respond to incorrect fixes statement. I do
+> not see how you clarified and responded at all.
+>
+> Best regards,
+> Krzysztof
 
-Either way, I don't see why raising irq_work should be a problem. That
-interrupt has to trigger once interrupts are enabled again. However, if
-this is missed then further irq_work enqueues won't trigger an
-interrupt which might be a problem if something relies on it.
+Sorry about that. I should have replied to the earlier review comments
+explicitly, and I also should not have sent so many separate patches.
 
-So the question what is doing while it makes no progress and does not
-fully boot.
+I will group future patches by subsystem and make sure to respond
+clearly to review feedback before resending.
 
-> Best Regards,
-> Petr
+Thanks for pointing this out.
 
-Sebastian
+Best regards,
+Guangshuo
