@@ -1,125 +1,132 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0FD3D522C
-	for <linux-tegra@vger.kernel.org>; Wed, 26 Aug 2026 10:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653E13101A0
+	for <linux-tegra@vger.kernel.org>; Wed, 26 Aug 2026 10:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787740109; cv=none; b=uD7OMoP+g6aRyHTdg5GQ0hKgsZlI/If7rVvtMeImZ2k7cMbc9pplmPxUqX9PBIWsualnG/m8I6bXmLpcWhxl16oyMET5xxfCEZIaQLfB0h0mWqIHzMXUbbSUVDKNoARkH1/0dpVCkXFHhNywPuvSD4EgLqH9mrO8y+TjCMoD5ws=
+	t=1787741684; cv=none; b=PZhbU/y4xALMLsKk8rtqnfaZGrntq6A4Qea8TxKEVwQ65QTSk7KiPtpi0PcZkx38uW97jq/wqrKXQKyt/88q4gLcJqOowESw2p25im1ffcojIJlBjjEZ9t8fz+ZpoVGomQ7Ko7+wQKOq5csxVwDuNhozCTQ2l56+UYwrUd7L62Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787740109; c=relaxed/simple;
-	bh=wL5hc3LpyT3SWMGIxNFjPrz1dCnPAqt0M9tE+ySsTFs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KLrElSibzG2g8WMZruHF0D+FeQjy15MAAy5uaMTe7nxh8IjyD8Y6gYKZ8wQINY2OiFRjSQZi3hLX5xxki6QP9poObi8m3Im3PqTuarUokOCWYqOl2nZpGETBJFWVTdKdo+yzj58BU26k8agSZ2wrjimrN+TxWKg0Pf9AAcXh5k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ez6/Kr+q; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787741684; c=relaxed/simple;
+	bh=hii+QqfsZRz7TD2Md3QiHEINUckRhxup9/Rc56VL7+I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DyMiK6TrpaTMvACXd2LDCwYNicuXqb9/h326gzBWQUY5ojtkZt4yp/yZFXyb/QnOkhH219dAYh2coGu5OhrK2X7ktdN+NA/6XDfK8XdTniIdl4sdvgOJ4lE5B4XueST7E3jgy9UPjXuP7ZVUksijf/VMKeWmmiFnrt7IUPVa/uA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wik+GUOL; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ez6/Kr+q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 820CF1F00ADB
-	for <linux-tegra@vger.kernel.org>; Wed, 26 Aug 2026 10:28:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wik+GUOL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5DD91F000E9;
+	Wed, 26 Aug 2026 10:54:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787740107;
-	bh=t4LB0ynimvmu7IDX+F7ZHjm0CNIAuGM932GF2KntDbE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=ez6/Kr+qZR/Ocy5aSFcPdPsbdH/0FP89fskhHThhM3BBpbHCZ9VsGp+8htG2sqwnX
-	 pjNgnTzO5YudXR4vHeNTNdmYk7TMMHqvT77BL1vQ8Z2MqY5JOi05ZnBhVAroVau/hz
-	 uyFPrvbRv56IXSx/ZQLJFWzlfyUkpHXrlYPRsZX4UozW39+2EysSf/uzgapvAjubX8
-	 e27Fp4rRs6ufE38jwSK4TwijNGufi6jsz2Jlxg1u5GcQmHTUZJWnZam9JK1y/Cq1Pa
-	 ivEn6k2Gb4xZi+YgiKxKLZYTNjc3ZCPktWX63NLytrp2f0PWl0RIE6solC5O9EWuYy
-	 Fie+3QpVFJzzw==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3a20367cf82so4091561fa.1
-        for <linux-tegra@vger.kernel.org>; Wed, 26 Aug 2026 03:28:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpeRPkyOU8foIjlNJF2ufR2QHiLC+FWnI1uSYgyMR84dVg9lOweJdYhZAB/N0aJK0tqaHQR2fLtpSUQew==@vger.kernel.org
-X-Gm-Message-State: AFuF++kozGuPnpbXBcI6woQwgvv9S9I77JGme3cizte/Z5nsKCduzoqw
-	gnTiSikc0B8N7ufrX+P/QiZptpZcozQhqXJs0eSbwD24z8R3+PKTFxPEO1vAbd9IsA/lt+1Nu9f
-	w/Q1dpeyZVgGZHfGuRD3+lzqHLajhuCY=
-X-Received: by 2002:a05:651c:1443:b0:3a2:522:c75 with SMTP id
- 38308e7fff4ca-3a205221193mr5570921fa.4.1787740105816; Wed, 26 Aug 2026
- 03:28:25 -0700 (PDT)
+	s=k20260515; t=1787741667;
+	bh=zBtPu+db9RSzD3FBUi4xb2NNk9iniOP6mDk0cqAmda4=;
+	h=From:To:Cc:Subject:Date;
+	b=Wik+GUOLq906uOZTbmIGKVULn7zt46W/+9bvBjXazjucCVYx7DQkKdU2u5V8o2bgg
+	 uPSkdET2q6rzHS3Sp6DkCZt12eh2hvpbuosscpHcpZtOCM3i7zJ6J/GqPq8Htgy8c3
+	 lFj0BF3L2Y1KDmwTSKwmdXMSbH2JgcqqKMWkm2XOuagdjT9jQDDI2JTo94u+/Z6B5G
+	 t/ih6v9QhDO0oOO+Vvu0Yuhz3rn54CL2tUZqL1oXzJVYaLI9Bp+bMNpMsgmB1/6cms
+	 4rhfAATGnbLY8lZ5nhW7pTDuRSbyRQQJsrHlB17RTGO5Lf2oEvZ6OWKVVdBaUJvGnK
+	 tqNRXIJEXKYnA==
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH] drm/tegra: Add blend mode properties
+Date: Wed, 26 Aug 2026 12:54:21 +0200
+Message-ID: <20260826105421.1825331-1-thierry.reding@kernel.org>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260806200857.601152-1-sumitg@nvidia.com> <46d81167-1548-4b6a-b6cc-38542b2d093e@nvidia.com>
- <146a49c4-5b2a-41db-90fd-6dd2028d2d53@arm.com>
-In-Reply-To: <146a49c4-5b2a-41db-90fd-6dd2028d2d53@arm.com>
-From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
-Date: Wed, 26 Aug 2026 12:27:40 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hMRNTZbhb1tR7rf5+65Oes-7K__b1dLg5kGkm7NqKvWw@mail.gmail.com>
-X-Gm-Features: AcwNN1Vq8ojxPy8S0E7lgKbAolH28ywilxtnQLjWXsCL5FdsGTBnAjbB9hFBo08
-Message-ID: <CAJZ5v0hMRNTZbhb1tR7rf5+65Oes-7K__b1dLg5kGkm7NqKvWw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] cpufreq: CPPC: Preserve OSPM-set registers across
- hotplug and unload
-To: Christian Loehle <christian.loehle@arm.com>, Sumit Gupta <sumitg@nvidia.com>
-Cc: viresh.kumar@linaro.org, pierre.gondois@arm.com, ionela.voinescu@arm.com, 
-	zhenglifeng1@huawei.com, zhanjie9@hisilicon.com, saket.dumbre@intel.com, 
-	ray.huang@amd.com, mario.limonciello@amd.com, perry.yuan@amd.com, 
-	kprateek.nayak@amd.com, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	acpica-devel@lists.linux.dev, linux-tegra@vger.kernel.org, treding@nvidia.com, 
-	jonathanh@nvidia.com, vsethi@nvidia.com, ksitaraman@nvidia.com, 
-	sanjayc@nvidia.com, mochs@nvidia.com, bbasu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 26, 2026 at 11:07=E2=80=AFAM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> On 8/25/26 22:20, Sumit Gupta wrote:
-> >
-> > On 07/08/26 01:38, Sumit Gupta wrote:
-> >> This series keeps the CPPC cpufreq policy alive across CPU hotplug and
-> >> preserves the OSPM-set CPPC registers (Energy Performance Preference,
-> >> Autonomous Activity Window, Autonomous Selection - set via sysfs).
-> >>
-> >> Without online()/offline() callbacks, the core tears a policy down whe=
-n
-> >> its last CPU goes offline and rebuilds it on the way back, re-reading =
-the
-> >> CPPC capabilities each time. The values written to these registers can
-> >> be lost:
-> >>
-> >>   - Across CPU hotplug or suspend/resume: the platform may reset them
-> >>     while the CPU is offline.
-> >>   - On driver unload: the driver-written value is left in the register
-> >>     instead of returning to its pre-driver state.
-> >>
-> >> Handle these with:
-> >>
-> >>   - Patch 1: adds online()/offline() callbacks so the core keeps polic=
-y
-> >>     alive across CPU hotplug instead of tearing it down and rebuilding=
- it.
-> >>   - Patch 2: makes the autonomous selection register helpers take a u6=
-4.
-> >>   - Patch 3: adds a table-driven mechanism that captures each register=
-'s
-> >>     firmware value at init(), restores it from offline(), and reapplie=
-s
-> >>     the OSPM-set value from online().
-> >>   - Patch 4: extends the same save/restore to system suspend/resume.
-> >
-> > Gentle reminder.
-> > Could this be considered for queuing if nothing further needs addressin=
-g.
->
-> FWIW both sashiko findings look legit to me, the feedback counters one I
-> wouldn't consider that drastic, given that these counters are expected to
-> have 'fuzzy' readings anyhow, the second one is worse (losing sysfs setti=
-ngs
-> on cpu_online())
+From: Thierry Reding <treding@nvidia.com>
 
-I agree.
+The default programming in the driver matches the "coverage" blend mode,
+so add the corresponding pixel blend mode property to let userspace know
+about it.
 
-Besides, as I said elsewhere, I want this series to go in before any
-other pending changes related to CPPC:
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpu/drm/tegra/dc.c  | 6 ++++++
+ drivers/gpu/drm/tegra/hub.c | 2 ++
+ 2 files changed, 8 insertions(+)
 
-https://lore.kernel.org/linux-acpi/20260826063019.670240-1-christian.loehle=
-@arm.com/
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 0b3fcc7011b35..fefc3761a4bc7 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -904,6 +904,7 @@ static struct drm_plane *tegra_primary_plane_create(struct drm_device *drm,
+ 						    struct tegra_dc *dc)
+ {
+ 	unsigned long possible_crtcs = tegra_plane_get_possible_crtcs(drm);
++	unsigned int blend_caps = BIT(DRM_MODE_BLEND_COVERAGE);
+ 	enum drm_plane_type type = DRM_PLANE_TYPE_PRIMARY;
+ 	struct tegra_plane *plane;
+ 	unsigned int num_formats;
+@@ -939,6 +940,7 @@ static struct drm_plane *tegra_primary_plane_create(struct drm_device *drm,
+ 	}
+ 
+ 	drm_plane_helper_add(&plane->base, &tegra_plane_helper_funcs);
++	drm_plane_create_blend_mode_property(&plane->base, blend_caps);
+ 	drm_plane_create_zpos_property(&plane->base, plane->index, 0, 255);
+ 
+ 	err = drm_plane_create_rotation_property(&plane->base,
+@@ -1209,6 +1211,7 @@ static struct drm_plane *tegra_dc_cursor_plane_create(struct drm_device *drm,
+ 						      struct tegra_dc *dc)
+ {
+ 	unsigned long possible_crtcs = tegra_plane_get_possible_crtcs(drm);
++	unsigned int blend_caps = BIT(DRM_MODE_BLEND_COVERAGE);
+ 	struct tegra_plane *plane;
+ 	unsigned int num_formats;
+ 	const u32 *formats;
+@@ -1252,6 +1255,7 @@ static struct drm_plane *tegra_dc_cursor_plane_create(struct drm_device *drm,
+ 	}
+ 
+ 	drm_plane_helper_add(&plane->base, &tegra_cursor_plane_helper_funcs);
++	drm_plane_create_blend_mode_property(&plane->base, blend_caps);
+ 	drm_plane_create_zpos_immutable_property(&plane->base, 255);
+ 
+ 	return &plane->base;
+@@ -1356,6 +1360,7 @@ static struct drm_plane *tegra_dc_overlay_plane_create(struct drm_device *drm,
+ 						       bool cursor)
+ {
+ 	unsigned long possible_crtcs = tegra_plane_get_possible_crtcs(drm);
++	unsigned int blend_caps = BIT(DRM_MODE_BLEND_COVERAGE);
+ 	struct tegra_plane *plane;
+ 	unsigned int num_formats;
+ 	enum drm_plane_type type;
+@@ -1394,6 +1399,7 @@ static struct drm_plane *tegra_dc_overlay_plane_create(struct drm_device *drm,
+ 	}
+ 
+ 	drm_plane_helper_add(&plane->base, &tegra_plane_helper_funcs);
++	drm_plane_create_blend_mode_property(&plane->base, blend_caps);
+ 	drm_plane_create_zpos_property(&plane->base, plane->index, 0, 255);
+ 
+ 	err = drm_plane_create_rotation_property(&plane->base,
+diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
+index bd442bfd45407..448f49f3a7d7e 100644
+--- a/drivers/gpu/drm/tegra/hub.c
++++ b/drivers/gpu/drm/tegra/hub.c
+@@ -759,6 +759,7 @@ struct drm_plane *tegra_shared_plane_create(struct drm_device *drm,
+ 					    unsigned int index,
+ 					    enum drm_plane_type type)
+ {
++	unsigned int blend_caps = BIT(DRM_MODE_BLEND_COVERAGE);
+ 	struct tegra_drm *tegra = drm->dev_private;
+ 	struct tegra_display_hub *hub = tegra->hub;
+ 	struct tegra_shared_plane *plane;
+@@ -797,6 +798,7 @@ struct drm_plane *tegra_shared_plane_create(struct drm_device *drm,
+ 	}
+ 
+ 	drm_plane_helper_add(p, &tegra_shared_plane_helper_funcs);
++	drm_plane_create_blend_mode_property(p, blend_caps);
+ 	drm_plane_create_zpos_property(p, 0, 0, 255);
+ 
+ 	return p;
+-- 
+2.55.0
 
-and I really would like to get some tags on it before it goes in.  It
-clearly is not ready for 7.3, but it may be applicable early for 7.4
-if people care to respond to it.
-
-Thanks!
