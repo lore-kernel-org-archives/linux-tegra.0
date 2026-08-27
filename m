@@ -1,100 +1,99 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B505433023;
-	Thu, 27 Aug 2026 10:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9863374A14;
+	Thu, 27 Aug 2026 12:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787824971; cv=none; b=XeQSnBOzg+wuY0EyUwvhkse8ZKSYWNOdmAX0zfnqmKb5IUY2v82pll3REDbuaD78uneddw6Fy4lX7aE0kGB/EMvUAnR3VVc2iinNPfNzDtzHFh5TQ+6f8jcBl1xZkql0ZcGeLpzMrwJZ910k4hv0W3IAgwDoWXBgFpLpHQ6HL9E=
+	t=1787835579; cv=none; b=pf8lrgeq6bLhekF9Za7EeCv2LAriuPbJru3GgFrqXWZs04hGIgWuzCEugxWaeWATtj8yUL90P6K8RxDOo3dMBQjPN7WzUdrPByiSUFBichbDZyF/EBG1v2QS1XG/3gFttl86vAQaomhZ/qRlDBAGIKA1sBgURgrWRDgLug0kXlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787824971; c=relaxed/simple;
-	bh=BNdLXxak5kdHC+TC0oFhL1qzrsX05HV9fmdJDJghaH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pzTuoczLNmdJl0z9mSwOzDT3k8PdQ+9NXJvkJBx0UhoHE9QJbwy3d1/uMGoXPw3bcnj0B28NN6U668zA3x1C9m5nHsxUO+z+krTrBr6K2JqA+AjaZ4pIKgmy62HWOsvxsTe/lDyNsX/A7Nnv8YVqSKQTXoVcm9fyP1ehB//cvfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N+v36roJ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787835579; c=relaxed/simple;
+	bh=n4g67O2ahbEYQjmAR1A9xvd9Q4M5H24NCJnflkw+TVQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Z9nfw703RmupiFCj/oHKZLb/rWE1fFuRMzUgadFUTO1RzkRJCdtow4O6QISD3xoJkArza/QAmmOm8a4wnMunWI30uewuz6xT09ImsMI/AVnA24p1ShAnZZT8vmO4Qfw9KWdyhY1GmDYl9aFQufJX4yW1iaF731Tp7y+yNgPXT6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q6Np/Wdc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=b+vOAjAR; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N+v36roJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 027CE1F000E9;
-	Thu, 27 Aug 2026 10:02:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787824961;
-	bh=dQf0EcSPG/lL00BAwpznv3if/aUi/WWdO+E51TS0eTE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=N+v36roJgN1Ahe2dnmlEaZJRhN+0vnoYut+6+gaRFcmNzEDBRENNAbZQ3t1LOynZA
-	 XENvmXFHrSTJj97NRtg70JHTt4ZCKbuWEbfDD1EzxqM+qYLJlhisiVxuYMzEdujJll
-	 WJt71F59aR3ugO6fRFnOttOF/o2lyXkGThSVx+VmN/cDta3AOBwgo3No4osnZXo0o9
-	 VqiOEv/fNWC0B5/qgcS72B21M/iz1/BIc6ughR9b06qnUxul0cXz9Pp77QpXOoW6dT
-	 NlV8f7b6x74p2/cDEoC4sYXTqawtjzfPZnqFJIDYSMymfvhBY9EgMAaTvBBjNQN+i8
-	 1OyIy2qRXLJCQ==
-Date: Thu, 27 Aug 2026 12:02:39 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Linmao Li <lilinmao@kylinos.cn>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, 
-	robh@kernel.org, bhelgaas@google.com, jonathanh@nvidia.com, 
-	mmaddireddy@nvidia.com, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: tegra264: Fix Link Capabilities register offset
-Message-ID: <apAK-s-gl3moinqH@orome>
-References: <20260827093919.2825467-1-lilinmao@kylinos.cn>
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q6Np/Wdc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="b+vOAjAR"
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1787835566;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ttq7Bkjlgdu0Zd+0ixn9ELU0etKIRWqFZqD1UHLmrgc=;
+	b=Q6Np/WdcLDbTppRHdNIsZvsXbCV0VpGuqjeHIZskuxVG5gp/xViV56RHP/72Ps82a5j0/s
+	1s/gEQAnxzZSsMq/La7yHyH0z5nn5tzI4yyhYP8P9VBkTA6gUAQ7WJHLsad/NvJhRSwVS6
+	Jh4LrPZ/KRZxmetrSJgMJCPzgy8jD8leK/k3gLZm47eSFkIuvUnnUwjEw8SFbQP3Nw2wji
+	8DXoij2zHhNE/ikjGIZAXN8N1NWvbSNGbp2I3OT7Kx2SmjNuilEvGqXZy1+ydlCudCLtJx
+	+CufXmP+B6Q33F1mmis+AGQPGF4kjpikugaRN3E8utw/DYHK2V+x+K2QvuKh7g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1787835566;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ttq7Bkjlgdu0Zd+0ixn9ELU0etKIRWqFZqD1UHLmrgc=;
+	b=b+vOAjAR3tlzs71HRuvPRJL98R7RFTZxC81KnRjz15M3vLEBFLjfmN/ud4z7HbyHAXkWWH
+	b0LhPwbuPhUw8CCA==
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Petr Mladek
+ <pmladek@suse.com>, Jon Hunter <jonathanh@nvidia.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>,
+ linux-kernel@vger.kernel.org, Ilpo =?utf-8?Q?J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Hugo Villeneuve
+ <hvilleneuve@dimonoff.com>, Kees Cook <kees@kernel.org>, Stepan Ionichev
+ <sozdayvek@gmail.com>, Xin Zhao <jackzxcui1989@163.com>, Osama Abdelkader
+ <osama.abdelkader@gmail.com>, Fushuai Wang <wangfushuai@baidu.com>, Marco
+ Felsch <m.felsch@pengutronix.de>, linux-serial@vger.kernel.org,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH tty v11 1/2] serial: 8250: Switch to nbcon console, take 2
+In-Reply-To: <20260826075925.WTEVoXWi@linutronix.de>
+References: <aoR_9g7W0qyqWbOj@pathway.suse.cz>
+ <fd1802c3-4b38-4127-b988-a9ff059bcebf@nvidia.com>
+ <877bll9d91.fsf@jogness.linutronix.de>
+ <eb0f2c8b-2c7b-4bfd-9144-6786999c4c31@nvidia.com>
+ <875x139eqr.fsf@jogness.linutronix.de>
+ <6b46866f-548f-4963-bc41-48ce15ae9012@nvidia.com>
+ <877ble714e.fsf@jogness.linutronix.de>
+ <d058012e-2be7-4e70-9c10-5e4c00a23b05@nvidia.com>
+ <87pkz56epl.fsf@jogness.linutronix.de> <ao6XVfmvV6HjBiEv@pathway.suse.cz>
+ <20260826075925.WTEVoXWi@linutronix.de>
+Date: Thu, 27 Aug 2026 15:05:25 +0206
+Message-ID: <875x0vpvma.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gh5ulkgsrpklu2rd"
-Content-Disposition: inline
-In-Reply-To: <20260827093919.2825467-1-lilinmao@kylinos.cn>
+Content-Type: text/plain
 
+Hi Jon,
 
---gh5ulkgsrpklu2rd
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] PCI: tegra264: Fix Link Capabilities register offset
-MIME-Version: 1.0
+On 2026-08-26, Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+> If that irq_work is the problem that making nbcon_irq_work LAZY should
+> delay it, masking the problem.
 
-On Thu, Aug 27, 2026 at 05:39:19PM +0800, Linmao Li wrote:
-> The PCI Express Link Capabilities and Link Status registers are at offsets
-> 0x0c and 0x12 from the capability header, respectively.  Since the driver
-> uses 0x5a for Link Status, Link Capabilities starts at 0x54, not 0x56.
->=20
-> Reading a 16-bit value at 0x56 returns the upper half of the Link
-> Capabilities register.  When a hotplug-capable port has no link during
-> probe, tegra264_pcie_icc_set() consequently derives the maximum speed and
-> width from unrelated bits and requests the wrong interconnect bandwidth.
->=20
-> Use the correct Link Capabilities offset.
->=20
-> Fixes: 01c3c27a0ef6 ("PCI: tegra264: Add Tegra264 support")
-> Signed-off-by: Linmao Li <lilinmao@kylinos.cn>
-> ---
->  drivers/pci/controller/pcie-tegra264.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Making nbcon_irq_work LAZY should work around this problem. And,
+actually, it should be fine to make nbcon_irq_work LAZY in general since
+it is only related to non-emergency messages, which are delayed anyway.
 
-Yes, that's what the manual says, too. /o\
+Jon, could you run your tests with only the following patch applied? If
+this works for you, I will submit an official version of the patch.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---gh5ulkgsrpklu2rd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqQCzwACgkQ3SOs138+
-s6FRuQ//Vn0cL2b/y8ldJhDUysOzenaabLXoX7Z15e3HRF+sf44gq2J8yZ4I+CbX
-QnyQxilOGf32BYtDDP8gp5NtCNslPF78Ae7oJCn+ptK7IE3gGPPG7Krg22TwHEJa
-qogcYeoIUM+qO1tAEwgXBCTgTaDV2g/BEn3ob5e3AywJpMYdOlTB5oft5fjmafNh
-brS3ph0grpaMSbIJ/xI2a51PzYFrJrkBDXrhGVOpCPXICbTJFtObuSIPeK6vU9IJ
-UF+RfPcxGvmc8bw7vMnzx5LZ4C7UHJA+fEhXTHvvN7M4zLoR6OKhlzOT/xQtLNSl
-e3dAkN9Z+eIErStCH+fY8/AaRf8JAvOlAU7sredi6SX9NpnU/Ye75jJNbsyhmrWW
-sUC44nIc2ixZ30NyVmdS3UOga19W+/ntnn4uLTIyPHBfIFsztGOF2jfhJmsudTlU
-rIHBQDDdMuTh5otP+Djyj8BDlHHpveP+cX07TkxFhTMe1vRZdhpW55CWOOgwmvMl
-npfnPltQd8bvAIWTnNnBR0zuznjEbxMXaT/KR1llKL0k1VWb+rSMZ7TZ1+mir8jH
-Jze2EzqiPVgFunC3ujsyz1SAFdgWW0ax+i0q/yBjMh97l83oxoU49qc7RpSVgeNc
-QdedTartQuTNkIAYuox7EtedWQvjPeOF68S37ok5pZsJHxk8fNE=
-=vrY+
------END PGP SIGNATURE-----
-
---gh5ulkgsrpklu2rd--
+diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+index a5921a84a80ed..ad79e30afd647 100644
+--- a/kernel/printk/nbcon.c
++++ b/kernel/printk/nbcon.c
+@@ -1782,7 +1782,7 @@ bool nbcon_alloc(struct console *con)
+ 	}
+ 
+ 	rcuwait_init(&con->rcuwait);
+-	init_irq_work(&con->irq_work, nbcon_irq_work);
++	con->irq_work = IRQ_WORK_INIT_LAZY(nbcon_irq_work);
+ 	atomic_long_set(&ACCESS_PRIVATE(con, nbcon_prev_seq), -1UL);
+ 	nbcon_state_set(con, &state);
+ 
