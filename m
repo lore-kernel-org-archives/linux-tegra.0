@@ -1,94 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05BC137B007;
-	Thu, 27 Aug 2026 17:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A032224AF1;
+	Fri, 28 Aug 2026 09:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787851992; cv=none; b=AXNBa1vSziItipA+6bkLL04mlq6cwVOEms5NnUSc1CoJuvOfIE+VHIuCcY0PaNSxDmQ5xnO3x1l8C5HC9jLmvWC65PXX5QELyAoA0bUGLPCZCcVTSFX9xtgdC+xGvzbX4rUcsO/I4MOO8ELrLJzeOIvL8IujvoQPGQo+wf3gACk=
+	t=1787908682; cv=none; b=Jgkkw1lMw8q/VXu4t4ngyzip2hg/Rv/GIBEIGiALFlfaozm/38TzISDgYTKnRkoGHdiH2a+ZE6iLdSdpomTq2qn165WwhEw77UIPSPXi8yhb2wDAiRi1baZlX4x4W9cReNByfFASNGjr7Pz3cqx45keI4/ueekskP9bH66jgh/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787851992; c=relaxed/simple;
-	bh=+s0gZwEVs+NNGL8SgUBqt8+kdikbnE8E+z4ksacIbUQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=maoBmjDeRq7kCdesvm5XhAbDwBhNr9BUJnEtm713n0NCLl9An6LdWZOkctKs+RA6HAle6JIZoBlFkm5sLUSxw22u0Y/jV6saD/QEGa3UNGWD/tSICyXZk9Gq8DMXs69GmrIwY8splQamBtw8+xel3/hn1FlV27UpESMjRJ73aBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q6CPT8M8; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q6CPT8M8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 611B11F000E9;
-	Thu, 27 Aug 2026 17:33:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787851990;
-	bh=+s0gZwEVs+NNGL8SgUBqt8+kdikbnE8E+z4ksacIbUQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Q6CPT8M8A1oGqfOeZ9xjZFHLIeCJdiHHtXX8nUg7UiQQ0DX0xc+ccyrOeQpQN0fy+
-	 HMPoQco++J17+F4K+Qz/ckq7OC6+uv/giwDZbY1K38bnRh+vfq/jGXkpG4RyIZicqk
-	 iQIMm0sRp+Qh2TfEQzkeIDfIZWxS7pXmKitY+zs3wUiTZOJhFXfPrejk8NHNP/WQtY
-	 AUK0iUobs7qqfsfziE3exfOu8GQk2BcdFOolcF2SmCRa1ayEHah4HOd1V1vXEWuWqM
-	 QjE6U56dUqj2FlJNIvE4fhn1HfhwSMZKol5qjVmXMbsfXwFBahBdvb1WpGQsB+A9hx
-	 3m3xwZpklPeEQ==
-Date: Thu, 27 Aug 2026 18:33:06 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+	s=arc-20240116; t=1787908682; c=relaxed/simple;
+	bh=VoGo//QekcH5Wag6hG6dIxgIBuSWA00nRhbmMIj2mlA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s7rFLPxVxQdi+cP3n8cgEM+T30jT/QlslDX2y0IUEQV1oHdfEyAxC080qUqogtvfEEt9UqCVxyyeWows3spfRSCOYAd/O4bzlW/GCQeaU/WuSzUWMtn+2O3ZeEzDDhT4SBcRYi4ome//yqvhg87fr7WAa0XC0Gpav2LzOc2LQOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [111.196.241.250])
+	by APP-03 (Coremail) with SMTP id rQCowAAHED49UpFqikR1Bg--.12222S2;
+	Fri, 28 Aug 2026 17:17:49 +0800 (CST)
+From: Pengpeng Hou <pengpeng@iscas.ac.cn>
+To: Thierry Reding <thierry.reding@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH 2/4] dt-bindings: thermal: Add Tegra264 header
-Message-ID: <20260827-disband-retrain-ad995df47784@spud>
-References: <20260827-tegra264-fan-v1-0-3c55f0c748b1@nvidia.com>
- <20260827-tegra264-fan-v1-2-3c55f0c748b1@nvidia.com>
- <20260827-riverbank-cinema-d898d4e5a522@spud>
- <apBwZwOkctBETKVJ@orome>
+	linux-tegra@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: tegra: Unwind partial PHY power-on failures
+Date: Fri, 28 Aug 2026 17:17:47 +0800
+Message-ID: <20260828091747.7976-1-pengpeng@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UzhbiDLoeUae/VAg"
-Content-Disposition: inline
-In-Reply-To: <apBwZwOkctBETKVJ@orome>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAAHED49UpFqikR1Bg--.12222S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WrW7Kr13Jw1kJw4xGr43trb_yoW8GFWUpa
+	yDta4kt3WkJa1akF43tF15ua4Y9anIkrW7J3ZIkw42vFsxWrWDGr1UtF9Yqa45Crs7t3yU
+	tF1YyF1UJr43WF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFV
+	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
+	x4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
+	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
+	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
+	sGvfC2KfnxnUUI43ZEXa7VUbtxhJUUUUU==
+X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
 
---UzhbiDLoeUae/VAg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The Tegra PCIe PHY setup has two nested acquisition loops.  Failure in a
+per-port loop leaves earlier PHYs in that port powered, while failure in
+the outer loop leaves all earlier ports powered.
 
-On Thu, Aug 27, 2026 at 07:17:15PM +0200, Thierry Reding wrote:
-> On Thu, Aug 27, 2026 at 05:35:28PM +0100, Conor Dooley wrote:
-> > On Thu, Aug 27, 2026 at 05:07:51PM +0200, Thierry Reding wrote:
-> > > From: Thierry Reding <treding@nvidia.com>
-> > >=20
-> > > This header file defines the set of thermal zones exposed by the BPMP=
- on
-> > > Tegra264.
-> >=20
-> > Does this need to be a binding, since you're just using it in the dts?
-> > Can it just go into your dts directory insteaD?
->=20
-> I don't think we've ever used these headers outside of DTS files, so,
-> yes, they could go into the DTS directory.
->=20
-> We've never done that before and there's a bunch of Tegra-specific files
-> that would be in the same basket. What's your recommendation for any of
-> the existing headers? Should I move those into the DTS directory, too?
-> If they are not used outside, that is? Or not worth the churn?
+Unwind the successfully powered PHYs in reverse order at both levels
+before returning the original error.
 
-Up to you re: churn I think, but were it my platform I'd probably move
-them.=20
+The issue was identified via static analysis and manually reviewed.
 
---UzhbiDLoeUae/VAg
-Content-Type: application/pgp-signature; name=signature.asc
+Fixes: 6fe7c187e026 ("PCI: tegra: Support per-lane PHYs")
 
------BEGIN PGP SIGNATURE-----
+Assisted-by: LLM
+Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
+---
+ drivers/pci/controller/pci-tegra.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCapB00gAKCRB4tDGHoIJi
-0t7NAQD0sDGi1VUfV9Utq6HbCWKUJKS+cT4Lxg1zNAgkj+/hZwD/SOfR7S7mJATc
-yY8irvYGTrJhqtvHRfYaLyxMvy4Kewc=
-=JTpm
------END PGP SIGNATURE-----
+diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+index 59b56446c507..443fa33b7f0e 100644
+--- a/drivers/pci/controller/pci-tegra.c
++++ b/drivers/pci/controller/pci-tegra.c
+@@ -1002,6 +1002,8 @@ static int tegra_pcie_port_phy_power_on(struct tegra_pcie_port *port)
+ 		err = phy_power_on(port->phys[i]);
+ 		if (err < 0) {
+ 			dev_err(dev, "failed to power on PHY#%u: %d\n", i, err);
++			while (i--)
++				phy_power_off(port->phys[i]);
+ 			return err;
+ 		}
+ 	}
+@@ -1051,6 +1053,8 @@ static int tegra_pcie_phy_power_on(struct tegra_pcie *pcie)
+ 			dev_err(dev,
+ 				"failed to power on PCIe port %u PHY: %d\n",
+ 				port->index, err);
++			list_for_each_entry_continue_reverse(port, &pcie->ports, list)
++				tegra_pcie_port_phy_power_off(port);
+ 			return err;
+ 		}
+ 	}
+-- 
+2.43.0
 
---UzhbiDLoeUae/VAg--
