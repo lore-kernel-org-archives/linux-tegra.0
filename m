@@ -1,184 +1,104 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655A5446C17;
-	Fri, 28 Aug 2026 11:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99100438029;
+	Fri, 28 Aug 2026 12:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787917941; cv=none; b=ENl2PTOepKJb7BwKMDylmrE8ituqVZ+3YuV5vSXOiKjdfA5S5VtHzLi4efKeGjxx7EydBUJoEPAcbmFFdBYniL1KmYKa0yxFxJEQBRYiBswrxzibaEWgNT6Hft9qHXEAGMAT7ltyEM89Ng6syxou3RgWeySKUCHay+dDYDIX7ac=
+	t=1787919023; cv=none; b=RXFvc+4Qsn8HNwtkvEHscEQb1tFSIIoyUl5T9noZbIeYqeMBlUj2BVt3ka+QjKhHmzhYxjsO7Uj0c9KQ7JQhM5G5GkkVwjcPq1VrlBmJBnibn+8qdSI5mi174MMNhk7DzzLBVoMAA9jqu47VVoTM2RgnWtp3B3EZST6tbXk3Cno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787917941; c=relaxed/simple;
-	bh=O1rzJtMcm6mFTSRKAvHPql4xwRZfD99a2m32PaIgH9c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=l9C3pHpHjspUw+QZfB/AgKU5FFZHAHtwKFph+eKiHanIXAKEAD0y2re2o3l3Se//NnuYILBRwAYq1TnoxUuVNwrGSgn4zbJpJ7zD1brzNi3hlbZBXQneuQQuq4D+jtdfG4FqxPAG9HghruEFarEXRV4TgFlQNhvIlXkKTFC7KQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PMvRSGzG; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787919023; c=relaxed/simple;
+	bh=FL/MuJQbgtG0aDhZ6aKljyrFLOE7pumpiZchS8mf5M4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZIGFo7Ck7HGccx4a1qoLlF8xQUZLQC9KtzBUB+I4IjDhHL8uy5iDB0iZGFnf8Sj39ELkMcYG1C8c0UhR9PD1D2+oyNbf41FlqyYCpVYqLF+DgUBPYfvdp57Xo2nZGmqLE6jhYq2Xq74Fbc8kThcx63v2WAPc9Huta7rVq4b+YSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P/g9g3ci; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PMvRSGzG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 372881F00A3E;
-	Fri, 28 Aug 2026 11:52:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P/g9g3ci"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82FA11F00A3F;
+	Fri, 28 Aug 2026 12:10:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787917924;
-	bh=a+5yaFkrJOw9/iYBFvWXyxER2EtDDURsdnRYrxTdIcw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=PMvRSGzG4PhWf4yoZtgKYnnKGmny1GBSM0fH81xluucpzRYUDD5zu8fB0WowZIGqF
-	 QReN8ASuhTTqJr0VNJZPv763dDcnBS6S27Eutqv26hp/DB9ZGvdzF9MvALayfxydMD
-	 YJgTMbQXU3sMIPvfA+GBhMfR76DC50a7FvZ0v7n7zQRuBxDoxf0vBIUtcO7TNOgown
-	 SsxKk+81rUQRXpaJT/UVsBc8WrtmnvfeTn3uc57hyQ5Q27hjYm1KUegg3dnmYzCUn5
-	 EJaU9+fFF4i5qp6OmOzEWTw8Yny9hUXoRK56D4soc4ABKQ+qUwhaIyzQ09Iyvu756y
-	 c+Rruo2dL0jPQ==
+	s=k20260515; t=1787919009;
+	bh=1q+hHwlu6v5audo77lrJXSEp0y2Ux+5NX7JjfJEJRbc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=P/g9g3cicDjwXv86a/QJWITL6TK1+gn+ufKrk2tFwx3X87oPhO7lWuVDYGJsZDMuQ
+	 39xxCoH0IsFd3BOO0ibr9Kb1/I0LQ2g6ggIlNg0CuZ3KqhOXSstO6VQQTnM6jdiAOO
+	 qmN2PujwTMYvkwsTS9ZMeZQTqLB1YZnOOMBuTXWwQElKuRH/fvCqB35TKi5eJuEPkZ
+	 ya0Kqq/dVAISixxRxF2pXyWImbW/96GM5cieECsysW0oTYNeMd9GFgHGGzUVmpoqHi
+	 Hq7V2wI/ZiO8Z5JNGyU/BlXowdhAq2JDHvnU/tjfK+ncKiSviAETG+D5hdQ3PT9IsW
+	 fosEAtWWH99Ag==
+Date: Fri, 28 Aug 2026 14:10:06 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-Date: Fri, 28 Aug 2026 13:51:39 +0200
-Subject: [PATCH v2 3/3] arm64: tegra: Add cooling device on Jetson AGX Thor
- DevKit
+To: Pengpeng Hou <pengpeng@iscas.ac.cn>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: tegra: Unwind partial PHY power-on failures
+Message-ID: <apF3QT5VJQU-Bf8c@orome>
+References: <20260828091747.7976-1-pengpeng@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260828-tegra264-fan-v2-3-a460389d8ef5@nvidia.com>
-References: <20260828-tegra264-fan-v2-0-a460389d8ef5@nvidia.com>
-In-Reply-To: <20260828-tegra264-fan-v2-0-a460389d8ef5@nvidia.com>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Thierry Reding <treding@nvidia.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2745; i=treding@nvidia.com;
- h=from:subject:message-id; bh=ffBQB+0ihS+VzjDCPSRBlHFSrJqDD1qnX5rd3sZ0miQ=;
- b=owEBbQKS/ZANAwAKAd0jrNd/PrOhAcsmYgBqkXZZ4QnqtN3MtgsOz+koisIFUDxJSir9NNrVk
- +ZD+3RoX2eJAjMEAAEKAB0WIQSI6sMIAUnM98CNyJ/dI6zXfz6zoQUCapF2WQAKCRDdI6zXfz6z
- odYaD/9MUVW9RqJVAomHU71wXNF3em9Mq6Wc0qO7AXnluaGqX9sPXmk/sD7lf1Jz/X5RfEf1cby
- iNDjCn9vSoGVzRDJDkYynSbz7f9gepuU3XmG/pyux35kYB6tqoYGyuyVTxJNRdKqnIb7l334TCa
- aSNS3LEHYF1l8kTJ8cCaMketb2zbHdiDTp+ksd6fLDlgu+DMTi97k8wwzmFku41gg6f2tQwgIeb
- 0ny4NxKCRrVfIlBeg+ka+4yCWBNy9UleJfSrIaZrCgEWHaqUeOB9xOsxFKJlV072JDhmxk51QLx
- g0RqZLP5fiQ263D2qFqLMfPHTvgl4w9SEDPOmIj0JID+uZrvcTVkGnka3uaxWtQ9C3n7fjv0+Sb
- u3A3RJNyYV5k2+uBT5SqrI5K1yTo+fJ1/+u7R6RFI0H/iB2rvel0ivPkas2AkPNZwiaMrm0vSfU
- 5ybFToIhWd1GRbkt0FLSkGltJ6UcFBTabDQ6QQcDJcKNfb+xik0NOGbHULSBCLLzpAjyyjql0CN
- CO+SU4kL8MOEhQ4pwWujsONULBfum18GLtkqYzvLhxbu5SAlrmv1/koa5CaPxGNaSXvjJxGJdj+
- Qua8BfRbV/SPZ/weUdkS809dGl7B5Y9AgyBdo9E2YpD2rPkHV2lPWIwfShS9XR3l9RVEuAziZ1I
- rK1vNyVlAc0z10g==
-X-Developer-Key: i=treding@nvidia.com; a=openpgp;
- fpr=88EAC3080149CCF7C08DC89FDD23ACD77F3EB3A1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vsysh2pbjmnneq3y"
+Content-Disposition: inline
+In-Reply-To: <20260828091747.7976-1-pengpeng@iscas.ac.cn>
 
-From: Thierry Reding <treding@nvidia.com>
 
-Monitor the TJ thermal zone and use the main PWM fan of the Jetson AGX
-Thor Developer Kit to actively cool the device if needed.
+--vsysh2pbjmnneq3y
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] PCI: tegra: Unwind partial PHY power-on failures
+MIME-Version: 1.0
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi     | 32 +++++++++++++
- .../boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi | 52 ++++++++++++++++++++++
- 2 files changed, 84 insertions(+)
+On Fri, Aug 28, 2026 at 05:17:47PM +0800, Pengpeng Hou wrote:
+> The Tegra PCIe PHY setup has two nested acquisition loops.  Failure in a
+> per-port loop leaves earlier PHYs in that port powered, while failure in
+> the outer loop leaves all earlier ports powered.
+>=20
+> Unwind the successfully powered PHYs in reverse order at both levels
+> before returning the original error.
+>=20
+> The issue was identified via static analysis and manually reviewed.
+>=20
+> Fixes: 6fe7c187e026 ("PCI: tegra: Support per-lane PHYs")
+>=20
+> Assisted-by: LLM
+> Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
+> ---
+>  drivers/pci/controller/pci-tegra.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
-index 58cd81bc33d7..d4c9f45e03c1 100644
---- a/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
-@@ -39,4 +39,36 @@ cmdqv@6200000 {
- 			status = "okay";
- 		};
- 	};
-+
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay-passive = <40>;
-+			polling-delay = <1000>;
-+			status = "okay";
-+		};
-+
-+		gpu-thermal {
-+			polling-delay-passive = <40>;
-+			polling-delay = <1000>;
-+			status = "okay";
-+		};
-+
-+		soc012-thermal {
-+			polling-delay-passive = <40>;
-+			polling-delay = <1000>;
-+			status = "okay";
-+		};
-+
-+		soc345-thermal {
-+			polling-delay-passive = <40>;
-+			polling-delay = <1000>;
-+			status = "okay";
-+		};
-+
-+		tj-thermal {
-+			polling-delay-passive = <40>;
-+			polling-delay = <1000>;
-+			status = "okay";
-+		};
-+	};
- };
-diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi b/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
-index 4550e843f513..dd042e57839a 100644
---- a/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
-@@ -22,4 +22,56 @@ fan: pwm-fan {
- 		pwms = <&pwm4 0 40000>;
- 		#cooling-cells = <2>;
- 	};
-+
-+	thermal-zones {
-+		tj-thermal {
-+			trips {
-+				tj_trip_active0: active-0 {
-+					temperature = <80000>;
-+					hysteresis = <0>;
-+					type = "active";
-+				};
-+
-+				tj_trip_active1: active-1 {
-+					temperature = <86000>;
-+					hysteresis = <0>;
-+					type = "active";
-+				};
-+
-+				tj_trip_active2: active-2 {
-+					temperature = <91000>;
-+					hysteresis = <0>;
-+					type = "active";
-+				};
-+
-+				tj_trip_active3: active-3 {
-+					temperature = <100000>;
-+					hysteresis = <0>;
-+					type = "active";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map-active-0 {
-+					cooling-device = <&fan 0 1>;
-+					trip = <&tj_trip_active0>;
-+				};
-+
-+				map-active-1 {
-+					cooling-device = <&fan 1 2>;
-+					trip = <&tj_trip_active1>;
-+				};
-+
-+				map-active-2 {
-+					cooling-device = <&fan 2 3>;
-+					trip = <&tj_trip_active2>;
-+				};
-+
-+				map-active-3 {
-+					cooling-device = <&fan 3 4>;
-+					trip = <&tj_trip_active3>;
-+				};
-+			};
-+		};
-+	};
- };
+We technically could do something like this, but honestly I don't see
+the point. If this ever happened, it'd mean that either the system is
+improperly designed, badly configured in device tree or somehow broken.
+In either case the unwind isn't really going to save you.
 
--- 
-2.55.0
+Thierry
 
+--vsysh2pbjmnneq3y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqRepkACgkQ3SOs138+
+s6ER/BAAjajaXP77leTWjrIV68TKvt74Z65CkDwzzIP6wx0TiYqwUXBgGzCyGFs8
+XhYwTNPGygr7YnRI4eGkYZ3Er168LDDeco2jU6WWrMPwBvUg111rHD3X5hRIYvsH
+6xky8ZKLM8R8codbio4/LEI42SIAG541F3UhBIDiZhahY55/e37ZgJik5Yf7orYV
+Y2Uu48nHIy7lkLNibxXNc8seSrGI63l99YxMqMsMcmZBeIIzPM31wk4sDcvlmrFt
+F8NdV5RIRnlrgWEFeb6Fzef8Wkq51MTWyl+CT8caLkH7c+BX2A7ESphTdmm3IrSD
+q6n5LWUCs8rmTb8ePSctBwpnzzBf09T5bx+w6Y7fMYem7l1NIbqPx6sHWLvg7yAm
+Vdp6xh2iEhYSiJ10Y6vMg5I7++x3z77icTOIQDqQicNLwVw6c6WdL24egQx82rqh
+LE3Vknp94vUaHUNvQjHt4mOOAFSF9fn9B/PAYjrWuEaUamjpvH5wt3a8L53JOzwK
+xr+Ho/YAvDYNrmzpULy+h0w/DOBYCSh2vNEynX6DFI2VCZ9MTj5WecIzPmvn0Vue
+nkboKZ9PakxOZp9QJxym7crWz/z/wrMvcSiXVLJ5qoJOyj4vEAW0MXu9JKsYBGra
+Xg51gQWKr6fB5/l2t9L491yJzIlOYIsbJK9e1L3jkHfbmUDEqCI=
+=Mv8m
+-----END PGP SIGNATURE-----
+
+--vsysh2pbjmnneq3y--
