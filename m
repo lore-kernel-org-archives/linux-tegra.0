@@ -1,152 +1,110 @@
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD2943785F;
-	Fri, 28 Aug 2026 11:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D49449B11;
+	Fri, 28 Aug 2026 11:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787917346; cv=none; b=NMSja8rehVynZjIOJE7DfkQK5WFVp9eHkAklFn58KqKWtZ8/ytcRMrPW6YSdNT/kyPNI+aGG+8R5iTouNsLfQWvieU/tcfuY188dwrfDDnASkqiP2iEDzIBbPHIZo7cSibtcXT6tzyA61HiXr/ATY52eQVucJrR+oX7cw9WJQQU=
+	t=1787917934; cv=none; b=nh9BL/aYlCq4Xda3vuxvaNnCdTpZcU6kEPCjUex/zC8pK4y7q8JFuR9l8H20ZzbxeyRUBgPscnH5u/UlurHUB1YQlqRJOAvUNzWM2CqVtaZkrG6lDl0lqg3W+gab3F3ozH0u5JP3JTN4nvX3Z6KhDGfJvKYdXBA9XHYzIsbs0Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787917346; c=relaxed/simple;
-	bh=UrRRrRGioU2jwFOT4R0dWftSuqJLymr8z94go2/Ju7k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mtNBbk0D04mNkZVrpynqBLTncHSzNpOzD/h+rRExK4In4Becq+MEJGVMPE5BVpzgedbh+EFv3im7splmTG/v9XwdNhDDQGbyMsMd/XvF0aarKSbvTGR3FbnCwPKdeahZKgHt0CC8V55vQksfINYXcVJ0QcPijtDr7zCoAZVBk1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [111.196.241.250])
-	by APP-01 (Coremail) with SMTP id qwCowABnO+8SdJFqoBO+Bg--.43429S2;
-	Fri, 28 Aug 2026 19:42:10 +0800 (CST)
-From: Pengpeng Hou <pengpeng@iscas.ac.cn>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thierry Reding <thierry.reding@kernel.org>
-Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-usb@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] usb: gadget: tegra-xudc: Unwind device-mode power failures
-Date: Fri, 28 Aug 2026 19:42:08 +0800
-Message-ID: <20260828114208.49341-1-pengpeng@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1787917934; c=relaxed/simple;
+	bh=rdQUteIaSUPwsRmpuLSNBayvkd4cABMkIzTlpYcMQiE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=aUoGjtnKS6Iu7ORkJFZFmr7FIACms9OI+6JCh+RywO5IjvRf45RR+ICz1XXrWykBZNNdN4aioxdc/EV1LNPG0aPZlcuhDRKiVEwojvEFZ2Ig6fcahJxvBzoNuaTOUvsKLHSb/hhKShGm5ZNk2SD1D7C0SAbxBmQan/DG8Q1qhVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EB0EhLVL; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EB0EhLVL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 949871F00A3A;
+	Fri, 28 Aug 2026 11:51:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787917919;
+	bh=GN4dzhCVNYuFNlRqNx2kYhGqEu7OFj46LaEj9Hl1nmM=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=EB0EhLVLASP5Uv9plkvA4XIi6sxxdNpKm0L3QTjLpvjTNedlXXIecpKn9Php19lXD
+	 q3tY3Io6wVY2Y5jNGS2z/DNMJtu0iK3ucgf/ruDnC484Pzutuq+5WScF+7FyZdnVPA
+	 Fo4XLFpv/AhVoHhkLvivbqQ8nS8+0NV9JwWvayPkRxUeyQOJSP0xmbd79M23CHgtZx
+	 GVbJ1n/Ug4UAe5qG90lvj2kCZlkoPKDslE0Qt70GO0NUHSOGO0oIQLK0dFXzsyNS3X
+	 dIPsmCj/dlGVtAT3Gni/G2tb+ISnx40fMiHzNurSqFoLVEbESdhjnNuZbpsv16OZ/y
+	 e+5HCe39rTpeA==
+From: Thierry Reding <thierry.reding@kernel.org>
+Date: Fri, 28 Aug 2026 13:51:37 +0200
+Subject: [PATCH v2 1/3] arm64: tegra: Add PWM fan on Jetson AGX Thor DevKit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABnO+8SdJFqoBO+Bg--.43429S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZF4ktF4ftFWxtF1kZw1kZrb_yoW5Cr17pa
-	1jgFW5J3ykX3sxKFnaq3yqvr15G3ykG348X34Iyay29rsrK34DJry7trWIqFW8Gr93Jr4j
-	yr4xK342yr9rWF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j
-	6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfUYf
-	HjUUUUU
-X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260828-tegra264-fan-v2-1-a460389d8ef5@nvidia.com>
+References: <20260828-tegra264-fan-v2-0-a460389d8ef5@nvidia.com>
+In-Reply-To: <20260828-tegra264-fan-v2-0-a460389d8ef5@nvidia.com>
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Thierry Reding <treding@nvidia.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1224; i=treding@nvidia.com;
+ h=from:subject:message-id; bh=Ip51aTiqgLVTRh0twWqTH6fgaUqaeRi7gl82nKxw9Vo=;
+ b=owEBbQKS/ZANAwAKAd0jrNd/PrOhAcsmYgBqkXZZipy8/vc12+p2EJFr9s84nqgFjuEHNUaDN
+ yO0oW3l7BWJAjMEAAEKAB0WIQSI6sMIAUnM98CNyJ/dI6zXfz6zoQUCapF2WQAKCRDdI6zXfz6z
+ oV9+EACfjqdbdzL6s50BrXFSIqP33pepyF+s5Vk5KbmBWSpZ4PiK1ZGLuiUuFBoyPpC2cwaJbjP
+ 6dYZVQ3KfCiQF5CfNGQWMM/cNBTSD7zGTV8Wn9qnwX5CzP6q8ZFR9QpFyQfoeRwOxftDWUFgHvg
+ HPeChYEYF+sa7agfrFuFw/rOFqlLu3OkKv8lZYE8YtSALmt5MZQvHjZQnKQZZfTes095toszpCJ
+ h6FSpkXCU//Dg7+pcx5kkXVlREALTtBBfzLp0tmiBcvkOK9ZsLRBauh0izv1jsfTJQKx4vtMY+a
+ PztBmmqkWEaY/jLFRj6Gdwmm3VO9ASZ9JJCrLzOjLrTmY/ZbOtlIzGa3pG4otamJGhu3AlEYXH2
+ a/3EvFQOFSgZRxMXcXBNjiLlkK7fquDtUh/bJuYwwLQ8kPYfL+PQo2iTaKMNTazy1cicWXtgEkO
+ /R86HV/fS1/SVckFtYdj9UlFlH9WoGw1qnpZPiKQG/sXVylLu6MVYUF5swclheFZvYokdz8wEja
+ 5U/2D4hTtgP7Bm667fkKT9ZESf1ctF3+ssk/LUREiCGkaMqMpdug1T56W9ctZ50espaej5vLrSu
+ UHAZMbwJKjm0Tw7ePQJHxALFRL7cyunTrkofoHVTEP1IqX17xPSAioiZXq9+qdN3BgOPwTX2/9b
+ eVtnoUCFzsokX6w==
+X-Developer-Key: i=treding@nvidia.com; a=openpgp;
+ fpr=88EAC3080149CCF7C08DC89FDD23ACD77F3EB3A1
 
-The Tegra XUDC role worker ignores runtime-PM, PHY power and PHY mode
-failures while entering device mode, and sets current_device_mode even
-after an incomplete transition.
+From: Thierry Reding <treding@nvidia.com>
 
-Acquire runtime PM with pm_runtime_resume_and_get(), unwind each
-completed PHY and pad operation on failure, and only publish
-current_device_mode after all steps succeed.  The worker logs the error.
-This is an RFC because the asynchronous role request has already
-completed and maintainers may prefer retry or desired-role state
-handling beyond local rollback.
+Without a PWM fan device node to actively control the PWM, the fan will
+either stop or run at full speed, depending on the state of the PWM when
+the controller's clock gets turned off during boot.
 
-The issue was identified via static analysis and manually reviewed.
+One is bad for the system's lifetime and the other is very annoying for
+anyone in close proximity to the device, so add the PWM fan in device
+tree to fix this.
 
-Assisted-by: LLM
-Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/usb/gadget/udc/tegra-xudc.c | 38 ++++++++++++++++++++++-------
- 1 file changed, 29 insertions(+), 9 deletions(-)
+Changes in v2:
+- fix device name in commit subject
+---
+ arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/usb/gadget/udc/tegra-xudc.c b/drivers/usb/gadget/udc/tegra-xudc.c
-index e9d33be02866..41015e5dc089 100644
---- a/drivers/usb/gadget/udc/tegra-xudc.c
-+++ b/drivers/usb/gadget/udc/tegra-xudc.c
-@@ -696,28 +696,43 @@ static void tegra_xudc_restore_port_speed(struct tegra_xudc *xudc)
- 	xudc_writel(xudc, val, SSPX_CORE_CNT72);
- }
- 
--static void tegra_xudc_device_mode_on(struct tegra_xudc *xudc)
-+static int tegra_xudc_device_mode_on(struct tegra_xudc *xudc)
- {
- 	int err;
- 
--	pm_runtime_get_sync(xudc->dev);
-+	err = pm_runtime_resume_and_get(xudc->dev);
-+	if (err < 0)
-+		return err;
- 
- 	tegra_phy_xusb_utmi_pad_power_on(xudc->curr_utmi_phy);
- 
- 	err = phy_power_on(xudc->curr_utmi_phy);
- 	if (err < 0)
--		dev_err(xudc->dev, "UTMI power on failed: %d\n", err);
-+		goto power_down_pad;
- 
- 	err = phy_power_on(xudc->curr_usb3_phy);
- 	if (err < 0)
--		dev_err(xudc->dev, "USB3 PHY power on failed: %d\n", err);
-+		goto power_off_utmi;
- 
- 	dev_dbg(xudc->dev, "device mode on\n");
- 
--	phy_set_mode_ext(xudc->curr_utmi_phy, PHY_MODE_USB_OTG,
--			 USB_ROLE_DEVICE);
-+	err = phy_set_mode_ext(xudc->curr_utmi_phy, PHY_MODE_USB_OTG,
-+			       USB_ROLE_DEVICE);
-+	if (err < 0)
-+		goto power_off_usb3;
- 
- 	xudc->current_device_mode = true;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi b/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
+index 45f8df9bbfd6..4550e843f513 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
+@@ -9,4 +9,17 @@ aliases {
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
 +
-+	return 0;
++	bus@0 {
++		pwm@c6a0000 {
++			status = "okay";
++		};
++	};
 +
-+power_off_usb3:
-+	phy_power_off(xudc->curr_usb3_phy);
-+power_off_utmi:
-+	phy_power_off(xudc->curr_utmi_phy);
-+power_down_pad:
-+	tegra_phy_xusb_utmi_pad_power_down(xudc->curr_utmi_phy);
-+	pm_runtime_put(xudc->dev);
-+	return err;
- }
- 
- static void tegra_xudc_device_mode_off(struct tegra_xudc *xudc)
-@@ -779,11 +794,16 @@ static void tegra_xudc_usb_role_sw_work(struct work_struct *work)
- {
- 	struct tegra_xudc *xudc = container_of(work, struct tegra_xudc,
- 					       usb_role_sw_work);
-+	int err;
- 
--	if (xudc->device_mode)
--		tegra_xudc_device_mode_on(xudc);
--	else
-+	if (xudc->device_mode) {
-+		err = tegra_xudc_device_mode_on(xudc);
-+
-+		if (err)
-+			dev_err(xudc->dev, "failed to enter device mode: %d\n", err);
-+	} else {
- 		tegra_xudc_device_mode_off(xudc);
-+	}
- }
- 
- static int tegra_xudc_get_phy_index(struct tegra_xudc *xudc,
++	fan: pwm-fan {
++		compatible = "pwm-fan";
++		cooling-levels = <77 102 140 192 255>;
++		pwms = <&pwm4 0 40000>;
++		#cooling-cells = <2>;
++	};
+ };
+
 -- 
-2.43.0
+2.55.0
 
