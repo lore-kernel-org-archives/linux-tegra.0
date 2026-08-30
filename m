@@ -1,34 +1,37 @@
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1B23B14A2;
-	Sun, 30 Aug 2026 12:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D113BA246;
+	Sun, 30 Aug 2026 16:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788094734; cv=none; b=Z/JXGcyJJabCMy3jgkRc56fxykPd9jPJ98bLrnY+A0fvvYcmNaT/Ken2jNMbKn84JgcwG6hNiWOCrk3NYc1eWcjo4hptlVdGklJ+DA2VzqRlfg9kvZ7yl3RXvsk4+QIbEvycuX8X897qGA8+6vSaf1eTGQmcyEmE6zYOYrn3syc=
+	t=1788106683; cv=none; b=KRFvVPGRj6pBgmUSIM1RIDcKTa3PnQVUoeiSrDNnDTXp9u2fuQna12n8ZJpbNRRGmIS+ynO23SwFK8OiBYb6FhIlfA5F9ah1fxKOhj2xnhuMvK4oo6RW/o/Y6K0IaMwfq3FfbmBr9M3p5puXaMd/eSCr4aRHB34W3tWuK93aEZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788094734; c=relaxed/simple;
-	bh=ULLsCIvRURUfWtY7aMZOQIJq838+3+EZQOBCAb4TPwM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uKHvLdbUd4r7CGweA+cyWclqZsjqt2EG2YrRHPHCq4lV5wmThl4TsfVHbOPaIRBkwaMY+/5DzxdprYPFT9PY/yWFZ1BvRViBDfEqQGV5ImJIc+4XGo7V9hdpsVUFqvCQa2NwJUDrES6xqZ23Lb1iSmMl22HTD51IxSsLChFDVH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [111.196.241.250])
-	by APP-03 (Coremail) with SMTP id rQCowADn6jgFKZRqOLuaBg--.22542S2;
-	Sun, 30 Aug 2026 20:58:45 +0800 (CST)
-From: Pengpeng Hou <pengpeng@iscas.ac.cn>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-pwm@vger.kernel.org,
+	s=arc-20240116; t=1788106683; c=relaxed/simple;
+	bh=S6ALsO99Mf8b4MLFFIHQIICD0ef6Ggwu0gNDps+5sOk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=er+jc34NWjzcoizBsIZz8oGGwbCYKG5CFLKzDEUjx6w0/pBMkIT9roB+xYfahgDFu41vZEM2KbvkAQLj+wLi41tgDFOC5AMEwpK9wq2jb83rMCrggJtRTykRMPVTDaiyriRtLrokW8IfNRflyNi++KaVtFHgBCKL/QBz5/bBw28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=C6adnRX8; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="C6adnRX8"
+Received: from PC-202605011814.localdomain (unknown [58.241.16.34])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 4bd7e97c7;
+	Mon, 31 Aug 2026 00:17:54 +0800 (GMT+08:00)
+From: Runyu Xiao <runyu.xiao@seu.edu.cn>
+To: Dipen Patel <dipenp@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: timestamp@lists.linux.dev,
 	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] pwm: tegra: fail probe on reset deassert errors
-Date: Sun, 30 Aug 2026 20:58:43 +0800
-Message-ID: <20260830125843.99132-1-pengpeng@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1
+	linux-kernel@vger.kernel.org,
+	runyu.xiao@seu.edu.cn,
+	jianhao.xu@seu.edu.cn,
+	stable@vger.kernel.org
+Subject: [PATCH] hte: tegra194: Initialize slice locks before registering chip
+Date: Mon, 31 Aug 2026 00:17:47 +0800
+Message-Id: <20260830161747.2719220-1-runyu.xiao@seu.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -36,53 +39,54 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowADn6jgFKZRqOLuaBg--.22542S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrurW5Gw47XFyxAryDur4xCrg_yoWDWFc_u3
-	4xXFsrWws8CryvkFnxt3yfZFWayF98uF10grZrtw13Kas0qF15GryvyrW5u34xWan8uFy7
-	GFW2vrWfA3sxAjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb4xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26F4UJV
-	W0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
-	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
-	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUmjgxUUU
-	UU=
-X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
+X-HM-Tid: 0aa05376928703a1kunmb280507910715e
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlDSU1LVhlPGB5LTBodHh4ZSVYeHw
+	5VEwETFhoSFyQUDg9ZV1kYEgtZQVlOQ1VJT0pVSk1VSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSE
+	xVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=C6adnRX8KIlM01g51zYlO58R1tJ0paYcKBbJRkU5m8eyH/dDIohFCii/CGeEnjXBDSu7Wkk+rucYsqYm4wggBz7x8rHeH17KpOztjUrFAqS2VZAI0hzkuj2Kb8IT7SfiibPRaNYV0SIG7qUNvKgHx16d9K/gh1ZAsvR2xgBE6q4=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
+	bh=+bGYSb5ANbtpow/T618bsKBQwWGrOFAzrHSouwdqQFY=;
+	h=date:mime-version:subject:message-id:from;
 
-tegra_pwm_probe() registers the PWM provider after deasserting the reset
-control without checking whether the reset controller accepted the request.
+Registering the HTE chip publishes its request callbacks to consumers.
+Initialize every slice lock before registration so a concurrent HTE
+request cannot use an uninitialized lock.
 
-Propagate the failure through the existing runtime-PM cleanup path instead
-of publishing a PWM controller whose hardware may still be reset.
-
-Fixes: 5dfbd2bd5439 ("pwm: tegra: Add support for reset control")
-Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
+Signed-off-by: Runyu Xiao <runyu.xiao@seu.edu.cn>
+Fixes: 09574cca6ad6 ("hte: Add Tegra194 HTE kernel provider")
+Cc: stable@vger.kernel.org
 ---
- drivers/pwm/pwm-tegra.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/hte/hte-tegra194.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-index 5cdbe120ba2d8..d9fa16a7b31f4 100644
---- a/drivers/pwm/pwm-tegra.c
-+++ b/drivers/pwm/pwm-tegra.c
-@@ -379,7 +379,9 @@ static int tegra_pwm_probe(struct platform_device *pdev)
- 		goto put_pm;
+diff --git a/drivers/hte/hte-tegra194.c b/drivers/hte/hte-tegra194.c
+index 4a7702b32..1612812ab 100644
+--- a/drivers/hte/hte-tegra194.c
++++ b/drivers/hte/hte-tegra194.c
+@@ -910,17 +910,17 @@ static int tegra_hte_probe(struct platform_device *pdev)
+ 
+ 	hte_dev->chip = gc;
+ 
++	for (i = 0; i < slices; i++) {
++		hte_dev->sl[i].flags = 0;
++		spin_lock_init(&hte_dev->sl[i].s_lock);
++	}
++
+ 	ret = devm_hte_register_chip(hte_dev->chip);
+ 	if (ret) {
+ 		dev_err(gc->dev, "hte chip register failed");
+ 		return ret;
  	}
  
--	reset_control_deassert(pc->rst);
-+	ret = reset_control_deassert(pc->rst);
-+	if (ret)
-+		goto put_pm;
- 
- 	chip->ops = &tegra_pwm_ops;
-
-base-commit: 08dbfad3f5040f5bdb6c529da20d6d4e81fefd72
+-	for (i = 0; i < slices; i++) {
+-		hte_dev->sl[i].flags = 0;
+-		spin_lock_init(&hte_dev->sl[i].s_lock);
+-	}
+-
+ 	val = HTE_TECTRL_ENABLE_ENABLE |
+ 	      (HTE_TECTRL_INTR_ENABLE << HTE_TECTRL_INTR_SHIFT) |
+ 	      (hte_dev->itr_thrshld << HTE_TECTRL_OCCU_SHIFT);
 -- 
-2.50.1
-
+2.34.1
