@@ -1,47 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05231485CC4;
-	Mon, 31 Aug 2026 13:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6034F9C7C;
+	Mon, 31 Aug 2026 13:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788183487; cv=none; b=CY836nD0LEZCawM9//9ZB8JZbv/m5HzVDTrNgQswLh/TLf+dc3a5wdLcJCCdxtTda9bAPRJRbQp5Vc9tBFLCKXuzQuTIgxBYJMyk3UBXkA2B+jilnr845ZOPQO+xqcVssAuHf+7XHqWUCEs5jHBhX0rVy9l7lGQtS8Jp7Mc+4QY=
+	t=1788183685; cv=none; b=gWNmEGHt1G8NzV3sRTlPty8V4x9V322+eIfyxKJ4abTqh551ND5a39OvVDVdY4D4zPpzpCk8D0QseSymb8GnrJRpWdvPi0BkaWlpLN6hcilbWUNA0ByEmfsYjI8013cvXxfzfS6NBUNy/SzqacsQ/8BRv355g3diVWyt7Ae2Gfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788183487; c=relaxed/simple;
-	bh=StpQ1iPH5C1RTadg3qaMSm7ReaIYMlq1adkj2M/QTdM=;
+	s=arc-20240116; t=1788183685; c=relaxed/simple;
+	bh=DB0Tukm1teGstjgzYUkOET9cw3v8J72MQ1+1ieAPynE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L13SMEqsWQIbbvda7tgcnC0mLpgn+juduWgiod7J73RcgjsSLrNPSU9YYcQJOfzdXIRyS1OURo/Kn4JoxAqta0nuEbrWqYTaYNvwi6kamRw9A7Iki/m2VDwyOIXxhMRSnp3nuEmy3XCPWT7VF9HsPtv20mdfXRyY1Sas4Jt+H58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oFYwWXFS; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=dGkQ8ezyHVG+s7V2gWsRrATQOCql+K3ZLLGGM1m12Q2cAiURjOvxSULUEvvoxL4TY37ft9Q4CWiwR50TKGK1+VcOfwOp62B18COWzaBEPzAonJ6tqjJmOXcIARMEAjNyEd5Fkz9gvr+fYqkrgs8nchUAnPDh3wLplG0EolkzDFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e0wRlrKE; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oFYwWXFS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50BC51F00A3D;
-	Mon, 31 Aug 2026 13:38:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e0wRlrKE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 497B51F00A3F;
+	Mon, 31 Aug 2026 13:41:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788183484;
-	bh=2GPnmN3E3Ldl1J2uBgjrNLFYb5skGIA23TTI8oRt1T0=;
+	s=k20260515; t=1788183683;
+	bh=t9NjzSVvUiK3gayp1XaXxHEpLml92T0c2xxi6CPFnHk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=oFYwWXFSYUdpFBV+tbQBZjlcWsqsaXNzkhodx1ia3zKmDTw8aFmGLK2wtmwCpDs+A
-	 WzT7QTIXAPhGGo8E0TUPXq8QrbTRoYlLfCd0YSCDPu88+Ebavj3cSMUXmJW+/IdQUa
-	 98e57kW8ZCES0mclvTu6J/anfrLn36cLw5icTQcxU4NeUFqQYBePOnEhVjvKc8CG+H
-	 ZpjGOKvZ2ysBYxubxQNBFRhB13U/ikg6mpeBTuqxedLZTRdkh4a91/pnQHc4cYS/nO
-	 o31QbQv3e01+1INrownWgL/pOqN4Dol2CWq/6mnXi1u0lK2Xb9iHPVRnDd2Ou9NQ/A
-	 q3KO6Qz0qRv5g==
+	b=e0wRlrKErUVDJTAUuxmDF+qkwIgNWTtkYZSb/XVEpOJEiKoamOkdq/FZi5K5vUY/a
+	 fU3+G1q8E2Hiq02mHCLEi6HTn24OVCAs8FJY1M5m20l93YY9Md+iXq6ecr10MTzptF
+	 LV0BhieFqvztq5TEX2pmpX9u3Ae2LQ1ymMWfoV031HWXCLSjFDYfnDwp51wYKAMeR/
+	 C5nc7GZN6x5Je7xDJAXGTjvfQ4xCE0x366xDDIMZgURRuuh+fiz/qexjbAbavznSFR
+	 LRG8juTiYLQyRB4IFVxAW6X5c1k2FFegP/UghbXiuLVdEsQdf2+CvX6sQm6uCGhLdF
+	 k6Gym0z8QKOsw==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Lukasz Luba <lukasz.luba@arm.com>,
+Cc: shayderrr <darknessshayder@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
 	Sasha Levin <sashal@kernel.org>,
-	rafael@kernel.org,
 	thierry.reding@kernel.org,
-	jonathanh@nvidia.com,
-	linux-pm@vger.kernel.org,
+	mperttunen@nvidia.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-5.10] thermal/drivers/tegra/soctherma: Switch to devm cooling device registration
-Date: Mon, 31 Aug 2026 09:22:32 -0400
-Message-ID: <20260831133314.4125787-124-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-5.15] host1x: bus: Fix missing ops null check in error teardown
+Date: Mon, 31 Aug 2026 09:24:30 -0400
+Message-ID: <20260831133314.4125787-242-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260831133314.4125787-1-sashal@kernel.org>
 References: <20260831133314.4125787-1-sashal@kernel.org>
@@ -57,385 +57,357 @@ X-stable-base: Linux 6.18.48
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>
+From: shayderrr <darknessshayder@gmail.com>
 
-[ Upstream commit ee126267bc04bfb03816ae9d71ca24c5bf99e739 ]
+[ Upstream commit 71d25f668bc5c0f36ea843462e12307dea45aaa3 ]
 
-Use devm_thermal_of_cooling_device_register() to simplify resource
-management and avoid manual cleanup in error paths.
+In host1x_device_init(), the error teardown paths do not check
+client->ops before dereferencing it, unlike the forward init paths
+which correctly guard with 'client->ops &&'. This can result in a
+NULL pointer dereference if client->ops is NULL.
 
-As a side effect this change has the benefit of solving an existing
-issue. Before, the function tegra_soctherm_remove() only called
-debugfs_remove_recursive() and never called thermal_cooling_device_unregister()
-for any of the cooling devices registered here.
+Fix by adding the missing client->ops check in both the teardown
+and teardown_late labels.
 
-After the driver removal, the thermal framework's cdev list would
-still hold references to thermal_cooling_device objects whose devdata
-pointer (ts) pointed to memory already freed by the platform device's
-devm cleanup.
-
-With this change, the cooling device is unregistered when the driver
-is removed, thus fixing the issue above.
-
-Signed-off-by: Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@kernel.org>
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
-Link: https://patch.msgid.link/20260424160019.41710-2-daniel.lezcano@oss.qualcomm.com
+Signed-off-by: shayderrr <darknessshayder@gmail.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Link: https://patch.msgid.link/20260517170456.84927-1-darknessshayder@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-# Stable Backport Analysis: tegra/soctherm devm cooling device
-registration
+## Phase 1: Commit Message Forensics
 
-**Local tree:** `v6.18.44` (Linux 6.18.44)
-
----
-
-## PHASE 1: COMMIT MESSAGE FORENSICS
-
-### Step 1.1: Subject line
-**Record:** `[thermal/drivers/tegra/soctherma]` `[Switch]` — move
-throttle cooling-device registration to the devm thermal API.
+### Step 1.1: Subject Line
+**Record:** `[host1x: bus]` `[Fix]` — Add missing `client->ops` NULL
+checks in `host1x_device_init()` error teardown paths.
 
 ### Step 1.2: Tags
 **Record:**
-- **Signed-off-by:** Daniel Lezcano `<daniel.lezcano@oss.qualcomm.com>`,
-  Daniel Lezcano `<daniel.lezcano@kernel.org>`
-- **Reviewed-by:** Lukasz Luba `<lukasz.luba@arm.com>`
-- **Link:** https://patch.msgid.link/20260424160019.41710-2-
-  daniel.lezcano@oss.qualcomm.com
-- **Absent (expected):** Fixes:, Reported-by:, Tested-by:, Cc:
-  stable@vger.kernel.org
-- **Notable:** Part of a 2-patch series; no syzbot/fuzzer report.
+- **Signed-off-by:** shayderrr \<darknessshayder@gmail.com\> (author)
+- **Signed-off-by:** Thierry Reding \<treding@nvidia.com\> (host1x/Tegra
+  maintainer)
+- **Link:** https://patch.msgid.link/20260517170456.84927-1-
+  darknessshayder@gmail.com
+- No Fixes:, Reported-by:, Tested-by:, Reviewed-by:, Acked-by:, or Cc:
+  stable tags
+- Notable: maintainer sign-off is a strong quality signal; no
+  syzbot/user bug report
 
-### Step 1.3: Body analysis
+### Step 1.3: Body Analysis
 **Record:**
-- **Bug:** `tegra_soctherm_remove()` never calls
-  `thermal_cooling_device_unregister()` for throttle cooling devices
-  registered in `soctherm_init_hw_throt_cdev()`.
-- **Symptom:** After driver removal, the thermal core still holds
-  `thermal_cooling_device` entries whose `devdata` points at `struct
-  tegra_soctherm *ts`, but `ts` is freed by devm when the platform
-  device is torn down → use-after-free.
-- **Root cause:** Non-devm `thermal_of_cooling_device_register()` with
-  no matching unregister in `.remove`.
-- **Fix approach:** `devm_thermal_of_cooling_device_register(dev, ...)`
-  so unregister happens automatically on device release.
+- **Bug:** `host1x_device_init()` teardown (`teardown`, `teardown_late`)
+  dereferences `client->ops` without a NULL guard; forward init paths
+  already use `client->ops &&`.
+- **Symptom:** NULL pointer dereference during error recovery when
+  initialization fails.
+- **Root cause:** Oversight when teardown was added (2017) and when
+  `teardown_late` was added (2021); `host1x_device_exit()` and other
+  paths in the same file already guard correctly.
 
-### Step 1.4: Hidden bug fix?
-**Record:** Yes. The commit is framed as resource-management cleanup,
-but it explicitly fixes a real UAF on driver removal.
+### Step 1.4: Hidden Bug Fix?
+**Record:** No — this is an explicit NULL-deref fix on an error path,
+not disguised cleanup.
 
 ---
 
-## PHASE 2: DIFF ANALYSIS
+## Phase 2: Diff Analysis
 
 ### Step 2.1: Inventory
 **Record:**
-- **Files:** `drivers/thermal/tegra/soctherm.c` only (+3 / −3 lines)
-- **Function modified:** `soctherm_init_hw_throt_cdev()`
-- **Scope:** Single-file, surgical change
+- **File:** `drivers/gpu/host1x/bus.c` (+2 / -2 lines)
+- **Function:** `host1x_device_init()`
+- **Scope:** Single-file, surgical (2-line change)
 
-### Step 2.2: Code flow change
+### Step 2.2: Code Flow Change
 **Record:**
-- **Before:** `thermal_of_cooling_device_register(np_stcc, name, ts,
-  &throt_cooling_ops)` — lifetime not tied to `pdev->dev`; survives past
-  `.remove`.
-- **After:** `devm_thermal_of_cooling_device_register(dev, np_stcc,
-  name, ts, &throt_cooling_ops)` — cooling device unregistered when
-  `dev` is released.
-- **Path affected:** Probe-time throttle cooling-device registration;
-  cleanup on driver remove/unbind.
+- **Hunk 1 (`teardown`):** `if (client->ops->exit)` → `if (client->ops
+  && client->ops->exit)`
+- **Hunk 2 (`teardown_late`):** `if (client->ops->late_exit)` → `if
+  (client->ops && client->ops->late_exit)`
+- **Before:** Error teardown could dereference NULL `client->ops`.
+- **After:** Clients without `ops` are skipped, matching forward init
+  and `host1x_device_exit()`.
 
-### Step 2.3: Bug mechanism
-**Record:** **Category:** Use-after-free / missing resource cleanup on
-driver removal.
+### Step 2.3: Bug Mechanism
+**Record:** **Category:** NULL pointer dereference (memory safety).
+**Mechanism:** On `early_init`/`init` failure, reverse iteration calls
+`client->ops->exit` / `client->ops->late_exit` even when `client->ops`
+is NULL — a client skipped in the forward path can still be visited in
+teardown.
 
-Mechanism verified in tree:
-1. `tegra` is allocated with `devm_kzalloc(&pdev->dev, ...)` (line
-   2101).
-2. Cooling devices store `ts` as `devdata` (line 1704).
-3. `throt_get_cdev_cur_state()` dereferences `cdev->devdata` as `ts` and
-   reads `ts->regs` (lines 1512–1515).
-4. `tegra_soctherm_remove()` only removes debugfs and disables clocks —
-   no cooling-device unregister (lines 2228–2235).
-5. After remove, thermal framework callbacks can touch freed `ts`
-   memory.
-
-### Step 2.4: Fix quality
-**Record:** Obviously correct; matches the pattern already used in the
-same probe path for thermal zones (`devm_thermal_of_zone_register` at
-line 2197). Minimal regression risk; no new APIs.
+### Step 2.4: Fix Quality
+**Record:** Obviously correct; mirrors existing patterns at lines
+196–207, 257–271, and 815–836 in the same file. Minimal regression risk.
 
 ---
 
-## PHASE 3: GIT HISTORY INVESTIGATION
+## Phase 3: Git History Investigation
 
 ### Step 3.1: Blame
-**Record:** `git blame` on the registration lines attributes them to
-`7e22de67e545d` (“drm/amdgpu/gfx10: replace BUG_ON() with WARN_ON()”),
-which is clearly unrelated — this tree’s git history for `soctherm.c`
-appears squashed/corrupted. **Cannot reliably determine the introducing
-commit or kernel version from history in this checkout.**
+**Record:**
+- `teardown` without NULL check: introduced in `8f7da1578e90b` (Thierry
+  Reding, 2017-11-08) — "gpu: host1x: Cleanup on initialization failure"
+- `teardown_late` without NULL check: introduced in `933deb8c7b8e3f`
+  (Thierry Reding, 2021-03-26) — "gpu: host1x: Add early init and late
+  exit callbacks"
+- Forward paths have had `client->ops &&` since original
+  `host1x_device_init()` (2013)
 
-### Step 3.2: Fixes: tag
-**Record:** N/A — no Fixes: tag in the commit message.
+### Step 3.2: Fixes: Tag
+**Record:** N/A — no Fixes: tag.
 
-### Step 3.3: Related file history
-**Record:** `git log --oneline -- drivers/thermal/tegra/soctherm.c`
-returns only the unrelated amdgpu commit. History is not usable here.
-The buggy pattern is present in the current file content.
+### Step 3.3: Related File History
+**Record:** Recent host1x stable-style fixes in this tree include UAF
+(`5f4de3c717d34`), reference leak (`c4d6442ac3ed0`), and syncpt race
+(`79197c6007f2a`). Standalone fix; not part of a series.
 
-### Step 3.4: Author context
-**Record:** Daniel Lezcano is a thermal maintainer. No other tegra
-thermal commits visible in this tree’s truncated history.
+### Step 3.4: Author Context
+**Record:** shayderrr is a contributor; Thierry Reding (maintainer)
+signed off. Author is not the subsystem maintainer but patch was
+accepted by one.
 
 ### Step 3.5: Dependencies
-**Record:** Patch is **2/2** in a series with patch 1/2 (clock disable
-via `devm_add_action_or_reset`). **Patch 2/2 is standalone** — it only
-changes the cooling-device registration call and does not depend on
-patch 1. `devm_thermal_of_cooling_device_register()` already exists in
-this tree’s `thermal_core.c` (lines 1217–1240).
+**Record:** No prerequisites. Applies to code present since 2017/2021.
+Self-contained.
 
 ---
 
-## PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
+## Phase 4: Mailing List and External Research
 
-### Step 4.1: Original discussion
+### Step 4.1–4.5
 **Record:**
-- **URL:** https://patch.msgid.link/20260424160019.41710-2-
-  daniel.lezcano@oss.qualcomm.com
-- **Series:** 2 patches (clock devm cleanup + this cooling-device devm
-  fix)
-- **b4:** Reports patch applies clean to current tree
-- **Review:** `Reviewed-by: Lukasz Luba` on patch 1/2; no separate
-  replies found for patch 2/2 in thread grep
-- **Stable nomination:** None found in thread or stable@ search
-
-### Step 4.2: Reviewers
-**Record:** CC’d: Rafael Wysocki, Daniel Lezcano, Thierry Reding,
-Jonathan Hunter; lists: linux-pm, linux-tegra.
-
-### Step 4.3: Bug report
-**Record:** No external bug report, syzbot, or crash log — bug
-identified by code inspection during cleanup.
-
-### Step 4.4: Series context
-**Record:** Patch 1/2 is independent (clock error-path cleanup). Not
-required for this fix to work.
-
-### Step 4.5: Stable list
-**Record:** No prior stable@ discussion found for this issue.
+- `b4 dig` by commit hash and subject: no match (commit not in this
+  checkout)
+- Lore/patch.msgid.link: blocked by Anubis bot protection — could not
+  read thread
+- **UNVERIFIED:** Reviewer feedback, stable nominations, series
+  revisions
 
 ---
 
-## PHASE 5: CODE SEMANTIC ANALYSIS
+## Phase 5: Code Semantic Analysis
 
-### Step 5.1: Key functions
-**Record:** `soctherm_init_hw_throt_cdev()`,
-`throt_get_cdev_cur_state()`, `tegra_soctherm_remove()`,
-`tegra_soctherm_probe()`.
+### Step 5.1: Key Functions
+**Record:** `host1x_device_init()` — only function modified.
 
 ### Step 5.2: Callers
-**Record:**
-- `soctherm_init_hw_throt_cdev()` called from `tegra_soctherm_probe()`
-  (line 2180)
-- Driver registered via `module_platform_driver(tegra_soctherm_driver)`
-  (line 2288) — `.remove` runs on unbind/module unload
-- Thermal zone trip handling also references `ts->throt_cfgs[i].cdev`
-  (lines 617–628)
+**Record:** `host1x_device_init()` is called from:
+- `drivers/gpu/drm/tegra/drm.c` (Tegra DRM probe)
+- `drivers/crypto/tegra/tegra-se-main.c` (Tegra SE)
+- `drivers/staging/media/tegra-video/video.c` (staging Tegra video)
+
+All are device-probe initialization paths on Tegra (or COMPILE_TEST).
 
 ### Step 5.3: Callees
-**Record:** Registration goes through
-`devm_thermal_of_cooling_device_register()` →
-`__thermal_cooling_device_register()` with devm release via
-`thermal_cooling_device_release()`.
+**Record:** `client->ops->exit`, `client->ops->late_exit`,
+`mutex_lock/unlock`, list iteration macros.
 
 ### Step 5.4: Reachability
 **Record:**
-- Requires `CONFIG_TEGRA_SOCTHERM` (tristate, `ARCH_TEGRA ||
-  COMPILE_TEST`)
-- Requires DT `throttle-cfgs` child nodes with non-OC throttle entries
-  (`stc->id < THROTTLE_OC1`)
-- Trigger: platform driver remove/unbind after successful probe with
-  throttle cooling devices registered
-- Post-remove thermal activity (zone polling, trip handling, sysfs) can
-  invoke cooling-device ops → UAF
+1. Tegra clients register via `host1x_client_register()` /
+   `__host1x_client_register()`.
+2. `host1x_device_init()` runs when the composite host1x device driver
+   probes.
+3. If any client's `init`/`early_init` fails, teardown runs.
+4. Forward path skips clients with `client->ops == NULL`; teardown does
+   not — inconsistent and unsafe.
+5. In-tree drivers set `ops` before register, but the API explicitly
+   allows NULL `ops` (forward guards prove intent). A client with NULL
+   `ops` on `device->clients` plus a later init failure triggers the
+   bug.
 
-### Step 5.5: Similar patterns
-**Record:** Same file already uses devm for zones
-(`devm_thermal_of_zone_register`), `tegra` struct, clocks, and other
-probe allocations. Cooling-device registration was the outlier.
+**Userspace trigger:** Indirect — probe failure during boot/driver load
+on Tegra systems with `CONFIG_TEGRA_HOST1X` and dependent drivers.
 
----
-
-## PHASE 6: CROSS-REFERENCE AGAINST LOCAL TREE (v6.18.44)
-
-### Step 6.1: Buggy code present?
-**Record:** **Yes.** Lines 1703–1705 still use
-`thermal_of_cooling_device_register()`; `tegra_soctherm_remove()` has no
-unregister. The fix is not yet in this tree.
-
-### Step 6.2: Backport complications
-**Record:** **Clean apply.** Verified with `git apply --check` — 3
-insertions, 3 deletions, no conflicts.
-`devm_thermal_of_cooling_device_register()` is declared in
-`include/linux/thermal.h` and implemented in
-`drivers/thermal/thermal_core.c`.
-
-### Step 6.3: Related fixes already present?
-**Record:** No. `grep thermal_cooling_device_unregister
-drivers/thermal/tegra/` returns nothing. Bug remains unfixed.
+### Step 5.5: Similar Patterns
+**Record:** Same `client->ops &&` pattern used in
+`host1x_device_exit()`, `host1x_client_suspend()`, and
+`host1x_client_resume()` in the same file. Teardown paths are the
+outlier.
 
 ---
 
-## PHASE 7: SUBSYSTEM CONTEXT
+## Phase 6: Cross-Reference Against Local Tree
 
-### Step 7.1: Subsystem and criticality
-**Record:** `drivers/thermal/tegra/` — Tegra platform thermal driver.
-**PERIPHERAL** (Tegra/embedded only), but thermally safety-relevant on
-affected hardware.
+### Step 6.1: Buggy Code Present?
+**Record:** **Yes.** Local tree is **v6.18.44** (Makefile: 6.18.44).
+Buggy code at lines 224 and 232 in `drivers/gpu/host1x/bus.c` — fix not
+yet applied.
+
+### Step 6.2: Backport Complications
+**Record:** **Clean apply expected** — two identical one-line changes.
+No conflicting recent churn in this function.
+
+### Step 6.3: Related Fixes Already Present?
+**Record:** No existing fix for this issue in this tree.
+
+---
+
+## Phase 7: Subsystem and Maintainer Context
+
+### Step 7.1: Subsystem
+**Record:** `drivers/gpu/host1x/` — Tegra display/multimedia bus
+infrastructure. **Criticality:** IMPORTANT for Tegra/embedded;
+PERIPHERAL globally (requires `CONFIG_TEGRA_HOST1X`, `ARCH_TEGRA` or
+`COMPILE_TEST`).
 
 ### Step 7.2: Activity
-**Record:** File history unavailable in this checkout; driver is mature
-and actively maintained upstream (April 2026 patch series).
+**Record:** Actively maintained; multiple bugfix commits in recent
+history on this subsystem.
 
 ---
 
-## PHASE 8: IMPACT AND RISK
+## Phase 8: Impact and Risk Assessment
 
-### Step 8.1: Who is affected
-**Record:** Systems with `CONFIG_TEGRA_SOCTHERM` built-in or as a
-module, DT `throttle-cfgs` present, and throttle cooling devices
-registered (LIGHT/HEAVY, not OC-only configs).
+### Step 8.1: Who Is Affected
+**Record:** Tegra platform users with host1x clients (DRM, crypto,
+staging video). Not universal x86/ARM server impact.
 
-### Step 8.2: Trigger conditions
-**Record:** Driver removal/unbind/module unload — not every boot, but a
-real kernel code path. Any subsequent thermal-framework access to the
-stale cooling device can trigger the bug.
-
-### Step 8.3: Failure mode severity
-**Record:** **Use-after-free** via `ts->regs` in
-`throt_get_cdev_cur_state()` → kernel oops/panic, unpredictable
-behavior. **Severity: HIGH.**
-
-### Step 8.4: Risk-benefit
+### Step 8.2: Trigger Conditions
 **Record:**
-- **Benefit:** HIGH for affected Tegra systems — prevents UAF on
-  teardown
-- **Risk:** VERY LOW — 3-line change, established devm API, no
-  structural changes
-- **Ratio:** Strongly favors backport
+- `host1x_device_init()` called during probe
+- A client `init`/`early_init` fails
+- Teardown visits a client with `client->ops == NULL` (skipped during
+  forward init)
+- **Likelihood:** Low-to-medium on error paths; requires init failure
+  plus NULL-ops client on the list
+
+### Step 8.3: Failure Mode Severity
+**Record:** Kernel oops (NULL dereference) during error recovery instead
+of clean `-errno` return. **Severity: HIGH** for affected path (turns
+recoverable probe failure into crash).
+
+### Step 8.4: Risk-Benefit
+**Record:**
+- **Benefit:** Prevents crash on init-failure teardown; makes error
+  recovery robust
+- **Risk:** Very low — 2-line change matching established pattern
+- **Ratio:** Favorable for Tegra stable users
 
 ---
 
-## PHASE 9: FINAL SYNTHESIS
+## Phase 9: Final Synthesis
 
-### Step 9.1: Evidence summary
+### Step 9.1: Evidence Summary
 
 **FOR backport:**
-- Real UAF on driver removal, clearly described and verified in code
-- Dangling `devdata` (`ts`) dereferenced in `throt_get_cdev_cur_state()`
-- Small, surgical, obviously correct devm fix
-- `devm_thermal_of_cooling_device_register()` exists in v6.18.44
-- Patch applies cleanly
-- Reviewed in series by Arm thermal reviewer; thermal maintainer
-  authored
+- Real NULL-deref bug on error path
+- Trivial, obviously correct 2-line fix
+- Matches existing code in same function/file
+- Maintainer (Thierry Reding) signed off
+- Bug present since 2017/2021; affects this v6.18.44 tree
+- Error-path crash is worse than the original init failure
 
 **AGAINST backport:**
-- Tegra-specific, not universal
-- Driver removal is less common than steady-state operation (often
-  built-in)
-- No fuzzer report or user crash log
-- Git history in this checkout cannot confirm how long the bug has
-  existed
+- Platform-specific (Tegra only)
+- Requires init failure (uncommon)
+- No user/syzbot report documented
+- In-tree drivers appear to always set `ops` before register (trigger
+  may be rare in practice)
 
-**Unresolved:** Exact commit that introduced the bug (history unusable
-in this tree).
+**UNRESOLVED:**
+- Mailing list review thread (Anubis blocked)
+- No confirmed in-tree reproduction with current drivers
 
-### Step 9.2: Stable rules checklist
-1. Obviously correct and tested? **PASS** — standard devm pattern;
-   series reviewed
-2. Fixes a real user-affecting bug? **PASS** — UAF on driver teardown
-3. Important issue? **PASS** — UAF / potential crash
-4. Small and contained? **PASS** — 3 lines, one function
-5. No new features/APIs? **PASS** — uses existing devm API
-6. Can apply to local tree? **PASS** — verified clean apply; API present
+The unresolved items do not outweigh the clear correctness fix: forward
+paths already treat NULL `ops` as valid; teardown must match.
 
-### Step 9.3: Exception categories
-**Record:** None (not a quirk/DT-ID/docs fix) — standard bug fix.
+### Step 9.2: Stable Rules Checklist
+1. Obviously correct and tested? **PASS** — mirrors existing guards;
+   maintainer SOB; no logic change beyond NULL safety
+2. Fixes a real bug? **PASS** — NULL deref on error teardown
+3. Important issue? **PASS** — kernel oops on probe error recovery (HIGH
+   for affected users)
+4. Small and contained? **PASS** — 2 lines, 1 file
+5. No new features/APIs? **PASS**
+6. Can apply to local tree? **PASS** — buggy code confirmed in v6.18.44
 
-### Step 9.4: Decision rationale
-For **Linux 6.18.44**, the buggy non-devm cooling-device registration
-exists, `tegra_soctherm_remove()` does not unregister those devices, and
-thermal callbacks dereference the freed `ts` pointer. The fix is
-minimal, self-contained, uses infrastructure already in this tree, and
-applies cleanly. This meets stable criteria for a real, important UAF
-fix.
+### Step 9.3: Exception Categories
+**Record:** None (standard bug fix).
+
+### Step 9.4: Decision Rationale
+This is a conservative, surgical fix for an inconsistent NULL check that
+can kernel-oops during `host1x_device_init()` error recovery on Tegra
+systems. The fix aligns teardown with forward init and
+`host1x_device_exit()`, carries negligible regression risk, and the
+buggy code is present in this v6.18.44 tree.
 
 ---
 
 ## Verification
 
-- **[Phase 1]** Parsed subject, tags, and body from provided commit
-  message
-- **[Phase 1]** Confirmed no Fixes:/Reported-by:/Cc: stable tags
-- **[Phase 2]** Read `soctherm.c` lines 1502–1534, 1655–1719, 2101,
-  2180, 2228–2235
-- **[Phase 2]** Confirmed `throt_get_cdev_cur_state()` dereferences
-  `cdev->devdata` as `ts`
-- **[Phase 2]** Confirmed `tegra_soctherm_remove()` has no
-  `thermal_cooling_device_unregister()`
-- **[Phase 3]** `git describe HEAD` → `v6.18.44`
-- **[Phase 3]** `git blame -L 1700,1710` → history unreliable (unrelated
-  amdgpu commit)
-- **[Phase 3]** `git log --oneline -- drivers/thermal/tegra/soctherm.c`
-  → single unrelated commit
-- **[Phase 3]** Verified `devm_thermal_of_cooling_device_register` in
-  `thermal_core.c:1217-1240` and `thermal.h:259`
-- **[Phase 4]** `b4 am 20260424160019.41710-2-...` → 2-patch series,
-  applies clean
-- **[Phase 4]** curl lore mbox → patch 2/2 content and series metadata;
-  Reviewed-by on patch 1/2 only
-- **[Phase 4]** curl stable@ search → no prior discussion found
-- **[Phase 5]** Traced call chain: `probe` →
-  `soctherm_init_hw_throt_cdev` → thermal callbacks on stale cdev
-- **[Phase 5]** `grep thermal_cooling_device_unregister
-  drivers/thermal/tegra/` → no matches
-- **[Phase 6]** Confirmed buggy `thermal_of_cooling_device_register()`
-  at lines 1703–1705
-- **[Phase 6]** `git apply --check` on provided diff → clean apply
-  (3+/3-)
-- **[Phase 6]** Read `Kconfig` → `CONFIG_TEGRA_SOCTHERM` tristate,
-  `ARCH_TEGRA || COMPILE_TEST`
-- **[Phase 8]** Failure mode: UAF via `ts->regs` → severity HIGH
-- **UNVERIFIED:** Exact kernel version/commit that introduced the non-
-  devm registration (git history in this checkout is not trustworthy)
+- **[Phase 1]** Parsed commit message and tags from user query
+- **[Phase 2]** Confirmed diff: 2 lines in `host1x_device_init()`
+  teardown paths
+- **[Phase 3]** `git describe HEAD`: v6.18.44; Makefile confirms 6.18.44
+- **[Phase 3]** `git blame -L 222,236`: teardown from 2017
+  (`8f7da1578e90b`), teardown_late from 2021 (`933deb8c7b8e3f`)
+- **[Phase 3]** `git show 8f7da1578e90bf`: original teardown added
+  without NULL check while forward path had one
+- **[Phase 3]** `git log -p -S 'if (client->ops->exit)'`: confirmed 2017
+  introduction of unguarded teardown
+- **[Phase 3]** `git log --oneline -15 -- drivers/gpu/host1x/bus.c`:
+  recent related fixes; no duplicate fix
+- **[Phase 4]** `b4 dig`: no results (commit not in tree)
+- **[Phase 4]** WebFetch lore/patch.msgid.link: blocked by Anubis —
+  **UNVERIFIED** review discussion
+- **[Phase 5]** `grep host1x_device_init`: callers in tegra drm, tegra-
+  se, tegra-video
+- **[Phase 5]** Read `host1x_device_init()`, `host1x_device_exit()`,
+  suspend/resume: confirmed `client->ops &&` pattern elsewhere
+- **[Phase 5]** Read tegra driver probes (dc.c, gr3d.c, sor.c, tegra-
+  se): ops set before register
+- **[Phase 6]** Read current `bus.c` lines 224, 232: buggy code present
+  (no NULL check)
+- **[Phase 6]** Kconfig: `CONFIG_TEGRA_HOST1X` depends on `ARCH_TEGRA ||
+  COMPILE_TEST`
+- **[Phase 8]** Failure mode: NULL deref → oops on init-failure teardown
 
-**YES**
+**YES**The backport analysis is done.
 
- drivers/thermal/tegra/soctherm.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+**Commit:** `host1x: bus: Fix missing ops null check in error teardown`
+**Tree:** v6.18.44 — the bug is still present (unguarded `client->ops`
+derefs at lines 224 and 232 in `drivers/gpu/host1x/bus.c`).
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 5d26b52beaba7..9d3eb3be2db02 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -1700,9 +1700,9 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
- 			stc->init = true;
- 		} else {
+**Summary:** On Tegra, if `host1x_device_init()` fails partway through,
+the teardown paths can NULL-deref `client->ops` while forward init and
+`host1x_device_exit()` already guard against that. The fix is two lines,
+matches existing patterns, and is signed off by host1x maintainer
+Thierry Reding.
+
+**Verdict: YES** — backport to this tree.
+
+A background `git log --grep` search timed out; it wasn’t needed for the
+decision since the buggy code and history were already confirmed
+directly.
+
+ drivers/gpu/host1x/bus.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+index 3313ead8bfcc2..06aa7fcd367e1 100644
+--- a/drivers/gpu/host1x/bus.c
++++ b/drivers/gpu/host1x/bus.c
+@@ -221,7 +221,7 @@ int host1x_device_init(struct host1x_device *device)
  
--			tcd = thermal_of_cooling_device_register(np_stcc,
--							 (char *)name, ts,
--							 &throt_cooling_ops);
-+			tcd = devm_thermal_of_cooling_device_register(dev, np_stcc,
-+								      (char *)name, ts,
-+								      &throt_cooling_ops);
- 			if (IS_ERR_OR_NULL(tcd)) {
- 				dev_err(dev,
- 					"throttle-cfg: %s: failed to register cooling device\n",
+ teardown:
+ 	list_for_each_entry_continue_reverse(client, &device->clients, list)
+-		if (client->ops->exit)
++		if (client->ops && client->ops->exit)
+ 			client->ops->exit(client);
+ 
+ 	/* reset client to end of list for late teardown */
+@@ -229,7 +229,7 @@ int host1x_device_init(struct host1x_device *device)
+ 
+ teardown_late:
+ 	list_for_each_entry_continue_reverse(client, &device->clients, list)
+-		if (client->ops->late_exit)
++		if (client->ops && client->ops->late_exit)
+ 			client->ops->late_exit(client);
+ 
+ 	mutex_unlock(&device->clients_lock);
 -- 
 2.53.0
 
