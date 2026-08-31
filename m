@@ -1,85 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj2-f11.google.com (mail-pj2-f11.google.com [74.125.227.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC993BE652;
-	Mon, 31 Aug 2026 07:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6963BE652
+	for <linux-tegra@vger.kernel.org>; Mon, 31 Aug 2026 07:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788160413; cv=none; b=mAluhnLJOwm9cQiRv2xDlSvHqg5LKhtOgm6xfJumRRl7sxf5pJV8DjiNcpz+ICVZ7Lt9t9sVvWZJbjf6knQhmO4AbniA2P7sKqzZUZvtTM9Ibw2DQd9jrZ2/skQfXqNVoRxlg/+2iCfUjOqL0pMSuCLZngUim1vpXAuCmi1yNr4=
+	t=1788161437; cv=none; b=AFCy0ZG9L78yQ4a1n99pepm87AFkQ1/5zVBoxgEBdrCUI9AOQ1V93iEC6lws/3FMyHCyC0I7UQbfsfR0t56t80FgSHZFGpJDG6U7HPjz/0xAvJtbayIGrY2tJdoUXkGwG9CNr6NK24UKDCcdtJKd+YVzIRuYj5mB2mxq+VTAbSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788160413; c=relaxed/simple;
-	bh=DxqPqtzTp8mxa4pd1eQE88Yy6ixGznKpTnusIop8ubY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=StqFQV8X4JNmHjZLLIpOg4Ws7/aGcF8ZVx1jtB0r4+2Ksc4vPog29EmODQ2fn7T0yIkBFf/jcTkiQjdLDQkDXW9H3ers2C8BAwDdYgVnu0d8+wHWlRDWNDB4AnNr57G8LqoFvhJKUZRYGnT7z4slX03SMcqLLign5g8HTiE6tX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dqr/4LOn; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dqr/4LOn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02F511F000E9;
-	Mon, 31 Aug 2026 07:13:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788160412;
-	bh=nzwDhMUaspxwPlR3epuNtDGJEcxkDmu+JR/CLbni2/U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=dqr/4LOntZvMk1raKJwDPLs4PrbOimbFQe+cAb+Hoj/TrBZEWIWZrrc9hivVHtD1x
-	 ApUuRoJsZ/WJJRLArudCfWfQ3DWAIK0rXpSFJMls+Yi5tIQdx5V5GUJ1S1IzB9ppPi
-	 DP9y7sor6Q91pT6oBuI4ejk1g+yg3zjYZPwIrgDHpwJc80OU5AaeMwu3JOAIJK0Jeo
-	 foQPTRHAaFnJ6T3jhcUUNoWnnuA+dSW2eTVgDZKU8QzO0tjspubPDPhWFYbJJ7NjtT
-	 B3ZDPZqi01/VcurvvYfN9SSzUiDDShNm0bPdb6eyuRl/5zlbAN8B8yAmIMp8SxlFib
-	 XVbHQC86MUKkg==
-Date: Mon, 31 Aug 2026 09:13:27 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Thierry Reding <thierry.reding@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH 2/4] dt-bindings: thermal: Add Tegra264 header
-Message-ID: <20260831-rainbow-terrier-of-flowers-3fd2fe@quoll>
-References: <20260827-tegra264-fan-v1-0-3c55f0c748b1@nvidia.com>
- <20260827-tegra264-fan-v1-2-3c55f0c748b1@nvidia.com>
- <20260827-riverbank-cinema-d898d4e5a522@spud>
- <apBwZwOkctBETKVJ@orome>
- <20260827-disband-retrain-ad995df47784@spud>
+	s=arc-20240116; t=1788161437; c=relaxed/simple;
+	bh=2B1kl82sYmAxF1gcvXNtWp/v9p548DwYxTPqP/ibams=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N4ahce7XJJpv7m6SRta3quUtmEVaVV/evP75xM5eONmDYeqhcXpg2jeWPDP+4WosYmcWesr8ALii5s7ZanfBRh2Dq4B4ONPrV+9Kb28eQqLueKUidRCSgKWOVqH29aOBoJrLXYujJWlb8XVd80Wfh1l1GBjyQadIxTEY+VX8DOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj2-f11.google.com with SMTP id d9443c01a7336-2ceb5a39c48so11209695ad.1
+        for <linux-tegra@vger.kernel.org>; Mon, 31 Aug 2026 00:30:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788161434; x=1788766234;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=cm/3LxFAE23VmmspdwwF2dVngvqHxTwL+4Y3pEVCqwE=;
+        b=K8PLhdZFhATHUv2hoxnqAjJeSTD82aoZgm4xPWD60s8QGsjnA8EcJDhITHz62Kn7x3
+         nPtgswlcH3hPGt5XkXQin9pE8ha83Orzpzti2eyAMsQP8mrQa01BH5Wl4hmc80qCzDwD
+         3pDMcJVCptOGwXZGyqvj8rAYadAJ6s9ov6GUIuAuLT0MAHdRZyZdIeFu/nF/oEh0m817
+         2EYixA1VBfxu1QHQd77YQK+l006nNSwJBh5o1neiM/IzEEGv2EyJOulSggrgeT0ftp0z
+         uu1QL9sMY5IZxKF5+7IGMxsq+j4xWECuWCVaALxz65RIbp8dJORe0LauA5BcKl/IGTab
+         GSyw==
+X-Forwarded-Encrypted: i=1; AKwUvBz5SnjUE2ZkI5xP0d6PMdhlYzuKN1PC0DpsZMcAgVy2rYWY3qQ1byquuLuoclMYfag0HJIyo2whvw1isg==@vger.kernel.org
+X-Gm-Message-State: AFuF++l9QP9Qe9yDRusnswUswAyDaIZOc/5I3SIbs4+/VVrB2iLZOEj9
+	pDwBwBemNIotq59wfsWKFqcawOvRpiRBO2SAKrQmU+yl1VgCxJthoWx6
+X-Gm-Gg: AR+sD13/P0EeoDOWeL78fOmvv5uL71LAHLlNQ2ANDTdl5C2a2oF4AveZiMCV0IVCV/4
+	yyccGWM8nJtBBVFkd2r+LM3XWAcmNh26r734TwGbE2nCEE/JCmwi5YkB98Ol0VR/44KNWB0pFfs
+	Us7hRcTPJp6oLbgw4R9AYZR9OR4tmvaEx0TP5TXw4omuvLcUrRu9OWQd9a7dWnlcCSKWGsHSkDf
+	egI+IbEUXx07DJLXdf/OTJy3leb05+yfz6mPs6i0U2kkv7ma07kYgrpq98qS4BGf7c3OQrC/VCk
+	LVleZjF8IdjlcIcwJ2OENtDmoFUePP6ClS0O6gA9ZloPN6nbMd5g8BD3PZFYsPVOcmhMAK1m+Wz
+	0zqHrZaYbyuuF7oxlr62yPsypYmrhjVM7kMrg78p6cPhAVRmUY7oimOWrMNdaPLhb/oQ8DrffSq
+	QFHdkJYNWGnyot6w/RdZXgEatXQuW0USxrlmhrXGkADT+DTKivyTxP98MMco3vRnd2nvwyyj0Tr
+	VoW3sZk7N0l3hHYxIP8XA==
+X-Received: by 2002:a17:903:3244:b0:2d8:d4cd:dc90 with SMTP id d9443c01a7336-2d8d4cddf8bmr245815485ad.19.1788161433689;
+        Mon, 31 Aug 2026 00:30:33 -0700 (PDT)
+Received: from kylin-XiaoXinPro-16-AHP9.. ([116.128.244.169])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2d75988d184sm30107865ad.62.2026.08.31.00.30.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Aug 2026 00:30:33 -0700 (PDT)
+From: Xueqin Luo <luoxueqin@kylinos.cn>
+To: rafael@kernel.org,
+	viresh.kumar@linaro.org,
+	thierry.reding@kernel.org,
+	jonathanh@nvidia.com
+Cc: sumitg@nvidia.com,
+	linux-pm@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xueqin Luo <luoxueqin@kylinos.cn>
+Subject: [PATCH] cpufreq: tegra194: fix double-pointer error in get_cpu_ndiv
+Date: Mon, 31 Aug 2026 15:30:08 +0800
+Message-ID: <20260831073009.3772408-1-luoxueqin@kylinos.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260827-disband-retrain-ad995df47784@spud>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 27, 2026 at 06:33:06PM +0100, Conor Dooley wrote:
-> On Thu, Aug 27, 2026 at 07:17:15PM +0200, Thierry Reding wrote:
-> > On Thu, Aug 27, 2026 at 05:35:28PM +0100, Conor Dooley wrote:
-> > > On Thu, Aug 27, 2026 at 05:07:51PM +0200, Thierry Reding wrote:
-> > > > From: Thierry Reding <treding@nvidia.com>
-> > > > 
-> > > > This header file defines the set of thermal zones exposed by the BPMP on
-> > > > Tegra264.
-> > > 
-> > > Does this need to be a binding, since you're just using it in the dts?
-> > > Can it just go into your dts directory insteaD?
-> > 
-> > I don't think we've ever used these headers outside of DTS files, so,
-> > yes, they could go into the DTS directory.
-> > 
-> > We've never done that before and there's a bunch of Tegra-specific files
-> > that would be in the same basket. What's your recommendation for any of
-> > the existing headers? Should I move those into the DTS directory, too?
-> > If they are not used outside, that is? Or not worth the churn?
-> 
-> Up to you re: churn I think, but were it my platform I'd probably move
-> them. 
+ndiv is already a u64 pointer, passing &ndiv to smp_call_function_single()
+results in a u64** being written to instead of the caller's u64 variable,
+so the caller always reads back an uninitialized ndiv.  Drop the spurious
+'&'.
 
-For Samsung I moved all non-ABI related headers to DTS. I think one more
-platform followed. Moving needs to keep old header for some time anyway,
-so it's entirely up to you if you/others want to work on that. Like with
-every less-important cleanup, the benefit is that correcting old
-patterns stops encouraging repeating them.
+Fixes: 0839ed1fd7ac ("cpufreq: tegra194: add soc data to support multiple soc")
+Signed-off-by: Xueqin Luo <luoxueqin@kylinos.cn>
+---
+ drivers/cpufreq/tegra194-cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+index c6375e14d445..1eb96e9f3310 100644
+--- a/drivers/cpufreq/tegra194-cpufreq.c
++++ b/drivers/cpufreq/tegra194-cpufreq.c
+@@ -367,7 +367,7 @@ static void tegra194_get_cpu_ndiv_sysreg(void *ndiv)
+ 
+ static int tegra194_get_cpu_ndiv(u32 cpu, u32 cpuid, u32 clusterid, u64 *ndiv)
+ {
+-	return smp_call_function_single(cpu, tegra194_get_cpu_ndiv_sysreg, &ndiv, true);
++	return smp_call_function_single(cpu, tegra194_get_cpu_ndiv_sysreg, ndiv, true);
+ }
+ 
+ static void tegra194_set_cpu_ndiv_sysreg(void *data)
+-- 
+2.43.0
 
