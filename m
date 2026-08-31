@@ -1,92 +1,85 @@
-Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D113BA246;
-	Sun, 30 Aug 2026 16:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC993BE652;
+	Mon, 31 Aug 2026 07:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788106683; cv=none; b=KRFvVPGRj6pBgmUSIM1RIDcKTa3PnQVUoeiSrDNnDTXp9u2fuQna12n8ZJpbNRRGmIS+ynO23SwFK8OiBYb6FhIlfA5F9ah1fxKOhj2xnhuMvK4oo6RW/o/Y6K0IaMwfq3FfbmBr9M3p5puXaMd/eSCr4aRHB34W3tWuK93aEZU=
+	t=1788160413; cv=none; b=mAluhnLJOwm9cQiRv2xDlSvHqg5LKhtOgm6xfJumRRl7sxf5pJV8DjiNcpz+ICVZ7Lt9t9sVvWZJbjf6knQhmO4AbniA2P7sKqzZUZvtTM9Ibw2DQd9jrZ2/skQfXqNVoRxlg/+2iCfUjOqL0pMSuCLZngUim1vpXAuCmi1yNr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788106683; c=relaxed/simple;
-	bh=S6ALsO99Mf8b4MLFFIHQIICD0ef6Ggwu0gNDps+5sOk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=er+jc34NWjzcoizBsIZz8oGGwbCYKG5CFLKzDEUjx6w0/pBMkIT9roB+xYfahgDFu41vZEM2KbvkAQLj+wLi41tgDFOC5AMEwpK9wq2jb83rMCrggJtRTykRMPVTDaiyriRtLrokW8IfNRflyNi++KaVtFHgBCKL/QBz5/bBw28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=C6adnRX8; arc=none smtp.client-ip=45.254.49.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
+	s=arc-20240116; t=1788160413; c=relaxed/simple;
+	bh=DxqPqtzTp8mxa4pd1eQE88Yy6ixGznKpTnusIop8ubY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=StqFQV8X4JNmHjZLLIpOg4Ws7/aGcF8ZVx1jtB0r4+2Ksc4vPog29EmODQ2fn7T0yIkBFf/jcTkiQjdLDQkDXW9H3ers2C8BAwDdYgVnu0d8+wHWlRDWNDB4AnNr57G8LqoFvhJKUZRYGnT7z4slX03SMcqLLign5g8HTiE6tX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dqr/4LOn; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="C6adnRX8"
-Received: from PC-202605011814.localdomain (unknown [58.241.16.34])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 4bd7e97c7;
-	Mon, 31 Aug 2026 00:17:54 +0800 (GMT+08:00)
-From: Runyu Xiao <runyu.xiao@seu.edu.cn>
-To: Dipen Patel <dipenp@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: timestamp@lists.linux.dev,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	runyu.xiao@seu.edu.cn,
-	jianhao.xu@seu.edu.cn,
-	stable@vger.kernel.org
-Subject: [PATCH] hte: tegra194: Initialize slice locks before registering chip
-Date: Mon, 31 Aug 2026 00:17:47 +0800
-Message-Id: <20260830161747.2719220-1-runyu.xiao@seu.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dqr/4LOn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02F511F000E9;
+	Mon, 31 Aug 2026 07:13:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788160412;
+	bh=nzwDhMUaspxwPlR3epuNtDGJEcxkDmu+JR/CLbni2/U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=dqr/4LOntZvMk1raKJwDPLs4PrbOimbFQe+cAb+Hoj/TrBZEWIWZrrc9hivVHtD1x
+	 ApUuRoJsZ/WJJRLArudCfWfQ3DWAIK0rXpSFJMls+Yi5tIQdx5V5GUJ1S1IzB9ppPi
+	 DP9y7sor6Q91pT6oBuI4ejk1g+yg3zjYZPwIrgDHpwJc80OU5AaeMwu3JOAIJK0Jeo
+	 foQPTRHAaFnJ6T3jhcUUNoWnnuA+dSW2eTVgDZKU8QzO0tjspubPDPhWFYbJJ7NjtT
+	 B3ZDPZqi01/VcurvvYfN9SSzUiDDShNm0bPdb6eyuRl/5zlbAN8B8yAmIMp8SxlFib
+	 XVbHQC86MUKkg==
+Date: Mon, 31 Aug 2026 09:13:27 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Thierry Reding <thierry.reding@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH 2/4] dt-bindings: thermal: Add Tegra264 header
+Message-ID: <20260831-rainbow-terrier-of-flowers-3fd2fe@quoll>
+References: <20260827-tegra264-fan-v1-0-3c55f0c748b1@nvidia.com>
+ <20260827-tegra264-fan-v1-2-3c55f0c748b1@nvidia.com>
+ <20260827-riverbank-cinema-d898d4e5a522@spud>
+ <apBwZwOkctBETKVJ@orome>
+ <20260827-disband-retrain-ad995df47784@spud>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa05376928703a1kunmb280507910715e
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlDSU1LVhlPGB5LTBodHh4ZSVYeHw
-	5VEwETFhoSFyQUDg9ZV1kYEgtZQVlOQ1VJT0pVSk1VSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSE
-	xVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=C6adnRX8KIlM01g51zYlO58R1tJ0paYcKBbJRkU5m8eyH/dDIohFCii/CGeEnjXBDSu7Wkk+rucYsqYm4wggBz7x8rHeH17KpOztjUrFAqS2VZAI0hzkuj2Kb8IT7SfiibPRaNYV0SIG7qUNvKgHx16d9K/gh1ZAsvR2xgBE6q4=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
-	bh=+bGYSb5ANbtpow/T618bsKBQwWGrOFAzrHSouwdqQFY=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260827-disband-retrain-ad995df47784@spud>
 
-Registering the HTE chip publishes its request callbacks to consumers.
-Initialize every slice lock before registration so a concurrent HTE
-request cannot use an uninitialized lock.
+On Thu, Aug 27, 2026 at 06:33:06PM +0100, Conor Dooley wrote:
+> On Thu, Aug 27, 2026 at 07:17:15PM +0200, Thierry Reding wrote:
+> > On Thu, Aug 27, 2026 at 05:35:28PM +0100, Conor Dooley wrote:
+> > > On Thu, Aug 27, 2026 at 05:07:51PM +0200, Thierry Reding wrote:
+> > > > From: Thierry Reding <treding@nvidia.com>
+> > > > 
+> > > > This header file defines the set of thermal zones exposed by the BPMP on
+> > > > Tegra264.
+> > > 
+> > > Does this need to be a binding, since you're just using it in the dts?
+> > > Can it just go into your dts directory insteaD?
+> > 
+> > I don't think we've ever used these headers outside of DTS files, so,
+> > yes, they could go into the DTS directory.
+> > 
+> > We've never done that before and there's a bunch of Tegra-specific files
+> > that would be in the same basket. What's your recommendation for any of
+> > the existing headers? Should I move those into the DTS directory, too?
+> > If they are not used outside, that is? Or not worth the churn?
+> 
+> Up to you re: churn I think, but were it my platform I'd probably move
+> them. 
 
-Signed-off-by: Runyu Xiao <runyu.xiao@seu.edu.cn>
-Fixes: 09574cca6ad6 ("hte: Add Tegra194 HTE kernel provider")
-Cc: stable@vger.kernel.org
----
- drivers/hte/hte-tegra194.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+For Samsung I moved all non-ABI related headers to DTS. I think one more
+platform followed. Moving needs to keep old header for some time anyway,
+so it's entirely up to you if you/others want to work on that. Like with
+every less-important cleanup, the benefit is that correcting old
+patterns stops encouraging repeating them.
 
-diff --git a/drivers/hte/hte-tegra194.c b/drivers/hte/hte-tegra194.c
-index 4a7702b32..1612812ab 100644
---- a/drivers/hte/hte-tegra194.c
-+++ b/drivers/hte/hte-tegra194.c
-@@ -910,17 +910,17 @@ static int tegra_hte_probe(struct platform_device *pdev)
- 
- 	hte_dev->chip = gc;
- 
-+	for (i = 0; i < slices; i++) {
-+		hte_dev->sl[i].flags = 0;
-+		spin_lock_init(&hte_dev->sl[i].s_lock);
-+	}
-+
- 	ret = devm_hte_register_chip(hte_dev->chip);
- 	if (ret) {
- 		dev_err(gc->dev, "hte chip register failed");
- 		return ret;
- 	}
- 
--	for (i = 0; i < slices; i++) {
--		hte_dev->sl[i].flags = 0;
--		spin_lock_init(&hte_dev->sl[i].s_lock);
--	}
--
- 	val = HTE_TECTRL_ENABLE_ENABLE |
- 	      (HTE_TECTRL_INTR_ENABLE << HTE_TECTRL_INTR_SHIFT) |
- 	      (hte_dev->itr_thrshld << HTE_TECTRL_OCCU_SHIFT);
--- 
-2.34.1
+Best regards,
+Krzysztof
+
