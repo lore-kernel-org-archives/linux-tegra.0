@@ -1,76 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012064.outbound.protection.outlook.com [52.101.48.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1487049E5D3;
-	Thu,  3 Sep 2026 17:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788456855; cv=none; b=ktdRjoJ6jVB1a1TCBeqxXttdd6smeb2tHwio9g3f30in8oXbZOXN78QNPav5ZenLtTen0lT2vgbp/zrBxj2Th9L1Dd8YTM/YYN+APuJIkV6axzb7xb/vjEyQxe2C+dE05lWXhByT9XTfMbnd65uzUqg31dfofouOrQ6IXw/I858=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788456855; c=relaxed/simple;
-	bh=NYpQHrjsJvf8pKVE2GpTexSixvlMtoy3aWduLWczkEc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OYCihXmkMFgol69Zyubg1S1FUF94thsbh543noShZwQNuaquQu/Ak3NsPPppOrSkWLD16ZAbYwAxOoaWHVNmzuIGVf5dJ0u/Gvo2jkf6hCNo1gjpTOiks2pVRgrIJA5PQjD+wjFo2hvDiIif/j/SS76Sq492bheDgNZESfDnpsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFdoaqnL; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE33D395ADD;
+	Thu,  3 Sep 2026 18:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788459984; cv=fail; b=ufBL6cAKLtWZtvdTNOpcVnWVy+z+9PnrOTeTi3PWNlfwdK09rZOTig+flazsT10JyQCXh7aqK3BqOCQxIf04OtYzkqHBSNF5s8vh1M4tk1CskXG7AtPyXsCAipjeo76/Kv45i8fvx1vRxyH+SIl4w4jWeLrzk7TUpUC0f12X1lc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788459984; c=relaxed/simple;
+	bh=9t4ytXHyXN/rLCl5FtgLnl97pIM0c9fb2NbXMgmYAsM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MZLxW1yV0PBlp0Ckhhs+layMawziAdMTvimLZ2CqkPUyS1cFIOuv8VmXa4ghw4jLcko1/gtjgFrl5j8WTbEZyCHq6M+wmAcKvOVRkCKVrkKcOt0IQENSuzZ9jAgq06ggEWlFlq14xfQhuXqQTQaLK+9x+DkCcMIvraB9jM4Crq8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=F4CutJx8; arc=fail smtp.client-ip=52.101.48.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFdoaqnL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 927221F000E9;
-	Thu,  3 Sep 2026 17:34:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788456853;
-	bh=NYpQHrjsJvf8pKVE2GpTexSixvlMtoy3aWduLWczkEc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=WFdoaqnLUk3HaTNd6HUuFF5+QP+sJz0ubZrssMmxLDDY7LE6BAcf6NtBJdBk4FuKm
-	 0EEDjzWb+nc6WMLy8y7RRKQa+rNq0Eu55R8XKibH0kHLyyGZcTILD84W0U0bnlXWSu
-	 pNnG6M/lgKehxsFqo7DDW0l6TRenm005mDLoYD/Z9S93nrwIi/ymLsKLdSxepzjHpM
-	 qQ6BZdnivOqpFK8yQalLTMNh2wBFrOGlDltNkM/qgYUhgBk2s1GP0JU5Z9rysf5sb2
-	 sELq7qRhTse7++FUySRdpcvQePQzrzAU/hrwpMHBEplymY1D/K4cQGyk9TSf5VJqVo
-	 gIENVLIxytCsA==
-Date: Thu, 3 Sep 2026 18:34:08 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Wayne Chang <waynec@nvidia.com>
-Cc: Vinod Koul <vkoul@kernel.org>, JC Kuo <jckuo@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3 1/4] dt-bindings: phy: tegra-xusb: Add support for
- Tegra264
-Message-ID: <20260903-autism-tranquil-15dd67d9cd2a@spud>
-References: <20260903071937.533646-1-waynec@nvidia.com>
- <20260903071937.533646-2-waynec@nvidia.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="F4CutJx8"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=diVbrMUI/PlusARR9vcOvb/xd/im1O0WoV0t+K/NSBCo7ygaMPu7t+Mh3yoWPpl6W6P5uzZRxjdShmT4gUnWmdDrJvHpiSEEUJIi4pd0ZPp1qQo4ikGxlwsGLn5pCCHsN8vO0UxxfN4xbxPL7IKIkX63ZtmsKnqv9qoK6stDO4DmPtCO49NHEQ/W/M3eT0PQid7Dsq+sQyH62MgWU9L8G0QmQ6bzUbJCQsK/LT9imwwNjUE54xjVltrgqxioATZGVSc7SlVvKngkB+zEpkIoNy5+aGoTWLXRVO9lkPUYMcwZ3RRPaWHK6WRyBkJ63GrjC8/x5vgH3Ycs1dO8DPVupg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jxfUJyEMS2sCozaBt6TtnyLdKH4OsgXw3/9Ve48u7KU=;
+ b=oiIjvPhCcnSSExa/taEVw72CQkdDErPNKm49Te+QHZJuQXZ2ayrG8hSrZUdjcuqVjRSu7F2p+O//J3fWViuyREPzTXjYLZoCEgaFefUXy5vX3yWPdmj06LLvdly+hHh8Ni2wK1Zq3roIaOiGkSMQN9M50xopCKzedlo1Ds24znCzqURlXAbZmWxkNjizwI0r0a8Q3hkKoNwqDOAfC7T12B8HGQ29Qo+bzDTxfYfkRHsqqk8wIK89wDz9OTqEOl/iKBd5pGoWLYPu3/zWe0N17OFvm85+6aeEj3zwc5tAucqCKz6NlGoZcaudsDgQ/7c2k0qVcn8EbbebUC9kC3zi2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jxfUJyEMS2sCozaBt6TtnyLdKH4OsgXw3/9Ve48u7KU=;
+ b=F4CutJx8X6KFOdUuvxh5sBryIK8Y4piFjruZFRPzTdw1Z7aY7wvni5mZFOF2mwcesQUKtUeu27/nDW3C7zNJfaU14ItMNYzG8Vg6ICvhceXuAfLYxwwkL3CsfVU3/JsbSEocW/M982X4xMLZKCTL8OZpdwt02Db3MicbrDsHBAmQ8h/FDAQYrDembO1aWKwFzco4Pq+UjL0bwPTH6wu2wlLhnwA7wiZZTEL3QVMloKxTEHm77ZI+4BFzA1VKY2JzjDD+hpv0UuPC7TXWOjv8LEojg8+xVJbJT/lyJ2X5HuwY06wjAFdJjlDJLG80sWl1Ll50bcV/rFR9qYvxtbhRkA==
+Received: from PH8P222CA0006.NAMP222.PROD.OUTLOOK.COM (2603:10b6:510:2d7::22)
+ by PH0PR12MB5648.namprd12.prod.outlook.com (2603:10b6:510:14b::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Thu, 3 Sep
+ 2026 18:26:16 +0000
+Received: from SA2PEPF00003AE6.namprd02.prod.outlook.com
+ (2603:10b6:510:2d7:cafe::a5) by PH8P222CA0006.outlook.office365.com
+ (2603:10b6:510:2d7::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.382.12 via Frontend Transport; Thu, 3
+ Sep 2026 18:26:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SA2PEPF00003AE6.mail.protection.outlook.com (10.167.248.6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.382.8 via Frontend Transport; Thu, 3 Sep 2026 18:26:15 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Thu, 3 Sep
+ 2026 11:25:51 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Thu, 3 Sep
+ 2026 11:25:50 -0700
+Received: from build-ketanp-noble-20260630.internal (10.127.8.10) by
+ mail.nvidia.com (10.129.68.7) with Microsoft SMTP Server id 15.2.2562.46 via
+ Frontend Transport; Thu, 3 Sep 2026 11:25:50 -0700
+From: Ketan Patil <ketanp@nvidia.com>
+To: <krzk@kernel.org>, <thierry.reding@kernel.org>, <jonathanh@nvidia.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Ketan Patil
+	<ketanp@nvidia.com>
+Subject: [PATCH 0/3] memory: tegra: Refactor Tegra264 mc-err code
+Date: Thu, 3 Sep 2026 18:25:17 +0000
+Message-ID: <20260903182520.950555-1-ketanp@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="q9uhrpU5IRC6OFsn"
-Content-Disposition: inline
-In-Reply-To: <20260903071937.533646-2-waynec@nvidia.com>
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00003AE6:EE_|PH0PR12MB5648:EE_
+X-MS-Office365-Filtering-Correlation-Id: e820b904-bd55-403c-2f09-08df09e8d76f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|23010399003|82310400026|36860700016|56012099006|10067099003|11063799006|3023799007|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	f7LWEeiwq8pIUnqovy2ICl/2tlUvmJtYutZvyXDxutAPSv9pMVMLFiWn7lqjjkSzS6yvnZcCYZnHGIqeJ2Mui0spiKr/j5u7avN9Bq4Tu0dA40aJRKxjDF9yvX+nKMBNyBcDmwg+oQLqolULfIUn1q7o4coo4i2TaxiK7cxTtAkYdi8IuALaskKZGrnveBWOlwnZA84Azt6iND4nkC0n445RVX6U9WNYVoT+Ows0huALd/9lA4+H4BRcCl7/AoGjCfb+W2IcyRXlBofky/SYAgD3AmHCiJwDegR7YaqsBCi4Q3NpiVxPia14HYDsmWNdRNz482xHhLbpyAfuBY+/mUuC7tW5xk4gZPVSbT6fE9CcW54E4tsXRD2g0Ss4YCMkcB0HlbHfMfBJR5nZ1B1s9mesxSuTv1VpBuWpHncGghp1WmFM+F/gIXs4KjgHnJENX3OH3sn8isnVvHxowW7GKfSXYRzXWxpTw6AYE/5cdkE6wd4nusEYZ1L9RC9RiKJqPDXiZUFIiIimNsD1IKkp8M9pbieorRGtnBA7EBO1+m3alAFAkqWScupj0JGvwRrJNGrd8dYkMNY5wpUCAYsLDg3jukgzR+vvHekqd8xhkMnGYRbydOzlvmpp4e7piv8+jq2ycaw++x5c58sN8AQoNCnFYL8EbhLryeSTSu/TIUNT1OdkNVB34VXoV3WtuMbmYDWH7N6ycVndjg2jSwLMug==
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(23010399003)(82310400026)(36860700016)(56012099006)(10067099003)(11063799006)(3023799007)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	xtP8MfxaoZvuoReGV2islIHivE43JSah+g+xhK94Lwdlq+JkCCyjNETMHbyPk54mJ3nZUnj1azH9PV+nvd9gy8wEBKqmYoBku8QAdn9Ga6BJ14P/lE1ckU5sWYhufOj7pVWI4JlPPzG1mWLfczamn4W3DqFY8GN++D/II3ZFiSOtt57O3CAWTHtXvfuvo5zDnV3+So6rjp0KsdySVVJHQJBu7G7v+1k2VoY6kkTmyst/OYwklUvHy7vyFw16d09AkSbvRjWlciKMzw/5aFaUboMAOn8omv9cN9JPVO9Ed3j4TCgDQXyEKh7LwylHrLgsBxGGD71DId6UbGsmbhhvVl5voW0JiGan+G/2mjM8uk8a/JilXCNIbaPJO1TJQXPXdQpeAh8kTnIZqrVkUFVG3WqEKDSDEjHqi5ROea8ihkXTqtSqOhr/FJ+yi3iXrMdE
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2026 18:26:15.9975
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e820b904-bd55-403c-2f09-08df09e8d76f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00003AE6.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5648
 
---q9uhrpU5IRC6OFsn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The MC and HUB error-logging paths on Tegra264 used large switch
+statements that interleaved register offsets, bit positions and
+decoding parameters for each error type, which made them hard to read
+and review. This patchset refactors these paths without intending any
+functional change to error decoding behavior.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+Ketan Patil (3):
+  memory: tegra: Use named defines for Tegra264 MC apertures
+  memory: tegra: Parameterise Tegra264 MCF slice bound
+  memory: tegra: Refactor Tegra264 mc-err code
 
---q9uhrpU5IRC6OFsn
-Content-Type: application/pgp-signature; name=signature.asc
+ drivers/memory/tegra/tegra264.c | 376 ++++++++++++++++++++------------
+ 1 file changed, 237 insertions(+), 139 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.43.0
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCapmvkAAKCRB4tDGHoIJi
-0jD5AP0a6bqiLXcYQNaN8CsxuVSiDNsddxuqqt1yA1S2qLMJjAD8CCRYlaWXwDgV
-ff5GEGbWl5rKWquWipeLRs/ydPo6eg4=
-=EvH+
------END PGP SIGNATURE-----
-
---q9uhrpU5IRC6OFsn--
