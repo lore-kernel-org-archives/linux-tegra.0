@@ -1,27 +1,28 @@
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011031.outbound.protection.outlook.com [52.101.52.31])
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011066.outbound.protection.outlook.com [52.101.52.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B35E2C11D9;
-	Thu,  3 Sep 2026 07:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA993DF001;
+	Thu,  3 Sep 2026 07:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.66
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788421570; cv=fail; b=tFUyPHgglqi88XDlQDKJtKm2AvsmAo/cxhOu4cHjCjpZSMOq6dr1sI0nTm7y94aZSaDtDKo7nm/bgdfYYSBqAv/P6Y/nZCm8Q2okoI5t76aAhrMy5h5I29v03lH0Y/ayozMiVhbOBBWYNGmNwj9PhtGYF8G7PTk7QEMBWDUDid0=
+	t=1788421575; cv=fail; b=YhHrDxLaZ2fF/mjHQ5HG03rx3wFOenCa6vOAc3J76v9PwwJ04uVIDVoFSWpLEtpnsShG5YVJWtdiEY0ofchoguIHvX7H/bZXAx49G1iCobfOrXYMKqUYijaTMEK6Y7RPRg4kSMzBUt4Z+QhUb7CwZbVQrN1eTldGLUzPsUw7ohM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788421570; c=relaxed/simple;
-	bh=itZuLPXbm9hPsHJ3Anfxwx+p6o7CwvTU7WQn8Gyk7v0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L9nV8b+nbmoJ1ge2DdDEQ4WAK1ZY/YRUy8vZUPe+tK67zxyyvK8EANvvY8jnbkifg9waiS3bI3ScTLb7TYtLFg2j4kiJHwPFDns5XNWWabjwcGyhP1cN9ZbM0H8t9/tCW3n2b/0ZnR01rY8jjCPIuS0f9qdHsjZ1zw+Zc7Uv+cA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=UATjB+qM; arc=fail smtp.client-ip=52.101.52.31
+	s=arc-20240116; t=1788421575; c=relaxed/simple;
+	bh=AEgKviVNss4jej0L8RXsi5M17Bq1acRuDbnC3Idg/v8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pSqQLgU7wxf2g9YLTbCCg0ORCecfdsTSnwVExr4mNCCuas38KypalwPkz3ZqhBSGH2pr6CsrNV+PewtXwv6BbLgqqE7Jg2zwLzDA/3O8qe0uhUMxvkN9+m+0l550lmBSV2OsenMOvLguI9xyYgIVML0Me/UwDwFXWSzuW6lWbzQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LU+Cx6Kj; arc=fail smtp.client-ip=52.101.52.66
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="UATjB+qM"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LU+Cx6Kj"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=su8Vn784Tvv1p1qI1jngkoUDF6ToZZQPbCXRREvhw3mh4eUvZnwmA7NemEV3rszmTbzlJhK7LWTAY1nPkqtS1LmByj2c1CAI5bF1CGC74lW2VVbqIqWiqV5aFLhcv70Cn9YOgHAImzfEZiP5PFKLw0smkeVgkMyBUZiAp3JfNt5cDzg3FBrTo2Ggi46rBo/YFXwgPhgMraX1Sk1WVhNqCwnk/k8HiyGVtyuaRRlAM/zPGykmhtpx4Wm+qly72iZXo/N8InFAiwhUa8N1I0b5s3w3AzsjAJZH5lsvrey7qy4AJNdUWNol+/sefX1d+5vCtkuorNnKSxa3BWCyJdZycQ==
+ b=IGdG/H64gmg7uz7+oJFrHpb1ssQTquKoHR4mQ11DUvklvLYuWXs0ZagXVhxs082YjxzvVPzUg2adPHK+n3s2TBdzC1u6lKdlvw4Qe2iZs44IYxjs+GcGFcF0hR4BbvJ3e3QL8Q0XWOUifyPaKNC/grldXDg4T85+JL32FcD6Y2FB8BBS2EOuLsJqMbWFJlRVuVzPt1eEHs9BF+2tq54XaQ6k9rKuNhreJzTCXSDeySdDcUhoIT1p5IuV6rTgetFyBZrjitphVnf/04cN0IUc0qon8PrznNh+zAHVd5qQ2sQcjaqwIlQJTMllar+kqJb54wPFpU0waW6vESnv9mcv+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NNZA/nVZOyblzz1O7eICD5g4p3+pd3k/1uq8RmatpUI=;
- b=M9xtJ9gCXQ/jMIM0ulf99WRW/D69wnluW+vYAWye+ALqWwO3y97hSwHjXLlaF4z8m/FvHFuXvk+gYeUEom6ecXjYtaaWg1O7NkmBUX+ChcoCl1PtDkOWddqGmsSjhpuaKmtcR9AnvFleWQ2VBeHsuDdKaLGzBYOqcj6boOxT8NpLPppFKerad6L29GiKnJhuLQfgjOeM0pfdAcBRQX5bBNUt2EddeFGNgRFSjYbSgrMR/okXHcvenqVXmNH/LDdrxx9IBeLIRhGDctnSvdzgqxWZ1l3GLNFZgVLCnoMcZW4SdQ6VYcIk6+TQY6udroc15mOukNWs08FFOOt0Da3uxg==
+ bh=gwZ9/5/7JsyBCb0Y5L2vyRQ4MABtX7VsdTxn8qAT3BE=;
+ b=lohgYELckNQdYCyj4FaPWWyz8AprKUFJBV8VUJhA3IX0WNNxUVKt7bV1fdG1B0aAhdpAJ245LDX4eOXIMoew8TKQeAlrLk0nF+tcB0rfwf5bOtzNB5sqYRyHQY4c1zE0zwqU8OwyeMKazsHaGBUBePfbJhLyK0COj/Ee+XfYCr/M8NyrpTZvHcygk3RwCipFWQh4z9FVcgtLYSNuFhSGyMQIZTegyvxIbA123GTiVjxBNZgJU7qzyeA/yMZpTza/+1ncb22GBVjhhmI2ER3eXhhUmJoCF23k3CeiJAuJP212j4sflJdtBGbI+8UoUpedFvQ2clPlSmADu5nb4OHDfg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
  smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
@@ -29,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NNZA/nVZOyblzz1O7eICD5g4p3+pd3k/1uq8RmatpUI=;
- b=UATjB+qMRetyjJMa0DLcloaOE2+vP9zsw73ZUQb17lhpGgmpT+KVmXrIk0B4XhHmU/W3BnVYHJXd3MECBYdMXguuP2LuoeHqrqk7KXJeyU7IRLMgzet7g/vDBY7/djInoLyeuiSZ7GAx9RzUBMMZeSwXEzFrCqHQHyH3JVyG2f1UzIPG5Gve0UH1NggK/YPeF/IHyQYZjE7Rq7RsaPdjG5JuTTWtl6rES7uIJeLqFQHcswGiGpZB1xAun7YBHH2q/mEuIaFfNIbWDCpYZHIA8dusjFm+EM7cJTybhITij4q7nDCSwK2TbeouooHIwY7GpZMFOuWSAYt7ChNUIchRxg==
-Received: from CH0PR13CA0035.namprd13.prod.outlook.com (2603:10b6:610:b2::10)
- by DS0PR12MB7746.namprd12.prod.outlook.com (2603:10b6:8:135::6) with
+ bh=gwZ9/5/7JsyBCb0Y5L2vyRQ4MABtX7VsdTxn8qAT3BE=;
+ b=LU+Cx6Kj18FZ7zq3C2WKL57WKcEL7OrGeCssQH39R3XnADEoxw5iA44syTvsXjVhbYt3JpPp7TTc/aiVjSelh7Hy93xqQo5yChNZx1IF7QnonfNaNVGAm0OZiVNh55HphaSc9anrJY4JFNx5t96zKeD199aZJe5P2DCpvsCiAaZavEq57wtNu7ddauqBzP5iRQSnOzJj11eIhG4D+RvzGdtRZLco52sBlPUgWL3jTAMm2tac6taSPrg2mnB7mZKixOvItMyN0hpv36xO4Y/BjMSPkbVlRkU+JvLHMiTF05DM8qPF8THZKY5Xl+71nidcDKxaTrxY55xpEbcKRvUHWQ==
+Received: from CH0PR13CA0037.namprd13.prod.outlook.com (2603:10b6:610:b2::12)
+ by MN0PR12MB5955.namprd12.prod.outlook.com (2603:10b6:208:37e::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.382.10; Thu, 3 Sep
- 2026 07:46:03 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Thu, 3 Sep
+ 2026 07:46:07 +0000
 Received: from CH2PEPF0000009B.namprd02.prod.outlook.com
- (2603:10b6:610:b2:cafe::aa) by CH0PR13CA0035.outlook.office365.com
- (2603:10b6:610:b2::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.3 via Frontend Transport; Thu, 3
- Sep 2026 07:46:03 +0000
+ (2603:10b6:610:b2:cafe::a1) by CH0PR13CA0037.outlook.office365.com
+ (2603:10b6:610:b2::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.382.11 via Frontend Transport; Thu, 3
+ Sep 2026 07:46:07 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -50,18 +51,18 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
 Received: from mail.nvidia.com (216.228.117.160) by
  CH2PEPF0000009B.mail.protection.outlook.com (10.167.244.23) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.382.8 via Frontend Transport; Thu, 3 Sep 2026 07:46:03 +0000
+ 15.21.382.8 via Frontend Transport; Thu, 3 Sep 2026 07:46:07 +0000
 Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
  (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Thu, 3 Sep
- 2026 00:45:45 -0700
+ 2026 00:45:49 -0700
 Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail202.nvidia.com
  (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Thu, 3 Sep
- 2026 00:45:44 -0700
+ 2026 00:45:48 -0700
 Received: from waynec-Precision-5760.nvidia.com (10.127.8.13) by
  mail.nvidia.com (10.129.68.7) with Microsoft SMTP Server id 15.2.2562.46 via
- Frontend Transport; Thu, 3 Sep 2026 00:45:42 -0700
+ Frontend Transport; Thu, 3 Sep 2026 00:45:46 -0700
 From: Wayne Chang <waynec@nvidia.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman
 	<mathias.nyman@intel.com>, Thierry Reding <thierry.reding@kernel.org>,
@@ -70,10 +71,12 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman
 CC: <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Wayne Chang
 	<waynec@nvidia.com>
-Subject: [PATCH V3 0/3] usb: host: xhci-tegra: Add Tegra264 XHCI support
-Date: Thu, 3 Sep 2026 15:45:36 +0800
-Message-ID: <20260903074539.613220-1-waynec@nvidia.com>
+Subject: [PATCH V3 1/3] dt-bindings: usb: Add Tegra264 XUSB host support
+Date: Thu, 3 Sep 2026 15:45:37 +0800
+Message-ID: <20260903074539.613220-2-waynec@nvidia.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260903074539.613220-1-waynec@nvidia.com>
+References: <20260903074539.613220-1-waynec@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -86,66 +89,156 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000009B:EE_|DS0PR12MB7746:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6ab82336-b252-4280-5b96-08df098f67c2
+X-MS-TrafficTypeDiagnostic: CH2PEPF0000009B:EE_|MN0PR12MB5955:EE_
+X-MS-Office365-Filtering-Correlation-Id: c6c50a38-2b5a-4db5-f8ec-08df098f69f7
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700016|82310400026|23010399003|7416014|376014|10067099003|56012099006|11063799006|18002099003|13003099007|6133799003;
+	BCL:0;ARA:13230040|23010399003|7416014|376014|1800799024|82310400026|36860700016|6133799003|56012099006|10067099003|11063799006|3023799007|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	21abMLZunBWEMMU/R+DxSLoGxE4l996c1Chks87I9pQcxJrk3B7qhcmG0ZdV0AKBb3KyibVIR9WEcYTTgh3KhJKsqGAVTO1ONvvcDzhSLCzPCaLMZW8fihxwmfXYcujtpGrTfXeePFWrmvSRRVj1tX4PBjoVxz8XmH/HuMcOuf3Hbk8MbZQVaLZJBRHKL2bWh22Y9ahTjYaNOLt64q3V90Mr3ItvnfaFSOMjJCHnOkm+UshYl1PjBzadoyOXLap2jL+86D3Pek4zU7oSDmyT6NX8g/UBgj8z4B5ovQLpueYxNPMeywmuxWOEUfUjQJGMZoGB2nuhXsltyzUkyWVa5sM08D9bPzfUqqPupE08+7c9AZzGF3tQ+km0Fv524bKC8GPKjW9J+hxQTRI74lMaFqy67fILFetAOsJscAi6f/F2ivsR2Cp6OCnbO7tFS7WZ3ZG7rtRiOa8a3z1XPA532GAz9/dObYIA0U4t23Y7Tx4rdowgw2AUVkML2LageVVJ/MJ4/rGjhxjLfcCDH3M0k3FnMbPBFRPHnx0B+inixifGVxa+56KlEnJ0NUtVDe647JU4mwUBVV6P1Ku2HmX3JBtuWbzR/M6y4vca9+Lnk2sxec/Um7bunnYhdeuObsfrfGNnaQ32HTh1DdBd47mBoBaekp1U1+JWVOkdd996STgKiaGSXFyyhfG/aK7ZIN6DMeMf3fi3cy3+5EbFXyc7yA==
+	7tuesdUAC4rLeIpMrJHYEEemCr9YqGJultLoa7DySBl+2R96QNGj0tfwvIOyxz112tCDZ50NaszkLp1yhGjVNIjm93lMGy7QE2NVU8WRgruKL5ww86IAKoDuY9THTlB9YvDJRvaKXRMp75lkovOo8IcfjQsfY396Hs/5WmPfuk5BOXCxDmjdt2dDgq0l3v+zKvrXzi16hqcR8M9eWhgOWJJqFX4R1/3ZUFRa6fUdhHSSxmAL+0GNgfy4/vEenZTDKb57gkptzTyIV+tAAtTnVv897+AQskBTYbCG7k4T8JOLGzt+MDLSKN7q86WF5c9EzEcbzPEBiAqq0a9ANZnP/ffH1mh4bg55W9hMuYfhdymz5AbExFqftI+5hl9/2Yg1xusuKSwX9pA77Pin88dA+kusycMYkuVHvjIGbllLXU0BZmmcLRdQw584tPCESBglL7xNgnpR8L27rFEMfN6GAzB9CB4pBxmfWtYN38UlPtxt2I1AX6Fx35/FC2v5YJ6IpJ6ReC5nfoXsW6knL9B20LKeUeDwBntUkTRcpQGHnqKT0NZHSvM9oGBLIbEqZcLG41cNJWGKoq3DvV6JoB/mkgzEL20C9Ldk3yrS6usJ3HBCXJ3leVudVx0JAoMXJvpk6NgC9O/L5F//2bKG7W3SRaBZzIiTYFj5n9WCRhOHkMdcOFk+rUrH6BNFl6gMVPxabHqe87WVNMvsy999jAmy4A==
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700016)(82310400026)(23010399003)(7416014)(376014)(10067099003)(56012099006)(11063799006)(18002099003)(13003099007)(6133799003);DIR:OUT;SFP:1101;
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(23010399003)(7416014)(376014)(1800799024)(82310400026)(36860700016)(6133799003)(56012099006)(10067099003)(11063799006)(3023799007)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	mmZssloMFoWz2iOiRHBGmmECVKjNEJArlO2E8Ot4+wvt2yLneQYpO1RH6BkJaCFUgb/0OHasnEmszbNLFl5wIVj8W/RwgI3BzEpNuOfgy1mo4yurYwewo7NWQHXpKdH7fv/X4xtqHvIybeRdQU77Lbybuz+J3DsWE7s9ZpfEW5Y1LXK4qFKbn7euZZ1baJ4kulDyx2qf5JUZRQvzah3GZksj2yZkoxL58TOz6y7LDC59R3yiKqi+LCADMxVg/IbDUfkW0lvtznxi6N6wNWyBt3er6nu4pwWifjYonL6TJ4pnAGUq9Lh897OCWu3KZ0MO1MIP8mMvjV0AkN80csInI8sCd5iS2x2g60YF2EMNB15aUYAkQyLBNOw7o7rQ0gs4eYynPFpd2JAp1cwArPNhZ1AGMsxHTtYSkm8S661K2rs/34rE9aFv39YcBgUiyv17
+	NYIqsJF9Rb6TgbLn0g9yhpkaL88eAqbheI81I0u5tKzLuxCWiMyw3eCjdOwGa8dILKy2yTLWr3QZ8Saa3KTQJy44sf0dpcC2BrmB4X1PAN3PFlekjhfQVZjmZ7U3auygUKiXsWYCWMdTcMUwt9VkTu2HzrEvN9CiOf8a+gYtrfW6xiGss+4llR5IQjsM3kVHkqNxC1bVAwX4KCOcFHOtAEZobKJt1O9PyyELEAkgyRIpPfryFd74+W2odoaATo8qkEQP8O8Y5FgFk7pxDofQ8Y2Z/Ckqg0Nc495pLqSlsHpWngfpRyMYt+ulCZD0dSX+L6sLVy6Lem1YPY/r/8l0+NCxgeIbMFqSI6aJ0pimSuZSKTxfNE7HBPkRqonrsxTscF3tB1b6kh6dcu8iKGYxSGZQz4Tipj/BYcNTyMlYyH3GrDErscjyd9TFr+gv3Rf8
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2026 07:46:03.4030
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2026 07:46:07.1225
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ab82336-b252-4280-5b96-08df098f67c2
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6c50a38-2b5a-4db5-f8ec-08df098f69f7
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	CH2PEPF0000009B.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7746
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5955
 
-Add Tegra264 support to the Tegra XUSB host (xhci-tegra) driver and
-its binding, as part of enabling USB host functions on the Tegra264
-Jetson AGX Thor platform.
+Extend the Tegra234 XUSB host binding to cover Tegra264:
 
-This series was previously posted as part of a single 8-patch series
-covering phy, USB host and arm64 DTS changes together [1]. Per review
-feedback, it has been split by subsystem so each maintainer can pick
-up only what belongs to their tree:
+- Add nvidia,tegra264-xusb compatible string
+- Document optional USB wake interrupts for Tegra264
+- Document Tegra264 PMC wake event to port mapping
+- List the up to five IOMMU specifiers for the additional XUSB host
+  stream IDs, since their order is now significant
+- Constrain interrupts and iommus counts for both Tegra234 and
+  Tegra264 via allOf conditionals, since each SoC wires up a fixed
+  number of wake interrupts and stream IDs
 
-- usb: host: xhci-tegra + its dt-bindings/usb: this series
-- phy: tegra: xusb + its dt-bindings/phy: separate series [2], sent
-  ahead of this one
-- arm64: tegra DTS enablement: separate series, to be sent once the
-  binding patches from this series and [2] have landed, since it
-  depends on both
+Signed-off-by: Wayne Chang <waynec@nvidia.com>
+---
+V2 -> V3: List the iommus entries instead of just bounding minItems/
+maxItems, and clarify that entries 1-4 correspond to XHCI virtual
+functions 1-4. Add an allOf conditional that also constrains Tegra264
+to interrupts maxItems 10 and iommus minItems 5, instead of leaving
+Tegra264 with the same flexible top-level bounds as Tegra234.
 
-Patch 1/3 (dt-bindings: usb) also addresses Krzysztof's V2 review
-comments: the iommus entries are now listed individually, and Tegra264
-gets its own allOf conditional pinning interrupts to 10 and iommus to 5,
-instead of inheriting Tegra234's wider top-level bounds unconstrained.
+V1 -> V2: Property definitions are back at the top level with the widest
+constraints, The allOf conditional only tightens Tegra234 to interrupts
+maxItems 9 and iommus maxItems 1.
 
-[1] https://lore.kernel.org/linux-tegra/20260831185835.3732707-1-waynec@nvidia.com/
-[2] https://lore.kernel.org/linux-tegra/20260903071937.533646-1-waynec@nvidia.com/
+ .../bindings/usb/nvidia,tegra234-xusb.yaml    | 52 +++++++++++++++++++++---
+ 1 file changed, 47 insertions(+), 5 deletions(-)
 
-Wayne Chang (3):
-  dt-bindings: usb: Add Tegra264 XUSB host support
-  usb: host: xhci-tegra: Skip MBOX MSG_ENABLED on Tegra264
-  usb: host: xhci-tegra: Add Tegra264 XHCI support
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
+index ec0993497fbb..71e01701ae2c 100644
+--- a/Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
++++ b/Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
+@@ -17,7 +17,9 @@ description: |
 
- .../bindings/usb/nvidia,tegra234-xusb.yaml    | 52 ++++++++++++++++++++---
- drivers/usb/host/xhci-tegra.c                 | 37 ++++++++++++++++
- 2 files changed, 84 insertions(+), 5 deletions(-)
+ properties:
+   compatible:
+-    const: nvidia,tegra234-xusb
++    enum:
++      - nvidia,tegra234-xusb
++      - nvidia,tegra264-xusb
 
+   reg:
+     items:
+@@ -43,6 +45,7 @@ properties:
+       - description: USB wake event 4
+       - description: USB wake event 5
+       - description: USB wake event 6
++      - description: USB wake event 7
+     description: |
+       The first two interrupts are required for the USB host controller. The
+       remaining USB wake event interrupts are optional. Each USB wake event is
+@@ -50,10 +53,9 @@ properties:
+       platform. The USB host controller can function even if no wake-up events
+       are defined. The USB wake event interrupts are handled by the Tegra PMC;
+       hence, the interrupt controller for these is the PMC and the interrupt
+-      IDs correspond to the PMC wake event IDs. A complete list of wake event
+-      IDs is provided below, and this information is also present in the Tegra
+-      TRM document.
++      IDs correspond to the PMC wake event IDs.
 
-base-commit: 940de590b839f71d6dc846160534bf202401b8b7
++      Tegra234 PMC wake events:
+         PMC wake-up 76 for USB3 port 0 wakeup
+         PMC wake-up 77 for USB3 port 1 wakeup
+         PMC wake-up 78 for USB3 port 2 and port 3 wakeup
+@@ -62,6 +64,16 @@ properties:
+         PMC wake-up 81 for USB2 port 2 wakeup
+         PMC wake-up 82 for USB2 port 3 wakeup
+
++      Tegra264 PMC wake events:
++        PMC wake-up 79 for USB3 port 0 wakeup
++        PMC wake-up 80 for USB3 port 1 wakeup
++        PMC wake-up 81 for USB3 port 2 wakeup
++        PMC wake-up 82 for USB3 port 3 wakeup
++        PMC wake-up 83 for USB2 port 0 wakeup
++        PMC wake-up 84 for USB2 port 1 wakeup
++        PMC wake-up 85 for USB2 port 2 wakeup
++        PMC wake-up 86 for USB2 port 3 wakeup
++
+   clocks:
+     items:
+       - description: XUSB host clock
+@@ -97,7 +109,13 @@ properties:
+       - const: write
+
+   iommus:
+-    maxItems: 1
++    minItems: 1
++    items:
++      - description: XUSB host stream ID
++      - description: XUSB host stream ID for virtual function 1
++      - description: XUSB host stream ID for virtual function 2
++      - description: XUSB host stream ID for virtual function 3
++      - description: XUSB host stream ID for virtual function 4
+
+   nvidia,xusb-padctl:
+     $ref: /schemas/types.yaml#/definitions/phandle
+@@ -137,6 +155,30 @@ properties:
+ allOf:
+   - $ref: usb-xhci.yaml
+
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: nvidia,tegra234-xusb
++    then:
++      properties:
++        interrupts:
++          maxItems: 9
++        iommus:
++          maxItems: 1
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: nvidia,tegra264-xusb
++    then:
++      properties:
++        interrupts:
++          maxItems: 10
++        iommus:
++          minItems: 5
++
+ unevaluatedProperties: false
+
+ examples:
 --
 2.25.1
 
