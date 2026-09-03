@@ -1,112 +1,121 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E7D4B0C87
-	for <linux-tegra@vger.kernel.org>; Thu,  3 Sep 2026 13:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9699C4B5157
+	for <linux-tegra@vger.kernel.org>; Thu,  3 Sep 2026 14:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788443571; cv=none; b=SZBkM+ZOwlfzltvFdP6Z1MOevSCT4GmSCPGrOyiHukqknsgvCbDgWg+qamKRkI4DUamUlEuNKT+Tx2tul8rmQ3nHCEE70aEXDq+HCv6Se4cgbPVOnRIFJWZgMblXN+tyvlyZUiLj7phT09WES7ve9p5uFeItUQa80pp200JZ21M=
+	t=1788444946; cv=none; b=ZVDArp4UamwEW+FTbzKR7QNnFX1upiUjARlNIhSmRoRN+mKuMh3NwecJlZAKaKD4b0WhpcisaVbX6SGToKGWUXPSTEe7OemnT4F2BPglqgcD5UaPVq5Iqb1s5Np0EvuAzwTRSyjWhQe6WWDvEOROzdLl/wY/NSCYgFRa0Io0F18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788443571; c=relaxed/simple;
-	bh=A9tFXtu0XWRFcdfwCqDHDr5yuN/58LVPsyUpMIW1Ps0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RCRAV1hI+ybucyOczLnE8ql10hYM8fcTTeDLUdadiav9/4sgbix7CFgH7BwWRcnuvjBdAFiQwpaHpETbNpL6I4mvDETnAPrxwTujYYiTzWQ7Sy9803yUbPBiNzlHsPY2d/6qunwOJwQwT3KpaPLK8mX4Ftr+hw/p+QXoqKGdHfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BxDtd7Rr; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788444946; c=relaxed/simple;
+	bh=hdcQUPY1jy/VCFo2GhqwL1K6LRuhDS/vAEQIqI03zcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tbhib/xP0YA1dB7Fs9H2ogW9mZt5l0LtmKMXn1bAWWV5EHwjiqyKq3e/yFdbNBkfFGD7/JwXBxTYjll80oCe3i/45Hv+gv90d/0FxRhx+17YJOTRxVzGeg84/NceqxFinDSAa9gHy0M3BETqH4jF7pDf6/wWZgCKTq9y76EMtfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+BwwitU; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BxDtd7Rr"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-48441a2ba14so2202975f8f.1
-        for <linux-tegra@vger.kernel.org>; Thu, 03 Sep 2026 06:52:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788443553; x=1789048353; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=csh27SRclgEY3hCLE8xf3YTKQW4fhH5v82nkgEIQKps=;
-        b=BxDtd7RrTkSLcDHlzFqae6piLIxi8lklen/ukPmCL4yQ08H/IOd+MDidvLFiQ0me0f
-         QKMo5JLGhZS6WRMECBXIIr+ke0mUNF+6ktCQby+V+un0exzlbpJB62RmaUAqRWjp8EHK
-         WI+FRUHf7dg30Q99Lpd6ffB3vhlaRo/cQcKzv7pDhCxC8nS4TTtLB1gI0u/tY23P/Vk0
-         LmIhZ4NhcIdUtpNuwk+wGLYd/ZJqAEFY1/TEU1nShT9/1AVytLb6UvqYJwYykXmat3oI
-         77w8rcJhceYhR/SRuv5uX/xGvaE8EKQGJv6NP2O7Po2oHow+sNnZG/mGNU3osD2uw8xU
-         6VuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788443553; x=1789048353;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=csh27SRclgEY3hCLE8xf3YTKQW4fhH5v82nkgEIQKps=;
-        b=UCzMyrbdihH/3cFhrAPAD6IfxTDioh9MwIiNc42lulg/2pEXesU78KLnLL6Lad2KfL
-         X1EjWGoApLNmBO8Cvcns19HXo8F8jBFDmMwAxLBx490Np81F1GxSFLiJ1i1YgfzJ9ECB
-         EatMsSMZ85zaoihSEdLPC+Z/JyZ1TPOXn7r2gNebrRksmgmiOB4gcAF9eelqT71A7MfH
-         lYgFA/YmZfvwSKnReiD9xRMfWNi7qzIcQriHhyd6MNVA0K8MEIats+Uek5b5rpEqd+zq
-         Qzf6KNZo/TfkF/epaTvhSFMOugWLimnbJAmxmdUaUyuZ6Z5OtNK9Vl+9zJoHqd5X1ueX
-         tF6g==
-X-Forwarded-Encrypted: i=1; AKwUvBxCOGhgkg30rDfb75i5Wf3jLwTi/pzLM9D3/PP49A4fMyziBIkF7S56AJIoNf85/Tzbpfa0Y4+aDZky2A==@vger.kernel.org
-X-Gm-Message-State: AFuF++nw3SmRmPNzSUzd2NR18mh4DrFhsLJi94tY1WLxmRW2QBd0MXCO
-	q4RekSKBX1glvYyt9SwGJWzzRgfK9o3g/8osn2Ea7wJoX1bU8s8Km0Q6
-X-Gm-Gg: AYBFou0NR35C8be9W6zUem83QPaiQ8MR7n2BqJ9DuTTM3oZ34nueInIWvYALEERePeC
-	IxwmGqIo+N5HQGuem4tE30JeQ93fuJ0aygunLpdphEnmY+Rkm4mU6NFIQkHLLd7371kUfdJhWfJ
-	5ulD2JFibHepc4O+R/cDfkptMPeSqDiJXum/DpF7+nL453vE+VOPqDKROyltHxA7n2ShbWABwMo
-	+lacH21f16zftCwfTxUMZ7eavZ9i0sCA+wocB1ROwC0ePNECGqlh0kFJTERmEH1Yc4PTrnIwNFJ
-	PAA0Fd/eB4psnLtQuQ0CtsqOAzNmqD3nRtPjVYuOluVAB8UqUKUfcyBqFoivp2aWi7UOiQ/HcIQ
-	vtpDxAiLP+042aKf5Mf6V4xbIZBF0jpxLHy2eW0KXUI7QqcGjDbrim+qySS736DWQTAEd4znO0R
-	+Kf2tk+lIDTcJUoL/ajvuU2qnJGKeW2IDxt2v9HRdIHtZnOEIQb0RSg4+ZaSReCGlDG2Hsckg06
-	VdeWmRB8/l6xd3VH2Y2TTTNYfAMgdYpWrCn8dmzPxnlH3j8dy0uul/eDyyRpQ==
-X-Received: by 2002:a05:6000:178e:b0:483:3695:6ea6 with SMTP id ffacd0b85a97d-48488f1b111mr21280968f8f.20.1788443553101;
-        Thu, 03 Sep 2026 06:52:33 -0700 (PDT)
-Received: from chubuchnyi-ThinkPad-P1-Gen-4i.tail30ebf2.ts.net ([158.173.155.197])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48448ed2edfsm13597771f8f.23.2026.09.03.06.52.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Sep 2026 06:52:32 -0700 (PDT)
-From: Aleksandr Chubuchnyi <chubuchnyi@gmail.com>
-To: Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: linux-media@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Aleksandr Chubuchnyi <chubuchnyi@gmail.com>
-Subject: [PATCH] MAINTAINERS: add Tegra CSI bindings to TEGRA VIDEO DRIVER
-Date: Thu,  3 Sep 2026 16:50:58 +0300
-Message-ID: <20260903135058.2598642-2-chubuchnyi@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+BwwitU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7B011F000E9;
+	Thu,  3 Sep 2026 14:15:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788444934;
+	bh=UE7/jFAn49MwhEKSvcSISMlSrbk246mSQRE6/IFk4zo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=c+BwwitUxBHvDJW+zqUmBNzpu8Jhbdl3z8z7gXhu7jLPeZjZ3T7Rei+WIIPtGeq6v
+	 57oFC/j423TMJloPyul86+OsuRBuLpr0pn8G6/pt1ffPGW55oG6fOA8TUvHFKcODT9
+	 R2qdv9rW6XjW9GsDx+1J6DFdEybpZ4lV9dE55+xn4CRF/7GAHxdtT1ISb2K5642NfF
+	 vOwGcMNT/HK07wucubWkX2HijrRl2FYlpmDJA3ZopDjaHlTu6M2XRdZSXuIjjvpbZT
+	 VNsyVBG9rpffzlDsNlf5MB0hVIS6didlhOo4UpMAF1nV3T8lMEkuZNpE8ILcok0UGP
+	 7YHatpvg9Gj+A==
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfauth.ams.internal (Postfix) with ESMTP id 7E69D1980050;
+	Thu,  3 Sep 2026 10:15:29 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Thu, 03 Sep 2026 10:15:32 -0400
+X-ME-Sender: <xms:AIGZaiLscKq84t9mQusL2tubKQctaCsE3fjku3XF92kPgOyQtKqJbA>
+    <xme:AIGZaoqr828WVqa1-2HBI11GpmruKAscwOkyF7b3V36-kGmsNBp1zgFZJhv42vXq7
+    1OYfkj-9z_50TrcNX-cUDuZKdbQBHQAkN4BXEzMj1RGWQ__Xn9tpRt0>
+X-ME-Received: <xmr:AIGZao4-BwLkjwwSxsKhktDFDp3hG9NL_nJ_oR68RGw4aqO5E2QwHATxJ54>
+X-ME-Proxy-Cause: dmFkZTErKF92w5SraCU0RjI5fWKGdJ1jFpZ8UDsC3ehiQy3rh+22MaN3Xc61sskS5EqzAB
+    r022D56DV39ZXrDjT4BaLM5p2OKuCfmU4aE3hvk3pfG56CK5K+YYs7WUX3RnPQ3qZ5Zq0D
+    pm+z4LI5Mynpo3TfH15iJ6+cHXlprfVp+KQg/zi+rQ1kN9NUx7Xam52RAMWfCPdSW/tP9h
+    sY3vahhqM6g9Ih5HOISLJjA1RqCvxztgIy7Lz2rbXMUF6ShZJJ7JZjM+lADeaz2cCAWodq
+    sYLdYR54UTFkDktGXnSaDFaBd9bSdPWYtIRCSR+ZZX6ACDp9EVxYffNHoadIlURNvITFQ4
+    LEPimdr/p7nz4uTaLDQzPPBVlGqoa7x4Wz8qBCa7tVrjsIe/76PKLAn9FrLx2EdN28S07B
+    pi1u9kc8nLHK3T04HZc7dgXpt0KFgX0IjAkXDMlR10EU2p0MUXMyGo11jUQwVRDR68JVdZ
+    FkuDT4uMnBsOb4HOEOsaEuiUzBH5N7x6w1XMnNAJCCPtFEPPWy9QU9OKb/AUAjQVTppQjw
+    NQWU4Q6wXLbMBt+Qzv4iOrVjiChQ6LhZ9ACIWBNGn7ml//LmD7ocKFqH0pv/0nNTz7Gdod
+    f7CRh0u/5iL9sVq4ghKd0/2fHBvfvoohpfxYwQJv8jzqdTI5yM0welR2woAQ
+X-ME-Proxy: <xmx:AIGZasLidSv0DXFxh5JPvrH5Ux1qY_aQl4u22nbqCF9GZ3kucGim6A>
+    <xmx:AIGZanj3AtD1m37ZXq-jKYDCRqWooy_CblfBEDB6TmhDV7OkK3MKwg>
+    <xmx:AIGZamE06pqtIuoh4IP8aQr-5RT7BbR0q5gg9Ole010yWLx2NRa7WQ>
+    <xmx:AIGZahK7njsyz9hMrYSumJcVgs6cd7-LBvmsCrhVZ6tx29XgaE3zGQ>
+    <xmx:AYGZau-96BT_qVQxXb8inT1hClOKq08StbYnWVF-ykZPH1tJdu53fNbT>
+Feedback-ID: i10464835:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 3 Sep 2026 10:15:28 -0400 (EDT)
+Date: Thu, 3 Sep 2026 15:15:27 +0100
+From: Kiryl Shutsemau <kas@kernel.org>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@nvidia.com>, 
+	Pranjal Shrivastava <praan@google.com>, Mostafa Saleh <smostafa@google.com>, 
+	Thierry Reding <thierry.reding@kernel.org>, Krishna Reddy <vdumpa@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Breno Leitao <leitao@debian.org>, Kyle McMartin <jkkm@meta.com>, 
+	Usama Arif <usama.arif@linux.dev>, kernel-team@meta.com, linux-arm-kernel@lists.infradead.org, 
+	iommu@lists.linux.dev, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] iommu/arm-smmu-v3: Add a cmdq_entries module
+ parameter
+Message-ID: <aplvJIuarj_ZrAx9@thinkstation>
+References: <20260902121724.3494954-1-kas@kernel.org>
+ <20260902121724.3494954-2-kas@kernel.org>
+ <aphbV1FSoop1YGOQ@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aphbV1FSoop1YGOQ@nvidia.com>
 
-The tegra20 and tegra210 CSI bindings are not listed in any MAINTAINERS
-entry, so get_maintainer.pl does not match TEGRA VIDEO DRIVER for changes
-to them and reports neither linux-media nor two of the four maintainers
-of that entry.
+On Wed, Sep 02, 2026 at 10:22:31AM -0700, Nicolin Chen wrote:
+> On Wed, Sep 02, 2026 at 01:17:23PM +0100, Kiryl Shutsemau (Meta) wrote:
+> > +/**
+> > + * arm_smmu_queue_max_n_shift() - pick the log2 depth of a queue
+> > + * @hw_shift: log2 depth the hardware allows, capped for natural alignment
+> > + * @ent_sz_shift: log2 of the queue entry size in bytes
+> > + * @want: number of entries asked for, or zero to use @hw_shift
+> > + *
+> > + * @want is rounded down to a power of two. It never sizes a queue below one
+> > + * page, because coherent DMA is page granular: a shallower queue occupies the
+> > + * same memory as one that fills the page, and arm_smmu_init_one_queue() stops
+> > + * shrinking at a page too.
+> 
+> Well, since we want the cmdq depth, why not name the parameter
+> "max_cmdq_depth"? Then, no rounding and more straightforward.
 
-The entry already covers the VI and VIP bindings, and csi.c binds to the
-compatibles documented by both files. Add them as well.
+The max_ prefix is better, thanks. cmdq_entries does not say it is a
+ceiling.
 
-Signed-off-by: Aleksandr Chubuchnyi <chubuchnyi@gmail.com>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+On the units, the page floor has to stay whatever we call the parameter.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fc320b373..e4f50fe24 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -26924,9 +26924,11 @@ M:	Luca Ceresoli <luca.ceresoli@bootlin.com>
- L:	linux-media@vger.kernel.org
- L:	linux-tegra@vger.kernel.org
- S:	Maintained
-+F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
- F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
- F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
- F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml
-+F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra210-csi.yaml
- F:	drivers/staging/media/tegra-video/
- 
- TEGRA XUSB PADCTL DRIVER
+Ask for 8 entries and max_n_shift comes out as 3, which the
+CMDQ_BATCH_ENTRIES check in arm_smmu_device_hw_probe() rejects with
+-ENXIO. The floor gives you 256 entries on a 4K kernel instead of a failed
+probe.
+
+So log2 removes the rounding but not the flooring, and the number asked for
+still is not always the number you get. I would rather keep entries than
+make people convert.
+
+The rounding is not silent, either: arm_smmu_init_one_queue() already
+prints "allocated %u entries for cmdq", so the effective depth lands in
+dmesg whichever unit the parameter takes.
+
+On the name itself, "depth" reads to me as a number of entries rather than
+its log2, so max_cmdq_depth=8 meaning 256 seems more surprising than the
+rounding it replaces.
+
 -- 
-2.43.0
-
+  Kiryl Shutsemau / Kirill A. Shutemov
