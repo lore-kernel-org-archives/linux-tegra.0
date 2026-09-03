@@ -1,94 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B45412BFA;
-	Thu,  3 Sep 2026 09:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A8838E5FF;
+	Thu,  3 Sep 2026 13:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788429444; cv=none; b=GeRsBusO4XsFguMFytHOyr9RWu/fPeEj1tnFUCq2J0z3+Cwm+yYjX3pp6XsKF/xWaokKZH66VTrvu8hdtSitM37fg0Y3ASF/BurpqyfMowRwEU7BAyPQ+tw2M+6sWpXnjptvRe4r0P2p4U00iaWZw0Ur9QtZXkVRHWMjeBslBXc=
+	t=1788442033; cv=none; b=bdYodjQTOvdUrVsluoiCn5pDVQ7I2LKl/tnoZQpU0HvFdVCmoq/AJzs3NsiEIfDLWYhu6X/yBre8hJJvUYqD2dXRTNZCG/NEyBHaunORc4YzwZ53+/B34OV9GIbTx4aBl0ugqpZvQebpCfbPl2FjFCK6onq6dbvIdbyM9x8yh4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788429444; c=relaxed/simple;
-	bh=0zJB0oT4kt0u1wn9CpgMQ95Xoqj+X+RrL5SxUzT7/cY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dq/ZOJWSURfvRZfhU77NxMUbFvtK4v9CSN6NOufmCnah9v5lcWRDy3Yzzm8AQuXO2G66gi//ghbD4TjFGXjTZ2GurXJXDeiHEOC3hpRYCgCVsSdKKulWdemC51+D2GS6lBAiIKg7yGGXXaQzfC9Wsl7bXU/dJoe+5bcqHlNXbPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nDXQYljP; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788442033; c=relaxed/simple;
+	bh=kONAT1sWOqq2RkVXK2/3P7bl1cJC2j6xiUdKnuWxokE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gmcq1nZKbvxg3+/hFPlVPuN8wG9m0Zu03u8bvj9HSIaspa6G4uvXIZdx27MwPSwQ3zCrDx3hRPXiOABAU9yxeGb98cpq86c0ROBrZQqkKiqxDoDlnYjyuXRBRKN8y9wK667V5Qg9YdrEW5qwuZD1bStiWCYIPFdiLrayvOddA3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JKj2t0Y+; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nDXQYljP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AC401F000E9;
-	Thu,  3 Sep 2026 09:57:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788429443;
-	bh=bRNFYPRZsbDCetzN2gVQ/oeYpcjMrmA9gbbBr7n+CBA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=nDXQYljP4r81aMX8xh/VF0cxK3WLx+c+7gtolXArRiMdngqFgMTqYvJoluYF/7489
-	 YD3hJ8r9CMfREGQZAz4zw3d8iq42hOBFREUFC+YhLiJ8uqihWylVYYZ5FBoav9O064
-	 S7OHr2DLwAUwvQM/tIuMWygEh8BULHeGDdq9wedpn6TeLnwlpw5jAfLTfQ4pKXpSz1
-	 EaikJV6Lw4NgVU22iChK/Qerc/AZyIs97hCNQVM8kNb6IBLXGFAlbhWDY79nwF0ZdL
-	 mQy58TEVKMPiXlj8J1Ys/jdxr9nFnuEqh/v7cVWqwGOMuPjJQmwvGUYAx76oPRR5iB
-	 OHpBcMaFp5Pig==
-Received: by traversing.sirena.org.uk (Postfix, from userid 1000)
-	id D8092D89935; Thu, 03 Sep 2026 10:57:17 +0100 (BST)
-Date: Thu, 3 Sep 2026 10:57:17 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Diogo Ivo <diogo.ivo@bootlin.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Animesh Agarwal <animeshagarwal28@gmail.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/2] ASoC: dt-bindings: realtek,rt5677: Add clock property
-Message-ID: <aplEfd33wSz59iLS@sirena.org.uk>
-References: <20260903-rt5677-mclk-v1-0-b71a5a3533f9@bootlin.com>
- <20260903-rt5677-mclk-v1-1-b71a5a3533f9@bootlin.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JKj2t0Y+"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id BF74A4E414DB;
+	Thu,  3 Sep 2026 13:26:54 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 90479602B8;
+	Thu,  3 Sep 2026 13:26:54 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6640F11C7A01D;
+	Thu,  3 Sep 2026 15:26:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1788442009; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=3fAcnP0xk5VImcOaCSVWFZKTfYi9ijAKHbQ0RnE0Z/o=;
+	b=JKj2t0Y+rLrVa8hQMDhuH5A6WBTEQV6WzzOGXWIeogW+5MKBSxcpl8sWzNWdSv7/W9f2HK
+	4I+SU7mG9L9YKyuvA6y6/pxdZIXS8zn2heIMRWxk6vvY8SpJmn87rErHdYd8D7l58dgwfP
+	5T6SijJWWnXY5DnJsTeBBQerxHA02r9RM6d3kf5c/1wZ3RZ+UJhPXUwndX/gVaLhE//h4W
+	k54jz75fPkwaOOVmxURByo6bOA0N4Wvmf/Yu7GpifzrQTy1Uw9IAI0c6BJIYY7l7WayU16
+	IAXNpL1IEkZL9mKA3Ar9n3UF7Q6F/d0zU6bDcBO6+N2BUe46lzZr34kMWD7AlA==
+Message-ID: <0746f828-a424-4001-8054-1e52ed07139b@bootlin.com>
+Date: Thu, 3 Sep 2026 15:26:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Lk5moJp7C7aAQOiL"
-Content-Disposition: inline
-In-Reply-To: <20260903-rt5677-mclk-v1-1-b71a5a3533f9@bootlin.com>
-X-Cookie: Orders subject to approval.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] ASoC: dt-bindings: realtek,rt5677: Add clock property
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Animesh Agarwal <animeshagarwal28@gmail.com>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+References: <20260903-rt5677-mclk-v1-0-b71a5a3533f9@bootlin.com>
+ <20260903-rt5677-mclk-v1-1-b71a5a3533f9@bootlin.com>
+ <aplEfd33wSz59iLS@sirena.org.uk>
+Content-Language: en-US
+From: Diogo Ivo <diogo.ivo@bootlin.com>
+In-Reply-To: <aplEfd33wSz59iLS@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+Hi Mark,
 
---Lk5moJp7C7aAQOiL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 9/3/26 11:57 AM, Mark Brown wrote:
+> On Thu, Sep 03, 2026 at 12:11:00AM +0200, Diogo Ivo wrote:
+>> Add a clock property as the RT5677 codec can be fed an
+>> external clock signal.
+> 
+>> +  clocks:
+>> +    items:
+>> +      - description: phandle and clock specifier for codec MCLK.
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: mclk
+> 
+> The driver code has a reference to MCLK1 which implies multiple MCLKs,
+> unfortunately no pinout seems to be available and other references in
+> the driver are just to MCLK so it could be cut'n'paste.
 
-On Thu, Sep 03, 2026 at 12:11:00AM +0200, Diogo Ivo wrote:
-> Add a clock property as the RT5677 codec can be fed an
-> external clock signal.
+Thanks for raising this point, I had missed it completely. In fact,
+looking at rt5677.h there are two places where MCLK2 is mentioned:
 
-> +  clocks:
-> +    items:
-> +      - description: phandle and clock specifier for codec MCLK.
-> +
-> +  clock-names:
-> +    items:
-> +      - const: mclk
+#define RT5677_MCLK_SRC_SFT                     10
+#define RT5677_MCLK1_SRC                        (0x0 << 10)
+#define RT5677_MCLK2_SRC                        (0x1 << 10)
 
-The driver code has a reference to MCLK1 which implies multiple MCLKs,
-unfortunately no pinout seems to be available and other references in
-the driver are just to MCLK so it could be cut'n'paste.
+and
 
---Lk5moJp7C7aAQOiL
-Content-Type: application/pgp-signature; name="signature.asc"
+#define RT5677_PLL2_PR_SRC_SFT                  15
+#define RT5677_PLL2_PR_SRC_MCLK1                (0x0 << 15)
+#define RT5677_PLL2_PR_SRC_MCLK2                (0x1 << 15)
 
------BEGIN PGP SIGNATURE-----
+so to me it _looks_ like there are indeed two MCLK inputs, both of which
+can drive the MCLK clock and can also be the input of PLL2. However, as
+you mentioned I also wasn't able to find the pinout/datasheet and I have
+no way of testing this. I think the safest bet here is that I send a v2
+where I rename "mclk" to "mclk1" that we know for a fact exists, and
+then later on if someone with access to the actual datasheet comes along
+and confirms the existence of "mclk2" we can add it to the binding.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqZRHkACgkQJNaLcl1U
-h9Acngf+Oxwzx8pflcjt6BCITldOMzGbYDTqvnQzzB5zpR7bp0RqxF+EtiOB9/DJ
-0ZMHWdSp097jtVU83mdD4b3H+7g+c4tm4e/NCtODFjNBkPBMk98rJm4FlMdGRWDE
-iiaaHWxusWm56M5XHS6KGhpxAx5GAXIxS9i95nfmztoO9hXNib+DNg88/mSRNfLl
-DNtrtfIatp+z1fDgxZ/xzg9YIMUy4udD7jPxWvmRTOGG6KlGUuRSofk34u4jyrHj
-wd9MrsD1XtWDORtidYcgcZ6cil+9LYlP/EjF2qZTa3iH9FKSdUOLF7tHSsG1U1sy
-yuCQOpf+tvEHTJqgr/WrLl6CBnN2pQ==
-=2vkM
------END PGP SIGNATURE-----
+Let me know what you think!
 
---Lk5moJp7C7aAQOiL--
+Best regards,
+Diogo
