@@ -1,107 +1,112 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A8838E5FF;
-	Thu,  3 Sep 2026 13:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E7D4B0C87
+	for <linux-tegra@vger.kernel.org>; Thu,  3 Sep 2026 13:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788442033; cv=none; b=bdYodjQTOvdUrVsluoiCn5pDVQ7I2LKl/tnoZQpU0HvFdVCmoq/AJzs3NsiEIfDLWYhu6X/yBre8hJJvUYqD2dXRTNZCG/NEyBHaunORc4YzwZ53+/B34OV9GIbTx4aBl0ugqpZvQebpCfbPl2FjFCK6onq6dbvIdbyM9x8yh4c=
+	t=1788443571; cv=none; b=SZBkM+ZOwlfzltvFdP6Z1MOevSCT4GmSCPGrOyiHukqknsgvCbDgWg+qamKRkI4DUamUlEuNKT+Tx2tul8rmQ3nHCEE70aEXDq+HCv6Se4cgbPVOnRIFJWZgMblXN+tyvlyZUiLj7phT09WES7ve9p5uFeItUQa80pp200JZ21M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788442033; c=relaxed/simple;
-	bh=kONAT1sWOqq2RkVXK2/3P7bl1cJC2j6xiUdKnuWxokE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gmcq1nZKbvxg3+/hFPlVPuN8wG9m0Zu03u8bvj9HSIaspa6G4uvXIZdx27MwPSwQ3zCrDx3hRPXiOABAU9yxeGb98cpq86c0ROBrZQqkKiqxDoDlnYjyuXRBRKN8y9wK667V5Qg9YdrEW5qwuZD1bStiWCYIPFdiLrayvOddA3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JKj2t0Y+; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1788443571; c=relaxed/simple;
+	bh=A9tFXtu0XWRFcdfwCqDHDr5yuN/58LVPsyUpMIW1Ps0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RCRAV1hI+ybucyOczLnE8ql10hYM8fcTTeDLUdadiav9/4sgbix7CFgH7BwWRcnuvjBdAFiQwpaHpETbNpL6I4mvDETnAPrxwTujYYiTzWQ7Sy9803yUbPBiNzlHsPY2d/6qunwOJwQwT3KpaPLK8mX4Ftr+hw/p+QXoqKGdHfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BxDtd7Rr; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JKj2t0Y+"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id BF74A4E414DB;
-	Thu,  3 Sep 2026 13:26:54 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 90479602B8;
-	Thu,  3 Sep 2026 13:26:54 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6640F11C7A01D;
-	Thu,  3 Sep 2026 15:26:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1788442009; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=3fAcnP0xk5VImcOaCSVWFZKTfYi9ijAKHbQ0RnE0Z/o=;
-	b=JKj2t0Y+rLrVa8hQMDhuH5A6WBTEQV6WzzOGXWIeogW+5MKBSxcpl8sWzNWdSv7/W9f2HK
-	4I+SU7mG9L9YKyuvA6y6/pxdZIXS8zn2heIMRWxk6vvY8SpJmn87rErHdYd8D7l58dgwfP
-	5T6SijJWWnXY5DnJsTeBBQerxHA02r9RM6d3kf5c/1wZ3RZ+UJhPXUwndX/gVaLhE//h4W
-	k54jz75fPkwaOOVmxURByo6bOA0N4Wvmf/Yu7GpifzrQTy1Uw9IAI0c6BJIYY7l7WayU16
-	IAXNpL1IEkZL9mKA3Ar9n3UF7Q6F/d0zU6bDcBO6+N2BUe46lzZr34kMWD7AlA==
-Message-ID: <0746f828-a424-4001-8054-1e52ed07139b@bootlin.com>
-Date: Thu, 3 Sep 2026 15:26:46 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BxDtd7Rr"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-48441a2ba14so2202975f8f.1
+        for <linux-tegra@vger.kernel.org>; Thu, 03 Sep 2026 06:52:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788443553; x=1789048353; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=csh27SRclgEY3hCLE8xf3YTKQW4fhH5v82nkgEIQKps=;
+        b=BxDtd7RrTkSLcDHlzFqae6piLIxi8lklen/ukPmCL4yQ08H/IOd+MDidvLFiQ0me0f
+         QKMo5JLGhZS6WRMECBXIIr+ke0mUNF+6ktCQby+V+un0exzlbpJB62RmaUAqRWjp8EHK
+         WI+FRUHf7dg30Q99Lpd6ffB3vhlaRo/cQcKzv7pDhCxC8nS4TTtLB1gI0u/tY23P/Vk0
+         LmIhZ4NhcIdUtpNuwk+wGLYd/ZJqAEFY1/TEU1nShT9/1AVytLb6UvqYJwYykXmat3oI
+         77w8rcJhceYhR/SRuv5uX/xGvaE8EKQGJv6NP2O7Po2oHow+sNnZG/mGNU3osD2uw8xU
+         6VuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788443553; x=1789048353;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=csh27SRclgEY3hCLE8xf3YTKQW4fhH5v82nkgEIQKps=;
+        b=UCzMyrbdihH/3cFhrAPAD6IfxTDioh9MwIiNc42lulg/2pEXesU78KLnLL6Lad2KfL
+         X1EjWGoApLNmBO8Cvcns19HXo8F8jBFDmMwAxLBx490Np81F1GxSFLiJ1i1YgfzJ9ECB
+         EatMsSMZ85zaoihSEdLPC+Z/JyZ1TPOXn7r2gNebrRksmgmiOB4gcAF9eelqT71A7MfH
+         lYgFA/YmZfvwSKnReiD9xRMfWNi7qzIcQriHhyd6MNVA0K8MEIats+Uek5b5rpEqd+zq
+         Qzf6KNZo/TfkF/epaTvhSFMOugWLimnbJAmxmdUaUyuZ6Z5OtNK9Vl+9zJoHqd5X1ueX
+         tF6g==
+X-Forwarded-Encrypted: i=1; AKwUvBxCOGhgkg30rDfb75i5Wf3jLwTi/pzLM9D3/PP49A4fMyziBIkF7S56AJIoNf85/Tzbpfa0Y4+aDZky2A==@vger.kernel.org
+X-Gm-Message-State: AFuF++nw3SmRmPNzSUzd2NR18mh4DrFhsLJi94tY1WLxmRW2QBd0MXCO
+	q4RekSKBX1glvYyt9SwGJWzzRgfK9o3g/8osn2Ea7wJoX1bU8s8Km0Q6
+X-Gm-Gg: AYBFou0NR35C8be9W6zUem83QPaiQ8MR7n2BqJ9DuTTM3oZ34nueInIWvYALEERePeC
+	IxwmGqIo+N5HQGuem4tE30JeQ93fuJ0aygunLpdphEnmY+Rkm4mU6NFIQkHLLd7371kUfdJhWfJ
+	5ulD2JFibHepc4O+R/cDfkptMPeSqDiJXum/DpF7+nL453vE+VOPqDKROyltHxA7n2ShbWABwMo
+	+lacH21f16zftCwfTxUMZ7eavZ9i0sCA+wocB1ROwC0ePNECGqlh0kFJTERmEH1Yc4PTrnIwNFJ
+	PAA0Fd/eB4psnLtQuQ0CtsqOAzNmqD3nRtPjVYuOluVAB8UqUKUfcyBqFoivp2aWi7UOiQ/HcIQ
+	vtpDxAiLP+042aKf5Mf6V4xbIZBF0jpxLHy2eW0KXUI7QqcGjDbrim+qySS736DWQTAEd4znO0R
+	+Kf2tk+lIDTcJUoL/ajvuU2qnJGKeW2IDxt2v9HRdIHtZnOEIQb0RSg4+ZaSReCGlDG2Hsckg06
+	VdeWmRB8/l6xd3VH2Y2TTTNYfAMgdYpWrCn8dmzPxnlH3j8dy0uul/eDyyRpQ==
+X-Received: by 2002:a05:6000:178e:b0:483:3695:6ea6 with SMTP id ffacd0b85a97d-48488f1b111mr21280968f8f.20.1788443553101;
+        Thu, 03 Sep 2026 06:52:33 -0700 (PDT)
+Received: from chubuchnyi-ThinkPad-P1-Gen-4i.tail30ebf2.ts.net ([158.173.155.197])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48448ed2edfsm13597771f8f.23.2026.09.03.06.52.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Sep 2026 06:52:32 -0700 (PDT)
+From: Aleksandr Chubuchnyi <chubuchnyi@gmail.com>
+To: Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: linux-media@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Aleksandr Chubuchnyi <chubuchnyi@gmail.com>
+Subject: [PATCH] MAINTAINERS: add Tegra CSI bindings to TEGRA VIDEO DRIVER
+Date: Thu,  3 Sep 2026 16:50:58 +0300
+Message-ID: <20260903135058.2598642-2-chubuchnyi@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ASoC: dt-bindings: realtek,rt5677: Add clock property
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Animesh Agarwal <animeshagarwal28@gmail.com>,
- Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org
-References: <20260903-rt5677-mclk-v1-0-b71a5a3533f9@bootlin.com>
- <20260903-rt5677-mclk-v1-1-b71a5a3533f9@bootlin.com>
- <aplEfd33wSz59iLS@sirena.org.uk>
-Content-Language: en-US
-From: Diogo Ivo <diogo.ivo@bootlin.com>
-In-Reply-To: <aplEfd33wSz59iLS@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-Hi Mark,
+The tegra20 and tegra210 CSI bindings are not listed in any MAINTAINERS
+entry, so get_maintainer.pl does not match TEGRA VIDEO DRIVER for changes
+to them and reports neither linux-media nor two of the four maintainers
+of that entry.
 
-On 9/3/26 11:57 AM, Mark Brown wrote:
-> On Thu, Sep 03, 2026 at 12:11:00AM +0200, Diogo Ivo wrote:
->> Add a clock property as the RT5677 codec can be fed an
->> external clock signal.
-> 
->> +  clocks:
->> +    items:
->> +      - description: phandle and clock specifier for codec MCLK.
->> +
->> +  clock-names:
->> +    items:
->> +      - const: mclk
-> 
-> The driver code has a reference to MCLK1 which implies multiple MCLKs,
-> unfortunately no pinout seems to be available and other references in
-> the driver are just to MCLK so it could be cut'n'paste.
+The entry already covers the VI and VIP bindings, and csi.c binds to the
+compatibles documented by both files. Add them as well.
 
-Thanks for raising this point, I had missed it completely. In fact,
-looking at rt5677.h there are two places where MCLK2 is mentioned:
+Signed-off-by: Aleksandr Chubuchnyi <chubuchnyi@gmail.com>
+---
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-#define RT5677_MCLK_SRC_SFT                     10
-#define RT5677_MCLK1_SRC                        (0x0 << 10)
-#define RT5677_MCLK2_SRC                        (0x1 << 10)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fc320b373..e4f50fe24 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -26924,9 +26924,11 @@ M:	Luca Ceresoli <luca.ceresoli@bootlin.com>
+ L:	linux-media@vger.kernel.org
+ L:	linux-tegra@vger.kernel.org
+ S:	Maintained
++F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-csi.yaml
+ F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
+ F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vi.yaml
+ F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-vip.yaml
++F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra210-csi.yaml
+ F:	drivers/staging/media/tegra-video/
+ 
+ TEGRA XUSB PADCTL DRIVER
+-- 
+2.43.0
 
-and
-
-#define RT5677_PLL2_PR_SRC_SFT                  15
-#define RT5677_PLL2_PR_SRC_MCLK1                (0x0 << 15)
-#define RT5677_PLL2_PR_SRC_MCLK2                (0x1 << 15)
-
-so to me it _looks_ like there are indeed two MCLK inputs, both of which
-can drive the MCLK clock and can also be the input of PLL2. However, as
-you mentioned I also wasn't able to find the pinout/datasheet and I have
-no way of testing this. I think the safest bet here is that I send a v2
-where I rename "mclk" to "mclk1" that we know for a fact exists, and
-then later on if someone with access to the actual datasheet comes along
-and confirms the existence of "mclk2" we can add it to the binding.
-
-Let me know what you think!
-
-Best regards,
-Diogo
