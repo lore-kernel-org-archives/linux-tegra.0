@@ -1,242 +1,153 @@
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012015.outbound.protection.outlook.com [52.101.66.15])
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012016.outbound.protection.outlook.com [52.101.53.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3FD3A7593;
-	Fri,  4 Sep 2026 08:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DAE408035;
+	Fri,  4 Sep 2026 08:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.16
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788510961; cv=fail; b=Xa7cO9aVmpKCmogUQykXNDGfhugeM9xKxxfNS1NiVWoBbDerRmABJY/dCiLHsF12h4iCIZUCfPT5Fx6Ne8xZ6NQ0yJUjdbfnlaxNuAQv9iniiFjPzltpoDflFqV20NqdmpRfU5K6U35m9edK9hnUI31+Ry1jgoJGD7IUL1SEtSk=
+	t=1788512024; cv=fail; b=EG3bpY/3OmatG/dxAb7FmW0n39IhcawjyYJaPf1eLG9U/AiFMSNl2a4QigMut1jPf5H0CG0z2qpIK4sHNlj1wEMrCtVwgVK1+/C5bvmxPOsYPpJ8roRrcSX8fwJe0XfkOZrcVpqHk0SKNnoJhF1WGW98wNgSo7PRmjmIfQu4YNM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788510961; c=relaxed/simple;
-	bh=oL6ruZ/1cOimsyCFaz/3CkgoXoGKGeEB2l/1nV8a2PE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ctM+OvZkPZRvh2ZkFkctwPhlHvfTgqOuNj80oLXMoKYdGWM2iGJVPznZTYHq64Uq+XdxI/fkb8VCdDOKh7rdvbS7td/sdg4USc9hWl2vfLUDuttkFENWc8eaYAPZreUzXpPElViyMNM4TzqGQ+6Hf2eSFsFRRUCxU//CdRqoZUI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=YryKQFes; arc=fail smtp.client-ip=52.101.66.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1788512024; c=relaxed/simple;
+	bh=/YcU8WAJkQz+Pk/O5vUYCtCtYLHOwSYDzH3o7IhzRKI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=mw0aWO/lowGjIKtGEoslT/Rc/ZEWhNx6XzgYB0/c3pUKJEffsPLtIdC2Y1HXnF1d/SZ45oTeezCf7TVL6pZ+0AYQwFNrJBma2B3Jr/+jXr8ZfeH42kqKsi1FqrBZMSPxI++h/VQMqWgCPgHKWHW3MY/wcKtG/BKo4+XaC+U3tJ0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=W1PLFNZj; arc=fail smtp.client-ip=52.101.53.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="YryKQFes"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="W1PLFNZj"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uDaPrdLquTJ/BGG/W6YxkcjbRJdGAgm0aeWcaIo/Qg7SfDIkNkt4T5z3tp4VrDkKUPqpcsx1QHcdeXa2wlfZV1YVJx7QrCHs50jJIX8k49uRdMVef4TlwTOqrrCuPyjenrxGKvyA5276vMkeeMqEHB2lhX0DY4n0ib9UsRcocTf7VHjXXgO8fyllNJwjEUnUNWb224O7aOousX666Rg/i+uIpqrpkOXhhJmPwkXNG42QzUwZeRQQhlZ/X5XqJZxfY/M8+IJgRikQnsIXjwXPXv+KxQDJoxeAOjJoFlQwFacmP716+2sMwqBp0iv6bbkfttB9dtpZIU80fS7t941LOg==
+ b=oDDCuyZnfjz1t9tLYa3IE4GiKCFpydTNakbO6wNzSC8xwKYTs4AJy6DaXo0zqjuPSnqvYuSTcenFt5RNhn2+A7HEbJECby+VIVAoVJ07l9iIYSy8C+N587DSoe5W7ksCGbkEWqdMLLTsYP4cMXaxyzX/485z0so4Tu7YmUcGh36INH4ArGX5oDJ2pjtV7ySM3M/1fk87bs29L8VMGSbZLxF2H38amOqKpFm4eFmgu9skBCf0SdkTEZqU2rXFuTBTlUdMtQ/MWFU6mtNxUdOpMVWJgbdbaxauH1WuFFSK9ZO8vL7DwN3V+M/FLwZEW/uMerGMVOep5PxATedkBHW/Nw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qXBaOeGDE9CIr0w1l+6Z/32ykDFbrDHVuTkJtZS1G7s=;
- b=jVyzeL+2xaWiuOGJzbg1h1TcRBK05POH2/1NfY62gOvSug991FkyQCkPXgiD4KbKKr2il+M9iR9BPRDzWpA+1c/qByc3MTbCAToPoJmsaAnQ+uHWFLb92PGMKmvUf0BUnYlUHsOdOmKoTRJFcCTDktzPONciVTsDi6cTGk88a8sgDT8YSvcMNXWyBTeCle+zAvoUyd3BBUwVb6aEsztlJBZR2ZOx14377Ch9lhcjHXQnXnsJZNy8E0m5JoOjKNV0PaKd0KiMVKHwKKO6DmAqE46QdXmQwzRO/WWU1rkcpw/2AkZjThQ8xN6F4IWbvlb5Q10p6PnMsjMdRgqTur3V2A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.88) smtp.rcpttodomain=oss.nxp.com smtp.mailfrom=foss.st.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ bh=CCNEQPuAtcfGAiEE/GbdkrO06yW3LpvnyamPRm61EVo=;
+ b=oxyO/LxA5lR06wR5q3tP1lHPHwv2VvyyRDBqYtfKpAU3CdPPD3SGKl8SF2KhUdvLY7RTWLrLQWJrwD/F8f52Wp2zCKeSUugHH+zvqQlgDdgDPdhh/EegSTVPu0WdMMMD+xrhDenWsJx7rRVgZUk2uoX+7FGuRDSoFY1xsgrp7fL8ouUmm5OFL6Akcto70+ekGQn1p0AsBsETSCDF66hkcXr2Fa8Am5ZPw4wL+Usu7TT/0tDbh+KqZ+RYdUW5G/YE0zR2tjHIXNjBbQyOl0FWLYxvCSS54MaKE131e3Rq2xcH4TBA7k4l8PJkGfgb2zTcNyvv6x/Lx+Jngaom2zkp0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qXBaOeGDE9CIr0w1l+6Z/32ykDFbrDHVuTkJtZS1G7s=;
- b=YryKQFes0AqftsnRRitantV98OOZks2Lb5z4yiQe+//1q3Vbob6LPbbVDudotRxoreEzX1jg8tbN9u5lRPvxHyOEJg1cTyEXeNNmuuinETN0PbgLQ9yGOw//WblBb0m+Ldt1Af54dti5soTFo18LIM9tW4KVZOBcK0jzo9wIAnZ4m9Sm5uK6mbjiH+D4TnW6ysEv+8b+B2TSro+XqOemcP1eXscW1wZHHdeuuhW8bazOvNKWi+hW1yifDLhmB3sXep3p5OwXaL4xS0DMF6Ea1VdENL/cOvR9B5x1NEQZZQYKqqwxZF2c5YQC51JG3axzzZI4rRySRgyxWoqd8CRewA==
-Received: from AS4PR10CA0013.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5dc::20)
- by VI1PR10MB3615.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:139::18) with
+ bh=CCNEQPuAtcfGAiEE/GbdkrO06yW3LpvnyamPRm61EVo=;
+ b=W1PLFNZjwhv5imd/NRkHw3nN+12GqItxJAKT9G+HCxSOqhp+5CPrUO5BlgIeAQBI/PUNVTat6OIEigKr6LsPWFLNLMLW9vjUnOa1qduQ3GR+gyqD/jZ0iNCnn/Iac51kQiBkkC9FMx9QtQumXJvTbTjjdf12u+bSTSx5cKBZaysrgxSoow2s9YUiSuZ+/21YzOD/GreFJfw24HzeG0koeBckD2qr45gId4YXQexCqGFiHojIQBFxSVAgZv0KXWJX1oOGeB23sMUzK/7+WJBGoheyIcu/uKHQCFYcDGKhA3bks8UZKP8xUmbSo2MsKFtDmFA9cDIVdrYgQlaeZnqsfQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ1PR12MB6051.namprd12.prod.outlook.com (2603:10b6:a03:48a::18)
+ by MW3PR12MB4459.namprd12.prod.outlook.com (2603:10b6:303:56::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Fri, 4 Sep
- 2026 08:35:49 +0000
-Received: from AMS0EPF00000567.eurprd02.prod.outlook.com
- (2603:10a6:20b:5dc:cafe::90) by AS4PR10CA0013.outlook.office365.com
- (2603:10a6:20b:5dc::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.382.12 via Frontend Transport; Fri, 4
- Sep 2026 08:35:49 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.88)
- smtp.mailfrom=foss.st.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=foss.st.com;
-Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.88 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.88; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.88) by
- AMS0EPF00000567.mail.protection.outlook.com (10.167.242.117) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.382.8 via Frontend Transport; Fri, 4 Sep 2026 08:35:49 +0000
-Received: from ENXDAG1NODE4.st.com (10.75.129.197) by smtpo365.st.com
- (10.250.44.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.43; Fri, 4 Sep
- 2026 10:33:06 +0200
-Received: from [10.48.87.20] (10.48.87.20) by ENXDAG1NODE4.st.com
- (10.75.129.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.43; Fri, 4 Sep
- 2026 10:35:47 +0200
-Message-ID: <4e3a2f00-ec1d-426e-b71b-fcd9fabe6b86@foss.st.com>
-Date: Fri, 4 Sep 2026 10:35:47 +0200
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.11; Fri, 4 Sep
+ 2026 08:53:39 +0000
+Received: from SJ1PR12MB6051.namprd12.prod.outlook.com
+ ([fe80::96e1:b300:7b78:d3a9]) by SJ1PR12MB6051.namprd12.prod.outlook.com
+ ([fe80::96e1:b300:7b78:d3a9%6]) with mapi id 15.21.0382.007; Fri, 4 Sep 2026
+ 08:53:39 +0000
+Message-ID: <578c07f6-3473-463c-b204-72335aa63264@nvidia.com>
+Date: Fri, 4 Sep 2026 09:53:34 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 17/21] ASoC: tegra: use .auto_selectable_formats
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Jaroslav Kysela <perex@perex.cz>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@kernel.org>
+Cc: linux-sound@vger.kernel.org,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <87zexzyw5v.wl-kuninori.morimoto.gx@renesas.com>
+ <87bjafyw3s.wl-kuninori.morimoto.gx@renesas.com>
+Content-Language: en-US
+From: Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <87bjafyw3s.wl-kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AS4PR09CA0003.eurprd09.prod.outlook.com
+ (2603:10a6:20b:5e0::6) To SJ1PR12MB6051.namprd12.prod.outlook.com
+ (2603:10b6:a03:48a::18)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dmaengine: vchan: add vchan_chan_name() to get
- channel device name
-To: <Frank.Li@oss.nxp.com>, Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung
-	<schung@nuvoton.com>, Vinod Koul <vkoul@kernel.org>, Frank Li
-	<Frank.Li@kernel.org>, Paul Cercueil <paul@crapouillou.net>, Eugeniy Paltsev
-	<Eugeniy.Paltsev@synopsys.com>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Binbin Zhou <zhoubinbin@loongson.cn>,
-	Patrice Chotard <patrice.chotard@foss.st.com>, Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Thierry Reding
-	<thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, "Ludovic
- Desroches" <ludovic.desroches@microchip.com>, Viresh Kumar
-	<vireshk@kernel.org>, Keguang Zhang <keguang.zhang@gmail.com>,
-	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Manivannan Sadhasivam
-	<mani@kernel.org>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang
-	<haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, "Chen-Yu
- Tsai" <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, "Samuel
- Holland" <samuel@sholland.org>, Kelvin Cao <kelvin.cao@microchip.com>, "Logan
- Gunthorpe" <logang@deltatee.com>, Laxman Dewangan <ldewangan@nvidia.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <dmaengine@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mips@vger.kernel.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>,
-	<linux-trace-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-actions@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
-	<imx@lists.linux.dev>, Frank Li <Frank.Li@nxp.com>
-References: <20260903-dma-chan_dev-rename-v2-0-0db305b6c716@nxp.com>
- <20260903-dma-chan_dev-rename-v2-1-0db305b6c716@nxp.com>
-Content-Language: en-US
-From: Amelie Delaunay <amelie.delaunay@foss.st.com>
-In-Reply-To: <20260903-dma-chan_dev-rename-v2-1-0db305b6c716@nxp.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: STKCAS1NODE1.st.com (10.75.128.134) To ENXDAG1NODE4.st.com
- (10.75.129.197)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS0EPF00000567:EE_|VI1PR10MB3615:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2065755b-6d7b-4a40-5e68-08df0a5f85f5
+X-MS-TrafficTypeDiagnostic: SJ1PR12MB6051:EE_|MW3PR12MB4459:EE_
+X-MS-Office365-Filtering-Correlation-Id: 23a17cee-55f9-4278-5f87-08df0a62035b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|7416014|376014|23010399003|36860700016|921020|10067099003|4143699003|56012099006|22082099003|18002099003|11063799006|41080700001;
+	BCL:0;ARA:13230040|1800799024|376014|10070799003|366016|23010399003|4143699003|56012099006|10067099003|11063799006|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	ieZZLa80x4vz4cYuxvA8oTLJIwQNPGSQa2J8I+XvITdrICEOfEbWdpxtA5u7LYRu3qCxXwoZx6ArfVYcjYzSzrpX5nu4JVMsB1dO+tZ8tzx9SopOev/0tBWXrTJb/Z3ZiQDOVQXzO7eXdSZfqBiJBrfrn3+CBV6VATxKx/aS9vi4iXeTA9fYWWIgx8lfuGlhuxISwq0QyS6Num/Cx0CkBiTeg0AFC3VtfSN/2B+yfxuGypF7riWEwz89H7/j35qNa4N53ilEF3ofhfTbEdJT2xKq6SRMrDlD/aqMSkgCkpNDP8gJ8iL6/BRzgdS8WKt4JkhtadEKizt1otphHzrDz9u/BTRz9Zw0Umr+LV3BBcSB+ejpSIp8SzWRmDcqzYEF2QqVEmXdhaSTaYPmsG00xMkEHbltI+jyjgslBfXhKRx75IrI9sfFnSNxH3SpLwVbarb+bYXODhTUtkFZpvpzq2+oZZmvClbGc4Zpg08bKEpfqSy+bU0Tr4bk5kAX7z7FoDjsL/fHwV6ZchFQlJLdbIAEP2VmnZqpb2SZ1xpTj9nBA869w7NoeIUAapzxWt51xAy71F9WUTRsboGk8UAkp6EL8MLymtuuwZ73Xu0dzX7vTE9pz0CSOiAp2KAZKYOWvl4xwsOmi7VoAD3DH7SM0+mREdWmQWDLr/oN2Xjk/U/C7W2rPE27DFFGcnEBAnRtl+aE1SBtRJcAMyOo7nSm+WLlst+deYBUZh5KLa97tpYf7d4qqNvc0w9ABiBn3itS
+	NkE3KCrXyVNH4E43VOJgb+/UNDSUjpxquMRynHRQWaFmXDyvzTv1d9MEVNCIPz+SQcjyw3ojzWTTkFuWi7H1Hl7Wkk2jplOvF96XoZKE/Z8sRJVQmPpl1FYfJBZFdO1i+BIUDZpWfzmNj3MGVOKD35HdzyoOcEkQobC5YMgmtiEp1+Noynqt+TJrj8Az406Cs29Lvg1+S80TQBKxmcmblVVnlMslWN7bXBBr1cWWLUucSDTdsfJn5L/owUMCGfqsUj09z4/ORuRbu6s5d95hlKwtxjSgTjp6jfrneJyWLECY2NLX/K/RNsDUEhH8FuffCt9kMwdrzw5yO3eZPJ63iaTpxle8ZWMVEHOaaKDEzkAxNTczZN1Uk3jJoqglWR/rFZh317BvCCjJCI7NQFsVTpwlvUbWQjWw2LjmqZcS3RlselBD+wBhiouXcArQRRc17UeZfAMSh2uWkqku+vbYPzxNrsOZXhGeIo7tGU99Znldsk7yfs8UDhEp4wvqUM/shBBnGYrbDhHIjbjh156PUId7azumujNax5HtgIxLpRP0DqgZZsH0R+cI2iH7bCb+M92YjQxSoor4WTKd0/l2VIOfkjBsALmMqCR5oWJ8qJNlAIiMGHVjHH323vtE9FnemPXp1fwSvruQTwYInxd9WKmHLGdhmPcuFK92wjmxsX4=
 X-Forefront-Antispam-Report:
-	CIP:164.130.1.88;CTRY:;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(7416014)(376014)(23010399003)(36860700016)(921020)(10067099003)(4143699003)(56012099006)(22082099003)(18002099003)(11063799006)(41080700001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR12MB6051.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(10070799003)(366016)(23010399003)(4143699003)(56012099006)(10067099003)(11063799006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
 X-MS-Exchange-AntiSpam-MessageData-0:
-	7Nu1x+BgUG32rkucRghRc8xYBseh5qbrNgvot1CwJuv2PToQVkBcPNfeoQwaz/GOE2cqdRh3I4XsPW+Mb+IlxAVAU3Pzdcy8S3RtIvjEYr2AgQwfWXf/xQSR0EX7sfe7dda3AgErZNZffWn4MEthtGZu0X5fxXjXxstCKFNgHOH+KPaVyrw3cIOMMn6P/8BGNzvBylRuRBxy7ZZ1rMPouKDOSmNIiR/dfXmJ2toknKgyhh0vKxxyxhgnZLONklwiMDFIfyyYUV8o3sxPuzXPLbEQPQID5VpxCHx4jmhQaBOx9jy1J16asPej6ib2U3tAvZegzO7sxYgROqsEFTkykwYmZgLwF5BTWrsQoEST77zh4SzyTnbf7vDHEHdhxVePWhmeEQw0PVIHjy8Q83rPOji1tP0vrSTQGllXzPe3yUuz3yFPHcRttunYvUZ/nX/M
-X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2026 08:35:49.4973
+	=?utf-8?B?T0Vrck9aczZ5UlQwTDFqanFUYlF3dEZhVjlZVWd1Q2N6bXgwWFpKRWpKY1Uz?=
+ =?utf-8?B?M0ZJdHhJMWdsYzFkMGtwUytnaFdRN2xSVVh3b1dXYnUzTk1CTGhHanBmR0F1?=
+ =?utf-8?B?a0w0bDFCQjMzNGVuYmVYZFRaUGlxMnMvVVhsUGxuM3RGRXV1TE5YR3RJcmt0?=
+ =?utf-8?B?bFFTMWxZWnMvclBvbTNNS3FHWmh2Qmc1Q0gxejBlZFBvam5HdldnZ1BVUVpN?=
+ =?utf-8?B?bVpXbGV1ZUZuR0ZWUEsvNEFBSHVydkk2bExUQ2tjSlNGZzRvNGtmbkV3MC9Z?=
+ =?utf-8?B?SGRVOEdYNUtFa3RDbVlqclBrTzVGMllibTZyclJsOUI3SlBlRGFUMnFkTzA4?=
+ =?utf-8?B?N0RNRDEwTU9NQWQ3aVROcWc2WUVodTZabC9CZ05ORHhGZ0FhcUVNUW9HU0gr?=
+ =?utf-8?B?T25BeGxQTkVENy9pK1Y5eUgzM1FXWG5PY0VTVGlsQXRvbDRldVlvSGRIalNK?=
+ =?utf-8?B?MkM1aEJaZXplV05veWl6YXBJdS9FWktFRG0xWVljQzBwdkNjQllhdnJ1MFFB?=
+ =?utf-8?B?Mm5DZ1d3aUhYSldwM0dGWjhqckVUUUh5NEF6ZG1JQURBYmNkSkhzUGZjNDNz?=
+ =?utf-8?B?Q2FZaFBVbmRoSFdnaWFWNzc5bEVSNS80UnpQZnZZYUNzT1VlM0FFMlpJL2lS?=
+ =?utf-8?B?Sy8wdW10RVlaQmlaa3lrejFvbzdramhJUHRqNSt4N3dXWkNkSHFGTnk1Wm5p?=
+ =?utf-8?B?elg4eFErS1hxNHI4U3hZWWVXRk5aQzF1eVgwNmduRVd5cHZWenBnN0lHVHdq?=
+ =?utf-8?B?NzE3YWtaMVpTRU05QWxPaFV5akRjUDhOSTFuYVIvSjlMR2FKdVI3SkxvTFZk?=
+ =?utf-8?B?M001cHV6a3NxY2VYSDJRUFI0L3NoVjl5NmFYazZ6eCs5S0NNYlpUL1dUYWxR?=
+ =?utf-8?B?cHMzWjBWems0T1pUdy9ncU8xTjg4L2tNWEZOdFlyVUJ5SlcyejVlZjNVdkZ4?=
+ =?utf-8?B?cTU4aGR6RkMwRVZUVGNJdFpGcHVpSWdBL05zRmxTRVphbWlPR3dOM1Jicytz?=
+ =?utf-8?B?cVFCZTlYSGQxbk5rY2ZETXpnR3dMdnZ0ZTBlb2tTTDJwcWJjVU9GQlpwNS9V?=
+ =?utf-8?B?ZmJTR2NrdTJPazA3bEJVMFVHNGlMZlM1S00yVEt2VCtmRVd1djVIWVFwNTdQ?=
+ =?utf-8?B?NThhM0E3SjFST3RwTEQ5TGR0UjhDdzJuRGRxa0kvYjZMaTVkV2xZVnNQZkRw?=
+ =?utf-8?B?L0dRYTBNZFJRdzBwdklQMlA5YWZUVmFyOHFxUlZBM2R0VmZiQW5jRkR1MFYz?=
+ =?utf-8?B?SGxhWXBjWDhtbklvOHNMcWtWcXlVNENNajRicFdKTFo2cTZJOTZ2QjNBak5L?=
+ =?utf-8?B?S3hkUm9HVGRhMmhTem1rdGozU2RnS0FZT2RKWjFrMUpIRmRaOURBT0NxRFNH?=
+ =?utf-8?B?ZnF3SFExY2NqdHNLZnBXZVRhRFZGRXJ5SFBsbFRVZmI2RUFwenFoTXF0QkVN?=
+ =?utf-8?B?M2ZhRnBDL2NDa0FkWWNZdS9LL3FmL3p2b2ExM1pVejhIWXZVRDJCUXduTHFX?=
+ =?utf-8?B?SUVaTklWQXp0dnY4emRoaXFPVkZNeUxKc0NrQWd0ZE5zZGV3Z1NwN1RtTUcz?=
+ =?utf-8?B?Vm1GTmpCZlUzVHFWcnhjYllXbmdTdzRubkNnU1IrNWd5dmZVeUI1QkhCMXNh?=
+ =?utf-8?B?Uml2K0xQN1lOZGwvT3V1amxBZ2JVT3JDZ1ZNb0pKbUhyY29meWtQL0V5dWg5?=
+ =?utf-8?B?aFFzUWdjbmlaU3VreHJyZ2hSU2tMY3NYekdrd2lzeVhLQ0FkUThCY2pCOEht?=
+ =?utf-8?B?SXVlZHN2a285YzVmbkltQVlEbXlQZTM2UlBJVlEyWFZCRTc1RGFBd1BFSGc5?=
+ =?utf-8?B?anU3cExJcTB4cEQ5SmdrTVZ1MGd4VTFSSUxMWjQ0QnF3Y2VFOW9kWDdNWUZv?=
+ =?utf-8?B?ak5vSzloalA4OHRZWWxsVzB5dHJyenc5dkFOYTdYVm1FUzJWUjNCbVRuMHBj?=
+ =?utf-8?B?Rk11L2ZOYTRJWU5DRjZNZGhEQ3cvMlBuSkNWT3RHbis4bzhYY0VLK2dvV2FD?=
+ =?utf-8?B?eGlkTnNsN3UrVVFmVWt6NkloWWJCbWRaUzdjc1ZPRytQQUZVSDIwZ3NETTFX?=
+ =?utf-8?B?VW95alVac2Y3T1d3dWk1MUZha2IyRlpzUHlkVzh0TUNsWjZzMHo1d2x6QWhi?=
+ =?utf-8?B?TUt6WkdRUTFrdFV2OE14b1RSYjFvSWxXVkVrOS93SUhkc2J2MlE4bEFRREo1?=
+ =?utf-8?B?RnhPOEZTbmhzaUdHaGF0S0VuRkh0QSs1a1NSam5ack1QSGFwUmFvQ1JRbjQ3?=
+ =?utf-8?B?VGJWMVNrWjNMcnRXNW51Y1VuVU9CUklZZG9zZDk1N1ZoZ29VNEVUS2pFd3Bq?=
+ =?utf-8?B?WnR1WmVGd2hDdzVsTmRmREFlSWw1cEZpUGllSWwxcGkvQ096UXc2NmRQTkNj?=
+ =?utf-8?Q?rcS3hzzlsX1sfeOkIeQQyTG9b0hu9uT1b0kSr6KAcp/Zg?=
+X-MS-Exchange-AntiSpam-MessageData-1: eW7mYGeuEKlNow==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 23a17cee-55f9-4278-5f87-08df0a62035b
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR12MB6051.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2026 08:53:39.2265
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2065755b-6d7b-4a40-5e68-08df0a5f85f5
-X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.88];Helo=[smtpO365.st.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF00000567.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB3615
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UQeIrebB0KtWcQRJkVCeCffPNEsv2FVv0Cqu5N1OaIycSVeL+51WljuB6RKlZgY6EPsQC2hIsM+D8p6DO+Fquw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4459
 
-Hi Frank,
 
-On 9/3/26 22:53, Frank.Li@oss.nxp.com wrote:
-> From: Frank Li <Frank.Li@nxp.com>
+On 03/09/2026 02:14, Kuninori Morimoto wrote:
+> We can use .auto_selectable_formats. Let's adds it.
 > 
-> Introduce vchan_chan_name() to obtain the DMA channel device name.
-> 
-> Use a dedicated helper instead of directly accessing dma_chan::dev
-> so callers remain unaffected by an upcoming rename of the struct member.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->   drivers/dma/arm-dma350.c                     |  2 +-
->   drivers/dma/loongson/loongson2-apb-cmc-dma.c |  2 +-
->   drivers/dma/stm32/stm32-dma.c                |  2 +-
->   drivers/dma/stm32/stm32-dma3.c               |  4 ++--
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Could you move the driver updates from this patch to the next one? I 
-don’t understand why the drivers above are modified here, while others 
-are deferred to "[PATCH v2 2/3] dmaengine: use dma_chan_name() helper to 
-get per-channel device name".
 
-Regards,
-Amelie
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
->   drivers/dma/virt-dma.h                       | 11 +++++++++++
->   5 files changed, 16 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/dma/arm-dma350.c b/drivers/dma/arm-dma350.c
-> index 09403aca8bb06..52f5242ea3327 100644
-> --- a/drivers/dma/arm-dma350.c
-> +++ b/drivers/dma/arm-dma350.c
-> @@ -512,7 +512,7 @@ static int d350_alloc_chan_resources(struct dma_chan *chan)
->   {
->   	struct d350_chan *dch = to_d350_chan(chan);
->   	int ret = request_irq(dch->irq, d350_irq, IRQF_SHARED,
-> -			      dev_name(&dch->vc.chan.dev->device), dch);
-> +			      vchan_chan_name(&dch->vc), dch);
->   	if (!ret)
->   		writel_relaxed(CH_INTREN_DONE | CH_INTREN_ERR, dch->base + CH_INTREN);
->   
-> diff --git a/drivers/dma/loongson/loongson2-apb-cmc-dma.c b/drivers/dma/loongson/loongson2-apb-cmc-dma.c
-> index 1c9a542edc859..2f1c8c4fd0654 100644
-> --- a/drivers/dma/loongson/loongson2-apb-cmc-dma.c
-> +++ b/drivers/dma/loongson/loongson2-apb-cmc-dma.c
-> @@ -678,7 +678,7 @@ static int loongson2_cmc_dma_probe(struct platform_device *pdev)
->   			return lchan->irq;
->   
->   		ret = devm_request_irq(dev, lchan->irq, loongson2_cmc_dma_chan_irq, IRQF_SHARED,
-> -				       dev_name(chan2dev(lchan)), lchan);
-> +				       vchan_chan_name(&lchan->vchan), lchan);
->   		if (ret)
->   			return ret;
->   	}
-> diff --git a/drivers/dma/stm32/stm32-dma.c b/drivers/dma/stm32/stm32-dma.c
-> index d3ad78562a140..3e8151e2ad75a 100644
-> --- a/drivers/dma/stm32/stm32-dma.c
-> +++ b/drivers/dma/stm32/stm32-dma.c
-> @@ -1668,7 +1668,7 @@ static int stm32_dma_probe(struct platform_device *pdev)
->   
->   		ret = devm_request_irq(&pdev->dev, chan->irq,
->   				       stm32_dma_chan_irq, 0,
-> -				       dev_name(chan2dev(chan)), chan);
-> +				       vchan_chan_name(&chan->vchan), chan);
->   		if (ret) {
->   			dev_err(&pdev->dev,
->   				"request_irq failed with err %d channel %d\n",
-> diff --git a/drivers/dma/stm32/stm32-dma3.c b/drivers/dma/stm32/stm32-dma3.c
-> index 4724e7fa0008e..1ee1bd22703fb 100644
-> --- a/drivers/dma/stm32/stm32-dma3.c
-> +++ b/drivers/dma/stm32/stm32-dma3.c
-> @@ -1892,10 +1892,10 @@ static int stm32_dma3_probe(struct platform_device *pdev)
->   		chan->irq = ret;
->   
->   		ret = devm_request_irq(&pdev->dev, chan->irq, stm32_dma3_chan_irq, 0,
-> -				       dev_name(chan2dev(chan)), chan);
-> +				       vchan_chan_name(&chan->vchan), chan);
->   		if (ret) {
->   			dev_err_probe(&pdev->dev, ret, "Failed to request channel %s IRQ\n",
-> -				      dev_name(chan2dev(chan)));
-> +				      vchan_chan_name(&chan->vchan));
->   			goto err_clk_disable;
->   		}
->   	}
-> diff --git a/drivers/dma/virt-dma.h b/drivers/dma/virt-dma.h
-> index 59d9eabc8b674..dd023a3831209 100644
-> --- a/drivers/dma/virt-dma.h
-> +++ b/drivers/dma/virt-dma.h
-> @@ -209,6 +209,17 @@ static inline void vchan_free_chan_resources(struct virt_dma_chan *vc)
->   	vchan_dma_desc_free_list(vc, &head);
->   }
->   
-> +/**
-> + * vchan_chan_name - Return vchan DMA channel device name
-> + * @vc: virtual channel
-> + *
-> + * Return: The name of the DMA channel device
-> + */
-> +static inline const char *vchan_chan_name(struct virt_dma_chan *vc)
-> +{
-> +	return dma_chan_name(&vc->chan);
-> +}
-> +
->   /**
->    * vchan_synchronize() - synchronize callback execution to the current context
->    * @vc: virtual channel to synchronize
-> 
+Thanks
+Jon
+
+-- 
+nvpublic
 
