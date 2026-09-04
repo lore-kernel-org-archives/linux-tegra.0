@@ -1,170 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73218470456;
-	Fri,  4 Sep 2026 10:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C90378D8B
+	for <linux-tegra@vger.kernel.org>; Fri,  4 Sep 2026 11:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788518754; cv=none; b=rEdwpI/yaWE6oWyk1DYG9+pHJvBzBhqicmb7wSDIhjxE2F4RJFX2tXo2ZwSeJnw0KXsxYB1aGKrqsP7Rhnd461We48Eg+2gamo07N95I5CsXmP6NMNDvGiug0n4UXNvUBVaNMUfX8UwjEY7TUmC5CQj9PpHvOMcUS/5UsaJV67M=
+	t=1788520209; cv=none; b=Y5Rn6Y9EINXInqKrazfUbRyCNExDCCIPCkyO1B5d96AZUqUWMuYMpjVFQHFOxNFU4vuDXrvjIR7krd/psxHi9xazsw8Jde3K4TbUoj7u6H8aSEdxCKhiMzaMgb2zCh+Ahh1C22oI4aMQeYuM2TCDMvIGqC2iy1rLxK270bg1Eh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788518754; c=relaxed/simple;
-	bh=HZxNmsZi+S62DG3AHdYyAcEUJkoueMrh5HNOsoP0nfw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Rck6iZi637AoEXFvzQbVwUNYxzC6vm1EV8KvOVuIdR3qE+qrE7zsVWwMdA+ZBRRSMp4JUTTVeBqGHI4wJVZtbSE6f888Un78Fq54+Y+T1P0DbvW6E1YxxIOplJR6a1cduwKac41j+/N3DBNnwE9ou5v7vikFdC+eGLCt3AFRz5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YP9DP3WW; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788520209; c=relaxed/simple;
+	bh=GYR7vyanVJ8plJU01WoNFSGTHSYQC4WumzJhgIObNr4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=avLnhgGVp3LNc5ihZ2IZ9BTPYab8wAYN6qUlqdaSrGoME/PTAon4o7uD2EconyQ1QNIwauAQ4BH3nSAi3yMO1uqiRL6TfD6p1FWDf8v6fz0hpsFGuCAnfyTqj6aSpc8f7rTZvlevIcnC9G5hybICY1MK3mIgEeU0xqxpUlXi0vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CXISd3ZO; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YP9DP3WW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 590C11F00A3D;
-	Fri,  4 Sep 2026 10:45:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788518752;
-	bh=tp5ZGMgCkDYYyYju3vZvBz8YmJ8LdRAUta1tmaeUPO4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=YP9DP3WWRHbpiBvqdRY47YbL8PcKvkW6ZXkIs1iXMKrHnkCIpHGrZPLBccBF7fo+9
-	 LV2JfjAHdxT74nfkVvRATWOGtmNEYIfha/f9lSFm+oRgKm90U62Knia62E+zDOb5h8
-	 BQHGnIwPgCVW2OaNJzvAXlgTZb2AbvzmXnUwyoIQQbE5eGYFWO1Di0Lr+YUVs2rnf0
-	 r7W6QnGFNrRfOdMjFQ+XjH/4PTzUJexNHgYqqxF0Lu30hod7dzL+Wyz/10mkHaqB/T
-	 O/hvZ9CjdZzI1ffSGAwm/du+AWBMSAkXfEGbuPOSnZdgEhDQUX68+TcEIjfSjIePTl
-	 aQbfiX0MrZCSg==
-From: Thierry Reding <thierry.reding@kernel.org>
-Date: Fri, 04 Sep 2026 12:45:03 +0200
-Subject: [PATCH v6 12/12] arm64: tegra: Add VPR placeholder node on
- Tegra264
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CXISd3ZO"
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-6b13496112cso685589eaf.2
+        for <linux-tegra@vger.kernel.org>; Fri, 04 Sep 2026 04:10:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788520206; x=1789125006; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=zHrBvnDyQmGN2H5xjBYZYpnknekC9rCkGbvIkvPCYYU=;
+        b=CXISd3ZOjTR0eHrmBwQpPnqqS9RhVQaEgTaAetkBnJ053K4FvYO3KVq0rwK5ecpmIz
+         BrMhDLLACu0gxfF5nQtPVmbn95K5isLL1pMW6rbs3+KsR9JdueB0CAH4xSCngPdAI6+m
+         gfAWjgq0vVlL3l+0MO0l5hB19RaAHJTvwrSDd1/b0tSpvudHXnDtMHe7hYlxPr6fbDuL
+         IsXMYlO2uwVXk9FmgQeGgL0auAInH+fKzDrI0OU7AFZcoSehsXfWSOkWxJkRhx6x16Iu
+         mp6qxXxNKaQ6M9e14XzF2zBe4hq8Vlbo5WV3lrqDsak/4I1hFsvSZKh3a/yvLeJlAfdz
+         OhmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788520206; x=1789125006;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=zHrBvnDyQmGN2H5xjBYZYpnknekC9rCkGbvIkvPCYYU=;
+        b=KTY0VSPcV3O7KNfzLxgfkQz0Y3ZQ0M1QWqb74c/o3lx+XgN40bcGgj51DFo609vHxS
+         Qjm+lyDuYr8MXl1/h/yLfs9vptO+hiU2ZmRT0Jq+sOE2wwMfc+nPqfjHsv+w5DxDNfyV
+         FEmUrwFILZpKG6lWEQaRp/vxW7vcklHaWaw6LZy2HUEa7oNBRu31I0T5mt/XGsKK5WqY
+         OaidfIT2zMDeZMgYxFp7MWne64NEHcAnPbHEHA1AxcWg0NbAhiUuhHE1z9UjtBor4X3J
+         36Fk+9hdjs3wyq2AyTIKMT3xC/1XV3orULpN6lZaR5re/KtENTrwwijxa3vdjC05SsUX
+         3hJA==
+X-Forwarded-Encrypted: i=1; AKwUvBwUvNUStqy8qbYjTvEG2bY66rfUcvsHXecNziIL0ge2EBwSlRAQ1PnmGCnjMvzFiObUg+6UKDNV55eGjg==@vger.kernel.org
+X-Gm-Message-State: AFuF++nqYmgGCW8CLgxtu24zZIqaN/kYTLNDP1P7CGif4K4+5M2uNv4C
+	0Q9NyPaZ9cE+MGBEYjz5QnsVO1Q+2gSvAcSci6mF0sNZ4hhUbt99xgA3
+X-Gm-Gg: AYBFou3wHVu7qS9vy307BHmM/BenNDXcYQmloiifY4KB9Ok3YJY/rMmPC/zfz515fKF
+	8fe/7jU762BfE9Fe9ykNZxEfvsIKHdAM6NVV3vmgslScE5c5pXxRMM5WGMNcRNjJPNIeR3u2mmB
+	1wLuXEAgwDSLguLMKawkqP0zSlOngCYdV8Nu+zvUkGYzaD7aky+kBmjmE+P6Frm6KAkto3ZDeHU
+	vHesCPEA/IAPPKCS7PUPh29tXcYgMW5rgdmN125OIphsJkzo/u7tlU83+ANtwEbI8UTcfxLJ5qC
+	eQ7z4UsBwg+9FMiljO/M1rQKG9KoWEMrI9YWQe3bIDznx5AMG2XWl7W/R29NIuniTJIS0hMngNW
+	7pTJVSa9mzigk2ICpBnwznvr0GbDtFvvh/6rxSxwBaBFP6uiRkTKcMGAn6frjwUH51BWk/OY0eJ
+	Gpg104vScdozGE1UXSpRr8hPbJ/vb/tdHJDY8tzHBF3p+JFl4ENNqP7/VIBiz+kfM4enL+oH17x
+	UUJAGOXoEklVqI=
+X-Received: by 2002:a05:6820:162a:b0:6b3:6444:46e with SMTP id 006d021491bc7-6b6facde170mr3834718eaf.8.1788520206216;
+        Fri, 04 Sep 2026 04:10:06 -0700 (PDT)
+Received: from volcano9f6e-hostos.amd.com ([165.204.217.251])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33450e140d3sm2492230eec.4.2026.09.04.04.10.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Sep 2026 04:10:05 -0700 (PDT)
+From: Hemanth Selam <hemanth.selam@gmail.com>
+To: Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Tero Kristo <kristo@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-omap@vger.kernel.org
+Subject: [PATCH] clk: tegra: fix typos in comments
+Date: Fri,  4 Sep 2026 16:39:57 +0530
+Message-ID: <20260904110959.21527-1-hemanth.selam@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260904-tegra-vpr-v6-12-79042cfa8de5@nvidia.com>
-References: <20260904-tegra-vpr-v6-0-79042cfa8de5@nvidia.com>
-In-Reply-To: <20260904-tegra-vpr-v6-0-79042cfa8de5@nvidia.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Sowjanya Komatineni <skomatineni@nvidia.com>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>, Yury Norov <yury.norov@gmail.com>, 
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
- Russell King <linux@armlinux.org.uk>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>, 
- "Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
- Michal Hocko <mhocko@suse.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
- Robin Murphy <robin.murphy@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
- Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
- "T.J. Mercier" <tjmercier@google.com>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Chun Ng <chunn@nvidia.com>, Mark Rutland <mark.rutland@arm.com>, 
- Saravana Kannan <saravanak@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, 
- linux-mm@kvack.org, iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org, 
- linux-trace-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2208; i=treding@nvidia.com;
- h=from:subject:message-id; bh=R7+I3znIc+C4CFBfwF3uhHrkIxj2+n+gJD2B2rW3tV0=;
- b=owEBbQKS/ZANAwAKAd0jrNd/PrOhAcsmYgBqmqE7rP80/4E7a4eMykLVRISmqrRHTPAuxP98w
- IQWcaSm6L+JAjMEAAEKAB0WIQSI6sMIAUnM98CNyJ/dI6zXfz6zoQUCapqhOwAKCRDdI6zXfz6z
- oaKNEACHyKhsBTZ1ctuBVdFSOjnEQ57mTqBOSye23UOv+Cr1ljxFp2QbH5hIEcClwoZOO9RCHkp
- Ta4o8lXpIGEeh0Os6ntBR3KiBB3v0WNaZwRZMwygvkxDFdGVgZv+m77w6UjOiNOOiwCO3J5sAXi
- Z1LPXrk5DPnIVRNxKPWenoikUckPR8eZDbkLjzC4i1lugL0pzKxtYA/KfhtpKQ3ySP74CCNVlLR
- lIV7U3WbT+g1GKMvtGNimuiIRl5iPmXfM+hs0uLpc9uWLGhsLMVfGVUTCmjIDDgabJWY1W/ikVx
- oKbI5FF342XhJ+LD2NO99czozExIVH/xTcwhhijOUOMPZ5WCV20Z2Ct1BlhkN8a3yK8CweWyWvN
- 0OoosKFHIGaJw/ZXOKhzODb3vrk0W1sMsJMrrRbAWpXoeNWJhh26wKyk5uZ5kypmlSSv6tSUmSS
- 0i60LJTaLmdfnl5vZnL2nKNBmpjWdZnT9lhXfDn4/v+saokkEIbUkA5QzpPBWsc/EQSwKN79Hjc
- t6gbLAylaeVwcS6w/AalDjDGEDVGDQ//gIHc4WSypdbJIpT4N2qhlCQaTIHyq3NxEj8C24lCtvz
- vJBUWMxwp8mg/mGygNuSa9PivjI7QtLST0GOLttf8SYkBQ0Fa3MYv1YSkoYYglsWVF3WDMfY8I5
- 2up7C/PXiHlgD7Q==
-X-Developer-Key: i=treding@nvidia.com; a=openpgp;
- fpr=88EAC3080149CCF7C08DC89FDD23ACD77F3EB3A1
+Content-Transfer-Encoding: 8bit
 
-From: Thierry Reding <treding@nvidia.com>
+Fix typos in comments, reported by scripts/checkpatch.pl using the
+misspelling list in scripts/spelling.txt.  Only touches comments, no code
+changes.
 
-This node contains two sets of properties, one for the case where the
-VPR is resizable (in which case the VPR region will be dynamically
-allocated at boot time) and another case where the VPR is fixed in size
-and initialized by early firmware.
-
-The firmware running on the device is responsible for updating the node
-with the real physical address for the fixed VPR case and remove the
-properties needed only for resizable VPR. Similarly, if the VPR is
-resizable, the firmware should remove the "reg" property since it is no
-longer needed.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Assisted-by: Cursor:claude-opus-5
+Signed-off-by: Hemanth Selam <hemanth.selam@gmail.com>
 ---
-Changes in v3:
-- comment out fixed VPR properties, assume resizable by default
-- rename node to "protected"
----
- arch/arm64/boot/dts/nvidia/tegra264.dtsi | 33 ++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ drivers/clk/tegra/clk.h | 2 +-
+ include/linux/clk/ti.h  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra264.dtsi b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
-index 964f18b256b1..998f7e28b9cb 100644
---- a/arch/arm64/boot/dts/nvidia/tegra264.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
-@@ -24,6 +24,39 @@ shmem_bpmp: shmem@86070000 {
- 			reg = <0x0 0x86070000 0x0 0x2000>;
- 			no-map;
- 		};
-+
-+		vpr: protected {
-+			compatible = "nvidia,tegra-video-protection-region";
-+			status = "disabled";
-+
-+			/*
-+			 * Two variants exist for this. For fixed VPR, the
-+			 * firmware is supposed to update the "reg" property
-+			 * with the fixed memory region configured as VPR.
-+			 *
-+			 * For resizable VPR we don't care about the exact
-+			 * address and instead want a reserved region to be
-+			 * allocated with a certain size and alignment at
-+			 * boot time.
-+			 *
-+			 * The below assumes resizable VPR by default. If the
-+			 * firmwares sets up fixed VPR, it is responsible for
-+			 * adding the missing "reg" property, removing any of
-+			 * the unused properties, as well as adding a unit-
-+			 * address matching the "reg" property.
-+			 */
-+
-+			/* fixed VPR */
-+			/*
-+			reg = <0x0 0x0 0x0 0x0>;
-+			no-map;
-+			*/
-+
-+			/* resizable VPR */
-+			size = <0x0 0x70000000>;
-+			alignment = <0x0 0x100000>;
-+			reusable;
-+		};
- 	};
- 
- 	/* SYSTEM MMIO */
-
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 73efd2ff37c9..afa93ba505ab 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -255,7 +255,7 @@ struct tegra_clk_pll;
+  * @set_gain:			Callback to adjust N div for SDM enabled
+  *				PLL's based on fractional divider value.
+  * @calc_rate:			Callback used to change how out of table
+- *				rates (dividers and multipler) are calculated.
++ *				rates (dividers and multiplier) are calculated.
+  * @adjust_vco:			Callback to adjust the programming range of the
+  *				divider range (if SDM is present)
+  * @set_defaults:		Callback which will try to initialize PLL
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index 54a3fa370004..61c4abf19995 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -51,7 +51,7 @@ struct clk_omap_reg {
+  * @autoidle_mask: mask of the DPLL autoidle mode bitfield in @autoidle_reg
+  * @freqsel_mask: mask of the DPLL jitter correction bitfield in @control_reg
+  * @dcc_mask: mask of the DPLL DCC correction bitfield @mult_div1_reg
+- * @dcc_rate: rate atleast which DCC @dcc_mask must be set
++ * @dcc_rate: rate at least which DCC @dcc_mask must be set
+  * @idlest_mask: mask of the DPLL idle status bitfield in @idlest_reg
+  * @lpmode_mask: mask of the DPLL low-power mode bitfield in @control_reg
+  * @m4xen_mask: mask of the DPLL M4X multiplier bitfield in @control_reg
 -- 
-2.55.0
+2.48.1
 
