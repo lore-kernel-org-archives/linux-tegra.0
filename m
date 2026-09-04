@@ -1,172 +1,179 @@
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013027.outbound.protection.outlook.com [40.93.196.27])
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013070.outbound.protection.outlook.com [52.101.72.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECAD3B2FFB;
-	Fri,  4 Sep 2026 09:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4278D43DA4C;
+	Fri,  4 Sep 2026 09:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.70
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788513999; cv=fail; b=kq91VD3lCzvUp7JiGeTGg+41YsrHIZCTCyR29xSS3SUTr1gGI5Er8M4KJfyFJtJRXwz195ocW38U0LZDJ7J4uM+l1jKy33mGojAGtzRNzQI3Kdzkxxfyi6jFyTmpDx9UQDfrSXc+LIKLBgQV+lO4DPGTTWoWdsK+YuJPMXX9kbA=
+	t=1788514009; cv=fail; b=kfMKqkUlL/IEQsMawauIq8JxsgKQLbc/HgdKyyl7UvFK65nJDJsPqwHslThx2WpLOyVDGlGlhT59IeL9KWFjt0CcxYHOj6Y7DVS6yIc3MIKRz7cHkH9H95PQa9VgpmRk4pZ29C3/Yq5itO//EsJL/N7Ag6f+iJ2BKPQq9uPUJhs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788513999; c=relaxed/simple;
-	bh=K9zFBCxx7P4WaokaXAWsNawlBd9mdn/qpMPR2N20k+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=uFVaX5dfTLqwyU/cSpZYXxsMrz+sb4ILdJv6MUsys91h499G8hOoMKpZHkyfQ6JaY4mHsMRCezIb5Gq2B1TJrOfmRKPb5tIwzEBo4VJqf2zqUArol8J6/bBhjRcMTcQoP5DlOfSjlwc0REbFGv+o9dnXQ3d3FLZ6iQSXF1lTzZY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=OvCneWZm; arc=fail smtp.client-ip=40.93.196.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1788514009; c=relaxed/simple;
+	bh=mIE97ZpsRAJYncmwUbcUN+Pmv5nAClD4HeSpqZ7ymOo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=K9Z9PcINiqnyjv4nIRaEZXkPH/JIc+q1EPOXl0NrOWRQjQcfq/zDTQ7EZTbpfzbUCjmAKw5Ib4/dAc4VDC/ofaOB/NtWdV3aYb0nQAcgZgFRBe6CaYsidt4u8lo+CY89mkkyywsXsfSYaoMs9gymrK1NTQoaDL32oZCvvekPVGs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=msEoMaqb; arc=fail smtp.client-ip=52.101.72.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="OvCneWZm"
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="msEoMaqb"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XhOEf4oeqRIkERi3wsA7g3Cbpxv1XEOvx75xxOF/AP38qw5A8JVfS1pAxNwj0zAYMxiUMMtORWu/IApTmm+woJxJYONrxACdXRTHJxKoqKN7le15t923YCJoV4wXFJRjB3FOV5cSOPyXf6m0OwOW7IhzDg+BIE4e43x804Nu7TMqQfTWvjHCxQFy0+CnVS/L47qZlADMV7YoQWZOPbWd8N0ek2OSOK/VPh5oTKm7P2g9W1fiFFQaagvqr+Q7gVHFZJGNFq5z9nWzNPErPWOBuog70BlY+i1CNsn/IE8yY9m4JN4OjUskrkSeNC6NqZqaDL1P5ma3+r5iVt7ggwsVAw==
+ b=BKRKpCvDCk9ls7lAXfzRyJdLWIkP0A/t2LNo2EAeXmfmOvL4hhg0KRLbvJJl/WcMrNcKvcRGk4+UgP6vuKRairoJWT3cz12irNv/RKRvcSav1I2SMINr/dfsuFwcAzDlnboRf4oQsmfLAM0/l6Usnb98lqJQq6+YfBB5Sg2L/TsW5LzopRH1YV10hGR294NholmiJxCcG5op/zr7f09h9qIpVsoBW4/GjM7GTtQJ4UyLkz0e/QjBPpvdMPTow3p/cxY55ay2BV4bQDDULwPZ1894jfLYTiwpgZKphYkD0UGSY0uO8lOy3eIizlO7d+VetIp9uASRKlVyfjfWraLJkQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0sbpKOh3joH09996b+rn9O3ZbyEjXn4A06Ndn6wRjtA=;
- b=lzsoPLqExou2r4pvUZWGwd+NkUBna5J/OK+8NTNZcIZHprQpxnaCtaPpE60nlWQSSvR1qf9SADa/lVpUUP1R10W/QIDtFQ+7tREVpIHOoe9kyIAvTBiaySwFPTAdV2q3VSVgLImG3r8sPUilOh+yYD2JkTQEelZz0f9FwoxsvEVNwoLZTMHhW+cxjL/ZByx/03LzlATIOrfvGBy06l31dgAmE9pKWYrNQ7RKJMiZ6hXCtDIKSPJyb9t2HgUjqKASNBQiVCnIHE8gbsqv83IbjmVj48oabr5iTWG9odr/glTsPZuklyOw2zx4rfANqaDp/3G2oZzjLcgxCoeLi9bSGA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ bh=jaJLRXdTfKBjKliU4yIsTLYlTagBUvh9PYCo9tJBrjo=;
+ b=IkWUriX2chGSj2rbPC1oieLbsHUUp4COVM9HLk9G/CK0yioglup0ioEYHN/6Sxd4nn7xLzD6GfRYiQVT4AIAWNAjY5VqiAGu/bJ4fNsujmQFJcrHcwv8q7G4ZDbY8FAm1WwMjq+url6MjpoBnWu9o20KHDLK04zgt2YB/1K+mvM5E/0rhe2YbxHRfeWDa5fKrFU89al/iQ7FnlrfNnzeoaM4n+dMV0Cl4SSzRIywAt5Ai9/J3X7E+1kzMaC7b99Bco4e5TvfVK4tLbaBZHByPkrsUYaUhPWRtqm9iaKqDYi7fackieJcVGlCo6V/fJ5SmR5NFu8mEVvVh5ctq+HTng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.88) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=foss.st.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0sbpKOh3joH09996b+rn9O3ZbyEjXn4A06Ndn6wRjtA=;
- b=OvCneWZm1yYGwezjO8SO1OlOvYrEwhiFij4/2eQSuOJMsc+00ek+xLxsAkOGrp2AOUsB7ZNZi7zAJqV8rIjniEkJiiVfOlja0IEXceaUak4LWQF0zBwQBL+3BPRsV3XWkrgaW1B7oyr9yYl02UtNx+rmF/1gYMHcEhla4A7vue9GbMyo1YvSTUw2d4iVoYMmMb4NQCRrTGOtlInupcLCZ8Po2+GB0lMFBzo+yWdpMdIVgBj+s9/xQ7hV/DMS0xHBeCxfwVJ/u90otqIJsnozW9j1gE1PMctXFFLXpnpvKW8I2x4N8lnvuc6c0c6okqRvp4xO6jWX1DBQJlLF2b9m7A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BL0PR12MB2370.namprd12.prod.outlook.com (2603:10b6:207:47::27)
- by IA1PR12MB7757.namprd12.prod.outlook.com (2603:10b6:208:422::17) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=jaJLRXdTfKBjKliU4yIsTLYlTagBUvh9PYCo9tJBrjo=;
+ b=msEoMaqbYsaqV1ZQPmhcYSxwQMYYb86+W/3okiSZbBhwMY/qZBbKlAQuYBNpZJHzDu13/DMTjoasIEpi0ZMLUAPJR4Q8efjoVvPHUJuxkZeIGhc9+rCiPbwH8B+Vx6bBallKSnamIgfhgklR/oK7gRnRVFmUb4d7y5To6hpQn8wyX1M/9YsQ7WnGT4gBIsDwuCIn0F8shLFLRG05uTjo7DdNQVQccNRJU5/X4F8jitNRSXr2ZOHolIKlZ/8TTujiLDe2xnI168BZiILbAfaX0ikOZeFXhLTW3VoGD5VGXipRbzThjWeDQ9IxOSTY3UMALbyk1Tuuhh6jD/WcctIHLw==
+Received: from DUZPR01CA0033.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:468::8) by VI0PR10MB747752.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:800:2bd::12) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Fri, 4 Sep
- 2026 09:26:34 +0000
-Received: from BL0PR12MB2370.namprd12.prod.outlook.com
- ([fe80::86cf:c3ec:2cf5:74c8]) by BL0PR12MB2370.namprd12.prod.outlook.com
- ([fe80::86cf:c3ec:2cf5:74c8%7]) with mapi id 15.21.0360.008; Fri, 4 Sep 2026
- 09:26:34 +0000
-Date: Fri, 4 Sep 2026 17:26:29 +0800
-From: Richard Cheng <icheng@nvidia.com>
-To: Srirangan Madhavan <smadhavan@nvidia.com>
-Cc: Alison Schofield <alison.schofield@intel.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Dan Williams <djbw@kernel.org>, 
-	Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>, 
-	Ira Weiny <ira.weiny@intel.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Vishal Verma <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alex Williamson <alex.williamson@redhat.com>, vsethi@nvidia.com, 
-	alwilliamson@nvidia.com, Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>, 
-	Vishal Aslot <vaslot@nvidia.com>, Manish Honap <mhonap@nvidia.com>, Jiandi An <jan@nvidia.com>, 
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v11 08/12] PCI/CXL: Reject CXL Reset on multifunction
- devices
-Message-ID: <apqONsm7xxFqtC5U@MWDK4CY14F>
-References: <20260902072804.665639-1-smadhavan@nvidia.com>
- <20260902072804.665639-9-smadhavan@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260902072804.665639-9-smadhavan@nvidia.com>
-X-ClientProxiedBy: SI3PR02CA0014.apcprd02.prod.outlook.com
- (2603:1096:4:295::6) To BL0PR12MB2370.namprd12.prod.outlook.com
- (2603:10b6:207:47::27)
+ 2026 09:26:42 +0000
+Received: from DB3PEPF0000885E.eurprd02.prod.outlook.com
+ (2603:10a6:10:468:cafe::4) by DUZPR01CA0033.outlook.office365.com
+ (2603:10a6:10:468::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.382.12 via Frontend Transport; Fri, 4
+ Sep 2026 09:26:40 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.88)
+ smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.88 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.88; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.88) by
+ DB3PEPF0000885E.mail.protection.outlook.com (10.167.242.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.382.8 via Frontend Transport; Fri, 4 Sep 2026 09:26:39 +0000
+Received: from ENXDAG1NODE4.st.com (10.75.129.197) by smtpo365.st.com
+ (10.250.44.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.43; Fri, 4 Sep
+ 2026 11:23:56 +0200
+Received: from [10.48.87.20] (10.48.87.20) by ENXDAG1NODE4.st.com
+ (10.75.129.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.43; Fri, 4 Sep
+ 2026 11:26:37 +0200
+Message-ID: <be376690-5219-4bf3-8ed7-02a49cee0e30@foss.st.com>
+Date: Fri, 4 Sep 2026 11:26:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dmaengine: vchan: add vchan_chan_name() to get
+ channel device name
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	<Frank.Li@oss.nxp.com>
+CC: Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>,
+	Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, Paul Cercueil
+	<paul@crapouillou.net>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	Binbin Zhou <zhoubinbin@loongson.cn>, Patrice Chotard
+	<patrice.chotard@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Steven Rostedt
+	<rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, "Mathieu
+ Desnoyers" <mathieu.desnoyers@efficios.com>, Thierry Reding
+	<thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, "Ludovic
+ Desroches" <ludovic.desroches@microchip.com>, Viresh Kumar
+	<vireshk@kernel.org>, Keguang Zhang <keguang.zhang@gmail.com>,
+	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Manivannan Sadhasivam
+	<mani@kernel.org>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang
+	<haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, "Chen-Yu
+ Tsai" <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, "Samuel
+ Holland" <samuel@sholland.org>, Kelvin Cao <kelvin.cao@microchip.com>, "Logan
+ Gunthorpe" <logang@deltatee.com>, Laxman Dewangan <ldewangan@nvidia.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	<linux-arm-kernel@lists.infradead.org>, <dmaengine@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mips@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-trace-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-actions@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
+	<imx@lists.linux.dev>, Frank Li <Frank.Li@nxp.com>
+References: <20260903-dma-chan_dev-rename-v2-0-0db305b6c716@nxp.com>
+ <20260903-dma-chan_dev-rename-v2-1-0db305b6c716@nxp.com>
+ <apqKgda7dW_JXolJ@ashevche-desk.local>
+Content-Language: en-US
+From: Amelie Delaunay <amelie.delaunay@foss.st.com>
+In-Reply-To: <apqKgda7dW_JXolJ@ashevche-desk.local>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: STKCAS1NODE1.st.com (10.75.128.134) To ENXDAG1NODE4.st.com
+ (10.75.129.197)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL0PR12MB2370:EE_|IA1PR12MB7757:EE_
-X-MS-Office365-Filtering-Correlation-Id: ab826513-eb05-446e-0925-08df0a669cc7
+X-MS-TrafficTypeDiagnostic: DB3PEPF0000885E:EE_|VI0PR10MB747752:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8e7f79ca-0027-4732-cfcc-08df0a66a00d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|1800799024|376014|7416014|366016|6133799003|22082099003|18002099003|56012099006|11063799006|4143699003|10067099003;
+	BCL:0;ARA:13230040|36860700016|23010399003|1800799024|82310400026|376014|7416014|4143699003|10067099003|18002099003|22082099003|11063799006|56012099006|13003099007|41080700001;
 X-Microsoft-Antispam-Message-Info:
-	3Tq3HAv0oQV/eSNOX3Q4FapAi9J+/lqGdt917tID5yeaVeaoPhlhDlipLtInhMdcrGtyzqiocJH20vOn98jCqP3NnU/iLqlZkTxtWNkJm74VO6FCBeRIcCYrCPYmzFFX03qUCESn6vElLnBD4cMHWC/8ho15Lhf2NKcVEQ9Nechbpn9RbkGnIB6wzTj2RKgUoMR1v5lBQZ1jyE4NdOqbgIrB9Blb8HDZ/Fc2Pkj/dazk+NfS659ImLSMs5Q1YFd4jjch4cpCBzx01vWNd4jLik57E8tO3ML/Im938zyGJXddyorXpizMlbiXFNEEGO00tpp0Mtod2fzcm+B+tp5oBs/rvVh3x3s9fI9b7naPDNODRVrNCbgXrFWUkAchx7oFxsCYALMxrvPNIityGcie1ZwdJdvCc1k0CSIhCnHB/78vJnJts3IPEAlIxUITw2YbZ+yLiXSc1bvqTxeNAcsO+iW9SnVQgYFZddY8SSIT30GhlrL6YCOpVA1XCOP/O1wlU17ZWDk9ZdxqYpDmZgbzMoDCQBbywhc5aZZyqKGE/NW2WyWnF3lvZhaE4hLq6p+nDNjfzbr4A24WmmRmtq4oPjyjlfE/JgYtAji0XE4e81WQniSgJjj1WiaWyLX0vFCDOwZ7eH/fUtv+mXQl0t2Su8KG6G9a7nV9me5CAkGFXMg=
+	iyoyOf3LVtUa56FiGdactARHtXf3qZbJg+Ym7tLfBsVQkpUD8TDuXyuvNn014MI+vJPGX/lVzaogT3SasTb0csZXPjriEPuwcHW7lcz6e+bOhKr7msAbG23aGOCMcADu1FUb9wv1KgMYh/rrJnY3jz+FRvmCOWU6Dgiea+81128aE1ixsZ9n+a+zTIz2IkOY2jU2DuLq6XfgjwmU0iI9RL+ZwgHupiiWUvIB57/vB7IUKeyGHkLZF0ZOHZkZ++zh43DcGWZ83zSj01GGEcM39D9UeuiU1bro/louxUU2PJLOpLG700GWItjkRyGmNvc7tqeP+wS+MmpuJEliStlUaih+2BSRTjri47fm5ZvoG6ypSZ7KqbUWc/sKxevY5LvQl+8xJowsMM5LN0jNWhqQTUvosDdG8Whw46mv82avSdB43SgilU6c+Y2/RDr8feaTXkKklGnVc2hoBqHNfJyxpe+nb0XP5fO0H58mZxTu/UFWt7uc6KbNxURdK+5UN/pDHIfUoUHoCGXgYtk8xdkv/kkcr6wp1T6ipPjeb/G0p/BlEjIyAnEX1a3ukRX3hT5f5/UcBtfKAndknwmAhkhomBXuSOUhXsMYd4pd3s6VjtmblGfVi9GEDv4wFiB7wIJPYzkmWDumq5bgn2i4iONaDKEOMiqQj5+y+XNWJULxyNLY16pnQzEthTRcxt/T85ZXYm6azn1UrMIVOrcdvhtlOgUZzulXyMCumD3W93zL1U8=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR12MB2370.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(376014)(7416014)(366016)(6133799003)(22082099003)(18002099003)(56012099006)(11063799006)(4143699003)(10067099003);DIR:OUT;SFP:1101;
+	CIP:164.130.1.88;CTRY:;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(23010399003)(1800799024)(82310400026)(376014)(7416014)(4143699003)(10067099003)(18002099003)(22082099003)(11063799006)(56012099006)(13003099007)(41080700001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xAZdyxgR80CiENBoLStzsKchh6ZHrpvvu6CdjTNuwiY4csASiGdx1Ql73Rj8?=
- =?us-ascii?Q?cdnE7qA9bzb7AYQAAUltA2tNtMqM0ROZ+P18sFnz3VxkrMu7m/LvbIXzp9Wl?=
- =?us-ascii?Q?/avfXKcDJ9TCAGpmZXXWEg89Jp+hFc75B1ygVMt0zfs/fCmkbp43S9gcSNP/?=
- =?us-ascii?Q?Q9mvCDkuMYXNfvv/6ny2oYtDWKR+zZ9l50UuIom+ZQUUUl0da2M9lSEMhCP2?=
- =?us-ascii?Q?9SkB8uUYi9ivvNugu3uk6ebLwaFqebqux9/w6gacknZ1wGLhzipODMZvKycC?=
- =?us-ascii?Q?BDM8UDkLHXI5WQnArzOKdg9fgRwAzp5pwXunkjrM3O61kwKqfZy6sr04v8Fp?=
- =?us-ascii?Q?hijXnpwDzvE34E6L1ujVX3xruXxoXv59ud1RzJApyrIBTDW0WxoCqTgyIEiX?=
- =?us-ascii?Q?FZpt1eyLmpMx8ezwu/XR9cnPL/RpsE/nWgbCAqvPYH8a8DlRgJbz5dlBe353?=
- =?us-ascii?Q?wz6n4EZo35UGYqbyPlWmIzUTlvmbo0P5oOjsy1IWqR/OJ5KfvcxZy28jRrig?=
- =?us-ascii?Q?FDsOfYBHsDjFCBkxX3PfivXOlleXWMYeuJLXVc/3dGJ3buWhCGuV9Zcfw6Hm?=
- =?us-ascii?Q?OKCFnicSGsj9nW23aJ9x9xDvOceK4wn6t4qhPHCxdHQyXgHjZ0jYGxFxBRFX?=
- =?us-ascii?Q?de6+DC8dkCsmJzK+hAmbckd7TMW5RVXNT/MES31v/N2atNLXg9WWWtT00+fx?=
- =?us-ascii?Q?I+nTiRaarH2S4kDCbjVwF2OHp/DSNC2Vpz592CTr0+tOUica/ONxwivQlUue?=
- =?us-ascii?Q?QuGUgI0FI+R3A5tApDwEBDqKLDHPk+dI93NTGsTLUfTeAhYdtbiUQwPQwLkw?=
- =?us-ascii?Q?SX/33VHVWtlVsOljcg6X71ekaRD6MzR5nnxU49ytyopLdkReoFRYMjDWNbqj?=
- =?us-ascii?Q?kp6pU7LD1aP/Li9Y71qYfRF/jy+GbnqYMsP8r+ChrziWO2/bADQrG8XGdhe+?=
- =?us-ascii?Q?muEnIhCTZUlhcsvnYntKSbO5ap4lstB5jnx/eJcQKM9GFcCqnUXYCmZ5pWCP?=
- =?us-ascii?Q?iTn8XxiCWYapMQEvpL0FdOYzl7gbCsOicjcqjkrXi/Ai6cklcR4gGhlFXFsA?=
- =?us-ascii?Q?WTsA61mOYDA6atbKiyoTEftxtDov4frnCpJEDD/36CeSK5lLO5ChDb6/bjBb?=
- =?us-ascii?Q?B775Pemb3SX9weqKhhmm/v0pwU4/GJ9NYB1I04FHZIpkCwwAKdV6x7iI5AAx?=
- =?us-ascii?Q?BBaI5eWRExnP5wWfG3L9z1zi0qH4UHKlPjOY8O5NqknipwlPAYa0dGuFuYvb?=
- =?us-ascii?Q?N+S0DEMwK/1f8h0OAgX9LlW+ZocRvR0Un723DfuB2Kv+Qq5t3OFdXsxLSF3B?=
- =?us-ascii?Q?CjCCdbh2wMGj1D0WjyrePu+U33JHnIhBkQUoB5cjgG84ZGC5D4BYcNyQB/9D?=
- =?us-ascii?Q?IXpSdk5YUzKrkZEz9QtA6VzmpY2EJhLtdYEypu9UZ+03odd/lGrSiMBIj5Pq?=
- =?us-ascii?Q?5v9L2QfH1RkmTrXqgYLWy6xzJTlWt6vsfNO5xn47nlXQz6VNtWR5bVDbF12G?=
- =?us-ascii?Q?q5pZFuQE7DjnhESiN4gEgLJzm+tzqgPWNRTuiZxnYMgZ6tkx61+uuArvBuCw?=
- =?us-ascii?Q?3RkAoGrE5ZModVyduUvnft0JudcryKXQe9U9QrYf5MgoqdExaqitsUDVD4dH?=
- =?us-ascii?Q?N5arQHmkHwU5DbQIJoQObV2UpOPXy7Saauw8+GYdRJ3JNEPCVv0k6YnhWTyg?=
- =?us-ascii?Q?WAi1m3KdpR6mo6+YjBK/HoSJqTxgxQbFI6HcGLh7t66wJp57RfPNynbOcgtv?=
- =?us-ascii?Q?OeAcx5JR1A=3D=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ab826513-eb05-446e-0925-08df0a669cc7
-X-MS-Exchange-CrossTenant-AuthSource: BL0PR12MB2370.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2026 09:26:34.6540
+	k35KY3k+uMIA+ymPEIQP6XqlVgCKMVi5Y8XGIWHJr1lmi6su34MqOMCY00yeX7PFejkyyXTTkwHau71TF0xwNoxl5/8T9CqToMC/9YY5trjFJmGZ65UxquCjt78IyC1eqz0AzjQb1zF4NNwBxyjD7MH2cW2LiY2EqsCLlrvpop+MdidVf04s+P59ok3HoSjF9q1DhTLJs4Eok14ryJHimCV3ZXNYkZjzFC+Vuxd3vwQwEtz5EBIH1n+zDG5J2NxH/CA+oyVnA/LcOs7zzyKtKnLHWWyG5dWXGYYyXJw4toKF0YX7e/RzHAJ8k3LnE74qpGkIIcVgFDemshPiOY/QUX87pqMV8N4/qQ8OH+Qj0GIo/yk9mcB5oMKSQO0fgFnWuaZ1CLpjEd24e0zL5sIjvy+nWmp7+SYSW+M+/xgtqEgJVWbumAULZ7gkep4455le
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2026 09:26:39.7294
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pHdiX0WSkjWCUDuJD5Jh7ewPSKO9+VrYdM8bb6415DsImydOp5McAYzhrvZfOnSktPjKBFdkP3yJfO65OZSAlA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7757
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e7f79ca-0027-4732-cfcc-08df0a66a00d
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.88];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB3PEPF0000885E.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR10MB747752
 
-On Wed, Sep 02, 2026 at 07:28:00AM +0800, Srirangan Madhavan wrote:
-> CXL Reset can be exposed as a PCI function reset method only when the
-> reset is function-scoped. PCI reset-method probing runs during
-> enumeration, so walking sibling functions there can race with functions
-> that have not been added to the bus yet.
+On 9/4/26 11:08, Andy Shevchenko wrote:
+> On Thu, Sep 03, 2026 at 04:53:11PM -0400, Frank.Li@oss.nxp.com wrote:
 > 
-> Reject multifunction devices for now instead of trying to infer reset
-> scope from sibling state. Systems that can prove a multifunction device
-> has function-scoped CXL Reset can be enabled later.
+>> Introduce vchan_chan_name() to obtain the DMA channel device name.
+>>
+>> Use a dedicated helper instead of directly accessing dma_chan::dev
+>> so callers remain unaffected by an upcoming rename of the struct member.
 > 
-> Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  drivers/cxl/core/resource.c | 3 +++
->  1 file changed, 3 insertions(+)
+> LGTM,
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > 
-> diff --git a/drivers/cxl/core/resource.c b/drivers/cxl/core/resource.c
-> index 13bd0c3faf7e..79227ce70169 100644
-> --- a/drivers/cxl/core/resource.c
-> +++ b/drivers/cxl/core/resource.c
-> @@ -979,6 +979,9 @@ int cxl_reset_function(struct pci_dev *pdev, bool probe)
->  	if (dvsec < 0)
->  		return dvsec;
->  
-> +	if (pdev->multifunction)
-> +		return -ENOTTY;
-> +
->  	if (probe)
->  		return 0;
+> ...
+> 
+>>   		ret = devm_request_irq(&pdev->dev, chan->irq,
+>>   				       stm32_dma_chan_irq, 0,
+>> -				       dev_name(chan2dev(chan)), chan);
+>> +				       vchan_chan_name(&chan->vchan), chan);
+>>   		if (ret) {
+>>   			dev_err(&pdev->dev,
+>>   				"request_irq failed with err %d channel %d\n",
+> 
+> This one...
+> 
+>> +++ b/drivers/dma/stm32/stm32-dma3.c
+> 
+>>   		ret = devm_request_irq(&pdev->dev, chan->irq, stm32_dma3_chan_irq, 0,
+>> -				       dev_name(chan2dev(chan)), chan);
+>> +				       vchan_chan_name(&chan->vchan), chan);
+>>   		if (ret) {
+>>   			dev_err_probe(&pdev->dev, ret, "Failed to request channel %s IRQ\n",
+>> -				      dev_name(chan2dev(chan)));
+>> +				      vchan_chan_name(&chan->vchan));
+>>   			goto err_clk_disable;
+> 
+> ...and this one are duplicate messages as devm_request*irq() printsr
+> most of the information.
+> 
+> Not sure if there will be a patch to simply drop them.
 > 
 
-Hmm a PF can have a single-function PCI header while having many enabled VFs,
-and VFs enablement can change after reset-method probing.
+It was the purpose of this series:
+https://lore.kernel.org/dmaengine/20260709135846.97972-1-panchuang@vivo.com/
 
-Since CXL Reset can affect VFs, do we have the mechanism to quiescie all VF?
-
-Best regards,
-Richard Cheng.
-
-
- 
-> -- 
-> 2.43.0
-> 
