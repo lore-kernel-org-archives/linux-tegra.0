@@ -1,123 +1,155 @@
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C90378D8B
-	for <linux-tegra@vger.kernel.org>; Fri,  4 Sep 2026 11:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8B742124D;
+	Fri,  4 Sep 2026 11:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788520209; cv=none; b=Y5Rn6Y9EINXInqKrazfUbRyCNExDCCIPCkyO1B5d96AZUqUWMuYMpjVFQHFOxNFU4vuDXrvjIR7krd/psxHi9xazsw8Jde3K4TbUoj7u6H8aSEdxCKhiMzaMgb2zCh+Ahh1C22oI4aMQeYuM2TCDMvIGqC2iy1rLxK270bg1Eh8=
+	t=1788521934; cv=none; b=L8IOl4mpkKc4pt5V7Lquz8TP2s13u/O2+m8kmqPitIP720O7/xzyy9uTDXfz5TXylBcI+a5uXHreGGjgAnFGUIcjQ+I9DSQHDWSxvrEeOKitCNHxySt502jkZ6ram2oppgLix4K2i57IXMBtPlF45LIUHUAyqFh+i8zkLJ3bQ00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788520209; c=relaxed/simple;
-	bh=GYR7vyanVJ8plJU01WoNFSGTHSYQC4WumzJhgIObNr4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=avLnhgGVp3LNc5ihZ2IZ9BTPYab8wAYN6qUlqdaSrGoME/PTAon4o7uD2EconyQ1QNIwauAQ4BH3nSAi3yMO1uqiRL6TfD6p1FWDf8v6fz0hpsFGuCAnfyTqj6aSpc8f7rTZvlevIcnC9G5hybICY1MK3mIgEeU0xqxpUlXi0vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CXISd3ZO; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788521934; c=relaxed/simple;
+	bh=sI88re9mQH9GGvNdQuqSOyqwac+FJGSZRs1mUIUeR4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GkUg4QPwqdho71NNwlSd+UcvqD0WpduP81hdnGUbVZdoeAdKs9Y9ZDunqmkZQkwVo1f9u+WEmsi+imm2RYgwwoHTeP7nMozglc7qnByFnoqOHFuGhDdb2kQNWLHfRa/kCw2upGn3a/vcFpILSFlOy+b7KbM5JoNaSXlp/5D6hQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UqaD9GhP; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CXISd3ZO"
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-6b13496112cso685589eaf.2
-        for <linux-tegra@vger.kernel.org>; Fri, 04 Sep 2026 04:10:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788520206; x=1789125006; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=zHrBvnDyQmGN2H5xjBYZYpnknekC9rCkGbvIkvPCYYU=;
-        b=CXISd3ZOjTR0eHrmBwQpPnqqS9RhVQaEgTaAetkBnJ053K4FvYO3KVq0rwK5ecpmIz
-         BrMhDLLACu0gxfF5nQtPVmbn95K5isLL1pMW6rbs3+KsR9JdueB0CAH4xSCngPdAI6+m
-         gfAWjgq0vVlL3l+0MO0l5hB19RaAHJTvwrSDd1/b0tSpvudHXnDtMHe7hYlxPr6fbDuL
-         IsXMYlO2uwVXk9FmgQeGgL0auAInH+fKzDrI0OU7AFZcoSehsXfWSOkWxJkRhx6x16Iu
-         mp6qxXxNKaQ6M9e14XzF2zBe4hq8Vlbo5WV3lrqDsak/4I1hFsvSZKh3a/yvLeJlAfdz
-         OhmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788520206; x=1789125006;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=zHrBvnDyQmGN2H5xjBYZYpnknekC9rCkGbvIkvPCYYU=;
-        b=KTY0VSPcV3O7KNfzLxgfkQz0Y3ZQ0M1QWqb74c/o3lx+XgN40bcGgj51DFo609vHxS
-         Qjm+lyDuYr8MXl1/h/yLfs9vptO+hiU2ZmRT0Jq+sOE2wwMfc+nPqfjHsv+w5DxDNfyV
-         FEmUrwFILZpKG6lWEQaRp/vxW7vcklHaWaw6LZy2HUEa7oNBRu31I0T5mt/XGsKK5WqY
-         OaidfIT2zMDeZMgYxFp7MWne64NEHcAnPbHEHA1AxcWg0NbAhiUuhHE1z9UjtBor4X3J
-         36Fk+9hdjs3wyq2AyTIKMT3xC/1XV3orULpN6lZaR5re/KtENTrwwijxa3vdjC05SsUX
-         3hJA==
-X-Forwarded-Encrypted: i=1; AKwUvBwUvNUStqy8qbYjTvEG2bY66rfUcvsHXecNziIL0ge2EBwSlRAQ1PnmGCnjMvzFiObUg+6UKDNV55eGjg==@vger.kernel.org
-X-Gm-Message-State: AFuF++nqYmgGCW8CLgxtu24zZIqaN/kYTLNDP1P7CGif4K4+5M2uNv4C
-	0Q9NyPaZ9cE+MGBEYjz5QnsVO1Q+2gSvAcSci6mF0sNZ4hhUbt99xgA3
-X-Gm-Gg: AYBFou3wHVu7qS9vy307BHmM/BenNDXcYQmloiifY4KB9Ok3YJY/rMmPC/zfz515fKF
-	8fe/7jU762BfE9Fe9ykNZxEfvsIKHdAM6NVV3vmgslScE5c5pXxRMM5WGMNcRNjJPNIeR3u2mmB
-	1wLuXEAgwDSLguLMKawkqP0zSlOngCYdV8Nu+zvUkGYzaD7aky+kBmjmE+P6Frm6KAkto3ZDeHU
-	vHesCPEA/IAPPKCS7PUPh29tXcYgMW5rgdmN125OIphsJkzo/u7tlU83+ANtwEbI8UTcfxLJ5qC
-	eQ7z4UsBwg+9FMiljO/M1rQKG9KoWEMrI9YWQe3bIDznx5AMG2XWl7W/R29NIuniTJIS0hMngNW
-	7pTJVSa9mzigk2ICpBnwznvr0GbDtFvvh/6rxSxwBaBFP6uiRkTKcMGAn6frjwUH51BWk/OY0eJ
-	Gpg104vScdozGE1UXSpRr8hPbJ/vb/tdHJDY8tzHBF3p+JFl4ENNqP7/VIBiz+kfM4enL+oH17x
-	UUJAGOXoEklVqI=
-X-Received: by 2002:a05:6820:162a:b0:6b3:6444:46e with SMTP id 006d021491bc7-6b6facde170mr3834718eaf.8.1788520206216;
-        Fri, 04 Sep 2026 04:10:06 -0700 (PDT)
-Received: from volcano9f6e-hostos.amd.com ([165.204.217.251])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33450e140d3sm2492230eec.4.2026.09.04.04.10.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Sep 2026 04:10:05 -0700 (PDT)
-From: Hemanth Selam <hemanth.selam@gmail.com>
-To: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UqaD9GhP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1788521931; x=1820057931;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sI88re9mQH9GGvNdQuqSOyqwac+FJGSZRs1mUIUeR4w=;
+  b=UqaD9GhPIW/SEAoEvQoN/3I3/quz0Twf58glhUF4UbcXAPhfSIYEFom8
+   asi/GlcCJpRE4/DOAHGUgb+lzY83/2fJFiSVHp3kIyLRaB6hWCpIa8k8q
+   2t2iYNFuw9Dr7Hk9t/y1vRxsLA5OJ2KRzi9R+3Red0tuBJTXGQyPFVZnm
+   1d+aS26JkqiJQKkrpvB8p2z/WALCvpkcItvZe9BoKVWDKKGJnpx8a3gNZ
+   XYXsb57cpHTJlPkVqGh9f8Pow1nOt4cx7pZ/9pUxOGI7HKrGZcjEOjNDs
+   UUsJEjk6FIPLMA3G8Trl1a4ffLKBe9mI1SCtb+QVB9iwP4XBRbXs88tcv
+   Q==;
+X-CSE-ConnectionGUID: LatcrKqzSN2OAwTI6oWWHw==
+X-CSE-MsgGUID: FFbvIKOaRBitth8s6SHZTw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11895"; a="92720050"
+X-IronPort-AV: E=Sophos;i="6.25,262,1779174000"; 
+   d="scan'208";a="92720050"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2026 04:38:50 -0700
+X-CSE-ConnectionGUID: ObP9eg0VQSCbRIFJ00EGKA==
+X-CSE-MsgGUID: UlijwXHGRmWAqOZ/7kly8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,262,1779174000"; 
+   d="scan'208";a="268698798"
+Received: from slindbla-desk.ger.corp.intel.com (HELO localhost) ([10.245.244.224])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2026 04:38:42 -0700
+Date: Fri, 4 Sep 2026 14:38:38 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Amelie Delaunay <amelie.delaunay@foss.st.com>
+Cc: Frank.Li@oss.nxp.com, Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>, Vinod Koul <vkoul@kernel.org>,
+	Frank Li <Frank.Li@kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	Binbin Zhou <zhoubinbin@loongson.cn>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
 	Thierry Reding <thierry.reding@kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	Tero Kristo <kristo@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-omap@vger.kernel.org
-Subject: [PATCH] clk: tegra: fix typos in comments
-Date: Fri,  4 Sep 2026 16:39:57 +0530
-Message-ID: <20260904110959.21527-1-hemanth.selam@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Keguang Zhang <keguang.zhang@gmail.com>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Kelvin Cao <kelvin.cao@microchip.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-trace-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-actions@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	imx@lists.linux.dev, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH v2 1/3] dmaengine: vchan: add vchan_chan_name() to get
+ channel device name
+Message-ID: <apqtvq2Xov1LKBPN@ashevche-desk.local>
+References: <20260903-dma-chan_dev-rename-v2-0-0db305b6c716@nxp.com>
+ <20260903-dma-chan_dev-rename-v2-1-0db305b6c716@nxp.com>
+ <apqKgda7dW_JXolJ@ashevche-desk.local>
+ <be376690-5219-4bf3-8ed7-02a49cee0e30@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <be376690-5219-4bf3-8ed7-02a49cee0e30@foss.st.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Fix typos in comments, reported by scripts/checkpatch.pl using the
-misspelling list in scripts/spelling.txt.  Only touches comments, no code
-changes.
+On Fri, Sep 04, 2026 at 11:26:37AM +0200, Amelie Delaunay wrote:
+> On 9/4/26 11:08, Andy Shevchenko wrote:
+> > On Thu, Sep 03, 2026 at 04:53:11PM -0400, Frank.Li@oss.nxp.com wrote:
+> > 
+> > > Introduce vchan_chan_name() to obtain the DMA channel device name.
+> > > 
+> > > Use a dedicated helper instead of directly accessing dma_chan::dev
+> > > so callers remain unaffected by an upcoming rename of the struct member.
+> > 
+> > LGTM,
+> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > 
+> > ...
+> > 
+> > >   		ret = devm_request_irq(&pdev->dev, chan->irq,
+> > >   				       stm32_dma_chan_irq, 0,
+> > > -				       dev_name(chan2dev(chan)), chan);
+> > > +				       vchan_chan_name(&chan->vchan), chan);
+> > >   		if (ret) {
+> > >   			dev_err(&pdev->dev,
+> > >   				"request_irq failed with err %d channel %d\n",
+> > 
+> > This one...
+> > 
+> > > +++ b/drivers/dma/stm32/stm32-dma3.c
+> > 
+> > >   		ret = devm_request_irq(&pdev->dev, chan->irq, stm32_dma3_chan_irq, 0,
+> > > -				       dev_name(chan2dev(chan)), chan);
+> > > +				       vchan_chan_name(&chan->vchan), chan);
+> > >   		if (ret) {
+> > >   			dev_err_probe(&pdev->dev, ret, "Failed to request channel %s IRQ\n",
+> > > -				      dev_name(chan2dev(chan)));
+> > > +				      vchan_chan_name(&chan->vchan));
+> > >   			goto err_clk_disable;
+> > 
+> > ...and this one are duplicate messages as devm_request*irq() printsr
+> > most of the information.
+> > 
+> > Not sure if there will be a patch to simply drop them.
+> 
+> It was the purpose of this series:
+> https://lore.kernel.org/dmaengine/20260709135846.97972-1-panchuang@vivo.com/
 
-Assisted-by: Cursor:claude-opus-5
-Signed-off-by: Hemanth Selam <hemanth.selam@gmail.com>
----
- drivers/clk/tegra/clk.h | 2 +-
- include/linux/clk/ti.h  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Yes, thanks. My point is (independently on who contributes that patch) that
+the piece above may be an unneeded churn due to messages are going to be
+removed. It all relies if that series (a.k.a. patch that removes messages)
+goes first.
 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 73efd2ff37c9..afa93ba505ab 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -255,7 +255,7 @@ struct tegra_clk_pll;
-  * @set_gain:			Callback to adjust N div for SDM enabled
-  *				PLL's based on fractional divider value.
-  * @calc_rate:			Callback used to change how out of table
-- *				rates (dividers and multipler) are calculated.
-+ *				rates (dividers and multiplier) are calculated.
-  * @adjust_vco:			Callback to adjust the programming range of the
-  *				divider range (if SDM is present)
-  * @set_defaults:		Callback which will try to initialize PLL
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index 54a3fa370004..61c4abf19995 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -51,7 +51,7 @@ struct clk_omap_reg {
-  * @autoidle_mask: mask of the DPLL autoidle mode bitfield in @autoidle_reg
-  * @freqsel_mask: mask of the DPLL jitter correction bitfield in @control_reg
-  * @dcc_mask: mask of the DPLL DCC correction bitfield @mult_div1_reg
-- * @dcc_rate: rate atleast which DCC @dcc_mask must be set
-+ * @dcc_rate: rate at least which DCC @dcc_mask must be set
-  * @idlest_mask: mask of the DPLL idle status bitfield in @idlest_reg
-  * @lpmode_mask: mask of the DPLL low-power mode bitfield in @control_reg
-  * @m4xen_mask: mask of the DPLL M4X multiplier bitfield in @control_reg
 -- 
-2.48.1
+With Best Regards,
+Andy Shevchenko
+
 
