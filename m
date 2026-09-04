@@ -1,266 +1,315 @@
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011059.outbound.protection.outlook.com [40.107.130.59])
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011050.outbound.protection.outlook.com [52.101.62.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46DEA42E8FF;
-	Fri,  4 Sep 2026 09:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.59
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84743932E5;
+	Fri,  4 Sep 2026 09:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.50
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788513067; cv=fail; b=VNgUH/v+y8wljiyr6jOCJGVcG/+7+giwi6l6ls5VSOp2B8yLJZf2ZAsScytj36tFE5+3T5ylQ5IuSiU2FSStpcbLdxi2hpec+AiMNYlLtrhLTIRXZBy7qz+oqSjLRE1FKIrRzOEycpn1uiVmuYwzTZHgDH511yEnEy8AsWhOaJg=
+	t=1788513372; cv=fail; b=EwRas6+aFaRpcTCSbRFm/egSdJfPvvYgSF3vJua5AHBOjF/EHVNaMDun2LY/QhjEzOkwPJmziHMqMfc20jUJCCxoWb0YagHikthEzmuW/fLV965Mg/fXtSVEZzb7dRd9X25hpWiqg82e4rip/pTpGK9X4yukqCp+Z513mTm3zMY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788513067; c=relaxed/simple;
-	bh=nMSZjDawsFA/XM7w+rCsVn0SrsWvBmKh4K53kn0UUWI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=S2LyS1y9ZashlqIsRjMiAqSELTUwbPBKgkjy08MlwQ3FDQGNyNNziVta1KGDnEZc1W+WtzK+IBMNEibbkwDAHVBlQYhnnicWMZGAkUYExkspwUySzOVTdh3aAu57IcCsENXvMbVqqvtaAxi+jbiKKzUoQKHa0OSsvErNzDT9PNc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=WShB0RDT; arc=fail smtp.client-ip=40.107.130.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1788513372; c=relaxed/simple;
+	bh=oE98lO+SPDNxASub3vSXhpPet+lr5Almh2velxiemZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=lbHDVs/GmVvIvuQmpxjA7uVxbI2BtsOjpfqGnTIn3KZ7x196Ya1LKRlB3ShpS4BURllrxglspZ8yJUpZJjKnIS5h4a9wKoB//Ec+dqZ6nzea/rry3mxfVOA20nRZT3IRz0Hbr4WkeA7prj/t/CasD2LVCVf9KBAzYGbqGNTG9HM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rJP4Se1t; arc=fail smtp.client-ip=52.101.62.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="WShB0RDT"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rJP4Se1t"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Iijn9OV/3hEbS2LeNMnfgXqTvw9zbE7VY5WCvxnuibAmvCNheB3+5oapGmSHgy7QICL2aksBT5VTpuZBybA7s5QAj+/5dgNoDooDLXdDCldB48adomCSxzv152M366kDYDcpOf5Z9dWp3YGl9GbFQRxwgE9E70t/pdHLhTDF7UTH5JsJIzFiddZV96bEQBZj5aNc8KwNRFlxIX54xvSkoGSNX3Y3a8T4arYQ2W4Tef+nYWquJLq9BZWSH4ClaxUEci/HnL1KYT5kjiFhah/BBCAwNmZHEGYC3Fj3TVjvHCNu86ETBS57nPu3d/3QGWdLjvt412queHMSF4xXptl1LQ==
+ b=Y302owDC3s4epWz8RvhkixuCZtQqmGmVrfadnDNYYVbLAGuVuPrOZOosEHKLI5fuUVcTsMEawTYQL2q0CFEhBeY7pV1afCAp7JbTmnEx0Rlm0I7gj1j/2AUty15uXx6chWTQNsMR01m5qTHEvFU79HMNCLLWttaX8GekW5tc4YDdhUpo4SgmjluX5gLvs6B82VCUcKbqa3g1erxhCGEfKWZbbw+yZ/2Ua4KXvLui8khcspAKFDyK7KLlpGmEh122DN7y1atIyXqIRwBoBoAwtFCPNxxxiBhj1iYW5L0pyamIjoIbyQV9dtV5poTbeEgA/1j0X/E7paaCT48vvuZqiw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NKnd/NrrzMM1L+HbhJfTzGv/GuYL8PflnYH9A3PisGY=;
- b=m1sDws6uhGquPykV7O5Tz4CfuIfEqSfqndStRh4q53134BaSD3Tl3Qong2m5oL4ZQyuzfufa/xqKchbZr1lYkDCVR6A0ENVQpcQzyAXqM3W76XdiJyL8YdvYTAw3f/7Zk1bS9DaX8jRirWdgQwe5Nf3Ds1Op1sHimx6JAUYIuPHiE+jO3xRu7+LHzFpJRtq26F1L/3KDspShSzAXPTvK8gMElwS17cxoJAFTBoJXU+sbeKb5144TlxDx6gb4YQYynJ+Zkx0TE+atFLU2SYJ36UCl+IyLAMBlJ3IYxEgTCxFaQq7lqKfVpBntyx74s/zarRwuIp/rF8NsFPi6a3eM0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.88) smtp.rcpttodomain=oss.nxp.com smtp.mailfrom=foss.st.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ bh=wTh4Ke9Sgi6KrqlGQS2/yfuiuES4niavQH3xn8CqLu0=;
+ b=MKKDSxYSNcelu6ybSWd+F8HOnAzzDQVrZSkzOLefgTB0cP1AYtywg99zEWVnFPKe1jB6H7DeOzpPbDpVSy8msKu2w+7fiPO5AmsEmDWZaP6e2zy2eBeupZntg6Ds+uOfAIjBhqUzwWDy0gOxE3GzttE9hJLZKZpMWpKhrp6JJxKyuxDklRu0mQp5lghqYpZnjZON282+XY+5NfnX4ntIxdiHAltWo+zogSSeEZyTYpBUh4OvM0maeajkRn6hCkjB8iBqpOpt59uTZW/3CjL2DJZwOJGpPOI1VetGVJJcU2DQK/A2daKABzcHeEo/Gl/FnYs1LJ7Xt1nxOzLg+fy4Kg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NKnd/NrrzMM1L+HbhJfTzGv/GuYL8PflnYH9A3PisGY=;
- b=WShB0RDT9vr0U0dv03ab4J+KxVmnvi74XvccqsGRjTSInDx9mnBbmTFLU0IHw+IEK8Ja163PYF1dVXJOagr8DrMvD1dJY9yA7kBYPQPbM67Bme/4jfQ6H6oExM4yoq/YpZR0BAlUHjPzRdSs2qzK/JBoNNl3AQfDADDtydf6dCh+s4GWNXLb1wXibj0D5D+ecrweGuSe0Dz6J6ZU4hz+u6uIdMT6se4k4yAfc6ya4rr7SFHRXWez/TYhA62asxgvP3Hoj04HemGf+FERBHWxTEe8bsGl6SAMAbzpru825Hl95cJuqTeAFGPuFDpOgqHbPSMwIjHNRC1NLdwhh0G3SA==
-Received: from PR1P264CA0083.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:345::14)
- by VI3PR10MB756752.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:377::24) with
+ bh=wTh4Ke9Sgi6KrqlGQS2/yfuiuES4niavQH3xn8CqLu0=;
+ b=rJP4Se1tmjoVWhr9QXfuucZ3ge3jhykjvHgSpMiL9xhyydV0JD648Cb2I86ZAbT0xJAq9sPJ0QG0+e+3MNvbflXJn3ul7furb1wk9g90LWN5naqXWMLeIyVSNZ5Mc4ztsWSm7uPj0rYtn9idjvGuhcq0OdKTjqLaEd+BOvzOz7kLLXQjNv6v1xJkVPKRujGje/JnZVkDMZwh+uducymzydRs30biM/3trH23+Srv1cN97uYgPZs3ILP08BSu2J+qjy9rjWMNZpfTpUVNoMeSjO6OdKrP8SpfQ2ukDTc5anyby5kjCQs9R3Kkz6+UfDINkBc9eCT+g94JLt3w5u6bsQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BL0PR12MB2370.namprd12.prod.outlook.com (2603:10b6:207:47::27)
+ by IA0PR12MB8863.namprd12.prod.outlook.com (2603:10b6:208:488::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Fri, 4 Sep
- 2026 09:10:57 +0000
-Received: from ZR1PEPF0000E6B5.eurprd07.prod.outlook.com
- (2603:10a6:102:345::4) by PR1P264CA0083.outlook.office365.com
- (2603:10a6:102:345::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.382.12 via Frontend Transport; Fri, 4
- Sep 2026 09:10:57 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.88)
- smtp.mailfrom=foss.st.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=foss.st.com;
-Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.88 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.88; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.88) by
- ZR1PEPF0000E6B5.mail.protection.outlook.com (10.167.241.68) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.382.8 via Frontend Transport; Fri, 4 Sep 2026 09:10:56 +0000
-Received: from ENXDAG1NODE4.st.com (10.75.129.197) by smtpo365.st.com
- (10.250.44.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.43; Fri, 4 Sep
- 2026 11:08:13 +0200
-Received: from [10.48.87.20] (10.48.87.20) by ENXDAG1NODE4.st.com
- (10.75.129.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.43; Fri, 4 Sep
- 2026 11:10:54 +0200
-Message-ID: <a4be2ef7-8987-481a-a329-52c809bbddb3@foss.st.com>
-Date: Fri, 4 Sep 2026 11:10:54 +0200
+ 2026 09:16:07 +0000
+Received: from BL0PR12MB2370.namprd12.prod.outlook.com
+ ([fe80::86cf:c3ec:2cf5:74c8]) by BL0PR12MB2370.namprd12.prod.outlook.com
+ ([fe80::86cf:c3ec:2cf5:74c8%7]) with mapi id 15.21.0360.008; Fri, 4 Sep 2026
+ 09:16:07 +0000
+Date: Fri, 4 Sep 2026 17:15:59 +0800
+From: Richard Cheng <icheng@nvidia.com>
+To: Srirangan Madhavan <smadhavan@nvidia.com>
+Cc: Alison Schofield <alison.schofield@intel.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Dan Williams <djbw@kernel.org>, 
+	Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>, 
+	Ira Weiny <ira.weiny@intel.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Vishal Verma <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alex Williamson <alex.williamson@redhat.com>, vsethi@nvidia.com, 
+	alwilliamson@nvidia.com, Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>, 
+	Vishal Aslot <vaslot@nvidia.com>, Manish Honap <mhonap@nvidia.com>, Jiandi An <jan@nvidia.com>, 
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v11 00/12] PCI/CXL: Add CXL reset support for Type 2
+ devices
+Message-ID: <apqLmL07mEji7e_k@MWDK4CY14F>
+References: <20260902072804.665639-1-smadhavan@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260902072804.665639-1-smadhavan@nvidia.com>
+X-ClientProxiedBy: SI1PR02CA0037.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6::13) To BL0PR12MB2370.namprd12.prod.outlook.com
+ (2603:10b6:207:47::27)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Linux-stm32] [PATCH v2 1/3] dmaengine: vchan: add
- vchan_chan_name() to get channel device name
-From: Amelie Delaunay <amelie.delaunay@foss.st.com>
-To: <Frank.Li@oss.nxp.com>, Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung
-	<schung@nuvoton.com>, Vinod Koul <vkoul@kernel.org>, Frank Li
-	<Frank.Li@kernel.org>, Paul Cercueil <paul@crapouillou.net>, Eugeniy Paltsev
-	<Eugeniy.Paltsev@synopsys.com>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Binbin Zhou <zhoubinbin@loongson.cn>,
-	Patrice Chotard <patrice.chotard@foss.st.com>, Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Thierry Reding
-	<thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, "Ludovic
- Desroches" <ludovic.desroches@microchip.com>, Viresh Kumar
-	<vireshk@kernel.org>, Keguang Zhang <keguang.zhang@gmail.com>,
-	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Manivannan Sadhasivam
-	<mani@kernel.org>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang
-	<haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, "Chen-Yu
- Tsai" <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, "Samuel
- Holland" <samuel@sholland.org>, Kelvin Cao <kelvin.cao@microchip.com>, "Logan
- Gunthorpe" <logang@deltatee.com>, Laxman Dewangan <ldewangan@nvidia.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>
-CC: <imx@lists.linux.dev>, Frank Li <Frank.Li@nxp.com>,
-	<linux-actions@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mips@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<dmaengine@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
-	<linux-stm32@st-md-mailman.stormreply.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-trace-kernel@vger.kernel.org>
-References: <20260903-dma-chan_dev-rename-v2-0-0db305b6c716@nxp.com>
- <20260903-dma-chan_dev-rename-v2-1-0db305b6c716@nxp.com>
- <4e3a2f00-ec1d-426e-b71b-fcd9fabe6b86@foss.st.com>
-Content-Language: en-US
-In-Reply-To: <4e3a2f00-ec1d-426e-b71b-fcd9fabe6b86@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: STKCAS1NODE1.st.com (10.75.128.134) To ENXDAG1NODE4.st.com
- (10.75.129.197)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZR1PEPF0000E6B5:EE_|VI3PR10MB756752:EE_
-X-MS-Office365-Filtering-Correlation-Id: 72641aa2-d6b6-4e01-7cc6-08df0a646def
+X-MS-TrafficTypeDiagnostic: BL0PR12MB2370:EE_|IA0PR12MB8863:EE_
+X-MS-Office365-Filtering-Correlation-Id: 054d9541-8bd2-4c12-c57f-08df0a652690
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|23010399003|1800799024|36860700016|376014|7416014|13003099007|921020|22082099003|18002099003|11063799006|56012099006|4143699003|10067099003|41080700001;
+	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|23010399003|56012099006|10067099003|5023799004|11063799006|6133799003|3023799007|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	hkhJ19OyXulv8Xh99h/xuMwKJ2h0ajYi0fQvNsIIKAZtYsMyhWrOlyN+rJrFxJQMVg7L4MKIhVr4ZnMcnHhgklA6aeRDXyBwhl30hP/KqKAxpK5KZns5fiRCE+5DNArivbwvaTqf6aSDt1E7GZ0/AjjMqkviDpscluExruw88jRybYFZN4+xXvvF6QQMdXTzR9rqnahanb8rkx0KYL1dwNbsjTa4CulG7oFOQtxOQ9HYhhdOn/BLxGnCnvWQnIoByRP3G0Dr8Ybx1bQpoaC+xbzng3EFfqDMaRAf2Iy8lZH2krvsCezNx0ZrDYhp8kIKYa6T6EpICNQexDg7cCxsWXCPJU5FH9BGVpdf84uawvL7XFRGkI7S5Ym3im4tBlWKkOCAFRgQvUpKpk5niE7gVP59v/AVBDcLZI3zD0JicRI7pN1DGBTDQLWhaTvi+YeCB0S7nwhA/lXbOTakh4KUV1cy3ateybqCFVlEkhmfki1hxyFnppbAwdS7ti8qoDeq5zG3OasfdQ330niyOEaw+djiG1NVP1MtAbB4cwsSGR0GEvjVaocMDyQbWiwM5wL/b+/wNMN6Auqk7vphMtZz8+VPorcuu2M+w/yrwdF88a6ThN7OWxnPTc7WtSXgUwGMrNPTyUJR2+PqQR32MDqOd+8VFRI1GIv+UQg7zMDecZbOBwtWuwyWn/QUo86e0DoW
+	1BYDJgEFwl68Qjvq+Dl8AcUihKL2OG1neyCJwkxY4ivIDNLRmbrDnJ9HQlbXdt5yqot2Klp7svH6vTjR4FFVXQW5/LteJrBW0yPtrQULLW1Pj8I/BLYhAw92eE+hLgOsIJ7taNZ/LlIHmSPmgXgFtWcOsHU9X3d+1IDW33bRJxe4UAHCeAHb6HuwmGjksrliEd6bUtj/p8qUq3m8K8HvozjZkByR0WS20E1X7NjUQKHBcQhdwEv2yCVaEO3cOPnNZ3cId2c9d98F931VnwT1/ljdUbMctuEjHnJ5UH//Avi3hbZqVQKKKQEXFIUlCMeKlETzwZ47HVKhlWT0Qy7l4DmlnFVbCSwwkgx6eXhlh3ErTUWfkg2FIGFb3KicT7aleoR8zorwoKDpwzhqQxWfqVj+u0Cu0Y97xOWQoznsJo4tZ4goTHUjktMRcBzMgE2FeY9Lv7d8Q2PExZwo9rNKvpOCyc9H0f/Cxy3+jLiriegFA74Eht0hyQtHFSv8FefMs775zLZv3mx8Roxaw3FF9noaf4R6z7/uEmScO2MI1d1fhlcCOe+JkVAoNUvsZmbPu6JASg7AOHNsZR/AI5kxGdVonvgPIKdO72QjLoA3EtuGR4qCHjhj2iiiInGy3WWv6nwugkedf+op3hyyzIFlNsgVjCeHqsz2F4DwMVXiip4=
 X-Forefront-Antispam-Report:
-	CIP:164.130.1.88;CTRY:;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(23010399003)(1800799024)(36860700016)(376014)(7416014)(13003099007)(921020)(22082099003)(18002099003)(11063799006)(56012099006)(4143699003)(10067099003)(41080700001);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR12MB2370.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(23010399003)(56012099006)(10067099003)(5023799004)(11063799006)(6133799003)(3023799007)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	YYh4pdgkdzU87tRyjQQvuvz20nvXo49VEjT/MveM6K3Cq2IuXuJiYRxvIgOipIqUUYNeXnTPPy4D/HOJSjnsD7Hps3pIJ/iKDU0RI+zwEVn2R6LI4Rfl4MdvpDdyNwJU2G85Zy7Aj6zWfUaeLS9np+uxRvVeusgGuOP2VbOLW/MqbMUZbesBU9rTLk5+toniC4XtsPUE74lVzZFItXUzEKXt4csHttFvKqdQyP8mDAoBLsDkkhMnFdL+IaBS46O9WgezJ3A/eYChK0K7mIkJUpIdAnYIckI3Z+Q7W+vrScCf5vCOf+PcQP8HqJnYPVdQW7mGisCOwKemhB4mjo+naZlvAgNemhapt6DvrSZzXL0g5zMvJNsdtCWIo49BdqvoDWSiYc+HbtLEdKMUV5U2UZtCJLWJwW1V182bob1zhKPfbnE3L4upyvpVW+Lu0Jga
-X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2026 09:10:56.6350
+	=?us-ascii?Q?ND7ShRHMdcRoNUEktMIb95iafaiC+rsgCPcQTamzoxN/fj6CG/5Fdu97qLOZ?=
+ =?us-ascii?Q?jtv0ThbPmDO/Tn5s1liQVqaNGdyCNGYcy7aQ389ENhFTb9TFDEUcrPV8+kbj?=
+ =?us-ascii?Q?BUutUm8jLuA7T03TISx/N7ucckmelc2USR3vVDikOqHAgpoLEbWOMSkGcCBy?=
+ =?us-ascii?Q?Nv1ZLj6X84jCSPXKo71fCalj9xu1kk7UF8i0RjUpWdqTgaH5vKb3TMFxKS5h?=
+ =?us-ascii?Q?6nnbXHSquC7vIt/Mndk49fkXhxZ+kDEqbXsgfn3AO/jc0zTm9u3xXAQWAiVS?=
+ =?us-ascii?Q?JZYVJcCv/YdTY5GVts24detRz4VvsvHbgtrnCJeeIq5ddqDFwEiOxtsmurWf?=
+ =?us-ascii?Q?HlWbJDsgzH8cfxbFCTm2pKQw6TV6AxwMefB467ebL6LUwIqZX5byIR+o3QEB?=
+ =?us-ascii?Q?0h9088c+8hqtx4zzMp0w2iApnnkP+cQXetZAbceSc5DJ6F+KT5LWTDqVYg99?=
+ =?us-ascii?Q?usog2KxcUn4FQUI9f5ud3OsICm/tfc1Ox9ShcJOZmwtQ5ZQx1dNDT1dG0tDw?=
+ =?us-ascii?Q?JLqxFZPtC1AJoax4l8h+swe2wXXW8ZNj/AzLbV43Ov38C8c5IN0CzvqNJTb3?=
+ =?us-ascii?Q?Cqui+1vHrPzux2+Q33QJ8egCHcegD0ZwptaeaapNB31xfc+JZGB7k8MvOOrW?=
+ =?us-ascii?Q?GGqnu/4Jjif4W5Sc5sH9kFqQm8BxuMsELdH/T9YBT3r/iS8XMpFZUS6uZmX8?=
+ =?us-ascii?Q?YJDwaaFYfIabpivk8WcZQ+u1qehs7MaGgp6/3ERfHsVyXkRUttjQE0m/6ioh?=
+ =?us-ascii?Q?z06CHVKBA81V8LRYLuNwoC1ha8UxFtAIkKOoGTQp/z1y/CXehBHiH7jZPxB5?=
+ =?us-ascii?Q?3Frft6Qlb0fMtJ6ghETnJ0buOfAwv8EuNaBzIL3ASdTNJGXr4b4FuLhfBXGO?=
+ =?us-ascii?Q?mXrQa3N6ZxnPo3+j70fQdQvo1IWZ+xRDhLFqkwpU1dbTmGgaTja1mvxCsEQ6?=
+ =?us-ascii?Q?xUjGb4qMk8hq4OfDDECd5UX9FUHIKAMUecvsdshBwIaeAysaTsARxR1073Qc?=
+ =?us-ascii?Q?Bz803YstSQECMUOQx0AeyohfZQK78Nvh+ZmXVWEXS+sb60wexd465z4aV+NV?=
+ =?us-ascii?Q?YP7vTqfYR623GIHmg2WTKuaDRjoWDEiP/6zLgIJNJyuEY2HRs9ySQxxI33Ce?=
+ =?us-ascii?Q?/aGA+/n7BU0ZxtVcHLQkMuXU7DxkIm9K+BZ3UAMLWWFKBg8Xtqxj+O/ZWtB4?=
+ =?us-ascii?Q?J0bW3gBZXrQs6MlfEvPkLcEJcX5cB2veRZ4D4mxcZsZo7Z5JsfIftAMcpgOV?=
+ =?us-ascii?Q?5w5Lavp6Cc8KxjVHlNxeAVbHUKtlyINYRgZh58D6Rm9vIo1QXugPdjuF/nLU?=
+ =?us-ascii?Q?lSNKKzqc80a+rWailqpvJE9Ap6EpSydB2ll/zbw10ubBkFRxzk62XkRZhCNQ?=
+ =?us-ascii?Q?hPM8KloPQ0LnAp37Z5BuwKDWglRlZwlrcfc1NzEmxjWV9EvmEc+nJcbF+LOB?=
+ =?us-ascii?Q?AvtxNsP+z/Kw9Hnz8+uSw/97tZ+7chB1+pwcSc1kClFQB1go8Nmc7PnSSC54?=
+ =?us-ascii?Q?K+4/0N8iTGkzcoI5CibVxU+wnns7CfKqB0+jdD2ooJnXXei4ruSlXxnmj+gc?=
+ =?us-ascii?Q?sYBSJ7zknUa7FMgqfauHcrmumrXDzJwfWQ7MTu30zV+rHbsZVc+jvsuTyJhJ?=
+ =?us-ascii?Q?IHl5GS3cOJGEms0feLHfoQiVjAWBWNhlpRMO3J5u9PdAhJoOXOkH7ePWeTqK?=
+ =?us-ascii?Q?R9T91K9MQgOzM6nCEHAGF26iw4Y5Yc1UgZSDf0z6Rwv5XNMUYvA52S1UAo81?=
+ =?us-ascii?Q?yTpU3Sz/JQ=3D=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 054d9541-8bd2-4c12-c57f-08df0a652690
+X-MS-Exchange-CrossTenant-AuthSource: BL0PR12MB2370.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2026 09:16:07.0632
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72641aa2-d6b6-4e01-7cc6-08df0a646def
-X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.88];Helo=[smtpO365.st.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	ZR1PEPF0000E6B5.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI3PR10MB756752
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JTyuDEhvpnw4m6HT9B+8AXIT55/Gj9AmUfeZo4X4f2gzce6QXog09cyc8uARW+Ti8w+bztH9LXhDcs/R70Mgfw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8863
 
-On 9/4/26 10:35, Amelie Delaunay wrote:
-> Hi Frank,
+On Wed, Sep 02, 2026 at 07:27:52AM +0800, Srirangan Madhavan wrote:
+> Hi folks!
 > 
-> On 9/3/26 22:53, Frank.Li@oss.nxp.com wrote:
->> From: Frank Li <Frank.Li@nxp.com>
->>
->> Introduce vchan_chan_name() to obtain the DMA channel device name.
->>
->> Use a dedicated helper instead of directly accessing dma_chan::dev
->> so callers remain unaffected by an upcoming rename of the struct member.
->>
->> Signed-off-by: Frank Li <Frank.Li@nxp.com>
->> ---
->>   drivers/dma/arm-dma350.c                     |  2 +-
->>   drivers/dma/loongson/loongson2-apb-cmc-dma.c |  2 +-
->>   drivers/dma/stm32/stm32-dma.c                |  2 +-
->>   drivers/dma/stm32/stm32-dma3.c               |  4 ++--
+> This series adds CXL Reset support for CXL Type 2 devices through the
+> existing PCI reset_method ABI. The reset sequence follows the CXL 4.0
+> specification [1], including CXL.cache disable, optional cache
+> writeback, CXL Reset initiation, ResetComplete polling, and ResetError
+> reporting.
+>
+
+Hi Srirangan,
+ 
+> The userspace ABI is the existing PCI reset interface:
 > 
-> Could you move the driver updates from this patch to the next one? I 
-> don’t understand why the drivers above are modified here, while others 
-> are deferred to "[PATCH v2 2/3] dmaengine: use dma_chan_name() helper to 
-> get per-channel device name".
+>     /sys/bus/pci/devices/.../reset_method
+>     /sys/bus/pci/devices/.../reset
+> 
+> Userspace can select "cxl_reset" in reset_method and then trigger reset
+> through the existing reset attribute.
+> 
+> CXL Reset is exposed conservatively. The target must be a
+> single-function CXL Type 2 device with CXL.cache and CXL.mem enabled,
+> and the kernel must have cached HDM state sufficient to validate affected
+> ranges and restore decoder programming. The reset preserves device
+> memory; it does not request CXL Reset Memory Clear.
 > 
 
-Oh, okay — my bad. I've just looked at v1, and I now understand that you 
-split the vchan_chan_name() and dma_chan_name() updates.
-I didn’t catch that at first glance because your cover letter hasn’t 
-changed between v1 and v2.
-"1st patch: use the existing helper dma_chan_name() to reduce rename 
-differences.
-2nd patch: rename drivers/dma"
+It seems reasonable to me, the whole approach.
+I wonder if we can document the complete reset-safety contract down ?
 
-> Regards,
-> Amelie
-> 
->>   drivers/dma/virt-dma.h                       | 11 +++++++++++
->>   5 files changed, 16 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/dma/arm-dma350.c b/drivers/dma/arm-dma350.c
->> index 09403aca8bb06..52f5242ea3327 100644
->> --- a/drivers/dma/arm-dma350.c
->> +++ b/drivers/dma/arm-dma350.c
->> @@ -512,7 +512,7 @@ static int d350_alloc_chan_resources(struct 
->> dma_chan *chan)
->>   {
->>       struct d350_chan *dch = to_d350_chan(chan);
->>       int ret = request_irq(dch->irq, d350_irq, IRQF_SHARED,
->> -                  dev_name(&dch->vc.chan.dev->device), dch);
->> +                  vchan_chan_name(&dch->vc), dch);
->>       if (!ret)
->>           writel_relaxed(CH_INTREN_DONE | CH_INTREN_ERR, dch->base + 
->> CH_INTREN);
->> diff --git a/drivers/dma/loongson/loongson2-apb-cmc-dma.c b/drivers/ 
->> dma/loongson/loongson2-apb-cmc-dma.c
->> index 1c9a542edc859..2f1c8c4fd0654 100644
->> --- a/drivers/dma/loongson/loongson2-apb-cmc-dma.c
->> +++ b/drivers/dma/loongson/loongson2-apb-cmc-dma.c
->> @@ -678,7 +678,7 @@ static int loongson2_cmc_dma_probe(struct 
->> platform_device *pdev)
->>               return lchan->irq;
->>           ret = devm_request_irq(dev, lchan->irq, 
->> loongson2_cmc_dma_chan_irq, IRQF_SHARED,
->> -                       dev_name(chan2dev(lchan)), lchan);
->> +                       vchan_chan_name(&lchan->vchan), lchan);
->>           if (ret)
->>               return ret;
->>       }
->> diff --git a/drivers/dma/stm32/stm32-dma.c b/drivers/dma/stm32/stm32- 
->> dma.c
->> index d3ad78562a140..3e8151e2ad75a 100644
->> --- a/drivers/dma/stm32/stm32-dma.c
->> +++ b/drivers/dma/stm32/stm32-dma.c
->> @@ -1668,7 +1668,7 @@ static int stm32_dma_probe(struct 
->> platform_device *pdev)
->>           ret = devm_request_irq(&pdev->dev, chan->irq,
->>                          stm32_dma_chan_irq, 0,
->> -                       dev_name(chan2dev(chan)), chan);
->> +                       vchan_chan_name(&chan->vchan), chan);
->>           if (ret) {
->>               dev_err(&pdev->dev,
->>                   "request_irq failed with err %d channel %d\n",
->> diff --git a/drivers/dma/stm32/stm32-dma3.c b/drivers/dma/stm32/stm32- 
->> dma3.c
->> index 4724e7fa0008e..1ee1bd22703fb 100644
->> --- a/drivers/dma/stm32/stm32-dma3.c
->> +++ b/drivers/dma/stm32/stm32-dma3.c
->> @@ -1892,10 +1892,10 @@ static int stm32_dma3_probe(struct 
->> platform_device *pdev)
->>           chan->irq = ret;
->>           ret = devm_request_irq(&pdev->dev, chan->irq, 
->> stm32_dma3_chan_irq, 0,
->> -                       dev_name(chan2dev(chan)), chan);
->> +                       vchan_chan_name(&chan->vchan), chan);
->>           if (ret) {
->>               dev_err_probe(&pdev->dev, ret, "Failed to request 
->> channel %s IRQ\n",
->> -                      dev_name(chan2dev(chan)));
->> +                      vchan_chan_name(&chan->vchan));
->>               goto err_clk_disable;
->>           }
->>       }
->> diff --git a/drivers/dma/virt-dma.h b/drivers/dma/virt-dma.h
->> index 59d9eabc8b674..dd023a3831209 100644
->> --- a/drivers/dma/virt-dma.h
->> +++ b/drivers/dma/virt-dma.h
->> @@ -209,6 +209,17 @@ static inline void 
->> vchan_free_chan_resources(struct virt_dma_chan *vc)
->>       vchan_dma_desc_free_list(vc, &head);
->>   }
->> +/**
->> + * vchan_chan_name - Return vchan DMA channel device name
->> + * @vc: virtual channel
->> + *
->> + * Return: The name of the DMA channel device
->> + */
->> +static inline const char *vchan_chan_name(struct virt_dma_chan *vc)
->> +{
->> +    return dma_chan_name(&vc->chan);
->> +}
->> +
->>   /**
->>    * vchan_synchronize() - synchronize callback execution to the 
->> current context
->>    * @vc: virtual channel to synchronize
->>
-> 
-> _______________________________________________
-> Linux-stm32 mailing list
-> Linux-stm32@st-md-mailman.stormreply.com
-> https://st-md-mailman.stormreply.com/mailman/listinfo/linux-stm32
+Especially what guarantees that all CXL.mem users and functions are quiesced ?
+Besides HDM EP , what are other EP state that should be retained or restored ?
 
+I think it will make people understand the mechanism more easily.
+
+Best regards,
+Richard Cheng.
+
+> Following Dan's v6 feedback, this uses the existing PCI reset_method
+> interface instead of adding a memdev-specific sysfs ABI.
+> 
+> v11 changes from v10 [2]:
+> - Rebase onto v7.3-rc1, which includes the CXL Type 2 enabling work, and
+>   use the merged public CXL PCI header.
+> - Rename the built-in support symbol to CONFIG_CXL_RESET and fix
+>   built-in/module linkage for CONFIG_CXL_BUS=m.
+> - Fix tools/testing/cxl linkage without compiling production helper
+>   objects twice in the mock cxl_core module.
+> - Simplify decoder snapshot handling and preserve endpoint DPA skip
+>   ownership under the existing DPA lock.
+> - Keep policy out of shared decoder parsing by accepting spec-legal
+>   zero-size decoder state, while skipping zero-size ranges during reset
+>   validation.
+> - Tighten early HDM cache setup, capability checks, BAR bounds, MSE
+>   enable/restore handling, and cache publication locking.
+> - Keep the conservative multifunction-device rejection requested in
+>   earlier review.
+> - Harden post-reset failure handling so MSE and BME remain disabled when
+>   HDM state cannot be safely restored.
+> - Serialize CXL bus-reset HDM restore against region updates and flush
+>   posted HDM writes before PCI_COMMAND can restore bus mastering.
+> - Address the remaining reviewability and naming feedback from v10.
+> 
+> Motivation:
+> -----------
+> - Type 2 devices need a CXL-specific reset mechanism beyond existing PCI
+>   reset methods.
+> 
+> - FLR does not reset CXL.cache or CXL.mem protocol state. CXL Reset is
+>   the architectural reset mechanism for those protocols.
+> 
+> - The PCI reset_method ABI lets userspace select CXL Reset before
+>   falling back to broader bus reset methods.
+> 
+> Change Description:
+> -------------------
+> 
+> Patch 1: cxl: Move HDM decoder programming helpers
+> - Introduce a decoder settings snapshot collected under the DPA lock.
+> - Move low-level settings-based HDM programming into resource.c.
+> 
+> Patch 2: cxl: Make HDM commit helpers available to reset code
+> - Build generic HDM resource helpers under CONFIG_CXL_RESET.
+> - Export the lock and commit helpers needed when cxl_core is modular.
+> 
+> Patch 3: cxl: Share HDM decoder decode logic
+> - Share HDM decoder decode and validation between normal CXL core
+>   enumeration and early PCI HDM cache setup.
+> - Decode zero-size committed decoder state without imposing caller policy.
+> 
+> Patch 4: cxl: Cache decoder settings on PCI devices
+> - Cache CXL core HDM decoder settings in pci_dev->hdm.
+> - Refresh the cache as decoders are enumerated, committed, or reset.
+> 
+> Patch 5: cxl: Cache endpoint decoder settings during PCI enumeration
+> - Snapshot endpoint HDM state during PCI enumeration.
+> - Cache the HDM register locator as BAR-relative metadata and preserve raw
+>   decoder state for reset restore.
+> 
+> Patch 6: cxl: Add CXL Device Reset helper
+> - Add the internal DVSEC reset sequence.
+> - Disable CXL.cache, perform cache writeback where supported, initiate
+>   CXL Reset, and wait for completion.
+> 
+> Patch 7: cxl: Validate HDM ranges before CXL reset
+> - Collect enabled cached HDM ranges, reject busy ranges, and perform CPU
+>   cache invalidation when a runtime backend is available.
+> 
+> Patch 8: PCI/CXL: Reject CXL Reset on multifunction devices
+> - Conservatively reject CXL Reset where function scope cannot be assumed.
+> 
+> Patch 9: cxl: Restore CXL HDM state after PCI reset
+> - Restore cached global and per-decoder HDM state after reset while the
+>   target IOMMU reset block remains active.
+> 
+> Patch 10: PCI/CXL: Expose CXL Reset as a PCI reset method
+> - Add "cxl_reset" to the PCI reset-method table ahead of FLR.
+> 
+> Patch 11: Documentation/ABI: Document CXL Reset PCI reset method
+> - Document the new reset_method value and reset behavior.
+> 
+> Patch 12: PCI/CXL: Restore HDM state after CXL bus reset
+> - Restore cached CXL HDM decoder state after cxl_bus reset.
+> 
+> The CPU cache invalidation step depends on
+> cpu_cache_invalidate_memregion() support for the affected address ranges.
+> If no runtime provider is available, the kernel emits a warning and
+> continues after the affected HDM ranges have been reserved.
+> 
+> Example:
+> 
+>     echo cxl_reset > /sys/bus/pci/devices/0000:bb:dd.f/reset_method
+>     echo 1 > /sys/bus/pci/devices/0000:bb:dd.f/reset
+> 
+> Testing:
+> - Built every intermediate patch, plus the v7.3-rc1 baseline, with
+>   CONFIG_CXL_BUS=m. All 12 patches passed a full kernel build and
+>   `make M=tools/testing/cxl/` independently.
+> - Built and booted the series on an arm64 NVIDIA NVL72 system and
+>   successfully exercised CXL Reset through the PCI reset sysfs ABI.
+> - Earlier revision testing ran 100 iterations of cxl_reset and exercised
+>   cxl_bus separately with HDM state restoration.
+> 
+> References:
+> [1] https://computeexpresslink.org/wp-content/uploads/2026/02/CXL-Specification_rev4p0_ver1p0_2026February26_clean_evalcopy_v2.pdf
+> [2] https://lore.kernel.org/linux-cxl/20260804192958.1823952-1-smadhavan@nvidia.com/
+> [3] https://lore.kernel.org/linux-cxl/20260709010304.680422-1-smadhavan@nvidia.com/
+> [4] https://lore.kernel.org/linux-cxl/20260703220508.546528-1-smadhavan@nvidia.com/
+> [5] https://lore.kernel.org/linux-cxl/20260623032453.3404772-1-smadhavan@nvidia.com/
+> 
+> Srirangan Madhavan (12):
+>   cxl: Move HDM decoder programming helpers
+>   cxl: Make HDM commit helpers available to reset code
+>   cxl: Share HDM decoder decode logic
+>   cxl: Cache decoder settings on PCI devices
+>   cxl: Cache endpoint decoder settings during PCI enumeration
+>   cxl: Add CXL Device Reset helper
+>   cxl: Validate HDM ranges before CXL reset
+>   PCI/CXL: Reject CXL Reset on multifunction devices
+>   cxl: Restore CXL HDM state after PCI reset
+>   PCI/CXL: Expose CXL Reset as a PCI reset method
+>   Documentation/ABI: Document CXL Reset PCI reset method
+>   PCI/CXL: Restore HDM state after CXL bus reset
+> 
+>  Documentation/ABI/testing/sysfs-bus-pci |   15 +
+>  drivers/cxl/Kconfig                     |    4 +
+>  drivers/cxl/core/Makefile               |    2 +-
+>  drivers/cxl/core/core.h                 |    8 +
+>  drivers/cxl/core/hdm.c                  |  324 +++---
+>  drivers/cxl/core/pci.c                  |    7 +-
+>  drivers/cxl/core/port.c                 |   19 +
+>  drivers/cxl/core/regs.c                 |    4 +
+>  drivers/cxl/core/resource.c             | 1351 +++++++++++++++++++++++
+>  drivers/cxl/cxl.h                       |   41 -
+>  drivers/pci/bus.c                       |    2 +
+>  drivers/pci/pci.c                       |    8 +
+>  drivers/pci/probe.c                     |    2 +
+>  include/cxl/cxl.h                       |  116 +-
+>  include/linux/pci.h                     |    8 +-
+>  include/uapi/linux/pci_regs.h           |   14 +
+>  tools/testing/cxl/Kbuild                |    1 -
+>  17 files changed, 1715 insertions(+), 211 deletions(-)
+>  create mode 100644 drivers/cxl/core/resource.c
+> 
+> 
+> base-commit: cee9395acd8043be0644b25c34bfa86623f2b935
+> -- 
+> 2.43.0
