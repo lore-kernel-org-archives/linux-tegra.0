@@ -1,102 +1,88 @@
-Received: from ale.deltatee.com (ale.deltatee.com [204.191.154.188])
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7A22D7DCF;
-	Thu,  3 Sep 2026 22:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=204.191.154.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84A741A54B;
+	Fri,  4 Sep 2026 06:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788474794; cv=none; b=Iojo+FjwTLYxwrrYAB6W5Jtlq2zuvx4tdgC4uI/O2Gi+E2jTUheTaVu+RZwnwiuPjJV/tUkEStUCSD+F+uuxngaSkPp0etnEIeg3elzb/iPTcU5h1m6bjo60DH3n1N4p2GXzxCwa6NKmrnpNrDfu97cXPCFHqHqTIVXxBIS74Vo=
+	t=1788502316; cv=none; b=Gxsw/D+a7JFP4apj5KfK9YBXcdeC+wL2b7ztfvZt6N9A2VY/ZXBe80xaZnKeOpowPi4iK1ZA+eNdrwu5l4KZqFqN6JTlVycsWF54odiXCC3GIJNcespm2tAgSFRBjjFo8Q9UPl4MRufjUgDkN54pmD/N+FbxNeucDgUQGgRlUq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788474794; c=relaxed/simple;
-	bh=PIXL1HlOr2OAWCKfAcP7uuThZNVlq9Vbb6VY/5c8pcE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:In-Reply-To:
-	 Content-Type:Subject; b=X/+dgPTc9qA/RArUJ/s9piPq5o7HC8aw+vSkBaTWeWrECl6Xjdnj/islRVkx1ADV5z14WnT3VOYQiJ/K+GBlhgxIPq9Zi/+M75blOnPqi1el6ZrCvMJefPyaeM/dYdMBhm3d5dGYPBYqzwr/x7f6XQW8ZpdQNwya0L+dpPXrGvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com; spf=pass smtp.mailfrom=deltatee.com; dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b=JxhafLRB; arc=none smtp.client-ip=204.191.154.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deltatee.com
+	s=arc-20240116; t=1788502316; c=relaxed/simple;
+	bh=VWcCSH0dCpuBnV6oiRYjSwzVUgnxtoHKJ+yXnETEx3A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aiRmKgRTVhFULrJf7n1pJ0koKr6HgsjovruUycZhqbs/2jFwMlfbiQpLTJBtmPnbuJnosL0fK4TUpdTvK+gqEXhOS1IZkTLSv7FECImjJZl1ppOpRoNbQBWhgSA1/sUUWeRoh7HEbs4N3Sz9UH9gLpz8MdZyYF9KIIq2M5chmD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=AXWOwarS; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="JxhafLRB"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=deltatee.com; s=20200525; h=Subject:In-Reply-To:From:References:Cc:To:
-	MIME-Version:Date:Message-ID:content-disposition;
-	bh=ZpOyW9JwdzvymqD7nh64dhGMgQ9gYFcIgy1C7e7EDew=; b=JxhafLRBFfiDbyUgKcxbdSJ2dB
-	G/LvGMoB/v6HYzBXhKjf6dKeFB5H+10bD37VRifeQ+IQOe1OOrI2sYFlDm8ol7jTn2tPJyT1qAxf9
-	2g7eLzUtwiPDksHmpo5egNV1iJ3GeKdR33UH5IPfi+V20GQ7DZaS3mAIHe/lR6+R4bjLPOgNyBVWN
-	eGhbVPL7oZXNhllf05l+l2reLpOpV8o9PVpH/MPGKrrj6j+/coMHh8vSbqi4cjoNrEDN7dijdO5DI
-	lrpCi+m+/WHQRtrKOEnzkBkCWiYJ31KSiouFHjsJYXPZro5rxKb/hxeJNcmS4Qw5US97USWLcyIWE
-	y9y2zAvg==;
-Received: from [104.157.31.28] (helo=[192.168.1.251])
-	by ale.deltatee.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.2)
-	(envelope-from <logang@deltatee.com>)
-	id 1x2FzL-00000001iUZ-2jmV;
-	Thu, 03 Sep 2026 16:32:56 -0600
-Message-ID: <1fb463b3-437c-43fa-95df-29c2c7d2496d@deltatee.com>
-Date: Thu, 3 Sep 2026 16:30:55 -0600
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="AXWOwarS"
+Received: from PC-202605011814.localdomain (unknown [222.191.246.242])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 4c84a5972;
+	Fri, 4 Sep 2026 14:11:43 +0800 (GMT+08:00)
+From: Runyu Xiao <runyu.xiao@seu.edu.cn>
+To: Dipen Patel <dipenp@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	timestamp@lists.linux.dev,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Runyu Xiao <runyu.xiao@seu.edu.cn>,
+	Jianhao Xu <jianhao.xu@seu.edu.cn>
+Subject: [PATCH] hte: tegra194-test: shut down timer before GPIO release
+Date: Fri,  4 Sep 2026 14:11:37 +0800
+Message-Id: <20260904061137.4037269-1-runyu.xiao@seu.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Frank.Li@oss.nxp.com, Jacky Huang <ychuang3@nuvoton.com>,
- Shan-Chun Hung <schung@nuvoton.com>, Vinod Koul <vkoul@kernel.org>,
- Frank Li <Frank.Li@kernel.org>, Paul Cercueil <paul@crapouillou.net>,
- Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Binbin Zhou <zhoubinbin@loongson.cn>,
- Patrice Chotard <patrice.chotard@foss.st.com>,
- =?UTF-8?Q?Am=C3=A9lie_Delaunay?= <amelie.delaunay@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Ludovic Desroches <ludovic.desroches@microchip.com>,
- Viresh Kumar <vireshk@kernel.org>, Keguang Zhang <keguang.zhang@gmail.com>,
- =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
- Manivannan Sadhasivam <mani@kernel.org>, Daniel Mack <daniel@zonque.org>,
- Haojian Zhuang <haojian.zhuang@gmail.com>,
- Robert Jarzmik <robert.jarzmik@free.fr>, Chen-Yu Tsai <wens@kernel.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Kelvin Cao <kelvin.cao@microchip.com>,
- Laxman Dewangan <ldewangan@nvidia.com>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-trace-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-actions@lists.infradead.org, linux-sunxi@lists.linux.dev,
- imx@lists.linux.dev, Frank Li <Frank.Li@nxp.com>
-References: <20260903-dma-chan_dev-rename-v2-0-0db305b6c716@nxp.com>
- <20260903-dma-chan_dev-rename-v2-1-0db305b6c716@nxp.com>
-Content-Language: en-CA
-From: Logan Gunthorpe <logang@deltatee.com>
-In-Reply-To: <20260903-dma-chan_dev-rename-v2-1-0db305b6c716@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 104.157.31.28
-X-SA-Exim-Rcpt-To: Frank.Li@oss.nxp.com, ychuang3@nuvoton.com, schung@nuvoton.com, vkoul@kernel.org, Frank.Li@kernel.org, paul@crapouillou.net, Eugeniy.Paltsev@synopsys.com, andriy.shevchenko@linux.intel.com, zhoubinbin@loongson.cn, patrice.chotard@foss.st.com, amelie.delaunay@foss.st.com, mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, thierry.reding@kernel.org, jonathanh@nvidia.com, ludovic.desroches@microchip.com, vireshk@kernel.org, keguang.zhang@gmail.com, afaerber@suse.de, mani@kernel.org, daniel@zonque.org, haojian.zhuang@gmail.com, robert.jarzmik@free.fr, wens@kernel.org, jernej.skrabec@gmail.com, samuel@sholland.org, kelvin.cao@microchip.com, ldewangan@nvidia.com, vigneshr@ti.com, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-trace-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-actions@lists.infradead.org, linux-sunxi@lists.linux.dev, imx@lists.linux.dev, Frank.Li@nxp.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Level: 
-Subject: Re: [PATCH v2 1/3] dmaengine: vchan: add vchan_chan_name() to get
- channel device name
-X-SA-Exim-Version: 4.2.1 (built Sun, 23 Feb 2025 07:57:16 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0aa06b0b635603a1kunm17d27c262ab16
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkZHkkdVk1NSR8aTBpPGEtITVYeHw
+	5VEwETFhoSFyQUDg9ZV1kYEgtZQVlJSUlVSkJKVUlPTVVJT0lZV1kWGg8SFR0UWUFZT0tIVUpLSE
+	pPSExVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=AXWOwarS7QhrIVl02efjy5LRtr8InSgy0R+P+DmPuXR41PqxGFR9WfKc+qv1B4jEXVHajHqaf7ed7UJG4lgAHOpk3c9NkxCVR/cyKHXktdF/AFgfQKO6wBTtZHmfMf+Ou6hHsTbAB8gBJqWU1lqNI+pm2/FePwjoZY3AVwfuDGM=; c=relaxed/relaxed; s=default; d=seu.edu.cn; v=1;
+	bh=zbYzMXzKyFZV0cyFot9tpNTeo7XFZPJwRoTE/bMycuU=;
+	h=date:mime-version:subject:message-id:from;
 
+tegra_hte_test_remove() releases GPIO descriptors before stopping
+hte.timer. gpio_timer_cb() accesses hte.gpio_out and rearms the timer, so
+a callback concurrent with remove can use a released descriptor and rearm
+after teardown.
 
+Shut down the timer before releasing the GPIO descriptors.
+timer_shutdown_sync() waits for a running callback and prevents it from
+being rearmed.
 
-On 2026-09-03 2:53 p.m., Frank.Li@oss.nxp.com wrote:
-> From: Frank Li <Frank.Li@nxp.com>
-> 
-> Introduce vchan_chan_name() to obtain the DMA channel device name.
-> 
-> Use a dedicated helper instead of directly accessing dma_chan::dev
-> so callers remain unaffected by an upcoming rename of the struct member.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Fixes: 9a75a7cd03c9 ("hte: Add Tegra HTE test driver")
+Cc: stable@vger.kernel.org
+Assisted-by: Codex:GPT-5
+Signed-off-by: Runyu Xiao <runyu.xiao@seu.edu.cn>
+---
+ drivers/hte/hte-tegra194-test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Makes sense to me:
+diff --git a/drivers/hte/hte-tegra194-test.c b/drivers/hte/hte-tegra194-test.c
+index 32907d951..cca33868f 100644
+--- a/drivers/hte/hte-tegra194-test.c
++++ b/drivers/hte/hte-tegra194-test.c
+@@ -217,10 +217,10 @@ static void tegra_hte_test_remove(struct platform_device *pdev)
+ {
+ 	(void)pdev;
+ 
++	timer_shutdown_sync(&hte.timer);
+ 	free_irq(hte.gpio_in_irq, &hte);
+ 	gpiod_put(hte.gpio_in);
+ 	gpiod_put(hte.gpio_out);
+-	timer_delete_sync(&hte.timer);
+ }
+ 
+ static struct platform_driver tegra_hte_test_driver = {
+-- 
+2.34.1
 
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
