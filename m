@@ -1,87 +1,100 @@
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010014.outbound.protection.outlook.com [52.101.69.14])
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011021.outbound.protection.outlook.com [40.107.130.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AB84A3D45;
-	Fri,  4 Sep 2026 16:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EBF3BCD3D;
+	Fri,  4 Sep 2026 21:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.21
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788537807; cv=fail; b=G1sXukZkLAFD5wM4vQ+9r5jVZrBx02iryogU4q87TSvcyEJ5KnXtondApUTlxG7ldJvmjathMm0Z/r55j//6KDLizBUvuE8Q0Gy3YCXG1eVePzSl9TcmphlPM/31awKu1Jdse/AdUXBvejZJeSxNVt424LcneVMM0KkIuOapPJc=
+	t=1788558609; cv=fail; b=knBhDzzHF3l7Zb2hOrnTey+Z9lj0e+pHmqfDlbetcr9mkmgbTgSkVniyHT6iQ0wsmDDkuc8Y2vmH8tBclN+DGpj7aLMmxlYJCra7o0sccEewr1nrh4y2/j1gFjvNC9GwbR4Rt9BeBgkyoXkq6Wqia+0/YcNEUTF5yswAiG/rBoE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788537807; c=relaxed/simple;
-	bh=ZKrIjI0VajTOiM1WjTfZtRqakCMtP2tF+M7bxHd2fOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=gqGq0IwYMzWWWSl4XjucJsJynQhTyLrvYpyeyGk4YnLPbcTah184ZmJT5TgvsDq+ktE115jrALWPc7rzjp3kwiqG++zD2+S1xrxoVPw1CeHRN2aRNTaMToVicC/xhjUrGEaSH7YQmnQigsbnM5W+5DFkFRcdF0ABTsugujtu8xY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=qEFRfD56; arc=fail smtp.client-ip=52.101.69.14
+	s=arc-20240116; t=1788558609; c=relaxed/simple;
+	bh=Iz18q3YPb98fKzkmx1z2iPR386MGdkbCyCjNkYrVyAg=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=qJkHZ6Tl6ReoRDEVSvFvC4WKE22VAr3gg8Cu7+mdsGx4icD0C+ebPH73jBOxmdekg/v3/V0z3/gqcr/FKncrOugF75QY5r/FRLwM9aHbohDpdhWQxRzlfjNgONIC3f+JBQeFRviCBJ6tc8wVoP1oKNz7WjmwjAeHESsFlRDb88k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=XwY/4JAw; arc=fail smtp.client-ip=40.107.130.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="qEFRfD56"
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="XwY/4JAw"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Cl06H6+52OV55Ip0lbLLGm0V9VAXMbxuxmXyZuOCbmVWYF2vf8hBk3IE7qhpDR6uOMBlqcQCVM/nGE0iOwvjQGz559v6BFtWi2/94aQ7UOBy0B8krO4ErZ2npiAGyeth0/ZKOMhGnKVS6O4uXIul+ftqa9FzJuybCQB306aWNNm+S846UV+Y76v7L9T+ybm3YAjmjLYAB/vDkg7qzmqjP4pSBSGn+rTCQsvgSsZleHHlXEbXW+IxUVycwaZhQSeYTWQcjTsXBdG60IlsLb8j//dbN2daMy7kdTJx5LXO8UpicKbOmGZvz2PgO6DoSmJZWwBh4GY2z1iPuS5OQU9/Zg==
+ b=kadPSMffQCebe7AFKBidnFNt9r0s2Wuh/Gm0QcQhym+Xj4/Z6pZ19zx/UPnFz9hV/hZz6ZGUw4RZ5PqN6d0mGm1Xgd2fYEb/x5NdaawZCE1joW98LjlehKsrh64DMEK8vVYDgFTJy0z93x5Xi/H/DhoRkOMPl+UWIF+fRf+wNYzew58f+z9jsUMxw0Flss1wax4X3otABjalk1XrJpYK6HNMr8HguIQCS2YywJY7dlPmTcks6BO3GavxJ3BWbNB8o7LwVTqmXtMyOpwxDGWedjsYWruvRXEPo+iyqDlbjGbI4JLKzNRxDwsJOzj/pSkPdJ/msFFjf7t3cHD6nvB/sw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xeoYE+wP/hZ73/Una2p/BsJnlKVMQwY7i/kdvuSzlz8=;
- b=jjwj/osQosP5/lvyMwOtJhCBBgb2TA8ABaL7sf1zkmaGjcT8hy4pAVxnqoplMkejbe2DnofaRwJIhYKGtr5Q5x+Y1O+CWfee61Ri39NguHfWdOtGTO7jvTIDIsRq9KeEEILa7QwdUMZHut9UXqhWSZNey0QjrUgsstCgubvbCIV45FD0P/K6CT1TF414Np2FCPi7OQxBuaEBoGheePBiEDL10h8bywAkZnJgxO9jA8WXpufZQHgE0rqyDqv1BdqmocVN+jvTvJXGMnBnQFOzrDdKsKfEZvJejcc8cOpLWen/isyD3BTYHp/VXkeFHZ9zNWDuZ8es1Go+RPghH+GDOA==
+ bh=lTl/9uc6WiU9isqcRUkabGsmk3gnyr5Plk0Jxx4ED0Q=;
+ b=JbYfTeVWKqlUGiy3JgYY+P61TuvO3E2PklV7Q6d8I68an6BHOf9kGRcvDgCouqnckBqPTs3OI75/kbQ3k9feJD141fFn8F0xzdkmWTgcICwXOESBMXmPjtyxLoRPYGChKJTUzFAUivxSoWtwVYNUfRSzX7t7ABK/dpoUkbKX+IaV8PNzN2TQ/ShuP8IHFTQb7wgQBVHZ2xoYF56Z6GCv/Av8U7p8ovxm5FArOM69dYueInhAfsmJg3SNocJJVChlBf7eFSSfbqLX9UjP/XGztPuxN8KyDd2AsvLCVXMQkWiMcWVUxMr7sSjfhldben4iEW8oJ+sxULQwiS8UUswrsA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xeoYE+wP/hZ73/Una2p/BsJnlKVMQwY7i/kdvuSzlz8=;
- b=qEFRfD569yYKylGKL7G3YZr9LjakE7IKYC+HWRyrmZUdpDP0T8XQ6t6uD1ZvAv3h24uYbpTOEKmhLl5N00ruQXbE9i69ELItCjOUy+rwdQvnPpatdO+fIdHWt5QZJUTiHjhcS9A1Wzxg1akFRy/Qi/UMVqZwELKGr3IWnHimdOG2n9jCCoOZdZf8WShW+7AijexRPUhN2lCzN4uk/+KWSCF0pr9D9zgBqkMAA24BpXx5YrQ4p5OFVkTUV06ildpguqJug0eEBmls7gSuiaQnWw2LSwhiBfpiJwKNj+3DSI/Nd/8A9c0oEaw6RZMcZCVD1VxltkKZBWOekbD75mJMRw==
+ bh=lTl/9uc6WiU9isqcRUkabGsmk3gnyr5Plk0Jxx4ED0Q=;
+ b=XwY/4JAw+Xv9/OIjO//eQN229W+t3e/CnOZT0bssnoXIb1ClkgDwzO1gUdWFVq/Tglnwi3y4agPpKj7HMxYun89s9ZE2sp2sT5FsFlWms32UNrFfD2ql5mA0ZKMPlVF2/vGBYnCom0BlgLhujW0/PVFv+cXf9TpdTTHJW62NeNatTKZlJdlDkZ0szUBZu0sZ6v6frQdg7CN9rERvVsfP7UzfCZDJ6VjW7fvoO6Ce521SO2E6AddJwmOvrd5unkHYaqYZEGdiFPmOvTl74rTKA8CaD7jhSeGa/NEA3Z9WiQly+wkLimqD/lzP+otsewR6+z/GDRbI1g8jMsfdlDgG4w==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
 Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
- by PR3PR04MB7353.eurprd04.prod.outlook.com (2603:10a6:102:82::20) with
+ by AS8PR04MB8932.eurprd04.prod.outlook.com (2603:10a6:20b:42f::18) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Fri, 4 Sep
- 2026 16:03:14 +0000
+ 2026 21:50:03 +0000
 Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
  ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c%7]) with mapi id 15.21.0360.008; Fri, 4 Sep 2026
- 16:03:13 +0000
-Date: Fri, 4 Sep 2026 12:02:58 -0400
-From: Frank Li <Frank.li@oss.nxp.com>
-To: Pan Chuang <panchuang@vivo.com>
-Cc: vkoul@kernel.org, Frank.Li@nxp.com, afaerber@suse.de,
-	alexandre.torgue@foss.st.com, amelie.delaunay@foss.st.com,
-	andersson@kernel.org, angelogioacchino.delregno@collabora.com,
-	baolin.wang@linux.alibaba.com, biju.das.jz@bp.renesas.com,
-	claudiu.beznea.uj@bp.renesas.com,
-	cosmin-gabriel.tanislav.xa@renesas.com, daniel@zonque.org,
-	dmaengine@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com,
-	geert+renesas@glider.be, haojian.zhuang@gmail.com,
-	hayashi.kunihiko@socionext.com, imx@lists.linux.dev,
-	jernej.skrabec@gmail.com, john.madieu.xa@bp.renesas.com,
-	jonathanh@nvidia.com, kees@kernel.org, keguang.zhang@gmail.com,
-	ldewangan@nvidia.com, linmq006@gmail.com,
-	linux-actions@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-	magnus.damm@gmail.com, mani@kernel.org, matthias.bgg@gmail.com,
-	mcoquelin.stm32@gmail.com, mhiramat@kernel.org, orsonzhai@gmail.com,
-	patrice.chotard@foss.st.com, pjw@kernel.org,
-	quic_jseerapu@quicinc.com, robert.jarzmik@free.fr,
-	samuel.holland@sifive.com, sean.wang@mediatek.com,
-	thierry.reding@kernel.org, thomasandreatta2000@gmail.com,
-	vigneshr@ti.com, wens@kernel.org, wsa+renesas@sang-engineering.com,
-	zhang.lyra@gmail.com, zhengxingda@iscas.ac.cn
-Subject: Re: [PATCH 00/26] dmaengine: Remove redundant
- dev_err()/dev_err_probe() calls
-Message-ID: <aprrssx-LorAEjV4@lizhi-Precision-Tower-5810>
-References: <alYmNl--mxMK1-86@vaman>
- <20260715064443.525836-1-panchuang@vivo.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260715064443.525836-1-panchuang@vivo.com>
-X-ClientProxiedBy: CY8P220CA0002.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:930:46::12) To GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c%7]) with mapi id 15.21.0382.007; Fri, 4 Sep 2026
+ 21:50:02 +0000
+From: Frank.Li@oss.nxp.com
+Subject: [PATCH v3 0/4] dmaengine: rename dma_chan::dev to
+ dma_chan::chan_dev for clarity
+Date: Fri, 04 Sep 2026 17:49:42 -0400
+Message-Id: <20260904-dma-chan_dev-rename-v3-0-685601b0b788@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPY8m2oC/33NQQ6CMBAF0KuQrq1pp6GIK+9hjCntIDWhkBYbD
+ OHutrhgY1z+zJ/3FxLQWwzkXCzEY7TBDi4FcSiI7pR7ILUmZQIMJDtxoKZXNF/uBiP16FSPVEq
+ QQukSla5J+hw9tnbe1Ovtm8OreaKeMpUbnQ3T4N/bbOS5938hcsqokhUXvK1MqeHi5vGoh55kP
+ 8Iu1Ez8FiAJzDSClY3UFZe7sK7rB36BfGkIAQAA
+X-Change-ID: 20260812-dma-chan_dev-rename-66263ac5eac9
+To: Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
+ Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, 
+ Paul Cercueil <paul@crapouillou.net>, 
+ Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Binbin Zhou <zhoubinbin@loongson.cn>, 
+ Patrice Chotard <patrice.chotard@foss.st.com>, 
+ =?utf-8?q?Am=C3=A9lie_Delaunay?= <amelie.delaunay@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Ludovic Desroches <ludovic.desroches@microchip.com>, 
+ Viresh Kumar <vireshk@kernel.org>, Keguang Zhang <keguang.zhang@gmail.com>, 
+ =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
+ Manivannan Sadhasivam <mani@kernel.org>, Daniel Mack <daniel@zonque.org>, 
+ Haojian Zhuang <haojian.zhuang@gmail.com>, 
+ Robert Jarzmik <robert.jarzmik@free.fr>, Chen-Yu Tsai <wens@kernel.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Kelvin Cao <kelvin.cao@microchip.com>, 
+ Logan Gunthorpe <logang@deltatee.com>, 
+ Laxman Dewangan <ldewangan@nvidia.com>, 
+ Vignesh Raghavendra <vigneshr@ti.com>
+Cc: linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-trace-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-actions@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+ imx@lists.linux.dev, Frank Li <Frank.Li@nxp.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1788558597; l=4241;
+ i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
+ bh=Iz18q3YPb98fKzkmx1z2iPR386MGdkbCyCjNkYrVyAg=;
+ b=99EnACD20tdz5KQPldkdQ5SDCnj6rFMhLv7TXzNPcnmZtoWOhjqQd1m4M/TWlwfGVgQ2i+e4T
+ ASsDGvoap+VAFThvwO4GMazPdn3oIGLAbBl390Pq8rDXtO+j9VfIlj/
+X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
+ pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
+X-ClientProxiedBy: CY8PR12CA0047.namprd12.prod.outlook.com
+ (2603:10b6:930:49::20) To GV2PR04MB11799.eurprd04.prod.outlook.com
  (2603:10a6:150:2cf::9)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -90,121 +103,157 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|PR3PR04MB7353:EE_
-X-MS-Office365-Filtering-Correlation-Id: f59e165f-29f4-4ff7-267b-08df0a9e0637
+X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|AS8PR04MB8932:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1e80f738-9b55-4123-1e90-08df0ace7932
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|23010399003|19092799006|376014|7416014|1800799024|6133799003|56012099006|10067099003|4143699003|11063799006|18002099003|22082099003|41080700001;
+	BCL:0;ARA:13230040|19092799006|23010399003|366016|7416014|376014|1800799024|921020|10067099003|11063799006|18002099003|56012099006|41080700001;
 X-Microsoft-Antispam-Message-Info:
-	EGNRqNQyr2mcr6anJTdDTVV2gNnqKI4j86N4WO/z6xfq7o7q+jA6BCJxuap/+9HsGECJlTa3PqtRNRUhMg1cbMe6Qvamqd5QqapY1cA4roXVIpvbH+CvrVKIwVkk7aEjdhrT0FwCkrMnR0nzELeAJ9YapngdEAE7P5G+CXSwJDP/n/5HiQ7yyqkAjoqKnPZGTcLez5ig0bsWTyVmo2mESf+tFTAcXxRg5xcvlXBCJHSl+gL2/ZXij2+j3XSsMn95oDP8WU/F9M6GA0yDm5XYR+37WadgOzC5bWAOfiT/+MijMmThC6PHHf7F1yX/n4kJ1UTj4yWnwHM1GYWtrKGCOaocVqe1bZgz8dQdzghhHQDLWwmoSiWKls4JD7dWtzq8QAaz2imnL382Vt0K4iraGoHarOSM/7JAHLGRZJy2okRsclByuXjLesKucFeGRYrsAd5iNHbKzWkv+PJPEix4SWKI48o2uyEuxY4wkmdCb4xcWkaaO0T5wdjnNhYBlFh+eMnkPKINH/f8gy6fqmFR1YFHrNPdn/R+pMlB3Mjt/bOaF6NzGN1Wf6W4UreW/zG0QsUlaQE1aCWcD6LV1XrifK3hgfVqBQGjyOtlGMh0GqnzBJFCUXCr+34WOxhcOSHw6tuhIa228nMPx+XEBTljeLVXet7X7BCZIs+Jk1W/DD7k4L8I2cvHbmVHMt6fwI+LpqovsnyDMfZQrnC7VprAQw23QQWTo3e5jdTFzgOKvtI=
+	wstk0lSvTtZRBxfJMUKvdTlh/zPAekIDhC71tt6mb0pOXtwlpdIAN2u+nZNjF329LFb6IW5SsgfgpCAhmpvWclckLbkyvR3w6ivgciqyC3UieyZpCkmgG/tkEXrQ9qlX+SQPxA6nLMw2t4kzOkGj/0tIzBGes/CVD8T9M8AGDWIudgxpR//IH8Y1o/McosA+yciwKlRoggjTz6NOoYj4ZoMHyulSnnjOKmU5ZAW6DWRB03ypJmyCqasxy8rUC7YSTJjZykqJLgt+5yEJP3BCLA+HRtncRuGOhhZy4o+sfawd1WwlpOb1XToxNnB4cxHbcDU9DU1/+Xzj190Gh8kwcFlIZQi8jmveD4TpKeokowuCSkvMyrFeKuZIWszGCZ9AXjUfXIiRi3djVP03JHgn8MPeGYWW6G1SjGFw2h+DCDFghVDCMO3KLALttbpYHn/31L1iM+LwGH5MlK4RRqADMRWgAjC9aOZkzIIEyqmfukSHY1zYoiLizvzc56vJVP3OkYd8GKijCsOmLSqqii+9VbcvcyGQQ5nU7E7f8PxknT4mrguxOPDRfW4fJi1Eh08y6ffh+aUSSl7uscFE2t5EsV7T38211YO/1xQ0kPI6lxBKiV1+hb/0y2nLr1JGTnqogJ8pJAYVk0CafJ+pU11cmYtJcDTW+tNXRmspjsnIcUN1JkfYu1uOlQKZ05rAoJ4B
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(19092799006)(376014)(7416014)(1800799024)(6133799003)(56012099006)(10067099003)(4143699003)(11063799006)(18002099003)(22082099003)(41080700001);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(23010399003)(366016)(7416014)(376014)(1800799024)(921020)(10067099003)(11063799006)(18002099003)(56012099006)(41080700001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ggZ2y553LUYUNuPjgSSeapu8scrV+1lJzcIp2oUL8pAm7IRgNgBODpk5umWj?=
- =?us-ascii?Q?nCTwHDEbkuE8Y9JGWvB0R3ScBVtv2ZXaQ7I9icH0Zcvsqg6JHn1EDuKTKm0e?=
- =?us-ascii?Q?JEAlF9YBCh2IFkmQUzjX4C6mpgSG+RxX4xjEe0LSHyve115zMOMCSCPFU+B8?=
- =?us-ascii?Q?IkdVYKXxDCB6O/0XYNjVmkNArt9gje1AoKX4Ib0p76F+nrFThZ1RFm106eTv?=
- =?us-ascii?Q?7FCFFhVz14HpO2uVksv+T4CMDZxjuD5tsV/fQM7d80grESezHk6NYgNCyWks?=
- =?us-ascii?Q?CzuGX0bF0J4As+eJ6BPcDYA5pNmjfieEl4s6yssfg8WUfIVevmh6zpngy/Rv?=
- =?us-ascii?Q?GnSzjT/XA+jGt7PlGRsMVe+Fe5219BNb05nVO8GcXjAcCuuOLv9c8bTIRxpC?=
- =?us-ascii?Q?OtqoiD68yZZ1GuuJc/fgxRo0s1CqDKwCuL/Dg9JVdzQDzFV1X3+6M3ocX5QJ?=
- =?us-ascii?Q?wPGOp3Pfz9Ub3Hck065UtDvG44FEdS9FPoWGJE/zMtLBbOxqCq09W5jzUERF?=
- =?us-ascii?Q?XffJMLeaH7AbNGYmwCW+D0moYSA8MbUBb/FC/ChMNuLuEvOQGR9d2vLJgILZ?=
- =?us-ascii?Q?Fxb5qr82x9aDJc0OqDJdCZBK/frIGY0CZbe5fb2IsoMRFOz7o9UO4hNYjTTb?=
- =?us-ascii?Q?j//Q+X4vYTjIP6hqUwbPrBgYLm1kn8qaK4Ku0hQF49km66xKoRTzSC2sr4Kn?=
- =?us-ascii?Q?+FQONmNo/uE0VKIXs/h2uhk5p5gNkuhQZ5PVquvzKdFq4xMhP80dMyhvoVxr?=
- =?us-ascii?Q?6ZW1terb0VdXYUHcQohPz+lQc+uhkIpv01e5foZzCLRSJuSAviiu8pMrP6QI?=
- =?us-ascii?Q?HnOmlnKlYx/DLoZwockYW7wlH1OEpLZN3T67uwR5BjMT1DIvjarf00ajFryH?=
- =?us-ascii?Q?NiWZpPSeYyrNAeKsW2ZX+TnxmZLTLs+l3Xs8YY3DtNoUCI2aMcQBX4rzqsEa?=
- =?us-ascii?Q?bBpDYV4HNw7FxwScErtGouyInwTAPny5epp/O69QtUQTj1hmnuJO1WQNZwQZ?=
- =?us-ascii?Q?sJaeTRHYmCQM9wZPq0vKGG4XXs4+ZWQQBu7G2AI1D8YPTFptpO8P+ElC1O7I?=
- =?us-ascii?Q?mJ6ELpOEwfda+MlwBPb0rN0hHCF57HUKagNnjzPD4J5ioQBRWevfUlEprtGh?=
- =?us-ascii?Q?fi1Qpj8o9mueaquNS8Ey0VvH+4K5Td+EJGFdmM8breaQzdQocT7z+LqIk+Os?=
- =?us-ascii?Q?L/r9JW4N5PbbmYCOj4FRR72+vLJxVZHg3WULqSBOMAZ+AEkojo/naKpkyWiH?=
- =?us-ascii?Q?0qk4R1eFyqTXM969wsyTzziXXTUk6FOTPgescEJFAmuQRnZ+WkO1iC2ds4G4?=
- =?us-ascii?Q?bQJXxfRCP/8Y85viBCdN4fvKMTXC3M340RwtH7Wlmq5xf5kyAjRH0VSXVlZ4?=
- =?us-ascii?Q?+PI7vIQQObhG8xC5oFzIyIljVbibzXo10y1/eINJXddbO767rgSGot7c1ivH?=
- =?us-ascii?Q?QxDpMd/XKluXI+35OtE01u3Ss+vA6HrXGyNrEEQDQAKr2lGMQVKgfDVJ7NL4?=
- =?us-ascii?Q?M3rlHFSDhkNQ6ShMb9H2FAGfM32+Se+0VB8txg7H/AJJwvdnp5PA4PhrHAS5?=
- =?us-ascii?Q?Jbq3yYuLQ6lsQwyav4ntd/bk+0DBBJdgiTeHZmoVGPacHG4fvN1QbVhNrEYe?=
- =?us-ascii?Q?o0f2irfh7b1CoSBX9vtqmovB07ObHcC6x51PKEANH8JQlw/zAz71FKJkar9z?=
- =?us-ascii?Q?MT5FrClcvtEBGNPlFd+3uMr629s0x7/3wtTLNnQN3Q+YxLbrztIRfspDEnaw?=
- =?us-ascii?Q?wCucmaGT0cAprs18Zr891xOwiQb0HBsDjcUnroHf39aJ74uvcpBC?=
+	=?utf-8?B?NnVNRDF4Kzk5T2lRalh5ell0RTk0b01KdmphSHQwdzBKRmVjT0JkWU05S1Yw?=
+ =?utf-8?B?S3E1SDRkV3YyRkJza08wMkx6dmRpVTFJNC9TSU1SYzBvVXppbnJNblZ4ODdj?=
+ =?utf-8?B?bHJDZkVFa0hFY1MyWVRtZVBmdmRlSDF4aCthL0tiUHgvdGxhdnlKS09iZ1Zs?=
+ =?utf-8?B?bG5CMXRBRTdUOFVETjBXdEdVcXF4cy9yVGZ2UEZHK0oxR3grdXdkM214TlV3?=
+ =?utf-8?B?ZUw1U2ltdXJkcHl6RC9kc1p2M3QrMlVSeU9wTFRTQ3RJTnJIeURaTFlPbGY5?=
+ =?utf-8?B?WkVTbWVoUHRFd1dDM3BSbkZ0L2haamIrRkhHMmdOb2xOVEFjQXFsTFFtbWxL?=
+ =?utf-8?B?YnZLZDEwVUMvTm5VWGV1RGlRZ2x4QklaeG9lVFh3SkJtUDY1eDh4UTJEc3Ro?=
+ =?utf-8?B?dmxqV3NudXFJSUlkVHJ0ZXZtbmJmSmxxS0NTM0N1N2dLWXZXWVh5WCswS2Ra?=
+ =?utf-8?B?Z2ZGM1gwMG0xaGdReEd0Z0VoaXFjMHhmTDljdWZUZnZEYzl6OWRUUCtEQnVF?=
+ =?utf-8?B?c2dyeWU2MjUwNWYrMW0rWUlYNUtOanhHQ1UwK29RdTI3Y05WUmhpMmlsLytX?=
+ =?utf-8?B?UitMazdVSlFiR1g3TDkrQWhmWTdtQXBpSFNDblZ5V2pwd3BvRHJBcFZXOW0r?=
+ =?utf-8?B?Ym05YUtqMUJFVzNvZWVIQUVGNnVCSFBrWDVjZGlSbG9UM243bWNSSlljck1G?=
+ =?utf-8?B?K3N6cUhhbFBMQ0Q3ZGo1N0oyMG5Kdy80RVhVRVJweE9GajhZVUt1M21WYW5W?=
+ =?utf-8?B?R2NtWGNDTUdHelQrb0d0RnczeW5zTGpKSndYaFBSTUV4SHNrN2E5eWdQV0d3?=
+ =?utf-8?B?RUxZaThVSWxzbGE0L1liQ1RUUXhWUWp5Y2t6TFl1dFBhcXp6bUtoQ3VQR2RK?=
+ =?utf-8?B?MkFEcFVFU20wVmwxZ25YSDlrUnBCRVNTZCsvU0hSU2hTTTltR0pFeW9wckNQ?=
+ =?utf-8?B?UGM3R3RUalZSMXZoMGliSW9obGVNNVRWOGNvMmtSTWJJNldhYWNJSWpEQzhL?=
+ =?utf-8?B?TzZwMk9XemJlYThJd2tSOGF1aElVNEFnKzNHUXUya3pmMGNRZHUzbVpQZUtF?=
+ =?utf-8?B?bEhkRmVPRUc0MFFOSGNrcXRoUTgrQkhMMGVGdDB6cDZRK0RJRkpWZlhVUndy?=
+ =?utf-8?B?VGtBb1d0SVhESFBIU1ZxVWx6eEc4SEU5c2MyYlVNd0NXMTRaZVJSRWIya2FB?=
+ =?utf-8?B?MEJIVllsWGF2eHVzSjE3d3lXMnRvR0dWNDVJb050ZEVCWFdrT3hjN1NhbXRY?=
+ =?utf-8?B?bkZEWUFhcFZsa1U0ZWMrWi9oQmRhNW53cFQ3Rys1TitENmRTUW9TdFFuZHBq?=
+ =?utf-8?B?V2VCQ0prRmZjOTRUcXEzMlU2L3pxN0dYUzVQeDF5RmFHc25sSUowWDFGSXpp?=
+ =?utf-8?B?b0loYkpEcUFrSEo3dkpidTFjdzdaWTlpVWZxN0VhWmJpUUhWV1B2WS9ld2lB?=
+ =?utf-8?B?azZvQnpzY1c2R0lnUVBJN09uYWtzMEprZFZRajJxejhDMkIyVFlpV2diUjQx?=
+ =?utf-8?B?dlduUFFNQzVCUE44Q1BzSDlodTZ2eUx2U2JITkFCMkpQcitIK2FtWmMranF5?=
+ =?utf-8?B?NTljNkdIQ0lobWNXWUt6bHNDZ0VvM0x5UUJ6NXU0TzMrWlp4Ylg5b05WbHJ3?=
+ =?utf-8?B?TTFZUStVZzN5YVZHZ003Nng1Ym5hSy9LZTRrY3NEN3UrSHFQZVlSMW5XdHla?=
+ =?utf-8?B?YnlJcDU0YUJyaFA3WkZ4WG0yd3k3UUwzU2F4QlBpZjZ6b1NzbVFrRDFzVmg4?=
+ =?utf-8?B?MTZvVDc5RTVQYmh6TVpTQ0tuT3I4OEN5U2t2YnNEbUprZ2hFQzR4NGx2cGov?=
+ =?utf-8?B?NWhsNzc4eDk4TTg5d1JTWGpvanpHMnZIV2pWdDB1UnpKQnl2ZkNhM1d3bWZ6?=
+ =?utf-8?B?YXNsNFVWbkNCQVl3QUg2a0VKbzl6cCtHTnJUazg3VnhDU1lRRXNZYkptTDR4?=
+ =?utf-8?B?WGpCcEpYUGswVVZZSTBmaXZXd1lLVFNzQVlwTHRrOEIvb2RhOUlYcXByREZL?=
+ =?utf-8?B?NTdJb1lPWGZZT0RFeXhPbUhqZi90WGhhTUx1ZWJKZTZuYW1ZT2FmampBSHJ1?=
+ =?utf-8?B?ZHBVdFV3MXREYWNKVnd0ZVNoY2FIUkh1dmlYZ2NGOCtjYVowVkY0NE40aXpP?=
+ =?utf-8?B?L3NoMDJpUjRpYXBXUjhLN1FjTlNNNmlTeUNtblpXamFnbGkwS0dOTlVhUHVL?=
+ =?utf-8?B?N29TWWFSZVkwSlJOK0Vkb2l1WFlXaWJ6SHVXdjlXWmxaOFBhNkZUUlFFRFhq?=
+ =?utf-8?B?S0x0SWtPMW10Q2RFcmRoQW1iVDVIR3g2ZWxlTVZ6cm5hRTFVSGhGMFVtZjNH?=
+ =?utf-8?B?SFlyaDROUnZjWjUyNEpjMmRUQ0xBVUIzNldmQzNzNU1FcEZSM0hVRE1MOWgv?=
+ =?utf-8?Q?+wYtESNuvZqxov20VjE4CXEIzPFq7Kf0qHH6m?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f59e165f-29f4-4ff7-267b-08df0a9e0637
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e80f738-9b55-4123-1e90-08df0ace7932
 X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2026 16:03:13.8534
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2026 21:50:02.6530
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lkRvp47PzUm1lyW3Y4uwQM4s9AwxWFJ7qQ6h4Kw5fqck+VtRbZM36DkftDNrkaUkK6SwT//VbFmMcAkjXtJIferJWN9HlKrsNn5O1yholw3eoa6D8lULmp9Y24F/oz4B
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7353
+X-MS-Exchange-CrossTenant-UserPrincipalName: LmvgexrAMc0CaLAQM8fwvE5NTvti7hbc4jzXaPs04B6+Wo/Ot9K9LKG4ZdaRhMCtzi2ZLnoK23mxQ9E8EmQzFoFPc13alAuW6CcYWWe81LhMndEBUOctq/xlxThHtspK
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8932
 
-On Wed, Jul 15, 2026 at 02:44:43PM +0800, Pan Chuang wrote:
-> On 2026-07-14 20:06, Vinod Koul wrote:
-> > On 09-07-26, 16:26, Wolfram Sang wrote:
-> >> On Thu, Jul 09, 2026 at 09:58:04PM +0800, Pan Chuang wrote:
-> >>> Commit 55b48e23f5c4b6f5ca9b7ab09599b17dcf501c10 ("genirq/devres: Add
-> >>> error handling in devm_request_*_irq()") added automatic error logging
-> >>> to devm_request_threaded_irq() and devm_request_any_context_irq() via
-> >>> the new devm_request_result() helper. The helper prints device name,
-> >>> IRQ number, handler functions, and error code on failure.
-> >>>
-> >>> Since devm_request_irq() is a static inline wrapper around
-> >>> devm_request_threaded_irq(), it also benefits from this automatic
-> >>> logging.
-> >>>
-> >>> This series removes the now-redundant dev_err() and dev_err_probe() calls
-> >>> in dmaengine drivers that follow these devm_request_*_irq() functions,
-> >>> as the core now provides more detailed diagnostic information on failure.
-> >>>
-> >>> Pan Chuang (26):
-> >>>   dmaengine: fsl-edma-main: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: fsl-qdma: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: loongson-loongson1-apb-dma: Remove redundant
-> >>>     dev_err()/dev_err_probe()
-> >>>   dmaengine: mediatek-mtk-cqdma: Remove redundant
-> >>>     dev_err()/dev_err_probe()
-> >>>   dmaengine: mediatek-mtk-hsdma: Remove redundant
-> >>>     dev_err()/dev_err_probe()
-> >>>   dmaengine: mmp_pdma: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: moxart-dma: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: owl-dma: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: pxa_dma: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: qcom-gpi: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: sf-pdma-sf-pdma: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: sh-rcar-dmac: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: sh-rz-dmac: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: sh-shdmac: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: sh-usb-dmac: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: sprd-dma: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: st_fdma: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: stm32-stm32-dma: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: stm32-stm32-dma3: Remove redundant
-> >>>     dev_err()/dev_err_probe()
-> >>>   dmaengine: stm32-stm32-mdma: Remove redundant
-> >>>     dev_err()/dev_err_probe()
-> >>>   dmaengine: sun4i-dma: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: sun6i-dma: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: tegra20-apb-dma: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: ti-edma: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: uniphier-xdmac: Remove redundant dev_err()/dev_err_probe()
-> >>>   dmaengine: xgene-dma: Remove redundant dev_err()/dev_err_probe()
-> >>
-> >> One patch per subsystem for such trivial changes, please.
-> >
-> > Yes pretty please
-> >
-> Thanks, I'll merge them in v2.
+The current dma_chan structure contains both "device" and "dev". So
 
-Did you post v2?
+    chan->device->dev refers to the DMA engine device.
+    chan->dev->device refers to the per-channel device instance.
 
-Frank
+Their similar naming makes the distinction unclear and increases reader
+confusion.
 
->
-> Best Regards,
-> PanChuang
+Add union dma_chan::chan_dev to make its purpose explicit and clearly
+identify it as the per-channel device. After all user switch to chan_dev,
+union and dma_chan::dev will be removed.
+
+Update the kernel-doc accordingly. Besides its sysfs usage, the per-channel
+device is also used by some DMA engine drivers for IOMMU mapping and
+therefore deserves a more accurate description.
+
+1st patch add help vchan_chan_name()
+2nd patch use existing helper dma_chan_name() to reduce rename difference.
+3rd patch add (dmaengine|vchan)_chan_dev() helper
+4th patch add union chan_dev for dma_chan::dev for clarity
+
+Need following patch to clean other dma engineer driver, which is not
+in drivers/dma
+
+After complete all rename work, dma_chan::dev can be removed.
+
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+Changes in v3:
+- add new helper function dmaengine_chan_dev() and vchan_chan_dev() to
+make clear.
+- some reduntant error message will be addressed by new patches.
+- Link to v2: https://patch.msgid.link/20260903-dma-chan_dev-rename-v2-0-0db305b6c716@nxp.com
+
+Changes in v2:
+- rebase to dmaengine/next
+- add vchan_chan_name() help function for vchan case.
+- Link to v1: https://patch.msgid.link/20260812-dma-chan_dev-rename-v1-0-a67131f7d5c2@nxp.com
+
+---
+Frank Li (4):
+      dmaengine: vchan: add vchan_chan_name() to get channel device name
+      dmaengine: use dma_chan_name() helper to get per-channel device name
+      dmaengine: add (dmaengine|vchan)_chan_dev() helper
+      dmaengine: add union chan_dev for dma_chan::dev for clarity
+
+ drivers/dma/arm-dma350.c                       |   2 +-
+ drivers/dma/at_hdmac.c                         |  81 ++++++-------
+ drivers/dma/at_xdmac.c                         | 159 ++++++++++++-------------
+ drivers/dma/dma-jz4780.c                       |  10 +-
+ drivers/dma/dmaengine.c                        |  34 +++---
+ drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c |  38 +++---
+ drivers/dma/dw-axi-dmac/dw-axi-dmac.h          |  10 --
+ drivers/dma/dw/core.c                          |  47 ++++----
+ drivers/dma/ep93xx_dma.c                       |  37 +++---
+ drivers/dma/idma64.c                           |   9 +-
+ drivers/dma/loongson/loongson1-apb-dma.c       |  23 ++--
+ drivers/dma/loongson/loongson2-apb-cmc-dma.c   |  17 +--
+ drivers/dma/loongson/loongson2-apb-dma.c       |   9 +-
+ drivers/dma/mmp_pdma.c                         |   2 +-
+ drivers/dma/moxart-dma.c                       |  23 ++--
+ drivers/dma/nbpfaxi.c                          |   2 +-
+ drivers/dma/owl-dma.c                          |  21 ++--
+ drivers/dma/pch_dma.c                          |  41 +++----
+ drivers/dma/pxa_dma.c                          |  52 ++++----
+ drivers/dma/st_fdma.c                          |   2 +-
+ drivers/dma/ste_dma40.c                        |  15 +--
+ drivers/dma/stm32/stm32-dma.c                  |  69 +++++------
+ drivers/dma/stm32/stm32-dma3.c                 |  99 ++++++++-------
+ drivers/dma/stm32/stm32-mdma.c                 |  95 +++++++--------
+ drivers/dma/sun4i-dma.c                        |  17 +--
+ drivers/dma/sun6i-dma.c                        |  31 ++---
+ drivers/dma/switchtec_dma.c                    |  14 +--
+ drivers/dma/tegra186-gpc-dma.c                 |   4 +-
+ drivers/dma/tegra20-apb-dma.c                  |   2 +-
+ drivers/dma/ti/k3-udma.c                       |   6 +-
+ drivers/dma/timb_dma.c                         |  63 +++++-----
+ drivers/dma/txx9dmac.c                         |  73 ++++++------
+ drivers/dma/virt-dma.h                         |  16 +++
+ include/linux/dmaengine.h                      |  23 +++-
+ include/trace/events/tegra_apb_dma.h           |   6 +-
+ 35 files changed, 538 insertions(+), 614 deletions(-)
+---
+base-commit: 5c7962210474adbd9874227bc5096dbc11501d34
+change-id: 20260812-dma-chan_dev-rename-66263ac5eac9
+
+Best regards,
+--  
+Frank Li <Frank.Li@nxp.com>
+
