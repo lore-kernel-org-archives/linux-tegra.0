@@ -1,120 +1,197 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011017.outbound.protection.outlook.com [52.101.57.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3956729D27D
-	for <linux-tegra@vger.kernel.org>; Sun,  6 Sep 2026 13:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788700600; cv=none; b=Gm0zGgOkKNZYPVUj3GxAQdPTAISk8F0PfhvqoTV4stgsyO5ALcgBUIAv1y5wBZo+F08dxFmhvJPuYjZMs3D2jl7RWQFP3g3IgRnvDNhMvYSmx7XbEjNze0PIdpeh+Go5cde7EGHw+wi6yxsz0NlRqjzW3gFk5oyqosT3rReUJIM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788700600; c=relaxed/simple;
-	bh=E/IRwFRn51f4v9NPGY7W25i+STprd8eEIq1SkiAi3xA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HhEliPlRwfhPdauCaSZWyGLwzPOaZTp9XVu/WQC74rh06y2O0H/MK4qTxlmP7GieAd8B9wGMcLd2xECjDWYAH27ZL7Q4dFYJbgBCM9m50nGiXIJPhM14xuOs4nPKpyaXE1GhFLiRyl/i/itxGYx1rGI9hwd73iCx6OqjeyQFvNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kfdgjYIz; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2012C242D6B;
+	Mon,  7 Sep 2026 04:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788754080; cv=fail; b=WY4pWV0nGKR8SVWICYj/kR0mGIZtUQCL5SjakwV66y4uH/6AUQpBWxyTM+FmuC/00G5mB4o24qVgqmWvm2qKqCbppvaW6Hqf+AcHX255658kXb6DtR+j1tQeWH2vQ94/Tvs8bP/ReJTtOjlEdUHH2/HTgfQ+j9kzVUxlGkkO8O8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788754080; c=relaxed/simple;
+	bh=cGvcRsNCEZMHGbE4svlfRK0SnzwQCGyVMTksgwzlEHU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cuFnnnOH3XFFMgTNVrj2mvGJMc/0cR8I3BEx6LDKFxXS6rYceWr/PPwPU9rUDNVmUHEUoHhqyVK8/5evnm7AqfegCupNjzg/ooso1KuJv8NDakpcegfp6YnbvK6ER4TdHjimMBOyTi/vpERE1lf/3Y7Qa0k+lB4/P6oUmjcbFgo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ir+NyU+P; arc=fail smtp.client-ip=52.101.57.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kfdgjYIz"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-862815e2683so1304913b3a.2
-        for <linux-tegra@vger.kernel.org>; Sun, 06 Sep 2026 06:16:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788700597; x=1789305397; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=rKCDTYeop/ZfF12Fo5a4rL8gHC3JidNUko0dh/DrcS0=;
-        b=kfdgjYIzepVmbKEjCMVJUqtiTANOktWdiU6cfLp9wrudthxSjFxExz0lImGF2bBS/F
-         7IAVMXPzJTlJCiuTOEe0r9d1dSeygSVBKVOUfq8prD00yTb6R/vynTfiUxlz7GI4CCf/
-         3ekdab3swLjqatLAC6QM0dFMPx2qnh95JgfGjoR1JOFsrLPBljtpyagQXVFfctHMg74U
-         OIIkV0nZrI4lamFyANsjiOq5ZMuCgHmINv0wnFBrtJ6JCCGJMqLUeIwwyVxCbmc9DA4G
-         iBmmb3SymN6Z3m3Tbo69cfogzPoqbU/hRh3VsJEt50ihhipoinSscDDDdX9ccnqVlIjw
-         ajFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788700597; x=1789305397;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=rKCDTYeop/ZfF12Fo5a4rL8gHC3JidNUko0dh/DrcS0=;
-        b=JXL30x0fE8eUwwBR+I0OQY/Axl8kENyHnTsVtoZGk/wMjMPxsT1npfhwCQtQ2XX4mm
-         1FaqnJcj+otxvm+yue6AFcoGjIUX7wYw5TFdC+F8vAqc/MuH7pTWRqN1toiizn885MMU
-         XGpihvB8M3dp4se1sQYpkc2l6hepVgh9ghO9tXVbfPxnb8SpEsqCQegwG6BmoeqrFAMR
-         cxnbKdp5rYXcSq/XGLKkt5pD405EMAhYYIAYn61Rr2cZPnFZ/dO/4oeIescRxoCKQEZD
-         1oIaEIq614o8k4Xt3ZOxW1m1RJkpoJYrA5EQpFoZ9T7L19sNm2UXj7PTSvvmNBAklxmh
-         xz5Q==
-X-Forwarded-Encrypted: i=1; AKwUvBwcJUT3OF0gs5pjoSD30sc0Q7T+d66nRTcLvRyOf5+9nKNa0obtyFkd15pW5w6Tp1Knlt8mx4f2htrkhg==@vger.kernel.org
-X-Gm-Message-State: AFuF++mp8FMhwC/DXnEcpJiAeuWJ0KS+ljflfZ5m6r4J8BgaES22ZtsJ
-	Cn3FYdh9zeULBtSFmMTFHiYgkXQmCJQfxhwagANqdVChSkrdDWjz8KVO
-X-Gm-Gg: AYBFou3QXxb2mRav4SB8+kZcwzXRQPbxY+wwVOHI2pPkf3Wze/thZk/8GBdXXyznf/e
-	ADoS8EUluogGOeZfoBSOCIUDVpf2hq9rvgNj2YA0MToOZhfrrG9qlEbrfjjrm4C0pIMeK0JWnQj
-	Mw1OIGXDOwnuMEaYkk4rx7bvTsrdl7jFDcHbr531oUZjMnP+JUU11Z/18EmxW9LPDbPaJ48+VV1
-	QnAzqAwX3PzEsR5VdFxzIeEqTgSSplUhPKTf9+oQZcs3xqFdSzTLcEcKW0XNMftjLe7jYhKKONJ
-	w4dxatkC7EJXIrcXQ0yKrjTEgb4U8YLf4TaglPXZXh26uGbb+cMI/kSStfHp+KAJEnmf9pgtd5R
-	zWJpLUSOAUzBzHkOpDj/eM6wT5sgwA3sX4MVtMe38pEtxmNIp+nC11MkElIblHEhrK2aOuiT1Pv
-	VGsOanx3IRRWIG+KB+Z2+kFVa1akYRgoVYu5vas6HxAEg8RAJDVrNTVRZ2Ci0P12a3r1H+IUd40
-	vqqbWyZx9s/rmgJa+lbCJRK3UTGE8IKxDNPPDo=
-X-Received: by 2002:a05:6a00:4145:b0:857:7384:b5f6 with SMTP id d2e1a72fcca58-8616908212emr25491708b3a.18.1788700597408;
-        Sun, 06 Sep 2026 06:16:37 -0700 (PDT)
-Received: from DESKTOP-PKFJL56.localdomain (36-234-53-90.dynamic-ip.hinet.net. [36.234.53.90])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-86153728c37sm3292257b3a.46.2026.09.06.06.16.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Sep 2026 06:16:36 -0700 (PDT)
-From: Hank Yang <s950343@gmail.com>
-To: marvin24@gmx.de
-Cc: gregkh@linuxfoundation.org,
-	ac100@lists.launchpad.net,
-	linux-tegra@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	Hank Yang <s950343@gmail.com>
-Subject: [PATCH] staging: nvec: fix race between power-off callback and driver removal
-Date: Sun,  6 Sep 2026 21:15:29 +0800
-Message-ID: <20260906131529.11422-1-s950343@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ir+NyU+P"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jl0MvVl+irIreBIb9BOauP+jAozNh6dNapqiIzIjVRAQtamkVikmvm2iHZXr8kuu/IZlrz3eiWWDqx/v4bWsLsauX8OloZm8j80uf3Ib89Y9PKcgYAYeuKdd3dA0KeHyLUBPMWSxxgpXqSzoVP+XMXPzIiVV3ksijs4liTkR0wK6zwvgDqOv7c8iskeQ1ga1sxjti6UdO7iroEzmhYzDnHCjR9nOyvWzGaBzZV8VLkG7KHRVV/5066+t8sSVJnhKtirrU8+GDQESkxpE03rGTUiVo6M+ed3WldFvC/SOOqIp4v6SS4BI+gF5lQkH7FNcBVfs/fJRo/zQHDHBSMwmwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FixH4jhD47mlarX0tpsnXZp0i9GU1+Q4lsG4bzF6aNY=;
+ b=mEaO3Ro/W9qaD/IKMfHn1LHoeGjEhplsWZTYJvPIAL/rt6itXL4VL035UH9/XTCUGcySLDYw93dHoC867n373PWNQF6BpO+OUSY7zhlsBYmQS9B1b4aFj+PNWfzv4bAvbAiI/0cEEUaVzvzNwBaRSDqWxBlaXU6S/ecYG+uqfzDxo+3tT51xrLKjTrhQ6MTmdobS2aBCgt20wqWa9qfXpZ2diP0w/Nwoz2bY5TpM/n3Cr1YGYuvIA2gPZSjawHYlrsN83YgvfoV3o7AzebZ4+59N8cUO3aljZALhTmKAEZKKJHvhlb5Pcm2aaP+auI8PpEGcpU+jLQmtiUfGREWJ9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FixH4jhD47mlarX0tpsnXZp0i9GU1+Q4lsG4bzF6aNY=;
+ b=Ir+NyU+P+F4gIZeT8IQYHVk6GS6kR7/pN0zrGyj0N7z0fPANhzNrGQYqyzx7r+6vogIVbc6u/kD/nTBq0UHekT1NANhDz48iNnJ3r0ZEbe+iZY09oC11a/eDkZOQrGRi+ME2v9o7r7/NNHWdXl/DlHQGFjAAEKUmIUv2RP7J/RGekWp32SiYvB37CKDfWeLGuAf5Pv9YIS/cWrB+FAjM2WrNRadBIctoL6YPcCNbR/VRATiHWR+ehHXW6/eGRBtqtN6bxCb+jvAl0boop2rk9IY8YVBhO/b2q/QSx0h/n8dq1MVLoCTbEQ4I+d0KA/x5rBdLEs+1honnJXlqrXXKQg==
+Received: from SJ2P221CA0004.NAMP221.PROD.OUTLOOK.COM (2603:10b6:a03:5db::14)
+ by DS4PR12MB9611.namprd12.prod.outlook.com (2603:10b6:8:277::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.382.15; Mon, 7 Sep
+ 2026 04:07:53 +0000
+Received: from SJ1PEPF0000231A.namprd03.prod.outlook.com
+ (2603:10b6:a03:5db:cafe::55) by SJ2P221CA0004.outlook.office365.com
+ (2603:10b6:a03:5db::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.382.15 via Frontend Transport; Mon, 7
+ Sep 2026 04:07:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ SJ1PEPF0000231A.mail.protection.outlook.com (10.167.242.231) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.406.5 via Frontend Transport; Mon, 7 Sep 2026 04:07:53 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Sun, 6 Sep
+ 2026 21:07:41 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Sun, 6 Sep 2026 21:07:41 -0700
+Received: from nvidia.com (10.127.8.11) by mail.nvidia.com (10.126.190.182)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46 via Frontend
+ Transport; Sun, 6 Sep 2026 21:07:38 -0700
+Date: Sun, 6 Sep 2026 21:07:35 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Kiryl Shutsemau (Meta)" <kas@kernel.org>
+CC: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, "Joerg
+ Roedel" <joro@8bytes.org>, Jason Gunthorpe <jgg@nvidia.com>, "Pranjal
+ Shrivastava" <praan@google.com>, Mostafa Saleh <smostafa@google.com>,
+	"Thierry Reding" <thierry.reding@kernel.org>, Krishna Reddy
+	<vdumpa@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Breno Leitao
+	<leitao@debian.org>, Kyle McMartin <jkkm@meta.com>, Usama Arif
+	<usama.arif@linux.dev>, <kernel-team@meta.com>,
+	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 1/2] iommu/arm-smmu-v3: Add a cmdq_entries module
+ parameter
+Message-ID: <ap44h0CSuwm173NO@nvidia.com>
+References: <20260902121724.3494954-1-kas@kernel.org>
+ <20260902121724.3494954-2-kas@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260902121724.3494954-2-kas@kernel.org>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF0000231A:EE_|DS4PR12MB9611:EE_
+X-MS-Office365-Filtering-Correlation-Id: b42698db-8e8f-4cc2-b686-08df0c959731
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|82310400026|36860700016|7416014|1800799024|376014|10067099003|3023799007|22082099003|18002099003|56012099006|11063799006|4143699003;
+X-Microsoft-Antispam-Message-Info:
+	mFU7wjGgzRI1cnffVcG9qpsHGFACrYWu8+rijlj4YQQ4LbO8t5TwN8NyHqtNT6GTd8/WaTFV5dwuAiiYHURoPObrxurXeHa28jC9aquaF5yeEzFkPYjPp8DlkB0SdYD68g/8CkLbNTDF5gLA8c+Z72qXePObqz5S2mfHF7cXpwuseq4C+SjxWKQBQd8bARDCpbK2FzqQbttQ3jIS5IqeXthX6pTxGq0tPU9r/oZ7tgY3cgD5EvbC2fEfN8Qw2o+WGl5/FUw+EMMvkL1UGnJgohpdUdOoInOYfjNCy1BGI5OVMsqYGNHCIU6523Ou8sgYn3Sc8eJ+B4Y5RtqZ3R090pHvE/Crx3KsEwVm3B52qf1DnCatzBy0/3FS/BuZcGXCJfQqXLHr/IMPaHXwTVIfS6SZDA0EhpaeG7d+QqRAtaTDqEQCj2wK3oPN17ZUavWobZ7pzIA7Hs0mX2AQGO8kHZrBZnry37QFN2Zf1RvMw/f2ns+MMfbNwXmUPZr9npCYfwyDjg/GlUTEVLmlu0f/Ekbzirxjfyc53k3EpByQTcZklx+WRGpmOhffyLoQOzOwTIhMtHXyWpBbjA2ws4F8CykUL6RBg9vyRLZ65rD4PSIM7EhsJAJd5oz04lfzVk1znKHT4OauLUZE1ItjdfMgC93RSB/5CZayUalC7DTBuObziZoix34gc8J/drayhAYqSqupf6cA7/qfpo4jAROJOQ==
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(23010399003)(82310400026)(36860700016)(7416014)(1800799024)(376014)(10067099003)(3023799007)(22082099003)(18002099003)(56012099006)(11063799006)(4143699003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	eOyYzVghoExKprLyE19S+5xwN5IP4cl6z0+YaHCoNCZFz5GH+VNR8dbJ9gyDroN/HlySKXOjulycXQdWEuKCsYEDXPqdhRUFt+2Cg1GePktU+AAsUr0fU3BHO149jnH0754CHfU7NjzuUMjyh0THUW5SV3jwY+GCCc8EiRY0H+BmzNsCiPS2qVB2+xYibGakKWXhIfdaJsT2KqLzNUZlbBIjxxSs2Hz5PAo+1SHmhlFKmJ+F8luC689PR4x1qC1LGBEkj9eUdr5OwZok8ItRLUGQ7QrAAHtEkIVA9i5zN/T0g/zG0ZHf++zQiJeM+l8Vy7R9KBeFgx1irvh23z1UYF6odDFOJfC0DcUtbP+zGu/Y4NOVsgLPxAwdymVOmEkYhDP3WXKszwgDlsv5riM57Y+7R/wMsiJzIia3VQYKTfjtDsxbxFzmwBXKU19E/Z0k
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2026 04:07:53.5565
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b42698db-8e8f-4cc2-b686-08df0c959731
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF0000231A.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR12MB9611
 
-tegra_nvec_remove() checks pm_power_off against nvec_power_off and
-then clears it in two separate steps:
+Hi,
 
-	if (pm_power_off == nvec_power_off)
-		pm_power_off = NULL;
+I think there can be some small cosmetic changes. I gave it a try, and
+it looks overall cleaner to me. Hope you would agree.
 
-If a shutdown is triggered between the check and the clear, the
-system's power-off path can call nvec_power_off() while
-tegra_nvec_remove() is concurrently tearing down the device (freeing
-resources via mfd_remove_devices(), cancel_work_sync(), etc.),
-leading to a use-after-free on nvec_power_handle.
+On Wed, Sep 02, 2026 at 01:17:23PM +0100, Kiryl Shutsemau (Meta) wrote:
+> +/**
+> + * arm_smmu_queue_max_n_shift() - pick the log2 depth of a queue
+> + * @hw_shift: log2 depth the hardware allows, capped for natural alignment
 
-Use cmpxchg() to make the check-and-clear atomic, closing this race
-window.
+We can drop "capped for natural alignment" -- evtq/priq don't cap.
 
-Compile-tested (ARM, tegra_defconfig) only; I don't have access to
-Tegra Paz00 hardware to test this at runtime.
+> + * @ent_sz_shift: log2 of the queue entry size in bytes
+> + * @want: number of entries asked for, or zero to use @hw_shift
 
-Assisted-by: Claude:claude-sonnet-5
+Instead, rename to:
 
-Signed-off-by: Hank Yang <s950343@gmail.com>
----
- drivers/staging/nvec/nvec.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+@ceiling: default max_n_shift ceiling of the queue
+@ent_sz_shift: log2 of the queue entry size in bytes
+@new_ceiling: new ceiling to override; use the default if 0
 
-diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-index 41cbdfdc1da6..b9ebfdf46002 100644
---- a/drivers/staging/nvec/nvec.c
-+++ b/drivers/staging/nvec/nvec.c
-@@ -906,8 +906,7 @@ static void tegra_nvec_remove(struct platform_device *pdev)
- 	nvec_unregister_notifier(nvec, &nvec->nvec_status_notifier);
- 	cancel_work_sync(&nvec->rx_work);
- 	cancel_work_sync(&nvec->tx_work);
--	if (pm_power_off == nvec_power_off)
--		pm_power_off = NULL;
-+	cmpxchg(&pm_power_off, nvec_power_off, NULL);
- }
- 
- #ifdef CONFIG_PM_SLEEP
--- 
-2.43.0
+> + * @want is rounded down to a power of two. It never sizes a queue below one
+> + * page, because coherent DMA is page granular: a shallower queue occupies the
+> + * same memory as one that fills the page, and arm_smmu_init_one_queue() stops
+> + * shrinking at a page too.
+> + */
+> +static u32 arm_smmu_queue_max_n_shift(u32 hw_shift, u32 ent_sz_shift, u32 want)
+> +{
+> +	u32 page_shift = PAGE_SHIFT - ent_sz_shift;
 
+And let's call it "floor". It fits the comments and commit message.
+
+> +
+> +	if (!want)
+> +		return hw_shift;
+> +
+> +	return min(hw_shift, max(ilog2(want), page_shift));
+> +}
+> +
+> +/*
+> + * Command queues are also allocated by the Tegra241 CMDQV for its VCMDQs, which
+> + * need the same depth decision.
+> + */
+> +u32 arm_smmu_cmdq_max_n_shift(u32 hw_shift)
+> +{
+> +	return arm_smmu_queue_max_n_shift(hw_shift, CMDQ_ENT_SZ_SHIFT,
+> +					  cmdq_entries);
+> +}
+
+Here, move in the natural alignment cap.
+
+u32 arm_smmu_cmdq_max_n_shift(u32 ceiling)
+{
+	/* Capped to ensure natural alignment */
+	ceiling = min_t(u32, CMDQ_MAX_SZ_SHIFT, ceiling);
+
+	return arm_smmu_queue_max_n_shift(
+		ceiling, CMDQ_ENT_SZ_SHIFT,
+		cmdq_max_entries ? ilog2(cmdq_max_entries) : 0);
+}
+  
+> @@ -662,8 +663,8 @@ static int tegra241_vcmdq_alloc_smmu_cmdq(struct tegra241_vcmdq *vcmdq)
+>  
+>  	/* Cap queue size to SMMU's IDR1.CMDQS and ensure natural alignment */
+>  	regval = readl_relaxed(smmu->base + ARM_SMMU_IDR1);
+> -	q->llq.max_n_shift =
+> -		min_t(u32, CMDQ_MAX_SZ_SHIFT, FIELD_GET(IDR1_CMDQS, regval));
+> +	hw_shift = min_t(u32, CMDQ_MAX_SZ_SHIFT, FIELD_GET(IDR1_CMDQS, regval));
+> +	q->llq.max_n_shift = arm_smmu_cmdq_max_n_shift(hw_shift);
+
+Then, we can just use FIELD_GET() at the two call sites:
+
+	smmu->cmdq.q.llq.max_n_shift =
+		arm_smmu_cmdq_max_n_shift(FIELD_GET(IDR1_CMDQS, reg));
+
+Thanks
+Nicolin
