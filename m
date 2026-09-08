@@ -1,168 +1,247 @@
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013044.outbound.protection.outlook.com [40.93.196.44])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF8C3A9605;
-	Tue,  8 Sep 2026 18:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788892965; cv=fail; b=DWLWUVfKLwcgWP6ruJvnXxKNiF6i63JlCBQwWut02VYkcFwk37I+uqvbcDHD9OdxPn087cO0owBmGaOkLtnP3gIyidi8Qa8QuALv28g9LDGg8vcL/tEATzE7VTQJi3m0yYz5uarogH234+4XZNHTtNfuJxkn0e2DQKXMpSo22ac=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788892965; c=relaxed/simple;
-	bh=K5L4uwORh9mDSTOZuLPlqm5+XJGxzdAST2bW6gcZKzQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=RRIv6vdG3AuOMzkOEfSpoq6o089wOUHxZMwH8wnK7vLFZbHUjyf7wwO4P/mte6Ztq8fbUryU0gG6Z/oXZjf45tAsDSrmMGTyRinqE4Fw7L62HL3djdFfxp56/05vwxAYepmFBWeAEPJW6XWp+/rNdUG+RGLPRpX1SYp8Fb67/Lk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LMTUBV1S; arc=fail smtp.client-ip=40.93.196.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30213812FE;
+	Tue,  8 Sep 2026 19:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788896280; cv=none; b=Ymk4GvWpspdDvSEN6jQb10VVmxu5AAiwRjEda5aeXKcGEX//Sset70s1+3MfsSgIojZ0LrBSQFWZfOmtD+UIicc3WBiEJfJAB0blx5NAxgITK1V4XVxQAOkl+/bcBvPREMtdg8KwRyEhw3pTIY3BAbwAK1EQICjBo0ZgaNY2Ksw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788896280; c=relaxed/simple;
+	bh=2qk0fy8BaA5H2eULjkDkeUiAjpBmUTLpUODBkGZ+mHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SA4oLx0HWBuecTMZ/i9PQf+mAVkcLaDdMSk0eMzjjxW6NDXzmGPZxmy/MMQVN+/ytJmjk70v5deFBqCpN2MqqQAruVBYq0FlKPGey1yxATr0aqI3x0dNKHicuGSuMRTD5oavAiGab9Y6w33XTHo2Ced77h+fP38O6oXQHW8/iVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LxLO7Ylh; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LMTUBV1S"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AyLq1H84IoU+gk0PJRPYxzPvxEiJaLwYHVl+7iUMmxae/rCNKpWHoc9LycXOPt4FhwNWf3kHAgXp6PvgQARwFycfbnVKTTcHPtnX8mAyotgrDa7ltSvi0ylSSR5e2Gqg6rk6nce0bUHLGSeRdai4b/SMS87LRoBX2JjPBueYOvgZbcYgUKfcNbQUPK28dHywd11XDfj5XOITAbU54SpjvLO3RLblHp/ibuYD0i4PPRqY7/W827u9ltAhyrUDitbLz2+zI8lpZPIpYdDFG3Vm3M7EKdLOF/Mf5Ey7vwSM27Tj0AdHPivWmVDToMpWf9xIfgLFm76LwWTeGnjnFPS4/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1DO+xCnLIl+S6XPQxNzpXwcqKXavnmf0PgkLXJmSOm0=;
- b=T9E8ftixDTwXjyHBh+9Q75gXSdaB5ZBWC4yrvZ5nN+sDWkaNio5e37JNjQkDLhArc3vgMry+b0EqsAGutubgNyjsp77B0XpbwXud+zpSqvm0aBkKvJL/wjmwYu4sPan5RWZNzBreO8fDF2rrOrht7nLn0W+3DkHkB0c6gWtB3zk4NhePDMaGGbtIgKe9YifFfeaV5QQCL1euuUNEtr0De1blKaFA0CQGYAh5pVnY15ZuRnZo9H9S1FO9grOjnn8OX0U8+PBfz1gLFMGfMC7yFTfUMdRs1MJgO0B3Dsgc3bANGNu7gGgWB+/kB8zNVgP9AjJvqLzlQhNCa5oJzD+bVw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1DO+xCnLIl+S6XPQxNzpXwcqKXavnmf0PgkLXJmSOm0=;
- b=LMTUBV1SczMfRN1ewLncGed44TNXnTdlcNAc2l97bq+VDzNC6VxTfGU+2bukVB0+NWj7aN97SlrLXg3p7Tt7uIgoZJDY07of0Cevd5JnXukkcBjLmCtwEY2zESuoOmnbw5ZxSDAd79g5/uuGmg6Bjor2xCDXWmrPxtldE5zKCBQkQMeOOGCOd53T9kMqyzIGSUXvxShlTMNYADhxXKedLHhgAsNVOdyi2xy5OB67t3nTMAb7MBQ8vZohGwS8gvtw8h5+3f0mmWXuYlU3Q/LxvpgOYhyEhey8wbqE/x0P7WT0wCXK67rHrpsi8/VUeeKUqufQnfYyoAmUdp/HQf98yQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from IA1PR12MB6329.namprd12.prod.outlook.com (2603:10b6:208:3e5::19)
- by SN7PR12MB6888.namprd12.prod.outlook.com (2603:10b6:806:260::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.7; Tue, 8 Sep 2026
- 18:42:36 +0000
-Received: from IA1PR12MB6329.namprd12.prod.outlook.com
- ([fe80::eadc:c846:73e9:8ccc]) by IA1PR12MB6329.namprd12.prod.outlook.com
- ([fe80::eadc:c846:73e9:8ccc%4]) with mapi id 15.21.0406.005; Tue, 8 Sep 2026
- 18:42:35 +0000
-Message-ID: <fe711e37-2ebe-4c34-946f-2ebe8eb8c17f@nvidia.com>
-Date: Tue, 8 Sep 2026 11:42:32 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hte: tegra194-test: shut down timer before GPIO release
-To: Runyu Xiao <runyu.xiao@seu.edu.cn>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, timestamp@lists.linux.dev,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Jianhao Xu <jianhao.xu@seu.edu.cn>
-References: <20260904061137.4037269-1-runyu.xiao@seu.edu.cn>
-Content-Language: en-US
-X-Nvconfidentiality: public
-From: Dipen Patel <dipenp@nvidia.com>
-In-Reply-To: <20260904061137.4037269-1-runyu.xiao@seu.edu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0008.namprd03.prod.outlook.com
- (2603:10b6:a03:33a::13) To IA1PR12MB6329.namprd12.prod.outlook.com
- (2603:10b6:208:3e5::19)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LxLO7Ylh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FEFD1F00A3F;
+	Tue,  8 Sep 2026 19:37:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788896278;
+	bh=dqsuwEOibNCoxL+MY+KJcXPDxVwv27f/BtLbRZm4oLA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=LxLO7YlhfkJ6kIOGDGZ5nSoikZlhH+iKssK96nrIO7LPlq5q0K2Xj6+A/pa9/a+RX
+	 MwPsws+1FTtge8362AgmAZRufc0hEQRFbUOUzwWcXHmJoIGnTqVfoWQPyV0JRvyvOs
+	 VmHenITvMjztqR/lCdFgSN/laLJDqebEOreLQId8H6kDq8mW2kpJlDTe+W6KqaHwWZ
+	 p+rR+msrIozKsAIdEu/QhUHnJKjr+snX2BjbUYougfQxRLPy6wTgLdGNR0Kn7VbpER
+	 Up1n5Q6hbMAqpZj1QlHWmyJkUyZ97Ej44ohBwdTHv5XiCehhhnrnKV33ex8bzFWzEm
+	 ddml7G1VkX4Cg==
+Date: Tue, 8 Sep 2026 20:37:52 +0100
+From: Sudeep Holla <sudeep.holla@kernel.org>
+To: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+Cc: Pragnesh Papaniya <pragnesh.papaniya@oss.qualcomm.com>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rajendra Nayak <rajendra.nayak@oss.qualcomm.com>,
+	Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH RFC 01/10] firmware: arm_scmi: Add SCMI QCOM Generic
+ Extension Protocol documentation
+Message-ID: <20260908-optimal-alpaca-of-justice-f55bba@sudeepholla>
+References: <20260724-rfc_v8_scmi_memlat-v1-0-cb732bcff1f4@oss.qualcomm.com>
+ <20260724-rfc_v8_scmi_memlat-v1-1-cb732bcff1f4@oss.qualcomm.com>
+ <20260724-crouching-starfish-of-apotheosis-d1cdf8@sudeepholla>
+ <f39b2be0-b6d6-43a6-a412-44ff433c51f6@oss.qualcomm.com>
+ <20260813-remarkable-handsome-heron-e99e78@sudeepholla>
+ <fb0ad185-8989-48a9-86b4-9c765788febf@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR12MB6329:EE_|SN7PR12MB6888:EE_
-X-MS-Office365-Filtering-Correlation-Id: 050687bc-a7e1-4173-96fd-08df0dd8f342
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|23010399003|1800799024|10067099003|56012099006|11063799006|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	7vuKGXAd9z+HIwkaBre9RfNBlsnlUq2Op/SlU1JgACEXinRTT3ie6ZGzvCHTbBWmgrCPgq9BUL1sF9LxABIe3dXQGrDKaJl8CkShJXPU1c5BBD8u+2TpJ0sTLNpIaqPUQcyfBQhijZUJgNByP4XjSsTkUgOh+ELvR39GxltJqIrt+7vX/seir6G4lRCgF0Mj7KIgEF23kP7SQ1Z+IJLBygZjdbhkfVBCsF8Yo3ziBBeawvnuGPKJgiLJ6gcv/RqxbKHDtCVAvKUa4J7XiuVI3k/sDHK+NDxG1JxyoID8Knl3Jx/z3T33VTwbWsD+mRdwu7n3vN4L6EUPXFvuXop5NS2UAm6HVQtkxVwpvme5wUraAOqq1zSfQEROt7nbP84W0eLtXwtcROT9fuX3zDpVVDY5iDSRu3V4K4mcboSnOzAMs2GiWJhzWU6ttmFzMC3R/f9tyx6YxeeXvPwwqu0jeBZVNNvyA/+nZX87CVQ8P4WSCnaOqMvfdY3NnRyKRZBN0JVyyNNKZOJJJoBESWZgc+CMy8fo85Bgj6vndmqD7gilQlG0rV++jrQYw2ysslGtEvV1hqEkeE/kEUQEUdBUnqzbSe3HaGx1e7yCT/RMNq/AwevXer4Rke22BglMtXwRwnPu9Ot21SY/V9Hma7ZYcXDJt5zVSvXaWDOX45Odeic=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6329.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(23010399003)(1800799024)(10067099003)(56012099006)(11063799006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?djJEWEFKTW1JUTFBdUEvdkI5a21sbTBIcWxBVHVpenFUeUdFSlpYZTZnQlRz?=
- =?utf-8?B?aWE0TG1GeFArd0Q5SS9PanliWU1pZTQ4K3F6VTY3QmNKcVJyZ0dnNVlCbEM2?=
- =?utf-8?B?RkZsTWtCWWtOUEFUYko3ZHRIVE8vTDM5REVnY0dwdHJHSEdpNXhkZytRK25C?=
- =?utf-8?B?bE1KNkIzY2tzeUM1M2lRbHk1SXBLRDRJRnU0SDQyVzdGQmFLY2VFeVZ0ZnV6?=
- =?utf-8?B?UEY2RjRZOG9RVEVGT3pvdlEwQWRjdko5KzVaWDNxWCtybUlYUC84KzFPSVJ0?=
- =?utf-8?B?NnQ2ellDTm1haEVFdnhlaDV4b09Ebk1DSUF5UGY3UmNmdm55dGNqZEZQRDVl?=
- =?utf-8?B?b0xESkVCcjNzUDNiQ2tGVXBjTWJCVTI4bHdUdXVHV0F4TUhIVkppc1VNQkdV?=
- =?utf-8?B?YXR5eEFDNmJHTXR2MWdpMENEZXVJYlJtZ1pYdDhGMW52Z1JieUhtd2dFazZ2?=
- =?utf-8?B?WGIvZi9tcGcrVVdOdVZMM2lIek9Gc2hmOFRhdHJac29lY014RXUvelBXVWgz?=
- =?utf-8?B?S252dElxMEtZbWE1TUdveGZrU3hmV2Vta2FRbDIwdDJack1XbXZhMnorMDhp?=
- =?utf-8?B?NEFIaE9pNEtXMTMrd3RNbjZJRWVYc0NhRTZDdzBGalI3Zm5tTVJ5UGJKdGYw?=
- =?utf-8?B?Ky9wR0V5dGxiaFdkV240bTZkYlE3WjR0ZVJySDYxQWxKUER0NFhoUHdPM0RZ?=
- =?utf-8?B?OEN5WUZZdDVJQ0k5dk5JZThWTFR2OVVtVzNMSDhpRWRaMW4rV3JYWGhBTXk3?=
- =?utf-8?B?dXRSMCs4S1R0MzJIYi9VVnhEdURBVUxUZ2pLV2REMmRNUEhEZVFCZDJWMUhr?=
- =?utf-8?B?c05QcC96WS9peDBTVXFLM1FRZWJYUWxLVlJqY1lqdmN1VVI3NDBFSW9wQndp?=
- =?utf-8?B?Z1BQTUJLdTJEc2tWS0NYQnNrSTB2WGVTbXVUek10cGhHOUFhajREL1E2Q3NP?=
- =?utf-8?B?UHR1RlVXdGp1UDRIeW1lYjcxTzhQQ003SWhHUnpzZGw0eVRLazNlWTV1VG5N?=
- =?utf-8?B?NGE5bFd0dWlwV2kxdzlEbTBXVlFDdThxVTRobm9MeEtZVWJqNW9wWDlwRGVL?=
- =?utf-8?B?QkFDQkNZZ3VHc2gwdG4xdTljYm9KUHhmcE1RQ1h1REVEek5lUU9sVndTZmtT?=
- =?utf-8?B?ak9XUDNjM1pjeVNtYlZWRmJxTnowMW03SFd4dnZOVDd5VmU1OW8xQWl1ZkFi?=
- =?utf-8?B?QUJPNVJMTXhhb0F2NVQvUEJsb29zMzNqWEdleU8rMlRRdDVzNnd0WDN1OG5z?=
- =?utf-8?B?WU0wUjkzOEVxbEhPV1BLRkw3QXRhUVlTd3hJZm1sYlB6dTdpV1ptcXpDSC9S?=
- =?utf-8?B?OEJuUEVRNmxlUStUelFXSm9UeEtCOWJlcWhTM2s5YlMrN3lSTEJuWmQ4MWxt?=
- =?utf-8?B?Y2pKdnRJeThxQklGb25Ha0hrakxlMDdkNkhVUTlmeWJiNDZxbW4wYkdHWERq?=
- =?utf-8?B?ZzdobTdSU3NKaWc5YkNZMWFXY21NZGwyL2ZwRG43d2k0ZlBMbCtkaEZTbjV4?=
- =?utf-8?B?eGNTR1pHOGxERllNa3ZNdVBtZHQ2Q0IyT1Fab3FPQlNLRFlnQ3IyM01TK2dD?=
- =?utf-8?B?bmZqc2Z1aEJ3UGZaSVo4RVljS2N0cVYrNU93VVRCYkx1WVZHSk9jdUhuZDJ1?=
- =?utf-8?B?N0lZelEwWk1BeEtnZXZoSjJNNzgvTjhnVE9mTGJVV1A2aWRtSmxWNk94ODRQ?=
- =?utf-8?B?UTl5OTIwWTBSamNIcmliQUpsclRTNWZnVTVUdjRHbjdWRmg0K0dDT1QrcVdi?=
- =?utf-8?B?OVF1R0V4MDRWcHJYKzZZdVdmRGdET3M0ZlFSR1lYeTlFS1phSFhIV1E5aC93?=
- =?utf-8?B?WVp4ZGkrdUNnam1COUg0dVhNOFB5Z21vLzJnWEFZbmRpRngxUlZyOWRGZTcv?=
- =?utf-8?B?eldXcDlocWIrK0RmV2JLZ2RXcVp5TlhUNjV0aUgvcm9sSEhTOCs3aVBhTk5N?=
- =?utf-8?B?em10dEdLQkFJbkFjS3ZHSWFIc3NVUjdqMERoVWp3ampLUnNsaDE5TjBiazNU?=
- =?utf-8?B?RWVOSDE5NTBncE9CRk1EMU9jZWtySE0wUVFHSU5TQXNCdG5DeGZyblo3WXRQ?=
- =?utf-8?B?Wi84S0ErRHRFREdUaGF6anloelE1YlpWZFBUYlJkWjlPMmJmM2dvdmtaZE9W?=
- =?utf-8?B?R1RUWHg0T1RaM1pCbDIxckNvangxY2hwTTdSVXJ2aERpYnd6YnFxWFdvTU5w?=
- =?utf-8?B?RWl5RFA3VmpxY0k1T3g3OTFrYlpQZno2QU5nNTB0NWVsaFNoRlRlTFNWcVE4?=
- =?utf-8?B?QTgrNzZCMXJzODJlRXJHL2lEb255VGNjQjMrYmJXOHc0Q01lRy9HY1RhcHJE?=
- =?utf-8?B?YkFzVndjVDlINmZhbTVDL0RUWm5XendhOU4vc2kreGNXRXJZTnhSUT09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 050687bc-a7e1-4173-96fd-08df0dd8f342
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6329.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2026 18:42:35.8016
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nbd0iRyrgys8fzAQwg/xZj6bbDbXOxPc+aNK3QWSBLICyXFko+qLfTYCJ1KWoqyHDqrFQ00/pL5qZLd704jwtg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6888
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fb0ad185-8989-48a9-86b4-9c765788febf@oss.qualcomm.com>
 
-On 9/3/26 11:11 PM, Runyu Xiao wrote:
-> tegra_hte_test_remove() releases GPIO descriptors before stopping
-> hte.timer. gpio_timer_cb() accesses hte.gpio_out and rearms the timer, so
-> a callback concurrent with remove can use a released descriptor and rearm
-> after teardown.
+On Thu, Aug 20, 2026 at 01:26:57AM +0530, Sibi Sankar wrote:
 > 
-> Shut down the timer before releasing the GPIO descriptors.
-> timer_shutdown_sync() waits for a running callback and prevents it from
-> being rearmed.
+> On 8/13/2026 12:48 PM, Sudeep Holla wrote:
+
+[...]
+
+> > The current rationale isn't entirely clear to me. Windows historically favors
+> > ACPI over native SCMI, meaning that supporting a proprietary vendor protocol
+> > would require non-native workarounds potentially hidden within interfaces like
+> > PEP. I am skeptical of this architectural direction. Since Android leverages
 > 
-> Fixes: 9a75a7cd03c9 ("hte: Add Tegra HTE test driver")
-> Cc: stable@vger.kernel.org
-> Assisted-by: Codex:GPT-5
-> Signed-off-by: Runyu Xiao <runyu.xiao@seu.edu.cn>
-> ---
->  drivers/hte/hte-tegra194-test.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> In an ideal world maybe but transition for all SoC capabilities to ACPI is
+> rarely that smooth and they do use the PEP interface.
 > 
-> diff --git a/drivers/hte/hte-tegra194-test.c b/drivers/hte/hte-tegra194-test.c
-> index 32907d951..cca33868f 100644
-> --- a/drivers/hte/hte-tegra194-test.c
-> +++ b/drivers/hte/hte-tegra194-test.c
-> @@ -217,10 +217,10 @@ static void tegra_hte_test_remove(struct platform_device *pdev)
->  {
->  	(void)pdev;
->  
-> +	timer_shutdown_sync(&hte.timer);
->  	free_irq(hte.gpio_in_irq, &hte);
->  	gpiod_put(hte.gpio_in);
->  	gpiod_put(hte.gpio_out);
-> -	timer_delete_sync(&hte.timer);
->  }
->  
->  static struct platform_driver tegra_hte_test_driver = {
-Acked-by: Dipen Patel <dipenp@nvidia.com>
+
+Well I agree, then we shouldn't be bringing up the topic of OS agnostic
+firmware as that is not a reality on the platforms we are talking about
+then ?
+
+> > the Linux kernel and already manages this through vendor modules, maintaining
+> > those as modules seems like the optimal path until we agree on the interface
+> > that can be merged.
+> > 
+> > Given that this patch series has been under discussion for nearly two years,
+> > please provide a summary of the feedback that has already been incorporated
+> > to address these concerns just for sake of argument and in your defence.
+> > 
+> > To clarify, the vendor protocol space is strictly intended for
+> > platform-specific functionalities that cannot be standardized; it should not
+> > be used to bypass standardization for convenience. It appears no evaluation
+> > was done to determine if or why the standard performance protocol was
+> > insufficient. Had that assessment occurred, I would expect the proposed
+> > interface to align much more closely with the standard definitions as I
+> > previously mentioned.
+> 
+> The design might seem contrived at the moment but it was still largely
+> shaped by the SCMI specification. There is a literally a 6-7 year window between
+> SCMI landing in mainline and the first mention of the vendor protocol identifiers
+> being re-useable between SoC vendors [1]. This largely shaped how Qualcomm
+
+[1] shows the date as 2024, so 6-7 years is bit of exaggeration IMO.
+
+> used vendor protocol. The first instance of vendor protocol was a straight
+> forward vendor protcol implementing just MEMLAT [2] but the sudden rise in
+> the number of protocol eating up vendor protocol space made them club
+> together the class of devfreq algorithms into a singular generic extension
+> protocol.
+>
+
+I fully understand that this interface is already deployed in firmware and
+that changing that firmware ABI may no longer be practical. However, I
+think we need to separate two things: supporting an existing firmware ABI
+and accepting that ABI as the abstraction exposed through the upstream SCMI
+framework.
+
+The former is a compatibility constraint for Qualcomm platforms. The latter
+is an upstream interface and maintainability decision, and the existence of
+deployed firmware cannot by itself determine that decision.
+
+> "deliberated attempt to circumvent the standard SCMI protocol template"
+
+This was specifically targeted for having performance related tunables
+outside of PERF protocol. If that is not possible, then I take back that
+statement.
+
+> "expectation of immediate acceptance without modification"
+> 
+> I gather that ^^ are the major objections to the current series landing but
+> sadly none of these were raised during this 2 year period and this protocol
+> even had a "Reviewed-by" from the only other reviewer listed [3]. We
+> promised to fix all the concerns raised [4] in the next major/minor version upgrade
+> [5].
+
+It is common for intermediate versions to receive Reviewed-by tags, but those
+do not necessarily imply final acceptance of the entire series. If there is an
+instance where I provided a Reviewed-by and later withdrew it without
+providing a technical justification, please point it out.
+
+Also, with code alone, please do not expect me to review these series
+effectively. It took more than a year and half for the documentation to reach
+a state where the design and implementation could be reasonably understood.
+Now that we have sufficient improved documentation and a clearer understanding
+of the approach, a proper and detailed review has just begun.
+
+Therefore, I do not think it is fair to claim that these issues should have
+been identified during reviews over the past two years. The lack of clear and
+adequate documentation made meaningful review difficult, and I have repeatedly
+requested improvements to the documentation for precisely this reason.
+
+> The current version works as is on Hamoa/Purwa/Glymur/Mahua/Kaanapali
+> maintaining the same ABI (that should count for something) and it would only
+> need a major/minor version update when a new algorithm string gets added
+> or a new param-ids gets added. Both of these are yet to happen.
+> 
+
+My concern with the generic extension protocol remains the multiplexing
+model. SCMI protocol IDs are themselves the mechanism by which
+independently defined functionality is identified, discovered and
+versioned. Introducing another namespace underneath a single vendor
+protocol, where an algorithm string selects effectively independent
+interfaces with their own sets of param_ids, duplicates that mechanism and
+makes protocol 0x80 a container for potentially unrelated functionality.
+
+> Given that we put out the pseudo code of what the MEMLAT algorithm does
+> and spent the past several revisions trying to explain why generic perf nor
+> mpam would work for us we keep getting hit with the blanket "It appears
+> no evaluation was done to determine if or why the standard performance
+> protocol was insufficient". The only recommendation I see from your side
+> is move MEMLAT to it's own protocol. With the documentation/code
+> available to you can please let us know how current perf protocol or MPAM
+> can be used as a standin replacement?
+> 
+
+This is also why I suggested treating MEMLAT as a distinct vendor protocol.
+I am not suggesting that MEMLAT can necessarily be replaced by the standard
+Performance protocol or MPAM. Those are separate questions. If MEMLAT
+semantics do not map to either of those, then that is a perfectly valid
+reason for having a vendor protocol. But "this functionality requires a
+vendor protocol" does not imply that the generic SET/GET/START/STOP
+multiplexing protocol is the right upstream representation of it. I am
+completely against such generalisation which will end up being ambiguous
+sooner or later.
+
+> [1] - https://lore.kernel.org/lkml/Zag5L9j8-oCebKFm@pluto/
+> [2] - https://lore.kernel.org/lkml/1667451512-9655-1-git-send-email-quic_sibis@quicinc.com/#t
+> [3] - https://lore.kernel.org/lkml/Zo14-rQ1Jaxh5Idi@pluto/
+> [4] - https://lore.kernel.org/lkml/Z1GfGk0yQAVQKEVL@pluto/
+> [5] - https://lore.kernel.org/lkml/55fd0c34-c52c-95c5-5cd0-16fd66a4baa2@quicinc.com/
+> 
+> > 
+> > The core issue here is that the proposed vendor protocol interface has been
+> > presented as a finished product without open discussion or a willingness to
+> > iterate based on upstream feedback. This approach bypasses standard
+> > development processes.
+> 
+> It would be way easier for us to re-design this but it would mean that we
+> are abandoning the current users stuck with this firmware version and that's the
+> only reason for trying to land this in a form that is maintainable. Either
+> way  please do take the call to decisively NAK the series (even if it's coming 9
+> revisions late and at the cost of 2 years). That way we can give up on this
+> and go about upstreaming using the standard development process.
+>
+
+I also don't think the fact that this has gone through several revisions
+means that architectural concerns can no longer be raised. I appreciate the
+amount of work that has gone into the series and the changes made in
+response to previous reviews, but neither elapsed time nor deployed
+non-standard vendor firmware can make an upstream interface immutable
+before it is merged. This series is not even properly versioned, carries
+RFC still without version if it is no the first RFC. Anyways, there are
+series that go through 15-20 versions before it get merged. See SCMI
+telemetry itself at v11 already. So, I don't understand your complaint and
+all I can say is welcome to the kernel development process if its still a
+for you.
+
+So I don't see this as a choice between accepting the current generic
+protocol or abandoning users of existing firmware. Sorry!
+
+If it is easier as you mentioned, yes please re-design MEMLAT and any other
+algorithm as a separate vendor protocol. If it helps take this as NACK for
+the current interface. Hopefully this helps you in making proper progress
+on upstreaming using the standard development process.
+
+This is not the only or first firmware ABI Qualcomm has failed to upstream
+because it was all baked and couldn't be changed. So nothing new/surprise
+at that end.
+
+> That said please do consider expanding your reviewer/maintainer count
+> in a way that gives you the capability to review series from all SoC
+> vendors.
+> 
+
+I don't quite understand this. Please elaborate.
+
+-- 
+Regards,
+Sudeep
