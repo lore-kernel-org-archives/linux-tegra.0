@@ -1,166 +1,260 @@
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012025.outbound.protection.outlook.com [52.101.43.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C246524B07;
-	Wed,  9 Sep 2026 10:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788950559; cv=fail; b=ltTVlPmgB31VZnA3uWOy/UNzoaOkC7LCVe4X09SoY4/6irXaT0Ix2KrJ8jM+MbIv2EDX4WMRFc0N8krxIV66aa1J4FeoNXWAInTggH3UA/io05/jIjEGic2vhhxoQ+DQuTI7K9y6BMho/3s8cKEx0m1apfF6eSnYGAh57XuLcAs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788950559; c=relaxed/simple;
-	bh=YvBjtQpKm5hFuV7MI6SjZHl8DJWxia46EP/a0/+z2ek=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=qj8wu1nx2rcSYpektQHhaSRT2EtL9pJUZ4AtKktMxXGlPNeNNA/ZztkmE19g0Toz5iZE6fB2Fd4PhvMGKciqaYK1SFZ0HqtNamxe6YRoJachdDZ9ipy1JXNs9SRSahvwG/OOC0rF0Gd82sCj5muV3+sRlDxU5FnLUNIhByx0dHY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=G8jtoWju; arc=fail smtp.client-ip=52.101.43.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3CA534445
+	for <linux-tegra@vger.kernel.org>; Wed,  9 Sep 2026 11:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788951861; cv=none; b=UXt7zQZDEetoyfmZLmAB+A+uuFeaCRjJ4DYVG51BMbSB3meIWeWbe8a59OagxnlZ4OB1Sw84Uc4CRulfBLk/wmcEHyyu+PWDBZzhuysmUkQV9YH4Lo+/DvfYFO6eVER8bwTnd+7m6C5LF5oxHqePapQF2GPd/ti0pu5o/ex+cpg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788951861; c=relaxed/simple;
+	bh=Rzpqksp/qKE1bDH6y39VH8pIARppCQb7o4bmXV4eju8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ttmZUNlSPa4F+hRdKkkQJGtphMIDiFgeKeWEr9ZH6G2PKT5n6yAK8o6CS2YbySRvf7hj5iQegW4nwuG3r1/batX/uQHQTzSBULfhBDAeKl5ROK4M95EwMzqAlbjiM4tRSTsK/oF10yyl+zdG7w5W9dfXuV/+AST9ekTcOOp97w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j89WfArA; arc=none smtp.client-ip=74.125.224.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="G8jtoWju"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ksr5dnhAyKjzcrt9Ge1UzZOpeLkzGkTL1SRe+ytYeUaTlPTWxIh5WNlSa9DaL9RV8/gle6ktDqyyoEsbozHpaGLM771zcTZBbA99uWHbmbwyxL6gozMf17ik6vofPS7nZ9oaehWOC7jfQsyVLNtmq42PeGR4g02S9g3EXqMGG6eIHyUXzRDSViS0Jbe/xlbIEBFRIKmc9DW7+lp5D3bZExpThUPOUJUNeVTqlTlCu0DdL8IRB/DS1cbqznYhCKwA1+ZH1/El2jnrHBv62C7Aa4fOa7GmAgeuqn6DkPx1JdmalzwgQgpxoAAr+8vqE1LOtyUFOw7nvKHTbymIOji4ew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uUJXRH+zi7fsqjCPKNqrSqmR2a+g5Zxjxb6T+mmtT8k=;
- b=ikSUdjLckndjJqkNpyWA9H8FksT1xsnj+BtgjHDGJwz+8DzAbrqxhQVZYTFD17VbsCHZUh7ljI6GaBN7SI3spi5H6NBMNQYMvcMjDJpcWWPCygprzkDw+S6u3LG4UcAy1hfbGf7l+pVpLJ7KmCwu7zHUzDPEMnZ48ZUteRL33/SQILPTK9IQtFf9MO+uSz9hVuDqbP7XGhnVWzA6qyGMt7uehCuZM+zpQm4RFI1pfeRfSa/xVDKxg70ngM5eCypSoLupnJPyOzGBgbYD9nGiLg/gUPa+euBX7+UGqQ05jSW+RsrcHT8G5a5U5d1yoSbEOWPwV8lUWVss7hNjtNkOgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uUJXRH+zi7fsqjCPKNqrSqmR2a+g5Zxjxb6T+mmtT8k=;
- b=G8jtoWju9baMR5Ge9HZ7e/tPia/8+58zZhbH4e+AocNNzUGFg+SxvkiMqXOctp3L2Wbo97blHLKzM5Np6xbhj145+fY+JAXUJNAJxHE3chayP12YfvPMHmCZNo5p/9xRsmK00KylL6c6aSuq9q3FMmOfaAMcpsc0P9Ro4DlRZJf4ANDj59BqIatfu0+C2wXXiWY/d/qBpl7JJd+nF2odDG2qIPhiSm8QT4TqdFsOWN3smiy+XRD4AinAOHrXtXLJxlIwptjU2eo0ODTsKtwR2Em/jjKzjsIrPYHO5S4BRKHCijHVXpNeTPyCFAYrDtDwDeccbk7UQwV9kPnaB6lM5Q==
-Received: from BN9P220CA0017.NAMP220.PROD.OUTLOOK.COM (2603:10b6:408:13e::22)
- by SA1PR12MB8887.namprd12.prod.outlook.com (2603:10b6:806:386::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.11; Wed, 9 Sep
- 2026 10:42:24 +0000
-Received: from BN2PEPF0000A894.namprd04.prod.outlook.com
- (2603:10b6:408:13e:cafe::8f) by BN9P220CA0017.outlook.office365.com
- (2603:10b6:408:13e::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.8 via Frontend Transport; Wed, 9
- Sep 2026 10:42:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN2PEPF0000A894.mail.protection.outlook.com (10.167.248.186) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.406.5 via Frontend Transport; Wed, 9 Sep 2026 10:42:23 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Wed, 9 Sep
- 2026 03:42:04 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Wed, 9 Sep
- 2026 03:42:03 -0700
-Received: from [127.0.1.1] (10.127.8.13) by mail.nvidia.com (10.129.68.9) with
- Microsoft SMTP Server id 15.2.2562.46 via Frontend Transport; Wed, 9 Sep 2026
- 03:41:58 -0700
-From: Kartik Rajput <kkartik@nvidia.com>
-Date: Wed, 9 Sep 2026 16:11:21 +0530
-Subject: [PATCH 3/4] scsi: ufs: hisi: Use VS_DEBUGSAVECONFIGTIME instead of
- a literal address
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j89WfArA"
+Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-66fb8a78ad2so6999511d50.2
+        for <linux-tegra@vger.kernel.org>; Wed, 09 Sep 2026 04:04:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788951852; x=1789556652; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=yu6XBq0/lXnZ7cWMkDYqnoMO3CTujhBWMHDaaEEIfu8=;
+        b=j89WfArAb4HAae1r9gERB9vbyd4lujvT4QzylaHONNA6Q2Wf4knbMbObz5i525Ut4t
+         XkSo5AaI0HUxT0uGfAvI+gBT3QVVAT4z7Z6X1rYzRyP6/km7YtvxqHnX65Mn7Ml5+NP3
+         FLXjoFY5SSOpi+0C6jJBGg5LkrrudZX7/Zf17BUfr1UBkyIOoHrFH0XGMbs1s6uMTjkr
+         3bRpufNCdRYjhLc0hcJzyc26NKMfFU/GknUIo1ib4IvIuFNBWZSUtSqWIt6BgZjcESeL
+         Gh26103u4O1yeaieTZtSACBZgpuK5tNWMK16x0Bs1FCT2UIk2Tms0ScjaMQ+CmRCv2hG
+         DtdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788951852; x=1789556652;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=yu6XBq0/lXnZ7cWMkDYqnoMO3CTujhBWMHDaaEEIfu8=;
+        b=TVsKVcSPBeT8vDw/w+sM1vE/uY3C/vTrDesBAuCsKSt4mZ0342VCzptPLoYpoAem9+
+         yvq4nYpYqP+1fZnijUXHOuKCybLXNRRTVHGkPFbsRjg6D2JTxsLSIhu53Fb9L/nz+KxQ
+         ieF7PMQWE+EaLaSsRN+C11Al7ePHOb9e2lOgENoKymh2bd1z+e/d3sIbWWOGWmYD9zui
+         AqeST2vlEfTpL1Jiwp3Z553oI2JLUloFEYQODefltji54Om2BA5/VtbdpFGPTL124Hh1
+         Lj6u4+WOFfElBeRJHl492WmNhQ6vl9CVonhw3bE5XZ1TEkYtgBZQGGyR4rl3MfsV9Rrd
+         9jMg==
+X-Forwarded-Encrypted: i=1; AKwUvBzF81aR9jMmnpUdoQi9Y62W1sy9SBWHn6a5PaMa4UvAvsu4ya6kGM1gN6NJ6Kusk29Jcb3aVUr7+2HR3A==@vger.kernel.org
+X-Gm-Message-State: AFuF++noNG3r+nLLdpwP/ivddpylRST3mqPbKUoczbj5yGzxaIdMjcPa
+	3C0Hw0JBeKT/hrtbliOPy8Bk80AYTDOifWTgzAlKqK4Th0cn0WXa2IfJ
+X-Gm-Gg: AYBFou3HYldujjxb5oyamztPo78FU0hgLQF8ux95UNcLQPvep7oJJk7uU+JFq+n9C3o
+	xx7uwHAC9l3L8SGH62+W94R03JrKRwHV2p51EIgk5DKi2Nq8ptxOMKhxG2gcdKnT1DLGQf/QXCl
+	Nk/v+x8xt5H89DYDdAIJSpexZWoYBgwzJIMv4X18FR+usl7sUkAeYtbHLPw0Bh6sJ+Dh4Dtxvfb
+	alEFARfXugSYY6cpQJbYjMVDt4A00Qzt3K1me/QlYB52QQyoQLJKeXKyT05FpE0rQJGNamECX6m
+	0iaZyzxLptZc+3aiw8dDc/rBd9yBEZIPTTxVWnYJyUuhzmpCBQGa6UFiY3+yc/62wDs9IHnyvaV
+	5wFMcl15QKbWuxhdEaD/9vkd116wjqiK4JJDz433ypE+ubZS9+NpXWHLV8w+mJ0+PaGaXtc3DOS
+	v6KaZ6pgFf6ypxjBFxfJ9XNfn5q7iAUb6QGm8QeelmAMMPAx+xYIVoaQHUfipRPcafyWeXLzkmZ
+	Nhyg7Mq3LB2FyLLN6EoL0YECfV+
+X-Received: by 2002:a05:690e:34f:b0:66d:2469:2518 with SMTP id 956f58d0204a3-66fb593f3e0mr8590219d50.13.1788951852153;
+        Wed, 09 Sep 2026 04:04:12 -0700 (PDT)
+Received: from [10.254.153.217] (munvpn.amd.com. [165.204.72.6])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91040694c35sm140718096d6.36.2026.09.09.04.04.04
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 09 Sep 2026 04:04:11 -0700 (PDT)
+Message-ID: <2fd989b4-06ea-42e6-b18a-bc3ef2e069f5@gmail.com>
+Date: Wed, 9 Sep 2026 13:04:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20260909-tegra264-ufs-v1-3-e4a9831702a0@nvidia.com>
-References: <20260909-tegra264-ufs-v1-0-e4a9831702a0@nvidia.com>
-In-Reply-To: <20260909-tegra264-ufs-v1-0-e4a9831702a0@nvidia.com>
-To: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman
-	<avri.altman@sandisk.com>, Bart Van Assche <bvanassche@acm.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, "Jonathan
- Hunter" <jonathanh@nvidia.com>, "James E.J. Bottomley"
-	<James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
-	<mkp@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-CC: Thierry Reding <treding@nvidia.com>, <linux-scsi@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Kartik Rajput <kkartik@nvidia.com>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1788950501; l=1550;
- i=kkartik@nvidia.com; s=20260909; h=from:subject:message-id;
- bh=YvBjtQpKm5hFuV7MI6SjZHl8DJWxia46EP/a0/+z2ek=;
- b=FciAtJ2xniuBD1TWeVTskTwggBx1WtD3ZEvTTz4HC2xzjkN5/9X3hkwz+P8jPxVhHVthpQma1
- Cu0rTla1qn9BsXKOEVMvz/r3tPX5NuAXxuQvWo0335BIHD12a//YEJL
-X-Developer-Key: i=kkartik@nvidia.com; a=ed25519;
- pk=V+1YkJqxCruxUVxLXtAG3f5k8O5skT0X4/QIB75KZ64=
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF0000A894:EE_|SA1PR12MB8887:EE_
-X-MS-Office365-Filtering-Correlation-Id: 295f7b33-7665-4744-8f02-08df0e5f0883
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|23010399003|36860700016|1800799024|7416014|376014|921020|18002099003|22082099003|56012099006|11063799006|10067099003;
-X-Microsoft-Antispam-Message-Info:
-	wJw50BezoqJFSzIfyKGa9uyvLxqGBfi46Gtec0wads2iEq/pCoTAjTbotzO8UTylRmlYhvVIbXissMJI0eznvubtZ1wrSIGZ706Ajdw6vnBx+pYKtU63xc7nMi9aWQz8c86Eiz5Nl2us+ujSKutlFcTCUtT4fC6YdoWWdY3LVVhlUeMtShDT/fuhyJ7RcT8SINu1+WnBlFrUtqPhGMa2NrV+4+aU87GGC91CAk6x1CzrtPaHgnQAZvOZTFtcXvj0Y20CuAV9zvEkYZ3pjViwxvoPzZPtgJwysEtGCNU3TWXkdw2Rsk63rBlBJLU3n0G4HFmVF3ye4CqqcbhVpJHdwUd/sFmHa0OFuUDbPKh1qsPjs4LqTWE7zyBK8tD/Ytxrpw5D+TlgBKEyV+LdklNdMMmCXdoHE7mid4Ge0B9Nr9bmlYr/utcnBwpZXVju3zT9ILB0esPmLc3DDgosyS+RgD4gtZSeZ6Gdxx+AlUke3VnHh7+V17tOvkGywt92EUur0QIwTsLe1bDniNJCFreiphcwjD+b7nbI7w/fMba865o0C87LZjd2juStOpST5cFJALKRw9keJ6A/1LXTghCOOmi7lgYzfbbbOhiJy7foXn2iQ7OO4uhdBjb9B2orPaY5tJuHfpKMMPLa3/u4nkGJVUuEAm431E6IkjvcDgj9a7GDnvSSPL/VVmjpsT+RBM6DJtE3POn0zkgJbhjnVTAwQV6CJW0Sph/nfJeyy8oH786bcF8XGjOqKa53QDR84mg6
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(23010399003)(36860700016)(1800799024)(7416014)(376014)(921020)(18002099003)(22082099003)(56012099006)(11063799006)(10067099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	FnEOQ+QjVcU2XS/y3YQDpDMey7CeDsRcvFt0oM1pT+fo6SIv1YFHaRtEFYd/6mSP0dqRPsnJ9GIbsC4/LdbBcDKuiTdM8cB0MVLXT2d6me7KEt9gwkKDBjWbkhvcq9Nsw97kGqZvDC8usfN7nxhsONb9347u4k/eGz6dqO12mCE5JWa5lcbQkt7se55L4pPyMWIsFO3Ofmf/xAitXe3H0xYbstNjCzRz0qeqTXCV0/EK/BOoxX1e/ktxcHF1yPlxCofed/55XpcFuLWX+PLzgdxypS4L5VS6sXaXJCGX32co13TJhYhifxazo10PyYfAOyvZtUBvqEiM3xLSgxz3/GzWpLziN25aSFh/wFbKBo8J9kcvYa00Sw4B1/T3Xp5c0hNVCGlo/hUpxc4AImKUUbSMGJ8onEA9F/LHvS56X1TYmsbu99R98ZAScrcPB4cW
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2026 10:42:23.5644
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 295f7b33-7665-4744-8f02-08df0e5f0883
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF0000A894.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8887
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 08/12] dma-buf: heaps: Add debugfs support
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
+To: Thierry Reding <thierry.reding@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>, Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Russell King <linux@armlinux.org.uk>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>,
+ "Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
+ "T.J. Mercier" <tjmercier@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Chun Ng <chunn@nvidia.com>, Mark Rutland <mark.rutland@arm.com>,
+ Saravana Kannan <saravanak@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-mm@kvack.org, iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org,
+ linux-trace-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+References: <20260904-tegra-vpr-v6-0-79042cfa8de5@nvidia.com>
+ <20260904-tegra-vpr-v6-8-79042cfa8de5@nvidia.com>
+ <a77730b2-b5d6-49f9-a8ab-72eac4e241b6@amd.com>
+Content-Language: en-US
+In-Reply-To: <a77730b2-b5d6-49f9-a8ab-72eac4e241b6@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-ufs-hisi writes the VS_DebugSaveConfigTime UIC attribute twice by its
-literal address, with a comment naming it each time. The attribute now
-has a name in the shared UniPro header, so use it and drop the comments
-and the redundant (u32) cast.
+Since AMDs mail servers blocked me from sending this out, here once more from my gmail account.
 
-No functional change.
+Regards,
+Christian.
 
-Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
----
- drivers/ufs/host/ufs-hisi.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/ufs/host/ufs-hisi.c b/drivers/ufs/host/ufs-hisi.c
-index 993e20ac211d..79417c16c627 100644
---- a/drivers/ufs/host/ufs-hisi.c
-+++ b/drivers/ufs/host/ufs-hisi.c
-@@ -318,8 +318,7 @@ static void ufs_hisi_pwr_change_pre_change(struct ufs_hba *hba)
- 		 * Boston platform need to set SaveConfigTime to 0x13,
- 		 * and change sync length to maximum value
- 		 */
--		/* VS_DebugSaveConfigTime */
--		ufshcd_dme_set(hba, UIC_ARG_MIB((u32)0xD0A0), 0x13);
-+		ufshcd_dme_set(hba, UIC_ARG_MIB(VS_DEBUGSAVECONFIGTIME), 0x13);
- 		/* g1 sync length */
- 		ufshcd_dme_set(hba, UIC_ARG_MIB((u32)0x1552), 0x4f);
- 		/* g2 sync length */
-@@ -335,8 +334,7 @@ static void ufs_hisi_pwr_change_pre_change(struct ufs_hba *hba)
- 
- 	if (hba->dev_quirks & UFS_DEVICE_QUIRK_HOST_VS_DEBUGSAVECONFIGTIME) {
- 		pr_info("ufs flash device must set VS_DebugSaveConfigTime 0x10\n");
--		/* VS_DebugSaveConfigTime */
--		ufshcd_dme_set(hba, UIC_ARG_MIB(0xD0A0), 0x10);
-+		ufshcd_dme_set(hba, UIC_ARG_MIB(VS_DEBUGSAVECONFIGTIME), 0x10);
- 		/* sync length */
- 		ufshcd_dme_set(hba, UIC_ARG_MIB(0x1556), 0x48);
- 	}
-
--- 
-2.43.0
+On 9/4/26 15:00, Christian König wrote:
+> On 9/4/26 12:44, Thierry Reding wrote:
+>> From: Thierry Reding <treding@nvidia.com>
+>>
+>> Add a callback to struct dma_heap_ops that heap providers can implement
+>> to show information about the state of the heap in debugfs. A top-level
+>> directory named "dma_heap" is created in debugfs and individual files
+>> will be named after the heaps.
+>>
+>> Reviewed-by: Maxime Ripard <mripard@kernel.org>
+>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> 
+> One minimal nit pick below, with that taken care of Reviewed-by: Christian König <christian.koenig@amd.com>.
+> 
+>> ---
+>> Changes in v5:
+>> - fix failure handling during debugfs root directory creation
+>> - add more cleanup to the newly introduced dma_heap_exit()
+>> ---
+>>  drivers/dma-buf/dma-heap.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++
+>>  include/linux/dma-heap.h   |  2 ++
+>>  2 files changed, 54 insertions(+)
+>>
+>> diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.c
+>> index 8a6c2b6e0cc6..65c80dac6500 100644
+>> --- a/drivers/dma-buf/dma-heap.c
+>> +++ b/drivers/dma-buf/dma-heap.c
+>> @@ -7,6 +7,7 @@
+>>   */
+>>  
+>>  #include <linux/cdev.h>
+>> +#include <linux/debugfs.h>
+>>  #include <linux/device.h>
+>>  #include <linux/dma-buf.h>
+>>  #include <linux/dma-heap.h>
+>> @@ -225,6 +226,40 @@ const char *dma_heap_get_name(struct dma_heap *heap)
+>>  }
+>>  EXPORT_SYMBOL_NS_GPL(dma_heap_get_name, "DMA_BUF_HEAP");
+>>  
+>> +#ifdef CONFIG_DEBUG_FS
+>> +static int dma_heap_debug_show(struct seq_file *s, void *unused)
+>> +{
+>> +	struct dma_heap *heap = s->private;
+>> +	int err = 0;
+>> +
+>> +	if (heap->ops && heap->ops->show)
+>> +		err = heap->ops->show(s, heap);
+>> +
+>> +	return err;
+>> +}
+>> +DEFINE_SHOW_ATTRIBUTE(dma_heap_debug);
+>> +
+>> +static struct dentry *dma_heap_debugfs_dir;
+>> +
+>> +static void dma_heap_init_debugfs(void)
+>> +{
+>> +	dma_heap_debugfs_dir = debugfs_create_dir("dma_heap", NULL);
+>> +}
+>> +
+>> +static void dma_heap_exit_debugfs(void)
+>> +{
+>> +	debugfs_remove_recursive(dma_heap_debugfs_dir);
+>> +}
+>> +#else
+>> +static void dma_heap_init_debugfs(void)
+>> +{
+>> +}
+>> +
+>> +static void dma_heap_exit_debugfs(void)
+>> +{
+>> +}
+>> +#endif
+>> +
+>>  /**
+>>   * dma_heap_add - adds a heap to dmabuf heaps
+>>   * @exp_info: information needed to register this heap
+>> @@ -299,6 +334,13 @@ struct dma_heap *dma_heap_add(const struct dma_heap_export_info *exp_info)
+>>  
+>>  	/* Add heap to the list */
+>>  	list_add(&heap->list, &heap_list);
+>> +
+>> +#ifdef CONFIG_DEBUG_FS
+>> +	if (heap->ops && heap->ops->show)
+>> +		debugfs_create_file(heap->name, 0444, dma_heap_debugfs_dir,
+>> +				    heap, &dma_heap_debug_fops);
+>> +#endif
+>> +
+>>  	mutex_unlock(&heap_list_lock);
+>>  
+>>  	return heap;
+>> @@ -335,6 +377,16 @@ static int dma_heap_init(void)
+>>  	}
+>>  	dma_heap_class->devnode = dma_heap_devnode;
+>>  
+>> +	dma_heap_init_debugfs();
+>> +
+>>  	return 0;
+>>  }
+>>  subsys_initcall(dma_heap_init);
+>> +
+>> +static void __exit dma_heap_exit(void)
+>> +{
+>> +	dma_heap_exit_debugfs();
+>> +	class_destroy(dma_heap_class);
+>> +	unregister_chrdev_region(dma_heap_devt, NUM_HEAP_MINORS);
+>> +}
+>> +__exitcall(dma_heap_exit);
+>> diff --git a/include/linux/dma-heap.h b/include/linux/dma-heap.h
+>> index 648328a64b27..1c9bed1f4dde 100644
+>> --- a/include/linux/dma-heap.h
+>> +++ b/include/linux/dma-heap.h
+>> @@ -12,6 +12,7 @@
+>>  #include <linux/types.h>
+>>  
+>>  struct dma_heap;
+>> +struct seq_file;
+>>  
+>>  /**
+>>   * struct dma_heap_ops - ops to operate on a given heap
+>> @@ -24,6 +25,7 @@ struct dma_heap_ops {
+>>  				    unsigned long len,
+>>  				    u32 fd_flags,
+>>  				    u64 heap_flags);
+>> +	int (*show)(struct seq_file *s, struct dma_heap *heap);
+> 
+> I found it good coding practice for objects ops pointer tables to have the object the function works with as first parameter.
+> 
+> Absolutely not a must have, but just looks a little bit more consistent.
+> 
+> Regards,
+> Christian.
+> 
+>>  };
+>>  
+>>  /**
+>>
+> 
 
