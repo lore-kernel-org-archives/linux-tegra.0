@@ -1,68 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from 011.lax.mailroute.net (011.lax.mailroute.net [199.89.1.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DCB4BFE7C
-	for <linux-tegra@vger.kernel.org>; Thu, 10 Sep 2026 12:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0635B47D468;
+	Thu, 10 Sep 2026 13:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789044073; cv=none; b=JNJ4Xs5e0/OwYutPX+qwMl5i2njWoaOqvquvJdokqimXJ6OAiP6UgnxQAZjnzpFa6OO+LEChy8GYwAIjG9X4a71UMySCcJgdhIFqJZlKYB43af1HXBHsuYgmWh8deiTJDDVxoyPfxjibk2pHaYZC7t33Mmj5MCxG01LDERG2MkI=
+	t=1789045792; cv=none; b=GjvaqRQAJasAXnajOys1G1wQO3ozjrBMiTp7s0CdW6WfV16YsppQESG3+u2g6Z18Xa2OGUQGZ7ouxJzY/rMP9Ba6M/XsKVggG3xgltUxdfq2YJBOY235OpuvLZEirbJynH39Vy8yDcsyOlxKtGpdvT8rdr2jLDS6oyWURd6ijtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789044073; c=relaxed/simple;
-	bh=YHWANGD3p0KdnbN+MqA6xoTrX2p7p70IdWFNuwDJ3kA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L033fdxLuVr+vAxQ6ohsphX1RBs7zYQriP/v4Q5QhVK3uOGt/pf5pdBI4uRhIKlGWQPL3WuSlZmVpyJwFhNz1NHarphbMOFpE508m2RUZyi0UIHu+jF8mWLOa+DRtFcYYJWLNgVQ7uHt3+E2AcZmNr5P0RhIrVFDZ1uNhsxdbNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YQt/iXRz; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789045792; c=relaxed/simple;
+	bh=uYEll0xRGJQKEXkXknOttnZJWYJjiAm9OIEVvnRtTQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YYEURAR9SUlu43Lh418ztCK/pnhz4g06QA25gyXPFOFiMvRSLkTYMlnKQAHdqyxL+1ahb3vIsOX4raQKciKE7bW9nNE46PqJMrYgIOylwfKFXOKID1u1zzlqMUBF0yJZQh0InKCceOIxwNeYlDopn0W6xYydifCd9xlu+OAR5tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=sFFX+OCa; arc=none smtp.client-ip=199.89.1.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQt/iXRz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77F291F000FF;
-	Thu, 10 Sep 2026 12:41:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789044071;
-	bh=nqcCxRxMFbBrhwPMpodtxEXS6u5ZBiAiUWNlaX+MgFI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=YQt/iXRzX69wBB0GMl+FdVJYEpPyRQDJpNHFnFYfGR+wwExa6vYlr2/ygpKeF9Iou
-	 ObaUKZ6XSDR3t6yGKBJmxOyyRDcmRw3+CUeQVFrNnzzZKU7hkbupXbUn5EJM/WXbza
-	 KjRRA+GAFpu4P8BsuIdsxm4ROS3XaiLqgk7rk6xq9xl6WXKJRwhiJvMlX130jiTLB+
-	 eV+8p7ZnuEubrC82Hk5dbFZXUt6SvZNhqTzGdYyGiDRRpIRXJaEl2YXQbpA8kaoGLW
-	 /z2fm+Gr3vSBCCPzuG54THAJ0mksF5h1qQtOUW7RS0G6VYgzScMDF4K6j1mcJr0api
-	 65v1xk03czdww==
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Thierry Reding <thierry.reding@kernel.org>,
-	Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] soc/tegra: pmc: Fix uninitialised clock rate
-Date: Thu, 10 Sep 2026 14:41:04 +0200
-Message-ID: <178904405812.3565311.12410117644991652709.b4-ty@b4>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260821130124.58844-1-jonathanh@nvidia.com>
-References: <20260821130124.58844-1-jonathanh@nvidia.com>
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="sFFX+OCa"
+Received: from localhost (localhost [127.0.0.1])
+	by 011.lax.mailroute.net (Postfix) with ESMTP id 4hgdLc4Y5Yz1XM6JP;
+	Thu, 10 Sep 2026 13:09:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1789045777; x=1791637778; bh=uYEll0xRGJQKEXkXknOttnZJ
+	WYJjiAm9OIEVvnRtTQI=; b=sFFX+OCa1UnWOA0pAOXqKCBomup2w1N5Imnnq6i4
+	Aav+XQ1NVrE7XRYnUtT+Gz2H0WdyNlY4+O5nBRMIMgEdT89yrSwDjhbtoXDfK2QT
+	ZIegW4QU3HavifFZhQazC4Uxa/KmxGRYqIt84T3ZZUG6yg5YYyoT9/OIyplHEvH/
+	RnJ9sGIRVuIVH3tLiXU61Sa6nQ5CZCpymNO7uyzeD2US0s1YE9FdJXInIweTkyO+
+	rtEtEHxXtwD+mJlrBeRmQjBV3hr0mIkOJ1MdB8/hX0nWHn3EkI+f7QaNDJHrO4o1
+	ZDpFMI5FfE9uYPsF29Ce1UXJLHYFDnG3KdfvCtyb47IbfQ==
+X-Virus-Scanned: by MailRoute
+Received: from 011.lax.mailroute.net ([127.0.0.1])
+ by localhost (011.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 2rNR6jfMuhwf; Thu, 10 Sep 2026 13:09:37 +0000 (UTC)
+Received: from [192.168.51.14] (c-24-6-239-25.hsd1.ca.comcast.net [24.6.239.25])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 011.lax.mailroute.net (Postfix) with ESMTPSA id 4hgdLM5xC2z1XM4Sx;
+	Thu, 10 Sep 2026 13:09:31 +0000 (UTC)
+Message-ID: <63f41284-a9ca-4d0e-ba34-096712f27b59@acm.org>
+Date: Thu, 10 Sep 2026 06:09:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] scsi: ufs: tegra: Add Tegra264 UFS host controller
+ driver
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Kartik Rajput <kkartik@nvidia.com>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Avri Altman <avri.altman@sandisk.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Martin K. Petersen" <mkp@kernel.org>, Philipp Zabel
+ <p.zabel@pengutronix.de>, Thierry Reding <treding@nvidia.com>,
+ linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260909-tegra264-ufs-v1-0-e4a9831702a0@nvidia.com>
+ <20260909-tegra264-ufs-v1-4-e4a9831702a0@nvidia.com>
+ <aqFqhNA50674GtPo@monoceros> <45a04396-c6c1-41f4-ace8-0ee0ccbc50ad@acm.org>
+ <aqKOipmg5V4oqZlB@monoceros>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <aqKOipmg5V4oqZlB@monoceros>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-From: Thierry Reding <treding@nvidia.com>
+On 9/10/26 4:21 AM, Uwe Kleine-K=C3=B6nig wrote:
+> What makes you claim that {} is preferred?
 
+There are many more occurrences of " =3D {};" (about 7000) in the Linux
+kernel than of " =3D { };" (about 1500). Additionally, clang-format
+changes any occurrence of " =3D { };" into " =3D {};".
 
-On Fri, 21 Aug 2026 14:01:24 +0100, Jon Hunter wrote:
-> For legacy 32-bit Tegra devices, the warning in the
-> tegra_pmc_enter_suspend_mode() function is being triggered because the
-> early_pmc->rate variable is never configured and hence, always 0. This
-> issue started occurring after updating the PMC driver to create the PMC
-> context dynamically which causes the 'rate' to be set in the new dynamic
-> context, but missed updating the rate in the early PMC context.
-> 
-> [...]
+Thanks,
 
-Applied, thanks!
-
-[1/1] soc/tegra: pmc: Fix uninitialised clock rate
-      commit: c5c95dbdc9011a56359df4dc00be829bbcc0b036
-
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+Bart.
