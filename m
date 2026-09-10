@@ -1,66 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3D818DB35;
-	Thu, 10 Sep 2026 10:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05606421235;
+	Thu, 10 Sep 2026 10:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789037527; cv=none; b=TGfNgZ4T0c6cVhcapzVtlDfE1tDyQ7osukiyrrJJa//7T9yL4zF5AqSUvWGpPkDlGjqHkR4NyBQTDi/BPFdKlaSZwyCHQ9TVfAwgos55H2TKKBt6TaK3vS6zorP9XuEHO2Z+Vy+AVk+55cymIfA9UhmLfJZNf5dvfDEXk4w9dyM=
+	t=1789037599; cv=none; b=fI83he8053PKaERvK3YVRziITbwpfrTqBUfOSCUqCNvNl5R6RjVR0++VTjeRLk16CJDmCt0HyAq7oEegZxIu1+DMQ2QfJhcU5rDl5ujyRJC8VQMfyRup9+hQ3s3c4oA2mlPTjwpqRBBd9gMjOE3oHfq6lBtMkoGPOtJ2F/4yurs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789037527; c=relaxed/simple;
-	bh=N7tjoMh0VJ0JjF10mqJOPD7b1ih9SO6rgWyfI3+RTmM=;
+	s=arc-20240116; t=1789037599; c=relaxed/simple;
+	bh=XQ4bOpWEdg7joI/rHhEM0ntGnna/QHZ0cyWmU7NS4QE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RhWIJOJaaV4obJosx6iNVAsGP28PPfDgNMAZVwvQ/bJHSKZ8qrpJ///IMXPJ4UTWNhE83tuVX5zmNtRW0AmozAywd1O/ra8AIfYwok1szrE6Zy7JUbw918KZqVxzFXrp2Y3IbqWeU1mCPaJ+b2pjunpwRdjbXbsj6xdfZvh5T9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jkBWkbqs; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=SCPxaumkUKBAwVWaAVn3ZjvekAMHzEVa/9sGSJBPAlBGdFThzLey2PkIw9/zAW4kjeazfLG1eq+CIs/j2zpe+AsE3pmPX0tf43WuY500qKzQptO44gsWN2Ru8YFFVtcceIMCaOj7UnXvKys8czEtU3JTNwWqpNRuyh7ramjFmBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W0qKshY4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jkBWkbqs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB61D1F000FF;
-	Thu, 10 Sep 2026 10:52:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W0qKshY4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 164071F000FF;
+	Thu, 10 Sep 2026 10:53:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789037526;
-	bh=N7tjoMh0VJ0JjF10mqJOPD7b1ih9SO6rgWyfI3+RTmM=;
+	s=k20260515; t=1789037597;
+	bh=MxMwOJOdXW6C8s3622AqqaYNuUGyq5gIDqrLGbv8shM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=jkBWkbqsUtrXGjvzs9ejgfK4XpAo0fpqaDkZEwyYUh3nsky2zY+18Vn27mS7241TL
-	 MvCu5S/EUOKRuRIWcemqgqVR0X7r6k4w/oYOXZqhYTVtmn5cDR0ZWuVJ+EoGIOf31K
-	 si2Vs3AQL0JW0JfVnduAaNtpDg+K6Gjxl/jEwtzpEcPUiZ4rezgSm0nh5PAkQQUFO1
-	 GwPIbbmKXcJaxgmpF9ohj/yHw0Jk801NrDXApGybMo/hVriULWRHefHhXwmI/BEyuR
-	 x75hp2NlH3/kPyBXNr+tNycCgJ1d5N0BstAe2eFHBEpUaMX8cbJ1kv4UK65a/OEoEn
-	 o+nS3JzDYdGyw==
-Date: Thu, 10 Sep 2026 12:52:03 +0200
+	b=W0qKshY4SnWlyQeFf9OJC5RXsUxOWyYDDXegchHthqgABJIN3xirFUmn4i1uNv8Ux
+	 l3+QOS1h/8yd092xWjYosXlzvtHo39MMxAWSnhc30V8THpspbyPx4yehKhAikWPd/Y
+	 4tE3rGoG8WhLR+vTOJOSzN/BDBCphWvAS727LqC/TeKzPmo3db7V+/+lajtonOD4xp
+	 Am8Kuwq0RhvAqkefcCgz5wi0aPzrULTufO3DbHweR2OMKMywQNesO3lLkLGUcZHMWd
+	 Xmzi3TUAQm8+sfBxSDYiTpeKkbRc534m+5xPV1Y39TEnceKojuBRHYGXbEOYMn6MyN
+	 5mqKBoeeZEN/A==
+Date: Thu, 10 Sep 2026 12:53:15 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Russell King <linux@armlinux.org.uk>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>, 
-	"Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Chun Ng <chunn@nvidia.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Saravana Kannan <saravanak@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, linux-mm@kvack.org, 
-	iommu@lists.linux.dev, linaro-mm-sig@lists.linaro.org, 
-	linux-trace-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v6 06/12] of: Export of_node_to_nid()
-Message-ID: <aqKLkeg0iRBqa3bo@orome>
-References: <20260904-tegra-vpr-v6-0-79042cfa8de5@nvidia.com>
- <20260904-tegra-vpr-v6-6-79042cfa8de5@nvidia.com>
- <20260908145929.GB3123582-robh@kernel.org>
+To: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: net: nvidia,tegra234-mgbe: Add missing
+ properties
+Message-ID: <aqKL_UX7bFt4BrYE@orome>
+References: <20260902003004.453960-1-thierry.reding@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -68,53 +45,65 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pochtu3uujjsdg7m"
+	protocol="application/pgp-signature"; boundary="n4di5mlilxk6ph5q"
 Content-Disposition: inline
-In-Reply-To: <20260908145929.GB3123582-robh@kernel.org>
+In-Reply-To: <20260902003004.453960-1-thierry.reding@kernel.org>
 
 
---pochtu3uujjsdg7m
+--n4di5mlilxk6ph5q
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 06/12] of: Export of_node_to_nid()
+Subject: Re: [PATCH v2] dt-bindings: net: nvidia,tegra234-mgbe: Add missing
+ properties
 MIME-Version: 1.0
 
-On Tue, Sep 08, 2026 at 09:59:29AM -0500, Rob Herring wrote:
-> On Fri, Sep 04, 2026 at 12:44:57PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Drivers buildable as a module may want to use this, so export it.
+On Wed, Sep 02, 2026 at 02:30:04AM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 >=20
-> We need a specific reason/driver. Otherwise, that's every API function.=
-=20
+> Being a DWMAC derivative, the Tegra234 MGBE supports AXI configuration
+> nodes named stmmac-axi-config and phandle references to them using the
+> snps,axi-config property.
 >=20
-> It doesn't look to me like the VPR driver ever actually uses the NID.
+> While at it, add the 10gbase-r PHY mode.
+>=20
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> Changes in v2:
+> - move common properties to snps,dwmac-common.yaml
+> - link to v1: https://lore.kernel.org/linux-tegra/20260716212001.989872-1=
+-thierry.reding@kernel.org/
+>=20
+>  .../bindings/net/nvidia,tegra234-mgbe.yaml    |  8 ++-
+>  .../bindings/net/snps,dwmac-common.yaml       | 66 +++++++++++++++++++
+>  .../devicetree/bindings/net/snps,dwmac.yaml   | 52 +--------------
+>  3 files changed, 73 insertions(+), 53 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/net/snps,dwmac-comm=
+on.yaml
 
-You're right, we currently don't need this. The plan is to use this to
-differentiate between VPR instances on NUMA systems, but we don't have
-any such system yet. I'll drop this patch for now.
+Any comments on this?
 
+Thanks,
 Thierry
 
---pochtu3uujjsdg7m
+--n4di5mlilxk6ph5q
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqii9MACgkQ3SOs138+
-s6G+LA/7BGayHietSWcjHsnMEamaB/I04lj2qpSvcwlZK/2E94CCzDouik55LAg2
-7yFNbMU0VYi2oxec0RMMlAfo/OEN8iG+3X3tcTwQ6Hv7fPxlsffyKDIAb0SxAalQ
-3gXrYnaeeUS8oWlfyapzTnArDHz1wkolZluRr9R3cj73ED8jdi0XuHkTjlbGKVko
-KaZTIYUo9uB5G1wLUs0TOP3pAfJJa97LpAtMPIdytlgwy8wLXa5ti4A79opsZzIa
-5kTsTXx5D9Xg+/kJuuvpr/5lanW+hYPWVbL8w37xwjKV5EoQW5kSdUnXXuZiE5p6
-zM5tKM16OssvhPhZkYaYwdR4QwrJz2wpGE1R8NV9W0IMpW4HtsIRJPbTQhQOqn0L
-DdKwKKwPYYEAshOJ/vel7xA5/rnfbFAtxOI8CvPpjM6mv0y8AFM8fApzzcfjlJvW
-D+mJVr7IHD3+E4MZeA44MUvJpuK9a6tZg80Z0ixPnnbtl7th8/3nrj6vpW2ANmjk
-aeh2Rud7YKP1TJThucNGvzzl9zmePpUiapF47cWCkR13ooM8opgzSHkeGBkU4Oaa
-HsXVrm8Ie+po6BAMLKsduZrB2KFkFyJ68bMGbHwuwqmVSux9BnT+Mc65Yc7fWEF7
-9+pu4BoTZZ32aJXzpyx8RcxV9jADGugXNEA88fHQpAxDbtyg5lc=
-=XC4p
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqijBsACgkQ3SOs138+
+s6ELSQ/6ArQVKQt4jXB8wXAaEC/UVlvgyRp7EHmuns+e8qZygBa0gYbCB3S0jwch
+//6TroJgmHnkUVxkz7B7psQkYKlhXlYeq6vT9+tlQmtzd5iN7gAvt9hWm1ADkdKk
+dsGaSA/0xw2uMTGIG2HheslpcXT4OEQ+2Y/GOXZUipIu9TgR7C9WatqTji75Ihow
+xqu3wv+BrPzo7nrPsO8rjThriPITn/AjpzCq11fEI4Md0NbVC9BC3gfJ9essiHHz
+yEEVyg6ep9ToqFvBB5zJYhJ0L5EUFStBHEk4rCbEhGOxS+N+GnPY5mT+f0kvXSHW
+NJp19GE5W5KsaBmqGz4PFPL1dTXceVUNSpn/RPOIoJvr/PDzvkKwKOa/bkvQSw7j
+fifod9xR57XWt1sSdGN0PD39HeT+cAjYSse0Mbw0U7szectlKohaWHhSZXy13UCB
+kdUdczMOUWZH8ogcSF6sVQkp+xQ/UPqoNVbRNBHdYebxfjv69EhqFXHPHguTZE3/
+YcA7mJ5jPTkT8n5LaVzvz3mcOOtdEHzofWMaP8W+YV8VndYzAHHJPV5Jqyu/lEc6
+UbUiZO3invSj0QYetKPME7ZeHixhWBzRNYCjE6U8UU+ZJxe9ZEIqtAR+ejdUxo5Q
+8G4XErg3wAawe31hDpR8SWfaXe6WnQuB52mAflxtIYZbSV9tWxw=
+=1Fr5
 -----END PGP SIGNATURE-----
 
---pochtu3uujjsdg7m--
+--n4di5mlilxk6ph5q--
