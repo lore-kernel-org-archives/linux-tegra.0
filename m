@@ -1,72 +1,71 @@
-Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011034.outbound.protection.outlook.com [52.101.57.34])
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010069.outbound.protection.outlook.com [52.101.46.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262053DAACF;
-	Thu, 10 Sep 2026 09:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C863626ED3E;
+	Thu, 10 Sep 2026 09:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.69
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789030820; cv=fail; b=oJ17xsQKf/kb+lTbFnbPWYKUpjU8L6Y8TUFoShgiDL4tlu/bNnk7FUbcRJxVrNFAtNExFso/e6xcsC8oBBKR0kzHSVUMhnndhizly8gbMV+wZK0CtuoHntzlIzh6zKzxEywqSiiePZW8qnTV8POCgA7oxmonwYXsN/F38su71vs=
+	t=1789030826; cv=fail; b=ANtE4DL8xMlo1jn+cGmncvQvwx68xNU7vH5DzQNjSPjwcywjLa2Gad/8ByyMQ+AgEfjiZtoAROUsNj8E5KK5CGlik+8CdAi8mygyEbPTVlaLcDA/b+a+1Qwi1k4+yJrrchMTCiEepO+YAm2q59AUZRrL+F7MbSNQp6DSdcmdfUI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789030820; c=relaxed/simple;
-	bh=GoEOZcHwdVo+xqTvn4xNsnF1Bd5EjidOK1bpUM3Xw4E=;
+	s=arc-20240116; t=1789030826; c=relaxed/simple;
+	bh=gv5xqPEbbB7ZMZ3BKLz0jgkJd04ciFnPX64QueiCvMw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hm19IjGaw4Kid5TEz9y2TiqYWxHhvi1GxMmjTkEsvnJ+PJsCSYyGkk5OIxi+ARvhicmFeUITxOjySOVGNHaGeLzzRZRqAKR3IAOnvfxZbf7KEo+nsrpsfvtZxAwgHkeYuCXUWkKGQydUbcvB/IIm4x8ivy0+/MSLNrXeExVgVQA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nK4hE86E; arc=fail smtp.client-ip=52.101.57.34
+	 MIME-Version:Content-Type; b=fDpAnN4sqrpdZ2v0YnkeXuBB58bYK/x6/PJh2P6RSS/ZjkTm00jiuSmlLZf4cZ9thLiZvxEt6496kjj0sF6CqXS6c4f7lDfrgrAGc2BGRQ+F85Dss952y/Q9X2RqJ8qcus980dcsF/wldT36H7EAyKWr9aBN5dJE9ML5hcb7ZFY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SsbcNicB; arc=fail smtp.client-ip=52.101.46.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nK4hE86E"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SsbcNicB"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vW51KhZ07GVxpYN+bzGlm2W7JGprzQDyZucpPOeCjg30G/mfELPak2SZjTGCWsktDPZ35EQa1F+o23ylQeLPwcjzwjAeAWdxRocH+zrizBaC7sa2Jo/k2jB2KmWyK+SGzNsSJiuBtOEh+kmwDWcwRRfxfxq1B1biBKcXMw6dVgymQ0WUy5+SMbZZWB3ixyJi5dKsd3L+/OU7+id8ml1kOZ3ARGspOOGOhONuvX+mPivjeTlH41dkzC3m+ozXVWIplJZnbOe6n5U7SJzujBqXeZMvQX6mUMzsxvR70oFamS563mil/zKEvXazijtGiWpk+IfSz6YYK6K0S8RPBY9zkA==
+ b=QuR56owdPBLSdEIcknii+iwdtWd9dfoe3BHU1WpL7Ql8Dl/JzhbCk5CxgkKxKis+OwiNGGnU7VuBrPjf+NbQW9Nb3ulFCCkzs53xw9PBvDIRUaaj+aJes/kAC8Yv3G9Y0DPH71+zNX55GAMFRTUenHGsiovIhM8AhEk6W8ibnQ+NYpv6ITcEcxSQPUM7wGTOVgntNi2FycHsKYmc5HRsTX4n///SlH32GR38/UBTIiPAfliTikAUJlLwHvAiMAyz3fptLuch3sYow5ecatNgLaWh8zKI6x7v14Ji8A/ckv0RN8KzgTIr2nJd49/yT4F/4sQzULz7XGs3xCUz1AiqXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SQshqhDmt7ISI/C/v1K9YeziwuFr4ycejSvxCIYXvuQ=;
- b=TYY0xIJF85KrrzwRVvB0B/opQGGT6fqjX9zpG/F8GoVjiWXH1IhFPUrE2FFXNK7fGXb+MULRtH0zSkaBzmqfRGnfqEsf6u5pDL8eh83yiHM7uvJeE02GLzh+AFqqpwoaBATJiiHIZn0coIgdAYbg4xqL7lzOrAJU9NOt5sLRz8+LqA+IFtZi4xK87nr1UAT4n9xGKn/zvr5jUlCFnZyhYl5o3Pwmsc4xcnWWdPXzyQ/7hSuHLZ5+wIR7PASTEdiy0krWKboxWPi3UBRXJ3r+H63YOzAjtlsWvxZu3F2aTTIpZXUHv1Et0uGN0tecQEo/JmyQhMS6BkDoXSYR3ZkOCQ==
+ bh=iIAkQ4h8SFkVT0fx997joVx2+hyqQ615NvOQc0RGsgs=;
+ b=OpjsZMSWbp9O+OY0/olnhiMfh/neHgzTAKOmkssNgCP7UwHMnurZE7cIh+j7mKfAm8eLSoyYLluIlN/iQofjCFTxPII2ub5CHbgJRwN3L1IGPcsSIPAeyTlUbE+IF+zM906q9oN/Vbk7KaprzoOzTjwehFKKS6j36rnOjwrvyvQ6z7UpaGQvAcknNDyvCZK4+yrpL8C7QLqxxBQBHq7H8WzQRMpmR+FsrrejTTfFn1y5RNhWR0/m4ijMgOIUO/Uk+1hvJn9Pi5HDWHFZ6FC15b3G4ymbiVJxc36Pq2ACrwAK0GXHgPZlW77Ou+RABgerJcVGhFJqaZuZvgvaiwGDYg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SQshqhDmt7ISI/C/v1K9YeziwuFr4ycejSvxCIYXvuQ=;
- b=nK4hE86ElIMm5G+iQuWMtmEBvSxm0ci1rhvluS9x+XFgnLqTrbTRo4gglXSD0nWI1e22weauxV0ogNFznMlh4tK60fexUicDyJceDmSe6kOncB0y0rZJvVWXvDo/tFo6CWejYernJjG0rELb4BffgnfSLKQememQEhfIbr92FIgAS/jiXvnsxWJVhP5+w6OnWfCMtiKX+Neg961FxnjUb8NoqNukFrsdO6Pbe6cziD7AXJ9PDf16SPrxF4r9SJTDKUo+x0MToSvOyhMzKg4su3SyHcglgl1248DD3t7/+KvYKCaZKoJhH5Wc9y8apUKki/EqBgC1OvYFuNbIR7Pm8A==
-Received: from DS1PR04CA0027.namprd04.prod.outlook.com (2603:10b6:8:243::7) by
- MN6PR12MB8472.namprd12.prod.outlook.com (2603:10b6:208:46c::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.9; Thu, 10 Sep
- 2026 08:59:55 +0000
-Received: from CY4PEPF0000FCBE.namprd03.prod.outlook.com
- (2603:10b6:8:243:cafe::b) by DS1PR04CA0027.outlook.office365.com
- (2603:10b6:8:243::7) with Microsoft SMTP Server (version=TLS1_3,
+ bh=iIAkQ4h8SFkVT0fx997joVx2+hyqQ615NvOQc0RGsgs=;
+ b=SsbcNicBDudecp1z83nxOgdfg9QFQWriRfZQYr1uCLt/GeQKcpznBZNDpHGQiIO+oe+tgMq9FzMRvblaDaAfjbBroSKj7Z2wzET+3c2oB9dmAmbUMlS+L7eSu5TuYq/7uJ1NnURE3sdGhGIkX18HUq4TLd0Rb9bjXazOPjOZTeb/4HpfiLKmxg/MdQPXesovvV9YcqVHzaiM4NoHKD34nNiDEGWcC7jmtW7ScSHtjeTTYKqzUMnClBv6rEClgcilo4Glry4iZpcbaZCebNqSTwAxmbo0QUFW5FXPabFOmOUVPCNcQTYo1HDE0NeQQXdgI+vrDvNDGrfGzXDXkeGm0w==
+Received: from DS7P220CA0035.NAMP220.PROD.OUTLOOK.COM (2603:10b6:8:223::31) by
+ SA1PR12MB7272.namprd12.prod.outlook.com (2603:10b6:806:2b6::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.406.9; Thu, 10 Sep 2026 08:59:55 +0000
+Received: from DS1PEPF00017090.namprd03.prod.outlook.com
+ (2603:10b6:8:223:cafe::33) by DS7P220CA0035.outlook.office365.com
+ (2603:10b6:8:223::31) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.9 via Frontend Transport; Thu, 10
- Sep 2026 08:59:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ Sep 2026 08:59:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CY4PEPF0000FCBE.mail.protection.outlook.com (10.167.242.100) with Microsoft
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DS1PEPF00017090.mail.protection.outlook.com (10.167.17.132) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.406.5 via Frontend Transport; Thu, 10 Sep 2026 08:59:54 +0000
+ 15.21.406.5 via Frontend Transport; Thu, 10 Sep 2026 08:59:53 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Thu, 10 Sep
- 2026 01:59:40 -0700
+ 2026 01:59:39 -0700
 Received: from build-anrao-noble-20260906.internal (10.126.230.37) by
  rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Thu, 10 Sep 2026 01:59:39 -0700
+ 15.2.2562.46; Thu, 10 Sep 2026 01:59:38 -0700
 From: Aniruddha Rao <anrao@nvidia.com>
 To: <thierry.reding@kernel.org>, <jonathanh@nvidia.com>
 CC: <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Aniruddha
  Rao" <anrao@nvidia.com>
-Subject: [PATCH v4 5/5] firmware: tegra: bpmp: Add MBWT sysfs interface
-Date: Thu, 10 Sep 2026 08:59:19 +0000
-Message-ID: <20260910085919.2522241-6-anrao@nvidia.com>
+Subject: [PATCH v4 3/5] firmware: tegra: bpmp: Add the Memory Bandwidth Throttler ABI definitions
+Date: Thu, 10 Sep 2026 08:59:17 +0000
+Message-ID: <20260910085919.2522241-4-anrao@nvidia.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260910085919.2522241-1-anrao@nvidia.com>
 References: <20260910085919.2522241-1-anrao@nvidia.com>
@@ -83,392 +82,242 @@ X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCBE:EE_|MN6PR12MB8472:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8ad0cafd-7b03-41c5-ef96-08df0f19e1e3
+X-MS-TrafficTypeDiagnostic: DS1PEPF00017090:EE_|SA1PR12MB7272:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0590b500-baca-44a6-ed10-08df0f19e133
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|23010399003|36860700016|6133799003|10067099003|56012099006|11063799006|22082099003|18002099003;
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700016|23010399003|18002099003|22082099003|3023799007|10067099003|56012099006|11063799006|6133799003;
 X-Microsoft-Antispam-Message-Info:
-	8+Oaa/3R7T+kLZkcAhwOY321NwUZuP9aWr/RiRdHF3u2LdhXUKQifc94yM2TIN5gU9CXDYkyYmjLWzOGH0DXAH3vNxuDFEqc+2YpbSZjoj8AjlNW9xo/0KTpnQJcSrmrIzgJsZyu4gql2bbBFMfA6HpmfwZh/AGMUjiYWZBXGYbfWr/HgZCE1JoCzQM8Wmy02V1cCRX60hQfHFt0eTEgMFoK6Xdjh6GBwIreSWAIkJEpNxw8K8BT733Hon4YtSEzv9xxkdFtUwmFxqODq3E1Erets0Opjt/cYPphiv+q0MKh3l7cJS8lA7dJfDsWKyG79O0CcbIcclDhNKL5+wmhqO4lnugXQ1QqT3mpopf6V6eUerMRrpTGBaGLFfk6LtEE4/f2hjYZ5WftfFlB0/Dx0h6qFCcnJdUMbELJVAAWImfYT8tgz5YXFpSEAdovh4Wvy/S4LatuLa5hS+RVcKT/tAumOWu6GP2N/wVn5k9AI6dF34lQ6ga0CKis4KQrhcEkJY4AktYZffxVdq0toqLHXgHbYDspj/a/8CjmP81S1RCVqYSRz4HqbFsSdayLNWJs6Ac6MK1kUlsP9PTm5Fp4HdqMN3vYoKUjdSsbMHt8sKaaF3UdfkC985YrnmVdvfBZlCy+JoR/41uJ2xyjlzJRQ+ZgZ4qWEjR75Joidd21eLp6s8qc9QE9H37LZnq63/4N+i3oXEJvm7mEdAN6rB7cuw==
+	n+C6kgxJTXroRWrtNb7pld017L9WIF939MxX8KEEuR0z9rZwUofNy6p0oL3xbIS8y4n2HIYS06a2QAEn3XxmtoA6QSsnvjk2SlSv1o4IDkOesysVUuJaimI+FOY3NnPgn/QgorTiE1aAlozJQIzc88yDYfNSkF4Vgm12B4qsBtSyPtA2q6ZP+6Se1oD+uMthA7yCDJKlCRDUOHkMNIRNvcSVbqMLu8x3zNnurDuh6bk25SJesN+tQmwWjJKcbyKNLPRJ1amobLsX7EPpL3IDnWV6wxUzQktL3i3WN7sFYKTnA91zOxjItwGi0/Qmrc7O2oi0qDNPuc08iFM413lbpUUsI08wxiOYx5qMsQstXru6PHSMQ+SnHzvM+tlbDjZa+zMVzRZDxuhCvNoiWy/G8ai0Ebj1KNkYlOiEW2RHlcaZVJ4cehUflmkOQzMvtfweSI0AA/QRD1A1AMjUsxZu3s/r96t/0DLVZxtMs2C2LLt7B6fkFD3YJb21hXCYiunabWsnzpyP5PcFRtqyuG3UJ3djJJvg9DF95JNcwKTRgOEsnKDaIula38ZTuPOtTa5RwMkNuShgB3mbaJhMx3lrvQhHPyRxAWhLg7j9ove0+06gXV2q8rSWJOapznW8CkOajtzxc7kVbiI2COA0JvBjX6z3k/bJej7+bQnY59JQN9oxPROmYJYXszAt6ct1H2dd6NpuuQx6652qGzi/Xijpjw==
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(23010399003)(36860700016)(6133799003)(10067099003)(56012099006)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700016)(23010399003)(18002099003)(22082099003)(3023799007)(10067099003)(56012099006)(11063799006)(6133799003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	BsH3m8hClFaofVkYxwIIWXNAYZGg3iIwX53BuQwZXyuwOLm1q6CAkj5gTnS9wHcORoEj9iLM0If+ukhxNTdx0bpDx6km32Qhfz4p3Y/nZaO+jpNvATTyX5LTIQq8gaj9FONsAd2aBzWPK7aOmdYiC1IIZfv+ZYvpRy7SsP/J72zmCWHVsQpHuJ5lDanBFZebJHu5jDP3Os8UiwqjfKpJiGNivSv56QPFCwSax7fQiDV60EoNML4fyBVvnsGxY8vJNZxyS1ny/oBXNGe0r/qPbOHle4xGRBNMTZmX0XINmKRAyiZRD+E1nw9Qtve/kqcLgO/5YGC1Mk0GQYFb7kFygd6ztRiamFzCTNQhej4j6bhws7ekVd5CbxlY3PjuKmrUWRob7P38Vgl+Dy93TWxWxUyhzpFJhS2uHFoE2XxogvDceLPC9lDTgMI6lBdAklVZ
+	UpI/XCI2TyrErSeGT3+WBfCIxajwKx+XXFX8boYWg5fDNfXDor6iJH7Ndb+2etpxLr9Z3vpw79nihyJpz4Hb8CPr+9jSpTeIPsYJjWT08Y+uswsc+WY3C+th5CnZuKAEOhbZVG1Kf61//Qibiau7Yto4vIUohdoMFZQEAVG5hxjdws6sbtZ6Qw2Om/KATmrtU7Xm3C/Wb6Ga17/kTtE7L1r1XJaa/G0K6/QwLw7WqRR7Kc1K3aJBhV03lrbt+kIHC9e9ZOKaXwtEWjcFhg9d8d7+uqjaUB46Bxfg4ECwQRfhP9VETLJ0l80ErizyeTEFOOpaYvNGvyg8bXm9q8z3yTWm1ryGq7+I5RiufL69WDHGFQ9GnfjUR8PgYSVGhtmo+uWdir5JtY7eceV5EIsGbY5lUtewZrC+Yio8ETNZJz7eCeaRahJn6kj6nTuJhzaS
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2026 08:59:54.7266
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2026 08:59:53.4645
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ad0cafd-7b03-41c5-ef96-08df0f19e1e3
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0590b500-baca-44a6-ed10-08df0f19e133
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000FCBE.namprd03.prod.outlook.com
+	DS1PEPF00017090.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8472
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7272
 
 Different workloads can place different memory-bandwidth demands on the
-system. Selecting an appropriate bandwidth limit depends on the runtime
-workload mix and on the devices carrying that traffic, such as PCIe
-traffic or GPU traffic connected over the chip-to-chip link (NVCLINK).
-That information is not available to the kernel.
+system. BPMP firmware of some Tegra platforms provides Memory Bandwidth
+Throttler (MBWT) controls for PCIe and GPU connected over chip-to-chip
+link (NVCLINK) traffic on the path to DRAM so software can query and
+program those bandwidth caps.
 
-BPMP firmware of some Tegra platforms provides Memory Bandwidth
-Throttler (MBWT) controls for PCIe and GPU traffic connected over
-NVCLINK on the path to DRAM. Each PCIe bandwidth group has a single
-shared cap for all traffic in that group. Bandwidth for a group can be
-set per traffic type.
+The MBWT controls are not exposed through ordinary host MMIO and are
+accessible only through BPMP firmware requests.
 
-Add sysfs attributes on the tegra-bpmp platform device to expose a
-narrow userspace interface for MBWT control. The attributes are arranged
-as mbwt/pcie0..pcie5/pcie_read/bandwidth,
-pcie_write/bandwidth and nvclink/bandwidth files. Each pcieN directory
-identifies a PCIe bandwidth group and each traffic directory identifies
-the traffic type.
-
-Reading a bandwidth attribute queries firmware for the selected bandwidth
-group and traffic type. Writing an integer programs the target bandwidth
-cap in GB/s for that bandwidth group and traffic type.
-
-Register the attributes only when BPMP firmware reports support for the
-MBWT GET_BW and SET_BW requests through its query ABI.
+Add the ABI definitions for the MBWT message request (MRQ), including
+the MRQ ID, sub-command IDs, and request/response payloads needed to
+issue the MBWT control requests defined by BPMP firmware.
 
 Signed-off-by: Aniruddha Rao <anrao@nvidia.com>
 ---
 Changes since v3:
-- Update the sysfs ABI Documentation date to September 2026 and target
-  release to 7.4.
+- No change.
 
 Changes since v2:
-- Rename bpmp-tegra-sysfs.c to bpmp-sysfs.c.
+- No change.
 
 Changes since v1:
-- Register the interface based on MBWT firmware support, not ACPI.
-- Replace the stateful tuple attribute with per-traffic bandwidth files.
-- Remove software bandwidth range checks.
-- Build the sysfs interface under CONFIG_SYSFS.
-- Rename the registration helper to tegra_bpmp_init_sysfs().
-- Avoid platform-specific or transport-specific MBWT wording.
+- Use NVCLINK spelling consistently.
 
- .../ABI/testing/sysfs-platform-tegra-bpmp     |  48 ++++
- drivers/firmware/tegra/Makefile               |   1 +
- drivers/firmware/tegra/bpmp-private.h         |   9 +
- drivers/firmware/tegra/bpmp-sysfs.c           | 205 ++++++++++++++++++
- drivers/firmware/tegra/bpmp.c                 |   4 +
- 5 files changed, 267 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-platform-tegra-bpmp
- create mode 100644 drivers/firmware/tegra/bpmp-sysfs.c
+ include/soc/tegra/bpmp-abi.h | 161 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 160 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-platform-tegra-bpmp b/Documentation/ABI/testing/sysfs-platform-tegra-bpmp
-new file mode 100644
-index 000000000000..244c91893005
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-platform-tegra-bpmp
-@@ -0,0 +1,48 @@
-+What:		/sys/bus/platform/devices/<bpmp-device>/mbwt/pcie[0-5]/pcie_read/bandwidth
-+What:		/sys/bus/platform/devices/<bpmp-device>/mbwt/pcie[0-5]/pcie_write/bandwidth
-+What:		/sys/bus/platform/devices/<bpmp-device>/mbwt/pcie[0-5]/nvclink/bandwidth
-+Date:		September 2026
-+KernelVersion:	7.4
-+Contact:	Aniruddha TVS Rao <anrao@nvidia.com>
-+Description:
-+		Provides access to Memory Bandwidth Throttler (MBWT)
-+		controls exposed by BPMP firmware for PCIe traffic and GPU
-+		traffic connected over the chip-to-chip link (NVCLINK) on
-+		the path to DRAM.
-+
-+		The attributes are present only when BPMP firmware reports
-+		support for the MBWT GET_BW and SET_BW requests through the
-+		MBWT query ABI.
-+
-+		Each pcieN directory identifies one PCIe bandwidth group.
-+		Each bandwidth group has a single shared cap for all traffic
-+		in that group. A group may contain only PCIe devices, only a
-+		GPU connected over NVCLINK, or both PCIe and GPU traffic in a
-+		bifurcated topology.
-+
-+		The pcie_read, pcie_write and nvclink directories select the
-+		traffic type for the selected group:
-+
-+		pcie_read
-+			PCIe read traffic
-+
-+		pcie_write
-+			PCIe write traffic
-+
-+		nvclink
-+			GPU traffic connected over NVCLINK
-+
-+		Reading a bandwidth attribute returns the bandwidth cap in GB/s
-+		reported by firmware for that bandwidth group and traffic
-+		type.
-+
-+		Writing an integer to a bandwidth attribute programs the target
-+		bandwidth cap in GB/s for that bandwidth group and traffic
-+		type.
-+
-+		Examples:
-+			cat .../mbwt/pcie0/pcie_write/bandwidth
-+			echo 100 > .../mbwt/pcie0/pcie_write/bandwidth
-+
-+Users:		Platform integration and bandwidth tuning on systems with BPMP
-+		firmware MBWT support.
-diff --git a/drivers/firmware/tegra/Makefile b/drivers/firmware/tegra/Makefile
-index 41e2e4dc31d6..97f7a5db9d0a 100644
---- a/drivers/firmware/tegra/Makefile
-+++ b/drivers/firmware/tegra/Makefile
-@@ -6,5 +6,6 @@ tegra-bpmp-$(CONFIG_ARCH_TEGRA_194_SOC)	+= bpmp-tegra186.o
- tegra-bpmp-$(CONFIG_ARCH_TEGRA_234_SOC)	+= bpmp-tegra186.o
- tegra-bpmp-$(CONFIG_ARCH_TEGRA_264_SOC)	+= bpmp-tegra186.o
- tegra-bpmp-$(CONFIG_DEBUG_FS)	+= bpmp-debugfs.o
-+tegra-bpmp-$(CONFIG_SYSFS)	+= bpmp-sysfs.o
- obj-$(CONFIG_TEGRA_BPMP)	+= tegra-bpmp.o
- obj-$(CONFIG_TEGRA_IVC)		+= ivc.o
-diff --git a/drivers/firmware/tegra/bpmp-private.h b/drivers/firmware/tegra/bpmp-private.h
-index b3770e71020e..3a15a7aa0ffc 100644
---- a/drivers/firmware/tegra/bpmp-private.h
-+++ b/drivers/firmware/tegra/bpmp-private.h
-@@ -33,4 +33,13 @@ int tegra_bpmp_mbwt_get(struct tegra_bpmp *bpmp, unsigned int instance,
- int tegra_bpmp_mbwt_set(struct tegra_bpmp *bpmp, unsigned int instance,
- 			unsigned int vc_type, unsigned int bandwidth);
+diff --git a/include/soc/tegra/bpmp-abi.h b/include/soc/tegra/bpmp-abi.h
+index 5c64b3e02211..6f25126f5fb8 100644
+--- a/include/soc/tegra/bpmp-abi.h
++++ b/include/soc/tegra/bpmp-abi.h
+@@ -587,12 +587,13 @@ struct mrq_response {
+ #define MRQ_HWPM		93U
+ #define MRQ_DVFS		94U
+ #define MRQ_PPP_PROFILE		95U
++#define MRQ_SOCHUB_MBWT		96U
  
-+#ifdef CONFIG_SYSFS
-+int tegra_bpmp_init_sysfs(struct tegra_bpmp *bpmp);
-+#else
-+static inline int tegra_bpmp_init_sysfs(struct tegra_bpmp *bpmp)
-+{
-+	return 0;
-+}
-+#endif
-+
- #endif
-diff --git a/drivers/firmware/tegra/bpmp-sysfs.c b/drivers/firmware/tegra/bpmp-sysfs.c
-new file mode 100644
-index 000000000000..f56836fa3314
---- /dev/null
-+++ b/drivers/firmware/tegra/bpmp-sysfs.c
-@@ -0,0 +1,205 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2026, NVIDIA CORPORATION.
+ /**
+  * @brief Maximum MRQ code to be sent by CPU software to
+  * BPMP. Subject to change in future
+  */
+-#define MAX_CPU_MRQ_ID		95U
++#define MAX_CPU_MRQ_ID		96U
+ 
+ /** @} */
+ 
+@@ -6686,6 +6687,164 @@ struct mrq_ppp_profile_response {
+ /** @} PPP */
+ /** @endcond */
+ 
++/** @cond (bpmp_tb500)
++ * @ingroup MRQ_Codes
++ * @def MRQ_SOCHUB_MBWT
++ * @brief Configure per-virtual-channel bandwidth caps for a bandwidth group using
++ *        Memory Bandwidth Throttler (MBWT).
++ *
++ * * Initiators: Any
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_sochub_mbwt_request
++ * * Response Payload: @ref mrq_sochub_mbwt_response
++ *
++ * @addtogroup SOCHUB_MBWT
++ * @{
 + */
 +
-+#include <linux/device.h>
-+#include <linux/kobject.h>
-+#include <linux/kstrtox.h>
-+#include <linux/mutex.h>
-+#include <linux/slab.h>
-+#include <linux/sysfs.h>
-+
-+#include <soc/tegra/bpmp.h>
-+#include <soc/tegra/bpmp-abi.h>
-+
-+#include "bpmp-private.h"
-+
-+#define TEGRA_BPMP_MBWT_NUM_GROUPS	6
-+#define TEGRA_BPMP_MBWT_NUM_VCS		3
-+
-+struct tegra_bpmp_mbwt_attr {
-+	struct kobj_attribute attr;
-+	struct tegra_bpmp_mbwt_sysfs *mbwt;
-+	unsigned int instance;
-+	unsigned int vc_type;
++/**
++ * @brief Sub-command identifiers for #MRQ_SOCHUB_MBWT.
++ */
++enum mrq_sochub_mbwt_cmd {
++	/**
++	 * @brief Check whether the BPMP-FW supports the specified
++	 * #MRQ_SOCHUB_MBWT sub-command.
++	 *
++	 * mrq_response::err is 0 if the specified request is
++	 * supported and -#BPMP_ENODEV otherwise.
++	 */
++	CMD_SOCHUB_MBWT_QUERY_ABI = 0,
++	/**
++	 * @brief Get bandwidth cap for a virtual channel
++	 *
++	 * mrq_response::err is defined as:
++	 *
++	 * | Value          | Description                                    |
++	 * |----------------|------------------------------------------------|
++	 * | 0              | Success                                        |
++	 * | -#BPMP_ENOTSUP | #MRQ_SOCHUB_MBWT is not supported by BPMP-FW.  |
++	 * | -#BPMP_EINVAL  | Invalid request parameters.                    |
++	 * | -#BPMP_EIO     | Failed to retrieve the bandwidth.              |
++	 */
++	CMD_SOCHUB_MBWT_GET_BW = 1,
++	/**
++	 * @brief Set bandwidth cap for a virtual channel.
++	 *
++	 * mrq_response::err is defined as:
++	 *
++	 * | Value          | Description                                    |
++	 * |----------------|------------------------------------------------|
++	 * | 0              | Success                                        |
++	 * | -#BPMP_ENOTSUP | #MRQ_SOCHUB_MBWT is not supported by BPMP-FW.  |
++	 * | -#BPMP_EINVAL  | Invalid request parameters.                    |
++	 * | -#BPMP_EIO     | Failed to set the bandwidth.                   |
++	 */
++	CMD_SOCHUB_MBWT_SET_BW = 2,
 +};
 +
-+struct tegra_bpmp_mbwt_sysfs {
-+	struct tegra_bpmp *bpmp;
-+	struct kobject *root;
-+	struct kobject *group[TEGRA_BPMP_MBWT_NUM_GROUPS];
-+	struct kobject *vc[TEGRA_BPMP_MBWT_NUM_GROUPS]
-+			  [TEGRA_BPMP_MBWT_NUM_VCS];
-+	struct tegra_bpmp_mbwt_attr attrs[TEGRA_BPMP_MBWT_NUM_GROUPS]
-+				       [TEGRA_BPMP_MBWT_NUM_VCS];
-+	/* Serializes bandwidth requests to firmware. */
-+	struct mutex lock;
-+};
++/**
++ * @brief Request data for #MRQ_SOCHUB_MBWT sub-command
++ *        #CMD_SOCHUB_MBWT_QUERY_ABI
++ */
++struct cmd_sochub_mbwt_query_abi_req {
++	/** @brief Sub-command identifier from @ref mrq_sochub_mbwt_cmd */
++	uint32_t cmd_code;
++} BPMP_ABI_PACKED;
 +
-+static const char * const tegra_bpmp_mbwt_group_names[] = {
-+	"pcie0", "pcie1", "pcie2", "pcie3", "pcie4", "pcie5",
-+};
++/**
++ * @brief Request data for #MRQ_SOCHUB_MBWT sub-command
++ *        #CMD_SOCHUB_MBWT_GET_BW
++ */
++struct cmd_sochub_mbwt_get_bw_req {
++	/**
++	 * @brief Instance ID for the bandwidth group
++	 *
++	 * Valid range is [0, 5]
++	 */
++	uint32_t instance;
++	/**
++	 * @brief Type of the virtual channel/traffic
++	 *
++	 * Valid values:
++	 *
++	 * * Value 0: PCIe read
++	 * * Value 1: PCIe write
++	 * * Value 2: GPU connected over the chip-to-chip link (NVCLINK)
++	 */
++	uint32_t vc_type;
++} BPMP_ABI_PACKED;
 +
-+static const char * const tegra_bpmp_mbwt_vc_names[] = {
-+	"pcie_read", "pcie_write", "nvclink",
-+};
++/**
++ * @brief Request data for #MRQ_SOCHUB_MBWT sub-command
++ *        #CMD_SOCHUB_MBWT_SET_BW
++ */
++struct cmd_sochub_mbwt_set_bw_req {
++	/**
++	 * @brief Instance ID for the bandwidth group
++	 *
++	 * Valid range is [0, 5]
++	 */
++	uint32_t instance;
++	/**
++	 * @brief Type of the virtual channel/traffic
++	 *
++	 * Valid values:
++	 *
++	 * * Value 0: PCIe read
++	 * * Value 1: PCIe write
++	 * * Value 2: GPU connected over the chip-to-chip link (NVCLINK)
++	 */
++	uint32_t vc_type;
++	/** @brief Bandwidth cap in GB/s */
++	uint32_t bw;
++} BPMP_ABI_PACKED;
 +
-+static struct tegra_bpmp_mbwt_attr *
-+tegra_bpmp_mbwt_attr_from_kobj_attr(struct kobj_attribute *attr)
-+{
-+	return container_of(attr, struct tegra_bpmp_mbwt_attr, attr);
-+}
++/**
++ * @brief Response data for #MRQ_SOCHUB_MBWT sub-command
++ *        #CMD_SOCHUB_MBWT_GET_BW
++ */
++struct cmd_sochub_mbwt_get_bw_resp {
++	/** @brief Bandwidth cap in GB/s */
++	uint32_t bw;
++} BPMP_ABI_PACKED;
 +
-+static ssize_t tegra_bpmp_mbwt_show(struct kobject *kobj,
-+				    struct kobj_attribute *attr, char *buf)
-+{
-+	struct tegra_bpmp_mbwt_attr *mbwt_attr;
-+	struct tegra_bpmp_mbwt_sysfs *mbwt;
-+	unsigned int bandwidth;
-+	int err;
++/**
++ * @brief Request payload for the #MRQ_SOCHUB_MBWT -command
++ *
++ * | Sub-command                   | Request payload                        |
++ * |-------------------------------|----------------------------------------|
++ * | #CMD_SOCHUB_MBWT_QUERY_ABI    | #cmd_sochub_mbwt_query_abi_req         |
++ * | #CMD_SOCHUB_MBWT_GET_BW       | #cmd_sochub_mbwt_get_bw_req            |
++ * | #CMD_SOCHUB_MBWT_SET_BW       | #cmd_sochub_mbwt_set_bw_req            |
++ */
++struct mrq_sochub_mbwt_request {
++	/** @brief Sub-command ID from @ref mrq_sochub_mbwt_cmd. */
++	uint32_t cmd;
++	union {
++		struct cmd_sochub_mbwt_query_abi_req query_abi;
++		struct cmd_sochub_mbwt_get_bw_req get_bw;
++		struct cmd_sochub_mbwt_set_bw_req set_bw;
++	} BPMP_UNION_ANON;
++} BPMP_ABI_PACKED;
 +
-+	mbwt_attr = tegra_bpmp_mbwt_attr_from_kobj_attr(attr);
-+	mbwt = mbwt_attr->mbwt;
++/**
++ * @brief Response payload for the #MRQ_SOCHUB_MBWT -command.
++ *
++ * | Sub-command                   | Response payload                       |
++ * |-------------------------------|----------------------------------------|
++ * | #CMD_SOCHUB_MBWT_QUERY_ABI    | -                                      |
++ * | #CMD_SOCHUB_MBWT_GET_BW       | #cmd_sochub_mbwt_get_bw_resp           |
++ * | #CMD_SOCHUB_MBWT_SET_BW       | -                                      |
++ */
++struct mrq_sochub_mbwt_response {
++	union {
++		struct cmd_sochub_mbwt_get_bw_resp get_bw;
++	} BPMP_UNION_ANON;
++} BPMP_ABI_PACKED;
 +
-+	mutex_lock(&mbwt->lock);
-+	err = tegra_bpmp_mbwt_get(mbwt->bpmp, mbwt_attr->instance,
-+				  mbwt_attr->vc_type, &bandwidth);
-+	mutex_unlock(&mbwt->lock);
-+	if (err)
-+		return err;
++/** @} SOCHUB_MBWT */
++/** @endcond */
 +
-+	return sysfs_emit(buf, "%u\n", bandwidth);
-+}
-+
-+static ssize_t tegra_bpmp_mbwt_store(struct kobject *kobj,
-+				     struct kobj_attribute *attr,
-+				     const char *buf, size_t count)
-+{
-+	struct tegra_bpmp_mbwt_attr *mbwt_attr;
-+	struct tegra_bpmp_mbwt_sysfs *mbwt;
-+	unsigned int bandwidth;
-+	int err;
-+
-+	err = kstrtou32(buf, 0, &bandwidth);
-+	if (err)
-+		return err;
-+
-+	mbwt_attr = tegra_bpmp_mbwt_attr_from_kobj_attr(attr);
-+	mbwt = mbwt_attr->mbwt;
-+
-+	mutex_lock(&mbwt->lock);
-+	err = tegra_bpmp_mbwt_set(mbwt->bpmp, mbwt_attr->instance,
-+				  mbwt_attr->vc_type, bandwidth);
-+	mutex_unlock(&mbwt->lock);
-+	if (err)
-+		return err;
-+
-+	return count;
-+}
-+
-+static void tegra_bpmp_mbwt_sysfs_teardown(void *data)
-+{
-+	struct tegra_bpmp_mbwt_sysfs *mbwt = data;
-+	unsigned int i, j;
-+
-+	for (i = 0; i < TEGRA_BPMP_MBWT_NUM_GROUPS; i++) {
-+		if (!mbwt->group[i])
-+			continue;
-+
-+		for (j = 0; j < TEGRA_BPMP_MBWT_NUM_VCS; j++) {
-+			if (!mbwt->vc[i][j])
-+				continue;
-+
-+			sysfs_remove_file(mbwt->vc[i][j],
-+					  &mbwt->attrs[i][j].attr.attr);
-+			kobject_put(mbwt->vc[i][j]);
-+		}
-+
-+		kobject_put(mbwt->group[i]);
-+	}
-+
-+	kobject_put(mbwt->root);
-+}
-+
-+static int tegra_bpmp_mbwt_sysfs_add_group(struct tegra_bpmp_mbwt_sysfs *mbwt,
-+					   unsigned int instance)
-+{
-+	struct tegra_bpmp_mbwt_attr *attr;
-+	unsigned int vc_type;
-+	int err;
-+
-+	mbwt->group[instance] =
-+		kobject_create_and_add(tegra_bpmp_mbwt_group_names[instance],
-+				       mbwt->root);
-+	if (!mbwt->group[instance])
-+		return -ENOMEM;
-+
-+	for (vc_type = 0; vc_type < TEGRA_BPMP_MBWT_NUM_VCS; vc_type++) {
-+		attr = &mbwt->attrs[instance][vc_type];
-+		mbwt->vc[instance][vc_type] =
-+			kobject_create_and_add(tegra_bpmp_mbwt_vc_names[vc_type],
-+					       mbwt->group[instance]);
-+		if (!mbwt->vc[instance][vc_type])
-+			return -ENOMEM;
-+
-+		sysfs_attr_init(&attr->attr.attr);
-+		attr->attr.attr.name = "bandwidth";
-+		attr->attr.attr.mode = 0644;
-+		attr->attr.show = tegra_bpmp_mbwt_show;
-+		attr->attr.store = tegra_bpmp_mbwt_store;
-+		attr->mbwt = mbwt;
-+		attr->instance = instance;
-+		attr->vc_type = vc_type;
-+
-+		err = sysfs_create_file(mbwt->vc[instance][vc_type],
-+					&attr->attr.attr);
-+		if (err)
-+			return err;
-+	}
-+
-+	return 0;
-+}
-+
-+int tegra_bpmp_init_sysfs(struct tegra_bpmp *bpmp)
-+{
-+	struct tegra_bpmp_mbwt_sysfs *mbwt;
-+	unsigned int instance;
-+	int err;
-+
-+	if (!tegra_bpmp_mrq_is_supported(bpmp, MRQ_SOCHUB_MBWT))
-+		return 0;
-+
-+	if (!tegra_bpmp_mbwt_cmd_is_supported(bpmp, CMD_SOCHUB_MBWT_GET_BW) ||
-+	    !tegra_bpmp_mbwt_cmd_is_supported(bpmp, CMD_SOCHUB_MBWT_SET_BW))
-+		return 0;
-+
-+	mbwt = devm_kzalloc(bpmp->dev, sizeof(*mbwt), GFP_KERNEL);
-+	if (!mbwt)
-+		return -ENOMEM;
-+
-+	mbwt->bpmp = bpmp;
-+	mutex_init(&mbwt->lock);
-+
-+	mbwt->root = kobject_create_and_add("mbwt", &bpmp->dev->kobj);
-+	if (!mbwt->root)
-+		return -ENOMEM;
-+
-+	for (instance = 0; instance < TEGRA_BPMP_MBWT_NUM_GROUPS; instance++) {
-+		err = tegra_bpmp_mbwt_sysfs_add_group(mbwt, instance);
-+		if (err)
-+			goto remove_sysfs;
-+	}
-+
-+	err = devm_add_action_or_reset(bpmp->dev,
-+				       tegra_bpmp_mbwt_sysfs_teardown, mbwt);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+
-+remove_sysfs:
-+	tegra_bpmp_mbwt_sysfs_teardown(mbwt);
-+
-+	return err;
-+}
-diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-index 4bfd96ba9919..0314537a2b05 100644
---- a/drivers/firmware/tegra/bpmp.c
-+++ b/drivers/firmware/tegra/bpmp.c
-@@ -1070,6 +1070,10 @@ static int tegra_bpmp_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	err = tegra_bpmp_init_sysfs(bpmp);
-+	if (err < 0)
-+		dev_err(&pdev->dev, "failed to initialize sysfs: %d\n", err);
-+
- 	err = tegra_bpmp_init_debugfs(bpmp);
- 	if (err < 0)
- 		dev_err(&pdev->dev, "debugfs initialization failed: %d\n", err);
+ /**
+  * @addtogroup Error_Codes
+  * Negative values for mrq_response::err generally indicate some
 -- 
 2.43.0
 
