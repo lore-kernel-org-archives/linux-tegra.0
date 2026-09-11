@@ -1,154 +1,372 @@
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A13E485939
-	for <linux-tegra@vger.kernel.org>; Fri, 11 Sep 2026 18:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.173
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789150100; cv=pass; b=hrCAj5KCHVygh1CKbD9glVUQOuZJwnLnHexD4MTylkF+S5SOBMRjNUikwwSTF59fzsgJuy+bf0tJqA/9Exlw9jzPBl2FSB8mRie3RXRU9ywahQqTEHDOyTtxBXw1e5t0ukPIzJZmmqePZVCgEY2/gKzL0MYnBlE3FdCphj0r/Wk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789150100; c=relaxed/simple;
-	bh=Vhnjxh1HDobVuiEJYIJm79PAu7Y1XNjwuISN/rF7iDk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rnigH2OB6qj+imjtIyUm7AC0ADqVrDBAvEoKsRb9LoLTWPjW7qQSisup82ekVuf2CbPJ3wJa0f6lM7RoEd+NZsy618H+4TlERk1UAVrl7RYnw9xF/dU+uNH9pStEn+ZbT8squzbSZFvwUJ199FiGVr9Jc0RxdQhA7qP4oO4n3ZI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l0qPQ/g/; arc=pass smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8CF43713C;
+	Fri, 11 Sep 2026 22:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789164733; cv=none; b=ew4ce9SXPPjJQS+0XRxs4Hvn9w8zJ3GiUPkoADgHh9lOGDG9dvDh9AI4I8mW8HtZF2JbD3CBU6mrXALUsqPbILOkCRjt8h6QAoIYNhayBRkd7a7Pi+nnIDQD23pCUUvSKpJ9e5bA747pPzs2hDFVm5xj8z29XigVbU9WyY/Yldc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789164733; c=relaxed/simple;
+	bh=7SacOg1IENiLKpqU81RPB0pY6bRjEI9ald8g9YA+/JA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ZzbqqbE74canXHyXIHMJKKET/hV7ctskd86qoUbjs5IntBYVeFCAr3q7psIQJrYs0CM3p9QpPlcgfdvS09Yt9YLfpLcWNA/Y113kt+nRMr2DAo9W1oNHMlYiIPHVsjaZ04TGboO3kua6GqwJAMTopDVuMCgUhxId1c9BGCeMG+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fpZSM3z6; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l0qPQ/g/"
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3a5a0703ae7so7524921fa.0
-        for <linux-tegra@vger.kernel.org>; Fri, 11 Sep 2026 11:08:18 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789150096; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Q0S4i1XX4TLEyLPbEPLc0hKitHhf3KyIhhxRka7xsw71PGkYoPJlfm8AI8Rm11d5Sp
-         ymjX/a2T4mczoUOfYKXU3krDTGFlqi3hXtNLnQVZ2vjduXqW6xApS9J3wMlMtAHOCGAD
-         vzhggDAJIEZZeuZMoFYO6THVrCMlWjgtnOYk4mf4jukPjgnGo9ZXQqVFND10oJ8BHDTZ
-         8L8lEI1+ovbL4QxTzTM5qdkasmNpoY7kbkPYXIfJp5qh9twSqjIqebWPkJ8Zv0xIr1Wr
-         gKQb2cRO1jDMZPZzstfVBHlr354uabn01ATfaTF301gSqbajw9eXZFOVr/52CyMCuGZ9
-         84Mw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=ouJPu2UO9j/yOvhcg7Ue0/AOuAhMQTW9jyKxwu22jHE=;
-        fh=pCVQVGnh5n/Q3CHvLj69s/AwRZ6+VI6bCF1uEHn42jk=;
-        b=SH1GgjiAXRuve0CbvRg/VHxQ30kJFADqjGfFMpVyuY2lGorKPFt63PnpzIBc1DuVO7
-         R1a+/s3K9PVTsLm/7GsCDoorsxYcUlxSXfVk+Q+TtGIVahCd2uPjxfnD/H0jPD/qeroz
-         zft6A1VSSR/pJaqawZOOWZ02FWg5aGFoid+RVOImLhmjL8/EQIaO6k1Uo2D7TbbLXX57
-         F3lIoUfCK+Ij6lrPVscfrfmm9EMHHTe/841gb3L4cDRV3UnpIDB+DKa+RGufptWJ6YvN
-         Adsu0cNvF3G2AS29KluLn6djSQOZdJx9Bk0lIFTiXSuGDkO2FooBUTmp0ZVJaajIHmJe
-         FuEw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789150096; x=1789754896; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=ouJPu2UO9j/yOvhcg7Ue0/AOuAhMQTW9jyKxwu22jHE=;
-        b=l0qPQ/g/9zteRf65RiOvlykq67P8LZojf6F7srr+GxW/54c6ya0LMwC+JFGKXATtak
-         dN8oRvm2KhXDNlep6q6U5Es6JPOed7l8DGhuD1OUKLtNUFnq9qQhwpqqvf2oSjGdTN0R
-         g0TDYyp/3MxYhE+6c82CddRUnOr/350/xZEZAOGMcC3vBWL/YvmVpN9xwfM4UMzs5rQJ
-         4om9UOT3SsfQykIIu9lBa5xQWYdAyVuxBSec9m/VFunbJw/GdyaJcg+PVNCCoLe2iRv4
-         ZZSejNEFGvBQC8wLkadmN2ms6lL7OzJ47qtgqte+yn8249T3Mu79zqPO370w7p+idzUM
-         zUGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789150096; x=1789754896;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=ouJPu2UO9j/yOvhcg7Ue0/AOuAhMQTW9jyKxwu22jHE=;
-        b=G3t6TYR0a/lM5m1Rg30DhQ2/eBFvmsJ0dHYCNWI1m16XEAHbtQkCX+WBV/2LmVY/DL
-         d8UvMz0iFM94YlfsvF/I+W7v0k23V5x+EBY+4xrbwmtB+aKzP8K1NI6+hfEnm0fKkojN
-         +9Q48W2hBrp/f320mfe9UdDSl/zvpnQhab8wQ9S4p05kZxaNKwJOXL/jMQzKbE8gSCH2
-         OHsfntNfcQigdXmH6FKaBtDtr2g8XSX2sRkBo6YUiYKSXuehMYTu93x9jayMoAOoRUC5
-         i48WfuxbgGmGvP1YNzwmgQbdr58xwDw8+52wjfxQ8oLlJ0qN3E2TOtnpCl4d1mcs+8RO
-         ZcUg==
-X-Forwarded-Encrypted: i=1; AKwUvBwtFZCu54sDpxubUzxmWlHfbnV1ruZFxTRttjWAaQ3MGEKKhkVwV4YSa3nxYoa8jWPV3o+ntItQ+xXm7g==@vger.kernel.org
-X-Gm-Message-State: AFuF++lBgwApo33nZzBu0+siiDBE7dTy8LjV4I/NIg4F3xnwAJZQFujE
-	/fTHwDDcYrqaEA46Bm7oD+Q/oktCHiO5LoX5I32XAIB+9wsYreNL1vB+rHm15tYmaVU+IG2zirS
-	1JYBX0rqeFGbdivzFa5MDtgPeuB0X59c=
-X-Gm-Gg: AYBFou2GUwzveuZSSUreIwt78tgp7iJEr0ObEXhCqWFPmOJwMFuQMVUbcbivkF57thK
-	zcYPMeBSDM7otJzELNn6qpbJHNdSrbNeTz3F5nyf+WGVXMGuQrFeegYRAp269HJoJRQMXHM4qDE
-	ajs1GYvmiyA9aAOYhX2fP+3JIZmpzf+/AbfKU+Gcs49Hgtuehy9CDaxTb6aib/HG206u1j7uvTX
-	91zD92DxqnnazJW7s364NMNMpddE1p46A3qaaUMjh4aqdYKxfx5OqMN/aJ4bxKL/eCu3ar/rdSl
-	nu4sLgF6s7VVBowYC3w9MR+hNnjjOPO3ejPvqfCAVENQyLj+8I9QKFC/011BHcpXm7Sf3FNptkq
-	w5/7nWXPS3W9zctD294tDyzf3aMvAKZbeikeF0WX56d2CFsmJzC0sUQ==
-X-Received: by 2002:a05:651c:4cb:b0:3a3:3fa3:25a6 with SMTP id
- 38308e7fff4ca-3a591060d33mr13539661fa.3.1789150096131; Fri, 11 Sep 2026
- 11:08:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fpZSM3z6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD6811F000FF;
+	Fri, 11 Sep 2026 22:12:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789164731;
+	bh=zcSpC8B/zBe1QBiSP3SsQ8IbOXdwAlEg8XGj9L10bq8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To;
+	b=fpZSM3z6PJ9swFzsvH+djv6QNuc3r3Jbh6fc5fg1plDIs1WScdIHvAlLBKslHFOpC
+	 VUlgeo0f4KrBy7cqz2x9XD+Eh3NSgeWTi4XevOllxU7aRx6le8EGCRlOn+NRS1y7ZT
+	 GYBZJbc5xO7X6hzpn+Zvxucqhh1evUkZ/RnAsEuHLV1vwBDcR/+mcWL3e5UX0jetdV
+	 yVMQfWSmiYNtJBa+MBKplM6FwGvkAsIabg7ccf5NsRaHmsVooL7N1AKbaAWG/Rv2bV
+	 0AwWtnXJG/bkaR0cMvSqKCps8HWA3DXqOgv3MqLk2Vx/pAe1cBKiOZbR7fWWy90N/G
+	 b2VIe389tv9qg==
+Date: Fri, 11 Sep 2026 17:12:09 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-tegra@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Felix Gu <ustc.gu@gmail.com>
+Subject: Re: [PATCH v9 3/3] PCI: Remove device links to PHY
+Message-ID: <20260911221209.GA587622@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260727-t210b01-pmc-v4-0-af68a21cd746@gmail.com>
-In-Reply-To: <20260727-t210b01-pmc-v4-0-af68a21cd746@gmail.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Fri, 11 Sep 2026 13:08:04 -0500
-X-Gm-Features: AcwNN1UL3Y1nd704u2MCWStPUxYAt0AKVH-AFaP-s9fmNKYucXoG44JF7P_CHrE
-Message-ID: <CALHNRZ_i+yBeYqGnp8PGfpYdT8cU8ah+8qm3O2vpoTtEmUx-=w@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] soc/tegra: pmc: Add Tegra210B01 support
-To: webgeek1234@gmail.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alexandre Hamamdjian <azkali.limited@gmail.com>, 
-	Thomas Makin <halorocker89@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260810124315.433448-4-vladimir.oltean@nxp.com>
 
-On Mon, Jul 27, 2026 at 9:00=E2=80=AFPM Aaron Kling via B4 Relay
-<devnull+webgeek1234.gmail.com@kernel.org> wrote:
->
-> This series adds support for the Tegra210B01 SoC to the Tegra PMC driver
-> and documents the new compatible.
->
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+[+cc Felix, author of device link leak fixes]
+
+On Mon, Aug 10, 2026 at 03:43:15PM +0300, Vladimir Oltean wrote:
+> This is practically a full revert of commit
+> 7a4db656a635 ("PCI: dra7xx: Create functional dependency between PCIe and PHY")
+> and a partial revert of the device link pieces from commits
+> dfb80534692d ("PCI: cadence: Add generic PHY support to host and EP drivers")
+> 49229238ab47 ("PCI: keystone: Cleanup PHY handling")
+
+Can we split this into three commits (dra7xx, cadence, keystone)?
+This combined commit is applied on the pci/controller/misc branch, and
+then we have conflicts between that branch and
+pci/controller/dwc-dra7xx.
+
+I think if we split this into three separate commits, we can apply the
+dra7xx one on pci/controller/dwc-dra7xx and drop Felix's device link
+leak fixes below so we don't clutter the git history with conflict
+resolutions or irrelevant commits:
+
+  https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/commit/?id=2b9a036b568c ("PCI: dra7xx: Fix device link leak when devm_phy_get() fails")
+
+  https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/commit/?id=bdfdf654b4b2 ("PCI: dra7xx: Fix device links leak when dra7xx_pcie_enable_phy() fails")
+
+> The trouble with these commits is that they dereference fields inside
+> struct phy from a consumer driver, which will become no longer possible.
+> 
+> Since commit 987351e1ea77 ("phy: core: Add consumer device link
+> support") from 2019, the PHY core also adds a device link to order PHY
+> provider and consumer suspend/resume operations. All reverted commits
+> are from 2017-2018, and what they do should actually be redundant now.
+> 
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
 > ---
-> Changes in v4:
-> - Add venc to powergate list in patch 2
-> - Link to v3: https://lore.kernel.org/r/20260722-t210b01-pmc-v3-0-1c5b970=
-788f2@gmail.com
->
-> Changes in v3:
-> - Update patch 2 commit author and sign-off tag as requested off list by
->   author
-> - Update patch 2 commit message to describe the powergate differences
->   compared to t210
-> - Drop sata powergate in patch 2
-> - Fix has_io_pad_wren value in patch 2
-> - Link to v2: https://lore.kernel.org/r/20260720-t210b01-pmc-v2-0-ca5317f=
-8507b@gmail.com
->
-> Changes in v2:
-> - Address sashiko report and drop duplicated structs
-> - Link to v1: https://lore.kernel.org/r/20260717-t210b01-pmc-v1-0-bf776be=
-8b3a7@gmail.com
->
+> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
+> Cc: Manivannan Sadhasivam <mani@kernel.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Vignesh Raghavendra <vigneshr@ti.com>
+> Cc: Siddharth Vadapalli <s-vadapalli@ti.com>
+> 
+> v8->v9: none
+> v7->v8: only context change - "return 0" became "return ret" for
+>         cdns_plat_pcie_probe()
+> v6->v7: none
+> v5->v6: collect tag from Manivannan Sadhasivam
+> v3->v5: none
+> v2->v3:
+> - remove dangling set but unused phy_count local variable in
+>   cdns_plat_pcie_probe()
+> v1->v2:
+> - fully remove struct device link **link from struct cdns_pcie and from
+>   cdns_plat_pcie_probe() error path
+> - collect tag from Bjorn Helgaas
+> - adjust commit title
 > ---
-> Aaron Kling (1):
->       dt-bindings: soc: tegra: pmc: Document Tegra210B01
->
-> Alexandre Hamamdjian (1):
->       soc/tegra: pmc: Add Tegra210B01 support
->
->  .../bindings/soc/tegra/nvidia,tegra20-pmc.yaml     |  5 +-
->  drivers/soc/tegra/pmc.c                            | 62 ++++++++++++++++=
-++++++
->  2 files changed, 66 insertions(+), 1 deletion(-)
-> ---
-> base-commit: 1a1757b76427f6201bfe0bf1bea9f7574f332a93
-> change-id: 20260713-t210b01-pmc-1a3f8b908044
->
-> Best regards,
-> --
-> Aaron Kling <webgeek1234@gmail.com>
-
-Thierry,
-
-I see other things going in currently, can you pick up this series please?
-
-Aaron
+>  .../controller/cadence/pcie-cadence-plat.c    |  4 ---
+>  drivers/pci/controller/cadence/pcie-cadence.c | 16 +---------
+>  drivers/pci/controller/cadence/pcie-cadence.h |  2 --
+>  drivers/pci/controller/dwc/pci-dra7xx.c       | 16 ----------
+>  drivers/pci/controller/dwc/pci-keystone.c     | 31 +++----------------
+>  5 files changed, 5 insertions(+), 64 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence-plat.c b/drivers/pci/controller/cadence/pcie-cadence-plat.c
+> index 8aed8b4c3e11..13edc6be21f5 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence-plat.c
+> +++ b/drivers/pci/controller/cadence/pcie-cadence-plat.c
+> @@ -41,7 +41,6 @@ static int cdns_plat_pcie_probe(struct platform_device *pdev)
+>  	struct pci_host_bridge *bridge;
+>  	struct cdns_pcie_ep *ep;
+>  	struct cdns_pcie_rc *rc;
+> -	int phy_count;
+>  	bool is_rc;
+>  	int ret;
+>  
+> @@ -122,9 +121,6 @@ static int cdns_plat_pcie_probe(struct platform_device *pdev)
+>  	pm_runtime_put_sync(dev);
+>  	pm_runtime_disable(dev);
+>  	cdns_pcie_disable_phy(cdns_plat_pcie->pcie);
+> -	phy_count = cdns_plat_pcie->pcie->phy_count;
+> -	while (phy_count--)
+> -		device_link_del(cdns_plat_pcie->pcie->link[phy_count]);
+>  
+>  	return ret;
+>  }
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence.c b/drivers/pci/controller/cadence/pcie-cadence.c
+> index a1eada56edba..0ac980249941 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence.c
+> +++ b/drivers/pci/controller/cadence/pcie-cadence.c
+> @@ -222,7 +222,6 @@ int cdns_pcie_init_phy(struct device *dev, struct cdns_pcie *pcie)
+>  	struct device_node *np = dev->of_node;
+>  	int phy_count;
+>  	struct phy **phy;
+> -	struct device_link **link;
+>  	int i;
+>  	int ret;
+>  	const char *name;
+> @@ -238,10 +237,6 @@ int cdns_pcie_init_phy(struct device *dev, struct cdns_pcie *pcie)
+>  	if (!phy)
+>  		return -ENOMEM;
+>  
+> -	link = devm_kcalloc(dev, phy_count, sizeof(*link), GFP_KERNEL);
+> -	if (!link)
+> -		return -ENOMEM;
+> -
+>  	for (i = 0; i < phy_count; i++) {
+>  		of_property_read_string_index(np, "phy-names", i, &name);
+>  		phy[i] = devm_phy_get(dev, name);
+> @@ -249,17 +244,10 @@ int cdns_pcie_init_phy(struct device *dev, struct cdns_pcie *pcie)
+>  			ret = PTR_ERR(phy[i]);
+>  			goto err_phy;
+>  		}
+> -		link[i] = device_link_add(dev, &phy[i]->dev, DL_FLAG_STATELESS);
+> -		if (!link[i]) {
+> -			devm_phy_put(dev, phy[i]);
+> -			ret = -EINVAL;
+> -			goto err_phy;
+> -		}
+>  	}
+>  
+>  	pcie->phy_count = phy_count;
+>  	pcie->phy = phy;
+> -	pcie->link = link;
+>  
+>  	ret =  cdns_pcie_enable_phy(pcie);
+>  	if (ret)
+> @@ -268,10 +256,8 @@ int cdns_pcie_init_phy(struct device *dev, struct cdns_pcie *pcie)
+>  	return 0;
+>  
+>  err_phy:
+> -	while (--i >= 0) {
+> -		device_link_del(link[i]);
+> +	while (--i >= 0)
+>  		devm_phy_put(dev, phy[i]);
+> -	}
+>  
+>  	return ret;
+>  }
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
+> index b4d51adefea5..4a96e1869e53 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence.h
+> +++ b/drivers/pci/controller/cadence/pcie-cadence.h
+> @@ -260,7 +260,6 @@ struct cdns_plat_pcie_of_data {
+>   * @is_hpa: indicates if the architecture is HPA
+>   * @phy_count: number of supported PHY devices
+>   * @phy: list of pointers to specific PHY control blocks
+> - * @link: list of pointers to corresponding device link representations
+>   * @ops: Platform-specific ops to control various inputs from Cadence PCIe
+>   *       wrapper
+>   * @cdns_pcie_reg_offsets: Register bank offsets for different SoC
+> @@ -276,7 +275,6 @@ struct cdns_pcie {
+>  	bool				     is_hpa;
+>  	int			             phy_count;
+>  	struct phy		             **phy;
+> -	struct device_link	             **link;
+>  	const  struct cdns_pcie_ops          *ops;
+>  	const  struct cdns_plat_pcie_of_data *cdns_pcie_reg_offsets;
+>  	int				     max_link_speed;
+> diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
+> index 3fc889944f02..bf6c5b86bb27 100644
+> --- a/drivers/pci/controller/dwc/pci-dra7xx.c
+> +++ b/drivers/pci/controller/dwc/pci-dra7xx.c
+> @@ -9,7 +9,6 @@
+>  
+>  #include <linux/clk.h>
+>  #include <linux/delay.h>
+> -#include <linux/device.h>
+>  #include <linux/err.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/irq.h>
+> @@ -678,7 +677,6 @@ static int dra7xx_pcie_probe(struct platform_device *pdev)
+>  	int i;
+>  	int phy_count;
+>  	struct phy **phy;
+> -	struct device_link **link;
+>  	void __iomem *base;
+>  	struct dw_pcie *pci;
+>  	struct dra7xx_pcie *dra7xx;
+> @@ -726,10 +724,6 @@ static int dra7xx_pcie_probe(struct platform_device *pdev)
+>  	if (!phy)
+>  		return -ENOMEM;
+>  
+> -	link = devm_kcalloc(dev, phy_count, sizeof(*link), GFP_KERNEL);
+> -	if (!link)
+> -		return -ENOMEM;
+> -
+>  	dra7xx->clk = devm_clk_get_optional(dev, NULL);
+>  	if (IS_ERR(dra7xx->clk))
+>  		return dev_err_probe(dev, PTR_ERR(dra7xx->clk),
+> @@ -744,12 +738,6 @@ static int dra7xx_pcie_probe(struct platform_device *pdev)
+>  		phy[i] = devm_phy_get(dev, name);
+>  		if (IS_ERR(phy[i]))
+>  			return PTR_ERR(phy[i]);
+> -
+> -		link[i] = device_link_add(dev, &phy[i]->dev, DL_FLAG_STATELESS);
+> -		if (!link[i]) {
+> -			ret = -EINVAL;
+> -			goto err_link;
+> -		}
+>  	}
+>  
+>  	dra7xx->base = base;
+> @@ -851,10 +839,6 @@ static int dra7xx_pcie_probe(struct platform_device *pdev)
+>  	pm_runtime_disable(dev);
+>  	dra7xx_pcie_disable_phy(dra7xx);
+>  
+> -err_link:
+> -	while (--i >= 0)
+> -		device_link_del(link[i]);
+> -
+>  	return ret;
+>  }
+>  
+> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+> index e9b012a5ea9a..8085c4f61403 100644
+> --- a/drivers/pci/controller/dwc/pci-keystone.c
+> +++ b/drivers/pci/controller/dwc/pci-keystone.c
+> @@ -130,7 +130,6 @@ struct keystone_pcie {
+>  	int			num_lanes;
+>  	u32			num_viewport;
+>  	struct phy		**phy;
+> -	struct device_link	**link;
+>  	struct			device_node *msi_intc_np;
+>  	struct irq_domain	*intx_irq_domain;
+>  	struct device_node	*np;
+> @@ -1130,7 +1129,6 @@ static int ks_pcie_probe(struct platform_device *pdev)
+>  	enum dw_pcie_device_mode mode;
+>  	struct dw_pcie *pci;
+>  	struct keystone_pcie *ks_pcie;
+> -	struct device_link **link;
+>  	struct gpio_desc *gpiod;
+>  	struct resource *res;
+>  	void __iomem *base;
+> @@ -1201,31 +1199,17 @@ static int ks_pcie_probe(struct platform_device *pdev)
+>  	if (!phy)
+>  		return -ENOMEM;
+>  
+> -	link = devm_kcalloc(dev, num_lanes, sizeof(*link), GFP_KERNEL);
+> -	if (!link)
+> -		return -ENOMEM;
+> -
+>  	for (i = 0; i < num_lanes; i++) {
+>  		snprintf(name, sizeof(name), "pcie-phy%d", i);
+>  		phy[i] = devm_phy_optional_get(dev, name);
+>  		if (IS_ERR(phy[i])) {
+>  			ret = PTR_ERR(phy[i]);
+> -			goto err_link;
+> -		}
+> -
+> -		if (!phy[i])
+> -			continue;
+> -
+> -		link[i] = device_link_add(dev, &phy[i]->dev, DL_FLAG_STATELESS);
+> -		if (!link[i]) {
+> -			ret = -EINVAL;
+> -			goto err_link;
+> +			goto err;
+>  		}
+>  	}
+>  
+>  	ks_pcie->np = np;
+>  	ks_pcie->pci = pci;
+> -	ks_pcie->link = link;
+>  	ks_pcie->num_lanes = num_lanes;
+>  	ks_pcie->phy = phy;
+>  
+> @@ -1235,7 +1219,7 @@ static int ks_pcie_probe(struct platform_device *pdev)
+>  		ret = PTR_ERR(gpiod);
+>  		if (ret != -EPROBE_DEFER)
+>  			dev_err(dev, "Failed to get reset GPIO\n");
+> -		goto err_link;
+> +		goto err;
+>  	}
+>  
+>  	/* Obtain references to the PHYs */
+> @@ -1250,7 +1234,7 @@ static int ks_pcie_probe(struct platform_device *pdev)
+>  
+>  	if (ret) {
+>  		dev_err(dev, "failed to enable phy\n");
+> -		goto err_link;
+> +		goto err;
+>  	}
+>  
+>  	platform_set_drvdata(pdev, ks_pcie);
+> @@ -1337,25 +1321,18 @@ static int ks_pcie_probe(struct platform_device *pdev)
+>  	pm_runtime_disable(dev);
+>  	ks_pcie_disable_phy(ks_pcie);
+>  
+> -err_link:
+> -	while (--i >= 0 && link[i])
+> -		device_link_del(link[i]);
+> -
+> +err:
+>  	return ret;
+>  }
+>  
+>  static void ks_pcie_remove(struct platform_device *pdev)
+>  {
+>  	struct keystone_pcie *ks_pcie = platform_get_drvdata(pdev);
+> -	struct device_link **link = ks_pcie->link;
+> -	int num_lanes = ks_pcie->num_lanes;
+>  	struct device *dev = &pdev->dev;
+>  
+>  	pm_runtime_put(dev);
+>  	pm_runtime_disable(dev);
+>  	ks_pcie_disable_phy(ks_pcie);
+> -	while (num_lanes--)
+> -		device_link_del(link[num_lanes]);
+>  }
+>  
+>  static struct platform_driver ks_pcie_driver = {
+> -- 
+> 2.34.1
+> 
