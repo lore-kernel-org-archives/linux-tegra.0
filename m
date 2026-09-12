@@ -1,90 +1,308 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4EA30E83F;
-	Sat, 12 Sep 2026 14:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7002D47F1;
+	Sat, 12 Sep 2026 14:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789221732; cv=none; b=hjapRS3goT6MOh3Z5A7HfnWMKKiJ0H1p140xmpKmkpCvAmnaF1GyA4fjcu1HnWcWSN+J323W4Z52/0H4waVCohvyYfJVbzsVZV2D4/j6XqHSP7c/WIj64bKcVdTUNpjipz61IBabT3L9IGMYfVZlky6zO+qjU/Z48Ib9LuEt70U=
+	t=1789222793; cv=none; b=VAPDlZkh3p7MG8c4dkjUOv3zVrKWNKjAf0WkR0W44dsyz8LXSLgrhPy+/yrkmoFI+5L2f/LY+FPIXAAjc3hHx6haJxtyoR+MFNc5LaJFw99wh67o7uSvxrrFTkr0l5nPyf8L3MkBPn4KUNTBdJv4rPdRDBroXU9ukk0DrtpUsEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789221732; c=relaxed/simple;
-	bh=2YYCJ2s6GQYJpcQs9gm+aBIcu9XOuOO5fkBNS/DWslg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=UvnjJf5vgh0Ict28eaah5sRT5rrHybWGXW1Dcov0L1SWGm1WTsJCA1CRylvfYykHJ/Eb32OS7aAHEWozUVm+boBTS6whdA+7nluiOasAfx/TIPWnmDgZtx8fpanMBXeWNAPQnL5+hPk1ZYRr9yli8/R70q6dpB+ZKSQOuoU09Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQxmc4al; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789222793; c=relaxed/simple;
+	bh=Gz6PrKQsrqwm3HXiTQ21ShUWfXM+qJV4Z9UuKVRkL8Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gL0OvmpeESM7f4GSfOhEjMTJcmQpMYd7EUmgjJi3L6y2g0LjW1/1SFt0ap19/WNVp8F2iQVVImGmVaTvLOuhtltJ/NF3TbWUv7BJRFDeDThNGjoRzMLzDquH2LbP8lAnYTOOmaCwRTPzGb8EPr96DYr4BzaijLDn6jbZBbuo2bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fNAbsxHw; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQxmc4al"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 424521F00898;
-	Sat, 12 Sep 2026 14:02:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789221728;
-	bh=HhkQLlPB59P0XClAYNcVy9iMiNOvmVp4sSejcGpryII=;
-	h=Date:From:To:Cc:Subject:In-Reply-To;
-	b=eQxmc4al0/OBE1frFyBPWrBQeC8rqLIOOFpOZ1Eh0/sVTb5pVrusuo+fUb3jR1S8c
-	 iCeDUxE85eohxy69nT/S7tpQcSvSegbQ7TprbePLCJf5w+afOkgXJ++9Eip5QKqaJX
-	 40VWN89atDSA/gAiV6anwIQO2gV/tE2mcF2kHChHcQK7Q2WkKbOcex/5hjNYo68t6N
-	 Kb+HgNFEg+MlUa5SI2CIPu8He30HwygovEJqDyRaZr0EAjXTpUZYg+cK/aMk73Cbmv
-	 zA/ZzF4MzI+qos/s6ZWYyX4HuuJkO2t/a5rvFBuT7uWS6oZjx0povsrmy32HQuvVNn
-	 KfqOnvm9pDI4Q==
-Date: Sat, 12 Sep 2026 09:02:07 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-tegra@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Felix Gu <ustc.gu@gmail.com>
-Subject: Re: [PATCH v9 3/3] PCI: Remove device links to PHY
-Message-ID: <20260912140207.GA655851@bhelgaas>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fNAbsxHw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D86FE1F000FF;
+	Sat, 12 Sep 2026 14:19:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
+	s=korg; t=1789222791;
+	bh=Rp3acZ3uh0BzcQGVp4ZNc8nO3x4J+FpIvKKPnlERbdc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=fNAbsxHwcTA9WpX8gp5TmN0mm30AYSYiCXlmS7GHWCOZ6psdr4iJSJgagQNHK9QQe
+	 gWJouYWDBJYT49Xxap+2dKQkDebktlMCX3SNdYyaWK/Nogz2fyRRCGFSBrBZvcQcJJ
+	 xzKEx5jkGqJwYBhiT3ziWxAaP+JyrmrmAHDrhaZM=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Besar Wicaksono <bwicaksono@nvidia.com>,
+	James Clark <james.clark@arm.com>,
+	suzuki.poulose@arm.com,
+	mike.leach@linaro.org,
+	jonathanh@nvidia.com,
+	rwiley@nvidia.com,
+	treding@nvidia.com,
+	vsethi@nvidia.com,
+	ywan@nvidia.com,
+	linux-arm-kernel@lists.infradead.org,
+	coresight@lists.linaro.org,
+	linux-tegra@vger.kernel.org,
+	Namhyung Kim <namhyung@kernel.org>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.6 0631/1424] perf cs-etm: Fix incorrect or missing decoder for raw trace
+Date: Sat, 12 Sep 2026 08:51:03 +0200
+Message-ID: <20260912065621.419338749@linuxfoundation.org>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260912065607.279695368@linuxfoundation.org>
+References: <20260912065607.279695368@linuxfoundation.org>
+User-Agent: quilt/0.69
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260912113944.cfs6tebsv2eqctvw@skbuf>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 12, 2026 at 02:39:44PM +0300, Vladimir Oltean wrote:
-> Hi Bjorn,
-> 
-> On Fri, Sep 11, 2026 at 05:12:09PM -0500, Bjorn Helgaas wrote:
-> > [+cc Felix, author of device link leak fixes]
-> > 
-> > On Mon, Aug 10, 2026 at 03:43:15PM +0300, Vladimir Oltean wrote:
-> > > This is practically a full revert of commit
-> > > 7a4db656a635 ("PCI: dra7xx: Create functional dependency between PCIe and PHY")
-> > > and a partial revert of the device link pieces from commits
-> > > dfb80534692d ("PCI: cadence: Add generic PHY support to host and EP drivers")
-> > > 49229238ab47 ("PCI: keystone: Cleanup PHY handling")
-> > 
-> > Can we split this into three commits (dra7xx, cadence, keystone)?
-> > This combined commit is applied on the pci/controller/misc branch, and
-> > then we have conflicts between that branch and
-> > pci/controller/dwc-dra7xx.
-> > 
-> > I think if we split this into three separate commits, we can apply the
-> > dra7xx one on pci/controller/dwc-dra7xx and drop Felix's device link
-> > leak fixes below so we don't clutter the git history with conflict
-> > resolutions or irrelevant commits:
-> > 
-> >   https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/commit/?id=2b9a036b568c ("PCI: dra7xx: Fix device link leak when devm_phy_get() fails")
-> > 
-> >   https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/commit/?id=bdfdf654b4b2 ("PCI: dra7xx: Fix device links leak when dra7xx_pcie_enable_phy() fails")
-> 
-> Isn't this patch already merged in pci/next as
-> https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?id=9a9d18547ddc97a73d5d90cff4d5aef90bd8c15d
-> ?
+6.6-stable review patch.  If anyone has any objections, please let me know.
 
-Yes, it is, but until Linus pulls it, the PCI tree is a draft subject
-to revision.  IMO the git history will be much cleaner.  The end
-result will be the same but we won't have conflict resolutions and
-fixes to code that was removed.
+------------------
+
+From: Besar Wicaksono <bwicaksono@nvidia.com>
+
+[ Upstream commit a16afcc58a8c5ebc65c852faf001f8f61f05e4ef ]
+
+The decoder creation for raw trace uses metadata from the first CPU.
+On per-cpu mode, this metadata is incorrectly used for every decoder.
+On per-process/per-thread traces, the first CPU is CPU0. If CPU0 trace
+is not enabled, its metadata will be marked unused and the decoder is
+not created. Perf report dump skips the decoding part because the
+decoder is missing.
+
+To fix this, use metadata of the CPU associated with sample object.
+
+Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
+Reviewed-by: James Clark <james.clark@arm.com>
+Cc: suzuki.poulose@arm.com
+Cc: mike.leach@linaro.org
+Cc: jonathanh@nvidia.com
+Cc: rwiley@nvidia.com
+Cc: treding@nvidia.com
+Cc: vsethi@nvidia.com
+Cc: ywan@nvidia.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: coresight@lists.linaro.org
+Cc: linux-tegra@vger.kernel.org
+Link: https://lore.kernel.org/r/20231010234803.5419-1-bwicaksono@nvidia.com
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+Stable-dep-of: 50cd0d54f1f6 ("perf cs-etm: Fix thread leaks on trace queue init failure")
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/perf/util/cs-etm.c | 106 ++++++++++++++++++++++++---------------
+ 1 file changed, 65 insertions(+), 41 deletions(-)
+
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 799c104901b4f..1fb104357eebb 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -283,22 +283,31 @@ static int cs_etm__metadata_set_trace_id(u8 trace_chan_id, u64 *cpu_metadata)
+ }
+ 
+ /*
+- * Get a metadata for a specific cpu from an array.
++ * Get a metadata index for a specific cpu from an array.
+  *
+  */
+-static u64 *get_cpu_data(struct cs_etm_auxtrace *etm, int cpu)
++static int get_cpu_data_idx(struct cs_etm_auxtrace *etm, int cpu)
+ {
+ 	int i;
+-	u64 *metadata = NULL;
+ 
+ 	for (i = 0; i < etm->num_cpu; i++) {
+ 		if (etm->metadata[i][CS_ETM_CPU] == (u64)cpu) {
+-			metadata = etm->metadata[i];
+-			break;
++			return i;
+ 		}
+ 	}
+ 
+-	return metadata;
++	return -1;
++}
++
++/*
++ * Get a metadata for a specific cpu from an array.
++ *
++ */
++static u64 *get_cpu_data(struct cs_etm_auxtrace *etm, int cpu)
++{
++	int idx = get_cpu_data_idx(etm, cpu);
++
++	return (idx != -1) ? etm->metadata[idx] : NULL;
+ }
+ 
+ /*
+@@ -641,66 +650,80 @@ static void cs_etm__packet_dump(const char *pkt_string)
+ }
+ 
+ static void cs_etm__set_trace_param_etmv3(struct cs_etm_trace_params *t_params,
+-					  struct cs_etm_auxtrace *etm, int idx,
+-					  u32 etmidr)
++					  struct cs_etm_auxtrace *etm, int t_idx,
++					  int m_idx, u32 etmidr)
+ {
+ 	u64 **metadata = etm->metadata;
+ 
+-	t_params[idx].protocol = cs_etm__get_v7_protocol_version(etmidr);
+-	t_params[idx].etmv3.reg_ctrl = metadata[idx][CS_ETM_ETMCR];
+-	t_params[idx].etmv3.reg_trc_id = metadata[idx][CS_ETM_ETMTRACEIDR];
++	t_params[t_idx].protocol = cs_etm__get_v7_protocol_version(etmidr);
++	t_params[t_idx].etmv3.reg_ctrl = metadata[m_idx][CS_ETM_ETMCR];
++	t_params[t_idx].etmv3.reg_trc_id = metadata[m_idx][CS_ETM_ETMTRACEIDR];
+ }
+ 
+ static void cs_etm__set_trace_param_etmv4(struct cs_etm_trace_params *t_params,
+-					  struct cs_etm_auxtrace *etm, int idx)
++					  struct cs_etm_auxtrace *etm, int t_idx,
++					  int m_idx)
+ {
+ 	u64 **metadata = etm->metadata;
+ 
+-	t_params[idx].protocol = CS_ETM_PROTO_ETMV4i;
+-	t_params[idx].etmv4.reg_idr0 = metadata[idx][CS_ETMV4_TRCIDR0];
+-	t_params[idx].etmv4.reg_idr1 = metadata[idx][CS_ETMV4_TRCIDR1];
+-	t_params[idx].etmv4.reg_idr2 = metadata[idx][CS_ETMV4_TRCIDR2];
+-	t_params[idx].etmv4.reg_idr8 = metadata[idx][CS_ETMV4_TRCIDR8];
+-	t_params[idx].etmv4.reg_configr = metadata[idx][CS_ETMV4_TRCCONFIGR];
+-	t_params[idx].etmv4.reg_traceidr = metadata[idx][CS_ETMV4_TRCTRACEIDR];
++	t_params[t_idx].protocol = CS_ETM_PROTO_ETMV4i;
++	t_params[t_idx].etmv4.reg_idr0 = metadata[m_idx][CS_ETMV4_TRCIDR0];
++	t_params[t_idx].etmv4.reg_idr1 = metadata[m_idx][CS_ETMV4_TRCIDR1];
++	t_params[t_idx].etmv4.reg_idr2 = metadata[m_idx][CS_ETMV4_TRCIDR2];
++	t_params[t_idx].etmv4.reg_idr8 = metadata[m_idx][CS_ETMV4_TRCIDR8];
++	t_params[t_idx].etmv4.reg_configr = metadata[m_idx][CS_ETMV4_TRCCONFIGR];
++	t_params[t_idx].etmv4.reg_traceidr = metadata[m_idx][CS_ETMV4_TRCTRACEIDR];
+ }
+ 
+ static void cs_etm__set_trace_param_ete(struct cs_etm_trace_params *t_params,
+-					  struct cs_etm_auxtrace *etm, int idx)
++					  struct cs_etm_auxtrace *etm, int t_idx,
++					  int m_idx)
+ {
+ 	u64 **metadata = etm->metadata;
+ 
+-	t_params[idx].protocol = CS_ETM_PROTO_ETE;
+-	t_params[idx].ete.reg_idr0 = metadata[idx][CS_ETE_TRCIDR0];
+-	t_params[idx].ete.reg_idr1 = metadata[idx][CS_ETE_TRCIDR1];
+-	t_params[idx].ete.reg_idr2 = metadata[idx][CS_ETE_TRCIDR2];
+-	t_params[idx].ete.reg_idr8 = metadata[idx][CS_ETE_TRCIDR8];
+-	t_params[idx].ete.reg_configr = metadata[idx][CS_ETE_TRCCONFIGR];
+-	t_params[idx].ete.reg_traceidr = metadata[idx][CS_ETE_TRCTRACEIDR];
+-	t_params[idx].ete.reg_devarch = metadata[idx][CS_ETE_TRCDEVARCH];
++	t_params[t_idx].protocol = CS_ETM_PROTO_ETE;
++	t_params[t_idx].ete.reg_idr0 = metadata[m_idx][CS_ETE_TRCIDR0];
++	t_params[t_idx].ete.reg_idr1 = metadata[m_idx][CS_ETE_TRCIDR1];
++	t_params[t_idx].ete.reg_idr2 = metadata[m_idx][CS_ETE_TRCIDR2];
++	t_params[t_idx].ete.reg_idr8 = metadata[m_idx][CS_ETE_TRCIDR8];
++	t_params[t_idx].ete.reg_configr = metadata[m_idx][CS_ETE_TRCCONFIGR];
++	t_params[t_idx].ete.reg_traceidr = metadata[m_idx][CS_ETE_TRCTRACEIDR];
++	t_params[t_idx].ete.reg_devarch = metadata[m_idx][CS_ETE_TRCDEVARCH];
+ }
+ 
+ static int cs_etm__init_trace_params(struct cs_etm_trace_params *t_params,
+ 				     struct cs_etm_auxtrace *etm,
++				     bool formatted,
++				     int sample_cpu,
+ 				     int decoders)
+ {
+-	int i;
++	int t_idx, m_idx;
+ 	u32 etmidr;
+ 	u64 architecture;
+ 
+-	for (i = 0; i < decoders; i++) {
+-		architecture = etm->metadata[i][CS_ETM_MAGIC];
++	for (t_idx = 0; t_idx < decoders; t_idx++) {
++		if (formatted)
++			m_idx = t_idx;
++		else {
++			m_idx = get_cpu_data_idx(etm, sample_cpu);
++			if (m_idx == -1) {
++				pr_warning("CS_ETM: unknown CPU, falling back to first metadata\n");
++				m_idx = 0;
++			}
++		}
++
++		architecture = etm->metadata[m_idx][CS_ETM_MAGIC];
+ 
+ 		switch (architecture) {
+ 		case __perf_cs_etmv3_magic:
+-			etmidr = etm->metadata[i][CS_ETM_ETMIDR];
+-			cs_etm__set_trace_param_etmv3(t_params, etm, i, etmidr);
++			etmidr = etm->metadata[m_idx][CS_ETM_ETMIDR];
++			cs_etm__set_trace_param_etmv3(t_params, etm, t_idx, m_idx, etmidr);
+ 			break;
+ 		case __perf_cs_etmv4_magic:
+-			cs_etm__set_trace_param_etmv4(t_params, etm, i);
++			cs_etm__set_trace_param_etmv4(t_params, etm, t_idx, m_idx);
+ 			break;
+ 		case __perf_cs_ete_magic:
+-			cs_etm__set_trace_param_ete(t_params, etm, i);
++			cs_etm__set_trace_param_ete(t_params, etm, t_idx, m_idx);
+ 			break;
+ 		default:
+ 			return -EINVAL;
+@@ -1016,7 +1039,7 @@ static u32 cs_etm__mem_access(struct cs_etm_queue *etmq, u8 trace_chan_id,
+ }
+ 
+ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
+-						bool formatted)
++						bool formatted, int sample_cpu)
+ {
+ 	struct cs_etm_decoder_params d_params;
+ 	struct cs_etm_trace_params  *t_params = NULL;
+@@ -1041,7 +1064,7 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
+ 	if (!t_params)
+ 		goto out_free;
+ 
+-	if (cs_etm__init_trace_params(t_params, etm, decoders))
++	if (cs_etm__init_trace_params(t_params, etm, formatted, sample_cpu, decoders))
+ 		goto out_free;
+ 
+ 	/* Set decoder parameters to decode trace packets */
+@@ -1081,14 +1104,15 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
+ static int cs_etm__setup_queue(struct cs_etm_auxtrace *etm,
+ 			       struct auxtrace_queue *queue,
+ 			       unsigned int queue_nr,
+-			       bool formatted)
++			       bool formatted,
++			       int sample_cpu)
+ {
+ 	struct cs_etm_queue *etmq = queue->priv;
+ 
+ 	if (list_empty(&queue->head) || etmq)
+ 		return 0;
+ 
+-	etmq = cs_etm__alloc_queue(etm, formatted);
++	etmq = cs_etm__alloc_queue(etm, formatted, sample_cpu);
+ 
+ 	if (!etmq)
+ 		return -ENOMEM;
+@@ -2827,7 +2851,7 @@ static int cs_etm__process_auxtrace_event(struct perf_session *session,
+ 		 * formatted in piped mode (true).
+ 		 */
+ 		err = cs_etm__setup_queue(etm, &etm->queues.queue_array[idx],
+-					  idx, true);
++					  idx, true, -1);
+ 		if (err)
+ 			return err;
+ 
+@@ -3033,7 +3057,7 @@ static int cs_etm__queue_aux_fragment(struct perf_session *session, off_t file_o
+ 		idx = auxtrace_event->idx;
+ 		formatted = !(aux_event->flags & PERF_AUX_FLAG_CORESIGHT_FORMAT_RAW);
+ 		return cs_etm__setup_queue(etm, &etm->queues.queue_array[idx],
+-					   idx, formatted);
++					   idx, formatted, sample->cpu);
+ 	}
+ 
+ 	/* Wasn't inside this buffer, but there were no parse errors. 1 == 'not found' */
+-- 
+2.53.0
+
+
+
