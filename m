@@ -1,81 +1,88 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C271C5F13
-	for <linux-tegra@vger.kernel.org>; Sat, 12 Sep 2026 02:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361E645629C;
+	Sat, 12 Sep 2026 11:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789181417; cv=none; b=byv9wmwMNW4+lPXo2RnfP4/h02wKzUUki0NN0K3MV70F98XvDKo7ij4lgh3p1B5GfEOWEJ/DozrKpWQP6DFLCF2SXq8++MhyZknrXuiMCkCWkYEmPVFxZfRjCSaBA/z7YDeIDiRy4XCBcwZRjlypDL0ezmMwojCGtrQt8LHjHaE=
+	t=1789211146; cv=none; b=Xp4L/YRcPLg5pXGvwVjjR8m1w9hbqT6XTlYDQ+PXozgSg/MuSL5I/QBt8y2Y4nExeOA2xUhlPUhxwgIpaClkSi7YqVeNXBG+m5Gml6w1/goytXHibn7TJ2Tu3ctCY8a4GEmq0JvRO206ZYkb5arORkWQvyTZGqqQMt1FTd56zas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789181417; c=relaxed/simple;
-	bh=TJ7n8YXadaOT6sFWZesUg7fEEQm/g7AiRrUqWz6FGJo=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=YncAcxUH6Rm0ut0ALdHmX1HVJEcyIXDXhNXEdWj1H0x2g6LGp3rhVWTlQzs0nD7tTmjOrll+krqBd2o/Ypj+mLdqbF1X0INEo4lPG84DaDF5U5XrBgbGsBkndtPcw0i8s/rRnQ9a9EC7NlfimZ++65rPlLTrjBtR8gsIXUgj8ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dRnFS47K; arc=none smtp.client-ip=192.198.163.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1789211146; c=relaxed/simple;
+	bh=EAbRSdXcg/S2Gd9ljR1ho5nMr6869TmN+678kggw2FM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pFedB0mlpMbD3gT5BYmCPznwdxRsVCAkuRjMCLXtIwkla6K3byXWoadso2tG9bG11CijnN+Idu5CeCqRVzuaIi7UDkU/Grj01ZwyrpHyMDZdt3Z9BJ8nEdOVA3AuoFdDdVKGmxIhDu2mQqi24tKonPHIdBR+CfyDkO40a0Qdm3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ijT55XBO; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dRnFS47K"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1789181416; x=1820717416;
-  h=date:from:to:cc:subject:message-id;
-  bh=TJ7n8YXadaOT6sFWZesUg7fEEQm/g7AiRrUqWz6FGJo=;
-  b=dRnFS47Klm0In+r3vdS+HtvXFWjztwIJ7vwU3urF0hwrEX+fqlgApRKI
-   JspByi7+RdeIE6OGDgvFo58NNSpMX0jkDEkhEpGHa1kSFZGR1dOj6f0GB
-   D9qCZFMbsDH4lsqLd3sOvd/CPV6XmKcGMsLhz0YBTLazoACneLnhpCrms
-   gpkEUM23rVa4eiF29RFJnlfcgMnDkbfqjeWHJn0E8/9iZLA9wNTkaV3aE
-   gnlmtWHcpRLDRKLUrSJ0QcXiRwMqZ+QEkNPNZXEVnrzExGOsLPO+TDvOH
-   tANSmAiRRQ9VaQTqdGFIKokYzaEvqGllCFZYK9kdHB7dXvhNMvUNU02Hm
-   g==;
-X-CSE-ConnectionGUID: o8qfhNPzTD2bLERn7MsBCQ==
-X-CSE-MsgGUID: 1mwPCBhZSY60+8BF6fsGRw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11902"; a="153600"
-X-IronPort-AV: E=Sophos;i="6.27,98,1787036400"; 
-   d="scan'208";a="153600"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa114.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2026 19:50:16 -0700
-X-CSE-ConnectionGUID: 8bkjdQKcT+aCDnSSUILTxw==
-X-CSE-MsgGUID: awgUOx4bRrCNO0nnKtO4lA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,98,1787036400"; 
-   d="scan'208";a="301983465"
-Received: from lkp-server02.sh.intel.com (HELO 0a3643a6ed9d) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 11 Sep 2026 19:50:13 -0700
-Received: from kbuild by 0a3643a6ed9d with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1x5Doh-000000002YR-2UAr;
-	Sat, 12 Sep 2026 02:50:11 +0000
-Date: Sat, 12 Sep 2026 10:49:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Thierry Reding <treding@nvidia.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-tegra@vger.kernel.org
-Subject: [arm-tegra:for-7.4/arm64/dt 11/19] FATAL ERROR: Syntax error
- parsing input tree
-Message-ID: <202609121029.dp1VVdPq-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ijT55XBO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C5D91F00898;
+	Sat, 12 Sep 2026 11:05:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789211145;
+	bh=EAbRSdXcg/S2Gd9ljR1ho5nMr6869TmN+678kggw2FM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ijT55XBORg6IcAu8uA5SrrBO9H2IAr5Mi+f/7KGqEBE4vH1ow2utu9M+h6Itg4c90
+	 YflEtHrnwzYXUBJdkoIgwtOKSqi7QRiBDiAb/48zBZhv0YSNU1LZNcMpjWC3eqx3jl
+	 7sM9pqRR8VJgGBfl5HeZKC2vhPL1MhbQIu8oAgs8jeDIIk9VF/g8OZXOT9xMmBrVWo
+	 n+JAdK+mDpRMna48QXXL7v0G8NW+pk3H2Mj8/mLdetCWS7U5oEFFUkn23LFwOZlKZN
+	 iUAqzzGWz6OE7gvFyPhjKcUYPdEXUHpmUgDdP/cCbtyNTOtBRsQ0hnP9aHoGW0ZCLD
+	 rsWomlqCc27Sg==
+Date: Sat, 12 Sep 2026 12:05:39 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Srirangan Madhavan <smadhavan@nvidia.com>
+Cc: mark.rutland@arm.com, lpieralisi@kernel.org, sudeep.holla@kernel.org,
+	jic23@kernel.org, catalin.marinas@arm.com, will@kernel.org,
+	treding@nvidia.com, jonathanh@nvidia.com, bence.csokas@arm.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] cache: add SMCCC-backed cache invalidate provider
+Message-ID: <aqUx9NCdeEr0R86z@squawk>
+References: <20260910082142.1522865-1-smadhavan@nvidia.com>
+ <20260910082142.1522865-3-smadhavan@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="WLLAqGgGEJH6ceCY"
+Content-Disposition: inline
+In-Reply-To: <20260910082142.1522865-3-smadhavan@nvidia.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git for-7.4/arm64/dt
-head:   1a4541cb8471164e3992dc4b08814409d6cdc582
-commit: f111ca03fcb3e5d397cc3ea095bebb93a589b742 [11/19] arm64: tegra: Clean up AHUB on Tegra264
-config: arm64-defconfig (https://download.01.org/0day-ci/archive/20260912/202609121029.dp1VVdPq-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 16.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260912/202609121029.dp1VVdPq-lkp@intel.com/reproduce)
+--WLLAqGgGEJH6ceCY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202609121029.dp1VVdPq-lkp@intel.com/
+Will/Catalin,
 
-All errors (new ones prefixed by >>):
+On Thu, Sep 10, 2026 at 08:21:42AM +0000, Srirangan Madhavan wrote:
+> Add a cache maintenance provider for the Arm SMCCC cache clean+invalidate
+> interface.
+>=20
+> The provider discovers SMCCC support and attributes at init time,
+> serializes firmware calls, handles transient BUSY and RATE_LIMITED
+> responses with bounded retries, and registers with the generic cache
+> coherency framework used by memregion callers.
+>=20
+> Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
+> Reviewed-by: Jonathan Cameron <jic23@kernel.org>
 
-   Lexical error: arch/arm64/boot/dts/nvidia/tegra264.dtsi:1587.23-25 Unexpected 'x0'
->> FATAL ERROR: Syntax error parsing input tree
+If yous wanna take this,
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers,
+Conor.
+
+--WLLAqGgGEJH6ceCY
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaqUx9AAKCRB4tDGHoIJi
+0tWbAP9pKv18wzUDrEQgGGMSF90ZNqqaF5RwAsn6LafqkcXPPAEAtHRF8XU+X4LP
+KmUhJnMv+MSySqjbU/zxJ/LhKruX2AA=
+=xoxY
+-----END PGP SIGNATURE-----
+
+--WLLAqGgGEJH6ceCY--
