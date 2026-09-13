@@ -1,121 +1,464 @@
-Received: from mail-qv2-f12.google.com (mail-qv2-f12.google.com [74.125.230.140])
+Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com [74.125.227.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A0B30E0CC
-	for <linux-tegra@vger.kernel.org>; Sun, 13 Sep 2026 04:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.230.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933092749E6
+	for <linux-tegra@vger.kernel.org>; Sun, 13 Sep 2026 04:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789272644; cv=none; b=GXtJFsEyrnPwzCLXsXKJwaaA6Jh+f1MXxkYMqkCFsu6Skzh3yPOxRJu0XuERrohm39aw+PGqLpL1Wf4CoCDgqhmlayyWpUbDYCY4fKMBZ0mN9H73BkAXHy8pNIuBnJmOdgxxp2vQrTI9nqPG7zMmbMZs3Zvedh71hpalRnWb7O4=
+	t=1789273083; cv=none; b=GuYR1BS5QU9VNffqkZCkVecS2mqHVxIKZDLHuNuafRXfHSSP2oXN8ckk/h3GQhs/Xj9eu0lChA2A2h5lP0lNFUt0MkYzEFSk0TSZOD2xNDjulr+nfXJ58ssWECafKVvmpyZYAkqFN+/1W3Gbwtt/4X43ixBniEJev/gyTJkfFms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789272644; c=relaxed/simple;
-	bh=q70lBCJF9U8Wv9pSNev+Rilr/PYDCEDGEVWmQL9R7qo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OKHU+tJzRfoDyv/wHO+zEY1w2xh0Rw3Bl83n1cnJ+NrYSmQkeC/qapfN1ox/7dyhDrbM2sTviZakNC7bLir3C0darH419f4AG6aaWGfj7QF8NKCV8uHt4ZeFIetTYOt0f9n1yQCYUnSdKVTJ3vCFz/JieH0hXfUE5cu73ci/2WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BA/YgI/L; arc=none smtp.client-ip=74.125.230.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1789273083; c=relaxed/simple;
+	bh=e5v6M5yqTktG0YaS+EYOkTfB1lGv19l+X8VLtpnRl6w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qa7bVbDWCZUKlKO+tG6TG7f/YYp+AhV0lMqGgfA+S7jHZnXxlof6YpxzkUb5corPAVxXtLwRmqytqfVL6sRtwsu7rnwzBeBH9TuUJwyjaT12cdCh3n2MavEGEX1UZJr0Ios7HlgnjTobxvzh7wgtT85AfT4BleftryyqD2IGDvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=itlDl9Q/; arc=none smtp.client-ip=74.125.227.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BA/YgI/L"
-Received: by mail-qv2-f12.google.com with SMTP id 6a1803df08f44-91058dd77a2so18538876d6.3
-        for <linux-tegra@vger.kernel.org>; Sat, 12 Sep 2026 21:10:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="itlDl9Q/"
+Received: by mail-pj2-f13.google.com with SMTP id 98e67ed59e1d1-39b31b4281eso1126477a91.2
+        for <linux-tegra@vger.kernel.org>; Sat, 12 Sep 2026 21:18:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789272642; x=1789877442; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=LdnUVZ9fGnxxypDVfl/aC1u8LA5L3SFgGUxVp+gDyPI=;
-        b=BA/YgI/LX8qY2e/HXaOWFxUY8/TQCfPDJXudwkboXgVFDCbP6vkykCYAJyz2VUKd+e
-         nQwruyyxF7x6OK2uNNvFSaXXNYXKM1tykIJlhlyguyoSvcHpCo1oPewNEmtyA4E9aFCb
-         Hh0f+7U6MKLq8Xn8bQAH6JtIBE2Zd1iSDOFjDD20lzC7ydYCXUdNcPilScTKocTt3Cy0
-         I2M7rfj008J2ZsbtrFSJblzVlWNzEGQlFgBxIPCvmMOxaarDMBRrQgRBMatDC/XuH15y
-         303IZKs+Fo6rS3gClNgspR6EacP3GXrWtD8VVgyKSYVUo2BsyYwl/+MKxhqr+Oa+H3TL
-         LB+w==
+        d=gmail.com; s=20251104; t=1789273081; x=1789877881; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=rxf311/eBJ/8T140hTt7JphIw/mqRr8QNJxhthUWUMk=;
+        b=itlDl9Q/+u1vctmKVBEnw1TlW42ClOKd5XREsrjVlmVSsoDzh7pqhFjPRljqj+DKZD
+         NMBlEIdwA4gkQhlhFw0/6pc1vYNOAhAIJFEMNjAt+RKCHlsh7m43wrOzZCLY3d0vmLcf
+         1rGVGoxZ4RLe/9fQ+DryIjGNLhoxZjOGZwr7XIUrN/KfAzt2ruzATaT5L5MvYf3aumVi
+         WdbSVrEOmqxm/KqBuH3r9laQnn5EMdC7JAGyM3EjH2kwfUqAvUbbx+R3liXu1DBWovNS
+         hlTymI53pqODcBB6QLjBE1sZbrYgKFQsB1HXppRxxZgtQ0pv+3RIZFqlG1aK16dSL+dt
+         dK5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789272642; x=1789877442;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=LdnUVZ9fGnxxypDVfl/aC1u8LA5L3SFgGUxVp+gDyPI=;
-        b=L9/luByVh9gHzSHVaMdQFfYVNGM2HFjxGI6tHPULQr0GV9sc8z1mpzPyL5fB1avT4Y
-         dDge1zmxQf6cRKXu+wrI9uaU/2OZiQXTOZH6IsJD3bZU17nd4k7Jb52G6+5g72nOaLQE
-         tV1U2rF7uKBbGZY/JtBZS3oWpTuxBkPWGcZN1cm0K/E7u6gHm3bHe60+wd6aSxYyCuvC
-         xw3kXOOxbupawPgOUVQug2RFxYS7ClFDO1RD6poLSqGL6mcm8FIak6SA2irKvrMIpShk
-         jVf+lKqFwjBjK/ejjTYEEwBo9ggiPkv9MKvVfBGPIVjkH8urQcbge6cfMEAg8NwUbwsN
-         bKJg==
-X-Forwarded-Encrypted: i=1; AKwUvBzJWHCGGa3daGwmWagKDnMg73JNjWp05BX51et9Gp6W5uRtJPd0i0Ey/ar/6fIMpopix5kCxKWI/PpHGg==@vger.kernel.org
-X-Gm-Message-State: AFuF++lh+93RZM31Ff20earx8yzy8i703RtX2cJJrQyYFEa/tPDNXpSX
-	uaZSSXEL03DaC/g1bpBUWHNRL3cK/K7Buklbz5ENeCUr832yK3m8HLg=
-X-Gm-Gg: AYBFou2/PhL2JC/9YJiz8iLsPDrsjKZVWg0CFmOYsVXRWqeoW7TUCq+QOMD6Td1kJCh
-	//bt/0//mpMhqYdg0TUTSH1y7KjwqIogqaPQnQkVstig3XQeJknqg1mXW+BCXYGvXkuXo+twzAQ
-	+undPhnerEOznri8AtHPV8N3mjBMYxiG2IW73SvU2KG1U87XhunNknT1GDV9rTzUwTwamxJORNr
-	sbQt467SV2+XxmK81NobLJhXX/4bN5Iz5b2JsAxEkqkDWQEEGcjOsjPSc0rNY4bMPrkjOUYq8e5
-	xUzogTwE03eMq4wnrVAv6dry4USHJ4RmpjRwguxty++FIsdMV8CeAK4oxFt3llwgT8431r9H/nv
-	xPI3KHDQUUK1ZEIE5RtTm0gkTtGYEl0WaxhZyI7/P3BmlTIjpwsBKX0g+GnoOcE4N5BWM6IQ2B8
-	S1nAW1x8JOQEbRRN7tGjOsWzrLWTQND03cYB/7eU+tLGukiVrzhQEixZsoff8cZE9nu/j9ZIm0w
-	GzOCdDbFpfplUN7PDWcRpW00YhO+DomDM01dU8PLEsXOeclhyhGYTtSInc2PVYTYYzye0jnHKtC
-	y+m1QWCXMojuAeChOS/OZ6G2P8LZLMQBfw==
-X-Received: by 2002:a05:6214:2a47:b0:910:706b:6a73 with SMTP id 6a1803df08f44-9121206f50cmr172281656d6.5.1789272642083;
-        Sat, 12 Sep 2026 21:10:42 -0700 (PDT)
-Received: from localhost.localdomain ([104.39.73.78])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-9120f45a780sm61544396d6.10.2026.09.12.21.10.40
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sat, 12 Sep 2026 21:10:40 -0700 (PDT)
-From: Myeonghun Pak <mhun512@gmail.com>
-To: Peter Chen <peter.chen@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Dmitry Osipenko <digetx@gmail.com>,
-	linux-usb@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Ijae Kim <ae878000@gmail.com>
-Subject: [PATCH] usb: chipidea: tegra: disable runtime PM on resume failure
-Date: Sun, 13 Sep 2026 00:10:33 -0400
-Message-ID: <20260913041033.25144-1-mhun512@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        d=1e100.net; s=20251104; t=1789273081; x=1789877881;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=rxf311/eBJ/8T140hTt7JphIw/mqRr8QNJxhthUWUMk=;
+        b=V3TZxxsjSxkoXqkVwyNI60Gjraj0V41euPqf8wofnvczEOZ/1qBHlVRlDSbmeSAMrr
+         /9aG86/+iXGLzb5E7EZNPPT/6pbrbqTbs7d3RpqpFqfhTh1K+/BV5pJgBS1Zlj9PfTrB
+         b5rJ7uCc2fQn6g5GeP9i/GoIUgGqINfMbHFdfphTnzimFd3knW9/Kqcuj6MI+msd7sUe
+         ix8RZTRX3pMr/lusCE6VspzkTsVeNj2QVAysEhqKYAEKtonYwRlOsrWfABSgzQF5hxsC
+         6Deq7/G3zlUaBh6jVQttvcsOq5RJQBUlDJG6mkuPEOKR+z2P+dcEmAgjXQGgU2/1ORpb
+         r+Fw==
+X-Forwarded-Encrypted: i=1; AKwUvBwVk5WYl59uaOsroTiQMOqdS+Uf98dWp9Jx1OFDOq7D0DHpAkWu1QqzaW5yid9EnIbntnr6bB1AYlbr/A==@vger.kernel.org
+X-Gm-Message-State: AFuF++l/SCq1NpUIpMsmgTkrERX4vueVyHXpBMxi0aWZwoPkwZGTWzvM
+	FdLdpkvFKt0YROZHukTAsyunJHKQfQjRhA6YSTMQvLhlyr5GM8x2QWgcPW/EyJGT
+X-Gm-Gg: AYBFou3JykAeDguBhXLBM04jbExT9MeZOG86Hn70JvxpwAU1JnakUbzgnXLOgxFVRK9
+	ZMgqprZ6VYbjBhyg+GH3cOXbUQWqx8Fo8JTgrYT7DzSC0aX5SGUYolOYvkthMtJwxPigP9Dh6tI
+	0qxdy+v8P/zHif49CXMKJHs8lOBZHGUKY2DCcvtPvPZ0xZGFocrPfohihlyUwSob6MLk1wR25se
+	zd2+p7jPeoMgS4N3njPr3l2KyfRP95oNIQQmMKsn+dQZ8OZnQ0ezFibi8TjvurSCNwMPRvlh8B2
+	YFgn9RuEC3cH86AVQsfd6ydsEPSmIj7MgC3LbmYpuvcuyZo3nDxTuyhvbnKc5LhdWKD1eVhAqfs
+	xcOP5NoX5qw2Wgdc5PYd3MRKMosZRF2h/2Lxc+Pfn0EKcM3xanNBueHHcE4MmoyIZ5Dv6hVk+wv
+	ne5A4X2npUQg8ekhlgAbQQqBSYBzHDxVlyOf4iOSG4UMZ3/yERSUJWLPWbxx9vON+hXgeRR1Owv
+	ZYK9vYOCT2iRZvK/2XG0IA2xgriua1Ri8pmADiQ8BJ2WijU
+X-Received: by 2002:a17:90b:4a03:b0:39d:84af:a0b3 with SMTP id 98e67ed59e1d1-39d9c3651damr19960732a91.18.1789273080666;
+        Sat, 12 Sep 2026 21:18:00 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33ba4fa50efsm19085670eec.28.2026.09.12.21.17.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 12 Sep 2026 21:18:00 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <51ec34a3-555c-4866-a949-7ccbdcc1a6bb@roeck-us.net>
+Date: Sat, 12 Sep 2026 21:17:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] watchdog: sbsa_gwdt: stop the watchdog across the whole
+ system-sleep transition
+To: David Cemin <dcemin@nvidia.com>, Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+References: <20260912182107.1156221-1-dcemin@nvidia.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20260912182107.1156221-1-dcemin@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-tegra_usb_probe() enables runtime PM before resuming the device. If
-pm_runtime_resume_and_get() fails, probe returns without disabling runtime
-PM. The later error paths reach pm_runtime_force_suspend(), but this early
-return bypasses that cleanup.
+On 9/12/26 11:21, David Cemin wrote:
+> The driver stops a running watchdog in its own device suspend callback
+> and restarts it in its resume callback. That leaves the watchdog armed,
+> with nobody refreshing it, for the entire early part of suspend entry:
+> userspace freeze, kernel thread freeze, and every device suspend
+> callback that runs before this device's own. The same window exists at
+> the tail end of resume.
+> 
+> When the watchdog is already running when the driver binds (started by
+> firmware, 10 s default timeout) and any device stalls its suspend
+> callback past the timeout, the watchdog resets the system in the middle
+> of suspend entry. On an arm64 laptop platform this fired on about 7% of
+> suspend attempts in a randomized suspend stress run (9 resets in 124
+> suspends, with the watchdog reset status set in the SoC's reset status
+> register). Two elimination runs confirm the mechanism: the identical
+> stress matrix with the watchdog stopped produced zero resets in 118
+> suspends, and with the first version of this change (notifier plus the
+> original device callbacks) applied, zero resets in 198 suspends across
+> four runs, where the baseline rate predicts about 14. The version here
+> keeps that mechanism, removes the device resume callback and adds the
+> locking described below; it went through a further 120 suspends (60
+> s2idle, 60 S3, randomized order, console recorded through every entry)
+> with the watchdog armed from boot and zero resets.
+> 
+> Stop the watchdog from a PM notifier at the *_PREPARE events, before
+> tasks are frozen and device callbacks run, and restart it at the
+> PM_POST_* events, after everything has resumed. The driver state (armed,
+> stopped for sleep) lives under a lock shared with the watchdog ops, so a
+> userspace stop or magic close after thaw cannot race the restart, and a
+> start requested while the transition is in progress is deferred until
+> PM_POST_* instead of arming hardware nobody can refresh; the transition
+> is recorded at *_PREPARE whether or not the watchdog was armed at that
+> point, so a start between *_PREPARE and task freezing is deferred as
+> well. The notifier is
+> registered before anything can arm the watchdog and its failure fails
+> the probe. A suspend-only device callback remains as the final guard for
+> a device whose probe overlapped the *_PREPARE event; it has no resume
+> counterpart, so nothing re-arms the watchdog during device resume,
+> before PM_POST_SUSPEND. The initial hardware state is adopted under the
+> same lock, so a firmware-started watchdog discovered by a probe that
+> lost the race with *_PREPARE is stopped at once and armed again at
+> PM_POST_*; the stop path is idempotent so the device callback remains
+> an effective fallback whatever the ordering.
+> 
 
-Disable runtime PM before returning the resume error. Do not use the
-fail_power_off path: the failed resume did not retain a usage reference,
-so its pm_runtime_put_sync_suspend() would be unbalanced.
+Isn't this a problem that affects _all_ watchdog drivers ?
 
-This issue was identified during our ongoing static-analysis research while
-reviewing kernel code.
+Thanks,
+Guenter
 
-Fixes: 8b85e11c1a7a ("usb: chipidea: tegra: Add runtime PM and OPP support")
-Cc: stable@vger.kernel.org
-Assisted-by: OpenAI:GPT-5.6
-Co-developed-by: Ijae Kim <ae878000@gmail.com>
-Signed-off-by: Ijae Kim <ae878000@gmail.com>
-Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
----
- drivers/usb/chipidea/ci_hdrc_tegra.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> Fixes: 57d2caaabfc7 ("Watchdog: introduce ARM SBSA watchdog driver")
+> Signed-off-by: David Cemin <dcemin@nvidia.com>
+> ---
+>   drivers/watchdog/sbsa_gwdt.c | 191 +++++++++++++++++++++++++++++------
+>   1 file changed, 159 insertions(+), 32 deletions(-)
+> 
+> diff --git a/drivers/watchdog/sbsa_gwdt.c b/drivers/watchdog/sbsa_gwdt.c
+> index e04d42cc7774..399a8bcb3c6f 100644
+> --- a/drivers/watchdog/sbsa_gwdt.c
+> +++ b/drivers/watchdog/sbsa_gwdt.c
+> @@ -46,6 +46,8 @@
+>   #include <linux/module.h>
+>   #include <linux/moduleparam.h>
+>   #include <linux/platform_device.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/suspend.h>
+>   #include <linux/uaccess.h>
+>   #include <linux/watchdog.h>
+>   #include <asm/arch_timer.h>
+> @@ -87,6 +89,13 @@
+>    *			indicate whether to adjust wdd->timeout to avoid a race with WS0
+>    * @refresh_base:	Virtual address of the watchdog refresh frame
+>    * @control_base:	Virtual address of the watchdog control frame
+> + * @lock:		Serializes the watchdog ops against the system sleep hooks
+> + * @hw_armed:		The watchdog is logically running (started by firmware,
+> + *			or userspace); the hardware follows it except
+> + *			while a system sleep transition is in progress
+> + * @sleeping:		A system sleep transition is in progress: the hardware
+> + *			stays stopped and hw_armed is applied at PM_POST_*
+> + * @pm_nb:		PM notifier stopping the watchdog across system sleep
+>    */
+>   struct sbsa_gwdt {
+>   	struct watchdog_device	wdd;
+> @@ -95,6 +104,10 @@ struct sbsa_gwdt {
+>   	bool			need_ws0_race_workaround;
+>   	void __iomem		*refresh_base;
+>   	void __iomem		*control_base;
+> +	spinlock_t		lock; /* hw_armed, sleeping */
+> +	bool			hw_armed;
+> +	bool			sleeping;
+> +	struct notifier_block	pm_nb;
+>   };
+>   
+>   #define DEFAULT_TIMEOUT		10 /* seconds */
+> @@ -244,12 +257,33 @@ static void sbsa_gwdt_get_version(struct watchdog_device *wdd)
+>   		!action && (impl == SBSA_GWDT_IMPL_MEDIATEK);
+>   }
+>   
+> +static void sbsa_gwdt_hw_start(struct sbsa_gwdt *gwdt)
+> +{
+> +	/* writing WCS will cause an explicit watchdog refresh */
+> +	writel(SBSA_GWDT_WCS_EN, gwdt->control_base + SBSA_GWDT_WCS);
+> +}
+> +
+> +static void sbsa_gwdt_hw_stop(struct sbsa_gwdt *gwdt)
+> +{
+> +	/* Simply write 0 to WCS to clean WCS_EN bit */
+> +	writel(0, gwdt->control_base + SBSA_GWDT_WCS);
+> +}
+> +
+>   static int sbsa_gwdt_start(struct watchdog_device *wdd)
+>   {
+>   	struct sbsa_gwdt *gwdt = watchdog_get_drvdata(wdd);
+> +	unsigned long flags;
+>   
+> -	/* writing WCS will cause an explicit watchdog refresh */
+> -	writel(SBSA_GWDT_WCS_EN, gwdt->control_base + SBSA_GWDT_WCS);
+> +	spin_lock_irqsave(&gwdt->lock, flags);
+> +	gwdt->hw_armed = true;
+> +	/*
+> +	 * While a system sleep transition is in progress nobody can refresh
+> +	 * the watchdog: leave the hardware stopped and let the PM_POST_*
+> +	 * notifier arm it once everything has resumed.
+> +	 */
+> +	if (!gwdt->sleeping)
+> +		sbsa_gwdt_hw_start(gwdt);
+> +	spin_unlock_irqrestore(&gwdt->lock, flags);
+>   
+>   	return 0;
+>   }
+> @@ -257,9 +291,12 @@ static int sbsa_gwdt_start(struct watchdog_device *wdd)
+>   static int sbsa_gwdt_stop(struct watchdog_device *wdd)
+>   {
+>   	struct sbsa_gwdt *gwdt = watchdog_get_drvdata(wdd);
+> +	unsigned long flags;
+>   
+> -	/* Simply write 0 to WCS to clean WCS_EN bit */
+> -	writel(0, gwdt->control_base + SBSA_GWDT_WCS);
+> +	spin_lock_irqsave(&gwdt->lock, flags);
+> +	gwdt->hw_armed = false;
+> +	sbsa_gwdt_hw_stop(gwdt);
+> +	spin_unlock_irqrestore(&gwdt->lock, flags);
+>   
+>   	return 0;
+>   }
+> @@ -288,12 +325,101 @@ static const struct watchdog_ops sbsa_gwdt_ops = {
+>   	.get_timeleft	= sbsa_gwdt_get_timeleft,
+>   };
+>   
+> +/*
+> + * Per-device suspend/resume callbacks alone would stop the watchdog only
+> + * once this device itself is suspended, one of the last steps of suspend
+> + * entry, and restart it during device resume, before tasks are thawed. A
+> + * watchdog running from boot (started by firmware) would therefore be armed, with
+> + * nobody refreshing it, through task freezing and every other device's
+> + * suspend callback on the way down, and again from device resume until
+> + * userspace runs on the way up; anything stalling past the timeout in
+> + * either window resets the system.
+> + *
+> + * Own the transition from a PM notifier instead: stop at the *_PREPARE
+> + * events, before anything is frozen, and restart at PM_POST_*, after
+> + * everything has resumed. The driver state (hw_armed, sleeping) is kept
+> + * under a lock shared with the watchdog ops so that a userspace stop or
+> + * magic close after thaw cannot race the restart, and a start requested
+> + * while the transition is in progress is deferred to PM_POST_*. The
+> + * transition is recorded at *_PREPARE whether or not the watchdog was
+> + * armed at that moment, so a start between *_PREPARE and task freezing
+> + * is deferred as well instead of arming hardware nobody refreshes. A
+> + * suspend-only device callback remains as the final guard for a device
+> + * whose probe overlapped the *_PREPARE event; it has no resume
+> + * counterpart, so nothing re-arms the hardware before PM_POST_*.
+> + */
+> +static void sbsa_gwdt_sleep_stop(struct sbsa_gwdt *gwdt)
+> +{
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&gwdt->lock, flags);
+> +	/*
+> +	 * Idempotent on purpose: the *_PREPARE notifier and the device
+> +	 * suspend callback both land here, and a probe that adopted a
+> +	 * firmware-armed watchdog after *_PREPARE relies on the second
+> +	 * call actually stopping the hardware.
+> +	 */
+> +	gwdt->sleeping = true;
+> +	if (gwdt->hw_armed)
+> +		sbsa_gwdt_hw_stop(gwdt);
+> +	spin_unlock_irqrestore(&gwdt->lock, flags);
+> +}
+> +
+> +static void sbsa_gwdt_sleep_restart(struct sbsa_gwdt *gwdt)
+> +{
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&gwdt->lock, flags);
+> +	if (gwdt->sleeping) {
+> +		gwdt->sleeping = false;
+> +		if (gwdt->hw_armed)
+> +			sbsa_gwdt_hw_start(gwdt);
+> +	}
+> +	spin_unlock_irqrestore(&gwdt->lock, flags);
+> +}
+> +
+> +static int sbsa_gwdt_pm_notify(struct notifier_block *nb, unsigned long mode,
+> +			       void *data)
+> +{
+> +	struct sbsa_gwdt *gwdt = container_of(nb, struct sbsa_gwdt, pm_nb);
+> +
+> +	switch (mode) {
+> +	case PM_SUSPEND_PREPARE:
+> +	case PM_HIBERNATION_PREPARE:
+> +	case PM_RESTORE_PREPARE:
+> +		sbsa_gwdt_sleep_stop(gwdt);
+> +		break;
+> +	case PM_POST_SUSPEND:
+> +	case PM_POST_HIBERNATION:
+> +	case PM_POST_RESTORE:
+> +		sbsa_gwdt_sleep_restart(gwdt);
+> +		break;
+> +	}
+> +
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static void sbsa_gwdt_unregister_pm_notifier(void *data)
+> +{
+> +	unregister_pm_notifier(data);
+> +}
+> +
+> +static int sbsa_gwdt_suspend(struct device *dev)
+> +{
+> +	sbsa_gwdt_sleep_stop(dev_get_drvdata(dev));
+> +
+> +	return 0;
+> +}
+> +
+> +static DEFINE_SIMPLE_DEV_PM_OPS(sbsa_gwdt_pm_ops, sbsa_gwdt_suspend, NULL);
+> +
+>   static int sbsa_gwdt_probe(struct platform_device *pdev)
+>   {
+>   	void __iomem *rf_base, *cf_base;
+>   	struct device *dev = &pdev->dev;
+>   	struct watchdog_device *wdd;
+>   	struct sbsa_gwdt *gwdt;
+> +	unsigned long flags;
+>   	int ret, irq;
+>   	u32 status;
+>   
+> @@ -318,6 +444,21 @@ static int sbsa_gwdt_probe(struct platform_device *pdev)
+>   	gwdt->clk = arch_timer_get_cntfrq();
+>   	gwdt->refresh_base = rf_base;
+>   	gwdt->control_base = cf_base;
+> +	spin_lock_init(&gwdt->lock);
+> +
+> +	/*
+> +	 * Register the sleep hook before anything can arm the watchdog, and
+> +	 * treat its failure as fatal: without it a running watchdog would
+> +	 * survive into system sleep with nobody refreshing it.
+> +	 */
+> +	gwdt->pm_nb.notifier_call = sbsa_gwdt_pm_notify;
+> +	ret = register_pm_notifier(&gwdt->pm_nb);
+> +	if (!ret)
+> +		ret = devm_add_action_or_reset(dev,
+> +					       sbsa_gwdt_unregister_pm_notifier,
+> +					       &gwdt->pm_nb);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to register PM notifier\n");
+>   
+>   	wdd = &gwdt->wdd;
+>   	wdd->parent = dev;
+> @@ -347,8 +488,20 @@ static int sbsa_gwdt_probe(struct platform_device *pdev)
+>   		dev_warn(dev, "System reset by WDT.\n");
+>   		wdd->bootstatus |= WDIOF_CARDRESET;
+>   	}
+> -	if (status & SBSA_GWDT_WCS_EN)
+> +	if (status & SBSA_GWDT_WCS_EN) {
+>   		set_bit(WDOG_HW_RUNNING, &wdd->status);
+> +		/*
+> +		 * Adopt the firmware-started watchdog under the lock: if a
+> +		 * system sleep transition began between notifier registration
+> +		 * and this point, keep the hardware stopped now and let
+> +		 * PM_POST_* arm it, like any other start during the transition.
+> +		 */
+> +		spin_lock_irqsave(&gwdt->lock, flags);
+> +		gwdt->hw_armed = true;
+> +		if (gwdt->sleeping)
+> +			sbsa_gwdt_hw_stop(gwdt);
+> +		spin_unlock_irqrestore(&gwdt->lock, flags);
+> +	}
+>   
+>   	if (action) {
+>   		irq = platform_get_irq(pdev, 0);
+> @@ -398,32 +551,6 @@ static int sbsa_gwdt_probe(struct platform_device *pdev)
+>   	return 0;
+>   }
+>   
+> -/* Disable watchdog if it is active during suspend */
+> -static int __maybe_unused sbsa_gwdt_suspend(struct device *dev)
+> -{
+> -	struct sbsa_gwdt *gwdt = dev_get_drvdata(dev);
+> -
+> -	if (watchdog_hw_running(&gwdt->wdd))
+> -		sbsa_gwdt_stop(&gwdt->wdd);
+> -
+> -	return 0;
+> -}
+> -
+> -/* Enable watchdog if necessary */
+> -static int __maybe_unused sbsa_gwdt_resume(struct device *dev)
+> -{
+> -	struct sbsa_gwdt *gwdt = dev_get_drvdata(dev);
+> -
+> -	if (watchdog_hw_running(&gwdt->wdd))
+> -		sbsa_gwdt_start(&gwdt->wdd);
+> -
+> -	return 0;
+> -}
+> -
+> -static const struct dev_pm_ops sbsa_gwdt_pm_ops = {
+> -	SET_SYSTEM_SLEEP_PM_OPS(sbsa_gwdt_suspend, sbsa_gwdt_resume)
+> -};
+> -
+>   static const struct of_device_id sbsa_gwdt_of_match[] = {
+>   	{ .compatible = "arm,sbsa-gwdt", },
+>   	{},
+> @@ -439,7 +566,7 @@ MODULE_DEVICE_TABLE(platform, sbsa_gwdt_pdev_match);
+>   static struct platform_driver sbsa_gwdt_driver = {
+>   	.driver = {
+>   		.name = DRV_NAME,
+> -		.pm = &sbsa_gwdt_pm_ops,
+> +		.pm = pm_sleep_ptr(&sbsa_gwdt_pm_ops),
+>   		.of_match_table = sbsa_gwdt_of_match,
+>   	},
+>   	.probe = sbsa_gwdt_probe,
+> 
+> base-commit: 841e384b841a3d89c50b4b2d6c5bb6abab1a7e39
 
-diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
-index 372788f0f..26225b034 100644
---- a/drivers/usb/chipidea/ci_hdrc_tegra.c
-+++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
-@@ -306,8 +306,10 @@ static int tegra_usb_probe(struct platform_device *pdev)
- 
- 	pm_runtime_enable(&pdev->dev);
- 	err = pm_runtime_resume_and_get(&pdev->dev);
--	if (err)
-+	if (err) {
-+		pm_runtime_disable(&pdev->dev);
- 		return err;
-+	}
- 
- 	if (device_property_present(&pdev->dev, "nvidia,needs-double-reset"))
- 		usb->needs_double_reset = true;
