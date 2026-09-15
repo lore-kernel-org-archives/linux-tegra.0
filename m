@@ -1,99 +1,75 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F419374E5A;
-	Tue, 15 Sep 2026 06:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A0C3126AD;
+	Tue, 15 Sep 2026 07:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789454058; cv=none; b=bZEB6bOJ1vxNjoiCPOp2pcWGTBcInqNfIiI4UVUl2SbGYBi3JZ+/vzMG/b4LcKH6B4oFUwvUEuBXkeIwiAVUQTQ85jLaa+EFL+y37DBFdIfwiGWMS7pAEdyASYO6g4X2qpDLUJrvGYLs2n3h7DeiHVL1ctlEIunkkMkSzZkz3wU=
+	t=1789456127; cv=none; b=vF8Z+IllrNp0XGCm4m32OpSA+ZF6MA8DyRZdwEKf9ACI6jWqpdWb3tPRk3cem3ljvOAkrndS+untiLz0VJec5iFFCNg3LO8lxofujG6zo/thB2VJ3g770Q7MgoDc7CDjyB1iY4UpK7D8in6mz4F39S04VRwjwKPsGfQowu5Q+To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789454058; c=relaxed/simple;
-	bh=Ser9KmsN1N57Rla+KhmDHZ+zORwXgQxdfa4OX3xOa08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iSIGoe0ioXGNQZK0yxtYK7Qzjg/IpeN8nCLJoKxJ+es8YHvgfkIluf1EWvULrJguuFzwb2hVEuT2Qk/n+ROTPWuPwG+mtTqKvatWhiWwMD2fqG+fGn++iolFmclN9OZZ5VdJKEahiWhu5IyVrcRluNe1vbDvj2smUwBjU4a8bGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=doVFDbsy; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789456127; c=relaxed/simple;
+	bh=iUxUSUt+SdyG7T8SxpfhJLcZS48K6HH1JYNBgBo0uII=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ojRKy9oHQ5MaIFEC2lVK91RADddfVTSx/ezY97PwGHuZGS0Tm3ekDk/oL4jHiys+iVl5WaoD6CJnoe/+U8CxaIStQhtzRluhIFBFDAsVuNfsB5BI0q7As54J6REfZsUJAX5R9hIUQr/1RrSr/bifWTOpeLtf8wwMGvO36vM2zRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e9rbETPo; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="doVFDbsy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63D711F000FF;
-	Tue, 15 Sep 2026 06:34:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e9rbETPo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 482271F00893;
+	Tue, 15 Sep 2026 07:08:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789454056;
-	bh=au+l37rDlIofO/OyR7zRhhJQrP7Rz6WCu1SPKN84omM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=doVFDbsyA1x4Gktsi+LtE/9eA53BBBxG2OJTRDljpLjv3g4G0uyqepGyb09SBztm0
-	 y84HnfhYZ9vsUKve49uoNNmKPZ2rE6YA2ceLSMjc/+oK8ZrNQAmYTbhnOOtmfHyf2u
-	 yh+cMis66E5vBzGGPyoQ8XnvBZvQ/vwYXedqnlrtSxbOzYwoVAoS31M3Uv3Iy0SHUw
-	 EzQPvyZUKn+O9F7A++5iYqsp/rqtz4K+L8X/pT9e1ofl/k3hnM0xIP5rUfaMJrAZ0u
-	 bwS62p2H4uQllEm0v8OCZDOioiWzTI+6ygP8M0BEPXyGKgndvU7q5N+hSVM7FtgHWa
-	 VoVRn/Jc8Q95g==
-Date: Mon, 14 Sep 2026 23:34:14 -0700
-From: Peter Chen <peter.chen@kernel.org>
-To: Myeonghun Pak <mhun512@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>, linux-usb@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Ijae Kim <ae878000@gmail.com>
-Subject: Re: [PATCH] usb: chipidea: tegra: disable runtime PM on resume
- failure
-Message-ID: <aqjm5m4NhLCeGSJY@hu-petche-lv.qualcomm.com>
-References: <20260913041033.25144-1-mhun512@gmail.com>
+	s=k20260515; t=1789456121;
+	bh=FZ4sOFzqh5v1KYNfvbErrDbhS9mXlIlU3yLYc4mNmzg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=e9rbETPo5oF+GJamUSAO1PMQlaV19jPJ98hzcGlSngUyxCSZ+/jAYmeYiVzGbi+Nk
+	 V+UaDOsYDXk6cKmZZ+j3K2QEifswV+3txtPPukBBSFouCyyiOeQMlzrDMmSYQN9IG3
+	 tJrXg+/Kq73+bsO4gG9T5idRiDkMJeCAa7mhDjjsVsDaVl5ne6fsDRIYG3QauLqOIi
+	 2KLwKvnTLufDC+1C955AMMw5wravYu6nSuNEnrwBhLuwQ7zXimvxY7dKMO7rI9u5ET
+	 9VUB7hc3eJk3895zfIm5Rr3Y4CdAo0uDdC9TUjv0RFOOqBCFHtuFyvCBzic0m8tCQf
+	 iT+8zZmStXp3w==
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: thierry.reding@kernel.org, jonathanh@nvidia.com, 
+ Ketan Patil <ketanp@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+In-Reply-To: <20260903182520.950555-1-ketanp@nvidia.com>
+References: <20260903182520.950555-1-ketanp@nvidia.com>
+Subject: Re: [PATCH 0/3] memory: tegra: Refactor Tegra264 mc-err code
+Message-Id: <178945611901.44219.2006628780238670109.b4-ty@b4>
+Date: Tue, 15 Sep 2026 09:08:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260913041033.25144-1-mhun512@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16.0
 
-On 26-09-13 00:10:33, Myeonghun Pak wrote:
-> tegra_usb_probe() enables runtime PM before resuming the device. If
-> pm_runtime_resume_and_get() fails, probe returns without disabling runtime
-> PM. The later error paths reach pm_runtime_force_suspend(), but this early
-> return bypasses that cleanup.
-> 
-> Disable runtime PM before returning the resume error. Do not use the
-> fail_power_off path: the failed resume did not retain a usage reference,
-> so its pm_runtime_put_sync_suspend() would be unbalanced.
-> 
-> This issue was identified during our ongoing static-analysis research while
-> reviewing kernel code.
-> 
-> Fixes: 8b85e11c1a7a ("usb: chipidea: tegra: Add runtime PM and OPP support")
-> Cc: stable@vger.kernel.org
-> Assisted-by: OpenAI:GPT-5.6
-> Co-developed-by: Ijae Kim <ae878000@gmail.com>
-> Signed-off-by: Ijae Kim <ae878000@gmail.com>
-> Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
 
-Acked-by: Peter Chen <peter.chen@kernel.org>
-
-Peter
-> ---
->  drivers/usb/chipidea/ci_hdrc_tegra.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+On Thu, 03 Sep 2026 18:25:17 +0000, Ketan Patil wrote:
+> The MC and HUB error-logging paths on Tegra264 used large switch
+> statements that interleaved register offsets, bit positions and
+> decoding parameters for each error type, which made them hard to read
+> and review. This patchset refactors these paths without intending any
+> functional change to error decoding behavior.
 > 
-> diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
-> index 372788f0f..26225b034 100644
-> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
-> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
-> @@ -306,8 +306,10 @@ static int tegra_usb_probe(struct platform_device *pdev)
->  
->  	pm_runtime_enable(&pdev->dev);
->  	err = pm_runtime_resume_and_get(&pdev->dev);
-> -	if (err)
-> +	if (err) {
-> +		pm_runtime_disable(&pdev->dev);
->  		return err;
-> +	}
->  
->  	if (device_property_present(&pdev->dev, "nvidia,needs-double-reset"))
->  		usb->needs_double_reset = true;
+> Ketan Patil (3):
+>   memory: tegra: Use named defines for Tegra264 MC apertures
+>   memory: tegra: Parameterise Tegra264 MCF slice bound
+>   memory: tegra: Refactor Tegra264 mc-err code
+> 
+> [...]
 
+Applied, thanks!
+
+[1/3] memory: tegra: Use named defines for Tegra264 MC apertures
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/edda28d5317521c2f5172f869d3a433a2d37f7a2
+[2/3] memory: tegra: Parameterise Tegra264 MCF slice bound
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/fb8af372f899690646444cd0b38a88ec52568cbc
+[3/3] memory: tegra: Refactor Tegra264 mc-err code
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/f4e16143420f4021431cc652ebd71e176267ecbc
+
+Best regards,
 -- 
+Krzysztof Kozlowski <krzk@kernel.org>
 
-Thanks,
-Peter Chen
