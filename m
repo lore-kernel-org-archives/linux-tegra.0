@@ -1,24 +1,25 @@
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E12D49B468;
-	Wed, 16 Sep 2026 15:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865884C33E0;
+	Wed, 16 Sep 2026 18:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789573981; cv=none; b=MaKm4N7MiFCyLCGoca8r0IRr2EO50mI89J56NFS1Cvio5WOc8Q9zI6VcpRBCHZ+2tX0AeKnT36P8EHSArWPnofVzJkN9iJnNkA7lL4jlG44AFpYyyaOoO7dO4PpaVVTNr0YlWdk4E6K9p7ahUOnIZxokcNE7I0K99D6hEG3Qm+o=
+	t=1789583191; cv=none; b=KBs9Sz+gKOVStyTyVeHFWWtUEjyPtTwRS8EDovL4VtSDi/iLrhSg/ZrSKbrqnSrJxNe80UM0/ZJD9T2pjqxN96gPblkt4mc4fPMKp/dqMUgPuxQNAp6nBHepCwE3RqPk+uBIEc6TUr0BYxWy9p9T90+BY0WjMS/K1Z/jjU3cRrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789573981; c=relaxed/simple;
-	bh=BM+h7cppDDvozEPiXX6BYGD/KcFCnuavtNYdswOQxhU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DgU0eLsABzqFyAB9j8KRppRVwjhMfqaG6eEzpzKBnO2X3s5NOkulBet1ZDwUigSUKLcnjgX8IFETqgBitgriyD+jyWUDzbBESe7gR7ItA4H5m3XFNBRLAykq7Kvh73yUkGnVc0QyHFNIpcmw0FkhKptmJQWf66HZbfUp+I7y43I=
+	s=arc-20240116; t=1789583191; c=relaxed/simple;
+	bh=02pmzJfioY5sM9RU8KqEw/pGb/Mp5V59fFHCtJ+Ck5s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XuLt1bY7heu3nOW/Bc8G2Px9cng2SHmueuicsEFYxpn2aG6aYuAlh1HHDHfFlTIBL1BmTC7v+pnCbETl2plZWbMu/EppT5zalvSZoepmJKuLvt+hW856hceTm1LRvlEMtvfJl4nSazYml9vQKgC2p+WTE4U+vZERcjFNpTM6qo0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
 Received: from dfae2b116770.home.arpa (unknown [36.110.52.2])
-	by APP-05 (Coremail) with SMTP id zQCowACH7zlPu6pqqCttCA--.21450S2;
-	Wed, 16 Sep 2026 23:52:47 +0800 (CST)
+	by APP-05 (Coremail) with SMTP id zQCowADnVD9K36pqEH1vCA--.24263S2;
+	Thu, 17 Sep 2026 02:26:18 +0800 (CST)
 From: Wentao Liang <vulab@iscas.ac.cn>
 To: airlied@gmail.com
 Cc: dri-devel@lists.freedesktop.org,
+	jonathanh@nvidia.com,
 	linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	mperttunen@nvidia.com,
@@ -26,9 +27,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	thierry.reding@kernel.org,
 	Wentao Liang <vulab@iscas.ac.cn>,
 	stable@vger.kernel.org
-Subject: [PATCH] gpu: host1x: Fix of_node reference leak in host1x_device_add()
-Date: Wed, 16 Sep 2026 15:52:19 +0000
-Message-Id: <20260916155219.2071989-1-vulab@iscas.ac.cn>
+Subject: [PATCH] drm/tegra: Fix bo reference leak in host1x_reloc_copy_from_user()
+Date: Wed, 16 Sep 2026 18:25:50 +0000
+Message-Id: <20260916182550.2091797-1-vulab@iscas.ac.cn>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -37,65 +38,53 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowACH7zlPu6pqqCttCA--.21450S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ww1UGrWrCr1fCF13uF4fGrg_yoW8XrykpF
-	Z8tFyYyrWDWF47Kw4jyF1UuFy3Kw1jk3yfKFyrJw13Kr4fJr9YqrykKFWUA34UWrW7GFnF
-	qF4jkr1rA345Cw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
-	6r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26F4j
-	6r4UJwCI42IY6I8E87Iv6xkF7I0E14v26F4UJVW0obIYCTnIWIevJa73UjIFyTuYvjfUrr
-	WFUUUUU
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBgEMA2qqok9B8gAAsW
+X-CM-TRANSID:zQCowADnVD9K36pqEH1vCA--.24263S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKr47tFyDWrWkAr1DKw4xtFb_yoWDGrb_WF
+	1UWFn7W34DuF4qy3WUAr47ZryIyFn5uF48Xa12yayfK34UZFyjq3429ryDur17Ca1xAF1D
+	A347X34SvF4SgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb-8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26F
+	4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+	7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbV
+	WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7Cj
+	xVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JF
+	I_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_
+	Jr0_JF4lIxAIcVC2z280aVAFwI0_Cr0_Gr1UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Cr1j6r
+	xdYxBIdaVFxhVjvjDU0xZFpf9x0JUtgA7UUUUU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwUMA2qqpVh7CwAAsA
 
-When host1x_device_parse_dt() fails, host1x_device_add() only frees the
-host1x_device and leaves the subdevs collected by host1x_subdev_add()
-on device->subdevs. Each of those subdevs still holds an OF node
-reference acquired with of_node_get(), which is normally dropped by
-host1x_subdev_del().
+If the lookup of the relocation target fails after the command buffer
+object has been looked up, the reference taken for the latter is not
+recorded in the caller's refs[] array and is never released.  Drop it
+before returning.
 
-Remove all stale subdevs, dropping their device node references, before
-freeing the device.
-
-Fixes: 776dc3840367 ("drm/tegra: Move subdevice infrastructure to host1x")
+Fixes: 961e3beae3b2 ("drm/tegra: Make job submission 64-bit safe")
 Cc: stable@vger.kernel.org
 Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 ---
- drivers/gpu/host1x/bus.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/tegra/drm.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index f814eb4941c0..8dbab96b7f5a 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -455,7 +455,7 @@ static int host1x_device_add(struct host1x *host1x,
- 			     struct host1x_driver *driver)
- {
- 	struct host1x_client *client, *tmp;
--	struct host1x_subdev *subdev;
-+	struct host1x_subdev *subdev, *sd;
- 	struct host1x_device *device;
- 	int err;
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 1dcef4e7d104..4e4d41c527c6 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -159,8 +159,10 @@ static int host1x_reloc_copy_from_user(struct host1x_reloc *dest,
+ 		return -ENOENT;
  
-@@ -485,6 +485,10 @@ static int host1x_device_add(struct host1x *host1x,
+ 	dest->target.bo = tegra_gem_lookup(file, target);
+-	if (!dest->target.bo)
++	if (!dest->target.bo) {
++		drm_gem_object_put(dest->cmdbuf.bo);
+ 		return -ENOENT;
++	}
  
- 	err = host1x_device_parse_dt(device, driver);
- 	if (err < 0) {
-+		mutex_lock(&device->subdevs_lock);
-+		list_for_each_entry_safe(subdev, sd, &device->subdevs, list)
-+			host1x_subdev_del(subdev);
-+		mutex_unlock(&device->subdevs_lock);
- 		kfree(device);
- 		return err;
- 	}
+ 	return 0;
+ }
 -- 
 2.34.1
 
