@@ -1,41 +1,41 @@
 Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254C551356B
-	for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2026 13:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623CF513576;
+	Wed, 16 Sep 2026 13:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789566488; cv=none; b=GAip94uKeLxTllcczTZZHdYJlqefqdz3DUyBcjIemn4bmQCuI2OUfhm/bmadqZj7s3jhskMd5TRg1UXLww6IuFfxVF1lj+vbc5VoMgXrVd3DTfSPpgprcoJP3rrQ4tKhfvxawEa9W/Xl25vLPVKpwd68BCbItI/ah3oUHdZvyQw=
+	t=1789566495; cv=none; b=TOU3M8/4iQVBWcnM8d6iLGMHEfvgKzQAtRsFnEGOAeHkGZmjj+zl0tt19USAgH1O8dj9pBLJh4d10127/NAP/Wv5xEvKTLXgRk1QLzGGixHrK3PU3NRDTdM6t5X+wzQyk+qH4bTyae7wDEBwSpAJb6GR1Jt4dN3k2uk5DqR0b8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789566488; c=relaxed/simple;
-	bh=NGCF1odYpyZpT4jPdVyjbHSa/D4W81AHmfHEdqrPKAw=;
+	s=arc-20240116; t=1789566495; c=relaxed/simple;
+	bh=zvmvQCvpPudl4NcpR0ZTDrhuH1AzDUe4QC/1i8pfGSE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RIjbOgIS7B45tmetpzI/V8dQnA3wMeq1Y2oWA9mHXPAGR7bBEgi7ZB5orFZ/QXMQ5J/jSkac5NdbHM3VnCWv3Vig7V0zxVmtG62fiDiFEz8RvacH9EnYFNYHMLqsGSJl40xSdug5GACJX3g+u5KiV+SueWB31412IErJCWVboxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FsjDM4CG; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=D62xS1YAXIg4bcP88lflQZO8rdYeJ8xjGRpHAoHAJ39TNLlJ35jmKwmgdukYpGW3/hFdaKxCUqilHtxg+4tSxXrNzjAT2pXLQWs4aI2fpzKkAb7OtjDBByIRQTth+hVPCVtXanZ4XhcYP+pysiA9JM8OaZoNCia/Y9bJgQaAkN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QGALR/4F; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FsjDM4CG"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QGALR/4F"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 915E84E40727;
-	Wed, 16 Sep 2026 13:47:55 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id EC6154E40736;
+	Wed, 16 Sep 2026 13:48:06 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 5C34860337;
-	Wed, 16 Sep 2026 13:47:55 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8DD3511C7B038;
-	Wed, 16 Sep 2026 15:47:45 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id B9F0660337;
+	Wed, 16 Sep 2026 13:48:06 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8B57111C7B031;
+	Wed, 16 Sep 2026 15:47:53 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1789566472; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1789566480; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=9MZSf+qxx8/Ty98JkFRndwTvdhbHq5kenzts5ncPb5U=;
-	b=FsjDM4CGhKTpGI7EPMnp1qVnUDiWZ/MvYCX8oJMcOhlwceApl0fdlmtaPgTFfCjdloIJUq
-	BcyX4XERNbeVj00xyKgOysccMA9MzsBVQgCrAV6xhR3oUQZ84Fe0LXU+5ifFco3zRTD/M9
-	Td5NgPF+IhklwWZehRnZRLwnowV0HuhOgof5SJrHwZuhP64CGoZq47pcVBj4e1wowetaCi
-	OwkdwMfw2X5QkU0cp+OQSQwTnGsVIi4eKkytfJw8DITMQNE4FSiMNU8yNvJrLkp9qGwEyP
-	lMdG5wZ9Vxznx3WQ0A0ZLNdev5B+D7vM4m9N71DkdWlavyuPEZZyVle1JP7GPQ==
+	bh=WuZX7Ld13ojOYCTY0ar+bokEZLNX0F8BwuavdUHGtR8=;
+	b=QGALR/4FPgZgsJZy9ShvO3e3wFndnrRlRApyWADH7o1KovktZ6gvPgK5F3GcNw7Xi4G2vp
+	jDl32gEpAtULcO8jsBkGW+p7uDlw04AuoovRFl1g/lx8/75D5MKKLRDH7kwUVFAKp6ithU
+	HsjCJjTIVNmRSKBUP6bM2vX7HQXd/kqGyPzL6AO4iI+iB8TusNMlHxNFUkb36uwwAwc8uN
+	SCVmLoMR/scL/Jz4EBOAuzAQD02IYoVrIYq1MNN03qOCft36nfQHBx5Wm8NopxtVSHKIC0
+	+7q6jNwndNZrUZpcLnB+S5CsGCAtKzdXd2tLF5blJtYK8fz7pJolZTed0/UZHQ==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Wed, 16 Sep 2026 15:45:40 +0200
-Subject: [PATCH v3 16/19] drm/bridge: ssd2825: don't create a panel_bridge
+Date: Wed, 16 Sep 2026 15:45:41 +0200
+Subject: [PATCH v3 17/19] drm/omap: dss: don't create a panel_bridge
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -44,7 +44,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260916-drm-bridge-every-panel-v3-16-83afb4f1a707@bootlin.com>
+Message-Id: <20260916-drm-bridge-every-panel-v3-17-83afb4f1a707@bootlin.com>
 References: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
 In-Reply-To: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -87,101 +87,104 @@ panel-bridge API is just a deprecated wrapper to access it.
 Update and simplify the code by just getting a reference to the
 already-existing bridge using of_drm_get_bridge_by_endpoint().
 
-As of_drm_get_bridge_by_endpoint() returns a refcounted bridge, take care
-of putting the bridge reference when not used anymore.
-
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/bridge/Kconfig   |  2 --
- drivers/gpu/drm/bridge/ssd2825.c | 23 +++++------------------
- 2 files changed, 5 insertions(+), 20 deletions(-)
+ drivers/gpu/drm/omapdrm/dss/omapdss.h |  1 -
+ drivers/gpu/drm/omapdrm/dss/output.c  | 42 ++++-------------------------------
+ 2 files changed, 4 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index 847a6397eb10..c7da6b02d7b6 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -349,8 +349,6 @@ config DRM_SOLOMON_SSD2825
- 	depends on SPI_MASTER && OF
- 	select DRM_MIPI_DSI
- 	select DRM_KMS_HELPER
--	select DRM_PANEL
--	select DRM_PANEL_BRIDGE
- 	help
- 	  Say Y here if you want support for the Solomon SSD2825 RGB/DSI
- 	  SPI bridge driver.
-diff --git a/drivers/gpu/drm/bridge/ssd2825.c b/drivers/gpu/drm/bridge/ssd2825.c
-index b0142d6d40dc..71877699dfab 100644
---- a/drivers/gpu/drm/bridge/ssd2825.c
-+++ b/drivers/gpu/drm/bridge/ssd2825.c
-@@ -17,7 +17,6 @@
- #include <drm/drm_drv.h>
- #include <drm/drm_mipi_dsi.h>
- #include <drm/drm_of.h>
+diff --git a/drivers/gpu/drm/omapdrm/dss/omapdss.h b/drivers/gpu/drm/omapdrm/dss/omapdss.h
+index 4c22c09c93d5..e3e685c931f1 100644
+--- a/drivers/gpu/drm/omapdrm/dss/omapdss.h
++++ b/drivers/gpu/drm/omapdrm/dss/omapdss.h
+@@ -204,7 +204,6 @@ struct omap_dss_device {
+ 	struct dss_device *dss;
+ 	struct drm_bridge *bridge;
+ 	struct drm_bridge *next_bridge;
+-	struct drm_panel *panel;
+ 
+ 	struct list_head list;
+ 
+diff --git a/drivers/gpu/drm/omapdrm/dss/output.c b/drivers/gpu/drm/omapdrm/dss/output.c
+index 6e9bc605ee22..36d37deac802 100644
+--- a/drivers/gpu/drm/omapdrm/dss/output.c
++++ b/drivers/gpu/drm/omapdrm/dss/output.c
+@@ -12,7 +12,6 @@
+ #include <linux/of_graph.h>
+ 
+ #include <drm/drm_bridge.h>
 -#include <drm/drm_panel.h>
- #include <video/mipi_display.h>
  
- #define SSD2825_DEVICE_ID_REG			0xb0
-@@ -114,7 +113,6 @@ static const struct regulator_bulk_data ssd2825_supplies[] = {
- 
- struct ssd2825_dsi_output {
- 	struct mipi_dsi_device *dev;
--	struct drm_panel *panel;
- 	struct drm_bridge *bridge;
- };
- 
-@@ -277,7 +275,6 @@ static int ssd2825_dsi_host_attach(struct mipi_dsi_host *host, struct mipi_dsi_d
+ #include "dss.h"
+ #include "omapdss.h"
+@@ -20,40 +19,16 @@
+ int omapdss_device_init_output(struct omap_dss_device *out,
+ 			       struct drm_bridge *local_bridge)
  {
- 	struct ssd2825_priv *priv = dsi_host_to_ssd2825(host);
- 	struct drm_bridge *bridge;
--	struct drm_panel *panel;
- 	struct device_node *ep;
+-	struct device_node *remote_node;
++	struct drm_bridge *bridge;
  	int ret;
  
-@@ -295,20 +292,14 @@ static int ssd2825_dsi_host_attach(struct mipi_dsi_host *host, struct mipi_dsi_d
- 		return -EOPNOTSUPP;
+-	remote_node = of_graph_get_remote_node(out->dev->of_node,
+-					       out->of_port, 0);
+-	if (!remote_node) {
++	bridge = of_drm_get_bridge_by_endpoint(out->dev->of_node, out->of_port, 0);
++	if (IS_ERR(bridge)) {
+ 		dev_dbg(out->dev, "failed to find video sink\n");
+ 		return 0;
  	}
  
--	ret = drm_of_find_panel_or_bridge(host->dev->of_node, 1, 0, &panel, &bridge);
--	if (ret)
--		return ret;
-+	bridge = of_drm_get_bridge_by_endpoint(host->dev->of_node, 1, 0);
-+	if (IS_ERR(bridge))
-+		return PTR_ERR(bridge);
- 
--	if (panel) {
--		bridge = drm_panel_bridge_add_typed(panel, DRM_MODE_CONNECTOR_DSI);
--		drm_panel_put(panel);
--		if (IS_ERR(bridge))
--			return PTR_ERR(bridge);
--	}
-+	bridge->type = DRM_MODE_CONNECTOR_DSI;
- 
- 	priv->output.dev = dev;
- 	priv->output.bridge = bridge;
--	priv->output.panel = panel;
- 
- 	priv->dsi_lanes = dev->lanes;
- 
-@@ -333,8 +324,7 @@ static int ssd2825_dsi_host_detach(struct mipi_dsi_host *host, struct mipi_dsi_d
- 	struct ssd2825_priv *priv = dsi_host_to_ssd2825(host);
- 
- 	drm_bridge_remove(&priv->bridge);
--	if (priv->output.panel)
--		drm_panel_bridge_remove(priv->output.bridge);
-+	drm_bridge_put(priv->output.bridge);
- 
- 	return 0;
- }
-@@ -579,9 +569,6 @@ static void ssd2825_bridge_atomic_pre_enable(struct drm_bridge *bridge,
- 	/* Initial DSI configuration register set */
- 	ssd2825_write_reg(priv, SSD2825_CONFIGURATION_REG, config);
- 	ssd2825_write_reg(priv, SSD2825_VC_CTRL_REG, 0);
+-	out->panel = of_drm_find_panel(remote_node);
+-	if (IS_ERR(out->panel))
+-		out->panel = NULL;
 -
--	if (priv->output.panel)
--		drm_panel_enable(priv->output.panel);
- }
+-	if (!out->panel)
+-		out->bridge = of_drm_find_and_get_bridge(remote_node);
+-
+-	of_node_put(remote_node);
+-
+-	if (out->panel) {
+-		struct drm_bridge *bridge;
+-
+-		bridge = drm_panel_bridge_add(out->panel);
+-		drm_panel_put(out->panel);
+-		if (IS_ERR(bridge)) {
+-			dev_err(out->dev,
+-				"unable to create panel bridge (%ld)\n",
+-				PTR_ERR(bridge));
+-			ret = PTR_ERR(bridge);
+-			goto error;
+-		}
+-
+-		out->bridge = drm_bridge_get(bridge);
+-	}
++	out->bridge = bridge;
  
- static void ssd2825_bridge_atomic_enable(struct drm_bridge *bridge,
+ 	if (local_bridge) {
+ 		if (!out->bridge) {
+@@ -65,11 +40,6 @@ int omapdss_device_init_output(struct omap_dss_device *out,
+ 		out->bridge = drm_bridge_get(local_bridge);
+ 	}
+ 
+-	if (!out->bridge) {
+-		ret = -EPROBE_DEFER;
+-		goto error;
+-	}
+-
+ 	return 0;
+ 
+ error:
+@@ -79,10 +49,6 @@ int omapdss_device_init_output(struct omap_dss_device *out,
+ 
+ void omapdss_device_cleanup_output(struct omap_dss_device *out)
+ {
+-	if (out->bridge && out->panel)
+-		drm_panel_bridge_remove(out->next_bridge ?
+-					out->next_bridge : out->bridge);
+-
+ 	drm_bridge_put(out->next_bridge);
+ 	drm_bridge_put(out->bridge);
+ }
 
 -- 
 2.55.0
