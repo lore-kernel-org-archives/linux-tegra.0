@@ -1,27 +1,27 @@
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012050.outbound.protection.outlook.com [52.101.43.50])
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012038.outbound.protection.outlook.com [40.93.195.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984503C0603;
-	Wed, 16 Sep 2026 06:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6014D0A1C;
+	Wed, 16 Sep 2026 10:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.38
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789541524; cv=fail; b=f1114mAXtXs2rN993w47AA2bXdV+h6WutKOXSxMiBhoU6mMkR5ymBQ2emlR0j7vJ6Avy1KZSlSuL4dlHmOk5BBpwKw80kUK1TuvahFw++XeP2JjOrpT5YHIVncR06KdaVKraUXOQJxjAMLpVTsjohT0+75I9R3+UsKZ+IInn5Fg=
+	t=1789555158; cv=fail; b=sxkqNQbpyLgf/qY4s1kJ6aFJoI93m2dLpa8sfzzKmZsLneffd1Iesbv6U1btEtG7lQaWr9WpstidzERPp2wVTtUUhhKdG7BgKaEBgTSQjEOG8cyhjeIyWSHDygGiTlyhluC/fIjbFzU5R51tOkNW1wkDBsLMGqVAMTc9jVGTPgc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789541524; c=relaxed/simple;
-	bh=1ZCf9eTWBeQmBwl/mfkV410oAgMobgGOP3FQ87LBZGw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=O0OPMCQwQ2DyIBoJQCDWrfMHScpzwyMYynVLLK1DDAZkA6P6/+fS2nbKkS+4fSwIT9BF+UDz3eyTuzfwwQG2Mcpmjpw4M+20OFWctQy9yZ/41Hfj/zIjh4eSigShmhQ3SJWfld9XAGcF0XfGD49sFnMdNAwD7fYPjAu7zGPKyVs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ffjfSG8y; arc=fail smtp.client-ip=52.101.43.50
+	s=arc-20240116; t=1789555158; c=relaxed/simple;
+	bh=JwVRPJhh0PZYPCy8j56bjc9hENFxPtD7QGy1AlU+MP4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RxYTFw5ISGmApdepu1toThMhW/por9s+tg8hhetF72YeqIo8tIUQ0jJslZ9F0u0JW9zlfNlZTRrsUfYanhDTpxbD2EXESiNA8kK0e5+p1gRUdKPpWp2dBYcxlXoLIKainqysEoNCry3xOMUGBMx39ju5Xtp8kOuVQDw2bPngGgs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XavbEm0J; arc=fail smtp.client-ip=40.93.195.38
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ffjfSG8y"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XavbEm0J"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=p+Ar1wq3RMh9aE6X7u+EiE5YBDyKVleUGwf3koC1wdEpB5A2aZzWLWrV3AMKvE0xXx0NrYQ4IyIVIGOLin45EutVNvkbJQLxcBNOw5eaPZ2AEOLBbNEvBbV0uzGo/HUnsHMQQdHpax90H/fo3d9xgIrncspbuc7H9OssyqJ4cvqvA9vwUPd5ksdHtZksXuCY+wPuwMsmM1DGqFAIzFu5ga32oVljHqsKLeNheBo00b/N5J2DPJLi/ofOOhEmm6qoTOCI0/X5qRSTUQFLupMDBe7axER9yjdGUphfQ86dhY2krwgZybrfTsJgAcgIMQRpCiKvUf1jnJeHA48RxXwlqQ==
+ b=IUDApUm8CdLkbX66+jvuspTmo/VRy8FlhsIMCvAE7y+qU1He4ozXk1vbnJeS04gOSlhoUL3qn385/gYX+Lh+wpVRMRZWL9MklIV70xksGBFPB8Lnq8Ik32z9qCyvZ0wM8Tp9K3vDvE/S4HDacyFN7uHP/63OSeyC4L2PKUY4sTJSmakg78zjxaSW50TWdsXeT0NaW0nT9/eDg/U/2Qf3g8Dksdr5PibK7598RCQmnsXqRKFD1dc7toz1U9DGOwxlsZYe7/JQxMviaiIBOY0mG18qZMwKAP2NXC5xNK0ZaZf7AuhjbtqjQICotRuEKmMtb1OD8+87dQ8l5j7lk9uSMQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RQAAwpNFVuBKg/y5o6R2UhgnZYrhwoyBrGcvI+oR+3o=;
- b=m+lQUWBQ2tGlA5Ms+qRoNgmxJL6saCNNlk0P6sNzR4a0WDQ7r7CRWklItReQmxS785hfYHKyz5exdBvqsTWynwHgTpKoVAK56Y27/+TA95xLiAKXgjfyskbGzerDrlSvl4BypSAzKQcu0mLB8lG9RkiCGJKYgZLmfC234J2Xp6P0F6YCzF+5xQVnPL+A/uo/B6q/HmgdRYfdPtHz11jyMah+ELRYdJRIzKflpSwcH8R9EBGp6TCIlneuzHcUxruWnrcw7dWSmsG8nj9RKSFFhhfzhXDsNmOVxyVrJgafQqSdjGcx/euqEVyEDidogx37L4RTmxfpQrUyGokujxmgGQ==
+ bh=8y3yUNUqla45/a5+5F505QtsFee8olmyJa14mnO7m4s=;
+ b=iEAOqA7O3CV6Znm58VJPU8n+bBE5ZUiMU6sL8Ytd73Zv7EV5w+ovUj5CTvBcSShaQt5gvBg5mA7U6JSVPqjjU6eTkK9UcroNJnp9ml9IF8faqAAmYSFK5oZrQCXVJLknPIIPrLeL+QKtr9ru7tAnUrQbtmJGPw6KyS2eQDKkPar4+y/erf6zwRth6GYw5icDgCYJ0OHMVHQ/NRLFFdpRI43POtC0jZaTHJ7vOLPkzZIaTKNwtXf8DFqJokMO90fe9HZ7LR39knrvVTi43ZUuzisAAHHsxEXCcUKjLY7YMEAHGPzeX7o1WMIftqrdLO7ESC26MlSi4iVNp+Jo+4xh7Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -29,18 +29,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RQAAwpNFVuBKg/y5o6R2UhgnZYrhwoyBrGcvI+oR+3o=;
- b=ffjfSG8yAZsiskRTK9qhvd+S4OuZVRZxeHQ5o1WpUaJ0CQGfCk1f+k05O9/N5G55dulIYTquqQizUhtioRoPL4MbCohpqpkdqmrtVviXuSbKOk8JghuSahWGvC0XminpRU/29C32pck6E0AiCszxr7XaHyf5651WjK52fxNWDdpQxaHboj1Vm7MC2qXdfboY1E2p5yMn3cW4Nt/reWhi7YV+Qr5VheystWoDaXNind307+t/9Sh5q54Vh0ulfqmvTUBJz1FuvcUu58DelWAO3iXL04CgbeQ+2ttv+/xIi3VZwtlCoStmBWec1C6f9KkI+F+3FWed6CVHHAGIJVSHTg==
-Received: from BN0PR04CA0054.namprd04.prod.outlook.com (2603:10b6:408:e8::29)
- by DS0PR12MB999081.namprd12.prod.outlook.com (2603:10b6:8:2ff::20) with
+ bh=8y3yUNUqla45/a5+5F505QtsFee8olmyJa14mnO7m4s=;
+ b=XavbEm0Jj5hgk2BP6R3VJqrskjPQwcbyLhodG4ntxz1zG6QL9lF83QdxcmURIyk0/Ga05FVsCSjzn8Kdqh3AHcwSjJ2VEYzSD3SrURuN++K7ZEy84UUx+eXaR/zjHorPOUEsnYnFpMJuDA4PYCISeIPL6WNNlVJWqPqi6aTK4XaiUYbZmDMVxQD0x5MitG63AOS1R4ZD0WQY9f/AqbpsPQf9HXcJpp/jdM587ciZtBGy7iGASaW6ac7URUYHB3DW4TkTZCHZuDYs3FQksrMSJ2E74OgRQEa0r/rEdlrSAaa17EbpfPc8Q2wB3m1GY7B/kMGgFEarQhM8oH/HZbPU+Q==
+Received: from SJ0PR03CA0356.namprd03.prod.outlook.com (2603:10b6:a03:39c::31)
+ by DM4PR12MB6279.namprd12.prod.outlook.com (2603:10b6:8:a3::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.9; Wed, 16 Sep
- 2026 06:51:51 +0000
-Received: from LV8PEPF0000006C.namprd03.prod.outlook.com
- (2603:10b6:408:e8:cafe::30) by BN0PR04CA0054.outlook.office365.com
- (2603:10b6:408:e8::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.9 via Frontend Transport; Wed, 16
- Sep 2026 06:51:51 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.12; Wed, 16 Sep
+ 2026 10:38:51 +0000
+Received: from SJ1PEPF000026C5.namprd04.prod.outlook.com
+ (2603:10b6:a03:39c:cafe::58) by SJ0PR03CA0356.outlook.office365.com
+ (2603:10b6:a03:39c::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.11 via Frontend Transport; Wed,
+ 16 Sep 2026 10:38:51 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -48,303 +48,125 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.161 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.161) by
- LV8PEPF0000006C.mail.protection.outlook.com (10.167.248.36) with Microsoft
+ SJ1PEPF000026C5.mail.protection.outlook.com (10.167.244.102) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.428.7 via Frontend Transport; Wed, 16 Sep 2026 06:51:51 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ 15.21.428.7 via Frontend Transport; Wed, 16 Sep 2026 10:38:50 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
  (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Tue, 15 Sep
- 2026 23:51:33 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Tue, 15 Sep
- 2026 23:51:32 -0700
-Received: from build-pshete-bionic-20260708.nvidia.com (10.127.8.14) by
- mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.2562.49 via
- Frontend Transport; Tue, 15 Sep 2026 23:51:32 -0700
-From: Prathamesh Shete <pshete@nvidia.com>
-To: <linusw@kernel.org>, <thierry.reding@kernel.org>, <jonathanh@nvidia.com>
-CC: <linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <pshete@nvidia.com>, <bhelgaas@google.com>,
-	<u.kleine-koenig@baylibre.com>, <arnd@arndb.de>
-Subject: [PATCH] pinctrl: tegra238: Fix register bank for AON pin groups
-Date: Wed, 16 Sep 2026 06:51:32 +0000
-Message-ID: <20260916065132.1411576-1-pshete@nvidia.com>
-X-Mailer: git-send-email 2.17.1
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Wed, 16 Sep
+ 2026 03:38:31 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Wed, 16 Sep
+ 2026 03:38:31 -0700
+Received: from sumitg-l4t.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.2562.46 via Frontend
+ Transport; Wed, 16 Sep 2026 03:38:24 -0700
+From: Sumit Gupta <sumitg@nvidia.com>
+To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <pierre.gondois@arm.com>,
+	<christian.loehle@arm.com>, <ionela.voinescu@arm.com>,
+	<zhenglifeng1@huawei.com>, <zhanjie9@hisilicon.com>, <lenb@kernel.org>,
+	<ray.huang@amd.com>, <mario.limonciello@amd.com>, <perry.yuan@amd.com>,
+	<kprateek.nayak@amd.com>, <linux-kernel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<acpica-devel@lists.linux.dev>, <linux-tegra@vger.kernel.org>
+CC: <treding@nvidia.com>, <jonathanh@nvidia.com>, <vsethi@nvidia.com>,
+	<ksitaraman@nvidia.com>, <sanjayc@nvidia.com>, <mochs@nvidia.com>,
+	<bbasu@nvidia.com>, <sumitg@nvidia.com>
+Subject: [PATCH v5 0/4] cpufreq: CPPC: Preserve OSPM-set registers across hotplug and unload
+Date: Wed, 16 Sep 2026 16:08:16 +0530
+Message-ID: <20260916103820.1760297-1-sumitg@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PEPF0000006C:EE_|DS0PR12MB999081:EE_
-X-MS-Office365-Filtering-Correlation-Id: c1fe2933-e05f-4ad9-4501-08df13befcce
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000026C5:EE_|DM4PR12MB6279:EE_
+X-MS-Office365-Filtering-Correlation-Id: 52f9773c-bea2-47a0-bc1a-08df13deb29f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|23010399003|82310400026|376014|1800799024|56012099006|11063799006|10067099003|18002099003|6133799003;
+	BCL:0;ARA:13230040|23010399003|82310400026|1800799024|36860700016|7416014|376014|6133799003|18002099003|13003099007|10067099003|921020|56012099006|11063799006;
 X-Microsoft-Antispam-Message-Info:
-	oja74cgcY4wLibRxN6zIC6kpFSH25DiC+OhZ+bAAodNlikgQeSmBtHzN27m2KyBYNgxLiV9cuFF1O8L2CV23yPGXVi+j7JrkzRTXdl9hrt+EyLW6rrZE9zdDgSHtd+jvberYTf73pAnkRotYlroDl0t0R1L8QZRxCtHTzl0Gr5XY/5TA+/fijDgFsa8wpmmvpl6KnAYLIZzfvPWeTZH1nST65NFbyT6BYhm1++8tkQEdHciZ9jv5rQzvdpOD1Pw25SFVht3ePs6m5lVe7bzFx14Rtj2LQxbDcExoF1SMGPU5rQ7RLdsf2JYi4YZ9pD7oBun+iVxHu03zFSRoN60ZW7pyk+AqCvjJlrihEQBB34J3JYkFqZwoSo49n1X4D6SU1pGz9Ygv1kgwcRummxt2lwOtIpRdbUVXr1W2avN6Y5rKNiKTzREbk2ej9aeNEBUWyfjx06rY2lr24oXDQj/aVZqYBieRceabOcn5aISfvfCrLpE0afcwWNKLuTl/lwRXP6ohZGjUAIeyG7eWNBP2WwXZHNOJTc5yF/4wK4CtOL6B07RpODiQv1L1f20TnKAYXhv3LFKoJ+dtfY4B3NUWcEUepWsipQAxpY45zOMdt5f2Ub1wa9MUutsSLSYEuvw30If5b8vebRnLw5ZQjvSILj6NOCeoB46XyulyqiOpvD15EqhupgfVcoYmD2od+dBE5ubynWpJ+9VvZfDeTEMj/A==
+	pJtVTidvZSt7IZzouh27off7ft8Hw6e+GfvMd9rKf3FZr1OFf3j0NUiXrkJg8SFeoA831daPPu6hnDQ2wCfwqlde2wm8TLaCnRsYSZsThtD5WAEvxveNVVSFY5vmrXW7VastKmy4ahBSnbRuC2RmORRmsc9FpTTo9JaS9vfj2Uqlock0w+3SenwqMvy/X7HdUR6ANCbxB3nZRQxYTM1jV0R3z6I8/yBxvpPSnKS82zLR6bNl7/YgP03qqpCpgHSFVqO+afsWM6gleIMDHNkDkZfXhsfr23DMFbx5VTqKuBOgY+eMKFfujh5YLu8HObzSdAO4GqITideUOtMJhWu+GyUdVh/idXcbyTBwiYiTjoaeZaRpme8dwEdG6rpoFlvMeRHVu9py9hhYrxRDXRhofw/dqcsVHaAzXINkCW7GQD+P7F4fMNhnYBAC9SYCCIMi2vEqt10oD1zrq4I/Z6CcOGRAt5vyCZoRIsxnLOTkvMDMcQwuQ4/gbndHZSXAwc/QT+LnSNtFe2sOfhYABiicpcTVJC963LmnUycdEhEHaMekvjLlS+DQrvvmvxbLKTek1evA2LreuUKNgU75ryfU2MZPM2X6UzyrwKeG1g9hIHlHBQ9DTWW36S2mYWylpcAzMnwvV893CkNje8+0ZU+jwvEuuJ85ha/fBWGKBJr6ACCNSQi2CoYcYqMy/DpQdoxdZblhPDezKbAW3GNo6xYF65Kv7BCprzy2IaJSyZETMabDMXhaMVq3HvyKVkl+q/cc
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(23010399003)(82310400026)(376014)(1800799024)(56012099006)(11063799006)(10067099003)(18002099003)(6133799003);DIR:OUT;SFP:1101;
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(23010399003)(82310400026)(1800799024)(36860700016)(7416014)(376014)(6133799003)(18002099003)(13003099007)(10067099003)(921020)(56012099006)(11063799006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	fxqCctlRTZg8rle6mn9nDflZyddwLAII3RC5nBpnw/qg2ItVwOopYgvei/OpHhAE4LLs6NI9n3Dvf+Fm7kQIqK8NnhucaqBm8Klr92fQ8uUZ8y0GFhi+5hcSH83fJEaEzD5ZVaU0t+fEo98xlwxT43DW6EeKxcPP2NV4jD5HQ2wMQ6Zw9W/9BQxrCZeQVHZcSVw28L18ytvC1XJy3o/kZs6skEc+44PLfaWPcvBpNHTsm/qgzIgI7lY/XwZZi7fpxhMCd0/OeVrS0Ofk2bTh0zfsSp2z8Olm/QFrFX3ozfuRFwytEHEaxLgvIv8GDBzMcijrBj7P+KQ10sdM7FFyVLwZOWq3DJ6RARdmS5x/eJXbZq0YoqfwS0J/a15VR9WCk7H0tb0FdOlu+GlB8JxNBKo5IgW+eacaetkmnDTn3KEyp3sYdyMsYbBwrTnC+vy0
+	aO/Qq/KWB+RiIHuIqmiK+qEv/VvMa6MmytgkIMiGZAcT1yyvs3VvUVXYmQJDAkILg/i13WZMrhKl4P/gFSOm7oxvkoRh1PZA1RMzKJQAlDH2Mpe2kskblOCY6qX8DVaTPNc4tMAB/PL+5TCLKsiypEQiJMmt2iL0HWgNooraCEUUCuUiednlmKxdYQwzZ9ivUkA/Ed38yghSY5W8lp8utEloCnfZbwskEFJ4abNzYBW342LFO9U2f0vyKolsQFQxPMb8wEZ7MhZ0f4QnGSjsi7+6Rz8bbBV2tJsTkC9excqBqwkjM8ECJntlRVmF/V1QYgVXbkWMzHJRqDGgfq/g4Wc++BblVCgKCp0rDOZgSrhvQZeaUi+JqU5BiQr/Z4JGMOJIFAslUN7WKZ5AaJVuylM7naIaF9yi+bnMUuH8X+Fd475GTHbJNOMzmhYM0Zko
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2026 06:51:51.4110
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2026 10:38:50.9062
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1fe2933-e05f-4ad9-4501-08df13befcce
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52f9773c-bea2-47a0-bc1a-08df13deb29f
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	LV8PEPF0000006C.namprd03.prod.outlook.com
+	SJ1PEPF000026C5.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB999081
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6279
 
-The AON pin controller has a single register region and therefore,
-the bank defined in the tegra238_functions[] and tegra238_aon_groups[]
-for the AON pin groups must be 0. However, commit 25cac7292d49
-("pinctrl: tegra: Add Tegra238 pinmux driver") incorrectly specified the
-bank for these pins as 1 and not 0. This means that in the
-tegra_pinctrl_probe() function we use an invalid index when accessing
-the pmx->regs[] array which causes an incorrect address to be used for
-accessing the pinmux registers.
+This series keeps the CPPC cpufreq policy alive across CPU hotplug and
+preserves the OSPM-set CPPC registers (Energy Performance Preference,
+Autonomous Activity Window, Autonomous Selection - set via sysfs).
 
-Fix this by correcting the bank for the AON pin groups.
+Without online()/offline() callbacks, the core tears a policy down when
+its last CPU goes offline and rebuilds it on the way back, re-reading the
+CPPC capabilities each time. The values written to these registers can
+be lost:
 
-Fixes: 25cac7292d49 ("pinctrl: tegra: Add Tegra238 pinmux driver")
-Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
----
- drivers/pinctrl/tegra/pinctrl-tegra238.c | 204 +++++++++++------------
- 1 file changed, 102 insertions(+), 102 deletions(-)
+ - Across CPU hotplug or suspend/resume: the platform may reset them
+   while the CPU is offline.
+ - On driver unload: the driver-written value is left in the register
+   instead of returning to its pre-driver state.
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra238.c b/drivers/pinctrl/tegra/pinctrl-tegra238.c
-index ec482365f14f..40aba285944e 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra238.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra238.c
-@@ -1744,57 +1744,57 @@ static const char * const tegra238_functions[] = {
- #define drive_sdmmc1_dat0_pu2		DRV_PINGROUP_ENTRY_Y(0x8034,	28,	2,	30,	2,	-1,	-1,	-1,	-1,	0)
- #define drive_ufs0_rst_n_pv1		DRV_PINGROUP_ENTRY_Y(0x11004,	12,	5,	24,	5,	-1,	-1,	-1,	-1,	0)
- #define drive_ufs0_ref_clk_pv0		DRV_PINGROUP_ENTRY_Y(0x1100c,	12,	5,	24,	5,	-1,	-1,	-1,	-1,	0)
--#define drive_batt_oc_paa4		    DRV_PINGROUP_ENTRY_Y(0x1024,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_bootv_ctl_n_paa0		DRV_PINGROUP_ENTRY_Y(0x102c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_vcomp_alert_paa2		DRV_PINGROUP_ENTRY_Y(0x105c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_hdmi_cec_pbb0		    DRV_PINGROUP_ENTRY_Y(0x1064,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_touch_clk_pdd3		DRV_PINGROUP_ENTRY_Y(0x106c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_uart3_rx_pcc6		    DRV_PINGROUP_ENTRY_Y(0x1074,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_uart3_tx_pcc5		    DRV_PINGROUP_ENTRY_Y(0x107c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_gen8_i2c_sda_pdd2		DRV_PINGROUP_ENTRY_Y(0x1084,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_gen8_i2c_scl_pdd1		DRV_PINGROUP_ENTRY_Y(0x108c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_spi2_mosi_pcc2		DRV_PINGROUP_ENTRY_Y(0x1094,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_gen2_i2c_scl_pcc7		DRV_PINGROUP_ENTRY_Y(0x109c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_spi2_cs0_pcc3		    DRV_PINGROUP_ENTRY_Y(0x10a4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_gen2_i2c_sda_pdd0		DRV_PINGROUP_ENTRY_Y(0x10ac,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_spi2_sck_pcc0		    DRV_PINGROUP_ENTRY_Y(0x10b4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_spi2_miso_pcc1		DRV_PINGROUP_ENTRY_Y(0x10bc,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio49_pee2		DRV_PINGROUP_ENTRY_Y(0x10c4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio50_pee4		DRV_PINGROUP_ENTRY_Y(0x10cc,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio82_pee3		DRV_PINGROUP_ENTRY_Y(0x10d4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio71_pff2		DRV_PINGROUP_ENTRY_Y(0x10dc,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio76_pff7		DRV_PINGROUP_ENTRY_Y(0x10e4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio74_pff5		DRV_PINGROUP_ENTRY_Y(0x10ec,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio00_paa1		DRV_PINGROUP_ENTRY_Y(0x10f4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio19_pdd6		DRV_PINGROUP_ENTRY_Y(0x10fc,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio86_phh3		DRV_PINGROUP_ENTRY_Y(0x1104,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio72_pff3		DRV_PINGROUP_ENTRY_Y(0x110c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio77_pgg0		DRV_PINGROUP_ENTRY_Y(0x1114,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio80_pff6		DRV_PINGROUP_ENTRY_Y(0x111c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio84_pgg1		DRV_PINGROUP_ENTRY_Y(0x1124,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio83_pee5		DRV_PINGROUP_ENTRY_Y(0x112c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio73_pff4		DRV_PINGROUP_ENTRY_Y(0x1134,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio70_pff1		DRV_PINGROUP_ENTRY_Y(0x113c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio04_paa5		DRV_PINGROUP_ENTRY_Y(0x1144,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio85_pgg6		DRV_PINGROUP_ENTRY_Y(0x114c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio69_pff0		DRV_PINGROUP_ENTRY_Y(0x1154,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio25_paa6		DRV_PINGROUP_ENTRY_Y(0x115c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_soc_gpio26_paa7		DRV_PINGROUP_ENTRY_Y(0x1164,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_uart5_tx_pgg7		    DRV_PINGROUP_ENTRY_Y(0x116c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_uart5_rx_phh0		    DRV_PINGROUP_ENTRY_Y(0x1174,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_uart2_tx_pgg2		    DRV_PINGROUP_ENTRY_Y(0x117c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_uart2_rx_pgg3		    DRV_PINGROUP_ENTRY_Y(0x1184,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_uart2_cts_pgg5		DRV_PINGROUP_ENTRY_Y(0x118c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_uart2_rts_pgg4		DRV_PINGROUP_ENTRY_Y(0x1194,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_uart5_cts_phh2		DRV_PINGROUP_ENTRY_Y(0x119c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_uart5_rts_phh1		DRV_PINGROUP_ENTRY_Y(0x11a4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_pwm7_pee1			    DRV_PINGROUP_ENTRY_Y(0x11ac,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_pwm2_pdd7			    DRV_PINGROUP_ENTRY_Y(0x11b4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_pwm3_pee0			    DRV_PINGROUP_ENTRY_Y(0x11bc,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_pwm1_paa3			    DRV_PINGROUP_ENTRY_Y(0x11c4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_spi2_cs1_pcc4		    DRV_PINGROUP_ENTRY_Y(0x11cc,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_dmic1_clk_pdd4		DRV_PINGROUP_ENTRY_Y(0x11d4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
--#define drive_dmic1_dat_pdd5		DRV_PINGROUP_ENTRY_Y(0x11dc,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	1)
-+#define drive_batt_oc_paa4		    DRV_PINGROUP_ENTRY_Y(0x1024,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_bootv_ctl_n_paa0		DRV_PINGROUP_ENTRY_Y(0x102c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_vcomp_alert_paa2		DRV_PINGROUP_ENTRY_Y(0x105c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_hdmi_cec_pbb0		    DRV_PINGROUP_ENTRY_Y(0x1064,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_touch_clk_pdd3		DRV_PINGROUP_ENTRY_Y(0x106c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_uart3_rx_pcc6		    DRV_PINGROUP_ENTRY_Y(0x1074,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_uart3_tx_pcc5		    DRV_PINGROUP_ENTRY_Y(0x107c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_gen8_i2c_sda_pdd2		DRV_PINGROUP_ENTRY_Y(0x1084,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_gen8_i2c_scl_pdd1		DRV_PINGROUP_ENTRY_Y(0x108c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_spi2_mosi_pcc2		DRV_PINGROUP_ENTRY_Y(0x1094,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_gen2_i2c_scl_pcc7		DRV_PINGROUP_ENTRY_Y(0x109c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_spi2_cs0_pcc3		    DRV_PINGROUP_ENTRY_Y(0x10a4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_gen2_i2c_sda_pdd0		DRV_PINGROUP_ENTRY_Y(0x10ac,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_spi2_sck_pcc0		    DRV_PINGROUP_ENTRY_Y(0x10b4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_spi2_miso_pcc1		DRV_PINGROUP_ENTRY_Y(0x10bc,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio49_pee2		DRV_PINGROUP_ENTRY_Y(0x10c4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio50_pee4		DRV_PINGROUP_ENTRY_Y(0x10cc,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio82_pee3		DRV_PINGROUP_ENTRY_Y(0x10d4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio71_pff2		DRV_PINGROUP_ENTRY_Y(0x10dc,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio76_pff7		DRV_PINGROUP_ENTRY_Y(0x10e4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio74_pff5		DRV_PINGROUP_ENTRY_Y(0x10ec,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio00_paa1		DRV_PINGROUP_ENTRY_Y(0x10f4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio19_pdd6		DRV_PINGROUP_ENTRY_Y(0x10fc,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio86_phh3		DRV_PINGROUP_ENTRY_Y(0x1104,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio72_pff3		DRV_PINGROUP_ENTRY_Y(0x110c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio77_pgg0		DRV_PINGROUP_ENTRY_Y(0x1114,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio80_pff6		DRV_PINGROUP_ENTRY_Y(0x111c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio84_pgg1		DRV_PINGROUP_ENTRY_Y(0x1124,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio83_pee5		DRV_PINGROUP_ENTRY_Y(0x112c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio73_pff4		DRV_PINGROUP_ENTRY_Y(0x1134,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio70_pff1		DRV_PINGROUP_ENTRY_Y(0x113c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio04_paa5		DRV_PINGROUP_ENTRY_Y(0x1144,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio85_pgg6		DRV_PINGROUP_ENTRY_Y(0x114c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio69_pff0		DRV_PINGROUP_ENTRY_Y(0x1154,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio25_paa6		DRV_PINGROUP_ENTRY_Y(0x115c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_soc_gpio26_paa7		DRV_PINGROUP_ENTRY_Y(0x1164,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_uart5_tx_pgg7		    DRV_PINGROUP_ENTRY_Y(0x116c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_uart5_rx_phh0		    DRV_PINGROUP_ENTRY_Y(0x1174,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_uart2_tx_pgg2		    DRV_PINGROUP_ENTRY_Y(0x117c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_uart2_rx_pgg3		    DRV_PINGROUP_ENTRY_Y(0x1184,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_uart2_cts_pgg5		DRV_PINGROUP_ENTRY_Y(0x118c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_uart2_rts_pgg4		DRV_PINGROUP_ENTRY_Y(0x1194,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_uart5_cts_phh2		DRV_PINGROUP_ENTRY_Y(0x119c,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_uart5_rts_phh1		DRV_PINGROUP_ENTRY_Y(0x11a4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_pwm7_pee1			    DRV_PINGROUP_ENTRY_Y(0x11ac,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_pwm2_pdd7			    DRV_PINGROUP_ENTRY_Y(0x11b4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_pwm3_pee0			    DRV_PINGROUP_ENTRY_Y(0x11bc,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_pwm1_paa3			    DRV_PINGROUP_ENTRY_Y(0x11c4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_spi2_cs1_pcc4		    DRV_PINGROUP_ENTRY_Y(0x11cc,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_dmic1_clk_pdd4		DRV_PINGROUP_ENTRY_Y(0x11d4,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
-+#define drive_dmic1_dat_pdd5		DRV_PINGROUP_ENTRY_Y(0x11dc,	12,	5,	20,	5,	-1,	-1,	-1,	-1,	0)
- 
- #define drive_sdmmc1_comp		DRV_PINGROUP_ENTRY_N
- 
-@@ -1961,57 +1961,57 @@ static const struct tegra_pingroup tegra238_groups[] = {
- };
- 
- static const struct tegra_pingroup tegra238_aon_groups[] = {
--	PINGROUP(bootv_ctl_n_paa0,	RSVD0,		RSVD1,			RSVD2,		RSVD3,		0x1028,		1,	Y,	-1,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio00_paa1,	RSVD0,		RSVD1,			RSVD2,		RSVD3,		0x10f0,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(vcomp_alert_paa2,	SOC_THERM_OC1,	RSVD1,			RSVD2,		RSVD3,		0x1058,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(pwm1_paa3,		GP_PWM1,	RSVD1,			RSVD2,		RSVD3,		0x11c0,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(batt_oc_paa4,		SOC_THERM_OC2,	RSVD1,			RSVD2,		RSVD3,		0x1020,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio04_paa5,	RSVD0,		RSVD1,			RSVD2,		RSVD3,		0x1140,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio25_paa6,	RSVD0,		RSVD1,			RSVD2,		RSVD3,		0x1158,		1,	Y,	-1,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio26_paa7,	RSVD0,		SOC_THERM_OC3,		RSVD2,		RSVD3,		0x1160,		1,	Y,	-1,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(hdmi_cec_pbb0,		HDMI_CEC,	RSVD1,			RSVD2,		RSVD3,		0x1060,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(spi2_sck_pcc0,		SPI2_SCK,	RSVD1,			RSVD2,		RSVD3,		0x10b0,		1,	Y,	-1,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(spi2_miso_pcc1,	SPI2_DIN,	RSVD1,			RSVD2,		RSVD3,		0x10b8,		1,	Y,	-1,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(spi2_mosi_pcc2,	SPI2_DOUT,	RSVD1,			RSVD2,		RSVD3,		0x1090,		1,	Y,	-1,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(spi2_cs0_pcc3,		SPI2_CS0,	RSVD1,			RSVD2,		RSVD3,		0x10a0,		1,	Y,	-1,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(spi2_cs1_pcc4,		SPI2_CS1,	RSVD1,			RSVD2,		RSVD3,		0x11c8,		1,	Y,	-1,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(uart3_tx_pcc5,		UARTC_TXD,	RSVD1,			RSVD2,		RSVD3,		0x1078,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(uart3_rx_pcc6,		UARTC_RXD,	RSVD1,			RSVD2,		RSVD3,		0x1070,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(gen2_i2c_scl_pcc7,	I2C2_CLK,	RSVD1,			RSVD2,		RSVD3,		0x1098,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(gen2_i2c_sda_pdd0,	I2C2_DAT,	RSVD1,			RSVD2,		RSVD3,		0x10a8,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(gen8_i2c_scl_pdd1,	I2C8_CLK,	RSVD1,			RSVD2,		RSVD3,		0x1088,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(gen8_i2c_sda_pdd2,	I2C8_DAT,	RSVD1,			RSVD2,		RSVD3,		0x1080,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(touch_clk_pdd3,	GP_PWM4,	TOUCH_CLK,		RSVD2,		RSVD3,		0x1068,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(dmic1_clk_pdd4,	DMIC1_CLK,	RSVD1,			DMIC5_CLK,	RSVD3,		0x11d0,		1,	Y,	-1,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(dmic1_dat_pdd5,	DMIC1_DAT,	RSVD1,			DMIC5_DAT,	RSVD3,		0x11d8,		1,	Y,	-1,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio19_pdd6,	RSVD0,		WDT_RESET_OUTB,		RSVD2,		RSVD3,		0x10f8,		1,	Y,	-1,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio49_pee2,	RSVD0,		RSVD1,			RSVD2,		RSVD3,		0x10c0,		1,	Y,	-1,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio50_pee4,	RSVD0,		RSVD1,			RSVD2,		RSVD3,		0x10c8,		1,	Y,	-1,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio82_pee3,	RSVD0,		RSVD1,			RSVD2,		RSVD3,		0x10d0,		1,	Y,	-1,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio71_pff2,	PPC_MODE_1,	RSVD1,			RSVD2,		RSVD3,		0x10d8,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio76_pff7,	RSVD0,		RSVD1,			TSC_EDGE_OUT0,	TSC_EDGE_OUT0A,	0x10e0,		1,	Y,	-1,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio74_pff5,	PPC_READY,	PPC_I2C_DAT,		RSVD2,		RSVD3,		0x10e8,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio86_phh3,	RSVD0,		SPI5_CS1,		TSC_EDGE_OUT3,	TSC_EDGE_OUT0D,	0x1100,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio72_pff3,	PPC_MODE_2,	RSVD1,			RSVD2,		RSVD3,		0x1108,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio77_pgg0,	RSVD0,		RSVD1,			TSC_EDGE_OUT1,	TSC_EDGE_OUT0B,	0x1110,		1,	Y,	-1,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio80_pff6,	RSVD0,		PPC_RST_N,		RSVD2,		RSVD3,		0x1118,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio84_pgg1,	RSVD0,		RSVD1,			TSC_EDGE_OUT2,	TSC_EDGE_OUT0C,	0x1120,		1,	Y,	-1,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio83_pee5,	RSVD0,		RSVD1,			RSVD2,		RSVD3,		0x1128,		1,	Y,	-1,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio73_pff4,	PPC_CC,		PPC_I2C_CLK,		RSVD2,		RSVD3,		0x1130,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio70_pff1,	PPC_MODE_0,	RSVD1,			RSVD2,		RSVD3,		0x1138,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio85_pgg6,	RSVD0,		SPI4_CS1,		RSVD2,		RSVD3,		0x1148,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(soc_gpio69_pff0,	PPC_INT_N,	RSVD1,			RSVD2,		RSVD3,		0x1150,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(uart5_tx_pgg7,		UARTE_TXD,	SPI5_SCK,		RSVD2,		RSVD3,		0x1168,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(uart5_rx_phh0,		UARTE_RXD,	SPI5_MISO,		RSVD2,		RSVD3,		0x1170,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(uart2_tx_pgg2,		UARTB_TXD,	SPI4_SCK,		RSVD2,		RSVD3,		0x1178,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(uart2_rx_pgg3,		UARTB_RXD,	SPI4_MISO,		RSVD2,		RSVD3,		0x1180,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(uart2_cts_pgg5,	UARTB_CTS,	SPI4_CS0,		RSVD2,		RSVD3,		0x1188,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(uart2_rts_pgg4,	UARTB_RTS,	SPI4_MOSI,		RSVD2,		RSVD3,		0x1190,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(uart5_cts_phh2,	UARTE_CTS,	SPI5_CS0,		RSVD2,		RSVD3,		0x1198,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(uart5_rts_phh1,	UARTE_RTS,	SPI5_MOSI,		RSVD2,		RSVD3,		0x11a0,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(pwm2_pdd7,		GP_PWM2,	LED_BLINK,		RSVD2,		RSVD3,		0x11b0,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(pwm3_pee0,		GP_PWM3,	RSVD1,			RSVD2,		RSVD3,		0x11b8,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
--	PINGROUP(pwm7_pee1,		GP_PWM7,	RSVD1,			RSVD2,		RSVD3,		0x11a8,		1,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(bootv_ctl_n_paa0,	RSVD0,		RSVD1,			RSVD2,		RSVD3,		0x1028,		0,	Y,	-1,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio00_paa1,	RSVD0,		RSVD1,			RSVD2,		RSVD3,		0x10f0,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(vcomp_alert_paa2,	SOC_THERM_OC1,	RSVD1,			RSVD2,		RSVD3,		0x1058,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(pwm1_paa3,		GP_PWM1,	RSVD1,			RSVD2,		RSVD3,		0x11c0,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(batt_oc_paa4,		SOC_THERM_OC2,	RSVD1,			RSVD2,		RSVD3,		0x1020,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio04_paa5,	RSVD0,		RSVD1,			RSVD2,		RSVD3,		0x1140,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio25_paa6,	RSVD0,		RSVD1,			RSVD2,		RSVD3,		0x1158,		0,	Y,	-1,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio26_paa7,	RSVD0,		SOC_THERM_OC3,		RSVD2,		RSVD3,		0x1160,		0,	Y,	-1,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(hdmi_cec_pbb0,		HDMI_CEC,	RSVD1,			RSVD2,		RSVD3,		0x1060,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(spi2_sck_pcc0,		SPI2_SCK,	RSVD1,			RSVD2,		RSVD3,		0x10b0,		0,	Y,	-1,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(spi2_miso_pcc1,	SPI2_DIN,	RSVD1,			RSVD2,		RSVD3,		0x10b8,		0,	Y,	-1,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(spi2_mosi_pcc2,	SPI2_DOUT,	RSVD1,			RSVD2,		RSVD3,		0x1090,		0,	Y,	-1,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(spi2_cs0_pcc3,		SPI2_CS0,	RSVD1,			RSVD2,		RSVD3,		0x10a0,		0,	Y,	-1,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(spi2_cs1_pcc4,		SPI2_CS1,	RSVD1,			RSVD2,		RSVD3,		0x11c8,		0,	Y,	-1,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(uart3_tx_pcc5,		UARTC_TXD,	RSVD1,			RSVD2,		RSVD3,		0x1078,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(uart3_rx_pcc6,		UARTC_RXD,	RSVD1,			RSVD2,		RSVD3,		0x1070,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(gen2_i2c_scl_pcc7,	I2C2_CLK,	RSVD1,			RSVD2,		RSVD3,		0x1098,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(gen2_i2c_sda_pdd0,	I2C2_DAT,	RSVD1,			RSVD2,		RSVD3,		0x10a8,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(gen8_i2c_scl_pdd1,	I2C8_CLK,	RSVD1,			RSVD2,		RSVD3,		0x1088,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(gen8_i2c_sda_pdd2,	I2C8_DAT,	RSVD1,			RSVD2,		RSVD3,		0x1080,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(touch_clk_pdd3,	GP_PWM4,	TOUCH_CLK,		RSVD2,		RSVD3,		0x1068,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(dmic1_clk_pdd4,	DMIC1_CLK,	RSVD1,			DMIC5_CLK,	RSVD3,		0x11d0,		0,	Y,	-1,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(dmic1_dat_pdd5,	DMIC1_DAT,	RSVD1,			DMIC5_DAT,	RSVD3,		0x11d8,		0,	Y,	-1,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio19_pdd6,	RSVD0,		WDT_RESET_OUTB,		RSVD2,		RSVD3,		0x10f8,		0,	Y,	-1,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio49_pee2,	RSVD0,		RSVD1,			RSVD2,		RSVD3,		0x10c0,		0,	Y,	-1,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio50_pee4,	RSVD0,		RSVD1,			RSVD2,		RSVD3,		0x10c8,		0,	Y,	-1,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio82_pee3,	RSVD0,		RSVD1,			RSVD2,		RSVD3,		0x10d0,		0,	Y,	-1,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio71_pff2,	PPC_MODE_1,	RSVD1,			RSVD2,		RSVD3,		0x10d8,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio76_pff7,	RSVD0,		RSVD1,			TSC_EDGE_OUT0,	TSC_EDGE_OUT0A,	0x10e0,		0,	Y,	-1,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio74_pff5,	PPC_READY,	PPC_I2C_DAT,		RSVD2,		RSVD3,		0x10e8,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio86_phh3,	RSVD0,		SPI5_CS1,		TSC_EDGE_OUT3,	TSC_EDGE_OUT0D,	0x1100,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio72_pff3,	PPC_MODE_2,	RSVD1,			RSVD2,		RSVD3,		0x1108,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio77_pgg0,	RSVD0,		RSVD1,			TSC_EDGE_OUT1,	TSC_EDGE_OUT0B,	0x1110,		0,	Y,	-1,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio80_pff6,	RSVD0,		PPC_RST_N,		RSVD2,		RSVD3,		0x1118,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio84_pgg1,	RSVD0,		RSVD1,			TSC_EDGE_OUT2,	TSC_EDGE_OUT0C,	0x1120,		0,	Y,	-1,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio83_pee5,	RSVD0,		RSVD1,			RSVD2,		RSVD3,		0x1128,		0,	Y,	-1,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio73_pff4,	PPC_CC,		PPC_I2C_CLK,		RSVD2,		RSVD3,		0x1130,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio70_pff1,	PPC_MODE_0,	RSVD1,			RSVD2,		RSVD3,		0x1138,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio85_pgg6,	RSVD0,		SPI4_CS1,		RSVD2,		RSVD3,		0x1148,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(soc_gpio69_pff0,	PPC_INT_N,	RSVD1,			RSVD2,		RSVD3,		0x1150,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(uart5_tx_pgg7,		UARTE_TXD,	SPI5_SCK,		RSVD2,		RSVD3,		0x1168,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(uart5_rx_phh0,		UARTE_RXD,	SPI5_MISO,		RSVD2,		RSVD3,		0x1170,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(uart2_tx_pgg2,		UARTB_TXD,	SPI4_SCK,		RSVD2,		RSVD3,		0x1178,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(uart2_rx_pgg3,		UARTB_RXD,	SPI4_MISO,		RSVD2,		RSVD3,		0x1180,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(uart2_cts_pgg5,	UARTB_CTS,	SPI4_CS0,		RSVD2,		RSVD3,		0x1188,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(uart2_rts_pgg4,	UARTB_RTS,	SPI4_MOSI,		RSVD2,		RSVD3,		0x1190,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(uart5_cts_phh2,	UARTE_CTS,	SPI5_CS0,		RSVD2,		RSVD3,		0x1198,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(uart5_rts_phh1,	UARTE_RTS,	SPI5_MOSI,		RSVD2,		RSVD3,		0x11a0,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(pwm2_pdd7,		GP_PWM2,	LED_BLINK,		RSVD2,		RSVD3,		0x11b0,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(pwm3_pee0,		GP_PWM3,	RSVD1,			RSVD2,		RSVD3,		0x11b8,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
-+	PINGROUP(pwm7_pee1,		GP_PWM7,	RSVD1,			RSVD2,		RSVD3,		0x11a8,		0,	Y,	5,	7,	6,	8,	-1,	10,	12),
- };
- 
- static const struct tegra_pinctrl_soc_data tegra238_pinctrl_aon = {
+Handle these with:
+
+ - Patch 1: adds online()/offline() callbacks so the core keeps policy
+   alive across CPU hotplug instead of tearing it down and rebuilding it.
+ - Patch 2: makes the autonomous selection register helpers take a u64.
+ - Patch 3: adds a table-driven mechanism that captures each register's
+   firmware value at init(), restores it from offline(), and reapplies
+   the OSPM-set value from online().
+ - Patch 4: extends the same save/restore to system suspend/resume.
+
+v4[4] -> v5:
+ - Patch 1:
+   - offline() stops the frequency invariance updates and online()
+     restarts them, replacing the resync that raced with tick. (Sashiko)
+   - reorder the functions to match cppc_cpufreq_driver. (Jie Zhan)
+ - Patch 3:
+   - reapply the OSPM-set registers even when the performance control
+     write fails. (Sashiko)
+ - Patch 4:
+   - suspend() stops the frequency invariance updates too, completing the
+     patch 1 change for a policy whose CPUs stay online.
+
+Sumit Gupta (4):
+  cpufreq: CPPC: Keep the policy across CPU hotplug
+  ACPI: CPPC: Make autonomous selection helpers take a u64
+  cpufreq: CPPC: Preserve OSPM-set registers across hotplug and unload
+  cpufreq: CPPC: Preserve OSPM-set registers across suspend/resume
+
+ drivers/acpi/cppc_acpi.c       |  20 +-
+ drivers/cpufreq/amd-pstate.c   |   2 +-
+ drivers/cpufreq/cppc_cpufreq.c | 378 ++++++++++++++++++++++++++++++++-
+ include/acpi/cppc_acpi.h       |   8 +-
+ 4 files changed, 381 insertions(+), 27 deletions(-)
+
+[1] v1: https://lore.kernel.org/lkml/20260623095403.3407436-1-sumitg@nvidia.com/
+[2] v2: https://lore.kernel.org/lkml/20260716153820.2007095-1-sumitg@nvidia.com/
+[3] v3: https://lore.kernel.org/lkml/20260724215937.3368276-1-sumitg@nvidia.com/
+[4] v4: https://lore.kernel.org/lkml/20260806200857.601152-1-sumitg@nvidia.com/
+
 -- 
-2.17.1
+2.34.1
 
