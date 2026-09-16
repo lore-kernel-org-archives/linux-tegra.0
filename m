@@ -1,69 +1,41 @@
-Received: from mail-pj2-f42.google.com (mail-pj2-f42.google.com [74.125.227.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2414F55B9
-	for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2026 13:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0044FC8FE;
+	Wed, 16 Sep 2026 13:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789564448; cv=none; b=k5klHT8FdE9tLKpiMrjUYddeJhbv5A0m46F7o2gtCuzCj/miK2lIQfGg+dmtFnO1O2ra7cUzM4TjI2m77Vj8RbJodXH7VAWbbHpoPCBW5fcUtQEixtp8KHGJ7DKL9GD8MRAhntHmGypYcAHxk6oYZo4Lpqk6SKLn+2cGvTv7nkc=
+	t=1789566365; cv=none; b=Azgj75BUNhXqyFaHsWyhbzycrUYyzPq43z7kR4HI455uxDHglhtxvN3l/2n2BVMqB8jBlvqGNdmsW/kpWWwU7WU5+NQyLHyhzJCGoKGAV19DkfyUr63z77rnFa7sMn9GOEeW0eYG4LSzlYVXSh4TZUeqsnwOvuRbpPJLpgogXjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789564448; c=relaxed/simple;
-	bh=Co/FuuwQTAJHp+zfOvsnW4jKaJGU3w7YpCQXjFi9wF8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QuIX4DasKxlDRlly6MMfC4PzENh0+D3Fa6rFn4Pvy2U8mX1KqFQB8ccnzSFP78qZFV2ZIP2kLnFrtLklsKBz2KlpKioZRlEH0uaZ9veqMcpD/PCgityhLMC8OIsygXqR0lEIyFQBDVmvjcto2NmWzkuyO2qTlDLPWQdmvkThMoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WuOrxGUp; arc=none smtp.client-ip=74.125.227.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789566365; c=relaxed/simple;
+	bh=bS8ZdorY5hLWLPb20IAn7+t22mIMZzb8NxXMhyRWUbI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=J+wxPjEXXlfbT/uBwSFZWRecezaB0wO/krsrDHmWCpsOxCmjQJE20AX8oljqw5AX/bbZXCLLn0nUKuoHgI97GMZPAkAEzE1R0JlQP99D+4dBOYttshDHVO1qgSMptGDeY/fQ2pnIstytFOwx/oMEWDqDNp2FxUBWrsQAMx+gzk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=n3aO308I; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WuOrxGUp"
-Received: by mail-pj2-f42.google.com with SMTP id 98e67ed59e1d1-39666e7c9efso102554a91.3
-        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2026 06:14:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789564446; x=1790169246; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=IvH662dOnIBtA8vIbuF/kJDS4lP+vMorwMZVPkvKzh8=;
-        b=WuOrxGUpLMZbLSt+nVIMdWzjdJoEdzM5Fy2RMju81M0JpquoVMkpuHpQmaLSC884vN
-         jPe8TZaGfzgU03aoitlRcHUzastGRfS2DqM0VPsA5FkxiObpTR0R5cocGGXNrkOPel3u
-         siuVmJNte5w+I/mMteJ6SS2iFjzVE0AazrrrtqDXVocQjp8+7HM+4RsaUFfI/eLlg9db
-         1SJPqMyAcoe6z9ZR9hactHlfg2mPt1A6NWxDp4MdThf2RKm1SY/qyFaRAHeajkuAE2uO
-         8zxPN5J1cv80NeYy0oxMbwihC1QhqYdfnYt+IQg/suwWnSTna/gh3+Xtivm1Wht+hvsS
-         2mdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789564446; x=1790169246;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=IvH662dOnIBtA8vIbuF/kJDS4lP+vMorwMZVPkvKzh8=;
-        b=pXDlgQWO2ujRCOEkXlemg/9t9FZhWzEj1Tqm/ww+f1X4+8gsx1e2tefNuotWtSYeXQ
-         lV8UeYN5elf6Bza+TxkeUDoZDrZSBwhqy+pVZw3Tu0oIGuC2VlexD3yf2O4wVDvhgm4F
-         W2x9cM2jtq6qleHqRhWfLKnIuLoje7lRm9+BlZ9OEZ702LO8YJAfGIh4OglU6spRMvtP
-         t6EkL7/jkc0COwpv9r4t/9dtRde2EzZTTrC9MYgvakAp34xwyFqRIjn2uaGSPWMDevAI
-         wV4WHEcS5Gf8h/koGff+JnlIUEpQnFrRxrXNCUtew09DN5xIPRam73C3fAlIpxOpOBD5
-         uO/w==
-X-Forwarded-Encrypted: i=1; AKwUvBzZlqxLIH9OrpeLtLtBPcY4eHBogpn8Sb0iakf6PZk6KJrX/17yhQbz9PgGIAFBfTyD6MrD7lKalD1IGg==@vger.kernel.org
-X-Gm-Message-State: AFuF++lGVtFaqNBIo7nes/RJCWaxDH5ySNW7SnZOG9flgTGyx89ONBly
-	Wd5YRW8wJlOrTsFgGgrGUIkqbd5MsoXxRJjjW9RaJUL2uUVTMooOH5NQ
-X-Gm-Gg: AYBFou2XHlfXAt8JGCOQtzKTDFEB/lxmkNgX8RkbfsXYeUmvVbAi+QqHO94n5pdA1Xi
-	6voCkWTR/54BTPQHVsMSvajrXujXY3AryoCNKg3OZoQ+IvnGd4xgv8dUEC17+XUeK0VaC1Isuj/
-	dZdpzjAAYov8+v7Kn0qsr2IBoAFhbYq3deHVGF3aQW+BzxF0BNbviqnT6/L+hgFxcQBjq/d4k0e
-	ZgjHq6wOE+w1lP076xVFTs5pZiFJ1Tc7oBmAUPHnlvCjcZWKDC+Gvjqvtc2c8vnZ5IMQxIjhTmh
-	ySmNbQwqzRq4oMq+ZVgUW08YvX+JDu6BUBkBf5hUOHHecUrAuA83WaNNWlCFu6FauQvrCNIdC/d
-	BHyQau2YowSfahyYEkdQYb+qvMjLgC5Gy1dxmv0gbBgWqPyvmuek94SKt0JDqreLKXkAZxW84GN
-	x7o7akup3QfX5hRpcKZKA2TZm6LEZkbr0QwcY3qvMjwQICloPkYp2/GexXDG9PsDMH9Sr90wBGB
-	gzq/Hsceo3pDbM3moptMQ==
-X-Received: by 2002:a17:90b:4c49:b0:39b:3510:4af7 with SMTP id 98e67ed59e1d1-39e1e2655f1mr4104606a91.1.1789564446036;
-        Wed, 16 Sep 2026 06:14:06 -0700 (PDT)
-Received: from [10.107.92.252] ([2409:40c2:5413:87f7:9fa7:eb18:a8e7:30a7])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33bf5aa1194sm9422972eec.14.2026.09.16.06.13.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 06:14:05 -0700 (PDT)
-From: Bhargav Joshi <j.bhargav.u@gmail.com>
-Date: Wed, 16 Sep 2026 18:41:29 +0530
-Subject: [PATCH v2 4/4] regulator: dt-bindings: ti,tps6586x: Convert to DT
- schema
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="n3aO308I"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 5C3F34E40727;
+	Wed, 16 Sep 2026 13:45:48 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 20DC660337;
+	Wed, 16 Sep 2026 13:45:48 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 70B7511C7B031;
+	Wed, 16 Sep 2026 15:45:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1789566345; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=q4C1pzG9+EtJ/2hH0YXWQ40f9dRoQswHxQlqElZewcs=;
+	b=n3aO308IOwzLiSpBj6Rpkxe9ZNqdqPI0CmCQMKrNSfN9UPSPY5uVwsfDsm/D9PMNLSGDAz
+	D3NsmMr0PdC9qhjOn9RXm3tf2sw3OQwvoKGTpxWxbs0JtsMoE5Lg76KnpwBvIj9Wqrd+Vz
+	tXwe77zGb9Se2LcKSr36bWDFRtdgAP7SgOUYwZtFaBAT/vqQwTmcliaWroX5T+REJdc8qQ
+	J0GMPNron3ITx86jJFd+8gtaLAY/dp9wsxse3bzg1iseCzrGdyC/7fNtanZ+k1RNrezSSo
+	T581sGjN2JOLUhCCMjM0zc0YtHluFtfSdpVRRdTnrMNbpbCj31YbMx3WcmzZgw==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH v3 00/19] drm/panel: embed a drm_bridge into every
+ drm_panel
+Date: Wed, 16 Sep 2026 15:45:24 +0200
+Message-Id: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -71,386 +43,287 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260916-ti-tps6586x-v2-4-f12cfdfb446c@gmail.com>
-References: <20260916-ti-tps6586x-v2-0-f12cfdfb446c@gmail.com>
-In-Reply-To: <20260916-ti-tps6586x-v2-0-f12cfdfb446c@gmail.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@avionic-design.de>, 
- Lee Jones <lee@kernel.org>, Shree Ramamoorthy <s-ramamoorthy@ti.com>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, 
- Svyatoslav Ryhel <clamor95@gmail.com>, 
- Laxman Dewangan <ldewangan@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- goledhruva@gmail.com, m-chawdhry@ti.com, daniel.baluta@gmail.com, 
- simona.toaca@nxp.com, j.bhargav.u@gmail.com, mfd@lists.linux.dev, 
- Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1789564321; l=10374;
- i=j.bhargav.u@gmail.com; h=from:subject:message-id;
- bh=Co/FuuwQTAJHp+zfOvsnW4jKaJGU3w7YpCQXjFi9wF8=;
- b=trvJkb/BTxF/UoaOp+8twTlQVAKaroMcYVW3hMh74EPDUNt2Qi0Qtn6iIRknGMy6Gud95wz0a
- 33kUASyJ65wAuvX/Qo9Bm6ugnAwIx2X6dFV7J6hLVDpa/bJHrlURWlj
-X-Developer-Key: i=j.bhargav.u@gmail.com; a=ed25519;
- pk=IqNDwUZKECEA+n8wXctFLBbYL9NhFstZNbOznm/nX1k=
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3WQ3WrDMAyFXyX4eh7+Texc7T3GGLasrB7Nz5zEr
+ JS++5yEUQbrnQ6SviOdK5kxRZxJW11JwhznOA5FyKeKwMkNH0hjKJoIJmpmuKAh9dSnGEoHM6Y
+ LndyAZ+q4tnWosUOnSFmeEnbxewe/vh16Xv0nwrLRtolTnJcxXXbnzLe5XxP1yCRzyii3ELRoG
+ gATXvw4Luc4PMPYk80mizvIMvkQJApIOG8QhdLS4F/Q7Tg44ddaAlmOL+55tNV/aZTy/aDDGd2
+ wTpRZDBqAM6tMm/dYvJuRFo8+Lm3lwDMNRmiUVpbSKBe8Vo3wnfe8AcOkdNZ25aDbD/C9UqmpA
+ QAA
+X-Change-ID: 20260812-drm-bridge-every-panel-a1596d6efea4
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Jessica Zhang <jesszhan0024@gmail.com>, 
+ Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
+ Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>, 
+ Paul Kocialkowski <paulk@sys-base.io>, Linus Walleij <linusw@kernel.org>, 
+ Inki Dae <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, Sean Paul <sean@poorly.run>, 
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+ Randy Dunlap <rdunlap@infradead.org>
+Cc: Albert Esteve <aesteve@redhat.com>, 
+ Anusha Srivatsa <asrivats@redhat.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Hui Pu <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-mips@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-stm32@st-md-mailman.stormreply.com, asahi@lists.linux.dev, 
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
+ linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.16.0
+X-Last-TLS-Session-Version: TLSv1.3
 
-Convert Texas Instruments tps6586x regulator binding from text to DT
-schema. Reference to nvidia,tegra-regulators-coupling in child regulator
-nodes.
+This series embeds a drm_bridge into every drm_panel, as previously
+discussed [1][2] and in previous iterations.
 
-Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
+This will allow bridges and encoders to interact with the next pipeline
+component always with the bridge API, not caring whether it is a panel or
+another device (e.g. a bridge from a bus to another bus).
+
+Currently a drm_panel does not have a corresponding drm_bridge when it is
+created. A panel_bridge is often created afterwards by the component
+accessing it (typically the previous bridge or encoder). This creates a
+mismatch between the drm_panel and the drm_bridge (part of the
+panel_bridge), in terms of lifetime and devm ownership. It also makes
+implementing bridge hotplug close to impossible in some cases.
+
+This work leverages the work done by Anusha Srivatsa and Albert Esteve to
+implement drm_panel lifetime.
+
+== panel_bridge API impact
+
+This series moves the panel_bridge code inside drm_panel.c and changes it
+to be reusable by the panel code. However this implies the old panel_bridge
+behaviour (drm_panel_bridge_add() and derivatives create a panel_bridge, to
+name one) cannot coexist with the new behaviour (devm_drm_panel_alloc()
+allocates an embedded drm_bridge and initializes it).
+
+To handle this, the old panel_bridge API is kept to not break its users,
+but now behaves differently:
+
+ * drm_panel_bridge_add() and derivatives don't create a bridge, they
+   just drm_bridge_get() and return a pointer to the existing one
+ * drm_panel_bridge_remove() and devm_drm_panel_bridge_release() don't
+   remove the bridge, they just drm-bridge_put() it
+ * The other panel_bridge functions stack on those listed in the previous 2
+   bullets, so their behaviour is changed correspondingly
+
+As a result, all drivers using the panel_bridge now behave the new way
+without any changes. Converting them to not stop using the panel_bridge is
+a goal, but can be done over time. Still this series converts a few
+drivers.
+
+== Series outline
+
+ 1. move code around in preparation
+
+      drm: of: move drm_of_find_panel_or_bridge() from drm_of.c to drm_panel.c
+      drm: of: remove now unnecessary forward declarations
+      drm/panel: move to a new module
+      drm/bridge: panel: move all code to drm_panel.c
+
+ 2. The main change
+
+      drm/panel: embed a drm_bridge into every drm_panel
+
+ 3. API cleanup
+
+      drm/bridge: remove devm_drm_put_bridge()
+      drm/panel: deprecate panel-bridge APIs
+      drm/todo: add entry for removing the panel_bridge API
+
+ 4. Update some drivers to not create a panel_bridge
+
+      drm/bridge: tc358767: don't create a panel_bridge
+      drm/bridge: waveshare-dsi: don't create a panel_bridge
+      drm/mcde: dsi: remove unused includes
+      drm/mcde: dsi: don't create a panel_bridge
+      drm/bridge: fsl-ldb: don't create a panel_bridge
+      drm/bridge: samsung-dsim: don't create a panel_bridge
+      drm/bridge: tc358768: don't create a panel_bridge
+      drm/bridge: ssd2825: don't create a panel_bridge
+      drm/omap: dss: don't create a panel_bridge
+      drm/tve200: don't create a panel_bridge
+      drm/bridge: analogix_dp: don't create a panel_bridge
+
+== Dependencies
+
+This series depends on:
+
+ * "drm/bridge: Kconfig: cleanup DRM_PANEL usage"
+   https://lore.kernel.org/r/20260915-drm-bridge-drm_panel-cleanup-v4-0-30401d9406f3@bootlin.com
+   Reason: trivial, both touch drivers/gpu/drm/bridge/Kconfig, would
+           conflict otherwise
+
+== Grand plan
+
+This is part of the work to support hotplug of DRM bridges. The grand plan
+was discussed in [0].
+
+Here's the work breakdown (➜ marks the current series):
+
+ 1. ➜ add refcounting to DRM bridges struct drm_bridge,
+      based on devm_drm_bridge_alloc()
+    A. ✔ add new alloc API and refcounting (v6.16)
+    B. ✔ convert all bridge drivers to new API (v6.17)
+    C. ✔ kunit tests (v6.17)
+    D. ✔ add get/put to drm_bridge_add/remove() + attach/detach()
+         and warn on old allocation pattern (v6.17)
+    E. ➜ add get/put on drm_bridge accessors
+       1. ✔ drm_bridge_chain_get_first_bridge(), add cleanup action (v6.18)
+       2. ✔ drm_bridge_get_prev_bridge() (v6.18)
+       3. ✔ drm_bridge_get_next_bridge() (v6.19)
+       4. ✔ drm_for_each_bridge_in_chain() (v6.19)
+       5. ✔ drm_bridge_connector_init (v6.19)
+       6. ✔ protect encoder bridge chain with a mutex (v7.2)
+       7. ✔ of_drm_find_bridge
+          a. ✔ add of_drm_get_bridge() (v7.0),
+               convert basic direct users (v7.0-v7.1)
+          b. ✔ convert direct of_drm_get_bridge() users, part 2 (v7.0)
+          c. ✔ convert direct of_drm_get_bridge() users, part 3 (v7.0)
+          d. ✔ convert direct of_drm_get_bridge() users, part 4 (v7.1-v7.2)
+          e. ✔ bridge-only drm_of_find_panel_or_bridge() users (v7.2)
+       8. ➜ panel_bridge lifetime
+          a. … cleanup DRM_PANEL in bridge drivers
+	  b. ➜ add a panel_bridge to every panel
+       9. ✔ enforce drm_bridge_add before drm_bridge_attach (v6.19)
+    F. ✔ debugfs improvements
+       1. ✔ add top-level 'bridges' file (v6.16)
+       2. ✔ show refcount and list lingering bridges (v6.19)
+ 2. ✔ handle gracefully atomic updates during bridge removal
+    A. ✔ Add drm_bridge_enter/exit() to protect device resources (v7.0)
+    B. ✔ Add drm_bridge_clear_and_put() (v7.1)
+ 3. … DSI host-device driver interaction
+ 4. ✔ removing the need for the "always-disconnected" connector
+ 5. ✔ Migrate i.MX LCDIF driver to bridge-connector (v7.2)
+ 6. … DRM bridge hotplug
+    A. … Bridge hotplug management in the DRM core
+       1. ✔ bridge-connector: attach encoder to the connector (v7.2)
+       2. … drm bridge hotplug
+    B.   Device tree description
+
+[0] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/#t
+
+[1]  https://lore.kernel.org/all/emuj2innmp6zmzd7pyakqzjqpdzhly6qfhakya3ydwmd63pl26@5jwxaidpikjw/
+[2]  https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-8-9d6f2c9c3058@bootlin.com/
+
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- .../devicetree/bindings/regulator/ti,tps6586x.yaml | 196 +++++++++++++++++++++
- .../devicetree/bindings/regulator/tps6586x.txt     | 135 --------------
- 2 files changed, 196 insertions(+), 135 deletions(-)
+Changes in v3:
+- Move the panel_bridge code to drm_panel.c, don't duplicate it, and change
+  the panel_bridge API to just wrap the newly embedded drm_bridge
+- Remove deprecated devm_drm_put_bridge() and TODO entry
+- Deprecate panel_bridge APIA, add TODO entry for its removal
+- Link to v2: https://patch.msgid.link/20260903-drm-bridge-every-panel-v2-0-2ab8ee24538e@bootlin.com
 
-diff --git a/Documentation/devicetree/bindings/regulator/ti,tps6586x.yaml b/Documentation/devicetree/bindings/regulator/ti,tps6586x.yaml
-new file mode 100644
-index 000000000000..1f7c7b35066f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/ti,tps6586x.yaml
-@@ -0,0 +1,196 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/regulator/ti,tps6586x.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI TPS6586x family of regulators
-+
-+maintainers:
-+  - Thierry Reding <thierry.reding@avionic-design.de>
-+
-+properties:
-+  compatible:
-+    const: ti,tps6586x
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  "#gpio-cells":
-+    const: 2
-+
-+  gpio-controller: true
-+
-+  sys-supply:
-+    description: The input supply for SYS.
-+
-+  ti,system-power-controller:
-+    type: boolean
-+    description:
-+      Whether or not this PMIC is controlling the system power.
-+
-+  regulators:
-+    type: object
-+    additionalProperties: false
-+    description:
-+      list of regulators provided by this controller, LDO5 and LDO_RTC is
-+      supplied by SYS regulator internally and driver take care of making
-+      proper parent child relationship.
-+
-+    properties:
-+      sys:
-+        type: object
-+        $ref: regulator.yaml#
-+        unevaluatedProperties: false
-+
-+    patternProperties:
-+      "^ldo([0-9]|_rtc)$":
-+        type: object
-+        allOf:
-+          - $ref: /schemas/regulator/regulator.yaml#
-+          - $ref: /schemas/regulator/nvidia,tegra-regulators-coupling.yaml#
-+        unevaluatedProperties: false
-+
-+      "^sm[0-2]$":
-+        type: object
-+        allOf:
-+          - $ref: /schemas/regulator/regulator.yaml#
-+          - $ref: /schemas/regulator/nvidia,tegra-regulators-coupling.yaml#
-+        unevaluatedProperties: false
-+
-+patternProperties:
-+  "^vin-sm[0-2]-supply$":
-+    description: The input supply for the corresponding SM (SM0, SM1, or SM2).
-+
-+  "^vinldo(01|23|4|678|9)-supply$":
-+    description: The input supply for the corresponding LDO or group of LDOs.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - regulators
-+  - "#gpio-cells"
-+  - gpio-controller
-+  - sys-supply
-+  - vin-sm0-supply
-+  - vin-sm1-supply
-+  - vin-sm2-supply
-+  - vinldo01-supply
-+  - vinldo23-supply
-+  - vinldo4-supply
-+  - vinldo678-supply
-+  - vinldo9-supply
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      pmic@34 {
-+          compatible = "ti,tps6586x";
-+          reg = <0x34>;
-+          interrupts = <0 88 0x4>;
-+
-+          #gpio-cells = <2>;
-+          gpio-controller;
-+
-+          ti,system-power-controller;
-+
-+          sys-supply = <&vdd_5v0_sys>;
-+          vin-sm0-supply = <&sys_reg>;
-+          vin-sm1-supply = <&sys_reg>;
-+          vin-sm2-supply = <&sys_reg>;
-+          vinldo01-supply = <&sm2_reg>;
-+          vinldo23-supply = <&sm2_reg>;
-+          vinldo4-supply = <&sm2_reg>;
-+          vinldo678-supply = <&sm2_reg>;
-+          vinldo9-supply = <&sm2_reg>;
-+
-+          regulators {
-+              sys {
-+                  regulator-name = "vdd_sys";
-+                  regulator-boot-on;
-+                  regulator-always-on;
-+              };
-+
-+              sm0 {
-+                  regulator-min-microvolt = < 725000>;
-+                  regulator-max-microvolt = <1500000>;
-+                  regulator-boot-on;
-+                  regulator-always-on;
-+              };
-+
-+              sm1 {
-+                  regulator-min-microvolt = < 725000>;
-+                  regulator-max-microvolt = <1500000>;
-+                  regulator-boot-on;
-+                  regulator-always-on;
-+              };
-+
-+              sm2 {
-+                  regulator-min-microvolt = <3000000>;
-+                  regulator-max-microvolt = <4550000>;
-+                  regulator-boot-on;
-+                  regulator-always-on;
-+              };
-+
-+              ldo0 {
-+                  regulator-name = "PCIE CLK";
-+                  regulator-min-microvolt = <3300000>;
-+                  regulator-max-microvolt = <3300000>;
-+              };
-+
-+              ldo1 {
-+                  regulator-min-microvolt = < 725000>;
-+                  regulator-max-microvolt = <1500000>;
-+              };
-+
-+              ldo2 {
-+                  regulator-min-microvolt = < 725000>;
-+                  regulator-max-microvolt = <1500000>;
-+              };
-+
-+              ldo3 {
-+                  regulator-min-microvolt = <1250000>;
-+                  regulator-max-microvolt = <3300000>;
-+              };
-+
-+              ldo4 {
-+                  regulator-min-microvolt = <1700000>;
-+                  regulator-max-microvolt = <2475000>;
-+              };
-+
-+              ldo5 {
-+                  regulator-min-microvolt = <1250000>;
-+                  regulator-max-microvolt = <3300000>;
-+              };
-+
-+              ldo6 {
-+                  regulator-min-microvolt = <1250000>;
-+                  regulator-max-microvolt = <3300000>;
-+              };
-+
-+              ldo7 {
-+                  regulator-min-microvolt = <1250000>;
-+                  regulator-max-microvolt = <3300000>;
-+              };
-+
-+              ldo8 {
-+                  regulator-min-microvolt = <1250000>;
-+                  regulator-max-microvolt = <3300000>;
-+              };
-+
-+              ldo9 {
-+                  regulator-min-microvolt = <1250000>;
-+                  regulator-max-microvolt = <3300000>;
-+              };
-+          };
-+      };
-+    };
-diff --git a/Documentation/devicetree/bindings/regulator/tps6586x.txt b/Documentation/devicetree/bindings/regulator/tps6586x.txt
-deleted file mode 100644
-index 8b40cac24d93..000000000000
---- a/Documentation/devicetree/bindings/regulator/tps6586x.txt
-+++ /dev/null
-@@ -1,135 +0,0 @@
--TPS6586x family of regulators
--
--Required properties:
--- compatible: "ti,tps6586x"
--- reg: I2C slave address
--- interrupts: the interrupt outputs of the controller
--- #gpio-cells: number of cells to describe a GPIO
--- gpio-controller: mark the device as a GPIO controller
--- regulators: A node that houses a sub-node for each regulator within the
--  device. Each sub-node is identified using the node's name (or the deprecated
--  regulator-compatible property if present), with valid values listed below.
--  The content of each sub-node is defined by the standard binding for
--  regulators; see regulator.txt.
--  sys, sm[0-2], ldo[0-9] and ldo_rtc
--- sys-supply: The input supply for SYS.
--- vin-sm0-supply: The input supply for the SM0.
--- vin-sm1-supply: The input supply for the SM1.
--- vin-sm2-supply: The input supply for the SM2.
--- vinldo01-supply: The input supply for the LDO1 and LDO2
--- vinldo23-supply: The input supply for the LDO2 and LDO3
--- vinldo4-supply: The input supply for the LDO4
--- vinldo678-supply: The input supply for the LDO6, LDO7 and LDO8
--- vinldo9-supply: The input supply for the LDO9
--
--Optional properties:
--- ti,system-power-controller: Telling whether or not this pmic is controlling
--  the system power.
--
--Each regulator is defined using the standard binding for regulators.
--
--Note: LDO5 and LDO_RTC is supplied by SYS regulator internally and driver
--      take care of making proper parent child relationship.
--
--Example:
--
--	pmu: tps6586x@34 {
--		compatible = "ti,tps6586x";
--		reg = <0x34>;
--		interrupts = <0 88 0x4>;
--
--		#gpio-cells = <2>;
--		gpio-controller;
--
--		ti,system-power-controller;
--
--		sys-supply = <&some_reg>;
--		vin-sm0-supply = <&some_reg>;
--		vin-sm1-supply = <&some_reg>;
--		vin-sm2-supply = <&some_reg>;
--		vinldo01-supply = <...>;
--		vinldo23-supply = <...>;
--		vinldo4-supply = <...>;
--		vinldo678-supply = <...>;
--		vinldo9-supply = <...>;
--
--		regulators {
--			sys_reg: sys {
--				regulator-name = "vdd_sys";
--				regulator-boot-on;
--				regulator-always-on;
--			};
--
--			sm0_reg: sm0 {
--				regulator-min-microvolt = < 725000>;
--				regulator-max-microvolt = <1500000>;
--				regulator-boot-on;
--				regulator-always-on;
--			};
--
--			sm1_reg: sm1 {
--				regulator-min-microvolt = < 725000>;
--				regulator-max-microvolt = <1500000>;
--				regulator-boot-on;
--				regulator-always-on;
--			};
--
--			sm2_reg: sm2 {
--				regulator-min-microvolt = <3000000>;
--				regulator-max-microvolt = <4550000>;
--				regulator-boot-on;
--				regulator-always-on;
--			};
--
--			ldo0_reg: ldo0 {
--				regulator-name = "PCIE CLK";
--				regulator-min-microvolt = <3300000>;
--				regulator-max-microvolt = <3300000>;
--			};
--
--			ldo1_reg: ldo1 {
--				regulator-min-microvolt = < 725000>;
--				regulator-max-microvolt = <1500000>;
--			};
--
--			ldo2_reg: ldo2 {
--				regulator-min-microvolt = < 725000>;
--				regulator-max-microvolt = <1500000>;
--			};
--
--			ldo3_reg: ldo3 {
--				regulator-min-microvolt = <1250000>;
--				regulator-max-microvolt = <3300000>;
--			};
--
--			ldo4_reg: ldo4 {
--				regulator-min-microvolt = <1700000>;
--				regulator-max-microvolt = <2475000>;
--			};
--
--			ldo5_reg: ldo5 {
--				regulator-min-microvolt = <1250000>;
--				regulator-max-microvolt = <3300000>;
--			};
--
--			ldo6_reg: ldo6 {
--				regulator-min-microvolt = <1250000>;
--				regulator-max-microvolt = <3300000>;
--			};
--
--			ldo7_reg: ldo7 {
--				regulator-min-microvolt = <1250000>;
--				regulator-max-microvolt = <3300000>;
--			};
--
--			ldo8_reg: ldo8 {
--				regulator-min-microvolt = <1250000>;
--				regulator-max-microvolt = <3300000>;
--			};
--
--			ldo9_reg: ldo9 {
--				regulator-min-microvolt = <1250000>;
--				regulator-max-microvolt = <3300000>;
--			};
--		};
--	};
+Changes in v2:
+- Totally new approach: embed a drm_bridge, don't create it dynamically
+- New approach to module dependencies management: new drm_panel module etc
+- Convert more drivers, including a complex, multi-user one (analogix_dp)
+- Add Albert and Anusha to Cc list
+- Minor improvements
+- Link to v1: https://patch.msgid.link/20260814-drm-bridge-every-panel-v1-0-19cd5277cc8d@bootlin.com
 
--- 
-2.55.0
+---
+Luca Ceresoli (19):
+      drm: of: move drm_of_find_panel_or_bridge() from drm_of.c to drm_panel.c
+      drm: of: remove now unnecessary forward declarations
+      drm/panel: move to a new module
+      drm/bridge: panel: move all code to drm_panel.c
+      drm/panel: embed a drm_bridge into every drm_panel
+      drm/bridge: remove devm_drm_put_bridge()
+      drm/panel: deprecate panel-bridge APIs
+      drm/todo: add entry for removing the panel_bridge API
+      drm/bridge: tc358767: don't create a panel_bridge
+      drm/bridge: waveshare-dsi: don't create a panel_bridge
+      drm/mcde: dsi: remove unused includes
+      drm/mcde: dsi: don't create a panel_bridge
+      drm/bridge: fsl-ldb: don't create a panel_bridge
+      drm/bridge: samsung-dsim: don't create a panel_bridge
+      drm/bridge: tc358768: don't create a panel_bridge
+      drm/bridge: ssd2825: don't create a panel_bridge
+      drm/omap: dss: don't create a panel_bridge
+      drm/tve200: don't create a panel_bridge
+      drm/bridge: analogix_dp: don't create a panel_bridge
+
+ Documentation/gpu/todo.rst                         |  33 +-
+ drivers/gpu/drm/Makefile                           |   3 +-
+ drivers/gpu/drm/adp/adp-mipi.c                     |   1 +
+ drivers/gpu/drm/arm/display/komeda/komeda_crtc.c   |   1 +
+ drivers/gpu/drm/bridge/Kconfig                     |  10 +-
+ drivers/gpu/drm/bridge/analogix/Kconfig            |   1 +
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |  40 +-
+ drivers/gpu/drm/bridge/aux-bridge.c                |   1 +
+ drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c     |   1 +
+ drivers/gpu/drm/bridge/fsl-ldb.c                   |  19 +-
+ drivers/gpu/drm/bridge/imx/imx93-pdfc.c            |   1 +
+ drivers/gpu/drm/bridge/panel.c                     | 563 -----------------
+ drivers/gpu/drm/bridge/samsung-dsim.c              |  24 +-
+ drivers/gpu/drm/bridge/ssd2825.c                   |  23 +-
+ drivers/gpu/drm/bridge/tc358767.c                  |  64 +-
+ drivers/gpu/drm/bridge/tc358768.c                  |  25 +-
+ drivers/gpu/drm/bridge/ti-tdp158.c                 |   1 +
+ drivers/gpu/drm/bridge/waveshare-dsi.c             |  17 +-
+ drivers/gpu/drm/display/drm_bridge_connector.c     |   1 +
+ drivers/gpu/drm/drm_bridge.c                       |  17 -
+ drivers/gpu/drm/drm_of.c                           |  63 --
+ drivers/gpu/drm/drm_panel.c                        | 664 +++++++++++++++++++--
+ drivers/gpu/drm/exynos/exynos_dp.c                 |  36 +-
+ drivers/gpu/drm/imx/dc/dc-kms.c                    |   1 +
+ drivers/gpu/drm/imx/dcss/Kconfig                   |   1 +
+ drivers/gpu/drm/ingenic/Kconfig                    |   1 +
+ drivers/gpu/drm/logicvc/Kconfig                    |   1 +
+ drivers/gpu/drm/mcde/Kconfig                       |   2 +-
+ drivers/gpu/drm/mcde/mcde_display.c                |   1 +
+ drivers/gpu/drm/mcde/mcde_dsi.c                    |  45 +-
+ drivers/gpu/drm/msm/dp/dp_display.c                |   1 +
+ drivers/gpu/drm/msm/dsi/dsi.c                      |   3 +-
+ drivers/gpu/drm/omapdrm/dss/omapdss.h              |   1 -
+ drivers/gpu/drm/omapdrm/dss/output.c               |  42 +-
+ drivers/gpu/drm/panel/Kconfig                      |   2 +-
+ drivers/gpu/drm/pl111/Kconfig                      |   1 +
+ drivers/gpu/drm/rockchip/Kconfig                   |   2 +
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    |   9 -
+ drivers/gpu/drm/stm/Kconfig                        |   1 +
+ drivers/gpu/drm/tegra/rgb.c                        |   1 +
+ drivers/gpu/drm/tidss/Kconfig                      |   1 +
+ drivers/gpu/drm/tve200/Kconfig                     |   2 +-
+ drivers/gpu/drm/tve200/tve200_drm.h                |   1 -
+ drivers/gpu/drm/tve200/tve200_drv.c                |  30 +-
+ include/drm/bridge/analogix_dp.h                   |   1 -
+ include/drm/drm_bridge.h                           |  54 --
+ include/drm/drm_of.h                               |  15 +-
+ include/drm/drm_panel.h                            |  99 ++-
+ 48 files changed, 855 insertions(+), 1072 deletions(-)
+---
+base-commit: acb05c825e393b0584adb5472bfbb17c8033a99f
+change-id: 20260812-drm-bridge-every-panel-a1596d6efea4
+prerequisite-change-id: 20260812-drm-bridge-drm_panel-cleanup-09ed5cc10948:v4
+prerequisite-patch-id: e15ab172f92263f58d86253708d0ad31d0a876e2
+prerequisite-patch-id: 8e8841279db302d98d060c2311781c51673031cd
+prerequisite-patch-id: 45c8dac16aad1187d7573c3680117954544b75ff
+prerequisite-patch-id: 9afefac08440b7aab2979bb919baf78ba60af1c0
+prerequisite-patch-id: 904a81179c02e6a3fe9e85d9a356cf265a4f4d11
+prerequisite-patch-id: 665576b9273a19567a410888e2eaf1ac3221ae3e
+prerequisite-patch-id: 9578cfffb25341935a89501736a5a59e59c50c56
+prerequisite-patch-id: ec32062a627672377ee6621cf73a7a1b99680403
+prerequisite-patch-id: d311eba3ac81be3b6af2264442369ff2b8fd5e48
+
+Best regards,
+--  
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
