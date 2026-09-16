@@ -1,209 +1,142 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj2-f42.google.com (mail-pj2-f42.google.com [74.125.227.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BED94EA370
-	for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2026 11:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82AB19E992
+	for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2026 13:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789556827; cv=none; b=VTJPau8uaJkZFc3o1VT8PePLQEzTXAF8XlyGasFcf1kXSw7sxdU01p93L1RDGWa5UD1bA7gEyz9njEtjZI95KMjGYpSfwI9r9ZlEPB07OJkLPq5VM3HshJRyy72UsMgaN10H+Fb9S412IhXyGvWT7TpcXK7oQz4NaLkvfhUOkXA=
+	t=1789564207; cv=none; b=VCi/1+5c3ltBsCaXvhnqkV46Rtfq/TlfsNIfbkBPyE+KhCJ0TcAov3awN5I8Ub1+v5rnqb0qulgsFE3eU021CS8Woy6wGK1pY4WQ76w3zO7zROABHnoWdYS23Z7rmGgR/Bnw+jqBBJhqYEQePSPLUfC9EEaSaFAOTUcgpJ/2/Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789556827; c=relaxed/simple;
-	bh=gwIUkktuidCGPHldmjcD3ZAPK4UHd/SoWIdHNcjBeL8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lnZQnZ6sG9VitMG2woYTh7ygRunEyHfZAXqcqh0Q2J7TutkORTzcq9Bw7NshT3nsx1Kj5oGSbk/nGoRVWlOjs1WNS0PdEvQD6QzYsfyV8qapw5BrGUqdjrXxAN6Uk16pzrR4Y9po+yrq7ED/EDlexNwanuGIqGPZOy/lqLEZyqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jPCfSzTH; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=aPwM1F4r; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1789564207; c=relaxed/simple;
+	bh=15vrT0yjzU+bYft7+I8HpmMdcGQzELx67Cb5lafi5jE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dOSfkyZWVdnMmr1lLDeJFajz/B29+7sajXQ9wPZO5sX1ZJs+ePiLpIbdqycxgixIlbtT5Fw3befiHr2EO07BRiEkviN15BzawfSGbN9n21b4Vuk71kgb0dFDRur/tq4uQSsUEupTI+CGABTwd58M4ayW12F+/eP4A6bi6TUwqIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lJGGB/4n; arc=none smtp.client-ip=74.125.227.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jPCfSzTH";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="aPwM1F4r"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1789556803;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Wa6WV+kYrjlESTUxvQTqQFxS+ZtQm6NsZYg9SHCkmJo=;
-	b=jPCfSzTH+6qFwOvcnBBrT6XkaxPkTPREnlURF/Z9Rx9CaAO5WXt86C63m3bS+lnYbS7OS4
-	0y4t/+dNu/BEXIWOJ+oi+5zpuSWYGwLPpDtwOO4DoCIkhqWAQjQAt4C3sY6Kk52T89QwLh
-	WItEeceWfSkLzWurWhgMEIlvzox33OM=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-655-mfjSOwDYPqaOn3ala2qFQQ-1; Wed, 16 Sep 2026 07:06:42 -0400
-X-MC-Unique: mfjSOwDYPqaOn3ala2qFQQ-1
-X-Mimecast-MFC-AGG-ID: mfjSOwDYPqaOn3ala2qFQQ_1789556801
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-4870142f030so1974911f8f.2
-        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2026 04:06:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lJGGB/4n"
+Received: by mail-pj2-f42.google.com with SMTP id 98e67ed59e1d1-39b1a806664so132614a91.3
+        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2026 06:10:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1789556801; x=1790161601; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Wa6WV+kYrjlESTUxvQTqQFxS+ZtQm6NsZYg9SHCkmJo=;
-        b=aPwM1F4r+wFcBT7vPigfABem/suoi+ZucBPIxwi0Oh0y/Y7YoE6cznoAjFFi5Sw9lP
-         EeflKXYdtKEw4EocO5Kp0dgv8X9Y4t6vsE8Uus7rNOzZOQWaNwOPbfeB7WeyQBGhA8OI
-         BvUodwbaARR9tWFPI/JNlqL/3rTMno+zheMR5p49NqFnKEQEWR3zNkKObAm2Bj2aPuuS
-         sn52FeMQEbtSoiQjKxJ3qyqVvOiLs1NeacRiL/w9mwwc7jTGdpqm0WKO7K53skYr9gAV
-         kqIIFrY3MSAuHvlr7vaQVJtAkHcnci4HdFNbWpX1rYgDdlpKbB1GWfNDwTvL91m57yiW
-         Ms8g==
+        d=gmail.com; s=20251104; t=1789564204; x=1790169004; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=C9r8dgLbj0GWUBjEyVgxWkn6zK87vuTMltoq6jGhYqA=;
+        b=lJGGB/4neg/fnWE/EFaXicMNrjhgwFeDXAW6QrlOEUWmVjHBV0cZ+3StJf04Rlxx/x
+         b+Ij+WDjI/rkhTLcUxQYLoKRJo3xRzUeUjOuX3FYM82incp8AsjncCMc1TAtODuZQmy2
+         MJJV/d6QKQlcWYk7lchRG1eE6sfvoMfBzkgDx9zoG9hTmBU2rYRfkSo7v6pL9c87fU6A
+         98hksHXjtqiHeR1hLPI2VFBXdHI/qTdqITNSftVLu5b3gwPTvyPQaqT6bvBQsE66yHaY
+         1IUKrcB9E2ffgwX72o0crnj2QdA0WAbwnysGfbg9Hm+6R71zRBFlT9n2TtQsrh9DyZ9E
+         qvIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789556801; x=1790161601;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Wa6WV+kYrjlESTUxvQTqQFxS+ZtQm6NsZYg9SHCkmJo=;
-        b=RMo2r4y8Y4cKk+dgwhxkOKDYhgCi+7BQHgcrWk7TE9AarWjtYnoeveic/nakhCP5hK
-         acK8Bq79tiMwPKjLkICVOuID+Gy6DWEjcXmP42428eCmRGFdZexur5e2myBPc9inN26h
-         SNCFHLBg0563Ui24JmSG3PLT/wRUoPvnnkflHHqoItvHZfA+XbHP8Xzt0h5e5Fa6ksRJ
-         adGKR95r8DNIEJu8WLv5j2tIiAzs1YajUDu6iegWv723ucs8C1FkDbV7XNNHmGdWTyd/
-         s0akl00wkE3OF0H89ck6hvVWv9Gy++Hs5TSr5feeDpvc9EpVFXSJr5DnggOlswN/U5L4
-         lXSw==
-X-Forwarded-Encrypted: i=1; AKwUvByhNazLRmOpa8cjNZg9S1i2U6S/SY+bb7YMx7/+1m83OUgdLOXYZUdYvn+C/7Up11DE4I7+qWPQE+EQ2w==@vger.kernel.org
-X-Gm-Message-State: AFuF++kJ99H43D40+pbvpoK4HkKEnmqyfuYnqe5FWx5/VvRRPlYPvq4m
-	QLK1Jt1XonIYIOUmbV1COS/cFVQtok3L1WO8L/1hfLtdSeGnNiWwTrwMzIn50r+QEtIPwjWCIx1
-	frPXDZ5XpcfEtXFAMUX2k4bVKEzSA2/lDv81TtkePP+XOxNu9clUum0OrZh3vuZ4h
-X-Gm-Gg: AYBFou13i0YJr2Kd5kqn7OYhIlmUB8VkBin5DqpPuCgoYNfDaKhe2pHVoSxXEbmws8r
-	yJPqEhDGETrms7VJxruZF96HDDz6dc8z0P1gsTPEnZoPeaUpluBoOABBujPTlB9kyzZT6FCbFbY
-	Tu1VGyZsswlNcrdM2leEAo6yrQTLeGiDqvAvhXt/Y5lCipBndXw65l6mB18ZjrqFdlHcWVcbLKX
-	2rBmCew3EiGY/ZBJox0RgcL9mqzd4ebLHCPAjnuMgj2HXlWpBOr70sIPbNCg5GtuymSQKHWCHHv
-	/BfKWY7X2nG45ZA8auOShBFHy9jrTHCOobuVW15fTSdXe5SzoZ2/1C2gLnQEv5+Hj8Bqgan/g6Q
-	58wXrZFkEpo2lRFG4U0LbnL50wgWO
-X-Received: by 2002:a05:6000:60e:b0:486:e901:e59 with SMTP id ffacd0b85a97d-4870d05a86emr2951054f8f.31.1789556800612;
-        Wed, 16 Sep 2026 04:06:40 -0700 (PDT)
-X-Received: by 2002:a05:6000:60e:b0:486:e901:e59 with SMTP id ffacd0b85a97d-4870d05a86emr2951010f8f.31.1789556800204;
-        Wed, 16 Sep 2026 04:06:40 -0700 (PDT)
-Received: from [192.168.0.9] (ip-109-41-176-3.web.vodafone.de. [109.41.176.3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4870bef7659sm6964448f8f.3.2026.09.16.04.06.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Sep 2026 04:06:39 -0700 (PDT)
-Message-ID: <4fb988c5-3dc7-49b2-aca8-45f23e71bad3@redhat.com>
-Date: Wed, 16 Sep 2026 13:06:37 +0200
+        d=1e100.net; s=20260707; t=1789564204; x=1790169004;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=C9r8dgLbj0GWUBjEyVgxWkn6zK87vuTMltoq6jGhYqA=;
+        b=ouQOJFy2hy6mETohmrJiFCWyvSCaDlqBVwvYi16c9FS0CdZxKoLWyY2DE1FAnbJPB3
+         nqi4D488iNlxkvA5y89eTKU+NGPh6Dc0zok2vrcCYK6zBAuh7AS1Bx+iBBan7b9GTSoL
+         ot9mPUipDn6THHoHbVzEujrUIA9uWmhQO9/cSk8+H0IVob4D70S2baicpsfs5qimdc9A
+         MsId7XUJwGdQ0+KmZyysNy1zbxDI73PNR2htE7+6BCwFaBpeOtnnoVqb68tBhZYkZXvl
+         zQFtrqnK8yYGYuKZfNXprOEherof5gb/CUx6IWDWUHET/d4DAHROn4hH8RRIN7yMULLR
+         /FXw==
+X-Forwarded-Encrypted: i=1; AKwUvByDBt2HUzyeUNxjRd39hEjy5TvN9LxJta/gcuATuE41J1T1VvBb8yiLRjuRvlMWkrNOqVhGZVz07ogHDA==@vger.kernel.org
+X-Gm-Message-State: AFuF++mrsj5jJ50f6WV1HRMq3N/OXp7lKHSS1ph8dbFqhV61J0jAGq+Z
+	4bfkw7yxtuZFgx72fOWdj4KmekwsVdBARn0iOgaYAWLXg01QwIPP2Fnv
+X-Gm-Gg: AYBFou3RJsH7DE4k0o3c4eHD0vqkdW/8lB9B57vrRZwduwPlzUy85pE27jNr/q5AdLz
+	rMGuDC2nmN+jXyPDEno2qJkr5qDlsX8qvXsbr60MpGjUZ8pcUEBwnM638IVZocjzsE1DCQiQcfB
+	96dau5leeUepqSBkN3BO3Hr5B3avJiUVeIGhOz1h4Smr7MY+6AWR/Lw2qT+k+cxbQimqiOp8r3j
+	8L1A1zraWi8NzSPxMT6tDDL3EsYTxgeMcX8SZKb2ojxKn4KoDkc6F3QEtPkG8D7PpO1irrDVFL2
+	K9bjdaQ7Ibs8e4tyAng5Em3PjwfEte8NTxTwOHrVIPLJq5wF9n/+f3/h7CKnZ7UBfoZN1rp/5k2
+	Ml7XUJj8E457TFE7cGsx2x+e6gRcgLb45mxM14SR4EQoEddYLhKMEEjn0imlh6/O3cBaQqnTBQ2
+	q3SV00H1IwgV8hkJ4f8HVPE2g8l0IAvNfWTt9ZGXLjc7A9j+gAM5DDKOby0VbKpADCi20f0QrPe
+	5vOby4JBJw=
+X-Received: by 2002:a17:90b:2250:b0:39d:e1f2:3400 with SMTP id 98e67ed59e1d1-39e1e5285d8mr3893628a91.5.1789564204084;
+        Wed, 16 Sep 2026 06:10:04 -0700 (PDT)
+Received: from [10.107.92.252] ([2409:40c2:5413:87f7:9fa7:eb18:a8e7:30a7])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33bf5ac47cfsm7186272eec.17.2026.09.16.06.09.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Sep 2026 06:10:03 -0700 (PDT)
+From: Bhargav Joshi <j.bhargav.u@gmail.com>
+Subject: [PATCH v2 0/4] dt-bindings: regulator: Tegra coupling DT
+ conversions and cleanup
+Date: Wed, 16 Sep 2026 18:39:30 +0530
+Message-Id: <20260916-ti-tps6586x-v2-0-31b98eeff7f9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] gpu: host1x: Allow entries in BO caches to be freed
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
- Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Aaron Kling <webgeek1234@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Simona Vetter <simona@ffwll.ch>,
- Herbert Xu <herbert@gondor.apana.org.au>, Akhil R <akhilrajeev@nvidia.com>
-References: <20260515-host1x-bocache-leak-v1-0-a0375f68aeab@nvidia.com>
- <20260515-host1x-bocache-leak-v1-1-a0375f68aeab@nvidia.com>
-Content-Language: en-US
-From: Thomas Huth <thuth@redhat.com>
-Autocrypt: addr=thuth@redhat.com; keydata=
- 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
-In-Reply-To: <20260515-host1x-bocache-leak-v1-1-a0375f68aeab@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/1WNQQ6CMBBFr0JmbQ0zQAFX3sOwoHWEMQqkrQRDu
+ LuAceHyJe+/P4NnJ+zhFM3geBQvfbcCHSKwbd01rOS6MlBMOi4IVRAVBq+zQk/KZCnniFhibmF
+ dDI5vMu21S/Vl/zJ3tmFLbEYrPvTuvd+NuHm/Mv2VR1SoysSaVJuEDOXn5lnL42j7J1TLsnwAk
+ 5/tUrgAAAA=
+X-Change-ID: 20260821-ti-tps6586x-b54e7111917c
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@avionic-design.de>, 
+ Lee Jones <lee@kernel.org>, Shree Ramamoorthy <s-ramamoorthy@ti.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, 
+ Svyatoslav Ryhel <clamor95@gmail.com>, 
+ Laxman Dewangan <ldewangan@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ goledhruva@gmail.com, m-chawdhry@ti.com, daniel.baluta@gmail.com, 
+ simona.toaca@nxp.com, j.bhargav.u@gmail.com, mfd@lists.linux.dev, 
+ Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1789564183; l=1796;
+ i=j.bhargav.u@gmail.com; h=from:subject:message-id;
+ bh=15vrT0yjzU+bYft7+I8HpmMdcGQzELx67Cb5lafi5jE=;
+ b=h4Sn/Q8+2ydvx+1ai82bKpETRX2wqt/JMINlNqyzcv8hIJDj4s6LN8xR6iCcdiEifDU+WPAA8
+ q+kQJQbpTG8A+Tl4xABPdsdK4NYgXn+qtCJTephF3KBFkOC8QMLm06Y
+X-Developer-Key: i=j.bhargav.u@gmail.com; a=ed25519;
+ pk=IqNDwUZKECEA+n8wXctFLBbYL9NhFstZNbOznm/nX1k=
 
-On 15/05/2026 04.34, Mikko Perttunen wrote:
-> When a buffer object is pinned via host1x_bo_pin() with a cache, the
-> resulting mapping is kept in the cache so it can be reused on subsequent
-> pins. Each mapping held a reference to the underlying host1x_bo (taken
-> in tegra_bo_pin / gather_bo_pin), so as long as a mapping was cached,
-> the bo itself could not be freed.
-> 
-> However, the only way to remove the cached mapping was through the free
-> path of the buffer object. This meant that if a bo got cached, it could
-> never get freed again.
-> 
-> Resolve the circularity by holding a weak reference to the bo from the
-> cache side. This is done by having the .pin callbacks not bump the bo's
-> refcount -- instead the common Host1x bo code does so, except for the
-> cache reference.
-> 
-> Also move the remove-cache-mapping-on-free code into a common function
-> inside Host1x code. This is only called from the TegraDRM GEM buffers
-> since those are the only ones that can be cached at the moment.
-> 
-> Reported-by: Aaron Kling <webgeek1234@gmail.com>
-> Fixes: 1f39b1dfa53c ("drm/tegra: Implement buffer object cache")
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
-...
-> diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-> index 5e7a63143a4a..d8f052a85b75 100644
-> --- a/include/linux/host1x.h
-> +++ b/include/linux/host1x.h
-> @@ -143,6 +143,12 @@ static inline struct host1x_bo_mapping *to_host1x_bo_mapping(struct kref *ref)
->   	return container_of(ref, struct host1x_bo_mapping, ref);
->   }
->   
-> +/**
-> + * struct host1x_bo_ops - operations implemented by a host1x_bo provider
-> + *
-> + * @pin: create a DMA mapping. Implementation must not touch the bo's refcount.
-> + * @unpin: destroy a DMA mapping. Implementation must not touch the bo's refcount.
-> + */
->   struct host1x_bo_ops {
->   	struct host1x_bo *(*get)(struct host1x_bo *bo);
->   	void (*put)(struct host1x_bo *bo);
+This series adds a shared DT schema for Tegra regulator coupling, 
+updates relevant PMICs to use it, and converts the TI TPS6586x 
+bindings to DT schema.
 
-  Hi Mikko!
+Summary:
+- Patch 1: Fixes existing TPS65910 validation warnings.
+- Patch 2: Converts Tegra regulator coupling to DT schema.
+- Patch 3: Updates Tegra-related PMICs to reference the new schema.
+- Patch 4: Converts TI TPS6586x to DT schema.
 
-FYI, this now causes some warnings during "make htmldocs":
+Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
+---
+Changes in v2:
+- Add patch 1 to resolve warnings from TPS65910.
+- Add patch 2 to convert nvidia,tegra-regulators-coupling to DT schema.
+- Add patch 3 to $ref to shared schema.
+- Patch 4: remove individual properties and add $ref to shared schema.
+- Link to v1: https://lore.kernel.org/r/20260822-ti-tps6586x-v1-1-93cb46b32b27@gmail.com
 
-WARNING: .../linux/include/linux/host1x.h:159 struct member 'get' not 
-described in 'host1x_bo_ops'
-WARNING: .../linux/include/linux/host1x.h:159 struct member 'put' not 
-described in 'host1x_bo_ops'
-WARNING: .../linux/include/linux/host1x.h:159 struct member 'mmap' not 
-described in 'host1x_bo_ops'
-WARNING: .../linux/include/linux/host1x.h:159 struct member 'munmap' not 
-described in 'host1x_bo_ops'
+---
+Bhargav Joshi (4):
+      dt-bindings: mfd: ti,tps65910: Add wakeup-source and GPIO hogs
+      regulator: dt-bindings: nvidia,tegra-regulators-coupling: Convert to DT schema
+      regulator: dt-bindings: Reference Tegra regulator coupling schema
+      regulator: dt-bindings: ti,tps6586x: Convert to DT schema
 
-If you've got some spare time, could you maybe send a patch to fix it?
+ .../devicetree/bindings/mfd/ti,tps65910.yaml       |  20 ++-
+ .../regulator/maxim,max77620-regulator.yaml        |   5 +-
+ .../regulator/nvidia,tegra-regulators-coupling.txt |  65 -------
+ .../nvidia,tegra-regulators-coupling.yaml          |  76 ++++++++
+ .../devicetree/bindings/regulator/ti,tps62360.yaml |   1 +
+ .../devicetree/bindings/regulator/ti,tps6586x.yaml | 196 +++++++++++++++++++++
+ .../devicetree/bindings/regulator/tps6586x.txt     | 135 --------------
+ 7 files changed, 294 insertions(+), 204 deletions(-)
+---
+base-commit: 9f0346dcbea363787186c94ef94dd01aaa215afa
+change-id: 20260821-ti-tps6586x-b54e7111917c
 
-  Thanks,
-   Thomas
+Best regards,
+-- 
+Bhargav
 
