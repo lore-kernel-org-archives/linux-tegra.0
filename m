@@ -1,265 +1,209 @@
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012032.outbound.protection.outlook.com [40.93.195.32])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B65950AC05;
-	Wed, 16 Sep 2026 10:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789555204; cv=fail; b=SHbhWGFmt9rPmphTXfZKt1A7wuHWHa05ctDeJxV01ZxT1N2KX9UJQivX1pfjbDFjIluRMVVcf4BH9MT6S93iJcTOcuHbYxXV+6tXxEPL5E1hg2HQLoK0Rjdtl13q93lYsaXMGVHBbpvVCWICZDp6yZteIRqwLQZRmo+BA0Ws7NQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789555204; c=relaxed/simple;
-	bh=Qvduej68MGeX+BC3BOqc01C35uajYgGBUbKkzN7f7tk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aiwExWg+GyOKlnycDZ9eP/uVuxr85FhDAdBgYav5fitrrsRd9pMOtnA1e8XSRBiJEhCSt1vGyck84YlIfxU/0iTddRhQVWoVMr2ov63hjdwaMQMd3zJffoLIiorORscHuS6nmQZ5Nqt0zlQA8X3pSAmGuCyHnTg+cSCDd8omXmM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EWRzkJLv; arc=fail smtp.client-ip=40.93.195.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BED94EA370
+	for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2026 11:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789556827; cv=none; b=VTJPau8uaJkZFc3o1VT8PePLQEzTXAF8XlyGasFcf1kXSw7sxdU01p93L1RDGWa5UD1bA7gEyz9njEtjZI95KMjGYpSfwI9r9ZlEPB07OJkLPq5VM3HshJRyy72UsMgaN10H+Fb9S412IhXyGvWT7TpcXK7oQz4NaLkvfhUOkXA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789556827; c=relaxed/simple;
+	bh=gwIUkktuidCGPHldmjcD3ZAPK4UHd/SoWIdHNcjBeL8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lnZQnZ6sG9VitMG2woYTh7ygRunEyHfZAXqcqh0Q2J7TutkORTzcq9Bw7NshT3nsx1Kj5oGSbk/nGoRVWlOjs1WNS0PdEvQD6QzYsfyV8qapw5BrGUqdjrXxAN6Uk16pzrR4Y9po+yrq7ED/EDlexNwanuGIqGPZOy/lqLEZyqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jPCfSzTH; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=aPwM1F4r; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EWRzkJLv"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AvDduda84gbr1CwU92a/JTb/7GNpZCcJB9kh5DtICP5C7fRxISMriTqf5eKbmoZlj9cmC9pz/dwaAhReFEpiVpVIz9nnKSY+ITneVguEPC4ag2PPWsYM/n+HdI+kUMN92KWksUB2lkSF9sEIz7Ab+Wun7LvXhLt3nOtXW7tyofan7M4AusrNAkXsIixlHx+uqAwDhUR9y6YpGJFJhKaZ5UB4AKeFBojz8p6WXALF7lDAIti+f/3JhEKhGNqfasKpJgTTLUBrTJXgCesn6svVXaSQFMrGMknBQSRcH1VYEi7VZv0OSAX+JvhyAoaATyrhgBVvZFMMQMc2wVVvWxB7Fw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vGoWmDSTUR34xt2WPPu+cAoxUpR34J7mn0r46m34R3k=;
- b=JVKiHOl3IH0+oqYsU+MvbzeSoJpXEx/j+wYyW/EzXM43ZeKiolL1IBQ6T+oaOtcO7f1xBWTF+22FM1DMrW+RXcNA9lBcJPkiRJ3oHIScsS6GcCSXv9mJYYrfzsCeaCUoJg/Evir9MaoMvIFn+L3ZZZdT0luyAyzhCnlrSmfwgb2z/M5Iwpllny4zdPxWfhlk/+sDQDmnCVz0kwO0XAjvqfJsjQK/CciibLVPV0xG6ddb4WVoFGsCSzGttezFkxxwPTRScuTyFrOrSe23d5W1cyJ+IeMYWkCw16Q6spvO8mi7SHnjoY+JCrKbo0m0XXDfZwzav4flPcnZL1EHJSxwbg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vGoWmDSTUR34xt2WPPu+cAoxUpR34J7mn0r46m34R3k=;
- b=EWRzkJLvUzivTA3D6OPrjBjhu5P/YUptOnmL6hH/IiT9jiwETLMTMbV+c4rPpcYZ+g27XT7ogSQAetIbJJAIBwmrl8ZoF+vRCHGIHPCmwtSSsDINQVzKmXJpmfij0sTOM5WYHrX0jjAWlY9mQ7a86lJAaqtNJXJqEjxoRa5oMYOEHZZ+QHCAffQVnCJjVx+Dkf2mjOyNo2WnTFWzzzh9ZB0WWJeLqi0rgAWLXK79m6fod16QmNU/QMbnns3UFgUpk/Wd633/9NN9mu+5Z3xhStYzb7c3ff3abxmYXNNNFV60bZTGfuKGT72G4YhTiiZiczKBSTgXOIRmn51cQKOjFQ==
-Received: from SJ2PR07CA0014.namprd07.prod.outlook.com (2603:10b6:a03:505::7)
- by DSVPR12MB999150.namprd12.prod.outlook.com (2603:10b6:8:388::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.11; Wed, 16 Sep
- 2026 10:39:31 +0000
-Received: from BY1PEPF00026966.namprd05.prod.outlook.com
- (2603:10b6:a03:505:cafe::28) by SJ2PR07CA0014.outlook.office365.com
- (2603:10b6:a03:505::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.9 via Frontend Transport; Wed, 16
- Sep 2026 10:39:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BY1PEPF00026966.mail.protection.outlook.com (10.167.244.150) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.428.7 via Frontend Transport; Wed, 16 Sep 2026 10:39:30 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Wed, 16 Sep
- 2026 03:39:13 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Wed, 16 Sep
- 2026 03:39:13 -0700
-Received: from sumitg-l4t.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server id 15.2.2562.46 via Frontend
- Transport; Wed, 16 Sep 2026 03:39:06 -0700
-From: Sumit Gupta <sumitg@nvidia.com>
-To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <pierre.gondois@arm.com>,
-	<christian.loehle@arm.com>, <ionela.voinescu@arm.com>,
-	<zhenglifeng1@huawei.com>, <zhanjie9@hisilicon.com>, <lenb@kernel.org>,
-	<ray.huang@amd.com>, <mario.limonciello@amd.com>, <perry.yuan@amd.com>,
-	<kprateek.nayak@amd.com>, <linux-kernel@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<acpica-devel@lists.linux.dev>, <linux-tegra@vger.kernel.org>
-CC: <treding@nvidia.com>, <jonathanh@nvidia.com>, <vsethi@nvidia.com>,
-	<ksitaraman@nvidia.com>, <sanjayc@nvidia.com>, <mochs@nvidia.com>,
-	<bbasu@nvidia.com>, <sumitg@nvidia.com>
-Subject: [PATCH v5 4/4] cpufreq: CPPC: Preserve OSPM-set registers across suspend/resume
-Date: Wed, 16 Sep 2026 16:08:20 +0530
-Message-ID: <20260916103820.1760297-5-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260916103820.1760297-1-sumitg@nvidia.com>
-References: <20260916103820.1760297-1-sumitg@nvidia.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jPCfSzTH";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="aPwM1F4r"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1789556803;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Wa6WV+kYrjlESTUxvQTqQFxS+ZtQm6NsZYg9SHCkmJo=;
+	b=jPCfSzTH+6qFwOvcnBBrT6XkaxPkTPREnlURF/Z9Rx9CaAO5WXt86C63m3bS+lnYbS7OS4
+	0y4t/+dNu/BEXIWOJ+oi+5zpuSWYGwLPpDtwOO4DoCIkhqWAQjQAt4C3sY6Kk52T89QwLh
+	WItEeceWfSkLzWurWhgMEIlvzox33OM=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-655-mfjSOwDYPqaOn3ala2qFQQ-1; Wed, 16 Sep 2026 07:06:42 -0400
+X-MC-Unique: mfjSOwDYPqaOn3ala2qFQQ-1
+X-Mimecast-MFC-AGG-ID: mfjSOwDYPqaOn3ala2qFQQ_1789556801
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-4870142f030so1974911f8f.2
+        for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2026 04:06:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1789556801; x=1790161601; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Wa6WV+kYrjlESTUxvQTqQFxS+ZtQm6NsZYg9SHCkmJo=;
+        b=aPwM1F4r+wFcBT7vPigfABem/suoi+ZucBPIxwi0Oh0y/Y7YoE6cznoAjFFi5Sw9lP
+         EeflKXYdtKEw4EocO5Kp0dgv8X9Y4t6vsE8Uus7rNOzZOQWaNwOPbfeB7WeyQBGhA8OI
+         BvUodwbaARR9tWFPI/JNlqL/3rTMno+zheMR5p49NqFnKEQEWR3zNkKObAm2Bj2aPuuS
+         sn52FeMQEbtSoiQjKxJ3qyqVvOiLs1NeacRiL/w9mwwc7jTGdpqm0WKO7K53skYr9gAV
+         kqIIFrY3MSAuHvlr7vaQVJtAkHcnci4HdFNbWpX1rYgDdlpKbB1GWfNDwTvL91m57yiW
+         Ms8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789556801; x=1790161601;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Wa6WV+kYrjlESTUxvQTqQFxS+ZtQm6NsZYg9SHCkmJo=;
+        b=RMo2r4y8Y4cKk+dgwhxkOKDYhgCi+7BQHgcrWk7TE9AarWjtYnoeveic/nakhCP5hK
+         acK8Bq79tiMwPKjLkICVOuID+Gy6DWEjcXmP42428eCmRGFdZexur5e2myBPc9inN26h
+         SNCFHLBg0563Ui24JmSG3PLT/wRUoPvnnkflHHqoItvHZfA+XbHP8Xzt0h5e5Fa6ksRJ
+         adGKR95r8DNIEJu8WLv5j2tIiAzs1YajUDu6iegWv723ucs8C1FkDbV7XNNHmGdWTyd/
+         s0akl00wkE3OF0H89ck6hvVWv9Gy++Hs5TSr5feeDpvc9EpVFXSJr5DnggOlswN/U5L4
+         lXSw==
+X-Forwarded-Encrypted: i=1; AKwUvByhNazLRmOpa8cjNZg9S1i2U6S/SY+bb7YMx7/+1m83OUgdLOXYZUdYvn+C/7Up11DE4I7+qWPQE+EQ2w==@vger.kernel.org
+X-Gm-Message-State: AFuF++kJ99H43D40+pbvpoK4HkKEnmqyfuYnqe5FWx5/VvRRPlYPvq4m
+	QLK1Jt1XonIYIOUmbV1COS/cFVQtok3L1WO8L/1hfLtdSeGnNiWwTrwMzIn50r+QEtIPwjWCIx1
+	frPXDZ5XpcfEtXFAMUX2k4bVKEzSA2/lDv81TtkePP+XOxNu9clUum0OrZh3vuZ4h
+X-Gm-Gg: AYBFou13i0YJr2Kd5kqn7OYhIlmUB8VkBin5DqpPuCgoYNfDaKhe2pHVoSxXEbmws8r
+	yJPqEhDGETrms7VJxruZF96HDDz6dc8z0P1gsTPEnZoPeaUpluBoOABBujPTlB9kyzZT6FCbFbY
+	Tu1VGyZsswlNcrdM2leEAo6yrQTLeGiDqvAvhXt/Y5lCipBndXw65l6mB18ZjrqFdlHcWVcbLKX
+	2rBmCew3EiGY/ZBJox0RgcL9mqzd4ebLHCPAjnuMgj2HXlWpBOr70sIPbNCg5GtuymSQKHWCHHv
+	/BfKWY7X2nG45ZA8auOShBFHy9jrTHCOobuVW15fTSdXe5SzoZ2/1C2gLnQEv5+Hj8Bqgan/g6Q
+	58wXrZFkEpo2lRFG4U0LbnL50wgWO
+X-Received: by 2002:a05:6000:60e:b0:486:e901:e59 with SMTP id ffacd0b85a97d-4870d05a86emr2951054f8f.31.1789556800612;
+        Wed, 16 Sep 2026 04:06:40 -0700 (PDT)
+X-Received: by 2002:a05:6000:60e:b0:486:e901:e59 with SMTP id ffacd0b85a97d-4870d05a86emr2951010f8f.31.1789556800204;
+        Wed, 16 Sep 2026 04:06:40 -0700 (PDT)
+Received: from [192.168.0.9] (ip-109-41-176-3.web.vodafone.de. [109.41.176.3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4870bef7659sm6964448f8f.3.2026.09.16.04.06.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Sep 2026 04:06:39 -0700 (PDT)
+Message-ID: <4fb988c5-3dc7-49b2-aca8-45f23e71bad3@redhat.com>
+Date: Wed, 16 Sep 2026 13:06:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY1PEPF00026966:EE_|DSVPR12MB999150:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6562345d-f95a-414d-97f9-08df13deca37
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|7416014|23010399003|36860700016|22082099003|18002099003|921020|11063799006|10067099003|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	fcGNp9R8LhFLhRLxhW5oG5+NZY5PXvsjr/7q8lPp1qlcSjHjScdTvzbMHafE618M0NuEnPY6HAa8xKhVAzfITZqgP75G8w1h7I2JCarUEOAW8TIEou26tSLJL5kav+24VF36rSdNpTzt3q5o8UgFM3TUB8m7lFfOGHFOYdJr2sEcpjNb6IUwQnWBb9qZvi9QdIFmnqutJLP2YZkt74WepWWgbadQl5yU/3UfNOwc2T7W9D/YdJOHvp35kntfPWjsxaMmPZAP+vy/pariksePhM9JZ9A1pgfuGTwlY0OXxH7dCxxoqn+aCx7quDS2+MbJ3nhtRO/82OMzriRGDb4Z1Siqj7Q2GDvJZ9eEpJeU7gOxPJLooUjSWevTPTk+xRB1jUGK34MUQD1nSooduOGKq8AxAk22P5zU/tNUjY8uSiBU8IrT13+aFB5EGGf/GxpgxsQGcOSKCK3HEBjTRqMT12ieKcL0nwRnS+gGh7MNFG0lE4qMHgNg9PyxNIl17rqzJsBK3DZA/heyvr9hhnRL7nuj5AAdHySREUqPi4+5f3hX8G4RIP+xQVCYlogTrIp98GMLyKOi1Szvt7pReIc5XAaOQT+oHz5ZKYjKImF0PLYMj85E2k18ZxBvN8bKtdLI5Y/1YSRX2X5DuoZWrlombrZb2OSKN8jk8e3Kpt1DWRiofrzJOKJ/p2lonjKpv7HkH8FSvBqvXombkeEUuz2fJ87Pyd6a6JgkXGOANbJkzqmNPfO+QmofrG/xbFcboSOu
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(7416014)(23010399003)(36860700016)(22082099003)(18002099003)(921020)(11063799006)(10067099003)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	ye1sYuSm5OhWDqJOOgM+g9Z7Kxu31eyjAxefdHQbcOBcXlSiJCUWkCbtU4k7YiOQSGef38hShxzxXCRD27+c/ufciaUPTRzmGZzdclopHb1+7u02c8P3ZPw0JYZkdyevaR3SA6KH7IEx6855vGa58I2gOLylOoCP2Sd9ETGmAYYXBOK02aZ9WguAgTWbfyq3mFZsoStxJZOGbc2mxczLWWU4TmxRXoA5H4D1rd7nr1rOHKTl6E+9vUYAglgARZ1DEdQ3viT0++0kyljIKR0I7tAys1or3SIdQOGvZIsWBd86CS7khXRfgCeab7337sA94tAZTSdqfhJ85cVb+kuvai1Dzek5HEfOoV3RZCIlWlCEv2ahn1Fsr+1s7thWqvvdQHVbFnZXWqxh7fW/RQMwFCZT4/leVuCYiz9ajAb/71bwodcGY23paVIcbbkJUPIT
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2026 10:39:30.5760
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6562345d-f95a-414d-97f9-08df13deca37
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BY1PEPF00026966.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DSVPR12MB999150
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] gpu: host1x: Allow entries in BO caches to be freed
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+ Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Aaron Kling <webgeek1234@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Simona Vetter <simona@ffwll.ch>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Akhil R <akhilrajeev@nvidia.com>
+References: <20260515-host1x-bocache-leak-v1-0-a0375f68aeab@nvidia.com>
+ <20260515-host1x-bocache-leak-v1-1-a0375f68aeab@nvidia.com>
+Content-Language: en-US
+From: Thomas Huth <thuth@redhat.com>
+Autocrypt: addr=thuth@redhat.com; keydata=
+ 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
+In-Reply-To: <20260515-host1x-bocache-leak-v1-1-a0375f68aeab@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The driver preserves the OSPM-set registers across CPU hotplug, but system
-suspend/resume is a separate path. On platforms that reset those registers
-or the performance controls across suspend, the values are lost.
+On 15/05/2026 04.34, Mikko Perttunen wrote:
+> When a buffer object is pinned via host1x_bo_pin() with a cache, the
+> resulting mapping is kept in the cache so it can be reused on subsequent
+> pins. Each mapping held a reference to the underlying host1x_bo (taken
+> in tegra_bo_pin / gather_bo_pin), so as long as a mapping was cached,
+> the bo itself could not be freed.
+> 
+> However, the only way to remove the cached mapping was through the free
+> path of the buffer object. This meant that if a bo got cached, it could
+> never get freed again.
+> 
+> Resolve the circularity by holding a weak reference to the bo from the
+> cache side. This is done by having the .pin callbacks not bump the bo's
+> refcount -- instead the common Host1x bo code does so, except for the
+> cache reference.
+> 
+> Also move the remove-cache-mapping-on-free code into a common function
+> inside Host1x code. This is only called from the TegraDRM GEM buffers
+> since those are the only ones that can be cached at the moment.
+> 
+> Reported-by: Aaron Kling <webgeek1234@gmail.com>
+> Fixes: 1f39b1dfa53c ("drm/tegra: Implement buffer object cache")
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+...
+> diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+> index 5e7a63143a4a..d8f052a85b75 100644
+> --- a/include/linux/host1x.h
+> +++ b/include/linux/host1x.h
+> @@ -143,6 +143,12 @@ static inline struct host1x_bo_mapping *to_host1x_bo_mapping(struct kref *ref)
+>   	return container_of(ref, struct host1x_bo_mapping, ref);
+>   }
+>   
+> +/**
+> + * struct host1x_bo_ops - operations implemented by a host1x_bo provider
+> + *
+> + * @pin: create a DMA mapping. Implementation must not touch the bo's refcount.
+> + * @unpin: destroy a DMA mapping. Implementation must not touch the bo's refcount.
+> + */
+>   struct host1x_bo_ops {
+>   	struct host1x_bo *(*get)(struct host1x_bo *bo);
+>   	void (*put)(struct host1x_bo *bo);
 
-The hotplug callbacks cannot cover suspend on their own. Secondary CPUs go
-offline only after devices are suspended, too late to touch the CPPC
-registers. offline() does not run for every policy either, as the boot CPU
-stays up during suspend-to-RAM and no CPU goes offline during
-suspend-to-idle. The driver's suspend() callback runs earlier, from
-cpufreq_suspend(), while all CPUs are still online and no device is
-suspended, so CPPC access is still safe.
+  Hi Mikko!
 
-Reuse the same save/restore mechanism for suspend/resume:
+FYI, this now causes some warnings during "make htmldocs":
 
-  - suspend() saves the current OSPM-set values, restores the firmware
-    ones and sets a per-policy flag, suspend_regs_handled, to record that.
-    It also stops the frequency invariance updates, so that no sample
-    spans the suspend window.
-  - offline() sees the flag and skips the save and restore, as suspend()
-    has already done both. Saving again would capture the firmware values
-    that suspend() wrote back and lose what the OS set. It still requests
-    the lowest desired performance.
-  - online() clears the flag, so that a later offline() takes a fresh
-    snapshot. It also restarts the frequency invariance updates.
-  - resume() calls online() for a policy that still has the flag set. CPUs
-    offlined during suspend come back before the core calls resume(), so
-    online() has already run for their policies and cleared the flag.
+WARNING: .../linux/include/linux/host1x.h:159 struct member 'get' not 
+described in 'host1x_bo_ops'
+WARNING: .../linux/include/linux/host1x.h:159 struct member 'put' not 
+described in 'host1x_bo_ops'
+WARNING: .../linux/include/linux/host1x.h:159 struct member 'mmap' not 
+described in 'host1x_bo_ops'
+WARNING: .../linux/include/linux/host1x.h:159 struct member 'munmap' not 
+described in 'host1x_bo_ops'
 
-Suggested-by: Christian Loehle <christian.loehle@arm.com>
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
----
- drivers/cpufreq/cppc_cpufreq.c | 63 ++++++++++++++++++++++++++++++++--
- 1 file changed, 60 insertions(+), 3 deletions(-)
+If you've got some spare time, could you maybe send a patch to fix it?
 
-diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-index ac315071a979..11f2e8111ef9 100644
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -87,6 +87,12 @@ struct cppc_saved_vals {
- 
- struct cppc_policy_state {
- 	struct cppc_saved_vals regs[CPPC_NR_SAVED_REGS];
-+	/*
-+	 * Set by suspend() after it saves the OSPM-set values and restores the
-+	 * firmware ones, so a later offline() does not repeat those accesses.
-+	 * Cleared at init() and by online().
-+	 */
-+	bool suspend_regs_handled;
- };
- 
- static DEFINE_PER_CPU(struct cppc_policy_state, cppc_policy_state);
-@@ -895,6 +901,7 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	policy->cur = cppc_perf_to_khz(caps, caps->highest_perf);
- 	cpu_data->perf_ctrls.desired_perf =  caps->highest_perf;
- 
-+	cppc_cpufreq_policy_state(policy)->suspend_regs_handled = false;
- 	cppc_cpufreq_save_regs(policy, CPPC_SAVED_FIRMWARE);
- 
- 	ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
-@@ -986,6 +993,8 @@ static int cppc_cpufreq_cpu_online(struct cpufreq_policy *policy)
- 	unsigned int cpu = policy->cpu;
- 	int ret;
- 
-+	cppc_cpufreq_policy_state(policy)->suspend_regs_handled = false;
-+
- 	ret = cppc_set_enable(cpu, true);
- 	if (ret && ret != -EOPNOTSUPP) {
- 		pr_warn("Failed to re-enable CPPC for CPU%u (%d)\n", cpu, ret);
-@@ -1034,9 +1043,14 @@ static int cppc_cpufreq_cpu_offline(struct cpufreq_policy *policy)
- 	unsigned int cpu = policy->cpu;
- 	int ret;
- 
--	/* Save what the OS set, and leave the platform in its pre-driver state. */
--	cppc_cpufreq_save_regs(policy, CPPC_SAVED_REQUESTED);
--	cppc_cpufreq_apply_saved_regs(policy, CPPC_SAVED_FIRMWARE);
-+	/*
-+	 * Save what the OS set and leave the platform in its pre-driver state,
-+	 * unless suspend() already did so earlier in this suspend cycle.
-+	 */
-+	if (!cppc_cpufreq_policy_state(policy)->suspend_regs_handled) {
-+		cppc_cpufreq_save_regs(policy, CPPC_SAVED_REQUESTED);
-+		cppc_cpufreq_apply_saved_regs(policy, CPPC_SAVED_FIRMWARE);
-+	}
- 
- 	/*
- 	 * Stop the frequency invariance updates and cancel the pending work, so
-@@ -1061,6 +1075,47 @@ static int cppc_cpufreq_cpu_offline(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
-+/*
-+ * Run for every active policy when the system suspends, before any CPU goes
-+ * offline.
-+ *
-+ * Save the OSPM-set values and restore the firmware values here, while CPPC
-+ * access is still safe. Secondary CPUs go offline much later, with devices
-+ * already suspended. That is too late for these accesses, so offline() skips
-+ * them. Doing it here also covers a policy whose CPUs stay online, for which
-+ * offline() never runs.
-+ *
-+ * Stop the frequency invariance updates here as well, so that no sample spans
-+ * the suspend window. offline() would not do it for a policy whose CPUs stay
-+ * online. online() restarts them on the way back.
-+ */
-+static int cppc_cpufreq_cpu_suspend(struct cpufreq_policy *policy)
-+{
-+	cppc_cpufreq_save_regs(policy, CPPC_SAVED_REQUESTED);
-+	cppc_cpufreq_apply_saved_regs(policy, CPPC_SAVED_FIRMWARE);
-+	cppc_cpufreq_policy_state(policy)->suspend_regs_handled = true;
-+
-+	cppc_cpufreq_cpu_fie_exit(policy);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Run the online() restore for a policy whose CPUs stayed online through
-+ * suspend.
-+ *
-+ * CPUs offlined during suspend come back before the core calls resume(), so
-+ * online() has already run for their policies and cleared the flag. Only a
-+ * policy that still has it set needs online() here.
-+ */
-+static int cppc_cpufreq_cpu_resume(struct cpufreq_policy *policy)
-+{
-+	if (!cppc_cpufreq_policy_state(policy)->suspend_regs_handled)
-+		return 0;
-+
-+	return cppc_cpufreq_cpu_online(policy);
-+}
-+
- static inline u64 get_delta(u64 t1, u64 t0)
- {
- 	if (t1 > t0 || t0 > ~(u32)0)
-@@ -1356,6 +1411,8 @@ static struct cpufreq_driver cppc_cpufreq_driver = {
- 	.exit = cppc_cpufreq_cpu_exit,
- 	.online = cppc_cpufreq_cpu_online,
- 	.offline = cppc_cpufreq_cpu_offline,
-+	.suspend = cppc_cpufreq_cpu_suspend,
-+	.resume = cppc_cpufreq_cpu_resume,
- 	.set_boost = cppc_cpufreq_set_boost,
- 	.attr = cppc_cpufreq_attr,
- 	.name = "cppc_cpufreq",
--- 
-2.34.1
+  Thanks,
+   Thomas
 
