@@ -1,108 +1,193 @@
-Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com [74.125.227.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011046.outbound.protection.outlook.com [52.101.62.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3783AC0ED
-	for <linux-tegra@vger.kernel.org>; Wed, 16 Sep 2026 02:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.140
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789524058; cv=none; b=WhUC1PMDimQwx9wmnImjT0ukm+lrXA93OUUkLeADgw1j979ROWIkQk57gUjCu0kjN7R70nFodDo1fb1CpRzoIcjL9AdE7boI6BgdSDv3tQq2DYdFCxKE71FP9B6Ta6h7z4gXETdM3M7VscG3VdARVzdQhXuIwE5gNE0ZnvUAbzg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789524058; c=relaxed/simple;
-	bh=z2vnxYECfe/CK+/EmMjMDlztEhbtnFjpr0RMVFWdXpQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=unoSBGygp0hrCOCq74mXr1gG0tbAZIoJuW87ppdnWEeVjVzYZLMW90+fUtTsZ0I56v6j7G+NQkM/TTpekmfRsHXmCe5xv3uduum6mqA9ZxXcNPoVEubCZCJvNMUOG+h+ZwZe9MV5b7CRtdeDD0dHm7MtlgrY7jRUIe4ax+8QeLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maticrobots.com; spf=pass smtp.mailfrom=matician.com; dkim=pass (2048-bit key) header.d=maticrobots.com header.i=@maticrobots.com header.b=HVCzwgFK; arc=none smtp.client-ip=74.125.227.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maticrobots.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matician.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839913EA947;
+	Wed, 16 Sep 2026 06:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789539579; cv=fail; b=HAFCDK8Pdajb1h+nWr/moThl9ZaHSuLApfY4oUk9SpspwLdLXid0f8VF/2yXPa7U5dOYsTQfahzLSjgBIJdOcmexwWEiVR5M6q3QgNCImfTcbP3X6x53xgaS6cWenFYk18ZRtT7xU3AS5nfppXNj562OrrzpO4823+c4pMwo3Fs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789539579; c=relaxed/simple;
+	bh=8wXTW1yyq5+HtYuFZzNXZp8JK9ylrqOp538DZ2E9kIM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ycn4x0boZfD+UBmPang4JvEzsNacyngNfNUG/QDoL7qT9+rMpGkXFJcVluEMZGzdWP6a5ANgkPriV1S+NECnl7sOM74OG79vIjqPNYmXqdVNNHyj/U1F0rYZTzEJS2Vyqua/VMdwQ4IAw6RgkhKA/lNX9tEJfgVz/lT15FbJyLE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HwQqGVBg; arc=fail smtp.client-ip=52.101.62.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maticrobots.com header.i=@maticrobots.com header.b="HVCzwgFK"
-Received: by mail-pj2-f12.google.com with SMTP id 98e67ed59e1d1-39b9184fa80so325035a91.2
-        for <linux-tegra@vger.kernel.org>; Tue, 15 Sep 2026 19:00:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=maticrobots.com; s=google; t=1789524042; x=1790128842; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=RR+WtBbiVNxPAorgDWRwyWsfbjTaY0Xp64w0w7OzUbY=;
-        b=HVCzwgFKkfh6aKjgL2wKm+4FvR5rkaT7Y6nq7I0TtPmzLzpX5BAbJZjdiIXkBnaE3/
-         W/y1TWuTikGZGhQtgL0kHC1HA5DrSpHTiI6aZ3+N1s6naSeM7bzUekvVtIA5zcqG4CLT
-         h6xI9S17e8cBgdTBtxnLBWxsC7S0BU247nHEq15JXpIYcCgHkC2ZhrpVxbMF3AbOzuYF
-         ngIniWzSDSZmhcrJuWB5lRAB537qrktO8t35j4NPnigpAErznE3zZ+A7Sd2KcVijqckb
-         i29pA/aPhxrQs1k9r6du4Iq5LZN+pBwc8XVueiThQon6quRBMeg87A91Qn2X+fOw7AUC
-         Uzew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789524042; x=1790128842;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=RR+WtBbiVNxPAorgDWRwyWsfbjTaY0Xp64w0w7OzUbY=;
-        b=KEa1el7EI+5J8lkp9xv9xskaS5f1ycZi+FLCPzNDnLj0hkNHu/n659OR1Fb4DmnIkp
-         pduFJUxcGpiAxsIxcrMH2DD4SmtzWO9A9r6crGJ6VYuk+arcL6FRwAxvo2fuvA2p3LCd
-         m9dmLohm63Lbc1T5PmLvv7qI1LQDDhgKBWyn7KJ4ol3cet2UdeZu1wCxKLUTxeI2Dw4r
-         EK6rHri4Ukz1nlk+zCFIW2bEKU4nAEHMN7JnRcU3EZMNx7Gz7vtZdocryEsIPLUNMHEG
-         Afp5JD8Oj/7ySK08tTGDXpW+Sa/Ss6oZYWaCNAYv++8QJvuy6kL52zH39m9GbSuY3GlC
-         aKaA==
-X-Forwarded-Encrypted: i=1; AKwUvByTuas9EsJNcmVx95frqfHTe3U6O2alxlCulSHGrmGieigUwBBQ0lgTNK7LHInrJWFd3aOC8Qg8S8rZVQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++mF1wM7+s48gY/VwilcpMrgRE2goaDCEA4FLURqteCQRs2WQpQw
-	AI7Yr1uQL6smDDrRB22MrGWxhGLkS/4Zj7MOhNDhyh0JkHD8F+R1oo/iJawSKpSGBAI=
-X-Gm-Gg: AYBFou2tKg2iGJMIP8GzXN46hdakUFkCAaw0kGZMwJVy53Jy8ZPd3Y5WzjXwpJgG4+2
-	shgZSMI6zTFWD6IaUfI76mQg49P0h7NnCxHBsSqKVoj7NtH2gbpwfeqs38AVoCE/gwT//89Qtlm
-	Vro1I+SX1SYeZWqgeMLchOBkncTJPsUNVBGJ6LFsFhuH0m7yVGjLl9qE33FkZ1eDw7mnxyrZLyw
-	FHa5ZMSwH8+uixkPvIpWnWS+sReN3NpOb+VWGrHc4oU732ikDeDoSulZfZnWHkiUYlE5X/f9jTg
-	3AF9bpuiEQORikF1tvEgHucBbT2WNkOQypJncz+uR2UIMOwXTcQOHLNKLB2dknq8mDKV4AP/4EW
-	PAp9oGQcu9bjA/y0NMTSw77NJ1lvfoshD2yOQJG5apgNcZs1U5ydET23UoyZiH29HneaKXRwFMO
-	PduVx9YkKYCsYkcvrHXPWUAsCJTypPrA0v4FtlFlH5wAZaGr9L6XyBR6oDKDyhd2JSSSJG5nZSZ
-	X4D3fR5KZkW/BydAevm5U+ds2ma57AWDpuwWV1bHRl+7TM0JnqIjlsOIx8=
-X-Received: by 2002:a17:90b:390d:b0:39d:f66e:1720 with SMTP id 98e67ed59e1d1-39e1e4907e8mr1658967a91.13.1789524042128;
-        Tue, 15 Sep 2026 19:00:42 -0700 (PDT)
-Received: from abeMaticDesktop.1020marsh.offices.matician.com ([2600:1700:471:807f:c09a:1c02:505f:9e4c])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33bf5b1d335sm3056984eec.28.2026.09.15.19.00.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Sep 2026 19:00:41 -0700 (PDT)
-From: Abraham Zukor <abe@maticrobots.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Abraham Zukor <abe@maticrobots.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	linux-spi@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] spi: tegra114: initialize native chip selects inactive
-Date: Tue, 15 Sep 2026 19:00:28 -0700
-Message-ID: <20260916020031.161347-1-abe@maticrobots.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <c6868d2a-f55f-4196-9914-f096420cbabc@sirena.org.uk>
-References: <20260826000517.631736-1-abe@maticrobots.com> <420de339-53d2-40d9-b04a-a54428450830@nvidia.com> <c6868d2a-f55f-4196-9914-f096420cbabc@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HwQqGVBg"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qrUanpiDssj5T4e7GSXTiaGOG7e5Gp+PeST7KbkqPtmNRqiCZnbHoO4JKd7hFWWg8cJo18aKKasARPhYD65Y4waQLc2wtF1MkL29hA48UyyH2bFWU4dQVM7USCPAjuKXYW7XNpckhKQPne1FLCN55eCCIKCPAsPjgtZrmfRFxG1XqsF5Kis9JxO8fn7yeJZvnLdCHjea5tEeC2X4VL9/aO7Dg6ZOMRHW0zO1ZPAF/xmLw/TjdG5tnJzCM8WbfzYKFxhPrMT9SsZr3lpFUWqp3pXusXjsBkNX2wPLt39jpBJmv4guMNK1ZOM7dtR+YgjCA1JeAW6gx4U2AonU3P/9Yw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=M0dbx7gtwFJQEItRfIgGeOtdzNXBuPR6pUDWioKJ5G4=;
+ b=lRXxioiRIqhjIttYtQWSTUqExADzRPTFoZ70WRx8HhCkcKiW8z2vXKigcMz/gnKKqeH1Vw4tLFQH9z6KI0sc6tDZIFHaGQKD72YrbPM3S2eKUDwb3y2k+zmvCe5CyuOIPi03hVn2q2lMGL3n0iuCaCVIYf1vkRPQjd7LYJoOtF6ed76tDwDna9KgIvGS5FanABJTbC8CjbwyhxELy8YCcS3kUntRvdb8a4haWgISE6YLCUzHY+KIqPbypXgGzCt7lnuOMLyYav3O9qbqFeh9omIVSpm17SkSPMNzJ3GEfQcRB2adJyKytAipIAUQ4iQR3Ub8eTgep1cgGwvLKuXL9Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M0dbx7gtwFJQEItRfIgGeOtdzNXBuPR6pUDWioKJ5G4=;
+ b=HwQqGVBgwQ9wKJFKsls8E92VGg4GW9TQ5qwR49LSA0rl22eRpRLacuCC2r0NiJ/RYeUbMTnjT9JRnU4hwK0GLoPXWqB6CyIqu+x99RXosTj8xF3BhB5jHwbUZVu+GAgJbH4Zjjn82J/Fh6E2QH0+ORSRmxhmfq/egA1kTbYjPtJzfNxZ+fBkJvkiMMCgvJuk2X607UGnthkzCTK0yWNWf30eGXW7YOZPNBhBGHOdmbyMbH2zs4P5ATMTmu/tTB89fTbU+ysjb+Zc5g/z1ojznf+8o0vTUyySKAF3rkMyreJEOdGInu0IdIOMpfy3IgkMndXogB19Oi8Mf+xRxk++Qg==
+Received: from BN9PR03CA0511.namprd03.prod.outlook.com (2603:10b6:408:131::6)
+ by CH1PPFE5ACC0FD2.namprd12.prod.outlook.com (2603:10b6:61f:fc00::629) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.9; Wed, 16 Sep
+ 2026 06:19:27 +0000
+Received: from BN3PEPF00022BC6.namprd05.prod.outlook.com
+ (2603:10b6:408:131:cafe::24) by BN9PR03CA0511.outlook.office365.com
+ (2603:10b6:408:131::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.9 via Frontend Transport; Wed, 16
+ Sep 2026 06:19:25 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN3PEPF00022BC6.mail.protection.outlook.com (10.167.248.219) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.428.7 via Frontend Transport; Wed, 16 Sep 2026 06:19:24 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Tue, 15 Sep
+ 2026 23:19:02 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Tue, 15 Sep
+ 2026 23:19:02 -0700
+Received: from waynec-Precision-5760.nvidia.com (10.127.8.13) by
+ mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.2562.49 via
+ Frontend Transport; Tue, 15 Sep 2026 23:19:00 -0700
+From: Wayne Chang <waynec@nvidia.com>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Jon Hunter <jonathanh@nvidia.com>, "Thierry
+ Reding" <thierry.reding@gmail.com>
+CC: <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Wayne Chang <waynec@nvidia.com>,
+	<stable@vger.kernel.org>
+Subject: [PATCH v2] usb: typec: ucsi_ccg: Add retry mechanism in ccg_read
+Date: Wed, 16 Sep 2026 14:18:58 +0800
+Message-ID: <20260916061858.1471606-1-waynec@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF00022BC6:EE_|CH1PPFE5ACC0FD2:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5d6fbe48-c47c-4d24-b775-08df13ba7450
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|1800799024|82310400026|376014|23010399003|18002099003|10067099003|56012099006|11063799006;
+X-Microsoft-Antispam-Message-Info:
+	OhXZSQ562eMtNUz4GjLxdpkkYJ8kQh3Vijgg7UAhUyiqYYsjnP/fG5r93CCS/BpCpaxXIn0YefCSwlW7HTxE1/E4/yn/0L+iaUskFsrYtL8mTlbkZ9FnMOs9VCz94HEfH8FyYtk72G9CASiwXQwGC75tj/8+/TLmuolhBtjWe4sUHiEjR+8qe5YTcOQj1n7/HECkIYefYC1euYrYWh+McuBgLbaxjUTZ2I1lXDHsxwbU/SsQRo/pEMKtUxmlAw2GziW2RFGoHa2lEEkcypTHhVx0pLhSi2K67zagjdZ8/zJnwlEJOa8B1rvJj3+Wz3BOvPqPmfKNiIcCzVaZHmtkeeV8i6qNKAmlL2uumyZ8xo4D2AQQ7FYqLATFZ8tLluggzbmjL3QRuEjbTUS37F4xI8MDWUFAzf8Wa29DaA3N09U99Jqjq4l+m8VyUNpfAjmX+82c86TRvKHeRaR1447cewjezR5rbhOa6WVRyFf3XGAdNIsmk7s5UXjsqDK4z6OTnUK+buQonaDxsI7wZonOwsWRxUfBnTgMqQSNH5ZPzSEu483PYmvXcX2A8CilWH8Sh2D4PFe7tjCmjA70LLqb62lU7KcAajqArPBiX2vhA1NdtthSDoPlAgELjQ4KWrs3hPnKrNYXiv/7cd1O7och2JUfm9sbgjNpUbVPkNj5+c4cIG5aGJa9TzG0JnNjiH6MdhakDKnlpxvKwdK9e/vH1Q==
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700016)(1800799024)(82310400026)(376014)(23010399003)(18002099003)(10067099003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	IyPwY3z03j3Oibl7S1BQsQ6tRw2XPW8/JYbJ/+D3bvo2LA8qNw+9W0UvdXeMk5GnvPc0UExEIvH8O6QNt0tu83cDjx/UWvSWrcYgctQNa63O9t9MUL7GT0V41QrxduyidBm7f+difdF/o7Z4hOx4cee/L+uW62Q0tMLYTY+R+7Qrddy2zFJptRtcyQjOwmSYFp7cCEWJZ14LSxzfbHTd8MOXmKroDsw0Rz96OQklHPXAcpVbh9VFuOZSaOb2KvhUPu8tlSfwJbsStMiSU2fx0lxF4FWfwQZxoezlWRr7K6JYNQD+/Uk1NgfFWqNQ6EIUZsBmnNCwcE4VlDANTBMipYH4yI/A1QZCoW5DzU/YZI46St4qI9QUtanyF8qsRpeSRrCCLkvMfIBfqSkhKMKmTCwSoRmySgEwGP56bUFWlrDuDV6G07yBy4v9+CeYpHNp
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2026 06:19:24.4114
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d6fbe48-c47c-4d24-b775-08df13ba7450
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF00022BC6.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPFE5ACC0FD2
 
-On Thu, Aug 27, 2026 at 04:38:39PM +0100, Mark Brown wrote:
-> I can see a system having multiple variants with the bootloader
-> selecting which device is active in the DT based on runtime
-> enumeration.  Not sure if anyone is *actually* doing that, but given
-> the state of the world with overlays...
+CCG4 firmware occasionally fails to respond to I2C read requests,
+especially when reading cci and intr_reg from the ISR path. In these
+cases, i2c_transfer() returns -EREMOTEIO.
 
-I think we should handle this per native chip select:
+The CCG4 is EOL, and Infineon no longer supports firmware updates, so
+a software workaround is necessary.
 
-If exactly one node is enabled, use its polarity, ignoring disabled
-alternatives.
+Attempt the read up to CCG_READ_MAX_RETRIES (4) times in total when
+-EREMOTEIO is returned, sleeping ~1 ms via fsleep() between attempts.
+This allows recovery from transient I2C failures without affecting
+other error paths.
 
-If none are enabled, use the polarity specified by the disabled nodes
-when they agree, including when there is only one. If they disagree, log
-a warning and use the polarity of one of them, since no inactive level
-can satisfy both polarities.
+The sleep is safe because ccg_read() is called both from process
+context and from ccg_irq_handler(), which runs in threaded IRQ
+context (registered via request_threaded_irq() with a NULL hard-IRQ
+handler), so sleeping is allowed in both cases.
 
-Multiple enabled nodes using the same CS are a configuration error that
-the SPI core already checks.
+Fixes: 247c554a14aa ("usb: typec: ucsi: add support for Cypress CCGx")
+Cc: stable@vger.kernel.org
+Signed-off-by: Wayne Chang <waynec@nvidia.com>
+---
+v1 -> v2: Per Heikki's review:
+- Fix off-by-one: CCG_READ_MAX_RETRIES was 3 but the loop ran 4 times
+  (retry_count <= CCG_READ_MAX_RETRIES). Changed the macro to 4 (the
+  actual total attempt count) and the loop condition to
+  retry_count < CCG_READ_MAX_RETRIES, so the name and the loop bound
+  now agree. Adjusted the "skip the sleep on the last attempt" check
+  to retry_count == CCG_READ_MAX_RETRIES - 1 to match.
+- Use fsleep(1000) instead of usleep_range(1000, 2000).
+- Reworded the commit message to say "up to CCG_READ_MAX_RETRIES (4)
+  times in total" instead of the ambiguous "up to three times (four
+  attempts total)" that prompted the off-by-one question.
 
-My v3 needs adjusting for the first case. I will implement this as a v4
-if no one sees an issue.
+ drivers/usb/typec/ucsi/ucsi_ccg.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/ucsi_ccg.c
+index 91c2958a708c..4b6c53d2a998 100644
+--- a/drivers/usb/typec/ucsi/ucsi_ccg.c
++++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
+@@ -135,6 +135,8 @@ struct version_format {
+ #define NVIDIA_FTB_DP_OFFSET	(2)
+ #define NVIDIA_FTB_DBG_OFFSET	(3)
+ 
++#define CCG_READ_MAX_RETRIES	4
++
+ struct version_info {
+ 	struct version_format base;
+ 	struct version_format app;
+@@ -255,6 +257,7 @@ static int ccg_read(struct ucsi_ccg *uc, u16 rab, u8 *data, u32 len)
+ 	};
+ 	u32 rlen, rem_len = len, max_read_len = len;
+ 	int status;
++	int retry_count;
+ 
+ 	/* check any max_read_len limitation on i2c adapter */
+ 	if (quirks && quirks->max_read_len)
+@@ -266,7 +269,17 @@ static int ccg_read(struct ucsi_ccg *uc, u16 rab, u8 *data, u32 len)
+ 		rlen = min_t(u16, rem_len, max_read_len);
+ 		msgs[1].len = rlen;
+ 		put_unaligned_le16(rab, buf);
+-		status = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
++
++		for (retry_count = 0; retry_count < CCG_READ_MAX_RETRIES; retry_count++) {
++			status = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
++
++			/* Only retry on -EREMOTEIO, and not after the last attempt */
++			if (status != -EREMOTEIO || retry_count == CCG_READ_MAX_RETRIES - 1)
++				break;
++
++			fsleep(1000);
++		}
++
+ 		if (status < 0) {
+ 			dev_err(uc->dev, "i2c_transfer failed %d\n", status);
+ 			pm_runtime_put_sync(uc->dev);
+
+base-commit: 940de590b839f71d6dc846160534bf202401b8b7
+-- 
+2.25.1
+
