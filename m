@@ -1,69 +1,75 @@
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011010.outbound.protection.outlook.com [52.101.52.10])
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012049.outbound.protection.outlook.com [52.101.53.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7F33BD65D;
-	Thu, 17 Sep 2026 18:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A583B71AE;
+	Thu, 17 Sep 2026 18:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.49
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789669862; cv=fail; b=EJalLtnUyTtEf4J97cgpqI8oNHvf/itqtPhEyeoU7uhbwUZe3ykm1Ytl01YRddBiWJKP5g0wTy5HXEBa32tT9aZ7XNeqkqyVtZI+1e3z11Goj1G++t2oIJUWQBP2zAOcQK1ABTzMwD0jL9J2z6///CKAprFvIFq7TxT0RwhzT8o=
+	t=1789671571; cv=fail; b=KxsDsaIZAULD8cATqGrWgaezHAAgxqzQE6779OH/DPTMr1jXT7oJjNgx7GTu8Zz0UUWnv6Pb1nDLUqYoJ2Vfp4JsLhcAfdrmP0aBMTxrUwpUr/054Ls8dbNJZkV/7dr3up5YbrVpcIW1QDRCXp07qPdwYpCk1iHvAu/IQbYv7RU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789669862; c=relaxed/simple;
-	bh=GorMQY5E5kdC8IQjdl7Gfc9irWkWWvK3W278Q972A/o=;
+	s=arc-20240116; t=1789671571; c=relaxed/simple;
+	bh=tg29YTX42MazPYzzrCdPj03Yln3W+7CPv8fS6FYIWAM=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=rZMwVQ8GIYOV+MXG7nPBextxzEsvZrH2Zm5u8u4oMriGdIthbueHHfhaWicJ/iJczKWKZehf5ggNmkUlKjDQLzoWT3nl8HTgZVKtvO0nSDHOdsbzno4yNXY/f2xNisGQ8+3Co10IykNjZr/Kis+47jZSGsgaIDI27Uo0APRlVRM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sBxh6S+6; arc=fail smtp.client-ip=52.101.52.10
+	 Content-Type:MIME-Version; b=uw4nAFudl1ZNZZwaalzek2b2x3eo3lMsNuMrn2ClccN22MSRAGenY44wFOx/0GP7SQ/Ekwyrij7q6uW9cwUD45EXUXFUYwCrrjDic8hAN/KFjBcBYbrWo/OzSt/QbeNWguNh/OwUND5C2yaESsrn0MgXL3jm20o4zkJ2WK3uoE0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KE4Di7Wk; arc=fail smtp.client-ip=52.101.53.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sBxh6S+6"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KE4Di7Wk"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TwKW3DJ70imN4nkCNiJvbjspdPuIVB8wHX/as8ZcXYU7/dabQS+h2IAwJmpTXaTg2N/ZCS0liCY589LWL2QByGQPuDLN0D/ArssGOJXGHiK/QCMtzGlsr+crxYlNNdvI0piwySRBWBxlVTlfCbyo9oQ1uN/2xiftBI8GE1WV3EjJI5v//BYC8ag6ah4gdgvFDSKRwyixY0GKqizS/EdXBDxuoluQRWOjDiJgp/2/YDBafH7XAGCSoKrT46p0sd1c1bw5S5cvjuCXLTo59N/uY/E1ST+BxtpFajrcp8+4889YiFfl2MgHm9vkfUHdXF6XaG0V2MfyHohQuXnDLuHbsw==
+ b=sdZDiVMwdI/jdwU7oDCGzBnRcKNw1SjbdV7J8yc+BJShrrbTlh5EJoNcPPOnqI+TNCdM6Co3/h4Atvqh7AsO+zjdNvTx54WiuTvMUl2TS2WNVQQ8vYnWr7AB4K8B4Auf8BgK05OIQ0d6XnqBhWM1s1v+RTYHWbbhnhOyz8M7Ze9PTm66DPQulNNFRxTW+DuEzheFbLjNc5/a0kt7WHbLg7rWStjvWzQjvpAzpvOOyZRXB1focR5NDYOu5aNuqajb2Gz0aVLgHlBwRjmxP6ae+MvOoYLjXoVqwjQr9rF7qavWM2LyUm27V+ATPR7ykskyEJJbnUEFh4fljqCMb9pf9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yxq9G5KGsBB1FDK0O/N7s1bf0Ve8zMB/SuUsUarZXCw=;
- b=KoHUlypVEjP8g4nfrbsz9rbVJQvolVHxm8vDkFfrwmKofdDIxsnGc7YsqvslY/U1ssRigjQhtmnDWKUAAzWb1p9Da+1r3Ymp8QfjCropFjXdbFjLuQdaGEniLDl6JYUZCGB0JD0cir6xn3+ydiJ9SPyRTLQBiniWauPCSV6GR65vjNvHYoB083bz5qmEw2WsNq0iIaFMPrCH6lvtscGMRiSdsx7bu3J+VPWICj2ETDszz/qvFFxWGpCMiyrxzlNqOSm17ZfrmIlXyhNkRFI4VcXzQ7LT8QIyguG5WJgMtB5NzUMApOZ+1CBPg6xNunlZPM23dmCPK16yPM8v0yH8VQ==
+ bh=82cQHuh5Qgo+fp1DcF6QU/KB+k+4HBH3Pkr1/vm+scA=;
+ b=YFAwxFcp7t3ph+tK7tMAmBCVeD6Tw0OYYr0rZnfGDPxWNYn4vcVqXPbEN04OOMIrVN1QNH2IVaFV384IqxExAjIiZEqa2TWkDb1vUPL6XVIWkNJT+0tHmaYLerrqi5SJK86eBBmRODqx3gNVs3tiqqqbLG9ibX1E9erg8n6UJgYunJhK0H6NFN3VeqH5GiwLZXEMS/UrDU5dY33cEHkcV3DlkdAthUGQChtzXgqtkr3atd7sruPPe1AJ4g/B6S0fktY3TyDqS5Q2yiPZI3PLszD+y8gsQo3XaQntygIkaAez5/vH8Q777dNSAqQUCufA6kEFX0O72EglfPpawLDGJQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yxq9G5KGsBB1FDK0O/N7s1bf0Ve8zMB/SuUsUarZXCw=;
- b=sBxh6S+6y9Jkr/udddTt+EOg2WP5dT6/aQ/Uxo0/zf+RGPHPvMoLi+Ycwabx7KUXed74o2IKWLVN/LOtuI8YOYMUAcGR6xmLk2cH+8RaEyxoXP7sJoChkxhkbDbO8I4iyUh0+K2uvlgwYpFZ1YT7CsVwpZwncnZzmebOZPR5aZ6Kr31ZzOcLCR/WtSEBnYGGgZt+j3wUOjDEYCGa5KmsRDW0u1v6fNtZ0KW2dqiM72U9lm2Ug/WeED9c4fMTQFR4+C8zi2FjaausCOAevEP5rDdl5cMLAhDy52BZJJqOosmJJmL+oo18JSyQS4hHU6yFYGlD89i4suo/MrWh2xrR8w==
+ bh=82cQHuh5Qgo+fp1DcF6QU/KB+k+4HBH3Pkr1/vm+scA=;
+ b=KE4Di7Wkc7H1zTYhvPftYECHNOzmK81Pz/yJlhu+JH0rfbRy/CcetOlO3J+INHlBh16BIULFDtvGJvFO3BJYM0zyryMZ00XfVjQ8Wli4EP6Wj2PAp4LXtZ/n9iWFfKX3/B6/pwIrAxVAtGuqZRfZxDe/I7BBFPbD2kRozZCBXFqmB2ncbhxIDctq2xzZnjKA/J2f+4V0j5XNxrQHzh27bqqHkd26vnLaVOkD/H2bu1oqdRH+C5klOs02ExULMxyLUDfUFx5hSaijxBYXjf0Z+RfFdrm6ZdAiozcnky7arBPgvgwQdZ380tLI8sGLaLJDdnKGuP89w3XareyPuiDS9g==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from DM4PR12MB5246.namprd12.prod.outlook.com (2603:10b6:5:399::17)
- by LV0PR12MB720236.namprd12.prod.outlook.com (2603:10b6:408:3e0::7) with
+ by CY5PR12MB6108.namprd12.prod.outlook.com (2603:10b6:930:27::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.13; Thu, 17 Sep
- 2026 18:30:56 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.12; Thu, 17 Sep
+ 2026 18:59:19 +0000
 Received: from DM4PR12MB5246.namprd12.prod.outlook.com
  ([fe80::9c9e:30a1:5456:c485]) by DM4PR12MB5246.namprd12.prod.outlook.com
  ([fe80::9c9e:30a1:5456:c485%4]) with mapi id 15.21.0428.011; Thu, 17 Sep 2026
- 18:30:56 +0000
-Message-ID: <4882af43-844f-4b99-bc8e-213da21a579c@nvidia.com>
-Date: Fri, 18 Sep 2026 00:00:48 +0530
+ 18:59:19 +0000
+Message-ID: <19b236de-ec1d-4abd-a78e-17e4faa3b75a@nvidia.com>
+Date: Fri, 18 Sep 2026 00:29:07 +0530
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/20] ACPI: CPPC: Fix register access and lifetime bugs
+Subject: Re: [PATCH v4 1/4] cpufreq: CPPC: Keep the policy across CPU hotplug
 To: Christian Loehle <christian.loehle@arm.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org, Len Brown <lenb@kernel.org>,
- Jie Zhan <zhanjie9@hisilicon.com>, Lifeng Zheng <zhenglifeng1@huawei.com>,
- Pierre Gondois <pierre.gondois@arm.com>, Sudeep Holla
- <sudeep.holla@arm.com>, Ionela Voinescu <ionela.voinescu@arm.com>,
- zhongqiu.han@oss.qualcomm.com,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20260916162805.1039247-1-christian.loehle@arm.com>
+ Jie Zhan <zhanjie9@hisilicon.com>, rafael@kernel.org,
+ viresh.kumar@linaro.org, pierre.gondois@arm.com, ionela.voinescu@arm.com,
+ zhenglifeng1@huawei.com, lenb@kernel.org, saket.dumbre@intel.com,
+ ray.huang@amd.com, mario.limonciello@amd.com, perry.yuan@amd.com,
+ kprateek.nayak@amd.com, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+ acpica-devel@lists.linux.dev, linux-tegra@vger.kernel.org
+Cc: treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
+ ksitaraman@nvidia.com, sanjayc@nvidia.com, mochs@nvidia.com, bbasu@nvidia.com
+References: <20260806200857.601152-1-sumitg@nvidia.com>
+ <20260806200857.601152-2-sumitg@nvidia.com>
+ <c30ddb21-2c97-4b9f-bae6-b29e30aa5e5e@hisilicon.com>
+ <753b98a6-b3f7-431b-a867-eccbfd15d357@nvidia.com>
+ <26439302-6759-446b-a498-310c218e4102@hisilicon.com>
+ <404f0fea-4980-4e7f-ae05-eadcc2b13d7d@nvidia.com>
+ <7d250745-bed7-4e75-a3b5-17565d8ff662@arm.com>
 Content-Language: en-US
 From: Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <20260916162805.1039247-1-christian.loehle@arm.com>
+In-Reply-To: <7d250745-bed7-4e75-a3b5-17565d8ff662@arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN4PR01CA0010.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:272::8) To DM4PR12MB5246.namprd12.prod.outlook.com
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PNYPR01CA0044.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:25b::6) To DM4PR12MB5246.namprd12.prod.outlook.com
  (2603:10b6:5:399::17)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -72,410 +78,334 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5246:EE_|LV0PR12MB720236:EE_
-X-MS-Office365-Filtering-Correlation-Id: fb6a8e47-e05c-4a04-4219-08df14e9d05a
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5246:EE_|CY5PR12MB6108:EE_
+X-MS-Office365-Filtering-Correlation-Id: 21f17392-50c8-4beb-5ade-08df14edc6dc
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|23010399003|1800799024|10067099003|56012099006|5023799004|3023799007|11063799006|6133799003|22082099003|18002099003;
+	BCL:0;ARA:13230040|7416014|23010399003|376014|366016|1800799024|6133799003|18002099003|22082099003|921020|4143699003|10067099003|11063799006|56012099006;
 X-Microsoft-Antispam-Message-Info:
-	BstJEQzONmmsPR3IDcfxp8S+Yr3do+L4c0iQaThYBTcilLh2fXicbLcgKlb81kEBEjyjFE4noFDxplWp6IHEqR4DDGXM4BVkRUIAVeNETgDdNHCx5c94+WcC6TcvRhEbC+L51/ire48N+YWnGzhtJ90K4i3VP9Qfh0D1hV8kybMkBr9WDkpb6R125gkrBU2jYyc/wqJ7LEiS1PJo5b+kSrz33M7f/CBX9rsb0cHviF4uPSzaDuoOHznPcUIaGHirk6UvanHK6mANizfjjVe1h7OFMAbSxEwabqZscku/GicjZ3tF648ziwrNH0Za5DT/n6va5rSFrts1H2qlnwpizRpGUzbBuIKsnXsE8TL3R6COgCoV166l2YKO+qXdUDDUgF25ZoaMhsWfuyoCRd0qr9WQsdBG0hxNthdGaM0DsuPiT+gH7Q9sXWMhtK75E8mc7EOl27SNju8b9R1jx1lDGjsj7QZ3T1IicBN2eMotdrnBSUBjpKMXw52tvuQCGCIRnQPR0XXYdHnYVhZg2IjnDNqapoSBIYI6PViCRJKmiMKTdgQLuWRVkLHYLBOMOYUSWUZ9Ck5At/qARnLvip403zwd6MPBlTr9EemZuUgRwEKmTURP1GFRfUlJuNLU1my9i2Dg4LqA34CxoE+FM2HQmqaScdcfC0nW/NvRGSWUkeE=
+	KV2vYPmYv6WyeTtBrhoCjEmbJkcusmYqd+OWV4dZkcYuxt/vYI8L4CuPEJfNPr6uyi2AjtsGgA+ZYmCA+VaeYdrFji1oKOxPph/TnAoMrZ+OXayFW8fWobMkLkmyzKICWyyk1T2xv91J1jYfVL1yGB2uJFJc3G1/Df0jT7E3e/yE32fmfyUdlXqrBcxqDAyH8N+ZIZB1wbyMDaHkwxp1qED+UT2XaewKnfCy+fqTQLWXZSqLQYcntTVr1VutEMWSuxWO8c1nMVR92xQwleYjcExpQ+PFOZ3G2DwQrQLnYnf77zGb/IeruURA3VBBffM89edZLYhJHO6wy0GuaLqM4saTiaDWGWI/bJfTNmjgQ9Wze4LOF4vzm922Ur2yqxqDoFXbDIn1WG79e1xrXX5U1NzW5bHZB7f78oc9ilR/MUcQCNQ4sWw+M66YI8HAsKucHDxKRaIYx2THarHk0krZdQqni31lAfPYWRs/ADWSpb/kHZ4U4TDDxj3CdtJLacKz6D2LhAJjR3sctzt0g6G1seSF7f90dOYS8hfPPPyBO6xsyX7qekTkSm7NgNDGEQoO6Yrhmy1VZfimebP9oSy7xBDY+cg4Nklz1X6YyHHAPo3SHlrQfZJ97u31lT1JfxypIM2OcFp5BsqAF5mWk0VXFBTIUUVW3aq8qXCwTIHbrqMjYUhtWIqJWjjgC220QdexkNp2mxUvirlvvqWsGmwR5w==
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5246.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(23010399003)(1800799024)(10067099003)(56012099006)(5023799004)(3023799007)(11063799006)(6133799003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5246.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(23010399003)(376014)(366016)(1800799024)(6133799003)(18002099003)(22082099003)(921020)(4143699003)(10067099003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SzZqWmJPOGtpNXpPMjFramVlUktuczlwYmlsOUhFWlpQMnJVcjBkTXkxY0t6?=
- =?utf-8?B?elBtVFR4cTcvWUNpcm9jbXVpZUNJaGRRd3htRjMxT1hiL2xxYzVWZUtqUXM5?=
- =?utf-8?B?V1FsQVBmNGkxZVhKa3ZucDVBSHdkVnVUd25DYzM0OGN2YzhCRGltdVBrVkV2?=
- =?utf-8?B?Vk5ldDAxYkxyZGpyUkdDWDlaUGhTYnoySXhObSsyUkZkaDVsRS9xODdwQW5L?=
- =?utf-8?B?ZEN1VkFndjl4UEhCdExyV3lOWjFMR1dvZER1WFpTNkZIL1ZwcHB5L2xtcS9Y?=
- =?utf-8?B?Q1Z3eGZrd3JLNitkSTBpTkJrdXc3SEl3TlcxRTI2eUlRUGRleHpJNUViUjNL?=
- =?utf-8?B?ZHNYMjdmeDZQeFNHeW9xTkVha05tQWdPUXRROThiL2FGQ0NWVGxKQlQ2ZEM4?=
- =?utf-8?B?Yi80YVJhaVNYMDAxQ1hWUXRNekZxZFdBK3VoQ25wc0tyWVlKVC8zNDkxVVBa?=
- =?utf-8?B?S29DR0RNM05iRVNSYUxFZ2xvTVFuZlBQdUloU1NLdFMzcXlLaVRZWG9zdEEz?=
- =?utf-8?B?b29iVEd5bjNoV0RLSFBoNU9IUTFxaFZuZ2N0U2l0VCt3ZUp5Z3BIRVRqaDFY?=
- =?utf-8?B?QWhXZ0dobWFkajZBK0h5eDJlOFpYYjBJb2NOcVNXS2NBQTF1RjNZY1F1WXl3?=
- =?utf-8?B?OWJlblFhQkUxTzJOK2U1bjBEeVA5VDZXcnQyc0xRWUE4NFBiU0M1YWdhRHpM?=
- =?utf-8?B?TEdkKzN3YVdYbzd6UUdpR3ZBRWFIODVvSS9lMSt3TW5taHcrczZZRm5OREJ3?=
- =?utf-8?B?QnBCSmJGYkEyOWdBM1I3cE1MeW5rdXYwSlBHb1JkU0JpbnZLQ1FvSnY4MkV5?=
- =?utf-8?B?UkNkaGt6eGFKa0ZPZ29kNzl3b21sbkRUWmRObDh2Y1p6dHRsUGtWbXVYMUZV?=
- =?utf-8?B?YjZkQ0dMYXpFbUprQjgzUTBEbmh1YkJMMzZJeldxa1FIcDB3czE4Z2VPYjhO?=
- =?utf-8?B?YU10SXN0elBWL3lGVjhFaEJPc1RDMWd6V1NSSnk2Zm1XY3dvZU5HenVlSWg3?=
- =?utf-8?B?aVVXY1A4bzRMUkJXeG9uQmI3Qkd4bUJRMU91UndVang5YTNGK2FCRTkvZ2JQ?=
- =?utf-8?B?bFpyUnBqTFczQXhiQ0MzdmJzNjdBckNyR1cxMTV6VGN5eUMwV252cUJlNVp5?=
- =?utf-8?B?cHJQWlo5UFNkbWtHM1Y2ZjBjUFg3dXJSK2ZUNjFHK0FReDlWQ0FuTVhQSEVU?=
- =?utf-8?B?dndaRXRiMGxzWEJDMXByd0NKWGNRTGVPcVVQdHVzalBhSlk0MEhwWjNhZ1R6?=
- =?utf-8?B?eFdVV24yc3VaZXBwYnh4M3R0SVplRUVra1daZUpGaW42RHZQbUcwYWVpL2ZD?=
- =?utf-8?B?Qk01OFRRSlhQQzZwNlMwWFA3eGx6c0FjcUNhUDRycVFHc01WTWtuMzdscGk1?=
- =?utf-8?B?OVluQUE3eXYxc3BvaC9hOGtrUmkvOEVPSE9CTWc1WjdYdU9IOGxrOTlBbkhB?=
- =?utf-8?B?T24yRVdFVlowb2Yxb3FZYUZhVWIzUkZRWWZHM3NVUmpZbXJzT28xWll1d2E4?=
- =?utf-8?B?NUFVZjJ2dnduamI3YmVpUU9BSVl3TUdGNHJGeFBLMFB3OFlUUjA3MEU3LzZ5?=
- =?utf-8?B?Tk9lYmxqYnl0M0pEWkd0VUJrb2tyOHRlS3g0blRVckZrVnVuSjNGdE9GYlVU?=
- =?utf-8?B?QjIwL3BNRTNmTTNjZm9QVnhKdWwvRmdXVlhHaWdpU3BuOThFRE1lRmR1N0xZ?=
- =?utf-8?B?Sm1xb2hqYWxqVThBUzN3Mm1HTnluV2R0UFdJaXpuY2gyTzBaem9ualc3S0I3?=
- =?utf-8?B?UmV1K2U5M201VVNnNzc1enJxUFRTMFhSRTY3Qmk3RWZ1THhzSzdlMXJIa2pV?=
- =?utf-8?B?d2FNWm4vcGZ5TDRWaGZRRGZZRXlVUHJFOGVjaXY0cEF4bXRnb0pzUmVLNGNk?=
- =?utf-8?B?eTYxSzBaZ1kzTE03L2ZaMjZJLzNQeFpUVGd3bVc4MENxbXVnVzJFeWdzN2RE?=
- =?utf-8?B?TWwvTWk4NlpHaUV4TS9KUzZraExDUEtVTXRLRkFPRVBTWXNpUktPZUo3V2Fp?=
- =?utf-8?B?aUkwOEJsSm9hMWMvN1dMbGgzY3NPRURKcDZQYnlpelRRSE81UW5UcmNjaVNZ?=
- =?utf-8?B?bnJHOGpCeG92RzdNdTl5eHRpamVJaXNONjFXTlZEYzgrbStNMVIrVXhaVnh6?=
- =?utf-8?B?MU5TaFpiK2hsbGhCREVDRU1UOGs2SG96cCtkbTYzZUZjYnNWMVYxZDNWWVFz?=
- =?utf-8?B?aXFDR0NtTFZZOWxsRjVsdUU2VXJsdkxFdXRvNjRjbUIrYzQzZlp4eDR6UEI2?=
- =?utf-8?B?bjFRbStkcTA3ZFcvWjJJSW1JZkdUbXBlZ3cxNnRWSFpVeUtFT0lXMkFhOU1K?=
- =?utf-8?Q?h0G2Q4h7lMaWewYGPl?=
+	=?utf-8?B?c0xTaml4alV5cjlEeXpOMytkOEx5NXhtODI5QThyUkMwaXFsSE9nZXhLVEFz?=
+ =?utf-8?B?T1UxVnVPUWxab2tuN1ZGSUc1ZnVYUmc5QWdaNHBVdHQ3R05VZXJxZ3MxSUJs?=
+ =?utf-8?B?SWNncytVbDhnUm5ZTXRobHYxMWtscnBiMzFmYWxlaXgyMDBzU2Z1cmVNYXUx?=
+ =?utf-8?B?STdyUXg3SVRNTndLY1UwTjFqbmJaTTRMaFA0L1RxWTFZU1ZaMVlLUlgzZHAx?=
+ =?utf-8?B?OTcwelhPeDlhbk9ZbUlsRGVUQXhXUFhEaGJvU2hCMk5DVGt2WFM3bVczRmFQ?=
+ =?utf-8?B?aFhXaFlPRWc2ckplUjdpbTh1RHRGbWsrTXM3djM0NDU1SHAzNTkzZW5NRVBW?=
+ =?utf-8?B?dGtCTzkwUjdPaS9DTHRYSGRlUXhUaDhWRUJvYUVsUjhrVkNYUkoyMzlrL3Nu?=
+ =?utf-8?B?R2o3R1ZFR3I2cmNKRU9oY1h0Wlk5NTBCNmRQK2RmOVZ1eDFjUUxDQTdvU0hp?=
+ =?utf-8?B?T3BQRWp4QUQwRlZxL3FzV1Y0cW1tc1RlRkJEcThzbVJyUVIxazMzUExBZGpl?=
+ =?utf-8?B?YzFoekxBVWxMRUxqbjFEbGUzeUQ2MFY4QmJWWVRka1BCZHNmdUtaTU5OK0M5?=
+ =?utf-8?B?TVNBQkRvK0dWdG5BNGhiTCtQN014SHVZcjhQZ2xXYTBoRm9XdkZ4UFFScVdp?=
+ =?utf-8?B?MGxMMDRWQ1N4SU5ObDVneUJBb3ZtQ3dFc0l5cFFoWEZJUFFCU1BJMkI5Qy92?=
+ =?utf-8?B?SFF5T3EzZXBGTjhZSElkK2pXSkExNEcveUUxMUd0K3hDblpabUtSOEF0dGRB?=
+ =?utf-8?B?N2xCS2hZczBheUxLdnQ5VEJBYTE4ZTE3S0xqSmtJanpoWnFhWmFIeExkSnRJ?=
+ =?utf-8?B?VGRxNnFpVzR2eExJNko1dVBXYkVJRVlTaHFmeUZtZVg3WEY5N0luYjNWNCtv?=
+ =?utf-8?B?V3ljYWlOWHdvb0Y1RHpnaVBWbkV4a2txMkJXTUh6ejVmZkdLUUJ4ODJnUVU3?=
+ =?utf-8?B?ZERnOGJ1RWhXY00yNDdnQUdyVEdGbFVUSVZTSUxqNnlwN3ZoNzNyYW1rSTZt?=
+ =?utf-8?B?dXFkd3BCUWFLdGVZSUZaby9uUHM4N1dXT3hLOGxNZjJwS2xkU2M0QVdya24z?=
+ =?utf-8?B?anJtN3RYOUViWVdSb1hSRG9ycXg1enVJTk1rYUM0T1YrNjA4NUsxTDFjd2RQ?=
+ =?utf-8?B?STdoQWNtYjdoR1pCVStGT1lRWDNadHVISVRnb0hjdks5QkNIVlQ1NFhuUjRE?=
+ =?utf-8?B?cHZwYWtESVBWanM4cjUrUzJHSkVxNEZ1Qy9iMklZZS9QVTRqeGV5TXdkSEF5?=
+ =?utf-8?B?cEhwcm9Va2dxSGJSNFNhMFB5SDVxb2xmRStwMGdZM2dpYnRpTGV1UDlTRWha?=
+ =?utf-8?B?b3hyakprdGRoZ3dlQi9QNy8wZ0VldFpOYUZkRTFxcXUzck1xVkJ6VndJQTVM?=
+ =?utf-8?B?ZE1tczJQVHAraXpMV3VKaFA5NWQ0OUY2cjNPRXFpMCtDNHh3d1JROGdjdS9v?=
+ =?utf-8?B?SWFRYWMvclZlNjZWYUh5S09uNmt5dXFGUTlReC9XeFBFNlFQYUw5TkN5MmtC?=
+ =?utf-8?B?RWZLSkQydzU0Vk04dU9USnhiSURyMUpVZy9lWW5ic1lzWjgzemgzL0d0bDRw?=
+ =?utf-8?B?L2NvNDBJeHFMeWRCZzUwMUlScHM2REJ4RDc0R2VhUEw2K2pEMEIyU1dldHBU?=
+ =?utf-8?B?M0dGbFV6OUxZdStkV1BsdnJ1aWhpZXIrLzhHVHNTaHdXK2lVdkJGT1lBV3VM?=
+ =?utf-8?B?WEFIOHJGLzlRTWJtaXdDeWdHdlJ2N1RGUnhHL2pOTVVhN0V0Tld4R3M2UXht?=
+ =?utf-8?B?eEZXKzg0eW5zQzlrZHl6cEEwMUpOaHlSaW9VblZQTHNtMlNrRW1JQU0vYnJq?=
+ =?utf-8?B?a213UFo5LzgxaEpENlZJTHRLRyszNnArUGJtdGxKVkZEQit5Z3RIU2N2VEpR?=
+ =?utf-8?B?bmoxVFdES2VobzY0TVQ5OEI2dHAxbWdqaTM2bWNINDYyUllTWU9mM0dTLzZI?=
+ =?utf-8?B?ZEZPWU9ObUJLUGsySDg5bXkzY215WWJjUVl0K1ViWk5DeWZlMjY5QmN4eWFH?=
+ =?utf-8?B?dVE1TVZFZHhsbXk3QVJuNmdYTklvM1FOVWJLbXhCTWxqdUliYWJpK1RkTlBN?=
+ =?utf-8?B?T2RERWw2N0FHT0E1U3lWKzJkOWM0OTBIM0ZFVDFsSExCaHFYbGZrbFdlNTV1?=
+ =?utf-8?B?enBDcVd1ZnZvVTNqNndiNDYyQkFCWVlrV0h2QlpsUU1WcitMSkhZMENaQnpP?=
+ =?utf-8?B?MDZ2V1ErMUE3NGlsQjZWcDZadlJOU25INFJTbzVwcmM4eERPSkgxNGltakJF?=
+ =?utf-8?B?czErWDZDMjI0ZEhpK211dnpqS3RKT0lDNEo2Q2pFVHJQWEs5NkVvQ08yMUE4?=
+ =?utf-8?Q?pUhVlcHsF28Lt14hCh?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fb6a8e47-e05c-4a04-4219-08df14e9d05a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21f17392-50c8-4beb-5ade-08df14edc6dc
 X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5246.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2026 18:30:56.7324
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2026 18:59:19.0537
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: I9erDe8xlIeCxx5oSVrlunJk9B9n89htGzFg/W7sfBmyewO3ZNa4DSPFNEjXjhXs9jQ0gqXOveWi6tUpeHDsjg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV0PR12MB720236
-
-Hi Christian,
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5UQ+LJyVMHttkqoE7tNA3Oq91m4opQ1qQYb+qSn1nbgaDvHAaga07KB8WtbIKTQvLPJXERftz0ZRqrbfpyBobA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6108
 
 
-On 16/09/26 21:57, Christian Loehle wrote:
+
+On 17/09/26 18:38, Christian Loehle wrote:
 > External email: Use caution opening links or attachments
 > 
 > 
-> This series fixes malformed _CPC handling, control-write error propagation,
-> PCC ownership and cleanup, CPC sysfs lifetime, register-field access,
-> cross-processor aliases, and Performance Limited clearing.
+> On 9/17/26 12:01, Sumit Gupta wrote:
+>>
+>>
+>>>>>
+>>>>> On 8/7/2026 4:08 AM, Sumit Gupta wrote:
+>>>>>> Without online()/offline() callbacks, the cpufreq core fully tears
+>>>>>> down a policy during exit() when its last online CPU is offlined, and
+>>>>>> rebuilds it during init() when it comes back.
+>>>>>>
+>>>>>> Add lightweight online()/offline() callbacks so the core instead keeps
+>>>>>> the policy live and reuses the driver's cpu_data across CPU hotplug.
+>>>>>> This avoids re-reading the CPPC capabilities on every offline/online,
+>>>>>> making CPU hotplug faster.
+>>>>>>
+>>>>>> Move what init() and exit() did on hotplug into the new callbacks:
+>>>>>>
+>>>>>>      - offline() requests the lowest desired performance, as exit() did.
+>>>>>>      - online() re-enables CPPC and restores the performance controls, as
+>>>>>>        the platform may have reset them. Failures are logged, not returned,
+>>>>>>        as the core would free the policy.
+>>>>>>      - online() also resyncs the frequency invariance counters, so that the
+>>>>>>        first tick does not measure across the offline window.
+>>>>>>
+>>>>>> The restore in online() uses cppc_set_perf(), which writes MIN before
+>>>>>> MAX. If the platform lowered MAX while the CPU was offline, writing the
+>>>>>> saved MIN could briefly leave MIN above MAX on registers not accessed
+>>>>>> through PCC, as PCC delivers the writes in one transaction. Raise MAX
+>>>>>> ahead of the restore when the saved MIN is above it.
+>>>>>>
+>>>>>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>>>>>> ---
+>>>>>>     drivers/cpufreq/cppc_cpufreq.c | 128 +++++++++++++++++++++++++++++++++
+>>>>>>     1 file changed, 128 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+>>>>>> index 80893844353c..4b3da9a3e122 100644
+>>>>>> --- a/drivers/cpufreq/cppc_cpufreq.c
+>>>>>> +++ b/drivers/cpufreq/cppc_cpufreq.c
+>>>>>> @@ -211,6 +211,29 @@ static void cppc_cpufreq_cpu_fie_exit(struct cpufreq_policy *policy)
+>>>>>>          }
+>>>>>>     }
+>>>>>>
+>>>>>> +/*
+>>>>>> + * Resync the counter snapshot, as the policy is kept across CPU hotplug and
+>>>>>> + * the first tick after online would otherwise span the offline window.
+>>>>>> + */
+>>>>>> +static void cppc_cpufreq_cpu_fie_resync(struct cpufreq_policy *policy)
+>>>>>> +{
+>>>>>> +     struct cppc_freq_invariance *cppc_fi;
+>>>>>> +     int cpu, ret;
+>>>>>> +
+>>>>>> +     if (fie_disabled)
+>>>>>> +             return;
+>>>>>> +
+>>>>>> +     /* policy->cpus still holds related_cpus here, so skip offline CPUs. */
+>>>>>> +     for_each_cpu_and(cpu, policy->cpus, cpu_online_mask) {
+>>>>>> +             cppc_fi = &per_cpu(cppc_freq_inv, cpu);
+>>>>>> +
+>>>>>> +             ret = cppc_get_perf_ctrs(cpu, &cppc_fi->prev_perf_fb_ctrs);
+>>>>>> +             if (ret)
+>>>>>> +                     pr_debug("%s: failed to read perf counters for cpu:%d: %d\n",
+>>>>>> +                              __func__, cpu, ret);
+>>>>>> +     }
+>>>>>> +}
+>>>>>> +
+>>>>>>     static void cppc_fie_kworker_init(void)
+>>>>>>     {
+>>>>>>          struct sched_attr attr = {
+>>>>>> @@ -281,6 +304,10 @@ static inline void cppc_cpufreq_cpu_fie_exit(struct cpufreq_policy *policy)
+>>>>>>     {
+>>>>>>     }
+>>>>>>
+>>>>>> +static inline void cppc_cpufreq_cpu_fie_resync(struct cpufreq_policy *policy)
+>>>>>> +{
+>>>>>> +}
+>>>>>> +
+>>>>>>     static inline void cppc_freq_invariance_init(void)
+>>>>>>     {
+>>>>>>     }
+>>>>>> @@ -735,6 +762,105 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>>>>>>          return ret;
+>>>>>>     }
+>>>>>>
+>>>>>> +/*
+>>>>>> + * With offline() defined, the cpufreq core keeps the policy alive when
+>>>>>> + * a CPU is hotplugged out.
+>>>>>> + */
+>>>>>> +static int cppc_cpufreq_cpu_offline(struct cpufreq_policy *policy)
+>>>>>> +{
+>>>>>> +     struct cppc_cpudata *cpu_data = policy->driver_data;
+>>>>>> +     struct cppc_perf_ctrls perf_ctrls = cpu_data->perf_ctrls;
+>>>>>> +     unsigned int cpu = policy->cpu;
+>>>>>> +     int ret;
+>>>>>> +
+>>>>>> +     /*
+>>>>>> +      * Request the lowest desired performance while the policy has no online
+>>>>>> +      * CPU. Zeroing MIN and MAX makes cppc_set_perf() leave them unchanged.
+>>>>>> +      */
+>>>>>> +     perf_ctrls.desired_perf = cpu_data->perf_caps.lowest_perf;
+>>>>>> +     perf_ctrls.min_perf = 0;
+>>>>>> +     perf_ctrls.max_perf = 0;
+>>>>>> +
+>>>>>> +     ret = cppc_set_perf(cpu, &perf_ctrls);
+>>>>>> +     if (ret)
+>>>>>> +             pr_debug("Err setting perf value:%u on CPU:%u. ret:%d\n",
+>>>>>> +                      cpu_data->perf_caps.lowest_perf, cpu, ret);
+>>>>>> +
+>>>>>> +     return 0;
+>>>>>> +}
+>>>>>> +
+>>>>>> +/*
+>>>>>> + * Raise MAX ahead of the full restore when the requested MIN is above the
+>>>>>> + * current MAX. cppc_set_perf() writes MIN before MAX, so the platform would
+>>>>>> + * otherwise briefly see MIN above MAX on registers not accessed through PCC.
+>>>>>> + * Lowering MAX is safe, as the MIN written first is never above it.
+>>>>>> + */
+>>>>>> +static int
+>>>>>> +cppc_cpufreq_prepare_perf_restore(unsigned int cpu,
+>>>>>> +                               const struct cppc_perf_ctrls *target)
+>>>>>> +{
+>>>>>> +     struct cppc_perf_ctrls cur = {}, prep = {};
+>>>>>> +     int ret;
+>>>>>> +
+>>>>>> +     ret = cppc_get_perf(cpu, &cur);
+>>>>>> +     if (ret)
+>>>>>> +             return ret;
+>>>>>> +
+>>>>>> +     if (!cur.max_perf || target->min_perf <= cur.max_perf)
+>>>>>> +             return 0;
+>>>>>> +
+>>>>>> +     prep.desired_perf = target->desired_perf;
+>>>>>> +     prep.min_perf = 0;      /* Zero leaves MIN unchanged. */
+>>>>>> +     prep.max_perf = target->max_perf;
+>>>>>> +
+>>>>>> +     return cppc_set_perf(cpu, &prep);
+>>>>>> +}
+>>>>>> +
+>>>>>> +/*
+>>>>>> + * Restore what the CPU may have lost while offline, as the platform may have
+>>>>>> + * disabled CPPC and reset the performance controls. Never fail the callback,
+>>>>>> + * or the core would free the policy and leave the CPU without cpufreq. The
+>>>>>> + * governor redoes the control writes, so they are best effort, unlike the
+>>>>>> + * enable, which only a later online() can retry.
+>>>>> Sorry, I don't quite understand the last sentence.
+>>>>
+>>>>
+>>>> Will rewrite in v5 as below:
+>>>>
+>>>>    Report failures without returning them, or the core would free the
+>>>>    policy and leave the CPU without cpufreq. A failed write to the
+>>>>    performance controls is not fatal, as the governor's next request
+>>>>    programs them again. A failed CPPC enable stops the restore, as the
+>>>>    writes that follow may not reach the platform.
+>>>>
+>>>>>> + */
+>>>>>> +static int cppc_cpufreq_cpu_online(struct cpufreq_policy *policy)
+>>>>>> +{
+>>>>>> +     struct cppc_cpudata *cpu_data = policy->driver_data;
+>>>>>> +     unsigned int cpu = policy->cpu;
+>>>>>> +     int ret;
+>>>>>> +
+>>>>>> +     cppc_cpufreq_cpu_fie_resync(policy);
+>>>>>> +
+>>>>>> +     ret = cppc_set_enable(cpu, true);
+>>>>>> +     if (ret && ret != -EOPNOTSUPP) {
+>>>>>> +             pr_warn("Failed to re-enable CPPC for CPU%u (%d)\n", cpu, ret);
+>>>>>> +             return 0;
+>>>>>> +     }
+>>>>>> +
+>>>>>> +     /*
+>>>>>> +      * The platform may reset the controls while the CPU is offline, so
+>>>>>> +      * recompute min/max, clamp desired_perf into range, and reprogram them.
+>>>>>> +      */
+>>>>>> +     cppc_cpufreq_update_perf_limits(cpu_data, policy);
+>>>>>> +
+>>>>>> +     cpu_data->perf_ctrls.desired_perf =
+>>>>>> +             clamp_t(u32, cpu_data->perf_ctrls.desired_perf,
+>>>>>> +                     cpu_data->perf_ctrls.min_perf,
+>>>>>> +                     cpu_data->perf_ctrls.max_perf);
+>>>>>> +
+>>>>>> +     ret = cppc_cpufreq_prepare_perf_restore(cpu, &cpu_data->perf_ctrls);
+>>>>> Actually, I don't quite think this is necessary?
+>>>>>
+>>>>> The motivation of doing this is fair (as mentioned in v3), but what's the
+>>>>> real consequence of transiently setting min_perf larger than max_perf?
+>>>>> Platforms should be able to handle this.
+>>>>>
+>>>>> Even if we have to fix it, it's supposed to be done in cppc_acpi.c.  The
+>>>>> current ABI wraps many things up.  cppc_get_perf() reads 4 values -
+>>>>> min_perf, max_perf, energy_perf, auto_sel.  cppc_set_perf writes 3
+>>>>> values - desired_perf, min_perf, max_perf.  The cppc_cpufreq driver would
+>>>>> be able to handle performance setting cleaner if those are separated.
+>>>>>
+>>>>> I don't suggest we complicate the driver for now?
+>>>>
+>>>> Agreed that it is not hotplug specific and can be done in the
+>>>> generic API.
+>>>>
+>>>> cppc_set_perf() would have to know the programmed MIN and MAX to pick
+>>>> the write order. Separate accessors would let it read only those two,
+>>>> but that would add a read before every write, including fast_switch().
+>>> fast_switch() doesn't have to touch min/max_perf, but it did at the moment.
+>>>> Caching what was last written would avoid that, but the platform can
+>>>> reset the registers while the CPU is offline or suspended.
+>>> Yeah, understood.  My question is still whether it's practically useful and
+>>> we're complicating this.
+>>>
+>>> Two reasons.
+>>>
+>>> 1. Platform should be able to handle min_perf being trasiently larger than
+>>> max_perf, otherwise it would be fragile.
+>>>
+>>> 2. It depends on the reset values of the two registers.
+>>>
+>>> I went over the ACPI Spec and didn't manage to find a descprition on what
+>>> the default/reset values of min/max perf registers should be.
+>>>
+>>> For a sensisble design, min_perf defaults to be 0 or lowest perf, and
+>>> max_perf defaults to be all 1s or highest perf.  In those cases, we are
+>>> safe to directly restore the saved values.
+>>
+>> Hi Jie,
 > 
-> Series structure
-> ================
+> Hi Sumit, Jie
 > 
-> Patches 1-7 cover parsing and control semantics, error propagation,
-> PCC update serialization, and descriptor/PCC cleanup. Patches 8-15
-> validate the register layouts and aliases which the existing accessors and
-> locking can safely support, and correct Performance Limited clearing.
-> Patch 16 bounds x86 and arm64 FFH fields before accessing hardware, checks
-> x86 MSR numbers, and dispatches FFH before generic Access Size decoding.
-> Patch 17 propagates failed cross-CPU FFH calls on arm64 and RISC-V before
-> using callback output, including counter reads for an offline CPU.
-> Patch 18 accepts a request to retain immutable Autonomous Selection as a
-> no-op, rejects unsupported amd-pstate transitions to passive mode before
-> changing state or removing the driver, and restores cppc-cpufreq's previous
-> mode if a later bounds update fails. The immutable-capability query is
-> serialized with descriptor publication and removal.
-> Patch 19 selects the frequency-invariance callback per CPU, avoiding
-> uninitialized deferred work in policies mixing PCC and direct counters.
-> Patch 20 creates the FIE worker when policy initialization encounters PCC
-> counters, before publishing callbacks. This covers offline and later-added
-> PCC members without making direct-counter FIE depend on worker setup.
+>>
+>> Agreed, those values would be safe, although they are not required
+>> reset defaults. A platform could reset MAX to a lower value, such as
+>> lowest_perf, while the saved policy MIN is higher.
+>> Restoring MIN first would then temporarily result in MIN greater than
+>> MAX on non-PCC systems.
+>>
+>> This preparation was added in response to Christian’s v3 comment [1].
+>> I had already posted v5 [2] before receiving this reply, and it retains
+>> the preparation.
 > 
-> The layout fixes are more substantial: a physical access unit can contain
-> several fields or be shared across processors and _PSD domains. Probe-time
-> interval registries enforce the assumptions of the existing
-> descriptor-local locking model. They add no lookup to the scheduler path;
-> standalone full-width SystemMemory writes remain lockless. Disjoint fields
-> within one descriptor retain their shared lock when their access units
-> overlap, including a full-width byte beside a wider partial-field access.
+> I basically agree(d) with Jie here when I commented on v3:
+> "I think cppc_set_perf() needs some prep first before using it on reset values.
+> We assume that reset value may be Autonomous Mode on, right? So we must never
+> write MIN>MAX and vice versa. I think we may just have to read and write
+> the 'otherwise-offending' value first on reset."
+> So I wanted to have this (as prep work) within cppc_set_perf() not in cppc-cpufreq,
 > 
-> Behavior description
-> ==================
+>>
+>> Christian, are you okay with dropping it and restoring the controls
+>> directly with cppc_set_perf(), as in v3?
+>> Any general requirement for ordered MIN/MAX updates can then be handled
+>> in a separate CPPC core series.
+>>
+>> [1] https://lore.kernel.org/lkml/40d72385-0b3f-46e5-9f32-a27be3842d7c@arm.com/
+>> [2] https://lore.kernel.org/lkml/20260916103820.1760297-1-sumitg@nvidia.com/
 > 
-> The parser validates the package before indexing its entries and the
-> Generic Register descriptor consumed by the driver. It tolerates trailing
-> package/ResourceTemplate data and legacy Integer-zero absent controls.
-> Buffer-backed capabilities and bound readbacks are checked before narrowing
-> to u32. Minimum and Maximum Performance must form a usable pair, and
-> an explicit minimum-valid flag preserves a zero Minimum Performance
-> readback across cpufreq initialization and exit. Maximum Performance and
-> amd-pstate's unsaved firmware-minimum restore requests retain their existing
-> zero-means-omitted convention.
-> 
-> Lowest Performance must remain nonzero, as before the series. Accepting zero
-> needs separate changes to consumers which assume a zero frequency origin
-> or use a zero capability as an absence sentinel. This does not change the
-> explicit zero Minimum Performance update used to remove a lower bound.
-> Invalid firmware-provided Lowest/Nominal Frequency values remain an error.
-> 
-> PCC ownership is acquired before staging payload updates. Direct-only,
-> batched PCC, and mixed-address-space performance updates retain their
-> separate ordering requirements. PCC lifecycle locking and payload-copy
-> serialization protect different state.
-> 
-> Frequency-invariance policy teardown remembers which PCC work was
-> initialized, so it can drain that work after processor removal unpublishes
-> the CPC descriptor. Callback selection uses that same per-CPU initialization
-> state rather than looking up the potentially removed descriptor again.
-> Worker creation is serialized and occurs only when initializing PCC
-> counters, before that policy publishes callbacks. Setup failure leaves
-> that policy without FIE, but does not disable direct-counter or already
-> active policies. Direct-only systems create no worker or deadline
-> reservation. Direct-counter CPUs continue updating in the tick.
-> This does not solve the separate runtime-accessor lifetime races with
-> processor removal (which I will post in a later series).
-> 
-> SystemMemory permits read-only overlaps, supported exact writable aliases,
-> and safe descriptor-local partial writes. A full-width writer may share a
-> larger read access unit across descriptors when their logical fields are
-> disjoint. Only controls written by the CPPC library count as competing
-> writers (i.e. OSPM Nominal Performance is not written). Its write-only
-> readback protections still apply. The validation rejects cross-descriptor
-> partial writers which its locks cannot serialize and accesses which replay
-> a write-only neighbour's undefined readback. SystemIO permits read-only
-> aliases with write-only controls, but not with readable controls whose
-> readback would select the wrong register. Unsupported optional controls are
-> disabled only where doing so cannot silently change the operating mode.
-> Present but inaccessible Enable or Autonomous Selection controls fail
-> probe, including sub-byte PCC forms which the existing writer cannot
-> program. This may reject firmware-enabled configurations that previously
-> worked until the driver attempted an unsupported control access.
-> Optional-writer fallback only changes unpublished descriptors. A conflict
-> with an already-published writer can still fail probe; making recovery
-> independent of CPU discovery order requires runtime quiescence support.
-> 
-> Performance Limited is sticky, but ACPI does not define the effect of
-> writing one. A selective clear can either replay stale status or set a bit
-> on a plain read/write implementation. Write 0x3 to the perf_limited
-> attribute to clear both bits with one literal-zero register write;
-> selective clears return -EOPNOTSUPP. Partial SystemMemory/SystemIO status
-> fields remain readable but cannot be cleared generically. This is a status
-> acknowledgement, not a lossless event log.
-> 
-> Inaccessible status ranges remain visible to overlap validation without
-> being accessed. Sumit Gupta's NVIDIA T41 quirk widens only the verified
-> two-bit, offset-zero DWord descriptor whose remaining bits are unimplemented,
-> allowing that platform to use the safe clear-all operation.
-> 
-> The general SystemMemory/SystemIO alignment checks retain the x86 exception
-> for unaligned accesses. Performance Limited currently inherits that policy.
-> This is not a guarantee of an indivisible device transaction at an unaligned
-> address; the stricter status-atomicity question remains separate work. No
-> torn access or affected platform has been demonstrated by the reviews.
-> 
-> Testing
-> =======
-> 
-> An earlier iteration was built and booted on Orion O6-01, with CPPC sysfs,
-> frequency changes, advancing counters and module reloads checked. The
-> subsequent AMD transition guard and FIE fixes have passed source/model
-> checks and checkpatch, but this tip has not yet been built or booted.
-> Those checks are not AMD hardware, mixed-PCC hotplug or concurrency tests.
-> 
-> Changes since v6
-> ================
-> 
-> Patch 1: Validate the _CPC package header
->    Unchanged from v6.
-> 
-> Patch 2: Validate _CPC entry and control semantics
->    Allow the full 64-bit Integer Counter Wraparound Time and emit FW_BUG
->    once for tolerated legacy Integer-zero Buffer placeholders. (Rafael)
->    Drop v6's zero Lowest Performance support: nonzero frequency anchors do
->    not make it safe for all consumers. Retain the pre-series nonzero check.
->    Reject Minimum/Maximum readbacks above U32_MAX before narrowing them.
->    Keep only min_perf_valid: an explicit zero minimum removes a lower bound,
->    whereas zero Maximum Performance retains its legacy omitted-update
->    meaning. Document the flag and leave it clear for amd-pstate's unsaved
->    firmware-minimum restore requests.
-> 
-> Patch 3: Propagate performance-control write errors
->    Adjust for patch 2's minimum-only validity flag; a zero maximum remains
->    an omitted update.
-> 
-> Patch 4: Serialize PCC single-register payload updates (v6 patch 5)
->    Reject unsupported PCC widths before taking the exclusive lock, so a
->    malformed request cannot abort an older valid performance batch.
->    Match both subspace and generation when completing failed PCC writes;
->    equal generation numbers in another subspace must not receive the error.
-> 
-> Patch 5: Serialize PCC EPP payload updates (v6 patch 6)
->    Preflight PCC widths and SystemIO writer geometry before changing any
->    direct control. This keeps the patch independently safe before the later
->    probe-time layout validation. Pass the subspace to error completion.
->    Patches 10 and 11 remove these preflights once probe guarantees them.
-> 
-> Patch 6: Release CPC descriptors through kobject (v6 patch 7)
->    Track initialized PCC frequency-invariance work independently of the CPC
->    descriptor, so policy exit still drains it after descriptor unpublication.
->    Make the counter-transport query tolerate a missing descriptor. Broader
->    runtime-accessor lifetime protection remains deferred.
-> 
-> Patch 7: Release PCC data after probe failures (v6 patch 8)
->    No functional changes from v6. Only clarify the channel-reuse comment.
-> 
-> Patch 8: Reject unsafe cross-CPU SystemMemory RMW (v6 patch 9)
->    Mark successful relaxed MMIO writes pending for lock-handoff ordering.
->    Use the interval walk to lock both same-descriptor overlapping accesses,
->    including mixed-width full/partial fields, without another overlap pass.
->    Permit a full-width writer beside a disjoint logical read-only field,
->    including across descriptors when the reader uses a larger access unit.
->    Do not count OSPM Nominal Performance as a competing writer: Linux does
->    not write it. Its write-only readback protections remain in patch 9.
->    Exact-alias coalescing and representative promotion were already in v6
->    and remain present; they are not additions in this version.
-> 
-> Patch 9: Reject direct reads of write-only controls (v6 patch 10)
->    Also reject readable SystemMemory fields whose logical bits overlap a
->    write-only control, including retained inaccessible fields. Treat a
->    retained zero-width field conservatively before the no-writer shortcut.
->    Reuse the logical-field overlap check instead of a separate full-width
->    ownership helper. Remove the duplicate Desired Performance getter check;
->    the common getter already enforces write-only semantics.
-> 
-> Patch 10: Validate and access PCC register layouts (v6 patch 11)
->    Fail probe for a present inaccessible Autonomous Selection control,
->    instead of hiding it without establishing the hardware's operating mode.
->    Separate the final bound-pair check from mandatory-control validation.
->    Remove setter PCC-width preflights once probe validates every published
->    writer, and remove unreachable PCC branches in the memory accessors.
->    Keep actual access-error handling and ownership serialization.
-> 
-> Patch 11: Validate SystemIO register layouts (v6 patch 12)
->    Allow a read-only port alias with a write-only control, but reject aliases
->    with readable controls whose readback would select the wrong register.
->    Remove the EPP setter's duplicate SystemIO geometry preflight once probe
->    enforces it. Read-only partial-field support and the x86 exception to
->    natural alignment were already in v6 and remain unchanged.
-> 
-> Patch 12: Validate PCC overlaps across processors (v6 patch 13)
->    Replace the separate same-descriptor overlap pass with registry checks.
->    Drop v6's expansion to additional byte-multiple PCC writer widths; retain
->    the existing 8/16/32/64-bit widths, subject to control-specific limits.
->    Keep one interval record per descriptor entry; PCC alias coalescing is
->    deferred. Correct Fixes to 80b8286aeec0 (CPPC request batching).
-> 
-> Patch 13: Validate SystemIO overlaps across processors (v6 patch 14)
->    Apply patch 11's direction-aware alias policy across processors and
->    remove the now-redundant same-descriptor overlap pass. Retain per-entry
->    interval records; SystemIO alias coalescing remains deferred.
-> 
-> Patch 14: Clear Performance Limited without a stale read (v6 patch 15)
->    Stop assuming write-zero-to-clear semantics for written ones. Reject
->    selective clears and implement clear-all (sysfs 0x3) with one literal-zero
->    register write, avoiding both stale readback and fabricated status. (Sumit)
->    Extend the readable-but-not-clearable fallback to partial SystemIO fields.
->    Extend inaccessible-range retention to PCC and SystemIO, including status
->    crossing the PCC payload end or port 0xffff. PCC claims retain their own
->    subspace without selecting or retaining an unnecessary access channel.
->    Permit disabling only unpublished, disjoint optional SystemMemory writers
->    which share a status access unit; never hide a required or Autonomous
->    Selection control. Published writers are not changed during another probe.
->    Compare bit geometry as well as byte ranges for exact PCC/SystemIO aliases,
->    and count only accessible controls as writers in those registries.
->    Make status fallback warnings once-only and document the clear-all and
->    unsupported-access behavior in the sysfs ABI.
-> 
-> Patch 15: Keep Performance Limited clearable on NVIDIA T41 (new)
->    Add Sumit's quirk for the verified two-bit, offset-zero DWord layout.
->    Use a cached DSDT match and quirk flags, applying the fixup to the private
->    GAS copy before validation and mapping. Distinguish lookup failures from
->    non-matches and leave failures retryable. Keep all quirk plumbing here,
->    so patch 14 remains independently buildable without unused declarations.
-> 
-> Patch 16: Validate FFH register fields before hardware access (new)
->    Reject invalid x86 field geometry and GAS addresses that would truncate
->    to another 32-bit MSR number. Bound arm64 AMU fields in both single and
->    paired readers. Dispatch FFH before generic Access Size decoding can
->    shift by an invalid amount using an architecture-specific field.
-> 
-> Patch 17: Propagate errors from cross-CPU FFH calls (new)
->    Return failed SMP-call errors on arm64 and RISC-V before consuming
->    uninitialized callback output. Also check RISC-V callback errors before
->    copying a read value. Keep this as a separate backportable error-path fix.
-> 
-> Patch 18: Accept requests to retain immutable autonomous selection (new)
->    Treat setting immutable Autonomous Selection Integer 1 to one as a
->    successful no-op; disabling it still fails. Distinguish immutable-one
->    descriptors from writable controls currently reading one. Reject an
->    unsupported amd-pstate transition to passive before changing the mode or
->    unregistering the working driver, checking known offline CPUs too.
->    Serialize the immutable query with descriptor publication/removal,
->    including probe failure, since CPU-hotplug locking does not pin it.
->    On a later bounds-update failure, restore cppc-cpufreq's previous mode
->    rather than always disabling selection.
-> 
-> Patch 19: Select the frequency-invariance callback per CPU (new)
->    Register the PCC callback only on CPUs with PCC counters. A shared policy
->    can also contain direct-counter CPUs, whose irq_work is not initialized.
->    Select from the recorded work-initialization state, so descriptor removal
->    between initialization and publication cannot change the callback choice.
->    Keep callback registration after the complete counter-initialization
->    pass, so an online CPU's failed initial read publishes no CPPC callbacks.
-> 
-> Patch 20: Create the FIE worker before enabling PCC callbacks (new)
->    Create the worker when initializing PCC counters, rather than relying
->    on an online-only startup scan. Serialize creation and reuse it until
->    driver teardown. Offline members and later PCC policies are covered.
->    On setup failure, skip FIE for that policy without changing the global
->    setting or affecting existing policies. Direct-only systems do not
->    allocate an unused worker or consume deadline admission bandwidth.
-> 
-> Dropped v6 patch 4: Use 64-bit masks for register fields
->    All supported CPPC configurations are already 64-bit, so this is only
->    a cleanup I'll submit later on.
-> 
-> Separate lifetime work
-> ======================
-> 
-> The PCC mailbox teardown fixes are posted separately: [1] is their cover,
-> [2] frees the channel before unmapping its shared memory, and [3] serializes
-> channel updates with shared-memory teardown. They are not included here;
-> this series alone does not close the mailbox IRQ-teardown races.
-> 
-> [1] https://lore.kernel.org/all/20260903111328.805352-1-christian.loehle@arm.com/
-> [2] https://lore.kernel.org/all/20260903111328.805352-2-christian.loehle@arm.com/
-> [3] https://lore.kernel.org/all/20260903111328.805352-3-christian.loehle@arm.com/
-> 
-> Christian Loehle (19):
->    ACPI: CPPC: Validate the _CPC package header
->    ACPI: CPPC: Validate _CPC entry and control semantics
->    ACPI: CPPC: Propagate performance-control write errors
->    ACPI: CPPC: Serialize PCC single-register payload updates
->    ACPI: CPPC: Serialize PCC EPP payload updates
->    ACPI: CPPC: Release CPC descriptors through kobject
->    ACPI: CPPC: Release PCC data after probe failures
->    ACPI: CPPC: Reject unsafe cross-CPU SystemMemory RMW
->    ACPI: CPPC: Reject direct reads of write-only controls
->    ACPI: CPPC: Validate and access PCC register layouts
->    ACPI: CPPC: Validate SystemIO register layouts
->    ACPI: CPPC: Validate PCC overlaps across processors
->    ACPI: CPPC: Validate SystemIO overlaps across processors
->    ACPI: CPPC: Clear Performance Limited without a stale read
->    ACPI: CPPC: Validate FFH register fields before hardware access
->    ACPI: CPPC: Propagate errors from cross-CPU FFH calls
->    ACPI: CPPC: Accept requests to retain immutable autonomous selection
->    cpufreq: CPPC: Select the frequency-invariance callback per CPU
->    cpufreq: CPPC: Create the FIE worker before enabling PCC callbacks
-> 
-> Sumit Gupta (1):
->    ACPI: CPPC: Keep Performance Limited clearable on NVIDIA T41
-> 
->   Documentation/ABI/testing/sysfs-devices-system-cpu |   16 +-
->   arch/arm64/kernel/topology.c                       |   14 +-
->   arch/x86/kernel/acpi/cppc.c                        |   14 +
->   drivers/acpi/cppc_acpi.c                           | 2209 +++++++++++++++++---
->   drivers/acpi/riscv/cppc.c                          |   26 +-
->   drivers/acpi/utils.c                               |   13 +-
->   drivers/cpufreq/amd-pstate.c                       |   31 +-
->   drivers/cpufreq/cppc_cpufreq.c                     |   73 +-
->   include/acpi/cppc_acpi.h                           |   18 +-
->   9 files changed, 2024 insertions(+), 390 deletions(-)
-> 
-> base-commit: fd73f4a6659897191fa0d40695fe370925dd3780
-> --
-> 2.34.1
 
+Hi Christian, Jie,
 
-Tested the v7 on v7.3-rc3, with both _CPC rev 3 and 4.
-
-For the entire series:
-Tested-by: Sumit Gupta <sumitg@nvidia.com>
-
-
-Patch 20/20 had a conflict in drivers/cpufreq/cppc_cpufreq.c with
-linux-next 20260916.
-
-The series applied cleanly to the base commit specified in the cover
-letter (fd73f4a66598, tag v7.3-rc3), so patch 20/20 may need to be
-rebased for the current linux-next.
+Thanks for the clarification. I will drop the preparation from
+cppc_cpufreq in v6 and restore the controls directly using
+cppc_set_perf(). I will address the MIN/MAX write ordering in
+cppc_set_perf() in a separate series soon.
 
 Thanks,
 Sumit
