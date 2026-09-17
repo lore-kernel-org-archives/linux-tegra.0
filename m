@@ -1,180 +1,421 @@
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010035.outbound.protection.outlook.com [40.93.198.35])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7154AE130;
-	Thu, 17 Sep 2026 20:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.35
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789675324; cv=fail; b=PCPe4Wtzxz0w/so88VG0lHjYqPChIZ+rLwZYQ+/Rt0K2d4t47PfgFbpoCW7SvIQIdOdRIopqWhTsaPXR6HHep/XM3IqJ/+KikUCAwastaoobVQ6IHviAcMFPkXVoXKQV8MocReSR5FtMkbccmeEnaTjEhgj5V5W9oLsLoQYqZJo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789675324; c=relaxed/simple;
-	bh=+wnrXmEsL/zqu3lk3RdOgmZTvCXSrenq2OsNOBL2cIA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=PwH7DfY/zOQQn9hSklf1G6qG2Nn5iucm+hzsNzh0+XBMC1zJBccgkgDUb+P5b/f53G/Iv2TWIhFnMmBo1BCQFnigkcFGACD774PzzmaPMTBm5K/LujK4Lxs7xi+csYnUBtZX/39eAHMIFq//8r0nWNtmyjsPU7CB2KoOdqNnJeY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ENd6wz1j; arc=fail smtp.client-ip=40.93.198.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EE649EC6E;
+	Thu, 17 Sep 2026 21:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789680035; cv=none; b=rYQ+sKaMrkk0ket2RttyXhSXSSdxlV4uS5rt4cesdkewK3AlRwFZio79lleGADI8HYTB4t2ZikFYQakhiJn4AfdaL1VdeKqB4KqyDN8klK4a0oMcUVlmN6HYpS1MADSKarDDpJjRZKielCRz14DAseAonlPH+cPXkHBDAJhbJG0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789680035; c=relaxed/simple;
+	bh=PK/vI3gJpOjSUbmuWp8bS7qffOZFRo9YhPSotm7E0YE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=r5gyDrieqN0tDI5xHLaFyd1xiMUJ4Vv8hIUlqHX5E9U5ZEYb0fLre+aDF97rxKrNE2OIpVBT7iPe5dhwBfwSR4x+QqxCqolWXouqPN48xxtpvOh9jPhoIoRMKVIslTkVXKviYaWlxNjLH8DQnBfYhu4oBvkL3NyO6CS98/U2sTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H9HYC50+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ENd6wz1j"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sCZLAioZFSuR9AaLzr5fQU1ay+MNoFiavuzNbXrXy8A58IAL6rbCIUZkvUAexaVG6/9FqYayyEIzv1zupo3fBKsLtEEMSAb/LgJWfObwh8PaO1wJ8tMKLt5fOiytaxY7S4JICPwE1QbMGKtwaptbTXaS38JXaj7OhGUKLxNNGNtgFgxnBJKCgfiJ0cbUZd4O7KT1C2NNpP9d1ubV7gOoyhEFAMMQ1IYsdMz2Zcfi3CybHVgroKFKJwZsC2rrWB/z0pILuy9NjmUwAzx5NGY5kALkNUPNXS53gm4KOkZjbj9UnoqVRqf4GxH6XmWs3eONngeImW5Ogbo5e1Yxeo9+cA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4sW1ylFEkm6iul+DwZq+vLnE/U/QmWkGnJAr0tS3Gk8=;
- b=fOtOdnQqzdAz+CBv8elrYKw95i61RPsdK4AR/yh7be3d9bUq5HmMdoSbj06jPOg+lyhezA5kYFUou2zZkMwpo1IScWpESrepRcEeLiyIJNHFw9oq8rlHnK/uVfkUkIADinrPTfK9LFfhE3UpfasXblKWpV8v4rTq5nrAM8Wo7HESL35lsnPHm8+XKMPC3s6+iGX1VLM2VaIGDBkaLtIMr7/xrfv47tWn9Prs5tPLEP1AABlklzQMN4y1ojN4NkUZduFHiJ69p41C5V5hT/a950Z7OGoTk3T2wIL7S/DyfCQeibBYm7xDk3HziRMfM3/tT4nW2lh1LAxgRVAMWBjvWA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4sW1ylFEkm6iul+DwZq+vLnE/U/QmWkGnJAr0tS3Gk8=;
- b=ENd6wz1j2KtYyrHHuLkqUSGNDeSPfWnzjfpwWcVQybHdG6hL6nWgjk/lCe8fAqyGh6sHZzlylfoO1uW0juNNsKSakGS5SE4GbYQCaG6uFyaD032yN5EEYq6B4TJ5643f1CtzVBaVzfD0CIpfS39UokU+7e29R9DTh/fxQhEmHM5sKqsk409lTtlb7k0fGbhazN3lDT96rns8L+ZuNKrtIkvI0l5MM/RYLT1aVTBSnSYT54Bsen1Q2Ln3NcWrmRlpMCYJDVa5UzStNhIClbiuisncJveGkJyZzOwhoSEQDYOsgWhl/0dWB46BLhX7VhWPLYKNDM8gAghYjOb2E+yq+w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH8PR12MB7110.namprd12.prod.outlook.com (2603:10b6:510:22e::11)
- by PH8PR12MB6940.namprd12.prod.outlook.com (2603:10b6:510:1bf::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.12; Thu, 17 Sep
- 2026 20:01:59 +0000
-Received: from PH8PR12MB7110.namprd12.prod.outlook.com
- ([fe80::736a:e1be:ec64:5740]) by PH8PR12MB7110.namprd12.prod.outlook.com
- ([fe80::736a:e1be:ec64:5740%6]) with mapi id 15.21.0428.009; Thu, 17 Sep 2026
- 20:01:59 +0000
-Message-ID: <1114db1e-55fa-4056-bcdd-f1512bac70c5@nvidia.com>
-Date: Thu, 17 Sep 2026 21:01:54 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] ARM: tegra: Clean up AHUB on Tegra124
-To: Thierry Reding <thierry.reding@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Charan Pedumuru <charan.pedumuru@gmail.com>, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- Thierry Reding <treding@nvidia.com>
-References: <20260902-tegra-ahub-dt-cleanup-v1-0-028f3c5e72f6@nvidia.com>
- <20260902-tegra-ahub-dt-cleanup-v1-1-028f3c5e72f6@nvidia.com>
-Content-Language: en-US
-From: Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20260902-tegra-ahub-dt-cleanup-v1-1-028f3c5e72f6@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0102.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9c::16) To PH8PR12MB7110.namprd12.prod.outlook.com
- (2603:10b6:510:22e::11)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H9HYC50+"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 41F06C2BCB3;
+	Thu, 17 Sep 2026 21:20:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1789680035;
+	bh=PK/vI3gJpOjSUbmuWp8bS7qffOZFRo9YhPSotm7E0YE=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=H9HYC50+2G2bvKO6y0HMMe/v4PcAhQyZZEi+bfOlcnsY4bgbGHvGhSbL+3YYHimXX
+	 e0a1pCY2tOmXKB2+FPBS9YJ4sTITnP4gEOXMNxhnpcTgPyPivV7fdqpUFaz6BJwVEq
+	 Z1YTiUh/jt0zJxI9iJ9V35ob6WaHjAb8rD/REW1J78MeHgqfBD7+HOGt58/1Tm4xyH
+	 no+CubNOWe4C0rDeFOI/3ECul3fSsWUz9wKb0H47d6EuhrvDlAtKrrx7cfdXWYgYhM
+	 4SpsgHxI1aE7l8SmmeN0y0BA3/KNUpxQB0a8a7my4AOy0mb9G8tbBts/2jzgeU3xZX
+	 lwsSDkGoUvq9g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1E5C982D0;
+	Thu, 17 Sep 2026 21:20:35 +0000 (UTC)
+From: 0xSmash0th via B4 Relay <devnull+0xSmash0th.gmail.com@kernel.org>
+Date: Thu, 17 Sep 2026 17:20:24 -0400
+Subject: [PATCH] firmware: tegra: ivc: back off when a peer stalls the
+ handshake
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7110:EE_|PH8PR12MB6940:EE_
-X-MS-Office365-Filtering-Correlation-Id: eaa675c1-719b-460f-fc9d-08df14f6884f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|23010399003|366016|10070799003|1800799024|22082099003|18002099003|11063799006|4143699003|10067099003|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	5AqV3TYweG9PHAauAPTQ0dCt67ZMEPRrPBUZ04ad8m468JRJJHXZJ1ikNVirZJVGUsWRf/3X1vyvcbb6DMAVd4Z3kgZswIquS646KvRgPnE0ulaWtbiPSvhhaJRL8RrLDu9q/k2pVBJ8oyuDtaG3CioJZd3NfT6v8xE/SmmwqXglPVVJvncerZ27PsNPeqEpNZAsHsiHZ8CgSGOsvY4Znvmhv0lvT2EjOCZQvz+IiltJqXL/mMXonk4/dH8fWdMVJUkYYc2ajIfQkb32rXTLYJPgpfIvMSPao5jY8Byg7Tjf0GPpayimu7gRZ4SFPHmAu+ar+A+Y0YQ/8lizlRDA59PQu7lJ31cQAV4xeNKL+MYIbuwF5Mh8uW4uVbCs22LHNeltZFb+bhO3B66b5HkAVP83yiItAb3KUeR+VwUzLlJgJD1kyi8LikBtTNEikRFZff3ZtQAlVnGDekqHXBSgxZvphcfYyqK66sW6vuj8C0CpvphggoJL0fEFOVmzyO8PCiltC+pd5aXUs823Rn4unK+hMWOoW3juxnX7d4KoxA7F2nlMDK3iR+K95rdTPeXaavd9/kvpWFfL+6EF0uF7ZISpZFK9YzvpwR+/AMDtX1qKEu3fhsyEl+OAC4pRPygKXv7dFVauNt7ajIh27/e5HoW5/XPzRyASK6QlFeX6ya4=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7110.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(23010399003)(366016)(10070799003)(1800799024)(22082099003)(18002099003)(11063799006)(4143699003)(10067099003)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Wm9BYmh0MWlVUjVLTzBjeTArY0tTc3JsTzVFSFFKclVYSlBmMGJwYk9UNm9x?=
- =?utf-8?B?b2VEcTlsRDlPRUVlVTd4RmZsNFMyY0JYczVGREp2YjhHWUQ1T0xQdW9sMGFs?=
- =?utf-8?B?K0U3SjdoSmcwT3hES3BDSFVjek92dnhSV3krNnNpdWJoRWc0NzN3dGVuNjQz?=
- =?utf-8?B?eDVpWHZYOE50U1NsaDZlUUc3UDZwUUtSdkF6UENYUU5zYk5iY0xUaVVpT245?=
- =?utf-8?B?MlQ3VFV5M0ZZUDQ4ZFVwbGhVbURjRlNSelRmdFlOeDlZWVp4d2RvMXg0cmk3?=
- =?utf-8?B?eEs2bUx4NWl4QjZKUCs1T1MyQVJEbldFR2ZuM2JBaENHanFhRXBGRzlXVUxW?=
- =?utf-8?B?REhzdEhkeGRWQ3Y3c0dJV2p0WXlPVWJwdnJqRGp2L0JQQml3RVBUMXVFK2xm?=
- =?utf-8?B?ZThrU2FOQXNxT0ltanJ1YmxuaUJiWExtVk0yek94cDRFTG1JZ2RUYWIxVlFG?=
- =?utf-8?B?RFEwWnlkWFEyZnk3NThsK3pXUzRIV2VhVWpVM1FGV1dRVnFTRTMwTVV2UXpq?=
- =?utf-8?B?TndJa08rWUowQ21uKzNkZm90M1pkVjR5WFdvZGFRd1U4cG9EQk9FeUFiRlpj?=
- =?utf-8?B?dHU1QkYwNmpPWU9FL2tqeGpKd2JkakoxZktLZmF0L0lZQTBQOHNKWTdNN2pm?=
- =?utf-8?B?R2FyRmdEOE13NytPbFV1elFTbDR5QW5wWi9objVqQUdJZHJSS1psMVNWak1V?=
- =?utf-8?B?eTJ6OVRFRFNsT1NoNWthSFYyOWxCdUllVEZJRzFUc3kySWM3NGdLeG1sMG5H?=
- =?utf-8?B?M0JnRXBsYitlYm1BSFN2LzVsdkVEWUNVZEZMMlBxcklENFlGY1NyaEF1emFZ?=
- =?utf-8?B?RXBLL2piR0t1dm10UlpDS3JnellmZmFuMlRNYmV1RXBDSmNWRXhlajU1RjM3?=
- =?utf-8?B?bFJlQnNFaXA3M2FyalhOcTd0b0U2N0dkcmRGT2RnYVpHekZ3RWdra3Q3TUFr?=
- =?utf-8?B?Rm45a3k4TVcwY3dYN2wwQnMvV2pvNUp4YytmTVBXOHJ1a0d1eW0vWWExQWFQ?=
- =?utf-8?B?MlVaQlFJb2hSZUNKVXJ2bVlSWTI0c0IrYkc2WEhCdE9Ib3dVNjg0ajFKcGl6?=
- =?utf-8?B?eVBTd2NjN0dHaWdhNXJxcjVJVE5VNG8ra3dHcFRlYU90ZFp1RjZDMTBUZG1W?=
- =?utf-8?B?RFVIQnh2M2gyaEJQTXF4OGc0RWVhQko3WG83bjZZQ1k0Nmo3bWZqeGExeHRJ?=
- =?utf-8?B?ellVWnlCVEJrREpYMUgzTTd2c2JBMThwS0lhR3FHeDRvWWxUY3I3czYydEpu?=
- =?utf-8?B?S1pCK2lBYVROajIvOC9La084K0dWaVdsK01hK0ZvZDcxM3VIWG56MnFZQk50?=
- =?utf-8?B?ZnZaNXJMell4U0tNWUdWeEpPYkJRemtCMVlpT0FqZ1ZNaTJDckZ2WjROL1B5?=
- =?utf-8?B?SktsbHBuUGEySWpBZkJQV3phSndZeG51Yy8vZVZITVNSS3NxRGd5WUoxeUlu?=
- =?utf-8?B?UTBJS0VjRjdxUnBQSTQ1VW9JdmNmdW1SVFNVTDFYYjF2a1pCTXR5QVBzWUZa?=
- =?utf-8?B?SnhCYzQ1Vi8yNDVQVHpodWFNRnZNS0xTamp6WTREL1hFQWVQRUltRmZiNjA5?=
- =?utf-8?B?UEkvSTVnNjA5NVFvRnU3VE90MDl6UGRpZmU1amovWjRpd1FhdytERk12R0JP?=
- =?utf-8?B?OGZzcVBwUGd6a2t3dDVhN3Z1eFZRcjN1aVJTTExaN05EbG53d1ZVUnFDUWEz?=
- =?utf-8?B?dUlnZWtycmlHanpmcUFqYUpiR0M0eWZ2QzJQdnpZOTYvaVRjc3o5dTJXcThj?=
- =?utf-8?B?QXdRalBPb0ltem55WVEwckVNaXRBSTNhTW9GcWg5aEF1T1RhVWRLRkpZY1pm?=
- =?utf-8?B?RXh4NEluL1FaTEpaQ2FQWkh2MHZGWHRGVklXSWlFQ2haZWlBK0ZmbG1Cd3Zk?=
- =?utf-8?B?bTZqM2xielVZeENKQlpnb2xNUFJKNmhLK0lJa0x1YTRXUTgwbFVaVkNETUda?=
- =?utf-8?B?c1JXbWJ3ZEpCRklEVXF4bVo3R0U0TmJ1N04wMkVjR1pMd0ZRQ09kMlNJeXBq?=
- =?utf-8?B?dnJHWE00RTMxSXFPbjlHdTZOZ1dOYVJBaGpmbnZqWkpmU2hNbStpblNxSlRG?=
- =?utf-8?B?L1QwWG53OUZscm1sdko3aUNBZkRpS3BZbjR2MVF4K0QxS3dXTkJKOVdJd3hM?=
- =?utf-8?B?eHBqc0ZEV1IyejRML3NESFBBL1B5VDk4VFQvVC9wc3pxcjNJTFFUc3VTK3NY?=
- =?utf-8?B?VDNvTUcxRlcwa25sTEllL3B3TkwxVFF6VFRYK3RJdTNJeDVIZDZCaWZBVjR0?=
- =?utf-8?B?cjRPNkdOZitCNUpueFptWUY5aWJpMWZSZ3lMOGp2QytVY3lmOElwVFhCSURR?=
- =?utf-8?B?VWUxWG9Yd2RPcmE5TzcyS0pydEtocTk2a0swaE5ORUdaV3R2TWdIY05VWnJi?=
- =?utf-8?Q?yiiocXYWHXwP+B6685gz8PEtF23V87Ja8PWpOtN+whn87?=
-X-MS-Exchange-AntiSpam-MessageData-1: yKA1RfvQ6K/mIA==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eaa675c1-719b-460f-fc9d-08df14f6884f
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7110.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2026 20:01:59.4686
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fZsx6yQmpaWkJViGeuD2lWUlgYO9CUk1qTx7Ve6peqCxGGe+S6KPOQrtzQ9+YryuWVlZfYjB0V6XYa1x6ADS4g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6940
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260917-ivc-resync-backoff-v1-1-dd41ef3a1390@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MQQqAIBBA0avErBuwIM2uEi10GmsILBSiiO6et
+ HyL/x/InIQzDNUDiU/JsseCpq6AVhcXRpmLoVWtVrYxKCdh4nxHQu9o20NAb3TfacteEUEJj8R
+ Brn86Tu/7AazuO8VkAAAA
+X-Change-ID: 20260917-ivc-resync-backoff-b768569eb0cc
+To: Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ 0xSmash0th <0xSmash0th@gmail.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1789680034; l=13677;
+ i=0xSmash0th@gmail.com; s=20260917; h=from:subject:message-id;
+ bh=xI23HGnd1O7JPgGTS/M47lGy5+o/8IZV4S5U1Ah6NHw=;
+ b=GM9OUxc05mtbQd3pbhl3RcsXMbSB7uqdjcegbRRk+L+IrGaBBaCj7H1rcOuczia/9STMK+0RK
+ NxOYCWLMOcDAYEhkzzRwlqmVoxEM9vpJVxxtx5e6NAJAJNNsKRh/JiQ
+X-Developer-Key: i=0xSmash0th@gmail.com; a=ed25519;
+ pk=zVeoR0UBzAAUPJSb7skqhhRlouyNu+2xwsW4ThiH5YU=
+X-Endpoint-Received: by B4 Relay for 0xSmash0th@gmail.com/20260917 with
+ auth_id=1034
+X-Original-From: 0xSmash0th <0xSmash0th@gmail.com>
+Reply-To: 0xSmash0th@gmail.com
 
-Hi Thierry,
+From: 0xSmash0th <0xSmash0th@gmail.com>
 
-On 02/09/2026 11:17, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Use #address-cells = <1> and #size-cells = <1> because we don't need
-> 64-bit register addressing for this hardware. While at it, also adjust
-> the ranges property to encompass the entire AHUB range as per the TRM.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->   arch/arm/boot/dts/nvidia/tegra124.dtsi | 16 ++++++++--------
->   1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/nvidia/tegra124.dtsi b/arch/arm/boot/dts/nvidia/tegra124.dtsi
-> index ce4efa1de509..7a71dba42dc0 100644
-> --- a/arch/arm/boot/dts/nvidia/tegra124.dtsi
-> +++ b/arch/arm/boot/dts/nvidia/tegra124.dtsi
-> @@ -1114,13 +1114,13 @@ ahub@70300000 {
->   			    "rx3", "tx3", "rx4", "tx4", "rx5", "tx5",
->   			    "rx6", "tx6", "rx7", "tx7", "rx8", "tx8",
->   			    "rx9", "tx9";
-> -		ranges;
-> -		#address-cells = <2>;
-> -		#size-cells = <2>;
-> +		ranges = <0x7030000 0x0 0x70300000 0x10000>;
+An untrusted peer can wedge a channel for ever: park its state word on
+SYNC and stop touching the ring.  No path in tegra_ivc_notified() can
+change the victim's rx word, so rx_state stays SYNC and the loop is
+absorbing rather than slow -- pass 7,651,085 is indistinguishable from
+pass 1.  Each pass rewrites the ACK already in tx.state, re-zeroes both
+counters, rings the doorbell and returns -EAGAIN.
 
+The only in-tree caller, tegra186_bpmp_channel_reset(), retries on that
+with no timeout, no iteration cap and no cpu_relax(), on both the probe
+and the resume path, so the victim burns a core at roughly 1.5M
+iterations per second for as long as the peer stays quiet.
 
-I noticed a regression on Tegra124 Jetson TK1 today and I am seeing ...
+A peer is a service, not a VM: one untrusted guest can hold a channel to
+each of a rack of service partitions, and nothing here makes wedging the
+tenth harder than the first.
 
-  tegra30-i2s 70300000.ahub:i2s@70301100: error -EINVAL: invalid resource (null)
-  tegra30-i2s 70300000.ahub:i2s@70301100: probe with driver tegra30-i2s failed with error -22
+This is not a new class of concern for ivc.c.  tegra_ivc_empty() already
+carries an over-full check "to prevent denial of service attacks", and
+calls that condition "an invalid case caused by a potentially malicious
+peer".  That defence covers the counters; the handshake has none.
 
-Looks like the first address in the above is missing a 0 and we
-should have 0x70300000 and not 0x7030000.
+Apply geometric backoff to calls that make no progress, modelled on
+xen_irq_lateeoi_locked(): a saturating count, a doubling delay, a hard
+cap, and a reset the moment the peer moves.  Progress is detected by
+reading tx.state back rather than by tracking which branch ran, so the
+states from which no branch can escape are covered too.  The wait is a
+bounded busy-wait by default because tegra_bpmp_transfer_atomic() reaches
+this with interrupts disabled, and it uses local_clock() because the
+resume path can run with timekeeping suspended.
 
-Let me know if you want to fix up or what a patch to fix.
+This is a floor, not a fix.  The return value is unchanged, the caller
+still retries for ever and probe or resume still never completes -- the
+spin just stops costing what other channels have to share.  Bounding the
+loop belongs in the caller.
 
-Thanks!
-Jon
+Assisted-by: LLM
+Signed-off-by: 0xSmash0th <0xSmash0th@gmail.com>
+---
+Precedent
+---------
+ivc.c already models a hostile peer.  tegra_ivc_empty() carries an
+over-full check "to prevent denial of service attacks", and calls the
+condition "an invalid case caused by a potentially malicious peer".  That
+defence covers the counters; the handshake has none.  This closes the
+second path, not a new class of concern.
 
+The handshake has never been revisited: since 2016, every patch to ivc.c
+has been the import itself or a tree-wide sweep.
+
+Scope
+-----
+A peer is a service on one channel, not a VM: DRIVE OS is one untrusted
+Linux guest with a channel to each of about ten service partitions.  One
+hostile peer wedges one channel, and nothing makes wedging the tenth
+harder than the first.
+
+Whether x services down becomes the SoC down, I cannot show.  That needs
+the spinning partitions to share cores rather than being pinned apart by
+the PCT, and the hypervisor to enforce no per-partition CPU budget.  I
+have no Tegra hardware and have not looked at the hypervisor -- treat the
+SoC-wide version as something to check, not a claim made here.
+
+Measurements
+------------
+Keying the test on the first branch -- where the doorbell amplification
+lives -- would cover only a third of the reachable cases.  Over 30 inputs
+that stall the loop:
+
+    looping endpoint                  n    before        after
+    rx=SYNC, tx=ACK   (branch A)      9   ~7,700,000      50-64
+    rx=SYNC, tx=SYNC  (enters A)      2   ~7,700,000         65
+    tx=SYNC, rx=EST   (empty else)   15    8,387,013      63-64
+    tx=SYNC, rx=OTHER (empty else)    3    7,648,606         64
+    tx=OTHER, rx=EST  (no escape)     1    8,244,347         64
+
+Two thirds are the do-nothing else at the end of the chain, which emits no
+doorbell at all -- silent, and so easier to miss.  The last row is an
+out-of-enum tx.state from which no branch can escape.
+
+Why only a floor
+----------------
+xen-netback puts five layers between a hostile frontend and the host that
+IVC has none of: a thread per peer, a blocking wait, stall detection that
+parks and recovers, a per-peer quota, and a fatal way to declare one peer
+dead.  Backoff is the floor under those, not a substitute.
+
+The two tunables and two counters are documented at their declarations in
+ivc.h.  Nothing in the tree sets or reads them yet.
+
+Testing
+-------
+Exercised under LKL with a userspace fuzzer driving ivc.c directly; the
+numbers above are from those runs.
+
+arm64 defconfig builds clean to vmlinux and Image under W=1 with TEGRA_IVC,
+TEGRA_BPMP and the 186/194/234/264 SoC options on.  ivc.o also builds clean
+for 32-bit ARM and pulls in no 64-bit division helper.  Not run on Tegra
+hardware.
+
+Tool assistance
+---------------
+AI tooling was used throughout -- audit, fuzzing setup, patch and changelog
+-- but never fully automated; every step was hand-checked.  The Assisted-by
+trailer is on the patch.
+---
+ drivers/firmware/tegra/ivc.c | 132 +++++++++++++++++++++++++++++++++++++++++++
+ include/soc/tegra/ivc.h      |  44 +++++++++++++++
+ 2 files changed, 176 insertions(+)
+
+diff --git a/drivers/firmware/tegra/ivc.c b/drivers/firmware/tegra/ivc.c
+index 8c9aff9804c0..2b7d7a240aa6 100644
+--- a/drivers/firmware/tegra/ivc.c
++++ b/drivers/firmware/tegra/ivc.c
+@@ -3,6 +3,12 @@
+  * Copyright (c) 2014-2016, NVIDIA CORPORATION.  All rights reserved.
+  */
+ 
++#include <linux/delay.h>
++#include <linux/math64.h>
++#include <linux/minmax.h>
++#include <linux/sched/clock.h>
++#include <linux/time64.h>
++
+ #include <soc/tegra/ivc.h>
+ 
+ #define TEGRA_IVC_ALIGN 64
+@@ -395,10 +401,111 @@ int tegra_ivc_write_advance(struct tegra_ivc *ivc)
+ }
+ EXPORT_SYMBOL(tegra_ivc_write_advance);
+ 
++/*
++ * A peer that moves to the SYNC state and then stops responding leaves this
++ * end with nothing to do. Each call to tegra_ivc_notified() repeats the same
++ * work, changes no state and returns -EAGAIN again, and the only in-tree
++ * caller retries in a loop with no timeout and no iteration limit. The result
++ * is a doorbell and several shared memory writes per iteration, for as long as
++ * the peer stays silent.
++ *
++ * Delay the call instead of skipping the work. Each call still does everything
++ * it did before, so the behaviour a caller sees is unchanged apart from how
++ * long the call takes. The delay doubles on each fruitless call, up to
++ * TEGRA_IVC_RESYNC_MAX_NS, which reduces the doorbell rate, the memory traffic
++ * and the CPU time together.
++ *
++ * A call counts as fruitless if it did not change this end's own state and is
++ * about to return -EAGAIN. That covers every case where a peer can stall the
++ * handshake, including the states from which no branch below can make
++ * progress, without naming any of them.
++ *
++ * The loop itself is not bounded by this. The channel really is not ready, so
++ * the return value does not change and a caller that retries forever still
++ * does. Only the cost of retrying falls.
++ */
++#define TEGRA_IVC_RESYNC_MIN_NS		(10 * NSEC_PER_USEC)
++#define TEGRA_IVC_RESYNC_MAX_NS		(100 * NSEC_PER_MSEC)
++#define TEGRA_IVC_RESYNC_MAX_SHIFT	16
++#define TEGRA_IVC_RESYNC_THRESHOLD	1
++
++/*
++ * resync_count stops increasing at U8_MAX, so a threshold near that value
++ * would leave no room for the delay to grow and the backoff would never take
++ * effect. Clamp the threshold so that a larger value always means a longer
++ * grace period, and leave TEGRA_IVC_RESYNC_DISABLED as the only way to turn
++ * the backoff off.
++ */
++#define TEGRA_IVC_RESYNC_THRESHOLD_MAX	32
++
++static void tegra_ivc_resync_restart(struct tegra_ivc *ivc)
++{
++	ivc->resync_count = 0;
++}
++
++static void tegra_ivc_resync_wait(struct tegra_ivc *ivc)
++{
++	unsigned int threshold = ivc->resync_threshold;
++	unsigned int shift;
++	u64 deadline;
++	u64 delay;
++
++	if (threshold == TEGRA_IVC_RESYNC_DISABLED)
++		return;
++
++	if (!threshold)
++		threshold = TEGRA_IVC_RESYNC_THRESHOLD;
++	else if (threshold > TEGRA_IVC_RESYNC_THRESHOLD_MAX)
++		threshold = TEGRA_IVC_RESYNC_THRESHOLD_MAX;
++
++	ivc->resync_events++;
++
++	if (ivc->resync_count != U8_MAX)
++		ivc->resync_count++;
++
++	/*
++	 * A small number of fruitless calls is normal while a peer catches
++	 * up, so they are not delayed. Still yield to any sibling thread,
++	 * because the caller is likely to be spinning.
++	 */
++	if (ivc->resync_count <= threshold) {
++		cpu_relax();
++		return;
++	}
++
++	shift = ivc->resync_count - 1 - threshold;
++	if (shift >= TEGRA_IVC_RESYNC_MAX_SHIFT)
++		delay = TEGRA_IVC_RESYNC_MAX_NS;
++	else
++		delay = min_t(u64, TEGRA_IVC_RESYNC_MIN_NS << shift,
++			      TEGRA_IVC_RESYNC_MAX_NS);
++
++	ivc->resync_delayed_ns += delay;
++
++	if (ivc->resync_can_sleep) {
++		might_sleep();
++		fsleep(div_u64(delay, NSEC_PER_USEC));
++		return;
++	}
++
++	/*
++	 * This can be reached while the device is suspended, where
++	 * timekeeping may also be suspended and ktime_get() would warn and
++	 * return a clock that is not advancing. local_clock() remains valid
++	 * there, and tegra_bpmp_wait_request_channel_free() busy-waits the
++	 * same way for the same reason.
++	 */
++	deadline = local_clock() + delay;
++	while (local_clock() < deadline)
++		cpu_relax();
++}
++
+ void tegra_ivc_reset(struct tegra_ivc *ivc)
+ {
+ 	unsigned int offset = offsetof(struct tegra_ivc_header, tx.count);
+ 
++	tegra_ivc_resync_restart(ivc);
++
+ 	tegra_ivc_header_write_field(&ivc->tx.map, tx.state, TEGRA_IVC_STATE_SYNC);
+ 	tegra_ivc_flush(ivc, ivc->tx.phys + offset);
+ 	ivc->notify(ivc, ivc->notify_data);
+@@ -546,6 +653,17 @@ int tegra_ivc_notified(struct tegra_ivc *ivc)
+ 		 */
+ 	}
+ 
++	/*
++	 * Read the state back to find out whether any of the branches above
++	 * changed it, rather than tracking which branch ran. A peer that is
++	 * making progress moves us along and resets the backoff; a peer that
++	 * has stopped leaves the value sampled at the top of this function.
++	 */
++	if (tegra_ivc_header_read_field(&ivc->tx.map, tx.state) != tx_state)
++		tegra_ivc_resync_restart(ivc);
++	else if (tx_state != TEGRA_IVC_STATE_ESTABLISHED)
++		tegra_ivc_resync_wait(ivc);
++
+ 	if (tx_state != TEGRA_IVC_STATE_ESTABLISHED)
+ 		return -EAGAIN;
+ 
+@@ -702,6 +820,20 @@ int tegra_ivc_init(struct tegra_ivc *ivc, struct device *peer, const struct iosy
+ 	ivc->tx.position = 0;
+ 	ivc->rx.position = 0;
+ 
++	/*
++	 * This function assigns the fields it uses and does not zero the
++	 * structure, so clear the backoff state explicitly. A caller that
++	 * passes an uninitialised structure would otherwise inherit a random
++	 * resync_can_sleep and could end up sleeping in atomic context. Both
++	 * of the caller-settable fields are cleared here, so they have to be
++	 * set after this function returns.
++	 */
++	ivc->resync_can_sleep = false;
++	ivc->resync_threshold = 0;
++	ivc->resync_count = 0;
++	ivc->resync_events = 0;
++	ivc->resync_delayed_ns = 0;
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL(tegra_ivc_init);
+diff --git a/include/soc/tegra/ivc.h b/include/soc/tegra/ivc.h
+index be45d5f5adea..548512e3113f 100644
+--- a/include/soc/tegra/ivc.h
++++ b/include/soc/tegra/ivc.h
+@@ -7,12 +7,20 @@
+ #define __TEGRA_IVC_H
+ 
+ #include <linux/device.h>
++#include <linux/limits.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/iosys-map.h>
+ #include <linux/types.h>
+ 
+ struct tegra_ivc_header;
+ 
++/*
++ * Store this in tegra_ivc.resync_threshold to turn the re-synchronisation
++ * backoff off. tegra_ivc_notified() then behaves as it did before the backoff
++ * was added, and the counters below stay at zero.
++ */
++#define TEGRA_IVC_RESYNC_DISABLED	U8_MAX
++
+ struct tegra_ivc {
+ 	struct device *peer;
+ 
+@@ -27,6 +35,42 @@ struct tegra_ivc {
+ 
+ 	unsigned int num_frames;
+ 	size_t frame_size;
++
++	/*
++	 * Backoff applied when a peer stops responding and calls to
++	 * tegra_ivc_notified() stop making progress. The call is delayed
++	 * rather than skipped, so the work it does is unchanged and only the
++	 * rate at which a retrying caller can repeat it falls. See the comment
++	 * above TEGRA_IVC_RESYNC_MIN_NS in ivc.c.
++	 *
++	 * @resync_can_sleep: set only if every call site of
++	 * tegra_ivc_notified() is allowed to sleep. When false, which is the
++	 * default, the delay is a bounded busy-wait that is safe in any
++	 * context. Do not set it just because the common path can sleep, as
++	 * tegra_bpmp_transfer_atomic() reaches this code with interrupts
++	 * disabled.
++	 *
++	 * @resync_threshold: how many calls that make no progress are allowed
++	 * through before the delay begins. Zero selects a default. Values
++	 * above TEGRA_IVC_RESYNC_THRESHOLD_MAX are clamped, so a larger value
++	 * always means a longer grace period and never disables the backoff.
++	 *
++	 * Both of the above are cleared by tegra_ivc_init(), so set them after
++	 * calling it.
++	 *
++	 * @resync_count: how many calls in a row have made no progress. Reset
++	 * whenever the state changes and by tegra_ivc_reset(). Internal.
++	 *
++	 * @resync_events: how many calls have made no progress in total.
++	 * @resync_delayed_ns: how long this channel has spent delayed, in
++	 * nanoseconds. Both are for diagnostics, are only cleared by
++	 * tegra_ivc_init(), and are not used elsewhere in the kernel.
++	 */
++	bool resync_can_sleep;
++	u8 resync_threshold;
++	u8 resync_count;
++	u32 resync_events;
++	u64 resync_delayed_ns;
+ };
+ 
+ /**
+
+---
+base-commit: dc9c9c4fcb88a5660259dcef93c1ef5acd767189
+change-id: 20260917-ivc-resync-backoff-b768569eb0cc
+
+Best regards,
 -- 
-nvpublic
+0xSmash0th <0xSmash0th@gmail.com>
+
 
