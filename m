@@ -1,42 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664413290A6;
-	Fri, 18 Sep 2026 12:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965093A9013;
+	Fri, 18 Sep 2026 12:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789736174; cv=none; b=Jf4HnWEwOc+kSkhA7cUAnjHOQIX/CfR2ZWJmF6Ju+eaPXUpmu1ZS77fkPXvd0naouHRuRsmaEWnS3qlB+8Iiit05AZQs7/KZuFGT7x8CpLSaEZRhnM4cCDAcrZAVIdcUJKwRBzcqUlyOtrYX5Z+w/HX2BlfTp2j0rRye8s8jEcU=
+	t=1789736237; cv=none; b=LbyfkaTtCnk6E4o16DczgyhQZrJuc7CwYScy1F+y6WbYXjlb718uvup08bmENULEKN0smoKVNn01cFdkH0BM4Au5Ab2ij8S0Hu3G13hHSY+dxidYlIVlxnLKgbqrOB6+esR/ltMA6f01B6Uaw+i//j5XfOG2QE/PSGrRvmTvPeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789736174; c=relaxed/simple;
-	bh=RBXYEjHF/EWP9iukfkuHgom2R/J9ihTDzvMV0PEXWn4=;
+	s=arc-20240116; t=1789736237; c=relaxed/simple;
+	bh=tpwzFkjnZBOXxEGmcfJodTksQQDSD8ju7e36ieY34x0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m0kgFfCf59ce06YQYe8IqVfB82RZZlkRmcTZ89hxp8ziYZk1u8NMF4gL/UXPPjVPbIllyE/+2P4kLj7IvNVjrQ67W8S0AojbypY9cqJKCCYqmRv+09AgjS/kRB0IiH85gy6fKk4p8FwYbQkMG9QYhtljj6jYf3ePbogZPnAKexI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=im6zGlq1; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=YSKhJJ5MaqXGPVuvz+d7e6u7fWZJBjdgjaEkSRHvETg7okfG3XAqOsE5ONqcQQ0yEXrkxMq7SF9cnuY1wvxng1IUgEI86wMRGjM6aCUJ619riFFtrFhL6Qv/wCPT7GBxwBRAoor56B+y6U/caXxSHv/yeTVPq++zYjXwQ0WS0mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UeJf9n++; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="im6zGlq1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E1841F000FF;
-	Fri, 18 Sep 2026 12:56:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UeJf9n++"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99F431F000FF;
+	Fri, 18 Sep 2026 12:57:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789736173;
-	bh=J/k/w1B8of/PqrcuFgrWv1Alar7pC652sY+HmgTQ7ZU=;
+	s=k20260515; t=1789736236;
+	bh=O6mVnh2QxpWQMZdcxjlqqxRDl64o8g6/0MdKyQqxUgE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=im6zGlq1sW0eexQqwTbDpMfwxn/B6XmuCoktMjwlDeHct1/HEwclInfWXA2kAg9Xq
-	 U1HLJ2FMWXsDx5M9wXzpgohBUOcF8FL1PK11XFGYGSpfhECuIEZLYu+gBKZzRjtyOE
-	 b8aPExCBpmLUG4BkchoXW/uunWzcRXwPUcyHRRb7stjjIctjrwVUKDT0rdq0Wi3lWA
-	 H8b+MzBx0Jjc5MLtIf+fT88GFafz0soIczuGUEEe3FH69abNSFWkF50CL6fDmb88WZ
-	 PMzxdaOGZMpdWmSk2lsxRotrrxEHVwHJvzlnmPqki22X5fbTQzzPwliEX6wdwOdFli
-	 Ju4s+d5bgAwJQ==
-Date: Fri, 18 Sep 2026 14:56:10 +0200
+	b=UeJf9n++/bdLr5/NLxctB+2lDVLjXSVWPjihsu0RXsLhJn3lY79HUYY1nQ28lIUHf
+	 op141Hs7D6jUQOGPnm/eyAa9lrRu8MoBmoYE2oKS6yHsMp5v5c1sZGSjrFxsY5TJLu
+	 PHB0iIiO5ndnypCAahILD6uFPtPSDplaq36ldOMwQpPqs5qeCa75db9QPUJIxRIXUv
+	 vWDgY6+ZVljarkPqnITRGUM7Vgni2LZ/d25zz/0P1+DoZ02dswZfL85C95VvD0KBy0
+	 j/8wU6bJCpHd4q5kLiSIn4AXyFgCpxv6N7JkCDxsnABxGe2SMjGs6GB6r/mWltNXj6
+	 SmIsa04L8NC+Q==
+Date: Fri, 18 Sep 2026 14:57:13 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH 5/5] arm64: tegra: Add thermal senser for Jetson AGX Thor
-Message-ID: <aq00xANbqBoo-PrG@orome>
-References: <20260918-tegra264-i2c-v1-0-3adac7aae717@nvidia.com>
- <20260918-tegra264-i2c-v1-5-3adac7aae717@nvidia.com>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Anand Moon <linux.amoon@gmail.com>, devicetree@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6] dt-bindings: pci: tegra: Convert to json-schema
+Message-ID: <aq00_JJv77a7l2ph@orome>
+References: <20260902142449.735168-1-thierry.reding@kernel.org>
+ <178969471460.164579.7468750310934261303.b4-ty@b4>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -44,53 +46,51 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="exzpwnb5s2wwqjns"
+	protocol="application/pgp-signature"; boundary="4xxiwst64mchr4kd"
 Content-Disposition: inline
-In-Reply-To: <20260918-tegra264-i2c-v1-5-3adac7aae717@nvidia.com>
+In-Reply-To: <178969471460.164579.7468750310934261303.b4-ty@b4>
 
 
---exzpwnb5s2wwqjns
+--4xxiwst64mchr4kd
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 5/5] arm64: tegra: Add thermal senser for Jetson AGX Thor
+Subject: Re: [PATCH v6] dt-bindings: pci: tegra: Convert to json-schema
 MIME-Version: 1.0
 
-On Fri, Sep 18, 2026 at 11:06:57AM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On Fri, Sep 18, 2026 at 03:25:14AM +0200, Manivannan Sadhasivam wrote:
 >=20
-> The Jetson AGX Thor module contains a thermal sensor that can be used to
-> read out the local temperature. Add a device tree node describing this
-> sensor.
+> On Wed, 02 Sep 2026 16:24:49 +0200, Thierry Reding wrote:
+> > Convert the Tegra PCIe controller bindings from the free-form text
+> > format to json-schema.
 >=20
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+> Applied, thanks!
+>=20
+> [1/1] dt-bindings: pci: tegra: Convert to json-schema
+>       commit: 94976a87cfc164fdddda54f4baa61ea7f0bde323
 
-FWIW, I fixed up the stupid typo in the subject. For some reason it only
-stood out at me when looking at the patchwork listing.
+w00t! \o/
 
 Thierry
 
---exzpwnb5s2wwqjns
+--4xxiwst64mchr4kd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqtNOoACgkQ3SOs138+
-s6EUxw/+MwOQuWdUCVkR+SPKW8jPXk6hRuQXGyXpNSV0y0IVpmTrDDuMY98wsTAK
-L/crMDZNdf2Q1uN/fvgQP9a190AXGmUFkUu8UkbTHDV7MP46XdNL07/EIrhFxDZc
-3+y9s9QMMCmdtpiXWd9u1quegzxOdiUxZtM2ZDAh74FGE526Wtprvj/N/WaLLx6I
-K1J+kJNhQVWLsRVV+97kQ6YmHcjqYo/Bfi89HGqHjv/ST3rynr9FYDe36lNNeMgJ
-xBQ+dkrjWFklBYnsqU0JPfEpbLuDuLhxPbhIMAEujWdrpsnPOGs56ElspxDW4meJ
-eetVna5gMSvizncRHdrQHdpUq9Q6c3CS61OdFoabU+7N7CUNiDDpXQFzgypgsRWQ
-gLTWo8mSYh7ddpCarz0waNYovnY6lQBtpXrRDnHLP109P0oPmvYbTh2SU2dOkjoy
-Fj/krG6GKk16QxzNRNmwwRnWqkAZGfLnK+yyBfLIelbezFuMp3eOmyy+2PL03z4p
-zPTtlEN7M+XixUi1D2nfkBDGRkRKxOLZmLvhh7XlhYuJSJNSuZW0ddqeFHLOtrLw
-znqYEnNWFGdSqHgZARkPtNYDMhu93FFwdZIJTKXeKb6MXU2DJSMhy9PVtjAVH3vB
-gNNUMRNA+9eIJ36YyU4cLPJ+WiqVz584L8VSBbSJOhag7cu3P4k=
-=vIr1
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqtNSkACgkQ3SOs138+
+s6EJGg//bQ0cEgTIuVP9BnIde2ClYmeOhYi/yLw+uu4LOtIHtJmFc4zeWirobwlE
+Ai/CEp5N71Ur2pdmCnRo4qrH+sDtptFQM5yCSaG0yqlXv22Gdzr6AtJr9b4UjSrh
+S4iJBWmkMeKYU0aSuqh6+VPXGghiMzF5yDmEvne6NhFQ1lyyRpfQkV7EnAeJznSz
+7d8elNo3Cp9zQOwmzvzthdHSe9KOPVzIRQxLtAR1kLPEavY6acCUMKoGgr79X5kj
+BW5FCrZF+IRn8+kdYRMXf65rxJzbLFZDwuiu6y9FfmqklfAGnJQP/fr6EMeDOeDD
+Qwk+eiyncNT2rfTuk/Q9TUuXqR4QBIFf16XcR0o75rCU6MicgvQXkCqRiaMa9zPN
+WRK1EmMLvUgUV9mr9ZCthYcXbTs9QrGjHX6pkBFzM2/SVKCxav/qYiLB8Hbeihfg
+m6aFWQ3lP3OyQCRoytk3UIGmrZ6HNfVjOUhBh6f62Xn92hg1RufHDhKBtkpxiexw
+6NkKHymX7oJg2Tn9Fh6iQJZPoo2Dg+lwTzEIGoGEyWpff+RuaACMF2AWCVom8ZT8
+3aBZQ/QE3lYnOAG0pncuEtV9dJ6C5EYARs1bQL8yB48K7wdmxlZLnimy4JwtMdFi
+7pzzHEEFECE+b5JECg+fmr0bKr14De6JOSRQW//JPVTWtVj23ts=
+=w91P
 -----END PGP SIGNATURE-----
 
---exzpwnb5s2wwqjns--
+--4xxiwst64mchr4kd--
