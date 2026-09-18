@@ -1,34 +1,35 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18A654704E;
-	Fri, 18 Sep 2026 09:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0212B342514;
+	Fri, 18 Sep 2026 09:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789722435; cv=none; b=XHw3fvjWl4SIfWbX98K0ZUlko4tcLJ5r0FfZfEevTjfGV+Pmwfh4+EjtlJa/Eq9y9Whjvzqca02gfE/yCkRcLqYGf2MQcWaegDb/tM6oTPCzm94GBasv8IdqEGOypBQzaSxgJFGXRgDsDJfySGVJHD0JP21vHXPAViW6DOKpL0M=
+	t=1789722438; cv=none; b=ZtA6ABRSFhq6M9/di7yEify0LjJQ7a3ES5qUyEAzbL9pqg+sdLE+F87Z4+7uxML8Tl115UfrmPRyWoXLH5Q9jbXyeF36jugdsZH6KZ/RDL6VxkDC5/K+c6kyKqhZyVvSUGkFaxcO8ByTD4TcWqTV9MiKu/T8FmBO00yxQkiVzAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789722435; c=relaxed/simple;
-	bh=uVMGV6mW+9McPX2jlcYqWgyFcbTHghD5Rr/hke0J85A=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=in/jEqINBZYjia9jh0ij4lL8damymh0ql/uivt2uEGt5X/qk5RJOPZAHg2raRuIqM+dmxEMg4MZt8ZbiL/s4h2UzKxfnPahZJvNH1t62bWuSFBcMIYaZkD2qZ5oCgYlspt5TlbBPuQPQ+pLg2PQ44qQd1LtIg0rSloPZ3CGYgVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ms3SArsN; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789722438; c=relaxed/simple;
+	bh=2Um907s1I8QJ+sKFjO+ivkQiLeMQobxhytsnnNk6niA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=t15pdx0XTbAOZKd56cMt64nc538PoBQHsLCexOZgi7hxI70ubL2qdv1qyFz1+rggYrHiVa5PVuvuRbnAGBPB0sW0gbh/uffdhenk2U2BchWhWW1u2xVS2dK3uDpT1Z9yQYAuIHJedeTHdzr5L4CIievAIy6z5H23B12pUjwX+ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K3VM0Qf4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ms3SArsN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14FE11F00893;
-	Fri, 18 Sep 2026 09:07:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K3VM0Qf4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE2201F000FF;
+	Fri, 18 Sep 2026 09:07:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789722433;
-	bh=36KRSidEpS51Zb1bKWhm3XI3hlhvN8uP5EwIs5i6OQ4=;
-	h=From:Subject:Date:To:Cc;
-	b=Ms3SArsNpwxupNYZmptYC/aNSZG1oj/QcDsgqGHVRmlT6KF1+3ctpnjm30ySOeNXV
-	 9ZruOaQYIkgnxG3YAeONW7ggp4kuEdZmYGhUF7kiZiaO0KZmTcTBQpNFNcvRmIKGSH
-	 8pcymmjOWUWy7R+m+yj1tQf+Dqzy8iXgWFbnpH9wPdg2+RFyywePUA2hnJNu3Oqg6d
-	 tWqMVfdwOv57PtKNsPPtTftQVhjdF2E+dhu834NTIx5Rdxd77uElKMd0yJFHC0i03u
-	 jYFG9zUJzzK9wMcU4nPiOuy5m5id0YwQfDmBwsPdHPaFU5Avf3mX7lsuE7Ny3mKmIe
-	 NNPTvDlJusY9w==
+	s=k20260515; t=1789722436;
+	bh=2nCw6KkfIi4BffRTdVZ1uGCrQblL43sxgakuDypKl2M=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=K3VM0Qf4CNGu65pCv6VleHhBv9TMkF+XKl7gQR38XzzizJ5qeNuYJf37nxo7XgYJG
+	 ETZNuFGDLLCwxfvBQS7QoDS/dgu4Re9WrklN58GpckJ5gmqBczYQ/7KeQ3ocIzR/1f
+	 vJ/GMH6XdH5hb6XZl7hAU1Fy4Hb0hOGoeoUwN72MzySiVn3DbMUMEEQgALxDy3u2xw
+	 v0jGOaJV9t6oa3OyDso9ySoiDGe6TdPTE5n33bBniQBnIhnYO/SeGYnb7oEceGQu0h
+	 t3oAifR4buRUdcubIs4jSibdFiVgAgvM40g6ns54nP+2t18oq+rQvF2vIz1YrCEu4e
+	 ugVGGkCIIh9EQ==
 From: Thierry Reding <thierry.reding@kernel.org>
-Subject: [PATCH 0/5] arm64: tegra: Miscellaneous I2C changes on Tegra264
-Date: Fri, 18 Sep 2026 11:06:52 +0200
-Message-Id: <20260918-tegra264-i2c-v1-0-3adac7aae717@nvidia.com>
+Date: Fri, 18 Sep 2026 11:06:53 +0200
+Subject: [PATCH 1/5] arm64: tegra: Add missing *-cells properties for I2C
+ controllers
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -37,10 +38,9 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDS0ML3ZLU9KJEIzMT3UyjZF1TI8Nkg1TLVFODFGMloJaCotS0zAqwcdG
- xEH5xaVJWanIJyAyl2loAFYPgOHAAAAA=
-X-Change-ID: 20260918-tegra264-i2c-521c0e9e50d3
+Message-Id: <20260918-tegra264-i2c-v1-1-3adac7aae717@nvidia.com>
+References: <20260918-tegra264-i2c-v1-0-3adac7aae717@nvidia.com>
+In-Reply-To: <20260918-tegra264-i2c-v1-0-3adac7aae717@nvidia.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
  Thierry Reding <thierry.reding@kernel.org>, 
@@ -48,61 +48,173 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1538; i=treding@nvidia.com;
- h=from:subject:message-id; bh=uVMGV6mW+9McPX2jlcYqWgyFcbTHghD5Rr/hke0J85A=;
- b=owEBbQKS/ZANAwAKAd0jrNd/PrOhAcsmYgBqrP85E9EJE68J7QBWTBwmzc1FA2wDIVcqZt2UV
- xBo3kecqcOJAjMEAAEKAB0WIQSI6sMIAUnM98CNyJ/dI6zXfz6zoQUCaqz/OQAKCRDdI6zXfz6z
- odP7EACRvRY8ivrK2J0ClLr7BlCS51jqY3gQnZ9mCBogu8sd+oAKfpOGA//iUG7Tw91xT1nZPYv
- GSawXaieMQ4DmaqD2GVK4eA5C0TGuSbwDsUaRb9campumpIi+a15byi/H6Jm6yTrn3+eljoSRom
- nyeVSaaKcmrTdIMEjt7ituB/on78fuXFlqyvqmeP3j2o02rkFE/IpADaYMRe03Br5EYIpfjDxZe
- u0MYy5PDNeZXCrnYE+gk2vd1c+0e0y4roYXaPxVtEbG0Wa2PSohbUiaVrYn3HGIzHT7/Zwox2O5
- 4/li/ircmuGiqtbdlCi+aqCVLw6PGw5Fl4EiCU45n/D9tw7jZPkAWLJGsBaYavvNUWkeCD5l9OR
- ub0lpwIsVc80BWKc1CGDpoUc5hWDMeO110RiBqdDFOwyFp04A1JqeM4ijpocbGNMqRaGl527Stb
- Anh79M3F34ZvHyvBrssbunDzawMH9zfXl2q1Ev4klzjBCipJDi5kDkTw3iWdwm7j82Ag12QgXYv
- tyv+IapjPzhDbhbaVEjG3MqPb0tU9FNZ9iHnFE/mjBw3fKrLFb7jEsi2eZzyz5Py7WLCjgew5QB
- AGNQoqvZcURInvvA7ZIPVbl7dDa3jMINELyJIYYlmeWLk1G0a+QiuugpNHIwWSLex8CqYg+7WZA
- uVtGZuZFDnPkUTw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5712; i=treding@nvidia.com;
+ h=from:subject:message-id; bh=hbiISH/xEfQuYpC+KSzNmyszX4beKE3WE4XSekJaBfA=;
+ b=owEBbQKS/ZANAwAKAd0jrNd/PrOhAcsmYgBqrP8+XYCPu93lPL5cUOfKjOLzCbNLHbb7k8UPX
+ TRfXsUIpJiJAjMEAAEKAB0WIQSI6sMIAUnM98CNyJ/dI6zXfz6zoQUCaqz/PgAKCRDdI6zXfz6z
+ ofSTEACDLnThW+DH+Mbol3PcWlF8L+fLNqtjF/qWJ4fl5vMZOmytrR5LNgdo/8Rk2KMet9/DcEt
+ rXU4rwZgiKKUhgGZEArXL+8DFKIctohW29aL9L8X95kAJ6ytIi5xjG4KegMvK7tctNhDZPCrG1P
+ OimF5XeqEMUBxb42DctpaImqkbvXaAzLHIL46aARH3hYoC5etB42IFnnyztED8AigF9VU1yYt1c
+ PHeOjhR4l8Ex9bIJUvcQrOyLMpmsLi14IIjLNVsIgX/J4Jmy3Pwna9ZsuSaISXo1dZqSTVPKIxB
+ SkqrjtDxht9JvA2pdmE0vchULCUlY9wlUJA6yC0pmrhodS3bG7Kd9z2rBaVzJ+RIgf/dwZ/zloX
+ p5PBkd8u2zFpYjhyuo2QbHhYjNf8fTtMlCfr061LF+rX6tbnydmg9vmDonzydoDrEj3e7xLv0sb
+ pId0Z4cCJeIp1lwX/RDrxImwcsJnmB9ha+r7Li27jSlVqng3PRp7H1bPtawdAgDPrb3pim4vO4A
+ Dl2yrxE3URMSFuFY455BjQzYf5jJfCvZZT94eOgLxwZ/h3tHRt7m2zbg6oFuaENuZePScYfRwkg
+ 2DZhQcOQ+quR0fy3DftnZptbYOOYkaJ+kCrXMRq97/U4ipIJ8OVOF+UHccJabFZmg9ab6/o2Fxt
+ dT0KHNOX07SjT0g==
 X-Developer-Key: i=treding@nvidia.com; a=openpgp;
  fpr=88EAC3080149CCF7C08DC89FDD23ACD77F3EB3A1
 
-This series of patches fixes some minor issues with the I2C controllers
-on Tegra264 and adds some I2C clients that are useful for these systems.
+From: Thierry Reding <treding@nvidia.com>
 
-Patch 1 adds the missing #address-cells and #size-cells properties for
-all I2C controllers. These had gone unnoticed since no I2C clients had
-been added so far.
-
-Patch 2 ensures the I2C controllers are consistently named (and their
-names correspond to those find in various documents) by adding aliases
-to them.
-
-The module and system EEPROMs found on most modern Jetson devices are
-added in patches 3 and 4.
-
-Finally, the thermal sensor found on the Jetson AGX Thor module is
-described in patch 5. This allows reading the local temperature of the
-module.
-
-Thierry
+The I2C controllers on Tegra264 are missing the #address-cells and
+devices are added below them.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
-Thierry Reding (5):
-      arm64: tegra: Add missing *-cells properties for I2C controllers
-      arm64: tegra: Add I2C aliases for Tegra264
-      arm64: tegra: Add NVIDIA Jetson AGX Thor module EEPROM
-      arm64: tegra: Add NVIDIA Jetson AGX Thor system EEPROM
-      arm64: tegra: Add thermal senser for Jetson AGX Thor
+ arch/arm64/boot/dts/nvidia/tegra264.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
- arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi     | 25 +++++++++++
- .../boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi | 14 +++++++
- arch/arm64/boot/dts/nvidia/tegra264.dtsi           | 49 ++++++++++++++++++++++
- 3 files changed, 88 insertions(+)
----
-base-commit: e657a464aba873f5eaf3ca821b6e4016674492d6
-change-id: 20260918-tegra264-i2c-521c0e9e50d3
+diff --git a/arch/arm64/boot/dts/nvidia/tegra264.dtsi b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
+index b84f93ad227e..a5049e1a0571 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra264.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra264.dtsi
+@@ -3311,6 +3311,8 @@ i2c2: i2c@c600000 {
+ 			compatible = "nvidia,tegra264-i2c";
+ 			reg = <0x0 0x0c600000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 532 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 			clock-frequency = <400000>;
+ 			clocks = <&bpmp TEGRA264_CLK_AON_I2C>,
+ 				 <&bpmp TEGRA264_CLK_PLLAON>;
+@@ -3326,6 +3328,8 @@ i2c3: i2c@c610000 {
+ 			compatible = "nvidia,tegra264-i2c";
+ 			reg = <0x0 0x0c610000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 533 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 			clock-frequency = <400000>;
+ 			clocks = <&bpmp TEGRA264_CLK_AON_I2C>,
+ 				 <&bpmp TEGRA264_CLK_PLLAON>;
+@@ -3623,6 +3627,8 @@ i2c14: i2c@c410000 {
+ 			compatible = "nvidia,tegra264-i2c";
+ 			reg = <0x00 0x0c410000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 			clock-frequency = <400000>;
+ 			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
+ 				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
+@@ -3638,6 +3644,8 @@ i2c15: i2c@c420000 {
+ 			compatible = "nvidia,tegra264-i2c";
+ 			reg = <0x00 0x0c420000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 			clock-frequency = <400000>;
+ 			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
+ 				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
+@@ -3653,6 +3661,8 @@ i2c16: i2c@c430000 {
+ 			compatible = "nvidia,tegra264-i2c";
+ 			reg = <0x00 0x0c430000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 			clock-frequency = <400000>;
+ 			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
+ 				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
+@@ -3728,6 +3738,8 @@ i2c0: i2c@c630000 {
+ 			compatible = "nvidia,tegra264-i2c";
+ 			reg = <0x00 0x0c630000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 			clock-frequency = <400000>;
+ 			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
+ 				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
+@@ -3743,6 +3755,8 @@ i2c1: i2c@c640000 {
+ 			compatible = "nvidia,tegra264-i2c";
+ 			reg = <0x00 0x0c640000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 			clock-frequency = <400000>;
+ 			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
+ 				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
+@@ -3758,6 +3772,8 @@ i2c4: i2c@c650000 {
+ 			compatible = "nvidia,tegra264-i2c";
+ 			reg = <0x00 0x0c650000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 			clock-frequency = <400000>;
+ 			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
+ 				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
+@@ -3773,6 +3789,8 @@ i2c6: i2c@c670000 {
+ 			compatible = "nvidia,tegra264-i2c";
+ 			reg = <0x00 0x0c670000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 			clock-frequency = <400000>;
+ 			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
+ 				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
+@@ -3788,6 +3806,8 @@ i2c7: i2c@c680000 {
+ 			compatible = "nvidia,tegra264-i2c";
+ 			reg = <0x00 0x0c680000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 			clock-frequency = <400000>;
+ 			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
+ 				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
+@@ -3803,6 +3823,8 @@ i2c8: i2c@c690000 {
+ 			compatible = "nvidia,tegra264-i2c";
+ 			reg = <0x00 0x0c690000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 			clock-frequency = <400000>;
+ 			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
+ 				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
+@@ -3818,6 +3840,8 @@ i2c9: i2c@c6a0000 {
+ 			compatible = "nvidia,tegra264-i2c";
+ 			reg = <0x00 0x0c6a0000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 			clock-frequency = <400000>;
+ 			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
+ 				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
+@@ -3833,6 +3857,8 @@ i2c10: i2c@c6b0000 {
+ 			compatible = "nvidia,tegra264-i2c";
+ 			reg = <0x00 0x0c6b0000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 			clock-frequency = <400000>;
+ 			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
+ 				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
+@@ -3848,6 +3874,8 @@ i2c11: i2c@c6c0000 {
+ 			compatible = "nvidia,tegra264-i2c";
+ 			reg = <0x00 0x0c6c0000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 			clock-frequency = <400000>;
+ 			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
+ 				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
+@@ -3863,6 +3891,8 @@ i2c12: i2c@c6d0000 {
+ 			compatible = "nvidia,tegra264-i2c";
+ 			reg = <0x00 0x0c6d0000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 			clock-frequency = <400000>;
+ 			clocks = <&bpmp TEGRA264_CLK_TOP_I2C>,
+ 				 <&bpmp TEGRA264_CLK_PLLP_OUT0>;
 
-Best regards,
---  
-Thierry Reding <treding@nvidia.com>
+-- 
+2.55.0
 
