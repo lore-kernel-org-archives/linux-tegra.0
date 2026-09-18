@@ -1,65 +1,63 @@
-Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE0233A6E2
-	for <linux-tegra@vger.kernel.org>; Fri, 18 Sep 2026 14:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4537C3B0AF0
+	for <linux-tegra@vger.kernel.org>; Fri, 18 Sep 2026 14:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789742044; cv=none; b=kyQSQquB0g6OUoli6QuJwXFuJwgZvKJ2tGdK0x9huAiEo3hrA+RMtce2B8UJEFOOrQoh45NPFvHHTEWW9+RmO8qLohvgq+0FxU+k8VNIN62zhFFpey4awlKSNuSuLsq+vEk8AjRyFytXh67grv+Bu/54va2rQuaVOp2vkDMkbVg=
+	t=1789742044; cv=none; b=NiWGg/4Rbid6Zx7WmZMZpqize0miOpegCk+qnrSOk502GSPcczmdTQboQaopLIMvJ4jDPaoHI+k+cyVu0i6bGcPPs0sVWS2Bd2VSW6X5fJ6BIiGpzO1PRk3ipKpjtxfoHIXjPpEKqbZmelXMlu6Mp/4tYqUXYQa9YFKU5H4RxwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1789742044; c=relaxed/simple;
-	bh=7Cv4SBcra0Ohdz6SOqua5EyRhbXggKO8tv0Gpq49x+8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=esJQK6y6x2pjrokU4THgvpTvp+h9dAJDGp+sH/Pm3UO4SM14P1C3g/eAIX3S7S5UpvYvsSIvxMhO6nw7DUlIu/XzlUwEF93hII2ov2ZKGeqgAJSiXE8hxymRSf7oOejD+G8h7WANxkdi5jbgelwbBwf6eSEO+gZIyd4pkxE1tnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=ZhDRM7H8; arc=none smtp.client-ip=74.125.225.76
+	bh=CRzKAxpUlFq5Wd+7/e0Agj6JML70XnNYB6sRMUphW4Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ljNysMO3lZ7j1YNkLHUKNjCgCiZt6m9fZHnTJvAPV8xjrpxPkNOWXBooZACFu5gJF3uzSZGX9aZmImdC1CqVon18FYkukj87DwVJgpzDr7S2NqRCvx8tBsEqOo0N5gCurPDFEjwrQx/KGfKoQXZeZ//nz0lB/kafL9PMNNKfYfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=LKJLMBzT; arc=none smtp.client-ip=74.125.225.140
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="ZhDRM7H8"
-Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-482f6350f91so486547f8f.1
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Sep 2026 07:34:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="LKJLMBzT"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49b912d3920so5871845e9.1
+        for <linux-tegra@vger.kernel.org>; Fri, 18 Sep 2026 07:34:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1789742040; x=1790346840; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Sjx4o8bJ6g5b8nq5GAvpSa8wVIWcrZHnOeqXqn9scx8=;
-        b=ZhDRM7H85uR/DnyY2luQxPixNVkAI1NoICkA5SctxuNa6VrLloCn/NX1Mx/m1Jvqyn
-         o7iZKyo0Y1rcTxfIzJS3aebN2B8JoqrqT10sq9YgaSMzq0CtQLI1oU2Yzu6/jTtb4Ygu
-         uI1+K8aXOmUxsFhtlGHG64q71pHUEkHa94/ODoKW2SSnY7wojMNUtjm57UpsO+Z8HyFt
-         zXXyThBcMYopoIJTaBWJ1QpjhATAY6jqv6z386DF0oCfN4GAep0tzozvSpImIO2oanTk
-         tDXDy+npZzBNJz+dfgXj9BeO56DsrnHooYA2C+PlxrbhYdiVf5OrQI7I2gCIqoFTbF/7
-         aPLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789742040; x=1790346840;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=baylibre.com; s=google; t=1789742039; x=1790346839; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Sjx4o8bJ6g5b8nq5GAvpSa8wVIWcrZHnOeqXqn9scx8=;
-        b=yePj3XFdMmUq0yFoqblY0lzn9iv1ruWYuL1p988N8eI9Yu8dXPKaGXyKB7UOUHzDq/
-         TCWI8TZhMOxjKIq8KPdDj7A8h9pELcwo46Guiw2ak5YNJvKQKVUPN2Itm58rc1qHmaD9
-         0yBSC37fMwCLqy73L9AytSCF1MHkgqiEEW9nTlub9Ux8MJAoyHY0F5IKd7jBUu/WnVdl
-         1RjXsSr0BqOlvrHetNKpfs5fYy0AXefy0bk6ChdUUr1a86plPWhsaXcvGcsybko9HrQL
-         WqNSlSIOGzrpE5h1obzeaonwXU6DxIVKDyuSdsE+luxEOYtcovVMRaE8leRFXbFQeHjL
-         o+xQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzcBhfCfXQmlRqcyDtr27h2QTb8YtcxEIX8BZFIeyirLFViocr0HRvMW+BjHW8ttYh6lVWTh0zY3WxJoA==@vger.kernel.org
-X-Gm-Message-State: AFuF++mS0ymmerJqUQVkcHE161vLUnRrOZMvVZlgDmrKOtD/0Ra8Plu+
-	U2aYf615fVsWyv+U1nBBeJMwxcld9a5SGp0CwPV3XPDnMmipLlQHcy36vkbyin//pFU=
-X-Gm-Gg: AYBFou3DahhfAnqBOLHOaKozYP4nS0uRmeq6f/fv3E7k2mn1iR78bJ+j00mm/jUGiR6
-	OQDckAZ/OX1QufXU/8xodVAkRJd7ap38Iw2ZvwQd/cCuyws5CSN3zZVWa+xgGPuniGXTPA69wq6
-	AJV2Y9XCk0jBhmFNquSU8NpDT8Y0BOwQ37oqEIuzIjXD+wyx+1s6xUpxHG/s0oWiytmvnnILwFV
-	nOgSCTopos0TDwA/9YMkuFxDu5Ha/vaxBRru0i7CY76FVeAFz7o1/b1IIJ5AdWCEoxzqnpqEtMU
-	0EII3n5M9bX3AfIC8MlpXNb+XiG2ahSqW1VAfLCLP4+TOf2QWFlIPpA9QDLij58pcfoVz96Olno
-	cmAzEfDxQ8WTqZSalC8W71iAD5uNL2N79VTOecF+ZYIWTsSqvc5v21ln2OHZmzO83x4CxY/BF8y
-	5gUiU+dalHAKntDGHQzExNUyPhG/7Sj7i7gg/RAY8A74zTXUOGIXpJhHFMjhZktjiqLmfGto0ph
-	nEJT2jiILZXI4oFr9I+5tLIttb5tbudHrsMMbDlHhWHK+xlu3yXbtM6aAl9Bg==
-X-Received: by 2002:adf:e011:0:20b0:487:21a6:51d with SMTP id ffacd0b85a97d-48721a60df4mr1710417f8f.15.1789742040504;
-        Fri, 18 Sep 2026 07:34:00 -0700 (PDT)
+        bh=3Iw/Uos+s86X9GmGfeJVE31qnn37ChCYcPePO9lpThQ=;
+        b=LKJLMBzTDb4omBz2Zjwwn+WkThB7xYzRS4e0xnFeCygy3E0usN76aLlenaVG37A33D
+         HbfRtDLPPqRZzMiLeC2X2qaTCtegMYTb2BmNGRj0yBj1aXX+D30XVuaAhObvs1lUvtTL
+         bfNzpNVBw9biYGRveLOXNjD10ocEkIpf7GXvJUniZyl4d8XvJOkZSy6oPwZ7dHlrytas
+         np5U8VZ/jPdfAgXXqXSCeNO3ZiZ6LVvpMjZNv5L/l5Eeujehaixm0CNTDhELK/UrwP1b
+         k2uVXDvFBAW2E0M+C2/e+9cGi+K9fJljyHVkoOq8zqINsNcJ/preE4Y1rXrivGF8naWl
+         IL2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789742039; x=1790346839;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=3Iw/Uos+s86X9GmGfeJVE31qnn37ChCYcPePO9lpThQ=;
+        b=wiMpfTLvMthNbk7CC2wfCRp6/n6KMpnGaVB6pPbEodyf35kyDCZ8q0hNkt+FuiFmk0
+         jDjbm7Pz8tZWrz8Lh2ZFs2Pjr7RbB/vfa8Q2ILnqQRMmA0A02l+qv8k+AbuhGlbto31f
+         ch+nGodDfXbCM1euLIa5bhyvHUH3/ni7ArWBgVrkxFdrvUPKyIVBNsvWlrmC4JMLjDye
+         uHnaHY4EHwkaC7KCajOAiEFT+94I6VbKAv20jlO2r6EjSD0ODSJv//lw0V3RJegLS75c
+         /kgyuvoGEFsgHMJwWLJ7XdflXJendYqqq6ZocPPklA3QjM06PlL+dt6p75BnOvzzNn2T
+         /NMQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwxt+ga80XK2wobJa8gRfOVN3FdKCwmsofYg8zt8HMj3Y7rErdUD9DvYLYrg6qI6AIpUpOTLiSdn5suhw==@vger.kernel.org
+X-Gm-Message-State: AFuF++lo36WW/g0AnHJshcDRqHQ6mf9Qf5ct2mW1KCZ2QI7MSmcf2nqp
+	/WlwCL5iU/YVJCUt51fktQChHYData54fd1mHUmZXCuox/FRc3wpSFqHu06x6IU2Zuc=
+X-Gm-Gg: AYBFou1027wCbOI7cunDj+lAZ3i+igU0z0Ywux/V0kzTlFFI/diOymYMadjp4WF25uu
+	7KbL6LAl1buF2fGpt3mDeFF8mSCTbxzLIz3diewkLzejBdx+SAiPkvVcs+6NoSH+Tt9RrnTNsG2
+	vkJUDFp4QJkaw+VbPXEEWIxQADBzXbRT+C7XZcpurlAOEMFV/Ruz5AztSq5ALERXaa/bjRSOCf7
+	LomkiRoMiU581PQVM01ZIMNF5EsHwV9UcId+VxODPnuWzswSuuVL4zoL+92ctDYHqUWCxpftygz
+	8UDDeZRMb9gVisCrEc72sK67FNHGfDWyHRKWSJ5kYyRq1nmpGX1mdBVo2nIUXyWI/aNlWhztUv3
+	ZdVXoNU7CPtJMogX2lyb5vbDOdodDMXUpNUIyN+HAHqcnwlwtFXdAGwPnALY2toVJD+rwFxJB2f
+	kMEjsH3FqmY/La2pFJho4PjGCZNQVz2PJUFs/dgYHEccTWFCAQgbzAn+vIF7K3+NYFb0Cx5wYL1
+	EYvBqtpfHH82HWnyuaQM/DFucEo8X/ZDIQSvDyJWhGAtdx1UDNE4APaPEbr3w==
+X-Received: by 2002:a05:600c:8b6a:b0:49f:bc43:9e8e with SMTP id 5b1f17b1804b1-49fc5741199mr36086125e9.26.1789742038920;
+        Fri, 18 Sep 2026 07:33:58 -0700 (PDT)
 Received: from localhost (p200300f65f19a90444c8989fe13f5be4.dip0.t-ipconnect.de. [2003:f6:5f19:a904:44c8:989f:e13f:5be4])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4872008160csm5384787f8f.32.2026.09.18.07.33.59
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-49fc55cd8a8sm61606545e9.0.2026.09.18.07.33.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Sep 2026 07:33:59 -0700 (PDT)
+        Fri, 18 Sep 2026 07:33:58 -0700 (PDT)
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
 To: Thierry Reding <thierry.reding@kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
@@ -68,12 +66,10 @@ Cc: Philipp Zabel <p.zabel@pengutronix.de>,
 	linux-pwm@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/3] pwm: tegra: Make use of dev_err_probe()
-Date: Fri, 18 Sep 2026 16:33:45 +0200
-Message-ID:  <641219a7d76bbcd8fe98b5955f2355ed45f55986.1789741839.git.u.kleine-koenig@baylibre.com>
+Subject: [PATCH v2 0/3] pwm: tegra: Cleanups and .get_state()
+Date: Fri, 18 Sep 2026 16:33:44 +0200
+Message-ID: <cover.1789741839.git.u.kleine-koenig@baylibre.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1789741839.git.u.kleine-koenig@baylibre.com>
-References: <cover.1789741839.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -81,139 +77,57 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4230; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=7Cv4SBcra0Ohdz6SOqua5EyRhbXggKO8tv0Gpq49x+8=; b=owGbwMvMwMXY3/A7olbonx/jabUkhqy13mf+ZyUymK5KWyytFmks5K93LOmMm6hGxZRzFw8rV uxNV5jWyWjMwsDIxSArpshi37gm06pKLrJz7b/LMINYmUCmMHBxCsBEONI5GLYcldvP5PT8+RX9 dM6AY99NXvN19Hv9dOGr1kh45nbAr8HHydzqvsmRH6HZtueZD5bP3C+jy31o5pkPV758US/RXDC h91aDs5BoeavFvpnsn9OymUpt/tksEd1Vfm8h4+r09/fKZ93X2Ge2veCveDV/tYn3BbYux3vlYl 9N9fTk9Hu3sMzIzFNqveJVb7Ln9s0tvlknJxsKdbg/Yeax3iXx+qXtO493GZ/2zznWNyVx1R7NB 8LKH88vP6fzZ+MrTZ6DB2pueR185ihcGdEoYXy85Mn7BrPwEv7mXBFHocXNC7jLdnac45+/eYpP bN8tJ3nrfy7WsevWs2ady6+wEX2zVbWhr/yl5qQky/qPAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1769; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=CRzKAxpUlFq5Wd+7/e0Agj6JML70XnNYB6sRMUphW4Q=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBqrUvJ4l3buWoLNn8yyHMgb4/NF2D3cdFjhzkst zrYNKYzgPeJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCaq1LyQAKCRCPgPtYfRL+ TlMbB/416PVhikXSeG+rl2Vn98ol8X4mjw+EfXcbGpU1LegxL2aAY8imKvrby22p5yJGNtkjbtb 0UEqZQ1jOjHciD+sfbFvEuJgjUvsteRW4Vy9KNMoW6P2jodsbta2e5nvVTM8PZySfg20Ftd9yUK 40N15CPLU2+hcT+ySHoisqocz69Swtv+Jt5xH0+e3iu8NCGdh3/BFbpvq/O9HzPPn2Z/c/rpix6 KWKyJTYHbyctTUr0+T6bkJIJVHNXlfRWxXZWMo6FZXN3nXB57yLYpkboezzzQW+S0i2cEo4yFI9 KHOWR9Gc/VhbKP0gj9Q5wytv4eEErvw7hWiN5r9vKchsjjR8
 X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-Usage of dev_err_probe() is more compact than dev_err()'s, emits the
-error code and handles -ENOMEM and -EPROBE_DEFER properly. Benefit from
-these improvements.
+Hello,
 
-Also add a few messages in error paths that lacked an output before.
+v1 of this series can be found at
+https://lore.kernel.org/cover.1784030076.git.ukleinek@kernel.org.
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
----
- drivers/pwm/pwm-tegra.c | 52 ++++++++++++++++++++++++-----------------
- 1 file changed, 31 insertions(+), 21 deletions(-)
+Changes since then:
 
-diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-index 5cdbe120ba2d..efb7ab60f602 100644
---- a/drivers/pwm/pwm-tegra.c
-+++ b/drivers/pwm/pwm-tegra.c
-@@ -316,14 +316,15 @@ static const struct pwm_ops tegra_pwm_ops = {
- 
- static int tegra_pwm_probe(struct platform_device *pdev)
- {
-+	struct device *dev = &pdev->dev;
- 	struct pwm_chip *chip;
- 	struct tegra_pwm_chip *pc;
- 	const struct tegra_pwm_soc *soc;
- 	int ret;
- 
--	soc = of_device_get_match_data(&pdev->dev);
-+	soc = of_device_get_match_data(dev);
- 
--	chip = devm_pwmchip_alloc(&pdev->dev, soc->num_channels, sizeof(*pc));
-+	chip = devm_pwmchip_alloc(dev, soc->num_channels, sizeof(*pc));
- 	if (IS_ERR(chip))
- 		return PTR_ERR(chip);
- 	pc = to_tegra_pwm_chip(chip);
-@@ -331,28 +332,39 @@ static int tegra_pwm_probe(struct platform_device *pdev)
- 	pc->soc = soc;
- 
- 	pc->regs = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(pc->regs))
-+	if (IS_ERR(pc->regs)) {
-+		/*
-+		 * devm_platform_ioremap_resource() already emits an error
-+		 * message with CONFIG_HAS_IOMEM, so don't emit another message
-+		 * here.
-+		 */
- 		return PTR_ERR(pc->regs);
-+	}
- 
- 	platform_set_drvdata(pdev, chip);
- 
--	pc->clk = devm_clk_get(&pdev->dev, NULL);
-+	pc->clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(pc->clk))
--		return PTR_ERR(pc->clk);
-+		return dev_err_probe(dev, PTR_ERR(pc->clk), "Failed to get clock\n");
- 
--	ret = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
--	if (ret)
-+	ret = devm_tegra_core_dev_init_opp_table_common(dev);
-+	if (ret) {
-+		/*
-+		 * devm_tegra_core_dev_init_opp_table_common() emits an error
-+		 * message most of the time, so don't add another.
-+		 */
- 		return ret;
-+	}
- 
--	pm_runtime_enable(&pdev->dev);
--	ret = pm_runtime_resume_and_get(&pdev->dev);
-+	pm_runtime_enable(dev);
-+	ret = pm_runtime_resume_and_get(dev);
- 	if (ret)
--		return ret;
-+		return dev_err_probe(dev, ret, "Failed to runtime resume device\n");
- 
- 	/* Set maximum frequency of the IP */
--	ret = dev_pm_opp_set_rate(&pdev->dev, ULONG_MAX);
-+	ret = dev_pm_opp_set_rate(dev, ULONG_MAX);
- 	if (ret < 0) {
--		dev_err(&pdev->dev, "Failed to set max frequency: %d\n", ret);
-+		dev_err_probe(dev, ret, "Failed to set max frequency\n");
- 		goto put_pm;
- 	}
- 
-@@ -363,8 +375,7 @@ static int tegra_pwm_probe(struct platform_device *pdev)
- 	 */
- 	pc->clk_rate = clk_get_rate(pc->clk);
- 	if (pc->clk_rate < TEGRA_PWM_DEPTH) {
--		dev_err(&pdev->dev, "clock maximum frequency out of range\n");
--		ret = -ERANGE;
-+		ret = dev_err_probe(dev, -ERANGE, "Clock maximum frequency out of range\n");
- 		goto put_pm;
- 	}
- 
-@@ -372,10 +383,9 @@ static int tegra_pwm_probe(struct platform_device *pdev)
- 	pc->min_period_ns =
- 	    (NSEC_PER_SEC / (pc->clk_rate / TEGRA_PWM_DEPTH)) + 1;
- 
--	pc->rst = devm_reset_control_get_exclusive(&pdev->dev, "pwm");
-+	pc->rst = devm_reset_control_get_exclusive(dev, "pwm");
- 	if (IS_ERR(pc->rst)) {
--		ret = PTR_ERR(pc->rst);
--		dev_err(&pdev->dev, "Reset control is not found: %d\n", ret);
-+		ret = dev_err_probe(dev, PTR_ERR(pc->rst), "Failed to get reset control\n");
- 		goto put_pm;
- 	}
- 
-@@ -385,17 +395,17 @@ static int tegra_pwm_probe(struct platform_device *pdev)
- 
- 	ret = pwmchip_add(chip);
- 	if (ret < 0) {
--		dev_err(&pdev->dev, "pwmchip_add() failed: %d\n", ret);
-+		dev_err_probe(dev, ret, "Adding pwmchip failed\n");
- 		reset_control_assert(pc->rst);
- 		goto put_pm;
- 	}
- 
--	pm_runtime_put(&pdev->dev);
-+	pm_runtime_put(dev);
- 
- 	return 0;
- put_pm:
--	pm_runtime_put_sync_suspend(&pdev->dev);
--	pm_runtime_force_suspend(&pdev->dev);
-+	pm_runtime_put_sync_suspend(dev);
-+	pm_runtime_force_suspend(dev);
- 	return ret;
- }
- 
+ - Reordered the patches to have dev_err_probe and dev first. Fixes a
+   build failure in the middle of v1. This way patch 2 -- which could be
+   considered a fix -- isn't before the cleanup in patch 1, but doing
+   patch 1 the old way first also feels strange.
+
+ - add { } around blocks with a single statement if there is also a
+   comment.
+
+ - fixed too many parenthesis in patch #3 (formerly #6).
+
+ - dropped other patches as they reorder stuff in unwanted or at least
+   untested ways.
+
+There was a concern in reply to patch #1 of the v1 series (now #2) from
+Mikko Perttunen. He wrote: 
+
+> I feel like driver_override falls in the realm of 'root can mess with
+> the system as they feel like but if they don't know what they're doing
+> they get to keep the pieces'. So adding a check in every driver, or
+> in practice having a random mix of drivers with and without the check,
+> doesn't seem necessary to me.
+> 
+> If we actually want to check for this condition, could it be done
+> centrally instead? I.e. don't call probe if there's no match data and
+> the driver's match table implies it requires it.
+
+It cannot be done reliably in the driver core, and IMHO even root
+shouldn't be able to trigger a NULL pointer exception. So I kept the
+check.
+
+Uwe Kleine-König (3):
+  pwm: tegra: Make use of dev_err_probe()
+  pwm: tegra: Check for match_data being NULL
+  pwm: tegra: Implement .get_state()
+
+ drivers/pwm/pwm-tegra.c | 108 ++++++++++++++++++++++++++++++++--------
+ 1 file changed, 87 insertions(+), 21 deletions(-)
+
+
+base-commit: cee9395acd8043be0644b25c34bfa86623f2b935
 -- 
 2.47.3
 
