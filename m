@@ -1,35 +1,35 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6CB4C10C9;
-	Fri, 18 Sep 2026 10:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11A44C6EF8;
+	Fri, 18 Sep 2026 10:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789728282; cv=none; b=RRBZb9JcrPEA2HuS41tA27uT51qCg5PkuYnCuqzVXaSS6UMJPzMfUCM0G+quw1qlV6or3fMSx+hhrLj3g4DZZaBUtl3KjuMvzBICsuvoszfGIuUixRr13djMdrWH/ANnbYj0nZtTd2bASswM6GVvNBl3XmCvjMSktTAeVrejzZQ=
+	t=1789728286; cv=none; b=AA9J+A2JFvmWaSHuKuul2r5xoDtr5+TtKSi6j6Fm8pz6fMW6lVXNgsTvgGkan6Q2I2ler1O4XM20gfNKwAwtV/WCpNZEqGejI+/xa4fOhE1oBbx2jt2xbGkqe8Ba3de/Zwhn9OAyZO4+P5TscaN1NmtvdysShkRwfJu5oCKVsq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789728282; c=relaxed/simple;
-	bh=LOdjOuiDa5EMlmABS/nhDQm3v5RQfRvKfR3wfM/bt0Q=;
+	s=arc-20240116; t=1789728286; c=relaxed/simple;
+	bh=F6TvpcEVosqVPYmYYk2zyN5vocsuBaY0vDUb/g4fM9Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fScrdemKTRTvTFBsEhLoqvHtT+oEEpFvYsJlcnnESk1HJHH8a1/2D8anTq8DkjOt9MurGvZSERUAjresTISblBfQbqMbI+AL4q5F0o5lCt0H/yXxZuT+gIr17eI4Z1A47ZW4XfhnXLFfx+uNZSh4ax5TpCOawA7aWd6UOxCwgL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=C+j1tgFb; arc=none smtp.client-ip=213.167.242.64
+	 In-Reply-To:To:Cc; b=DKLFaKzJRiH9luj3ZZKVHa6Wlq8Y5Uo1mNFTA4085eoC02L3/dmBK7kvncBfiLzDFffRIr7d0EVZBdKkWiQK3+LslNZ2kPIj8OutdkoqZhQdhxrXudfHAE0C67jNNL/MuY6PHeS+uevA5jY4D+Rgw5OxeaQygPHmn3gpNB7rlfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=AnhH/oE2; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="C+j1tgFb"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="AnhH/oE2"
 Received: from ping.linuxembedded.co.uk (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B43264F03;
-	Fri, 18 Sep 2026 12:42:42 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2A7564F07;
+	Fri, 18 Sep 2026 12:42:44 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1789728164;
-	bh=LOdjOuiDa5EMlmABS/nhDQm3v5RQfRvKfR3wfM/bt0Q=;
+	s=mail; t=1789728165;
+	bh=F6TvpcEVosqVPYmYYk2zyN5vocsuBaY0vDUb/g4fM9Y=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=C+j1tgFbiXlv9Jwu1lodC3tdEbD//oroYu6nu92Lwqbe6epnQYAu2aOYC6ZKxmXgi
-	 /u1Fy8Z1BK0Eo1FuGLLMBKfJ0N0t7PQHdEgzLu0XR8WAb09zywuC0P5yFCx95ra/vZ
-	 4X3dF0/oHtpv5C1+GeEN8L6pHaWeDt5xfwYpyu/4=
+	b=AnhH/oE2XOJ3Jhxmu7HdEKMMIjTcKMzZsrzIasIBLMSNJCv9a1rw2L1pXeSnEOMTp
+	 n6mE/tLr3BZdQ0OVugoqrdxvGd3KB33cpBo8CdMP+6qZAiWZfztFctaBWT/KZeYnWa
+	 X/ilA5/ogcWIMR7qu/AKEGD/uwbyfANa4JkzrXlY=
 From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Date: Fri, 18 Sep 2026 11:44:17 +0100
-Subject: [PATCH v6 5/6] ARM: tegra: Convert to new media orientation
- definitions
+Date: Fri, 18 Sep 2026 11:44:18 +0100
+Subject: [PATCH v6 6/6] dt-bindings: media: i2c: himax,hm1246: Use
+ video-interface-devices
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -38,7 +38,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260918-kbingham-orientation-v6-5-5e8b1f01be29@ideasonboard.com>
+Message-Id: <20260918-kbingham-orientation-v6-6-5e8b1f01be29@ideasonboard.com>
 References: <20260918-kbingham-orientation-v6-0-5e8b1f01be29@ideasonboard.com>
 In-Reply-To: <20260918-kbingham-orientation-v6-0-5e8b1f01be29@ideasonboard.com>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
@@ -74,11 +74,11 @@ Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
  linux-tegra@vger.kernel.org, 
  Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1789728257; l=4149;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1789728257; l=1278;
  i=kieran.bingham@ideasonboard.com; s=20260207; h=from:subject:message-id;
- bh=Wjt5veqgt2cH3AYWBoFwcgxVrdtQEOScHWgKInDvv9w=;
- b=cjXp//9cyWoQkn+W/rTfgcsA7BFQKIKpPDJ7Jo1vuJ6qPjQ6ve9/V7yGLiKepMcNr8SYMwC+S
- /Fe/qkfbu+XDVlCcPuxFNt0xAvuPzqzw+kF6X0me4tx8NoGv9M1rf9h
+ bh=zj0TRPd2r+l+CPw8KXOYUgmrO4GRMVVMAHrTLWUo4iY=;
+ b=Hr6H/4uJ2Ofm5pjTJhZRU6jZzp9KXp8SsSLerp3e166U5M1d90/cFvvGs5guDRBlHx+joE/ec
+ nf3mQVJ4lxnBPnrBMrnIqA9Yx+RgDsgC3UQc+I8me1Uv3ykqmv5j6Z/
 X-Developer-Key: i=kieran.bingham@ideasonboard.com; a=ed25519;
  pk=FVXKN7YuwHc6UtbRUeTMAmranfsQomA+vnilfglWdaY=
 
@@ -87,106 +87,38 @@ From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 The orientation property for video interface devices now has definitions
 to prevent hardcoded integer values for the enum options.
 
-Update the users throughout the nvidia device trees to use the new
-definitions.
+Update the example binding documentation.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
-v2:
- - Fix MEDIA_ORIENTATION_REAR to MEDIA_ORIENTATION_BACK
----
- arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-common.dtsi | 3 ++-
- arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi    | 3 ++-
- arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts                     | 4 +++-
- arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi                      | 3 ++-
- 4 files changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-common.dtsi b/arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-common.dtsi
-index 892d718294dd..a7fdd194300c 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-common.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-common.dtsi
-@@ -3,6 +3,7 @@
- #include <dt-bindings/input/gpio-keys.h>
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/media/video-interfaces.h>
-+#include <dt-bindings/media/video-interface-devices.h>
- #include <dt-bindings/power/summit,smb347-charger.h>
- #include <dt-bindings/thermal/thermal.h>
+---
+v6:
+ - Actually use the correct orientation!
+---
+ Documentation/devicetree/bindings/media/i2c/himax,hm1246.yaml | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/media/i2c/himax,hm1246.yaml b/Documentation/devicetree/bindings/media/i2c/himax,hm1246.yaml
+index a65488fcc643..9994105552e7 100644
+--- a/Documentation/devicetree/bindings/media/i2c/himax,hm1246.yaml
++++ b/Documentation/devicetree/bindings/media/i2c/himax,hm1246.yaml
+@@ -86,6 +86,7 @@ examples:
+   - |
+     #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/media/video-interfaces.h>
++    #include <dt-bindings/media/video-interface-devices.h>
  
-@@ -991,7 +992,7 @@ front-camera@48 {
- 			vdd-supply = <&vddio_cam>;
- 			vaa-supply = <&avdd_cam1>;
+     i2c {
+         #address-cells = <1>;
+@@ -103,7 +104,7 @@ examples:
+             iovdd-supply = <&hm1246_iovdd>;
+             dvdd-supply = <&hm1246_dvdd>;
  
--			orientation = <0>; /* Front camera */
-+			orientation = <MEDIA_ORIENTATION_FRONT>;
+-            orientation = <2>;
++            orientation = <MEDIA_ORIENTATION_EXTERNAL>;
+             rotation = <0>;
  
- 			assigned-clocks = <&tegra_car TEGRA30_CLK_VI_SENSOR>,
- 					  <&tegra_car TEGRA30_CLK_CSUS>;
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi b/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi
-index bf1c3a31d406..76286e15684c 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi
-@@ -3,6 +3,7 @@
- #include <dt-bindings/input/gpio-keys.h>
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/media/video-interfaces.h>
-+#include <dt-bindings/media/video-interface-devices.h>
- #include <dt-bindings/thermal/thermal.h>
- 
- #include "tegra30.dtsi"
-@@ -1262,7 +1263,7 @@ front-camera@48 {
- 			vdd-supply = <&vdd_1v8_cam>;
- 			vaa-supply = <&avdd_2v85_fcam>;
- 
--			orientation = <0>; /* Front camera */
-+			orientation = <MEDIA_ORIENTATION_FRONT>;
- 
- 			assigned-clocks = <&tegra_car TEGRA30_CLK_VI_SENSOR>,
- 					  <&tegra_car TEGRA30_CLK_CSUS>;
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts b/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
-index 896639599c12..28680063bcc0 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
-@@ -1,6 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
- /dts-v1/;
- 
-+#include <dt-bindings/media/video-interface-devices.h>
-+
- #include "tegra30-lg-x3.dtsi"
- 
- / {
-@@ -132,7 +134,7 @@ front-camera@48 {
- 			vdd-supply = <&vt_1v8_front>;
- 			vaa-supply = <&vt_2v8_front>;
- 
--			orientation = <0>; /* Front camera */
-+			orientation = <MEDIA_ORIENTATION_FRONT>;
- 
- 			assigned-clocks = <&tegra_car TEGRA30_CLK_VI_SENSOR>,
- 					  <&tegra_car TEGRA30_CLK_CSUS>;
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi b/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-index 60e8a19aa70e..77cab695d3da 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-@@ -4,6 +4,7 @@
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/leds/common.h>
- #include <dt-bindings/media/video-interfaces.h>
-+#include <dt-bindings/media/video-interface-devices.h>
- #include <dt-bindings/mfd/max77620.h>
- #include <dt-bindings/thermal/thermal.h>
- 
-@@ -1216,7 +1217,7 @@ rear-camera@10 {
- 			dvdd-supply = <&vdd_1v2_rear>;
- 			avdd-supply = <&vdd_2v7_rear>;
- 
--			orientation = <1>; /* Rear camera */
-+			orientation = <MEDIA_ORIENTATION_BACK>;
- 			rotation = <90>;
- 
- 			nvmem = <&m24c08>;
+             port {
 
 -- 
 2.52.0
