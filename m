@@ -1,155 +1,172 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E534740801E;
-	Fri, 18 Sep 2026 09:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3561349890F;
+	Fri, 18 Sep 2026 10:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789724742; cv=none; b=bgSacmmLQ2g7vV1Y3mQPF37CwdK3nQ/LOudaYhhHL6vSdpnmgsFT5M1VSZ7tMHPlYrfFOTgc9ZiKBFb7T8sc0Bi6ScdxAaiS1s29hSUZ3KM5+Tm8MfzLP6aNqli8pD8e0IMLWj+0cwQdeZ1BpDuoVFtll6gPrgFJxIDsfC/blvo=
+	t=1789725949; cv=none; b=bqz9LCgdWLcCv0tTqOhenJ0GG6LzGdTz0mwjVjjrNY/1so5XQImVGGW6AAV4d3UUPIEBk1PUoElfND2WYEnHR0oO4dtX1BLDkk+GLfERbVYTjXpFKBD9bX2qyQYYs1k4QHVfEFQLQnTIZzqve5LWRTLBfyPfkaBGKmO5bjHq17A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789724742; c=relaxed/simple;
-	bh=89XNQWaJJfGotGWu/y8kapAmM51DkG82nQ/unU2N1NQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sWws3NHAtyZ9juGRUbd6npE8p4sSMnRVgOd8uvvMtra4+p49EqNU1Wip/olbgDh/s4MHYOzq05wxuaeRcwjlsohkULJtm9O3qj6bZGzj2doG+bzzFrNb6q35x52e1YsiDF2RFD7N5u668KzHuYbRxpzUvG+V5+fP5BIk7eePadE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RJ1HCIwt; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1789725949; c=relaxed/simple;
+	bh=0tWYUZiixVnvD59lVl7V1A+pe3zDJA5LsRCVuPk+vBk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JGjuLPzB0xwk7R1IPWsqqI75g023PRlN51ErGDm7ZGSMig9OJxO/n58Hr/kyNfalTNHtGUZAtqJSLIJajMBeJsuytJYonq9A/jr7BbbT/9L2YbIubmcxllccSNj2S8hgS2AoBMFcaOVtLCMIvGsC46HWrN9DXn69lqlreR42SBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qkVxBqHj; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RJ1HCIwt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1789724740; x=1821260740;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=89XNQWaJJfGotGWu/y8kapAmM51DkG82nQ/unU2N1NQ=;
-  b=RJ1HCIwtKHBO2yTy1nUZmx0XzKemSwCBLnof0o58Ne1q8BCWkEYvOiVg
-   sDfwOzpdOoqFS3w4p64KHSAY8FfRedMVq1ZxoyPPnNChfgFFtqB7mZoy6
-   BUi9oqj7hYWdCVj+PXE4Nr+to2S5KtYfBXhgtyDUi09oTcXbiIluvv+ZG
-   v+snblko2yhg//lP/ODEPWxTxIGNG+zx4awXP99H/cmH97meHRWi3+Mht
-   0DfJNlInmkV1YgKGVesrjhzu/9W2h6vjkn5LT6iSuEdPF8o5PUGw2+JPO
-   2h0VWWd5ldcrSsJXJdWtsRM/DRoasndu+pKobwUrjofupJSJDVtJkhKuo
-   g==;
-X-CSE-ConnectionGUID: bTsfPMSMT7KJs+/w8jh54w==
-X-CSE-MsgGUID: EiH7P7wQTdGC6IBKu/Zmhw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="77782486"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="77782486"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2026 02:45:39 -0700
-X-CSE-ConnectionGUID: XTKBeoNFTmG7p/9NjQwnPA==
-X-CSE-MsgGUID: aSQkoXbcT2OadNgmRfHhZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="270638789"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa010.fm.intel.com with ESMTP; 18 Sep 2026 02:45:37 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1008)
-	id 6F40199; Fri, 18 Sep 2026 11:45:36 +0200 (CEST)
-Date: Fri, 18 Sep 2026 11:45:36 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Wayne Chang <waynec@nvidia.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] usb: typec: ucsi_ccg: Add retry mechanism in ccg_read
-Message-ID: <aq0IQA_7TrlM7-VO@black.igk.intel.com>
-References: <20260916061858.1471606-1-waynec@nvidia.com>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qkVxBqHj"
+Received: from ping.linuxembedded.co.uk (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 41905236;
+	Fri, 18 Sep 2026 12:03:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1789725832;
+	bh=0tWYUZiixVnvD59lVl7V1A+pe3zDJA5LsRCVuPk+vBk=;
+	h=From:Subject:Date:To:Cc:From;
+	b=qkVxBqHjmma1aIBSh/W1KRZfWIsingY4v8DrXgBkCLxfeDkvIXIRKAMdzwe4tqOS2
+	 l/u0x+ENIc7JM6rz1rL2W8mwVxpeh4AsZFojwy6XgP5wELKuIjczO6gLoTubTcuwln
+	 Jcyc6qhvMNe5BmxFjBUhsXgXacpClDHIJT2AbAbE=
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH v5 0/6] dt-bindings: Orientation defines
+Date: Fri, 18 Sep 2026 11:05:21 +0100
+Message-Id: <20260918-kbingham-orientation-v5-0-e1a134326988@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260916061858.1471606-1-waynec@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOEMrWoC/3XNTQ6DIBCG4asY1qWhiPx01Xs0XYCgThrBgCFtj
+ Hcvmibd2OU7yffMgpKL4BK6VguKLkOC4Es0pwq1g/a9w2BLI0ooJ5xI/DTg+0GPOJSdn/VcBpg
+ S3bWkM1w1ApXpFF0Hr529P0oPkOYQ3/uXTLfrF6T8GMwUE8zERUjjFBWG3cA6nYI3QUd7bsOIN
+ jeznyUJ+2OxYtU1V0pay+tDa13XD13jikMLAQAA
+X-Change-ID: 20260608-kbingham-orientation-20afc0fb6957
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jacopo Mondi <jacopo@jmondi.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Jimmy Su <jimmy.su@intel.com>, 
+ Matthias Fend <matthias.fend@emfend.at>, 
+ Mikhail Rudenko <mike.rudenko@gmail.com>, 
+ Daniel Scally <dan.scally@ideasonboard.com>, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+ Michael Riesch <michael.riesch@collabora.com>, 
+ Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
+ Sylvain Petinot <sylvain.petinot@foss.st.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Paul Elder <paul.elder@ideasonboard.com>, 
+ Martin Kepplinger <martin.kepplinger@puri.sm>, 
+ Quentin Schulz <quentin.schulz@theobroma-systems.com>, 
+ Tommaso Merciai <tomm.merciai@gmail.com>, 
+ Svyatoslav Ryhel <clamor95@gmail.com>, 
+ Richard Acayan <mailingradian@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux@ew.tq-group.com, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-tegra@vger.kernel.org, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Alexander Stein <alexander.stein@ew.tq-group.com>, 
+ David Heidelberg <david@ixit.cz>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Quentin Schulz <quentin.schulz@cherry.de>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1789725933; l=4234;
+ i=kieran.bingham@ideasonboard.com; s=20260207; h=from:subject:message-id;
+ bh=0tWYUZiixVnvD59lVl7V1A+pe3zDJA5LsRCVuPk+vBk=;
+ b=/NCC6ht+TiMEJOrDiWTCe63UziN/m3CKwxyK+5kXXDl3uVCHE+GHRtth7vbpOTtyf+MEK+Ev7
+ SNIhs1ck1JdCbMp2wVWxirResfZ7Sus0HogXDLaHlv5r0qlwL+BcX0t
+X-Developer-Key: i=kieran.bingham@ideasonboard.com; a=ed25519;
+ pk=FVXKN7YuwHc6UtbRUeTMAmranfsQomA+vnilfglWdaY=
 
-On Wed, Sep 16, 2026 at 02:18:58PM +0800, Wayne Chang wrote:
-> CCG4 firmware occasionally fails to respond to I2C read requests,
-> especially when reading cci and intr_reg from the ISR path. In these
-> cases, i2c_transfer() returns -EREMOTEIO.
-> 
-> The CCG4 is EOL, and Infineon no longer supports firmware updates, so
-> a software workaround is necessary.
-> 
-> Attempt the read up to CCG_READ_MAX_RETRIES (4) times in total when
-> -EREMOTEIO is returned, sleeping ~1 ms via fsleep() between attempts.
-> This allows recovery from transient I2C failures without affecting
-> other error paths.
-> 
-> The sleep is safe because ccg_read() is called both from process
-> context and from ccg_irq_handler(), which runs in threaded IRQ
-> context (registered via request_threaded_irq() with a NULL hard-IRQ
-> handler), so sleeping is allowed in both cases.
-> 
-> Fixes: 247c554a14aa ("usb: typec: ucsi: add support for Cypress CCGx")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Wayne Chang <waynec@nvidia.com>
+Add a new dt-bindings/media/video-interface-devices.h header that
+initially supports the Orientation types and convert existing users
+throughout the code base.
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+v3 collects tags, and fixes the typo, but drops all hunks that do not
+apply on the media-next tree so that these changes can be merged. Once
+the core feature is accepted a second sweep will convert remaining (new)
+additions of the orientation field.
 
-> ---
-> v1 -> v2: Per Heikki's review:
-> - Fix off-by-one: CCG_READ_MAX_RETRIES was 3 but the loop ran 4 times
->   (retry_count <= CCG_READ_MAX_RETRIES). Changed the macro to 4 (the
->   actual total attempt count) and the loop condition to
->   retry_count < CCG_READ_MAX_RETRIES, so the name and the loop bound
->   now agree. Adjusted the "skip the sleep on the last attempt" check
->   to retry_count == CCG_READ_MAX_RETRIES - 1 to match.
-> - Use fsleep(1000) instead of usleep_range(1000, 2000).
-> - Reworded the commit message to say "up to CCG_READ_MAX_RETRIES (4)
->   times in total" instead of the ambiguous "up to three times (four
->   attempts total)" that prompted the off-by-one question.
-> 
->  drivers/usb/typec/ucsi/ucsi_ccg.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/ucsi_ccg.c
-> index 91c2958a708c..4b6c53d2a998 100644
-> --- a/drivers/usb/typec/ucsi/ucsi_ccg.c
-> +++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
-> @@ -135,6 +135,8 @@ struct version_format {
->  #define NVIDIA_FTB_DP_OFFSET	(2)
->  #define NVIDIA_FTB_DBG_OFFSET	(3)
->  
-> +#define CCG_READ_MAX_RETRIES	4
-> +
->  struct version_info {
->  	struct version_format base;
->  	struct version_format app;
-> @@ -255,6 +257,7 @@ static int ccg_read(struct ucsi_ccg *uc, u16 rab, u8 *data, u32 len)
->  	};
->  	u32 rlen, rem_len = len, max_read_len = len;
->  	int status;
-> +	int retry_count;
->  
->  	/* check any max_read_len limitation on i2c adapter */
->  	if (quirks && quirks->max_read_len)
-> @@ -266,7 +269,17 @@ static int ccg_read(struct ucsi_ccg *uc, u16 rab, u8 *data, u32 len)
->  		rlen = min_t(u16, rem_len, max_read_len);
->  		msgs[1].len = rlen;
->  		put_unaligned_le16(rab, buf);
-> -		status = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
-> +
-> +		for (retry_count = 0; retry_count < CCG_READ_MAX_RETRIES; retry_count++) {
-> +			status = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
-> +
-> +			/* Only retry on -EREMOTEIO, and not after the last attempt */
-> +			if (status != -EREMOTEIO || retry_count == CCG_READ_MAX_RETRIES - 1)
-> +				break;
-> +
-> +			fsleep(1000);
-> +		}
-> +
->  		if (status < 0) {
->  			dev_err(uc->dev, "i2c_transfer failed %d\n", status);
->  			pm_runtime_put_sync(uc->dev);
-> 
-> base-commit: 940de590b839f71d6dc846160534bf202401b8b7
-> -- 
-> 2.25.1
+v2:
+ - Now expands from the original v1 "dt-bindings: media: Add macros for
+   video interface devices" to update
+   Documentation/devicetree/bindings/media/video-interface-devices.yaml
+   and extend to actually change all users to the new types.
+ - Link to v2: https://lore.kernel.org/r/20260626-kbingham-orientation-v2-0-47178be927b4@ideasonboard.com
 
+v3:
+ - Fix the arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
+   MEDIA_ORIENTATION_REAR to MEDIA_ORIENTATION_BACK
+   - Though this patch is dropped from this series to post the main
+     integration through the media tree.
+ - Drop (temporarily) changes to:
+    - arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
+    - arch/arm64/boot/dts/qcom/sdm670-google-common.dtsi
+    - arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam0.dtso
+    - arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam1.dtso
+ - Non applying changes will be re-posted after the core feature
+   lands in linux-next, or after those changes appear in media-next.
+
+-v4:
+ - Rebased media-committers/next (v7.2-rc1)
+ - Reintroduced updates to:
+   - arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
+   - arch/arm64/boot/dts/qcom/sdm670-google-common.dtsi
+   - arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam0.dtso
+   - arch/arm64/boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam1.dtso
+ - Squash header introduction and bindings updates
+ - Link to v4: https://lore.kernel.org/r/20260804-kbingham-orientation-v4-0-336998dd63b4@ideasonboard.com
+
+-v5:
+ - Definitions now accepted in linux-media, rebased to get conversions in.
+ - Converts new himax,hm1246 binding
+
+---
+Kieran Bingham (6):
+      arm64: dts: freescale: Convert to new media orientation definitions
+      arm64: dts: qcom: Convert to new media orientation definitions
+      arm64: dts: renesas: Convert to new media orientation definitions
+      arm64: dts: rockchip: Convert to new media orientation definitions
+      ARM: tegra: Convert to new media orientation definitions
+      dt-bindings: media: i2c: himax,hm1246: Use video-interface-devices
+
+ Documentation/devicetree/bindings/media/i2c/himax,hm1246.yaml        | 3 ++-
+ arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-common.dtsi     | 3 ++-
+ arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi        | 3 ++-
+ arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts                         | 4 +++-
+ arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi                          | 3 ++-
+ .../boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314-imx219.dtso    | 3 ++-
+ arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi                    | 3 ++-
+ arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts                   | 3 ++-
+ arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts           | 3 ++-
+ arch/arm64/boot/dts/qcom/sdm670-google-common.dtsi                   | 3 ++-
+ .../boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx219.dtso     | 3 ++-
+ .../boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j1-imx462.dtso     | 3 ++-
+ .../boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx219.dtso     | 3 ++-
+ .../boot/dts/renesas/r8a779g3-sparrow-hawk-camera-j2-imx462.dtso     | 3 ++-
+ arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi                        | 3 ++-
+ arch/arm64/boot/dts/rockchip/px30-ringneck-haikou-video-demo.dtso    | 3 ++-
+ arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts                | 5 +++--
+ .../boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam0.dtso      | 3 ++-
+ .../boot/dts/rockchip/rk3588-rock-5b-plus-radxa-cam4k-cam1.dtso      | 3 ++-
+ 19 files changed, 40 insertions(+), 20 deletions(-)
+---
+base-commit: aedd77ea8168f00687c1248cdf115071e869cf93
+change-id: 20260608-kbingham-orientation-20afc0fb6957
+
+Best regards,
 -- 
-heikki
+--
+Kieran
+
