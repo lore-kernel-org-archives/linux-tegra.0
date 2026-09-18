@@ -1,54 +1,53 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AEE03E5EC6;
-	Fri, 18 Sep 2026 19:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6C949365C;
+	Fri, 18 Sep 2026 19:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789758428; cv=none; b=Ug/9IuXH/FX51alNPayn3vBrgk4d07pldMV9PejXV0/icIv/1ToKcCaWfcqKaeTp+v90l2ihLQceMyvQn/bGIk2XMLOIj/35srNLz1v2a0zv8cnz/YvXqmnirtzP+YlSLJess1glg42rAX3mTXj4qlprAlizD82FGGES7ZyqJjw=
+	t=1789758526; cv=none; b=B7bvRt5btYJ15ymmMIzpP6mRoTVJhPbvF50dUOilA+EkOo0hDVDwXKN4jLnxO6zk2Zk+MvnpIyH1fDoNjAIlMXfmereOFeQqHgpckCHDyAqjA+Gz4lyZnzGkcLHlA52Y5Qm/6yEj0MxPhO1aVmAsOnym0/dmaxKviXJn9P2tMHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789758428; c=relaxed/simple;
-	bh=nmBrAk2np5GoI3sJtrEpyM1co07LQXkjXcmn1QcUvFM=;
+	s=arc-20240116; t=1789758526; c=relaxed/simple;
+	bh=vI+TF9dVX8+RcMZILkOobu5dRaDpbLMEirHg2VF5u3s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iQl4wOCBbUYur8Gk7g1QcDNER1w9vmzjRcKPb+Z07EkmnMdgzi1oOb7wYScazouxlNJ6vFlyKeijgpCiKzqRJlP1XQTSKL5p3O8R8oCcm/6e6KhfOiVBDJXH5LUVdrq2tWPusVauhEdvXBPT/MPoMxFqLRC/OQwoTsnlF2HR8g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODTBatoE; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=G+MXepVcEPVaq5qOEi5tIZCeNQ9v4N5npCoFwDVnY484EpaFYpXoTKjn+dnyxsJAhMLb+HZVD1NoGYLKuGiBkfFDJNhKIE4plxDgLfqMuvtyzI3/zSjOvEvQexAOISynVso0nVPWunynRp8VmXlUgSZwHwA2kSvAeasp44IwnLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CYaa25a2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODTBatoE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 878EE1F000FF;
-	Fri, 18 Sep 2026 19:06:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CYaa25a2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E21F1F000FF;
+	Fri, 18 Sep 2026 19:08:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789758419;
-	bh=uFZ900qTgVxFOe9pUi4nHRz0fpi8qpGS361sszzh/Ts=;
+	s=k20260515; t=1789758517;
+	bh=HWRmnHQMovxcKFotbAleN5uJtk69/2HddGt39ADECss=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ODTBatoEZrOELXFOqOTuo0sTeBau8flMjrJ86Id/zuOkmF9KFQJ/mBvYH9NxkD0FR
-	 JT2Slc9GMTtX6Pt1bjAJK9ATSpyQ3/7sCm91e03zt6UyVIMA8QXZc9e+xSWW4WqyLM
-	 rR2usTFFpzSebVWQyVqRBaYFmfx1p0BHq6ID9K0aU03TbV03pRFwjKv2eDX1sVpSaZ
-	 zZjYz69uELlrlbjNctKbzxCBICsMAr+thFPlGqByc89GFyjWNOW8ucf7xwnytcg8pt
-	 j3k+y1aEUXQ5/m9mnvMKnuwdYCwb6KB2Qknr6TmXZdsNlF0RVwwwJEENSE13FVIW5w
-	 qbmc7lvEfwKvg==
-Date: Fri, 18 Sep 2026 14:06:57 -0500
-From: Rob Herring <robh@kernel.org>
+	b=CYaa25a2AlxVZQUM8ycEBhvuqlJM05/D6Svs3yvM9Akx7OWMuYMrQQBs3ooZ/+BVs
+	 fX7dPOLCp/CJ4Ef+CC78YHjCYoRjyD1m2iwLMZ9Utb2/oOa3XUcks9R0XSnhb4exIY
+	 Rj1DdVAMc8tscZd1VxsR6/+2fnpOSkXSI3WQUrbLt9V0F2xtU9RDMbbjsEvO/eAm5X
+	 AfbqLi5aKeFx7vx7QEzLNcOqKJOVeleFvOWlZcTbtmIgdHFodoWnVTfe3rU2Qeun/j
+	 ibhNRJB0UefURBR2/L4jpz1uYC0ZCFUAeBnEcQ5kLdBKQF8q/I4s+zUFaYyylwN/YK
+	 eGbSLSGvDD0Rg==
+Date: Fri, 18 Sep 2026 14:08:35 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Bhargav Joshi <j.bhargav.u@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@avionic-design.de>,
-	Lee Jones <lee@kernel.org>,
-	Shree Ramamoorthy <s-ramamoorthy@ti.com>,
+Cc: Laxman Dewangan <ldewangan@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>, linux-tegra@vger.kernel.org,
+	simona.toaca@nxp.com, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
 	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	goledhruva@gmail.com, m-chawdhry@ti.com, daniel.baluta@gmail.com,
-	simona.toaca@nxp.com, mfd@lists.linux.dev,
-	Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] regulator: dt-bindings: Reference Tegra regulator
- coupling schema
-Message-ID: <20260918190657.GB1426069-robh@kernel.org>
+	Thierry Reding <treding@nvidia.com>,
+	Thierry Reding <thierry.reding@avionic-design.de>,
+	Shree Ramamoorthy <s-ramamoorthy@ti.com>, daniel.baluta@gmail.com,
+	goledhruva@gmail.com, Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org, m-chawdhry@ti.com,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, mfd@lists.linux.dev,
+	Lee Jones <lee@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>,
+	Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 4/4] regulator: dt-bindings: ti,tps6586x: Convert to
+ DT schema
+Message-ID: <178975851483.1443252.7885513556008901807.robh@kernel.org>
 References: <20260916-ti-tps6586x-v2-0-f12cfdfb446c@gmail.com>
- <20260916-ti-tps6586x-v2-3-f12cfdfb446c@gmail.com>
+ <20260916-ti-tps6586x-v2-4-f12cfdfb446c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -57,18 +56,20 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260916-ti-tps6586x-v2-3-f12cfdfb446c@gmail.com>
+In-Reply-To: <20260916-ti-tps6586x-v2-4-f12cfdfb446c@gmail.com>
 
-On Wed, Sep 16, 2026 at 06:41:28PM +0530, Bhargav Joshi wrote:
-> Several PMICs used on Tegra boards TPS65910, TPS62360, and MAX77620 use
-> Tegra-specific regulator coupling properties. Update their dt bindings
-> to reference the shared nvidia,tegra-regulators-coupling.yaml schema.
+
+On Wed, 16 Sep 2026 18:41:29 +0530, Bhargav Joshi wrote:
+> Convert Texas Instruments tps6586x regulator binding from text to DT
+> schema. Reference to nvidia,tegra-regulators-coupling in child regulator
+> nodes.
 > 
 > Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
 > ---
->  Documentation/devicetree/bindings/mfd/ti,tps65910.yaml       | 12 +++++++++---
->  .../bindings/regulator/maxim,max77620-regulator.yaml         |  5 ++++-
->  Documentation/devicetree/bindings/regulator/ti,tps62360.yaml |  1 +
->  3 files changed, 14 insertions(+), 4 deletions(-)
+>  .../devicetree/bindings/regulator/ti,tps6586x.yaml | 196 +++++++++++++++++++++
+>  .../devicetree/bindings/regulator/tps6586x.txt     | 135 --------------
+>  2 files changed, 196 insertions(+), 135 deletions(-)
+> 
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
