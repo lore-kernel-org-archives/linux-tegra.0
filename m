@@ -1,34 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7965C390224;
-	Fri, 18 Sep 2026 09:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401563F1048;
+	Fri, 18 Sep 2026 09:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789722443; cv=none; b=bL91XOal/9PF+5e9zNQZ7JIhf9xfwY6l0mUmvzQ9UREAM+WQ2uGa0xfkxzhUI4Vj3GVm7HDl8VF92lf8SLtYYxx0gRG1lTB0yVYrLxIo0dEX0OWQPqE+pDS/FUl7KFMD6CpY7qnoBOMppd6tp3MhAfoPkmC1GcnhQvnjMdLT7XQ=
+	t=1789722446; cv=none; b=Hxxud8dI8I3YxLPbsSoL1IPkq/04ocJTAo8nxixMPrD04ZDqpaeHq5AMISS60D1AwebUz/wKxH7gVniosxukglLkncNrqHHozHq97Wg+WOAisDXpiLoBLS8aqBGkQapUy5EWllKbIc9HKVNGFYNh5nxsldYwZ4pNDNXGAIuU44c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789722443; c=relaxed/simple;
-	bh=iQeGCDxqJCz6uml4RJH21u9Hj5ZeVsRhDzEhPEYDdaM=;
+	s=arc-20240116; t=1789722446; c=relaxed/simple;
+	bh=iLnuDJoWz9Uq7szmyd3CWCMjaYotcZN0LyyGElZWwFo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rZTV+SeqJMPXgCbzaaUu2awv5wyfZQnzwEW2dxvYqKNJDFFNYPjbWoiBWOd9Cjb3a84NEfme4ZBKoqBdGP3UpB5GaTp3egC8Na7Q2T55W9LfvnjNrRXxav8FPFQ1JD5Uo9bO4UHWJcKrYo2SwpZ/EXaXw4R1OKKHvVFFGnIXmjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K3Xy3i6L; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:To:Cc; b=b99tnSiilWPBMa90kvg5lnHDQIVOQJbGc8sWuiqsbwDjvYoL0umPqhgMm9WHfTp5ie0Vc+1rtPpom9CDf+lbm2nm51XnslBcOm3f1esXH5oN5W5zKlJN6NLZM6de7C+SSNbe4jqGIZcNRBjnEIVUddM9elkfMxwnukBv9Hkf95k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P7zVPX+B; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K3Xy3i6L"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 845D81F000FF;
-	Fri, 18 Sep 2026 09:07:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P7zVPX+B"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 549DE1F000FF;
+	Fri, 18 Sep 2026 09:07:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789722442;
-	bh=eXixHyXSg8TS99KXc3U62EWBrHKL97PRLE4uTSlZ0yQ=;
+	s=k20260515; t=1789722444;
+	bh=ppk3/xwifzZLroA54+9rB22nqWzLHTHCYN6LwoyipV4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=K3Xy3i6LvpGHAewbRvlt551TLuSIk1CISQ5WqpCkQ1FrL6B1E1jvnZ9dNHzBgw5/A
-	 iLibLlr9+jhRyII+we7U7uli2WcksoixdSMvh9biIJT6JprDiACaAAVoeVEzbuxmfi
-	 Yg7BwdlvgDAyvvP5wOJAFc9X5LqD+1v2b8EtFaKtgZ54L0fiVb/v/mmsu1xMEBN96E
-	 hrBiYCIcLGdJ2E+D1ZnXJViVo+h5gf2et+2DctXIwmOjhUcsRHfA31pvL5LbENG7EX
-	 Scmkprjbayrt2USm7Blebyjb6lo1e+tYd3PYYsO1uyiLbAeLJMEKR5aUk2XQw/ni87
-	 pvoHWGG0IzQdA==
+	b=P7zVPX+ByLbkFb75wAduGi19Vgi95PNUaVR6pmbkf4pLLhG9vRUJSPDh+b/7r8rdd
+	 /lu+Hn/7QRA34i5JQKBO8hocysocs9mSctPV4hSEavuN9qJMmZxgrvoLe2ZEa33Wd8
+	 pYkJHt2xjGG1zKDY512sdTRXAccbi5HARpyI8PGRD0uU9ALDdMmT4C12VsNM01yFYy
+	 kSFllU6u8E2Lquq8E7Mvr2AM1reSw3bykqJdzsFwFP9ZMBPOm6vgOzO6c69jvvTnmx
+	 wSyyMNZAzzruamZ6/J35ZaEiZ8DT8I9k2Gth8uFVrnpg3YXRx5kurbursR0XDlDZaM
+	 KL7YU5R9abQ+w==
 From: Thierry Reding <thierry.reding@kernel.org>
-Date: Fri, 18 Sep 2026 11:06:55 +0200
-Subject: [PATCH 3/5] arm64: tegra: Add NVIDIA Jetson AGX Thor module EEPROM
+Date: Fri, 18 Sep 2026 11:06:56 +0200
+Subject: [PATCH 4/5] arm64: tegra: Add NVIDIA Jetson AGX Thor system EEPROM
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -37,7 +37,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260918-tegra264-i2c-v1-3-3adac7aae717@nvidia.com>
+Message-Id: <20260918-tegra264-i2c-v1-4-3adac7aae717@nvidia.com>
 References: <20260918-tegra264-i2c-v1-0-3adac7aae717@nvidia.com>
 In-Reply-To: <20260918-tegra264-i2c-v1-0-3adac7aae717@nvidia.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -47,58 +47,58 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=941; i=treding@nvidia.com;
- h=from:subject:message-id; bh=OFbwD/LIElKc5M2Bq4f1puVsWKdNFeqhG3E+WpnW34o=;
- b=kA0DAAoB3SOs138+s6EByyZiAGqs/z6js8TkqMrGIOedSZnEmvJAPCqBdEVBx5MDSuPzHacxv
- 4kCMwQAAQoAHRYhBIjqwwgBScz3wI3In90jrNd/PrOhBQJqrP8+AAoJEN0jrNd/PrOh10kP/A+a
- w2faeaqpXhA3WW2ykPq7ZY9aLOd0z3yTsqcBofulp0/JYh/zyHR1Zc35wCRAcpPLQlqGKsa3kmw
- D6FmafIBxJqA/RCvQPo6LpiE4SCRJ0vwLlYeQMpmFXzIMVabtxCUnd9YsY5cHFt7lu6Pmoa4XAi
- 1QWLJBYgvwUOQzcfnDMGHOyFzdClb9C4zm8KHtS3lYvSUE2QepGaKjCBN5RSyO6dfwp4XpBDquY
- KBVKw+ED5XLZkwkfonmKM6nMJKu/oswfcjjUOyn9TqeEgL4s/Q0XbwP0MohMCVK5dPhQmXZGrWW
- 5nrfNNwlDDlIk2PyDkAkv8RAvOwozpr2tWi9sHPPYOSSTbyMRN/H9G0XepNaHs6pFgUo7XR0Px4
- zvs9DOCbzN8vAHAPjr0yyxSbH6fnCCR7ccPbF+u3xw597iH2z8EVdI0iJ+dfDGBAPuFoSbfQBpU
- eOLByBoRA6Jg0R3AmaVerCrFzHB+iwTs+Es1QqCg4mYuJkSg/HyQg5FisLTGLujLd3ZJbpvnFBA
- ztC+7Nw53jfYpcfJAK2ziAWwdFVyH6W85K2xO36+cw9ih2kfZGX5BgVCqK9lY4uN8qpU2f737qz
- gH7AFflGGlClIOVW7CA4DqIJFIUFxkF+rIHF1d3xOpRNIEaSPyU1bCxXlvph/SP43dEcIin/D+c
- NjZHj
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1023; i=treding@nvidia.com;
+ h=from:subject:message-id; bh=/jE7PYOugXQeMYx845CwR61BSX9vUw6xjbMf0JnVUYA=;
+ b=owEBbQKS/ZANAwAKAd0jrNd/PrOhAcsmYgBqrP8+JXnZ07ZRxqM41Fh5SqdI0VXJbH75PN1VZ
+ L4iUuzNoRCJAjMEAAEKAB0WIQSI6sMIAUnM98CNyJ/dI6zXfz6zoQUCaqz/PgAKCRDdI6zXfz6z
+ oQa5D/0foUAZoF29zkhPGQxDsTQf7vXr5Yw9ghnIWfCzhaXoOZPNXrqS0txAA/KCzM6y0CPXCyc
+ iRcqSD0K0pm+ZhqbFGSiW+mEjOel5jqDi8p50NYcgSOmXyT5IdeEa5IehEPOf5wVNAGFP9+ZkLV
+ bvBe41Fenk9eazCdpKouGSsusBTxKc1JLcrTX8hJmTlmlNDzZBGcMTf0wMf3DyQtH2J1JFnGtMT
+ QjaVYpf2zIoKxrNKcURtk/qS6XGfU6YrLshDi4rNUdwWJ0LT0BCvaAGm/oBZe/Tn861HtMAJdHy
+ uPEZZlJOezgSmThc74FeY4KxDRqqAgi4+n4LimabWqGEbRQgAvm7L7j0U44fThxh8KqXLbfsetx
+ 6AIelCvqqlSg07CAFeWyRDfKiJDjEYCUOwrdRNwTs/A7mtwCWEEuPLGxvVnyMuauQ7swyCFKYlR
+ A96VpyRrhMqinptbZHsWXSFY1TghGGi+7cLXj0gHCj4aYLe8l5B6p1yAr6VnjPnMRQ57lY8JfzM
+ 72vqgUlklP9quuBaijfmco/UadHz+3YIgoa9QYCEZZGUQODxc4jfFUaqKg+recYyoi7fuiVWZ5W
+ o9+1NzjOQZtUZorqtMr4hnuL1QFUm+HyzTelEVcAwS92UeyVJPXvaHB67cQpo+hgj5zezNFaXi7
+ Kqe+/pwHHHNTjlg==
 X-Developer-Key: i=treding@nvidia.com; a=openpgp;
  fpr=88EAC3080149CCF7C08DC89FDD23ACD77F3EB3A1
 
 From: Thierry Reding <treding@nvidia.com>
 
 Like most previous Jetson devices, the Jetson AGX Thor has EEPROMs used
-to identify the module. Add the device tree node describing this EEPROM.
+to identify the system. Add the device tree node describing this EEPROM.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi | 14 ++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi | 14 ++++++++++++++
  1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
-index d4c9f45e03c1..eb157b0168f0 100644
---- a/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
-@@ -38,6 +38,20 @@ iommu@6000000 {
- 		cmdqv@6200000 {
- 			status = "okay";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi b/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
+index 86ce40e80c73..62ca7e4d227e 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
+@@ -19,6 +19,20 @@ pwm@c6a0000 {
  		};
-+
+ 	};
+ 
++	bus@8100000000 {
 +		i2c@c640000 {
-+			status = "okay";
-+
-+			eeprom@50 {
++			eeprom@56 {
 +				compatible = "atmel,24c02";
-+				reg = <0x50>;
-+				label = "module";
++				reg = <0x56>;
++				label = "system";
 +				address-width = <8>;
 +				pagesize = <8>;
 +				size = <256>;
 +				read-only;
 +			};
 +		};
- 	};
- 
- 	thermal-zones {
++	};
++
+ 	fan: pwm-fan {
+ 		compatible = "pwm-fan";
+ 		cooling-levels = <77 102 140 192 255>;
 
 -- 
 2.55.0
