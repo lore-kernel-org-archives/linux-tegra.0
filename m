@@ -1,201 +1,219 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A2E4F93D1;
-	Fri, 18 Sep 2026 13:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE0233A6E2
+	for <linux-tegra@vger.kernel.org>; Fri, 18 Sep 2026 14:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789738428; cv=none; b=C/DlHPWs29Fk9jSyHMtDS0JYrMVPPQB7gTZ44UxwPFps92abzfejGY3H1wzvEvSfrkbxr2LEexTVAlrEETTQ0rIDY1eYjXSAO8cNv1Z6iXVr1UGX52HIi/PI7njvHWXIUlcg3Ts6PCKilfoAcPbRJkwZEMlhGcOr7ksS9aGjY0Y=
+	t=1789742044; cv=none; b=kyQSQquB0g6OUoli6QuJwXFuJwgZvKJ2tGdK0x9huAiEo3hrA+RMtce2B8UJEFOOrQoh45NPFvHHTEWW9+RmO8qLohvgq+0FxU+k8VNIN62zhFFpey4awlKSNuSuLsq+vEk8AjRyFytXh67grv+Bu/54va2rQuaVOp2vkDMkbVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789738428; c=relaxed/simple;
-	bh=82Mn9uZcABYJuJY9Ja/otiQ81SD5L074KXYkhdIuJ6I=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=c5Gmy+AJUX13j5mSiiQf/6taRQMakU0omPrgseKgEJpWx9tysnWzjylUxcnbMjWiNyFconW0h+UlF4lqCyomkAHd9gt2zxok+w7AkS52XgnYmV1weXtlI4/dXFdUr1UjnJAqZhxT1yhQJSaJEoJ3zkVS+N7nvKgxuZuF5wHhEEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sSs1i0F9; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1789742044; c=relaxed/simple;
+	bh=7Cv4SBcra0Ohdz6SOqua5EyRhbXggKO8tv0Gpq49x+8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=esJQK6y6x2pjrokU4THgvpTvp+h9dAJDGp+sH/Pm3UO4SM14P1C3g/eAIX3S7S5UpvYvsSIvxMhO6nw7DUlIu/XzlUwEF93hII2ov2ZKGeqgAJSiXE8hxymRSf7oOejD+G8h7WANxkdi5jbgelwbBwf6eSEO+gZIyd4pkxE1tnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=ZhDRM7H8; arc=none smtp.client-ip=74.125.225.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sSs1i0F9"
-Received: from monstersaurus.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7AD234F05;
-	Fri, 18 Sep 2026 15:31:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1789738313;
-	bh=82Mn9uZcABYJuJY9Ja/otiQ81SD5L074KXYkhdIuJ6I=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=sSs1i0F90LIHx/AZUsiKA+YnwsGpLmBo4KVoj+4PCYr811SKW5YYmJfzvEQ+leTOG
-	 VCaTQT21x5BR83STKDA30U4LByAcaDz/jNhdEjxPUk9zaNjq9ie6lUfcemA34CJvoF
-	 NZ/sE+F0CEFUVp37+OhHkPGXGNYIHHWb0YThntK4=
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="ZhDRM7H8"
+Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-482f6350f91so486547f8f.1
+        for <linux-tegra@vger.kernel.org>; Fri, 18 Sep 2026 07:34:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1789742040; x=1790346840; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=Sjx4o8bJ6g5b8nq5GAvpSa8wVIWcrZHnOeqXqn9scx8=;
+        b=ZhDRM7H85uR/DnyY2luQxPixNVkAI1NoICkA5SctxuNa6VrLloCn/NX1Mx/m1Jvqyn
+         o7iZKyo0Y1rcTxfIzJS3aebN2B8JoqrqT10sq9YgaSMzq0CtQLI1oU2Yzu6/jTtb4Ygu
+         uI1+K8aXOmUxsFhtlGHG64q71pHUEkHa94/ODoKW2SSnY7wojMNUtjm57UpsO+Z8HyFt
+         zXXyThBcMYopoIJTaBWJ1QpjhATAY6jqv6z386DF0oCfN4GAep0tzozvSpImIO2oanTk
+         tDXDy+npZzBNJz+dfgXj9BeO56DsrnHooYA2C+PlxrbhYdiVf5OrQI7I2gCIqoFTbF/7
+         aPLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789742040; x=1790346840;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Sjx4o8bJ6g5b8nq5GAvpSa8wVIWcrZHnOeqXqn9scx8=;
+        b=yePj3XFdMmUq0yFoqblY0lzn9iv1ruWYuL1p988N8eI9Yu8dXPKaGXyKB7UOUHzDq/
+         TCWI8TZhMOxjKIq8KPdDj7A8h9pELcwo46Guiw2ak5YNJvKQKVUPN2Itm58rc1qHmaD9
+         0yBSC37fMwCLqy73L9AytSCF1MHkgqiEEW9nTlub9Ux8MJAoyHY0F5IKd7jBUu/WnVdl
+         1RjXsSr0BqOlvrHetNKpfs5fYy0AXefy0bk6ChdUUr1a86plPWhsaXcvGcsybko9HrQL
+         WqNSlSIOGzrpE5h1obzeaonwXU6DxIVKDyuSdsE+luxEOYtcovVMRaE8leRFXbFQeHjL
+         o+xQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzcBhfCfXQmlRqcyDtr27h2QTb8YtcxEIX8BZFIeyirLFViocr0HRvMW+BjHW8ttYh6lVWTh0zY3WxJoA==@vger.kernel.org
+X-Gm-Message-State: AFuF++mS0ymmerJqUQVkcHE161vLUnRrOZMvVZlgDmrKOtD/0Ra8Plu+
+	U2aYf615fVsWyv+U1nBBeJMwxcld9a5SGp0CwPV3XPDnMmipLlQHcy36vkbyin//pFU=
+X-Gm-Gg: AYBFou3DahhfAnqBOLHOaKozYP4nS0uRmeq6f/fv3E7k2mn1iR78bJ+j00mm/jUGiR6
+	OQDckAZ/OX1QufXU/8xodVAkRJd7ap38Iw2ZvwQd/cCuyws5CSN3zZVWa+xgGPuniGXTPA69wq6
+	AJV2Y9XCk0jBhmFNquSU8NpDT8Y0BOwQ37oqEIuzIjXD+wyx+1s6xUpxHG/s0oWiytmvnnILwFV
+	nOgSCTopos0TDwA/9YMkuFxDu5Ha/vaxBRru0i7CY76FVeAFz7o1/b1IIJ5AdWCEoxzqnpqEtMU
+	0EII3n5M9bX3AfIC8MlpXNb+XiG2ahSqW1VAfLCLP4+TOf2QWFlIPpA9QDLij58pcfoVz96Olno
+	cmAzEfDxQ8WTqZSalC8W71iAD5uNL2N79VTOecF+ZYIWTsSqvc5v21ln2OHZmzO83x4CxY/BF8y
+	5gUiU+dalHAKntDGHQzExNUyPhG/7Sj7i7gg/RAY8A74zTXUOGIXpJhHFMjhZktjiqLmfGto0ph
+	nEJT2jiILZXI4oFr9I+5tLIttb5tbudHrsMMbDlHhWHK+xlu3yXbtM6aAl9Bg==
+X-Received: by 2002:adf:e011:0:20b0:487:21a6:51d with SMTP id ffacd0b85a97d-48721a60df4mr1710417f8f.15.1789742040504;
+        Fri, 18 Sep 2026 07:34:00 -0700 (PDT)
+Received: from localhost (p200300f65f19a90444c8989fe13f5be4.dip0.t-ipconnect.de. [2003:f6:5f19:a904:44c8:989f:e13f:5be4])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4872008160csm5384787f8f.32.2026.09.18.07.33.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Sep 2026 07:33:59 -0700 (PDT)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-pwm@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/3] pwm: tegra: Make use of dev_err_probe()
+Date: Fri, 18 Sep 2026 16:33:45 +0200
+Message-ID:  <641219a7d76bbcd8fe98b5955f2355ed45f55986.1789741839.git.u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <cover.1789741839.git.u.kleine-koenig@baylibre.com>
+References: <cover.1789741839.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260918132013.GG59058@killaraus.ideasonboard.com>
-References: <20260918-kbingham-orientation-v6-0-5e8b1f01be29@ideasonboard.com> <20260918-kbingham-orientation-v6-2-5e8b1f01be29@ideasonboard.com> <178972979131.1723501.9444120486527129452@ping.linuxembedded.co.uk> <20260918132013.GG59058@killaraus.ideasonboard.com>
-Subject: Re: [PATCH v6 2/6] arm64: dts: qcom: Convert to new media orientation definitions
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Benjamin Mugnier <benjamin.mugnier@foss.st.com>, Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Daniel Scally <dan.scally@ideasonboard.com>, Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Heiko Stuebner <heiko@sntech.de>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Jacopo Mondi <jacopo@jmondi.org>, Jimmy Su <jimmy.su@intel.com>, Jonathan Hunter <jonathanh@nvidia.com>, Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, Martin Kepplinger <martin.kepplinger@puri.sm>, Matthias Fend <matthias.fend@emfend.at>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michael Riesch <michael.riesch@collabora.com>, Mikhail Rudenko <mike.rudenko@gmail.com>, Paul Elder <paul.elder@ideasonboard.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Quentin Schulz <quentin.schulz@theobroma-systems.com>, Richard Acayan <mailingradian@gmail.com>, 
- Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Sascha Hauer <s.hauer@pengutronix.de>, Svyatoslav Ryhel <clamor95@gmail.com>, Sylvain Petinot <sylvain.petinot@foss.st.com>, Thierry Reding <thierry.reding@kernel.org>, Tommaso Merciai <tomm.merciai@gmail.com>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux@ew.tq-group.com, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, David Heidelberg <david@ixit.cz>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Fri, 18 Sep 2026 14:33:34 +0100
-Message-ID: <178973841405.1723501.9051265194315500867@ping.linuxembedded.co.uk>
-User-Agent: alot/0.9.1
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4230; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=7Cv4SBcra0Ohdz6SOqua5EyRhbXggKO8tv0Gpq49x+8=; b=owGbwMvMwMXY3/A7olbonx/jabUkhqy13mf+ZyUymK5KWyytFmks5K93LOmMm6hGxZRzFw8rV uxNV5jWyWjMwsDIxSArpshi37gm06pKLrJz7b/LMINYmUCmMHBxCsBEONI5GLYcldvP5PT8+RX9 dM6AY99NXvN19Hv9dOGr1kh45nbAr8HHydzqvsmRH6HZtueZD5bP3C+jy31o5pkPV758US/RXDC h91aDs5BoeavFvpnsn9OymUpt/tksEd1Vfm8h4+r09/fKZ93X2Ge2veCveDV/tYn3BbYux3vlYl 9N9fTk9Hu3sMzIzFNqveJVb7Ln9s0tvlknJxsKdbg/Yeax3iXx+qXtO493GZ/2zznWNyVx1R7NB 8LKH88vP6fzZ+MrTZ6DB2pueR185ihcGdEoYXy85Mn7BrPwEv7mXBFHocXNC7jLdnac45+/eYpP bN8tJ3nrfy7WsevWs2ady6+wEX2zVbWhr/yl5qQky/qPAA==
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
 
-Quoting Laurent Pinchart (2026-09-18 14:20:13)
-> On Fri, Sep 18, 2026 at 12:09:51PM +0100, Kieran Bingham wrote:
-> > Quoting Kieran Bingham (2026-09-18 11:44:14)
-> > > From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> > >=20
-> > > The orientation property for video interface devices now has definiti=
-ons
-> > > to prevent hardcoded integer values for the enum options.
-> > >=20
-> > > Update the users throughout the qualcomm device trees to use the new
-> > > definitions.
-> > >=20
-> > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-> > > Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> > > Reviewed-by: David Heidelberg <david@ixit.cz>
-> >=20
-> > Sashiko has noted that there is another new dts added in dts/qcom since
-> > I wrote this patch.
-> >=20
-> > I don't want to invalidate the above reviews by adding another change,
-> > so I will send the single update to the new file separately as the core
-> > definitions are already accepted now.
-> >=20
-> > If someone /really/ wants me to add the change to
-> > arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi in this patch,
-> > please let me know.
-> >=20
-> > it looks like this:
-> >=20
-> > ----------- arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi --=
----------
-> > index 945127dacc82..f86d3e0d51a6 100644
-> > @@ -3,10 +3,11 @@
-> >   * Copyright (c) 2022-2024 Jianhua Lu <lujianhua000@gmail.com>
-> >   */
-> >=20
-> >  #include <dt-bindings/arm/qcom,ids.h>
-> >  #include <dt-bindings/media/video-interfaces.h>
-> > +#include <dt-bindings/media/video-interface-devices.h>
-> >  #include <dt-bindings/phy/phy.h>
-> >  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-> >  #include <dt-bindings/usb/pd.h>
-> >  #include "sm8250.dtsi"
-> >  #include "pm8150.dtsi"
-> > @@ -571,11 +572,11 @@ camera_front: camera@10 {
-> >               reset-gpios =3D <&tlmm 109 GPIO_ACTIVE_LOW>;
-> >=20
-> >               pinctrl-0 =3D <&cam_mclk3_default &camera_front_active>;
-> >               pinctrl-names =3D "default";
-> >=20
-> > -             orientation =3D <0>; /* Front facing */
-> > +             orientation =3D <MEDIA_ORIENTATION_FRONT>;
-> >               rotation =3D <270>;
-> >=20
-> >               port {
-> >                       ov8856_front_ep: endpoint {
-> >                               data-lanes =3D <1 2>;
->=20
-> I don't mind either way, and I think you can keep the existing R-b tags
-> if you add that hunk.
+Usage of dev_err_probe() is more compact than dev_err()'s, emits the
+error code and handles -ENOMEM and -EPROBE_DEFER properly. Benefit from
+these improvements.
 
-As noticed by Thierry, it will also impact things depending on who
-applies this patch and where.
+Also add a few messages in error paths that lacked an output before.
 
-It seems like the headers used appear in linux-next already now that
-Sakari has merged them, but this hunk won't apply on
-media-committers/next ... so I'll keep it separate until we can let the
-dust settle.
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+---
+ drivers/pwm/pwm-tegra.c | 52 ++++++++++++++++++++++++-----------------
+ 1 file changed, 31 insertions(+), 21 deletions(-)
 
---
-Kieran
+diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+index 5cdbe120ba2d..efb7ab60f602 100644
+--- a/drivers/pwm/pwm-tegra.c
++++ b/drivers/pwm/pwm-tegra.c
+@@ -316,14 +316,15 @@ static const struct pwm_ops tegra_pwm_ops = {
+ 
+ static int tegra_pwm_probe(struct platform_device *pdev)
+ {
++	struct device *dev = &pdev->dev;
+ 	struct pwm_chip *chip;
+ 	struct tegra_pwm_chip *pc;
+ 	const struct tegra_pwm_soc *soc;
+ 	int ret;
+ 
+-	soc = of_device_get_match_data(&pdev->dev);
++	soc = of_device_get_match_data(dev);
+ 
+-	chip = devm_pwmchip_alloc(&pdev->dev, soc->num_channels, sizeof(*pc));
++	chip = devm_pwmchip_alloc(dev, soc->num_channels, sizeof(*pc));
+ 	if (IS_ERR(chip))
+ 		return PTR_ERR(chip);
+ 	pc = to_tegra_pwm_chip(chip);
+@@ -331,28 +332,39 @@ static int tegra_pwm_probe(struct platform_device *pdev)
+ 	pc->soc = soc;
+ 
+ 	pc->regs = devm_platform_ioremap_resource(pdev, 0);
+-	if (IS_ERR(pc->regs))
++	if (IS_ERR(pc->regs)) {
++		/*
++		 * devm_platform_ioremap_resource() already emits an error
++		 * message with CONFIG_HAS_IOMEM, so don't emit another message
++		 * here.
++		 */
+ 		return PTR_ERR(pc->regs);
++	}
+ 
+ 	platform_set_drvdata(pdev, chip);
+ 
+-	pc->clk = devm_clk_get(&pdev->dev, NULL);
++	pc->clk = devm_clk_get(dev, NULL);
+ 	if (IS_ERR(pc->clk))
+-		return PTR_ERR(pc->clk);
++		return dev_err_probe(dev, PTR_ERR(pc->clk), "Failed to get clock\n");
+ 
+-	ret = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
+-	if (ret)
++	ret = devm_tegra_core_dev_init_opp_table_common(dev);
++	if (ret) {
++		/*
++		 * devm_tegra_core_dev_init_opp_table_common() emits an error
++		 * message most of the time, so don't add another.
++		 */
+ 		return ret;
++	}
+ 
+-	pm_runtime_enable(&pdev->dev);
+-	ret = pm_runtime_resume_and_get(&pdev->dev);
++	pm_runtime_enable(dev);
++	ret = pm_runtime_resume_and_get(dev);
+ 	if (ret)
+-		return ret;
++		return dev_err_probe(dev, ret, "Failed to runtime resume device\n");
+ 
+ 	/* Set maximum frequency of the IP */
+-	ret = dev_pm_opp_set_rate(&pdev->dev, ULONG_MAX);
++	ret = dev_pm_opp_set_rate(dev, ULONG_MAX);
+ 	if (ret < 0) {
+-		dev_err(&pdev->dev, "Failed to set max frequency: %d\n", ret);
++		dev_err_probe(dev, ret, "Failed to set max frequency\n");
+ 		goto put_pm;
+ 	}
+ 
+@@ -363,8 +375,7 @@ static int tegra_pwm_probe(struct platform_device *pdev)
+ 	 */
+ 	pc->clk_rate = clk_get_rate(pc->clk);
+ 	if (pc->clk_rate < TEGRA_PWM_DEPTH) {
+-		dev_err(&pdev->dev, "clock maximum frequency out of range\n");
+-		ret = -ERANGE;
++		ret = dev_err_probe(dev, -ERANGE, "Clock maximum frequency out of range\n");
+ 		goto put_pm;
+ 	}
+ 
+@@ -372,10 +383,9 @@ static int tegra_pwm_probe(struct platform_device *pdev)
+ 	pc->min_period_ns =
+ 	    (NSEC_PER_SEC / (pc->clk_rate / TEGRA_PWM_DEPTH)) + 1;
+ 
+-	pc->rst = devm_reset_control_get_exclusive(&pdev->dev, "pwm");
++	pc->rst = devm_reset_control_get_exclusive(dev, "pwm");
+ 	if (IS_ERR(pc->rst)) {
+-		ret = PTR_ERR(pc->rst);
+-		dev_err(&pdev->dev, "Reset control is not found: %d\n", ret);
++		ret = dev_err_probe(dev, PTR_ERR(pc->rst), "Failed to get reset control\n");
+ 		goto put_pm;
+ 	}
+ 
+@@ -385,17 +395,17 @@ static int tegra_pwm_probe(struct platform_device *pdev)
+ 
+ 	ret = pwmchip_add(chip);
+ 	if (ret < 0) {
+-		dev_err(&pdev->dev, "pwmchip_add() failed: %d\n", ret);
++		dev_err_probe(dev, ret, "Adding pwmchip failed\n");
+ 		reset_control_assert(pc->rst);
+ 		goto put_pm;
+ 	}
+ 
+-	pm_runtime_put(&pdev->dev);
++	pm_runtime_put(dev);
+ 
+ 	return 0;
+ put_pm:
+-	pm_runtime_put_sync_suspend(&pdev->dev);
+-	pm_runtime_force_suspend(&pdev->dev);
++	pm_runtime_put_sync_suspend(dev);
++	pm_runtime_force_suspend(dev);
+ 	return ret;
+ }
+ 
+-- 
+2.47.3
 
->=20
-> > > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.co=
-m>
-> > > ---
-> > >  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts         | 3 ++-
-> > >  arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts | 3 ++-
-> > >  arch/arm64/boot/dts/qcom/sdm670-google-common.dtsi         | 3 ++-
-> > >  3 files changed, 6 insertions(+), 3 deletions(-)
-> > >=20
-> > > diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arc=
-h/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> > > index f41ad446a39e..e2b7f1bd05ab 100644
-> > > --- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> > > +++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> > > @@ -13,6 +13,7 @@
-> > >  #include <dt-bindings/iio/qcom,spmi-adc7-pmk8350.h>
-> > >  #include <dt-bindings/leds/common.h>
-> > >  #include <dt-bindings/media/video-interfaces.h>
-> > > +#include <dt-bindings/media/video-interface-devices.h>
-> > >  #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
-> > >  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-> > >  #include <dt-bindings/sound/qcom,q6asm.h>
-> > > @@ -701,7 +702,7 @@ camera@10 {
-> > >                 pinctrl-0 =3D <&cam_mclk3_default>;
-> > >                 pinctrl-names =3D "default";
-> > > =20
-> > > -               orientation =3D <0>; /* Front facing */
-> > > +               orientation =3D <MEDIA_ORIENTATION_FRONT>;
-> > >                 rotation =3D <270>;
-> > > =20
-> > >                 port {
-> > > diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.d=
-ts b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> > > index 218573a97785..3b5f6a29e969 100644
-> > > --- a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> > > +++ b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-> > > @@ -11,6 +11,7 @@
-> > >  #include <dt-bindings/input/gpio-keys.h>
-> > >  #include <dt-bindings/input/input.h>
-> > >  #include <dt-bindings/leds/common.h>
-> > > +#include <dt-bindings/media/video-interface-devices.h>
-> > >  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-> > > =20
-> > >  #include "sc8280xp.dtsi"
-> > > @@ -683,7 +684,7 @@ camera@10 {
-> > > =20
-> > >                 clocks =3D <&camcc CAMCC_MCLK3_CLK>;
-> > > =20
-> > > -               orientation =3D <0>;      /* Front facing */
-> > > +               orientation =3D <MEDIA_ORIENTATION_FRONT>;
-> > > =20
-> > >                 avdd-supply =3D <&vreg_l6q>;
-> > >                 dvdd-supply =3D <&vreg_l2q>;
-> > > diff --git a/arch/arm64/boot/dts/qcom/sdm670-google-common.dtsi b/arc=
-h/arm64/boot/dts/qcom/sdm670-google-common.dtsi
-> > > index b4854801a5f5..7880d85b52fe 100644
-> > > --- a/arch/arm64/boot/dts/qcom/sdm670-google-common.dtsi
-> > > +++ b/arch/arm64/boot/dts/qcom/sdm670-google-common.dtsi
-> > > @@ -9,6 +9,7 @@
-> > >  #include <dt-bindings/gpio/gpio.h>
-> > >  #include <dt-bindings/input/input.h>
-> > >  #include <dt-bindings/leds/common.h>
-> > > +#include <dt-bindings/media/video-interface-devices.h>
-> > >  #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
-> > >  #include <dt-bindings/power/qcom-rpmpd.h>
-> > >  #include "sdm670.dtsi"
-> > > @@ -460,7 +461,7 @@ camera@1a {
-> > >                 pinctrl-names =3D "default";
-> > > =20
-> > >                 rotation =3D <270>;
-> > > -               orientation =3D <0>;
-> > > +               orientation =3D <MEDIA_ORIENTATION_FRONT>;
-> > > =20
-> > >                 port {
-> > >                         cam_front_endpoint: endpoint {
-> > >=20
->=20
-> --=20
-> Regards,
->=20
-> Laurent Pinchart
