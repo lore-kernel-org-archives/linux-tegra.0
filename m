@@ -1,43 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39DF83F20EC;
-	Fri, 18 Sep 2026 12:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AB23AF66E
+	for <linux-tegra@vger.kernel.org>; Fri, 18 Sep 2026 12:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789733980; cv=none; b=NVAZ5hb3EhR+9Dzs39avwZUdKq0XcIVL0FLYi870iMLwTYZQTLJSbShq9/nBNQFpb4uZXPqwJtVpYk+j5xBO/SEC5Ilr/kZyhGvVHvoDo1VkCkekXubqY/Kh8ekWMJvRxWpBZCGNzI4a1UXSXoRvrq2dI2dpiL2I1rNYF6Eb2yA=
+	t=1789734976; cv=none; b=o26xhToTcO6WL3g5So/XdVsVizCXO/81Vq4vTprkgWqsq43MDMDD2jczGMk0wr+DRYM3Ye9cRc6AoD/g2e2ixE/TxBzevMS6+eQf+qH0pUM4QLpnkFWfCjvto+3PxL1LA9bFBLcIRrLhmu4OC4fO/+q0lelno02/1wIPRu9uzIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789733980; c=relaxed/simple;
-	bh=MZro/A7ro5nz7JLZ+GIpyBsLqovSBy1yv895sHvWpJI=;
+	s=arc-20240116; t=1789734976; c=relaxed/simple;
+	bh=+Eawl5SxhbcxVTSrftCHbfh/NkYEt/ITCxfJ9a2Njh8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KV0Z9gNcMe1il9Eu0yIIAZTPHdvcaO4UhlwZuTCS2FX5ePCyFfy0AC18vrFi7Gn1rIAPvS25HXkzuHUuhJjbgmzCA4dZTLUaILhUT16CypB06Jn4qoO2LJyWKcxvLkcJ+xNFE3k8QpmpEBzUBBTLgdHqUXI0lVpdhWSth6r9WkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aQzb9XWT; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=jRToxQfl98B96TX7LOpP4rBm+vghi+9xtfJF6bpUoo3N0ihcptx8FnyrOSc2lGse5q9UrjHVqPoqokR02jqtrAR/6+iG1vRlnPtmO6n5ho3RQCJ4L6EUnOhJ+A6bBdnbYFeEKLOBmJsRrrLoGeTb5uqhQrtUyO4lkzJZyCFtRoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DusgQpZI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aQzb9XWT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58E151F000FF;
-	Fri, 18 Sep 2026 12:19:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DusgQpZI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB3BE1F000FF;
+	Fri, 18 Sep 2026 12:36:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789733978;
-	bh=xoVozf3XKNPP3HzK2ZeGqkN76iLDIyMvofa8UkB13XE=;
+	s=k20260515; t=1789734975;
+	bh=Sb0LbV+qy9vs/5l3oux6Y+ZcGfz04wYswEvpakDWmsQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=aQzb9XWTRDCZMybJH4mwB1FxibMeY01qhn0jfSxrNWuWxWmkhrPW7DE1zJuekgZcf
-	 83ltZ1DVSUTvqw5zWhms2UYvFk5M6Cl5dvWVXBoWZnFBdcsJnHAjN595+QcILI3tEd
-	 GBKHUQkPZU3AOJAHjA7ESfyzPAoUzCw6/+8m9XKSB00fNfZqJaXdeH4N9VlWXEc1KB
-	 go0ui7kDDeFbExGkAo4xviLdPd2M6WdGWjPGgotXZsDgXtprDqX1pM154F4MS1Olbs
-	 RqLpfGcPXYHZK5YzKrrBrJBeJMN5IHXUaLX4oOywEp+/xvXD0wqUckPF0qnEYMenf6
-	 myzdJxEuSd7aQ==
-Date: Fri, 18 Sep 2026 14:19:36 +0200
+	b=DusgQpZIz+qRZGZwEVV53iGNlr2yK/sOSUe0cB2fsd7J9GdoSOk7mCia8ThcOcPv4
+	 bbKOZ+6BWxMdK9/kE0dCsg209TdjdYdqVnZI/Xelg1otJ0pyCcX5WC2yu/xOkoUUr7
+	 o76NSp67xccdL/EPthaMlnLfQy7GM37CAXbafu2R049u3uv1gZqntmD05iWd/SnR/X
+	 GvaKrvnQnHy/UFIGnDpuOHD8JxZvgPSkBpRYH72baMCO6ovs6Nv7sUo3KutAf6n6jt
+	 9LZD8yBCocHpioQ/lB5//v8tyiuiuIVx3TDzbtsNiD1S9F7mn65v/+JQfVulB6F5+b
+	 ckamN3mQvaW+w==
+Date: Fri, 18 Sep 2026 14:36:12 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
 To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Charan Pedumuru <charan.pedumuru@gmail.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH 1/8] ARM: tegra: Clean up AHUB on Tegra124
-Message-ID: <aq0sR4k96fGs1MY-@orome>
-References: <20260902-tegra-ahub-dt-cleanup-v1-0-028f3c5e72f6@nvidia.com>
- <20260902-tegra-ahub-dt-cleanup-v1-1-028f3c5e72f6@nvidia.com>
- <1114db1e-55fa-4056-bcdd-f1512bac70c5@nvidia.com>
+Cc: linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] arm64: tegra: Enable built-in RTC on Jetson AGX Thor
+Message-ID: <aq0wEa-okvY9IaZX@orome>
+References: <20260817143205.287870-1-thierry.reding@kernel.org>
+ <75f49105-f36a-48cb-877b-5ab96c8fcd90@nvidia.com>
+ <aoQ4vGb2-FwwXss9@orome>
+ <353be5ea-4845-42dd-a902-430f0ed37348@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -45,82 +43,94 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rzyhrhrctqple7na"
+	protocol="application/pgp-signature"; boundary="isrtrbl7wjbvke3j"
 Content-Disposition: inline
-In-Reply-To: <1114db1e-55fa-4056-bcdd-f1512bac70c5@nvidia.com>
+In-Reply-To: <353be5ea-4845-42dd-a902-430f0ed37348@nvidia.com>
 
 
---rzyhrhrctqple7na
+--isrtrbl7wjbvke3j
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/8] ARM: tegra: Clean up AHUB on Tegra124
+Subject: Re: [PATCH] arm64: tegra: Enable built-in RTC on Jetson AGX Thor
 MIME-Version: 1.0
 
-On Thu, Sep 17, 2026 at 09:01:54PM +0100, Jon Hunter wrote:
-> Hi Thierry,
+On Fri, Sep 11, 2026 at 03:48:19PM +0100, Jon Hunter wrote:
 >=20
-> On 02/09/2026 11:17, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
+> On 18/08/2026 11:54, Thierry Reding wrote:
+> > On Mon, Aug 17, 2026 at 03:41:31PM +0100, Jon Hunter wrote:
+> > >=20
+> > > On 17/08/2026 15:32, Thierry Reding wrote:
+> > > > From: Thierry Reding <treding@nvidia.com>
+> > > >=20
+> > > > The built-in RTC is mostly useful for testing suspend/resume cycles.
+> > > >=20
+> > > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > > ---
+> > > >    arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi | 6 ++=
+++++
+> > > >    1 file changed, 6 insertions(+)
+> > > >=20
+> > > > diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.d=
+tsi b/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
+> > > > index c4ba3322ed9a..113ecf297378 100644
+> > > > --- a/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
+> > > > +++ b/arch/arm64/boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi
+> > > > @@ -13,6 +13,12 @@ chosen {
+> > > >    		stdout-path =3D "serial0:115200n8";
+> > > >    	};
+> > > > +	bus@0 {
+> > > > +		rtc@c2c0000 {
+> > > > +			status =3D "okay";
+> > > > +		};
+> > > > +	};
+> > > > +
+> > >=20
+> > >=20
+> > > Any reason we should not just enable in tegra264.dtsi by default? I s=
+ee that
+> > > we do that for tegra234.
 > >=20
-> > Use #address-cells =3D <1> and #size-cells =3D <1> because we don't need
-> > 64-bit register addressing for this hardware. While at it, also adjust
-> > the ranges property to encompass the entire AHUB range as per the TRM.
+> > This is more of a development type of option and not everybody may want
+> > to have it enabled, especially since it's not always hooked up to do
+> > anything useful. We commonly use it on the devkit for suspend/resume
+> > testing, so it's useful there, but even then there's usually another RTC
+> > on a PMIC or something that's considered the primary one.
 > >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >   arch/arm/boot/dts/nvidia/tegra124.dtsi | 16 ++++++++--------
-> >   1 file changed, 8 insertions(+), 8 deletions(-)
+> > So in production I suspect people may not want to enable the built-in
+> > RTC. If we enabled it by default, then people would have to explicitly
+> > disable it again.
 > >=20
-> > diff --git a/arch/arm/boot/dts/nvidia/tegra124.dtsi b/arch/arm/boot/dts=
-/nvidia/tegra124.dtsi
-> > index ce4efa1de509..7a71dba42dc0 100644
-> > --- a/arch/arm/boot/dts/nvidia/tegra124.dtsi
-> > +++ b/arch/arm/boot/dts/nvidia/tegra124.dtsi
-> > @@ -1114,13 +1114,13 @@ ahub@70300000 {
-> >   			    "rx3", "tx3", "rx4", "tx4", "rx5", "tx5",
-> >   			    "rx6", "tx6", "rx7", "tx7", "rx8", "tx8",
-> >   			    "rx9", "tx9";
-> > -		ranges;
-> > -		#address-cells =3D <2>;
-> > -		#size-cells =3D <2>;
-> > +		ranges =3D <0x7030000 0x0 0x70300000 0x10000>;
+> > I don't feel very strongly either way, and I could easily be swayed.
 >=20
+> I would be good to get this added. I don't have strong feelings either
+> way. So ...
 >=20
-> I noticed a regression on Tegra124 Jetson TK1 today and I am seeing ...
->=20
->  tegra30-i2s 70300000.ahub:i2s@70301100: error -EINVAL: invalid resource =
-(null)
->  tegra30-i2s 70300000.ahub:i2s@70301100: probe with driver tegra30-i2s fa=
-iled with error -22
->=20
-> Looks like the first address in the above is missing a 0 and we
-> should have 0x70300000 and not 0x7030000.
->=20
-> Let me know if you want to fix up or what a patch to fix.
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-Should be fixed now, thanks for reporting this.
+Applied, thanks.
 
 Thierry
 
---rzyhrhrctqple7na
+--isrtrbl7wjbvke3j
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqtLFgACgkQ3SOs138+
-s6H5/BAAwPKkJgykHi8AKsVAlex59IAoVpE8yH72tGIA8Fk2Kd9Uz4iHxcqlgZTr
-NrfX0DKELHIawjqbeI5AYkTFtPDl4gx0FzvKwbp/C+FQrzQgu9d8wqz36qHzr1QW
-W06eiWaUtgJe/HXmfUX5a82JUJdtrhPfHxDtUoiuwdhArPz9B4v5i2pC+49A2esM
-u5tW+IydQLBmA2MBf9pImDptXhTj7XYk2fuQGPhqYlkCvrU1T7s6/QhHYnGxbQ4r
-WC6g5IB+rQilgL4g+LnoOnnq8sKDIc7mEHHNL3VXryFVjj5tc5GdkSh3i27VwrD4
-CRWdZrCkwRFPUAi8klqh3mlB4OaWFAViI4PX6ffkXuQRfpi1JxH4somPt0guD2/y
-TLw1SsUKr1u5Mc6RzhXG5KCh6dz6WZ3B7zDt88kD8R3WdWZth6/fsjhsQdFzeTTt
-xs0LqJ57DW5iQmqnu7AaVrPksyH3Nk4iJ5EmnSUmKpfFPn9j2F3eC2JdJ2+W4iqD
-NWiKeLQFyZtG3/F3H2ENr+iwJHmsEaAedUHeDFr634E2ESYrHTQjbUBdCKRYKRCO
-l8d/xI1Nw09pR5cgMOPSqb38TAx/mT26kBwX1geNfvH28S9xmhmvdneKPBc6prSH
-ISYY5g6h+M1vgxtMyPnmwfTKKi4yz0uDD2ZDI8WhH7vJ8EVGbjY=
-=s++q
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqtMDwACgkQ3SOs138+
+s6FTVA//X6CYkfe5lvfj3+GLwt98NOsM+ptCbHsqlGuhS1E8K/qP/v/LyAr35PGq
+6NdCYaQhIsEXZx20e8MlGpb6Oqf5mn4fAFSAjje6ecHjnLJLki/RjXQSIQ6PtVak
+0IwWAqc54r2kZ3yzC3AsqdMn0eAcac2YM8OqLDP0i5Kbr75aoWTaagQUtBPOfuJr
+ux2Uzg77uhuLgbV8LEb5H1ep83UtYYZkvZx9wZZdzWqrY6waKLTh4JeZVW/RiTE2
+hkyzvnBxB/pLbdqTZTAAk5zgj1X+d77FVpTmWz5JhXdklCXRFlsdwYUJQijLgpH6
+5PvTH2mwnZNriX/fqy+o56ZAQY3K1QrOfONEbb7/ajP7sxFcDXVqE9cp78+ZKkbP
+3BcVDIj8CBnUCBeQk/ZWGmOMa/P8ECp3y9Qbx5BE0i/M5dGLQOmgBwZDEJ8pbpL1
+vT36wzej/gUVDlZsnV+UibEleCkSQdO7wtZnXQm1QFWV0q/SWokrCZl2lQRZ4nFH
+GMwOPC/j7w3s2jFIkXdrngV4FnpwuM8EhsxITDRulyidE9iKgF9cMHXBIcXEKVIp
+3rKSOCVrMwCUJEuajBocmhC63ETZCEZOBsTFcyAF8ZRBXgX9ORtnJLixiaEj9vDP
+bKtnjilbrKu5I2T3vs7K6i8F1OzEnMtZg1Oo6sCAPyF/UwYG6K0=
+=7oNh
 -----END PGP SIGNATURE-----
 
---rzyhrhrctqple7na--
+--isrtrbl7wjbvke3j--
