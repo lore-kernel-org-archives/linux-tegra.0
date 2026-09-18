@@ -1,103 +1,155 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439D34AD7DD;
-	Fri, 18 Sep 2026 09:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E534740801E;
+	Fri, 18 Sep 2026 09:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789722449; cv=none; b=iWYGpGR8cer0ZqlI1mkWwghQDLoG10j/byZWiSGn1PdbyObDe3K9i2vBFtxgoAo/MzEu9zFJHhShbJiD/sv0V6dHgYvtqPNW8HQu1BqepsLde7/21DNE3PVZ7ghNy1+hNtYiVRy1wK+rKhs/QPQigsry9wqpMIWooJ17Dw0N4jY=
+	t=1789724742; cv=none; b=bgSacmmLQ2g7vV1Y3mQPF37CwdK3nQ/LOudaYhhHL6vSdpnmgsFT5M1VSZ7tMHPlYrfFOTgc9ZiKBFb7T8sc0Bi6ScdxAaiS1s29hSUZ3KM5+Tm8MfzLP6aNqli8pD8e0IMLWj+0cwQdeZ1BpDuoVFtll6gPrgFJxIDsfC/blvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789722449; c=relaxed/simple;
-	bh=prWtC84Z2bEj0T6Ru7ScsA3CiIenQ658zODxPXLz2Yo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HAwWUoh1pgLt4x3VPHHUSHgsJUUJocXmrSnGfH0Li6Y4Xt6VeTzdFhYkryIUPiwG0gSwtfKh9WEOB4aznicj8fxSkyLARU2TRG8JqomVE98qYcic/o3d18msJspFbXXTxyQ1wQLQiMKTY/ZzGKyZn3Vt3w8gx7MwxxICZkwOxIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZPndOfet; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789724742; c=relaxed/simple;
+	bh=89XNQWaJJfGotGWu/y8kapAmM51DkG82nQ/unU2N1NQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sWws3NHAtyZ9juGRUbd6npE8p4sSMnRVgOd8uvvMtra4+p49EqNU1Wip/olbgDh/s4MHYOzq05wxuaeRcwjlsohkULJtm9O3qj6bZGzj2doG+bzzFrNb6q35x52e1YsiDF2RFD7N5u668KzHuYbRxpzUvG+V5+fP5BIk7eePadE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RJ1HCIwt; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZPndOfet"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2639D1F000FF;
-	Fri, 18 Sep 2026 09:07:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789722447;
-	bh=ufBb0+fNRfStQnARdx2fWI4zq7VSUEMwTS+qv5GOtio=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=ZPndOfetzEZsskWpr6FwGa2N6oHoebIeShKpkYPirvMwXUpqDWISRVkX+tgyO8SWA
-	 I4kKvn3whB8AqQBJdqxcuGXwT0uYuDukNaXSAkIM3hn8vIk7iCyB3NHybs1XglziI1
-	 2rKoTMqRoSoedy6Cx6LSbGsGZDmSh57Z1olJSmvje/5x8fvdBkxZcaPWMI4dQxlGtD
-	 kYH4LOYmAfzlipo2DSUlNT9LiYkg+zePd3I5qfv51Ipbl+14zTRmD4dgyu4MNcJo3T
-	 /MthEEVc/ThomULNDzgp/wVAWxWUqPQp84wDc7j6oimq31cR+l287i8QNSo9ze8X3c
-	 FJdvEi5K9Jrsg==
-From: Thierry Reding <thierry.reding@kernel.org>
-Date: Fri, 18 Sep 2026 11:06:57 +0200
-Subject: [PATCH 5/5] arm64: tegra: Add thermal senser for Jetson AGX Thor
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RJ1HCIwt"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1789724740; x=1821260740;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=89XNQWaJJfGotGWu/y8kapAmM51DkG82nQ/unU2N1NQ=;
+  b=RJ1HCIwtKHBO2yTy1nUZmx0XzKemSwCBLnof0o58Ne1q8BCWkEYvOiVg
+   sDfwOzpdOoqFS3w4p64KHSAY8FfRedMVq1ZxoyPPnNChfgFFtqB7mZoy6
+   BUi9oqj7hYWdCVj+PXE4Nr+to2S5KtYfBXhgtyDUi09oTcXbiIluvv+ZG
+   v+snblko2yhg//lP/ODEPWxTxIGNG+zx4awXP99H/cmH97meHRWi3+Mht
+   0DfJNlInmkV1YgKGVesrjhzu/9W2h6vjkn5LT6iSuEdPF8o5PUGw2+JPO
+   2h0VWWd5ldcrSsJXJdWtsRM/DRoasndu+pKobwUrjofupJSJDVtJkhKuo
+   g==;
+X-CSE-ConnectionGUID: bTsfPMSMT7KJs+/w8jh54w==
+X-CSE-MsgGUID: EiH7P7wQTdGC6IBKu/Zmhw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="77782486"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
+   d="scan'208";a="77782486"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2026 02:45:39 -0700
+X-CSE-ConnectionGUID: XTKBeoNFTmG7p/9NjQwnPA==
+X-CSE-MsgGUID: aSQkoXbcT2OadNgmRfHhZw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
+   d="scan'208";a="270638789"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa010.fm.intel.com with ESMTP; 18 Sep 2026 02:45:37 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1008)
+	id 6F40199; Fri, 18 Sep 2026 11:45:36 +0200 (CEST)
+Date: Fri, 18 Sep 2026 11:45:36 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Wayne Chang <waynec@nvidia.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] usb: typec: ucsi_ccg: Add retry mechanism in ccg_read
+Message-ID: <aq0IQA_7TrlM7-VO@black.igk.intel.com>
+References: <20260916061858.1471606-1-waynec@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260918-tegra264-i2c-v1-5-3adac7aae717@nvidia.com>
-References: <20260918-tegra264-i2c-v1-0-3adac7aae717@nvidia.com>
-In-Reply-To: <20260918-tegra264-i2c-v1-0-3adac7aae717@nvidia.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=857; i=treding@nvidia.com;
- h=from:subject:message-id; bh=Zmc+RmlRoeCabDhbuPn0Xy5Yjv7Zp1RCG1M5HfuCVxw=;
- b=owEBbQKS/ZANAwAKAd0jrNd/PrOhAcsmYgBqrP8+r3vYviwkQMyi30+PiX9vJbS3O1O1Bk6bH
- si7NSUu9zKJAjMEAAEKAB0WIQSI6sMIAUnM98CNyJ/dI6zXfz6zoQUCaqz/PgAKCRDdI6zXfz6z
- oSiJD/95EP2s4+OgxSl8BlhoaNnMh/uvrkf1w5Mj4t2H63du/K7U07hJHi7vZDh7PWn/P+ACmP2
- ypd0Y/hZiPq3mb6j2ta5LJk9oMeaDCCeCaRa6X8XTMWfi7TiBfAslT969KQcH8id9lpeLLhJvS7
- dXWesi6kJjHIKeYKC8CBwEt4UWnDvjrSocSoLGj6DzosILZS3z4niDp35jGk6kXeG8hBowurE+2
- YidsIz8h50dQzNvNLnAs5xI5c/f8dvFv/0Uxk3jMKv79xhiJrz6vOQDbLuO59aLHkEwmQIfoIRA
- 6yzXfzpObmqhqstsbnbN1KPHoAuA1YNgzUfpntrOgzmP7VQQve9V5izQydWTFuym9ouLJUUFeo1
- GBPYOFSIjgQUymIybm8BGAz2j99F1VmhKXNTl9RR6gE0InVeBv+THdE3MJ6Vc7vvXUzNvKImyX8
- ebLKAhmVuT+tKGgcKpGEOIkvtUG+w2UBDdg/dwy4BsVcOcZP92mx+Zp9GlODSQ0VzEFMVB0Kf62
- 0ih0kbjAnsn6bevqAM6L5qKSkAGvTPEqxpqcdwyxtehdVk6Bon8OwgKM1lafZRBLPqcndka0zDe
- e9sSdXFqm9pnST6/8kauSZNyWhs3Wz+vkWFK7MiWSjoQxeDwCMxz0GelY720HO/fk9a3BDXIcvr
- y9WfH8VX7ZKf6HA==
-X-Developer-Key: i=treding@nvidia.com; a=openpgp;
- fpr=88EAC3080149CCF7C08DC89FDD23ACD77F3EB3A1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260916061858.1471606-1-waynec@nvidia.com>
 
-From: Thierry Reding <treding@nvidia.com>
+On Wed, Sep 16, 2026 at 02:18:58PM +0800, Wayne Chang wrote:
+> CCG4 firmware occasionally fails to respond to I2C read requests,
+> especially when reading cci and intr_reg from the ISR path. In these
+> cases, i2c_transfer() returns -EREMOTEIO.
+> 
+> The CCG4 is EOL, and Infineon no longer supports firmware updates, so
+> a software workaround is necessary.
+> 
+> Attempt the read up to CCG_READ_MAX_RETRIES (4) times in total when
+> -EREMOTEIO is returned, sleeping ~1 ms via fsleep() between attempts.
+> This allows recovery from transient I2C failures without affecting
+> other error paths.
+> 
+> The sleep is safe because ccg_read() is called both from process
+> context and from ccg_irq_handler(), which runs in threaded IRQ
+> context (registered via request_threaded_irq() with a NULL hard-IRQ
+> handler), so sleeping is allowed in both cases.
+> 
+> Fixes: 247c554a14aa ("usb: typec: ucsi: add support for Cypress CCGx")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Wayne Chang <waynec@nvidia.com>
 
-The Jetson AGX Thor module contains a thermal sensor that can be used to
-read out the local temperature. Add a device tree node describing this
-sensor.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
-index eb157b0168f0..f39f33a66cd2 100644
---- a/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi
-@@ -54,6 +54,17 @@ eeprom@50 {
- 		};
- 	};
- 
-+	bpmp {
-+		i2c {
-+			status = "okay";
-+
-+			thermal-sensor@4c {
-+				compatible = "ti,tmp451";
-+				reg = <0x4c>;
-+			};
-+		};
-+	};
-+
- 	thermal-zones {
- 		cpu-thermal {
- 			polling-delay-passive = <40>;
+> ---
+> v1 -> v2: Per Heikki's review:
+> - Fix off-by-one: CCG_READ_MAX_RETRIES was 3 but the loop ran 4 times
+>   (retry_count <= CCG_READ_MAX_RETRIES). Changed the macro to 4 (the
+>   actual total attempt count) and the loop condition to
+>   retry_count < CCG_READ_MAX_RETRIES, so the name and the loop bound
+>   now agree. Adjusted the "skip the sleep on the last attempt" check
+>   to retry_count == CCG_READ_MAX_RETRIES - 1 to match.
+> - Use fsleep(1000) instead of usleep_range(1000, 2000).
+> - Reworded the commit message to say "up to CCG_READ_MAX_RETRIES (4)
+>   times in total" instead of the ambiguous "up to three times (four
+>   attempts total)" that prompted the off-by-one question.
+> 
+>  drivers/usb/typec/ucsi/ucsi_ccg.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> index 91c2958a708c..4b6c53d2a998 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_ccg.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> @@ -135,6 +135,8 @@ struct version_format {
+>  #define NVIDIA_FTB_DP_OFFSET	(2)
+>  #define NVIDIA_FTB_DBG_OFFSET	(3)
+>  
+> +#define CCG_READ_MAX_RETRIES	4
+> +
+>  struct version_info {
+>  	struct version_format base;
+>  	struct version_format app;
+> @@ -255,6 +257,7 @@ static int ccg_read(struct ucsi_ccg *uc, u16 rab, u8 *data, u32 len)
+>  	};
+>  	u32 rlen, rem_len = len, max_read_len = len;
+>  	int status;
+> +	int retry_count;
+>  
+>  	/* check any max_read_len limitation on i2c adapter */
+>  	if (quirks && quirks->max_read_len)
+> @@ -266,7 +269,17 @@ static int ccg_read(struct ucsi_ccg *uc, u16 rab, u8 *data, u32 len)
+>  		rlen = min_t(u16, rem_len, max_read_len);
+>  		msgs[1].len = rlen;
+>  		put_unaligned_le16(rab, buf);
+> -		status = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
+> +
+> +		for (retry_count = 0; retry_count < CCG_READ_MAX_RETRIES; retry_count++) {
+> +			status = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
+> +
+> +			/* Only retry on -EREMOTEIO, and not after the last attempt */
+> +			if (status != -EREMOTEIO || retry_count == CCG_READ_MAX_RETRIES - 1)
+> +				break;
+> +
+> +			fsleep(1000);
+> +		}
+> +
+>  		if (status < 0) {
+>  			dev_err(uc->dev, "i2c_transfer failed %d\n", status);
+>  			pm_runtime_put_sync(uc->dev);
+> 
+> base-commit: 940de590b839f71d6dc846160534bf202401b8b7
+> -- 
+> 2.25.1
 
 -- 
-2.55.0
-
+heikki
