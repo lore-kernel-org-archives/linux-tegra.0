@@ -1,40 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7F148F001;
-	Mon, 21 Sep 2026 11:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A14D48489A;
+	Mon, 21 Sep 2026 11:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789989448; cv=none; b=ZJGntFafaxvzP+gj69Pu9R68knvLpyIzl2ELKH5lwiRZYTH9ZJUsPoNRB8R9nXy4ntDNgdoVQQ8QMGOfrMYw5De/VX46Ef8zp++02gqqg8aMneaJYuPSCBzoQbYCHdnPqF27Zr0eRbEubqC6jqG0nORqCJNJvfus5BhRyIo100g=
+	t=1789990136; cv=none; b=QWDf/aKY6OviqR1aPM4r3AzyeYRpqoUnUYK/TQbKnf5sm948ScDunDT5SNOCaVXSSMG13PQ1V6Kv1Wh8sohGvNOFeW2m3M4XG8xnbrCuGI9Za4hbxHxVYAwg38g/2NtFrn1fwDjQIe5t5bN1tFQ/S6wTjDrdwVr87K0FBuVosYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789989448; c=relaxed/simple;
-	bh=x16NKno05BT2zHHJEfQb8QZgs6VvyRc/Bo82uAB5hKI=;
+	s=arc-20240116; t=1789990136; c=relaxed/simple;
+	bh=23O1N9RAoRg8GUl0wqI99Kzo6mCdV07KZt4GTFKyfdw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IMTp2UOy+wE7o8PCRfwE91K4oKrvLKsBV0G97yjckuTc6l2RInMm6il+9gIgfeh8sij33QaV1KKwVyydWIQjDYHsa9UGyptMNY3X0ziVttRqC4vw/w31Pqi0IrbU4dC1ij+nOesm75GSw+ytQVUjjED6kp6OUhK+zGOUxzhMFOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MLp2MZ+M; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qg8Oy//qBTIzqfRtPb7NFrlTPwO43b7ay5a5rSjidxwKW9WdfuOYXDZsUh2d6XfBHd5rzgxBalljsF3CfUWjVSKBBDjFWswbIeU3yKmC/1f3inucwP18XpHLTl/GEW8/P4mgxEeVQTOlLxVRTv5Kq5c+V8hQcOTCd235fnLCfGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U/e3aISV; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MLp2MZ+M"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C8731F000FF;
-	Mon, 21 Sep 2026 11:17:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U/e3aISV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C15C1F000FF;
+	Mon, 21 Sep 2026 11:28:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789989446;
-	bh=kl9oMLe8SDeeHamOhAttW5UionMDkMf7HMRbiNeRvac=;
+	s=k20260515; t=1789990134;
+	bh=aaRbicKNfqtcJIZ5MQEU8o/qjFzZn0m/iDzkauQ3Qt4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=MLp2MZ+MILWRvW9R/eS22d0Z0g7H8CaIm6P2C7sdFzfdkqRllu+FieG23RrZDJ8AZ
-	 tIHocolyxYv74udgHnlvVQUl7O3MnZ80nDSXFWBAYc7idU9mENLYQOKAJN1wHMX7Fs
-	 SYk42uHZqWQVp3vPihD9T9hCkQGNWi+NNyH6DwgK2oMXRRhl47zGcVJLdqQVeBY/Dc
-	 i7eedgyNuHceK+/XYuI/oeETsoRK0WgJbp+8aVoU+YwlhlMAewNQtRJU7/Wa5Ix3Mp
-	 RoKCratFlQNXsr9WvrYTAjhUDJ/LIswLY8h79T1wDSMkrVnPXwgOk+kHfVAdEc3NfD
-	 amAc024zY3EKg==
-Date: Mon, 21 Sep 2026 13:17:24 +0200
+	b=U/e3aISV00A7ww8Hei7QixqUITRE14MzH4XqHHJarBC47v5xUeurs1Br+A2TFyzYT
+	 rW2Pa2ldvVMGIGLZHXnTqqT0jg0LBxiWzDbX4qVi/24Rv9uHMFGYm3iUn66EYHJElt
+	 cBNWgqQeQc8KZV7QkUmA98Mx6XPg3GiL3CSnvdz3YsytovHIS5CsZcsvD+QReu+8er
+	 BwAe1Z0Y3oy0xe32U8NT2wpd1S0OG2mVZrfL6xREtSkiPWikff+qiAVZ4FUn5uVqxK
+	 9bgCnwPFlLm3qfsAbQbtAVyrmmmsm/f2C9r1QcdqpvAyfRcZArOLIalco9PTsv6KYH
+	 wNdy4UdIIVzTg==
+Date: Mon, 21 Sep 2026 13:28:52 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-To: 0xSmash0th@gmail.com
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firmware: tegra: ivc: back off when a peer stalls the
- handshake
-Message-ID: <arEQa6XbnKsePcaq@orome>
-References: <20260917-ivc-resync-backoff-v1-1-dd41ef3a1390@gmail.com>
+To: Myeonghun Pak <mhun512@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Ijae Kim <ae878000@gmail.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] usb: gadget: tegra-xudc: Disable port reset work on
+ removal
+Message-ID: <arETYSjwaHytxyBu@orome>
+References: <CAGEsz8F2eKsmV_tymO+9UD5xkS_tWhZo-b9Xom1_SiKuc-BCqg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -42,88 +43,85 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="z35p4itbzvgd3yrg"
+	protocol="application/pgp-signature"; boundary="5zdctmjwsshytil5"
 Content-Disposition: inline
-In-Reply-To: <20260917-ivc-resync-backoff-v1-1-dd41ef3a1390@gmail.com>
+In-Reply-To: <CAGEsz8F2eKsmV_tymO+9UD5xkS_tWhZo-b9Xom1_SiKuc-BCqg@mail.gmail.com>
 
 
---z35p4itbzvgd3yrg
+--5zdctmjwsshytil5
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] firmware: tegra: ivc: back off when a peer stalls the
- handshake
+Subject: Re: [PATCH] usb: gadget: tegra-xudc: Disable port reset work on
+ removal
 MIME-Version: 1.0
 
-On Thu, Sep 17, 2026 at 05:20:24PM -0400, 0xSmash0th via B4 Relay wrote:
-> From: 0xSmash0th <0xSmash0th@gmail.com>
+On Thu, Sep 17, 2026 at 07:20:58PM +0000, Myeonghun Pak wrote:
+> The port status interrupt can schedule port_reset_war_work to handle the
+> Tegra210 port reset workaround. The remove path does not cancel this
+> work, so it can run after the PHYs and controller resources have been
+> released and access freed memory.
 >=20
-> An untrusted peer can wedge a channel for ever: park its state word on
-> SYNC and stop touching the ring.  No path in tegra_ivc_notified() can
-> change the victim's rx word, so rx_state stays SYNC and the loop is
-> absorbing rather than slow -- pass 7,651,085 is indistinguishable from
-> pass 1.  Each pass rewrites the ACK already in tx.state, re-zeroes both
-> counters, rings the doorbell and returns -EAGAIN.
+> Disable and drain port_reset_war_work before tearing down the controller.
+> Use disable_delayed_work_sync() so that the interrupt handler cannot
+> queue the work again while the managed IRQ is still registered.
 >=20
-> The only in-tree caller, tegra186_bpmp_channel_reset(), retries on that
-> with no timeout, no iteration cap and no cpu_relax(), on both the probe
-> and the resume path, so the victim burns a core at roughly 1.5M
-> iterations per second for as long as the peer stays quiet.
+> This issue was identified during our ongoing static-analysis research
+> while reviewing kernel code.
 >=20
-> A peer is a service, not a VM: one untrusted guest can hold a channel to
-> each of a rack of service partitions, and nothing here makes wedging the
-> tenth harder than the first.
->=20
-> This is not a new class of concern for ivc.c.  tegra_ivc_empty() already
-> carries an over-full check "to prevent denial of service attacks", and
-> calls that condition "an invalid case caused by a potentially malicious
-> peer".  That defence covers the counters; the handshake has none.
->=20
-> Apply geometric backoff to calls that make no progress, modelled on
-> xen_irq_lateeoi_locked(): a saturating count, a doubling delay, a hard
-> cap, and a reset the moment the peer moves.  Progress is detected by
-> reading tx.state back rather than by tracking which branch ran, so the
-> states from which no branch can escape are covered too.  The wait is a
-> bounded busy-wait by default because tegra_bpmp_transfer_atomic() reaches
-> this with interrupts disabled, and it uses local_clock() because the
-> resume path can run with timekeeping suspended.
->=20
-> This is a floor, not a fix.  The return value is unchanged, the caller
-> still retries for ever and probe or resume still never completes -- the
-> spin just stops costing what other channels have to share.  Bounding the
-> loop belongs in the caller.
->=20
+> Fixes: 49db427232fe ("usb: gadget: Add UDC driver for tegra XUSB
+> device mode controller")
+
+Please don't wrap lines like this.
+
+> Cc: stable@vger.kernel.org # 6.10+
 > Assisted-by: LLM
+> Co-developed-by: Ijae Kim <ae878000@gmail.com>
+> Signed-off-by: Ijae Kim <ae878000@gmail.com>
+> Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
+> ---
+>  drivers/usb/gadget/udc/tegra-xudc.c |    1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> --- a/drivers/usb/gadget/udc/tegra-xudc.c
+> +++ b/drivers/usb/gadget/udc/tegra-xudc.c
+> @@ -3926,6 +3926,7 @@
+>=20
+>  	pm_runtime_get_sync(xudc->dev);
+>=20
+> +	disable_delayed_work_sync(&xudc->port_reset_war_work);
+>  	cancel_delayed_work_sync(&xudc->plc_reset_work);
+>  	cancel_work_sync(&xudc->usb_role_sw_work);
 
-I'm not going to bother even reading all of this. There is no such thing
-as a hostile IVC peer. The one peer that currently uses this IVC in the
-Linux kernel is the BPMP and if that is somehow compromised, wedging the
-channel is probably the most harmless thing it can do.
+This is a preexisting problem, but given that we only delete the gadget
+below this cleanup, shouldn't the other two cancel_*() calls be
+disable_*() as well? Otherwise there's potentially a race condition
+between this and the interrupt handler (which is only unregistered after
+=2Eremove() completes).
 
-> Signed-off-by: 0xSmash0th <0xSmash0th@gmail.com>
-
-Please use your full name when submitting patches to Linux.
+Either that or the existing cancel_*() calls are enough in which case
+your patch probably should be using that variant as well.
 
 Thierry
 
---z35p4itbzvgd3yrg
+--5zdctmjwsshytil5
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqxEkAACgkQ3SOs138+
-s6H7XQ/+PoZUKRpSJzcyPQm0IjtIiEtP3M4Tb8PpScfsEmmzefZp3xHq511w4hqK
-EN69XaSlE0yIVwdM85hvpfvAKLnmdi3u817Lovs7ZVgt8jditQuoiU3VgBZONZUu
-z7HvFgPg+Qe9T8bF5X6KP4R0w7q3RJWBwFihdPuS3wBvCPwK8luxLEnNGFcJMq9N
-57PBTw5A3ahekOsgPSI3Nb/q9NY0DwK9t6Ecg/jW1RL+R+AUs9swnLxPINzebgIK
-YQOEmvwI6CXLv3rmhRy7Gdz8snlDcvE7XJPzbN9VHISzMHt6Nx9KpLlz/Sxeckkj
-UwIIOWttsurrWeJNpqOrY5X/g+W46g3gYFMvoV0f1h5Mgx7CwZo7i6vckbUs5fMZ
-nBYeE2D7GcsaIcxa5uRHM6NUWkAoh8ryggLEqlvBcZS8Dxq1spawEpKgqT+v7r9Z
-CR2UrBmK/YEdKNzcYjlk8X2SyhbaEPATdKEUvzZ/9nkpekmkLlywToq0c3dQwyFo
-Hv0YLr0ILia6FV34dnaUi6D/p+fObKU1kq4RvFOmjM7frS9jkNuiAsxPZt8kU1bB
-GCoWssnYkspTlfbulGMUblxn0WcigdR8RiAe6J6gpkbAdm5QHc+3E62omw/yrwGd
-pMDHGiirM4Grn9Vs7N8I+RPexJdtaYs/DKpRUQmt4XWZpVMKlec=
-=mY5Y
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqxFPAACgkQ3SOs138+
+s6Htpg//WPr1p2gbjuixtztjto5kgSpBtht2UIY60AmdxNMUo0WL0PUmoJ6v1s1u
+Mye/zUOsJokaRKZK1x8pply2BvTiOG7mJT3fqb345BrMXZAsIVkPVzNRuPU6uHel
+jck7pp3cZiD8RpFWhb38rPSzwchHlKLtAakrDzC/fBHhKc1gE7hAM8U50fLuiJJT
+SOXf+aa3Bm1tPN+ydwIDeihf9OBPEgBVzl88re1aVy+D5CE3ejh24OPO8IGi3bZ8
+SAAc6tNCOlNusAP9q5zMXXwTjb9nOSKS1kSkc6fSkML9cpnnKUd2LPEtiqtV6c0g
+TpCVQXFHA1QfryeCxkILu7B5ZkuPTwu0DLkqNfwocdw8FNU+HQgyjAh97buQU6LS
+h8eDya980cQ0ZTC76GlhCMMTHGNdVPpAwAQCeq9kN6QkqgfjqY9AfWt8Q0pQVJfL
+zBw2ndvzfDiLSdEMFQuHeshldcKy+kaAQW0pws4jkKJ37BAAALpQpM1OiEUAsCp+
+PQYBBpb2udeaPI6OV8zd5rPh2NDbAqIGc3CpKzLSJgSeTe9swTY3t48diNcq/rvz
+0dfUmfdpMlIFL7zFYkeCXkhm0/kA7ABHIa1BKHj1fbynXbpYmfa4PLG/XSCOz4tR
+G1ZcAee9mdfskKGYI/LQU0XByVGgZ84+JxtaIXN1Rovc80GE8Hc=
+=oxn7
 -----END PGP SIGNATURE-----
 
---z35p4itbzvgd3yrg--
+--5zdctmjwsshytil5--
