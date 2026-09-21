@@ -1,179 +1,153 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013068.outbound.protection.outlook.com [40.93.196.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B898488DAF;
-	Mon, 21 Sep 2026 12:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789992621; cv=none; b=V1kOzRuh1x3pECSjJf1YXEtojjVi06KM0JB7Q7fjhNwiaSigzX1KBUmcYP4mBUDHpx7vUDKklglQl1shD8jTlKtGGGIasZ1bfbV31+uOAcPorLDqxlmhOYjIxwRxh8U0aAyDRACbW1nmv15IpJY0nf7YZkv2LOVY6HgaTn6V7Sk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789992621; c=relaxed/simple;
-	bh=FG6tH/Y8T9b0/2uVNUkAWRpyGeXjSLQD/gEba+dtlXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UL1iKedbE6OPJ6F0SO3vyTO6uCWD5jpDFWKCNmPKEl3PnvKeuF4MhQMTCADZvsoWRc2JMztiXCcDI1gOr75+NKDYMx/CXRuq24XnTUTcpkRiD6AZuBu7C8USDRruJKcTuE76ZzLcucpc8IeGZVFrFk0XQlZoFQsC0hdxMexMVRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NOpaGtJ8; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81B331D39A;
+	Mon, 21 Sep 2026 12:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789992922; cv=fail; b=WgRINoGzs+jjcbd8aWbyqkeus9RcEEvOmyAooBdtPiP0rcIKz1mXIfNjX8X911Vv8hK8Ru998I2QIQydDwqRbYbWylGwK3w9/wtrOnk0skBFmzGQe2CqHsYDa+zX0oJS6GrLRuAIspztBe7dLzOgDDSEPNIQnos6Z6OSVPr9ofQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789992922; c=relaxed/simple;
+	bh=8+HBzf8s99lBvqoNEBeP06SEv/c1Nfyl4btRrMENeXg=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=e8QrmOHtRypCDu5xVESpiaZQcWmZcLXe9kjlt2JmGsXsLw35KTXLLllUzIqaxBnjfNsCQbDlc/T9skr4WypXlDy2lAF7ungmloQYAUnY9DP6aUxr7LXDW0IBaOvWEJuNR+YiTWdAfocQWhJRRa1CZ9Z/FedUv1x5ytDr9N8Nme8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=s6/fa6x1; arc=fail smtp.client-ip=40.93.196.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NOpaGtJ8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FE441F000FF;
-	Mon, 21 Sep 2026 12:10:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789992619;
-	bh=3uAtYTanQvdsf1B+VPerfl6h7vAqJMoph6hxUBqYX7Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=NOpaGtJ8d++Zjqk+UoXhakEjmOlnVQIsuHpbXfFYV7K8jr4hyOGCVgwc3IAF2ni5w
-	 p1uvEkfp9voac0b7T8ihJV0NM2Q68FaNxdCAGlv/f+CLHPK45HP7IzejYj81Ylz2HJ
-	 +QuWP1387BZap0C4UNLw1ceCBKNpcnPezEY5lbrThWRyOM/V0Phx4YqGxyGEc28xUH
-	 oZlcD8tzG9DuLVRxOdQnCR879W9saNzv26PHUVOQvaFhKpXpga0d2EnYJ2nIghTC/y
-	 twDPiKShfjwM90J4jSLynS47kyx0geFk9lM0oXqfT/xzzUqwL4OaH3pmkHFW2Yfcvj
-	 +xaneJMo9qBRQ==
-Date: Mon, 21 Sep 2026 14:10:17 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jacopo Mondi <jacopo@jmondi.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Jimmy Su <jimmy.su@intel.com>, 
-	Matthias Fend <matthias.fend@emfend.at>, Mikhail Rudenko <mike.rudenko@gmail.com>, 
-	Daniel Scally <dan.scally@ideasonboard.com>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Michael Riesch <michael.riesch@collabora.com>, Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
-	Sylvain Petinot <sylvain.petinot@foss.st.com>, Paul Elder <paul.elder@ideasonboard.com>, 
-	Martin Kepplinger <martin.kepplinger@puri.sm>, Quentin Schulz <quentin.schulz@theobroma-systems.com>, 
-	Tommaso Merciai <tomm.merciai@gmail.com>, Svyatoslav Ryhel <clamor95@gmail.com>, 
-	Richard Acayan <mailingradian@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux@ew.tq-group.com, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, David Heidelberg <david@ixit.cz>, 
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Quentin Schulz <quentin.schulz@cherry.de>
-Subject: Re: [PATCH v6 0/6] dt-bindings: Orientation defines
-Message-ID: <arEeG06MiZ_97uzH@orome>
-References: <20260918-kbingham-orientation-v6-0-5e8b1f01be29@ideasonboard.com>
- <CAMuHMdWWOB48AUCbXh=9ZGCK2qZyVH06kJ2paRY-wxkq5NC16A@mail.gmail.com>
- <CAMuHMdVhK0vm_Ksze_=jG8D_=8Q45v+ezNbxwL7JntTt_v_fkg@mail.gmail.com>
- <20260921073538.GA1466037@killaraus.ideasonboard.com>
- <arEVs0FDleyHeeLj@orome>
- <178999124332.1723501.13535584681937232110@ping.linuxembedded.co.uk>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="s6/fa6x1"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nogeNkqFi0QTU/XcprWHRNKALZW5XqKXA8p1bI1xGqEmTSe0Ysq6vTRmF5d0UhsOs0mBY/5r7IEI+r0xTXu4IRfXlteimNkKbz3dm2KAU/UENLbAJf6J9STBNNqvufKIWboBb/RW+TK5DwivXbsl/nOwnOS5oUKXDxAsxge0PxuQJlX5x3FwDjpTAO2qhIqYPd6nU7tWfGgMJlE8brapE0Gk+UfYv6lq8eyN5X7xskY2K6q77XUVW6ARdnbvN+1/xv5psiswDbv69S9AbusW2G+bHG5rwH7YbP3ffjmorwChZBpqkr4+95dJlAZO7SMUf9tM0BF5YIB50FkFwZcPLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3DvdxrRdy3DoE7N+gymwePixxn2in6AYLSzkOpG9ByE=;
+ b=Xk0thTKW2LyM5V/SGmrwCmeG9C40a9LPAyWkykufTHlInPqTekQd0TENeZ4/HaBbD/e4mOvQqkSNdINW0T81qpbku5kmcr8aF11LhBkg4Ofm6q57q/O4z3uA+3gfnbXGd4u/Q73Hv3bcV7upsMdalklv6H6AB6MGMRm3dg+V3AR02yvFL9/MhciXQFkz6DHrpuCSJZTGh4rkSfXr3MzMj76/r4MMetSveT2b/0ERbQwdBsUxrT04yMDol5Hvf+dUsvFFOS6zXaFGDg4qq0iJBKxoRXp9+F2ifWRCG80YNEjv1aOnTJfm8R+haDemuvTdqoh1G4dwnl5Xdu+V1Hqatw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3DvdxrRdy3DoE7N+gymwePixxn2in6AYLSzkOpG9ByE=;
+ b=s6/fa6x1hNtnzL43Gg4i8gplMYUeBo95V9v3F9wUMoCY7hnyemZ9cAbdfvqNBBwyUpdJfGFQ+S2Q+99EcZJJVwAfrku5sLi3PiH9fS3cS2rNXds6GA1VfwaEnIQp0xzW1pA8WVv4srgBIwwX/RhV9P+DCOAHrVapPmHmYTFlO+O18Ip/pJzzJlg54cng42dVS/CygTFacIntITk6IVr3rVTZDL2FHTUjDjSIXA93XA/MNfeMkZYGvLJGEqWawaGQMX9qbOMQlAcrjO7CRa7byZpBYTFxIqLTGDuauxZS5L5eARv7rYlc4FBcuUy+QoQ8ziMr6V6Ys8B81NsZfZ7yZA==
+Received: from SJ0PR03CA0216.namprd03.prod.outlook.com (2603:10b6:a03:39f::11)
+ by IA1PR12MB8192.namprd12.prod.outlook.com (2603:10b6:208:3f9::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.16; Mon, 21 Sep
+ 2026 12:15:14 +0000
+Received: from SJ1PEPF000026C6.namprd04.prod.outlook.com
+ (2603:10b6:a03:39f:cafe::81) by SJ0PR03CA0216.outlook.office365.com
+ (2603:10b6:a03:39f::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.16 via Frontend Transport; Mon,
+ 21 Sep 2026 12:15:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ1PEPF000026C6.mail.protection.outlook.com (10.167.244.103) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.451.8 via Frontend Transport; Mon, 21 Sep 2026 12:15:13 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Mon, 21 Sep
+ 2026 05:14:52 -0700
+Received: from [127.0.1.1] (10.126.231.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Mon, 21 Sep
+ 2026 05:14:49 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 0/3] phy: tegra: xusb: Add Tegra238 support
+Date: Mon, 21 Sep 2026 13:14:44 +0100
+Message-ID: <20260921-tegra-phy-v1-0-83466bf9a7cd@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vnshuij5kqlf56wu"
-Content-Disposition: inline
-In-Reply-To: <178999124332.1723501.13535584681937232110@ping.linuxembedded.co.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALUfsWoC/yXMyw6CMBCF4VchXVvToWUKxBjfw7gYYIpdgNrih
+ RDf3QrL/+TkW0Tk4DmKOltE4JeP/jamgF0m2iuNPUvfpRa5ylFVUMqJ+0Dyfp0lIICDrjDkSKT
+ /PbDzn9U6X7YO/HgmctpGMXCMtJJ1dthEpZWFStt9oTUalCDfNI/cnsaX7zzt29tw/OMNRZYpB
+ j/VGWNhyaChhkqrXcHkdEtlDg2yUYBojanyDsXl+/0BYt1FEuIAAAA=
+X-Change-ID: 20260918-tegra-phy-1611f1d54afa
+To: Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>, JC Kuo <jckuo@nvidia.com>
+CC: Thierry Reding <thierry.reding@gmail.com>, Wayne Chang
+	<waynec@nvidia.com>, <linux-phy@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Jon Hunter
+	<jonathanh@nvidia.com>
+X-Mailer: b4 0.16.1-dev
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000026C6:EE_|IA1PR12MB8192:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2e1ee608-1fc3-41e7-b45f-08df17d9fd58
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700016|376014|7416014|23010399003|82310400026|11063799006|56012099006|10067099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	P0hCPnXUURX7LjmpxsWkZch38aG7mtWDiSLE9R8UanM6go2aYZ/OZK06Wi9FZUSX8AVsK43Prav5f07qwDE5yGf1/HaHY2L0FE04geYUla9FAYmUpUfC4iltIqkpbWN6uk0+tQO/cFvQqH4BJ80RfKWupdfOrxj0BAt8+sAzb3ULnOtp81uVCM8+HzWESerBPj3QuELpwyoE9AxpWTleBm8UECr8qbJxdoerutAkR5ksl2xw4qNF0/rPFV0KQh0sJCMB2mJRmToNHyiOFuO5CSGW+b0qR6z6BwRMTNdyUL5b1Nko0alXKuqEuu2kUINv6Hpg1zbyCmMbXFxZZ4XYYBYqvfnDG44H2FwEiVEPQSBFgUrDzp9JlYxQ2D9VdA0SY0mGVuSWRpKuRo/9HKa3h4/7op0enaCagpdr6kE6DL3rFrOU+H/ZGSdnSQofLLkYr3vi1GLo+1FVXYXLtWF9XuHgiHcSzLGdgqIm95kiCzr2e0nLIe38FzlXVgOMnBNNwV/eyiHpQjIhlhJQbVeFYf4tyjX2U8G+sH95NZBQQjXVWRemxTQW6e2duSzLW3tTZWdDtLZqIY5g4KYTe743E+xMsGlPEjGb7Nt7hqTvbXjs5yN2mx76u8jczZCAOZ+EFx9jrphB2vuGQckh2WoK7lpg/EZFKCngqeEkXuxLJQPp0fLnIFEkjfbAyg8lnmOO/QhqaVrw29G0zc/8Hv8+3Q==
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700016)(376014)(7416014)(23010399003)(82310400026)(11063799006)(56012099006)(10067099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	DnM2iEZ3tOevicXxKsZnBbZ4pe2qR7Hx4x61b/e2AYCGPh22a7MCHElaJsLQcbMz+PxGslCcg35WsLfOQGfEcP1CvRH33VQK6SzXsBtf5hpwDZKuAcjdbCtlM6tBx3LGL294hUa5fjr5crraGBVxYpUbhBcaZtmdeP6injkI2/c7GYjnQEAtzt1e8ffitXzjzt7coeVAssUqljPNnnje2Wo57aMbLcWjFnzIPBU4E6GMi9RHOFaR7nfihGfIHCZ+TbksUOdndykMD5knMsSrMI/ih9manW97Fg5plGaHpCkzBcMT6PKvLyZM4FJ8qCMoSwEbSX4ftVW/AvioLpOfkQhYFtN0lVAY4ICRG6tgMr/3XPfdMB4pwy1MeftlnYyfjaLXMDIEfysGFX6S996rE/pEVsu3RYcDOHX1De+sluIsKzz11VO5z4xJ4WjD4273
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2026 12:15:13.4314
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e1ee608-1fc3-41e7-b45f-08df17d9fd58
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000026C6.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8192
 
+Add support for the Tegra238 device to the Tegra XUSB PHY driver and
+add the necessary device-tree binding documentation for this device.
 
---vnshuij5kqlf56wu
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 0/6] dt-bindings: Orientation defines
-MIME-Version: 1.0
+This series also includes a trivial clean-up patch to use the
+dev_err_probe() function in the Tegra XUSB PHY driver instead of open
+coding this function.
 
-On Mon, Sep 21, 2026 at 12:47:23PM +0100, Kieran Bingham wrote:
-> Quoting Thierry Reding (2026-09-21 12:33:54)
-> > On Mon, Sep 21, 2026 at 10:35:38AM +0300, Laurent Pinchart wrote:
-> > > On Mon, Sep 21, 2026 at 09:07:01AM +0200, Geert Uytterhoeven wrote:
-> > > > On Mon, 21 Sept 2026 at 09:05, Geert Uytterhoeven wrote:
-> > > > > On Fri, 18 Sept 2026 at 12:55, Kieran Bingham wrote:
-> > > > > > Add a new dt-bindings/media/video-interface-devices.h header th=
-at
-> > > > > > initially supports the Orientation types and convert existing u=
-sers
-> > > > > > throughout the code base.
-> > > > >
-> > > > > Just noticed these are already in since commit 6ab5acfb8dd38729
-> > > > > ("dt-bindings: media: Add macros for video interface devices") in
-> > > > > media/master (next-20260903 and later)?
-> > > > >
-> > > > > > v3 collects tags, and fixes the typo, but drops all hunks that =
-do not
-> > > > >
-> > > > > [...]
-> > > > >
-> > > > > > v2:
-> > > > >
-> > > > > Interesting changelog order ;-)
-> > > > >
-> > > > > [...]
-> > > > >
-> > > > > > v3:
-> > > > >
-> > > > > [...]
-> > > > >
-> > > > > > -v4:
-> > > > >
-> > > > > [...]
-> > > > >
-> > > > >
-> > > > > > -v5:
-> > > > > >  - Definitions now accepted in linux-media, rebased to get conv=
-ersions in.
-> > > > >
-> > > > > Oh, you say so here ;-)
-> > > > >
-> > > > > >       arm64: dts: renesas: Convert to new media orientation def=
-initions
-> > > > >
-> > > > > So it's been safe for me to pick this up since v5?
-> > > >=20
-> > > > No it's not, there is a hard dependency.
-> > >=20
-> > > The whole series needs to be postponed by one kernel cycle :-/ It's n=
-ot
-> > > urgent so it's not a big deal. Kieran will have the priviledge of
-> > > rebasing and sending a v7 :-)
-> >=20
-> > If all platform maintainers Ack this series, they could go through the
-> > media tree where the shared include was already merged. Alternatively
-> > the media maintainers could provide a shared branch for everyone to pull
-> > into their platform trees.
-> >=20
-> > But given that this is simply replacing a literal with a preprocessor
-> > macro, maybe not worth the extra hassle.
->=20
-> Indeed, I'm not personally worried here. I thought that because Sakari
-> had accepted the main patches these could go in now, so I refreshed the
-> series.
->=20
-> I don't really care which route they go, or when. I'd rather not have to
-> re-re-rebase again in two months ... but I can cope whatever :D There's
-> certainly no urgency here.
+This series is based on top of the series that adds support for the
+Tegra264 device to the Tegra XUSB PHY driver [0].
 
-You already have my Acked-by and I'm fine with anyone picking up the
-Tegra DT changes. I don't think there's going to be any conflict with
-any other work in the Tegra tree. If they don't get applied, I'll pick
-it up for the next release.
+[0] https://lore.kernel.org/linux-tegra/20260903071937.533646-1-waynec@nvidia.com/
 
-Thierry
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+Jon Hunter (3):
+      dt-bindings: phy: tegra194: Add compatible for Tegra238
+      phy: tegra: xusb: Use dev_err_probe()
+      phy: tegra: Add support for Tegra238 XUSB pad controller
 
---vnshuij5kqlf56wu
-Content-Type: application/pgp-signature; name="signature.asc"
+ .../bindings/phy/nvidia,tegra194-xusb-padctl.yaml  | 38 ++++++++++++++++++++++
+ drivers/phy/tegra/xusb-tegra186.c                  | 29 +++++++++++++----
+ drivers/phy/tegra/xusb.c                           | 15 +++++----
+ drivers/phy/tegra/xusb.h                           |  3 ++
+ 4 files changed, 72 insertions(+), 13 deletions(-)
+---
+base-commit: e657a464aba873f5eaf3ca821b6e4016674492d6
+change-id: 20260918-tegra-phy-1611f1d54afa
+prerequisite-message-id: <20260903071937.533646-1-waynec@nvidia.com>
+prerequisite-patch-id: 4d5aee86ddf39567e3751c3e3067d9381635de46
+prerequisite-patch-id: 532f630446505f9258dee65ab43887fc3cf877e0
+prerequisite-patch-id: 4660a52fe6277f5d91ee70cee0b74280a8ce927e
+prerequisite-patch-id: d58ecf03061a3c26f4f0a71f2dd5c97a673e23eb
 
------BEGIN PGP SIGNATURE-----
+Best regards,
+--  
+Jon Hunter <jonathanh@nvidia.com>
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqxHqkACgkQ3SOs138+
-s6GCVA/8CTjCU06x7t4Mbm966PsuhGx8Q1j3ntV2PiowxzhJwEyb68oBkfVXTkrL
-9rGbkF8OnuoiY/uxupgsIUa+x2hplNqTs6J/OxG5LLbOhdnv1OpzXUBaXlg6ahe2
-+7XwSzG2TQcYExblLuZqsViN21+KOWOJAcTGTnxP/X0lbLQYLjSRmzkVlOPjhtEU
-uhszVibjBBSQjotx1SMbk0C2Mxmko7X+ocCxsZ+APwIO3xvrxRRefs3s5nWXRaZH
-mb8ywwgh0WqojUcfOLazhhfUQ/wIn5WTNutOymPP17QgoUVluJOu9TUz1KEnSDVg
-B5NLXtC37c4Ap7iy4ZZMbs95EpkH6c6Dg5qF6avcs3nDUt/g94yCb3eQ20JBveBj
-jOBT9Gpc5pz0s5wLzVzCNWmKk1tQYABslMzcS5aQLBy85HUIwDH/DcCXBOQMm5Tu
-ukBohOeV+nvFWVkT5gDK+zRzaHqPpYpajvemCYUJrw5eXZp53X0L8JV+4HvhGgnW
-uUHIqXFNgXiRGiSfAs+24+jaUhU/W8Wpj5svPEsD2/OeW2jjUTKpo58pQEo7X4up
-XVVNGOuxJaT/8Rh62gC7rHMnM2sVlBE9I0rpRtghOzA8EBdyFnq22rDy/xIx/86j
-aXnoCcK0YUHzkj4lzswo2sohi0nE4T9nDsfYTN14FxH3WvRPoFk=
-=3wJh
------END PGP SIGNATURE-----
-
---vnshuij5kqlf56wu--
