@@ -1,76 +1,47 @@
-Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B8A490C0D
-	for <linux-tegra@vger.kernel.org>; Mon, 21 Sep 2026 12:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9FF4963D2;
+	Mon, 21 Sep 2026 12:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789994770; cv=none; b=D44FBiG9eTGEp0TubS9KQfwZhIkDUyGWyLCxEFCdRa6KCYrMiQAJu5J7RNgzZ+mgSTchIX9FMX/4eTce2wybPEsKBziJJo3ivCgSl1P6zcNpmJBWEi45XW+WYaZzhV4fbhGZNMxLh957GP1bqkp0szo6aXLcJel6EK+NyXt/Yo0=
+	t=1789995065; cv=none; b=HljoypAOeUOY7bWNMk3NSHO82jgQqAgWAIbqK+n+iKYd1jcB8g72U3BTEGKfCmt5vvD2NuB+nBXq/Ps9GYBx7yzVtonjMm3UOJK65MWPSUubE+VmpzT71UR9fAn8pBcDGH5KwwWQV8WOdx5sAeOHtJE+chOBnXku8V3ZP1VBK0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789994770; c=relaxed/simple;
-	bh=7R1Rn+2qMXkFEF7BvVUCxelrDSnx+67+3Np2fXUKa84=;
+	s=arc-20240116; t=1789995065; c=relaxed/simple;
+	bh=tWjhtlSmNitNe/RV24G2Ic0DpfRB6aqKBFyMVbKS+uY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NKDzXxHxZsjzn7fw+/Sf2bjx5bY4LNVyofQYHarLF5uzXQLfAigBMtWowrgc6/mDZLFYR2277jfdc6+MoL/cApTwHGxkKlurO/GkpVtJfHPnQYY8WBRbckQ9Badq6gG+60t42I6PImG5folREZVeJrYTsVOe1cTnci53SCW4AII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=RBkw+hD5; arc=none smtp.client-ip=74.125.225.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=TADVsHYAhqyIkPHRjlGWSEdazHpQgm8CXDKUu+YM3CrZ10d7UxSXsHsTHOcP6b/+z20I4FsUuuGWozbxRz1gCdqAmFNLII8qipbsnHn/YP7QQ2+AaAQUwU9WeT3ChBA0W5O/FihRJYeVB0WRlPNaXUAZ6tgpB7BaN8C+ATQCGDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JzHyLd0X; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="RBkw+hD5"
-Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-482f6351831so1484949f8f.1
-        for <linux-tegra@vger.kernel.org>; Mon, 21 Sep 2026 05:46:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1789994766; x=1790599566; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=VRzt0l54E3ZERRUZPLXC250ltjhNiAUfDutetMT3kZU=;
-        b=RBkw+hD5dzaiiECDV+P0jR/36CJjARn/ZYd8e7BY8yQ1SrI2rUDmwYdS+0uiyZqfEY
-         LIUQRnrPt8tQhszAUCJy0xzV5j6usICWvrrNV7JUOUR/AwWiYwoHL9QXsRjwOIpVoNBd
-         AsmF6vdp24I5wT7NLfR/UDSE2VHmZBOZT0bUcRqz9z6LNTihjTb5yXqKZkw9oDcorcDb
-         2Nq9leUIC8jDKgZzvmA8RFENWDT73fLlyq43StivztxQJyGs/4XSDKAnf1CcRHhg1/xL
-         2sAv9luyAeP8ePRqRl6u1L8IDDLaLov9kxnCj5NX5jUaKb5febkVZql+q1zIV1efRKVW
-         19IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789994766; x=1790599566;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=VRzt0l54E3ZERRUZPLXC250ltjhNiAUfDutetMT3kZU=;
-        b=xvsPh3FWDwd7PuF98oVF4U9jzRMt8ieSEX5xic83UR5C0nrNbxFK9/T2gM0N0lVvHG
-         Dl6BvU2SFP95YhnShi2keq31T57Rskm9I3u57hjaFCFIMebB1pf0A8Fo3m39hDcVmmUB
-         SyWn0pjDJWxrQT7EJeWs3RyYK8Xdvjk3XxkY0/0E0thitS11L0VLf50M++UwN0/YSKFh
-         ag9HXUA+q+TJZFOWAIXfZ06AwkuUwRs3KXs9oyOKMIbPIzH5NuIb3aFZEwIPK9jHVwU2
-         97/TQP72P7ed/Yx6taSDKl/UMRheL4dAfyVOvFaoTI/Y5kyw1xluZv7421t7kTqDxjKD
-         FtHQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwCO6iJpHStFcvEFXkJYTp4/WQHp9l2s3cjVM7BuZRZbgKRLHhuvVD+XXl6wToSJE/waHdGKK11PgtlAw==@vger.kernel.org
-X-Gm-Message-State: AFuF++ngajzUUctlSdh8YzcEu2SP8ssrZy5a1yA5ABnD2MFMqtvbg8Ov
-	bIjqghRnjJ+F4XSlA6YFENtyfOjm2aMt/5U/rBpbqwrbT3hn0UDaZrlqFh0tVnEuYYU=
-X-Gm-Gg: AYBFou3g43+oTDxLAc81x3fTs07l4v8rZiw5pPfBxKC2t+AVTMVht0gEYf9YODQTv+4
-	sqK3YcfAV+pIgaTwHbYVlAhr1NRRLWogoJUn9RV5is4Ry66ZuFvZzZZXs4VwUKHC6QQl74B1L8v
-	+CsKsdKH7p7ZHyR+wrq7IQ75L9oCz1llSli/gTMxVHomZQGsjxh4/QKXN6O1hItV460BS2wfprM
-	iQIZ+xZtp/UugEShOysjhZklYyzbto4rz/r8mZIcmmjDBsTPwcjUCdaZErKmRZhpf5ISoaLG+c5
-	b8FDNb4WiSVnDrCK9NqZeHqRMtxOow6xjBnc4UCFCe6vWYYVUSXqcL2M/acbjxAU9TgC6kFP85p
-	rmVpEB2yrf4uw0V/r2ZxG7p445hWI5D3is9NKtqNU4EuiN5RG2b+4+9Vaj4iquzQcGi9RaT+mOg
-	y4VTYVVTnN4DGmkQgJM4XDo1+YcmOPz6f4Ed6hJGPWexdmWo0yqzUss3YDeB690qTd/HuA+8Pys
-	4I1
-X-Received: by 2002:a05:6000:2890:b0:487:370:45d3 with SMTP id ffacd0b85a97d-4871e26e3e9mr13472477f8f.43.1789994766281;
-        Mon, 21 Sep 2026 05:46:06 -0700 (PDT)
-Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-487244608e7sm23927472f8f.6.2026.09.21.05.46.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Sep 2026 05:46:05 -0700 (PDT)
-Date: Mon, 21 Sep 2026 14:46:03 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JzHyLd0X"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ED541F000FF;
+	Mon, 21 Sep 2026 12:51:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789995063;
+	bh=4/yFLn+o15BprTqPsawaFIBezfUtDv5pEFxxxaLrCRs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=JzHyLd0XpsfgMH78TsESHQI0kAOiRQG63YkLwNG0ek3LStt5aUXAT2CHkx/60wT/F
+	 wAjcrwqtLjkp74QMrfyAqpBh1N2+q8zZdlzQJGguCVSGmCdtiwS5+lPf7Ku6DSfvQr
+	 W7E9PY27NC/TIFEN3/r6PY1enFmjJCxxBqcBLQv9c6D5Wkj09UqNDIO4p8INgWiAgy
+	 WdJlKI5UIrhnYZuGgX1M2/RT0CTx1pTMgBCVShTB1nZRz3HBGy6SvYxERYgviKGEVL
+	 bJLEyHMPlvpPI+hdYopFCiySz+YpRIELzPVOV7z+GUjkpKQutziNnd60fNiWzitLts
+	 osD5CrCV61ClQ==
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+	id A6BE91AC5376; Mon, 21 Sep 2026 13:51:00 +0100 (BST)
+Date: Mon, 21 Sep 2026 14:51:00 +0200
+From: Mark Brown <broonie@kernel.org>
 To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] pwm: tegra: Make use of dev_err_probe()
-Message-ID: <arEiVZG7UqxpqAPZ@monoceros>
-References: <cover.1789741839.git.u.kleine-koenig@baylibre.com>
- <641219a7d76bbcd8fe98b5955f2355ed45f55986.1789741839.git.u.kleine-koenig@baylibre.com>
- <arD6ILv1sd8YBUXj@orome>
+Cc: Sheetal <sheetal@nvidia.com>, Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sameer Pujar <spujar@nvidia.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Mohan Kumar <mkumard@nvidia.com>, linux-sound@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/3] ASoC: tegra: ASRC control fixes and ratio caching
+Message-ID: <arEoNAC729MT5Bqr@sirena.co.uk>
+References: <20260921085704.1248920-1-sheetal@nvidia.com>
+ <arEaioTIrCyJqwKn@orome>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -78,154 +49,53 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xmimg5iqxopngnsh"
+	protocol="application/pgp-signature"; boundary="UT4EMBkDKh9XPIOk"
 Content-Disposition: inline
-In-Reply-To: <arD6ILv1sd8YBUXj@orome>
+In-Reply-To: <arEaioTIrCyJqwKn@orome>
+X-Cookie: Too clever is dumb.
 
 
---xmimg5iqxopngnsh
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+--UT4EMBkDKh9XPIOk
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/3] pwm: tegra: Make use of dev_err_probe()
-MIME-Version: 1.0
 
-Hello Thierry,
+On Mon, Sep 21, 2026 at 02:07:19PM +0200, Thierry Reding wrote:
 
-On Mon, Sep 21, 2026 at 11:38:41AM +0200, Thierry Reding wrote:
-> On Fri, Sep 18, 2026 at 04:33:45PM +0200, Uwe Kleine-K=F6nig wrote:
-> > Usage of dev_err_probe() is more compact than dev_err()'s, emits the
-> > error code and handles -ENOMEM and -EPROBE_DEFER properly. Benefit from
-> > these improvements.
-> >=20
-> > Also add a few messages in error paths that lacked an output before.
-> >=20
-> > Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
-> > ---
-> >  drivers/pwm/pwm-tegra.c | 52 ++++++++++++++++++++++++-----------------
-> >  1 file changed, 31 insertions(+), 21 deletions(-)
-> >=20
-> > diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-> > index 5cdbe120ba2d..efb7ab60f602 100644
-> > --- a/drivers/pwm/pwm-tegra.c
-> > +++ b/drivers/pwm/pwm-tegra.c
-> > @@ -316,14 +316,15 @@ static const struct pwm_ops tegra_pwm_ops =3D {
-> > =20
-> >  static int tegra_pwm_probe(struct platform_device *pdev)
-> >  {
-> > +	struct device *dev =3D &pdev->dev;
-> >  	struct pwm_chip *chip;
-> >  	struct tegra_pwm_chip *pc;
-> >  	const struct tegra_pwm_soc *soc;
-> >  	int ret;
-> > =20
-> > -	soc =3D of_device_get_match_data(&pdev->dev);
-> > +	soc =3D of_device_get_match_data(dev);
-> > =20
-> > -	chip =3D devm_pwmchip_alloc(&pdev->dev, soc->num_channels, sizeof(*pc=
-));
-> > +	chip =3D devm_pwmchip_alloc(dev, soc->num_channels, sizeof(*pc));
-> >  	if (IS_ERR(chip))
-> >  		return PTR_ERR(chip);
-> >  	pc =3D to_tegra_pwm_chip(chip);
-> > @@ -331,28 +332,39 @@ static int tegra_pwm_probe(struct platform_device=
- *pdev)
-> >  	pc->soc =3D soc;
-> > =20
-> >  	pc->regs =3D devm_platform_ioremap_resource(pdev, 0);
-> > -	if (IS_ERR(pc->regs))
-> > +	if (IS_ERR(pc->regs)) {
-> > +		/*
-> > +		 * devm_platform_ioremap_resource() already emits an error
-> > +		 * message with CONFIG_HAS_IOMEM, so don't emit another message
-> > +		 * here.
-> > +		 */
->=20
-> Seems a bit counter-productive to leave comments like this. Function
-> comments should document what the function does and then people should
-> read those comments. Then we don't need to mention it every time we call
-> these functions.
+> Given the ABI change, do we have a good understanding of who might be
+> using these features? My understanding is that these are used for the
+> setup of hardware pipelines involving sample rate conversions. So these
+> are likely not your regular users that just want to change the volume
+> for headphones and such. This is for highly specific use-cases. Do we
+> know if people use extra userspace software on top of ALSA to set these
+> up, or are they typically dealing with fixed configuration files for
+> specifying these values?
 
-I often deal with bug reports by users where things fail without an
-error message[1]. So a usual thing I do is checking probe (and other)
-functions for silent error paths. As I fail to follow the (continously
-changing) set of functions that emit an error message, this comment is
-very useful for a me at least and I'd wish others would add such
-comments, too. (An IMHO fine thing here would be to let no generic
-resource getter function emit an error message, but that ship has
-sailed.)
+=2E..
 
-I'd be open for a shorter marker, that might even be machine-parsable.
-=20
-> >  		return PTR_ERR(pc->regs);
-> > +	}
-> > =20
-> >  	platform_set_drvdata(pdev, chip);
-> > =20
-> > -	pc->clk =3D devm_clk_get(&pdev->dev, NULL);
-> > +	pc->clk =3D devm_clk_get(dev, NULL);
-> >  	if (IS_ERR(pc->clk))
-> > -		return PTR_ERR(pc->clk);
-> > +		return dev_err_probe(dev, PTR_ERR(pc->clk), "Failed to get clock\n");
-> > =20
-> > -	ret =3D devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
-> > -	if (ret)
-> > +	ret =3D devm_tegra_core_dev_init_opp_table_common(dev);
-> > +	if (ret) {
-> > +		/*
-> > +		 * devm_tegra_core_dev_init_opp_table_common() emits an error
-> > +		 * message most of the time, so don't add another.
-> > +		 */
->=20
-> Same here.
->=20
-> > @@ -385,17 +395,17 @@ static int tegra_pwm_probe(struct platform_device=
- *pdev)
-> > =20
-> >  	ret =3D pwmchip_add(chip);
-> >  	if (ret < 0) {
-> > -		dev_err(&pdev->dev, "pwmchip_add() failed: %d\n", ret);
-> > +		dev_err_probe(dev, ret, "Adding pwmchip failed\n");
->=20
-> This stands out as very different from other error messages, so maybe
-> change this to something like "Failed to add PWM chip" for consistency?
+> Mark, Liam, do you have any guidelines on how to handle such ABI
+> changes?
 
-Fine for me, will fix in the next submission.
+I don't really, beyond your already very good summary.  It depends a lot
+on knowledge of the users for the device, their level of expertise and
+how likely anyone is to be using the individual feature in the first
+place.  Obviously it's an ABI break so we shouldn't really be doing it
+if we can avoid it, but if everyone involved is happy and has a good way
+to deal with the changes then it's not really a problem. =20
 
-Thanks for your feedback,
-Uwe
-
-[1] last instance was just today, where on a bananapi USB didn't work
-    and /sys/kernel/debug/devices_deferred ended up containing:
-
-	1c13000.usb     platform: supplier 1c13400.phy not ready
-	1c1c000.usb     platform: supplier 1c13400.phy not ready
-	1c14400.usb     platform: supplier 1c13400.phy not ready
-	1c13400.phy     platform: supplier axp20x-usb-power-supply not ready
-	1c14000.usb     platform: supplier 1c13400.phy not ready
-	1c1c400.usb     platform: supplier 1c13400.phy not ready
-	axp20x-usb-power-supply
-
-    It would be so easy[2] to add a useful debugging hint here
-
-[2] https://lore.kernel.org/all/b699f8251afed736af454a981630926e45eb7da7.17=
-89983244.git.ukleinek@debian.org/
-
-
---xmimg5iqxopngnsh
+--UT4EMBkDKh9XPIOk
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmqxJwIACgkQj4D7WH0S
-/k6TkQf/eAw5zDfaIbztIoZT+VAAcehCL1/kPn4I4Hi46xzJMzl40YQBF4L7/HXX
-8j/EMjuck3VKqQGIVsByUhalES2OtJn7ArCIun6Gv/lNnQ9qAXdkifDnKFWMlg8Y
-DwwrEF31d09eQXRZGAJoMiPNCXSCD5ySLfYyAPcL/PitgOWSWecir9tNH3QtvnJs
-VUKv9AnmEwZ2pf7omkMU3GSHP97HbFXUll6lLpQn1P0qotsVB04W9becs5poiMuz
-JLCEbPnsh5yIh2BDZpmCuskVAGatpRUIITMH3sBapm+zFRmUkGHWnDW59uM/3GMU
-jG+1znJHsdEc1YuAhpXZd/lkwzbuWw==
-=+P+D
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqxKDMACgkQJNaLcl1U
+h9BWJQf/bjhcoK/uZuZxiYOxhzHzfC/k+m9JWXSCqbAguDQONHhzmGu1lisC/C1N
+yBncc4DlJtY5wPiw1lKTXA5ukf/nNmkOUxFJE61eAyHD59Bh6I8JDgADNzKxlAsK
+inJ76p2doCQ6xnoofAEt9zfqieZGYqZf0Zuws3GWDat0m5UkVqKXNda05opvYMWb
+gsCcni7ab8XS8CXkr69VaLirKAJ/XSVG0elNJ0B5cPLFEUX8/FTfU6mBrplru4e4
+qkZxwvOnzG+yeWM8LYbwnO/fhHAHs0b3vydTTqkzwV3XdzeFYASSGotln7g9mwc0
+b6FLtnimS1SREUAarKKT5z+f68xcKw==
+=fjYI
 -----END PGP SIGNATURE-----
 
---xmimg5iqxopngnsh--
+--UT4EMBkDKh9XPIOk--
