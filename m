@@ -1,42 +1,65 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F96048EBF6;
-	Mon, 21 Sep 2026 12:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B898488DAF;
+	Mon, 21 Sep 2026 12:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789992443; cv=none; b=h4RgpodGfhfH8p53hxd8cG+NyN76AzRDOnZdv+NKQFYl1+F+/4FaTIi0bMkJAoX3KqhXRhAsSTVk6ALkrEjFcOO0IVL303P199zyNEB0f7jBXIjko7vHoVU6OT7XnNJomdjy6/iBh43cQ/G9S2NoqnnRn/5IochoIfRqy18eKJE=
+	t=1789992621; cv=none; b=V1kOzRuh1x3pECSjJf1YXEtojjVi06KM0JB7Q7fjhNwiaSigzX1KBUmcYP4mBUDHpx7vUDKklglQl1shD8jTlKtGGGIasZ1bfbV31+uOAcPorLDqxlmhOYjIxwRxh8U0aAyDRACbW1nmv15IpJY0nf7YZkv2LOVY6HgaTn6V7Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789992443; c=relaxed/simple;
-	bh=/5Walc3cjaSwroiEzmN8sLMeAmjeoQcDDIqd1wodBC0=;
+	s=arc-20240116; t=1789992621; c=relaxed/simple;
+	bh=FG6tH/Y8T9b0/2uVNUkAWRpyGeXjSLQD/gEba+dtlXg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VJWvMCY86c4tX4ZBWfDuozs84LY1qcQHBoXyxWAH2uVbL6kpsSDp7VRroD5uLPrJkAWi8Z9SWGTcLsaLBvRfonjp7qptHqWgL8o3jVYhwZcJtpy+AFizmI5FpzrG2SeRYxe/ORp7UYyLB7OgOFS8UnqGG9huL+5BshgfHrcEd4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SAMPBgRs; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=UL1iKedbE6OPJ6F0SO3vyTO6uCWD5jpDFWKCNmPKEl3PnvKeuF4MhQMTCADZvsoWRc2JMztiXCcDI1gOr75+NKDYMx/CXRuq24XnTUTcpkRiD6AZuBu7C8USDRruJKcTuE76ZzLcucpc8IeGZVFrFk0XQlZoFQsC0hdxMexMVRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NOpaGtJ8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SAMPBgRs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73A651F000FF;
-	Mon, 21 Sep 2026 12:07:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NOpaGtJ8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FE441F000FF;
+	Mon, 21 Sep 2026 12:10:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789992442;
-	bh=/5Walc3cjaSwroiEzmN8sLMeAmjeoQcDDIqd1wodBC0=;
+	s=k20260515; t=1789992619;
+	bh=3uAtYTanQvdsf1B+VPerfl6h7vAqJMoph6hxUBqYX7Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=SAMPBgRsLuE+fu5Qdwu97K7t48iJYOFTrfqGnca8W/N31jyJQau+tyjdEjS7RHbMd
-	 lZAi67rbqjDMsT6zg2dZ+/SDEgn3F5nMvOVSNmEYznhpbxOr0eEH31J5DOO9A49Rgf
-	 QYVU46CvLtoEEylNKMcjAIBrm6Tf5Ak1sLi1YsNAkkr2Wd2IIl4O3heEDR9yOkQo+j
-	 kYu9UbfN9uUotEuRaFVLsOVSZboQsv1UskcGSYSk1cTt7N8ynGkdLG10ztbyRCN2qS
-	 ijh3+NAhhprhJRJpwrEPAggnvpjd4DKh7fjrIQpzmsptyU9zC4M4K/biEevx3U+tuX
-	 /h1Wz0lXI5c4Q==
-Date: Mon, 21 Sep 2026 14:07:19 +0200
+	b=NOpaGtJ8d++Zjqk+UoXhakEjmOlnVQIsuHpbXfFYV7K8jr4hyOGCVgwc3IAF2ni5w
+	 p1uvEkfp9voac0b7T8ihJV0NM2Q68FaNxdCAGlv/f+CLHPK45HP7IzejYj81Ylz2HJ
+	 +QuWP1387BZap0C4UNLw1ceCBKNpcnPezEY5lbrThWRyOM/V0Phx4YqGxyGEc28xUH
+	 oZlcD8tzG9DuLVRxOdQnCR879W9saNzv26PHUVOQvaFhKpXpga0d2EnYJ2nIghTC/y
+	 twDPiKShfjwM90J4jSLynS47kyx0geFk9lM0oXqfT/xzzUqwL4OaH3pmkHFW2Yfcvj
+	 +xaneJMo9qBRQ==
+Date: Mon, 21 Sep 2026 14:10:17 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Sheetal <sheetal@nvidia.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Sameer Pujar <spujar@nvidia.com>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Mohan Kumar <mkumard@nvidia.com>, linux-sound@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] ASoC: tegra: ASRC control fixes and ratio caching
-Message-ID: <arEaioTIrCyJqwKn@orome>
-References: <20260921085704.1248920-1-sheetal@nvidia.com>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jacopo Mondi <jacopo@jmondi.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Jimmy Su <jimmy.su@intel.com>, 
+	Matthias Fend <matthias.fend@emfend.at>, Mikhail Rudenko <mike.rudenko@gmail.com>, 
+	Daniel Scally <dan.scally@ideasonboard.com>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Michael Riesch <michael.riesch@collabora.com>, Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
+	Sylvain Petinot <sylvain.petinot@foss.st.com>, Paul Elder <paul.elder@ideasonboard.com>, 
+	Martin Kepplinger <martin.kepplinger@puri.sm>, Quentin Schulz <quentin.schulz@theobroma-systems.com>, 
+	Tommaso Merciai <tomm.merciai@gmail.com>, Svyatoslav Ryhel <clamor95@gmail.com>, 
+	Richard Acayan <mailingradian@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux@ew.tq-group.com, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	Alexander Stein <alexander.stein@ew.tq-group.com>, David Heidelberg <david@ixit.cz>, 
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Quentin Schulz <quentin.schulz@cherry.de>
+Subject: Re: [PATCH v6 0/6] dt-bindings: Orientation defines
+Message-ID: <arEeG06MiZ_97uzH@orome>
+References: <20260918-kbingham-orientation-v6-0-5e8b1f01be29@ideasonboard.com>
+ <CAMuHMdWWOB48AUCbXh=9ZGCK2qZyVH06kJ2paRY-wxkq5NC16A@mail.gmail.com>
+ <CAMuHMdVhK0vm_Ksze_=jG8D_=8Q45v+ezNbxwL7JntTt_v_fkg@mail.gmail.com>
+ <20260921073538.GA1466037@killaraus.ideasonboard.com>
+ <arEVs0FDleyHeeLj@orome>
+ <178999124332.1723501.13535584681937232110@ping.linuxembedded.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -44,73 +67,113 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jhizgarl7ooit75x"
+	protocol="application/pgp-signature"; boundary="vnshuij5kqlf56wu"
 Content-Disposition: inline
-In-Reply-To: <20260921085704.1248920-1-sheetal@nvidia.com>
+In-Reply-To: <178999124332.1723501.13535584681937232110@ping.linuxembedded.co.uk>
 
 
---jhizgarl7ooit75x
+--vnshuij5kqlf56wu
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH 0/3] ASoC: tegra: ASRC control fixes and ratio caching
+Subject: Re: [PATCH v6 0/6] dt-bindings: Orientation defines
 MIME-Version: 1.0
 
-On Mon, Sep 21, 2026 at 08:57:01AM +0000, Sheetal wrote:
-> This RFC series updates the Tegra186 ASRC driver control handling.
+On Mon, Sep 21, 2026 at 12:47:23PM +0100, Kieran Bingham wrote:
+> Quoting Thierry Reding (2026-09-21 12:33:54)
+> > On Mon, Sep 21, 2026 at 10:35:38AM +0300, Laurent Pinchart wrote:
+> > > On Mon, Sep 21, 2026 at 09:07:01AM +0200, Geert Uytterhoeven wrote:
+> > > > On Mon, 21 Sept 2026 at 09:05, Geert Uytterhoeven wrote:
+> > > > > On Fri, 18 Sept 2026 at 12:55, Kieran Bingham wrote:
+> > > > > > Add a new dt-bindings/media/video-interface-devices.h header th=
+at
+> > > > > > initially supports the Orientation types and convert existing u=
+sers
+> > > > > > throughout the code base.
+> > > > >
+> > > > > Just noticed these are already in since commit 6ab5acfb8dd38729
+> > > > > ("dt-bindings: media: Add macros for video interface devices") in
+> > > > > media/master (next-20260903 and later)?
+> > > > >
+> > > > > > v3 collects tags, and fixes the typo, but drops all hunks that =
+do not
+> > > > >
+> > > > > [...]
+> > > > >
+> > > > > > v2:
+> > > > >
+> > > > > Interesting changelog order ;-)
+> > > > >
+> > > > > [...]
+> > > > >
+> > > > > > v3:
+> > > > >
+> > > > > [...]
+> > > > >
+> > > > > > -v4:
+> > > > >
+> > > > > [...]
+> > > > >
+> > > > >
+> > > > > > -v5:
+> > > > > >  - Definitions now accepted in linux-media, rebased to get conv=
+ersions in.
+> > > > >
+> > > > > Oh, you say so here ;-)
+> > > > >
+> > > > > >       arm64: dts: renesas: Convert to new media orientation def=
+initions
+> > > > >
+> > > > > So it's been safe for me to pick this up since v5?
+> > > >=20
+> > > > No it's not, there is a hard dependency.
+> > >=20
+> > > The whole series needs to be postponed by one kernel cycle :-/ It's n=
+ot
+> > > urgent so it's not a big deal. Kieran will have the priviledge of
+> > > rebasing and sending a v7 :-)
+> >=20
+> > If all platform maintainers Ack this series, they could go through the
+> > media tree where the shared include was already merged. Alternatively
+> > the media maintainers could provide a shared branch for everyone to pull
+> > into their platform trees.
+> >=20
+> > But given that this is simply replacing a literal with a preprocessor
+> > macro, maybe not worth the extra hassle.
 >=20
-> The main RFC point is the userspace-visible ALSA mixer control ABI
-> change in patch 2. The existing per-stream controls expose the software
-> ratio as separate integer and fractional mixer controls. This series
-> replaces each pair with one two-value mixer control so userspace updates
-> the integer and fractional parts together. That avoids programming a
-> transient mixed ratio to hardware, but it does require userspace that
-> sets ASRC software ratios to switch to the new paired controls.
+> Indeed, I'm not personally worried here. I thought that because Sakari
+> had accepted the main patches these could go in now, so I refreshed the
+> series.
+>=20
+> I don't really care which route they go, or when. I'd rather not have to
+> re-re-rebase again in two months ... but I can cope whatever :D There's
+> certainly no urgency here.
 
-Given the ABI change, do we have a good understanding of who might be
-using these features? My understanding is that these are used for the
-setup of hardware pipelines involving sample rate conversions. So these
-are likely not your regular users that just want to change the volume
-for headphones and such. This is for highly specific use-cases. Do we
-know if people use extra userspace software on top of ALSA to set these
-up, or are they typically dealing with fixed configuration files for
-specifying these values?
-
-So essentially to be able to better understand how to proceed it'd be
-good to know what the upgrade path is for this. How easy or difficult
-will it be for people to transition to this? Can we transition them
-automatically by keeping write-only backwards-compatibility controls
-that mirror the old ABI and maybe provide a hint that people should be
-upgrading to the new controls?
-
-Since we expect this to also fix the occasional glitch caused by
-mismatched ratios, I think we really want this, but we need to make sure
-users aren't left in the dark about such changes and have a reasonable
-upgrade path.
-
-Mark, Liam, do you have any guidelines on how to handle such ABI
-changes?
+You already have my Acked-by and I'm fine with anyone picking up the
+Tegra DT changes. I don't think there's going to be any conflict with
+any other work in the Tegra tree. If they don't get applied, I'll pick
+it up for the next release.
 
 Thierry
 
---jhizgarl7ooit75x
+--vnshuij5kqlf56wu
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqxHfQACgkQ3SOs138+
-s6EZ2A/+LftH9l4aFzMUci3zRpp5yKQkxogs17WHYtErsoJX0a+1PbARbgyZppyc
-OnVo6z1m4w2pGH4G7RKhSBARlmBGZiGT/ha9sICRQh4/JsSGAWjoycZC2K3VTP84
-Hlk1EJZVlJkVxjqlMu+Cxgf1681oSgETCELH1Evxhw5Rgu9vBzCSuP8by4ol76Pe
-pnmJDimbHs9Zx+ohnNEmvqqcVoHzKCfRZZsxAscknG+tQ29Cyw4hfrSDm1CIZhAF
-7KRETjmyuVuVjD9aU30Dkg9qll6cZgJLUwPpi8BbOAvvM3D4mDpyF/+VZAK3TdXx
-gZ1qSKQPGK7o7fHLKNSViZWoFB8bBv53SHBbgjAlZA0yAWwO+kYO0s2ZVgeXHSZU
-AAxM8Cgr1qtFiAY1cBVzsl2bGWJNHbyioiLvHLhHz8oh5hIYD1ovLTgASuAlBhg+
-/h1nVVcmnCvOzcFhm/x+kR2tuYHkH9/FKkhiGPdiuvWyri+bERFpE+Tg/leOSED9
-aXeZewebkZx8gbN1BtwATx1LnIR2No1nFy/e1MwZH1hGVXYK3rhs3/ICNr4cm1Fw
-UfxCnzxi5yg8WtluryxHRcczf9I/zi/JQwFOtjSDdSQVfgj7T7ikJ78r/31SGkDo
-wE/uwWw9Es+5NSl/hRftp13UO//lhR8PrRNzioUWsBHiKG8xRiY=
-=dZmk
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqxHqkACgkQ3SOs138+
+s6GCVA/8CTjCU06x7t4Mbm966PsuhGx8Q1j3ntV2PiowxzhJwEyb68oBkfVXTkrL
+9rGbkF8OnuoiY/uxupgsIUa+x2hplNqTs6J/OxG5LLbOhdnv1OpzXUBaXlg6ahe2
++7XwSzG2TQcYExblLuZqsViN21+KOWOJAcTGTnxP/X0lbLQYLjSRmzkVlOPjhtEU
+uhszVibjBBSQjotx1SMbk0C2Mxmko7X+ocCxsZ+APwIO3xvrxRRefs3s5nWXRaZH
+mb8ywwgh0WqojUcfOLazhhfUQ/wIn5WTNutOymPP17QgoUVluJOu9TUz1KEnSDVg
+B5NLXtC37c4Ap7iy4ZZMbs95EpkH6c6Dg5qF6avcs3nDUt/g94yCb3eQ20JBveBj
+jOBT9Gpc5pz0s5wLzVzCNWmKk1tQYABslMzcS5aQLBy85HUIwDH/DcCXBOQMm5Tu
+ukBohOeV+nvFWVkT5gDK+zRzaHqPpYpajvemCYUJrw5eXZp53X0L8JV+4HvhGgnW
+uUHIqXFNgXiRGiSfAs+24+jaUhU/W8Wpj5svPEsD2/OeW2jjUTKpo58pQEo7X4up
+XVVNGOuxJaT/8Rh62gC7rHMnM2sVlBE9I0rpRtghOzA8EBdyFnq22rDy/xIx/86j
+aXnoCcK0YUHzkj4lzswo2sohi0nE4T9nDsfYTN14FxH3WvRPoFk=
+=3wJh
 -----END PGP SIGNATURE-----
 
---jhizgarl7ooit75x--
+--vnshuij5kqlf56wu--
