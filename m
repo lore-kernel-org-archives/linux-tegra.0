@@ -1,114 +1,265 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221F93C3C07;
-	Mon, 21 Sep 2026 10:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE01430CEC;
+	Mon, 21 Sep 2026 11:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789986252; cv=none; b=j9kq2Kplq2Nnw24jLpI7um17BBGBtQgnHNZJYaapdVTiM9R9qPSxvIqhebh6J73JM0oxeDHsPEva2o0bvsSk5n+1pY1ZPRJ/w6vY9iHr9NJJq1vFuBKppowNecPiQaIOsl/csiPXNwIi1xZcBNIbw3TBHsNDUWI07EYrXydKh40=
+	t=1789988677; cv=none; b=Q+8SF1rIDVV75d6MUB6KomPhIycZ5kR4hc1wGROY6gyob4qI1Exr6JAzQZ/8JaTgvDP4PUEn/Yz3L8mrEeAj2ellXf1FjLzKjruWhSb7eDayLB11Ts7o7y2Jgny9AG4e62YgX+kHMB+zVpUM1IzVOwgnOMRLMAadf8anisrck7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789986252; c=relaxed/simple;
-	bh=Ub/+kGpAAP6+lsoiaCw9Klc1Wvd0seH12psmBQ0pa4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NO90f5cyGo3gmoXxucVU8yPXgm7PFGr1dB4VnWpj54DUUN61BV5itD/mNPWHLBjkN7iSGkuyt5IdVYeyV2KwQtWSEWLulXEz2mAtb5HP7pvMfahXn15OKR6uMNqoERw/hELCCl7lujMfBApOLFpVASq7qeoo/Ao4nedIvTLi3es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kkp/F6R7; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789988677; c=relaxed/simple;
+	bh=jSuuVBlpSef5iuoN/mlS5h79+s0Sw155NGnBGKRWtBA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d13yrfzmD9/XFwvXFPB1hplbZOTyDQN23+K7ovtRazXhObhqG80B7WS5O2v03eyuw6CQWDbf92iZ585czolR47LatRJKlkt4DumWAV7X6X90FM8kfmt98ybBZgii014uehv3KYGO6uhwZVua2JnKPUk+qdF4jxZPqZGbpKNunNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gU/qQHU8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kkp/F6R7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1EE61F000FF;
-	Mon, 21 Sep 2026 10:24:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gU/qQHU8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83EC81F000FF;
+	Mon, 21 Sep 2026 11:04:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789986250;
-	bh=lwX4uKLsOTYT1SCuUhODQ6rGv8tZpp4S5pftAMN0UFY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Kkp/F6R7RcrV996+F2BmiS0mCBFkfoMw0mo2+WHNo8tu51/jvdlk4oaGmKZm/H+rq
-	 Rfg9Oy3pOswCWSS2mFm2Ig9BkjTbwZVtieTQQC4948ZJ6m6bK03o6VM2QUbUC4vDej
-	 eVr2+evJZqWtqkTAMcXNaAswZ6ZlmByPatJNMfpcIOFWlNukFZWINhDB9+JyWdRdYG
-	 XQJhMSddxMNv1AOlhFYrs69jT7rJtWClnEnLG/dWR1NHJ2g0E7OEn6nIIE2TgkfuxQ
-	 p+0XUC+PHM5DTUO5aZ44f8G9ueuQ16XCR8dyI1LKJvjs3ooZcMQm+1Zce+y2f6vfny
-	 X0PG7re0U9OWg==
-Date: Mon, 21 Sep 2026 12:24:07 +0200
+	s=k20260515; t=1789988671;
+	bh=iZCqbmeiHFb5rdxel++hBSJZRs8tjgQKm9/ukIOdAnU=;
+	h=From:To:Cc:Subject:Date;
+	b=gU/qQHU89z18qCQaUCE+09/PGmZM7ufVqHZ7UZs+D3KqgFlNZPUX6BwGTepQKkHmU
+	 Bc1vZrHwcqRC3dzfkFbePdhhwuYBDw5VnTlHj6toIYKdeAk0ju6AMb8qH+HKEqdM1l
+	 J1xCcJgk2cYdUUPf/Qan+4qyh35ae3Q8udkDcJLtueE4kKyn0R0K/bzK18MkkPfgE3
+	 EALKTSAraLlN/H4O/1EiAydXWsbnfva4cT0jHOKYrauib8bvS8KVdwJC0VQJlGBKI1
+	 /0qF1EbxNsZjdUVqQURAjwOQy3jsApt61XGkwYJmmo6NKOUVjXuRZhAmjWZ8EbPJG1
+	 /XH5TApuzSuMw==
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v2 0/3] soc/tegra: fuse: Add Tegra264 support
-Message-ID: <arEFuSVya1BcQcrN@orome>
-References: <20260917-tegra-tegra264-fuse-v2-0-4936068c2168@nvidia.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] dt-bindings: net: nvidia,tegra234-mgbe: Add missing properties
+Date: Mon, 21 Sep 2026 13:04:22 +0200
+Message-ID: <20260921110422.220832-1-thierry.reding@kernel.org>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="c473hq6sfnp3kpw7"
-Content-Disposition: inline
-In-Reply-To: <20260917-tegra-tegra264-fuse-v2-0-4936068c2168@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
+From: Thierry Reding <treding@nvidia.com>
 
---c473hq6sfnp3kpw7
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 0/3] soc/tegra: fuse: Add Tegra264 support
-MIME-Version: 1.0
+Being a DWMAC derivative, the Tegra234 MGBE supports AXI configuration
+nodes named stmmac-axi-config and phandle references to them using the
+snps,axi-config property.
 
-On Thu, Sep 17, 2026 at 10:16:00AM +0100, Jon Hunter wrote:
-> This series adds support for the FUSE block found on Tegra264. The first
-> two patches were originally posted by Thierry Reding and add the device
-> tree binding and FUSE node. The third patch adds the Tegra264 FUSE SoC
-> data, including the register range and keepouts.
->=20
-> Changes in v2:
-> - Reword the device tree binding commit message following review
->   feedback
-> - Correct the register range for the efuse block to map the complete
->   address space.
-> - Add Tegra264 FUSE driver support
->=20
-> Link: https://lore.kernel.org/linux-tegra/20260320233822.2578569-1-thierr=
-y.reding@kernel.org/
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
-> Jon Hunter (1):
->       soc/tegra: fuse: Add Tegra264 support
->=20
-> Thierry Reding (2):
->       dt-bindings: fuse: Document compatible string for Tegra264 FUSE
->       arm64: tegra: Add FUSE block on Tegra264
->=20
->  .../bindings/fuse/nvidia,tegra20-fuse.yaml         |   1 +
->  arch/arm64/boot/dts/nvidia/tegra264.dtsi           |   7 +
->  drivers/soc/tegra/fuse/fuse-tegra.c                |  11 +-
->  drivers/soc/tegra/fuse/fuse-tegra30.c              | 168 +++++++++++++++=
-+++++-
->  drivers/soc/tegra/fuse/fuse.h                      |   7 +-
->  5 files changed, 191 insertions(+), 3 deletions(-)
+While at it, add the 10gbase-r PHY mode.
 
-All there patches applied, thanks.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+Changes in v3:
+- add Rob's Reviewed-by
+- link to v2: https://lore.kernel.org/linux-tegra/20260902003004.453960-1-thierry.reding@kernel.org/
 
-Thierry
+Changes in v2:
+- move common properties to snps,dwmac-common.yaml
+- link to v1: https://lore.kernel.org/linux-tegra/20260716212001.989872-1-thierry.reding@kernel.org/
 
---c473hq6sfnp3kpw7
-Content-Type: application/pgp-signature; name="signature.asc"
+ .../bindings/net/nvidia,tegra234-mgbe.yaml    |  8 ++-
+ .../bindings/net/snps,dwmac-common.yaml       | 66 +++++++++++++++++++
+ .../devicetree/bindings/net/snps,dwmac.yaml   | 52 +--------------
+ 3 files changed, 73 insertions(+), 53 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/snps,dwmac-common.yaml
 
------BEGIN PGP SIGNATURE-----
+diff --git a/Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.yaml b/Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.yaml
+index 215f14d1897d..48e4798a039b 100644
+--- a/Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.yaml
++++ b/Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.yaml
+@@ -81,8 +81,9 @@ properties:
+   phy-mode:
+     contains:
+       enum:
+-        - usxgmii
+         - 10gbase-kr
++        - 10gbase-r
++        - usxgmii
+ 
+   mdio:
+     $ref: mdio.yaml#
+@@ -90,6 +91,9 @@ properties:
+     description:
+       Optional node for embedded MDIO controller.
+ 
++allOf:
++  - $ref: snps,dwmac-common.yaml#
++
+ required:
+   - compatible
+   - reg
+@@ -103,7 +107,7 @@ required:
+   - phy-handle
+   - phy-mode
+ 
+-additionalProperties: false
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/net/snps,dwmac-common.yaml b/Documentation/devicetree/bindings/net/snps,dwmac-common.yaml
+new file mode 100644
+index 000000000000..a38ff314b3cd
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/snps,dwmac-common.yaml
+@@ -0,0 +1,66 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/snps,dwmac-common.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Synopsys DesignWare MAC common properties
++
++maintainers:
++  - Alexandre Torgue <alexandre.torgue@foss.st.com>
++  - Giuseppe Cavallaro <peppe.cavallaro@st.com>
++  - Jose Abreu <joabreu@synopsys.com>
++
++properties:
++  stmmac-axi-config:
++    type: object
++    unevaluatedProperties: false
++    description:
++      AXI BUS Mode parameters.
++
++    properties:
++      snps,lpi_en:
++        $ref: /schemas/types.yaml#/definitions/flag
++        description:
++          enable Low Power Interface
++
++      snps,xit_frm:
++        $ref: /schemas/types.yaml#/definitions/flag
++        description:
++          unlock on WoL
++
++      snps,wr_osr_lmt:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description:
++          max write outstanding req. limit
++
++      snps,rd_osr_lmt:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description:
++          max read outstanding req. limit
++
++      snps,blen:
++        $ref: /schemas/types.yaml#/definitions/uint32-array
++        description:
++          this is a vector of supported burst length.
++        minItems: 7
++        maxItems: 7
++
++      snps,fb:
++        $ref: /schemas/types.yaml#/definitions/flag
++        description:
++          fixed-burst
++
++  snps,axi-config:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      AXI BUS Mode parameters. Phandle to a node that can contain the
++      following properties
++        * snps,lpi_en, enable Low Power Interface
++        * snps,xit_frm, unlock on WoL
++        * snps,wr_osr_lmt, max write outstanding req. limit
++        * snps,rd_osr_lmt, max read outstanding req. limit
++        * snps,blen, this is a vector of supported burst length.
++        * snps,fb, fixed-burst
++
++additionalProperties: true
+diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+index 2449311c6d28..c5222c82e27a 100644
+--- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+@@ -195,18 +195,6 @@ properties:
+       can be passive (no SW requirement), and requires that the MAC operate
+       in a different mode than the PHY in order to function.
+ 
+-  snps,axi-config:
+-    $ref: /schemas/types.yaml#/definitions/phandle
+-    description:
+-      AXI BUS Mode parameters. Phandle to a node that can contain the
+-      following properties
+-        * snps,lpi_en, enable Low Power Interface
+-        * snps,xit_frm, unlock on WoL
+-        * snps,wr_osr_lmt, max write outstanding req. limit
+-        * snps,rd_osr_lmt, max read outstanding req. limit
+-        * snps,blen, this is a vector of supported burst length.
+-        * snps,fb, fixed-burst
+-
+   snps,mtl-rx-config:
+     $ref: /schemas/types.yaml#/definitions/phandle
+     description:
+@@ -558,45 +546,6 @@ properties:
+     required:
+       - compatible
+ 
+-  stmmac-axi-config:
+-    type: object
+-    unevaluatedProperties: false
+-    description:
+-      AXI BUS Mode parameters.
+-
+-    properties:
+-      snps,lpi_en:
+-        $ref: /schemas/types.yaml#/definitions/flag
+-        description:
+-          enable Low Power Interface
+-
+-      snps,xit_frm:
+-        $ref: /schemas/types.yaml#/definitions/flag
+-        description:
+-          unlock on WoL
+-
+-      snps,wr_osr_lmt:
+-        $ref: /schemas/types.yaml#/definitions/uint32
+-        description:
+-          max write outstanding req. limit
+-
+-      snps,rd_osr_lmt:
+-        $ref: /schemas/types.yaml#/definitions/uint32
+-        description:
+-          max read outstanding req. limit
+-
+-      snps,blen:
+-        $ref: /schemas/types.yaml#/definitions/uint32-array
+-        description:
+-          this is a vector of supported burst length.
+-        minItems: 7
+-        maxItems: 7
+-
+-      snps,fb:
+-        $ref: /schemas/types.yaml#/definitions/flag
+-        description:
+-          fixed-burst
+-
+ required:
+   - compatible
+   - reg
+@@ -610,6 +559,7 @@ dependencies:
+ 
+ allOf:
+   - $ref: ethernet-controller.yaml#
++  - $ref: snps,dwmac-common.yaml#
+   - if:
+       properties:
+         compatible:
+-- 
+2.55.0
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqxBccACgkQ3SOs138+
-s6G+mhAAmQERE+9oglvjMFq0bGHSrMhFsWXzwxwRfRHRzKRRRif+Vd5AS1hjELXh
-18+jEiHRVDluV54BaO6hOFLL+CuIZv9Jy1UATKMYXooS6UwE3lCo2yP0TH8L6RHB
-ni9wfveRpkkUEgHgelvaY2KaWUsw4sfoY8I4AzzUMfoymLOHjoUdWkx0h5C0uvAk
-Onbn81XBcvUH48zlhF4wJbxQqZZzi3Q0QleTD8I8wv6YSC3IqZVZzpgtdxDFYYLP
-msLHUKNNE0xcjJLvAJJqJHfvk7oNA0lae+pFqLn4MXWDe2BREkGr0Z91O31OsMZP
-drAzzfU6YVW8sNix9W4zQinQgpZm2jXE4b7smp4XzxNxPt9yx/7FgsP609KVHZ4g
-cOLaf4eOJ4Pn9tDQAAxc8FTuZErfSqC2Xww+44sJA9FDxeDHlIiN2LeiIcBlmH38
-EWCvgHjxRXtazi2UVG8wHbLIPD4AG8p+Agz9lHr0LSlngt5Q3ohoR+deN0WR875l
-eRVk8WfYGbgohxatiBGKI9CrvXukNewROrVTmzcXJGJucRM0BP7+LfJWEVOnLnsk
-f8Bnytnz6TdLXsSrj7E4Qs0LpM3kQHhoOd1NzcPegNDZ+PCs/v0VTQk+JtByfVvW
-ELiQn4jWlGF/BwX4c1gLPdgzWnnCO8dz2D/biz7aeIoUmvN05/M=
-=K4L1
------END PGP SIGNATURE-----
-
---c473hq6sfnp3kpw7--
