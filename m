@@ -1,41 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A14D48489A;
-	Mon, 21 Sep 2026 11:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFADE346E74;
+	Mon, 21 Sep 2026 11:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789990136; cv=none; b=QWDf/aKY6OviqR1aPM4r3AzyeYRpqoUnUYK/TQbKnf5sm948ScDunDT5SNOCaVXSSMG13PQ1V6Kv1Wh8sohGvNOFeW2m3M4XG8xnbrCuGI9Za4hbxHxVYAwg38g/2NtFrn1fwDjQIe5t5bN1tFQ/S6wTjDrdwVr87K0FBuVosYE=
+	t=1789990438; cv=none; b=lYqk2hUXOaAP+GJIIl6msViXK+7sb2sPSfS59G6/238in+1TJn4yGYM9CFflCt2s92NAI+N/5gKh/TuvXp7D/mMmi2HjrnLG2j2/KTdlZgvbEu5bWSnYAPn37Cpu2ggp4NP8Z8+VMpRsE22Ql1/cjpgOwEp60xgFHd0HAppECDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789990136; c=relaxed/simple;
-	bh=23O1N9RAoRg8GUl0wqI99Kzo6mCdV07KZt4GTFKyfdw=;
+	s=arc-20240116; t=1789990438; c=relaxed/simple;
+	bh=4PgdLDiKIVXTWGTu2jsrSR6qx/gSsOj410WrI/Vadek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qg8Oy//qBTIzqfRtPb7NFrlTPwO43b7ay5a5rSjidxwKW9WdfuOYXDZsUh2d6XfBHd5rzgxBalljsF3CfUWjVSKBBDjFWswbIeU3yKmC/1f3inucwP18XpHLTl/GEW8/P4mgxEeVQTOlLxVRTv5Kq5c+V8hQcOTCd235fnLCfGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U/e3aISV; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=OqOefsOEeP0lVegW0x3DXBFeMCSfvFq57+TnQfepKzt5swUN+8I4zNep4JcIxobzLVxkBMLWipANI2mcZcgUF8WLcAwp4gYiiPKZPl7M2XKzpKBGjPxdt6b3Zwt9nO1SHzaoyTJa9xPhEx+u6L9wedxjXEhRtIMamO/kDDbJY+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MdJ1QI3y; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U/e3aISV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C15C1F000FF;
-	Mon, 21 Sep 2026 11:28:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MdJ1QI3y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3B591F000FF;
+	Mon, 21 Sep 2026 11:33:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789990134;
-	bh=aaRbicKNfqtcJIZ5MQEU8o/qjFzZn0m/iDzkauQ3Qt4=;
+	s=k20260515; t=1789990436;
+	bh=MDIUNnJTr3U0Ey9p4etc55PGRbEZi0JsFTUGlPBKo5M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=U/e3aISV00A7ww8Hei7QixqUITRE14MzH4XqHHJarBC47v5xUeurs1Br+A2TFyzYT
-	 rW2Pa2ldvVMGIGLZHXnTqqT0jg0LBxiWzDbX4qVi/24Rv9uHMFGYm3iUn66EYHJElt
-	 cBNWgqQeQc8KZV7QkUmA98Mx6XPg3GiL3CSnvdz3YsytovHIS5CsZcsvD+QReu+8er
-	 BwAe1Z0Y3oy0xe32U8NT2wpd1S0OG2mVZrfL6xREtSkiPWikff+qiAVZ4FUn5uVqxK
-	 9bgCnwPFlLm3qfsAbQbtAVyrmmmsm/f2C9r1QcdqpvAyfRcZArOLIalco9PTsv6KYH
-	 wNdy4UdIIVzTg==
-Date: Mon, 21 Sep 2026 13:28:52 +0200
+	b=MdJ1QI3yp0m4W6wPjnpOlP/LuYDBBHyHtO6Zn5chWqo6r8O56zfzdu30oPxNYD7eA
+	 6NGIwnlNi7nbYAUpTe1nB9kvVWEiGBLoBvhjAHsDR6BvGuOtqTHJcPSCEiap+Uxct0
+	 XCeDFQD0PyS9iZgRDiVsh2TcunDaQiBgZY/9kjfjGSJr7L8n5Hmu9QWXs9J+wkqaLD
+	 OQSjmUuvVqsmZx1mUngxnmaYWwePogbProrqJV/yU2encACF0F3DNiP/Z86Sez1sve
+	 3bQh5KztIL9br8JUjHdDnn67RbY+tci0wjl5CYZnvUkpF+gfVLiTLCjAdHzsfTJzui
+	 Wb+6X6UdDhHpQ==
+Date: Mon, 21 Sep 2026 13:33:54 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Myeonghun Pak <mhun512@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Ijae Kim <ae878000@gmail.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget: tegra-xudc: Disable port reset work on
- removal
-Message-ID: <arETYSjwaHytxyBu@orome>
-References: <CAGEsz8F2eKsmV_tymO+9UD5xkS_tWhZo-b9Xom1_SiKuc-BCqg@mail.gmail.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Kieran Bingham <kieran.bingham@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jacopo Mondi <jacopo@jmondi.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Jimmy Su <jimmy.su@intel.com>, 
+	Matthias Fend <matthias.fend@emfend.at>, Mikhail Rudenko <mike.rudenko@gmail.com>, 
+	Daniel Scally <dan.scally@ideasonboard.com>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Michael Riesch <michael.riesch@collabora.com>, Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
+	Sylvain Petinot <sylvain.petinot@foss.st.com>, Paul Elder <paul.elder@ideasonboard.com>, 
+	Martin Kepplinger <martin.kepplinger@puri.sm>, Quentin Schulz <quentin.schulz@theobroma-systems.com>, 
+	Tommaso Merciai <tomm.merciai@gmail.com>, Svyatoslav Ryhel <clamor95@gmail.com>, 
+	Richard Acayan <mailingradian@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux@ew.tq-group.com, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Alexander Stein <alexander.stein@ew.tq-group.com>, 
+	David Heidelberg <david@ixit.cz>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Quentin Schulz <quentin.schulz@cherry.de>
+Subject: Re: [PATCH v6 0/6] dt-bindings: Orientation defines
+Message-ID: <arEVs0FDleyHeeLj@orome>
+References: <20260918-kbingham-orientation-v6-0-5e8b1f01be29@ideasonboard.com>
+ <CAMuHMdWWOB48AUCbXh=9ZGCK2qZyVH06kJ2paRY-wxkq5NC16A@mail.gmail.com>
+ <CAMuHMdVhK0vm_Ksze_=jG8D_=8Q45v+ezNbxwL7JntTt_v_fkg@mail.gmail.com>
+ <20260921073538.GA1466037@killaraus.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -43,85 +65,95 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5zdctmjwsshytil5"
+	protocol="application/pgp-signature"; boundary="rscvpqrbalagvufr"
 Content-Disposition: inline
-In-Reply-To: <CAGEsz8F2eKsmV_tymO+9UD5xkS_tWhZo-b9Xom1_SiKuc-BCqg@mail.gmail.com>
+In-Reply-To: <20260921073538.GA1466037@killaraus.ideasonboard.com>
 
 
---5zdctmjwsshytil5
+--rscvpqrbalagvufr
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] usb: gadget: tegra-xudc: Disable port reset work on
- removal
+Subject: Re: [PATCH v6 0/6] dt-bindings: Orientation defines
 MIME-Version: 1.0
 
-On Thu, Sep 17, 2026 at 07:20:58PM +0000, Myeonghun Pak wrote:
-> The port status interrupt can schedule port_reset_war_work to handle the
-> Tegra210 port reset workaround. The remove path does not cancel this
-> work, so it can run after the PHYs and controller resources have been
-> released and access freed memory.
+On Mon, Sep 21, 2026 at 10:35:38AM +0300, Laurent Pinchart wrote:
+> On Mon, Sep 21, 2026 at 09:07:01AM +0200, Geert Uytterhoeven wrote:
+> > On Mon, 21 Sept 2026 at 09:05, Geert Uytterhoeven wrote:
+> > > On Fri, 18 Sept 2026 at 12:55, Kieran Bingham wrote:
+> > > > Add a new dt-bindings/media/video-interface-devices.h header that
+> > > > initially supports the Orientation types and convert existing users
+> > > > throughout the code base.
+> > >
+> > > Just noticed these are already in since commit 6ab5acfb8dd38729
+> > > ("dt-bindings: media: Add macros for video interface devices") in
+> > > media/master (next-20260903 and later)?
+> > >
+> > > > v3 collects tags, and fixes the typo, but drops all hunks that do n=
+ot
+> > >
+> > > [...]
+> > >
+> > > > v2:
+> > >
+> > > Interesting changelog order ;-)
+> > >
+> > > [...]
+> > >
+> > > > v3:
+> > >
+> > > [...]
+> > >
+> > > > -v4:
+> > >
+> > > [...]
+> > >
+> > >
+> > > > -v5:
+> > > >  - Definitions now accepted in linux-media, rebased to get conversi=
+ons in.
+> > >
+> > > Oh, you say so here ;-)
+> > >
+> > > >       arm64: dts: renesas: Convert to new media orientation definit=
+ions
+> > >
+> > > So it's been safe for me to pick this up since v5?
+> >=20
+> > No it's not, there is a hard dependency.
 >=20
-> Disable and drain port_reset_war_work before tearing down the controller.
-> Use disable_delayed_work_sync() so that the interrupt handler cannot
-> queue the work again while the managed IRQ is still registered.
->=20
-> This issue was identified during our ongoing static-analysis research
-> while reviewing kernel code.
->=20
-> Fixes: 49db427232fe ("usb: gadget: Add UDC driver for tegra XUSB
-> device mode controller")
+> The whole series needs to be postponed by one kernel cycle :-/ It's not
+> urgent so it's not a big deal. Kieran will have the priviledge of
+> rebasing and sending a v7 :-)
 
-Please don't wrap lines like this.
+If all platform maintainers Ack this series, they could go through the
+media tree where the shared include was already merged. Alternatively
+the media maintainers could provide a shared branch for everyone to pull
+into their platform trees.
 
-> Cc: stable@vger.kernel.org # 6.10+
-> Assisted-by: LLM
-> Co-developed-by: Ijae Kim <ae878000@gmail.com>
-> Signed-off-by: Ijae Kim <ae878000@gmail.com>
-> Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
-> ---
->  drivers/usb/gadget/udc/tegra-xudc.c |    1 +
->  1 file changed, 1 insertion(+)
->=20
-> --- a/drivers/usb/gadget/udc/tegra-xudc.c
-> +++ b/drivers/usb/gadget/udc/tegra-xudc.c
-> @@ -3926,6 +3926,7 @@
->=20
->  	pm_runtime_get_sync(xudc->dev);
->=20
-> +	disable_delayed_work_sync(&xudc->port_reset_war_work);
->  	cancel_delayed_work_sync(&xudc->plc_reset_work);
->  	cancel_work_sync(&xudc->usb_role_sw_work);
-
-This is a preexisting problem, but given that we only delete the gadget
-below this cleanup, shouldn't the other two cancel_*() calls be
-disable_*() as well? Otherwise there's potentially a race condition
-between this and the interrupt handler (which is only unregistered after
-=2Eremove() completes).
-
-Either that or the existing cancel_*() calls are enough in which case
-your patch probably should be using that variant as well.
+But given that this is simply replacing a literal with a preprocessor
+macro, maybe not worth the extra hassle.
 
 Thierry
 
---5zdctmjwsshytil5
+--rscvpqrbalagvufr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqxFPAACgkQ3SOs138+
-s6Htpg//WPr1p2gbjuixtztjto5kgSpBtht2UIY60AmdxNMUo0WL0PUmoJ6v1s1u
-Mye/zUOsJokaRKZK1x8pply2BvTiOG7mJT3fqb345BrMXZAsIVkPVzNRuPU6uHel
-jck7pp3cZiD8RpFWhb38rPSzwchHlKLtAakrDzC/fBHhKc1gE7hAM8U50fLuiJJT
-SOXf+aa3Bm1tPN+ydwIDeihf9OBPEgBVzl88re1aVy+D5CE3ejh24OPO8IGi3bZ8
-SAAc6tNCOlNusAP9q5zMXXwTjb9nOSKS1kSkc6fSkML9cpnnKUd2LPEtiqtV6c0g
-TpCVQXFHA1QfryeCxkILu7B5ZkuPTwu0DLkqNfwocdw8FNU+HQgyjAh97buQU6LS
-h8eDya980cQ0ZTC76GlhCMMTHGNdVPpAwAQCeq9kN6QkqgfjqY9AfWt8Q0pQVJfL
-zBw2ndvzfDiLSdEMFQuHeshldcKy+kaAQW0pws4jkKJ37BAAALpQpM1OiEUAsCp+
-PQYBBpb2udeaPI6OV8zd5rPh2NDbAqIGc3CpKzLSJgSeTe9swTY3t48diNcq/rvz
-0dfUmfdpMlIFL7zFYkeCXkhm0/kA7ABHIa1BKHj1fbynXbpYmfa4PLG/XSCOz4tR
-G1ZcAee9mdfskKGYI/LQU0XByVGgZ84+JxtaIXN1Rovc80GE8Hc=
-=oxn7
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqxFiIACgkQ3SOs138+
+s6HA/BAAlTOuxN7hAGKsy7dYRPGn5XonD1CL3PrwL+ma3OlyhbTXIVe+Io6RW7J5
+zKfOah30Mnvem2LLH7Sg0m4pfm8rTX/nF7tQQihKyk5IU0/9OgH8/2J5VeB6WRmb
+7ekKOnFAQw9YQs1vcpGn4Jm1JvkIz1ari2ZXHx2qf3gfSi43gDwZ5ZLZSnL2NyTG
+ZaSMB+Sqiao0Q8YuY0UYuEi4jqGJr6qV0fpJKMaG+LHrPS42UG0PYDSbwLkkXALN
+GOz3A9wsFz58L3s92t3+L030Jl/WJEzrg9b6HzfbuS1YKX0mcG1FWRQB3k6waSQM
+lSVq/HZ2fzW31WglB118JZFVqyBGH8cHxXumpsOkOcPiga0dkUIkfCIdOm1GWP1J
+Q/CMLKNu3phGaXej8wIlhtZxUbhP1DYJmAWtYNSAbOg/Zgomo1Q4y+m2qxkO2VWr
+fq/UoozCz2rYlLcTDYB/ML7e2KZHsh7OTNwIGaJ3eIretaKyI+K9jOfOxLZ83SuJ
+yvkNTOAq9sRKiSQod41cgN4UWLsSEdLn6399hyFGHpcwazrebRKfnnfMUauRflSq
+sLokqJGJrk/Ck2uecD/pNXlBGztCR5Czxyf+R4CHNMKMa8HqYQS9OFvU32QnyD26
+6Nb3cTM0bMwTrWMTJVQnV+SVmqld3xVL6f9i1vImIvJAiEcxJQg=
+=n1ZD
 -----END PGP SIGNATURE-----
 
---5zdctmjwsshytil5--
+--rscvpqrbalagvufr--
