@@ -1,161 +1,209 @@
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011071.outbound.protection.outlook.com [52.101.70.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD3C4A0EF0;
-	Mon, 21 Sep 2026 14:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790000566; cv=fail; b=CJUiliy/pjPbhwSjjDj1S+rPZnvCRpPu3hjlFSicHbpQrfVMSpswKnS3AwXTJyI4UuZptam5+9Dp6v9dcqLLu6Awr0ZIbwEK3Vv2YXOFntHJ2CNg1ATU1zIJiwkVL1I7nEB/lLQbCrPVlz13Fn/PNVMu3xFiVZey4Adjy3wOT90=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790000566; c=relaxed/simple;
-	bh=AgIOAagCieiDXgpOVt0CSJ6s/RrhODnm2YybCbi9FLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=risEUsobrfCz/C7FkBNTVTKnV+P4eTWjNOpODr52yfC0fibh1l1CogwYN/Dbp/vgObYFO3LyfppbnAjj3goerQsa+UEr3hIyHHqtrQFVlGAgnkdTOQeubwbcyS0Cgo+GJhpWGMo1zFp9cOkIzDfyNYax97ZOXjnJ3qTaaf43b20=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=S+A2jMpG; arc=fail smtp.client-ip=52.101.70.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435913F8250
+	for <linux-tegra@vger.kernel.org>; Mon, 21 Sep 2026 14:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790000769; cv=none; b=lLj1cS6YuMEBEdigPKDSdrz7BoKBW2KBq+6ufqNS74BzNJ0XtpgxtNefwyBN9/8gx2DYH7UFpM6QQ00omE8SIpNS3YitmexnE2pl4I1ehAAK5EaHZM/8ss5+i/QVAIXmY6xGESV6YAjGgKZaaFSxVVR+9XesWd0REMeB48aQYwE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790000769; c=relaxed/simple;
+	bh=u79GVvIrNgovGs36Fao9Rh6cQHN/TgXSWpa2Q+lis6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MKs6KRsVRL3MJom6EyxyT7kuwoXyrk/Cq2gGt1x6kPbf3mVKcXOun45D0AhpkGCkbTl7wiJweNYVSMGDNjJBp98IWD2C43n/zX5Q91SwZbVe27U6d0u1RuR7jVTzQZ4TtB41HgRnKsMAFKYPNkLP2SVlk4nQBpmk2cMwqRd7NvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=l1Ea1RHV; arc=none smtp.client-ip=74.125.225.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="S+A2jMpG"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oGZdLIzb+bKzcI466v29cW2Y46cEUur4HVjGHtDfG0majdAxrCkuRENxn6ArxAneqNtK7UHVh6iwFj99dASwjTcPGL45BG7hDVjnDn/ugCdJQBH3pvLHetffP+dJ3i1xT3AtLaEHXsWQyYGzRAgvNXvKyG1zF0apJfD6k+hPUKjAqfOozilcmOECVRsc5oueqr0/40qsO+TiSpmKEK/Hz7MtHt9XefZzY0eKwBhuKtjvoYN07BjPBGDpZdUI09wDmE+hX6gN8DL1eruySvwpiNTYoR0cmS8DGTGyKWl5o+VpHu2PYIeoAJ/N9M4Ly0DG/5rzrvjeEX0gvwlrsEFjWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZLMPFEgSAqZyBdWsP31fIJ4sgcL2+0aVY2gTJcAODLs=;
- b=xoQ/tIXVZh/mOI9//8f5QkM3NTbSfX4DSPnpyerGIlrFzOujBQYURPyUcWVp/Vuu1S8StLEZBuhse+1K2IQMjUhQdlmij7M1UDRDe4cbj8Du9xTSxlWVn6yTLKn7ynbgItRnWt4YYYW2XNOfSTrZdpTfa0dO6a2AX8LzMH5vl8s9zA1Z002GvumaW2EhWlbtdqQdkh2b5itO3Yxiyg03UvQEZwLPSsHVdeJ26NkY7Nwn56lJC00wCQXGL6UN+xzbbAnuYKCpTYwDjq9OFsSnP37FqYa78ugpEuDJBVI8NHiusqq8Ob3mdrkbqAMY345iBqMmMBEXqiD0744dXtT0KA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZLMPFEgSAqZyBdWsP31fIJ4sgcL2+0aVY2gTJcAODLs=;
- b=S+A2jMpGA/JEBpHNaGAAILRR8dbzJCnHmolno7c2ljtwXgzojWUqBG63PjqgF3L8m2o3xATkvRWn+gwA/9o2SVT15lUkTip2poUyhBLWXEeG5hGg4JWoSJD4eYoNFAOvfvtKZ4/NdorlCwG+UebZCEoRsS1Sxws0XeLgiIyVxTLV1W1jT8wqAGPhTleBfI0CX87WYnhVZUCQUOitk6undrZa5ZHJVFKRUHevnOx3AkwONpCJC30P3w1MuA0BzSg4Pv8yLLUX9OtcvPxFnA9guUgsVuLQM6oo3TUANusCqLTkchQeo+TH7Xs7KquAkJYScoGpmc70S1rYhfqTQ0s6Eg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV2PR04MB12318.eurprd04.prod.outlook.com
- (2603:10a6:150:32b::19) by GV1PR04MB9214.eurprd04.prod.outlook.com
- (2603:10a6:150:29::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.16; Mon, 21 Sep
- 2026 14:22:38 +0000
-Received: from GV2PR04MB12318.eurprd04.prod.outlook.com
- ([fe80::a498:2b5a:cbdb:d6fa]) by GV2PR04MB12318.eurprd04.prod.outlook.com
- ([fe80::a498:2b5a:cbdb:d6fa%3]) with mapi id 15.21.0428.015; Mon, 21 Sep 2026
- 14:22:38 +0000
-Date: Mon, 21 Sep 2026 17:22:30 +0300
-From: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jessica Zhang <jesszhan0024@gmail.com>, Lucas Stach <l.stach@pengutronix.de>, 
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Paul Kocialkowski <paulk@sys-base.io>, 
-	Linus Walleij <linusw@kernel.org>, Inki Dae <inki.dae@samsung.com>, 
-	Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Sean Paul <sean@poorly.run>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Albert Esteve <aesteve@redhat.com>, Anusha Srivatsa <asrivats@redhat.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Hui Pu <Hui.Pu@gehealthcare.com>, 
-	Ian Ray <ian.ray@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com, asahi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v3 13/19] drm/bridge: fsl-ldb: don't create a panel_bridge
-Message-ID: <wge4c6p4ijsk6skitl5slznxagmuw5m4lhqmz56v6bbrsu4r4f@fhmo5hpibut3>
-References: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
- <20260916-drm-bridge-every-panel-v3-13-83afb4f1a707@bootlin.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260916-drm-bridge-every-panel-v3-13-83afb4f1a707@bootlin.com>
-X-ClientProxiedBy: AM0PR10CA0032.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:150::12) To GV2PR04MB12318.eurprd04.prod.outlook.com
- (2603:10a6:150:32b::19)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="l1Ea1RHV"
+Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-4843f22dc83so2207019f8f.1
+        for <linux-tegra@vger.kernel.org>; Mon, 21 Sep 2026 07:26:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1790000765; x=1790605565; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=fKaXtSv/kbKul4ZN5Cjuy3lIzweY+anlAeJnxQKsOuk=;
+        b=l1Ea1RHVmAsB0z7ojHjSr2xmmjYcjdH0qvg0JMOGJQm6HSEco0QARF+Rot97So+0Y/
+         ZlBB6qtQCXX4ZD337dxI2fAvQc3yjy2AZn/pbHgEqZqQDAXN9ftI9i/DYoGpFQXCxJU3
+         MiHACGJOxC9SKBWXtPs6jj7NKH7tilEDNChcgcDne8CE9OubcnSt54bEH+yquwgIJO4L
+         gdPwFGCOWuaJWPnC3NppLC1Ay6xqzewUGfyFCrSV/g4BMhCmlftKFYdAZPvQKjLbFeeD
+         lQqNgz9xk3VeYRoDoB59ZO89uJSyqG5YsUt1bvVD9Y5WutWv055qKBvofEqxmGvmhObw
+         kjtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790000765; x=1790605565;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=fKaXtSv/kbKul4ZN5Cjuy3lIzweY+anlAeJnxQKsOuk=;
+        b=fnnIun3JCPhN12FI3SUandHhmhyLMYgCweFC9OVf9Z93L/mYoZueHEmvulFRoJ0Nx9
+         s7alfUFpPN5n2ho8Tms+3YB4Dnm4tbH5EiVcPpH4tw4WSoI/C96C0eSvsbIYcDkcURjO
+         j+1l9qX+IAKw+h2MY3pxhd3e08jcmzu0/Z/WsRn4Era9sucLUZuPGRC2OuVmE36yts3i
+         98cqAZPYIkwTsyCvq1wIggYLUQ5nxtb5CZUxnuo0Qhkfm7QwG/bmh9NS95021A/5RtNO
+         lq/UJ5S82DOTt2PTUjaoc5Tns2zky9ixk722iQCJpr1uPfjHNFF+r7Vuf6A+hMs32M7K
+         QPTQ==
+X-Forwarded-Encrypted: i=1; AKwUvByVkS0Sq9JebFKS15NEUzSX0JID9vaUvUOQIBVDB8G71aHdEeOfYT9D5KF28GM+fBZY94tP2LjwwihadQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++n0KVRzAcKrZ6DpqsVpinXNGbfsaYs+XBMYaQSASf79HFtZA024
+	wEEqV1goEwN+2e5WgBCOWYmGemN+pw4qgRIxeQojLRc6/xMiHD6InkM67tlBPP3z9TM=
+X-Gm-Gg: AYBFou3WUUswnLJwljts5zVT8ImHMJ/d7UBqXoP8c8j5FJy1kNe+ScH0cSlI13TiHRa
+	hk0GWBpSFjZ6ECPqOoatDEaPcgakY4rkvO974j7y+y3XTTuYYoJlk07ZFeK5D9UZMi8hRXeciQA
+	BbCbMva0IW0lf54dEPBDJpq+tRC2OYdm23vC2aLGR4qkrdE07pPbgcTVIhx86+2zLNyA0pW0EZM
+	q+y0rusoZgLbu7kWb8Gjvqdy8jMBPEQ8eGw9T6c2Cpy9TQVl/C3vfSSwHuT/JPYRXHBvInZqEWc
+	UfCiBJ8O28DES8qxReIpHuGur4lWqL0n4a2JNI1f0VGG+CKztI2l6E+bx5gqKSYFTaDJaTJvzsB
+	m+Lj0J+aFTaMy48of5K4gdwUtbk7E2r9BRFu+JAFsQ2t8AxKkWrPN6p876KURWDV2ZKJ02EX3Dx
+	01kXrhrLVCcXzf5iWhl8UsCpBqRL8Y+3zhqhBrO3M2ajrg3oIXn8V4XKkYnzuYUFQERS/wriGHZ
+	lyIYFyZ3Hf3bd6bHlbCJ0D+eXuww9UHMOqr81Aj5Qwm0gyAi/PE32EHhOKbnQ==
+X-Received: by 2002:a05:600c:c8f:b0:49e:6c9b:4e94 with SMTP id 5b1f17b1804b1-49fc5743124mr150664255e9.28.1790000765458;
+        Mon, 21 Sep 2026 07:26:05 -0700 (PDT)
+Received: from localhost (p200300f65f19a904d4f76eed31f2ef79.dip0.t-ipconnect.de. [2003:f6:5f19:a904:d4f7:6eed:31f2:ef79])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4872459f446sm21874677f8f.35.2026.09.21.07.26.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Sep 2026 07:26:04 -0700 (PDT)
+Date: Mon, 21 Sep 2026 16:26:03 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"Ola Chr. Vaage" <ola.christoffer.vage@scoutdi.com>
+Subject: Re: [PATCH v2 3/3] pwm: tegra: Implement .get_state()
+Message-ID: <arE932ZcHGB8RAN6@monoceros>
+References: <cover.1789741839.git.u.kleine-koenig@baylibre.com>
+ <b72b16cf704aa662a1b49805db284379d4fa4050.1789741839.git.u.kleine-koenig@baylibre.com>
+ <arEAjOHU4rH5aGqb@orome>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB12318:EE_|GV1PR04MB9214:EE_
-X-MS-Office365-Filtering-Correlation-Id: d6a00f19-e95e-419c-3f3c-08df17ebc9d4
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|366016|1800799024|376014|7416014|19092799006|56012099006|11063799006|4143699003|22082099003|18002099003|10067099003;
-X-Microsoft-Antispam-Message-Info:
-	6Ry210RMWU1m99zK2Th985rcEUcrtllfN1seDfAStbM9JRA6t+vfF6og33g32fnz5X77Qr5HrH9WjIw6nBhKQG2CD5kHNWPxti2JEgo0Zm4tVMW9lfD0etHojTT6CzlQ2hyapKszjRQJVuSIpzfZu8vKElHVcSbYpsaXTXsKPanLOb8uqve/t3m8pqbNz1EUw/NV1hP3Rv1q6RLo8esk22wgQj4DQq3jPqZavSW4ninhWIXzJId5DV54FaYeWNHgh1YIgeaKfOtZVT7b+qyB9cGmyUG3hRUg8upP0/uH2c4dSOP01yS5w4PkPKV3hifwaFjAzJzHrXQ5ELiSLUUynrTBEPCRVWDJD+MraNllDYsvnB6Q85JC/4VYsxtE7p86XlbIMoLof6cYqtRtAO0xIxd6f5r17+FHLYdJeiYH0ydFjC+hZ/fmXsKrvmqbZmR6RY+Pxcc+PDx9X2NzMSmjGN5PeJgl27gIZlZirgyvRlw6AV4thGgbjAEIm1i/cmWQW5uOHsKEgAyCp5XAO0ekalTIkEzcQRUzf0w0j0pWF1ttFsWAqsMzLKgzd863DAoT4ARqr3ccK+oCF6le7Dc2AN4sIQx6yx+A9ZtZnuw8wbkWpmSMCEJrbpQQo3JT/QYlD1OSobOb8rqvm19cumpOh+uFqT80JJk0sPY/GG9nf/s=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB12318.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(1800799024)(376014)(7416014)(19092799006)(56012099006)(11063799006)(4143699003)(22082099003)(18002099003)(10067099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?H95D/SW4ZJ5x08QD7PJCQg2DI0haQgLFNEtphZR+/K+dg6LeB8d3fZaEgg7w?=
- =?us-ascii?Q?Eqrw1s69lYD45VxU1rbU06vL6TORFmomLjS7ZniegKZ5XmX3/3haaZ57JeNl?=
- =?us-ascii?Q?oOiH+to8uDIOvSVlj7q1C7hUcMTnBXCwc2tUILImjsbICp+Zh8tiYs0/C/rX?=
- =?us-ascii?Q?zWUO3r7roCClx34UJ1Dm6aeUhRb0PL1K+mxEws7auYUV6i5pWbUe6Hh9F5jA?=
- =?us-ascii?Q?RCDcyERxRuHVebif+5BObX1NIUooEfyZxEXVKJF0miz+m8BYVb2rlfGTR/i7?=
- =?us-ascii?Q?LA9h2yhqU5uJNn7VgbaC0n76Z6JHfnfJxtmTjqOB+2vgvFg6VWv0WiSmYuFw?=
- =?us-ascii?Q?szdTlq8JLcU/JnyasBNEz9FPdQ4Qi3TFAGvMwPHVUUySFI73i7eEmVNe+qsx?=
- =?us-ascii?Q?JXXwwoEatHBWgNZXPtZo4hv1olS1e7VjkLtO8bg3tjgqGaVZzxyshTl53PuX?=
- =?us-ascii?Q?VzJA0GDc6FKo13vZwb8Xiw0UaG0nDGtso3GoLfbjmM679BYls2uRuD5TuFMv?=
- =?us-ascii?Q?3hN7bLMzWCb9ls1Fa6CqaUVoOCtyouWZq94Q94AhJDy0HPUUG/1QZXQUGZ25?=
- =?us-ascii?Q?JVwI1l9Ots045/HgOQvWkfqhOvFUMyudcnIKEp3oV6v1F4Q/9J/KZcm/K2yl?=
- =?us-ascii?Q?9xiPe2rtY3VdPUKLPYl5JlVxjFgzKdt0L/OvQr+lPMKbTak4YEyBTUOSykuo?=
- =?us-ascii?Q?dQJStoT6jDhrKfx++yvc0ImyXjJE4VkEP93X91Orut12djmPhJkA75ka8tCS?=
- =?us-ascii?Q?ppwi24A753/9FxZrMwdAkBVhdCp9boi/UYgasZt4NybCD5vZ4OYMOc9UdYXK?=
- =?us-ascii?Q?Tub1Hk8SYMBTP12brAD8T49+/pNl++HY/1RRnBKxSYQetRAp1ACXApsxNLU5?=
- =?us-ascii?Q?07cFOYdp06VTmU7l5uiiQlpghKfB2nkzFP5DpuyRUhux7wT05cJA9rhYwERD?=
- =?us-ascii?Q?8RSWrGpxX7JXwNDAbgvIpZAWqVEPdvRc3iew7YBzkuSvm5e3Ag5d45a9UIpv?=
- =?us-ascii?Q?ijqlONABEEcsxO5srZCvwuACN/fFrlKTgWbIoss8//J+8aaditT7LKFhS9Zb?=
- =?us-ascii?Q?iS6qK6KTzCl62OhEEx3dFMMGZPoOe5XLe9pdQvjQHyaBvqMEjm4cVQXiUT7h?=
- =?us-ascii?Q?q4Ait352Fuji3lif9StJhaeqizBYQp/pqeAtKU/vsD9gXtTjRMPBaP8MkVPm?=
- =?us-ascii?Q?C8tPQywB4iO5/EdVz1ZTtcHICjW2NhDl3uqon0sy//7/woL3m0P0sLcRyCZ8?=
- =?us-ascii?Q?JAdguOTRJlDAu95emlSeZESdqiHpm/ZDGeWtJl6a9EsAQepJ12bzaz1ilKU4?=
- =?us-ascii?Q?9NXOS1C1W1mpqNvknKUZHAi/B0sRkWYxjRzTa5KUyv+1mG1EBQqbXEHNYoXI?=
- =?us-ascii?Q?cZVdt7IfTuidFdc6lysDVkz00QuCjYcEdj5+oFpwuGtgvsM5vnuKCt74SC92?=
- =?us-ascii?Q?XGLVK9Tg0q/V8E1Hk/UJ5ZkQDEx7njPj/Hrw56qUltUD/G0/HB2qes81h3u0?=
- =?us-ascii?Q?AY4/Ld3yfnHjv740unHdZvpI1rBgWO0BZmQDWQ8XX5Pe4sQohsrc7AgLComZ?=
- =?us-ascii?Q?3eK2bM0ts6KF4nJfI6WBhWx/M59fI8pEOej5IUyjy+qpw0zUJM+5nwXJvSvz?=
- =?us-ascii?Q?LoR4G4NPXDDjze0DPzkYmhZUl/FrSSW60H6hieroDZIMelmXoV5wi7dvUnpw?=
- =?us-ascii?Q?9RnqwSglOHFUMz4RowLG4VVoS/CAMZSUACRnJoyhhsJWJljkLzF0oC+E8asX?=
- =?us-ascii?Q?ResjsnOdAUtAc0/aC0cTCh+t28gcruE=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d6a00f19-e95e-419c-3f3c-08df17ebc9d4
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB12318.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2026 14:22:38.4915
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bs+8VLkYNnpIoq06RpXBn2mI9S3fceP1a3JMZz7tjv9osAhAQUwnt+2hS4uQUCewHfHdN9zbTxBKoAiO0ipT5g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB9214
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qkbghpdorbcu5kso"
+Content-Disposition: inline
+In-Reply-To: <arEAjOHU4rH5aGqb@orome>
 
-Hi Luca,
 
-On Wed, Sep 16, 2026 at 03:45:37PM +0200, Luca Ceresoli wrote:
-> Now a panel_bridge is automatically created for every drm_panel and the
-> panel-bridge API is just a deprecated wrapper to access it.
-> 
-> Update and simplify the code by just getting a reference to the
-> already-existing bridge using of_drm_find_and_get_bridge().
-> 
-> And since of_drm_find_and_get_bridge() returns a refcounted bridge, take
-> care of putting the bridge reference by using bridge->next_bridge.
-> 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+--qkbghpdorbcu5kso
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 3/3] pwm: tegra: Implement .get_state()
+MIME-Version: 1.0
 
-Reviewed-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+Hello Thierry,
 
--- 
-Thanks,
-Laurentiu
+On Mon, Sep 21, 2026 at 12:18:16PM +0200, Thierry Reding wrote:
+> On Fri, Sep 18, 2026 at 04:33:47PM +0200, Uwe Kleine-K=C3=B6nig wrote:
+> > The registers of the PWM IP are readable. Use that to implement the
+> > .get_state() callback.
+> >=20
+> > Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+> > Tested-by: Ola Chr. Vaage <ola.christoffer.vage@scoutdi.com>
+> > Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
+> > ---
+> >  drivers/pwm/pwm-tegra.c | 48 +++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 48 insertions(+)
+> >=20
+> > diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+> > index b461d3877f43..0520d025c776 100644
+> > --- a/drivers/pwm/pwm-tegra.c
+> > +++ b/drivers/pwm/pwm-tegra.c
+> > @@ -310,8 +310,56 @@ static int tegra_pwm_apply(struct pwm_chip *chip, =
+struct pwm_device *pwm,
+> >  	return err;
+> >  }
+> > =20
+> > +static int tegra_pwm_get_state(struct pwm_chip *chip, struct pwm_devic=
+e *pwm,
+> > +			       struct pwm_state *state)
+> > +{
+> > +	struct tegra_pwm_chip *pc =3D to_tegra_pwm_chip(chip);
+> > +	int rc;
+> > +	u32 val;
+> > +
+> > +	rc =3D pm_runtime_resume_and_get(pwmchip_parent(chip));
+> > +	if (rc)
+> > +		return rc;
+> > +
+> > +	val =3D tegra_pwm_readl(pwm, pc->soc->enable_reg);
+> > +	if (val & TEGRA_PWM_ENABLE) {
+> > +		u32 scale, pwm0;
+> > +
+> > +		if (pc->soc->enable_reg !=3D TEGRA_PWM_CSR_0)
+> > +			val =3D tegra_pwm_readl(pwm, TEGRA_PWM_CSR_0);
+> > +
+> > +		scale =3D (val >> TEGRA_PWM_SCALE_SHIFT) & ((1 << pc->soc->scale_wid=
+th) - 1);
+> > +		pwm0 =3D (val >> TEGRA_PWM_DUTY_SHIFT) & (2 * TEGRA_PWM_DEPTH - 1);
+> > +
+> > +		if (pwm0 > TEGRA_PWM_DEPTH)
+> > +			pwm0 =3D TEGRA_PWM_DEPTH;
+>=20
+> It feels like this has too many assumptions built-in. That's mostly a
+> predefined issue, but I think if we want to get accurate hardware read-
+> out, we need to address this.
+>=20
+> According to the register documentation, the PWM depth is 16 bits wide
+> (on generations where it can be programmed). The value defaults to 255
+> (which is n - 1 encoded, hence TEGRA_PWM_DEPTH), but it can technically
+> be reprogrammed to any 16-bit value, as far as I can tell.
+>=20
+> So I think for this to be correct we'd need to read out the actual value
+> before overwriting with TEGRA_PWM_CSR_0 contents above. At that point I
+> think we'd need to either adjust the mask to be (2 * depth) - 1, or
+> maybe better yet, avoid masking it out arbitrarily based on the depth
+> and instead cap it at depth so we never exceed the 1:1 ratio for duty
+> cycle vs. period.
+
+As long as .apply() also hardcodes TEGRA_PWM_DEPTH, it's IMO fine that
+=2Eget_state() does so, too.
+
+> > +		/*
+> > +		 * scale + 1 is at most 1 << 17, TEGRA_PWM_DEPTH is 256, so the
+> > +		 * multiplication for .period doesn't overflow a u64. With
+> > +		 * pwm0 =E2=89=A4 TEGRA_PWM_DEPTH, .duty_cycle is also fine.
+> > +		 */
+> > +		*state =3D (struct pwm_state){
+> > +			.period =3D DIV64_U64_ROUND_UP((u64)(scale + 1) * TEGRA_PWM_DEPTH *=
+ NSEC_PER_SEC, pc->clk_rate),
+> > +			.duty_cycle =3D DIV64_U64_ROUND_UP((u64)(scale + 1) * pwm0 * NSEC_P=
+ER_SEC, pc->clk_rate),
+>=20
+> Maybe as part of the above this can be broken down a bit to make it
+> easier to read? Something like:
+>=20
+> 	u64 duty_cycle =3D (u64)(scale + 1) * pwm0 * NSEC_PER_SEC;
+> 	u64 period =3D (u64)(scale + 1) * depth * NSEC_PER_SEC;
+>=20
+> 	...
+>=20
+> 	*state =3D (struct pwm_state) {
+> 		.period =3D DIV64_U64_ROUND_UP(period, pc->clk_rate),
+> 		.duty_cycle =3D DIV64_U64_ROUND_UP(duty_cycle, pc->clk_rate),
+> 		...
+> 	};
+>=20
+> is a bit easier on the eye and would make checkpatch happy (or happier).
+
+Fine for me, will address in the next revision.
+
+Best regards
+Uwe
+
+--qkbghpdorbcu5kso
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmqxPnkACgkQj4D7WH0S
+/k77Kwf9HxX3gL2kjGUKkvvjXebMyyfQxZRXgqCU/pg12x5boLb18HblbZUDfnsX
+d19SKdoOiLJ/HAWUgKF9O9XA1RN60DhMjkBSUQgOKWd8J0397yW5YcTyoXsWM7FU
++dLfLHUj9S4Mv12ZWdpUOsAzdqOeJmdcGwby+OE7WjUc7B7mgcHg+SiBL+0QhA+z
+iye5Tag5LBtF/E6nCniBQV40ZFYME87gLKhtnZ6TrIKjGcw0TIEMb+fprw1Zm0ST
+gV1hPx94YVT37Gf1sOCC945uutgq6b7iivRlk0o+wetKxUANXbdbjRbOZ3S98OOL
+8L8Ibx6QLCqRAH4q0ud2Vk+nhi1FQQ==
+=KT2n
+-----END PGP SIGNATURE-----
+
+--qkbghpdorbcu5kso--
