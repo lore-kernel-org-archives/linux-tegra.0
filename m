@@ -1,163 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from e3i491.smtp2go.com (e3i491.smtp2go.com [158.120.85.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A644C8C67;
-	Mon, 21 Sep 2026 16:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420684D4887
+	for <linux-tegra@vger.kernel.org>; Mon, 21 Sep 2026 18:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.85.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790007883; cv=none; b=fPZXszLmSnRF5RWsmvKdohPr+gUNQBDKwj0esM1BbhhsgQ9dLvYc/nZ7y9G9wmx1zcFTcHg4GBu6rtx6bO8whSZDEpSLoQzoD2hkU+wiKb4J8DX+6z7ZArKAw2aM7CWXVJBQflWi2rAAIZdEvhDtUuJbRbl3Rg6xrIm8yOdBPOU=
+	t=1790013779; cv=none; b=Awgh+4C0VbkMyviy5j7QXHd4S9jNCn4DVHcxcQKNLNsLL0C93Mi0lZGBVOlF+R9LdSAEY32OtbUhY6NrZQfs2LjtO/GZzReDi6DWvdWn/zEPZk7nuBCprF2RQpjDtOMAGB8FsM+syEFzx3E6sgp/pgU7UkQcbLYIN6cVSxkNzm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790007883; c=relaxed/simple;
-	bh=XW1ZlnJxNk2y8YaabeqSHfQ25ViAMd1EBr4H9M78FJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JZLxK6QKJ0CDBsWSW+CzIp8N8TtpCDozefzvX2A0tc8A7KslZsZ+HlFA1LyH7Ax7L0DZIoQC4p4KA0XBmw+jhn+yXYp3eXvA6z6wWREeaD+zupON/dgs0EsVeU0ria63X4jOdy0rTQVpRYprOejfZNxuJCJ72GTt2pE2xoSdxYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mfUDY7Fj; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mfUDY7Fj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 108781F000FF;
-	Mon, 21 Sep 2026 16:24:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790007881;
-	bh=I4ZlrTIz7FGg79lxB9dHWC/bH0FGoNCXcCfyaQJngSM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=mfUDY7FjLtHZP43FxwQzN9I3Zfmawue7TvFL8Sa3o63jscHKIugoNZU/BCQ4LHgda
-	 obTMEuWsTElzFr0+vvXLHZH96UCt1OdCoVe1MdCS0twVhNvA594O/b7ryQH3eIZNEf
-	 BYV2neV8/rp+U2IocIlqMMpRfl4e5YyLVDitSORtJG8t0t2SNbgUT8JQxT4VivGRHd
-	 aRLKnqOGVW+ZaxLDwrcYvUziBC+ybPg/8xLYMgyVCtRTVQ4tcZB5uErTBuC8wZ2xMX
-	 kbOMFMJNawVOG9I1IiIM6RQPD77IXkCPddKEYR7ZufyCsnjbmkCufqjG4VqFpYLZiX
-	 cqVF5NQ33w3ng==
-Date: Mon, 21 Sep 2026 18:24:39 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] pwm: tegra: Check for match_data being NULL
-Message-ID: <arFYGka5NpcgJ8oQ@orome>
-References: <cover.1789741839.git.u.kleine-koenig@baylibre.com>
- <ed943d9be3b785514e0f65a5b8c13a78aba7a090.1789741839.git.u.kleine-koenig@baylibre.com>
- <arD7N6A6ncBNR1Jk@orome>
- <arE-s0zbTUn14aIr@monoceros>
+	s=arc-20240116; t=1790013779; c=relaxed/simple;
+	bh=4G0M6iu+3DbIzYRQG1Yv+jgmq0Cbd09bKLZUBE2dFXk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a2xGBpqGCq0aNk1noeH9ZDzLjofQfLr1Pv03YpZ1hl4kdlRVwJEZbpDKLzCYQAOYPEyxl3D3S4DYFlsL8Xn8rFi1CN251R98co8kiWmatWxx5F0bethtBnXnByN645/n9yTSQyefOowq/EVzZPH/gx3H1LZuIAnBNtYZXnVlDpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fkr.dev; spf=pass smtp.mailfrom=em1020969.fkr.dev; arc=none smtp.client-ip=158.120.85.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fkr.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1020969.fkr.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fkr.dev;
+ i=@fkr.dev; q=dns/txt; s=s1020969; t=1790013776; h=from : subject : to
+ : message-id : date : list-unsubscribe : list-unsubscribe-post;
+ bh=LNZ1eajasSywAC8cAFwe6Gt9F01M/AHsm3wncnenzU0=;
+ b=VkEZNkL6R3+Q4Sk6JG/3E9ldLADDXn/UL3ITysfmXeIK9sxxg6+qHLF08xshq8z9esYyz
+ 7cb7qlDoVX9SJEbj22fP6mOueqjQKXU8ylUQjUlLE0jYoRStR7yJmmA1oriz1Zran6rpxkU
+ nWYScf/tk6/egexqdoRovPW/ov/iXibWQPcG2D6AczhsxvyHkhisfEKtjVeTsM8VWfF+ehh
+ D3Wr6ZD0ffsvv+ErmgB3oWvCO1V26JHGENg6UzrvAmDk7tBL4bWtdDOy5q5LWYoaB6CD0OI
+ U0h45ZLaAg8+Cs5PblmZQ7tbKBMqu37vLmkBKaIaOo1Y3GCJodg+1nP1S3hg==
+Received: from [10.244.246.9] (helo=fkr.dev)
+	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128:X25519)
+	(Exim 4.100)
+	(envelope-from <florian.krischer@fkr.dev>)
+	id 1x8iLu-FnQW0hPx9vz-lvtM;
+	Mon, 21 Sep 2026 18:02:54 +0000
+DKIM-Signature: a=rsa-sha256; bh=LNZ1eajasSywAC8cAFwe6Gt9F01M/AHsm3wncnenzU0=; c=relaxed/relaxed; d=fkr.dev; 
+ =?utf-8?q?h=3DSubject=3ASubject=3ASender=3ATo=3ATo=3ACc=3ACc=3AFrom=3AFrom=3ADate=3ADate=3AMIME-Version=3AMIME-Versio?=
+ =?utf-8?q?n=3AContent-Type=3AContent-Type=3AContent-Transfer-Encoding=3AContent-Transfer-Encoding=3AReply-To=3AIn-Rep?=
+ =?utf-8?q?ly-To=3AMessage-Id=3AMessage-Id=3AReferences=3AAutocrypt=3AOpenpgp=3B?= i=@fkr.dev; s=default; t=1790013773;
+ v=1; x=1790445773; b=ahqJ2WoFTtstcSInWpnQjqsCfK1JUeSmnXS0HfRESzJZg8g4D0D7dlwfDIAbIeV+M47o46UD
+ Nplz6CsSq4cn5gXrOcpx3l1eHtqqDFPSjztefxBtwpTLJMibCzv4ZsPOXmue1zTcB4AClj+rfD9
+ brPwnsmJDYzoLzNpsHDKfuk8CApguk1dGQc+U/exNSBEdOhaDb4ckz6HH3JUFPAtHmwKuRn8QzL
+ GXoN90rfz4ONG4ejuLiinPQ6w7yuzyhjxLkq7/+IN+VLkM9ZC/QphMS2tuLu5upGg5R9n8B74a1
+ hYWmSFZWEnd6bIcKhjl+nN55eEZIYLrH9F7CB6Q43DKWQ==
+Received: by fkr.dev (envelope-sender <florian.krischer@fkr.dev>) with
+ ESMTPS id 1c4aeddb; Mon, 21 Sep 2026 18:02:53 +0000
+From: Florian Krischer <florian.krischer@fkr.dev>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Florian Krischer <florian.krischer@fkr.dev>
+Subject: [PATCH] ARM: tegra: Add embedded controller to ASUS SL101
+Date: Mon, 21 Sep 2026 20:02:52 +0200
+Message-ID: <20260921180250.3223545-dts-florian.krischer@fkr.dev>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cc43efw76xe5jxqu"
-Content-Disposition: inline
-In-Reply-To: <arE-s0zbTUn14aIr@monoceros>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
+Feedback-ID: 1020969m:1020969amTSgpp:1020969sz5l73ojUQ
+X-smtpcorp-track: 5JCpfWW57BIA.YJLPbeAQNNaj.9leeDwkuCK9
 
+The ASUS Eee Pad Slider SL101 has an embedded controller for its
+built-in sliding keyboard.
 
---cc43efw76xe5jxqu
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/3] pwm: tegra: Check for match_data being NULL
-MIME-Version: 1.0
+Describe the EC on the PTA/GEN2 I2C mux leg. The EC responds at 0x19,
+with DockRAM at 0x1b. AP_WAKE is GPIO S2 and EC_REQUEST is GPIO S3.
 
-On Mon, Sep 21, 2026 at 04:34:09PM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> Hello Thierry,
->=20
-> On Mon, Sep 21, 2026 at 11:47:17AM +0200, Thierry Reding wrote:
-> > On Fri, Sep 18, 2026 at 04:33:46PM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> > > It's unlikely but not impossible that of_device_get_match_data() retu=
-rns
-> > > NULL. Handle this case instead of triggering a NULL pointer exception.
-> > >=20
-> > > Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
-> > > ---
-> > >  drivers/pwm/pwm-tegra.c | 8 ++++++++
-> > >  1 file changed, 8 insertions(+)
-> > >=20
-> > > diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-> > > index efb7ab60f602..b461d3877f43 100644
-> > > --- a/drivers/pwm/pwm-tegra.c
-> > > +++ b/drivers/pwm/pwm-tegra.c
-> > > @@ -323,6 +323,14 @@ static int tegra_pwm_probe(struct platform_devic=
-e *pdev)
-> > >  	int ret;
-> > > =20
-> > >  	soc =3D of_device_get_match_data(dev);
-> > > +	if (!soc) {
-> > > +		/*
-> > > +		 * This can only happen if pdev was matched via pdev->name
-> > > +		 * (which should not happen today) or in combination with a
-> > > +		 * driver override.
-> > > +		 */
-> > > +		return dev_err_probe(dev, -ENODEV, "Unsupported device\n");
-> > > +	}
-> >=20
-> > We don't usually do this. Matching via anything other than OF device ID
-> > tables (or ACPI, I suppose) is a programming error and you deserve the
-> > crash which forces you to fix things rather than continue with an error
-> > that is easy to miss.
->=20
-> I don't agree to "you deserve the crash". IMHO even root should be
-> unable to make the kernel crash. I don't understand what you think
-> should be fixed if I hit that crash. My userspace interactions in /sys?
-> Which error is easy to miss?
+The node has been tested on a physical SL101 with EC model
+ASUS-EP102-DOCK and firmware SL101-0202. With the ASUS Transformer EC
+MFD/serio driver and the SL101 event-protocol fixups, the built-in
+keyboard works through serio/atkbd.
 
-Oh, root can easily make the kernel crash in any number of ways. That's
-really kind of baked into the concept.
+This patch depends on the ASUS Transformer EC binding that provides the
+"asus,sl101-ec-dock" compatible.
 
-To me this is in the same category as force-unloading a module. You can
-do it, but you should know that it's potentially dangerous and most of
-the time doesn't make sense either. It's called forcing because there
-are guardrails in place to prevent you from trying to do it.
+Signed-off-by: Florian Krischer <florian.krischer@fkr.dev>
+---
+ arch/arm/boot/dts/nvidia/tegra20-asus-sl101.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-If a device cannot operate without device data, it doesn't make sense to
-bind to it with a driver override because then you just don't get that
-data.
-
-I'll grant you that purposefully crashing the system is maybe a bit of
-an exaggeration if there's a knob specifically designed to let you do
-this, hence why I volunteered to look into opting out of driver_override
-where it doesn't make sense.
-
-> > Driver overrides aren't going to work with these devices anyway, so I'm
-> > beginning to think it might be worth looking into opting out of the
-> > override behaviour for select drivers.
->=20
-> I think there are much more drivers that don't expect to be forced on a
-> device, so opting in for override would be a more sensible result. Of
-> course the path to there is more painful ...
->=20
-> Best regards
-> Uwe
-
-Yeah, driver_override has been baked into the driver core for quite a
-long time (platform devices seem to have had this functionality for more
-than a decade).
-
-You're probably not wrong about opt-in being the more natural choice,
-but looking at commit 3d713e0e382e ("driver core: platform: add device
-binding path 'driver_override'"), the intended use-cases are very
-generic, so it would probably lead to a continuous stream of patches
-needing to be added whenever a new device wants to be supported with
-vfio or something.
-
-Thierry
-
---cc43efw76xe5jxqu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmqxWkQACgkQ3SOs138+
-s6EfIhAAsvshoTesQTfrJCF4vjN9N0WONFlSJ5uvGQt19cLckjR+Q/kj84q6FMO8
-X7u5/FmyoVD/N+wecH/YpFrygVAMWdyiQrVnRjXvwi7OaBozpQhXPFcXfu81cck+
-JeyBrl62G7lbh+Br7vzEWUGuT1M9fi3LIrHPREq2lwoiU84+iPbVr8TKJyhe7L36
-sVnstyo2+YkadubZ0PLyMxXqyZ8tHnILxgMMiPfrIHmH/DRaTCO47HEGuM7eLgS8
-Mp8LjpXJD/KRpnKKjevo2zSelgJ2VaBSP56ZQhcgGt2+sQ8G/zcOzNqDxdHAv1XH
-9Aiwr0HqOS/VKoQH6LVkugrs+lD49MgV7IHxGPlRMCo2aCBvGnzTm4gHxmXacDgJ
-0iozuHtRt+iWhy2rWL3QaHCeuuJyp9HjiFSSdxrdxg2DbR5sCKcUfvPh1+i6zK71
-HzJ8pH6/BByPiuTt0k/f0v9/h/iuufm3RvL7yGTa4F4viPkL7STaKz6U+2422Ogk
-i3wN3mBNQFk0IzryzbQ+5BlksX41K8nsx0oVApSnboAEXYuOuhNJcQgL2qbJKuLv
-8wQkeDVjXqN51283iEj2Dhl+cJvsfIycYybs8fS7O+OiwjT7TUliZ3HfOUF19g9n
-3Ecs45RHPH2B1kqlEF3iZRsUzooGd1VrPLvPgp2bPwBlM9bHFCM=
-=Ul3u
------END PGP SIGNATURE-----
-
---cc43efw76xe5jxqu--
+--- a/arch/arm/boot/dts/nvidia/tegra20-asus-sl101.dts
++++ b/arch/arm/boot/dts/nvidia/tegra20-asus-sl101.dts
+@@ -59,3 +59,16 @@
+ 		};
+ 	};
+ };
++
++&lvds_ddc {
++	embedded-controller@19 {
++		compatible = "asus,sl101-ec-dock";
++		reg = <0x19>, <0x1b>;
++		reg-names = "ec", "dockram";
++
++		interrupt-parent = <&gpio>;
++		interrupts = <TEGRA_GPIO(S, 2) IRQ_TYPE_LEVEL_LOW>;
++
++		request-gpios = <&gpio TEGRA_GPIO(S, 3) GPIO_ACTIVE_LOW>;
++	};
++};
+--
