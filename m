@@ -1,103 +1,102 @@
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542FA5383FB
-	for <linux-tegra@vger.kernel.org>; Tue, 22 Sep 2026 11:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3A347D927;
+	Tue, 22 Sep 2026 11:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790075168; cv=none; b=KL9xMBAZRCvp02wbUFhZXvINtcOERK5S0pghSi9TgrYSXJGuslS2W6gKFWcstIfdUda1eQabGWz8iOnVqRlGp2RirefS5mYlpIp6Ic+nd8FQk4klRROAH4JbfaM4jnnBaanukAMZ9YToVzQk0BQUNsCUOCPbiDv+2nApqDgibk0=
+	t=1790077127; cv=none; b=G5rYMExBDT7eWCU+1U07mNI5hfeKVrHsqFfEV7Ar4ehcMlJUeAE8dUYASbaj4rQMX+JydWJlM2kqi6MCGHvWhC7lVXJRXN0ETl3dVdNG81rfbO8Plv81/G7HicXhUyPytXdDl/lyVAazssuG1ZUPleBZFXauidYP43G7Q2ulR1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790075168; c=relaxed/simple;
-	bh=s/0O22UlvHKYSxa61UAVvdf6eqtjzPHamDIakwAoE5Q=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=FWXtUvo6dMHVWwWNVAlm0iAfs/Dza/7Zbq6cuge9wEY8Gv7kRLVxblpaadJClAFtkrSUPz2N6aaBhWiw6/PQlvWNTytWnLBob0IFUN7ZVSJI+cRBNf3Y0o5Sr037yL90pIoljPtuvq0iuzXaev70zGYNzAmGOmTKfRrp2RxVcxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WY1rGbem; arc=none smtp.client-ip=209.85.214.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com
+	s=arc-20240116; t=1790077127; c=relaxed/simple;
+	bh=CNcIF/bBl59gDLz6K9vpIOEvLhgEfb2lK1cP/xPcNok=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gedwT/AcR/euW7k4bmA5Lqwjmip0yewVhp9XD9cUKKW9sYL+Dk1YnZYflwuRhUF2oi97eKhnEz1r0iltZaLMEacyft82SkSeXeGP0eMOyNA4NiYz4EyJVqONuQkPWMFaM6RjR+EadGAg8oDgqgG6i/8BKXElrG21RmQ3i6vjHUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D5RONLVS; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WY1rGbem"
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2dd53f2b27cso49275255ad.0
-        for <linux-tegra@vger.kernel.org>; Tue, 22 Sep 2026 04:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1790075166; x=1790679966; darn=vger.kernel.org;
-        h=content-type:cc:to:from:subject:message-id:mime-version:date:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=+ecy7FzIPrtxUNn+PNMjV2l4GmOvdXqqQHutFCvXsJQ=;
-        b=WY1rGbemVvteaE/3BhtWu7EVmN6LDsMw5vRyPU7xONN3QZ5w8FMRRxjeFENfk1/SmU
-         +aohFLMK/p2Lxb12GX4Q+NW2WbigXoTGWR9Ym6cJkdJdW63TQc7rXfaCB9tZ+7cKAeBd
-         MEQePu65OtnWFP6v43/hrE61BrjVJsWb7sTXkX0jmJgMInkCaMwnmtYg6yCNaB8TTFnn
-         e/PTbzQhFYZECylMksKtctUb0prjO8bIh0jVKG/VvpXz/amGB6NqI8FxQH66cg1jBeuj
-         mqxG0InWzb9DtL7PLB+SAP+4a1KBgdIK6E09L/4yoPilX7alN6qAsF4aj+XO9qqwO8Hz
-         Qvcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790075166; x=1790679966;
-        h=content-type:cc:to:from:subject:message-id:mime-version:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=+ecy7FzIPrtxUNn+PNMjV2l4GmOvdXqqQHutFCvXsJQ=;
-        b=Aj3wUSgNjXa3WCTg4YBPP/LftK6yEqTBA7vDRAhFUohDkTWWKOkUEOJPzY8d9DNnFX
-         8Ow8r4aD/w3BEldV/DOLLeK7INfwPxSLFM+4yEj06RXieRNJLYO1EM+AQw0anw0FweuQ
-         /IIPKHiqmaMgJbofff1K2VweCBedFyTqh9nY7paH/HZl3kTY1fSoS3xv2jf3fjGazFsV
-         baigaImCc9Cc6tGd4EOxvhVVCmg56IDOBo4f/Q7rKQkIUcbgiDpv+y8DWxIFwx0RlkG6
-         k9FI1VahfQI+ueB1WwAc2+u8sE69Aqql5PlQ/4Pw/9R7ePY83QgEgZgPZ1aEbDRF0c3b
-         oxtQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwP8k9amHJW6nsSVOYjLlpQo6OQqcauNqtemEpA+THeWERVmEk2FkLgQyT3Jaa+Onqk3B+reu5DcoClWA==@vger.kernel.org
-X-Gm-Message-State: AFuF++m8xpGvemHx747AFSd7jkfWpDeIroa9r9HhU+S3Rv3G0fdH0NXz
-	bjL9QgTgdj8ICjQiGpxmRagyjftQi3pN+WJjkrizrinEOKQtzTO3KqlPORcXyhJj4tj1mhOkn8k
-	w
-X-Received: from plw15.prod.google.com ([2002:a17:903:45cf:b0:2dd:b2b9:91a7])
- (user=morbo job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:984:b0:2d9:438e:b70d
- with SMTP id d9443c01a7336-2df609b194dmr9585075ad.1.1790075165400; Tue, 22
- Sep 2026 04:06:05 -0700 (PDT)
-Date: Tue, 22 Sep 2026 11:06:01 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5RONLVS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E54251F000FF;
+	Tue, 22 Sep 2026 11:38:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790077125;
+	bh=Ob7jihC3QWzpJZqECes5/mW4OZ1MSKF4J2KhX+VVTEA=;
+	h=From:Subject:Date:To:Cc;
+	b=D5RONLVSip7Zv1V8etdQPWOLoeJZFQaFBKMaB1UxRHiXTKWQYcD8NzKRJ/YEyzMK5
+	 WgFPyoWsJHlYjvcBjGF7s4Kg++Jl6ziTPktZ42Pa+uxs8/oCVxsuHO6xpnkTBEFnMs
+	 CxTnwjRuDlBKr8TsFCJiH2NZLQuLFDFpmiS86M67STkojZEXCBm2zWhSxXGKKw6VYZ
+	 NgprNqdnDI+oiP/OS1jBouajYbNn3FW4eQAjjwJ7q/mX1oG/Gm5O816ono/FwBOdK6
+	 rOr4wpxUUjEBikWzJPWDygcTX8K9X05HRo7v9c/KmliAWPfGUhQdKWN831mYbNMFSG
+	 Zd5lBMp+OrK0w==
+From: Thierry Reding <thierry.reding@kernel.org>
+Subject: [PATCH 0/2] driver: core: Allow drivers to opt out of
+ driver_override
+Date: Tue, 22 Sep 2026 13:38:27 +0200
+Message-Id: <20260922-driver-override-opt-out-v1-0-58c35ded3b83@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.55.0.1082.g2b9226bbc0-goog
-Message-ID: <20260922110601.1959213-1-morbo@google.com>
-Subject: [PATCH] clk: tegra: annotate struct tegra210_clk_emc_provider with __counted_by_ptr
-From: Bill Wendling <morbo@google.com>
-To: Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, Bill Wendling <morbo@google.com>, 
-	codemender-patching+linux@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMQQqDMBCF4avIrB2Ig1riVYoLTcZ2ujAyiUEQ7
+ 960bh58i/efEFmFIwzVCcpZooS1oKkrcO9pfTGKLwYy1BtLhF4ls2Ioo+IZw5Yw7AnbhyFrls5
+ 3zkJ5b8qLHP/yc7wd9/nDLv1ycF1fIYS5j3sAAAA=
+X-Change-ID: 20260922-driver-override-opt-out-470290f5d5c9
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ Thierry Reding <treding@nvidia.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1266; i=treding@nvidia.com;
+ h=from:subject:message-id; bh=CNcIF/bBl59gDLz6K9vpIOEvLhgEfb2lK1cP/xPcNok=;
+ b=owEBbQKS/ZANAwAKAd0jrNd/PrOhAcsmYgBqsmi+T4am/1wuEkp8JdH7tMcAMkTylREKIqnwI
+ NU1XVPGPNKJAjMEAAEKAB0WIQSI6sMIAUnM98CNyJ/dI6zXfz6zoQUCarJovgAKCRDdI6zXfz6z
+ oVfsEACgiHotyvFNvjXO3PiMzZCjDUyTjbWDwtIbbjN6WBZ1LqkjyZxkVIw8qwZN2kiUha/VNcx
+ ZNLHfzoKcUcvDQKfbsT66cIUZY7yxZ3J8Yqt+0a18UbZOoV7Od/l8QrUThwlmErKFhwjsTioTmn
+ z1UAedgf6o/BGort0d/OfY0a7R3O13p6Pa3QhA7b9UJErjf14A2i10E9STtBV53cfXxGc0gNLtd
+ BoNcS5k+NNfYo+X6wFpAG/EYMFuSVGb8y2Q0qJ+kJTbFu0MaG3Xmb11WwMZsxECVDCYWGDAqS5B
+ KzqagT6gtVNZPl4F7T3ozX6M4lhLeej46a0YutIQxStJpFY7TIIB/JFM351ZXBhXAGqcSuTBOuu
+ +sFy0rjBGVcmQxZidivH0H6vjs2R7XYe90gzXFhfY5MZxUkVbl+UWz+dswLuqXPLbYs7omLrvyc
+ R7bCcnExAmoLidP1/i2BE8M6BEJpYYdo8xBgPgJlIgkhnd8TwBPxGCUp2qmc4BEoBaoJEqoWHNm
+ gR6yx+6OXctf7EO/ylj+zEODVtDGZZa3dfSl1+M7vQ3F9HYwE2twHi6xbIFPQeW6nyPWPGhh1si
+ ikl4PasNd8l0iwRztzBQKD1rY1NbcSisT9sMOBdnzOM9ocD1LQFZ8s7Q7t7eU/+IuxX3XYU9kNr
+ LagMN7LD8mJrTwA==
+X-Developer-Key: i=treding@nvidia.com; a=openpgp;
+ fpr=88EAC3080149CCF7C08DC89FDD23ACD77F3EB3A1
 
-Annotate the "configs" pointer field of "struct
-tegra210_clk_emc_provider" with the "__counted_by_ptr" attribute,
-allowing the compiler to perform runtime bounds checking on accesses to
-"configs" based on the value of "num_configs".
+Overriding the driver to bind to may not make sense for some drivers.
+One example of this is platform drivers that use device data obtained
+through device ID matching (such as OF or ACPI) and they cannot work
+without that device data.
 
-The "emc->provider.configs = devm_kcalloc(...)" call uses
-"emc->num_timings" for the number of elements, which is then assigned to
-"emc->provider.num_configs" before any accesses to "configs". The
-"num_configs" field isn't modified after assignment.
+Usually the device ID matching is the only way that such drivers can
+match against a device, so drivers shouldn't need to check that their
+device data is valid. For such drivers, driver_override is the only
+corner case that can lead to a case where no device data is found.
+Instead of requiring each and every driver to handle this case, move
+handling into the core and let drivers opt out of this override
+mechanism if it doesn't make any sense for them.
 
-Cc: codemender-patching+linux@google.com
-Assisted-by: LLM
-Signed-off-by: Bill Wendling <morbo@google.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- include/linux/clk/tegra.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thierry Reding (2):
+      driver: core: Allow drivers to opt out of driver_override
+      pwm: tegra: Opt out of driver_override
 
-diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
-index 3650e926e93f..f1034e14c1a4 100644
---- a/include/linux/clk/tegra.h
-+++ b/include/linux/clk/tegra.h
-@@ -170,7 +170,7 @@ struct tegra210_clk_emc_provider {
- 	struct module *owner;
- 	struct device *dev;
- 
--	struct tegra210_clk_emc_config *configs;
-+	struct tegra210_clk_emc_config *configs __counted_by_ptr(num_configs);
- 	unsigned int num_configs;
- 
- 	int (*set_rate)(struct device *dev,
--- 
-2.55.0.1082.g2b9226bbc0-goog
+ drivers/pwm/pwm-tegra.c       |  1 +
+ include/linux/device.h        | 12 +++++++++---
+ include/linux/device/driver.h | 12 ++++++++++++
+ 3 files changed, 22 insertions(+), 3 deletions(-)
+---
+base-commit: 5c4d4169604b335c38bbc79bc1fc03042981fc6f
+change-id: 20260922-driver-override-opt-out-470290f5d5c9
+
+Best regards,
+--  
+Thierry Reding <treding@nvidia.com>
 
