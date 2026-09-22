@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85DBD29DB8F;
-	Tue, 22 Sep 2026 07:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42DD4FD78C;
+	Tue, 22 Sep 2026 07:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790060987; cv=none; b=NibewHyTT7Iy5VduSEkhVFn9AXPIZSzSKwwwrEUcRU/SY538LMRyRjYCXUJhf/k0D4JGgw1xRq3RKlWHosYbuZEdVC512hR9axsoch1342wimIVXO4p1awmOnQqTsztI6yRNfWsmNxzFdcFzAmLcMJ99MTEg6GBon5DxieSivDU=
+	t=1790061005; cv=none; b=Kbs+O9lBV9F1gwV9r3Fqh0KKnkWyIE8VgQgHOHNf+iEYKRHVBQ3j7LGoQrWG3j9Vm8TnTtLcah39M+8uULRiUf1z3mNSzFtns45omkNtYcppbWOQ8/CZ5WNDaHS++1ibhWjXi8PXn8KrZtXFwOHvi07MVsfbkmJztPIVqp4yssY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790060987; c=relaxed/simple;
-	bh=rcFewv9OxapmeYE4E1fxP6conHMDHSDBlxWDqmo7ljw=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=ubNwOsYXSOgPTad98ObpOlMd5v8qzBuK4PlM5IHsHsRZYwHutoBk58qq7EE4LsplEVXl8x/Oth8irpnnCpGabIGV++Aj8q+sQnn5lPk3gyd4Uue/mideaDVT5PnIimLPRFLwFkLc5AAzyh5lT+aurBQViifBQ+6tgLorharRLAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EBphDY33; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790061005; c=relaxed/simple;
+	bh=qE3BgAGhxcQjkCKqcw/Wm7uhxfnnB2TkB3alO4SHRKE=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=KgimNRADIFlGjZuq/isG4G3I6QlxtLXpCjATNFtP+6u86g+lMGav2iH7LHxHzywFsLGRBcQfjpIq3tLRDWZNTQBzHJoMvEBkkC4oCUn4AcdxFpZ6bDtqfwabRPh6XNLUR1Sp27tWfvTI4wYq8XSzTe+Lziip5+QVTm0VVfxBL1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iP0yRwSi; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EBphDY33"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AD0F1F000FF;
-	Tue, 22 Sep 2026 07:09:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iP0yRwSi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1026C1F000FF;
+	Tue, 22 Sep 2026 07:10:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790060986;
-	bh=y2GGkrgzKCsgm0mwf6UdJFHfN95qxznzs56jCuPDyFw=;
+	s=k20260515; t=1790061003;
+	bh=zLBBmo4Xwhls1j1goGCjnxPnfdCheNpokxKYbGGW2ss=;
 	h=Date:From:To:Subject:In-Reply-To:References:Cc;
-	b=EBphDY338h1X323tWP1cLxM2et1PqxVvsgo6xqwgld5xaEIPOb+VThqfivND4ugAT
-	 8i6MaPiC07iPrjefCXEdKl0AybWYuoyRyjo4gOJ6Ip2+PniX1YOnyoIb9Ui40sgIvO
-	 2miUtk0lbPFbAEeSjAVn5gF9ZqO/wG7WIzN1OcArF8pmYZHYtmGx8sY/nl8C4t0zK6
-	 IKyPWGKm8AweRYEalzbwsykmKumd0k/sig1a0ztd8xsONgsEDzhEHC1POHcL/D5NUV
-	 jIjcDd5U2fDg5m6oIegk+jwz9qXgrC6MQVqqzWRNt6CLaFj/YUNCbNGiKBamFyBO4P
-	 58PtuvgAvPi2Q==
-Message-ID: <ea873a72b009d3fc34feab6bd3cfaf01@kernel.org>
-Date: Tue, 22 Sep 2026 07:09:42 +0000
+	b=iP0yRwSiCrG2msgx9keRDUw5ehN82SWusxS6QeTmiKhXCFr5ZmoTruY9oYUej38qR
+	 mSPpGwIDkB+HmLJNCFLXfJiVSiNjbGCaGAuFPBlRIQGx0kj2yOfCVLdPc87ki0imVr
+	 tWUqSDQ6mHicF09joYCiK73W7Q46WiyG6wiYkAHc8YBDnS8+firHrI6OKNptPTVSSJ
+	 tfC10wes5nA82AJlociWMAxb4ojKbSsgQYCp5sbX5Xsgw4BljYbrRjaeg8itdgptz4
+	 ITKMpu5hipVPkDU6I6CVCAZagZDvHvJPYukzq66eTXi/4/jDjN9q/CwtVdZNV3T+z+
+	 9zW9xj14VOvJA==
+Message-ID: <638ca267e355bf5c28357aae09a1f2bf@kernel.org>
+Date: Tue, 22 Sep 2026 07:10:00 +0000
 From: "Maxime Ripard" <mripard@kernel.org>
 To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH v3 13/19] drm/bridge: fsl-ldb: don't create a
+Subject: Re: [PATCH v3 14/19] drm/bridge: samsung-dsim: don't create a
  panel_bridge
-In-Reply-To: <20260916-drm-bridge-every-panel-v3-13-83afb4f1a707@bootlin.com>
-References: <20260916-drm-bridge-every-panel-v3-13-83afb4f1a707@bootlin.com>
+In-Reply-To: <20260916-drm-bridge-every-panel-v3-14-83afb4f1a707@bootlin.com>
+References: <20260916-drm-bridge-every-panel-v3-14-83afb4f1a707@bootlin.com>
 Cc: asahi@lists.linux.dev, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, "Albert
  Esteve" <aesteve@redhat.com>, "Andrzej Hajda" <andrzej.hajda@intel.com>, "Anusha
  Srivatsa" <asrivats@redhat.com>, "David Airlie" <airlied@gmail.com>, "Dmitry
@@ -58,7 +58,7 @@ List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 
-On Wed, 16 Sep 2026 15:45:37 +0200, Luca Ceresoli wrote:
+On Wed, 16 Sep 2026 15:45:38 +0200, Luca Ceresoli wrote:
 > Now a panel_bridge is automatically created for every drm_panel and the
 > panel-bridge API is just a deprecated wrapper to access it.
 > 
