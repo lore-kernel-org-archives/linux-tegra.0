@@ -1,122 +1,130 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr2-f39.google.com (mail-wr2-f39.google.com [74.125.225.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A77539E196;
-	Tue, 22 Sep 2026 08:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE7F43F0B3
+	for <linux-tegra@vger.kernel.org>; Tue, 22 Sep 2026 08:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790065426; cv=none; b=QZ7BMUJaJlbcLjLj0hYn/7S/jwkG/otMxoB0o9wH47G3JyFq3hN/BbdTZ75AaacfkGx8Z8QK0MHYyL39LBUWWFwYKKDJ9Ug48xSv+Ox5INlv+Qc7jeqP3rMDUBFr/szdZkw2iN+o7W66gjd2YmGldrtO6ZVOO040KorLM6cQ/Pg=
+	t=1790066004; cv=none; b=U0nXHyZH6Okq5hqeCI5wbIuo5F6nq67e+UFbI5CS52JaYlBd5u8k2GKdO9RKDYi4Ug/x0+P+r3Z0ZWqJxF1VUkXg+4BsyS4ptoP0/nyBkr1goWobY4osk8YOl9ZgnFzo0oFXBDNMCwUrK9hGg0fmIi5VbxP6E/evKs1FdU62n0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790065426; c=relaxed/simple;
-	bh=99I28I2AOtqL4yZ6o0lZKqdG2P1Q7R8wSRGf94VrOf0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BrVbLfGyWUm78vngBqobSVJfdijrxB7uHpMfBpWdl6jlHcGccN4NF5sHAO6uesxCwRVnXGXtJCHfr//K5Nt5hJ/Pf82hfRKGMX9DXm5+INYJMFAkQbm7NEL4QdZotcw6ygRw9GLdg6+6PBG1b9GgiHyysklPqC62eb4VR21Rnv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=u2EoGzb0; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1790066004; c=relaxed/simple;
+	bh=zEomBp/JAYre+ACaiHStIXFRKfBN3mk/YZOtMfOIzaA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tuJNa+wJF24j9Gld1f/UvMaG3RCef9u9kBPl2KWU0PDLUcA7NBMMTo+92cZ2xHJVX5CMerRLp7z/+xqWPpxXJxOieLgDggwn2a82luFvV7vkhtIRJ4Z8l1gHPEKruUSl8dvp5ze0cdiqjOgAwwWvdwl990VomjVZd0Lr7ERYwes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=SDFVaqqZ; arc=none smtp.client-ip=74.125.225.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="u2EoGzb0"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=jhl12w2BK3T73bfh332u/N28Aqr0VzNZAxke4cgagwM=; b=u2EoGzb0ti7/TwOnyh9MQVstlN
-	w0Pg4/YOo2FcGHfMzDj6DJWTLAZl/q6wfb0gQBuemkKb1j0eeW+WYstTYzTZ6EoAxsccNubqQJUZN
-	+EareNsxJgvta6aTnqHlYNGYQ7C3eiT2vi9mBsUwMy++Rd5ky9sTpJAoeHrfvRv2Tdpzcd7STIENx
-	qSKtdU4j3clbqQeFKrx0t6PTBYYSXYjWGzr5u0CaUp+ZTrI5ngCU9xUwss//eYPvorO28GHHAVxC1
-	dHDdKIt8PuB9naKPeh9/KaHsg4R0I1BlucAmJM3BYHEO3lnkZ28rRXo9h86iKeESOIYIqjw9nbcN9
-	C7eDjFYw==;
-From: Heiko Stuebner <heiko@sntech.de>
-To: Damon Ding <damon.ding@rock-chips.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jessica Zhang <jesszhan0024@gmail.com>,
- Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
- Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>,
- Paul Kocialkowski <paulk@sys-base.io>, Linus Walleij <linusw@kernel.org>,
- Inki Dae <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Sean Paul <sean@poorly.run>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
- Randy Dunlap <rdunlap@infradead.org>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Albert Esteve <aesteve@redhat.com>, Anusha Srivatsa <asrivats@redhat.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Hui Pu <Hui.Pu@gehealthcare.com>, Ian Ray <ian.ray@gehealthcare.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-mips@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, asahi@lists.linux.dev,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-Subject:
- Re: [PATCH v3 19/19] drm/bridge: analogix_dp: don't create a panel_bridge
-Date: Tue, 22 Sep 2026 10:22:37 +0200
-Message-ID: <1889588.TLkxdtWsSY@phil>
-In-Reply-To: <DLLOZYM6YWJ3.6Q0LRD1WABGW@bootlin.com>
-References:
- <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
- <975a4d45-9a61-4858-b498-8bc0a1e44746@rock-chips.com>
- <DLLOZYM6YWJ3.6Q0LRD1WABGW@bootlin.com>
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="SDFVaqqZ"
+Received: by mail-wr2-f39.google.com with SMTP id ffacd0b85a97d-482f633ece3so2944461f8f.3
+        for <linux-tegra@vger.kernel.org>; Tue, 22 Sep 2026 01:33:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1790065998; x=1790670798; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=uU9EGsP0jhjlOuyY9ffTaiqx8NHl2A4tqCF5zEPkwzk=;
+        b=SDFVaqqZfU84z5zv8A0dBFvjQ5ivbjNkUHmEJ7qXw4RP033lXmvKCIDV0XMZNXCfRB
+         ui/pPwbTZABAxe3HFMjfc3b5p/QgarOU2p/jqEl4x5cmgAsvAXZZklTW3gw9MctW4B1w
+         puOuBQA6N8M4qtoWTLlrbp3f7obYQIrRDVzCW/k8YGESOy49RuHBOzzkXtMA8z9VLPZr
+         lh6zJXb11GaufjqWPGfATi+exGxn3U5GRs7jNkQNKNPc+A7Ukxr3e4UUTlTs6CseUm3r
+         1yhGWo0otGrC67Y7qvaRzSed99ajmtn1bqBwcTF5aO4pohbI/xJBUDjj//vwpyALMepV
+         U0Qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790065998; x=1790670798;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=uU9EGsP0jhjlOuyY9ffTaiqx8NHl2A4tqCF5zEPkwzk=;
+        b=OMv6eAsYNDQMB78SQa5XQuhPZ6+Wp92uePLJ3dsW2tC45Ed/sDrPX0AoH4VXNnicie
+         jTpAq7u2VliRJP0MXLEAPwlcMxy/9A0wjv5O/T+aWyE3bKbXg/oE7zeaXg/CysejFVH3
+         UVY7cstwsWxbiiPXXxTwpgOpwX2kU1NalPcBV3OYldLqAgewbv9kxU7Rr7u9f0AU7EUx
+         7Jr+wIziHxki6x+MpUnKqr0lEd0gsrNMCwyLBvm6F+2axuijXqjklPj92cZTcjmGS9fy
+         6yj49+D91qDT+guG11hEJ+PxvMZwnk3GQnLgOuvBCm+lKPgX75ZPTzr9xs7+dmwYYUy0
+         V8vw==
+X-Forwarded-Encrypted: i=1; AKwUvBx2AlBJq9fUK/15Ph0coQ1dwT5W0y4onMQSwOy8Ls1xvXJUwK698SbTJ9QiFa5i9yWK3RZxbxxoueRYIA==@vger.kernel.org
+X-Gm-Message-State: AFuF++kHVD232wqQdyfpNltRy+NDP29fodqgv0DtCPpEdpAv56HdRatx
+	CF6fTetKRT1TWvoC3q9LUWt1kGE8GWyMYiFqgVlfNSGDS3BxyfCyIeeUV/eQCcJmVT0=
+X-Gm-Gg: AYBFou3eJ2O9wBdByQbmUi/gmeZ5SmPQemjx+7bi26J65Vxe4HuqyP8Ym9yy6Seeg8X
+	CIucN0jETC16gACMPr9riEoyUeQ3xVFPZzP0SVJGBCfXcHQxhReSwLpxyGu1v5QbeDlnp/yvOkp
+	nd1bX32I2gwgjknS5a2Vj8du0sQFXDWYilo/75zhqjMxI3FjdpDlDv0mbgy09WdB0+BhPkbYIKz
+	qkWk6T7x7wmM6xTey7baEtP7CbXhZeWviBTEvuo7pB0KHJsmphPJgEyfJfzvMOPqEZkihCQM8CV
+	CBd5iilUD0yLo4CAocRL95CdUr9/tBWXdLh1dtmlM1um9jWTa+c20refxQYJn7vPDal9pMZhdPZ
+	x7/JA+Cqwd6aWmxB6iOFOaB5dQhZh01fNGc/2E29E2gvwlCisKOnd6vFmWFqdIq2LtMt3Vdo15c
+	o3UKYg7SvPY724nR6JEeGtwzCjrK1MIxbY9Y2Iz0de1ckHCb4LaniCG0m2QPuKdzZ8z3Lgs0rZk
+	RysY58GM3+rSjuyNyAva3AbZUhibiCxBWiTIr0LWM1Efiby4a5ao2cmJy+bDw==
+X-Received: by 2002:a05:600d:6503:20b0:49f:d087:6526 with SMTP id 5b1f17b1804b1-49fd0876705mr70277975e9.34.1790065997920;
+        Tue, 22 Sep 2026 01:33:17 -0700 (PDT)
+Received: from localhost (p200300f65f19a9041d0e57515b2ea4c8.dip0.t-ipconnect.de. [2003:f6:5f19:a904:1d0e:5751:5b2e:a4c8])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-49fdaaf0074sm32730825e9.3.2026.09.22.01.33.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Sep 2026 01:33:16 -0700 (PDT)
+Date: Tue, 22 Sep 2026 10:33:16 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] pwm: tegra: Check for match_data being NULL
+Message-ID: <arI8vXaKTvEJi-Zd@monoceros>
+References: <cover.1789741839.git.u.kleine-koenig@baylibre.com>
+ <ed943d9be3b785514e0f65a5b8c13a78aba7a090.1789741839.git.u.kleine-koenig@baylibre.com>
+ <arD7N6A6ncBNR1Jk@orome>
+ <arE-s0zbTUn14aIr@monoceros>
+ <arFYGka5NpcgJ8oQ@orome>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-
-Hi Luca,
-
-Am Dienstag, 22. September 2026, 10:12:41 Mitteleurop=C3=A4ische Sommerzeit=
- schrieb Luca Ceresoli:
-> On Mon Sep 21, 2026 at 5:07 AM CEST, Damon Ding wrote:
-> > On 9/16/2026 9:45 PM, Luca Ceresoli wrote:
-
-[...]
-
-> >> @@ -163,18 +161,6 @@ static int exynos_dp_probe(struct platform_device=
- *pdev)
-> >>   	 */
-> >>   	platform_set_drvdata(pdev, dp);
-> >>
-> >> -	/* This is for the backward compatibility. */
-> >> -	np =3D of_parse_phandle(dev->of_node, "panel", 0);
-> >> -	if (np) {
-> >> -		dp->plat_data.panel =3D of_drm_find_panel(np);
-> >> -
-> >> -		of_node_put(np);
-> >> -		if (IS_ERR(dp->plat_data.panel))
-> >> -			return PTR_ERR(dp->plat_data.panel);
-> >> -
-> >> -		goto out;
-> >> -	}
-> >> -
-> >
-> > TIP: In my WIP v3 patch series, I use of_drm_find_panel() together with
-> > devm_drm_panel_bridge_add() to maintain this backward compatibility. But
-> > I also think this old approach should be deprecated now. Shall we add
-> > some notes in the commit message to mention the deprecation of this met=
-hod?
->=20
-> What is the "WIP v3" series exactly? Do you have a link (to v2 in case v3
-> is not yet public)?
-
-https://lore.kernel.org/linux-rockchip/20260804081717.741404-1-damon.ding@r=
-ock-chips.com/
-is the series in question.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rspyuoriyu3xbsxg"
+Content-Disposition: inline
+In-Reply-To: <arFYGka5NpcgJ8oQ@orome>
 
 
-Heiko
+--rspyuoriyu3xbsxg
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH v2 2/3] pwm: tegra: Check for match_data being NULL
+MIME-Version: 1.0
 
+Hello,
 
+On Mon, Sep 21, 2026 at 06:24:39PM +0200, Thierry Reding wrote:
+> You're probably not wrong about opt-in being the more natural choice,
+> but looking at commit 3d713e0e382e ("driver core: platform: add device
+> binding path 'driver_override'"), the intended use-cases are very
+> generic, so it would probably lead to a continuous stream of patches
+> needing to be added whenever a new device wants to be supported with
+> vfio or something.
+
+thinking a bit more about that: The use-case presented in that commit is
+about
+
+	echo vfio-platform > /sys/bus/platform/devices/fff51000.ethernet/driver_override
+
+. If we had an opt-in mechanism on the driver side, it would only be
+vfio* that would need it, wouldn't it? That sounds handleable.
+
+Best regards
+Uwe
+
+--rspyuoriyu3xbsxg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmqyPUoACgkQj4D7WH0S
+/k75uggAjU66rIYhxOlgu7NhEO7xA565YwhTBJeloD4bUMm8+0W08iZNphhaGPvO
+uXNwj8m6MCl1yFVzOCumzKhF8r2ixYGsKW+vmyn59m1b/DAoL0KnjJjPyjkwizOX
+eyNlZMnvMwp4Y65HaziLW9s6eTtc0fNMmGsrCVKvAjtGlZDsrzBZbRnun/Hd2pg8
+J/lYgKQVwTDYJZZnxauPn5Qyq7pZ8Acs5JDvOi7dBto3YRcG8w5OFbnRL6HYAhgr
+neCLHai/wCMyehrQVakEyRkwfYJmyiAMIIv8g0/uUlUF/exQR6RKtaJpd88gX6vT
+X539Y2bk5qA9iu35MHWrmN+RXfuKOQ==
+=XDmF
+-----END PGP SIGNATURE-----
+
+--rspyuoriyu3xbsxg--
