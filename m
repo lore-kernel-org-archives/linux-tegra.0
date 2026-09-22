@@ -1,72 +1,148 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C5D39D6F6;
-	Tue, 22 Sep 2026 07:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7F33EBF16;
+	Tue, 22 Sep 2026 08:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790062113; cv=none; b=Ki1Z6rcS8kBZS8twvQybv2+HB4238jDKPatYxMx5tXY+hpGXnJzPhGlInnO3zpn17dYy44Y3MCV1N+EiTf8SCtZso4MKTFWV2nWf1Bjg5wbva3KwBGdHrmBo3hUmIK8QiSyB+FA7UzqF5eT+IRu8+HJYFfZKc4WizMWhW7VPgCM=
+	t=1790064496; cv=none; b=Z9IwKuCBliXgnqyH4qiJ3YS+Fc7qxvx3cu0aRO+mTx9VoF7wNnVvhikMwkVsSib9RHzSEuRKOFksCW9+eg+DMGsJM+05k87zQSOdw3KXxmS6lzobmEYBCDpSgBUFFhc7qFQvfi6CZlBS1pbFNGRjnmKqiQL2fpctB1iOAtRh6Bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790062113; c=relaxed/simple;
-	bh=MNW2dzG6pcpEavKZGguDP74vi3LNwv29iDiCZEufv9A=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=rqPeyLJTwerHMejH6mMLrx2bS+84pKqgMayRreZhgE9xEEFL+pBMMPaSS3CjETGPfbT7s3eaB5J2a17O3ge0BThsVC6x4yXOqDaxIPs/NJLV9pxkTUic69vYHCl/XRoIGAe40N1cw4G624zd+hxF0jR42MlqEk/6Ey4Z7/sQLPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YkjQqzpt; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790064496; c=relaxed/simple;
+	bh=zcp8tcZsfdsmxUcen5sJupr/nyZnxY5fTXf1NQWKnsw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=VuJ2wrTAG5vTyrYAo0DOJn+QEXMFyoKSreJ4tDLIUqWNq039HOphUdHO/TsHJxvU8p4GaQtvCisE/Z267ISuSrkfhKHIJ/BpDHS9EHOqLbT82ZaaSVgmj5MSQK4OCyos8wI1ukUXEGc6t7iKagfyNOdTFCtMc9gBY1gYtyxc4AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FGUyk9MH; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YkjQqzpt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81BC11F000FF;
-	Tue, 22 Sep 2026 07:28:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790062112;
-	bh=3ux+jnjvPDKFrFGj72qL6Pn667s3hOD+uMkfDVfth4w=;
-	h=Date:From:To:Subject:In-Reply-To:References:Cc;
-	b=YkjQqzptaJUXFmAbBCfQSoebYMNmQsBJusR+FSLllKUHPSDR/AL2tHFk2zhwxNU7S
-	 ZJbfZu40Jiy9uENTSiPYc64Lcx94x7gvgq4r10P5tkVhjAckhpA4rHtOHP7iC6JGCQ
-	 uruJKSCufdGIu8+GqNCYguivLSOkrO0PYzcv9H55HdbBwhc6XetHqFpIs8Oz8ocKc/
-	 F+pwW6p2nmFAKy1+wl1R8qwJYF0XfLNQ2Ch9HnpJbsXLnOpMgTo8k355OEsqvk9tSx
-	 U6dZz8YsyfwjZP7LWG98ep2jcL/q999EvT9I8Pe5W0ao4g0y1bjIvrcA4zQDS96MGd
-	 aUi2l2X0SuTJg==
-Message-ID: <c66e59d50c98b5bf862c687ff9ec86f5@kernel.org>
-Date: Tue, 22 Sep 2026 07:28:27 +0000
-From: "Maxime Ripard" <mripard@kernel.org>
-To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH v3 18/19] drm/tve200: don't create a panel_bridge
-In-Reply-To: <20260916-drm-bridge-every-panel-v3-18-83afb4f1a707@bootlin.com>
-References: <20260916-drm-bridge-every-panel-v3-18-83afb4f1a707@bootlin.com>
-Cc: asahi@lists.linux.dev, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, "Albert
- Esteve" <aesteve@redhat.com>, "Andrzej Hajda" <andrzej.hajda@intel.com>, "Anusha
- Srivatsa" <asrivats@redhat.com>, "David Airlie" <airlied@gmail.com>, "Dmitry
- Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>, "Fabio Estevam" <festevam@gmail.com>, "Frank
- Li" <Frank.Li@nxp.com>, "Hui Pu" <Hui.Pu@gehealthcare.com>, "Ian Ray" <ian.ray@gehealthcare.com>, "Inki
- Dae" <inki.dae@samsung.com>, "Jagan Teki" <jagan@amarulasolutions.com>, "Jernej
- Skrabec" <jernej.skrabec@gmail.com>, "Jessica Zhang" <jesszhan0024@gmail.com>, "Jonas
- Karlman" <jonas@kwiboo.se>, "Jonathan Corbet" <corbet@lwn.net>, "Laurent
- Pinchart" <Laurent.pinchart@ideasonboard.com>, "Laurentiu Palcu" <laurentiu.palcu@oss.nxp.com>, "Linus
- Walleij" <linusw@kernel.org>, "Lucas Stach" <l.stach@pengutronix.de>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Marek Szyprowski" <m.szyprowski@samsung.com>, "Maxime
- Ripard" <mripard@kernel.org>, "Neil Armstrong" <neil.armstrong@linaro.org>, "Paul
- Cercueil" <paul@crapouillou.net>, "Paul Kocialkowski" <paulk@sys-base.io>, "Pengutronix
- Kernel Team" <kernel@pengutronix.de>, "Randy Dunlap" <rdunlap@infradead.org>, "Robert
- Foss" <rfoss@kernel.org>, "Sascha Hauer" <s.hauer@pengutronix.de>, "Sean
- Paul" <sean@poorly.run>, "Shuah Khan" <skhan@linuxfoundation.org>, "Simona
- Vetter" <simona@ffwll.ch>, "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>, "Thomas
- Zimmermann" <tzimmermann@suse.de>
-Content-Transfer-Encoding: 7bit
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FGUyk9MH"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id ED834C23DB6;
+	Tue, 22 Sep 2026 08:08:47 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 468C860580;
+	Tue, 22 Sep 2026 08:08:01 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4056C1032925B;
+	Tue, 22 Sep 2026 10:07:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1790064477; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=zcp8tcZsfdsmxUcen5sJupr/nyZnxY5fTXf1NQWKnsw=;
+	b=FGUyk9MHJzJ0m0z8YAThEo2DOBHDLTsuC25rLZr2qIfJay2Q0I+gVCvTxsv2nvY/dDnJb9
+	IgXAUJLDLFyWtCu0gq4m+hX3dLL+xecsNJ8WJa5QPeWS1Zy6AUoS89OPdFALC8X5Qo/SYt
+	P+8Axb3+Z77DYvypZw+Bo1A5RcA0P5rB/gomubC1yCw1+sui5hmFk5wLv6D9zSGNbH/9I3
+	BDo6gZcaNWSmUaB3MSGwrUc50FkG95rYvnEytrHx7tFcZXjfqgUddfJurME6kZVkekBte7
+	SOpxzk5wN3ckVBb+KRlg6NycfNY3+6MfShb4b9lHPUZw9BG8DyTys0vA4UWL/w==
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 22 Sep 2026 10:07:36 +0200
+Message-Id: <DLLOW2ROGP6L.3GTVT76VYPGAU@bootlin.com>
+Subject: Re: [PATCH v3 19/19] drm/bridge: analogix_dp: don't create a
+ panel_bridge
+Cc: "Albert Esteve" <aesteve@redhat.com>, "Anusha Srivatsa"
+ <asrivats@redhat.com>, "Dmitry Baryshkov"
+ <dmitry.baryshkov@oss.qualcomm.com>, "Hui Pu" <Hui.Pu@gehealthcare.com>,
+ "Ian Ray" <ian.ray@gehealthcare.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <imx@lists.linux.dev>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-mips@vger.kernel.org>,
+ <linux-rockchip@lists.infradead.org>,
+ <linux-stm32@st-md-mailman.stormreply.com>, <asahi@lists.linux.dev>,
+ <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
+ <linux-tegra@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-samsung-soc@vger.kernel.org>, "Heiko Stuebner" <heiko@sntech.de>
+To: "Damon Ding" <damon.ding@rock-chips.com>, "Luca Ceresoli"
+ <luca.ceresoli@bootlin.com>, "Andrzej Hajda" <andrzej.hajda@intel.com>,
+ "Neil Armstrong" <neil.armstrong@linaro.org>, "Robert Foss"
+ <rfoss@kernel.org>, "Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>,
+ "Jonas Karlman" <jonas@kwiboo.se>, "Jernej Skrabec"
+ <jernej.skrabec@gmail.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Jessica Zhang"
+ <jesszhan0024@gmail.com>, "Laurentiu Palcu" <laurentiu.palcu@oss.nxp.com>,
+ "Lucas Stach" <l.stach@pengutronix.de>, "Frank Li" <Frank.Li@nxp.com>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
+ <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "Paul
+ Cercueil" <paul@crapouillou.net>, "Paul Kocialkowski" <paulk@sys-base.io>,
+ "Linus Walleij" <linusw@kernel.org>, "Inki Dae" <inki.dae@samsung.com>,
+ "Jagan Teki" <jagan@amarulasolutions.com>, "Marek Szyprowski"
+ <m.szyprowski@samsung.com>, "Sean Paul" <sean@poorly.run>, "Jonathan
+ Corbet" <corbet@lwn.net>, "Shuah Khan" <skhan@linuxfoundation.org>, "Randy
+ Dunlap" <rdunlap@infradead.org>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+X-Mailer: aerc 0.22.0
+References: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
+ <20260916-drm-bridge-every-panel-v3-19-83afb4f1a707@bootlin.com>
+ <975a4d45-9a61-4858-b498-8bc0a1e44746@rock-chips.com>
+ <96882735-091f-49c6-a47b-5da8be711818@rock-chips.com>
+In-Reply-To: <96882735-091f-49c6-a47b-5da8be711818@rock-chips.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, 16 Sep 2026 15:45:42 +0200, Luca Ceresoli wrote:
-> Now a panel_bridge is automatically created for every drm_panel and the
-> panel-bridge API is just a deprecated wrapper to access it.
-> 
-> Update and simplify the code by just getting a reference to the
-> already-existing bridge using of_drm_get_bridge_by_endpoint().
-> 
-> [ ... ]
+Hello Damon,
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
+On Mon Sep 21, 2026 at 8:34 AM CEST, Damon Ding wrote:
+> On 9/21/2026 11:07 AM, Damon Ding wrote:
+>> Hi Luca,
+>>
+>> On 9/16/2026 9:45 PM, Luca Ceresoli wrote:
+>>> Now a panel_bridge is automatically created for every drm_panel and the
+>>> panel-bridge API is just a deprecated wrapper to access it.
+>>>
+>>> Update and simplify the code by just getting a reference to the
+>>> already-existing bridge using of_drm_get_bridge_by_endpoint().
+>>>
+>>> As of_drm_get_bridge_by_endpoint() returns a refcounted bridge, take ca=
+re
+>>> of putting the bridge reference. This is not easily done in the remove
+>>> path
+>>> due to the different probe paths of the user drivers, so add a devm
+>>> action
+>>> to ensure the reference is put only when it was taken.
+>>>
+>>> Assisted-by: opencode:deepseek-v4-flash-0731
+>>> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+>>> ---
+>>> =C2=A0 drivers/gpu/drm/bridge/analogix/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 -
+>>> =C2=A0 drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 40 ++++++++=
+++++
+>>> +---------
+>>> =C2=A0 drivers/gpu/drm/exynos/exynos_dp.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 36 +
+>>> +-----------------
+>>> =C2=A0 drivers/gpu/drm/rockchip/analogix_dp-rockchip.c=C2=A0=C2=A0=C2=
+=A0 |=C2=A0 9 -----
+>>> =C2=A0 include/drm/bridge/analogix_dp.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0 1 -
+>>> =C2=A0 5 files changed, 25 insertions(+), 62 deletions(-)
+>>>
+>
+> [snip]
+>
+>>> @@ -488,14 +487,6 @@ static void rockchip_dp_remove(struct
+>>> platform_device *pdev)
+>>> =C2=A0 {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct rockchip_dp_device *dp =3D platfo=
+rm_get_drvdata(pdev);
+>
+> The above unused &rockchip_dp_device could be also remved.
 
-Thanks!
-Maxime
+Ah, indeed!
+
+I guess I can keep your review tags if applying this patch with only this
+line removed. Correct?
+
+Luca
+
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
