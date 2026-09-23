@@ -1,75 +1,177 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772CA449B2D;
-	Wed, 23 Sep 2026 07:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE23749AA4A
+	for <linux-tegra@vger.kernel.org>; Wed, 23 Sep 2026 11:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790148523; cv=none; b=FuNUNkV4wSVfwHCykRNlzfDIH51UAlrliDpuUFAn2RyHTNqgw1FaQXiw8D58Do9nYVXvOjGHzyb2nVJiXcES0BpYD2V5g2I1jy/uBbz6bm0WRr1rJKvLoj3LOe23RDz0UpMfim1p1hzAuGlDUESQaAFETDFppdNtoEBRlwpk4tE=
+	t=1790161573; cv=none; b=tvGO+VFyq7D3p94VsORqXV+nvTapCHFJEFm8YZ534df9xZ0HRvapxupUcZ0/R2IJgGqSRzGAiRYE1bWJQMgKYyUP9/yFeEdWCOBhJaeqWUjwz2biURefseHRK1jRRiIVhssDW5rBXmgU4hjCjlZERRW+PVdMJj1joq4NZRTO5fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790148523; c=relaxed/simple;
-	bh=dyyaL52hNJt9646Y4OfdjI42kaJDzzGIdBw13x827qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GdyrLidUN7EVmIpq+P1X0UnIjw7fbHm6Ti1XbwQM0G0iDWBd8Qv1EaicnJaIyBPtZQgzDyzyv6essLNE1KDGOn4QD8vEJmefH2yaCizUW7aOefDKSm8Ai9I0k6FQRcaS2J/fHqg2EypmJR4tUP/SzJL0DMNJVDiEryJY1t///d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GxrilVmj; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790161573; c=relaxed/simple;
+	bh=K3K6CQYxD/NI66dopnXyy4GAxmihl9WmBh+YvF5sO8M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mk+7gmdtkB42qAPcvl5FbnlaX8kBQmuymvRaVgQC7zcbbxn1R5cApSJIssECQDq6glt+zd4nfpa43SPZNY7s5Sgmnllm8R0XNF+fGQBsDvJsCibyHYRZiIk46vPW/mklpvzevbLk5tp0167ay4ON18txb07o+fe2eDL9ztFqucs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ePtxV5xp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=J+WdkfMv; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=m5yKt4a2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vsplEf8y; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GxrilVmj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 148991F000FF;
-	Wed, 23 Sep 2026 07:28:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790148522;
-	bh=gptYRX18yZ3lNNH+Yst1WTPf8NSivdeHjyw/ZEBZf5k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=GxrilVmjG/urDra3VoKePE4TElFbGRKUx0avZDZwjiGtBafeZTnwtHnd+l338iXde
-	 7PkOPJzKLjLPELciJ+QMGpBb4u8GCKKHMqoqpAVuoBfSBzSGXQiU9h+YdpI6Si+0kB
-	 1S2bghpdV6P6+qqOEYqjk4G8A+un4sQDD6ZfwjKFqkr7pYFF6wj7ljFqCVoxsC8Ggm
-	 oBw0JbWPQeilKr8dbpCe2vcWulh/Xog9JrJeusIPC/7YVAflERriecFUhrJLGUSKED
-	 o/QweHHoXySNUtGuBMLUFoqQvo+6BMAHc0D2XuDClBpHAaLeSc26LG7i1n2D81VmTe
-	 FnJ9ECLaKoQjg==
-Date: Wed, 23 Sep 2026 00:28:41 -0700
-From: Kees Cook <kees@kernel.org>
-To: Bill Wendling <morbo@google.com>
-Cc: Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	codemender-patching+linux@google.com
-Subject: Re: [PATCH] clk: tegra: annotate struct tegra210_clk_emc_provider
- with __counted_by_ptr
-Message-ID: <202609230028.B4D7FE202@keescook>
-References: <20260922110601.1959213-1-morbo@google.com>
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ePtxV5xp";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="J+WdkfMv";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="m5yKt4a2";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vsplEf8y"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E84C321C07;
+	Wed, 23 Sep 2026 11:05:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1790161546; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=yig4P1nR/KUuXfkyUGF4O2Z2u6hzgy5a9b/28nBUgkg=;
+	b=ePtxV5xpT8kK69c6QxNDO4furdu3M40140REdmVhxy9as5dPbyUr/uRJe4N4go7xr2pmJl
+	l0v8XBmVn1yllU9MKy1JgKgxZKHJx50yXMCUuy9q4gyrdSLjvQfb97KAN/hknQugGtRkag
+	0+PLjCx0AqRtQKcBf5pWdIuMgaQNU2E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1790161546;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=yig4P1nR/KUuXfkyUGF4O2Z2u6hzgy5a9b/28nBUgkg=;
+	b=J+WdkfMvtx3Z6FGXkOBbFg76sR2NA+Es/PJiyFaiCgBuoWQ17D0vNc9YnSYL/TpED8BzRx
+	gINVHglNrjfPlBAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=m5yKt4a2;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=vsplEf8y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1790161542; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=yig4P1nR/KUuXfkyUGF4O2Z2u6hzgy5a9b/28nBUgkg=;
+	b=m5yKt4a2fXeCzHw3ipzn/lBSRUYdp4k+kJ2mRUn6c5+U5r36PMvgsOZm+jr+0CnafI7kg/
+	QXnk4w90i0Mpc340hjS4jh//qAF7Co8aKR9Tcu65KB6N3wQTYuBqfT6CxPP70pew59GWa/
+	KuenZdsmc6j4ZiSTH0FZeNbuL9d5kUk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1790161542;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=yig4P1nR/KUuXfkyUGF4O2Z2u6hzgy5a9b/28nBUgkg=;
+	b=vsplEf8yfCWyorb1CPQA1FraVVbOxPtSXYOyp7RR2I/wEotb7KJZ/+630wDBb9sEMz2oTV
+	ezeJIaUYCNypgTBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 54EFA13432;
+	Wed, 23 Sep 2026 11:05:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VCF1C4Wys2qeBAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 23 Sep 2026 11:05:41 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: jfalempe@redhat.com,
+	javierm@redhat.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-rockchip@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	sashiko-reviews@lists.linux.dev,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH 0/2] drm/fbdev: Move helpers to clients/ subdirectory
+Date: Wed, 23 Sep 2026 12:59:08 +0200
+Message-ID: <20260923110537.451614-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260922110601.1959213-1-morbo@google.com>
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: E84C321C07
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_TO(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLqtkr6cif1ebgurukgmwdm7xc)];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
 
-On Tue, Sep 22, 2026 at 11:06:01AM +0000, Bill Wendling wrote:
-> Annotate the "configs" pointer field of "struct
-> tegra210_clk_emc_provider" with the "__counted_by_ptr" attribute,
-> allowing the compiler to perform runtime bounds checking on accesses to
-> "configs" based on the value of "num_configs".
-> 
-> The "emc->provider.configs = devm_kcalloc(...)" call uses
-> "emc->num_timings" for the number of elements, which is then assigned to
-> "emc->provider.num_configs" before any accesses to "configs". The
-> "num_configs" field isn't modified after assignment.
+Helpers for fbdev emulation are still linked into drm_kms_helper.ko,
+which is for mode setting. Move the source and header files to the
+clients/ subdirectory and link them into drm_client_lib.ko. This has
+some fallout throughout drivers, but it's all trivial.
 
-Yup, that's the only assignment I can find.
+There are 3 module parameters to drm_kms_helper.ko that control fbdev
+emulation. For compatibility with existing installations, leave them
+in this module.
 
-> Cc: codemender-patching+linux@google.com
-> Assisted-by: LLM
-> Signed-off-by: Bill Wendling <morbo@google.com>
+Thomas Zimmermann (2):
+  drm/fbdev: Move fbdev module parameters next to module init
+  drm/fbdev: Move fbdev helpers into client library
 
-Reviewed-by: Kees Cook <kees@kernel.org>
+ drivers/gpu/drm/Makefile                      |  1 -
+ drivers/gpu/drm/amd/amdgpu/amdgpu_display.c   |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c       |  2 +-
+ drivers/gpu/drm/clients/Makefile              |  3 +-
+ drivers/gpu/drm/clients/drm_fbdev_client.c    |  2 +-
+ .../drm_fbdev_helper.c}                       | 34 +---------------
+ drivers/gpu/drm/drm_crtc_helper_internal.h    |  9 +++++
+ drivers/gpu/drm/drm_fbdev_dma.c               |  2 +-
+ drivers/gpu/drm/drm_fbdev_shmem.c             |  2 +-
+ drivers/gpu/drm/drm_fbdev_ttm.c               |  2 +-
+ drivers/gpu/drm/drm_kms_helper_common.c       | 39 +++++++++++++++++++
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c     |  2 +-
+ drivers/gpu/drm/gma500/fbdev.c                |  2 +-
+ drivers/gpu/drm/i915/display/intel_fbdev.c    |  2 +-
+ drivers/gpu/drm/msm/msm_debugfs.c             |  2 +-
+ drivers/gpu/drm/msm/msm_fbdev.c               |  2 +-
+ drivers/gpu/drm/nouveau/dispnv50/disp.c       |  1 -
+ drivers/gpu/drm/omapdrm/omap_debugfs.c        |  2 +-
+ drivers/gpu/drm/omapdrm/omap_fbdev.c          |  2 +-
+ drivers/gpu/drm/radeon/radeon_device.c        |  2 +-
+ drivers/gpu/drm/radeon/radeon_fbdev.c         |  2 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.c   |  2 +-
+ drivers/gpu/drm/sitronix/st7571.c             |  1 -
+ drivers/gpu/drm/tegra/fbdev.c                 |  2 +-
+ drivers/gpu/drm/vboxvideo/vbox_mode.c         |  2 +-
+ .../drm_fbdev_helper.h}                       |  4 +-
+ 26 files changed, 72 insertions(+), 56 deletions(-)
+ rename drivers/gpu/drm/{drm_fb_helper.c => clients/drm_fbdev_helper.c} (97%)
+ rename include/drm/{drm_fb_helper.h => clients/drm_fbdev_helper.h} (99%)
 
 -- 
-Kees Cook
+2.55.0
+
