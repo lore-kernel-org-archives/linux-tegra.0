@@ -1,170 +1,77 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A0C511E8A;
-	Wed, 23 Sep 2026 14:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B8E49551D;
+	Wed, 23 Sep 2026 15:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790173960; cv=none; b=R2tBHVzbH++Ub3rKT1Dm+hhRy4P4duuWBYk3kqMrIe36riEDJRPCX3K3VzqScv62+6l1D0pdaZw9NXAfr67IABMwFmeAPL6CVeJKyuNaITroUR1ZsCcGHOiPSXxSL6edkf2lkwMTlAZY8rCh2apXwfBInLr2dz4IARjtyjFXkHU=
+	t=1790176745; cv=none; b=WT4/IEXCnxVVMK1L3vqghyLJmjCv8ZA+JrjmFYFYBV0/ZvkEx9m+GaUI8H/okcYJruhkzpvzqrufkqFlymKRwzJZRjQLe5SBBdLNStH9vzt/gTQge0N/5mq6fNPu7ukcGMAoP2XgjCOhTZT75aM7e1rkI1r748sRL6HB+yutF2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790173960; c=relaxed/simple;
-	bh=lbYV1LSybyMNBPEhgM4YVhUd3BoeQAweKneYDrc6bXo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TKI53ajoiHvmvXtzaeLQg91tLdV62ezFPLX/1Vsg1J1jzjU2QHXxrdqo4X2AJW4nBJQ/t8lfcDV8Z5JKBCdRWbuTtmTm5H4jq1vQGfTIciHnyJHB+RUMUe6ch6PibnoLDo07Cd9f0DpjlcohV6dfddrVsc8CwujzWQsmw7lTsJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fO6eOMs5; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790176745; c=relaxed/simple;
+	bh=PKx41dZ0+EbMSj1CGMXu5FUR2IPWf+QeNIdPCevnSTs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=VHgR04hnxyJCDc3IgVOkIDbWg8iwi4b7MatGv3ak4hDm2nBVpObG4au0mpDP1ERt1zYG29vAQtlW05NECPhwlJTeCEFYS7B8l6xOuiPZmIouyc4L6bLOQOfETD6Un/2vsk3YYaaq0W2aFrFjDAr0FLNhgCJ5S2fpU78yIFNBjsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MXLjPFTU; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fO6eOMs5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B361A1F000FF;
-	Wed, 23 Sep 2026 14:32:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MXLjPFTU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 388881F000FF;
+	Wed, 23 Sep 2026 15:19:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790173959;
-	bh=nszf8PUF4EQzPBEcCjZZ0KgFF4eI3s+mniEiPsNVXR0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=fO6eOMs56OPjiajrTw8h9zElAg5bsvjL3NdV0Lj3D+elgi0B10cQK/wFJf+VT7suo
-	 PttohCYnc4gvkNCaSmInmQ5DMYL3LFRmjbfrpSrTvvKbRkWxIUjIC0e2k8CB3R68nm
-	 ptBmaJYKoNbP7DFT9sEvrW2aISPaujLyRgLlgqk5RxOfgGZgIh6DO5nY/V9Nem7mPn
-	 sLoVxHwnbfTB1WHMzMwV3+CwdcGtXhGjp4B6CSMF5mijVcrvS0e6WrnU3SprFKTQLY
-	 oYd2caHTiQHgOHbwj9M8xeWWtT4yPPw17E1I7TSfgNgd/z/OawhaUqyPVjFm/0ggTN
-	 lmW6WHkxmwxYA==
-Date: Wed, 23 Sep 2026 16:32:33 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Manikanta Maddireddy <mmaddireddy@nvidia.com>,
-	Koichiro Den <den@valinux.co.jp>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Frank Li <Frank.Li@kernel.org>, Vidya Sagar <vidyas@nvidia.com>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/11] PCI: endpoint: test: Do not relocate fixed MSI-X
- tables
-Message-ID: <arPjAeYzVbe5_qo8@ryzen>
-References: <20260923072237.1139013-1-mmaddireddy@nvidia.com>
- <20260923072237.1139013-12-mmaddireddy@nvidia.com>
+	s=k20260515; t=1790176744;
+	bh=6CepSRCAbKIjXTMP6C8ytWdH906y7T3tD7VVl/5d7Y0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=MXLjPFTUK7B8QalXpCasymY/1E7W0+Tk5SrpUduuDzDte8u4sELX3BKE41I5n1NNt
+	 HUQ632XGt+B7Kt6fhVWaD73om33kEsKcENi+vgdmofupI15Sw8HbRBwlBkMh5cM9vh
+	 3pLXm9qlzZ2/rf3C+EsQkwXW6Dep33iDOdq8bkR4NuObU3D2a/LU0/hoaTFS9/3Xr2
+	 TCtWQzgHcjECnxIn6e5n+q1/+ApgHrJQU6qc25JZWcOYQ9Zv7K6ezR+wVB+d17PbQj
+	 vXm0QcHztauWGxbVgyipESxOoQEgS+DPSCmGotwXxZjCCf7AQxUAXwe1Zqm7YcXwdH
+	 WO/UYFmYo5hog==
+From: Lee Jones <lee@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@avionic-design.de>, 
+ Lee Jones <lee@kernel.org>, Shree Ramamoorthy <s-ramamoorthy@ti.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, 
+ Svyatoslav Ryhel <clamor95@gmail.com>, 
+ Laxman Dewangan <ldewangan@nvidia.com>, 
+ Bhargav Joshi <j.bhargav.u@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ goledhruva@gmail.com, m-chawdhry@ti.com, daniel.baluta@gmail.com, 
+ simona.toaca@nxp.com, mfd@lists.linux.dev, 
+ Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org
+In-Reply-To: <20260919-ti-tps6586x-v3-1-63dd240f4684@gmail.com>
+References: <20260919-ti-tps6586x-v3-1-63dd240f4684@gmail.com>
+Subject: Re: (subset) [PATCH v3 1/4] dt-bindings: mfd: ti,tps65910: Add
+ wakeup-source and GPIO hogs
+Message-Id: <179017673997.4161889.6046857782031846355.b4-ty@b4>
+Date: Wed, 23 Sep 2026 16:18:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260923072237.1139013-12-mmaddireddy@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.16-dev-ad80c
 
-On Wed, Sep 23, 2026 at 12:52:37PM +0530, Manikanta Maddireddy wrote:
-> Some endpoint controllers expose MSI-X table/PBA storage at fixed,
-> hardware-owned BARs. Such BARs are described to endpoint functions as
-> BAR_RESERVED with PCI_EPC_BAR_RSVD_MSIX_TBL_RAM, so the function driver
-> must not reprogram the MSI-X Table/PBA capability to point into ordinary
-> function BAR memory.
+On Sat, 19 Sep 2026 02:31:22 +0530, Bhargav Joshi wrote:
+> Device tree validation throws warnings for the TPS65911 PMIC on Tegra
+> boards because wakeup-source and GPIO hog nodes are not documented in
+> the schema, even though the hardware supports them.
 > 
-> pci_epf_test always allocates MSI-X storage after its test registers and
-> calls pci_epc_set_msix(). On controllers with fixed MSI-X storage, this
-> overwrites the controller-defined MSI-X layout. For example, the generic
-> DesignWare path derives the PBA offset from the number of vectors, which
-> can make the host program the wrong MSI-X storage and prevent MSI-X
-> delivery.
+> Add wakeup-source property and allow child nodes that match the "-hog"
+> pattern.
 > 
-> Detect fixed MSI-X table BARs and leave the controller-owned MSI-X
-> capability layout unchanged. Keep allocating and programming MSI-X
-> storage in the test BAR only for controllers that do not advertise fixed
-> MSI-X table storage.
-> 
-> Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-> ---
->  drivers/pci/endpoint/functions/pci-epf-test.c | 27 +++++++++++++++++--
->  1 file changed, 25 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> index d4905aa8e4c0..82d4714e998c 100644
-> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> @@ -83,6 +83,7 @@ struct pci_epf_test {
->  	struct config_group	group;
->  	enum pci_barno		test_reg_bar;
->  	size_t			msix_table_offset;
-> +	bool			msix_table_fixed;
->  	struct delayed_work	cmd_handler;
->  	struct dma_chan		*dma_chan_tx;
->  	struct dma_chan		*dma_chan_rx;
-> @@ -98,6 +99,26 @@ struct pci_epf_test {
->  	size_t			bar_size[PCI_STD_NUM_BARS];
->  };
->  
-> +static bool pci_epf_test_msix_table_fixed(const struct pci_epc_features *features)
-> +{
-> +	enum pci_barno bar;
-> +	int i;
-> +
-> +	for (bar = BAR_0; bar < PCI_STD_NUM_BARS; bar++) {
-> +		const struct pci_epc_bar_desc *desc = &features->bar[bar];
-> +
-> +		if (desc->type != BAR_RESERVED)
-> +			continue;
-> +
-> +		for (i = 0; i < desc->nr_rsvd_regions; i++) {
-> +			if (desc->rsvd_regions[i].type == PCI_EPC_BAR_RSVD_MSIX_TBL_RAM)
-> +				return true;
-> +		}
-> +	}
-> +
-> +	return false;
-> +}
-> +
->  struct pci_epf_test_reg {
->  	__le32 magic;
->  	__le32 command;
-> @@ -1214,7 +1235,7 @@ static int pci_epf_test_epc_init(struct pci_epf *epf)
->  		}
->  	}
->  
-> -	if (epc_features->msix_capable) {
-> +	if (epc_features->msix_capable && !epf_test->msix_table_fixed) {
->  		ret = pci_epc_set_msix(epc, epf->func_no, epf->vfunc_no,
->  				       epf->msix_interrupts,
->  				       epf_test->test_reg_bar,
-> @@ -1282,7 +1303,9 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
->  
->  	test_reg_bar_size = ALIGN(sizeof(struct pci_epf_test_reg), 128);
->  
-> -	if (epc_features->msix_capable) {
-> +	epf_test->msix_table_fixed = pci_epf_test_msix_table_fixed(epc_features);
-> +
-> +	if (epc_features->msix_capable && !epf_test->msix_table_fixed) {
->  		msix_table_size = PCI_MSIX_ENTRY_SIZE * epf->msix_interrupts;
->  		epf_test->msix_table_offset = test_reg_bar_size;
->  		/* Align to QWORD or 8 Bytes */
+> [...]
 
-Here you are only updating pci-epf-test. What about the other EPF drivers?
+Applied, thanks!
 
+[1/4] dt-bindings: mfd: ti,tps65910: Add wakeup-source and GPIO hogs
+      commit: 6d39f6cc5ae3a84bccc9acf11ef71e7219c3d35e
 
-Also, if you run then pci_endpoint kselftest, with the default 2048 MSI-X
-interrupts. Are really all 2048 MSI-X successful?
+--
+Lee Jones [李琼斯]
 
-It seems that often the "hardware owned" MSI-X table is much smaller than
-that. See e.g. Koichiro's series which tries to use "hardware owned" MSI-X
-table, but if the "hardware owned" MSI-X table is too small to hold all
-2048 MSI-X IRQs, then "hardware owned" MSI-X table would not be used:
-
-https://lore.kernel.org/linux-pci/20260830151948.3547577-2-den@valinux.co.jp/
-
-+	if (layout->table_size < table_size || layout->pba_size < pba_size)
-+		return -ENOSPC;
-
-
-
-Apparently NTB EPF needs to read the MSI-X table from RAM:
-https://lore.kernel.org/linux-pci/pj5vpwwd5tr5tuvhdq3bcpefnq27r6ljvwoysguz2o4tglcqx5@l7zmb6wjnhla/
-
-Which is why he also decided to let an EPF driver choose if it should
-use "hardware owned" MSI-X table or not.
-
-
-Kind regards,
-Niklas
