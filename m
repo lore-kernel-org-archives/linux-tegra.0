@@ -1,64 +1,64 @@
-Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
+Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E057B442FA0
-	for <linux-tegra@vger.kernel.org>; Thu, 24 Sep 2026 09:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D7543F0A8
+	for <linux-tegra@vger.kernel.org>; Thu, 24 Sep 2026 09:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790240807; cv=none; b=mlIUb+86SpkxHJymSa7L3USz6bRI2m4niNOxfb+cpe/OxbxEuEbgHk6s0UCH/uGii0hmu63ZFbPvmIAZt1BNAm5aS5i+sBU6rQY6qh8tWcjNpkKq4eLEjM57gnOpaJxiTnP1aqfRHTc5bFiR9JHDNgOlZ+FEDXY4cQzhZoxQnhc=
+	t=1790240807; cv=none; b=U6z8WQQ4Hj9KdsULs2Mc7dYSrOm8/9sFSxxCIYGrS7wLqm8UVXFYebRlm0hl76UazADPFcI+ObrO7ASfdeN6a7/3p+JJO355AOem4oHxqByvUVpcq2upWi/sSIn8+XZ25hdjV2jXq7bw+WB4vGmxDIB68+LZVaGr/e63dPD/Qa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1790240807; c=relaxed/simple;
-	bh=vmp+OQPaS2NHX0XYFG8L5R60OBL0I0xQunPfHTA/NMw=;
+	bh=UxPNWJfzzN3pc+SiwXYWwQaSf/BsCFyVvpF19rlQ91A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eAEHOzstfvKMH7NBd6imHhxhqIv8FfnJfvsvi8nsizphomWZ8NK6wpIOY3c0jiudisMXXBVuLg3ndopkjpZqfAjvecPGtrnGyCfZL4x0x4hkoY0XsS8AoCSYchh2dI+cq3rcQW6e1TSkEVDgt/yG/0RhH1sg7XKaj2Spa7bBRHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hVwlq/rs; arc=none smtp.client-ip=74.125.225.76
+	 MIME-Version; b=q/zaQs0sMArgV8cjihtVkMzmoIjTZQ5iClznslSQstZa/CVLEipgv7Ua/PvJysVMScWZHxbLj/fJ2YQjI6ew1Kt6UI22PYEQo0kqFS99zb57u/7CkE7zyI+0SUeJm18gRnGzMYmkETWHBLWfx6xdYTOzZJ9gk+9/pEmiSfadOSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OhIMgG+u; arc=none smtp.client-ip=74.125.225.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hVwlq/rs"
-Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-4834977ae75so1282220f8f.3
-        for <linux-tegra@vger.kernel.org>; Thu, 24 Sep 2026 02:06:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OhIMgG+u"
+Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49e7bcb94d3so12602125e9.2
+        for <linux-tegra@vger.kernel.org>; Thu, 24 Sep 2026 02:06:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790240803; x=1790845603; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1790240804; x=1790845604; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=zeTy3yB4AFQI47c9gqtmLbqmJYgDGxNm0dRNSD0HLKI=;
-        b=hVwlq/rsfAW0HgOH95+ab4PVdJaG4F8X9X5i8rmo5cKbh+RGcsqqKz7tHvc7fyP7cZ
-         N4dc03dgzy3h070h7wnlPs4rQGPV/LuSgAahG7nF0POH7bSHktBmACqd/8YqQjysPp+5
-         Kl/h0fkYQ360dcXlsFY4xOY3YH22SCKe8Ro2DrdsqisqyIQD+6/F5da6GjX1Ov9OADgv
-         TNlNmDcnhd6qeXBolh68s9IzQfkBeCGxuYFReaxa2iGyfAKK3Q/SngESbFY8x7Z7u9UU
-         1V9pY/o5+ZbjYzu48PlK1ltMuP5lrueaSGbdPP1RYSFs3Pdno1GJrGnxvj+giA4MaRUy
-         w1aw==
+        bh=8NlIOK7+oF3d5liGs+n8ifJbGtp8feUVzzfztaQ8JwI=;
+        b=OhIMgG+u2bnKCGtjWqhF07I/MudIT98aJynUhY3B/7gnxrT0cj8PoTu/ea48ZHLTs/
+         Uoo1EEdk0sFbeFwHjUNLL9BQHEooFi7ph47a2fo2qDjl53l9XfFGhA9jZanpCVtgUlr3
+         aKQ2vj8vzY7MQY3a2FOlodM/sihXkO/djQP4mv33ZoeDTNymMyHLkgIJSwk4Zq3BC23M
+         HaLSARBeE1eiSSHhAmpeOIkInesmyMi55/3REIVaa3Vk8PzdScs1sbn4aPNmYAxTtIrY
+         dwdoZYHECpLRax9bGWsfwuht+iWJhFqHzle6O/LdsyzoN6C5Tn+BfOPYfzaWp4OuNOhJ
+         yn8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790240803; x=1790845603;
+        d=1e100.net; s=20260707; t=1790240804; x=1790845604;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=zeTy3yB4AFQI47c9gqtmLbqmJYgDGxNm0dRNSD0HLKI=;
-        b=J6L/C40ybU4OrX+e7b5vQr1ZWgQVrPzcm55xq8HEYhXNmA/NrOgcclMh4IpdqFOsWd
-         DXaohCPuA5nc6M7vKXk3Sg7dciApY91T5nr4c0qJlk1cqZZghnyAwpVuLvIdW1qO9FxN
-         Rbr3KAPiOGmj4Y4vRJ0sz0Nw+WlRYIQINo0oYYl4uJXal/nuLOfm+Q1FEWqL3yQak08p
-         MuepCSz+nIhm5m+nY+fKKuVKYcgXppQbUPmJ2yWG1ss4j+tY86pPIfGTUuzxXqYlOIzr
-         DreEZcFaXRbE7TlJ8rx3gExdlR1rRjGFBoSHmQO0L8CT0jSLGTsH+mL8IfqUsjae2l6e
-         NJBg==
-X-Forwarded-Encrypted: i=1; AKwUvBzqHrp3jLKK5GBHLQapGSLeRk5vOsyZTtmv1G0i4JEwHgKsSb+AHGVohas8cK4UF+RYMdA5/cb8YC6/LQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++mtTOjFvNAXFFJyJH+ZvhysH2ZPR8S3nEAcTLGjs2/7nbHfM8yk
-	CsqWxQifuu6MNfRvlTIl8VkWA7lGTkQIC0McBbkISnwTm0wE9QnuBiZC
-X-Gm-Gg: AYBFou173dId7C2JcBiI1ltDhNz4s9xwsdDoUJ3jOohxpDCouD4NeC0+gvgLaWe4Pdb
-	ARVrD8a0L3IuLmdBg8tXUCSeBNmkjpsUcmTxYFjuyWBZkWVpIDV0Tj/dHiJHS840Of3px0BLxOt
-	5WO+FDR8QfsDtDqosMtbV7exVgRn0qbEWqwcqzaOD+0lFGOfQt80oQeQpxJeoPOU1OU869h4SSJ
-	z1z3tJiDRvUVlAzCQznf9uM7nMFPEk2xFcuJvegVve3XN8OF15NE1aDaxfvmikQl32dLxQxCGKL
-	2kfpVZ8hU9OxLRGi7yYXNI4Mgn0WZpEWKseIj/Dpj+AyAcnhfCl01MQkiXN6Tg0Q11Cwiz6Otp7
-	juUQU8KMyD7anDkXCdx/2VglIbiyaNwUznXyYKI6hQ8yovvP+4SnIxP00oliPtOKz0jFmfmwv5m
-	uOcMboHAMs5NU4Ti0OIAJhqDLlIJCs62fwVo8ltCwq9EDR8zBh5ztkamzAuc4jG60ddLVFqwlNc
-	fovL+s55mGVtGISgkg=
-X-Received: by 2002:a05:6000:230b:b0:487:ae2:4d01 with SMTP id ffacd0b85a97d-488716836ccmr3067286f8f.22.1790240802712;
-        Thu, 24 Sep 2026 02:06:42 -0700 (PDT)
+        bh=8NlIOK7+oF3d5liGs+n8ifJbGtp8feUVzzfztaQ8JwI=;
+        b=mYRxatb+Z++oXdhlAQp6AixBD8AkFOFyW+0F80+ye5W7PbxgyHuFWhbSbeuLNnMRqu
+         Es+mxRYSGiim+VQrDpTSs5voTcR39cVCU0LI2cpOgjDWt2fXm6h95NNDR7AheN57IMoY
+         WHUEryA7L0ksT+p1VHhc2wSY+GkMaqyqtfQx2IHwelYWrWBMAAvJSvB+b1Rl3gCgp0IB
+         sjnk1+VIj4mPJizCUnv4MW3q6+0uTXDkJffQar0Z9cwPqCQBr3rJi0jATxFP63a83Eho
+         BC9+HBqKIKqzwkVaYhinsSpZDrFgi2rbpygmpiOenzA1E7yU18HFeJeurZ8Yif1h6hFd
+         sqHw==
+X-Forwarded-Encrypted: i=1; AKwUvBwGgr9oHgDaauqVQaVoKtfUBbRsEVpxEXe+KcacBhf3JEygCsZjVrKNMvy5K7XSPuqeg/8GOS62ChY8Iw==@vger.kernel.org
+X-Gm-Message-State: AFuF++k33n6G2WuvfowP6hw3giLXlG88VE59LQ9i2756awEV0aj8rldW
+	7z88dEhc19h7MQ08XeLKW+05SAqr/IVfsHj3d5PuFdDoHAw2FOyH8L3h
+X-Gm-Gg: AYBFou1QSSqKBoa3gl3kRtq/1VB2RSaj1wrfD8DFnA1lt6Llj83bimTi8gxZHNd8yYf
+	l7no+HwjqRp9bDXhzHOsmZaohrwcZOctlQn4oXbCWDhTPSVHcZCykNWXd3lJZ3041E7Elq2pado
+	LXuiRPCY9MH3hWerbdQZ8RejJEsqSk/TbG75//m3IqTHKDmoiZERs8XkUnJKAOhUQ9VviZNY0X0
+	oUXWshaMxoIScziVuXWLwRn6bRV5rdHOgKhKAvZshx1eHfRIUQ1I2H5nRpNdP+MMrNAQVXwyrgf
+	MUXGGLxq1hFc5vidDREcMQRgZFVbRkIW4ghm8op3Ku+hyrlpnuxnGKDjKBj646gO05ecseuDHWG
+	Eko+AaLRGj7wKU0o++5IcO8Y3m8qcOHhZTivT15PPmb9ERO3utY75cCphdZTArqzTGK4yEqAMcw
+	wRA7nP87gEnBW+OfsAU96OtOCe1nELiE2X8cwqpQrFXBCfpk5XHuX6aBZN/uNoT6oJK/KB6XkSL
+	QdHNbLqUL3WmxUsvmNv7fKf9eKeTw==
+X-Received: by 2002:a05:600c:4ec6:b0:49d:1a02:4797 with SMTP id 5b1f17b1804b1-49fe66d828fmr29579305e9.17.1790240804130;
+        Thu, 24 Sep 2026 02:06:44 -0700 (PDT)
 Received: from xeon ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4886877c379sm12875561f8f.29.2026.09.24.02.06.41
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4886877c379sm12875561f8f.29.2026.09.24.02.06.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Sep 2026 02:06:42 -0700 (PDT)
+        Thu, 24 Sep 2026 02:06:43 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -70,9 +70,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 4/7] ARM: tegra: lg-x3: Add light sensor node
-Date: Thu, 24 Sep 2026 12:06:05 +0300
-Message-ID: <20260924090608.28734-5-clamor95@gmail.com>
+Subject: [PATCH v1 5/7] ARM: tegra: lg-x3: Add flash LEDs controller node
+Date: Thu, 24 Sep 2026 12:06:06 +0300
+Message-ID: <20260924090608.28734-6-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260924090608.28734-1-clamor95@gmail.com>
 References: <20260924090608.28734-1-clamor95@gmail.com>
@@ -84,38 +84,62 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add node for Avago APDS9900 ambient light and proximity sensor used in
-this device.
+Add node for TI LM3559 LEDs controlled used with flash LEDs in this
+device.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi | 30 +++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
 diff --git a/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi b/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-index 5f3273a4dcf46..417cc1bf42ea3 100644
+index 417cc1bf42ea3..a59539f36a316 100644
 --- a/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
 +++ b/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-@@ -1142,6 +1142,19 @@ nfc@28 {
- 			firmware-gpios = <&gpio TEGRA_GPIO(R, 0) GPIO_ACTIVE_HIGH>;
+@@ -1277,6 +1277,7 @@ rear-camera@10 {
+ 			rotation = <90>;
+ 
+ 			nvmem = <&m24c08>;
++			flash-leds = <&lm3559_led0>, <&lm3559_led1>;
+ 			lens-focus = <&dw9714>;
+ 
+ 			assigned-clocks = <&tegra_car TEGRA30_CLK_VI_SENSOR>,
+@@ -1311,6 +1312,35 @@ m24c08: eeprom@50 {
+ 			vcc-supply = <&vio_1v8_rear>;
  		};
  
-+		light-sensor@39 {
-+			compatible = "avago,apds9900";
-+			reg = <0x39>;
++		led-controller@53 {
++			compatible = "ti,lm3559";
++			reg = <0x53>;
 +
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(K, 2) IRQ_TYPE_EDGE_RISING>;
++			enable-gpios = <&gpio TEGRA_GPIO(BB, 3) GPIO_ACTIVE_HIGH>;
++			vin-supply = <&vdd_3v3_vbat>;
 +
-+			vdd-supply = <&vdd_3v0_proxi>;
-+			vddio-supply = <&vdd_1v8_sen>;
++			flash-max-timeout-us = <1024000>;
++			ti,peak-current-microamp = <1400000>;
 +
-+			led-max-microamp = <100000>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			/* single flash led is on 2 lines */
++			lm3559_led0: led@0 {
++				reg = <0>;
++
++				flash-max-microamp = <393750>;
++				led-max-microamp = <140625>;
++			};
++
++			lm3559_led1: led@1 {
++				reg = <1>;
++
++				flash-max-microamp = <393750>;
++				led-max-microamp = <140625>;
++			};
 +		};
 +
- 		imu@68 {
- 			compatible = "invensense,mpu6050";
- 			reg = <0x68>;
+ 		camera-pmic@7d {
+ 			compatible = "ti,lp8720";
+ 			reg = <0x7d>;
 -- 
 2.53.0
 
