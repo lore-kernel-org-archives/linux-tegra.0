@@ -1,64 +1,64 @@
-Received: from mail-wr2-f31.google.com (mail-wr2-f31.google.com [74.125.225.95])
+Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D2F444708
-	for <linux-tegra@vger.kernel.org>; Thu, 24 Sep 2026 09:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E057B442FA0
+	for <linux-tegra@vger.kernel.org>; Thu, 24 Sep 2026 09:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790240805; cv=none; b=ZrO0ILAB6e7nWe1MJ8SJ1b+Kno6pud0E4STgpkzi0LMOTPMbJt2hxPQaKmKclCKRFjj5TXQ3RqLhO2Ph8S3mamT5rdxj2zkWpgjyWnVrWY1Pm4O2vewWel8BsZXSx/aKmjgZOcGdy6KnGTO+ZpzoB3+bcn0K5JiOwl+MMbmwH88=
+	t=1790240807; cv=none; b=mlIUb+86SpkxHJymSa7L3USz6bRI2m4niNOxfb+cpe/OxbxEuEbgHk6s0UCH/uGii0hmu63ZFbPvmIAZt1BNAm5aS5i+sBU6rQY6qh8tWcjNpkKq4eLEjM57gnOpaJxiTnP1aqfRHTc5bFiR9JHDNgOlZ+FEDXY4cQzhZoxQnhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790240805; c=relaxed/simple;
-	bh=4dRwls4R8/kpI+9XIG1uUVhIvaRqvFRURWdJz121/9Y=;
+	s=arc-20240116; t=1790240807; c=relaxed/simple;
+	bh=vmp+OQPaS2NHX0XYFG8L5R60OBL0I0xQunPfHTA/NMw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d8heSngwqFmgATBeRccQv+XZKQpr+LtBo9t8g2rH+RE1mUmI2s0NIoI4HwiW+2ug2tIjhwqFloz9402BaD1Wp7C9i6bcnCNmJZq4YQ7XAEWOMMWlbGoJ4WizUavgyB5ePJnLNF2jimuP3RFpwe21PfPpIrbuAaEAn0TPDa9Wy/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XAMmjRIw; arc=none smtp.client-ip=74.125.225.95
+	 MIME-Version; b=eAEHOzstfvKMH7NBd6imHhxhqIv8FfnJfvsvi8nsizphomWZ8NK6wpIOY3c0jiudisMXXBVuLg3ndopkjpZqfAjvecPGtrnGyCfZL4x0x4hkoY0XsS8AoCSYchh2dI+cq3rcQW6e1TSkEVDgt/yG/0RhH1sg7XKaj2Spa7bBRHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hVwlq/rs; arc=none smtp.client-ip=74.125.225.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XAMmjRIw"
-Received: by mail-wr2-f31.google.com with SMTP id ffacd0b85a97d-4843c2790ccso1180642f8f.1
-        for <linux-tegra@vger.kernel.org>; Thu, 24 Sep 2026 02:06:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hVwlq/rs"
+Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-4834977ae75so1282220f8f.3
+        for <linux-tegra@vger.kernel.org>; Thu, 24 Sep 2026 02:06:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790240801; x=1790845601; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1790240803; x=1790845603; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=1fteixIIwblHawz7BNGvMfhTpgCIGOR+rDxVKC84SHY=;
-        b=XAMmjRIwfNyOKl9N8ATL1UgRjLrG4GuxegFmvd31KlsWioczYxyAQskcYHoD0POjit
-         l9tMWAWP6Mpt8mX63ZX+fk89o0/PLzP7qZS/sGL3zEw6+0pBHyr0zjLCO9mIJd/xYbJH
-         9rlXRV82ESkqgGIU4uR/GqQpcn97fsZQtApvfySJPAlLg67yIFGy7rim/pP0/HpkIyGK
-         a7twxlPGJsw9r6f4KMEAQ21/WZ+k1AB5c9f0NyekGr5XhvoBWELbjGH1KiNl0RTCjw+b
-         L8/By9B5/hXmuuK1t9pq3mMWDSo1InGAgvG5X+6z4e+o2NiSCqXrTS95437fj8I5iXFY
-         upkg==
+        bh=zeTy3yB4AFQI47c9gqtmLbqmJYgDGxNm0dRNSD0HLKI=;
+        b=hVwlq/rsfAW0HgOH95+ab4PVdJaG4F8X9X5i8rmo5cKbh+RGcsqqKz7tHvc7fyP7cZ
+         N4dc03dgzy3h070h7wnlPs4rQGPV/LuSgAahG7nF0POH7bSHktBmACqd/8YqQjysPp+5
+         Kl/h0fkYQ360dcXlsFY4xOY3YH22SCKe8Ro2DrdsqisqyIQD+6/F5da6GjX1Ov9OADgv
+         TNlNmDcnhd6qeXBolh68s9IzQfkBeCGxuYFReaxa2iGyfAKK3Q/SngESbFY8x7Z7u9UU
+         1V9pY/o5+ZbjYzu48PlK1ltMuP5lrueaSGbdPP1RYSFs3Pdno1GJrGnxvj+giA4MaRUy
+         w1aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790240801; x=1790845601;
+        d=1e100.net; s=20260707; t=1790240803; x=1790845603;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=1fteixIIwblHawz7BNGvMfhTpgCIGOR+rDxVKC84SHY=;
-        b=EQQVCzm+tTQF3U1plLoGY//lfSdllvu5h3IU0pV/tHhGq9Bj2VbpWVn0zEFacNbq0/
-         VpIl1VEqTfGtptsManHWp3Ul4FYeg0TtWoH2gA8pBpiU7jUlmBkj0qCPd3r1lxafiaV4
-         B+pfBlXYGzplR3s66YUAQ5tPGxWLYsLhXfctqEU8nTU2uhpRwKntFdTmRUPU0qzvqe8Y
-         rBPiS6IXrwUMgSmKWob/zb0HoPeIc2HnVe8D/J7ogn6216RE87sGoSSB4TH01ZoaGRm5
-         grbLFtM24Ifu89ebU2bHIOQrzkT4IS8D+D8SdHaUrmRt2xPVYlCq5VacJIM9ZUF5ZRBt
-         QfOw==
-X-Forwarded-Encrypted: i=1; AKwUvBzGb78VjQjQu3GpAsnno9JvmPqy36WJcfiXxfl+X6ucRvtDlqi2n0L/oXasJ2TDrWnWbtMQWtIqpPMfEQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++lyRMa8qCoVogGOyxuWFEHZqkyZmeUWi/BC900wAe44NW+TOKs0
-	/Y3EI5+FOahmf7EIrtHFoy3V8p7g38Zvh5sGTHMh3TFahZisfORgIZLT
-X-Gm-Gg: AYBFou092f0e82zv/U+tSog5a2xIwxElEjSxl6P3lSzBghK3Tg04tuJS/+cE6Wouwg7
-	7k0QtM5BwhS//e/nwZ7YQC77Ye1tqir5iqw/UR+x++jgVmh+VEAsI6MGBxAPu5SXuMwsqmaHasy
-	gTfm+JJ0PuYDsc3eudye/QPhKTPSN7+LyF3cwawaQTgYYRH3ydViqtR/S0RbtumulvBMUhtfbtn
-	a/Gmc7ztIDMvw79ru2w92P3sTorYGwfc2N25wXVjDHw7tbqcgqLokfdad3Ed0t241g/RVWemuuc
-	LDRj2a7VYStYbEGpc/D2XzrLeiR5GWTpwLBMns8Qrtxnzn3ppShjX8oIigpkBuID/bMGZwRaBrv
-	yWEGD9n48eaXpVRVuKBVF2OOiNITeBNWT9t578FDPyqycP3O5PhpaQs+xyz5RucYtuXdJdCWFMn
-	vmMm5PdTxix2VTRtYszTXaqw0XHTixksU/b9p5pMZlQk7SYtyb9E5TrDJCxbnjQH1NP0cPsmzBq
-	b97oZvIkvkFLM0Zr6iSsJgn00cbPQ==
-X-Received: by 2002:a5d:64c7:0:b0:487:27f6:a4df with SMTP id ffacd0b85a97d-488716b8a05mr3203154f8f.47.1790240801226;
-        Thu, 24 Sep 2026 02:06:41 -0700 (PDT)
+        bh=zeTy3yB4AFQI47c9gqtmLbqmJYgDGxNm0dRNSD0HLKI=;
+        b=J6L/C40ybU4OrX+e7b5vQr1ZWgQVrPzcm55xq8HEYhXNmA/NrOgcclMh4IpdqFOsWd
+         DXaohCPuA5nc6M7vKXk3Sg7dciApY91T5nr4c0qJlk1cqZZghnyAwpVuLvIdW1qO9FxN
+         Rbr3KAPiOGmj4Y4vRJ0sz0Nw+WlRYIQINo0oYYl4uJXal/nuLOfm+Q1FEWqL3yQak08p
+         MuepCSz+nIhm5m+nY+fKKuVKYcgXppQbUPmJ2yWG1ss4j+tY86pPIfGTUuzxXqYlOIzr
+         DreEZcFaXRbE7TlJ8rx3gExdlR1rRjGFBoSHmQO0L8CT0jSLGTsH+mL8IfqUsjae2l6e
+         NJBg==
+X-Forwarded-Encrypted: i=1; AKwUvBzqHrp3jLKK5GBHLQapGSLeRk5vOsyZTtmv1G0i4JEwHgKsSb+AHGVohas8cK4UF+RYMdA5/cb8YC6/LQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++mtTOjFvNAXFFJyJH+ZvhysH2ZPR8S3nEAcTLGjs2/7nbHfM8yk
+	CsqWxQifuu6MNfRvlTIl8VkWA7lGTkQIC0McBbkISnwTm0wE9QnuBiZC
+X-Gm-Gg: AYBFou173dId7C2JcBiI1ltDhNz4s9xwsdDoUJ3jOohxpDCouD4NeC0+gvgLaWe4Pdb
+	ARVrD8a0L3IuLmdBg8tXUCSeBNmkjpsUcmTxYFjuyWBZkWVpIDV0Tj/dHiJHS840Of3px0BLxOt
+	5WO+FDR8QfsDtDqosMtbV7exVgRn0qbEWqwcqzaOD+0lFGOfQt80oQeQpxJeoPOU1OU869h4SSJ
+	z1z3tJiDRvUVlAzCQznf9uM7nMFPEk2xFcuJvegVve3XN8OF15NE1aDaxfvmikQl32dLxQxCGKL
+	2kfpVZ8hU9OxLRGi7yYXNI4Mgn0WZpEWKseIj/Dpj+AyAcnhfCl01MQkiXN6Tg0Q11Cwiz6Otp7
+	juUQU8KMyD7anDkXCdx/2VglIbiyaNwUznXyYKI6hQ8yovvP+4SnIxP00oliPtOKz0jFmfmwv5m
+	uOcMboHAMs5NU4Ti0OIAJhqDLlIJCs62fwVo8ltCwq9EDR8zBh5ztkamzAuc4jG60ddLVFqwlNc
+	fovL+s55mGVtGISgkg=
+X-Received: by 2002:a05:6000:230b:b0:487:ae2:4d01 with SMTP id ffacd0b85a97d-488716836ccmr3067286f8f.22.1790240802712;
+        Thu, 24 Sep 2026 02:06:42 -0700 (PDT)
 Received: from xeon ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4886877c379sm12875561f8f.29.2026.09.24.02.06.39
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4886877c379sm12875561f8f.29.2026.09.24.02.06.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Sep 2026 02:06:40 -0700 (PDT)
+        Thu, 24 Sep 2026 02:06:42 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -70,9 +70,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/7] ARM: tegra: lg-x3: Lower supported suspend mode
-Date: Thu, 24 Sep 2026 12:06:04 +0300
-Message-ID: <20260924090608.28734-4-clamor95@gmail.com>
+Subject: [PATCH v1 4/7] ARM: tegra: lg-x3: Add light sensor node
+Date: Thu, 24 Sep 2026 12:06:05 +0300
+Message-ID: <20260924090608.28734-5-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260924090608.28734-1-clamor95@gmail.com>
 References: <20260924090608.28734-1-clamor95@gmail.com>
@@ -84,27 +84,38 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-LG P880 and P895 are perfectly capable of supporting the lowest suspend
-mode currently available for Tegra devices which is LP1.
+Add node for Avago APDS9900 ambient light and proximity sensor used in
+this device.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
 diff --git a/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi b/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-index 5b4da6ee991ff..5f3273a4dcf46 100644
+index 5f3273a4dcf46..417cc1bf42ea3 100644
 --- a/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
 +++ b/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-@@ -1695,7 +1695,7 @@ bridge_output: endpoint {
- 	pmc@7000e400 {
- 		status = "okay";
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <2000>;
- 		nvidia,cpu-pwr-off-time = <200>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
+@@ -1142,6 +1142,19 @@ nfc@28 {
+ 			firmware-gpios = <&gpio TEGRA_GPIO(R, 0) GPIO_ACTIVE_HIGH>;
+ 		};
+ 
++		light-sensor@39 {
++			compatible = "avago,apds9900";
++			reg = <0x39>;
++
++			interrupt-parent = <&gpio>;
++			interrupts = <TEGRA_GPIO(K, 2) IRQ_TYPE_EDGE_RISING>;
++
++			vdd-supply = <&vdd_3v0_proxi>;
++			vddio-supply = <&vdd_1v8_sen>;
++
++			led-max-microamp = <100000>;
++		};
++
+ 		imu@68 {
+ 			compatible = "invensense,mpu6050";
+ 			reg = <0x68>;
 -- 
 2.53.0
 
