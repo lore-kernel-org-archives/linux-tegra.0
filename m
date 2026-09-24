@@ -1,225 +1,166 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22BA7411A04;
-	Thu, 24 Sep 2026 03:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F823DF019;
+	Thu, 24 Sep 2026 07:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790221819; cv=none; b=lLh7gzw7iX+deQiMmcSQKClFIBj5lQf5u6m9Y7w9iKwLP4grhk956sn4q3VMIEUc645RTUBSL7xQXergw1xP1bx95PMcayx0W0J3z9apY6ih2z7FYWD2JXQAle/hIxJKfKeXXz9f24uOpdcNi8LeV6MExHep/H2ONWpQpQNzjnQ=
+	t=1790233319; cv=none; b=nld9slEeM4mcDcsa1TGy6J6AQl7w2hWwPtosfcD4FOsOEp7tltMpupGYA1SsXTzcIfgSg0mnR1EW9n7PUoolr1fDF4lm/PufTgwGB6kktX0S5x3XVGvzV+H/Kk8RL6EcX5tBzzQAlDEEj3zRn1H9tB6NJJZhrwBM5kz6lTYOJcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790221819; c=relaxed/simple;
-	bh=EYDtgQh4UcsNtSysALP+BZSrwdnGwsWWo/9NQvy0WCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J9xr9i5jX4gYOdXDEVhFf3SPf7Q4oFF1LaPqNX6avA58PyDpR9jWANpdGrGJ5WnNP9DIiB7LLJjSTd5f6rdyguVrLcgPYRfl9SiI5mAGoJjLfr6MIzAfcfC/qOacep+4V9cthLWxyDiqqLXYfyfMh9Y+pBf5Rev3f5glkWJ1aXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LAoLIIDU; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790233319; c=relaxed/simple;
+	bh=21vHPs+cccmI0GIDrI9wBRtngdr4EBlpl0EvM5Z31P0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=fizDNc3pNoHXrAPDf0Kzv/ke+PFF16UeAjwB+6VZwWlGf7efM7kPL+WROqRzXc31wnwanfybbH4osmEPu5gxJg2MW18ez6Ex1ia1cnGjtXgbUE18PFMd/HwZIN4PAPQu+k4kNPkgzYxo9jKv0neeYYSPR1hSSAsM2vEkd2oRjb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VfDv7S7f; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAoLIIDU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 209201F00898;
-	Thu, 24 Sep 2026 03:50:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790221817;
-	bh=vL0tcDYJr3n2Q4j6if2QNfUOhtsuGg0RL0rCca8Bhnk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=LAoLIIDUnEmOBMkyDlO5bl4xr79XHe+LIjFG3J45nGFqVXb0VXQZeqVDMcM7XnvDv
-	 6+QchEdBrf0LA4iqvpnsOFjdzrLf69/UngP40z89FLxkH9cr1i97Jj5Kd1JpitopCy
-	 2OkyBLtfhP++3A0fK5OkyC4PLZ9S3REsklGRzWk0L73Shr5ygVR0CDVTGEZh79bNyk
-	 BoQNYixweWY4Aq4ntBTwhOizQsNGTHt4QE9M0vSt/zvkXrpJludha7iKr/3gO2KEgC
-	 DpTZSbW3wml9kQePNy/H7+Sd2PunY2lRVJrRSJtgodxzPhC4R5WmyYzataIJc2O00Q
-	 xvI+aViWdo4Gg==
-Date: Thu, 24 Sep 2026 04:50:10 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Srirangan Madhavan <smadhavan@nvidia.com>
-Cc: Alison Schofield <alison.schofield@intel.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso
- <dave@stgolabs.net>, Ira Weiny <ira.weiny@intel.com>, Vishal Verma
- <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Williamson
- <alex.williamson@redhat.com>, vsethi@nvidia.com, alwilliamson@nvidia.com,
- Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>, Vishal Aslot
- <vaslot@nvidia.com>, Manish Honap <mhonap@nvidia.com>, Jiandi An
- <jan@nvidia.com>, Richard Cheng <icheng@nvidia.com>,
- linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v13 13/15] cxl: Restore CXL state after PCI reset
-Message-ID: <20260924045010.3c1b299f@jic23-hlaptop>
-In-Reply-To: <20260922083924.2451158-14-smadhavan@nvidia.com>
-References: <20260922083924.2451158-1-smadhavan@nvidia.com>
-	<20260922083924.2451158-14-smadhavan@nvidia.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VfDv7S7f"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 2A3521A0FF5;
+	Thu, 24 Sep 2026 07:01:44 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id EA2AA5FB45;
+	Thu, 24 Sep 2026 07:01:43 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B2EEF103294A6;
+	Thu, 24 Sep 2026 09:01:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1790233298; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=3oGwBuyJVzkAjrauN/FxJTxwMCY3sLnXn9ixXjUrD2A=;
+	b=VfDv7S7faDApBOx+DPqMCyWHBKUPlODcB1xuNfsFjM3RNlzyRMcdJhIP0bigttbKx1o5jy
+	+B3mEF8B/s9ysd2wfnmGpCg4NZheR3VGvS94Ic0SKnLPviSK0O4PMC4viKTqfmdCj+9vMX
+	uaR7ncMHlkENvjrtg1sfppR2+2rB1w3yNHl15P3vTuCFyK7Bv7Ut1MV2dfvSol7696XXmK
+	vqgt//ttjMMGzJqmyWKqUW/+naiLm3TqTzPFnvGHAOfowEfbjOv664AYGg+P4m03YFGXZS
+	W/ZrKJoYs3u+wZqS+nmUIHWaVMRI8biPPQkNoSk2GzQUV+7Bbe8V7J315PgOJg==
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 24 Sep 2026 09:01:18 +0200
+Message-Id: <DLNCQEG62F5N.O98WAO4U2FJO@bootlin.com>
+Cc: "Andrzej Hajda" <andrzej.hajda@intel.com>, "Neil Armstrong"
+ <neil.armstrong@linaro.org>, "Robert Foss" <rfoss@kernel.org>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman"
+ <jonas@kwiboo.se>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Thomas Zimmermann"
+ <tzimmermann@suse.de>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
+ <simona@ffwll.ch>, "Jessica Zhang" <jesszhan0024@gmail.com>, "Laurentiu
+ Palcu" <laurentiu.palcu@oss.nxp.com>, "Lucas Stach"
+ <l.stach@pengutronix.de>, "Frank Li" <Frank.Li@nxp.com>, "Sascha Hauer"
+ <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
+ <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "Paul
+ Cercueil" <paul@crapouillou.net>, "Paul Kocialkowski" <paulk@sys-base.io>,
+ "Linus Walleij" <linusw@kernel.org>, "Inki Dae" <inki.dae@samsung.com>,
+ "Jagan Teki" <jagan@amarulasolutions.com>, "Marek Szyprowski"
+ <m.szyprowski@samsung.com>, "Sean Paul" <sean@poorly.run>, "Jonathan
+ Corbet" <corbet@lwn.net>, "Shuah Khan" <skhan@linuxfoundation.org>, "Randy
+ Dunlap" <rdunlap@infradead.org>, "Albert Esteve" <aesteve@redhat.com>,
+ "Anusha Srivatsa" <asrivats@redhat.com>, "Dmitry Baryshkov"
+ <dmitry.baryshkov@oss.qualcomm.com>, "Hui Pu" <Hui.Pu@gehealthcare.com>,
+ "Ian Ray" <ian.ray@gehealthcare.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <imx@lists.linux.dev>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-mips@vger.kernel.org>,
+ <linux-rockchip@lists.infradead.org>,
+ <linux-stm32@st-md-mailman.stormreply.com>, <asahi@lists.linux.dev>,
+ <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
+ <linux-tegra@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-samsung-soc@vger.kernel.org>
+To: "Maxime Ripard" <mripard@kernel.org>, "Luca Ceresoli"
+ <luca.ceresoli@bootlin.com>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v3 12/19] drm/mcde: dsi: don't create a panel_bridge
+X-Mailer: aerc 0.22.0
+References: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
+ <20260916-drm-bridge-every-panel-v3-12-83afb4f1a707@bootlin.com>
+ <arInho2bsfJiCgjV@houat>
+In-Reply-To: <arInho2bsfJiCgjV@houat>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, 22 Sep 2026 08:39:22 +0000
-Srirangan Madhavan <smadhavan@nvidia.com> wrote:
+Hi Linus, Maxime,
 
-> Restore the PCI configuration needed for HDM access, followed by cached
-> HDM decoder and CXL Device DVSEC state. Recommit a cleared locked decoder
-> before restoring its lock, but leave surviving locked state unchanged.
-> 
-> Stop at the first restoration failure and preserve a disabled PCI command
-> snapshot. Keep IOMMU exclusion active through restoration and post-reset
-> cache invalidation.
-> 
-> Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
+On Tue Sep 22, 2026 at 9:09 AM CEST, Maxime Ripard wrote:
+> On Wed, Sep 16, 2026 at 03:45:36PM +0200, Luca Ceresoli wrote:
+>> Now a panel_bridge is automatically created for every drm_panel and the
+>> panel-bridge API is just a deprecated wrapper to access it.
+>>
+>> Update and simplify the code by just getting a reference to the
+>> already-existing bridge using of_drm_find_and_get_bridge().
+>>
+>> Also keep the "connected to non-panel bridge (unsupported)\n" error logi=
+c
+>> by using the drm_bridge_is_panel() function.
+>>
+>> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-Hi Srirangan,
+[...]
 
-I'm out of time for today so main request it to take a look at that
-final function. It is running quite a complex statemachine with a bunch
-of ownership transfers. That's the sort of single function that takes
-too much energy to review. Please have a revisit and see if there
-is a simpler stepwise way to do that.
+>> @@ -1102,40 +1100,21 @@ static int mcde_dsi_bind(struct device *dev, str=
+uct device *master,
+>>
+>>  	/* Look for a panel as a child to this node */
+>>  	for_each_available_child_of_node_scoped(dev->of_node, child) {
+>> -		panel =3D of_drm_find_panel(child);
+>> -		if (IS_ERR(panel)) {
+>> -			dev_err(dev, "failed to find panel try bridge (%ld)\n",
+>> -				PTR_ERR(panel));
+>> -			panel =3D NULL;
+>> -
+>> -			bridge =3D of_drm_find_and_get_bridge(child);
+>> -			if (!bridge) {
+>> -				dev_err(dev, "failed to find bridge\n");
+>> -				return -EINVAL;
+>> -			}
+>> +		bridge =3D of_drm_find_and_get_bridge(child);
+>> +		if (!bridge) {
+>> +			dev_err(dev, "failed to find bridge\n");
+>> +			return -EINVAL;
+>>  		}
+>>
+>> -		if (panel || bridge)
+>> -			break;
+>> +		break;
+>>  	}
+>> -	if (panel) {
+>> -		bridge =3D drm_panel_bridge_add_typed(panel,
+>> -						    DRM_MODE_CONNECTOR_DSI);
+>> -		drm_panel_put(panel);
+>> -		if (IS_ERR(bridge)) {
+>> -			dev_err(dev, "error adding panel bridge\n");
+>> -			return PTR_ERR(bridge);
+>> -		}
+>> -		drm_bridge_get(bridge);
+>> -		dev_info(dev, "connected to panel\n");
+>> -		d->panel =3D panel;
+>> -	} else if (bridge) {
+>> +	if (!bridge) {
+>> +		dev_err(dev, "no bridge\n");
+>> +		return -ENODEV;
+>> +	} else if (!drm_bridge_is_panel(bridge)) {
+>>  		/* TODO: AV8100 HDMI encoder goes here for example */
+>>  		dev_info(dev, "connected to non-panel bridge (unsupported)\n");
+>>  		return -ENODEV;
+>
+> I wonder if we still need that branch. Every panel is a bridge now, and
+> it looks like we don't have any specific panel handling in this driver,
+> so I guess it supports bridges already?
+>
+> Linus, do you know why this condition was here in the first place?
 
-> @@ -726,6 +1064,18 @@ static int cxl_reset_disable_cache(struct pci_dev *pdev, int dvsec, u16 cap)
->  	return cxl_reset_wait_cache_wbi(pdev, dvsec);
->  }
->  
-> +static int cxl_reset_restore_cache_policy(struct pci_dev *pdev, int dvsec)
-> +{
-> +	int rc;
-> +
-> +	rc = cxl_reset_update_ctrl2_no_replay(pdev, dvsec, 0,
-> +					      PCI_DVSEC_CXL_DISABLE_CACHING);
-> +	if (rc)
-> +		pci_err(pdev, "failed to re-enable CXL caching: %d\n", rc);
-> +
-> +	return rc;
-> +}
-> +
->  static int cxl_reset_wait_done(struct pci_dev *pdev, int dvsec, u16 cap)
->  {
->  	unsigned long deadline;
-> @@ -767,28 +1117,41 @@ static int cxl_reset_wait_done(struct pci_dev *pdev, int dvsec, u16 cap)
->  	}
->  }
->  
-> -static int cxl_reset_execute(struct pci_dev *pdev, int dvsec, u16 cap,
-> -			     struct cxl_hdm_range_context *range_ctx)
-> +static int cxl_reset_execute(struct pci_dev *pdev, int dvsec, u16 cap)
->  {
-> +	struct cxl_hdm_info *snapshot = NULL;
-> +	struct cxl_hdm_range_context range_ctx;
-> +	u16 command;
->  	int rc, rc2;
->  
-> -	rc = cxl_reset_disable_cache(pdev, dvsec, cap);
-> +	down_write(&cxl_rwsem.region);
-> +	INIT_LIST_HEAD(&range_ctx.ranges);
-> +
-> +	rc = cxl_hdm_ranges_prepare(&range_ctx, pdev);
-> +	if (rc)
-> +		goto out_destroy_ranges;
-> +
-> +	rc = cxl_snapshot_hdm(pdev, &snapshot);
->  	if (rc)
->  		goto out_destroy_ranges;
->  
-> +	rc = cxl_reset_disable_cache(pdev, dvsec, cap);
-> +	if (rc)
-> +		goto out_destroy_enable_cache;
-> +
->  	if (!pci_wait_for_pending_transaction(pdev)) {
->  		pci_err(pdev, "timed out waiting for pending transactions\n");
->  		rc = -ETIMEDOUT;
-> -		goto out_destroy_ranges;
-> +		goto out_destroy_enable_cache;
->  	}
->  
->  	rc = pci_dev_reset_iommu_prepare(pdev);
->  	if (rc) {
->  		pci_err(pdev, "failed to stop IOMMU for CXL reset: %d\n", rc);
-> -		goto out_destroy_ranges;
-> +		goto out_destroy_enable_cache;
->  	}
->  
-> -	/* Clear Memory Clear again even if this command write reports failure. */
-> +	/* Clear Memory Clear below even if this command write reports failure. */
->  	rc = cxl_reset_update_ctrl2_no_replay(pdev, dvsec,
->  					      PCI_DVSEC_CXL_INIT_CXL_RST |
->  					      PCI_DVSEC_CXL_RST_MEM_CLR_EN, 0);
-> @@ -798,39 +1161,60 @@ static int cxl_reset_execute(struct pci_dev *pdev, int dvsec, u16 cap,
->  	rc = cxl_reset_wait_done(pdev, dvsec, cap);
->  
->  out_clear_memory:
-> -	rc2 = cxl_reset_update_ctrl2_no_replay(
-> -		pdev, dvsec, 0, PCI_DVSEC_CXL_RST_MEM_CLR_EN);
-> +	rc2 = cxl_reset_update_ctrl2_no_replay(pdev, dvsec, 0,
-> +					       PCI_DVSEC_CXL_RST_MEM_CLR_EN);
->  	if (rc2)
->  		pci_err(pdev, "failed to clear CXL Reset Memory Clear: %d\n",
-> -			rc2);
-> +			 rc2);
->  	rc = rc ?: rc2;
-> +	if (rc)
-> +		goto out_finish_ranges;
-> +
-> +	cxl_restore_pci_state_for_hdm_restore(pdev, &command);
-> +	rc = cxl_restore_state(pdev, snapshot);
->  
-> +out_finish_ranges:
->  	/* Evict lines fetched during reset before ending DMA exclusion. */
-> -	rc2 = cxl_hdm_ranges_finish(range_ctx);
-> +	rc2 = cxl_hdm_ranges_finish(&range_ctx);
->  	rc = rc ?: rc2;
-> +	if (rc)
-> +		goto out_fail_closed;
-> +
->  	pci_dev_reset_iommu_done(pdev);
-> -	goto out_enable_cache;
->  
-> -out_destroy_ranges:
-> -	cxl_hdm_range_context_destroy(range_ctx);
-> +	rc = cxl_reset_restore_cache_policy(pdev, dvsec);
-> +	if (rc) {
-> +		cxl_reset_save_disabled_state(pdev);
-> +		goto out_unlock;
-> +	}
->  
-> -out_enable_cache:
-> -	/*
-> -	 * DISABLE_CACHING was the first preparation step. Restore the original
-> -	 * cache policy last, after reset exclusion has ended.
-> -	 */
-> -	rc2 = cxl_reset_update_ctrl2_no_replay(
-> -		pdev, dvsec, 0, PCI_DVSEC_CXL_DISABLE_CACHING);
-> -	if (rc2)
-> -		pci_err(pdev, "failed to re-enable CXL caching: %d\n", rc2);
-> +	rc = cxl_reset_save_restored_state(pdev, command);
-> +	goto out_unlock;
-> +
-> +out_fail_closed:
-> +	cxl_reset_save_disabled_state(pdev);
-> +	pci_dev_reset_iommu_done(pdev);
-> +	rc2 = cxl_reset_restore_cache_policy(pdev, dvsec);
->  	rc = rc ?: rc2;
-> +	goto out_unlock;
-> +
-> +out_destroy_enable_cache:
-> +	cxl_hdm_range_context_destroy(&range_ctx);
-> +	rc2 = cxl_reset_restore_cache_policy(pdev, dvsec);
-> +	rc = rc ?: rc2;
-> +	goto out_unlock;
-> +
-> +out_destroy_ranges:
-> +	cxl_hdm_range_context_destroy(&range_ctx);
->  
-> +out_unlock:
-> +	kfree(snapshot);
-> +	up_write(&cxl_rwsem.region);
+I had the same thought while writing the patch, but I chose to be
+conservative.
 
-This is going to take some signficant unpicking but as
-it stands it is very complex to follow with releases quite
-often out of reverse order of setup and complex hand
-off from one function to another. Please take another look
-even if I don't get back to this with more specific comments.
+Linus, unless you have more info I'm going to apply the patch as
+is. Removing this special case would be welcome as a later patch.
 
+Luca
 
->  	return rc;
->  }
-
-
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
