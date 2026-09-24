@@ -1,141 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr2-f34.google.com (mail-wr2-f34.google.com [74.125.225.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B607440A0A;
-	Thu, 24 Sep 2026 08:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565A4340281
+	for <linux-tegra@vger.kernel.org>; Thu, 24 Sep 2026 09:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790240253; cv=none; b=FtGh/EX9IjAvnVieWwL9SftCA/McbhWRa4iN8sk3KBbortIzwiZ/ouwd+F/4/3ovzlVshfvLmYA1nGceXqNFUpk/deCW0FJ1pSMN0dFjcmqHCWYjrOma1e6HZRLENMghM3I+UHXKj75F3G0+XUAR59nvk27SOY2ajD3yWpM9S3M=
+	t=1790240801; cv=none; b=m0mpS5WPKYjy1pYMZVHWMjcuJ8i1TG0YaphY1NYw8h9kuIdIa6sJEPd+JJbYusFBSyolXwZPZ13WRDiAujSMcUQ3qcFaMEbWMvmDEzggkU8K7bUMgCr3niUtX29gPgLzymI35s2Cq24qi7HvVnJl5Omr61bo/+Fn9sqhDJqNnxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790240253; c=relaxed/simple;
-	bh=xsiuJQwIZ5xEk8gorL2gE4ZMImjXNE15Fspti5LUvPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tk34WMAHsFrRyDuqkbeD36b8lgmQFC7bEf1oj4Yzu503Cun+2j0TFuxdn7tsad1FSmoCVuC3sSOD1mdIEOYC77UkVMSlz5l2v3dbjHXE+gWTN1Jc4CePrvY+UysK+zEXfA6BrvdWE+dIverdSdx+88oHQWVZhowJePdr2kRRX1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y66Nn1F7; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790240801; c=relaxed/simple;
+	bh=nK28L6hxZ9KSJUY90j7KB9ZFcL/Tw1vP3St946F4sGI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VF3MWU6scENB1ql9RF1d3kLvuqR18/25fLT4I8NSUt47YoIKQM1DnaN6+hIWO1jewjwebOd41F+j2EkLOW374rhg3ysTLVskwKBgRqFj16TiKSLjRcOUegeohnzu7v2/ylo+A3SA6GY3l7hLu5wCnanzdtO7R1mMNRhKYrk9Mlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NCTeg91k; arc=none smtp.client-ip=74.125.225.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y66Nn1F7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AAFF1F00893;
-	Thu, 24 Sep 2026 08:57:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790240248;
-	bh=KsfA+7ZRfaMaOYHf9FLzqm+87QxZc0nf8pdVelteCEk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Y66Nn1F70+EOrXieRS0criFH3uxMANVUI7oanFcCoy8GmyXIy+pJT4bYVlm/thmPG
-	 N7qIdDiz1YmSsvWNdouFIMEZW4BAqVieOEmxdbjyjg8VeCwPdmNl98xvvOpohxm65Y
-	 GyNzGB6Z7BI3y56gBKntItSCJRjU51zGLLQXLvZnr16k3FQ6buDS49+J1C+07Q9T63
-	 n6nHxyci7fO61wmUlSLUGoMKJe5Tmzp5UMO6z0QysEePeglKrYmnlnSTGRtL4Xmc0R
-	 znGcbePU3j8NmjIOaR7E0m14ncuBzwafBVjkGLhSAzXI59gpYQZewywAESCZXVQDnZ
-	 5vqxv1raD/1Pw==
-Date: Thu, 24 Sep 2026 10:57:24 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jessica Zhang <jesszhan0024@gmail.com>, Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
-	Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>, 
-	Paul Kocialkowski <paulk@sys-base.io>, Inki Dae <inki.dae@samsung.com>, 
-	Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Sean Paul <sean@poorly.run>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Albert Esteve <aesteve@redhat.com>, Anusha Srivatsa <asrivats@redhat.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Hui Pu <Hui.Pu@gehealthcare.com>, 
-	Ian Ray <ian.ray@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com, asahi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v3 12/19] drm/mcde: dsi: don't create a panel_bridge
-Message-ID: <arTlpd-KAsVpj3UH@houat>
-References: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
- <20260916-drm-bridge-every-panel-v3-12-83afb4f1a707@bootlin.com>
- <arInho2bsfJiCgjV@houat>
- <DLNCQEG62F5N.O98WAO4U2FJO@bootlin.com>
- <CAD++jLkk-a0MrQUiaDD8OoDDoYVwBwSjFTj5ZBy=Xo7MS4+01g@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NCTeg91k"
+Received: by mail-wr2-f34.google.com with SMTP id ffacd0b85a97d-482f633cd78so1074078f8f.1
+        for <linux-tegra@vger.kernel.org>; Thu, 24 Sep 2026 02:06:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790240797; x=1790845597; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=d4sabqfhS2o2uZAuTQZWzjMte84cAzlbbU15QotmRlg=;
+        b=NCTeg91kgeO/6hhad3TJi0TyEnQP0uxcb+6OAKEHPKrddLSfUu163NCPx3H3SM2oZ/
+         ax0VTOP+qvH9/ZT8zc8Hgfm5oGjRoheNenMPFTTsKJKLhDktWKYxtl9mnniAhSDdjRXD
+         +zDm+Jg+cl+RuIBTl7YRK8R9srFdHIQ9IT+MUvHTiAwDeSJx+zOVkW+RYUYhiO5R32sA
+         F6cjfFrATQ4U+DXUicBx65GUFvcWeoADV3eJBg2n9T04aq4lNgQ1A8TRFfBy3HBVibxc
+         t67sa15+xCm2/8MVSMnMf3Ji+bk1dDBPsnfQGm1yah27KOtqtCmM0p/IUYmjqvbwKzwR
+         cKuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790240797; x=1790845597;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=d4sabqfhS2o2uZAuTQZWzjMte84cAzlbbU15QotmRlg=;
+        b=wbgJMNAGLERJBQdO1oIJwTJxiYtvV2zRURUEj0dp8MeIUlUioCKD/98xi6y9Pzrxgu
+         Wv0eN5e5LOC4EYI6DZBvsg00Hn4XS/6+/ih1libAnVNuvIq69JRPsxcVIpR43f8Vs+2/
+         XFenUxOZ4vC47anEAJTsviAh28GbmdNybSckRCKckCW/wVLQx2UcQpXuxR9mPkKx7ekO
+         D0G2TShuLtyo2NEsHD2W5vS8NmrBrmikRgAz2xl1UVZafCNaLE7QNKynRRagyGfmTJmp
+         bV7pBChHmcZnhvDzOWpMZVvEL5dKyjDuKrWqQQ9iOsDAGtzx3A28sVSwEufORTb/S8r9
+         ic0Q==
+X-Forwarded-Encrypted: i=1; AKwUvByG+ZVMr1ibzg01z+zm3j7EGDh/DIaIqChtJlqPPVq9NcnXPSe1YnQHxvFT1RjL1d0edIEJsr1V+9AkFg==@vger.kernel.org
+X-Gm-Message-State: AFuF++kNV0r612iySkrEvBNs4lQPsXN19Jjbyov+Qm2qRik+hbG46L2V
+	ZynAXH1OvnmPJ8ZYfUSRQU4At+i0h3mdRImVras+D4wwuQQArqwcq3mX
+X-Gm-Gg: AYBFou0YfQ4ey00fOLQ6Q+8n0dmRyOnh5nmIjtxCzhLGyANXlXJNj+3Xg9SV2w7k3g+
+	ZqFpMqFV7CCnhEVRaXPuFbsXqN+P+VyheDWoxsl3aYg2OlDD08paenlZUDc2x1z2f9qAMDSH8eo
+	tb/gn3kYRpK16AxuyTAj9OHgEH0LRTB9Jb+DPm00hIaP9uLVzYM/tpGWu//eN2e5Gil6b9ydlei
+	NnnhAZLnf4t4HrRUfKO0qMQLb8PTMJE2wZ9e/tU2f01ndK2O1Nf9XE3a9jJk1zi8Y8Eu7jTC5wT
+	t3r6aZDfLH/T989LbqgvfH0dRt5iSJoXYjGwg2+Z+X1kse7CGHQzWOfea/3f5YVkFfw8TEDjyqN
+	l8AEvhnDelaDXGAyTie8zTsZEWUGKORX6cOFfILEc5zDWnFKEhiERv9EqJXNJacHTLsmARQridO
+	nL7qjSYdj2iMlyx3t52Z/OZHE/ctvX/qrm43fI9JUsV9HEMUhvUUMVJ7Yz3CEvpKIq5+z6nGiPF
+	nyknDy8Ug1By9QYRb0=
+X-Received: by 2002:a05:6000:26c1:b0:487:342:d141 with SMTP id ffacd0b85a97d-48871679294mr3268587f8f.23.1790240796949;
+        Thu, 24 Sep 2026 02:06:36 -0700 (PDT)
+Received: from xeon ([188.163.112.76])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4886877c379sm12875561f8f.29.2026.09.24.02.06.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Sep 2026 02:06:36 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Ion Agorria <ion@agorria.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/7] ARM: tegra: lg-x3: Add newly supported devices and fixes
+Date: Thu, 24 Sep 2026 12:06:01 +0300
+Message-ID: <20260924090608.28734-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="fta6xv3zcvscpec2"
-Content-Disposition: inline
-In-Reply-To: <CAD++jLkk-a0MrQUiaDD8OoDDoYVwBwSjFTj5ZBy=Xo7MS4+01g@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
+Add nodes for recently supported device (ALS, LED controllers, haptics)
+along with minor tweaks and fixups.
 
---fta6xv3zcvscpec2
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 12/19] drm/mcde: dsi: don't create a panel_bridge
-MIME-Version: 1.0
+Svyatoslav Ryhel (7):
+  ARM: tegra: lg-x3: Adjust WiFi node
+  ARM: tegra: lg-x3: Remove pinctrl-* properties duplication
+  ARM: tegra: lg-x3: Lower supported suspend mode
+  ARM: tegra: lg-x3: Add light sensor node
+  ARM: tegra: lg-x3: Add flash LEDs controller node
+  ARM: tegra: lg-x3: Add haptic engine node
+  ARM: tegra: lg-x3: Add backlight LED controller node
 
-On Thu, Sep 24, 2026 at 09:51:53AM +0200, Linus Walleij wrote:
-> Hi Luca,
->=20
-> sorry for my slowness!
->=20
-> On Thu, Sep 24, 2026 at 9:01=E2=80=AFAM Luca Ceresoli <luca.ceresoli@boot=
-lin.com> wrote:
-> > On Tue Sep 22, 2026 at 9:09 AM CEST, Maxime Ripard wrote:
->=20
-> > >> -    } else if (bridge) {
-> > >> +    if (!bridge) {
-> > >> +            dev_err(dev, "no bridge\n");
-> > >> +            return -ENODEV;
-> > >> +    } else if (!drm_bridge_is_panel(bridge)) {
-> > >>              /* TODO: AV8100 HDMI encoder goes here for example */
-> > >>              dev_info(dev, "connected to non-panel bridge (unsupport=
-ed)\n");
-> > >>              return -ENODEV;
-> > >
-> > > I wonder if we still need that branch. Every panel is a bridge now, a=
-nd
-> > > it looks like we don't have any specific panel handling in this drive=
-r,
-> > > so I guess it supports bridges already?
-> > >
-> > > Linus, do you know why this condition was here in the first place?
-> >
-> > I had the same thought while writing the patch, but I chose to be
-> > conservative.
-> >
-> > Linus, unless you have more info I'm going to apply the patch as
-> > is. Removing this special case would be welcome as a later patch.
->=20
-> I'd say go ahead as-is.
+ arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts |   5 +-
+ arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts |   5 +-
+ arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi  | 106 ++++++++++++++++++-
+ 3 files changed, 108 insertions(+), 8 deletions(-)
 
-I'm fine with that, but I really want this removed at some point.
+-- 
+2.53.0
 
-> I do have the idea to code up and submit the AV8100 encoder
-> and I have the hardware to test it, but every other user should
-> be using panels directly, and I would be the only non-panel
-> user so I can deal with it when it comes up.
-
-It won't change a thing. All existing "panel" users will be bridge users
-after this patch is merged. So whether you want to enable a bridge or
-not shouldn't matter, the only thing that does is whether the existing
-users would still work.
-
-Maxime
-
---fta6xv3zcvscpec2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCarTl8wAKCRAnX84Zoj2+
-dhwWAXwI9qMs84ZRfc2g48IeAyQiE/CtbfMWnKHKCoJcY62gOn2KtPtJlfAUSVSt
-Fz2FzIoBf1P/bkrhzAS0uao6/CjJ0F2xh689BoYPK8a7rDMJeckpdh6Df4f795pW
-2kQWWS2bNQ==
-=k5VA
------END PGP SIGNATURE-----
-
---fta6xv3zcvscpec2--
