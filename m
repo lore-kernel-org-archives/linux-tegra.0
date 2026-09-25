@@ -1,54 +1,54 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357813CCFCC
-	for <linux-tegra@vger.kernel.org>; Fri, 25 Sep 2026 17:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740EC3DF019
+	for <linux-tegra@vger.kernel.org>; Fri, 25 Sep 2026 17:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790356407; cv=none; b=tNE1iIGUOeBd7a1mRxtfyh2FKB11ndKKKomR2wLzIV/zj5ne7Fhs/t/q5MVqPtAYQyWOCEVCUSiS1DUtc1d/QLXaHA4U0Lr/SxhqfZwVqX4NbaNk/BPHgre87r+VIuLFzhpc6h5+ptib3jdY6a+g4JNu+4/VdSTDjkdDvuLvuVY=
+	t=1790356700; cv=none; b=Ce8KQsCugJZs0DdIoE8RpKaecuzdwAOPHdvCcyrcEsc3OXpmDGRvIv21MUVfQxlOnh8aTGQ8UGacueR1k3BpHQizx1T7nDili2gFUuWBSo6Ga/D0IEZoiixzFm3ChUWPmR7xMT1QCeE/MXg++U5GxaZ3Nh/8Z8NwqHak46LM8Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790356407; c=relaxed/simple;
-	bh=384v7QNU8uMOwn752osb83Wsjox2PvAoX3x1D79y4yU=;
+	s=arc-20240116; t=1790356700; c=relaxed/simple;
+	bh=ckr26Yw3wApR+lSdfbW/93b4yjmA7Lo5mPynSlL6p4c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XAOYNcMTrKtusfbzT7EcvuBPap8Hab0ggcNGndRftOSqMeQyGHSWqzmz0wGzMfXA/KE9PxBi+QUyT52EyHfT0Wq4Nnn0Xtukrx9yrG+UdUbI95zpieDG2Fh/8SIJEq6bFBK7/V0UW+RDOWnnlfV2s82T6FPrJkqOQNwSScbEdRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fMNy01MX; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=jTk2RQQ8UHOU2rXOsE1MhwojbE/6c/6owj41xZlLuembIMedzsT76oN9f/fx+X6jA+b+btIsVRRVmj3KbZB9obNv8fHGx/BzjIMc2cf8QSW9P3RWY+YIKSQpqZ9kzf3aH/Vb4cEWrEGou1YEqeh3NfjsS88CyyyQmhdruOu07BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NG9G4QWb; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fMNy01MX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 067331F00899
-	for <linux-tegra@vger.kernel.org>; Fri, 25 Sep 2026 17:13:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NG9G4QWb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1A281F008A6
+	for <linux-tegra@vger.kernel.org>; Fri, 25 Sep 2026 17:18:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790356400;
-	bh=w6oFhP4d897O6hevgiojapWqh1TxSc/Rze+fEmEjBbw=;
+	s=k20260515; t=1790356681;
+	bh=Q+tqMDUbKQR8LyFFw6M+hDO4cRFA42XhLm/V//0Hxk4=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=fMNy01MXgn7yDOs0oUjw2jFUQpwSTt24yg6pry8fPPD9ZjG/DC4y+11g0emIcDJIi
-	 hBMCQ6qnUD2U60Sdxm/PYcEvWhFXPpcZbXoGvmsQn8x4ykjNye8a+ODobDiz/WS/9c
-	 vKKEIZ3WQdoyNoJk2MS8ZSvzlLFGP/2PJywiLoXM/E3dcMKwW84FGNHSjJEq+hBCgC
-	 oMiqUrtNDM/Os21ic2vpMuicGFwFzf2/adVvjqe6fKyBUefZzFfgsXtCWW6FrgcDvQ
-	 wbyqtcIN9stuVPfi9d1QymqYItr+2hbB761p4yeQGMB0KfbVIzznpHVcAQBV+hCrIa
-	 J+FiRHKbElF4Q==
-Received: by mail-lr2-f35.google.com with SMTP id 38308e7fff4ca-3a612404718so8992191fa.2
-        for <linux-tegra@vger.kernel.org>; Fri, 25 Sep 2026 10:13:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBypJ2DECPnoHYV84U1MBNvuGSYE74KP/s2/16znzTo8F7iKGEc2qzrV6XxsPWSqI++89gPiGx+qgzZjlA==@vger.kernel.org
-X-Gm-Message-State: AFuF++kN7jN0QtlVH7z1i88hVe/dLWsbZb42kFPPcSHjUkndEA8zZ7Ui
-	PAcyR04omcIB7davl5bghNF9m4VzRqJ00N2u7ncJUAGj+5Bgh+6WN56i5LHmuSI/EJkplsgpZvZ
-	LrJIDzlBuNkgpuu1NACjJWmuh1RQUO2M=
-X-Received: by 2002:a05:651c:2127:b0:3a3:5a01:a794 with SMTP id
- 38308e7fff4ca-3a63bf674d8mr15117381fa.1.1790356398423; Fri, 25 Sep 2026
- 10:13:18 -0700 (PDT)
+	b=NG9G4QWb7YfdbwEELALMeh8yvVPlh7jqMwk8nvEKPErDk/YkczwRfKVF5S8KOE0GO
+	 9UtMkBAxwUc2qu5TMa1OMqCgfgHhZQBf0ojJFxj/JqhZLgRrfOZz0fLW0qKGur4fie
+	 Zr99TqPld5dREWrUvVFHkHHz8FX4yZBFEe6DIFWV3ur9yPx3EeEbY+iPJIfPFbmmII
+	 YV8JgLcsCr/w8ksl6VlnI/Zxl9gsH3kHOqFVnbeYQmfEjfpa/7PqsPpl9Lyg9vwZ+p
+	 cLUx0VP5NxQRMdxPA5J9/rq/RyAVNBwwGCEyyTt3BTcAKLNtyvrKgEXfKrVsWws24/
+	 IaejLgTYDbQzA==
+Received: by mail-lr2-f24.google.com with SMTP id 38308e7fff4ca-3a64dff7acfso8883581fa.3
+        for <linux-tegra@vger.kernel.org>; Fri, 25 Sep 2026 10:18:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBw6iNAPImQr/4YgCRgF/FZL9vgCox3rXt1N4Mof4krxcJi2ef0vUcKkSXVKKM62Kb9Bo7wJa9CApPBluA==@vger.kernel.org
+X-Gm-Message-State: AFuF++k1oyNK//FPYEo6YOARSS1YUi+IcpAHk0vh9bUmhtdgmRIHhYIk
+	CtLOXzrL1Gg6/s3YA/IVFx7Vn9bRoFIyL0Jo44S0pDSxAn8HRp2yh1vXYyx7D5GrD6VXPvuO2Kv
+	f15jbLJ37ckwR+xol+K7rRVC6aKO1jbM=
+X-Received: by 2002:a05:651c:a205:20b0:3a3:74b9:8a7f with SMTP id
+ 38308e7fff4ca-3a649494426mr7927261fa.24.1790356680089; Fri, 25 Sep 2026
+ 10:18:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260907064725.10686-1-hemanth.selam@gmail.com> <20260907064725.10686-2-hemanth.selam@gmail.com>
-In-Reply-To: <20260907064725.10686-2-hemanth.selam@gmail.com>
+References: <20260907064725.10686-1-hemanth.selam@gmail.com> <20260907064725.10686-3-hemanth.selam@gmail.com>
+In-Reply-To: <20260907064725.10686-3-hemanth.selam@gmail.com>
 From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
-Date: Fri, 25 Sep 2026 19:11:41 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jXy6J9Lw929W5RNiz9AetGjAOu0GxdFrG7T1zF3Coe5A@mail.gmail.com>
-X-Gm-Features: AclHuK-gDqMuvMxuWX6tWnCQEQ9B7j9h5lfzr84tihm8zFD470uBDG-yTmqpy0Y
-Message-ID: <CAJZ5v0jXy6J9Lw929W5RNiz9AetGjAOu0GxdFrG7T1zF3Coe5A@mail.gmail.com>
-Subject: Re: [PATCH 1/5] driver core: fix typo "sucessfully" in comment
+Date: Fri, 25 Sep 2026 19:16:22 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0izZ8BvBDbfku5T0AuCYG3tJ1BsbtJ3ApaU+LqQVrQSiA@mail.gmail.com>
+X-Gm-Features: AclHuK_D9Ujhsp9E9IzjgDza-mJM-p_UUW53v5ggM2n-Qw6qQxtAAmsBKUtfAUM
+Message-ID: <CAJZ5v0izZ8BvBDbfku5T0AuCYG3tJ1BsbtJ3ApaU+LqQVrQSiA@mail.gmail.com>
+Subject: Re: [PATCH 2/5] thermal: fix typos in comments
 To: Hemanth Selam <hemanth.selam@gmail.com>
 Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
@@ -65,36 +65,151 @@ Content-Transfer-Encoding: quoted-printable
 On Mon, Sep 7, 2026 at 8:47=E2=80=AFAM Hemanth Selam <hemanth.selam@gmail.c=
 om> wrote:
 >
-> Correct "sucessfully" to "successfully", reported by scripts/checkpatch.p=
-l
-> using the misspelling list in scripts/spelling.txt.  Only touches comment=
-s,
-> no code changes.
+> Fix typos in comments, reported by scripts/checkpatch.pl using the
+> misspelling list in scripts/spelling.txt.  Only touches comments, no code
+> changes.
 >
 > Assisted-by: Cursor:claude-opus-5
 > Signed-off-by: Hemanth Selam <hemanth.selam@gmail.com>
 > ---
->  drivers/base/power/clock_ops.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/thermal/thermal_core.c              |  2 +-
+>  drivers/thermal/thermal_of.c                |  4 ++--
+>  drivers/thermal/ti-soc-thermal/ti-bandgap.c | 12 ++++++------
+>  include/uapi/linux/thermal.h                |  8 ++++----
+>  4 files changed, 13 insertions(+), 13 deletions(-)
 >
-> diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_op=
-s.c
-> index 59bb37e8244c..3b8ba27802a8 100644
-> --- a/drivers/base/power/clock_ops.c
-> +++ b/drivers/base/power/clock_ops.c
-> @@ -250,7 +250,7 @@ EXPORT_SYMBOL_GPL(pm_clk_add);
+> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_cor=
+e.c
+> index 82e2f0d8a26d..5db52de33398 100644
+> --- a/drivers/thermal/thermal_core.c
+> +++ b/drivers/thermal/thermal_core.c
+> @@ -1662,7 +1662,7 @@ EXPORT_SYMBOL_GPL(thermal_zone_device_unregister);
 >   *
->   * Add the clock to the list of clocks used for the power management of =
-@dev.
->   * The power-management code will take control of the clock reference, s=
-o
-> - * callers should not call clk_put() on @clk after this function sucessf=
-ully
-> + * callers should not call clk_put() on @clk after this function success=
-fully
->   * returned.
+>   * Return: On success returns a reference to an unique thermal zone with
+>   * matching name equals to @name, an ERR_PTR otherwise (-EINVAL for inva=
+lid
+> - * paramenters, -ENODEV for not found and -EEXIST for multiple matches).
+> + * parameters, -ENODEV for not found and -EEXIST for multiple matches).
 >   */
->  int pm_clk_add_clk(struct device *dev, struct clk *clk)
+>  struct thermal_zone_device *thermal_zone_get_zone_by_name(const char *na=
+me)
+>  {
+> diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
+> index 0217a49b08ae..f6566b5b916c 100644
+> --- a/drivers/thermal/thermal_of.c
+> +++ b/drivers/thermal/thermal_of.c
+> @@ -349,10 +349,10 @@ static bool thermal_of_should_bind(struct thermal_z=
+one_device *tz,
+>  }
+>
+>  /**
+> - * thermal_of_zone_unregister - Cleanup the specific allocated ressource=
+s
+> + * thermal_of_zone_unregister - Cleanup the specific allocated resources
+>   *
+>   * This function disables the thermal zone and frees the different
+> - * ressources allocated specific to the thermal OF.
+> + * resources allocated specific to the thermal OF.
+>   *
+>   * @tz: a pointer to the thermal zone structure
+>   */
+> diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.c b/drivers/therma=
+l/ti-soc-thermal/ti-bandgap.c
+> index ba43399d0b38..5c028d25a565 100644
+> --- a/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+> +++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+> @@ -332,7 +332,7 @@ static inline int ti_bandgap_validate(struct ti_bandg=
+ap *bgp, int id)
+>   * ti_bandgap_read_counter() - read the sensor counter
+>   * @bgp: pointer to bandgap instance
+>   * @id: sensor id
+> - * @interval: resulting update interval in miliseconds
+> + * @interval: resulting update interval in milliseconds
+>   */
+>  static void ti_bandgap_read_counter(struct ti_bandgap *bgp, int id,
+>                                     int *interval)
+> @@ -352,7 +352,7 @@ static void ti_bandgap_read_counter(struct ti_bandgap=
+ *bgp, int id,
+>   * ti_bandgap_read_counter_delay() - read the sensor counter delay
+>   * @bgp: pointer to bandgap instance
+>   * @id: sensor id
+> - * @interval: resulting update interval in miliseconds
+> + * @interval: resulting update interval in milliseconds
+>   */
+>  static void ti_bandgap_read_counter_delay(struct ti_bandgap *bgp, int id=
+,
+>                                           int *interval)
+> @@ -394,7 +394,7 @@ static void ti_bandgap_read_counter_delay(struct ti_b=
+andgap *bgp, int id,
+>   * ti_bandgap_read_update_interval() - read the sensor update interval
+>   * @bgp: pointer to bandgap instance
+>   * @id: sensor id
+> - * @interval: resulting update interval in miliseconds
+> + * @interval: resulting update interval in milliseconds
+>   *
+>   * Return: 0 on success or the proper error code
+>   */
+> @@ -427,7 +427,7 @@ int ti_bandgap_read_update_interval(struct ti_bandgap=
+ *bgp, int id,
+>   * ti_bandgap_write_counter_delay() - set the counter_delay
+>   * @bgp: pointer to bandgap instance
+>   * @id: sensor id
+> - * @interval: desired update interval in miliseconds
+> + * @interval: desired update interval in milliseconds
+>   *
+>   * Return: 0 on success or the proper error code
+>   */
+> @@ -471,7 +471,7 @@ static int ti_bandgap_write_counter_delay(struct ti_b=
+andgap *bgp, int id,
+>   * ti_bandgap_write_counter() - set the bandgap sensor counter
+>   * @bgp: pointer to bandgap instance
+>   * @id: sensor id
+> - * @interval: desired update interval in miliseconds
+> + * @interval: desired update interval in milliseconds
+>   */
+>  static void ti_bandgap_write_counter(struct ti_bandgap *bgp, int id,
+>                                      u32 interval)
+> @@ -486,7 +486,7 @@ static void ti_bandgap_write_counter(struct ti_bandga=
+p *bgp, int id,
+>   * ti_bandgap_write_update_interval() - set the update interval
+>   * @bgp: pointer to bandgap instance
+>   * @id: sensor id
+> - * @interval: desired update interval in miliseconds
+> + * @interval: desired update interval in milliseconds
+>   *
+>   * Return: 0 on success or the proper error code
+>   */
+> diff --git a/include/uapi/linux/thermal.h b/include/uapi/linux/thermal.h
+> index 46a2633d33aa..36f3da2d6a7c 100644
+> --- a/include/uapi/linux/thermal.h
+> +++ b/include/uapi/linux/thermal.h
+> @@ -81,11 +81,11 @@ enum thermal_genl_event {
+>         THERMAL_GENL_EVENT_CDEV_STATE_UPDATE,   /* Cdev state updated */
+>         THERMAL_GENL_EVENT_TZ_GOV_CHANGE,       /* Governor policy change=
+d  */
+>         THERMAL_GENL_EVENT_CPU_CAPABILITY_CHANGE,       /* CPU capability=
+ changed */
+> -       THERMAL_GENL_EVENT_THRESHOLD_ADD,       /* A thresold has been ad=
+ded */
+> -       THERMAL_GENL_EVENT_THRESHOLD_DELETE,    /* A thresold has been de=
+leted */
+> +       THERMAL_GENL_EVENT_THRESHOLD_ADD,       /* A threshold has been a=
+dded */
+> +       THERMAL_GENL_EVENT_THRESHOLD_DELETE,    /* A threshold has been d=
+eleted */
+>         THERMAL_GENL_EVENT_THRESHOLD_FLUSH,     /* All thresolds have bee=
+n deleted */
+> -       THERMAL_GENL_EVENT_THRESHOLD_UP,        /* A thresold has been cr=
+ossed the way up */
+> -       THERMAL_GENL_EVENT_THRESHOLD_DOWN,      /* A thresold has been cr=
+ossed the way down */
+> +       THERMAL_GENL_EVENT_THRESHOLD_UP,        /* A threshold has been c=
+rossed the way up */
+> +       THERMAL_GENL_EVENT_THRESHOLD_DOWN,      /* A threshold has been c=
+rossed the way down */
+>         __THERMAL_GENL_EVENT_MAX,
+>  };
+>  #define THERMAL_GENL_EVENT_MAX (__THERMAL_GENL_EVENT_MAX - 1)
 > --
 
 Applied as 7.4 material, thanks!
