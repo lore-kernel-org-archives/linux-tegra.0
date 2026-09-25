@@ -1,117 +1,140 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCDF4D7D35;
-	Fri, 25 Sep 2026 16:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913074E3784
+	for <linux-tegra@vger.kernel.org>; Fri, 25 Sep 2026 16:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790354021; cv=none; b=YH8RudjKRKgk0S/2fJ10XDbBSDDkBdO2jLG/AOlV28NZJmo4p5KZdovteGCNiS/S5+hoKA9XzOKREP1J4/haLrLffmlKWJVxKuCvFg1A+EgpSviP5rAVzfn8GBHwkc+OKpKjvhYa+9kR5F2sXjf8o+Geks4FzuXcXQKNpQALAOI=
+	t=1790354370; cv=none; b=bNV/K7MMDglRMsGY+n8IqhlF3hTdEasP7IREl+nVvkHZPUUpqw/9ryIj9W0YoZak7OPF+XbZQVxq2xzR/xNaFQjkclAFgeYy4yN8iFWCTaooBlEani7CgiMCWgWawxZrT2mwuf4lD1z6X/RmMgaQifRGci+4dvqiXn9sb2EB2tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790354021; c=relaxed/simple;
-	bh=foA8UbomajTa22DkRxj3005Wjy2ttgaDybzSQGdZd1s=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=fYOvZj3ZIcx1/ItlPLgVBzxEpDylA88Ospn3+AQcVD0RLD0ymNhNdiEg4reqgJo6O9rMv6mfcwpOgWelHYTcYJktMH/6Gp0Ypmf+obbYxB1BcTcDnpAAPlmEoComFdPliPvkEJVUZXJF9ACABroE2StqOHuvSdK35o/0jsQY3nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UVIlKBXc; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1790354370; c=relaxed/simple;
+	bh=VXvBcHnM4+6Ep/7SdRUR1l/yH/QrZzmxp8xss1L1aTM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sTFrkMmqemLwCi6NZWW81G0OiNX6opst9a1szJV99MOXcHPOoG7mispsCdOeBURI9w2rIHFYNjgKGQwusy5qywX2DRPBt3JS99UMS2xx4SNLjzUdAh9kqOSuKxx4M3zrtw1DfE4wTCGjzTRzG3/cKvopyLPDIL1L+2nXWqqq8lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XnBTjN/z; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UVIlKBXc"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 0C5E5C653F2;
-	Fri, 25 Sep 2026 16:34:24 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id EE3D46073B;
-	Fri, 25 Sep 2026 16:33:35 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A19C0102F1E2A;
-	Fri, 25 Sep 2026 18:33:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1790354012; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=foA8UbomajTa22DkRxj3005Wjy2ttgaDybzSQGdZd1s=;
-	b=UVIlKBXcttrLLrKy6BGsauS7t/MyVySVo242G5oaPV7ZhSacbtUL9/V/bjZW7WNZtfq1nR
-	+p0xFsBSa6zjnsGOeaC4k55ZqS4p+L8CxFJ1kj9MDub7xt9b3MNbX/WBAAq8ZeIMvJrNJN
-	SfRoXd/ROpQ7w178tshiDhesA0DA7g37XVn2x5dwzGwQywmZcqUx40vWCBnfSSsYwE+JWR
-	RXubplVcLtikf8ywNM5oq/ITzF96yQOLn6ut5IGpZZm8xsnwWbfhqacoN8hxaeuPcZ74XL
-	FwQynJsoxdHzXMb8CFGKszltbAs2WVNKelNcVq7xoiwSgsz1TAy9wZGUtAtoEQ==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XnBTjN/z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F9711F0089E
+	for <linux-tegra@vger.kernel.org>; Fri, 25 Sep 2026 16:39:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790354351;
+	bh=vkRCPkME5XSadj4AHmXSFOzDwTfbfBKlvl6TXo6HoyE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=XnBTjN/zQu9dwFIYGYkLdWvUer5UkJ9Gd9xVyftCkRhm+UYkuwGAtZB30hVT5A0Tx
+	 nY28P9oEzeoaIymoQoAeJnMcVqhhUBoCDK871Vid9WlobUZDEA5ytIUV+XBSidIaPO
+	 h173ny/1TgUyzj7B8C+oP7X3nScKNQiaiYqXZ8qkLJBWIAENyzVLwX0SlF2aoqw3/r
+	 CSb3F/WJ+MO9wFuKBc7F1CizUg3Ty8l3X8a9tJDwlTzP9fSqZZ/0GeobA1xNx9HCbz
+	 Uz5ZrJAM+rv0ypxTCxfAoN1rdX3DTFtxcuM3t4/6E+LffEDx+hDAdadpClDJxuqT8o
+	 SRCUnGaY9aC+g==
+Received: by mail-lr2-f12.google.com with SMTP id 38308e7fff4ca-3a2ff04155bso8434921fa.1
+        for <linux-tegra@vger.kernel.org>; Fri, 25 Sep 2026 09:39:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByuRzma8O8aIqN16SmeIsg049Xq7JDDVVp5nSWVGlLsdcsUNdglagxRgcItSWpfB04QwYyBpfJ7WuHB7A==@vger.kernel.org
+X-Gm-Message-State: AFuF++nW2yH1Jv8HoAqRfk+IRtBklKOZRFC1vBImjVaNLVkA/pZUWBZF
+	3TqjRo1JOS6eZ9xpLsmOYn3RC+6Ty/DrCkWJYb88vHCkBuUV0hI+pugjs1ycUC+ZuDU/mqGU0Wu
+	bb85FwF62TimESCoCkNO658Vnv5nfq7A=
+X-Received: by 2002:a2e:bc0d:0:b0:3a6:4c3d:976e with SMTP id
+ 38308e7fff4ca-3a64c3d98afmr7197051fa.18.1790354349866; Fri, 25 Sep 2026
+ 09:39:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20260807214837.863209-1-sumitg@nvidia.com>
+In-Reply-To: <20260807214837.863209-1-sumitg@nvidia.com>
+From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
+Date: Fri, 25 Sep 2026 18:37:32 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hhQCGmC8CGKdK_dZT6mUMZv29rgt=GbAp2aC06mH2x2Q@mail.gmail.com>
+X-Gm-Features: AclHuK8JgmU9wKlzoPxfpY5SooBBwN2lxAQ83ILHIy_wG82UGJTwLeYbKyosu6Q
+Message-ID: <CAJZ5v0hhQCGmC8CGKdK_dZT6mUMZv29rgt=GbAp2aC06mH2x2Q@mail.gmail.com>
+Subject: Re: [PATCH v7 0/3] ACPI / cpufreq: CPPC: Add ospm_nominal_perf support
+To: Sumit Gupta <sumitg@nvidia.com>, pierre.gondois@arm.com, zhanjie9@hisilicon.com, 
+	zhenglifeng1@huawei.com
+Cc: viresh.kumar@linaro.org, christian.loehle@arm.com, ionela.voinescu@arm.com, 
+	mario.limonciello@amd.com, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, 
+	vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, 
+	mochs@nvidia.com, bbasu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 25 Sep 2026 18:33:15 +0200
-Message-Id: <DLOJIV124RG7.27SOPEOHBTA7W@bootlin.com>
-Subject: Re: [PATCH v3 12/19] drm/mcde: dsi: don't create a panel_bridge
-Cc: "Luca Ceresoli" <luca.ceresoli@bootlin.com>, "Andrzej Hajda"
- <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
- <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
- "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Thomas Zimmermann"
- <tzimmermann@suse.de>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
- <simona@ffwll.ch>, "Jessica Zhang" <jesszhan0024@gmail.com>, "Laurentiu
- Palcu" <laurentiu.palcu@oss.nxp.com>, "Lucas Stach"
- <l.stach@pengutronix.de>, "Frank Li" <Frank.Li@nxp.com>, "Sascha Hauer"
- <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
- <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "Paul
- Cercueil" <paul@crapouillou.net>, "Paul Kocialkowski" <paulk@sys-base.io>,
- "Inki Dae" <inki.dae@samsung.com>, "Jagan Teki"
- <jagan@amarulasolutions.com>, "Marek Szyprowski"
- <m.szyprowski@samsung.com>, "Sean Paul" <sean@poorly.run>, "Jonathan
- Corbet" <corbet@lwn.net>, "Shuah Khan" <skhan@linuxfoundation.org>, "Randy
- Dunlap" <rdunlap@infradead.org>, "Albert Esteve" <aesteve@redhat.com>,
- "Anusha Srivatsa" <asrivats@redhat.com>, "Dmitry Baryshkov"
- <dmitry.baryshkov@oss.qualcomm.com>, "Hui Pu" <Hui.Pu@gehealthcare.com>,
- "Ian Ray" <ian.ray@gehealthcare.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
- <linux-kernel@vger.kernel.org>, <imx@lists.linux.dev>,
- <linux-arm-kernel@lists.infradead.org>, <linux-mips@vger.kernel.org>,
- <linux-rockchip@lists.infradead.org>,
- <linux-stm32@st-md-mailman.stormreply.com>, <asahi@lists.linux.dev>,
- <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
- <linux-tegra@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-samsung-soc@vger.kernel.org>
-To: "Linus Walleij" <linusw@kernel.org>, "Maxime Ripard"
- <mripard@kernel.org>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-X-Mailer: aerc 0.22.0
-References: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
- <20260916-drm-bridge-every-panel-v3-12-83afb4f1a707@bootlin.com>
- <arInho2bsfJiCgjV@houat> <DLNCQEG62F5N.O98WAO4U2FJO@bootlin.com>
- <CAD++jLkk-a0MrQUiaDD8OoDDoYVwBwSjFTj5ZBy=Xo7MS4+01g@mail.gmail.com>
- <arTlpd-KAsVpj3UH@houat>
- <CAD++jLmktDoqn2EbXsNnyGRudo-q2NCxUf+9ZjeU+WrY4CBMWw@mail.gmail.com>
-In-Reply-To: <CAD++jLmktDoqn2EbXsNnyGRudo-q2NCxUf+9ZjeU+WrY4CBMWw@mail.gmail.com>
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hello Linus,
-
-On Fri Sep 25, 2026 at 6:25 PM CEST, Linus Walleij wrote:
-> On Thu, Sep 24, 2026 at 10:57=E2=80=AFAM Maxime Ripard <mripard@kernel.or=
-g> wrote:
->> On Thu, Sep 24, 2026 at 09:51:53AM +0200, Linus Walleij wrote:
+On Fri, Aug 7, 2026 at 11:49=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com> wro=
+te:
 >
->> > > Linus, unless you have more info I'm going to apply the patch as
->> > > is. Removing this special case would be welcome as a later patch.
->> >
->> > I'd say go ahead as-is.
->>
->> I'm fine with that, but I really want this removed at some point.
+> This series adds support for the OSPM Nominal Performance register
+> (ACPI 6.6, Section 8.4.6.1.2.6) to the CPPC ACPI and cpufreq drivers.
 >
-> If Luca wanna fix this up (drop this path) that's fine by me,
-> else send a patch immediately after this is applied and I'll
-> ACK it.
+> Unlike the read-only Nominal Performance register, OSPM Nominal
+> Performance is writable and lets OSPM request a nominal level below
+> the platform-reported nominal. The platform treats performance above
+> this level as boost and below as throttle for its power and thermal
+> decisions.
+>
+>  - Patch 1: adds cppc_set_ospm_nominal_perf() and
+>    cppc_ospm_nominal_perf_supported().
+>
+>  - Patch 2: adds the per-policy ospm_nominal_freq attribute in kHz, and
+>    tracks the register in the OSPM-set save/restore table. The register
+>    cannot be read back, so the attribute is write-only.
+>
+>  - Patch 3: reflects the OSPM nominal in the cpufreq policy, so that
+>    boost and the frequency limits stay consistent with the register.
+>
+> This series applies on top of the following series, which provides the
+> save/restore table that patch 2 hooks into:
+>   cpufreq: CPPC: Preserve OSPM-set registers across hotplug and unload
+>   https://lore.kernel.org/lkml/20260806200857.601152-1-sumitg@nvidia.com/
+>
+> v6[6] -> v7:
+>  - Split patch 1 into an ACPI patch and a cpufreq patch.
+>  - Patch 1:
+>    - drop cppc_get_ospm_nominal_perf(), as the register is write-only.
+>    - add cppc_ospm_nominal_perf_supported(), sharing the setter's
+>      writable check via the new cpc_reg_writable() helper.
+>  - Patch 2:
+>    - make ospm_nominal_freq write-only, and track the requested value
+>      in software instead of reading the register back.
+>    - place the register before auto_sel in the save/restore table.
+>  - Patch 3:
+>    - rename *_reflect_nominal() to *_update_nominal_limits().
+>    - do not fail the sysfs write when cppc_cpufreq_update_nominal_limits(=
+)
+>      fails to update the QoS limit.
+>    - skip the limit update while boost is enabled.
+>    - make cppc_cpufreq_effective_nominal() take the value from the
+>      software-tracked state, so it returns it directly and cannot fail.
+>    - init() checks cppc_ospm_nominal_perf_supported() directly, instead
+>      of using cppc_cpufreq_effective_nominal().
+>
+> Sumit Gupta (3):
+>   ACPI: CPPC: Add ospm_nominal_perf support
+>   cpufreq: CPPC: Add ospm_nominal_freq attribute
+>   cpufreq: CPPC: Reflect the OSPM nominal in boost and limits
+>
+>  .../ABI/testing/sysfs-devices-system-cpu      |  24 ++++
+>  drivers/acpi/cppc_acpi.c                      |  48 ++++++-
+>  drivers/cpufreq/cppc_cpufreq.c                | 135 +++++++++++++++++-
+>  include/acpi/cppc_acpi.h                      |  10 ++
+>  4 files changed, 208 insertions(+), 9 deletions(-)
+>
+> v6: https://lore.kernel.org/lkml/20260717215330.2215058-1-sumitg@nvidia.c=
+om/
+> v5: https://lore.kernel.org/lkml/20260615185934.2383514-1-sumitg@nvidia.c=
+om/
+> v4: https://lore.kernel.org/lkml/20260527194626.185286-1-sumitg@nvidia.co=
+m/
+> v3: https://lore.kernel.org/lkml/20260514194822.1841748-1-sumitg@nvidia.c=
+om/
+> v2: https://lore.kernel.org/lkml/20260430142430.755437-1-sumitg@nvidia.co=
+m/
+> v1: https://lore.kernel.org/lkml/20260427051823.280419-1-sumitg@nvidia.co=
+m/
 
-To avoid postponing this series I plan to apply as is on Monday. I can send
-another patch later to remove the !panel case.
+Dear CPPC cpufreq driver reviewers, please let me know what you think.
 
-Thanks for the feedback!
+This is not going to go in without any comments from anyone, as far as
+I'm concerned.
 
-Luca
-
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks!
