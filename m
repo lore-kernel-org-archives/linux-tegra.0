@@ -1,102 +1,253 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DCA3BD635;
-	Thu, 24 Sep 2026 20:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F793BB685
+	for <linux-tegra@vger.kernel.org>; Fri, 25 Sep 2026 07:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790281553; cv=none; b=ieilhFQKv+6BnFdjqwL1+6Lzih+obLCCdhhB5b8lfCG56Lltq9+vVM6G+jGd0hhb7FK8Zhm2eSEldXEgWM1oCVrr1ne0GrMFYrDHcC0o1rebNCY2d/IMzgbD61WN6c6e+EPxLa6PyF2L5VUCnZk/o6tu16hHFhnNjYuCIK9bWY4=
+	t=1790320794; cv=none; b=RcedihkszmZTF4gA/UgBZ81KRkZku75sWBjV/Q7c5P8EjUnGUavobGrghAb702nX4/niefHLJa+zf507Ceh7IzL2Ta7HfxWzHbl2OWh+Mmr2s1mzvaBt1cqy2gRVFnqSGL3ldv9nOXGZI/NJ2daquJDWLyWXJ1WZFU5hgot/GwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790281553; c=relaxed/simple;
-	bh=gYK6ndsFHPVYHwKFga4puHoXE0sqDic9pm0N4BfZYNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JHT05ZcOQr6SB/43uM1X+dMOyKq5yhJVZKEAM6o8GH1qQaBB3iDGgxYWWm/ruus8f92kiXMS+Gc1b6tl9qdwzFbjnaYVtzV0ua+46Ld69o9O1Nm2v16mCKbzQsd3b1613+Ota4/4TsCHXlt4RXtcSe+USUsGzvREXesnp7ysRU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zv1AdEXk; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1790320794; c=relaxed/simple;
+	bh=Z3USjdlKI3EVMweaoe1SdyP2tejeJRK6vjJLDfi+7mM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YolnTynwTNJfqjvd7d2BvSCYeVFJ5CJpfK20UOEg+mac3F3oBNvIBJ7Ap0jpR1iq6o6yL8pShcmWbde9E4k5YagIqlIwjSdB+RZvbMTg3Tod5Igtrsf606z/GHLzfntb3km6aT+3iYjbhOKzO2lGJF37zm4RZ1azQWXfUZtK+Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Ep+P9Kdb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5Q3vXGM4; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zv1AdEXk"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1790281545; x=1821817545;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gYK6ndsFHPVYHwKFga4puHoXE0sqDic9pm0N4BfZYNk=;
-  b=Zv1AdEXkLafcUxVuL1XoXR3k1sLy44BFpzms5VMrhMP+sSu/MQlhjqQr
-   eokOGXUzwZ7lua9O8Ez5tLZ6I+jWXruvNxpK/RdTwXIJPKrpD0F9yfFeN
-   tudQNFZeAI0LwhDAzzvURZvqPqteGS6bEgVw9l10LO1Fmpt5zl0jBhuDn
-   eP6e4V+LzFCwdgOu8p+jAqtOPPsMQtc0hAvq75PFP0xi01hObCPyJ7mtx
-   /nuSx+pmToDBmoJwHGfxrAH5TG26L5IWnEe7CsyYKKS+VxqFarsOWdxc8
-   D8pecDIhHBwUP0WkB/d6ObYMgAJ3lq6evPKd/gZBv10yCMVaO8LE1XW00
-   w==;
-X-CSE-ConnectionGUID: rK7y5XBRQgOOWBliy43UQA==
-X-CSE-MsgGUID: 67N7FgUtQSifWZbEa88hRA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11915"; a="89977133"
-X-IronPort-AV: E=Sophos;i="6.27,121,1787036400"; 
-   d="scan'208";a="89977133"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2026 13:25:40 -0700
-X-CSE-ConnectionGUID: Yg+Sv6gGRDqo9Oi07q8ixA==
-X-CSE-MsgGUID: Omt4/15OTcWXQrw3pYJv6A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,121,1787036400"; 
-   d="scan'208";a="274236211"
-Received: from abityuts-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.199])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2026 13:25:37 -0700
-Date: Thu, 24 Sep 2026 23:25:34 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Frank Li <Frank.Li@kernel.org>, Vidya Sagar <vidyas@nvidia.com>,
-	Niklas Cassel <cassel@kernel.org>, Koichiro Den <den@valinux.co.jp>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/11] PCI: tegra194: Check core reset deassertion
-Message-ID: <arWHPtdCfbmnMKxT@ashevche-desk.local>
-References: <20260923072237.1139013-1-mmaddireddy@nvidia.com>
- <20260923072237.1139013-3-mmaddireddy@nvidia.com>
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Ep+P9Kdb";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5Q3vXGM4"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2672A1FE05;
+	Fri, 25 Sep 2026 07:19:38 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1790320778; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NrwHL2kcG+Vt4W3ByUonzTmcHea4Q9dyMEh/DeXT5Ok=;
+	b=Ep+P9KdbBV1MwfAV+EVSM+XHvYokB1fuYKtSyEidHOytqSEzdwm6aTml+p9gEr4r4a8xgE
+	CWQTaAZPKjR+iG7HSqL8t7F4UWkhIwgOknXtL54U/fehBA7O7Belzn232Cm3TIcVJFRYEh
+	HXNMxQpoiBAg0fkiqtyDBmFrQWOa+rY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1790320778;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NrwHL2kcG+Vt4W3ByUonzTmcHea4Q9dyMEh/DeXT5Ok=;
+	b=5Q3vXGM4I9spI5/CLeote8OUvbbBwR85Xj6u8e8lEn2II6Wy/Pvux2V8/0MdxZFYtXUSKy
+	X4UUiWha6U180JDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 53135138A7;
+	Fri, 25 Sep 2026 07:19:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5u4JJoggtmpbBQAAD6G6ig:T2
+	(envelope-from <tzimmermann@suse.de>); Fri, 25 Sep 2026 07:19:37 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: jfalempe@redhat.com,
+	javierm@redhat.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	jani.nikula@linux.intel.com,
+	Alexander.Deucher@amd.com
+Cc: dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-rockchip@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	sashiko-reviews@lists.linux.dev,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH v3 1/2] drm/fbdev: Move fbdev module parameters next to module init
+Date: Fri, 25 Sep 2026 09:17:49 +0200
+Message-ID: <20260925071933.44283-2-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260925071933.44283-1-tzimmermann@suse.de>
+References: <20260925071933.44283-1-tzimmermann@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260923072237.1139013-3-mmaddireddy@nvidia.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 2672A1FE05
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Spam-Level: 
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
 
-On Wed, Sep 23, 2026 at 12:52:28PM +0530, Manikanta Maddireddy wrote:
-> Several paths access DBI registers after deasserting the controller core
-> reset. If reset_control_deassert() fails, those DBI accesses can trigger a
-> CBB timeout, or setup can return success with the core still in reset.
-> 
-> Check core reset deassertion in Root Port setup, the DLF retry path and the
-> Endpoint PERST# deassert path. Unwind before DBI access when deassertion
-> fails.
+Define the parameters for fbdev emulation in the source file with the
+module-initialization and exit code of drm_kms_helper.ko. The parameters
+control some aspects of DRM's fbdev emulation. Common usage looks like
 
-...
+  drm_kms_helper.drm_fbdev_overalloc=200
 
-> +		ret = reset_control_deassert(pcie->core_rst);
-> +		if (ret) {
-> +			dev_err(pci->dev, "Failed to deassert core reset: %d\n",
-> +				ret);
+on the kernel's command line. This has been possible for many years
+and changing it would likely upset users.
 
-We have pci_err().
+The emulation code is supposed to be moved into the module for DRM
+clients. Keeping the parameters in drm_kms_helper.ko avoids breaking
+systems the use them in the way described above.
 
-> +			return ret;
-> +		}
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+---
+ drivers/gpu/drm/drm_crtc_helper_internal.h |  9 +++++
+ drivers/gpu/drm/drm_fb_helper.c            | 32 +-----------------
+ drivers/gpu/drm/drm_kms_helper_common.c    | 39 ++++++++++++++++++++++
+ 3 files changed, 49 insertions(+), 31 deletions(-)
 
+diff --git a/drivers/gpu/drm/drm_crtc_helper_internal.h b/drivers/gpu/drm/drm_crtc_helper_internal.h
+index bae73936acf9..adcc9a2e24ee 100644
+--- a/drivers/gpu/drm/drm_crtc_helper_internal.h
++++ b/drivers/gpu/drm/drm_crtc_helper_internal.h
+@@ -29,6 +29,8 @@
+ #ifndef __DRM_CRTC_HELPER_INTERNAL_H__
+ #define __DRM_CRTC_HELPER_INTERNAL_H__
+ 
++#include <linux/types.h>
++
+ enum drm_mode_status;
+ struct drm_connector;
+ struct drm_crtc;
+@@ -36,6 +38,13 @@ struct drm_display_mode;
+ struct drm_encoder;
+ struct drm_modeset_acquire_ctx;
+ 
++/* drm_kms_helper_common.c */
++#if IS_ENABLED(CONFIG_DRM_FBDEV_EMULATION)
++extern bool drm_fbdev_emulation;
++extern int drm_fbdev_overalloc;
++extern bool drm_leak_fbdev_smem;
++#endif
++
+ /* drm_probe_helper.c */
+ enum drm_mode_status drm_crtc_mode_valid(struct drm_crtc *crtc,
+ 					 const struct drm_display_mode *mode);
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index d4664ed468b2..76195410db60 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -43,39 +43,9 @@
+ #include <drm/drm_vblank.h>
+ 
+ #include "drm_internal.h"
++#include "drm_crtc_helper_internal.h"
+ #include "drm_crtc_internal.h"
+ 
+-static bool drm_fbdev_emulation = true;
+-module_param_named(fbdev_emulation, drm_fbdev_emulation, bool, 0600);
+-MODULE_PARM_DESC(fbdev_emulation,
+-		 "Enable legacy fbdev emulation [default=true]");
+-
+-static int drm_fbdev_overalloc = CONFIG_DRM_FBDEV_OVERALLOC;
+-module_param(drm_fbdev_overalloc, int, 0444);
+-MODULE_PARM_DESC(drm_fbdev_overalloc,
+-		 "Overallocation of the fbdev buffer (%) [default="
+-		 __MODULE_STRING(CONFIG_DRM_FBDEV_OVERALLOC) "]");
+-
+-/*
+- * In order to keep user-space compatibility, we want in certain use-cases
+- * to keep leaking the fbdev physical address to the user-space program
+- * handling the fbdev buffer.
+- *
+- * This is a bad habit, essentially kept to support closed-source OpenGL
+- * drivers that should really be moved into open-source upstream projects
+- * instead of using legacy physical addresses in user space to communicate
+- * with other out-of-tree kernel modules.
+- *
+- * This module_param *should* be removed as soon as possible and be
+- * considered as a broken and legacy behaviour from a modern fbdev device.
+- */
+-static bool drm_leak_fbdev_smem;
+-#if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
+-module_param_unsafe(drm_leak_fbdev_smem, bool, 0600);
+-MODULE_PARM_DESC(drm_leak_fbdev_smem,
+-		 "Allow unsafe leaking fbdev physical smem address [default=false]");
+-#endif
+-
+ /**
+  * DOC: fbdev helpers
+  *
+diff --git a/drivers/gpu/drm/drm_kms_helper_common.c b/drivers/gpu/drm/drm_kms_helper_common.c
+index b5d5b469b444..1e55ecac4698 100644
+--- a/drivers/gpu/drm/drm_kms_helper_common.c
++++ b/drivers/gpu/drm/drm_kms_helper_common.c
+@@ -25,10 +25,49 @@
+  *
+  */
+ 
++#include <linux/export.h>
+ #include <linux/module.h>
++#include <linux/moduleparam.h>
+ 
++#include "drm_crtc_helper_internal.h"
+ #include "drm_panic_internal.h"
+ 
++#if IS_ENABLED(CONFIG_DRM_FBDEV_EMULATION)
++bool drm_fbdev_emulation = true;
++EXPORT_SYMBOL(drm_fbdev_emulation);
++module_param_named(fbdev_emulation, drm_fbdev_emulation, bool, 0600);
++MODULE_PARM_DESC(fbdev_emulation, "Enable legacy fbdev emulation [default=true]");
++
++int drm_fbdev_overalloc = CONFIG_DRM_FBDEV_OVERALLOC;
++EXPORT_SYMBOL(drm_fbdev_overalloc);
++module_param(drm_fbdev_overalloc, int, 0444);
++MODULE_PARM_DESC(drm_fbdev_overalloc,
++		 "Overallocation of the fbdev buffer (%) [default="
++		 __MODULE_STRING(CONFIG_DRM_FBDEV_OVERALLOC) "]");
++
++/*
++ * In order to keep user-space compatibility, we want in certain use-cases
++ * to keep leaking the fbdev physical address to the user-space program
++ * handling the fbdev buffer.
++ *
++ * This is a bad habit, essentially kept to support closed-source OpenGL
++ * drivers that should really be moved into open-source upstream projects
++ * instead of using legacy physical addresses in user space to communicate
++ * with other out-of-tree kernel modules.
++ *
++ * This module_param *should* be removed as soon as possible and be
++ * considered as a broken and legacy behaviour from a modern fbdev device.
++ */
++bool drm_leak_fbdev_smem;
++EXPORT_SYMBOL(drm_leak_fbdev_smem);
++#if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
++module_param_unsafe(drm_leak_fbdev_smem, bool, 0600);
++MODULE_PARM_DESC(drm_leak_fbdev_smem,
++		 "Allow unsafe leaking fbdev physical smem address [default=false]");
++#endif
++
++#endif
++
+ static int __init drm_kms_helper_init(void)
+ {
+ 	return drm_panic_helper_init();
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.55.0
 
