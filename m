@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7995A49C4C1;
-	Fri, 25 Sep 2026 13:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AB847F2ED;
+	Fri, 25 Sep 2026 13:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790342857; cv=none; b=t92fFOTeQFpd7xqqXBuEyFnxkjFFbiI6j+ThioMRuuPGiM6QNq9KJgRPEZ+wbfowPRcp4l4RFJRGhZZeiJYsuO/vGhCPZ4ur0O745Ncnw922JzG7ciESiQsjmNwx7yBJr81v9Cvi/TnWelpePYJ7edM5gCW/WmZob6sM86DwuG8=
+	t=1790342909; cv=none; b=SeH6k6NGb/G6W5z6cMr+VB29SRNC5u78sf0l/y3uhcB6IMGYDhcbK0RfhwZwfOietuHwxzN2rRHKrevBltJ6V48qoWRjoUw43GL/R5gZBMdVBBLPVarlIVOHLFom72KVMQLBwjjnfr/RW71B2n2PtvwxgcnbLhCENSxjgXzjF4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790342857; c=relaxed/simple;
-	bh=xH4CgvJ6S1TBcJ26MTtAcAZImdtR8Xh7/8reiWfwipE=;
+	s=arc-20240116; t=1790342909; c=relaxed/simple;
+	bh=OllZMIxXnvomEfjURimDAuoRIrFYtlNR8euMU7Jxark=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kcmrNhgCzXB3S7mdXXHRHnyZjqzrNwa514OXMK254IQd5SwBGDxUPEDKEC8o5nom40LD0jHcLR7MODESww1GUvxB9U7ebEQCH/kb3TiTnjogntOwg9fx1mewzN1gYbOzzed7xdaGR+5o4OlCNR96VF9SW9z7SlcqXc4iYG1BRiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wdd4qQzI; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=g4XJtinA+x41wQexVxGA/YZ4Xh0QHAT3we2NhOcNGOddAbfzgobSwFy38BFjkUziblCU/N3pzoDvPKez/pKHzVeOE6S54pjZ4BsHHeM2CK/dQG7FW5HeGYit7UgKh4PPdVeIKS281rzYZZG4/Z6hPzWgyN55l920L5hI8dF+gSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cnLTbuh2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wdd4qQzI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05CDA1F000FF;
-	Fri, 25 Sep 2026 13:27:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cnLTbuh2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B3281F00898;
+	Fri, 25 Sep 2026 13:28:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790342841;
-	bh=iOL2dsI0QKWCvEAu87sQ8NsOgSXgKA4g7aR9kmxjAfQ=;
+	s=k20260515; t=1790342907;
+	bh=igRZSuKdWRa6SLEpVIqru5r9A4TGRbofsMfOGQQjYz0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Wdd4qQzILq9UhCHkIa8mmY3gY4ea90zw+vpnpeRIsvpMv6kYgZlYCZDveJigqRJ1c
-	 wsRzZgTWWZ7GDlVdR0xS4hHT+BohT/zI9/d4eDkMjX92ceaOHS48grbRONzt5pXGhm
-	 13niQrixGQifrhb/YIiSWxnoYQWWz4R5T6LrAyeuleMWKmXRG2bcWSXgMDMH+YjNIQ
-	 1Pnd20ADIIOPOzYw7ZZJSon/QDzQUcr479HGf0kc67TlU2vjGUUbw/izBFIfEv990F
-	 6axTaBO+OsGNzq576Z6DjQKUCu71Ay4FQD7hHzLtOzvZ7Sn7WQ5jcm0LVVQWUOM/WR
-	 8jYLviH2EIYOw==
-Date: Fri, 25 Sep 2026 15:27:17 +0200
+	b=cnLTbuh2c/dXzpAr6JtRYJMJFfO72Rtbtrn7JNwEVAwxDNACeIIQWGkETtVeL8nP5
+	 ZQ89mA02T2ACS9yDUuSRNZ+xInQ0xppRoUC5hJjOFa9Ikh5S9abZP128SfunsTeYBJ
+	 cGKe4zq2XqYStAXZAMxDCbatwLCQHZ7F0pzQIoEQ/W75+NYHOONWHpuhK+kUTXcIt3
+	 ZG52SDvohl7shCQmY2a3VH3ips1ZbqvIebOrhYpoIKFXV+NnLVNxnbiC12fSc3Pdwl
+	 Eujg8uFeMhCdQ8lzdqJ4eq1i0hsVPfktja+ib2n7LazuK2svrMpvgGPFFPHEXPowxP
+	 Xr5kgewcosIPA==
+Date: Fri, 25 Sep 2026 15:28:23 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Jon Hunter <jonathanh@nvidia.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -36,11 +36,11 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Mathias Nyman <mathias.nyman@intel.com>, Thierry Reding <thierry.reding@gmail.com>, 
 	linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
 	Thierry Reding <treding@nvidia.com>, Wayne Chang <waynec@nvidia.com>
-Subject: Re: [PATCH 1/9] dt-bindings: usb: Add Tegra238 XUSB host controller
+Subject: Re: [PATCH 2/9] dt-bindings: usb: tegra-xudc: Add Tegra238 XUDC
  support
-Message-ID: <20260925-alligator-of-authentic-economy-f631fd@quoll>
+Message-ID: <20260925-obedient-proficient-nyala-31f81b@quoll>
 References: <20260921-tegra-usb-v1-0-74a925a35d82@nvidia.com>
- <20260921-tegra-usb-v1-1-74a925a35d82@nvidia.com>
+ <20260921-tegra-usb-v1-2-74a925a35d82@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -49,48 +49,23 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260921-tegra-usb-v1-1-74a925a35d82@nvidia.com>
+In-Reply-To: <20260921-tegra-usb-v1-2-74a925a35d82@nvidia.com>
 
-On Mon, Sep 21, 2026 at 01:19:01PM +0100, Jon Hunter wrote:
-> Add a compatible string for the Tegra238 XUSB host controller. The
-> Tegra238 XUSB host controller is similar to that found on the Tegra234
-> device but only supports 3 PHYs compared to the 4 PHYs on the Tegra234.
-> Hence, the binding is also updated to limit the number of PHYs that can
-> be specified for the Tegra238 device.
+On Mon, Sep 21, 2026 at 01:19:02PM +0100, Jon Hunter wrote:
+> Add a compatible string for the Tegra238 XUDC device. The Tegra238 XUDC
+> is similar to that found on the Tegra234 device but only support 3 PHYs
+> compared to the 4 PHYs on the Tegra234. The XUDC binding only defines
+> which of the available PHYs is used by the XUDC controller and the Tegra
+> XUSB pad controller binding [0] defines the PHYs that are available.
+> 
+> [0] Documentation/devicetree/bindings/phy/nvidia,tegra194-xusb-padctl.yaml
 > 
 > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
->  .../bindings/usb/nvidia,tegra234-xusb.yaml           | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
-> index 3f56110be915..9d605db7e77f 100644
-> --- a/Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
-> +++ b/Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
-> @@ -19,6 +19,7 @@ properties:
->    compatible:
->      enum:
->        - nvidia,tegra234-xusb
-> +      - nvidia,tegra238-xusb
->        - nvidia,tegra264-xusb
->  
->    reg:
-> @@ -154,6 +155,25 @@ properties:
->  
->  allOf:
->    - $ref: usb-xhci.yaml
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: nvidia,tegra238-xusb
-> +    then:
-> +      properties:
-> +        phys:
+>  Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
 
-minItems: to be explicit. I would expect minItems: 6, but your phy-names
-is flexible, so probably wording in your commit msg should be "*up to* 3
-PHYs compared to the...."
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
