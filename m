@@ -1,97 +1,95 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D403413791
-	for <linux-tegra@vger.kernel.org>; Fri, 25 Sep 2026 17:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501844D5984;
+	Fri, 25 Sep 2026 18:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790356904; cv=none; b=AlLx+8ekrYGo8m0tcEVHjAI5kWYcbQGUwGpAz2B/FrlTZmG8MphgMF+TVqsOQ59fc+Gs/DI4tZyHNZcHlbT3kDB8l5Z6pmsgAdvCh5VFyJSzJP63pCmXaKj9JHYdJpwE/5dTDDdvDpKfomXUiM+sQeJEZJorEY1YlqE3vig40aM=
+	t=1790360810; cv=none; b=IDEWBA3KKvsoHKcRerzHopk6XYLTSoUkwM+1nQMV4BR9bXgJZmz8/D9ShORtQOLOVGnWWsrzfHNWmtvEQ4ZkshSAHCpOde86qYG/dJHVBKSazSJaETnawYvUl0iNE3KtYVtguuUB7MZF/y9tNuaSQHosfWxiYPV+PkMUHDQbgO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790356904; c=relaxed/simple;
-	bh=wUgsMiUfEK9Zu8BnQEf2g3A9P5+KDk4ZVGI5Lvg371E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h1aFukCGe9rYbPTncQ0er5r11zOxcSHfLCaZdUOt/1QUlVh/PZgOPa+N+5s20MhMTfiBj5KZNkkH+Hv5TOGtKiGWW8QjzXTHO8T9ENojXmyNmZrNmm20BKtF2gxPKyhsjzuLFKGhxezmAYDQSjX7RjmIagqPQBON+FQEG62ETfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PiDFcMex; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790360810; c=relaxed/simple;
+	bh=bHUYqtVWEAsJGNb8E8k3hE8XLkYTUQurYodFUi2bblQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Ozc32hqA8vkvpC9S5XbH+AXbOoI78lLJ/WWZtBDvFoAy0dMBC1dEZ6IyIKvdshkVufWcYlViRuC+/mIHFYTG+VCPoJtwZZxvFks4GZrOwYIdp2NvmTQV4bDykkY7JDntsgpEyyfCdiEZ4dG17NQ+BgtfQOW8xqRh9+zlP6X9bL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cmZIp0iS; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PiDFcMex"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4FA81F008A1
-	for <linux-tegra@vger.kernel.org>; Fri, 25 Sep 2026 17:21:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmZIp0iS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E64801F000FF;
+	Fri, 25 Sep 2026 18:26:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790356888;
-	bh=XNmbr204Up7Ok7eGekStfLMb4Fdr9YmxqwJjaeRLmCE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=PiDFcMexyMbCKloouvLH8Am+6+ow9b1XZ5UIbYgVrG+L11D9wRXlvEG8H8yng3+ua
-	 GWkPZxa6YjvQy7KQ/4LrErDm2SKFGaquVXbsdDB2CPMwzrXwz2vlv2Wu0BjZNxmTo/
-	 DttkYT6I1L7Tm9xirVO4vcDYZ2JMqSIkqf49FY+QnFdLenCVzqPeML0M6YskslCeQW
-	 +LdikbC3uVuy5RL06sQadqsEu7LbbC4usCHoDlR9wS2bavdgfMlhTK1NC7PueN5PgA
-	 QiGN64zH5ikJQ02El2TsDS+SrihBFPVBDeRlVm7/UhB3goEDsKWyuCL6WwbTCpgmD4
-	 1xZaFcw72GuWQ==
-Received: by mail-lr2-f34.google.com with SMTP id 38308e7fff4ca-3a651f928d9so5377151fa.0
-        for <linux-tegra@vger.kernel.org>; Fri, 25 Sep 2026 10:21:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByjIwE7LCGxaJ861nbM8FjjVF3wO5YqAhIw3T6DSxrBMxm7TD1FzHSYBZ5OjY+iXff3nmwnsuRZrDz+zw==@vger.kernel.org
-X-Gm-Message-State: AFuF++lPvYgWbvziwi+vXMJ0XFIrZuKex5aMpgudw16y+mQ9h2Q1A/Kt
-	3B/yCt6sXq8XawR4lbtwLtiqDyX5sbTbzdRbzGePjOIhCP2weCxhB+ZLw9tRdKBz7PW/f81Szx0
-	S1SE56hOrYUKbWdFnRyD3sgE/g0WLWLI=
-X-Received: by 2002:a05:651c:b0f:b0:3a3:749e:319e with SMTP id
- 38308e7fff4ca-3a63de17ef3mr12978521fa.18.1790356887308; Fri, 25 Sep 2026
- 10:21:27 -0700 (PDT)
+	s=k20260515; t=1790360808;
+	bh=OWH8aBpbLBU/bj6i0nhE7KbyG25vTlj803jezpamD8M=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=cmZIp0iS2QAdGweWsJ1eY/fb5QP/9IUt92CFA4eww+K4vI+V60+scjuR/qOSkoIoC
+	 uOx8aH9o4Oc0lBv/Q7oVPiZBdxx2sQqXoddgpDcDsom1SVNE2KKC8qoK4F+MLwCQBa
+	 I1MZAZaCH2WGIXW92UV/v+cEuDS53dEw5HI9poN0wJ+CvZ7a2Y48qyZZ0f1gd7uayv
+	 qB75aqzhq4Ea//rUO6EwjvrpT8f2EZ7zitBPxIf89dvPxWKuz0DPVkRrLUf37ICdHp
+	 dh8OhyOv95AGpE5xU86V7eYo3FwRLPNPi5aUgRm0ckqt7BLJTeV/5OSB0eTPdyFPR8
+	 TVWSci4nnaNjw==
+From: Mark Brown <broonie@kernel.org>
+To: David Cemin <dcemin@nvidia.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, 
+ Bard Liao <yung-chuan.liao@linux.intel.com>, 
+ Charles Keepax <ckeepax@opensource.cirrus.com>, 
+ Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
+ Jack Yu <jack.yu@realtek.com>, linux-sound@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, stable@vger.kernel.org
+In-Reply-To: <20260912182131.1156475-1-dcemin@nvidia.com>
+References: <20260912182131.1156475-1-dcemin@nvidia.com>
+Subject: Re: [PATCH] ASoC: sdw_utils: clear stale RT711 device reference on
+ exit
+Message-Id: <179035513174.204944.7908716001360886025.b4-ty@b4>
+Date: Fri, 25 Sep 2026 17:52:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260907064725.10686-1-hemanth.selam@gmail.com> <20260907064725.10686-6-hemanth.selam@gmail.com>
-In-Reply-To: <20260907064725.10686-6-hemanth.selam@gmail.com>
-From: "Rafael J. Wysocki (Intel)" <rafael@kernel.org>
-Date: Fri, 25 Sep 2026 19:19:50 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gWh-owRUPvVFMakkvinrbquHsNDeTHFnxFsOXrbuUgjw@mail.gmail.com>
-X-Gm-Features: AclHuK_ILwQGXShVI2J1hXJ11N9GyjGLgux8oszAP0m9LZ9ydGAWPgmg0ZIJt0M
-Message-ID: <CAJZ5v0gWh-owRUPvVFMakkvinrbquHsNDeTHFnxFsOXrbuUgjw@mail.gmail.com>
-Subject: Re: [PATCH 5/5] ACPI: NUMA: fix typo in log message
-To: Hemanth Selam <hemanth.selam@gmail.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, 
-	Christian Loehle <christian.loehle@arm.com>, Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, 
-	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1135; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=bHUYqtVWEAsJGNb8E8k3hE8XLkYTUQurYodFUi2bblQ=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqtrzkZVeY81q47sj2JWjXO07V9e1sn66sHd0HS
+ s9EltYUYymJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCara85AAKCRAk1otyXVSH
+ 0I7ZB/937gR96C275sPpEApV+U+JLPlNSOAUrqDLVAa0XgneZwHqZZtE4vw++0x6oI0iXXMQxh+
+ ybCAy46RvG/hM5Grmb1885t/bVFJvpjHIDUC+e/3vWOKCRl/OFc5Mk4sydAlyPwavLNCbYAtSTI
+ fV0OhTZa0gqsQl/gYt5e3HfzV4DQqROawSEqr5Niemyr1ebZexxtidvjvDyz/6X1y/wbXWi2ZfA
+ ixGRO7JMn1fazRHz7dxJife0neU2sTK0MX8oL7MKPF5jZ1PE1KKOJKxq+F5iIBgoGGu38JFpmZT
+ jm1Gg5WDQ/SWs6bOd6oJ+c8Kn37hlFuF6M8dlYRerhVqDEc2
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Mon, Sep 7, 2026 at 8:48=E2=80=AFAM Hemanth Selam <hemanth.selam@gmail.c=
-om> wrote:
->
-> Correct the misspelling in a message the user sees, reported by
-> scripts/checkpatch.pl using the list in scripts/spelling.txt.
->
-> Only the message text changes, no code changes.
->
-> Assisted-by: Cursor:claude-opus-5
-> Signed-off-by: Hemanth Selam <hemanth.selam@gmail.com>
-> ---
->  drivers/acpi/numa/srat.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
-> index 5c407dc6401e..f5616830f5a9 100644
-> --- a/drivers/acpi/numa/srat.c
-> +++ b/drivers/acpi/numa/srat.c
-> @@ -111,7 +111,7 @@ int __init fix_pxm_node_maps(int max_nid)
->                         for (j =3D 0; j <=3D max_nid; j++) {
->                                 if ((emu_nid_to_phys[j] =3D=3D i) &&
->                                     WARN(node_to_pxm_map_copy[j] !=3D PXM=
-_INVAL,
-> -                                        "Node %d is already binded to PX=
-M %d\n",
-> +                                        "Node %d is already bound to PXM=
- %d\n",
->                                          j, node_to_pxm_map_copy[j]))
->                                         return -1;
->                                 if (emu_nid_to_phys[j] =3D=3D i) {
-> --
+On Sat, 12 Sep 2026 11:21:31 -0700, David Cemin wrote:
+> ASoC: sdw_utils: clear stale RT711 device reference on exit
 
-Applied as 7.4 material, thanks!
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-7.4
+
+Thanks!
+
+[1/1] ASoC: sdw_utils: clear stale RT711 device reference on exit
+      https://git.kernel.org/broonie/sound/c/7c7df141dcab
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
