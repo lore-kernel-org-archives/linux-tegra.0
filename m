@@ -1,211 +1,193 @@
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE21F4A9D56;
-	Fri, 25 Sep 2026 14:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C581B37B020
+	for <linux-tegra@vger.kernel.org>; Fri, 25 Sep 2026 15:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790345746; cv=none; b=FRJWDAKUVL5MaRrWI7LECvIXb3r7GIOAs3oeBzSyr6P/J9ed2y3brGtzehb9/r0VecFFuQr1DKhpz/8ByAYhuOYmmw6yrMXlIl7Avk4UIuNSwX53FmUtJv0IkbdKILY4QM5/O/h+ezausNVTzem5ghsmr3EK3xxGDo71BApUsD0=
+	t=1790349666; cv=none; b=SDT338FABLn48Ml3otxsblZbG7e1JVW4ra9EyFZTgwiRhG7rUX1wOTbcDKiyxGX1dW/KAY6XnYvaS04iTntyvM7KUTbhtcVcBaEPRgaO2+zq5fBCQGkusPH7vC7NX5AYAXWK7ua+GNIGfeK4EJXFidNSKGj9IxFHZBEyyMMC7eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790345746; c=relaxed/simple;
-	bh=uL62P1C5xKl+vpUBDxHCmDZ5EXwnuj5Sjo+mo9Gevgo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NPivLdK0J9BWZcRcgo0B3raTxtBKvEBJToMjvrmuCuFweaJQ8lVEfduaGT+U+tfXmTBS/Hk9BsfJOx+YPkHvt5uzG/2+YxQ9MZiAjBjHRxxUt/xdaF/fO35QJL27WUIU9wBHTEnzqtV/dcZWZHeVm4uLXuw9w7cVULRfkJU7aQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=cFdcGhfG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bNGQDokD; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+	s=arc-20240116; t=1790349666; c=relaxed/simple;
+	bh=0SnJkzwA/pHULhb5TwuLkpxcvwrBwkvslcB87um5YV4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=lvxSB0rmhouYTJz44eQIAu2HORl8OxOI+XRKoujp0MOjYMEWIiNse4ZYu0MUUOYHZzUqbwSwMpFdsnSFbbIw7P/OR2WVvWX61isq1LnbxZPV/83BmxgT6pez5CYifJa6UhMHVszBhtgCsB6otOF+yIj8omJ+ly3ek9UiN8Z4nkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=F656mgJ9; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="cFdcGhfG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bNGQDokD"
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 45CD11400168;
-	Fri, 25 Sep 2026 10:15:43 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Fri, 25 Sep 2026 10:15:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1790345743; x=
-	1790432143; bh=CSvNW4KC0jILNq7/I9jV1syURG3TP6r5qeySe9d+kW4=; b=c
-	FdcGhfGwM72PqbT32460E1BwZRiHfv+1as0xeCO1B/Fy/N7LzMTdM+cVxx9J45Eg
-	jEuqzVEvOY4wPtxGp0IIICGUHaSUCeM0LJ/vfo+1tdpefCYiH+OPYJqFzW270vqW
-	fKyA8fqpBoDEVCBkltQWYDKDdzbX5aWloaxDl5k0nn+acivm2VU+4O85Xddno9AY
-	7SzdwXLzggobGf9KgvoJM8P5142wvO0WQO6L+4gYqcnLG3AWXLr9mKlwK53KmLB5
-	3+h1pQbrnY5tNm/N4QpFfkqy/3SnR7WU2Y/fBuyGnNaK/juEgzGWV50diijgpIPs
-	8mEWBmt1/k3Kwx2sAh8kA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1790345743; x=1790432143; bh=C
-	SvNW4KC0jILNq7/I9jV1syURG3TP6r5qeySe9d+kW4=; b=bNGQDokDhYo6Wnzd8
-	uepseBC5jEaPxcmj8Ao0GMXeC2B6v/V91MiewK1WkdgI7RxWtZiroqFd9sVPS81H
-	9f2PkqvovHto+Ot/NdGfeKGePORDxB4uregYOb8eqmOS+NvuGYQdsd+CublMc/89
-	zBqbk4fOXJCVIhXdN+c+VyVeDQJK4qYiwQlnGu+Xb0ZZlzf2eAarTmcmEwlSGbEH
-	X8MxqGhmCr/tWXpLC9ILdsarPA7NYV4ic+rc/WMjd9XIkE22Km8wUth46A88j0/F
-	kh7MjEUos0EthaZ4LnHACAWwFGZTKcszwxN3VH+n0e8ledtZfVJ8KdZgZZ16zSKp
-	fw3xA==
-X-ME-Sender: <xms:D4K2argky54Wp1LPE_AkPAmu4DhN2sozWwUFEw4VCb_C063vj4oIgg>
-    <xme:D4K2alNJVJ9zpA_jR4lMG8FyHkGLqtG--L7BkUG-vpamnjf2m6ATnIeTGhgTBKn3a
-    OWoAVj2vv-wCSPB8ZDVaorOVlTjx4HJkxnzLi-Rm0chGU4urMTbQBHs>
-X-ME-Received: <xmr:D4K2avlC_xoylEB7Swncbe2II-_vS7627u7rAPMydCQMcczhsppY761zJRg>
-X-ME-Proxy-Cause: dmFkZTGKDwwNiF627+asCW7qlOfbc3YO4/BWQQAIa1dD7j4y1/LpRsbneXz52sgooVW2NB
-    3cVSkvlr4fQi4SwiDMxRaBoBRNO6zHRHeGXMGxJYTRHb1PBeh27/Q3VWbCGBZujoWHPoE6
-    R+Qc/6k1bBYz+Haf5IzKmyGQxC9qTL+WrK7JzMZqDmDHuiASYj35os3WnrFE1SWLZ6a+qY
-    bCW2glHxjWyrurmiVGB62MJKctiau11N+au9WzHHk3KgIfj2lfSeRdK+MffwyEB0gNSuDN
-    eSmAis7xZg1iofNwJ76iNU49c75bqPHfinmsayTQbADoZ6F/gk68t7NA/yonOE6sVDH8HE
-    D3ftdBE7WnFsPxGcCrWYEQmSAbK7DmTVXeozDOm33abuyGIyUWUYmk42rWMIOSulW5MN5U
-    r+bQ8LHYnJXbH1N1JBlBmKseL7dxUcK49tdAO5EHONR0qoxm8SRl9vmTzDDoKINrV6q1NO
-    v+9uVOC68bBiJKHaZIqSsEIkN9+lFZz8a0ANE3olguIulErakGj3YNqcofh4GyHDCbHfeb
-    bzNkJfo1dosM7+p857j3d16Oey7PxmHreAx04gx6kNEDsjaz2YX3jobUGkB8uhdIxfxWZx
-    OIlwu1cuf1GpDQxmkBIhKPcoHqF/wRcEGrRzImSbCqjKAsFHjqnJeqbC0f2w
-X-ME-Proxy: <xmx:D4K2akdBMJa3Facg3DOoIz6JDOY6ry7GkEBjaF93mWnspULoGUIoZQ>
-    <xmx:D4K2apt6Z3NjDmal7ROY-eN189R4s7kDDDWeid-i5p0kxm5gssQLNA>
-    <xmx:D4K2auAcLFLs_EQOB7Ln75jmG7x4MzmIDLX2VL2Jlk_22cgL5ooHNg>
-    <xmx:D4K2aswnNEslbozeNf2fj0VMJ_WgNrk9Z0RT2DhF8fJhj0teYytXbA>
-    <xmx:D4K2akcLDs96m2lcv7rRT4o3jVImLbNhJJ2vlYi141oR2I9Hbk-weImB>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 25 Sep 2026 10:15:42 -0400 (EDT)
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Breno Leitao <leitao@debian.org>
-Cc: "Kiryl Shutsemau (Meta)" <kas@kernel.org>,
-	Krishna Reddy <vdumpa@nvidia.com>,
-	Pranjal Shrivastava <praan@google.com>,
-	Mostafa Saleh <smostafa@google.com>,
-	Ashish Mhetre <amhetre@nvidia.com>,
-	Shameer Kolothum <skolothumtho@nvidia.com>,
-	Yuanhe Shu <xiangzao@linux.alibaba.com>,
-	Kyle McMartin <jkkm@meta.com>,
-	Usama Arif <usama.arif@linux.dev>,
-	kernel-team@meta.com,
-	linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v7 2/2] iommu/arm-smmu-v3: Default queue depths to one page in a kdump kernel
-Date: Fri, 25 Sep 2026 15:15:30 +0100
-Message-ID: <20260925141532.1274962-3-kirill@shutemov.name>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260925141532.1274962-1-kirill@shutemov.name>
-References: <20260925141532.1274962-1-kirill@shutemov.name>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="F656mgJ9"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20260925152100euoutp013cfd9faf50884debbeb364720d4ab1a9~YmYfXcust2212322123euoutp01f
+	for <linux-tegra@vger.kernel.org>; Fri, 25 Sep 2026 15:21:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20260925152100euoutp013cfd9faf50884debbeb364720d4ab1a9~YmYfXcust2212322123euoutp01f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1790349660;
+	bh=SHgaribOFjNf5YMHUlR3fMpt5ySYd+TAsj/f7UavMDk=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=F656mgJ9jfgNjrKs8uA1ZyoifUtpO6Jd2QaA5EhGg1UsGVHdaiunvQVyoBsr8yvQm
+	 4JvEzIJQ1xTCBczVOiZBqIm+3EdyCpwECRq8i8GN27wlqHNo+fCU/+mKx+GZJgiYUH
+	 q6eRUP+VcFpqTg/tZTDMerGTpXC394G1YEw2aP4w=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20260925152059eucas1p2019d7b4eb9d392a10993cc13136edee1~YmYeygoFS3026930269eucas1p2w;
+	Fri, 25 Sep 2026 15:20:59 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20260925152057eusmtip25e163fc5b8da5ebbde70f8a09827ff17~YmYcynyS-2281922819eusmtip28;
+	Fri, 25 Sep 2026 15:20:57 +0000 (GMT)
+Message-ID: <a5b453db-a4f9-4dba-b150-6e4045f61027@samsung.com>
+Date: Fri, 25 Sep 2026 17:20:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 00/11] Make the 32-bit ARM DMA API work with normal
+ IOMMU DMA default domains (+ Tegra PoC)
+To: Mikko Perttunen <mperttunen@nvidia.com>, Robin Murphy
+	<robin.murphy@arm.com>, "Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon
+	<will@kernel.org>, Russell King <linux@armlinux.org.uk>, Heiko Stuebner
+	<heiko@sntech.de>, Thierry Reding <thierry.reding@kernel.org>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jonathan Hunter
+	<jonathanh@nvidia.com>, Krishna Reddy <vdumpa@nvidia.com>, Krzysztof
+	Kozlowski <krzk@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec
+	<jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Yong Wu
+	<yong.wu@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob
+	Clark <robin.clark@oss.qualcomm.com>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20260915-b4-arm32-iommu-dma-cookie-v1-0-ba4f9d33a2b8@nvidia.com>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20260925152059eucas1p2019d7b4eb9d392a10993cc13136edee1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20260915021542eucas1p254addab18c10cb117f42ccf3d3522883
+X-EPHeader: CA
+X-CMS-RootMailID: 20260915021542eucas1p254addab18c10cb117f42ccf3d3522883
+References: <CGME20260915021542eucas1p254addab18c10cb117f42ccf3d3522883@eucas1p2.samsung.com>
+	<20260915-b4-arm32-iommu-dma-cookie-v1-0-ba4f9d33a2b8@nvidia.com>
 
-From: "Kiryl Shutsemau (Meta)" <kas@kernel.org>
+On 15.09.2026 04:14, Mikko Perttunen wrote:
+> Depending on the probe ordering, TegraDRM does not currently probe on 
+> kernels with CONFIG_ARM_DMA_USE_IOMMU enabled, such as with 
+> multi_v7_defconfig. The Tegra SMMU puts several display and 2D/3D 
+> clients into one IOMMU group, and the legacy 32-bit ARM DMA API path 
+> creates one UNMANAGED domain per device and attaches it with 
+> iommu_attach_device(). That only works for one device per group, so 
+> every client after the first fails to attach, 
+> iommu_device_use_default_domain() rejects the group with -EBUSY, and the 
+> driver goes down with it. tegra_defconfig is currently working by virtue 
+> of not enabling CONFIG_ARM_DMA_USE_IOMMU.
+>
+> Robin suggested [1] that instead of teaching the legacy path about 
+> groups, we should explore modernizing the 32-bit ARM DMA code a bit by 
+> making it use domain cookies and have the core code own the domains, as 
+> is the case on other architectures. Still, ARM's own DMA code is kept to 
+> support existing drivers and APIs that expect it, and because dma-iommu 
+> is considered too big and unnecessary for 32-bit ARM.
 
-All three queues are sized from the maxima the hardware advertises in IDR1
-and allocated at probe, up to 4 MB each on a 4K-page kernel. The capture
-kernel already disables two of them: arm_smmu_device_reset() drops
-CR0_EVTQEN and CR0_PRIQEN. It still allocates both at full size.
 
-A kdump capture kernel runs from a small crashkernel reservation, and every
-SMMUv3 instance pays that cost again, up to 12 MB apiece. It goes to queues
-that either serve the handful of devices used to save the dump or are
-switched off outright, and it is memory the dump itself needs.
+I agree that such little modernization is the right step to unify a bit
+ARM 32bit with modern archs and get rid of some workaround in the drivers.
 
-Size all three queues at one page worth of entries when is_kdump_kernel().
-The queues carry commands and fault records rather than DMA data, so dump
-throughput is unaffected. A shallower command queue only bounds how many
-commands may be in flight before a sync, which does not matter for the few
-devices that save the dump. The cmdq_max_n_shift parameter therefore does
-not apply in a capture kernel.
+It was me who raised the concern about the drivers depending on the first-fit
+allocation algorithm used in the32-bit ARM DMA code. This is an issue for some
+legacy Samsung Exynos drivers. I not aware of any other driver used on ARM 32bit
+SoCs that depends on this behavior.
 
-Suggested-by: Kyle McMartin <jkkm@meta.com>
-Assisted-by: LLM
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Tested-by: Yuanhe Shu <xiangzao@linux.alibaba.com>
-Signed-off-by: Kiryl Shutsemau (Meta) <kas@kernel.org>
----
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 30 ++++++++++++++++-----
- 1 file changed, 24 insertions(+), 6 deletions(-)
+If one is still interested in switching ARM 32bit to generic IOMMU-DMA code I
+can prepare a workaround for those Exynos drivers. I still have it on my todo
+list, but in meantime there was no interest in updating ARM 32bit DMA code.
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index 810d3ce75089..a5ad57432dfd 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -43,7 +43,7 @@ MODULE_PARM_DESC(disable_msipolling,
- static unsigned int cmdq_max_n_shift = CMDQ_MAX_SZ_SHIFT;
- module_param(cmdq_max_n_shift, uint, 0444);
- MODULE_PARM_DESC(cmdq_max_n_shift,
--	"Cap on the command queue depth, as log2 of the number of entries. Defaults to the hardware maximum; the queue never shrinks below one page.");
-+	"Cap on the command queue depth, as log2 of the number of entries. Defaults to the hardware maximum; the queue never shrinks below one page. A kdump kernel always uses one page.");
- 
- static const struct iommu_ops arm_smmu_ops;
- static struct iommu_dirty_ops arm_smmu_dirty_ops;
-@@ -4424,6 +4424,8 @@ static struct iommu_dirty_ops arm_smmu_dirty_ops = {
-  * @ent_sz_shift: log2 of the queue entry size in bytes
-  * @limit_n_shift: log2 depth to cap the queue at
-  *
-+ * A kdump capture kernel gets one page worth of entries whatever the limit.
-+ *
-  * @limit_n_shift is floored at one page, because coherent DMA is page
-  * granular: a shallower queue occupies the same memory as one that fills the
-  * page, and arm_smmu_init_one_queue() stops shrinking at a page too.
-@@ -4433,10 +4435,27 @@ static u32 arm_smmu_queue_max_n_shift(u32 hw_max_n_shift, u32 ent_sz_shift,
- {
- 	u32 floor_n_shift = PAGE_SHIFT - ent_sz_shift;
- 
-+	if (is_kdump_kernel())
-+		return min(hw_max_n_shift, floor_n_shift);
-+
- 	limit_n_shift = max(limit_n_shift, floor_n_shift);
- 	return min(hw_max_n_shift, limit_n_shift);
- }
- 
-+static inline u32 arm_smmu_evtq_max_n_shift(u32 hw_max_n_shift)
-+{
-+	/* Capped to ensure natural alignment */
-+	return arm_smmu_queue_max_n_shift(hw_max_n_shift, EVTQ_ENT_SZ_SHIFT,
-+					  EVTQ_MAX_SZ_SHIFT);
-+}
-+
-+static inline u32 arm_smmu_priq_max_n_shift(u32 hw_max_n_shift)
-+{
-+	/* Capped to ensure natural alignment */
-+	return arm_smmu_queue_max_n_shift(hw_max_n_shift, PRIQ_ENT_SZ_SHIFT,
-+					  PRIQ_MAX_SZ_SHIFT);
-+}
-+
- /*
-  * Command queues are also allocated by the Tegra241 CMDQV for its VCMDQs, which
-  * need the same depth decision.
-@@ -5191,7 +5210,6 @@ static int arm_smmu_device_hw_probe(struct arm_smmu_device *smmu)
- 	if (reg & IDR1_ATTR_TYPES_OVR)
- 		smmu->features |= ARM_SMMU_FEAT_ATTR_TYPES_OVR;
- 
--	/* Queue sizes, capped to ensure natural alignment */
- 	smmu->cmdq.q.llq.max_n_shift =
- 		arm_smmu_cmdq_max_n_shift(FIELD_GET(IDR1_CMDQS, reg));
- 	if (smmu->cmdq.q.llq.max_n_shift <= ilog2(CMDQ_BATCH_ENTRIES)) {
-@@ -5206,10 +5224,10 @@ static int arm_smmu_device_hw_probe(struct arm_smmu_device *smmu)
- 		return -ENXIO;
- 	}
- 
--	smmu->evtq.q.llq.max_n_shift = min_t(u32, EVTQ_MAX_SZ_SHIFT,
--					     FIELD_GET(IDR1_EVTQS, reg));
--	smmu->priq.q.llq.max_n_shift = min_t(u32, PRIQ_MAX_SZ_SHIFT,
--					     FIELD_GET(IDR1_PRIQS, reg));
-+	smmu->evtq.q.llq.max_n_shift =
-+		arm_smmu_evtq_max_n_shift(FIELD_GET(IDR1_EVTQS, reg));
-+	smmu->priq.q.llq.max_n_shift =
-+		arm_smmu_priq_max_n_shift(FIELD_GET(IDR1_PRIQS, reg));
- 
- 	/* SID/SSID sizes */
- 	smmu->ssid_bits = FIELD_GET(IDR1_SSIDSIZE, reg);
+
+> The series is in four parts:
+>
+> - Patches 1-2 are preparation in the IOMMU core:
+>   1. Add iommu_teardown_dma_ops, counterpart to iommu_setup_dma_ops.
+>   2. Add cookie type for ARM's DMA domains.
+> - Patches 3-6 implement the DMA API side on 32-bit ARM:
+>   3. Split up domain and address space management code in arch/arm/.
+>   4. Implement parallel dma_ops / cookie APIs on ARM side.
+>   5. Avoid domain allocation when IOMMU core does it.
+>   6. Support foreign-allocated sg_tables.
+> - Patch 7 enables 32-bit ARM IOMMU drivers to provide a DMA default 
+>   domain.
+> - Patches 8-11 convert Tegra:
+>   8. Allows deferring translation enable until driver handshake for
+>      selected devices.
+>   9-10. Removes code detaching ARM UNMANAGED DMA domains in
+>         Host1x/TegraDRM.
+>   11. Enables DMA default domain for selected Tegra devices.
+>
+> None of this should have any functional effect on any device other than 
+> the Tegra devices enabled in patches 8-11. Other IOMMU drivers can opt 
+> in later. The new DMA default domains are enabled only when the IOMMU 
+> driver explicitly specifies a DMA domain type, just returning 0 for the 
+> default is not enough (unlike on arm64), keeping the current behavior.
+>
+> Patches 8-11 are provided for demonstration but we can deal with them 
+> separately if the rest of the series is accepted.
+>
+> Patches 1,2,3 are applicable independently.
+> Patches 4,5 depend on the previous patches.
+> Patch 6 can be applied independently but is only required once
+>   the whole series lands (by TegraDRM).
+> Patch 7 depends on patch 4.
+>
+> Patches 1-7 only touch drivers/iommu/ and arch/arm/mm/ and associated 
+> headers.
+>
+> Best regards,
+> Mikko
+>
+> [1] https://lore.kernel.org/linux-tegra/910d1492-ad3b-4201-93c6-208be1dcde7d@arm.com/
+>
+> ---
+> Mikko Perttunen (11):
+>       iommu: Add iommu_teardown_dma_ops
+>       iommu: Add cookie type for ARM_DMA_USE_IOMMU
+>       ARM: dma-mapping: Split mapping allocation from domain allocation
+>       ARM: dma-mapping: Implement and expose DMA setup functions
+>       ARM: dma-mapping: Bypass the legacy path for core-owned DMA API domains
+>       ARM: dma-mapping: Handle foreign buffers in arm_iommu_get_sgtable
+>       iommu: Let 32-bit ARM drivers opt into a DMA API default domain
+>       iommu/tegra-smmu: Defer display client translation to driver handover
+>       gpu: host1x: Drop release of legacy 32-bit ARM DMA domain
+>       drm/tegra: Drop release of legacy 32-bit ARM DMA domain
+>       iommu/tegra-smmu: Use a DMA API default domain per swgroup
+>
+>  arch/arm/include/asm/dma-iommu.h |  17 ++++
+>  arch/arm/mm/dma-mapping.c        | 209 ++++++++++++++++++++++++++++++++-------
+>  drivers/gpu/drm/tegra/dc.c       |   8 ++
+>  drivers/gpu/drm/tegra/drm.c      |  15 ---
+>  drivers/gpu/host1x/dev.c         |  15 ---
+>  drivers/iommu/Kconfig            |   1 +
+>  drivers/iommu/dma-iommu.c        |   5 +
+>  drivers/iommu/dma-iommu.h        |  52 +++++++---
+>  drivers/iommu/iommu.c            |  24 ++---
+>  drivers/iommu/tegra-smmu.c       | 109 +++++++++++++++++++-
+>  drivers/memory/tegra/tegra114.c  |  15 ++-
+>  drivers/memory/tegra/tegra124.c  |  12 ++-
+>  drivers/memory/tegra/tegra210.c  |   6 +-
+>  drivers/memory/tegra/tegra30.c   |  18 ++--
+>  include/linux/iommu.h            |   3 +
+>  include/soc/tegra/mc.h           |  20 ++++
+>  16 files changed, 410 insertions(+), 119 deletions(-)
+> ---
+> base-commit: f5098b6bae761e346ebcd9da7f95622c04733cff
+> change-id: 20260728-b4-arm32-iommu-dma-cookie-3170e07f9125
+>
+>
+Best regards
 -- 
-2.54.0
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
