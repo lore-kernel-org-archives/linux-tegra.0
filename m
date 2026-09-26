@@ -1,108 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8AE33F589;
-	Sat, 26 Sep 2026 07:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C3F474273;
+	Sat, 26 Sep 2026 15:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790407470; cv=none; b=AGySIVeHGuoIWPtJrgSsf95c/GMfZQAo0gPDksk3fwZkrklVaKAwYRFnwJ4V/DPhAOWmCDGbC+xy/qt+kIH87vEChhHjce3vSVyTPDzHd1OpSxahZStZR/hbMC5Y4ET6C7sVIJLIuMWowIBRATa2ZPCUVnQSKcRjoliRU0pttwY=
+	t=1790435705; cv=none; b=naFdBf9+/eqocvJbhZ/JhgwdkGc0PTYR2aks88aEA0lKpjb/HV80xSVf6gpj4S1dNyp/aG/aUzw5QtmJB+LQAErtzXz1qpRoQ2Xg5nJLT4P2ridb5TpAsZ3ZoIzlCyTWn7+zUn0adZLp2hYOb2XwoF8gBt43oNbSaIEY19CbCms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790407470; c=relaxed/simple;
-	bh=LSFWMmwZm9AOOui3G9yO6os/W4ndoAnTIvP6M1MFVyw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Tp/AB1nLcE7ssaCIWMVluR2RIURcCyUKuG2QeyUe7OczsXpLUbiKUkfPNLY0/yutcEsJjFTH3+WH3q0EtA01BW5m1apZ6Dw1vBSiaQsTrYAI5jxVNjUTpWF+QxFhajjBSMM9iBVEoiKR03sZYxuGjQGi7tTtbRWaBMV6lBPTJAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F70k0EEf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1790435705; c=relaxed/simple;
+	bh=ClVltLSpZXX7kyYoGrs6WXWqQwR9MaJl7aFlqiT71a0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DPzWOKbog8IjlKJypCupAWCTohUjqiBEZds1sPQd5lxWbeiN7KVO2t03RtSb78bIgH1C1OaqHQvVAWEVqeeVTiDu0gjfejFN6TIjTL2UTiWDsLb3ZVh4kKrBXcvpYdttSooW3ppEGwI5tDXekTHNg3FeXMevPUdlkAdHLAUgpKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YMbXDXzo; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F70k0EEf"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 21047C2BCB8;
-	Sat, 26 Sep 2026 07:24:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1790407470;
-	bh=LSFWMmwZm9AOOui3G9yO6os/W4ndoAnTIvP6M1MFVyw=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=F70k0EEfDlYyHcVUO1ludQ5Sq/5NlWWVaNpChhgYfOyEtspuKDmcTMX0TdJ7UxnmC
-	 e4em7lAOgJGOqqeiLMSXcQaTFlGFqEitG6JVaAXORSOcDXTZTAbCjUnSRm/2Ei3721
-	 DdF/rpRUglY+fs+3/7lcx/9Y+ruvOKaUF+/YosFeUOvbwoC+vQaJKKSF6EsjtHMaqD
-	 wOdtscZz+70I7FVyRbpejHuh3GOoL/kQHDw/pHdJRg6egT9mNi4XzH6MVgJw86TvPn
-	 LuqIONOpKtzopWldB8pCZblI2g4ba1ijQ83Kh9hGIZO51tymrZJiKz9WIRa6wYDNAT
-	 B3DpTnduGWJ3g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFDEFC98318;
-	Sat, 26 Sep 2026 07:24:29 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Sat, 26 Sep 2026 02:24:19 -0500
-Subject: [PATCH] ALSA: hda/tegra: Re-enable SDO workaround for Tegra194
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YMbXDXzo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96E0A1F000FF;
+	Sat, 26 Sep 2026 15:15:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790435702;
+	bh=ClVltLSpZXX7kyYoGrs6WXWqQwR9MaJl7aFlqiT71a0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=YMbXDXzoGinwjtRaX2S2hqGI03VydgE7flbwKGLsH/D4N25KRqqxdVXEDMU4fUr98
+	 tixVjYJIraXwbE0CtskCAF0P56zAVnU95MkukV+OofcQ6nmryHDlXUVQbJXVnSS9Pk
+	 e7HbfqWF8ATzoeQPTpT/atbfJ0COmyrDPM/0vup039dsGZAHBr28PoVXUXUpPsagXe
+	 mXJbpuvsSWvvZ5fgw9f2V1LqW8EdvORKt55opNL8L4yn8Ol18YZiL2K28+KjVR9nWx
+	 ZYMhAMxtc9m2OaxvGEucFh3GLQMKwaY369dnBT86mm0NOXbrVyzh89kRPZhdaUrWWv
+	 uPtirHf7WgA7w==
+Date: Sat, 26 Sep 2026 17:14:57 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Linus Walleij <linusw@kernel.org>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
+	Lucas Stach <l.stach@pengutronix.de>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>, 
+	Paul Kocialkowski <paulk@sys-base.io>, Inki Dae <inki.dae@samsung.com>, 
+	Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Sean Paul <sean@poorly.run>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Albert Esteve <aesteve@redhat.com>, Anusha Srivatsa <asrivats@redhat.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Hui Pu <Hui.Pu@gehealthcare.com>, 
+	Ian Ray <ian.ray@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com, asahi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v3 12/19] drm/mcde: dsi: don't create a panel_bridge
+Message-ID: <arfhYxN4y_ZcXsZa@houat>
+References: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
+ <20260916-drm-bridge-every-panel-v3-12-83afb4f1a707@bootlin.com>
+ <arInho2bsfJiCgjV@houat>
+ <DLNCQEG62F5N.O98WAO4U2FJO@bootlin.com>
+ <CAD++jLkk-a0MrQUiaDD8OoDDoYVwBwSjFTj5ZBy=Xo7MS4+01g@mail.gmail.com>
+ <arTlpd-KAsVpj3UH@houat>
+ <CAD++jLmktDoqn2EbXsNnyGRudo-q2NCxUf+9ZjeU+WrY4CBMWw@mail.gmail.com>
+ <DLOJIV124RG7.27SOPEOHBTA7W@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260926-tegra194-hda-sdo-v1-1-f7a636a07a58@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MQQqAIBBA0avIrBtQKdGuEi1Ep5qNhkYE4d2Tl
- m/x/wuVClOFWbxQ6ObKOXWoQUA4fNoJOXaDltpIpw1etBev3IhH9FhjRhXtGIy0k3IWenYW2vj
- 5l8va2gf4fpxUYgAAAA==
-X-Change-ID: 20260926-tegra194-hda-sdo-1d84c6085198
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>, linux-sound@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1790407469; l=1584;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=8rAycl98UAJVNpg4nxLeFSEwU8WePutSW40I7utV8vY=;
- b=jpT6mRhj6kFaT03vLb78Ga/cCq4a5oFDhA6+ifoHcGRLo0Q1WygeZdjkILrQ2wRqTUOIgSoJj
- ur/C6Ic/N/jCoPadVejJRrh2MNXBWbwY9PtMqbgCOK/Yg6KbL8H5cHw
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
-
-From: Aaron Kling <webgeek1234@gmail.com>
-
-This workaround was originally added for Tegra194, but no longer gets
-applied for it. Commit 615d43540043 ("ALSA: hda/tegra: fix tegra-hda on
-tegra30 soc") changed the guard to tegra30-hda, which worked because all
-affected archs had the fallback compatible. However, commit 7f0ea5acfc19
-("arm64: tegra: Use correct compatible string for Tegra194 HDA") removed
-the fallback compatible for Tegra194, causing this to break.
-
-Fixes: 7f0ea5acfc19 ("arm64: tegra: Use correct compatible string for Tegra194 HDA")
-Cc: stable@vger.kernel.org
-Assisted-by: LLM
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
-ALSA: hda/tegra: Re-enable SDO workaround for Tegra194
----
- sound/hda/controllers/tegra.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/sound/hda/controllers/tegra.c b/sound/hda/controllers/tegra.c
-index 31c14c4bbe683..674cc0f79c3c8 100644
---- a/sound/hda/controllers/tegra.c
-+++ b/sound/hda/controllers/tegra.c
-@@ -374,7 +374,8 @@ static int hda_tegra_first_init(struct azx *chip, struct platform_device *pdev)
- 	 * in powers of 2, next available ratio is 16 which can be
- 	 * used as a limiting factor here.
- 	 */
--	if (of_device_is_compatible(np, "nvidia,tegra30-hda"))
-+	if (of_device_is_compatible(np, "nvidia,tegra30-hda") ||
-+	    of_device_is_compatible(np, "nvidia,tegra194-hda"))
- 		chip->bus.core.sdo_limit = 16;
- 
- 	/* codec detection */
-
----
-base-commit: 4c253ac4b29b8c6cc6fdef8f92d4facde62e63b9
-change-id: 20260926-tegra194-hda-sdo-1d84c6085198
-
-Best regards,
--- 
-Aaron Kling <webgeek1234@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="dg3ucg3v26dehzsz"
+Content-Disposition: inline
+In-Reply-To: <DLOJIV124RG7.27SOPEOHBTA7W@bootlin.com>
 
 
+--dg3ucg3v26dehzsz
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 12/19] drm/mcde: dsi: don't create a panel_bridge
+MIME-Version: 1.0
+
+On Fri, Sep 25, 2026 at 06:33:15PM +0200, Luca Ceresoli wrote:
+> Hello Linus,
+>=20
+> On Fri Sep 25, 2026 at 6:25 PM CEST, Linus Walleij wrote:
+> > On Thu, Sep 24, 2026 at 10:57=E2=80=AFAM Maxime Ripard <mripard@kernel.=
+org> wrote:
+> >> On Thu, Sep 24, 2026 at 09:51:53AM +0200, Linus Walleij wrote:
+> >
+> >> > > Linus, unless you have more info I'm going to apply the patch as
+> >> > > is. Removing this special case would be welcome as a later patch.
+> >> >
+> >> > I'd say go ahead as-is.
+> >>
+> >> I'm fine with that, but I really want this removed at some point.
+> >
+> > If Luca wanna fix this up (drop this path) that's fine by me,
+> > else send a patch immediately after this is applied and I'll
+> > ACK it.
+>=20
+> To avoid postponing this series I plan to apply as is on Monday. I can se=
+nd
+> another patch later to remove the !panel case.
+
+Works for me :)
+
+Maxime
+
+--dg3ucg3v26dehzsz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCarfhbQAKCRAnX84Zoj2+
+dgfdAYDG6Hu5i0e526axMly2zcjPr4YeajdmZ6bTC6CCZBd1XimS1nPSmAH1o1Wh
+jL7z65EBgJ/BZN2zgzTAR8W15VSdR3qxd4+gFK3Sr3hkGLJSe9YoI6JmUUUSQpXj
+edP84d+izQ==
+=Inr9
+-----END PGP SIGNATURE-----
+
+--dg3ucg3v26dehzsz--
