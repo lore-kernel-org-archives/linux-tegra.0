@@ -1,71 +1,71 @@
-Received: from mail-oo2-f13.google.com (mail-oo2-f13.google.com [74.125.231.141])
+Received: from mail-oo2-f42.google.com (mail-oo2-f42.google.com [74.125.231.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2283134252C
-	for <linux-tegra@vger.kernel.org>; Sat, 26 Sep 2026 15:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175DC2DECCB
+	for <linux-tegra@vger.kernel.org>; Sat, 26 Sep 2026 15:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790437772; cv=none; b=DZKI2nCLUcmIwMRgjX9zMPPpu+PBWp5efawSHYeacSMvVAhIGur3S7D8GhviPIkV0VNxqxIu1Fd6764T+e4R70gqCDL3pMAbQlJH/vV+p0HygrHoaGNEcf3I3w8QLx7zTBc6KL6mZ6Qf/hKfq+KG+JJC7SUiS7D20e6dwNIzG3Q=
+	t=1790437775; cv=none; b=nP8NfO1lndJbWvG15g3qpmRkZEdLdkurtlidYWxeB5a7Iu2SqUcYKOeUw3FU4Ltj1wPvfBbIWab8jF68Vki26V8BOHPFHcyfQIqc0yFKnWwOSnh32F83oZMF0GlCRgiGOpT658Fuidwyq19p13jxWIbwzWL6r1eWNQ3WV+jG/mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790437772; c=relaxed/simple;
-	bh=U0usEgD6eBVSyAl+4wuE0PhgO7aYIcSIWGg7AGP8BEg=;
+	s=arc-20240116; t=1790437775; c=relaxed/simple;
+	bh=2ChPtfS7fuQ6xmL5pBM0ED+Tz6MNWUwwNmCfWCfm6zM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WDqhKvrFx44Bd4qnQHN2R2pt7r6GbyfdaVJBwttcLWpcaIPSD+kzstYgukyELhJCYZ6qFxCHogmpjCdHd6+dtHdBLMPP/ILvi9z16i8FKNhzsMyQk5gK4EnoXacE85RsSJh50OHmGJZOdkRQqFAQEQr2Jw+Fk4SfBiW4vmlDtvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sRuhkRGd; arc=none smtp.client-ip=74.125.231.141
+	 In-Reply-To:To:Cc; b=BKI9h1QnW1zH8UAAYM3yq75DpMsn+nAj3AcfEmRHGnZrKoyPc//bjFRVt04nJy5oEoS5N9qPpfvDK5JogkS1W5cTxFoNq3Sqic10/zWJ1Lu3IqcZ4Tiq+940ca5xknwo3Cs0ejZc/VMxOg97awxO0kg0Wut580G0/IGfH8C4H+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mohVNcip; arc=none smtp.client-ip=74.125.231.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sRuhkRGd"
-Received: by mail-oo2-f13.google.com with SMTP id 006d021491bc7-6d7a52c9d62so127505eaf.1
-        for <linux-tegra@vger.kernel.org>; Sat, 26 Sep 2026 08:49:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mohVNcip"
+Received: by mail-oo2-f42.google.com with SMTP id 46e09a7af769-81b8e8e9cb0so10051a34.3
+        for <linux-tegra@vger.kernel.org>; Sat, 26 Sep 2026 08:49:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790437763; x=1791042563; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1790437768; x=1791042568; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=B0ScVIX3sPn/yQi4OeJT/F76Vd8VPP2euaNmJMN8ERw=;
-        b=sRuhkRGd0u8nkOxa0GXrwphVrHhk1n3TOpBZ8Ki/iyxUfciGgghFsVF6tpv6Ttd7uS
-         ASNaisI4iRsAK26INUqWMlXgR6DQuFiZhjXX0WyulRfkpsjnfZ2/DIdywIgrVZ08XFTD
-         IZmUGtFkkLP9NQODz66uQUePhgLso6vCFuWu67JQ81fgzWZqIGjZHz/2QgYkvFRwvYN/
-         RzXDykVxoV42Mnox1uwvBeIJ56SZLTxa17EnDIjZJFfrTT/LK3n9H4gE/NQZBEXfeB4B
-         yCVpd1ec1iwItV2xGrF1tbdFpRymprAE60ajlhRNx8p5PlIANw5cVjB3hCoZwD79SsCf
-         dOPw==
+        bh=pt1JZ0Xx4dSQpjlcwcv4OrOAetyhY0kdTpc42Knguac=;
+        b=mohVNcipWlGEJslyD0IsZkG+B5AWQcv5qAkzYCOwQUICWSKmnSx5vjgc13hcsLdTpZ
+         qlyD7kSE0P6DL3qf2Kfg9MA3nVIP5m19BH1Fa/68btsEZPAGWhOnXwH5VxCn1snzRnDi
+         v1DcYeborhQd2p3+CZLOI6wImkx69Hk+T+rK9h60DiouWnNNQL5UG4xC32i9hUnvG9h/
+         4vLAJwdMOREqCBZy4wxmp29ie15jvz0LXK3Db8TOcpc/qfPu6Dg+g77uI9q8ckGdwvWv
+         5LJXZPKn40TOYbxMBRPBI27DLYyWyeYhN8x4bZNuSa2DyZ4I/vZM5AMyR+JXTdX1E3FI
+         2grA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790437763; x=1791042563;
+        d=1e100.net; s=20260707; t=1790437768; x=1791042568;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=B0ScVIX3sPn/yQi4OeJT/F76Vd8VPP2euaNmJMN8ERw=;
-        b=Re89K3xXff5hWx0lbyZuIzx0NrmU6zid/p0IZJTbt/6QVnp5oueoAXtypF3Xc/m0Bk
-         GOrVHkCO+kLseP+bK4DB93QycNwefHRYHjuZyk+K1QmazdMRRNjp51/Wy9A2cwPwcP4j
-         wySQWMvL/ge+6RKfVeUVUYf5qlOGGkCq3DF2gtYqnTTGhxDwahM32oFXGBQ3WnxiHpBE
-         UU2OezdzOlXhXnJpyrEKprp3luxMSlXyfYFBR61qKzVfhLPRxxBiBwnn1VOhkGrFR5+c
-         jkGkaxuRfuWPyibotQrpcBXkH8roexXrC96iIGIpNkVrbAp3XEZdtud72OKcNTewwbjC
-         D17A==
-X-Forwarded-Encrypted: i=1; AKwUvBzBbSTTF5HQejVvnpLY0AK8qwwU3eMTVuvMZwnPy++jaOfXacumzshHutdhd+dqM5FJ5Rm/bDsXCLqrkg==@vger.kernel.org
-X-Gm-Message-State: AFuF++ndZdx4C4+C5KkGNGBH6E/D+vyju4P1bvZg1aCDM7sgF99Vu3Vc
-	dAFY/QCLnaq4tUwiACu6D68ezmAmuskn80a0JkWEkCOSo7CqK/MzzgGu
-X-Gm-Gg: AYBFou1A3iNtvjBmLGcqZTXlAaAcLgrONpbgNA4sl/OnuIMWvlwBnFpuR8v3x+8JbPw
-	1p5/LXDzzlL3fYwTI1eEtXD2OY59wLJ0prz/mUeFyFhhRrzuDNfTYgbVm1wULhZy9Ybi+iEibZb
-	efzvkbhPBUgRFWvCA8aEoR+X+ylkQ/P0094C+rF7fcXh8oG/Q2Dn1X1srqyRnn51UWaR5fNoU27
-	vKif+veWpt9nFWXU5gtxYdFYAgOCRdCzZ7QLJsOf5HIklb0cP/bsuuIN0oDsD7y5M245l+D3Wh2
-	BWbSTo+5w672oxBiBBJdzrMcmRffouNoBekSHGugdHOmmTXoPnqE+zw11lZWrqcdqlb591IsRUx
-	Vy1gmqxGBwe7guUq1sNum7V1+CBg0JjFmbfxVcoso1pklfbu8sbzYYlJSSN5KdHYwldefyuFf2h
-	3/lg6Yt8NKYGSj40bnkXFROCtIK9wl5uHQHDprTj8zYf6iRQTQGdI1YDllsLc6TnyOrNIIZw7Cb
-	vHpmbK6We2pEWgnAuWAoKyE3e4U6qUUbVBODTvlzeL46t7HzI1irMABi236Ng09hwqe8xxqTBzj
-	y2W1/jI/SdYG70Y2rOsEaX+5JJG7oPplgU+E1kYTPQC10VYEODYxN6HDPD+7QPchfk+6QCB6t4X
-	AZ2K1er6AQULxhpKM+qk/
-X-Received: by 2002:a05:6820:1ca6:b0:6d3:402e:1fca with SMTP id 006d021491bc7-6d43ebf0448mr8754440eaf.9.1790437762887;
-        Sat, 26 Sep 2026 08:49:22 -0700 (PDT)
+        bh=pt1JZ0Xx4dSQpjlcwcv4OrOAetyhY0kdTpc42Knguac=;
+        b=MPZkwo/a7qzY8I47IKhPcSR1xUNZqtXQZJSs3FUcGhFKOjC9DbIVPZBA/2mbBeKETE
+         InjhnaetcKbDUGF8W0blB4R/SWLytMUt+cot2WyoVOiIOf7ZgUvQRiR9ic4GUGQ+I/4e
+         s81KaSNAveZjJrx15DsBYEsDSFeP/64kFNGNF1KI4FMupf4f6dXCHUYTT7ebVVyLS3NX
+         pwFOW4gfVHYxH2gXpJCXJ9onPAUne/z4b8qNKY9aF0+jgwRWdFGtVltn3BS7a5xObKPj
+         k03wHGovK/UVzFMljZZbYZWNvtdh1rZUpB10pkEhj2Op5NqRPtt0LzLzEieR3xjnrx2u
+         sFuw==
+X-Forwarded-Encrypted: i=1; AKwUvBz2FaSaTytBFiKJ0ziAK5ZzX24Z0PJ4lQJQjF0Ay//wYHcRDCTeiwR6RLq8QybXQuOxfPI+8d+5ki+A+w==@vger.kernel.org
+X-Gm-Message-State: AFuF++nDLmvLd1UMk7VKuj3oXI/PvtQnIT/5aaA7aMuSM9rJfeK47FSD
+	K8cmfBxqyQxB6TYeVZB/ESiE7y+FpcdIfnT+S++cbaCLAHPEAid4+1+h
+X-Gm-Gg: AYBFou2edsnKJ11LAxjHplbEqe06/oIEPazdB2ax3sJTQUL/mnEsBTCmLfHB5HMPwhe
+	sDSJ8ICs8HS6aWp3WOgFFBZuUSTHenPWz9oTQNAYljLXwRLgQ5CIIkB3Y0ZrCMsOnbgs4zpxvmJ
+	9slmboXOSdriIl8zha1bJfTw7i7ETvh3O0NAx/chotvzXHsVkqyL6BVAWiLpwlBViPrFnIyT4Pn
+	dok1fVTpYdXDfV8xRFQ0DdR9usZS69W0gH0kKVIh8dpKUg32EIjqaP9APKnG5p/x2yHJfpvQcJp
+	E3yu+vbmRBsU1CWoTuIi0zjYDErGgW+TaVyZ00x4rMhb81rpHaOd2ULxD/f/pOz73VHKaIGeHBr
+	y+WDa+cS2X2yt3mocnILLYWhURjGRe5w5zbhDuajMKMlN3Rx5vD5ZNcr0ObMWMSBaZwMcYBhoHx
+	Q4fw3f7c7kwYtqrsQk2n9SUmmUNUPXYDXVPCGgKWxjJ2sHcvTGZehVQ2pbB5Prdik0RKauysmAl
+	J2A3MIDdjAGaHuqGlbIBc2cwxS7mfsSda3NSR/ARaKFtUZZuovgGQmFC5DrsCW/wfNB+kevbt31
+	42gezt4URJeOlnr+KA5PKnGqrTEfiI5oDkyK/SupBKK9q1L25Slrh0L+P4cDmWMRkL0byyWddI2
+	cAC6H/q4509RyKma2iqPj
+X-Received: by 2002:a05:6830:6734:b0:7dc:4a43:fb5c with SMTP id 46e09a7af769-81781294540mr9561085a34.11.1790437767719;
+        Sat, 26 Sep 2026 08:49:27 -0700 (PDT)
 Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-818e98b16d4sm5442366a34.26.2026.09.26.08.49.20
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-818e98b16d4sm5442366a34.26.2026.09.26.08.49.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Sep 2026 08:49:22 -0700 (PDT)
+        Sat, 26 Sep 2026 08:49:26 -0700 (PDT)
 From: James Hilliard <james.hilliard1@gmail.com>
-Date: Sat, 26 Sep 2026 09:48:57 -0600
-Subject: [PATCH net v4 02/15] net: stmmac: reuse the MDIO reset GPIO on
- resume
+Date: Sat, 26 Sep 2026 09:48:59 -0600
+Subject: [PATCH net v4 04/15] xsk: freeze deferred pool teardown during
+ system sleep
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260926-submit-stmmac-reset-fixes-v1-v4-2-ec1c0250b3c9@gmail.com>
+Message-Id: <20260926-submit-stmmac-reset-fixes-v1-v4-4-ec1c0250b3c9@gmail.com>
 References: <20260926-submit-stmmac-reset-fixes-v1-v4-0-ec1c0250b3c9@gmail.com>
 In-Reply-To: <20260926-submit-stmmac-reset-fixes-v1-v4-0-ec1c0250b3c9@gmail.com>
 To: Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, 
@@ -120,62 +120,38 @@ Cc: Richard Genoud <richard.genoud@bootlin.com>,
  linux-tegra@vger.kernel.org, linux-sunxi@lists.linux.dev
 X-Mailer: b4 0.15.2
 
-MDIO bus registration acquires the optional snps,reset GPIO through
-devres. A later bus reset must reuse that descriptor: requesting the
-same exclusive GPIO again returns -EBUSY while devres still owns it.
-Cache the successfully acquired descriptor for subsequent resets.
-Propagate acquisition errors without caching an error pointer.
+Pool destruction calls the driver under RTNL from system_wq. That queue
+is not frozen during system sleep, so ndo_bpf() can run after the device
+suspend callback has gated its clocks or after the noirq phase.
 
-Fixes: 7c86f20d15b7 ("net: stmmac: use GPIO descriptors in stmmac_mdio_reset")
+Use the freezable workqueue for deferred pool release. Work already
+running completes before device suspend, and newly queued destruction
+waits until device resume. The pool, UMEM and netdev references remain
+owned by the work until then. This does not replace driver error
+handling after a failed resume.
+
+Fixes: 1c1efc2af158 ("xsk: Create and free buffer pool independently from umem")
 Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac.h      |  1 +
- drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c | 18 ++++++++++++------
- 2 files changed, 13 insertions(+), 6 deletions(-)
+ net/xdp/xsk_buff_pool.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-index 7582fca63741..c7c876408d85 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-@@ -287,6 +287,7 @@ struct stmmac_priv {
+diff --git a/net/xdp/xsk_buff_pool.c b/net/xdp/xsk_buff_pool.c
+index 9d2d94f1fb75..c58f56f24a9c 100644
+--- a/net/xdp/xsk_buff_pool.c
++++ b/net/xdp/xsk_buff_pool.c
+@@ -337,7 +337,10 @@ bool xp_put_pool(struct xsk_buff_pool *pool)
  
- 	unsigned int pause_time;
- 	struct mii_bus *mii;
-+	struct gpio_desc *mdio_reset_gpio;
- 
- 	struct stmmac_pcs *integrated_pcs;
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-index afe98ff5bdcb..07d5eab05996 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-@@ -386,14 +386,20 @@ int stmmac_mdio_reset(struct mii_bus *bus)
- 
- #ifdef CONFIG_OF
- 	if (priv->device->of_node) {
--		struct gpio_desc *reset_gpio;
-+		struct gpio_desc *reset_gpio = priv->mdio_reset_gpio;
- 		u32 delays[3] = { 0, 0, 0 };
- 
--		reset_gpio = devm_gpiod_get_optional(priv->device,
--						     "snps,reset",
--						     GPIOD_OUT_LOW);
--		if (IS_ERR(reset_gpio))
--			return PTR_ERR(reset_gpio);
-+		/* The bus reset also runs on resume. Devres retains the GPIO
-+		 * until unbind, so do not request an already owned line again.
+ 	if (refcount_dec_and_test(&pool->users)) {
+ 		INIT_WORK(&pool->work, xp_release_deferred);
+-		schedule_work(&pool->work);
++		/* Teardown calls ndo_bpf(), which may need powered hardware.
++		 * RTNL alone does not exclude the device's system PM callbacks.
 +		 */
-+		if (!reset_gpio) {
-+			reset_gpio = devm_gpiod_get_optional(priv->device,
-+							     "snps,reset",
-+							     GPIOD_OUT_LOW);
-+			if (IS_ERR(reset_gpio))
-+				return PTR_ERR(reset_gpio);
-+			priv->mdio_reset_gpio = reset_gpio;
-+		}
++		queue_work(system_freezable_wq, &pool->work);
+ 		return true;
+ 	}
  
- 		device_property_read_u32_array(priv->device,
- 					       "snps,reset-delays-us",
 
 -- 
 2.53.0
