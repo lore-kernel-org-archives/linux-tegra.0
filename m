@@ -1,71 +1,71 @@
-Received: from mail-oo2-f37.google.com (mail-oo2-f37.google.com [74.125.231.165])
+Received: from mail-oo2-f39.google.com (mail-oo2-f39.google.com [74.125.231.167])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E947737E5EB
-	for <linux-tegra@vger.kernel.org>; Sat, 26 Sep 2026 15:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6923C372ECD
+	for <linux-tegra@vger.kernel.org>; Sat, 26 Sep 2026 15:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.167
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790437788; cv=none; b=N1n600wBIWcb7P+aUnrEfozPNCeQXPhCn2vNNTq7CHL3fbCD5FEdZr1e4AhNOxTgbwkrnKI8Aw/ctbrzncgxebEui/vVDCQpPTa/uuq+JqirB48bRQa6j6Pnr6J7u/PtUfA4eRM1D7m2YKUkdxHz8uxykUSCyg6X19XdeOEyHrM=
+	t=1790437790; cv=none; b=pjJDxRPEvMCgxWMZpMxIEWzkaMuuH4sFFb2Fn+m+QjSByJaBxpq8uG3lqM3FEY/l/CTZYtWJYtwm0dLtsbEn56vhAjILmzGsue1vhoEewpY84JWRe9obl+BN/V4bLcY1RmlZWXW96Vgdzw2h4t0aMpgrrSvPzzgo0K8ce6EQqqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790437788; c=relaxed/simple;
-	bh=AAtTdvZNrumwoPmEQLjH0UMJLifFnY3iZ+J8gFMDj0s=;
+	s=arc-20240116; t=1790437790; c=relaxed/simple;
+	bh=D8q+JFl8ShBAwd8HatsVWk4ClB609jvEFQM0NLY9Qlk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HP5SY3r5NHHe4p46hKEl9H/C1ibMKa9NAGxJFgL8UeL6nSZAYGmey7jPUcMWdpS4O3FY2PouWXehwVBylmK0EC3CS2aCSbc/yFPz5nmqioXqzehmZe7bZYW+UfhEr8WQFDoTs3rGD4TcOXTXL7gKJiwRflpt3Rb2fFaIBLvJL8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lVgyT9ZN; arc=none smtp.client-ip=74.125.231.165
+	 In-Reply-To:To:Cc; b=BtrYJa/YJjgNS+kYMNEJSyIBPRCphU0wEDb2UKd8/4iRcXeBXjtNwsWEQHF7ov61+y0xG40sHAQCBUf+VlY7VXTKhNIuu8J7NP4MhV0GRy5yTdluCGf776DZxXfB1dY459RfV+FqMF08q2DivfJ+oFPejZN2OReSG4+MzKV1A7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sst8+Yxw; arc=none smtp.client-ip=74.125.231.167
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lVgyT9ZN"
-Received: by mail-oo2-f37.google.com with SMTP id 46e09a7af769-7fcb425fc2bso1178408a34.3
-        for <linux-tegra@vger.kernel.org>; Sat, 26 Sep 2026 08:49:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sst8+Yxw"
+Received: by mail-oo2-f39.google.com with SMTP id 46e09a7af769-7f4f0c89e33so1049271a34.0
+        for <linux-tegra@vger.kernel.org>; Sat, 26 Sep 2026 08:49:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790437783; x=1791042583; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1790437785; x=1791042585; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Q30zsdAglVy5fQcIaWXAHFq5dI/FtpUN3Zb+euSKjCs=;
-        b=lVgyT9ZNWDq1v2vYk18T7sv3wFR/R4txc7ZSpm46c8JszfhlyluTu4xPpUKfzWl92q
-         CZpqGZGqniWZljHS6LKhL0LcLTZ4D9ooIBRAVa96FxWjOXXiusyzWFoDmKzM7yQPYBJC
-         4rT27h9KZXPYag60pPnGfW3AzhOp873LWCO5MMIzxwHArwFczQecZv/VouwK5NANeYaf
-         5Q2kljrMG+crlDnPDroozHvVvsXSXB/a3bHlvnzm9htIBowXs1joZizUsh8ReATp+frj
-         y6N5CK9tFVzeQKVa1oOUOKsXIaoG44WysIUMsbkU716yTqMdECPobx5fdyOQSNhX3djn
-         axDw==
+        bh=v5J6qvfoNxCIHw/hgiMJQWPeLhNGA42IA+QA8tl0rh4=;
+        b=sst8+YxwPuldscdV+CM8PYE7o6nFopWbfVqJG2uWoMMhMDPD5b9rJ9Fb27MRox0q5T
+         N+tR/CxyBRvxlnxDFp+fI/dJEHCcXMaMk9SOD7as5MSmiLcneeEgFAjsV8P6qj7+OkNi
+         hFxQ3eDLCgy4vqqSwGn+UIQAeNVUEilKxQhjnxCPiuWFCoaP7QXpHo5wi8LuiCv8BzMR
+         fBU/m11m9j8rdbue4j3rRaFnp38v0pdhN4cUxuOR0jXUfed8cuQob5A7hlPfcNO2XGSx
+         w81t7Q9tl1Kc5I0Kc5roRMiP36228/h6ktrtL+MmEJhAQwkITv3nKE+Obkx2u3siUY7W
+         OLog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790437783; x=1791042583;
+        d=1e100.net; s=20260707; t=1790437785; x=1791042585;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Q30zsdAglVy5fQcIaWXAHFq5dI/FtpUN3Zb+euSKjCs=;
-        b=edQJ358oXBZb91ZtUFbkgiCxg7Nu23FKC1/10OoIXP8m/6PV4by1rospTkKt3PH9du
-         B+bq98qERwgSBYaLZW+URq6hIOCbWb8Tz3KNlrmKCz+8cjiK121Fe7rVf+FgXmbKFtGp
-         Nyfxu0eoklzlo018g9wY+a0D3M+6LlM0HsgSxI5Opo28rGHLaHVVF/BcQmBV3zOeLtqS
-         5m7SaT+axb0UsmiOOQJyIo1qvW/j8392ROfMwnJ2YsakScLv74pkTwuvKRAHzezOH8CK
-         AefeZ4Oqk9tQMi7r+z2UD106Oafdkt04nNwAIFnk18UMvQJGK2kHf3XZ0CS0FyLRt7vN
-         xfgA==
-X-Forwarded-Encrypted: i=1; AKwUvBxDUADwVB0b+eDh8lEa7GIjxIjO6x6EzkcQnDdgIFoXvSx29+Rnr5d08qRbS4uPnazixS0tpAl8lIxJfQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++mH49dBMoY9QJj4utyWJrLj3qFmn2RWOtzdUzkCQM2RpgxAqKzq
-	5sYO9xDS36Kvkpebczu+HNcMbY9rlf6Sb5AHiQnIAn8bQ+EkVxfRn16R
-X-Gm-Gg: AYBFou34WOHEa5iHhUjEYBx9uUcmFbkucRcIc1RZLIMhu49rGjV+Ei10q4GlnsxX71o
-	nZ7tOCBnJNoYrGojF0fstwDBypZkc9GozRCBFPAhzbDtH1fBPsg4W6OwxXjpOFqZQdI3Ix2+OZl
-	kqz0xokRPm7K+l20aKY63DMJIOom671gyW729eNj6q8gMBPZw0JuGWcNxaeiMoyIpSIlAsiBDVN
-	tUd1d1e21KIml7HKyJsU8aLbxFZoL4h1RifAyq6IonJn//Ol+UckObzBAnMsYKHOx0GomP2Izd5
-	gk7UKv7JzXVOsSnLvwaz0MySITYvC5hPlL0JFGbR5Ms31GJNGikHkHerhPbUuHjSGN2smg608tf
-	MzEZ6dgOe2LvyxgwevBl4xUb5P2fqj3FAH/EiZAEIhJ9qupgulLwEe884SzRVFF64qA6VvcpPMX
-	T+IP56hsaLyNzOwcsY32eMEwBg0p9/1kFS+ytGGFnaTTRLvhOm5rcIAOT0+O0yxGeSf/LfgdtYd
-	cdUfIlTFRlYQU4ksHN0nuW7KLsoyE0RGbD5PqLYvAMhJ+l6kAFGso3CafFw/oDVqBIrW/KG+Lny
-	ngTobdPMhwa/L2V/s8e5VcQ3vjh4q8hkzwXoy/0rd6/hrnOJsXBAlUM0JvBZu5bM/IcTU0qwcrx
-	46vD2R7whVOphvgM1Qtns
-X-Received: by 2002:a05:6830:3887:b0:7f5:17:3f2a with SMTP id 46e09a7af769-8178317d7ddmr9815575a34.15.1790437783091;
-        Sat, 26 Sep 2026 08:49:43 -0700 (PDT)
+        bh=v5J6qvfoNxCIHw/hgiMJQWPeLhNGA42IA+QA8tl0rh4=;
+        b=LSsk1tpNRbc0lDRUDLgV2BGvBoaJyMEw4ht07SgmGbq0SBd4Y5bAfUXIHnal6QTRah
+         kQ5fVKZTR9L0uIIQTOVIcBpo7EWEOq63O2qLBeRs4nNbkmhf1Y9ZpfiFN1fY0PL6rdnJ
+         yXU6wZS7iF5QM+DqUftH1pb4RkRQAIEHCJp4wQfvSSyWVFqtPvJYvB8JIwZg53QNRCKj
+         5flNljcSosUnm0xR2LHhZUZvZxZ/IpFuYfjq/PJWay1pacFRuyWHJFZtrWzPPENPHE6j
+         /lMjSJYHULFz6pspePmSqx4csi0KH2cEQhOWT8ecgWc8mSswiKr2kqDZOkklJgZ5klqU
+         UxLA==
+X-Forwarded-Encrypted: i=1; AKwUvBwSwtNtgIcIw05Ks2s348H1u6pxuz0oFUKBw5SExiy/9iLojdLA5dJ5DiVrO4hiDMSjxWh+2cjLFVMx2A==@vger.kernel.org
+X-Gm-Message-State: AFuF++kbYrQwHQMwJXeM7PhfwAF73Tf3nbO9cWJEEhXCaZRvTG000RLC
+	eS86CsPDszd0KeTDE4NOa7N8fhCoT5m1bC/WSba9ARvQxc+hQDAmsSUj
+X-Gm-Gg: AYBFou3I5+3LM01Hqp6PixxTE/BT2mJT2pwweqHCzT5Mj1zr/dbqMdWbD/bQF/aq9qC
+	2qV4oxpG0cyudO44QiAEuj4qOl1GUeNSRj8peqH5CTYopZauPx6AqLmteIXqZuzquYQ481tUW/P
+	RSMnS2rvgZw7VhBJDSO3NkZ9G9i+KkpSN8R4NvSPWwu3NODjIGf5MtLq2+Yx9bX4nu3NfaEpArW
+	9Jba2nPELXMNoLlGz9q1NnlZEvWj8b86laNeaSS4oEB+k47zo7fQA8SHNP3oLh77+ErRvdtq/f3
+	ocrYgb+KPUXZX6mFezbZy6eMUNZWW1lTZDCUcCP2uHnKD0CT1F2n6Ekm2sWqpz6ag4PBd5H1fsC
+	495ZFuffgGSQnIog7bLlQgJs8k3Zon+/RtWe+BukEPmSWJSNvIaL9eGVbCnRH2e9hgSwfXauBRR
+	/XMMsbTJrKfIKs/Q6ogLoxwAS8wHlSKFSobS8i0YYkHFI43ybInEVJXEz4//WEMFYkrcZqCJELP
+	YsGhJB5A0LEaei4jqrR74Xzcgyd63Z/bFtgOPoy9IK6UPS2e59Yfkcds33uWbjSb79Y2lQaWmgx
+	942VjPPWIaloHMF8X2LlAOQc8rqKrD8BOfmPInPe8OoFVMxIDMAvBJbHjqKl7Towz9i1BGY8MuI
+	hEnF4soUwrghY2cjSW53B
+X-Received: by 2002:a05:6830:6686:b0:7f4:eb76:881d with SMTP id 46e09a7af769-81780693ca6mr10527443a34.5.1790437785355;
+        Sat, 26 Sep 2026 08:49:45 -0700 (PDT)
 Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-818e98b16d4sm5442366a34.26.2026.09.26.08.49.40
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-818e98b16d4sm5442366a34.26.2026.09.26.08.49.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Sep 2026 08:49:42 -0700 (PDT)
+        Sat, 26 Sep 2026 08:49:44 -0700 (PDT)
 From: James Hilliard <james.hilliard1@gmail.com>
-Date: Sat, 26 Sep 2026 09:49:06 -0600
-Subject: [PATCH net v4 11/15] net: stmmac: restore TC offloads before
- restarting DMA
+Date: Sat, 26 Sep 2026 09:49:07 -0600
+Subject: [PATCH net v4 12/15] xsk: allow drivers to retain DMA mappings
+ independently of pools
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260926-submit-stmmac-reset-fixes-v1-v4-11-ec1c0250b3c9@gmail.com>
+Message-Id: <20260926-submit-stmmac-reset-fixes-v1-v4-12-ec1c0250b3c9@gmail.com>
 References: <20260926-submit-stmmac-reset-fixes-v1-v4-0-ec1c0250b3c9@gmail.com>
 In-Reply-To: <20260926-submit-stmmac-reset-fixes-v1-v4-0-ec1c0250b3c9@gmail.com>
 To: Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, 
@@ -120,620 +120,173 @@ Cc: Richard Genoud <richard.genoud@bootlin.com>,
  linux-tegra@vger.kernel.org, linux-sunxi@lists.linux.dev
 X-Mailer: b4 0.15.2
 
-A DMA software reset loses MAC filters and the MTL gate schedule, not
-just the ring addresses. Restore those offloads during ordinary hardware
-setup and resume. The later live-XDP reset fallback and retained-ring
-MTU transaction will use the same restoration.
+An unsuccessful device shutdown does not make its DMA memory safe to
+unmap. AF_XDP pool removal must nevertheless complete: the last socket
+release invokes the driver detach callback and then destroys the pool,
+regardless of the callback's return value.
 
-Keep the parsed L3/L4 rule rather than only its cookie. Program from
-that saved definition both when installing a rule and after reset. Do
-not publish a partially programmed replacement; restore the previous
-slot when installation fails. Keep runtime VLAN priorities in the
-existing queue configuration and replay EtherType steering and the
-configured preemption/TC mapping. Preserve the additional fragment size.
+Provide an independent reference to the existing DMA mapping and its
+UMEM pages. A driver can take it while installing rings and release it
+after DMA has actually stopped. It does not retain pool metadata, fill
+or completion rings, or the pool users reference which triggers
+teardown.
 
-Restore EST after the timestamp counter is usable, advancing its saved
-base time by whole cycles when necessary. Delay DMA start until filters,
-timestamp state and the gate schedule have been restored. Propagate a
-replay error through the existing rollback or detached recovery path.
-
-Build and validate TAPRIO replacements separately, including the PHC time
-read, and publish the saved schedule only after hardware setup succeeds.
-Keep the previous schedule on rejection and attempt to restore it after
-a programming error. A rejected first install must not leave an enabled
-zero-cycle cache for PHC adjustment or reset replay. Serialize schedule
-publication with those consumers under the PTP mutex.
+Keep the DMA device and the mapping's netdev lookup key allocated,
+without taking a netdev usage reference that would prevent unregister.
+Save the mapping attributes and unmap before dropping the last retained
+UMEM reference. Mapping reference operations are serialized by RTNL,
+like the existing mapping list operations.
 
 Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac.h      |   9 +
- drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c  |   1 +
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |  25 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c   | 286 +++++++++++++++-------
- 4 files changed, 226 insertions(+), 95 deletions(-)
+ include/net/xdp_sock_drv.h  | 23 ++++++++++++++++++++++
+ include/net/xsk_buff_pool.h |  4 ++++
+ net/xdp/xsk_buff_pool.c     | 48 +++++++++++++++++++++++++++++++++++++++++++--
+ 3 files changed, 73 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-index b65f47db3c2e..6abb0d1d4095 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-@@ -151,6 +151,9 @@ struct stmmac_fpe_cfg {
- 	struct ethtool_mmsv mmsv;
- 	const struct stmmac_fpe_reg *reg;
- 	u32 fpe_csr;	/* MAC_FPE_CTRL_STS reg cache */
-+	u32 preemptible_tcs;
-+	u32 add_frag_size;
-+	bool mapping_configured;
- };
- 
- struct stmmac_tc_entry {
-@@ -194,6 +197,10 @@ struct stmmac_flow_entry {
- 	unsigned long cookie;
- 	unsigned long action;
- 	u8 ip_proto;
-+	u32 ip4_src;
-+	u32 ip4_dst;
-+	u16 port_src;
-+	u16 port_dst;
- 	int in_use;
- 	int idx;
- 	int is_l4;
-@@ -433,6 +440,8 @@ void stmmac_set_ethtool_ops(struct net_device *netdev);
- void stmmac_ptp_register(struct stmmac_priv *priv);
- void stmmac_ptp_unregister(struct stmmac_priv *priv);
- int stmmac_ptp_restore(struct stmmac_priv *priv);
-+int stmmac_tc_restore_filters(struct stmmac_priv *priv);
-+int stmmac_tc_restore_est(struct stmmac_priv *priv);
- int stmmac_xdp_open(struct net_device *dev);
- void stmmac_xdp_release(struct net_device *dev);
- int stmmac_get_phy_intf_sel(phy_interface_t interface);
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c
-index c889204a7aa5..067ea1f5134b 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c
-@@ -195,6 +195,7 @@ void stmmac_fpe_set_add_frag_size(struct stmmac_priv *priv, u32 add_frag_size)
- 	value = readl(ioaddr + reg->mtl_fpe_reg);
- 	writel(u32_replace_bits(value, add_frag_size, FPE_MTL_ADD_FRAG_SZ),
- 	       ioaddr + reg->mtl_fpe_reg);
-+	priv->fpe_cfg.add_frag_size = add_frag_size;
+diff --git a/include/net/xdp_sock_drv.h b/include/net/xdp_sock_drv.h
+index d94aeb506379..819410797db3 100644
+--- a/include/net/xdp_sock_drv.h
++++ b/include/net/xdp_sock_drv.h
+@@ -95,6 +95,20 @@ static inline void xsk_pool_dma_unmap(struct xsk_buff_pool *pool,
+ 	xp_dma_unmap(pool, attrs);
  }
  
- #define ALG_ERR_MSG "TX algorithm SP is not suitable for one-to-many mapping"
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 618e01772ab8..edcb9a025385 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -3756,6 +3756,11 @@ static int stmmac_hw_setup(struct net_device *dev)
- 		if (ret)
- 			return ret;
- 	}
-+	ret = stmmac_tc_restore_filters(priv);
-+	if (ret)
-+		return ret;
-+	if (stmmac_fpe_supported(priv))
-+		stmmac_fpe_set_add_frag_size(priv, priv->fpe_cfg.add_frag_size);
- 
- 	/* Initialize Safety Features */
- 	stmmac_safety_feat_configuration(priv);
-@@ -3818,9 +3823,6 @@ static int stmmac_hw_setup(struct net_device *dev)
- 		stmmac_enable_tbs(priv, priv->ioaddr, enable, chan);
- 	}
- 
--	/* Start the ball rolling... */
--	stmmac_start_all_dma(priv);
--
- 	phylink_rx_clk_stop_block(priv->phylink);
- 	stmmac_set_hw_vlan_mode(priv, priv->hw);
- 	phylink_rx_clk_stop_unblock(priv->phylink);
-@@ -4348,6 +4350,14 @@ static int __stmmac_open(struct net_device *dev,
- 	stmmac_init_coalesce(priv);
- 
- 	stmmac_vlan_restore(priv);
-+	mutex_lock(&priv->ptp_mutex);
-+	ret = stmmac_tc_restore_est(priv);
-+	mutex_unlock(&priv->ptp_mutex);
-+	if (ret)
-+		goto irq_error;
-+
-+	/* All reset-sensitive offloads must be installed before DMA runs. */
-+	stmmac_start_all_dma(priv);
- 
- 	ret = stmmac_request_irq(dev);
- 	if (ret)
-@@ -8722,10 +8732,14 @@ int stmmac_resume(struct device *dev)
- 		goto error_stop_dma;
- 	}
- 
--	stmmac_init_timestamping(priv);
- 	mutex_lock(&priv->ptp_mutex);
--	stmmac_block_ptp(priv, false);
-+	stmmac_init_timestamping(priv);
-+	ret = stmmac_tc_restore_est(priv);
-+	if (!ret)
-+		stmmac_block_ptp(priv, false);
- 	mutex_unlock(&priv->ptp_mutex);
-+	if (ret)
-+		goto error_stop_dma;
- 
- 	stmmac_init_coalesce(priv);
- 	phylink_rx_clk_stop_block(priv->phylink);
-@@ -8734,6 +8748,7 @@ int stmmac_resume(struct device *dev)
- 
- 	stmmac_vlan_restore(priv);
- 
-+	stmmac_start_all_dma(priv);
- 	stmmac_enable_all_queues(priv);
- 	stmmac_enable_all_dma_irq(priv);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-index 9ded65750e89..de254919f6ab 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-@@ -14,12 +14,17 @@
- static int tc_config_preemption(struct stmmac_priv *priv,
- 				struct netlink_ext_ack *extack, u32 preemptible_tcs)
- {
--	/* Qdisc teardown must not access unpowered registers. */
--	if (priv->hw_unavailable)
--		return 0;
-+	int ret = 0;
- 
--	return stmmac_fpe_map_preemption_class(priv, priv->dev, extack,
--					      preemptible_tcs);
-+	/* Qdisc teardown still clears the saved mapping after failed resume. */
-+	if (!priv->hw_unavailable)
-+		ret = stmmac_fpe_map_preemption_class(priv, priv->dev, extack,
-+						      preemptible_tcs);
-+	if (!ret) {
-+		priv->fpe_cfg.preemptible_tcs = preemptible_tcs;
-+		priv->fpe_cfg.mapping_configured = true;
-+	}
-+	return ret;
- }
- 
- static void tc_fill_all_pass_entry(struct stmmac_tc_entry *entry)
-@@ -519,31 +524,15 @@ static int tc_add_ip4_flow(struct stmmac_priv *priv,
- {
- 	struct flow_rule *rule = flow_cls_offload_flow_rule(cls);
- 	struct flow_dissector *dissector = rule->match.dissector;
--	bool inv = entry->action & STMMAC_FLOW_ACTION_DROP;
- 	struct flow_match_ipv4_addrs match;
--	u32 hw_match;
--	int ret;
- 
- 	/* Nothing to do here */
- 	if (!dissector_uses_key(dissector, FLOW_DISSECTOR_KEY_IPV4_ADDRS))
- 		return -EINVAL;
- 
- 	flow_rule_match_ipv4_addrs(rule, &match);
--	hw_match = ntohl(match.key->src) & ntohl(match.mask->src);
--	if (hw_match) {
--		ret = stmmac_config_l3_filter(priv, priv->hw, entry->idx, true,
--					      false, true, inv, hw_match);
--		if (ret)
--			return ret;
--	}
--
--	hw_match = ntohl(match.key->dst) & ntohl(match.mask->dst);
--	if (hw_match) {
--		ret = stmmac_config_l3_filter(priv, priv->hw, entry->idx, true,
--					      false, false, inv, hw_match);
--		if (ret)
--			return ret;
--	}
-+	entry->ip4_src = ntohl(match.key->src) & ntohl(match.mask->src);
-+	entry->ip4_dst = ntohl(match.key->dst) & ntohl(match.mask->dst);
- 
- 	return 0;
- }
-@@ -554,11 +543,7 @@ static int tc_add_ports_flow(struct stmmac_priv *priv,
- {
- 	struct flow_rule *rule = flow_cls_offload_flow_rule(cls);
- 	struct flow_dissector *dissector = rule->match.dissector;
--	bool inv = entry->action & STMMAC_FLOW_ACTION_DROP;
- 	struct flow_match_ports match;
--	u32 hw_match;
--	bool is_udp;
--	int ret;
- 
- 	/* Nothing to do here */
- 	if (!dissector_uses_key(dissector, FLOW_DISSECTOR_KEY_PORTS))
-@@ -566,10 +551,7 @@ static int tc_add_ports_flow(struct stmmac_priv *priv,
- 
- 	switch (entry->ip_proto) {
- 	case IPPROTO_TCP:
--		is_udp = false;
--		break;
- 	case IPPROTO_UDP:
--		is_udp = true;
- 		break;
- 	default:
- 		return -EINVAL;
-@@ -577,23 +559,46 @@ static int tc_add_ports_flow(struct stmmac_priv *priv,
- 
- 	flow_rule_match_ports(rule, &match);
- 
--	hw_match = ntohs(match.key->src) & ntohs(match.mask->src);
--	if (hw_match) {
--		ret = stmmac_config_l4_filter(priv, priv->hw, entry->idx, true,
--					      is_udp, true, inv, hw_match);
-+	entry->port_src = ntohs(match.key->src) & ntohs(match.mask->src);
-+	entry->port_dst = ntohs(match.key->dst) & ntohs(match.mask->dst);
-+
-+	entry->is_l4 = true;
-+	return 0;
-+}
-+
-+static int tc_config_flow(struct stmmac_priv *priv,
-+			  const struct stmmac_flow_entry *entry)
-+{
-+	bool inv = entry->action & STMMAC_FLOW_ACTION_DROP;
-+	bool udp = entry->ip_proto == IPPROTO_UDP;
-+	int ret;
-+
-+	/* Clear the whole slot, including matches removed by a replacement. */
-+	ret = stmmac_config_l3_filter(priv, priv->hw, entry->idx, false,
-+				      false, false, false, 0);
-+	if (ret || !entry->in_use)
-+		return ret;
-+	if (entry->ip4_src) {
-+		ret = stmmac_config_l3_filter(priv, priv->hw, entry->idx, true,
-+					      false, true, inv, entry->ip4_src);
- 		if (ret)
- 			return ret;
- 	}
--
--	hw_match = ntohs(match.key->dst) & ntohs(match.mask->dst);
--	if (hw_match) {
-+	if (entry->ip4_dst) {
-+		ret = stmmac_config_l3_filter(priv, priv->hw, entry->idx, true,
-+					      false, false, inv, entry->ip4_dst);
-+		if (ret)
-+			return ret;
-+	}
-+	if (entry->port_src) {
- 		ret = stmmac_config_l4_filter(priv, priv->hw, entry->idx, true,
--					      is_udp, false, inv, hw_match);
-+					    udp, true, inv, entry->port_src);
- 		if (ret)
- 			return ret;
- 	}
--
--	entry->is_l4 = true;
-+	if (entry->port_dst)
-+		return stmmac_config_l4_filter(priv, priv->hw, entry->idx, true,
-+					      udp, false, inv, entry->port_dst);
- 	return 0;
- }
- 
-@@ -629,6 +634,7 @@ static int tc_add_flow(struct stmmac_priv *priv,
- {
- 	struct stmmac_flow_entry *entry = tc_find_flow(priv, cls, false);
- 	struct flow_rule *rule = flow_cls_offload_flow_rule(cls);
-+	struct stmmac_flow_entry new = {};
- 	int i, ret;
- 
- 	if (!entry) {
-@@ -637,23 +643,33 @@ static int tc_add_flow(struct stmmac_priv *priv,
- 			return -ENOENT;
- 	}
- 
--	ret = tc_parse_flow_actions(priv, &rule->action, entry,
-+	new.idx = entry->idx;
-+	ret = tc_parse_flow_actions(priv, &rule->action, &new,
- 				    cls->common.extack);
- 	if (ret)
- 		return ret;
- 
- 	for (i = 0; i < ARRAY_SIZE(tc_flow_parsers); i++) {
--		ret = tc_flow_parsers[i].fn(priv, cls, entry);
-+		ret = tc_flow_parsers[i].fn(priv, cls, &new);
- 		if (!ret)
--			entry->in_use = true;
-+			new.in_use = true;
- 		else if (ret == -EOPNOTSUPP)
- 			return ret;
- 	}
- 
--	if (!entry->in_use)
-+	if (!new.in_use)
- 		return -EINVAL;
- 
--	entry->cookie = cls->cookie;
-+	ret = tc_config_flow(priv, &new);
-+	if (ret) {
-+		/* Do not publish a rule that was only partially programmed. */
-+		if (tc_config_flow(priv, entry))
-+			netdev_err(priv->dev, "failed to restore flower filter %d\n",
-+				   entry->idx);
-+		return ret;
-+	}
-+	new.cookie = cls->cookie;
-+	*entry = new;
- 	return 0;
- }
- 
-@@ -739,6 +755,8 @@ static int tc_add_vlan_flow(struct stmmac_priv *priv,
- 
- 		prio = BIT(match.key->vlan_priority);
- 		stmmac_rx_queue_prio(priv, priv->hw, prio, tc);
-+		priv->plat->rx_queues_cfg[tc].prio = prio;
-+		priv->plat->rx_queues_cfg[tc].use_prio = true;
- 
- 		entry->in_use = true;
- 		entry->cookie = cls->cookie;
-@@ -760,6 +778,8 @@ static int tc_del_vlan_flow(struct stmmac_priv *priv,
- 
- 	if (stmmac_tc_active(priv))
- 		stmmac_rx_queue_prio(priv, priv->hw, 0, entry->tc);
-+	priv->plat->rx_queues_cfg[entry->tc].prio = 0;
-+	priv->plat->rx_queues_cfg[entry->tc].use_prio = true;
- 
- 	entry->in_use = false;
- 	entry->cookie = 0;
-@@ -934,6 +954,45 @@ static int tc_setup_cls(struct stmmac_priv *priv,
- 	return ret;
- }
- 
-+int stmmac_tc_restore_filters(struct stmmac_priv *priv)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < priv->flow_entries_max; i++) {
-+		struct stmmac_flow_entry *entry = &priv->flow_entries[i];
-+
-+		if (!entry->in_use)
-+			continue;
-+		ret = tc_config_flow(priv, entry);
-+		if (ret)
-+			return ret;
-+	}
-+	for (i = 0; i < priv->rfs_entries_total; i++) {
-+		struct stmmac_rfs_entry *entry = &priv->rfs_entries[i];
-+
-+		if (!entry->in_use)
-+			continue;
-+		switch (entry->type) {
-+		/* VLAN priorities are replayed by stmmac_mtl_configuration(). */
-+		case STMMAC_RFS_T_VLAN:
-+			break;
-+		case STMMAC_RFS_T_LLDP:
-+			stmmac_rx_queue_routing(priv, priv->hw, PACKET_DCBCPQ,
-+						entry->tc);
-+			break;
-+		case STMMAC_RFS_T_1588:
-+			stmmac_rx_queue_routing(priv, priv->hw, PACKET_PTPQ,
-+						entry->tc);
-+			break;
-+		}
-+	}
-+	/* The XGMAC callback also restores the runtime TC-to-queue mapping. */
-+	if (priv->fpe_cfg.mapping_configured)
-+		return tc_config_preemption(priv, NULL,
-+					    priv->fpe_cfg.preemptible_tcs);
-+	return 0;
-+}
-+
- struct timespec64 stmmac_calc_tas_basetime(ktime_t old_base_time,
- 					   ktime_t current_time,
- 					   u64 cycle_time)
-@@ -957,7 +1016,37 @@ struct timespec64 stmmac_calc_tas_basetime(ktime_t old_base_time,
- 	return time;
- }
- 
--static void tc_taprio_map_maxsdu_txq(struct stmmac_priv *priv,
-+/* Called after timestamp setup and before DMA starts, with ptp_mutex held.
-+ * The PHC can still be blocked while reset state is being restored.
++/* RTNL must be held. Keep DMA mappings and pinned pages independently of
++ * the socket/pool lifetime, for rings whose DMA shutdown can fail.
++ * This does not keep pool metadata alive or postpone the detach callback.
 + */
-+int stmmac_tc_restore_est(struct stmmac_priv *priv)
++static inline struct xsk_dma_map *xsk_pool_dma_get(struct xsk_buff_pool *pool)
 +{
-+	struct stmmac_est *est = priv->est;
-+	struct timespec64 base;
-+	unsigned long flags;
-+	u64 now, cycle;
-+	int ret;
-+
-+	if (!est || !est->enable)
-+		return 0;
-+	mutex_lock(&priv->est_lock);
-+	read_lock_irqsave(&priv->ptp_lock, flags);
-+	ret = stmmac_get_systime(priv, priv->ptpaddr, &now);
-+	read_unlock_irqrestore(&priv->ptp_lock, flags);
-+	if (ret)
-+		goto out;
-+	cycle = (u64)est->ctr[1] * NSEC_PER_SEC + est->ctr[0];
-+	base = stmmac_calc_tas_basetime(ktime_set(est->btr_reserve[1],
-+						  est->btr_reserve[0]), now, cycle);
-+	est->btr[0] = base.tv_nsec;
-+	est->btr[1] = base.tv_sec;
-+	ret = stmmac_est_configure(priv, priv, est, priv->plat->clk_ptp_rate);
-+out:
-+	mutex_unlock(&priv->est_lock);
-+	return ret;
++	return xp_dma_get(pool);
 +}
 +
-+static void tc_taprio_map_maxsdu_txq(struct stmmac_est *est,
- 				     struct tc_taprio_qopt_offload *qopt)
++static inline void xsk_pool_dma_put(struct xsk_dma_map *dma_map)
++{
++	xp_dma_put(dma_map);
++}
++
+ static inline int xsk_pool_dma_map(struct xsk_buff_pool *pool,
+ 				   struct device *dev, unsigned long attrs)
  {
- 	u32 num_tc = qopt->mqprio.qopt.num_tc;
-@@ -974,7 +1063,7 @@ static void tc_taprio_map_maxsdu_txq(struct stmmac_priv *priv,
- 		count = qopt->mqprio.qopt.count[i];
- 
- 		for (j = offset; j < offset + count; j++)
--			priv->est->max_sdu[j] = qopt->max_sdu[i] + ETH_HLEN - ETH_TLEN;
-+			est->max_sdu[j] = qopt->max_sdu[i] + ETH_HLEN - ETH_TLEN;
- 	}
+@@ -432,6 +446,15 @@ static inline void xsk_pool_dma_unmap(struct xsk_buff_pool *pool,
+ {
  }
  
-@@ -984,8 +1073,9 @@ static int tc_taprio_configure(struct stmmac_priv *priv,
- 	u32 size, wid = priv->dma_cap.estwid, dep = priv->dma_cap.estdep;
- 	struct netlink_ext_ack *extack = qopt->mqprio.extack;
- 	struct timespec64 time, current_time, qopt_time;
-+	struct stmmac_est *est;
- 	ktime_t current_time_ns;
--	int err, i, ret = 0;
-+	int i, ret;
- 	u64 ctr;
- 
- 	if (qopt->base_time < 0)
-@@ -1040,34 +1130,27 @@ static int tc_taprio_configure(struct stmmac_priv *priv,
- 	if (qopt->cycle_time_extension >= BIT(wid + 7))
- 		return -ERANGE;
- 
--	if (!priv->est) {
--		priv->est = devm_kzalloc(priv->device, sizeof(*priv->est),
--					 GFP_KERNEL);
--		if (!priv->est)
--			return -ENOMEM;
--
--		mutex_init(&priv->est_lock);
--	} else {
--		mutex_lock(&priv->est_lock);
--		memset(priv->est, 0, sizeof(*priv->est));
--		mutex_unlock(&priv->est_lock);
--	}
-+	/* Build the replacement without changing the installed schedule. An
-+	 * entry rejected below must not leave an enabled, zero-cycle cache for
-+	 * PHC adjustment or reset replay to consume.
-+	 */
-+	est = kzalloc_obj(*est);
-+	if (!est)
-+		return -ENOMEM;
- 
- 	size = qopt->num_entries;
--
--	mutex_lock(&priv->est_lock);
--	priv->est->gcl_size = size;
--	priv->est->enable = qopt->cmd == TAPRIO_CMD_REPLACE;
--	mutex_unlock(&priv->est_lock);
-+	est->gcl_size = size;
-+	est->enable = true;
- 
- 	for (i = 0; i < size; i++) {
- 		s64 delta_ns = qopt->entries[i].interval;
- 		u32 gates = qopt->entries[i].gate_mask;
- 
--		if (delta_ns > GENMASK(wid - 1, 0))
--			return -ERANGE;
--		if (gates > GENMASK(31 - wid, 0))
--			return -ERANGE;
-+		if (delta_ns > GENMASK(wid - 1, 0) ||
-+		    gates > GENMASK(31 - wid, 0)) {
-+			ret = -ERANGE;
-+			goto free_est;
-+		}
- 
- 		switch (qopt->entries[i].command) {
- 		case TC_TAPRIO_CMD_SET_GATES:
-@@ -1079,47 +1162,69 @@ static int tc_taprio_configure(struct stmmac_priv *priv,
- 			gates &= ~BIT(0);
- 			break;
- 		default:
--			return -EOPNOTSUPP;
-+			ret = -EOPNOTSUPP;
-+			goto free_est;
- 		}
- 
--		priv->est->gcl[i] = delta_ns | (gates << wid);
-+		est->gcl[i] = delta_ns | (gates << wid);
- 	}
- 
--	mutex_lock(&priv->est_lock);
- 	/* Adjust for real system time */
--	priv->ptp_clock_ops.gettime64(&priv->ptp_clock_ops, &current_time);
-+	ret = priv->ptp_clock_ops.gettime64(&priv->ptp_clock_ops, &current_time);
-+	if (ret)
-+		goto free_est;
- 	current_time_ns = timespec64_to_ktime(current_time);
- 	time = stmmac_calc_tas_basetime(qopt->base_time, current_time_ns,
- 					qopt->cycle_time);
- 
--	priv->est->btr[0] = (u32)time.tv_nsec;
--	priv->est->btr[1] = (u32)time.tv_sec;
-+	est->btr[0] = (u32)time.tv_nsec;
-+	est->btr[1] = (u32)time.tv_sec;
- 
- 	qopt_time = ktime_to_timespec64(qopt->base_time);
--	priv->est->btr_reserve[0] = (u32)qopt_time.tv_nsec;
--	priv->est->btr_reserve[1] = (u32)qopt_time.tv_sec;
-+	est->btr_reserve[0] = (u32)qopt_time.tv_nsec;
-+	est->btr_reserve[1] = (u32)qopt_time.tv_sec;
- 
- 	ctr = qopt->cycle_time;
--	priv->est->ctr[0] = do_div(ctr, NSEC_PER_SEC);
--	priv->est->ctr[1] = (u32)ctr;
-+	est->ctr[0] = do_div(ctr, NSEC_PER_SEC);
-+	est->ctr[1] = (u32)ctr;
- 
--	priv->est->ter = qopt->cycle_time_extension;
-+	est->ter = qopt->cycle_time_extension;
- 
--	tc_taprio_map_maxsdu_txq(priv, qopt);
-+	tc_taprio_map_maxsdu_txq(est, qopt);
- 
--	ret = stmmac_est_configure(priv, priv, priv->est,
--				   priv->plat->clk_ptp_rate);
--	mutex_unlock(&priv->est_lock);
-+	if (!priv->est) {
-+		priv->est = devm_kzalloc(priv->device, sizeof(*priv->est),
-+					 GFP_KERNEL);
-+		if (!priv->est) {
-+			ret = -ENOMEM;
-+			goto free_est;
-+		}
-+		mutex_init(&priv->est_lock);
-+	}
++static inline struct xsk_dma_map *xsk_pool_dma_get(struct xsk_buff_pool *pool)
++{
++	return NULL;
++}
 +
-+	mutex_lock(&priv->est_lock);
-+	ret = stmmac_est_configure(priv, priv, est, priv->plat->clk_ptp_rate);
- 	if (ret) {
- 		netdev_err(priv->dev, "failed to configure EST\n");
--		goto disable;
-+		goto restore;
- 	}
- 
- 	ret = tc_config_preemption(priv, extack, qopt->mqprio.preemptible_tcs);
- 	if (ret)
--		goto disable;
-+		goto restore;
- 
--	return 0;
-+	*priv->est = *est;
-+	mutex_unlock(&priv->est_lock);
-+free_est:
-+	kfree(est);
-+	return ret;
++static inline void xsk_pool_dma_put(struct xsk_dma_map *dma_map)
++{
++}
 +
-+restore:
-+	/* A failed hardware update must not publish the rejected schedule. */
-+	if (stmmac_est_configure(priv, priv, priv->est, priv->plat->clk_ptp_rate))
-+		netdev_err(priv->dev, "failed to restore EST\n");
-+	mutex_unlock(&priv->est_lock);
-+	goto free_est;
- 
- disable:
- 	if (priv->est) {
-@@ -1137,9 +1242,7 @@ static int tc_taprio_configure(struct stmmac_priv *priv,
- 		mutex_unlock(&priv->est_lock);
- 	}
- 
--	err = tc_config_preemption(priv, extack, 0);
--
--	return qopt->cmd == TAPRIO_CMD_DESTROY ? err : ret;
-+	return tc_config_preemption(priv, extack, 0);
+ static inline int xsk_pool_dma_map(struct xsk_buff_pool *pool,
+ 				   struct device *dev, unsigned long attrs)
+ {
+diff --git a/include/net/xsk_buff_pool.h b/include/net/xsk_buff_pool.h
+index a7df573784fd..25a09b098703 100644
+--- a/include/net/xsk_buff_pool.h
++++ b/include/net/xsk_buff_pool.h
+@@ -38,6 +38,8 @@ struct xsk_dma_map {
+ 	dma_addr_t *dma_pages;
+ 	struct device *dev;
+ 	struct net_device *netdev;
++	struct xdp_umem *umem;
++	unsigned long attrs;
+ 	refcount_t users;
+ 	struct list_head list; /* Protected by the RTNL_LOCK */
+ 	u32 dma_pages_cnt;
+@@ -143,6 +145,8 @@ void xp_fill_cb(struct xsk_buff_pool *pool, struct xsk_cb_desc *desc);
+ int xp_dma_map(struct xsk_buff_pool *pool, struct device *dev,
+ 	       unsigned long attrs, struct page **pages, u32 nr_pages);
+ void xp_dma_unmap(struct xsk_buff_pool *pool, unsigned long attrs);
++struct xsk_dma_map *xp_dma_get(struct xsk_buff_pool *pool);
++void xp_dma_put(struct xsk_dma_map *dma_map);
+ struct xdp_buff *xp_alloc(struct xsk_buff_pool *pool);
+ u32 xp_alloc_batch(struct xsk_buff_pool *pool, struct xdp_buff **xdp, u32 max);
+ bool xp_can_alloc(struct xsk_buff_pool *pool, u32 count);
+diff --git a/net/xdp/xsk_buff_pool.c b/net/xdp/xsk_buff_pool.c
+index c58f56f24a9c..8f95eddc91fc 100644
+--- a/net/xdp/xsk_buff_pool.c
++++ b/net/xdp/xsk_buff_pool.c
+@@ -360,7 +360,8 @@ static struct xsk_dma_map *xp_find_dma_map(struct xsk_buff_pool *pool)
  }
  
- static void tc_taprio_stats(struct stmmac_priv *priv,
-@@ -1180,7 +1283,10 @@ static int tc_setup_taprio(struct stmmac_priv *priv,
- 	switch (qopt->cmd) {
- 	case TAPRIO_CMD_REPLACE:
- 	case TAPRIO_CMD_DESTROY:
-+		/* Serialize cache publication with PHC adjustment and reset replay. */
-+		mutex_lock(&priv->ptp_mutex);
- 		err = tc_taprio_configure(priv, qopt);
-+		mutex_unlock(&priv->ptp_mutex);
- 		break;
- 	case TAPRIO_CMD_STATS:
- 		tc_taprio_stats(priv, qopt);
+ static struct xsk_dma_map *xp_create_dma_map(struct device *dev, struct net_device *netdev,
+-					     u32 nr_pages, struct xdp_umem *umem)
++					     u32 nr_pages, struct xdp_umem *umem,
++					     unsigned long attrs)
+ {
+ 	struct xsk_dma_map *dma_map;
+ 
+@@ -376,6 +377,8 @@ static struct xsk_dma_map *xp_create_dma_map(struct device *dev, struct net_devi
+ 
+ 	dma_map->netdev = netdev;
+ 	dma_map->dev = dev;
++	dma_map->umem = umem;
++	dma_map->attrs = attrs;
+ 	dma_map->dma_pages_cnt = nr_pages;
+ 	refcount_set(&dma_map->users, 1);
+ 	list_add(&dma_map->list, &umem->xsk_dma_list);
+@@ -430,6 +433,47 @@ void xp_dma_unmap(struct xsk_buff_pool *pool, unsigned long attrs)
+ }
+ EXPORT_SYMBOL(xp_dma_unmap);
+ 
++struct xsk_dma_map *xp_dma_get(struct xsk_buff_pool *pool)
++{
++	struct xsk_dma_map *dma_map;
++
++	ASSERT_RTNL();
++	if (!pool->dma_pages)
++		return NULL;
++	dma_map = xp_find_dma_map(pool);
++	if (WARN_ON_ONCE(!dma_map))
++		return NULL;
++
++	refcount_inc(&dma_map->users);
++	xdp_get_umem(dma_map->umem);
++	get_device(dma_map->dev);
++	/* Keep the mapping's lookup key alive without preventing unregister. */
++	get_device(&dma_map->netdev->dev);
++	return dma_map;
++}
++EXPORT_SYMBOL_GPL(xp_dma_get);
++
++void xp_dma_put(struct xsk_dma_map *dma_map)
++{
++	struct net_device *netdev;
++	struct xdp_umem *umem;
++	struct device *dev;
++
++	ASSERT_RTNL();
++	if (!dma_map)
++		return;
++	dev = dma_map->dev;
++	netdev = dma_map->netdev;
++	umem = dma_map->umem;
++	if (refcount_dec_and_test(&dma_map->users))
++		__xp_dma_unmap(dma_map, dma_map->attrs);
++	/* Unmap before the final reference can unpin the UMEM pages. */
++	xdp_put_umem(umem, false);
++	put_device(&netdev->dev);
++	put_device(dev);
++}
++EXPORT_SYMBOL_GPL(xp_dma_put);
++
+ static void xp_check_dma_contiguity(struct xsk_dma_map *dma_map)
+ {
+ 	u32 i;
+@@ -487,7 +531,7 @@ int xp_dma_map(struct xsk_buff_pool *pool, struct device *dev,
+ 		return 0;
+ 	}
+ 
+-	dma_map = xp_create_dma_map(dev, pool->netdev, nr_pages, pool->umem);
++	dma_map = xp_create_dma_map(dev, pool->netdev, nr_pages, pool->umem, attrs);
+ 	if (!dma_map)
+ 		return -ENOMEM;
+ 
 
 -- 
 2.53.0
