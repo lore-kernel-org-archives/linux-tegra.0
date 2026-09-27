@@ -1,70 +1,71 @@
-Received: from mail-oo2-f38.google.com (mail-oo2-f38.google.com [74.125.231.166])
+Received: from mail-oo2-f41.google.com (mail-oo2-f41.google.com [74.125.231.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916762D0620
-	for <linux-tegra@vger.kernel.org>; Sun, 27 Sep 2026 21:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3C73CC9E9
+	for <linux-tegra@vger.kernel.org>; Sun, 27 Sep 2026 21:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790546391; cv=none; b=cMbqwmupsYJPpR3gf8B0rY04jCE+7dp0Qih4qE9GfLMuceMyv8FjMsks07+3QKzkzSuQnhq3Fm1WThSCaspqoD4V3yzevV0jYk4AuYmslYCZiN1/etkWqDDTUhcUqk1oeXZHUYzzDBpb6lAMg4NOxTN8pqfIdAuxtG9Dyna8SHo=
+	t=1790546394; cv=none; b=rgy4fltkxrGZosnkEk1Tc3VfJs8SmO5y3t7FfmRbB124nlOtXr0RaWmE4qSZ/GfvD+r3Ifw7izNDfP0MagCL1PkZs/075RXsV5sB6eCDE/qkjsT/6e1mDNwMLbMsyF8oQGPtHxTWEsnaRl8PJ5p9CpWbqrk8Oc9ev/dkx/KCYG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790546391; c=relaxed/simple;
-	bh=qYGQCHXoEZV5jzZUL1na1NCk0N4dxc04XAI8z6cnaPs=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LHe15tIw1TzhD2j3CrdhRpkHtFYlq89wwa20GGFM+OPoL5+qEGQehg5apTfLVDWJ29IrACnSlaVGrKUdfwxfpTSHo0XjyExlEgtiLphGF+KzRH4yehatESBrWbFO/LREFzMMV7P2P7IsPv4t8kap92WfuYQUBA/NARJQjuvuCAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CAEssD63; arc=none smtp.client-ip=74.125.231.166
+	s=arc-20240116; t=1790546394; c=relaxed/simple;
+	bh=kRWe3zJ18nPwnbV8Vp/GoUZKSkrJS4rO4y9k1SLXFfM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=B6kmiD169WcOurSykYRD0Q1COsTTyzs4nwCFbkk78S0Q+Lyvh4pOm//1x+17f9Ht6I8kHkLkM6QOVceSu/Igk05cfC4d0LbkS83HNW2AKmepP72dBae8B1eC+3EoG5iw/KqK5i9NM9AZU5refJXFvZrfHSUcNNaiZ4ZPCzjIa7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H9Cy4ggc; arc=none smtp.client-ip=74.125.231.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CAEssD63"
-Received: by mail-oo2-f38.google.com with SMTP id 46e09a7af769-8138dddb94bso1759906a34.2
-        for <linux-tegra@vger.kernel.org>; Sun, 27 Sep 2026 14:59:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H9Cy4ggc"
+Received: by mail-oo2-f41.google.com with SMTP id 46e09a7af769-8177a7fc354so1256303a34.3
+        for <linux-tegra@vger.kernel.org>; Sun, 27 Sep 2026 14:59:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790546386; x=1791151186; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=igAli1XIKkBSafQqyYALsMXsjZszlsyKkYv896bnSd8=;
-        b=CAEssD63xSev8cIlamG9fb6OmSBYBbpP3wNsYmE9dy6b5jVMoPUOoF0huYdEzGSowt
-         zNlnO19EgUh+FPrdWMLZpfKMePV9rySelzKSkepewWTNH06gSSWJhYgxQX31ufdzDHKq
-         vQH8sdXkZysef+0dzEwxkVX2dDheEby7po7S2R4aEA8YYn4WzBMvgc6pR0g+pSxjHZYF
-         jTenG+mDVJRSTTJdMNhk+oqbgyc6IPdg9KD7ChDVuLVn9Gwct6oV68e+IsIcqKFodemb
-         oaPaFki2d1yues6ZYBxZDDsJMK1fXTPVUb2AsouUBkxTsTkGXgU10LYstRthTOyIeSeA
-         xcxw==
+        d=gmail.com; s=20251104; t=1790546388; x=1791151188; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=wMTK91isCtW7K3W3fSl1Ctwz86tx7+iRah3Eev0qMBA=;
+        b=H9Cy4ggc5TpXyWJhhmM2LN5DQpgz+tnnoNGH2grUgzEEVtj4a8l49p0u0Qfm9aNIcq
+         sjcvZyEnWyI/xR/k7ZeYogd+oDYkOPlOiV/PTPBniOrdZQbXUSzCqZ/hlSX0AbAR1Xxh
+         htfftGb4jWcb3Vkgppy/JKQaNf/adGn8CUyvBtR7ISF++gULFE1m//c02BniDbP+u2wj
+         K5nCHHjwLilsmnbS54aJFjHNaJAXKe27z18/Lw1kwts8F8BaPgIEJSO5jNvo3/FUQRhh
+         RIRMHLyeKKRBOC3epFDLFc3omp6mhlzq72Jf2dkEw2n2YJPUfce32Xil05kZY681vllk
+         zVFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790546386; x=1791151186;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=igAli1XIKkBSafQqyYALsMXsjZszlsyKkYv896bnSd8=;
-        b=W9onE59SohAECLqojqbgUz1tLE8nYzWm1jGVlT1s+1934jQqvy78swhdj//qDMAex+
-         skQBflm5s7ucseo4Tod57OgkU3tv/Ced+BXUbq4FVjNTH3DAUoywxjT0m57HlwQFeDZM
-         ajfFj8Glcucy83MeSPcSUuoo64AX4yyIbrH9qAtnQ3/Vr7SOJa5wHnr4kHeR24TjggJ2
-         HXxIbo5cQTv2xtUJIaiIRcFwDEAdc6I8OH+3Sz70/vC+K/S7t7MYvfwIKvF2Ob2jPxTy
-         exdv/fANPWTfvQ9EBKnY0czhVcQmuuv88Jp33r7wREljMe6Jywh5Guh3/Ne6ftdld76y
-         r+4g==
-X-Forwarded-Encrypted: i=1; AKwUvBx3XZY4Aef3VZeY4xo7RJxqnCuwO3BpOSP2tfY3yskBHJnH5SlcWNUIWWizXKdOTHnN3UevNjzpVK0HfQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++mZTazNj2VJMEB3G4ZkeldQJWn7nBsi+2QRcSRlwztafjlRPkbL
-	tFnVhMAwHUQPcRLRGDc+gv3iRQedMQBw1EQaO6m3y6eqX3E+mwtPXHf9
-X-Gm-Gg: AYBFou0VicTB+uSjDzA1HQ2/J9rP2PvZAK3J2Y2NZQuFfeYpN7Z4pHdyAlkv2rXJ0tK
-	fFSEDwIljz1ENVmlvqJZKSY3myd6B+kmEfd+xsNzId3nZBFUUgZ4/VvZaILadY2dn932DIUPjjM
-	xF6/pr57y7cgaoIf9KCaUCW4nV0fEzJ1eQBpk8+NxJy/20Igk9SMCJ/tNjl82OxkFddnQplqp+b
-	DTt7PSS4Q+dP4PsMLjEJAPqk2LjiV/ah1dXbG/JErHs26ua3Sje5gq/rvalMZTUxQETJs0B0iEr
-	ZuSxKLTwoJxLaC5FHhR2aMMKAGon7738P5Oi1isJueIYuIc+QGXbnziySxGA/d/kCekeDJzL2Se
-	krt1MFOP6Tbx2lWcSBzdJEWS18UFG04ZPT31iwQnCfPLEK48J0V14sPbXHgU3f9OfXnBRdVN7fC
-	8LHoaZjOf3Rd5PrMBsQJmsEvZuLPOAONbMZyCRR9E21UWFA9X3ihiS3zjIqzqkziaUjlRc6aF1F
-	OVfW3tm7avPdEN1qNRj353J08TW2iGQHDTSny2z3qyMwRkpnrJSPT7a9DtqRmQtnqHdViMbhXKe
-	1VMsZ4YfpE6nITi3NqYUngL28fAlatoZPZVTK7FAYYW2g04AkT3zgbanFJwVPYdvKeTdVb20mDS
-	4nJBTbBCqHnKdukmhLJB9
-X-Received: by 2002:a4a:ee0a:0:b0:6c9:80d8:a1f3 with SMTP id 006d021491bc7-6d4410d5fa6mr10516659eaf.48.1790546385625;
-        Sun, 27 Sep 2026 14:59:45 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1790546388; x=1791151188;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=wMTK91isCtW7K3W3fSl1Ctwz86tx7+iRah3Eev0qMBA=;
+        b=ogB/Go5DQFmunDsi6Zo3F2KBhyzmGYxh0UF5doCtmw2dSMKj/1arABidZJG0+3wJqF
+         sBCwEYs+T1jr8mPM6Q9D/DMpALN5Y3aCTJEwNhs9uO7CCghI/B+2gmDQwbD5ekrHp3gc
+         N78KzwFEFIkyxkjWCcPhoVtbf88rJ8p7JiRPXK1iGB8096Dv4Fiu1G9OtlyDMgWiyNeK
+         EnB214QW792b336ZVLbj96tDtIrY7gQAOYan4sGeUY/OBKNlQY9uwmzRaOCUARarNZWq
+         tX1XTgZQjoQRuPg32jSoITdkkKtcKWvPfxTM1SESPu42z2FOA7K6zS59YOgAqibtzUAV
+         mCvA==
+X-Forwarded-Encrypted: i=1; AKwUvByNG21g2cu2xWfd2BjYO4KxwjcfJBRyyLSDt5R9UuGTT1YAoj0Eu4EC01GqB17R1WQPfJs6n/oA9T4elw==@vger.kernel.org
+X-Gm-Message-State: AFuF++nP7JqUVUWQHm2vafu4TLFC1vyH6waokH8DTGxDcV00CWXmoaP7
+	jnBjPV0903B9ltdnqJGcapUEpGQccDE/Vy7/Bm05YCMrMj9tvh2gJN2Z
+X-Gm-Gg: AYBFou0z3jTmygR3jUVZ9finRToq7p0ScyHY7+jOs3YsmvEA8qLeuVXsnabrSjEhs4R
+	vzkF4RZ8pDCmeZZCIE56JqnwEet77ru1PFtUaVYOSXfrK8KWFsuhDSN8OxcKcF9r3evcV3QGgtS
+	S2xE9KHEF4wn8fAl4RVBWedJTRVFN9P2O5YGo9Utb6vQX86Nj9gVZkd1UyksEypms1k3YSbUEb8
+	6TuS2CslI4Ssu8b4Xc1f7FOw4zmQsywdagFot6qnmwPD6IhmXaUMDN6U1bGqMn5Lz5f0UoM1dS9
+	042x+FGghmpCSypySXg1YToABt6QHsegMMXvp1g3eo9PkQOF3EVvhUm/GGT7jdPfAAVzZWlHlkn
+	Vjax/zMkw4kIpXCe5oMGWWBGGlg3acFQkOiuyYvVk3YtAMCpCrs6l+w6BZ3V0ObqKn9liFQgwWn
+	yeYj2T6LRiIOxW7QVVWMgCpKhaemTMAbQMPoV6fbmQwOXrh7qLdPE8sl7EqDLolT4UkAvNJVABL
+	HMaVrNMOEifFrUbQm6xK8ubUmrBJZN8w9hzpYP4/vcrekuwiKNb3ajzlWKNBmS3y5T6o+qzwKzB
+	Iv5ObBM4zGLJGcEggZAKTwnFO5HrNxcscvPN5x+4iH7IkgmQAow5sI75iEaws0oV0zQzYHFMFZT
+	+t7UF1CPaeFuhrGmTd81Cqzwu9wLQ8EI=
+X-Received: by 2002:a05:6820:81cf:b0:6b9:8413:89b8 with SMTP id 006d021491bc7-6d4411d2841mr11892599eaf.57.1790546388198;
+        Sun, 27 Sep 2026 14:59:48 -0700 (PDT)
 Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-81b3de6f7e1sm4874147a34.22.2026.09.27.14.59.43
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-81b3de6f7e1sm4874147a34.22.2026.09.27.14.59.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Sep 2026 14:59:44 -0700 (PDT)
+        Sun, 27 Sep 2026 14:59:47 -0700 (PDT)
 From: James Hilliard <james.hilliard1@gmail.com>
-Subject: [PATCH net-next v5 00/19] net: stmmac: preserve datapath state
- across MTU and resume failures
-Date: Sun, 27 Sep 2026 15:59:35 -0600
-Message-Id: <20260927-submit-stmmac-reset-fixes-v1-v5-0-feec6c14dd06@gmail.com>
+Date: Sun, 27 Sep 2026 15:59:36 -0600
+Subject: [PATCH net-next v5 01/19] net: stmmac: unwind the WoL IRQ after a
+ safety IRQ request failure
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -72,13 +73,10 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/43OwU7DMAwG4FeZciYocbKu5sR7oB1S19uCSIuSr
- Bqa+u545VLtUiRfLP/+7LsqnCMX9ba7q8xTLHEcpNm/7BRdwnBmHXvpFRhoDILV5dqlWHWpKQX
- SmQtXfYo3Lnqy+kDYdgg9YEAlxHfmZSbChxokOfCtquPfRKRPpvrQH9lLLHXMP8snk102/ndUy
- uj2EDx7Z5mNeT+nEL9eaUzLqQnWGGxgIFiPwJLtGLF5xtwa8xuYE4yMfOVOLkALz5hfY80G5gV
- jsmRgbzpHuMbmef4FduVD78sBAAA=
-X-Change-ID: 20260921-submit-stmmac-reset-fixes-v1-7c98b92d29a9
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260927-submit-stmmac-reset-fixes-v1-v5-1-feec6c14dd06@gmail.com>
+References: <20260927-submit-stmmac-reset-fixes-v1-v5-0-feec6c14dd06@gmail.com>
+In-Reply-To: <20260927-submit-stmmac-reset-fixes-v1-v5-0-feec6c14dd06@gmail.com>
 To: Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, 
  Heiner Kallweit <hkallweit1@gmail.com>, 
  "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
@@ -121,420 +119,53 @@ Cc: Richard Genoud <richard.genoud@bootlin.com>,
  Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>, 
  Ding Hui <dinghui1111@163.com>, Linkui Xiao <xiaolinkui@kylinos.cn>, 
  Linkui Xiao <xiaolinkui@126.com>, linux-tegra@vger.kernel.org, 
- linux-sunxi@lists.linux.dev, James Hilliard <james.hilliard1@gmail.com>, 
- stable@vger.kernel.org, Rayagond Kokatanur <rayagond@vayavyalabs.com>, 
- Ding Hui <dinghui@lixiang.com>
+ linux-sunxi@lists.linux.dev, James Hilliard <james.hilliard1@gmail.com>
 X-Mailer: b4 0.15.2
 
-Keep the stmmac datapath coherent after failed MTU changes or hardware
-resume without changing the interface's administrative state. Retain the
-working MTU configuration for rollback, and allow ordinary down/up
-recovery when hardware cannot be restored.
+The IRQ setup paths request the MAC IRQ, then the optional WoL IRQ, then
+the common safety IRQ. If requesting the safety IRQ fails, cleanup must
+release the WoL and MAC IRQs, but not the failed safety IRQ.
 
-This revision incorporates the following previously posted fixes as
-prerequisites:
+The REQ_IRQ_ERR_SFTY case instead frees the safety IRQ and skips the WoL
+IRQ. Allocation fault injection during live XDP reopening reproduces a
+"Trying to free already-free IRQ" warning and leaves the WoL handler
+registered after the datapath resources have been released. A subsequent
+open can then fail to request that still-owned IRQ.
 
-- Linkui Xiao's v3 MDIO reset GPIO fix:
-  https://lore.kernel.org/r/20260921015727.2643540-1-xiaolinkui@126.com
-- Ding Hui's v3 DMA descriptor allocation cleanup:
-  https://lore.kernel.org/r/20260919121436.1642724-1-dinghui1111@163.com
-- Lorenzo Bianconi's v3 EST series, patches 2-4:
-  https://lore.kernel.org/r/20260902-stmmac-est-reapply-after-open-v3-0-e72a6df5a7ef@oss.qualcomm.com
+Move safety IRQ cleanup before REQ_IRQ_ERR_SFTY and WoL IRQ cleanup
+after it. This restores reverse acquisition order for both shared and
+MSI IRQ setup, including unwind after failures in later per-queue IRQ
+requests.
 
-The GPIO patch incorporates the review fixes for non-platform builds,
-disabled MDIO children and resume-only resets, and drops the unnecessary
-forward declaration. Ding's allocation patch is unchanged apart from our
-forwarding sign-off; its deliberate omission of Fixes tags is kept.
-
-The ownership transition and its XDP, ethtool and PM consumers land
-together, so resource cleanup does not precede the power-access guards
-it requires. The larger DMA shutdown change precedes MTU rollback,
-rather than leaving early retained-ring commits with unsafe teardown
-paths.
-
-The ownership states remain distinct: DOWN owns no IRQs or enabled NAPI;
-RUNNING has active queues; SUSPENDED retains rings and IRQs; HALTED
-retains rings but has released IRQs after failed MTU rollback.
-Collapsing the last two states would make close free IRQs which it no
-longer owns. DMA memory ownership is tracked separately: a failed
-shutdown can retain allocations even in DOWN until hardware acknowledges
-a successful reset.
-
-Jumbo rollback allocates no new buffers or IRQ registrations. RX holes
-are filled before reset without changing the old descriptors;
-descriptors are rebuilt or retired only after reset succeeds. If
-rollback also fails, the interface remains detached until down/up
-recovery. This cannot guarantee recovery from indefinitely failing
-hardware.
-
-Failed interfaces still receive hardware/PHY sleep handling. A failed
-datapath with MAC WoL configured rejects suspend with -EBUSY because its
-wake path is unusable; PHY-only WoL is not rejected. Platform MAC WoL
-retains register, receive and timestamp power so a level wake interrupt
-can be acknowledged before normal resume. PCI power transitions instead
-run inside the noirq window, retaining PME/D3 wakeup. Failed PCI
-restoration masks only that function's INTx source until recovery, not a
-shared IRQ line. Optional platform wake resources are balanced
-separately from BSP power.
-
-Timestamp filters and PHC registration survive an MTU change. MTU reset
-and the live XDP/XSK reset fallback replay the platform PTP clock
-selector, frequency correction, PEROUT and EXTTS settings. Ordinary
-system resume retains the timestamp initialization path and does not
-replay cached PEROUT or EXTTS requests. Continuous PHC time is not
-preserved across reset.
-
-Live XDP and ethtool failures leave the administratively-up interface
-detached for ordinary down/up recovery. Program attachment failures
-return an error without consuming the proposed program. BPF-link and
-XSK-pool removal still complete if their datapath restart fails, so
-teardown can release the program or pool safely. AF_XDP pool
-reconfiguration now pauses all queues and replays the MAC link while
-rebuilding the rings. Successful reconfiguration leaves the PHY running
-rather than powering it down and restarting autonegotiation. All queues
-and other sockets are still paused while their rings are rebuilt. A
-failed restart stops phylink without reconfiguring the failed MAC, then
-permits ordinary down/up recovery.
-
-Close and live XDP/XSK release now require stopped DMA process states or
-a completed global reset before releasing DMA memory. Unsupported
-idle-register layouts, including XGMAC and GMAC4 with more than three
-channels, use the reset fallback. Replay cached L3/L4 filters, EtherType
-steering, VLAN priority, preemption/TC mapping and EST before starting
-DMA, with PHC replay on the reset paths described above. A datapath
-replay failure enters the existing rollback or detached recovery path.
-
-If shutdown and reset both fail, retain rings, mappings and backing
-memory. AF_XDP pool teardown still completes, with independent
-references keeping its DMA mapping, UMEM pages and buffer metadata
-alive. DMA-owned frames are not returned to the pool's reusable free
-list. A later successful down/up reset reclaims them. There is no
-generic isolation guarantee for permanently unresponsive hardware:
-removal reports and retains unsafe DMA allocations, which may therefore
-remain pinned until reboot.
-
-Assisted-by: Codex:gpt-6-astra
+Fixes: 5c2215167d12 ("net: stmmac: Add driver support for common safety IRQ")
 Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
 ---
-Changes in v5:
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-- Keep platform MAC-WoL register access available while IRQ handlers can
-  run; separate STM32 wake-clock preparation from power removal and
-  retain Tegra private clocks/reset state. Publish wake handling before
-  arming PMT.
-- Move PCI BSP power changes into noirq while preserving PME/D3 wakeup.
-  Mask function-local INTx after failed restoration until datapath
-  recovery.
-- Acknowledge powered timestamp interrupts while PHC access is blocked,
-  including after PMT is disarmed; suppress delivery from a blocked
-  clock. Balance wake-only resources and unwind a failed suspend
-  callback.
-- Keep frequency correction when recalculating the PHC increment.
-- Retain XSK buffer metadata without delaying socket teardown, and keep
-  DMA-owned RX frames off the pool free list until shutdown is
-  confirmed.
-- Rebuild RX buffer addresses and read-format control words after a
-  successful resume reset, including page-pool holes and partial XSK
-  rings.
-- Target net-next and include the unmerged GPIO, allocation and EST
-  work, retaining authorship, sign-offs, review history and original
-  submission links. Place the EST group before PHC serialization and the
-  per-queue allocation cleanup immediately before the remaining
-  allocation fixes.
-- Drop our MDIO GPIO patch. Keep only the allocation-lifetime additions
-  not covered by Ding's per-queue allocation cleanup.
-- Incorporate the GPIO acquisition guards and declaration cleanup from
-  the prerequisite reviews. Cache reset resources even without
-  needs_reset, because system resume calls the reset routine directly.
-- Reuse Lorenzo's embedded EST state, explicit hardware enable argument
-  and shared replay helper; retain transactional schedule replacement
-  and replay before DMA starts, under the PTP mutex. Pass unpublished
-  replacements through the same base-time and programming helper as
-  reset replay.
-- Return EST disable, clock-update and EST replay errors from PHC time
-  adjustment. Keep the schedule locked throughout and attempt to rearm
-  it even if the clock update fails.
-- Preserve net-next PTP error propagation and timestamp-capability
-  checks, while tracking actual clock ownership independently during
-  failed PM.
-- Keep the already merged open-error DMA stop and extend it with
-  hardware shutdown confirmation and retained DMA memory on failure.
-- Link to v4:
-  https://patch.msgid.link/20260926-submit-stmmac-reset-fixes-v1-v4-0-ec1c0250b3c9@gmail.com
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 3ad9252bf6ae..894de213b92f 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -3828,13 +3828,13 @@ static void stmmac_free_irq(struct net_device *dev,
+ 			free_irq(msi->sfty_ce_irq, dev);
+ 		fallthrough;
+ 	case REQ_IRQ_ERR_SFTY_CE:
+-		if (priv->wol_irq > 0 && priv->wol_irq != dev->irq)
+-			free_irq(priv->wol_irq, dev);
+-		fallthrough;
+-	case REQ_IRQ_ERR_SFTY:
+ 		if (priv->sfty_irq > 0 && priv->sfty_irq != dev->irq)
+ 			free_irq(priv->sfty_irq, dev);
+ 		fallthrough;
++	case REQ_IRQ_ERR_SFTY:
++		if (priv->wol_irq > 0 && priv->wol_irq != dev->irq)
++			free_irq(priv->wol_irq, dev);
++		fallthrough;
+ 	case REQ_IRQ_ERR_WOL:
+ 		free_irq(dev->irq, dev);
+ 		fallthrough;
 
-Changes in v4:
-
-- Reorder prerequisites ahead of their consumers. Separate the
-  independent MDIO GPIO fix and PHC/IRQ preparation, and combine
-  datapath ownership with the XDP, ethtool and PM paths which must
-  observe it. Keep MTU rollback last.
-- Replay cached TC filters, steering, preemption mapping and EST after
-  reset, with DMA held stopped until replay succeeds. Preserve the
-  previous cached rule on installation failure and advance EST base time
-  by whole cycles.
-- Validate TAPRIO replacements without modifying the installed schedule;
-  reject failed PHC reads and retain a valid cache after setup failure.
-- Keep control operations from accessing unpowered registers after close
-  reattaches the netdev. Permit software-only VLAN, qdisc and TC filter
-  removal, and preserve open-time power recovery. Remove cached flower,
-  steering and u32 rules while down or detached so reset cannot replay
-  filters which TC has already deleted.
-- Use phylink link replay for live XDP/XSK updates, leaving the PHY
-  running on success and balancing replay with phylink_stop() on failed
-  restart.
-- Require a hardware idle acknowledgement or completed reset before DMA
-  memory retirement on close, XDP/XSK replacement and failed open.
-  Retain failed configurations for recovery, and defer IRQ TX recovery
-  and resume descriptor rebuilding until shutdown/reset is confirmed.
-- Add independent AF_XDP mapping/UMEM references so pool teardown can
-  complete without unmapping DMA-visible memory after a shutdown
-  failure. Document reset fallback and permanent-failure memory
-  retention.
-- Keep shared IRQ controller lines enabled during MTU replacement. Mask
-  DMA sources at the device, protect DMA-handler quiescence with the
-  channel lock, and drain registered handlers with synchronize_irq().
-- Preserve pending DMA status while quiesced, including when hardware
-  setup restores interrupt enables. Restore saved masks on restart and
-  leave DMA sources masked when failed rollback releases the driver's
-  IRQ handlers.
-- Reuse the final TX queue and timer drain after synchronizing IRQ
-  handlers.
-- Restore saved RX skb ownership immediately when taking partial receive
-  state, including a budget-one completion and a DMA-owned next
-  descriptor.
-- Cancel the EEE software timer after draining NAPI, and make GSO
-  feature checks use stable platform TBS capabilities rather than
-  replaceable rings.
-- Reuse the MDIO reset GPIO acquired at probe and reject TC queue work
-  when the datapath is not running, except for software-only filter
-  deletion.
-- Let carrier-down XSK TX polls complete instead of continuously
-  repolling, and remove the unused external XSK wakeup declaration.
-- Stop a PHY powered by prepare_resume() after failed ethtool setup.
-  Publish core queue counts transactionally only after the fallible open
-  work.
-- Initialize rollback RX addresses before publishing descriptor
-  ownership. Restore the platform PTP clock selection, frequency
-  adjustment, PEROUT and EXTTS settings; serialize PHC/devlink access
-  across reset and reject access to a failed retained clock.
-- Freeze deferred XSK pool teardown before device PM. Track platform
-  power, pending clock restoration and actual PTP clock ownership
-  separately from the datapath. Avoid unpowered MAC/MDIO accesses on
-  failed close-time recovery and balance clocks even after a noirq
-  resume failure.
-- Check unusable MAC WoL before the pending-sleep shortcut, and update
-  comments for HALTED ownership and the ethtool reopen path.
-- Link to v3:
-  https://patch.msgid.link/20260924-submit-stmmac-reset-fixes-v1-v3-0-c031e3f3a282@gmail.com
-
-Changes in v3:
-
-- Snapshot debugfs queue counts under RTNL with the descriptor ownership
-  check, so a reader blocked behind channel shrink uses the new
-  topology.
-- Complete pending core sleep state during close and retry restoration
-  on open after runtime-PM acquisition. Use the installed wake state
-  rather than mutable WoL settings, and retain the pending marker if
-  restoration fails.
-- Put the independent IRQ unwind fix first, ahead of the ownership
-  changes.
-- Correct the WoL/safety IRQ unwind order, fixing a repeated safety IRQ
-  free and a leaked WoL handler.
-- Account for live XDP release/reopen in datapath ownership. Stop DMA on
-  late IRQ failure, propagate program-attach errors without losing
-  program references, and allow BPF-link removal to complete after
-  restart failure.
-- Replace the void AF_XDP queue-enable helpers with the tracked XDP
-  restart. Unmap a removed pool only after freeing its rings, undo
-  failed pool attachment, and preserve TBS configuration while
-  rebuilding the channels.
-- Keep PHY/PM ownership across ethtool ring/channel changes, restoring
-  the old configuration after failed reopening and leaving the interface
-  detached for down/up recovery without a second runtime-PM put.
-  Explicitly disable the MAC during release even when link resolution
-  has not reached mac_link_up().
-- Split the MTU work into normal-size MTU handling, allocation unwind,
-  stable DMA/IRQ ownership (including timer lifetime), and the
-  retained-ring transaction. Keep the ownership change and its
-  open/error-path adaptations in the same patch.
-- Restore the PHY advertisement reduced by phylink_suspend() when
-  stopping a suspended instance, without restarting or reconfiguring the
-  MAC, in response to Andrew Lunn.
-- Keep suspend-owned PHY speed control separate from explicit driver
-  speed-down requests, so close-time power saving does not overwrite the
-  original advertisement and remains effective until the matching
-  speed-up.
-- Suspend a stopped PHY powered back up by phylink_prepare_resume() when
-  stopping after a failed MAC resume, without repeating phy_stop().
-- Add a separate MTU transaction patch retaining old DMA resources and
-  IRQ registrations until replacement succeeds, following Andrew Lunn's
-  request to keep the old setup for failure recovery.
-- Keep DMA configuration objects at stable addresses and use persistent
-  channel objects for per-queue interrupt contexts.
-- Drain transmitters and post-completion NAPI poll tails before
-  cancelling TX timers.
-- Avoid resetting normal-size MTU changes, including all supported
-  AF_XDP MTUs, and stop rebinding live pools through temporary RXQ
-  objects.
-- Program the new MAC receive limit before activation and restore the
-  old MTU on failure; refill old RX buffer holes before reset so
-  rollback does not require allocation.
-- Preserve coalescing, TBS state, PHC registration and timestamp
-  filters; leave a failed rollback detached with old rings retained for
-  close.
-- Harden partial-allocation unwind.
-- Separate core sleep completion from datapath ownership so failed MTU
-  and resume paths still receive hardware PM handling, without disabling
-  NAPI twice or restarting released queues. Address the skipped-suspend
-  issue reported by Sashiko; reject an unusable MAC WoL path with
-  -EBUSY.
-- Balance platform noirq PTP clock handling against resources still
-  owned after detached XDP cleanup.
-- Link to v2:
-  https://patch.msgid.link/20260922-submit-stmmac-reset-fixes-v1-v2-0-d92e609be996@gmail.com
-
-Changes in v2:
-
-- Drop forced netif_close() and retain the interface's administrative
-  state, as requested by Maxime Chevallier.
-- Separate queue quiescence from resource release and use explicit
-  datapath state instead of a napi_disabled argument to the release
-  helper.
-- Handle repeated suspend/resume after failure, preserve PHY/PM
-  ownership until ordinary close, and allow a fresh down/up recovery.
-- Check XDP/AF_XDP cleanup, descriptor readback and asynchronous reset
-  work while the netdev is administratively up but unavailable.
-- Explain the generic phylink suspend-to-stop transition and why
-  restarting phylink after a failed MAC resume is not a valid
-  substitute, in response to Andrew Lunn.
-- Combine the two stmmac error-path fixes so every user of the new state
-  has consistent resource and NAPI lifetime handling in one patch.
-- Link to v1:
-  https://patch.msgid.link/20260921-submit-stmmac-reset-fixes-v1-v1-0-87a4e431ee00@gmail.com
-
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>
-To: "David S. Miller" <davem@davemloft.net>
-To: Eric Dumazet <edumazet@google.com>
-To: Jakub Kicinski <kuba@kernel.org>
-To: Paolo Abeni <pabeni@redhat.com>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>
-To: Serge Semin <fancer.lancer@gmail.com>
-To: Suraj Jaiswal <quic_jsuraj@quicinc.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: Linus Walleij <linusw@kernel.org>
-To: Russell King <linux@armlinux.org.uk>
-To: Heiner Kallweit <hkallweit1@gmail.com>
-To: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-To: Magnus Karlsson <magnus.karlsson@intel.com>
-To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-To: Stanislav Fomichev <sdf@fomichev.me>
-To: Simon Horman <horms@kernel.org>
-To: Alexei Starovoitov <ast@kernel.org>
-To: Daniel Borkmann <daniel@iogearbox.net>
-To: Jesper Dangaard Brouer <hawk@kernel.org>
-To: John Fastabend <john.fastabend@gmail.com>
-To: Björn Töpel <bjorn@kernel.org>
-To: Richard Cochran <richardcochran@gmail.com>
-To: Jose Abreu <Jose.Abreu@synopsys.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-To: Joao Pinto <Joao.Pinto@synopsys.com>
-To: Yao Zi <me@ziyao.cc>
-To: Thierry Reding <thierry.reding@kernel.org>
-To: Jonathan Hunter <jonathanh@nvidia.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-To: Ong Boon Leong <boon.leong.ong@intel.com>
-To: Voon Weifeng <weifeng.voon@intel.com>
-To: "Song, Yoong Siang" <yoong.siang.song@intel.com>
-To: Chen-Yu Tsai <wens@kernel.org>
-To: Jernej Skrabec <jernej.skrabec@gmail.com>
-To: Samuel Holland <samuel@sholland.org>
-Cc: netdev@vger.kernel.org
-Cc: linux-stm32@st-md-mailman.stormreply.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: bpf@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-sunxi@lists.linux.dev
-
----
-Ding Hui (1):
-      net: stmmac: fix error path cleanup in DMA descriptor ring allocation
-
-James Hilliard (14):
-      net: stmmac: unwind the WoL IRQ after a safety IRQ request failure
-      net: phylink: allow stopping a suspended instance
-      xsk: freeze deferred pool teardown during system sleep
-      net: stmmac: serialize and retain PHC configuration across reset
-      net: stmmac: leave the datapath running for normal-size MTU changes
-      net: stmmac: complete DMA configuration allocation unwind
-      net: stmmac: keep DMA configurations at stable addresses
-      net: stmmac: track datapath and power ownership across failed reopening
-      net: stmmac: use the tracked datapath restart for XSK pool changes
-      net: stmmac: restore TC offloads before restarting DMA
-      xsk: allow drivers to retain DMA mappings independently of pools
-      net: stmmac: retain DMA memory until hardware shutdown completes
-      net: stmmac: prepare device-local DMA interrupt quiescence
-      net: stmmac: retain DMA resources across MTU changes
-
-Linkui Xiao (1):
-      net: stmmac: request the MDIO reset GPIO only once
-
-Lorenzo Bianconi (3):
-      net: stmmac: embed struct stmmac_est in stmmac_priv struct
-      net: stmmac: pass the desired EST enable state to est_configure()
-      net: stmmac: re-apply taprio offload in __stmmac_open() and stmmac_resume()
-
- drivers/net/ethernet/stmicro/stmmac/chain_mode.c   |    6 +-
- drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c  |    2 +-
- .../net/ethernet/stmicro/stmmac/dwmac-loongson.c   |    2 +-
- .../net/ethernet/stmicro/stmmac/dwmac-motorcomm.c  |    2 +-
- drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c  |   18 +
- drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c  |   28 +
- drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c  |   27 +-
- .../net/ethernet/stmicro/stmmac/dwmac1000_core.c   |    4 +
- .../net/ethernet/stmicro/stmmac/dwmac1000_dma.c    |    2 +
- drivers/net/ethernet/stmicro/stmmac/dwmac100_dma.c |    2 +
- drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c   |    4 +
- drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.h   |    8 +
- drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c   |   29 +
- drivers/net/ethernet/stmicro/stmmac/dwmac_dma.h    |    4 +
- drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c    |   30 +
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |   11 +
- drivers/net/ethernet/stmicro/stmmac/hwif.h         |   11 +-
- drivers/net/ethernet/stmicro/stmmac/ring_mode.c    |    4 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac.h       |   70 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_est.c   |   49 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_est.h   |   13 +
- .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   |   15 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c   |    1 +
- .../net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c  |   10 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 1912 +++++++++++++++-----
- drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c  |   65 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c   |    2 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_pcs.c   |    3 +-
- .../net/ethernet/stmicro/stmmac/stmmac_platform.c  |   40 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c   |  190 +-
- .../net/ethernet/stmicro/stmmac/stmmac_selftests.c |    8 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c    |  375 ++--
- drivers/net/ethernet/stmicro/stmmac/stmmac_vlan.c  |    6 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_xdp.c   |   83 +-
- drivers/net/phy/phylink.c                          |   51 +-
- include/linux/stmmac.h                             |    7 +
- include/net/xdp_sock_drv.h                         |   25 +
- include/net/xsk_buff_pool.h                        |    7 +
- net/xdp/xsk_buff_pool.c                            |   72 +-
- 39 files changed, 2390 insertions(+), 808 deletions(-)
----
-base-commit: 014d795c73837ea2339a4ea8e8f82c6e959b845d
-change-id: 20260921-submit-stmmac-reset-fixes-v1-7c98b92d29a9
-
-Best regards,
---  
-James Hilliard <james.hilliard1@gmail.com>
+-- 
+2.53.0
 
