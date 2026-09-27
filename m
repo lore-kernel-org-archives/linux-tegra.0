@@ -1,71 +1,71 @@
-Received: from mail-oo2-f42.google.com (mail-oo2-f42.google.com [74.125.231.170])
+Received: from mail-oo2-f39.google.com (mail-oo2-f39.google.com [74.125.231.167])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F6A3EC687
-	for <linux-tegra@vger.kernel.org>; Sun, 27 Sep 2026 22:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99FD439328
+	for <linux-tegra@vger.kernel.org>; Sun, 27 Sep 2026 22:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.167
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790546418; cv=none; b=hln2a8BscLEpzrOh3AajXgUOhcXfvLrdf46Sy6PxIi6KFy1lDZKmJMlO5wqxN0Wrxs5//PSSGzLqYwiZl1xSiMGKs5xLHUfv5d9CTutPzuvCnbZvAmsuWz4iXa6k5XLlhHEKiCIvPTj6zzQIyREUnggHpnAm3RlyMHERVH3TBIM=
+	t=1790546421; cv=none; b=RUWznN6hIhPm5hx9x1Ep192YjWmftlXDIJ1FoDV+xAkNkHsEhSA/E4wCYly07eW30S+lsrErmgbV4Vnde3aGM2er+lf3ILKckY45QwGRYq/q2G7FXLfEUQg8EQGPBPXLwiALFI3KvwpMPcUkkRZ1am/GjZN7Uto6bjvCwxYU16Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790546418; c=relaxed/simple;
-	bh=gVk5Yp0fa5DC+JmIN7hJNs0tuRiH76TK6U/e7s2AWcU=;
+	s=arc-20240116; t=1790546421; c=relaxed/simple;
+	bh=Wg9uOKO2uavAXfyYKzZQM2kSoq6T2GSD4zo7KjquxW8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OCOOht3UoRTaQ/gg6OFjZdWLKnNLBH4dpuU8THSenoZuwxvZDs9TxibCUcH5ZH08AUO9nizw8/IaqpiRWmwNih/BBnXl3fI+JE7JTIBmETOq8XMbdn4ZjpbUAtLodTAu9Z2RlaZAq7fweigWzZTtlvEd7927ihCa7LaDwfFyuvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eNBASeX4; arc=none smtp.client-ip=74.125.231.170
+	 In-Reply-To:To:Cc; b=swW+8/WoBZ09wVM/aC2XLtU0ZhD6+jUfHVjpSBPIJ2Lnr6E20SrumP2dR/V1xxfom6apx2BCO41O/PrI0ig/qeiMtx8S9n8N0cACv8hIrCmCTSAmX2QtTJNA3iN2iOJyAe9QKvepn5Z1of/+4oXbDeBo4UxYqM/kH+EhEQxMGDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mSldbyfd; arc=none smtp.client-ip=74.125.231.167
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eNBASeX4"
-Received: by mail-oo2-f42.google.com with SMTP id 46e09a7af769-81adacb0f81so649047a34.1
-        for <linux-tegra@vger.kernel.org>; Sun, 27 Sep 2026 15:00:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSldbyfd"
+Received: by mail-oo2-f39.google.com with SMTP id 46e09a7af769-8144632e066so1346504a34.0
+        for <linux-tegra@vger.kernel.org>; Sun, 27 Sep 2026 15:00:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790546409; x=1791151209; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1790546411; x=1791151211; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=9cINQWWverkhRH4suCO77K0cLfNkdgj2lkVHlOLl+dU=;
-        b=eNBASeX4zaB5bjKWwvhnEx2OlAPVLhGsQ5duqSjGt7PlpnlTCPenimPcA8OANXsIS6
-         lzW/v8qWWNbDzpZa4wTGhpTpEB3b3lRus1Y9u6pWRwnz8aOPvQ2wUtACBiMUrwr515VT
-         5EXM/h9Px9nxGGT88z7YDRZsGrltBhEgCkIqr+EZjDGuh+145UI0Us+hKBOU52/Qi19Y
-         0qXNe00frLddsu0PkzpowZH/ydcO4K5m8Pq4+FN3bNLJZZBgIY0XnHKom7ryNjrL3f3q
-         5nAgxSTw7kVKpLxM2puSiOXzKvHEqNeb4JG43OaS7kwQTOGNwUcATwvVKsnljrOkLXDx
-         g+fA==
+        bh=uF7xnPzdi03tjllE2GYzrJD/eEbjnznIoKovj7ZFXd4=;
+        b=mSldbyfdFMu6gh4xHh3nHTIh7qAb9uJVgpGHr6cwqYRo/MELHzW5pTU4MT0W+3e1/L
+         xETs6GdJY3nJsXGafmyPZ8sXcBiD/Nu4YG5jN0tflEze6jaUqmWym9y+dYm0Rdz55jZk
+         SraC0V/SI0UaYco0x8VFo4UZ7ugVZDVTs35UlR6bJv2Zd7N+b167J7nSJcbxapJhfksa
+         m+Xq/q6Dz3n73zcCc4tRIImShrc9XDw64gCfNP5z7CYBfNXLwyb8MBSwbYApNnO4X/Mx
+         5TipE0eq7/XqIXrwpDLOwJM88b0me+nI1ey9w/s5mJCnYy8UsKaqiCJo8w6m7B4/GE+y
+         aPYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790546409; x=1791151209;
+        d=1e100.net; s=20260707; t=1790546411; x=1791151211;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=9cINQWWverkhRH4suCO77K0cLfNkdgj2lkVHlOLl+dU=;
-        b=l0o3O6KqIhEjAJs4+xEBrM27sUhCp00dFtn/T8PrAFBCXlXp8TM1i8zHiMKkRV81Bd
-         vEXixiQAUitvDPe7yd/cpCJVnEx2Vuam9lBkZoq6eG/yzaCU+zCdcWOd7v0/O7MlrXBn
-         2WBhQuGL/sWlIn+9Akb1rG7YbflAWbzWzjkeMQZILg4AxWGi+z9XTsx5IGz7ulomwrWf
-         JdK2Es0P8hNDfZsIAPZJfZgAxgGwsCXSp6trR9Q6iZIcCny3Yahwg17f3QpECKjwYTQQ
-         fbS/cjyDFSr29uYtcAVRhQJRGHQDOoAydvmA7etYULOrZgcSc6w0WMCL004PTGQWfW9O
-         4tOg==
-X-Forwarded-Encrypted: i=1; AKwUvBzKJvdyO1O4JSXBMpB3pTYebl+YhXkET+V6WgelypkZiildMxeDOe4+xdbajmN810cO9U2hId4XsCJdpQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++mS5qphEO3jgpP+amL5QBdv6pVbM+2mpS8u0eWpQTkRxtXPEdQa
-	bANR+8ymafafu6iGNQhW6boAwT4MVhJnaXiY+bmhuzXb2ioSneRuV76+NznYr9zx
-X-Gm-Gg: AYBFou3GsZs4LrQD9sg1BbQJgVIquL7jSs16PXOd3MebOrBksnzlKciA6kuEmX2bhvb
-	NfISCroa6mfBpgvq6Y7IjidXdu98afYnLawEq0KMrsmrJoAIqP+LAsqoKMjLIX90BWlPnFbZxjE
-	Qih321AKvnwR6MZcP/frDo6a9AxHDFm2K+PNKPS//gbK3n3oLnGFQP/VuvSGFlR67yLlvGKnzH5
-	ZtdOCZWgRZ0X+dPy3uSg1qqbf/rzdcg0erLUK+1R7FxY3P6ZV9nkO3XJYJU7RbMYsPKJe6Yg4S8
-	9zVCptbJw7p7nVNPz+QRHX7pJpEeEAZH3Rqo8mPp2MRi9PDtyjdQJXnUEp6z85wqWCbA3kmAKw8
-	qgWvZrrggWWF1HmrDqKQ3O06fBv1hPsBJ1Tp60eUXTt/ep4SJW+Qvff6arJ4SSXJR1MLyldCDF/
-	lBFShQfNvdoyc0q0FrdMGSnxnIxR54EskBfia0BkF2B7EZPR/mzSD4F9Mj67uNfclpi+DOAFYpn
-	RI2yu2EAs2lGpeveFpkVt816VLnpyxiogzk9VcgYF8+IiAV+XQ28wtB5nKxy1zkNeGNgjgccz2k
-	NDCCKpbY+6CDjTJAqxE8TkyrPKPZdxr6rO7IN07sdIqBxm8yjn9JnErs09aeIqJ+WbPsvDp5OXt
-	QzOntfyymmB72uX7Xlq4m
-X-Received: by 2002:a05:6830:6d11:b0:81c:a8c5:6380 with SMTP id 46e09a7af769-81ca8c566f2mr813463a34.5.1790546408844;
-        Sun, 27 Sep 2026 15:00:08 -0700 (PDT)
+        bh=uF7xnPzdi03tjllE2GYzrJD/eEbjnznIoKovj7ZFXd4=;
+        b=q35fUsWTkdOLzJQv7dpg8DlJhWH48QY+m20eanOnsGsZ5LMH7U+8A2QZZt+9men9Iy
+         vfxeg0Ygnst4RmSwPU6BM1uW0jSn0yz+KlZY3K2Dll3G8A3eyU6ThKl9oJNlKiLKKGXK
+         lefqXG/p9MtRkWYVq95l5UgY4U6KIl4nuQ+vflKgTiSvvWKYG4zgTyP6psxOLKcXKb8A
+         TLBdbow1nHRdcEJyZ6yJC6+/8mgbIqs4hkmJd4MnZthh0WUHngwRnPOe1icRFEK/9PL+
+         /T4TT7JDZ+ryBDQs+VhMs2Ow7MlpLFT62Twr3xowKD0oU6nAniwBWL7euGSB+QGvhsnE
+         Q2Ng==
+X-Forwarded-Encrypted: i=1; AKwUvByPCXduMJNpu3Vn/zleO7JTilcFBXa4Df830i+r1d6XQRgGVtxT45PSOur+7Yv3wUVm3IDF5rKtrg7VLQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++mFe4PEKGubIXcSPQE7U5tUNJPSDjmprqQRLy5oTU6EDtokQ8yW
+	6on8vxlMWg7OChSP0fM7vxaxPQbmYQV8Frt5/WYTZFZzkQYozPeBrbrv
+X-Gm-Gg: AYBFou19Jvu7SNBKIP4F7GIvr5z0aYZ1IW8d6JQNg5s/3SYWuCGdwAXb1HMu5cFvKrf
+	DU98VlryC8UqweBDqFRQpyWXPqPAY18Sl6+t+mSKz9Nc6qPnDG9iV6UecaNUm/oASXoZJDHZLeE
+	XnzTywqRYAGhIB6OCKBWJWQJbkj0510L8pqdqiS5gUJqQMMEVWFgxvAZHlCga5m4/xtbp/xHSx8
+	ZrRbmViXNaN6ZBMjaWWfwO5xggxBZ4JQNhhkTYTLNs9CC8lbRhctQJfhAmzyVXZjUYHfHiGtgPy
+	u/QUKBOKcjK+4/+/ZaZetWFz4KnCxiD7RX0vTQ97oWCtpESJBtKQJSTPUKy+7A+Dv7N76zAzMsU
+	wf7qXvgWcqI+3dFug/Ugn4nGTL97fPH0XvcGRRYNoavz1QII95olJdXSIYWfDWIE6fqj5VGWPTo
+	z77hDyudKP5+vZDDJd/vurCCJMP0rHDqmfcHSpXQuI2PCoKZpG9ZYBLgi+/WbcdEC5znWRbO9fT
+	3FganRXZ78FAQAM0WtaKN8xFsdy/5VcxuH3KSz0e0BjBjCKJ0XVrgIn3pQIe7DsMZmd9ETMrhUD
+	BcPsDNVQ8AyBw1s9RZsWIBM72gYJbIlYluPDCmUbfxPvy7SSnUmWTt1M7ijqY8ZcZYWA4P5QCQH
+	jwRfvVTepirXRetMQh9lk
+X-Received: by 2002:a05:6820:8119:b0:6cd:3ffc:e338 with SMTP id 006d021491bc7-6d441996bcfmr10141053eaf.86.1790546411401;
+        Sun, 27 Sep 2026 15:00:11 -0700 (PDT)
 Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-81b3de6f7e1sm4874147a34.22.2026.09.27.15.00.06
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-81b3de6f7e1sm4874147a34.22.2026.09.27.15.00.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Sep 2026 15:00:08 -0700 (PDT)
+        Sun, 27 Sep 2026 15:00:10 -0700 (PDT)
 From: James Hilliard <james.hilliard1@gmail.com>
-Date: Sun, 27 Sep 2026 15:59:44 -0600
-Subject: [PATCH net-next v5 09/19] net: stmmac: leave the datapath running
- for normal-size MTU changes
+Date: Sun, 27 Sep 2026 15:59:45 -0600
+Subject: [PATCH net-next v5 10/19] net: stmmac: fix error path cleanup in
+ DMA descriptor ring allocation
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260927-submit-stmmac-reset-fixes-v1-v5-9-feec6c14dd06@gmail.com>
+Message-Id: <20260927-submit-stmmac-reset-fixes-v1-v5-10-feec6c14dd06@gmail.com>
 References: <20260927-submit-stmmac-reset-fixes-v1-v5-0-feec6c14dd06@gmail.com>
 In-Reply-To: <20260927-submit-stmmac-reset-fixes-v1-v5-0-feec6c14dd06@gmail.com>
 To: Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, 
@@ -119,47 +119,221 @@ Cc: Richard Genoud <richard.genoud@bootlin.com>,
  Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>, 
  Ding Hui <dinghui1111@163.com>, Linkui Xiao <xiaolinkui@kylinos.cn>, 
  Linkui Xiao <xiaolinkui@126.com>, linux-tegra@vger.kernel.org, 
- linux-sunxi@lists.linux.dev, James Hilliard <james.hilliard1@gmail.com>
+ linux-sunxi@lists.linux.dev, James Hilliard <james.hilliard1@gmail.com>, 
+ Ding Hui <dinghui@lixiang.com>
 X-Mailer: b4 0.15.2
 
-Changing an MTU at or below ETH_DATA_LEN does not change the receive
-buffer size or the MAC receive limit when the previous MTU was also in
-that range. Do not release and reopen the datapath for those changes.
+From: Ding Hui <dinghui@lixiang.com>
 
-Besides avoiding unnecessary hardware resets and their failure paths,
-this keeps live AF_XDP pool bindings intact. Preparing replacement rings
-before stopping the old rings otherwise binds the pool to a temporary
-RXQ and consumes fill-ring entries while its current RXQ is still
-active. XDP already rejects jumbo MTUs, so all supported live XDP MTU
-changes can use this path without preparing replacement rings.
+__alloc_dma_rx_desc_resources() and __alloc_dma_tx_desc_resources()
+allocate resources in multiple steps but return early on failure
+without cleaning up what they have already allocated. The outer
+error paths then call the free helpers on partially-initialized
+queues, which dereference pointers that were never allocated:
 
-Keep jumbo transitions on the existing reinitialization path for now.
-The later ownership and rollback changes address that path separately.
+  - dma_free_rx_skbufs() and dma_free_rx_xskbufs() dereference
+    rx_q->buf_pool[i] via stmmac_free_rx_buffer(), but buf_pool
+    may be NULL if its kzalloc_objs() failed.
 
-Fixes: 3470079687448 ("net: ethernet: stmicro: stmmac: permit MTU change with interface up")
+  - dma_free_tx_skbufs() dereferences tx_q->tx_skbuff_dma[i] via
+    stmmac_free_tx_buffer(), but tx_skbuff_dma may be NULL if its
+    kzalloc_objs() failed.
+
+  - stmmac_free_tx_buffer() dereferences tx_q->xdpf[i] and
+    tx_q->tx_skbuff[i] (aliased through a union), but tx_skbuff
+    may be NULL if its allocation failed while tx_skbuff_dma
+    succeeded.
+
+Fix this by making each allocation function responsible for undoing
+its own allocations on error, following the standard kernel error
+handling pattern of cleaning up in reverse order. Also add NULL
+checks in the free helpers as a defensive measure, since they may
+be called on partially-initialized queues.
+Additionally, make __free_dma_rx_desc_resources() and
+__free_dma_tx_desc_resources() clear the pointers they free, so that
+the NULL guards in the free helpers hold reliably when the long-lived
+priv->dma_conf is reused across XDP open/release cycles.
+
+Signed-off-by: Ding Hui <dinghui@lixiang.com>
 Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 70 +++++++++++++++++++----
+ 1 file changed, 60 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index a8e5e86e0ead..d9d676ae1c82 100644
+index d9d676ae1c82..258de45d122c 100644
 --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
 +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -6212,7 +6212,12 @@ static int stmmac_change_mtu(struct net_device *dev, int new_mtu)
- 	if ((txfifosz < new_mtu) || (new_mtu > BUF_SIZE_16KiB))
- 		return -EINVAL;
+@@ -1767,7 +1767,7 @@ static void stmmac_free_tx_buffer(struct stmmac_priv *priv,
+ 					 DMA_TO_DEVICE);
+ 	}
  
--	if (netif_running(dev)) {
-+	/* Normal-size frames use the same buffers and MAC receive limits.
-+	 * In particular, do not disturb a live AF_XDP pool: XDP does not
-+	 * support jumbo frames, so it never needs the ring replacement below.
-+	 */
-+	if (netif_running(dev) &&
-+	    (dev->mtu > ETH_DATA_LEN || mtu > ETH_DATA_LEN)) {
- 		netdev_dbg(priv->dev, "restarting interface to change its MTU\n");
- 		/* Try to allocate the new DMA conf with the new mtu */
- 		dma_conf = stmmac_setup_dma_desc(priv, mtu);
+-	if (tx_q->xdpf[i] &&
++	if (tx_q->xdpf && tx_q->xdpf[i] &&
+ 	    (tx_q->tx_skbuff_dma[i].buf_type == STMMAC_TXBUF_T_XDP_TX ||
+ 	     tx_q->tx_skbuff_dma[i].buf_type == STMMAC_TXBUF_T_XDP_NDO)) {
+ 		xdp_return_frame(tx_q->xdpf[i]);
+@@ -1777,7 +1777,7 @@ static void stmmac_free_tx_buffer(struct stmmac_priv *priv,
+ 	if (tx_q->tx_skbuff_dma[i].buf_type == STMMAC_TXBUF_T_XSK_TX)
+ 		tx_q->xsk_frames_done++;
+ 
+-	if (tx_q->tx_skbuff[i] &&
++	if (tx_q->tx_skbuff && tx_q->tx_skbuff[i] &&
+ 	    tx_q->tx_skbuff_dma[i].buf_type == STMMAC_TXBUF_T_SKB) {
+ 		dev_kfree_skb_any(tx_q->tx_skbuff[i]);
+ 		tx_q->tx_skbuff[i] = NULL;
+@@ -1800,6 +1800,10 @@ static void dma_free_rx_skbufs(struct stmmac_priv *priv,
+ 	struct stmmac_rx_queue *rx_q = &dma_conf->rx_queue[queue];
+ 	int i;
+ 
++	/* buf_pool may not be allocated if alloc failed early */
++	if (!rx_q->buf_pool)
++		return;
++
+ 	for (i = 0; i < dma_conf->dma_rx_size; i++)
+ 		stmmac_free_rx_buffer(priv, rx_q, i);
+ }
+@@ -1841,6 +1845,10 @@ static void dma_free_rx_xskbufs(struct stmmac_priv *priv,
+ 	struct stmmac_rx_queue *rx_q = &dma_conf->rx_queue[queue];
+ 	int i;
+ 
++	/* buf_pool may not be allocated if alloc failed early */
++	if (!rx_q->buf_pool)
++		return;
++
+ 	for (i = 0; i < dma_conf->dma_rx_size; i++) {
+ 		struct stmmac_rx_buffer *buf = &rx_q->buf_pool[i];
+ 
+@@ -2136,6 +2144,10 @@ static void dma_free_tx_skbufs(struct stmmac_priv *priv,
+ 	struct stmmac_tx_queue *tx_q = &dma_conf->tx_queue[queue];
+ 	int i;
+ 
++	/* tx_skbuff_dma may not be allocated if alloc failed early */
++	if (!tx_q->tx_skbuff_dma)
++		return;
++
+ 	tx_q->xsk_frames_done = 0;
+ 
+ 	for (i = 0; i < dma_conf->dma_tx_size; i++)
+@@ -2193,13 +2205,20 @@ static void __free_dma_rx_desc_resources(struct stmmac_priv *priv,
+ 	size = stmmac_get_rx_desc_size(priv) * dma_conf->dma_rx_size;
+ 
+ 	dma_free_coherent(priv->device, size, addr, rx_q->dma_rx_phy);
++	rx_q->dma_erx = NULL;
++	rx_q->dma_rx = NULL;
++	rx_q->dma_rx_phy = 0;
+ 
+ 	if (xdp_rxq_info_is_reg(&rx_q->xdp_rxq))
+ 		xdp_rxq_info_unreg(&rx_q->xdp_rxq);
+ 
+ 	kfree(rx_q->buf_pool);
+-	if (rx_q->page_pool)
++	rx_q->buf_pool = NULL;
++
++	if (rx_q->page_pool) {
+ 		page_pool_destroy(rx_q->page_pool);
++		rx_q->page_pool = NULL;
++	}
+ }
+ 
+ static void free_dma_rx_desc_resources(struct stmmac_priv *priv,
+@@ -2241,9 +2260,16 @@ static void __free_dma_tx_desc_resources(struct stmmac_priv *priv,
+ 	size = stmmac_get_tx_desc_size(priv, tx_q) * dma_conf->dma_tx_size;
+ 
+ 	dma_free_coherent(priv->device, size, addr, tx_q->dma_tx_phy);
++	tx_q->dma_etx = NULL;
++	tx_q->dma_entx = NULL;
++	tx_q->dma_tx = NULL;
++	tx_q->dma_tx_phy = 0;
+ 
+ 	kfree(tx_q->tx_skbuff_dma);
++	tx_q->tx_skbuff_dma = NULL;
++
+ 	kfree(tx_q->tx_skbuff);
++	tx_q->tx_skbuff = NULL;
+ }
+ 
+ static void free_dma_tx_desc_resources(struct stmmac_priv *priv,
+@@ -2311,15 +2337,19 @@ static int __alloc_dma_rx_desc_resources(struct stmmac_priv *priv,
+ 	}
+ 
+ 	rx_q->buf_pool = kzalloc_objs(*rx_q->buf_pool, dma_conf->dma_rx_size);
+-	if (!rx_q->buf_pool)
+-		return -ENOMEM;
++	if (!rx_q->buf_pool) {
++		ret = -ENOMEM;
++		goto err_destroy_pool;
++	}
+ 
+ 	size = stmmac_get_rx_desc_size(priv) * dma_conf->dma_rx_size;
+ 
+ 	addr = dma_alloc_coherent(priv->device, size, &rx_q->dma_rx_phy,
+ 				  GFP_KERNEL);
+-	if (!addr)
+-		return -ENOMEM;
++	if (!addr) {
++		ret = -ENOMEM;
++		goto err_free_buf_pool;
++	}
+ 
+ 	if (priv->extend_desc)
+ 		rx_q->dma_erx = addr;
+@@ -2335,10 +2365,22 @@ static int __alloc_dma_rx_desc_resources(struct stmmac_priv *priv,
+ 	ret = xdp_rxq_info_reg(&rx_q->xdp_rxq, priv->dev, queue, napi_id);
+ 	if (ret) {
+ 		netdev_err(priv->dev, "Failed to register xdp rxq info\n");
+-		return -EINVAL;
++		goto err_free_dma;
+ 	}
+ 
+ 	return 0;
++
++err_free_dma:
++	dma_free_coherent(priv->device, size, addr, rx_q->dma_rx_phy);
++	rx_q->dma_erx = NULL;
++	rx_q->dma_rx = NULL;
++err_free_buf_pool:
++	kfree(rx_q->buf_pool);
++	rx_q->buf_pool = NULL;
++err_destroy_pool:
++	page_pool_destroy(rx_q->page_pool);
++	rx_q->page_pool = NULL;
++	return ret;
+ }
+ 
+ static int alloc_dma_rx_desc_resources(struct stmmac_priv *priv,
+@@ -2391,14 +2433,14 @@ static int __alloc_dma_tx_desc_resources(struct stmmac_priv *priv,
+ 
+ 	tx_q->tx_skbuff = kzalloc_objs(struct sk_buff *, dma_conf->dma_tx_size);
+ 	if (!tx_q->tx_skbuff)
+-		return -ENOMEM;
++		goto err_free_skbuff_dma;
+ 
+ 	size = stmmac_get_tx_desc_size(priv, tx_q) * dma_conf->dma_tx_size;
+ 
+ 	addr = dma_alloc_coherent(priv->device, size,
+ 				  &tx_q->dma_tx_phy, GFP_KERNEL);
+ 	if (!addr)
+-		return -ENOMEM;
++		goto err_free_skbuff;
+ 
+ 	if (priv->extend_desc)
+ 		tx_q->dma_etx = addr;
+@@ -2408,6 +2450,14 @@ static int __alloc_dma_tx_desc_resources(struct stmmac_priv *priv,
+ 		tx_q->dma_tx = addr;
+ 
+ 	return 0;
++
++err_free_skbuff:
++	kfree(tx_q->tx_skbuff);
++	tx_q->tx_skbuff = NULL;
++err_free_skbuff_dma:
++	kfree(tx_q->tx_skbuff_dma);
++	tx_q->tx_skbuff_dma = NULL;
++	return -ENOMEM;
+ }
+ 
+ static int alloc_dma_tx_desc_resources(struct stmmac_priv *priv,
 
 -- 
 2.53.0
