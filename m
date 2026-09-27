@@ -1,71 +1,71 @@
-Received: from mail-oo2-f36.google.com (mail-oo2-f36.google.com [74.125.231.164])
+Received: from mail-oo2-f38.google.com (mail-oo2-f38.google.com [74.125.231.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5A23CF1F1
-	for <linux-tegra@vger.kernel.org>; Sun, 27 Sep 2026 21:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.164
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303473E8330
+	for <linux-tegra@vger.kernel.org>; Sun, 27 Sep 2026 22:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790546405; cv=none; b=Zzbdog7p7zvmdjtnbwyKb9qabil6MksptSfn/lb/dWXf6UZSb91tmHR44sY2/z3rGI7hq0zBUIiUHpY321G7IVH5rFRUHLxDItOonuLhw3KtD8r1ciadFMiBF+V7ezBt6elPPUAAYfS/4y23aPylY5sAi62ZyrycTj6GTrkLAUI=
+	t=1790546409; cv=none; b=lfnLWRTjSgwr1k2kIWtWs+sGSG6UKI8lE4I6A/4e6BBaznM65YUWJa8KWUVqZcaDgYIetkQ6opkM91f1lHXJALf/+foeMXIO4rYGSgIIRQrxnkhQM+4Ue+zCTIayVv9N6BoFNSJwlCKlr2+PS1K0R6gmLjdwcIoFc0czWJZbBHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790546405; c=relaxed/simple;
-	bh=2ChPtfS7fuQ6xmL5pBM0ED+Tz6MNWUwwNmCfWCfm6zM=;
+	s=arc-20240116; t=1790546409; c=relaxed/simple;
+	bh=Hx5UJuxKjwprvSGWaXQVjVJ0w0ttNwljukD9w8lrWm4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RKXNB97KedQDnrcjmUASnQ7qe997w4ltlYOqvn++0Qhe4TTRzdNKUwRTJ33hzZnccldly0MDW0vPgK0nJyr7BviggDs4MfdtNsHJlMtP20mbbo5VQLc8OZTGVNT2ogFxnEFh+hquAlCSR8eqsxLgXs9vzo6UgrZqCDdDvbX+nAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CEi6GvdR; arc=none smtp.client-ip=74.125.231.164
+	 In-Reply-To:To:Cc; b=rPpFnC3JA+kwBLqotkpZsILt/HO64nYkj2XiOe9fPtVw6Xuuwcn7nrbIjo+N7nnvVhjpfoG5Wn/GHTVr5Fjoi6jkqh7v3OobDpm/hgcUH2SFKRAllzq5OQbvdAon5BdA1i2Kp+Vxc1bVsX1/kRYS0J7s+IfGmhuU/9S/fJbMbHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sedZzQuf; arc=none smtp.client-ip=74.125.231.166
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CEi6GvdR"
-Received: by mail-oo2-f36.google.com with SMTP id 46e09a7af769-81a86afd781so635570a34.1
-        for <linux-tegra@vger.kernel.org>; Sun, 27 Sep 2026 14:59:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sedZzQuf"
+Received: by mail-oo2-f38.google.com with SMTP id 46e09a7af769-80a71781323so1412773a34.1
+        for <linux-tegra@vger.kernel.org>; Sun, 27 Sep 2026 15:00:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790546396; x=1791151196; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1790546401; x=1791151201; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=pt1JZ0Xx4dSQpjlcwcv4OrOAetyhY0kdTpc42Knguac=;
-        b=CEi6GvdRr9Qc9e5aohxNgsgG1WWEfL9SmvQl2UZhtPWzlz9PZ0Ph10zKMiShuWufKd
-         +y5LKJ5MwfK3HsHgB9to5D+nLxvfX7fsC+dW1ePeAv9eqxxBpIGPMXqIE12Hx9W6zv49
-         T9OmTgGIb0B2BuuBI/W/xeiSU7GmlYljzX4Scct/iMvlEyjRm8ywQ+zjzG4Ei6IsayfJ
-         PvGcqpzIBh1TVyZGJHMQihOYCQeyCDXNNTfsTLVv0TVk4LhdoKf/ll1kvwBA+kbYszdi
-         /lBT3zMlNocApC9m3dK7LIHeJ6U5MeCE8y12BqSYFZPWHIKH0tHp7+ACFRYdwvhTkFRB
-         lYKg==
+        bh=KfjvWDlH74aBokTz23r7fE1Dwv67vVeYYEoQzFsEUhQ=;
+        b=sedZzQufY1aPY2nUE663G3m9glioc6Lnd6BjODfLk/YLBrrOmH560H0JbP2E7GSh2M
+         U99bvf2EudZDkXtBeGO+Ni6d/RgM4ZU0M8WznDCpE+yMymBiw5mnlDaBWwOySkDVUpIc
+         GCbqRcORHJsB/epZosPsD/d1aDAJn+LZEGCJoW9uOPmFKDsdPuQFhwZX/sxR8R+JnO74
+         eGYcA4xyRGH/soY0V8hE7J4MlGg4VcBTNJi6QvJgAB9/H2sshFgJw59z2Z4tOxmlLWwC
+         rQSwuHa+CPcxkAsGwmRewloh1SZLZusmeA2lhsoRn0uASfKMJOxOL1HmAITMOBoTM5oZ
+         pliQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790546396; x=1791151196;
+        d=1e100.net; s=20260707; t=1790546401; x=1791151201;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=pt1JZ0Xx4dSQpjlcwcv4OrOAetyhY0kdTpc42Knguac=;
-        b=Chl5tdE1ZRsqZ0IuFpaeYsCBHeMh0F5jcyhVb26Z0Qg8JcSidHyjeclzh6keVhs3eZ
-         zZPhojnkfJ+/vqBuzNbXANZurqmpUCz2f0Jy9nmCJCP4WtWVazS+mXrKil5U8k9bqeP9
-         +sYNMLvYv4OnUdFBw759v2XtFH2Wf0rp1W7tPzlR6SejJ6501kE4JMqTSL7qqdZMSTzL
-         +V8TunIsNXNY8D/6XKy/oQwZUT/n1sI16s88pvEWJt2pbVmTlyfN6q0RoPiHzaGvWF0E
-         NpAJeeYYPGteJk5uft3ALJQsXCJb/H8cQ0/3AIYADIdRobA0G+6vqs+IkcyoE92IZx0S
-         BdFw==
-X-Forwarded-Encrypted: i=1; AKwUvBw/SWclY3ufrHMn1d9WrvHnxx6svo1gDR8VLO6SnAjEpToP8NYF3bsgRYtZRFycTtwAN85q4yk6lq/eUg==@vger.kernel.org
-X-Gm-Message-State: AFuF++njSHECG9jDHNSFAyH4B+2O5nxIMcAFAjrzfFH+HQgtomft/v1t
-	5x8KkhRfISKiNlP7QWuxB9/73lvYibiDjxHQsFETSfja3wo/pHdzxb/h
-X-Gm-Gg: AYBFou3B2iHKIiZxPvP0OYVFQoQHjSMqljgSerGL3UiAfLWEZaFhSahZGAbl1w6fKkG
-	hMWAP47kymrX30lZgH1E8MiWudNrCF8JkqZZcbssI2WiqJECZABQksIMj+wG7wBaxAG3sXd4lI2
-	gPFfe6iDzOSJtrea13HpaNLfJsPWqntMuqqofT11ec13+CTnsPxSbnywPkCkbwSHr1tVSpUKYJM
-	oizZHqebCekgsFcfxFi+alaEwX0Qf5T3Y+L6i4Ny6Y1Jv72HKPSDxftXogfjdg3B8o2elhM1AXF
-	XWdyjU/5q0qc/fhTk8Rg/Zx9htKmFIEGdRXniqKqEX4lzLJP5R4YnNzmmoNNZl7B07M9JS9sr+B
-	wTJEbeXg3MVwo3nHaX+KEhIFiOxqKeTH2L1etCQw8xXFt9O5FIiKfQnMybIdFI/BChbQnyB2lpl
-	gzUj81pUP3cqzHW9CebBBhQDZKTGzd3TQy0v18BpveNplAcZ9C7MEI3qtyaCaXDPIet/oxqXP0H
-	2kJ3lqBNC4vd3eSdZm2cSRMn5nvYIFHc8PGs597X8CK2Q8fpGincTXgUxfFrZX8o5HclTjEz6yg
-	5pT5S5OJ94BP21WxRXI1+orWT5byqImTPiBMHqFGLX659lrdUFPzORT+0087+Ybr/au8SA6R2l0
-	XljilAJdeV947V6oFstTv9iH9oi71hjE=
-X-Received: by 2002:a05:6830:6d50:b0:7fa:ac4f:794 with SMTP id 46e09a7af769-81781d93ab0mr13732683a34.16.1790546395901;
-        Sun, 27 Sep 2026 14:59:55 -0700 (PDT)
+        bh=KfjvWDlH74aBokTz23r7fE1Dwv67vVeYYEoQzFsEUhQ=;
+        b=u9ixtbquJ5lxXM1hWIB0+0CGoq4IjULckMmdtsRrZ3L/bgOcqUXySJcHWkWtMJS03k
+         95lvJReqnlWNrDSkss8scDVxT+sarkXYHJj5tqOWPWxya36lZcl1Nu+jood/QRGBPyBT
+         osXorOQ2MWTZtrhwXmO3SL6wd6csCSz442OokMwLCOnsvi+QR8vg0DIfQr2M7iKsdsjM
+         +Q8uYYfAFQVkwISXmsofGoM4MTzWWZLpQQMgTEgYdGLDxIy5J8xuAzcZRmRCG7f0LVt7
+         6tI8ge+PkQMV8BFA6eRl/ZbgjOuLIUvsRZo14g9OIeWaPyHyD1B/FW8CjeFJPzxreQ5U
+         UjYA==
+X-Forwarded-Encrypted: i=1; AKwUvBzaoXAEuBrclyDbKTwDuG3KMlUX2U/t23fyJGz5ibuAfTphLJfyGUYSLqr89XvE/nuFoJxt6gUtVpGagQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++k8ZX88pU0YMNzR3QjlNJ7qOJWafzvMgoP7zi95+613PxBadzZI
+	zcOSEQRAWKvfmdxto93rdZpHGqADQSel9O3uzkd7R4I1MH3t2slLVgMJ
+X-Gm-Gg: AYBFou1M+bDNoYmhIcdElkKfCD/2EhjAECSoGM7S5uRHaLIcS3Ui7Yi4DAMoqyi7x36
+	l6cr7fv5PyZj2+c7e3KrFrMwfLeb1PPWDbGDdb9w+g+f5Bup7dCSvpWkNWExj3ktjo/9DmNZU6D
+	NPtaUfkiJKmn9eC4976ewAzlvm5TJn6p20RakN2deX8BN64EW4LR68e9Wa8ncj8/9UVnBeP5Imn
+	nPwug8DIjXwT4MyUTEqgJQBto8r/TBUU9Ja+m3uDKflT243niX+sh4cmK6PA13EzqYjbXeSh7Tm
+	MZsobP/X2gn89R67GXowtclhEdtIujeJjG11XOtc3s035SZZe/VNdidOAHosWWG+YB7lbHFiBu/
+	vr68E16Rju73k8vgdhId0H8wfL42I/J/moJC4xljyQo77nZp523SfXTw2SHaxvDUfQIfqiJO4PW
+	v+Xe/rapNO2JBSWKmLiKaGggESF6JMI0t3YioXUCbLTj4e5iTzGfRbtNXD3nXZ6iZLwKpouXnct
+	TKz6c3YdTzW5+7b8D0+2m9UtikI6vvVifeT1qc6vLvawVcBzfjcn4NvXsDo5m2LQSZ/dfhdUqEs
+	FngOA9pYJxve3cpoNiEWZ8xXJkDMOqkDasmOLebSHxPe6U6ubORPha/G3neeYKPCmGe2YwKgMcY
+	O/lAk+pM1V/Ba7S6wJ03Uiw==
+X-Received: by 2002:a05:6830:25c4:b0:7fa:5c68:d04d with SMTP id 46e09a7af769-8178317f9a9mr11970434a34.23.1790546400973;
+        Sun, 27 Sep 2026 15:00:00 -0700 (PDT)
 Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-81b3de6f7e1sm4874147a34.22.2026.09.27.14.59.53
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-81b3de6f7e1sm4874147a34.22.2026.09.27.14.59.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Sep 2026 14:59:55 -0700 (PDT)
+        Sun, 27 Sep 2026 15:00:00 -0700 (PDT)
 From: James Hilliard <james.hilliard1@gmail.com>
-Date: Sun, 27 Sep 2026 15:59:39 -0600
-Subject: [PATCH net-next v5 04/19] xsk: freeze deferred pool teardown
- during system sleep
+Date: Sun, 27 Sep 2026 15:59:41 -0600
+Subject: [PATCH net-next v5 06/19] net: stmmac: pass the desired EST enable
+ state to est_configure()
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260927-submit-stmmac-reset-fixes-v1-v5-4-feec6c14dd06@gmail.com>
+Message-Id: <20260927-submit-stmmac-reset-fixes-v1-v5-6-feec6c14dd06@gmail.com>
 References: <20260927-submit-stmmac-reset-fixes-v1-v5-0-feec6c14dd06@gmail.com>
 In-Reply-To: <20260927-submit-stmmac-reset-fixes-v1-v5-0-feec6c14dd06@gmail.com>
 To: Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, 
@@ -122,38 +122,113 @@ Cc: Richard Genoud <richard.genoud@bootlin.com>,
  linux-sunxi@lists.linux.dev, James Hilliard <james.hilliard1@gmail.com>
 X-Mailer: b4 0.15.2
 
-Pool destruction calls the driver under RTNL from system_wq. That queue
-is not frozen during system sleep, so ndo_bpf() can run after the device
-suspend callback has gated its clocks or after the noirq phase.
+From: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
 
-Use the freezable workqueue for deferred pool release. Work already
-running completes before device suspend, and newly queued destruction
-waits until device resume. The pool, UMEM and netdev references remain
-owned by the work until then. This does not replace driver error
-handling after a failed resume.
+Pass the desired EST enable state explicitly to est_configure() instead
+of having it derive the EEST/EST_INT_EN bits from cfg->enable. This
+decouples the hardware programming state from the priv->est.enable
+flag, which records whether the taprio offload is attached.
 
-Fixes: 1c1efc2af158 ("xsk: Create and free buffer pool independently from umem")
+No functional change intended: the callers keep toggling
+priv->est.enable around the EST programming, as before.
+
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
 Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
 ---
- net/xdp/xsk_buff_pool.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/stmicro/stmmac/hwif.h       | 2 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_est.c | 6 +++---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c | 4 ++--
+ drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c  | 4 ++--
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/net/xdp/xsk_buff_pool.c b/net/xdp/xsk_buff_pool.c
-index 9d2d94f1fb75..c58f56f24a9c 100644
---- a/net/xdp/xsk_buff_pool.c
-+++ b/net/xdp/xsk_buff_pool.c
-@@ -337,7 +337,10 @@ bool xp_put_pool(struct xsk_buff_pool *pool)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.h b/drivers/net/ethernet/stmicro/stmmac/hwif.h
+index a8a5c8fdd5ed..1fd9f1ab316e 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/hwif.h
++++ b/drivers/net/ethernet/stmicro/stmmac/hwif.h
+@@ -617,7 +617,7 @@ struct stmmac_mmc_ops {
  
- 	if (refcount_dec_and_test(&pool->users)) {
- 		INIT_WORK(&pool->work, xp_release_deferred);
--		schedule_work(&pool->work);
-+		/* Teardown calls ndo_bpf(), which may need powered hardware.
-+		 * RTNL alone does not exclude the device's system PM callbacks.
-+		 */
-+		queue_work(system_freezable_wq, &pool->work);
- 		return true;
+ struct stmmac_est_ops {
+ 	int (*configure)(struct stmmac_priv *priv, struct stmmac_est *cfg,
+-			 unsigned int ptp_rate);
++			 unsigned int ptp_rate, bool enable);
+ 	void (*irq_status)(struct stmmac_priv *priv, struct net_device *dev,
+ 			   struct stmmac_extra_stats *x, u32 txqcnt);
+ };
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_est.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_est.c
+index afc516059b89..f15d4d046aa7 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_est.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_est.c
+@@ -26,7 +26,7 @@ static int est_write(void __iomem *est_addr, u32 reg, u32 val, bool gcl)
+ }
+ 
+ static int est_configure(struct stmmac_priv *priv, struct stmmac_est *cfg,
+-			 unsigned int ptp_rate)
++			 unsigned int ptp_rate, bool enable)
+ {
+ 	void __iomem *est_addr = priv->estaddr;
+ 	int i, ret = 0;
+@@ -62,7 +62,7 @@ static int est_configure(struct stmmac_priv *priv, struct stmmac_est *cfg,
+ 		ctrl |= ((NSEC_PER_SEC / ptp_rate) * EST_GMAC5_PTOV_MUL) <<
+ 			 EST_GMAC5_PTOV_SHIFT;
+ 	}
+-	if (cfg->enable)
++	if (enable)
+ 		ctrl |= EST_EEST | EST_SSWL | EST_DFBS;
+ 	else
+ 		ctrl &= ~EST_EEST;
+@@ -70,7 +70,7 @@ static int est_configure(struct stmmac_priv *priv, struct stmmac_est *cfg,
+ 	writel(ctrl, est_addr + EST_CONTROL);
+ 
+ 	/* Configure EST interrupt */
+-	if (cfg->enable)
++	if (enable)
+ 		ctrl = EST_IECGCE | EST_IEHS | EST_IEHF | EST_IEBE | EST_IECC;
+ 	else
+ 		ctrl = 0;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c
+index 2a4099fe470c..64d890664421 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c
+@@ -74,7 +74,7 @@ static int stmmac_adjust_time(struct ptp_clock_info *ptp, s64 delta)
+ 		mutex_lock(&priv->est_lock);
+ 		priv->est.enable = false;
+ 		stmmac_est_configure(priv, priv, &priv->est,
+-				     priv->plat->clk_ptp_rate);
++				     priv->plat->clk_ptp_rate, false);
+ 		mutex_unlock(&priv->est_lock);
  	}
  
+@@ -104,7 +104,7 @@ static int stmmac_adjust_time(struct ptp_clock_info *ptp, s64 delta)
+ 		priv->est.btr[1] = (u32)time.tv_sec;
+ 		priv->est.enable = true;
+ 		ret = stmmac_est_configure(priv, priv, &priv->est,
+-					   priv->plat->clk_ptp_rate);
++					   priv->plat->clk_ptp_rate, true);
+ 		mutex_unlock(&priv->est_lock);
+ 		if (ret)
+ 			netdev_err(priv->dev, "failed to configure EST\n");
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+index 357d1eaf0d7d..67c6fc32d0ea 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+@@ -1082,7 +1082,7 @@ static int tc_taprio_configure(struct stmmac_priv *priv,
+ 	tc_taprio_map_maxsdu_txq(priv, qopt);
+ 
+ 	ret = stmmac_est_configure(priv, priv, &priv->est,
+-				   priv->plat->clk_ptp_rate);
++				   priv->plat->clk_ptp_rate, true);
+ 	mutex_unlock(&priv->est_lock);
+ 	if (ret) {
+ 		netdev_err(priv->dev, "failed to configure EST\n");
+@@ -1100,7 +1100,7 @@ static int tc_taprio_configure(struct stmmac_priv *priv,
+ 	mutex_lock(&priv->est_lock);
+ 	priv->est.enable = false;
+ 	stmmac_est_configure(priv, priv, &priv->est,
+-			     priv->plat->clk_ptp_rate);
++			     priv->plat->clk_ptp_rate, false);
+ 	/* Reset taprio status */
+ 	for (i = 0; i < priv->plat->tx_queues_to_use; i++) {
+ 		priv->xstats.max_sdu_txq_drop[i] = 0;
 
 -- 
 2.53.0
