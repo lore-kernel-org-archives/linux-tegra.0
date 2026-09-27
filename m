@@ -1,71 +1,71 @@
-Received: from mail-oo2-f39.google.com (mail-oo2-f39.google.com [74.125.231.167])
+Received: from mail-oo2-f43.google.com (mail-oo2-f43.google.com [74.125.231.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99FD439328
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BD642BC43
 	for <linux-tegra@vger.kernel.org>; Sun, 27 Sep 2026 22:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.167
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790546421; cv=none; b=RUWznN6hIhPm5hx9x1Ep192YjWmftlXDIJ1FoDV+xAkNkHsEhSA/E4wCYly07eW30S+lsrErmgbV4Vnde3aGM2er+lf3ILKckY45QwGRYq/q2G7FXLfEUQg8EQGPBPXLwiALFI3KvwpMPcUkkRZ1am/GjZN7Uto6bjvCwxYU16Y=
+	t=1790546422; cv=none; b=JIe8CzQxIJgGXn9c7k4H4ljoXFfpdJs2t1SSJ6XadaqM5GEImGrHWQeIMmUgOr0SYT1EYrJ1/fCfknfnquJWtgWa0WNvPmR+slRP2976TYRqilWYNTXhVbyCHylwrB5NK2eY5373ufN4GNatsVa6zKWYOCIKQxOcPhd78BqxkK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790546421; c=relaxed/simple;
-	bh=Wg9uOKO2uavAXfyYKzZQM2kSoq6T2GSD4zo7KjquxW8=;
+	s=arc-20240116; t=1790546422; c=relaxed/simple;
+	bh=hGe7opUWtd3dH+BdZuV25FvF4CrbbA/rtGiLv7Y7dx0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=swW+8/WoBZ09wVM/aC2XLtU0ZhD6+jUfHVjpSBPIJ2Lnr6E20SrumP2dR/V1xxfom6apx2BCO41O/PrI0ig/qeiMtx8S9n8N0cACv8hIrCmCTSAmX2QtTJNA3iN2iOJyAe9QKvepn5Z1of/+4oXbDeBo4UxYqM/kH+EhEQxMGDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mSldbyfd; arc=none smtp.client-ip=74.125.231.167
+	 In-Reply-To:To:Cc; b=rUqJbkcpeCqsEjjVaRDqbu0PlnpQcqNNS7eih/t/K1gMXBXHDqFBrcQpDoOSys7SN/OzSxqbyYPx2RN0tKB9HCPzXF0/hZNOv5jvLnO9D1eHbbRdO5n1e4pQqscenrYFRfJZVBxw6TmDrn4Eq1QcslVZ9R96EvPmSz0YUhFEVoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UHrFFPym; arc=none smtp.client-ip=74.125.231.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSldbyfd"
-Received: by mail-oo2-f39.google.com with SMTP id 46e09a7af769-8144632e066so1346504a34.0
-        for <linux-tegra@vger.kernel.org>; Sun, 27 Sep 2026 15:00:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UHrFFPym"
+Received: by mail-oo2-f43.google.com with SMTP id 46e09a7af769-81b15bca7dfso665756a34.0
+        for <linux-tegra@vger.kernel.org>; Sun, 27 Sep 2026 15:00:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790546411; x=1791151211; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1790546414; x=1791151214; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=uF7xnPzdi03tjllE2GYzrJD/eEbjnznIoKovj7ZFXd4=;
-        b=mSldbyfdFMu6gh4xHh3nHTIh7qAb9uJVgpGHr6cwqYRo/MELHzW5pTU4MT0W+3e1/L
-         xETs6GdJY3nJsXGafmyPZ8sXcBiD/Nu4YG5jN0tflEze6jaUqmWym9y+dYm0Rdz55jZk
-         SraC0V/SI0UaYco0x8VFo4UZ7ugVZDVTs35UlR6bJv2Zd7N+b167J7nSJcbxapJhfksa
-         m+Xq/q6Dz3n73zcCc4tRIImShrc9XDw64gCfNP5z7CYBfNXLwyb8MBSwbYApNnO4X/Mx
-         5TipE0eq7/XqIXrwpDLOwJM88b0me+nI1ey9w/s5mJCnYy8UsKaqiCJo8w6m7B4/GE+y
-         aPYg==
+        bh=83ThLbPC5Dd2yel01jjZwvC9Fqqb0286KBpR//NQh0A=;
+        b=UHrFFPymSvZvb/sw3uMIuvlZzTGk4450dm76KbUfFaWlXzX1fJljVIYPJY/rWTS3mp
+         xKtWcoKroSN+boopjjE+t6qe0zfl+C+KOnCVXher7nSqB5/NJZcWY11Zk0goR5mNlKFj
+         rOqDtgrdzo53QeyAWmm23h9fPH0VIhd7uC8SjG3tP4h8aE0xuWAukJmHY6EH/3Tqf/56
+         lHsn9qArSGM24Aoue2mawlsvQf/L8mDb3mz2pNGGaOAJ4hS/2uN+cFeFzF8z3J1zhiIt
+         ooak+xVdjejbnE01BtM/sqoGDZEbO6eMJyFEEwvAi01YvG2qqzQeas4xyU2Nc4PNQuZV
+         dCIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790546411; x=1791151211;
+        d=1e100.net; s=20260707; t=1790546414; x=1791151214;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=uF7xnPzdi03tjllE2GYzrJD/eEbjnznIoKovj7ZFXd4=;
-        b=q35fUsWTkdOLzJQv7dpg8DlJhWH48QY+m20eanOnsGsZ5LMH7U+8A2QZZt+9men9Iy
-         vfxeg0Ygnst4RmSwPU6BM1uW0jSn0yz+KlZY3K2Dll3G8A3eyU6ThKl9oJNlKiLKKGXK
-         lefqXG/p9MtRkWYVq95l5UgY4U6KIl4nuQ+vflKgTiSvvWKYG4zgTyP6psxOLKcXKb8A
-         TLBdbow1nHRdcEJyZ6yJC6+/8mgbIqs4hkmJd4MnZthh0WUHngwRnPOe1icRFEK/9PL+
-         /T4TT7JDZ+ryBDQs+VhMs2Ow7MlpLFT62Twr3xowKD0oU6nAniwBWL7euGSB+QGvhsnE
-         Q2Ng==
-X-Forwarded-Encrypted: i=1; AKwUvByPCXduMJNpu3Vn/zleO7JTilcFBXa4Df830i+r1d6XQRgGVtxT45PSOur+7Yv3wUVm3IDF5rKtrg7VLQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++mFe4PEKGubIXcSPQE7U5tUNJPSDjmprqQRLy5oTU6EDtokQ8yW
-	6on8vxlMWg7OChSP0fM7vxaxPQbmYQV8Frt5/WYTZFZzkQYozPeBrbrv
-X-Gm-Gg: AYBFou19Jvu7SNBKIP4F7GIvr5z0aYZ1IW8d6JQNg5s/3SYWuCGdwAXb1HMu5cFvKrf
-	DU98VlryC8UqweBDqFRQpyWXPqPAY18Sl6+t+mSKz9Nc6qPnDG9iV6UecaNUm/oASXoZJDHZLeE
-	XnzTywqRYAGhIB6OCKBWJWQJbkj0510L8pqdqiS5gUJqQMMEVWFgxvAZHlCga5m4/xtbp/xHSx8
-	ZrRbmViXNaN6ZBMjaWWfwO5xggxBZ4JQNhhkTYTLNs9CC8lbRhctQJfhAmzyVXZjUYHfHiGtgPy
-	u/QUKBOKcjK+4/+/ZaZetWFz4KnCxiD7RX0vTQ97oWCtpESJBtKQJSTPUKy+7A+Dv7N76zAzMsU
-	wf7qXvgWcqI+3dFug/Ugn4nGTL97fPH0XvcGRRYNoavz1QII95olJdXSIYWfDWIE6fqj5VGWPTo
-	z77hDyudKP5+vZDDJd/vurCCJMP0rHDqmfcHSpXQuI2PCoKZpG9ZYBLgi+/WbcdEC5znWRbO9fT
-	3FganRXZ78FAQAM0WtaKN8xFsdy/5VcxuH3KSz0e0BjBjCKJ0XVrgIn3pQIe7DsMZmd9ETMrhUD
-	BcPsDNVQ8AyBw1s9RZsWIBM72gYJbIlYluPDCmUbfxPvy7SSnUmWTt1M7ijqY8ZcZYWA4P5QCQH
-	jwRfvVTepirXRetMQh9lk
-X-Received: by 2002:a05:6820:8119:b0:6cd:3ffc:e338 with SMTP id 006d021491bc7-6d441996bcfmr10141053eaf.86.1790546411401;
-        Sun, 27 Sep 2026 15:00:11 -0700 (PDT)
+        bh=83ThLbPC5Dd2yel01jjZwvC9Fqqb0286KBpR//NQh0A=;
+        b=nylGnKpXtCrHRKbq6bHNhLQFgJRMfUenXSe347ZRCVstSeiSmeV+0DGUF3GVcUM7kK
+         KuMVLhjqIfvxexbkRChHCLdOb7j/HhLoM/+P+7XJs9sm8wZtWnTv2hizZwJQcLF8xVb0
+         qHUGHvTgy3TwklmfT2fSveu+L0jov9THGdz+D0f5mc5ZHYEDH3de0/9psyasbO924SlK
+         HcrexOBTKnj5j8yB7Er5uNlVnZ5NdrcdQ1xn3pcA5p/J8cStsr4N1h/uUjOI4+F+RnV7
+         emca/0OznytV5olxZsNtUhF81rbUAk9J99Vmp609meg818GNSHVzJETw6ITYSUxepO7q
+         pkeA==
+X-Forwarded-Encrypted: i=1; AKwUvBxs+rY8YTzy+z8LK/fxLimEN9qYMbcAQ2BmoV3E4V4oHDLAxsS2Qmpx4t53xbRCBtcAyTdjefbA5xqGGw==@vger.kernel.org
+X-Gm-Message-State: AFuF++nsaj7aL3Y86sAqJFpPCALRKCTGWnWxCKfvLfRFmLhRqAkhAc9M
+	xljjwn8hDRpYDjhfd1HlgMoAT/kTeVSqyC8IuoZeCEbWWfArcT3mS9K+
+X-Gm-Gg: AYBFou1SfVc/7Z8kwEIECWtiHphYAeHubifz+X1MlIjZf56a17F7G7IZwVDjdMpMER4
+	OXwJ5W31IlRKw4oGNnb1pnyNLFW3AlCv3rDApzvIsR2EoHIlY7mjgn924dg/iCt4aa8k4Dnaq1y
+	/8D+wFSMAgyGOlFFWJNIlqbGUmFnFyCBXgYH9f4kMk0Y99Yt1poBBHrSvr//7z126NymC7y6HQ5
+	2Mu6z/2LnFx/iVJKuX0WSh3tH6dcz3x0jHq+epD+dR3vBb2ALU5Wp8JaEQ8s+NmBVTRrtn/K8Wx
+	1yu0uzQF6VAuIk/pHB3sBdHS8u8nTr4ONqISP3RaOAXT+PogA0ehjb3hHF/FEQH9OwlckIfLlxJ
+	1zBKp37PwQGnU0N5NqrUDgX5WH0eUntnx10wBtUKhwzd4Rlxs/FK5YN1qrYM/GN7vzSr95IOqEp
+	/Mtp2KrGPiRNQemWv4pUAHvIomnxtyPAI5V6oYcmYCGVfKAFKgHapoUMHHZdjv+lXmwB0ei1STt
+	rC97NvB8/kjRLIvVfAwd/S0Rged2hnFZAeZmv2DzIDngh7KirU2RFWvW+c6kqjpaB+ZcDfxkavd
+	neAKL6f1An6jC1mnRTkij1b1rlpxAwE/F60I6nUGlvVe4oLDtPZ6n4iR569k1UP2CKpj59V9cmZ
+	hDrpejm7D5wmEFTU1P0ga
+X-Received: by 2002:a05:6830:2992:b0:7fe:e653:9535 with SMTP id 46e09a7af769-81782989d7bmr12777689a34.16.1790546414159;
+        Sun, 27 Sep 2026 15:00:14 -0700 (PDT)
 Received: from [127.0.1.1] (174-29-1-49.hlrn.qwest.net. [174.29.1.49])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-81b3de6f7e1sm4874147a34.22.2026.09.27.15.00.08
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-81b3de6f7e1sm4874147a34.22.2026.09.27.15.00.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Sep 2026 15:00:10 -0700 (PDT)
+        Sun, 27 Sep 2026 15:00:13 -0700 (PDT)
 From: James Hilliard <james.hilliard1@gmail.com>
-Date: Sun, 27 Sep 2026 15:59:45 -0600
-Subject: [PATCH net-next v5 10/19] net: stmmac: fix error path cleanup in
- DMA descriptor ring allocation
+Date: Sun, 27 Sep 2026 15:59:46 -0600
+Subject: [PATCH net-next v5 11/19] net: stmmac: complete DMA configuration
+ allocation unwind
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260927-submit-stmmac-reset-fixes-v1-v5-10-feec6c14dd06@gmail.com>
+Message-Id: <20260927-submit-stmmac-reset-fixes-v1-v5-11-feec6c14dd06@gmail.com>
 References: <20260927-submit-stmmac-reset-fixes-v1-v5-0-feec6c14dd06@gmail.com>
 In-Reply-To: <20260927-submit-stmmac-reset-fixes-v1-v5-0-feec6c14dd06@gmail.com>
 To: Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, 
@@ -119,221 +119,174 @@ Cc: Richard Genoud <richard.genoud@bootlin.com>,
  Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>, 
  Ding Hui <dinghui1111@163.com>, Linkui Xiao <xiaolinkui@kylinos.cn>, 
  Linkui Xiao <xiaolinkui@126.com>, linux-tegra@vger.kernel.org, 
- linux-sunxi@lists.linux.dev, James Hilliard <james.hilliard1@gmail.com>, 
- Ding Hui <dinghui@lixiang.com>
+ linux-sunxi@lists.linux.dev, James Hilliard <james.hilliard1@gmail.com>
 X-Mailer: b4 0.15.2
 
-From: Ding Hui <dinghui@lixiang.com>
+Build on Ding Hui's per-queue allocation cleanup. The combined RX/TX
+allocator still needs to release the successful RX allocation if TX
+allocation fails. Guard coherent frees after the per-queue unwind has
+already emptied a queue.
 
-__alloc_dma_rx_desc_resources() and __alloc_dma_tx_desc_resources()
-allocate resources in multiple steps but return early on failure
-without cleaning up what they have already allocated. The outer
-error paths then call the free helpers on partially-initialized
-queues, which dereference pointers that were never allocated:
+Propagate RXQ memory-model registration errors instead of continuing
+with an unusable RXQ. Clear XSK RXQ bindings before the RXQ goes away and
+release any saved partial packet. The MTU transaction added later relies
+on preparation failures being fully unwound without touching the active
+configuration.
 
-  - dma_free_rx_skbufs() and dma_free_rx_xskbufs() dereference
-    rx_q->buf_pool[i] via stmmac_free_rx_buffer(), but buf_pool
-    may be NULL if its kzalloc_objs() failed.
+Take ownership of saved partial RX state at poll entry by clearing the
+saved flag and skb pointer immediately. Preserve incomplete state if the
+next descriptor is still DMA-owned. A budget-one completion must not
+leave an already delivered or freed skb reachable by the new teardown
+cleanup.
 
-  - dma_free_tx_skbufs() dereferences tx_q->tx_skbuff_dma[i] via
-    stmmac_free_tx_buffer(), but tx_skbuff_dma may be NULL if its
-    kzalloc_objs() failed.
-
-  - stmmac_free_tx_buffer() dereferences tx_q->xdpf[i] and
-    tx_q->tx_skbuff[i] (aliased through a union), but tx_skbuff
-    may be NULL if its allocation failed while tx_skbuff_dma
-    succeeded.
-
-Fix this by making each allocation function responsible for undoing
-its own allocations on error, following the standard kernel error
-handling pattern of cleaning up in reverse order. Also add NULL
-checks in the free helpers as a defensive measure, since they may
-be called on partially-initialized queues.
-Additionally, make __free_dma_rx_desc_resources() and
-__free_dma_tx_desc_resources() clear the pointers they free, so that
-the NULL guards in the free helpers hold reliably when the long-lived
-priv->dma_conf is reused across XDP open/release cycles.
-
-Signed-off-by: Ding Hui <dinghui@lixiang.com>
+Fixes: 71fedb0198cb ("net: stmmac: break some functions into RX and TX scopes")
 Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 70 +++++++++++++++++++----
- 1 file changed, 60 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 54 ++++++++++++++++-------
+ 1 file changed, 37 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index d9d676ae1c82..258de45d122c 100644
+index 258de45d122c..bc19f8c19bb8 100644
 --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
 +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -1767,7 +1767,7 @@ static void stmmac_free_tx_buffer(struct stmmac_priv *priv,
- 					 DMA_TO_DEVICE);
- 	}
+@@ -1931,17 +1931,19 @@ static int __init_dma_rx_desc_rings(struct stmmac_priv *priv,
+ 	rx_q->xsk_pool = stmmac_get_xsk_pool(priv, queue);
  
--	if (tx_q->xdpf[i] &&
-+	if (tx_q->xdpf && tx_q->xdpf[i] &&
- 	    (tx_q->tx_skbuff_dma[i].buf_type == STMMAC_TXBUF_T_XDP_TX ||
- 	     tx_q->tx_skbuff_dma[i].buf_type == STMMAC_TXBUF_T_XDP_NDO)) {
- 		xdp_return_frame(tx_q->xdpf[i]);
-@@ -1777,7 +1777,7 @@ static void stmmac_free_tx_buffer(struct stmmac_priv *priv,
- 	if (tx_q->tx_skbuff_dma[i].buf_type == STMMAC_TXBUF_T_XSK_TX)
- 		tx_q->xsk_frames_done++;
+ 	if (rx_q->xsk_pool) {
+-		WARN_ON(xdp_rxq_info_reg_mem_model(&rx_q->xdp_rxq,
+-						   MEM_TYPE_XSK_BUFF_POOL,
+-						   NULL));
++		ret = xdp_rxq_info_reg_mem_model(&rx_q->xdp_rxq,
++						 MEM_TYPE_XSK_BUFF_POOL, NULL);
++		if (ret)
++			return ret;
+ 		netdev_info(priv->dev,
+ 			    "Register MEM_TYPE_XSK_BUFF_POOL RxQ-%d\n",
+ 			    queue);
+ 		xsk_pool_set_rxq_info(rx_q->xsk_pool, &rx_q->xdp_rxq);
+ 	} else {
+-		WARN_ON(xdp_rxq_info_reg_mem_model(&rx_q->xdp_rxq,
+-						   MEM_TYPE_PAGE_POOL,
+-						   rx_q->page_pool));
++		ret = xdp_rxq_info_reg_mem_model(&rx_q->xdp_rxq,
++						 MEM_TYPE_PAGE_POOL, rx_q->page_pool);
++		if (ret)
++			return ret;
+ 		netdev_info(priv->dev,
+ 			    "Register MEM_TYPE_PAGE_POOL RxQ-%d\n",
+ 			    queue);
+@@ -2003,6 +2005,8 @@ static int init_dma_rx_desc_rings(struct net_device *dev,
+ 			dma_free_rx_skbufs(priv, dma_conf, queue);
  
--	if (tx_q->tx_skbuff[i] &&
-+	if (tx_q->tx_skbuff && tx_q->tx_skbuff[i] &&
- 	    tx_q->tx_skbuff_dma[i].buf_type == STMMAC_TXBUF_T_SKB) {
- 		dev_kfree_skb_any(tx_q->tx_skbuff[i]);
- 		tx_q->tx_skbuff[i] = NULL;
-@@ -1800,6 +1800,10 @@ static void dma_free_rx_skbufs(struct stmmac_priv *priv,
- 	struct stmmac_rx_queue *rx_q = &dma_conf->rx_queue[queue];
- 	int i;
+ 		rx_q->buf_alloc_num = 0;
++		if (rx_q->xsk_pool)
++			xsk_pool_set_rxq_info(rx_q->xsk_pool, NULL);
+ 		rx_q->xsk_pool = NULL;
  
-+	/* buf_pool may not be allocated if alloc failed early */
-+	if (!rx_q->buf_pool)
-+		return;
-+
- 	for (i = 0; i < dma_conf->dma_rx_size; i++)
- 		stmmac_free_rx_buffer(priv, rx_q, i);
- }
-@@ -1841,6 +1845,10 @@ static void dma_free_rx_xskbufs(struct stmmac_priv *priv,
- 	struct stmmac_rx_queue *rx_q = &dma_conf->rx_queue[queue];
- 	int i;
+ 		queue--;
+@@ -2188,10 +2192,16 @@ static void __free_dma_rx_desc_resources(struct stmmac_priv *priv,
+ 	void *addr;
  
-+	/* buf_pool may not be allocated if alloc failed early */
-+	if (!rx_q->buf_pool)
-+		return;
-+
- 	for (i = 0; i < dma_conf->dma_rx_size; i++) {
- 		struct stmmac_rx_buffer *buf = &rx_q->buf_pool[i];
- 
-@@ -2136,6 +2144,10 @@ static void dma_free_tx_skbufs(struct stmmac_priv *priv,
- 	struct stmmac_tx_queue *tx_q = &dma_conf->tx_queue[queue];
- 	int i;
- 
-+	/* tx_skbuff_dma may not be allocated if alloc failed early */
-+	if (!tx_q->tx_skbuff_dma)
-+		return;
-+
- 	tx_q->xsk_frames_done = 0;
- 
- 	for (i = 0; i < dma_conf->dma_tx_size; i++)
-@@ -2193,13 +2205,20 @@ static void __free_dma_rx_desc_resources(struct stmmac_priv *priv,
- 	size = stmmac_get_rx_desc_size(priv) * dma_conf->dma_rx_size;
- 
- 	dma_free_coherent(priv->device, size, addr, rx_q->dma_rx_phy);
-+	rx_q->dma_erx = NULL;
-+	rx_q->dma_rx = NULL;
-+	rx_q->dma_rx_phy = 0;
- 
- 	if (xdp_rxq_info_is_reg(&rx_q->xdp_rxq))
- 		xdp_rxq_info_unreg(&rx_q->xdp_rxq);
- 
- 	kfree(rx_q->buf_pool);
--	if (rx_q->page_pool)
-+	rx_q->buf_pool = NULL;
-+
-+	if (rx_q->page_pool) {
- 		page_pool_destroy(rx_q->page_pool);
-+		rx_q->page_pool = NULL;
+ 	/* Release the DMA RX socket buffers */
+-	if (rx_q->xsk_pool)
++	if (rx_q->xsk_pool) {
+ 		dma_free_rx_xskbufs(priv, dma_conf, queue);
+-	else
++		xsk_pool_set_rxq_info(rx_q->xsk_pool, NULL);
++	} else {
+ 		dma_free_rx_skbufs(priv, dma_conf, queue);
 +	}
- }
++	if (rx_q->state_saved)
++		dev_kfree_skb_any(rx_q->state.skb);
++	rx_q->state.skb = NULL;
++	rx_q->state_saved = 0;
  
- static void free_dma_rx_desc_resources(struct stmmac_priv *priv,
-@@ -2241,9 +2260,16 @@ static void __free_dma_tx_desc_resources(struct stmmac_priv *priv,
- 	size = stmmac_get_tx_desc_size(priv, tx_q) * dma_conf->dma_tx_size;
- 
- 	dma_free_coherent(priv->device, size, addr, tx_q->dma_tx_phy);
-+	tx_q->dma_etx = NULL;
-+	tx_q->dma_entx = NULL;
-+	tx_q->dma_tx = NULL;
-+	tx_q->dma_tx_phy = 0;
- 
- 	kfree(tx_q->tx_skbuff_dma);
-+	tx_q->tx_skbuff_dma = NULL;
-+
- 	kfree(tx_q->tx_skbuff);
-+	tx_q->tx_skbuff = NULL;
- }
- 
- static void free_dma_tx_desc_resources(struct stmmac_priv *priv,
-@@ -2311,15 +2337,19 @@ static int __alloc_dma_rx_desc_resources(struct stmmac_priv *priv,
- 	}
- 
- 	rx_q->buf_pool = kzalloc_objs(*rx_q->buf_pool, dma_conf->dma_rx_size);
--	if (!rx_q->buf_pool)
--		return -ENOMEM;
-+	if (!rx_q->buf_pool) {
-+		ret = -ENOMEM;
-+		goto err_destroy_pool;
-+	}
+ 	rx_q->buf_alloc_num = 0;
+ 	rx_q->xsk_pool = NULL;
+@@ -2204,7 +2214,8 @@ static void __free_dma_rx_desc_resources(struct stmmac_priv *priv,
  
  	size = stmmac_get_rx_desc_size(priv) * dma_conf->dma_rx_size;
  
- 	addr = dma_alloc_coherent(priv->device, size, &rx_q->dma_rx_phy,
- 				  GFP_KERNEL);
--	if (!addr)
--		return -ENOMEM;
-+	if (!addr) {
-+		ret = -ENOMEM;
-+		goto err_free_buf_pool;
-+	}
- 
- 	if (priv->extend_desc)
- 		rx_q->dma_erx = addr;
-@@ -2335,10 +2365,22 @@ static int __alloc_dma_rx_desc_resources(struct stmmac_priv *priv,
- 	ret = xdp_rxq_info_reg(&rx_q->xdp_rxq, priv->dev, queue, napi_id);
- 	if (ret) {
- 		netdev_err(priv->dev, "Failed to register xdp rxq info\n");
--		return -EINVAL;
-+		goto err_free_dma;
- 	}
- 
- 	return 0;
-+
-+err_free_dma:
-+	dma_free_coherent(priv->device, size, addr, rx_q->dma_rx_phy);
-+	rx_q->dma_erx = NULL;
-+	rx_q->dma_rx = NULL;
-+err_free_buf_pool:
-+	kfree(rx_q->buf_pool);
-+	rx_q->buf_pool = NULL;
-+err_destroy_pool:
-+	page_pool_destroy(rx_q->page_pool);
-+	rx_q->page_pool = NULL;
-+	return ret;
- }
- 
- static int alloc_dma_rx_desc_resources(struct stmmac_priv *priv,
-@@ -2391,14 +2433,14 @@ static int __alloc_dma_tx_desc_resources(struct stmmac_priv *priv,
- 
- 	tx_q->tx_skbuff = kzalloc_objs(struct sk_buff *, dma_conf->dma_tx_size);
- 	if (!tx_q->tx_skbuff)
--		return -ENOMEM;
-+		goto err_free_skbuff_dma;
+-	dma_free_coherent(priv->device, size, addr, rx_q->dma_rx_phy);
++	if (addr)
++		dma_free_coherent(priv->device, size, addr, rx_q->dma_rx_phy);
+ 	rx_q->dma_erx = NULL;
+ 	rx_q->dma_rx = NULL;
+ 	rx_q->dma_rx_phy = 0;
+@@ -2259,7 +2270,8 @@ static void __free_dma_tx_desc_resources(struct stmmac_priv *priv,
  
  	size = stmmac_get_tx_desc_size(priv, tx_q) * dma_conf->dma_tx_size;
  
- 	addr = dma_alloc_coherent(priv->device, size,
- 				  &tx_q->dma_tx_phy, GFP_KERNEL);
- 	if (!addr)
--		return -ENOMEM;
-+		goto err_free_skbuff;
+-	dma_free_coherent(priv->device, size, addr, tx_q->dma_tx_phy);
++	if (addr)
++		dma_free_coherent(priv->device, size, addr, tx_q->dma_tx_phy);
+ 	tx_q->dma_etx = NULL;
+ 	tx_q->dma_entx = NULL;
+ 	tx_q->dma_tx = NULL;
+@@ -2500,6 +2512,8 @@ static int alloc_dma_desc_resources(struct stmmac_priv *priv,
+ 		return ret;
  
- 	if (priv->extend_desc)
- 		tx_q->dma_etx = addr;
-@@ -2408,6 +2450,14 @@ static int __alloc_dma_tx_desc_resources(struct stmmac_priv *priv,
- 		tx_q->dma_tx = addr;
+ 	ret = alloc_dma_tx_desc_resources(priv, dma_conf);
++	if (ret)
++		free_dma_rx_desc_resources(priv, dma_conf);
  
- 	return 0;
-+
-+err_free_skbuff:
-+	kfree(tx_q->tx_skbuff);
-+	tx_q->tx_skbuff = NULL;
-+err_free_skbuff_dma:
-+	kfree(tx_q->tx_skbuff_dma);
-+	tx_q->tx_skbuff_dma = NULL;
-+	return -ENOMEM;
+ 	return ret;
  }
+@@ -5822,6 +5836,7 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
+ 	struct sk_buff *skb = NULL;
+ 	struct stmmac_xdp_buff ctx;
+ 	int xdp_status = 0;
++	bool in_progress = rx_q->state_saved;
+ 	int bufsz;
  
- static int alloc_dma_tx_desc_resources(struct stmmac_priv *priv,
+ 	dma_dir = page_pool_get_dma_dir(rx_q->page_pool);
+@@ -5836,6 +5851,14 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
+ 		stmmac_display_ring(priv, rx_head, priv->dma_conf.dma_rx_size, true,
+ 				    rx_q->dma_rx_phy, desc_size);
+ 	}
++	if (in_progress) {
++		skb = rx_q->state.skb;
++		error = rx_q->state.error;
++		len = rx_q->state.len;
++		rx_q->state.skb = NULL;
++		rx_q->state_saved = false;
++	}
++
+ 	while (count < limit) {
+ 		unsigned int buf1_len = 0, buf2_len = 0;
+ 		enum pkt_hash_types hash_type;
+@@ -5844,12 +5867,7 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
+ 		int entry;
+ 		u32 hash;
+ 
+-		if (!count && rx_q->state_saved) {
+-			skb = rx_q->state.skb;
+-			error = rx_q->state.error;
+-			len = rx_q->state.len;
+-		} else {
+-			rx_q->state_saved = false;
++		if (!in_progress) {
+ 			skb = NULL;
+ 			error = 0;
+ 			len = 0;
+@@ -5883,6 +5901,8 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
+ 
+ 		prefetch(np);
+ 
++		in_progress = status & rx_not_ls;
++
+ 		if (priv->extend_desc)
+ 			stmmac_rx_extended_status(priv, &priv->xstats, rx_q->dma_erx + entry);
+ 		if (unlikely(status == discard_frame)) {
+@@ -6057,7 +6077,7 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
+ 		count++;
+ 	}
+ 
+-	if (status & rx_not_ls || skb) {
++	if (in_progress || skb) {
+ 		rx_q->state_saved = true;
+ 		rx_q->state.skb = skb;
+ 		rx_q->state.error = error;
 
 -- 
 2.53.0
