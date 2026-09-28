@@ -1,136 +1,113 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C7436B934
-	for <linux-tegra@vger.kernel.org>; Mon, 28 Sep 2026 18:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FFA4ED1A4;
+	Mon, 28 Sep 2026 19:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790619036; cv=none; b=aUHMq3s4oJ/+Ra+RGTTiZ4c9UX5UR66FcjRu66neeZj1XmWk+eGZBHNj5EY5lfU6l8MRXOcV2L16JAaSynBVuukPHh20FpgEBEgGw4rcgexz5q47fDasKMJHG/E79gU5rnid038a56fR3/TIVmHXtKfr+opm1i+Uw5VELKo/+C8=
+	t=1790623433; cv=none; b=LD4E7KcUhLrHnYmX6F/iIu5XNy2SyjfKuqnkZh7jyIbJFX1UY4liXtaBiqIqvrqtumHbEKKkk1OGxUP5eRgUhTGtv93R3PTczGURiFWzwXRSxh45OJwt6r0HxCTM2wjB2T9bjJTzmwszC+PIsJmz1CDaLU8NVIqgo6mzmyyEoDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790619036; c=relaxed/simple;
-	bh=bbVVcjiD4ES+ov/wPnX+0XE+Qh3pApdn+aRpLrnrl9I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=O5lMDCvHQ303ZOOG34bz3FQh6bxjTMO6ROOBWV/HbBITP7jUYfI2C/xb7eZT3NcDJZFL1YQFit6fEen8f4yqnUlh7MhI5C25H8cTDj8yoLzX0mK1YP0X9DUzVi+hvPDwUITTCZggSz6PIGnCJ503BZb/kB62nwYns0L5sfmSdgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hANFZopc; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=D1tLpPXA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1790623433; c=relaxed/simple;
+	bh=VVOtKwa1kDM3Rb1Ue/KB2Bbfk4hVDpH2ITeTMbbz2Jw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jBVY33k1/2ugLgJ7diiM5kL+4uJ8K7/RNfbxgy+yjqCzsA43jdlY0L+0R8z7iT50tc9MBjtoTft3SVgTUwj7Xmzias0YWENqylzNWisjUBNohOtIFNjNo37casYn8SYcsCYPRRuKcT8I7EV7P6CdJBnfb0HXq42shZMCPXUHtDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S2TQPMzn; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hANFZopc";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="D1tLpPXA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1790619032;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OFTht72VGYwnHy4rRuIiS5N5orHNND6LgvZVdS8G2Q0=;
-	b=hANFZopcyLedUQhKEQkdBlYiherp/C3nUQ747CxrT374lOZGGIv2QoZiZHPUNYOm+PIToz
-	7dnnCCpihtUy32qnGza1WpDmtSh+RO8rPj1CFTfdg80p4y/4/N5n2pTYm2LF4gxQr0eT/D
-	mPT76c9OZAGILFsF8fORK692OatNQRw=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-688--QPByWn-OWad8YdQjhqZkw-1; Mon, 28 Sep 2026 14:10:31 -0400
-X-MC-Unique: -QPByWn-OWad8YdQjhqZkw-1
-X-Mimecast-MFC-AGG-ID: -QPByWn-OWad8YdQjhqZkw_1790619030
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-49e635a6002so39972335e9.0
-        for <linux-tegra@vger.kernel.org>; Mon, 28 Sep 2026 11:10:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1790619030; x=1791223830; darn=vger.kernel.org;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=OFTht72VGYwnHy4rRuIiS5N5orHNND6LgvZVdS8G2Q0=;
-        b=D1tLpPXARoZeAxaY6gpJ4I6Z0XRTb/LUXa5vh7I7KUJljAWxkpapD6YT1dUx+MqZoM
-         DVe6SE1HEgdqm+1yicmQXJdKwkUm3MtRhGJKPJ+VmcbSIRkAgIKpcdqkPQ3fSBhTm40+
-         46YpSNVSWaqXntaypYSgyT+sW8vm3USKA/dCVPW8PUw/oOQ0iKFl5DeOq5yWzrT1jMQ4
-         IslWHxjrNLEA3ZqlfaPuUI9hvEEPOfuzaOqYIO8LJKLnl/iXsRy7clIXOWK4OpiWQwSf
-         4XbF7nn9D5okP9XdN1tU214fMzw59uLOozIH4akkodMExCpmlelTJYDjeu668N2ACuhJ
-         hE0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790619030; x=1791223830;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=OFTht72VGYwnHy4rRuIiS5N5orHNND6LgvZVdS8G2Q0=;
-        b=JeF+Xi1XRj3Ngj/3Wbp7/NzPHL0Ya+8KQSezocfdUKu33lBzeZOJYmO2jL4iu3WVGe
-         IEAp+4xbSSEw2b22wkvU+bszC3/rQ8nc6iKZMXiQ+z9nOExe+0fcOhJMgJ0O6ogufOMV
-         isWXm6m0UGZHVFXM9xmR3X9KLG+gPgzm1H3c1K2qEnoOxD5Y+p7zDnOhZWZ0EZGlGwpN
-         4eEGZVO3fxKhPblZza9xWd0iNy+KzdQ7Rdw1FP3r9qBDXfaZiKuoVRKBDnxCBHeCrH4K
-         GYoo9uRP12K1NrLn/AmLEXp63qMTW6Lks9RbEIvU3SKIle2eAz4Lh4sPoKJnJFhIragh
-         mXog==
-X-Forwarded-Encrypted: i=1; AKwUvByHOIrGkjqaIRhQ2WRYzBeFtGKf9mnktHmSbz4mjGFH2ai7VYfNi54pS7r2hiqSvKYn8JY6ont4WRMfKQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++kaoWjPTOttB+c+B9g5cuiTbXwoA/rY/YqlVlP1JQ7AgX1Q/7un
-	zrSz08iDLsYnpNKCSUF9pnN3dKlF+BZApR7cuq6fsvmpvxbTSATFuGJo/HuiawlZUvds+LbSWxq
-	b2uO35Uh16XcOb0++tZ4DUvkr7keL21w/0PF+2rB3FrWXgc4Lw8bN/SyNLPZI6Gus
-X-Gm-Gg: AYBFou1D8A81IlWZ6IxdtQN0ffnwheRlF3KON6oRcBOgtwwgCy6dEh8LVKrk/xAZYzO
-	KsnJQdql9FdoMmD3zh+NvjFb7gJJiX0isHYCVfnesNrc0+o3D7sFtateM7i44iJeB7jWJvUs8V3
-	yxTJf8QzNBACYjNWQF+b4aSlI8VbAhZ62pTc6R4sDSwWhl4Ib/h+BuvY9HpxSz2s3JlXuo88i4/
-	fYJdd04pBDdTiVdtb/7FBD2wpBDa9QCLmb/Mm/6pJJEsLbDVoujMqBNLTHb6BHUCU+F0fxo0mDc
-	FzP0JTc+ms0ZgFxf7ccT8k7CUe4ePlCDAdhFkkb5QmU2t2Qp37The6HDadWyyoC2cSRj6eYtPFS
-	QUUC4eHx1Mt2g7TjWS7Fd3oXOfMeTHefR8vuVmQDmmdkuxQDR5IifdaWyxXWdYoWssQ==
-X-Received: by 2002:a05:600c:4f44:b0:4a0:23f:8b0d with SMTP id 5b1f17b1804b1-4a0023f8d93mr91712365e9.2.1790619030017;
-        Mon, 28 Sep 2026 11:10:30 -0700 (PDT)
-X-Received: by 2002:a05:600c:4f44:b0:4a0:23f:8b0d with SMTP id 5b1f17b1804b1-4a0023f8d93mr91712165e9.2.1790619029624;
-        Mon, 28 Sep 2026 11:10:29 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a00cfe16a2sm9652415e9.4.2026.09.28.11.10.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Sep 2026 11:10:28 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>, jfalempe@redhat.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch, jani.nikula@linux.intel.com, Alexander.Deucher@amd.com
-Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- nouveau@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
- linux-tegra@vger.kernel.org, sashiko-reviews@lists.linux.dev, Thomas
- Zimmermann <tzimmermann@suse.de>, Alex Deucher
- <alexander.deucher@amd.com>, Jani Nikula <jani.nikula@intel.com>
-Subject: Re: [PATCH v4 2/2] drm/fbdev: Move fbdev helpers into client library
-In-Reply-To: <20260928080323.23909-3-tzimmermann@suse.de>
-References: <20260928080323.23909-1-tzimmermann@suse.de>
- <20260928080323.23909-3-tzimmermann@suse.de>
-Date: Mon, 28 Sep 2026 20:10:27 +0200
-Message-ID: <xlv1zex1dz70.fsf@fmartine-thinkpadx1carbongen12.rmtes.csb>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2TQPMzn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DC2E1F000FF;
+	Mon, 28 Sep 2026 19:23:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790623431;
+	bh=XC9uAI75CvKuRZPLoeoISogD4mGmbtSRDIY7qlsonpc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=S2TQPMzn/EllqP+M3Z0R2248/Bp3GONBRTCVVPf7zRlt4R+EN5892+TQtRlua6e3f
+	 7jdXcOGHo2ck9hDViQaZ+47YsO0tNKMAeUB3dkfurdRLWNCqCKK5S2UEJZQMGc3TVA
+	 og4ic4yzipJ9jkgPYuc7JSctTdvlis5wea2Cw8bD3l4zN/YVdSap0r/2Xcjo/ynYzO
+	 V87mykkGwJkHbxFXOmWzJSz1La+uApwunG92J88izj0YMWHoJwkq1jcsw8lYw58a6c
+	 3Npx8b33duhqTPDnSKBgAldlA1C2H+xxnjF67i+hrtPA7L8e6/H3zd7DRWufIpvFBa
+	 bEzWK7qMMh0Ng==
+Date: Mon, 28 Sep 2026 20:23:45 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, mfd@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thierry Reding <thierry.reding@gmail.com>,
+	linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org,
+	Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH 2/2] dt-bindings: sound: tegra-ahub: Convert to
+ json-schema
+Message-ID: <d5ebde9e-29be-47ab-b74e-63a6bda079a4@sirena.org.uk>
+References: <20260928-as3722-bindings-v1-0-35f423a9f2b2@nvidia.com>
+ <20260928-as3722-bindings-v1-2-35f423a9f2b2@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="B/XKNQtA6qkUcNe4"
+Content-Disposition: inline
+In-Reply-To: <20260928-as3722-bindings-v1-2-35f423a9f2b2@nvidia.com>
+X-Cookie: All is fear in love and war.
 
-Thomas Zimmermann <tzimmermann@suse.de> writes:
 
-> DRM's fbdev helpers are for the fbdev-emulation clients. Move them
-> into the client-library module. Fix include statements throughout
-> DRM drivers.
->
-> While at it, rename the files from drm_fb_helper to drm_fbdev_helper.
-> The old name was too reminiscent of DRM's framebuffer code.
->
-> The GEM support code for fbdev remains part of DRM's memory managers.
->
-> v4:
-> - fix the depedendencies from v3
-> v3:
-> - remove obsolete dependencies from Kconfig
-> v2:
-> - update armada und docs
->
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-> Acked-by: Jani Nikula <jani.nikula@intel.com>
-> ---
+--B/XKNQtA6qkUcNe4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+On Mon, Sep 28, 2026 at 06:24:41PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>=20
+> Convert Tegra AHUB bindings from the free-form text format to
+> json-schema.
 
--- 
-Best regards,
+> -- compatible : For Tegra30, must contain "nvidia,tegra30-ahub".  For Teg=
+ra114,
+> -  must contain "nvidia,tegra114-ahub".  For Tegra124, must contain
+> -  "nvidia,tegra124-ahub".  Otherwise, must contain "nvidia,<chip>-ahub",
+> -  plus at least one of the above, where <chip> is tegra132.
 
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+This documents fallbacks...
 
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nvidia,tegra30-ahub
+> +      - nvidia,tegra114-ahub
+> +      - nvidia,tegra124-ahub
+
+=2E..but this does not.
+
+> +  resets:
+> +    minItems: 11
+> +    maxItems: 21
+> +
+> +  reset-names:
+> +    minItems: 11
+> +    maxItems: 21
+
+Ideally there'd be per-SoC constraints but meh.
+
+--B/XKNQtA6qkUcNe4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq6vsAACgkQJNaLcl1U
+h9C8fQf/VYi7kxfm88EWJPHFuCQLtcS4CBbBCtFTcu+MKSeEUp3q3EdAwf00exOI
+t3x1eSrRiQJRbXmFDbr177atlbD3i5TLtDsRDO4FCEbyzwH6OYWBS0RG08V9Ua0p
+qTZ2E9NxOvbFxCLlUU1VIP2nozlGuR1HrfHfL0xSJwRUIZmZBIRG4Jr8OtNAeyo6
+6HsjRRuen/SnPiPLgJgaBLuuhQwUsZU+GLIunGAn+6/1HK0eWhpLYTwaVwyg14uR
+sS/RIv32ktYosHvh6KOB4ZxBO6OASqj9oIeyXDGbC9Vw1jlK8osOSqQm1GdZTYX7
+IMiEnjyGjPLMJfyr3trqEMCkJYREIg==
+=/iZ4
+-----END PGP SIGNATURE-----
+
+--B/XKNQtA6qkUcNe4--
