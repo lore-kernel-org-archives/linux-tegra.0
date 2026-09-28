@@ -1,102 +1,95 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0E97083C;
-	Mon, 28 Sep 2026 08:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9AA348FF98;
+	Mon, 28 Sep 2026 08:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790584819; cv=none; b=s2Rezky6oC3GAOvLSDFWdnl1odc3+oZRgnEYCTK5E5KJLzfpLQVFaZLW9Q8ng2qdgn66HpLB/jaIphglRjbhaWpMCPXl+OtKKUmYYfCEIo1zfW71F7tD34+EtQqwR4bP0iaj4IFsA6/WSBZG4RhGS52H3c4n4uzI+RJ5aJGBmGk=
+	t=1790585326; cv=none; b=cA56qyToY5EfYTHi/Aa6ATWtgTkAOojWbyV4ra1LwUBcW4kykLby9Ibsa8oDzeC2SSTEXIhrf07E45OhGpR9E0lF7VcOhEQIFOOUBcD9vt7xmhKAAv3cPbjBE7MHVrSqfnJr9lUE73SItho3+XUf2KRHSGABruyRDo3Q8Bl1Bh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790584819; c=relaxed/simple;
-	bh=P5mxHYVpnmelHKIgP6O6mmW+MIgYR2G0Dglhx0fDJWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QgNb7Av0iqfhk9OpGcsLqWgiwhq0E6m8Ge4VzgshyEAxb3eD0HzB8XrM40x0IBuy+EPzUKbBt1uJXAvrs08ujCpyljGbQ99VOJDgKT+J1K1qhUwM0zJnfqosOeIzl54HjME1yG0Z1fD28gn2nMFTdwcCVwbvFa6ROoqy57uuqyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QrdFLLOH; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1790585326; c=relaxed/simple;
+	bh=4TrL1LK87jREhsshgj9afbV5g3GJEMSvHjNMsw4bwYc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=hjZcICg8tA7WAxvB5VbnFgf7qEFjgdpJ8ssnxRar/ekihoi2J+QNrrJy33mgtianl3OHB+BuL5FQ/WtQ+BQKeZtVIcPQk//Z5ofxvBAxHQUGBWnFT4MaXVbwpWILpLBZg47V/v5Y0JrzOqY8NhoNaYaxOmI3Y1W7vNLAPeyD8OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZDa58Au2; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QrdFLLOH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1790584816; x=1822120816;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=P5mxHYVpnmelHKIgP6O6mmW+MIgYR2G0Dglhx0fDJWw=;
-  b=QrdFLLOHZrspztxYbKxA4dNkSl3hFKdrT9o9uNMvnsNY4H7mHjRhjE/J
-   yNItS8oQdfkAW5jGEHJcDTLtI4d8RFo/VfW6Lc9UbNF+KYa0ewcY/cCKa
-   fNT8ZUTsGr/dDASb1Bg/CegDbtTLtoq8KzIrLTmWwyCVEbCc5Lhhyfh2U
-   yVJc4jUcXfQ5ioB1CIVoe8/66ktORFbpsMUshnv1esFIRj5liM3xhct0K
-   Q+oGnRAeA+GN/3viUZmrajO2BdgGhWBFgiWNpsC4F9lIb+nTgu/K9jpm5
-   0tPx7EPqPBDiEQiu9fv826bqjsA9U3hpQm9hNdnvXDHMaHaLjHhGmN3Ht
-   A==;
-X-CSE-ConnectionGUID: Hi3dROPxQCyYhEWtEAIbFQ==
-X-CSE-MsgGUID: sF1qA0/JRQaHT+Ku+t4sVg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11918"; a="90181276"
-X-IronPort-AV: E=Sophos;i="6.27,128,1787036400"; 
-   d="scan'208";a="90181276"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2026 01:40:15 -0700
-X-CSE-ConnectionGUID: sG/cqplNQFa2g3W+eq5swA==
-X-CSE-MsgGUID: 4EP6RJZRT52npEeblPF61g==
-X-ExtLoop1: 1
-Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.42])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2026 01:40:11 -0700
-Date: Mon, 28 Sep 2026 11:40:08 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Frank Li <Frank.Li@kernel.org>, Vidya Sagar <vidyas@nvidia.com>,
-	Niklas Cassel <cassel@kernel.org>, Koichiro Den <den@valinux.co.jp>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/11] PCI: tegra194: Check core reset deassertion
-Message-ID: <aron6OqtGqvuUKE8@ashevche-desk.local>
-References: <20260923072237.1139013-1-mmaddireddy@nvidia.com>
- <20260923072237.1139013-3-mmaddireddy@nvidia.com>
- <arWHPtdCfbmnMKxT@ashevche-desk.local>
- <474a85a8-501c-4b11-b53d-0a40fd74662f@nvidia.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZDa58Au2"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id EB1EBC5CD51;
+	Mon, 28 Sep 2026 08:49:29 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id BA3E4601BD;
+	Mon, 28 Sep 2026 08:48:40 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B9ED0102F1EA6;
+	Mon, 28 Sep 2026 10:48:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1790585317; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=4TrL1LK87jREhsshgj9afbV5g3GJEMSvHjNMsw4bwYc=;
+	b=ZDa58Au2RHTizRo43gJ1JRUszIzTyZQkH6fdz231iZk+mFK47kmlmDY+0VETY5yPpnsekI
+	H2W47fDdg16ql/VlkfIClEu+3ESEBPzsHVxHQwSdkpqq7xS/LmLFAZ+c1Cwv0IKbwSw7wN
+	UNguMPFymrWlqGCyroCsOi8X9w+cBGPYBNKhNvYG1RBg11GdeNJxoWlU5ueicQVxlBuyqM
+	rssKNaxcGDmyEx8/mRYdRbY6UDDqUJjccvTKQdvCwKLp+ozx2FfNr7mFPECEsnr5mrfBuE
+	Qly9BUoYG+GYmxYZ6jpGEQOn3mIhX3sFqMhz33riAziOXByw/e3sDqg5nym3vw==
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <474a85a8-501c-4b11-b53d-0a40fd74662f@nvidia.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 28 Sep 2026 10:48:20 +0200
+Message-Id: <DLQTIJA71AQ1.1RASTM0D6GMGX@bootlin.com>
+To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>, "Andrzej Hajda"
+ <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
+ <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
+ "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Jessica Zhang"
+ <jesszhan0024@gmail.com>, "Laurentiu Palcu" <laurentiu.palcu@oss.nxp.com>,
+ "Lucas Stach" <l.stach@pengutronix.de>, "Frank Li" <Frank.Li@nxp.com>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
+ <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "Paul
+ Cercueil" <paul@crapouillou.net>, "Paul Kocialkowski" <paulk@sys-base.io>,
+ "Linus Walleij" <linusw@kernel.org>, "Inki Dae" <inki.dae@samsung.com>,
+ "Jagan Teki" <jagan@amarulasolutions.com>, "Marek Szyprowski"
+ <m.szyprowski@samsung.com>, "Sean Paul" <sean@poorly.run>, "Jonathan
+ Corbet" <corbet@lwn.net>, "Shuah Khan" <skhan@linuxfoundation.org>, "Randy
+ Dunlap" <rdunlap@infradead.org>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v3 00/19] drm/panel: embed a drm_bridge into every
+ drm_panel
+Cc: "Albert Esteve" <aesteve@redhat.com>, "Anusha Srivatsa"
+ <asrivats@redhat.com>, "Dmitry Baryshkov"
+ <dmitry.baryshkov@oss.qualcomm.com>, "Hui Pu" <Hui.Pu@gehealthcare.com>,
+ "Ian Ray" <ian.ray@gehealthcare.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <imx@lists.linux.dev>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-mips@vger.kernel.org>,
+ <linux-rockchip@lists.infradead.org>,
+ <linux-stm32@st-md-mailman.stormreply.com>, <asahi@lists.linux.dev>,
+ <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
+ <linux-tegra@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-samsung-soc@vger.kernel.org>
+X-Mailer: aerc 0.22.0
+References: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
+In-Reply-To: <20260916-drm-bridge-every-panel-v3-0-83afb4f1a707@bootlin.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Sep 28, 2026 at 11:15:07AM +0530, Manikanta Maddireddy wrote:
-> On 25/09/26 1:55 am, Andy Shevchenko wrote:
-> > On Wed, Sep 23, 2026 at 12:52:28PM +0530, Manikanta Maddireddy wrote:
+On Wed Sep 16, 2026 at 3:45 PM CEST, Luca Ceresoli wrote:
+> This series embeds a drm_bridge into every drm_panel, as previously
+> discussed [1][2] and in previous iterations.
 
-...
+Series applied to drm-misc-next.
 
-> > > +		ret = reset_control_deassert(pcie->core_rst);
-> > > +		if (ret) {
-> > > +			dev_err(pci->dev, "Failed to deassert core reset: %d\n",
-> > > +				ret);
-> > 
-> > We have pci_err().
-> 
-> Thank you for taking time to review.
-> pci pointer is of type "struct dw_pcie" not "struct pci_dev".
+Luca
 
-I see, thanks, naming is hard, indeed...
-
-> > > +			return ret;
-> > > +		}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
