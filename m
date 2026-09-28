@@ -1,92 +1,134 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABDE4EF130;
-	Mon, 28 Sep 2026 16:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F19547046
+	for <linux-tegra@vger.kernel.org>; Mon, 28 Sep 2026 18:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790613540; cv=none; b=m17IWHhb5WPJMqcYxJ0hiEqfCwixxzghkKVaHSGBcl8/la5Drn0xicr69uwqi51Pjf3AwatW+rL7IBb7TiOlOlh3XM3LSip6pq3L45LLN2I/EXnQ59YQ9d8JzIl6UujriZE4AJj4iNHzc4QM6hgT9pgv3KZG5P0fLmZWCe3GvOY=
+	t=1790618972; cv=none; b=QNM5xNJK5D8XM0ATcLnrwFQJ5uos9NGB+TOYhX0i8B8cgTBw79+YEkQLjzhHT/U0k882ON1gwYDsmBgnJcdQvsKOeJ7vGz3sfnKKaDoiR8CnM6x52dtvPz3aJd/pgMglQtbUtyzjnYoJ6h+C2hUUb/B947/pgLcb6+A7vp/UmP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790613540; c=relaxed/simple;
-	bh=ZtFcD9dDy8Ns8wujRyXoCai7LHrcQP2Mng/vMzHQGYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C0DmHTJVy6TmAioMU1AH/7fX+eolxfwymFDfIc9DruGBAiKWyvOoKCHTQO9FzWGh+OiY3NQ5i0oGL7etbk2tzoVmBfMrdRobNgkcomkpRXLIzEu0kxX+RTbeykWCFTKMg0Meaf7erjOo/b7f+dLvITHuzo1Cg3DVTPVSawnhX1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=go+gzpOp; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790618972; c=relaxed/simple;
+	bh=IJl8ZLVeSLK/3tm4qT2HpxIpgkaGExTUeW/aig9VFu8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=plXADwQ5E+/qN1cL0dedGKedfcr7Fi+D2RbZgYMA6QPqwpu6LtQ5FYZsVVSmcSWmT1ZLsSHOyTsKIf5adi+/YtDV33IoE+KOyDmB6nMSJW1JvzPd04CFsX+8in5orWTy3eOjlBQBlKZ/ZnWrhRBVe78iHruzG12dyGU+hG7Q3RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cl4bJVb2; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=PYFbVzmm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="go+gzpOp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F26A1F000FF;
-	Mon, 28 Sep 2026 16:38:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790613538;
-	bh=ZtFcD9dDy8Ns8wujRyXoCai7LHrcQP2Mng/vMzHQGYs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=go+gzpOpBvx1mGpjBYXWajUUizHF/j77bLG/W6wYn7pqtSJxctIALU3zYJdgC0QTs
-	 awtGSRHrNOQm7rCDKIRA7z/3BErK0lw08NcRU3MsqJLuZUvaOeHHUIH5IeB9MvtRsC
-	 Uyfgr3kbl+elnYZgCsCjCyha+G6I+NMM31VAYuAPUlvmrg6b361lfY7JnZ0OUmU4m4
-	 ibSivyuWyJvNyhUYnQcV2bq6UB1CBq1zXWpOjaoYjy/YNTdIKatbwjJJShpZ1Hc8FV
-	 lD4UvJN8Ks0odUDgGUcnrKNbPv60bfliFsp9my9ojZPz2kQMEfNkDUVZgO/F3kOSmI
-	 iviD54rZUJfOg==
-Date: Mon, 28 Sep 2026 17:38:50 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, mfd@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thierry Reding <thierry.reding@gmail.com>,
-	linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org,
-	Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH 2/2] dt-bindings: sound: tegra-ahub: Convert to
- json-schema
-Message-ID: <3f5e8785-692d-449a-b1c6-6a2b8679239e@sirena.org.uk>
-References: <20260928-as3722-bindings-v1-0-35f423a9f2b2@nvidia.com>
- <20260928-as3722-bindings-v1-2-35f423a9f2b2@nvidia.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cl4bJVb2";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="PYFbVzmm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1790618970;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WblzAY3JRV9CtwzNMKeAP2oGeUzXJbmdjxKWRmzPjT0=;
+	b=Cl4bJVb2yGMg418R/dWWSytlOLD4xTru66dMwgPYhwOdvR7JQ7aMGnWSaJHOrm1dqN4aWm
+	1qmnhlqCykCul0iw/1urYyg7q44LptyqaR+Y3rBBQ/p0rPqgKAfF1P1FTiLkZcXALxNQqa
+	XYi876v3i+nNO+RJLoq8ofQSnS94KGc=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-630-YOB-oGYLODe13Qj89vllNQ-1; Mon, 28 Sep 2026 14:09:28 -0400
+X-MC-Unique: YOB-oGYLODe13Qj89vllNQ-1
+X-Mimecast-MFC-AGG-ID: YOB-oGYLODe13Qj89vllNQ_1790618967
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-49e745d5dabso32644575e9.0
+        for <linux-tegra@vger.kernel.org>; Mon, 28 Sep 2026 11:09:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1790618967; x=1791223767; darn=vger.kernel.org;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=WblzAY3JRV9CtwzNMKeAP2oGeUzXJbmdjxKWRmzPjT0=;
+        b=PYFbVzmmvZVGu/BkEygo6A2l/I0inpwH16sicqv/jgL8kEyBqZBILrYckSlQswYwiE
+         n9DSKJordvyihg7YUPiR1aJO3+eGeSnXZxDznkw2o+4URA1bUudncN4zynoFiI4GOVbJ
+         oLUsXRR2HEb7FP+KWcWE/PdX9WOmclUFC/ANinFByD720twiuaFqh3/h4qU5YRmMqh7z
+         dq3IUVcB0BkeEzksBsvq+Ki8x4sYpZdNfvWGGyGp/t+VFT1/0xGo8ptIqcCxt7PJl9Be
+         YipQYntnPiPoVuD89Ed+vGA76K6FyG1v8Mxo4z/ZGWT+MPUWoiB7fPvEJlczVqMA84Zi
+         Kc0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790618967; x=1791223767;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=WblzAY3JRV9CtwzNMKeAP2oGeUzXJbmdjxKWRmzPjT0=;
+        b=LmCSdHRavwSpVqtmy+vyrv3B0N7n4zLSuGVmKzp8LOahT1KTEghrFJcI6gjb2p6ZME
+         laldl/0Ip67/Yxk1E4ILXcMRRLPi3f8MXk2F6qqGVC5ziJfq6B7gdU8xv+qBboiEB3fT
+         FkjXw+Pfh4GW7fIExM7KHwNxM+dZzLgXUtrmneqsUcGSzU7ughuAPrAzHyk8uMhXJfXm
+         gVQzTLqDLP2QNevlhfET/FX9B98ofC35P0iMbc9PqyA6n9Htdcyi6ePBxz0P8Nntw8Iy
+         jA5miIzVsQJ05kJxnIdvdkrgym1/PdxWIclGiL5XAk/75w7lPnySrrZGsgeiMRy4lxPZ
+         vV5Q==
+X-Forwarded-Encrypted: i=1; AKwUvBw2+ncdZVkKV9/Cdj1sCdYreCzpan41vRIPUHMk3+BV4ioXCwp4y9fxLpfBt/5LA8Y+l/uge0t6ejKYPA==@vger.kernel.org
+X-Gm-Message-State: AFuF++knedRivnk46IjiPq4Nw9aRGYTJIrt4Bnte/eeRW9hKBl2fNgQC
+	dxG5PI39y9W2u5cl0qu/o9WkSFHkN2TVGAWwBlP8Mrj5cf6I+AEQS6uMiyMRYDoE8dK+4+2Mtv4
+	UYjPGaFsNu11le5tiuDpMXZeZLGZsDGk+MD9HSxQ55oDpIMLSeEOzMsZuYBl8h1ua
+X-Gm-Gg: AYBFou2+DR9mH2nkCcLXVktxSABDP3uFUlOMlraU9dtsHTuxIl286L38U8uVN1RmKpE
+	ZzS+XUV4XP86SSZH5p+rQn/qO/xnFwsnG/WK9GKEdUczmaXOiiBgZmAe2Bqo0AQz9Us+eIOraPB
+	8N9tm0zr7qW8i4wPJeYKWBA1jCIHCRxMfCukclmyHOz8UIfHsEhLD/i2R5zxQZzX2MH5zi1xc+g
+	V7dAf9INWhCArK9p3zKctalRfeFPPuPGAuBrNQXKkE/06RZnHt+5dOGrKnIt3NxvfSL8/IdMeAZ
+	fpbgYLgOw7GmFNCUAsqs0a8pCsDH01tS5SzdR8AfBv4HKU3+S6T3pPZafD0+6S3PbRA2VDPLcaA
+	jjvVjT5Pu8iYeFRV07eB4+MHmSAQhetSguRFGJuuHhlMiG6U70tRirTV2iuPh74r0Bg==
+X-Received: by 2002:a05:600c:1389:b0:49f:dcc8:c735 with SMTP id 5b1f17b1804b1-49fe66f4c7dmr231739845e9.18.1790618966871;
+        Mon, 28 Sep 2026 11:09:26 -0700 (PDT)
+X-Received: by 2002:a05:600c:1389:b0:49f:dcc8:c735 with SMTP id 5b1f17b1804b1-49fe66f4c7dmr231739375e9.18.1790618966445;
+        Mon, 28 Sep 2026 11:09:26 -0700 (PDT)
+Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a00d10cb7dsm3533065e9.0.2026.09.28.11.09.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Sep 2026 11:09:25 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>, jfalempe@redhat.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch, jani.nikula@linux.intel.com, Alexander.Deucher@amd.com
+Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+ nouveau@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
+ linux-tegra@vger.kernel.org, sashiko-reviews@lists.linux.dev, Thomas
+ Zimmermann <tzimmermann@suse.de>, Alex Deucher <alexander.deucher@amd.com>
+Subject: Re: [PATCH v4 1/2] drm/fbdev: Move fbdev module parameters next to
+ module init
+In-Reply-To: <20260928080323.23909-2-tzimmermann@suse.de>
+References: <20260928080323.23909-1-tzimmermann@suse.de>
+ <20260928080323.23909-2-tzimmermann@suse.de>
+Date: Mon, 28 Sep 2026 20:09:23 +0200
+Message-ID: <xlv133utfdt8.fsf@fmartine-thinkpadx1carbongen12.rmtes.csb>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yXMPISHdeW+LmfrK"
-Content-Disposition: inline
-In-Reply-To: <20260928-as3722-bindings-v1-2-35f423a9f2b2@nvidia.com>
-X-Cookie: All is fear in love and war.
+Content-Type: text/plain
 
+Thomas Zimmermann <tzimmermann@suse.de> writes:
 
---yXMPISHdeW+LmfrK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Thomas,
 
-On Mon, Sep 28, 2026 at 06:24:41PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->=20
-> Convert Tegra AHUB bindings from the free-form text format to
-> json-schema.
+> Define the parameters for fbdev emulation in the source file with the
+> module-initialization and exit code of drm_kms_helper.ko. The parameters
+> control some aspects of DRM's fbdev emulation. Common usage looks like
+>
+>   drm_kms_helper.drm_fbdev_overalloc=200
+>
+> on the kernel's command line. This has been possible for many years
+> and changing it would likely upset users.
+>
+> The emulation code is supposed to be moved into the module for DRM
+> clients. Keeping the parameters in drm_kms_helper.ko avoids breaking
+> systems the use them in the way described above.
+>
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+> ---
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 
---yXMPISHdeW+LmfrK
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+Best regards,
 
------BEGIN PGP SIGNATURE-----
+Javier Martinez Canillas
+Core Platforms
+Red Hat
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmq6mBkACgkQJNaLcl1U
-h9BtmAf+MByjhamJChEoE4jSBrcxviNHKOCvYqv8inoXbjXe/SGDa013k4ogX4jK
-Nk4r5FgtLey4RUm16rFcDbhvoyWoY1GKdhbOYOCAehrlsj1AKZ9W9dE1dwmyniGF
-X/vK756vmpMTczkJnJNO246yw7hkGOWqY6jNYtoNRbjePKo0BaPGBeoyWoBtrdTv
-mr5tTKOWR5CSIE2gUfZBDRYc9al7oR7y40j+yBV8fokKkEp1nKEGQypGr6uwWT+J
-gLstLrC/Jl+2iO3q8B33LgaxRJQu3Ysdb4R+0NwoR9QXff3R1IPzVg5Znta2DJVf
-V0wSVAPmhPnUu3jRsxFdtyIgnc92Ig==
-=s+s/
------END PGP SIGNATURE-----
-
---yXMPISHdeW+LmfrK--
