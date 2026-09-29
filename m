@@ -1,132 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf2-f12.google.com (mail-lf2-f12.google.com [74.125.229.204])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924493DC856;
-	Tue, 29 Sep 2026 11:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790682298; cv=none; b=ZDuA1/PNjb7KQY/KN8MJdH+5S9lq6njiTbaXhUQeorRwUuhEHcc9vliht/EJTe+piSnZaQObmBi3uloZV/KTy/ZrVJqc5YEFoHTHCUb3piP2q4ymGQJvfLAjv9Jas9mYtBv+1RPbmdDX6hymuYtou9NjUwTTJrorGLl5yY54IxA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790682298; c=relaxed/simple;
-	bh=5BwuNLumvwnLJvANXEf0gbKEoPE/6sb4nYobupI5XrI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jQsJ0Z402gc0f6Kmu56Xnt9oeWLW2iVhfuCilHs7iJDuxnOy/8A2wEvuRZbFl3iC69tTv1u/cK+vP+//RJhngVQUA2puBBRpM2unlNlNzg6kK7H02nWCkT3BkHwIbVr/sijo1V9btgUMx+kBpD1isFaq9knXIoE6ioWkrEu186E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DeO9+Qgp; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D324E430B
+	for <linux-tegra@vger.kernel.org>; Tue, 29 Sep 2026 17:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.229.204
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790702562; cv=pass; b=HPYYXmLTuLbL2JtFpkxiJ6bMflWZeynagYTNGszRgJTgVlrjyz1gb+Cp6WiyoMSw63fc/PFBQjVJ1RT7jbqIzeaAqvVEGj1OJbj/B1ocGaCWm/Lc7OcmWJd2H7njsXvhayE6WY4U9BPA6dzPQ9SGXFsWM02j8P62RAHUYPMa6bM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790702562; c=relaxed/simple;
+	bh=eXyEWE550+ycqkkgf2Pb87Qz+oDiZBp//OZdYRPDZCk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZVI/EYpuR+RYYJbg/mhss9CNncICRugy/6Y1BmZZo58lGSVUVWZkI1O9zOyHsQD/tpBFkbYGztHVwmxL6E6KbujYwp7OVZCWOSv8PEUPrKlVW0I4E+2X03ua94ZuS6wjL8zGvFc7YiD6spg6hNQiJ1DEsfej6HsdWp0WkDLuWUQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ON5ZjlVC; arc=pass smtp.client-ip=74.125.229.204
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DeO9+Qgp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCAF11F00893;
-	Tue, 29 Sep 2026 11:44:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790682297;
-	bh=RtJYB+Pl9ynxw35Fyg+zXtll53++J5Xy7Hr5WNfcZ88=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=DeO9+Qgpo0OwN6Fqs0tWqwcMwVlsQkjfxWi8f/Oktstl3AZ9QFtGXpU7JW3toKHzB
-	 gbHwJxVSrvJ+BiYpXFZedAhExwGqhIorXRQWhl99W17kXk+wd3Tg8Q59rIKT5Ah7iQ
-	 ufoEfyQyF3m+ERKz6aEJVXOdRzKcI6sUzU6OKAhvLwCQmOKK13X7ftvWIbVxRtqyWN
-	 uH0POFwTw+7XpHXj0yfhga6dXQ8FqYh5bjREGaDmxoGqJR+G0QeVV1vCk/sR0zMk84
-	 oZXqRwkVjTdvefPC9zkqZ2MLzApoz/1fbSWcqgUIO4+hemz1WulcQ3mdXYDraQCXE7
-	 TsgBORfJL1/8w==
-Date: Tue, 29 Sep 2026 13:44:54 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, mfd@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, 
-	linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH 2/2] dt-bindings: sound: tegra-ahub: Convert to
- json-schema
-Message-ID: <arugF4OhAMqzGith@orome>
-References: <20260928-as3722-bindings-v1-0-35f423a9f2b2@nvidia.com>
- <20260928-as3722-bindings-v1-2-35f423a9f2b2@nvidia.com>
- <d5ebde9e-29be-47ab-b74e-63a6bda079a4@sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ON5ZjlVC"
+Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5ba31af822cso1037061e87.1
+        for <linux-tegra@vger.kernel.org>; Tue, 29 Sep 2026 10:22:39 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790702558; cv=none;
+        d=google.com; s=arc-20260327;
+        b=NbonaDYur2ZSWk74LpHDdJqTceTrvOmEqFqRfmRQRoYDa8yJUv/NLCiax8nQQyg0Xb
+         vCa6bmnM6Ey7Mt0kF5hPm6kToXbCbhIHeQQSvXH241FQ0Kazy4f3KhaZRUi1WdVhNAsD
+         B/UjT6V7917XD8dL8RXZdwfCKUcVVFYwlcPbEVL1s1b2FfG3mS2I7a6Kbg+tXrfEmZb+
+         sqITGGX0X7ORJNK46c1FEMBpTVWvXqJbQHbqOV3rtgTPi4o5ym79hCZ2aa8gwLvXlsqg
+         7Z5gkuiLcmpmEi7YHhDPk7yUiqMKsOeZ2MiiKh2XVQKrJ93l0erTOtZLp5HPtYtVlhk6
+         twPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=wC73nxIKsVnxmirOrWNj6owYWyTLWTGRvdPe/YEwMgs=;
+        fh=ZeW8YO6zh3BNij1CRQSp3lakdPHbSOKcQxtj30QatH8=;
+        b=o3Yg8WsEW6aDIIydF13yMQ3FdKAlnBXJjuA+hJzBBJcqfQqHwIf4k0dv/fdm0NVvtm
+         SJ2ZWzbLrHNtKJK/oPZ5d7wMYe7M2L7BmEP8TweW4kSzdH9qjovNR9loqZq0khaVkKXp
+         rEjr2M4pf4rGBaD2NImuUyBaUC3EsYRvqeUB4MmFIg+AsncgaWNdOWvOdTOhucH6vYB3
+         MLD7amPmNiAqC8te5gmJH/2Kj+hpM9+yimBRc9OKMVryfyiSYBQ8ITR/WCasWtwv9LcG
+         ob5CVOR7HUmpIJvBhBTmL4j0xhrIgQ2bN7zaOqozpZhj1bit3j1t4yMGFR1TldAqxxlk
+         d+Aw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790702558; x=1791307358; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=wC73nxIKsVnxmirOrWNj6owYWyTLWTGRvdPe/YEwMgs=;
+        b=ON5ZjlVCqB/TYA5/JG+HIffUcoeWHrUc2YnR4RgoPO6MuTy4TVUSzDWTA8NW4GRVbl
+         nygA/N/lNdMooKu58birVRuuHjv/jD9/SPXvlWO+7UtXhImZzyvHwy+EJPKFUiRsVRSB
+         JLHTFE4v5Am8GIq0NyugClwC10zo2hQ6+1lPwpGIoqlbOD0k4KdQHogxTBHGk2fBRGzV
+         uztfTA53KoFVgec9MCIRtY2KsluAdRAbUVgvc5evHqe2NQZ5+mZdnD/Uu0Lz+HdW9wmy
+         fX4Z62p8IhCk+Ssh/y4zZcujA4e6Uw2u9D6PK0Z0479jvsVv2m1NIinONx4GrcxZTPnu
+         IqEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790702558; x=1791307358;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=wC73nxIKsVnxmirOrWNj6owYWyTLWTGRvdPe/YEwMgs=;
+        b=C61/tXqkizTVEtPpD3x/IElfdnM50xkjE2Im80wVcT6O57rHD4F+LYNH2e+mtdcAYW
+         O2HtmIHQtTfXOHEnQNKe3DzIftu6Sfir/vSIP2rHF+/+SKkqmNegp4AUI2NgLHW5/KUt
+         mZLvYl9xJ0o2gC8JN1uGE8wcTOvCHLCoFHjYN4WP9QuYWFrA7sMKP18MixhBOOtTJqCI
+         DTW5A6oeX9bQ3tBms1RmeO19CjO5qhf/UMsqMgT+NcIlLm4h8LqCMRE76P9dR6AI3OEi
+         rv+3n4oNlT5WGsEWEJE/yxhiOLfcSDGZL9ILbMVnGnCT4mnTjLMElM4BW/2itkF6dDmM
+         IirQ==
+X-Forwarded-Encrypted: i=1; AKwUvBw2xKoExyda8nF0OU23fMmt/1jwRQhsc+u8bS4YSxnW6vqSq/Exi3hBFKHXZ1GyMNutS6RGBY3mq+7yvw==@vger.kernel.org
+X-Gm-Message-State: AFq9FYI64yL21MGIZsWYZ96jZFx4bwQACLOEmASoHWlcG5DzQzPSGGki
+	y6hHAKo/u5ntZ8+AyFuHF4YlfAeEUaUEV8c+3dDJ8av6xjAENLfhP1TU9pZGAuYjfD8HTV0Y0qo
+	UobArxe2BlGLRACM0EklUmEaJO7Z2hxM=
+X-Gm-Gg: AYBFou2M5bxx7gyK+I3SC0SoTY7gWJXXLqomzbEmMxgFPG/IK9VvF0FPX+JFzwhrkz0
+	jM5VY4GH11nDIn4ubhkCVNjLWxRtOXXXkTWcAzu4RbfVYmoATR3q5/HtszLZ9bvW+hfhcrAnN5H
+	6TP50yIc9B1FFCvra1rd2yIyDKWj/1GvXSMbufpagels4VuNn798rWmo2O3cwy1RsYdulyW84cm
+	RTq55QcQ1KUUsEI/4+uiy+2w4/nTKIbZZW2NdSm4XZ3Edavz/a/yIrkqTGzFQY1xTMxpR+L25Q4
+	gloBK2EXnQXUjcci/AKXUpvsnDHip8+SgzMuG1t20SbbKpfZDVAiNK3QZ78CrNYnjI0dXndTwyp
+	aMn94HFV3h5VddWoYWWM0bSxV/8DU1C6P1rTvIz4cvjMO
+X-Received: by 2002:a05:6512:2348:b0:5b8:edb8:fa41 with SMTP id
+ 2adb3069b0e04-5ba3beca9cbmr77162e87.46.1790702557344; Tue, 29 Sep 2026
+ 10:22:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qgm63f4y6y5lsrev"
-Content-Disposition: inline
-In-Reply-To: <d5ebde9e-29be-47ab-b74e-63a6bda079a4@sirena.org.uk>
-
-
---qgm63f4y6y5lsrev
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20260926-tegra194-hda-sdo-v1-1-f7a636a07a58@gmail.com> <aruc3qx7izFQYOhC@orome>
+In-Reply-To: <aruc3qx7izFQYOhC@orome>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Tue, 29 Sep 2026 12:22:25 -0500
+X-Gm-Features: AclHuK9LkfgEQsoTN_f-0RfKykcFSMYOYJZq1Uw5H4JV_On6s3wU6oygXAoVMzw
+Message-ID: <CALHNRZ8RLs6mXkYiZ4qRimmf4WzpWpnJ9racWTPH__Op2Nk8kg@mail.gmail.com>
+Subject: Re: [PATCH] ALSA: hda/tegra: Re-enable SDO workaround for Tegra194
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <treding@nvidia.com>, linux-sound@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/2] dt-bindings: sound: tegra-ahub: Convert to
- json-schema
-MIME-Version: 1.0
 
-On Mon, Sep 28, 2026 at 08:23:45PM +0100, Mark Brown wrote:
-> On Mon, Sep 28, 2026 at 06:24:41PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Convert Tegra AHUB bindings from the free-form text format to
-> > json-schema.
->=20
-> > -- compatible : For Tegra30, must contain "nvidia,tegra30-ahub".  For T=
-egra114,
-> > -  must contain "nvidia,tegra114-ahub".  For Tegra124, must contain
-> > -  "nvidia,tegra124-ahub".  Otherwise, must contain "nvidia,<chip>-ahub=
-",
-> > -  plus at least one of the above, where <chip> is tegra132.
->=20
-> This documents fallbacks...
->=20
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - nvidia,tegra30-ahub
-> > +      - nvidia,tegra114-ahub
-> > +      - nvidia,tegra124-ahub
->=20
-> ...but this does not.
+On Tue, Sep 29, 2026 at 6:12=E2=80=AFAM Thierry Reding
+<thierry.reding@kernel.org> wrote:
+>
+> On Sat, Sep 26, 2026 at 02:24:19AM -0500, Aaron Kling via B4 Relay wrote:
+> > From: Aaron Kling <webgeek1234@gmail.com>
+> >
+> > This workaround was originally added for Tegra194, but no longer gets
+> > applied for it. Commit 615d43540043 ("ALSA: hda/tegra: fix tegra-hda on
+> > tegra30 soc") changed the guard to tegra30-hda, which worked because al=
+l
+> > affected archs had the fallback compatible. However, commit 7f0ea5acfc1=
+9
+> > ("arm64: tegra: Use correct compatible string for Tegra194 HDA") remove=
+d
+> > the fallback compatible for Tegra194, causing this to break.
+> >
+> > Fixes: 7f0ea5acfc19 ("arm64: tegra: Use correct compatible string for T=
+egra194 HDA")
+> > Cc: stable@vger.kernel.org
+> > Assisted-by: LLM
+> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > ---
+> > ALSA: hda/tegra: Re-enable SDO workaround for Tegra194
+> > ---
+> >  sound/hda/controllers/tegra.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> Maybe we should move this out of of_device_is_compatible() conditionals
+> and into hda_tegra_soc instead. That would make the checks for this a
+> lot more consistent and robust.
 
-In device tree we never used nvidia,tegra132-ahub, but I guess it's
-technically necessary, so I'll add that combination here, exactly as
-described in the original bindings, and fix up the device tree to use
-that instead.
+I received a notification from Takashi Iwai that this has already been
+picked up, but it was only sent to me and not the list. Not sure why.
+But looking at -next, it's already there. Not sure if you would want
+to have that pulled back for updates or do followups later.
 
->=20
-> > +  resets:
-> > +    minItems: 11
-> > +    maxItems: 21
-> > +
-> > +  reset-names:
-> > +    minItems: 11
-> > +    maxItems: 21
->=20
-> Ideally there'd be per-SoC constraints but meh.
-
-They are there, further down below, though maybe somewhat hidden. The
-per-SoC constraints define the exact items that need to go into each of
-these. Though I guess I could expand a bit more and narrow down the
-minItems and maxItems for each compatible.
-
-Thierry
-
---qgm63f4y6y5lsrev
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmq7pLMACgkQ3SOs138+
-s6F0IQ/9GBOhoiLn6+F/S0+LoMKX+d72dvzXdgEsQWHzfaZBgg6kPR38IuGkNI5+
-jHJkfnf3nx0QFCzcDK34/RPlZZTwJsAhX5hNRjBoxG8mtPuPFzQxOSa0KidmNUE5
-ojDY2PxYjMNTqnsz2FR14cfqKX79grRYW8xIXIHUtVhCkAlA3A2+HlPuq/bxCu9/
-vFWT1J26YR2UG/761VWesNcu0LxWLPv4iZwJ4b6rZogO1CXnOIsD+mLnCqIkEuwj
-HqgHn5dp+PrBCBdKDoVjg8KnMD/4b4HOrHmKuiXs3jsIvZPArSROYC9mrzvtCYjK
-uyT8U/vJ6qnKJdUadqyFAtztDZ71VVozYMTCJRHafgJ/b3I3VJjYyot8jt9aUWGZ
-9jWA4Ks4W2HQC+Jr36v145tVQn/UVFmzUqQatKJlJ+fjKNp2gLKkw6G3C2fEvpIM
-Djo4Vtk7eecKihntpFmRxCEm/Qm7GuzYNp7MKzEDznezANZhiU/YOqV4diqiEkxA
-xuZ5saOzyxjMttajnDl8zMqlz2//E68YIPv2eniNeZnHqJnIqLfO6RrufhW0XHdT
-E2+jC+LxS53UCUU8i1t+OXcpzpZ6icFSKaie9pdpjQdHkMPFE1c2PPcHOC/Ii1Lw
-IHiGpZ6r7j8ApGakw2nUv7qXs1u1GPn/pqBzOQHA9pAYxDTowB4=
-=bNkn
------END PGP SIGNATURE-----
-
---qgm63f4y6y5lsrev--
+Aaron
