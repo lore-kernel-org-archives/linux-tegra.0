@@ -1,59 +1,61 @@
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013015.outbound.protection.outlook.com [40.93.196.15])
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011024.outbound.protection.outlook.com [52.101.52.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10014FD7BE;
-	Tue, 29 Sep 2026 09:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC3F2D0620;
+	Tue, 29 Sep 2026 09:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.24
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790675999; cv=fail; b=AJq8vAc+RyWdhvWjzLsJYDvq5afoGEH54H3YVhOoS7stXdPyOO0GXU+uGlELUo9YdhSK3awy2Oo4xr8wSEDZNG2pmSMDVlU6ERhmCSJDvhLfiPI+qniShTBvIkedTlfSyagaHK3vzp80zJynQI/C3YvpjfdqCcxRapisryPya6A=
+	t=1790676001; cv=fail; b=I+2adcs4Ab481iijxgWawfQXiwCbMQre+IrObUwZ8twcrfaH8C4brcqRNT/qNLhiZNf9p3oAmTvLU/FS2iuOebQp2NYvrtViDi2I0HM36a26W6HE2VWl2SedohdqUoUcoj49IkrGIHHo9o4cElmxGeeid6NGzs+RTPJZFwjZV9w=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790675999; c=relaxed/simple;
-	bh=28tEVs5Ly43A9athii135x+PZwpW2eQ0tF51krLCUzA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Sqmsiif5p0R739X+EaH/vTfb/KR/L3Td+t9uKrPiMj58H6g4iqkUWAq74RPYMV5Gtd/JbJGIkVIu0SEAjQ0g+xZzb4PyeChf6k3Jcu91U+ZAq6lp80S6PSzTCgUv/mXEr366pidxwJy//Z+2hvhB7Ck10zynxPu/CByB1P/oiXk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gL8n+ODK; arc=fail smtp.client-ip=40.93.196.15
+	s=arc-20240116; t=1790676001; c=relaxed/simple;
+	bh=TzCnywfxM/8FFfWdfnFgVBTEcZxcvj+O9zxfl6XvkMA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UvGbkuHSd8yoI+onrxDnpKfxD/mrVg5bt76ued4Aw1Ex5Mzy6Fh9smbKOqi/ryfG5liVIMxMLyVoApH6MHU5igKCemc8gJymHAmvpk/cJYwVk4B8dSwfC/LLiUuklvffSYtuxhUfVLvDvWpL+bPwBvQKlq2Qpb6j5WVAgKoTK6A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=k9PLE4wb; arc=fail smtp.client-ip=52.101.52.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gL8n+ODK"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="k9PLE4wb"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jZN4TTa5NtWEyoXcC6xJelTWfCRYTof1axYqTxvciIfljCgx4tCVTf99p37NMnTQ3r9iuFWo51S6lUmMYtC+WX+iCJFpDf6GKEUwVvx89gXlLlUcqlfWh9D+FxckXbOEl550h+twDDYzxFFtSVykRIfSIB/kw2GjpID96JlsoVnPDA1Rv5tfF+jyPiiBzOgU8EtYdfgMPxOrOGufcc7dtJKnKukkzsFrEHZaI3bzwVIGddB0SLr1CNT/XVgjLxy9KGgDNzeCzfbP9jnyfiRFwm8Ueyd6A3+QyRB83BOkD61xO0BEdVT1Qy6D6OsgK7f9BBEeZSoxXRf7Tki74rYjvQ==
+ b=d3WlSxT45yna15L18tEQnDNq7jAHCIffrgQegDmO4YqmYyRkywNqQr3/jmsAGrToodcLAk1hBpG2uwIZwjfCh97yuFe172ewY9d4DIFjSkfKwdV5uodw0EcvcQ1rzm7C9Gq/lBFb04AxnB32Qb7GFhWmNhRu6ZIE+vKqrTXpzF4372lu36EfQoFguG3DxIhTbDC0nl6I4rD1xTuBzlOkBA/7C/5Xt6HTK6ekCEbF5xX9y4ZGUybywrygkgzPkfA0swmr4HA1aKSExSgNxSqmiyRN0SYWWkvmcWMq8Mi+GGAX614mPpa+iV7t4rWaRTBioZAmGh6/DzO9SEdsCpCWqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xwxaqKJYujdvRz1ajDjU0y+/a7Uor0wsCBhSQz7LuPc=;
- b=LrcBajKlNsDHOj76nN9bQJzqT0034EqUeQk5f3Tl46J62jvtiEwCQMOPH8GngWC/JlTmpEr1Lg16958ql0ti50MdDS0ZtOVfWmE2v/1Rue7j6s8WfnwfhPh46fjGfihaCYR3fcpOuzoMEUIkkZqrVPp3Zg3D+DbTPdwn14ne0BFKFsHqt52EugJdPJ3NzkeBpRuMff2esrcEZ00zvyqtXLJqsqJUDN51/wEXv5Eu++QqQselXfrPB8Pt7B/jj7wBYWOZGuCrtvY8tJK7Q7VyxiBntIZI6cRuh/X6/7wtfGa3fFY0zG9pV5Mvsn42G4XOxCC/8w+HbOQEnwX5xpBHcw==
+ bh=6OMQmEA+jFytPv97Feq9jcwp0+TVzLZ4tx9R8cVnpK4=;
+ b=AtCQpKF8DkqE1cLiwrZDEYR+lbkeAOBm7YvfwT/INv5riuGSAhSqd3zNALXJLgE0x3qZe2m1PaMo4u8YqETAbJB8SpKVGmsHsVhg0A0fUhsnP4ft/SFuGppRVfBu1QqvQDBJ3yRUEHOWZSBSq7BKPKFfNMSxNicRnq4BhLTuWdTEzAjiFfv+V1alGyiGxhpmtV8fi9+bqjb7t9TTeTbOh8n2SzgtvAhX4BW5OuHvXIGNs42DCw2kLkGsIjHcfKKNEZQMyEsGy4NNusZeKgxwNJa4w69mESHaCdYC0Rgvjha+A3YIZGCz2YP53mmESSwnPHMQXN1zjvevIB51F9W2Vw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xwxaqKJYujdvRz1ajDjU0y+/a7Uor0wsCBhSQz7LuPc=;
- b=gL8n+ODKl0N5bVLUlzR10zkoQA2bt4q21VAPhQvr44TgOt8Q7M6facZu4rRZ16aH7e3d5u+4HRWnaRTbvqu57fkLL9WtGxsG98KOVpdpFNZSobk82DOT0rHOjkmTpnKzZTI075R1v0UufdR7spNkoEGAQ2kzxtvusDUZBdG51n6+LM+5nvEtXmpPdNxa569Em97w1MEHhzkuRshtLfreOwm2LZs1yKOu7rt+eRoATbdZQiPaZqhyJwixX62mIo8/0yJs5o+S80dYgAQJuPmtq0lXHnM9y75BVqmuxPsA7eixhC53UtstaZ/aDOyBovZDUtzRvMRBnJFML4eRwNlw4Q==
-Received: from DSZP220CA0012.NAMP220.PROD.OUTLOOK.COM (2603:10b6:5:280::10) by
- SN7PR12MB7275.namprd12.prod.outlook.com (2603:10b6:806:2ae::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.451.24; Tue, 29 Sep 2026 09:59:47 +0000
-Received: from DM2PEPF00003FC6.namprd04.prod.outlook.com
- (2603:10b6:5:280:cafe::36) by DSZP220CA0012.outlook.office365.com
- (2603:10b6:5:280::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.472.15 via Frontend Transport; Tue,
- 29 Sep 2026 09:59:47 +0000
+ bh=6OMQmEA+jFytPv97Feq9jcwp0+TVzLZ4tx9R8cVnpK4=;
+ b=k9PLE4wbrOz0iuT+ZkVbKpm2re5LOpQfUzDRpkTNZzVHciPzaBx4aT+r5soyw2LNESIE9jPtGxrzrkXc/Y1bC/AuHEUYe71jHcajYJR/NesY8zeb+4jI1hXbW3Gq4mfeNMlIG0vsXEUu5NJahHRtK1pdXfxqjrsbovpkBLMvgdWESgbI3A7ucdebmpGi6daeHU+KgC1PuS7rUTlSVy3CqgOAO4xItW03cwm3uTMGFTNunF42o9Leqp37CQJjiMIujePIffQaiOdYQnn29yTZoVjds6UdyCf3ITbCGMrWUgu3DhtRj1a9muZapNsn6oOiDsa35Js1vyxUsKIlI1yTIQ==
+Received: from CH5PR02CA0024.namprd02.prod.outlook.com (2603:10b6:610:1ed::6)
+ by CYYPR12MB9013.namprd12.prod.outlook.com (2603:10b6:930:c2::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.26; Tue, 29 Sep
+ 2026 09:59:49 +0000
+Received: from CH1PEPF0000AD75.namprd04.prod.outlook.com
+ (2603:10b6:610:1ed:cafe::75) by CH5PR02CA0024.outlook.office365.com
+ (2603:10b6:610:1ed::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.451.24 via Frontend Transport; Tue,
+ 29 Sep 2026 09:59:49 +0000
 X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 216.228.117.161) smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ is 216.228.117.160) smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- DM2PEPF00003FC6.mail.protection.outlook.com (10.167.23.25) with Microsoft
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH1PEPF0000AD75.mail.protection.outlook.com (10.167.244.54) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.472.14 via Frontend Transport; Tue, 29 Sep 2026 09:59:47 +0000
+ 15.21.472.14 via Frontend Transport; Tue, 29 Sep 2026 09:59:49 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Tue, 29 Sep
- 2026 02:59:32 -0700
+ 2026 02:59:33 -0700
 Received: from build-anrao-noble-20260906.internal (10.126.230.37) by
  rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -62,10 +64,12 @@ From: Aniruddha Rao <anrao@nvidia.com>
 To: <thierry.reding@kernel.org>, <jonathanh@nvidia.com>
 CC: <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Aniruddha
  Rao" <anrao@nvidia.com>
-Subject: [PATCH v5 0/5] firmware: tegra: bpmp: Add ACPI and MBWT support
-Date: Tue, 29 Sep 2026 09:59:10 +0000
-Message-ID: <20260929095915.2215685-1-anrao@nvidia.com>
+Subject: [PATCH v5 1/5] firmware: tegra: bpmp: Move channel initialization to helper
+Date: Tue, 29 Sep 2026 09:59:11 +0000
+Message-ID: <20260929095915.2215685-2-anrao@nvidia.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260929095915.2215685-1-anrao@nvidia.com>
+References: <20260929095915.2215685-1-anrao@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -79,106 +83,140 @@ X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM2PEPF00003FC6:EE_|SN7PR12MB7275:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9ea8eda6-1aee-4065-7ab4-08df1e10653f
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD75:EE_|CYYPR12MB9013:EE_
+X-MS-Office365-Filtering-Correlation-Id: d676f6a3-3a44-4634-2c6d-08df1e106666
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|36860700016|376014|1800799024|82310400026|18002099003|6133799003|10067099003|56012099006|11063799006;
+	BCL:0;ARA:13230040|23010399003|376014|36860700016|1800799024|82310400026|10067099003|56012099006|11063799006|22082099003|18002099003|6133799003;
 X-Microsoft-Antispam-Message-Info:
-	RPqcrAW+5m5b+6g23nX6ZgxDmGJgDJMJXtQPnsgDvHkLN7YiRReLcKyO4curb5EKfBuwsPA3PXXZhe6QQSxMkikXc8nPR1akMXjEAMAvVfCukMmVyIYzoiuQQpSAIuXUn6FAGnfHrWV4RKC9tOduiv4Sd0zS/7ZA87XF7xV9JStL27+EE9TaoukguLel2nt5+fpQazgMIJF2p2LgySl+B80WMcJNjTywsvF7+Cmoy09PUiFGELINizRR33dEFOQHXEyqfr/GoVUPLZkvWz9B8IQESjVHEWtjOhj7/wDR4T0u9EVboWixE14VkJQazdBGTdtB9wWJ4+DuUhtC06xO+c8XxpwMbkgAjRVochaJNHbdUWQ8H3+lfac9E8Rwm83Ey1hRSe0dRTAbocJjfsL91hWhhS061J09nuqUjhbkrNyYv5AT6rNQ4EQZQ+66PkNo8OtjieJsT81VXDHJ34l4qu5fGkPZ6cyuRrYFuUHLST0je06MybDjjA4qOnTjBt+pnKVCeog21BSghksQVJipYbg3eWblWtjcwvEH4nJL0IY4c57qglefyZUgvSz7bGujP6X5Hg+2MY8TGp7ZZW9pMd5LzrVRKZDC8SUBtGvbPZTdkmHDHqq5VBmWdqNLOa6p2+zZ4lhBnSmcwXglG4Ckvpw9QsEXntNBhWSywK4CbvsFX+ikG6MzP6WqxrzCU6yQTasCdksNPZs7nn0EKp3j2Q==
+	iQ1DAun8pQVXznOmSsE0arBTLr/KrxJy+YrVMREZzfYWcKXj8d1anstXUr8GAjiEIDJ/IH80Ge5ZAqA8Mo+7i8KFE0soDJN6pVxIC61b7BRrxHhMdjq5zyc137x+sA/Ubwplzsw3B8k0XdynfNEc/4qTJ3YNXPFoOJX4vNLbVmg820P5pHdyEbxiUBcNvZ+LOXLm3LxJtCJ3lLVXToqv6f+CQMB7V2Xg6ZXegoTIwDTsCBshh7sVo9w9PT+9lb/VAYyYpYxAcajoa/6kcDDrgWBQCC2QrFcVDukT067z57H5AysAuWrgtUxgbQJSznmqo3+t8FNshEY7rqvZSBMXpQ8168eyDl3KZrmKxuNTGxhM0POrGvUxPOYBUagj/jnG+CPEP0zihVfh99WWk3iOKroSpCAWmvORKoQ0jYKuHGN3/drbL3V58aGP9KqgQchxPRZLL7yES5aOTNDgAN7yXcXn1hcb/hGpGR3Epehu6YTRlz57YJHHrAukaTw+OJ/d6BbC9CpT3tTy+P2ejfrKOv84ypvV6lxqqVi7lKT5LCLCtBzUQI0bu9Node7r3qFIHNsHTzV+/HGVmBgxZvUpaewIm0bO4tdoUWtTBwaRJ0AIslT6ZXT90Pcaowjo1qe+5W1Y1h13Com38/Q9QrB+DsOSwDRQnGpQwNyEjh2uBAhjsUG6xuB8fIbbgzAQDCs3kXRSzqHou3m8e+sEm8nyfA==
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(23010399003)(36860700016)(376014)(1800799024)(82310400026)(18002099003)(6133799003)(10067099003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(23010399003)(376014)(36860700016)(1800799024)(82310400026)(10067099003)(56012099006)(11063799006)(22082099003)(18002099003)(6133799003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	oB22F/JfxBKLAT1kzA2OC/O6cO25+EGEiobMlSGDkhuJkSEAcK6Q5qGVlxJVUfFSYl/WsiI/RQhpe7o0lbozTBd5Du0ogFnZNZPQs0/LCob7xjDU/Tcf0DBF3qo8Ke3IE/OKB2gNBVStAHMlw/8fiHRO8zbh/eI3bLukwYRuSnsQPuDI0T3Av9NPFaM3LtIivzhkqigpIQw6b38BF9Lmh3X369pFBinEOZ9xBnskMdyvZxanVNBfuGb30Cj6xHpnNdnhvo8Ot2oDFw5UfxkS/BkVvjgPN5E2C+rGmlguPRkaWyzhNhYTCeXsw/41gdMckQc4GTo5WwXryyDhJRbwl0eal4VF97FkCASZ84hSvnJDBMtBzzE1LFKSS3Nhueg/I1GH/0uyxm+oqo0Sp8O+EOs+5f4iDkp913e/zGNyqvYHjgHSOVeFTgsdW8AunwZy
+	Gw4bKslY7SslhsQtlw2qEGLFoNBMFseNDA8XF8EuTylGA18eAJ6w/XWWnEadglaSYG71sAhWwzCaFNeq4ILsFzUHS4SxkFFRDv/BTgH5u1hzcYfRjR+bspRoSsEJTTLL1u2LN8UC/eJwzfvV8px8meHnTBf65c2uyHaKZN1B1+fy3vQHsAvSSFI8+6hj5jrlNrHxVoyROzi+vRws+nrLh+Dloy3rxwPcpZi452j9Xhz6GRW+cm2COmR0Vs1hCG6I0I5pGAvf9lXjFjwxqwNO6x4hhj3+1ETSczKCfF2OBaR7xoIr48q03NIS316sfGmBu15Oh7vG0jIy8J9YAvNWnLZVWUDnGGYobRkG3o5mn7qApDtcF7RyYNtf24gq/QWf6GB92kngf1wLAA4EJ4o6FEMqBtf1mWAYZ2MaGvmTpSG7tTry8XeOciknXDbWBMjx
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2026 09:59:47.5364
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2026 09:59:49.4594
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ea8eda6-1aee-4065-7ab4-08df1e10653f
+X-MS-Exchange-CrossTenant-Network-Message-Id: d676f6a3-3a44-4634-2c6d-08df1e106666
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	DM2PEPF00003FC6.namprd04.prod.outlook.com
+	CH1PEPF0000AD75.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7275
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB9013
 
-This series adds ACPI support to the Tegra BPMP driver and support for
-Memory Bandwidth Throttler (MBWT) controls exposed by BPMP firmware of
-some Tegra platforms.
+Move BPMP channel allocation and initialization into a helper.
 
-The current BPMP driver depends on device tree bindings. This series
-keeps the existing DT path unchanged while adding an ACPI transport path
-for BPMP firmware requests.
+This keeps the probe function focused on sequencing.
 
-MBWT controls are accessed through BPMP firmware requests. This series
-defines the MBWT BPMP ABI, adds MBWT helper functions, and exposes a
-narrow sysfs interface when firmware reports support for the required
-MBWT requests.
+It also lets later patches decide whether mailbox/IVC setup is needed.
 
-Aniruddha Rao (5):
-  firmware: tegra: bpmp: Move channel initialization to helper
-  firmware: tegra: bpmp: Add ACPI support
-  firmware: tegra: bpmp: Add the Memory Bandwidth Throttler ABI
-    definitions
-  firmware: tegra: bpmp: Add MBWT BPMP helpers
-  firmware: tegra: bpmp: Add MBWT sysfs interface
+No functional change is intended.
 
- .../ABI/testing/sysfs-platform-tegra-bpmp     |  48 ++
- drivers/firmware/tegra/Makefile               |   1 +
- drivers/firmware/tegra/bpmp-private.h         |  39 ++
- drivers/firmware/tegra/bpmp-sysfs.c           | 207 +++++++++
- drivers/firmware/tegra/bpmp-tegra186.c        |  14 +
- drivers/firmware/tegra/bpmp-tegra210.c        |  13 +-
- drivers/firmware/tegra/bpmp.c                 | 415 +++++++++++++++---
- include/soc/tegra/bpmp-abi.h                  | 161 ++++++-
- include/soc/tegra/bpmp.h                      |   2 +
- 9 files changed, 849 insertions(+), 51 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-platform-tegra-bpmp
- create mode 100644 drivers/firmware/tegra/bpmp-sysfs.c
-
+Signed-off-by: Aniruddha Rao <anrao@nvidia.com>
+---
 Changes since v4:
-- Move BPMP channel allocation and ping setup/teardown into the
-  SoC-specific init/deinit operations.
-- Add an optional init_providers operation for DT child and provider
-  registration after BPMP communication is established and the firmware
-  tag is read.
-- Add an ACPI BPMP init operation for the BMRQ ping path.
-- Remove ACPI-specific setup and teardown conditionals from the common
-  probe path.
-- Drop the redundant NULL check after device_get_match_data().
-- Explain the transport and provider initialization phases in the ACPI
-  support commit message.
-- Explain why DT registers an incoming MRQ_PING handler while ACPI only
-  sends an outgoing ping request.
-- Describe MBWT bandwidth groups and traffic types with platform data so
-  firmware instance and VC type values can vary between platforms.
-- Document the sysfs hierarchy using platform-defined bandwidth-group and
-  traffic-type names.
+- No change.
 
 Changes since v3:
-- Update the sysfs ABI Documentation date to September 2026 and target
-  release to 7.4.
+- No change.
 
 Changes since v2:
-- Rename the non-ACPI transfer helper to tegra_bpmp_transfer_channel().
-- Keep the common BPMP message validation in tegra_bpmp_transfer().
-- Remove duplicate message validation from the ACPI transfer helper.
-- Move the MBWT helpers near probe and document why they are needed.
-- Rename bpmp-tegra-sysfs.c to bpmp-sysfs.c.
+- No change.
 
 Changes since v1:
-- Dropped the SoC Kconfig patch.
-- Kept the existing DT path unchanged while adding ACPI support.
-- Reworked ACPI matching to avoid a dummy ops table.
-- Added explicit error handling for short ACPI BMRQ responses.
-- Folded MBWT helpers into bpmp.c.
-- Reworked MBWT sysfs into per-traffic bandwidth attributes.
-- Removed software bandwidth range checks.
-- Use NVCLINK consistently in commit messages and documentation.
-- Avoid platform-specific or transport-specific MBWT wording.
+- Keep OF resource initialization in tegra_bpmp_probe().
+- Move only BPMP channel allocation and initialization into a helper.
 
+ drivers/firmware/tegra/bpmp.c | 44 +++++++++++++++++++++--------------
+ 1 file changed, 27 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
+index 753472b53bd8..0eb99b1c5068 100644
+--- a/drivers/firmware/tegra/bpmp.c
++++ b/drivers/firmware/tegra/bpmp.c
+@@ -733,19 +733,9 @@ void tegra_bpmp_handle_rx(struct tegra_bpmp *bpmp)
+ 	spin_unlock(&bpmp->lock);
+ }
+ 
+-static int tegra_bpmp_probe(struct platform_device *pdev)
++static int tegra_bpmp_init_channels(struct tegra_bpmp *bpmp)
+ {
+-	struct tegra_bpmp *bpmp;
+-	char tag[TAG_SZ];
+ 	size_t size;
+-	int err;
+-
+-	bpmp = devm_kzalloc(&pdev->dev, sizeof(*bpmp), GFP_KERNEL);
+-	if (!bpmp)
+-		return -ENOMEM;
+-
+-	bpmp->soc = of_device_get_match_data(&pdev->dev);
+-	bpmp->dev = &pdev->dev;
+ 
+ 	INIT_LIST_HEAD(&bpmp->mrqs);
+ 	spin_lock_init(&bpmp->lock);
+@@ -755,31 +745,51 @@ static int tegra_bpmp_probe(struct platform_device *pdev)
+ 
+ 	size = BITS_TO_LONGS(bpmp->threaded.count) * sizeof(long);
+ 
+-	bpmp->threaded.allocated = devm_kzalloc(&pdev->dev, size, GFP_KERNEL);
++	bpmp->threaded.allocated = devm_kzalloc(bpmp->dev, size, GFP_KERNEL);
+ 	if (!bpmp->threaded.allocated)
+ 		return -ENOMEM;
+ 
+-	bpmp->threaded.busy = devm_kzalloc(&pdev->dev, size, GFP_KERNEL);
++	bpmp->threaded.busy = devm_kzalloc(bpmp->dev, size, GFP_KERNEL);
+ 	if (!bpmp->threaded.busy)
+ 		return -ENOMEM;
+ 
+ 	spin_lock_init(&bpmp->atomic_tx_lock);
+-	bpmp->tx_channel = devm_kzalloc(&pdev->dev, sizeof(*bpmp->tx_channel),
++	bpmp->tx_channel = devm_kzalloc(bpmp->dev, sizeof(*bpmp->tx_channel),
+ 					GFP_KERNEL);
+ 	if (!bpmp->tx_channel)
+ 		return -ENOMEM;
+ 
+-	bpmp->rx_channel = devm_kzalloc(&pdev->dev, sizeof(*bpmp->rx_channel),
+-	                                GFP_KERNEL);
++	bpmp->rx_channel = devm_kzalloc(bpmp->dev, sizeof(*bpmp->rx_channel),
++					GFP_KERNEL);
+ 	if (!bpmp->rx_channel)
+ 		return -ENOMEM;
+ 
+-	bpmp->threaded_channels = devm_kcalloc(&pdev->dev, bpmp->threaded.count,
++	bpmp->threaded_channels = devm_kcalloc(bpmp->dev, bpmp->threaded.count,
+ 					       sizeof(*bpmp->threaded_channels),
+ 					       GFP_KERNEL);
+ 	if (!bpmp->threaded_channels)
+ 		return -ENOMEM;
+ 
++	return 0;
++}
++
++static int tegra_bpmp_probe(struct platform_device *pdev)
++{
++	struct tegra_bpmp *bpmp;
++	char tag[TAG_SZ];
++	int err;
++
++	bpmp = devm_kzalloc(&pdev->dev, sizeof(*bpmp), GFP_KERNEL);
++	if (!bpmp)
++		return -ENOMEM;
++
++	bpmp->soc = of_device_get_match_data(&pdev->dev);
++	bpmp->dev = &pdev->dev;
++
++	err = tegra_bpmp_init_channels(bpmp);
++	if (err < 0)
++		return err;
++
+ 	platform_set_drvdata(pdev, bpmp);
+ 
+ 	err = bpmp->soc->ops->init(bpmp);
 -- 
 2.43.0
 
