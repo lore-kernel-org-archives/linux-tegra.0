@@ -1,149 +1,263 @@
-Received: from mail-wr2-f32.google.com (mail-wr2-f32.google.com [74.125.225.96])
+Received: from mail-dy2-f41.google.com (mail-dy2-f41.google.com [74.125.229.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859C54CA798
-	for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 11:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.96
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790769365; cv=none; b=Y5Var8Ij+KHSPMN/U8qw5fsvA4APN1FKarnODlFVFxbpiq0lz04nVMQurT11lW1fK8KUeb6+4j7bJPIHBTHYUzn+PFdxFkhPIViv6WPnyqxXP2WnBYAWhEIwz7h4ShIlxyfG7qEBPHYAwawfdxncJTkTOu3A+YRc8YXCZnbWIqA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790769365; c=relaxed/simple;
-	bh=KG6BiYXVkut6wA2+1armqrbyGN68UP40llVPal0pULM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j/MsTk/6K6gF3PifM3soSO4iTMffvWMup9gqSFXwLJRzlYlzq8pcnSOlBQHzo7Eggo/ZUEoEEL88Q5m2qHI8iGo4G49eRhxU99RrkatIFLBYNw9xrEFqTfrkLDXL+AU1buEQ1UPPLbB0FEzE6ZHlay+wIFtWkvh/Od1HNDT4bio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=YIsdJzDW; arc=none smtp.client-ip=74.125.225.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1B64CCDC9
+	for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 11:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.229.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790769400; cv=pass; b=P8ZGYwXg8H7zqOaXLDh4Vg6iHsssggiqBMFCZZP2fvjZH1fHzvLw0lyO58EKhUViuCWBkRjUyJ2FyFwpYgwGAMycDsuGkf1rNwPXBwTjZQShmdu6tKREvxnAdoFSKuWHprLpHZSLrmq7D1TWxuIg2MhZjRx/FIC6xkPS2K9s0Ks=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790769400; c=relaxed/simple;
+	bh=rv+dzbO6L5HwhMD3iGr/BBvwxIAcXGr9izjWAdufBwk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=giJqfVi8MQa0MhigGu+SDGKqP9JJ7OuSvo+JebfI/GLr0BjKHJxe6XhFnQPwdIGzYvcnMdblGY/wrIR6rwybP262EOHSSPyIKeIF+HbUQnvzzXrTLCH4QwcuSOob08LSAXZuTvOqJsCUifLygN8b6syKuqaABg+y+XLCqOYFmdY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GoTATub7; arc=pass smtp.client-ip=74.125.229.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="YIsdJzDW"
-Received: by mail-wr2-f32.google.com with SMTP id ffacd0b85a97d-482f6350f91so3063992f8f.1
-        for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 04:56:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GoTATub7"
+Received: by mail-dy2-f41.google.com with SMTP id 5a478bee46e88-34c2a97ec17so761519eec.3
+        for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 04:56:38 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790769398; cv=none;
+        d=google.com; s=arc-20260327;
+        b=Uubpyg1gnFMF2iyY3FSpZfu+Op6kUGlOHv17GBg4ORNvgr3kocxZGm8Iw3orhM9P+R
+         LLve5SVq3xyKnPFnXb31IXTLncHFlm1waNNJ5pjD6apCiHmd9RG31YeX1Aw1sQv9wUBc
+         u3zQvQL64aW7hH5sy9lm79DWrK0PmslHUQxzGs4g+JUmJc0kbk5rX/UI3xCLM7l98kZ0
+         iJjJLTU92Lp3Stsr+mu+Y/HE8uPZFqhP8CQPwKZXwz1ncosYoOZUiDQAud1G6uKEmqWJ
+         8Wx0cXOv7estAMcOvys6rEMb8EpCNJI9YFIKYS+QoP7IIjtbRrXMEOESxPQKGSebaldd
+         nPSA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=yOi1xGJqgS9LzwvMIA8Rqod0f0w6LITZ2YMI6SsIEdk=;
+        fh=cXO7zkTsXhRV6vK44IQwHs8RVInx2lzNz9Ee9XBJDRA=;
+        b=mQ/gxowFFHK5qVl1KA77fNdrbvmJ9GHXq32ugUnVk/HdwE1ZD8thKXfyYqaQ0ASGm2
+         tcxv8NDof1ued0fbwT7DbB7iwWzj15H/oT7bDOBTLNdEn2jmj+CfbF2e+QRjt7R3GW+o
+         bJVtu8+7oO4U13f3txJMzggg/aK5aTMkZIl+YdZkvgvw3BcLCd/e9lHfzM4Uk3w544Jh
+         8GAD3TyTwAtWgLPYsj+omPSmW47/QfSD/xHHQPDF/uk3kveNiWCh1U7O0JgZQf/Om5mb
+         kYieHfLHC3ylZ6W39lLju1SxZHUc/n5yl9q46x49Yk4T9reb4RHfCuUJFRHv0jYK1Pii
+         fXVQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1790769362; x=1791374162; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+        d=gmail.com; s=20251104; t=1790769398; x=1791374198; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=nbYCj712E+4XFuBgODpd1EFeTXIJOMr8QdEF2zg7Mms=;
-        b=YIsdJzDWFgeofjItZ9rbRNhCqwCcLXd0ZQ3tMu+avXw+hPCROmC3sq6g30VjiDwSsb
-         ip6GnnPa7hq3IKx1PcIgYZHAJ+vMs4tP89gyKrigqNveCyQ60iAdlLzSYbidjuYV4/Mr
-         wtUwts3g+zwoDH7Yj3RToQO1GBh+jK4eW5zYYU+gkIcKkbRJi+JHTS5Mi+UZbYeXD3C/
-         /GQXgxkAUgL8wSXU8PcX/K6eQPQowPNYzvpMZgwhE9ZCXBobwr4TTSXemqFrGbToCecC
-         Bo4jsc92S992tBZub9ZkpzryhFn/cahM4uh4qS2Mi5URs4Ot7DGjhjAYK/HSaXhHiKQB
-         qzCQ==
+        bh=yOi1xGJqgS9LzwvMIA8Rqod0f0w6LITZ2YMI6SsIEdk=;
+        b=GoTATub7KfzRD+oJxrsUE7XrIaAGmGWj6f6+2CEteteYcO+MJrOUVrynM5wFCTQ7Vy
+         bl2FlHiz7u2jZMiMjtXejRGM5Z6ROCcdixLrHJTmJZhzwPdcmtsS2nraItegsRfJhyE/
+         5+a+xGja3DPnGZKLP0zH2UnYFkmHkrjZsfc0SVYv90yQpmPEZNZwZSvW3WgnAqCj1pMn
+         I2Pd5QsKfgvTitUysQFM8G9N4ntdSsOx7+MhHHLheuF4+HT47rL6lFaSRZlsu+i8m7sm
+         UmdlI33/ZZeFuiBMea8RHJRHm+XHLbS/UV4SJhKnYUhESKltFQJapV+YXQBrVE1UdOO3
+         8mjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790769362; x=1791374162;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20260707; t=1790769398; x=1791374198;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=nbYCj712E+4XFuBgODpd1EFeTXIJOMr8QdEF2zg7Mms=;
-        b=TiG0En19EjNpP/qHlvfrbTMI/a80mIvyVHGEcQWUfMOdYsjq7he54ZH46Qn+WMAnso
-         YaCenjQ45prwo4jkgUfWkx/yv+xpz//TidFYNtbdDWYVh3z4tQi6JDNVaK4ZFC0YGfHD
-         R2bypN1rkg6y1mRJ/2lN5DwZALwWHBqDug4gYeInT5XwKyLLgRImSXyVWhPyKxUhuZZQ
-         9DuFAwHPOI0XScPn7fb6C+vxmO8SODcRlJQla+VaecKdujSF7Q1lH3LkxTAKM66B5P1b
-         2jshwxPEitkpYQjXFxUFnMP86zRUD3sY8gb9cxKygGv6ySaTG9R/x3UT1LlSaQh3ULZr
-         gGZg==
-X-Forwarded-Encrypted: i=1; AKwUvBzgRIiIBKfs+DWgZyt9izdZPzMvnuw26nOY28JuRPz9P1V1nIysWckwinqesIMptVPphAkufBr0w0xJgg==@vger.kernel.org
-X-Gm-Message-State: AFuF++lpS5o2/O746SSxaT/zykV1jipQe6VoIK9XQafGqB4Q1/2yI7kB
-	VnZFYnRv/wXbdi6tOjvexc6bofJg6h8tlqA3iM4JO/p7q1CY+iaps+5Yyviz9pYYxE4=
-X-Gm-Gg: AYBFou0UUyjW1zt/omQTMNiUK6vIojExo0937bNioSuuKfICmih2RLwrvYmqnk/OscA
-	0uvAXcwapidpLKEkZdY1nDO5HYpp+Fj5SssUerpDq93q8G346Aytc77P8FOcT5fAkQ7VbOPSYFN
-	PKbX9Qhk0dYAxY/0RtUAfqf4MH7WI0d5iDKVzTnN5XeVQvuMf2LYFSh5kCHdlgIp2tRQY+VW2xh
-	niBwIkCiqQfbFm27WmBjoallRWF1uRXzc9tGDlOXa8l8jzy1cYiPUl1AP9DOHFCMiH2NgD9B38q
-	Rm8W31bNIPpvThGp3raef6Z+2cnfkUj0ty+6bu5CM5IJPmO1Y9vtkLELOKkc2VMhpIc60QSvoga
-	BKOzVIL4vbyWsu7l2Zr4UOyfjpRIdX3CC9e7ghXpSe4u50vFPZAIG1SxLwVG2XK3l1tH1S8mfZm
-	gbZm4elbJPjbaF2zfJ9JyIxUG3KPdaqOFG8KW9u2My7OauN4iVs3/HkWOwHtNEY4KDpfDHCj9cj
-	DhmImXNkyXy/w==
-X-Received: by 2002:a05:600c:1d2a:b0:49f:faa3:3ca2 with SMTP id 5b1f17b1804b1-4a01afebf68mr25206575e9.13.1790769361720;
-        Wed, 30 Sep 2026 04:56:01 -0700 (PDT)
-Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4a01ca32a44sm6509785e9.0.2026.09.30.04.56.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Sep 2026 04:56:01 -0700 (PDT)
-Date: Wed, 30 Sep 2026 13:55:59 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] pwm: tegra: Check for match_data being NULL
-Message-ID: <arz4S1-q7DXM8y4s@monoceros>
-References: <cover.1789741839.git.u.kleine-koenig@baylibre.com>
- <ed943d9be3b785514e0f65a5b8c13a78aba7a090.1789741839.git.u.kleine-koenig@baylibre.com>
- <arD7N6A6ncBNR1Jk@orome>
- <arE-s0zbTUn14aIr@monoceros>
- <arFYGka5NpcgJ8oQ@orome>
- <arI8vXaKTvEJi-Zd@monoceros>
- <arJRPVsReXWfUC_o@orome>
+        bh=yOi1xGJqgS9LzwvMIA8Rqod0f0w6LITZ2YMI6SsIEdk=;
+        b=EBsvt89QOBkEM109JaQJRJWAYo9CwrvbfsYqKwkf49+qNKO9GjolkE+vbMNhSl54tP
+         6J9SNfpHgKOoeKw+I6zmhPATx1YXsEVpBHvqFusQheGubAU1u1MFKDJAhDALa0SK2AcA
+         5mdPMIdw5gKqAz7gRPsif6GRmYODxOFLrqTckdG8Aku0YJaTfufSe2bQ2R1bKr2htK/x
+         pAfrMknFWwSOEOU3DeXJaTDHzZpLxSam36rll9k7ZY74RypP33aOP7a5bXwssSdra9/z
+         ZBWwu/XLNs+eEVJZmiAa9rJ3aVSmc3uF2vhRHnJKz3r68RjubT3HZvExm9/bdIgPWUtP
+         GEhw==
+X-Forwarded-Encrypted: i=1; AKwUvBzDezQ+qGREU9YcOrPrQ8z30kfSrsrB5x5kiKzQFM4Xs/ouSzxl0SiUYnGkBnaZsGxEK8r+dsZgPibGUQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++kFKJXGW9Ncd7JCxf3RurOmnT1uAcNQ80uE2cYGYHjTi/bNGBh4
+	MG18vJerpR+DZEsfcPqWB+P9uOkpK0lOsXfwWaMGoOLo1rSmqrLD5Y62xPcemIdl1dyUef2gSEZ
+	oBqxAJxMfDyEXy7zxs6mDL2v4aV0m+Sqz0g==
+X-Gm-Gg: AYBFou34M6TQZ1aUwg+Pe0QhETsMThuMojzfnWTbuPqBQgNcnIMU75QCAoS3cOkhbtL
+	WQrUm5aXOfjqc9bRIyjKMF83fR7Dq/5R1E4xPHcZjf3KJGTwXzvfwd1In9mrab4iWEkNMDL+nav
+	r7xMiP7qXsf0i3IDIXP4HVQ8X1bqtQZd4A8xcpShAGv5tQY/hmWjANU94TF434lHR19DRR2U5DL
+	ZCMo26XUKxVEtcvbd9Wg3w12f2nqVFcr4oMlhN08hY5iix+wORTd8lFES2TKEfUQ6FATH5Fd+eK
+	JV4gwk3R6rVnrvTZ3llIcqJwlQhzKt2ZVe5ehHugv4FhG+H2NK29ZrxGbaKoVzQrfyIUY0Bp8vZ
+	9C3yq1ocv44AU
+X-Received: by 2002:a05:701b:2611:b0:144:d792:8be5 with SMTP id
+ a92af1059eb24-14d33680cc3mr1029225c88.42.1790769397896; Wed, 30 Sep 2026
+ 04:56:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6rgnpj74w7f4diji"
-Content-Disposition: inline
-In-Reply-To: <arJRPVsReXWfUC_o@orome>
-
-
---6rgnpj74w7f4diji
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
+References: <20260930070535.47130-1-clamor95@gmail.com> <20260930070535.47130-4-clamor95@gmail.com>
+ <UJZ22UtaS1GSRPlyAst1og@nvidia.com> <CAPVz0n2F8LBqFs2bJERmgvdNYgtt1OEVtK3++CP9y0gxW7gCGA@mail.gmail.com>
+ <arzn-TNbOlqXqQgd@orome> <CAPVz0n33c_uwfhsSguEfFfJ3FV=26SPtNTEpHes9f5RjnPDA_w@mail.gmail.com>
+ <arz1wzEI_7e7ruKi@orome>
+In-Reply-To: <arz1wzEI_7e7ruKi@orome>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Wed, 30 Sep 2026 14:56:26 +0300
+X-Gm-Features: AclHuK-jagRAWDSvA026O_Jnox8tuvSOQdVM_QI0nIj8TPkLU1ik19zpdv3Pldc
+Message-ID: <CAPVz0n12oiuc=5wjeNCuNtJpe-M7Ys=rHn0TOExc0qkweVQnuA@mail.gmail.com>
+Subject: Re: [PATCH v1 3/6] dt-bindings: display: tegra: Document 8-bit CPU
+ parallel interface
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/3] pwm: tegra: Check for match_data being NULL
-MIME-Version: 1.0
 
-On Tue, Sep 22, 2026 at 12:06:14PM +0200, Thierry Reding wrote:
-> On Tue, Sep 22, 2026 at 10:33:16AM +0200, Uwe Kleine-K=F6nig wrote:
-> > Hello,
-> >=20
-> > On Mon, Sep 21, 2026 at 06:24:39PM +0200, Thierry Reding wrote:
-> > > You're probably not wrong about opt-in being the more natural choice,
-> > > but looking at commit 3d713e0e382e ("driver core: platform: add device
-> > > binding path 'driver_override'"), the intended use-cases are very
-> > > generic, so it would probably lead to a continuous stream of patches
-> > > needing to be added whenever a new device wants to be supported with
-> > > vfio or something.
-> >=20
-> > thinking a bit more about that: The use-case presented in that commit is
-> > about
-> >=20
-> > 	echo vfio-platform > /sys/bus/platform/devices/fff51000.ethernet/drive=
-r_override
-> >=20
-> > . If we had an opt-in mechanism on the driver side, it would only be
-> > vfio* that would need it, wouldn't it? That sounds handleable.
->=20
-> I have a prototype patch that I'm going to send out shortly (after
-> testing that it actually works). The problem ended up being that the
-> driver_override is a device attribute, so there's no good way to drop it
-> based on a driver flag.
+=D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 14:46 Thie=
+rry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Wed, Sep 30, 2026 at 01:56:40PM +0300, Svyatoslav Ryhel wrote:
+> > =D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 13:50 =
+Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> > >
+> > > On Wed, Sep 30, 2026 at 12:52:18PM +0300, Svyatoslav Ryhel wrote:
+> > > > =D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 12=
+:19 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> > > > >
+> > > > > On Wednesday, September 30, 2026 4:05=E2=80=AFPM Svyatoslav Ryhel=
+ wrote:
+> > > > > > Document 8-bit CPU parallel MIPI DBI Type B interface provided =
+by
+> > > > > > Tegra20/30 SoCs display controller.
+> > > > > >
+> > > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > > > ---
+> > > > > >  .../display/tegra/nvidia,tegra-8bit-cpu.yaml  | 138 ++++++++++=
+++++++++
+> > > > > >  1 file changed, 138 insertions(+)
+> > > > > >  create mode 100644 Documentation/devicetree/bindings/display/t=
+egra/nvidia,tegra-8bit-cpu.yaml
+> > > > > >
+> > > > > > diff --git a/Documentation/devicetree/bindings/display/tegra/nv=
+idia,tegra-8bit-cpu.yaml b/Documentation/devicetree/bindings/display/tegra/=
+nvidia,tegra-8bit-cpu.yaml
+> > > > > > new file mode 100644
+> > > > > > index 0000000000000..f0dab608b2936
+> > > > > > --- /dev/null
+> > > > > > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,te=
+gra-8bit-cpu.yaml
+> > > > > > @@ -0,0 +1,138 @@
+> > > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > > > +%YAML 1.2
+> > > > > > +---
+> > > > > > +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra-=
+8bit-cpu.yaml#
+> > > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > > > +
+> > > > > > +title: Nvidia Tegra DC based MIPI DBI Type B bridge
+> > > > > > +
+> > > > > > +maintainers:
+> > > > > > +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > > > +
+> > > > > > +description: The display controller in Tegra20/30 SoCs feature=
+s an
+> > > > > > +  8-bit SPI interface that closely resembles the MIPI DBI Type=
+ B
+> > > > > > +  protocol and is referred to as '8-bit CPU'. Each display con=
+troller
+> > > > > > +  provides two such interfaces, which can be used to send MIPI=
+ DCS
+> > > > > > +  commands to initialize and control the panel while image dat=
+a is
+> > > > > > +  transmitted via 16/18/24-line RGB.
+> > > > > > +
+> > > > > > +properties:
+> > > > > > +  compatible:
+> > > > > > +    const: nvidia,tegra-8bit-cpu
+> > > > > > +
+> > > > > > +  dc-gpios:
+> > > > > > +    description: Data/command selection pin.
+> > > > > > +    maxItems: 1
+> > > > > > +
+> > > > > > +  rw-gpios:
+> > > > > > +    description: Read/write pin.
+> > > > > > +    maxItems: 1
+> > > > > > +
+> > > > > > +  cs-gpios:
+> > > > > > +    description: Chip select pin.
+> > > > > > +    maxItems: 1
+> > > > > > +
+> > > > > > +  data-gpios:
+> > > > > > +    description: Specifies a set of 8 gpio pins used to transf=
+er data.
+> > > > > > +    minItems: 8
+> > > > > > +    maxItems: 8
+> > > > >
+> > > > > Based on my admittedly brief research, according to the TRM the d=
+isplay
+> > > > > controller can drive all of these pins - of which there are two f=
+ixed
+> > > > > sets as you mention - directly. So we'd need to describe which in=
+terface
+> > > > > the display is connected to in DT, but not any GPIOs (which they =
+really
+> > > > > aren't).
+> > > > >
+> > > >
+> > > > I am perfectly fine to not expose any gpios in the binding, if this=
+ is
+> > > > preferred. Only question, which method of interface checking would =
+be
+> > > > preferred. I assume if primary then nothing, if secondary - boolean
+> > > > prop "nvidia,secondary"? Feel free to share your vision.
+> > >
+> > > The driver currently uses the GPIOs to program DBI commands, so I
+> > > suspect we do need some way of controlling those pins. Or is there a =
+way
+> > > to have the display controller program the pins and send commands? Th=
+at
+> > > would be much preferred because it would more accurately reflect the =
+HW
+> > > design and possibly also simplify the driver because it doesn't need =
+to
+> > > parse the GPIOs and then also not use the GPIO API to set the values.
+> > >
+> >
+> > From what I know, GPIOs must be used and freed after use. Sets of
+> > GPIOs are defined and remain fixed for primary and secondary
+> > interface.
+>
+> So you're saying that we need the GPIO handling in the RGB/DBI driver to
+> prevent anyone else from using these GPIOs and potentially messing with
+> the DBI communication?
+>
 
-Did you see that I sent such a patch already.
-https://lore.kernel.org/lkml/0f7446324f6a0c8f0153d6532d92a6eeecd6a308.17906=
-12298.git.u.kleine-koenig@baylibre.com/ .
-You were on Cc:, I thought this to be enough to make you aware and
-didn't mention it in this thread here.
+No, gpios are used for dbi communcation while their sfio versions are
+used to transfer RGB data. So there is no risk in external
+intereference.
 
-I hope to not have provoked much duplicate work.
+> It feels like there should be a better mechanism for that than requiring
+> the DC driver to request all the GPIOs. Maybe these should be excluded
+> from the range of valid GPIOs?
+>
 
-Best regards
-Uwe
+NO! These gpios can be used for random purposes on devices with non-RGB set=
+ups.
 
---6rgnpj74w7f4diji
-Content-Type: application/pgp-signature; name="signature.asc"
+> We can make sure that device tree isn't going to use these on a given
+> platform, but there's still the risk of users grabbing them via sysfs or
+> the chardev API.
+>
 
------BEGIN PGP SIGNATURE-----
+Well, defining them in the schema as it is now and adding a note that
+gpios specified in the binding cannot be re-used/shared may be a
+solution. But overall it is impossible to reuse gpios dedicated for
+dbi by hw design. They cannot be shared or used for other purposes if
+dbi is used.
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmq8+MMACgkQj4D7WH0S
-/k4RvAgAqd9FufsIM+X10LNPW2vXz8iS437cIitZBmuW1Vk5daH2a6nX3ITro9Xd
-m1uBy04vTBPMSXsUwvol6f9Y1h5JW0iYXF2YwTTAlWR3fetaR884qBLR/X6yveCc
-Z71fEjfhgB65RixvyS2lccOO5HZMIuSUg78ugSEU/oZmfI1rY27I9D/H21bJtZpY
-CUtunPcw+aRBmHe1IY9wTsT58JaACjvTaMyXJnppHSx8Q6Z7ZrYatU3AomaKIemk
-ReTaT9id7o5dVHf7gP1rZowooxWdUyjGpXfQ6B3sRPR7SzweCGbW9d8KGcEcSAB7
-k3PLVpRXQlv8VzgsQaqq/nbFY0ILdQ==
-=3GXt
------END PGP SIGNATURE-----
-
---6rgnpj74w7f4diji--
+> > > As for selecting the interface to use, it could probably be just a
+> > > simple, single-cell value with two valid values. That's a bit clearer
+> > > than a boolean, because with a boolean you need to explicitly documen=
+t
+> > > what happens when it is absent.
+> > >
+> >
+> > I can describe boolean too, but if you want set it like "nvidia,head".
+> > Fine by me.
+>
+> Yeah, I'd prefer it to be explicit which mode of operation is selected.
+>
+> Thierry
