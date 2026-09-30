@@ -1,239 +1,256 @@
-Received: from mail-dy2-f41.google.com (mail-dy2-f41.google.com [74.125.229.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834FD468C06
-	for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 11:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.229.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790766631; cv=pass; b=Ha6GobvEjrB7He71U9FWpzFNgEqoRYDFpOQpHbApjwQp7Hhy1I0ZE+BO/Dlj594Vzwcq+51tTXPOwosgi8jiXiD7e/IY8ZQckm+widxzUlL+47Efu2S4uydNg9ih+11KuLkY30gyQBZNS5PPkHtDa+RFPi/GrIaSUJUysLIWWAM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790766631; c=relaxed/simple;
-	bh=HnH8VJnjaBSq8pHNX8m+PS+xqjnyRiEUaGmbI29CpZU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gQGImxvODzly2MFpwLdKTk59cFPsPQTSCOfWgyBG6CqY7X0D9VWvMmhgC9QzBW8xPT/oZcmzamdRbhP75fHq+4FTh/fdGrXDaEQruALW7f/eIW8IXz8wz8NJ4h4o1AP30VsgqQUcnS+odNcAumS3QzETfT5wHveA3oOYCvmztRo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MgQTQyg1; arc=pass smtp.client-ip=74.125.229.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DB22AEEB;
+	Wed, 30 Sep 2026 11:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790768046; cv=none; b=TcuQz8LM4LN1vTzoU9LnuHnBK8IsMaHHoteytZognJjWR1lAByFZ0zjG6Lu8HGaXWyoOaDL0gwM3T0bQrgW4h2Htu9G68moXix0xFfkEEjXZQoY7UDaXfJI0lmQX6Hn3Uidlzh7ORnCSAm2teAmHpCZTjRIsHLjXgwQKAskSxOY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790768046; c=relaxed/simple;
+	bh=CmWysLMga2qvG/l1NVuKy643fhuHle4zYD1qmtCZAC0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s7mCpRhOLkuv0sBAA+wG36sEffw8pUDECM9HHxhG7jiv7scXgKc4ATxblQJhJx0tlf+NUPw6WwCShyBiSauba5SoxgURFhfmk/jxGCiPaE8Z9ddnMsZttq3l5Q41utErSuce0RwTyYDbXPnSCA6AcfPjSqrD6sY69ajMzViJ+EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJln5r1F; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MgQTQyg1"
-Received: by mail-dy2-f41.google.com with SMTP id 5a478bee46e88-347866278b6so1589652eec.2
-        for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 04:10:28 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790766627; cv=none;
-        d=google.com; s=arc-20260327;
-        b=bdAlOAwjxmn+iNKp1rHBUVUXs6pW4Fhk+Y8sn9j9b8Ol8kO+2wins0+L7eKnBDcgS+
-         c/p/2d4mSBAq3AA23loQrbwNr2AkrWYa9G5cuy1I0jRzwT1I2kQaVxOHpEGVqSOcK8AB
-         ZhizqSm1CHKOWzH1L4iZ7IiZWEIZtjLXoiQePWuxvrKGcCyYTa3d91SNHbCZVXZjB0Gp
-         r0z8+FdeVvQ32eaMwJ4DZp3DZbT5YzrUGK/j8FRgq+sZl09SBNg31LTSQMr+ntsBdkLq
-         vagnkrIaG8TecCZLxdIMUvUFKYsalAwhqOgC2NX7PeulN7/jlOhiTX1t/kmY20eJHyS0
-         gd5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=OEhQm76+qWHV8H86aGRhLc+e8lMqxBXJwP8RftuJrxE=;
-        fh=8yU54DQ33KPhjillabq+Kd/2fekri8b70b6EZ5NjGNg=;
-        b=YX+E9hGgJuau74pAZNz2bcQfM38PbjQmHFsTb2YHHpxqCvR0UbdOooa4xuC7grh+LX
-         ydkBlxZO7fQTkfGSKoxG8Qljcg91NFG3oSnOjCttqWUDYpqLlMF0h+IsONMgdgqLm5vq
-         k/VIYFGBBaBvud7dEyrmTgitaopmpGmExG1tm8Kzn8uZ5NqiQde5zIHEuG2N8+XdV9AF
-         rBh/t9hHwzvB5Ku0HMMEXJgNUtVopg/eQjRl8VUw5fvSCYG6CyZQF+YMn0ksTPHyGF/F
-         R/69LRs6K1SBJyEMDWS2lEMlNCbCCw2w++Utss+OdWT4M6mFkXRXUkShFp1y+Op9KfEf
-         C1PQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790766627; x=1791371427; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=OEhQm76+qWHV8H86aGRhLc+e8lMqxBXJwP8RftuJrxE=;
-        b=MgQTQyg1ZXvluhLl4HNq2TnzEpia4IA7QL7q+ykyFhy6WehRWXU1peJZw+Bqehtp4u
-         44maUhW+cOdfNWt4z9Xa6pnYkTBgTDW30HLqqiHO/ySxlRktd29uVoqe3AlIhfzqFzGC
-         gZJPzscmILJ7ey4QWY9MwnSoOoNbSMrV0WZdpPZpZ43QGN+pR4OkAGdpUMVgCiLskFhT
-         h/wkhrgfNV3rVERn6niPabRYQnsv80I2oUmHW2cyJKfD4chcxTbhKO8c5RTvdl5kKDyk
-         EFBdPdbKTwypNe4rDT0r22o2hOWlEVD2ac+c863T37sKAhTflN4DC/fA6NiZVSdCejR3
-         VrSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790766627; x=1791371427;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=OEhQm76+qWHV8H86aGRhLc+e8lMqxBXJwP8RftuJrxE=;
-        b=PN/ldrE/t0sw6g2/vUd2sMsAD3wVIMWCkOA/px3e0iZOX1Ai+5fNGPamwBZqLdMVS3
-         Uq2g5hLjEsPBtvbxVYst+hqO9RfYMzrzVXJD2dmR03fg3+/6WC9H8SdU1hG+NBu7WDRq
-         plbKwgJB3uyc2QROR4YcXxKw8WynGeTwGKfC2YxGlAek5LTrCUxjblonXv4R0Cv1ht+b
-         cj9RgRAXvQqGsnk5bsEvcIiO+f2K+1A3lMm/xHH1w7TTunWv4w5qXg5d4540mXDcZ2Mr
-         IYFNWwPGdl2gPjQkRS4EYIItyzSyccW+QqvLGWms6aR2r7wuxTjHwwvkhoaoiNOzukWV
-         dGAg==
-X-Forwarded-Encrypted: i=1; AKwUvBwEg2CmW3RqcYluJYblukzpwyu3X7oGtUWq1xtacOvh7XQjjlMWkrLs0SXGGBwLSjgPH6znvhrhzBeKlA==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJ/9a9dPlWwj/qcNNUhHgYoVbjmVWg4UjMXwDXgbIyzkPTVrZSL
-	TQIzvnZJ9q1Iasm+poDnyGEDY3tK3PQ73nmAoYRTjw+tXWqKnadgJABn4EU8/0BZc5VmYOaCu1y
-	Dqb5yAaBTkUcrcXCwggJ3Dlw7ZD9tF/I=
-X-Gm-Gg: AYBFou2l45KB/LWFvlLiSOCQRfBmv56RWHAQAEEGGnUebAlun9Wm1iFG6fDffw5nE2b
-	2cN0FHeQsyfkjxK7C64cFohVTukEU7P/qXTWf5DaAYmfhwBXQRcEzphS9TLKZnadgeQazf5p1XP
-	einscLHp9TM4KwKbhSHKxM2ElzgEM6tMOIlusjfX+YLn2fTunY+moCzwthVCR6qAzCEGCRiUbFx
-	3S8GSh9zhqhyZ6acVpsIsR7Kb07pJM3q6Ixt/MBUwjTvu0dzfXpv6j4AeiyecbNjlIOQChck6Ky
-	IAnZcxHO56lJ+9WbQ8/XrL5W18r0ByZTE5W7EOJBTxNbT5OKbTFv987dQy/293oWTxzR8e4mjXR
-	FmapWyDYAo9Ce
-X-Received: by 2002:a05:693c:66ce:10b0:34b:731a:7325 with SMTP id
- 5a478bee46e88-34cdcbb4344mr1377981eec.29.1790766627375; Wed, 30 Sep 2026
- 04:10:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJln5r1F"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43A781F000FF;
+	Wed, 30 Sep 2026 11:34:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790768044;
+	bh=Flr3+GGP3TPmQvHBee/nC5aClMMVtkJOvhVsHYP44Jw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=HJln5r1FM98WBeLs7XUSvG/yAXxwvSZTn+E3qku7Fcw7QA70Y5PV2GcYMSGQSJBwq
+	 VnysVYjfQjFuvK8+MrEELJkhIlSVBYdS/3CU0+iv9k2Ajlsci/8xGoeojxrQ3xRvfR
+	 GvQ90wuGG0SBsySlnyRXaMBJHymxkonwG+b8AbWjMDqCcaAeh+FQSGWfgzlCnpQ6YA
+	 WUqlMFRL+jH9zjujPu6F8RxD3ubOphumLBhx0eCaAVAU1G7brwDmWGhUnHdM4YnEOE
+	 23YIdYjbItbNFOPUqpSN+1GqIBtP1IO2L9ppWjyZpN92UE9iOI4Nn4MnkLMnLKoEEr
+	 wIv2P4K7MUBlA==
+Date: Wed, 30 Sep 2026 13:34:02 +0200
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Kartik Rajput <kkartik@nvidia.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, 
+	Avri Altman <avri.altman@sandisk.com>, Bart Van Assche <bvanassche@acm.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, "Martin K. Petersen" <mkp@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Thierry Reding <treding@nvidia.com>, linux-scsi@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] scsi: ufs: tegra: Add Tegra264 UFS host
+ controller driver
+Message-ID: <arzsK8U8Nw39Pwu-@orome>
+References: <20260929-tegra264-ufs-v2-0-f0467b9c503e@nvidia.com>
+ <20260929-tegra264-ufs-v2-4-f0467b9c503e@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260930070535.47130-1-clamor95@gmail.com> <20260930070535.47130-4-clamor95@gmail.com>
- <arzMF0wjcF_SVxpE@orome> <CAPVz0n3Oc4ocUWrtGgd-MdrdJ3SgDEi8onOkXi92o7hAn3y0Ww@mail.gmail.com>
- <arzlR8mCg9d_z62L@orome> <CAPVz0n0jnitNemUyhi9C2SgbRbJA9CinY1DrR-r7gnN=CaYGiQ@mail.gmail.com>
- <arzpluDc-Ib7q-K7@orome>
-In-Reply-To: <arzpluDc-Ib7q-K7@orome>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Wed, 30 Sep 2026 14:10:15 +0300
-X-Gm-Features: AclHuK-5MVKqwWOaWtZXWbiTTg2vtWkQnodr3EENyxfP5JkvZ2csH4Wtodn2Zmg
-Message-ID: <CAPVz0n0sQo-6xKOGzd3LsJzzAr7_TficW4KeU320Z-tcRUne9w@mail.gmail.com>
-Subject: Re: [PATCH v1 3/6] dt-bindings: display: tegra: Document 8-bit CPU
- parallel interface
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jp336opcm6u7er2z"
+Content-Disposition: inline
+In-Reply-To: <20260929-tegra264-ufs-v2-4-f0467b9c503e@nvidia.com>
+
+
+--jp336opcm6u7er2z
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 4/4] scsi: ufs: tegra: Add Tegra264 UFS host
+ controller driver
+MIME-Version: 1.0
 
-=D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 13:54 Thie=
-rry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Wed, Sep 30, 2026 at 01:42:17PM +0300, Svyatoslav Ryhel wrote:
-> > =D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 13:34 =
-Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> > >
-> > > On Wed, Sep 30, 2026 at 12:00:21PM +0300, Svyatoslav Ryhel wrote:
-> > > > =D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 11=
-:47 Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > > >
-> > > > > On Wed, Sep 30, 2026 at 10:05:32AM +0300, Svyatoslav Ryhel wrote:
-> > > > > > Document 8-bit CPU parallel MIPI DBI Type B interface provided =
-by
-> > > > > > Tegra20/30 SoCs display controller.
-> > > > > >
-> > > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > > > ---
-> > > > > >  .../display/tegra/nvidia,tegra-8bit-cpu.yaml  | 138 ++++++++++=
-++++++++
-> > > > > >  1 file changed, 138 insertions(+)
-> > > > > >  create mode 100644 Documentation/devicetree/bindings/display/t=
-egra/nvidia,tegra-8bit-cpu.yaml
-> > > > > >
-> > > > > > diff --git a/Documentation/devicetree/bindings/display/tegra/nv=
-idia,tegra-8bit-cpu.yaml b/Documentation/devicetree/bindings/display/tegra/=
-nvidia,tegra-8bit-cpu.yaml
-> > > > > > new file mode 100644
-> > > > > > index 0000000000000..f0dab608b2936
-> > > > > > --- /dev/null
-> > > > > > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,te=
-gra-8bit-cpu.yaml
-> > > > > > @@ -0,0 +1,138 @@
-> > > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > > > +%YAML 1.2
-> > > > > > +---
-> > > > > > +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra-=
-8bit-cpu.yaml#
-> > > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > > > +
-> > > > > > +title: Nvidia Tegra DC based MIPI DBI Type B bridge
-> > > > > > +
-> > > > > > +maintainers:
-> > > > > > +  - Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > > > +
-> > > > > > +description: The display controller in Tegra20/30 SoCs feature=
-s an
-> > > > > > +  8-bit SPI interface that closely resembles the MIPI DBI Type=
- B
-> > > > > > +  protocol and is referred to as '8-bit CPU'. Each display con=
-troller
-> > > > > > +  provides two such interfaces, which can be used to send MIPI=
- DCS
-> > > > > > +  commands to initialize and control the panel while image dat=
-a is
-> > > > > > +  transmitted via 16/18/24-line RGB.
-> > > > > > +
-> > > > > > +properties:
-> > > > > > +  compatible:
-> > > > > > +    const: nvidia,tegra-8bit-cpu
-> > > > >
-> > > > > The description says that this is a feature of the display contro=
-ller,
-> > > > > so adding a new binding and compatible string for this is not the=
- right
-> > > > > move. This is all covered by the "nvidia,tegra{20,30}-dc" already=
-, just
-> > > > > need to extend that with whatever is new.
-> > > > >
-> > > >
-> > > > How would you model it? I have tried to model 8bit-cpu as a bridge,=
- similar
-> > > > to how DSI bridges are modeled. This reflects interface used to lin=
-k RGB and
-> > > > panel, without inflating existing DC binding. If you have any ideas=
- in modelling
-> > > > this, I am open to any suggestions.
-> > >
-> > > My suggestion is to integrate this into the existing "rgb" node, or, =
-if
-> >
-> > Not an option since it is not clean RGB and there will be no way to
-> > distinguish RGB from 8bit-CPU.
-> >
-> > > that becomes too convoluted, a separate "lcd" node (or "dbi", whateve=
-r).
-> >
-> > This is fine by me but nesting nodes without compatible feels weird. Oh=
- well.
-> >
-> > dc {
-> >   compatible =3D "...";
-> >   rgb {
-> >     dbi {
-> >       ...
-> >     };
-> >   };
-> > };
->
-> That's one option, but there's also many other ways you could
-> differentiate between RGB and DBI. Could be a simple "nvidia,interface"
-> property in the "rgb" node (that defaults to RGB if absent). It could
-> also be a node that is a sibling to "rgb" (rather than a child). Or the
-> child could work, too.
->
-> Ultimately we're still describing aspects of the display controller here
-> since this is all registers within the display controller's MMIO region.
-> Nested nodes are purely for adding some logical structure for the
-> description that makes sense.
->
+On Tue, Sep 29, 2026 at 03:15:10PM +0530, Kartik Rajput wrote:
+> Add a driver for the UFS host controller found on NVIDIA Tegra264 SoCs.
+> The controller has Tegra-specific auxiliary registers, clocks and resets,
+> and it drives the four M-PHY lane directions exposed by the Tegra264
+> M-PHY driver.
+>=20
+> Co-developed-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+> ---
+>  drivers/ufs/host/Kconfig     |  14 +
+>  drivers/ufs/host/Makefile    |   1 +
+>  drivers/ufs/host/ufs-tegra.c | 686 +++++++++++++++++++++++++++++++++++++=
+++++++
+>  3 files changed, 701 insertions(+)
+>=20
+> diff --git a/drivers/ufs/host/Kconfig b/drivers/ufs/host/Kconfig
+> index ff170c0b6da0..7ca317d25251 100644
+> --- a/drivers/ufs/host/Kconfig
+> +++ b/drivers/ufs/host/Kconfig
+> @@ -168,3 +168,17 @@ config SCSI_UFS_AMD_VERSAL2
+> =20
+>  	  Select this if you have UFS controller on AMD Versal Gen 2 SoC.
+>  	  If unsure, say N.
+> +
+> +config SCSI_UFS_TEGRA
+> +	tristate "NVIDIA Tegra264 UFS controller platform driver"
+> +	depends on SCSI_UFSHCD_PLATFORM
+> +	depends on ARCH_TEGRA_264_SOC || (COMPILE_TEST && 64BIT)
 
-From my understanding data is sent basically as RGB, at least RGB
-configuration is still used in downstream. Panel commands are sent via
-DBI
+=46rom a quick look I couldn't spot anything specific to 64-bit in the
+driver. Did I miss anything?
 
-dc {
-   compatible =3D "...";
+Also, we really shouldn't depend on ARCH_TEGRA_264_SOC since this
+controller exists on prior generations and we will eventually want to
+support them, too.
 
-   rgb {
-    port...
-   };
+> +	select PHY_TEGRA_MPHY
 
-   dbi {
-      ...
-   };
-};
+Maybe to complement what Krzysztof already said: Kconfig dependencies
+are primarily build-time dependencies. This driver uses the generic PHY
+API to access the M-PHY functionality, so GENERIC_PHY is the correct
+build-time dependency. The driver is purposefully agnostic to the
+specific implementation of the PHYs that it uses so that it can work
+with (potentially) many different PHY implementations.
 
-This would work nicely if DBI is modeled using bridge framework. I
-would strongly insist on keeping it as a stand-alone configuration
-separated from RGB and DC.
+We use device tree to hook up the runtime dependencies. If the M-PHY
+driver is not enabled we get the probe deferred because the PHYs that
+were hooked up in DT haven't been registered and hence can't be found
+(by the generic PHY framework). On other devices the PHYs might end up
+being backed by completely different implementations and they could
+still work just fine.
 
-> Thierry
+> +	help
+> +	  Enable support for the UFS host controller on NVIDIA Tegra264
+> +	  SoCs. The driver relies on the Tegra264 M-PHY driver
+
+I would suggest dropping references to Tegra264 here. The driver is not
+specific to Tegra264. There are older Tegra SoCs that have (earlier)
+generations of this IP and that should still work with this driver
+(maybe with some parameterization).
+
+> diff --git a/drivers/ufs/host/ufs-tegra.c b/drivers/ufs/host/ufs-tegra.c
+> new file mode 100644
+> index 000000000000..f12265432592
+> --- /dev/null
+> +++ b/drivers/ufs/host/ufs-tegra.c
+> @@ -0,0 +1,686 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +// Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserv=
+ed.
+> +// NVIDIA Tegra264 UFS host controller driver.
+
+Tegra264 can be dropped here as well.
+
+[...]
+> +#define UFS_TEGRA_HS_CLK_RATE_HZ		5840000000UL
+
+Do we assume that this will always be the same value? Maybe this should
+be turned into SoC data? We could always do that when necessary, of
+course.
+
+[...]
+> +static int ufs_tegra_mphy_power_on(struct ufs_hba *hba)
+> +{
+> +	struct ufs_tegra *ufs =3D ufshcd_get_variant(hba);
+> +	int err;
+> +
+> +	err =3D phy_power_on(ufs->mphy_l0_rx);
+> +	if (err) {
+> +		dev_err(hba->dev, "failed to power on mphy-l0-rx\n");
+> +		return err;
+> +	}
+> +
+> +	err =3D phy_power_on(ufs->mphy_l0_tx);
+> +	if (err) {
+> +		dev_err(hba->dev, "failed to power on mphy-l0-tx\n");
+> +		goto out_power_off_l0_rx;
+> +	}
+> +
+> +	err =3D phy_power_on(ufs->mphy_l1_rx);
+> +	if (err) {
+> +		dev_err(hba->dev, "failed to power on mphy-l1-rx\n");
+> +		goto out_power_off_l0_tx;
+> +	}
+> +
+> +	err =3D phy_power_on(ufs->mphy_l1_tx);
+> +	if (err) {
+> +		dev_err(hba->dev, "failed to power on mphy-l1-tx\n");
+> +		goto out_power_off_l1_rx;
+> +	}
+> +
+> +	return 0;
+> +
+> +out_power_off_l1_rx:
+> +	phy_power_off(ufs->mphy_l1_rx);
+> +out_power_off_l0_tx:
+> +	phy_power_off(ufs->mphy_l0_tx);
+> +out_power_off_l0_rx:
+> +	phy_power_off(ufs->mphy_l0_rx);
+> +
+> +	return err;
+> +}
+
+Almost seems like we need phy_bulk APIs. Again, doesn't need to be part
+of this series, but maybe something to keep in mind.
+
+[...]
+> +static int ufs_tegra_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op,
+> +			     enum ufs_notify_change_status status)
+> +{
+> +	if (status =3D=3D PRE_CHANGE)
+> +		return 0;
+> +
+> +	/* Runtime H8 park keeps the M-PHY powered; only tear it down
+> +	 * on the full-teardown paths (system suspend, shutdown, or
+> +	 * runtime PM with LINK_OFF).
+> +	 */
+
+Comment style needs the first line to be /* on its own, except for the
+net subsystem, if I recall correctly. There are other occurrences of
+this elsewhere in the file.
+
+Also, I read "H8" as "hate" at first and it took me a little bit to
+realize it meant "hibernate" in this case. Looks like the rest of UFS
+uses "hibern8". Maybe stick to the convention?
+
+[...]
+> +static int ufs_tegra_pwr_change_notify(struct ufs_hba *hba,
+> +				       enum ufs_notify_change_status status,
+> +				       struct ufs_pa_layer_attr *dev_req_params)
+> +{
+[...]
+> +	if (dev_req_params->hs_rate =3D=3D PA_HS_MODE_A ||
+> +	    dev_req_params->hs_rate =3D=3D PA_HS_MODE_B) {
+> +		err =3D clk_set_rate(ufs->hs_clk, UFS_TEGRA_HS_CLK_RATE_HZ);
+
+What if hs_rate !=3D PA_HS_MODE_A or PA_HS_MODE_B?
+
+> +static int ufs_tegra_set_dma_mask(struct ufs_hba *hba)
+> +{
+> +	return dma_set_mask_and_coherent(hba->dev, DMA_BIT_MASK(32));
+> +}
+
+I have a feeling like the 32 is here on purpose, but I can't fully
+remember why it's not something like 40, which is the standard on recent
+Tegra devices.
+
+Maybe we should add a comment explaining why this needs to be so narrow.
+
+Thierry
+
+--jp336opcm6u7er2z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmq886cACgkQ3SOs138+
+s6GdQxAAmLZzF9sJFE536oAWmTNQI9D2+UMoQmKCgyANxCKt1hphd8gO9qhAdDtd
+WkG7dHXvZqGDpDVwiC/SdQUwySkpHnfM68lqABGScHTBH1mY+8BxufnqOLooJ1AV
+in06DLEgN0G3wGNx45CllJmg9plimxKAEFXbv9MYxbg3hyf4jcdEMKdFsXMSBG8b
+ka7E3RqWt8nuiK5M1oi7HbdiOeRYay37L/HJ6Cw2p9GPgFCl9/yPuX2X53RguzfJ
+0A8fGV3K69skmsFmDcY3AficeHN6hfNNHSDqjPXBinCbMiI+h4WX4ceqhCWnmxE8
+j1SJg8u9hv10VXRsTfurJ2iBZxHNmLxdt1MM8PiFlZD8QPAHB9KEBJM0fx2i2UR7
+Xhnx2iLCexGxGsFfdt5PWlpsGI84dJ443YSK7GkD4hCqiyDZM0Bf5aL6LOKzvKsA
+TOUJjC7p2xD3mXn5wi7FTg91yxhZR7dow6+ibronLCEEmJPlmA89l1D+FhPaeOfl
+UGAbBsX2PtztusqkMhR7VGWSAuBD8cF4JICKVSeVC5nH5HnUtgkpzDBySt2WfGY0
+4AppFkRnnYQhgmeas6kjwyG8HBBrlJsSdIps6CdhHGgVh9SEvycEbT2Ft1ZFR1xp
+qbzMSzMj0DFkKEdVSKC9BjwM4mVBe1OUyQrxqt18sw0gl6tNJL8=
+=IQBi
+-----END PGP SIGNATURE-----
+
+--jp336opcm6u7er2z--
