@@ -1,249 +1,191 @@
-Received: from mail-dy2-f42.google.com (mail-dy2-f42.google.com [74.125.229.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058AA4A99D6
-	for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 10:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.229.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790765821; cv=pass; b=J5qVMXJ/Y72bEjDqAgVZMdK+4cGLBXeCLEa/qkPA/g9+X2BkQX63vkmv/Kvt2uGJjzri114HimhuJQHvrmcKbjDn7ySuWEVIUj9rK3CzbGPQhWdobS3a2fB7cN9ZRPnNF5rvQQnPg5dhLgrayZndkPYtQc3ThdcMZq/rF/JtIGk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790765821; c=relaxed/simple;
-	bh=XcbWL0nrpyuw33WpWCVIaEEAxdeZN3j0ShZSAAf0IvY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GlniWoJN8lv2x8LwVX2coL5clUiWLxaty6icuzK0lI+2wooL9eN1PXnKpVB8Qro3KYIuG8AZuzErEDpvmQlPy89FxyDUNLDj81cATGtL6W9LP0zDuo6rysaWOI6u/1QpmjswiLtwMtKo3Uu3/c8nW32FOxuXtTbHEoFRRHDNfC0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rybekjI9; arc=pass smtp.client-ip=74.125.229.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005E44BA9E1;
+	Wed, 30 Sep 2026 10:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790765922; cv=none; b=sAy0nOqbnknLNhTHwzKrxFmWky6wNfob54z4GYj3S9UwDvaDjnEMJ3iDKqky9Xco8ukHj0nx7+N5qDRzuzck63YDcwCwVUEfkjCw7OVsP6nYyzyHIAzqroOuA66bOvjmHy6y7+N0PCdMbIK/r12TPXlXjwUtIizgnJKH6b/UYZE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790765922; c=relaxed/simple;
+	bh=JLsh9ctEJAIlq3fH54goXvPm3ESwMmQCY00+a5e5rZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jVtaMHEAj4trr6nGdwDdwt00dk6wp6uwUkOh0Ye/tk8ANnrThqYE66O0lS3Ehf2gy8pvwfwNV/ZSVhsYZBMNCoa8BAE922CT9n2OHKt6CC0+eQ4Qqqc77iaitES6aID7lCG/9SVNIZOeSftZtMbmUvR447epfsZHY80V8wqv0Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jRK1yGoH; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rybekjI9"
-Received: by mail-dy2-f42.google.com with SMTP id 5a478bee46e88-3411e0ace58so6582904eec.0
-        for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 03:56:54 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790765813; cv=none;
-        d=google.com; s=arc-20260327;
-        b=p3ns7mhUYZpjDvz90rAgbNVkmXOJ+8ccYu2U/eOXYYrzJx0FL5FGFCXCNSEegjh3vq
-         ucB6TM6AUc45ZIE4GjQUj+GWPVI+ODW0oeYD5wxQfGLcEA/YEldEETMaauhx/ZNbC1w4
-         PCjWBWhDyGniKlXj+9wDrg+boJ2W9mPLWSmR5xqXrcex7sGZ8Ouh3jF1WNALGGs1Upyu
-         FasMeWJjPj7wq2T7JbUCC7iUj/8ufOawM+kzgnFoDhqj5L2LuxvGOsw9tOcwyYdWhott
-         901jxizCv0pKxIkZIvfzd9N51U4Wo5bfMtCkSo1ZxFaJKk6QCXbhFTYMwdmjBHT/HFI0
-         q9bw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=9e1cJ5TO1cnYCQwoGNWZgRp51pppadHuJRrjli9Xnp0=;
-        fh=WObqGRjY12GiEHjFpIcB05CIO4WI7T84XmoZQ1E3ynE=;
-        b=WBEf7T3Kj6J9Ab+gKjLijd5+tu0cDr9umAkUpuFhqpkbhkPT8Y7TlsILYorCzq2R5/
-         XdDOUVhgLLm5V9V6ewUNZipmlVSSS1bZ77k61+yvM6K7/LCSQzl1S9L0Q9B9f4apPRzB
-         gmiPeGrhxkbzgnf0NTDogyrt7drjrxfPrW9/N9CpZ19AsI9VP8lgrki/bU0BPbO9T4RW
-         UuSnfGvo6tuouqfWl5Qc14E+dnUdZ96sfrZlBMcMuT5sciAt07CVQOVxKZlhr+MGfJIn
-         ub8w0UF8FXOTGr+cd0izo5qICNiAfCW+MCbhpooQ20QfhFEe+QCJugc8FrO1fyG5hHOa
-         5d1A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790765813; x=1791370613; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=9e1cJ5TO1cnYCQwoGNWZgRp51pppadHuJRrjli9Xnp0=;
-        b=rybekjI97RAVJGUiavX981Z73wuvlnlE/zrBODzwCInnQOwdhPlISuQ5rLl0FIPb85
-         NS0FT+J/EAfjMdLE4efQfweGTUVwKjo+74cUPrWUT+QxkFgLD5E69TLxatvrCwnfajvv
-         hE6PTIb2XDfEZzJPUKyrrJBilupezt+kToq6FhhJiKkNxQv6jmyvbJ1QWF4k9xwW4gYz
-         45viYHNdfLBhRhAlFZ48YCyZG/aTbCBI1TKl7upDs+Zs6JEZP53FRNybEHavT1SKCLWK
-         Cwx2iAXZJQNxVscL1GUC890mkO8vPNhu461SOo0EH7a6aQ/+x82aoOvCQMse7Zl6T95D
-         7lew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790765813; x=1791370613;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=9e1cJ5TO1cnYCQwoGNWZgRp51pppadHuJRrjli9Xnp0=;
-        b=tpgz0nO9dHhJFOTy5lIH227n8NL5TY9Bvynm1QOaxQdjH+P8DYIxuCPXwOltUeXu7v
-         FkMvgnDs2wLCC0xuOHmnsmXPkAdBPCsd8NDHN/t0VUmcp+gAsHb6ETKwc6Do1q4wtvbJ
-         yZlwf6FNYM2PgXx/8VeiBZyQglqx342i1DZ17CorvADkwOhyHRRCWYHVe4aku2r+XFUD
-         +chinsZMjxHOka9HxQDJWTVQLj6c2osvTNrVw2XblfJza6Gs9AJFYU47Zw1W1VBFVIA+
-         lr5UyDcFZ4zV3sJ7PVql/qiCkXFcQzLufI2pRe+Kq4hvlFj1uZH9jisR25Yz2/VdVdlS
-         8NDg==
-X-Forwarded-Encrypted: i=1; AKwUvBwPYUkevmJz+S861wlbO5PNbJbu62lpKzLJeJ0AEECJFVUMdf+FZ9N5pjyFudC6usoUSngPMlB9qlu/Tw==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJsWFVzGz4nbddSchiMgQOfmSmT5qEkIY16E0SvDP1A3H7TUWwf
-	UXCZ97M7n1k/+CJ7gvsmhuWHaGyTVkehG6/eigK5BuVmukygaGZxOBI1/Vs2H99vB246M7RzCgB
-	KOYIOu17Ebtc+EovI0Sdn6zkro+eQ7QtF4lES
-X-Gm-Gg: AYBFou2rTlyG7jrS3IbpC6rzVvRAHv5KmhdyvX4jdhltrsJ/zh52Vbt8NngzRAgHtfA
-	PM1cl3bnpAHHjLUi/aa0SFbGAH/yVM9A7i99TDoJ/1IDql7JSYfmKnmPFXf2ewZbIXbKNCikU5P
-	4ufBbxz8llVqDDLxO4r67Brb9+jFiorvJU0O8gsYzow0uR3k9bb+RUY9th2a4DUdaAOBmm/5PtS
-	BxSeUczCKSK4+ZsVngX//Z7XD6Ksnwg6N985FZpEgi4E+B7VYLPVAIb2zvn+/FHpljWLBS7+axL
-	sd/LdYwK44/S3sWzgBRsGmAVTHzfZPrukx8oq4WQbnHKzWm2+fDGvENOMUMgL2tIM83GEvTwBGN
-	KE7eItjIEJSLcNPT9/y5Ssow=
-X-Received: by 2002:a05:693c:42c8:b0:33e:a0c3:4163 with SMTP id
- 5a478bee46e88-34cdcca9e48mr1323411eec.24.1790765812417; Wed, 30 Sep 2026
- 03:56:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jRK1yGoH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29A931F000FF;
+	Wed, 30 Sep 2026 10:58:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790765910;
+	bh=pxhYZCRtMlW/teM6HS7EhHEc9imdgRYDA4FlDdsFq3M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=jRK1yGoHLg8mo0+XWEf7WOjjtFpxaRMreP9qMX3pg+2Y7ZiFtQSJz+CWqWeheH7U/
+	 97X6LWY/xoBvS447MoVh2DB9HePtTAwjh73etUcythKMcDkYAQloqbWVS8sEhRPm5W
+	 wNSlDpU24jgbrbDa8xwhUwBMc/1D9+EqMqS0BDE6/BjQIwlAIwTGYJMqIefBlVhe8j
+	 ML5zzV848TfX/F+Xu5yM2qzB5iw2pyAv52+B/AUj+xUK9imEFdRlF1S2s5ZVYLPfXN
+	 pCFmXcki3V8IPuTB31cByzs36LY3ujdDf9W/8Sg8xUSLVOT/g6jGIEP+MBhrgkCwie
+	 sqpPTKyzDzevQ==
+Date: Wed, 30 Sep 2026 12:58:28 +0200
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 6/6] drm/panel: Add Hitachi TX10D07VM0BAA and LG
+ LH400WV3-SD04 MIPI DBI panel driver
+Message-ID: <arzqcM1Qn40gO9qY@orome>
+References: <20260930070535.47130-1-clamor95@gmail.com>
+ <20260930070535.47130-7-clamor95@gmail.com>
+ <arzNgbx465QIKYdX@orome>
+ <CAPVz0n2QdSWL8=KBXnsQQkdNEJ9m6HSQ0+6mJji_RHZ8QgXN-g@mail.gmail.com>
+ <arzilGz4akKvRF1K@orome>
+ <CAPVz0n0-baCzHOXjWLOCLjv8fb5GbE9a2v=8tBYr3RgHkEu+qg@mail.gmail.com>
+ <arznE4HKl9r_mPX2@orome>
+ <CAPVz0n2A8oU_yRFQ_u_YkXSa5x7PtK8sYZ_p2P+GNcphq-bP-w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260930070535.47130-1-clamor95@gmail.com> <20260930070535.47130-4-clamor95@gmail.com>
- <UJZ22UtaS1GSRPlyAst1og@nvidia.com> <CAPVz0n2F8LBqFs2bJERmgvdNYgtt1OEVtK3++CP9y0gxW7gCGA@mail.gmail.com>
- <arzn-TNbOlqXqQgd@orome>
-In-Reply-To: <arzn-TNbOlqXqQgd@orome>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Wed, 30 Sep 2026 13:56:40 +0300
-X-Gm-Features: AclHuK9oLMebZiHh4azYE1DFmusVvYbZfHXPOcFGt1h-TD62cN-nNm6dZ6ICVfc
-Message-ID: <CAPVz0n33c_uwfhsSguEfFfJ3FV=26SPtNTEpHes9f5RjnPDA_w@mail.gmail.com>
-Subject: Re: [PATCH v1 3/6] dt-bindings: display: tegra: Document 8-bit CPU
- parallel interface
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jesszhan0024@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pxzrbd7z7tsl5fzj"
+Content-Disposition: inline
+In-Reply-To: <CAPVz0n2A8oU_yRFQ_u_YkXSa5x7PtK8sYZ_p2P+GNcphq-bP-w@mail.gmail.com>
+
+
+--pxzrbd7z7tsl5fzj
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 6/6] drm/panel: Add Hitachi TX10D07VM0BAA and LG
+ LH400WV3-SD04 MIPI DBI panel driver
+MIME-Version: 1.0
 
-=D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 13:50 Thie=
-rry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Wed, Sep 30, 2026 at 12:52:18PM +0300, Svyatoslav Ryhel wrote:
-> > =D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 12:19 =
-Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > >
-> > > On Wednesday, September 30, 2026 4:05=E2=80=AFPM Svyatoslav Ryhel wro=
-te:
-> > > > Document 8-bit CPU parallel MIPI DBI Type B interface provided by
-> > > > Tegra20/30 SoCs display controller.
+On Wed, Sep 30, 2026 at 01:48:02PM +0300, Svyatoslav Ryhel wrote:
+> =D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 13:43 Th=
+ierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Wed, Sep 30, 2026 at 01:34:19PM +0300, Svyatoslav Ryhel wrote:
+> > > =D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 13:2=
+3 Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
 > > > >
-> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > ---
-> > > >  .../display/tegra/nvidia,tegra-8bit-cpu.yaml  | 138 ++++++++++++++=
-++++
-> > > >  1 file changed, 138 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/display/tegra=
-/nvidia,tegra-8bit-cpu.yaml
+> > > > On Wed, Sep 30, 2026 at 12:08:41PM +0300, Svyatoslav Ryhel wrote:
+> > > > > =D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE =
+12:02 Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> > > > > > On Wed, Sep 30, 2026 at 10:05:35AM +0300, Svyatoslav Ryhel wrot=
+e:
+> > > > [...]
+> > > > > > > +static const struct of_device_id panel_dbi_of_match[] =3D {
+> > > > > > > +     { .compatible =3D "hit,tx10d07vm0baa", .data =3D (void =
+*)PANEL_DBI_TX10D07VM0BAA },
+> > > > > > > +     { .compatible =3D "lg,lh400wv3-sd04", .data =3D (void *=
+)PANEL_DBI_LH400WV3 },
+> > > > > >
+> > > > > > Why the detour through that PANEL_DB_* enum? You could just pas=
+s the
+> > > > > > panel funcs pointers directly via .data here.
+> > > > > >
+> > > > >
+> > > > > Passing API/OPS via .data is discouraged.
 > > > >
-> > > > diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia=
-,tegra-8bit-cpu.yaml b/Documentation/devicetree/bindings/display/tegra/nvid=
-ia,tegra-8bit-cpu.yaml
-> > > > new file mode 100644
-> > > > index 0000000000000..f0dab608b2936
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra-=
-8bit-cpu.yaml
-> > > > @@ -0,0 +1,138 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra-8bit=
--cpu.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: Nvidia Tegra DC based MIPI DBI Type B bridge
-> > > > +
-> > > > +maintainers:
-> > > > +  - Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > +
-> > > > +description: The display controller in Tegra20/30 SoCs features an
-> > > > +  8-bit SPI interface that closely resembles the MIPI DBI Type B
-> > > > +  protocol and is referred to as '8-bit CPU'. Each display control=
-ler
-> > > > +  provides two such interfaces, which can be used to send MIPI DCS
-> > > > +  commands to initialize and control the panel while image data is
-> > > > +  transmitted via 16/18/24-line RGB.
-> > > > +
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    const: nvidia,tegra-8bit-cpu
-> > > > +
-> > > > +  dc-gpios:
-> > > > +    description: Data/command selection pin.
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  rw-gpios:
-> > > > +    description: Read/write pin.
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  cs-gpios:
-> > > > +    description: Chip select pin.
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  data-gpios:
-> > > > +    description: Specifies a set of 8 gpio pins used to transfer d=
-ata.
-> > > > +    minItems: 8
-> > > > +    maxItems: 8
+> > > > No it's not. We do it all the time.
+> > > >
 > > >
-> > > Based on my admittedly brief research, according to the TRM the displ=
-ay
-> > > controller can drive all of these pins - of which there are two fixed
-> > > sets as you mention - directly. So we'd need to describe which interf=
-ace
-> > > the display is connected to in DT, but not any GPIOs (which they real=
+> > > I have had some controversial experience with MFD, with passing cell
+> > > composition. If DRM subsystem allows this, I am more then happy to
+> > > pass panel ops directly.
+> > >
+> > > > > > Also, looking at the enable/disable sequences these are in fact=
+ two
+> > > > > > different drivers, with the only commonality being that they ha=
+ppen to
+> > > > > > be used in the same device. Rolling them both into one driver s=
+eems a
+> > > > > > bit odd.
+> > > > >
+> > > > > I did this to simplify maintainance. Both panels are used in the =
+LG
+> > > > > Optimus 2X. My assumption is that LG switched one to another at s=
+ome
+> > > > > point, hence they share same timings, controls and supplies, but
+> > > > > differ in en/disable sequence. Additionally, these are the the on=
 ly
-> > > aren't).
+> > > > > DBI Type B-only panels in the kernel, from what I can see.
+> > > >
+> > > > That's just one more reason to put them into more of a generic driv=
+er,
+> > > > which would allow people to find it and extend/improve it as needed.
+> > > >
 > > >
+> > > This driver cannot be "generic". Both panels don't fall into any
+> > > category of being "generic". They are grouped solely cause they share
+> > > same timings, controls and supplies (only these 2 panels, other will
+> > > definitely differ) and are used in the same device. I have no problems
+> > > in splitting them into 2 distinct drivers.
 > >
-> > I am perfectly fine to not expose any gpios in the binding, if this is
-> > preferred. Only question, which method of interface checking would be
-> > preferred. I assume if primary then nothing, if secondary - boolean
-> > prop "nvidia,secondary"? Feel free to share your vision.
->
-> The driver currently uses the GPIOs to program DBI commands, so I
-> suspect we do need some way of controlling those pins. Or is there a way
-> to have the display controller program the pins and send commands? That
-> would be much preferred because it would more accurately reflect the HW
-> design and possibly also simplify the driver because it doesn't need to
-> parse the GPIOs and then also not use the GPIO API to set the values.
->
-
-From what I know, GPIOs must be used and freed after use. Sets of
-GPIOs are defined and remain fixed for primary and secondary
-interface.
-
-> As for selecting the interface to use, it could probably be just a
-> simple, single-cell value with two valid values. That's a bit clearer
-> than a boolean, because with a boolean you need to explicitly document
-> what happens when it is absent.
->
-
-I can describe boolean too, but if you want set it like "nvidia,head".
-Fine by me.
-
-> > > > +
-> > > > +  nvidia,init-sequence:
-> > > > +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> > > > +    description: Device specific set of values used in DC DISP_SPI=
-_INIT_SEQ
-> > > > +      registers.
-> > > > +    minItems: 4
-> > > > +    maxItems: 4
-> > >
-> > > And AIUI this is panel-specific DBI commands the display controller w=
-ill
-> > > transmit. So ideally the display driver should receive this data from
-> > > the panel driver.
-> > >
+> > The driver can still be mostly generic. And I suspect that the panels
+> > might have different names for the supplies and controls as well, they
+> > just happen to match in schematics or sources that you used as reference
+> > because they are for the same device.
 > >
-> > This is not panel driver data, but it is panel or maybe even more
-> > interface itself specific. TRM has no clear method of generation of
-> > this seq I am aware of. Maybe I have missed smth. These 4 entries
-> > co-respond to DC_DISP_SPI_INIT_SEQ_DATA_A_0,
-> > DC_DISP_SPI_INIT_SEQ_DATA_B_0, DC_DISP_SPI_INIT_SEQ_DATA_C_0 and
-> > DC_DISP_SPI_INIT_SEQ_DATA_D_0 registers of DC. Maybe you have some
-> > info to shed some light onto method of generation of this seq. Then it
-> > could be simply removed from binding and calculated internally. Thank
-> > you!
->
-> Even if this is interface-specific data, it is still defined by the
-> panel that's being used, right?
->
-> As such it'd make sense to integrate it into the panel driver and have
-> some side-channel to feed it to the display controller. If there's no
-> good standard way of doing so, having the display controller read it
-> from the panel node and programming it at the appropriate time could
-> work, too.
->
-> Thierry
+> > My point is, you can keep a lot of boilerplate in a generic DBI driver
+> > and then parameterize the things that aren't the same across them. That
+> > gives you the best of both worlds.
+> >
+> > The reason why I objected is that you have a very specific name for the
+> > driver file and the second panel doesn't match that at all, so it's
+> > confusing.
+> >
+>=20
+> Noted. I will split them to remove confusion. I assume that schema can
+> remain common.
+
+Works for me.
+
+> IMHO creating a generic DBI Type B panel driver does not wort it,
+> especially since these panels are more like non-simple DSI panels and
+> always require a dedicated en/disable sequence.
+
+But that's not a great reason. Note that you can have a generic driver
+that describes radically different panels. It's all a matter of
+parameterization. You can have very different *-supply property names
+and enable/disable sequences, all in the same driver. What matters at
+the driver level is the general structure (i.e. you're device has a
+backlight, one or more power supplies, a DBI command sequence, a reset
+GPIO, ...).
+
+You managed to make them work in one driver, whether that's called
+panel-dbi.c or panel-hitachi-tx10d07vm0baa.c doesn't matter. If there's
+ever a DBI driver that doesn't match the structure of whatever you
+introduce, we can improve or add another driver.
+
+Thierry
+
+--pxzrbd7z7tsl5fzj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmq861QACgkQ3SOs138+
+s6H/kRAAm1vAxXljWgcYmOQOkbUgCiwXkFNb46Q54mWK1nQzXYXWFZlcyYbr4/sL
+Qnlfcyg63GeL1vedgz72NvA3IW92mZzNo0eNFAqI5hGNj2xJnZw6rNatONFRnLUa
+6LpqhL4TY4mel8zBczNh2JHGUYGCufpDMYAcJSY45po5pGJqtTDwfEf6oiZC3jdt
+jHje5mFoCmeGak5W43VQQ060/ZI2Q1MchRKU0D3siG8GGUcYFlbecrJqQ6XS+0NX
+iAXEH5mXB8VzS+yAVmWFIpYVGGtp1YzCtfn176NkzHj1VH0JUFjTE/flQAbsTdCl
+fZCqw2HPfz7TOvZ0EnNEPtwAPmpIff/GXiiatmtKuRSdc42mexLR8bg/0Dy7PQUd
+m+g6UuHYsWXsTHIEXpPNloA7I+tPESuGMf6+7FZOfTcyIzYK2uICQl3qaaPeGQF+
+Opx+Xeac9OesckawREYpVjasI8tnWE+xkow3tnQyAtH0eKY+8a5D0byicJmISJek
+c2ViwFSEzgo9c/M683yL9o8YbwADJr0EJZTGGU7iF6Kou0vgiaKECHH7pEAlc25l
+O74WlMpnD48S5i8i5sD6Gnvn2SBS9HpzDarh6B5YhkUlifwWZnTSyZJ42rcCAzQA
+A7Yb+1bCFegREaFz1KGQjHqR/j6vHMdKud6biUFdaJzK1IXW0gY=
+=FFOm
+-----END PGP SIGNATURE-----
+
+--pxzrbd7z7tsl5fzj--
