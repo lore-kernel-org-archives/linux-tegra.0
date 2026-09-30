@@ -1,155 +1,72 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BE248EC7B;
-	Wed, 30 Sep 2026 10:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A62495053;
+	Wed, 30 Sep 2026 10:43:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790765013; cv=none; b=BOz4WvNi+C+la5xApeW77a8u/hONI/ITCixw4WYRkpaGoLA3ClAaFQWrepaS4OHd28cmoPeqHazWhzHPx6du5rmhph5bHXZEr+qXG8yDXT4wQnUp/sv4hmROz4PVj42DzhLTQ8kkdLmXzSoFhSJRCDTlcZrj1gcYOegcen5rE74=
+	t=1790765019; cv=none; b=mDEgZ4VboZ4+L67g6N1FToMGnlh+XfzvmdhZb6uyJ556HN1WOn+xKYZMH9BlBMZJI5wTBBJh1gsXuuw4PJakgi+HN5NJdTujbnKq45YNDxTZ9PeKJ18wukW2u1/xtUdL6CHlGHoIcRohmonTlovOTRtkYUqdSmLwpb4oLCSDB6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790765013; c=relaxed/simple;
-	bh=o0GiJYAWpqDTkpkaCAJmpOlmet3wclqXQHIwBXld78M=;
+	s=arc-20240116; t=1790765019; c=relaxed/simple;
+	bh=KypAfSkK5BPNc0SQvHY51D9K6dH/91sZIh2l5oE1Yps=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SBrntWVz5oI/akPleqUCmHHIbnUUYbcJ3GxcOqeda7erMT5fSVEPQkhn8b/HQt67tzN8e2YsGEiaK7wCrK3s9WfcgHmh+GHNJvyRdl1X9MAEL60o7pqtmpxnx/RDJec7shdPjdvSBNnh8oGpFAEUReh8b9SZ7RBdiIfWHed7Rgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UyfPVZnz; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=AkpJo2Sel6+MZDqp9pX1VPKJjf4/DJTGsc/7IGQCy6brcXEGY+MpRhOfIeR3rmGjZ65jOyc5vHaHiOOdqgyZT9DjIHuUS3lpDfnZ2IwmS9R0ogPKSzj2WuWE/mknk0aXRvaUI6qXqA1b80fvoRdNbxkV6mmsdBOwo5kANiFz0SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nhdjDth0; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UyfPVZnz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D730A1F0089A;
-	Wed, 30 Sep 2026 10:43:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nhdjDth0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D1D11F000FF;
+	Wed, 30 Sep 2026 10:43:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790765003;
-	bh=7yyzSOInAkUGRq5dHL3pz4TbnD3aTRaw+i+69ZVaw08=;
+	s=k20260515; t=1790765005;
+	bh=2CcZrOPTiCuVQgzPeyWPgbcli8oYwkOTwjzeDcYF/E0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=UyfPVZnzF+lD5Jp+7EFCb7CYkScPiVCdFblzNg5UF2sN19BrGW8kEdAE7MFLYRU8I
-	 aIT8oFXeDvdrWFPncK8LpYS1zlbLGOswJoX1wwr5242gNkAH8rFFpfghYSvSVZrV8s
-	 f8W30eA7lu1Mj6WOLPwYao2nxwFXHKCNOG+UcW7MjHa5kuKIfB2pSItfbtwD4p/elS
-	 PkoPxO3D4qviX4Sb9bIlMIVfeSz68wQiZJI4/d5Xn1A4BKUtAzg5BuSJ9Pain3QHND
-	 xrEeXT/PGrUUSI1DG+kO3P2PR+5Uc+0/yN7hju6H8UP/Ri7yVqKP7biUT/0it1kDmx
-	 nl9D8cJttopwQ==
+	b=nhdjDth0mzr7QWhMFksXyISNw53E9mrT+UZnzst7nzcu9H9e9VtZpLRtZ4Igy6amv
+	 u8ztHCeDN1cxVsUJfLahzebQnU9oMDLrQDZX6dplkZsgT8LU3YeJ24wQct8lRiD7zw
+	 L91ItOdsSEvMfrWGJWaYOsMESP3VpXqEDqPChvxWyCyHA0Dq3VX9dUU4OOO7H9QZmB
+	 wXWuGaxqcv6b8wvaDzGGPizbIkXBNJwM+HneEJsdqQoDs2DOjXPO8BLQDuBog65hPp
+	 7ReWVNUz4/k8eSXxQWypGZpcx5Zi1vDItsSiCpD1KXHV4+5wUdeek5Mel/Wf9gp6DQ
+	 JX/9ONnsFOUmw==
 Date: Wed, 30 Sep 2026 12:43:21 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jesszhan0024@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v1 6/6] drm/panel: Add Hitachi TX10D07VM0BAA and LG
- LH400WV3-SD04 MIPI DBI panel driver
-Message-ID: <arznE4HKl9r_mPX2@orome>
-References: <20260930070535.47130-1-clamor95@gmail.com>
- <20260930070535.47130-7-clamor95@gmail.com>
- <arzNgbx465QIKYdX@orome>
- <CAPVz0n2QdSWL8=KBXnsQQkdNEJ9m6HSQ0+6mJji_RHZ8QgXN-g@mail.gmail.com>
- <arzilGz4akKvRF1K@orome>
- <CAPVz0n0-baCzHOXjWLOCLjv8fb5GbE9a2v=8tBYr3RgHkEu+qg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kartik Rajput <kkartik@nvidia.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, 
+	Avri Altman <avri.altman@sandisk.com>, Bart Van Assche <bvanassche@acm.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <mkp@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Thierry Reding <treding@nvidia.com>, linux-scsi@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: ufs: Add nvidia,tegra264-ufs
+Message-ID: <20260930-hopeful-hasty-eagle-052982@quoll>
+References: <20260929-tegra264-ufs-v2-0-f0467b9c503e@nvidia.com>
+ <20260929-tegra264-ufs-v2-1-f0467b9c503e@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="inabyhftcsvajn5l"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAPVz0n0-baCzHOXjWLOCLjv8fb5GbE9a2v=8tBYr3RgHkEu+qg@mail.gmail.com>
+In-Reply-To: <20260929-tegra264-ufs-v2-1-f0467b9c503e@nvidia.com>
 
+On Tue, Sep 29, 2026 at 03:15:07PM +0530, Kartik Rajput wrote:
+> Add binding for the UFS host controller on NVIDIA Tegra264 SoCs. The
+> controller supports UFS 3.1 up to HS-G4B on two data lanes.
+> 
+> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
 
---inabyhftcsvajn5l
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 6/6] drm/panel: Add Hitachi TX10D07VM0BAA and LG
- LH400WV3-SD04 MIPI DBI panel driver
-MIME-Version: 1.0
+I do not understand why you added dependency on the phy in this
+patchset. Looks like fake/not real dependency, so you only stall your
+work and raise questions.
 
-On Wed, Sep 30, 2026 at 01:34:19PM +0300, Svyatoslav Ryhel wrote:
-> =D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 13:23 Th=
-ierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > On Wed, Sep 30, 2026 at 12:08:41PM +0300, Svyatoslav Ryhel wrote:
-> > > =D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 12:0=
-2 Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > > On Wed, Sep 30, 2026 at 10:05:35AM +0300, Svyatoslav Ryhel wrote:
-> > [...]
-> > > > > +static const struct of_device_id panel_dbi_of_match[] =3D {
-> > > > > +     { .compatible =3D "hit,tx10d07vm0baa", .data =3D (void *)PA=
-NEL_DBI_TX10D07VM0BAA },
-> > > > > +     { .compatible =3D "lg,lh400wv3-sd04", .data =3D (void *)PAN=
-EL_DBI_LH400WV3 },
-> > > >
-> > > > Why the detour through that PANEL_DB_* enum? You could just pass the
-> > > > panel funcs pointers directly via .data here.
-> > > >
-> > >
-> > > Passing API/OPS via .data is discouraged.
-> >
-> > No it's not. We do it all the time.
-> >
->=20
-> I have had some controversial experience with MFD, with passing cell
-> composition. If DRM subsystem allows this, I am more then happy to
-> pass panel ops directly.
->=20
-> > > > Also, looking at the enable/disable sequences these are in fact two
-> > > > different drivers, with the only commonality being that they happen=
- to
-> > > > be used in the same device. Rolling them both into one driver seems=
- a
-> > > > bit odd.
-> > >
-> > > I did this to simplify maintainance. Both panels are used in the LG
-> > > Optimus 2X. My assumption is that LG switched one to another at some
-> > > point, hence they share same timings, controls and supplies, but
-> > > differ in en/disable sequence. Additionally, these are the the only
-> > > DBI Type B-only panels in the kernel, from what I can see.
-> >
-> > That's just one more reason to put them into more of a generic driver,
-> > which would allow people to find it and extend/improve it as needed.
-> >
->=20
-> This driver cannot be "generic". Both panels don't fall into any
-> category of being "generic". They are grouped solely cause they share
-> same timings, controls and supplies (only these 2 panels, other will
-> definitely differ) and are used in the same device. I have no problems
-> in splitting them into 2 distinct drivers.
+Cover letter mentions "the binding references
+the M-PHY provider" but this is simply NOT TRUE.
 
-The driver can still be mostly generic. And I suspect that the panels
-might have different names for the supplies and controls as well, they
-just happen to match in schematics or sources that you used as reference
-because they are for the same device.
+Patch itself is correct but I suggest to be careful what you send, to
+avoid questions on trivial stuff.
 
-My point is, you can keep a lot of boilerplate in a generic DBI driver
-and then parameterize the things that aren't the same across them. That
-gives you the best of both worlds.
+Best regards,
+Krzysztof
 
-The reason why I objected is that you have a very specific name for the
-driver file and the second panel doesn't match that at all, so it's
-confusing.
-
-Thierry
-
---inabyhftcsvajn5l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmq858gACgkQ3SOs138+
-s6HGhg/+JmLTUMGSPe575o/yuo3LDz+vlWdqi3tAABk0qwu0WkwJ6b2OX3HhmecD
-4CixZaHzeRglHA3Qp5OIofMnSAqI+7Y2iPcLI+eKHvqaSbMBoNqaJ9poZb59OJ0t
-YeKeQDC0w/mj1uRl5U2Lw06Rx32bF+JCmsztzwKAfm1uQF3kTwKfctHfVkf2UBlM
-HVvux9gvrvKR3BYdVK1nx7gkqBXifwTTWyqLY5piAtcfF045P44PtPkpQKuJ7T49
-2b1SLJ2o9JEN3Quf3F0FR0ZHu7mx0/+NXOpcl0XrntZ2MzPzkGAnCYZxEHxU9Yop
-HJ+IDi8vcI/ETbX4j+l6JbEFTqa03S/xKubknmYBoQkXBWUj7G4+UWO9DnjHfoUb
-Vk0KwJSA8SL/qz4+BsiYJ+Q7wvQ13OeKsYTVeUyfTc0YaY3IeRXI4/lqba783rtV
-VdC5olXPhhVwMyLA6W9JbBkLV3du4Pxx+d32g9asdrXRT9n7sXwDiO0uTfNCfxUM
-A42abW7eMYfKAY8sS/sokWMIFW920TFJOXMXPqXPepK0p0/6V8iFH5JtgWEG2OWj
-GesX6c1knAuzGdvxU71W9I//rJzEyAXHq0MB0/ViDduX1i5Q0ARsSZNp105MunDf
-bHTIOfRRp/T7Q/r+hydWkxQh4Ps6/1zYMGgq/wnfOAynLDkfak8=
-=mzl7
------END PGP SIGNATURE-----
-
---inabyhftcsvajn5l--
