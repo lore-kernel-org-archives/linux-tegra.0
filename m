@@ -1,322 +1,330 @@
-Received: from mail-dy2-f41.google.com (mail-dy2-f41.google.com [74.125.229.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011024.outbound.protection.outlook.com [52.101.52.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CBA44E055
-	for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 09:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.229.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EB044C4FE;
+	Wed, 30 Sep 2026 09:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.24
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790759335; cv=pass; b=gKfZamiuyPvajVctEk3upygoKUV1r+vgxM2eABw/8GoLi/uoHFOBt+HeQ+6pA2bcRJd9pFVKXb7b3Jab3kQvZmVnELF56VHDl+uqnZL8Iab9KmYLff1Ua/wHTGhZNHYrlFicZZT4qtbWF69hmFq6zvjDN53UAmxXRVZV/m9XG14=
+	t=1790759974; cv=fail; b=O1HJ/MHuvC9vUoevDHhpOjv8dRIaBXPLkIddlzMualhzeZBGTFQeDVw/iP63K0do6l7fURRkT59XjEB5jcUN2yJYzrxe+yHx54/oXVSw30CRRPJsTKMNnObcqiEIZ54KNMVry+8alT+6puyT/O4uilf0ai6MSRilLbKKZf761KM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790759335; c=relaxed/simple;
-	bh=K5OhWACTMzhR2anM039XHIir0uVqO+wNNsG17y8h6SE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AGfzexICnLJWSCWF0kTtnDOMZNePrY4UVLGbF5B6x5ynnJBmh0HxaYFFQQYUGogYEhYdfKrWTk5bPUxX4+PQfVMgLVcRqmcygxko2qC3LXOe7RhN78uU+McWDuEPws3WCsWnZbX14uY0xVvxJHJohxoDiUwK7YxM//OtIWlL8vQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R86uMiQs; arc=pass smtp.client-ip=74.125.229.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790759974; c=relaxed/simple;
+	bh=ct8P/Q44tbdUQ62xm9B5E+chSNJSYabGsUbvEVpgxgM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TEZ7Ua+9twtZzCnIsea/i7KWRhvbT1C3yfwxYMYaj1AopbgNR5Zzr9G1rxsrmqJcbT7lCRWBjcGsoMc5oKu1j6IyYBorn7W90GIgaPZVNZ1Qa8KRjurGlTr7Q3OR8lpYtx4kZW+zj1jHmN39IryhRRyr5Pqwl6IQLMBzru1aWrk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hbcPX000; arc=fail smtp.client-ip=52.101.52.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R86uMiQs"
-Received: by mail-dy2-f41.google.com with SMTP id 5a478bee46e88-34b4f2d90c4so1387026eec.2
-        for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 02:08:53 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790759333; cv=none;
-        d=google.com; s=arc-20260327;
-        b=VgXIMjn7HOiNnijOxvViP9jYUV8SmmRyrPofkrTp+hZnRUBjKSX/AMnPwVfTRF+sJL
-         96U8FQO4FBWgkoD/OzvyD4zzC7wL3P/gm5d5t8ptHka1bKffIss2hHt24qGzi1w4FZ8F
-         EUe4QbCzmMX+5R3v29GCs1bwcpCLAh+E92RJcYBzSdiyrfSuE4LvHMYHM35fFHVSRO9i
-         xzaIUwdRubDtXEfz/iBtHVvhhhb//EgVBBkON+XT9cdnmpvY2W8EGeL7I3Tm7mlTxAtO
-         +qj0gaYxq/PA8vIpRjoKysFaFbOdKkvZpI8HdX+UJWiAfXrrzv17czZiCq5U6A6xQ7F0
-         5Mpw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=V7p6Z4nnBygY3IGhowKUKWBqT1Jl8ZZYivkVdoMSSWE=;
-        fh=EziLbqxyo6EQaJn7YEINC+IKUjN6XqP6gzBKkr54Q0Y=;
-        b=gxFUAYj22309FaBDeOMDDOHZE21JyXQ2NYNxWv3wfcwqhhVGF/6qHZ5vfB/ZcFWJkj
-         aQHIRuFt/M28KjKQ3ikvL6M5HJqT2on022nonfAX3OWh7Cyb5Xq4wCeDDKszOrAPOlXk
-         8GsWsQFJXuIF8emMdY4Mk5HLKjmZwQi9beG1r+xGwaVuVmLsf8oP35xAXVxNnXPLiSWO
-         BwCIK+HgIS1aDJR8Z1NzlC09PtVmkNcPj0/SCJipV06ROgeBQqpBV0QavCzyHPpAghCm
-         wnjFLPgczrtzu4bDwtT0ucDv8ndz76ALUsRUN8aHBn920CEB5bxyicrszA+E/smLzQEm
-         NEOg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790759333; x=1791364133; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=V7p6Z4nnBygY3IGhowKUKWBqT1Jl8ZZYivkVdoMSSWE=;
-        b=R86uMiQsOTDuvLYaGHCaMW3eJXOvD5j3DU00FIZtW36Ks/W6LgLNfS+wSQ7Rawlt1J
-         GINX7hVqpdPSVCbkABBbnbvWvMY4XLxRAIFYrhlNnYfOaiObbGuUzfYu/8nDQMrveawi
-         /yuU+Z4YdITgmic0LfznezZTnwF9iVtOLbIWmEtVp90KmVHgLEwkomAEZt3W0OfhXBwc
-         EeDmf9vzFIphZ+FB/lALjYs51Zzas/v66PEytcz9klmK2pyCuQjiSQ/3D2t9vYO5p750
-         6qvUsBmescVzYlgrJ40vp+XX88Yr7Fb5Q+37Mufd0rUN96d6IDfyXIAUpg+Rg+pmmSBm
-         cP+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790759333; x=1791364133;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=V7p6Z4nnBygY3IGhowKUKWBqT1Jl8ZZYivkVdoMSSWE=;
-        b=2BY6JaFXSHPeIGUzKxdYigFyzN37zmb2R0K9xnkS/cgPqTF3cOMxiiK/eILWsGA7t/
-         RJGHUKh5grVbrdtsnCQSbLpsHhYznOZU9PajeadjDnkKfBqk0NOXRlCNP/Dh8JhnMETf
-         zpww1kUxN+AaHdtlAuJyQ0bY6ySMIVJFBa68ZlmCbppNC2HEvx9j9qX6P8v6tWJmg2dL
-         Ysxm4lS6duFJrqRJXOQmW2uhekn0vLHxS2dkHhQT/nLHDCV6mozMCr0vT6ds+7DiPb8o
-         I8bt8CCxMx8955MssF6apdVYyjzQU6ux8BN8VrDDKfup8vSyWojApwrQeYu0iu3bJo8T
-         BrAw==
-X-Forwarded-Encrypted: i=1; AKwUvBx1xmTUR0SCF10QnkBWrexZInAqYJhrvznDgF90n25Q8sSZaLbGPzYGtdSlvhXXPNkp4jYOB+43dV5fSg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKJW5pYuL5f3EzQdIXpuPEGZecIuJMIMiXxZx5leuqujrX6CjRk
-	mt75mq9sKz6gXOBVRdKcCZsRw+2KHYrmBwOXpXHnyvdwp0AbHO0S9NCoPOeC1soVEWaKS1BN8t1
-	b7AKkB0B/ntlPykBHFvZWaodJiDpbjbc=
-X-Gm-Gg: AYBFou0EGC4DjTpk9GX9DULJnWSduaouwt2jn/hZJYEF5lk66zC0w7bvaAgtfboF/qu
-	VqplRzPPlb57XYAaDCI5NoYejli5IC43aXSzauWBdE7n2QM1FOru5ILtrH5hKPMuXdSyw78+Ztn
-	efL0Bo9T4czv1y9/bpywgAzXRiKSph0zGItr2OEEwtAjVbLuG8zlnev3lXuwSJ+RnwdAP9+WKb3
-	kNkbE0LtS1qQp83CZuqCqkd543NTg4qSKVAnZ4AWowU59tskl5Ncqei1eSnknvvDdAjScJMM3py
-	yMk0D+s8vWC0mAJvJvOnMgjJPcq7NE2jgSDdd+u15toeiK7V/48aDEOZnEereMfuAC9WziG493v
-	L3u7KJOC89Wi+
-X-Received: by 2002:a05:7301:9a93:b0:341:fd68:89ce with SMTP id
- 5a478bee46e88-34cdc6bd821mr1056387eec.23.1790759332923; Wed, 30 Sep 2026
- 02:08:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hbcPX000"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ew8LGX188dmWGv5sm5Ky0KqIlunEAGRqw8AEkli6Omwm5eRXm/yoxxXPXcNDjH4ke+LFCEeaqeEtmNAcm+PEUcxff/Pn5937NuxeRHIKbpaqheIELzoF5ja48/tOO6JYv+mTfG4duu4LkoN6wHlo2/idExi94joNdLjVNhqAZ7m+lmniqA8PDixpzFbVj4S2HkZjpKBk6H/RX2arV72UAtVGawhbmhl8lko7y8sknaEE5QckWfLVPJUlytsA8OE3AUwnaAQcZ/+xYSFP3xnRxKqHh2iau+/dGiwVGfX6y8WmUCnK93qjCjL1xu773Xx/saTWz49diSBedofYrtYdnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=njq/yzgUIdNiOOqWv7bIYjZq3ew1FCyjdWNz2r9414U=;
+ b=JCOtr1GXvBuSNNI7HrlTd689+LJ+WFhfNmaH7+eGpUaxdQnGdJPXN68Jtoqo7S4kpaaRT2/VFkJRzim7NyXSm2tAqVDJff8T3zvDHqAsDlLoow0vFuv8ukHucm9W2qxk/Gla/PLm+2Yo0F0fvUdrz2nmIlr2ovRM22mL26gjJV7DAsAu8CWPUlRjab7sgbFLaswz9cHIDThSzN7q7gaKQIStcmMUb/dG1X5QF9McBLzLl7hNBT1b2mnxnF5xmsA1SD6RxBM/KSMX2yzT2B7bgi6jK6/HRgMUDtT1gFqrno5uQdmD6dBQH/dAnqXjHLi1HOKzuVWhaxDxQ1L+sJDtRg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=njq/yzgUIdNiOOqWv7bIYjZq3ew1FCyjdWNz2r9414U=;
+ b=hbcPX000t/ZAuWFCxGRGpEKHk2ErpYYkDU0LE1LyuoXROdxYdx7S5mC+zUbqFCenNGrUXC1pyAI6o1X9Mx/Cr70laRNiwgOm0tAnaLBKNCB9PfrHjHjeQ19w7lnQmNbwpKAwrSqVTk+M1o87WT8ht+LuSSV/e8Dtq5saiQC4QicbxAEBnKEzLv2CK08evHG7ExLAmbvxSWMVGw0LY0BBKg+wgxpMC8pjSUXkbUjdgmUEsdFF6OujUJLCKoEj6M8uYybsbZFuqRRn+uR9iG6Ed8tXHHnRsHuBGtHdknyojMzqOlBWOK+ZkQaC/UR2YNm3lHJnESfuPvLP6RP8IbdE7A==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
+ by MN2PR12MB4110.namprd12.prod.outlook.com (2603:10b6:208:1dd::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.24; Wed, 30 Sep
+ 2026 09:19:26 +0000
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0451.022; Wed, 30 Sep 2026
+ 09:19:26 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <jesszhan0024@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Svyatoslav Ryhel <clamor95@gmail.com>, Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject:
+ Re: [PATCH v1 3/6] dt-bindings: display: tegra: Document 8-bit CPU parallel
+ interface
+Date: Wed, 30 Sep 2026 18:19:23 +0900
+Message-ID: <UJZ22UtaS1GSRPlyAst1og@nvidia.com>
+In-Reply-To: <20260930070535.47130-4-clamor95@gmail.com>
+References:
+ <20260930070535.47130-1-clamor95@gmail.com>
+ <20260930070535.47130-4-clamor95@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TY4P301CA0123.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:405:37e::6) To SJ2PR12MB9161.namprd12.prod.outlook.com
+ (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260930070535.47130-1-clamor95@gmail.com> <20260930070535.47130-7-clamor95@gmail.com>
- <arzNgbx465QIKYdX@orome>
-In-Reply-To: <arzNgbx465QIKYdX@orome>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Wed, 30 Sep 2026 12:08:41 +0300
-X-Gm-Features: AclHuK_GrgB1ybpXzB5TqGoO9XwCnkq9EQsObVGEae8urTG4uQ6PfBurcWJJG5Q
-Message-ID: <CAPVz0n2QdSWL8=KBXnsQQkdNEJ9m6HSQ0+6mJji_RHZ8QgXN-g@mail.gmail.com>
-Subject: Re: [PATCH v1 6/6] drm/panel: Add Hitachi TX10D07VM0BAA and LG
- LH400WV3-SD04 MIPI DBI panel driver
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|MN2PR12MB4110:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf51e677-d1ae-42ee-b2ac-08df1ed3ec6c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|366016|7416014|23010399003|10070799003|921020|56012099006|3023799007|10067099003|22082099003|11063799006|4143699003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	eDLz0Xt5vCQpLE4XZkqLqLw7WhbLJAvorXk65hcrls3D4Es6T1qklLT9fNOn2WxIme9OHdSZBoTPq+Kxjuphr8Enq/fVQJmTsNNgq7qIirC/ezdP2kxbr0cVyABTBld1r2aIESra8XvqKrTUmSds4EDhq9u7ne7lFhpr9+7BBl7tH7Te4/TuiAqHLADTzpKT0MklafaQJfxY/oxDGjH2MDHH3sx5vDDB9i8QAN7D9/5NXuFDe+T0PGD6h5Xzy2/HsKihljXZmC9kFkmrOgzbv2QD9d3GedTndI6z+jmmEkyFl6yshhrecOo4+lOHPl7zNHGpxvjB0km0U6Ps7PgBcC7/HSC+N15DX/Ld1GUAm1qCkkoCYkEux7RDkZLyD1KRpzejLGSQ+GO6iJXQWtZs2z+Gu/BmnfwSfVNN49Fjk10y9JkAz9rQOOshMLXMFd0rgb3rMDNfCg1RN9Ks0ZgqHo9JhCHwFb6VM9VaQsnagLemcDP3uQ5uim6fn/yk6CAQwE6Ki+fUa5cSM4T6Fjs+M9lABE3qZnz8dSw6fSTTkGU2xsoIIYoh9jI/Mml4b9WxUdJZiAnd5OqmhodUBU5oIW4g2LY3kdOr5yb13hkbIejskiTv94v/maujJFpcxB8TCkqmLYQkxA2N6cWG2t7vN48p35P4pizB5De0Po/x7ctyIFz1hO4v4uyVqXHADQP61A8RwXif5M6FlNImbIk6GA==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(23010399003)(10070799003)(921020)(56012099006)(3023799007)(10067099003)(22082099003)(11063799006)(4143699003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z0ZUZ3hUaXZ1Q0ZWdDcvU3ZSanRJYUpvbm9vMGpEaHRnMHorcm02dDVzTXNF?=
+ =?utf-8?B?RlpOK1VKYmxKb0wrbWkzUklDcitCSXVUQ1RlMGtzOVVtODRqQ2VXL3hRWEhm?=
+ =?utf-8?B?aUhBcE5wOTlxbCtuZFBaTEw1amxEZ0dCZndyVFVBYVNoKzBTbE1zWkVMWThR?=
+ =?utf-8?B?bnJoWXhGcm5RN1JXeGxwNWg0NzI2TjBHbEp6cGRCTzdPOTlENjZjellZcm9a?=
+ =?utf-8?B?aHRBdWovSmNDVWRJV3l1MEYzL0pUT2VuR1krQlFuVitUODFNZWYwWFNmQnJM?=
+ =?utf-8?B?SWwvOXZKVHFIbEdocTV0bmxDQ3lVcXFmazdSdUFBL3dIRXR2V3dCMWxWSnFp?=
+ =?utf-8?B?WE9JSU1RRTVvZ1JmQUtUWGdaT1Y5S0picFVLRXZ1RVFlSnQvZFp5aUVwTHN4?=
+ =?utf-8?B?SStNaG9zRzFxRmxPZ3F2eXFvRllERmk4U0dHMWtuQWdIa1dkYW5mU2tRcnFa?=
+ =?utf-8?B?UWk5NzJKSmN3ZVVOMTJyam45dUUxczNSL3A2TGlGa3lzY1pOQ3Rsb0ZHM2Ru?=
+ =?utf-8?B?SkNlY1RLTU1lY2ZCSGQrcDkvRnJKWkFBV1MrVXJ3a3hXVkpyQnFpai9Ma3dQ?=
+ =?utf-8?B?YzJMTm9LTGQwNHBSaEhlTFlkT1FqUHFjUkxtVlh3eXdHMXdEK0tMeGtyeG9h?=
+ =?utf-8?B?RWpqd0xaY2crbVF3d1hIakRoRkdScVZGN0F1ZzIrUVpuVmNuODdSQ3hoMGVO?=
+ =?utf-8?B?ZmdWWThaYUJyOExsdFU0TVAyZys1TTNtR21CUmlyTnQ0Ym5OZmYrYU1kSUVw?=
+ =?utf-8?B?K1RoMGxNazVNaVUyS1ozV040bGQ2U08xSlJXWlgrS0NiUlFqQjNTWVFhUU8y?=
+ =?utf-8?B?d0JjMzFFeVBwWU95NkFUK0hZdjhmQjM3M2Rla1pVejFpVFNyOTcvc3c4YlRX?=
+ =?utf-8?B?ZmsxVkNLeDVySit4OTI4cHpjem9KYWV6TlR5K1V5SmFWN0VFdEJvYkFBYURt?=
+ =?utf-8?B?UG45WThQdmlldFR0NmxCejBTSWFqTVdURmd4bVAzcXNjUE9kbkUzb3RTbVp2?=
+ =?utf-8?B?Tndnbi9KQVFSdENVS1ZXUlFJNUpkd0VFQ1BTNWkvTVV3ZlYyRHJTekc0K1JC?=
+ =?utf-8?B?SGVHZE12ME13QUFLUjcwb05LNFEwSEFkdEVUNTZpNGJjbjNLQkVUYmxQMy84?=
+ =?utf-8?B?UGdyUzhkWGJjcE9ScWI3c0g4RnJleVg5ak5ZYXJieXZzeUpUUFQwOCtmdExu?=
+ =?utf-8?B?ZEI2UWU1UCtXdWNvMnRCTVdoaTl0cFdVVHNLNXE4dzNnc1dmNkYzTUVNU2NT?=
+ =?utf-8?B?RmVQZyttenRaSUNHZGhRWmxqVnFlZDdMSHRtZW5COXRyM200Z3hPUTB2Y1B0?=
+ =?utf-8?B?RlM0bGY2UEw0VE9OL1drd2w2c3ErSkhGNGViNmdFYWs3YVkwWUN0UkJ5VXlP?=
+ =?utf-8?B?ZE1tL1ZlQWk0U2dBbXRoWEEvTVZyWll5eXdpYVovVkR5Y0hZdnB3T2lxamFX?=
+ =?utf-8?B?dHNPbHJqRVlvMjZWejQraVVvSkI4NEZKU29vVk9xK2huRG9kNCtIaC9KUWp2?=
+ =?utf-8?B?NWNQaDhnSkxvRHBUbGdnRVg2R2cvYk1zeTE1dnc0MUJxZSt1TlVwdlh0WitH?=
+ =?utf-8?B?NWdMVXdEbXM0cXovdVRiVFlnU09jMy93MWsrbWRTVkJVaUxoaUU0REc2UmJS?=
+ =?utf-8?B?ekhMSWpMQ28rNExyY0JORC9pZ3JvTXR0MnJRcDdiVDZMNGFuTXZJcE1reC9X?=
+ =?utf-8?B?ZTdkQkhPS09TTUtiSUVNbmhkSDJvOTl5cWh0eUF5QkxSUUJWc3g2QVI0dDZG?=
+ =?utf-8?B?MS84UGdPamxXSGNhb1doelZGcWUyWExOcU9VcFVuRElDTExESzFnUWwwQlZJ?=
+ =?utf-8?B?NnlwcE9zNFhDWXE1Y1Fabk5qMXVVa1UwYmk5dFN3WjQ0amh6SGZCOHJvRmRV?=
+ =?utf-8?B?TGl2OVhZajZDTmhHQlpxb3pHdnpqMHFmM0RQTmZNeTgyNjhtVm50bUVxOGwy?=
+ =?utf-8?B?SXZLck56Z3R5YUJMQmZ6M1BmMStYSVdUeFcvREJudjdEdVJGbWhOSHAzOE16?=
+ =?utf-8?B?eUx5MVQ5UldWNGkvQnJpcVN6WnR5ZElTUklWOERUV3FiOGkrSjZTNVZIKzgx?=
+ =?utf-8?B?eXJMUDdLSndyMk9VRkcwZnRycXhlaHdETXFEcGh3UE0zeWt0c1dacEt4Ny9j?=
+ =?utf-8?B?Y0cwaU4xWDY5cUU2bTNKeHQ0Mk8yOElSazlRTFVKQVRKL0h4eE56Mlgwdk5v?=
+ =?utf-8?B?UXlKb0tEQlVCSjRvSEU5UnlDbUZJemRNZnkvOUk5UXdTdXppNG5wVEN5Q0Iz?=
+ =?utf-8?B?dVJNVldWdkdWcUQvUCtPTjg2QUZDSXBYUHBHNUZmczFCdWRrRW9aZ1lyTHoz?=
+ =?utf-8?B?T0dXSjNxM3BmVTRRRlY0QjhmK3J1STJnZ3JSY1A1WjNEcXF4SFBvL3MyS3gx?=
+ =?utf-8?Q?DpH2gjoSVNOsi0xDqFXtXYnqmeYTcCUsR3rERgviyjYo7?=
+X-MS-Exchange-AntiSpam-MessageData-1: ubI2D9sxnm+Qlw==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf51e677-d1ae-42ee-b2ac-08df1ed3ec6c
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2026 09:19:26.5671
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FEL9WRm664PwhEzXJontedLih44RpK39vm3n9hUWIElfQmKrneuOxZuK/Vask0Qbc9kpg5jHR2uuROpzxRUrKg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4110
 
-=D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 12:02 Thie=
-rry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Wed, Sep 30, 2026 at 10:05:35AM +0300, Svyatoslav Ryhel wrote:
-> > Add a driver for panels used in LG Optimus 2X P990. Both panels are 4"
-> > WVGA MIPI DBI Type B linked to DRM encoder via RGB to DBI bridge.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  drivers/gpu/drm/panel/Kconfig                 |  14 +
-> >  drivers/gpu/drm/panel/Makefile                |   1 +
-> >  .../drm/panel/panel-hitachi-tx10d07vm0baa.c   | 396 ++++++++++++++++++
-> >  3 files changed, 411 insertions(+)
-> >  create mode 100644 drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
-> >
-> > diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kcon=
-fig
-> > index 747f47347521a..47962197a9c76 100644
-> > --- a/drivers/gpu/drm/panel/Kconfig
-> > +++ b/drivers/gpu/drm/panel/Kconfig
-> > @@ -273,6 +273,20 @@ config DRM_PANEL_HIMAX_HX8394
-> >
-> >         If M is selected the module will be called panel-himax-hx8394.
-> >
-> > +config DRM_PANEL_HITACHI_TX10D07VM0BAA
-> > +     tristate "Hitachi TX10D07VM0BAA and LG LH400WV3 MIPI DBI panels"
-> > +     depends on OF
-> > +     depends on BACKLIGHT_CLASS_DEVICE
-> > +     select DRM_MIPI_DBI
-> > +     select VIDEOMODE_HELPERS
-> > +     help
-> > +       Say Y here if you want to enable support for the HITACHI
-> > +       TX10D07VM0BAA and LG LH400WV3 MIPI DBI panels found in the
-> > +       LG Optimus 2X P990 smartphone.
-> > +
-> > +       To compile this driver as a module, choose M here: the module w=
-ill
-> > +       be called panel-hitachi-tx10d07vm0baa.
-> > +
-> >  config DRM_PANEL_HYDIS_HV101HD1
-> >       tristate "Hydis HV101HD1 panel"
-> >       depends on OF
-> > diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Mak=
-efile
-> > index f2c9c80a218f0..414267a49d922 100644
-> > --- a/drivers/gpu/drm/panel/Makefile
-> > +++ b/drivers/gpu/drm/panel/Makefile
-> > @@ -27,6 +27,7 @@ obj-$(CONFIG_DRM_PANEL_HIMAX_HX83112A) +=3D panel-him=
-ax-hx83112a.o
-> >  obj-$(CONFIG_DRM_PANEL_HIMAX_HX83112B) +=3D panel-himax-hx83112b.o
-> >  obj-$(CONFIG_DRM_PANEL_HIMAX_HX83121A) +=3D panel-himax-hx83121a.o
-> >  obj-$(CONFIG_DRM_PANEL_HIMAX_HX8394) +=3D panel-himax-hx8394.o
-> > +obj-$(CONFIG_DRM_PANEL_HITACHI_TX10D07VM0BAA) +=3D panel-hitachi-tx10d=
-07vm0baa.o
-> >  obj-$(CONFIG_DRM_PANEL_HYDIS_HV101HD1) +=3D panel-hydis-hv101hd1.o
-> >  obj-$(CONFIG_DRM_PANEL_ILITEK_ILI7807S) +=3D panel-ilitek-ili7807s.o
-> >  obj-$(CONFIG_DRM_PANEL_ILITEK_ILI7836A) +=3D panel-ilitek-ili7836a.o
-> > diff --git a/drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c b/driv=
-ers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
-> > new file mode 100644
-> > index 0000000000000..d2c3b63649288
-> > --- /dev/null
-> > +++ b/drivers/gpu/drm/panel/panel-hitachi-tx10d07vm0baa.c
-> > @@ -0,0 +1,396 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +
-> > +#include <linux/array_size.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/err.h>
-> > +#include <linux/gpio/consumer.h>
-> > +#include <linux/media-bus-format.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of_platform.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/property.h>
-> > +#include <linux/regulator/consumer.h>
-> > +
-> > +#include <video/mipi_display.h>
-> > +
-> > +#include <drm/drm_mipi_dbi.h>
-> > +#include <drm/drm_modes.h>
-> > +#include <drm/drm_of.h>
-> > +#include <drm/drm_panel.h>
-> > +#include <drm/drm_probe_helper.h>
-> > +
-> > +enum panel_dbi_id {
-> > +     PANEL_DBI_NONE,
-> > +     PANEL_DBI_TX10D07VM0BAA,
-> > +     PANEL_DBI_LH400WV3,
-> > +};
-> > +
-> > +static const struct regulator_bulk_data panel_dbi_supplies[] =3D {
-> > +     { .supply =3D "avci" }, { .supply =3D "iovcc" },
-> > +};
-> > +
-> > +struct panel_dbi {
-> > +     struct drm_panel panel;
-> > +     struct mipi_dbi *dbi;
-> > +
-> > +     struct regulator_bulk_data *supplies;
-> > +     struct gpio_desc *reset_gpio;
-> > +};
-> > +
-> > +static inline struct panel_dbi *to_panel_dbi(struct drm_panel *panel)
-> > +{
-> > +     return container_of(panel, struct panel_dbi, panel);
-> > +}
-> > +
-> > +#define panel_dbi_command(priv, cmd, seq...) \
-> > +({ \
-> > +     const u8 d[] =3D { seq }; \
-> > +     struct drm_panel *panel =3D &(priv)->panel; \
-> > +     struct device *dev =3D panel->dev; \
-> > +     int ret; \
-> > +     ret =3D mipi_dbi_command_stackbuf((priv)->dbi, cmd, d, ARRAY_SIZE=
-(d)); \
-> > +     if (ret) \
-> > +             dev_err_ratelimited(dev, "error %d when sending command %=
-#02x\n", ret, cmd); \
-> > +     ret; \
-> > +})
-> > +
->
-> [...]
-> > +static int panel_dbi_probe(struct platform_device *pdev)
-> > +{
-> > +     struct device *dev =3D &pdev->dev;
-> > +     const struct drm_panel_funcs *panel_dbi_funcs;
-> > +     struct panel_dbi *priv;
-> > +     enum panel_dbi_id id;
-> > +     int ret;
-> > +
-> > +     id =3D (uintptr_t)of_device_get_match_data(dev);
-> > +
-> > +     switch (id) {
-> > +     case PANEL_DBI_TX10D07VM0BAA:
-> > +             panel_dbi_funcs =3D &hitachi_tx10d07vm0baa_panel_funcs;
-> > +             break;
-> > +
-> > +     case PANEL_DBI_LH400WV3:
-> > +             panel_dbi_funcs =3D &lg_lh400wv3_panel_funcs;
-> > +             break;
-> > +
-> > +     default:
-> > +             return dev_err_probe(dev, -ENODEV, "Unknown device %d\n",=
- id);
-> > +     }
->
-> This is a bit pointless. The only reason you need that default here is
-> because you have an enum that is "none" but that PANEL_DBI_NONE is never
-> even used.
->
-> > +
-> > +     priv =3D devm_drm_panel_alloc(dev, struct panel_dbi, panel,
-> > +                                 panel_dbi_funcs, DRM_MODE_CONNECTOR_D=
-PI);
-> > +     if (IS_ERR(priv))
-> > +             return PTR_ERR(priv);
-> > +
-> > +     ret =3D devm_regulator_bulk_get_const(dev, ARRAY_SIZE(panel_dbi_s=
-upplies),
-> > +                                         panel_dbi_supplies, &priv->su=
-pplies);
-> > +     if (ret)
-> > +             return dev_err_probe(dev, ret, "Failed to get supplies\n"=
-);
-> > +
-> > +     priv->reset_gpio =3D devm_gpiod_get_optional(dev, "reset", GPIOD_=
-OUT_HIGH);
-> > +     if (IS_ERR(priv->reset_gpio))
-> > +             return dev_err_probe(dev, PTR_ERR(priv->reset_gpio),
-> > +                                  "Failed to get reset gpio\n");
-> > +
-> > +     ret =3D drm_panel_of_backlight(&priv->panel);
-> > +     if (ret)
-> > +             return dev_err_probe(dev, ret, "Failed to get backlight\n=
-");
-> > +
-> > +     ret =3D devm_drm_panel_add(dev, &priv->panel);
-> > +     if (ret)
-> > +             return dev_err_probe(dev, ret, "Failed to add panel\n");
-> > +
-> > +     platform_set_drvdata(pdev, priv);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static const struct of_device_id panel_dbi_of_match[] =3D {
-> > +     { .compatible =3D "hit,tx10d07vm0baa", .data =3D (void *)PANEL_DB=
-I_TX10D07VM0BAA },
-> > +     { .compatible =3D "lg,lh400wv3-sd04", .data =3D (void *)PANEL_DBI=
-_LH400WV3 },
->
-> Why the detour through that PANEL_DB_* enum? You could just pass the
-> panel funcs pointers directly via .data here.
->
+On Wednesday, September 30, 2026 4:05=E2=80=AFPM Svyatoslav Ryhel wrote:
+> Document 8-bit CPU parallel MIPI DBI Type B interface provided by
+> Tegra20/30 SoCs display controller.
+>=20
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../display/tegra/nvidia,tegra-8bit-cpu.yaml  | 138 ++++++++++++++++++
+>  1 file changed, 138 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidi=
+a,tegra-8bit-cpu.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra=
+-8bit-cpu.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,teg=
+ra-8bit-cpu.yaml
+> new file mode 100644
+> index 0000000000000..f0dab608b2936
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra-8bit-c=
+pu.yaml
+> @@ -0,0 +1,138 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra-8bit-cpu.y=
+aml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Nvidia Tegra DC based MIPI DBI Type B bridge
+> +
+> +maintainers:
+> +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> +
+> +description: The display controller in Tegra20/30 SoCs features an
+> +  8-bit SPI interface that closely resembles the MIPI DBI Type B
+> +  protocol and is referred to as '8-bit CPU'. Each display controller
+> +  provides two such interfaces, which can be used to send MIPI DCS
+> +  commands to initialize and control the panel while image data is
+> +  transmitted via 16/18/24-line RGB.
+> +
+> +properties:
+> +  compatible:
+> +    const: nvidia,tegra-8bit-cpu
+> +
+> +  dc-gpios:
+> +    description: Data/command selection pin.
+> +    maxItems: 1
+> +
+> +  rw-gpios:
+> +    description: Read/write pin.
+> +    maxItems: 1
+> +
+> +  cs-gpios:
+> +    description: Chip select pin.
+> +    maxItems: 1
+> +
+> +  data-gpios:
+> +    description: Specifies a set of 8 gpio pins used to transfer data.
+> +    minItems: 8
+> +    maxItems: 8
 
-Passing API/OPS via .data is discouraged.
+Based on my admittedly brief research, according to the TRM the display=20
+controller can drive all of these pins - of which there are two fixed=20
+sets as you mention - directly. So we'd need to describe which interface=20
+the display is connected to in DT, but not any GPIOs (which they really=20
+aren't).
 
-> Also, looking at the enable/disable sequences these are in fact two
-> different drivers, with the only commonality being that they happen to
-> be used in the same device. Rolling them both into one driver seems a
-> bit odd.
+> +
+> +  nvidia,init-sequence:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description: Device specific set of values used in DC DISP_SPI_INIT_=
+SEQ
+> +      registers.
+> +    minItems: 4
+> +    maxItems: 4
 
-I did this to simplify maintainance. Both panels are used in the LG
-Optimus 2X. My assumption is that LG switched one to another at some
-point, hence they share same timings, controls and supplies, but
-differ in en/disable sequence. Additionally, these are the the only
-DBI Type B-only panels in the kernel, from what I can see.
+And AIUI this is panel-specific DBI commands the display controller will=20
+transmit. So ideally the display driver should receive this data from=20
+the panel driver.
 
-> If you really want to avoid duplication, maybe they should go
-> into some kind of "simple" or "generic" DBI driver.
+Thank you
+Mikko
 
-DBI Type B is not well supported in the kernel.
+> +
+> +  panel:
+> +    type: object
+> +    description: Node of supported panel driven by the bridge.
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description: Video port for RGB input.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: /schemas/graph.yaml#/$defs/endpoint-base
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              bus-width:
+> +                enum: [ 16, 18, 24 ]
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: Video port for DBI output (panel or connector).
+> +
+> +    required:
+> +      - port@0
+> +      - port@1
+> +
+> +required:
+> +  - compatible
+> +  - ports
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    dbi-bridge {
+> +        compatible =3D "nvidia,tegra-8bit-cpu";
+> +
+> +        dc-gpios =3D <&gpio 110 GPIO_ACTIVE_HIGH>;
+> +        rw-gpios =3D <&gpio 11 GPIO_ACTIVE_HIGH>;
+> +        cs-gpios =3D <&gpio 108 GPIO_ACTIVE_HIGH>;
+> +
+> +        data-gpios =3D <&gpio 32 GPIO_ACTIVE_HIGH>, <&gpio 33 GPIO_ACTIV=
+E_HIGH>,
+> +                     <&gpio 34 GPIO_ACTIVE_HIGH>, <&gpio 35 GPIO_ACTIVE_=
+HIGH>,
+> +                     <&gpio 36 GPIO_ACTIVE_HIGH>, <&gpio 37 GPIO_ACTIVE_=
+HIGH>,
+> +                     <&gpio 38 GPIO_ACTIVE_HIGH>, <&gpio 39 GPIO_ACTIVE_=
+HIGH>;
+> +
+> +        nvidia,init-sequence =3D <0x0000002c 0x0 0x0 0x00005000>;
+> +
+> +        panel {
+> +            compatible =3D "hit,tx10d07vm0baa";
+> +
+> +            reset-gpios =3D <&gpio 175 GPIO_ACTIVE_LOW>;
+> +
+> +            avci-supply =3D <&vcc_2v8_lcd>;
+> +            iovcc-supply =3D <&iovcc_1v8_lcd>;
+> +
+> +            backlight =3D <&backlight>;
+> +
+> +            port {
+> +                panel_input: endpoint {
+> +                    remote-endpoint =3D <&bridge_output>;
+> +                };
+> +            };
+> +        };
+> +
+> +        ports {
+> +            #address-cells =3D <1>;
+> +            #size-cells =3D <0>;
+> +
+> +            port@0 {
+> +                reg =3D <0>;
+> +
+> +                bridge_input: endpoint {
+> +                    remote-endpoint =3D <&dpi_output>;
+> +                };
+> +            };
+> +
+> +            port@1 {
+> +                reg =3D <1>;
+> +
+> +                bridge_output: endpoint {
+> +                    remote-endpoint =3D <&panel_input>;
+> +                };
+> +            };
+> +        };
+> +    };
+> --=20
+> 2.53.0
+>=20
+>=20
 
->
-> Thierry
+
+
+
