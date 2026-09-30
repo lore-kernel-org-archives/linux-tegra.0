@@ -1,49 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583583B6BF0;
-	Wed, 30 Sep 2026 10:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBEE45D91B;
+	Wed, 30 Sep 2026 10:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790763791; cv=none; b=C1ktaYx8mr7q95N082s1xwypMAAxlKXUaAKO/wQ4qU/ZsQiUDaP19TMveaFd6ZbuuWRzQw+09GU89xakAuwuzVYJJddEJuWbtVFsr2Bh+vmOGxqHwD5b7a6kgT9SYwN1uLfwl1jEC6VgHQ8nN/QcfW7xa9Aorwnkb7+HenU6EPc=
+	t=1790764186; cv=none; b=EJs8lLm5Mgb59yDzeKhTaVzdjf5l7VCZNj8bt39Htb7judQiO7E9FaR0N651eVrKwQKp3iELt3B0o7wELhJ5J1Hi7XqxBf/uBbecxdTiThfBS/iRwVX2/UAcc14+I7KtUlhWB3m+ncu2SbCPwxv5w2VCl+O+B0PqvjGzRB25RHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790763791; c=relaxed/simple;
-	bh=Ac9CVGOrU6oXqL6GVn2GyjRWBzUZlH+PpKQIsO0i+g0=;
+	s=arc-20240116; t=1790764186; c=relaxed/simple;
+	bh=XypHvjK5uPib3gTzLMK3ROmEL2JUJgny3XWTGHw5q7U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HTMClG4aw0hmcTv3ouAfF2TEsMsi9l9R4ZkZ51DofR27sLHsYht9/YUvW6ugroy4gXc1+OQJ+0tODBcj+npA8sUbq5zPek/DXESjpc5p5ckJzyrPS7cHkYGrG3IC6xH7gsVa1DkGx5UeGRuD68r0tEX30ro7E8TPIpCv47/vuX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lHeN8bl4; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=m5v/DTg2gKtx6QecgoctSW+FIv0CUpgSpljwsCywegU3BVEivtXe9WiTs5/QF48w5/EbOreO8n+SAc6d58a/Qdoros98dIBdpgI03+hdoSXI4S5M7inhIuF/U59nR56vs/S81Hol3xHIAVcP+Oiigm7FbLmvpBMa3OMNLyMQsW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FAAUlSno; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lHeN8bl4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EE551F000FF;
-	Wed, 30 Sep 2026 10:23:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FAAUlSno"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC0451F000FF;
+	Wed, 30 Sep 2026 10:29:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790763789;
-	bh=Y6/eisC/1PFb58SA29sI1vLKdk/wVao3FROKDUJrtpE=;
+	s=k20260515; t=1790764184;
+	bh=XypHvjK5uPib3gTzLMK3ROmEL2JUJgny3XWTGHw5q7U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=lHeN8bl4qsZssVq0G+AKebLkMTNz5dsor1PkFzGDB+Fo2ksKyhPNcWDNf3c1oW8AY
-	 SXRyEup0Z6PhB1unC/Za3hEb8fCraiDSrAIdgUk5f7mOMUpKb7UQ2iuKLBPVFdWbkO
-	 Xd2yb175oTanKHzoLQk/Xfu3cX3pq2QP1qHe06uMrJOkxAdvC/01OMdzpZEu16E5Qv
-	 JAlnpQPUgYbezTQU6fB+sTFDdNApoezixWJhLASufOfh3x5Ve7/mBGmDFSKXlU6sJE
-	 +ldKbJ4qgrqVSuFdOuRtS92TxcnbufO1EcWK/uC0jBU1NaeZBm5yeRjgsixw9aKjRZ
-	 Eg3tKpKpJDWlw==
-Date: Wed, 30 Sep 2026 12:23:07 +0200
+	b=FAAUlSnoYYurnCYex91tc1QBD3i/oUzFFyh2x73vvFgF4jP7xNvXO938l7CgsuQlg
+	 lGm5ZLeV21M9u/s6zEzBlvvXNONH9/QAxi4S0nvMJWNwFoLABFtUWwqKn0KxDkRAuT
+	 Y+1rr6fSdAZx4PfwALwUlkOoG4OoWFYzgQrY7+wjKFE54EqLYVFrIRWyZFqBTew79q
+	 ieZ4eSnDosiIY3ODS1QWftgZYFKIaZLphV9B7mUL8AK8vm5NV95clVDR45euA96ltT
+	 1paIxCfqSrTzEu7+9iT0HyWzuDHzZ0b2GgwqVucgVteKh8sbdkei/2kNe7xEbsvSgP
+	 iNRO7X1uLWFkw==
+Date: Wed, 30 Sep 2026 12:29:42 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jesszhan0024@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v1 6/6] drm/panel: Add Hitachi TX10D07VM0BAA and LG
- LH400WV3-SD04 MIPI DBI panel driver
-Message-ID: <arzilGz4akKvRF1K@orome>
-References: <20260930070535.47130-1-clamor95@gmail.com>
- <20260930070535.47130-7-clamor95@gmail.com>
- <arzNgbx465QIKYdX@orome>
- <CAPVz0n2QdSWL8=KBXnsQQkdNEJ9m6HSQ0+6mJji_RHZ8QgXN-g@mail.gmail.com>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"Ola Chr. Vaage" <ola.christoffer.vage@scoutdi.com>
+Subject: Re: [PATCH v2 3/3] pwm: tegra: Implement .get_state()
+Message-ID: <arzjXtZj0hIf5iZU@orome>
+References: <cover.1789741839.git.u.kleine-koenig@baylibre.com>
+ <b72b16cf704aa662a1b49805db284379d4fa4050.1789741839.git.u.kleine-koenig@baylibre.com>
+ <arEAjOHU4rH5aGqb@orome>
+ <arE932ZcHGB8RAN6@monoceros>
+ <arJTSEfkILPQmqNV@orome>
+ <arzcE4nVRTAK9C-X@monoceros>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -51,79 +48,92 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="c2npe4egdsdkxc2s"
+	protocol="application/pgp-signature"; boundary="x65eqfhbbjg6hmbn"
 Content-Disposition: inline
-In-Reply-To: <CAPVz0n2QdSWL8=KBXnsQQkdNEJ9m6HSQ0+6mJji_RHZ8QgXN-g@mail.gmail.com>
+In-Reply-To: <arzcE4nVRTAK9C-X@monoceros>
 
 
---c2npe4egdsdkxc2s
+--x65eqfhbbjg6hmbn
 Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 6/6] drm/panel: Add Hitachi TX10D07VM0BAA and LG
- LH400WV3-SD04 MIPI DBI panel driver
+Subject: Re: [PATCH v2 3/3] pwm: tegra: Implement .get_state()
 MIME-Version: 1.0
 
-On Wed, Sep 30, 2026 at 12:08:41PM +0300, Svyatoslav Ryhel wrote:
-> =D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 12:02 Th=
-ierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> > On Wed, Sep 30, 2026 at 10:05:35AM +0300, Svyatoslav Ryhel wrote:
-[...]
-> > > +static const struct of_device_id panel_dbi_of_match[] =3D {
-> > > +     { .compatible =3D "hit,tx10d07vm0baa", .data =3D (void *)PANEL_=
-DBI_TX10D07VM0BAA },
-> > > +     { .compatible =3D "lg,lh400wv3-sd04", .data =3D (void *)PANEL_D=
-BI_LH400WV3 },
-> >
-> > Why the detour through that PANEL_DB_* enum? You could just pass the
-> > panel funcs pointers directly via .data here.
-> >
+On Wed, Sep 30, 2026 at 11:54:03AM +0200, Uwe Kleine-K=C3=B6nig wrote:
+> Hello Thierry,
 >=20
-> Passing API/OPS via .data is discouraged.
-
-No it's not. We do it all the time.
-
-> > Also, looking at the enable/disable sequences these are in fact two
-> > different drivers, with the only commonality being that they happen to
-> > be used in the same device. Rolling them both into one driver seems a
-> > bit odd.
+> On Tue, Sep 22, 2026 at 12:07:26PM +0200, Thierry Reding wrote:
+> > On Mon, Sep 21, 2026 at 04:26:03PM +0200, Uwe Kleine-K=C3=B6nig wrote:
+> > > On Mon, Sep 21, 2026 at 12:18:16PM +0200, Thierry Reding wrote:
+> > > > It feels like this has too many assumptions built-in. That's mostly=
+ a
+> > > > predefined issue, but I think if we want to get accurate hardware r=
+ead-
+> > > > out, we need to address this.
+> > > >=20
+> > > > According to the register documentation, the PWM depth is 16 bits w=
+ide
+> > > > (on generations where it can be programmed). The value defaults to =
+255
+> > > > (which is n - 1 encoded, hence TEGRA_PWM_DEPTH), but it can technic=
+ally
+> > > > be reprogrammed to any 16-bit value, as far as I can tell.
+> > > >=20
+> > > > So I think for this to be correct we'd need to read out the actual =
+value
+> > > > before overwriting with TEGRA_PWM_CSR_0 contents above. At that poi=
+nt I
+> > > > think we'd need to either adjust the mask to be (2 * depth) - 1, or
+> > > > maybe better yet, avoid masking it out arbitrarily based on the dep=
+th
+> > > > and instead cap it at depth so we never exceed the 1:1 ratio for du=
+ty
+> > > > cycle vs. period.
+> > >=20
+> > > As long as .apply() also hardcodes TEGRA_PWM_DEPTH, it's IMO fine that
+> > > .get_state() does so, too.
+> >=20
+> > Okay, fair enough.
 >=20
-> I did this to simplify maintainance. Both panels are used in the LG
-> Optimus 2X. My assumption is that LG switched one to another at some
-> point, hence they share same timings, controls and supplies, but
-> differ in en/disable sequence. Additionally, these are the the only
-> DBI Type B-only panels in the kernel, from what I can see.
+> Is that an Ack then?
 
-That's just one more reason to put them into more of a generic driver,
-which would allow people to find it and extend/improve it as needed.
+I've been thinking about this some more and I don't know if it really
+makes sense to keep hard-coding TEGRA_PWM_DEPTH. If only .apply() uses
+it, then it's mostly fine, I suppose, because we don't care what the
+current (or initial) state is/was. So we either don't use the device or
+we overwrite it with a custom set of values.
 
-> > If you really want to avoid duplication, maybe they should go
-> > into some kind of "simple" or "generic" DBI driver.
->=20
-> DBI Type B is not well supported in the kernel.
+Once we add .get_state() into the mix, now we kind of have to care about
+the initial state, because we might end up using those values. If we did
+not care, what would be the point, right? Which means that if we read
+out wrong values, we, well, get wrong values. Which then may mean that
+we overwrite values that we shouldn't, etc.
 
-Well, you always start somewhere.
+I suppose this would be okay if we reject any depth values other than
+the default as errors. But then we also significantly reduce the
+usefulness of this patch.
 
 Thierry
 
---c2npe4egdsdkxc2s
+--x65eqfhbbjg6hmbn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmq84wgACgkQ3SOs138+
-s6Eiuw//RQ2fm/9EQCbJc7rzzjSmpYsrALrOL8ogrNgRr+Us7Js++rkpBy77jMCa
-90Qnk6xN1CIf9BhJTiguaDmm5iYpvItlJttFThldrtaVCWR0dlS5YhTDgabxCcXh
-CGvcXuGxPZfmx5/+IYpBkO48k83Czq+9CHDjL33IVSNmOXikAHLC9YeetQEky5vT
-p8AANLuVKSig8r6ZpamwRiiiPDNhaQP2ohSJ58uaK3e0224iYTm7AYfEj6VZPKdG
-yzO/ZrgFtpveqy6/XuY6h9GP2uF+lIE1ZAw1RseBYGuQe3/fROaZcCo+48T3h3cA
-EKVOOGEFkbZVJtqojDA9vFrZyptANBNtFnB6TtNV4252NoMwkVpRs6zgcMO0F8k4
-VBvzfEVE8Q8O5YD7Alugjsg5bdu+AmyxB9LnnqbvAIDwjPpbjGCo7b0slLaNxpq4
-XMuzqsM8l5YvLFzgK3APfk13aBRbZoraA1NxE0pDOiJuz2jU2GQM93ApmReILD3a
-wdC6598g1AkPaxNOSe/NIbe/uSg8a5AGE17AL7o5QJsbdgC58eHte8NsrplzK3h8
-HXFCnZIhsl9F6PtqtEccus3qYk0kZENOYgEjwkIHVlMHVAUDOufngzwrX+QERknV
-7mWpdUkxp9lUlmS5BXUcZRb1PR6e5ucdggcIjv6SFJYsWmdFf2Q=
-=5XM7
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmq85JYACgkQ3SOs138+
+s6GMSg/8CShCqOv5o6ZDmB+VHSaIQFFGttOeoXgmzAA2smnA4YfobLPobkLnCycp
+Jt9Nl1ks+s7Y7XilTXZxPjeg6a7vlKlNB1MPZZVfS7Me83rdJaw84jj92pVtl6Ar
+8nxcah0tE/jcbS+RS2A419cch5o9sS8RtaCqR84vyQwxiht/EqHLDjTXr1ysW1Yk
+2zcPgErdivSMfe9dipW9ZkmLSeZTVDHT9YMnC6/51C9wPfcSBqToiFXKRxpgMlw2
+SgRwmUWEp3m6CfumD5bQWJ2uPCkrIJu5PNy+MNcL9qQgtxslworz7FgeSpFCgCtr
+2JYyllAYKzHgrktKfMS3BYyRonfWzxTZ26JxZKgxRZKx6nKpDpqB/n4fp9cHf01i
+8m7M0gd6BKtSYcZ/jJcvhJTnyNS3hMbxjx4YVzwzZ+V4AJg6NJATFn6Z5R/Ov4bb
+/HKdZdajsmI2Rlr0JpX/z0gSInNnl/1bjB5u56dMdx0YE2VZqM92dNPqdIo1j4CW
+1Ar/kXTdJmeEnhI7teoaB1VAucD8H0masAOfLNmrxAnMMvLUU0HxA9+sQmrYeQq5
+SkImXEY2a3AjnVADJv9TVLtb84F6idEb7MumGTyasgwApf81ASPj85CAGxSL/oEl
+JFg1o7zJFEkvTfLtfB41fME8Wajus2WokswqmEh/2jkHNCO5ybo=
+=AW50
 -----END PGP SIGNATURE-----
 
---c2npe4egdsdkxc2s--
+--x65eqfhbbjg6hmbn--
