@@ -1,92 +1,149 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr2-f32.google.com (mail-wr2-f32.google.com [74.125.225.96])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B3D4915B9;
-	Wed, 30 Sep 2026 11:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859C54CA798
+	for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 11:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790769072; cv=none; b=iUuwE+oPCrFpLqphS0mlHcEBuF6NjYYYHcCW8jYV97LJ5UEq/DK/Ov/9IwkGReldOlXJRs6e/32Oiv5/ZufIrGXl6EYxAI9BUTct7bdkozNAYzGXPdapCEypkAoEPSfxuG2aPQtcWBdWzNAn/Rseyo5lBr61QfeQMI1n/1qewnw=
+	t=1790769365; cv=none; b=Y5Var8Ij+KHSPMN/U8qw5fsvA4APN1FKarnODlFVFxbpiq0lz04nVMQurT11lW1fK8KUeb6+4j7bJPIHBTHYUzn+PFdxFkhPIViv6WPnyqxXP2WnBYAWhEIwz7h4ShIlxyfG7qEBPHYAwawfdxncJTkTOu3A+YRc8YXCZnbWIqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790769072; c=relaxed/simple;
-	bh=PVEC3OfMnJKPSbEYEJhCCXJZBxEy7N52ccDh76wrJpI=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=GWhMPkAeLWiezNn4MEgtOykxw278G8ZcPxpuBrMPPlsRIM2aGzIjLdA/yD7O1R7j00Astuy+BsVgPtELqEihN6+MSVFJTVqlP3pkgbwMus8rC2xVmUGuO5Elk3mulQrS/SFW8wb0He7fC2Itau6Dr8paF32UWORWT2vxsoC/iOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h6TAJnvg; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790769365; c=relaxed/simple;
+	bh=KG6BiYXVkut6wA2+1armqrbyGN68UP40llVPal0pULM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j/MsTk/6K6gF3PifM3soSO4iTMffvWMup9gqSFXwLJRzlYlzq8pcnSOlBQHzo7Eggo/ZUEoEEL88Q5m2qHI8iGo4G49eRhxU99RrkatIFLBYNw9xrEFqTfrkLDXL+AU1buEQ1UPPLbB0FEzE6ZHlay+wIFtWkvh/Od1HNDT4bio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=YIsdJzDW; arc=none smtp.client-ip=74.125.225.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h6TAJnvg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49A561F00893;
-	Wed, 30 Sep 2026 11:51:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790769070;
-	bh=MsKu2QvMYXznsid/PbO/r1U6EfT+lLwdNFVx4O4bgtQ=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject;
-	b=h6TAJnvg38T8ZGN/EIwoqqtBiFlnbXRa0lWOxh6p0B5Rpz4tK31to/oI6kFWQvxI1
-	 v6f6jmZWVdVISWWG2sdyxHsdlXI8u1jmO7xF0C8AbqEw6fmEoltjsZVihxBMBrqjUh
-	 2TTDD6DxikCq1b84Xpl5Vyv0FgPg/pqf4alQr5pFh0W6KNJNy1i5nuc2d1aZgnlduQ
-	 SXZLrAvrmCfIeg/deQ2TB6tMN+IxBn0Rd8cw9C/hoMXqRQLR2Bf59fMJRKNIbNk9dB
-	 +wkoGu+0eHOOzpw3kxLyDo4mxXj9pA/bd5yqIvh+1v7Nm4rvIH6LBxC5I5DpheZEN5
-	 XFJkNcwN4s4pA==
-Date: Wed, 30 Sep 2026 06:51:09 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="YIsdJzDW"
+Received: by mail-wr2-f32.google.com with SMTP id ffacd0b85a97d-482f6350f91so3063992f8f.1
+        for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 04:56:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1790769362; x=1791374162; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=nbYCj712E+4XFuBgODpd1EFeTXIJOMr8QdEF2zg7Mms=;
+        b=YIsdJzDWFgeofjItZ9rbRNhCqwCcLXd0ZQ3tMu+avXw+hPCROmC3sq6g30VjiDwSsb
+         ip6GnnPa7hq3IKx1PcIgYZHAJ+vMs4tP89gyKrigqNveCyQ60iAdlLzSYbidjuYV4/Mr
+         wtUwts3g+zwoDH7Yj3RToQO1GBh+jK4eW5zYYU+gkIcKkbRJi+JHTS5Mi+UZbYeXD3C/
+         /GQXgxkAUgL8wSXU8PcX/K6eQPQowPNYzvpMZgwhE9ZCXBobwr4TTSXemqFrGbToCecC
+         Bo4jsc92S992tBZub9ZkpzryhFn/cahM4uh4qS2Mi5URs4Ot7DGjhjAYK/HSaXhHiKQB
+         qzCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790769362; x=1791374162;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=nbYCj712E+4XFuBgODpd1EFeTXIJOMr8QdEF2zg7Mms=;
+        b=TiG0En19EjNpP/qHlvfrbTMI/a80mIvyVHGEcQWUfMOdYsjq7he54ZH46Qn+WMAnso
+         YaCenjQ45prwo4jkgUfWkx/yv+xpz//TidFYNtbdDWYVh3z4tQi6JDNVaK4ZFC0YGfHD
+         R2bypN1rkg6y1mRJ/2lN5DwZALwWHBqDug4gYeInT5XwKyLLgRImSXyVWhPyKxUhuZZQ
+         9DuFAwHPOI0XScPn7fb6C+vxmO8SODcRlJQla+VaecKdujSF7Q1lH3LkxTAKM66B5P1b
+         2jshwxPEitkpYQjXFxUFnMP86zRUD3sY8gb9cxKygGv6ySaTG9R/x3UT1LlSaQh3ULZr
+         gGZg==
+X-Forwarded-Encrypted: i=1; AKwUvBzgRIiIBKfs+DWgZyt9izdZPzMvnuw26nOY28JuRPz9P1V1nIysWckwinqesIMptVPphAkufBr0w0xJgg==@vger.kernel.org
+X-Gm-Message-State: AFuF++lpS5o2/O746SSxaT/zykV1jipQe6VoIK9XQafGqB4Q1/2yI7kB
+	VnZFYnRv/wXbdi6tOjvexc6bofJg6h8tlqA3iM4JO/p7q1CY+iaps+5Yyviz9pYYxE4=
+X-Gm-Gg: AYBFou0UUyjW1zt/omQTMNiUK6vIojExo0937bNioSuuKfICmih2RLwrvYmqnk/OscA
+	0uvAXcwapidpLKEkZdY1nDO5HYpp+Fj5SssUerpDq93q8G346Aytc77P8FOcT5fAkQ7VbOPSYFN
+	PKbX9Qhk0dYAxY/0RtUAfqf4MH7WI0d5iDKVzTnN5XeVQvuMf2LYFSh5kCHdlgIp2tRQY+VW2xh
+	niBwIkCiqQfbFm27WmBjoallRWF1uRXzc9tGDlOXa8l8jzy1cYiPUl1AP9DOHFCMiH2NgD9B38q
+	Rm8W31bNIPpvThGp3raef6Z+2cnfkUj0ty+6bu5CM5IJPmO1Y9vtkLELOKkc2VMhpIc60QSvoga
+	BKOzVIL4vbyWsu7l2Zr4UOyfjpRIdX3CC9e7ghXpSe4u50vFPZAIG1SxLwVG2XK3l1tH1S8mfZm
+	gbZm4elbJPjbaF2zfJ9JyIxUG3KPdaqOFG8KW9u2My7OauN4iVs3/HkWOwHtNEY4KDpfDHCj9cj
+	DhmImXNkyXy/w==
+X-Received: by 2002:a05:600c:1d2a:b0:49f:faa3:3ca2 with SMTP id 5b1f17b1804b1-4a01afebf68mr25206575e9.13.1790769361720;
+        Wed, 30 Sep 2026 04:56:01 -0700 (PDT)
+Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4a01ca32a44sm6509785e9.0.2026.09.30.04.56.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Sep 2026 04:56:01 -0700 (PDT)
+Date: Wed, 30 Sep 2026 13:55:59 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] pwm: tegra: Check for match_data being NULL
+Message-ID: <arz4S1-q7DXM8y4s@monoceros>
+References: <cover.1789741839.git.u.kleine-koenig@baylibre.com>
+ <ed943d9be3b785514e0f65a5b8c13a78aba7a090.1789741839.git.u.kleine-koenig@baylibre.com>
+ <arD7N6A6ncBNR1Jk@orome>
+ <arE-s0zbTUn14aIr@monoceros>
+ <arFYGka5NpcgJ8oQ@orome>
+ <arI8vXaKTvEJi-Zd@monoceros>
+ <arJRPVsReXWfUC_o@orome>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-tegra@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, devicetree@vger.kernel.org, 
- Mikko Perttunen <mperttunen@nvidia.com>, linux-kernel@vger.kernel.org, 
- Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Jessica Zhang <jesszhan0024@gmail.com>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Conor Dooley <conor+dt@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-In-Reply-To: <20260930070535.47130-4-clamor95@gmail.com>
-References: <20260930070535.47130-1-clamor95@gmail.com>
- <20260930070535.47130-4-clamor95@gmail.com>
-Message-Id: <179076815642.2155434.13248975463672729099.robh@kernel.org>
-Subject: Re: [PATCH v1 3/6] dt-bindings: display: tegra: Document 8-bit CPU
- parallel interface
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6rgnpj74w7f4diji"
+Content-Disposition: inline
+In-Reply-To: <arJRPVsReXWfUC_o@orome>
 
 
-On Wed, 30 Sep 2026 10:05:32 +0300, Svyatoslav Ryhel wrote:
-> Document 8-bit CPU parallel MIPI DBI Type B interface provided by
-> Tegra20/30 SoCs display controller.
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../display/tegra/nvidia,tegra-8bit-cpu.yaml  | 138 ++++++++++++++++++
->  1 file changed, 138 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra-8bit-cpu.yaml
-> 
+--6rgnpj74w7f4diji
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 2/3] pwm: tegra: Check for match_data being NULL
+MIME-Version: 1.0
 
-My bot found errors running 'make dt_binding_check' on your patch:
+On Tue, Sep 22, 2026 at 12:06:14PM +0200, Thierry Reding wrote:
+> On Tue, Sep 22, 2026 at 10:33:16AM +0200, Uwe Kleine-K=F6nig wrote:
+> > Hello,
+> >=20
+> > On Mon, Sep 21, 2026 at 06:24:39PM +0200, Thierry Reding wrote:
+> > > You're probably not wrong about opt-in being the more natural choice,
+> > > but looking at commit 3d713e0e382e ("driver core: platform: add device
+> > > binding path 'driver_override'"), the intended use-cases are very
+> > > generic, so it would probably lead to a continuous stream of patches
+> > > needing to be added whenever a new device wants to be supported with
+> > > vfio or something.
+> >=20
+> > thinking a bit more about that: The use-case presented in that commit is
+> > about
+> >=20
+> > 	echo vfio-platform > /sys/bus/platform/devices/fff51000.ethernet/drive=
+r_override
+> >=20
+> > . If we had an opt-in mechanism on the driver side, it would only be
+> > vfio* that would need it, wouldn't it? That sounds handleable.
+>=20
+> I have a prototype patch that I'm going to send out shortly (after
+> testing that it actually works). The problem ended up being that the
+> driver_override is a device attribute, so there's no good way to drop it
+> based on a driver flag.
 
-yamllint warnings/errors:
+Did you see that I sent such a patch already.
+https://lore.kernel.org/lkml/0f7446324f6a0c8f0153d6532d92a6eeecd6a308.17906=
+12298.git.u.kleine-koenig@baylibre.com/ .
+You were on Cc:, I thought this to be enough to make you aware and
+didn't mention it in this thread here.
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/display/tegra/nvidia,tegra-8bit-cpu.example.dtb: /example-0/dbi-bridge/panel: failed to match any schema with compatible: ['hit,tx10d07vm0baa']
+I hope to not have provoked much duplicate work.
 
-doc reference errors (make refcheckdocs):
+Best regards
+Uwe
 
-See https://patchwork.kernel.org/project/devicetree/patch/20260930070535.47130-4-clamor95@gmail.com
+--6rgnpj74w7f4diji
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+-----BEGIN PGP SIGNATURE-----
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmq8+MMACgkQj4D7WH0S
+/k4RvAgAqd9FufsIM+X10LNPW2vXz8iS437cIitZBmuW1Vk5daH2a6nX3ITro9Xd
+m1uBy04vTBPMSXsUwvol6f9Y1h5JW0iYXF2YwTTAlWR3fetaR884qBLR/X6yveCc
+Z71fEjfhgB65RixvyS2lccOO5HZMIuSUg78ugSEU/oZmfI1rY27I9D/H21bJtZpY
+CUtunPcw+aRBmHe1IY9wTsT58JaACjvTaMyXJnppHSx8Q6Z7ZrYatU3AomaKIemk
+ReTaT9id7o5dVHf7gP1rZowooxWdUyjGpXfQ6B3sRPR7SzweCGbW9d8KGcEcSAB7
+k3PLVpRXQlv8VzgsQaqq/nbFY0ILdQ==
+=3GXt
+-----END PGP SIGNATURE-----
 
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+--6rgnpj74w7f4diji--
