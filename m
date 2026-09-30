@@ -1,168 +1,124 @@
-Received: from mail-dy2-f16.google.com (mail-dy2-f16.google.com [74.125.229.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4573488238
-	for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 10:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.229.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790764474; cv=pass; b=B0UldctUNUK/zfugTlz3IqJ113RLlSktB4LPjJ9iBJspb0v9QV7gsFNYrOrCIPbWYPPt7wHTngm9DH8b7QtsDHDzL07vrz64nGmVb1Gn93XA6y8jOu0it15Ypx9m+9AcHfqHT+5GG9chPNI8y0xVg+xCyIdU8GCbXH1LKDdZaww=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790764474; c=relaxed/simple;
-	bh=Jgl2MM4xT4vjtYr00D2lGwtIPFBPkBNmNvFUfSxZsvk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dwX8/ioKE6c4+qGvzLI0bfyrw85pLBnjh7QojdVyYuOZ0I69h7IAIwwswqCq1Jxr3Li554Z2/I3Qr5GsMtPhDoYEXmSy5wA3Bce3+II/Y0lyboFtU4fwhVTauW7rsraPOAOBCDCy3BhIKFfkjLsRmlcdRYrISOhqJf+mYfCUmr8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qPEkw3dg; arc=pass smtp.client-ip=74.125.229.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494DD48F846;
+	Wed, 30 Sep 2026 10:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790764753; cv=none; b=SMAWXg1Y7b22R5jTxVC3sq02YJlJY3PaOppJHpx8iEmpiHuVF7+qg9uUa83Q2Ws0gTP535805CMc7dhDUATFXHGYNJdQAfbSxZx32jjJC1By0rjDnl3sdVE/EPSv8v6hyW5Q/2vSQJ6i+MwYIAHl0/dhvIkphtNO+Kmq/7OgeJ4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790764753; c=relaxed/simple;
+	bh=rv5gx3fDT9i+N8SB6hWcjTDTpJiTAkjOXQyZwVxvfNA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WCrvmH/3eaFIXNpIBpU7NRXQFKIfOKXQ4c3MnD1IKtoFqK+VIEw8HQ1Df88Z5D9gjiIJuc4NUGFd9TTjaisvM10sNqR9fv3YEkEwe2yr3nEVrkqpijHdw+TnyooVlZOg769gCHmvYIUqqZRRpqsFwAxzFx9/hpZYeTw/5bPbbTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=URdDuFZY; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qPEkw3dg"
-Received: by mail-dy2-f16.google.com with SMTP id 5a478bee46e88-34b3a9cd8edso814140eec.1
-        for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 03:34:32 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790764472; cv=none;
-        d=google.com; s=arc-20260327;
-        b=sFkpkyZicTPU3ulP8/VWxnB+r55kbt5PSaaYjoHrWlhKf+eNGa00n7XpLsPr7MkrQc
-         9rD2DpPMA6S2o3r7JuTT36My0wDzSDZ70Ukts07ksJMkhyltjC376RGE5o25XabpcrM5
-         trK0rPmGwanboC1zeGHIW04l/mwjGLFSAs78X3opzeHjuaXzQB5rhuYCtF8wWSwfT1zl
-         psiRL3PyCAEYb7qxg5DElkR4cwFZvxHlddLgM/WgFd05EPp2zULntm9+f50Ir7SnHlz3
-         GhBdN3FX37MDW8Z13GPrkDomvm0iYifeO0TMSqxX8cOF18Ip3+tpAmZX8JCNxJeLHw8v
-         sAfg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=o3Nzxky31E5PRv1JQth+E+SJrslWGDTCiHFn65qWNg4=;
-        fh=9+jyCOFZDFB4ssH0aKSAupBFta+37ntkWLsg51xp168=;
-        b=BZ/ktGqEJneNZwWryUZqv16wAP1HmpLg74OIZxtxwmR8pu5QCC5Tb4t8Uv6baeKMFo
-         o14oqkkX+1mReW1B+z+1+LGVsgV3+p2/Vs5beb921Xz+xAt53u4wn0Et2T4OpRJ5Ke6S
-         ixirGDCbNJ2WStMwNYSzWxX3n4/7X1tUgRJWRRs0tiGz7xpBESQIXB4Q0o+o2bxRdRQZ
-         4uCnxkf0Vl3iDPMdzuqwRvtayFqt97wI4jhX/VzN1RHwa5LkqPHhIDV6yJ9LXRFWAQDb
-         ZWl4htFRtBHm+Sr+L8NGvj2mPLneGVQfaNKa13buC49C5Q9wUCNXhEK1DERVxmCdueBN
-         hjWA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790764472; x=1791369272; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=o3Nzxky31E5PRv1JQth+E+SJrslWGDTCiHFn65qWNg4=;
-        b=qPEkw3dglTjNzw0HlyCIzGBpo2CjjVahjiWF+piW77HhGnKI4v3LQR9mVIfNdzhzR0
-         Ci4EAj9e9Dx7sAqbPLTdlBaSIC2s07klwMHi6jOh7X9XPgSyou7f25VE+x0OrhVdc7w4
-         DZEUXqKSRMTAT+6culknnvmGXb5apK709JsdLsNR13XNkuMkJppTyNruFh8ntGiP2fjY
-         szpd2E6Fp1A50P2XRHSz2+SVQfiF/rYQA7TGb+MjMNpXss0NXu1N9DVd+SZkCbEpOdch
-         a5F9wMGkFM+8zZhRnJLT8FrmR9aMUT9kZoTG433zfkt9NfePWKavXVLlRNIEioV5DNZ+
-         Tl+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790764472; x=1791369272;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=o3Nzxky31E5PRv1JQth+E+SJrslWGDTCiHFn65qWNg4=;
-        b=y7hqdTdwPDgnaZpLljU4u/q9PHKvokEBa8UBITR3vACHdJXWYRRS91GRGTrMZqiUSC
-         tbZSO8jFNnblTDRm+dIaqtUJa9mRxwzc2R+VMPM7gLXrY6BQSOMBzHhonLxZCNxFdUDM
-         8azAp9CW8OLMgrc05HgMyTN9/aaF/9gBdLTKSg5QCSQ/QSdqzwLSUzogX1CTaanc2TKK
-         gBPFU+DJfVdj0LjKrySBG7Oahl9u2i9TvgtCUtoOY7WFE0qVQjgCPbY2YuX3AieUgn6B
-         iE9BrZn16q1Ls58Uc3ALZ43/wqo4ZV8wPKEc4ZH2PSJPF4e222mqsWGItZ+bMe66dHCF
-         XMjQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwCmrmP79mFVQRm7CYUgfhADBTfkOL/wESPa0llHaJ7GCKtcC08KTa2JP8xV2HM3ORB8qfWqph4VORaYg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYI7Wu0QY/Y86lTsQ3JTXxoTeCuuSz4bOsGHFXixs9Cd3byKCGCo
-	6Z//abySYS9aFk1t8+3juyugWczt3czd3Z0fXpxr5+6U/YunfUD6HNuyXSVLPValqTKEhne+C9u
-	ggwpBJA2AywDAnL1Jd4CvkdMQ5R7/k7g=
-X-Gm-Gg: AYBFou0dCGp/C1Il9L1tGxjZKjphPM1/AJRZkkrSRAHYFUAUwP0fUs+cditG+bAqhoS
-	k5jHjb59TMdKzx9bHLWgY5yufeW3eikY6WqMFe8H/wKUXtHh2JWjUZ3CVKTwe4TWj3psd1GRZxj
-	s/LybX2UomWlC/qHHV15m1Pk9JEyXK1OZgf22oXCJW0yqg+wV/byyV+wbrLOuipOuPlGL6I/dUt
-	ebW9QffBONO8LOEsChGFADwnxCLAmMQ/XvgqAW0GVlZyflOZwW06q7iCqa/s8OanPm5Dw/6wjtP
-	fXp5FEii++dXaS0nV+SorzYmNm752Z5AHSmdBLKDh++yPej3iSztb9xAzrIL83lCmrn/Ov0T+w9
-	kB05qI1h7fo87BBDVhf2jg/U=
-X-Received: by 2002:a05:693c:4092:b0:332:94e9:a732 with SMTP id
- 5a478bee46e88-34ce4683bf7mr1420176eec.13.1790764471845; Wed, 30 Sep 2026
- 03:34:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="URdDuFZY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DA581F000FF;
+	Wed, 30 Sep 2026 10:39:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790764745;
+	bh=tGFtMM2F77TT7uxlHemaNZrtS7chdzgDhP0DLWrj3QE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=URdDuFZYMOB0KJ3EHnp/XFnKkA5OJRrie0b8tMbQgLKw5iE7YrjBIy1pxZGUlsT4u
+	 WUMueqTDoUT9Nt+yCPXvfKOTBa4Cp+438AM3xfumhShyR92YPfaBtI6k1PRlaxhVpV
+	 Nt1DVku/cbQzVUeLtwuw/1Y1RP30LJc5Ztiu9+3q/vrZ+I3CM6bZt7D84cqrReSSD2
+	 zB8Gq5C9FelfYvXQ20pvn9UDb3BPuUWfyg26VMWYoKLDXwZwXGnyIBrUc+QCJNe6PF
+	 Af03FNTHASTt0NeOs1zYtKFlpw67ugJxCplASx32oK9FsguwRWb3j/yxG6zvQbYurN
+	 khqawdi0AZ1+w==
+Date: Wed, 30 Sep 2026 12:39:03 +0200
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 4/6] drm/tegra: Add support for 8-bit CPU interface
+Message-ID: <arzmMa0tlhhJ2n78@orome>
+References: <20260930070535.47130-1-clamor95@gmail.com>
+ <20260930070535.47130-5-clamor95@gmail.com>
+ <arzMjoi2LcyfxCzN@orome>
+ <CAPVz0n1WnhwOqz2xOp_0SsbgUFuYAf5YBByoMv_+XUDPANvhFw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260930070535.47130-1-clamor95@gmail.com> <20260930070535.47130-7-clamor95@gmail.com>
- <arzNgbx465QIKYdX@orome> <CAPVz0n2QdSWL8=KBXnsQQkdNEJ9m6HSQ0+6mJji_RHZ8QgXN-g@mail.gmail.com>
- <arzilGz4akKvRF1K@orome>
-In-Reply-To: <arzilGz4akKvRF1K@orome>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Wed, 30 Sep 2026 13:34:19 +0300
-X-Gm-Features: AclHuK9nWzYGgxYyAeFQUOiXDBSTKrGnZ3E_AfgUmTUKQbpwZQYV_7ChXtWTs0A
-Message-ID: <CAPVz0n0-baCzHOXjWLOCLjv8fb5GbE9a2v=8tBYr3RgHkEu+qg@mail.gmail.com>
-Subject: Re: [PATCH v1 6/6] drm/panel: Add Hitachi TX10D07VM0BAA and LG
- LH400WV3-SD04 MIPI DBI panel driver
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mb6amis5vjytdup7"
+Content-Disposition: inline
+In-Reply-To: <CAPVz0n1WnhwOqz2xOp_0SsbgUFuYAf5YBByoMv_+XUDPANvhFw@mail.gmail.com>
+
+
+--mb6amis5vjytdup7
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 4/6] drm/tegra: Add support for 8-bit CPU interface
+MIME-Version: 1.0
 
-=D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 13:23 Thie=
-rry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Wed, Sep 30, 2026 at 12:08:41PM +0300, Svyatoslav Ryhel wrote:
-> > =D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 12:02 =
-Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > On Wed, Sep 30, 2026 at 10:05:35AM +0300, Svyatoslav Ryhel wrote:
-> [...]
-> > > > +static const struct of_device_id panel_dbi_of_match[] =3D {
-> > > > +     { .compatible =3D "hit,tx10d07vm0baa", .data =3D (void *)PANE=
-L_DBI_TX10D07VM0BAA },
-> > > > +     { .compatible =3D "lg,lh400wv3-sd04", .data =3D (void *)PANEL=
-_DBI_LH400WV3 },
+On Wed, Sep 30, 2026 at 12:02:14PM +0300, Svyatoslav Ryhel wrote:
+> =D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 11:48 Th=
+ierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Wed, Sep 30, 2026 at 10:05:33AM +0300, Svyatoslav Ryhel wrote:
+> > > The display controller in Tegra20/30 SoCs features an 8-bit SPI inter=
+face
+> > > that closely resembles the MIPI DBI Type B protocol and is referred t=
+o as
+> > > '8-bit CPU'. Each display controller provides two such interfaces, wh=
+ich
+> > > can be used to send MIPI DCS commands to initialize and control the p=
+anel
+> > > while image data is transmitted via 16/18/24-line RGB.
 > > >
-> > > Why the detour through that PANEL_DB_* enum? You could just pass the
-> > > panel funcs pointers directly via .data here.
-> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  drivers/gpu/drm/tegra/Kconfig      |   7 +
+> > >  drivers/gpu/drm/tegra/Makefile     |   1 +
+> > >  drivers/gpu/drm/tegra/cpu-bridge.c | 427 +++++++++++++++++++++++++++=
+++
+> > >  3 files changed, 435 insertions(+)
+> > >  create mode 100644 drivers/gpu/drm/tegra/cpu-bridge.c
 > >
-> > Passing API/OPS via .data is discouraged.
->
-> No it's not. We do it all the time.
->
-
-I have had some controversial experience with MFD, with passing cell
-composition. If DRM subsystem allows this, I am more then happy to
-pass panel ops directly.
-
-> > > Also, looking at the enable/disable sequences these are in fact two
-> > > different drivers, with the only commonality being that they happen t=
-o
-> > > be used in the same device. Rolling them both into one driver seems a
-> > > bit odd.
+> > This doesn't need to be a separate driver. It should all live in dc.c.
+> > Or maybe even rgb.c, since it uses pretty much the same pins and is
+> > quite similar to it.
 > >
-> > I did this to simplify maintainance. Both panels are used in the LG
-> > Optimus 2X. My assumption is that LG switched one to another at some
-> > point, hence they share same timings, controls and supplies, but
-> > differ in en/disable sequence. Additionally, these are the the only
-> > DBI Type B-only panels in the kernel, from what I can see.
->
-> That's just one more reason to put them into more of a generic driver,
-> which would allow people to find it and extend/improve it as needed.
->
+>=20
+> I don't mind moving this to dc or rgb, my intention was to avoid
+> bloating them with smth that is not used often and is present only on
+> Tegra20 and Tegra30.
 
-This driver cannot be "generic". Both panels don't fall into any
-category of being "generic". They are grouped solely cause they share
-same timings, controls and supplies (only these 2 panels, other will
-definitely differ) and are used in the same device. I have no problems
-in splitting them into 2 distinct drivers.
+I don't think we've ever used rgb beyond Tegra30, so I wouldn't worry
+about that. Even with this integrated into rgb.c, we'll end up with
+around 1000 lines of code in that file, which is still quite manageable.
 
-> > > If you really want to avoid duplication, maybe they should go
-> > > into some kind of "simple" or "generic" DBI driver.
-> >
-> > DBI Type B is not well supported in the kernel.
->
-> Well, you always start somewhere.
->
+Thierry
 
-I don't think that DBI Type B needs some deep and fundamental support.
-Even for its time it does not seem to be common, not saying today.
-More a curiosity.
+--mb6amis5vjytdup7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> Thierry
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmq85scACgkQ3SOs138+
+s6Gtuw/9FP+6Dk73iUJajgZE7NHK28W/1w8RCo3JUL+muKlehzTvBjzkctjLTRJF
+KjIhpyINwgN1yc+C6m/MpIBh7f1bD6HSfDY2rF0E+CpRh4gvUdVOX8gbCtHjyTRO
+zPZFGJaHjfJkICMU6mtRbdfQ/JEkMBR0b6GJo8Ws93bsnOXVSuhN8Xm9vO6GgQHA
+agtkwliX9oUy4Un82PHCqhcLZrvK2tZ75pcdVwpxeGvTWwEzEutbTafBXXUcShjq
+f3hSw22zFMsXdH4zSh+sw6+TY++ZcfgzipkTDh24AOn4tHd4bTBH7nT6mlo83Ge1
+/TFxTz/+Isq/7IBmQOSe8UXppM7uh6JD2qiPyC2yrijaz89t+k1DSqrUhkBgbRPZ
+MqVqPqACZRh22x3AlvfHVh3L3jVhTTdMwrQeCUVabzoMvoD2BXZCOtyKOYI6NcyK
+VoAXqfhC8q/4BBkCK0DbgWJDwLpC2mmf2xOahvStsV9UUnAhJVOpnVRsB5+BICb+
+akRnpzln4nePAjNWD1RmFvA4XAcR/ASnxqCchp8VLovXb6ViPmaTYIxDQ6ZvSkqz
+p8gkqtHIGPWNEmaCmeOjBFAI5qeyQpf8JGyVxV6aGa6YaOPgMdi1L6psDMLadYKt
+hwibuXj954+zq08AqId5nyBb+RIKDeO65IXEa0modmdB9eUaexQ=
+=OKun
+-----END PGP SIGNATURE-----
+
+--mb6amis5vjytdup7--
