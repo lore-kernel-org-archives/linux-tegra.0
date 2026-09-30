@@ -1,64 +1,64 @@
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200FD3F9A13
-	for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 07:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867874457D0
+	for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 07:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790751970; cv=none; b=TAEW/PD0fYVtmtYD9Nfclq5btUiLrVd2OzNa1gpZoFjLOxR3av7STjJPB45yR4ndiPDNpwfdjm0Dx+PJ0ukZGs2R1fKd+2otEahSCDLGxyl/e7Ce1ly++OuY3e1MfogPo30M8mpUkiwmSv6he1w4z62GZ1Rto9SdWawvk4fUcFg=
+	t=1790751974; cv=none; b=jN2sgv6NEA5RXe5oHde7SM4IJRIlbYb4jQwaiPJgb2S5gOECgqPf84QNuGsFU2la5guR4+bq63BzuvujEx6UoV8L5bJ/1dWcByfTETNxO8FZyAz9mCTIILXXhkhzIsMQ2OAs3CMaOhzFoTGbvC9YgMN6y3W024Gc8nw8plvaylg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790751970; c=relaxed/simple;
-	bh=Kq5+QK0x+TRkwFsiRnUO+bq2KChSkkVzbilWKGBwOeg=;
+	s=arc-20240116; t=1790751974; c=relaxed/simple;
+	bh=+aDlPONG6UpGM8pzNDt0ZnArqs2t2sWmt8mV+5mbkds=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LLqYXpzrH1CH9RzpNi4MBKyWpY/PxejcvOxm1Wkq2Buzj24t5ZZbRbEM2nceWndYlJO1OAlloKfyBK5HSBMAYnGxGQCRfsvk4Sckpc1p7bbi8PGgncqWxogcTtp4ixmzcNSkG7UU3/zsWaCWqa1t4OpgnME+BVXJyKBBiHRKA0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mi9xYmri; arc=none smtp.client-ip=74.125.225.141
+	 MIME-Version; b=eD1h4Lpis7COJ+UbyLbBB07mFwNcW3JzeSE7uCrMtvMVpgiuTquzDGGS/S0P3DZgS3IrvcW9badmHuZMaEuJZlOdwEU6PSUlkRcuF4VdK5XdPRK8a+zg1Ga8G7frKCcOuJ7JvnV3/4jayT5TGnKe1vzA7tYpnRkSCUEHhAw2OHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LvSDZokd; arc=none smtp.client-ip=74.125.225.140
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mi9xYmri"
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49ff9642c57so7535815e9.0
-        for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 00:06:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LvSDZokd"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49ce364488dso5326265e9.0
+        for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 00:06:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790751960; x=1791356760; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1790751964; x=1791356764; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=c/1eVBfEidkNMnK70z191xNT/a5PNdQYyZi8hBu3u0k=;
-        b=Mi9xYmrijNJQ/Bd+f2S8ga/otxkgvloppsCe0IzAOBPkt/gKtcJrXkMnHvx610pr/B
-         eth4dS9VqGDwZJn5JQBWhFWLMi/zv9eSrAEZPyBRCQ/ezCC1Q58y6XnkvhjJ3AS5taeh
-         sNQwRMw93NjcqXNJ7xzXu6MWAZkNT2LSmWZBNqkRst7mVwZN0YrjQAWlBX50c0s7RkKQ
-         qI5ynhYl3kQqJGcg3CO6lQ7D0CWXG3mUqGfDkpVUKdv+nB+ovfxBo+ZRiuvCVsTnnGFD
-         gPuaEnCHwxQTrTus/h7qc4+U7iV9THVGuqyUDpDibh+vXuhFwGA9/we4vZL1uVS456xM
-         7RPQ==
+        bh=WNCP+MgExkv2yvoAQcyTiZxwG6dNYRxx1MxpmqPtKeA=;
+        b=LvSDZokdBAvDETIX+xIbrl0O1Y+InIq5K5IQIscpEn/ZDRX1C6fdrRtrp6BYUiWYsF
+         GZkXBZsk+aZEp7Pkyv3+5p3HGMMWkVbFzWN1s1Evg5Y2mJEbTHp2GzoRjxh0N2DyosGS
+         wEkrU4QgpQj6nu3xsB7HzpB9MgAhXhmphcBJBokV5xryfwlSILUWwoV8hzxeWoTROBwW
+         D67RHqCrSe8UPCzHv9So9zhjyOGl3sR78QAUww70YgHAPM2EvNc9uI54thOFJcPSbpas
+         Cx+imwC81Crmeax7hNVEy916FvpUA/t1t70t4X2x0lbIm7KqTi2PKO9bbNQWuMRJECPC
+         gT1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790751960; x=1791356760;
+        d=1e100.net; s=20260707; t=1790751964; x=1791356764;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=c/1eVBfEidkNMnK70z191xNT/a5PNdQYyZi8hBu3u0k=;
-        b=Ppat7YZ1Okci3NwIBL+sQr0vlV/Q/rE8j/4RIv/1EKi2+CvVu2Nr3YIZhyvrB1o6QA
-         m9Q5OwONEzUtSrCQMgbzsmI32NZ6TTc18Vt/s8w2P6vyO8jZ/0rbnNkEbuC2MY2NdyWr
-         Tkaa70hu3rwMtoIS6yDF2ep5+ShM9+WjuurSBa0Il58ezYKHTkPW7uT+rKF3RK5pD1WA
-         yo1zvqFJNne1oiqZ15ecZaA2M7bnNuxPg98keQFuwtXVGVB1uyBqmvI9GVPRhkg+Zh16
-         dUU7m0e5lY3dLKas6nHpj7+v8COgrgdryjuNYBF6CHesDH65DG0BJrr6RuSHuUhJfZyD
-         7mFQ==
-X-Forwarded-Encrypted: i=1; AKwUvBz9WCjwblus5NPJqYSSY9mvN9dlwhcP0ULgRegd1ZsP07f1+aN+E1QS5MEneVGcqFpweO1049PYsBb6cw==@vger.kernel.org
-X-Gm-Message-State: AFuF++maAVcCR6J/sKvSKhXcz6ztepLIZ12qXooS/+Wn6OEaqBVftWgt
-	B+aczBMbqvWNolp0k9kfgNEWZbGpjGkrlMWXKXN8yPim4qbAx49w7CAI
-X-Gm-Gg: AYBFou1XdT6zUZCnQDxkxtG1uDAMoHl7Na7keWtD8EhwQ0sg0CxX5ZqcUIYlk9mCeJH
-	4JndGoRhUWdcuHzwoRib8w4tyzl3SqIyQ/5pU2VGCFutmUblAp654yF0yuDzKtfeqGt2hbuQI1r
-	nAD78u/qtu9ZnN6dO0mx/tqxPu1E6AQl+yL8rQzNOCu6CPLjdaQo6egy0ElR1NZnfi2ex9T5qav
-	oYFfTrgNccK2NKM/GtwT5pMCexbhSXDHLpRmfDiQGdPVLbcNDoTxJcm/Y06dmxgpRnBlQXsHSXW
-	m/f1Sd1nEnKG09ENbtv+LwiVV5Xr9lif5qSBxbQMof2fmRm7Dl9YsuWYMmAp6z6u6ylKBJJfv0g
-	lsjpS6zd1Ao7KuKANF3gDcdsPHfx4rv8+Hr2uP1tU4uVYWuReblp8HWSZq9gmxsvFetQ4RvDYbf
-	9/d+QEUThCcNyYKAyEUpBT9Xox8a/iRD2Ji0ix3NrJxpHrhPwpX16ljExxzGXglO2Rm5Gyl0IXs
-	tzMT3xQWNHVp2fDfuSQSdouqoER4Q==
-X-Received: by 2002:a05:600c:45c4:b0:4a0:25c:8ad2 with SMTP id 5b1f17b1804b1-4a01b1aedd0mr5255825e9.9.1790751960356;
-        Wed, 30 Sep 2026 00:06:00 -0700 (PDT)
+        bh=WNCP+MgExkv2yvoAQcyTiZxwG6dNYRxx1MxpmqPtKeA=;
+        b=KyYpSxyn785biMgxJNh9KQbCatiTlP5tmWNm/tarCB3o3rBvx4UGxfc9FTQfR77lR4
+         wZAAMimPMsPg9xts97LNf5tlLZ80YkcLUKK7Vag5oHU+OBLckQem3R99/CRVdIGxtilg
+         DNWWE13IM4uokQMBGXKJtgYZqRADy/cO3cmsTg/Q6yulTHvYLORCoHzfeJ5bSICwXn5m
+         nXQSxxjBZErrravpKa6FL6HGFvYhWn8xiuyjpPZNAdZlzi9SkAQOVM0ADDRXsM9yfDv3
+         oK6/dVuN6nw51CHVGXr1YwEwV1/GSSd5gzgaRYRWioDVQU1AZ0yhatP0Ysd1oT7QxgYV
+         +8dg==
+X-Forwarded-Encrypted: i=1; AKwUvBxtBC1H/YIkFsG+/IoTaipihLH/M/Uq0DbW1frbl97B9ofOg8hxPxByTtky+9KdR1HGHFZfAyN04Ejx0w==@vger.kernel.org
+X-Gm-Message-State: AFuF++mGZDPsPAvDp4GvhJHz/B0Srp0vIX8pZQW9aOCmcGtKQRy31Ufm
+	BHbZaYk25WJ2PFJWhZ6zqGnewKOtx9oHv6dy0yycHxCajXmjuZISMMgZ
+X-Gm-Gg: AYBFou3GcHFQFkcnYtobIwFxqVFq8sFWsY9NHwIFMed4QlLXmzH2ca38KlYfpkvF16i
+	ZzRlZ9xNcXs12W4N/Mk9V2mY+t2Kfng3Fqb4eJKtw1o03Gw7wEAAHUvqaHNjzaqgeyqGBWu81UL
+	ywLK46JGamBoCIozyBeJx8tlRsSss0k6SLp2NrvA7+X2XTP2PkCz0Ad/h0bSG62TVwrWaED4BdS
+	OdtmW7h4XHnWhK1GDmFB2nMjAjyHVC9qakQmrpRk6s47wkemgvKMCoPkeAws2Y4VsqoPV55ZTy0
+	j6ZxSDrY2BpmjmH2UxLsBSHYEaP0jyFmwJU9ISftOqZ9hbsriaSFQn570vrkAfs/TnmZg0WfUa/
+	UUAh63mfSxvrB8TxCv2mMxKgZg8ZChqhcbTNUrL9RqGvPD8ySu7Farok5wqz+z1Nq6WtCXuHPiS
+	iOSjHEfay99rw6fMg7gCk0ut99GroRmI5xCCF9M1NqmKrdYaWinPEz2LGmmh9lV6xaF9Urd/9Wg
+	eyWpmNYnKov8cPX2ZNrQxSX7EStQQ==
+X-Received: by 2002:a05:600c:4f8e:b0:49e:63cc:6324 with SMTP id 5b1f17b1804b1-4a01b196740mr4474045e9.6.1790751963864;
+        Wed, 30 Sep 2026 00:06:03 -0700 (PDT)
 Received: from xeon ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48b029f5bcdsm1145150f8f.27.2026.09.30.00.05.58
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48b029f5bcdsm1145150f8f.27.2026.09.30.00.06.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Sep 2026 00:05:59 -0700 (PDT)
+        Wed, 30 Sep 2026 00:06:03 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Jessica Zhang <jesszhan0024@gmail.com>,
@@ -78,9 +78,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH v1 3/6] dt-bindings: display: tegra: Document 8-bit CPU parallel interface
-Date: Wed, 30 Sep 2026 10:05:32 +0300
-Message-ID: <20260930070535.47130-4-clamor95@gmail.com>
+Subject: [PATCH v1 5/6] dt-bindings: display: panel: Document Hitachi TX10D07VM0BAA and LG LH400WV3 panels
+Date: Wed, 30 Sep 2026 10:05:34 +0300
+Message-ID: <20260930070535.47130-6-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260930070535.47130-1-clamor95@gmail.com>
 References: <20260930070535.47130-1-clamor95@gmail.com>
@@ -92,159 +92,76 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document 8-bit CPU parallel MIPI DBI Type B interface provided by
-Tegra20/30 SoCs display controller.
+Document Hitachi TX10D07VM0BAA and LG LH400WV3 MIPI DBI 4" WVGA panels
+found in LG Optimus 2X P990.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- .../display/tegra/nvidia,tegra-8bit-cpu.yaml  | 138 ++++++++++++++++++
- 1 file changed, 138 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra-8bit-cpu.yaml
+ .../display/panel/hit,tx10d07vm0baa.yaml      | 55 +++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/hit,tx10d07vm0baa.yaml
 
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra-8bit-cpu.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra-8bit-cpu.yaml
+diff --git a/Documentation/devicetree/bindings/display/panel/hit,tx10d07vm0baa.yaml b/Documentation/devicetree/bindings/display/panel/hit,tx10d07vm0baa.yaml
 new file mode 100644
-index 0000000000000..f0dab608b2936
+index 0000000000000..ab839d9e4e111
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra-8bit-cpu.yaml
-@@ -0,0 +1,138 @@
++++ b/Documentation/devicetree/bindings/display/panel/hit,tx10d07vm0baa.yaml
+@@ -0,0 +1,55 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra-8bit-cpu.yaml#
++$id: http://devicetree.org/schemas/display/panel/hit,tx10d07vm0baa.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Nvidia Tegra DC based MIPI DBI Type B bridge
++title: Hitachi/LG 4" WVGA TFT LCD panel
 +
 +maintainers:
 +  - Svyatoslav Ryhel <clamor95@gmail.com>
 +
-+description: The display controller in Tegra20/30 SoCs features an
-+  8-bit SPI interface that closely resembles the MIPI DBI Type B
-+  protocol and is referred to as '8-bit CPU'. Each display controller
-+  provides two such interfaces, which can be used to send MIPI DCS
-+  commands to initialize and control the panel while image data is
-+  transmitted via 16/18/24-line RGB.
++allOf:
++  - $ref: panel-common.yaml#
 +
 +properties:
 +  compatible:
-+    const: nvidia,tegra-8bit-cpu
++    items:
++      - enum:
++          - hit,tx10d07vm0baa
++          - lg,lh400wv3-sd04
 +
-+  dc-gpios:
-+    description: Data/command selection pin.
-+    maxItems: 1
++  avci-supply: true
++  iovcc-supply: true
 +
-+  rw-gpios:
-+    description: Read/write pin.
-+    maxItems: 1
++  reset-gpios: true
 +
-+  cs-gpios:
-+    description: Chip select pin.
-+    maxItems: 1
-+
-+  data-gpios:
-+    description: Specifies a set of 8 gpio pins used to transfer data.
-+    minItems: 8
-+    maxItems: 8
-+
-+  nvidia,init-sequence:
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    description: Device specific set of values used in DC DISP_SPI_INIT_SEQ
-+      registers.
-+    minItems: 4
-+    maxItems: 4
-+
-+  panel:
-+    type: object
-+    description: Node of supported panel driven by the bridge.
-+
-+  ports:
-+    $ref: /schemas/graph.yaml#/properties/ports
-+
-+    properties:
-+      port@0:
-+        $ref: /schemas/graph.yaml#/$defs/port-base
-+        unevaluatedProperties: false
-+        description: Video port for RGB input.
-+
-+        properties:
-+          endpoint:
-+            $ref: /schemas/graph.yaml#/$defs/endpoint-base
-+            unevaluatedProperties: false
-+
-+            properties:
-+              bus-width:
-+                enum: [ 16, 18, 24 ]
-+
-+      port@1:
-+        $ref: /schemas/graph.yaml#/properties/port
-+        description: Video port for DBI output (panel or connector).
-+
-+    required:
-+      - port@0
-+      - port@1
++  backlight: true
++  port: true
 +
 +required:
 +  - compatible
-+  - ports
 +
-+unevaluatedProperties: false
++additionalProperties: false
 +
 +examples:
 +  - |
 +    #include <dt-bindings/gpio/gpio.h>
 +
-+    dbi-bridge {
-+        compatible = "nvidia,tegra-8bit-cpu";
++    panel {
++        compatible = "lg,lh400wv3-sd04";
 +
-+        dc-gpios = <&gpio 110 GPIO_ACTIVE_HIGH>;
-+        rw-gpios = <&gpio 11 GPIO_ACTIVE_HIGH>;
-+        cs-gpios = <&gpio 108 GPIO_ACTIVE_HIGH>;
++        reset-gpios = <&gpio 175 GPIO_ACTIVE_LOW>;
 +
-+        data-gpios = <&gpio 32 GPIO_ACTIVE_HIGH>, <&gpio 33 GPIO_ACTIVE_HIGH>,
-+                     <&gpio 34 GPIO_ACTIVE_HIGH>, <&gpio 35 GPIO_ACTIVE_HIGH>,
-+                     <&gpio 36 GPIO_ACTIVE_HIGH>, <&gpio 37 GPIO_ACTIVE_HIGH>,
-+                     <&gpio 38 GPIO_ACTIVE_HIGH>, <&gpio 39 GPIO_ACTIVE_HIGH>;
++        avci-supply = <&vcc_2v8_lcd>;
++        iovcc-supply = <&iovcc_1v8_lcd>;
 +
-+        nvidia,init-sequence = <0x0000002c 0x0 0x0 0x00005000>;
++        backlight = <&backlight>;
 +
-+        panel {
-+            compatible = "hit,tx10d07vm0baa";
-+
-+            reset-gpios = <&gpio 175 GPIO_ACTIVE_LOW>;
-+
-+            avci-supply = <&vcc_2v8_lcd>;
-+            iovcc-supply = <&iovcc_1v8_lcd>;
-+
-+            backlight = <&backlight>;
-+
-+            port {
-+                panel_input: endpoint {
-+                    remote-endpoint = <&bridge_output>;
-+                };
-+            };
-+        };
-+
-+        ports {
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+
-+            port@0 {
-+                reg = <0>;
-+
-+                bridge_input: endpoint {
-+                    remote-endpoint = <&dpi_output>;
-+                };
-+            };
-+
-+            port@1 {
-+                reg = <1>;
-+
-+                bridge_output: endpoint {
-+                    remote-endpoint = <&panel_input>;
-+                };
++        port {
++            endpoint {
++                remote-endpoint = <&dbi_out>;
 +            };
 +        };
 +    };
++...
 -- 
 2.53.0
 
