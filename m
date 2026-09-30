@@ -1,149 +1,154 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50924D1787;
-	Wed, 30 Sep 2026 15:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7A55172E0
+	for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 17:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790783913; cv=none; b=FCX+nABzNWKSO2+2YQH2ZQikHMzBBQd7YMGvYTjVdjZsAT6QXP4uyUCK1SQJvxRzMptVsAaBc+YWK3AgYdhUK40cTkWcNzz2imYz05O6g+wt0aVjS1HdzK7R5jy1NtZnNtnnA00HRnhL2gJb8ni2rSIUk/2T/q0sJqleCD+NjzM=
+	t=1790787937; cv=none; b=WdYZCJAst0APjqK4p03uUmPuCB0sXrf4GQTuauU1Ken2/DS5kbQfjKAbbzhwNs01zkHUxb5NfHbAnvC165jLrWdvQwWBdT3liu1KwfsIIE37l4tkNbCPZ8ZQ/CPUeiepsmwduRyU1bY+pRHLw1QUFXcee9qHyDLltBKa4q6OjW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790783913; c=relaxed/simple;
-	bh=7+uOAdwvRA5Phs71HOWvHd2WnABdLy2EzB8eI2nyFFE=;
+	s=arc-20240116; t=1790787937; c=relaxed/simple;
+	bh=ZAUUIneOAYnu5HIH9P7hXzk9WJKgXOYtiwGV8misX4E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lqTI12H6q0H84KMyhlgT9gmEZn/iqjp61tDA5rFSJatvq8zU0nlK0U8uiX3Q5xqHh6PlSUnk8h6Yg1SDGRU91+5rrANOAeMjKSzexzdFe/2YegbpPcA8IjjdKnpkSeUCO9jwVR434AzJdX/lZ+enO2qW0fa6M9fnzZw9tD7hgak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=L2tfF9HC; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=P+YAeRb+ex69txgxPoouD6pjoxwEw1fMj0EHLDeKXKAvWCqj5jyQduUHkL0zS3iayyi03tiswxHaUNBp8kVfR34IBSuh0fAz9mS+xliTLmhtpRb2w/WINZpv6DuTjTDdjIh7Z+m5ae5KXuGnzSNks8UdUNq3vYvzcZEPGp4uNaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=ZVWwwLUK; arc=none smtp.client-ip=74.125.225.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="L2tfF9HC"
-Received: from ideasonboard.com (unknown [93.65.100.155])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 34D4C34;
-	Wed, 30 Sep 2026 17:56:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1790783786;
-	bh=7+uOAdwvRA5Phs71HOWvHd2WnABdLy2EzB8eI2nyFFE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L2tfF9HC3qurjOKRXYDMqOKASmD+Fr11uViI6pruu4IK+X2gjb+Qrc0LPbo2ClC/i
-	 pQ50KvP2bVEDVqeebyd/BBPmVqkW68rD+oEjTdYgMuso89FKaU5zYqVN2gKEIaX8Kh
-	 049B+Gb1N/HvapsKch/NcZ4isnk/qWbGR2u6qN6Y=
-Date: Wed, 30 Sep 2026 17:58:14 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Paul Cercueil <paul@crapouillou.net>, 
-	Anitha Chrisanthus <anitha.chrisanthus@intel.com>, Paul Kocialkowski <paulk@sys-base.io>, 
-	Linus Walleij <linusw@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Alexey Brodkin <abrodkin@synopsys.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Michal Simek <michal.simek@amd.com>, 
-	Daniel Scally <dan.scally@ideasonboard.com>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Eddie James <eajames@linux.ibm.com>, 
-	Tiffany Lin <tiffany.lin@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>, 
-	Yunfei Dong <yunfei.dong@mediatek.com>, Minghsiu Tsai <minghsiu.tsai@mediatek.com>, 
-	Houlong Wei <houlong.wei@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Joseph Liu <kwliu@nuvoton.com>, Marvin Lin <kflin@nuvoton.com>, 
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Srinivas Kandagatla <srini@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ge Gordon <gordon.ge@bst.ai>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
-	Bard Liao <yung-chuan.liao@linux.intel.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Peter Chen <peter.chen@cixtech.com>, Fugang Duan <fugang.duan@cixtech.com>, 
-	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>, BST Linux Kernel Upstream Group <bst-upstream@bstai.top>, 
-	Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, 
-	CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-aspeed@lists.ozlabs.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-media@vger.kernel.org, openbmc@lists.ozlabs.org, linux-mediatek@lists.infradead.org, 
-	kernel@collabora.com, linux-tegra@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-staging@lists.linux.dev, 
-	linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, imx@lists.linux.dev, 
-	sound-open-firmware@alsa-project.org
-Subject: Re: [PATCH 21/42] media: arm: mali-c55: Use
- devm_of_reserved_mem_device_init()
-Message-ID: <ar0xb9md8E76G5VI@zed>
-References: <20260703193855.110619-1-mukesh.ojha@oss.qualcomm.com>
- <20260703193855.110619-22-mukesh.ojha@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="ZVWwwLUK"
+Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-4a00d8bec5aso14347445e9.2
+        for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 10:05:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1790787934; x=1791392734; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=ZAUUIneOAYnu5HIH9P7hXzk9WJKgXOYtiwGV8misX4E=;
+        b=ZVWwwLUKySpTSjgnfZr09+nNgZkXpUBysyD+h4aUcIeyP3IuzzFdqzIiTFuTeZdYHN
+         RJbJvTCynxmEcSPHFTe1oVTfnEdUcCbPks2AtvOHNivW2bKOVP7a3c93nqcww/hnk7ID
+         3P9Y4HRa39NjCe9dKP/S1uzp590EUsV7fQ0wfSzGqEBB+Tis+ZfJLk89w8jFJlt0WyGN
+         +r56Ta4Lz+sIj1cXgx7EtA7orsAGqU6hDrmFkUsKZ31YJVaFmo1AkBKOHdw5HOfYiAEc
+         AFCMgh4f+Mlx2m1m/qAIiQV5QssJVOSdzYg/nEljpMIR2x4Mk61XYT0YSOlbYNO831xY
+         i16A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790787934; x=1791392734;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=ZAUUIneOAYnu5HIH9P7hXzk9WJKgXOYtiwGV8misX4E=;
+        b=Rp/Tlbyg6Ke73SwezC6k+kjIkjgKck3x10gRaF1YRJccmaF8KPgwagnvUW9H93l4pM
+         gVH6Rio3ucNEQUcARJe7FLcRq+HlQF0rRDCHOKVJH5teRusT2gXr2QKT7uXBpxSVKlSk
+         s55ABLrwHtMTgNQp5kSTMoIGEQoS+3OBqguw3kd4kqnBVE0Qp4G0gO+HEDYu7lccTN7b
+         OvTEDvzdsq8AhfU0rTVTJdYX2QWDhGTQGQE5FVwH7eDXICV0SVIAts4bzy1zQFHYUYOs
+         mZ0z7skPqYJzGSCznUbEZKvXHYsbuGvdsRBzaaXO3ilEWuJ6e9rTM8VZBxhyqbrOiabG
+         PlMQ==
+X-Forwarded-Encrypted: i=1; AKwUvByivw5Je0hh6kHmlO4192/w29OmaHRDNAyB+Xab+yxu/Vx8Bp0M1uQAesTKo75UvRBRwiUqgAaHSXTnfQ==@vger.kernel.org
+X-Gm-Message-State: AFuF++n4VAjhk5VILxP2hodAdqZHEkJ3EqSrfV86cQZRHXqV7D6vvrOc
+	YQeqnyc4cwkdt8JftNgjGP4BRugwNxZ1psiKwmZYqmSpb2xDLP6kY1Kf1ndgJKdztRgej/aj/n+
+	IBDdw
+X-Gm-Gg: AYBFou0N2TkobVXy6/+lXhgIRwdCfpG/dDpN7CIb2xgFbH9Sd41AB7TRS1M/EejaULn
+	bj12e6dfFN2FrWQdmh9JLHW4gNNDsM/kbJ6gFmuf6vwnAEkx2yfYXjyPskeMwl+J8INxFClZLt0
+	79gO/bqHmb/HZqm55KXEOJLPHNk3VSTOX+MmQl4qU6M2jaKP2ztXhWCtyksKDbGG4f6w2DLZjD+
+	WaylW8ms7Ft2y2iglujbz+q2X6ElXq3/FukKSljE+StqtgM/OeXmW420utSZPoerSd1nQgKxMwv
+	ck8EurjZ7O2CCfCjfoi6D7LsOPzNked59L/zIW/Eev7oDYvIL1To/J47M9e5sxhZZzC4iY44DYU
+	bXSxmOT6CWB23s8RDFK92ZrVLc2XqVhqLDi2JMAcn9kShf8uN4w28h0Ed475dRzsLQUpcW4Zipq
+	L2HKENNo8a7XzpXJquDUEWE0shmudCRoUr85mLzq0twm+YNHm6ABJyqnBgY4qxCHta1j/LeHFRx
+	l1qb5c5A31i0NTEEQbmsnKWxkGG8K/bXEjfvZ5dSYwgPt/4Ywsytfg1SdH17PM=
+X-Received: by 2002:a05:600c:1f87:b0:49d:174e:2a1e with SMTP id 5b1f17b1804b1-4a01afe1e05mr38534285e9.19.1790787933541;
+        Wed, 30 Sep 2026 10:05:33 -0700 (PDT)
+Received: from localhost (p200300f65f19a904e5d8cd228f56d36d.dip0.t-ipconnect.de. [2003:f6:5f19:a904:e5d8:cd22:8f56:d36d])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4a01ef9b996sm784555e9.1.2026.09.30.10.05.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Sep 2026 10:05:32 -0700 (PDT)
+Date: Wed, 30 Sep 2026 19:05:31 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] pwm: tegra: Check for match_data being NULL
+Message-ID: <ar1AKd2_V8FX_3V1@monoceros>
+References: <cover.1789741839.git.u.kleine-koenig@baylibre.com>
+ <ed943d9be3b785514e0f65a5b8c13a78aba7a090.1789741839.git.u.kleine-koenig@baylibre.com>
+ <arD7N6A6ncBNR1Jk@orome>
+ <arE-s0zbTUn14aIr@monoceros>
+ <arFYGka5NpcgJ8oQ@orome>
+ <arI8vXaKTvEJi-Zd@monoceros>
+ <arJRPVsReXWfUC_o@orome>
+ <arz4S1-q7DXM8y4s@monoceros>
+ <ar0JBTAxcXVmTx1b@orome>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nf3fi52ehffm5ni5"
 Content-Disposition: inline
-In-Reply-To: <20260703193855.110619-22-mukesh.ojha@oss.qualcomm.com>
+In-Reply-To: <ar0JBTAxcXVmTx1b@orome>
 
-Hi Mukesh
 
-On Sat, Jul 04, 2026 at 01:08:34AM +0530, Mukesh Ojha wrote:
-> Use the devres-managed devm_of_reserved_mem_device_init() instead of
-> the manual of_reserved_mem_device_init()/of_reserved_mem_device_release()
-> pair, letting the device resource manager handle cleanup automatically.
->
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+--nf3fi52ehffm5ni5
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 2/3] pwm: tegra: Check for match_data being NULL
+MIME-Version: 1.0
 
-Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Hello Thierry,
 
-I'll collect this single patch for the Mali-C55 PR for v7.4
+On Wed, Sep 30, 2026 at 03:14:35PM +0200, Thierry Reding wrote:
+> On Wed, Sep 30, 2026 at 01:55:59PM +0200, Uwe Kleine-K=C3=B6nig wrote:
+> > On Tue, Sep 22, 2026 at 12:06:14PM +0200, Thierry Reding wrote:
+> > > I have a prototype patch that I'm going to send out shortly (after
+> > > testing that it actually works). The problem ended up being that the
+> > > driver_override is a device attribute, so there's no good way to drop=
+ it
+> > > based on a driver flag.
+> >=20
+> > Did you see that I sent such a patch already.
+> > https://lore.kernel.org/lkml/0f7446324f6a0c8f0153d6532d92a6eeecd6a308.1=
+790612298.git.u.kleine-koenig@baylibre.com/ .
+> > You were on Cc:, I thought this to be enough to make you aware and
+> > didn't mention it in this thread here.
+> >=20
+> > I hope to not have provoked much duplicate work.
+>=20
+> Well, from the looks of it you ended up hijacking my earlier attempt
+> while it was being discussed. It's customary to ask before you do so,
+> specifically in order to avoid duplication of work. Or at least answer
+> on the original thread that you plan to take this in a different
+> direction so that people know what's going on.
 
-> ---
->  drivers/media/platform/arm/mali-c55/mali-c55-core.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/media/platform/arm/mali-c55/mali-c55-core.c b/drivers/media/platform/arm/mali-c55/mali-c55-core.c
-> index 94a389b3f833..afbec11f69f8 100644
-> --- a/drivers/media/platform/arm/mali-c55/mali-c55-core.c
-> +++ b/drivers/media/platform/arm/mali-c55/mali-c55-core.c
-> @@ -801,14 +801,12 @@ static int mali_c55_probe(struct platform_device *pdev)
->  	if (ret)
->  		return dev_err_probe(dev, ret, "failed to acquire resets\n");
->
-> -	of_reserved_mem_device_init(dev);
-> +	devm_of_reserved_mem_device_init(dev);
->  	vb2_dma_contig_set_max_seg_size(dev, UINT_MAX);
->
->  	ret = __mali_c55_power_on(mali_c55);
-> -	if (ret) {
-> -		dev_err_probe(dev, ret, "failed to power on\n");
-> -		goto err_release_mem;
-> -	}
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to power on\n");
->
->  	ret = mali_c55_check_hwcfg(mali_c55);
->  	if (ret)
-> @@ -847,9 +845,6 @@ static int mali_c55_probe(struct platform_device *pdev)
->  	kfree(mali_c55->context.registers);
->  err_power_off:
->  	__mali_c55_power_off(mali_c55);
-> -err_release_mem:
-> -	of_reserved_mem_device_release(dev);
-> -
->  	return ret;
->  }
->
-> @@ -864,7 +859,6 @@ static void mali_c55_remove(struct platform_device *pdev)
->  	}
->  	pm_runtime_disable(&pdev->dev);
->  	kfree(mali_c55->context.registers);
-> -	of_reserved_mem_device_release(&pdev->dev);
->  }
->
->  static const struct of_device_id mali_c55_of_match[] = {
-> --
-> 2.53.0
->
+Yeah, sorry about that. On that other thread where we were discussing
+taints in context of driver_overrides the topics overlapped, so my idea
+was to get all the suggestions into a single place. It seems I failed to
+make you notice that in time. Mea culpa.
+=20
+> Anyway, I was still waiting for any conclusions on the original thread
+> and didn't spend any more time revisiting my original series, so no harm
+> done.
+
+=F0=9F=98=85
+
+Best regards
+Uwe
+
+--nf3fi52ehffm5ni5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmq9QVgACgkQj4D7WH0S
+/k7AYQf/R0QuF3d8jygNy6Q74jEavE/+xQpUO/OkuPVWoo1ffUcTPkFbc/w/3aHp
+TCHePWOpWTtt30u1KkpoSuYKvmPcjiCyVe307JmudFY77ChzXKLesRpVpcbngqQM
+epMp/MpTe2XWC1VDmflVe+vwIcjFMx/R+8h6w76uzfhkrdEhvkG9OqK+ID/Qce6K
+A2kyyRf3zFON/Ur5gTne+AEZAmVr4COpSnA9gIKrXqJHTrJ4/QwmQPCLKz0kMmau
+SDXy00x8z3X+qls2v8QJmiYrWqqyDGvHa6N+k7twp7cvgtvCTmpj9YqYXxbq7vZd
+TWyU+hdrFUQdqMYKX4uEvfgwaGMENg==
+=85ej
+-----END PGP SIGNATURE-----
+
+--nf3fi52ehffm5ni5--
