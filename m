@@ -1,154 +1,168 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy2-f16.google.com (mail-dy2-f16.google.com [74.125.229.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA7D484880;
-	Wed, 30 Sep 2026 10:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790764448; cv=none; b=QN9EU04lTdN66e0FSfKFeSkizIhmDtn+miuKzuKn6Z260y1h6nyN2qZZUZCAKBFEVQS43qO0p+FgRII4iONgCvj1soMdkBA/FmEwlXeF4YqoDOfXZU5PD3O+IO9HJQTC0cH5ki4juUNelb0OcgBvNZWNmZlWKna8i1RorKy+w5Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790764448; c=relaxed/simple;
-	bh=LHJFJf1JM/5+L2u9YqQ4OPmho16vhx9BtSfDg2kqjqE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WV2vdaaB1BgWaK6WvI78aS+dQV/pp2dAhKR40UHscBt/qnTDchwzUQ3meGUuCkNCcku6EW/WQ2nk12f4PNBuyLnBAYGcEteFia0ZucEZW3NHZaNAOnFYDZg2Am4NBuAXb+7z2PqiLMIXOsBCKA3cZSDCF4pc+7mFQt59uZEjGaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nLFelxOT; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4573488238
+	for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 10:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.229.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790764474; cv=pass; b=B0UldctUNUK/zfugTlz3IqJ113RLlSktB4LPjJ9iBJspb0v9QV7gsFNYrOrCIPbWYPPt7wHTngm9DH8b7QtsDHDzL07vrz64nGmVb1Gn93XA6y8jOu0it15Ypx9m+9AcHfqHT+5GG9chPNI8y0xVg+xCyIdU8GCbXH1LKDdZaww=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790764474; c=relaxed/simple;
+	bh=Jgl2MM4xT4vjtYr00D2lGwtIPFBPkBNmNvFUfSxZsvk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dwX8/ioKE6c4+qGvzLI0bfyrw85pLBnjh7QojdVyYuOZ0I69h7IAIwwswqCq1Jxr3Li554Z2/I3Qr5GsMtPhDoYEXmSy5wA3Bce3+II/Y0lyboFtU4fwhVTauW7rsraPOAOBCDCy3BhIKFfkjLsRmlcdRYrISOhqJf+mYfCUmr8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qPEkw3dg; arc=pass smtp.client-ip=74.125.229.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nLFelxOT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EAEC1F008A1;
-	Wed, 30 Sep 2026 10:34:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790764445;
-	bh=wdtdcWDvIX3RhUgrcDsVcvdnSRLIn02KRn8evUdU690=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=nLFelxOTnK5+4PmA3eQcRLkA5rLE3e5PcOCSBzAlgsE8zjuww7gr7DQhD9o2BuCGK
-	 3hYt3adxfH4KCIgG/Wh8Z4YFoGfQaIQ/+wslJg2J8VOnMsOios7ZQVLGsiW5FTEzXz
-	 rqgnlpfoU7rZBeyHU0SyB5929t87Deuua8qTkbVg5OiMNG/y2IH9aVcwXtQIlxxWjJ
-	 lsG4V4v1+QfvEURoJpkNwgvug0WFZcFmJhzv/C6trPT7sljjJEQ6/ZPqzaZSOlbimT
-	 ixqqsPlfCpX7iz3lxxgpaluHXQJ/dkLsMcZEebVrfAATKWHHhpg9K9eZQNWI3Qukdx
-	 pOFdKVQ4e1Egw==
-Date: Wed, 30 Sep 2026 12:34:03 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jesszhan0024@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v1 3/6] dt-bindings: display: tegra: Document 8-bit CPU
- parallel interface
-Message-ID: <arzlR8mCg9d_z62L@orome>
-References: <20260930070535.47130-1-clamor95@gmail.com>
- <20260930070535.47130-4-clamor95@gmail.com>
- <arzMF0wjcF_SVxpE@orome>
- <CAPVz0n3Oc4ocUWrtGgd-MdrdJ3SgDEi8onOkXi92o7hAn3y0Ww@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qPEkw3dg"
+Received: by mail-dy2-f16.google.com with SMTP id 5a478bee46e88-34b3a9cd8edso814140eec.1
+        for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 03:34:32 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790764472; cv=none;
+        d=google.com; s=arc-20260327;
+        b=sFkpkyZicTPU3ulP8/VWxnB+r55kbt5PSaaYjoHrWlhKf+eNGa00n7XpLsPr7MkrQc
+         9rD2DpPMA6S2o3r7JuTT36My0wDzSDZ70Ukts07ksJMkhyltjC376RGE5o25XabpcrM5
+         trK0rPmGwanboC1zeGHIW04l/mwjGLFSAs78X3opzeHjuaXzQB5rhuYCtF8wWSwfT1zl
+         psiRL3PyCAEYb7qxg5DElkR4cwFZvxHlddLgM/WgFd05EPp2zULntm9+f50Ir7SnHlz3
+         GhBdN3FX37MDW8Z13GPrkDomvm0iYifeO0TMSqxX8cOF18Ip3+tpAmZX8JCNxJeLHw8v
+         sAfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=o3Nzxky31E5PRv1JQth+E+SJrslWGDTCiHFn65qWNg4=;
+        fh=9+jyCOFZDFB4ssH0aKSAupBFta+37ntkWLsg51xp168=;
+        b=BZ/ktGqEJneNZwWryUZqv16wAP1HmpLg74OIZxtxwmR8pu5QCC5Tb4t8Uv6baeKMFo
+         o14oqkkX+1mReW1B+z+1+LGVsgV3+p2/Vs5beb921Xz+xAt53u4wn0Et2T4OpRJ5Ke6S
+         ixirGDCbNJ2WStMwNYSzWxX3n4/7X1tUgRJWRRs0tiGz7xpBESQIXB4Q0o+o2bxRdRQZ
+         4uCnxkf0Vl3iDPMdzuqwRvtayFqt97wI4jhX/VzN1RHwa5LkqPHhIDV6yJ9LXRFWAQDb
+         ZWl4htFRtBHm+Sr+L8NGvj2mPLneGVQfaNKa13buC49C5Q9wUCNXhEK1DERVxmCdueBN
+         hjWA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790764472; x=1791369272; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=o3Nzxky31E5PRv1JQth+E+SJrslWGDTCiHFn65qWNg4=;
+        b=qPEkw3dglTjNzw0HlyCIzGBpo2CjjVahjiWF+piW77HhGnKI4v3LQR9mVIfNdzhzR0
+         Ci4EAj9e9Dx7sAqbPLTdlBaSIC2s07klwMHi6jOh7X9XPgSyou7f25VE+x0OrhVdc7w4
+         DZEUXqKSRMTAT+6culknnvmGXb5apK709JsdLsNR13XNkuMkJppTyNruFh8ntGiP2fjY
+         szpd2E6Fp1A50P2XRHSz2+SVQfiF/rYQA7TGb+MjMNpXss0NXu1N9DVd+SZkCbEpOdch
+         a5F9wMGkFM+8zZhRnJLT8FrmR9aMUT9kZoTG433zfkt9NfePWKavXVLlRNIEioV5DNZ+
+         Tl+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790764472; x=1791369272;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=o3Nzxky31E5PRv1JQth+E+SJrslWGDTCiHFn65qWNg4=;
+        b=y7hqdTdwPDgnaZpLljU4u/q9PHKvokEBa8UBITR3vACHdJXWYRRS91GRGTrMZqiUSC
+         tbZSO8jFNnblTDRm+dIaqtUJa9mRxwzc2R+VMPM7gLXrY6BQSOMBzHhonLxZCNxFdUDM
+         8azAp9CW8OLMgrc05HgMyTN9/aaF/9gBdLTKSg5QCSQ/QSdqzwLSUzogX1CTaanc2TKK
+         gBPFU+DJfVdj0LjKrySBG7Oahl9u2i9TvgtCUtoOY7WFE0qVQjgCPbY2YuX3AieUgn6B
+         iE9BrZn16q1Ls58Uc3ALZ43/wqo4ZV8wPKEc4ZH2PSJPF4e222mqsWGItZ+bMe66dHCF
+         XMjQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwCmrmP79mFVQRm7CYUgfhADBTfkOL/wESPa0llHaJ7GCKtcC08KTa2JP8xV2HM3ORB8qfWqph4VORaYg==@vger.kernel.org
+X-Gm-Message-State: AFq9FYI7Wu0QY/Y86lTsQ3JTXxoTeCuuSz4bOsGHFXixs9Cd3byKCGCo
+	6Z//abySYS9aFk1t8+3juyugWczt3czd3Z0fXpxr5+6U/YunfUD6HNuyXSVLPValqTKEhne+C9u
+	ggwpBJA2AywDAnL1Jd4CvkdMQ5R7/k7g=
+X-Gm-Gg: AYBFou0dCGp/C1Il9L1tGxjZKjphPM1/AJRZkkrSRAHYFUAUwP0fUs+cditG+bAqhoS
+	k5jHjb59TMdKzx9bHLWgY5yufeW3eikY6WqMFe8H/wKUXtHh2JWjUZ3CVKTwe4TWj3psd1GRZxj
+	s/LybX2UomWlC/qHHV15m1Pk9JEyXK1OZgf22oXCJW0yqg+wV/byyV+wbrLOuipOuPlGL6I/dUt
+	ebW9QffBONO8LOEsChGFADwnxCLAmMQ/XvgqAW0GVlZyflOZwW06q7iCqa/s8OanPm5Dw/6wjtP
+	fXp5FEii++dXaS0nV+SorzYmNm752Z5AHSmdBLKDh++yPej3iSztb9xAzrIL83lCmrn/Ov0T+w9
+	kB05qI1h7fo87BBDVhf2jg/U=
+X-Received: by 2002:a05:693c:4092:b0:332:94e9:a732 with SMTP id
+ 5a478bee46e88-34ce4683bf7mr1420176eec.13.1790764471845; Wed, 30 Sep 2026
+ 03:34:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5qqv5e64sjmxmngg"
-Content-Disposition: inline
-In-Reply-To: <CAPVz0n3Oc4ocUWrtGgd-MdrdJ3SgDEi8onOkXi92o7hAn3y0Ww@mail.gmail.com>
-
-
---5qqv5e64sjmxmngg
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20260930070535.47130-1-clamor95@gmail.com> <20260930070535.47130-7-clamor95@gmail.com>
+ <arzNgbx465QIKYdX@orome> <CAPVz0n2QdSWL8=KBXnsQQkdNEJ9m6HSQ0+6mJji_RHZ8QgXN-g@mail.gmail.com>
+ <arzilGz4akKvRF1K@orome>
+In-Reply-To: <arzilGz4akKvRF1K@orome>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Wed, 30 Sep 2026 13:34:19 +0300
+X-Gm-Features: AclHuK9nWzYGgxYyAeFQUOiXDBSTKrGnZ3E_AfgUmTUKQbpwZQYV_7ChXtWTs0A
+Message-ID: <CAPVz0n0-baCzHOXjWLOCLjv8fb5GbE9a2v=8tBYr3RgHkEu+qg@mail.gmail.com>
+Subject: Re: [PATCH v1 6/6] drm/panel: Add Hitachi TX10D07VM0BAA and LG
+ LH400WV3-SD04 MIPI DBI panel driver
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 3/6] dt-bindings: display: tegra: Document 8-bit CPU
- parallel interface
-MIME-Version: 1.0
 
-On Wed, Sep 30, 2026 at 12:00:21PM +0300, Svyatoslav Ryhel wrote:
-> =D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 11:47 Th=
-ierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > On Wed, Sep 30, 2026 at 10:05:32AM +0300, Svyatoslav Ryhel wrote:
-> > > Document 8-bit CPU parallel MIPI DBI Type B interface provided by
-> > > Tegra20/30 SoCs display controller.
+=D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 13:23 Thie=
+rry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Wed, Sep 30, 2026 at 12:08:41PM +0300, Svyatoslav Ryhel wrote:
+> > =D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 12:02 =
+Thierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> > > On Wed, Sep 30, 2026 at 10:05:35AM +0300, Svyatoslav Ryhel wrote:
+> [...]
+> > > > +static const struct of_device_id panel_dbi_of_match[] =3D {
+> > > > +     { .compatible =3D "hit,tx10d07vm0baa", .data =3D (void *)PANE=
+L_DBI_TX10D07VM0BAA },
+> > > > +     { .compatible =3D "lg,lh400wv3-sd04", .data =3D (void *)PANEL=
+_DBI_LH400WV3 },
 > > >
-> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > ---
-> > >  .../display/tegra/nvidia,tegra-8bit-cpu.yaml  | 138 ++++++++++++++++=
-++
-> > >  1 file changed, 138 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/display/tegra/n=
-vidia,tegra-8bit-cpu.yaml
+> > > Why the detour through that PANEL_DB_* enum? You could just pass the
+> > > panel funcs pointers directly via .data here.
 > > >
-> > > diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,t=
-egra-8bit-cpu.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia=
-,tegra-8bit-cpu.yaml
-> > > new file mode 100644
-> > > index 0000000000000..f0dab608b2936
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra-8b=
-it-cpu.yaml
-> > > @@ -0,0 +1,138 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra-8bit-c=
-pu.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Nvidia Tegra DC based MIPI DBI Type B bridge
-> > > +
-> > > +maintainers:
-> > > +  - Svyatoslav Ryhel <clamor95@gmail.com>
-> > > +
-> > > +description: The display controller in Tegra20/30 SoCs features an
-> > > +  8-bit SPI interface that closely resembles the MIPI DBI Type B
-> > > +  protocol and is referred to as '8-bit CPU'. Each display controller
-> > > +  provides two such interfaces, which can be used to send MIPI DCS
-> > > +  commands to initialize and control the panel while image data is
-> > > +  transmitted via 16/18/24-line RGB.
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: nvidia,tegra-8bit-cpu
 > >
-> > The description says that this is a feature of the display controller,
-> > so adding a new binding and compatible string for this is not the right
-> > move. This is all covered by the "nvidia,tegra{20,30}-dc" already, just
-> > need to extend that with whatever is new.
+> > Passing API/OPS via .data is discouraged.
+>
+> No it's not. We do it all the time.
+>
+
+I have had some controversial experience with MFD, with passing cell
+composition. If DRM subsystem allows this, I am more then happy to
+pass panel ops directly.
+
+> > > Also, looking at the enable/disable sequences these are in fact two
+> > > different drivers, with the only commonality being that they happen t=
+o
+> > > be used in the same device. Rolling them both into one driver seems a
+> > > bit odd.
 > >
->=20
-> How would you model it? I have tried to model 8bit-cpu as a bridge, simil=
-ar
-> to how DSI bridges are modeled. This reflects interface used to link RGB =
-and
-> panel, without inflating existing DC binding. If you have any ideas in mo=
-delling
-> this, I am open to any suggestions.
+> > I did this to simplify maintainance. Both panels are used in the LG
+> > Optimus 2X. My assumption is that LG switched one to another at some
+> > point, hence they share same timings, controls and supplies, but
+> > differ in en/disable sequence. Additionally, these are the the only
+> > DBI Type B-only panels in the kernel, from what I can see.
+>
+> That's just one more reason to put them into more of a generic driver,
+> which would allow people to find it and extend/improve it as needed.
+>
 
-My suggestion is to integrate this into the existing "rgb" node, or, if
-that becomes too convoluted, a separate "lcd" node (or "dbi", whatever).
+This driver cannot be "generic". Both panels don't fall into any
+category of being "generic". They are grouped solely cause they share
+same timings, controls and supplies (only these 2 panels, other will
+definitely differ) and are used in the same device. I have no problems
+in splitting them into 2 distinct drivers.
 
-Thierry
+> > > If you really want to avoid duplication, maybe they should go
+> > > into some kind of "simple" or "generic" DBI driver.
+> >
+> > DBI Type B is not well supported in the kernel.
+>
+> Well, you always start somewhere.
+>
 
---5qqv5e64sjmxmngg
-Content-Type: application/pgp-signature; name="signature.asc"
+I don't think that DBI Type B needs some deep and fundamental support.
+Even for its time it does not seem to be common, not saying today.
+More a curiosity.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmq85ZsACgkQ3SOs138+
-s6E7XBAAuKQS8yR2SKtcJ9URq8iBstKVNV6cBYIfMkUMoznqJ8AofgjCNOXarHhT
-OHOBwd+Uzir7Fq8eoqvuUuDqAi8imORaQ7KH4PWcrR+a/xEb3zQ8KW8DiRGyCEfp
-QwnM2x7thvTxOA1OBDtqw1Y9rSAaaPmNj5jkTOekoU/zzWjJ9VoGqhb7T5S5BaYI
-8xmQ12nMe6j4Y90n/hYwDwNAqt5ANugLi9jlJWA+vq3IgnezDXgYQyWklLHxwVPW
-13smeQCeDVXhCa5jUSUyA6ZkEOhg3zX1DTLn8+1eUm0kMtEbaIjkz5gV2Hsw4VkO
-RV94lLXCh069LMmcECHWhuhY4iReXyKZcRwoTy7gstWMzPyiXLmh4gfd/q/SSffm
-RbBfr9gUkLfHHy6NsiFts6pyPPn7Zu3rJs0aSCKineH789EWeivIRqXgajUosk5r
-h10A43EXwPMxCjM7DXOnHVbS+bIakm5eD+1gx6W4r/manLqyGv7kBHD8AJv7OVM4
-iMaDifVlyo4T19XOnDsfNAvt4TqStn+IcDJshdC21RbtOD+siUe5OAhgTUeUn2Nk
-ECZ2u+nUFBMD0Nl/5qLSgZq4x9mOzERH2jxr8n8TjZ+Q2r0s94RCNjGB6J0spTi0
-brXx83ivY0QXxITb9vaeXp1QqNTXIsBSphMiOUzrBIfFnNJV2e4=
-=9KZ+
------END PGP SIGNATURE-----
-
---5qqv5e64sjmxmngg--
+> Thierry
