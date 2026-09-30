@@ -1,46 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBEE45D91B;
-	Wed, 30 Sep 2026 10:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA7D484880;
+	Wed, 30 Sep 2026 10:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790764186; cv=none; b=EJs8lLm5Mgb59yDzeKhTaVzdjf5l7VCZNj8bt39Htb7judQiO7E9FaR0N651eVrKwQKp3iELt3B0o7wELhJ5J1Hi7XqxBf/uBbecxdTiThfBS/iRwVX2/UAcc14+I7KtUlhWB3m+ncu2SbCPwxv5w2VCl+O+B0PqvjGzRB25RHg=
+	t=1790764448; cv=none; b=QN9EU04lTdN66e0FSfKFeSkizIhmDtn+miuKzuKn6Z260y1h6nyN2qZZUZCAKBFEVQS43qO0p+FgRII4iONgCvj1soMdkBA/FmEwlXeF4YqoDOfXZU5PD3O+IO9HJQTC0cH5ki4juUNelb0OcgBvNZWNmZlWKna8i1RorKy+w5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790764186; c=relaxed/simple;
-	bh=XypHvjK5uPib3gTzLMK3ROmEL2JUJgny3XWTGHw5q7U=;
+	s=arc-20240116; t=1790764448; c=relaxed/simple;
+	bh=LHJFJf1JM/5+L2u9YqQ4OPmho16vhx9BtSfDg2kqjqE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m5v/DTg2gKtx6QecgoctSW+FIv0CUpgSpljwsCywegU3BVEivtXe9WiTs5/QF48w5/EbOreO8n+SAc6d58a/Qdoros98dIBdpgI03+hdoSXI4S5M7inhIuF/U59nR56vs/S81Hol3xHIAVcP+Oiigm7FbLmvpBMa3OMNLyMQsW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FAAUlSno; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=WV2vdaaB1BgWaK6WvI78aS+dQV/pp2dAhKR40UHscBt/qnTDchwzUQ3meGUuCkNCcku6EW/WQ2nk12f4PNBuyLnBAYGcEteFia0ZucEZW3NHZaNAOnFYDZg2Am4NBuAXb+7z2PqiLMIXOsBCKA3cZSDCF4pc+7mFQt59uZEjGaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nLFelxOT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FAAUlSno"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC0451F000FF;
-	Wed, 30 Sep 2026 10:29:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nLFelxOT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EAEC1F008A1;
+	Wed, 30 Sep 2026 10:34:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790764184;
-	bh=XypHvjK5uPib3gTzLMK3ROmEL2JUJgny3XWTGHw5q7U=;
+	s=k20260515; t=1790764445;
+	bh=wdtdcWDvIX3RhUgrcDsVcvdnSRLIn02KRn8evUdU690=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=FAAUlSnoYYurnCYex91tc1QBD3i/oUzFFyh2x73vvFgF4jP7xNvXO938l7CgsuQlg
-	 lGm5ZLeV21M9u/s6zEzBlvvXNONH9/QAxi4S0nvMJWNwFoLABFtUWwqKn0KxDkRAuT
-	 Y+1rr6fSdAZx4PfwALwUlkOoG4OoWFYzgQrY7+wjKFE54EqLYVFrIRWyZFqBTew79q
-	 ieZ4eSnDosiIY3ODS1QWftgZYFKIaZLphV9B7mUL8AK8vm5NV95clVDR45euA96ltT
-	 1paIxCfqSrTzEu7+9iT0HyWzuDHzZ0b2GgwqVucgVteKh8sbdkei/2kNe7xEbsvSgP
-	 iNRO7X1uLWFkw==
-Date: Wed, 30 Sep 2026 12:29:42 +0200
+	b=nLFelxOTnK5+4PmA3eQcRLkA5rLE3e5PcOCSBzAlgsE8zjuww7gr7DQhD9o2BuCGK
+	 3hYt3adxfH4KCIgG/Wh8Z4YFoGfQaIQ/+wslJg2J8VOnMsOios7ZQVLGsiW5FTEzXz
+	 rqgnlpfoU7rZBeyHU0SyB5929t87Deuua8qTkbVg5OiMNG/y2IH9aVcwXtQIlxxWjJ
+	 lsG4V4v1+QfvEURoJpkNwgvug0WFZcFmJhzv/C6trPT7sljjJEQ6/ZPqzaZSOlbimT
+	 ixqqsPlfCpX7iz3lxxgpaluHXQJ/dkLsMcZEebVrfAATKWHHhpg9K9eZQNWI3Qukdx
+	 pOFdKVQ4e1Egw==
+Date: Wed, 30 Sep 2026 12:34:03 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"Ola Chr. Vaage" <ola.christoffer.vage@scoutdi.com>
-Subject: Re: [PATCH v2 3/3] pwm: tegra: Implement .get_state()
-Message-ID: <arzjXtZj0hIf5iZU@orome>
-References: <cover.1789741839.git.u.kleine-koenig@baylibre.com>
- <b72b16cf704aa662a1b49805db284379d4fa4050.1789741839.git.u.kleine-koenig@baylibre.com>
- <arEAjOHU4rH5aGqb@orome>
- <arE932ZcHGB8RAN6@monoceros>
- <arJTSEfkILPQmqNV@orome>
- <arzcE4nVRTAK9C-X@monoceros>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 3/6] dt-bindings: display: tegra: Document 8-bit CPU
+ parallel interface
+Message-ID: <arzlR8mCg9d_z62L@orome>
+References: <20260930070535.47130-1-clamor95@gmail.com>
+ <20260930070535.47130-4-clamor95@gmail.com>
+ <arzMF0wjcF_SVxpE@orome>
+ <CAPVz0n3Oc4ocUWrtGgd-MdrdJ3SgDEi8onOkXi92o7hAn3y0Ww@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -48,92 +51,104 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="x65eqfhbbjg6hmbn"
+	protocol="application/pgp-signature"; boundary="5qqv5e64sjmxmngg"
 Content-Disposition: inline
-In-Reply-To: <arzcE4nVRTAK9C-X@monoceros>
+In-Reply-To: <CAPVz0n3Oc4ocUWrtGgd-MdrdJ3SgDEi8onOkXi92o7hAn3y0Ww@mail.gmail.com>
 
 
---x65eqfhbbjg6hmbn
+--5qqv5e64sjmxmngg
 Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 3/3] pwm: tegra: Implement .get_state()
+Subject: Re: [PATCH v1 3/6] dt-bindings: display: tegra: Document 8-bit CPU
+ parallel interface
 MIME-Version: 1.0
 
-On Wed, Sep 30, 2026 at 11:54:03AM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> Hello Thierry,
+On Wed, Sep 30, 2026 at 12:00:21PM +0300, Svyatoslav Ryhel wrote:
+> =D1=81=D1=80, 30 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 11:47 Th=
+ierry Reding <thierry.reding@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Wed, Sep 30, 2026 at 10:05:32AM +0300, Svyatoslav Ryhel wrote:
+> > > Document 8-bit CPU parallel MIPI DBI Type B interface provided by
+> > > Tegra20/30 SoCs display controller.
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  .../display/tegra/nvidia,tegra-8bit-cpu.yaml  | 138 ++++++++++++++++=
+++
+> > >  1 file changed, 138 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/display/tegra/n=
+vidia,tegra-8bit-cpu.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,t=
+egra-8bit-cpu.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia=
+,tegra-8bit-cpu.yaml
+> > > new file mode 100644
+> > > index 0000000000000..f0dab608b2936
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra-8b=
+it-cpu.yaml
+> > > @@ -0,0 +1,138 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra-8bit-c=
+pu.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Nvidia Tegra DC based MIPI DBI Type B bridge
+> > > +
+> > > +maintainers:
+> > > +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> > > +
+> > > +description: The display controller in Tegra20/30 SoCs features an
+> > > +  8-bit SPI interface that closely resembles the MIPI DBI Type B
+> > > +  protocol and is referred to as '8-bit CPU'. Each display controller
+> > > +  provides two such interfaces, which can be used to send MIPI DCS
+> > > +  commands to initialize and control the panel while image data is
+> > > +  transmitted via 16/18/24-line RGB.
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    const: nvidia,tegra-8bit-cpu
+> >
+> > The description says that this is a feature of the display controller,
+> > so adding a new binding and compatible string for this is not the right
+> > move. This is all covered by the "nvidia,tegra{20,30}-dc" already, just
+> > need to extend that with whatever is new.
+> >
 >=20
-> On Tue, Sep 22, 2026 at 12:07:26PM +0200, Thierry Reding wrote:
-> > On Mon, Sep 21, 2026 at 04:26:03PM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> > > On Mon, Sep 21, 2026 at 12:18:16PM +0200, Thierry Reding wrote:
-> > > > It feels like this has too many assumptions built-in. That's mostly=
- a
-> > > > predefined issue, but I think if we want to get accurate hardware r=
-ead-
-> > > > out, we need to address this.
-> > > >=20
-> > > > According to the register documentation, the PWM depth is 16 bits w=
-ide
-> > > > (on generations where it can be programmed). The value defaults to =
-255
-> > > > (which is n - 1 encoded, hence TEGRA_PWM_DEPTH), but it can technic=
-ally
-> > > > be reprogrammed to any 16-bit value, as far as I can tell.
-> > > >=20
-> > > > So I think for this to be correct we'd need to read out the actual =
-value
-> > > > before overwriting with TEGRA_PWM_CSR_0 contents above. At that poi=
-nt I
-> > > > think we'd need to either adjust the mask to be (2 * depth) - 1, or
-> > > > maybe better yet, avoid masking it out arbitrarily based on the dep=
-th
-> > > > and instead cap it at depth so we never exceed the 1:1 ratio for du=
-ty
-> > > > cycle vs. period.
-> > >=20
-> > > As long as .apply() also hardcodes TEGRA_PWM_DEPTH, it's IMO fine that
-> > > .get_state() does so, too.
-> >=20
-> > Okay, fair enough.
->=20
-> Is that an Ack then?
+> How would you model it? I have tried to model 8bit-cpu as a bridge, simil=
+ar
+> to how DSI bridges are modeled. This reflects interface used to link RGB =
+and
+> panel, without inflating existing DC binding. If you have any ideas in mo=
+delling
+> this, I am open to any suggestions.
 
-I've been thinking about this some more and I don't know if it really
-makes sense to keep hard-coding TEGRA_PWM_DEPTH. If only .apply() uses
-it, then it's mostly fine, I suppose, because we don't care what the
-current (or initial) state is/was. So we either don't use the device or
-we overwrite it with a custom set of values.
-
-Once we add .get_state() into the mix, now we kind of have to care about
-the initial state, because we might end up using those values. If we did
-not care, what would be the point, right? Which means that if we read
-out wrong values, we, well, get wrong values. Which then may mean that
-we overwrite values that we shouldn't, etc.
-
-I suppose this would be okay if we reject any depth values other than
-the default as errors. But then we also significantly reduce the
-usefulness of this patch.
+My suggestion is to integrate this into the existing "rgb" node, or, if
+that becomes too convoluted, a separate "lcd" node (or "dbi", whatever).
 
 Thierry
 
---x65eqfhbbjg6hmbn
+--5qqv5e64sjmxmngg
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmq85JYACgkQ3SOs138+
-s6GMSg/8CShCqOv5o6ZDmB+VHSaIQFFGttOeoXgmzAA2smnA4YfobLPobkLnCycp
-Jt9Nl1ks+s7Y7XilTXZxPjeg6a7vlKlNB1MPZZVfS7Me83rdJaw84jj92pVtl6Ar
-8nxcah0tE/jcbS+RS2A419cch5o9sS8RtaCqR84vyQwxiht/EqHLDjTXr1ysW1Yk
-2zcPgErdivSMfe9dipW9ZkmLSeZTVDHT9YMnC6/51C9wPfcSBqToiFXKRxpgMlw2
-SgRwmUWEp3m6CfumD5bQWJ2uPCkrIJu5PNy+MNcL9qQgtxslworz7FgeSpFCgCtr
-2JYyllAYKzHgrktKfMS3BYyRonfWzxTZ26JxZKgxRZKx6nKpDpqB/n4fp9cHf01i
-8m7M0gd6BKtSYcZ/jJcvhJTnyNS3hMbxjx4YVzwzZ+V4AJg6NJATFn6Z5R/Ov4bb
-/HKdZdajsmI2Rlr0JpX/z0gSInNnl/1bjB5u56dMdx0YE2VZqM92dNPqdIo1j4CW
-1Ar/kXTdJmeEnhI7teoaB1VAucD8H0masAOfLNmrxAnMMvLUU0HxA9+sQmrYeQq5
-SkImXEY2a3AjnVADJv9TVLtb84F6idEb7MumGTyasgwApf81ASPj85CAGxSL/oEl
-JFg1o7zJFEkvTfLtfB41fME8Wajus2WokswqmEh/2jkHNCO5ybo=
-=AW50
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmq85ZsACgkQ3SOs138+
+s6E7XBAAuKQS8yR2SKtcJ9URq8iBstKVNV6cBYIfMkUMoznqJ8AofgjCNOXarHhT
+OHOBwd+Uzir7Fq8eoqvuUuDqAi8imORaQ7KH4PWcrR+a/xEb3zQ8KW8DiRGyCEfp
+QwnM2x7thvTxOA1OBDtqw1Y9rSAaaPmNj5jkTOekoU/zzWjJ9VoGqhb7T5S5BaYI
+8xmQ12nMe6j4Y90n/hYwDwNAqt5ANugLi9jlJWA+vq3IgnezDXgYQyWklLHxwVPW
+13smeQCeDVXhCa5jUSUyA6ZkEOhg3zX1DTLn8+1eUm0kMtEbaIjkz5gV2Hsw4VkO
+RV94lLXCh069LMmcECHWhuhY4iReXyKZcRwoTy7gstWMzPyiXLmh4gfd/q/SSffm
+RbBfr9gUkLfHHy6NsiFts6pyPPn7Zu3rJs0aSCKineH789EWeivIRqXgajUosk5r
+h10A43EXwPMxCjM7DXOnHVbS+bIakm5eD+1gx6W4r/manLqyGv7kBHD8AJv7OVM4
+iMaDifVlyo4T19XOnDsfNAvt4TqStn+IcDJshdC21RbtOD+siUe5OAhgTUeUn2Nk
+ECZ2u+nUFBMD0Nl/5qLSgZq4x9mOzERH2jxr8n8TjZ+Q2r0s94RCNjGB6J0spTi0
+brXx83ivY0QXxITb9vaeXp1QqNTXIsBSphMiOUzrBIfFnNJV2e4=
+=9KZ+
 -----END PGP SIGNATURE-----
 
---x65eqfhbbjg6hmbn--
+--5qqv5e64sjmxmngg--
