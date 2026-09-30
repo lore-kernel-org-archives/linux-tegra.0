@@ -1,224 +1,220 @@
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010006.outbound.protection.outlook.com [52.101.193.6])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA2138E8A2;
-	Wed, 30 Sep 2026 04:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.6
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790741519; cv=fail; b=NjD8XXzkQeWOzBT07whTUW4u9U+B62qG3lOVhJUPvevR2UwzLvpHj1Wiqnv/03uU7TdBqliuY1ZD8KAb7ROwkDTEqLkiFvr0dKVXtyrjH1QW7seeowDQqJKh67+enAvOmjBuYJuYNzZfmx/jum1CrckB8uPOGQrWAADjnX8Ru6U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790741519; c=relaxed/simple;
-	bh=7Pqh7FjV8ibxfS91iSCNaN4rphq7CqnKXYRPcsdXb4E=;
-	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=E34FLDJkND0ppFG+kYhJ0d7OEmho8z/1bTV9BY216VIG4Wrag/xIKfzj4obscM8tuKFde+OtMmVB6bWXL9fjfodv41lXfA/31d9bbvykvyMUX8ZGaZ5htGJgaDCiAi+W6jhtQGIqnSC3SxlzIFvL1lHOfVZwDWJKjK91bke9n9Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Cb9UVsZ1; arc=fail smtp.client-ip=52.101.193.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DAA38A73B;
+	Wed, 30 Sep 2026 04:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790743891; cv=none; b=UdWW6jZaRp0ZDCQ3iB8w7Cl9NwmThj9rCmfm7xx0h1YYSsiQuqBR9gbLPy8gNXAJMSeOXygyHDHndb8pzaEyw5wUXgDIpy2n2OOuqDKHjJ18H6w9SJWpsdA7UXm0tr5M3D0i1jl8BGo5IjkEhXS/QnPbeD+VZ0HOP/unP4V/wzw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790743891; c=relaxed/simple;
+	bh=O4ZEI8E7/aLCYgTl8e7WVy6Vu+ylqm/hJe9IfZ9kY9c=;
+	h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hhmdZNUzAQmastJzRURZW8zPncyyRN/uKqtC5DJryYksjBhCJFdqwdtDCFDHV0iNK93S56kM7tX+dFBY7iF6ZtABJBmcp211nxB667jAf8f1BO2XrW6r/7XaHepW9CWO99VSJoDSRTZTuXT+2WL1znxIdIpJ69mmL7ITagynMLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVmotk48; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Cb9UVsZ1"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cBsrPxUASzEE1B5wbJSezm3hrQqnvAy1D5PtcZRlvReYTMMNxloSAUBl5XNIHu17rnNOolHw7bo/mLNlk3oYaBdooPyaQ+30I80YbWrin6Ojb1DkvI570zCj9TyzD0SLZPHl16H16dQZQnGo5ok1AKIEhh+dUgqB1VyH+OO/4xdMQkgwI/tzIabo0Xm0iWwsYYG0XNWxdrVadHE5ibkUHLTc48ZWDt7YZIqi4EBlq1IIdSTdoxT/+dFQ8A5T7fNv4lGpOMpBW+xI2hbntVidvKKphSmOiDOr2TNBBeMBGh89rJWCU+xu+y9IWd9RAcIlBGu5jSsld6Bu9bNkSVNZmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RXOig+l2nuZVaaNbuVrtGgybC+CVzlN6Q1LKCxvuZYg=;
- b=E93aOJkr7gxS+KNSr2qKjn6/vkp3xHLOMXmfNxvzOcJocppL8qDRFOouymLhXGTL5R0dDEA9ItAfGizMcH/tpihfNd1+XKuKxsna1pXjHH3g0muHDxDosr0RPB+YVISkhB9z7l4eYV7P+X83JQV8ameKwltjwlAw/rGofrAEWagNgEB0zVQiW4PMAfA501Swxjffq1lK2hEaMfZAnL4qkXvc3BsctLRBVeVcDQw1rNr6h34ZtNXhWKbv7NU/HN/PCs85s3Nbklax8H6pVZbaDkW3BN1y1jB4FrbybG4rZGJeT0AzOxjNtr5KhnUM9/NuTCBQXuSW4H1ozVUultbsjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RXOig+l2nuZVaaNbuVrtGgybC+CVzlN6Q1LKCxvuZYg=;
- b=Cb9UVsZ1jki+M4FhQUEW0YdCIoFE11clC/9mG/9VVqlLvy42nYuivv6mXzfhVi9yRpVNOUSPweWaGd0bhjc+cfTc+Jk9mWTsBx1whdQRUwgTndIOxRO6BFZhDqMVYSFx18lWoFD2Bz9CzntqPM0R17Ar4O2z40w2NA3t43aHKco1pva8K4MG4riSF8G41TK2MXEfI2JZcBnYIs31inb1hSJ5uZtBtyRpn08YXFUzU6emJWAcbPJCn4QD4rduUCElos5ladIaNxRVkNPFLU8sqHvgf3jFLJTcE+jA/J+EzmxzFbUmi2zQ+oLyeB7YL/RnWoYDD8fhwm2Fw6ZpES82Zw==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by DM4PR12MB7599.namprd12.prod.outlook.com (2603:10b6:8:109::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.26; Wed, 30 Sep
- 2026 04:11:52 +0000
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0451.022; Wed, 30 Sep 2026
- 04:11:52 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Date: Wed, 30 Sep 2026 13:11:40 +0900
-Subject: [PATCH] ARM: tegra: Add core supply for Tegra114 boards
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVmotk48"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 622781F000FF;
+	Wed, 30 Sep 2026 04:51:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790743890;
+	bh=I6jkYFcTNthR5C+Hpfv06QjmgS8uSSJevl9gWXkvy/I=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=cVmotk48593ZILJB8/gEe7LYuTOWfrkzQF/exVikVuuuFa9zA/AAqfhd0BByUTffD
+	 /H+BVg9OGvBFTWmyev6HkAAoE858UtcJI8fL9W5TKWJ2YMZ9k69gDDC47LRlNZCw5C
+	 dn5WDmzhOWPVLpn9JrUQaNEHi9RxK/f23gxq3qD+iJvWv9yIjJ/X6UXUdM1ZohQIDf
+	 5PnpWJEFuXEtsEpzuvZc2bqUN71NOOXm6bnl2QKCARiAhEzIKFrsJI+kiU023wz0YW
+	 ZcOHRYdClFfyVcNrhSmJXd0cY7jYuEnZ/BAlCN1/mxx4b8oINjVFgOJm+hOAo71s8P
+	 +zyr/FaT+SYeA==
+Subject:
+ Re: [PATCH net v4 02/15] net: stmmac: reuse the MDIO reset GPIO on resume
+From: netdev-bot+sashiko@kernel.org
+To: james.hilliard1@gmail.com
+Cc: linux@armlinux.org.uk, andrew@lunn.ch, hkallweit1@gmail.com,
+ davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+ qiangqing.zhang@nxp.com, rmk+kernel@armlinux.org.uk,
+ maxime.chevallier@bootlin.com, andrew+netdev@lunn.ch,
+ mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, ansuelsmth@gmail.com,
+ yangtiezhu@loongson.cn, chenhuacai@kernel.org, ast@kernel.org,
+ daniel@iogearbox.net, hawk@kernel.org, john.fastabend@gmail.com,
+ sdf@fomichev.me, fancer.lancer@gmail.com, quic_jsuraj@quicinc.com,
+ richardcochran@gmail.com, Joao.Pinto@synopsys.com, vladimir.oltean@nxp.com,
+ boon.leong.ong@intel.com, weifeng.voon@intel.com, yoong.siang.song@intel.com,
+ linusw@kernel.org, martin.blumenstingl@googlemail.com,
+ magnus.karlsson@intel.com, maciej.fijalkowski@intel.com, horms@kernel.org,
+ bjorn@kernel.org, thierry.reding@kernel.org, jonathanh@nvidia.com,
+ wens@kernel.org, jernej.skrabec@gmail.com, samuel@sholland.org,
+ edumazet@kernel.org, richard.genoud@bootlin.com, alastair@d-silva.org,
+ mripard@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org,
+ zhaojinming@uniontech.com, lorenzo.bianconi@oss.qualcomm.com,
+ dinghui1111@163.com, linux-tegra@vger.kernel.org, linux-sunxi@lists.linux.dev
+Date: Wed, 30 Sep 2026 04:51:26 +0000
+Message-ID: <179074388691.434549.18241724837995094025@kernel.org>
+In-Reply-To:
+ <20260926-submit-stmmac-reset-fixes-v1-v4-2-ec1c0250b3c9@gmail.com>
+References:
+ <20260926-submit-stmmac-reset-fixes-v1-v4-2-ec1c0250b3c9@gmail.com>
+X-sashiko-severity: High
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260930-dalmore-fixes-core-supply-v1-1-4bd87fd70b0d@nvidia.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yWM0Q6CMBAEf4Xcs5eUYlD8FeMDtIueQWh6QjCEf
- 6fg206yMwspokDpli0UMYnK0CfITxm5V90/weITkzW2NFVh2NfdZ4jgVmYou33qGEL3Y5T22lb
- +bHJ7oeSHiOOU9Pvjzzo2b7jvHqR13QAOO7ahfQAAAA==
-X-Change-ID: 20260930-dalmore-fixes-core-supply-e628f9d40127
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Thierry Reding <treding@nvidia.com>, devicetree@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mikko Perttunen <mperttunen@nvidia.com>
-X-Mailer: b4 0.16-dev
-X-ClientProxiedBy: TY6PR01CA0020.jpnprd01.prod.outlook.com
- (2603:1096:405:3bb::12) To SJ2PR12MB9161.namprd12.prod.outlook.com
- (2603:10b6:a03:566::20)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|DM4PR12MB7599:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8414b3b0-b116-43a6-9c66-08df1ea8f49f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|10070799003|376014|1800799024|366016|10067099003|56012099006|11063799006|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	CTbR/hDUiN5ox4RbaGCXslr81g86rv7ADmyNSqp1axQitic9oTs1ZEZmV3V5wmtccOJiW0U+P0Z1IjQ0W8K5XkmhfjdRsCpsB3J3bpIiRqxO2sbDhA3hKdwIZSCYDJ7VBcSogLoK4iVfL6Mzfo5emCBs7un2MALGsNWWAzuvm5+8zYLrEHPAzEYW1CnJsgwLG9XQW13uFbaPXQfItvltNroVkR9vV3oJcucBgMyhgu0JYsEI4IGwF3g5Dd9virrOElClxPEiAm8Sg8ZP8gIIAd4L7Cq7wOwACurml8of/bABtVuLkzUHl9yPF8W6kHs+MxETjcL9YwGGFcEjs8h7p9F6oMcBXpKfcHbSjZnR28svZi6H9CaCBeMhy2ODj6ZgtW7c2AI3AownKogSIr50WNUy3kNNyV0cCLFuohvc+DslF17ey7aCVpmkzeQO1N6uBNrgywOpEMZwuJhpv4kREKuxDDccSUixasBoVxoHGJKKxMlnyCj4aTh1DMxwx8pNvcQv9oHCWW4Ox2PrFDoeCjukBlwwJlxNVKssKPSriNB3AUPjC62rKrSzQ7rq1VL9x9pxJOENw7tTa8FX2oo1/BMIdlqnQhFEumFoekj2rauSlBzi42z0xME2z8q+tcrexyjXtvfyAFC82COFA0DlBx62ujtXikdM47xchvfQV2w=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(10070799003)(376014)(1800799024)(366016)(10067099003)(56012099006)(11063799006)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Y00yY2RMaUE2VHVtZzMwbzJQeEZoUjIwNFZsTzB6NWNzWFlNemZ6cHAzT1pI?=
- =?utf-8?B?cmgzeUNWRk5QTmFrbmYrNUhIT054WEVCTFRkY1puSzY4TjQ0TGNDZUhHamdD?=
- =?utf-8?B?eHZJVzZ0YTJDYjRGRnhUalJrNUkrSXljVkRCRGZoc3NCOEFZcGlsZmxKU2Y5?=
- =?utf-8?B?M3JsaW1ROVQvc0NJTjBmb2lLdW1ONDU4SC82a3R0a1ZSd0c3MzJaN3hldG81?=
- =?utf-8?B?SnVPcVNCaXJVRE8wdnZPQlFha0Z2c1l2TGdGVUZFc0JzdkQvdnJMME80Ynd6?=
- =?utf-8?B?RElQZWtmbWp1U3Z5Y0xZbnpCQUZNcnp0YXRNM0xpbHU4ZEZBRk5mQ0VWS1VF?=
- =?utf-8?B?MlVVSFp1c3J5dFRPNnBjS3oyeEpKbEVXSHVyT1JMWkliSTBjV2lncnRLblRS?=
- =?utf-8?B?YXA3TkZMdG9WY1F5bTVsU3hDcmxMeVh5b085MFllN0lkeXE2cndaeUcxVFhx?=
- =?utf-8?B?My9YdjV1ZWpXQnZSQVpRNW9ERTNFRWlzbGp4R2xudlRXdEkxanJuS0FiR2Vi?=
- =?utf-8?B?UjNZQW1jQ1FiaW4vNmkxZUwrZXNyOTJCSUZKQ01zTGhPOUh2UHhuWlRHdG5u?=
- =?utf-8?B?OXlQZEN4aEhNSHIwTytiYnM2T1Qzakg2UmxvWG92amRWUlo0MXJTMjJEZ2dQ?=
- =?utf-8?B?RDNwUzJ2US9VYVZ1cEFmZ2tKOVRMV2hNZWhHczEzaE81VlppOVcvRmRiUkhO?=
- =?utf-8?B?QnpNS3o3WHUrSm9SV21neEIzSHNBaGZZbGJNbW81VHlIUDJYODhqWHQvVmRp?=
- =?utf-8?B?R1FudVBIaVJBWWVJUU1xdjVaZ3NJaVYwWVFqQlRSTFRGRlNMamZCUHc5aTdE?=
- =?utf-8?B?TXAxN3dSMEk3YjhBMVNlVEZQcFRVMUFGY2h6QnJlRnRUQ2lEc2d1UndKVkJQ?=
- =?utf-8?B?ZHpEU3Q0Zy9HMkpHaEhlcXYxeUpHc3lWV1FVWXgrallsUWI4bFR6dW1mcHoy?=
- =?utf-8?B?QldOL1hET2RiQlo0NVF1SzI2YlFHWDlZVVNaeTZuMFNVUW1DZEV1Q1NuTzNR?=
- =?utf-8?B?UUFpbGFlek00K1pxR2xaT0ZMd3c5S3lGMW9McEQvL3ZmdDFIdkU5QnhqMlNx?=
- =?utf-8?B?Vm5YVnNESDh1QkY0VGhad0V4YU5scXZiN3BCc2pvTy9lTTNZZHg2aElDbVhi?=
- =?utf-8?B?TWV1a2tJYkoyNnplL0h4Y2t6d2VwOW1DNTFTNm0yTjFpa2tuUDJHaE9ZSjUr?=
- =?utf-8?B?VE1yeTVjT0NaVGRnMC9wTGJKeHB0Tm84eWZwZlRvYmJlYSswZnFwOExMRUJ4?=
- =?utf-8?B?MXZ3L3dTeG1CU0hVY0U5ZSt6MmxzbHpCWXNMcEd6dkJYbHEzN01SVWFyNlJS?=
- =?utf-8?B?cFVhMWRacFllOXA5cDJUTlVKaGNwMHZaTWJnZVI0bVpjaFZ3SFRVMHh6K2Rh?=
- =?utf-8?B?VllMemxJaDBzWlBOZ012MTBwWCszcHZObGU4M3FISFp0WXNiT3kxOEZJTDY0?=
- =?utf-8?B?ak5UU3FDZnZhbDdHQVVrZklSMlAvWDhGNStFcm1xOVhaQWFlYzM4TWo2enM5?=
- =?utf-8?B?eHdRQk9FczNkbWg2Z21uc0d2T2hLVnUzZE9TUE4xbnEvLzcwYmptYjdPcGc4?=
- =?utf-8?B?ZWxsaEFBZFF6Y0pVSG1nTUNZL1kxWHVkck9kTi9pdVRtbzAwbjl5TGxHY3BP?=
- =?utf-8?B?S29mNFVpV1J4WU90NXJlSUtJaFhLRDJ6cElxVW1ETFdSd2FtYTF0Y0laUFBL?=
- =?utf-8?B?RXRlaTNUNkRVM09vbjdNVUUrK29VclFjaXNsWGlWMlVNMmtsWmp5ckFEc0gv?=
- =?utf-8?B?eGI4Rkw0REdkYmR1bHhJWWJIQk9OMnlpSHF6ZnB2NXA4Y0l4S2hQZHMwdmo5?=
- =?utf-8?B?Y2tlQllVRXQxcENMYVFVUmZQUkVpeE0vM3ZvZXRicG9HSTF5TGY5U3U5SWt3?=
- =?utf-8?B?SXJPZWVoWks4MHJ5MHMwd0M4QkNzbjVGajRhZC80eE5wQzEwNXZTUnVHd0Jj?=
- =?utf-8?B?VWhaYnd4N0luSTNwcTdLcVZFbEMyQisrL2NTNVh4T2taUDBWTVo2Q084eFZj?=
- =?utf-8?B?ME12QkNiWkJHa0hKRXFsWUVKbzlGODZ4dHRaeC82MEEvWXpkYlpsSWhjQWJK?=
- =?utf-8?B?R09rVTAyS2JGckh0SkJMRlo5K0hwOFZ2R0xOdjlQRVB2VUJjcDQycStnNGxO?=
- =?utf-8?B?RFBFMW9PVE9XeDZuczJDNkd5Z3owSmJaOUVnOFpYY1ZjZXdLb0VwcThjSjhI?=
- =?utf-8?B?WEI2VGt5QUM4aDhMcDJPa0VmcTFzdXlPU3RybXZxYnV4YXA5WklsS1FybElu?=
- =?utf-8?B?R3NhbkdpOWtlWlFzYlhESHY1OThTc094eWg3MlowSnRHY3M4eStNV1NwR3VZ?=
- =?utf-8?B?Sk1TZ1VLOVF3UUEvRE1Dc1lDQjJsb0RMSlBWTGZPdTJTaldVb3JLWDJIL1di?=
- =?utf-8?Q?1YvBSRLRtRGLeJgGV6iEdiz5aqWrGA8JjUik3xarSnr1u?=
-X-MS-Exchange-AntiSpam-MessageData-1: Jpf9EHsm7IH8rA==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8414b3b0-b116-43a6-9c66-08df1ea8f49f
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2026 04:11:52.0838
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +BHFRw2IyqJhNYBSmxfi65ZKV1BsuNkPZwzebw75sy/EmdXo2WCTV0WA/zQw35pXthGZJwKJeJtXyhLB5LGZAw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7599
 
-After commit 4cc90d4c043e ("ARM: tegra: Configure Tegra114 power
-domains"), a core-supply property is required in the PMC node.
-Label the core regulator on Dalmore, NVIDIA SHIELD and Tegra Note 7
-and add the property.
+Thank you for your contribution! Sashiko AI review found 2 potential
+issue(s) to consider.
 
-Fixes: 4cc90d4c043e ("ARM: tegra: Configure Tegra114 power domains")
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
-This skips TF701T since there is already a patch on the mailing list for 
-it. Tested on Dalmore, but not on TN7 or SHIELD Portable.
----
- arch/arm/boot/dts/nvidia/tegra114-dalmore.dts | 4 +++-
- arch/arm/boot/dts/nvidia/tegra114-roth.dts    | 4 +++-
- arch/arm/boot/dts/nvidia/tegra114-tn7.dts     | 4 +++-
- 3 files changed, 9 insertions(+), 3 deletions(-)
+Critical: 0 · High: 1 · Medium: 0 · Low: 1
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra114-dalmore.dts b/arch/arm/boot/dts/nvidia/tegra114-dalmore.dts
-index c06b52fe330a..8d97a47c969c 100644
---- a/arch/arm/boot/dts/nvidia/tegra114-dalmore.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra114-dalmore.dts
-@@ -969,7 +969,7 @@ smps45 {
- 						regulator-boot-on;
- 					};
- 
--					smps457 {
-+					vdd_core: smps457 {
- 						regulator-name = "vdd-core";
- 						regulator-min-microvolt = <900000>;
- 						regulator-max-microvolt = <1400000>;
-@@ -1095,6 +1095,8 @@ flash@0 {
- 	};
- 
- 	pmc@7000e400 {
-+		core-supply = <&vdd_core>;
-+
- 		nvidia,invert-interrupt;
- 		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <500>;
-diff --git a/arch/arm/boot/dts/nvidia/tegra114-roth.dts b/arch/arm/boot/dts/nvidia/tegra114-roth.dts
-index a89b16573b42..f48d5c37e848 100644
---- a/arch/arm/boot/dts/nvidia/tegra114-roth.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra114-roth.dts
-@@ -837,7 +837,7 @@ vdd_1v8: smps3 {
- 						regulator-boot-on;
- 					};
- 
--					smps457 {
-+					vdd_core: smps457 {
- 						regulator-name = "vdd-soc";
- 						regulator-min-microvolt = <900000>;
- 						regulator-max-microvolt = <1400000>;
-@@ -960,6 +960,8 @@ rtc {
- 	};
- 
- 	pmc@7000e400 {
-+		core-supply = <&vdd_core>;
-+
- 		nvidia,invert-interrupt;
- 	};
- 
-diff --git a/arch/arm/boot/dts/nvidia/tegra114-tn7.dts b/arch/arm/boot/dts/nvidia/tegra114-tn7.dts
-index 75fbafb4a872..4b1e47364fdb 100644
---- a/arch/arm/boot/dts/nvidia/tegra114-tn7.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra114-tn7.dts
-@@ -95,7 +95,7 @@ smps123 {
- 						regulator-boot-on;
- 					};
- 
--					smps45 {
-+					vdd_core: smps45 {
- 						regulator-name = "vd-soc";
- 						regulator-min-microvolt = <1100000>;
- 						regulator-max-microvolt = <1100000>;
-@@ -241,6 +241,8 @@ rtc {
- 	};
- 
- 	pmc@7000e400 {
-+		core-supply = <&vdd_core>;
-+
- 		nvidia,invert-interrupt;
- 	};
- 
+If you believe none of the issues are legitimate, please reply to each
+issue of Medium severity or higher and explain why the AI is wrong.
+If any of them are legitimate and you plan to respin, please let patchwork
+know by including "pw-bot: cr" as a separate line at the end of your reply
+(one such reply per series is enough).
 
----
-base-commit: 72d3fcf802c45d00b300f25b848a93c3a2bd7c7e
-change-id: 20260930-dalmore-fixes-core-supply-e628f9d40127
+- [High] Once the cached descriptor is used, stmmac_mdio_reset() really
+  does pulse the snps,reset PHY reset line on every system resume…
+- [Low] The commit message explains the mechanism (the second exclusive
+  request of snps,reset returns -EBUSY) but not what users see.
 
+--
+
+net: stmmac: reuse the MDIO reset GPIO on resume
+
+MDIO bus registration acquires the snps,reset GPIO. This commit caches
+that descriptor in priv->mdio_reset_gpio, so later calls to
+stmmac_mdio_reset(), such as the one on resume, reuse it. Without the
+cache, those calls request the exclusive line again and fail with
+-EBUSY.
+
+> MDIO bus registration acquires the optional snps,reset GPIO through
+> devres. A later bus reset must reuse that descriptor: requesting the
+> same exclusive GPIO again returns -EBUSY while devres still owns it.
+
+[Severity: Low]
+
+This isn't a bug, but could the commit message describe the effect that
+users see?
+
+stmmac_resume() ignores the return value of stmmac_mdio_reset(). Before
+this patch, on OF boards with a snps,reset GPIO, every resume without
+MAC WoL silently skipped two things: the PHY reset pulse and the
+STE101P dummy MDC write:
+
+    writel(0, priv->ioaddr + mii_address);
+
+Nothing was logged when this happened.
+
+The message also doesn't say that this change turns the PHY hard reset
+on resume back on. That reset has not run since 7c86f20d15b7. Without a
+symptom or behaviour change in the message, stable backporters
+following the Fixes: tag have nothing to match against bug reports.
+
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+> index afe98ff5bdcb0..07d5eab05996b 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+> @@ -386,14 +386,20 @@ int stmmac_mdio_reset(struct mii_bus *bus)
+>  
+>  #ifdef CONFIG_OF
+>  	if (priv->device->of_node) {
+> -		struct gpio_desc *reset_gpio;
+> +		struct gpio_desc *reset_gpio = priv->mdio_reset_gpio;
+>  		u32 delays[3] = { 0, 0, 0 };
+>  
+> -		reset_gpio = devm_gpiod_get_optional(priv->device,
+> -						     "snps,reset",
+> -						     GPIOD_OUT_LOW);
+> -		if (IS_ERR(reset_gpio))
+> -			return PTR_ERR(reset_gpio);
+> +		/* The bus reset also runs on resume. Devres retains the GPIO
+> +		 * until unbind, so do not request an already owned line again.
+> +		 */
+> +		if (!reset_gpio) {
+> +			reset_gpio = devm_gpiod_get_optional(priv->device,
+> +							     "snps,reset",
+> +							     GPIOD_OUT_LOW);
+> +			if (IS_ERR(reset_gpio))
+> +				return PTR_ERR(reset_gpio);
+> +			priv->mdio_reset_gpio = reset_gpio;
+> +		}
+
+[Severity: High]
+
+With the descriptor cached, stmmac_mdio_reset() now really pulses the
+snps,reset line on every system resume where MAC WoL is off. Does
+anything re-initialise the PHY after that?
+
+Before this patch, the second devm_gpiod_get_optional() on the
+exclusive line failed in gpiod_request_commit() with -EBUSY. The
+resume path ignores that error:
+
+stmmac_resume()
+    } else {
+        pinctrl_pm_select_default_state(priv->device);
+        /* reset the phy so that it's ready */
+        if (priv->mii)
+            stmmac_mdio_reset(priv->mii);
+    }
+
+So no PHY hard reset has run on resume since 7c86f20d15b7. Before that
+commit the reset did run, but mdio_bus_phy_resume()->phy_init_hw()
+followed it.
+
+Today stmmac_phylink_setup() sets config->mac_managed_pm = true, and
+phylink copies that into phydev->mac_managed_pm. As a result,
+mdio_bus_phy_resume() returns early:
+
+mdio_bus_phy_resume()
+    if (phydev->mac_managed_pm)
+        return 0;
+    ...
+    ret = phy_init_hw(phydev);
+
+The MAC-managed path only runs phylink_prepare_resume()->phy_resume()
+and phylink_resume()->phylink_start()->phy_start()->__phy_resume().
+Neither of these replays config_init() or config_intr().
+
+Wouldn't that leave the PHY at its power-on or strap defaults while
+phylib believes it is still configured? The config_init() settings
+would be lost: RGMII delays or skews, clock-out, LEDs, vendor quirks,
+and the autonomous EEE disable.
+
+For an interrupt-driven PHY, the reset also clears the interrupt
+enable register. phy_start() restarts aneg, sees link down and moves
+to PHY_NOLINK, and it does not poll after that. Could link-up then
+never be reported, so the interface stays down until the admin runs a
+down/up cycle?
+
+PHY-based WoL seems to be affected too. phylink_ethtool_set_wol()
+removes the modes the PHY handles from the MAC mask:
+
+    wolopts &= ~w.wolopts;
+
+With PHY WoL, priv->wolopts is therefore 0, so resume takes the reset
+branch. Won't the reset pulse erase the PHY's WoL enables, so the next
+suspend is not armed for wake?
+
+Resume now also blocks for the snps,reset-delays-us msleep() calls.
+When those delays are 0, the DMA reset in stmmac_hw_setup() needs the
+PHY RX clock, and it runs right after reset deassert.
+
+This also looks unresolved at the end of the series. After "net:
+stmmac: track datapath and power ownership across failed reopening",
+stmmac_resume_hw() still calls stmmac_mdio_reset(). stmmac_resume()
+still only calls phylink_prepare_resume() and phylink_resume() after
+it, and no phy_init_hw() call was added in stmmac or phylink.
+
+This patch carries a Fixes: tag, so it will reach stable. Should the
+resume path either re-initialise the PHY after the reset, or skip the
+reset pulse on resume?
+
+[ ... ]
+
+-- 
+Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/20260926-submit-stmmac-reset-fixes-v1-v4-0-ec1c0250b3c9%40gmail.com
