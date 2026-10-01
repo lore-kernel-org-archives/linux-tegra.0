@@ -1,80 +1,50 @@
-Received: from mail-qk2-f41.google.com (mail-qk2-f41.google.com [74.125.230.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mf01.lie.net (mf01.lie.net [212.77.32.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1D6366051
-	for <linux-tegra@vger.kernel.org>; Thu,  1 Oct 2026 05:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.230.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B850483BCB;
+	Thu,  1 Oct 2026 06:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.32.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790833629; cv=none; b=qGUvQBXRS+XL8WPBDp7RfiwOtv6i+N4/rplx+auaPOtR/5Pb9nLBXYGv655HXLOv34YI0jt/m4TsfX2h1lge+eNur4+yo/j0SzBa+nnDjX0N5ZjWthTuA6ABSTbLY+ND2tsUo//b50rc3cKiXBD/TCh4/joa9hxS4DNvIQWfgPE=
+	t=1790835679; cv=none; b=Zv4jTILs2pDYdmq5puKF1X7lyOYpKkzRA7XW/K2Wf0mqRNUe9R88Dk6lp60yIzpeOCY1gUK12B3A9PhfdUNq1a9k4AdQXLyK6sdK+BOkZ3gmqI1CTrQnUzCFhVJe4lBvv1rVB4KvR5ccM3ugzb76Ur50QH9ScNV6gE/+j/8yxzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790833629; c=relaxed/simple;
-	bh=J6CDJfDrHs9Xh8xm7mF4JVU7BUMT89ttkfJpwjj06p4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=foL9YK5b2D/bC9yYsogMG7jJz2C+dcVvaYF6KYF0EIEFoiQTYY3aMmmhSpahmR8FJAXY2KSw2hW949cN4ivli23vXQpMiqztrpTetQfeuxtjShO2N9Pxk1wRjgY5IHrzRnSoja+KatzupwTHqhokNNDGLaBeQlo9uK3uhlnXYYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EwD7LtRm; arc=none smtp.client-ip=74.125.230.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EwD7LtRm"
-Received: by mail-qk2-f41.google.com with SMTP id af79cd13be357-93c599e3902so552058185a.2
-        for <linux-tegra@vger.kernel.org>; Wed, 30 Sep 2026 22:47:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790833627; x=1791438427; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=ole5s+LPcjnPZwgGNmuzsjKHTKb0fD2/ZAwdN7H+e4w=;
-        b=EwD7LtRm+QdsLN1rVB2nV3oa6TUh8JPA1zIm+wENinQnq2/v3jIg8EaMTubh55Hw/J
-         3qmBgpeBr6dqyLkR5c+judV5Psg48LOKCNZr3iIFKaHCO9I1x3uArM/vYmAmZfhhmlVQ
-         p0mXjsR1ff4P31r6fw5UfnzO2kG7CYaC8VILjnh0ak1Mbrps5CJq4NtZAIUhRr6/R3sT
-         G2E6ToaR3bcs9b/u/YWTVkygA3RhmP22AG1ZcMbs1WTZbsswnkUbqeNS0fesrXEWZhY3
-         0wY723tmJvqPxOsy7SWBC2FB1yc6xJI+334CnTMd3Qp5FUAkXHfTrUn6ScZ8ytj+UyQC
-         UiMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790833627; x=1791438427;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=ole5s+LPcjnPZwgGNmuzsjKHTKb0fD2/ZAwdN7H+e4w=;
-        b=Es1MEfQYnep+lGZkt3CkcfPO2Cijkn8OWKhZqDn2gLqeMowCXH6l2Q28zbghhNDfsp
-         B/qD6NPyyECmdHlfrVpJ8AyE5c+m3uN4ZrY4uNv6UO6h/qgoyZ4jhxdZtX+kiZRY8GFE
-         lkb5zZw+Lwi66ECHbkJhuxO78Rc6dg4kpB6iF7FgdEXS+LeYOHwDZqYURBggrqhQBPTy
-         hx2JQjd4JinSSqa4JyF4NAUkCy/PpIiCoX0TYYGmW5rvGCzczVJzhPB+XSaDxaJ42T2Y
-         /j+mR3q0UFKURFtXWse8+9k0kynH+6K3HI2aOv0ZR4q9AYj+eYFVyPp35SYndjxbbStp
-         tNwA==
-X-Forwarded-Encrypted: i=1; AKwUvBySnZrGRMxLPcoaVnKXwI0sZDYpDlJqOG+ED6Bp18ShYe57NrRAafv+W6fWGqfFv2DxKMngqvIG5XKR7Q==@vger.kernel.org
-X-Gm-Message-State: AFuF++n5zVPIkp7VOWogzyg7f0qK9+gK6XluOjgl3/c/jkDzLqsjfjHp
-	4YKUwpxf8aG60pa1N0vVL2uiuitjAJpCyj/6VTsy4n0POpjGuSwu4ETw
-X-Gm-Gg: AYBFou3Brhw7YuogMXLgzsaNR7vA4J16YDYgCdm1kV5c0P/AyDH5bbbsjqkCxd5F8W1
-	aMV9JW2zVlx2+Hde1l14JGRQRj8e9szaxw38xu19n27Qtl8Uyf1ESYxt6qhgiBDWSoDuqa6eR6Z
-	+NPCU7peZIoqIXhJJ1d6jUhGiF/rYBm37BXoUt9Zm6RJj6nmKZCF0+jLcV1Jf256CpV9sKvvxj1
-	6AP7K7hJanwHmIZpvFIv71dKLwx0EJS0wEcbvQclZTA2+bolPE5byxs98i1g7LH2OU3X8XE05zV
-	cFdpVlDRZoXSBZd5Mn+p9Lj0JqXFIc3GQcPcw2DgYR/OE+C8mLqiAMbHRZ9OqaMQW6W+591ii89
-	IFlSNN8zoJHnKemBSuMC9Xu+l9Z9IMz9D/n7UJELpr4gXjSMNaGS257cT7b+VpwsEt60JrgjNdj
-	gX3aT10rWNP1eFWf0CGo/JNalqPFZNGh6NLIyRHCIBfoZrvBwHbEjk90h79mEEjgxI0pm3S67Q1
-	S6EAh+4PskPHjcqTrd4u1Imt/gO+RERU635xEpwBlk4pqVG0dfel2sMQr+rQT65IjrPg25evAtS
-	v1ySrjR092dpfF/N7yeHQphHqr9zHx/6LNgCOuQUzrhLT2eEt5uy2aHDpmke
-X-Received: by 2002:a05:620a:2b96:b0:93c:7b3d:38a9 with SMTP id af79cd13be357-93ca94f6521mr633545385a.2.1790833625365;
-        Wed, 30 Sep 2026 22:47:05 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8000:7a86::e34])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-93cb64eb59esm140040785a.22.2026.09.30.22.47.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Sep 2026 22:47:04 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
-	linux-kernel@vger.kernel.org (open list),
-	linux-hardening@vger.kernel.org (open list:KERNEL HARDENING (not covered by other areas):Keyword:\b__counted_by(_le|_be|_ptr)?\b)
-Subject: [PATCH v2] clk: tegra: bpmp: remove kcalloc
-Date: Wed, 30 Sep 2026 22:47:01 -0700
-Message-ID: <20261001054701.39160-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.55.0
+	s=arc-20240116; t=1790835679; c=relaxed/simple;
+	bh=YAlgLuw26GFR9op9Uq5uvNMngkMw6KWKsd3NTl5ZtiY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ieae11/63Q7ylTzsdMuvJqTkMb5fr5PfnS9GuB0cMtjWW8JguoXTC2QYXkKeQZisSswZgYsTyMpzk5xZM0xXfXfZ1UL/NcM+3OAqUqYlTCnFQ2M70M/rI9FlmHgFXCt47LSf4K9hNIee+CvheauS6dwQw0jlw5IjxXOROt0Wd4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=noxsystems.com; spf=pass smtp.mailfrom=noxsystems.com; arc=none smtp.client-ip=212.77.32.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=noxsystems.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=noxsystems.com
+Authentication-Results: mf01.lie.net;
+	spf=pass (lie.net: domain of simon.gassner@noxsystems.com designates 212.77.58.239 as permitted sender) smtp.mailfrom=simon.gassner@noxsystems.com;
+Received: from securemail.noxsystems.com (mail.noxsystems.com [212.77.58.239])
+	by mf01.lie.net  with ESMTPS id 69165j41020147-69165j43020147
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
+	Thu, 1 Oct 2026 08:05:45 +0200
+Received: from securemail (localhost [127.0.0.1])
+	by securemail.noxsystems.com (Postfix) with SMTP id 4hwLxj4cyVz2WX5;
+	Thu, 01 Oct 2026 08:05:45 +0200 (CEST)
+Received: from SRV2.NOX.intern (unknown [10.10.11.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by securemail.noxsystems.com (Postfix) with ESMTPS;
+	Thu, 01 Oct 2026 08:05:45 +0200 (CEST)
+Received: from SRV2.NOX.intern (10.10.11.200) by SRV2.NOX.intern
+ (10.10.11.200) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Thu, 1 Oct
+ 2026 08:05:45 +0200
+Received: from NOXSIMON.NOX.intern (10.10.11.80) by SRV2.NOX.intern
+ (10.10.11.200) with Microsoft SMTP Server id 15.2.2562.49 via Frontend
+ Transport; Thu, 1 Oct 2026 08:05:45 +0200
+From: Simon Gassner <simon.gassner@noxsystems.com>
+To: <gregkh@linuxfoundation.org>, <jirislaby@kernel.org>,
+	<thierry.reding@kernel.org>
+CC: <ldewangan@nvidia.com>, <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <simon.gassner@noxsystems.com>,
+	<stable@vger.kernel.org>
+Subject: [PATCH] serial: tegra: don't clear the Tx FIFO on an Rx-only reset
+Date: Thu, 1 Oct 2026 08:05:39 +0200
+Message-ID: <20261001060539.32659-1-simon.gassner@noxsystems.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -82,53 +52,89 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-SM-outgoing: yes
+X-FEAS-SPF: spf-result=pass, ip=212.77.58.239, helo=securemail.noxsystems.com, mailFrom=simon.gassner@noxsystems.com
+X-FEAS-Client-IP: 212.77.58.239
+X-FE-Last-Public-Client-IP: 212.77.58.239
+X-FE-Policy-ID: 12:4:3:noxsystems.com
 
-Use a flexible array member to avoid allocating separately.
+tegra_uart_fifo_reset() applies the Tegra30 workaround for
+"cannot clear the Tx FIFO while FIFO mode is enabled"
+unconditionally: it leaves FIFO mode, writes the requested FCR
+clear bits, and re-enters FIFO mode. Leaving FIFO mode empties
+both FIFOs, so an Rx-only reset discards queued Tx data as well.
 
-Use __counted_by for extra runtime analysis.
+The break handler in tegra_uart_decode_rx_error() calls it with
+UART_FCR_CLEAR_RCVR only. On a half-duplex RS485 board whose Rx
+line is pulled low while the transceiver drives the bus, every
+transmission raises a spurious break, and all but the first
+character of the frame is lost.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
+Only take the FIFO-mode path when the caller actually asked for
+CLEAR_XMIT. Likewise only wait for TEMT in that case: with the Tx
+FIFO deliberately left intact, that loop would otherwise spin for
+a full frame time in hard IRQ context with the port lock held.
+
+Tested on a Colibri T30 (Tegra30) with Rx DMA:
+
+ - Break during transmission: the reset still fires from
+   tegra_uart_decode_rx_error(), and the complete frame now
+   reaches the peer. Before this change only the character in
+   the shift register was sent.
+ - Internal loopback with a generated break: the Rx FIFO is
+   correctly cleared by the plain FCR write, and subsequent
+   receive works with no frame, parity or overrun errors.
+
+Fixes: e9ea096dd225 ("serial: tegra: add serial driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Simon Gassner <simon.gassner@noxsystems.com>
 ---
- v2: fix subject
- drivers/clk/tegra/clk-bpmp.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ drivers/tty/serial/serial-tegra.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
-index 067a8555c4e7..15b976162b59 100644
---- a/drivers/clk/tegra/clk-bpmp.c
-+++ b/drivers/clk/tegra/clk-bpmp.c
-@@ -32,7 +32,7 @@ struct tegra_bpmp_clk {
- 	unsigned int id;
+diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
+index 8004fc00fb9c..b0fc4ae3686f 100644
+--- a/drivers/tty/serial/serial-tegra.c
++++ b/drivers/tty/serial/serial-tegra.c
+@@ -306,11 +306,19 @@ static void tegra_uart_fifo_reset(struct tegra_uart_port *tup, u8 fcr_bits)
+ {
+ 	unsigned long fcr = tup->fcr_shadow;
+ 	unsigned int lsr, tmout = 10000;
++	bool clear_tx = !!(fcr_bits & UART_FCR_CLEAR_XMIT);
  
- 	unsigned int num_parents;
--	unsigned int *parents;
-+	unsigned int parents[] __counted_by(num_parents);
- };
+ 	if (tup->rts_active)
+ 		set_rts(tup, false);
  
- static inline struct tegra_bpmp_clk *to_tegra_bpmp_clk(struct clk_hw *hw)
-@@ -518,20 +518,14 @@ tegra_bpmp_clk_register(struct tegra_bpmp *bpmp,
- 	unsigned int i;
- 	int err;
+-	if (tup->cdata->allow_txfifo_reset_fifo_mode) {
++	/*
++	 * Leaving FIFO mode below is a workaround for a Tegra30
++	 * restriction on clearing the Tx FIFO while FIFO mode is
++	 * enabled. It empties both FIFOs, so applying it to an
++	 * Rx-only reset would destroy an in-flight transmission.
++	 * Only take that path when the caller asked for CLEAR_XMIT.
++	 */
++	if (tup->cdata->allow_txfifo_reset_fifo_mode || !clear_tx) {
+ 		fcr |= fcr_bits & (UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT);
+ 		tegra_uart_write(tup, fcr, UART_FCR);
+ 	} else {
+@@ -335,9 +343,15 @@ static void tegra_uart_fifo_reset(struct tegra_uart_port *tup, u8 fcr_bits)
+ 	 */
+ 	tegra_uart_wait_cycle_time(tup, 32);
  
--	clk = devm_kzalloc(bpmp->dev, sizeof(*clk), GFP_KERNEL);
-+	clk = devm_kzalloc(bpmp->dev, struct_size(clk, parents, info->num_parents), GFP_KERNEL);
- 	if (!clk)
- 		return ERR_PTR(-ENOMEM);
- 
-+	clk->num_parents = info->num_parents;
- 	clk->id = info->id;
- 	clk->bpmp = bpmp;
- 
--	clk->parents = devm_kcalloc(bpmp->dev, info->num_parents,
--				    sizeof(*clk->parents), GFP_KERNEL);
--	if (!clk->parents)
--		return ERR_PTR(-ENOMEM);
--
--	clk->num_parents = info->num_parents;
--
- 	/* hardware clock initialization */
- 	memset(&init, 0, sizeof(init));
- 	init.name = info->name;
++	/*
++	 * Only wait for the transmitter to drain when the Tx FIFO was
++	 * part of the reset. For an Rx-only reset it is left intact,
++	 * and waiting for TEMT here would spin for a full frame time.
++	 */
+ 	do {
+ 		lsr = tegra_uart_read(tup, UART_LSR);
+-		if ((lsr & UART_LSR_TEMT) && !(lsr & UART_LSR_DR))
++		if ((!clear_tx || (lsr & UART_LSR_TEMT)) &&
++		    !(lsr & UART_LSR_DR))
+ 			break;
+ 		udelay(1);
+ 	} while (--tmout);
 -- 
-2.55.0
+2.43.0
 
