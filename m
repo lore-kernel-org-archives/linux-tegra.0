@@ -1,157 +1,127 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7974EB859
-	for <linux-tegra@vger.kernel.org>; Fri,  2 Oct 2026 15:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3624B4867
+	for <linux-tegra@vger.kernel.org>; Fri,  2 Oct 2026 15:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790955655; cv=none; b=cAEdgYRUsiTd073HMl8F6c35NutFHXWdbw2BfZWLYrdCgH0Z8mhCeIWoKNnNrSnjpVbNiQtz0gw5CaHCwdsxstQv5GJdId93pivByGiuW6vXzgsiOR6qDU48ExV9imjU3ZvPDSPT5TdLB/rRx2nPfCVfnZ5XP3+Pxb05Rh3sM6A=
+	t=1790955991; cv=none; b=Yd8qk+nTkEVCNrxOUnKIdcnlC6Y3XjNaig0GZTfM+JQZvmp/Df7wzdWRylE9M0OpvfQQTO4v+QkyYsgGYjXcA6twHcodQsVkwxqm3z8S3VSpNe5ucMvPqnFbd133KTlyfRLrtdXfyi6iUac9WaNs/RfVs0gjMdZhVAk7twsLZqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790955655; c=relaxed/simple;
-	bh=WQsDDSMUZRhlskhbuefNaU/oDZmoaAVqCqR5bHZT1Bg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TB7AfReIycwd6McEFbDgBSbTY9kN2mnLaDwUJHb0OVfiifrW3DYp6mvSnZez+hn948sE4l1mpAQmk13k23ii64BTcJr/Rms23wn1fLPmIX6w9uhHnKweMaSdASiufxnHYo4v8sJ6gRgRRLQpXD7GLzy1F7nAOtY8W5o6ZCQ5+Sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FZO9v/rA; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ozPpu/jX; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1790955991; c=relaxed/simple;
+	bh=h28xSIp17OKs/AgiIrNq+DdSPKZiP/ZhWr17OJaw6v0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=iXz1aePJ/RXQyWoTen7/cs8GfWO0RqXf7SkiptJ1da8nWiUI6rVLF8mpVioIAFQKvHE76yLZ5tOX5ckNsPE1L2hzqpjzYVa2iuaf2kmag8Vf5ia6TtGYHRFhScZuSZIdoHJXfFaP7Qh2tJHfnZJEaStuZUnwIwF/wSdmqpgyFeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=boSRXA0u; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=eopCkTTT; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FZO9v/rA";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ozPpu/jX"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="boSRXA0u";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="eopCkTTT"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1790955619;
+	s=mimecast20190719; t=1790955989;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=oiiS057kpBWsJD1BtMWJm5EOfNc4H/UurY52kp0eYCc=;
-	b=FZO9v/rAn4UaEvJRHny4YEhKKBHnl5oMo31kpcu/VqegrioRt3sgH54ZUriRlMdADTCCFi
-	twVtGXqvk+mKL+//E9xugJvOidMW4pcPM+mrgkIQUy2EjgfCs1ww/d1EAYx9AxSRfes80X
-	o+yLddwbKV229/Kv08h7BR3MCRbnK3c=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=dkAUcAmviJBE+AfFgIHguRjot4BcqQHezlPnJllPFWc=;
+	b=boSRXA0uww2VevY/aVLg9v4AFUOOzUCGmolfLvfnq+FOJrGXiTQXexejCYMSHKsAFJsGmn
+	XDooiy1VP08H2BzSSb5BmCVuWx6dez890OkGDwbHhxv6CQb2r94iwiD85F48MMpiQHKc/7
+	gesjC/rcFrriTGYnv+ef0oxGCy+d+18=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-681-JwC4EF_lOSGoxv8YkfKYUg-1; Fri, 02 Oct 2026 11:40:18 -0400
-X-MC-Unique: JwC4EF_lOSGoxv8YkfKYUg-1
-X-Mimecast-MFC-AGG-ID: JwC4EF_lOSGoxv8YkfKYUg_1790955617
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-53390e79a19so27470701cf.0
-        for <linux-tegra@vger.kernel.org>; Fri, 02 Oct 2026 08:40:18 -0700 (PDT)
+ us-mta-395-bGd_JfhgO_i7J2GSULOXPQ-1; Fri, 02 Oct 2026 11:46:28 -0400
+X-MC-Unique: bGd_JfhgO_i7J2GSULOXPQ-1
+X-Mimecast-MFC-AGG-ID: bGd_JfhgO_i7J2GSULOXPQ_1790955988
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-93cb71b1443so448100685a.2
+        for <linux-tegra@vger.kernel.org>; Fri, 02 Oct 2026 08:46:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1790955617; x=1791560417; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=oiiS057kpBWsJD1BtMWJm5EOfNc4H/UurY52kp0eYCc=;
-        b=ozPpu/jXAzZIo0zu/9LK+ICU9zXJodlaZQRzNX5FgATAdHaZ+qAvKmTF6t9jvZfiJ9
-         AHmLMmZ6SmPxUhguGshnF08hBOW7KGWy1OVge8CKnRpdkHpUs3J9Zw5U0EhYXfIXZQc9
-         iRCvbwKgvrEZts/PrfR5k8R9TjKm5lvrdXwtn5rddK9pQ85cjiTOKzHchZn7MZTlSvCQ
-         UpVf6Fbk+JFqhc9u7WML8faX1PukOsM8jJvIEF7M8zQVho6PbRJNrgkS41rljzFHo/ZF
-         0MGK5budA4AJFsXKlr1Lpbh+mamOjcfaEWVjU8e6SCBuHWYWyw0vC8dEOp/SiCPJEbgh
-         m6Lw==
+        d=redhat.com; s=google; t=1790955987; x=1791560787; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=dkAUcAmviJBE+AfFgIHguRjot4BcqQHezlPnJllPFWc=;
+        b=eopCkTTTIgHgygBF57ZjL8jbqnAWngZ5pqqHQ5zV356I7kTlMUzwLDF+KIlr6lQqpc
+         6V3/ndlGDkbs5YDeOWZQ/FR2cTV3pKDdUatOXUIYUrgBOsSwOOlVW7CuW6cuvIrWRexP
+         XJSG+AR3eKWRVOuniShBV/SnRlBfrADRNxKY/bu3J1c9DF+H8mDSXXpYGt6WSRwIkfWd
+         pCsKf2oE2gYbKstCqM5zwLIywg1iBnxDtWiwEf6RbcUt8/xPAbd62Hn04bNaVLGnzy8P
+         rdgUxd4tKKSpLhvr0ATRVvKzZjpQGpJUEI79pqENg5i3veVKpke+oxA251flaXSgysrP
+         P+dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790955617; x=1791560417;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20260707; t=1790955987; x=1791560787;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=oiiS057kpBWsJD1BtMWJm5EOfNc4H/UurY52kp0eYCc=;
-        b=GcHrYQmmBvKn7hEO9qAILuz/qZdDaItc59WtckLTmYnYfPQoJwq5V4XZmzTpyr825t
-         h9FNUGpzcbNqv+6gy/EwhbXtn6jqAY82L3k7eRpWNm+M44OJF9nwL8ofSncMoFYKeeVs
-         wvyVxjygggr/+QCGmaEMptKf3upjF5NsXlwAE94DoLq+mrx2xtiO5f7rTgZ3N0qonq+1
-         iyBJe4hwnc1bs186muXw6mgQmrC9+oX8CA39/FBBusdo0OnnSg2wU8CZmneeDAQJoycR
-         DFovJXDpFSihIpdeXUkmPHuDg2RKGZ7DtpUWUOqGcda06Ro/N474vAIjYLggSkX8iNBs
-         oCwg==
-X-Forwarded-Encrypted: i=1; AKwUvBzorjO+ALrQHI8cUrJEa7qGyCx+3CIuAEOHglA+gijN20GLimm0B7DHVeFmMI+hm4oobdYTygbRmlhGeA==@vger.kernel.org
-X-Gm-Message-State: AFuF++lVqBvYPtl/iGdVLT1FAlgxEuGw4P1mEn+OtIj+KRx+uVu0G/Ap
-	PUb25W+xhchXNTfaAEDUeLVZlXZ0/AgOlda8wejwQRmIyADVT9ruy2Ncbks/Xw0jzda07xb513X
-	TmhRXigvWY2/dvrQsfbcRo2yt+U/5XLVxCd30Njh524wXX7rZA/FgzY3KRDh3KfD0
-X-Gm-Gg: AYBFou10bVmLAvs881y7oUssBgzguyp3Fhm6wQw4kFaqHWV2JCuXjJA/4LipHh0No8b
-	yMPcg3dFGEHcpRKvCHpx3emixlpoE9IWKgxdiCIVSP1iZ3+ir+H9d6dJicd4Qpc6T3ew3pDbVVO
-	sluVs/E4pdS1/4WwW01SRLA+Jl6+o/n9puTZrekY87da0nPjF0YLti+MbctE/5fl4g/eLChpH/U
-	ZnKwjgw5h0sxSPnMYvMQ0NS8n51xCpLDhELODjDwm9qL+ytyJkVt4rha9JUme6k4f3mr+bZAQU9
-	8oBhYaWYYu8M19ID//Q4euGjf/kWHhMD/Wruu/T7J79pli5FQt8ap9uAqf2HFVYjmjc56DJcEMk
-	2kREQ9FGiz0omi95ybX32qrn35D9Vw8hdgVQ=
-X-Received: by 2002:a05:622a:250e:b0:532:ab93:1400 with SMTP id d75a77b69052e-533bc662ddamr53425641cf.5.1790955617364;
-        Fri, 02 Oct 2026 08:40:17 -0700 (PDT)
-X-Received: by 2002:a05:622a:250e:b0:532:ab93:1400 with SMTP id d75a77b69052e-533bc662ddamr53425041cf.5.1790955616765;
-        Fri, 02 Oct 2026 08:40:16 -0700 (PDT)
-Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-53398d438ccsm28817651cf.30.2026.10.02.08.40.14
+        bh=dkAUcAmviJBE+AfFgIHguRjot4BcqQHezlPnJllPFWc=;
+        b=P6JoAv6Px8EISr8AO9FX6mYqCnTnoMujv5FPIUzzm1yMo6NHXTj2HddbDJLInATTYS
+         Y+MfP0BpjIleiSGpL377UmYJwgdmdvNCxLUnp5+Hxg7GHEuKRNid557mZQkL+xcW7/8M
+         2Hf4FeJmQeVP09rII0bM38S35dGwMyPqrj8SQqHIwjO/+hcRNwSNplVbzpCCS9vzR1R7
+         JQ/pd06aDRlm7mBU//y7jSHQo/nQalGUzW+8tUbrx0nA06ytS5aGsrx/sn7DdwNMrOVI
+         ImW+DsptBAqpQCObar9Q/zvanceGD3JBOknclpLFLAX8dxGfdSWYBrEiEx7SGFO7c/lw
+         FVfQ==
+X-Forwarded-Encrypted: i=1; AKwUvByoxpQ1gwZFqUz+7JGapi/+LH7KzrTC0chQJpAzpsbUyDJPbRn9/0qQ8a2FRo3iFomvveOr2TRviNorcg==@vger.kernel.org
+X-Gm-Message-State: AFuF++kpFkyNK8a4Jc42+ni2ANHudtzPEZj0vuO6lPNBV3ynjFlGdQPe
+	bkOEqdPNenKiAvQyC+twso+cWQo43OlPdRE/+2DdZdZ8kNVLTAMcLGn1uQgZeBM7a4DmtA//aRM
+	2NLmGxG5jN9jMlm82ihzjYHA1wFub/qi/k32t9rV+K37YedWFP2MDRw1oJipT5XoOHxsMxYSwoA
+	CZVnK7V3WGcx8q9hAUmAmPZISJ3u0/UT9b4dRZP5/y8qU+qQg=
+X-Gm-Gg: AYBFou3ByyE1ZOy/NIYRj/Id024sCkRIm+kkl7yTS3RNLgzd/Z5QZweEs8XHwxfvCRr
+	QPOXhAcshPK1EzkNQYDN4FT+mqIHyW/pkrx5yu6i1q2EyTlBza48WdRj0rS08kHV+T+eZd0FwoO
+	zYxmc2eTEQr4k89DeQC4g4jQ7fw+lzUF5d4d2422oMxjM6ZSsznS9Q1I5p5N2lPJ9UkRYL+wizi
+	osM89caWYXwyNB6cYbnt8GfF08Z5Jda9hicMEJrILfcBvC0+zSNVvosjly1YlQRTBGvLaU72shW
+	m3DiNBu/X0bnReRBFzBS1b/0OQ18Y+JDE934VQJiC3UO+79Q4fT18u5a6ZE1eVwb4fbyT9S8lbk
+	1mhA70Oulf7NY351PdEVmSkgG/qqf+gAqdG8JEGjtplHg3mvDv6g=
+X-Received: by 2002:a05:620a:1a13:b0:93c:c98d:e1b6 with SMTP id af79cd13be357-93cf178a238mr541165385a.48.1790955987338;
+        Fri, 02 Oct 2026 08:46:27 -0700 (PDT)
+X-Received: by 2002:a05:620a:1a13:b0:93c:c98d:e1b6 with SMTP id af79cd13be357-93cf178a238mr541159185a.48.1790955986487;
+        Fri, 02 Oct 2026 08:46:26 -0700 (PDT)
+Received: from bmasney-x1.rmtuswv.csb (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93cca209601sm250629285a.20.2026.10.02.08.46.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Oct 2026 08:40:15 -0700 (PDT)
-Date: Fri, 2 Oct 2026 11:40:13 -0400
+        Fri, 02 Oct 2026 08:46:25 -0700 (PDT)
 From: Brian Masney <bmasney@redhat.com>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: Fix Tegra114 MIPI calibration clock parent
-Message-ID: <ar_QXessqHKkVAHi@redhat.com>
-References: <20260930-b4-dalmore-fixes-mipical-clk-v1-1-0518be6c7979@nvidia.com>
+To: linux-clk@vger.kernel.org, Rosen Penev <rosenp@gmail.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Thierry Reding <thierry.reding@kernel.org>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Kees Cook <kees@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+In-Reply-To: <20261001054701.39160-1-rosenp@gmail.com>
+References: <20261001054701.39160-1-rosenp@gmail.com>
+Subject: Re: [PATCH v2] clk: tegra: bpmp: remove kcalloc
+Message-Id: <179095597991.810253.6056329084530494982.b4-ty@b4>
+Date: Fri, 02 Oct 2026 11:46:19 -0400
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260930-b4-dalmore-fixes-mipical-clk-v1-1-0518be6c7979@nvidia.com>
-User-Agent: Mutt/2.4.2 (2026-08-30)
-
-Hi Mikko,
-
-On Wed, Sep 30, 2026 at 02:18:34PM +0900, Mikko Perttunen wrote:
-> CLK_MIPI_CAL on Tegra114 is a plain clock gate with no source mux; the
-> fixed parent is PLL_P_OUT3, which is specified to run at 72 MHz. The
-> clock driver currently registers the gate with clk_m as its parent, so
-> the clock framework never enables PLL_P_OUT3 when MIPI_CAL is enabled,
-> and reports the wrong rate for it.
-> 
-> Register the gate with pll_p_out3 as its parent. Also drop
-> CLK_SET_RATE_PARENT at the same time: the parent canonically runs at
-> 72 MHz so we shouldn't change the rate.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-
-Should there be a Fixes tag? I see that Thierry made a change to this
-same clock 11 years ago:
-
-commit 07314fc108e195044c074f4b443974b5aaa2d5d7
-Author: Thierry Reding <treding@nvidia.com>
-Date:   Wed Apr 8 16:48:26 2015 +0200
-
-    clk: tegra: Special-case mipi-cal parent on Tegra114
-    
-    Starting with Tegra124, the mipi-cal clock uses the 72 MHz clock as its
-    source. On Tegra114 this clock's parent was clk_m, so it is the one-off
-    chip.
-
-Brian
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=267; i=bmasney@redhat.com;
+ s=20250903; h=from:subject:message-id;
+ bh=p9s0POduzL50uWCzmc8L//0zD1FZFy8osEfnLmwPpCE=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLL2X7xwlD3q0Mk3N81nbOcpuVDJ4shx5VqkofuNK0t8q
+ 5zkd/vXd5SyMIhxMciKKbIsyTUqiEhdZXvvjiYLzBxWJpAhDFycAjCRac0M/7NLc2IttmQFTU5a
+ uPWu9kv/HRz/0lkjLru9WDHz87aLs/4xMlwpS5q7a8bS/AVXHn6vDbqh6rXRLriQfRnnxPz6rHz
+ lB4wA
+X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
 
-> ---
->  drivers/clk/tegra/clk-tegra114.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-> index f1bca81b7776..97f5500b13b5 100644
-> --- a/drivers/clk/tegra/clk-tegra114.c
-> +++ b/drivers/clk/tegra/clk-tegra114.c
-> @@ -1050,8 +1050,8 @@ static __init void tegra114_periph_clk_init(void __iomem *clk_base,
->  				    &emc_lock);
->  	clks[TEGRA114_CLK_MC] = clk;
->  
-> -	clk = tegra_clk_register_periph_gate("mipi-cal", "clk_m", 0, clk_base,
-> -					     CLK_SET_RATE_PARENT, 56,
-> +	clk = tegra_clk_register_periph_gate("mipi-cal", "pll_p_out3", 0,
-> +					     clk_base, 0, 56,
->  					     periph_clk_enb_refcnt);
->  	clks[TEGRA114_CLK_MIPI_CAL] = clk;
->  
-> 
-> ---
-> base-commit: 72d3fcf802c45d00b300f25b848a93c3a2bd7c7e
-> change-id: 20260930-b4-dalmore-fixes-mipical-clk-eb375008dd66
-> 
+On Wed, 30 Sep 2026 22:47:01 -0700, Rosen Penev wrote:
+> clk: tegra: bpmp: remove kcalloc
+
+Applied, thanks!
+
+[1/1] clk: tegra: bpmp: remove kcalloc
+      commit: 2fdfb2abce2fcc157de840949fa3e6af9e915363
+
+Best regards,
+-- 
+Brian Masney <bmasney@redhat.com>
 
