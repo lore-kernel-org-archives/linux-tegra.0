@@ -1,99 +1,156 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE35B446BE0;
-	Fri,  2 Oct 2026 07:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B61B43BDD0;
+	Fri,  2 Oct 2026 07:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790926758; cv=none; b=dmZIZBfaJ6+hYFWH8TElzq57qEWSnsAYScvQoHYw8zOczss9W2WbM3t5I6llGTXEIIA5QcX5Mxro82/YLvA1+9U0+LL4yMLIVWH75v64Lz866C/ps1cU89i7miaXi7OY19sRw0lxlmXA65BMZBXE/YZyg1Jbxth8oJYH0Jbj/fE=
+	t=1790927436; cv=none; b=OvBRL+NsUXakrEnRuxtoKLb4+1hgsIvey040azLbPJORkjB81Kx17E+74EKUX5Yd8/A/m+9FxveF2F22/+Qm8a3ia5KD/v213chQ9qafL5UYxjMQ4gc/5x7wxtPYwF0rA9KILQWAOMRT71sHh5VklroZmUh/YVeB7a/1RCZb8iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790926758; c=relaxed/simple;
-	bh=X/L/98Axwn/uXnmFnrFOTIk61KxGSsua3yBHEUbtquE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OykgdK2hhwlwLeRhZG1EEKrjRL9vJBXgmUTjsQLXl8NRT5GPgIRZgWBg+M+o82zu2faFjBUOqD7b3T+/kZGg14dCeuP1S1D8gMZvJb9b1MFNREo2jERoZlr6Bp+7TwPp5eSgZuph+9KbcMMiI+//LfTI8+IbvLItUlNg+MJ76z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OUMMd+qz; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790927436; c=relaxed/simple;
+	bh=ddZ/0Ika27klzKF3I+d/d7JLE2NqOUP4YHYyI3E85/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HKdNO188MHPrZNiCyFAZzl0Ht3GmUIqbTyoQrCouVhQLn5Dgfl3Wz7hn/DMgXF6VJzgnHHz/PLr6gXnfj4MoJtTHfIHjSpm/CtpymzomQEVBfcSAjTG1U67zgxN+j5uldI7RGtoKVOQYHDBDu01A417YhgX5n1YTsAxP/5AE4cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gVw7lvMo; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OUMMd+qz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E74831F000FF;
-	Fri,  2 Oct 2026 07:39:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gVw7lvMo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE6F01F00893;
+	Fri,  2 Oct 2026 07:50:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790926756;
-	bh=8Lj6q5XU6JhM44roHTVfqUiJhoqsZ3blqG5shOu900w=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=OUMMd+qzKJrWpIxVqdCHY1f/1EpZYvub86f2YYg6CHO5yGP2MDujwwP9Fn6Rpk8FJ
-	 Q9vbmY7+RSWef6gV1LENzQgWlRYrVRkei4qEDUQVMF1JgLxWTnyFlk95elho3YAA2M
-	 yxJwjG5fhsRDMLvvCaljkBhNFUjHLVcvIaf5JoFI1PJ5ty36Cew/+ZMEhbJnWPE83s
-	 VIiNX3ruJ+L8zt4uzUiQfFYUJ83fV9LWpGRrKVUsT4FFEOgqsCeYcXeucpBPsJTnc0
-	 IqxrKWh5HuN5ciuYUAKuN2YdqzZ8hy4H6dfKxXlFnhd9GDPmeAivQPKACQWhVHYF4l
-	 kSMArPNff9UaA==
+	s=k20260515; t=1790927435;
+	bh=+Pc5nkrvJxxyhhPfWbKf32Vct+MxV8Z2P9Zl0wY1/k8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=gVw7lvMoGqVLws9vQal+E+SIdYRd8U/eI136EhycJtrNhAccjVkInfoBhm7Jb+Vdh
+	 fNLRHZBdv6xRlI0etsNET9uk6Pw7rkKRHiXUfWeLmVu58i+GFxw5yhsijnjdKD0LLz
+	 hPPL69QId6FDxroqWH6kQGdWskTBAO2vTAVpyLyOCfJUvKPijceyz3HlbqsvXBj9UO
+	 PaAPZGVZB+9BDW9CvZxF4DC3jmgqxs8jgsFQWqvrFLks3lfy97yUIDphEdA+Ld4mGj
+	 zOe2HSvaCAT9sznLF9wQ+Kw9HgDLKm095R2YdfLOuVnZVGLXZ6N+mg2Nf9fEW1hiVn
+	 NNjWPO8mOLyNg==
+Date: Fri, 2 Oct 2026 09:50:33 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-Date: Fri, 02 Oct 2026 09:39:00 +0200
-Subject: [PATCH v3 3/3] arm64: tegra: Add Tegra132 specific compatible for
- AHUB
+To: Aniruddha Rao <anrao@nvidia.com>
+Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/5] firmware: tegra: bpmp: Add ACPI and MBWT support
+Message-ID: <ar9iNawW4HzCx19I@orome>
+References: <20260929095915.2215685-1-anrao@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261002-as3722-bindings-v3-3-21c179b72a95@nvidia.com>
-References: <20261002-as3722-bindings-v3-0-21c179b72a95@nvidia.com>
-In-Reply-To: <20261002-as3722-bindings-v3-0-21c179b72a95@nvidia.com>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: mfd@lists.linux.dev, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, 
- linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org, 
- Thierry Reding <treding@nvidia.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=844; i=treding@nvidia.com;
- h=from:subject:message-id; bh=7Ad9jY12fMOEkyY06XfEXlx3a1uy4HQfBw9/dyfFbsM=;
- b=owEBbQKS/ZANAwAKAd0jrNd/PrOhAcsmYgBqv1+Zl0Y2vb1ghaccjiZ+/pZsUgwtVpeFsOue6
- 7ditMZozfeJAjMEAAEKAB0WIQSI6sMIAUnM98CNyJ/dI6zXfz6zoQUCar9fmQAKCRDdI6zXfz6z
- ocd1D/9207Ic09i+kw+ro4g2kptiURJdGLHm3e9F7XYLiEhgBSk9kq+zRsBc4fWwi8olKCfWqCA
- nMsn8QD1Jymw9ck5RbqDOuY+I6h7ia23aaLC7CISFDDei110i3Jq9DQEqrm4eEZHaWdTg3iNlMv
- 6Zzt8hn9UxjvlWd2j88tSJqlRywz1tBqOTnKVw5m5fLahnMWGvqsawL/HdQyfBDWhv0Q88D37F0
- FxN+c47dwSbKgdWrnQeXLLit4knIKF9oPno5BlIjL+E1mdLjTi69Q2hYYkuCBb0jN6VaICSy/nG
- LD2dasBz2nfRvJdYN0j2SmXhu+qz5OmWn5FCjhX6lu5ocf84kkmdsKMQLefTcRFk4VTkUyvaisN
- O+YFBEFYNet22IsY3h0MXhhayz+3kL8URApqG8tZYULIG6hAVZJwFAuih8Jqbaam1JxYiWytIK+
- 4J39rolMtyzn4wObO6UeFuTJPOJ33sZVUNpXPQxN8ECXgxjzqaar6+UjTIb8+ct3lQrg5mYU/mi
- yRLC/9aLTfWC7jmIy0qrgxDxpxblk1L2sDdtv8MWixNFuHATGHxQw/AhVKiBjyxbhDGc6VT1aBC
- wba8Nh98XDsiAmlXuBWnEQ/UOg/WowPXTbL6WzVCkGTA84B0RAmN9iNbnvQYqoVbzrUMX8rg3oE
- mA7ePvNzkScmK/Q==
-X-Developer-Key: i=treding@nvidia.com; a=openpgp;
- fpr=88EAC3080149CCF7C08DC89FDD23ACD77F3EB3A1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="enqzndaxjwx6gx6i"
+Content-Disposition: inline
+In-Reply-To: <20260929095915.2215685-1-anrao@nvidia.com>
 
-From: Thierry Reding <treding@nvidia.com>
 
-The AHUB on Tegra132 is backwards-compatible with the one found on
-Tegra124, but it needs a specific compatible string anyway, so add
-one.
+--enqzndaxjwx6gx6i
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 0/5] firmware: tegra: bpmp: Add ACPI and MBWT support
+MIME-Version: 1.0
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra132.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Sep 29, 2026 at 09:59:10AM +0000, Aniruddha Rao wrote:
+> This series adds ACPI support to the Tegra BPMP driver and support for
+> Memory Bandwidth Throttler (MBWT) controls exposed by BPMP firmware of
+> some Tegra platforms.
+>=20
+> The current BPMP driver depends on device tree bindings. This series
+> keeps the existing DT path unchanged while adding an ACPI transport path
+> for BPMP firmware requests.
+>=20
+> MBWT controls are accessed through BPMP firmware requests. This series
+> defines the MBWT BPMP ABI, adds MBWT helper functions, and exposes a
+> narrow sysfs interface when firmware reports support for the required
+> MBWT requests.
+>=20
+> Aniruddha Rao (5):
+>   firmware: tegra: bpmp: Move channel initialization to helper
+>   firmware: tegra: bpmp: Add ACPI support
+>   firmware: tegra: bpmp: Add the Memory Bandwidth Throttler ABI
+>     definitions
+>   firmware: tegra: bpmp: Add MBWT BPMP helpers
+>   firmware: tegra: bpmp: Add MBWT sysfs interface
+>=20
+>  .../ABI/testing/sysfs-platform-tegra-bpmp     |  48 ++
+>  drivers/firmware/tegra/Makefile               |   1 +
+>  drivers/firmware/tegra/bpmp-private.h         |  39 ++
+>  drivers/firmware/tegra/bpmp-sysfs.c           | 207 +++++++++
+>  drivers/firmware/tegra/bpmp-tegra186.c        |  14 +
+>  drivers/firmware/tegra/bpmp-tegra210.c        |  13 +-
+>  drivers/firmware/tegra/bpmp.c                 | 415 +++++++++++++++---
+>  include/soc/tegra/bpmp-abi.h                  | 161 ++++++-
+>  include/soc/tegra/bpmp.h                      |   2 +
+>  9 files changed, 849 insertions(+), 51 deletions(-)
+>  create mode 100644 Documentation/ABI/testing/sysfs-platform-tegra-bpmp
+>  create mode 100644 drivers/firmware/tegra/bpmp-sysfs.c
+>=20
+> Changes since v4:
+> - Move BPMP channel allocation and ping setup/teardown into the
+>   SoC-specific init/deinit operations.
+> - Add an optional init_providers operation for DT child and provider
+>   registration after BPMP communication is established and the firmware
+>   tag is read.
+> - Add an ACPI BPMP init operation for the BMRQ ping path.
+> - Remove ACPI-specific setup and teardown conditionals from the common
+>   probe path.
+> - Drop the redundant NULL check after device_get_match_data().
+> - Explain the transport and provider initialization phases in the ACPI
+>   support commit message.
+> - Explain why DT registers an incoming MRQ_PING handler while ACPI only
+>   sends an outgoing ping request.
+> - Describe MBWT bandwidth groups and traffic types with platform data so
+>   firmware instance and VC type values can vary between platforms.
+> - Document the sysfs hierarchy using platform-defined bandwidth-group and
+>   traffic-type names.
+>=20
+> Changes since v3:
+> - Update the sysfs ABI Documentation date to September 2026 and target
+>   release to 7.4.
+>=20
+> Changes since v2:
+> - Rename the non-ACPI transfer helper to tegra_bpmp_transfer_channel().
+> - Keep the common BPMP message validation in tegra_bpmp_transfer().
+> - Remove duplicate message validation from the ACPI transfer helper.
+> - Move the MBWT helpers near probe and document why they are needed.
+> - Rename bpmp-tegra-sysfs.c to bpmp-sysfs.c.
+>=20
+> Changes since v1:
+> - Dropped the SoC Kconfig patch.
+> - Kept the existing DT path unchanged while adding ACPI support.
+> - Reworked ACPI matching to avoid a dummy ops table.
+> - Added explicit error handling for short ACPI BMRQ responses.
+> - Folded MBWT helpers into bpmp.c.
+> - Reworked MBWT sysfs into per-traffic bandwidth attributes.
+> - Removed software bandwidth range checks.
+> - Use NVCLINK consistently in commit messages and documentation.
+> - Avoid platform-specific or transport-specific MBWT wording.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
-index 3463fa637b37..3e9e123eceeb 100644
---- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
-@@ -889,7 +889,7 @@ throttle_heavy: heavy {
- 	};
- 
- 	ahub@70300000 {
--		compatible = "nvidia,tegra124-ahub";
-+		compatible = "nvidia,tegra132-ahub", "nvidia,tegra124-ahub";
- 		reg = <0x0 0x70300000 0x0 0x200>,
- 		      <0x0 0x70300800 0x0 0x800>,
- 		      <0x0 0x70300200 0x0 0x600>;
+Applied, thanks.
 
--- 
-2.55.0
+Thierry
 
+--enqzndaxjwx6gx6i
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmq/YkYACgkQ3SOs138+
+s6F3bA//cq/B0PZhoRS+EnpJvSQ+cflJK29IKgYI27ueF0Mi07HmWAnDSemd4zUo
+iHVE8N5ubqYpUcAPseqyCNjtsHsxklev5waJ+ZTwbuaq3ypClQ8zDCKh53lUtWVF
+uM2fFidEo2hjBLQPQtgyTP2yo0VE3+Qx9OU7N9daK5hB5UA5eVFxZ16jVQYoP1d4
+zRdMMeLau8euTIaBSgjs3b9Q1GS0m8fHFzaYHTih2xYupOc7ZlOFbBzORTnnyN56
+BaC1fL4B4JFyGTPNVUJ7j4m8/e/MPlF0oHRNrg2/LGVCTn4JPHGSqOGf+oezVoEw
+1DIjVT+4NpsjOWYN2cWy+2hjo4MmLBSdJlcQ/prqHtKBvk3I4SlFq3yWXxDpe3Ot
+9KEtK0A+tQ7stLJAxS87DB8+6dlHzMFYf9B/B2/wJ5wDPmvSH3UTVVGG57o25HBP
+C85OBti+M98rDn4r6xDTi3cOL4DaXvJSItj+JUtt5H6vPYKpsAruGd5HRLDmXS0e
+OzK6UKoaoENqShMNexY+VPyMcvaoTG+bR6jG7bwrFLoNixebHe2ThejUy0TphAxy
+fcdXRXnN1dC7n0eANzrPQe07fvM1rcbb+CShxJqxVp91Ym7otpcUXh01hr5FjGLR
+1eqGCxbuH1uE2h+lybuiLOp6xCsqD+js6QxK2g+eL1EKdIKw5d4=
+=ptmA
+-----END PGP SIGNATURE-----
+
+--enqzndaxjwx6gx6i--
