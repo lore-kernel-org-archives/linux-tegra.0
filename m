@@ -1,124 +1,122 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DDB1CAA92;
-	Fri,  2 Oct 2026 21:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11483400986;
+	Fri,  2 Oct 2026 22:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790977865; cv=none; b=Zw20LzOyjD1rrftPeZDTbrcYUBCBAk2Zi6uOuGNz5tp+KStoS3bJ78N6fO198VVDFyghvSix9KKmA5V4GdWiNgv6pSucpC/g6K4LfybnCSI5sineEs+0vCtBSbyvPPH100ckM+FBGMPmG71CFWjzAkzwW7jwD7RyRS6QTFPmj6c=
+	t=1790980824; cv=none; b=kY5BNVAsjeIVT6Z0QRbIwaX1ASHIBeYb7NKTliO1yyfGskRbgf43OfEW4QYi9DX//1i9v4UD7nVzBenMsmGppeTdGLZa8MEkrUF1IL6SVr8iLLFTVuGTM1C8PZtec1TQLzFOM3zJmHYZ3gNMyMtoiRIIOJNxj99eCveX9WO/xqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790977865; c=relaxed/simple;
-	bh=1lpqgtTTfvgovbY+i/gmDqeiERrogpv45ktYkTnXgkk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ji0J41QFlTN3fX4EBevUhUicxFe8b+veme1b4PgdjB+TBx0yUvUFxySVnqxzDwTO7e7LLBusW6vohXdAMzY8BxvbXeeXsrF1IQM4biJOdBid26h2UCGX0fA6Sjgxk/v2cBESbcqYxFGmJHjcg/jb/tXAuwwMzfnYrELHoj0cX/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AFcI4L3V; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1790980824; c=relaxed/simple;
+	bh=JwW5mZmTud5tP08S8sNobma0ZDT9xCYCjRO1RBOIrao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hhWM9S4t2BwlHRRiv95iPm2d/FdlI3dhXak6QAggM8C4t+ZgoYYSVq5MHL/dKsOTxyupYejds64SlfLsCrhnfV/yj+OqZBFoGsSiErRPLC3oHIu8rccJ15aFMsI8YeYTubDC+2ffAjf6BOShW7oiHcP8QMRysB09TtWy1OHKM8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UcT3IiuU; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AFcI4L3V"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1790977862; x=1822513862;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=1lpqgtTTfvgovbY+i/gmDqeiERrogpv45ktYkTnXgkk=;
-  b=AFcI4L3V3igw99PaM2LU6yofHbNeGWktOwa9qgoJGPyqSE8wOBWZv89F
-   zZpRmYvK3MaseKTf+7HVTWU6iCfkeeJ7oLSKxDcIUEs5ueQ+6AiZPgfZB
-   2R/d1RQArHYaefpqI0riaI1n/CzfE4GoCcZbfkIedxRt//TjwP9dzjKgx
-   u1pj7yJY64SZELEC6obNNuiudSBQc+zE5xwYZ414wi+S9pVMTLYVgJLzz
-   Ace3VYSTgMayAFb7CSiWNT870t7j1umkSmv2i51JKTrRxXxLwYeJqillg
-   zScPrapK2A2LIhp7Q7qEdFMeQgX1pA+OWo5bhbTRLPWlVnH3is0iZZDtJ
-   w==;
-X-CSE-ConnectionGUID: bzjbzkMiSrmTgxqXFdl69A==
-X-CSE-MsgGUID: 4pp/UdHvQYCxGz5u98wp+Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11923"; a="90883203"
-X-IronPort-AV: E=Sophos;i="6.27,136,1787036400"; 
-   d="scan'208";a="90883203"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2026 14:51:02 -0700
-X-CSE-ConnectionGUID: u0COSXgcRSa3gGAcqE0zEg==
-X-CSE-MsgGUID: 4o4TxdHTSHmDE6r+f3hVcQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,136,1787036400"; 
-   d="scan'208";a="284398796"
-Received: from ssimmeri-mobl2.amr.corp.intel.com (HELO [10.125.108.45]) ([10.125.108.45])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2026 14:51:01 -0700
-Message-ID: <cc1a68c6-b057-4cc6-bd7a-0f3156bb1af4@intel.com>
-Date: Fri, 2 Oct 2026 14:50:59 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UcT3IiuU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 205A91F00893;
+	Fri,  2 Oct 2026 22:40:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790980822;
+	bh=b+guDJ+6ue63Kf74hHxrjaU5WAEYvQyFDLTq3NDnDjw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=UcT3IiuUrqnW4MReGXc0oI/ClzghLUrLFMzK/QH9galk/R3HnBP6+TZGIyCGWZUzW
+	 XAwM2DeXL+8VNL16+C009PYDtRfGAdDbQyaCUV0o8XfuYtuEXesXNBw/BeSNJ8yv0a
+	 58CuNQ17m4HR/J50B1W1Z+8//Gg2H8vNZVywmKRGofz3s8oP/LpGjkgrLlfePxwWVw
+	 uCuD7rJFCJOUXxjJU+ZqMOtn3bY2mIy9L2104IqbodofBhFhu/2/Y3m935LQlqwp5J
+	 836P13AMlQEhZ4zJZBn9nU+anrcvF4SSbymbHjBVatn9VAjqj2dOhAvFT7l5F5Mmt1
+	 74B6DL0mzBhNg==
+Date: Sat, 3 Oct 2026 00:40:20 +0200
+From: Thierry Reding <thierry.reding@kernel.org>
+To: webgeek1234@gmail.com
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alexandre Hamamdjian <azkali.limited@gmail.com>, Thomas Makin <halorocker89@gmail.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>
+Subject: Re: [PATCH v4 0/2] soc/tegra: pmc: Add Tegra210B01 support
+Message-ID: <asAywx-TFRgVVMxc@orome>
+References: <20260727-t210b01-pmc-v4-0-af68a21cd746@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 08/16] cxl: Reject overflowing HDM decoder ranges
-To: Srirangan Madhavan <smadhavan@nvidia.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Ira Weiny <ira.weiny@intel.com>, Jonathan Cameron <jic23@kernel.org>,
- Vishal Verma <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Alex Williamson <alex.williamson@redhat.com>, vsethi@nvidia.com,
- alwilliamson@nvidia.com,
- Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>,
- Vishal Aslot <vaslot@nvidia.com>, Manish Honap <mhonap@nvidia.com>,
- Jiandi An <jan@nvidia.com>, Richard Cheng <icheng@nvidia.com>,
- linux-tegra@vger.kernel.org
-References: <20261001092227.3004747-1-smadhavan@nvidia.com>
- <20261001092227.3004747-9-smadhavan@nvidia.com>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <20261001092227.3004747-9-smadhavan@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ysebxuimg42wkplx"
+Content-Disposition: inline
+In-Reply-To: <20260727-t210b01-pmc-v4-0-af68a21cd746@gmail.com>
 
 
+--ysebxuimg42wkplx
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 0/2] soc/tegra: pmc: Add Tegra210B01 support
+MIME-Version: 1.0
 
-On 10/1/26 2:22 AM, Srirangan Madhavan wrote:
-> An HDM decoder with a nonzero size can report a base and size whose end
-> address wraps the 64-bit address space. Reject that programming before
-> publishing the decoder range, so enumeration and later reset handling
-> cannot use the wrapped range.
-> 
-> Use check_add_overflow() for nonzero ranges. Preserve the existing
-> empty-range representation for zero-size decoders.
-
-Why split this out instead of just introduce it when the function is introduced in the previous patch?
-
-DJ
-
-> 
-> Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
+On Mon, Jul 27, 2026 at 09:00:09PM -0500, Aaron Kling via B4 Relay wrote:
+> This series adds support for the Tegra210B01 SoC to the Tegra PMC driver
+> and documents the new compatible.
+>=20
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 > ---
->  drivers/cxl/core/resource.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cxl/core/resource.c b/drivers/cxl/core/resource.c
-> index 8dfeb12de8c9..8d2fbc49a06f 100644
-> --- a/drivers/cxl/core/resource.c
-> +++ b/drivers/cxl/core/resource.c
-> @@ -115,16 +115,21 @@ int cxl_hdm_unpack_decoder(struct cxl_decoder_settings *settings, int id,
->  	int interleave_ways;
->  	unsigned long flags = 0;
->  	struct range hpa_range;
-> +	u64 end;
->  	int rc;
->  
->  	if (!committed)
->  		size = 0;
->  	if (base == U64_MAX || size == U64_MAX)
->  		return -ENXIO;
-> +	if (size && check_add_overflow(base, size - 1, &end))
-> +		return -ENXIO;
-> +	if (!size)
-> +		end = base - 1;
->  
->  	hpa_range = (struct range) {
->  		.start = base,
-> -		.end = base + size - 1,
-> +		.end = end,
->  	};
->  
->  	if (committed) {
+> Changes in v4:
+> - Add venc to powergate list in patch 2
+> - Link to v3: https://lore.kernel.org/r/20260722-t210b01-pmc-v3-0-1c5b970=
+788f2@gmail.com
+>=20
+> Changes in v3:
+> - Update patch 2 commit author and sign-off tag as requested off list by
+>   author
+> - Update patch 2 commit message to describe the powergate differences
+>   compared to t210
+> - Drop sata powergate in patch 2
+> - Fix has_io_pad_wren value in patch 2
+> - Link to v2: https://lore.kernel.org/r/20260720-t210b01-pmc-v2-0-ca5317f=
+8507b@gmail.com
+>=20
+> Changes in v2:
+> - Address sashiko report and drop duplicated structs
+> - Link to v1: https://lore.kernel.org/r/20260717-t210b01-pmc-v1-0-bf776be=
+8b3a7@gmail.com
+>=20
+> ---
+> Aaron Kling (1):
+>       dt-bindings: soc: tegra: pmc: Document Tegra210B01
+>=20
+> Alexandre Hamamdjian (1):
+>       soc/tegra: pmc: Add Tegra210B01 support
+>=20
+>  .../bindings/soc/tegra/nvidia,tegra20-pmc.yaml     |  5 +-
+>  drivers/soc/tegra/pmc.c                            | 62 ++++++++++++++++=
+++++++
+>  2 files changed, 66 insertions(+), 1 deletion(-)
 
+Applied, thanks.
+
+Thierry
+
+--ysebxuimg42wkplx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrAMtAACgkQ3SOs138+
+s6Frgw//X9Oo5RC5Q83CHX55FUS+RusWjU8bD0e5Pv0GuZ/D2kZ8THLu54baIX+r
+5nQbMMHi3BHz8eF6Xn1ZrK6twQhq6v/fEp7Vo288ixLv8gZwEeS0heKxm76qbSdC
+IOou2+rWXMlSUIyjVcW/C4X8bjClyJKYjcaM0SU0DN1sVC/F718+zLLb3mpilhpO
+cQTdBf8e2ZBfE9TNAIWoIlUgePVYHG0NMTE6oNB1CneLbrwL+qBhlbjdKi0IRcG6
+kcU8ggB9uCq328VXx0rfpoiYH2GB977DeMfWADN76g89gf7z1jdqgO5d3jByeKpS
+rOw2b3N36mXh48iZ5BKJRLMIhM59g6n0P4/awVQ0df/0oCcGNlFDHQCxQGU6ZHHA
+LZuXpkqf6vekofTZiTqbV4aIJFfh0o+L3pCkxxrK6XuGK+8JoDpEKZPoaI2Kp4YO
+TM9cN8E78MWArg9kkaQ3hK94a3eu/sGoEY03nmgVEQZijvKVRXV12goc31tx1nI5
+LgGZ5Unmm792iJkNgAzQuVUvZILuB/9G58W31bcd6ZmRDl4p/JrKUPNIulbGjVXa
+SzHAyhHO9g1O1NgQ6lXQK0N1c2xZJB96+mmh19BW/Gq12VAYZ3DQ3qRSxW4y1dFS
+o2jB3sRzXJHuk0tzN71ajfBesZMpG1LAWvCyZHkiiLH/TMlQhug=
+=303I
+-----END PGP SIGNATURE-----
+
+--ysebxuimg42wkplx--
