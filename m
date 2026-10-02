@@ -1,55 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FAC4EBAE9;
-	Fri,  2 Oct 2026 15:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7974EB859
+	for <linux-tegra@vger.kernel.org>; Fri,  2 Oct 2026 15:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790955609; cv=none; b=kr4TghOq5wgOX5L19h2Snm0ewrb/Gekxt2jZKwRcDwCmwJJJskrSdi80opxLOeow6BQFQgjI+EEbll1iR90ADnX2kTd1B5kDuXLB6RIECRRnJby5c3MtkyJrsGjfnZBDNi323n8BKBC3yCKCMnjmUsWm+dMB1D/op+UbZddExW0=
+	t=1790955655; cv=none; b=cAEdgYRUsiTd073HMl8F6c35NutFHXWdbw2BfZWLYrdCgH0Z8mhCeIWoKNnNrSnjpVbNiQtz0gw5CaHCwdsxstQv5GJdId93pivByGiuW6vXzgsiOR6qDU48ExV9imjU3ZvPDSPT5TdLB/rRx2nPfCVfnZ5XP3+Pxb05Rh3sM6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790955609; c=relaxed/simple;
-	bh=m3FvdAyFXZieRr02nJ4owcCPAAVdLgk6MLZpPnf/aIM=;
+	s=arc-20240116; t=1790955655; c=relaxed/simple;
+	bh=WQsDDSMUZRhlskhbuefNaU/oDZmoaAVqCqR5bHZT1Bg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z2C1gB0Hz13+O5+U4JBureo2yLGHOcU6eGThjjmuxUEe5InjXienZUHTl5H1tCGkIoQqqjAlm9njBHFWG6YfQN9KsrhsZoGJzHx0qTtusTMItBYonwpYKj+uk9mNZwyWBx9d2N4V4kfrwUP6nVMCMqVKuGG2lVIjnqYLxq52/U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H1cCKfVY; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=TB7AfReIycwd6McEFbDgBSbTY9kN2mnLaDwUJHb0OVfiifrW3DYp6mvSnZez+hn948sE4l1mpAQmk13k23ii64BTcJr/Rms23wn1fLPmIX6w9uhHnKweMaSdASiufxnHYo4v8sJ6gRgRRLQpXD7GLzy1F7nAOtY8W5o6ZCQ5+Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FZO9v/rA; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ozPpu/jX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H1cCKfVY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 540021F00893;
-	Fri,  2 Oct 2026 15:39:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790955600;
-	bh=NUoaeZWBEqi49tG6RXh95F+Nquw14LsgVd4Y+Bv0KE4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=H1cCKfVYe8PTDI2SW8gRcfNHXyc9n3g8UnpjywsE/9yiJiJv5CZDjeftxarPhJxab
-	 sedfIedK3D3yNB2QVWxwVrMnKxj89l3K8Jjg/xk0Ok+Pw5mafJmITp4ykxYEQKxDlv
-	 zLiIEzDz4QQ1aZ4auMNhMyz3q1mA7K/1rUeXocjFOm0CmRo9uXj6evrFrazXg8EXl7
-	 xdYJtU0LOuyqJduEeojgZFp7Sx221s0I4x3lFySnuy66Yka+wD6egtLLt2Ml9lWkMY
-	 IMPKdJ4+LGQsGWVZwKng9I6lMcFApUGdqPImCjCsfApsYk2GAXNKCfvnuw+o1daf5c
-	 3hDb03E1v7pMg==
-Date: Fri, 2 Oct 2026 16:39:53 +0100
-From: Will Deacon <will@kernel.org>
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FZO9v/rA";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ozPpu/jX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1790955619;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oiiS057kpBWsJD1BtMWJm5EOfNc4H/UurY52kp0eYCc=;
+	b=FZO9v/rAn4UaEvJRHny4YEhKKBHnl5oMo31kpcu/VqegrioRt3sgH54ZUriRlMdADTCCFi
+	twVtGXqvk+mKL+//E9xugJvOidMW4pcPM+mrgkIQUy2EjgfCs1ww/d1EAYx9AxSRfes80X
+	o+yLddwbKV229/Kv08h7BR3MCRbnK3c=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-681-JwC4EF_lOSGoxv8YkfKYUg-1; Fri, 02 Oct 2026 11:40:18 -0400
+X-MC-Unique: JwC4EF_lOSGoxv8YkfKYUg-1
+X-Mimecast-MFC-AGG-ID: JwC4EF_lOSGoxv8YkfKYUg_1790955617
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-53390e79a19so27470701cf.0
+        for <linux-tegra@vger.kernel.org>; Fri, 02 Oct 2026 08:40:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1790955617; x=1791560417; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=oiiS057kpBWsJD1BtMWJm5EOfNc4H/UurY52kp0eYCc=;
+        b=ozPpu/jXAzZIo0zu/9LK+ICU9zXJodlaZQRzNX5FgATAdHaZ+qAvKmTF6t9jvZfiJ9
+         AHmLMmZ6SmPxUhguGshnF08hBOW7KGWy1OVge8CKnRpdkHpUs3J9Zw5U0EhYXfIXZQc9
+         iRCvbwKgvrEZts/PrfR5k8R9TjKm5lvrdXwtn5rddK9pQ85cjiTOKzHchZn7MZTlSvCQ
+         UpVf6Fbk+JFqhc9u7WML8faX1PukOsM8jJvIEF7M8zQVho6PbRJNrgkS41rljzFHo/ZF
+         0MGK5budA4AJFsXKlr1Lpbh+mamOjcfaEWVjU8e6SCBuHWYWyw0vC8dEOp/SiCPJEbgh
+         m6Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790955617; x=1791560417;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=oiiS057kpBWsJD1BtMWJm5EOfNc4H/UurY52kp0eYCc=;
+        b=GcHrYQmmBvKn7hEO9qAILuz/qZdDaItc59WtckLTmYnYfPQoJwq5V4XZmzTpyr825t
+         h9FNUGpzcbNqv+6gy/EwhbXtn6jqAY82L3k7eRpWNm+M44OJF9nwL8ofSncMoFYKeeVs
+         wvyVxjygggr/+QCGmaEMptKf3upjF5NsXlwAE94DoLq+mrx2xtiO5f7rTgZ3N0qonq+1
+         iyBJe4hwnc1bs186muXw6mgQmrC9+oX8CA39/FBBusdo0OnnSg2wU8CZmneeDAQJoycR
+         DFovJXDpFSihIpdeXUkmPHuDg2RKGZ7DtpUWUOqGcda06Ro/N474vAIjYLggSkX8iNBs
+         oCwg==
+X-Forwarded-Encrypted: i=1; AKwUvBzorjO+ALrQHI8cUrJEa7qGyCx+3CIuAEOHglA+gijN20GLimm0B7DHVeFmMI+hm4oobdYTygbRmlhGeA==@vger.kernel.org
+X-Gm-Message-State: AFuF++lVqBvYPtl/iGdVLT1FAlgxEuGw4P1mEn+OtIj+KRx+uVu0G/Ap
+	PUb25W+xhchXNTfaAEDUeLVZlXZ0/AgOlda8wejwQRmIyADVT9ruy2Ncbks/Xw0jzda07xb513X
+	TmhRXigvWY2/dvrQsfbcRo2yt+U/5XLVxCd30Njh524wXX7rZA/FgzY3KRDh3KfD0
+X-Gm-Gg: AYBFou10bVmLAvs881y7oUssBgzguyp3Fhm6wQw4kFaqHWV2JCuXjJA/4LipHh0No8b
+	yMPcg3dFGEHcpRKvCHpx3emixlpoE9IWKgxdiCIVSP1iZ3+ir+H9d6dJicd4Qpc6T3ew3pDbVVO
+	sluVs/E4pdS1/4WwW01SRLA+Jl6+o/n9puTZrekY87da0nPjF0YLti+MbctE/5fl4g/eLChpH/U
+	ZnKwjgw5h0sxSPnMYvMQ0NS8n51xCpLDhELODjDwm9qL+ytyJkVt4rha9JUme6k4f3mr+bZAQU9
+	8oBhYaWYYu8M19ID//Q4euGjf/kWHhMD/Wruu/T7J79pli5FQt8ap9uAqf2HFVYjmjc56DJcEMk
+	2kREQ9FGiz0omi95ybX32qrn35D9Vw8hdgVQ=
+X-Received: by 2002:a05:622a:250e:b0:532:ab93:1400 with SMTP id d75a77b69052e-533bc662ddamr53425641cf.5.1790955617364;
+        Fri, 02 Oct 2026 08:40:17 -0700 (PDT)
+X-Received: by 2002:a05:622a:250e:b0:532:ab93:1400 with SMTP id d75a77b69052e-533bc662ddamr53425041cf.5.1790955616765;
+        Fri, 02 Oct 2026 08:40:16 -0700 (PDT)
+Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-53398d438ccsm28817651cf.30.2026.10.02.08.40.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Oct 2026 08:40:15 -0700 (PDT)
+Date: Fri, 2 Oct 2026 11:40:13 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
 	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Breno Leitao <leitao@debian.org>,
-	"Kiryl Shutsemau (Meta)" <kas@kernel.org>,
-	Krishna Reddy <vdumpa@nvidia.com>,
-	Pranjal Shrivastava <praan@google.com>,
-	Mostafa Saleh <smostafa@google.com>,
-	Ashish Mhetre <amhetre@nvidia.com>,
-	Shameer Kolothum <skolothumtho@nvidia.com>,
-	Yuanhe Shu <xiangzao@linux.alibaba.com>,
-	Kyle McMartin <jkkm@meta.com>, Usama Arif <usama.arif@linux.dev>,
-	kernel-team@meta.com, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 0/2] iommu/arm-smmu-v3: Make the queue depths tunable,
- and shrink them in a kdump kernel
-Message-ID: <ar_QSdV44YzQQ6Yx@willie-the-truck>
-References: <20260925141532.1274962-1-kirill@shutemov.name>
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra: Fix Tegra114 MIPI calibration clock parent
+Message-ID: <ar_QXessqHKkVAHi@redhat.com>
+References: <20260930-b4-dalmore-fixes-mipical-clk-v1-1-0518be6c7979@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -58,55 +96,62 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260925141532.1274962-1-kirill@shutemov.name>
+In-Reply-To: <20260930-b4-dalmore-fixes-mipical-clk-v1-1-0518be6c7979@nvidia.com>
+User-Agent: Mutt/2.4.2 (2026-08-30)
 
-On Fri, Sep 25, 2026 at 03:15:28PM +0100, Kiryl Shutsemau wrote:
-> From: "Kiryl Shutsemau (Meta)" <kas@kernel.org>
-> 
-> The queues are sized from the IDR1 maxima and allocated at probe, costing
-> megabytes per queue per SMMU instance. A kdump capture kernel pays that out
-> of a small crashkernel reservation, for queues it barely uses and two of
-> which it switches off anyway.
-> 
-> Patch 1 adds a cmdq_max_n_shift module parameter, decided in a per-queue
-> helper and floored at one page. Patch 2 has a kdump kernel size all three
-> queues at one page through the same helper. The parameter does not apply
-> there.
-> 
-> Yuanhe Shu tested v6 on an arm64 server with six SMMUv3 instances, 64K
-> pages and a 512 MiB crashkernel reservation. Without the series the queues
-> took 192 MiB and the capture kernel OOMed before makedumpfile ran. With it
-> they take about 1 MiB and the vmcore is saved.
-> 
-> Measured per instance under QEMU on -M virt,iommu=smmuv3 with the virtio
-> devices behind the SMMU, the capture kernel identified by elfcorehdr= on
-> the command line:
-> 
->                         4K page          64K page
->       cmdq         1 MB -> 4 KB      8 MB -> 64 KB
->       evtq         1 MB -> 4 KB     16 MB -> 64 KB
-> 
-> cmdq_max_n_shift moves the command queue alone outside kdump and is
-> ignored inside it; zero gives one page. QEMU exposes no PRI queue, which
-> takes the same path. No CMD_SYNC timeout, GERROR or context fault in any
-> run. Build-tested across 4K/16K/64K, TEGRA241_CMDQV=n, CRASH_DUMP=n and
-> ARM_SMMU_V3=m, every commit warning-free.
-> 
-> v7:
->  - Flatten the depth helper as Jason suggested: floor the limit, then min
->    with the hardware maximum; callers pass their alignment cap as the
->    limit.
->  - Initialise cmdq_max_n_shift to CMDQ_MAX_SZ_SHIFT, so zero is no longer
->    the "default" sentinel; it asks for the smallest queue, one page.
->  - A kdump kernel always gets one page; cmdq_max_n_shift no longer
->    overrides it.
->  - Tags: Breno's and Jason's Reviewed-by on patch 1, Jason's Reviewed-by
->    and Yuanhe's Tested-by on patch 2.
+Hi Mikko,
 
-Ah, sorry, I missed that you'd already sent a v7! As I said on v6, I don't
-have a particularly strong opinion on the naming, so given that Jason is
-happy with the logic, I'll just apply this now as-is.
+On Wed, Sep 30, 2026 at 02:18:34PM +0900, Mikko Perttunen wrote:
+> CLK_MIPI_CAL on Tegra114 is a plain clock gate with no source mux; the
+> fixed parent is PLL_P_OUT3, which is specified to run at 72 MHz. The
+> clock driver currently registers the gate with clk_m as its parent, so
+> the clock framework never enables PLL_P_OUT3 when MIPI_CAL is enabled,
+> and reports the wrong rate for it.
+> 
+> Register the gate with pll_p_out3 as its parent. Also drop
+> CLK_SET_RATE_PARENT at the same time: the parent canonically runs at
+> 72 MHz so we shouldn't change the rate.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-Cheers,
+Should there be a Fixes tag? I see that Thierry made a change to this
+same clock 11 years ago:
 
-Will
+commit 07314fc108e195044c074f4b443974b5aaa2d5d7
+Author: Thierry Reding <treding@nvidia.com>
+Date:   Wed Apr 8 16:48:26 2015 +0200
+
+    clk: tegra: Special-case mipi-cal parent on Tegra114
+    
+    Starting with Tegra124, the mipi-cal clock uses the 72 MHz clock as its
+    source. On Tegra114 this clock's parent was clk_m, so it is the one-off
+    chip.
+
+Brian
+
+
+> ---
+>  drivers/clk/tegra/clk-tegra114.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+> index f1bca81b7776..97f5500b13b5 100644
+> --- a/drivers/clk/tegra/clk-tegra114.c
+> +++ b/drivers/clk/tegra/clk-tegra114.c
+> @@ -1050,8 +1050,8 @@ static __init void tegra114_periph_clk_init(void __iomem *clk_base,
+>  				    &emc_lock);
+>  	clks[TEGRA114_CLK_MC] = clk;
+>  
+> -	clk = tegra_clk_register_periph_gate("mipi-cal", "clk_m", 0, clk_base,
+> -					     CLK_SET_RATE_PARENT, 56,
+> +	clk = tegra_clk_register_periph_gate("mipi-cal", "pll_p_out3", 0,
+> +					     clk_base, 0, 56,
+>  					     periph_clk_enb_refcnt);
+>  	clks[TEGRA114_CLK_MIPI_CAL] = clk;
+>  
+> 
+> ---
+> base-commit: 72d3fcf802c45d00b300f25b848a93c3a2bd7c7e
+> change-id: 20260930-b4-dalmore-fixes-mipical-clk-eb375008dd66
+> 
+
