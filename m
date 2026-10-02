@@ -1,50 +1,50 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73BD435EFA;
-	Fri,  2 Oct 2026 19:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32B331D366;
+	Fri,  2 Oct 2026 21:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790971175; cv=none; b=iJNat6VFP0q6OuFexvm54+DnVjULuBfihCxt08FrS1BogGyO27GGhNmqms7IlrufJhgSm+WwF8OKegjaY8nfsu5wa9VLr0RdV+NAFMBoo9MHRFg45Dm41HT4oBaPUIP1O75LAjjY6VH9pm050iZSAeD8dBcZLDTXOOTWyhNptmc=
+	t=1790977595; cv=none; b=KK2JST11EUOcIjpcq4PTfZcQe0lHGZQPFWlS7CZcnk4zTCvyWnx5Rlaadogc7Vz8iFepe2SsNJwmKiqmQDs5ZpDXHDlJKKl07LUN3Pom/s6RYn7yoSraS/0HCJh2wEYKrjV4P6br9CN54/OhbIockxLdfH42UujnTYSkr9dsHPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790971175; c=relaxed/simple;
-	bh=OUkQSTb+08n9fzBs5hFCgs2B94+SFhWVWH9pwOprMQI=;
+	s=arc-20240116; t=1790977595; c=relaxed/simple;
+	bh=fEtWUgOBbnlnzHaDVwHu5Cm5YPUkyyuz6fV3V57WppA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hh7XQvp9tgwliJ/8xDzfsPVHyp0FFkUDwHsYQK/M3GhqL33TPlz3bBUx6jaDK6mPMYLXDCG4lQlUhz35GX27MRgkgcXy5JkXaiSSVXMndHtvaTen4dt3+jqhkb+p8XWTSOovw7L+mGQqzLTSaPVPc4DpxlypEEFCSHnzGMfWTVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j/YhHzGY; arc=none smtp.client-ip=192.198.163.10
+	 In-Reply-To:Content-Type; b=TKAmX4Oz3K0qOOQcCwokUfPYOlq/Kd+Xo0TWYLUg0Ojq1W1LB62NGs+YP9w6n/1qyy8uGiLxIJ0GYH9jnYQY+YMLeLyPKg9ojrw4KHunt3eS+5FVDyex8JZyskj3DfOuOj53y2m47jtySA/pGv9Ae7HyAGGnbA+UhVaoAq94geg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jAer+0Jp; arc=none smtp.client-ip=192.198.163.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j/YhHzGY"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jAer+0Jp"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1790971173; x=1822507173;
+  t=1790977592; x=1822513592;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=OUkQSTb+08n9fzBs5hFCgs2B94+SFhWVWH9pwOprMQI=;
-  b=j/YhHzGY1zhi8uTD0zfQKSgE2mE2FPTVSCnU3PpOiet9LAEs30CD5nNt
-   +6LeoiZrYD3tgrlKNZrADSOhii6JUgYjIv7886oUN8PjUUvKnqSMrsi5I
-   jXJPyDTdUJAZZapo2aikOi57FeXrODZMhi9/jMiBmJiJtbUiREJcjqp2h
-   Skv0eHdXuYBk15daedNTFBHSdxOIBZIlUDx4glb2p191m7n/EMtDVNlDW
-   XzBsN+eTBLCDlul9tlHaZjFKMr6unSZeCadM1qUDeYwE0PLGAUgd7pOHg
-   5KGTtc4Ll/d0NBbXOfeDw4E6kEUf22Vch3wo4ZIJ7xP7SZovh671mpsQv
-   g==;
-X-CSE-ConnectionGUID: qO0YvWfBT8OlveE4pAxpNQ==
-X-CSE-MsgGUID: 4KosUyIYRf2n/tF3AAMbyw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11923"; a="103115243"
+  bh=fEtWUgOBbnlnzHaDVwHu5Cm5YPUkyyuz6fV3V57WppA=;
+  b=jAer+0Jpg3M01psLLA7RdVIZG2cu31hwu/G3UvvWVz0aCgZlGVH5HwE+
+   qCsO99wVxnIu6qFCEyAqg9o8Tvb0vbCB6SrMzPqGdWFxLwF0w0DFiTcKc
+   ChW+J0bcp2F0jcpq2KpOOIcf54yvnx6pRB6wav4fxalW81L6A3YzB9XW1
+   z3JnGjuJdBPUWHeWbbM0hB1E+DKK++4RYuwT0PBbXIQN6Q5k/HbhzIqRO
+   mD3fAjyVe/QAxI+17C+rodopSqDDy3wNXpKDfqtZXU04sd+k/BOY2QmWe
+   JR4BPRc+qNpjmpLgnL1muo5/5gZylH/eT4BjgqiHTNSBT1yPks4bMuPNw
+   w==;
+X-CSE-ConnectionGUID: CJeJQQfZQFOp3PIgbovSeA==
+X-CSE-MsgGUID: ZN8I2dfPTAe/IbnSMHKvRg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11923"; a="90883059"
 X-IronPort-AV: E=Sophos;i="6.27,136,1787036400"; 
-   d="scan'208";a="103115243"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2026 12:59:32 -0700
-X-CSE-ConnectionGUID: woU8eIs1TceZy+n0nVkwCw==
-X-CSE-MsgGUID: Gz4irXPuTaqqYj3g+PufrA==
+   d="scan'208";a="90883059"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2026 14:46:31 -0700
+X-CSE-ConnectionGUID: BNce/BCKQC2j38vP7QdwxA==
+X-CSE-MsgGUID: ZiWINYMtQL+PXYDqs7ATeg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,136,1787036400"; 
-   d="scan'208";a="280060653"
+   d="scan'208";a="284398309"
 Received: from ssimmeri-mobl2.amr.corp.intel.com (HELO [10.125.108.45]) ([10.125.108.45])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2026 12:59:31 -0700
-Message-ID: <60dbd245-0b16-4c4b-8350-26570916ede0@intel.com>
-Date: Fri, 2 Oct 2026 12:59:29 -0700
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2026 14:46:30 -0700
+Message-ID: <ad7f3467-2025-473f-bc9c-2870940b30e0@intel.com>
+Date: Fri, 2 Oct 2026 14:46:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 05/16] cxl: Introduce reusable HDM decoder settings
+Subject: Re: [PATCH v14 07/16] cxl: Share HDM decoder register unpacking
 To: Srirangan Madhavan <smadhavan@nvidia.com>,
  Alison Schofield <alison.schofield@intel.com>,
  Bjorn Helgaas <bhelgaas@google.com>, Davidlohr Bueso <dave@stgolabs.net>,
@@ -66,305 +66,233 @@ Cc: Alex Williamson <alex.williamson@redhat.com>, vsethi@nvidia.com,
  Jiandi An <jan@nvidia.com>, Richard Cheng <icheng@nvidia.com>,
  linux-tegra@vger.kernel.org
 References: <20261001092227.3004747-1-smadhavan@nvidia.com>
- <20261001092227.3004747-6-smadhavan@nvidia.com>
+ <20261001092227.3004747-8-smadhavan@nvidia.com>
 From: Dave Jiang <dave.jiang@intel.com>
 Content-Language: en-US
-In-Reply-To: <20261001092227.3004747-6-smadhavan@nvidia.com>
+In-Reply-To: <20261001092227.3004747-8-smadhavan@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
 On 10/1/26 2:22 AM, Srirangan Madhavan wrote:
-> Represent HDM programming state with struct cxl_decoder_settings and pass
-> it to the commit helpers. Keep endpoint skip and switch targets with their
-> owning types and flatten them only into transient programming settings.
-> Place flags with the programming state and leave runtime region ownership
-> outside the snapshot.
+> Factor HDM register parsing into cxl_hdm_unpack_decoder(). Validate the
+> range and interleave parameters in locals before publishing the complete
+> settings, including enable/lock flags and the target-or-skip register
+> value.
 > 
-> Separate commit initiation from completion waiting so reset restoration
-> can reuse register programming without changing normal DPA-lock policy.
+> Use the unpacked settings in init_hdm_decoder(), retaining the target-list
+> union and passing endpoint skip state to the existing DPA reservation
+> helper.
 > 
 > Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
 > ---
->  drivers/cxl/core/core.h |  3 ++
->  drivers/cxl/core/hdm.c  | 82 ++++++++++++++++++++++++++---------------
->  include/cxl/cxl.h       | 10 +++++
->  3 files changed, 66 insertions(+), 29 deletions(-)
+>  drivers/cxl/core/core.h     |  4 +++
+>  drivers/cxl/core/hdm.c      | 68 +++++++++++--------------------------
+>  drivers/cxl/core/resource.c | 57 +++++++++++++++++++++++++++++++
+>  3 files changed, 81 insertions(+), 48 deletions(-)
 > 
 > diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
-> index 983d7690c3a5..a3fddb2bed63 100644
+> index a3fddb2bed63..a0bef246121d 100644
 > --- a/drivers/cxl/core/core.h
 > +++ b/drivers/cxl/core/core.h
-> @@ -139,6 +139,9 @@ struct cxl_rwsem {
+> @@ -142,6 +142,10 @@ extern struct cxl_rwsem cxl_rwsem;
+>  void cxl_commit_start(void __iomem *hdm, struct cxl_decoder_settings *settings);
+>  int cxld_await_commit(void __iomem *hdm, int id);
 >  
->  extern struct cxl_rwsem cxl_rwsem;
->  
-> +void cxl_commit_start(void __iomem *hdm, struct cxl_decoder_settings *settings);
-> +int cxld_await_commit(void __iomem *hdm, int id);
+> +int cxl_hdm_unpack_decoder(struct cxl_decoder_settings *settings, int id,
+> +			   u32 ctrl, u64 base, u64 size,
+> +			   u64 target_or_skip_reg_val);
 > +
 >  int cxl_memdev_init(void);
 >  void cxl_memdev_exit(void);
 >  void cxl_mbox_init(void);
 > diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
-> index 9e05032a5426..d3f21dfda146 100644
+> index 629e3420ad0b..b6a8fe83d336 100644
 > --- a/drivers/cxl/core/hdm.c
 > +++ b/drivers/cxl/core/hdm.c
-> @@ -707,7 +707,7 @@ int cxl_dpa_alloc(struct cxl_endpoint_decoder *cxled, u64 size)
->  	return devm_add_action_or_reset(&port->dev, cxl_dpa_release, cxled);
->  }
->  
-> -static void cxld_set_interleave(struct cxl_decoder *cxld, u32 *ctrl)
-> +static void cxld_set_interleave(struct cxl_decoder_config *config, u32 *ctrl)
+> @@ -932,8 +932,8 @@ static int init_hdm_decoder(struct cxl_port *port, struct cxl_decoder *cxld,
+>  			    u64 *dpa_base, struct cxl_endpoint_dvsec_info *info)
 >  {
->  	u16 eig;
->  	u8 eiw;
-> @@ -716,12 +716,12 @@ static void cxld_set_interleave(struct cxl_decoder *cxld, u32 *ctrl)
->  	 * Input validation ensures these warns never fire, but otherwise
->  	 * suppress unititalized variable usage warnings.
->  	 */
-> -	if (WARN_ONCE(ways_to_eiw(cxld->config.interleave_ways, &eiw),
-> -		      "invalid interleave_ways: %d\n", cxld->config.interleave_ways))
-> +	if (WARN_ONCE(ways_to_eiw(config->interleave_ways, &eiw),
-> +		      "invalid interleave_ways: %d\n", config->interleave_ways))
->  		return;
-> -	if (WARN_ONCE(granularity_to_eig(cxld->config.interleave_granularity, &eig),
-> +	if (WARN_ONCE(granularity_to_eig(config->interleave_granularity, &eig),
->  		      "invalid interleave_granularity: %d\n",
-> -		      cxld->config.interleave_granularity))
-> +		      config->interleave_granularity))
->  		return;
->  
->  	u32p_replace_bits(ctrl, eig, CXL_HDM_DECODER0_CTRL_IG_MASK);
-> @@ -729,10 +729,10 @@ static void cxld_set_interleave(struct cxl_decoder *cxld, u32 *ctrl)
->  	*ctrl |= CXL_HDM_DECODER0_CTRL_COMMIT;
->  }
->  
-> -static void cxld_set_type(struct cxl_decoder *cxld, u32 *ctrl)
-> +static void cxld_set_type(struct cxl_decoder_config *config, u32 *ctrl)
->  {
->  	u32p_replace_bits(ctrl,
-> -			  !!(cxld->config.target_type == CXL_DECODER_HOSTONLYMEM),
-> +			  !!(config->target_type == CXL_DECODER_HOSTONLYMEM),
->  			  CXL_HDM_DECODER0_CTRL_HOSTONLY);
->  }
->  
-> @@ -764,7 +764,7 @@ static void cxlsd_set_targets(struct cxl_switch_decoder *cxlsd, u64 *tgt)
->   * clock skew and other marginal behavior
->   */
->  #define COMMIT_TIMEOUT_MS 20
-> -static int cxld_await_commit(void __iomem *hdm, int id)
-> +int cxld_await_commit(void __iomem *hdm, int id)
->  {
->  	u32 ctrl;
->  	int i;
-> @@ -784,45 +784,66 @@ static int cxld_await_commit(void __iomem *hdm, int id)
->  	return -ETIMEDOUT;
->  }
->  
-> -static void setup_hw_decoder(struct cxl_decoder *cxld, void __iomem *hdm)
-> +static void setup_hw_decoder(void __iomem *hdm,
-> +			     struct cxl_decoder_settings *settings)
-
-settings is replacing cxld, I would prefer that as the first parameter
-
->  {
-> -	int id = cxld->config.id;
-> +	struct cxl_decoder_config *config = &settings->config;
-> +	int id = config->id;
-> +	u64 target_or_skip_reg_val;
->  	u64 base, size;
->  	u32 ctrl;
->  
-> -	/* common decoder settings */
-> -	ctrl = readl(hdm + CXL_HDM_DECODER0_CTRL_OFFSET(cxld->config.id));
-> -	cxld_set_interleave(cxld, &ctrl);
-> -	cxld_set_type(cxld, &ctrl);
-> -	base = cxld->config.hpa_range.start;
-> -	size = range_len(&cxld->config.hpa_range);
-> +	ctrl = readl(hdm + CXL_HDM_DECODER0_CTRL_OFFSET(id));
-> +	cxld_set_interleave(config, &ctrl);
-> +	cxld_set_type(config, &ctrl);
-> +	base = config->hpa_range.start;
-> +	size = range_len(&config->hpa_range);
-> +	target_or_skip_reg_val = settings->target_or_skip_reg_val;
->  
->  	writel(upper_32_bits(base), hdm + CXL_HDM_DECODER0_BASE_HIGH_OFFSET(id));
->  	writel(lower_32_bits(base), hdm + CXL_HDM_DECODER0_BASE_LOW_OFFSET(id));
->  	writel(upper_32_bits(size), hdm + CXL_HDM_DECODER0_SIZE_HIGH_OFFSET(id));
->  	writel(lower_32_bits(size), hdm + CXL_HDM_DECODER0_SIZE_LOW_OFFSET(id));
-> +	/* Target-list and endpoint-skip registers alias the same slot. */
-> +	writel(upper_32_bits(target_or_skip_reg_val), hdm + CXL_HDM_DECODER0_TL_HIGH(id));
-> +	writel(lower_32_bits(target_or_skip_reg_val), hdm + CXL_HDM_DECODER0_TL_LOW(id));
-> +
-> +	writel(ctrl, hdm + CXL_HDM_DECODER0_CTRL_OFFSET(id));
-> +}
-> +
-> +void cxl_commit_start(void __iomem *hdm, struct cxl_decoder_settings *settings)
-> +{
-> +	lockdep_assert_held(&cxl_rwsem.dpa);
-> +	setup_hw_decoder(hdm, settings);
-> +}
-> +
-> +/*
-> + * Endpoint skip and switch targets have different owners. Keep that state with
-> + * its owning type and flatten it only into a transient register-programming
-> + * snapshot.
-> + */
-> +static void cxl_decoder_snapshot(struct cxl_decoder *cxld,
-> +				 struct cxl_decoder_settings *settings)
-> +{
-> +	lockdep_assert_held(&cxl_rwsem.dpa);
-> +
-> +	*settings = (struct cxl_decoder_settings) {
-> +		.config = cxld->config,
-> +	};
->  
->  	if (is_switch_decoder(&cxld->dev)) {
->  		struct cxl_switch_decoder *cxlsd =
->  			to_cxl_switch_decoder(&cxld->dev);
-> -		void __iomem *tl_hi = hdm + CXL_HDM_DECODER0_TL_HIGH(id);
-> -		void __iomem *tl_lo = hdm + CXL_HDM_DECODER0_TL_LOW(id);
->  		u64 targets;
->  
->  		cxlsd_set_targets(cxlsd, &targets);
-> -		writel(upper_32_bits(targets), tl_hi);
-> -		writel(lower_32_bits(targets), tl_lo);
-> +		settings->target_or_skip_reg_val = targets;
->  	} else {
->  		struct cxl_endpoint_decoder *cxled =
->  			to_cxl_endpoint_decoder(&cxld->dev);
-> -		void __iomem *sk_hi = hdm + CXL_HDM_DECODER0_SKIP_HIGH(id);
-> -		void __iomem *sk_lo = hdm + CXL_HDM_DECODER0_SKIP_LOW(id);
->  
-> -		writel(upper_32_bits(cxled->skip), sk_hi);
-> -		writel(lower_32_bits(cxled->skip), sk_lo);
-> +		settings->target_or_skip_reg_val = cxled->skip;
->  	}
-> -
-> -	writel(ctrl, hdm + CXL_HDM_DECODER0_CTRL_OFFSET(id));
->  }
->  
->  static int cxl_decoder_commit(struct cxl_decoder *cxld)
-> @@ -830,6 +851,7 @@ static int cxl_decoder_commit(struct cxl_decoder *cxld)
->  	struct cxl_port *port = to_cxl_port(cxld->dev.parent);
->  	struct cxl_hdm *cxlhdm = dev_get_drvdata(&port->dev);
->  	void __iomem *hdm = cxlhdm->regs.hdm_decoder;
+>  	struct cxl_endpoint_decoder *cxled = NULL;
+> -	u64 size, base, skip, dpa_size, lo, hi;
+> -	bool committed;
 > +	struct cxl_decoder_settings settings;
->  	int id = cxld->config.id, rc;
+> +	u64 size, base, skip, dpa_size, lo, hi, target_or_skip_reg_val;
+
+I don't think you need target_or_skip_reg_val here. You should be able to read and pass the single meaning variable with the change I suggested earlier and pass in to the appropriate branches depending on endpoint or switch. I think that's what the code did before the changes. In general just avoid using compound variable names for better code clarity.
+
+DJ
+
+>  	u32 remainder;
+>  	int i, rc;
+>  	u32 ctrl;
+> @@ -953,35 +953,28 @@ static int init_hdm_decoder(struct cxl_port *port, struct cxl_decoder *cxld,
+>  	lo = readl(hdm + CXL_HDM_DECODER0_SIZE_LOW_OFFSET(which));
+>  	hi = readl(hdm + CXL_HDM_DECODER0_SIZE_HIGH_OFFSET(which));
+>  	size = (hi << 32) + lo;
+> -	committed = !!(ctrl & CXL_HDM_DECODER0_CTRL_COMMITTED);
+> +	lo = readl(hdm + CXL_HDM_DECODER0_TL_LOW(which));
+> +	hi = readl(hdm + CXL_HDM_DECODER0_TL_HIGH(which));
+> +	target_or_skip_reg_val = (hi << 32) + lo;
+> +	rc = cxl_hdm_unpack_decoder(&settings, which, ctrl, base, size,
+> +				    target_or_skip_reg_val);
+> +	if (rc) {
+> +		dev_warn(&port->dev,
+> +			 "decoder%d.%d: Invalid decoder configuration (ctrl: %#x): %d\n",
+> +			 port->id, cxld->config.id, ctrl, rc);
+> +		return rc;
+> +	}
+> +
+>  	cxld->commit = cxl_decoder_commit;
+>  	cxld->reset = cxl_decoder_reset;
+> -
+> -	if (!committed)
+> -		size = 0;
+> -	if (base == U64_MAX || size == U64_MAX) {
+> -		dev_warn(&port->dev, "decoder%d.%d: Invalid resource range\n",
+> -			 port->id, cxld->config.id);
+> -		return -ENXIO;
+> -	}
+> +	cxld->config = settings.config;
+> +	size = range_len(&cxld->config.hpa_range);
 >  
->  	if (cxld->config.flags & CXL_DECODER_F_ENABLE)
-> @@ -862,10 +884,12 @@ static int cxl_decoder_commit(struct cxl_decoder *cxld)
+>  	if (info)
+>  		cxled = to_cxl_endpoint_decoder(&cxld->dev);
+> -	cxld->config.hpa_range = (struct range) {
+> -		.start = base,
+> -		.end = base + size - 1,
+> -	};
+>  
+>  	/* decoders are enabled if committed */
+> -	if (committed) {
+> -		cxld->config.flags |= CXL_DECODER_F_ENABLE;
+> -		if (ctrl & CXL_HDM_DECODER0_CTRL_LOCK)
+> -			cxld->config.flags |= CXL_DECODER_F_LOCK;
+> -		if (FIELD_GET(CXL_HDM_DECODER0_CTRL_HOSTONLY, ctrl))
+> -			cxld->config.target_type = CXL_DECODER_HOSTONLYMEM;
+> -		else
+> -			cxld->config.target_type = CXL_DECODER_DEVMEM;
+> -
+> +	if (cxld->config.flags & CXL_DECODER_F_ENABLE) {
+>  		guard(rwsem_write)(&cxl_rwsem.region);
+>  		if (cxld->config.id != cxl_num_decoders_committed(port)) {
+>  			dev_warn(&port->dev,
+> @@ -1015,38 +1008,19 @@ static int init_hdm_decoder(struct cxl_port *port, struct cxl_decoder *cxld,
+>  			writel(ctrl, hdm + CXL_HDM_DECODER0_CTRL_OFFSET(which));
 >  		}
 >  	}
+> -	rc = eiw_to_ways(FIELD_GET(CXL_HDM_DECODER0_CTRL_IW_MASK, ctrl),
+> -			  &cxld->config.interleave_ways);
+> -	if (rc) {
+> -		dev_warn(&port->dev,
+> -			 "decoder%d.%d: Invalid interleave ways (ctrl: %#x)\n",
+> -			 port->id, cxld->config.id, ctrl);
+> -		return rc;
+> -	}
+> -	rc = eig_to_granularity(FIELD_GET(CXL_HDM_DECODER0_CTRL_IG_MASK, ctrl),
+> -				 &cxld->config.interleave_granularity);
+> -	if (rc) {
+> -		dev_warn(&port->dev,
+> -			 "decoder%d.%d: Invalid interleave granularity (ctrl: %#x)\n",
+> -			 port->id, cxld->config.id, ctrl);
+> -		return rc;
+> -	}
+> -
+>  	dev_dbg(&port->dev, "decoder%d.%d: range: %#llx-%#llx iw: %d ig: %d\n",
+>  		port->id, cxld->config.id, cxld->config.hpa_range.start, cxld->config.hpa_range.end,
+>  		cxld->config.interleave_ways, cxld->config.interleave_granularity);
 >  
-> -	scoped_guard(rwsem_read, &cxl_rwsem.dpa)
-> -		setup_hw_decoder(cxld, hdm);
-> +	scoped_guard(rwsem_read, &cxl_rwsem.dpa) {
-> +		cxl_decoder_snapshot(cxld, &settings);
-> +		cxl_commit_start(hdm, &settings);
-> +	}
+>  	if (!cxled) {
+> -		lo = readl(hdm + CXL_HDM_DECODER0_TL_LOW(which));
+> -		hi = readl(hdm + CXL_HDM_DECODER0_TL_HIGH(which));
+> -		target_list.value = (hi << 32) + lo;
+> +		target_list.value = settings.target_or_skip_reg_val;
+>  		for (i = 0; i < cxld->config.interleave_ways; i++)
+>  			cxld->target_map[i] = target_list.target_id[i];
 >  
-> -	rc = cxld_await_commit(hdm, cxld->config.id);
-> +	rc = cxld_await_commit(hdm, settings.config.id);
+>  		return 0;
+>  	}
+>  
+> -	if (!committed)
+> +	if (!(cxld->config.flags & CXL_DECODER_F_ENABLE))
+>  		return 0;
+>  
+>  	dpa_size = div_u64_rem(size, cxld->config.interleave_ways, &remainder);
+> @@ -1056,9 +1030,7 @@ static int init_hdm_decoder(struct cxl_port *port, struct cxl_decoder *cxld,
+>  			port->id, cxld->config.id, size, cxld->config.interleave_ways);
+>  		return -ENXIO;
+>  	}
+> -	lo = readl(hdm + CXL_HDM_DECODER0_SKIP_LOW(which));
+> -	hi = readl(hdm + CXL_HDM_DECODER0_SKIP_HIGH(which));
+> -	skip = (hi << 32) + lo;
+> +	skip = settings.target_or_skip_reg_val;
+>  	rc = devm_cxl_dpa_reserve(cxled, *dpa_base + skip, dpa_size, skip);
 >  	if (rc) {
->  		dev_dbg(&port->dev, "%s: error %d committing decoder\n",
->  			dev_name(&cxld->dev), rc);
-> diff --git a/include/cxl/cxl.h b/include/cxl/cxl.h
-> index 237b31d54249..67c81be47fbb 100644
-> --- a/include/cxl/cxl.h
-> +++ b/include/cxl/cxl.h
-> @@ -72,6 +72,16 @@ struct cxl_decoder {
->  	void (*reset)(struct cxl_decoder *cxld);
->  };
->  
-> +/**
-> + * struct cxl_decoder_settings - CXL HDM decoder programming snapshot
-> + * @config: common decoder configuration
-> + * @target_or_skip_reg_val: switch target list or endpoint skip register value
-> + */
-> +struct cxl_decoder_settings {
-> +	struct cxl_decoder_config config;
-> +	u64 target_or_skip_reg_val;
-
-Single variable contains multiple meanings gets confusing and messy when they are different values depending on context.
-
-How about something like:
-
-struct cxl_endpoint_decoder_settings {
-	struct cxl_decoder_config config;
-	u64 skips;
-};
-
-/* resource.c: common to both decoder types */
-static u32 cxl_hdm_write_range(void __iomem *hdm,
-                             const struct cxl_decoder_config *config)
-{
-      int id = config->id;
-      u64 base = config->hpa_range.start;
-      u64 size = range_len(&config->hpa_range);
-      u32 ctrl = readl(hdm + CXL_HDM_DECODER0_CTRL_OFFSET(id));
-
-      cxld_set_interleave(config, &ctrl);
-      cxld_set_type(config, &ctrl);
-      writel(upper_32_bits(base), hdm + CXL_HDM_DECODER0_BASE_HIGH_OFFSET(id))
-      writel(lower_32_bits(base), hdm + CXL_HDM_DECODER0_BASE_LOW_OFFSET(id));
-      writel(upper_32_bits(size), hdm + CXL_HDM_DECODER0_SIZE_HIGH_OFFSET(id))
-      writel(lower_32_bits(size), hdm + CXL_HDM_DECODER0_SIZE_LOW_OFFSET(id));
-      return ctrl;
-}
-
-void cxl_commit_start_endpoint(void __iomem *hdm,
-                             const struct cxl_endpoint_decoder_settings *s)
-{
-      int id = s->config.id;
-      u32 ctrl;
-
-      lockdep_assert_held(&cxl_rwsem.dpa);
-      ctrl = cxl_hdm_write_range(hdm, &s->config);
-      writel(upper_32_bits(s->skip), hdm + CXL_HDM_DECODER0_SKIP_HIGH(id));
-      writel(lower_32_bits(s->skip), hdm + CXL_HDM_DECODER0_SKIP_LOW(id));
-      writel(ctrl, hdm + CXL_HDM_DECODER0_CTRL_OFFSET(id));
-}
-
-void cxl_commit_start_switch(void __iomem *hdm,
-                           const struct cxl_decoder_config *config,
-                           u64 targets)
-{
-      int id = config->id;
-      u32 ctrl;
-
-      lockdep_assert_held(&cxl_rwsem.dpa);
-      ctrl = cxl_hdm_write_range(hdm, config);
-      writel(upper_32_bits(targets), hdm + CXL_HDM_DECODER0_TL_HIGH(id));
-      writel(lower_32_bits(targets), hdm + CXL_HDM_DECODER0_TL_LOW(id));
-      writel(ctrl, hdm + CXL_HDM_DECODER0_CTRL_OFFSET(id));
-}
-
-/* hdm.c: cxl_decoder_commit() */
-scoped_guard(rwsem_read, &cxl_rwsem.dpa) {
-      if (is_switch_decoder(&cxld->dev)) {
-              struct cxl_switch_decoder *cxlsd =
-                      to_cxl_switch_decoder(&cxld->dev);
-              u64 targets;
-
-              cxlsd_set_targets(cxlsd, &targets);
-              cxl_commit_start_switch(hdm, &cxld->config, targets);
-      } else {
-              struct cxl_endpoint_decoder *cxled =
-                      to_cxl_endpoint_decoder(&cxld->dev);
-              struct cxl_endpoint_decoder_settings s = {
-                      .config = cxld->config,
-                      .skip = cxled->skip,
-              };
-
-              cxl_commit_start_endpoint(hdm, &s);
-      }
-}
-
-> +};
+>  		dev_err(&port->dev,
+> diff --git a/drivers/cxl/core/resource.c b/drivers/cxl/core/resource.c
+> index ff027cb89e57..8dfeb12de8c9 100644
+> --- a/drivers/cxl/core/resource.c
+> +++ b/drivers/cxl/core/resource.c
+> @@ -104,3 +104,60 @@ void cxl_commit_start(void __iomem *hdm, struct cxl_decoder_settings *settings)
+>  	setup_hw_decoder(hdm, settings);
+>  }
+>  EXPORT_SYMBOL_FOR_MODULES(cxl_commit_start, "cxl_core");
 > +
->  /*
->   * Using struct_group() allows for per register-block-type helper routines,
->   * without requiring block-type agnostic code to include the prefix.
+> +int cxl_hdm_unpack_decoder(struct cxl_decoder_settings *settings, int id,
+> +			   u32 ctrl, u64 base, u64 size,
+> +			   u64 target_or_skip_reg_val)
+> +{
+> +	bool committed = FIELD_GET(CXL_HDM_DECODER0_CTRL_COMMITTED, ctrl);
+> +	enum cxl_decoder_type target_type = 0;
+> +	int interleave_granularity;
+> +	int interleave_ways;
+> +	unsigned long flags = 0;
+> +	struct range hpa_range;
+> +	int rc;
+> +
+> +	if (!committed)
+> +		size = 0;
+> +	if (base == U64_MAX || size == U64_MAX)
+> +		return -ENXIO;
+> +
+> +	hpa_range = (struct range) {
+> +		.start = base,
+> +		.end = base + size - 1,
+> +	};
+> +
+> +	if (committed) {
+> +		flags |= CXL_DECODER_F_ENABLE;
+> +		if (ctrl & CXL_HDM_DECODER0_CTRL_LOCK)
+> +			flags |= CXL_DECODER_F_LOCK;
+> +		if (FIELD_GET(CXL_HDM_DECODER0_CTRL_HOSTONLY, ctrl))
+> +			target_type = CXL_DECODER_HOSTONLYMEM;
+> +		else
+> +			target_type = CXL_DECODER_DEVMEM;
+> +	}
+> +
+> +	rc = eiw_to_ways(FIELD_GET(CXL_HDM_DECODER0_CTRL_IW_MASK, ctrl),
+> +			 &interleave_ways);
+> +	if (rc)
+> +		return rc;
+> +	rc = eig_to_granularity(FIELD_GET(CXL_HDM_DECODER0_CTRL_IG_MASK, ctrl),
+> +				&interleave_granularity);
+> +	if (rc)
+> +		return rc;
+> +
+> +	*settings = (struct cxl_decoder_settings) {
+> +		.config = {
+> +			.id = id,
+> +			.hpa_range = hpa_range,
+> +			.interleave_ways = interleave_ways,
+> +			.interleave_granularity = interleave_granularity,
+> +			.target_type = target_type,
+> +			.flags = flags,
+> +		},
+> +		.target_or_skip_reg_val = target_or_skip_reg_val,
+> +	};
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_FOR_MODULES(cxl_hdm_unpack_decoder, "cxl_core");
 
