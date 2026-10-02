@@ -1,148 +1,147 @@
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF000405F7
-	for <linux-tegra@vger.kernel.org>; Fri,  2 Oct 2026 08:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBE3418A2D;
+	Fri,  2 Oct 2026 08:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790931126; cv=none; b=QgyBf7zNIhiGSixBAbG7jVeEsQvcvuV2pgavzKaJEe1uAclNLAZw6YDq4rlm48m7Zvk8/DxI+1c6O8nSnBU/Z9CAb8+TpjBwNqHcnTk5UiOe6JXGJt67bVUW0NZKsWqH+iumkXKtX7gRFIqOO7Dh4hJpkchl5rBGzeG2U1Ynz7E=
+	t=1790931380; cv=none; b=nCXqztj5XSOgE5UDGDfBWqA5rsdP9aLSnW53HiIn7lSEQpNGipJmX9KA0d4Z1XKw0nS6r2vsLllw9+OLjN7n6zj6G9NJ5MzwGQRSysq881can67iozRgL9OIGD89sNHDKX8lr5G1t8CQYRtQyruJ6Dpds2tSu+rlzEMIdiVJvRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790931126; c=relaxed/simple;
-	bh=DIVNiWfMxnfOIKoQN89pB/UWBJB/wMDmHrfQVePcqbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EC4w+wZ3KTL9qbro0mSxP7H6vODJ9sTqQkuX0oOwALFkMzUZ6CH5wGAZQtz+Plj37z2n54iRduExgid4FkZSCTtFN6t3rQFiuAVuPmgtLDzT88d9TXAZlGJOdPwN09aoQckqfuzOvqy3lWcLb5OtGEslCWiXeRiGUHYnH5vEchk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=RQtbQuJX; arc=none smtp.client-ip=74.125.225.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1790931380; c=relaxed/simple;
+	bh=5fH3iwFmjKTR4dD+k5aX/cl1wka55yWtQa+NwctyYkU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=as6it+ZfGcv5nzL1C1LekQIEinYAQIOpWnYjbTP1AWx9CN41clAJG23pJ9+0V4kEKKE77wW4rPm3jJQF2hHABrGG3kF9Wld0zNjLc4Ex2RCYm6pX0RC5iHx5wTXfMpi9J2xGuxYf02pIPYrKQ8l4UULZW4g/4bY3NkQzEZGB5ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=Fdog09s/; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="RQtbQuJX"
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49e7bcb94d3so56157985e9.2
-        for <linux-tegra@vger.kernel.org>; Fri, 02 Oct 2026 01:52:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1790931123; x=1791535923; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=DIVNiWfMxnfOIKoQN89pB/UWBJB/wMDmHrfQVePcqbQ=;
-        b=RQtbQuJXSBV0CiZlzBszaNn32zUzQsXq4EFZ9s8K1fwX2lvTNkCrMAXdq5QmYLNcCF
-         tJdY17WxGeu+BPCuNn+YKJeZ4txUdv/i8ABnMpywG5VSNQ09HydZl/i2R+6f/cCuv7jm
-         gjdaFyW6Cy2bHZhKmSOjz17Of6dinfCpm/dA/RgU89rceBYznSIxj2Uv1uh8zt/KR1Xm
-         HCmRkJqFGJgKrS8YxylA6vdLqtByklFSfDmHyEvhVoc0iuGO3hjiIcTCC5YEvYk6PnRy
-         BziYFBvv3Y939MT8s2xNd8Rk1EFB5Hu52awzz36Y7vYNE+DzlFTbH5MQOOM/GRc5ey4g
-         C7vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790931123; x=1791535923;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=DIVNiWfMxnfOIKoQN89pB/UWBJB/wMDmHrfQVePcqbQ=;
-        b=p/zupJn6vwAVjWvDpJEYoDDGp2pVJ7MZOuCeVR1nUabYJAOKrrmvxnr64i9imkIjUy
-         0mfohzK+BgLmKIwjjIg+yD67Nkm0EIeryIQOX24EphGx4IUJ817Is8Z6uJ5ZIGeO7lz8
-         xn+kDqnTxcnyz/Pqd5JQL3HvMoE7JoS/8lKDmcHx/7fdINkmKvissw1NJi1/muq/k/0u
-         C1tPBZu0FmUU03Otv+0Ro6uWWAf1mykIPP8EC2pjYzyTeDclvO2x01GpO+WbnrevZaCL
-         Jikzd9CGIezXGShV94gzOVGpjC2BPqvXuzu/ytieDBhtBbKYQhg5eKaJN4uD+g1wFrRe
-         7FiQ==
-X-Forwarded-Encrypted: i=1; AKwUvByrXFy7iKHBnbHgz5/iRwUny2W5yWzgRiRz8LKx5nM4WswSucqkbzJQWgVCt/6PkzR7FIkkmG2I+SEy2A==@vger.kernel.org
-X-Gm-Message-State: AFuF++lg+NckWemv7xR0TLK+eL0wuScJ2V8cXvxLTKUI/tshvI14PwtH
-	BoOJInINybAgsuLKf1l2EE5pMVTO3HKfyIcoCgJ0yWkQDaAudt4v2pmFlAFVfdH16y54LG0usN5
-	dXNh2
-X-Gm-Gg: AYBFou1OilL2h8PLWDUjETsJZOD7dBlIKTBZGSMumCfJvl/vPHrpVCkaO6pqP0i1wCg
-	xPlNPWjk6g4IxvwW4oiPR2l05xkY3rdiLrkUgTUvD27jItK3fNi9P1PGTQ5UdmbEGkrL1NcklXT
-	4sZbHiTwKf29bbJHM3PhQ7f9Sw9JHZm8ZvwVNB+6t+VsVNizoLqA2FfMOItLifioB5TCf5rUzEO
-	82wyPWMOby/WhXdRVD+KyggEbg8bpE5qGT6WiOHLx8ZCh9GyKzjybvWxIlSTNo9txWmmG+ZCWrB
-	eteiz2nSOiSuy0eMRX8gWma/YI6Ug5C56UwTmA5Ubf2DYh9+y3n+vJi2407hR0VTEtHXgIpidQ/
-	o1/exelwQ2801mWwYRSguZOolxjFHgTzh7xBVnApBGgenw1mG9CPdNHBMBRhv3v2EtXh91AqcPD
-	e+w9EBLXcdo6DOq1YZ1pA9CWAnzYjz8X7Yh01fWdg7omO+MNUc8H7yJ2hTKVk/FBFiX17dyks=
-X-Received: by 2002:a05:600c:6a04:b0:4a0:4f6:3dc5 with SMTP id 5b1f17b1804b1-4a027542255mr24825255e9.7.1790931122817;
-        Fri, 02 Oct 2026 01:52:02 -0700 (PDT)
-Received: from localhost ([194.213.108.11])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4a0280bfafasm65232975e9.8.2026.10.02.01.52.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Oct 2026 01:52:01 -0700 (PDT)
-Date: Fri, 2 Oct 2026 10:51:59 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Thierry Reding <thierry.reding@kernel.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"Ola Chr. Vaage" <ola.christoffer.vage@scoutdi.com>
-Subject: Re: [PATCH v2 3/3] pwm: tegra: Implement .get_state()
-Message-ID: <ar9vT4FY3QxEvRZH@monoceros>
-References: <cover.1789741839.git.u.kleine-koenig@baylibre.com>
- <b72b16cf704aa662a1b49805db284379d4fa4050.1789741839.git.u.kleine-koenig@baylibre.com>
- <arEAjOHU4rH5aGqb@orome>
- <arE932ZcHGB8RAN6@monoceros>
- <arJTSEfkILPQmqNV@orome>
- <arzcE4nVRTAK9C-X@monoceros>
- <arzjXtZj0hIf5iZU@orome>
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="Fdog09s/"
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6925m4B91818453;
+	Fri, 2 Oct 2026 04:56:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=vGEAg+FMsTMOiHSqsHGFpGXF1Fy
+	W801R5QJ876ogRPc=; b=Fdog09s/Zb7iwrdw2QXM6p2YsScR8paUpvmA55Ztx0B
+	ObuKsfTeWvfCNYhhKu1SsTZYFbYHqs8Ltwhj9smAPmyfcbIU16NmMydGVePcofcX
+	zCnb4qdsm1b+BoPu0u4aQ4t7CPTXWNka8QTA0a2e91qyLMQLJv7ySOAck8/TonVr
+	SkUwoqhMD2omxYv9Z48wurNYzP4dudHAh1TbCyLwOjNHVoZZmIR69M2g+WgP5RUl
+	xBtfzOdA2efas3UxWkEgLunk8u8p6WAr2ER1gljUx1nLF00CVcXQeC1y3tBhwama
+	17uzh76R4BUFN99G6EVSW41PT/MqXfOOe+EiT85K9gg==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4h1hy989xv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Oct 2026 04:56:02 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 6928u1S9033085
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 2 Oct 2026 04:56:01 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.37; Fri, 2 Oct
+ 2026 04:56:01 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
+ Transport; Fri, 2 Oct 2026 04:56:00 -0400
+Received: from CJONES7-T01.ad.analog.com ([10.66.6.191])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 6928tmvN002158;
+	Fri, 2 Oct 2026 04:55:51 -0400
+From: Carlos Jones <carlosjr.jones@analog.com>
+To: Mark Brown <broonie@kernel.org>
+CC: Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding
+	<thierry.reding@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sowjanya
+ Komatineni <skomatineni@nvidia.com>,
+        <linux-spi@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Carlos Jones
+ Jr <carlosjr.jones@analog.com>
+Subject: [PATCH] spi: tegra114: assert CS GPIO for every transfer in a message
+Date: Fri, 2 Oct 2026 16:55:40 +0800
+Message-ID: <20261002085540.1625-1-carlosjr.jones@analog.com>
+X-Mailer: git-send-email 2.51.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qg3ayc2w423pjf6n"
-Content-Disposition: inline
-In-Reply-To: <arzjXtZj0hIf5iZU@orome>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDAyMDAzNSBTYWx0ZWRfX5JmZ2O4dRVHA
+ cgaJYrJOqb3ciJRDhauD0onbyh2jHGT8HIuJwcN0J8lVbasevvzeMwZyDFBoIv8nuZQEjvFFWz+
+ 0P62jjmjMMxFey2RtM3hIcweKopq81/4Cx5cJmxaIrLrM/mnYz6O
+X-Proofpoint-GUID: JWO_s6sWlJz9TgsYBvaJYOgiZAilNxZ2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDAyMDAzNSBTYWx0ZWRfX3yUhWxAVe1fP
+ prihB7rQ94r4EdUsLXh7o5RPZ8j4lZ0uAcrkzawWPVBs5pb2e5yhrhhwoSPSRBYuJufwFnl0JRI
+ ZSyzMuTGaNZdD3/fU/WbW8SQg5wg9iQgG9rgwDDi8lC+51jbs82bXLmgglgetfzYsYMFhn+eKmc
+ 4IDc4bDCwV4dGIAV94ZZcD6iJ2/Hie4WIVqqHZlGkGi2KOA1Gz+ME4Vz8nW3Z0QBWX4jTy6IiP/
+ w5DdsVBN6B+tmE++Jkza2Jp0AG1fC7JeotvZbTH0jjvMJnZTaMLFSF/y0vbiUkrP2+fdZ7wjRve
+ PEXeNZ/45XzfZFKU6yqccWwFtoL2qLLqWQtVSgR3k/wUbeLF/DD0L/Y70ZzroZFB4/Zc/MtaFug
+ gvdYBOqPmspRzzTtC/WrP3p9V3D63I5ns3Ni7qj7z/uAySU2cu3ilFOm7jwMUje0UJVH4DE//3x
+ bjuuW1YKZfBXVhxvMyQ==
+X-Proofpoint-ORIG-GUID: JWO_s6sWlJz9TgsYBvaJYOgiZAilNxZ2
+X-Authority-Analysis: v=2.4 cv=Vftir1p9 c=1 sm=1 tr=0 ts=6abf71a2 cx=c_pps
+ a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
+ a=660iZSQnnn4A:10 a=VkNPw1HP01LnGYTKEx00:22 a=0sLvza09kfJOxVLZPwjg:22
+ a=Z0pTeXoby7EwIRygza74:22 a=gAnH3GRIAAAA:8 a=H6mhVM5xjDqGWgEDBD4A:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-02_02,2026-10-01_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0 spamscore=0
+ priorityscore=1501 clxscore=1011 bulkscore=0 phishscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2610020035
 
+From: Carlos Jones Jr <carlosjr.jones@analog.com>
 
---qg3ayc2w423pjf6n
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 3/3] pwm: tegra: Implement .get_state()
-MIME-Version: 1.0
+The driver provides its own transfer_one_message() and therefore drives
+the chip-select GPIO itself rather than through the SPI core. The GPIO is
+asserted only in the is_first_of_msg path of
+tegra_spi_setup_transfer_one(), but tegra_spi_transfer_end() deasserts it
+whenever a transfer has cs_change set. For a multi-transfer message whose
+earlier transfers request cs_change -- for example a register read that
+sends the address in one transfer and clocks the data back in the next --
+the CS GPIO is released after the first transfer and never re-asserted,
+so the remaining transfers are clocked with chip-select inactive and the
+peripheral never drives the bus.
 
-Hello Thierry,
+This was observed with an ADIS16470 IMU (adis16475 driver), whose
+register read is a two-transfer, cs_change-framed exchange: a logic
+analyzer showed the data frame clocked with CS high, and the driver read
+0 while the device drove 0x4056 on the wire.
 
-On Wed, Sep 30, 2026 at 12:29:42PM +0200, Thierry Reding wrote:
-> On Wed, Sep 30, 2026 at 11:54:03AM +0200, Uwe Kleine-K=F6nig wrote:
-> > On Tue, Sep 22, 2026 at 12:07:26PM +0200, Thierry Reding wrote:
-> > > On Mon, Sep 21, 2026 at 04:26:03PM +0200, Uwe Kleine-K=F6nig wrote:
-> > > > As long as .apply() also hardcodes TEGRA_PWM_DEPTH, it's IMO fine t=
-hat
-> > > > .get_state() does so, too.
-> > >=20
-> > > Okay, fair enough.
-> >=20
-> > Is that an Ack then?
->=20
-> I've been thinking about this some more and I don't know if it really
-> makes sense to keep hard-coding TEGRA_PWM_DEPTH.
+Re-assert the CS GPIO for every transfer so that multi-transfer messages
+keep chip-select active across the whole message. gpiod_set_value() is
+idempotent and polarity-aware, so this is a no-op for the first transfer
+and for messages that keep CS asserted throughout.
 
-Full ack, ideally this implementation gap would be closed. Compared to
-implementing .get_state() I don't feel confident to do that without
-testing though. (Though I could make the driver return an error code if
-the register setting doesn't match.)
+Fixes: 63c1440596ff ("spi: tegra114: add support for gpio based CS")
+Signed-off-by: Carlos Jones Jr <carlosjr.jones@analog.com>
+---
+ drivers/spi/spi-tegra114.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> If only .apply() uses it, then it's mostly fine, I suppose, because we
-> don't care what the current (or initial) state is/was. So we either
-> don't use the device or we overwrite it with a custom set of values.
+diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+index 1234567..89abcde 100644
+--- a/drivers/spi/spi-tegra114.c
++++ b/drivers/spi/spi-tegra114.c
+@@ -859,6 +859,13 @@ static u32 tegra_spi_setup_transfer_one(struct spi_device *spi,
+ 		command1 |= SPI_BIT_LENGTH(bits_per_word - 1);
+ 	}
 
-I don't agree here. If the TEGRA_PWM_DEPTH setting is different in
-hardware than the driver assumes, I'd say .apply() being wrong is worse
-than .get_state() being wrong. So I'd either go with .get_state() as it
-is now, or rely on someone with hardware to correct the depth setting
-first.
++	/*
++	 * Re-assert the CS GPIO for every transfer: transfer_end() drops it
++	 * on cs_change, and the assert above only covers is_first_of_msg.
++	 */
++	if (spi_get_csgpiod(spi, 0))
++		gpiod_set_value(spi_get_csgpiod(spi, 0), 1);
++
+ 	return command1;
+ }
 
-Best regards
-Uwe
-
---qg3ayc2w423pjf6n
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmq/cKwACgkQj4D7WH0S
-/k4IkQf9E7DSmKZFIFIR/4nH83QY05qdjqp1cDV+Cim8WXIUyam/m2CsUXY32OT+
-Oup6DSCgMewSZMEsR6H1yvCtiCuizscQG/RUaK+BYpGcBLbihvBD0+T/vCq8Oh04
-hFAtyOFQc6FuzKtcJZ6iSryB1ATZN4eUCJtVuS8OUL2EISrUBVEPkL5eYmuVa5LH
-y1n5gA8T7iAuLwc5cgsCA/uShVFtsLnt8ghXotNIQzGyqxNtIA57gcdQvgjY0cpg
-QU2ZRoS9IxC2PszH9kw0aExfpT6/2ZD1/vYddzMQlTvLp4ooHUQnFZT+MQSfnhBo
-3EFJpVbpZmwWBLfCLnsHEeSFSsC0uQ==
-=iMZG
------END PGP SIGNATURE-----
-
---qg3ayc2w423pjf6n--
+--
+2.43.0
