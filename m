@@ -1,279 +1,213 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012033.outbound.protection.outlook.com [40.107.200.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F4B1F938;
-	Fri,  2 Oct 2026 23:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790985476; cv=none; b=F0pxPIsy+Np0nyVQtgO2IOa8f7WMyzEjanh5Uwrbzx/e6LMA1FgcJ4/xhyM0iLLSIbivjlt2VbJ84A/ClzclmerCZE8mSr4ftQZhft3SqIXp8w6eMCpTEKkAaYF0CDGo26Nsu8dMrSrsPTdZe+nO6+dmL49BmEW4x+oE+z1eLt4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790985476; c=relaxed/simple;
-	bh=3nUcFROvnFrIVmiERC1HTVfCqP0nxNJMr2n8zO2lnA8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qg50/dhxVFX8R6r+ssou/4XW2/l2aENrQwptLe3BVBSUVPq/5u2CrlUH1VfBbKgsy3oyssTOf4mEDROLkw0XcwAIRI/s0RDTIZnWEtruaaAFwE3+24+uZolZOwI1E29bJpySq3caaU2Pk8SJ2l5EjyhzE/D9ENNbuKRN6DRq2ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rwjga7cC; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622952F8EBC;
+	Sat,  3 Oct 2026 03:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790997778; cv=fail; b=F6+t4r4QLsDnyVSExblWjsHFaaNYdGGEONa39euuDRi7MHnGIXU3xWMuw9VohCkPP7SWMRP8tfPoHpqOPEkFE+xcyAuB9Yd5GRV7Rh0UJ9460YDkS0q3tl6V65sZBxcCmDJfAhO7DfOTyFEw43TYUFOxKE78kAkrH1vBOCRhjPY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790997778; c=relaxed/simple;
+	bh=13wMua0CGZsBTtVPL4G4396tSOqD0yxkgDIihpS47SU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Y2HFXDup3XSfvwmGBE9kknkbunVkqA6PhDblABxHvaxYVNlMHW+PshurVhvM68WrrQ1wOH95cYXBLsiwiOHJisaY1y4p5UVFhxL4XHujWe0kSZ/9pauUX+3l/zqF7pqH3gJsyAjt+yWZ+oj4LaQ/OlaQWtvzpw8KpW95F7AvUDw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WsCrYNnD; arc=fail smtp.client-ip=40.107.200.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rwjga7cC"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1790985475; x=1822521475;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=3nUcFROvnFrIVmiERC1HTVfCqP0nxNJMr2n8zO2lnA8=;
-  b=Rwjga7cCHUELrHGpjkK3uNJcSm0UUjwcpOakuEMB9nUNirBg53I4MRU1
-   Ye4FaYkO2FP/Dr6klkClJTpHcPBtvrb7LCYBo0uAGr8UuIgTlfSqPG4rp
-   EPt1/GoCbUox2Z0Q/Gp4Pp5w6HsRu0YLgPoG18sdk8Ma35xMkZ4ASl45v
-   87gIr6hLg0dcwpjQhL2LZ+dVwLTph/3FPm6NZduP9hhkfM2D019uRUGtg
-   wg4BYONtijDQhukXWL9VXOEoYh/qQpoWk+Jp2QPJ7ZoqX6Mh4x+6J8tTD
-   BcVuG7pA+V4mF/G9bnC8U5gP7ZR7Yb3dM/KmYsXY+Dq/h0mBcuoGzbgR2
-   A==;
-X-CSE-ConnectionGUID: oGOVswvBQaKK40h3jjxpNg==
-X-CSE-MsgGUID: HtCdaH1MT8OSOhvaOCJ45g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11923"; a="90967019"
-X-IronPort-AV: E=Sophos;i="6.27,136,1787036400"; 
-   d="scan'208";a="90967019"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2026 16:57:54 -0700
-X-CSE-ConnectionGUID: fUdsXD40Rq+CwkXiGS58Bw==
-X-CSE-MsgGUID: 8QbEIFLbS6G+MMZMIfw8IA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,136,1787036400"; 
-   d="scan'208";a="281087790"
-Received: from ssimmeri-mobl2.amr.corp.intel.com (HELO [10.125.108.45]) ([10.125.108.45])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2026 16:57:53 -0700
-Message-ID: <48d34fdc-d891-4175-81df-2217068176dd@intel.com>
-Date: Fri, 2 Oct 2026 16:57:51 -0700
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WsCrYNnD"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SUAsAD6R781ZGO867E4KOjOgs2puHfOZuhIl2uPtwXOmgLk9IBtYNTnyM14E6n6KKQlzDyJ+QWD6YB70TIdKlBQ/SeQDVc7qXsxzMQ2nkkxav0s6LOJ0iDO1LP6rQhSIh9ta8FaiFuQ7C6ED1hZG+FF3Iml8G8mB0mCLlapGHue/7nha5R04JXd7lXe6kTGd83SfIWek5C+XVgY7xlXSX9Etqb2uIVsqIwZpEEA4aC1P5EBmGftxQ1kbnxguw0I3/xea4+KWJaPnKE6YsS2sPayZ4p3SgoPCJmSH4YdNrT0dj3OqOYM0+S8Hxv3dhsEf7NPntZOfQ8IDx7npteqC5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5+viOYnXk0t/bMwL+IZc2i1y/EJIC+8eEbc+TuChK28=;
+ b=B2VzIPkXT4hx2jBG5S6su32SqjvUF7yYwMvM6hJUhLlWyf9AdAvSLGIFSMX7gLd9dzDPmBd9HzSHR2MjIUa+QckaqqFW0Bzy4y8Du00CkicmEQ+KPUEuEoJ4FW6iBRFyi5TvSeUV1Qrki54euDcYzpCiWDffMn4A2S7qhqEV0yraY53JbPjMkr1GoTlosMIsumWJbiUw/fU9RpC4+jXtedjZPFLtoFW0crF1RXINu7tSpLUqQ31Dt/1BvOWVmmZAYBO8nM6kQtr4ybugBRK5LwMJ0HI0R0rurTYl0ix0V0ie6UvlO6SWPVkMh2i02wpGE+tBVGNc41N7O8Zo6T7ECw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5+viOYnXk0t/bMwL+IZc2i1y/EJIC+8eEbc+TuChK28=;
+ b=WsCrYNnD97ByI4eh79WudktYMdY52r4A54wDvSBqhu07SY8uXUxPKKpNp5B5+tEPKULEBDhZh8A52y1Z7nXeE0mOOK8P7QD+8eLYl2MDs/G1ZKpOTxdLr9702OHTbjBbdzblAP4I2uSOmPuKU8QVAKWWb9ych24N8VCKR0VVZvNFLR9XtC3qEVQcFrOU444yDFnXIS9SxaSEQLZNpShTuZV0wIVEVwsRn7RRGj3bZBPPF/bOAn5Kpst7BpURhoMX9oOGw+xV0s43xy2YCwRVYlKV5ut7NcySfO5NqaO9+Pg78ePRIgyutug0Haomtm/92lm2xoV695Jqa9oW6p8+CA==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
+ by SA3PR12MB9159.namprd12.prod.outlook.com (2603:10b6:806:3a0::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.18; Sat, 3 Oct
+ 2026 03:22:53 +0000
+Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
+ ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0472.016; Sat, 3 Oct 2026
+ 03:22:52 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>,
+ Thierry Reding <thierry.reding@kernel.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra: Fix Tegra114 MIPI calibration clock parent
+Date: Sat, 03 Oct 2026 12:22:48 +0900
+Message-ID: <encGrolPTXOOvSimmmZLIQ@nvidia.com>
+In-Reply-To: <ar_QXessqHKkVAHi@redhat.com>
+References:
+ <20260930-b4-dalmore-fixes-mipical-clk-v1-1-0518be6c7979@nvidia.com>
+ <ar_QXessqHKkVAHi@redhat.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP286CA0372.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:79::20) To SJ2PR12MB9161.namprd12.prod.outlook.com
+ (2603:10b6:a03:566::20)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 09/16] cxl: Refresh cached PCI HDM decoder settings
-To: Srirangan Madhavan <smadhavan@nvidia.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Ira Weiny <ira.weiny@intel.com>, Jonathan Cameron <jic23@kernel.org>,
- Vishal Verma <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Alex Williamson <alex.williamson@redhat.com>, vsethi@nvidia.com,
- alwilliamson@nvidia.com,
- Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>,
- Vishal Aslot <vaslot@nvidia.com>, Manish Honap <mhonap@nvidia.com>,
- Jiandi An <jan@nvidia.com>, Richard Cheng <icheng@nvidia.com>,
- linux-tegra@vger.kernel.org
-References: <20261001092227.3004747-1-smadhavan@nvidia.com>
- <20261001092227.3004747-10-smadhavan@nvidia.com>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <20261001092227.3004747-10-smadhavan@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|SA3PR12MB9159:EE_
+X-MS-Office365-Filtering-Correlation-Id: 041ccbbd-4073-4c64-877f-08df20fd9bdc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|23010399003|10070799003|376014|1800799024|22082099003|18002099003|4143699003|6133799003|10067099003|56012099006|11063799006;
+X-Microsoft-Antispam-Message-Info:
+	5aVhUnQd+YSgbP9bceF630jzJReXXbS2sODx1rlPjywggAUzjq0q8vrvi0NQ+qV3ybgtQaTgvB9DxE7Q9hwZ2aGvky3ppH61HJB+FwYRQ1x5ZIp+N6CzHkEjnwj7HxFPFJ701sRxDrOKft5ko2+L10gXJL0zK/Fo+IB4KgLGov+rkkgfP/Ujn5gTCuMshUXYx65PNh84wB8aVPXkHuWAAb9XZAjq53vwgXIijIj8R6S9DNnzrrc8wQGSL0f7lDePe2zcQ/XamN8F7MZC5JTDCoYYw/FmphOwKqMxKj8sRYNtK+DXXd2j8OVC/4WFHRD0rQqmgEjR1gJCO88uoRwt1gWCJ6tZG6IRXwpwL/A8oXnQCmWsceiMeedJfvpJSuNR2Oe4RfhilGXXB/brQOQrCSC1oJjl9JiaiB/NbLXCWRvHv9r8yv+AtPXbtQhGz11dUCPhF3MNT+yLUEpSDRX/87CW9m8n8tlvcuAOfVHSaPm/Lfi5gcGTxoSXvv0giH3YOCqRy7Q2apxZkkHf9DXOdiBm3V+HBNV+O/eUBRV66aV0CkZr+87h/WGFmcAXEx8YSUWxEgECIOjH13v4ci5AU5WiR9ldf4bDMhuqTha2E5micDCsN0vKrTp9C73MB9VnaQfTIKiV9MsQTPZn7uKT5SWcIoKbFrwxCxNQTtlCJGM=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(10070799003)(376014)(1800799024)(22082099003)(18002099003)(4143699003)(6133799003)(10067099003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cXhuWmlIcjVSVW9KZGJOci9IWXVEZUFremhtQ0tORWZuVUc2ZWgwanRMYWg1?=
+ =?utf-8?B?eU5wWmJtRWYxa1ZHWERhZ3FORFd4VlFZUVNNaENPN1FxVnk1R0N4OG8wcFBl?=
+ =?utf-8?B?emN1b0ZqUU9yRlgwY3grSGtVQnBEMHNiRGFQVHVUU1VreDhrMzBBSFBYWEhE?=
+ =?utf-8?B?SVdGd0FtM0pWYkhobDYwSWJBb2JvL3Irek50aGQyODVMNFZlQ1BPWVdNd3RF?=
+ =?utf-8?B?aXM0SHRvRkZ0OHFiTnJUcmg2ZFJOU1NRL0lFc29FTlE3R042Z1M3SXFjeXNu?=
+ =?utf-8?B?UkhDSUhsTXNSSUE1VGVIbmFGeXFOZUwvNEtKQ05NQjl3cm8zMzNEWHdGSXV4?=
+ =?utf-8?B?ODNJbUpHaHhDbTdlT3JLS3lMNUJZWHZpdi9tUjhlbzIyM1BmWk11UEtIZzBx?=
+ =?utf-8?B?T2JIbTU3Q0FwNmUxRSt4T2R1aVJlcWNtRHl6Ukpnay9qQWk1V0lZUk13cFVR?=
+ =?utf-8?B?NU1XQkdzcjNPekc0bDNZN0Jvb1VDb3E2KytrVHdZU045a1Q3T3FYT05zNW5k?=
+ =?utf-8?B?V3lZRTZ4LzIzY09FcWllMDJIZ2lXY1RJMUZ6Z0VuWmlXRXpoYXZ3MjlPcnc3?=
+ =?utf-8?B?YUtoM1ZoQmk1a1k1SEh3Wlcxdkt2TUZIOGdGUS9FbjFXVTdjVEdOeEd1cGE1?=
+ =?utf-8?B?Sjh4M0FLa0Qzd0grNHdZVkljdHV3YWpJMHF0UURWcXJYQWpHUGhGZWpVUEJY?=
+ =?utf-8?B?WWdKdEY3Qy9YTk1EaDNqdFVlZXJoL2E1VzdrVnUrT1puLzJwcm9oRHNZNEha?=
+ =?utf-8?B?RFIzWlh2N0xabklrbmpqYU8yOXNGQTcrRmJOM2JkSlA3a0w5Tk1rZkxjb1VY?=
+ =?utf-8?B?dXVIMUdhMWdKWnMxc3AwVFQvei9IZkFtakYyS05neWIwNXA4ODNleEJBcndh?=
+ =?utf-8?B?aUZjUnJJY3ZNcDRUcTdZYUFhM3RlRE5tMm1BZ0lrV1lSMzlZNk5Pak0yblNt?=
+ =?utf-8?B?djFvQ0wrbU9YdTl4bUtFUGJFdzArVnE1WGZ6dFc1R1pjT1FvM25DaDR2UGNL?=
+ =?utf-8?B?NmFvay9wejRCazIrem91T2dqVmVKRmtHOFZrRmliWlNyRjh1NjFhbFRKakNM?=
+ =?utf-8?B?T3c1bjA0R1ZSLytkYW1acDlFUUhhOWlYRkhlWDdHS3J3NzVCNm5CcGFUYWpx?=
+ =?utf-8?B?TWp1ZjV3MkJZdHVucjdtSlV5aW10TXVMcTRkRTFIQjNOUnlSR2RHbno2WG15?=
+ =?utf-8?B?Nit1SGpva2dGT2NjRUgrZnRHWlN2b1c0OHVZckNBMndRemRsVUNLUU9odEt5?=
+ =?utf-8?B?OWgwMFViNk9UUks0eENFMnFUVjc2WHV6eEtwWjFtVk5tdFpIa3MwWk1saU1h?=
+ =?utf-8?B?dXk1TWlPVmVBZWs0QnNoTU1NOTZuZVFERGxETGc3b3RxZnN2VmNBY0RLamJG?=
+ =?utf-8?B?SGJla3QzZExETDNjWVRXekFPNVlTK3FkSHE3Rnp6TGhNNVJkdnR4NnljSkx2?=
+ =?utf-8?B?WlJKK3lYbkxTd1BYSngyL2tJckxDbGNpL0orOFNVQlJxUGUydXJIZHpXbUVT?=
+ =?utf-8?B?elJOMzlPeWc5aWYxMTk1WnNkSkxDdDFpT0MwcmZheEhHYnQ4RVB1cWVGSmlo?=
+ =?utf-8?B?TUsyZU1VL21WOUxaeUxsUkZZWlU3YlRXdmZNcXJuVWhEQXlYelpxR2tWQXZL?=
+ =?utf-8?B?R1habDRlRTliWHBzUkdvRnBoZnBobENuKzVnVHNmMEZxeGxMYmlJcFJKOVBO?=
+ =?utf-8?B?RGZaRFBReWNMWGR3WVZaSWdVc3VYYUtLZXpONUhwNzIyZjc4VkRtNnZkVkdS?=
+ =?utf-8?B?RHErOVF1NS9pbkRNejRqZHRtUUIrbGlEb2EwYWthYnFIVXR0Q0FxT3pmbkhU?=
+ =?utf-8?B?c3VjdFRpb2I5V256c2MreGY1elhvbHNrS1IwZ29ZSUhLSTlnY1dQc1BnUWJE?=
+ =?utf-8?B?WTRjY2NDWTZEbG55TDdoamk1SHJqY1NybkZmTXgxeTlTTno1VXc1NUhpWUxz?=
+ =?utf-8?B?Z2tYQW43bzBoUjRtNHBjR0tWdVFRNWpZVkorYXMrVWl1cUs3SWkrVmNKQ1BY?=
+ =?utf-8?B?SGJxWXU2OVVoUHg2bFF1WHlBYllXUlZmcnlFMTAya0w3MDB1Q1RVT2xqRWY1?=
+ =?utf-8?B?am0rRWZreGhYNlNrOXVwTkRsY0ZZLzEyODR6N0NXTlRPR1NNaGxISStUeHEw?=
+ =?utf-8?B?cTgweEJCZVRsWDRSeW1jRnZkUEpsZEs1NG02T2JkRkthMjNIV1FTZzJ0RHBy?=
+ =?utf-8?B?ZXZRQ0ZLQXdVOVREK2lENGcwNmF2VytGOXdaNmNaRE1vc2k5TmxVekVtanBa?=
+ =?utf-8?B?ZkxLUXZPZ2lub3d3WTh1Yzl3eVZCZlZrMmMwUFRJOXdqeWxhQzdVUSsrSk9L?=
+ =?utf-8?B?ZmkxLzhjQXlwbkxoMnhwNEtvUUNHVjd0MEsvUmlTQlVma0J5N05TUmZ3RHlS?=
+ =?utf-8?Q?Hz/mSMXahm8DIpgFSJ6Gs+pZKVVLoF1k0LzGtF169A/Jd?=
+X-MS-Exchange-AntiSpam-MessageData-1: Eqdi+RJXBXyQyw==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 041ccbbd-4073-4c64-877f-08df20fd9bdc
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2026 03:22:52.6001
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: p3tX4cNcKOUPNtux4BV2UXHmHw08ayoql/Q7VPpjZvCQu2L0rjKFNIbyHPHyYRbAUfqambvfYsd/WnMKZs7z0w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9159
+
+On Saturday, October 3, 2026 12:40=E2=80=AFAM Brian Masney wrote:
+> Hi Mikko,
+>=20
+> On Wed, Sep 30, 2026 at 02:18:34PM +0900, Mikko Perttunen wrote:
+> > CLK_MIPI_CAL on Tegra114 is a plain clock gate with no source mux; the
+> > fixed parent is PLL_P_OUT3, which is specified to run at 72 MHz. The
+> > clock driver currently registers the gate with clk_m as its parent, so
+> > the clock framework never enables PLL_P_OUT3 when MIPI_CAL is enabled,
+> > and reports the wrong rate for it.
+> >=20
+> > Register the gate with pll_p_out3 as its parent. Also drop
+> > CLK_SET_RATE_PARENT at the same time: the parent canonically runs at
+> > 72 MHz so we shouldn't change the rate.
+> >=20
+> > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>=20
+> Should there be a Fixes tag? I see that Thierry made a change to this
+> same clock 11 years ago:
+>=20
+> commit 07314fc108e195044c074f4b443974b5aaa2d5d7
+> Author: Thierry Reding <treding@nvidia.com>
+> Date:   Wed Apr 8 16:48:26 2015 +0200
+>=20
+>     clk: tegra: Special-case mipi-cal parent on Tegra114
+>    =20
+>     Starting with Tegra124, the mipi-cal clock uses the 72 MHz clock as i=
+ts
+>     source. On Tegra114 this clock's parent was clk_m, so it is the one-o=
+ff
+>     chip.
+>=20
+> Brian
+
+True, technically this is a fix for that patch. I don't think this patch=20
+warrants any backporting, though, that the tag may trigger. If you'd=20
+prefer I can add the below (or if easier, you can add when applying):
+
+Fixes: 07314fc108e1 ("clk: tegra: Special-case mipi-cal parent on Tegra114"=
+)
+
+Thanks
+Mikko
+
+>=20
+>=20
+> > ---
+> >  drivers/clk/tegra/clk-tegra114.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-t=
+egra114.c
+> > index f1bca81b7776..97f5500b13b5 100644
+> > --- a/drivers/clk/tegra/clk-tegra114.c
+> > +++ b/drivers/clk/tegra/clk-tegra114.c
+> > @@ -1050,8 +1050,8 @@ static __init void tegra114_periph_clk_init(void =
+__iomem *clk_base,
+> >  				    &emc_lock);
+> >  	clks[TEGRA114_CLK_MC] =3D clk;
+> > =20
+> > -	clk =3D tegra_clk_register_periph_gate("mipi-cal", "clk_m", 0, clk_ba=
+se,
+> > -					     CLK_SET_RATE_PARENT, 56,
+> > +	clk =3D tegra_clk_register_periph_gate("mipi-cal", "pll_p_out3", 0,
+> > +					     clk_base, 0, 56,
+> >  					     periph_clk_enb_refcnt);
+> >  	clks[TEGRA114_CLK_MIPI_CAL] =3D clk;
+> > =20
+> >=20
+> > ---
+> > base-commit: 72d3fcf802c45d00b300f25b848a93c3a2bd7c7e
+> > change-id: 20260930-b4-dalmore-fixes-mipical-clk-eb375008dd66
+> >=20
+>=20
+>=20
 
 
 
-On 10/1/26 2:22 AM, Srirangan Madhavan wrote:
-> Early PCI discovery creates the HDM cache, while later CXL enumeration and
-> decoder operations provide updated programming state.
-> 
-> Refresh the PCI snapshot when decoders are enumerated, committed, or reset
-> so reset recovery need not walk the CXL topology. Ignore updates when no
-> cache exists and reject decoder-count mismatches.
-> 
-> Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
-> ---
->  drivers/cxl/core/hdm.c | 58 ++++++++++++++++++++++++++++++++++++++++++
->  include/cxl/cxl.h      | 22 ++++++++++++++++
->  include/linux/pci.h    |  6 +++++
->  3 files changed, 86 insertions(+)
-> 
-> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
-> index b6a8fe83d336..d6b3afbffa3e 100644
-> --- a/drivers/cxl/core/hdm.c
-> +++ b/drivers/cxl/core/hdm.c
-> @@ -753,6 +753,44 @@ static void cxl_decoder_snapshot(struct cxl_decoder *cxld,
->  	}
->  }
->  
-> +static void cxl_hdm_refresh_decoder(struct cxl_hdm *cxlhdm,
-> +				    struct cxl_decoder *cxld)
-> +{
-> +	struct cxl_port *port = cxlhdm->port;
-> +	void __iomem *hdm = cxlhdm->regs.hdm_decoder;
-
-reverse xmas tree pls.
-
-> +	struct cxl_decoder_settings *settings;
-> +	struct cxl_hdm_info *info;
-> +	struct pci_dev *pdev __free(pci_dev_put) =
-> +		cxl_port_get_uport_pci_dev(port);
-
-You can move this outside of declaration block. It's one of the exceptions. 
-
-Also, is there any reason to reference a PCI device specifically? Can't you just get the 'struct device' and use exclusively that in this function? Prefer to keep the function neutral here rather than hard code it to PCI and I don't see anything specific to PCI that needs the hard coding. core/hdm.c should use 'struct device'. It does not have a PCI dependency before this. Also you may break cxl_test as it uses platform devices instead of PCI devices.
-
-As an aside, can you please do me a favor and run cxl_test for your series? Having it passing all regression tests is one of the requirements for us to accept CXL patches. We will help you fix any issues crop up if you need it. Of course adding new regression tests for reset to test the new core functions would be awesome and much appreciated. 
-
-> +
-> +	if (!pdev || !hdm)
-> +		return;
-
-Go ahead and do the block like:
-
-	struct pci_dev *pdev __free(pci_dev_put) =
-		cxl_port_get_uport_pci_dev(port);
-	if (!pdev)
-		return;
-
-	if (!hdm)
-		return;
-
-
-> +
-> +	guard(rwsem_write)(&cxl_rwsem.dpa);
-> +	info = pdev->hdm;
-> +	if (!info)
-> +		return;
-
-Could use a blank line here.
-
-> +	if (cxld->config.id < 0 || cxld->config.id >= info->decoder_count) {
-
-Maybe just create a local ptr for cxld->config given all the places you need to access its members.
-
-> +		pci_warn(pdev, "CXL HDM decoder %d exceeds cached count %d\n",
-> +			 cxld->config.id, info->decoder_count);
-> +		return;
-> +	}
-> +
-> +	info->global_ctrl = readl(hdm + CXL_HDM_DECODER_CTRL_OFFSET);
-> +	settings = &info->settings[cxld->config.id];
-> +
-> +	/*
-> +	 * A disabled decoder's software object may retain its old range and
-> +	 * target state. Leave only the decoder id in the cached settings so stale
-> +	 * state is not restored as an enabled decode.
-> +	 */
-> +	*settings = (struct cxl_decoder_settings) {
-> +		.config.id = cxld->config.id,
-> +	};
-> +	if (cxld->config.flags & CXL_DECODER_F_ENABLE)
-> +		cxl_decoder_snapshot(cxld, settings);
-> +}
-> +
->  static int cxl_decoder_commit(struct cxl_decoder *cxld)
->  {
->  	struct cxl_port *port = to_cxl_port(cxld->dev.parent);
-> @@ -804,6 +842,7 @@ static int cxl_decoder_commit(struct cxl_decoder *cxld)
->  	}
->  	port->commit_end++;
->  	cxld->config.flags |= CXL_DECODER_F_ENABLE;
-> +	cxl_hdm_refresh_decoder(cxlhdm, cxld);
->  
->  	return 0;
->  }
-> @@ -876,6 +915,7 @@ static void cxl_decoder_reset(struct cxl_decoder *cxld)
->  	writel(0, hdm + CXL_HDM_DECODER0_BASE_LOW_OFFSET(id));
->  
->  	cxld->config.flags &= ~CXL_DECODER_F_ENABLE;
-> +	cxl_hdm_refresh_decoder(cxlhdm, cxld);
->  
->  	/* Userspace is now responsible for reconfiguring this decoder */
->  	if (is_endpoint_decoder(&cxld->dev)) {
-> @@ -1086,6 +1126,23 @@ static int devm_cxl_enumerate_decoders(struct cxl_hdm *cxlhdm,
->  	int i;
->  	u64 dpa_base = 0;
->  
-> +	if (is_cxl_endpoint(port) && hdm) {
-> +		struct pci_dev *pdev __free(pci_dev_put) =
-> +			cxl_port_get_uport_pci_dev(port);
-> +
-> +		if (pdev) {
-> +			guard(rwsem_read)(&cxl_rwsem.dpa);
-> +
-> +			if (pdev->hdm &&
-> +			    pdev->hdm->decoder_count != cxlhdm->decoder_count) {
-> +				pci_warn(pdev,
-> +					 "CXL HDM cache decoder count mismatch: cached=%d hdm=%d\n",
-> +					 pdev->hdm->decoder_count, cxlhdm->decoder_count);
-> +				return -ENXIO;
-> +			}
-> +		}
-
-So we can't have a 'struct pci_dev' in core/hdm.c without breaking cxl_test. I think we can move this block into a helper function that's in core/pci.c. Maybe call it something like cxl_check_cached_decoder_settings(). I'm open to ideas. That way cxl_test can create a mock function and override it. See something like cxl_await_media_ready() in tools/testing/cxl/ on how to fixup cxl_test. Until we add support code for decoder saving etc in cxl_test, it can just do nothing now.
-
-DJ
-> +	}
-> +
->  	cxl_settle_decoders(cxlhdm);
->  
->  	for (i = 0; i < cxlhdm->decoder_count; i++) {
-> @@ -1124,6 +1181,7 @@ static int devm_cxl_enumerate_decoders(struct cxl_hdm *cxlhdm,
->  			put_device(&cxld->dev);
->  			return rc;
->  		}
-> +		cxl_hdm_refresh_decoder(cxlhdm, cxld);
->  		rc = add_hdm_decoder(port, cxld);
->  		if (rc) {
->  			dev_warn(&port->dev,
-> diff --git a/include/cxl/cxl.h b/include/cxl/cxl.h
-> index 67c81be47fbb..e200c5c56b92 100644
-> --- a/include/cxl/cxl.h
-> +++ b/include/cxl/cxl.h
-> @@ -82,6 +82,28 @@ struct cxl_decoder_settings {
->  	u64 target_or_skip_reg_val;
->  };
->  
-> +/**
-> + * struct cxl_hdm_info - cached CXL HDM state for a PCI device
-> + * @decoder_count: number of entries in @settings
-> + * @hdm_bar: PCI BAR containing the HDM decoder capability
-> + * @hdm_offset: offset of the HDM decoder capability in @hdm_bar
-> + * @hdm_size: size of the HDM decoder register block
-> + * @global_ctrl: HDM decoder global control register
-> + * @dvsec_ctrl: CXL DVSEC control register
-> + * @dvsec_ctrl_valid: whether @dvsec_ctrl contains valid state
-> + * @settings: per-decoder programming state
-> + */
-> +struct cxl_hdm_info {
-> +	int decoder_count;
-> +	int hdm_bar;
-> +	resource_size_t hdm_offset;
-> +	resource_size_t hdm_size;
-> +	u32 global_ctrl;
-> +	u16 dvsec_ctrl;
-> +	bool dvsec_ctrl_valid;
-> +	struct cxl_decoder_settings settings[] __counted_by(decoder_count);
-> +};
-> +
->  /*
->   * Using struct_group() allows for per register-block-type helper routines,
->   * without requiring block-type agnostic code to include the prefix.
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index d31a8d107b1e..7bb37fcb556d 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -339,6 +339,9 @@ struct pcie_link_state;
->  struct pci_sriov;
->  struct pci_p2pdma;
->  struct rcec_ea;
-> +#ifdef CONFIG_CXL_RESET
-> +struct cxl_hdm_info;
-> +#endif
->  
->  /* struct pci_dev - describes a PCI device
->   *
-> @@ -566,6 +569,9 @@ struct pci_dev {
->  #ifdef CONFIG_PCI_DOE
->  	struct xarray	doe_mbs;	/* Data Object Exchange mailboxes */
->  #endif
-> +#ifdef CONFIG_CXL_RESET
-> +	struct cxl_hdm_info *hdm;	/* CXL HDM decoder state */
-> +#endif
->  #ifdef CONFIG_PCI_NPEM
->  	struct npem	*npem;		/* Native PCIe Enclosure Management */
->  #endif
 
