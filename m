@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115BE3FDBEA
-	for <linux-tegra@vger.kernel.org>; Sat,  3 Oct 2026 09:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE674052D4
+	for <linux-tegra@vger.kernel.org>; Sat,  3 Oct 2026 09:59:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791021577; cv=none; b=etSUQ+dHQn7FS3JKsRC/yWAhFcROMJp+wVp14tjnyiAbFq3HJAtG4ubu/2sZmkTTWZhI7Y1V4eZuVoSA7LYLFgv4G79hr+nmPbCwqFg0aPDzqvTt9DfoIoH26APsNlOaJGUP2e8IK1ptbuY4Fg+TBMvHd2V6T4LdipuRR32yusI=
+	t=1791021580; cv=none; b=YlgSNcw/Jh7LcaWR458MmlWaTC3SvLcMXMecyAcnpQfUmv1pRlpVjsjBIV3yhLmj23Jzkjp2ak7MZVGzldHy7kd7wsNBfnuYoIImNJ7PMywBsjYOi/ZoPEktLJH6TLfjoWLjo03Ft2PFpQ8SMoTjQnGAJx0Os/ZjDu8nFJ1s7d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791021577; c=relaxed/simple;
-	bh=IfgmeJ47Oxr65SldEFg6mtycdKNtt0FmCHkcDPmRSak=;
+	s=arc-20240116; t=1791021580; c=relaxed/simple;
+	bh=TO1OFXn140rsQwaJPA3mHkLTkhi5qr5QsGsdvz1BAt0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eBAb4r9OhpOXOrcwFYgtE0vt5YcmgDbyqD1mZ9AaLhpriNghgatjiRHsljZtn4znsOKU+qRtrfhcEONtY+M02BhvUOSABtkvtGNMUUL6m43HQkOZI0dVGwiQ5f+nJ2H0Vaiv1ijfIPeNvvnIMH8GCt/dW0owharE/Pq9eG8AAaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PybIidDn; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:MIME-Version; b=D5EYfedW4hYUxgxEcA1xEfT09c+cRjHK56dXbHUpubR+ZNjrQeUFuaaihS4fFVV0QPMxTIKpwy6szvBU5Np+eJRK+OZ2MVc4P9XC0N3QbSmK3qntb6zT8LJWOUO+GLVqLXDV1JlfKERSEebLBwW+xggkdkcwVQbyWZPF4xGnigk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQEzY9Aa; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PybIidDn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 360551F0089B;
-	Sat,  3 Oct 2026 09:59:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQEzY9Aa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14A1C1F0089B;
+	Sat,  3 Oct 2026 09:59:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791021575;
-	bh=RlLe9ES4mcBqbTqNdhC9FduZlq++oXYrUweaCi2aKHM=;
+	s=k20260515; t=1791021578;
+	bh=zDa65J8U+gkeDjNb7lapYrPffOrSP1UGKdKfaTp+xMc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=PybIidDn5ZFmY6k75NMDqG831uJ7YiN1tU55G0VzovC4Ur69bGMgMscBeo7ofyUKW
-	 z7/9LMbnPX4D7ti5sy9rYbmj1kvxpxt7KdO5/m59qZGqTM8ls1iZ41QJh23pIz2Vwz
-	 5jFpc8c8F2MsxPVqClj3syxMtw1gxHkTlXoDanuIK7i1m9cGpBuzTeiWBitjG5AnRF
-	 mdZrMRzMS4zoI5Rv5jATjnabcr59UZwL6IwzvoJsCqNzUJbSYNFaI6TdvwvbIrbK+i
-	 fTyxOrcyaSraxsmQSrqcfunBP8dR7p/XCXCES8prKfV+2/y4zSo4gU6rmeEj+MlpSJ
-	 yeI5RDPhu6KiQ==
+	b=BQEzY9Aa3AgifVv00F/pQntz1+yvProCfizNPoMYmPmTpZbQwZ6QqCKYQxUBOH4RO
+	 nD/Wd4rBsn36YdmgLVM0ezyWbdIymOP9HCNtfPUaxGz0hpN/R18aQAJ7pwTChNQD62
+	 Edk7slFhrTvxZk3tIIILMS6mGCDpdgzlQb8KgdJL1jm9xc93OKmSVLwRGrNJqQT8LA
+	 NX1ZRYdoSM2TwpmmaMc3sdrDkM19ckXpjq1gJSvGFi0+X8AEnf7dDiDW1DsB2nRJ6O
+	 erjbNvSV6uBC1TMjBbcOvbulWN6G/Zi8//ffByYfUYvFk7vbLfdGmal4iA3MgH+ECt
+	 23OgsGVVN5lkg==
 From: Thierry Reding <thierry.reding@kernel.org>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -33,9 +33,9 @@ Cc: Thierry Reding <thierry.reding@kernel.org>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 4/7] firmware/tegra: Changes for v7.4-rc1
-Date: Sat,  3 Oct 2026 11:59:19 +0200
-Message-ID: <20261003095924.1370238-4-thierry.reding@kernel.org>
+Subject: [GIT PULL 5/7] ARM: tegra: Changes for v7.4-rc1
+Date: Sat,  3 Oct 2026 11:59:20 +0200
+Message-ID: <20261003095924.1370238-5-thierry.reding@kernel.org>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261003095924.1370238-1-thierry.reding@kernel.org>
 References: <20261003095924.1370238-1-thierry.reding@kernel.org>
@@ -58,47 +58,71 @@ The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.4-firmware
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.4-arm-dt
 
-for you to fetch changes up to 1bbcf4a19f1495f769b69e9569d8c1e81df074f5:
+for you to fetch changes up to c79aff01aeda4885cf707c17eede8d19617b78f1:
 
-  firmware: tegra: Remove redundant dev_err() (2026-10-03 01:13:35 +0200)
+  ARM: tegra: lg-x3: Add backlight LED controller node (2026-10-02 00:50:38 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-firmware/tegra: Changes for v7.4-rc1
+ARM: tegra: Changes for v7.4-rc1
 
-The bulk of this adds ACPI support to BPMP as well as a mechanism to
-throttle bandwidth for various high speed interconnects. Some smaller
-cleanup and typofixes are also included.
+The TF701T and LG X3 devices see a lot of updates and device trees are
+added for the Motorola Atrix 4G and Droid X2. The core power supply is
+added on Tegra114 devices to make power domains work properly. AHUB on
+Tegra124 is cleaned up a bit.
 
 ----------------------------------------------------------------
-Aniruddha Rao (6):
-      firmware: tegra: bpmp: Move channel initialization to helper
-      firmware: tegra: bpmp: Add ACPI support
-      firmware: tegra: bpmp: Add the Memory Bandwidth Throttler ABI definitions
-      firmware: tegra: bpmp: Add MBWT BPMP helpers
-      firmware: tegra: bpmp: Add MBWT sysfs interface
-      firmware: tegra: bpmp: Allow BPMP debugfs population to be skipped
+Mikko Perttunen (1):
+      ARM: tegra: Add core supply for Tegra114 boards
 
-Hemanth Selam (1):
-      soc/tegra: Fix typos in comments
+Svyatoslav Ryhel (19):
+      dt-bindings: arm: tegra: Add Motorola Artix 4G and Droid X2
+      ARM: tegra: tf701t: Configure CPU DFLL clock node
+      ARM: tegra: tf701t: Add core-supply to PMC node
+      ARM: tegra: tf701t: Add MC and EMC timing nodes
+      ARM: tegra: tf701t: Remove pin_ prefix from PMIC pinmux
+      ARM: tegra: tf701t: Add thermal zones for nct1008 sensor
+      ARM: tegra: tf701t: Tune MMC devices
+      ARM: tegra: tf701t: Fix BCM43341 WiFi/BT chip configuration
+      ARM: tegra: tf701t: Complete power sensor node
+      ARM: tegra: tf701t: Configure UART-B line used for GPS
+      ARM: tegra: tf701t: Add chosen node
+      ARM: tegra: Add device-tree for Motorola Atrix 4G and Droid X2
+      ARM: tegra: lg-x3: Adjust WiFi node
+      ARM: tegra: lg-x3: Remove pinctrl-* properties duplication
+      ARM: tegra: lg-x3: Lower supported suspend mode
+      ARM: tegra: lg-x3: Add light sensor node
+      ARM: tegra: lg-x3: Add flash LEDs controller node
+      ARM: tegra: lg-x3: Add haptic engine node
+      ARM: tegra: lg-x3: Add backlight LED controller node
 
-Pan Chuang (1):
-      firmware: tegra: Remove redundant dev_err()
+Thierry Reding (4):
+      dt-bindings: memory: tegra: Fix Tegra132 compatible string
+      dt-bindings: fuse: Document compatible string for Tegra264 FUSE
+      Merge branch 'for-7.4/dt-bindings' into for-7.4/dt-bindings
+      ARM: tegra: Clean up AHUB on Tegra124
 
- .../ABI/testing/sysfs-platform-tegra-bpmp          |  48 +++
- drivers/firmware/tegra/Makefile                    |   1 +
- drivers/firmware/tegra/bpmp-debugfs.c              |   9 +
- drivers/firmware/tegra/bpmp-private.h              |  39 ++
- drivers/firmware/tegra/bpmp-sysfs.c                | 207 ++++++++++
- drivers/firmware/tegra/bpmp-tegra186.c             |  14 +
- drivers/firmware/tegra/bpmp-tegra210.c             |  17 +-
- drivers/firmware/tegra/bpmp.c                      | 434 ++++++++++++++++++---
- include/soc/tegra/bpmp-abi.h                       | 165 +++++++-
- include/soc/tegra/bpmp.h                           |   2 +
- 10 files changed, 880 insertions(+), 56 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-platform-tegra-bpmp
- create mode 100644 drivers/firmware/tegra/bpmp-sysfs.c
+ Documentation/devicetree/bindings/arm/tegra.yaml   |    6 +
+ .../bindings/fuse/nvidia,tegra20-fuse.yaml         |    1 +
+ .../memory-controllers/nvidia,tegra124-emc.yaml    |   10 +-
+ .../memory-controllers/nvidia,tegra124-mc.yaml     |    1 +
+ arch/arm/boot/dts/nvidia/Makefile                  |    2 +
+ arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts  |  885 ++++++++++++++-
+ arch/arm/boot/dts/nvidia/tegra114-dalmore.dts      |    4 +-
+ arch/arm/boot/dts/nvidia/tegra114-roth.dts         |    4 +-
+ arch/arm/boot/dts/nvidia/tegra114-tn7.dts          |    4 +-
+ arch/arm/boot/dts/nvidia/tegra124.dtsi             |   16 +-
+ .../boot/dts/nvidia/tegra20-motorola-daytona.dts   |  107 ++
+ arch/arm/boot/dts/nvidia/tegra20-motorola-mot.dtsi | 1194 ++++++++++++++++++++
+ .../boot/dts/nvidia/tegra20-motorola-olympus.dts   |  108 ++
+ arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts       |    5 +-
+ arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts       |    5 +-
+ arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi        |  106 +-
+ 16 files changed, 2399 insertions(+), 59 deletions(-)
+ create mode 100644 arch/arm/boot/dts/nvidia/tegra20-motorola-daytona.dts
+ create mode 100644 arch/arm/boot/dts/nvidia/tegra20-motorola-mot.dtsi
+ create mode 100644 arch/arm/boot/dts/nvidia/tegra20-motorola-olympus.dts
