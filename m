@@ -1,97 +1,102 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B01D39734A;
-	Sat,  3 Oct 2026 08:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8267939734A;
+	Sat,  3 Oct 2026 08:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791016367; cv=none; b=LHKTNTt568/Cb7c1b/J0kt2yKAs6X1cnqsgPlU7AZF5GScmZdz6CYXOKfGIYY5SmWzeoOV6R8f/m6JMWyXsxfcfe6VnNy1pgHQXFP7XA3+MuiwAINGvmKyu6J+qSdHfIoLKSiBfB6PDPMLzc7gCIE09Kgu+O125YRgX73CuyZek=
+	t=1791016504; cv=none; b=rcDPDwe5RzPqMN7JHo87IIY+04OnW+5ovm+gZqwEgCsu6TCTAxtYZjvaPu/75XWpgxE/BPfFPb66DcCBjlciBqbZgmNxHci3aNP9BvnTHjKFMjVQ6NDar0sQL4jsoC4wyQMEr2rEPeTxcnp5o22Do04/rwcbnVRfkRp4+YEj4jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791016367; c=relaxed/simple;
-	bh=mTgsraDyaZwUNKNLUzIDplC+Yod0FrM7Z7ibjSoJow8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dCGM46iSRKaBmko5pj2CarxaGvrcEsjRrZF546nl4offGA6pKSDkwjoYvtCxTG7mgNGiT5mHy+3d1wT2OI4OWDYjA8GBxw5MOIWAbYyVyfvI4Ato5zVm35FBIOzHDPr3v64G6GdrQGH0VUhQmn337KQZnuEHvRl2Cto28m7fx0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=FlqL+VRp; arc=none smtp.client-ip=220.197.31.3
+	s=arc-20240116; t=1791016504; c=relaxed/simple;
+	bh=jiND6+VyUYO2CZ2lWHVi2o8c/TWRKntONQdI4+2CpXk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=d9JBGt21NM0+KQschMk/AnGwsB4xcz0CpGmO8q1usDkjtwMlOfsnEZbG/GdB16WxWfshnQRxoDdLUbM2uKrZ5dMJUa/qWFOeCdBsSMAvljWtYtM6rYOI8Bxor7w/OqrEjKBHPwJehtsd793uWjLzoqlOZiFYH2OFQbzJthtrvxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=RvyLmjr7; arc=none smtp.client-ip=117.135.210.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="FlqL+VRp"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="RvyLmjr7"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=I0
-	96cPDAgu/rffSPuYsOvZ0nu9Fx4C52NqLyO2/RJjU=; b=FlqL+VRpdcFAWmYaMI
-	aBRL3FvMMPe/QiX2CUAF4I04Ad1aPvQq1ty4z3wpa34NEzKU6BQmE49Gt4YK3KGt
-	Hznk+wTN2Tni1nvvouOQjBmPnEhhXinvOzoZOSiPmeJkMVQ2YkZPFjZJS6PyO2TK
-	CaWxfYnp61Y77D9qxJ89SVtBo=
-Received: from pc.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3dzGDvcBqKMk7CA--.47308S2;
-	Sat, 03 Oct 2026 16:32:04 +0800 (CST)
-From: Jiale Yao <yaojiale02@163.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linusw@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Cc: Jiale Yao <yaojiale02@163.com>
-Subject: [PATCH v2 0/4] pinctrl: free maps on DT mapping failures
-Date: Sat,  3 Oct 2026 16:31:53 +0800
-Message-Id: <20261003083200.459705-1-yaojiale02@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=jiND6+VyUYO2CZ2lWHVi2o8c/TWRKntONQdI4+2CpXk=; b=R
+	vyLmjr7asOnRkd+0Pk6etc5TX+OBVW0itpLDR99GEhu4/sSuW1FrJMsx7ZqXVDha
+	R2KNd27y/+jOKZo2w7Hql5rXDb0HTdj4pOpp3pAiDH7zf9Aq+IUNl5c8ZKP9+d/d
+	XoHfUoL56vSx3GLkeI+V5ADnrmL9RB4U83dpezuoSg=
+Date: Sat, 3 Oct 2026 16:34:32 +0800 (CST)
+From: "jiale yao" <19888972804@163.com>
+To: "Geert Uytterhoeven" <geert@linux-m68k.org>
+Cc: "Linus Walleij" <linusw@kernel.org>, "Orson Zhai" <orsonzhai@gmail.com>,
+	"Baolin Wang" <baolin.wang@linux.alibaba.com>,
+	"Chunyan Zhang" <zhang.lyra@gmail.com>,
+	"Thierry Reding" <thierry.reding@kernel.org>,
+	"Jonathan Hunter" <jonathanh@nvidia.com>,
+	"Krzysztof Kozlowski" <krzysztof.kozlowski@oss.qualcomm.com>,
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re:Re:Re: [PATCH 2/4] pinctrl: renesas: rzn1: free maps on DT map
+ failure
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
+ 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
+In-Reply-To: <7eaa18c1.6909.1a0ec33ffd4.Coremail.19888972804@163.com>
+References: <20260924111856.622898-1-yaojiale02@163.com>
+ <20260924111856.622898-3-yaojiale02@163.com>
+ <CAMuHMdUaPuhy==YAKxUsBTCddCu9pEixPckkYYgoy=LXprnYog@mail.gmail.com>
+ <7eaa18c1.6909.1a0ec33ffd4.Coremail.19888972804@163.com>
+X-NTES-SC: AL_Qu2SA/yauUws5CafZOkdmE8Uges8WcC0svki1YJUc+4GhzHBwiABbHpeBEnt4NmlFwSNnAm9ShFy8/5qb6BZ9ZSUsK8BHdfKyMeQSduBQg==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3dzGDvcBqKMk7CA--.47308S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7trWrtw15tr4rtr4fAF1DKFg_yoW8GFyUpF
-	4fWFsIyrn8Jw42yF9xJw10yFyfGa1xCry5W3W3K34UZF45CFyDGr4Y9FWFqrWkCrW8Ww4f
-	tF45KFyDWr18AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEM5lnUUUUU=
-X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbCzQRblWrAvYT77AAA3D
+Message-ID: <1ac76ed5.1123.1a100e69066.Coremail.19888972804@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:jygvCgDnZxYYvsBqM0MHAA--.9447W
+X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbC7xiAumrAvhiYhAAA3d
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Several pinctrl drivers reserve map storage before appending mux and
-configuration entries while translating device tree nodes.  If a later
-operation fails, their error paths free only temporary configuration data
-and leave the partially built map allocated.
-
-Commit 17007cd70060 ("pinctrl: generic: free maps on
-pinctrl_generic_to_map() failure") fixed the same cleanup problem in the
-generic mapping helper.  These drivers use their own mapping callbacks and
-need equivalent error handling.
-
-Free the accumulated map on every failure path in the Spreadtrum, Renesas
-RZ/N1, Tegra XUSB, and Samsung drivers.  Each patch changes one driver and
-remains independently buildable.
-
-Changes in v2:
-- Add the Fixes tag and Baolin's Reviewed-by tag to patch 1.
-- Drop the unnecessary output parameter resets from all four patches and
-  update their commit messages accordingly.
-
-Jiale Yao (4):
-  pinctrl: sprd: free maps on DT map failure
-  pinctrl: renesas: rzn1: free maps on DT map failure
-  pinctrl: tegra: xusb: free maps on DT map failure
-  pinctrl: samsung: free maps on DT map failure
-
- drivers/pinctrl/renesas/pinctrl-rzn1.c     |  8 ++++++--
- drivers/pinctrl/samsung/pinctrl-samsung.c  | 24 ++++++++++++++--------
- drivers/pinctrl/sprd/pinctrl-sprd.c        |  3 +++
- drivers/pinctrl/tegra/pinctrl-tegra-xusb.c |  6 +++++-
- 4 files changed, 29 insertions(+), 12 deletions(-)
-
--- 
-2.34.1
+QXQgMjAyNi0wOS0yOSAxNjowNzowNSwgImppYWxlIHlhbyIgPDE5ODg4OTcyODA0QDE2My5jb20+
+IHdyb3RlOgo+SGkgR2VlcnQsCj4KPkF0IDIwMjYtMDktMjggMjE6MTk6NDgsICJHZWVydCBVeXR0
+ZXJob2V2ZW4iIDxnZWVydEBsaW51eC1tNjhrLm9yZz4gd3JvdGU6Cj4+SGkgSmlhbGUsCj4+Cj4+
+T24gVGh1LCAyNCBTZXB0IDIwMjYgYXQgMTM6MTksIEppYWxlIFlhbyA8eWFvamlhbGUwMkAxNjMu
+Y29tPiB3cm90ZToKPj4+IHJ6bjFfZHRfbm9kZV90b19tYXBfb25lKCkgYXBwZW5kcyBtYXBwaW5n
+cyBmb3IgZWFjaCBEVCBub2RlLiAgSWYgYQo+Pj4gbm9kZSBmYWlscyBhZnRlciBtYXAgc3RvcmFn
+ZSBoYXMgYmVlbiByZXNlcnZlZCwgdGhlIHRvcC1sZXZlbCBjYWxsYmFjawo+Pj4gcmV0dXJucyB3
+aXRob3V0IHJlbGVhc2luZyBtYXBwaW5ncyBidWlsdCBmb3IgdGhlIGN1cnJlbnQgYW5kIHByZXZp
+b3VzCj4+PiBub2Rlcy4KPj4+Cj4+PiBGcmVlIHRoZSBhY2N1bXVsYXRlZCBtYXAgYW5kIGNsZWFy
+IHRoZSBvdXRwdXQgcGFyYW1ldGVycyBvbiBldmVyeSBlcnJvcgo+Pj4gcGF0aC4KPj4+Cj4+PiBT
+aWduZWQtb2ZmLWJ5OiBKaWFsZSBZYW8gPHlhb2ppYWxlMDJAMTYzLmNvbT4KPj4KPj5UaGFua3Mg
+Zm9yIHlvdXIgcGF0Y2ghCj4+Cj4+PiAtLS0gYS9kcml2ZXJzL3BpbmN0cmwvcmVuZXNhcy9waW5j
+dHJsLXJ6bjEuYwo+Pj4gKysrIGIvZHJpdmVycy9waW5jdHJsL3JlbmVzYXMvcGluY3RybC1yem4x
+LmMKPj4+IEBAIC00MTEsMTUgKzQxMSwyMSBAQCBzdGF0aWMgaW50IHJ6bjFfZHRfbm9kZV90b19t
+YXAoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LAo+Pj4KPj4+ICAgICAgICAgcmV0ID0gcnpu
+MV9kdF9ub2RlX3RvX21hcF9vbmUocGN0bGRldiwgbnAsIG1hcCwgbnVtX21hcHMpOwo+Pj4gICAg
+ICAgICBpZiAocmV0IDwgMCkKPj4+IC0gICAgICAgICAgICAgICByZXR1cm4gcmV0Owo+Pj4gKyAg
+ICAgICAgICAgICAgIGdvdG8gZXJyX2ZyZWVfbWFwOwo+Pj4KPj4+ICAgICAgICAgZm9yX2VhY2hf
+Y2hpbGRfb2Zfbm9kZV9zY29wZWQobnAsIGNoaWxkKSB7Cj4+PiAgICAgICAgICAgICAgICAgcmV0
+ID0gcnpuMV9kdF9ub2RlX3RvX21hcF9vbmUocGN0bGRldiwgY2hpbGQsIG1hcCwgbnVtX21hcHMp
+Owo+Pj4gICAgICAgICAgICAgICAgIGlmIChyZXQgPCAwKQo+Pj4gLSAgICAgICAgICAgICAgICAg
+ICAgICAgcmV0dXJuIHJldDsKPj4+ICsgICAgICAgICAgICAgICAgICAgICAgIGdvdG8gZXJyX2Zy
+ZWVfbWFwOwo+Pj4gICAgICAgICB9Cj4+Pgo+Pj4gICAgICAgICByZXR1cm4gMDsKPj4+ICsKPj4+
+ICtlcnJfZnJlZV9tYXA6Cj4+PiArICAgICAgIHBpbmN0cmxfdXRpbHNfZnJlZV9tYXAocGN0bGRl
+diwgKm1hcCwgKm51bV9tYXBzKTsKPj4KPj5OaWNlIGNhdGNoIQo+Pgo+Pj4gKyAgICAgICAqbWFw
+ID0gTlVMTDsKPj4+ICsgICAgICAgKm51bV9tYXBzID0gMDsKPj4KPj5JcyB0aGUgcmVzZXR0aW5n
+IGFjdHVhbGx5IG5lZWRlZD8KPj5Pbmx5IHBpbmN0cmwtZ2VuZXJpYy5jLCBwaW5jdHJsLXNwcmQu
+YywgYW5kIHBpbmN0cmwtdGVncmEteHVzYi5jIHNlZW0KPj50byBkbyB0aGF0Cj4KPk5vLCB0aGUg
+cmVzZXR0aW5nIGlzIG5vdCBuZWVkZWQsIGFzIHRoZSBjYWxsZXIgZG9lcyBub3QgaW5zcGVjdCB0
+aGUKPm91dHB1dCBwYXJhbWV0ZXJzIHdoZW4gZHRfbm9kZV90b19tYXAoKSByZXR1cm5zIGFuIGVy
+cm9yLgo+Cj5JJ2xsIGRyb3AgYm90aCBhc3NpZ25tZW50cyBhbmQgdXBkYXRlIHRoZSBjb21taXQg
+bWVzc2FnZSBpbiB2Mi4KdjIgaW4sIGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI2MTAw
+MzA4MzIwMC40NTk3MDUtMS15YW9qaWFsZTAyQDE2My5jb20KPgo+Lgo+Pgo+Pj4gKyAgICAgICBy
+ZXR1cm4gcmV0Owo+Pj4gIH0KPj4+Cj4+PiAgc3RhdGljIGNvbnN0IHN0cnVjdCBwaW5jdHJsX29w
+cyByem4xX3BjdHJsX29wcyA9IHsKPj4KPj5HcntvZXRqZSxlZXRpbmd9cywKPj4KPj4gICAgICAg
+ICAgICAgICAgICAgICAgICBHZWVydAo+Pgo+Pgo+Pi0tCj4+R2VlcnQgVXl0dGVyaG9ldmVuIC0t
+IFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC1tNjhrLm9y
+Zwo+Pgo+PkluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJ
+IGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQKPj53aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxp
+c3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuCj4+ICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcwo+Cj5KaWFsZQo=
 
