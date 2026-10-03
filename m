@@ -1,45 +1,52 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD7D39FCC4;
-	Sat,  3 Oct 2026 08:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B01D39734A;
+	Sat,  3 Oct 2026 08:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791016362; cv=none; b=oYv5Bi1hL7IScvlwDLHND59G7KkUCTP7qZbyn1JBLvG+TTeZW5AEkG90ks/fOPR9KgPPD2q8xeY47bFgVE8U3uMiagBkoWlCX6VuDiQVYkZEDHxJA7r06apBrUUqsCkQ3cUdiR71MpGIXpcaj3zsAf9H13tJHjYlzlgsSM9vAms=
+	t=1791016367; cv=none; b=LHKTNTt568/Cb7c1b/J0kt2yKAs6X1cnqsgPlU7AZF5GScmZdz6CYXOKfGIYY5SmWzeoOV6R8f/m6JMWyXsxfcfe6VnNy1pgHQXFP7XA3+MuiwAINGvmKyu6J+qSdHfIoLKSiBfB6PDPMLzc7gCIE09Kgu+O125YRgX73CuyZek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791016362; c=relaxed/simple;
-	bh=8qOSFA2sJUv+KWHHvj42fQUNUgEEifG6QWugdgJf2bk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iKQhqajQWXPKc/Mb9OmX6XJ6WS3n/7GCebh+qNPxdmktK+zzo7xQb//met1VjanafkVCdkqNDxgNGXicJFryzsY18Ik2QcBLSeEW4oMWosPLR9IwfyXCGODyP+CKTtQ7wyUACm4xM7yXYQeJext1o69cYgb5C+FIMnJTpXagmwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=dyZ6hlmR; arc=none smtp.client-ip=220.197.31.4
+	s=arc-20240116; t=1791016367; c=relaxed/simple;
+	bh=mTgsraDyaZwUNKNLUzIDplC+Yod0FrM7Z7ibjSoJow8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dCGM46iSRKaBmko5pj2CarxaGvrcEsjRrZF546nl4offGA6pKSDkwjoYvtCxTG7mgNGiT5mHy+3d1wT2OI4OWDYjA8GBxw5MOIWAbYyVyfvI4Ato5zVm35FBIOzHDPr3v64G6GdrQGH0VUhQmn337KQZnuEHvRl2Cto28m7fx0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=FlqL+VRp; arc=none smtp.client-ip=220.197.31.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="dyZ6hlmR"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="FlqL+VRp"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=/u
-	TRQAtLsELjQBXidvufTqqYcCEYm891ddHU7+TMhqc=; b=dyZ6hlmR8+xRnyV0w4
-	r2XSqDobmjswlaPlC5SOzec8ffLlhp/GZlXj9HgMyjZTlWe4onXQiGNzR9Z66VF5
-	6E9w/v0RGXsosQBkcRomNzMmzSH1psMdOlSFkHDjihHuXOVzaW+D2qpe9iu37m/X
-	8lPuzi03AuptAuUJfHQD4vyv4=
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=I0
+	96cPDAgu/rffSPuYsOvZ0nu9Fx4C52NqLyO2/RJjU=; b=FlqL+VRpdcFAWmYaMI
+	aBRL3FvMMPe/QiX2CUAF4I04Ad1aPvQq1ty4z3wpa34NEzKU6BQmE49Gt4YK3KGt
+	Hznk+wTN2Tni1nvvouOQjBmPnEhhXinvOzoZOSiPmeJkMVQ2YkZPFjZJS6PyO2TK
+	CaWxfYnp61Y77D9qxJ89SVtBo=
 Received: from pc.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3dzGDvcBqKMk7CA--.47308S5;
-	Sat, 03 Oct 2026 16:32:11 +0800 (CST)
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3dzGDvcBqKMk7CA--.47308S2;
+	Sat, 03 Oct 2026 16:32:04 +0800 (CST)
 From: Jiale Yao <yaojiale02@163.com>
-To: Linus Walleij <linusw@kernel.org>,
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linusw@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
 	Thierry Reding <thierry.reding@kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	linux-renesas-soc@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-tegra@vger.kernel.org
 Cc: Jiale Yao <yaojiale02@163.com>
-Subject: [PATCH v2 3/4] pinctrl: tegra: xusb: free maps on DT map failure
-Date: Sat,  3 Oct 2026 16:31:56 +0800
-Message-Id: <20261003083200.459705-4-yaojiale02@163.com>
+Subject: [PATCH v2 0/4] pinctrl: free maps on DT mapping failures
+Date: Sat,  3 Oct 2026 16:31:53 +0800
+Message-Id: <20261003083200.459705-1-yaojiale02@163.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20261003083200.459705-1-yaojiale02@163.com>
-References: <20261003083200.459705-1-yaojiale02@163.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -47,47 +54,44 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3dzGDvcBqKMk7CA--.47308S5
-X-Coremail-Antispam: 1Uf129KBjvJXoWrtr1fAF1UCF17Ww4DtF1DJrb_yoW8Jr17pF
-	4fWFy5Jrn8Jw4fGF9xJw47ZFy3Can3A34Uua4rK342vFs8CryDtF1UKFy8ZFWkCrWktr13
-	ur15AFy7uFy5uaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zi8wIDUUUUU=
-X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbCzQxdl2rAvYz8VwAA37
+X-CM-TRANSID:_____wD3dzGDvcBqKMk7CA--.47308S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7trWrtw15tr4rtr4fAF1DKFg_yoW8GFyUpF
+	4fWFsIyrn8Jw42yF9xJw10yFyfGa1xCry5W3W3K34UZF45CFyDGr4Y9FWFqrWkCrW8Ww4f
+	tF45KFyDWr18AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEM5lnUUUUU=
+X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbCzQRblWrAvYT77AAA3D
 
-tegra_xusb_padctl_parse_subnode() can append mappings before a later
-child or configuration operation fails.  The top-level callback currently
-returns the error while retaining all mappings allocated for earlier
-children.
+Several pinctrl drivers reserve map storage before appending mux and
+configuration entries while translating device tree nodes.  If a later
+operation fails, their error paths free only temporary configuration data
+and leave the partially built map allocated.
 
-Free the accumulated map on failure.  The caller ignores the output
-parameters when the mapping callback returns an error, so they do not need
-to be reset after freeing the map.
+Commit 17007cd70060 ("pinctrl: generic: free maps on
+pinctrl_generic_to_map() failure") fixed the same cleanup problem in the
+generic mapping helper.  These drivers use their own mapping callbacks and
+need equivalent error handling.
 
-Signed-off-by: Jiale Yao <yaojiale02@163.com>
----
- drivers/pinctrl/tegra/pinctrl-tegra-xusb.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Free the accumulated map on every failure path in the Spreadtrum, Renesas
+RZ/N1, Tegra XUSB, and Samsung drivers.  Each patch changes one driver and
+remains independently buildable.
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c b/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-index c6a51bb21215..fb70f8aee56b 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-@@ -248,10 +248,14 @@ static int tegra_xusb_padctl_dt_node_to_map(struct pinctrl_dev *pinctrl,
- 						      &reserved_maps,
- 						      num_maps);
- 		if (err < 0)
--			return err;
-+			goto err_free_map;
- 	}
- 
- 	return 0;
-+
-+err_free_map:
-+	pinctrl_utils_free_map(pinctrl, *maps, *num_maps);
-+	return err;
- }
- 
- static const struct pinctrl_ops tegra_xusb_padctl_pinctrl_ops = {
+Changes in v2:
+- Add the Fixes tag and Baolin's Reviewed-by tag to patch 1.
+- Drop the unnecessary output parameter resets from all four patches and
+  update their commit messages accordingly.
+
+Jiale Yao (4):
+  pinctrl: sprd: free maps on DT map failure
+  pinctrl: renesas: rzn1: free maps on DT map failure
+  pinctrl: tegra: xusb: free maps on DT map failure
+  pinctrl: samsung: free maps on DT map failure
+
+ drivers/pinctrl/renesas/pinctrl-rzn1.c     |  8 ++++++--
+ drivers/pinctrl/samsung/pinctrl-samsung.c  | 24 ++++++++++++++--------
+ drivers/pinctrl/sprd/pinctrl-sprd.c        |  3 +++
+ drivers/pinctrl/tegra/pinctrl-tegra-xusb.c |  6 +++++-
+ 4 files changed, 29 insertions(+), 12 deletions(-)
+
 -- 
 2.34.1
 
