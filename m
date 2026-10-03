@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE674052D4
-	for <linux-tegra@vger.kernel.org>; Sat,  3 Oct 2026 09:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FF14078C5
+	for <linux-tegra@vger.kernel.org>; Sat,  3 Oct 2026 09:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791021580; cv=none; b=YlgSNcw/Jh7LcaWR458MmlWaTC3SvLcMXMecyAcnpQfUmv1pRlpVjsjBIV3yhLmj23Jzkjp2ak7MZVGzldHy7kd7wsNBfnuYoIImNJ7PMywBsjYOi/ZoPEktLJH6TLfjoWLjo03Ft2PFpQ8SMoTjQnGAJx0Os/ZjDu8nFJ1s7d4=
+	t=1791021583; cv=none; b=DEviEVeVnxqRUfGZCsfmn2UvcdaPSM+f60zg/WTrVHVQTtrKOr74DsLutwdK8/twm9Po0CLtOtb36OFvoyDAzwLsK2s70+NEKltEvHa/0FvuBg2upw07MjP+JSPIjmf0knCqmgp5J95XRLX6aC9ZAfHuYMKRA7QJgIIAqbItAy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791021580; c=relaxed/simple;
-	bh=TO1OFXn140rsQwaJPA3mHkLTkhi5qr5QsGsdvz1BAt0=;
+	s=arc-20240116; t=1791021583; c=relaxed/simple;
+	bh=G8XhxioShejTAX29jJ53hwT4zrUjg1tvAJH6HLO7eMU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=D5EYfedW4hYUxgxEcA1xEfT09c+cRjHK56dXbHUpubR+ZNjrQeUFuaaihS4fFVV0QPMxTIKpwy6szvBU5Np+eJRK+OZ2MVc4P9XC0N3QbSmK3qntb6zT8LJWOUO+GLVqLXDV1JlfKERSEebLBwW+xggkdkcwVQbyWZPF4xGnigk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQEzY9Aa; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:MIME-Version; b=rQTvtQGPtujGl4sBDyKCBuXhw9dxaNOw7vhmhqSntGIsXTgcdoaJqohHtAmlyNKhaZVIPouWjj8LgncLQJqPGZkMUlKJCLePJzRszPRUaGNtO9xRBH94M1ohaKxaaZWMirm3G2orYkO/YtWrzAaqY7AlvViFVWG+f0XBLqL3SII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n+mqO0TO; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQEzY9Aa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14A1C1F0089B;
-	Sat,  3 Oct 2026 09:59:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n+mqO0TO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3EDD1F0089B;
+	Sat,  3 Oct 2026 09:59:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791021578;
-	bh=zDa65J8U+gkeDjNb7lapYrPffOrSP1UGKdKfaTp+xMc=;
+	s=k20260515; t=1791021581;
+	bh=QQUDK7iQZnXh2lBf7ATl7J/UaIvcvGDIkPs2KRMQAk0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=BQEzY9Aa3AgifVv00F/pQntz1+yvProCfizNPoMYmPmTpZbQwZ6QqCKYQxUBOH4RO
-	 nD/Wd4rBsn36YdmgLVM0ezyWbdIymOP9HCNtfPUaxGz0hpN/R18aQAJ7pwTChNQD62
-	 Edk7slFhrTvxZk3tIIILMS6mGCDpdgzlQb8KgdJL1jm9xc93OKmSVLwRGrNJqQT8LA
-	 NX1ZRYdoSM2TwpmmaMc3sdrDkM19ckXpjq1gJSvGFi0+X8AEnf7dDiDW1DsB2nRJ6O
-	 erjbNvSV6uBC1TMjBbcOvbulWN6G/Zi8//ffByYfUYvFk7vbLfdGmal4iA3MgH+ECt
-	 23OgsGVVN5lkg==
+	b=n+mqO0TOr77vBtY5/lGabd+8JO8E+Ss6lh2TW12NXZ4q3mGghP5yjuLhQrDE8eE8D
+	 7S145Iuf8/zRb8lZFjwdCmLw7qNloUdcTQvs41c6fQlyHO81fl/+FTFbwfjcogCOih
+	 n+3wRfJ0ysOmo8AXoKUi/TfY5uo8rkuVIJP1ycn8vdQRcsyLN9YdPY7pnqzgtBq89H
+	 2+SByFHcQY6q5NSONE5/3AHklYmMWv+zcZSPnLGU5V3XKqgUq9X/DSyUWk6tlVugbV
+	 v5oFaSLoiae9/hDzMBwoTppieOKfj+kmSW5OLP29AqWyooadp1/WCuqDAaKpJ/+4Zh
+	 YQujM83GeVAgA==
 From: Thierry Reding <thierry.reding@kernel.org>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -33,9 +33,9 @@ Cc: Thierry Reding <thierry.reding@kernel.org>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 5/7] ARM: tegra: Changes for v7.4-rc1
-Date: Sat,  3 Oct 2026 11:59:20 +0200
-Message-ID: <20261003095924.1370238-5-thierry.reding@kernel.org>
+Subject: [GIT PULL 6/7] arm64: tegra: Changes for v7.4-rc1
+Date: Sat,  3 Oct 2026 11:59:21 +0200
+Message-ID: <20261003095924.1370238-6-thierry.reding@kernel.org>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261003095924.1370238-1-thierry.reding@kernel.org>
 References: <20261003095924.1370238-1-thierry.reding@kernel.org>
@@ -58,71 +58,88 @@ The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.4-arm-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-7.4-arm64-dt
 
-for you to fetch changes up to c79aff01aeda4885cf707c17eede8d19617b78f1:
+for you to fetch changes up to ad4deb2e42ebb94425c003ca3ca39691ebe61e0f:
 
-  ARM: tegra: lg-x3: Add backlight LED controller node (2026-10-02 00:50:38 +0200)
+  arm64: tegra: Add Tegra264 SDMMC1 device tree node (2026-10-03 00:56:24 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Changes for v7.4-rc1
+arm64: tegra: Changes for v7.4-rc1
 
-The TF701T and LG X3 devices see a lot of updates and device trees are
-added for the Motorola Atrix 4G and Droid X2. The core power supply is
-added on Tegra114 devices to make power domains work properly. AHUB on
-Tegra124 is cleaned up a bit.
+This set of changes contain a lot of cleanups to existing device trees,
+most of which fix issues with the device tree validation.
+
+There are also various improvements to Jetson AGX Thor and the DevKit as
+well as IGX Orin, making all these Tegra264-based devices more capable.
 
 ----------------------------------------------------------------
-Mikko Perttunen (1):
-      ARM: tegra: Add core supply for Tegra114 boards
+Aaron Kling (1):
+      arm64: tegra: Enable DMA Support on Tegra194 QSPI
 
-Svyatoslav Ryhel (19):
-      dt-bindings: arm: tegra: Add Motorola Artix 4G and Droid X2
-      ARM: tegra: tf701t: Configure CPU DFLL clock node
-      ARM: tegra: tf701t: Add core-supply to PMC node
-      ARM: tegra: tf701t: Add MC and EMC timing nodes
-      ARM: tegra: tf701t: Remove pin_ prefix from PMIC pinmux
-      ARM: tegra: tf701t: Add thermal zones for nct1008 sensor
-      ARM: tegra: tf701t: Tune MMC devices
-      ARM: tegra: tf701t: Fix BCM43341 WiFi/BT chip configuration
-      ARM: tegra: tf701t: Complete power sensor node
-      ARM: tegra: tf701t: Configure UART-B line used for GPS
-      ARM: tegra: tf701t: Add chosen node
-      ARM: tegra: Add device-tree for Motorola Atrix 4G and Droid X2
-      ARM: tegra: lg-x3: Adjust WiFi node
-      ARM: tegra: lg-x3: Remove pinctrl-* properties duplication
-      ARM: tegra: lg-x3: Lower supported suspend mode
-      ARM: tegra: lg-x3: Add light sensor node
-      ARM: tegra: lg-x3: Add flash LEDs controller node
-      ARM: tegra: lg-x3: Add haptic engine node
-      ARM: tegra: lg-x3: Add backlight LED controller node
+Diogo Ivo (1):
+      arm64: tegra: Move Tegra210 AHUB audio ports/endpoints to SoC DTSI
 
-Thierry Reding (4):
-      dt-bindings: memory: tegra: Fix Tegra132 compatible string
-      dt-bindings: fuse: Document compatible string for Tegra264 FUSE
-      Merge branch 'for-7.4/dt-bindings' into for-7.4/dt-bindings
-      ARM: tegra: Clean up AHUB on Tegra124
+Jon Hunter (1):
+      arm64: tegra: Add the USB Type-C controller for IGX Orin
 
- Documentation/devicetree/bindings/arm/tegra.yaml   |    6 +
- .../bindings/fuse/nvidia,tegra20-fuse.yaml         |    1 +
- .../memory-controllers/nvidia,tegra124-emc.yaml    |   10 +-
- .../memory-controllers/nvidia,tegra124-mc.yaml     |    1 +
- arch/arm/boot/dts/nvidia/Makefile                  |    2 +
- arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts  |  885 ++++++++++++++-
- arch/arm/boot/dts/nvidia/tegra114-dalmore.dts      |    4 +-
- arch/arm/boot/dts/nvidia/tegra114-roth.dts         |    4 +-
- arch/arm/boot/dts/nvidia/tegra114-tn7.dts          |    4 +-
- arch/arm/boot/dts/nvidia/tegra124.dtsi             |   16 +-
- .../boot/dts/nvidia/tegra20-motorola-daytona.dts   |  107 ++
- arch/arm/boot/dts/nvidia/tegra20-motorola-mot.dtsi | 1194 ++++++++++++++++++++
- .../boot/dts/nvidia/tegra20-motorola-olympus.dts   |  108 ++
- arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts       |    5 +-
- arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts       |    5 +-
- arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi        |  106 +-
- 16 files changed, 2399 insertions(+), 59 deletions(-)
- create mode 100644 arch/arm/boot/dts/nvidia/tegra20-motorola-daytona.dts
- create mode 100644 arch/arm/boot/dts/nvidia/tegra20-motorola-mot.dtsi
- create mode 100644 arch/arm/boot/dts/nvidia/tegra20-motorola-olympus.dts
+Krzysztof Kozlowski (1):
+      arm64: tegra: Replace spaces indentation with tabs
+
+Manikanta Maddireddy (2):
+      arm64: tegra: Use iommus for PCIe endpoint controllers
+      arm64: tegra: Add PCIe wake GPIO for Jetson Orin NX/Nano
+
+Prathamesh Shete (1):
+      arm64: tegra: Add Tegra264 SDMMC1 device tree node
+
+Thierry Reding (26):
+      arm64: tegra: Add PWM controllers on Tegra264
+      arm64: tegra: Add PWM fan on Jetson AGX Thor DevKit
+      arm64: tegra: Reorder reg and reg-names to match bindings
+      arm64: tegra: Add PCIe root ports on Tegra264
+      arm64: tegra: Clean up AHUB on Tegra132
+      arm64: tegra: Adjust AHUB range on Tegra210
+      arm64: tegra: Clean up AHUB on Tegra186
+      arm64: tegra: Clean up AHUB on Tegra194
+      arm64: tegra: Clean up AHUB on Tegra234
+      arm64: tegra: Clean up AHUB on Tegra264
+      arm64: tegra: Clean up some whitespace issues on Tegra264
+      arm64: tegra: Fix up cooling map names on Tegra194
+      arm64: tegra: Fix up cooling map names on Tegra186
+      arm64: tegra: Fix up cooling map names on Tegra210
+      arm64: tegra: Use consistent key code for force-recovery button
+      arm64: tegra: Enable GPIO keys on Jetson AGX Thor
+      arm64: tegra: Add thermal zones for Tegra264
+      arm64: tegra: Add cooling device on Jetson AGX Thor DevKit
+      arm64: tegra: Enable built-in RTC on Jetson AGX Thor
+      arm64: tegra: Add FUSE block on Tegra264
+      arm64: tegra: Add missing *-cells properties for I2C controllers
+      arm64: tegra: Add I2C aliases for Tegra264
+      arm64: tegra: Add NVIDIA Jetson AGX Thor module EEPROM
+      arm64: tegra: Add NVIDIA Jetson AGX Thor system EEPROM
+      arm64: tegra: Add thermal sensor for Jetson AGX Thor
+      arm64: tegra: Add Tegra132 specific compatible for AHUB
+
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi           |   22 +-
+ .../dts/nvidia/tegra186-p3509-0000+p3636-0001.dts  |    8 +-
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   76 +-
+ arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts |    8 +-
+ .../arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi |    8 +-
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           |  113 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts | 1120 -------------------
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 1011 +-----------------
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           | 1126 +++++++++++++++++++-
+ .../boot/dts/nvidia/tegra234-p3737-0000+p3701.dtsi |    9 +-
+ .../dts/nvidia/tegra234-p3740-0002+p3701-0008.dts  |   45 +-
+ .../boot/dts/nvidia/tegra234-p3768-0000+p3767.dtsi |   12 +-
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi           |   86 +-
+ arch/arm64/boot/dts/nvidia/tegra264-p3834.dtsi     |   57 +
+ .../boot/dts/nvidia/tegra264-p4071-0000+p3834.dtsi |  106 ++
+ arch/arm64/boot/dts/nvidia/tegra264.dtsi           |  794 +++++++++-----
+ .../boot/dts/nvidia/thermal/nvidia,tegra264-bpmp.h |   20 +
+ 17 files changed, 2030 insertions(+), 2591 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/nvidia/thermal/nvidia,tegra264-bpmp.h
