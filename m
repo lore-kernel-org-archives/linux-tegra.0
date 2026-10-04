@@ -1,234 +1,177 @@
-Received: from mail-wr2-f34.google.com (mail-wr2-f34.google.com [74.125.225.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011067.outbound.protection.outlook.com [52.101.57.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FB73D1CC5
-	for <linux-tegra@vger.kernel.org>; Sun,  4 Oct 2026 16:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.98
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791132742; cv=none; b=pbyjM0I9381ZNXIey50Ueg9+9/u0PlrphUeVG7eTVKWwzTZxurKfgWu3NeWIen0P8MJQLIdWAQTwNEe9zjs1fN9CtjhwGfVB2fjz3G7/a4lNQ3iFhLyS3G4X9v8xDOBW0rj6Urh27ZtN8RNFIeBltCI7utTTPHc0EhV1Lk00jm0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791132742; c=relaxed/simple;
-	bh=YsOWNf6k3c8k/mWCI04yyLmuoXVKeXFhCGr6HCib2RI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CUF8kWqYL/82D08PgwHVwNsRvQFAXOsjD1+jRJChM0Vjaz0B8mJBq+FkZEWUIZXPi9UWE7SMZSbzQ8TM2NVjWwB9mDrZVri6beoQqx7F6f9veTFx4kVVcKt8nLdS7W2PhEu2Re6aEaUX4tOoajWfJjMHqPVHk8b15WwtGDMEUrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZYIYwySM; arc=none smtp.client-ip=74.125.225.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE983C3BF7;
+	Sun,  4 Oct 2026 19:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791142169; cv=fail; b=cqE1jIkjtWlSPoBBVqmCGIeQP7XDRd3tZmvaBfkjjj/gvepZcxQUdEa+NbTPmvAdT1yB4URPRSY2+exqzasoOtN6Iqvtmkgn4caqKsJ816FU4lWMSvvW6/T/uGcm7C5oEsqeBGSrNMiLnTnHURL1iBSV3odTUI3ETaoaCaztq6Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791142169; c=relaxed/simple;
+	bh=Rq50fSboN41frkMMBkjV9T9dk+emTKq0AdhvHUyhZxk=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=HHuAffWRFenwHaZr6NItYyfUFacJX5kBjadP2zJb5iKxDS/Oi4oPKCjMRG8yW6CWimLycNVuFHt8IdqkXudaoz3VyhFsRo9oqZcWB/7cgH/D6kn1FiIHkc9p8piX0t70E3qBL8zk8Vu1nlle2FkPYjw/X6XvTfG9Qw/UqnED8HM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=r+Tiz0uE; arc=fail smtp.client-ip=52.101.57.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYIYwySM"
-Received: by mail-wr2-f34.google.com with SMTP id ffacd0b85a97d-48b01d89b23so413485f8f.2
-        for <linux-tegra@vger.kernel.org>; Sun, 04 Oct 2026 09:52:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791132739; x=1791737539; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=CFCgMSBeysJSZt2B7ifOkYjjdaDgVJLpazyx7TBo5uA=;
-        b=ZYIYwySMMqmGTrj7LuuXmgtZX8ZTUzwPOtuegbm6lkB2hiMxBaWIpil6WBfQWOvWst
-         9HiG3164afnZyqRAjRs2PIr6O97KAXy46ObaNdDS/6HFg0nrUqbdq3Ay04eITUHLgnSX
-         eDphXpaPug3CXyKz8iRi6cwhq7Sa8sSxeSgEH5Y4J4gQUIHz4Nbv8h1zTGJDHPjEVWgs
-         YJ0iIdezDcRCDVgUx7YB8I/da3fGlVBw7H8b2bKpV8fXMBzYgJn8etp40EcsxMe8j4zF
-         OrQFHtUJIvvuERL3Tym1wW0W3BhU2U2A6g5Xvv7/7mCVKOJjL0TfpFvXe9y/dEGPJqE1
-         eSog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791132739; x=1791737539;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=CFCgMSBeysJSZt2B7ifOkYjjdaDgVJLpazyx7TBo5uA=;
-        b=24NqmyLatGFI1Al/+gaF1aW3pNWA9G0StPE2RO2mKf8IMCKvgsv20UiF6zg5bC6xpl
-         erP/+/LLBmDWz7bsGLM3PJNlYu58j2WeosEk4opGfvLO5U1z5Af/74n2wILi2cmfBw+g
-         VB83kUz0XO+yce1K18zVa7ktVbLvLN4Ih6Sfnmnc5mPYxu/3N+VLG16JGrulU5QaN/Kq
-         +PWBloc9t0nh3tHZKr3mqhSbEsdPg1GNbewTzAyt88sVfD1nyk+aHQg0Rn+1QmUdmT6z
-         8e7PS3Z5mowyIWyxudAldzHBjJsG5f4k7Uhe+zn4UfI+0Z61+zCqR/tDLIbb8il2bYmk
-         2DuQ==
-X-Forwarded-Encrypted: i=1; AKwUvByvxJmSdgtRMUKrTZpmGizJiebqOE0Rj/V90edy/TVuOLqhJxXC6TWdlDnkMUfDXnL4bJK3JIvcVRevGQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYIqHYvRM37b8E/ZLrX8IOkCfyt8/tGAcd5VsE67COKzhuIRTIM9
-	lRS1Bw9RTlPklQYeNv0IBBXsmZt4wnOBuJm7HvPdOBbWFX25eFIpqoGt
-X-Gm-Gg: AYBFou0DrCnnzJsa3gP1I/d3LyByCH5mj0vHHHgPoLUEQ7/eTTPUfx9IeMnBuT3F7ma
-	ByQjiLdzAwtnn1rdodoLpQ9bheM6CCHDh2l+lm/c8iSuuCk6+srC9xREcX7pVVOS88G2iOhWtaJ
-	kKbhKDikJn0h2wjoCqPkIOVGKbeO46ioLimRa3EzjV+8AmIaLLNs5qtK9YxEvsOOHS6ReqAa3q/
-	Qi0WKiTRZZ2nBAmL53CA4dz/fSvOzTm8vRRJ/U8der6jcu+V8Yu0gEc/jYoqrB5Ju5+NY4tSVhU
-	wnDwYUFuKMoKEinAhSPErcTtNBu3B4MUMc/5LJbaKygNEIjJrIiWfkvrspmZJ7uSfxcAP8raiZh
-	cOROeST3naGiZl1oPrPkV7Qume6w2F6jlxXEbdxeqzPhD1ct2pErRDGRNW1oz+hH4I2ru9nI6tO
-	TbBNQTq15PdIPRYYA1m+UF01e0v5yEHboeAyWgJpBr8wGorjJiH8GFXnBOuAEbgzwc7WNrE6s0N
-	0vjcglsZAa9mZ4MYVs=
-X-Received: by 2002:a05:6000:2405:b0:48c:5306:c11a with SMTP id ffacd0b85a97d-48c5306c1d1mr5056623f8f.24.1791132738870;
-        Sun, 04 Oct 2026 09:52:18 -0700 (PDT)
-Received: from xeon ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48b382f8c4asm20902213f8f.37.2026.10.04.09.52.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Oct 2026 09:52:17 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="r+Tiz0uE"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tCRhyNIKcJp5+7NF0Ijcte+j5CC7D3KBKEJNjqkraU8bvvIIq1lYqfQUwH+sI5FzmvJB863LS+wXrgJDV5FgCMVxJ4uA8qLHUa2vPPEF1fYhtBzSZAv0KsYXPdUaXx3zoSxE3cryFE8zIfcQKReeV4vT6mpaaWHvPJC3sIzc8lY4opQOqEVqZ0cprSPJjUGElY6qKAC5OaPYZhNfeer874eSsaknqFrIOMWMH518y7R+ZEKTwXNQdt4nc8fVbIPq+Xhf6cYuY+BtdHJwOy51u933UabuKJ7zObvfBLC28hpZ7plBV5FholuIVvQ0he7F/I8OaLxgey3LVc+2JnrLYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LIVSbRytsZYlb9sZarGz/ybKJJjNiG5EkgvgRnM+Ntg=;
+ b=BeCMFNJIOuAgjthkyiQAERAo/6Ip7cdE548gLaskxq89IJhsnO4jLw2HEzHc6zP3Baxq9Eby5fN6MgmYTq6qnXCg8UDa7+RGzKJKTgp04C+6qXNnYidLqRHyePaDpgKFcww2oFhDkGR13K+AsV0dGsCZ0ABTmHgUUVZ7gKa3wwUxdUVNsie1Iath3DEKPkBLsAs9JBtKlbjCyYtzuBM6hKsp/E2VOaYRItMEJ/YrjsnqghWARZYEBmpqmcaKcM8qSqj6y7x1N4hJCnO4H6oeh6Sksyfy01kRGbRQlbbkTdMA0jYvY+w+xAPHwey+YaMJtlA5OJay6srxGO1UeMp7Kw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LIVSbRytsZYlb9sZarGz/ybKJJjNiG5EkgvgRnM+Ntg=;
+ b=r+Tiz0uEvL7XmSIBYVMHJlTVwBJEDqBwSxH6cY8DSDvaXI9qODncK7DWE/AjNXT5A9eEurtQkDDXEwoeAGi/W0n0tl0l4QuvNPNelzZMf3fOTG9h62RaBcn6vCP06VsaIena0WEx9G3hPBOaYEUhIWfe2kYpKDqIW0i3pxAl5OjJXb2TV30xEr6B4m5WvX7WO6mCLV7Mv79RZDOlKr7Le8ACWMs/pO5SDm2plrmj1iZYRYfe+Abh1+q3fFTIXCcIy9az74Qh4ccWvBixKSEXpk3Ou9N9z/LHStlmbvQ0Xtp8R4Dx95eG9dvdRuwxMp+AbVkw1xFScnhW2LlVOkvIzw==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH8PR12MB9815.namprd12.prod.outlook.com (2603:10b6:610:277::13)
+ by SN7PR12MB7299.namprd12.prod.outlook.com (2603:10b6:806:2af::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.26; Sun, 4 Oct
+ 2026 19:29:22 +0000
+Received: from CH8PR12MB9815.namprd12.prod.outlook.com
+ ([fe80::1592:590a:e527:ca24]) by CH8PR12MB9815.namprd12.prod.outlook.com
+ ([fe80::1592:590a:e527:ca24%4]) with mapi id 15.21.0472.016; Sun, 4 Oct 2026
+ 19:29:22 +0000
+From: Prateek Agarwal <praagarwal@nvidia.com>
+To: Linus Walleij <linusw@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jordan Viknar <jordanviknar@gmail.com>
-Cc: linux-usb@vger.kernel.org,
+	Jon Hunter <jonathanh@nvidia.com>
+Cc: Prathamesh Shete <pshete@nvidia.com>,
+	Prateek Agarwal <praagarwal@nvidia.com>,
+	linux-gpio@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] usb: phy: tegra: Disable internal USB sensing if extcon is used
-Date: Sun,  4 Oct 2026 19:52:04 +0300
-Message-ID: <20261004165204.205660-3-clamor95@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261004165204.205660-1-clamor95@gmail.com>
-References: <20261004165204.205660-1-clamor95@gmail.com>
+Subject: [PATCH 0/3] Add Tegra268 pinmux support
+Date: Sun,  4 Oct 2026 19:29:18 +0000
+Message-Id: <20261004192921.2460405-1-praagarwal@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR05CA0109.namprd05.prod.outlook.com
+ (2603:10b6:a03:334::24) To CH8PR12MB9815.namprd12.prod.outlook.com
+ (2603:10b6:610:277::13)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH8PR12MB9815:EE_|SN7PR12MB7299:EE_
+X-MS-Office365-Filtering-Correlation-Id: 88f0e9ed-018f-42af-d607-08df224dcae2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|23010399003|376014|366016|18002099003|6133799003|56012099006|10067099003|11063799006;
+X-Microsoft-Antispam-Message-Info:
+	HM4sPGkFYO6JrspnGOksxCXqjf0Mn5KMbvbm61/BAgrjYtKg6Z11chga2IdxxsE3GOCbyuSl/teoGbPpXeq/L7Mrswiu6SzumCNE//0cMPKx2tOkA0bwJ3l9z89G8Fviz/SitAKSey4CzmYxj5tdndkB9F9hgtNdc4FfLmA3q5JUZ/1/txwWKfHRTyrCm8skYZgpqIruHOMp014PgxQaU56kxDACZqQn6VLT/W7UJqM2t4F9I4CDESGCeh+eP6JpgcwheZL4zxdvGUagCOghROhUKC7+SuRuyVOclHK9aQXG9oRLgW6c5j00XZCRrOGL/lbGDC3hoozl8Wy87fK+1uZpyWtVB+6hzEoHjEE78maUnfJZatb/P4gj6djkHwbrnsv3Ej/9WSFfHn8MA/BI7tXVv8JPLXyIsAXi/OV0rTvbclN0sCbHdp546H11lNXGtLKt4lXAUqjwS/Vpwxerw4meEkyXg2V6nQKdhiVmNtHBi3LhWJdMUW9PC1XgJNcKEJ8kYgOoxDOvs0Ho96XuXKvmrAIlEKn0DhYkG5tJ4UHWfh25+zbrDpGrlTy+7hb3yXrt4nOabCqetx1Vi0lH9jAY5DR8yagPtTEM5Rn1IGl9Ua0XVPBSdOJR6UPZMB1B40+fjTDCvHjPDK9l+FvsE2d91agWZxlnkFu/6Dcbhro=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH8PR12MB9815.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(376014)(366016)(18002099003)(6133799003)(56012099006)(10067099003)(11063799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Bg1ibZFal9vEyOhMxT7lZHNv9AbBIkKIS1vjOSIhrC5CnyxlzSVVGmhKgD5D?=
+ =?us-ascii?Q?1tzcIoKxMhRfi8raEWY2ekr1hHkuuwn41beojZ4cxGYkO2I3Xfrip4cbY4iS?=
+ =?us-ascii?Q?80Z85RkxpW2DvaGFCfYNy8LloJZgaz+qpu8vzrTdGatg/yZLENRU1X9l4uyI?=
+ =?us-ascii?Q?JewYKhssL8E5yM9v1rHneJUZoXXjZlDbM0b+MIz50jCrCcR9GpMDKz0hENP+?=
+ =?us-ascii?Q?GHkrhl/W7WTqJm/2889hUmwcI08RqJgbdd8E0eDtL39Rx+sF6zZoP4Atk79G?=
+ =?us-ascii?Q?7QRYh0quq7Mrwsf7WsM7wiPtUnvHwd8B2LpVDAhp0QrWEvPkVDSrGlXDENBt?=
+ =?us-ascii?Q?L3wMQFKnVuHUccqC3VWU0UF/uQobUkCplq01MeMiLUfVQRUE/Q8u2oEZ+5Qf?=
+ =?us-ascii?Q?nTKPHFw4H2jeQJ/NXqeQ2Xa4hV2AaQqm/UeQXR44Owd7L9UTBiH2YS2WixKf?=
+ =?us-ascii?Q?wu6nq3EG26JET7TDHALPT7+dxei+Or1thQHlGekWFsP+aPCr0hesu0NtnSAR?=
+ =?us-ascii?Q?XV0cPifSGNdxYvTWAgdTG1EBWJ3qhXx8pTjKIxJGbWobNlCWqcuVTS+uxD4V?=
+ =?us-ascii?Q?1CCGmoeKKbxSkhXvqpIk5YSHNnt6HW6h4jRLrAqSnQe2qcq120eMNL+EXwAL?=
+ =?us-ascii?Q?OkNZznzR33C2jwk/RjTO1v+7bplFwm3FGbQ5zIRbvM3VqyVU6yZ6R+2fClRy?=
+ =?us-ascii?Q?yryT8/i5pyhkaJToDZ3/dM3AYpd6sg+ou7VCV+dq2t1BbATTNxMBX72cumjf?=
+ =?us-ascii?Q?CgB3fxKGry6HHGIkkyiQdlPSoAxDotMNcdADNfS2WGwzgVHFVzZC94X/mAZY?=
+ =?us-ascii?Q?Whkm1x+Y8QlmQ3wIvkBYm0tOocZBeTYnhnL3M5B+5oNh3gTM7c8bAzjHpZNt?=
+ =?us-ascii?Q?BP9ElxdwK6nLQAS0hKb5DaAzZCIYD7EL4GahrE2eVgQyd8Wf6cAqlanFTLy7?=
+ =?us-ascii?Q?JEV89lobhcZLGkxR6YH53IpNiT1utKCOX8vOteKlyW2bZ6F8hIB5I/3cYpKo?=
+ =?us-ascii?Q?GRHqjoYLQF/m+YYmAZeiz31UiT0JaMvxCW2lbzEuUlFjqaT7a8Z1gZk7YURk?=
+ =?us-ascii?Q?UIWjv+Bf3Ec9zGp2vxkPX5jBI/BJ+BMBm9tz9OYqxUcyMHcyvYMfA7+HBKg9?=
+ =?us-ascii?Q?dNij3WpPIUZKVZwiWyuMR+q254VEg+kQeNV7/kZKW6OKKLrwQEGrU3btwoYa?=
+ =?us-ascii?Q?JjEZHlFZfc60fqZotf9Uc0d1qF/17JrZeIM+yfaUGyfD3j3BUPPFmcBwKNDK?=
+ =?us-ascii?Q?x7p9P3EpVxOD/R9c38M2tcJ2HcqeM/XSDjAec0mqiFELYRX0CVc01xWSrrKO?=
+ =?us-ascii?Q?Em05cwpxGB/+cyFEcWzjzzX+5A4sy5+zlWRk3tb2BhPMPKL8Iufim0+wn+qh?=
+ =?us-ascii?Q?X5cx//wZc5gTq+8JYB2863olOL+Q51KtI6SH9bn486eYE8GAMi5cIviwbBj8?=
+ =?us-ascii?Q?ysuOwj6Wob08C0kO3QcMeBtqQkqBXKY1Y6fFWLBrndiiqvHHRpjGCFNOXUPn?=
+ =?us-ascii?Q?9m/kbmAO5pD9nQm7lDcsUtYL127rifvqRK1XcYQEbxtBDnWQLr2SUmSUPjhz?=
+ =?us-ascii?Q?h3h1aGW+BfdT1RY1i1xrUKzZvKu8MV7fSNz2D3jsdLCwKs6oZNXFv8OfeFet?=
+ =?us-ascii?Q?BDziF1dIf1yRNlpG4VXirMRcn5TnFaqA0rEjzsy8Czj1NDbw2aC5VaP7td1n?=
+ =?us-ascii?Q?R+Ni0T8N9k7shdhE08lPzXeYVqk2JK/OdqiYmuCr77l/pYsh24vb5z1jDZb4?=
+ =?us-ascii?Q?BJZiuGogCQ=3D=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88f0e9ed-018f-42af-d607-08df224dcae2
+X-MS-Exchange-CrossTenant-AuthSource: CH8PR12MB9815.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2026 19:29:22.2380
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mVH31GjIIZ/IyqSF9HvWsrLIVITFSYdJFKxr+V3Sp0uOCLWH43bGmh3337JIIiMVdH74zxwJr/mF/6t8z6IL0w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7299
 
-From: Jordan Viknar <jordanviknar@gmail.com>
+This series adds pinctrl support for the three pin controllers (MAIN, UPHY
+and AON) found on Tegra268. The pin, function and pin group data is
+self-contained in the new driver.
 
-The Tegra USB PHY features four VBUS sensors: A_VBUS_VLD, A_SESS_VLD,
-B_SESS_VLD, and B_SESS_END. This allows the SoC to detect mode switches
-and natively work with OTG. On some devices, instead of relying on Tegra's
-own mechanism, some type of extcon detection chip may be used, which
-conflicts with the native Tegra implementation.
+Patch 1 adds the ARCH_TEGRA_268_SOC Kconfig symbol. This symbol gates the
+Tegra268 specific support code, and PINCTRL_TEGRA268 in patch 3 uses it as
+its default. It is kept as a separate patch because drivers/soc/tegra is
+merged through the Tegra tree rather than the pinctrl tree.
 
-Add extcon parsing from the linked USB controller. If such a property
-exists, switch VBUS sensors to software mode and set their values to SET.
-This indicates that the VBUS sensors are not required by the USB
-controller, which uses extcon for detection instead.
+Patch 2 documents the three compatible strings and describes the pins and
+functions they provide. Patch 3 adds the driver and the PINCTRL_TEGRA268
+Kconfig symbol.
 
-This fixes all devices that have OTG mode set with extcon for Tegra20
-(LG Optimus 2X P990), Tegra30 (LG Optimus 4X P880 and Vu P895),
-Tegra114 (Nvidia Tegra Note 7), and Tegra124 (Xiaomi Mi Pad). All listed
-devices were tested.
+Patches 2 and 3 build without patch 1. PINCTRL_TEGRA268 only references
+ARCH_TEGRA_268_SOC in a "default m if" expression, and Kconfig treats an
+unknown symbol in that position as false, so the driver simply defaults to
+off if patch 1 is not present. Patches 2 and 3 can therefore be applied to
+the pinctrl tree independently of patch 1, and no temporary build break
+occurs if the trees are merged in either order.
 
-Assisted-by: Claude Sonnet 5
-Signed-off-by: Jordan Viknar <jordanviknar@gmail.com>
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- drivers/usb/phy/phy-tegra-usb.c   | 55 +++++++++++++++++++++++++++++++
- include/linux/usb/tegra_usb_phy.h |  1 +
- 2 files changed, 56 insertions(+)
+There is no Tegra268 device tree in the tree yet. The device tree nodes for
+these controllers will be posted together with the Tegra268 device tree
+once that work is ready. If it is preferred that the bindings land
+alongside their first consumer instead, patch 2 can be held back and
+reposted with the device tree.
 
-diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index 00443a7beaeb0..d3faeb6619454 100644
---- a/drivers/usb/phy/phy-tegra-usb.c
-+++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -16,6 +16,7 @@
- #include <linux/iopoll.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/resource.h>
-@@ -68,9 +69,18 @@
- #define   UHSIC_PHY_ENABLE			BIT(19)
- 
- #define USB_PHY_VBUS_SENSORS			0x404
-+#define   B_SESS_VLD_SW_EN			BIT(11)
-+#define   B_SESS_VLD_SW_VALUE			BIT(12)
- #define   B_SESS_VLD_WAKEUP_EN			BIT(14)
-+#define   A_SESS_VLD_SW_EN			BIT(19)
-+#define   A_SESS_VLD_SW_VALUE			BIT(20)
- #define   A_SESS_VLD_WAKEUP_EN			BIT(22)
-+#define   A_VBUS_VLD_SW_EN			BIT(27)
-+#define   A_VBUS_VLD_SW_VALUE			BIT(28)
- #define   A_VBUS_VLD_WAKEUP_EN			BIT(30)
-+#define VBUS_SENSORS_SW_OVERRIDE		(B_SESS_VLD_SW_EN | B_SESS_VLD_SW_VALUE | \
-+						 A_SESS_VLD_SW_EN | A_SESS_VLD_SW_VALUE | \
-+						 A_VBUS_VLD_SW_EN | A_VBUS_VLD_SW_VALUE)
- 
- #define USB_PHY_VBUS_WAKEUP_ID			0x408
- #define   ID_INT_EN				BIT(0)
-@@ -621,6 +631,10 @@ static int utmi_phy_power_on(struct tegra_usb_phy *phy)
- 		val = readl_relaxed(base + USB_PHY_VBUS_SENSORS);
- 		val &= ~(A_VBUS_VLD_WAKEUP_EN | A_SESS_VLD_WAKEUP_EN);
- 		val &= ~(B_SESS_VLD_WAKEUP_EN);
-+
-+		if (phy->has_extcon)
-+			val |= VBUS_SENSORS_SW_OVERRIDE;
-+
- 		writel_relaxed(val, base + USB_PHY_VBUS_SENSORS);
- 
- 		val = readl_relaxed(base + UTMIP_BAT_CHRG_CFG0);
-@@ -727,6 +741,12 @@ static int utmi_phy_power_off(struct tegra_usb_phy *phy)
- 					   val, !(val & VBUS_WAKEUP_STS),
- 					   5000, 100000);
- 
-+	if (phy->has_extcon) {
-+		val = readl_relaxed(base + USB_PHY_VBUS_SENSORS);
-+		val &= ~VBUS_SENSORS_SW_OVERRIDE;
-+		writel_relaxed(val, base + USB_PHY_VBUS_SENSORS);
-+	}
-+
- 	utmi_phy_clk_disable(phy);
- 
- 	/* PHY won't resume if reset is asserted */
-@@ -1456,6 +1476,34 @@ static int tegra_usb_phy_parse_pmc(struct device *dev,
- 	return 0;
- }
- 
-+static int tegra_usb_phy_parse_controller(struct device *dev,
-+					  struct tegra_usb_phy *phy)
-+{
-+	struct device_node *usb_node;
-+	char *node_path;
-+	u64 addr;
-+	int ret;
-+
-+	ret = of_property_read_reg(dev->of_node, 0, &addr, NULL);
-+	if (ret) {
-+		dev_err(dev, "Failed to read reg entry 0: %d\n", ret);
-+		return ret;
-+	}
-+
-+	node_path = devm_kasprintf(dev, GFP_KERNEL, "/usb@%08llx", addr);
-+	if (!node_path)
-+		return -ENOMEM;
-+
-+	usb_node = of_find_node_by_path(node_path);
-+	if (!usb_node)
-+		return -ENODEV;
-+
-+	phy->has_extcon = of_property_present(usb_node, "extcon");
-+	of_node_put(usb_node);
-+
-+	return 0;
-+}
-+
- static const struct tegra_phy_soc_config tegra20_soc_config = {
- 	.utmi_pll_config_in_car_module = false,
- 	.has_hostpc = false,
-@@ -1552,6 +1600,13 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
-+	if (tegra_phy->mode == USB_DR_MODE_OTG) {
-+		err = tegra_usb_phy_parse_controller(&pdev->dev, tegra_phy);
-+		if (err)
-+			return dev_err_probe(&pdev->dev, err,
-+					     "Failed to get controller\n");
-+	}
-+
- 	tegra_phy->phy_type = of_usb_get_phy_mode(np);
- 	switch (tegra_phy->phy_type) {
- 	case USBPHY_INTERFACE_MODE_UTMI:
-diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
-index 6343f88df5de8..4bb20e39003ab 100644
---- a/include/linux/usb/tegra_usb_phy.h
-+++ b/include/linux/usb/tegra_usb_phy.h
-@@ -87,6 +87,7 @@ struct tegra_usb_phy {
- 	bool wakeup_enabled;
- 	bool pad_wakeup;
- 	bool powered_on;
-+	bool has_extcon;
- };
- 
- #endif /* __TEGRA_USB_PHY_H */
+Prathamesh Shete (3):
+  soc/tegra: Add Tegra268 Kconfig symbol
+  dt-bindings: pinctrl: Document Tegra268 pin controllers
+  pinctrl: tegra: Add support for Tegra268
+
+ .../pinctrl/nvidia,tegra268-pinmux-aon.yaml   |   78 +
+ .../nvidia,tegra268-pinmux-common.yaml        |   84 +
+ .../pinctrl/nvidia,tegra268-pinmux-main.yaml  |  136 ++
+ .../pinctrl/nvidia,tegra268-pinmux-uphy.yaml  |   75 +
+ drivers/pinctrl/tegra/Kconfig                 |   11 +
+ drivers/pinctrl/tegra/Makefile                |    1 +
+ drivers/pinctrl/tegra/pinctrl-tegra268.c      | 1944 +++++++++++++++++
+ drivers/soc/tegra/Kconfig                     |    9 +
+ 8 files changed, 2338 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra268-pinmux-aon.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra268-pinmux-common.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra268-pinmux-main.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra268-pinmux-uphy.yaml
+ create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra268.c
+
+
+base-commit: 72d3fcf802c45d00b300f25b848a93c3a2bd7c7e
 -- 
-2.53.0
+2.17.1
 
