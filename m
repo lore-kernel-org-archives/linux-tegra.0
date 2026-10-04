@@ -1,64 +1,64 @@
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE21230264
-	for <linux-tegra@vger.kernel.org>; Sun,  4 Oct 2026 15:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6067A3C0A00
+	for <linux-tegra@vger.kernel.org>; Sun,  4 Oct 2026 15:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791128759; cv=none; b=qR9n+mEQlbvgsKeyH4qMpXzy+/ktivN9QOpg0xl+RtFNR4mRXE9CO7oYTa7s5hxlyiccC6Lb7ne7/EkOkVoZjhqQ584+kNPbtq1nxA4ZpQjyvwxLPiCqk+nd6sSWujOYkMpPvCCILpQOGH1DLQMUgLOU5kZFU962CpPe4jYSJWE=
+	t=1791128760; cv=none; b=HvuO6h+wZ8yDuJ0alEcueBs20zIqMQHW+TPAuCZj4gQYHSd7C5qKDCk3gbJ28r3r8e1OGRLzLHZmS/T6Gft8uBRNb3J/mg3Yt+0RNQOhNp3UvKe0d/ts9/XOWuoo7onSOW16CfNozZ7ly9A5fpCgPFfvCdMsr3YZzT6sZpe6734=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791128759; c=relaxed/simple;
-	bh=K1VIZ3NwHt5qEWl3louZYpxajUVl1gB557HUIiN0qII=;
+	s=arc-20240116; t=1791128760; c=relaxed/simple;
+	bh=XZS61d0mcO7GLkdtlPlyL2kzE68bvmUYKNf3f7TrgJg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G3Keh2A0I4Wkr6OxjnYs7KIphTti1Pn9CtJfkf9VPWbLMj91g8tPyJhQrOHDPgxtDXss2mhxtnp3eQ2djd9cd8r7GQasXJaUYyPTd5MQ5kSHtuymE4f6GnNdsWiXjcw4z3KbfAhejuXo+tONhEGqu4OItUiqsfH7VbqC1mXUlS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ojZ2or1P; arc=none smtp.client-ip=74.125.225.141
+	 MIME-Version; b=IyQR3sVq5/hJSFr6m7c6Nf+tDZ2t1yu6F4Gc/Aox7arrK1hYZ3gBK3rZkWKZRka+ThYJo4UZMGUlfCdLVHIM8I09TLDhwW7PmeB6epRdCa1oBftx0epbrf30MTgyhB1aatMV6t2joCeZRTNWWSUXEa14oKtYqltM56BLMG+YXAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sqNkdAAW; arc=none smtp.client-ip=74.125.225.140
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ojZ2or1P"
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-4a1681949b8so5794005e9.1
-        for <linux-tegra@vger.kernel.org>; Sun, 04 Oct 2026 08:45:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sqNkdAAW"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49d1fb0cf5eso9379375e9.3
+        for <linux-tegra@vger.kernel.org>; Sun, 04 Oct 2026 08:45:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791128744; x=1791733544; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1791128749; x=1791733549; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=T1cONhEHrcirrtFRMhHudThkO2tsvRRJIxPc9+WouMU=;
-        b=ojZ2or1PwufYCbu1U8opKRRmjymNYEFG1G2xGJv9IH90cbEwzBzr9W4wSuEjqnQ8A0
-         YU8cLRFuU4wDfYpOlIDODIyooouRv1XhJGA94DGCbU2pOYkuwWXAX2n2acZfK/yV+/1Z
-         kg9vLUr69NXR8drX/XOsQ43MsoHaC2F2vyfrni05CAXdYBrOfdwuiscEh7fU1PeITH6i
-         vJfB/Mjex2CSSQK6Cdqi3XugFfuLGmfonBveQ56A5IFP2mLMfohCTOSs0ixIA18fizL1
-         dCruMmdFOyj5LBiO+n3TVUBm5tzFDT7E/7I0C3UJdRXUSPlk5B/q6LVxPlEk7PiBwFTi
-         UgbA==
+        bh=+VMd5ocy/TAqsRdGEQmPxImtWVq/jP2X2lBRDaNKz1k=;
+        b=sqNkdAAW+XdbqaRT5HvubBsfFNg0bIjKznp8PYCPiTwOzGgKdo0053Bz2d6Ylhf6Gv
+         O88qVjviAyVwtRIpKhAPTHdUu0x2q2MhmiNs4h+/t71S0COeX/xt6IlaEDHQKHieWX/k
+         qzujEamRWUnk89gBiqWzjdBkzoxc7nbWQuuqaURtBQThR73tJVFFDStKqW7Ms6CVdPJQ
+         3FxM3iEHgiIBRY/AHqh53iJPWj8eN9s/xtvxZh3HnxTjHmIZ+jcHrs+NhCNqMV8TZlJV
+         383ZePCEiPZUgawe2B/8T0/Cp+EYWpyonyfgZ9JmFSnvlo5ujYMOj0titSvyMTf+XhQg
+         VObw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791128744; x=1791733544;
+        d=1e100.net; s=20260707; t=1791128749; x=1791733549;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=T1cONhEHrcirrtFRMhHudThkO2tsvRRJIxPc9+WouMU=;
-        b=rFo3guth3KTojtPb2gQLVcZ25Nzo3IUiIBGyGrUGk3g5jhhIYnzCVJ+bBNTSbzxm7e
-         PNZm+DCYL/jLDdTIVAX3IgVuCLtms20v5j8KbnV4DYbVWvph+eomTRaHY4XyGWkqaXj/
-         3XOeHIDLUCquCqmsBJYbAD2T/xKiKzrL8EwvFt26J3f0hJEIK5rkXOE8zsL9HLg5RFj7
-         TuraAnQ28qMFLmFbHeQnOCt5XPI8UN24s92Q2MbRolpIJvD7uioyAYpgEIWzKhadE+83
-         SJNbJjYKnppUu6ofHxl5t6Ijz5MyU0WBy/KfJxUBV/+cqUWwA298/BZt4ZV0slX4ktwF
-         QljA==
-X-Forwarded-Encrypted: i=1; AKwUvBxKVe7EttqL5hPEArHLSQJBnMGFFw1fk+qSjBYGPRGquEqOJKVbaZtpbJl5Iy+Cvl9bwQqZEsoNrJ6REQ==@vger.kernel.org
-X-Gm-Message-State: AFuF++mDVEDURk7XJsACx43Me1LNgcqhruJZ+NPjLvVhzhV+lUmkguOI
-	acrjPdS9pv3iaGQzfjjSVLaAWS2HTkgUOBBWAbtFhxiB+HDrDJNuQ6fq
-X-Gm-Gg: AYBFou3KSEpCEZxqCrjQan8KYjM0ggC3i8WAwQYPP7r9ypa7NP/t2YRmRM13NrOvvrs
-	r+uH/NWGxTzjJYfDHIAbFuzSg21wORwdHseIHCLQsDKguzcC3QjSmzVrTb5qpLmQhHqERuiIhtm
-	oA9wkvkZ3Vs9rAxx4I3+dSTAW7A+YJJExAhLbGXhO93Vj1r8gPcLoxqa+TGpKmzz/7FaQV1lKTL
-	PWS99j7TawprKJUjI/sEgUg1DAohrrj8aRVbeJyZjVU4tEMMixYPEEyRIWI1H5wTt5505oEeBq3
-	t0XPEtjiYLhs8dWhrYC6ZY6Wr+1JJG0bwji8dZdo+c+RBQ1ZG6tv2dMqrLr/EZV1+ArZba+OrpC
-	bLoz15p7NnXes4IDXamRKBDR1YZ5JNJg5Ku0sFfX85NMd6R3uSSxzDOZZnaYOwyKQUt7sgaLhmF
-	XqoMnCvaVeJoUn1nBesit8ArrYK02g//pTwO+Vw8J6y0U6qNAa3Z97ePIEahOEorP7o1nX75dNI
-	vN9LJXkj5WEva3e0MA=
-X-Received: by 2002:a05:600c:1546:b0:4a0:1c43:3c04 with SMTP id 5b1f17b1804b1-4a02756e5edmr142342575e9.13.1791128743642;
-        Sun, 04 Oct 2026 08:45:43 -0700 (PDT)
+        bh=+VMd5ocy/TAqsRdGEQmPxImtWVq/jP2X2lBRDaNKz1k=;
+        b=Fd29cLKjV33PId+b9FyduoaJWczC51gqi+6uxi3N9ym+7pKezWShxVHAwSDcb++OZG
+         hUgV9ueBnI62TweEFsHgajI3LkZhDFuJIzleLxVikhhQlk0DTDP+/Rl6MAYlk88p73cQ
+         mslzT5rkYKFZoaNtUmGpTobuZNgmnGcIAP2XNa9dqNqc/7Uih3LVxGQEfGVWRJadmEnU
+         6pgdU1zYC3H6uyyVEWneEpqcImk9QIpWnOFvdIkdpn3se4Ae7+X6bkQrQHNA0G7X3O/V
+         H/9mqJQnrRMMi4auzm3wucRl0l+ur6BbQFjSibhXxue6TjD6WpNixdV/TyXq0sKaBEE+
+         5KoA==
+X-Forwarded-Encrypted: i=1; AKwUvBzet1bzdpVroGfUyhkq3xFyvO31eC5r9+G5a7zdaf18+jmLaAFvDAhL4i92QUspv8veNcg0wnSGQ5sFiw==@vger.kernel.org
+X-Gm-Message-State: AFuF++mdRNWQsTyebWOSDuH62f8tsmdNlKFmSg6AKigNzYUFJDx4Q7+I
+	JYuYQ0kcQ+OKpXWzo5I+lzZ0UrcqdEd34vHdJ9X32ayC0s3yOy9oP2er
+X-Gm-Gg: AYBFou0E4CT7kqMsWK/vxCVtT6NLZ7Q7hJiRPmIbWgo7/t4uXI0voMZ/3FMx+KQfsZj
+	Ie5bpO3/xkcJT/J8ZepzwATg2Yo64dTY+UpQUko+SH4hPtm6TFS36Sgh1Hc04r0uzu/6SM19HVX
+	lAu3D1VMsAGYLd/Iuyc5cDUIOK3rl1ZXEakCqe5TfmAU+u3L2DVWQp2LHfa4o0uuXskWyZBAyv5
+	lKe7FsDCWKmcrtgqZ2TXWjWDvoDaE+dw//nBQAu5AiZT5/MEh0lrOE5XQygCo0g6cft6E4yyMEf
+	nk2jQIcBALpXoaOrX18eX5c4pNiBh/Oqz22sdYbQ0DAqjvprjRFjnSwdg5DXbLg61XobK0pq48B
+	Y9hK5hbCISGEQ3cLsxnNVj9QjLYYIzlHDec6jyb+KSCbuCLFfNp7FPutzzzOhTMgfoa0Jb2XsqR
+	VLTFl2knhFaGMPjEudBPXtw/qhJ3/9YzSRKMufHI5jsevHqzrJ+FYCZVu+hWfn84lGDERPbtdJp
+	dVZ1i4edXvDVSULGBUsdi7ZD16QZg==
+X-Received: by 2002:a05:600d:82e4:b0:4a1:71af:cbc7 with SMTP id 5b1f17b1804b1-4a171bc2193mr13724975e9.13.1791128748595;
+        Sun, 04 Oct 2026 08:45:48 -0700 (PDT)
 Received: from xeon ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a0394ca0f0sm168639935e9.1.2026.10.04.08.45.40
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a0394ca0f0sm168639935e9.1.2026.10.04.08.45.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Oct 2026 08:45:42 -0700 (PDT)
+        Sun, 04 Oct 2026 08:45:48 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -70,9 +70,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/9] ARM: tegra: lg-x3: Add haptic engine node
-Date: Sun,  4 Oct 2026 18:44:53 +0300
-Message-ID: <20261004154456.145362-7-clamor95@gmail.com>
+Subject: [PATCH v2 9/9] ARM: tegra: p895: Update power LED trigger
+Date: Sun,  4 Oct 2026 18:44:56 +0300
+Message-ID: <20261004154456.145362-10-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261004154456.145362-1-clamor95@gmail.com>
 References: <20261004154456.145362-1-clamor95@gmail.com>
@@ -84,48 +84,29 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add node for Imagis ISA1200 haptic motor driver used in this device.
+The previous "battery-charging" trigger was unreliable and slow to update.
+Since LG X3 devices now have a charger driver, use
+"max8971-charger-online" instead. Tested on the LG Optimus Vu P895; it
+works much more reliably.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi | 24 +++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi b/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-index 99afd5d634e2b..1f10f4bfb5f24 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-@@ -1568,6 +1568,30 @@ power-sensor@40 {
- 			vs-supply = <&vdd_3v0_sen>;
- 		};
+diff --git a/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts b/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
+index 0d56fd25ce178..f2b527dfbabd4 100644
+--- a/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
++++ b/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
+@@ -552,7 +552,7 @@ led-power {
+ 			label = "power::white";
+ 			gpios = <&gpio TEGRA_GPIO(R, 3) GPIO_ACTIVE_HIGH>;
  
-+		haptic-engine@49 {
-+			compatible = "imagis,isa1200";
-+			reg = <0x49>;
-+
-+			control-gpios = <&gpio TEGRA_GPIO(H, 1) GPIO_ACTIVE_HIGH>;
-+
-+			pwms = <&pwm 3 53000>;
-+
-+			vdd-supply = <&vdd_3v3_vbat>;
-+			vddp-supply = <&vdd_1v8_vio>;
-+
-+			imagis,clk-div = <128>;
-+			imagis,pll-div = <1>;
-+
-+			imagis,mode = <0>; /* LRA_MODE */
-+			imagis,duty-cycle-ns = <1250>;
-+
-+			ldo {
-+				regulator-name = "vdd_vib";
-+				regulator-min-microvolt = <2300000>;
-+				regulator-max-microvolt = <2300000>;
-+			};
-+		};
-+
- 		nct72: temperature-sensor@4c {
- 			compatible = "onnn,nct1008";
- 			reg = <0x4c>;
+-			linux,default-trigger = "battery-charging";
++			linux,default-trigger = "max8971-charger-online";
+ 
+ 			color = <LED_COLOR_ID_WHITE>;
+ 			function = LED_FUNCTION_CHARGING;
 -- 
 2.53.0
 
