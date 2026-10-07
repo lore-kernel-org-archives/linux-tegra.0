@@ -1,115 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from sender5-pp-o94.zoho.com (sender5-pp-o94.zoho.com [165.173.182.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E3249BD92;
-	Wed,  7 Oct 2026 11:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791372888; cv=none; b=DapzEl1tGA+dYviJmA2RWCgZ6vyK5wr/S4vMh+nt8NUs0SYl1bA059WUBadV4cmfcKxPOeBgSdaT5i0C0c7Wny+ktoe2lf+FiCcfqrv11jXnzJ3BQzVv91hK9HBWFR77+ryWV1dEGh2+HpoC9tXWebfu31ZY6pffX1mWVpqJqKg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791372888; c=relaxed/simple;
-	bh=Ws6UWbSyirGr78A6A4olKIaj1QOQ71/PaeuwdgTHIbw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Axh/xmR35WVQCxt5HvsolFz3q5AsIdybls10Xx9+xbEqcBNb0s8T3+xKoT+bnixq73H5ka83x6jdwZnlg4eM4TNFcMJNt3R+fa+0CtBryLrplD9W+MA1T6wv4AmmdVz5kJXbK/f8iaP/qsgef7VuUWgYIAf/R2TN5GQp+Ysk7S4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=djlMORNO; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A09A49CF42;
+	Wed,  7 Oct 2026 12:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=165.173.182.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791374907; cv=pass; b=GeaBMEVyDwKwr/82ZPG94XsOy4cqdWMElNvax6fRitpBEwfg5Qc77+qqEAkSSjWBAtSd5q5ZR1C7CEyFz4xmF2dqjf2MuQ7QSZfDInYlkgPca3sdeDTBxI6QVL9eYvpRVhMBu34S4BiXPiqfw9FnU7auc/CT4N6Kpb0eNk9GEU8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791374907; c=relaxed/simple;
+	bh=KRN5aUoBT6yvcY7O4JyYd5G1G6gDhqkgVMCgSeJbvNM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mwvM/wSG3u8snmqaLTOktRqD9FfxyvdFXlmR/EvcInLkwrGZnTv3Gird4UsiXvSgtT30HK6oBO+DIGf4nfNiugDaygO+E1PiZgELOkj+S/z2etEn8pXjArycTsFYwOju6+0SS1aE93Vm+EQ1hQcmhMylg829ZiK/4M3dNdNTfKw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=ZY3ITvKg; arc=pass smtp.client-ip=165.173.182.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="djlMORNO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47AE41F0089F;
-	Wed,  7 Oct 2026 11:34:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791372860;
-	bh=ICWQdx+9bafScmLX6rIhC1GY4bzyBO4kDfsgsL1Y4hE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=djlMORNOidZdcrEG0KV+L9n5u6utPmDDRyLDPab9FhvTjvmtcIv9QrNydF5ln1pjx
-	 1LcSo0FcVcWRXibhNXbuHVTN1TcRaDlb3XUpl7E9aQls8UiRgvKtkCo724osPMglgO
-	 3B3/3uMSECP7KsAUZjEHkG6Tl3Cj8OtvGW4YxL2659ernucfITTcVSPQJn93IvH7Ff
-	 +A62H/7Ue0L2fzV1vuLLz0UFyBcb8w6jWmDsg4AzSSsRWO/lxSd2e7kow5hEeobE6V
-	 16aIlE4h24x44TpvDVIJcRJtzV3k4rBw3t6H6V+9PfZOX4BZ4N7WD4mmg1eJWEOOcb
-	 XRAXX31jv5yeg==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@avionic-design.de>, 
- Lee Jones <lee@kernel.org>, Shree Ramamoorthy <s-ramamoorthy@ti.com>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, 
- Svyatoslav Ryhel <clamor95@gmail.com>, 
- Laxman Dewangan <ldewangan@nvidia.com>, 
- Bhargav Joshi <j.bhargav.u@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- goledhruva@gmail.com, m-chawdhry@ti.com, daniel.baluta@gmail.com, 
- simona.toaca@nxp.com, mfd@lists.linux.dev, 
- Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org
-In-Reply-To: <20260930-ti-tps6586x-v5-0-aac0273b5da3@gmail.com>
-References: <20260930-ti-tps6586x-v5-0-aac0273b5da3@gmail.com>
-Subject: Re: [PATCH v5 0/2] regulator: dt-bindings: Tegra coupling DT
- conversions and cleanup
-Message-Id: <179130203894.150114.7116075753773766038.b4-ty@b4>
-Date: Tue, 06 Oct 2026 17:53:58 +0200
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="ZY3ITvKg"
+ARC-Seal: i=1; a=rsa-sha256; t=1791374876; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=HQtt+hGOtkINnmmSqfuJv66DQNPtui0WTpXLacyuGkwaxKoVoDzC+2664uOhmmfshqG0/LGB94vBSHg5hv2oF/us6E+nmSm/DlZyy0YyGHbsGSD/O/UfbY/uIyje5bvvjxsrjDzE0KoouPgL3pvrGZCtuVFkR22s5X20S0XNW1k=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1791374876; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=YDK+eVt9z7jRcDCuoLKKEPAz6CTTIjzqCw6nYaxWFUo=; 
+	b=DyD7RTtmF5YMYtuRiolLCpZDT2xv2BQ8hFeOHWU5Dsr/nVoNPoexdJyo4f40d35VYyG8534opljdjS3WNeBEbtAliG2CM1oZSDNejzdXneuEKilQOd/SMCElrOh4OPRaDi8oKE93hcYah9igUjf4mfZc49WjGoLdhIF/awkxygc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1791374876;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=YDK+eVt9z7jRcDCuoLKKEPAz6CTTIjzqCw6nYaxWFUo=;
+	b=ZY3ITvKgdmfAjd2WVOLOK6GSg2cSyewIJRVmd2ft1tdpPuqmbonRZR0+GxhAkgiE
+	AmCECSovVs9IMOKcDBgJbFDkSw80ibnoH+XEaJ08DYHqEYqiO0FDB/aidyYUfHI4cJu
+	KFmP2LpSdDTTy3FVHOXpCGiANaKmeRqLaCxti3MI=
+Received: by smtp.zohomail.com with SMTPS id 1791374874789244.05969337523243;
+	Wed, 7 Oct 2026 05:07:54 -0700 (PDT)
+Message-ID: <fb3dd8b9-438c-4cca-9811-6bc47efee873@zohomail.com>
+Date: Wed, 7 Oct 2026 20:07:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1741; i=broonie@kernel.org;
- h=from:subject:message-id; bh=Ws6UWbSyirGr78A6A4olKIaj1QOQ71/PaeuwdgTHIbw=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqxi4zq6VJX3p2Ui13vHE1qMW3TC+Bl+6RbhV5N
- U5UYK5AyziJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCasYuMwAKCRAk1otyXVSH
- 0EvSB/99Vqk+6H5hVnI9jJhm94CuhImQktNRO1BGb0nD6bqymRjT3zBlJ3MidWlZh3lwhurt9nC
- smDUEJkIh/3bqJnMiLsrFQ0yE3TEik2gN3xcaKmtmvxyWoWrcARcZF4Imxrq/tIYh7t3WSNAuQa
- CSyi27ZGKO7itOlWXatafyyBlO5TJWXD28EeORIzyyaMTYnjiXwlTavDbYkcyMXQYGheWB3ZXq9
- QX1C6ZPWvuoGi9RqMsg8uKCUsj1XbFaE3gFNqBy4koDKUMmxnPivAekFoW1DoI7Dh3/7C8bI2ag
- 6L6l74d3CF65uDOFXj7zwogLjVIxjjE7COwthJr+szfRPqp7
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 01/16] cxl: Drop stale decoder interleave limit
+ comment
+To: Srirangan Madhavan <smadhavan@nvidia.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, Dave Jiang <dave.jiang@intel.com>,
+ Davidlohr Bueso <dave@stgolabs.net>, Ira Weiny <ira.weiny@intel.com>,
+ Jonathan Cameron <jic23@kernel.org>, Vishal Verma
+ <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Alex Williamson <alex.williamson@redhat.com>, vsethi@nvidia.com,
+ alwilliamson@nvidia.com,
+ Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>,
+ Vishal Aslot <vaslot@nvidia.com>, Manish Honap <mhonap@nvidia.com>,
+ Jiandi An <jan@nvidia.com>, Richard Cheng <icheng@nvidia.com>,
+ linux-tegra@vger.kernel.org,
+ Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>
+References: <20261001092227.3004747-1-smadhavan@nvidia.com>
+ <20261001092227.3004747-2-smadhavan@nvidia.com>
+From: Li Ming <ming.li@zohomail.com>
+In-Reply-To: <20261001092227.3004747-2-smadhavan@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Feedback-ID: zu080112270568025c6b11d8de7c4fec200000de64e2ac7ec75c8a0427ea90bee38664b83f6ba0a7c3c9653f:ZohoMail
+X-Zoho-CM-AccountID: abd763e7b9fa23acf4f42a44f9876d2d993e05abdb9290f9ccb1008c977bf7f0
+X-ZohoMailClient: External
 
-On Wed, 30 Sep 2026 00:59:41 +0530, Bhargav Joshi wrote:
-> regulator: dt-bindings: Tegra coupling DT conversions and cleanup
-> 
-> This series adds a shared DT schema for Tegra regulator coupling,
-> updates relevant PMICs to use it, and converts the TI TPS6586x
-> bindings to DT schema.
-> 
-> Summary:
-> - Patch 1: Fixes existing TPS65910 validation warnings.
-> - Patch 2: Converts Tegra regulator coupling to DT schema.
-> - Patch 3: Updates Tegra-related PMICs to reference the new schema.
-> - Patch 4: Converts TI TPS6586x to DT schema.
-> 
-> [...]
 
-Applied to
+在 2026/10/1 17:22, Srirangan Madhavan 写道:
+> CXL 2.0 added 16-way memory interleaving, making the comment that the
+> specification supports only 8-way interleaving stale. Remove the comment
+> without changing CXL_DECODER_MAX_INTERLEAVE.
+>
+> Suggested-by: Jonathan Cameron <jic23@kernel.org>
+> Link: https://lore.kernel.org/linux-cxl/20260912003057.3db9335c@jic23-hlaptop/
+> Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@oss.qualcomm.com>
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+Reviewed-by: Li Ming <ming.li@zohomail.com>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-7.4
-
-Thanks!
-
-[1/2] regulator: dt-bindings: nvidia,tegra-regulators-coupling: Convert to DT schema
-      https://git.kernel.org/broonie/regulator/c/53063f38ce08
-[2/2] regulator: dt-bindings: Reference Tegra regulator coupling schema
-      https://git.kernel.org/broonie/regulator/c/27321a6290a5
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> ---
+>   drivers/cxl/cxl.h | 4 ----
+>   1 file changed, 4 deletions(-)
+>
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index 3ef0810ab86b..9e0500d56866 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -269,10 +269,6 @@ enum cxl_decoder_type {
+>   	CXL_DECODER_HOSTONLYMEM = 3,
+>   };
+>   
+> -/*
+> - * Current specification goes up to 8, double that seems a reasonable
+> - * software max for the foreseeable future
+> - */
+>   #define CXL_DECODER_MAX_INTERLEAVE 16
+>   
+>   #define CXL_QOS_CLASS_INVALID -1
+>
+> base-commit: fef22d37d47043b63e4007f2f5fe762fa21fae0c
