@@ -1,63 +1,65 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A038F49A3A6
-	for <linux-tegra@vger.kernel.org>; Wed,  7 Oct 2026 10:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F20471433
+	for <linux-tegra@vger.kernel.org>; Wed,  7 Oct 2026 10:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791370189; cv=none; b=U9n9iJ3k8rW8CwuYLiOcGxTqjtuRSHIbQdbiUaQYHMAyiILB2eBVs49jU3JzsmnSqsZXTI17TJ3fe1nkYPQ9qHEHe9TNGuQ5uoh8OPF2ySDZMt38lpmXfwAv5vsmNxNG1tV6dvBQiFXTr+MNDcB7VK6h+YMKG8DKQDX0hVK+6WE=
+	t=1791370194; cv=none; b=nDnH9aKYI3mxuWOwuzK6xLpak/jXHzdStEoen7KJZgHxQHnAp93GujWIv/ZXrwQx4fXCs0o/H1gBTi7sg+pmcplSES0kPmP3WILB7iw5HMmo64QPKPW3rBDgyCsazUp1HnkgpZqFzSbw/0RzDfgoPz3v6pYjGcQ1Bt4MQoEs+SM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791370189; c=relaxed/simple;
-	bh=xgVe3/5ChIxKHbtLau34tuV4XNPB7x3ojPv2vZnUFME=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b9H5c5wo6Ziq9UsrL13PadnI4LjE9ytF63iRI0Bn4znhOl8i9YwUeHeoc0SiKg1XeUrWEldXw0CKbZzrspUtySjBGrZEhmZIkp1RW862c/XKD5x6arrVXh2X4oo1DPB9n3sFSTor+29VhfyiwhVhl/RnmoWzxx8axRWBo7Q7k+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nvSmA0FR; arc=none smtp.client-ip=209.85.216.50
+	s=arc-20240116; t=1791370194; c=relaxed/simple;
+	bh=5B1H9FA7mZy/gFbNTlCD7iwhPS8Ucq4yIS3VU3Z7Aio=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mCbhhsuZ13wrK4pYu87pZ2a9fbyj/SLyBKt0Zv2pKhy8+rzNAPImBf9OjlHoFTc2sHx2+R93jKjHDolZ23L5iBihPZTKga0ovNqVqRUa9WMNjRs/Lp5NHoML0+rUNZQFydi46Ut1ygxbKrAxlSgUbl8Klie4ihgUFZWWrOOvX6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KMGUdK1O; arc=none smtp.client-ip=209.85.215.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nvSmA0FR"
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3a706146559so1441891a91.2
-        for <linux-tegra@vger.kernel.org>; Wed, 07 Oct 2026 03:48:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KMGUdK1O"
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-cc4ca696de6so994188a12.2
+        for <linux-tegra@vger.kernel.org>; Wed, 07 Oct 2026 03:49:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791370139; x=1791974939; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=9e+3jmJX4LTPI4etQxzprcCTZVbd6Ws0ithfkyYyE0I=;
-        b=nvSmA0FRbXqc5/oDtGDkyVQO2bdR7TsiVdpsoxGLZPTz6odvbFzPXZQzHY3Z5sn5xu
-         q1zKp/Ka8B9UXy4KcDDj3itHeWCozt8Z4P+IWDl9fKNKUaDOI5qHsSncYDpNM2OEHRRA
-         qngdQpPrnyDnLQhgOMwYFYm49YW4lP0EC9hVB89yf6VJIw9LBb1gRNjI8/UUe794TsOi
-         AS/y/jC6jq7diW8pOOOwYry8OohSMsFTxUjxbAzipZ3zoYxg+tnbgHR3wZVN9sfsIe2V
-         NAeANelQZcKSF0ha8hn+Q199eyagBKI3CtSwfpm224sMx+v0QstSB6VRI5B/IZDe9ScV
-         aHqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791370139; x=1791974939;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1791370143; x=1791974943; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=9e+3jmJX4LTPI4etQxzprcCTZVbd6Ws0ithfkyYyE0I=;
-        b=Lg4Fv1zdZhHz7UBAowO1JwIrvsPBqfG7+uu/L4stzgx4KRsRgkNy+UVdnZ0476ghQA
-         ikjbV3mRS1tqSHoSAR6iWFc6HGwGpwxcvYlq3mr16FK7+l1Bj3n0P/jebOQGMlsXtX6r
-         oRU4S11niWOCkEK66TxPkgfT5M+kWUodlq4DR4B2u2jOVGCyN7+KAlSBedKuRp/wLnCd
-         QrGb9gajKqrnIfk0+AUAPXOqB2/OlKFWegxKdaQyg+l7uyFXVCXrXWZMKdauu8I6HiBC
-         dubdW48X9tO2KEXfsjMRTu3dcPfmKUOBG6BnUSgnKdcF1wD34WEykbtaO5kfga1LrIN8
-         mNJw==
-X-Forwarded-Encrypted: i=1; AKwUvBxcIlnlWcBSzPBgXf2BHDqBQBvg9rQWv6nKQGetor0noGFVJbK8oS3r2tsjiNbRpJgiuomMyDVGGvPoIQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJ4F4ZUoBOb8GiFabLM0kcWs/6/oreL1xyylB+VQgVJb8A3sJiY
-	mduWsvwfiI/Gw6ixoW+FFV2NNxTCl2AFhC6NWyDj/QmM6DVvhelGMBn2
-X-Gm-Gg: AYBFou2OBDFYBqW8V0UOldvbOWWNihHKAxxA7OOb+sskt3nB9uh2BizgZRVAHt7PIVK
-	wCtqAy0SiV+zsbaMcC+D1fvETmOlsSfQ5vNLdqrej4pY8c5w3z0OZulET6iLi47LqaNNx7h5TIk
-	85AbmpTl1RIWHDXLNCQiP+CoMQ0lISYdardQPN4iYsPwX3l74UWFt36T2hSB1MZGH4u7pE2RtZN
-	DkJIPYoW0LKA1uJtDWYCrY4AjhQFzP9s41CkUV0i8WqxErQObaacGAzj9DCdY6FnGeKBgJWgalT
-	O6g0tn3T+Ma0VoyUwyvpLQOqQQYlKL1jMff56uVIIOKS/oT0RQcAaYemnsvZkTGgPbQEYRE/vPt
-	OdKlUQHAdEvgPF48Q1UJWR2b9fTDgKrL9AxnFVSJ+Ka9FwwIK/F2XTuyaBTkJ4czI7OLZ7/076z
-	wJ2VWyRkSfEeBtMP4KP6RU+osZUS5PiM48pXCzju2Hy1g4B4ktTJTMenNTAluQQUd9gJHxChZ/u
-	tIiQ4j6STxKQJCfvV26vz/PEsusIa9ThpgdFal2veokb4thMtnFXifSkcTlv21hfdjZlMgjFR9k
-	vtPoRiyEUVI1Ig==
-X-Received: by 2002:a17:90a:fc50:b0:3a0:9640:803a with SMTP id 98e67ed59e1d1-3a89f649791mr1506978a91.5.1791370138770;
-        Wed, 07 Oct 2026 03:48:58 -0700 (PDT)
+        bh=KiCqXelSwhsxxAotTgryiWxi3hHYLhT7SYQdblGbV2w=;
+        b=KMGUdK1OpSDMw4BfTyYR8pEniuILqLBYG2dGQWn1ANmOUfrDDq89hdYnoCcnhi9Znz
+         PG9LnDcm1TJws9+lVP2aoRrL4Yi43fLCrjub1WcWf11N3Uw4eoEUH6PxEbLw/4ArcEab
+         vjMsBdA1jh1fBWEChxRjjOzeilpf5J+jvEFIP9QfMyHy8/Bel+dewyxSg6Q5708Pv5IR
+         8CzF4nQUXtoCQN738tnATSgXsvc9XQatrGhdgexLyAkErW+lOl1uD0fqp8s8gNY073ki
+         YDpJhnvLCQBACCWJRFVK08EivOSxqvAjLKUTeP/4GnvzKkhwHifLjgauGQXNKEaXJgFB
+         IAiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791370143; x=1791974943;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=KiCqXelSwhsxxAotTgryiWxi3hHYLhT7SYQdblGbV2w=;
+        b=GtKdiFGjEOkPxHM+xFWRpMxjvCkmBP6/SNrqVcLH0NGrLfFf9chTfcAQfGUvv+bAJ6
+         4Cvx2eO4fwOTDtMEAEHJYZYZ7Mkb0i/ZDRA79akrBputYOs0jh3MVtLwiYawr9LXgoU6
+         Rn7XrTnGCgME9mroRXQiPsMIIzgn/q4KKQOL+xkZGb/TVRXZpeGQS1z1pdn7RWYvducb
+         eAKaKUYOnTxSEktB1MmG5lHJ5/rLAmZvfPRz3oJs7OP9P6FN+y6CdOVYmoXqpkAbSP1H
+         qNcvsFB95y5L/yMdHkRKvTINRUnEQE7sO1lQIQjiPgEtq6ZqCZ/PCmFPRbC5W7Qn5Y7n
+         xGfw==
+X-Forwarded-Encrypted: i=1; AKwUvByfJKNi2+bla6/OP3Qs5x5If6Gq13hiNYINqWwqnWWFfhVcE6ttv2BfNLR190wQ8F+6Fe9dHXfXERsP4w==@vger.kernel.org
+X-Gm-Message-State: AFq9FYJIkyZ8Er133ipnPBafLFKLkH7arARe+U7xUiqe46D/0hCnoZH8
+	9HgcTv8qinkC66XVZ7DBc6Z5qGJOKR7enh8Lbt73EHgTp0Nvh/iGbGln
+X-Gm-Gg: AYBFou3qoaNKBwOIeKKlowRvD6GfEGcHUOEPSSb5kowCmxnyceolP15hg5lMYMOdc93
+	USskduyqbxpi48f1b6FBQ7qJAW2SFTIMUBxay2LgkwsgjwkNCDdciGtNXIO2HcVrhBqcaWU2wGU
+	pFGzvmBY5/p6YM2BQDU/GFOwmXfgi8vghpDBV/Y/AVhnZJD9EUpfQjqiyl3gAUu/LgcIaOph8fE
+	n2RebfNNG8f64DiHB9co7uci63sqebv5gfmlRNzx5Ao3ylFfftf+5eJR4evzrQM3bZ5j+rQ5Zkz
+	uPHhC5Zw/KoLARXs2s0gXzJDoEI/ExEIAXITjUrUNAOUdbebw+5Pxth0+9U8K2cIjR8PyIopZh2
+	JoxFLwKCvNHvPwL8NovqjpF2xTrChrUkf7lcfrLSev5X/oZcEiSx4U1o6de0yLR9/Qba2Urpy/0
+	00gLotpf5/gGtAU5R9btXntz3I9S18J1IdrAR5KangOR7c1eY+zbc5/wHvCNdH9N/MdrwnQYFdd
+	kC9URhr+12nJw2JoP5qp6M2QTj6luiMpwEVs8/NEfaPAsq1y5Uwm9zXNXrayTXLjJR5+3Om79gG
+	AE3pukoanN2Jew==
+X-Received: by 2002:a17:90b:3c04:b0:3a0:a83d:dd0c with SMTP id 98e67ed59e1d1-3a8a08514e6mr1600840a91.17.1791370143411;
+        Wed, 07 Oct 2026 03:49:03 -0700 (PDT)
 Received: from phuc-desktop.. ([183.91.15.56])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3a85afe9ef9sm9119961a91.12.2026.10.07.03.48.55
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3a85afe9ef9sm9119961a91.12.2026.10.07.03.48.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Oct 2026 03:48:58 -0700 (PDT)
+        Wed, 07 Oct 2026 03:49:03 -0700 (PDT)
 From: phucduc.bui@gmail.com
 To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
 	kwilczynski@kernel.org,
@@ -73,10 +75,12 @@ Cc: Vidya Sagar <vidyas@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	bui duc phuc <phucduc.bui@gmail.com>
-Subject: [PATCH 1/2] PCI: tegra194: use dev_err_probe() for PERST GPIO
-Date: Wed,  7 Oct 2026 17:48:46 +0700
-Message-ID: <20261007104847.507776-1-phucduc.bui@gmail.com>
+Subject: [PATCH 2/2] PCI: tegra194: propagate REFCLK select GPIO errors
+Date: Wed,  7 Oct 2026 17:48:47 +0700
+Message-ID: <20261007104847.507776-2-phucduc.bui@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261007104847.507776-1-phucduc.bui@gmail.com>
+References: <20261007104847.507776-1-phucduc.bui@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -87,8 +91,14 @@ Content-Transfer-Encoding: 8bit
 
 From: bui duc phuc <phucduc.bui@gmail.com>
 
-Use dev_err_probe() when getting the PERST GPIO to simplify error
-handling and properly handle -EPROBE_DEFER.
+devm_gpiod_get_optional() returns NULL when the optional GPIO is not
+present, but may return -EPROBE_DEFER or other errors.
+
+The current code treats GPIO lookup errors as if the GPIO were not
+present.
+
+Check the return value and propagate errors from the REFCLK select GPIO
+lookup.
 
 Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
 ---
@@ -96,31 +106,31 @@ Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
  1 file changed, 3 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 63a0f56cad8e..767e11216196 100644
+index 767e11216196..5ebe01f72833 100644
 --- a/drivers/pci/controller/dwc/pcie-tegra194.c
 +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -1200,18 +1200,9 @@ static int tegra_pcie_dw_parse_dt(struct tegra_pcie_dw *pcie)
- 
- 	/* Endpoint mode specific DT entries */
- 	pcie->pex_rst_gpiod = devm_gpiod_get(pcie->dev, "reset", GPIOD_IN);
--	if (IS_ERR(pcie->pex_rst_gpiod)) {
--		int err = PTR_ERR(pcie->pex_rst_gpiod);
+@@ -1207,18 +1207,9 @@ static int tegra_pcie_dw_parse_dt(struct tegra_pcie_dw *pcie)
+ 	pcie->pex_refclk_sel_gpiod = devm_gpiod_get_optional(pcie->dev,
+ 							     "nvidia,refclk-select",
+ 							     GPIOD_OUT_HIGH);
+-	if (IS_ERR(pcie->pex_refclk_sel_gpiod)) {
+-		int err = PTR_ERR(pcie->pex_refclk_sel_gpiod);
 -		const char *level = KERN_ERR;
 -
 -		if (err == -EPROBE_DEFER)
 -			level = KERN_DEBUG;
 -
 -		dev_printk(level, pcie->dev,
--			   dev_fmt("Failed to get PERST GPIO: %d\n"),
+-			   dev_fmt("Failed to get REFCLK select GPIOs: %d\n"),
 -			   err);
--		return err;
+-		pcie->pex_refclk_sel_gpiod = NULL;
 -	}
-+	if (IS_ERR(pcie->pex_rst_gpiod))
-+		return dev_err_probe(pcie->dev, PTR_ERR(pcie->pex_rst_gpiod),
-+				     "Failed to get PERST GPIO\n");
++	if (IS_ERR(pcie->pex_refclk_sel_gpiod))
++		return dev_err_probe(pcie->dev, PTR_ERR(pcie->pex_refclk_sel_gpiod),
++				     "Failed to get REFCLK select GPIOs\n");
  
- 	pcie->pex_refclk_sel_gpiod = devm_gpiod_get_optional(pcie->dev,
- 							     "nvidia,refclk-select",
+ 	return 0;
+ }
 -- 
 2.43.0
 
