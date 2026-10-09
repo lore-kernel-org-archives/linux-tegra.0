@@ -1,402 +1,169 @@
-Received: from sender5-pp-o94.zoho.com (sender5-pp-o94.zoho.com [165.173.182.94])
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011026.outbound.protection.outlook.com [40.93.194.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA854EF12B;
-	Fri,  9 Oct 2026 14:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=165.173.182.94
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C830B503916;
+	Fri,  9 Oct 2026 18:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.26
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791556929; cv=pass; b=TRrbpl8VIBW7gZD45ITR96duJqNFmpM0+vTwOZJ8ZGYZ2nxRWN8bRWzTZgVNW9n6sfyUxPZGZCLcFsrrVQLThllnnK3bXoL7NKfoVIN1ZgoO6+7/i9+DOsuklDpUXjKz6sYCuyJ/DDqJM6Io9K9ri26gW3tLtJIzy+nrpUkXLQc=
+	t=1791571030; cv=fail; b=X1waEHQSt+Pp8Mc2GzmMzDEpptMlQQAAEryXEAcP1fuhDrq4SQLII4zaRXz3amWopn/LOgROmbVrtWpHEOQHMJzyBFm6n7liNsNAmSpZVqu76FJodB2vzxd/lU+8lhZp2iR0yNLGuOHjIYcOmjbblCfeF+uInNXIT0Tb7VCvyFU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791556929; c=relaxed/simple;
-	bh=mYcjK8jdNquyn3c9F7hmZXqlaGCNSUvqi4l3YYKSkmM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=USOusjl/HOZhLWFiTCkgejCSSpRGMdqOIhgS8dd/pF2g966Rk+98XeHZEAnUmc88DhoNObR1SkItZVpSIC4AXuGfi+viR1Hevazrl4SaLh1jtMWvvYNLVFYkCxEGY9d2sLLY2Gno3YErDVkdG7dOF/1bV5/w8nBWN3wLFWxUIMk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=SSFhCZXl; arc=pass smtp.client-ip=165.173.182.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+	s=arc-20240116; t=1791571030; c=relaxed/simple;
+	bh=Fq6JF1lWlhKnGXCpsu5PMV8+HXW1WNOhzcrWx6fLyRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=PxnKTuX0RFnyePXzjo2hfeUc2V2DcE+Pm2Jgh4gjNvC7OW5y+APN679aElotR4vUWmDTRK2LFKEELrEPIsa10D2DirTePE16vwCp1v5HQyq8NyA2MlVs+KHy6fgfuOEGy7xLlzZ3FVnH75kO96C13ZUf6DhHuMv96bg1y01EyQo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=n+o+S6Ar; arc=fail smtp.client-ip=40.93.194.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="SSFhCZXl"
-ARC-Seal: i=1; a=rsa-sha256; t=1791556910; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Y0h0RXda5FoVKNnqBzy3RMEZyhyvE3VKof3yZ0LYWMCZOeMTM7RySBFplfwSjQkRpo4u1a35oPAzeujo/yxdWhH/0NySCexELMRDawLyM+UvX43Ek5XSeo5yhTW2U7JvWF3DsDDAQnXXzdQTmbHC3lwt4mk3aOQWQXqSHIhQNv0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1791556910; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Vc4shJ7JTOZtXqrInqhmldF9QJjIS9vSgJN7sr8S+0E=; 
-	b=Msh/Nsj+QAvfujJ3S+YSQ9kIEuHxfDwFg6MzKCrGb8jqiNa/R2Ed6KtmHzDf0gGUTQPdtHc9WcfKeTb6qfm2IalFR9InIeQkAyV00mcfUBD3XtyMuqSbJHSsjKFDacJrIF69S93plrzAYt+8T186jRB0uh2E2QLAHtMQ0oWVKG0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
-	dmarc=pass header.from=<ming.li@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1791556910;
-	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=Vc4shJ7JTOZtXqrInqhmldF9QJjIS9vSgJN7sr8S+0E=;
-	b=SSFhCZXlpjxpCqZ9MJqji1u4CUiqyE+jRYuV29NP3Y1RFOV5FdU6i7PGeJsRQxyN
-	s84R05vl/vvwhI+0jhQfiqGMaUZyrSL5Aw6xmMWGNRx3D58JoMuirXXx7bjw+L3GqJ3
-	FN1e0+hvfU5diM3ta1VOT2vfATvA2ews+Flh7puY=
-Received: by smtp.zohomail.com with SMTPS id 1791556909356350.57764764958677;
-	Fri, 9 Oct 2026 07:41:49 -0700 (PDT)
-Message-ID: <3c6f75c5-f559-4b73-a835-70ea3a680fe1@zohomail.com>
-Date: Fri, 9 Oct 2026 22:41:33 +0800
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="n+o+S6Ar"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TafDH/81RbSKx0kxoeDzQIh3oc3HnIhhz5nZTYM+IG26WWwvqktx+ENDIDdj6F0QSBezNuN4Q5LvJESSe3VUXZ9Xq7qHmBvCSPelaZQatcFZtybU+Rrup/UEtH3+LvOPjrOquWwhjWUTf4UaBRGEyPLO1NfEw0LSf+A8vawXEmflyrFQ0iSPL9dRyaKUt3VvNHZHY50L77CDKJoRVNUuXn0H7zCK2rso6EakJ9i9hy0E8B+uL2lQDZUsm09/s2OZ+yczeApZPk53HeTmPY4ANf06H/rWP9xo3ANbV+bD7a7c3n6X8c6ysH1l20dCQ/YAMgmCnLP6bGhI8CQ2l0vzAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HfNKJ8sCBjWvornIx0UlgvyXvNY6iQltqHxScjoCUZ8=;
+ b=vfshPYhn7goXh4pYVEDhsILqc0pYQ5T7KP8o8eCRKCakQ4zXoZ/bceVVW2xTyHP111mMIMcJxDmbIR+Shai1DMD8P+me+ZK5DsSdQwQqxCDjeBUJGSeZcN+37Ka9ci1jHe6Oc1feHUe8Of0NJ82WOEB9sT7Y7RZY5kJyufcORN8zVrvZ2y0REBWAh3+7jscpzOilCKJKGjUSXbpI5VMxk2vThwLqku9RpeT/G8ACDv/n4n93sgDVrm0QmdtCGSqI8nMW02Gsc7CLLQdS/0bg6m3hcJfKAEFIysW/CiKSvM3VnmtbuLRxTZZ3xYyEaSVAQersfPqCkGYwsfIrGGyWnQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HfNKJ8sCBjWvornIx0UlgvyXvNY6iQltqHxScjoCUZ8=;
+ b=n+o+S6ArDZZiVnfICsy4CDXvMFt/Eu2VclsUSk5IlXbntBzz+ypxgIvH3gwJspRRPEM6MLIFT8ISMFEAoPB0upzstXRH3vKL2YKhmjVFaMnaB1wXXjyXkcZkWVCpApeqm9VN6qwl4dBzRA2kA0yiEQHl4Auh7BUNvtGLZxQd5/cwRG4k6GLsJFhfXVSuXeFDBQy+ato3DapWX7/bZETR9o72YwqbVjF+37H4ZMJFpxXVcjEz8H1D6tz/upTJUuwvdEkq4vyRZgf693nF+JidQ54+/2ql4ye2hIkyPpyZgTx+VXxvxntESVn49h/ja86BQluITvoD/qPjiBTjXyVWKg==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CHBPR12MB731189.namprd12.prod.outlook.com
+ (2603:10b6:610:33d::12) by BL3PR12MB6570.namprd12.prod.outlook.com
+ (2603:10b6:208:38d::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.15; Fri, 9 Oct
+ 2026 18:36:56 +0000
+Received: from CHBPR12MB731189.namprd12.prod.outlook.com
+ ([fe80::b0e5:123d:fe06:e10d]) by CHBPR12MB731189.namprd12.prod.outlook.com
+ ([fe80::b0e5:123d:fe06:e10d%6]) with mapi id 15.21.0496.015; Fri, 9 Oct 2026
+ 18:36:56 +0000
+Date: Fri, 9 Oct 2026 15:36:52 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Karl Mehltretter <kmehltretter@gmail.com>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T . J . Mercier" <tjmercier@google.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] dma-buf: heaps: cma: respect the device's maximum
+ segment size
+Message-ID: <20261009183652.GF13920@nvidia.com>
+References: <20261005064640.7776-1-kmehltretter@gmail.com>
+ <20261005064640.7776-4-kmehltretter@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261005064640.7776-4-kmehltretter@gmail.com>
+X-ClientProxiedBy: BL1P221CA0044.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:208:5b5::16) To CHBPR12MB731189.namprd12.prod.outlook.com
+ (2603:10b6:610:33d::12)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 05/16] cxl: Introduce reusable HDM decoder settings
-To: Dave Jiang <dave.jiang@intel.com>,
- Srirangan Madhavan <smadhavan@nvidia.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Ira Weiny <ira.weiny@intel.com>, Jonathan Cameron <jic23@kernel.org>,
- Vishal Verma <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Alex Williamson <alex.williamson@redhat.com>, vsethi@nvidia.com,
- alwilliamson@nvidia.com,
- Sai Yashwanth Reddy Kancherla <skancherla@nvidia.com>,
- Vishal Aslot <vaslot@nvidia.com>, Manish Honap <mhonap@nvidia.com>,
- Jiandi An <jan@nvidia.com>, Richard Cheng <icheng@nvidia.com>,
- linux-tegra@vger.kernel.org
-References: <20261001092227.3004747-1-smadhavan@nvidia.com>
- <20261001092227.3004747-6-smadhavan@nvidia.com>
- <60dbd245-0b16-4c4b-8350-26570916ede0@intel.com>
- <12dff52f-61fb-4796-afa9-0e7a8f74452d@zohomail.com>
- <e8ee0949-90b9-4572-869d-61b4073c568d@intel.com>
- <f3c0fd73-c9e0-4b65-9f83-2b1fd9579dca@zohomail.com>
- <60653fdc-2b9c-4f9d-841c-6d7d68d51ed3@intel.com>
-From: Li Ming <ming.li@zohomail.com>
-In-Reply-To: <60653fdc-2b9c-4f9d-841c-6d7d68d51ed3@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Feedback-ID: zu080112271575eab0932f54156237566700003da1a77b021e8211d00f34ef2d19d6c8cc498a068694a168af:ZohoMail
-X-Zoho-CM-AccountID: abd763e7b9fa23acf4f42a44f9876d2d993e05abdb9290f9ccb1008c977bf7f0
-X-ZohoMailClient: External
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CHBPR12MB731189:EE_|BL3PR12MB6570:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5cc10797-a497-4777-162f-08df26344a33
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|1800799024|376014|23010399003|5023799004|11063799006|56012099006|4143699003|10067099003|22082099003|6133799003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	yRBdblmxRwMTzs419OuG6x9SM5C2AcgCXhGYuiHwAi5p8zasio68D24iB3+eFvVmXqPZ2Cv5qZwTPmVM1SpyodarM8I254SFKQdV40WsZJbkQi80jPjgTCrxyi6+xQYxhm2c5VPKaCe2X7/n4dZxK+IqbWna58LWRFzIYNwavELH8A9MQDJ/j4TYypXdw7Xcl0HVMhOzcmgrq2YeAP5QyWfVDrFuGndlZLdB/0Fq1veD5zQWVikeG4LDSfZJvrbwUK8eJ4x0+ZRqfovXqoHTtBHt5SDjlXW3KZAjuaOvDtgph+dl25MuwPeSSux1Huqgf/nVSh7InqDgdFBOjP3E/NeY9XlSOokd4pdy0R7EAR0rSZAY/MUsnmR/Z6iqHCCxzk5z9hThC9hVpF7xHz+Z+/C2Ye1B8yWvvy8urI5TJcVUggol2TO9vheddQ+kdz0GeQJgGZ3lDO5qWGgX7PL0v7VjrWqcSH0etI3OGkKTKWN2FQKkh0dC8aEOzMAAiBjodrNb8pTksNHoxVEgK+JzgRtyWlv08hD5Wbxdb0xk781n2DGGCs+1I7BOTCNTclr2x0YhdYCSmGCemRWR36kbgm65RQ3eFV8KrRGrUu4t4YfRS5rFXDIFvKTiI5WJNcm9hJflIEWXWFv7qiTPmaSiEa/ygtZNI8KRatPkoFzMKj8=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CHBPR12MB731189.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014)(23010399003)(5023799004)(11063799006)(56012099006)(4143699003)(10067099003)(22082099003)(6133799003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?wbTnF8lJzRoHFaHLiVY4TF3wxq+QJbonCEATORAvcRJ3c1YnrUXV0jwzCfJA?=
+ =?us-ascii?Q?mba2cBtYfOhh1vpVDdLkxnf8ZeBg6Aun5pduOG4p+gfoXJfnkUwpQzWPIDnz?=
+ =?us-ascii?Q?VtPLwyUx71UT5JWX4zVgB3GhfFuGgd+5f3A4wm3Y7d6zHHl7uQ4EqvD1Z+DL?=
+ =?us-ascii?Q?WW3gcmRrYgwo9lA+aCbHwvYqymfXmFYRAkJroY1hdlfJhNUY2/9Ss0Jh4hGc?=
+ =?us-ascii?Q?A4wWdRIeouXQo9+nHIdl+N9ODwB3FRk9BnOcXdEYGoFdhJG1b9qZZk+Waw+o?=
+ =?us-ascii?Q?sdUXEchoVphnNBAnlSGxAfLxAKEfzmKSK1QDQgKiBZS54J7rw1Q3+tzlCz/2?=
+ =?us-ascii?Q?MaDZan8wtBJa9TLNXpqbk1Z9AXbHGU7lRlIhBlGK7ZAx3oIvIMTyR/epZBBu?=
+ =?us-ascii?Q?4ZqmYxZsC2qi8LfT4UFhIDXl6uKQkpSI9KngQWSJjGtMD4z8rThD0w1Fa3tC?=
+ =?us-ascii?Q?1WI3EVDZ8cCLmYUeB09c1IaPR7kd+gYBzumdSR3Yyqju2nFT2qNIZ5KpZs9j?=
+ =?us-ascii?Q?gs73YUJKV0snkSALx0uds2EwvjGxXeIMFzVNUoGcXMA6RABP4O7PK2Hlm9kk?=
+ =?us-ascii?Q?hDrTYbRwDW0mIUiKUIadt6m8vZYENXaaYZAyqvo8EqY88sLWCx3F8OBGFR+f?=
+ =?us-ascii?Q?kVqEDI9cqd9f7HkiW26NKks1N4BEqyswwTm5NNTTpJJyYi6hY2kveqmwT0FX?=
+ =?us-ascii?Q?Jlm0EUyKWloklrNtN+sc6AVDSWwx7NuSiC3RMNMZjtY2sLntliFBp/bjImbR?=
+ =?us-ascii?Q?NYEMrYGm/KXr/WRHYoiDXLIXeSWCzH6nlJTz/vZcAIGkeNaP26/80zv1kKQ2?=
+ =?us-ascii?Q?D7H73plez9dzipPvX7KfiTq4k9maaunPh+kl2I6QlgVnSaMTQEIXfyIvMQKF?=
+ =?us-ascii?Q?Z/ENK8ZYvk+dc/iw+4WFmfUVLrvTbHzdIqJp+ugQ4UJzZT98UiNqMMNPCRJb?=
+ =?us-ascii?Q?MsN5F3OmYbkZX1eqD1gI2u44PfLCWhLj1vlBlG7MtyCR6Nx+FiTggyiBdp+Y?=
+ =?us-ascii?Q?xZz6oFzd6q0fQ/6haeaSU7iSelKp7L41c+0ayWg10SAnKyZOJSrgMTXu5UAD?=
+ =?us-ascii?Q?XLlMIQDaJYf3TMrdTqbzWkZ9tjrlcL+r7RRr73p5LDgaqL44g+AxSlGUaic0?=
+ =?us-ascii?Q?DnZNaBb423bkwF49eG76/pXNAwAbphFPTDTu+Gsi7C8wStcQZInTouoZcctX?=
+ =?us-ascii?Q?iMd6d011R/MY0namoyWp5rtReuEbY4PvihWrC24x/mkCm6j7yqs0KcFXWQNZ?=
+ =?us-ascii?Q?eQp1bRijo4uP53EoQdiJw5/L7FZtrtXacV1AUUaLxSZ1LXZZq7aN750iVntA?=
+ =?us-ascii?Q?Jf9FQjHEu6tt7pyne4WusPOyvd5w1fxzXdfLsH6lwuhICejMGgRE9A54DHGM?=
+ =?us-ascii?Q?WIz5GhAY5xTQLDB/uN2i4octyZEcYTcB36CDdD20YiM39F0zHvPSZLzZ5d2Y?=
+ =?us-ascii?Q?RoGaDtIe9XFcDXUesjmGqUXHmAeGA/LgBXCtHjua7FiyuXYJMv4t3NJ1YUoX?=
+ =?us-ascii?Q?gvfFNICfYr9jE1daJ0hluLByDOu90Eu6kAj7Dvb9ZQhidZRF2hDiKASBQe+f?=
+ =?us-ascii?Q?M7Y5GjSNN0KHiT3/00r3Wezkyj+Et0wnlE6+wkknkbLEJg1ZXwbwotW7wSrt?=
+ =?us-ascii?Q?NUsaXj0jibM+g3IT9YyYoDe5ocrdbS/t8lH5LnpqC/wBa5+atTxUR/Li/s6n?=
+ =?us-ascii?Q?Hp3EKtAH26HPjHiKW0Qei6Vg47PmAwf/3DAOQaErCzhGMfkv?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5cc10797-a497-4777-162f-08df26344a33
+X-MS-Exchange-CrossTenant-AuthSource: CHBPR12MB731189.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2026 18:36:53.5968
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: C+8690C9lSRZND+obH/PuHqyy4BL3DWR5QkLU+QDGb39FQFy4eC78qKDApdTx3eI
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6570
 
+On Mon, Oct 05, 2026 at 08:46:40AM +0200, Karl Mehltretter wrote:
+> diff --git a/drivers/dma-buf/heaps/cma_heap.c b/drivers/dma-buf/heaps/cma_heap.c
+> index 3fb4b946c91a..9d61d14688b8 100644
+> --- a/drivers/dma-buf/heaps/cma_heap.c
+> +++ b/drivers/dma-buf/heaps/cma_heap.c
+> @@ -58,16 +58,22 @@ static int cma_heap_attach(struct dma_buf *dmabuf,
+>  {
+>  	struct cma_heap_buffer *buffer = dmabuf->priv;
+>  	struct dma_heap_attachment *a;
+> +	unsigned int max_segment;
+>  	int ret;
+>  
+> +	max_segment = dma_get_max_seg_size(attachment->dev);
+> +	/* The SG allocator requires a segment limit of at least PAGE_SIZE. */
+> +	if (max_segment < PAGE_SIZE)
+> +		return -EINVAL;
 
-在 2026/10/8 23:19, Dave Jiang 写道:
->
-> On 10/8/26 6:18 AM, Li Ming wrote:
->> 在 2026/10/8 00:23, Dave Jiang 写道:
->>> On 10/7/26 6:12 AM, Li Ming wrote:
->>>> 在 2026/10/3 03:59, Dave Jiang 写道:
->>>>> On 10/1/26 2:22 AM, Srirangan Madhavan wrote:
->>>>>> Represent HDM programming state with struct cxl_decoder_settings and pass
->>>>>> it to the commit helpers. Keep endpoint skip and switch targets with their
->>>>>> owning types and flatten them only into transient programming settings.
->>>>>> Place flags with the programming state and leave runtime region ownership
->>>>>> outside the snapshot.
->>>>>>
->>>>>> Separate commit initiation from completion waiting so reset restoration
->>>>>> can reuse register programming without changing normal DPA-lock policy.
->>>>>>
->>>>>> Signed-off-by: Srirangan Madhavan <smadhavan@nvidia.com>
->>>>>> ---
->>>>>>     drivers/cxl/core/core.h |  3 ++
->>>>>>     drivers/cxl/core/hdm.c  | 82 ++++++++++++++++++++++++++---------------
->>>>>>     include/cxl/cxl.h       | 10 +++++
->>>>>>     3 files changed, 66 insertions(+), 29 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
->>>>>> index 983d7690c3a5..a3fddb2bed63 100644
->>>>>> --- a/drivers/cxl/core/core.h
->>>>>> +++ b/drivers/cxl/core/core.h
->>>>>> @@ -139,6 +139,9 @@ struct cxl_rwsem {
->>>>>>       extern struct cxl_rwsem cxl_rwsem;
->>>>>>     +void cxl_commit_start(void __iomem *hdm, struct cxl_decoder_settings *settings);
->>>>>> +int cxld_await_commit(void __iomem *hdm, int id);
->>>>>> +
->>>>>>     int cxl_memdev_init(void);
->>>>>>     void cxl_memdev_exit(void);
->>>>>>     void cxl_mbox_init(void);
->>>>>> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
->>>>>> index 9e05032a5426..d3f21dfda146 100644
->>>>>> --- a/drivers/cxl/core/hdm.c
->>>>>> +++ b/drivers/cxl/core/hdm.c
->>>>>> @@ -707,7 +707,7 @@ int cxl_dpa_alloc(struct cxl_endpoint_decoder *cxled, u64 size)
->>>>>>         return devm_add_action_or_reset(&port->dev, cxl_dpa_release, cxled);
->>>>>>     }
->>>>>>     -static void cxld_set_interleave(struct cxl_decoder *cxld, u32 *ctrl)
->>>>>> +static void cxld_set_interleave(struct cxl_decoder_config *config, u32 *ctrl)
->>>>>>     {
->>>>>>         u16 eig;
->>>>>>         u8 eiw;
->>>>>> @@ -716,12 +716,12 @@ static void cxld_set_interleave(struct cxl_decoder *cxld, u32 *ctrl)
->>>>>>          * Input validation ensures these warns never fire, but otherwise
->>>>>>          * suppress unititalized variable usage warnings.
->>>>>>          */
->>>>>> -    if (WARN_ONCE(ways_to_eiw(cxld->config.interleave_ways, &eiw),
->>>>>> -              "invalid interleave_ways: %d\n", cxld->config.interleave_ways))
->>>>>> +    if (WARN_ONCE(ways_to_eiw(config->interleave_ways, &eiw),
->>>>>> +              "invalid interleave_ways: %d\n", config->interleave_ways))
->>>>>>             return;
->>>>>> -    if (WARN_ONCE(granularity_to_eig(cxld->config.interleave_granularity, &eig),
->>>>>> +    if (WARN_ONCE(granularity_to_eig(config->interleave_granularity, &eig),
->>>>>>                   "invalid interleave_granularity: %d\n",
->>>>>> -              cxld->config.interleave_granularity))
->>>>>> +              config->interleave_granularity))
->>>>>>             return;
->>>>>>           u32p_replace_bits(ctrl, eig, CXL_HDM_DECODER0_CTRL_IG_MASK);
->>>>>> @@ -729,10 +729,10 @@ static void cxld_set_interleave(struct cxl_decoder *cxld, u32 *ctrl)
->>>>>>         *ctrl |= CXL_HDM_DECODER0_CTRL_COMMIT;
->>>>>>     }
->>>>>>     -static void cxld_set_type(struct cxl_decoder *cxld, u32 *ctrl)
->>>>>> +static void cxld_set_type(struct cxl_decoder_config *config, u32 *ctrl)
->>>>>>     {
->>>>>>         u32p_replace_bits(ctrl,
->>>>>> -              !!(cxld->config.target_type == CXL_DECODER_HOSTONLYMEM),
->>>>>> +              !!(config->target_type == CXL_DECODER_HOSTONLYMEM),
->>>>>>                   CXL_HDM_DECODER0_CTRL_HOSTONLY);
->>>>>>     }
->>>>>>     @@ -764,7 +764,7 @@ static void cxlsd_set_targets(struct cxl_switch_decoder *cxlsd, u64 *tgt)
->>>>>>      * clock skew and other marginal behavior
->>>>>>      */
->>>>>>     #define COMMIT_TIMEOUT_MS 20
->>>>>> -static int cxld_await_commit(void __iomem *hdm, int id)
->>>>>> +int cxld_await_commit(void __iomem *hdm, int id)
->>>>>>     {
->>>>>>         u32 ctrl;
->>>>>>         int i;
->>>>>> @@ -784,45 +784,66 @@ static int cxld_await_commit(void __iomem *hdm, int id)
->>>>>>         return -ETIMEDOUT;
->>>>>>     }
->>>>>>     -static void setup_hw_decoder(struct cxl_decoder *cxld, void __iomem *hdm)
->>>>>> +static void setup_hw_decoder(void __iomem *hdm,
->>>>>> +                 struct cxl_decoder_settings *settings)
->>>>> settings is replacing cxld, I would prefer that as the first parameter
->>>>>
->>>>>>     {
->>>>>> -    int id = cxld->config.id;
->>>>>> +    struct cxl_decoder_config *config = &settings->config;
->>>>>> +    int id = config->id;
->>>>>> +    u64 target_or_skip_reg_val;
->>>>>>         u64 base, size;
->>>>>>         u32 ctrl;
->>>>>>     -    /* common decoder settings */
->>>>>> -    ctrl = readl(hdm + CXL_HDM_DECODER0_CTRL_OFFSET(cxld->config.id));
->>>>>> -    cxld_set_interleave(cxld, &ctrl);
->>>>>> -    cxld_set_type(cxld, &ctrl);
->>>>>> -    base = cxld->config.hpa_range.start;
->>>>>> -    size = range_len(&cxld->config.hpa_range);
->>>>>> +    ctrl = readl(hdm + CXL_HDM_DECODER0_CTRL_OFFSET(id));
->>>>>> +    cxld_set_interleave(config, &ctrl);
->>>>>> +    cxld_set_type(config, &ctrl);
->>>>>> +    base = config->hpa_range.start;
->>>>>> +    size = range_len(&config->hpa_range);
->>>>>> +    target_or_skip_reg_val = settings->target_or_skip_reg_val;
->>>>>>           writel(upper_32_bits(base), hdm + CXL_HDM_DECODER0_BASE_HIGH_OFFSET(id));
->>>>>>         writel(lower_32_bits(base), hdm + CXL_HDM_DECODER0_BASE_LOW_OFFSET(id));
->>>>>>         writel(upper_32_bits(size), hdm + CXL_HDM_DECODER0_SIZE_HIGH_OFFSET(id));
->>>>>>         writel(lower_32_bits(size), hdm + CXL_HDM_DECODER0_SIZE_LOW_OFFSET(id));
->>>>>> +    /* Target-list and endpoint-skip registers alias the same slot. */
->>>>>> +    writel(upper_32_bits(target_or_skip_reg_val), hdm + CXL_HDM_DECODER0_TL_HIGH(id));
->>>>>> +    writel(lower_32_bits(target_or_skip_reg_val), hdm + CXL_HDM_DECODER0_TL_LOW(id));
->>>>>> +
->>>>>> +    writel(ctrl, hdm + CXL_HDM_DECODER0_CTRL_OFFSET(id));
->>>>>> +}
->>>>>> +
->>>>>> +void cxl_commit_start(void __iomem *hdm, struct cxl_decoder_settings *settings)
->>>>>> +{
->>>>>> +    lockdep_assert_held(&cxl_rwsem.dpa);
->>>>>> +    setup_hw_decoder(hdm, settings);
->>>>>> +}
->>>>>> +
->>>>>> +/*
->>>>>> + * Endpoint skip and switch targets have different owners. Keep that state with
->>>>>> + * its owning type and flatten it only into a transient register-programming
->>>>>> + * snapshot.
->>>>>> + */
->>>>>> +static void cxl_decoder_snapshot(struct cxl_decoder *cxld,
->>>>>> +                 struct cxl_decoder_settings *settings)
->>>>>> +{
->>>>>> +    lockdep_assert_held(&cxl_rwsem.dpa);
->>>>>> +
->>>>>> +    *settings = (struct cxl_decoder_settings) {
->>>>>> +        .config = cxld->config,
->>>>>> +    };
->>>>>>           if (is_switch_decoder(&cxld->dev)) {
->>>>>>             struct cxl_switch_decoder *cxlsd =
->>>>>>                 to_cxl_switch_decoder(&cxld->dev);
->>>>>> -        void __iomem *tl_hi = hdm + CXL_HDM_DECODER0_TL_HIGH(id);
->>>>>> -        void __iomem *tl_lo = hdm + CXL_HDM_DECODER0_TL_LOW(id);
->>>>>>             u64 targets;
->>>>>>               cxlsd_set_targets(cxlsd, &targets);
->>>>>> -        writel(upper_32_bits(targets), tl_hi);
->>>>>> -        writel(lower_32_bits(targets), tl_lo);
->>>>>> +        settings->target_or_skip_reg_val = targets;
->>>>>>         } else {
->>>>>>             struct cxl_endpoint_decoder *cxled =
->>>>>>                 to_cxl_endpoint_decoder(&cxld->dev);
->>>>>> -        void __iomem *sk_hi = hdm + CXL_HDM_DECODER0_SKIP_HIGH(id);
->>>>>> -        void __iomem *sk_lo = hdm + CXL_HDM_DECODER0_SKIP_LOW(id);
->>>>>>     -        writel(upper_32_bits(cxled->skip), sk_hi);
->>>>>> -        writel(lower_32_bits(cxled->skip), sk_lo);
->>>>>> +        settings->target_or_skip_reg_val = cxled->skip;
->>>>>>         }
->>>>>> -
->>>>>> -    writel(ctrl, hdm + CXL_HDM_DECODER0_CTRL_OFFSET(id));
->>>>>>     }
->>>>>>       static int cxl_decoder_commit(struct cxl_decoder *cxld)
->>>>>> @@ -830,6 +851,7 @@ static int cxl_decoder_commit(struct cxl_decoder *cxld)
->>>>>>         struct cxl_port *port = to_cxl_port(cxld->dev.parent);
->>>>>>         struct cxl_hdm *cxlhdm = dev_get_drvdata(&port->dev);
->>>>>>         void __iomem *hdm = cxlhdm->regs.hdm_decoder;
->>>>>> +    struct cxl_decoder_settings settings;
->>>>>>         int id = cxld->config.id, rc;
->>>>>>           if (cxld->config.flags & CXL_DECODER_F_ENABLE)
->>>>>> @@ -862,10 +884,12 @@ static int cxl_decoder_commit(struct cxl_decoder *cxld)
->>>>>>             }
->>>>>>         }
->>>>>>     -    scoped_guard(rwsem_read, &cxl_rwsem.dpa)
->>>>>> -        setup_hw_decoder(cxld, hdm);
->>>>>> +    scoped_guard(rwsem_read, &cxl_rwsem.dpa) {
->>>>>> +        cxl_decoder_snapshot(cxld, &settings);
->>>>>> +        cxl_commit_start(hdm, &settings);
->>>>>> +    }
->>>>>>     -    rc = cxld_await_commit(hdm, cxld->config.id);
->>>>>> +    rc = cxld_await_commit(hdm, settings.config.id);
->>>>>>         if (rc) {
->>>>>>             dev_dbg(&port->dev, "%s: error %d committing decoder\n",
->>>>>>                 dev_name(&cxld->dev), rc);
->>>>>> diff --git a/include/cxl/cxl.h b/include/cxl/cxl.h
->>>>>> index 237b31d54249..67c81be47fbb 100644
->>>>>> --- a/include/cxl/cxl.h
->>>>>> +++ b/include/cxl/cxl.h
->>>>>> @@ -72,6 +72,16 @@ struct cxl_decoder {
->>>>>>         void (*reset)(struct cxl_decoder *cxld);
->>>>>>     };
->>>>>>     +/**
->>>>>> + * struct cxl_decoder_settings - CXL HDM decoder programming snapshot
->>>>>> + * @config: common decoder configuration
->>>>>> + * @target_or_skip_reg_val: switch target list or endpoint skip register value
->>>>>> + */
->>>>>> +struct cxl_decoder_settings {
->>>>>> +    struct cxl_decoder_config config;
->>>>>> +    u64 target_or_skip_reg_val;
->>>>> Single variable contains multiple meanings gets confusing and messy when they are different values depending on context.
->>>>>
->>>>> How about something like:
->>>>>
->>>>> struct cxl_endpoint_decoder_settings {
->>>>>       struct cxl_decoder_config config;
->>>>>       u64 skips;
->>>>> };
->>>>>
->>>>> /* resource.c: common to both decoder types */
->>>>> static u32 cxl_hdm_write_range(void __iomem *hdm,
->>>>>                                 const struct cxl_decoder_config *config)
->>>>> {
->>>>>          int id = config->id;
->>>>>          u64 base = config->hpa_range.start;
->>>>>          u64 size = range_len(&config->hpa_range);
->>>>>          u32 ctrl = readl(hdm + CXL_HDM_DECODER0_CTRL_OFFSET(id));
->>>>>
->>>>>          cxld_set_interleave(config, &ctrl);
->>>>>          cxld_set_type(config, &ctrl);
->>>>>          writel(upper_32_bits(base), hdm + CXL_HDM_DECODER0_BASE_HIGH_OFFSET(id))
->>>>>          writel(lower_32_bits(base), hdm + CXL_HDM_DECODER0_BASE_LOW_OFFSET(id));
->>>>>          writel(upper_32_bits(size), hdm + CXL_HDM_DECODER0_SIZE_HIGH_OFFSET(id))
->>>>>          writel(lower_32_bits(size), hdm + CXL_HDM_DECODER0_SIZE_LOW_OFFSET(id));
->>>>>          return ctrl;
->>>>> }
->>>>>
->>>>> void cxl_commit_start_endpoint(void __iomem *hdm,
->>>>>                                 const struct cxl_endpoint_decoder_settings *s)
->>>>> {
->>>>>          int id = s->config.id;
->>>>>          u32 ctrl;
->>>>>
->>>>>          lockdep_assert_held(&cxl_rwsem.dpa);
->>>>>          ctrl = cxl_hdm_write_range(hdm, &s->config);
->>>>>          writel(upper_32_bits(s->skip), hdm + CXL_HDM_DECODER0_SKIP_HIGH(id));
->>>>>          writel(lower_32_bits(s->skip), hdm + CXL_HDM_DECODER0_SKIP_LOW(id));
->>>>>          writel(ctrl, hdm + CXL_HDM_DECODER0_CTRL_OFFSET(id));
->>>>> }
->>>>>
->>>>> void cxl_commit_start_switch(void __iomem *hdm,
->>>>>                               const struct cxl_decoder_config *config,
->>>>>                               u64 targets)
->>>>> {
->>>>>          int id = config->id;
->>>>>          u32 ctrl;
->>>>>
->>>>>          lockdep_assert_held(&cxl_rwsem.dpa);
->>>>>          ctrl = cxl_hdm_write_range(hdm, config);
->>>>>          writel(upper_32_bits(targets), hdm + CXL_HDM_DECODER0_TL_HIGH(id));
->>>>>          writel(lower_32_bits(targets), hdm + CXL_HDM_DECODER0_TL_LOW(id));
->>>>>          writel(ctrl, hdm + CXL_HDM_DECODER0_CTRL_OFFSET(id));
->>>>> }
->>>>>
->>>>> /* hdm.c: cxl_decoder_commit() */
->>>>> scoped_guard(rwsem_read, &cxl_rwsem.dpa) {
->>>>>          if (is_switch_decoder(&cxld->dev)) {
->>>>>                  struct cxl_switch_decoder *cxlsd =
->>>>>                          to_cxl_switch_decoder(&cxld->dev);
->>>>>                  u64 targets;
->>>>>
->>>>>                  cxlsd_set_targets(cxlsd, &targets);
->>>>>                  cxl_commit_start_switch(hdm, &cxld->config, targets);
->>>>>          } else {
->>>>>                  struct cxl_endpoint_decoder *cxled =
->>>>>                          to_cxl_endpoint_decoder(&cxld->dev);
->>>>>                  struct cxl_endpoint_decoder_settings s = {
->>>>>                          .config = cxld->config,
->>>>>                          .skip = cxled->skip,
->>>>>                  };
->>>>>
->>>>>                  cxl_commit_start_endpoint(hdm, &s);
->>>>>          }
->>>>> }
->>>> Hi Dave,
->>>>
->>>>
->>>> I think cxl_decoder_snapshot() also needs this struct cxl_decoder_settings to store current value of switch/endpoint decoder registers.
->>>>
->>>> But your implementation only defines a struct cxl_endpoint_decoder_settings, I suppose that we also need a struct cxl_switch_decoder_settings?
->>>>
->>>>
->>>> How about using a union in struct cxl_decoder_settings, I think it can resolve the "Single variable with multiple meanings" issue you mentioned. like that
->>>>
->>>> struct cxl_decoder_settings {
->>>>
->>>>       struct cxl_decoder_config config;
->>>>
->>>>       union {
->>>>
->>>>           u64 targets;    // used for switch decoders
->>>>
->>>>           u64 skips;        // used for endpoint decoders
->>>>
->>>>       };
->>>>
->>>> };
->>>>
->>> That was my first thought, but it does not look like the switch decoders need it at the moment. I had LLM do a refactor and this [1] is what it looks like. See if you agree.
->>>
->>> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/djiang/linux.git/log/?h=cxl-type2-reset
->>>
->>> DJ
->> That looks good to me, I was thinking that the struct cxl_decoder_settings was also needed to cache HDM decoders registers of switch USPs during PCI enumeration, but I realize that this patchset is only for type2 device reset support, not need to consider switch ports reset.
->>
->> Seems like if a switch USP reset will destroy the HDM routing in type2 device under switch case, if we want to support it, we will need another patchset to cache decoders registers on switch USP?
-> You are correct. I guess we cross that bridge when we get there?
+This seems like unnecessary AI paranoia.. If something like this
+should exist it should be inside sg_alloc_table_from_pages_segment().
 
-Yes, I agree.
+I guess pretty much every DRM user has this latent issue? Given few
+importers even seem to use the segment size, it would be nicer to
+solve it by just not using segment size here.
 
+This is possible with the new dma api, and adding a new
+dma_buf_pages_to_sgt() using that approach looked OK from an AI draft.
 
-Ming
+However, the dma_sync_sgtable_for_device() in the heap doesn't seem to
+have a straightforward conversion.. We never made streaming functions
+for the new dma api, and drivers are not permitted to call the cache
+flushing functions by themselves.
 
->
-> DJ
->
->>
->> Ming
->>
->>>> Ming
->>>>
->>>>>> +};
->>>>>> +
->>>>>>     /*
->>>>>>      * Using struct_group() allows for per register-block-type helper routines,
->>>>>>      * without requiring block-type agnostic code to include the prefix.
+Something to think about at least.
+
+Jason
+
