@@ -1,111 +1,73 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA6542A165;
-	Fri,  9 Oct 2026 06:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403B4434998;
+	Fri,  9 Oct 2026 06:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791526250; cv=none; b=BQtkiOgK/w24afC5H949yFMuaXp5BHwSOEHuVd3lzB5tnWGHxYMeZ5A+gDdt/Sjn2paS1EDuyQuVLum8jnnmEzDgWvecsp+pOi9bYVF6sMJA7QzrwTDje0wLI8sSumt2F5bag8ps8AKk52XLyKATLNtsrbTRBnc6ZLt2QeeWois=
+	t=1791527535; cv=none; b=kNMnQqRduNrvJhztEDmjZKHteaegDquhSqQ7WGc5G6ZHnwrTTwaQINljOVqV5Owx2LcL0LWFoU8O9x5Oguzaqhvf0c7LqvNSWefOehc/KnxOPqwBh7mwAkW/LC7oKAAk7m8WQLbRXnMeNA6kewkE8sj/ZCT0PxpKNqDKOGlmE7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791526250; c=relaxed/simple;
-	bh=uZZSYAOjuJMOd9IMpZoWRtC11rV4plwn/pRAjV9rM/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OFOZTw0jCwuTowz8W755eGGEzGHV3+WDlbFPEjcKQigFNgBeTTtj4yapwEK/7Ti6d4xcMxYGnCEo6jqgurRLXWUfoOPxySeo76PJiA8l2sQUFDRfrXg4vwmh6XsfH726dDBZGN6PbzUEUx4WM0UpU3fw/MAl/RrIqkNiscUoXa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Th2wQWgL; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791527535; c=relaxed/simple;
+	bh=SJmJvPjq95kXXZNsTkAOwWaIVlCToDkLwuE8XLWV6n4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=clhqfLLDAOFFDv/DE0enPhee8je7G39OpKGpAqX4yo+mCVUV3go7mZmviegySwfKeiKzSUh8zL9Vu2z4LDySWqDfguRXsaObcG7HkVSN8MsSBKGyS/zdf2Ue4XW+PFk1nzKJJkbRvjEH1DqrIHAthWKVgjNJtvC0VlocczK/glI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=CoJGFaet; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Th2wQWgL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08E2D1F000FF;
-	Fri,  9 Oct 2026 06:10:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791526248;
-	bh=iSvppU/VIwgUjLgHLY+2yfkmaTPGx2jQBRc2qY3PfdY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Th2wQWgLkUIUbUa9P7OdQoa+4jOz/4lruJgGs8eKOTUwAeX7Q9+hbqCzQSvLztDDJ
-	 958bwpn1zjnZQl3RZiLRve68iqMIuohYfMaCj+N9XHF4KT/jGrCi/3A8PH8MWAzHaB
-	 0Y7ljKhBHznW/ueF+DDrvJe+lJ1Fi/vlh+4/937ypk0egOiy9yWWuhSXW7F+f3bjKa
-	 mTLyQ8yzTOJ5Xw7xUmH73s35FgaspvHsmD/hucDSrVVrv2EoUBv6QcPZmVcPsMLQRN
-	 FdrOkdL8/K7MnrsR7/nEaoXiOPrGpzI02QO8+QswkCBovCYp7eFx3enG3qKTg2GBVW
-	 rfXgho+3vjqFg==
-Date: Fri, 9 Oct 2026 08:10:46 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Haotian Zhang <vulab@iscas.ac.cn>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>, 
-	Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	linux-tegra@vger.kernel.org, Boris Brezillon <bbrezillon@kernel.org>, 
-	Dmitry Osipenko <digetx@gmail.com>, Lucas Stach <dev@lynxeye.de>, 
-	Thierry Reding <thierry.reding@kernel.org>, Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH] mtd: rawnand: tegra: fix OF node leak in
- tegra_nand_chips_init()
-Message-ID: <20261009-zippy-prompt-ringtail-e8fc6c@quoll>
-References: <20261008182442.2770036-1-vulab@iscas.ac.cn>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="CoJGFaet"
+Received: from mac.lan (unknown [4.194.122.162])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 706CC20B7167;
+	Thu,  8 Oct 2026 23:32:07 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 706CC20B7167
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1791527532;
+	bh=qD62pXmGKVATyqrDADZTyaMvYvoa09vK1Gim1YBZHO8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CoJGFaet4DDGAbOueEskwrOs0Wir2eiw+rknTCgaQGK4wDpB6sqCgmzGZz/S0gwUd
+	 HjSzsbYEkkNxW811t9tabkNp8WDzy5o/mMjS4pdiKOUKO4NW5zlH55NG833VccxAgs
+	 xICBtmiNLR+nVmjilTSNy5SOd2g3+mRRfB4+zG2E=
+From: "Cen Zhang (Microsoft)" <cenzhang@linux.microsoft.com>
+To: Marc Dietrich <marvin24@gmx.de>,
+	Greg KH <gregkh@linuxfoundation.org>
+Cc: Cen Zhang <cenzhang@linux.microsoft.com>,
+	ac100@lists.launchpad.net,
+	linux-tegra@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: nvec: fix GPIO descriptor documentation
+Date: Fri,  9 Oct 2026 02:31:56 -0400
+Message-ID: <20261009063156.28306-1-cenzhang@linux.microsoft.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261008182442.2770036-1-vulab@iscas.ac.cn>
+Content-Transfer-Encoding: 8bit
 
+The kernel-doc for struct nvec_chip still refers to the old gpio member
+and to struct nvec_platform_data, which no longer exists.
 
-On Fri, 09 Oct 2026 02:24:42 +0800, Haotian Zhang wrote:
-> tegra_nand_chips_init() takes an extra reference on the child NAND node
-> with of_get_next_child() and passes it to nand_set_flash_node(), which
-> only stores the pointer in mtd->dev.of_node. None of the return paths,
-> including the successful one, drop that reference, so the device node is
-> leaked. The get/put pair performed by the MTD core in add_mtd_device()
-> and mtd_release() is balanced and cannot compensate for it.
-> 
-> Release the reference with of_node_put() right after the node has been
-> stored, and route the earlier error paths through an err_put_node label
-> so that they release it as well.
-> 
-> Fixes: d7d9f8ec77fe ("mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver")
-> Assisted-by: DeepSeek-V4.1-Flash
-> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
-> ---
->  drivers/mtd/nand/raw/tegra_nand.c | 19 ++++++++++++++-----
->  1 file changed, 14 insertions(+), 5 deletions(-)
-> 
+Rename the documented member to gpiod and describe its role as the GPIO
+descriptor for the embedded controller request line.
 
+Signed-off-by: Cen Zhang (Microsoft) <cenzhang@linux.microsoft.com>
+---
+ drivers/staging/nvec/nvec.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Multiple things here:
-1. Your team ignored completely previous feedback.
-
-2. You use multiple identities with this email, thus I actually doubt we speak
-   with actual person.
-
-3. Finally, same feedback:
-You sent multiple independent patches, to multiple independent
-subsystems. The amount of these patches clearly suggest this was
-AI generated and most likely not tested.
-
-More importantly, you sent all this work without properly organizing
-relevant patches into patchsets. This makes reviewing difficult
-and might cause multiple reviewers to address the same issue.
-Replying to the entire set is impossible and requires handling each
-patch independently, instead of applying or discarding the set.
-Maintainers also won't see the bigger picture of your work. Quite
-worrying.
-
-This is on the verge of hostile patch: bomb us with so many
-contributions, we won't be able to handle them in efficient manner,
-like responding ONCE to ask you to slow down.  Considering all this
-is untested and LLM generated, I have even more doubts whether this
-should be considered for review.
-
-Please read kernel documentation BEFORE posting more work. It will
-explain you how to identify subsystems, how to organize your work per
-subsystem (so a patchset grouping multiple patches with a short cover
-letter), how to document usage of LLM and how what you should not do
-if this was posted in a good faith.
-
-Best regards,
-Krzysztof
-
-
-
+diff --git a/drivers/staging/nvec/nvec.h b/drivers/staging/nvec/nvec.h
+index 80c0353f141c..5ef959352338 100644
+--- a/drivers/staging/nvec/nvec.h
++++ b/drivers/staging/nvec/nvec.h
+@@ -102,7 +102,7 @@ struct nvec_msg {
+ /**
+  * struct nvec_chip - A single connection to an NVIDIA Embedded controller
+  * @dev: The device
+- * @gpio: The same as for &struct nvec_platform_data
++ * @gpiod: GPIO descriptor for the embedded controller request line
+  * @irq: The IRQ of the I2C device
+  * @i2c_addr: The address of the I2C slave
+  * @base: The base of the memory mapped region of the I2C device
+-- 
+2.55.0
 
