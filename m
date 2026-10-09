@@ -1,253 +1,85 @@
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010048.outbound.protection.outlook.com [52.101.61.48])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4DE2E03EA;
-	Fri,  9 Oct 2026 06:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791528341; cv=fail; b=bFEFFF6qR7m9f8YdbMDtI6/oThxNufCRtueCjO5nXjfTIrjQ53Nf1Oeev/sgnq6q4Z2IuauFMdIBi5kCOm9TTYoX39cqalArB5u4zT7UE12vuYK+pPvIXTnMKXsIOqwICFMdnZuloo37nu0OkGw3e/U0ROz6c46PbzyyigeCaJE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791528341; c=relaxed/simple;
-	bh=F+KkEff29VAA/MInBxBwU2ke+YjHQN1Ps+XfXuO3rS4=;
-	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=BAzj/j8fVrHk0HNRSy/GraE0PD+zwUkp+TseuluJCRRcel4Q6CsOOTLOR/m+y3kkezL1EuWy5Org6ryXtPyTJh9dkl01FOeF7GWWNWhQVGT/7il08VqYREfuhVjDr+f0X9ZH4/+NvwsPoaWwTxx2rCGNOq7rUJ9clH31xGuWki8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fFqlJMCz; arc=fail smtp.client-ip=52.101.61.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDFD30C157;
+	Fri,  9 Oct 2026 08:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791533262; cv=none; b=D4DNloQlI8qlE5GRq/mqcll3ZcUIGnZMN5e2PrVL0hlcPRbTYN5j3Bo4sywIOfOhrFTgFQ9T7W/XaktILbcB/I6Dv1mL+76CGbvvb3u17btdIqHdmgfIwPRKInZT3/LaLi+vd6NlD9VoE6xj1m4Iza2lTPYqxa2Ah6n/lNz+dyY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791533262; c=relaxed/simple;
+	bh=/qqvs4XSDIENh5BFTmEIXbC7YVVgc7goDh6mscL0QBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nH2yqUbbCz86+1GiEYUeq1QyV5SvE5awRydlMRSSXE1aOFGv1ZZq71b5WjTSSIkvH2Szx1as98AzcfYKejxuUoh6fUI6xQ1X1s+dJ6rYBs1cm73jPbL/aaWPB8YMgOo2u/pgkUrRoCKvP7BKGyBjCqPOVW/xoGiirRvdZRbOAwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eTwnynhJ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fFqlJMCz"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LWd/BDbyhot296SrH+bvz7oDrjspHc5J6hjhul3KRsVtwUxzW1mPNmX17xJotOiFmqjtTku78yy5FxN0LzYAFwAmLizR96iQbYPDOvJ9ZVzpz+1WokZxtfJPJrK1OBU5RJGtaCbNjcPilc5UHYssa6uR4Y8Ihc5yVQgTGFg3MiiwQf+hVXg+oEcxe1mL1sgLM8yht1F9d+/XFYrdax/soIXUukY8a225UOaLJFM75jjjuccIPP2VR3BrGFb4CjBdYXtdB7HufX8tJEjFAF2LH7izWEesNI58bsgG6lv2Uk3qG4hcEMSHbgBz2aqrPG6s+QcDQly2R2BSk2h4nLDI9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=x+4DRuyUn5Q/271HZhlLLASsCuCfULofWsk/vmie4hs=;
- b=MLI5g+13XpZyWJfApCqOZcQZMWNi5U7UJ6nv9UfUUk1qeikwJ4Qw4ksUm7Shzjy8dtkeRC/z7NnuMYDSAbueHJqpnE4qB4DazgvlYkA0oTlr3Y91lYeJehoPk9Nbu5fFxRJNlxFkEJB5t7StJeXzSjFFtTQ6IM9u5KbnoL/Xpy3wDVCXolAwDp7bx6OPKC7jpePRDgjpYG2piB8DGWoIjXYoBOTido8mpUKFbPSPVXdqrh+zcazz8rYdskpPizI4iASckozmh/nfm5WK6JnF6J1xa8FLGS/HjXMKdZRHZrOuVdmgIuReKBAovTdn9E3VH5PmzLdDDWQyTkL5bQ3K9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x+4DRuyUn5Q/271HZhlLLASsCuCfULofWsk/vmie4hs=;
- b=fFqlJMCzXqb6tOBKgayzfk7hH2jWTO7/jBOJ2mNlIemlPI4yR+17kuO1P3yM5SQBAQngy6CkrqEPo5oI4iROtiqGgY1X9rXVQJt/9M/v08Je4dk0VmSQXWbH3RFN8NIOKvr8zLKOXPBJq6Hc4G2LEsLLRHllMVRVN8+/9sYHfUe21tayJlA14VX4fJbRRxaBFdcLgI6+1i++pOJ0CQoPLGjN9TjGFxRwFfZ8aOkcNZ3KorhNmUELzCqFr8O0I93muTP7BcG5T4rvR4Pqb9xGn2Rc141LTqVxAmnL7x+JP/ybV8JdTTdvZv+ota590vgX6SiE+eQLYmj6pfGrhXIkXw==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.15; Fri, 9 Oct
- 2026 06:45:30 +0000
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0496.015; Fri, 9 Oct 2026
- 06:45:30 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Date: Fri, 09 Oct 2026 15:45:03 +0900
-Subject: [PATCH v2] drm/tegra: dsi: Unconditionally manage reset line
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261009-dalmore-fixes-dsi-reset-v2-1-90237a9461f1@nvidia.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/4WNQQ6CMBBFr0Jm7RhahIAr72FYlHaQMUJNBxsN4
- e4WPIDLl7z/3wJCgUngnC0QKLKwnxLoQwZ2MNONkF1i0Lmu8qbI0ZnH6ANhz28SdMIYSGjGU1+
- oRjlr6rqCtH4G2pU0vrY/lld3Jztvd5sxsMw+fPZ0VJv3vxIVKixr2zil+5I6d5kiOzZH60do1
- 3X9AiJl7dLRAAAA
-X-Change-ID: 20260930-dalmore-fixes-dsi-reset-4f3191dca886
-To: Thierry Reding <thierry.reding@kernel.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mikko Perttunen <mperttunen@nvidia.com>
-X-Mailer: b4 0.16-dev
-X-ClientProxiedBy: TYCP301CA0066.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:7d::7) To SJ2PR12MB9161.namprd12.prod.outlook.com
- (2603:10b6:a03:566::20)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eTwnynhJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E4301F000FF;
+	Fri,  9 Oct 2026 08:07:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791533259;
+	bh=/kNvVp8JCnz6l3mxn462kmLGkEwADtkdhDAdyThKQWs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=eTwnynhJ2mbNCajjri09cvqUnOACHMgfWrg1HOStcTmcjjcH+9d+WmZAeVwhyRGh4
+	 jxG4zMtAfeFNoon4vfW/eCV/6owf7seqRYpqmmNJmZxIbJ1gYKzlWAgx8j4GzLpHlJ
+	 JnfRUhMeuv3ZjKecKansZNntPtru1QVRwuktSDeaTtXKDUD9Nv2YA33pePtIW5zwm0
+	 zmcWDWmvCNQIT565yG0/pRes5JuejP18Vo8cBGSlEuqPoxwcERNPDorGhSwQVVnrcn
+	 +JOIA8jk/1fRO/PmV4rfj4Uv54sPLPYOTFFaGU+rd75zK8ip3UwCxEveTPAKKvvjPq
+	 EteXXs6neOmNw==
+Date: Fri, 9 Oct 2026 10:07:36 +0200
+From: Vinod Koul <vkoul@kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	JC Kuo <jckuo@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Wayne Chang <waynec@nvidia.com>, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] phy: tegra: Add support for Tegra238 XUSB pad
+ controller
+Message-ID: <asigyGqnlLUGpfo-@parshuram>
+References: <20261007-tegra-phy-v3-0-d501de414710@nvidia.com>
+ <20261007-tegra-phy-v3-3-d501de414710@nvidia.com>
+ <y7p44oeut66usohn3hdfsx2fndlxhup6osok6uo27c5xreyjvv@uyk37kiedv3u>
+ <25b96f0f-afc6-493c-9428-ab00a0bd9aff@nvidia.com>
+ <576e4762-4ced-4abb-99ef-a895415e30af@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|DS7PR12MB9473:EE_
-X-MS-Office365-Filtering-Correlation-Id: fe9c2752-5a70-4473-4b31-08df25d0e8e9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|10070799003|23010399003|10067099003|56012099006|11063799006|10063799003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	HaITciirQt5kvDhw1xO6Imy0VJoHzXGLpya6F7MIThyIuvnuvVyOmzCUNlzYnLObMcElGhXw16qbQtR3EbjAcKCP89J+suyyAiTkcRoy9f+HrKfmzR4i81TI7sR2gMAbD7oFZs/ZFrJP7I8LpiWU/c7JwCdA/8j5kLD3nN9ISJpWg/Dgv2RhPi3490T4DdpQJupyAFGnOSl/RBsc1cPOvrEriOVLptdnvkTupnaULT/UpiXUbxfHD1PUjNEkXI9UzY4me98lZHDHANsV8lAXvD/EYUGeqMdb0b/69tJ9FW52khZd6ym4k0oaqc6qrHRoDS1Y86NDS+Z/QilJd2ubm/OIrhc1fBQjfki2hNw9Z6CGZt5TxTMiCPzIYfUt5nHpZOrcXiyHcC0Ep7KgmPAAO6OWQ11fNG/pUbAe8/JilZJgE+DLeGVnkAAT00LUMl/HlMhLzXqwjDC80Gvmo92iMH/F0mqPfmfKKj35kKM+0e1pLek8B7p1l7/ohZF4gsOkJ0KFdYuHXfZSoB5OI+oVcWMsavSuI0b45qWBFDajLZF/N0Wb+tbiZYDkc5yNiFgm9r5BTU/MbC/DmIUNLTbAtZgpBdfyN2egbeoBcQ3/swRA5ziZLuQu0g1g21btkCy61rKNYxMyzMrQjdymwm8F7gDOhfAgj/DtugSlu1DzNjY=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(10070799003)(23010399003)(10067099003)(56012099006)(11063799006)(10063799003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eGFLQ2JNWWNtODNZNElVNUhpeHdnL0xVQnRGMWkxRnJpQklmNnZUazMza3cz?=
- =?utf-8?B?REVUbDlPRHhRUDl0RHhnazdOc09CR1BySFdtM2tjRy9lV1BUV2VpSUVkcWxJ?=
- =?utf-8?B?R1VaSHg0MDVyRTFiYWZXenRUZHREWEZaNW5YS1FBQXZSbFF3SWlnOHRKcGhi?=
- =?utf-8?B?OGIzSXBpZUJnYk5TNE85dktvREY3eE5jSUhtZkVNM3pTOVJPaTYvMEk5Yitq?=
- =?utf-8?B?cmVDQUp1Nk9iczhUV2JmQ2s4bFRXY3M3bzZEUWF1WDhRT09QM1dJVUR6ejY5?=
- =?utf-8?B?bWlFN3lKN20zdkNuNFFmWkpXNzZ4QkpYbm41ZERzVWhyZHFhTTBWZjJFajNv?=
- =?utf-8?B?NmxzNGhXV3VYRkhmVXRBOURqaGYwWE1uR0hrYjlxd2pDNUVhRFYxT1NXeE1P?=
- =?utf-8?B?bVluMFJMNDV6c2lqYXZ1UzdlTHAyUmZoQzgyWktVWlhZbVZHU0dOeDRwMUtI?=
- =?utf-8?B?MkJHUjNRTDBJK0Z5dGR5Vi95MUZnMGdtK2luVGp2R1VBTWtyWHd6ZmRqWHRx?=
- =?utf-8?B?THNHL3BqSzBIWW5VOTM1R1lkYk11VE9XVTFzYTFpQzFHZHhnT2RzalNhQkxS?=
- =?utf-8?B?ZG5LK1d2K2Mwd1AvUmRveEE4LzZJSDZaWVNMU1RlZmd4cTdVKy9POGVoN2Zi?=
- =?utf-8?B?aU1qK1d3ejhQRHM2ZkZXM1RxQmVLTnhYaTV3OFJmZTBHSGtpMUx2WkpZM1p1?=
- =?utf-8?B?ekdLQWF6MjBKZkQ1VUhKeUExVUFJZVFHY1gzSGhhZGpZMVkvaitLS2tQT3Fl?=
- =?utf-8?B?cjF5cExETldSeTM2VXBMcnpUT0N2cXRMOStzQVFCSXJWTnNzdklNTTFBQUxy?=
- =?utf-8?B?aHNqaUh2UitPdklaMVE0OTN0eUExa1htcXQwMTMxU1VyNjhkc1FWU3JBbEhJ?=
- =?utf-8?B?MXVhblNQS3BhUnNyaUJ4MTJjamhvYlZrd1UyMGo1QXhBemtmLzY0UzBBbmNH?=
- =?utf-8?B?UmNGQXVNa3VkMm1DSk9uTEhYZXplR0lmMjZXeWRkUEpuS0tETy9ua1N6UWlQ?=
- =?utf-8?B?ektQaWw2dmRTY280dW9QNlhkdENMeGZSaUdIdXBCOXFJTGN6VFM0QTVoSzcw?=
- =?utf-8?B?S1cySmlYMVd5S0ZNa2xWZkROMXEyZnhKTjBSZXJ3TkhqM2xmQW5pL2ZIMlBH?=
- =?utf-8?B?bkJ0ckNpYkl0TjFCQ0ZPbDVqd2h3ZUI0S1VnNitOZjljUkhYWnpsamdGUWdE?=
- =?utf-8?B?a2VUZUkxYmxvNmFKZjVQVWJ1MUkwem9SNi95Z0piNWZieG5DUUxjUkx1Umtn?=
- =?utf-8?B?RXNnR2hyNFFPS1Z0c0pCVUhrWEFtMmVvSTR2WDBoOFowM2ZKb0x3MUVFaFdj?=
- =?utf-8?B?cGdsUU9uc2REOFI5VXoyblorZDlidHVLMTlKV2s5V0IxU0gvdnpsb2tkQ0pt?=
- =?utf-8?B?bk02Tm9lY2wxUDY3TnppcXFqTVpydXM4bTE2Y1J6UDAxVmVzTlZIMmZJaFpw?=
- =?utf-8?B?Lzg0RWpaRS9qMGNnbGMwTy8yQVhQc24ya1ZqU1huTW9pK3JGUXp2VVFDTWRB?=
- =?utf-8?B?UGZGMDVMQ21aVVFRS1JObXpKUWpNMTdhN25LLzc5NFdWTUhoMVBnaklYWXFt?=
- =?utf-8?B?ZjYvY1pvd1RJa3Y1UXVVTy81bTczL1FLUGpqQ1VVTVNuSmZmcUhieHBybnh0?=
- =?utf-8?B?cXZPNnhncVdrbE91SjNjNnEvREpidCtvRWpBUWo3QkdGSzUrdjRRVVlQTEJ4?=
- =?utf-8?B?MDkzeHl1ZXJxQ3l2THZDWUQwd0dmb0NBWERmMUVNWUlpa2REMmtVelZzeWR2?=
- =?utf-8?B?U3NuOFF2WlJVYjl3cVJhTWt4NXB2cVFQUWtBcklwQ0xjZkNmRWNYdmNzc001?=
- =?utf-8?B?dGh4RFdRUzREdkxSWjVIdnVaZFUwR1JFYkdxMUZZblRpd1h0WXRZTGpaSDkv?=
- =?utf-8?B?amVhdmFIWURLN09TMXE4RUw4cEM1eGsycVBIUHhFdlFYZ3BRZkZ6d0NQYWti?=
- =?utf-8?B?ZTlCVlF3dlJhYnRWaEJEcmdaZ1RmNEp6ZEVUbVBHSmdCZXdYaUQxYWpRWUVh?=
- =?utf-8?B?RDRkbW4rL2ZZb3ZUajRrb0NiT0VJTk5BTjlTcFpyZkNXcWdQR25PNnBCWitm?=
- =?utf-8?B?VVlTc2VNd01kQ2E5Nlc4MUFLMnZBYlZtdjBySkpMTENCQzVjTStqMCtTQ3VI?=
- =?utf-8?B?RVNDVVoreEJXUVhkQkwzTTNDYjBzaHB5VjQydUlidURMby9LeklkNTBRRkdk?=
- =?utf-8?B?VmRyUERBTFVOUHl6ZC82UG82SmpoWHh2eW1ZWmp1K0JnOVNlN0puQVkrcWxt?=
- =?utf-8?B?ZG9FRDlLVlhYQjQ0NmwzVW10RktWQ3FCd0E1cHhWUERGWHIwbG1sQWJZWXBk?=
- =?utf-8?B?Nk1SSVRDQU10ekdUMDgzOVkrYWRQeVplZGIyb2liVVhLczNpaFR1MTBDakJI?=
- =?utf-8?Q?/tzQSHqQ73xb7euCuzSstaV+D7KGN1evm6mZigKMpRGc5?=
-X-MS-Exchange-AntiSpam-MessageData-1: F3r+Db+N890L7Q==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe9c2752-5a70-4473-4b31-08df25d0e8e9
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2026 06:45:30.3208
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: McQ7AmS/sXqq1d2vRd/UVQXMsuLRPAdf4VSAUB4idMShsRnUdIenFj0QI/J5OpYTIPaG+xH9EwLNWUV41TVFYQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB9473
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <576e4762-4ced-4abb-99ef-a895415e30af@nvidia.com>
 
-The DSI driver ignores the reset line if a power domain is configured.
-This was originally added to support Tegra210, where the power domain
-provider has to control the reset line -- at that time, older SoCs
-didn't have a power domain for DSI, so the driver continued to manage
-the reset line.
+On 08-10-26, 13:09, Jon Hunter wrote:
+> 
+> On 07/10/2026 17:27, Jon Hunter wrote:
+> > 
+> > On 07/10/2026 16:20, Manivannan Sadhasivam wrote:
+> > > On Wed, Oct 07, 2026 at 03:44:43PM +0100, Jon Hunter wrote:
 
-Now, however, Tegra20/30/114 place DSI in the core power domain, causing
-reset management to be skipped. On Tegra114, DSI should be placed in the
-DIS power domain where PMC could manage the reset, but that power domain
-hasn't been implemented yet. On Tegra20/30, there is no such power
-domain.
+> > > 
+> > > This is just a mess. As a followup patch, could you please please switch to
+> > > generic ARCH_TEGRA Kconfig option as done in this commit, 6b5e2f70a95c
+> > > ("PCI: dwc: tegra194: Broaden architecture dependency")?
+> > 
+> > Yes that would be a good idea and yes I can do that as a follow-up.
+> I did see the latest sashiko warning:
+> 
+> "Does this cause missing declaration warnings (-Wmissing-declarations or
+> -Wmissing-prototypes)".
+> 
+> I am not seeing any warnings but I can also address that in the
+> follow-up.
 
-On many platforms this seems to happen to work, presumably due to the
-bootloader bringing DSI out of reset. However, on Tegra114 Dalmore this
-isn't the case and the system ends up hanging during boot. Fix the issue
-by managing the reset unconditionally - while there is the alternative
-fix for Tegra114, for correctness this is required on Tegra20/30.
+Thanks, would appreciate if you folks can get this sorted. I have picked
+this one though...
 
-While the power domain may also access the reset, managing it also in
-the driver is safe -- asserts/deasserts are done in runtime
-resume/suspend where the device is guaranteed to be powered on from the
-power domain's perspective. Hence we can consider the additional reset
-assertion just a "runtime reset" independent of the power gating
-sequence. Ownership of the reset line is also no longer a problem with
-reset acquire/release semantics.
-
-Finally, the device tree bindings already require the reset and it is
-present on all platforms, so this is safe to do.
-
-Fixes: 4cc90d4c043e ("ARM: tegra: Configure Tegra114 power domains")
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
-Changes in v2:
-- Based on offline discussion, updated commit message to clarify
-  that the reset management is safe and does not interact with the
-  powergating sequence. Also other commit message improvements.
-- Link to v1: https://patch.msgid.link/20260930-dalmore-fixes-dsi-reset-v1-1-58c9d12f5ebd@nvidia.com
----
- drivers/gpu/drm/tegra/dsi.c | 40 ++++++++++++++++++++++------------------
- 1 file changed, 22 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-index cb88aafbd36f..7124cf648a1a 100644
---- a/drivers/gpu/drm/tegra/dsi.c
-+++ b/drivers/gpu/drm/tegra/dsi.c
-@@ -1113,14 +1113,14 @@ static int tegra_dsi_runtime_suspend(struct host1x_client *client)
- 	struct device *dev = client->dev;
- 	int err;
- 
--	if (dsi->rst) {
--		err = reset_control_assert(dsi->rst);
--		if (err < 0) {
--			dev_err(dev, "failed to assert reset: %d\n", err);
--			return err;
--		}
-+	err = reset_control_assert(dsi->rst);
-+	if (err < 0) {
-+		dev_err(dev, "failed to assert reset: %d\n", err);
-+		return err;
- 	}
- 
-+	reset_control_release(dsi->rst);
-+
- 	usleep_range(1000, 2000);
- 
- 	clk_disable_unprepare(dsi->clk_lp);
-@@ -1164,16 +1164,22 @@ static int tegra_dsi_runtime_resume(struct host1x_client *client)
- 
- 	usleep_range(1000, 2000);
- 
--	if (dsi->rst) {
--		err = reset_control_deassert(dsi->rst);
--		if (err < 0) {
--			dev_err(dev, "cannot assert reset: %d\n", err);
--			goto disable_clk_lp;
--		}
-+	err = reset_control_acquire(dsi->rst);
-+	if (err < 0) {
-+		dev_err(dev, "failed to acquire reset: %d\n", err);
-+		goto disable_clk_lp;
-+	}
-+
-+	err = reset_control_deassert(dsi->rst);
-+	if (err < 0) {
-+		dev_err(dev, "cannot deassert reset: %d\n", err);
-+		goto release_reset;
- 	}
- 
- 	return 0;
- 
-+release_reset:
-+	reset_control_release(dsi->rst);
- disable_clk_lp:
- 	clk_disable_unprepare(dsi->clk_lp);
- disable_clk:
-@@ -1623,12 +1629,10 @@ static int tegra_dsi_probe(struct platform_device *pdev)
- 	dsi->format = MIPI_DSI_FMT_RGB888;
- 	dsi->lanes = 4;
- 
--	if (!pdev->dev.pm_domain) {
--		dsi->rst = devm_reset_control_get(&pdev->dev, "dsi");
--		if (IS_ERR(dsi->rst)) {
--			err = PTR_ERR(dsi->rst);
--			goto remove;
--		}
-+	dsi->rst = devm_reset_control_get_exclusive_released(&pdev->dev, "dsi");
-+	if (IS_ERR(dsi->rst)) {
-+		err = PTR_ERR(dsi->rst);
-+		goto remove;
- 	}
- 
- 	dsi->clk = devm_clk_get(&pdev->dev, NULL);
-
----
-base-commit: 72d3fcf802c45d00b300f25b848a93c3a2bd7c7e
-change-id: 20260930-dalmore-fixes-dsi-reset-4f3191dca886
-
+-- 
+~Vinod
