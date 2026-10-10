@@ -1,169 +1,203 @@
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011064.outbound.protection.outlook.com [40.107.208.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F86D3955E4;
-	Sat, 10 Oct 2026 09:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791623520; cv=fail; b=RZoctbH6Sv+Zx2rz5mb8zYWF7GN6h+LFUxZxX88o5XHpJFT1QyLq+ojmJSY9CyE8C6VQZ0Ix80oAJgyB78rUDvS3EGAgTtDCkXr5KoOWfoq1dQLAArI7AJJTjPolalbiL2RsXpYpKAT5Vxkejg7xqKUMXLroVKrLKN8pIx1PCNQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791623520; c=relaxed/simple;
-	bh=rG9XeD4ITr1/MbX1VK5JbHjWlXyBGwfb0mJXZL9QPrw=;
-	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=VnjnuBETb2du+RVvBAYeODhOX3fS7vFdxRvQeuHUcQc7pePxDnWhah0wyXCVuZS34yKjxfC7Mk7YDbGPs954vHbgT6QPJVIlHgfcisoW7duTH24fB5QGhz/cIhazXkyPsu94TQjJqa9YISfqFEHPtiNbXc6KrBW5QCelWJNRwKc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=K7dDd9xI; arc=fail smtp.client-ip=40.107.208.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3BE37D101
+	for <linux-tegra@vger.kernel.org>; Sat, 10 Oct 2026 19:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791662130; cv=none; b=nlvzBBA9C3/1+cDp0iFLxnEWEoko9uGjw1t4fy5ZAMDMqd7UylqoHprMHk0ugWm7o33K+RmQSwb08a3Fytlt9Z9wOsn2VGlAC+LqmCuvPsqpsX1XmD4zc6VfEtwn23tywOye/4uXH2j44dYjZiEYm+MfBVrhPeQaeZYSnkKMdio=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791662130; c=relaxed/simple;
+	bh=VvVh33q/LcRioaEUOAFFjkFOJPBDmzqONfWQOUP9HVU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XQgZCLh+VWB49yqbvjMWDECj4JE7tyXwnpm1hxdc35f/h8LJxzQ+9GK9wKmAHzOejN8FAzubHoNtFAcTXDjLtL2cCgVQEsH9TDZcQQc+kUo6A1XhM3hbnUjRqJdwyj10ZLZq4zSTGy9K07NJJGC+qnokEn2qUJzMHafQ1kk2BrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maticrobots.com; spf=pass smtp.mailfrom=matician.com; dkim=pass (2048-bit key) header.d=maticrobots.com header.i=@maticrobots.com header.b=gQB1zRK2; arc=none smtp.client-ip=74.125.82.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maticrobots.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matician.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="K7dDd9xI"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ED7zrIaAMYXnfDlxpyALCV25vCKqAH/bMRMmlWcmKPivopt3wSzHx16irqdKP6n4K9YXS+l6KUiPbv44AaTBdldBJDR1hAjpmt7ZeT+mT8ibSXsG2A+AK3BJYZFzN/T4jUaDPf+BxBGsqNF8x+CE8Q9xmnmJPckLcjqvNTKiAT5J2WA+jUPiHYJKswKogFVzg22rPCRL/JWVnpVWi2rXJpOkysrXGaRjuEwPfWoEOMwb9QWqcFZKDpu2zJAhvpT5jYYSdL2nZ5W26xIZnLwpyQsvvPN6MGtipJLtCR4NktJCQXSleJP/04lyvLZMJS4WQafNsqYzFBU6FMHAZUSEZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4s4gqxwWp498s3XeOOsfn024RsnjakXIeKJLhiXph5s=;
- b=EPQJ4m2HcyLfYfXGn9DiWxUhMMC1P2F63ciALoytMFJrrP88fj9714u6KTNaO+zjAbX9PlGcf2Q3nt3wvCiF/VLZnm2Saag6UTnou0VGjZmjFO+O3GPS4oHDaC04oht8zdoVbW1OH78POaHqtDMF4uzZW/w2ftLMJwgRGhYt8myqW4Zjic7UBdaVqpT9iRNnbvX/ykvO0c156R5dYfqBnsWlRo+4PyCYOW34Jz4FzTkVY11EU/GDKSDBpcJoQ87ovPjGrmNgbh+4txxh0TtOwTImUWyDApTupbm9hj0sGUSETu8mIqFAU2qhlwVDP4uEeYGyekQ6vBxCGIj78Eg3+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4s4gqxwWp498s3XeOOsfn024RsnjakXIeKJLhiXph5s=;
- b=K7dDd9xIWVJEdqwVOlsyg/UYD9v+07jCokzpasMpjiE3EcfNPMufvjQ50IpHlvCrfzXXgC50YhR4yYqlsN01IwaMACgriosgNk1Mng+6GwSDbrLjHSf+qTtMnLxQnISI2EtqcOVxOtRgdmA5uQ7ZGJPK9dC4AnkS4ersoTWdsh4h6dB+3efMUMqpW88CaFjirJrB+CcZ6FXHKl/AQ9NrWChHyx42jkahMU6tZZMBKDvcjw1MyYtHJDcrLNST3j1Nj5fRK5mpwJqmbV+PS6HR2cYJ1TKcEf8A810nMqowxfWzMre2yyNb2fXcMId1yVDIulJUQZ78agrrpXx/segihQ==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com (2603:10b6:a03:566::20)
- by DS5PPF5C0B6C3B6.namprd12.prod.outlook.com (2603:10b6:f:fc00::64e) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.17; Sat, 10 Oct
- 2026 09:11:56 +0000
-Received: from SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017]) by SJ2PR12MB9161.namprd12.prod.outlook.com
- ([fe80::d9d1:8c49:a703:b017%5]) with mapi id 15.21.0496.015; Sat, 10 Oct 2026
- 09:11:55 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Date: Sat, 10 Oct 2026 18:11:25 +0900
-Subject: [PATCH] arm64: tegra: Override ethernet FIFO sizes on Tegra194
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261010-b4-t194-stmmac-debug-202610-v1-1-dbee21235296@nvidia.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMQQrCMBBA0auUWTuQtGlEryJdJJOxjtAqmVSE0
- rsb2+Xjw19BOQsrXJsVMn9E5TVX2FMD9AjzyCipGlrTemusweiw2ItDLdMUCBPHZcSjYt+l4N2
- ZUucJ6uGd+S7f/X4bDusSn0zlv4Rt+wHUsatVfwAAAA==
-X-Change-ID: 20261010-b4-t194-stmmac-debug-202610-53da647cd36c
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Mikko Perttunen <mperttunen@nvidia.com>
-X-Mailer: b4 0.16-dev
-X-ClientProxiedBy: TY4P286CA0113.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:37c::8) To SJ2PR12MB9161.namprd12.prod.outlook.com
- (2603:10b6:a03:566::20)
+	dkim=pass (2048-bit key) header.d=maticrobots.com header.i=@maticrobots.com header.b="gQB1zRK2"
+Received: by mail-dl1-f51.google.com with SMTP id a92af1059eb24-1419d3416ceso1273398c88.0
+        for <linux-tegra@vger.kernel.org>; Sat, 10 Oct 2026 12:55:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=maticrobots.com; s=google; t=1791662127; x=1792266927; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=gVa5PKFZG05oCr1W6VnQbp7u/39NDlzVBtH1WKIfORk=;
+        b=gQB1zRK2qSPeJUanOjQchZajT8gOROIfT/PiTsWk5xUhFum3ejOdbahqz/svAjqKm0
+         Kv0k4ZUi97rL87YkxsDOBpOsKjp2mCzWS3fy+BU8MUuj8IUeQdPiecN2/BBZmE8vAttP
+         w06vfvqOYb3VsX4YUrWdLOEJJRPmn7s8qxUEk3R46b9GzrLqrXHWmobAN3kTMJkK8obp
+         V0U2Wz+Il6kb6jmIZPvntyeqncLL4CE6TvsdALmQg1OoSZ/CdL8zxSvEKB4cow0AokhT
+         6uXRO91MspinKugizFllJ80bbtzSH8frP9U+pLk4mGviyGjYWiHM2PMqxZl93GkGaISz
+         Wgig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791662127; x=1792266927;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=gVa5PKFZG05oCr1W6VnQbp7u/39NDlzVBtH1WKIfORk=;
+        b=PRgbxWA543KriIDHZ8P18R5wX4yqojvYkrvbvlYxejDwczJr9ku4lXRSUOwW4qOKi9
+         pH8qZs7oPYbpG0Hm63/THgVp7vjEgLak1Xa6tjUR+7fELu/7YQqQ3soESJF9T7FbDDoA
+         9sE27OJW6WisSIeLtOsYWUzVI9+XDVJ5E6yxR9d2mI+zC9s9l0/76kTZNgBv2bjlY5I5
+         bgETbAUbZ+OIE4lef7bbgs0MErd/NulyhmoJnNgLez5BVXDlHxyJPdBRLx3FmJ6MTuuB
+         Uh/Qm9L8BYK7qZ3kL+En1PswQUjfa1KiZW8JNrYdg+uJDe5qaipKIpZ4u1zn8DF2SoxK
+         2mEg==
+X-Forwarded-Encrypted: i=1; AKwUvBwQPmEAKAYq6onfYGdxNv3Dx4LB6IV2Z75Wls23ziCMam+I1kmUjkw42B1VlZnH22ZotOkda2J2SA7v8g==@vger.kernel.org
+X-Gm-Message-State: AFq9FYItnpJQlsASGYwm+VI+EYKY6q2SLc/Xu1KVb0vq0rUga7XoPSCC
+	Ykx0jWZf5J9gPu7+jRIUC18VUYwSRdqrKF5kICzOG2enMX0YD2fjXzcI0obdTVnj7Ow=
+X-Gm-Gg: AYBFou3Ql++HnGPNFvYJxXA6afR3xcKMg1cxywKGrVqtbx2n3I1R84wg6P31wvdPH5u
+	30IRtdUbw4MBRtnWbgo8d54/g2RyuUH/hr/rA6DpOIsE1MiGU9yd6xsjw1n5FAHv+LmVTZJtI5Q
+	3EibGkCxXaoXiygQ4tTWB9g5hAS4mf5KlJqRkwNG3H70tY2cy/fTOV7B6YLYrTqpoQDpGXq29e9
+	JxrOzv6YsO2np1Z/6WT3Y66MR+EjAvzEujqYlo3dXTchsE7iKVuDnc37lK8d+7QfClSCyTZPWzn
+	Sno+Q8ylC1+8M1K/6OIM9+Mloc2XRT44Gqpweoc5N4fD+9Opmp1bV19IR6qdLpDgJiQnUUDezK4
+	dngNca4AzWdcDDDiwLlMxucMkYdvKe8JbHkgyH2t34IFBgUdVb62l81W3mxosh0Rk37NKykbe7k
+	tAJMiOoHg3qOiwWOj37B4a1ryjd/T2K23ZU8d//CY43K7ZFrDvtxRmSGon4VqDkIc7rjrtwnKWS
+	bMlmpeeAdxWc1bgxt38Zx9TccY4mwz2bdFA0XwmXDVOZ8Q=
+X-Received: by 2002:a05:7022:43a3:b0:14f:b5ac:ace4 with SMTP id a92af1059eb24-16a62ea9574mr9846984c88.44.1791662126977;
+        Sat, 10 Oct 2026 12:55:26 -0700 (PDT)
+Received: from abeMaticDesktop.1020marsh.offices.matician.com ([2600:1700:471:807f:88c:2ee5:394c:5592])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3537c841648sm20211705eec.3.2026.10.10.12.55.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 10 Oct 2026 12:55:26 -0700 (PDT)
+From: Abraham Zukor <abe@maticrobots.com>
+To: Mark Brown <broonie@kernel.org>,
+	Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Abraham Zukor <abe@maticrobots.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-spi@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] spi: tegra114: initialize native chip selects inactive
+Date: Sat, 10 Oct 2026 12:54:05 -0700
+Message-ID: <20261010195503.623287-1-abe@maticrobots.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9161:EE_|DS5PPF5C0B6C3B6:EE_
-X-MS-Office365-Filtering-Correlation-Id: d60cfaa7-78d6-420e-fd71-08df26ae87aa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|10070799003|376014|366016|1800799024|56012099006|11063799006|10067099003|18002099003|261009223027099003;
-X-Microsoft-Antispam-Message-Info:
-	ht7nsBHqU+S7EZ79bGrjh3V6lxkeDqSYlyhEsVQq6vszjN+3rE7MPJpu4Jpqx8OwKW2sIZ9q54bL8+eOwgOBVdLdCjZWT7xdIvkkKU7pHMrZ3v2zcTxWgYc7s/lUFBbIW8stCdDcBs1v28Ou9hzBC3+6ZVYhNsKg/2XrwEez0cQDdgLrelfdaDTGn16318qdtIWmKCpUKPKRpcHA2uH6+i6vHIn5ZKiKz8nJ15jSTIS7/yEL3dpG0sSlnlAIJLAKjLzMP3JkM77KPNKKjgbrKSJ6j4pYFwnKNyDPFrm+QIpHPL6a/uN6BO3j+Z0hcwTGHfiO1/8RQ90jprbfFBbaofNRe8QZPYF5nkylpr8DTm9ZpdJ2L3vOgnMg/Y7JTvx14Sybeq4Uja3e9mVwDNKFnamCU5AEE/kAvBKnAIKKzV0hbo0XbldVIAiOFSVUUEaIhjU9e6lnt4hCC/3y1oUZu0skYPL5ouJ4rkcUembze9R48hoeawuNGx2xOvN12fweK0DBGeVS9gtAhwSWo/4mTVqqdImojnbxwaJKd/yEMGDkSFvrfFYZYDNRv+1tD50hYltFNqS/BND/zwfMrCv9wy6Qzfwq5odCPiKn4xR5CFiwv9EbhykIEdldIxhub2qOW6hSp6zXZ6CRxO7D/khvlaNKVSPBsc+5ey5ASsh7YRI=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB9161.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(10070799003)(376014)(366016)(1800799024)(56012099006)(11063799006)(10067099003)(18002099003)(261009223027099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Tm9wRWRlZUxYQThvN2swU1hGTHg4UnpzRHZkRHpKeFBWS2IyUlFTY0tURmU0?=
- =?utf-8?B?MXdNYnNGbkxkRENMZWc2VzVYUE5NejJWNTdOOUVYNWV2WElDdzY5REIrR3o5?=
- =?utf-8?B?TTByVlZmTHEyc01BUERvTlBiYW9JUWdDd3h2SFZmWGZjbXY4OW42SHlDMDNj?=
- =?utf-8?B?WVdoNE1YNC9uRlNqVElWSVp3NWRsQmVwaVBTVk9obmNVejBLUWZZQUVEdjJ4?=
- =?utf-8?B?QlM3bU1MUjZLZ2o2RnZJOEdvaFlMaWk1R3pPV05XcG5Wc0J4bjlidDdOeHA3?=
- =?utf-8?B?azF5YWJGWXhRd0JlQVRsUEVLa2dSejl4dEZodU5PaXg4VzZJTEpDMDFsNmln?=
- =?utf-8?B?aTZjcktPKytZcXF6WkZxb1JTeXIwNmlLbERtend5eUVsbHd6Y0p0UmdQZFN3?=
- =?utf-8?B?S3lrZkxNZElYTW1rd1NMNlFaT2cxTEp1TTRKUzZQZ0hGdW02THN6UFpWdlpD?=
- =?utf-8?B?dE51Uk83ZWJVdDl5MmVxV0dNM0t4Y3o0MjlGVnBxbXY1aDcwWHBhOTU1Z2wz?=
- =?utf-8?B?d28rRDZhek81RU5MZXpqZTlCRHE3bE1FbjIvU3FDbGkrRE8wNUY2RGt4Qmxu?=
- =?utf-8?B?Sm5NNkFQa3dWTmdZOFJkSjVWbHRmWVJEeDV6R29RTXFpdGJFdmhYTElTNEw3?=
- =?utf-8?B?S0NxUGYyQ0NLTkVqVWVwdXcwc1J0bFBXRFJNYUt1THIrMENJbzlFR0FQS2VO?=
- =?utf-8?B?dGVGL2ZPUjRGOG5MMnhFNWpOVVBBaHJpcUMyRVN5MFh1TzBZRkJ2cUpwYy95?=
- =?utf-8?B?aUkzN3FyUDBDREw0TUkzVExkaDZaMjJEQjNGMlllQ1RUd08zZmJZeVlNQmkr?=
- =?utf-8?B?YkoxWmc2bWhFK1JSOTlUQ21UZXM2bU9CeExHZklkOUxjTk5wb3QxcVJwVkZ2?=
- =?utf-8?B?Vy9seVpKakZRZ0pTclpsTk04Z0VWT3hoS3owWWZUK1lUZWRPOFF6TjUyL3hR?=
- =?utf-8?B?MmEvSUp1Vm9IZzU3K3Zlb1dvdWVmWjhXbTNxdWtHd3FlR2NLZ2ZaVGtra1NP?=
- =?utf-8?B?alZ1RHFnY2RqakpCckkyTndZTHZpZm9QZUs1Vm5qbGVnLytNTVZpZjNsNUQx?=
- =?utf-8?B?VTE3VEVSM1YrWGJJZGtuSUlBNXU0Z3lIWUdVQmpKR3lRN0lDbW13WC9QL01X?=
- =?utf-8?B?RU9ORk5pNVYvNDB5MUx2R25NaExZYXVHK2JXOU1FcFdaWDI0Y0RRV2dyTzNj?=
- =?utf-8?B?N0taWFdxS1lrWUFURWNRTjN1ODFXV1IvMTAxOWxrSTRZQkxUUHNtU0JaM3BU?=
- =?utf-8?B?bHoyTXg2TkZlV1B5RXkxWjJsQUZpT3YrRmN3cG1wRmdYdloyYlcwWGYzU3Ju?=
- =?utf-8?B?Y1pLaGZDcHpWVXU0b2VKVkkrUmlMNGsycmtqSjZJUUVBNmRCRUF1VGN5b0ZN?=
- =?utf-8?B?blhiMG1BV3c4Y1Y4ZWxQeWpSa2dGek11WEVSTlNETllHY2Z0Qm44WWYyS295?=
- =?utf-8?B?VEI4d1pCWlZnb3oxSFhOZWU4bGVIaHlSOGR1UEFuaXJQYm5WQ3A0SE9wL2Ro?=
- =?utf-8?B?ZlRhbVQwYlR5dU5UZUtOalpqektIVm1vWVZLZ2RsTWJhUkZEU0xwaEt1RlFi?=
- =?utf-8?B?WXZDZjV5S3hIbStuL3ZIYzVSdkNuUFhzV0dHcnlXNDUwakFnbm1FRnpGcnRL?=
- =?utf-8?B?V0xLSGZWOHM3cVpBYnFON0dBQVg1TzFWVjMwdXltMWIxWVZhK252WDBnM2Z0?=
- =?utf-8?B?aXcrb003dWV1Ry9FSGNyN0ROYWJmTXNUMmNVNUs0K1hwL0xEK0V0YkFwV3l0?=
- =?utf-8?B?VkdrRUhna0JkYVBsZ1piNTRJRVJRRG5oWXQwVUJwNjJkbGUrZCtwZEVWMkZi?=
- =?utf-8?B?M2h0UmFTU28vUHZFUmdjenVSWUkrbXVlY21wNnd4WHgvRXNNMUFxUkgzSUFN?=
- =?utf-8?B?NnpCTFZnZ2o4OFIwelFJdHpLQWdsS2V2UEZpTzBoS1N4QXpBcEVrWkFlaXR1?=
- =?utf-8?B?ZUhtN2RuQTUwRzVFMVRmck1RNVU5K3EyYkJxQ0dhQ0JDV1BPczkrTVBhZzhN?=
- =?utf-8?B?TnNxWDE5UVV0Z1hTZytzSElFL2pRNW9CZXVaR2VlemJjQmlVYTVaUVdrOTQv?=
- =?utf-8?B?dHpGN3FQdzFjZXVpZ3VOYmdoSFFjV0JoL3YyZkhKeDVKcGh0Y2hTK0txYU4r?=
- =?utf-8?B?by9mZ1h4b0M0dEEzdVY2a3l0UUtxLzZpUjNZczBXdFRDTXZKdXRoQkFrRUJw?=
- =?utf-8?B?cmo4Z2Vpby84d0ZsWDBFMmFDckI1eUhJYWVKNHlmT052dC9ZdENpQWtnUEc4?=
- =?utf-8?B?QUFDM1V3NG9YR3FoTDg2Nk04YWJQV0VabHkySWYvSFBhU3hDZ096R0RCeXlO?=
- =?utf-8?B?Q1hMb0c0enl6MVBLUmpFU1JvWkJ1bHBsVSszMXdrZFQxdDJ6OGswdlI5WlNI?=
- =?utf-8?Q?fnoZtnrD/cbXkRBkVFLw+aepVkLOp6BWzqeIpCKNtuT1L?=
-X-MS-Exchange-AntiSpam-MessageData-1: Nnks77D6R5Kbwg==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d60cfaa7-78d6-420e-fd71-08df26ae87aa
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9161.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2026 09:11:55.3596
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5t1LpOTuzgDczwWDIlsJ01XedrHjKL2YgQNgmQPfSGk7i3ujlSbdZ3fc1B0qIhbmtZi6B4ivFmK+43qCD4tM0Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPF5C0B6C3B6
+Content-Transfer-Encoding: 8bit
 
-The eqos ethernet device on Tegra194 has 36KiB of each of RX and TX FIFO
-memory. The hardware registers that report the sizes to the driver only
-work in powers of two, and are rounding up to 64KiB, causing
-intermittent network hangs.
+tegra_spi_probe() initializes SPI_COMMAND1 with only SPI_M_S, leaving
+CS_POL_INACTIVE clear for every chip select. This drives every native
+active-low chip select low until tegra_spi_setup() runs for that device.
 
-Fix this by overriding the FIFO sizes to 36KiB here in the device tree.
+SPI children are registered and probed one at a time. A synchronous
+probe of an earlier child can therefore transfer while a later child's
+chip select is still asserted. On a Tegra234 system with active-low
+devices on CS0 and CS1, this caused both devices to be selected when the
+CS1 device probed first. Its initialization then intermittently failed.
+A logic analyzer showed CS0 remained low throughout the CS1 transfer and
+went high only after the CS1 probe failed.
 
-Fixes: f89b58ce71a9 ("arm64: tegra: Add ethernet controller on Tegra194")
-Cc: stable@vger.kernel.org
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+Walk the controller's device tree children before SPI_COMMAND1 is
+written and set CS_POL_INACTIVE for each valid chip select without
+spi-cs-high. That way the line is already deasserted when the first
+child transfers and does not change level when setup runs.
+
+Disabled children are walked too. The core only registers available
+children, so tegra_spi_setup() never runs for a disabled one and probe
+is the only chance to park its chip select at the level its hardware
+needs.
+
+If an enabled child shares a chip select with disabled ones, its
+polarity takes priority. If only disabled children use a chip select
+and they disagree, warn and leave the line inactive high.
+
+Fixes: f333a331adfa ("spi/tegra114: add spi driver")
+Assisted-by: Claude:Opus-5
+Signed-off-by: Abraham Zukor <abe@maticrobots.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+v4:
+- Let an enabled child's polarity take priority over disabled children
+  on the same chip select (Jon Hunter, Mark Brown).
+- Warn when only disabled children use a chip select and they disagree
+  on polarity.
+- Link to v3: https://lore.kernel.org/all/20260826000517.631736-1-abe@maticrobots.com/
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 43d82841b3cd..fe2a3b81c829 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -156,6 +156,9 @@ ethernet@2490000 {
- 			iommus = <&smmu TEGRA194_SID_EQOS>;
- 			status = "disabled";
+v3:
+- Drop the cs-gpios check; programming an unused native chip select does
+  not affect a device using a GPIO chip select.
+- Split the compound condition into separate checks for readability.
+- Retest on a Jetson Orin Nano with CS1 disabled. The old module left CS1
+  asserted, while the patched module parked both chip selects inactive.
+
+v2:
+- Derive the inactive level per chip select from the device tree instead
+  of setting the whole CS_POL_INACTIVE field, which is incorrect for an
+  active-high or mixed-polarity bus.
+
+ drivers/spi/spi-tegra114.c | 49 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
+
+diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+index aa44ffd09..ebf568d0f 100644
+--- a/drivers/spi/spi-tegra114.c
++++ b/drivers/spi/spi-tegra114.c
+@@ -1301,6 +1301,9 @@ static int tegra_spi_probe(struct platform_device *pdev)
+ 	struct resource		*r;
+ 	int ret, spi_irq;
+ 	int bus_num;
++	u32 conflicting_cs;
++	u32 enabled_child_cs_polarity = 0, disabled_child_cs_low = 0, disabled_child_cs_high = 0;
++	u32 enabled_cs_mask = 0;
  
-+			rx-fifo-depth = <36864>;
-+			tx-fifo-depth = <36864>;
+ 	host = devm_spi_alloc_host(&pdev->dev, sizeof(*tspi));
+ 	if (!host) {
+@@ -1395,6 +1398,52 @@ static int tegra_spi_probe(struct platform_device *pdev)
+ 	udelay(2);
+ 	reset_control_deassert(tspi->rst);
+ 	tspi->def_command1_reg  = SPI_M_S;
 +
- 			snps,write-requests = <1>;
- 			snps,read-requests = <3>;
- 			snps,burst-map = <0x7>;
-
----
-base-commit: bf1ee2bd5c2da8992f33c8950ef194aaff74ed6c
-change-id: 20261010-b4-t194-stmmac-debug-202610-53da647cd36c
++	/*
++	 * SPI_COMMAND1 is written before any child is registered, so a chip
++	 * select with CS_POL_INACTIVE clear stays asserted until
++	 * tegra_spi_setup() runs for that device. Program the level the
++	 * device tree asks for up front instead.
++	 *
++	 * Disabled children are included deliberately. The core never
++	 * registers them, so this is the only chance to park their chip
++	 * select at the level their hardware needs. An enabled child on the
++	 * same CS takes priority.
++	 */
++	for_each_child_of_node_scoped(pdev->dev.of_node, np) {
++		u32 cs;
++		u32 polarity_bitmask;
++		u32 cs_polarity = 0;
++
++		if (of_property_read_u32(np, "reg", &cs))
++			continue;
++
++		if (cs >= MAX_CHIP_SELECT)
++			continue;
++
++		polarity_bitmask = SPI_CS_POL_INACTIVE(cs);
++		if (!of_property_read_bool(np, "spi-cs-high"))
++			cs_polarity = polarity_bitmask;
++
++		if (of_device_is_available(np)) {
++			enabled_cs_mask |= polarity_bitmask;
++			enabled_child_cs_polarity |= cs_polarity;
++		} else {
++			if (cs_polarity)
++				disabled_child_cs_low |= polarity_bitmask;
++			else
++				disabled_child_cs_high |= polarity_bitmask;
++		}
++	}
++	conflicting_cs = disabled_child_cs_low & disabled_child_cs_high & ~enabled_cs_mask;
++	for (u32 cs = 0; cs < MAX_CHIP_SELECT; cs++) {
++		if (SPI_CS_POL_INACTIVE(cs) & conflicting_cs)
++			dev_warn(&pdev->dev,
++				 "Conflicting CS polarity on disabled nodes at cs %u\n", cs);
++	}
++
++	tspi->def_command1_reg |= enabled_child_cs_polarity |
++		(disabled_child_cs_low & ~enabled_cs_mask);
+ 	tegra_spi_writel(tspi, tspi->def_command1_reg, SPI_COMMAND1);
+ 	tspi->spi_cs_timing1 = tegra_spi_readl(tspi, SPI_CS_TIMING1);
+ 	tspi->spi_cs_timing2 = tegra_spi_readl(tspi, SPI_CS_TIMING2);
+-- 
+2.52.0
 
