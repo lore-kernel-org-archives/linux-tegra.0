@@ -1,203 +1,93 @@
-Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
+Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com [74.125.82.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3BE37D101
-	for <linux-tegra@vger.kernel.org>; Sat, 10 Oct 2026 19:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956B63E2ADB
+	for <linux-tegra@vger.kernel.org>; Sat, 10 Oct 2026 20:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791662130; cv=none; b=nlvzBBA9C3/1+cDp0iFLxnEWEoko9uGjw1t4fy5ZAMDMqd7UylqoHprMHk0ugWm7o33K+RmQSwb08a3Fytlt9Z9wOsn2VGlAC+LqmCuvPsqpsX1XmD4zc6VfEtwn23tywOye/4uXH2j44dYjZiEYm+MfBVrhPeQaeZYSnkKMdio=
+	t=1791662492; cv=none; b=gW/rCcTYaDdyFlhxURsieB/m/XldoIK0XOjHHOZHG6mBzYNMDlMvLXSa1Lh4N85zUwz5iE01wRivNpb1CynOVSqQMszJ1n9yn4q8KcctbNvi+mECtlVVZ2t60Kq+pRsYRnLublQnbhQJZusA/kb4emr9HuzoPvhvmtXcuKb9SJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791662130; c=relaxed/simple;
-	bh=VvVh33q/LcRioaEUOAFFjkFOJPBDmzqONfWQOUP9HVU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XQgZCLh+VWB49yqbvjMWDECj4JE7tyXwnpm1hxdc35f/h8LJxzQ+9GK9wKmAHzOejN8FAzubHoNtFAcTXDjLtL2cCgVQEsH9TDZcQQc+kUo6A1XhM3hbnUjRqJdwyj10ZLZq4zSTGy9K07NJJGC+qnokEn2qUJzMHafQ1kk2BrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maticrobots.com; spf=pass smtp.mailfrom=matician.com; dkim=pass (2048-bit key) header.d=maticrobots.com header.i=@maticrobots.com header.b=gQB1zRK2; arc=none smtp.client-ip=74.125.82.51
+	s=arc-20240116; t=1791662492; c=relaxed/simple;
+	bh=XRMulLqQ9lTxfpINJFkOFLsDuOIPnmi9UOaet3zqcRI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=a48luO1SOdBcX02U+bLi212omDD5WtZMrIMzdoL3rtWAdYc9A4y98H08XXNaWwrjGOwojACiLNuF/m3eTtFG1G6znsoLBFowQhmh7UGBhmy+/8P2VDkwakmzoQgU7Yw1h9OsvRrcUFuNmGrFvc03Hds6hvvaQ9IBpmBSXJmR68U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maticrobots.com; spf=pass smtp.mailfrom=matician.com; dkim=pass (2048-bit key) header.d=maticrobots.com header.i=@maticrobots.com header.b=JMLdJ07s; arc=none smtp.client-ip=74.125.82.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maticrobots.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matician.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maticrobots.com header.i=@maticrobots.com header.b="gQB1zRK2"
-Received: by mail-dl1-f51.google.com with SMTP id a92af1059eb24-1419d3416ceso1273398c88.0
-        for <linux-tegra@vger.kernel.org>; Sat, 10 Oct 2026 12:55:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=maticrobots.com header.i=@maticrobots.com header.b="JMLdJ07s"
+Received: by mail-dy1-f169.google.com with SMTP id 5a478bee46e88-3115c4451c8so739031eec.1
+        for <linux-tegra@vger.kernel.org>; Sat, 10 Oct 2026 13:01:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=maticrobots.com; s=google; t=1791662127; x=1792266927; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=gVa5PKFZG05oCr1W6VnQbp7u/39NDlzVBtH1WKIfORk=;
-        b=gQB1zRK2qSPeJUanOjQchZajT8gOROIfT/PiTsWk5xUhFum3ejOdbahqz/svAjqKm0
-         Kv0k4ZUi97rL87YkxsDOBpOsKjp2mCzWS3fy+BU8MUuj8IUeQdPiecN2/BBZmE8vAttP
-         w06vfvqOYb3VsX4YUrWdLOEJJRPmn7s8qxUEk3R46b9GzrLqrXHWmobAN3kTMJkK8obp
-         V0U2Wz+Il6kb6jmIZPvntyeqncLL4CE6TvsdALmQg1OoSZ/CdL8zxSvEKB4cow0AokhT
-         6uXRO91MspinKugizFllJ80bbtzSH8frP9U+pLk4mGviyGjYWiHM2PMqxZl93GkGaISz
-         Wgig==
+        d=maticrobots.com; s=google; t=1791662490; x=1792267290; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=XRMulLqQ9lTxfpINJFkOFLsDuOIPnmi9UOaet3zqcRI=;
+        b=JMLdJ07stMbBRhiZGHaVO5NQ+s83usNAru/yE27GGgJTqoLMSGs1lFmtlXxTCaJ4cu
+         2+FhWZP7zYQ1iC6WAy0kdIgv+hxS76Kzog+rjp99ik2ihdEcZXQs9dfY/YWppvT+8/vh
+         j7kwo7GT1RkL1SJnSSDHe2v+LVHmV4qBezgwdArEMmdUBDfdY0VceNvZVYXlCe1Dq8aV
+         GP+zZWksBHOFECvfZE2Y/07ehzADC7KkhCI6Rz8eUGBvSJu/n1vFjZdZgBgCu7oj2sHx
+         2w3rtmZXbgMv4wHNVYc0pv09m6O7yJEVCpA7lZH5jXap2Jr4fZ8qOeh9Yx0DMjYL7tT9
+         pOlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791662127; x=1792266927;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=gVa5PKFZG05oCr1W6VnQbp7u/39NDlzVBtH1WKIfORk=;
-        b=PRgbxWA543KriIDHZ8P18R5wX4yqojvYkrvbvlYxejDwczJr9ku4lXRSUOwW4qOKi9
-         pH8qZs7oPYbpG0Hm63/THgVp7vjEgLak1Xa6tjUR+7fELu/7YQqQ3soESJF9T7FbDDoA
-         9sE27OJW6WisSIeLtOsYWUzVI9+XDVJ5E6yxR9d2mI+zC9s9l0/76kTZNgBv2bjlY5I5
-         bgETbAUbZ+OIE4lef7bbgs0MErd/NulyhmoJnNgLez5BVXDlHxyJPdBRLx3FmJ6MTuuB
-         Uh/Qm9L8BYK7qZ3kL+En1PswQUjfa1KiZW8JNrYdg+uJDe5qaipKIpZ4u1zn8DF2SoxK
-         2mEg==
-X-Forwarded-Encrypted: i=1; AKwUvBwQPmEAKAYq6onfYGdxNv3Dx4LB6IV2Z75Wls23ziCMam+I1kmUjkw42B1VlZnH22ZotOkda2J2SA7v8g==@vger.kernel.org
-X-Gm-Message-State: AFq9FYItnpJQlsASGYwm+VI+EYKY6q2SLc/Xu1KVb0vq0rUga7XoPSCC
-	Ykx0jWZf5J9gPu7+jRIUC18VUYwSRdqrKF5kICzOG2enMX0YD2fjXzcI0obdTVnj7Ow=
-X-Gm-Gg: AYBFou3Ql++HnGPNFvYJxXA6afR3xcKMg1cxywKGrVqtbx2n3I1R84wg6P31wvdPH5u
-	30IRtdUbw4MBRtnWbgo8d54/g2RyuUH/hr/rA6DpOIsE1MiGU9yd6xsjw1n5FAHv+LmVTZJtI5Q
-	3EibGkCxXaoXiygQ4tTWB9g5hAS4mf5KlJqRkwNG3H70tY2cy/fTOV7B6YLYrTqpoQDpGXq29e9
-	JxrOzv6YsO2np1Z/6WT3Y66MR+EjAvzEujqYlo3dXTchsE7iKVuDnc37lK8d+7QfClSCyTZPWzn
-	Sno+Q8ylC1+8M1K/6OIM9+Mloc2XRT44Gqpweoc5N4fD+9Opmp1bV19IR6qdLpDgJiQnUUDezK4
-	dngNca4AzWdcDDDiwLlMxucMkYdvKe8JbHkgyH2t34IFBgUdVb62l81W3mxosh0Rk37NKykbe7k
-	tAJMiOoHg3qOiwWOj37B4a1ryjd/T2K23ZU8d//CY43K7ZFrDvtxRmSGon4VqDkIc7rjrtwnKWS
-	bMlmpeeAdxWc1bgxt38Zx9TccY4mwz2bdFA0XwmXDVOZ8Q=
-X-Received: by 2002:a05:7022:43a3:b0:14f:b5ac:ace4 with SMTP id a92af1059eb24-16a62ea9574mr9846984c88.44.1791662126977;
-        Sat, 10 Oct 2026 12:55:26 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1791662490; x=1792267290;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=XRMulLqQ9lTxfpINJFkOFLsDuOIPnmi9UOaet3zqcRI=;
+        b=QiS5gAS2CGHtr+/e9ph54xa9rMQPytPEoiCUEJeCmRBa5P+VmT5z2pi5BRiCRs+z+U
+         nnzmxKaUaghZeRegORLUDG/0w5+D67jGvhyg01+beWtGnbyoEX0GODpWlmOxzNfH3iPV
+         n+W5hgdRr6E3XuUq4SdE5FGjaRfQdhX7UY9Ql9zoZmrn1tu7pSNILxixOnEpvsqA0pf4
+         psmZ0crm8RlJ2BEV2caA1R02JZPcDdoK6QrW1WosxgNiHdn7u1GWcLzNaE1h00L1sBp1
+         rVnjz8G1cPLFhFOfTnIuvw0fkT/ue8FZaZOs8lLFwrMPcjzXcPwe3oBSrAWeU/+DxRxl
+         MAbw==
+X-Forwarded-Encrypted: i=1; AKwUvBxn4jtiI1l1YEEXj/onhTGB0wUehzTuPrEJtXzHd8j8PwzEuIlHlWV3mnwo8F1H63VRpUWoxx+jj+J7mA==@vger.kernel.org
+X-Gm-Message-State: AFq9FYLhSfGPorwwnNfm81jEeCDp0sS2hgaGRWv7Ck2a62x8i4cbxqhY
+	V9TZmdYEUo3cTNupo3G3XjCxxhANfr80QgYq9FAz8HvMlRI2sAVnFqA56JMU1Iu6UTA=
+X-Gm-Gg: AYBFou2tAcjBoyDumxc/EYvw7/nzwEmgjNEmOnkusbdnhnoxLB1Q9zVC4MgdpnpuFLC
+	N1bcacAwj3t8rObuL5LpRUtIJw1zCC4hlqsVhLugtcTyqh/Jx8TgfpUnDqNbcSjSbiAGb/bE1hv
+	KNKVMggqTWZ5ZXfeZQXYxoXyGPvZ6pDyVHLw/pX+/6psauQF7vvFD7F9Vh44DSTY5GLaQcvjfsX
+	xju/xfgndgpZiUCqvtak0Vot8UEHCUr5RjJvf7Kx8DrcTlMpoo/9SHQhmALnurxTqsMXwypEvGH
+	bXy6wSMRFLtdGBLzADw7UsT7EFODml/z8jurWnOhMwKPyMga4Saf3oCe2PZwWI2cf5ZL6vFBwx/
+	cAi8Ero8NCegFzM3T0VfTmejicFp+tfAy2pGDn6BicrqnST9oSO8iEoMhFo7+8kTHYgwyvBzWS1
+	isoUdi/2AM56lxTQwLiuLu+j04EgRk51RRs/U/XUOJDGCTiPj1y1h4A3014CdkIgr5H3YlskRu0
+	5pX5F75ZoTGLW8jV+Gk/XRiNDk42HDEWa10TuassGYIMBQ0
+X-Received: by 2002:a05:7301:7d19:b0:353:7b3a:1c84 with SMTP id 5a478bee46e88-3537df7772fmr7765406eec.5.1791662489397;
+        Sat, 10 Oct 2026 13:01:29 -0700 (PDT)
 Received: from abeMaticDesktop.1020marsh.offices.matician.com ([2600:1700:471:807f:88c:2ee5:394c:5592])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3537c841648sm20211705eec.3.2026.10.10.12.55.25
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3537c61eaa0sm20792549eec.0.2026.10.10.13.01.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 Oct 2026 12:55:26 -0700 (PDT)
+        Sat, 10 Oct 2026 13:01:28 -0700 (PDT)
 From: Abraham Zukor <abe@maticrobots.com>
-To: Mark Brown <broonie@kernel.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>
+To: Mark Brown <broonie@kernel.org>
 Cc: Abraham Zukor <abe@maticrobots.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
 	Mikko Perttunen <mperttunen@nvidia.com>,
 	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
 	linux-spi@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] spi: tegra114: initialize native chip selects inactive
-Date: Sat, 10 Oct 2026 12:54:05 -0700
-Message-ID: <20261010195503.623287-1-abe@maticrobots.com>
+Subject: Re: [PATCH v3] spi: tegra114: initialize native chip selects inactive
+Date: Sat, 10 Oct 2026 13:01:09 -0700
+Message-ID: <20261010200117.625169-1-abe@maticrobots.com>
 X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260916020031.161347-1-abe@maticrobots.com>
+References: <20260826000517.631736-1-abe@maticrobots.com> <420de339-53d2-40d9-b04a-a54428450830@nvidia.com> <c6868d2a-f55f-4196-9914-f096420cbabc@sirena.org.uk> <20260916020031.161347-1-abe@maticrobots.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 8bit
 
-tegra_spi_probe() initializes SPI_COMMAND1 with only SPI_M_S, leaving
-CS_POL_INACTIVE clear for every chip select. This drives every native
-active-low chip select low until tegra_spi_setup() runs for that device.
+On Tue, Sep 15, 2026 at 07:00:28PM -0700, Abraham Zukor wrote:
+> My v3 needs adjusting for the first case. I will implement this as a v4
+> if no one sees an issue.
 
-SPI children are registered and probed one at a time. A synchronous
-probe of an earlier child can therefore transfer while a later child's
-chip select is still asserted. On a Tegra234 system with active-low
-devices on CS0 and CS1, this caused both devices to be selected when the
-CS1 device probed first. Its initialization then intermittently failed.
-A logic analyzer showed CS0 remained low throughout the CS1 transfer and
-went high only after the CS1 probe failed.
-
-Walk the controller's device tree children before SPI_COMMAND1 is
-written and set CS_POL_INACTIVE for each valid chip select without
-spi-cs-high. That way the line is already deasserted when the first
-child transfers and does not change level when setup runs.
-
-Disabled children are walked too. The core only registers available
-children, so tegra_spi_setup() never runs for a disabled one and probe
-is the only chance to park its chip select at the level its hardware
-needs.
-
-If an enabled child shares a chip select with disabled ones, its
-polarity takes priority. If only disabled children use a chip select
-and they disagree, warn and leave the line inactive high.
-
-Fixes: f333a331adfa ("spi/tegra114: add spi driver")
-Assisted-by: Claude:Opus-5
-Signed-off-by: Abraham Zukor <abe@maticrobots.com>
----
-v4:
-- Let an enabled child's polarity take priority over disabled children
-  on the same chip select (Jon Hunter, Mark Brown).
-- Warn when only disabled children use a chip select and they disagree
-  on polarity.
-- Link to v3: https://lore.kernel.org/all/20260826000517.631736-1-abe@maticrobots.com/
-
-v3:
-- Drop the cs-gpios check; programming an unused native chip select does
-  not affect a device using a GPIO chip select.
-- Split the compound condition into separate checks for readability.
-- Retest on a Jetson Orin Nano with CS1 disabled. The old module left CS1
-  asserted, while the patched module parked both chip selects inactive.
-
-v2:
-- Derive the inactive level per chip select from the device tree instead
-  of setting the whole CS_POL_INACTIVE field, which is incorrect for an
-  active-high or mixed-polarity bus.
-
- drivers/spi/spi-tegra114.c | 49 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
-
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index aa44ffd09..ebf568d0f 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -1301,6 +1301,9 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 	struct resource		*r;
- 	int ret, spi_irq;
- 	int bus_num;
-+	u32 conflicting_cs;
-+	u32 enabled_child_cs_polarity = 0, disabled_child_cs_low = 0, disabled_child_cs_high = 0;
-+	u32 enabled_cs_mask = 0;
- 
- 	host = devm_spi_alloc_host(&pdev->dev, sizeof(*tspi));
- 	if (!host) {
-@@ -1395,6 +1398,52 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 	udelay(2);
- 	reset_control_deassert(tspi->rst);
- 	tspi->def_command1_reg  = SPI_M_S;
-+
-+	/*
-+	 * SPI_COMMAND1 is written before any child is registered, so a chip
-+	 * select with CS_POL_INACTIVE clear stays asserted until
-+	 * tegra_spi_setup() runs for that device. Program the level the
-+	 * device tree asks for up front instead.
-+	 *
-+	 * Disabled children are included deliberately. The core never
-+	 * registers them, so this is the only chance to park their chip
-+	 * select at the level their hardware needs. An enabled child on the
-+	 * same CS takes priority.
-+	 */
-+	for_each_child_of_node_scoped(pdev->dev.of_node, np) {
-+		u32 cs;
-+		u32 polarity_bitmask;
-+		u32 cs_polarity = 0;
-+
-+		if (of_property_read_u32(np, "reg", &cs))
-+			continue;
-+
-+		if (cs >= MAX_CHIP_SELECT)
-+			continue;
-+
-+		polarity_bitmask = SPI_CS_POL_INACTIVE(cs);
-+		if (!of_property_read_bool(np, "spi-cs-high"))
-+			cs_polarity = polarity_bitmask;
-+
-+		if (of_device_is_available(np)) {
-+			enabled_cs_mask |= polarity_bitmask;
-+			enabled_child_cs_polarity |= cs_polarity;
-+		} else {
-+			if (cs_polarity)
-+				disabled_child_cs_low |= polarity_bitmask;
-+			else
-+				disabled_child_cs_high |= polarity_bitmask;
-+		}
-+	}
-+	conflicting_cs = disabled_child_cs_low & disabled_child_cs_high & ~enabled_cs_mask;
-+	for (u32 cs = 0; cs < MAX_CHIP_SELECT; cs++) {
-+		if (SPI_CS_POL_INACTIVE(cs) & conflicting_cs)
-+			dev_warn(&pdev->dev,
-+				 "Conflicting CS polarity on disabled nodes at cs %u\n", cs);
-+	}
-+
-+	tspi->def_command1_reg |= enabled_child_cs_polarity |
-+		(disabled_child_cs_low & ~enabled_cs_mask);
- 	tegra_spi_writel(tspi, tspi->def_command1_reg, SPI_COMMAND1);
- 	tspi->spi_cs_timing1 = tegra_spi_readl(tspi, SPI_CS_TIMING1);
- 	tspi->spi_cs_timing2 = tegra_spi_readl(tspi, SPI_CS_TIMING2);
--- 
-2.52.0
-
+v4 is out with the change:
+https://lore.kernel.org/r/20261010195503.623287-1-abe@maticrobots.com
