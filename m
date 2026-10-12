@@ -1,149 +1,109 @@
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17132FE56F
-	for <linux-tegra@vger.kernel.org>; Sun, 11 Oct 2026 20:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E0F318ED7;
+	Mon, 12 Oct 2026 05:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791748865; cv=none; b=itjExpuyLUdBtjqcThVAbrx7uJtzmZ6g8YD2I8qCzW2nI43Xu5FXNzU5c2C4gdIpkjm/9kEVmvdw4BmEERU48q3liZbc3gOrqnCG+7jWml35tUfoYiERVpjSo3FvMfzELNPi9inX3WyDZigSfgiEayRq9fqaMFfuCO6oVisBmrk=
+	t=1791784684; cv=none; b=bCAmkOKhBRfh7iI9Q3e1C0Srm1TF1rfOB6rNVAAqcrXFoB6D42A4rmFZK59hhRXJ7v4tBaFaqExOCb2Go/tDRU3Mcu2pMPrbZOGbyedG9o3znaiicc2RtxJD9ihToPsVj09lnW23UYOiZxKpOP15qu8OeY5lQFbooTPYE+g8W54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791748865; c=relaxed/simple;
-	bh=8hzuobKMRFUIB5Gkf99Q71AgNKs1zpi13TsIJ+8zIjk=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=hzv47LqE6IvhRqK5PCjAvZ5ryfGvhtfT8YS4QHCe/ZvkfyDDkWMhX7y/0QGjR8MEt5qb2nqXQ6zY3cvFSptVs6YG+jCszq5ikUHeKUQsyDT8wS2Mb6CYLAhyLmJKNQlRLJichAL5JnRE/dgPITWNF1OgfCUZyMVXpu0FJMjW7Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Icvu6A/U; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1791784684; c=relaxed/simple;
+	bh=oTrODFrVK+fs0ywHN/TMizl+ZxHTa7uPOGuTPcSvCYo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wp/tdaAucfuraLbD4Q2mxgfqd+/sSosbiSeSC+Vw58hWm5OO8mo3CdGs+TYxQeY3ybXayw157Djyem/70YQiU5LPZBzeJbTKK1KQJSTwzK266f3fHJSANQ5Jwx6SzOZ5GV1RQH1kHQ4bUXxbs+P+7jjSgF/lbVCSOszeBe0+UdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S+xDgTCD; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Icvu6A/U"
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-93e6eb77f0bso134510385a.3
-        for <linux-tegra@vger.kernel.org>; Sun, 11 Oct 2026 13:01:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791748863; x=1792353663; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:content-type:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=DjYVCkAhkYx5jymWbenkZ0abyqmM1tuoDhhjTrAOAqI=;
-        b=Icvu6A/Un9xQ7lqsGbP/1TR7Eu838z/TBIi7vZx8eA+IcPT7Fha3bbYsQkCifXzXxK
-         IR49CUt7dWUNVRHL7q5/J8wm66gU1geG6eJ4pzvwt4TDkkzGcP5v/yzzqJHe8KMsR4nR
-         +LRznEnFb2zmglC6yC9HNEfvNw1/XQbce01Pt9+ot/gRXlSSJB1gWVZvEMtxcFYPsvd/
-         pURpd/MD7Hr2rF4K1MyPXG7uiqfym2BL8Sb6eKIaBtBaLoswlgefmkmNiZ0mmy8bmW57
-         lG082c+UWUaEtjZ3feQVspA4y9L/waOuCA5ele6y1IybT4wOK83fhxmQ+mLF1Glcr9Im
-         /tOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791748863; x=1792353663;
-        h=content-transfer-encoding:mime-version:content-type:message-id:date
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=DjYVCkAhkYx5jymWbenkZ0abyqmM1tuoDhhjTrAOAqI=;
-        b=dX9oTQuKbDovh8CK9ytNk2JNBEXscIhi0zYGsL33IFaHi86dujGDWRx45Vpb0OzE2H
-         pRcpDtr/vbaGqiYstYtncxJ1PDeBlUBCxjA1BoUvfu4HJ9Lf2Ih60i3b3W+V//J5VSgT
-         jWvSg3TFvfiDpSUEr2JXsB9StiVUQ1jDnd13b4D3lTH3g+1zqJD1YpqK5+wUE6IGQzet
-         3u+9CrR7tbYQStnWye0l+1nmsP5Sxxwd0aHln1mjn0z6Fe1bOteudnjkqppcbXs2KcCj
-         7AG+o4gY9DCdKEdIwaPfgwblCocpnb+l2RfPg7CW0R3OdF/Cu4LDQvyj/NborPQrNqx3
-         mk3w==
-X-Forwarded-Encrypted: i=1; AKwUvBwFkVoheWcIGhwRivtOK2MJYS9TYzgxYWf93yhxNy67RjNV/Nw79LEWRtSWGy5xVGKFbcI/vGihAbFhxQ==@vger.kernel.org
-X-Gm-Message-State: AFq9FYKjYyIsCuoRElZHQhZeCU+St27wz6nLZTbT15SKMPxEV9Hw36nM
-	Rxegqlvb4NMws5G7M22eaGn5B3SgaPNO2m4/70Ai2tsjTFb+NxZbl34=
-X-Gm-Gg: AYBFou0nsDn9N9LQPiOwR7OPOqw/07FVbduOrXfPdARdTutri+0NxZBPRuuV8c/vrzr
-	01vvytiXQhhg4r1x4dv1snQAuBV6KunsDcT7FH1UicIOeWmbd45WhBV/hvZqqyq2Gu9quZZDnX6
-	ERC3lDu+F+hVALxln1AY9MI9cqkzLDMlqgbQ4eGl+ScJQi7o15MiderJFVcfP4wYSqRz8u5VDI1
-	CT9JixLAeqDIaFAx90mxaO4L1wzB9xvR3YO4ImMmfoYoF95dyVcAb6iSQb4+C81vHc5zEz5w+5H
-	XFnRO9ILDJCYgVQLCE54aJMjv92gZYrEaEJxRpJmNGrWvSPQ6GPlWMTYtvenB4BSvQ8aewFHq8O
-	x0bZFSynq6Xi3+ICTdQIP6caM5b8YnHX4MWvV1YRgFkisrpvbjN2eBoxMKLblhmYALD2LJn7UGs
-	gnIrMh5vK5muFVIXyATv1jHgF+Pa8+z3WfJUSn+H8TBXP4sUlcYZwmd8G4CpxKPXPPg1VbhTG7N
-	uJT8orzru/3qhr8+LPztMx1WAyQnblCsLnFBoRtS3uXqdcI2QkoWRmbjA+0Ru6GnLV0YbmcTVP8
-	f4JcKQqrLe3nprJc
-X-Received: by 2002:a05:620a:a0d3:20b0:93e:c12c:9b74 with SMTP id af79cd13be357-93ec12c9f6amr885590485a.79.1791748858371;
-        Sun, 11 Oct 2026 13:00:58 -0700 (PDT)
-Received: from gmail.com ([130.203.156.90])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-93eb986c0cfsm705308685a.19.2026.10.11.13.00.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Oct 2026 13:00:57 -0700 (PDT)
-From: Myeonghun Pak <mhun512@gmail.com>
-To: krzk@kernel.org,
-	thierry.reding@kernel.org,
-	jonathanh@nvidia.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	ae878000@gmail.com
-Subject: [PATCH] memory: tegra: Shut down Tegra210 EMC timers before teardown
-Date: Sun, 11 Oct 2026 16:00:56 -0400
-Message-ID: <20261011160034.93d011b386c2-1-mhun512@gmail.com>
-X-Mailer: git-send-email 2.53.0
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S+xDgTCD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D72D11F0089B;
+	Mon, 12 Oct 2026 05:58:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791784683;
+	bh=mPPQ++MUoadxPUoc9/p8ERrMgkZWA2CRtjIMkHUYcFs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=S+xDgTCDNGf/bXDt2GUumdgFwUaiiRg92DpydOgS6XwtmyObl+Xvy1vHFikY9bLJx
+	 Yl+yhN6Co6Tb9/Gjr2WQMUHwpZ6j4rWbhQa5EFexUM+kARq6i5rMxp0FCZjiT2QEGM
+	 dA7H55VdCQXsTy8A+eFcjkfI/WlSgHS/IsgTE+KE39AE5bXxhWOouCAsWPr/1zx6hF
+	 cXSFDnlwvQ71Z/Zu0uNOTNy0j17OzdMdg7x+Tg7RwbpdKggr+nPKWEaOuNVxUAO684
+	 UUO9xxvcvUxksAov51XdxNVuoVtXSnul8TFFBvWYp7f4F2XmXXwv5DN2Z1Qp90Yy6u
+	 4eUVIsAGQo4rw==
+Message-ID: <6bb8cb0b-e614-4d7b-9b61-fdea34c2f793@kernel.org>
+Date: Mon, 12 Oct 2026 07:57:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] memory: tegra: Shut down Tegra210 EMC timers before
+ teardown
+To: Myeonghun Pak <mhun512@gmail.com>, thierry.reding@kernel.org,
+ jonathanh@nvidia.com
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+ ae878000@gmail.com
+References: <20261011160034.93d011b386c2-1-mhun512@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20261011160034.93d011b386c2-1-mhun512@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The training and refresh timers can outlive the EMC state on removal
-or probe failure after clock attachment, causing use-after-free.
+On 11/10/2026 22:00, Myeonghun Pak wrote:
+> The training and refresh timers can outlive the EMC state on removal
+> or probe failure after clock attachment, causing use-after-free.
+> 
+> Shut down both timers before detaching the clock provider and releasing
+> the timing tables to wait for callbacks and prevent rearming. Initialize
+> them before clock attachment, since set_rate() can start training.
+> 
+> This issue was found by static analysis.
 
-Shut down both timers before detaching the clock provider and releasing
-the timing tables to wait for callbacks and prevent rearming. Initialize
-them before clock attachment, since set_rate() can start training.
+You are expected to name the tool or be silent. Reading code by LLM is
+not static analysis. It's statistical guessing, nothing to do with
+static analysis.
 
-This issue was found by static analysis.
-
-Fixes: 10de21148f7d ("memory: tegra: Add EMC scaling support code for Tegra210")
-Assisted-by: LLM
-Co-developed-by: Ijae Kim <ae878000@gmail.com>
-Signed-off-by: Ijae Kim <ae878000@gmail.com>
-Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
----
-Compile-tested with GCC, W=1 (arm). No runtime testing.
-
- drivers/memory/tegra/tegra210-emc-core.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/memory/tegra/tegra210-emc-core.c b/drivers/memory/tegra/tegra210-emc-core.c
-index e8d4cd8..044ec6f 100644
---- a/drivers/memory/tegra/tegra210-emc-core.c
-+++ b/drivers/memory/tegra/tegra210-emc-core.c
-@@ -1946,12 +1946,6 @@ static int tegra210_emc_probe(struct platform_device *pdev)
- 			config->same_freq = true;
- 	}
- 
--	err = tegra210_clk_emc_attach(emc->clk, &emc->provider);
--	if (err < 0) {
--		dev_err(&pdev->dev, "failed to attach to EMC clock: %d\n", err);
--		goto release;
--	}
--
- 	emc->clkchange_delay = 100;
- 	emc->training_interval = 100;
- 	dev_set_drvdata(emc->dev, emc);
-@@ -1963,6 +1957,12 @@ static int tegra210_emc_probe(struct platform_device *pdev)
- 
- 	timer_setup(&emc->training, tegra210_emc_train, 0);
- 
-+	err = tegra210_clk_emc_attach(emc->clk, &emc->provider);
-+	if (err < 0) {
-+		dev_err(&pdev->dev, "failed to attach to EMC clock: %d\n", err);
-+		goto release;
-+	}
-+
- 	tegra210_emc_debugfs_init(emc);
- 
- 	cd = devm_thermal_of_child_cooling_device_register(emc->dev, np, "emc", emc,
-@@ -1978,6 +1978,8 @@ static int tegra210_emc_probe(struct platform_device *pdev)
- 
- detach:
- 	debugfs_remove_recursive(emc->debugfs.root);
-+	timer_shutdown_sync(&emc->training);
-+	timer_shutdown_sync(&emc->refresh_timer);
- 	tegra210_clk_emc_detach(emc->clk);
- release:
- 	of_reserved_mem_device_release(emc->dev);
-@@ -1990,6 +1992,8 @@ static void tegra210_emc_remove(struct platform_device *pdev)
- 	struct tegra210_emc *emc = platform_get_drvdata(pdev);
- 
- 	debugfs_remove_recursive(emc->debugfs.root);
-+	timer_shutdown_sync(&emc->training);
-+	timer_shutdown_sync(&emc->refresh_timer);
- 	tegra210_clk_emc_detach(emc->clk);
- 	of_reserved_mem_device_release(emc->dev);
- }
+Best regards,
+Krzysztof
