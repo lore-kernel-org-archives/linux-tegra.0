@@ -1,158 +1,276 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3CE469841;
-	Mon, 12 Oct 2026 13:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791810317; cv=none; b=rtlrSQaNbToRTekxhYVVMb1feXfHP64dJ1U3YVjU4H9KLADruqChdvrtq/e+giJZ1Q/m0e/x4pjWvtyIqFze1RWdCKAWgdLEFhVVHdLsup55nND4+7GG6LRlNsYijOxn3lWQ88PDjyR89DGBuDbb99IW901+S+DQLXAAktweF00=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791810317; c=relaxed/simple;
-	bh=TJeQAN9KqZ2HQFMyvgo2CldFEYJ/Aevze9HuTjW/Msc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=coQ5cySDKHbk9CorLWQKWJ3HtBMuodLozTpg6dhlQwDYd77CUJExXLHc0TCHA/Bw7O1dFUVo8M00Wufhv3mZDJkK7Bd+K7clDU8IzPR4ljDYtz9Ep5r5PoXYT39HMWwovNg1ycEAGY2O3f+fvLBhCDBXH/UVlLoE4kKkRX1H4MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=IfiXllgL; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013024.outbound.protection.outlook.com [40.107.162.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843F12253EB;
+	Mon, 12 Oct 2026 13:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.24
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791811144; cv=fail; b=lYZg08ITPRJ0tUyJJJ99LHCooeSNPmHdWcin6SIMEhOb/8hrISSRlUT3Fz3974Gfjmxga+kgBDNMHAPIX09Aa8rG9Gxp40Ptk31kLg//5csdnf8vnslqtiwJ2DekxsarOZ5jwz1mxYNrsBAfiTCyf4kMRhj0LsbpZP3JiZaRrow=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791811144; c=relaxed/simple;
+	bh=ROB1Xf+TvXuzsrvpRMjnv5/L/HPgSvCmZX8AVp+e8Jc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=lZim/f4TY969Rw96USJVMZy5w7LjAswHNm3blF9IaoBK9s4Cco6SCLHDO33az7pML7YKsHB0qZAtY5KIR6aT406HJFbMSuVSYqpn3H2R3n67Cra8W6QKRqbZHeN3Efmzyho9TbxepKoU973G982QAsFwvoy+F8mvoOIHUFNsY7A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=TOGy+2c8; arc=fail smtp.client-ip=40.107.162.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="IfiXllgL"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 702391655;
-	Mon, 12 Oct 2026 06:05:11 -0700 (PDT)
-Received: from [10.57.57.201] (unknown [10.57.57.201])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0F2503F882;
-	Mon, 12 Oct 2026 06:05:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1791810314; bh=TJeQAN9KqZ2HQFMyvgo2CldFEYJ/Aevze9HuTjW/Msc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IfiXllgLUFnPwL1ik/aVjn/fqzAmj8Z1QCvTOC8vsF6oIi4fXTdRxIaAqQWv52U2M
-	 1Gk4BmMEq9QtnWNQsI4/QExZU5+i5aQUAebFRpOJCyjysWhtlrApdaplP3B0CBN20s
-	 wyiKH2Oq72Y0FWAt4XiIUlCLJJorj+LEJAKXX/BI=
-Message-ID: <f15d35a3-9378-4363-b12b-f5c082331400@arm.com>
-Date: Mon, 12 Oct 2026 14:05:03 +0100
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="TOGy+2c8"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TqSYDltBd1LMeVhe8QgkAeR5xNcM37S27ecWcIYsOzIz0S2Yjw4o1DFUokDfqzd+LBLDG2BzDFfnx46L6cyWuUlvF8lGjW3SOP/Iu6qIX8bdX84x3CJ3vIF1BWd26n/FmsmxdcX+BwBKI2Wk46wYo6WSmzLY9hC4OPWXjwjfMjzld/AI4JcuIT5eevnZyd7LzcOvE8fxwf+VeK4g13sSInMhrk7ENcOJz9ac/wMAOoTfAhRLgvLcuhj8pjSL5zbPtSf70MB1UPWZDyLB6iwaR/9q7Py99yN0SEDqjMeGhFJLS+wzNWKHEp0md1e/EO/MR9lEDHp7jNbYhTaE36cgHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Dk75LqYt1alYz1PWaWOdD4b/cjZLZXMEv/OmqxUE6lk=;
+ b=g4n/rU5ODzCBPcD+qnEMR0sDqAVWj0M2KBUw1nD30a7+cSqH4uoyW8KkWlWEplDRoBA32+QYN8S6flO0ERrIgeDYa5b391pSUzH/G0h5yw3VtLUV3g1GUUCo3fFdztEOkhKEx0fUUQ6Z2z11/8x6XnlVJuapkn/IgXjHtd8nyv6QtTVsEAASZB3HZlcV7N/iSfssdpc3dCWd2rnTIlOiR7m9SiQc0J/QvlN6v9Al8gb3L6zFK+6adKjHCiOX/OY73JcgIl1VwEOFDgR6M2ansrAIi7gbn3oq7zOiAOALlbKNooBiBv4pWp0B81hqJOWExO6tSR0NL8dcqVrjOY03lg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Dk75LqYt1alYz1PWaWOdD4b/cjZLZXMEv/OmqxUE6lk=;
+ b=TOGy+2c8NpsMuIqFQ7RB0y/CRF7BpRJWjyd5Aga8Ww5uv1zkIu0rWD/BRwl1uamwjPEFLB5EtuuRPcB/lgxBTOPETEmfefh+vAs+IfEK1m/dpEDN72tknaKzSgE5xfDRUjGrwGgZeo2PX6f1r3vCI43zj6RHeX6lDLdRvCKwLFkehR6IqKQw+otgjQtD52UHwFI/neqQKIwL9Tz8ldgRhfuISnRp6VJ2xrHOf4zvwuB2oPjn2H9vBIvBQ30rCQFuI2lC/ZEYs28gRnT/0oVW8lPzgwErtlcSGbAs/0+2kr1GWfJMSEEsg75XhBsncQWsQeICVJ4wg6UTDzGxXqbaTQ==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AM8PR04MB7874.eurprd04.prod.outlook.com (2603:10a6:20b:24d::9)
+ by DB8PR04MB6953.eurprd04.prod.outlook.com (2603:10a6:10:111::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.21; Mon, 12 Oct
+ 2026 13:18:58 +0000
+Received: from AM8PR04MB7874.eurprd04.prod.outlook.com
+ ([fe80::ac38:1699:6f18:c5d9]) by AM8PR04MB7874.eurprd04.prod.outlook.com
+ ([fe80::ac38:1699:6f18:c5d9%6]) with mapi id 15.21.0496.021; Mon, 12 Oct 2026
+ 13:18:58 +0000
+Date: Mon, 12 Oct 2026 21:23:32 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	"Joerg Roedel (AMD)" <joro@8bytes.org>,
+	Jean-Philippe Brucker <jpb@kernel.org>,
+	Nicolin Chen <nicolinc@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Krishna Reddy <vdumpa@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH RFC v6 5/5] iommu/arm-smmu-v3: Wire up shared-SID STE
+ ordering and feature gating
+Message-ID: <aszfVNP6DGzWYdK0@shlinux89>
+References: <20261011-smmu-shared-sid-v6-0-cb76b89dc612@nxp.com>
+ <20261011-smmu-shared-sid-v6-5-cb76b89dc612@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261011-smmu-shared-sid-v6-5-cb76b89dc612@nxp.com>
+X-ClientProxiedBy: MA5PR01CA0215.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:1f3::19) To AM8PR04MB7874.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24d::9)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v6 4/5] iommu/arm-smmu-v3: Group aliasing devices into
- the same IOMMU group
-To: Peng Fan <peng.fan@oss.nxp.com>, Will Deacon <will@kernel.org>,
- "Joerg Roedel (AMD)" <joro@8bytes.org>,
- Jean-Philippe Brucker <jpb@kernel.org>, Nicolin Chen <nicolinc@nvidia.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Thierry Reding <thierry.reding@kernel.org>,
- Krishna Reddy <vdumpa@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
- Peng Fan <peng.fan@nxp.com>
-References: <20261011-smmu-shared-sid-v6-0-cb76b89dc612@nxp.com>
- <20261011-smmu-shared-sid-v6-4-cb76b89dc612@nxp.com>
- <aszRgehfo5emwCt+@shlinux89>
-Content-Language: en-GB
-From: Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <aszRgehfo5emwCt+@shlinux89>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7874:EE_|DB8PR04MB6953:EE_
+X-MS-Office365-Filtering-Correlation-Id: 70b9dda4-40c2-434f-b921-08df28635f9f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|23010399003|1800799024|7416014|376014|366016|6133799003|10067099003|22082099003|18002099003|13003099007|11063799006|261009223027099003|4143699003|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	By+ZwRpqBnzT6dsOJMDr36133UM+WAhbP5daSKBpaAvtaQuKh8pW2mogy96cMaPPAzC+80ZGrVOhw8Z/Ebf92Xb5NFOREajxPGiI0wMZGsC5hF6a5a3aXFZkT06W9r8HjSWVsQmL32Du0dpOUoA0f/AMp3QQWZWLVSVv1LHtr3ZCntFSOdpbQoRDu2thiopB071rQg+tdhn0uZOfO73JWBtClRVUZm+ZAqRgQaZ8Qp2eeL9fHk28eM+HJ93TAVvAoExl5MMUohMHNkX+klXHWuSC9zMUlpdEb68Z/wsbGj28R6GZ6ysyrChRxYEVa1IC8MgxJyDOqV9ehtsTBNyLEXWo172Vm/ELx9EkrVu3Gxu+3Bwse1QLa5GkY7ddt4/FFIkG+DIgLDXqjZwIJdLSGB+kQvWY0SKn8YNWEsp6MtpLuX3FcfY00U+aXMrCHhCeXrLGgHanje8bnrvJUlGFBtM8qfeICe/WDVn7iFVgUhl/UQrGd/vglYpvwA3IHzxUvuuCVawadnuwqKIzikEAsNJz7LE9VddLjGteguervnQVtdKGQwlWTWIz7wp3ONFNsjr9B2OEYpc76mfqO+CFTs5OdGgdbEmyWYrv0NaGZ7s=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7874.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(23010399003)(1800799024)(7416014)(376014)(366016)(6133799003)(10067099003)(22082099003)(18002099003)(13003099007)(11063799006)(261009223027099003)(4143699003)(56012099006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?PTLtNWnhqfAzNA65MedZ1FOFnAb/7zqp1UBLaxBc2jISYsp1Fc590pJJGy9q?=
+ =?us-ascii?Q?rYM1IaaDGpPvOkNlKqZk8g57fDSKN3sVQHj5WlyYzAppvgi20PhhzqRgs3x5?=
+ =?us-ascii?Q?m7KsIyBNvRt/rpcRc5xUCVETp5iGkXVt7L53EeEeulR8ViaGNkizBwZ5wiNe?=
+ =?us-ascii?Q?nDlxaXzrvdL62yaCjkhchY5x8RCh8vJok2pspACNo+BppSZulnLyEsT8HQ13?=
+ =?us-ascii?Q?AeC7pgU9f60sxojvQ0JYGlw7Yj96OuHMcK8vTQlHN2r7eRWBJeIiCLcKy7o4?=
+ =?us-ascii?Q?9j9Qdvu0f69H8ifOfySEawRcVM9vlaD89CQymVUi06l93D/OrOV5GIw6EkrL?=
+ =?us-ascii?Q?b8PWTqvVV4hhqqAomvAFUHnehoLtWTGtJS+OXhwSDmXoXkWrPeAm7Vt00OfV?=
+ =?us-ascii?Q?m2aZREoBAaoX9k6Kd4FrnqQ7YMPeghUoLI2IA0OtzSJQ12AfhlyqSQaBzgkl?=
+ =?us-ascii?Q?MEyoFJ73zlZgfrDIaGXDkO5y9tI6KwxDKFUGyTKmHxOAYTX7S8Fl8r9+QWeF?=
+ =?us-ascii?Q?UJxy8LYR/6GgK4k6w3ey5sZxfNlpLU0V/xix0C6dwgk+RWGqhbNvgpwBaUnO?=
+ =?us-ascii?Q?CyNxjFHDXaQ3qdUvvLDXjAoHRRpFJroNtw0A3bR8b2x2d+XqRY55D/1nFhFK?=
+ =?us-ascii?Q?5uf85ag/ywXMHKufbJMA/ULTyIgBFqCrx3hBjBKHYRQpQXw2WpKW6hezP7AA?=
+ =?us-ascii?Q?3QrsRISdwycxti69Zyd2PH2R9wlgTabjPP0cdeiJvg9EX/vmU3jBlglEOQM7?=
+ =?us-ascii?Q?XJg6BfswI3ZMn2nq1CbLjYE9AyzpkCX8+3Q8FVRWmpx7zqPGLgQ+ZGQZ1arU?=
+ =?us-ascii?Q?ADkjxPHf3POrI/s960Qy6Cz1AXeWx1gZ+49sYorwBErXaWODpws5f8BwOt10?=
+ =?us-ascii?Q?nenyN1WfE3R2DyWeGZxzOQ8v58/GB1I9NHBWXAtIv6FJj6abTyaryAPXlh8H?=
+ =?us-ascii?Q?+JB7gMZxELgaUjlxgmKoE0+NHKJue845g2UYETwSdca4SOSZ0/9unmDaHomC?=
+ =?us-ascii?Q?mWBkr7Smr0PjfCsURuigwXJR1xXKZlLBY6056ZuPkDLAaNLdheQMQMEqtOWs?=
+ =?us-ascii?Q?wzP6YfXemmKWNCMCIQy+bsjkOg9hAsvsMRBoJeZZB33BydLYHHsleoltRHjW?=
+ =?us-ascii?Q?/y3HGxsPO29eqHpJ73JKhBYFbfFB/3ScldQ02kgMTVeWCerA6ifqejijqArz?=
+ =?us-ascii?Q?jG3hWDxn2u5BpVBqzURMb77oEsmZKUUgiBbZr5Kuynqz1dl4KLeLJAcqHe7c?=
+ =?us-ascii?Q?B4k7fq95v6n2esRKfEtQPCIwPI9JpV71I8zWpGoCT1NZOjhETCcWcWAjZtT5?=
+ =?us-ascii?Q?tmLSYrAzz9ar7g50EXavo+2n+MFrhscurgrNRBwHz/s+qzNf8rh/S/3AGUB5?=
+ =?us-ascii?Q?maQT8eEMgPRKIgf22nagX16k5qlagfiYaXvqhJENWMlALxhe16zdnzlXwu4q?=
+ =?us-ascii?Q?R4UjzfiOqebEy16k+c3GB/en4ArHhjms7rO9o2eAGnL7sN6wTN6NSBsL63k7?=
+ =?us-ascii?Q?Ec+IjOPFvWjayZ3ywpAtcWJHFZ/OYnIQ9UTY9zUAgO9caEWNRsepRBAyVaTx?=
+ =?us-ascii?Q?5OS/IGJXL3AGpI+5tTGZBIp5Z9vYiGZTjeluvO/80uQK5Dk1Vbj1gsbsSSJK?=
+ =?us-ascii?Q?vnfguB7QlW6CXiU2R7JJ3YnmEqU46iaquyh3sHhdO/OcCiThTiU62k/MQwkb?=
+ =?us-ascii?Q?WyPxfPi+nyC83s1EWbypO2UUX2sV5Gmjkkcp6SDApVAYKLJQqQ7AdAcrhwrN?=
+ =?us-ascii?Q?YDyFVQBbi1/XInhwN9l+ZyrOFkCnBOq7gyb4DYOohQRMOOwtK3y3?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70b9dda4-40c2-434f-b921-08df28635f9f
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7874.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2026 13:18:58.4025
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fzD0cE2CHLbny92t5pHYNsa5MmfrQzPIw56xnbdAwhbJ41mHWTvGdEO9WFLXVnjF3cEYsIjuyoWDFXR265C6MK7w4S5DMmaeC5m623PH11f1dfaxWYpemicZSPrirBxd
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB6953
 
-On 2026-10-12 1:24 pm, Peng Fan wrote:
-> On Sun, Oct 11, 2026 at 07:31:28PM +0800, Peng Fan (OSS) wrote:
->> From: Peng Fan <peng.fan@nxp.com>
->>
->> Devices sharing a SID must share a single IOMMU domain (and
->> therefore a single cd_table) because the STE can only point to one
->> cd_table at a time.
->>
->> Detect SID aliasing at group-assignment time by looking up the RB
->> tree for existing owners.  arm_smmu_device_group() is called before
->> arm_smmu_insert_master(), so any RB tree hit belongs to a
->> different, already-probed master.
-> As Sashiko pointed, I need correct as below:
-> 
-> Detect SID aliasing at group-assignment time by looking up the RB
-> tree for existing owners. Since probe_device() inserts the master
-> before device_group() is called, skip the device's own stream and
-> look for a different, already-probed master that shares the same
-> SID.
-> 
->>
->> Assisted-by: LLM
->> Signed-off-by: Peng Fan <peng.fan@nxp.com>
->> ---
->> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 33 ++++++++++++++++++++---------
->> 1 file changed, 23 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
->> index 351ccdfa765b4..328d580935b96 100644
->> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
->> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
->> @@ -4572,19 +4572,32 @@ static int arm_smmu_set_dirty_tracking(struct iommu_domain *domain,
->>
->> static struct iommu_group *arm_smmu_device_group(struct device *dev)
->> {
->> -	struct iommu_group *group;
->> +	struct arm_smmu_master *master = dev_iommu_priv_get(dev);
->> +	struct arm_smmu_device *smmu = master->smmu;
->> +	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
->> +	struct iommu_group *group = NULL;
->> +	int i;
->> +
->> +	mutex_lock(&smmu->streams_mutex);
->> +	for (i = 0; i < fwspec->num_ids; i++) {
->> +		struct arm_smmu_stream *stream;
->> +
->> +		stream = arm_smmu_find_stream(smmu, fwspec->ids[i]);
->> +		if (!stream)
->> +			continue;
-> 
-> Not very sure here, should I use below as check condition?
->    if (!stream || stream->master == master)
->        continue?
+Hi Robin, Nicolin,
 
-By this point, we must always find a valid stream for every ID, or 
-probe_device() hasn't done its job correctly. The difference is if it 
-only belongs to this device then it doesn't represent a group yet, 
-otherwise if it is shared then the other device(s) must already have a 
-group (since we're within the serialised part of probing) and we need to 
-return that.
+On Sun, Oct 11, 2026 at 07:31:29PM +0800, Peng Fan (OSS) wrote:
+>From: Peng Fan <peng.fan@nxp.com>
+>
+>For shared SIDs, only the first master to attach writes the STE
+>(tracked by ste_installed under streams_mutex); subsequent masters
+>skip the write.  On teardown, skip the ABORT STE write while other
+>masters still share the SID, and reset ste_installed so the next
+>domain attach cycle re-writes the STE.
+>
+>Fault events on shared SIDs cannot be attributed to a specific
+>master, so arm_smmu_find_master() returns NULL when the stream's
+>shared_masters list is non-empty.
+>
+>Disable SVA, IOPF/stall, and vSMMU nesting for shared-SID masters
+>since all three require unambiguous SID-to-device mapping.  Clear
+>stall_enabled for both the new master and the existing first master
+>when sharing is detected in arm_smmu_insert_master(), so the STE
+>is never programmed with the stall bit.  This prevents
+>unrecoverable bus lockups since CMD_RESUME cannot be issued without
+>a unique SID-to-device mapping.
+>
+>Assisted-by: LLM
+>Signed-off-by: Peng Fan <peng.fan@nxp.com>
+>---
+> .../iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c    |  2 +-
+> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c    |  3 ++
+> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c        | 60 +++++++++++++++++-----
+> 3 files changed, 52 insertions(+), 13 deletions(-)
 
-Thanks,
-Robin.
+...
 
-> Per my understanding stream->master will never equals to master,
-> but Sashiko concerns: Could this logic be adjusted to better handle the
-> device's own stream?
+>+
+>+static bool arm_smmu_skip_shared_ste(struct arm_smmu_device *smmu,
+>+				     u32 sid, bool is_abort)
+>+{
+>+	struct arm_smmu_stream *stream;
+>+
+>+	lockdep_assert_held(&smmu->streams_mutex);
+>+
+>+	stream = arm_smmu_find_stream(smmu, sid);
+>+	if (!stream || list_empty(&stream->shared_masters))
+>+		return false;
+>+
+>+	if (is_abort) {
+>+		stream->ste_installed = false;
+>+		return true;
+>+	}
+>+	if (stream->ste_installed)
+>+		return true;
+>+	stream->ste_installed = true;
+>+	return false;
+
+sashiko has comments: https://sashiko.dev/#/patchset/20261011-smmu-shared-sid-v6-0-cb76b89dc612%40nxp.com
+
+We just need to support a simple case that platform devices(single SID) which
+could share there SIDs, such as MMC-0 and MMC-1 share one SID.
+
+Shared-SID masters are restricted to platform devices sharing a single SID.
+SVA, IOPF, and vSMMU nesting are all rejected for shared-SID masters (patch 5),
+so VFIO passthrough and direct domain replacement scenarios do not apply.
+The only domain transitions are the default DMA domain attach at probe time
+and ABORT on unbind. Or I may miss something.
+
+>+}
+>+
+> void arm_smmu_install_ste_for_dev(struct arm_smmu_master *master,
+> 				  const struct arm_smmu_ste *target)
+> {
+>-	int i, j;
+>+	int i;
+> 	struct arm_smmu_device *smmu = master->smmu;
+>+	bool is_abort;
 > 
-> Thanks
-> Peng
-> 
->> +
->> +		group = iommu_group_get(stream->master->dev);
->> +		break;
->> +	}
->> +	mutex_unlock(&smmu->streams_mutex);
->> +
->> +	if (group)
->> +		return group;
->>
->> -	/*
->> -	 * We don't support devices sharing stream IDs other than PCI RID
->> -	 * aliases, since the necessary ID-to-device lookup becomes rather
->> -	 * impractical given a potential sparse 32-bit stream ID space.
->> -	 */
->> 	if (dev_is_pci(dev))
->> -		group = pci_device_group(dev);
->> -	else
->> -		group = generic_device_group(dev);
->> +		return pci_device_group(dev);
->>
->> -	return group;
->> +	return generic_device_group(dev);
->> }
->>
->> static int arm_smmu_of_xlate(struct device *dev,
->>
->> -- 
->> 2.34.1
->>
->>
 
+....
+
+>@@ -4360,9 +4391,11 @@ static int arm_smmu_insert_master(struct arm_smmu_device *smmu,
+> 				break;
+> 			}
+> 
+>-			if (list_empty(&stream->shared_masters))
+>+			if (list_empty(&stream->shared_masters)) {
+> 				list_add_tail(&stream->master->shared_masters_elm,
+> 					      &stream->shared_masters);
+>+				stream->master->stall_enabled = false;
+
+Sashiko comment:
+https://sashiko.dev/#/patchset/20261011-smmu-shared-sid-v6-0-cb76b89dc612%40nxp.com
+
+"
+Does this dynamically modify the software stall state of the active first
+master without reprogramming the active SMMU hardware STE?
+When a second device sharing a SID is dynamically probed, this clears the
+software stall_enabled flag for the existing active master. However, this
+software state change is never actively flushed to the live hardware Context
+Descriptor (CD), leaving the stall bit active in the SMMU hardware.
+If the first device triggers a page fault while in this mismatched state,
+the SMMU hardware will pause the transaction and generate a stall event.
+Because arm_smmu_find_master() returns NULL for shared SIDs, won't
+arm_smmu_handle_event() drop the event?
+Alternatively, if a fault was already reported to the IOPF queue just before
+the second device's probe, wouldn't arm_smmu_page_response() see the cleared
+stall_enabled flag and return early?
+In both cases, the required CMD_RESUME is never issued. Can this result in
+a permanent, unrecoverable lockup of the SMMU bus? Should this sharing be
+rejected if the existing master is already actively using SVA or IOPF?
+"
+
+I am thinking to simplify reject if stall_enabled is true:
+ 			if (list_empty(&stream->shared_masters)) {
++				if (stream->master->stall_enabled) {
++					dev_warn(master->dev,
++						 "Shared StreamID 0x%x rejected: existing master has stall enabled\n",
++						 sid);
++					ret = -EBUSY;
++					break;
++				}
+
+Otherwise things will be a bit complicated.
+
+May I get your suggestions?
+
+Thanks
+Peng
+
+
+>+			}
+> 			list_add_tail(&master->shared_masters_elm,
+> 				      &stream->shared_masters);
+> 			master->streams[n++] = stream;
+>@@ -4522,6 +4555,9 @@ static struct iommu_device *arm_smmu_probe_device(struct device *dev)
+> 	    smmu->features & ARM_SMMU_FEAT_STALL_FORCE)
+> 		master->stall_enabled = true;
+> 
+>+	if (arm_smmu_is_shared_sid(master))
+>+		master->stall_enabled = false;
+>+
+> 	ret = arm_smmu_master_prepare_ats(master);
+> 	if (ret)
+> 		goto err_disable_pasid;
+>
+>-- 
+>2.34.1
+>
+>
+>
