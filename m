@@ -1,141 +1,135 @@
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39806471249
-	for <linux-tegra@vger.kernel.org>; Mon, 12 Oct 2026 09:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791798524; cv=none; b=qyhh32Dj4GD7J8lmIRSf+Iifhh5gC0u62Fg5x+e6HBFNRFV3yRMj/o6SZqp6FMqYE2BXI912FOv51BcON84Cb49p5vDGcaDYSYOm2kwmTnByHK1+Vwp1aZTwcXT440sJBPrqqrAaPQc1EVfgPq+85YYeay3joGbkbhORfcGsT4k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791798524; c=relaxed/simple;
-	bh=2YXlOBKMzxFPx3DMx/2ONurojDALU3qcgugVzd5jMsQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MffgnscwMFEZubk/18GegxNRd8BK/hliHdW+lMlH1rvShAfCBMLkQCNeyp4nA1C5ZJPvOJha2FEYQaGjQnaBz9sny9vTL9twUs6xrMvImzGxc+LuyvTlRgDMcZ9evHtApzsL2zMZJRS59MP0YEWFivLcbgwg5utivFIiYrjvVc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=as+AMPnd; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3286F40B38C
+	for <linux-tegra@vger.kernel.org>; Mon, 12 Oct 2026 10:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.171
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791802549; cv=pass; b=O4UR2tkWerc2tLygAdKFPepjlueyCBwITp/Aq22htW0O/E0i0iBjn0LzCkvOHWgiPrWxF3ez3+85step14PoEEuhNQW1rAuwEXZ2HJ0JZg4hnuTDETo7peFsXSniDkfAVjOo7ZDkNQZF3eIz6JLB0+SQFmn9JS7E1OfritA9GY4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791802549; c=relaxed/simple;
+	bh=l1EXipAKmMkC4QwXJ8OoHPfFNSosRCN5cyKya011Gw4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ymla2l9/4KmcUQvWUs5C/uZYkrtQOpnfQUN5AZ0T6EndDsIiko6+v9fMVdtxjhjx+ClIaSnL2RlTaIWn7z2jqP4RymHD3qZRMDf4KFd66rir2tpdQi5iObDTLNRzGqEhrHVkijbW7i9HOp+5rY90/zGgCGqE4q2H7B65Ymht+X0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JYX9L2CP; arc=pass smtp.client-ip=74.125.82.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="as+AMPnd"
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-398a5aad413so793336a91.3
-        for <linux-tegra@vger.kernel.org>; Mon, 12 Oct 2026 02:48:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JYX9L2CP"
+Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-3514e7cbbbaso4498822eec.1
+        for <linux-tegra@vger.kernel.org>; Mon, 12 Oct 2026 03:55:48 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791802547; cv=none;
+        d=google.com; s=arc-20260327;
+        b=ZM0pOiqOynIddhzbMcF4XeTLhJlXwFlCk4yms5TK0bT1Qb/RH0CQxR3JQJO2di+zvo
+         rcKjbH5uvdzY8RB9TQk0WfEGCqv3CuGGdQ7s0pIOvF0NudwAcVmqZvtC13Nk0pbGuYka
+         /26wFbTqAyFnPceMrh0Tsw9uc61GcsXenov6DiYdkBaNT7oxws4aRNlSFwSn/JkSRE6n
+         ZsrD8evlvk1hq7Aq42GyLiTdHJUplz/YpJSEMdsuquT/OMd2GVpG1nphSofsKQV5xPz8
+         tM4yAH8MwyVT6nHadZMa8ziV4tqqJXJd1khPeWXeD9kWk9svJD7GPtlU9T5iejzyU7Vb
+         u2bg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=+9ROzNBJNDCemx8euIOsygMH5hKPgnw7X8l8m/TjjpI=;
+        fh=hx6Z0qSprxneGy4rZncnm8XYZqukJzg2xSs8HkJlgAo=;
+        b=D76EguBHeDq86gY1FC8OevHma9MpwzISHAhmtp+vjcimRlCm/bApESsVE1iu/YzGxf
+         302ZCShNhpdYaPMrpsMNohG7zSPz2xp7wC23jBms3KwSgKKKZpFfC7ZHNJexCNA+hD9Y
+         T5t9VEm8F/53xTQW2R4JoU9FpoEuGnML1y9w+aD+cVaGZXyZE8rFiZ9aszSPWWIDbtQd
+         dDF+MuAU+4CqGcdAYahCpSpZxWUQWVpr26nNZHFB5DII27BAkSGe29nCnelQbesrRqi+
+         2daWO8gdYpE5X+ixmTMa3Mvqao5MP8F+8u3jkeosPM6jLxe2sbIiGBtkOMZSnYjL2s80
+         Oarw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791798522; x=1792403322; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=GGOboJZ5dJ9D0JSN3yGTlwUzv+5aJL+vgrNZ2KefTzY=;
-        b=as+AMPndnf6BXuHnuFvkUXKq8u7l94FvNggLpdylQnWe64PUUs5WBqpOzjYi4o0Dba
-         K6RBSX+l3Ri1PsijuNP76DGU7V2LFxrJeU6B3QlLaIS2CoQfutZm4jj63ixqg3I3F6em
-         ebgd45Jdz6ahiW1okMXbEDAKgctTCHJu8g0ELjhSVZxQcgcv3YxnvFR1rq6xBUMh6jur
-         0FVAzwLo9naGaFgfGfAbskIFz5UR7Y0JRkX2d5rtQUbrSBJhQzvV4kDahLVHJRz5b/pC
-         0OXMSJhgeJmwFjYAJJewgyefg7zUQ09nVpicmGZ51w8bE+hWQcycK6ygbGzzBAMbp8JG
-         k7sQ==
+        d=gmail.com; s=20251104; t=1791802547; x=1792407347; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=+9ROzNBJNDCemx8euIOsygMH5hKPgnw7X8l8m/TjjpI=;
+        b=JYX9L2CPwELErdnA2VR9OlUD1AcDPj2aoEDCkMXfTAvCz18j2lgC+sjlHvnXOeTyYL
+         zf552/7Z58k6fEPTryNlTjpIYM8WOAbYmmVvWWn5euNzQvNq1cwZo6FbMfRiDPuQMUa3
+         IOjeecMdHuouzpxIGddmb8WRfAoCIDw/G4U6Az9rpODAqW6fghbK4sQoib3WtX5Swuau
+         xlMr0jESpTTtVDhr7B/oltKVA48Jsz35qtF+GLUJ8oNTmW/W0UXr3vKvxfRnXSx8rADp
+         qukLI+YZWa+OP/8RKPgfMUcDtWxBAa6V4OlgmJ0IXmkBzwAdm07jZ+LPIjV5fVewlivK
+         372g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791798522; x=1792403322;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=GGOboJZ5dJ9D0JSN3yGTlwUzv+5aJL+vgrNZ2KefTzY=;
-        b=m8x+oDKTVsUxHd/2jXCIRqk2Rr3Vw8xchm0wHQl/z0V+fGtZ2ZTPtMDcQcFghM4osa
-         /DAQ4Bec6RO9Dp9Mi2ZdnGAqtoZdnXOl8n9JDDuxXTDt4nqB6U7DaKavn6AsTZFbs5lG
-         D5KdKAlkLvnxO/eRfacbO6R7cXFnRSqe7wszrmj1KTd5C4nSLceXUHdq+5Ogozw0PleY
-         yiB6nVtFbqMUPFbbuVWvfDMackqP+gOISWin3Yowt1WyxZTUgwU1gptd3FBZSUwxBJBG
-         c+Wpl+6UPgg4E1ShzAva1R9biJUuaj2770wZbkQUHU3Q9RVrApNamleYe8SeWdF84qWl
-         pNuQ==
-X-Forwarded-Encrypted: i=1; AKwUvBx1KX0ZYhAUIPHtWIQbcFkU6hyuKtamjQi5uVgLxRlOC5bOyWK0TdoZnpVXjsEa5GOf9KqzlwW5/jkxdg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJLUn0QU6BK4yp9b4YiBXcF9u6QfRNCS0qpgY+jl9yRWnHn4zhx
-	wLtSWs7NCIXwgXt+C9O4vWNJ/MkX3NAAFFpnW9TPdRp8Udu3yvq6y3uu
-X-Gm-Gg: AYBFou0W5ExWGE0OM05gk/9PrYBv13pFgm8s6jS3bxZfC1Kr3hgbYc5DEtN4j9Ylvbj
-	Ij/i2/d/kyfatqITMgsnkGuU2lmk4cFnBvbYaQLtyW1WP+V4kGhNYJoN2gRn9lqXH1T9G0V/LRY
-	Y/7VSe7qiArKURt4ltvhnPAyCj6VxGxkzSnCgleyWI2DYopL2SCPHarBX2rJkivI/TKgvRxm0xz
-	J6jS40AWHL4Qx40VXZtWHhyKSWXJQRPq3zM+xnRRVE1wfMbHwIMNCkU43Z3EcZ1cwGVUfjrLWap
-	5R9ir8GKY5dxbI+7ifM+MpW5RUj7HREILW54LsZn2gzKZTadnH2I7knZrjAeYxA/Tk7Z/dRso9P
-	RcLj54QjYZzcaE3uqgw9TpfxPj9lTtrmLvq3MMyOw0mEj2OCbx/WPLOFGBLEbaY7uFn3my0oTjt
-	I+u1qOrrpeeVFOlnR6hYg4Bvzi27WE7cgm/0jVVcf0yJ17w4VSe3E2e18dm42Hp7ipqPOMTrcBt
-	J6qBDMf5ulOzeQ7+/bobOPgu5XmZjsUENo3U9yC9laz0WY4uSaZBCoekz9raJMYdOGInRXOCU3F
-	nFFK3ZyQ2c+u/A==
-X-Received: by 2002:a17:90b:384a:b0:3a8:bb56:f1ef with SMTP id 98e67ed59e1d1-3ab3a2902a2mr7546924a91.2.1791798522450;
-        Mon, 12 Oct 2026 02:48:42 -0700 (PDT)
-Received: from phuc-desktop.. ([183.91.15.56])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ab36ed053csm16189628a91.4.2026.10.12.02.48.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Oct 2026 02:48:42 -0700 (PDT)
-From: phucduc.bui@gmail.com
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	kwilczynski@kernel.org,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Cc: Vidya Sagar <vidyas@nvidia.com>,
-	Niklas Cassel <cassel@kernel.org>,
-	linux-pci@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bui duc phuc <phucduc.bui@gmail.com>
-Subject: [PATCH v2 2/2] PCI: tegra194: Propagate REFCLK select GPIO errors
-Date: Mon, 12 Oct 2026 16:48:15 +0700
-Message-ID: <20261012094815.28160-2-phucduc.bui@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261012094815.28160-1-phucduc.bui@gmail.com>
-References: <20261012094815.28160-1-phucduc.bui@gmail.com>
+        d=1e100.net; s=20260707; t=1791802547; x=1792407347;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=+9ROzNBJNDCemx8euIOsygMH5hKPgnw7X8l8m/TjjpI=;
+        b=yZCMQLV3GI5CPxYLXWPUaZVKgrZMRaCnmbyipqG3zu+0bjzqo2/lY4MSVG1XBT8me3
+         s+gUHRmDR84H+T6R+UpZIlf5ju5BHEHafGP5B673yE7tfU1icdMlR1C2DunFyQw1fpcr
+         RmpET4pMdM+bIRZqBiOeEWPjdLt4UsB6Oo6ZFlRO5s999m17jTfUvTL46+aousdTruWe
+         BrJJu+agJfOM7jrsr9xm1aiSgouwHTiSzXoRo/3txdYxNHHWLUVKE8VdvNgH1lzdr9mk
+         E8zT0D9fyEQpwA0jir0dXRbZltNbjlV8nT2/ivlxIKRgvxey6e9u8hxD5RDEPajSdgBC
+         8sbw==
+X-Forwarded-Encrypted: i=1; AKwUvBwqFtOvAQCkjvmWg5k5LjjmWzKuCGgPPebr/MywuirSzOSO5WWmY4AefzqO3OZw7Uyhg7HyvwCNwX39Ww==@vger.kernel.org
+X-Gm-Message-State: AFq9FYKa81zTAYo8gK3t1WCYT6TbXB/h1gsWrH/CQHMoih+ifoompuWU
+	FYDpchShxKmSRvBKICEgnIDHbBKxSs/ZkZD1Ny6t9tNM9VQq/LwVEj4OqEYpHZoupqvRf5mCyAJ
+	HlUlF6Wq0cg46wPqP4FkRJYJ9fx95JHw=
+X-Gm-Gg: AYBFou2hqfhE6npvL7cy/qR9m8kMK2lQwEhBwvHlLG0vu9jw2TukvHnUt9xVf/EMkaM
+	2CXEuZcyIwuP/r9noElWTyiYEwCwkmv7Iw9dCL7wB3ohzqxBold07InkaAWb1UkXb399fesYrC5
+	kWHRYx2CgajBLraDPPRtFsVJoEtAjqT8o8avIL/KikU5bLdSbOJWccKE4lhhuCDesK4oZpKFQHn
+	P7oXUtqSMBqfR6lCMFHYqudPtYFBXR9MeAxJ3O5kZmuS7wnmeOqJ40EGHplFmJDx7zpp0X1IdwR
+	0uceUhXOCiAbm/euQJondDz0FUTXj5wIXLH9QOvjV0FdKKJTW7JUBkdzebrg8kUgPhRsIsJJTcb
+	XNXXwrapLWs3gR3zZmMajAjgZ
+X-Received: by 2002:a05:693c:820e:b0:351:5b99:5f35 with SMTP id
+ 5a478bee46e88-3537df50ea8mr13679930eec.6.1791802547178; Mon, 12 Oct 2026
+ 03:55:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20261004154456.145362-1-clamor95@gmail.com>
+In-Reply-To: <20261004154456.145362-1-clamor95@gmail.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Mon, 12 Oct 2026 13:55:33 +0300
+X-Gm-Features: AclHuK9-WY5HBOzJjdXhPqCGEm0X08eS8KVRxjYfB0CV_-KCl6-E-4-979CzLCw
+Message-ID: <CAPVz0n1HOWAXMwfeCBV76Z+N+6mgynXW5GeMebnqYQubNDqpOw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/9] ARM: tegra: lg-x3: Add newly supported devices and fixes
+To: Thierry Reding <thierry.reding@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Ion Agorria <ion@agorria.com>, 
+	Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: bui duc phuc <phucduc.bui@gmail.com>
+=D0=BD=D0=B4, 4 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 18:45=
+ Svyatoslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> Add nodes for recently supported device (ALS, LED controllers, haptics)
+> along with minor tweaks and fixups.
+>
+> ---
+> Changes in v2:
+> - added USB configuration update commit
+> - added p895 power LED trigger update commit
+> ---
+>
+> Svyatoslav Ryhel (9):
+>   ARM: tegra: lg-x3: Adjust WiFi node
+>   ARM: tegra: lg-x3: Remove pinctrl-* properties duplication
+>   ARM: tegra: lg-x3: Lower supported suspend mode
+>   ARM: tegra: lg-x3: Add light sensor node
+>   ARM: tegra: lg-x3: Add flash LEDs controller node
+>   ARM: tegra: lg-x3: Add haptic engine node
+>   ARM: tegra: lg-x3: Add backlight LED controller node
+>   ARM: tegra: lg-x3: Update USB configuration
+>   ARM: tegra: p895: Update power LED trigger
+>
+>  arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts |   5 +-
+>  arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts |   7 +-
+>  arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi  | 125 ++++++++++++++++++-
+>  3 files changed, 127 insertions(+), 10 deletions(-)
+>
+> --
+> 2.53.0
+>
 
-devm_gpiod_get_optional() returns NULL when the optional GPIO is not
-present, but may return -EPROBE_DEFER or other errors.
-
-The current code treats GPIO lookup errors as if the GPIO were not
-present.
-
-Check the return value and propagate errors from the REFCLK select GPIO
-lookup.
-
-Reviewed-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
----
-
-Changes in v2:
- - Follow the subject line capitalization style.
-
- drivers/pci/controller/dwc/pcie-tegra194.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 2f8e828c4d9a..4c1f22b88288 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -1207,18 +1207,9 @@ static int tegra_pcie_dw_parse_dt(struct tegra_pcie_dw *pcie)
- 	pcie->pex_refclk_sel_gpiod = devm_gpiod_get_optional(pcie->dev,
- 							     "nvidia,refclk-select",
- 							     GPIOD_OUT_HIGH);
--	if (IS_ERR(pcie->pex_refclk_sel_gpiod)) {
--		int err = PTR_ERR(pcie->pex_refclk_sel_gpiod);
--		const char *level = KERN_ERR;
--
--		if (err == -EPROBE_DEFER)
--			level = KERN_DEBUG;
--
--		dev_printk(level, pcie->dev,
--			   dev_fmt("Failed to get REFCLK select GPIOs: %d\n"),
--			   err);
--		pcie->pex_refclk_sel_gpiod = NULL;
--	}
-+	if (IS_ERR(pcie->pex_refclk_sel_gpiod))
-+		return dev_err_probe(pcie->dev, PTR_ERR(pcie->pex_refclk_sel_gpiod),
-+				     "Failed to get REFCLK select GPIO\n");
- 
- 	return 0;
- }
--- 
-2.43.0
-
+Hello Thierry!
+May you please pick this patch set if you are ok with it?
+Thank you!
