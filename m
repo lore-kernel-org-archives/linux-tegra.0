@@ -1,119 +1,133 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C4E2DECA3
-	for <linux-tegra@vger.kernel.org>; Mon, 12 Oct 2026 09:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.179
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791798108; cv=pass; b=gxfg/rbHpuuUl1F9od3FH+soxVcFwyYF+xar7Ql3wCXPVgeIkUOjayD576nn6+zckexqe12akLMBX5dBRGYSi7rhhBn2HT+Olxr7Sx0uhPM+Tpe6/EDgy6yDXmSdFmIQ78kjotTk4lyAzlaLdPrpzzuPM97CaiRVGzLjUZGvaaA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791798108; c=relaxed/simple;
-	bh=xEje11MauacCyql/+a8TCVSQ59zjM7UA50aHu0/0fM0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tUWZOe4s/6/FlQWEzFA/EW+O2fW9OgdrYBVfVrTYT56OFpXC4pvGARPf35n0RsFg46+mXRIQ+qJIeIKI+CwmiRt8L+Nz5Y2AMGqWug4gH4BVoTF/Pl8r2UShQRR4W4Orl+FC+t69+NPdwlz4Bd3lVMvI4ue/4u1mXiaisHfOVx4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PuKKuUMK; arc=pass smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B156B33C195
+	for <linux-tegra@vger.kernel.org>; Mon, 12 Oct 2026 09:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791798517; cv=none; b=W1qJsQwheljYXLod6zK50BfkxZac0No3wI0APd8L6tRnJVil/WvpyPEdF87Dv4AqvNii2pXJti85sWWpdKLg05e0hFaezzdujrkPgAUDR1jVP1Jb4tfe2I5zzkw3AQQGqKMG+4LDTNa+Ml4lKxbxne6Sy0dS1O6UjlFCMDZS1cE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791798517; c=relaxed/simple;
+	bh=Xwo1yCAMK5tqAeCHkGuwh4MMuZ0ul0FuqvfPBWClix4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pkpsebzMnhykMP8tw6/L68g7LpDZ5TYa0xGWuhtL9TDOnzK/Mb6hyQeBRiEPTu9nI40T1sGWYxG+gkiczDTIgFLhI9pr6ydrdYa1iQhhPmfuvl/KaC8g2J2mtnL9lfTt7ndojizXAmgMLqpNHwoSyAOTUnB2k355BL9PwtKxHKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TORYaqkV; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PuKKuUMK"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2dd76b1361dso9661125ad.1
-        for <linux-tegra@vger.kernel.org>; Mon, 12 Oct 2026 02:41:47 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791798107; cv=none;
-        d=google.com; s=arc-20260327;
-        b=S57FukoSNNP9QpjzZ/nl54CDZGs2Cq5K4S8M0GOe43NG4ysacbhbW/bKxULjJhntZk
-         6mSdK6D/Xrw8eE9wx9o+hfrHYR99wIzSvK7Ray2nDHTHDkhpww3PjiyDzWCmmQKVDW3Y
-         4rzI0B2B+O+yfSXgr88ZIsW9KnvAaTxOw9phRUsA83SgSM6LoFdaSbUNYPj5pVjM134/
-         dpLPWk7ryfv72nQNXjqWlq13wLwilcbJcVKbwc+i/8y3vZXiySrI9zkLcnDeW7JYWDXM
-         uGAOvLeeu4TNrXgOKkfdfGx6rqa71qslpPPL+wOUYLVkLXQxsBx6eZEl6FS9bQX46vyZ
-         NXJw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=xEje11MauacCyql/+a8TCVSQ59zjM7UA50aHu0/0fM0=;
-        fh=KO6kM2njqQykiljXumOnMIqWxsJz3rdxhQ4Rnjw/fb4=;
-        b=K20wFgcEAXNRpYNT4jNO4ELkRy/+wd+4txz8F5z7YkVAVNUvuUuQiNSP5LlwZlcN/H
-         QHi0saUazoih/foOlvkpPKggqfvRDGhnx5Rp/zuLS7h48c504ZdJCJscL9bD2OjOjgGA
-         /HYWKJFTZ4nu38GIMS74DXLqbgmXl13nNeG5SItIIaKIRg6m+WB06bkXLmaSdD5odU62
-         BHDEdJMqpqxuEUMtJhx+8G87/59/Zz0jVwC+osRjCkQt4IHn9cUc5x3kW1Zg6KHDUPd/
-         JN/hi21F54PfQF9b4sGGxQrrED4bszhBVoQjoK2p3sPjOcLyoVzXFA7qn/r0cuPlyiiu
-         WqlA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TORYaqkV"
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-3a0aaa0fd13so1174315a91.2
+        for <linux-tegra@vger.kernel.org>; Mon, 12 Oct 2026 02:48:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791798107; x=1792402907; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=xEje11MauacCyql/+a8TCVSQ59zjM7UA50aHu0/0fM0=;
-        b=PuKKuUMK7FCJUAqsNN/uQwQCgRErWKIhsMxoKp882vmKUQTdu3xdKt36TnJZsiHhOS
-         cJKJRAEqgILInj2M2mXOQoB+SCen3fdSti0NwTTIH2ISuBcZcLSsAp+yFpSSpAc/+zvT
-         y6wvcoe7OQi/KmcSJ4MATVjHHidXPMIU6TTiFT+m7aL5YqWWMAFqZ2cDgk+AuTgChUm0
-         rAgbdsAN8tc/BIctNRK6Of8M2zROy+/LfhJfZTzthlYFgIWfk4PQ+oHzHtCC/YiCF9v9
-         EGnkhgvEmlz95jpsmsiU20OUfMXocVsGtKmFE51uAUT5A8HA3j5anP8bpRA3KuqsAsk7
-         q0AA==
+        d=gmail.com; s=20251104; t=1791798515; x=1792403315; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=AE3qN2Gya+sk1Ul6ZbTJH8NleA3l4oK8s0FP1HbUA3M=;
+        b=TORYaqkVFtclOWs603SYkBWWxbqnriwpP+x52DkpssGyR5Unfd/daaOYmfUzIzbDe2
+         UROnVRll3Vn0U/sZ51Qosr5Wl92DBaiYgY1lOmzexCtjjlOWEJ06/EJa+ud1VWNel3X9
+         um22y+RmZykC3PnCNi6rRrMRLBojjLpNcz4x7nPtfPaCrLmHTxEACWD9mtBLZyaorTwh
+         SG95Igkt9EIDDU9dSLWqQ8vmfGdYYuJx/6yzyMyCWBxDzZnL8f7Jll1Dn9fB9U9/XhP4
+         KVgfb8YVgCfQ5TUYyALGeysPFYWpscTiow9rK/nM6Q4Vig4GBg2bEMhgquvgmF6Bvw9f
+         Ev0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791798107; x=1792402907;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=xEje11MauacCyql/+a8TCVSQ59zjM7UA50aHu0/0fM0=;
-        b=I1mj1E5fFNWxm+QI11KzvcjtjW9eqcNBK4nU3SMpfxRxzpHCTpcyv1UAaCGp+eXcoE
-         sUl5/TRljE9rELpP5Jfqp77HLGO1XtZVu8RNpApQHdvdglT22cUwSpwlfm5D5YCGAiQn
-         Inli3ff1k6Ag36giRZ9SVCW6igjyUQANRJyuRyTV3iwDjmEDFwrSDHv1qJjB52SuUltR
-         WZ7ts59Q0RmL0wRqnUdAZbovxy1bmEOAhD1AV210p6ufOLCpH9CauYobBW43LfYsZ9IE
-         jyIEuexvSobV/W/cLBbvOO6etrzTuOII0ZOv2GqSFcjt17ij3WPYeyQbgrjLKaKrLrEd
-         expw==
-X-Forwarded-Encrypted: i=1; AKwUvByFCq+N+/NR7Y/eFWVjmC1T6P+ToW1Z056ww3Ewhdm5WyUIkydF7UatWGymN5vjcNQgatj5wKAhy/0+4g==@vger.kernel.org
-X-Gm-Message-State: AFq9FYK/U/Z40zcBDNtNlU0ZYW3ZMwMksH6DWOmxCSYH+KmpUBmQfA1W
-	rY0PeqYw/USBKLY0TeDjDfuqZW7re0jQlwnoGmgNKICgzTRyYNqTn6lcw6G3AgB1ogAuoxYguDX
-	wb5XmRLymWp8/FczoygBx+zZvNlzlOyA=
-X-Gm-Gg: AYBFou1WlaV3DgRw1ux++X5DOJOEYAeerBFYGyOEzDudvb0Fkqd7s8Xikc6JdJb3imj
-	gfTxoyNZ20hZEdsVgvJoddRq8SSqnjmM1g63DbWsDXpqZwyNy7MjDadVJ4QBgPJV1h/Z87HnCgh
-	iF7qv+KGWoF/U7MDDivX4IbKWCjWBAsGDcXuHQrK6cZ79K/x5uYPQZ8LMQGZVrHwtj9LqP+3gNg
-	tSHx7pBbdeKnnLQmoFBkvRNgRk7LQ+VocjgGs5FbwEgsFxuW6y/qdsuXgg4atFXoI5/crzE5I1O
-	lRlGmJ4hq9Zqrd7dA2p8hJu3H+27151eyUipXjDIe5V3SNEIeX8Gtd50U3XsC5C0oL7wDQyTZNi
-	bg4t6sJkykDni7HLdSMrp+q4gcgOEw5Q2/Oy1DPhbpYwAlTk9YS91xlPXU8v5D70oOeE=
-X-Received: by 2002:a17:902:d2c8:b0:2cf:afa5:b19a with SMTP id
- d9443c01a7336-2e842ab812bmr74647105ad.11.1791798106721; Mon, 12 Oct 2026
- 02:41:46 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1791798515; x=1792403315;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=AE3qN2Gya+sk1Ul6ZbTJH8NleA3l4oK8s0FP1HbUA3M=;
+        b=p0aLIi4yDn056OM5WaCp2EmtFXTe1gmphhIIzTCcp4GDmZqYgMywHxwhCLIqejX5k+
+         gDJOtbQFSIOabXybjNlUDACzov6vM88pfuTJcdRfRlZjzrvPN4y9SPEPx5nbLgSe3kRo
+         uj5LZ7aimuZXZgMLYPI9byjYUXnMIR5uK5idrNkLDKcjyK19CgOYRq2HKiGHJIAflJO9
+         2PZpR98ZbTdhBbzBrkcATvssZb0rnZ1wNoxeGs/+oWEgowiXPl6FG9o9wTGeCCOXq5Td
+         rrZidb0dFNprq2UuXI0A3iGATqubCByF6zUz0LfkKs9f0VEN1kuNQdDVXNfK0/R0M/lJ
+         kkNA==
+X-Forwarded-Encrypted: i=1; AKwUvBz5DwXFOVv9wrBkpZbiotHicZjJw5s+MfVpXGZQhLwf2yg+TNhDFngPx6l1ds29H7TwnkE9vjoPhXbw2w==@vger.kernel.org
+X-Gm-Message-State: AFq9FYIW75tusMONjizCzqZy8p333BWGvpbJLtS4jfJoA60995pIshm8
+	w1LwuYLXl1fqlc66gwzgAkBymdRyPq1Ui2mZtpbpR6seqlKbatgZBZiW
+X-Gm-Gg: AYBFou3cfeccJ7TT+dRhn6D/M4YzSA5MI9QC6j6XKkMYVidqGxSkPSfDDL5EzpNSxpd
+	c/82F1KIoXtZ+eVuUZVuzBQKbXaQRzQ1ZV7lJoz9BCtksEtAya2I22Adg/lQ1vu5YZLqxwbd3FT
+	orM3lpuIC+2CZTGURJOSqb5d0vm49ShxxvSgHnKhy8tLaxCNg6sgcmB/aJRh1QYpVfMgZFwfy3R
+	wydnpVMtWF0BSPHdz/Cax/XkTIJf18d7pkSNwz3kQm5WPzs72YaVkkm4R8QaFN2aUsKaRVNi3ml
+	m/bMd9mXT+GhWOd9eqvD8r4ZWFccaPW0dxfJ4iq3f6WlzYKcl7FbZcEN+QALjl+yvOg6K6foP9M
+	FN2rSs4Ltt6JZdJwK9/DLRjMgWY9qY6JtAtYwGCfMxCl4AsuWWtzUj1tl3dA7h9Ci71axaXBNkJ
+	OIzcYdCNRi2qt3Hbz4hddLt8k1TKsBFU/yFnNmYRPI6HNFbD3Ni3a41zdoymK0s5T7JVKgVAg64
+	PC1cYW6GeRhZiFYZ2YpWV6v2Gk9LVPruCqP0LkaGA/7j0bX76SZp5xJjjsytOb4knAwEoMfxvwe
+	JzXAWA4cwlhjCw==
+X-Received: by 2002:a17:90b:58cb:b0:3ac:e6a:1b2b with SMTP id 98e67ed59e1d1-3ac0e6a4ed3mr1023251a91.0.1791798515002;
+        Mon, 12 Oct 2026 02:48:35 -0700 (PDT)
+Received: from phuc-desktop.. ([183.91.15.56])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ab36ed053csm16189628a91.4.2026.10.12.02.48.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Oct 2026 02:48:34 -0700 (PDT)
+From: phucduc.bui@gmail.com
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	kwilczynski@kernel.org,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Cc: Vidya Sagar <vidyas@nvidia.com>,
+	Niklas Cassel <cassel@kernel.org>,
+	linux-pci@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bui duc phuc <phucduc.bui@gmail.com>
+Subject: [PATCH v2 1/2] PCI: tegra194: Use dev_err_probe() for PERST# GPIO
+Date: Mon, 12 Oct 2026 16:48:14 +0700
+Message-ID: <20261012094815.28160-1-phucduc.bui@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261007104847.507776-1-phucduc.bui@gmail.com>
- <20261007104847.507776-2-phucduc.bui@gmail.com> <923d7875-69f7-4c87-869a-fc66727c70a8@nvidia.com>
-In-Reply-To: <923d7875-69f7-4c87-869a-fc66727c70a8@nvidia.com>
-From: Bui Duc Phuc <phucduc.bui@gmail.com>
-Date: Mon, 12 Oct 2026 16:41:35 +0700
-X-Gm-Features: AclHuK--qfWr1I67rnpFbrjIRtXfOWVmS6fI1rNM14DuFuibSj-EIqraNUcYF84
-Message-ID: <CAABR9nEk0dm4Lghcp8-ej=-0jAUFqvi0dYBBEYg3uY+6YdEZ0g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] PCI: tegra194: propagate REFCLK select GPIO errors
-To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Cc: Vidya Sagar <vidyas@nvidia.com>, Niklas Cassel <cassel@kernel.org>, linux-pci@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, kwilczynski@kernel.org, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Manikanta,
+From: bui duc phuc <phucduc.bui@gmail.com>
 
-Thanks for pointing this out. I wasn't aware that you had already
-posted a similar patch.
+Use dev_err_probe() when getting the PERST# GPIO to simplify error
+handling and properly handle -EPROBE_DEFER.
 
-> I published similar patch
-> https://patchwork.kernel.org/project/linux-pci/patch/20260923072237.1139013-2-mmaddireddy@nvidia.com/
->
-> I am OK if this patch is merged, I will drop from my series.
->
-> With the subject line capitalization style fix,
-> Reviewed-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
->
+Reviewed-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
+---
 
-I'll update the subject line capitalization and send v2 shortly.
-Thanks for the review.
+Changes in v2:
+ - Follow the subject line capitalization style.
+ - Use "PERST#" in the subject, commit log, and dmesg text to match
+   spec usage.
 
-Best regards,
-Phuc
+ drivers/pci/controller/dwc/pcie-tegra194.c | 15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 63a0f56cad8e..2f8e828c4d9a 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -1200,18 +1200,9 @@ static int tegra_pcie_dw_parse_dt(struct tegra_pcie_dw *pcie)
+ 
+ 	/* Endpoint mode specific DT entries */
+ 	pcie->pex_rst_gpiod = devm_gpiod_get(pcie->dev, "reset", GPIOD_IN);
+-	if (IS_ERR(pcie->pex_rst_gpiod)) {
+-		int err = PTR_ERR(pcie->pex_rst_gpiod);
+-		const char *level = KERN_ERR;
+-
+-		if (err == -EPROBE_DEFER)
+-			level = KERN_DEBUG;
+-
+-		dev_printk(level, pcie->dev,
+-			   dev_fmt("Failed to get PERST GPIO: %d\n"),
+-			   err);
+-		return err;
+-	}
++	if (IS_ERR(pcie->pex_rst_gpiod))
++		return dev_err_probe(pcie->dev, PTR_ERR(pcie->pex_rst_gpiod),
++				     "Failed to get PERST# GPIO\n");
+ 
+ 	pcie->pex_refclk_sel_gpiod = devm_gpiod_get_optional(pcie->dev,
+ 							     "nvidia,refclk-select",
+-- 
+2.43.0
+
