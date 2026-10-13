@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88213BE16A;
-	Tue, 13 Oct 2026 15:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC20513554;
+	Tue, 13 Oct 2026 15:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791906541; cv=none; b=IHD2Mil+KqsEIGBnI9kqzrdkaOptYO/1u5vnkh9EOkKJ0ti5+EW1PMeU6hRBWXkFbuUuEGrW0ncRFuj/XMmPZoqWOA9Hi0b0xofLp8vQGNum7q/Q1cdKKZ7i3XlFRLcLHZnRNhW6lKSBc/KDpZ7fh+PhEsnib91PYau2tES5fn4=
+	t=1791906667; cv=none; b=K1Z+xoWtl1D1WAuGNcqAsihoQo3Wmuwa4qF5TBq+z+U90ZfHpaBWEgnPjjVtKi/HG+qXEAcFQjeX5TF5UmKsS07z6g3rlvabaA0UIIfpP8ii+Vh4pKo9nw1g4JADy1hBe2sW+8gggdJ7NXYf8gHE8osEkjbiY7RVvat3f5v0nD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791906541; c=relaxed/simple;
-	bh=YJ6vYcPmPnjYkJFJjJE8EJJRT9npufNwYBiIpSAHuZQ=;
+	s=arc-20240116; t=1791906667; c=relaxed/simple;
+	bh=r3dPIqJVZRDrga/MJbTb3/5uaWkSC7+Lc43sA/eq0hQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qk/QTBlA/UwfXdk58GegQRoUqIGbkzuOfoiYBy1IR7QtKVC+QrMpF8OQSzyAL4swer2yROPqkp9iDV51XTKKarNEcrG4U7HIyoSd7/oFKPGQBlsSgT0dI245vcXATLqezOPVEHs+JNFHjuccrjvxI6jLJg4M5VF6ZwukLBsrrZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DbcaSXqU; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=IZC6z0ETHKyvLJVwguzUtl2+mIGS8+3LQdWuBhRwzILCAQLXqAhFHA1Q7xzxU82nmGWy7Dv9IOg5lxb1ltgX0U9f/V0d57SuKNajirpdsHRfeYi9W73//0RBO9qQZm9u56FEbFRONwqWIPH/GSVKUB6liKGA6EAVCPW95juRh1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M7k7sMsx; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DbcaSXqU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0B381F000FF;
-	Tue, 13 Oct 2026 15:48:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M7k7sMsx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 230E81F000FF;
+	Tue, 13 Oct 2026 15:51:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791906540;
-	bh=8HIRM0RG8gr/DXh0YsHOuMrZwiwotXguOVcFJ3C/Z+g=;
+	s=k20260515; t=1791906665;
+	bh=MJ86ar7ft1Sjd5oHlVMjY4gwK71NzHJf7v8T3vhrJ3o=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=DbcaSXqUcaVh+Dn4Szez+2sa+s1pn6dxh4rk0zuD2iS8MtxWqlXtsDeQFdf0+ndoN
-	 e/DNfTRvn9qFxjEsaqLCCTMDD/EciCocH2iWVubkVKjRrjDeFtkfl4bHHsA9fVSzY2
-	 5PmwFn+sUQg6zBbcWR6OfrGEZezUr/RDrg6k9Zk3/Zy0QMcHqh3uzg1+sU+SMZxRYt
-	 okNpdlpySaXg9Sp07feU4V5/NVpd6+Y7lfTLm1c6W1XLDwF8W5TWDC8N4VrC5JR/32
-	 9jFemyokGfVPK87YKsMrGcqPYVVpQOwv5ubDWtaUKYdhlrgu4gTkUxTQAH+//kM1Lu
-	 y9f6egNh+AXDA==
-Date: Tue, 13 Oct 2026 17:48:58 +0200
+	b=M7k7sMsxNzFfFxydRPey+N/9CCSkwmN5DyNYLRN5dFgRPYd43mfp0TWbfEdFgtY/w
+	 H00/6MvApVWWBqq6LDZx7/+XInjZmbM5zuio3/3YukuSPwX35+4v+bZT4srhksV8Y/
+	 8bn1MH/mlIp1/ryVdV5wSZQDhrWJpceSWiOoCDwcWL+D5pwOATLTjZsmlUmRJ4pMfD
+	 kLlwAqKnCSGxhK43xZgCQAZ5VYC99wMNctVqXBsraoV+Tk46krOgTi1shEbqCtFfVL
+	 Yf1Ycg8KCjLzBo9AnqlKiK7HQ47FXsYThbecmNPzqLxcksT0Py5AI5nA/VimCa4vcF
+	 VB7t70b3CeeaA==
+Date: Tue, 13 Oct 2026 17:51:03 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
 To: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
 Cc: Andi Shyti <andi.shyti@kernel.org>, 
@@ -49,9 +49,10 @@ Cc: Andi Shyti <andi.shyti@kernel.org>,
 	linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org
 Subject: Re: [PATCH 1/2] i2c: i2c-core-acpi: use named initializers for
  acpi_device_id
-Message-ID: <as5S4eXw9_olPYTK@orome>
+Message-ID: <as5TMuJUE3H7bcFX@orome>
 References: <20260918-acpi-i2c-v1-0-caf4bea4886c@thegoodpenguin.co.uk>
  <20260918-acpi-i2c-v1-1-caf4bea4886c@thegoodpenguin.co.uk>
+ <as5S4eXw9_olPYTK@orome>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -59,12 +60,12 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bdaukvpfqy47g5lz"
+	protocol="application/pgp-signature"; boundary="ta66zshbuz6aaek2"
 Content-Disposition: inline
-In-Reply-To: <20260918-acpi-i2c-v1-1-caf4bea4886c@thegoodpenguin.co.uk>
+In-Reply-To: <as5S4eXw9_olPYTK@orome>
 
 
---bdaukvpfqy47g5lz
+--ta66zshbuz6aaek2
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -72,40 +73,48 @@ Subject: Re: [PATCH 1/2] i2c: i2c-core-acpi: use named initializers for
  acpi_device_id
 MIME-Version: 1.0
 
-On Fri, Sep 18, 2026 at 02:01:50PM +0100, Pawel Zalewski wrote:
-> Use a designated initializer for the acpi_device_id fields which makes the
-> code more readable and consistent with how lists are initialized in the
-> rest of the kernel code base. Also drop explicitly setting fields to 0
-> where it is redundant.
+On Tue, Oct 13, 2026 at 05:48:58PM +0200, Thierry Reding wrote:
+> On Fri, Sep 18, 2026 at 02:01:50PM +0100, Pawel Zalewski wrote:
+> > Use a designated initializer for the acpi_device_id fields which makes =
+the
+> > code more readable and consistent with how lists are initialized in the
+> > rest of the kernel code base. Also drop explicitly setting fields to 0
+> > where it is redundant.
+> >=20
+> > Unify the list terminator to have a single space between the brackets a=
+nd
+> > no trailing comma.
+> >=20
+> > Signed-off-by: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
+> > ---
+> >  drivers/i2c/i2c-core-acpi.c | 14 +++++++-------
+> >  1 file changed, 7 insertions(+), 7 deletions(-)
 >=20
-> Unify the list terminator to have a single space between the brackets and
-> no trailing comma.
->=20
-> Signed-off-by: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
-> ---
->  drivers/i2c/i2c-core-acpi.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+> Reviewed-by: Thierry Reding <treding@nvidia.com>
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
+Nevermind, I realized too late that this popped up in my inbox because
+of Andi's message saying the patches were applied.
 
---bdaukvpfqy47g5lz
+Thierry
+
+--ta66zshbuz6aaek2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrOUukACgkQ3SOs138+
-s6FUgw//WLO80tnSOWkfuTVznJOATqQqtXNIxuY17kM5m1EEoZt1NHMjgBpv4ylb
-UVXRSs8cAFNkUsmkCkeMiPaJiPSWLzGuuTJ0sE4E/yH0MMoIDPf8b1RwifvG2sSN
-ZGDPA+UWX7NANExmBZdu/Fs06EC5xjQtH23rqXP4Yh79x2ZPSkLP6yWrhrY7y+pW
-NZbhO6sZK5RmU+vX8JVgFot2fc5kuCXxXhhZP9nxMeiofepJlKO6pK0CgC2h3lMY
-rnaNREXSSruDZU4a+NXJtxkuPsKR4wQGGr3bcYJCyjcVmP4z6uUMLSI0YAT1Rgaq
-Y/kgJcAvgVY0JtyL2vUcU8IK+8dfiZT/j16cBPlrdlJcETavrz6C1/ySJsl14wmu
-o/y6FcKOZHXvLhPA4za1bQU5O8b7UZtP1MyvClac1rSzfL3V/9bb8+evmlWV944X
-aesOgjT5EptZyVYamUKXsFYP/XRUgMXykA1QChwVOtfFS4yOXc6k5TC/HbjY8dsq
-/7v+zkFiG0oI63U1dGMWWyCSjykdZaS4KyXLzFHptkgUCjj34C76CmENPztxCA+E
-M9m2Bac9gmYqgnyPE2QxC8l+s+nl6B+RA3Ajiuve2HQ6ZM8I9AJNKFGfR1kKu5Gf
-5CvbCSpmxrZzyS/Bt0DlUt1ZtYkHBF055ZwQtlBWs4AAAFsvcVA=
-=wgwe
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrOU2cACgkQ3SOs138+
+s6EkQg//Q94g8lhAZ9FF1mSkUo8+4iAGe4AwVPaHJcaAsp/d3MMwLNgGHDNCCUTg
+G+wEpoEVHWYXoLXJdfApoubX1HNKCyZixOydZMuy/vyjfKK8d24WoUwsrruWKNoC
+Qr6q3NbnPuILsnE6wQDTVdRqZ5iJlmJKMwdL9zfnVqM3bLVwpDqLWA7QkJrqsNY+
+XJcQw62QQ2bvNUYmnEMs96w/3hFC5bQeQkZcRFHxT5YaZwH7n8XX3hvrMUqPUclG
+PWzaf3rRgKJvhonQNuJSHjaSbHTtBt1uuxV/RncTBbTqczCwADWg+huMeyInDKNG
+9jZddMF5telzFS0C6Qm320brFB2ZzTRmjHM+2QzdwwnIN48mkmpy3lwdzBDIsd1O
+aHW2OyY2zyfp3NG+HeVuBNWw3ctMLcffAk5pdZeVvW15ZaAYUMBFd6xMDS40I4TX
+6zJCJz7BRWHyAxLcuIK90E5LgVatIVCJvHGaYnwGPWgGan7CvL3WC+bGGu9u5huD
+LdxQ8jbuT81xOMrbWy9h8so1N+3KjZXMnz12Z2TD8mK+BJpgZt52vXOSzmNWB5Jt
+O1f8qDoslIrvaisD5tgoXZmn9NhZquYjFl1HqpnHxWpBK4rCW0fzIcMO1vByl8eF
+cwD+MtMt4inGeVuyn7CCI4ntQKPY1jGEF0X9EwXGBBfcYoocK/A=
+=H7B1
 -----END PGP SIGNATURE-----
 
---bdaukvpfqy47g5lz--
+--ta66zshbuz6aaek2--
