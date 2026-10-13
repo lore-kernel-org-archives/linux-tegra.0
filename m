@@ -1,30 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF7B3F23D0;
-	Tue, 13 Oct 2026 14:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9D54398F1;
+	Tue, 13 Oct 2026 14:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791903134; cv=none; b=cFZaPAiC7STeW7F7glLxrmghLr7feyjtAALMHXmFgEjF7ELfhC5mDuxv0lYoQscZlRhNqmkdlI9y4Mb/cYW3/V7K0wV4OkzgFOVtX1SidEAmaN7SuhLiVFd7RdP+N2I5AlFLYgsL0DkRA10RlvNMBR9SiLNYQuBOW30Q3hEUQQQ=
+	t=1791903136; cv=none; b=uKFhiW1+Sf2McUztvw2hGMQQP2vZxtcWMeimEW1PZfKgi/tr2b315r+1+xs75tXclIA/EnT4Nz1bieAu65qOzlzBHc+cuhaT/Zqm6VssndY5nvGFJx4oWRVldOx3Ffod9wxF5rzGLoZV/m9ap2SEhwWaOKTxS8/xa6Pnb9ObuHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791903134; c=relaxed/simple;
-	bh=lyZ9X0ZAqUaFCJgH1uhwmIHCKS1vJlYxf3w1kWjDvks=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dL//rCzUQ8TTRqZGu7mQOuIgBvTmVtRLMCtcei1wsCD/NpK7y1To28ooNMe/ATVriAuPmFGrwv4Ds3Hf53fFp4eqXhXzersqhroH5U5FWk/5zHO1bQZjhBLRf4yEies6Ynt4xjkAtLxYludemfn6f9+8G7AW3fZ1Nzi/jZpc45E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=maz/NfDL; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791903136; c=relaxed/simple;
+	bh=/u7EvFooTlLqPtHcEbarIAc47xfRty4LAnLOQukkS+o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Xkg8lmBLQEjbJ/rbqlrCKMmIbZf6KaaYhW84icLNO4+A/pQvjNlloVUIcwjrgzDju+f2jxXf6l6H+HghHAe4p12aqTuJFBo2cpOlyCWFyNGKJPtdFlUlUzMU3HdVMfzvh2o+OojAgWw5uVbRt9SnXn+REQPiksqR9j2kMmhV5xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PW5uHOaq; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="maz/NfDL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 276071F000FF;
-	Tue, 13 Oct 2026 14:52:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PW5uHOaq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DF571F00893;
+	Tue, 13 Oct 2026 14:52:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791903133;
-	bh=kYokskwFXqmZbxKXA0hYcmteDiHu4dzWazXznQi6jas=;
-	h=From:To:Cc:Subject:Date;
-	b=maz/NfDLUqWVk46kbQMUYi+byb8hig2awtRci3j40GQMdgpsPuS0sCFthj5FFvq1n
-	 WBd+9CZfIpchLU1v2GvSoK418B55YxWRRVnYYJVBYdjT5KEAW3+IM0AchnSIuo3yaA
-	 w0hymCfISUgZUKjEHm1Xc2oh30ec4DIi890rilGsmcqHM9p3/NuNe88UKXFgWlRObE
-	 Gm8+In9FCU9xPAZlJ6EiJ1gnKqqt3neOvnQsDDduqrMA3v3KWZqcRFdNjyd9dsAqLJ
-	 WgI1UXnTeXyC6Cq5jiqiQ7F6914ahbIIdPSttuKaJwiGHVjlFGljGu9DaRq5Ne5Q3v
-	 as4m/OI4y0Slw==
+	s=k20260515; t=1791903135;
+	bh=hbNHU1fsqSqBvlLyyjwsZtUfV6L8Ck8u/6m0aKnYvpE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=PW5uHOaqNfFerh7XvA6GccwyPteZU9o8lgMSsFD0lKj/nqtlSw1zXQTbIZhNUdDCJ
+	 N1zCLyQ413MsGAVS2S1kaxYHFVpSeF6Tuu+E1a3f2GtU/FNNRAUk3OSYJI/tvSPA9o
+	 rsO0sVofrj0M173tBhgjLW4CjMl9JlgjjDg4lYOjWPctqXbW023GwAKvDbO5NWe0va
+	 9xXUljmjyv5UgFrYRL8ngvS7Q9rshiXjMkfmL7gXl6sCmFJHAJDHd6rCuMJwVblU4J
+	 Q3uLgBBmO3SryQZ+vnsgvnJ9uFUD+aG0wmDy9gPthyD97CC0yAW+yzImho9jX3zI5c
+	 cgm4uHE/+ud9w==
 From: Sasha Levin <sashal@kernel.org>
 To: Thierry Reding <thierry.reding@kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
@@ -48,10 +49,12 @@ Cc: Rob Herring <robh@kernel.org>,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 1/3] dt-bindings: gpu: nvidia,gk20a: Allow a fuse clock after the reference clock
-Date: Tue, 13 Oct 2026 10:52:08 -0400
-Message-ID: <20261013145210.103565-1-sashal@kernel.org>
+Subject: [PATCH 2/3] arm64: tegra: Add the fuse clock to the Tegra210 GPU
+Date: Tue, 13 Oct 2026 10:52:09 -0400
+Message-ID: <20261013145210.103565-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20261013145210.103565-1-sashal@kernel.org>
+References: <20261013145210.103565-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -60,35 +63,31 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-GM20B needs both its reference clock and the fuse clock while it is
-powered, so allow "fuse" as a fourth clock after "ref".
+The GM20B GPU on Tegra210 needs the fuse clock running while it is
+powered. Describe it so that the GPU driver can keep it enabled.
 
 Assisted-by: LLM
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/devicetree/bindings/gpu/nvidia,gk20a.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpu/nvidia,gk20a.yaml b/Documentation/devicetree/bindings/gpu/nvidia,gk20a.yaml
-index 4d856a8b674c..ecbc20e6adec 100644
---- a/Documentation/devicetree/bindings/gpu/nvidia,gk20a.yaml
-+++ b/Documentation/devicetree/bindings/gpu/nvidia,gk20a.yaml
-@@ -44,6 +44,7 @@ properties:
-       - description: GPU clock
-       - description: Power clock
-       - description: Reference or fuse clock
-+      - description: Fuse clock
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 5f5e5370d709..2e84b2bda314 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -446,8 +446,9 @@ gpu@57000000 {
+ 		interrupt-names = "stall", "nonstall";
+ 		clocks = <&tegra_car TEGRA210_CLK_GPU>,
+ 			 <&tegra_car TEGRA210_CLK_PLL_P_OUT5>,
+-			 <&tegra_car TEGRA210_CLK_PLL_G_REF>;
+-		clock-names = "gpu", "pwr", "ref";
++			 <&tegra_car TEGRA210_CLK_PLL_G_REF>,
++			 <&tegra_car TEGRA210_CLK_FUSE>;
++		clock-names = "gpu", "pwr", "ref", "fuse";
+ 		resets = <&tegra_car 184>;
+ 		reset-names = "gpu";
  
-   clock-names:
-     minItems: 2
-@@ -51,6 +52,7 @@ properties:
-       - const: gpu
-       - const: pwr
-       - enum: [ ref, fuse ]
-+      - const: fuse
- 
-   resets:
-     maxItems: 1
 -- 
 2.43.0
 
