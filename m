@@ -1,64 +1,64 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E0549AA2E
-	for <linux-tegra@vger.kernel.org>; Tue, 13 Oct 2026 18:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D372349B465
+	for <linux-tegra@vger.kernel.org>; Tue, 13 Oct 2026 18:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791916362; cv=none; b=DZvvRsyLlikblR3XGbDvPLB5jxeKP3iag9nCKXvgsHikTAj9sHWCj3dytjz3Fw2uIw5vkK16/FPOhWEZMFEGPpNlIEDQFOVdOagdeb98dzlTuUSpQk00cO3B2Mxn3ZlfntVwhBcyihQznULgya/etXqg46yr7UuK6G0g4C1i6gQ=
+	t=1791916365; cv=none; b=oYDMrX7BNR+AiYVfllwuMuJJli4T7EKj+XeiXRq8zqO11OMVAgR6+Oou0C0IEc2w+Vq25Ejl3hqO4Lu9AgdooX3qC3+OrjQqw3x7X49HvwVmBfEOl4BCg6a1qd+aUdqUPP7/TVMXw8rJEM7nGYULBb8YBs30z7KDRzFlQNFAOAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791916362; c=relaxed/simple;
-	bh=sRh2h9zB1an4fHHdjoUBYWc1yZ5+jD2WIHwZzPaCqjM=;
+	s=arc-20240116; t=1791916365; c=relaxed/simple;
+	bh=Bs86v3lbyxE6NRoXSABEXIQnXCClN1E6c4K13PIelMs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J/pw5rewdfqcImDpqvwYVg+syGSeVVEtieddzX2X0MjtrlHqSv/LgWgWnB+DKVPmuJsupkaTfwuCgOPGP7xx8TMfYiOZHRkC70q5IqwKuIAmJbgTd2Y/EJdUCPVGPgUTI+cDo3YBb/QyGl8wcZdjU9FIv0k0BRTneMMsM0FL360=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fy+b4oJ8; arc=none smtp.client-ip=209.85.128.47
+	 MIME-Version; b=sf2DlHHObnmof24gAhWT67GXpeyJXxWS4SEvORpbcYj+RWohpHtb3LhlW8fclIYRWKJW9IJx7engrYxVoPqyVD7aZirf+HXs8Vwum+U3csvSa0Ja7ZI+dJzTttj1TxSeFUPA0m6b9Bmfp0bGZp1sg2xJI4y71AQQiGzPWvSrndk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DkAT/UB+; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fy+b4oJ8"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4a161d9b8c7so23374725e9.3
-        for <linux-tegra@vger.kernel.org>; Tue, 13 Oct 2026 11:32:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DkAT/UB+"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4a180fbeef5so30068035e9.1
+        for <linux-tegra@vger.kernel.org>; Tue, 13 Oct 2026 11:32:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791916358; x=1792521158; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1791916360; x=1792521160; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=kREpI8m4G/QZhA7u4s2/uYr0oWTkEgsKQc7fRL7IuIU=;
-        b=Fy+b4oJ8OF84+GRKg1LZS8p6A0387DQKq1ZTnr5UxFHmr6he2CmvuknxsCtvFLjy/u
-         kEFT4tIdfvmZJ03+g9bzWdfG4SwSjw2lnrZJhPZWPBkjqfZpPgkawZD0jcHR59W3F6KD
-         RMVYDZzOYfxdJysmh48D//1Qz7pvCpfBzro33L8roe/jZOQlMdZEI4OhY/LCIKjfcNc6
-         zumA/cnOzY9GHLsITxBuYWT3IEa+CLIifjwWYzNBcgoTUfgYyQzR3/bVKb+tPd7wNrbm
-         q4u6LUVxJ31iJ/w89bs23o2a53puFrfWbfckJjd1+OfrWyyr+vXJPsbfkFydUuOodXqX
-         o5Fg==
+        bh=MI+lWug+CF+zds+VngY+4+EE14MEntbx1ydEJnf/IQs=;
+        b=DkAT/UB+UL0ZOYfjrVtVyP3cVry5UrQzsM3Ccxun3wvk0QcN/idEKA/WJLAo8Q0M4J
+         wNJ4EcybqZn7MDrQ7RE+lJP6rF02fSQ+b/41fEB9Caq22/MwYSvCGZVPa0qkRkqY4tJU
+         JB1tRPXRSirsaV4u0fVOLlV0QUkhEFTA2NMu3xiEwQ141Tlo2QpQ4M5l3Z3sKFAuM7co
+         b3smR40djCuxj8Z0pgn3dphEUUya3Rz/n5RbT0a4el1NRV/kDoFG9bbtKYhiq0P1BZ9t
+         Y2rr5A8syN+ZsN37DdpHYX2sKpaH1dwVx4EHyKxTBwX+BRwQlzmTh1ZFl8AE9o8aZwzG
+         B57Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791916358; x=1792521158;
+        d=1e100.net; s=20260707; t=1791916360; x=1792521160;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=kREpI8m4G/QZhA7u4s2/uYr0oWTkEgsKQc7fRL7IuIU=;
-        b=qhxfEO6XiSBHSBvDlHP03prdUw7hv5D6WYDV1GyVWXLnrD8h9sWK5OAEPH5lsTwY5A
-         0EzoxC5xCcDe/eK/GKwJek8+RjVjaZVpMojb4ZnuYy5oiVk/rO19AJEYBQJZw2WNojgq
-         UnmZWEd8Gh8byRzSk5dFEQHOVkyFXlrfdI358FZCJtidNpNM4eJX7l7aYF0V5KrQnK/T
-         CZZQGRV37yST3Vc07ubfdnSp5grNi2uh8zJDBUtM3+yXXgN5Uf8tXW/6NPel8R/kvv1d
-         Aw0AXrYz1/MMdZQJySSb60+KbhGQmNBWZJfD0S1ev6U7sNpQwcQRGU/kjWAKntgbOlz4
-         lC8Q==
-X-Forwarded-Encrypted: i=1; AKwUvBw0dmHiDxVCyTHFT9MRB0TJ5ReSqRdVKkzd0bLHo5H7yq3REyEGeB4yGi6RksIuGdFMqktOJvhEPDLSdg==@vger.kernel.org
-X-Gm-Message-State: AFq9FYJLmGbKe/s1WNHOv5Jg8lSJ5jwL2kkZrwY9CsRjfHWk6aHfBCod
-	WrKmSeXM2/yPU77+XBsB39Uzezewk/YwH5i3au2DT4cAC9W/l3wky6co
-X-Gm-Gg: AYBFou3zzA4t8FbM6/knfqhGj2mnKqFVs1u77dHAoCx2NS6F1l3tyMm0QS7Gc5c0WQq
-	7zoehHusH8lEueMiZPfwAQE8Zc3ImKsBMz3EgGNSTbmdM+V7YXsq0GQGgSGKoW2OhTD4UG4TPob
-	y4HD7Qaz6aQB95CDTlagxJ5YuPDArK1qyqn4NfnZEDkarF/i1h8jbGIN+MD7SGn8KvZ3L137UYI
-	WKKzOiElnmDfrHthr+20IDKu+vSk+fr3+jFLJzXMrT3PchZSSVzGBkw/CrXFHAIK+rW1tFFKOlw
-	SPxQ2dj6yO3O7pEGS31Q1koTN1Y0IbnsY+irxqIemr3wSHyc/42osY9YLpwPSkaz2WPVtbLOcDI
-	AWaULNl/9qpyyxTzjncDYF5c2/hroG9P85Aa+EK8Xwx2tV08oMCiQMg8o2ckQFnMUuiKE0Ko4yt
-	f+tTZmbDe9rk1s7hDG1yZZew0qeM1o30gJMh1ZDCjgyCcF+eYgc/6fijUhTv9MRtQVwPqt2J1JJ
-	nPS6FHvu5dIKBmGHRo=
-X-Received: by 2002:a05:600c:548e:b0:4a0:1aa0:7cfa with SMTP id 5b1f17b1804b1-4a18e4aa724mr275921405e9.12.1791916358313;
-        Tue, 13 Oct 2026 11:32:38 -0700 (PDT)
+        bh=MI+lWug+CF+zds+VngY+4+EE14MEntbx1ydEJnf/IQs=;
+        b=2ahLLJ9WPzBSnU9jicDqPhQyuowkPmfIIGg+jjcVrssJIf+f6SpxBy9edoTYZdLkHb
+         Sr4bFu6TA/1srrZl2II6HDJCyyv0mx6Efa076nFkbKlj7pVRmPEZJzqG5f0uxtEIWnHX
+         u/FENR5jhaVV0xjwbzYYZU1DrbNCzY2esMQPzvcylis6p+yVKOhthtHjHgSekymYns4N
+         sV7rfC0YjbgowM4IJ9tqu5t0lJ3q5wQo2q7BmtLX4hCvrdmgTzlqpevlN4ZyDMwGuRJW
+         8ZIZTTz4iLOfykES72Yl0l+DQBslzcIl/gZ2vsBS9VlQKJswbIVZkgwc8yROywPhriwc
+         M2iQ==
+X-Forwarded-Encrypted: i=1; AKwUvBw+8qP92M0z41zia0Ab9WfAAhkV8lA7SVNHXrWcpzSq+myb+FN6oFMmN6WxpScmDusua694kTxNFpx7SA==@vger.kernel.org
+X-Gm-Message-State: AFq9FYIDJN4gNps5FPhKvKRbAB2Otr8KnZ4k6bdEqMbG6hnwSRGn4A2s
+	nsEVOd+mN+gwJbDH3ynSh+IbqVl3GhCiu0G9uDF1sPvoz9Sln1zKza7W
+X-Gm-Gg: AYBFou3M/8ql/O6cxosEfxA9poK9mdQSvS4X0LGMSN6y/7ZGisZJfNh5E3nbAB3jI9I
+	fbKp9PTlCTREnwZdEYv5FReXnFfkdgq7L/XvfL9srPWwmgZnoqhUnZpbCHrobPY5mAMBL0TMXB/
+	IbJJypEjcjrDA/D3D5ShdCtPUeW1K/8ISF6P7gKKlLsO6ftgzwPKLIR31Yopgog9tsGnfAWi620
+	X74migGBrqO4NSiYUjuVmdhWYZnLRrgyIa8AVOYiyp4Hl9Fzz2J6k9XkLSpnh+iqAjd8MwNy9up
+	FYs5+KFp7Ob/l45yRTGL2LIVrgfucod3jU7HNR68fJhq1ucB5jl6HPZAsg7MZ39vSCyIXk+tBPt
+	3IRGTVEKpBUSSktzICRy+oR7ufcX5yr1nZkR3u/AIFgIs3tqwcvGj9FWtMrPrc4eAldZoXp6mPb
+	qdn1qKSvoSZTjb6c4wCGDBinAWFbK6ROB58QT5vcUeE3r43nmq8SrakXCcPrd5vuSUoYW9ogEmj
+	1xn98Kvf8CYRWdtSn2qOKGwGC3Cgw==
+X-Received: by 2002:a05:600c:608d:b0:49c:cee0:e7c1 with SMTP id 5b1f17b1804b1-4a18e48d45cmr285728915e9.16.1791916359916;
+        Tue, 13 Oct 2026 11:32:39 -0700 (PDT)
 Received: from xeon ([188.163.112.62])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18bea0f1csm548921305e9.9.2026.10.13.11.32.36
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18bea0f1csm548921305e9.9.2026.10.13.11.32.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Oct 2026 11:32:37 -0700 (PDT)
+        Tue, 13 Oct 2026 11:32:39 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Liam Girdwood <lgirdwood@gmail.com>,
 	Mark Brown <broonie@kernel.org>,
@@ -74,9 +74,9 @@ Cc: linux-sound@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/2] ASoC: dt-bindings: nvidia,tegra-audio: document WM8994 CODEC
-Date: Tue, 13 Oct 2026 21:32:25 +0300
-Message-ID: <20261013183226.513658-2-clamor95@gmail.com>
+Subject: [PATCH v1 2/2] ASoC: tegra: Support WM8994 by machine driver
+Date: Tue, 13 Oct 2026 21:32:26 +0300
+Message-ID: <20261013183226.513658-3-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261013183226.513658-1-clamor95@gmail.com>
 References: <20261013183226.513658-1-clamor95@gmail.com>
@@ -88,129 +88,231 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add dt-binding for WM8994 CODEC.
+Add Wolfson Microelectronics WM8994 codec support to the Tegra ASoC
+machine driver. The WM8994 codec is found on devices like LG Optimus 2X
+(P990/star) and Samsung Captivate Glide (SGH-i927).
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- .../sound/nvidia,tegra-audio-wm8994.yaml      | 109 ++++++++++++++++++
- 1 file changed, 109 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8994.yaml
+ sound/soc/tegra/Kconfig        |  10 ++
+ sound/soc/tegra/Makefile       |   2 +
+ sound/soc/tegra/tegra_wm8994.c | 169 +++++++++++++++++++++++++++++++++
+ 3 files changed, 181 insertions(+)
+ create mode 100644 sound/soc/tegra/tegra_wm8994.c
 
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8994.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8994.yaml
+diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
+index fdc954028d622..dd3b2d3d6c4c9 100644
+--- a/sound/soc/tegra/Kconfig
++++ b/sound/soc/tegra/Kconfig
+@@ -239,6 +239,16 @@ config SND_SOC_TEGRA_WM8962
+ 	  boards using the WM8962 codec. Currently, the supported boards are
+ 	  Microsoft Surface RT.
+ 
++config SND_SOC_TEGRA_WM8994
++	tristate "SoC Audio support for Tegra boards using a WM8994 codec"
++	depends on I2C && GPIOLIB && MFD_WM8994
++	select SND_SOC_TEGRA_MACHINE_DRV
++	select SND_SOC_WM8994
++	help
++	  Say Y or M here if you want to add support for SoC audio on Tegra
++	  boards using the WM8994 codec. Currently, the supported boards are
++	  LG Optimus X2 P990 and Samsung Captivate Glide (SGH-i927).
++
+ config SND_SOC_TEGRA_WM9712
+ 	tristate "SoC Audio support for Tegra boards using a WM9712 codec"
+ 	depends on GPIOLIB
+diff --git a/sound/soc/tegra/Makefile b/sound/soc/tegra/Makefile
+index 1c18ef6971c09..b8f90149bfa63 100644
+--- a/sound/soc/tegra/Makefile
++++ b/sound/soc/tegra/Makefile
+@@ -43,10 +43,12 @@ obj-$(CONFIG_SND_SOC_TEGRA210_OPE) += snd-soc-tegra210-ope.o
+ # Tegra machine Support
+ snd-soc-tegra-wm8903-y := tegra_wm8903.o
+ snd-soc-tegra-wm8962-y := tegra_wm8962.o
++snd-soc-tegra-wm8994-y := tegra_wm8994.o
+ snd-soc-tegra-machine-y := tegra_asoc_machine.o
+ snd-soc-tegra-audio-graph-card-y := tegra_audio_graph_card.o
+ 
+ obj-$(CONFIG_SND_SOC_TEGRA_WM8903) += snd-soc-tegra-wm8903.o
+ obj-$(CONFIG_SND_SOC_TEGRA_WM8962) += snd-soc-tegra-wm8962.o
++obj-$(CONFIG_SND_SOC_TEGRA_WM8994) += snd-soc-tegra-wm8994.o
+ obj-$(CONFIG_SND_SOC_TEGRA_MACHINE_DRV) += snd-soc-tegra-machine.o
+ obj-$(CONFIG_SND_SOC_TEGRA_AUDIO_GRAPH_CARD) += snd-soc-tegra-audio-graph-card.o
+diff --git a/sound/soc/tegra/tegra_wm8994.c b/sound/soc/tegra/tegra_wm8994.c
 new file mode 100644
-index 0000000000000..3c9a055f5e4bd
+index 0000000000000..950fa6ad388f9
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm8994.yaml
-@@ -0,0 +1,109 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/nvidia,tegra-audio-wm8994.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/sound/soc/tegra/tegra_wm8994.c
+@@ -0,0 +1,169 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * tegra_wm8994.c - Tegra machine ASoC driver for boards using WM8994 codec.
++ *
++ * Copyright (C) 2026 Svyatoslav Ryhel <clamor95@gmail.com>
++ *
++ * Based on tegra_wm8994 code copyright/by:
++ *
++ * Author: Sumit Bhattacharya <sumitb@nvidia.com>
++ * Copyright (C) 2010-2011 - NVIDIA, Inc.
++ *
++ * Based on code copyright/by:
++ *
++ * (c) 2009, 2010 Nvidia Graphics Pvt. Ltd.
++ *
++ * Copyright 2007 Wolfson Microelectronics PLC.
++ * Author: Graeme Gregory
++ *         graeme.gregory@wolfsonmicro.com or linux@wolfsonmicro.com
++ */
 +
-+title: NVIDIA Tegra audio complex with WM8994 CODEC
++#include <linux/gpio/consumer.h>
++#include <linux/of.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
 +
-+maintainers:
-+  - Svyatoslav Ryhel <clamor95@gmail.com>
++#include <sound/core.h>
++#include <sound/jack.h>
++#include <sound/soc.h>
 +
-+allOf:
-+  - $ref: nvidia,tegra-audio-common.yaml#
++#include "../codecs/wm8994.h"
 +
-+properties:
-+  compatible:
-+    items:
-+      - pattern: '^[a-z0-9]+,tegra-audio-wm8994(-[a-z0-9]+)+$'
-+      - const: nvidia,tegra-audio-wm8994
++#include "tegra_asoc_machine.h"
 +
-+  nvidia,audio-routing:
-+    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
-+    description: |
-+      A list of the connections between audio components.
-+      Each entry is a pair of strings, the first being the connection's sink,
-+      the second being the connection's source. Valid names for sources and
-+      sinks are the pins (documented in the binding document),
-+      and the jacks on the board.
-+    minItems: 2
-+    items:
-+      enum:
-+        # Board Connectors
-+        - Headphone Jack
-+        - Int Spk
-+        - Earpiece
-+        - Line Out
-+        - Mic Jack
-+        - Int Mic
-+        - Internal Mic 1
-+        - Internal Mic 2
++static struct snd_soc_jack_pin tegra_wm8994_mic_jack_pins[] = {
++	{ .pin = "Mic Jack", .mask = SND_JACK_MICROPHONE },
++};
 +
-+        # CODEC Pins
-+        - SPKOUTLP
-+        - SPKOUTLN
-+        - SPKOUTRP
-+        - SPKOUTRN
-+        - HPOUT1L
-+        - HPOUT1R
-+        - HPOUT2P
-+        - HPOUT2N
-+        - LINEOUT1P
-+        - LINEOUT1N
-+        - LINEOUT2P
-+        - LINEOUT2N
-+        - IN1LN
-+        - IN1LP
-+        - IN2LN
-+        - IN2LP:VXRN
-+        - IN1RN
-+        - IN1RP
-+        - IN2RN
-+        - IN2RP:VXRP
-+        - DMIC1DAT
-+        - DMIC2DAT
-+        - MICBIAS1
-+        - MICBIAS2
++static unsigned int tegra_wm8994_mclk_rate(unsigned int srate)
++{
++	unsigned int mclk;
 +
-+required:
-+  - nvidia,i2s-controller
++	switch (srate) {
++	case 8000:
++	case 16000:
++	case 24000:
++	case 32000:
++	case 48000:
++	case 64000:
++	case 96000:
++		mclk = 12288000;
++		break;
++	case 11025:
++	case 22050:
++	case 44100:
++	case 88200:
++		mclk = 11289600;
++		break;
++	default:
++		mclk = 12000000;
++		break;
++	}
 +
-+unevaluatedProperties: false
++	return mclk;
++}
 +
-+examples:
-+  - |
-+    #include <dt-bindings/clock/tegra20-car.h>
-+    #include <dt-bindings/gpio/gpio.h>
++static const struct snd_kcontrol_new tegra_wm8994_controls[] = {
++	SOC_DAPM_PIN_SWITCH("Int Spk"),
++	SOC_DAPM_PIN_SWITCH("Internal Mic 1"),
++	SOC_DAPM_PIN_SWITCH("Internal Mic 2"),
++	SOC_DAPM_PIN_SWITCH("Mic Jack"),
++	SOC_DAPM_PIN_SWITCH("Line Out"),
++	SOC_DAPM_PIN_SWITCH("FM Radio"),
++};
 +
-+    sound {
-+        compatible = "lg,tegra-audio-wm8994-star",
-+                     "nvidia,tegra-audio-wm8994";
-+        nvidia,model = "LG Optimus 2X WM8994";
++static int tegra_wm8994_init(struct snd_soc_pcm_runtime *rtd)
++{
++	struct tegra_machine *machine = snd_soc_card_get_drvdata(rtd->card);
++	int err;
 +
-+        nvidia,audio-routing =
-+                "Headphone Jack", "HPOUT1L",
-+                "Headphone Jack", "HPOUT1R",
-+                "Int Spk", "SPKOUTLN",
-+                "Int Spk", "SPKOUTLP",
-+                "Earpiece", "HPOUT2N",
-+                "Earpiece", "HPOUT2P",
-+                "IN2RN", "MICBIAS2",
-+                "IN2RN", "Mic Jack",
-+                "IN1LN", "MICBIAS1",
-+                "IN1LN", "Internal Mic 1",
-+                "IN1RN", "MICBIAS1",
-+                "IN1RN", "Internal Mic 2";
++	err = tegra_asoc_machine_init(rtd);
++	if (err)
++		return err;
 +
-+        nvidia,i2s-controller = <&tegra_i2s1>;
-+        nvidia,audio-codec = <&wm8994>;
++	if (!machine->gpiod_mic_det && machine->asoc->add_mic_jack) {
++		struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
++		struct snd_soc_component *component = codec_dai->component;
 +
-+        nvidia,hp-det-gpios = <&gpio 51 GPIO_ACTIVE_HIGH>;
-+        nvidia,mic-det-gpios = <&gpio 27 GPIO_ACTIVE_HIGH>;
-+        nvidia,ext-mic-en-gpios = <&gpio 57 GPIO_ACTIVE_HIGH>;
-+        nvidia,coupled-mic-hp-det;
++		err = snd_soc_card_jack_new_pins(rtd->card, "Mic Jack",
++						 SND_JACK_MICROPHONE,
++						 machine->mic_jack,
++						 tegra_wm8994_mic_jack_pins,
++						 ARRAY_SIZE(tegra_wm8994_mic_jack_pins));
++		if (err) {
++			dev_err(rtd->dev, "Mic Jack creation failed: %d\n", err);
++			return err;
++		}
 +
-+        clocks = <&tegra_car TEGRA20_CLK_PLL_A>,
-+                 <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
-+                 <&tegra_car TEGRA20_CLK_CDEV1>;
-+        clock-names = "pll_a", "pll_a_out0", "mclk";
-+    };
++		wm8994_mic_detect(component, machine->mic_jack, 1);
++	}
++
++	return 0;
++}
++
++static int tegra_wm8994_remove(struct snd_soc_card *card)
++{
++	struct snd_soc_dai_link *link = &card->dai_link[0];
++	struct snd_soc_pcm_runtime *rtd = snd_soc_get_pcm_runtime(card, link);
++	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
++	struct snd_soc_component *component = codec_dai->component;
++
++	wm8994_mic_detect(component, NULL, 0);
++
++	return 0;
++}
++
++SND_SOC_DAILINK_DEFS(wm8994_hifi,
++	DAILINK_COMP_ARRAY(COMP_EMPTY()),
++	DAILINK_COMP_ARRAY(COMP_CODEC(NULL, "wm8994-aif1")),
++	DAILINK_COMP_ARRAY(COMP_EMPTY()));
++
++static struct snd_soc_dai_link tegra_wm8994_dai = {
++	.name = "WM8994",
++	.stream_name = "WM8994 PCM",
++	.init = tegra_wm8994_init,
++	.dai_fmt = SND_SOC_DAIFMT_I2S |
++		   SND_SOC_DAIFMT_NB_NF |
++		   SND_SOC_DAIFMT_CBC_CFC,
++	SND_SOC_DAILINK_REG(wm8994_hifi),
++};
++
++static struct snd_soc_card snd_soc_tegra_wm8994 = {
++	.components = "codec:wm8994",
++	.dai_link = &tegra_wm8994_dai,
++	.num_links = 1,
++	.controls = tegra_wm8994_controls,
++	.num_controls = ARRAY_SIZE(tegra_wm8994_controls),
++	.remove = tegra_wm8994_remove,
++	.fully_routed = true,
++};
++
++static const struct tegra_asoc_data tegra_wm8994_data = {
++	.mclk_rate = tegra_wm8994_mclk_rate,
++	.mclk_id = WM8994_SYSCLK_MCLK1,
++	.card = &snd_soc_tegra_wm8994,
++	.add_common_dapm_widgets = true,
++	.add_common_snd_ops = true,
++	.add_mic_jack = true,
++	.add_hp_jack = true,
++};
++
++static const struct of_device_id tegra_wm8994_of_match[] = {
++	{ .compatible = "nvidia,tegra-audio-wm8994", .data = &tegra_wm8994_data },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, tegra_wm8994_of_match);
++
++static struct platform_driver tegra_wm8994_driver = {
++	.driver = {
++		.name = "tegra-wm8994",
++		.of_match_table = tegra_wm8994_of_match,
++		.pm = &snd_soc_pm_ops,
++	},
++	.probe = tegra_asoc_machine_probe,
++};
++module_platform_driver(tegra_wm8994_driver);
++
++MODULE_AUTHOR("Svyatoslav Ryhel <clamor95@gmail.com>");
++MODULE_DESCRIPTION("Tegra+WM8994 machine ASoC driver");
++MODULE_LICENSE("GPL");
 -- 
 2.53.0
 
