@@ -1,42 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FA951DB04
-	for <linux-tegra@vger.kernel.org>; Tue, 13 Oct 2026 15:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E6A370ADA;
+	Tue, 13 Oct 2026 16:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791906983; cv=none; b=XyUDiNmhYh87z1/opS7ta20M+s7imZQTqf3b4bXtce3nfll2n8epKDnc4atKrhqDThWq5ZHRYjbK4kngZt3MMFH0ydonldNIsxdhDnLnZDhYfZsPCspEhKX/5wFPFnKFoyg17t0swcIZPW1qx3E81AL0qa57kjqZ05Ury2pQAi0=
+	t=1791907414; cv=none; b=kl6gpEPn6tgUVFZU5Mq0auFlNrUY3OlsnoMRFwe2D63XOK5U/Epmm7Uf7LO7it5UfwbNUpeDDLZg2hPlTbFx5QB9BMMJRinGH295MTVd7tJK5kPR9xej6GsOFnX1UbcMbVdlhxKC++Yttka3Nmh5ZiHvganIGSVgzcMuigC9fbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791906983; c=relaxed/simple;
-	bh=Px+SYY6OQ3VwKAESTknEjRL2REhoUTrz34NNEU3Y/KI=;
+	s=arc-20240116; t=1791907414; c=relaxed/simple;
+	bh=5WHoeUINkgZunqY8JUIYAZgXEPU5x9iKF8csd5FaLyk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XXpOVrZRY3+DE0jrJ+U/zMTyaUSi2m/gX+eESz+lDvTmTC2LK800WjGgbJQy09MfY6IqWWw7utJR3FFkGliWtNSDotfWWh7gv6NgeiGN2IkkX69ls/FOVryaf46auPcWcqgavDOTNoQ5nlH7VCp/tz79UAFhMOWWnKjuNzjkwhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GmwDMNEK; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=SN2Zu//SAimAR1OrwIdFykmi9VydW0zQJimE8Y032a+RNF7Lg7J/H7m8eT9yv1nwiApJ4wCOS6yhUe0h7tueCKQRsHLXX4kQA4z1LywQFZbjK+lBqLyyMOJ2b1Jj9MM7J6n/5cPiMuNCbTjlwS1ePnT6r9s6GJb8a9pDLN6URxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HFJaatkP; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GmwDMNEK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C0FF1F000FF;
-	Tue, 13 Oct 2026 15:56:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HFJaatkP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DED11F000FF;
+	Tue, 13 Oct 2026 16:03:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791906982;
-	bh=rE6QkMfYCe+RrphLCAUELCRN9FLvMmyJTEZSB+tWcSE=;
+	s=k20260515; t=1791907413;
+	bh=s5v4uxkqBN5uEW7jS4QQBdALy0qidx9Gwm7FyQCTQOg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=GmwDMNEKDA12CApBgXR1ot0gUIvy+8+b4kDD/XsLl7QrmK2Hu3gthqwBQyCBhAYKd
-	 pPVTcXMtJYy6S1CzMCnPk4u3uO0p2Kz+4GgcqtO9WtsQAKc224iItkIpxHAqv/BrMI
-	 qV4bgIu8d9iaA8/rzDX23zDyRFbjr6lRbt2tD2ZRJ4WRz1/2gA+LvFLJkyzkcdHlQ5
-	 /Rh9NJMXCjbtxDdGzdsa9mz3uKdFQXAn8pvoen6rEZLhV1Qq40m8Qzn0Ac/enyfuwS
-	 QgJkpnKuBedPcCFYLg0p8lbrAkvDfHHY5KcTtqreU3Soo8JdWT/bWWgjULiQF2KhXh
-	 2HxUjPWWhwSLg==
-Date: Tue, 13 Oct 2026 17:56:19 +0200
+	b=HFJaatkPM8P3cKdqWx5HDHGyETlugYRtbcgnLGwDC6vfCzWcX5P0Po7bYmC/lvJ5R
+	 PZA9DERac7C1khJvwdImHMR59mJOSfzzUCbSOHxZXw1zVeHgq3eFORAZEiFcFFYL3N
+	 pEe2lR+ThCluEaX6c6zh+/cXTCL9Uz05YY+Lpubb3rfXYqzkf3Q1Tubij+K+H3lZni
+	 du/zHBLyRt0FP2ma+7bHpzECLZLhtx4HhX/UbuT73M8ZkkVPdbHtltBAOWyXl0vmWb
+	 IjRz6ptv0jI2J1ApjhCYWM8xCV4TE2GZxyKzG+DDHD6O/HdEYyCJX1zVMRUWtEmsKK
+	 OmOs4EW6yLA3Q==
+Date: Tue, 13 Oct 2026 18:03:31 +0200
 From: Thierry Reding <thierry.reding@kernel.org>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Aaron Kling <webgeek1234@gmail.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org
-Subject: Re: [REQUEST] Release Firmware to Match Current Driver Support
-Message-ID: <as5UbMrupLKub49y@orome>
-References: <CALHNRZ8uHmx3nqpg1-F6RCprDavx3nY55en5gJds54RU8MDR5Q@mail.gmail.com>
- <CALHNRZ8PcnQ7mHwpvJwk29N0FvTh2vqZSBhfE4ckf=78NkKEHw@mail.gmail.com>
- <aoQ4he4rBJSTPBbR@orome>
- <BMe1VOJ9Rf6tF74Mkc7tPQ@nvidia.com>
+To: Jeremy Clifton <deaner92@yahoo.com>
+Cc: Julia Lawall <julia.lawall@inria.fr>, Marc Dietrich <marvin24@gmx.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, 
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, outreachy@lists.linux.dev
+Subject: Re: [PATCH] staging: nvec: use guard(mutex) in nvec_write_sync()
+Message-ID: <as5WES_Ec2KGWQsm@orome>
+References: <20261012171312.5998-1-deaner92.ref@yahoo.com>
+ <20261012171312.5998-1-deaner92@yahoo.com>
+ <b51c3755-a967-3de3-5f8c-3e4984d6e93c@inria.fr>
+ <492e9a13-b50b-48cb-bd41-3114573c7950@yahoo.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -44,134 +45,57 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7bf375a3chnjy7d4"
+	protocol="application/pgp-signature"; boundary="hzewtzrna6tsl46x"
 Content-Disposition: inline
-In-Reply-To: <BMe1VOJ9Rf6tF74Mkc7tPQ@nvidia.com>
+In-Reply-To: <492e9a13-b50b-48cb-bd41-3114573c7950@yahoo.com>
 
 
---7bf375a3chnjy7d4
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
+--hzewtzrna6tsl46x
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [REQUEST] Release Firmware to Match Current Driver Support
+Subject: Re: [PATCH] staging: nvec: use guard(mutex) in nvec_write_sync()
 MIME-Version: 1.0
 
-On Tue, Oct 13, 2026 at 05:49:40PM +0900, Mikko Perttunen wrote:
-> On Tuesday, August 18, 2026 7:49=E2=80=AFPM Thierry Reding wrote:
-> > On Mon, Aug 17, 2026 at 12:17:27PM -0500, Aaron Kling wrote:
-> > > On Mon, May 11, 2026 at 3:02=E2=80=AFAM Mikko Perttunen <mperttunen@n=
-vidia.com> wrote:
-> > > >
-> > > > On Monday, May 11, 2026 12:05=E2=80=AFPM Aaron Kling wrote:
-> > > > > On Fri, Nov 14, 2025 at 2:17=E2=80=AFPM Aaron Kling <webgeek1234@=
-gmail.com> wrote:
-> > > > > >
-> > > > > > On Fri, Aug 1, 2025 at 4:56=E2=80=AFAM Thierry Reding <thierry.=
-reding@gmail.com> wrote:
-> > > > > > >
-> > > > > > > On Thu, Jul 31, 2025 at 04:22:32PM -0500, Aaron Kling wrote:
-> > > > > > > > This was originally discussed on the freedesktop issue trac=
-ker [0],
-> > > > > > > > but there hasn't been a response there in 6 months. So I'm =
-reopening
-> > > > > > > > the discussion here.
-> > > > > > > >
-> > > > > > > > * Nvdec firmware. The driver has been in the kernel for ove=
-r three
-> > > > > > > > years and there's still no available freely licensed firmwa=
-re to use
-> > > > > > > > with it.
-> > > > > > > > * T234 vic firmware. The driver has supported the arch for =
-almost
-> > > > > > > > three years and freely licensed firmware still isn't availa=
-ble.
-> > > > > > > > * Nvjpg firmware. The driver is awaiting final approval, pr=
-obably
-> > > > > > > > worth it to release the firmware with everything else.
-> > > > > > > >
-> > > > > > > > * T194 nouveau firmware. This does not have driver support,=
- but there
-> > > > > > > > has been some interest in working on it. Making the firmware
-> > > > > > > > available, even if it isn't merged to linux-firmware, would=
- be one
-> > > > > > > > less blocker for someone that doesn't work at Nvidia to wor=
-k on
-> > > > > > > > support.
-> > > > > > > >
-> > > > > > > > Aaron Kling
-> > > > > > > >
-> > > > > > > > [0] https://gitlab.freedesktop.org/drm/tegra/-/issues/4
-> > > > > > >
-> > > > > > > I will continue to look into this, but it'll not be high prio=
-rity. Too
-> > > > > > > many other things going on.
-> > > > > >
-> > > > > > After some discussion with nouveau developers, it was pointed o=
-ut to
-> > > > > > me that the gsp on ga10b doesn't do much and the setup is more =
-like
-> > > > > > prior tegra gpus. And that it wouldn't make sense to support ga=
-10b on
-> > > > > > nova. So I would like to expand the request for gv11b nouveau f=
-irmware
-> > > > > > to also include ga10b. Perhaps not directly pushed to linux-fir=
-mware
-> > > > > > until they can be verified working, but made available so driver
-> > > > > > development can happen.
-> > > > >
-> > > > > It has been over eight months since the last response. Nvjpg driv=
-er
-> > > > > support has been merged in the meantime. Has any progress been ma=
-de on
-> > > > > any of the firmware releases?
-> > > > >
-> > > > > Aaron
-> > > >
-> > > > I have the multimedia engine firmware files on my todo-list. I'm
-> > > > planning to send these out after Tegra264 VIC support is ready to s=
-end.
-> > > > Unfortunately there have been some delays in that.
-> > > >
-> > > > Mikko
-> > >=20
-> > > The Tegra264 VIC series has been picked up into -next. Is there any
-> > > update on the firmware release process?
-> >=20
-> > We're still working on it, it's just taking a really long time.
-> >=20
-> > Thierry
+On Mon, Oct 12, 2026 at 03:41:48PM -0600, Jeremy Clifton wrote:
+> Thank you so much for your guidance and feedback.
 >=20
-> Firmware files for VIC, NVDEC, NVENC, NVJPG, OFA, and XUSB for Tegra124=
-=20
-> and later are now in linux-firmware:
+> It is the result that the patch will produce. All the unlock calls will
+> be deleted and the out of memory path will have no braces, as per
+> the style guidelines.
 >=20
->     https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmwa=
-re.git/commit/?id=3Dbdeb9f0f93f18d10b281217e66e81838527ce55a
+> The motivation behind the patch is to defer usage of manual locks
+> for new and improved guards, disallowing lock leaks.
 >=20
-> Thanks for your patience. I was about to lose mine a few times.
+> This way, there can be no error producing path by not calling unlock.
+>=20
+> Shall I send a v2 with motivation included?
 
-Thanks for pushing this over the finish line!
+Not a big deal in this case, but you might want to read up on how to
+properly reply to emails:
+
+    https://subspace.kernel.org/etiquette.html#do-not-top-post-when-replying
 
 Thierry
 
---7bf375a3chnjy7d4
+--hzewtzrna6tsl46x
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrOVKMACgkQ3SOs138+
-s6HdlA//RmzCXm6c3tqJ+PpkKipsXDp/tKTaF3DV5jtzyEzZI5UU2DZegZBVhJXG
-elz8L4HXCWDlHzpG4QbKHmmLd9Ejk7xJ5h2MGu1SHAAyaRZ360274d1s3WGapS4f
-1PZyc9NNk7aTD4vg7ebrBGeePvlvqCjMJEykGwD/OTbEiOGVDVzRYGppLYq0y6iY
-rja8M4rtNlXGEnTfQgEG3Dx8LvrDz0pR5hyjIRglmOGFPY9kbcvrfzxcuV2iD0iK
-tDgtNVNCDuJoyF+taO2DQuKB8WrmcDhpxxC01g2z4PAq8lkt2lPwtk2XItqEpA+Q
-TS7DjVGnBW+cqdzMLRBfJVLumWp/nBWJT+XJm16tRMJZkjrKt7F7atQzzfQeZ4up
-3Yrfm9+PuGKCHAWRiyeB4GbuXP1Hut3Mu8q1U32PoqJsz51TbAx6gPKnNjjoMONg
-dBMd/dUP9p8Hgn9tAaeKadlAqLaE7cUMLJSdPlpFLgyBYlD/8LTcFQT7Zs4ntCdV
-WXJngq3tFDsmB3QMRCv7W+w3MpVsAWkD+cIajDI1CWuwujjPrj4/u4TmhAgsQmqX
-vYFeB7njVuwyDs+eqFyfb+cZ7gko0YoJ3oM9TvSFF8YtSY2DO9PAkUJEiW2jxMgv
-M66oJV7Q+QK0e6JZa/wSpA2zwYiS6gf7zMS3pkS9eFhx0YRT1yg=
-=SZbm
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmrOVlIACgkQ3SOs138+
+s6Ey4Q/9HeWRPuZBHvX53s52PXGTjx7DIALN1o0lQS3b1+MxhUlcETBj+3LrS/GV
+zwtBFcTdqMirW9QE9n+dScPrkSoxRCuX0p5BBpMMccYd3f+S3yMCHGCQ6Sy33qQb
+B59hayWYN/uxCo8LkZfeNgsOr+UDJ8nJuLehH3/OBz+ya86RJ1Jaz1kQzcDIBVEq
+dHR0NPKdcdCOgJYTaq0v59GSCavBAAGepGfa/3HOEZUPf6d0u8iy4kJbGH1dQff3
+JZbvseri/M6ONxcXq1DO0+TNMa99QX0gJMVXF6HCmsCot93v1/7s7iwlYdewjebM
+00brAb7yX0PrtraFf840pKf4Fy8iQ2M4a3/PwYpjBSDKP3oBlV/aVXjBJLMTGFrR
+qFN+mDTEGwt3Sz5babpmvXmWxchkwO05ayoTrOWxy4QJQ73blJbmx7l5EjQMl+8/
+4lmQWug9/KfumoKnex73Am2YYNQDh+bkGks/FjvSsBVy617F07fX3j4TdN+n40ME
+qn3GmAxFd31vK78lqASap7xG764Li9IBKn0Wt0LIzUfH5IJnMMb8weFM6VxvcI63
+5IuEAoqCRgz6YaNw8NnNkjvvcM2P0neW3/FHAsjYZcr4rFh3izw/UhfV+fR7CXuf
+j56BBV+TN8hqoNvtfgUcNXTHfWGwhmCxHcT7fw/BdJfgy6xFJBE=
+=5cEq
 -----END PGP SIGNATURE-----
 
---7bf375a3chnjy7d4--
+--hzewtzrna6tsl46x--
